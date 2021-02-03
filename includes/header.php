@@ -83,18 +83,19 @@ if (top.frames.length!=0)
 						</ul>
 					</li>
 					<li>
-						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php" >Inventories</a>
-						<ul>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=1" >Project 1</a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=2" >Project 2</a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=3" >Project 3</a>
-							</li>
-						</ul>
+						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=140" >Chicago BG</a>
+					</li>
+					<li>
+						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=141" >Denver BG</a>
+					</li>
+					<li>
+						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=139" >Desert BG</a>
+					</li>
+					<li>
+						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=115" >NYBG</a>
+					</li>
+					<li>
+						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=138" >Selby BG</a>
 					</li>
 					<li>
 						<a href="#" >Interactive Tools</a>
