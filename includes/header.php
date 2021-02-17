@@ -9,14 +9,11 @@ if (top.frames.length!=0)
 		<td id="header" colspan="3">
 			<div style="clear:both; width:100%; height:170px; border-bottom:1px solid #000000;">
 				<div style="float:left">
-					<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/left_logo.jpg" style="margin:0px 30px;width:130px" />
+					<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/left_logo.jpg" style="margin:0px 30px;width:230px" />
 				</div>
 				<div style="margin-left: 40px; color: #fff; font-family: 'Mate', serif; letter-spacing: 1px; text-shadow: 0 0 7px rgba(0,0,0,0.5);">
 					<div style="margin-top:30px; font-size:60px; line-height:48px;">
-						First Level Title
-					</div>
-					<div style="margin-top:20px; font-size:35px; font-style: italic">
-						Second Level Title
+						North American EcoFloras
 					</div>
 				</div>
 			</div>

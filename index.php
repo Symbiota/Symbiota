@@ -33,17 +33,16 @@ header("Content-Type: text/html; charset=".$CHARSET);
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
-		<h1></h1>
-		<div id="quicksearchdiv">
-			<!-- -------------------------QUICK SEARCH SETTINGS--------------------------------------- -->
-			<form name="quicksearch" id="quicksearch" action="<?php echo $CLIENT_ROOT; ?>/taxa/index.php" method="get" onsubmit="return verifyQuickSearch(this);">
-				<div id="quicksearchtext" ><?php echo (isset($LANG['QSEARCH_SEARCH'])?$LANG['QSEARCH_SEARCH']:'Taxon Search'); ?></div>
-				<input id="taxa" type="text" name="taxon" />
-				<button name="formsubmit"  id="quicksearchbutton" type="submit" value="Search Terms"><?php echo (isset($LANG['QSEARCH_SEARCH_BUTTON'])?$LANG['QSEARCH_SEARCH_BUTTON']:'Search'); ?></button>
-			</form>
-		</div>
-		<div style="padding: 0px 10px;">
-			Description and introduction of project
+		<h1> Welcome to the North American EcoFloras Portal!</h1>
+				<div style="float:right;width:410px;margin:0px 25px">
+			<div id="quicksearchdiv">
+				<!-- -------------------------QUICK SEARCH SETTINGS--------------------------------------- -->
+				<form name="quicksearch" id="quicksearch" action="<?php echo $CLIENT_ROOT; ?>/taxa/index.php" method="get" onsubmit="return verifyQuickSearch(this);">
+					<div id="quicksearchtext" ><?php echo (isset($LANG['QSEARCH_SEARCH'])?$LANG['QSEARCH_SEARCH']:'Taxon Search'); ?></div>
+					<input id="taxa" type="text" name="taxon" />
+					<button name="formsubmit"  id="quicksearchbutton" type="submit" value="Search Terms"><?php echo (isset($LANG['QSEARCH_SEARCH_BUTTON'])?$LANG['QSEARCH_SEARCH_BUTTON']:'Search'); ?></button>
+				</form>
+			</div>
 		</div>
 	</div>
 	<?php
