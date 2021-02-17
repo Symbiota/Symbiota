@@ -72,20 +72,58 @@ if (top.frames.length!=0)
 						</ul>
 					</li>
 					<li>
-						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=140" >Chicago Botanical Garden</a>
+						<a href="#" >Chicago Botanical Garden</a>
+						<ul>
+							<li>
+								<a href"#" >Project Information</a>
+							</li>
+							<li>
+								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=140" >Checklists</a>
+							</li>
+						</ul>						
 					</li>
-					<li>  
-						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=141" >Denver Botanical Garden</a>
+					<li> 
+						<a href="#" >Denver Botanical Garden</a>
+						<ul>
+							<li>
+								<a href"#" >Project Information</a>
+							</li>
+							<li>
+								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=141" >Checklists</a>
+							</li>
+						</ul>
+					</li>	
+					<li>
+						<a href="#" >Desert Botanical Garden</a>
+						<ul>
+							<li>
+								<a href"#" >Project Information</a>
+							</li>
+							<li>
+								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=139" >Checklists</a>
+							</li>
+						</ul>
 					</li>
 					<li>
-						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=139" >Desert Botanical Garden</a>
-					</li>
+						<a href="#" >NY Botanical Garden</a>
+						<ul>
+							<li>
+								<a href"#" >Project Information</a>
+							</li>
+							<li>
+								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=115" >Checklists</a>
+							</li>
+						</ul>
 					<li>
-						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=115" >NY Botanical Garden</a>
-					</li>
-					<li>
-						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=138" >Selby Botanical Garden</a>
-					</li>
+						<a href="#" >Selby Botanical Garden</a>
+						<ul>
+							<li>
+								<a href"#" >Project Information</a>
+							</li>
+							<li>
+								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=138" >Checklists</a>
+							</li>
+						</ul>
 					<li>
 						<a href="#" >Interactive Tools</a>
 						<ul>
