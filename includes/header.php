@@ -64,35 +64,27 @@ if (top.frames.length!=0)
 								<a href="<?php echo $CLIENT_ROOT; ?>/collections/index.php" >Search Collections</a>
 							</li>
 							<li>
+								<a href="<?php echo $CLIENT_ROOT; ?>/imagelib/search.php" >Search Images</a>
+							</li>
+							<li>
 								<a href="<?php echo $CLIENT_ROOT; ?>/collections/map/index.php" target="_blank">Map Search</a>
 							</li>
 						</ul>
 					</li>
 					<li>
-						<a href="#" >Images</a>
-						<ul>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/imagelib/index.php" >Image Browser</a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/imagelib/search.php" >Search Images</a>
-							</li>
-						</ul>
+						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=140" >Chicago Botanical Garden</a>
+					</li>
+					<li>  
+						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=141" >Denver Botanical Garden</a>
 					</li>
 					<li>
-						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=140" >Chicago BG</a>
+						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=139" >Desert Botanical Garden</a>
 					</li>
 					<li>
-						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=141" >Denver BG</a>
+						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=115" >NY Botanical Garden</a>
 					</li>
 					<li>
-						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=139" >Desert BG</a>
-					</li>
-					<li>
-						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=115" >NYBG</a>
-					</li>
-					<li>
-						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=138" >Selby BG</a>
+						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=138" >Selby Botanical Garden</a>
 					</li>
 					<li>
 						<a href="#" >Interactive Tools</a>
@@ -104,6 +96,9 @@ if (top.frames.length!=0)
 								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=key" >Dynamic Key</a>
 							</li>
 						</ul>
+					</li>
+					<li>
+						<a href="#" >Resources</a>
 					</li>
 				</ul>
 			</div>

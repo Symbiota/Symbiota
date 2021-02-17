@@ -1,8 +1,8 @@
 <table>
 	<tr>
 		<td class="footer1" colspan="5">
-			<div style="width:auto;">
-				<div style="width:300px;padding:0px 20px;display:table-cell;vertical-align:middle;">
+			<div style="vertical-align:middle">
+				<div style="width:300px;padding:20px 20px;display:table-cell;vertical-align:middle;">
 					<a href="https://www.chicagobotanic.org" target="_blank">
 					<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/cbglogo.jpg" style="width:100px" />
 					</a>
