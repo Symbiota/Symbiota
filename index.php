@@ -33,8 +33,10 @@ header("Content-Type: text/html; charset=".$CHARSET);
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
-		<h1> Welcome to the North American EcoFloras Portal!</h1>
-				<div style="float:right;width:410px;margin:0px 25px">
+		<div style="display:inline-block;text-align:center">
+					<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/BIGMAP.png" style="margin:0px 0px;width:1000px" />
+				</div>
+			<div style="display:inline-block;text-align:center;width:410px;margin:0px 25px">
 			<div id="quicksearchdiv">
 				<!-- -------------------------QUICK SEARCH SETTINGS--------------------------------------- -->
 				<form name="quicksearch" id="quicksearch" action="<?php echo $CLIENT_ROOT; ?>/taxa/index.php" method="get" onsubmit="return verifyQuickSearch(this);">
