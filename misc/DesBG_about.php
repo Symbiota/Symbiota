@@ -19,6 +19,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 			<a href="../index.php"><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;
 			<b><?php echo (isset($LANG['ABOUT_PROJECT'])?$LANG['ABOUT_PROJECT']:'DesBG > About the Project'); ?></b>
 		</div>
+		<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/Phoenix_Ecoflora_Final.png" style="width:300px" />
 		<!-- This is inner text! -->
 		<div id="innertext" style="margin:10px 20px">
 			<h1><?php echo (isset($LANG['ABOUT_PROJECT'])?$LANG['ABOUT_PROJECT']:'About the Project'); ?>:</h1>
