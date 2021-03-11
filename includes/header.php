@@ -76,10 +76,10 @@ if (top.frames.length!=0)
 								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=140" >Checklists</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/CBG_dynamicmap.php?interface=checklist" >Create a Checklist</a>
+								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist&lat=41.89&long=-87.67&zoom=9" >Create a Checklist</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/CBG_dynamicmap.php?interface=key" >Dynamic Key</a>
+								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=key&lat=41.89&long=-87.67&zoom=9" >Dynamic Key</a>
 							</li>
 						</ul>						
 					</li>
@@ -93,10 +93,10 @@ if (top.frames.length!=0)
 								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=141" >Checklists</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/DenBG_dynamicmap.php?interface=checklist" >Create a Checklist</a>
+								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist&lat=39.72&long=-104.96&zoom=9" >Create a Checklist</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/DenBG_dynamicmap.php?interface=key" >Dynamic Key</a>
+								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=key&lat=39.72&long=-104.96&zoom=9" >Dynamic Key</a>
 							</li>
 						</ul>
 					</li>	
@@ -110,10 +110,10 @@ if (top.frames.length!=0)
 								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=139" >Checklists</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/DesBG_dynamicmap.php?interface=checklist" >Create a Checklist</a>
+								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist&lat=33.51&long=-112.08&zoom=9" >Create a Checklist</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/DesBG_dynamicmap.php?interface=key" >Dynamic Key</a>
+								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=key&lat=33.51&long=-112.08&zoom=9" >Dynamic Key</a>
 							</li>
 						</ul>
 					</li>
@@ -127,10 +127,10 @@ if (top.frames.length!=0)
 								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=115" >Checklists</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/NYBG_dynamicmap.php?interface=checklist" >Create a Checklist</a>
+								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist&lat=40.75&long=-73.99&zoom=10" >Create a Checklist</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/NYBG_dynamicmap.php?interface=key" >Dynamic Key</a>
+								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=key&lat=40.75&long=-73.99&zoom=10" >Dynamic Key</a>
 							</li>
 						</ul>
 					<li>
@@ -143,10 +143,10 @@ if (top.frames.length!=0)
 								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=138" >Checklists</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/SBG_dynamicmap.php?interface=checklist" >Create a Checklist</a>
+								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist&lat=27.32&long=-82.34&zoom=9" >Create a Checklist</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/SBG_dynamicmap.php?interface=key" >Dynamic Key</a>
+								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=key&lat=27.32&long=-82.34&zoom=9" >Dynamic Key</a>
 							</li>
 						</ul>
 				</ul>
