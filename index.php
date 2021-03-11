@@ -33,18 +33,16 @@ header("Content-Type: text/html; charset=".$CHARSET);
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
-		<div style="display:inline-block;text-align:center">
-					<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/BIGMAP.png" style="margin:0px 0px;width:1000px" />
+		<div style="text-align:center">
+					<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/BIGMAP.png" style="margin:0px 0px;width:800px" />
 				</div>
-			<div style="display:inline-block;text-align:center;width:410px;margin:0px 25px">
-			<div id="quicksearchdiv">
-				<!-- -------------------------QUICK SEARCH SETTINGS--------------------------------------- -->
-				<form name="quicksearch" id="quicksearch" action="<?php echo $CLIENT_ROOT; ?>/taxa/index.php" method="get" onsubmit="return verifyQuickSearch(this);">
-					<div id="quicksearchtext" ><?php echo (isset($LANG['QSEARCH_SEARCH'])?$LANG['QSEARCH_SEARCH']:'Taxon Search'); ?></div>
-					<input id="taxa" type="text" name="taxon" />
-					<button name="formsubmit"  id="quicksearchbutton" type="submit" value="Search Terms"><?php echo (isset($LANG['QSEARCH_SEARCH_BUTTON'])?$LANG['QSEARCH_SEARCH_BUTTON']:'Search'); ?></button>
-				</form>
-			</div>
+			<div style="text-align:center">
+			<p> This is the homepage for the North American EcoFloras project. EcoFloras, prototyped by the New York Botanical Garden and supported by a National Leadership grant from the Institute of Museum and Library Services, are innovative models for connecting people to plant collections, nature, and urban biodiversity.</p>
+			<p> The projects combine existing knowledge from herbaria and libraries with real-time observations of plants and their ecological partners.</p>
+			<p> EcoFloras' goals are:</p>
+			<p> 1) to better understand urban ecosystems and urbanization, 2) democratize biodiversity data, and 3) increase the understanding and appreciation of plant life.</p>
+			<p>Participants are encouraged to explore their communities and record observations using iNaturalist or Budburst. Exploration of urban biodiversity supports increased environmental literacy and fosters public appreciation of the natural world, while engaging urban residents in local conservation advocacy</p>
+			<p>Currently there are 5 participating gardens. Visit the "Project Information" pages to learn more about their programs and information. </p>
 		</div>
 	</div>
 	<?php
