@@ -451,13 +451,13 @@ else{
 		?>
 		<link href="../../css/occureditor.css?ver=2" type="text/css" rel="stylesheet" id="editorCssLink" />
 		<?php
-		if(isset($CSSARR)){
-			foreach($CSSARR as $cssVal){
+		if(defined('CSSARR')){
+			foreach(CSSARR as $cssVal){
 				echo '<link href="includes/config/'.$cssVal.'?ver=170601" type="text/css" rel="stylesheet" />';
 			}
 		}
-		if(isset($JSARR)){
-			foreach($JSARR as $jsVal){
+		if(defined('JSARR')){
+			foreach(JSARR as $jsVal){
 				echo '<script src="includes/config/'.$jsVal.'?ver=170601" type="text/javascript"></script>';
 			}
 		}
@@ -834,12 +834,12 @@ else{
 												?>
 												<div id="exsDiv">
 													<div id="ometidDiv">
-														<?php echo (isset($LANG['EXS_TITLE'])?$LANG['EXS_TITLE']:'Exsiccati Title'); ?><br/>
+														<?php echo (defined('EXSICCATITITLELABEL')?EXSICCATITITLELABEL:isset($LANG['EXS_TITLE'])?$LANG['EXS_TITLE']:'Exsiccati Title'); ?><br/>
 														<input id="exstitleinput" name="exstitle" value="<?php echo (isset($occArr['exstitle'])?$occArr['exstitle']:''); ?>" />
 														<input id="ometidinput" name="ometid" type="text" style="display: none;" value="<?php echo (isset($occArr['ometid'])?$occArr['ometid']:''); ?>" onchange="fieldChanged('ometid')" />
 													</div>
 													<div id="exsnumberDiv">
-														<?php echo (isset($LANG['NUMBER'])?$LANG['NUMBER']:'Number'); ?><br/>
+														<?php echo (defined('EXSICCATINUMBERLABEL')?EXSICCATINUMBERLABEL:isset($LANG['NUMBER'])?$LANG['NUMBER']:'Number'); ?><br/>
 														<input name="exsnumber" type="text" value="<?php echo isset($occArr['exsnumber'])?$occArr['exsnumber']:''; ?>" onchange="fieldChanged('exsnumber')" />
 													</div>
 												</div>
@@ -1069,7 +1069,7 @@ else{
 													<input type="button" value="F" onclick="toggleCoordDiv()" />
 												</div>
 												<div id="geodeticDatumDiv">
-													<?php echo (defined('GEODETICDATIMLABEL')?GEODETICDATIMLABEL:'Datum'); ?>
+													<?php echo (defined('GEODETICDATUMLABEL')?GEODETICDATUMLABEL:'Datum'); ?>
 													<a href="#" onclick="return dwcDoc('geodeticDatum')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 													<br/>
 													<input type="text" id="geodeticdatum" name="geodeticdatum" tabindex="56" maxlength="255" value="<?php echo array_key_exists('geodeticdatum',$occArr)?$occArr['geodeticdatum']:''; ?>" onchange="fieldChanged('geodeticdatum');" />
@@ -1224,7 +1224,7 @@ else{
 												<br/>
 												<textarea name="associatedtaxa" tabindex="84" onchange="fieldChanged('associatedtaxa');"><?php echo array_key_exists('associatedtaxa',$occArr)?$occArr['associatedtaxa']:''; ?></textarea>
 												<?php
-												if(!isset($ACTIVATEASSOCTAXAAID) || $ACTIVATEASSOCTAXAAID){
+												if(!defined('ACTIVATEASSOCTAXAAID') || ACTIVATEASSOCTAXAAID){
 													echo '<a href="#" onclick="openAssocSppAid();return false;"><img class="editimg" src="../../images/list.png" /></a>';
 												}
 												?>

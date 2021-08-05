@@ -245,7 +245,7 @@ if($SYMB_UID){
 										<a href="#" onclick="parseVerbatimElevation(document.entryform);return false">&lt;&lt;</a>
 									</div>
 									<div style="float:left;">
-										<?php echo (defined('VERBATIMELEVATION')?VERBATIMELEVATION:'Verbatim Elevation'); ?>
+										<?php echo (defined('VERBATIMELEVATIONLABEL')?VERBATIMELEVATIONLABEL:'Verbatim Elevation'); ?>
 										<br/>
 										<input type="text" name="verbatimelevation" tabindex="62" maxlength="255" value="<?php echo array_key_exists('verbatimelevation',$occArr)?$occArr['verbatimelevation']:''; ?>" onchange="verbatimElevationChanged(this.form);" title="" />
 									</div>
@@ -324,7 +324,7 @@ if($SYMB_UID){
 									<?php echo (defined('ASSOCIATEDTAXALABEL')?ASSOCIATEDTAXALABEL:'Associated Taxa'); ?><br/>
 									<textarea name="associatedtaxa" tabindex="84"><?php echo array_key_exists('associatedtaxa',$occArr)?$occArr['associatedtaxa']:''; ?></textarea>
 									<?php
-									if(!isset($ACTIVATEASSOCTAXAAID) || $ACTIVATEASSOCTAXAAID){
+									if(!defined('ACTIVATEASSOCTAXAAID') || ACTIVATEASSOCTAXAAID){
 										echo '<a href="#" onclick="openAssocSppAid();return false;"><img src="../../images/list.png" /></a>';
 									}
 									?>
@@ -349,7 +349,7 @@ if($SYMB_UID){
 									<?php echo (defined('OTHERCATALOGNUMBERSLABEL')?OTHERCATALOGNUMBERSLABEL:'Other Numbers'); ?>
 									<a href="#" onclick="return dwcDoc('otherCatalogNumbers')"><img class="docimg" src="../../images/qmark.png" /></a>
 									<br/>
-									<input type="text" name="othercatalognumbers" tabindex="4" maxlength="255" value="<?php echo array_key_exists('othercatalognumbers',$occArr)?$occArr['othercatalognumbers']:''; ?>" onchange="fieldChanged('othercatalognumbers');<?php if(defined('OTHERCATNUMDUPECHECK') && OTHERCATNUMDUPECHECK) echo 'searchDupesOtherCatalogNumbers(this.form)'; ?>" />
+									<input type="text" name="othercatalognumbers" tabindex="4" maxlength="255" value="<?php echo array_key_exists('othercatalognumbers',$occArr)?$occArr['othercatalognumbers']:''; ?>" onchange="fieldChanged('othercatalognumbers');<?php if(!defined('OTHERCATNUMDUPECHECK') || OTHERCATNUMDUPECHECK) echo 'searchDupesOtherCatalogNumbers(this.form)'; ?>" />
 								</div>
 								<div id="recordNumberDiv">
 									<?php echo (defined('RECORDNUMBERLABEL')?RECORDNUMBERLABEL:'Number'); ?>
