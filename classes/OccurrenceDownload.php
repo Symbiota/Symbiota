@@ -610,13 +610,14 @@ class OccurrenceDownload{
 		if($collid){
 			$sql .= 'WHERE collid = '.$collid;
 		}
+		$sql .= ' ORDER BY processingstatus ASC';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			if($r->processingstatus) $psArr[] = $r->processingstatus;
 		}
 		$rs->free();
 		//Special sort
-		$templateArr = array('unprocessed','unprocessed-nlp','pending duplicate','stage 1','stage 2','stage 3','pending review','reviewed');
+		$templateArr = array('unprocessed','unprocessed-nlp','stage 1','stage 2','stage 3','pending duplicate','pending review','expert required','reviewed', 'closed');
 		//Get all active processing statuses and then merge all extra statuses that may exists for one reason or another
 		return array_merge(array_intersect($templateArr,$psArr),array_diff($psArr,$templateArr));
 	}

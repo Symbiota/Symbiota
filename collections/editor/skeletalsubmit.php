@@ -28,6 +28,17 @@ if($collid){
 		$isEditor = 1;
 	}
 }
+
+// Add collection customization variables
+if($collid && file_exists('includes/config/occurVarColl'.$collid.'.php')){
+	//Specific to particular collection
+	include('includes/config/occurVarColl'.$collid.'.php');
+}
+elseif(file_exists('includes/config/occurVarDefault.php')){
+	//Specific to Default values for portal
+	include('includes/config/occurVarDefault.php');
+}
+
 ?>
 <html>
 <head>
@@ -180,16 +191,26 @@ if($collid){
 							<div id="processingstatusdiv" style="display:none;float:left;margin:7px 3px 3px 0px">
 								<b><?php echo $LANG['PROCESSING_STATUS']; ?>:</b><br/>
 								<select id="fprocessingstatus" name="processingstatus" style="margin-top:4px">
-									<option value=""></option>
-									<option>unprocessed</option>
-									<option>stage 1</option>
-									<option>stage 2</option>
-									<option>stage 3</option>
-									<option>expert required</option>
-									<option>pending review-nfn</option>
-									<option>pending review</option>
-									<option>reviewed</option>
-									<option>closed</option>
+									<option value="">No Set Status</option>
+									<option>-------------------</option>
+									<?php
+
+									// Set the list of processing statuses, from the collection editor template
+									$processingStatusArr = array();
+									if(defined('PROCESSINGSTATUS') && PROCESSINGSTATUS){
+										$processingStatusArr = PROCESSINGSTATUS;
+									}
+									else{
+										$processingStatusArr = array('unprocessed','unprocessed/NLP','stage 1','stage 2','stage 3','pending duplicate','pending review-nfn','pending review','expert required','reviewed','closed');
+									}
+
+									foreach($processingStatusArr as $v){
+
+										$keyOut = strtolower($v);
+
+										echo '<option value="'.$keyOut.'">'.ucwords($v).'</option>';
+									}
+									?>
 								</select>
 							</div>
 							<div id="languagediv" style="display:none;float:left;margin:7px 3px 3px 0px;">

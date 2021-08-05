@@ -2,18 +2,9 @@
 function detectBatchUpdateField(){
 	var fieldSelected = document.getElementById('bufieldname').value;
 	if(fieldSelected == "processingstatus"){
+		var processingStatus = document.getElementById("processingStatus").innerHTML;
 		var buNewValue = '<select name="bunewvalue">';
-		buNewValue += '<option value="unprocessed">Unprocessed</option>';
-		buNewValue += '<option value="unprocessed/nlp">Unprocessed/NLP</option>';
-		buNewValue += '<option value="stage 1">Stage 1</option>';
-		buNewValue += '<option value="stage 2">Stage 2</option>';
-		buNewValue += '<option value="stage 3">Stage 3</option>';
-		buNewValue += '<option value="pending review-nfn">Pending Review-NfN</option>';
-		buNewValue += '<option value="pending review">Pending Review</option>';
-		buNewValue += '<option value="expert required">Expert Required</option>';
-		buNewValue += '<option value="reviewed">Reviewed</option>';
-		buNewValue += '<option value="closed">Closed</option>';
-		buNewValue += '<option value="">No Set Status</option>';
+		buNewValue += processingStatus;
 		buNewValue += '</select>';
 		document.getElementById("bunewvaluediv").innerHTML = buNewValue;
 	}

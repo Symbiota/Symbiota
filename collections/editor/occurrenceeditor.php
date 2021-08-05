@@ -1400,7 +1400,7 @@ else{
 															}
 														}
 														if($pStatus && $pStatus != 'isnull' && !in_array($pStatus,$processingStatusArr)){
-															echo '<option value="'.$pStatus.'" SELECTED>'.$pStatus.'</option>';
+															echo '<option value="'.$pStatus.'" SELECTED>'.ucwords($pStatus).'</option>';
 														}
 														?>
 													</select>

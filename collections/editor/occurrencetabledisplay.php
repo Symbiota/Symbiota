@@ -79,6 +79,32 @@ if($SYMB_UID){
 		}
 	}
 
+	//Bring in config variables
+	if($isGenObs){
+		if(file_exists('includes/config/occurVarGenObs'.$SYMB_UID.'.php')){
+			//Specific to particular collection
+			include('includes/config/occurVarGenObs'.$SYMB_UID.'.php');
+		}
+		elseif(file_exists('includes/config/occurVarGenObsDefault.php')){
+			//Specific to Default values for portal
+			include('includes/config/occurVarGenObsDefault.php');
+		}
+	}
+	else{
+		if($collId && file_exists('includes/config/occurVarColl'.$collId.'.php')){
+			//Specific to particular collection
+			include('includes/config/occurVarColl'.$collId.'.php');
+		}
+		elseif(file_exists('includes/config/occurVarDefault.php')){
+			//Specific to Default values for portal
+			include('includes/config/occurVarDefault.php');
+		}
+		if($crowdSourceMode && file_exists('includes/config/crowdSourceVar.php')){
+			//Specific to Crowdsourcing
+			include('includes/config/crowdSourceVar.php');
+		}
+	}
+
 	if(array_key_exists('bufieldname',$_POST)){
 		$occManager->setQueryVariables();
 		$statusStr = $occManager->batchUpdateField($_POST['bufieldname'],$_POST['buoldvalue'],$_POST['bunewvalue'],$_POST['bumatch']);
@@ -220,16 +246,15 @@ else{
 										if($buFieldName=='processingstatus'){
 											?>
 											<select name="bunewvalue">
-												<option value="unprocessed" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='unprocessed'?'SELECTED':''); ?>><?php echo (isset($LANG['UNPROCESSED'])?$LANG['UNPROCESSED']:'Unprocessed'); ?></option>
-												<option value="unprocessed/nlp" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='unprocessed/nlp'?'SELECTED':''); ?>><?php echo (isset($LANG['UNPROCESSED_NLP'])?$LANG['UNPROCESSED_NLP']:'Unprocessed/NLP'); ?></option>
-												<option value="stage 1" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='stage 1'?'SELECTED':''); ?>><?php echo (isset($LANG['STAGE_1'])?$LANG['STAGE_1']:'Stage 1'); ?></option>
-												<option value="stage 2" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='stage 2'?'SELECTED':''); ?>><?php echo (isset($LANG['STAGE_2'])?$LANG['STAGE_2']:'Stage 2'); ?></option>
-												<option value="stage 3" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='stage 3'?'SELECTED':''); ?>><?php echo (isset($LANG['STAGE_3'])?$LANG['STAGE_3']:'Stage 3'); ?></option>
-												<option value="pending review-nfn" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='pending review-nfn'?'SELECTED':''); ?>><?php echo (isset($LANG['PENDING_NFN'])?$LANG['PENDING_NFN']:'Pending Review-NfN'); ?></option>
-												<option value="pending review" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='pending review'?'SELECTED':''); ?>><?php echo (isset($LANG['PENDING_REVIEW'])?$LANG['PENDING_REVIEW']:'Pending Review'); ?></option>
-												<option value="expert required" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='expert required'?'SELECTED':''); ?>><?php echo (isset($LANG['EXPERT_REQUIRED'])?$LANG['EXPERT_REQUIRED']:'Expert Required'); ?></option>
-												<option value="reviewed" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='reviewed'?'SELECTED':''); ?>><?php echo (isset($LANG['REVIEWED'])?$LANG['REVIEWED']:'Reviewed'); ?></option>
-												<option value="closed" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='closed'?'SELECTED':''); ?>><?php echo (isset($LANG['CLOSED'])?$LANG['CLOSED']:'Closed'); ?></option>
+												<?php
+												foreach($processingStatusArr as $v){
+
+													$keyOut = strtolower($v);
+
+													echo '<option value="'.$keyOut.'"'.(array_key_exists('bunewvalue',$_REQUEST) && $_REQUEST['bunewvalue'] == $keyOut ? ' SELECTED' : '').'>'.isset($LANG[strtoupper($v)])?$LANG[strtoupper($v)]:ucwords($v).'</option>';
+												}
+
+												?>
 												<option value="" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='no set status'?'SELECTED':''); ?>><?php echo (isset($LANG['NO_STATUS'])?$LANG['NO_STATUS']:'No Set Status'); ?></option>
 											</select>
 											<?php
@@ -251,6 +276,18 @@ else{
 									<?php echo (isset($LANG['MATCH_PART'])?$LANG['MATCH_PART']:'Match Any Part of Field'); ?>
 								</div>
 								<div style="margin:2px;">
+									<select id= "processingStatus" name="processingStatus" style="display: none;">
+										<?php
+										// Make a hidden processing status select box, that javascript detectBatchUpdateField()
+										// in js/symb/collections.occureditorshare.js can pull custom processing statuses from
+										foreach($processingStatusArr as $v){
+
+											$keyOut = strtolower($v);
+
+											echo '<option value="'.$keyOut.'"'.(array_key_exists('bunewvalue',$_REQUEST) && $_REQUEST['bunewvalue'] == $keyOut ? ' SELECTED' : '').'>'.ucwords($v).'</option>';
+										}
+										?>
+									</select>
 									<input name="collid" type="hidden" value="<?php echo $collId; ?>" />
 									<input name="occid" type="hidden" value="0" />
 									<input name="occindex" type="hidden" value="0" />

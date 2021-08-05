@@ -179,7 +179,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 							$processingStatusArr = PROCESSINGSTATUS;
 						}
 						else{
-							$processingStatusArr = array('unprocessed','unprocessed/NLP','stage 1','stage 2','stage 3','pending review-nfn','pending review','expert required','reviewed','closed');
+							$processingStatusArr = array('unprocessed','unprocessed/NLP','stage 1','stage 2','stage 3','pending duplicate','pending review-nfn','pending review','expert required','reviewed','closed');
 						}
 						?>
 						<select name="processingstatus">
