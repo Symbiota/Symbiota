@@ -26,6 +26,7 @@ $LANG['ENTER_URL'] = 'Enter URL';
 $LANG['UPLOAD_LOCAL'] = 'Upload Local Image';
 $LANG['DONT_MAP_LARGE'] = 'Do not map large version of image (when applicable)';
 $LANG['PROCESSING_STATUS'] = 'Processing Status';
+$LANG['NO_SET_STATUS'] = 'No Set Status';
 $LANG['SKELETAL_DATA'] = 'Skeletal Data';
 $LANG['CAT_NUM'] = 'Catalog Number';
 $LANG['SCINAME'] = 'Scientific Name';
