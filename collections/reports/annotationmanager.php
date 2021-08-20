@@ -22,6 +22,16 @@ elseif(array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collid,$USER_RIG
 if($isEditor){
 	$annoArr = $datasetManager->getAnnoQueue();
 }
+
+// Add collection customization variables
+if($collid && file_exists('../editor/includes/config/occurVarColl'.$collid.'.php')){
+	//Specific to particular collection
+	include('../editor/includes/config/occurVarColl'.$collid.'.php');
+}
+elseif(file_exists('../editor/includes/config/occurVarDefault.php')){
+	//Specific to Default values for portal
+	include('../editor/includes/config/occurVarDefault.php');
+}
 ?>
 <html>
 	<head>
@@ -132,8 +142,8 @@ if($isEditor){
 							<tr>
 								<th title="Select/Deselect all Specimens" style="width:30px;"><input name="" value="" type="checkbox" onclick="selectAll(this);" /></th>
 								<th style="width:25px;text-align:center;">#</th>
-								<th style="width:125px;text-align:center;">Collector</th>
-								<th style="width:300px;text-align:center;">Scientific Name</th>
+								<th style="width:125px;text-align:center;"><?php echo (defined('RECORDEDBYLABEL')?RECORDEDBYLABEL:(isset($LANG['COLLECTOR'])?$LANG['COLLECTOR']:'Collector')); ?></th>
+								<th style="width:300px;text-align:center;"><?php echo (defined('SCIENTIFICNAMELABEL')?SCIENTIFICNAMELABEL:(isset($LANG['SCINAME'])?$LANG['SCINAME']:'Scientific Name')); ?></th>
 								<th style="width:400px;text-align:center;">Determination</th>
 							</tr>
 							<?php
@@ -186,7 +196,7 @@ if($isEditor){
 								</div>
 								<div style="margin:4px;">
 									<input type="checkbox" name="printcatnum" value="1" />
-									<b>Print Catalog Numbers</b>
+									<b>Print <?php echo (defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:(isset($LANG['CAT_NUM'])?$LANG['CAT_NUM']:'Catalog Number')); ?>s</b>
 								</div>
 								<div style="margin:4px;">
 									<input type="checkbox" name="clearqueue" value="1" onclick="" />

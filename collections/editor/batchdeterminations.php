@@ -41,6 +41,16 @@ if($isEditor){
 		}
 	}
 }
+
+// Add collection customization variables
+if($collid && file_exists('includes/config/occurVarColl'.$collid.'.php')){
+	//Specific to particular collection
+	include('includes/config/occurVarColl'.$collid.'.php');
+}
+elseif(file_exists('includes/config/occurVarDefault.php')){
+	//Specific to Default values for portal
+	include('includes/config/occurVarDefault.php');
+}
 ?>
 
 <html>
@@ -316,7 +326,7 @@ if($isEditor){
 					<div style="margin:15px;width:700px;">
 						<form name="accqueryform" action="batchdeterminations.php" method="post" onsubmit="return submitAccForm(this);">
 							<div>
-								<b><?php echo $LANG['CATNUM']; ?>:</b>
+								<b><?php echo (defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:(isset($LANG['CATNUM'])?$LANG['CATNUM']:'Catalog Number')); ?>:</b>
 								<input name="catalognumber" type="text" style="border-color:green;width:200px;" />
 								<span style="margin-left:20px"><input name="allcatnum" type="checkbox" checked /> <?php echo $LANG['TARGET_ALL']; ?></span>
 							</div>
@@ -354,8 +364,8 @@ if($isEditor){
 							<thead>
 								<tr>
 									<th style="width:25px;text-align:center;">&nbsp;</th>
-									<th style="width:125px;text-align:center;"><?php echo $LANG['CATNUM']; ?></th>
-									<th style="width:300px;text-align:center;"><?php echo $LANG['SCINAME']; ?></th>
+									<th style="width:125px;text-align:center;"><?php echo (defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:(isset($LANG['CATNUM'])?$LANG['CATNUM']:'Catalog Number')); ?></th>
+									<th style="width:300px;text-align:center;"><?php echo (defined('SCIENTIFICNAMELABEL')?SCIENTIFICNAMELABEL:(isset($LANG['SCINAME'])?$LANG['SCINAME']:'Scientific Name')); ?></th>
 									<th style="text-align:center;"><?php echo $LANG['COLLECTOR_LOCALITY']; ?></th>
 								</tr>
 							</thead>
@@ -375,21 +385,21 @@ if($isEditor){
 								</div>
 								<div style="clear:both;margin:15px 0px"><hr /></div>
 								<div id="idQualifierDiv" style='margin:3px;clear:both'>
-									<b><?php echo $LANG['ID_QUALIFIER']; ?>:</b>
+									<b><?php echo (defined('IDENTIFICATIONQUALIFIERLABEL')?IDENTIFICATIONQUALIFIERLABEL:(isset($LANG['ID_QUALIFIER'])?$LANG['ID_QUALIFIER']:'Identification Qualifier')); ?>:</b>
 									<input type="text" name="identificationqualifier" title="e.g. cf, aff, etc" />
 								</div>
 								<div style='margin:3px;'>
-									<b><?php echo $LANG['SCINAME']; ?>:</b>
+									<b><?php echo (defined('SCIENTIFICNAMELABEL')?SCIENTIFICNAMELABEL:(isset($LANG['SCINAME'])?$LANG['SCINAME']:'Scientific Name')); ?>:</b>
 									<input type="text" id="dafsciname" name="sciname" style="background-color:lightyellow;width:350px;" onfocus="initDetAutocomplete(this.form)" />
 									<input type="hidden" id="daftidtoadd" name="tidtoadd" value="" />
 									<input type="hidden" name="family" value="" />
 								</div>
 								<div style='margin:3px;'>
-									<b><?php echo $LANG['AUTHOR']; ?>:</b>
+									<b><?php echo (defined('SCIENTIFICNAMEAUTHORSHIPLABEL')?SCIENTIFICNAMEAUTHORSHIPLABEL:(isset($LANG['AUTHOR'])?$LANG['AUTHOR']:'Author')); ?>:</b>
 									<input type="text" name="scientificnameauthorship" style="width:200px;" />
 								</div>
 								<div id="codDiv" style='margin:3px;'>
-									<b><?php echo $LANG['CONFIDENCE']; ?>:</b>
+									<b><?php echo (defined('IDCONFIDENCELABEL')?IDCONFIDENCELABEL:(isset($LANG['CONFIDENCE'])?$LANG['CONFIDENCE']:'Confidence of Determination')); ?>:</b>
 									<select name="confidenceranking">
 										<option value="8"><?php echo $LANG['HIGH']; ?></option>
 										<option value="5" selected><?php echo $LANG['MEDIUM']; ?></option>
@@ -397,19 +407,19 @@ if($isEditor){
 									</select>
 								</div>
 								<div id="identifiedByDiv" style='margin:3px;'>
-									<b><?php echo $LANG['DETERMINER']; ?>:</b>
+									<b><?php echo (defined('IDENTIFIEDBYLABEL')?IDENTIFIEDBYLABEL:(isset($LANG['DETERMINER'])?$LANG['DETERMINER']:'Determiner')); ?>:</b>
 									<input type="text" name="identifiedby" id="identifiedby" style="background-color:lightyellow;width:200px;" />
 								</div>
 								<div id="dateIdentifiedDiv" style='margin:3px;'>
-									<b><?php echo $LANG['DATE']; ?>:</b>
+									<b><?php echo (defined('DATEIDENTIFIEDLABEL')?DATEIDENTIFIEDLABEL:(isset($LANG['DATE'])?$LANG['DATE']:'Date')); ?>:</b>
 									<input type="text" name="dateidentified" id="dateidentified" style="background-color:lightyellow;" onchange="detDateChanged(this.form);" />
 								</div>
 								<div style='margin:3px;'>
-									<b><?php echo $LANG['REFERENCE']; ?>:</b>
+									<b><?php echo (defined('IDENTIFICATIONREFERENCELABEL')?IDENTIFICATIONREFERENCELABEL:(isset($LANG['REFERENCE'])?$LANG['REFERENCE']:'Reference')); ?>:</b>
 									<input type="text" name="identificationreferences" style="width:350px;" />
 								</div>
 								<div style='margin:3px;'>
-									<b><?php echo $LANG['NOTES']; ?>:</b>
+									<b><?php echo (defined('IDENTIFICATIONREMARKSLABEL')?IDENTIFICATIONREMARKSLABEL:(isset($LANG['NOTES'])?$LANG['NOTES']:'Notes')); ?>:</b>
 									<input type="text" name="identificationremarks" style="width:350px;" />
 								</div>
 								<div id="makeCurrentDiv" style='margin:3px;'>

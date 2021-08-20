@@ -10,6 +10,8 @@ $dateIdent = $_GET['dateident'];
 $sciName = $_GET['sciname'];
 $crowdSourceMode = $_GET['csmode'];
 $editMode = $_GET['em'];
+$collId = $_GET['collid'];
+$isGenObs = $_GET['isgenobs'];
 
 $annotatorname = $_GET['annotatorname'];
 $annotatoremail = $_GET['annotatoremail'];
@@ -23,6 +25,32 @@ $detArr = $occManager->getDetMap($identBy, $dateIdent, $sciName);
 $idRanking = $occManager->getIdentificationRanking();
 
 $specImgArr = $occManager->getImageMap();  // find out if there are images in order to show/hide the button to display/hide images.
+
+//Bring in config variables
+if($isGenObs){
+	if(file_exists('config/occurVarGenObs'.$SYMB_UID.'.php')){
+		//Specific to particular collection
+		include('config/occurVarGenObs'.$SYMB_UID.'.php');
+	}
+	elseif(file_exists('config/occurVarGenObsDefault.php')){
+		//Specific to Default values for portal
+		include('config/occurVarGenObsDefault.php');
+	}
+}
+else{
+	if($collId && file_exists('config/occurVarColl'.$collId.'.php')){
+		//Specific to particular collection
+		include('config/occurVarColl'.$collId.'.php');
+	}
+	elseif(file_exists('config/occurVarDefault.php')){
+		//Specific to Default values for portal
+		include('config/occurVarDefault.php');
+	}
+	if($crowdSourceMode && file_exists('config/crowdSourcingVar.php')){
+		//Specific to Crowdsourcing
+		include('config/crowdSourcingVar.php');
+	}
+}
 
 ?>
 <div id="determdiv" style="width:795px;">
@@ -45,7 +73,7 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 			<div id="idrankeditdiv" style="display:none;margin:15px;">
 				<form name="editidrankingform" action="occurrenceeditor.php" method="post">
 					<div style='margin:3px;'>
-						<b>Confidence of Determination:</b>
+						<b><?php echo (defined('IDCONFIDENCELABEL')?IDCONFIDENCELABEL:'Confidence of Determination'); ?>:</b>
 						<select name="confidenceranking">
 							<?php
 							$currentRanking = 5;
@@ -65,7 +93,7 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 						</select>
 					</div>
 					<div style='margin:3px;'>
-						<b>Notes:</b>
+						<b><?php echo (defined('IDENTIFICATIONREMARKSLABEL')?IDENTIFICATIONREMARKSLABEL:'Notes'); ?>:</b>
 						<input name="notes" type="text" value="<?php echo ($idRanking?$idRanking['notes']:''); ?>" style="width:90%;" />
 					</div>
 					<div style='margin:15px;'>
@@ -155,21 +183,21 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 						}
 						?>
 						<div style='margin:3px;'>
-							<b>Identification Qualifier:</b>
+							<b><?php echo (defined('IDENTIFICATIONQUALIFIERLABEL')?IDENTIFICATIONQUALIFIERLABEL:'Identification Qualifier'); ?>:</b>
 							<input type="text" name="identificationqualifier" title="e.g. cf, aff, etc" />
 						</div>
 						<div style='margin:3px;'>
-							<b>Scientific Name:</b>
+							<b><?php echo (defined('SCIENTIFICNAMELABEL')?SCIENTIFICNAMELABEL:'Scientific Name'); ?>:</b>
 							<input type="text" id="dafsciname" name="sciname" style="background-color:lightyellow;width:350px;" onfocus="initDetAutocomplete(this.form)" />
 							<input type="hidden" id="daftidtoadd" name="tidtoadd" value="" />
 							<input type="hidden" name="family" value="" />
 						</div>
 						<div style='margin:3px;'>
-							<b>Author:</b>
+							<b><?php echo (defined('SCIENTIFICNAMEAUTHORSHIPLABEL')?SCIENTIFICNAMEAUTHORSHIPLABEL:'Author'); ?>:</b>
 							<input type="text" name="scientificnameauthorship" style="width:200px;" />
 						</div>
 						<div style='margin:3px;'>
-							<b>Confidence of Determination:</b>
+							<b><?php echo (defined('IDCONFIDENCELABEL')?IDCONFIDENCELABEL:'Confidence of Determination'); ?>:</b>
 							<select name="confidenceranking">
 								<option value="8">High</option>
 								<option value="5" selected>Medium</option>
@@ -177,19 +205,19 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 							</select>
 						</div>
 						<div style='margin:3px;'>
-							<b>Determiner:</b>
+							<b><?php echo (defined('IDENTIFIEDBYLABEL')?IDENTIFIEDBYLABEL:'Determiner'); ?>:</b>
 							<input type="text" name="identifiedby" style="background-color:lightyellow;width:200px;" />
 						</div>
 						<div style='margin:3px;'>
-							<b>Date:</b>
+							<b><?php echo (defined('DATEIDENTIFIEDLABEL')?DATEIDENTIFIEDLABEL:'Date'); ?>:</b>
 							<input type="text" name="dateidentified" style="background-color:lightyellow;" onchange="detDateChanged(this.form);" />
 						</div>
 						<div style='margin:3px;'>
-							<b>Reference:</b>
+							<b><?php echo (defined('IDENTIFICATIONREFERENCELABEL')?IDENTIFICATIONREFERENCELABEL:'Reference'); ?>:</b>
 							<input type="text" name="identificationreferences" style="width:350px;" />
 						</div>
 						<div style='margin:3px;'>
-							<b>Notes:</b>
+							<b><?php echo (defined('IDENTIFICATIONREMARKSLABEL')?IDENTIFICATIONREMARKSLABEL:'Notes'); ?>:</b>
 							<input type="text" name="identificationremarks" style="width:350px;" />
 						</div>
 						<div style='margin:3px;'>
@@ -249,23 +277,23 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 						?>
 					</div>
 					<div style='margin:3px 0px 0px 15px;'>
-						<b>Determiner:</b> <?php echo $detRec['identifiedby']; ?>
+						<b><?php echo (defined('IDENTIFIEDBYLABEL')?IDENTIFIEDBYLABEL:'Determiner'); ?>:</b> <?php echo $detRec['identifiedby']; ?>
 						<span style="margin-left:40px;">
-							<b>Date:</b> <?php echo $detRec['dateidentified']; ?>
+							<b><?php echo (defined('DATEIDENTIFIEDLABEL')?DATEIDENTIFIEDLABEL:'Date'); ?>:</b> <?php echo $detRec['dateidentified']; ?>
 						</span>
 					</div>
 					<?php
 					if($detRec['identificationreferences']){
 						?>
 						<div style='margin:3px 0px 0px 15px;'>
-							<b>Reference:</b> <?php echo $detRec['identificationreferences']; ?>
+							<b><?php echo (defined('IDENTIFICATIONREFERENCELABEL')?IDENTIFICATIONREFERENCELABEL:'Reference'); ?>:</b> <?php echo $detRec['identificationreferences']; ?>
 						</div>
 						<?php
 					}
 					if($detRec['identificationremarks']){
 						?>
 						<div style='margin:3px 0px 0px 15px;'>
-							<b>Notes:</b> <?php echo $detRec['identificationremarks']; ?>
+							<b><?php echo (defined('IDENTIFICATIONREMARKSLABEL')?IDENTIFICATIONREMARKSLABEL:'Notes'); ?>:</b> <?php echo $detRec['identificationremarks']; ?>
 						</div>
 						<?php
 					}
@@ -286,33 +314,33 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 							<legend><b>Edit Determination</b></legend>
 							<form name="deteditform" action="occurrenceeditor.php" method="post" onsubmit="return verifyDetForm(this);">
 								<div style='margin:3px;'>
-									<b>Identification Qualifier:</b>
+									<b><?php echo (defined('IDENTIFICATIONQUALIFIERLABEL')?IDENTIFICATIONQUALIFIERLABEL:'Identification Qualifier'); ?>:</b>
 									<input type="text" name="identificationqualifier" value="<?php echo $detRec['identificationqualifier']; ?>" title="e.g. cf, aff, etc" />
 								</div>
 								<div style='margin:3px;'>
-									<b>Scientific Name:</b>
+									<b><?php echo (defined('SCIENTIFICNAMELABEL')?SCIENTIFICNAMELABEL:'Scientific Name'); ?>:</b>
 									<input type="text" id="defsciname-<?php echo $detId;?>" name="sciname" value="<?php echo $detRec['sciname']; ?>" style="background-color:lightyellow;width:350px;" onfocus="initDetAutocomplete(this.form)" />
 									<input type="hidden" id="deftidtoadd" name="tidtoadd" value="" />
 									<input type="hidden" name="family" value="" />
 								</div>
 								<div style='margin:3px;'>
-									<b>Author:</b>
+									<b><?php echo (defined('SCIENTIFICNAMEAUTHORSHIPLABEL')?SCIENTIFICNAMEAUTHORSHIPLABEL:'Author'); ?>:</b>
 									<input type="text" name="scientificnameauthorship" value="<?php echo $detRec['scientificnameauthorship']; ?>" style="width:200px;" />
 								</div>
 								<div style='margin:3px;'>
-									<b>Determiner:</b>
+									<b><?php echo (defined('IDENTIFIEDBYLABEL')?IDENTIFIEDBYLABEL:'Determiner'); ?>:</b>
 									<input type="text" name="identifiedby" value="<?php echo $detRec['identifiedby']; ?>" style="background-color:lightyellow;width:200px;" />
 								</div>
 								<div style='margin:3px;'>
-									<b>Date:</b>
+									<b><?php echo (defined('DATEIDENTIFIEDLABEL')?DATEIDENTIFIEDLABEL:'Date'); ?>:</b>
 									<input type="text" name="dateidentified" value="<?php echo $detRec['dateidentified']; ?>" style="background-color:lightyellow;" />
 								</div>
 								<div style='margin:3px;'>
-									<b>Reference:</b>
+									<b><?php echo (defined('IDENTIFICATIONREFERENCELABEL')?IDENTIFICATIONREFERENCELABEL:'Reference'); ?>:</b>
 									<input type="text" name="identificationreferences" value="<?php echo $detRec['identificationreferences']; ?>" style="width:350px;" />
 								</div>
 								<div style='margin:3px;'>
-									<b>Notes:</b>
+									<b><?php echo (defined('IDENTIFICATIONREMARKSLABEL')?IDENTIFICATIONREMARKSLABEL:'Notes'); ?>:</b>
 									<input type="text" name="identificationremarks" value="<?php echo $detRec['identificationremarks']; ?>" style="width:350px;" />
 								</div>
 								<div style='margin:3px;'>

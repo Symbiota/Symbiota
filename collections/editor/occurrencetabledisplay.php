@@ -26,26 +26,6 @@ $displayQuery = 0;
 $isGenObs = 0;
 $collMap = array();
 $recArr = array();
-$headerMapBase = array('institutioncode'=>'Institution Code (override)','collectioncode'=>'Collection Code (override)',
-	'ownerinstitutioncode'=>'Owner Code (override)','catalognumber' => 'Catalog Number',
-	'othercatalognumbers' => 'Other Catalog #','family' => 'Family','identificationqualifier' => 'ID Qualifier',
-	'sciname' => 'Scientific Name','scientificnameauthorship'=>'Author','recordedby' => 'Collector','recordnumber' => 'Number',
-	'associatedcollectors' => 'Associated Collectors','eventdate' => 'Event Date','verbatimeventdate' => 'Verbatim Date',
-	'identificationremarks' => 'Identification Remarks','taxonremarks' => 'Taxon Remarks','identifiedby' => 'Identified By',
-	'dateidentified' => 'Date Identified', 'identificationreferences' => 'Identification References',
-	'country' => 'Country','stateprovince' => 'State/Province','county' => 'County','municipality' => 'Municipality',
-	'locality' => 'Locality','decimallatitude' => 'Latitude', 'decimallongitude' => 'Longitude',
-	'coordinateuncertaintyinmeters' => 'Uncertainty In Meters', 'verbatimcoordinates' => 'Verbatim Coordinates','geodeticdatum' => 'Datum',
-	'georeferencedby' => 'Georeferenced By','georeferenceprotocol' => 'Georeference Protocol','georeferencesources' => 'Georeference Sources',
-	'georeferenceverificationstatus' => 'Georef Verification Status','georeferenceremarks' => 'Georef Remarks',
-	'minimumelevationinmeters' => 'Elev. Min. (m)','maximumelevationinmeters' => 'Elev. Max. (m)','verbatimelevation' => 'Verbatim Elev.',
-	'minimumdepthinmeters' => 'Depth. Min. (m)','maximumdepthinmeters' => 'Depth. Max. (m)','verbatimdepth' => 'Verbatim Depth',
-	'habitat' => 'Habitat','substrate' => 'Substrate','occurrenceremarks' => 'Notes (Occurrence Remarks)','associatedtaxa' => 'Associated Taxa',
-	'verbatimattributes' => 'Description','lifestage' => 'Life Stage', 'sex' => 'Sex', 'individualcount' => 'Individual Count',
-	'samplingprotocol' => 'Sampling Protocol', 'preparations' => 'Preparations', 'reproductivecondition' => 'Reproductive Condition',
-	'typestatus' => 'Type Status','cultivationstatus' => 'Cultivation Status','establishmentmeans' => 'Establishment Means',
-	'disposition' => 'Disposition','duplicatequantity' => 'Duplicate Qty','datelastmodified' => 'Date Last Modified', 'labelproject' => 'Project',
-	'processingstatus' => 'Processing Status','recordenteredby' => 'Entered By','dbpk' => 'dbpk','basisofrecord' => 'Basis Of Record','language' => 'Language');
 $headMap = array();
 
 $qryCnt = 0;
@@ -99,11 +79,76 @@ if($SYMB_UID){
 			//Specific to Default values for portal
 			include('includes/config/occurVarDefault.php');
 		}
-		if($crowdSourceMode && file_exists('includes/config/crowdSourceVar.php')){
+		if($crowdSourceMode && file_exists('includes/config/crowdSourcingVar.php')){
 			//Specific to Crowdsourcing
-			include('includes/config/crowdSourceVar.php');
+			include('includes/config/crowdSourcingVar.php');
 		}
 	}
+
+	$headerMapBase = array(
+		'institutioncode'=>defined('INSTITUTIONCODELABEL')?INSTITUTIONCODELABEL:'Institution Code (override)',
+		'collectioncode'=>defined('COLLECTIONCODELABEL')?COLLECTIONCODELABEL:'Collection Code (override)',
+		'ownerinstitutioncode'=> defined('OWNERINSTITUTIONCODELABEL')?OWNERINSTITUTIONCODELABEL:'Owner Code (override)',
+		'catalognumber' => defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:'Catalog Number',
+		'othercatalognumbers' => defined('OTHERCATALOGNUMBERSLABEL')?OTHERCATALOGNUMBERSLABEL:'Other Catalog #',
+		'family' => defined('FAMILYLABEL')?FAMILYLABEL:'Family',
+		'identificationqualifier' => defined('IDENTIFICATIONQUALIFIERLABEL')?IDENTIFICATIONQUALIFIERLABEL:'ID Qualifier',
+		'sciname' => defined('SCIENTIFICNAMELABEL')?SCIENTIFICNAMELABEL:'Scientific Name',
+		'scientificnameauthorship' => defined('SCIENTIFICNAMEAUTHORSHIPLABEL')?SCIENTIFICNAMEAUTHORSHIPLABEL:'Author',
+		'recordedby' => defined('RECORDEDBYLABEL')?RECORDEDBYLABEL:'Collector',
+		'recordnumber' => defined('RECORDNUMBERLABEL')?RECORDNUMBERLABEL:'Number',
+		'associatedcollectors' => defined('ASSOCIATEDCOLLECTORSLABEL')?ASSOCIATEDCOLLECTORSLABEL:'Associated Collectors',
+		'eventdate' => defined('EVENTDATELABEL')?EVENTDATELABEL:'Event Date',
+		'verbatimeventdate' => defined('VERBATIMEVENTDATELABEL')?VERBATIMEVENTDATELABEL:'Verbatim Date',
+		'identificationremarks' => defined('IDENTIFICATIONREMARKSLABEL')?IDENTIFICATIONREMARKSLABEL:'Identification Remarks',
+		'taxonremarks' => defined('TAXONREMARKSLABEL')?TAXONREMARKSLABEL:'Taxon Remarks',
+		'identifiedby' => defined('IDENTIFIEDBYLABEL')?IDENTIFIEDBYLABEL:'Identified By',
+		'dateidentified' => defined('DATEIDENTIFIEDLABEL')?DATEIDENTIFIEDLABEL:'Date Identified',
+		'identificationreferences' => defined('IDENTIFICATIONREFERENCELABEL')?IDENTIFICATIONREFERENCELABEL:'Identification References',
+		'country' => defined('COUNTRYLABEL')?COUNTRYLABEL:'Country',
+		'stateprovince' => defined('STATEPROVINCELABEL')?STATEPROVINCELABEL:'State/Province',
+		'county' => defined('COUNTYLABEL')?COUNTYLABEL:'County',
+		'municipality' => defined('MUNICIPALITYLABEL')?MUNICIPALITYLABEL:'Municipality',
+		'locality' => defined('LOCALITYLABEL')?LOCALITYLABEL:'Locality',
+		'decimallatitude' => defined('DECIMALLATITUDELABEL')?DECIMALLATITUDELABEL:'Latitude',
+		'decimallongitude' => defined('DECIMALLONGITUDELABEL')?DECIMALLONGITUDELABEL:'Longitude',
+		'coordinateuncertaintyinmeters' => defined('COORDINATEUNCERTAINITYINMETERSLABEL')?COORDINATEUNCERTAINITYINMETERSLABEL:'Uncertainty In Meters',
+		'verbatimcoordinates' => defined('VERBATIMCOORDINATESLABEL')?VERBATIMCOORDINATESLABEL:'Verbatim Coordinates',
+		'geodeticdatum' => defined('GEODETICDATUMLABEL')?GEODETICDATUMLABEL:'Datum',
+		'georeferencedby' => defined('GEOREFERENCEBYLABEL')?GEOREFERENCEBYLABEL:'Georeferenced By',
+		'georeferenceprotocol' => defined('GEOREFERENCEPROTOCOLLABEL')?GEOREFERENCEPROTOCOLLABEL:'Georeference Protocol',
+		'georeferencesources' => defined('GEOREFERENCESOURCESLABEL')?GEOREFERENCESOURCESLABEL:'Georeference Sources',
+		'georeferenceverificationstatus' => defined('GEOREFERENCEVERIFICATIONSTATUSLABEL')?GEOREFERENCEVERIFICATIONSTATUSLABEL:'Georef Verification Status',
+		'georeferenceremarks' => defined('GEOREFERENCEREMARKSLABEL')?GEOREFERENCEREMARKSLABEL:'Georef Remarks',
+		'minimumelevationinmeters' => 'Elev. Min. (m)',
+		'maximumelevationinmeters' => 'Elev. Max. (m)',
+		'verbatimelevation' => defined('VERBATIMELEVATIONLABEL')?VERBATIMELEVATIONLABEL:'Verbatim Elev.',
+		'minimumdepthinmeters' => 'Depth. Min. (m)',
+		'maximumdepthinmeters' => 'Depth. Max. (m)',
+		'verbatimdepth' => defined('VERBATIMDEPTHLABEL')?VERBATIMDEPTHLABEL:'Verbatim Depth',
+		'habitat' => defined('HABITATLABEL')?HABITATLABEL:'Habitat',
+		'substrate' => defined('SUBSTRATELABEL')?SUBSTRATELABEL:'Substrate',
+		'occurrenceremarks' => defined('FAMILYLABEL')?FAMILYLABEL:'Notes (Occurrence Remarks)',
+		'associatedtaxa' => defined('ASSOCIATEDTAXALABEL')?ASSOCIATEDTAXALABEL:'Associated Taxa',
+		'verbatimattributes' => defined('VERBATIMATTRIBUTESLABEL')?VERBATIMATTRIBUTESLABEL:'Description',
+		'lifestage' => defined('LIFESTAGELABEL')?LIFESTAGELABEL:'Life Stage',
+		'sex' => defined('SEXLABEL')?SEXLABEL:'Sex',
+		'individualcount' => defined('INDIVIDUALCOUNTLABEL')?INDIVIDUALCOUNTLABEL:'Individual Count',
+		'samplingprotocol' => defined('SAMPLINGPROTOCOLLABEL')?SAMPLINGPROTOCOLLABEL:'Sampling Protocol',
+		'preparations' => defined('PREPARATIONSLABEL')?PREPARATIONSLABEL:'Preparations',
+		'reproductivecondition' => defined('REPRODUCTIVECONDITIONLABEL')?REPRODUCTIVECONDITIONLABEL:'Reproductive Condition',
+		'typestatus' => defined('TYPESTATUSLABEL')?TYPESTATUSLABEL:'Type Status',
+		'cultivationstatus' => defined('CULTIVATIONSTATUSLABEL')?CULTIVATIONSTATUSLABEL:'Cultivation Status',
+		'establishmentmeans' => defined('ESTABLISHMENTMEANSLABEL')?ESTABLISHMENTMEANSLABEL:'Establishment Means',
+		'disposition' => defined('DISPOSITIONLABEL')?DISPOSITIONLABEL:'Disposition',
+		'duplicatequantity' => defined('DUPLICATEQUANTITYCOUNTLABEL')?DUPLICATEQUANTITYCOUNTLABEL:'Duplicate Qty',
+		'datelastmodified' => 'Date Last Modified',
+		'labelproject' => defined('LABELPROJECTLABEL')?LABELPROJECTLABEL:'Label Project',
+		'processingstatus' => defined('PROCESSINGSTATUSLABEL')?PROCESSINGSTATUSLABEL:'Processing Status',
+		'recordenteredby' => 'Entered By',
+		'dbpk' => 'dbpk',
+		'basisofrecord' => defined('BASISOFRECORDLABEL')?BASISOFRECORDLABEL:'Basis Of Record',
+		'language' => defined('LANGUAGELABEL')?LANGUAGELABEL:'Language');
 
 	if(array_key_exists('bufieldname',$_POST)){
 		$occManager->setQueryVariables();

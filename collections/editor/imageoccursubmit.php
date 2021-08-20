@@ -198,27 +198,28 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 				<fieldset style="padding:15px;">
 					<legend><b><?php echo $LANG['SKELETAL_DATA']?></b></legend>
 					<div style="margin:3px;">
-						<b><?php echo $LANG['CAT_NUM']?>:</b>
+
+						<b><?php echo (defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:(isset($LANG['CAT_NUM'])?$LANG['CAT_NUM']:'Catalog Number')); ?>:</b>
 						<input name="catalognumber" type="text" onchange="<?php if(!defined('CATNUMDUPECHECK') || CATNUMDUPECHECK) echo 'searchDupesCatalogNumber(this.form,true)'; ?>" />
 					</div>
 					<div style="margin:3px;">
-						<b><?php echo $LANG['SCINAME']?>:</b>
+						<b><?php echo (defined('SCIENTIFICNAMELABEL')?SCIENTIFICNAMELABEL:(isset($LANG['SCINAME'])?$LANG['SCINAME']:'Scientific Name')); ?>:</b>
 						<input id="sciname" name="sciname" type="text" value="<?php echo (isset($_POST['sciname'])?$_POST['sciname']:''); ?>" style="width:300px"/>
 						<input name="scientificnameauthorship" type="text" value="<?php echo (isset($_POST['scientificnameauthorship'])?$_POST['scientificnameauthorship']:''); ?>" /><br/>
 						<input type="hidden" id="tidinterpreted" name="tidinterpreted" value="<?php echo (isset($_POST['tidinterpreted'])?$_POST['tidinterpreted']:''); ?>" />
-						<b><?php echo $LANG['FAMILY']?>:</b> <input name="family" type="text" value="<?php echo (isset($_POST['family'])?$_POST['family']:''); ?>" />
+						<b><?php echo (defined('FAMILYLABEL')?FAMILYLABEL:(isset($LANG['FAMILY'])?$LANG['FAMILY']:'Family')); ?>:</b> <input name="family" type="text" value="<?php echo (isset($_POST['family'])?$_POST['family']:''); ?>" />
 					</div>
 					<div>
 						<div style="float:left;margin:3px;">
-							<b><?php echo $LANG['COUNTRY']?>:</b><br/>
+							<b><?php echo (defined('COUNTRYLABEL')?COUNTRYLABEL:(isset($LANG['COUNTRY'])?$LANG['COUNTRY']:'Country')); ?>:</b><br/>
 							<input id="country" name="country" type="text" value="<?php echo (isset($_POST['country'])?$_POST['country']:''); ?>" />
 						</div>
 						<div style="float:left;margin:3px;">
-							<b><?php echo $LANG['STATE_PROVINCE']?>:</b><br/>
+							<b><?php echo (defined('STATEPROVINCELABEL')?STATEPROVINCELABEL:(isset($LANG['STATE_PROVINCE'])?$LANG['STATE_PROVINCE']:'State/Province')); ?>:</b><br/>
 							<input id="state" name="stateprovince" type="text" value="<?php echo (isset($_POST['stateprovince'])?$_POST['stateprovince']:''); ?>" />
 						</div>
 						<div style="float:left;margin:3px;">
-							<b><?php echo $LANG['COUNTY']?>:</b><br/>
+							<b><?php echo (defined('COUNTYLABEL')?COUNTYLABEL:(isset($LANG['COUNTY'])?$LANG['COUNTY']:'County')); ?>:</b><br/>
 							<input id="county" name="county" type="text" value="<?php echo (isset($_POST['county'])?$_POST['county']:''); ?>" />
 						</div>
 					</div>

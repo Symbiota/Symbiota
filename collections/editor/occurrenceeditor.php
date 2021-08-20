@@ -103,9 +103,9 @@ if($SYMB_UID){
 			//Specific to Default values for portal
 			include('includes/config/occurVarDefault.php');
 		}
-		if($crowdSourceMode && file_exists('includes/config/crowdSourceVar.php')){
+		if($crowdSourceMode && file_exists('includes/config/crowdSourcingVar.php')){
 			//Specific to Crowdsourcing
-			include('includes/config/crowdSourceVar.php');
+			include('includes/config/crowdSourcingVar.php');
 		}
 	}
 
@@ -654,7 +654,7 @@ else{
 										$person = $pHandler->getPerson();
 										$userEmail = ($person?$person->getEmail():'');
 
-										$anchorVars = 'occid='.$occManager->getOccId().'&occindex='.$occIndex.'&csmode='.$crowdSourceMode.'&collid='.$occManager->getCollId();
+										$anchorVars = 'occid='.$occManager->getOccId().'&occindex='.$occIndex.'&csmode='.$crowdSourceMode.'&collid='.$occManager->getCollId().'&isgenobs='.$isGenObs;
 										$detVars = 'identby='.urlencode($occArr['identifiedby']).'&dateident='.urlencode($occArr['dateidentified']).
 											'&sciname='.urlencode($occArr['sciname']).'&em='.$isEditor.
 											'&annotatorname='.urlencode($USER_DISPLAY_NAME).'&annotatoremail='.urlencode($userEmail).
