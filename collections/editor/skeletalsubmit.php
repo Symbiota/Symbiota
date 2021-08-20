@@ -128,12 +128,12 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 					</div>
 					<div>
 						<div style="">
-							<div id="scinamediv" style="float:left">
+							<div id="scinamediv" style="float:left" title="<?php echo (defined('SCIENTIFICNAMETIP') ? SCIENTIFICNAMETIP : ''); ?>">
 								<b><?php echo (defined('SCIENTIFICNAMELABEL')?SCIENTIFICNAMELABEL:(isset($LANG['SCINAME'])?$LANG['SCINAME']:'Scientific Name')); ?>:</b>
 								<input id="fsciname" name="sciname" type="text" value="" style="width:300px"/>
 								<input id="ftidinterpreted" name="tidinterpreted" type="hidden" value="" />&nbsp;
 							</div>
-							<div id="authordiv" style="float:left">
+							<div id="authordiv" style="float:left" title="<?php echo (defined('SCIENTIFICNAMEAUTHORSHIPTIP') ? SCIENTIFICNAMEAUTHORSHIPTIP : ''); ?>">
 								<b><?php echo (defined('SCIENTIFICNAMEAUTHORSHIPLABEL')?SCIENTIFICNAMEAUTHORSHIPLABEL:(isset($LANG['AUTHOR'])?$LANG['AUTHOR']:'Author')); ?>:</b>
 								<input id="fscientificnameauthorship" name="scientificnameauthorship" type="text" value="" />
 							</div>
@@ -149,7 +149,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 							}
 							?>
 							<div style="clear:both;">
-								<div id="familydiv" style="float:left">
+								<div id="familydiv" style="float:left" title="<?php echo (defined('FAMILYTIP') ? FAMILYTIP : ''); ?>">
 									<b><?php echo (defined('FAMILYLABEL')?FAMILYLABEL:(isset($LANG['FAMILY'])?$LANG['FAMILY']:'Family')); ?>:</b> <input id="ffamily" name="family" type="text" tabindex="0" value="" />
 								</div>
 								<div id="localitysecuritydiv" style="float:left;margin:3px 5px">
@@ -159,37 +159,37 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 							</div>
 						</div>
 						<div style="clear:both;padding-top:5px">
-							<div id="countrydiv" style="display:none;float:left;margin:3px 3px 3px 0px;">
+							<div id="countrydiv" style="display:none;float:left;margin:3px 3px 3px 0px;" title="<?php echo (defined('COUNTRYTIP') ? COUNTRYTIP : ''); ?>">
 								<b><?php echo (defined('COUNTRYLABEL')?COUNTRYLABEL:(isset($LANG['COUNTRY'])?$LANG['COUNTRY']:'Country')); ?>:</b><br/>
 								<input id="fcountry" name="country" type="text" value="" autocomplete="off" />
 							</div>
-							<div id="statediv" style="float:left;margin:3px 3px 3px 0px;">
+							<div id="statediv" style="float:left;margin:3px 3px 3px 0px;" title="<?php echo (defined('STATEPROVINCETIP') ? STATEPROVINCETIP : ''); ?>">
 								<b><?php echo (defined('STATEPROVINCELABEL')?STATEPROVINCELABEL:(isset($LANG['STATE_PROVINCE'])?$LANG['STATE_PROVINCE']:'State/Province')); ?>:</b><br/>
 								<input id="fstateprovince" name="stateprovince" type="text" value="" autocomplete="off" onchange="localitySecurityCheck(this.form)" />
 							</div>
-							<div id="countydiv" style="float:left;margin:3px 3px 3px 0px;">
+							<div id="countydiv" style="float:left;margin:3px 3px 3px 0px;" title="<?php echo (defined('COUNTYTIP') ? COUNTYTIP : ''); ?>">
 								<b><?php echo (defined('COUNTYLABEL')?COUNTYLABEL:(isset($LANG['COUNTY_PARISH'])?$LANG['COUNTY_PARISH']:'County')); ?>:</b><br/>
 								<input id="fcounty" name="county" type="text" autocomplete="off" value="" />
 							</div>
 						</div>
 						<div style="clear:both;padding-top:5px">
-							<div id="recordedbydiv" style="display:none;float:left;margin:3px 3px 3px 0px;">
+							<div id="recordedbydiv" style="display:none;float:left;margin:3px 3px 3px 0px;" title="<?php echo (defined('RECORDEDBYTIP') ? RECORDEDBYTIP : ''); ?>">
 								<b><?php echo (defined('RECORDEDBYLABEL')?RECORDEDBYLABEL:(isset($LANG['COLLECTOR'])?$LANG['COLLECTOR']:'Collector')); ?>:</b><br/>
 								<input id="frecordedby" name="recordedby" type="text" value="" />
 							</div>
-							<div id="recordnumberdiv" style="display:none;float:left;margin:3px 3px 3px 0px;">
+							<div id="recordnumberdiv" style="display:none;float:left;margin:3px 3px 3px 0px;" title="<?php echo (defined('RECORDNUMBERTIP') ? RECORDNUMBERTIP : ''); ?>">
 								<b><?php echo (defined('RECORDNUMBERLABEL')?RECORDNUMBERLABEL:(isset($LANG['COLLECTOR_NO'])?$LANG['COLLECTOR_NO']:'Collector Number')); ?>:</b><br/>
 								<input id="frecordnumber" name="recordnumber" type="text" value="" />
 							</div>
-							<div id="eventdatediv" style="display:none;float:left;margin:3px 3px 3px 0px;">
+							<div id="eventdatediv" style="display:none;float:left;margin:3px 3px 3px 0px;" title="<?php echo (defined('EVENTDATETIP') ? EVENTDATETIP : 'Earliest Date Collected'); ?>">
 								<b><?php echo (defined('EVENTDATELABEL')?EVENTDATELABEL:(isset($LANG['DATE'])?$LANG['DATE']:'Date')); ?>:</b><br/>
 								<input id="feventdate" name="eventdate" type="text" value="" onchange="eventDateChanged(this)" />
 							</div>
-							<div id="labelprojectdiv" style="display:none;float:left;margin:5px 3px 3px 0px;">
+							<div id="labelprojectdiv" style="display:none;float:left;margin:5px 3px 3px 0px;" title="<?php echo (defined('LABELPROJECTTIP') ? LABELPROJECTTIP : ''); ?>">
 								<b><?php echo (defined('LABELPROJECTLABEL')?LABELPROJECTLABEL:(isset($LANG['LABEL_PROJECT'])?$LANG['LABEL_PROJECT']:'Label Project')); ?>:</b><br/>
 								<input id="flabelproject" name="labelproject" type="text" value="" />
 							</div>
-							<div id="processingstatusdiv" style="display:none;float:left;margin:7px 3px 3px 0px">
+							<div id="processingstatusdiv" style="display:none;float:left;margin:7px 3px 3px 0px" title="<?php echo (defined('PROCESSINGSTATUSTIP') ? PROCESSINGSTATUSTIP : ''); ?>">
 								<b><?php echo (defined('PROCESSINGSTATUSLABEL')?PROCESSINGSTATUSLABEL:(isset($LANG['PROCESSING_STATUS'])?$LANG['PROCESSING_STATUS']:'Processing Status')); ?>:</b><br/>
 								<select id="fprocessingstatus" name="processingstatus" style="margin-top:4px">
 									<option value="">No Set Status</option>
@@ -214,7 +214,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 									?>
 								</select>
 							</div>
-							<div id="languagediv" style="display:none;float:left;margin:7px 3px 3px 0px;">
+							<div id="languagediv" style="display:none;float:left;margin:7px 3px 3px 0px;" title="<?php echo (defined('LANGUAGETIP') ? LANGUAGETIP : ''); ?>">
 								<b><?php echo (defined('LANGUAGELABEL')?LANGUAGELABEL:(isset($LANG['LANGUAGE'])?$LANG['LANGUAGE']:'Language')); ?>:</b><br/>
 								<select id="flanguage" name="language" style="margin-top:4px">
 									<option value=""></option>
@@ -231,11 +231,11 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 							<div style="float:right;margin:16px 30px 0px 0px;">
 								<input name="clearform" type="reset" value="Clear Form" style="margin-right:40px" />
 							</div>
-							<div style="float:left;">
+							<div style="float:left;" title="<?php echo (defined('CATALOGNUMBERTIP') ? CATALOGNUMBERTIP : ''); ?>">
 								<b><?php echo (defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:(isset($LANG['CAT_NUM'])?$LANG['CAT_NUM']:'Catalog Number')); ?>:</b><br/>
 								<input id="fcatalognumber" name="catalognumber" type="text" style="border-color:green;" />
 							</div>
-							<div id="othercatalognumbersdiv" style="display:none;float:left;margin:3px;">
+							<div id="othercatalognumbersdiv" style="display:none;float:left;margin:3px;" title="<?php echo (defined('OTHERCATALOGNUMBERSTIP') ? OTHERCATALOGNUMBERSTIP : ''); ?>">
 								<b><?php echo (defined('OTHERCATALOGNUMBERSLABEL')?OTHERCATALOGNUMBERSLABEL:(isset($LANG['OTHER_CAT_NUMS'])?$LANG['OTHER_CAT_NUMS']:'Other Catalog Numbers')); ?>:</b><br/>
 								<input id="fothercatalognumbers" name="othercatalognumbers" type="text" value="" />
 							</div>

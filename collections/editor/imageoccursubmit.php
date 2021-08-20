@@ -197,28 +197,37 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 				</fieldset>
 				<fieldset style="padding:15px;">
 					<legend><b><?php echo $LANG['SKELETAL_DATA']?></b></legend>
-					<div style="margin:3px;">
+					<div style="margin:3px;" title="<?php echo (defined('CATALOGNUMBERTIP') ? CATALOGNUMBERTIP : ''); ?>">
 
 						<b><?php echo (defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:(isset($LANG['CAT_NUM'])?$LANG['CAT_NUM']:'Catalog Number')); ?>:</b>
 						<input name="catalognumber" type="text" onchange="<?php if(!defined('CATNUMDUPECHECK') || CATNUMDUPECHECK) echo 'searchDupesCatalogNumber(this.form,true)'; ?>" />
 					</div>
 					<div style="margin:3px;">
-						<b><?php echo (defined('SCIENTIFICNAMELABEL')?SCIENTIFICNAMELABEL:(isset($LANG['SCINAME'])?$LANG['SCINAME']:'Scientific Name')); ?>:</b>
-						<input id="sciname" name="sciname" type="text" value="<?php echo (isset($_POST['sciname'])?$_POST['sciname']:''); ?>" style="width:300px"/>
-						<input name="scientificnameauthorship" type="text" value="<?php echo (isset($_POST['scientificnameauthorship'])?$_POST['scientificnameauthorship']:''); ?>" /><br/>
+							<div style="display: inline;" title="<?php echo (defined('SCIENTIFICNAMETIP') ? SCIENTIFICNAMETIP : ''); ?>">
+								<b><?php echo (defined('SCIENTIFICNAMELABEL')?SCIENTIFICNAMELABEL:(isset($LANG['SCINAME'])?$LANG['SCINAME']:'Scientific Name')); ?>:</b>
+								<input id="sciname" name="sciname" type="text" value="<?php echo (isset($_POST['sciname'])?$_POST['sciname']:''); ?>" style="width:300px"/>
+							</div>
+							<div style="display: inline;" title="<?php echo (defined('SCIENTIFICNAMEAUTHORSHIPTIP') ? SCIENTIFICNAMEAUTHORSHIPTIP : ''); ?>">
+								<b><?php echo (defined('SCIENTIFICNAMEAUTHORSHIPLABEL')?SCIENTIFICNAMEAUTHORSHIPLABEL:(isset($LANG['AUTHOR'])?$LANG['AUTHOR']:'Author')); ?>:</b>
+								<input name="scientificnameauthorship" type="text" value="<?php echo (isset($_POST['scientificnameauthorship'])?$_POST['scientificnameauthorship']:''); ?>" /><br/>
+							</div>
+
 						<input type="hidden" id="tidinterpreted" name="tidinterpreted" value="<?php echo (isset($_POST['tidinterpreted'])?$_POST['tidinterpreted']:''); ?>" />
-						<b><?php echo (defined('FAMILYLABEL')?FAMILYLABEL:(isset($LANG['FAMILY'])?$LANG['FAMILY']:'Family')); ?>:</b> <input name="family" type="text" value="<?php echo (isset($_POST['family'])?$_POST['family']:''); ?>" />
+						<div title="<?php echo (defined('FAMILYTIP') ? FAMILYTIP : ''); ?>">
+							<b><?php echo (defined('FAMILYLABEL')?FAMILYLABEL:(isset($LANG['FAMILY'])?$LANG['FAMILY']:'Family')); ?>:</b> 
+							<input name="family" type="text" value="<?php echo (isset($_POST['family'])?$_POST['family']:''); ?>" />
+						</div>
 					</div>
 					<div>
-						<div style="float:left;margin:3px;">
+						<div style="float:left;margin:3px;" title="<?php echo (defined('COUNTRYTIP') ? COUNTRYTIP : ''); ?>">
 							<b><?php echo (defined('COUNTRYLABEL')?COUNTRYLABEL:(isset($LANG['COUNTRY'])?$LANG['COUNTRY']:'Country')); ?>:</b><br/>
 							<input id="country" name="country" type="text" value="<?php echo (isset($_POST['country'])?$_POST['country']:''); ?>" />
 						</div>
-						<div style="float:left;margin:3px;">
+						<div style="float:left;margin:3px;" title="<?php echo (defined('STATEPROVINCETIP') ? STATEPROVINCETIP : ''); ?>">
 							<b><?php echo (defined('STATEPROVINCELABEL')?STATEPROVINCELABEL:(isset($LANG['STATE_PROVINCE'])?$LANG['STATE_PROVINCE']:'State/Province')); ?>:</b><br/>
 							<input id="state" name="stateprovince" type="text" value="<?php echo (isset($_POST['stateprovince'])?$_POST['stateprovince']:''); ?>" />
 						</div>
-						<div style="float:left;margin:3px;">
+						<div style="float:left;margin:3px;" title="<?php echo (defined('COUNTYTIP') ? COUNTYTIP : ''); ?>">
 							<b><?php echo (defined('COUNTYLABEL')?COUNTYLABEL:(isset($LANG['COUNTY'])?$LANG['COUNTY']:'County')); ?>:</b><br/>
 							<input id="county" name="county" type="text" value="<?php echo (isset($_POST['county'])?$_POST['county']:''); ?>" />
 						</div>
@@ -227,7 +236,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 						<?php
 						if(isset($TESSERACT_PATH) && $TESSERACT_PATH){
 							?>
-							<div style="float:left;">
+							<div style="float:left;" title="<?php echo (defined('OCRTEXTTIP') ? OCRTEXTTIP : ''); ?>">
 								<input name="tessocr" type="checkbox" value=1 <?php if(isset($_POST['tessocr'])) echo 'checked'; ?> />
 								<?php echo $LANG['OCR_TEXT_ENGINE']?>
 							</div>

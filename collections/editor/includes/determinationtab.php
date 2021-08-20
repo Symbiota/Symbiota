@@ -72,7 +72,7 @@ else{
 			?>
 			<div id="idrankeditdiv" style="display:none;margin:15px;">
 				<form name="editidrankingform" action="occurrenceeditor.php" method="post">
-					<div style='margin:3px;'>
+					<div style='margin:3px;' title="<?php echo (defined('IDCONFIDENCETIP') ? IDCONFIDENCETIP : ''); ?>">
 						<b><?php echo (defined('IDCONFIDENCELABEL')?IDCONFIDENCELABEL:'Confidence of Determination'); ?>:</b>
 						<select name="confidenceranking">
 							<?php
@@ -92,7 +92,7 @@ else{
 							<option value="0" <?php echo ($currentRanking==0?'SELECTED':''); ?>>0 - Unlikely</option>
 						</select>
 					</div>
-					<div style='margin:3px;'>
+					<div style='margin:3px;' title="<?php echo (defined('IDENTIFICATIONREMARKSTIP') ? IDENTIFICATIONREMARKSTIP : ''); ?>">
 						<b><?php echo (defined('IDENTIFICATIONREMARKSLABEL')?IDENTIFICATIONREMARKSLABEL:'Notes'); ?>:</b>
 						<input name="notes" type="text" value="<?php echo ($idRanking?$idRanking['notes']:''); ?>" style="width:90%;" />
 					</div>
@@ -182,21 +182,21 @@ else{
 							<?php
 						}
 						?>
-						<div style='margin:3px;'>
+						<div style='margin:3px;' title="<?php echo (defined('IDENTIFICATIONQUALIFIERTIP') ? IDENTIFICATIONQUALIFIERTIP : 'e.g. cf, aff, etc'); ?>">
 							<b><?php echo (defined('IDENTIFICATIONQUALIFIERLABEL')?IDENTIFICATIONQUALIFIERLABEL:'Identification Qualifier'); ?>:</b>
-							<input type="text" name="identificationqualifier" title="e.g. cf, aff, etc" />
+							<input type="text" name="identificationqualifier" />
 						</div>
-						<div style='margin:3px;'>
+						<div style='margin:3px;' title="<?php echo (defined('SCIENTIFICNAMETIP') ? SCIENTIFICNAMETIP : ''); ?>">
 							<b><?php echo (defined('SCIENTIFICNAMELABEL')?SCIENTIFICNAMELABEL:'Scientific Name'); ?>:</b>
 							<input type="text" id="dafsciname" name="sciname" style="background-color:lightyellow;width:350px;" onfocus="initDetAutocomplete(this.form)" />
 							<input type="hidden" id="daftidtoadd" name="tidtoadd" value="" />
 							<input type="hidden" name="family" value="" />
 						</div>
-						<div style='margin:3px;'>
+						<div style='margin:3px;' title="<?php echo (defined('SCIENTIFICNAMEAUTHORSHIPTIP') ? SCIENTIFICNAMEAUTHORSHIPTIP : ''); ?>">
 							<b><?php echo (defined('SCIENTIFICNAMEAUTHORSHIPLABEL')?SCIENTIFICNAMEAUTHORSHIPLABEL:'Author'); ?>:</b>
 							<input type="text" name="scientificnameauthorship" style="width:200px;" />
 						</div>
-						<div style='margin:3px;'>
+						<div style='margin:3px;' title="<?php echo (defined('IDCONFIDENCETIP') ? IDCONFIDENCETIP : ''); ?>">
 							<b><?php echo (defined('IDCONFIDENCELABEL')?IDCONFIDENCELABEL:'Confidence of Determination'); ?>:</b>
 							<select name="confidenceranking">
 								<option value="8">High</option>
@@ -204,26 +204,26 @@ else{
 								<option value="2">Low</option>
 							</select>
 						</div>
-						<div style='margin:3px;'>
+						<div style='margin:3px;' title="<?php echo (defined('IDENTIFIEDBYTIP') ? IDENTIFIEDBYTIP : ''); ?>">
 							<b><?php echo (defined('IDENTIFIEDBYLABEL')?IDENTIFIEDBYLABEL:'Determiner'); ?>:</b>
 							<input type="text" name="identifiedby" style="background-color:lightyellow;width:200px;" />
 						</div>
-						<div style='margin:3px;'>
+						<div style='margin:3px;' title="<?php echo (defined('DATEIDENTIFIEDTIP') ? DATEIDENTIFIEDTIP : ''); ?>">
 							<b><?php echo (defined('DATEIDENTIFIEDLABEL')?DATEIDENTIFIEDLABEL:'Date'); ?>:</b>
 							<input type="text" name="dateidentified" style="background-color:lightyellow;" onchange="detDateChanged(this.form);" />
 						</div>
-						<div style='margin:3px;'>
+						<div style='margin:3px;' title="<?php echo (defined('IDENTIFICATIONREFERENCETIP') ? IDENTIFICATIONREFERENCETIP : ''); ?>">
 							<b><?php echo (defined('IDENTIFICATIONREFERENCELABEL')?IDENTIFICATIONREFERENCELABEL:'Reference'); ?>:</b>
 							<input type="text" name="identificationreferences" style="width:350px;" />
 						</div>
-						<div style='margin:3px;'>
+						<div style='margin:3px;' title="<?php echo (defined('IDENTIFICATIONREMARKSTIP') ? IDENTIFICATIONREMARKSTIP : ''); ?>">
 							<b><?php echo (defined('IDENTIFICATIONREMARKSLABEL')?IDENTIFICATIONREMARKSLABEL:'Notes'); ?>:</b>
 							<input type="text" name="identificationremarks" style="width:350px;" />
 						</div>
-						<div style='margin:3px;'>
+						<div style='margin:3px;' title="<?php echo (defined('MAKECURRENTDETERMINATIONTIP') ? MAKECURRENTDETERMINATIONTIP : ''); ?>">
 							<input type="checkbox" name="makecurrent" value="1" /> Make this the current determination
 						</div>
-						<div style='margin:3px;'>
+						<div style='margin:3px;' title="<?php echo (defined('ANNOTATIONPRINTQUEUETIP') ? ANNOTATIONPRINTQUEUETIP : ''); ?>">
 							<input type="checkbox" name="printqueue" value="1" /> Add to Annotation Print Queue
 						</div>
 						<div style='margin:15px;'>
@@ -313,42 +313,42 @@ else{
 						<fieldset>
 							<legend><b>Edit Determination</b></legend>
 							<form name="deteditform" action="occurrenceeditor.php" method="post" onsubmit="return verifyDetForm(this);">
-								<div style='margin:3px;'>
+								<div style='margin:3px;' title="<?php echo (defined('IDENTIFICATIONQUALIFIERTIP') ? IDENTIFICATIONQUALIFIERTIP : 'e.g. cf, aff, etc'); ?>">
 									<b><?php echo (defined('IDENTIFICATIONQUALIFIERLABEL')?IDENTIFICATIONQUALIFIERLABEL:'Identification Qualifier'); ?>:</b>
-									<input type="text" name="identificationqualifier" value="<?php echo $detRec['identificationqualifier']; ?>" title="e.g. cf, aff, etc" />
+									<input type="text" name="identificationqualifier" value="<?php echo $detRec['identificationqualifier']; ?>" />
 								</div>
-								<div style='margin:3px;'>
+								<div style='margin:3px;' title="<?php echo (defined('SCIENTIFICNAMETIP') ? SCIENTIFICNAMETIP : ''); ?>">
 									<b><?php echo (defined('SCIENTIFICNAMELABEL')?SCIENTIFICNAMELABEL:'Scientific Name'); ?>:</b>
 									<input type="text" id="defsciname-<?php echo $detId;?>" name="sciname" value="<?php echo $detRec['sciname']; ?>" style="background-color:lightyellow;width:350px;" onfocus="initDetAutocomplete(this.form)" />
 									<input type="hidden" id="deftidtoadd" name="tidtoadd" value="" />
 									<input type="hidden" name="family" value="" />
 								</div>
-								<div style='margin:3px;'>
+								<div style='margin:3px;' title="<?php echo (defined('SCIENTIFICNAMEAUTHORSHIPTIP') ? SCIENTIFICNAMEAUTHORSHIPTIP : ''); ?>">
 									<b><?php echo (defined('SCIENTIFICNAMEAUTHORSHIPLABEL')?SCIENTIFICNAMEAUTHORSHIPLABEL:'Author'); ?>:</b>
 									<input type="text" name="scientificnameauthorship" value="<?php echo $detRec['scientificnameauthorship']; ?>" style="width:200px;" />
 								</div>
-								<div style='margin:3px;'>
+								<div style='margin:3px;' title="<?php echo (defined('IDENTIFIEDBYTIP') ? IDENTIFIEDBYTIP : ''); ?>">
 									<b><?php echo (defined('IDENTIFIEDBYLABEL')?IDENTIFIEDBYLABEL:'Determiner'); ?>:</b>
 									<input type="text" name="identifiedby" value="<?php echo $detRec['identifiedby']; ?>" style="background-color:lightyellow;width:200px;" />
 								</div>
-								<div style='margin:3px;'>
+								<div style='margin:3px;' title="<?php echo (defined('DATEIDENTIFIEDTIP') ? DATEIDENTIFIEDTIP : ''); ?>">
 									<b><?php echo (defined('DATEIDENTIFIEDLABEL')?DATEIDENTIFIEDLABEL:'Date'); ?>:</b>
 									<input type="text" name="dateidentified" value="<?php echo $detRec['dateidentified']; ?>" style="background-color:lightyellow;" />
 								</div>
-								<div style='margin:3px;'>
+								<div style='margin:3px;' title="<?php echo (defined('IDENTIFICATIONREFERENCETIP') ? IDENTIFICATIONREFERENCETIP : ''); ?>">
 									<b><?php echo (defined('IDENTIFICATIONREFERENCELABEL')?IDENTIFICATIONREFERENCELABEL:'Reference'); ?>:</b>
 									<input type="text" name="identificationreferences" value="<?php echo $detRec['identificationreferences']; ?>" style="width:350px;" />
 								</div>
-								<div style='margin:3px;'>
+								<div style='margin:3px;' title="<?php echo (defined('IDENTIFICATIONREMARKSTIP') ? IDENTIFICATIONREMARKSTIP : ''); ?>">
 									<b><?php echo (defined('IDENTIFICATIONREMARKSLABEL')?IDENTIFICATIONREMARKSLABEL:'Notes'); ?>:</b>
 									<input type="text" name="identificationremarks" value="<?php echo $detRec['identificationremarks']; ?>" style="width:350px;" />
 								</div>
-								<div style='margin:3px;'>
+								<div style='margin:3px;' title="<?php echo (defined('SORTSEQUENCETIP') ? SORTSEQUENCETIP : ''); ?>">
 									<b>Sort Sequence:</b>
 									<input type="text" name="sortsequence" value="<?php echo $detRec['sortsequence']; ?>" style="width:40px;" />
 								</div>
-								<div style='margin:3px;'>
-									<input type="checkbox" name="printqueue" value="1" <?php if($detRec['printqueue']) echo 'checked'; ?> /> Added to Print Queue
+								<div style='margin:3px;' title="<?php echo (defined('ANNOTATIONPRINTQUEUETIP') ? ANNOTATIONPRINTQUEUETIP : ''); ?>">
+									<input type="checkbox" name="printqueue" value="1" <?php if($detRec['printqueue']) echo 'checked'; ?> /> Added to Annotation Print Queue
 								</div>
 								<div style='margin:15px;'>
 									<input type="hidden" name="occid" value="<?php echo $occId; ?>" />
@@ -370,7 +370,7 @@ else{
 										<?php
 										if($detRec['appliedstatus']){
 											?>
-											<input type="submit" name="submitaction" value="Make Determination Current" />
+											<input type="submit" name="submitaction" value="Make Determination Current" title="<?php echo (defined('MAKECURRENTDETERMINATIONTIP') ? MAKECURRENTDETERMINATIONTIP : ''); ?>" />
 											<?php
 										}
 										else{

@@ -24,7 +24,9 @@
 //Uncomment to turn the Associated Taxa entry aid (popup to enter associated taxa) on/off (on by default)
 //define('ACTIVATEASSOCTAXAAID',true);
 
-//FieldLabel text: uncomment variables and add a value to modify field labels 
+
+// FieldLabel text: uncomment variables and add a value to modify field labels 
+
 //define('CATALOGNUMBERLABEL','');
 //define('OTHERCATALOGNUMBERSLABEL','');
 //define('RECORDEDBYLABEL','');
@@ -99,5 +101,139 @@
 //define('OWNERINSTITUTIONCODELABEL','');
 //define('PROCESSINGSTATUSLABEL','');
 //define('DATAGENERALIZATIONSLABEL','');
+//define('OCRWHOLEIMAGELABEL','');
+//define('OCRANALYSISLABEL','');
+
+// Field Tooltip text: uncomment variables and add a value to modify field tooltips that popup on hover
+
+// Collection and Collector info
+//define('CATALOGNUMBERTIP','');
+//define('OTHERCATALOGNUMBERSTIP','');
+//define('RECORDEDBYTIP','');
+//define('RECORDNUMBERTIP','');
+//define('EVENTDATETIP','');
+//define('DUPLICATESTIP','');
+//define('ASSOCIATEDCOLLECTORSTIP','');
+//define('VERBATIMEVENTDATETIP','');
+//define('YYYYMMDDTIP','');
+//define('NUMERICYEARTIP','');
+//define('NUMERICMONTHTIP','');
+//define('NUMERICDAYTIP','');
+//define('DAYOFYEARTIP','');
+//define('STARTDAYOFYEARTIP','');
+//define('ENDDAYOFYEARTIP','');
+//define('ENDDATETIP','');
+
+// Exsiccati
+//define('EXSICCATITITLETIP','');
+//define('EXSICCATINUMBERTIP','');
+
+// Latest Identification
+//define('SCIENTIFICNAMETIP','');
+//define('SCIENTIFICNAMEAUTHORSHIPTIP','');
+//define('IDCONFIDENCETIP','');
+//define('IDENTIFICATIONQUALIFIERTIP','');
+//define('FAMILYTIP','');
+//define('IDENTIFIEDBYTIP','');
+//define('DATEIDENTIFIEDTIP','');
+//define('IDENTIFICATIONREFERENCETIP','');
+//define('IDENTIFICATIONREMARKSTIP','');
+//define('TAXONREMARKSTIP','');
+
+// Locality & Georeferencing
+//define('COUNTRYTIP','');
+//define('STATEPROVINCETIP','');
+//define('COUNTYTIP','');
+//define('MUNICIPALITYTIP','');
+//define('LOCATIONIDTIP','');
+//define('LOCALITYTIP','');
+//define('LOCATIONREMARKSTIP','');
+//define('LOCALITYAUTOLOOKUP','');
+//define('LOCALITYSECURITYTIP','');
+//define('LOCALITYSECURITYREASONTIP','');
+//define('DECIMALLATITUDETIP','');
+//define('DECIMALLONGITUDETIP','');
+//define('COORDINATEUNCERTAINITYINMETERSTIP','');
+//define('GOOGLEMAPSTIP','');
+//define('GEOLOCATETIP','');
+//define('COORDCLONETIP','');
+//define('GEOTOOLSTIP','');
+//define('GEODETICDATUMTIP','');
+//define('VERBATIMCOORDINATESTIP','');
+//define('RECALCULATECOORDSTIP','');
+//define('ELEVATIONINMETERSTIP','');
+//define('MINELEVATIONINMETERSTIP','');
+//define('MAXELEVATIONINMETERSTIP','');
+//define('RECALCULATEELEVTIP','');
+//define('VERBATIMELEVATIONTIP','');
+//define('DEPTHINMETERSTIP','');
+//define('MINDEPTHINMETERSTIP','');
+//define('MAXDEPTHINMETERSTIP','');
+//define('VERBATIMDEPTHTIP','');
+//define('GEOREFERENCEBYTIP','');
+//define('GEOREFERENCESOURCESTIP','');
+//define('GEOREFERENCEREMARKSTIP','');
+//define('GEOREFERENCEPROTOCOLTIP','');
+//define('GEOREFERENCEVERIFICATIONSTATUSTIP','');
+//define('GOOGLEMAPSPOLYGONTIP','');
+//define('FOOTPRINTWKTTIP','');
+
+// Misc
+//define('HABITATTIP','');
+//define('SUBSTRATETIP','');
+//define('HOSTTIP','');
+//define('ASSOCIATEDTAXATIP','');
+//define('ASSOCIATEDTAXAAIDTIP','');
+//define('VERBATIMATTRIBUTESTIP','');
+//define('OCCURRENCEREMARKSTIP','');
+//define('DYNAMICPROPERTIESTIP','');
+//define('LIFESTAGETIP','');
+//define('SEXTIP','');
+//define('INDIVIDUALCOUNTTIP','');
+//define('SAMPLINGPROTOCOLTIP','');
+//define('PREPARATIONSTIP','');
+//define('REPRODUCTIVECONDITIONTIP','');
+//define('ESTABLISHMENTMEANSTIP','');
+//define('CULTIVATIONSTATUSTIP','');
+
+// Curation
+//define('TYPESTATUSTIP','');
+//define('DISPOSITIONTIP','');
+//define('OCCURRENCEIDTIP','');
+//define('FIELDNUMBERTIP','');
+//define('BASISOFRECORDTIP','');
+//define('LANGUAGETIP','');
+//define('LABELPROJECTTIP','');
+//define('DUPLICATEQUANTITYCOUNTTIP','');
+//define('INSTITUTIONCODETIP','');
+//define('COLLECTIONCODETIP','');
+//define('OWNERINSTITUTIONCODETIP','');
+//define('PROCESSINGSTATUSTIP','');
+//define('DATAGENERALIZATIONSTIP','');
+//define('STATUSAUTOSETTIP','');
+
+// Record Cloning
+//define('CARRYOVERTIP','');
+//define('RELATIONSHIPTIP','');
+//define('TARGETCOLLECTIONTIP','');
+//define('NUMBERRECORDSTIP','');
+//define('PREPOPULATETIP','');
+//define('CLONECATALOGNUMBERTIP','');
+
+// Determinations
+//define('MAKECURRENTDETERMINATIONTIP','');
+//define('ANNOTATIONPRINTQUEUETIP','');
+//define('SORTSEQUENCETIP','');
+
+// OCR
+//define('OCRWHOLEIMAGETIP','');
+//define('OCRANALYSISTIP','');
+
+// Batch Determinations
+//define('DETERMINATIONTAXONTIP','');
+//define('ANNOTATIONTYPETIP','');
+
+// Occurrence Image Submission
+//define('OCRTEXTTIP','');
 
 ?>

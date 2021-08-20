@@ -325,12 +325,12 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 					</div>
 					<div style="margin:15px;width:700px;">
 						<form name="accqueryform" action="batchdeterminations.php" method="post" onsubmit="return submitAccForm(this);">
-							<div>
+							<div title="<?php echo (defined('CATALOGNUMBERTIP') ? CATALOGNUMBERTIP : ''); ?>">
 								<b><?php echo (defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:(isset($LANG['CATNUM'])?$LANG['CATNUM']:'Catalog Number')); ?>:</b>
 								<input name="catalognumber" type="text" style="border-color:green;width:200px;" />
 								<span style="margin-left:20px"><input name="allcatnum" type="checkbox" checked /> <?php echo $LANG['TARGET_ALL']; ?></span>
 							</div>
-							<div>
+							<div title="<?php echo (defined('DETERMINATIONTAXONTIP') ? DETERMINATIONTAXONTIP : ''); ?>">
 								<b><?php echo $LANG['TAXON']; ?>:</b>
 								<input type="text" id="nomsciname" name="sciname" style="width:260px;" onfocus="initScinameAutocomplete(this.form)" />
 							</div>
@@ -374,7 +374,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 						<div id="newdetdiv" style="">
 							<fieldset style="margin: 15px 15px 0px 15px;padding:15px;">
 								<legend><b><?php echo $LANG['NEW_DET_DETAILS']; ?></b></legend>
-								<div style='margin:3px;position:relative;height:35px'>
+								<div style='margin:3px;position:relative;height:35px' title="<?php echo (defined('ANNOTATIONTYPETIP') ? ANNOTATIONTYPETIP : ''); ?>">
 									<div style="float:left;">
 										<b><?php echo $LANG['ANNOTATION_TYPE']; ?>:</b>
 									</div>
@@ -384,21 +384,21 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 									</div>
 								</div>
 								<div style="clear:both;margin:15px 0px"><hr /></div>
-								<div id="idQualifierDiv" style='margin:3px;clear:both'>
+								<div id="idQualifierDiv" style='margin:3px;clear:both' title="<?php echo (defined('IDENTIFICATIONQUALIFIERTIP') ? IDENTIFICATIONQUALIFIERTIP : 'e.g. cf, aff, etc'); ?>">
 									<b><?php echo (defined('IDENTIFICATIONQUALIFIERLABEL')?IDENTIFICATIONQUALIFIERLABEL:(isset($LANG['ID_QUALIFIER'])?$LANG['ID_QUALIFIER']:'Identification Qualifier')); ?>:</b>
 									<input type="text" name="identificationqualifier" title="e.g. cf, aff, etc" />
 								</div>
-								<div style='margin:3px;'>
+								<div style='margin:3px;' title="<?php echo (defined('SCIENTIFICNAMETIP') ? SCIENTIFICNAMETIP : ''); ?>">
 									<b><?php echo (defined('SCIENTIFICNAMELABEL')?SCIENTIFICNAMELABEL:(isset($LANG['SCINAME'])?$LANG['SCINAME']:'Scientific Name')); ?>:</b>
 									<input type="text" id="dafsciname" name="sciname" style="background-color:lightyellow;width:350px;" onfocus="initDetAutocomplete(this.form)" />
 									<input type="hidden" id="daftidtoadd" name="tidtoadd" value="" />
 									<input type="hidden" name="family" value="" />
 								</div>
-								<div style='margin:3px;'>
+								<div style='margin:3px;' title="<?php echo (defined('SCIENTIFICNAMEAUTHORSHIPTIP') ? SCIENTIFICNAMEAUTHORSHIPTIP : ''); ?>">
 									<b><?php echo (defined('SCIENTIFICNAMEAUTHORSHIPLABEL')?SCIENTIFICNAMEAUTHORSHIPLABEL:(isset($LANG['AUTHOR'])?$LANG['AUTHOR']:'Author')); ?>:</b>
 									<input type="text" name="scientificnameauthorship" style="width:200px;" />
 								</div>
-								<div id="codDiv" style='margin:3px;'>
+								<div id="codDiv" style='margin:3px;' title="<?php echo (defined('IDCONFIDENCETIP') ? IDCONFIDENCETIP : ''); ?>">
 									<b><?php echo (defined('IDCONFIDENCELABEL')?IDCONFIDENCELABEL:(isset($LANG['CONFIDENCE'])?$LANG['CONFIDENCE']:'Confidence of Determination')); ?>:</b>
 									<select name="confidenceranking">
 										<option value="8"><?php echo $LANG['HIGH']; ?></option>
@@ -406,26 +406,26 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 										<option value="2"><?php echo $LANG['LOW']; ?></option>
 									</select>
 								</div>
-								<div id="identifiedByDiv" style='margin:3px;'>
+								<div id="identifiedByDiv" style='margin:3px;' title="<?php echo (defined('IDENTIFIEDBYTIP') ? IDENTIFIEDBYTIP : ''); ?>">
 									<b><?php echo (defined('IDENTIFIEDBYLABEL')?IDENTIFIEDBYLABEL:(isset($LANG['DETERMINER'])?$LANG['DETERMINER']:'Determiner')); ?>:</b>
 									<input type="text" name="identifiedby" id="identifiedby" style="background-color:lightyellow;width:200px;" />
 								</div>
-								<div id="dateIdentifiedDiv" style='margin:3px;'>
+								<div id="dateIdentifiedDiv" style='margin:3px;' title="<?php echo (defined('DATEIDENTIFIEDTIP') ? DATEIDENTIFIEDTIP : ''); ?>">
 									<b><?php echo (defined('DATEIDENTIFIEDLABEL')?DATEIDENTIFIEDLABEL:(isset($LANG['DATE'])?$LANG['DATE']:'Date')); ?>:</b>
 									<input type="text" name="dateidentified" id="dateidentified" style="background-color:lightyellow;" onchange="detDateChanged(this.form);" />
 								</div>
-								<div style='margin:3px;'>
+								<div style='margin:3px;' title="<?php echo (defined('IDENTIFICATIONREFERENCETIP') ? IDENTIFICATIONREFERENCETIP : ''); ?>">
 									<b><?php echo (defined('IDENTIFICATIONREFERENCELABEL')?IDENTIFICATIONREFERENCELABEL:(isset($LANG['REFERENCE'])?$LANG['REFERENCE']:'Reference')); ?>:</b>
 									<input type="text" name="identificationreferences" style="width:350px;" />
 								</div>
-								<div style='margin:3px;'>
+								<div style='margin:3px;' title="<?php echo (defined('IDENTIFICATIONREMARKSTIP') ? IDENTIFICATIONREMARKSTIP : ''); ?>">
 									<b><?php echo (defined('IDENTIFICATIONREMARKSLABEL')?IDENTIFICATIONREMARKSLABEL:(isset($LANG['NOTES'])?$LANG['NOTES']:'Notes')); ?>:</b>
 									<input type="text" name="identificationremarks" style="width:350px;" />
 								</div>
-								<div id="makeCurrentDiv" style='margin:3px;'>
+								<div id="makeCurrentDiv" style='margin:3px;'title="<?php echo (defined('MAKECURRENTDETERMINATIONTIP') ? MAKECURRENTDETERMINATIONTIP : ''); ?>">
 									<input type="checkbox" name="makecurrent" value="1" checked /> <?php echo $LANG['MAKE_CURRENT']; ?>
 								</div>
-								<div style='margin:3px;'>
+								<div style='margin:3px;'  title="<?php echo (defined('ANNOTATIONPRINTQUEUETIP') ? ANNOTATIONPRINTQUEUETIP : ''); ?>">
 									<input type="checkbox" name="printqueue" value="1" checked /> <?php echo $LANG['ADD_PRINT_QUEUE']; ?>
 									<a href="../reports/annotationmanager.php?collid=<?php echo $collid; ?>" target="_blank"><img src="../../images/list.png" style="width:13px" title="<?php echo $LANG['DISPLAY_QUEUE']; ?>" /></a>
 								</div>
