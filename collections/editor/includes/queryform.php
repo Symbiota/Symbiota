@@ -185,7 +185,15 @@ else{
 					'substrate'=>'Substrate','taxonRemarks'=>'Taxon Remarks','typeStatus'=>'Type Status','verbatimCoordinates'=>'Verbatim Coordinates',
 					'verbatimEventDate'=>'Verbatim Date','verbatimDepth'=>'Verbatim Depth','verbatimElevation'=>'Verbatim Elevation');
 			}
-			//sort($advFieldArr);
+
+			// Use a field name label defined in the collection templating system for each field, if set
+			foreach($advFieldArr as $k => $v){
+				$advFieldArr[$k] = defined(strtoupper($k).'LABEL')?constant(strtoupper($k).'LABEL'):$v;
+			}
+
+			// Sort array by the values (displayed field names), case insensitive
+			asort($advFieldArr, SORT_NATURAL | SORT_FLAG_CASE);
+
 			?>
 			<div class="fieldGroupDiv">
 				Custom Field 1:
@@ -194,10 +202,7 @@ else{
 					<option value="">---------------------------------</option>
 					<?php
 					foreach($advFieldArr as $k => $v){
-						echo '<option value="'.$k.'" '.($k==$qCustomField1?'SELECTED':'').'>';
-						// Use a label defined in the collection templating system for each field, if set
-						echo defined(strtoupper($k).'LABEL')?constant(strtoupper($k).'LABEL'):$v;
-						echo '</option>';
+						echo '<option value="'.$k.'" '.($k==$qCustomField1?'SELECTED':'').'>'.$v.'</option>';
 					}
 					?>
 				</select>
@@ -223,10 +228,7 @@ else{
 					<option value="">---------------------------------</option>
 					<?php
 					foreach($advFieldArr as $k => $v){
-						echo '<option value="'.$k.'" '.($k==$qCustomField2?'SELECTED':'').'>';
-						// Use a label defined in the collection templating system for each field, if set
-						echo defined(strtoupper($k).'LABEL')?constant(strtoupper($k).'LABEL'):$v;
-						echo '</option>';
+						echo '<option value="'.$k.'" '.($k==$qCustomField2?'SELECTED':'').'>'.$v.'</option>';
 					}
 					?>
 				</select>
@@ -252,10 +254,7 @@ else{
 					<option value="">---------------------------------</option>
 					<?php
 					foreach($advFieldArr as $k => $v){
-						echo '<option value="'.$k.'" '.($k==$qCustomField3?'SELECTED':'').'>';
-						// Use a label defined in the collection templating system for each field, if set
-						echo defined(strtoupper($k).'LABEL')?constant(strtoupper($k).'LABEL'):$v;
-						echo '</option>';
+						echo '<option value="'.$k.'" '.($k==$qCustomField3?'SELECTED':'').'>'.$v.'</option>';
 					}
 					?>
 				</select>
