@@ -92,7 +92,7 @@ $procManager->setProjVariables('OCR Harvest');
 					<?php
 					$psList = $procManager->getProcessingStatusList();
 					foreach($psList as $psVal){
-						echo '<option value="'.$psVal.'">'.$psVal.'</option>';
+						echo '<option value="'.$psVal.'">'.ucwords($psVal).'</option>';
 					}
 					?>
 				</select>
@@ -112,14 +112,14 @@ $procManager->setProjVariables('OCR Harvest');
 				<div style="padding:3px;">
 					<b>Processing Status:</b>
 					<select name="procstatus">
-						<option value="unprocessed">unprocessed</option>
+						<option value="unprocessed">Unprocessed</option>
 						<option value="">-----------------------------------</option>
 						<option value="null">No Status</option>
 						<?php
 						$psList = $procManager->getProcessingStatusList();
 						foreach($psList as $psVal){
 							if($psVal != 'unprocessed'){
-								echo '<option value="'.$psVal.'">'.$psVal.'</option>';
+								echo '<option value="'.$psVal.'">'.ucwords($psVal).'</option>';
 							}
 						}
 						?>

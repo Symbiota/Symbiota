@@ -10,6 +10,16 @@ $loanId = $_REQUEST['loanid'];
 $loanManager = new OccurrenceLoans();
 if($collid) $loanManager->setCollId($collid);
 $specList = $loanManager->getSpecList($loanId);
+
+// Add collection customization variables
+if($collid && file_exists('../editor/includes/config/occurVarColl'.$collid.'.php')){
+	//Specific to particular collection
+	include('../editor/includes/config/occurVarColl'.$collid.'.php');
+}
+elseif(file_exists('../editor/includes/config/occurVarDefault.php')){
+	//Specific to Default values for portal
+	include('../editor/includes/config/occurVarDefault.php');
+}
 ?>
 <div id="outloanspecdiv">
 	<div class="addSpecimenDiv">
@@ -18,8 +28,8 @@ $specList = $loanManager->getSpecList($loanId);
 			<div id="infoBatchDiv" style="margin-bottom:10px;display:none">Link multiple specimens at once by entering a list of catalog numbers on separate lines or delimited by commas.</div>
 			<form name="batchaddform" action="outgoing.php" method="post">
 				<div>
-					<div style="float:left;margin:0px 15px"><input name="targetidentifier" type="radio" value="catnum" checked /> Target Catalog Number</div>
-					<div style="float:left;"><input name="targetidentifier" type="radio" value="other" /> Target Other Catalog Numbers</div>
+					<div style="float:left;margin:0px 15px"><input name="targetidentifier" type="radio" value="catnum" checked /> Target <?php echo (defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:'Catalog Number'); ?></div>
+					<div style="float:left;"><input name="targetidentifier" type="radio" value="other" /> Target <?php echo (defined('OTHERCATALOGNUMBERSLABEL')?OTHERCATALOGNUMBERSLABEL:'Other Catalog Numbers'); ?></div>
 				</div>
 				<div style="clear:both"><textarea name="catalogNumbers" cols="6" style="width:600px"></textarea></div>
 				<div>
@@ -43,10 +53,10 @@ $specList = $loanManager->getSpecList($loanId);
 					SUCCESS: Specimen record added to loan.
 				</div>
 				<div id="addspecerr1" style="float:left;margin-left:30px;padding-bottom:2px;color:red;display:none;">
-					ERROR: No specimens found with that catalog number.
+					ERROR: No specimens found with that <?php echo (defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:'Catalog Number'); ?>.
 				</div>
 				<div id="addspecerr2" style="float:left;margin-left:30px;padding-bottom:2px;color:red;display:none;">
-					ERROR: More than one specimen located with same catalog number.
+					ERROR: More than one specimen located with same <?php echo (defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:'Catalog Number'); ?>.
 				</div>
 				<div id="addspecerr3" style="float:left;margin-left:30px;padding-bottom:2px;color:orange;display:none;">
 					Warning: Specimen already linked to loan.
@@ -73,7 +83,7 @@ $specList = $loanManager->getSpecList($loanId);
 			<table class="styledtable" style="font-family:Arial;font-size:12px;">
 				<tr>
 					<th style="width:25px;text-align:center;"><input type="checkbox" onclick="selectAll(this);" title="Select/Deselect All" /></th>
-					<th style="width:100px;text-align:center;">Catalog Number</th>
+					<th style="width:100px;text-align:center;"><?php echo (defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:'Catalog Number'); ?></th>
 					<th style="width:375px;text-align:center;">Details</th>
 					<th style="width:90px;text-align:center;">Date Returned</th>
 				</tr>
@@ -124,21 +134,21 @@ $specList = $loanManager->getSpecList($loanId);
 				<fieldset>
 					<legend><b>Add a New Determinations</b></legend>
 					<div style='margin:3px;'>
-						<b>Identification Qualifier:</b>
+						<b><?php echo (defined('IDENTIFICATIONQUALIFIERLABEL')?IDENTIFICATIONQUALIFIERLABEL:'Identification Qualifier'); ?>:</b>
 						<input type="text" name="identificationqualifier" title="e.g. cf, aff, etc" />
 					</div>
 					<div style='margin:3px;'>
-						<b>Scientific Name:</b>
+						<b><?php echo (defined('SCIENTIFICNAMELABEL')?SCIENTIFICNAMELABEL:'Scientific Name'); ?>:</b>
 						<input type="text" id="dafsciname" name="sciname" style="background-color:lightyellow;width:350px;" onfocus="initLoanDetAutocomplete(this.form)" />
 						<input type="hidden" id="daftidtoadd" name="tidtoadd" value="" />
 						<input type="hidden" name="family" value="" />
 					</div>
 					<div style='margin:3px;'>
-						<b>Author:</b>
+						<b><?php echo (defined('SCIENTIFICNAMEAUTHORSHIPLABEL')?SCIENTIFICNAMEAUTHORSHIPLABEL:'Author'); ?>:</b>
 						<input type="text" name="scientificnameauthorship" style="width:200px;" />
 					</div>
 					<div style='margin:3px;'>
-						<b>Confidence of Determination:</b>
+						<b><?php echo (defined('IDCONFIDENCELABEL')?IDCONFIDENCELABEL:'Confidence of Determination'); ?>:</b>
 						<select name="confidenceranking">
 							<option value="8">High</option>
 							<option value="5" selected>Medium</option>
@@ -146,19 +156,19 @@ $specList = $loanManager->getSpecList($loanId);
 						</select>
 					</div>
 					<div style='margin:3px;'>
-						<b>Determiner:</b>
+						<b><?php echo (defined('IDENTIFIEDBYLABEL')?IDENTIFIEDBYLABEL:'Determiner'); ?>:</b>
 						<input type="text" name="identifiedby" id="identifiedby" style="background-color:lightyellow;width:200px;" />
 					</div>
 					<div style='margin:3px;'>
-						<b>Date:</b>
+						<b><?php echo (defined('DATEIDENTIFIEDLABEL')?DATEIDENTIFIEDLABEL:'Date'); ?>:</b>
 						<input type="text" name="dateidentified" id="dateidentified" style="background-color:lightyellow;" onchange="detDateChanged(this.form);" />
 					</div>
 					<div style='margin:3px;'>
-						<b>Reference:</b>
+						<b><?php echo (defined('IDENTIFICATIONREFERENCELABEL')?IDENTIFICATIONREFERENCELABEL:'Reference'); ?>:</b>
 						<input type="text" name="identificationreferences" style="width:350px;" />
 					</div>
 					<div style='margin:3px;'>
-						<b>Notes:</b>
+						<b><?php echo (defined('IDENTIFICATIONREMARKSLABEL')?IDENTIFICATIONREMARKSLABEL:'Notes'); ?>:</b>
 						<input type="text" name="identificationremarks" style="width:350px;" />
 					</div>
 					<div style='margin:3px;'>

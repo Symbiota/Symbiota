@@ -30,11 +30,11 @@ $qOrderByDir = (array_key_exists('orderbydir',$qryArr)?$qryArr['orderbydir']:'')
 
 //Set processing status
 $processingStatusArr = array();
-if(isset($PROCESSINGSTATUS) && $PROCESSINGSTATUS){
-	$processingStatusArr = $PROCESSINGSTATUS;
+if(defined('PROCESSINGSTATUS') && PROCESSINGSTATUS){
+	$processingStatusArr = PROCESSINGSTATUS;
 }
 else{
-	$processingStatusArr = array('unprocessed','unprocessed/NLP','stage 1','stage 2','stage 3','pending review-nfn','pending review','expert required','reviewed','closed');
+	$processingStatusArr = array('unprocessed','unprocessed/NLP','stage 1','stage 2','stage 3','pending duplicate','pending review-nfn','pending review','expert required','reviewed','closed');
 }
 //if(!isset($_REQUEST['q_catalognumber'])) $displayQuery = true;
 ?>
@@ -47,15 +47,15 @@ else{
 				?>
 				<div class="fieldGroupDiv">
 					<div class="fieldDiv" title="Full name of collector as entered in database. To search just on last name, place the wildcard character (%) before name (%Gentry).">
-						Collector:
+						<?php echo (defined('RECORDEDBYLABEL')?RECORDEDBYLABEL:'Collector'); ?>:
 						<input type="text" name="q_recordedby" value="<?php echo $qRecordedBy; ?>" onchange="setOrderBy(this)" />
 					</div>
 					<div class="fieldDiv" title="Separate multiple terms by comma and ranges by ' - ' (space before and after dash required), e.g.: 3542,3602,3700 - 3750">
-						Number:
+						<?php echo (defined('RECORDNUMBERLABEL')?RECORDNUMBERLABEL:'Number'); ?>:
 						<input type="text" name="q_recordnumber" value="<?php echo $qRecordNumber; ?>" style="width:120px;" onchange="setOrderBy(this)" />
 					</div>
 					<div class="fieldDiv" title="Enter ranges separated by ' - ' (space before and after dash required), e.g.: 2002-01-01 - 2003-01-01">
-						Date:
+						<?php echo (defined('EVENTDATELABEL')?EVENTDATELABEL:'Date'); ?>:
 						<input type="text" name="q_eventdate" value="<?php echo $qEventDate; ?>" style="width:160px" onchange="setOrderBy(this)" />
 					</div>
 				</div>
@@ -64,7 +64,7 @@ else{
 			?>
 			<div class="fieldGroupDiv">
 				<div class="fieldDiv" title="Separate multiples by comma and ranges by ' - ' (space before and after dash required), e.g.: 3542,3602,3700 - 3750">
-					Catalog Number:
+					<?php echo (defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:'Catalog Number'); ?>:
 					<input type="text" name="q_catalognumber" value="<?php echo $qCatalogNumber; ?>" onchange="setOrderBy(this)" />
 				</div>
 				<?php
@@ -79,7 +79,7 @@ else{
 				else{
 					?>
 					<div class="fieldDiv" title="Separate multiples by comma and ranges by ' - ' (space before and after dash required), e.g.: 3542,3602,3700 - 3750">
-						Other Catalog Numbers:
+						<?php echo (defined('OTHERCATALOGNUMBERSLABEL')?OTHERCATALOGNUMBERSLABEL:'Other Catalog Numbers'); ?>:
 						<input type="text" name="q_othercatalognumbers" value="<?php echo $qOtherCatalogNumbers; ?>" />
 					</div>
 					<?php
@@ -106,7 +106,7 @@ else{
 				</div>
 				<div class="fieldGroupDiv">
 					<div class="fieldDiv">
-						Processing Status:
+						<?php echo (defined('PROCESSINGSTATUSLABEL')?PROCESSINGSTATUSLABEL:'Processing Status'); ?>:
 						<select name="q_processingstatus" onchange="setOrderBy(this)">
 							<option value=''>All Records</option>
 							<option>-------------------</option>
@@ -185,7 +185,15 @@ else{
 					'substrate'=>'Substrate','taxonRemarks'=>'Taxon Remarks','typeStatus'=>'Type Status','verbatimCoordinates'=>'Verbatim Coordinates',
 					'verbatimEventDate'=>'Verbatim Date','verbatimDepth'=>'Verbatim Depth','verbatimElevation'=>'Verbatim Elevation');
 			}
-			//sort($advFieldArr);
+
+			// Use a field name label defined in the collection templating system for each field, if set
+			foreach($advFieldArr as $k => $v){
+				$advFieldArr[$k] = defined(strtoupper($k).'LABEL')?constant(strtoupper($k).'LABEL'):$v;
+			}
+
+			// Sort array by the values (displayed field names), case insensitive
+			asort($advFieldArr, SORT_NATURAL | SORT_FLAG_CASE);
+
 			?>
 			<div class="fieldGroupDiv">
 				Custom Field 1:
@@ -203,7 +211,6 @@ else{
 					<option <?php echo ($qCustomType1=='NOT EQUALS'?'SELECTED':''); ?> value="NOT EQUALS">NOT EQUALS</option>
 					<option <?php echo ($qCustomType1=='STARTS'?'SELECTED':''); ?> value="STARTS">STARTS WITH</option>
 					<option <?php echo ($qCustomType1=='LIKE'?'SELECTED':''); ?> value="LIKE">CONTAINS</option>
-					<option <?php echo ($qCustomType1=='NOT LIKE'?'SELECTED':''); ?> value="NOT LIKE">DOESN'T CONTAIN</option>
 					<option <?php echo ($qCustomType1=='GREATER'?'SELECTED':''); ?> value="GREATER">GREATER THAN</option>
 					<option <?php echo ($qCustomType1=='LESS'?'SELECTED':''); ?> value="LESS">LESS THAN</option>
 					<option <?php echo ($qCustomType1=='NULL'?'SELECTED':''); ?> value="NULL">IS NULL</option>
@@ -230,7 +237,6 @@ else{
 					<option <?php echo ($qCustomType2=='NOT EQUALS'?'SELECTED':''); ?> value="NOT EQUALS">NOT EQUALS</option>
 					<option <?php echo ($qCustomType2=='STARTS'?'SELECTED':''); ?> value="STARTS">STARTS WITH</option>
 					<option <?php echo ($qCustomType2=='LIKE'?'SELECTED':''); ?> value="LIKE">CONTAINS</option>
-					<option <?php echo ($qCustomType2=='NOT LIKE'?'SELECTED':''); ?> value="NOT LIKE">DOESN'T CONTAIN</option>
 					<option <?php echo ($qCustomType2=='GREATER'?'SELECTED':''); ?> value="GREATER">GREATER THAN</option>
 					<option <?php echo ($qCustomType2=='LESS'?'SELECTED':''); ?> value="LESS">LESS THAN</option>
 					<option <?php echo ($qCustomType2=='NULL'?'SELECTED':''); ?> value="NULL">IS NULL</option>
@@ -257,7 +263,6 @@ else{
 					<option <?php echo ($qCustomType3=='NOT EQUALS'?'SELECTED':''); ?> value="NOT EQUALS">NOT EQUALS</option>
 					<option <?php echo ($qCustomType3=='STARTS'?'SELECTED':''); ?> value="STARTS">STARTS WITH</option>
 					<option <?php echo ($qCustomType3=='LIKE'?'SELECTED':''); ?> value="LIKE">CONTAINS</option>
-					<option <?php echo ($qCustomType3=='NOT LIKE'?'SELECTED':''); ?> value="NOT LIKE">DOESN'T CONTAIN</option>
 					<option <?php echo ($qCustomType3=='GREATER'?'SELECTED':''); ?> value="GREATER">GREATER THAN</option>
 					<option <?php echo ($qCustomType3=='LESS'?'SELECTED':''); ?> value="LESS">LESS THAN</option>
 					<option <?php echo ($qCustomType3=='NULL'?'SELECTED':''); ?> value="NULL">IS NULL</option>
@@ -314,24 +319,24 @@ else{
 					Sort by:
 					<select name="orderby">
 						<option value=""></option>
-						<option value="recordedby" <?php echo ($qOrderBy=='recordedby'?'SELECTED':''); ?>>Collector</option>
-						<option value="recordnumber" <?php echo ($qOrderBy=='recordnumber'?'SELECTED':''); ?>>Number</option>
-						<option value="eventdate" <?php echo ($qOrderBy=='eventdate'?'SELECTED':''); ?>>Date</option>
-						<option value="catalognumber" <?php echo ($qOrderBy=='catalognumber'?'SELECTED':''); ?>>Catalog Number</option>
+						<option value="recordedby" <?php echo ($qOrderBy=='recordedby'?'SELECTED':''); ?>><?php echo (defined('RECORDEDBYLABEL')?RECORDEDBYLABEL:'Collector'); ?></option>
+						<option value="recordnumber" <?php echo ($qOrderBy=='recordnumber'?'SELECTED':''); ?>><?php echo (defined('RECORDNUMBERLABEL')?RECORDNUMBERLABEL:'Number'); ?></option>
+						<option value="eventdate" <?php echo ($qOrderBy=='eventdate'?'SELECTED':''); ?>><?php echo (defined('EVENTDATELABEL')?EVENTDATELABEL:'Date'); ?></option>
+						<option value="catalognumber" <?php echo ($qOrderBy=='catalognumber'?'SELECTED':''); ?>><?php echo (defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:'Catalog Number'); ?></option>
 						<option value="recordenteredby" <?php echo ($qOrderBy=='recordenteredby'?'SELECTED':''); ?>>Entered By</option>
 						<option value="dateentered" <?php echo ($qOrderBy=='dateentered'?'SELECTED':''); ?>>Date Entered</option>
 						<option value="datelastmodified" <?php echo ($qOrderBy=='datelastmodified'?'SELECTED':''); ?>>Date Last modified</option>
-						<option value="processingstatus" <?php echo ($qOrderBy=='processingstatus'?'SELECTED':''); ?>>Processing Status</option>
-						<option value="sciname" <?php echo ($qOrderBy=='sciname'?'SELECTED':''); ?>>Scientific Name</option>
-						<option value="family" <?php echo ($qOrderBy=='family'?'SELECTED':''); ?>>Family</option>
-						<option value="country" <?php echo ($qOrderBy=='country'?'SELECTED':''); ?>>Country</option>
-						<option value="stateprovince" <?php echo ($qOrderBy=='stateprovince'?'SELECTED':''); ?>>State / Province</option>
-						<option value="county" <?php echo ($qOrderBy=='county'?'SELECTED':''); ?>>County</option>
-						<option value="municipality" <?php echo ($qOrderBy=='municipality'?'SELECTED':''); ?>>Municipality</option>
-						<option value="locationid" <?php echo ($qOrderBy=='locationid'?'SELECTED':''); ?>>Location ID</option>
-						<option value="locality" <?php echo ($qOrderBy=='locality'?'SELECTED':''); ?>>Locality</option>
-						<option value="decimallatitude" <?php echo ($qOrderBy=='decimallatitude'?'SELECTED':''); ?>>Decimal Latitude</option>
-						<option value="decimallongitude" <?php echo ($qOrderBy=='decimallongitude'?'SELECTED':''); ?>>Decimal Longitude</option>
+						<option value="processingstatus" <?php echo ($qOrderBy=='processingstatus'?'SELECTED':''); ?>><?php echo (defined('PROCESSINGSTATUSLABEL')?PROCESSINGSTATUSLABEL:'Processing Status'); ?></option>
+						<option value="sciname" <?php echo ($qOrderBy=='sciname'?'SELECTED':''); ?>><?php echo (defined('SCIENTIFICNAMELABEL')?SCIENTIFICNAMELABEL:'Scientific Name'); ?></option>
+						<option value="family" <?php echo ($qOrderBy=='family'?'SELECTED':''); ?>><?php echo (defined('FAMILYLABEL')?FAMILYLABEL:'Family'); ?></option>
+						<option value="country" <?php echo ($qOrderBy=='country'?'SELECTED':''); ?>><?php echo (defined('COUNTRYLABEL')?COUNTRYLABEL:'Country'); ?></option>
+						<option value="stateprovince" <?php echo ($qOrderBy=='stateprovince'?'SELECTED':''); ?>><?php echo (defined('STATEPROVINCELABEL')?STATEPROVINCELABEL:'State/Province'); ?></option>
+						<option value="county" <?php echo ($qOrderBy=='county'?'SELECTED':''); ?>><?php echo (defined('COUNTYLABEL')?COUNTYLABEL:'County'); ?></option>
+						<option value="municipality" <?php echo ($qOrderBy=='municipality'?'SELECTED':''); ?>><?php echo (defined('MUNICIPALITYLABEL')?MUNICIPALITYLABEL:'Municipality'); ?></option>
+						<option value="locationid" <?php echo ($qOrderBy=='locationid'?'SELECTED':''); ?>><?php echo (defined('LOCATIONIDLABEL')?LOCATIONIDLABEL:'Location ID'); ?></option>
+						<option value="locality" <?php echo ($qOrderBy=='locality'?'SELECTED':''); ?>><?php echo (defined('LOCALITYLABEL')?LOCALITYLABEL:'Locality'); ?></option>
+						<option value="decimallatitude" <?php echo ($qOrderBy=='decimallatitude'?'SELECTED':''); ?>><?php echo (defined('DECIMALLATITUDELABEL')?DECIMALLATITUDELABEL:'Latitude'); ?></option>
+						<option value="decimallongitude" <?php echo ($qOrderBy=='decimallongitude'?'SELECTED':''); ?>><?php echo (defined('DECIMALLONGITUDELABEL')?DECIMALLONGITUDELABEL:'Longitude'); ?></option>
 						<option value="minimumelevationinmeters" <?php echo ($qOrderBy=='minimumelevationinmeters'?'SELECTED':''); ?>>Elevation Minimum</option>
 						<option value="maximumelevationinmeters" <?php echo ($qOrderBy=='maximumelevationinmeters'?'SELECTED':''); ?>>Elevation Maximum</option>
 					</select>

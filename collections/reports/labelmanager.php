@@ -30,6 +30,16 @@ if($isEditor){
 	}
 }
 $labelFormatArr = $labelManager->getLabelFormatArr(true);
+
+// Add collection customization variables
+if($collid && file_exists('../editor/includes/config/occurVarColl'.$collid.'.php')){
+	//Specific to particular collection
+	include('../editor/includes/config/occurVarColl'.$collid.'.php');
+}
+elseif(file_exists('../editor/includes/config/occurVarDefault.php')){
+	//Specific to Default values for portal
+	include('../editor/includes/config/occurVarDefault.php');
+}
 ?>
 <html>
 	<head>
@@ -212,21 +222,21 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 						<legend><b>Define Specimen Recordset</b></legend>
 						<div style="margin:3px;">
 							<div title="Scientific name as entered in database.">
-								Scientific Name:
+								<?php echo (defined('SCIENTIFICNAMELABEL')?SCIENTIFICNAMELABEL:'Scientific Name'); ?>:
 								<input type="text" name="taxa" id="taxa" size="60" value="<?php echo (array_key_exists('taxa',$_REQUEST)?$_REQUEST['taxa']:''); ?>" />
 							</div>
 						</div>
 						<div style="margin:3px;clear:both;">
 							<div style="float:left;" title="Full or last name of collector as entered in database.">
-								Collector:
+								<?php echo (defined('RECORDEDBYLABEL')?RECORDEDBYLABEL:'Collector'); ?>:
 								<input type="text" name="recordedby" style="width:150px;" value="<?php echo (array_key_exists('recordedby',$_REQUEST)?$_REQUEST['recordedby']:''); ?>" />
 							</div>
 							<div style="float:left;margin-left:20px;" title="Separate multiple terms by comma and ranges by ' - ' (space before and after dash required), e.g.: 3542,3602,3700 - 3750">
-								Record Number(s):
+								<?php echo (defined('RECORDNUMBERLABEL')?RECORDNUMBERLABEL:'Collector Number'); ?>(s):
 								<input type="text" name="recordnumber" style="width:150px;" value="<?php echo (array_key_exists('recordnumber',$_REQUEST)?$_REQUEST['recordnumber']:''); ?>" />
 							</div>
 							<div style="float:left;margin-left:20px;" title="Separate multiple terms by comma and ranges by ' - ' (space before and after dash required), e.g.: 3542,3602,3700 - 3750">
-								Catalog Number(s):
+								<?php echo (defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:'Catalog Number'); ?>(s):
 								<input type="text" name="identifier" style="width:150px;" value="<?php echo (array_key_exists('identifier',$_REQUEST)?$_REQUEST['identifier']:''); ?>" />
 							</div>
 						</div>
@@ -247,7 +257,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 							</div>
 						</div>
 						<div style="margin:3px;clear:both;">
-							Label Projects:
+							<?php echo (defined('LABELPROJECTLABEL')?LABELPROJECTLABEL:'Label Project'); ?>:
 							<select name="labelproject" >
 								<option value="">All Projects</option>
 								<option value="">-------------------------</option>
@@ -304,9 +314,9 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 									<tr>
 										<th title="Select/Deselect all Specimens"><input type="checkbox" onclick="selectAll(this);" /></th>
 										<th title="Label quantity">Qty</th>
-										<th>Collector</th>
-										<th>Scientific Name</th>
-										<th>Locality</th>
+										<th><?php echo (defined('RECORDEDBYLABEL')?RECORDEDBYLABEL:'Collector'); ?></th>
+										<th><?php echo (defined('SCIENTIFICNAMELABEL')?SCIENTIFICNAMELABEL:'Scientific Name'); ?></th>
+										<th><?php echo (defined('LOCALITYLABEL')?LOCALITYLABEL:'Locality'); ?></th>
 									</tr>
 									<?php
 									$trCnt = 0;
@@ -383,10 +393,10 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 									<div class="fieldDiv">
 										<div class="checkboxLabel">Heading Mid-Section:</div>
 										<div class="fieldElement">
-											<input type="radio" id="hmid1" name="hmid" value="1" />Country
-											<input type="radio" id="hmid2" name="hmid" value="2" />State
-											<input type="radio" id="hmid3" name="hmid" value="3" />County
-											<input type="radio" id="hmid4" name="hmid" value="4" />Family
+											<input type="radio" id="hmid1" name="hmid" value="1" /><?php echo (defined('COUNTRYLABEL')?COUNTRYLABEL:'Country');?>
+											<input type="radio" id="hmid2" name="hmid" value="2" /><?php echo (defined('STATEPROVINCELABEL')?STATEPROVINCELABEL:'State');?>
+											<input type="radio" id="hmid3" name="hmid" value="3" /><?php echo (defined('COUNTYLABEL')?COUNTYLABEL:'County');?>
+											<input type="radio" id="hmid4" name="hmid" value="4" /><?php echo (defined('FAMILYLABEL')?FAMILYLABEL:'Family');?>
 											<input type="radio" id="hmid0" name="hmid" value="0" checked/>Blank
 										</div>
 									</div>
@@ -408,14 +418,14 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 									</div>
 									<div class="fieldDiv">
 										<input type="checkbox" name="catalognumbers" value="1" onclick="checkBarcodeCheck(this.form);" />
-										<span class="checkboxLabel">Print Catalog Numbers</span>
+										<span class="checkboxLabel">Print <?php echo (defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:'Catalog Number');?>s</span>
 									</div>
 									<?php
 									if(class_exists('Image_Barcode2') || class_exists('Image_Barcode')){
 										?>
 										<div class="fieldDiv">
 											<input type="checkbox" name="bc" value="1" onclick="checkBarcodeCheck(this.form);" />
-											<span class="checkboxLabel">Include barcode of Catalog Number</span>
+											<span class="checkboxLabel">Include barcode of <?php echo (defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:'Catalog Number');?></span>
 										</div>
 										<!--
 										<div class="fieldDiv">

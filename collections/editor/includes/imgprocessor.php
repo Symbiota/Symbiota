@@ -90,8 +90,12 @@
 						<div style="float:left;">
 							<fieldset style="width:200px;background-color:lightyellow;">
 								<legend>Options</legend>
-								<input type="checkbox" id="ocrfull" value="1" /> OCR whole image<br/>
-								<input type="checkbox" id="ocrbest" value="1" /> OCR w/ analysis
+								<div title="<?php echo (defined('OCRWHOLEIMAGETIP') ? OCRWHOLEIMAGETIP : ''); ?>">
+									<input type="checkbox" id="ocrfull" value="1" /> <?php echo (defined('OCRWHOLEIMAGELABEL') ? OCRWHOLEIMAGELABEL : 'OCR whole image'); ?><br/>
+								</div>
+								<div title="<?php echo (defined('OCRANALYSISTIP') ? OCRANALYSISTIP : ''); ?>">
+									<input type="checkbox" id="ocrbest" value="1" /> <?php echo (defined('OCRANALYSISLABEL') ? OCRANALYSISLABEL : 'OCR w/ analysis'); ?>
+								</div>
 							</fieldset>
 						</div>
 						<div style="float:right;margin-right:20px;font-weight:bold;">

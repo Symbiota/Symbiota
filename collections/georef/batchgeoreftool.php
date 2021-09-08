@@ -60,6 +60,16 @@ $georeferenceSources = filter_var($georeferenceSources, FILTER_SANITIZE_STRING);
 $georeferenceProtocol = filter_var($georeferenceProtocol, FILTER_SANITIZE_STRING);
 $georeferenceVerificationStatus = filter_var($georeferenceVerificationStatus, FILTER_SANITIZE_STRING);
 
+// Add collection customization variables
+if($collid && !strpos($collid, ",") && file_exists('../editor/includes/config/occurVarColl'.$collid.'.php')){
+	//Specific to particular collection
+	include('../editor/includes/config/occurVarColl'.$collid.'.php');
+}
+elseif(file_exists('../editor/includes/config/occurVarDefault.php')){
+	//Specific to Default values for portal
+	include('../editor/includes/config/occurVarDefault.php');
+}
+
 if(!$georeferenceSources) $georeferenceSources = 'georef batch tool '.date('Y-m-d');
 if(!$georeferenceVerificationStatus) $georeferenceVerificationStatus = 'reviewed - high confidence';
 
@@ -264,7 +274,7 @@ if($isEditor && $submitAction){
 										</div>
 										<div style="float:left;margin-right:10px;">
 											<select name="qprocessingstatus">
-												<option value="">All Processing Status</option>
+												<option value="">All Records</option>
 												<option value="">-----------------------</option>
 												<?php
 												$processingStr = array_key_exists('processingstr',$_POST)?strip_tags($_POST['processingstr']):'';
@@ -272,7 +282,7 @@ if($isEditor && $submitAction){
 												if($processingStr) $processingArr = explode('|',$processingStr);
 												else $processingArr = $geoManager->getProcessingStatus();
 												foreach($processingArr as $pStatus){
-													echo '<option '.($qProcessingStatus==$pStatus?'SELECTED':'').'>'.$pStatus.'</option>';
+													echo '<option '.($qProcessingStatus==$pStatus?'SELECTED':'').'>'.ucwords($pStatus).'</option>';
 												}
 												?>
 											</select>
@@ -535,16 +545,25 @@ if($isEditor && $submitAction){
 										<td colspan="4">
 											<select name="processingstatus">
 												<option value="">Leave as is</option>
-												<option value="unprocessed">Unprocessed</option>
-												<option value="unprocessed/NLP">unprocessed/NLP</option>
-												<option value="stage 1">Stage 1</option>
-												<option value="stage 2">Stage 2</option>
-												<option value="stage 3">Stage 3</option>
-												<option value="pending review-nfn">Pending Review-NfN</option>
-												<option value="pending review">Pending Review</option>
-												<option value="expert required">Expert Required</option>
-												<option value="reviewed">Reviewed</option>
-												<option value="closed">Closed</option>
+												<option>-------------------</option>
+												<?php
+
+												// Set the list of processing statuses, from the collection editor template
+												$processingStatusArr = array();
+												if(defined('PROCESSINGSTATUS') && PROCESSINGSTATUS){
+													$processingStatusArr = PROCESSINGSTATUS;
+												}
+												else{
+													$processingStatusArr = array('unprocessed','unprocessed/NLP','stage 1','stage 2','stage 3','pending duplicate','pending review-nfn','pending review','expert required','reviewed','closed');
+												}
+
+												foreach($processingStatusArr as $v){
+
+													$keyOut = strtolower($v);
+
+													echo '<option value="'.$keyOut.'">'.ucwords($v).'</option>';
+												}
+												?>
 											</select>
 											<span style="margin-left:20px;font-size:80%">
 												Georefer by:

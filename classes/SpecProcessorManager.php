@@ -284,14 +284,14 @@ class SpecProcessorManager {
 	public function getProcessingStatusList(){
 		$retArr = array();
 		if($this->collid){
-			$sql = 'SELECT DISTINCT processingstatus FROM omoccurrences WHERE collid = '.$this->collid;
+			$sql = 'SELECT DISTINCT processingstatus FROM omoccurrences WHERE collid = '.$this->collid.' ORDER BY processingstatus ASC';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				if($r->processingstatus) $retArr[] = $r->processingstatus;
 			}
 			$rs->free();
-			sort($retArr);
+			//sort($retArr);
 		}
 		return $retArr;
 	}

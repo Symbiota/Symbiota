@@ -92,6 +92,28 @@ $duManager->setMatchOtherCatalogNumbers($matchOtherCatNum);
 $duManager->setVerifyImageUrls($verifyImages);
 $duManager->setProcessingStatus($processingStatus);
 
+//Bring in config variables
+if($duManager->getCollInfo('colltype') == 'General Observations'){
+	if(file_exists('../editor/includes/config/occurVarGenObs'.$SYMB_UID.'.php')){
+		//Specific to particular general observation collection
+		include('../editor/includes/config/occurVarGenObs'.$SYMB_UID.'.php');
+	}
+	elseif(file_exists('../editor/includes/config/occurVarGenObsDefault.php')){
+		//Specific to Default values for portal
+		include('../editor/includes/config/occurVarGenObsDefault.php');
+	}
+}
+else{
+	if($collid && file_exists('../editor/includes/config/occurVarColl'.$collid.'.php')){
+		//Specific to particular collection
+		include('../editor/includes/config/occurVarColl'.$collid.'.php');
+	}
+	elseif(file_exists('../editor/includes/config/occurVarDefault.php')){
+		//Specific to Default values for portal
+		include('../editor/includes/config/occurVarDefault.php');
+	}
+}
+
 if($action == 'Automap Fields'){
 	$autoMap = true;
 }
@@ -645,8 +667,16 @@ if($isEditor && $collid){
 						<?php
 					}
 				}
-				$processingList = array('unprocessed' => 'Unprocessed', 'stage 1' => 'Stage 1', 'stage 2' => 'Stage 2', 'stage 3' => 'STAGE_3', 'pending review' => 'Pending Review',
-					'expert required' => 'Expert Required', 'pending review-nfn' => 'Pending Review-NfN', 'reviewed' => 'Reviewed', 'closed' => 'Closed');
+
+				// Set the list of processing statuses, from the collection editor template
+				$processingStatusArr = array();
+				if(defined('PROCESSINGSTATUS') && PROCESSINGSTATUS){
+					$processingStatusArr = PROCESSINGSTATUS;
+					}
+				else{
+					$processingStatusArr = array('unprocessed','unprocessed/NLP','stage 1','stage 2','stage 3','pending duplicate','pending review-nfn','pending review','expert required','reviewed','closed');
+				}
+
 				if($ulPath && ($uploadType == $DWCAUPLOAD || $uploadType == $IPTUPLOAD)){
 					//Data has been uploaded and it's a DWCA upload type
 					if($duManager->analyzeUpload()){
@@ -829,8 +859,11 @@ if($isEditor && $collid){
 														<option value=""><?php echo (isset($LANG['NO_SETTING'])?$LANG['NO_SETTING']:'Leave as is / No Explicit Setting'); ?></option>
 														<option value="">--------------------------</option>
 														<?php
-														foreach($processingList as $ps){
-															echo '<option value="'.$ps.'">'.ucwords($ps).'</option>';
+														foreach($processingStatusArr as $v){
+
+															$keyOut = strtolower($v);
+
+															echo '<option value="'.$keyOut.'">'.ucwords($v).'</option>';
 														}
 														?>
 													</select>
@@ -874,8 +907,11 @@ if($isEditor && $collid){
 										<option value=""><?php echo (isset($LANG['NO_SETTING'])?$LANG['NO_SETTING']:'Leave as is / No Explicit Setting'); ?></option>
 										<option value="">--------------------------</option>
 										<?php
-										foreach($processingList as $ps){
-											echo '<option value="'.$ps.'">'.ucwords($ps).'</option>';
+										foreach($processingStatusArr as $v){
+
+											$keyOut = strtolower($v);
+
+											echo '<option value="'.$keyOut.'">'.ucwords($v).'</option>';
 										}
 										?>
 									</select>
@@ -1004,8 +1040,11 @@ if($isEditor && $collid){
 											<option value=""><?php echo (isset($LANG['NO_SETTING'])?$LANG['NO_SETTING']:'Leave as is / No Explicit Setting'); ?></option>
 											<option value="">--------------------------</option>
 											<?php
-											foreach($processingList as $ps){
-												echo '<option value="'.$ps.'">'.ucwords($ps).'</option>';
+											foreach($processingStatusArr as $v){
+
+												$keyOut = strtolower($v);
+
+												echo '<option value="'.$keyOut.'">'.ucwords($v).'</option>';
 											}
 											?>
 										</select>

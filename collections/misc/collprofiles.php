@@ -32,6 +32,16 @@ if($SYMB_UID){
 		}
 	}
 }
+
+// Add collection customization variables
+if($collid && file_exists('../editor/includes/config/occurVarColl'.$collid.'.php')){
+	//Specific to particular collection
+	include('../editor/includes/config/occurVarColl'.$collid.'.php');
+}
+elseif(file_exists('../editor/includes/config/occurVarDefault.php')){
+	//Specific to Default values for portal
+	include('../editor/includes/config/occurVarDefault.php');
+}
 ?>
 <html>
 <head>
@@ -109,7 +119,7 @@ if($SYMB_UID){
 						<legend><b><?php echo (isset($LANG['DAT_EDIT'])?$LANG['DAT_EDIT']:'Data Editor Control Panel'); ?></b></legend>
 						<fieldset style="float:right;margin:5px" title="Quick Search">
 							<legend><b><?php echo (isset($LANG['QUICK_SEARCH'])?$LANG['QUICK_SEARCH']:'Quick Search'); ?></b></legend>
-							<b><?php echo (isset($LANG['CAT_NUM'])?$LANG['CAT_NUM']:'Catalog Number'); ?></b><br/>
+							<b><?php echo (defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:(isset($LANG['CAT_NUM'])?$LANG['CAT_NUM']:'Catalog Number')); ?></b><br/>
 							<form name="quicksearch" action="../editor/occurrenceeditor.php" method="post">
 								<input name="q_catalognumber" type="text" />
 								<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
