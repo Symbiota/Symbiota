@@ -200,7 +200,7 @@ else{
 	?>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.table.js?ver=2" type="text/javascript" ></script>
+	<script src="../../js/symb/collections.editor.table.js?ver=3" type="text/javascript" ></script>
 	<script src="../../js/symb/collections.editor.query.js?ver=3" type="text/javascript" ></script>
 	<style type="text/css">
 		table.styledtable td { white-space: nowrap; }
