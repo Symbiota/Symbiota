@@ -139,12 +139,12 @@ $smManager = new SiteMapManager();
 									<?php echo $LANG['CREATENEWCOLL'];?>
 								</a>
 							</li>
+							<!--
 							<li>
 								<a href="<?php echo $CLIENT_ROOT; ?>/geothesaurus/index.php">
 									<?php echo isset($LANG['GEOTHESAURUS'])?$LANG['GEOTHESAURUS']:'Geographic Thesaurus'; ?>
 								</a>
 							</li>
-							<!--
 							<li>
 								<a href="<?php echo $CLIENT_ROOT; ?>/collections/cleaning/coordinatevalidator.php">
 									<?php echo isset($LANG['COORDVALIDATOR'])?$LANG['COORDVALIDATOR']:'Verify coordinates against political boundaries';?>
@@ -461,10 +461,13 @@ $smManager = new SiteMapManager();
 				}
 			?>
 			</fieldset>
-			<div style="margin: 15px">
-				<div style="margin: 5px"><img src="https://img.shields.io/badge/Symbiota-v<?php echo $CODE_VERSION; ?>-blue.svg" /></div>
-				<div style="margin: 5px"><img src="https://img.shields.io/badge/Schema-<?php echo 'v'.$smManager->getSchemaVersion(); ?>-blue.svg" /></div>
-			</div>
+
+			<h2><?php echo $LANG['ABOUT'];?></h2>
+			<ul>
+				<li>
+					<?php echo $LANG['SCHEMA'].' '.$smManager->getSchemaVersion(); ?>
+				</li>
+			</ul>
 		</div>
 	</div>
 	<?php

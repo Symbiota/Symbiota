@@ -1,0 +1,8 @@
+.label {
+		clear:both;
+		margin: 0px;
+		padding: 0px;
+		width: 125px;
+		page-break-before:auto;
+		page-break-inside:avoid;
+		}

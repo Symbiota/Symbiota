@@ -388,23 +388,20 @@ class SpecUploadDwca extends SpecUploadBase{
 				if($node = $symbiotaNodeList->item(0)){
 					if($node->hasAttribute('id')){
 						if($symbiotaGuid = $node->getAttribute('id')){
-							$this->setPortalID($symbiotaGuid);
+							$this->setPortalIndexID($symbiotaGuid);
 							if(!$this->sourcePortalIndex){
 								$urlNodeList = $xpath->query('/eml:eml/dataset/alternateIdentifier');
 								if($urlNodeList && isset($urlNodeList->item(0)->nodeValue)){
-									$urlRoot = $urlNodeList->item(0)->nodeValue;
-									$urlRoot = substr($urlRoot,0,strpos($urlRoot,'/collections/misc/collprofiles.php'));
+									$url = $urlNodeList->item(0)->nodeValue;
+									$url = substr($url,0,strpos($url,'/collections/misc/collprofiles.php'));
 									$portalName = 'GUID: '.$symbiotaGuid;
 									if($GLOBALS['DEFAULT_TITLE']) $portalName = $GLOBALS['DEFAULT_TITLE'];
 									$sql = 'INSERT INTO portalindex(portalName, urlRoot, guid)
-										VALUES("'.$this->cleanInStr($portalName).'","'.$this->cleanInStr($urlRoot).'","'.$this->cleanInStr($symbiotaGuid).'")';
-									if($this->conn->query($sql)){
-										$this->sourcePortalIndex = $this->conn->insert_id;
-										$this->touchRemoteInstallation($urlRoot);
-									}
+										VALUES("'.$this->cleanInStr($portalName).'","'.$this->cleanInStr($url).'","'.$this->cleanInStr($symbiotaGuid).'")';
+									if($this->conn->query($sql)) $this->sourcePortalIndex = $this->conn->insert_id;
 									else{
-										//$this->errorStr = 'ERROR adding portal index: '.$this->conn->error();
-										//$this->outputMsg($this->errorStr);
+										$this->errorStr = 'ERROR adding portal index: '.$this->conn->error();
+										$this->outputMsg($this->errorStr);
 									}
 								}
 							}
@@ -416,28 +413,11 @@ class SpecUploadDwca extends SpecUploadBase{
 		}
 	}
 
-	private function touchRemoteInstallation($urlRoot){
-		if($urlRoot && isset($GLOBALS['PORTAL_GUID']) && $GLOBALS['PORTAL_GUID']){
-			$urlLocal = 'http://';
-			if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlLocal = 'https://';
-			$urlLocal .= $_SERVER['SERVER_NAME'];
-			if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443) $urlLocal .= ':'.$_SERVER['SERVER_PORT'];
-			$url = $urlRoot.'/api/v2/installation/'.$GLOBALS['PORTAL_GUID'].'/touch/'.htmlentities($urlLocal.$GLOBALS['CLIENT_ROOT']);
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, $url);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-			curl_setopt($ch, CURLOPT_TIMEOUT_MS, 500);
-			curl_exec($ch);
-			curl_close($ch);
-		}
-	}
-
-	private function setPortalID($symbiotaGuid){
+	private function setPortalIndexID($symbiotaGuid){
 		if($symbiotaGuid){
-			$sql = 'SELECT portalID FROM portalindex WHERE guid = "'.$this->cleanInStr($symbiotaGuid).'"';
+			$sql = 'SELECT portalIndexID FROM portalindex WHERE guid = "'.$this->cleanInStr($symbiotaGuid).'"';
 			if($rs = $this->conn->query($sql)){
-				if($r = $rs->fetch_object()) $this->sourcePortalIndex = $r->portalID;
+				if($r = $rs->fetch_object()) $this->sourcePortalIndex = $r->portalIndexID;
 				$rs->free();
 			}
 		}

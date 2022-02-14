@@ -1,4 +1,4 @@
-var acUrlBase = "/rpc/taxasuggest.php";
+var acUrlBase = "/api/taxonomy/taxasuggest.php";
 var acUrl = acUrlBase;
 
 $(document).ready(function() {
@@ -109,7 +109,7 @@ function validateTaxon(f,submitForm){
 	else{
 		$.ajax({
 			type: "POST",
-			url: "../rpc/gettaxon.php",
+			url: "../api/taxonomy/gettaxon.php",
 			dataType: "json",
 			data: { sciname: f.taxa.value }
 		}).done(function( taxaObj ) {

@@ -111,7 +111,7 @@ class OccurrenceListManager extends OccurrenceManager{
 	}
 
 	private function setImages($occArr,&$retArr){
-		$sql = 'SELECT occid, thumbnailurl FROM images WHERE occid IN('.implode(',',$occArr).') ORDER BY occid, sortOccurrence';
+		$sql = 'SELECT occid, thumbnailurl FROM images WHERE occid IN('.implode(',',$occArr).') ORDER BY occid, sortsequence';
 		$rs = $this->conn->query($sql);
 		$previousOccid = 0;
 		while($r = $rs->fetch_object()){

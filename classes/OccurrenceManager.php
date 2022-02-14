@@ -161,21 +161,12 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 					$localArr[$k] = 'Locality IS NULL';
 				}
 				else{
-					$fullTextSearch = true;
-					if(strlen($value) < 4) $fullTextSearch = false;
-					elseif(strpos($value,' ')){
-						$wordArr = explode(' ',$value);
-						$fullTextSearch = false;
-						foreach($wordArr as $w){
-							if(strlen($w) > 3){
-								$fullTextSearch = true;
-								break;
-							}
-						}
+					if(strlen($value) < 4){
+						$tempArr[] = '(o.municipality LIKE "'.$this->cleanInStr($value).'%" OR o.Locality LIKE "%'.$this->cleanInStr($value).'%")';
 					}
-
-					if($fullTextSearch) $tempArr[] = '(MATCH(f.locality) AGAINST(\'"'.$this->cleanInStr(str_replace('"', '', $value)).'"\' IN BOOLEAN MODE)) ';
-					else $tempArr[] = '(o.municipality LIKE "'.$this->cleanInStr($value).'%" OR o.Locality LIKE "%'.$this->cleanInStr($value).'%")';
+					else{
+						$tempArr[] = '(MATCH(f.locality) AGAINST(\'"'.$this->cleanInStr(str_replace('"', '', $value)).'"\' IN BOOLEAN MODE)) ';
+					}
 				}
 			}
 			$sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
@@ -459,7 +450,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			//Make the sql valid, but return nothing
 			//$this->sqlWhere = 'WHERE o.occid IS NULL ';
 		}
-		//echo $this->sqlWhere;
+		//echo $this->sqlWhere; exit;
 	}
 
 	private function getAdditionIdentifiers($identFrag){
@@ -520,11 +511,9 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		if(array_key_exists('polycoords',$this->searchTermArr) || strpos($sqlWhere,'p.point')){
 			$sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
 		}
-		/*
 		if(array_key_exists('includeothercatnum',$this->searchTermArr)){
-			$sqlJoin .= 'LEFT JOIN omoccuridentifiers oi ON o.occid = oi.occid ';
+			//$sqlJoin .= 'LEFT JOIN omoccuridentifiers oi ON o.occid = oi.occid ';
 		}
-		*/
 		return $sqlJoin;
 	}
 

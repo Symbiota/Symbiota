@@ -713,19 +713,6 @@ class OccurrenceSesar extends Manager {
 			}
 			$rs->free();
 
-			$sql = 'SELECT identifierValue FROM omoccuridentifiers WHERE (occid = '.$occid.') ORDER BY sortBy';
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				if($r->identifierValue != $catalogNumber && $r->identifierValue != $catalogNumber){
-					$retArr['errCode'] = 2;
-					$catNum = $r->identifierValue;
-					if(isset($retArr['catNum'])) $catNum .= ', '.$retArr['catNum'];
-					$retArr['catNum'] = $catNum;
-					$ok = false;
-				}
-			}
-			$rs->free();
-
 			if($ok){
 				$sqlUpdate = 'UPDATE omoccurrences SET occurrenceid = "'.$this->cleanInStr($igsn).'" WHERE occid = '.$occid;
 				if($this->conn->query($sqlUpdate)){

@@ -13,7 +13,7 @@ if($collId) $loanManager->setCollId($collId);
 
 $invoiceArr = $loanManager->getInvoiceInfo($loanId,$loanType);
 $addressArr = $loanManager->getFromAddress($collId);
-$specList = $loanManager->getSpecimenList($loanId);
+$specList = $loanManager->getSpecList($loanId);
 $targetCode = $invoiceArr['institutioncode'];
 $sourceCode = $addressArr['institutioncode'];
 if($loanType == 'in'){
@@ -58,7 +58,7 @@ if($outputMode == 'doc'){
 	$table = $section->addTable('listTable');
 	foreach($specList as $specArr){
 		$table->addRow();
-		$table->addCell(2250,$cellStyle)->addText(htmlspecialchars($specArr['catalognumber'].(isset($specArr['othercatalognumbers'])?', '.implode(', '.$specArr['othercatalognumbers']):'')),'colFont','colSpace');
+		$table->addCell(2250,$cellStyle)->addText(htmlspecialchars($specArr['catalognumber']),'colFont','colSpace');
 		$table->addCell(4500,$cellStyle)->addText(htmlspecialchars($specArr['collector']),'colFont','colSpace');
 		$table->addCell(6000,$cellStyle)->addText(htmlspecialchars($specArr['sciname']),'colFont','colSpace');
 	}
@@ -81,7 +81,14 @@ else{
 			<title><?php echo $sourceCode.' '.$invoiceArr['loanidentifierown']; ?> Specimen List</title>
 			<?php
 			$activateJQuery = false;
-			include_once($SERVER_ROOT.'/includes/head.php');
+			if(file_exists($SERVER_ROOT.'/includes/head.php')){
+				include_once($SERVER_ROOT.'/includes/head.php');
+			}
+			else{
+				echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
+				echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
+				echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
+			}
 			?>
 			<style type="text/css">
 				body {font-family:arial,sans-serif;}
@@ -123,7 +130,7 @@ else{
 					<?php
 					foreach($specList as $specArr){
 						echo '<tr>';
-						echo '<td style="width:150px;">'.$specArr['catalognumber'].(isset($specArr['othercatalognumbers'])?'<br/>'.implode(', '.$specArr['othercatalognumbers']):'').'</td>';
+						echo '<td style="width:150px;">'.$specArr['catalognumber'].'</td>';
 						echo '<td style="width:300px;">'.$specArr['collector'].'</td>';
 						echo '<td style="width:400px;">'.$specArr['sciname'].'</td>';
 						echo '<td> </td>';
