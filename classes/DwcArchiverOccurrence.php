@@ -358,11 +358,11 @@ class DwcArchiverOccurrence{
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				if($r->identifierName) $retStr .= $r->identifierName.': ';
-				$retStr .= $r->identifierValue;
+				$retStr .= $r->identifierValue.'; ';
 			}
 			$rs->free();
 		}
-		return $retStr;
+		return trim($retStr,'; ');
 	}
 
 	public function setIncludeExsiccatae(){
