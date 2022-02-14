@@ -1,0 +1,254 @@
+/* Modify styles within this file to override styles within base.css file 
+ * 
+ **/
+body{
+	width: 100%;
+	min-width: 400px;
+	max-width: 1600px;
+	margin-top:0px;
+	background-color: #F8F8F8;
+	color: #515151;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 15px;
+}
+
+a{
+	color: #17a2ff;
+}
+a:hover{
+	color:#ff7417;
+}
+
+/*Main table framework*/
+#maintable{
+	width: 90%;
+	margin:auto;
+	vertical-align:center;
+	background-color:#F8F8F8;
+	/*border:3px solid #ff7417;*/
+
+}
+
+#maintable td{
+/*	padding:4px;*/
+}
+
+#header{
+	text-align:center;
+	padding:0px;
+	background-color:#F8F8F8;
+	width:100%;
+}
+
+#header a{
+
+}
+
+#header a:hover{
+
+}
+
+#middleleft{
+}
+
+#middleleftnomenu{
+}
+
+#middlecenter{
+	padding:0px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 15px;
+}
+
+#middleright{
+}
+
+#footer{
+}
+
+/*Central div in the middle center table div */
+#innertext{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 15px;
+	background-color:#f8f8f8;
+}
+
+#innertext a{
+
+}
+#innertext a:hover{
+
+}
+
+div.navpath {
+}
+
+/* Image thumbnails   */
+div.tndiv{
+
+}
+
+div.tnimg{
+
+}
+
+div.tnimg a{
+
+}
+
+div.tnimg img{
+
+}	
+
+/*Misc general items*/
+table{
+
+}
+
+h1{
+
+}
+
+h2{
+
+}
+
+h3{
+
+}
+
+#top_navbar{
+	clear:both;
+	height:35px;/*was 33px*/
+	color:#5c5c5c;
+	margin-left:auto;
+	margin-right:auto;
+	text-align:center;
+}
+#right_navbarlinks{
+	clear:both;
+	font-size:14px;
+	/*position: absolute;*/
+	/*margin-left:80%*/
+	text-align:right;
+	float:right;
+	color:#000000;
+	margin-top:9px;
+}
+#hor_dropdown{
+	list-style:none;
+	font-size:24px;
+	width:auto;
+	height:35px;
+	border-top: 0px;
+	margin-left:auto;
+	margin-right:auto;
+	color: #5c5c5c;
+}
+#hor_dropdown li{		
+	float:none;
+	display: inline-block;
+	padding:0;
+	margin:0;
+}
+#hor_dropdown a{
+	display:block;
+	color:#17a2ff;
+	text-decoration:none;
+	padding-top:5px;
+	padding-bottom:5px;
+	padding-left:10px;
+	padding-right:10px;
+	background-image:none;/* url(/web/20200521021043im_/https://serv.biokic.asu.edu/ecdysis/css/images/menu-item_divider.jpg);*/
+    background-repeat: no-repeat;
+    background-position: right bottom;
+}
+#hor_dropdown a:hover{
+	background-color:#ff7417;
+	color:#FFFFFF;
+	padding-top:5px;
+	padding-bottom:5px;
+	padding-left:10px;
+	padding-right:10px;
+	background-image:none;
+}
+/* Submenu */
+#hor_dropdown ul {
+	list-style:none;
+	position:absolute;
+	left:-9999px;
+	top:-9999px;
+	background-color:#dcdcdc;
+	z-index:1000;
+}
+#hor_dropdown ul li{
+	float:none;
+}
+#hor_dropdown ul a{
+	white-space:nowrap;
+}
+#hor_dropdown li:hover ul {
+	left:0;
+	top:33px;
+	padding:0px;
+	z-index:1000;
+}
+#hor_dropdown li:hover ul a {
+	padding:5px;
+	text-decoration:none;
+	text-indent:8px;
+	padding-right:8px;
+	background-image: none;
+	background-color:#dcdcdc;
+	z-index:1000;
+}
+#hor_dropdown li:hover ul li a:hover { 
+	background:#999999; 
+}
+
+.categorytitle{
+}
+
+.categorytitle a{ 
+}
+
+.collectiontitle{
+}
+
+.collectiontitle a{
+}
+
+.collectiontitle a:hover{
+}
+
+.collectionname{
+}
+
+.collectioncode{
+}
+
+
+#omlisttable{
+	 font-size: 14px;
+}
+
+
+/* Quick Search Plugin */
+#quicksearchdiv{
+}
+
+#quicksearchtext{
+	font-size: 15px;
+}
+
+#quicksearchtaxon{
+	font-size: 15px;
+}
+
+#quicksearchbutton{
+	font-size: 15px;
+}
+
+/* Slideshow Plugin */
+#slideshowcontainer{
+}
