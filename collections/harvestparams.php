@@ -14,14 +14,20 @@ $attribSearch = new OccurrenceAttributeSearch();
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['PAGE_TITLE']; ?></title>
 	<?php
 	$activateJQuery = true;
-	include_once($SERVER_ROOT.'/includes/head.php');
+	if(file_exists($SERVER_ROOT.'/includes/head.php')){
+		include_once($SERVER_ROOT.'/includes/head.php');
+	}
+	else{
+		echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
+		echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
+		echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
+	}
     include_once($SERVER_ROOT.'/includes/googleanalytics.php');
     ?>
 	<script src="../js/jquery-3.2.1.min.js?ver=3" type="text/javascript"></script>
 	<script src="../js/jquery-ui-1.12.1/jquery-ui.min.js?ver=3" type="text/javascript"></script>
 	<script src="../js/symb/collections.harvestparams.js?ver=180721" type="text/javascript"></script>
 	<script src="../js/symb/collections.traitsearch.js?ver=8" type="text/javascript"></script> <!-- Contains serach-by-trait modifications -->
-	<script src="../js/symb/wktpolygontools.js?ver=1c" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			<?php
@@ -88,7 +94,7 @@ $attribSearch = new OccurrenceAttributeSearch();
 							}
 							?>
 						</select>
-						<input id="taxa" type="text" size="60" name="taxa" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
+						<input id="taxa" type="text" size="54" name="taxa" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
 					</div>
 				</div>
 				<div style='float:right;margin:0px 10px;'>
@@ -166,7 +172,7 @@ $attribSearch = new OccurrenceAttributeSearch();
 						&nbsp;<a href="#" onclick="openCoordAid('polygon');return false;"><img src="../images/map.png" title="<?php echo (isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'); ?>" /></a>
 					</div>
 					<div class="elemDiv">
-						<textarea id="footprintwkt" name="footprintwkt" onchange="this.value = validatePolygon(this.value)" style="zIndex:999;width:100%;height:90px"></textarea>
+						<textarea id="footprintwkt" name="footprintwkt" style="zIndex:999;width:100%;height:90px"></textarea>
 					</div>
 				</div>
 				<div class="coordBoxDiv">

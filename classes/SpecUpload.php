@@ -152,12 +152,12 @@ class SpecUpload{
 			$sql = 'SELECT collid FROM omcollections WHERE securitykey = "'.$k.'"';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
-			if($r = $rs->fetch_object()){
-				$this->setCollId($r->collid);
-			}
-			else{
-				return false;
-			}
+	    	if($r = $rs->fetch_object()){
+	    		$this->setCollId($r->collid);
+	    	}
+	    	else{
+	    		return false;
+	    	}
 			$rs->free();
 		}
 		elseif(!isset($this->collMetadataArr["securitykey"])){
@@ -246,8 +246,7 @@ class SpecUpload{
 			if($searchVariables == 'matchappend'){
 				$sql = 'SELECT DISTINCT u.occid, u.dbpk, u.'.implode(',u.',$occFieldArr).' '.
 					'FROM uploadspectemp u INNER JOIN omoccurrences o ON u.collid = o.collid '.
-					'LEFT JOIN omoccuridentifiers i ON o.occid = i.occid '.
-					'WHERE (u.collid IN('.$this->collId.')) AND (u.occid IS NULL) AND (u.catalogNumber = o.catalogNumber OR u.othercatalogNumbers = o.othercatalogNumbers OR u.othercatalogNumbers = i.identifiervalue) ';
+					'WHERE (u.collid IN('.$this->collId.')) AND (u.occid IS NULL) AND (u.catalogNumber = o.catalogNumber OR u.othercatalogNumbers = o.othercatalogNumbers) ';
 			}
 			elseif($searchVariables == 'sync'){
 				$sql = 'SELECT DISTINCT u.occid, u.dbpk, u.'.implode(',u.',$occFieldArr).' '.
@@ -318,38 +317,38 @@ class SpecUpload{
 	}
 
 	//Profile management
-	public function readUploadParameters(){
-		if($this->uspid){
+    public function readUploadParameters(){
+    	if($this->uspid){
 			$sql = 'SELECT usp.collid, usp.title, usp.Platform, usp.server, usp.port, usp.Username, usp.Password, usp.SchemaName, '.
-				'usp.code, usp.path, usp.pkfield, usp.querystr, usp.cleanupsp, cs.uploaddate, usp.uploadtype '.
+	    		'usp.code, usp.path, usp.pkfield, usp.querystr, usp.cleanupsp, cs.uploaddate, usp.uploadtype '.
 				'FROM uploadspecparameters usp LEFT JOIN omcollectionstats cs ON usp.collid = cs.collid '.
-				'WHERE (usp.uspid = '.$this->uspid.')';
+	    		'WHERE (usp.uspid = '.$this->uspid.')';
 			//echo $sql;
 			$result = $this->conn->query($sql);
-			if($row = $result->fetch_object()){
-				if(!$this->collId) $this->collId = $row->collid;
-				$this->title = $row->title;
-				$this->platform = $row->Platform;
-				$this->server = $row->server;
-				$this->port = $row->port;
-				$this->username = $row->Username;
-				$this->password = $row->Password;
-				$this->schemaName = $row->SchemaName;
-				$this->code = $row->code;
-				if(!$this->path) $this->path = $row->path;
-				$this->pKField = strtolower($row->pkfield);
-				$this->queryStr = $row->querystr;
-				$this->storedProcedure = $row->cleanupsp;
-				$this->lastUploadDate = $row->uploaddate;
-				$this->uploadType = $row->uploadtype;
-				if(!$this->lastUploadDate) $this->lastUploadDate = date('Y-m-d H:i:s');
-			}
-			$result->free();
-		}
-	}
+	    	if($row = $result->fetch_object()){
+	    		if(!$this->collId) $this->collId = $row->collid;
+	    		$this->title = $row->title;
+	    		$this->platform = $row->Platform;
+	    		$this->server = $row->server;
+	    		$this->port = $row->port;
+	    		$this->username = $row->Username;
+	    		$this->password = $row->Password;
+	    		$this->schemaName = $row->SchemaName;
+	    		$this->code = $row->code;
+	    		if(!$this->path) $this->path = $row->path;
+	    		$this->pKField = strtolower($row->pkfield);
+	    		$this->queryStr = $row->querystr;
+	    		$this->storedProcedure = $row->cleanupsp;
+	    		$this->lastUploadDate = $row->uploaddate;
+	    		$this->uploadType = $row->uploadtype;
+	    		if(!$this->lastUploadDate) $this->lastUploadDate = date('Y-m-d H:i:s');
+	    	}
+	    	$result->free();
+    	}
+    }
 
-	public function editUploadProfile($profileArr){
-		$sql = 'UPDATE uploadspecparameters SET title = "'.$this->cleanInStr($profileArr['title']).'"'.
+    public function editUploadProfile($profileArr){
+    	$sql = 'UPDATE uploadspecparameters SET title = "'.$this->cleanInStr($profileArr['title']).'"'.
 			', platform = '.($profileArr['platform']?'"'.$profileArr['platform'].'"':'NULL').
 			', server = '.($profileArr['server']?'"'.$profileArr['server'].'"':'NULL').
 			', port = '.($profileArr['port']?$profileArr['port']:'NULL').
@@ -370,7 +369,7 @@ class SpecUpload{
 		return true;
 	}
 
-	public function createUploadProfile($profileArr){
+    public function createUploadProfile($profileArr){
 		$sql = 'INSERT INTO uploadspecparameters(collid, uploadtype, title, platform, server, port, code, path, '.
 			'pkfield, username, password, schemaname, cleanupsp, querystr) VALUES ('.$this->collId.','.
 			$profileArr['uploadtype'].',"'.$this->cleanInStr($profileArr['title']).'",'.
@@ -395,7 +394,7 @@ class SpecUpload{
 		}
 	}
 
-	public function deleteUploadProfile($uspid){
+    public function deleteUploadProfile($uspid){
 		$sql = 'DELETE FROM uploadspecparameters WHERE (uspid = '.$uspid.')';
 		if(!$this->conn->query($sql)){
 			$this->errorStr = '<div>Error Adding Upload Parameters: '.$this->conn->error.'</div><div>'.$sql.'</div>';
@@ -483,8 +482,12 @@ class SpecUpload{
 				$logPath = $GLOBALS['SERVER_ROOT'];
 				if(substr($logPath,-1) != '/') $logPath .= '/';
 				$logPath .= 'content/logs/occurImport/';
-				if($logTitle) $logPath .= $logTitle;
-				else $logPath .= 'dataupload';
+				if($logTitle){
+					$logPath .= $logTitle;
+				}
+				else{
+					$logPath .= 'dataupload';
+				}
 				$logPath .= '_'.date('Y-m-d').".log";
 				$this->logFH = fopen($logPath, 'a');
 				$this->outputMsg('Start time: '.date('Y-m-d h:i:s A'));

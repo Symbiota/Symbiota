@@ -500,7 +500,7 @@ else{
         }
 
 	</script>
-	<script src="../../js/symb/collections.coordinateValidation.js?ver=1" type="text/javascript"></script>
+	<script src="../../js/symb/collections.coordinateValidation.js?ver=170310" type="text/javascript"></script>
 	<script src="../../js/symb/wktpolygontools.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/collections.georef.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.main.js?ver=10" type="text/javascript"></script>
@@ -515,6 +515,13 @@ else{
 		.fieldDiv{ float:left; margin-right: 20px; }
 		#identifierDiv img{ width:10px; margin-left: 5px; }
 	</style>
+	
+	<link rel="apple-touch-icon" sizes="180x180" href="<?php echo $CLIENT_ROOT; ?>/images/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="<?php echo $CLIENT_ROOT; ?>/images/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="<?php echo $CLIENT_ROOT; ?>/images/favicon-16x16.png">
+	<link rel="manifest" href="<?php echo $CLIENT_ROOT; ?>/images/site.webmanifest">
+	<link rel="mask-icon" href="<?php echo $CLIENT_ROOT; ?>/images/safari-pinned-tab.svg" color="#5bbad5">
+		
 </head>
 <body>
 	<div id="innertext">
