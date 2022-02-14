@@ -30,12 +30,13 @@ if($isEditor){
 		elseif($formSubmit == 'Save Outgoing'){
 			$statusStr = $loanManager->editLoanOut($_POST);
 		}
-		elseif($formSubmit == 'performSpecimenAction'){
-			if(!$loanManager->editSpecimen($_REQUEST)){
-				$statusStr = $loanManager->getErrorMessage();
-			}
+		elseif($formSubmit == 'deleteSpecimens'){
+			if(!$loanManager->deleteSpecimens($_POST['occid'], $_POST['loanid'])) $statusStr = $loanManager->getErrorMessage();
 		}
-		elseif($formSubmit == 'Add New Determinations'){
+		elseif($formSubmit == 'checkinSpecimens'){
+			if(!$loanManager->batchCheckinSpecimens($_POST['occid'], $_POST['loanid'])) $statusStr = $loanManager->getErrorMessage();
+		}
+		elseif($formSubmit == 'addDeterminations'){
 			include_once($SERVER_ROOT.'/classes/OccurrenceEditorDeterminations.php');
 			$occManager = new OccurrenceEditorDeterminations();
 			$occidArr = $_REQUEST['occid'];
@@ -95,14 +96,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 	<title><?php echo $DEFAULT_TITLE; ?>: Outgoing Loan Management</title>
 	<?php
 	$activateJQuery = true;
-	if(file_exists($SERVER_ROOT.'/includes/head.php')){
-		include_once($SERVER_ROOT.'/includes/head.php');
-	}
-	else{
-		echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-		echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-		echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-	}
+	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
@@ -209,7 +203,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 		function verifySpecEditForm(f){
 			if(skipFormVerification) return true;
 			skipFormVerification = false;
-			//Make sure at least on specimen checkbox is checked
+
 			var cbChecked = false;
 			var dbElements = document.getElementsByName("occid[]");
 			for(i = 0; i < dbElements.length; i++){
@@ -224,18 +218,6 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 				return false;
 			}
 
-			//If task equals delete, confirm action
-			var applyTaskObj = f.applytask;
-			var l = applyTaskObj.length;
-			var applyTaskValue = "";
-			for(var i = 0; i < l; i++) {
-				if(applyTaskObj[i].checked) {
-					applyTaskValue = applyTaskObj[i].value;
-				}
-			}
-			if(applyTaskValue == "delete"){
-				return confirm("Are you sure you want to remove selected specimens from this loan?");
-			}
 			return true;
 		}
 
@@ -304,6 +286,14 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 				var dbElement = dbElements[i];
 				dbElement.checked = boxesChecked;
 			}
+		}
+
+		function openCheckinPopup(loanId, occid, collid){
+			urlStr = "specnoteseditor.php?loanid="+loanId+"&occid="+occid+"&collid="+collid;
+			newWindow = window.open(urlStr,'popup','scrollbars=1,toolbar=0,resizable=1,width=800,height=300,left=60,top=250');
+			window.name = "parentWin";
+			if(newWindow.opener == null) newWindow.opener = self;
+			return false;
 		}
 
 	</script>

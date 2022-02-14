@@ -28,25 +28,22 @@ if($collid){
 
 $includeDets = 1;
 $includeImgs = 1;
+$includeMatSample = 1;
 $redactLocalities = 1;
 if($action == 'savekey' || (isset($_REQUEST['datasetKey']) && $_REQUEST['datasetKey'])){
 	$collManager->setAggKeys($_POST);
 	$collManager->updateAggKeys();
 }
 elseif($action){
-	if (!array_key_exists('dets', $_POST)) {
-		$includeDets = 0;
-		$dwcaManager->setIncludeDets(0);
-	}
-	if (!array_key_exists('imgs', $_POST)) {
-		$includeImgs = 0;
-		$dwcaManager->setIncludeImgs(0);
-	}
-	if (!array_key_exists('redact', $_POST)) {
-		$redactLocalities = 0;
-		$dwcaManager->setRedactLocalities(0);
-	}
-	$dwcaManager->setTargetPath($SERVER_ROOT . (substr($SERVER_ROOT, -1) == '/' ? '' : '/') . 'content/dwca/');
+	if(!array_key_exists('dets', $_POST)) $includeDets = 0;
+	$dwcaManager->setIncludeDets($includeDets);
+	if(!array_key_exists('imgs', $_POST)) $includeImgs = 0;
+	$dwcaManager->setIncludeImgs($includeImgs);
+	if(!array_key_exists('matsample', $_POST)) $includeMatSample = 0;
+	$dwcaManager->setIncludeMaterialSample($includeMatSample);
+	if (!array_key_exists('redact', $_POST)) $redactLocalities = 0;
+	$dwcaManager->setRedactLocalities($redactLocalities);
+	$dwcaManager->setTargetPath($SERVER_ROOT.(substr($SERVER_ROOT, -1) == '/' ? '' : '/').'content/dwca/');
 }
 
 $idigbioKey = $collManager->getIdigbioKey();
@@ -65,6 +62,8 @@ if($isEditor){
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
+	<meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate">
+	<meta http-equiv="Pragma" content="no-cache">
 	<title><?php echo $LANG['DWCA_PUBLISHER']; ?></title>
 	<?php
 	$activateJQuery = true;
@@ -255,7 +254,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	</div>
 	<?php
 	if($collid){
-		if($action == 'Create/Refresh Darwin Core Archive'){
+		if($action == 'buildDwca'){
 			echo '<ul>';
 			$dwcaManager->setVerboseMode(3);
 			$dwcaManager->setLimitToGuids(true);
@@ -304,7 +303,7 @@ include($SERVER_ROOT.'/includes/header.php');
 			$recFlagArr = $dwcaManager->verifyCollRecords($collid);
 			if($collArr['guidtarget']){
 				echo '<div style="margin:10px;"><b>GUID source:</b> '.$collArr['guidtarget'].'</div>';
-				if($recFlagArr['nullGUIDs']){
+				if(isset($recFlagArr['nullGUIDs']) && $recFlagArr['nullGUIDs']){
 					echo '<div style="margin:10px;">';
 					if($collArr['guidtarget'] == 'occurrenceId'){
 						echo '<b>'.$LANG['RECORDS_MISSING'].' <a href="" target="_blank">'.$LANG['OCCID_GUIDS'].'</a>:</b> '.$recFlagArr['nullGUIDs'];
@@ -331,7 +330,7 @@ include($SERVER_ROOT.'/includes/header.php');
 			}
 			else{
 				echo '<div style="margin:10px;font-weight:bold;color:red;">'.$LANG['GUID_NOT_SET'].' <a href="../misc/collmetadata.php?collid='.$collid.'">'.$LANG['EDIT_METADATA'].'</a> '.$LANG['TO_SET_GUID'].'.</div>';
-				$blockSubmitMsg = 'Archive cannot be published until occurrenceID GUID source is set<br/>';
+				$blockSubmitMsg = $LANG['CANNOT_PUBLISH'].'<br/>';
 			}
 			if($recFlagArr['nullBasisRec']){
 				echo '<div style="margin:10px;font-weight:bold;color:red;">'.$LANG['THERE_ARE'].' '.$recFlagArr['nullBasisRec'].$LANG['MISSING_BASISOFRECORD'].' '.' <a href="../editor/occurrencetabledisplay.php?q_recordedby=&q_recordnumber=&q_catalognumber&collid='.$collid.'&csmode=0&occid=&occindex=0">'.$LANG['EDIT_EXISTING'].'</a> '.$LANG['TO_CORRECT'].'</div>';
@@ -415,12 +414,15 @@ include($SERVER_ROOT.'/includes/header.php');
 				<div>
 					<input type="checkbox" name="dets" value="1" <?php echo ($includeDets?'CHECKED':''); ?> /> <?php echo $LANG['INCLUDE_DETS']; ?><br/>
 					<input type="checkbox" name="imgs" value="1" <?php echo ($includeImgs?'CHECKED':''); ?> /> <?php echo $LANG['INCLUDE_IMGS']; ?><br/>
+					<?php
+					if($collManager->materialSampleIsActive()) echo '<input type="checkbox" name="matsample" value="1" '.($includeMatSample?'CHECKED':'').' /> '.$LANG['INCLUDE_MATSAMPLE'].'<br/>';
+					?>
 					<input type="checkbox" name="redact" value="1" <?php echo ($redactLocalities?'CHECKED':''); ?> /> <?php echo $LANG['REDACT_LOC']; ?><br/>
 				</div>
 				<div style="clear:both;margin:10px;">
 					<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
 					<?php
-					echo '<button type="submit" name="formsubmit" value="Create/Refresh Darwin Core Archive" '.($blockSubmitMsg?'disabled':'').'>'.$LANG['CREATE_REFRESH'].'</button>';
+					echo '<button type="submit" name="formsubmit" value="buildDwca" '.($blockSubmitMsg?'disabled':'').'>'.$LANG['CREATE_REFRESH'].'</button>';
 					if($blockSubmitMsg) echo '<span style="color:red;margin-left:10px;">'.$blockSubmitMsg.'</span>';
 					?>
 				</div>
@@ -440,7 +442,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	else{
 		$catID = (isset($DEFAULTCATID)?$DEFAULTCATID:0);
 		if($IS_ADMIN){
-			if($action == 'Create/Refresh Darwin Core Archive(s)'){
+			if($action == 'buildDwca'){
 				echo '<ul>';
 				$dwcaManager->setVerboseMode(2);
 				$dwcaManager->setLimitToGuids(true);
@@ -461,12 +463,9 @@ include($SERVER_ROOT.'/includes/header.php');
 							$collList = $dwcaManager->getCollectionList($catID);
 							foreach($collList as $k => $v){
 								$errMsg = '';
-								if(!$v['guid']){
-									$errMsg = 'Missing GUID source';
-								}
-								elseif($v['url'] && !strpos($v['url'],str_replace('www.', '', $_SERVER["SERVER_NAME"]))){
-									$baseUrl = substr($v['url'],0,strpos($v['url'],'/content')).'/collections/datasets/datapublisher.php';
-									$errMsg = $LANG['ALREADY_PUB_DOMAIN'].' (<a href="'.$baseUrl.'" target="_blank">'.substr($baseUrl,0,strpos($baseUrl,'/',10)).'</a>)';
+								if(isset($v['err']) && $v['err']){
+									$errMsg = $LANG[$v['err']];
+									if($v['err'] == 'ALREADY_PUB_DOMAIN') $errMsg .= ' (<a href="'.$v['url'].'" target="_blank">'.substr($v['url'],0,strpos($v['url'],'/',10)).'</a>)';
 								}
 								$inputAttr = '';
 								if($errMsg) $inputAttr = 'DISABLED';
@@ -483,11 +482,14 @@ include($SERVER_ROOT.'/includes/header.php');
 							<legend><b><?php echo $LANG['OPTIONS']; ?></b></legend>
 							<input type="checkbox" name="dets" value="1" <?php echo ($includeDets?'CHECKED':''); ?> /> <?php echo $LANG['INCLUDE_DETS']; ?><br/>
 							<input type="checkbox" name="imgs" value="1" <?php echo ($includeImgs?'CHECKED':''); ?> /> <?php echo $LANG['INCLUDE_IMGS']; ?><br/>
+							<?php
+							if($dwcaManager->materialSampleIsActive()) echo '<input type="checkbox" name="matsample" value="1" '.($includeMatSample?'CHECKED':'').' /> '.$LANG['INCLUDE_MATSAMPLE'].'<br/>';
+							?>
 							<input type="checkbox" name="redact" value="1" <?php echo ($redactLocalities?'CHECKED':''); ?> /> <?php echo $LANG['REDACT_LOC']; ?><br/>
 						</fieldset>
 						<div style="clear:both;margin:20px;">
 							<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
-							<button type="submit" name="formsubmit" value="Create/Refresh Darwin Core Archive(s)" ><?php echo $LANG['CREATE_REFRESH']; ?></button>
+							<button type="submit" name="formsubmit" value="buildDwca" ><?php echo $LANG['CREATE_REFRESH']; ?></button>
 						</div>
 					</fieldset>
 				</form>
@@ -538,7 +540,7 @@ include($SERVER_ROOT.'/includes/header.php');
 				echo '<div style="font-weight:bold;font-size:140%;margin:50px 0px 15px 0px;">'.$LANG['ADDIT_SOURCES'].'</div>';
 				echo '<ul>';
 				foreach($addDwca as $domanName => $domainArr){
-					echo '<li><a href="'.$domainArr['url'].'/collections/datasets/datapublisher.php'.'" target="_blank">'.$domanName.'</a> - '.$domainArr['cnt'].' Archives</li>';
+					echo '<li><a href="'.$domainArr['url'].'" target="_blank">'.$domanName.'</a> - '.$domainArr['cnt'].' Archives</li>';
 				}
 				echo '</ul>';
 			}

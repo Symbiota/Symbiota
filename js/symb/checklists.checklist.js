@@ -94,7 +94,7 @@ function validateAddSpecies(f){
 	else{
 		$.ajax({
 			type: "POST",
-			url: "../api/taxonomy/gettaxon.php",
+			url: "../rpc/gettaxon.php",
 			dataType: "json",
 			data: { sciname: sciName }
 		}).done(function( taxaObj ) {

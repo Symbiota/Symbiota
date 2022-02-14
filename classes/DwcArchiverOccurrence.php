@@ -238,8 +238,6 @@ class DwcArchiverOccurrence{
 			$this->occurDefArr['fields']['lithology'] = 'paleo.lithology';
 			$this->occurDefArr['terms']['stratRemarks'] = 'https://symbiota.org/terms/paleo-stratRemarks';
 			$this->occurDefArr['fields']['stratRemarks'] = 'paleo.stratRemarks';
-			$this->occurDefArr['terms']['lithDescription'] = 'https://symbiota.org/terms/paleo-lithDescription';
-			$this->occurDefArr['fields']['lithDescription'] = 'paleo.lithDescription';
 			$this->occurDefArr['terms']['element'] = 'https://symbiota.org/terms/paleo-element';
 			$this->occurDefArr['fields']['element'] = 'paleo.element';
 			$this->occurDefArr['terms']['slideProperties'] = 'https://symbiota.org/terms/paleo-slideProperties';
@@ -356,10 +354,11 @@ class DwcArchiverOccurrence{
 	public function getAdditionalCatalogNumberStr($occid){
 		$retStr = '';
 		if(is_numeric($occid)){
-			$sql = 'SELECT GROUP_CONCAT(CONCAT_WS(": ",identifierName, identifierValue) SEPARATOR "; ") as idStr FROM omoccuridentifiers WHERE occid = '.$occid;
+			$sql = 'SELECT identifierName, identifierValue FROM omoccuridentifiers WHERE occid = '.$occid.' ORDER BY sortBy';
 			$rs = $this->conn->query($sql);
-			if($r = $rs->fetch_object()){
-				$retStr = $r->idStr;
+			while($r = $rs->fetch_object()){
+				if($r->identifierName) $retStr .= $r->identifierName.': ';
+				$retStr .= $r->identifierValue;
 			}
 			$rs->free();
 		}

@@ -5,8 +5,7 @@ Language: Français (French)
 ------------------
 */
 
-include_once($SERVER_ROOT.'/content/lang/collections/individual/index.fr.php');
-include_once($SERVER_ROOT.'/content/lang/collections/sharedterms.fr.php');
+include_once($SERVER_ROOT.'/content/lang/collections/list.fr.php');
 
 $LANG['COL_RESULTS'] = 'Tableau des Résultats de Recherche de Collections';
 $LANG['SORT'] = 'Trier les Résultats';

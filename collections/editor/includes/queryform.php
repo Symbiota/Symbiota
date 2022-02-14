@@ -378,7 +378,7 @@ else{
 					<option <?php echo ($qCustomType4=='NOT EQUALS'?'SELECTED':''); ?> value="NOT EQUALS">NOT EQUALS</option>
 					<option <?php echo ($qCustomType4=='STARTS'?'SELECTED':''); ?> value="STARTS">STARTS WITH</option>
 					<option <?php echo ($qCustomType4=='LIKE'?'SELECTED':''); ?> value="LIKE">CONTAINS</option>
-					<option <?php echo ($qCustomType4=='NOT LIKE'?'SELECTED':''); ?> value="NOT LIKE">DOESN'T CONTAIN</option>
+					<option <?php echo ($qCustomType4=='NOT LIKE'?'SELECTED':''); ?> value="NOT LIKE">DOES NOT CONTAIN</option>
 					<option <?php echo ($qCustomType4=='GREATER'?'SELECTED':''); ?> value="GREATER">GREATER THAN</option>
 					<option <?php echo ($qCustomType4=='LESS'?'SELECTED':''); ?> value="LESS">LESS THAN</option>
 					<option <?php echo ($qCustomType4=='NULL'?'SELECTED':''); ?> value="NULL">IS NULL</option>
@@ -421,7 +421,7 @@ else{
 					<option <?php echo ($qCustomType5=='NOT EQUALS'?'SELECTED':''); ?> value="NOT EQUALS">NOT EQUALS</option>
 					<option <?php echo ($qCustomType5=='STARTS'?'SELECTED':''); ?> value="STARTS">STARTS WITH</option>
 					<option <?php echo ($qCustomType5=='LIKE'?'SELECTED':''); ?> value="LIKE">CONTAINS</option>
-					<option <?php echo ($qCustomType5=='NOT LIKE'?'SELECTED':''); ?> value="NOT LIKE">DOESN'T CONTAIN</option>
+					<option <?php echo ($qCustomType5=='NOT LIKE'?'SELECTED':''); ?> value="NOT LIKE">DOES NOT CONTAIN</option>
 					<option <?php echo ($qCustomType5=='GREATER'?'SELECTED':''); ?> value="GREATER">GREATER THAN</option>
 					<option <?php echo ($qCustomType5=='LESS'?'SELECTED':''); ?> value="LESS">LESS THAN</option>
 					<option <?php echo ($qCustomType5=='NULL'?'SELECTED':''); ?> value="NULL">IS NULL</option>
@@ -464,7 +464,7 @@ else{
 					<option <?php echo ($qCustomType6=='NOT EQUALS'?'SELECTED':''); ?> value="NOT EQUALS">NOT EQUALS</option>
 					<option <?php echo ($qCustomType6=='STARTS'?'SELECTED':''); ?> value="STARTS">STARTS WITH</option>
 					<option <?php echo ($qCustomType6=='LIKE'?'SELECTED':''); ?> value="LIKE">CONTAINS</option>
-					<option <?php echo ($qCustomType6=='NOT LIKE'?'SELECTED':''); ?> value="NOT LIKE">DOESN'T CONTAIN</option>
+					<option <?php echo ($qCustomType6=='NOT LIKE'?'SELECTED':''); ?> value="NOT LIKE">DOES NOT CONTAIN</option>
 					<option <?php echo ($qCustomType6=='GREATER'?'SELECTED':''); ?> value="GREATER">GREATER THAN</option>
 					<option <?php echo ($qCustomType6=='LESS'?'SELECTED':''); ?> value="LESS">LESS THAN</option>
 					<option <?php echo ($qCustomType6=='NULL'?'SELECTED':''); ?> value="NULL">IS NULL</option>
@@ -506,7 +506,7 @@ else{
 					<option <?php echo ($qCustomType7=='NOT EQUALS'?'SELECTED':''); ?> value="NOT EQUALS">NOT EQUALS</option>
 					<option <?php echo ($qCustomType7=='STARTS'?'SELECTED':''); ?> value="STARTS">STARTS WITH</option>
 					<option <?php echo ($qCustomType7=='LIKE'?'SELECTED':''); ?> value="LIKE">CONTAINS</option>
-					<option <?php echo ($qCustomType7=='NOT LIKE'?'SELECTED':''); ?> value="NOT LIKE">DOESN'T CONTAIN</option>
+					<option <?php echo ($qCustomType7=='NOT LIKE'?'SELECTED':''); ?> value="NOT LIKE">DOES NOT CONTAIN</option>
 					<option <?php echo ($qCustomType7=='GREATER'?'SELECTED':''); ?> value="GREATER">GREATER THAN</option>
 					<option <?php echo ($qCustomType7=='LESS'?'SELECTED':''); ?> value="LESS">LESS THAN</option>
 					<option <?php echo ($qCustomType7=='NULL'?'SELECTED':''); ?> value="NULL">IS NULL</option>
@@ -547,7 +547,7 @@ else{
 					<option <?php echo ($qCustomType8=='NOT EQUALS'?'SELECTED':''); ?> value="NOT EQUALS">NOT EQUALS</option>
 					<option <?php echo ($qCustomType8=='STARTS'?'SELECTED':''); ?> value="STARTS">STARTS WITH</option>
 					<option <?php echo ($qCustomType8=='LIKE'?'SELECTED':''); ?> value="LIKE">CONTAINS</option>
-					<option <?php echo ($qCustomType8=='NOT LIKE'?'SELECTED':''); ?> value="NOT LIKE">DOESN'T CONTAIN</option>
+					<option <?php echo ($qCustomType8=='NOT LIKE'?'SELECTED':''); ?> value="NOT LIKE">DOES NOT CONTAIN</option>
 					<option <?php echo ($qCustomType8=='GREATER'?'SELECTED':''); ?> value="GREATER">GREATER THAN</option>
 					<option <?php echo ($qCustomType8=='LESS'?'SELECTED':''); ?> value="LESS">LESS THAN</option>
 					<option <?php echo ($qCustomType8=='NULL'?'SELECTED':''); ?> value="NULL">IS NULL</option>

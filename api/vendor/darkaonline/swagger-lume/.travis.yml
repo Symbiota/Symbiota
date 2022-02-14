@@ -1,0 +1,46 @@
+language: php
+sudo: false
+git:
+  depth: 1
+env:
+  global:
+  - DEFAULT_COMPOSER_FLAGS="--no-interaction --no-progress --optimize-autoloader"
+  - REPORT_TESTS_COVERAGE=0
+  - SWAGGER_VERSION=2.0
+matrix:
+  fast_finish: true
+  include:
+  - php: 7.2
+    env: CACHE_NAME=SWAGGER
+  - php: 7.2
+    env: SWAGGER_VERSION=3.0 CACHE_NAME=OPEN_API
+  - php: 7.3
+    env: CACHE_NAME=SWAGGER
+  - php: 7.3
+    env: SWAGGER_VERSION=3.0 CACHE_NAME=OPEN_API
+  - php: 7.4
+    env: REPORT_TESTS_COVERAGE=1 CACHE_NAME=SWAGGER
+  - php: 7.4
+    env: SWAGGER_VERSION=3.0 CACHE_NAME=OPEN_API
+cache:
+  directories:
+  - "$HOME/.composer/cache"
+install:
+  - travis_retry composer update $DEFAULT_COMPOSER_FLAGS
+  - if [ $SWAGGER_VERSION == 2.0 ]; then composer require 'zircote/swagger-php:2.*'; fi
+  - if [ $SWAGGER_VERSION == 3.0 ]; then composer require 'zircote/swagger-php:3.*'; fi
+  - composer info -D | sort
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+script:
+  - if [ $REPORT_TESTS_COVERAGE != 1 ]; then vendor/bin/phpunit --no-coverage; fi
+  - if [ $REPORT_TESTS_COVERAGE == 1 ]; then vendor/bin/phpunit; cp tests/storage/logs/test-reports/clover.xml clover.xml; fi
+after_success:
+  - if [ $REPORT_TESTS_COVERAGE == 1 ] && [ $TRAVIS_PULL_REQUEST == "false" ]; then ./cc-test-reporter after-build -t clover --exit-code $TRAVIS_TEST_RESULT; fi
+  - if [ $REPORT_TESTS_COVERAGE == 1 ]; then php vendor/bin/coveralls -v; fi
+notifications:
+  email: false
+  slack:
+    secure: LcBRB+/pmXrUpsjv618NfIFJlbOQkQZclcavvAJgACGTxAy1p19+WLddtWivPVPpm1txexyiZu6QEGR9bhVGpmhBFnpPeFkCmkhm7KNbSbwmJvUMU0Vul2Tg+j5xgWAbHSnAInUqBsL1pwG6PoIeeN3IVy6XqeWjN5n86ImFYKFvgdUwZ4O141NWqBKNqmMjV0NXH9DuEW6MHZYOTmVEIxvIOXcohNhruGMXPJJSlRBWXX8fQUsa6iOWVp+9nLuddU4mauImFlx6A7ISCAI74WDFGqMKvYJC3ySGJYscpcAmPEUgZ3fIiq2az31i7+VHPv6PzUwL4B6YOZfJbncSRqpqBmuurjXv5yM1dvZI6prb046MCJEAsZwa12RVHfe7Q76Jp5ZLFyVqvftSM7KEgXM/32xKnRoUUbuSv04hrzEDa16xHlSVvF0s2qIKd5BHoF4RyQlfZuRJ2Rt43Px8zE+UOj86rqlCGXuhBUDfo+Y3ne/PLghAEt0Mdz2GfVtaAOyBVg76R+gk7fir7lj/eBOQQwjYjaeUBtbf4+H2UkoqLhKA7JCgtrWCh98XwkLeVhaufxMrjdTkwqsDXp+eUVV/CDPLqWvILq4Ih5YZXQAfzn9mY7k1Ese2UdPcVxhfKGodZodgsY1tJ6CO5ibL3FPkZbCQviFot1gEa2RSfLo=

@@ -16,3 +16,5 @@ includes/spprofilehead.php
 includes/usagepolicy.php
 .project
 .settings/org.eclipse.core.resources.prefs
+content/lang/header.fr.php
+.settings/org.eclipse.php.ui.prefs

@@ -1,106 +1,170 @@
-#smSampleTypeDiv {
+.smSampleTypeDiv {
 	float:left;
 	margin: 2px;
+	height: 35px;
 }
 
-#smSampleTypeDiv input{
+.smSampleTypeDiv label{
+	display: block;
 }
 
-#smCatalogNumberDiv {
+.smSampleTypeDiv input{
+}
+
+.smCatalogNumberDiv {
 	float:left;
 	margin: 2px;
+	height: 35px;
 }
 
-#smCatalogNumberDiv input{
+.smCatalogNumberDiv label{
+	display: block;
 }
 
-#smGuidDiv {
+.smCatalogNumberDiv input{
+}
+
+.smGuidDiv {
 	float:left;
 	margin: 2px;
+	height: 35px;
 }
 
-#smGuidDiv input{
+.smGuidDiv label{
+	display: block;
 }
 
-#smSampleConditionDiv {
+.smGuidDiv input{
+}
+
+.smSampleConditionDiv {
 	float:left;
 	margin: 2px;
+	height: 35px;
 }
 
-#smSampleConditionDiv input{
+.smSampleConditionDiv label{
+	display: block;
 }
 
-#smDispositionDiv {
+.smSampleConditionDiv input{
+}
+
+.smDispositionDiv {
 	float:left;
 	margin: 2px;
+	height: 35px;
 }
 
-#smDispositionDiv input{
+.smDispositionDiv label{
+	display: block;
 }
 
-#smPreservationTypeDiv {
+.smDispositionDiv input{
+}
+
+.smPreservationTypeDiv {
 	float:left;
 	margin: 2px;
+	height: 35px;
 }
 
-#smPreservationTypeDiv input{
+.smPreservationTypeDiv label{
+	display: block;
 }
 
-#smPreparationDateDiv {
+.smPreservationTypeDiv input{
+}
+
+.smPreparationDateDiv {
 	float:left;
 	margin: 2px;
+	height: 35px;
 }
 
-#smPreparationDateDiv input{
+.smPreparationDateDiv label{
+	display: block;
 }
 
-#smPreparedByUidDiv {
+.smPreparationDateDiv input{
+}
+
+.smPreparedByUidDiv {
 	float:left;
 	margin: 2px;
+	height: 35px;
 }
 
-#smPreparedByUidDiv input{
+.smPreparedByUidDiv label{
+	display: block;
 }
 
-#smPreparationDetailsDiv {
+.smPreparedByUidDiv input{
+}
+
+.smPreparationDetailsDiv {
 	clear:both;
 	margin: 2px;
+	height: 35px;
 }
 
-#smPreparationDetailsDiv input{
+.smPreparationDetailsDiv label{
+	display: block;
+}
+
+.smPreparationDetailsDiv input{
 	width: 90%;
 }
 
-#smIndividualCountDiv {
+.smIndividualCountDiv {
 	float:left;
 	margin: 2px;
+	height: 35px;
 }
 
-#smIndividualCountDiv input{
+.smIndividualCountDiv label{
+	display: block;
 }
 
-#smSampleSizeDiv {
+.smIndividualCountDiv input{
+}
+
+.smSampleSizeDiv {
 	float:left;
 	margin: 2px;
+	height: 35px;
 }
 
-#smSampleSizeDiv input{
+.smSampleSizeDiv label{
+	display: block;
 }
 
-#smStorageLocationDiv {
+.smSampleSizeDiv input{
+}
+
+.smStorageLocationDiv {
 	float:left;
 	margin: 2px;
+	height: 35px;
 }
 
-#smStorageLocationDiv input{
+.smStorageLocationDiv label{
+	display: block;
 }
 
+.smStorageLocationDiv input{
+}
 
-#smRemarksDiv {
+.smRemarksDiv {
 	clear:both;
 	margin: 2px;
+	height: 35px;
 }
 
-#smRemarksDiv input{
+.smRemarksDiv label{
+	display: block;
+}
+
+.smRemarksDiv input{
 	width: 90%;
 }

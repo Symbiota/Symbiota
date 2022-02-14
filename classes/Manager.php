@@ -42,7 +42,7 @@ class Manager  {
 
 	protected function logOrEcho($str, $indexLevel=0, $tag = 'li'){
 		//verboseMode: 0 = silent, 1 = log, 2 = out to screen, 3 = both
-		if($this->verboseMode){
+		if($str && $this->verboseMode){
 			if($this->verboseMode == 3 || $this->verboseMode == 1){
 				if($this->logFH){
 					fwrite($this->logFH,str_repeat("\t", $indexLevel).strip_tags($str)."\n");

@@ -547,12 +547,20 @@ class SpecUploadBase extends SpecUpload{
 			}
 			if($this->matchOtherCatalogNumbers){
 				//Match records based on other Catalog Numbers fields
-				$sql2 = 'UPDATE uploadspectemp u INNER JOIN omoccurrences o ON (u.otherCatalogNumbers = o.otherCatalogNumbers) AND (u.collid = o.collid) '.
+				$sql2 = 'UPDATE uploadspectemp u INNER JOIN omoccurrences o ON u.collid = o.collid '.
 					'SET u.occid = o.occid '.
-					'WHERE (u.collid IN('.$this->collId.')) AND (u.occid IS NULL) AND (u.othercatalogNumbers IS NOT NULL) AND (o.othercatalogNumbers IS NOT NULL) ';
-				if($this->collMetadataArr['colltype'] == 'General Observations' && $this->observerUid) $sql .= ' AND o.observeruid = '.$this->observerUid;
+					'WHERE (u.collid IN('.$this->collId.')) AND (u.occid IS NULL) AND (u.otherCatalogNumbers = o.otherCatalogNumbers) ';
+				if($this->collMetadataArr['colltype'] == 'General Observations' && $this->observerUid) $sql2 .= ' AND o.observeruid = '.$this->observerUid;
 				if(!$this->conn->query($sql2)){
-					$this->outputMsg('<li><span style="color:red;">Warning: unable to match on other catalog numbers: '.$this->conn->error.'</span></li>');
+					$this->outputMsg('<li><span style="color:red;">Warning: unable to match on otherCatalogNumbers: '.$this->conn->error.'</span></li>');
+				}
+				$sql2b = 'UPDATE uploadspectemp u INNER JOIN omoccurrences o ON u.collid = o.collid '.
+				    'INNER JOIN omoccuridentifiers i ON o.occid = i.occid '.
+				 	'SET u.occid = o.occid '.
+					'WHERE (u.collid IN('.$this->collId.')) AND (u.occid IS NULL) AND (u.othercatalogNumbers = i.identifiervalue) ';
+				if($this->collMetadataArr['colltype'] == 'General Observations' && $this->observerUid) $sql2b .= ' AND o.observeruid = '.$this->observerUid;
+				if(!$this->conn->query($sql2b)){
+				    $this->outputMsg('<li><span style="color:red;">Warning: unable to match on omoccuridentifiers: '.$this->conn->error.'</span></li>');
 				}
 			}
 		}
@@ -703,7 +711,8 @@ class SpecUploadBase extends SpecUpload{
 			//Records that can be matched on Catalog Number, but will be appended
 			$sql = 'SELECT count(o.occid) AS cnt '.
 				'FROM uploadspectemp u INNER JOIN omoccurrences o ON u.collid = o.collid '.
-				'WHERE (u.collid IN('.$this->collId.')) AND (u.occid IS NULL) AND (u.catalogNumber = o.catalogNumber OR u.othercatalogNumbers = o.othercatalogNumbers) ';
+				'LEFT JOIN omoccuridentifiers i ON o.occid = i.occid '.
+				'WHERE (u.collid IN('.$this->collId.')) AND (u.occid IS NULL) AND (u.catalogNumber = o.catalogNumber OR u.othercatalogNumbers = o.othercatalogNumbers OR u.othercatalogNumbers = i.identifierValue) ';
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
 				$reportArr['matchappend'] = $r->cnt;
@@ -833,7 +842,6 @@ class SpecUploadBase extends SpecUpload{
 		$rs->free();
 
 		$fieldArr = $this->getTransferFieldArr();
-
 		//Update matching records
 		$sqlFragArr = array();
 		foreach($fieldArr as $v){
@@ -1360,8 +1368,8 @@ class SpecUploadBase extends SpecUpload{
 
 	private function crossMapSymbiotaOccurrences(){
 		if($this->sourcePortalIndex && $this->collMetadataArr['managementtype'] == 'Snapshot'){
-			$sql = 'INSERT INTO ompublicationoccurlink(occid, targetOccid, portalIndexID, refreshTimestamp)
-				SELECT u.occid, u.dbpk, '.$this->sourcePortalIndex.', NOW() FROM uploadspectemp u LEFT JOIN ompublicationoccurlink l ON u.occid = l.occid
+			$sql = 'INSERT INTO portaloccurrences(occid, targetOccid, portalID, refreshTimestamp)
+				SELECT u.occid, u.dbpk, '.$this->sourcePortalIndex.', NOW() FROM uploadspectemp u LEFT JOIN portaloccurrences l ON u.occid = l.occid
 				WHERE u.occid IS NOT NULL AND u.dbpk IS NOT NULL AND u.collid = '.$this->collId.' AND l.occid IS NULL';
 			if($this->conn->query($sql)) $this->outputMsg('<li>Occurrences cross-mapped to Symbiota source portal</li> ');
 			//else $this->outputMsg('<li>ERROR linking occurrences to source portal: '.$this->conn->error.'</li> ');
@@ -1917,7 +1925,7 @@ class SpecUploadBase extends SpecUpload{
 	private function getPaleoSymbTerms(){
 		$paleoTermArr = array('paleo-geologicalcontextid','paleo-lithogroup','paleo-formation','paleo-member','paleo-bed','paleo-eon','paleo-era','paleo-period','paleo-epoch',
 			'paleo-earlyinterval','paleo-lateinterval','paleo-absoluteage','paleo-storageage','paleo-stage','paleo-localstage','paleo-biota','paleo-biostratigraphy',
-			'paleo-taxonenvironment','paleo-lithology','paleo-stratremarks','paleo-lithdescription','paleo-element','paleo-slideproperties');
+			'paleo-taxonenvironment','paleo-lithology','paleo-stratremarks','paleo-element','paleo-slideproperties');
 		return $paleoTermArr;
 	}
 
