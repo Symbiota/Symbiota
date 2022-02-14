@@ -358,12 +358,15 @@ class DwcArchiverOccurrence{
 		if(is_numeric($occid)){
 			$sql = 'SELECT GROUP_CONCAT(CONCAT_WS(": ",identifierName, identifierValue) SEPARATOR "; ") as idStr FROM omoccuridentifiers WHERE occid = '.$occid;
 			$rs = $this->conn->query($sql);
-			if($r = $rs->fetch_object()){
-				$retStr = $r->idStr;
+
+			while($r = $rs->fetch_object()){
+				if($r->identifierName) $retStr .= $r->identifierName.': ';
+				$retStr .= $r->identifierValue.'; ';
+
 			}
 			$rs->free();
 		}
-		return $retStr;
+		return trim($retStr,'; ');
 	}
 
 	public function setIncludeExsiccatae(){
