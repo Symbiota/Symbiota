@@ -10,6 +10,7 @@ $collid = $_REQUEST['collid'];
 $displayMode = array_key_exists('display',$_REQUEST)?$_REQUEST['display']:'1';
 $faStatus = array_key_exists('fastatus',$_REQUEST)?strip_tags($_REQUEST['fastatus']):'';
 $frStatus = array_key_exists('frstatus',$_REQUEST)?strip_tags($_REQUEST['frstatus']):'1,2';
+$filterFieldName = array_key_exists('fFieldName',$_POST)?strip_tags($_POST['fFieldName']):'';
 $editor = array_key_exists('editor',$_REQUEST)?strip_tags($_REQUEST['editor']):'';
 $queryOccid = array_key_exists('occid',$_REQUEST)?strip_tags($_REQUEST['occid']):'';
 $startDate = array_key_exists('startdate',$_REQUEST)?strip_tags($_REQUEST['startdate']):'';
@@ -35,15 +36,15 @@ else{
 	$reviewManager->setAppliedStatusFilter($faStatus);
 	$reviewManager->setReviewStatusFilter($frStatus);
 }
+$reviewManager->setFieldNameFilter($filterFieldName);
 $reviewManager->setEditorFilter($editor);
 $reviewManager->setStartDateFilter($startDate);
 $reviewManager->setEndDateFilter($endDate);
 $reviewManager->setPageNumber($pageNum);
 $reviewManager->setLimitNumber($limitCnt);
 
-
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
+if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin']))){
  	$isEditor = true;
 }
 elseif($reviewManager->getObsUid()){
@@ -106,17 +107,10 @@ $navStr .= '</div>';
 <html>
 	<head>
 		<title><?php echo $LANG['EDIT_REVIEWER']; ?></title>
-    <?php
-      $activateJQuery = true;
-      if(file_exists($SERVER_ROOT.'/includes/head.php')){
-        include_once($SERVER_ROOT.'/includes/head.php');
-      }
-      else{
-        echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-        echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-        echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-      }
-    ?>
+		<?php
+		$activateJQuery = true;
+		include_once($SERVER_ROOT.'/includes/head.php');
+		?>
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>
 		<script>
@@ -185,6 +179,10 @@ $navStr .= '</div>';
 			}
 		</script>
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/shared.js" type="text/javascript" ></script>
+		<style type="text/css">
+			#filterDiv{ width:450px; }
+			.fieldDiv{ margin:3px; }
+		</style>
 	</head>
 	<body>
 		<?php
@@ -220,9 +218,9 @@ $navStr .= '</div>';
 				?>
 				<div id="filterDiv" style="float:right;">
 					<form name="filter" action="editreviewer.php" method="post" onsubmit="return validateFilterForm(this)">
-						<fieldset style="width:400px;text-align:left;">
+						<fieldset>
 							<legend><b><?php echo $LANG['FILTER']; ?></b></legend>
-							<div style="margin:3px;">
+							<div class="fieldDiv">
 								<?php echo $LANG['APPLIED_STATUS']; ?>:
 								<select name="fastatus">
 									<option value=""><?php echo $LANG['ALL_RECS']; ?></option>
@@ -230,7 +228,7 @@ $navStr .= '</div>';
 									<option value="1" <?php echo ($faStatus=='1'?'SELECTED':''); ?>><?php echo $LANG['APPLIED']; ?></option>
 								</select>
 							</div>
-							<div style="margin:3px;">
+							<div class="fieldDiv">
 								<?php echo $LANG['REVIEW_STATUS']; ?>:
 								<select name="frstatus">
 									<option value="0"><?php echo $LANG['ALL_RECS']; ?></option>
@@ -240,7 +238,20 @@ $navStr .= '</div>';
 									<option value="3" <?php echo ($frStatus=='3'?'SELECTED':''); ?>><?php echo $LANG['CLOSED']; ?></option>
 								</select>
 							</div>
-							<div style="margin:3px;">
+							<div class="fieldDiv">
+								<?php echo $LANG['FIELD_NAME']; ?>:
+								<select name="fFieldName">
+									<option value=""><?php echo $LANG['ALL_FIELDS']; ?></option>
+									<option value="">----------------------</option>
+									<?php
+									$fieldList = $reviewManager->getFieldList();
+									foreach($fieldList as $fName){
+										echo '<option '.($filterFieldName==$fName?'SELECTED':'').'>'.$fName.'</option>';
+									}
+									?>
+								</select>
+							</div>
+							<div class="fieldDiv">
 								<?php echo $LANG['EDITOR']; ?>:
 								<select name="editor">
 									<option value=""><?php echo $LANG['ALL_EDITORS']; ?></option>
@@ -248,20 +259,20 @@ $navStr .= '</div>';
 									<?php
 									$editorArr = $reviewManager->getEditorList();
 									foreach($editorArr as $id => $e){
-										echo '<option value="'.$id.'" '.($editor==$id?'SELECTED':'').'>'.$e.'</option>'."\n";
+										echo '<option value="'.$id.'" '.($editor==$id?'SELECTED':'').'>'.$e.'</option>';
 									}
 									?>
 								</select>
 							</div>
-							<div style="margin:3px;">
+							<div class="fieldDiv">
 								<?php echo $LANG['DATE']; ?>:
-								<input name="startdate" type="date" value="<?php echo $startDate; ?>" /> <?php echo $LANG['TO']; ?>
+								<input name="startdate" type="date" value="<?php echo $startDate; ?>" /> -
 								<input name="enddate" type="date" value="<?php echo $endDate; ?>" />
 							</div>
 							<?php
 							if($reviewManager->hasRevisionRecords() && !$reviewManager->getObsUid()){
 								?>
-								<div style="margin:3px;">
+								<div class="fieldDiv">
 									<?php echo $LANG['EDITING_SOURCE']; ?>:
 									<select name="display">
 										<option value="1"><?php echo $LANG['INTERNAL']; ?></option>
@@ -271,12 +282,12 @@ $navStr .= '</div>';
 								<?php
 							}
 							?>
-							<div style="margin:10px;float:right;">
+							<div style="margin:10px;">
 								<button name="submitbutton" type="submit" value="submitfilter"><?php echo $LANG['SUBMIT_FILTER']; ?></button>
 								<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 							</div>
 							<!--
-							<div style="margin:3px;">
+							<div class="fieldDiv">
 								Records per page: <input name="limitcnt" type="text" value="<?php echo $limitCnt; ?>" style="width:60px" />
 							</div>
 							 -->
@@ -391,18 +402,10 @@ $navStr .= '</div>';
 														<?php
 														if($displayAll){
 															$rStatus = $edObj['rstatus'];
-															if($rStatus == 1){
-																echo $LANG['OPEN'];
-															}
-															elseif($rStatus == 2){
-																echo $LANG['PENDING'];
-															}
-															elseif($rStatus == 3){
-																echo $LANG['C_CLOSED'];
-															}
-															else{
-																echo $LANG['UNKNOWN'];
-															}
+															if($rStatus == 1) echo $LANG['OPEN'];
+															elseif($rStatus == 2) echo $LANG['PENDING'];
+															elseif($rStatus == 3) echo $LANG['C_CLOSED'];
+															else echo $LANG['UNKNOWN'];
 														}
 														?>
 													</div>
@@ -411,12 +414,8 @@ $navStr .= '</div>';
 													<div title="<?php echo $LANG['APPLIED_STATUS']; ?>">
 														<?php
 														if($displayAll){
-															if($appliedStatus == 1){
-																echo 'APPLIED';
-															}
-															else{
-																echo 'NOT APPLIED';
-															}
+															if($appliedStatus == 1) echo $LANG['APPLIED'];
+															else echo $LANG['NOT_APPLIED'];
 														}
 														?>
 													</div>
@@ -484,9 +483,7 @@ $navStr .= '</div>';
 				</form>
 				<?php
 			}
-			else{
-				echo '<div>'.$LANG['ERROR'].'</div>';
-			}
+			else echo '<div>'.$LANG['ERROR'].'</div>';
 			?>
 		</div>
 		<?php include($SERVER_ROOT.'/includes/footer.php');?>

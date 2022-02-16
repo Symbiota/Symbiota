@@ -32,7 +32,7 @@ function validatePolygon(footprintWktInput){
 	//Check to see if input is a KML coordinate tuple (e.g. -99.238545,47.148081,0 -99.238545,47.148081,0 ...)
 	var patt = new RegExp(/^[\d-\.]+,[\d-\.]+,[\d]+\s+/);
 	if(patt.test(footprintWkt)){
-		var newStr = ''
+		var newStr = "";
 		var klmArr = footprintWkt.split(" ");
 		for(var i=0; i < klmArr.length; i++){
 			var pArr = klmArr[i].split(",");
@@ -41,10 +41,24 @@ function validatePolygon(footprintWktInput){
 		footprintWkt = newStr.substr(1);
 	}
 
+	//Check to see if input is another KML coordinate format (e.g. -99.238545,47.148081 -99.238545,47.148081 ...)
+	var patt = new RegExp(/\<kml\s+/);
+	if(patt.test(footprintWkt)){
+		var coordArr = footprintWkt.match(/[\d-\.]+,[\d-\.]+/g);
+		if(coordArr){
+			var tempArr = [];
+			for (i = 0; i < coordArr.length; i++) {
+				tempArr = coordArr[i].split(",");
+				coordArr[i] = tempArr[1]+" "+tempArr[0];
+			}
+			footprintWkt = coordArr.join(",");
+		}
+	}
+
 	//Check to see if it's a GeoLocate polygon (e.g. 31.6661680128,-110.709762938,31.6669780128,-110.710163938,...)
 	var patt = new RegExp(/^[\d-\.]+,[\d-\.]+/);
 	if(patt.test(footprintWkt)){
-		var newStr = ''
+		var newStr = "";
 		var coordArr = footprintWkt.split(",");
 		for(var i=0; i < coordArr.length; i++){
 			if((i % 2) == 1){
@@ -75,14 +89,18 @@ function validatePoints(footprintWkt, switchPoints){
 	if(!switchPoints){
 		if(parseInt(Math.abs(strArr[0].substring(0,strArr[0].indexOf(" ")).trim())) > 90) switchPoints = true;
 	}
+	if(switchPoints) alert("switch points");
+
 	for(var i=0; i < strArr.length; i++){
 		var xy = strArr[i].trim().split(" ");
 		if(i<1 || strArr[i-1].trim() != strArr[i].trim()){
-			if(switchPoints){
-				retStr = retStr + "," + parseFloat(xy[1]).toFixed(6) + " " + parseFloat(xy[0]).toFixed(6);
-			}
-			else{
-				retStr = retStr + "," + parseFloat(xy[0]).toFixed(6) + " " + parseFloat(xy[1]).toFixed(6);
+			if(!isNaN(xy[0]) && !isNaN(xy[1])){
+				if(switchPoints){
+					retStr = retStr + "," + parseFloat(xy[1]).toFixed(6) + " " + parseFloat(xy[0]).toFixed(6);
+				}
+				else{
+					retStr = retStr + "," + parseFloat(xy[0]).toFixed(6) + " " + parseFloat(xy[1]).toFixed(6);
+				}
 			}
 		}
 	}

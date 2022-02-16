@@ -824,7 +824,7 @@ class OccurrenceEditorManager {
 				//Get current identifiers values to be saved within versioning tables
 				$editFieldArr['identifier'] = array_intersect($editArr, $this->fieldArr['identifier']);
 				if($editFieldArr['identifier']){
-					$sql = 'SELECT idomoccuridentifiers, CONCAT_WS(": ",identifiername,identifiervalue) as identifier FROM omoccuridentifiers WHERE occid = '.$this->occid;
+					$sql = 'SELECT idomoccuridentifiers, CONCAT_WS(": ",identifiername,identifiervalue) as identifier FROM omoccuridentifiers WHERE (occid = '.$this->occid.') ORDER BY sortBy';
 					$rs = $this->conn->query($sql);
 					while($r = $rs->fetch_object()){
 						$oldValueArr['identifier'][$r->idomoccuridentifiers] = $r->identifier;
@@ -1609,7 +1609,7 @@ class OccurrenceEditorManager {
 					$otherCatNumArr[$value] = $tag;
 				}
 			}
-			$sql = 'SELECT idomoccuridentifiers, identifiername, identifiervalue FROM omoccuridentifiers WHERE occid = '.$this->occid.' ORDER BY sortby ';
+			$sql = 'SELECT idomoccuridentifiers, identifiername, identifiervalue FROM omoccuridentifiers WHERE (occid = '.$this->occid.') ORDER BY sortBy ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$idName = $r->identifiername;

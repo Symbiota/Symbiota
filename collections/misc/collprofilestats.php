@@ -1,6 +1,5 @@
 <?php
 include_once($SERVER_ROOT.'/content/lang/collections/misc/collprofiles.'.$LANG_TAG.'.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceCollectionProfile.php');
 
 $statDisplay = array_key_exists('stat',$_REQUEST)?$_REQUEST['stat']:'';
 

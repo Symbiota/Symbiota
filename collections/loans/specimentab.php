@@ -9,8 +9,11 @@ $loanId = $_REQUEST['loanid'];
 
 $loanManager = new OccurrenceLoans();
 if($collid) $loanManager->setCollId($collid);
-$specList = $loanManager->getSpecList($loanId);
+$specList = $loanManager->getSpecimenList($loanId);
 ?>
+<style type="text/css">
+	table th{ text-align:center; }
+</style>
 <div id="outloanspecdiv">
 	<div class="addSpecimenDiv">
 		<fieldset>
@@ -18,10 +21,11 @@ $specList = $loanManager->getSpecList($loanId);
 			<div id="infoBatchDiv" style="margin-bottom:10px;display:none">Link multiple specimens at once by entering a list of catalog numbers on separate lines or delimited by commas.</div>
 			<form name="batchaddform" action="outgoing.php" method="post">
 				<div>
-					<div style="float:left;margin:0px 15px"><input name="targetidentifier" type="radio" value="catnum" checked /> Target Catalog Number</div>
-					<div style="float:left;"><input name="targetidentifier" type="radio" value="other" /> Target Other Catalog Numbers</div>
+					<div style="float:left;margin:0px 5px">Target: <input name="targetidentifier" type="radio" value="allid" checked /> All Identifiers</div>
+					<div style="float:left;margin:0px 5px"><input name="targetidentifier" type="radio" value="catnum" /> Catalog Number</div>
+					<div style="float:left;"><input name="targetidentifier" type="radio" value="other" /> Other Catalog Numbers</div>
 				</div>
-				<div style="clear:both"><textarea name="catalogNumbers" cols="6" style="width:600px"></textarea></div>
+				<div style="clear:both"><textarea name="catalogNumbers" cols="6" style="width:700px"></textarea></div>
 				<div>
 					<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 					<input name="loanid" type="hidden" value="<?php echo $loanId; ?>" />
@@ -72,10 +76,11 @@ $specList = $loanManager->getSpecList($loanId);
 		<form name="speceditform" action="outgoing.php" method="post" onsubmit="return verifySpecEditForm(this)" >
 			<table class="styledtable" style="font-family:Arial;font-size:12px;">
 				<tr>
-					<th style="width:25px;text-align:center;"><input type="checkbox" onclick="selectAll(this);" title="Select/Deselect All" /></th>
-					<th style="width:100px;text-align:center;">Catalog Number</th>
-					<th style="width:375px;text-align:center;">Details</th>
-					<th style="width:90px;text-align:center;">Date Returned</th>
+					<th><input type="checkbox" onclick="selectAll(this);" title="Select/Deselect All" /></th>
+					<th>&nbsp;</th>
+					<th>Catalog Number</th>
+					<th>Details</th>
+					<th>Date Returned</th>
 				</tr>
 				<?php
 				foreach($specList as $occid => $specArr){
@@ -90,13 +95,15 @@ $specList = $loanManager->getSpecList($loanId);
 							</span>
 						</td>
 						<td>
-							<div style="float:right">
+							<div>
 								<a href="#" onclick="openIndPopup(<?php echo $occid; ?>); return false;"><img src="../../images/list.png" style="width:13px" title="Open Specimen Details page" /></a><br/>
 								<a href="#" onclick="openEditorPopup(<?php echo $occid; ?>); return false;"><img src="../../images/edit.png" style="width:13px" title="Open Occurrence Editor" /></a>
 							</div>
+						</td>
+						<td>
 							<?php
 							if($specArr['catalognumber']) echo '<div>'.$specArr['catalognumber'].'</div>';
-							if($specArr['othercatalognumbers']) echo '<div>'.$specArr['othercatalognumbers'].'</a></div>';
+							if(isset($specArr['othercatalognumbers'])) echo '<div>'.implode('<br/>',$specArr['othercatalognumbers']).'</div>';
 							if($specArr['collid'] != $collid) echo '<div style="color:orange">external</div>';
 							?>
 						</td>
@@ -111,8 +118,7 @@ $specList = $loanManager->getSpecList($loanId);
 							?>
 						</td>
 						<td><?php
-						$editorLink = 'specnoteseditor.php?loanid='.$loanId.'&occid='.$occid.'&collid='.$collid;
-						echo '<div style="float:right"><a href="#" onclick="openPopup(\''.$editorLink.'\');return false"><img src="../../images/edit.png" style="width:13px" title="Edit notes" /></a></div>';
+						echo '<div style="float:right"><a href="#" onclick="openCheckinPopup('.$loanId.','.$occid.','.$collid.');return false"><img src="../../images/edit.png" style="width:13px" title="Edit notes" /></a></div>';
 						echo $specArr['returndate'];
 						?></td>
 					</tr>
@@ -169,31 +175,27 @@ $specList = $loanManager->getSpecList($loanId);
 					</div>
 					<div style='margin:15px;'>
 						<div style="float:left;">
-							<input type="submit" name="formsubmit" onclick="verifyLoanDet();" value="Add New Determinations" />
+							<button type="submit" name="formsubmit" value="addDeterminations" onclick="return verifyLoanDet();">Add New Determinations</button>
 						</div>
 					</div>
 				</fieldset>
 			</div>
 			<div style="clear:both">
 				<div style="margin:10px;">
-					<fieldset style="float:left;width:200px">
+					<fieldset style="width:800px">
 						<legend>Actions</legend>
-						<input name="applytask" type="radio" value="check" title="Check-in Specimens" CHECKED />Check-in Specimens<br/>
-						<input name="applytask" type="radio" value="delete" title="Delete Specimens" />Delete Specimens from Loan
-
-						<button name="formsubmit" type="submit" value="performSpecimenAction">Perform Action</button>
+						<div style="float:left;margin-right:20px">
+							<button name="formsubmit" type="submit" value="checkinSpecimens">Batch Check-in Specimens</button><br/>
+							<button type="button" onclick="toggle('newdetdiv');">Add New Determinations</button>
+						</div>
+						<div style="float:left;">
+							<button name="formsubmit" type="submit" value="exportSpecimenList" onclick="skipFormVerification = true">Export Specimen List</button><br/>
+							<button name="formsubmit" type="submit" value="deleteSpecimens" onclick="return confirm('Are you sure you want to remove selected specimens from this loan?')">Remove Selected Specimens</button><br/>
+						</div>
 						<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 						<input name="loanid" type="hidden" value="<?php echo $loanId; ?>" />
 						<input name="tabindex" type="hidden" value="1" />
 					</fieldset>
-					<span style="margin-left:25px;">
-						<button name="formsubmit" type="submit" value="exportSpecimenList" onclick="skipFormVerification = true">Export Specimen List</button>
-					</span>
-				</div>
-				<div style="margin:10px;float:right;">
-					<div id="detAddToggleDiv" onclick="toggle('newdetdiv');">
-						<a href="#" onclick="return false;">Add New Determinations</a>
-					</div>
 				</div>
 			</div>
 		</form>

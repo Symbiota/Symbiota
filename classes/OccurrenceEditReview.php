@@ -10,7 +10,8 @@ class OccurrenceEditReview extends Manager{
 	private $display = 1;
 	private $appliedStatusFilter = '';
 	private $reviewStatusFilter;
-	private $editorUidFilter;
+	private $fieldNameFilter;
+	private $editorFilter;
 	private $queryOccidFilter;
 	private $startDateFilter;
 	private $endDateFilter;
@@ -100,7 +101,6 @@ class OccurrenceEditReview extends Manager{
 	}
 
 	private function getEditSqlBase($includeUserTable=false){
-		//Build SQL WHERE fragment
 		$sqlBase = '';
 		if($this->collid){
 			$sqlBase = 'FROM omoccuredits e INNER JOIN omoccurrences o ON e.occid = o.occid ';
@@ -111,6 +111,9 @@ class OccurrenceEditReview extends Manager{
 			}
 			if($this->reviewStatusFilter){
 				$sqlBase .= 'AND (e.reviewstatus IN('.$this->reviewStatusFilter.')) ';
+			}
+			if($this->fieldNameFilter){
+				$sqlBase .= 'AND (e.fieldName = "'.$this->cleanInStr($this->fieldNameFilter).'") ';
 			}
 			if($this->editorFilter){
 				$sqlBase .= 'AND (e.uid = '.$this->editorFilter.') ';
@@ -467,6 +470,10 @@ class OccurrenceEditReview extends Manager{
 		}
 	}
 
+	public function setFieldNameFilter($f){
+		$this->fieldNameFilter = $f;
+	}
+
 	public function setEditorFilter($f){
 		$this->editorFilter = $this->cleanInStr($f);
 	}
@@ -503,6 +510,18 @@ class OccurrenceEditReview extends Manager{
 
 	public function getObsUid(){
 		return $this->obsUid;
+	}
+
+	public function getFieldList(){
+		$retArr = array();
+		$sql = 'SELECT DISTINCT e.fieldName FROM omoccurrences o INNER JOIN omoccuredits e ON o.occid = e.occid WHERE (o.collid = '.$this->collid.') ';
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$retArr[] = $r->fieldName;
+		}
+		$rs->free();
+		sort($retArr);
+		return $retArr;
 	}
 
 	public function getEditorList(){

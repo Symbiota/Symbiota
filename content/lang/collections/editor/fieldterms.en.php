@@ -5,7 +5,7 @@ Language: English
 ------------------
 */
 
-$LANG['IDNAME'] = 'Additional Identifier Name';
-$LANG['IDVALUE'] = 'Value';
+$LANG['IDNAME'] = 'Tag Name';
+$LANG['IDVALUE'] = 'Additional Identifier Value';
 
 ?>

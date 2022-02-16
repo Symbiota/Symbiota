@@ -14,7 +14,7 @@ $(document).ready(function() {
 
 function openPointAid(latDef,lngDef) {
 	var tid = document.pointaddform.pointtid.value;
-	pointWindow=open("tools/mappointaid.php?latcenter="+latDef+"&lngcenter="+lngDef+"&tid="+tid,"pointaid","resizable=0,width=800,height=700,left=20,top=20");
+	pointWindow=open("tools/mappointaid.php?latcenter="+latDef+"&lngcenter="+lngDef+"&tid="+tid,"pointaid","resizable=0,width=800,height=800,left=20,top=20");
     if(pointWindow.opener == null) pointWindow.opener = self;
 }
 

@@ -37,7 +37,7 @@ if($loanType == 'exchange'){
 $numSpecimens = 0;
 if($loanType == 'exchange') $numSpecimens = $loanManager->getExchangeTotal($identifier);
 else{
-	$specList = $loanManager->getSpecList($identifier);
+	$specList = $loanManager->getSpecimenList($identifier);
 	if($specList){
 		if(count($specList) == 1) $numSpecimens = 1;
 		else $numSpecimens = count($specList);

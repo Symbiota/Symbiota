@@ -2,25 +2,21 @@
 
 ## REQUIREMENTS
 
-* Apache HTTP Server (2.x or better) - other PHP enabled web servers should work, yet we have only tested the installation through Apache HTTP Server
-* PHP (5.x or better) configured to your web server
-  * mysqli extension must be enabled (improved mysql library)
-  * GD2 extension must be enabled (GD image library)
-  * Enableing the PHP "mbstring" module is recommended
-  * If planning to upload specimen data as flat DwC text files, upload_max_filesize (= 2M as default) variable should be increased to match expected files sizes
-  * zip extension should be enabled if you plan on uploading compressed data files
-  * Optional: Pear package Image_Barcode2 (https://pear.php.net/package/Image_Barcode2) – enable barcode generation on specimen labels
+* Apache HTTP Server (2.x or better) - other PHP enabled web servers should work, though mostly tested using Apache HTTP Server and Nginx
+* PHP (7.3 or better) configured to your web server
+  * Required extensions: mysqli, gd, mbstring, zip, curl, exif, openssl,  dom, libxml, json, SimpleXML, xml core 
+  * Recommended configuration adjustments: upload_max_filesize = 100M (or expected file size upload), max_input_vars = 2000, memory_limit = 256M, post_max_size = 100M
+  * Optional: Pear package Image_Barcode2 (https://pear.php.net/package/Image_Barcode2) – enables barcodes on specimen labels
   * Optional: Install Pear Mail for SMTP mail support: https://pear.php.net/package/Mail/redirected 
-    * (pear channel-update pear.php.net; pear install -a Mail)
-* MariaDB or MySQL (5.1 or better)
-* GIT Client - not required though can be useful for updates from source code 
+* MariaDB (v10.2.2+) or MySQL (v5.8+)
+* GIT Client - not required, though recommend for updating source code 
 
 
 ## INSTRUCTIONS
 
 1. Download Symbiota code from GitHub repository
-   * (https://github.com/BioKIC/Symbiota-light)  
-   * Command line checkout: git clone https://github.com/BioKIC/Symbiota-light.git
+   * (https://github.com/BioKIC/Symbiota)  
+   * Command line checkout: git clone https://github.com/BioKIC/Symbiota.git
 2. Install Symbiota database schema
    1. Create new database (e.g. CREATE SCHEMA symbdb CHARACTER SET utf8 COLLATE utf8_general_ci) 
    2. Create read-only and read/write users for Symbiota database 
@@ -30,10 +26,11 @@
       * GRANT SELECT,UPDATE,INSERT,DELETE,EXECUTE ON `symbdb`.* TO `symbwriter`@localhost;
    3. Load databse schema from scripts. Schema definition files are located in <SymbiotaBaseFolder>/config/schema-1.0/utf8/. By default, the database is assumed to be configured to a UTF8 character set.  
       * Run db_schema-1.0.sql to install the core table structure. 
-      * From MySQL commandline: SOURCE /BaseFolderPath/config/schema-1.0/utf8/db_schema-1.0.sql 
+      * From MySQL commandline: SOURCE <BaseFolderPath>/config/schema-1.0/utf8/db_schema-1.0.sql 
    4. Run database patch scripts to bring database up to current structure. Make sure to run the scripts in the correct order e.g. db_schema_patch-1.1.sql, db_schema_patch-1.2.sql, etc.
       * From MySQL commandline: SOURCE /BaseFolderPath/config/schema-1.0/utf-8/db_schema_patch-1.1.sql
-3. Configure the Symbiota Portal - modify following configuration files
+      * From MySQL commandline: SOURCE /BaseFolderPath/config/schema-1.0/utf-8/db_schema_patch-1.2.sql
+3. Configure the Symbiota Portal - modify following configuration files; running /config/setup.sh will create the following required files and permissions
    1. Symbiota configuration 
       * rename /config/symbini_template.php to /config/symbini.php. 
       * Modify variables within to match your project environment. See Symbiota configuration help page for more information on this subject.

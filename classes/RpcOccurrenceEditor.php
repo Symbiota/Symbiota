@@ -15,7 +15,7 @@ class RpcOccurrenceEditor extends RpcBase{
 		$bool = false;
 		if(is_numeric($identifierID)){
 			$origOcnStr = '';
-			$sql = 'SELECT CONCAT_WS(": ",identifierName,identifierValue) as identifier FROM omoccuridentifiers WHERE idomoccuridentifiers = '.$identifierID;
+			$sql = 'SELECT CONCAT_WS(": ",identifierName,identifierValue) as identifier FROM omoccuridentifiers WHERE (idomoccuridentifiers = '.$identifierID.') ORDER BY sortBy ';
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
 				$origOcnStr = $r->identifier;

@@ -193,7 +193,7 @@ class OccurrenceLabel{
 			}
 			//Append identifiers indexed within omoccurridentifier
 			if($retArr){
-				$sql = 'SELECT occid, identifiername, identifiervalue FROM omoccuridentifiers WHERE occid IN('.implode(',',array_keys($retArr)).')';
+				$sql = 'SELECT occid, identifiername, identifiervalue FROM omoccuridentifiers WHERE occid IN('.implode(',',array_keys($retArr)).') ORDER BY sortBy';
 				if($rs = $this->conn->query($sql)){
 					$otherCatArr = array();
 					$cnt = 0;

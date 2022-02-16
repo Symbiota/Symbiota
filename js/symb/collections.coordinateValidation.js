@@ -4,81 +4,93 @@ function verifyCoordinates(f){
 	var lngValue = f.decimallongitude.value;
 	var latValue = f.decimallatitude.value;
 	if(latValue && lngValue){
-		
 		$.ajax({
 			type: "GET",
-			url: "//maps.googleapis.com/maps/api/geocode/json?sensor=false",
+			url: "//api.gbif.org/v1/geocode/reverse",
 			dataType: "json",
-			data: { latlng: latValue+","+lngValue }
+			data: { lat: latValue, lng: lngValue }
 		}).done(function( data ) {
 			if(data){
-				if(data.status != "ZERO_RESULTS"){
-					var result = data.results[0];
-					if(result && result.address_components){
-						var compArr = result.address_components;
-						var coordCountry = "";
-						var coordState = "";
-						var coordCounty = "";
-						for (var p1 in compArr) {
-							var compObj = compArr[p1];
-							if(compObj.long_name && compObj.types){
-								var longName = compObj.long_name;
-								var types = compObj.types;
-								if(types[0] == "country"){
-									var coordCountry = longName;
-								}
-								else if(types[0] == "administrative_area_level_1"){
-									var coordState = longName;
-								}
-								else if(types[0] == "administrative_area_level_2"){
-									var coordCounty = longName;
-								}
-							}
-						}
-						var coordValid = true;
-						if(f.country.value != ""){
-							//if(f.country.value.toLowerCase().indexOf(coordCountry.toLowerCase()) == -1) coordValid = false;
-						}
-						else if(coordCountry != ""){
-							f.country.value = coordCountry;
-						}
-						if(coordState != ""){
-							if(f.stateprovince.value != ""){
-								if(f.stateprovince.value.toLowerCase().indexOf(coordState.toLowerCase()) == -1) coordValid = false;
-							}
-							else{
-								f.stateprovince.value = coordState;
-							}
-						}
-						if(coordCounty != ""){
-							var coordCountyIn = coordCounty.replace(" County","");
-							coordCountyIn = coordCountyIn.replace(" Parish","");
-							if(f.county.value != ""){
-								var fCounty = f.county.value;
-								if(f.county.value.toLowerCase().indexOf(coordCountyIn.toLowerCase()) == -1){
-									if(f.county.value.toLowerCase() != coordCountyIn.toLowerCase()){
-										coordValid = false;
-									}
-								}
-							}
-							else{
-								f.county.value = coordCountyIn;
-							}
-						}
-						if(!coordValid){
-							var msg = "Are coordinates accurate? They currently map to: "+coordCountry+", "+coordState;
-							if(coordCounty) msg = msg + ", " + coordCounty;
-							msg = msg + ", which differs from what is in the form. Click globe symbol to display coordinates in map.";
-							alert(msg);
-						}
-					}
+				let geoObj = parseGbifGeocode(data);
+				if(!geoObj.level0){
+					if(geoObj.ocean) alert("Unable to identify country! Appears to be in "+geoObj.ocean+" Click globe symbol to display coordinates in map.");
+					else alert("Unable to identify country! Are coordinates accurate? Click globe symbol to display coordinates in map.");
 				}
 				else{
+					let level0 = "";
+					let level1 = "";
+					let level2 = "";
+					if(geoObj.level0) level0 = geoObj.level0.name; 
+					if(geoObj.level1) level1 = geoObj.level1.name; 
+					if(geoObj.level2) level2 = geoObj.level2.name; 
+					let coordValid = true;
 					if(f.country.value != ""){
-						alert("Unable to identify country! Are coordinates accurate? Click globe symbol to display coordinates in map.");
+						if(geoObj.level0.iso && geoObj.level0.iso != 'US'){
+							if(f.country.value.toLowerCase().indexOf(level0.toLowerCase()) == -1) coordValid = false;
+						}
+					}
+					else{
+						f.country.value = level0;
+						f.country.style.backgroundColor = "lightblue";
+					}
+					if(level1 != ""){
+						if(f.stateprovince.value != ""){
+							let stateForm = f.stateprovince.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+							let stateIn = level1.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+							if(stateForm.toLowerCase().indexOf(stateIn.toLowerCase()) == -1) coordValid = false;
+						}
+						else{
+							f.stateprovince.value = level1;
+							f.stateprovince.style.backgroundColor = "lightblue";
+						}
+					}
+					if(level2 != ""){
+						let countyStr = level2.replace(" County","");
+						countyStr = countyStr.replace(" Parish","");
+						if(f.county.value != ""){
+							if(f.county.value.toLowerCase().indexOf(countyStr.toLowerCase()) == -1){
+								if(f.county.value.toLowerCase() != countyStr.toLowerCase()){
+									coordValid = false;
+								}
+							}
+						}
+						else{
+							f.county.value = level2;
+							f.county.style.backgroundColor = "lightblue";
+						}
+					}
+					if(!coordValid){
+						let msg = "Are coordinates accurate? They currently map to: "+level0+", "+level1;
+						if(level2) msg = msg + ", " + level2;
+						msg = msg + ", which differs from what is in the form. Click globe symbol to display coordinates in map.";
+						alert(msg);
 					}
 				}
 			}
 		});
 	}
+}
+
+function parseGbifGeocode(data){
+	let geoObj = {};
+	for(var i = 0; i < data.length; i++) {
+		let obj = data[i];
+		if(obj.type == 'IHO') geoObj.ocean = obj.title;
+		else if(obj.type == 'GADM0'){
+			geoObj.level0 = {};
+			geoObj.level0.name = obj.title;
+			if(obj.isoCountryCode2Digit) geoObj.level0.iso = obj.isoCountryCode2Digit;
+		}
+		else if(obj.type == 'GADM1'){
+			geoObj.level1 = {};
+			geoObj.level1.name = obj.title;
+			if(obj.isoCountryCode2Digit) geoObj.level1.iso = obj.isoCountryCode2Digit;
+		} 
+		else if(obj.type == 'GADM2'){
+			geoObj.level2 = {};
+			geoObj.level2.name = obj.title;
+			if(obj.isoCountryCode2Digit) geoObj.level2.iso = obj.isoCountryCode2Digit;
+		} 
+	}
+	return geoObj;
 }

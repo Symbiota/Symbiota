@@ -20,19 +20,16 @@ require_once($SERVER_ROOT.'/classes/SpecUploadBase.php');
 require_once($SERVER_ROOT.'/classes/SpecUploadFile.php');
 require_once($SERVER_ROOT.'/classes/SpecUploadDwca.php');
 
-$uploadType = preg_replace("/[^0-9]/","",$_REQUEST["uploadtype"]);
-$securityKey = preg_replace("/[^A-Za-z0-9\-]/","",$_REQUEST["key"]);
-$filePath = array_key_exists("filepath",$_REQUEST)?$_REQUEST['filepath']:false;
-$importIdent = array_key_exists("importident",$_REQUEST)?$_REQUEST['importident']:false;
-$importImage = array_key_exists("importimage",$_REQUEST)?$_REQUEST['importimage']:false;
+$uploadType = isset($_REQUEST['uploadtype'])?preg_replace('/[^0-9]/','',$_REQUEST['uploadtype']):'';
+$securityKey = isset($_REQUEST['key'])?preg_replace('/[^A-Za-z0-9\-]/','',$_REQUEST['key']):'';
+$filePath = array_key_exists('filepath',$_REQUEST)?$_REQUEST['filepath']:false;
+$importIdent = array_key_exists('importident',$_REQUEST)?$_REQUEST['importident']:false;
+$importImage = array_key_exists('importimage',$_REQUEST)?$_REQUEST['importimage']:false;
 $sourceType = array_key_exists('sourcetype',$_REQUEST)?$_REQUEST['sourcetype']:'';
-$action = array_key_exists("action",$_REQUEST)?preg_replace("/[^a-z]/","",$_REQUEST['action']):'';
 
-if(!$uploadType){
-	exit("ERROR: uploadtype is required and is null ");
-}
+if(!$uploadType) exit("ERROR: uploadtype is required and is null ");
 
-$duManager;
+$duManager = null;
 $FILEUPLOAD = 3; $DWCAUPLOAD = 6;
 if($uploadType == $FILEUPLOAD){
 	$duManager = new SpecUploadFile();
@@ -46,9 +43,8 @@ elseif($uploadType == $DWCAUPLOAD){
 	//For now, assume DWCA import is a specfy database
 	if(!$sourceType) $sourceType = 'specify';
 }
-else{
-	exit('ERROR: illegal upload type = '.$uploadType.' (should be 3 = File Upload, 6 = DWCA upload)');
-}
+else exit('ERROR: illegal upload type = '.$uploadType.' (should be 3 = File Upload, 6 = DWCA upload)');
+
 $duManager->setVerboseMode(2);
 if(!$securityKey){
 	$errStr = 'ERROR: security key is required and is null';
@@ -69,19 +65,11 @@ if(!$ulPath){
 	exit($errStr);
 }
 
-if(!$duManager->analyzeUpload()){
-	exit('ERROR analyzing upload file: '.$duManager->getErrorStr());
-}
-if(!$duManager->uploadData(false)){
-	exit('ERROR uploading file: '.$duManager->getErrorStr());
-}
+if(!$duManager->analyzeUpload()) exit('ERROR analyzing upload file: '.$duManager->getErrorStr());
+if(!$duManager->uploadData(false)) exit('ERROR uploading file: '.$duManager->getErrorStr());
 $transferCnt = $duManager->getTransferCount();
 $duManager->finalTransfer();
 
-if($transferCnt > 0){
-	echo 'Transfer successful: '.$transferCnt.' records transferred';
-}
-else{
-	echo 'FAILED: 0 records uploaded';
-}
+if($transferCnt > 0) echo 'Transfer successful: '.$transferCnt.' records transferred';
+else echo 'FAILED: 0 records uploaded';
 ?>

@@ -966,9 +966,12 @@ $traitArr = $indManager->getTraitArr();
 								if(substr($occArr['othercatalognumbers'],0,1) == '{'){
 									if($ocnArr = json_decode($occArr['othercatalognumbers'],true)){
 										foreach($ocnArr as $idKey => $idArr){
-											if(!$displayStr || ($idKey && $idKey == 'NEON sampleID')){
+											if(!$displayStr || $idKey == 'NEON sampleID' || $idKey == 'NEON sampleCode (barcode)'){
 												$displayStr = $idArr[0];
+												if($idKey == 'NEON sampleCode (barcode)') $iUrl = str_replace('sampleTag','barcode',$iUrl);
 												$indUrl = str_replace('--OTHERCATALOGNUMBERS--',$idArr[0],$iUrl);
+												if($idKey == 'NEON sampleID') break;
+												if($idKey == 'NEON sampleCode (barcode)') break;
 											}
 										}
 									}

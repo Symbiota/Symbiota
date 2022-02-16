@@ -47,7 +47,7 @@ else{
 		<title><?php echo $DEFAULT_TITLE; ?> - Coordinate Aid</title>
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 		<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'&key='.$GOOGLE_MAP_KEY:''); ?>"></script>
-		<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/wktpolygontools.js?ver=1" type="text/javascript"></script>
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/wktpolygontools.js?ver=2" type="text/javascript"></script>
 		<script type="text/javascript">
 			var map;
 			var selectedShape = null;
@@ -80,7 +80,7 @@ else{
 				};
 
 				var drawingManager = new google.maps.drawing.DrawingManager({
-					drawingMode: null,
+					drawingMode: google.maps.drawing.OverlayType.POLYGON,
 					drawingControl: true,
 					drawingControlOptions: {
 						position: google.maps.ControlPosition.TOP_CENTER,
@@ -241,11 +241,11 @@ else{
 			}
 
 			function submitPolygonForm(f){
-				var str1 = "block";
+				var str1 = "inline";
 				var str2 = "none";
 				if(f.clid.value == "" || f.footprintwkt.value == ""){
 					str1 = "none";
-					str2 = "block";
+					str2 = "inline";
 				}
 				if(opener.document.getElementById("polyDefDiv")){
 					opener.document.getElementById("polyDefDiv").style.display = str1;
@@ -273,8 +273,8 @@ else{
 		</script>
 	</head>
 	<body style="background-color:#ffffff;" onload="initialize()">
-		<div id='map_canvas' style='width:100%;height:600px;'></div>
-		<div>
+		<div id="map_canvas" style="width:100%;height:600px;"></div>
+		<div style="width:100%;">
 			<div id="reformatdiv" style="display:none;color:red">Polygon has been reformated. The new polygon must be saved before it is usable!</div>
 			<div id="helptext" style="display:none;margin:5px 0px">
 				Click on polygon symbol to activate polygon tool and create a shape representing research area.
@@ -284,8 +284,8 @@ else{
 				Use Switch Coordinate Order button to convert Long-Lat coordinate pairs to Lat-Long format.
 			</div>
 			<form name="polygonSubmitForm" method="post" action="mappolyaid.php" onsubmit="return submitPolygonForm(this)">
-				<div style="float:left">
-					<textarea id="footprintwkt" name="footprintwkt" style="width:650px;height:75px;"><?php echo $clManager->getFootprintWkt(); ?></textarea>
+				<div style="float:left;width:800px">
+					<textarea id="footprintwkt" name="footprintwkt" style="width:98%;height:90px;"><?php echo $clManager->getFootprintWkt(); ?></textarea>
 					<input name="clid" type="hidden" value="<?php echo $clid; ?>" />
 					<input name="latdef" type="hidden" value="<?php echo $latDef; ?>" />
 					<input name="lngdef" type="hidden" value="<?php echo $lngDef; ?>" />

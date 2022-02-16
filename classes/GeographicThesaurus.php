@@ -309,7 +309,7 @@ class GeographicThesaurus extends Manager{
 	//geoBoundary harvesting functions
 	public function getGBCountryList(){
 		$retArr = array();
-		$contArr = array('Asia','Caribbean','Oceania','Africa','Europe','Central America','Northern America','South America',);
+		$contArr = $this->getContinentArr();
 		$url = 'https://www.geoboundaries.org/api/current/gbOpen/ALL/ADM0/';
 		$json = $this->getGeoboundariesJSON($url);
 		$obj = json_decode($json);
@@ -319,7 +319,7 @@ class GeographicThesaurus extends Manager{
 				$retArr[$key]['id'] = $countryObj->boundaryID;
 				$retArr[$key]['name'] = $countryObj->boundaryName;
 				$retArr[$key]['canonical'] = $countryObj->boundaryCanonical;
-				$retArr[$key]['license'] = $countryObj->boundaryLicense;
+				$retArr[$key]['license'] = $this->licenseTranslate($countryObj->boundaryLicense);
 				$region = '';
 				if(in_array($countryObj->Continent,$contArr)) $region = $countryObj->Continent;
 				elseif(in_array($countryObj->{'UNSDG-subregion'},$contArr)) $region = $countryObj->{'UNSDG-subregion'};
@@ -347,21 +347,167 @@ class GeographicThesaurus extends Manager{
 		return $retArr;
 	}
 
-	public function addPolygon($gbID){
+	public function getGBGeoList($countryCode){
 		$retArr = array();
+		$contArr = $this->getContinentArr();
+		$url = 'https://www.geoboundaries.org/api/current/gbOpen/'.$countryCode.'/ALL/';
+		$json = $this->getGeoboundariesJSON($url);
+		$obj = json_decode($json);
+		if($obj){
+			foreach($obj as $boundaryObj){
+				$type = $boundaryObj->boundaryType;
+				if(preg_match('/^ADM[0-3]{1}$/',$type)){
+					$retArr[$type]['id'] = $boundaryObj->boundaryID;
+					$retArr[$type]['canonical'] = $boundaryObj->boundaryCanonical;
+					$retArr[$type]['year'] = $boundaryObj->boundaryYearRepresented;
+					$retArr[$type]['license'] = $this->licenseTranslate($boundaryObj->boundaryLicense);
+					$retArr[$type]['licenseSource'] = $boundaryObj->licenseSource;
+					$retArr[$type]['sourceURL'] = $boundaryObj->boundarySourceURL;
+					$region = '';
+					if(in_array($boundaryObj->Continent,$contArr)) $region = $boundaryObj->Continent;
+					elseif(in_array($boundaryObj->{'UNSDG-subregion'},$contArr)) $region = $boundaryObj->{'UNSDG-subregion'};
+					else $region = $boundaryObj->Continent.'/'.$boundaryObj->{'UNSDG-subregion'};
+					if($region == 'Northern America') $region == 'North America';
+					if($countryCode == 'ATA') $region = 'Antartica';
+					$retArr[$type]['region'] = $region;
+					$retArr[$type]['geoJson'] = $boundaryObj->gjDownloadURL;
+					$retArr[$type]['simpleGeoJson'] = $boundaryObj->simplifiedGeometryGeoJSON;
+					$retArr[$type]['link'] = $boundaryObj->apiURL;
+					$retArr[$type]['img'] = $boundaryObj->imagePreview;
+				}
+			}
+			ksort($retArr);
+			//Check to see if country is already in thesaurus
+			$sql = 'SELECT g.geoThesID, g.iso3, p.geoThesID AS polygonID
+				FROM geographicthesaurus g LEFT JOIN geographicpolygon p ON g.geoThesID = p.geoThesID
+				WHERE g.geoLevel = 50 AND g.acceptedID IS NULL AND g.iso3 IN("'.$countryCode.'")';
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_object()){
+				$retArr['ADM0']['geoThesID'] = $r->geoThesID;
+				if($r->polygonID) $retArr['ADM0']['polygon'] = 1;
+			}
+			$rs->free();
+			$this->checkLowerDivision($retArr);
+		}
+		return $retArr;
+	}
+
+	private function licenseTranslate($licenseStr){
+		$retStr = $licenseStr;
+		if($licenseStr == 'Public Domain') $retStr = 'CC0';
+		elseif($licenseStr == 'CC0 1.0 Universal (CC0 1.0) Public Domain Dedication') $retStr = 'CC0 1.0';
+		elseif($licenseStr == 'Creative Commons Attribution 3.0 License') $retStr = 'CC BY 3.0';
+		elseif($licenseStr == 'Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)') $retStr = 'CC BY 3.0 IGO';
+		elseif($licenseStr == 'Attribuzione 3.0 Italia (CC BY 3.0 IT)') $retStr = 'CC BY 3.0 IT';
+		elseif($licenseStr == 'Creative Commons Attribution 4.0 (CC BY 4.0)') $retStr = 'CC BY 4.0';
+		elseif($licenseStr == 'Creative Commons Attribution 4.0 International (CC BY 4.0)') $retStr = 'CC BY 4.0';
+		elseif($licenseStr == 'Creative Commons Attribution-ShareAlike 2.0') $retStr = 'CC BY-SA 2.0';
+		elseif($licenseStr == 'Creative Commons Attribution-ShareAlike 3.0 Unported') $retStr = 'CC BY-SA 3.0';
+		elseif($licenseStr == 'Creative Commons Attribution-ShareAlike 4.0 International License') $retStr = 'CC BY-SA 4.0';
+		elseif($licenseStr == 'Open Data Commons Open Database License 1.0') $retStr = 'ODbL';
+		elseif($licenseStr == 'Open Government Licence v3.0') $retStr = 'OGL 3.0';
+
+		return $retStr;
+	}
+
+	private function checkLowerDivision(&$retArr, $type = 'ADM1'){
+		$admLevel = substr($type,-1);
+		$geoLevel = 0;
+		if($admLevel == 1) $geoLevel = 60;
+		elseif($admLevel == 2) $geoLevel = 70;
+		elseif($admLevel == 3) $geoLevel = 80;
+		elseif($admLevel > 3) return false;
+		if($geoLevel){
+			$admNext = 'ADM'.($admLevel+1);
+			if(isset($retArr[$type]['geoThesID']) && isset($retArr[$admNext])){
+				$sql = 'SELECT g.geoThesID, g.iso3, p.geoThesID AS polygonID
+					FROM geographicthesaurus g LEFT JOIN geographicpolygon p ON g.geoThesID = p.geoThesID
+					WHERE g.geoLevel = '.$geoLevel.' AND g.acceptedID IS NULL AND g.parentID = '.$retArr[$type]['geoThesID'];
+				$rs = $this->conn->query($sql);
+				while($r = $rs->fetch_object()){
+					$retArr[$admNext]['geoThesID'] = $r->geoThesID;
+					if($r->polygonID) $retArr[$admNext]['polygon'] = 1;
+					$this->checkLowerDivision($retArr, $admNext);
+				}
+				$rs->free();
+			}
+		}
+	}
+
+	public function addGeoBoundary($gbID){
+		$status = false;
+		$url = 'https://www.geoboundaries.org/api/gbID/'.$gbID.'/';
+		$json = $this->getGeoboundariesJSON($url);
+		$obj = json_decode($json);
+
+
+
+		return $status;
+	}
+
+	private function getGeoThesID($iso3, $type){
+		$countryGeoThesID = 0;
+		$sql = 'SELECT geoThesID FROM geographicthesaurus WHERE iso3 = "'.$iso3.'"';
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$countryGeoThesID = $r->geoThesID;
+		}
+		$rs->free();
+		if(!$countryGeoThesID) $countryGeoThesID = $this->insertGeoBoundary();
+		if($type = 'ADM0') return $countryGeoThesID;
+		if($countryGeoThesID){
+			if($type = 'ADM1'){
+				$this->getGeoThesID($iso3, 'ADM1');
+			}
+		}
+	}
+
+	private function insertGeoBoundary(){
+		$retID = 0;
+		$sql = '';
+		if($this->conn->query($sql)){
+			$retID = $this->conn->insert_id;
+		}
+		else{
+			echo '<div>ERROR inserting geoBoundary: '.$this->conn->query().'</div>';
+		}
+		return $retID;
+	}
+
+	private function addGBPolygon($gbID){
+		$status = false;
 		$url = 'https://www.geoboundaries.org/api/gbID/'.$gbID.'/';
 		$json = $this->getGeoboundariesJSON($url);
 		$obj = json_decode($json);
 		if(isset($obj->simplifiedGeometryGeoJSON)){
 			$geoJson = $this->getGeoboundariesJSON($obj->simplifiedGeometryGeoJSON);
-			$sql = 'REPLACE INTO geographicpolygon(geoThesID, footprintPolygon) SELECT geoThesID, ST_GeomFromGeoJSON(\''.$geoJson.'\',2) FROM geographicthesaurus WHERE acceptedID IS NULL AND iso3 = "'.$obj->boundaryISO.'"';
-echo $sql;
-			if(!$this->conn->query($sql)){
+			$geoJson = $this->cleanGeoJson($geoJson);
+			$sql = 'REPLACE INTO geographicpolygon(geoThesID, footprintPolygon, geoJson)
+				SELECT geoThesID, ST_GeomFromGeoJSON(\''.$geoJson.'\'),\''.$geoJson.'\' FROM geographicthesaurus WHERE acceptedID IS NULL AND iso3 = "'.$obj->boundaryISO.'"';
+			if($this->conn->query($sql)){
+				$status = true;
+			}
+			else{
 				$this->errorMessage = $this->conn->error;
 				echo 'ERROR adding geoJSON to database: '.$this->conn->error;
 			}
 		}
-		return $retArr;
+		return $status;
+	}
+
+	private function cleanGeoJson($geoJson){
+		$jsonObj = json_decode($geoJson);
+		$retObj = [];
+		foreach($jsonObj->features as $fKey => $featureObj){
+			foreach($featureObj->geometry->coordinates as $coordKey1 => $coordObj1){
+				foreach($coordObj1 as $coordKey2 => $coordObj2){
+					$jsonObj->features[$fKey]->geometry->coordinates[$coordKey1][$coordKey2][0] = round($coordObj2[0],6);
+					$jsonObj->features[$fKey]->geometry->coordinates[$coordKey1][$coordKey2][1] = round($coordObj2[1],6);
+				}
+			}
+
+		}
+		return json_encode($jsonObj->features[0]->geometry);
 	}
 
 	private function getGeoboundariesJSON($url){
@@ -382,6 +528,9 @@ echo $sql;
 		return $resJson;
 	}
 
+	private function getContinentArr(){
+		return array('Asia','Caribbean','Oceania','Africa','Europe','Central America','Northern America','South America');
+	}
 
 	// Setters and getters
 

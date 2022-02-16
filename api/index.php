@@ -1,33 +1,29 @@
 <?php
-include_once('../config/symbini.php');
-header("Content-Type: text/html; charset=".$CHARSET);
-header("Location: ".$CLIENT_ROOT."/index.php");
-?>
-<html>
-	<head>
-		<title>Forbidden</title>
-		<?php
-		$activateJQuery = false;
-		include_once($SERVER_ROOT.'/includes/head.php');
-		?>
-	</head>
-	<body>
-		<?php
-		$displayLeftMenu = true;
-		include($SERVER_ROOT.'/includes/header.php');
-		?>
-		<!-- This is inner text! -->
-		<div id="innertext">
-			<h1>Forbidden</h1>
-			<div style="font-weight:bold;">
-				You don't have permission to access this page.
-			</div>
-			<div style="font-weight:bold;margin:10px;">
-				<a href="<?php echo $CLIENT_ROOT; ?>/index.php">Return to index page</a>
-			</div>
-		</div>
-		<?php
-		include($SERVER_ROOT.'/includes/footer.php');
-		?>
-	</body>
-</html>
+
+/*
+|--------------------------------------------------------------------------
+| Create The Application
+|--------------------------------------------------------------------------
+|
+| First we need to get an application instance. This creates an instance
+| of the application / container and bootstraps the application so it
+| is ready to receive HTTP / Console requests from the environment.
+|
+*/
+
+//$app = require __DIR__.'/../bootstrap/app.php';
+$app = require __DIR__.'/bootstrap/app.php';
+
+/*
+|--------------------------------------------------------------------------
+| Run The Application
+|--------------------------------------------------------------------------
+|
+| Once we have the application, we can handle the incoming request
+| through the kernel, and send the associated response back to
+| the client's browser allowing them to enjoy the creative
+| and wonderful application we have prepared for them.
+|
+*/
+
+$app->run();
