@@ -5,8 +5,6 @@ class APIBase extends Manager{
 
 	function __construct($id=null,$conType=null) {
 		parent::__construct($id,$conType);
-		//Need to change this so that the log only creates the log file is an error is thrown
-		//$this->setLogFH('../content/logs/occurrenceWriter/occurrenceWriter_'.date('Y-m-d').'.log');
 	}
 
 	function __destruct(){
@@ -27,6 +25,11 @@ class APIBase extends Manager{
 			return true;
 		}
 		return true;
+	}
+
+	protected function logOrEcho($str, $indexLevel=0, $tag = 'li'){
+		if(!$this->logFH) $this->setLogFH('../content/logs/occurImport/occurrenceWriter_'.date('Y-m-d').'.log');
+		parent::logOrEcho($str, $indexLevel, $tag);
 	}
 }
 ?>

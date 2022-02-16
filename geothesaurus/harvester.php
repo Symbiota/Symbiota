@@ -1,7 +1,7 @@
 <?php
 include_once ('../config/symbini.php');
 include_once ($SERVER_ROOT . '/classes/GeographicThesaurus.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+//header("Content-Type: text/html; charset=".$CHARSET);
 
 $geoThesID = array_key_exists('geoThesID', $_REQUEST) ? $_REQUEST['geoThesID'] : '';
 $gbAction = array_key_exists('gbAction', $_REQUEST) ? $_REQUEST['gbAction'] : '';
@@ -23,9 +23,10 @@ if($isEditor && $submitAction) {
 		else $statusStr = '<span style="color:green;">'.implode('<br/>',$geoManager->getWarningArr()).'<span style="color:green;">';
 	}
 	elseif($submitAction == 'submitCountryForm'){
-		$geoManager->addPolygon($_POST['geoid'][0]);
+		$geoManager->addGeoBoundary($_POST['geoid'][0]);
 	}
 }
+//https://gadm.org/download_country.html
 ?>
 <html>
 <head>
@@ -37,14 +38,7 @@ if($isEditor && $submitAction) {
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>
 	<script type="text/javascript">
-		function selectAll(cb){
-			var boxesChecked = true;
-			if(!cb.checked) boxesChecked = false;
-			var f = cb.form;
-			for(var i=0;i<f.length;i++){
-				if(f.elements[i].name == "geoid[]") f.elements[i].checked = boxesChecked;
-			}
-		}
+
 	</script>
 	<style type="text/css">
 		fieldset{ margin: 10px; padding: 15px; }
@@ -114,25 +108,23 @@ if($isEditor && $submitAction) {
 					<li><a href="harvester.php?gbAction=gbListCountries">List All Countries</a></li>
 				</ul>
 				<?php
-				if($gbAction == 'gbListCountries'){
-					?>
-					<div>
-						<div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nopoly').hide();" /> Show no polygon only</div>
-						<div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nodb').hide();" /> Show not in database only</div>
-						<div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nopoly').show();$('.nodb').show();" /> Show all</div>
-					</div>
-					<form name="" method="post" action="harvester.php">
+				if($gbAction){
+					if($gbAction == 'gbListCountries'){
+						?>
+						<div>
+							<div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nopoly').hide();" /> Show no polygon only</div>
+							<div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nodb').hide();" /> Show not in database only</div>
+							<div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nopoly').show();$('.nodb').show();" /> Show all</div>
+						</div>
 						<table class="styledtable">
 							<tr>
-								<th title="Select/Deselect All"><input name="all" type="checkbox" onclick="selectAll(this)" /></th>
 								<th>Name</th><th>ISO</th><th>In Database</th><th>Has Polygon</th><th>ID</th><th>Canonical</th><th>License</th><th>Region</th><th>Full Link</th><th>Preview Image</th>
 							</tr>
 							<?php
 							$countryList = $geoManager->getGBCountryList();
 							foreach($countryList as $iso => $cArr){
 								echo '<tr class="'.(isset($cArr['geoThesID'])?'nodb':'').(isset($cArr['polygon'])?' nopoly':'').'">';
-								echo '<td><input name="geoid[]" type="checkbox" value="'.$cArr['id'].'" '.(isset($cArr['polygon'])?'DISABLED':'').' /></td>';
-								echo '<td>'.$cArr['name'].'</td>';
+								echo '<td><a href="harvester.php?gbAction='.$iso.'">'.$cArr['name'].'</a></td>';
 								echo '<td>'.$iso.'</td>';
 								echo '<td>'.(isset($cArr['geoThesID'])?'Yes':'No').'</td>';
 								echo '<td>'.(isset($cArr['polygon'])?'Yes':'No').'</td>';
@@ -146,9 +138,38 @@ if($isEditor && $submitAction) {
 							}
 							?>
 						</table>
-						<button name="submitaction" type="submit" value="submitCountryForm">Submit</button>
-					</form>
-				<?php
+						<?php
+					}
+					else{
+						?>
+						<form name="" method="post" action="harvester.php">
+							<table class="styledtable">
+								<tr>
+									<th></th><th>Type</th><th>ID</th><th>In Database</th><th>Has Polygon</th><th>Canonical</th><th>Region</th><th>License</th><th>Full Link</th><th>Preview Image</th>
+								</tr>
+								<?php
+								$geoList = $geoManager->getGBGeoList($gbAction);
+								foreach($geoList as $type => $gArr){
+									echo '<tr class="'.(isset($gArr['geoThesID'])?'nodb':'').(isset($gArr['polygon'])?' nopoly':'').'">';
+									echo '<td><input name="geoid[]" type="checkbox" value="'.$gArr['id'].'" '.(isset($gArr['polygon'])?'DISABLED':'').' /></td>';
+									echo '<td>'.$type.'</td>';
+									echo '<td>'.$gArr['id'].'</td>';
+									echo '<td>'.(isset($gArr['geoThesID'])?'Yes':'No').'</td>';
+									echo '<td>'.(isset($gArr['polygon'])?'Yes':'No').'</td>';
+									echo '<td>'.$gArr['canonical'].'</td>';
+									echo '<td>'.$gArr['region'].'</td>';
+									echo '<td>'.$gArr['license'].'</td>';
+									echo '<td><a href="'.$gArr['link'].'" target="_blank">link</a></td>';
+									echo '<td><a href="'.$gArr['img'].'" target="_blank">IMG</a></td>';
+									echo '</tr>';
+								}
+								?>
+							</table>
+							<input name="gbAction" type="hidden" value="<?php echo $gbAction; ?>" />
+							<button name="submitaction" type="submit" value="submitCountryForm">Add Boundaries</button>
+						</form>
+						<?php
+					}
 				}
 			?>
 			</fieldset>

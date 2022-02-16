@@ -12,6 +12,7 @@ class OccurrenceCollectionProfile extends Manager {
 	private $datasetKey;
 	private $endpointKey;
 	private $idigbioKey;
+	private $materialSampleIsActive = false;
 
 	public function __construct($connType = 'readonly'){
 		parent::__construct(null,$connType);
@@ -37,7 +38,7 @@ class OccurrenceCollectionProfile extends Manager {
 	private function setCollectionMeta(){
 		$sql = 'SELECT c.collid, c.institutioncode, c.CollectionCode, c.CollectionName, c.collectionid, c.FullDescription, c.resourceJson, c.contactJson, c.individualurl, '.
 			'c.latitudedecimal, c.longitudedecimal, c.icon, c.colltype, c.managementtype, c.publicedits, c.guidtarget, c.rights, c.rightsholder, c.accessrights, '.
-			'c.dwcaurl, c.sortseq, c.securitykey AS skey, c.collectionguid AS recordid, c.publishtogbif, c.publishtoidigbio, c.aggkeysstr, s.uploaddate '.
+			'c.dwcaurl, c.sortseq, c.securitykey AS skey, c.collectionguid AS recordid, c.publishtogbif, c.publishtoidigbio, c.aggkeysstr, c.dynamicProperties, s.uploaddate '.
 			'FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid ';
 		if($this->collid) $sql .= 'WHERE (c.collid = '.$this->collid.') ';
 		else $sql .= 'WHERE s.recordcnt > 0 ORDER BY c.SortSeq, c.CollectionName';
@@ -45,9 +46,13 @@ class OccurrenceCollectionProfile extends Manager {
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_assoc()){
 			foreach($r as $k => $v){
-				$this->collMeta[$r['collid']][strtolower($k)] = $v;
+				if($k != 'dynamicProperties') $this->collMeta[$r['collid']][strtolower($k)] = $v;
 			}
-			$uDate = "";
+			if($r['dynamicProperties'] && strpos($r['dynamicProperties'],'matSample":{"status":1')){
+				$this->collMeta[$r['collid']]['matSample'] = 1;
+				$this->materialSampleIsActive = true;
+			}
+			$uDate = '';
 			if($r['uploaddate']){
 				$uDate = $r['uploaddate'];
 				$month = substr($uDate,5,2);
@@ -620,18 +625,19 @@ class OccurrenceCollectionProfile extends Manager {
 
 	public function findIdigbioKey($guid){
 		global $CLIENT_ROOT;
-		$url = 'http://search.idigbio.org/v2/search/recordsets?rsq={%22recordids%22:%22';
-		$url .= (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']?'https://':'http://');
-		$url .= $_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/webservices/dwc/'.$guid.'%22}';
+		$url = 'https://search.idigbio.org/v2/search/recordsets?rsq={%22recordids%22:[';
+		$url .= '%22'.$guid.'%22,';
+		$url .= '%22https://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/webservices/dwc/'.$guid.'%22,';
+		$url .= '%22http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/webservices/dwc/'.$guid.'%22';
+		$url .= ']}';
 		$ch = curl_init($url);
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 		$result = curl_exec($ch);
 		curl_close($ch);
 		$returnArr = json_decode($result,true);
-		if(isset($returnArr['items'][0]['uuid'])){
-			$this->idigbioKey = $returnArr['items'][0]['uuid'];
-		}
+		if(isset($returnArr['items'][0]['uuid'])) $this->idigbioKey = $returnArr['items'][0]['uuid'];
 		if($this->idigbioKey) $this->updateAggKeys();
 		return $this->idigbioKey;
 	}
@@ -1189,6 +1195,10 @@ class OccurrenceCollectionProfile extends Manager {
 		if($rs->num_rows) $bool = true;
 		$rs->free();
 		return $bool;
+	}
+
+	public function materialSampleIsActive(){
+		return $this->materialSampleIsActive;
 	}
 
 	//Misc functions

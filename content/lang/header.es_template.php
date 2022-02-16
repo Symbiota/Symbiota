@@ -40,6 +40,6 @@ $LANG['H_SITEMAP'] = 'Mapa del Sitio';
 $LANG['H_WELCOME'] = 'Bienvenido';
 $LANG['H_MY_PROFILE'] = 'Mi Perfil';
 $LANG['H_LOGOUT'] = 'Finalizar Sesi&oacute;n';
-$LANG['H_LOGIN'] = 'iniciar Sesi&oacute;n';
+$LANG['H_LOGIN'] = 'Iniciar Sesi&oacute;n';
 $LANG['H_NEW_ACCOUNT'] = 'Nueva Cuenta';
 ?>

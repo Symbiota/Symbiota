@@ -189,8 +189,11 @@ class DwcArchiverCore extends Manager{
 					$this->collArr[$r->collid]['phone'] = $r->phone;
 					if($r->dynamicproperties){
 						if($propArr = json_decode($r->dynamicproperties,true)){
-							if(isset($propArr['editorProps']['modules-panel']['paleo']['status'])){
-								if($propArr['editorProps']['modules-panel']['paleo']['status'] == 1) $this->hasPaleo = true;
+							if(isset($propArr['editorProps']['modules-panel'])){
+								foreach($propArr['editorProps']['modules-panel'] as $k => $modArr){
+									if(isset($modArr['paleo']['status'])) $this->hasPaleo = true;
+									elseif(isset($modArr['matSample']['status'])) $this->collArr[$r->collid]['matSample'] = 1;
+								}
 							}
 							if(isset($propArr['publicationProps']['titleOverride']) && $propArr['publicationProps']['titleOverride']){
 								$this->collArr[$r->collid]['collname'] = $propArr['publicationProps']['titleOverride'];
@@ -865,7 +868,7 @@ class DwcArchiverCore extends Manager{
 				$zipArchive->addFile($this->targetPath.$this->ts.'-attr'.$this->fileExt);
 				$zipArchive->renameName($this->targetPath.$this->ts.'-attr'.$this->fileExt,'measurementOrFact'.$this->fileExt);
 			}
-			if($this->includeMaterialSample){
+			if($this->includeMaterialSample && file_exists($this->targetPath.$this->ts.'-matSample'.$this->fileExt)){
 				$zipArchive->addFile($this->targetPath.$this->ts.'-matSample'.$this->fileExt);
 				$zipArchive->renameName($this->targetPath.$this->ts.'-matSample'.$this->fileExt,'materialSample'.$this->fileExt);
 			}
@@ -883,14 +886,10 @@ class DwcArchiverCore extends Manager{
 			if($this->includeDets) unlink($this->targetPath.$this->ts.'-det'.$this->fileExt);
 			if($this->includeImgs) unlink($this->targetPath.$this->ts.'-multimedia'.$this->fileExt);
 			if($this->includeAttributes) unlink($this->targetPath.$this->ts.'-attr'.$this->fileExt);
-			if($this->includeMaterialSample) unlink($this->targetPath.$this->ts.'-matSample'.$this->fileExt);
+			if($this->includeMaterialSample && file_exists($this->targetPath.$this->ts.'-matSample'.$this->fileExt)) unlink($this->targetPath.$this->ts.'-matSample'.$this->fileExt);
 			unlink($this->targetPath.$this->ts.'-meta.xml');
-			if($this->schemaType == 'dwc'){
-				rename($this->targetPath.$this->ts.'-eml.xml',$this->targetPath.str_replace('.zip','.eml',$fileName));
-			}
-			else{
-				unlink($this->targetPath.$this->ts.'-eml.xml');
-			}
+			if($this->schemaType == 'dwc') rename($this->targetPath.$this->ts.'-eml.xml',$this->targetPath.str_replace('.zip','.eml',$fileName));
+			else unlink($this->targetPath.$this->ts.'-eml.xml');
 		}
 		else{
 			$this->errorMessage = 'FAILED to create archive file due to failure to return occurrence records; check and adjust search variables';
@@ -1050,7 +1049,7 @@ class DwcArchiverCore extends Manager{
 		}
 
 		//MaterialSample extension
-		if($this->includeMaterialSample){
+		if($this->includeMaterialSample && isset($this->fieldArrMap['materialSample'])){
 			$extElem3 = $newDoc->createElement('extension');
 			$extElem3->setAttribute('encoding',$this->charSetOut);
 			$extElem3->setAttribute('fieldsTerminatedBy',$this->delimiter);
@@ -1079,7 +1078,7 @@ class DwcArchiverCore extends Manager{
 		}
 		$newDoc->save($this->targetPath.$this->ts.'-meta.xml');
 
-    	$this->logOrEcho("Done!! (".date('h:i:s A').")\n");
+    	$this->logOrEcho('Done! ('.date('h:i:s A').")\n");
 	}
 
 	private function getEmlArr(){
@@ -1205,7 +1204,7 @@ class DwcArchiverCore extends Manager{
 
 		$emlDoc->save($this->targetPath.$this->ts.'-eml.xml');
 
-    	$this->logOrEcho("Done!! (".date('h:i:s A').")\n");
+    	$this->logOrEcho('Done! ('.date('h:i:s A').")\n");
 	}
 
 	/*
@@ -1565,7 +1564,7 @@ class DwcArchiverCore extends Manager{
 
 	//Generate Data files
 	private function writeOccurrenceFile(){
-		$this->logOrEcho("Creating occurrence file (".date('h:i:s A').")... ");
+		$this->logOrEcho('Creating occurrence file ('.date('h:i:s A').')... ');
 		$filePath = $this->targetPath.$this->ts.'-occur'.$this->fileExt;
 		$fh = fopen($filePath, 'w');
 		if(!$fh){
@@ -1594,9 +1593,7 @@ class DwcArchiverCore extends Manager{
 			unset($fieldArr['localitySecurity']);
 			unset($fieldArr['collID']);
 		}
-		elseif($this->schemaType == 'backup'){
-			unset($fieldArr['collID']);
-		}
+		elseif($this->schemaType == 'backup') unset($fieldArr['collID']);
 		$fieldOutArr = array();
 		if($this->schemaType == 'coge'){
 			//Convert to GeoLocate flavor
@@ -1605,17 +1602,11 @@ class DwcArchiverCore extends Manager{
 				'minimumElevationInMeters'=>'MinimumElevation','maximumElevationInMeters'=>'MaximumElevation','maximumDepthInMeters'=>'MaximumDepth','minimumDepthInMeters'=>'MinimumDepth',
 				'occurrenceRemarks'=>'Notes','dateEntered','dateLastModified','collID'=>'collId','recordID'=>'recordId','references');
 			foreach($fieldArr as $k => $v){
-				if(array_key_exists($k,$glFields)){
-					$fieldOutArr[] = $glFields[$k];
-				}
-				else{
-					$fieldOutArr[] = strtoupper(substr($k,0,1)).substr($k,1);
-				}
+				if(array_key_exists($k,$glFields)) $fieldOutArr[] = $glFields[$k];
+				else $fieldOutArr[] = strtoupper(substr($k,0,1)).substr($k,1);
 			}
 		}
-		else{
-			$fieldOutArr = array_keys($fieldArr);
-		}
+		else $fieldOutArr = array_keys($fieldArr);
 		$this->writeOutRecord($fh,$fieldOutArr);
 		if(!$this->collArr){
 			//Collection array not previously primed by source
@@ -1637,13 +1628,15 @@ class DwcArchiverCore extends Manager{
 
 		$materialSampleHandler = null;
 		if($this->includeMaterialSample){
-			$this->logOrEcho('Initiating MaterialSample extension file ('.date('h:i:s A').')... ');
-			$materialSampleHandler = new DwcArchiverMaterialSample($this->conn);
-			$materialSampleHandler->initiateProcess($this->targetPath.$this->ts.'-matSample'.$this->fileExt);
-			$materialSampleHandler->setSchemaType($this->schemaType);
-			$this->fieldArrMap['materialSample'] = $materialSampleHandler->getFieldArrTerms();
+			$collid = key($this->collArr);
+			if(isset($this->collArr[$collid]['matSample'])){
+				$this->logOrEcho('Creating material sample extension file ('.date('h:i:s A').')... ');
+				$materialSampleHandler = new DwcArchiverMaterialSample($this->conn);
+				$materialSampleHandler->initiateProcess($this->targetPath.$this->ts.'-matSample'.$this->fileExt);
+				$materialSampleHandler->setSchemaType($this->schemaType);
+				$this->fieldArrMap['materialSample'] = $materialSampleHandler->getFieldArrTerms();
+			}
 		}
-
 		//echo $sql; exit;
 		if($rs = $this->dataConn->query($sql,MYSQLI_USE_RESULT)){
 			$this->setServerDomain();
@@ -1745,7 +1738,7 @@ class DwcArchiverCore extends Manager{
 
 				$batchOccidArr[] = $r['occid'];
 				if(count($batchOccidArr) > 1000){
-					if($this->includeMaterialSample) $materialSampleHandler->writeOutRecordBlock($batchOccidArr);
+					if($materialSampleHandler) $materialSampleHandler->writeOutRecordBlock($batchOccidArr);
 					unset($batchOccidArr);
 					$batchOccidArr = array();
 				}
@@ -1758,10 +1751,9 @@ class DwcArchiverCore extends Manager{
 				}
 			}
 			$rs->free();
-			if($this->includeMaterialSample){
+			if($materialSampleHandler){
 				if($batchOccidArr) $materialSampleHandler->writeOutRecordBlock($batchOccidArr);
 				$materialSampleHandler->__destruct();
-				$this->logOrEcho("Done!! (".date('h:i:s A').")\n");
 			}
 		}
 		else{
@@ -1777,7 +1769,7 @@ class DwcArchiverCore extends Manager{
 			$this->errorMessage = 'No records returned. Modify query variables to be more inclusive.';
 			$this->logOrEcho($this->errorMessage);
 		}
-		$this->logOrEcho("Done!! (".date('h:i:s A').")\n");
+		$this->logOrEcho('Done! ('.date('h:i:s A').")\n");
 		return $filePath;
 	}
 
@@ -1790,7 +1782,7 @@ class DwcArchiverCore extends Manager{
 	}
 
 	private function writeDeterminationFile(){
-		$this->logOrEcho("Creating identification file (".date('h:i:s A').")... ");
+		$this->logOrEcho("Creating identification extension file (".date('h:i:s A').")... ");
 		$filePath = $this->targetPath.$this->ts.'-det'.$this->fileExt;
 		$fh = fopen($filePath, 'w');
 		if(!$fh){
@@ -1822,16 +1814,16 @@ class DwcArchiverCore extends Manager{
 			$rs->free();
 		}
 		else{
-			$this->logOrEcho("ERROR creating identification file: ".$this->dataConn->error."\n");
+			$this->logOrEcho("ERROR creating identification extension file: ".$this->dataConn->error."\n");
 			$this->logOrEcho("\tSQL: ".$sql."\n");
 		}
 
 		fclose($fh);
-    	$this->logOrEcho("Done!! (".date('h:i:s A').")\n");
+    	$this->logOrEcho('Done! ('.date('h:i:s A').")\n");
 	}
 
 	private function writeImageFile(){
-		$this->logOrEcho("Creating image file (".date('h:i:s A').")... ");
+		$this->logOrEcho("Creating image extension file (".date('h:i:s A').")... ");
 		$filePath = $this->targetPath.$this->ts.'-multimedia'.$this->fileExt;
 		$fh = fopen($filePath, 'w');
 		if(!$fh){
@@ -1926,13 +1918,13 @@ class DwcArchiverCore extends Manager{
 			$rs->free();
 		}
 		else{
-			$this->logOrEcho("ERROR creating image file: ".$this->dataConn->error."\n");
+			$this->logOrEcho("ERROR creating image extension file: ".$this->dataConn->error."\n");
 			$this->logOrEcho("\tSQL: ".$sql."\n");
 		}
 
 		fclose($fh);
 
-    	$this->logOrEcho("Done!! (".date('h:i:s A').")\n");
+    	$this->logOrEcho('Done! ('.date('h:i:s A').")\n");
 	}
 
 	private function writeAttributeFile(){
@@ -1961,12 +1953,12 @@ class DwcArchiverCore extends Manager{
 			$rs->free();
 		}
 		else{
-			$this->logOrEcho("ERROR creating attribute (MeasurementOrFact file: ".$this->dataConn->error."\n");
+			$this->logOrEcho("ERROR creating attribute (MeasurementOrFact) extension file: ".$this->dataConn->error."\n");
 			$this->logOrEcho("\tSQL: ".$sql."\n");
 		}
 
 		fclose($fh);
-    	$this->logOrEcho("Done!! (".date('h:i:s A').")\n");
+    	$this->logOrEcho('Done! ('.date('h:i:s A').")\n");
 	}
 
 	private function writeOutRecord($fh,$outputArr){

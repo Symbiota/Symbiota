@@ -16,11 +16,11 @@ $LANG['TAB_OCCURRENCES'] = 'Registros de Ocurrencia';
 $LANG['TAB_MAP'] = 'Mapas';
 
 $LANG['SELECT_DESELECT'] = 'Selecciona/Deselecciona';
-$LANG['ALL_COLLECTIONS'] = 'todas colecciones';
+$LANG['ALL_COLLECTIONS'] = 'todas las colecciones';
 
 $LANG['DOWNLOAD_SPECIMEN_DATA'] = 'Descargar Datos de Ejemplares';
 $LANG['COPY_TO_CLIPBOARD'] = 'Copia URL al Portapapeles';
 
-$LANG['BUTTON_NEXT'] = 'Proxima >';
+$LANG['BUTTON_NEXT'] = 'Siguiente >';
 $LANG['BUTTON_RESET'] = 'Restablecer';
 ?>

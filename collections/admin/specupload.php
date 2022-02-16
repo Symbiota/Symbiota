@@ -329,11 +329,11 @@ if($isEditor && $collid){
 				}
 			}
 			if(f.observeruid && f.observeruid.value == ""){
-				alert("<?php echo (isset($LANG['SEL_TAR_USER'])?$LANG['SEL_TAR_USER']:'Since this is a group managed observation project, you need to select a target user to which the occurrence will be linked'); ?>");
+				alert("<?php echo $LANG['SEL_TAR_USER']; ?>");
 				return false;
 			}
 			if(possibleMappingErr){
-				return confirm("<?php echo (isset($LANG['FIRST_ROW'])?$LANG['FIRST_ROW']:'Does the first row of the input file contain the column names? It appears that you may be mapping directly to the first row of active data rather than a header row. If so, the first row of data will be lost and some columns might be skipped. Select OK to proceed, or cancel to abort'); ?>");
+				return confirm("<?php echo $LANG['FIRST_ROW']; ?>");
 			}
 			return true;
 		}
@@ -341,7 +341,7 @@ if($isEditor && $collid){
 		function verifySaveMapping(f){
 			if(f.uspid.value == "" && f.profiletitle.value == ""){
 				$("#newProfileNameDiv").show();
-				alert("<?php echo (isset($LANG['ENTER_PROF'])?$LANG['ENTER_PROF']:'Enter a profile name and click the Save Map button to create a new Upload Profile'); ?>");
+				alert("<?php echo $LANG['ENTER_PROF']; ?>");
 				return false;
 			}
 			return true;
@@ -423,18 +423,19 @@ if($isEditor && $collid){
 						}
 						echo '</div>';
 						echo '<div style="margin-left:15px;">';
-						echo '<div>Records to be updated: ';
+						echo '<div>'.$LANG['RECORDS_UPDATED'].': ';
 						echo $reportArr['update'];
 						if($reportArr['update']){
-							echo ' <a href="uploadreviewer.php?collid='.$collid.'&searchvar=occid:ISNOTNULL" target="_blank" title="'.(isset($LANG['PREVIEW'])?$LANG['PREVIEW']:'Preview 1st 1000 Records').'"><img src="../../images/list.png" style="width:12px;" /></a>';
-							echo ' <a href="uploadreviewer.php?action=export&collid='.$collid.'&searchvar=occid:ISNOTNULL" target="_self" title="'.(isset($LANG['DOWNLOAD_RECS'])?$LANG['DOWNLOAD_RECS']:'Download Records').'"><img src="../../images/dl.png" style="width:12px;" /></a>';
-							if($uploadType != $SKELETAL && $uploadType != $NFNUPLOAD)
-								echo '&nbsp;&nbsp;&nbsp;<span style="color:orange"><b>'.(isset($LANG['CAUTION_REPLACE'])?$LANG['CAUTION_REPLACE']:'Caution:</b></span> incoming records will replace existing records');
+							echo ' <a href="uploadreviewer.php?collid='.$collid.'&searchvar=occid:ISNOTNULL" target="_blank" title="'.$LANG['PREVIEW'].'"><img src="../../images/list.png" style="width:12px;" /></a>';
+							echo ' <a href="uploadreviewer.php?action=export&collid='.$collid.'&searchvar=occid:ISNOTNULL" target="_self" title="'.$LANG['DOWNLOAD_RECS'].'"><img src="../../images/dl.png" style="width:12px;" /></a>';
+							if($uploadType != $SKELETAL && $uploadType != $NFNUPLOAD){
+								echo '<span style="color:orange;margin-left:10px"><b>'.$LANG['CAUTION'].':</b></span> '.$LANG['CAUTION_REPLACE'];
+							}
 						}
 						echo '</div>';
 						if($uploadType != $NFNUPLOAD || $reportArr['new']){
-							if($uploadType == $NFNUPLOAD) echo '<div>Mismatched records: ';
-							else echo '<div>New records: ';
+							if($uploadType == $NFNUPLOAD) echo '<div>'.(isset($LANG['MISMATCHED'])?$LANG['MISMATCHED']:'Mismatched records').': ';
+							else echo '<div>'.(isset($LANG['NEW_RECORDS'])?$LANG['NEW_RECORDS']:'New records').': ';
 							echo $reportArr['new'];
 							if($reportArr['new']){
 								echo ' <a href="uploadreviewer.php?collid='.$collid.'&searchvar=occid:ISNULL" target="_blank" title="'.(isset($LANG['PREVIEW'])?$LANG['PREVIEW']:'Preview 1st 1000 Records').'"><img src="../../images/list.png" style="width:12px;" /></a>';
@@ -444,14 +445,15 @@ if($isEditor && $collid){
 							echo '</div>';
 						}
 						if(isset($reportArr['matchappend']) && $reportArr['matchappend']){
-							echo '<div>Records matching on catalog number that will be appended : ';
+							echo '<div>'.(isset($LANG['MATCHING_CATALOG'])?$LANG['MATCHING_CATALOG']:'Records matching on catalog number that will be appended').': ';
 							echo $reportArr['matchappend'];
 							if($reportArr['matchappend']){
 								echo ' <a href="uploadreviewer.php?collid='.$collid.'&searchvar=matchappend" target="_blank" title="'.(isset($LANG['PREVIEW'])?$LANG['PREVIEW']:'Preview 1st 1000 Records').'"><img src="../../images/list.png" style="width:12px;" /></a>';
 								echo ' <a href="uploadreviewer.php?action=export&collid='.$collid.'&searchvar=matchappend" target="_self" title="'.(isset($LANG['DOWNLOAD_RECS'])?$LANG['DOWNLOAD_RECS']:'Download Records').'"><img src="../../images/dl.png" style="width:12px;" /></a>';
 							}
 							echo '</div>';
-							echo '<div style="margin-left:15px;"><span style="color:orange;">'.(isset($LANG['WARNING_DUPES'])?$LANG['WARNING_DUPES']:'WARNING:</span> This will result in records with duplicate catalog numbers').'</div>';
+							echo '<div style="margin-left:15px;"><span style="color:orange;">'.(isset($LANG['WARNING'])?$LANG['WARNING']:'WARNING').':</span> ';
+							echo (isset($LANG['WARNING_DUPES'])?$LANG['WARNING_DUPES']:'This will result in records with duplicate catalog numbers').'</div>';
 						}
 						if($uploadType != $NFNUPLOAD && $uploadType != $SKELETAL){
 							if(isset($reportArr['sync']) && $reportArr['sync']){
@@ -462,21 +464,17 @@ if($isEditor && $collid){
 									echo ' <a href="uploadreviewer.php?action=export&collid='.$collid.'&searchvar=sync" target="_self" title="'.(isset($LANG['DOWNLOAD_RECS'])?$LANG['DOWNLOAD_RECS']:'Download Records').'"><img src="../../images/dl.png" style="width:12px;" /></a>';
 								}
 								echo '</div>';
-								echo '<div style="margin-left:15px;">'.(isset($LANG['EXPL_SYNC'])?$LANG['EXPL_SYNC']:'These are typically records that have been originally processed within the portal, exported and integrated into a local management database, and then reimported and synchronized with the portal records by matching on catalog number').'.</div>';
-								echo '<div style="margin-left:15px;"><span style="color:orange;">'.(isset($LANG['WARNING_REPLACE'])?$LANG['WARNING_REPLACE']:'WARNING:</span> Incoming records will replace portal records by matching on catalog numbers. Make sure incoming records are the most up to date!').'</div>';
+								echo '<div style="margin-left:15px;">'.$LANG['EXPL_SYNC'].'.</div>';
+								echo '<div style="margin-left:15px;"><span style="color:orange;">'.(isset($LANG['WARNING'])?$LANG['WARNING']:'WARNING').':</span> '.$LANG['WARNING_REPLACE'].'</div>';
 							}
 							if(isset($reportArr['exist']) && $reportArr['exist']){
-								echo '<div>Previous loaded records not matching incoming records: ';
-								echo $reportArr['exist'];
+								echo '<div>'.$LANG['NOT_MATCHING'].': '.$reportArr['exist'];
 								if($reportArr['exist']){
 									echo ' <a href="uploadreviewer.php?collid='.$collid.'&searchvar=exist" target="_blank" title="'.(isset($LANG['PREVIEW'])?$LANG['PREVIEW']:'Preview 1st 1000 Records').'"><img src="../../images/list.png" style="width:12px;" /></a>';
 									echo ' <a href="uploadreviewer.php?action=export&collid='.$collid.'&searchvar=exist" target="_self" title="'.(isset($LANG['DOWNLOAD_RECS'])?$LANG['DOWNLOAD_RECS']:'Download Records').'"><img src="../../images/dl.png" style="width:12px;" /></a>';
 								}
 								echo '</div>';
-								echo '<div style="margin-left:15px;">';
-								echo (isset($LANG['EXPECTED'])?$LANG['EXPECTED']:'Note: If you are doing a partial upload, this is expected').'. ';
-								echo (isset($LANG['FULL_REFRESH'])?$LANG['FULL_REFRESH']:'If you are doing a full data refresh, these may be records that were deleted within your local database but not within the portal.');
-								echo '</div>';
+								echo '<div style="margin-left:15px;">'.$LANG['EXPECTED'].'. '.$LANG['FULL_REFRESH'].'</div>';
 							}
 							if(isset($reportArr['nulldbpk']) && $reportArr['nulldbpk']){
 								echo '<div style="color:red;">'.(isset($LANG['NULL_RM'])?$LANG['NULL_RM']:'Records that will be removed due to NULL Primary Identifier').': ';
@@ -499,16 +497,11 @@ if($isEditor && $collid){
 						}
 						echo '</div>';
 						//Extensions
-						if(isset($reportArr['ident'])){
-							echo '<div>'.(isset($LANG['IDENT_TRANSFER'])?$LANG['IDENT_TRANSFER']:'Identification history count').': '.$reportArr['ident'].'</div>';
-						}
-						if(isset($reportArr['image'])){
-							echo '<div>'.(isset($LANG['IMAGE_TRANSFER'])?$LANG['IMAGE_TRANSFER']:'Image count').': '.$reportArr['image'].'</div>';
-						}
-
+						if(isset($reportArr['ident'])) echo '<div>'.$LANG['IDENT_TRANSFER'].': '.$reportArr['ident'].'</div>';
+						if(isset($reportArr['image'])) echo '<div>'.$LANG['IMAGE_TRANSFER'].': '.$reportArr['image'].'</div>';
 						?>
 					</div>
-					<form name="finaltransferform" action="specupload.php" method="post" style="margin-top:10px;" onsubmit="return confirm('<?php echo (isset($LANG['FINAL_TRANSFER'])?$LANG['FINAL_TRANSFER']:'Are you sure you want to transfer records from temporary table to central specimen table?'); ?>');">
+					<form name="finaltransferform" action="specupload.php" method="post" style="margin-top:10px;" onsubmit="return confirm('<?php echo $LANG['FINAL_TRANSFER']; ?>');">
 						<input type="hidden" name="collid" value="<?php echo $collid;?>" />
 						<input type="hidden" name="uploadtype" value="<?php echo $uploadType; ?>" />
 						<input type="hidden" name="observeruid" value="<?php echo $observerUid; ?>" />
@@ -565,11 +558,7 @@ if($isEditor && $collid){
 										<b><?php echo $pathLabel; ?>:</b>
 										<input name="ulfnoverride" type="text" size="70" /><br/>
 										<?php
-										if($uploadType != $IPTUPLOAD){
-											echo '* '.(isset($LANG['WORKAROUND'])?$LANG['WORKAROUND']:'This option is for pointing to a data file that was manually
-											uploaded to a server. This option offers a workaround for importing files that are larger than what is allowed
-											by server upload limitations (e.g. PHP configuration limits');
-										}
+										if($uploadType != $IPTUPLOAD) echo '* '.$LANG['WORKAROUND'];
 										?>
 									</div>
 									<?php
@@ -742,7 +731,7 @@ if($isEditor && $collid){
 											<?php
 											if($uspid) echo '<button type="submit" name="action" value="Reset Field Mapping">'.(isset($LANG['RESET_MAP'])?$LANG['RESET_MAP']:'Reset Field Mapping').'</button>';
 											echo '<button name="action" type="submit" value="saveMapping" onclick="return verifySaveMapping(this.form)" style="margin-left:5px">'.(isset($LANG['SAVE_MAP'])?$LANG['SAVE_MAP']:'Save Mapping').'</button>';
-											if(!$uspid) echo ' <span id="newProfileNameDiv" style="margin-left:15px;color:orange;display:none">'.(isset($LANG['NEW_PROF_TITLE'])?$LANG['NEW_PROF_TITLE']:'New profile title').': <input type="text" name="profiletitle" style="width:300px" /></span>';
+											if(!$uspid) echo ' <span id="newProfileNameDiv" style="margin-left:15px;color:orange;display:none">'.$LANG['NEW_PROF_TITLE'].': <input type="text" name="profiletitle" style="width:300px" /></span>';
 											?>
 
 										</div>
@@ -771,7 +760,7 @@ if($isEditor && $collid){
 												</div>
 												<ul style="margin-top:2px">
 													<li><?php echo $recReplaceMsg; ?></li>
-													<li><?php echo (isset($LANG['BOTH_CATS'])?$LANG['BOTH_CATS']:'If both checkboxes are selected, matches will first be made on catalog numbers and secondarily on other catalog numbers'); ?></li>
+													<li><?php echo $LANG['BOTH_CATS']; ?></li>
 												</ul>
 												<?php
 											}
@@ -889,9 +878,11 @@ if($isEditor && $collid){
 						<div id="mdiv" style="display:<?php echo $displayStr; ?>">
 							<?php $duManager->echoFieldMapTable($autoMap,'spec'); ?>
 							<div>
-								<?php echo '* '.(isset($LANG['UNVER'])?$LANG['UNVER']:'Unverified mappings are displayed in yellow'); ?><br/>
-								<?php echo '* '.(isset($LANG['SKIPPED'])?$LANG['SKIPPED']:'Record will be skipped when all of the following fields are empty: catalogNumber, otherCatalogNumbers, occurrenceID, recordedBy (collector), eventDate, scientificName, dbpk'); ?><br/>
-								<?php echo '* '.(isset($LANG['LEARN_MORE'])?$LANG['LEARN_MORE']:'To learn more about mapping to Symbiota fields (and Darwin Core)'); ?>:
+								<?php
+								echo '* '.$LANG['UNVER'].'<br/>';
+								echo '* '.$LANG['SKIPPED'].'<br/>';
+								echo '* '.$LANG['LEARN_MORE'].':';
+								?>
 								<div style="margin-left:15px;">
 									<a href="https://symbiota.org/wp-content/uploads/SymbiotaOccurrenceFields.pdf" target="_blank">SymbiotaOccurrenceFields.pdf</a><br/>
 									<a href="https://symbiota.org/symbiota-introduction/loading-specimen-data/" target="_blank"><?php echo (isset($LANG['LOADING_DATA'])?$LANG['LOADING_DATA']:'Loading Data into Symbiota'); ?></a>
@@ -935,18 +926,14 @@ if($isEditor && $collid){
 									</div>
 									<div>
 										<input name="matchothercatnum" type="checkbox" value="1" <?php echo ($matchOtherCatNum?'checked':''); ?> />
-										<?php echo (isset($LANG['MATCH_O_CAT'])?$LANG['MATCH_O_CAT']:'Match on Other Catalog Numbers'); ?>
+										<?php echo (isset($LANG['MATCH_ON_CAT'])?$LANG['MATCH_ON_CAT']:'Match on Other Catalog Numbers'); ?>
 									</div>
 									<ul style="margin-top:2px">
 										<?php
-										if($uploadType == $SKELETAL){
-											echo '<li>Incoming skeletal data will be appended only if targeted field is empty</li>';
-										}
-										else{
-											echo '<li>'.$recReplaceMsg.'</li>';
-										}
+										if($uploadType == $SKELETAL) echo '<li>'.$LANG['APPENDED'].'</li>';
+										else echo '<li>'.$recReplaceMsg.'</li>';
+										echo '<li>'.$LANG['BOTH_CATS'].'</li>';
 										?>
-										<li><?php echo (isset($LANG['BOTH_CATS'])?$LANG['BOTH_CATS']:'If both checkboxes are selected, matches will first be made on catalog numbers and secondarily on other catalog numbers'); ?></li>
 									</ul>
 									<?php
 								}

@@ -115,6 +115,7 @@ $LANG['LOGIN'] = 'login';
 $LANG['TOACCESS'] = ' to access editing tools.';
 $LANG['CONTACTPORTAL'] = 'Contact a portal administrator for obtaining editing permissions';
 $LANG['ABOUT'] = 'About Symbiota';
+$LANG['CODE'] = 'Code Version ';
 $LANG['SCHEMA'] = 'Schema Version ';
 $LANG['AUTHO'] = 'You are authorized to access the';
 $LANG['SYN_COM'] = 'Synonyms / Common Names';

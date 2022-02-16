@@ -5,8 +5,7 @@ Language: English
 ------------------
 */
 
-include_once($SERVER_ROOT.'/content/lang/collections/individual/index.en.php');
-include_once($SERVER_ROOT.'/content/lang/collections/sharedterms.en.php');
+include_once($SERVER_ROOT.'/content/lang/collections/list.en.php');
 
 $LANG['COL_RESULTS'] = 'Collections Search Results Table';
 $LANG['SORT'] = 'Sort Results';
@@ -28,6 +27,5 @@ $LANG['EDIT_REC'] = 'Edit Record';
 $LANG['HAS_IMAGE'] = 'Has Image';
 $LANG['CLICK_SYMB'] = 'Click on the Symbiota identifier in the first column to see Full Record Details';
 $LANG['NONE_FOUND'] = 'No records found matching the query';
-
 
 ?>

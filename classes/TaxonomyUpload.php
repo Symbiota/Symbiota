@@ -714,10 +714,8 @@ class TaxonomyUpload{
 			'FROM uploadtaxa '.
 			'WHERE (TID IS NULL) AND (rankid = 10)';
 		if($this->conn->query($sql)){
-			$sql = 'INSERT INTO taxstatus(tid, tidaccepted, taxauthid, parenttid) '.
-				'SELECT DISTINCT t.tid, t.tid, '.$this->taxAuthId.', t.tid '.
-				'FROM taxa t LEFT JOIN taxstatus ts ON t.tid = ts.tid '.
-				'WHERE (t.rankid = 10) AND (ts.tid IS NULL)';
+			$sql = 'INSERT INTO taxstatus(tid, tidaccepted, taxauthid, parenttid, modifiedUid) '.
+				'SELECT DISTINCT t.tid, t.tid, '.$this->taxAuthId.', t.tid, '.$GLOBALS['SYMB_UID'].' FROM taxa t LEFT JOIN taxstatus ts ON t.tid = ts.tid WHERE (t.rankid = 10) AND (ts.tid IS NULL)';
 			if(!$this->conn->query($sql)){
 				$this->outputMsg('ERROR: '.$this->conn->error,1);
 			}

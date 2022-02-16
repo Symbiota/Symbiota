@@ -283,8 +283,7 @@ class TaxonomyEditorManager extends Manager{
 		$family = "";$parentTid = 0;
 		$statusStr = '';
 		if(is_numeric($tidAcc)){
-			$sqlFam = 'SELECT ts.family, ts.parenttid '.
-				'FROM taxstatus ts WHERE (ts.tid = '.$this->tid.') AND (ts.taxauthid = '.$this->taxAuthId.')';
+			$sqlFam = 'SELECT ts.family, ts.parenttid FROM taxstatus ts WHERE (ts.tid = '.$this->tid.') AND (ts.taxauthid = '.$this->taxAuthId.')';
 			$rs = $this->conn->query($sqlFam);
 			if($row = $rs->fetch_object()){
 				$family = $row->family;
@@ -296,10 +295,8 @@ class TaxonomyEditorManager extends Manager{
 				$sqlDel = "DELETE FROM taxstatus WHERE (tid = ".$this->tid.") AND (taxauthid = ".$this->taxAuthId.')';
 				$this->conn->query($sqlDel);
 			}
-			$sql = 'INSERT INTO taxstatus (tid,tidaccepted,taxauthid,family,parenttid) '.
-				'VALUES ('.$this->tid.', '.$tidAcc.', '.$this->taxAuthId.','.
-				($family?'"'.$family.'"':"NULL").','.
-				$parentTid.') ';
+			$sql = 'INSERT INTO taxstatus (tid,tidaccepted,taxauthid,family,parenttid,modifiedUid) '.
+				'VALUES ('.$this->tid.', '.$tidAcc.', '.$this->taxAuthId.','.($family?'"'.$family.'"':"NULL").','.$parentTid.','.$GLOBALS['SYMB_UID'].') ';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
 				$statusStr = 'ERROR adding accepted link: '.$this->conn->error;
@@ -581,9 +578,9 @@ class TaxonomyEditorManager extends Manager{
 				}
 
 				//Load new record into taxstatus table
-				$sqlTaxStatus = 'INSERT INTO taxstatus(tid, tidaccepted, taxauthid, family, parenttid, unacceptabilityreason) '.
+				$sqlTaxStatus = 'INSERT INTO taxstatus(tid, tidaccepted, taxauthid, family, parenttid, unacceptabilityreason, modifiedUid) '.
 					'VALUES ('.$tid.','.$tidAccepted.','.$this->taxAuthId.','.($family?'"'.$this->cleanInStr($family).'"':'NULL').','.
-					$parTid.','.($dataArr["unacceptabilityreason"]?'"'.$this->cleanInStr($dataArr["unacceptabilityreason"]).'"':'NULL').') ';
+					$parTid.','.($dataArr["unacceptabilityreason"]?'"'.$this->cleanInStr($dataArr["unacceptabilityreason"]).'"':'NULL').','.$GLOBALS['SYMB_UID'].') ';
 				//echo "sqlTaxStatus: ".$sqlTaxStatus;
 				if(!$this->conn->query($sqlTaxStatus)){
 					return "ERROR: Taxon loaded into taxa, but failed to load taxstatus: ".$this->conn->error.'; '.$sqlTaxStatus;

@@ -23,8 +23,7 @@ $LANG['DWC'] = 'Darwin Core';
 $LANG['DWCA_EXPLAIN_3'] = ' exchange standard. We recommend that you also review instructions for';
 $LANG['PUBLISH_IDIGBIO'] = 'Publishing Occurrence Data to iDigBio';
 $LANG['PUBLISH_GBIF'] = 'Publishing Occurrence Data to GBIF';
-$LANG['DWCA_DOWNLOAD_EXPLAIN_1'] = 'The following downloads are occurrence data packages from collections
-	that have chosen to publish their complete dataset as a';
+$LANG['DWCA_DOWNLOAD_EXPLAIN_1'] = 'The following downloads are occurrence data packages from collections that have chosen to publish their complete dataset as a';
 $LANG['DWCA_DOWNLOAD_EXPLAIN_2'] = 'file. DwC-A files are a single compressed ZIP file that contains one to several data files along with a meta.xml
 	document that describes the content. Archives published through this portal contain three comma separated (CSV) files containing occurrences,
 	identifications (determinations), and image metadata. Fields within the occurrences.csv file are defined by the';
@@ -43,6 +42,7 @@ $LANG['DWCA_FILE'] = 'DwC-Archive File';
 $LANG['PUB_DATE'] = 'Publication Date';
 $LANG['DWCA_NOT_PUBLISHED'] = 'A Darwin Core Archive has not yet been published for this collection';
 $LANG['PUB_INFO'] = 'Publishing Information';
+$LANG['GUID_SOURCE'] = 'GUID source';
 $LANG['RECORDS_MISSING'] = 'Records missing';
 $LANG['OCCID_GUIDS'] = 'OccurrenceID GUIDs';
 $LANG['RECS_TO_NOT_PUBLISH'] = 'These records will not be published!';
@@ -56,6 +56,7 @@ $LANG['ALREADY_PUBLISHED'] = 'Already published on sister portal';
 $LANG['GUID_NOT_SET'] = 'The GUID source has not been set for this collection. Please go to the';
 $LANG['EDIT_METADATA'] = 'Edit Metadata page';
 $LANG['TO_SET_GUID'] = 'to set GUID source';
+$LANG['CANNOT_PUBLISH'] = 'Archive cannot be published until occurrenceID GUID source is set';
 $LANG['THERE_ARE'] = 'There are';
 $LANG['MISSING_BASISOFRECORD'] = 'records missing basisOfRecord and will not be published. Please go to';
 $LANG['EDIT_EXISTING'] = 'Edit Existing Occurrence Records';
@@ -81,10 +82,12 @@ $LANG['IDIGBIO_DATASET'] = 'iDigBio Dataset page';
 $LANG['PUBLISH_REFRESH'] = 'Publish/Refresh DwC-A Data';
 $LANG['INCLUDE_DETS'] = 'Include Determination History';
 $LANG['INCLUDE_IMGS'] = 'Include Image URLs';
+$LANG['INCLUDE_MATSAMPLE'] = 'Include Material Sample';
 $LANG['REDACT_LOC'] = 'Redact Sensitive Localities';
 $LANG['CREATE_REFRESH'] = 'Create/Refresh Darwin Core Archive';
 $LANG['NOTE_LACKING_EXCLUDED'] = 'NOTE: all records lacking occurrenceID GUIDs will be excluded';
 $LANG['SEL_DESEL_ALL'] = 'Select/Deselect All';
+$LANG['MISSING_GUID'] = 'Missing GUID source';
 $LANG['ALREADY_PUB_DOMAIN'] = 'Already published on different domain';
 $LANG['OPTIONS'] = 'Options';
 $LANG['CODE'] = 'Code';
@@ -93,6 +96,4 @@ $LANG['METADATA'] = 'Metadata';
 $LANG['PUB_DATE'] = 'Pub Date';
 $LANG['NO_PUBLISHABLE'] = 'There are no publishable collections';
 $LANG['ADDIT_SOURCES'] = 'Additional Data Sources within the Portal Network';
-
-
 ?>

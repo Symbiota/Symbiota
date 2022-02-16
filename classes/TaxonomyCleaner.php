@@ -507,8 +507,7 @@ class TaxonomyCleaner extends Manager{
 							$accObj = $externalTaxonObj['accepted_name'];
 							$accTid = $this->evaluateTaxonomy($accObj,0);
 							//Change to not accepted and link to accepted
-							$sql = 'UPDATE taxstatus SET tidaccetped = '.$accTid.' WHERE (taxauthid = '.$this->taxAuthId.') AND (tid = '.
-								$internalTaxonObj['tid'].') AND (tidaccepted = '.$tidCurrentAccepted.')';
+							$sql = 'UPDATE taxstatus SET tidaccetped = '.$accTid.' WHERE (taxauthid = '.$this->taxAuthId.') AND (tid = '.$internalTaxonObj['tid'].') AND (tidaccepted = '.$tidCurrentAccepted.')';
 							$this->conn->query($sql);
 							$this->updateDependentData($internalTaxonObj['tid'],$accTid);
 							//Go through synonyms and evaluate
