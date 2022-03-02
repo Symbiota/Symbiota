@@ -48,12 +48,8 @@ class SpecUploadDwca extends SpecUploadBase{
 					if(!is_writable($this->uploadTargetPath)) $this->errorStr .= ', Permission issue: target directory is not writable';
 					$this->outputMsg('<li>'.$this->errorStr.' </li>');
 				}
-				if($this->unpackArchive()){
-					$retPath = $this->uploadTargetPath;
-				}
-				else{
-					$this->uploadTargetPath = '';
-				}
+				if($this->unpackArchive()) $retPath = $this->uploadTargetPath;
+				else $this->uploadTargetPath = '';
 			}
 		}
 		elseif(array_key_exists("uploadfile",$_FILES)){

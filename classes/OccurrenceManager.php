@@ -151,14 +151,16 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
 			$this->displaySearchArr[] = implode(' OR ',$countyArr);
 		}
-		if(array_key_exists("local",$this->searchTermArr)){
-			$localArr = explode(", ",$this->searchTermArr["local"]);
-			$tempArr = Array();
+		if(array_key_exists('local',$this->searchTermArr)){
+			$localArr = explode(';',$this->searchTermArr['local']);
+			$tempSqlArr = Array();
+			$tempTermArr = Array();
+			$fullTextArr = array();
 			foreach($localArr as $k => $value){
 				$value = trim($value);
 				if($value == 'NULL'){
-					$tempArr[] = '(o.locality IS NULL)';
-					$localArr[$k] = 'Locality IS NULL';
+					$tempSqlArr[] = '(o.locality IS NULL)';
+					$tempTermArr[] = 'Locality IS NULL';
 				}
 				else{
 					$fullTextSearch = true;
@@ -173,13 +175,28 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 							}
 						}
 					}
-
-					if($fullTextSearch) $tempArr[] = '(MATCH(f.locality) AGAINST(\'"'.$this->cleanInStr(str_replace('"', '', $value)).'"\' IN BOOLEAN MODE)) ';
-					else $tempArr[] = '(o.municipality LIKE "'.$this->cleanInStr($value).'%" OR o.Locality LIKE "%'.$this->cleanInStr($value).'%")';
+					if($fullTextSearch) $fullTextArr[] = $this->cleanInStr(str_replace('"', '', $value));
+					else{
+						$tempSqlArr[] = '(o.municipality LIKE "'.$this->cleanInStr($value).'%" OR o.Locality LIKE "%'.$this->cleanInStr($value).'%")';
+						$tempTermArr[] = $value;
+					}
+					//if($fullTextSearch) $tempArr[] = '(MATCH(f.locality) AGAINST(\'"'.$this->cleanInStr(str_replace('"', '', $value)).'"\' IN BOOLEAN MODE)) ';
+					//else $tempArr[] = '(o.municipality LIKE "'.$this->cleanInStr($value).'%" OR o.Locality LIKE "%'.$this->cleanInStr($value).'%")';
 				}
 			}
-			$sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
-			$this->displaySearchArr[] = implode(' OR ',$localArr);
+			if($fullTextArr){
+				if(count($fullTextArr) == 1){
+					$searchTerm = array_pop($fullTextArr);
+					$tempSqlArr[] = '(MATCH(f.locality) AGAINST(\'"'.$searchTerm.'"\' IN BOOLEAN MODE)) ';
+					$this->displaySearchArr[] = $searchTerm;
+				}
+				else{
+					$tempSqlArr[] = '(MATCH(f.locality) AGAINST("'.implode(' ',$fullTextArr).'")) ';
+					$this->displaySearchArr[] = implode(' OR ',$fullTextArr);
+				}
+			}
+			$sqlWhere .= 'AND ('.implode(' OR ',$tempSqlArr).') ';
+			if($tempTermArr) $this->displaySearchArr[] = implode(' OR ',$tempTermArr);
 		}
 		if(array_key_exists("elevlow",$this->searchTermArr) || array_key_exists("elevhigh",$this->searchTermArr)){
 			$elevlow = -200;
@@ -236,42 +253,39 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$sqlWhere .= 'AND (ST_Within(p.point,GeomFromText("'.$this->searchTermArr['footprintwkt'].'"))) ';
 			$this->displaySearchArr[] = 'Polygon search (not displayed)';
 		}
-		if(array_key_exists("collector",$this->searchTermArr)){
-			$collectorArr = explode(";",$this->searchTermArr["collector"]);
-			$tempArr = Array();
-			if(count($collectorArr) == 1){
-				if($collectorArr[0] == 'NULL'){
-					$tempArr[] = '(o.recordedBy IS NULL)';
-					$collectorArr[] = 'Collector IS NULL';
-				}
-				else{
-					$tempInnerArr = array();
-					$collValueArr = explode(" ",trim($collectorArr[0]));
-					foreach($collValueArr as $collV){
-						if(strlen($collV) == 2 || strlen($collV) == 3 || in_array(strtolower($collV),array('best','little'))){
-							//Need to avoid FULLTEXT stopwords interfering with return
-							$tempInnerArr[] = '(o.recordedBy LIKE "%'.$this->cleanInStr($collV).'%")';
-						}
-						else{
-							$tempInnerArr[] = '(MATCH(f.recordedby) AGAINST("'.$this->cleanInStr(str_replace('"', '', $collV)).'")) ';
-						}
-					}
-					$tempArr[] = implode(' AND ', $tempInnerArr);
-				}
+		if(array_key_exists('collector',$this->searchTermArr)){
+			$collectorArr = explode(';',$this->searchTermArr['collector']);
+			$tempCollSqlArr = Array();
+			$tempCollTextArr = Array();
+			if(count($collectorArr) == 1 && $collectorArr[0] == 'NULL'){
+				$tempCollSqlArr[] = '(o.recordedBy IS NULL)';
+				$tempCollTextArr[] = 'Collector IS NULL';
 			}
-			elseif(count($collectorArr) > 1){
+			else{
+				$fullCollArr = array();
 				foreach($collectorArr AS $collStr){
-					if(strlen($collStr) < 4 || in_array(strtolower($collStr),array('best','little'))){
+					if(strlen($collStr) == 2 || strlen($collStr) == 3 || in_array(strtolower($collStr),array('best','little'))){
 						//Need to avoid FULLTEXT stopwords interfering with return
-						$tempArr[] = '(o.recordedBy LIKE "%'.$this->cleanInStr($collStr).'%")';
+						$tempCollSqlArr[] = '(o.recordedBy LIKE "%'.$this->cleanInStr($collStr).'%")';
+						$tempCollTextArr[] = $collStr;
 					}
 					else{
-						$tempArr[] = '(MATCH(f.recordedby) AGAINST("'.$this->cleanInStr($collStr).'")) ';
+						$fullCollArr[] = $this->cleanInStr(str_replace('"','',$collStr));
+						//$tempArr[] = '(MATCH(f.recordedby) AGAINST("'.$this->cleanInStr($collStr).'")) ';
 					}
 				}
+				if(count($fullCollArr) == 1){
+					$collTerm = array_pop($fullCollArr);
+					$tempCollSqlArr[] = '(MATCH(f.recordedby) AGAINST(\'"'.$collTerm.'"\' IN BOOLEAN MODE)) ';
+					$tempCollTextArr[] = $collTerm;
+				}
+				else{
+					$tempCollSqlArr[] = '(MATCH(f.recordedby) AGAINST("'.implode(' ',$fullCollArr).'")) ';
+					$tempCollTextArr = array_merge($tempCollTextArr, explode(' ',implode(' ',$fullCollArr)));
+				}
 			}
-			$sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
-			$this->displaySearchArr[] = implode(', ',$collectorArr);
+			if($tempCollSqlArr) $sqlWhere .= 'AND ('.implode(' OR ',$tempCollSqlArr).') ';
+			$this->displaySearchArr[] = implode(' OR ',$tempCollTextArr);
 		}
 		if(array_key_exists("collnum",$this->searchTermArr)){
 			$collNumArr = explode(";",$this->cleanInStr($this->searchTermArr["collnum"]));

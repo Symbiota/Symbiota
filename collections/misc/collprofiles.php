@@ -2,19 +2,21 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/collections/misc/collprofiles.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCollectionProfile.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset='.$CHARSET);
 unset($_SESSION['editorquery']);
 
-$collid = ((array_key_exists("collid",$_REQUEST) && is_numeric($_REQUEST["collid"]))?$_REQUEST["collid"]:0);
-$action = array_key_exists("action",$_REQUEST)?htmlspecialchars($_REQUEST["action"]):"";
-$eMode = array_key_exists('emode',$_REQUEST)?htmlspecialchars($_REQUEST['emode']):0;
+$collid = isset($_REQUEST['collid'])?$_REQUEST['collid']:0;
+$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
+$eMode = array_key_exists('emode',$_REQUEST)?$_REQUEST['emode']:0;
 
-if($eMode && !$SYMB_UID){
-	header('Location: ../../profile/index.php?refurl=../collections/misc/collprofiles.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
-}
+//Sanitation
+if(!is_numeric($collid)) $collid = 0;
+if(!is_numeric($eMode)) $eMode = 0;
+
+if($eMode && !$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/misc/collprofiles.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $collManager = new OccurrenceCollectionProfile();
-if(!$collManager->setCollid($collid)) $collid = '';
+$collManager->setCollid($collid);
 
 $collData = $collManager->getCollectionMetadata();
 
@@ -24,19 +26,15 @@ if($SYMB_UID){
 		$editCode = 3;
 	}
 	else if($collid){
-		if(array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"])){
-			$editCode = 2;
-		}
-		elseif(array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollEditor"])){
-			$editCode = 1;
-		}
+		if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin'])) $editCode = 2;
+		elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollEditor'])) $editCode = 1;
 	}
 }
 ?>
 <html>
 <head>
-	<title><?php echo $DEFAULT_TITLE." ".($collid?$collData[$collid]["collectionname"]:""); ?></title>
-	<meta name="keywords" content="Natural history collections,<?php echo ($collid?$collData[$collid]["collectionname"]:""); ?>" />
+	<title><?php echo $DEFAULT_TITLE.' '.($collid?$collData[$collid]['collectionname']:''); ?></title>
+	<meta name="keywords" content="Natural history collections,<?php echo ($collid?$collData[$collid]['collectionname']:''); ?>" />
 	<meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate">
 	<meta http-equiv="Pragma" content="no-cache">
 	<?php

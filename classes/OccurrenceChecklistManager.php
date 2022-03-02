@@ -24,7 +24,7 @@ class OccurrenceChecklistManager extends OccurrenceManager{
 		if($sqlWhere){
 			$sql = "";
 			if($taxonAuthorityId && is_numeric($taxonAuthorityId)){
-				$sql = 'SELECT DISTINCT ts2.family, t.sciname, o.tidinterpreted '.
+				$sql = 'SELECT DISTINCT ts2.family, t.sciname, t.tid '.
 					'FROM omoccurrences o INNER JOIN taxstatus ts1 ON o.TidInterpreted = ts1.Tid '.
 					'INNER JOIN taxa t ON ts1.TidAccepted = t.Tid '.
 					'INNER JOIN taxstatus ts2 ON t.tid = ts2.tid '.
@@ -33,7 +33,7 @@ class OccurrenceChecklistManager extends OccurrenceManager{
 					' AND ts1.taxauthid = '.$taxonAuthorityId.' AND ts2.taxauthid = '.$taxonAuthorityId.' AND t.RankId > 140 ';
 			}
 			else{
-				$sql = 'SELECT DISTINCT IFNULL(ts1.family,o.family) AS family, o.sciname, o.tidinterpreted '.
+				$sql = 'SELECT DISTINCT IFNULL(ts1.family,o.family) AS family, o.sciname, o.tidinterpreted AS tid '.
 					'FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.tid '.
 					'LEFT JOIN taxstatus ts1 ON t.tid = ts1.tid '.
 					$this->getTableJoins($sqlWhere).
@@ -46,7 +46,7 @@ class OccurrenceChecklistManager extends OccurrenceManager{
 				if(!$family) $family = 'undefined';
 				$sciName = $r->sciname;
 				if($sciName && substr($sciName,-5)!='aceae' && substr($sciName,-4)!='idae'){
-					$returnVec[$family][$sciName] = $r->tidinterpreted;
+					$returnVec[$family][$sciName] = $r->tid;
 					$this->checklistTaxaCnt++;
 				}
 			}
@@ -59,20 +59,17 @@ class OccurrenceChecklistManager extends OccurrenceManager{
 		$returnVec = Array();
 		$tidStr = implode(',',$tidArr);
 		$this->checklistTaxaCnt = 0;
-		$sql = "";
 		$sql = 'SELECT DISTINCT ts.family, t.sciname '.
 			'FROM (taxstatus AS ts1 INNER JOIN taxa AS t ON ts1.TidAccepted = t.Tid) '.
 			'INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
-			'WHERE ts1.tid IN('.$tidStr.') '.
-			'AND ts1.taxauthid = '.$taxonFilter.' AND ts.taxauthid = '.$taxonFilter.' AND t.RankId > 140 ';
+			'WHERE ts1.tid IN('.$tidStr.') AND ts1.taxauthid = '.$taxonFilter.' AND ts.taxauthid = '.$taxonFilter.' AND t.RankId > 140 ';
 		//echo "<div>".$sql."</div>";
 		$result = $this->conn->query($sql);
 		while($row = $result->fetch_object()){
 			$family = strtoupper($row->family);
 			if(!$family) $family = 'undefined';
-			$sciName = $row->sciname;
-			if($sciName && substr($sciName,-5)!='aceae'){
-				$returnVec[$family][] = $sciName;
+			if($row->sciname && substr($row->sciname,-5)!='aceae'){
+				$returnVec[$family][] = $row->sciname;
 				$this->checklistTaxaCnt++;
 			}
 		}

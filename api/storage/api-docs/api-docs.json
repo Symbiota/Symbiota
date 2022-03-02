@@ -10,7 +10,7 @@
     },
     "servers": [
         {
-            "url": "portal"
+            "url": "../"
         }
     ],
     "paths": {
