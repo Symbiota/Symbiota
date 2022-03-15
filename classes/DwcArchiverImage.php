@@ -6,7 +6,7 @@ class DwcArchiverImage{
 		$termArr['identifier'] = 'http://purl.org/dc/terms/identifier';
 		$fieldArr['identifier'] = 'IFNULL(i.originalurl,i.url) as identifier';
 		$termArr['accessURI'] = 'http://rs.tdwg.org/ac/terms/accessURI';
-		$fieldArr['accessURI'] = 'IFNULL(i.originalurl,i.url) as accessURI';
+		$fieldArr['accessURI'] = 'IFNULL(NULLIF(i.originalurl,""),i.url) as accessURI';
 		$termArr['thumbnailAccessURI'] = 'http://rs.tdwg.org/ac/terms/thumbnailAccessURI';
 		$fieldArr['thumbnailAccessURI'] = 'i.thumbnailurl as thumbnailAccessURI';
 		$termArr['goodQualityAccessURI'] = 'http://rs.tdwg.org/ac/terms/goodQualityAccessURI';
