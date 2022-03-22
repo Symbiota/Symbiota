@@ -233,9 +233,9 @@ else{
 			<div class="fieldGroupDiv">
 				<?php echo $LANG['CUSTOM_FIELD_1']; ?>:
 				<select name="q_customopenparen1" onchange="customSelectChanged(1)">
-        	<option value="">---</option>
-        	<option <?php echo ($qCustomOpenParen1=='('?'SELECTED':''); ?> value="(">(</option>
-        	<option <?php echo ($qCustomOpenParen1=='(('?'SELECTED':''); ?> value="((">((</option>
+					<option value="">---</option>
+					<option <?php echo ($qCustomOpenParen1=='('?'SELECTED':''); ?> value="(">(</option>
+					<option <?php echo ($qCustomOpenParen1=='(('?'SELECTED':''); ?> value="((">((</option>
 					<option <?php echo ($qCustomOpenParen1=='((('?'SELECTED':''); ?> value="(((">(((</option>
 				</select>
 				<select name="q_customfield1" onchange="customSelectChanged(1)">
@@ -260,11 +260,11 @@ else{
 				</select>
 				<input name="q_customvalue1" type="text" value="<?php echo $qCustomValue1; ?>" style="width:200px;" />
 				<select name="q_customcloseparen1" onchange="customSelectChanged(1)">
-                    <option value="">---</option>
-                    <option <?php echo ($qCustomCloseParen1==')'?'SELECTED':''); ?> value=")">)</option>
-                </select>
+					<option value="">---</option>
+					<option <?php echo ($qCustomCloseParen1==')'?'SELECTED':''); ?> value=")">)</option>
+				</select>
 				<a href="#" onclick="toggleCustomDiv2();return false;">
-					<img src="../../images/editplus.png" />
+					<img class="editimg" src="../../images/editplus.png" />
 				</a>
 			</div>
 			<div id="customdiv2" class="fieldGroupDiv" style="display:<?php echo ($qCustomValue2||$qCustomType2=='NULL'||$qCustomType2=='NOTNULL'?'block':'none');?>;">
@@ -301,12 +301,12 @@ else{
 				</select>
 				<input name="q_customvalue2" type="text" value="<?php echo $qCustomValue2; ?>" style="width:200px;" />
 				<select name="q_customcloseparen2" onchange="customSelectChanged(2)">
-                    <option value="">---</option>
-                    <option <?php echo ($qCustomCloseParen2==')'?'SELECTED':''); ?> value=")">)</option>
-                    <option <?php echo ($qCustomCloseParen2=='))'?'SELECTED':''); ?> value="))">))</option>
-                </select>
+					<option value="">---</option>
+					<option <?php echo ($qCustomCloseParen2==')'?'SELECTED':''); ?> value=")">)</option>
+					<option <?php echo ($qCustomCloseParen2=='))'?'SELECTED':''); ?> value="))">))</option>
+				</select>
 				<a href="#" onclick="toggleCustomDiv3();return false;">
-					<img src="../../images/editplus.png" />
+					<img class="editimg" src="../../images/editplus.png" />
 				</a>
 			</div>
 			<div id="customdiv3" class="fieldGroupDiv" style="display:<?php echo ($qCustomValue3||$qCustomType3=='NULL'||$qCustomType3=='NOTNULL'?'block':'none');?>;">
@@ -343,27 +343,27 @@ else{
 				</select>
 				<input name="q_customvalue3" type="text" value="<?php echo $qCustomValue3; ?>" style="width:200px;" />
 				<select name="q_customcloseparen3" onchange="customSelectChanged(3)">
-                    <option value="">---</option>
-                    <option <?php echo ($qCustomCloseParen3==')'?'SELECTED':''); ?> value=")">)</option>
-                    <option <?php echo ($qCustomCloseParen3=='))'?'SELECTED':''); ?> value="))">))</option>
-                    <option <?php echo ($qCustomCloseParen3==')))'?'SELECTED':''); ?> value=")))">)))</option>
-                </select>
-                <a href="#" onclick="toggleCustomDiv4();return false;">
-                    <img src="../../images/editplus.png" />
-                </a>
+					<option value="">---</option>
+					<option <?php echo ($qCustomCloseParen3==')'?'SELECTED':''); ?> value=")">)</option>
+					<option <?php echo ($qCustomCloseParen3=='))'?'SELECTED':''); ?> value="))">))</option>
+					<option <?php echo ($qCustomCloseParen3==')))'?'SELECTED':''); ?> value=")))">)))</option>
+				</select>
+				<a href="#" onclick="toggleCustomDiv4();return false;">
+					<img class="editimg" src="../../images/editplus.png" />
+				</a>
 			</div>
 			<div id="customdiv4" class="fieldGroupDiv" style="display:<?php echo ($qCustomValue4||$qCustomType4=='NULL'||$qCustomType4=='NOTNULL'?'block':'none');?>;">
 				Custom Field 4:
 				<select name="q_customandor4" onchange="customSelectChanged(4)">
-                    <option>AND</option>
-                    <option <?php echo ($qCustomAndOr4=='OR'?'SELECTED':''); ?> value="OR">OR</option>
-                </select>
-                <select name="q_customopenparen4" onchange="customSelectChanged(4)">
-                    <option value="">---</option>
-                    <option <?php echo ($qCustomOpenParen4=='('?'SELECTED':''); ?> value="(">(</option>
-                    <option <?php echo ($qCustomOpenParen4=='(('?'SELECTED':''); ?> value="((">((</option>
-                    <option <?php echo ($qCustomOpenParen4=='((('?'SELECTED':''); ?> value="(((">(((</option>
-                </select>
+					<option>AND</option>
+					<option <?php echo ($qCustomAndOr4=='OR'?'SELECTED':''); ?> value="OR">OR</option>
+				</select>
+				<select name="q_customopenparen4" onchange="customSelectChanged(4)">
+					<option value="">---</option>
+					<option <?php echo ($qCustomOpenParen4=='('?'SELECTED':''); ?> value="(">(</option>
+					<option <?php echo ($qCustomOpenParen4=='(('?'SELECTED':''); ?> value="((">((</option>
+					<option <?php echo ($qCustomOpenParen4=='((('?'SELECTED':''); ?> value="(((">(((</option>
+				</select>
 				<select name="q_customfield4" onchange="customSelectChanged(4)">
 					<option value="">Select Field Name</option>
 					<option value="">---------------------------------</option>
@@ -386,27 +386,27 @@ else{
 				</select>
 				<input name="q_customvalue4" type="text" value="<?php echo $qCustomValue4; ?>" style="width:200px;" />
 				<select name="q_customcloseparen4" onchange="customSelectChanged(4)">
-                    <option value="">---</option>
-                    <option <?php echo ($qCustomCloseParen4==')'?'SELECTED':''); ?> value=")">)</option>
-                    <option <?php echo ($qCustomCloseParen4=='))'?'SELECTED':''); ?> value="))">))</option>
-                    <option <?php echo ($qCustomCloseParen4==')))'?'SELECTED':''); ?> value=")))">)))</option>
-                </select>
-                <a href="#" onclick="toggleCustomDiv5();return false;">
-                    <img src="../../images/editplus.png" />
-                </a>
+					<option value="">---</option>
+					<option <?php echo ($qCustomCloseParen4==')'?'SELECTED':''); ?> value=")">)</option>
+					<option <?php echo ($qCustomCloseParen4=='))'?'SELECTED':''); ?> value="))">))</option>
+					<option <?php echo ($qCustomCloseParen4==')))'?'SELECTED':''); ?> value=")))">)))</option>
+				</select>
+				<a href="#" onclick="toggleCustomDiv5();return false;">
+					<img class="editimg" src="../../images/editplus.png" />
+				</a>
 			</div>
 			<div id="customdiv5" class="fieldGroupDiv" style="display:<?php echo ($qCustomValue5||$qCustomType5=='NULL'||$qCustomType5=='NOTNULL'?'block':'none');?>;">
 				Custom Field 5:
 				<select name="q_customandor5" onchange="customSelectChanged(5)">
-                    <option>AND</option>
-                    <option <?php echo ($qCustomAndOr5=='OR'?'SELECTED':''); ?> value="OR">OR</option>
-                </select>
-                <select name="q_customopenparen5" onchange="customSelectChanged(5)">
-                    <option value="">---</option>
-                    <option <?php echo ($qCustomOpenParen5=='('?'SELECTED':''); ?> value="(">(</option>
-                    <option <?php echo ($qCustomOpenParen5=='(('?'SELECTED':''); ?> value="((">((</option>
-                    <option <?php echo ($qCustomOpenParen5=='((('?'SELECTED':''); ?> value="(((">(((</option>
-                </select>
+					<option>AND</option>
+					<option <?php echo ($qCustomAndOr5=='OR'?'SELECTED':''); ?> value="OR">OR</option>
+				</select>
+				<select name="q_customopenparen5" onchange="customSelectChanged(5)">
+					<option value="">---</option>
+					<option <?php echo ($qCustomOpenParen5=='('?'SELECTED':''); ?> value="(">(</option>
+					<option <?php echo ($qCustomOpenParen5=='(('?'SELECTED':''); ?> value="((">((</option>
+					<option <?php echo ($qCustomOpenParen5=='((('?'SELECTED':''); ?> value="(((">(((</option>
+				</select>
 				<select name="q_customfield5" onchange="customSelectChanged(5)">
 					<option value="">Select Field Name</option>
 					<option value="">---------------------------------</option>
@@ -429,27 +429,27 @@ else{
 				</select>
 				<input name="q_customvalue5" type="text" value="<?php echo $qCustomValue5; ?>" style="width:200px;" />
 				<select name="q_customcloseparen5" onchange="customSelectChanged(5)">
-                    <option value="">---</option>
-                    <option <?php echo ($qCustomCloseParen5==')'?'SELECTED':''); ?> value=")">)</option>
-                    <option <?php echo ($qCustomCloseParen5=='))'?'SELECTED':''); ?> value="))">))</option>
-                    <option <?php echo ($qCustomCloseParen5==')))'?'SELECTED':''); ?> value=")))">)))</option>
-                </select>
-                <a href="#" onclick="toggleCustomDiv6();return false;">
-                    <img src="../../images/editplus.png" />
-                </a>
+					<option value="">---</option>
+					<option <?php echo ($qCustomCloseParen5==')'?'SELECTED':''); ?> value=")">)</option>
+					<option <?php echo ($qCustomCloseParen5=='))'?'SELECTED':''); ?> value="))">))</option>
+					<option <?php echo ($qCustomCloseParen5==')))'?'SELECTED':''); ?> value=")))">)))</option>
+				</select>
+				<a href="#" onclick="toggleCustomDiv6();return false;">
+					<img class="editimg" src="../../images/editplus.png" />
+				</a>
 			</div>
 			<div id="customdiv6" class="fieldGroupDiv" style="display:<?php echo ($qCustomValue6||$qCustomType6=='NULL'||$qCustomType6=='NOTNULL'?'block':'none');?>;">
 				Custom Field 6:
 				<select name="q_customandor6" onchange="customSelectChanged(6)">
-                    <option>AND</option>
-                    <option <?php echo ($qCustomAndOr6=='OR'?'SELECTED':''); ?> value="OR">OR</option>
-                </select>
-                <select name="q_customopenparen6" onchange="customSelectChanged(6)">
-                    <option value="">---</option>
-                    <option <?php echo ($qCustomOpenParen6=='('?'SELECTED':''); ?> value="(">(</option>
-                    <option <?php echo ($qCustomOpenParen6=='(('?'SELECTED':''); ?> value="((">((</option>
-                    <option <?php echo ($qCustomOpenParen6=='((('?'SELECTED':''); ?> value="(((">(((</option>
-                </select>
+					<option>AND</option>
+					<option <?php echo ($qCustomAndOr6=='OR'?'SELECTED':''); ?> value="OR">OR</option>
+				</select>
+				<select name="q_customopenparen6" onchange="customSelectChanged(6)">
+					<option value="">---</option>
+					<option <?php echo ($qCustomOpenParen6=='('?'SELECTED':''); ?> value="(">(</option>
+					<option <?php echo ($qCustomOpenParen6=='(('?'SELECTED':''); ?> value="((">((</option>
+					<option <?php echo ($qCustomOpenParen6=='((('?'SELECTED':''); ?> value="(((">(((</option>
+				</select>
 				<select name="q_customfield6" onchange="customSelectChanged(6)">
 					<option value="">Select Field Name</option>
 					<option value="">---------------------------------</option>
@@ -472,26 +472,26 @@ else{
 				</select>
 				<input name="q_customvalue6" type="text" value="<?php echo $qCustomValue6; ?>" style="width:200px;" />
 				<select name="q_customcloseparen6" onchange="customSelectChanged(6)">
-                    <option value="">---</option>
-                    <option <?php echo ($qCustomCloseParen6==')'?'SELECTED':''); ?> value=")">)</option>
-                    <option <?php echo ($qCustomCloseParen6=='))'?'SELECTED':''); ?> value="))">))</option>
-                    <option <?php echo ($qCustomCloseParen6==')))'?'SELECTED':''); ?> value=")))">)))</option>
-                </select>
-                <a href="#" onclick="toggleCustomDiv7();return false;">
-                    <img src="../../images/editplus.png" />
-                </a>
+					<option value="">---</option>
+					<option <?php echo ($qCustomCloseParen6==')'?'SELECTED':''); ?> value=")">)</option>
+					<option <?php echo ($qCustomCloseParen6=='))'?'SELECTED':''); ?> value="))">))</option>
+					<option <?php echo ($qCustomCloseParen6==')))'?'SELECTED':''); ?> value=")))">)))</option>
+				</select>
+				<a href="#" onclick="toggleCustomDiv7();return false;">
+					<img class="editimg" src="../../images/editplus.png" />
+				</a>
 			</div>
 			<div id="customdiv7" class="fieldGroupDiv" style="display:<?php echo ($qCustomValue7||$qCustomType7=='NULL'||$qCustomType7=='NOTNULL'?'block':'none');?>;">
 				Custom Field 7:
 				<select name="q_customandor7" onchange="customSelectChanged(7)">
-                    <option>AND</option>
-                    <option <?php echo ($qCustomAndOr7=='OR'?'SELECTED':''); ?> value="OR">OR</option>
-                </select>
-                <select name="q_customopenparen7" onchange="customSelectChanged(7)">
-                    <option value="">---</option>
-                    <option <?php echo ($qCustomOpenParen7=='('?'SELECTED':''); ?> value="(">(</option>
-                    <option <?php echo ($qCustomOpenParen7=='(('?'SELECTED':''); ?> value="((">((</option>
-                </select>
+					<option>AND</option>
+					<option <?php echo ($qCustomAndOr7=='OR'?'SELECTED':''); ?> value="OR">OR</option>
+				</select>
+				<select name="q_customopenparen7" onchange="customSelectChanged(7)">
+					<option value="">---</option>
+					<option <?php echo ($qCustomOpenParen7=='('?'SELECTED':''); ?> value="(">(</option>
+					<option <?php echo ($qCustomOpenParen7=='(('?'SELECTED':''); ?> value="((">((</option>
+				</select>
 				<select name="q_customfield7" onchange="customSelectChanged(7)">
 					<option value="">Select Field Name</option>
 					<option value="">---------------------------------</option>
@@ -514,25 +514,25 @@ else{
 				</select>
 				<input name="q_customvalue7" type="text" value="<?php echo $qCustomValue7; ?>" style="width:200px;" />
 				<select name="q_customcloseparen7" onchange="customSelectChanged(7)">
-                    <option value="">---</option>
-                    <option <?php echo ($qCustomCloseParen7==')'?'SELECTED':''); ?> value=")">)</option>
-                    <option <?php echo ($qCustomCloseParen7=='))'?'SELECTED':''); ?> value="))">))</option>
-                    <option <?php echo ($qCustomCloseParen7==')))'?'SELECTED':''); ?> value=")))">)))</option>
-                </select>
-                <a href="#" onclick="toggleCustomDiv8();return false;">
-                    <img src="../../images/editplus.png" />
-                </a>
+					<option value="">---</option>
+					<option <?php echo ($qCustomCloseParen7==')'?'SELECTED':''); ?> value=")">)</option>
+					<option <?php echo ($qCustomCloseParen7=='))'?'SELECTED':''); ?> value="))">))</option>
+					<option <?php echo ($qCustomCloseParen7==')))'?'SELECTED':''); ?> value=")))">)))</option>
+				</select>
+				<a href="#" onclick="toggleCustomDiv8();return false;">
+					<img class="editimg" src="../../images/editplus.png" />
+				</a>
 			</div>
 			<div id="customdiv8" class="fieldGroupDiv" style="display:<?php echo ($qCustomValue8||$qCustomType8=='NULL'||$qCustomType8=='NOTNULL'?'block':'none');?>;">
 				Custom Field 8:
 				<select name="q_customandor8" onchange="customSelectChanged(8)">
-                    <option>AND</option>
-                    <option <?php echo ($qCustomAndOr8=='OR'?'SELECTED':''); ?> value="OR">OR</option>
-                </select>
-                <select name="q_customopenparen8" onchange="customSelectChanged(8)">
-                    <option value="">---</option>
-                    <option <?php echo ($qCustomOpenParen8=='('?'SELECTED':''); ?> value="(">(</option>
-                </select>
+					<option>AND</option>
+					<option <?php echo ($qCustomAndOr8=='OR'?'SELECTED':''); ?> value="OR">OR</option>
+				</select>
+				<select name="q_customopenparen8" onchange="customSelectChanged(8)">
+					<option value="">---</option>
+					<option <?php echo ($qCustomOpenParen8=='('?'SELECTED':''); ?> value="(">(</option>
+				</select>
 				<select name="q_customfield8" onchange="customSelectChanged(8)">
 					<option value="">Select Field Name</option>
 					<option value="">---------------------------------</option>
@@ -555,11 +555,11 @@ else{
 				</select>
 				<input name="q_customvalue8" type="text" value="<?php echo $qCustomValue8; ?>" style="width:200px;" />
 				<select name="q_customcloseparen8" onchange="customSelectChanged(8)">
-                    <option value="">---</option>
-                    <option <?php echo ($qCustomCloseParen8==')'?'SELECTED':''); ?> value=")">)</option>
-                    <option <?php echo ($qCustomCloseParen8=='))'?'SELECTED':''); ?> value="))">))</option>
-                    <option <?php echo ($qCustomCloseParen8==')))'?'SELECTED':''); ?> value=")))">)))</option>
-                </select>
+					<option value="">---</option>
+					<option <?php echo ($qCustomCloseParen8==')'?'SELECTED':''); ?> value=")">)</option>
+					<option <?php echo ($qCustomCloseParen8=='))'?'SELECTED':''); ?> value="))">))</option>
+					<option <?php echo ($qCustomCloseParen8==')))'?'SELECTED':''); ?> value=")))">)))</option>
+				</select>
 			</div>
 			<div class="fieldGroupDiv">
 				<?php
@@ -662,12 +662,12 @@ else{
 
 		// Copy to clipboard
 		navigator.clipboard.writeText(link).then(() => {
-	      /* clipboard succcessfully set */
-	      //console.log("Clipboard copy successful");
-	    }, () => {
-	      /* clipboard write failed */
-	      //console.log("Clipboard copy failed");
-	    });
+		  /* clipboard succcessfully set */
+		  //console.log("Clipboard copy successful");
+		}, () => {
+		  /* clipboard write failed */
+		  //console.log("Clipboard copy failed");
+		});
 	}
 
 	function enteredByCurrentUser(){

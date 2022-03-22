@@ -88,7 +88,7 @@ class OmCollections extends Manager{
 						$sql = 'INSERT INTO omcollectionstats(collid,recordcnt,uploadedby) VALUES('.$cid.',0,"'.$GLOBALS['USERNAME'].'")';
 						$this->conn->query($sql);
 						//Add collection to category
-						if(isset($reqArr['ccpk'])){
+						if(isset($reqArr['ccpk']) && is_numeric($reqArr['ccpk'])){
 							$sql = 'INSERT INTO omcollcatlink (ccpk,collid) VALUES('.$postArr['ccpk'].','.$cid.')';
 							if(!$this->conn->query($sql)){
 								//$this->errorMessage = 'ERROR inserting collection category link(2): '.$this->conn->error;
@@ -108,11 +108,11 @@ class OmCollections extends Manager{
 
 	private function getRequestArr($postArr){
 		$retArr = array();
-		$retArr['institutionCode'] = ($postArr['institutionCode']?$this->cleanInStr($postArr['institutionCode']):NULL);
-		$retArr['collectionCode'] = ($postArr['collectionCode']?$this->cleanInStr($postArr['collectionCode']):'');
-		$retArr['collectionName'] = ($postArr['collectionName']?$this->cleanInStr($postArr['collectionName']):NULL);
-		$retArr['collectionID'] = ($postArr['collectionID']?$this->cleanInStr($postArr['collectionID']):NULL);
-		$retArr['fullDescription'] = ($postArr['fullDescription']?$this->cleanInStr($postArr['fullDescription']):NULL);
+		$retArr['institutionCode'] = ($postArr['institutionCode']?trim($postArr['institutionCode']):NULL);
+		$retArr['collectionCode'] = ($postArr['collectionCode']?trim($postArr['collectionCode']):'');
+		$retArr['collectionName'] = ($postArr['collectionName']?trim($postArr['collectionName']):NULL);
+		$retArr['collectionID'] = ($postArr['collectionID']?trim($postArr['collectionID']):NULL);
+		$retArr['fullDescription'] = ($postArr['fullDescription']?trim($postArr['fullDescription']):NULL);
 		$retArr['resourceJson'] = (isset($postArr['resourceJson'])&&$postArr['resourceJson']?$postArr['resourceJson']:NULL);
 		$retArr['contactJson'] = (isset($postArr['contactJson'])&&$postArr['contactJson']?$postArr['contactJson']:NULL);
 		$retArr['latitudeDecimal'] = (is_numeric($postArr['latitudeDecimal'])?$postArr['latitudeDecimal']:NULL);
@@ -120,18 +120,18 @@ class OmCollections extends Manager{
 		$retArr['publishToGbif'] = (isset($postArr['publishToGbif']) && is_numeric($postArr['publishToGbif'])?$postArr['publishToGbif']:NULL);
 		$retArr['publishToIdigbio'] = (isset($postArr['publishToIdigbio']) && is_numeric($postArr['publishToIdigbio'])?$postArr['publishToIdigbio']:NULL);
 		$retArr['publicEdits'] = (isset($postArr['publicEdits']) && is_numeric($postArr['publicEdits'])?$postArr['publicEdits']:0);
-		$retArr['guidTarget'] = (isset($postArr['guidTarget']) && $postArr['guidTarget']?$this->cleanInStr($postArr['guidTarget']):NULL);
-		$retArr['rights'] = ($postArr['rights']?$this->cleanInStr($postArr['rights']):NULL);
-		$retArr['rightsHolder'] = ($postArr['rightsHolder']?$this->cleanInStr($postArr['rightsHolder']):NULL);
-		$retArr['accessRights'] = ($postArr['accessRights']?$this->cleanInStr($postArr['accessRights']):NULL);
-		$retArr['individualUrl'] = ($postArr['individualUrl']?$this->cleanInStr($postArr['individualUrl']):NULL);
+		$retArr['guidTarget'] = (isset($postArr['guidTarget']) && $postArr['guidTarget']?trim($postArr['guidTarget']):NULL);
+		$retArr['rights'] = ($postArr['rights']?trim($postArr['rights']):NULL);
+		$retArr['rightsHolder'] = ($postArr['rightsHolder']?trim($postArr['rightsHolder']):NULL);
+		$retArr['accessRights'] = ($postArr['accessRights']?trim($postArr['accessRights']):NULL);
+		$retArr['individualUrl'] = ($postArr['individualUrl']?trim($postArr['individualUrl']):NULL);
 		if(isset($_FILES['iconFile']['name']) && $_FILES['iconFile']['name']) $retArr['icon'] = $this->addIconImageFile($postArr);
-		elseif(isset($postArr['iconUrl']) && $postArr['iconUrl']) $retArr['icon'] = $this->cleanInStr($postArr['iconUrl']);
-		elseif(isset($postArr['icon']) && $postArr['icon']) $retArr['icon'] = $this->cleanInStr($postArr['icon']);
+		elseif(isset($postArr['iconUrl']) && $postArr['iconUrl']) $retArr['icon'] = trim($postArr['iconUrl']);
+		elseif(isset($postArr['icon']) && $postArr['icon']) $retArr['icon'] = trim($postArr['icon']);
 		else $retArr['icon'] = NULL;
 		if(isset($postArr['managementType']) && $GLOBALS['IS_ADMIN']){
-			$retArr['managementType'] = $this->cleanInStr($postArr['managementType']);
-			$retArr['collType'] = $this->cleanInStr($postArr['collType']);
+			$retArr['managementType'] = trim($postArr['managementType']);
+			$retArr['collType'] = trim($postArr['collType']);
 			if(isset($postArr['sortSeq']) && is_numeric($postArr['sortSeq'])) $retArr['sortSeq'] = $postArr['sortSeq'];
 		}
 		if(isset($postArr['ccpk']) && is_numeric($postArr['ccpk'])) $retArr['ccpk'] = $postArr['ccpk'];

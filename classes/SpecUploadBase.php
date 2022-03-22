@@ -125,6 +125,7 @@ class SpecUploadBase extends SpecUpload{
 				case $this->SKELETAL:
 				case $this->DWCAUPLOAD:
 				case $this->IPTUPLOAD:
+				case $this->SYMBIOTA:
 				case $this->DIRECTUPLOAD:
 				case $this->SCRIPTUPLOAD:
 					$sql = 'SELECT sourcefield, symbspecfield FROM uploadspecmap WHERE (uspid = '.$this->uspid.')';
@@ -234,6 +235,7 @@ class SpecUploadBase extends SpecUpload{
 			case $this->SKELETAL:
 			case $this->DWCAUPLOAD:
 			case $this->IPTUPLOAD:
+			case $this->SYMBIOTA:
 			case $this->RESTOREBACKUP:
 			case $this->DIRECTUPLOAD:
 				//Get identification metadata

@@ -41,7 +41,7 @@ if($verifyImages !== true) $verifyImages = false;
 if(!preg_match('/^[a-zA-Z0-9\s_-]+$/',$processingStatus)) $processingStatus = '';
 if($dbpk) $dbpk = htmlspecialchars($dbpk);
 
-$FILEUPLOAD = 3; $DWCAUPLOAD = 6; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9;
+$FILEUPLOAD = 3; $DWCAUPLOAD = 6; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9; $SYMBIOTA = 13;
 
 $duManager = new SpecUploadBase();
 if($uploadType == $FILEUPLOAD || $uploadType == $NFNUPLOAD){
@@ -53,7 +53,7 @@ elseif($uploadType == $SKELETAL){
 	$duManager->setUploadFileName($ulPath);
 	$matchCatNum = true;
 }
-elseif($uploadType == $DWCAUPLOAD || $uploadType == $IPTUPLOAD){
+elseif($uploadType == $DWCAUPLOAD || $uploadType == $IPTUPLOAD || $uploadType == $SYMBIOTA){
 	$duManager = new SpecUploadDwca();
 	$duManager->setTargetPath($ulPath);
 	$duManager->setIncludeIdentificationHistory($importIdent);
@@ -276,7 +276,7 @@ include($SERVER_ROOT.'/includes/header.php');
 		$processingList = array('unprocessed' => 'Unprocessed', 'stage 1' => 'Stage 1', 'stage 2' => 'Stage 2', 'stage 3' => 'stage 3', 'pending review' => 'Pending Review',
 			'expert required' => 'Expert Required', 'pending review-nfn' => 'Pending Review-NfN', 'reviewed' => 'Reviewed', 'closed' => 'Closed');
 		$ulPath = $duManager->uploadFile();
-		if(($uploadType == $DWCAUPLOAD || $uploadType == $IPTUPLOAD) && $ulPath){
+		if(($uploadType == $DWCAUPLOAD || $uploadType == $IPTUPLOAD || $uploadType == $SYMBIOTA) && $ulPath){
 			//Data has been uploaded and it's a DWCA upload type
 			if($duManager->analyzeUpload()){
 				$metaArr = $duManager->getMetaArr();

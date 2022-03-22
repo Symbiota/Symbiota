@@ -44,7 +44,7 @@ if(!is_numeric($finalTransfer)) $finalTransfer = 0;
 if($dbpk) $dbpk = htmlspecialchars($dbpk);
 if(!is_numeric($sourceIndex)) $sourceIndex = 0;
 
-$DIRECTUPLOAD = 1; $FILEUPLOAD = 3; $STOREDPROCEDURE = 4; $SCRIPTUPLOAD = 5; $DWCAUPLOAD = 6; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9;
+$DIRECTUPLOAD = 1; $FILEUPLOAD = 3; $STOREDPROCEDURE = 4; $SCRIPTUPLOAD = 5; $DWCAUPLOAD = 6; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9; $SYMBIOTA = 13;
 
 $duManager = new SpecUploadBase();
 if($uploadType == $DIRECTUPLOAD){
@@ -59,7 +59,7 @@ elseif($uploadType == $SKELETAL){
 	$duManager->setUploadFileName($ulPath);
 	$matchCatNum = true;
 }
-elseif($uploadType == $DWCAUPLOAD || $uploadType == $IPTUPLOAD){
+elseif($uploadType == $DWCAUPLOAD || $uploadType == $IPTUPLOAD || $uploadType == $SYMBIOTA){
 	$duManager = new SpecUploadDwca();
 	$duManager->setTargetPath($ulPath);
 	$duManager->setIncludeIdentificationHistory($importIdent);
@@ -125,7 +125,6 @@ include($SERVER_ROOT.'/includes/header.php');
 			echo '<div style="font-weight:bold;font-size:120%">'.(isset($LANG['UP_STATUS'])?$LANG['UP_STATUS']:'Upload Status').':</div>';
 			echo '<ul style="margin:10px;font-weight:bold;">';
 			$duManager->uploadData($finalTransfer);
-			if($uploadType == $DWCAUPLOAD || $uploadType == $IPTUPLOAD) $sourceIndex = $duManager->getSourcePortalIndex();
 			echo '</ul>';
 			if(!$finalTransfer){
 				?>
@@ -219,6 +218,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						//Extensions
 						if(isset($reportArr['ident'])) echo '<div>'.$LANG['IDENT_TRANSFER'].': '.$reportArr['ident'].'</div>';
 						if(isset($reportArr['image'])) echo '<div>'.$LANG['IMAGE_TRANSFER'].': '.$reportArr['image'].'</div>';
+						if($uploadType == $DWCAUPLOAD || $uploadType == $IPTUPLOAD || $uploadType == $SYMBIOTA) $sourceIndex = $duManager->getSourcePortalIndex();
 						?>
 					</div>
 					<form name="finaltransferform" action="specuploadprocessor.php" method="post" style="margin-top:10px;" onsubmit="return confirm('<?php echo $LANG['FINAL_TRANSFER']; ?>');">

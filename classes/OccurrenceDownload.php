@@ -27,7 +27,7 @@ class OccurrenceDownload{
 		$this->securityArr = Array('locality','locationRemarks','minimumElevationInMeters','maximumElevationInMeters','verbatimElevation',
 			'decimalLatitude','decimalLongitude','geodeticDatum','coordinateUncertaintyInMeters','footprintWKT','verbatimCoordinates',
 			'georeferenceRemarks','georeferencedBy','georeferenceProtocol','georeferenceSources','georeferenceVerificationStatus','habitat');
-		if($GLOBALS['IS_ADMIN'] || array_key_exists("CollAdmin", $GLOBALS['USER_RIGHTS']) || array_key_exists("RareSppAdmin", $GLOBALS['USER_RIGHTS']) || array_key_exists("RareSppReadAll", $GLOBALS['USER_RIGHTS'])){
+		if($GLOBALS['IS_ADMIN'] || array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])){
 			$this->redactLocalities = false;
 		}
 		if(array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS'])){
@@ -394,46 +394,13 @@ class OccurrenceDownload{
 			foreach($this->conditionArr as $field => $condArr){
 				$sqlFrag2 = '';
 				foreach($condArr as $cond => $valueArr){
-					if($cond == 'NULL'){
-						$sqlFrag2 .= 'OR o.'.$field.' IS NULL ';
-					}
-					elseif($cond == 'NOTNULL'){
-						$sqlFrag2 .= 'OR o.'.$field.' IS NOT NULL ';
-					}
-					elseif($cond == 'EQUALS'){
-						$sqlFrag2 .= 'OR o.'.$field.' IN("'.implode('","',$valueArr).'") ';
-					}
-					elseif($cond == 'NOTEQUALS'){
-						$sqlFrag2 .= 'OR o.'.$field.' NOT IN("'.implode('","',$valueArr).'") ';
-					}
-					else{
-						foreach($valueArr as $value){
-							if($cond == 'STARTS'){
-								$sqlFrag2 .= 'OR o.'.$field.' LIKE "'.$value.'%" ';
-							}
-							elseif($cond == 'LIKE'){
-								$sqlFrag2 .= 'OR o.'.$field.' LIKE "%'.$value.'%" ';
-							}
-							elseif($cond == 'NOTLIKE'){
-								$sqlFrag2 .= 'OR o.'.$field.' NOT LIKE "%'.$value.'%" ';
-							}
-							elseif($cond == 'LESSTHAN'){
-								$sqlFrag2 .= 'OR o.'.$field.' < "'.$value.'" ';
-							}
-							elseif($cond == 'GREATERTHAN'){
-								$sqlFrag2 .= 'OR o.'.$field.' > "'.$value.'" ';
-							}
-						}
-					}
+					$sqlFrag2 .= $this->getSqlFragment($field, $cond, $valueArr);
 				}
 				$sqlFrag .= 'AND ('.substr($sqlFrag2,3).') ';
 			}
 
 		}
-		//Build where
-		if($sqlFrag){
-			$this->sqlWhere .= $sqlFrag;
-		}
+		if($sqlFrag) $this->sqlWhere .= $sqlFrag;
 		if($this->sqlWhere){
 			//Make sure it starts with WHERE
 			if(substr($this->sqlWhere,0,4) == 'AND '){
@@ -443,6 +410,42 @@ class OccurrenceDownload{
 				$this->sqlWhere = 'WHERE '.$this->sqlWhere;
 			}
 		}
+	}
+
+	private function getSqlFragment($field, $cond, $valueArr){
+		$sqlFrag = '';
+		if($cond == 'NULL'){
+			$sqlFrag .= 'OR o.'.$field.' IS NULL ';
+		}
+		elseif($cond == 'NOTNULL'){
+			$sqlFrag .= 'OR o.'.$field.' IS NOT NULL ';
+		}
+		elseif($cond == 'EQUALS'){
+			$sqlFrag .= 'OR o.'.$field.' IN("'.implode('","',$valueArr).'") ';
+		}
+		elseif($cond == 'NOTEQUALS'){
+			$sqlFrag .= 'OR o.'.$field.' NOT IN("'.implode('","',$valueArr).'") OR o.'.$field.' IS NULL ';
+		}
+		else{
+			foreach($valueArr as $value){
+				if($cond == 'STARTS'){
+					$sqlFrag .= 'OR o.'.$field.' LIKE "'.$value.'%" ';
+				}
+				elseif($cond == 'LIKE'){
+					$sqlFrag .= 'OR o.'.$field.' LIKE "%'.$value.'%" ';
+				}
+				elseif($cond == 'NOTLIKE'){
+					$sqlFrag .= 'OR o.'.$field.' NOT LIKE "%'.$value.'%" OR o.'.$field.' IS NULL ';
+				}
+				elseif($cond == 'LESSTHAN'){
+					$sqlFrag .= 'OR o.'.$field.' < "'.$value.'" ';
+				}
+				elseif($cond == 'GREATERTHAN'){
+					$sqlFrag .= 'OR o.'.$field.' > "'.$value.'" ';
+				}
+			}
+		}
+		return $sqlFrag;
 	}
 
 	private function getSql(){

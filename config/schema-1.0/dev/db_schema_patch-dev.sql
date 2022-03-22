@@ -192,6 +192,18 @@ ALTER TABLE `omoccuredits`
   ADD COLUMN `isActive` INT(1) NULL DEFAULT NULL COMMENT '0 = not the value applied within the active field, 1 = valued applied within active field' AFTER `editType`,
   ADD COLUMN `reapply` INT(1) NULL COMMENT '0 = do not reapply edit; 1 = reapply edit when snapshot is refreshed, if edit isActive and snapshot value still matches old value ' AFTER `isActive`;
 
+
+UPDATE omoccuridentifiers SET identifiername = "" WHERE identifiername IS NULL;
+
+ALTER TABLE `omoccuridentifiers` 
+  CHANGE COLUMN `identifiername` `identifiername` VARCHAR(45) NOT NULL DEFAULT '' COMMENT 'barcode, accession number, old catalog number, NPS, etc' ;
+
+ALTER TABLE `omoccuridentifiers` 
+  ADD UNIQUE INDEX `UQ_omoccuridentifiers` (`occid` ASC, `identifiervalue` ASC, `identifiername` ASC);
+
+ALTER TABLE `omoccuridentifiers` RENAME INDEX `Index_value` TO `IX_omoccuridentifiers_value`;
+
+
 CREATE TABLE `portalindex` (
   `portalID` INT NOT NULL AUTO_INCREMENT,
   `portalName` VARCHAR(45) NOT NULL,
@@ -302,6 +314,12 @@ ALTER TABLE `omoccurrences`
 ALTER TABLE `omoccurrences` 
   DROP COLUMN `recordedbyid`,
   DROP INDEX `FK_recordedbyid` ;
+
+ALTER TABLE `omoccurrences` 
+  DROP INDEX `Index_latlng`,
+  ADD INDEX `IX_occurrences_lat` (`decimalLatitude` ASC),
+  ADD INDEX `IX_occurrences_lng` (`decimalLongitude` ASC);
+
 
 ALTER TABLE `specprocessorprojects` 
   ADD COLUMN `customStoredProcedure` VARCHAR(45) NULL AFTER `source`,

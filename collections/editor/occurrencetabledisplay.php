@@ -133,6 +133,7 @@ else{
 		.fieldGroupDiv{ clear:both; margin-bottom:2px; overflow: auto}
 		.fieldDiv{ float:left; margin-right: 20px}
 		#innertext{ background-color: white; margin: 0px 10px; }
+		.editimg{ width: 15px; }
 	</style>
 </head>
 <body style="margin-left: 0px; margin-right: 0px;background-color:white;">
@@ -146,7 +147,7 @@ else{
 					<?php
 					if($isEditor == 1 || $isGenObs){
 						?>
-						<a href="#" title="Batch Update Tool" onclick="toggleBatchUpdate();return false;"><img src="../../images/editplus.png" style="width:14px;" /></a>
+						<a href="#" title="Batch Update Tool" onclick="toggleBatchUpdate();return false;"><img class="editimg" src="../../images/editplus.png" /></a>
 						<?php
 					}
 					?>

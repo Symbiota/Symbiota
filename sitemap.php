@@ -222,7 +222,7 @@ $smManager = new SiteMapManager();
 					<h3><?php echo $LANG['IMAGES'];?></h3>
 					<div style="margin:10px;">
 						<?php echo $LANG['SEESYMBDOC'];?>
-						<a href="https://symbiota.org/image-submission-2/"><?php echo $LANG['IMGSUB'];?></a>
+						<a href="https://biokic.github.io/symbiota-docs/editor/images/"><?php echo $LANG['IMGSUB'];?></a>
 						<?php echo $LANG['FORANOVERVIEW'];?>
 					</div>
 					<ul>

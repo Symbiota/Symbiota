@@ -4,19 +4,20 @@ include_once($SERVER_ROOT.'/classes/OccurrenceEditReview.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/editreviewer.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/editreviewer.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/editor/editreviewer.en.php');
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/editreviewer.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset='.$CHARSET);
 
 $collid = $_REQUEST['collid'];
 $displayMode = array_key_exists('display',$_REQUEST)?$_REQUEST['display']:'1';
 $faStatus = array_key_exists('fastatus',$_REQUEST)?strip_tags($_REQUEST['fastatus']):'';
 $frStatus = array_key_exists('frstatus',$_REQUEST)?strip_tags($_REQUEST['frstatus']):'1,2';
-$filterFieldName = array_key_exists('fFieldName',$_POST)?strip_tags($_POST['fFieldName']):'';
+$filterFieldName = array_key_exists('ffieldname',$_POST)?strip_tags($_POST['ffieldname']):'';
 $editor = array_key_exists('editor',$_REQUEST)?strip_tags($_REQUEST['editor']):'';
 $queryOccid = array_key_exists('occid',$_REQUEST)?strip_tags($_REQUEST['occid']):'';
 $startDate = array_key_exists('startdate',$_REQUEST)?strip_tags($_REQUEST['startdate']):'';
 $endDate = array_key_exists('enddate',$_REQUEST)?strip_tags($_REQUEST['enddate']):'';
 $pageNum = array_key_exists('pagenum',$_REQUEST)?$_REQUEST['pagenum']:'0';
 $limitCnt = array_key_exists('limitcnt',$_REQUEST)?$_REQUEST['limitcnt']:'1000';
+$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 if(!is_numeric($collid)) $collid = 0;
 if(!is_numeric($displayMode)) $displayMode = 1;
@@ -53,16 +54,16 @@ elseif($reviewManager->getObsUid()){
 
 $statusStr = "";
 if($isEditor){
-	if(array_key_exists('updatesubmit', $_POST)){
+	if($formSubmit == 'updateRecords'){
 		if(!$reviewManager->updateRecords($_POST)){
 			$statusStr = '<br>'.implode('</br><br>',$reviewManager->getWarningArr()).'</br>';
 		}
 	}
-	elseif(array_key_exists('delsubmit', $_POST)){
+	elseif($formSubmit == 'deleteSelectedEdits'){
 		$idStr = implode(',',$_POST['id']);
 		$reviewManager->deleteEdits($idStr);
 	}
-	elseif(array_key_exists('dlsubmit', $_POST)){
+	elseif($formSubmit == 'downloadSelectedEdits'){
 		$idStr = implode(',',$_POST['id']);
 		if($reviewManager->exportCsvFile($idStr)){
 			exit();
@@ -71,7 +72,7 @@ if($isEditor){
 			$statusStr = $reviewManager->getErrorMessage();
 		}
 	}
-	elseif(array_key_exists('dlallsubmit', $_POST)){
+	elseif($formSubmit == "downloadAllRecords"){
 		if($reviewManager->exportCsvFile('', true)){
 			exit();
 		}
@@ -87,21 +88,13 @@ if($subCnt > $recCnt) $subCnt = $recCnt;
 $navPageBase = 'editreviewer.php?collid='.$collid.'&display='.$displayMode.'&fastatus='.$faStatus.'&frstatus='.$frStatus.'&editor='.$editor;
 
 $navStr = '<div class="navbarDiv" style="float:right;">';
-if($pageNum){
-	$navStr .= '<a href="'.$navPageBase.'&pagenum='.($pageNum-1).'&limitcnt='.$limitCnt.'" title="Previous '.$limitCnt.' records">&lt;&lt;</a>';
-}
-else{
-	$navStr .= '&lt;&lt;';
-}
+if($pageNum) $navStr .= '<a href="'.$navPageBase.'&pagenum='.($pageNum-1).'&limitcnt='.$limitCnt.'" title="Previous '.$limitCnt.' records">&lt;&lt;</a>';
+else $navStr .= '&lt;&lt;';
 $navStr .= ' | ';
 $navStr .= ($pageNum*$limitCnt).'-'.$subCnt.' of '.$recCnt.' '.$LANG['FIELDS_EDITED'];
 $navStr .= ' | ';
-if($subCnt < $recCnt){
-	$navStr .= '<a href="'.$navPageBase.'&pagenum='.($pageNum+1).'&limitcnt='.$limitCnt.'" title="Next '.$limitCnt.' records">&gt;&gt;</a>';
-}
-else{
-	$navStr .= '&gt;&gt;';
-}
+if($subCnt < $recCnt) $navStr .= '<a href="'.$navPageBase.'&pagenum='.($pageNum+1).'&limitcnt='.$limitCnt.'" title="Next '.$limitCnt.' records">&gt;&gt;</a>';
+else $navStr .= '&gt;&gt;';
 $navStr .= '</div>';
 ?>
 <html>
@@ -240,7 +233,7 @@ $navStr .= '</div>';
 							</div>
 							<div class="fieldDiv">
 								<?php echo $LANG['FIELD_NAME']; ?>:
-								<select name="fFieldName">
+								<select name="ffieldname">
 									<option value=""><?php echo $LANG['ALL_FIELDS']; ?></option>
 									<option value="">----------------------</option>
 									<?php
@@ -313,10 +306,11 @@ $navStr .= '</div>';
 									</select>
 								</div>
 								<div style="clear:both;margin:15px 5px;">
-									<input name="updatesubmit" type="submit" value="<?php echo $LANG['UPDATE_SELECTED']; ?>" onclick="return validateEditForm(this.form);" />
+									<button name="formsubmit" type="submit" value="updateRecords" onclick="return validateEditForm(this.form);"><?php echo $LANG['UPDATE_SELECTED']; ?></button>
 									<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 									<input name="fastatus" type="hidden" value="<?php echo $faStatus; ?>" />
 									<input name="frstatus" type="hidden" value="<?php echo $frStatus; ?>" />
+									<input name="ffieldname" type="hidden" value="<?php echo $filterFieldName; ?>" />
 									<input name="editor" type="hidden" value="<?php echo $editor; ?>" />
 									<input name="occid" type="hidden" value="<?php echo $queryOccid; ?>" />
 									<input name="pagenum" type="hidden" value="<?php echo $pageNum; ?>" />
@@ -330,18 +324,18 @@ $navStr .= '</div>';
 							</div>
 							<div id="additional" style="display:none">
 								<div style="margin:10px 15px;">
-									<input name="delsubmit" type="submit" value="Delete Selected Edits" onclick="return validateDelete(this.form)" />
+									<button name="formsubmit" type="submit" value="deleteSelectedEdits" onclick="return validateDelete(this.form)"><?php echo $LANG['DELETE_SELECTED']; ?></button>
 									<div style="margin:5px 0px 10px 10px;">* <?php echo $LANG['PERMANENTLY_CLEAR']; ?></div>
 								</div>
 								<div style="margin:5px 0px 10px 15px;">
-									<input name="dlsubmit" type="submit" value="<?php echo $LANG['DOWNLOAD_SELECTED']; ?>" onclick="return validateEditForm(this.form);" />
+									<button name="formsubmit" type="submit" value="downloadSelectedEdits" onclick="return validateEditForm(this.form);" ><?php echo $LANG['DOWNLOAD_SELECTED']; ?></button>
 								</div>
 								<div style="margin:5px 0px 10px 15px;">
-									<input name="dlallsubmit" type="submit" value="Download All Records" />
+									<button name="formsubmit" type="submit" value="downloadAllRecords"><?php echo $LANG['DOWNLOAD_ALL']; ?></button>
 									<div style="margin:5px 0px 10px 10px;">* <?php echo $LANG['BASED_ON_PARAMETERS']; ?></div>
 								</div>
 								<div style="margin:10px 15px;">
-									<input name="printsubmit" type="button" value="<?php echo $LANG['PRINT_FRIENDLY']; ?>" onclick="printFriendlyMode(true)" />
+									<button name="printsubmit" type="button" onclick="printFriendlyMode(true)"><?php echo $LANG['PRINT_FRIENDLY']; ?></button>
 								</div>
 							</div>
 						</fieldset>

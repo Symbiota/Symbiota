@@ -72,7 +72,7 @@ class PortalIndex extends OmCollections{
 	public function getDataImportProfile($collid){
 		$retArr = array();
 		if(is_numeric($collid)){
-			$sql = 'SELECT title, uspid, path, internalQuery, queryStr, cleanUpSP FROM uploadspecparameters WHERE uploadType = 9 AND collid = '.$collid;
+			$sql = 'SELECT title, uspid, path, internalQuery, queryStr, cleanUpSP FROM uploadspecparameters WHERE uploadType = 13 AND collid = '.$collid;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retArr[$r->uspid]['title'] = $r->title;
@@ -103,7 +103,7 @@ class PortalIndex extends OmCollections{
 		$collArr['icon'] = $parse['host'].$collArr['icon'];
 		if($collid = $this->collectionInsert($collArr)){
 			$sql = 'INSERT INTO uploadspecparameters(collid, uploadType, title, path, queryStr, endpointPublic, createdUid)
-				VALUES('.$collid.',9,"Symbiota Import","'.$portal[$portalID]['urlRoot'].'",NULL,1,'.$GLOBALS['SYMB_UID'].')';
+				VALUES('.$collid.',13,"Symbiota Import","'.$portal[$portalID]['urlRoot'].'",NULL,1,'.$GLOBALS['SYMB_UID'].')';
 			if(!$this->conn->query($sql)){
 				$this->warningArr[] = 'ERROR creating import profile: '.$this->conn->error;
 			}

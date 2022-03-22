@@ -1,4 +1,3 @@
-var pauseSubmit = false;
 var imgAssocCleared = false;
 var voucherAssocCleared = false;
 
@@ -1237,7 +1236,6 @@ function initDetAutocomplete(f){
 		minLength: 3,
 		change: function(event, ui) {
 			if(f.sciname.value){
-				pauseSubmit = true;
 				verifyDetSciName(f);
 			}
 			else{

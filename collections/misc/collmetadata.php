@@ -70,14 +70,7 @@ $collManager->cleanOutArr($collData);
 	<title><?php echo $DEFAULT_TITLE.' '.($collid?$collData['collectionname']:'').' '.(isset($LANG['COLL_PROFS'])?$LANG['COLL_PROFS']:'Collection Profiles'); ?></title>
 	<?php
 	$activateJQuery = true;
-	if(file_exists($SERVER_ROOT.'/includes/head.php')){
-		include_once($SERVER_ROOT.'/includes/head.php');
-	}
-	else{
-		echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-		echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-		echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-	}
+	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
@@ -86,7 +79,7 @@ $collManager->cleanOutArr($collData);
 	<script>
 		// Adds WYSIWYG editor to description field
 		tinymce.init({
-			selector: 'textarea[name="full-description"]',
+			selector: '#full-description',
 			plugins: 'link lists image',
 			menubar: '',
 			toolbar: ['undo redo | bold italic underline | link | alignleft aligncenter alignright | formatselect | bullist numlist | indent outdent | blockquote | image | charmap'],
@@ -312,7 +305,7 @@ $collManager->cleanOutArr($collData);
 							<div class="field-block">
 								<span class="field-label"><?php echo (isset($LANG['DESC'])?$LANG['DESC']:'Description (2000 character max)'); ?>:</span>
 								<div class="field-elem">
-									<textarea name="full-description" style="width:95%;height:90px;"><?php echo ($collid?$collData["fulldescription"]:'');?></textarea>
+									<textarea id="full-description" name="fullDescription" style="width:95%;height:90px;"><?php echo ($collid?$collData["fulldescription"]:'');?></textarea>
 								</div>
 							</div>
 							<div class="field-block">

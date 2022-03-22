@@ -503,17 +503,18 @@ else{
 	<script src="../../js/symb/collections.coordinateValidation.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/wktpolygontools.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/collections.georef.js?ver=1" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.main.js?ver=11" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.tools.js?ver=3" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.main.js?ver=12" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.tools.js?ver=4" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.imgtools.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.query.js?ver=4" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.query.js?ver=5" type="text/javascript"></script>
 	<style type="text/css">
 		fieldset{ padding:15px }
 		fieldset > legend{ font-weight:bold; }
 		.fieldGroupDiv{ clear:both; margin-bottom:2px; }
 		.fieldDiv{ float:left; margin-right: 20px; }
 		#identifierDiv img{ width:10px; margin-left: 5px; }
+		.editimg{ width: 15px; }
 	</style>
 </head>
 <body>

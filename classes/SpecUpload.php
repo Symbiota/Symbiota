@@ -31,7 +31,7 @@ class SpecUpload{
 	private $logFH;
 	protected $errorStr;
 
-	protected $DIRECTUPLOAD = 1, $FILEUPLOAD = 3, $STOREDPROCEDURE = 4, $SCRIPTUPLOAD = 5, $DWCAUPLOAD = 6, $SKELETAL = 7, $IPTUPLOAD = 8, $NFNUPLOAD = 9, $RESTOREBACKUP = 10;
+	protected $DIRECTUPLOAD = 1, $FILEUPLOAD = 3, $STOREDPROCEDURE = 4, $SCRIPTUPLOAD = 5, $DWCAUPLOAD = 6, $SKELETAL = 7, $IPTUPLOAD = 8, $NFNUPLOAD = 9, $RESTOREBACKUP = 10, $SYMBIOTA = 13;
 
 	function __construct() {
 		$this->conn = MySQLiConnectionFactory::getCon("write");
@@ -86,6 +86,9 @@ class SpecUpload{
 				}
 				elseif($uploadType == $this->IPTUPLOAD){
 					$uploadStr = 'IPT Resource';
+				}
+				elseif($uploadType == $this->SYMBIOTA){
+					$uploadStr = 'Symbiota Import';
 				}
 				$returnArr[$row->uspid]['title'] = $row->title.' ('.$uploadStr.' - #'.$row->uspid.')';
 				$returnArr[$row->uspid]['uploadtype'] = $row->uploadtype;
@@ -415,6 +418,7 @@ class SpecUpload{
 		if(!$title){
 			if($this->uploadType == $this->DWCAUPLOAD) $title = 'Manual DwC-Archive Import';
 			elseif($this->uploadType == $this->IPTUPLOAD) $title = 'IPT/DwC-A Provider Import';
+			elseif($this->uploadType == $this->SYMBIOTA) $title = 'Symbiota Import';
 			elseif($this->uploadType == $this->SKELETAL) $title = 'Skeletal File Import';
 			elseif($this->uploadType == $this->FILEUPLOAD) $title = 'Delimited Text File Import';
 			elseif($this->uploadType == $this->NFNUPLOAD) $title = 'Notes from Natural Import';

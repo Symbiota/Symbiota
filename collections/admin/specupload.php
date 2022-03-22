@@ -21,7 +21,7 @@ if(!is_numeric($collid)) $collid = 0;
 if(!is_numeric($uploadType)) $uploadType = 0;
 if(!is_numeric($uspid)) $uspid = 0;
 
-$DIRECTUPLOAD = 1; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9; $STOREDPROCEDURE = 4; $SCRIPTUPLOAD = 5;
+$DIRECTUPLOAD = 1; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9; $STOREDPROCEDURE = 4; $SCRIPTUPLOAD = 5; $SYMBIOTA = 13;
 
 $duManager = new SpecUploadBase();
 
@@ -34,7 +34,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,
 	$isEditor = 1;
 }
 $duManager->readUploadParameters();
-if($uploadType == $IPTUPLOAD) if($duManager->getPath()) header('Location: specuploadmap.php?uploadtype=8&uspid='.$uspid.'&collid='.$collid);
+if($uploadType == $IPTUPLOAD || $uploadType == $SYMBIOTA) if($duManager->getPath()) header('Location: specuploadmap.php?uploadtype=8&uspid='.$uspid.'&collid='.$collid);
 elseif($uploadType == $DIRECTUPLOAD || $uploadType == $STOREDPROCEDURE || $uploadType == $SCRIPTUPLOAD){
 	header('Location: specuploadprocessor.php?uploadtype='.$SCRIPTUPLOAD.'&uspid='.$uspid.'&collid='.$collid);
 }

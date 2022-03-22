@@ -179,7 +179,7 @@ function submitQueryEditor(f){
 	f.occid.value = "";
 	f.occindex.value = "0"
 	f.occidlist.value = "";
-	if(verifyQueryForm(f)) f.submit();
+	//f.submit();
 	return true;
 }
 
@@ -189,7 +189,7 @@ function submitQueryTable(f){
 	f.occid.value = "";
 	f.occindex.value = "0"
 	f.occidlist.value = "";
-	if(verifyQueryForm(f)) f.submit();
+	//f.submit();
 	return true;
 }
 
@@ -400,7 +400,7 @@ function toggle(target){
 
 //Misc
 function verifyLeaveForm(){
-	if(document.fullform && document.fullform.submitaction.disabled == false && document.fullform.submitaction.type == "submit"){
+	if(document.fullform && document.fullform.editedfields && document.fullform.editedfields.value != ""){
 		return confirm("It appears that you didn't save your changes. Are you sure you want to leave without saving?"); 
 	}
 	return true;

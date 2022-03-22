@@ -76,7 +76,7 @@ else{
 	else{
 		$occurManager = new OccurrenceMapManager();
 	}
-	if($schema == "georef"){
+	if($schema == 'georef'){
 		$dlManager = new OccurrenceDownload();
 		if(array_key_exists("publicsearch",$_POST)) $dlManager->setIsPublicDownload();
 		if(array_key_exists("publicsearch",$_POST) && $_POST["publicsearch"]){
@@ -102,7 +102,7 @@ else{
 	}
 	elseif($schema == 'checklist'){
 		$dlManager = new OccurrenceDownload();
-		if(array_key_exists("publicsearch",$_POST) && $_POST["publicsearch"]){
+		if(array_key_exists('publicsearch',$_POST) && $_POST['publicsearch']){
 			$dlManager->setSqlWhere($occurManager->getSqlWhere());
 		}
 		$dlManager->setSchemaType($schema);
