@@ -84,7 +84,7 @@ $projArr = $csManager->getProjectDetails();
 <body style="margin-left: 0px; margin-right: 0px;background-color:white;">
 	<div class='navpath'>
 		<a href="../../../index.php">Home</a> &gt;&gt;
-		<a href="index.php">Source Board</a> &gt;&gt;
+		<a href="index.php">Score Board</a> &gt;&gt;
 		<?php
 		if($collid) echo '<a href="../index.php?tabindex=1&collid='.$collid.'">Control Panel</a> &gt;&gt;';
 		?>
@@ -303,7 +303,7 @@ $projArr = $csManager->getProjectDetails();
 								Return to <a href="../index.php?tabindex=1&collid=<?php echo $collid; ?>">Control Panel</a>
 							</div>
 							<div style="margin:15px;">
-								Return to <a href="index.php">Source Board</a>
+								Return to <a href="index.php">Score Board</a>
 							</div>
 						</div>
 						<?php

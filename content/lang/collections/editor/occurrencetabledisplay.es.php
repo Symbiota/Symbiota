@@ -1,7 +1,7 @@
 <?php
 /*
 ------------------
-Language: English
+Language: Español
 ------------------
 */
 
@@ -31,7 +31,7 @@ $LANG['MATCH_WHOLE'] = 'Coincidir con Todo el Campo';
 $LANG['MATCH_PART'] = 'Coincidir con Cualquier Parte del Campo';
 $LANG['BATCH_UP_FIELD'] = 'Actualizar el Campo en Lote';
 $LANG['HOME'] = 'Inicio';
-$LANG['CENTRAL_CROWD'] = 'Crowd Sourcing Central';
+$LANG['CENTRAL_CROWD'] = 'Crowd Source Central';
 $LANG['COL_MANAGEMENT'] = 'Manejo de Colecciones';
 $LANG['PERS_MANAGEMENT'] = 'Manejo Personal';
 $LANG['SYMB_ID'] = 'ID Symbiota';

@@ -480,7 +480,7 @@ else{
 						<?php
 						if($crowdSourceMode){
 							?>
-							<a href="../specprocessor/crowdsource/index.php">Crowd Sourcing Central</a> &gt;&gt;
+							<a href="../specprocessor/crowdsource/index.php">Crowd Source Central</a> &gt;&gt;
 							<?php
 						}
 						else{

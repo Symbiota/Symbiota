@@ -271,7 +271,7 @@ $projArr = $csManager->getProjectDetails();
 					</table>
 				</div>
 				<div style="clear:both;margin-top:50px;font-weight:bold;">
-					Visit <a href="crowdsource/index.php">Source Board</a>
+					Visit <a href="crowdsource/index.php">Score Board</a>
 				</div>
 				<?php
 			}

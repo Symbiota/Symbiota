@@ -760,21 +760,22 @@ if($spprid) $specManager->setProjVariables($spprid);
 						if($logArr){
 							$logPath = '../../content/logs/';
 							foreach($logArr as $logCat => $logList){
-								echo '<div style="font-weight:bold;font-decoration:underline;margin: 10px 0px 5px 0px">';
+								echo '<div style="font-weight:bold;margin: 10px 0px 5px 0px">';
 								if($logCat=='imgProccessing') echo 'General Processing';
 								elseif($logCat=='iplant') echo 'iPlant (pre-CyVerse)';
 								elseif($logCat=='cyverse') echo 'CyVerse';
-								echo '</div>';
+								elseif($logCat=='processing/imgmap') echo 'Image Mapping File';
+								echo '</div><div style="margin:5px 0px 15px 10px">';
 								foreach($logList as $logFile){
 									echo '<div><a href="'.$logPath.$logCat.'/'.$logFile.'" target="_blank">'.$logFile.'</a></div>';
 								}
+								echo '</div>';
 							}
 						}
 						else echo '<div>No logs exist for this collection</div>';
 						?>
 					</fieldset>
 				</div>
-
 				<?php
 			}
 			?>

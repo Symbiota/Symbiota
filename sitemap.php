@@ -104,7 +104,7 @@ $smManager = new SiteMapManager();
 
 			<h2><?php echo (isset($LANG['DATASETS'])?$LANG['DATASETS']:'Datasets') ;?></h2>
 			<ul>
-				<li><a href="collections/datasets/publiclist.php">All Publicly Viewable Datasets</a></li>
+				<li><a href="collections/datasets/publiclist.php"><?php echo (isset($LANG['ALLPUBDAT'])?$LANG['ALLPUBDAT']:'All Publicly Viewable Datasets') ;?></a></li>
 			</ul>
 			<div style="margin-top:10px;"><h2><?php echo $LANG['DYNAMIC'];?></h2></div>
 			<ul>
@@ -273,7 +273,7 @@ $smManager = new SiteMapManager();
 
 					<h3><?php echo (isset($LANG['DATASETS'])?$LANG['DATASETS']:'Datasets') ;?></h3>
 					<ul>
-						<li><a href="collections/datasets/index.php">Dataset Management Page</a> - datasets you are authorized to edit</li>
+						<li><a href="collections/datasets/index.php"><?php echo (isset($LANG['DATMANPAG'])?$LANG['DATMANPAG']:'Dataset Management Page</a> - datasets you are authorized to edit') ;?></li>
 					</ul>
 					<h3><?php echo $LANG['TAXONPROF'];?></h3>
 					<?php

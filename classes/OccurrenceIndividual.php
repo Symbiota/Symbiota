@@ -214,7 +214,7 @@ class OccurrenceIndividual extends Manager{
 			$rs->free();
 		}
 		else{
-			trigger_error('Unable to setDeterminations; '.$this->conn->error,E_USER_NOTICE);
+			trigger_error('Unable to setGUID; '.$this->conn->error,E_USER_NOTICE);
 		}
 	}
 
@@ -1110,7 +1110,7 @@ class OccurrenceIndividual extends Manager{
 	public function activateOrcidID($inStr){
 		$retStr = $inStr;
 		$m = array();
-		if(preg_match('#ORCID[\s:]+((https://orcid.org/)?\d{4}-\d{4}-\d{4}-\d{4})#', $inStr,$m)){
+		if(preg_match('#ORCID[\s:]+((https://orcid.org/)?\d{4}-\d{4}-\d{4}-\d{3}[0-9X])#', $inStr,$m)){
 			$orcidAnchor = $m[1];
 			if(substr($orcidAnchor,5) != 'https') $orcidAnchor = 'https://orcid.org/'.$orcidAnchor;
 			$orcidAnchor = '<a href="'.$orcidAnchor.'" target="_blank">'.$m[1].'</a>';

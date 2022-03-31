@@ -118,11 +118,14 @@ $LANG['ABOUT'] = 'About Symbiota';
 $LANG['CODE'] = 'Code Version ';
 $LANG['SCHEMA'] = 'Schema Version ';
 $LANG['AUTHO'] = 'You are authorized to access the';
-$LANG['SYN_COM'] = 'Synonyms / Common Names';
-$LANG['TEXTDESC'] = 'Text Descriptions';
+$LANG['SYN_COM'] = 'Edit Synonyms / Common Names';
+$LANG['TEXTDESC'] = 'Edit Text Descriptions';
 $LANG['PERSONAL'] = 'Personal Specimen Management and Label Printing Features';
 $LANG['EDITIMG'] = 'Edit Images';
 $LANG['IMGSORTORD'] = 'Edit Image Sorting Order';
 $LANG['ADDNEWIMG'] = 'Add a new image';
 $LANG['DATASETS'] = 'Datasets';
+$LANG['ALLPUBDAT'] = 'All Publicly Viewable Datasets';
+$LANG['DATMANPAG'] = 'Dataset Management Page</a> - datasets you are authorized to edit';
+
 ?>

@@ -118,11 +118,14 @@ $LANG['ABOUT'] = 'Acerca de Symbiota';
 $LANG['CODE'] = 'Versión del código';
 $LANG['SCHEMA'] = 'Versión del esquema';
 $LANG['AUTHO'] = 'Usted esta autorizado/a para el acceso a los siguientes paginas';
-$LANG['SYN_COM'] = 'Sinonimia / Nombres Comunes';
-$LANG['TEXTDESC'] = 'Descripciones textuales';
+$LANG['SYN_COM'] = 'Modificar Sinonimia / Nombres Comunes';
+$LANG['TEXTDESC'] = 'Modificar Descripciones Textuales';
 $LANG['PERSONAL'] = 'Gesti&oacute;n del manejo personal de especimenes y imprimir etiquetas';
 $LANG['EDITIMG'] = 'Modificar Im&aacute;genes';
 $LANG['IMGSORTORD'] = 'Modificar la secuencia de im&aacute;genes';
 $LANG['ADDNEWIMG'] = 'Añadir nuevo imagen';
 $LANG['DATASETS'] = 'Conjuntos de datos';
+$LANG['ALLPUBDAT'] = 'Todos los conjuntos de datos visibles públicamente';
+$LANG['DATMANPAG'] = 'Página de Administración de Conjuntos de Datos</a> - conjuntos de datos que está autorizado a editar';
+
 ?>
