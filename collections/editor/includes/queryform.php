@@ -81,7 +81,7 @@ else{
 }
 //if(!isset($_REQUEST['q_catalognumber'])) $displayQuery = true;
 ?>
-<div id="querydiv" style="clear:both;width:920px;display:<?php echo ($displayQuery?'block':'none'); ?>;">
+<div id="querydiv" style="clear:both;width:900px;display:<?php echo ($displayQuery?'block':'none'); ?>;">
 	<form name="queryform" action="<?php echo $_SERVER['SCRIPT_NAME']; ?>" method="post" onsubmit="return verifyQueryForm(this)">
 		<fieldset style="padding:5px;">
 			<legend><?php echo $LANG['RECORD_SEARCH_FORM']; ?></legend>
@@ -573,38 +573,43 @@ else{
 				?>
 			</div>
 			<div class="fieldGroupDiv">
-				<?php
-				if(!$crowdSourceMode){
-					$qryStr = '';
-					if($qRecordedBy) $qryStr .= '&recordedby='.$qRecordedBy;
-					if($qRecordNumber) $qryStr .= '&recordnumber='.$qRecordNumber;
-					if($qEventDate) $qryStr .= '&eventdate='.$qEventDate;
-					if($qCatalogNumber) $qryStr .= '&catalognumber='.$qCatalogNumber;
-					if($qOtherCatalogNumbers) $qryStr .= '&othercatalognumbers='.$qOtherCatalogNumbers;
-					if($qRecordEnteredBy) $qryStr .= '&recordenteredby='.$qRecordEnteredBy;
-					if($qDateEntered) $qryStr .= '&dateentered='.$qDateEntered;
-					if($qDateLastModified) $qryStr .= '&datelastmodified='.$qDateLastModified;
-					if($qryStr){
-						?>
-						<div style="float:right;margin-top:10px;" title="<?php echo $LANG['GO_LABEL_PRINT']; ?>">
-							<a href="../reports/labelmanager.php?collid=<?php echo $collId.$qryStr; ?>">
-								<img src="../../images/list.png" style="width:15px;" />
+				<div style="float:right">
+					<button type="button" class="icon-button" onclick="copyQueryLink(event)" title="<?php echo (isset($LANG['COPY_SEARCH'])?$LANG['COPY_SEARCH']:'Copy Search As Link'); ?>">
+						<img src="../../images/dl2.png" srcset="../../images/link.svg" class="svg-icon" style="width:15px; height:15px" />
+					</button>
+					<?php
+					if(!$crowdSourceMode){
+						$qryStr = '';
+						if($qRecordedBy) $qryStr .= '&recordedby='.$qRecordedBy;
+						if($qRecordNumber) $qryStr .= '&recordnumber='.$qRecordNumber;
+						if($qEventDate) $qryStr .= '&eventdate='.$qEventDate;
+						if($qCatalogNumber) $qryStr .= '&catalognumber='.$qCatalogNumber;
+						if($qOtherCatalogNumbers) $qryStr .= '&othercatalognumbers='.$qOtherCatalogNumbers;
+						if($qRecordEnteredBy) $qryStr .= '&recordenteredby='.$qRecordEnteredBy;
+						if($qDateEntered) $qryStr .= '&dateentered='.$qDateEntered;
+						if($qDateLastModified) $qryStr .= '&datelastmodified='.$qDateLastModified;
+						if($qryStr){
+							?>
+							<a href="../reports/labelmanager.php?collid=<?php echo $collId.$qryStr; ?>" target="_blank">
+								<button type="button" class="icon-button" title="<?php echo $LANG['GO_LABEL_PRINT']; ?>">
+									<img src="../../images/list.png" style="width:15px; height:15px" />
+								</button>
 							</a>
-						</div>
-						<?php
+							<?php
+						}
 					}
-				}
-				?>
+					?>
+				</div>
 				<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
 				<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
 				<input type="hidden" name="occid" value="<?php echo $occManager->getOccId(); ?>" />
 				<input type="hidden" name="occindex" value="<?php echo $occManager->getOccIndex(); ?>" />
 				<input type="hidden" name="occidlist" value="<?php echo $occManager->getOccidIndexStr(); ?>" />
 				<input type="hidden" name="direction" value="" />
-				<button name="submitaction" value="Display Editor" onclick="submitQueryEditor(this.form)" ><?php echo $LANG['DISPLAY_EDITOR']; ?></button>
-				<button name="submitaction" value="Display Table" onclick="submitQueryTable(this.form)" ><?php echo $LANG['DISPLAY_TABLE']; ?></button>
+				<button name="submitaction" type="submit" onclick="submitQueryEditor(this.form)" ><?php echo $LANG['DISPLAY_EDITOR']; ?></button>
+				<button name="submitaction" type="submit" onclick="submitQueryTable(this.form)" ><?php echo $LANG['DISPLAY_TABLE']; ?></button>
 				<span style="margin-left:10px;">
-					<input type="button" name="reset" value="Reset Form" onclick="resetQueryForm(this.form)" />
+					<button type="button" name="reset" value="Reset Form" onclick="resetQueryForm(this.form)">Reset Form</button>
 				</span>
 				<span style="margin-left:10px;">
 					<?php echo $LANG['SORT_BY']; ?>:
@@ -637,9 +642,21 @@ else{
 						<option value="ASC"><?php echo $LANG['ASCENDING']; ?></option>
 						<option value="DESC" <?php echo ($qOrderByDir=='DESC'?'SELECTED':''); ?>><?php echo $LANG['DESCENDING']; ?></option>
 					</select>
+					<?php
+					if(!isset($recLimit) || !$recLimit) $recLimit = 1000;
+					echo $LANG['OUTPUT'].':';
+					?>
+					<select name="reclimit">
+						<option <?php echo ($recLimit==500?'selected':''); ?>>500</option>
+						<option <?php echo ($recLimit==1000?'selected':''); ?>>1000</option>
+						<option <?php echo ($recLimit==2000?'selected':''); ?>>2000</option>
+						<option <?php echo ($recLimit==3000?'selected':''); ?>>3000</option>
+					</select> <?php //echo $LANG['RECORDS']; ?>
 				</span>
-				<input type="button" name="copylink" value="Copy Search As Link" onclick="copyQueryLink(event)">
-			</div>
+				<!--
+				<div style="margin-left:110px"><input name="dynamictable" type="checkbox" value="1" <?php if(isset($dynamicTable) && $dynamicTable) echo 'checked'; ?> /> <?php echo $LANG['DYNAMIC_TABLE']; ?></div>
+ 				-->
+ 			</div>
 		</fieldset>
 	</form>
 </div>

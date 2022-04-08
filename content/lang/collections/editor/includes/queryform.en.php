@@ -107,9 +107,11 @@ $LANG['IS_NOT_NULL'] = 'IS NOT NULL';
 $LANG['CUSTOM_FIELD_2'] = 'Custom Field 2';
 $LANG['CUSTOM_FIELD_3'] = 'Custom Field 3';
 $LANG['SHOW_RECS_ALL'] = 'Show records for all users (admin control)';
+$LANG['COPY_SEARCH'] = 'Copy Search As Link';
 $LANG['GO_LABEL_PRINT'] = 'Go to Label Printing Module';
 $LANG['DISPLAY_EDITOR'] = 'Display Editor';
 $LANG['DISPLAY_TABLE'] = 'Display Table';
+$LANG['DYNAMIC_TABLE'] = 'Display as dynamic table';
 $LANG['SORT_BY'] = 'Sort By';
 $LANG['DATE_LAST_MODIFIED'] = 'Date Last Modified';
 $LANG['LOCATION_ID'] = 'Location ID';
@@ -120,5 +122,5 @@ $LANG['ELEV_MIN'] = 'Elevation Minimum';
 $LANG['ELEV_MAX'] = 'Elevation Maximum';
 $LANG['ASCENDING'] = 'ascending';
 $LANG['DESCENDING'] = 'descending';
-
+$LANG['OUTPUT'] = 'Record output';
 ?>

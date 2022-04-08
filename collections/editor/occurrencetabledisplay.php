@@ -2,12 +2,13 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrencetabledisplay.'.$LANG_TAG.'.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset='.$CHARSET);
 
 $collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:false;
 $recLimit = array_key_exists('reclimit',$_REQUEST)?$_REQUEST['reclimit']:1000;
 $occIndex = array_key_exists('occindex',$_REQUEST)?$_REQUEST['occindex']:0;
 $crowdSourceMode = array_key_exists('csmode',$_REQUEST)?$_REQUEST['csmode']:0;
+$dynamicTable = array_key_exists('dynamictable',$_REQUEST)?$_REQUEST['dynamictable']:0;
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 //Sanitation
@@ -15,6 +16,7 @@ if(!is_numeric($collId)) $collId = false;
 if(!is_numeric($recLimit)) $recLimit = 1000;
 if(!is_numeric($occIndex)) $occIndex = false;
 if(!is_numeric($crowdSourceMode)) $crowdSourceMode = 0;
+if(!is_numeric($dynamicTable)) $dynamicTable = 0;
 $action = filter_var($action,FILTER_SANITIZE_STRING);
 
 $occManager = new OccurrenceEditorManager();
@@ -121,8 +123,23 @@ else{
 	<link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet">
 	<link href="<?php echo $CLIENT_ROOT; ?>/css/base.css?ver=5" type="text/css" rel="stylesheet">
 	<link href="<?php echo $CLIENT_ROOT; ?>/css/symb/main.css?ver=1" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CLIENT_ROOT; ?>/js/datatables/datatables.min.css" type="text/css" rel="stylesheet">
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
+	<script src="../../js/datatables/datatables.min.js?ver=1" type="text/javascript"></script>
+	<script type="text/javascript">
+		$(document).ready(
+			function () {
+				$('#dynamictable').DataTable( {
+					paging: false,
+					searching: false,
+					fixedColumns: {
+						left: 1
+					}
+				} );
+			}
+		);
+	</script>
 	<script src="../../js/symb/collections.editor.table.js?ver=2" type="text/javascript" ></script>
 	<script src="../../js/symb/collections.editor.query.js?ver=4" type="text/javascript" ></script>
 	<style type="text/css">
@@ -291,42 +308,56 @@ else{
 			<?php
 			if($recArr){
 				?>
-				<table class="styledtable" style="font-family:Arial;font-size:12px;">
-					<tr>
-						<th><?php echo (isset($LANG['SYMB_ID'])?$LANG['SYMB_ID']:'Symbiota ID'); ?></th>
-						<?php
-						foreach($headerMap as $k => $v){
-							echo '<th>'.$v.'</th>';
-						}
-						?>
-					</tr>
+				<div style="clear: both; padding-top:10px">
 					<?php
-					$recCnt = 0;
-					foreach($recArr as $id => $occArr){
-						if($occArr['sciname']){
-							$occArr['sciname'] = '<i>'.$occArr['sciname'].'</i> ';
-						}
-						echo "<tr ".($recCnt%2?'class="alt"':'').">\n";
-						echo '<td>';
-						$url = 'occurrenceeditor.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$recStart).'&occid='.$id.'&collid='.$collId;
-						echo '<a href="'.$url.'" title="open in same window">'.$id.'</a> ';
-						echo '<a href="'.$url.'" target="_blank" title="'.(isset($LANG['NEW_WINDOW'])?$LANG['NEW_WINDOW']:'open in new window').'">';
-						echo '<img src="../../images/newwin.png" style="width:10px;" />';
-						echo '</a>';
-						echo '</td>'."\n";
-						foreach($headerMap as $k => $v){
-							$displayStr = $occArr[$k];
-							if(strlen($displayStr) > 60){
-								$displayStr = substr($displayStr,0,60).'...';
-							}
-							if(!$displayStr) $displayStr = '&nbsp;';
-							echo '<td>'.$displayStr.'</td>'."\n";
-						}
-						echo "</tr>\n";
-						$recCnt++;
+					$tableId = 'defaulttable';
+					$tableClass = 'styledtable';
+					if($dynamicTable){
+						$tableId = 'dynamictable';
+						$tableClass = 'stripe hover order-column compact nowrap cell-border';
 					}
 					?>
-				</table>
+					<table id="<?php echo $tableId; ?>" class="<?php echo $tableClass; ?>" style="font-family:Arial;font-size:12px;">
+						<thead>
+							<tr>
+								<th><?php echo (isset($LANG['SYMB_ID'])?$LANG['SYMB_ID']:'Symbiota ID'); ?></th>
+								<?php
+								foreach($headerMap as $k => $v){
+									echo '<th>'.$v.'</th>';
+								}
+								?>
+							</tr>
+						</thead>
+						<tbody>
+							<?php
+							$recCnt = 0;
+							foreach($recArr as $id => $occArr){
+								if($occArr['sciname']){
+									$occArr['sciname'] = '<i>'.$occArr['sciname'].'</i> ';
+								}
+								echo "<tr ".($recCnt%2?'class="alt"':'').">\n";
+								echo '<td>';
+								$url = 'occurrenceeditor.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$recStart).'&occid='.$id.'&collid='.$collId;
+								echo '<a href="'.$url.'" title="open in same window">'.$id.'</a> ';
+								echo '<a href="'.$url.'" target="_blank" title="'.(isset($LANG['NEW_WINDOW'])?$LANG['NEW_WINDOW']:'open in new window').'">';
+								echo '<img src="../../images/newwin.png" style="width:10px;" />';
+								echo '</a>';
+								echo '</td>'."\n";
+								foreach($headerMap as $k => $v){
+									$displayStr = $occArr[$k];
+									if(strlen($displayStr) > 60){
+										$displayStr = substr($displayStr,0,60).'...';
+									}
+									if(!$displayStr) $displayStr = '&nbsp;';
+									echo '<td>'.$displayStr.'</td>'."\n";
+								}
+								echo "</tr>\n";
+								$recCnt++;
+							}
+							?>
+						</tbody>
+					</table>
+				</div>
 				<div style="width:790px;">
 					<?php echo $navStr; ?>
 				</div>

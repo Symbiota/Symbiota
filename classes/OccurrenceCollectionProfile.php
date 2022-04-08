@@ -206,91 +206,97 @@ class OccurrenceCollectionProfile extends OmCollections{
 		while($row = $rs->fetch_object()){
 			if($row->publishToGbif && $row->aggKeysStr){
 				$gbifKeyArr = json_decode($row->aggKeysStr,true);
-				if(isset($gbifKeyArr['datasetKey']) && $row->dwcaUrl) $this->triggerGBIFCrawl($gbifKeyArr['datasetKey'], $row->dwcaUrl, $row->collid, $row->collectionname);
+				$this->datasetKey = $gbifKeyArr['datasetKey'];
+				$this->organizationKey = $gbifKeyArr['organizationKey'];
+				if(isset($gbifKeyArr['datasetKey']) && $row->dwcaUrl) $this->triggerGBIFCrawl($row->dwcaUrl, $row->collid, $row->collectionname);
 			}
 		}
 		$rs->free();
 	}
 
-	public function triggerGBIFCrawl($datasetKey, $dwcUri, $collid, $collectionname){
+	public function triggerGBIFCrawl($dwcUri, $collid, $collectionname){
 		global $GBIF_USERNAME,$GBIF_PASSWORD;
 		if(!$this->logFH){
 			$this->setVerboseMode(3);
-			$logPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1)=='/'?'':'/')."content/logs/gbif/GBIF_".date('Y-m-d').".log";
+			$logPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1)=='/'?'':'/').'content/logs/gbif/GBIF_'.date('Y-m-d').'.log';
 			$this->setLogFH($logPath);
 		}
 		$this->logOrEcho('Starting GBIF harvest for: '.$collectionname.' (#'.$collid.')');
-		if($datasetKey){
-			$loginStr = $GBIF_USERNAME.':'.$GBIF_PASSWORD;
+		if($this->datasetKey){
 			if($dwcUri){
-				//Make sure end point is up-to-date
-				$epUrl = 'https://api.gbif.org/v1/dataset/'.$datasetKey.'/endpoint';
-				//Get endpoint
-				$ch = curl_init($epUrl);
-				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-				curl_setopt($ch, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json','Accept: application/json'));
-				$endpointArr = json_decode(curl_exec($ch),true);
-				curl_close($ch);
-
-				$endpointChanged = true;
-				foreach($endpointArr as $epArr){
-					if($epArr['url'] == $dwcUri) $endpointChanged = false;
-					break;
-				}
-
-				if($endpointChanged || !$endpointArr){
-					//Endpoint has changed, delete old endpoints
+				//Get dataset details to enose that endpoint and publishingOrganizationKey is still valid
+				$dsUrl = 'https://api.gbif.org/v1/dataset/'.$this->datasetKey;
+				if($curlRet = $this->gbifCurlCall($dsUrl)){
+					$datasetArr = json_decode($curlRet,true);
+					//Check endpoint
+					$this->logOrEcho('Verifying Endpoints...', 1);
+					$endpointArr = $datasetArr['endpoints'];
+					$epUrl = $dsUrl.'/endpoint';
+					$addEndpoint = true;
 					foreach($endpointArr as $epArr){
-						$this->logOrEcho('Resetting Endpoints due to change...', 1);
-						if(isset($epArr['key'])){
-							$this->logOrEcho('Deleting Endpoint (key: '.$epArr['key'].')...', 2);
-							$ch = curl_init($epUrl.'/'.$epArr['key']);
-							curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-							curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-							curl_setopt($ch, CURLOPT_FAILONERROR, true);
-							curl_setopt($ch, CURLOPT_USERPWD, $loginStr);
-							curl_setopt($ch, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json','Accept: application/json'));
-							curl_exec($ch);
-							if(curl_error($ch)) $this->logOrEcho('ERROR deleting Endpoint: '.curl_error($ch), 3);
-							curl_close($ch);
+						if($epArr['url'] == $dwcUri) $addEndpoint = false;
+						else{
+							if(isset($epArr['key'])){
+								$this->logOrEcho('Deleting Endpoint (#'.$epArr['key'].': '.$epArr['url'].')...', 2);
+								if(!$this->gbifCurlCall($epUrl.'/'.$epArr['key'], 'DELETE')){
+									if($this->errorMessage) $this->logOrEcho('ERROR deleting Endpoint: '.$this->errorMessage, 3);
+								}
+							}
 						}
 					}
-
-					//Add new endpoint
-					$this->logOrEcho('Adding new Endpoint (url: '.$dwcUri.')...', 1);
-					$ch = curl_init($epUrl);
-					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-					$dataStr = json_encode( array( 'type' => 'DWC_ARCHIVE','url' => $dwcUri ) );
-					curl_setopt( $ch, CURLOPT_POSTFIELDS, $dataStr );
-					curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-					curl_setopt($ch, CURLOPT_FAILONERROR, true);
-					curl_setopt($ch, CURLOPT_USERPWD, $loginStr);
-					curl_setopt($ch, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json','Accept: application/json'));
-					$endpointStr = curl_exec($ch);
-					if(!strpos($endpointStr,' ') && strlen($endpointStr) == 36) $this->endpointKey = $endpointStr;
-					if(curl_error($ch)) $this->logOrEcho('ERROR adding Endpoint: '.curl_error($ch), 2);
-					curl_close($ch);
+					if($addEndpoint){
+						//Add new endpoint
+						$this->logOrEcho('Adding new Endpoint (url: '.$dwcUri.')...', 2);
+						$dataStr = json_encode( array( 'type' => 'DWC_ARCHIVE','url' => $dwcUri ) );
+						if($endpointStr = $this->gbifCurlCall($epUrl, 'POST', $dataStr)){
+							if(!strpos($endpointStr,' ') && strlen($endpointStr) == 36) $this->endpointKey = $endpointStr;
+						}
+						else $this->logOrEcho('ERROR adding Endpoint: '.$this->errorMessage, 2);
+					}
+					//Check publishingOrganizationKey
+					if(isset($datasetArr['publishingOrganizationKey'])){
+						if($datasetArr['publishingOrganizationKey'] != $this->organizationKey){
+							//Update publishingOrganizationKey
+							$this->logOrEcho('Updating publishingOrganizationKey from '.$datasetArr['publishingOrganizationKey'].' to '.$this->organizationKey, 1);
+							$datasetArr['publishingOrganizationKey'] = $this->organizationKey;
+							$dataStr = json_encode( $datasetArr );
+							if(!$this->gbifCurlCall($dsUrl, 'PUT', $dataStr)){
+								if($this->errorMessage) $this->logOrEcho('ERROR updating publishingOrganizationKey: '.$this->errorMessage, 2);
+							}
+						}
+					}
 				}
+				else echo 'ERROR grabbing data from GBIF API: '.$this->errorMessage;
 			}
-
 			//Trigger Crawl
 			$this->logOrEcho('Triggering crawl...', 1);
-			$dsUrl = 'https://api.gbif.org/v1/dataset/'.$datasetKey.'/crawl';
-			$ch = curl_init($dsUrl);
-			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_FAILONERROR, true);
-			curl_setopt($ch, CURLOPT_USERPWD, $loginStr);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','Accept: application/json'));
-			curl_exec($ch);
-			if(curl_error($ch)) $this->logOrEcho('ERROR triggering crawl: '.curl_error($ch), 2);
-			curl_close($ch);
+			$crawlUrl = 'https://api.gbif.org/v1/dataset/'.$this->datasetKey.'/crawl';
+			if(!$this->gbifCurlCall($crawlUrl, 'POST')){
+				if($this->errorMessage) $this->logOrEcho('ERROR triggering crawl: '.$this->errorMessage, 2);
+			}
 			$this->logOrEcho('Done!', 1);
 		}
-		else{
-			$this->logOrEcho('ABORT: datasetKey IS NULL', 1);
+		else $this->logOrEcho('ABORT: datasetKey IS NULL', 1);
+	}
+
+	private function gbifCurlCall($url, $method = null, $dataStr = NULL){
+		global $GBIF_USERNAME,$GBIF_PASSWORD;
+		$loginStr = $GBIF_USERNAME.':'.$GBIF_PASSWORD;
+		$ch = curl_init($url);
+		if($method) curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+		if($dataStr) curl_setopt( $ch, CURLOPT_POSTFIELDS, $dataStr );
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		if(in_array($method, array('POST','DELETE','PUT'))){
+			curl_setopt($ch, CURLOPT_FAILONERROR, true);
+			curl_setopt($ch, CURLOPT_USERPWD, $loginStr);
 		}
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json','Accept: application/json'));
+		//curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+		//curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+		$curlRet = curl_exec($ch);
+		if($curlRet === false && curl_error($ch)) $this->errorMessage = curl_error($ch);
+		curl_close($ch);
+		return $curlRet;
 	}
 
 	public function setAggKeys($aggKeyArr){

@@ -2,14 +2,13 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/collections/tools/mapaids.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset='.$CHARSET);
 
-$clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:0;
-$formSubmit = array_key_exists("formsubmit",$_POST)?$_POST["formsubmit"]:0;
-$latDef = array_key_exists("latdef",$_REQUEST)?$_REQUEST["latdef"]:'';
-$lngDef = array_key_exists("lngdef",$_REQUEST)?$_REQUEST["lngdef"]:'';
-$zoom = array_key_exists("zoom",$_REQUEST)&&$_REQUEST["zoom"]?$_REQUEST["zoom"]:5;
-$eMode = array_key_exists("emode",$_REQUEST)?$_REQUEST["emode"]:1;
+$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
+$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:0;
+$latDef = array_key_exists('latdef',$_REQUEST)?$_REQUEST['latdef']:'';
+$lngDef = array_key_exists('lngdef',$_REQUEST)?$_REQUEST['lngdef']:'';
+$zoom = array_key_exists('zoom',$_REQUEST)&&$_REQUEST['zoom']?$_REQUEST['zoom']:5;
 
 $clManager = new ChecklistAdmin();
 $clManager->setClid($clid);
@@ -17,7 +16,7 @@ $clManager->setClid($clid);
 if($formSubmit){
 	if($formSubmit == 'save'){
 		$clManager->savePolygon($_POST['footprintwkt']);
-		$formSubmit = "exit";
+		$formSubmit = 'exit';
 	}
 }
 
@@ -33,7 +32,7 @@ if(is_numeric($latDef) && is_numeric($lngDef)){
 	$zoom = 12;
 }
 elseif($MAPPING_BOUNDARIES){
-	$boundaryArr = explode(";",$MAPPING_BOUNDARIES);
+	$boundaryArr = explode(';',$MAPPING_BOUNDARIES);
 	$latCenter = ($boundaryArr[0]>$boundaryArr[2]?((($boundaryArr[0]-$boundaryArr[2])/2)+$boundaryArr[2]):((($boundaryArr[2]-$boundaryArr[0])/2)+$boundaryArr[0]));
 	$lngCenter = ($boundaryArr[1]>$boundaryArr[3]?((($boundaryArr[1]-$boundaryArr[3])/2)+$boundaryArr[3]):((($boundaryArr[3]-$boundaryArr[1])/2)+$boundaryArr[1]));
 }
@@ -46,17 +45,17 @@ else{
 	<head>
 		<title><?php echo $DEFAULT_TITLE; ?> - Coordinate Aid</title>
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-		<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'&key='.$GOOGLE_MAP_KEY:''); ?>"></script>
-		<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/wktpolygontools.js?ver=2" type="text/javascript"></script>
+		<script src="//maps.googleapis.com/maps/api/js?<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'key='.$GOOGLE_MAP_KEY:''); ?>&libraries=drawing&v=weekly"></script>
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/wktpolygontools.js?ver=3d" type="text/javascript"></script>
 		<script type="text/javascript">
 			var map;
-			var selectedShape = null;
+			var polygons = [];
+			var polyBounds = null;
+			var selectedPolygon = null;
+			var drawingManager = null;
 			<?php
-			if($formSubmit && $formSubmit == 'exit'){
-				echo 'window.close();';
-			}
+			if($formSubmit && $formSubmit == 'exit') echo 'window.close();';
 			?>
-
 			function initialize(){
 				if(opener.document.getElementById("footprintwkt") && opener.document.getElementById("footprintwkt").value != ""){
 					if(document.getElementById('footprintwkt').value == ""){
@@ -64,180 +63,173 @@ else{
 					}
 				}
 				var dmLatLng = new google.maps.LatLng(<?php echo $latCenter.','.$lngCenter; ?>);
-				var dmOptions = {
+
+				map = new google.maps.Map(document.getElementById("map_canvas"), {
 					zoom: <?php echo $zoom; ?>,
 					center: dmLatLng,
 					mapTypeId: google.maps.MapTypeId.TERRAIN,
 					scaleControl: true
-				};
-				map = new google.maps.Map(document.getElementById("map_canvas"), dmOptions);
+				});
 
-				var polyOptions = {
-					strokeWeight: 0,
-					fillOpacity: 0.45,
-					editable: true,
-					draggable: true
-				};
+				polyBounds = new google.maps.LatLngBounds();
 
-				var drawingManager = new google.maps.drawing.DrawingManager({
+				drawingManager = new google.maps.drawing.DrawingManager({
 					drawingMode: google.maps.drawing.OverlayType.POLYGON,
 					drawingControl: true,
 					drawingControlOptions: {
 						position: google.maps.ControlPosition.TOP_CENTER,
-						drawingModes: [
-							google.maps.drawing.OverlayType.POLYGON
-						]
+						drawingModes: [ google.maps.drawing.OverlayType.POLYGON ]
 					},
 					markerOptions: {
 						draggable: true
 					},
-					polygonOptions: polyOptions
+					polyOptions: {
+						fillOpacity: 0.45,
+						strokeWeight: 0,
+						editable: true,
+						draggable: true
+					},
 				});
 
-				drawingManager.setMap(<?php echo ($eMode?'map':'null'); ?>);
+				drawingManager.setMap(map);
 
-				google.maps.event.addListener(drawingManager, 'overlaycomplete', function(e) {
-					if (e.type != google.maps.drawing.OverlayType.MARKER) {
-						// Switch back to non-drawing mode after drawing a shape.
-						drawingManager.setDrawingMode(null);
-
-						var newShapeType = e.type;
-						// Add an event listener that selects the newly-drawn shape when the user
-						// mouses down on it.
-						var newShape = e.overlay;
-						newShape.type = e.type;
-						google.maps.event.addListener(newShape, 'click', function() {
-							setSelection(newShape);
-						});
-						google.maps.event.addListener(newShape, 'dragend', function() {
-							setSelection(newShape);
-						});
-						if (newShapeType == 'polygon'){
-							setPolygonStr(newShape);
-							google.maps.event.addListener(newShape.getPath(), 'insert_at', function() {
-								setSelection(newShape);
-							});
-							google.maps.event.addListener(newShape.getPath(), 'remove_at', function() {
-								setSelection(newShape);
-							});
-							google.maps.event.addListener(newShape.getPath(), 'set_at', function() {
-								setSelection(newShape);
-							});
-						}
-						setSelection(newShape);
-					}
+				google.maps.event.addListener(drawingManager, 'polygoncomplete', function (polygon) {
+					drawingManager.setDrawingMode(null);
+					addPolyListeners(polygon);
+					polygon.id = polygons.length;
+				    polygons.push(polygon);
+				    selectedPolygon = polygon;
+				    polygon.setEditable(true);
+					setPolygonStr();
 				});
 
 				// Clear the current selection when the drawing mode is changed or when the map is clicked
 				google.maps.event.addListener(drawingManager, 'drawingmode_changed', clearSelection);
 				google.maps.event.addListener(map, 'click', clearSelection);
-				setPolygon();
+				if(drawPolygons()) drawingManager.setDrawingMode(null);
 			}
 
-			function setPolygon(){
-				var pointArr = [];
-				var polyBounds = new google.maps.LatLngBounds();
-				if(document.getElementById('footprintwkt').value != ''){
-					var origFootprintWkt = document.getElementById('footprintwkt').value;
-					var footprintWKT = validatePolygon(origFootprintWkt);
-					if(footprintWKT != origFootprintWkt){
-						document.getElementById("reformatdiv").style.display = "block";
-						document.getElementById('footprintwkt').value = footprintWKT;
-					}
-					footprintWKT = trimPolygon(footprintWKT);
-					var strArr = footprintWKT.split(",");
-					for(var i=0; i < strArr.length; i++){
-						var xy = strArr[i].trim().split(" ");
-						var lat = xy[0];
-						var lng = xy[1];
-						if(!isNumeric(lat) || !isNumeric(lng)){
-							document.getElementById("reformatdiv").style.display = "none";
-							alert("One or more coordinates are illegal (lat: "+lat+"   long: "+lng+")");
-							document.getElementById('footprintwkt').value = origFootprintWkt;
-							return false;
+			function drawPolygons(){
+				polygons = [];
+				let status = false;
+				let footprintWkt = document.getElementById('footprintwkt').value.trim();
+				if(footprintWkt != ""){
+					if(footprintWkt.substring(0,7) == "POLYGON") footprintWkt = footprintWkt.substring(7).trim();
+					else if(footprintWkt.substring(0,12) == "MULTIPOLYGON") footprintWkt = footprintWkt.substring(12).trim();
+					footprintWkt = footprintWkt.slice(2,-2);
+					let polyArr = footprintWkt.split(")),");
+					for(let m=0; m < polyArr.length; m++){
+						let pointArr = [];
+						let polyStr = polyArr[m];
+						while(polyStr.substring(0,1) == "("){
+							polyStr = polyStr.substring(1).trim();
 						}
-						else if(parseInt(Math.abs(lat)) > 90 || parseInt(Math.abs(lng)) > 180){
-							document.getElementById("reformatdiv").style.display = "none";
-							alert("One or more coordinates are out-of-range or ordered incorrectly (lat: "+lat+"   long: "+lng+")");
-							document.getElementById('footprintwkt').value = origFootprintWkt;
-							return false;
+						while(polyStr.substring(polyStr.length-1) == ")"){
+							polyStr = polyStr.slice(0, -1).trim();
 						}
-						var pt = new google.maps.LatLng(lat,lng);
-						pointArr.push(pt);
-						polyBounds.extend(pt);
+						let strArr = polyStr.split(",");
+						for(let n=0; n < strArr.length; n++){
+							var xy = strArr[n].trim().split(" ");
+							var pt = new google.maps.LatLng(xy[0],xy[1]);
+							pointArr.push(pt);
+							polyBounds.extend(pt);
+						}
+
+						if(pointArr.length > 0){
+							let footPoly = new google.maps.Polygon({
+								paths: pointArr,
+								strokeWeight: 0,
+								fillOpacity: 0.45,
+								draggable: false,
+								map: map
+							});
+							addPolyListeners(footPoly);
+						    polygons.push(footPoly);
+							map.fitBounds(polyBounds);
+							map.panToBounds(polyBounds);
+						}
 					}
+					status = true;
 				}
+				return status;
+			}
 
-				if(pointArr.length > 0){
-					var footPoly = new google.maps.Polygon({
-						paths: pointArr,
-						strokeWeight: 0,
-						fillOpacity: 0.45,
-						editable: true,
-						draggable: false,
-						map: map
-					});
-					footPoly.type = 'polygon';
-					google.maps.event.addListener(footPoly, 'click', function() { setSelection(footPoly); });
-					google.maps.event.addListener(footPoly, 'dragend', function() { setSelection(footPoly); });
-					google.maps.event.addListener(footPoly.getPath(), 'insert_at', function() { setSelection(footPoly); });
-					google.maps.event.addListener(footPoly.getPath(), 'remove_at', function() { setSelection(footPoly); });
-					google.maps.event.addListener(footPoly.getPath(), 'set_at', function() { setSelection(footPoly); });
-					setSelection(footPoly);
-					map.fitBounds(polyBounds);
-					map.panToBounds(polyBounds);
+			function addPolyListeners(poly){
+				google.maps.event.addListener(poly, 'click', function() {
+					clearSelection();
+					selectedPolygon = poly;
+					poly.setEditable(true);
+				});
+				google.maps.event.addListener(poly, 'dragend', function() { setPolygonStr(); });
+				google.maps.event.addListener(poly.getPath(), 'insert_at', function() { setPolygonStr(); });
+				google.maps.event.addListener(poly.getPath(), 'remove_at', function() { setPolygonStr(); });
+				google.maps.event.addListener(poly.getPath(), 'set_at', function() { setPolygonStr(); });
+			}
+
+			function reformatPolygons(f){
+				let footprintWkt = f.footprintwkt.value.trim();
+				f.footprintwkt.value = validatePolygon(footprintWkt);
+				clearSelection();
+				for(var h=0;h<polygons.length;h++){
+					polygons[h].setMap(null);
 				}
-			}
-
-			function isNumeric(n) {
-				return !isNaN(parseFloat(n)) && isFinite(n);
-			}
-
-			function reformatCoordinates(f){
-				reformCoordinates(f);
-				resetPolygon();
-			}
-
-			function resetPolygon(){
-				if(selectedShape) selectedShape.setMap(null);
-				setPolygon();
-			}
-
-			function setSelection(shape) {
-				selectedShape = shape;
-				selectedShape.setEditable(<?php echo ($eMode?'true':'false'); ?>);
-				if (shape.type == 'polygon') setPolygonStr(shape);
+				drawPolygons();
+				drawingManager.setDrawingMode(null);
+				f.formatButton.disabled = true;
 			}
 
 			function clearSelection() {
-				if(selectedShape){
-					selectedShape.setEditable(false);
-					selectedShape = null;
+				if(selectedPolygon){
+					selectedPolygon.setEditable(false);
+					selectedPolygon = null;
 				}
 			}
 
-			function setPolygonStr(polygon) {
-				var coordinates = [];
-				var coordinatesMVC = (polygon.getPath().getArray());
-				for(var i=0;i<coordinatesMVC.length;i++){
-					var mvcString = coordinatesMVC[i].toString();
-					mvcString = mvcString.slice(1, -1);
-					var latlngArr = mvcString.split(",");
-					coordinates.push(parseFloat(latlngArr[0]).toFixed(6)+" "+parseFloat(latlngArr[1]).toFixed(6));
+			function setPolygonStr() {
+				var polyStrArr = [];
+				for(var h=0;h<polygons.length;h++){
+					let polygon = polygons[h];
+
+					let coordinates = [];
+					let coordinatesMVC = (polygon.getPath().getArray());
+					for(var i=0;i<coordinatesMVC.length;i++){
+						let mvcString = coordinatesMVC[i].toString();
+						mvcString = mvcString.slice(1, -1);
+						let latlngArr = mvcString.split(",");
+						coordinates.push(parseFloat(latlngArr[0]).toFixed(6)+" "+parseFloat(latlngArr[1]).toFixed(6));
+					}
+					if(coordinates[0] != coordinates[i-1]) coordinates.push(coordinates[0]);
+					let coordStr = coordinates.toString();
+					if(coordStr && coordStr != "" && coordStr != undefined){
+						polyStrArr.push("(("+coordStr+"))");
+					}
 				}
-				if(coordinates[0] != coordinates[i-1]) coordinates.push(coordinates[0]);
-				var coordStr = coordinates.toString();
-				if(coordStr && coordStr != "" && coordStr != undefined){
-					document.getElementById("footprintwkt").value = "POLYGON (("+coordStr+"))";
+
+				document.getElementById("footprintwkt").value = "";
+				if(polyStrArr.length == 1){
+					document.getElementById("footprintwkt").value = "POLYGON "+polyStrArr[0];
 				}
+				else if(polyStrArr.length > 1){
+					var outStr = '';
+					for(var j=0;j<polyStrArr.length;j++){
+						outStr = outStr + "," + polyStrArr[j];
+					}
+					document.getElementById("footprintwkt").value = "MULTIPOLYGON ("+outStr.substring(1)+")";
+				}
+				document.getElementById("formatButton").disabled = true;
 			}
 
-			function deleteSelectedShape(f) {
-				if(selectedShape){
-					selectedShape.setMap(null);
+			function deleteSelectedPolygon() {
+				if(selectedPolygon){
+					let index = selectedPolygon.id;
+					polygons.splice(index, 1);
+					for(var h=0;h<polygons.length;h++){
+						polygons[h].id = h;
+					}
+					selectedPolygon.setMap(null);
 					clearSelection();
+					setPolygonStr();
 				}
-				f.footprintwkt.value = "";
 			}
 
 			function submitPolygonForm(f){
@@ -259,15 +251,15 @@ else{
 				return true;
 			}
 
+			function polygonModified(f){
+				f.formatButton.disabled = false;
+			}
+
 			function toggle(target){
 				var ele = document.getElementById(target);
 				if(ele){
-					if(ele.style.display=="none"){
-						ele.style.display="";
-					}
-					else{
-						ele.style.display="none";
-					}
+					if(ele.style.display=="none") ele.style.display="";
+					else ele.style.display="none";
 				}
 			}
 		</script>
@@ -275,7 +267,6 @@ else{
 	<body style="background-color:#ffffff;" onload="initialize()">
 		<div id="map_canvas" style="width:100%;height:600px;"></div>
 		<div style="width:100%;">
-			<div id="reformatdiv" style="display:none;color:red">Polygon has been reformated. The new polygon must be saved before it is usable!</div>
 			<div id="helptext" style="display:none;margin:5px 0px">
 				Click on polygon symbol to activate polygon tool and create a shape representing research area.
 				Click save button to link polygon to checklist.
@@ -285,25 +276,18 @@ else{
 			</div>
 			<form name="polygonSubmitForm" method="post" action="mappolyaid.php" onsubmit="return submitPolygonForm(this)">
 				<div style="float:left;width:800px">
-					<textarea id="footprintwkt" name="footprintwkt" style="width:98%;height:90px;"><?php echo $clManager->getFootprintWkt(); ?></textarea>
+					<textarea id="footprintwkt" name="footprintwkt" style="width:98%;height:90px;" oninput="polygonModified(this.form)"><?php echo $clManager->getFootprintWkt(); ?></textarea>
 					<input name="clid" type="hidden" value="<?php echo $clid; ?>" />
 					<input name="latdef" type="hidden" value="<?php echo $latDef; ?>" />
 					<input name="lngdef" type="hidden" value="<?php echo $lngDef; ?>" />
 					<input name="zoom" type="hidden" value="<?php echo $zoom; ?>" />
 				</div>
-				<?php
-				if($eMode){
-					?>
-					<div style="float:left">
-						<button name="formsubmit" type="submit" value="save">Save Polygon</button>
-						<a href="#" onclick="toggle('helptext')"><img alt="Display Help Text" src="../../images/qmark_big.png" style="width:15px;" /></a><br/>
-						<button name="formsubmit" type="submit" value="save" onclick="deleteSelectedShape(this.form)">Delete Selected Shape</button><br/>
-						<button type="button" onclick="resetPolygon()">Redraw Polygon</button><br/>
-						<button type="button" onclick="reformatCoordinates(this.form);">Reformat Coordinates</button>
-					</div>
-					<?php
-				}
-				?>
+				<div style="float:left">
+					<button name="formsubmit" type="submit" value="save">Save Polygons</button>
+					<a href="#" onclick="toggle('helptext')"><img alt="Display Help Text" src="../../images/qmark_big.png" style="width:15px;" /></a><br/>
+					<button name="deleteButton" type="button" onclick="deleteSelectedPolygon()">Delete Selected Shape</button><br/>
+					<button id="formatButton" name="formatButton" type="button" onclick="reformatPolygons(this.form);" disabled>Reformat Polygons</button><br/>
+				</div>
 			</form>
 		</div>
 	</body>

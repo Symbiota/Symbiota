@@ -262,12 +262,14 @@ class ImageProcessor {
 					if(($catalogNumber || $otherCatalogNumbers) && ($originalUrl || ($url && $url != 'empty'))){
 						$this->logOrEcho('#'.$cnt.': Processing Catalog Number: '.($catalogNumber?$catalogNumber:$otherCatalogNumbers));
 						$occArr = array();
-						$sql = 'SELECT occid, tidinterpreted FROM omoccurrences WHERE (collid = '.$this->collid.') ';
+						$sql = '';
 						if($catalogNumber){
-							$sql .= 'AND (catalognumber = "'.$catalogNumber.'")';
+							$sql .= 'SELECT occid, tidinterpreted FROM omoccurrences WHERE (collid = '.$this->collid.') AND (catalognumber = "'.$catalogNumber.'")';
 						}
 						else{
-							$sql .= 'AND (othercatalognumbers = "'.$otherCatalogNumbers.'")';
+							$sql .= 'SELECT DISTINCT o.occid, o.tidinterpreted
+								FROM omoccurrences o LEFT JOIN omoccuridentifiers i ON o.occid = i.occid
+								WHERE (o.collid = '.$this->collid.') AND (o.othercatalognumbers = "'.$otherCatalogNumbers.'" OR i.identifierValue = "'.$otherCatalogNumbers.'")';
 						}
 						$rs = $this->conn->query($sql);
 						while($r = $rs->fetch_object()){
@@ -276,19 +278,19 @@ class ImageProcessor {
 						$rs->free();
 						if($occArr){
 							//Check to see if image with matching filename is already linked. If so, remove and replace with new
-							$origFileName = substr(strrchr($originalUrl, "/"), 1);
-							$urlFileName = substr(strrchr($url, "/"), 1);
+							$origUrl = substr($originalUrl, 5);
+							$baseUrl = substr($url, 5);
 							foreach($occArr as $occid => $tid){
 								$sql1 = 'SELECT imgid, url, originalurl, thumbnailurl FROM images WHERE (occid = '.$occid.')';
 								$rs1 = $this->conn->query($sql1);
 								while($r1 = $rs1->fetch_object()){
-									$uFileName = substr(strrchr($r1->url, "/"), 1);
-									$oFileName = substr(strrchr($r1->originalurl, "/"), 1);
+									$testOrigUrl = substr($r1->originalurl,5);
+									$testBaseUrl = substr($r1->url,5);
 									$replaceImg = false;
-									if($oFileName && $oFileName == $origFileName) $replaceImg = true;
-									elseif($uFileName && $uFileName == $urlFileName) $replaceImg = true;
-									elseif($oFileName && $oFileName == $urlFileName) $replaceImg = true;
-									elseif($uFileName && $uFileName == $origFileName) $replaceImg = true;
+									if($testOrigUrl && $testOrigUrl == $origUrl) $replaceImg = true;
+									elseif($testBaseUrl && $testBaseUrl == $baseUrl) $replaceImg = true;
+									elseif($testOrigUrl && $testOrigUrl == $baseUrl) $replaceImg = true;
+									elseif($testBaseUrl && $testBaseUrl == $origUrl) $replaceImg = true;
 									if($replaceImg){
 										$sql2 = 'UPDATE images '.
 											'SET url = "'.$url.'", originalurl = "'.$originalUrl.'", thumbnailurl = '.($thumbnailUrl?'"'.$thumbnailUrl.'"':'NULL').', '.

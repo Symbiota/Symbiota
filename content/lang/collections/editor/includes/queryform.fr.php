@@ -107,9 +107,11 @@ $LANG['IS_NOT_NULL'] = 'EST NON NULLE';
 $LANG['CUSTOM_FIELD_2'] = 'Champ Personnalisé 2';
 $LANG['CUSTOM_FIELD_3'] = 'Champ Personnalisé 3';
 $LANG['SHOW_RECS_ALL'] = 'Afficher enregistrements pour tous utilisateurs (contrôle administrateur)';
+$LANG['COPY_SEARCH'] = 'Copier la recherche en tant que lien';
 $LANG['GO_LABEL_PRINT'] = "Aller au Module d'Impression d'Étiquettes";
 $LANG['DISPLAY_EDITOR'] = "Éditeur d'Affichage";
 $LANG['DISPLAY_TABLE'] = "Tableau d'Affichage";
+$LANG['DYNAMIC_TABLE'] = 'Afficher sous forme de tableau dynamique';
 $LANG['SORT_BY'] = 'Trier Par';
 $LANG['DATE_LAST_MODIFIED'] = 'Date de Dernière Modification';
 $LANG['LOCATION_ID'] = 'Identifiant de Emplacement';
@@ -120,4 +122,5 @@ $LANG['ELEV_MIN'] = 'Altitude Minimale';
 $LANG['ELEV_MAX'] = 'Altitude Maximale';
 $LANG['ASCENDING'] = 'ascendant';
 $LANG['DESCENDING'] = 'descendant';
+$LANG['OUTPUT'] = 'Record output';
 ?>

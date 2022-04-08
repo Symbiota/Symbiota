@@ -263,7 +263,7 @@ include($SERVER_ROOT.'/includes/header.php');
 			echo '</ul>';
 			if($publishGBIF){
 				echo '<ul>';
-				$collManager->triggerGBIFCrawl($collManager->getDatasetKey(),$collArr['dwcaurl'], $collid, $collArr['collectionname']);
+				$collManager->triggerGBIFCrawl($collArr['dwcaurl'], $collid, $collArr['collectionname']);
 				echo '</ul>';
 			}
 		}
