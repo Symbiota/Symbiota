@@ -234,7 +234,7 @@ class DwcArchiverOccurrence{
 			$this->occurDefArr['fields']['member'] = 'paleo.member';
 			$this->occurDefArr['terms']['bed'] = 'http://rs.tdwg.org/dwc/terms/bed';
 			$this->occurDefArr['fields']['bed'] = 'paleo.bed';
-			$this->occurDefArr['terms']['lithology'] = 'http://rs.tdwg.org/dwc/terms/lithostratigraphicTerms';
+			$this->occurDefArr['terms']['lithology'] = 'http://rs.tdwg.org/dwc/terms/lithostratigraphic';
 			$this->occurDefArr['fields']['lithology'] = 'paleo.lithology';
 			$this->occurDefArr['terms']['stratRemarks'] = 'https://symbiota.org/terms/paleo-stratRemarks';
 			$this->occurDefArr['fields']['stratRemarks'] = 'paleo.stratRemarks';

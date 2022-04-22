@@ -653,9 +653,7 @@ else{
 						<option <?php echo ($recLimit==3000?'selected':''); ?>>3000</option>
 					</select> <?php //echo $LANG['RECORDS']; ?>
 				</span>
-				<!--
 				<div style="margin-left:110px"><input name="dynamictable" type="checkbox" value="1" <?php if(isset($dynamicTable) && $dynamicTable) echo 'checked'; ?> /> <?php echo $LANG['DYNAMIC_TABLE']; ?></div>
- 				-->
  			</div>
 		</fieldset>
 	</form>

@@ -5,6 +5,8 @@ Language: Français (French)
 ------------------
 */
 
+include_once('fieldterms.fr.php');
+
 $LANG['HOME'] = 'Accueil';
 $LANG['CLONES_CREATED'] = 'Succès! Les nouveaux enregistrements clones suivants ont été créés';
 $LANG['CLONE_SOURCE'] = 'source du clone';

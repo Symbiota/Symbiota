@@ -12,9 +12,11 @@ $minLon = (isset($_GET['MinLon'])?$_GET['MinLon']:0);
 $maxLon = (isset($_GET['MaxLon'])?$_GET['MaxLon']:0);
 
 //Sanitation
+$stateString = filter_var($stateString, FILTER_SANITIZE_STRING);
 
 
 $whereManager = new GamesWhereManager();
+$whereManager->setStateStr($stateString);
 
 //$debug=true;
 if($debug){
@@ -46,64 +48,9 @@ else
 $OutString = json_encode($Hits);
 $Result = file_put_contents("Hits.txt",$OutString);
 
-
 $whereManager->setBoundingBox($minLat, $maxLat, $minLon, $maxLon);
 
-//*************************************************************************
-//   State limits
-//*************************************************************************
-
-//  If any states were selected, limit the search to a rectangle bounded by those states borders.
-$MinLatBound = 1000;
-$MinLonBound = 1000;
-$MaxLatBound = -1000;
-$MaxLatBound = -1000;
-
-if($stateString)
-	{
-	if($stateString == "Full Region")
-		$QueryAdd = "";
-	else
-		{
-		$QueryAdd = "AND stateProvince in ('".str_replace(", ","','",$stateString)."') ";
-		$States = explode(", ",$stateString);
-		$Bounds = file("StateBoundingBoxes.txt");
-
-		//Checks to see that the state selected is actually in view based on rectangular bounds
-		foreach($States as $OneState)
-			{
-			foreach($Bounds as $OneBound)
-				{
-				$BoundState = explode(",",$OneBound);
-				if($BoundState[0] != $OneState)
-					continue;
-
-				if($BoundState[1] < $MinLonBound)
-					$MinLonBound = $BoundState[1];
-				if($BoundState[2]<$MinLatBound)
-					$MinLatBound = $BoundState[2];
-				if($BoundState[3]>$MaxLonBound)
-					$MaxLonBound = $BoundState[3];
-				if($BoundState[4] > $MaxLatBound)
-					$MaxLatBound = $BoundState[4];
-				}
-			}
-		if($FullArea->MinLon < $MinLonBound)
-			$FullArea->MinLon = $MinLonBound;
-		if($FullArea->MinLat < $MinLatBound)
-			$FullArea->MinLat = $MinLatBound;
-		if($FullArea->MaxLon > $MaxLonBound)
-			$FullArea->MaxLon = $MaxLonBound;
-		if($FullArea->MaxLat > $MaxLatBound)
-			$FullArea->MaxLat = $MaxLatBound;
-		}
-	}
-else
-	$QueryAdd = "";
-
-//********************
-
-if($stateString != "" && ($FullArea->MinLon > $FullArea->MaxLon || $FullArea->MinLat > $FullArea->MaxLat))
+if(!$stateString && ($whereManager->getMinLon > $whereManager->getMaxLon || $whereManager->getMinLat > $whereManager->getMaxLat))
 	die("Error: Invalid region.  State ($stateString) not visible?");
 
 //************************************************************************************************************
@@ -115,59 +62,13 @@ $TabooCoor = file_get_contents("TabooCoor.txt");
 $QueryAdd .= "and CONCAT(decimalLatitude,'#',decimalLongitude) NOT IN ($TabooCoor)";
 
 //Load the coordinates of the ocean exclusion rectangles.
-$Oceans = file("Oceans.txt",FILE_IGNORE_NEW_LINES);
-if(!$whereManager->CheckOcean($FullArea))
-	die("Error: No significant specimens in the selected area.");
-
-if(!$whereManager->hasEnoughRecords()) die("Error:  ".count($SearchArray)." specimens found in whole area.");
-
-
+if(!$whereManager->checkOcean()) die("Error: No significant specimens in the selected area.");
 
 //************************************************************************
 //  Region zeroed in to.  Find specific location and a list of plants.
 //************************************************************************
 
-$SearchArray = array();
-$InputArea = clone $FullArea;
-do
-	{
-	$Tries = 0;
-	do
-		{
-		$whereManager->MainQuery($SearchArray,$InputArea); //Find at least 10 and up to 200 plants from a random rectangle inside this region
-		}while(count($SearchArray) < 10);
-
-	$Count = count($SearchArray);
-	for($RandomChoice = 0;$RandomChoice < 50;$RandomChoice++)
-		{//RandomChoice is just a counter.  50 trials should be plenty.
-		//Randomly choose one of the specimens from this region.
-		$Select = rand(0,$Count-1);
-		$Degrees = .1;
-		//Search for all plants within 0.1 degrees of this random specimen (about 10 kilometers).
-		$CurrentArea = new SearchArea($SearchArray[$Select]['decimalLatitude'] - $Degrees, $SearchArray[$Select]['decimalLatitude'] + $Degrees,$SearchArray[$Select]['decimalLongitude'] - $Degrees, $SearchArray[$Select]['decimalLongitude'] + $Degrees);
-		$ResultArray = array();
-		$query = "SELECT sciname, decimalLatitude, decimalLongitude, habitat from omoccurrences WHERE sciname NOT LIKE '' AND sciname NOT LIKE 'indet.%' AND decimalLatitude != '' AND (decimalLatitude between {$CurrentArea->MinLat} AND {$CurrentArea->MaxLat}) AND (decimalLongitude between {$CurrentArea->MinLon} AND {$CurrentArea->MaxLon}) $QueryAdd";
-		if($debug)
-			echo "Query = $query<br><br>";
-
-		//First query SEINet
-		$whereManager->QDB($ResultArray,$DB[0],$query);
-
-		//If appropriate, query Neotropica too.
-		if($CurrentArea->MinLat < 30 && $CurrentArea->MinLon < -34 && $CurrentArea->MaxLon > -117)
-			$whereManager->QDB($ResultArray,$DB[1],$query);
-
-		if($debug)
-			echo "Then Found nearby ".count($ResultArray)."<br>";
-		if(count($ResultArray) >= 10)
-			break; //We found a specimen that has at least 10 specimens nearby.
-		}
-	$Tries++;
-	if($Tries > 200)
-		die("Error: Search failed.  Try again. ");//I haven't see this happen...
-	}while(count($ResultArray) < 5);
-if($debug)
-	echo $query."<br><br>";
+$resultArray = $whereManager->getResultArr();
 
 //************************************************************************
 //  Assemble the list of plants to return to the html program.
@@ -179,7 +80,7 @@ $LonArray = array(); //Used to find the median coordinates that determine the ta
 $LatArray = array();
 $Content = ""; //The string that gets returned to WITW.
 $Hint="";
-foreach($ResultArray as $One)
+foreach($resultArray as $One)
 	{
 	$SciName = $One['sciname'];
 	$Preg = preg_split("/[\s]+/", $One['sciname']); //Convert any sciname to "GENUS species", ignoring var., ssp. etc.

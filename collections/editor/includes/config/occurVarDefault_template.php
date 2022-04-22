@@ -33,7 +33,6 @@
 //define('VERBATIMEVENTDATELABEL','');
 //define('YYYYMMDDLABEL','');
 //define('DAYOFYEARLABEL','');
-//define('ENDDATELABEL','');
 //define('SCINAMELABEL','');
 //define('SCIENTIFICNAMEAUTHORSHIPLABEL','');
 //define('IDCONFIDENCELABEL','');

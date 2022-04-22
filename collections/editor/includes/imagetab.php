@@ -17,6 +17,46 @@ $occManager->setOccId($occId);
 $specImgArr = $occManager->getImageMap();
 $photographerArr = $occManager->getPhotographerArr();
 ?>
+<script type="text/javascript">
+	function verifyImgAddForm(f){
+		var filePath = f.elements["imgfile"].value;
+		if(filePath == ""){
+			if(f.elements["imgurl"].value == ""){
+				alert("<?php echo $LANG['SELECT_FILE']; ?>");
+				return false;
+			}
+			else{
+				filePath = f.elements["imgfile"].value
+			}
+		}
+		filePath = filePath.toLowerCase();
+		if((filePath.indexOf(".tif") > -1) || (filePath.indexOf(".png") > -1) && (filePath.indexOf(".dng") > -1)){
+			alert("<?php echo $LANG['NOT_WEB_OPTIMIZED']; ?>");
+			return false;
+		}
+		return true;
+	}
+
+	function verifyImgEditForm(f){
+
+		return true;
+	}
+
+	function verifyImgDelForm(f){
+		if(confirm("<?php echo $LANG['CONFIRM_IMAGE_DELETE']; ?>")){
+			return true;
+		}
+		return false;
+	}
+
+	function verifyImgRemapForm(f){
+		if(f.targetoccid.value == ''){
+			alert("<?php echo $LANG['SELECT_TARGET']; ?>");
+			return false;
+		}
+		return true;
+	}
+</script>
 <div id="imagediv" style="width:795px;">
 	<div style="float:right;cursor:pointer;" onclick="toggle('addimgdiv');" title="<?php echo $LANG['ADD_IMG']; ?>">
 		<img style="border:0px;width:12px;" src="../../images/add.png" />
@@ -371,25 +411,45 @@ $photographerArr = $occManager->getPhotographerArr();
 										</div>
 									</fieldset>
 								</form>
-								<form name="img<?php echo $imgId; ?>remapform" action="occurrenceeditor.php" method="post" onsubmit="return verifyImgRemapForm(this);">
-									<fieldset style="padding:15px">
-										<legend><b><?php echo $LANG['REMAP_TO_ANOTHER']; ?></b></legend>
-										<div>
-											<b><?php echo $LANG['OCC_REC_NUM']; ?>:</b>
-											<input id="imgoccid-<?php echo $imgId; ?>" name="targetoccid" type="text" value="" />
-											<span style="cursor:pointer;color:blue;"  onclick="openOccurrenceSearch('imgoccid-<?php echo $imgId; ?>')">
-												<?php echo $LANG['OPEN_LINK_AID']; ?>
-											</span>
-										</div>
-										<div style="margin:10px 20px;">
-											<input name="occid" type="hidden" value="<?php echo $occId; ?>" />
-											<input type="hidden" name="imgid" value="<?php echo $imgId; ?>" />
-											<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
-											<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
-											<button type="submit" name="submitaction" value="Remap Image"><?php echo $LANG['REMAP_IMG']; ?></button>
-										</div>
-									</fieldset>
-								</form>
+								<?php
+								$displayRemapForm = true;
+								$idArr = $occManager->getIdentifierArr();
+								$testArr = array();
+								if($imgArr['origurl']) $testArr[] = $imgArr['origurl'];
+								if($imgArr['url']) $testArr[] = $imgArr['url'];
+								foreach($idArr as $idStr){
+									foreach($testArr as $url){
+										if($testStr = substr($url, strrpos($url, '/'))){
+											if(strpos($testStr,$idStr) !== false && !preg_match('/_\d{10}[_\.]{1}/', $testStr)){
+												$displayRemapForm = false;
+												break 2;
+											}
+										}
+									}
+								}
+								if($displayRemapForm){
+									?>
+									<form name="img<?php echo $imgId; ?>remapform" action="occurrenceeditor.php" method="post" onsubmit="return verifyImgRemapForm(this);">
+										<fieldset style="padding:15px">
+											<legend><b><?php echo $LANG['REMAP_TO_ANOTHER']; ?></b></legend>
+											<div>
+												<b><?php echo $LANG['TARGET_OCCID']; ?>:</b>
+												<input id="imgdisplay-<?php echo $imgId; ?>" name="displayoccid" type="text" value="" disabled style="width:70px" />
+												<span onclick="openOccurrenceSearch('<?php echo $imgId; ?>');return false"><a href="#"><?php echo $LANG['OPEN_LINK_AID']; ?></a></span>
+											</div>
+											<div style="margin:10px 20px;">
+												<input id="imgoccid-<?php echo $imgId; ?>" name="targetoccid" type="hidden" value="" />
+												<input name="occid" type="hidden" value="<?php echo $occId; ?>" />
+												<input type="hidden" name="imgid" value="<?php echo $imgId; ?>" />
+												<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
+												<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
+												<button type="submit" name="submitaction" value="Remap Image"><?php echo $LANG['REMAP_IMG']; ?></button>
+											</div>
+										</fieldset>
+									</form>
+									<?php
+								}
+								?>
 								<form action="occurrenceeditor.php" method="post">
 									<fieldset style="padding:15px">
 										<legend><b><?php echo $LANG['LINK_TO_BLANK']; ?></b></legend>

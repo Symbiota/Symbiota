@@ -499,8 +499,8 @@ class OccurrenceLoans extends Manager{
 	public function exportSpecimenList($loanid){
 		$occurArr = array();
 		$headerArr = array();
-		$sql = 'SELECT o.catalogNumber, o.otherCatalogNumbers, o.occurrenceID, o.family, o.sciname, o.recordedBy, o.recordNumber, o.eventDate, o.country, o.stateProvince, '.
-			'o.county, o.locality, o.decimalLatitude, o.decimalLongitude, o.minimumElevationInMeters, o.dateEntered, o.dateLastModified, o.occid '.
+		$sql = 'SELECT o.catalogNumber, o.otherCatalogNumbers, o.occurrenceID, l.returnDate, l.notes, o.family, o.sciname, o.recordedBy, o.recordNumber, o.eventDate, o.country, o.stateProvince, '.
+			'o.county, o.locality, o.decimalLatitude, o.decimalLongitude, o.minimumElevationInMeters, o.dateEntered, o.dateLastModified, l.initialTimestamp as dateTimeAddToLoan, o.occid '.
 			'FROM omoccurrences o INNER JOIN omoccurloanslink l ON o.occid = l.occid '.
 			'WHERE l.loanid = '.$loanid;
 		$rs = $this->conn->query($sql);
@@ -555,11 +555,14 @@ class OccurrenceLoans extends Manager{
 		else echo "Specimen recordset is empty.\n";
 	}
 
-	public function linkSpecimen($loanid, $catNum){
-		//This method is used by the ajax script insertLoanSpecimen.php
+	/*
+	 * This method is used by the ajax script processLoanSpecimen.php
+	 * return: 0 = failed due to no records matching catalog number, 1 = success, 2 = failed due to multiple records found with catalog number, 3 = failed to link
+	 */
+	public function linkSpecimen($loanid, $catNum, $target){
+		//This method is used by the ajax script processLoanSpecimen.php
 		if(is_numeric($loanid)){
-			$occArr = $this->getOccid($catNum);
-			if(!$occArr) $occArr = $this->getOccid($catNum,true);
+			$occArr = $this->getOccid($catNum, $target);
 			if(!$occArr) return 0;
 			elseif(count($occArr) > 1) return 2;
 			else{
@@ -570,10 +573,30 @@ class OccurrenceLoans extends Manager{
 		return 0;
 	}
 
-	public function batchLinkSpecimens($postArr){
+	/*
+	 * This method is used by the ajax script processLoanSpecimen.php
+	 * return: 0 = failed due to no records matching catalog number, 1 = success, 2 = success, but multiple records check, 3 = failed to update record (not in loan or already checked-in)
+	 */
+	public function checkinSpecimen($loanid, $catNum, $target){
+		if(is_numeric($loanid)){
+			$occArr = $this->getOccid($catNum, $target);
+			if(!$occArr) return 0;
+			else{
+				if($status = $this->batchCheckinSpecimens($occArr, $loanid)){
+					if($status == 1) return 1;
+					else return 2;
+				}
+				else return 3;
+			}
+		}
+		return 0;
+	}
+
+	public function batchProcessSpecimens($postArr){
 		$cnt = 0;
 		if($this->collid && is_numeric($postArr['loanid'])){
 			if($postArr['catalogNumbers']){
+				$mode = $postArr['processmode'];
 				$catNumStr = str_replace(array("\n", "\r\n", ";"), ",", $postArr['catalogNumbers']);
 				$catArr = array_unique(explode(',',$catNumStr));
 				foreach($catArr as $catStr){
@@ -581,12 +604,19 @@ class OccurrenceLoans extends Manager{
 					if($catStr){
 						if($occArr = $this->getOccid($catStr, $postArr['targetidentifier'])){
 							if(count($occArr) > 1) $this->warningArr['multiple'][] = $catStr;
-							foreach($occArr as $occid){
-								if($this->addLoanSpecimen($postArr['loanid'], $occid)) $cnt++;
-								else{
-									if(strpos($this->errorMessage,'Duplicate entry') === 0) $this->warningArr['dupe'][] = $catStr;
-									else $this->warningArr['error'][] = $this->errorMessage;
+							if($mode == 'link'){
+								foreach($occArr as $occid){
+									if($this->addLoanSpecimen($postArr['loanid'], $occid)) $cnt++;
+									else{
+										if(strpos($this->errorMessage,'Duplicate entry') === 0) $this->warningArr['dupe'][] = $catStr;
+										else $this->warningArr['error'][] = $this->errorMessage;
+									}
 								}
+							}
+							elseif($mode == 'checkin'){
+								if($status = $this->batchCheckinSpecimens($occArr, $postArr['loanid'])) $cnt++;
+								elseif($status === 0) $this->warningArr['zeroMatch'][] = $catStr;
+								else $this->warningArr['error'][] = $this->errorMessage;
 							}
 						}
 						else $this->warningArr['missing'][] = $catStr;
@@ -599,6 +629,7 @@ class OccurrenceLoans extends Manager{
 
 	private function getOccid($catNum, $method){
 		$occArr = array();
+		if(!$method || !in_array($method,array('allid','catnum','other'))) $method = 'allid';
 		$sql = 'SELECT o.occid FROM omoccurrences o ';
 		$sqlWhere = '';
 		if($method == 'allid' || $method == 'other'){
@@ -622,7 +653,6 @@ class OccurrenceLoans extends Manager{
 	private function addLoanSpecimen($loanid,$occid){
 		$status = false;
 		$sql = 'INSERT INTO omoccurloanslink(loanid,occid) VALUES ('.$loanid.','.$occid.') ';
-		//echo $sql;
 		if($this->conn->query($sql)) $status = true;
 		else $this->errorMessage = $this->conn->error;
 		return $status;
@@ -655,12 +685,14 @@ class OccurrenceLoans extends Manager{
 		return $status;
 	}
 
-	public function batchCheckinSpecimens($occidArr, $loanID){
+	public function batchCheckinSpecimens($occidInput, $loanID){
 		$status = false;
-		$occidStr = implode(',',$occidArr);
+		$occidStr = '';
+		if(is_numeric($occidInput)) $occidStr = $occidInput;
+		else $occidStr = implode(',',$occidInput);
 		if(is_numeric($loanID) && preg_match('/^[\d,]+$/', $occidStr)){
 			$sql = 'UPDATE omoccurloanslink SET returndate = "'.date('Y-m-d H:i:s').'" WHERE loanid = '.$loanID.' AND (occid IN('.$occidStr.')) AND (returndate IS NULL) ';
-			if($this->conn->query($sql)) $status = true;
+			if($this->conn->query($sql)) $status = $this->conn->affected_rows;
 			else $this->errorMessage = 'ERROR checking in specimens: '.$this->conn->error;
 		}
 		return $status;

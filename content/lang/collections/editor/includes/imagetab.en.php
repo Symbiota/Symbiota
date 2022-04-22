@@ -5,6 +5,10 @@ Language: English
 ------------------
 */
 
+$LANG['SELECT_FILE'] = 'Select an image file or enter a URL to an existing image';
+$LANG['NOT_WEB_OPTIMIZED'] = 'Input file must be a web-optimized image (e.g. jpg). File appears to be an archival image (e.g. tif, png, dng, etc)';
+$LANG['CONFIRM_IMAGE_DELETE'] = 'Are you sure you want to delete this image? Note that the physical image will be deleted from the server if checkbox is selected';
+$LANG['SELECT_TARGET'] = 'Select target record';
 $LANG['ADD_IMG'] = 'Add a New Image';
 $LANG['SELECT_IMG'] = 'Select an image file located on your computer that you want to upload';
 $LANG['ENTER_URL'] = 'Enter URL';
@@ -45,8 +49,8 @@ $LANG['DEL_IMG'] = 'Delete Image';
 $LANG['REM_FROM_SERVER'] = 'Remove image from server';
 $LANG['RM_DB_NOT_SERVER'] = 'Note: leaving unchecked removes image from database without removing from server)';
 $LANG['REMAP_TO_ANOTHER'] = 'Remap to Another Specimen';
-$LANG['OCC_REC_NUM'] = 'Occurrence Record #';
-$LANG['OPEN_LINK_AID'] = 'Open Occurrence Linking Aid';
+$LANG['TARGET_OCCID'] = 'Target record ID';
+$LANG['OPEN_LINK_AID'] = 'Occurrence Linking Tool';
 $LANG['REMAP_IMG'] = 'Remap Image';
 $LANG['LINK_TO_BLANK'] = 'Link to a New Blank Occurrence Record within Collection';
 $LANG['LINK_TO_NEW'] = 'Link to New Occurrence';

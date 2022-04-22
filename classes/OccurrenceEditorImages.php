@@ -31,6 +31,24 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 		return $imageMap;
 	}
 
+	public function getIdentifierArr(){
+		$retArr = array();
+		$sql = 'SELECT o.catalogNumber, o.otherCatalogNumbers, i.identifierValue
+			FROM omoccurrences o LEFT JOIN omoccuridentifiers i ON o.occid = i.occid WHERE (o.occid = '.$this->occid.')';
+		$rs = $this->conn->query($sql);
+		$cnt = 0;
+		while($r = $rs->fetch_object()){
+			if(!$cnt){
+				if($r->catalogNumber) $retArr[] = $r->catalogNumber;
+				if($r->otherCatalogNumbers) $retArr[] = $r->otherCatalogNumbers;
+			}
+			if($r->identifierValue) $retArr[] = $r->identifierValue;
+			$cnt++;
+		}
+		$rs->free();
+		return $retArr;
+	}
+
 	/**
 	 * Takes parameters from a form submission and modifies an existing image record
 	 * in the database.

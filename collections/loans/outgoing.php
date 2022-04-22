@@ -6,7 +6,7 @@ if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../co
 
 $collid = $_REQUEST['collid'];
 $loanId = array_key_exists('loanid',$_REQUEST)?$_REQUEST['loanid']:0;
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
+$formSubmit = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
 
 $isEditor = 0;
@@ -45,27 +45,33 @@ if($isEditor){
 				$occManager->addDetermination($_REQUEST,$isEditor);
 			}
 		}
-		elseif($formSubmit == 'batchLinkSpecimens'){
-			$cnt = $loanManager->batchLinkSpecimens($_POST);
+		elseif($formSubmit == 'batchProcessSpecimens'){
+			$cnt = $loanManager->batchProcessSpecimens($_POST);
 			$statusStr = '<ul>';
-			$statusStr .= '<li><b>'.$cnt.'</b> specimens linked successfully</li>';
+			$statusStr .= '<li><b>'.$cnt.'</b> specimens processed successfully</li>';
 			if($warnArr = $loanManager->getWarningArr()){
 				if(isset($warnArr['missing'])){
 					$statusStr .= '<li style="color:red;"><b>Unable to locate following catalog numbers</b></li>';
-					foreach($warnArr['missing'] as $errStr){
-						$statusStr .= '<li style="margin-left:10px;color:black;">'.$errStr.'</li>';
+					foreach($warnArr['missing'] as $catNum){
+						$statusStr .= '<li style="margin-left:10px;color:black;">'.$catNum.'</li>';
 					}
 				}
 				if(isset($warnArr['multiple'])){
 					$statusStr .= '<li style="color:orange;"><b>Catalog numbers with multiple matches</b></li>';
-					foreach($warnArr['multiple'] as $errStr){
-						$statusStr .= '<li style="margin-left:10px;color:black;">'.$errStr.'</li>';
+					foreach($warnArr['multiple'] as $catNum){
+						$statusStr .= '<li style="margin-left:10px;color:black;">'.$catNum.'</li>';
 					}
 				}
 				if(isset($warnArr['dupe'])){
 					$statusStr .= '<li style="color:orange"><b>Specimens already linked to loan</b></li>';
-					foreach($warnArr['dupe'] as $errStr){
-						$statusStr .= '<li style="margin-left:10px;color:black;">'.$errStr.'</li>';
+					foreach($warnArr['dupe'] as $catNum){
+						$statusStr .= '<li style="margin-left:10px;color:black;">'.$catNum.'</li>';
+					}
+				}
+				if(isset($warnArr['zeroMatch'])){
+					$statusStr .= '<li style="color:orange;"><b>Already checked-in or not associated with this loan</b></li>';
+					foreach($warnArr['zeroMatch'] as $catNum){
+						$statusStr .= '<li style="margin-left:10px;color:black;">'.$catNum.'</li>';
 					}
 				}
 				if(isset($warnArr['error'])){
@@ -74,15 +80,15 @@ if($isEditor){
 						$statusStr .= '<li style="margin-left:10px;color:black;">'.$errStr.'</li>';
 					}
 				}
-				$statusStr .= '</ul>';
 			}
+			$statusStr .= '</ul>';
 			$tabIndex = 1;
 		}
 		elseif($formSubmit == 'saveSpecimenDetails'){
 			if($loanManager->editSpecimenDetails($loanId,$_POST['occid'],$_POST['returndate'],$_POST['notes'])) $statusStr = true;
 			echo $statusStr = $loanManager->getErrorMessage();
 		}
-		elseif($formSubmit == "exportSpecimenList"){
+		elseif($formSubmit == 'exportSpecimenList'){
 			$loanManager->exportSpecimenList($loanId);
 			exit;
 		}
@@ -102,7 +108,6 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
 	<script type="text/javascript">
 		var tabIndex = <?php echo $tabIndex; ?>;
-		var skipFormVerification = false;
 
 		function verifyLoanOutEditForm(){
 			var submitStatus = true;
@@ -118,184 +123,6 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 			});
 			return submitStatus;
 		}
-
-		function addSpecimen(f,splist){
-			if(!f.catalognumber.value){
-				alert("Please enter a catalog number!");
-				return false;
-			}
-			else{
-				//alert("rpc/insertLoanSpecimens.php?loanid="+f.loanid.value+"&catalognumber="+f.catalognumber.value+"&collid="+f.collid.value);
-				$.ajax({
-					method: "POST",
-					data: { loanid: f.loanid.value, catalognumber: f.catalognumber.value, collid: f.collid.value },
-					dataType: "text",
-					url: "rpc/insertLoanSpecimens.php"
-				})
-				.done(function(retStr) {
-					if(retStr == "0"){
-						document.getElementById("addspecsuccess").style.display = "none";
-						document.getElementById("addspecerr1").style.display = "block";
-						document.getElementById("addspecerr2").style.display = "none";
-						document.getElementById("addspecerr3").style.display = "none";
-						setTimeout(function () {
-							document.getElementById("addspecerr1").style.display = "none";
-						}, 4000);
-						//alert("ERROR: Specimen record not found in database.");
-					}
-					else if(retStr == "1"){
-						f.catalognumber.value = '';
-						document.getElementById("addspecsuccess").style.display = "block";
-						document.getElementById("addspecerr1").style.display = "none";
-						document.getElementById("addspecerr2").style.display = "none";
-						document.getElementById("addspecerr3").style.display = "none";
-						setTimeout(function () {
-							document.getElementById("addspecsuccess").style.display = "none";
-						}, 4000);
-						//alert("SUCCESS: Specimen record added to loan.");
-						if(splist == 0){
-							document.getElementById("speclistdiv").style.display = "block";
-							document.getElementById("nospecdiv").style.display = "none";
-						}
-					}
-					else if(retStr == "2"){
-						document.getElementById("addspecsuccess").style.display = "none";
-						document.getElementById("addspecerr1").style.display = "none";
-						document.getElementById("addspecerr2").style.display = "block";
-						document.getElementById("addspecerr3").style.display = "none";
-						setTimeout(function () {
-							document.getElementById("addspecerr2").style.display = "none";
-						}, 4000);
-						//alert("ERROR: More than one specimen with that catalog number.");
-					}
-					else if(retStr == "3"){
-						document.getElementById("addspecsuccess").style.display = "none";
-						document.getElementById("addspecerr1").style.display = "none";
-						document.getElementById("addspecerr2").style.display = "none";
-						document.getElementById("addspecerr3").style.display = "block";
-						setTimeout(function () {
-							document.getElementById("addspecerr3").style.display = "none";
-						}, 4000);
-						//alert("ERROR: More than one specimen with that catalog number.");
-					}
-					else{
-						f.catalognumber.value = "";
-						document.refreshspeclist.submit();
-						/*
-						document.getElementById("addspecsuccess").style.display = "block";
-						document.getElementById("addspecerr1").style.display = "none";
-						document.getElementById("addspecerr2").style.display = "none";
-						document.getElementById("addspecerr3").style.display = "none";
-						setTimeout(function () {
-							document.getElementById("addspecsuccess").style.display = "none";
-							}, 5000);
-						alert("SUCCESS: Specimen added to loan.");
-						*/
-					}
-				})
-				.fail(function() {
-					alert("Generation of new ID failed");
-				});
-			}
-			return false;
-		}
-
-		function verifySpecEditForm(f){
-			if(skipFormVerification) return true;
-			skipFormVerification = false;
-
-			var cbChecked = false;
-			var dbElements = document.getElementsByName("occid[]");
-			for(i = 0; i < dbElements.length; i++){
-				var dbElement = dbElements[i];
-				if(dbElement.checked){
-					cbChecked = true;
-					break;
-				}
-			}
-			if(!cbChecked){
-				alert("Please select specimens to which you wish to apply the action");
-				return false;
-			}
-
-			return true;
-		}
-
-		function verifyLoanDet(){
-			if(document.getElementById('dafsciname').value == ""){
-				alert("Scientific Name field must have a value");
-				return false;
-			}
-			if(document.getElementById('identifiedby').value == ""){
-				alert("Determiner field must have a value (enter 'unknown' if not defined)");
-				return false;
-			}
-			if(document.getElementById('dateidentified').value == ""){
-				alert("Determination Date field must have a value (enter 's.d.' if not defined)");
-				return false;
-			}
-			return true;
-		}
-
-		function initLoanDetAutocomplete(f){
-			$( f.sciname ).autocomplete({
-				source: "../editor/rpc/getspeciessuggest.php",
-				minLength: 3,
-				change: function(event, ui) {
-					if(f.sciname.value){
-						pauseSubmit = true;
-						verifyLoanDetSciName(f);
-					}
-					else{
-						f.scientificnameauthorship.value = "";
-						f.family.value = "";
-						f.tidtoadd.value = "";
-					}
-				}
-			});
-		}
-
-		function verifyLoanDetSciName(f){
-			$.ajax({
-				type: "POST",
-				url: "../editor/rpc/verifysciname.php",
-				dataType: "json",
-				data: { term: f.sciname.value }
-			}).done(function( data ) {
-				if(data){
-					f.scientificnameauthorship.value = data.author;
-					f.family.value = data.family;
-					f.tidtoadd.value = data.tid;
-				}
-				else{
-		            alert("WARNING: Taxon not found. It may be misspelled or needs to be added to taxonomic thesaurus by a taxonomic editor.");
-					f.scientificnameauthorship.value = "";
-					f.family.value = "";
-					f.tidtoadd.value = "";
-				}
-			});
-		}
-
-		function selectAll(cb){
-			boxesChecked = true;
-			if(!cb.checked){
-				boxesChecked = false;
-			}
-			var dbElements = document.getElementsByName("occid[]");
-			for(i = 0; i < dbElements.length; i++){
-				var dbElement = dbElements[i];
-				dbElement.checked = boxesChecked;
-			}
-		}
-
-		function openCheckinPopup(loanId, occid, collid){
-			urlStr = "specnoteseditor.php?loanid="+loanId+"&occid="+occid+"&collid="+collid;
-			newWindow = window.open(urlStr,'popup','scrollbars=1,toolbar=0,resizable=1,width=800,height=300,left=60,top=250');
-			window.name = "parentWin";
-			if(newWindow.opener == null) newWindow.opener = self;
-			return false;
-		}
-
 	</script>
 	<script type="text/javascript" src="../../js/symb/collections.loans.js?ver=1"></script>
 	<style>

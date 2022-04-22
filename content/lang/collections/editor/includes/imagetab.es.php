@@ -5,6 +5,10 @@ Language: Español
 ------------------
 */
 
+$LANG['SELECT_FILE'] = 'Seleccione un archivo de imagen o ingrese una URL a una imagen existente';
+$LANG['NOT_WEB_OPTIMIZED'] = 'El archivo de entrada debe ser una imagen optimizada para la web (por ejemplo, jpg). El archivo parece ser una imagen de archivo (por ejemplo, tif, png, dng, etc.)';
+$LANG['CONFIRM_IMAGE_DELETE'] = '¿Está seguro de que desea eliminar esta imagen? Tenga en cuenta que la imagen física se eliminará del servidor si se selecciona la casilla de verificación';
+$LANG['SELECT_TARGET'] = 'Seleccionar registro de destino';
 $LANG['ADD_IMG'] = 'Añadir una Nueva Imagen';
 $LANG['SELECT_IMG'] = 'Seleccionar un archivo de imagen localizado en su computadora que desee subir';
 $LANG['ENTER_URL'] = 'Introducir URL';
@@ -45,7 +49,7 @@ $LANG['DEL_IMG'] = 'Eliminar Imagen';
 $LANG['REM_FROM_SERVER'] = 'Remover imagen del servidor';
 $LANG['RM_DB_NOT_SERVER'] = 'Nota: al no seleccionar se remueve la imagen de la base de datos sin removerla del servidor)';
 $LANG['REMAP_TO_ANOTHER'] = 'Remapear a Otro Espécimen';
-$LANG['OCC_REC_NUM'] = 'Registro de Occurrencia #';
+$LANG['TARGET_OCCID'] = 'Registro objetivo';
 $LANG['OPEN_LINK_AID'] = 'Abrir Ayuda para Enlace de Ocurrencias';
 $LANG['REMAP_IMG'] = 'Remapear Imagen';
 $LANG['LINK_TO_BLANK'] = 'Enlazar a Nuevo Registro de Ocurrencia en Blanco entre la Colección';

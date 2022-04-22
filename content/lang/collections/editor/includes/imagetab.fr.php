@@ -5,6 +5,10 @@ Language: Français (French)
 ------------------
 */
 
+$LANG['SELECT_FILE'] = 'Sélectionnez un fichier image ou entrez une URL vers une image existante';
+$LANG['NOT_WEB_OPTIMIZED'] = "Le fichier d'entrée doit être une image optimisée pour le Web (par exemple, jpg). Le fichier semble être une image d'archive (par exemple, tif, png, dng, etc.)";
+$LANG['CONFIRM_IMAGE_DELETE'] = "Êtes-vous sûr de vouloir supprimer cette image? Notez que l'image physique sera supprimée du serveur si la case est cochée";
+$LANG['SELECT_TARGET'] = "Sélectionnez l'enregistrement cible";
 $LANG['ADD_IMG'] = 'Ajouter une Nouvelle Image';
 $LANG['SELECT_IMG'] = 'Sélectionnez un fichier image situé sur votre ordinateur que vous souhaitez télécharger';
 $LANG['ENTER_URL'] = 'Entrer URL';
@@ -45,7 +49,7 @@ $LANG['DEL_IMG'] = 'Supprimer Image';
 $LANG['REM_FROM_SERVER'] = 'Supprimer image du serveur';
 $LANG['RM_DB_NOT_SERVER'] = "Remarque: ne pas cocher la case supprime l'image de la base de données sans la supprimer du serveur)";
 $LANG['REMAP_TO_ANOTHER'] = 'Remapper à Autre Spécimen';
-$LANG['OCC_REC_NUM'] = 'Enregistrement Occurrence #';
+$LANG['TARGET_OCCID'] = 'Enregistrement Occurrence #';
 $LANG['OPEN_LINK_AID'] = "Ouvrir Aide de Liaison d'Occurrence";
 $LANG['REMAP_IMG'] = 'Remapper Image';
 $LANG['LINK_TO_BLANK'] = "Lier à Nouvel Enregistrement d'Occurrence Vierge dans Collection";

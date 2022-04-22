@@ -1238,46 +1238,6 @@ function verifyDetForm(f){
 	return true;
 }
 
-//Image tab form methods 
-function verifyImgAddForm(f){
-	var filePath = f.elements["imgfile"].value;
-	if(filePath == ""){
-		if(f.elements["imgurl"].value == ""){
-			alert("Select an image file or enter a URL to an existing image");
-			return false;
-		}
-		else{
-			filePath = f.elements["imgfile"].value
-		}
-	}
-	filePath = filePath.toLowerCase();
-	if((filePath.indexOf(".tif") > -1) || (filePath.indexOf(".png") > -1) && (filePath.indexOf(".dng") > -1)){
-		alert("Input file must be a web-optimized image (e.g. jpg). File appears to be an archival image (e.g. tif, png, dng, etc).");
-		return false;
-	}
-	return true;
-}
-
-function verifyImgEditForm(f){
-
-	return true;
-}
-
-function verifyImgDelForm(f){
-	if(confirm('Are you sure you want to delete this image? Note that the physical image will be deleted from the server if checkbox is selected.')){
-		return true;
-	}
-	return false;
-}
-
-function verifyImgRemapForm(f){
-	if(f.targetoccid.value == ''){
-		alert("Enter the occurrence record identifier (occid) of the occurrence record you want to transfer to");
-		return false;
-	}
-	return true;
-}
-
 //Misc
 function dwcDoc(dcTag){
 	dwcWindow=open("https://biokic.github.io/symbiota-docs/editor/edit/fields/#"+dcTag,"dwcaid","width=1250,height=300,left=20,top=20,scrollbars=1");

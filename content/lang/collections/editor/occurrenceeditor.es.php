@@ -5,6 +5,8 @@ Language: Español
 ------------------
 */
 
+include_once('fieldterms.es.php');
+
 $LANG['HOME'] = 'Inicio';
 $LANG['CLONES_CREATED'] = '¡Éxito! Los siguientes registros clonados ha sido creados';
 $LANG['CLONE_SOURCE'] = 'fuente de clonación';

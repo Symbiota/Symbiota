@@ -512,11 +512,11 @@ $whereManager = new GamesWhereManager();
 								<td valign=top>
 									<!--/td><td width = 50></td><td valign=top-->
 									<form name="CheckForm">
-										<input type="Checkbox" id="RingCheck" name="RingCheck" checked=checked>Show Distance Ring (Approximate)</input><br><br>
-										<input type="Radio" id="UsePolo" name="MapToUse" onclick="ChangeMapLayer('Polo')" checked>Political Map</input><br>
-										<input type="Radio" id="UseLandscape" name="MapToUse" onclick="ChangeMapLayer('Landscape')">Landscape Map</input><br>
-										<input type="Radio" id="UseTopo" name="MapToUse" onclick="ChangeMapLayer('Topo')">Relief Map</input><br>
-										<input type="Radio" id="UseSatellite" name="MapToUse" onclick="ChangeMapLayer('Satellite')">Satellite Map</input><br>
+										<input type="Checkbox" id="RingCheck" name="RingCheck" checked=checked />Show Distance Ring (Approximate)<br><br>
+										<input type="Radio" id="UsePolo" name="MapToUse" onclick="ChangeMapLayer('Polo')" checked />Political Map<br>
+										<input type="Radio" id="UseLandscape" name="MapToUse" onclick="ChangeMapLayer('Landscape')" />Landscape Map<br>
+										<input type="Radio" id="UseTopo" name="MapToUse" onclick="ChangeMapLayer('Topo')" />Relief Map<br>
+										<input type="Radio" id="UseSatellite" name="MapToUse" onclick="ChangeMapLayer('Satellite')" />Satellite Map<br>
 									</form>
 									<br>
 									<div id='ShowState'></div>

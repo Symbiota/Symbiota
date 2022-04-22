@@ -388,7 +388,11 @@ class ImageProcessor {
 				$rs->free();
 			}
 			if(!$occid && $this->matchOtherCatalogNumbers){
-				$sql = 'SELECT occid FROM omoccurrences WHERE (collid = '.$this->collid.') AND (othercatalognumbers IN("'.$targetIdentifier.'"'.(substr($targetIdentifier,0,1)=='0'?',"'.ltrim($targetIdentifier,'0 ').'"':'').')) ';
+				$searchStr = '"'.$targetIdentifier.'"'.(substr($targetIdentifier,0,1)=='0'?',"'.ltrim($targetIdentifier,'0 ').'"':'');
+				$sql = 'SELECT o.occid
+					FROM omoccurrences o LEFT JOIN omoccuridentifiers i ON o.occid = i.occid
+					WHERE (o.collid = '.$this->collid.')
+					AND (o.othercatalognumbers IN('.$searchStr.') OR (i.identifierValue IN('.$searchStr.'))) ';
 				$rs = $this->conn->query($sql);
 				if($row = $rs->fetch_object()){
 					$occid = $row->occid;

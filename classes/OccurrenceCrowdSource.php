@@ -166,7 +166,7 @@ class OccurrenceCrowdSource {
 		if(preg_match('/^[,\d]+$/', $catid)) $sql .= 'INNER JOIN omcollcatlink cat ON c.collid = cat.collid WHERE (cat.ccpk IN('.$catid.')) ';
 		$sql .= 'GROUP BY c.collid,q.reviewstatus,q.uidprocessor,q.isvolunteer '.
 			'HAVING (q.uidprocessor = '.$GLOBALS['SYMB_UID'].' OR q.uidprocessor IS NULL) '.
-			'ORDER BY c.institutioncode,c.collectioncode,q.reviewstatus';
+			'ORDER BY c.collectionname ,q.reviewstatus';
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		$pPoints = 0;
