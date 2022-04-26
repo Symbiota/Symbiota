@@ -80,7 +80,10 @@ $collManager->cleanOutArr($collData);
 			branding: false,
 			default_link_target: "_blank",
 			paste_as_text: false,
-			images_upload_url: 'tinymceimagehandler.php'
+			block_unsupported_drop: true,
+			images_file_types: 'jpg,jpeg,png,gif',
+			images_upload_url: 'tinymceimagehandler.php',
+			a11y_advanced_options: true
 		});
 
 		$(function() {

@@ -2,6 +2,7 @@
 include_once('../../config/symbini.php');
 /**
  * Based on code copied from https://www.tiny.cloud/docs/advanced/php-upload-handler/
+ * 
  * modified by Greg Post
  */
 
@@ -11,7 +12,7 @@ include_once('../../config/symbini.php');
 $accepted_origins = array("http://localhost", "http://$SERVER_HOST", "https://$SERVER_HOST");
 
 /*********************************************
- * Change this line to set the upload folder *
+ * Change thse lines to set the upload folder *
  *********************************************/
 $imageFolder = $SERVER_ROOT . $PUBLIC_IMAGE_UPLOAD_ROOT;
 $imageURL = $CLIENT_ROOT . $PUBLIC_IMAGE_UPLOAD_ROOT . '/';
@@ -55,17 +56,17 @@ if (is_uploaded_file($temp['tmp_name'])) {
     }
 
     // Accept upload if there was no origin, or if it is an accepted origin
-    $filetowrite = $imageFolder . $temp['name'];
-    move_uploaded_file($temp['tmp_name'], $filetowrite);
+    $filetowrite = $imageFolder . '/' . $temp['name'];
+    if (!move_uploaded_file($temp['tmp_name'], $filetowrite)) {
+        header("HTTP/1.1 500 Server Error");
+        return;
+    }
 
-    // Determine the base URL
-    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? "https://" : "http://";
-    $baseurl = $protocol . $_SERVER["HTTP_HOST"] . rtrim(dirname($_SERVER['REQUEST_URI']), "/") . "/";
 
     // Respond to the successful upload with JSON.
     // Use a location key to specify the path to the saved image resource.
     // { location : '/your/uploaded/image/file'}
-    echo json_encode(array('location' => $baseurl . $imageURL . $temp['name']));
+    echo json_encode(array('location' => $imageURL . $temp['name']));
 } else {
     // Notify editor that the upload failed
     header("HTTP/1.1 500 Server Error");
