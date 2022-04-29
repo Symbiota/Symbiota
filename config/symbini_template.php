@@ -21,7 +21,7 @@ $CSS_BASE_PATH = $CLIENT_ROOT . '/css/symb';
 $CSS_VERSION_LOCAL = '1';		//Changing this variable will force a refresh of main.css styles within users browser cache for all pages
 
 //Path to user uploaded images files.  Used by tinyMCE. This is NOT for collection images. See section immediatly below for collection image location
-$PUBLIC_IMAGE_UPLOAD_ROOT = '/public/images';
+$PUBLIC_IMAGE_UPLOAD_ROOT = '/content/imglib';
 
 //the root for the collection image directory
 $IMAGE_DOMAIN = '';				//Domain path to images, if different from portal
