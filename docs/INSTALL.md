@@ -55,7 +55,6 @@
    6. Misc: rename usagepolicy_template.php to usagepolicy.php, and modify as needed
 4. File permissions - the web server needs write access to the following files and folders
    * All folders in /temp/ (e.g. sudo chmod -R 777 temp/) 
-   * /webservices/dwc/rss.xml
    * /content/collicon/
    * /content/dwca/
    * /content/logs/

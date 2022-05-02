@@ -238,7 +238,7 @@ if(!$clid){
 				</fieldset>
 			</div>
 			<div style="clear:both;margin-top:5px;">
-				<fieldset style="width:300px;">
+				<fieldset style="width:600px;">
 					<legend><b><?php echo (isset($LANG['DEFAULTDISPLAY'])?$LANG['DEFAULTDISPLAY']:'Default Display Settings');?></b></legend>
 					<div>
 						<?php
@@ -254,7 +254,12 @@ if(!$clid){
 					<div>
 						<!-- Display as Images: 0 = false, 1 = true  -->
 						<input name='dimages' id='dimages' type='checkbox' value='1' <?php echo (($defaultArr&&$defaultArr["dimages"])?"checked":""); ?> onclick="showImagesDefaultChecked(this.form);" />
-						<?php echo $LANG['DISPLAYIMG'];?>
+						<?php echo $LANG['DISPLAYIMAGES'];?>
+					</div>
+					<div>
+						<!-- Display as Voucher Images: 0 = false, 1 = true  -->
+						<input name='dvoucherimages' id='dvoucherimages' type='checkbox' value='1' <?php echo ((isset($defaultArr['dvoucherimages'])&&$defaultArr['dvoucherimages'])?"checked":""); ?> />
+						<?php echo $LANG['DISPLAYVOUCHERIMAGES'];?>
 					</div>
 					<div>
 						<!-- Display Details: 0 = false, 1 = true  -->

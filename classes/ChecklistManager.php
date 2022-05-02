@@ -21,6 +21,7 @@ class ChecklistManager {
 	private $showCommon = false;
 	private $showSynonyms = false;
 	private $showImages = false;
+	private $limitImagesToVouchers = false;
 	private $showVouchers = false;
 	private $showAlphaTaxa = false;
 	private $searchCommon = false;
@@ -324,44 +325,55 @@ class ChecklistManager {
 
 	private function setImages(){
 		if($this->taxaList){
-			$sql = 'SELECT i2.tid, i.url, i.thumbnailurl FROM images i INNER JOIN '.
-				'(SELECT ts1.tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
-				'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-				'INNER JOIN images i ON ts2.tid = i.tid '.
-				'WHERE i.sortsequence < 500 AND (i.thumbnailurl IS NOT NULL) AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.tid IN('.implode(',',array_keys($this->taxaList)).')) '.
-				'GROUP BY ts1.tid) i2 ON i.imgid = i2.imgid';
-			//echo $sql;
-			$rs = $this->conn->query($sql);
 			$matchedArr = array();
-			while($row = $rs->fetch_object()){
-				$this->taxaList[$row->tid]['url'] = $row->url;
-				$this->taxaList[$row->tid]['tnurl'] = $row->thumbnailurl;
-				$matchedArr[] = $row->tid;
+			if($this->limitImagesToVouchers){
+				$sql = 'SELECT i.tid, i.url, i.thumbnailurl, i.originalurl
+					FROM images i INNER JOIN omoccurrences o ON i.occid = o.occid
+					INNER JOIN fmvouchers v ON o.occid = v.occid
+					WHERE (v.clid = 2) AND (i.tid IN('.implode(',',array_keys($this->taxaList)).'))';
+				$matchedArr = $this->setImageSubset($sql);
 			}
-			$rs->free();
-			$missingArr = array_diff(array_keys($this->taxaList),$matchedArr);
-			if($missingArr){
-				//Get children images
-				$sql2 = 'SELECT i2.tid, i.url, i.thumbnailurl FROM images i INNER JOIN '.
-					'(SELECT ts1.parenttid AS tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
+			if($missingArr = array_diff(array_keys($this->taxaList),$matchedArr)){
+				$sql = 'SELECT i2.tid, i.url, i.thumbnailurl FROM images i INNER JOIN '.
+					'(SELECT ts1.tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
 					'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 					'INNER JOIN images i ON ts2.tid = i.tid '.
-					'WHERE i.sortsequence < 500 AND (i.thumbnailurl IS NOT NULL) AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.parenttid IN('.implode(',',$missingArr).')) '.
+					'WHERE i.sortsequence < 500 AND (i.thumbnailurl IS NOT NULL) AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.tid IN('.implode(',',$missingArr).')) '.
 					'GROUP BY ts1.tid) i2 ON i.imgid = i2.imgid';
-				//echo $sql;
-				$rs2 = $this->conn->query($sql2);
-				while($row2 = $rs2->fetch_object()){
-					$this->taxaList[$row2->tid]['url'] = $row2->url;
-					$this->taxaList[$row2->tid]['tnurl'] = $row2->thumbnailurl;
+				$matchedArr = $this->setImageSubset($sql);
+				if($missingArr = array_diff(array_keys($this->taxaList),$matchedArr)){
+					//Get children images
+					$sql = 'SELECT i2.tid, i.url, i.thumbnailurl FROM images i INNER JOIN '.
+						'(SELECT ts1.parenttid AS tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
+						'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
+						'INNER JOIN images i ON ts2.tid = i.tid '.
+						'WHERE i.sortsequence < 500 AND (i.thumbnailurl IS NOT NULL) AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.parenttid IN('.implode(',',$missingArr).')) '.
+						'GROUP BY ts1.tid) i2 ON i.imgid = i2.imgid';
+					$this->setImageSubset($sql);
 				}
-				$rs2->free();
 			}
 		}
 	}
 
+	private function setImageSubset($sql){
+		$matchTidArr = array();
+		if($this->taxaList){
+			//echo $sql;
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_object()){
+				if(!in_array($r->tid,$matchTidArr)){
+					$this->taxaList[$r->tid]['url'] = $r->url;
+					$this->taxaList[$r->tid]['tnurl'] = $r->thumbnailurl;
+					$matchTidArr[$r->tid] = $r->tid;
+				}
+			}
+			$rs->free();
+		}
+		return $matchTidArr;
+	}
+
 	private function setVernaculars(){
 		if($this->taxaList){
-			$tempVernArr = array();
 			$sql = 'SELECT ts1.tid, v.vernacularname '.
 				'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 				'INNER JOIN taxavernaculars v ON ts2.tid = v.tid '.
@@ -758,6 +770,10 @@ class ChecklistManager {
 
 	public function setShowImages($bool){
 		if($bool) $this->showImages = true;
+	}
+
+	public function setLimitImagesToVouchers($bool){
+		if($bool) $this->limitImagesToVouchers = true;
 	}
 
 	public function setShowVouchers($bool){

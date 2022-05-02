@@ -36,7 +36,6 @@ cp ../content/lang/contacts.es_template.php ../content/lang/contacts.es.php
 
 #Adjust file permission to give write access to certain folders and files
 echo "Adjusting file permissions"
-chmod 777 ../webservices/dwc/rss.xml
 chmod -R 777 ../temp
 chmod -R 777 ../content/collicon
 chmod -R 777 ../content/dwca

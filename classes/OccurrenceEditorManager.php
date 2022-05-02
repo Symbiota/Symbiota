@@ -950,7 +950,7 @@ class OccurrenceEditorManager {
 								}
 								$newValue = $postArr[$fieldName];
 								$oldValue = '';
-								if($oldValueArr && $oldValueArr[$tableName][$fieldName]) $oldValue = $oldValueArr[$tableName][$fieldName];
+								if(isset($oldValueArr[$tableName][$fieldName])) $oldValue = $oldValueArr[$tableName][$fieldName];
 								//Version edits only if value has changed
 								if($oldValue != $newValue){
 									if($fieldName != 'tidinterpreted'){

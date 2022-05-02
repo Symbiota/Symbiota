@@ -46,7 +46,7 @@ $clMetaArr = $clManager->getClMetadata();
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
-	<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['CHECKADMIN'];?></title>
+	<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['CHECKLIST_ADMIN'];?></title>
 	<?php
     $activateJQuery = true;
     if(file_exists($SERVER_ROOT.'/includes/head.php')){
@@ -80,7 +80,7 @@ include($SERVER_ROOT.'/includes/header.php');
 <div class="navpath">
 	<a href="../index.php"><?php echo $LANG['NAV_HOME']?></a> &gt;&gt;
 	<a href="checklist.php?clid=<?php echo $clid.'&pid='.$pid; ?>"><?php echo $LANG['RETURNCHECK'];?></a> &gt;&gt;
-	<b><?php echo $LANG['CHECKADMIN'];?></b>
+	<b><?php echo $LANG['CHECKLIST_ADMIN'];?></b>
 </div>
 <!-- This is inner text! -->
 <div id='innertext'>

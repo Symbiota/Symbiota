@@ -7,8 +7,6 @@ Language: English
 
 include_once('checklist.en.php');
 
-$LANG['NAV_HOME'] = 'Home';
-$LANG['CHECKADMIN'] = 'Checklist Administration';
 $LANG['SELECTPROJECT'] = 'Select a project';
 $LANG['RETURNCHECK'] = 'Return to Checklist';
 $LANG['ADMIN'] = 'Admin';
@@ -34,16 +32,11 @@ $LANG['EDITCHECKDET'] = 'Edit Checklist Details';
 $LANG['CHECKNAME'] = 'Checklist Name';
 $LANG['CHECKTYPE'] = 'Checklist Type';
 $LANG['RARETHREAT'] = 'Rare, threatened, protected species list';
-$LANG['AUTHORS'] = 'Authors';
 $LANG['GENCHECK'] = 'General Checklist';
 $LANG['LOC'] = 'Locality';
-$LANG['CITATION'] = 'Citation';
-$LANG['INTNOTES'] = 'Internal Notes:';
-$LANG['ABSTRACT'] = 'Abstract:';
 $LANG['PARCHECK'] = 'Parent Checklist';
 $LANG['SELECTPARCHECK'] = 'Select a Parent checklist';
 $LANG['SPECIES'] = 'Species:';
-$LANG['NOTES'] = 'Notes';
 $LANG['LATCENT'] = 'Latitude';
 $LANG['LONGCENT'] = 'Longitude';
 $LANG['POINTRAD'] = 'Point Radius (meters)';
@@ -53,14 +46,6 @@ $LANG['POLYGON_NOT_DEFINED'] = 'Polygon footprint not defined<br/>Click globe to
 $LANG['POLYGON_READY'] = 'Polygon changed/removed<br/>and ready to be saved';
 $LANG['DEFAULTDISPLAY'] = 'Default Display Settings';
 $LANG['SHOWDETAILS'] = 'Show Details';
-$LANG['DISPLAY_SYNONYMS'] = 'Display Synonyms';
-$LANG['COMMON'] = 'Display Common Names';
-$LANG['DISPLAYIMG'] = 'Display as Images';
-$LANG['NOTESVOUC'] = 'Show Notes &amp; Vouchers';
-$LANG['TAXONAUTHOR'] = 'Dislay Taxon Authors';
-$LANG['TAXONABC'] = ' Display Taxa Alphabetically';
-$LANG['ACTIVATEKEY'] = 'Activate Identification Key';
-$LANG['DEFAULT_SORT'] = 'Default Sorting Sequence';
 $LANG['ACCESS'] = 'Access';
 $LANG['PRIVATE'] = 'Private';
 $LANG['PUBLIC'] = 'Public';

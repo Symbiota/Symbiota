@@ -372,8 +372,8 @@ class DwcArchiverOccurrence{
 		$rs->free();
 	}
 
-	public function getExsiccateStr($occid){
-		$retStr = '';
+	public function getExsiccateArr($occid){
+		$retArr = array();
 		if($this->includeExsiccatae && is_numeric($occid)){
 			$sql = 'SELECT t.title, t.abbreviation, t.editor, t.exsrange, n.exsnumber, l.notes '.
 				'FROM omexsiccatiocclink l INNER JOIN omexsiccatinumbers n ON l.omenid = n.omenid '.
@@ -381,16 +381,25 @@ class DwcArchiverOccurrence{
 				'WHERE l.occid = '.$occid;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$retStr = $r->title;
-				if($r->abbreviation) $retStr .= ' ['.$r->abbreviation.']';
-				if($r->exsrange) $retStr .= ', '.$r->exsrange;
-				if($r->editor) $retStr .= ', '.$r->editor;
-				$retStr .= ', exs #: '.$r->exsnumber;
-				if($r->notes) $retStr .= ' ('.$r->notes.')';
+				$exsStr = $r->title;
+				if($r->abbreviation) $exsStr .= ' ['.$r->abbreviation.']';
+				if($r->exsrange) $exsStr .= ', '.$r->exsrange;
+				if($r->editor) $exsStr .= ', '.$r->editor;
+				$exsStr .= ', exs #: '.$r->exsnumber;
+				if($r->notes) $exsStr .= ' ('.$r->notes.')';
+				$retArr['exsStr'] = $exsStr;
+				$dynProp = array();
+				$dynProp['exsTitle'] = $r->title;
+				if($r->abbreviation) $dynProp['exsAbbreviation'] = $r->abbreviation;
+				if($r->exsrange) $dynProp['exsRange'] = $r->exsrange;
+				if($r->editor) $dynProp['exsEditor'] = $r->editor;
+				$dynProp['exsNumber'] = $r->exsnumber;
+				if($r->notes) $dynProp['exsNotes'] = $r->notes;
+				$retArr['exsJson'] = json_encode($dynProp);
 			}
 			$rs->free();
 		}
-		return $retStr;
+		return $retArr;
 	}
 
 	public function getAssociationStr($occid){

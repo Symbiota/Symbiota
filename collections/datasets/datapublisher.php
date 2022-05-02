@@ -243,8 +243,8 @@ include($SERVER_ROOT.'/includes/header.php');
 		<?php
 		echo '<b>'.$LANG['RSS_FEED'].':</b> ';
 		$urlPrefix = $dwcaManager->getServerDomain().$CLIENT_ROOT.(substr($CLIENT_ROOT,-1)=='/'?'':'/');
-		if(file_exists('../../webservices/dwc/rss.xml')){
-			$feedLink = $urlPrefix.'webservices/dwc/rss.xml';
+		if(file_exists('../../content/dwca/rss.xml')){
+			$feedLink = $urlPrefix.'content/dwca/rss.xml';
 			echo '<a href="'.$feedLink.'" target="_blank">'.$feedLink.'</a>';
 		}
 		else{

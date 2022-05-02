@@ -76,6 +76,7 @@ class ChecklistAdmin{
 			$defaultViewArr["dsynonyms"] = array_key_exists("dsynonyms",$postArr)?1:0;
 			$defaultViewArr["dcommon"] = array_key_exists("dcommon",$postArr)?1:0;
 			$defaultViewArr["dimages"] = array_key_exists("dimages",$postArr)?1:0;
+			$defaultViewArr['dvoucherimages'] = array_key_exists('dvoucherimages',$postArr)?1:0;
 			$defaultViewArr["dvouchers"] = array_key_exists("dvouchers",$postArr)?1:0;
 			$defaultViewArr["dauthors"] = array_key_exists("dauthors",$postArr)?1:0;
 			$defaultViewArr["dalpha"] = array_key_exists("dalpha",$postArr)?1:0;
@@ -137,7 +138,8 @@ class ChecklistAdmin{
 			$defaultViewArr["ddetails"] = array_key_exists("ddetails",$postArr)?1:0;
 			$defaultViewArr["dsynonyms"] = array_key_exists("dsynonyms",$postArr)?1:0;
 			$defaultViewArr["dcommon"] = array_key_exists("dcommon",$postArr)?1:0;
-			$defaultViewArr["dimages"] = array_key_exists("dimages",$postArr)?1:0;
+			$defaultViewArr['dimages'] = array_key_exists('dimages',$postArr)?1:0;
+			$defaultViewArr['dvoucherimages'] = array_key_exists('dvoucherimages',$postArr)?1:0;
 			$defaultViewArr["dvouchers"] = array_key_exists("dvouchers",$postArr)?1:0;
 			$defaultViewArr["dauthors"] = array_key_exists("dauthors",$postArr)?1:0;
 			$defaultViewArr["dalpha"] = array_key_exists("dalpha",$postArr)?1:0;

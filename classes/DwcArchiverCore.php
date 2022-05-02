@@ -1738,9 +1738,13 @@ class DwcArchiverCore extends Manager{
 				elseif($this->schemaType == 'backup') unset($r['collID']);
 
 				if($ocnStr = $dwcOccurManager->getAdditionalCatalogNumberStr($r['occid'])) $r['otherCatalogNumbers'] = $ocnStr;
-				if($exsStr = $dwcOccurManager->getExsiccateStr($r['occid'])){
+				if($exsArr = $dwcOccurManager->getExsiccateArr($r['occid'])){
+					$exsStr = $exsArr['exsStr'];
 					if(isset($r['occurrenceRemarks']) && $r['occurrenceRemarks']) $exsStr = $r['occurrenceRemarks'].'; '.$exsStr;
 					$r['occurrenceRemarks'] = $exsStr;
+					$dynProp = 'exsiccatae: '.$exsArr['exsJson'];
+					if(isset($r['dynamicProperties']) && $r['dynamicProperties']) $dynProp = $r['dynamicProperties'].'; '.$dynProp;
+					$r['dynamicProperties'] = $dynProp;
 				}
 				if($assocOccurStr = $dwcOccurManager->getAssociationStr($r['occid'])) $r['t_associatedOccurrences'] = $assocOccurStr;
 				if($assocSeqStr = $dwcOccurManager->getAssociatedSequencesStr($r['occid'])) $r['t_associatedSequences'] = $assocSeqStr;
@@ -1993,7 +1997,7 @@ class DwcArchiverCore extends Manager{
 
 	public function deleteArchive($collid){
 		//Remove archive instance from RSS feed
-		$rssFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1)=='/'?'':'/').'webservices/dwc/rss.xml';
+		$rssFile = $GLOBALS['SERVER_ROOT'].'/content/dwca/rss.xml';
 		if(!file_exists($rssFile)) return false;
 		$doc = new DOMDocument();
 		$doc->load($rssFile);

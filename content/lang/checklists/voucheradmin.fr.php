@@ -6,7 +6,7 @@ Language: Français (French)
 */
 
 $LANG['NAV_HOME'] = 'Accueil';
-$LANG['CHECKADMIN'] = 'Administration d\'Liste';
+$LANG['CHECKLIST_ADMIN'] = 'Administration d\'Liste';
 $LANG['RETURNCHECK'] = 'Retour à Liste';
 $LANG['ADDIMGVOUCHER'] = 'Ajouter l\'Échantillon d\'Image';
 $LANG['EDITSEARCH'] = 'Modifier l\'Instruction de Recherche';
@@ -42,7 +42,7 @@ $LANG['CHECKLISTID'] = 'ID de Liste';
 $LANG['ADDNAMECURRTAX'] = 'Ajouter nom en utilisant la taxonomie actuelle';
 $LANG['NOVOUCHLOCA'] = 'Aucun échantillon localisé';
 $LANG['LISTEDBELOWARESPECINSTRUC'] = "Ci-dessous figurent les espèces de la liste qui n'ont pas d'échantillons liés..
-Cliquez sur le nom pour utiliser l'instruction de recherche ci-dessus pour interroger dynamiquement l'ensemble de données 
+Cliquez sur le nom pour utiliser l'instruction de recherche ci-dessus pour interroger dynamiquement l'ensemble de données
 pour des échantillons possibles. Utilisez le menu déroulant à droite pour afficher les échantillons sous forme de tableau.";
 $LANG['ALLTAXACONTAINVOUCH'] = 'Tous les taxons contiennent des échantillons';
 $LANG['FULLSPECLIST'] = 'Liste complète des espèces (CSV)';

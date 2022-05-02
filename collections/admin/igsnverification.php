@@ -153,9 +153,7 @@ include($SERVER_ROOT.'/includes/header.php');
 			echo '</fieldset>';
 		}
 	}
-	else{
-		echo '<h2>You are not authorized to access this page or collection identifier has not been set</h2>';
-	}
+	else echo '<h2>You are not authorized to access this page or collection identifier has not been set</h2>';
 	?>
 </div>
 <?php

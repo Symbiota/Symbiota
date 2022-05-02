@@ -5,10 +5,8 @@ Language: Español (Spanish)
 ------------------
 */
 
-include_once('checklist.en.php');
+include_once('checklist.es.php');
 
-$LANG['NAV_HOME'] = 'Inicio';
-$LANG['CHECKADMIN'] = 'Administraci&oacute;n de Listado de Comprobaci&oacute;n';
 $LANG['SELECTPROJECT'] = 'Selecciona un proyecto';
 $LANG['RETURNCHECK'] = 'Volver al Listado de Comprobaci&oacute;n';
 $LANG['ADMIN'] = 'Admin';
@@ -34,16 +32,11 @@ $LANG['EDITCHECKDET'] = 'Editar detalles del Listado de Comprobaci&oacute;n';
 $LANG['CHECKNAME'] = 'Nombre del Listado de Comprobaci&oacute;n';
 $LANG['CHECKTYPE'] = 'Tipo de Listado de Comprobaci&oacute;n';
 $LANG['RARETHREAT'] = 'Listado de especies raras, amenazadas, protegidas';
-$LANG['AUTHORS'] = 'Autores';
 $LANG['GENCHECK'] = 'Listado de Comprobaci&oacute;n General';
 $LANG['LOC'] = 'Localidad';
-$LANG['CITATION'] = 'Cita';
-$LANG['INTNOTES'] = 'Notas Internas:';
-$LANG['ABSTRACT'] = 'Resumen:';
 $LANG['PARCHECK'] = 'Listado de Comprobaci&oacute;n Padre';
 $LANG['SELECTPARCHECK'] = 'Seleccionar un Listado de Comprobaci&oacute;n Padre';
 $LANG['SPECIES'] = 'Especies:';
-$LANG['NOTES'] = 'Notas';
 $LANG['LATCENT'] = 'Latitud';
 $LANG['LONGCENT'] = 'Longitud';
 $LANG['POINTRAD'] = 'Punto Radio (metros)';
@@ -53,14 +46,6 @@ $LANG['POLYGON_NOT_DEFINED'] = 'Pol&iacute;gono definida<br/>Haga clic en globo 
 $LANG['POLYGON_READY'] = 'Pol&iacute;gono cambiado y listas para guardar';
 $LANG['DEFAULTDISPLAY'] = 'Ajustes de Vista por Defecto';
 $LANG['SHOWDETAILS'] = 'Mostrar Detalles';
-$LANG['DISPLAY_SYNONYMS'] = 'Mostrar Sin&oacute;nimos';
-$LANG['COMMON'] = ' Nombres comunes';
-$LANG['DISPLAYIMG'] = 'Mostrar como Im&aacute;genes';
-$LANG['NOTESVOUC'] = 'Notas &amp; Vouchers';
-$LANG['TAXONAUTHOR'] = 'Autores del Tax&oacute;n';
-$LANG['TAXONABC'] = ' Mostrar Taxa Alfab&eacute;ticamente';
-$LANG['ACTIVATEKEY'] = 'Activate Identification Key';
-$LANG['DEFAULT_SORT'] = 'Secuencia de clasificaci&oacute;n';
 $LANG['ACCESS'] = 'Acceso';
 $LANG['PRIVATE'] = 'Privado';
 $LANG['PUBLIC'] = 'P&uacute;blico';
