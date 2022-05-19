@@ -43,3 +43,4 @@ chmod -R 777 ../content/geolocate
 chmod -R 777 ../content/imglib
 chmod -R 777 ../content/lang
 chmod -R 777 ../content/logs 
+chmod -R 777 ../api/storage 

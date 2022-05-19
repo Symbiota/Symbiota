@@ -24,7 +24,6 @@ class SpecUploadDwca extends SpecUploadBase{
 		if(array_key_exists('ulfnoverride',$_POST) && $_POST['ulfnoverride'] && !$this->path){
 			$this->path = $_POST['ulfnoverride'];
 		}
-
 		if($this->path){
 			if($this->uploadType == $this->IPTUPLOAD){
 				$this->path = preg_replace('/&v=[\d\.]+/', '', $this->path);
@@ -73,12 +72,8 @@ class SpecUploadDwca extends SpecUploadBase{
 				if(!is_writable($this->uploadTargetPath)) $this->errorStr .= 'permission issue, target directory is not writable (path: '.$targetPath.')';
 				$this->outputMsg('<li>'.$this->errorStr.' </li>');
 			}
-			if($this->unpackArchive()){
-				$retPath = $this->uploadTargetPath;
-			}
-			else{
-				$this->uploadTargetPath = '';
-			}
+			if($this->unpackArchive()) $retPath = $this->uploadTargetPath;
+			else $this->uploadTargetPath = '';
 		}
 		return $retPath;
 	}
@@ -89,7 +84,6 @@ class SpecUploadDwca extends SpecUploadBase{
 	}
 
 	private function unpackArchive(){
-		//Extract archive
 		$status = true;
 		if(file_exists($this->uploadTargetPath.'dwca.zip')){
 			$zip = new ZipArchive;
@@ -249,7 +243,9 @@ class SpecUploadDwca extends SpecUploadBase{
 									$fh = fopen($this->uploadTargetPath.$this->metaArr['occur']['name'],'r') or die("Can't open occurrence file");
 									$headerArr = $this->getRecordArr($fh,true);
 									foreach($headerArr as $k => $v){
-										if(strtolower($v) != strtolower($this->metaArr['occur']['fields'][$k])){
+										$metaField = strtolower($this->metaArr['occur']['fields'][$k]);
+										if(substr($metaField,0,6) == 'paleo-') $metaField = substr($metaField,6);
+										if(strtolower($v) != $metaField){
 											$msg = '<div style="margin-left:25px;">';
 											$msg .= 'WARNING: meta.xml field order out of sync w/ '.$this->metaArr['occur']['name'].'; remapping: field #'.($k+1).' => '.$v;
 											$msg .= '</div>';
@@ -345,7 +341,7 @@ class SpecUploadDwca extends SpecUploadBase{
 												$metaField = strtolower($this->metaArr[$tagName]['fields'][$k]);
 												if(strtolower($v) != $metaField && $metaField != 'coreid'){
 													$msg = '<div style="margin-left:25px;">';
-													$msg .= 'WARNING: meta.xml field order out of sync w/ '.$this->metaArr[$tagName]['name'].'; remapping: field #'.($k+1).' => '.$v;
+													$msg .= 'WARNING: meta.xml field order out of sync with '.$this->metaArr[$tagName]['name'].'; remapping: field #'.($k+1).' => '.$v;
 													$msg .= '</div>';
 													$this->outputMsg($msg);
 													$this->errorStr = $msg;
@@ -392,15 +388,23 @@ class SpecUploadDwca extends SpecUploadBase{
 									$urlRoot = substr($urlRoot,0,strpos($urlRoot,'/collections/misc/collprofiles.php'));
 									$portalName = 'GUID: '.$symbiotaGuid;
 									if($GLOBALS['DEFAULT_TITLE']) $portalName = $GLOBALS['DEFAULT_TITLE'];
-									$sql = 'INSERT INTO portalindex(portalName, urlRoot, guid)
-										VALUES("'.$this->cleanInStr($portalName).'","'.$this->cleanInStr($urlRoot).'","'.$this->cleanInStr($symbiotaGuid).'")';
-									if($this->conn->query($sql)){
-										$this->sourcePortalIndex = $this->conn->insert_id;
-										$this->touchRemoteInstallation($urlRoot);
+									//Temp code need until portal index schema is finalized
+									$tableExists = false;
+									if($rs = $this->conn->query('SHOW TABLES LIKE "portalindex"')){
+										if($rs->num_rows) $tableExists = true;
+										$rs->free();
 									}
-									else{
-										//$this->errorStr = 'ERROR adding portal index: '.$this->conn->error();
-										//$this->outputMsg($this->errorStr);
+									if($tableExists){
+										$sql = 'INSERT INTO portalindex(portalName, urlRoot, guid)
+											VALUES("'.$this->cleanInStr($portalName).'","'.$this->cleanInStr($urlRoot).'","'.$this->cleanInStr($symbiotaGuid).'")';
+										if($this->conn->query($sql)){
+											$this->sourcePortalIndex = $this->conn->insert_id;
+											$this->touchRemoteInstallation($urlRoot);
+										}
+										else{
+											//$this->errorStr = 'ERROR adding portal index: '.$this->conn->error();
+											//$this->outputMsg($this->errorStr);
+										}
 									}
 								}
 							}
@@ -431,10 +435,18 @@ class SpecUploadDwca extends SpecUploadBase{
 
 	private function setPortalID($symbiotaGuid){
 		if($symbiotaGuid){
-			$sql = 'SELECT portalID FROM portalindex WHERE guid = "'.$this->cleanInStr($symbiotaGuid).'"';
-			if($rs = $this->conn->query($sql)){
-				if($r = $rs->fetch_object()) $this->sourcePortalIndex = $r->portalID;
+			//Temp code need until portal index schema is finalized
+			$tableExists = false;
+			if($rs = $this->conn->query('SHOW TABLES LIKE "portalindex"')){
+				if($rs->num_rows) $tableExists = true;
 				$rs->free();
+			}
+			if($tableExists){
+				$sql = 'SELECT portalID FROM portalindex WHERE guid = "'.$this->cleanInStr($symbiotaGuid).'"';
+				if($rs = $this->fconn->query($sql)){
+					if($r = $rs->fetch_object()) $this->sourcePortalIndex = $r->portalID;
+					$rs->free();
+				}
 			}
 		}
 	}
@@ -467,7 +479,6 @@ class SpecUploadDwca extends SpecUploadBase{
 
 		$fullPath = $this->uploadTargetPath;
 		if(file_exists($fullPath)){
-
 			if($this->readMetaFile() && isset($this->metaArr['occur']['fields'])){
 				//Set parsing variables
 				if(isset($this->metaArr['occur']['fieldsTerminatedBy']) && $this->metaArr['occur']['fieldsTerminatedBy']){

@@ -544,7 +544,7 @@ class OccurrenceSesar extends Manager {
 			$rs->free();
 		}
 		if(isset($sesarResultArr['missing'])) $this->setMissingSesarMeta($sesarResultArr);
-		//$this->setSynchronizationStatus();
+		$this->setSynchronizationStatus();
 		return $sesarResultArr;
 	}
 
@@ -617,7 +617,7 @@ class OccurrenceSesar extends Manager {
 					if(preg_match('/[A-Z.\s]+(\{.+)/i', $retStr, $m1)) $retStr = $m1[1];
 				}
 				$igsnObj = json_decode($retStr);
-				if(preg_match('/^(.+)\s*\[\s*(\d+)\s*\]$/', $igsnObj->name,$m2)){
+				if(preg_match('/^(.*)\s*\[\s*(\d+)\s*\]$/', $igsnObj->name,$m2)){
 					$catNum = $m2[1];
 					$occid = $m2[2];
 					$sesarResultArr['missing'][$lostIGSN] = array('catNum'=>$catNum,'occid'=>$occid);
@@ -634,27 +634,18 @@ class OccurrenceSesar extends Manager {
 	private function setSynchronizationStatus(){
 		$status = false;
 		$sqlArr = array();
-		$sqlArr[] = 'UPDATE igsnverification SET syncStatus = "OK" WHERE occid IS NOT NULL AND catalogNumber IS NULL';
-		$sqlArr[] = 'UPDATE igsnverification i INNER JOIN omoccurrences o ON i.occid = o.occid '.
-			'SET i.syncStatus = "secondaryIGSN assigned" '.
-			'WHERE i.catalognumber IS NOT NULL AND i.igsn != o.occurrenceID AND i.syncStatus IS NULL';
-		$sqlArr[] = 'UPDATE igsnverification i INNER JOIN omoccuridentifiers i2 ON i.catalogNumber = i2.identifiervalue '.
-			'INNER JOIN omoccurrences o ON i2.occid = o.occid '.
-			'SET i.syncStatus = "secondaryIGSN assigned", i.occid = o.occid '.
-			'WHERE i.catalognumber IS NOT NULL AND i.occid IS NULL AND i.igsn != o.occurrenceID AND i.syncStatus IS NULL';
-		$sqlArr[] = 'UPDATE igsnverification i INNER JOIN NeonSample s ON i.catalogNumber = s.sampleID '.
-			'INNER JOIN omoccurrences o ON s.occid = o.occid '.
-			'SET i.syncStatus = "secondaryIGSN assigned", i.occid = o.occid '.
-			'WHERE i.catalognumber IS NOT NULL AND i.occid IS NULL AND i.igsn != o.occurrenceID AND i.syncStatus IS NULL';
-		$sqlArr[] = 'UPDATE igsnverification i INNER JOIN NeonSample s ON i.catalogNumber = s.sampleID '.
-			'INNER JOIN omoccurrences o ON s.occid = o.occid '.
-			'SET i.syncStatus = "secondaryIGSN assigned", i.occid = o.occid '.
-			'WHERE i.catalognumber IS NOT NULL AND i.occid IS NULL AND i.igsn != o.occurrenceID AND i.syncStatus IS NULL';
-		$sqlArr[] = 'UPDATE igsnverification i INNER JOIN NeonSample s ON i.catalogNumber = s.alternativeSampleID '.
-			'INNER JOIN omoccurrences o ON s.occid = o.occid '.
-			'SET i.syncStatus = "secondaryIGSN assigned", i.occid = o.occid '.
-			'WHERE i.catalognumber IS NOT NULL AND i.occid IS NULL AND i.igsn != o.occurrenceID AND i.syncStatus IS NULL';
-		$sqlArr[] = 'UPDATE igsnverification SET syncStatus = "" WHERE syncStatus IS NULL AND occid IS NULL AND catalogNumber IS NOT NULL';
+		$sqlArr[] = 'UPDATE omoccurrences o LEFT JOIN igsnverification v ON o.occurrenceid = v.igsn
+			SET v.syncStatus = "IGSN in portal, not in SESAR system"
+			WHERE o.occurrenceID LIKE "NEON%" AND v.igsn IS NULL';
+		$sqlArr[] = 'UPDATE igsnverification SET syncStatus = "OK" WHERE occidInPortal IS NOT NULL AND catalogNumber IS NULL';
+		$sqlArr[] = 'UPDATE igsnverification i INNER JOIN omoccurrences o ON i.occidInSesar = o.occid
+			SET i.syncStatus = "newIGSN re-assigned to same occurrence record"
+			WHERE i.occidInPortal IS NULL AND i.igsn != o.occurrenceID AND i.syncStatus IS NULL';
+		$sqlArr[] = 'UPDATE igsnverification v INNER JOIN omoccuridentifiers i ON v.catalogNumber = i.identifierValue
+			INNER JOIN omoccurrences o ON i.occid = o.occid
+			SET v.syncStatus = "newIGSN, new record, matching NEON ID"
+			WHERE v.occidInPortal IS NULL AND v.igsn != o.occurrenceID AND v.syncStatus IS NULL';
+		$sqlArr[] = 'UPDATE igsnverification SET syncStatus = "Occurrence not in portal" WHERE occidInPortal IS NULL AND catalogNumber IS NOT NULL AND syncStatus IS NULL';
 		foreach($sqlArr as $sql){
 			if(!$this->conn->query($sql)){
 				$errorStr = 'ERROR setting syncStatus: '.$this->conn->error;
@@ -731,6 +722,8 @@ class OccurrenceSesar extends Manager {
 	private function getSesarApiData($url, $method = 'get', $requestData = null){
 		$retArr = array();
 		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array ( 'Accept: application/json' ));

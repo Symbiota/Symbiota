@@ -2,9 +2,9 @@ Copy code below into the site's home page (index.php) or any other page of inter
 Tool is dependent on the following css and js files being included within head tag
   
 	<link href="css/quicksearch.css" type="text/css" rel="Stylesheet" />
-	<link href="js/jquery-ui-1.12.1/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
+	<link href="js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
 	<script src="js/jquery-3.2.1.min.js" type="text/javascript"></script>
-	<script src="js/jquery-ui-1.12.1/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="js/symb/api.taxonomy.taxasuggest.js" type="text/javascript"></script>
 
 

@@ -38,6 +38,26 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Pagination parameter: maximum number of records per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1000
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Pagination parameter: page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
                     }
                 ],
                 "responses": {
@@ -61,6 +81,17 @@
                     ""
                 ],
                 "operationId": "/api/v2/collection/identifier",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "Installation ID or GUID associated with target collection",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Returns collection data",
@@ -86,7 +117,7 @@
                     {
                         "name": "limit",
                         "in": "query",
-                        "description": "record limit per page",
+                        "description": "Pagination parameter: maximum number of records per page",
                         "required": false,
                         "schema": {
                             "type": "integer",
@@ -96,7 +127,7 @@
                     {
                         "name": "offset",
                         "in": "query",
-                        "description": "page number",
+                        "description": "Pagination parameter: page number",
                         "required": false,
                         "schema": {
                             "type": "integer",
@@ -189,10 +220,10 @@
                         }
                     },
                     {
-                        "name": "urlPath",
+                        "name": "endpoint",
                         "in": "query",
                         "description": "Url to Symbiota root of remote installation",
-                        "required": false,
+                        "required": true,
                         "schema": {
                             "type": "string"
                         }
@@ -201,6 +232,58 @@
                 "responses": {
                     "200": {
                         "description": "Returns metabase remote installation, if successfully registered",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. Identifier of remote installation is required."
+                    }
+                }
+            }
+        },
+        "/api/v2/installation/{identifier}/occurrence": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/installation/identifier/occurrence",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "Identifier of the remote installation",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Pagination parameter: maximum number of records per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 100
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Pagination parameter: page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns list of occurrences associated with an installations",
                         "content": {
                             "application/json": {
                                 "schema": {}
@@ -268,19 +351,21 @@
                     {
                         "name": "limit",
                         "in": "query",
-                        "description": "record limit per page",
+                        "description": "Pagination parameter: maximum number of records per page",
                         "required": false,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "default": 100
                         }
                     },
                     {
                         "name": "offset",
                         "in": "query",
-                        "description": "page number",
+                        "description": "Pagination parameter: page number",
                         "required": false,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "default": 0
                         }
                     }
                 ],

@@ -375,7 +375,7 @@ class SpecUpload{
 	}
 
 	public function createUploadProfile($profileArr){
-		$sql = 'INSERT INTO uploadspecparameters(collid, uploadtype, title, platform, server, port, code, path, pkfield, username, password, schemaname, cleanupsp, querystr)
+		$sql = 'INSERT INTO uploadspecparameters(collid, uploadtype, title, platform, server, port, code, path, pkfield, username, password, schemaname, cleanupsp, querystr, createdUid)
 			VALUES ('.$this->collId.','.
 			$profileArr['uploadtype'].',"'.$this->cleanInStr($profileArr['title']).'",'.
 			(isset($profileArr['platform'])&&$profileArr['platform']?'"'.$this->cleanInStr($profileArr['platform']).'"':'NULL').','.
@@ -388,8 +388,8 @@ class SpecUpload{
 			(isset($profileArr['password'])&&$profileArr['password']?'"'.$this->cleanInStr($profileArr['password']).'"':'NULL').','.
 			(isset($profileArr['schemaname'])&&$profileArr['schemaname']?'"'.$this->cleanInStr($profileArr['schemaname']).'"':'NULL').','.
 			(isset($profileArr['cleanupsp'])&&$profileArr['cleanupsp']?'"'.$this->cleanInStr($profileArr['cleanupsp']).'"':'NULL').','.
-			(isset($profileArr['querystr'])&&$profileArr['querystr']?'"'.$this->cleanInStr($profileArr['querystr']).'"':'NULL').')';
-		//echo $sql;
+			(isset($profileArr['querystr'])&&$profileArr['querystr']?'"'.$this->cleanInStr($profileArr['querystr']).'"':'NULL').','.$GLOBALS['SYMB_UID'].')';
+			//echo $sql;
 		if($this->conn->query($sql)){
 			return $this->conn->insert_id;
 		}

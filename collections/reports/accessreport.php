@@ -10,7 +10,6 @@ $display = array_key_exists('display',$_REQUEST)?$_REQUEST['display']:'summary';
 $duration = array_key_exists('duration',$_REQUEST)?$_REQUEST['duration']:'day';
 $startDate = array_key_exists('startdate',$_REQUEST)?$_REQUEST['startdate']:'';
 $endDate = array_key_exists('enddate',$_REQUEST)?$_REQUEST['enddate']:'';
-$ip = array_key_exists('ip',$_REQUEST)?$_REQUEST['ip']:'';
 $accessType = array_key_exists('accesstype',$_REQUEST)?$_REQUEST['accesstype']:'';
 $occid = array_key_exists('occid',$_REQUEST)?$_REQUEST['occid']:'';
 $pageNum = array_key_exists('pagenum',$_REQUEST)?$_REQUEST['pagenum']:'0';
@@ -24,7 +23,6 @@ if($collid) $collName = $statManager->setCollid($collid);
 $statManager->setDuration($duration);
 $statManager->setStartDate($startDate);
 $statManager->setEndDate($endDate);
-$statManager->setIpAddress($ip);
 $statManager->setAccessType($accessType);
 $statManager->setOccidStr($occid);
 $statManager->setPageNum($pageNum);
@@ -58,17 +56,10 @@ else{
 <html>
 	<head>
 		<title>Occurrence Access Reporting</title>
-    <?php
-      $activateJQuery = true;
-      if(file_exists($SERVER_ROOT.'/includes/head.php')){
-        include_once($SERVER_ROOT.'/includes/head.php');
-      }
-      else{
-        echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-        echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-        echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-      }
-    ?>
+		<?php
+		$activateJQuery = true;
+		include_once($SERVER_ROOT.'/includes/head.php');
+		?>
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>
 		<script>
@@ -133,7 +124,7 @@ else{
 				//Setup navigation bar
 				$subsetCnt = $limitCnt*($pageNum + 1);
 				if($subsetCnt > $recCnt) $subsetCnt = $recCnt;
-				$navPageBase = 'accessreport.php?collid='.$collid.'&display='.$display.'&duration='.$duration.'&startdate='.$startDate.'&enddate='.$endDate.'&ip='.$ip.'&accesstype='.$accessType;
+				$navPageBase = 'accessreport.php?collid='.$collid.'&display='.$display.'&duration='.$duration.'&startdate='.$startDate.'&enddate='.$endDate.'&accesstype='.$accessType;
 				$navStr = '<div class="navbarDiv" style="float:right;">';
 				if($pageNum){
 					$navStr .= '<a href="'.$navPageBase.'&pagenum='.($pageNum-1).'&limitcnt='.$limitCnt.'" title="Previous '.$limitCnt.' records">&lt;&lt;</a>';

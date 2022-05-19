@@ -47,7 +47,8 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
 	<script src="../js/jquery-3.2.1.min.js" type="text/javascript"></script>
-	<script src="../js/jquery-ui-1.12.1/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="../js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
+	<link href="../js/jquery-ui/jquery-ui.min.css?ver=1" type="text/css" rel="Stylesheet" />
 	<script src="../js/symb/collections.index.js?ver=2" type="text/javascript"></script>
 	<meta name='keywords' content='' />
 	<script type="text/javascript">

@@ -34,7 +34,9 @@ if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,
 	$isEditor = 1;
 }
 $duManager->readUploadParameters();
-if($uploadType == $IPTUPLOAD || $uploadType == $SYMBIOTA) if($duManager->getPath()) header('Location: specuploadmap.php?uploadtype=8&uspid='.$uspid.'&collid='.$collid);
+if($uploadType == $IPTUPLOAD || $uploadType == $SYMBIOTA){
+	if($duManager->getPath()) header('Location: specuploadmap.php?uploadtype=8&uspid='.$uspid.'&collid='.$collid);
+}
 elseif($uploadType == $DIRECTUPLOAD || $uploadType == $STOREDPROCEDURE || $uploadType == $SCRIPTUPLOAD){
 	header('Location: specuploadprocessor.php?uploadtype='.$SCRIPTUPLOAD.'&uspid='.$uspid.'&collid='.$collid);
 }

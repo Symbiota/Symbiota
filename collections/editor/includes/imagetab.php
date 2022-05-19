@@ -412,22 +412,7 @@ $photographerArr = $occManager->getPhotographerArr();
 									</fieldset>
 								</form>
 								<?php
-								$displayRemapForm = true;
-								$idArr = $occManager->getIdentifierArr();
-								$testArr = array();
-								if($imgArr['origurl']) $testArr[] = $imgArr['origurl'];
-								if($imgArr['url']) $testArr[] = $imgArr['url'];
-								foreach($idArr as $idStr){
-									foreach($testArr as $url){
-										if($testStr = substr($url, strrpos($url, '/'))){
-											if(strpos($testStr,$idStr) !== false && !preg_match('/_\d{10}[_\.]{1}/', $testStr)){
-												$displayRemapForm = false;
-												break 2;
-											}
-										}
-									}
-								}
-								if($displayRemapForm){
+								if($displayRemapForm = $occManager->isRemappable($imgArr)){
 									?>
 									<form name="img<?php echo $imgId; ?>remapform" action="occurrenceeditor.php" method="post" onsubmit="return verifyImgRemapForm(this);">
 										<fieldset style="padding:15px">

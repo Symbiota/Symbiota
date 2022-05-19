@@ -13,7 +13,8 @@ header("Content-Type: text/html; charset=".$CHARSET);
 	?>
 	<link href="css/quicksearch.css" type="text/css" rel="Stylesheet" />
 	<script src="js/jquery-3.2.1.min.js" type="text/javascript"></script>
-	<script src="js/jquery-ui-1.12.1/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
+	<link href="js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
 	<script type="text/javascript">
 		var clientRoot = "<?php echo $CLIENT_ROOT; ?>";
 	</script>

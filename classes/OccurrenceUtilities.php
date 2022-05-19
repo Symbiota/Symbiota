@@ -141,7 +141,7 @@ class OccurrenceUtilities {
 			}
 			//Do some cleaning
 			if(strlen($y) == 2){
-				if($y < 20) $y = '20'.$y;
+				if($y <= date('y')) $y = '20'.$y;
 				else $y = '19'.$y;
 			}
 			//Build

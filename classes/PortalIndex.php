@@ -16,7 +16,7 @@ class PortalIndex extends OmCollections{
 	public function getPortalIndexArr($portalID){
 		$retArr = array();
 		$sql = 'SELECT portalID, portalName, acronym, portalDescription, urlRoot, securityKey, symbiotaVersion, guid, manager, managerEmail, primaryLead, primaryLeadEmail, notes, initialTimestamp FROM portalindex ';
-		if($portalID) $sql .= 'WHERE portalID = '.$portalID;
+		if($portalID && is_numeric($portalID)) $sql .= 'WHERE portalID = '.$portalID;
 		else $sql .= 'ORDER BY portalName';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_assoc()){
@@ -90,6 +90,7 @@ class PortalIndex extends OmCollections{
 		$portal = $this->getPortalIndexArr($portalID);
 		$url = $portal[$portalID]['urlRoot'].'/api/v2/collection/'.$remoteID;
 		$collArr = $this->getAPIResponce($url);
+		$targetCollid = $collArr['collID'];
 		if(!$collArr['collectionID']){
 			if(isset($collArr['recordID'])) $collArr['collectionID'] = $collArr['recordID'];
 			elseif(isset($collArr['collectionGuid'])) $collArr['collectionID'] = $collArr['collectionGuid'];
@@ -101,11 +102,18 @@ class PortalIndex extends OmCollections{
 		$collArr['guidTarget'] = 'occurrenceId';
 		$parse = parse_url($portal[$portalID]['urlRoot']);
 		$collArr['icon'] = $parse['host'].$collArr['icon'];
+		$uploadType = 13;
+		$queryStr = null;
+		$endpointPublic = 1;
+		$title = 'Symbiota Import';
 		if($collid = $this->collectionInsert($collArr)){
-			$sql = 'INSERT INTO uploadspecparameters(collid, uploadType, title, path, queryStr, endpointPublic, createdUid)
-				VALUES('.$collid.',13,"Symbiota Import","'.$portal[$portalID]['urlRoot'].'",NULL,1,'.$GLOBALS['SYMB_UID'].')';
-			if(!$this->conn->query($sql)){
-				$this->warningArr[] = 'ERROR creating import profile: '.$this->conn->error;
+			$dwcaPath = $portal[$portalID]['urlRoot'].'/webservices/dwc/dwcapubhandler.php?collid='.$targetCollid.'&schema=symbiota&extended=1';
+			$sql = 'INSERT INTO uploadspecparameters(collid, uploadType, title, path, queryStr, endpointPublic, createdUid) VALUES(?,?,?,?,?,?,?)';
+			if($stmt = $this->conn->prepare($sql)) {
+				$stmt->bind_param('iisssii', $collid, $uploadType, $title, $dwcaPath, $queryStr, $endpointPublic, $GLOBALS['SYMB_UID']);
+				$stmt->execute();
+				if(!$stmt->affected_rows && $stmt->error) $this->warningArr[] = 'ERROR creating import profile: '.$this->conn->error;
+				$stmt->close();
 			}
 		}
 		return $collid;

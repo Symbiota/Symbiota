@@ -13,16 +13,16 @@ ALTER TABLE `agents`
 CREATE TABLE `agentoccurrencelink` (
   `agentID` BIGINT(20) NOT NULL,
   `occid` INT UNSIGNED NOT NULL,
-  `isPrimary` INT NULL,
+  `role` VARCHAR(45) NOT NULL DEFAULT '',
   `createdUid` INT UNSIGNED NULL,
   `modifiedUid` INT UNSIGNED NULL,
   `dateLastModified` DATETIME NULL,
   `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
-  PRIMARY KEY (`agentID`, `occid`),
+  PRIMARY KEY (`agentID`, `occid`, `role`),
   INDEX `FK_agentoccurlink_occid_idx` (`occid` ASC),
   INDEX `FK_agentoccurlink_created_idx` (`createdUid` ASC),
   INDEX `FK_agentoccurlink_modified_idx` (`modifiedUid` ASC),
-  INDEX `FK_agentoccurlink_isPrimary` (`isPrimary` ASC),
+  INDEX `FK_agentoccurlink_role` (`role` ASC),
   CONSTRAINT `FK_agentoccurlink_agentID`  FOREIGN KEY (`agentID`)  REFERENCES `agents` (`agentID`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_agentoccurlink_occid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_agentoccurlink_created`  FOREIGN KEY (`createdUid`)  REFERENCES `users` (`uid`)  ON DELETE RESTRICT  ON UPDATE CASCADE,
@@ -33,10 +33,11 @@ INSERT IGNORE INTO agents(familyName,firstName,middleName,startYearActive,endYea
   FROM omcollectors c LEFT JOIN agents a ON c.guid = a.guid
   WHERE a.guid IS NULL;
 
-INSERT IGNORE INTO agentoccurrencelink(agentID, occid, isPrimary)
-  SELECT a.agentID, o.occid, 1 as isPrimary
+INSERT IGNORE INTO agentoccurrencelink(agentID, occid, role)
+  SELECT a.agentID, o.occid, "primaryCollector"
   FROM agents a INNER JOIN omcollectors c ON a.guid = c.guid
   INNER JOIN omoccurrences o ON c.recordedbyid = o.recordedbyid;
+
 
 ALTER TABLE `ctcontrolvocab` 
   ADD COLUMN `collid` INT UNSIGNED NULL DEFAULT NULL AFTER `cvID`,
@@ -75,7 +76,11 @@ ALTER TABLE `imagetagkey`
   ADD COLUMN `audubonCoreTarget` VARCHAR(45) NULL AFTER `resourceLink`;
 
 ALTER TABLE `imagetagkey` 
-  CHANGE COLUMN `description_en` `description` VARCHAR(255) NOT NULL ;
+  ADD COLUMN `tagDescription` VARCHAR(255) NOT NULL AFTER `description_en`;
+
+UPDATE imagetagkey
+  SET tagDescription = description_en
+  WHERE tagDescription = "";
 
 CREATE TABLE `imagetaggroup` (
   `imgTagGroupID` INT NOT NULL AUTO_INCREMENT,
@@ -201,7 +206,44 @@ ALTER TABLE `omoccuridentifiers`
 ALTER TABLE `omoccuridentifiers` 
   ADD UNIQUE INDEX `UQ_omoccuridentifiers` (`occid` ASC, `identifiervalue` ASC, `identifiername` ASC);
 
-ALTER TABLE `omoccuridentifiers` RENAME INDEX `Index_value` TO `IX_omoccuridentifiers_value`;
+ALTER TABLE `omoccuridentifiers` 
+  DROP INDEX `Index_value` ;
+
+ALTER TABLE `omoccuridentifiers` 
+  ADD INDEX `IX_omoccuridentifiers_value` (`identifiervalue` ASC);
+
+TRUNCATE omoccuraccessstats;
+
+ALTER TABLE `omoccuraccessstats` 
+  DROP FOREIGN KEY `FK_occuraccess_occid`;
+
+ALTER TABLE `omoccuraccessstats` 
+  DROP COLUMN `oasid`,
+  DROP INDEX `UNIQUE_occuraccess` ,
+  DROP PRIMARY KEY;
+
+ALTER TABLE `omoccuraccessstats` 
+  DROP COLUMN `accessdate`,
+  DROP COLUMN `cnt`,
+  DROP COLUMN `notes`,
+  DROP COLUMN `dynamicProperties`;
+
+ALTER TABLE `omoccuraccessstats` 
+  CHANGE COLUMN `initialtimestamp` `initialtimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
+
+ALTER TABLE `omoccuraccessstats` 
+  ENGINE = MyISAM ;
+
+CREATE TABLE `omoccuraccesssummary` (
+  `oasid` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `occid` INT UNSIGNED NOT NULL,
+  `accessdate` DATE NOT NULL,
+  `cnt` INT UNSIGNED NOT NULL,
+  `accesstype` VARCHAR(45) NOT NULL,
+  `initialtimestamp` TIMESTAMP NOT NULL DEFAULT current_timestamp,
+  PRIMARY KEY (`oasid`),
+  UNIQUE INDEX `UNIQUE_occuraccess` (`occid` ASC, `accessdate` ASC, `accesstype` ASC),
+  CONSTRAINT `FK_occuraccess_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE);
 
 
 CREATE TABLE `portalindex` (
@@ -379,6 +421,11 @@ ALTER TABLE `uploadspectemp`
   DROP COLUMN `materialSampleID`,
   ADD COLUMN `materialSampleJSON` TEXT NULL AFTER `paleoJSON`;
 
+ALTER TABLE `omoccuredits` 
+  DROP FOREIGN KEY `fk_omoccuredits_uid`;
+
+ALTER TABLE `omoccuredits` 
+  ADD CONSTRAINT `fk_omoccuredits_uid`  FOREIGN KEY (`uid`)  REFERENCES `users` (`uid`)  ON DELETE RESTRICT  ON UPDATE CASCADE;
 
 ALTER TABLE `omoccurrences` 
   ADD COLUMN `type` VARCHAR(45) NULL AFTER `verbatimEventDate`;

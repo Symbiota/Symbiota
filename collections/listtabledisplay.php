@@ -35,7 +35,8 @@ $searchVar = $collManager->getQueryTermStr();
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
 	<script src="../js/jquery-3.2.1.min.js" type="text/javascript"></script>
-	<script src="../js/jquery-ui-1.12.1/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="../js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
+	<link href="../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
 	<script type="text/javascript">
 		$(document).ready(function() {
 			<?php

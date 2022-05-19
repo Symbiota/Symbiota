@@ -49,11 +49,7 @@ if(isset($ACTIVATE_GEOLOCATION) && $ACTIVATE_GEOLOCATION == 1) $activateGeolocat
 <html>
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><?php echo $DEFAULT_TITLE; ?> - Map Interface</title>
-  <!-- JQuery Mobile -->
-	<link href="../../css/jquery.mobile-1.4.0.min.css" type="text/css" rel="stylesheet" />
-	<link href="../../css/jquery.symbiota.css" type="text/css" rel="stylesheet" />
-	<link href="../../css/jquery-ui_accordian.css" type="text/css" rel="stylesheet" />
+	<title><?php echo $DEFAULT_TITLE; ?> - Map Interface</title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
@@ -64,8 +60,11 @@ if(isset($ACTIVATE_GEOLOCATION) && $ACTIVATE_GEOLOCATION == 1) $activateGeolocat
 		.ui-front { z-index: 9999999 !important; }
 	</style>
 	<script src="../../js/jquery-1.10.2.min.js" type="text/javascript"></script>
-	<script src="../../js/jquery-ui-1.10.4.js" type="text/javascript"></script>
+	<script src="../../js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
+	<link href="../../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
 	<script src="../../js/jquery.mobile-1.4.0.min.js" type="text/javascript"></script>
+	<link href="../../css/jquery.mobile-1.4.0.min.css" type="text/css" rel="stylesheet" />
+	<link href="../../css/jquery.symbiota.css" type="text/css" rel="stylesheet" />
 	<script src="../../js/jquery.popupoverlay.js" type="text/javascript"></script>
 	<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'&key='.$GOOGLE_MAP_KEY:''); ?>" ></script>
 	<script src="../../js/jscolor/jscolor.js?ver=1" type="text/javascript"></script>

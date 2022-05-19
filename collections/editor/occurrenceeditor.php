@@ -238,7 +238,19 @@ if($SYMB_UID){
 				}
 			}
 			elseif($action == 'Submit Image Edits'){
-				$statusStr = $occManager->editImage($_POST);
+				$occManager->editImage($_POST);
+				if($errArr = $occManager->getErrorArr()){
+					if(isset($errArr['web'])){
+						if(!$errArr['web']) $statusStr .= $LANG['ERROR_UPDATING_IMAGE'].': web image<br />';
+					}
+					if(isset($errArr['tn'])){
+						if(!$errArr['tn']) $statusStr .= $LANG['ERROR_UPDATING_IMAGE'].': thumbnail<br />';
+					}
+					if(isset($errArr['orig'])){
+						if(!$errArr['orig']) $statusStr .= $LANG['ERROR_UPDATING_IMAGE'].': large image<br />';
+					}
+					if(isset($errArr['error'])) $statusStr .= $LANG['ERROR_EDITING_IMAGE'].': '.$errArr['error'];
+				}
 				$tabTarget = 2;
 			}
 			elseif($action == 'Submit New Image'){
@@ -251,7 +263,7 @@ if($SYMB_UID){
 				}
 			}
 			elseif($action == 'Delete Image'){
-				$removeImg = (array_key_exists("removeimg",$_POST)?$_POST["removeimg"]:0);
+				$removeImg = (array_key_exists('removeimg',$_POST)?$_POST['removeimg']:0);
 				if($occManager->deleteImage($_POST["imgid"], $removeImg)){
 					$statusStr = (isset($LANG['IMAGE_DEL_SUCCESS'])?$LANG['IMAGE_DEL_SUCCESS']:'Image deleted successfully');
 					$tabTarget = 2;
@@ -260,16 +272,16 @@ if($SYMB_UID){
 					$statusStr = $occManager->getErrorStr();
 				}
 			}
-			elseif($action == "Remap Image"){
-				if($occManager->remapImage($_POST["imgid"], $_POST["targetoccid"])){
+			elseif($action == 'Remap Image'){
+				if($occManager->remapImage($_POST['imgid'], $_POST['targetoccid'])){
 					$statusStr = (isset($LANG['IMAGE_REMAP_SUCCESS'])?$LANG['IMAGE_REMAP_SUCCESS']:'SUCCESS: Image remapped to record').' <a href="occurrenceeditor.php?occid='.$_POST["targetoccid"].'" target="_blank">'.$_POST["targetoccid"].'</a>';
 				}
 				else{
 					$statusStr = (isset($LANG['IMAGE_REMAP_ERROR'])?$LANG['IMAGE_REMAP_ERROR']:'ERROR linking image to new specimen').': '.$occManager->getErrorStr();
 				}
 			}
-			elseif($action == "remapImageToNewRecord"){
-				$newOccid = $occManager->remapImage($_POST["imgid"], 'new');
+			elseif($action == 'remapImageToNewRecord'){
+				$newOccid = $occManager->remapImage($_POST['imgid'], 'new');
 				if($newOccid){
 					$statusStr = (isset($LANG['IMAGE_REMAP_SUCCESS'])?$LANG['IMAGE_REMAP_SUCCESS']:'SUCCESS: Image remapped to record').' <a href="occurrenceeditor.php?occid='.$newOccid.'" target="_blank">'.$newOccid.'</a>';
 				}

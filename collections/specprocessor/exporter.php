@@ -50,7 +50,8 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
 		<script src="../../js/jquery-3.2.1.min.js" type="text/javascript"></script>
-		<script src="../../js/jquery-ui-1.12.1/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="../../js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
+		<link href="../../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
 		<script src="../../js/symb/shared.js" type="text/javascript"></script>
 		<script>
 			$(function() {

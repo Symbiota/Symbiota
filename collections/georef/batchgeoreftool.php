@@ -63,7 +63,7 @@ $georeferenceProtocol = filter_var($georeferenceProtocol, FILTER_SANITIZE_STRING
 $georeferenceVerificationStatus = filter_var($georeferenceVerificationStatus, FILTER_SANITIZE_STRING);
 
 if(!$georeferenceSources) $georeferenceSources = 'georef batch tool '.date('Y-m-d');
-if(!$georeferenceVerificationStatus) $georeferenceVerificationStatus = 'reviewed - high confidence';
+//if(!$georeferenceVerificationStatus) $georeferenceVerificationStatus = 'reviewed - high confidence';
 
 $geoManager = new OccurrenceGeorefTools();
 $activeCollArr = explode(',', $collid);

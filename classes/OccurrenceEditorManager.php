@@ -2109,12 +2109,14 @@ class OccurrenceEditorManager {
 		}
 	}
 
-	public function getImageMap(){
+	public function getImageMap($imgId = 0){
 		global $LANG;
 		$imageMap = Array();
 		if($this->occid){
-			$sql = 'SELECT imgid, url, thumbnailurl, originalurl, caption, photographer, photographeruid, sourceurl, copyright, notes, occid, username, sortoccurrence, initialtimestamp '.
-				'FROM images WHERE (occid = '.$this->occid.') ORDER BY sortoccurrence';
+			$sql = 'SELECT imgid, url, thumbnailurl, originalurl, caption, photographer, photographeruid, sourceurl, copyright, notes, occid, username, sortoccurrence, initialtimestamp FROM images ';
+			if($imgId) $sql .= 'WHERE (imgid = '.$imgId.') ';
+			else $sql .= 'WHERE (occid = '.$this->occid.') ';
+			$sql .= 'ORDER BY sortoccurrence';
 			//echo $sql;
 			$result = $this->conn->query($sql);
 			while($row = $result->fetch_object()){
@@ -2526,6 +2528,10 @@ class OccurrenceEditorManager {
 
 	public function setCrowdSourceMode($m){
 		if(is_numeric($m)) $this->crowdSourceMode = $m;
+	}
+
+	public function getErrorArr(){
+		return $this->errorArr;
 	}
 
 	public function getErrorStr(){

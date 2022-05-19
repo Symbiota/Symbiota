@@ -144,10 +144,10 @@ class InstallationController extends Controller{
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Parameter(
-	 *		 name="urlPath",
+	 *		 name="endpoint",
 	 *		 in="query",
 	 *		 description="Url to Symbiota root of remote installation",
-	 *		 required=false,
+	 *		 required=true,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Response(
