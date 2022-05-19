@@ -13,4 +13,4 @@
 <meta name="viewport" content="initial-scale=1.0, user-scalable=yes" />
 <link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
 <link href="<?php echo $CLIENT_ROOT; ?>/css/base.css?ver=1" type="text/css" rel="stylesheet" />
-<link href="<?php echo $CLIENT_ROOT; ?>/css/symb/main.css?ver=1" type="text/css" rel="stylesheet" />
+<link href="<?php echo $CLIENT_ROOT; ?>/css/symb/main_gt.css?ver=1" type="text/css" rel="stylesheet" />
