@@ -443,7 +443,7 @@ class SpecUploadDwca extends SpecUploadBase{
 			}
 			if($tableExists){
 				$sql = 'SELECT portalID FROM portalindex WHERE guid = "'.$this->cleanInStr($symbiotaGuid).'"';
-				if($rs = $this->fconn->query($sql)){
+				if($rs = $this->conn->query($sql)){
 					if($r = $rs->fetch_object()) $this->sourcePortalIndex = $r->portalID;
 					$rs->free();
 				}
