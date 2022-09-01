@@ -1,6 +1,7 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyDisplayManager.php');
+include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.'.$LANG_TAG.'.php'); //yes, the lang file is the same as taxonomydisplay
 header('Content-Type: text/html; charset='.$CHARSET);
 header('Cache-Control: no-cache, must-revalidate'); // HTTP/1.1
 header('Expires: Sat, 26 Jul 1997 05:00:00 GMT'); // Date in the past
@@ -10,6 +11,13 @@ $displayAuthor = array_key_exists('displayauthor',$_REQUEST)?$_REQUEST['displaya
 $taxAuthId = array_key_exists('taxauthid',$_REQUEST)?$_REQUEST['taxauthid']:1;
 $editorMode = array_key_exists('emode',$_POST)?$_POST['emode']:0;
 $statusStr = array_key_exists('statusstr',$_REQUEST)?$_REQUEST['statusstr']:'';
+
+//Sanitation
+$target = filter_var($target, FILTER_SANITIZE_STRING);
+$displayAuthor = (is_numeric($displayAuthor)?$displayAuthor:0);
+$taxAuthId = (is_numeric($taxAuthId)?$taxAuthId:0);
+$editorMode = (is_numeric($editorMode)?$editorMode:0);
+$statusStr = filter_var($statusStr, FILTER_SANITIZE_STRING);
 
 $taxonDisplayObj = new TaxonomyDisplayManager();
 $taxonDisplayObj->setTargetStr($target);
@@ -74,8 +82,8 @@ reset($treePath);
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="../../index.php">Home</a> &gt;&gt;
-		<a href="taxonomydynamicdisplay.php"><b>Taxonomy Explorer</b></a>
+		<a href="../../index.php"><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
+		<a href="taxonomydynamicdisplay.php"><b><?php echo (isset($LANG['TAX_EXPLORE'])?$LANG['TAX_EXPLORE']:'Taxonomy Explorer'); ?></b></a>
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
@@ -91,7 +99,7 @@ reset($treePath);
 		}
 		if($isEditor){
 			?>
-			<div style="float:right;" title="Add a New Taxon">
+			<div style="float:right;" title="<?php echo (isset($LANG['ADD_NEW_TAXON'])?$LANG['ADD_NEW_TAXON']:'Add a New Taxon'); ?>">
 				<a href="taxonomyloader.php" target="_blank">
 					<img style='border:0px;width:15px;' src='../../images/add.png'/>
 				</a>
@@ -106,12 +114,12 @@ reset($treePath);
 			if(count($taxMetaArr) > 1){
 				echo '<div id="taxDetailDiv" style="margin-top:15px;margin-left:5px;float:left;font-size:80%"><a href="#" onclick="displayTaxomonyMeta()">(more details)</a></div>';
 				echo '<div id="taxMetaDiv" style="margin:10px 15px 35px 15px;display:none;clear:both;">';
-				if(isset($taxMetaArr['description'])) echo '<div style="margin:3px 0px"><b>Description:</b> '.$taxMetaArr['description'].'</div>';
-				if(isset($taxMetaArr['editors'])) echo '<div style="margin:3px 0px"><b>Editors:</b> '.$taxMetaArr['editors'].'</div>';
-				if(isset($taxMetaArr['contact'])) echo '<div style="margin:3px 0px"><b>Contact:</b> '.$taxMetaArr['contact'].'</div>';
-				if(isset($taxMetaArr['email'])) echo '<div style="margin:3px 0px"><b>Email:</b> '.$taxMetaArr['email'].'</div>';
+				if(isset($taxMetaArr['description'])) echo '<div style="margin:3px 0px"><b>'.(isset($LANG['DESCRIPTION'])?$LANG['DESCRIPTION']:'Description').':</b> '.$taxMetaArr['description'].'</div>';
+				if(isset($taxMetaArr['editors'])) echo '<div style="margin:3px 0px"><b>'.(isset($LANG['EDITORS'])?$LANG['EDITORS']:'Editors').':</b> '.$taxMetaArr['editors'].'</div>';
+				if(isset($taxMetaArr['contact'])) echo '<div style="margin:3px 0px"><b>'.(isset($LANG['CONTACT'])?$LANG['CONTACT']:'Contact').':</b> '.$taxMetaArr['contact'].'</div>';
+				if(isset($taxMetaArr['email'])) echo '<div style="margin:3px 0px"><b>'.(isset($LANG['EMAIL'])?$LANG['EMAIL']:'Email').':</b> '.$taxMetaArr['email'].'</div>';
 				if(isset($taxMetaArr['url'])) echo '<div style="margin:3px 0px"><b>URL:</b> <a href="'.$taxMetaArr['url'].'" target="_blank">'.$taxMetaArr['url'].'</a></div>';
-				if(isset($taxMetaArr['notes'])) echo '<div style="margin:3px 0px"><b>Notes:</b> '.$taxMetaArr['notes'].'</div>';
+				if(isset($taxMetaArr['notes'])) echo '<div style="margin:3px 0px"><b>'.(isset($LANG['NOTES'])?$LANG['NOTES']:'Notes').':</b> '.$taxMetaArr['notes'].'</div>';
 				echo '</div>';
 			}
 			?>
@@ -119,19 +127,19 @@ reset($treePath);
 		<div style="clear:both;">
 			<form id="tdform" name="tdform" action="taxonomydynamicdisplay.php" method='POST'>
 				<fieldset style="padding:10px;width:500px;">
-					<legend><b>Taxon Search</b></legend>
+					<legend><b><?php echo (isset($LANG['TAX_SEARCH'])?$LANG['TAX_SEARCH']:'Taxon Search'); ?></b></legend>
                     <div>
-						<b>Taxon:</b>
+						<b><?php echo (isset($LANG['TAXON'])?$LANG['TAXON']:'Taxon'); ?>:</b>
 						<input id="taxontarget" name="target" type="text" style="width:400px;" value="<?php echo $taxonDisplayObj->getTargetStr(); ?>" />
 					</div>
 					<div style="float:right;margin:15px 80px 15px 15px;">
-						<input name="tdsubmit" type="submit" value="Display Taxon Tree"/>
+						<button name="tdsubmit" type="submit" value="displayTaxonTree"><?php echo (isset($LANG['DISP_TAX_TREE'])?$LANG['DISP_TAX_TREE']:'Display Taxon Tree'); ?></button>
 						<input name="taxauthid" type="hidden" value="<?php echo $taxAuthId; ?>" />
 					</div>
 					<div style="margin:15px 15px 0px 60px;">
-						<input name="displayauthor" type="checkbox" value="1" <?php echo ($displayAuthor?'checked':''); ?> /> Display authors
+						<input name="displayauthor" type="checkbox" value="1" <?php echo ($displayAuthor?'checked':''); ?> /> <?php echo (isset($LANG['DISP_AUTHORS'])?$LANG['DISP_AUTHORS']:'Display authors'); ?>
 						<?php
-						if($isEditor) echo '<br/><input name="emode" type="checkbox" value="1" '.($editorMode?'checked':'').' /> Editor mode';
+						if($isEditor) echo '<br/><input name="emode" type="checkbox" value="1" '.($editorMode?'checked':'').' /> '.(isset($LANG['EDITOR_MODE'])?$LANG['EDITOR_MODE']:'Editor mode');
 						?>
 					</div>
 				</fieldset>

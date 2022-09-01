@@ -37,13 +37,13 @@ $LANG['ACTION_STATUS'] = 'Estado de Acción';
 $LANG['RETURN_TO_SEARCH'] = 'Regresar a Página de Búsqueda';
 $LANG['NONE_FOUND'] = 'No se encontraron registros que coincidan con la búsqueda';
 $LANG['REC_LOCKED'] = '¡Registro Bloqueado!';
-$LANG['LOCK_EXPLAIN'] = 'Este registro está bloqueado para edición por otro usuario. Una vez el usuario finalice de editar el registro,
-							el candado será removido. Los registros se bloquean por un máximo de 15 mins.';
+$LANG['LOCK_EXPLAIN'] = 'Este registro está bloqueado para edición por otro usuario. Una vez el usuario finalice de editar el registro, el candado será removido. Los registros se bloquean por un máximo de 15 mins.';
 $LANG['READ_ONLY'] = 'Vista de Lectura Únicamente';
 $LANG['OCC_DATA'] = 'Datos de Ocurrencia';
 $LANG['NEW_OCC_RECORD'] = 'Nuevo Registro de Ocurrencia';
 $LANG['DET_HISTORY'] = 'Historia de Determinación';
 $LANG['IMAGES'] = 'Imágenes';
+$LANG['MATERIAL_SAMPLE'] = 'Material Sample';
 $LANG['LINKED_RES'] = 'Recursos Enlazados';
 $LANG['TRAITS'] = 'Características';
 $LANG['ADMIN'] = 'Admin';
@@ -140,6 +140,7 @@ $LANG['GO_NEW_CARRYOVER'] = 'Ir a Nuevo Registro y Conservar Información de Loc
 $LANG['REMAIN_ON_PAGE'] = 'Permanecer en la Página de Edición (añadir imágenes, determinaciones, etc)';
 $LANG['ERROR_ID_NULL'] = 'ERROR:</b> los indentificadores del registro son NULOS';
 $LANG['ERROR_NO_CROWDSOURCING'] = 'ERROR:</b> Disculpe, parece que esta ocurrencia ha sido eliminada del listado de Colaboración Abierta y ya no es editable. Contacte al administrador de la colección si piensa que esto es incorrecto';
+$LANG['RETURN_TO_CROWDSOURCING'] = 'Return to Crowdsource Central';
 $LANG['ERROR_NOT_AUTHORIZED'] = 'ERROR:</b> Disculpe, no está autorizado para editar ocurrencias dentro de esta colección. Contactacte al administrador de la colección si piensa que esto es incorrecto';
 $LANG['ERROR_CANT_ADD'] = 'ERROR:</b> no está autorizado para añadir registros de ocurrencia';
 

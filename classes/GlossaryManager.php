@@ -1,9 +1,8 @@
 <?php
 include_once($SERVER_ROOT.'/config/dbconnection.php');
 
-class GlossaryManager{
+class GlossaryManager extends Manager {
 
-	private $conn;
 	private $glossId = 0;
 	private $lang;
 	private $glossGroupId = 0;
@@ -34,7 +33,7 @@ class GlossaryManager{
 	private $errorStr;
 
  	public function __construct(){
- 		$this->conn = MySQLiConnectionFactory::getCon("write");
+ 		parent::__construct(null, 'write');
 		$this->imageRootPath = $GLOBALS["imageRootPath"];
 		if(substr($this->imageRootPath,-1) != "/") $this->imageRootPath .= "/";
 		$this->imageRootUrl = $GLOBALS["imageRootUrl"];
@@ -51,7 +50,7 @@ class GlossaryManager{
  	}
 
  	public function __destruct(){
-		if($this->conn) $this->conn->close();
+ 		parent::__destruct();
 	}
 
 	public function getTermSearch($keyword,$language,$tid,$deepSearch = 1){
@@ -648,7 +647,7 @@ class GlossaryManager{
 			//echo $sql;
 			if($this->conn->query($sql)){
 				$imgUrl2 = '';
-				$domain = $this->getServerDomain();
+				$domain = $this->getDomain();
 				if(stripos($imgUrl,$domain) === 0){
 					$imgUrl2 = $imgUrl;
 					$imgUrl = substr($imgUrl,strlen($domain));
@@ -886,7 +885,7 @@ class GlossaryManager{
 		$urlBase = $this->urlBase;
 		//If central images are on remote server and new ones stored locally, then we need to use full domain
 		//e.g. this portal is sister portal to central portal
-		if($GLOBALS['imageDomain']) $urlBase = $this->getServerDomain().$urlBase;
+		if($GLOBALS['imageDomain']) $urlBase = $this->getDomain().$urlBase;
 		if(strtolower(substr($imgWebUrl,0,7)) != 'http://' && strtolower(substr($imgWebUrl,0,8)) != 'https://'){
 			$imgWebUrl = $urlBase.$imgWebUrl;
 		}
@@ -1497,22 +1496,6 @@ class GlossaryManager{
 
 	public function getErrorStr(){
 		return $this->errorStr;
-	}
-
-	private function getServerDomain(){
-		$domain = "http://";
-		if((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $domain = "https://";
-		$domain .= $_SERVER["SERVER_NAME"];
-		if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80 && $_SERVER['SERVER_PORT'] != 443) $domain .= ':'.$_SERVER["SERVER_PORT"];
-		return $domain;
-	}
-
-	//Misc functions
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 }
 ?>

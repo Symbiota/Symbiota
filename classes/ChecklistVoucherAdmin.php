@@ -1,29 +1,21 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/Manager.php');
 
-class ChecklistVoucherAdmin {
+class ChecklistVoucherAdmin extends Manager {
 
-	protected $conn;
 	protected $clid;
 	protected $clName;
 	protected $clMetadata;
 	protected $childClidArr = array();
 	private $footprintWkt;
 	private $queryVariablesArr = array();
-	protected $closeConnOnDestroy = true;
 
 	function __construct($con=null) {
-		if($con) {
-			$this->conn = $con;
-			$this->closeConnOnDestroy = false;
-		}
-		else{
-			$this->conn = MySQLiConnectionFactory::getCon("write");
-		}
+		parent::__construct(null, 'write', $con);
 	}
 
 	function __destruct(){
-		if($this->closeConnOnDestroy && !($this->conn === false)) $this->conn->close();
+		parent::__destruct();
 	}
 
 	public function setClid($clid){
@@ -644,19 +636,6 @@ class ChecklistVoucherAdmin {
 			}
 		}
 		return $retStr;
-	}
-
-	protected function cleanOutStr($str){
-		$str = str_replace('"',"&quot;",$str);
-		$str = str_replace("'","&apos;",$str);
-		return $str;
-	}
-
-	protected function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 }
 ?>

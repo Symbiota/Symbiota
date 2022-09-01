@@ -3,11 +3,18 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$sourcePage = array_key_exists("sourcepage",$_REQUEST)?$_REQUEST["sourcepage"]:"specimen";
-$downloadType = array_key_exists("dltype",$_REQUEST)?$_REQUEST["dltype"]:"specimen";
-$taxonFilterCode = array_key_exists("taxonFilterCode",$_REQUEST)?$_REQUEST["taxonFilterCode"]:0;
-$displayHeader = array_key_exists("displayheader",$_REQUEST)?$_REQUEST["displayheader"]:0;
-$searchVar = array_key_exists("searchvar",$_REQUEST)?$_REQUEST['searchvar']:'';
+$sourcePage = array_key_exists('sourcepage',$_REQUEST)?$_REQUEST['sourcepage']:'specimen';
+$downloadType = array_key_exists('dltype',$_REQUEST)?$_REQUEST['dltype']:'specimen';
+$taxonFilterCode = array_key_exists('taxonFilterCode',$_REQUEST)?$_REQUEST['taxonFilterCode']:0;
+$displayHeader = array_key_exists('displayheader',$_REQUEST)?$_REQUEST['displayheader']:0;
+$searchVar = array_key_exists('searchvar',$_REQUEST)?$_REQUEST['searchvar']:'';
+
+//Sanitation
+$sourcePage = filter_var($sourcePage, FILTER_SANITIZE_STRING);
+$downloadType = filter_var($downloadType, FILTER_SANITIZE_STRING);
+if(!is_numeric($taxonFilterCode)) $taxonFilterCode = 0;
+if(!is_numeric($displayHeader)) $displayHeader = 0;
+$searchVar = filter_var($searchVar, FILTER_SANITIZE_STRING);
 
 $dwcManager = new DwcArchiverCore();
 ?>
@@ -60,7 +67,8 @@ $dwcManager = new DwcArchiverCore();
 			if(obj.checked == false){
 				obj.form.images.checked = false;
 				obj.form.identifications.checked = false;
-				obj.form.attributes.checked = false;
+				if(obj.form.attributes) obj.form.attributes.checked = false;
+				if(obj.form.materialsample) obj.form.materialsample.checked = false;
 			}
 		}
 

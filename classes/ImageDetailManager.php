@@ -1,21 +1,20 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
-include_once($SERVER_ROOT."/classes/ImageShared.php");
+include_once($SERVER_ROOT.'/classes/Manager.php');
+include_once($SERVER_ROOT.'/classes/ImageShared.php');
 
-class ImageDetailManager {
+class ImageDetailManager extends Manager {
 
-	private $conn;
 	private $imgId;
 
 	public function __construct($id,$conType='readonly'){
- 		$this->conn = MySQLiConnectionFactory::getCon($conType);
- 		if(is_numeric($id)){
-	 		$this->imgId = $id;
- 		}
+		parent::__construct(null, $conType);
+		if(is_numeric($id)){
+			$this->imgId = $id;
+		}
 	}
 
- 	public function __destruct(){
-		if(!($this->conn === null)) $this->conn->close();
+	public function __destruct(){
+		parent::__destruct();
 	}
 
 	public function getImageMetadata(){
@@ -63,70 +62,70 @@ class ImageDetailManager {
 		if(substr($searchStr,-1) != "/") $searchStr .= "/";
 		$replaceStr = $GLOBALS["imageRootPath"];
 		if(substr($replaceStr,-1) != "/") $replaceStr .= "/";
-	 	$url = $postArr["url"];
-	 	$tnUrl = $postArr["thumbnailurl"];
-	 	$origUrl = $postArr["originalurl"];
-	 	if(array_key_exists("renameweburl",$postArr)){
-	 		$oldUrl = $postArr["oldurl"];
-	 		$oldName = str_replace($searchStr,$replaceStr,$oldUrl);
- 			$newWebName = str_replace($searchStr,$replaceStr,$url);
-	 		if($url != $oldUrl){
-	 			if(file_exists($newWebName)){
- 					$status = 'ERROR: unable to modify image URL because a file already exists with that name';
-		 			$url = $oldUrl;
-	 			}
-	 			else{
-		 			if(copy($oldName,$newWebName)){
-		 				unlink($oldName);
-		 			}
-		 			else{
-		 				$url = $oldUrl;
-			 			$status = "Web URL rename FAILED; url address unchanged";
-		 			}
-	 			}
-	 		}
+		$url = $postArr["url"];
+		$tnUrl = $postArr["thumbnailurl"];
+		$origUrl = $postArr["originalurl"];
+		if(array_key_exists("renameweburl",$postArr)){
+			$oldUrl = $postArr["oldurl"];
+			$oldName = str_replace($searchStr,$replaceStr,$oldUrl);
+			$newWebName = str_replace($searchStr,$replaceStr,$url);
+			if($url != $oldUrl){
+				if(file_exists($newWebName)){
+					$status = 'ERROR: unable to modify image URL because a file already exists with that name';
+					$url = $oldUrl;
+				}
+				else{
+					if(copy($oldName,$newWebName)){
+						unlink($oldName);
+					}
+					else{
+						$url = $oldUrl;
+						$status = "Web URL rename FAILED; url address unchanged";
+					}
+				}
+			}
 		}
 		if(array_key_exists("renametnurl",$postArr)){
-	 		$oldTnUrl = $postArr["oldthumbnailurl"];
-	 		$oldName = str_replace($searchStr,$replaceStr,$oldTnUrl);
-	 		$newName = str_replace($searchStr,$replaceStr,$tnUrl);
-	 		if($tnUrl != $oldTnUrl){
-	 			if(file_exists($newName)){
- 					$status = 'ERROR: unable to modify image URL because a file already exists with that name';
-		 			$tnUrl = $oldTnUrl;
-	 			}
-	 			else{
-		 			if(copy($oldName,$newName)){
-		 				unlink($oldName);
-		 			}
-		 			else{
-		 				$tnUrl = $oldTnUrl;
-			 			$status = "Thumbnail URL rename FAILED; url address unchanged";
-		 			}
-	 			}
-	 		}
+			$oldTnUrl = $postArr["oldthumbnailurl"];
+			$oldName = str_replace($searchStr,$replaceStr,$oldTnUrl);
+			$newName = str_replace($searchStr,$replaceStr,$tnUrl);
+			if($tnUrl != $oldTnUrl){
+				if(file_exists($newName)){
+					$status = 'ERROR: unable to modify image URL because a file already exists with that name';
+					$tnUrl = $oldTnUrl;
+				}
+				else{
+					if(copy($oldName,$newName)){
+						unlink($oldName);
+					}
+					else{
+						$tnUrl = $oldTnUrl;
+						$status = "Thumbnail URL rename FAILED; url address unchanged";
+					}
+				}
+			}
 		}
 		if(array_key_exists("renameorigurl",$postArr)){
-	 		$oldOrigUrl = $postArr["oldoriginalurl"];
-	 		$oldName = str_replace($searchStr,$replaceStr,$oldOrigUrl);
-	 		$newName = str_replace($searchStr,$replaceStr,$origUrl);
-	 		if($origUrl != $oldOrigUrl){
-	 			if(file_exists($newName)){
- 					$status = 'ERROR: unable to modify image URL because a file already exists with that name';
-	 				$origUrl = $oldOrigUrl;
- 	 			}
-	 			else{
-		 			if(copy($oldName,$newName)){
-		 				unlink($oldName);
-		 			}
-		 			else{
-		 				$origUrl = $oldOrigUrl;
-			 			$status = "Large image URL rename FAILED; url address unchanged";
-		 			}
-	 			}
-	 		}
+			$oldOrigUrl = $postArr["oldoriginalurl"];
+			$oldName = str_replace($searchStr,$replaceStr,$oldOrigUrl);
+			$newName = str_replace($searchStr,$replaceStr,$origUrl);
+			if($origUrl != $oldOrigUrl){
+				if(file_exists($newName)){
+					$status = 'ERROR: unable to modify image URL because a file already exists with that name';
+					$origUrl = $oldOrigUrl;
+				}
+				else{
+					if(copy($oldName,$newName)){
+						unlink($oldName);
+					}
+					else{
+						$origUrl = $oldOrigUrl;
+						$status = "Large image URL rename FAILED; url address unchanged";
+					}
+				}
+			}
 		}
-	 	$caption = $this->cleanInStr($postArr["caption"]);
+		$caption = $this->cleanInStr($postArr["caption"]);
 		$photographer = $this->cleanInStr($postArr["photographer"]);
 		$photographerUid = $postArr["photographeruid"];
 		$owner = $this->cleanInStr($postArr["owner"]);
@@ -195,20 +194,5 @@ class ImageDetailManager {
 		}
 		$result->free();
 	}
-
- 	private function cleanOutStr($str){
-		$newStr = str_replace('"',"&quot;",$str);
-		$newStr = str_replace("'","&apos;",$newStr);
-		//$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
-	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
-	}
-
 }
 ?>

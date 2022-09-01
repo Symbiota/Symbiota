@@ -14,13 +14,20 @@ $clManager = new ChecklistAdmin();
 if(!$clid && isset($_POST['delclid'])) $clid = $_POST['delclid'];
 $clManager->setClid($clid);
 
-if($action == 'SubmitAdd'){
-	//Anyone with a login can create a checklist
-	$newClid = $clManager->createChecklist($_POST);
-	header('Location: checklist.php?clid='.$newClid);
-}
 
 $statusStr = '';
+if($action == 'SubmitAdd'){
+	
+	//Conform User Checklist permission 
+	if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USER_RIGHTS['ClAdmin'])) || array_key_exists('ClCreate',$USER_RIGHTS)){		
+		$newClid = $clManager->createChecklist($_POST);
+		header('Location: checklist.php?clid='.$newClid);
+	} 
+	
+	//If we made it here the user does not have any checklist roles. cancel further execution.
+	$statusStr = 'You do not have permission to create a Checklist.';
+}
+
 $isEditor = 0;
 if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USER_RIGHTS['ClAdmin']))){
 	$isEditor = 1;
@@ -58,7 +65,7 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USE
 }
 $clArray = $clManager->getMetaData();
 $defaultArr = array();
-if($clArray['defaultsettings']){
+if(array_key_exists('defaultsettings',$clArray)){
 	$defaultArr = json_decode($clArray['defaultsettings'], true);
 }
 ?>

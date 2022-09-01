@@ -78,5 +78,5 @@ $LANG['ABSTRACT'] = 'Abstract';
 $LANG['COMMENTS'] = 'Comments';
 $LANG['PAGE'] = 'Page';
 $LANG['OF'] = 'of';
-$LANG['RESCHECK'] = 'Research Checklist';
+$LANG['CHECKLIST'] = 'Checklist';
 ?>

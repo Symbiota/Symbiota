@@ -19,31 +19,32 @@ class OccurrenceMapManager extends OccurrenceManager {
 	}
 
 	private function readGeoRequestVariables(){
-		if(array_key_exists("gridSizeSetting",$_REQUEST)){
-			$this->searchTermArr["gridSizeSetting"] = $this->cleanInStr($_REQUEST["gridSizeSetting"]);
+		if(array_key_exists('gridSizeSetting',$_REQUEST)){
+			$this->searchTermArr['gridSizeSetting'] = $this->cleanInStr($_REQUEST['gridSizeSetting']);
 		}
-		if(array_key_exists("minClusterSetting",$_REQUEST)){
-			$this->searchTermArr["minClusterSetting"] = $this->cleanInStr($_REQUEST["minClusterSetting"]);
+		if(array_key_exists('minClusterSetting',$_REQUEST)){
+			$this->searchTermArr['minClusterSetting'] = $this->cleanInStr($_REQUEST['minClusterSetting']);
 		}
-		if(array_key_exists("clusterSwitch",$_REQUEST)){
-			$this->searchTermArr["clusterSwitch"] = $this->cleanInStr($_REQUEST["clusterSwitch"]);
+		if(array_key_exists('clusterSwitch',$_REQUEST)){
+			$this->searchTermArr['clusterSwitch'] = $this->cleanInStr($_REQUEST['clusterSwitch']);
 		}
-		if(array_key_exists("recordlimit",$_REQUEST)){
-			if(is_numeric($_REQUEST["recordlimit"])){
-				$this->searchTermArr["recordlimit"] = $_REQUEST["recordlimit"];
-			}
+		if(array_key_exists('cltype',$_REQUEST) && $_REQUEST['cltype']){
+			if($_REQUEST['cltype'] == 'all') $this->searchTermArr['cltype'] = 'all';
+			$this->searchTermArr['cltype'] = 'vouchers';
 		}
-		if(array_key_exists("cltype",$_REQUEST) && $_REQUEST["cltype"]){
-			$this->searchTermArr["cltype"] = $_REQUEST["cltype"];
+		if(array_key_exists('poly_array',$_REQUEST) && $_REQUEST['poly_array']){
+			$this->searchTermArr['polycoords'] = $_REQUEST['poly_array'];
 		}
-		if(array_key_exists("poly_array",$_REQUEST) && $_REQUEST["poly_array"]){
-			$this->searchTermArr["polycoords"] = $_REQUEST["poly_array"];
-		}
-		elseif(array_key_exists("polycoords",$_REQUEST) && $_REQUEST["polycoords"]){
-			$this->searchTermArr["polycoords"] = $_REQUEST["polycoords"];
+		elseif(array_key_exists('polycoords',$_REQUEST) && $_REQUEST['polycoords']){
+			$this->searchTermArr['polycoords'] = $_REQUEST['polycoords'];
 		}
 		elseif($this->getClFootprintWkt()){
-			$this->searchTermArr["polycoords"] = $this->getClFootprintWkt();
+			$this->searchTermArr['polycoords'] = $this->getClFootprintWkt();
+		}
+		if(!$this->getSearchTerm('polycoords')){
+			if($this->getSearchTerm('clid') && $this->getClFootprintWkt()){
+				$this->searchTermArr['poly_array'] = $this->getClFootprintWkt();
+			}
 		}
 	}
 
@@ -65,31 +66,32 @@ class OccurrenceMapManager extends OccurrenceManager {
 			//echo "<div>SQL: ".$sql."</div>"; exit;
 			$result = $this->conn->query($sql);
 			$color = 'e69e67';
+			$occidArr = array();
 			while($row = $result->fetch_object()){
 				if(($row->DecimalLongitude <= 180 && $row->DecimalLongitude >= -180) && ($row->DecimalLatitude <= 90 && $row->DecimalLatitude >= -90)){
-					$occId = $row->occid;
+					$occidArr[] = $row->occid;
 					$collName = $row->CollectionName;
 					$tidInterpreted = $this->htmlEntities($row->tidinterpreted);
 					$latLngStr = $row->DecimalLatitude.",".$row->DecimalLongitude;
-					$coordArr[$collName][$occId]["llStr"] = $latLngStr;
-					$coordArr[$collName][$occId]["collid"] = $this->htmlEntities($row->collid);
+					$coordArr[$collName][$row->occid]["llStr"] = $latLngStr;
+					$coordArr[$collName][$row->occid]["collid"] = $this->htmlEntities($row->collid);
 					//$tidcode = strtolower(str_replace(" ", "",$tidInterpreted.$row->sciname));
 					//$tidcode = preg_replace( "/[^A-Za-z0-9 ]/","",$tidcode);
 					//$coordArr[$collName][$occId]["ns"] = $this->htmlEntities($tidcode);
-					$coordArr[$collName][$occId]["tid"] = $tidInterpreted;
-					$coordArr[$collName][$occId]["fam"] = ($row->family?strtoupper($row->family):'undefined');
-					$coordArr[$collName][$occId]["sn"] = $row->sciname;
-					$coordArr[$collName][$occId]["id"] = $this->htmlEntities($row->identifier);
+					$coordArr[$collName][$row->occid]["tid"] = $tidInterpreted;
+					$coordArr[$collName][$row->occid]["fam"] = ($row->family?strtoupper($row->family):'undefined');
+					$coordArr[$collName][$row->occid]["sn"] = $row->sciname;
+					$coordArr[$collName][$row->occid]["id"] = $this->htmlEntities($row->identifier);
 					//$coordArr[$collName][$occId]["icode"] = $this->htmlEntities($row->institutioncode);
 					//$coordArr[$collName][$occId]["ccode"] = $this->htmlEntities($row->collectioncode);
 					//$coordArr[$collName][$occId]["cn"] = $this->htmlEntities($row->catalognumber);
 					//$coordArr[$collName][$occId]["ocn"] = $this->htmlEntities($row->othercatalognumbers);
 					$coordArr[$collName]["c"] = $color;
-					$statsManager->recordAccessEvent($occId, 'map');
 				}
 			}
-			if(array_key_exists("undefined",$coordArr)){
-				$coordArr["undefined"]["c"] = $color;
+			$statsManager->recordAccessEventByArr($occidArr, 'map');
+			if(array_key_exists('undefined',$coordArr)){
+				$coordArr['undefined']['c'] = $color;
 			}
 			$result->free();
 		}
@@ -117,6 +119,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 			if(is_numeric($start) && $recLimit && is_numeric($recLimit)) $sql .= "LIMIT ".$start.",".$recLimit;
 			//echo "<div>SQL: ".$sql."</div>";
 			$rs = $this->conn->query($sql);
+			$occidArr = array();
 			while($r = $rs->fetch_assoc()){
 				if(($r['decimallongitude'] <= 180 && $r['decimallongitude'] >= -180) && ($r['decimallatitude'] <= 90 && $r['decimallatitude'] >= -90)){
 					$sciname = $r['sciname'];
@@ -138,9 +141,11 @@ class OccurrenceMapManager extends OccurrenceManager {
 							if(isset($r[$fieldName])) $coordArr[$sciname][$r['occid']][$fieldName] = $r[$fieldName];
 						}
 					}
+					$occidArr[] = $r['occid'];
 				}
 			}
 			$rs->free();
+			$statsManager->recordAccessEventByArr($occidArr, 'map');
 		}
 		return $coordArr;
 	}
@@ -209,7 +214,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 			$sqlWhere = $this->getSqlWhere();
 			$sqlWhere .= ($sqlWhere?'AND ':'WHERE ').'(o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) ';
 			if(array_key_exists('clid',$this->searchTermArr) && $this->searchTermArr['clid']){
-				if(isset($this->searchTermArr["cltype"]) && $this->searchTermArr["cltype"] == 'all'){
+				if(isset($this->searchTermArr['cltype']) && $this->searchTermArr['cltype'] == 'all'){
 					$sqlWhere .= "AND (ST_Within(p.point,GeomFromText('".$this->getClFootprintWkt()." '))) ";
 				}
 				else{
@@ -238,7 +243,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 	}
 
 	//Shape functions
-	public function createShape($previousCriteria){
+	public function createShape(){
 		$queryShape = '';
 		$properties = 'strokeWeight: 0,';
 		$properties .= 'fillOpacity: 0.45,';
@@ -246,11 +251,11 @@ class OccurrenceMapManager extends OccurrenceManager {
 		//$properties .= 'draggable: true,';
 		$properties .= 'map: map});';
 
-		if(isset($previousCriteria["upperlat"]) && $previousCriteria["upperlat"]){
+		if($this->getSearchTerm('upperlat')){
 			$queryShape = 'var queryRectangle = new google.maps.Rectangle({';
 			$queryShape .= 'bounds: new google.maps.LatLngBounds(';
-			$queryShape .= 'new google.maps.LatLng('.$previousCriteria["bottomlat"].', '.$previousCriteria["leftlong"].'),';
-			$queryShape .= 'new google.maps.LatLng('.$previousCriteria["upperlat"].', '.$previousCriteria["rightlong"].')),';
+			$queryShape .= 'new google.maps.LatLng('.$this->getSearchTerm('bottomlat').', '.$this->getSearchTerm('leftlong').'),';
+			$queryShape .= 'new google.maps.LatLng('.$this->getSearchTerm('upperlat').', '.$this->getSearchTerm('rightlong').')),';
 			$queryShape .= $properties;
 			$queryShape .= "queryRectangle.type = 'rectangle';";
 			$queryShape .= "google.maps.event.addListener(queryRectangle, 'click', function() {";
@@ -261,15 +266,15 @@ class OccurrenceMapManager extends OccurrenceManager {
 			$queryShape .= 'setSelection(queryRectangle);});';
 			$queryShape .= 'setSelection(queryRectangle);';
 			$queryShape .= 'var queryShapeBounds = new google.maps.LatLngBounds();';
-			$queryShape .= 'queryShapeBounds.extend(new google.maps.LatLng('.$previousCriteria["bottomlat"].', '.$previousCriteria["leftlong"].'));';
-			$queryShape .= 'queryShapeBounds.extend(new google.maps.LatLng('.$previousCriteria["upperlat"].', '.$previousCriteria["rightlong"].'));';
+			$queryShape .= 'queryShapeBounds.extend(new google.maps.LatLng('.$this->getSearchTerm('bottomlat').', '.$this->getSearchTerm('leftlong').'));';
+			$queryShape .= 'queryShapeBounds.extend(new google.maps.LatLng('.$this->getSearchTerm('upperlat').', '.$this->getSearchTerm('rightlong').'));';
 			$queryShape .= 'map.fitBounds(queryShapeBounds);';
 			$queryShape .= 'map.panToBounds(queryShapeBounds);';
 		}
-		if(isset($previousCriteria["pointlat"]) && $previousCriteria["pointlat"]){
-			$radius = (($previousCriteria["radius"]/0.6214)*1000);
+		if($this->getSearchTerm('pointlat')){
+			$radius = (($this->getSearchTerm('radius')/0.6214)*1000);
 			$queryShape = 'var queryCircle = new google.maps.Circle({';
-			$queryShape .= 'center: new google.maps.LatLng('.$previousCriteria["pointlat"].', '.$previousCriteria["pointlong"].'),';
+			$queryShape .= 'center: new google.maps.LatLng('.$this->getSearchTerm('pointlat').', '.$this->getSearchTerm('pointlong').'),';
 			$queryShape .= 'radius: '.$radius.',';
 			$queryShape .= $properties;
 			$queryShape .= "queryCircle.type = 'circle';";
@@ -286,9 +291,10 @@ class OccurrenceMapManager extends OccurrenceManager {
 			$queryShape .= 'map.fitBounds(queryShapeBounds);';
 			$queryShape .= 'map.panToBounds(queryShapeBounds);';
 		}
-		if(isset($previousCriteria["poly_array"]) && $previousCriteria["poly_array"] && substr($previousCriteria["poly_array"],0,7) == 'POLYGON'){
-			$wkt = substr($previousCriteria["poly_array"],9,-2);
-			if(substr($wkt,0,1) == '(') $wkt = substr($wkt,1);
+		if($this->getSearchTerm('polycoords')){
+			$wkt = $this->getSearchTerm('polycoords');
+			if(substr($wkt,0,7) == 'POLYGON') $wkt = substr($wkt,7);
+			$wkt = trim($wkt,' (),');
 			$coordArr = explode(',',$wkt);
 			if($coordArr){
 				$shapeBounds = 'var queryShapeBounds = new google.maps.LatLngBounds();';
@@ -353,7 +359,6 @@ class OccurrenceMapManager extends OccurrenceManager {
 				'paddle/red-circle','paddle/purple-circle','paddle/blu-square','paddle/grn-square','paddle/ltblu-square','paddle/pink-square',
 				'paddle/ylw-square','paddle/wht-square','paddle/red-square','paddle/purple-square','paddle/blu-stars','paddle/grn-stars',
 				'paddle/ltblu-stars','paddle/pink-stars','paddle/ylw-stars','paddle/wht-stars','paddle/red-stars','paddle/purple-stars');
-			$statsManager = new OccurrenceAccessStats();
 			$color = 'e69e67';
 			foreach($coordArr as $sciname => $snArr){
 				unset($snArr['tid']);

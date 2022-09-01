@@ -41,6 +41,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 						$(ui.panel).html("<p>Loading...</p>");
 					}
 				});
+				sessionStorage.querystr = null;
 				//document.collections.onkeydown = checkKey;
 			});
 		</script>

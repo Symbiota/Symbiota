@@ -1,25 +1,26 @@
 <?php
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorMaterialSample.php');
-include_once($SERVER_ROOT.'/collections/editor/includes/config/materialSampleVars.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once($SERVER_ROOT.'/content/lang/fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
+header('Content-Type: text/html; charset='.$CHARSET);
 
 $occid = $_REQUEST['occid'];
-$occIndex = $_REQUEST['occindex'];
 $collid = isset($_REQUEST['collid'])?$_REQUEST['collid']:'';
+$occIndex = $_REQUEST['occindex'];
 
 $materialSampleManager = new OccurrenceEditorMaterialSample();
 
 //Sanitation
 if(!is_numeric($occid)) $occid = 0;
 if(!is_numeric($collid)) $collid = 0;
+if(!is_numeric($occIndex)) $occIndex = 0;
 $materialSampleManager->cleanFormData($_POST);
 
 $materialSampleManager->setOccid($occid);
 
 $isEditor = false;
 if($IS_ADMIN) $isEditor = true;
-elseif($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin'])) $isEditor = true;
+elseif($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin'])) $isEditor = true;
 elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollEditor'])) $isEditor = true;
 
 $materialSampleArr = $materialSampleManager->getMaterialSampleArr();

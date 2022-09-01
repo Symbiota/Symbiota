@@ -1,7 +1,7 @@
 <?php
 /*
 ------------------
-Language: English
+Language: Français (French)
 ------------------
 */
 
@@ -111,6 +111,7 @@ $LANG['SKIPPED'] = 'Enregistrement sera ignoré lorsque tous champs suivants son
 $LANG['LEARN_MORE'] = 'Pour en savoir plus sur la cartographie des champs Symbiota (et Darwin Core)';
 $LANG['LOADING_DATA'] = 'Chargement Données dans Symbiota';
 $LANG['VER_MAPPING'] = 'Vérifier Mappage';
+$LANG['VERSION_DATA_CHANGES'] = 'Version data changes';
 $LANG['SAVE_MAP'] = 'Enregistrer Mappage';
 $LANG['VER_LINKS_MEDIA'] = "Vérifier les liens d'image à partir du champ associatedMedia (Média Associé)";
 $LANG['SKEL_EXPLAIN'] = "Les fichiers squelettes sont constitués de données stub faciles à capturer en masse pendant le processus d'imagerie.
@@ -119,11 +120,13 @@ $LANG['SKEL_EXPLAIN'] = "Les fichiers squelettes sont constitués de données st
 						Les téléchargements de fichiers squelettiques sont similaires aux téléchargements réguliers, bien qu'ils diffèrent de plusieurs manières.";
 $LANG['SKEL_EXPLAIN_P1'] = 'Les téléchargements de fichiers généraux consistent généralement en des enregistrements complets, tandis que les téléchargements squelettiques seront presque toujours un enregistrement annoté avec des données pour seulement quelques champs sélectionnés';
 $LANG['SKEL_EXPLAIN_P2'] = 'Le champ du numéro de catalogue est requis pour les téléchargements de fichiers squelettiques car ce champ est utilisé pour trouver des correspondances sur des images ou des enregistrements existants';
-$LANG['SKEL_EXPLAIN_P3'] = "Dans les cas où un enregistrement existe déjà, un téléchargement de fichier général remplacera complètement l'enregistrement existant par les données du nouvel enregistrement. D'un autre côté, un téléchargement squelettique augmentera l'enregistrement existant uniquement avec de nouvelles données de terrain. Les champs ne sont ajoutés que si les données n'existent pas déjà dans le champ cible.";
+$LANG['SKEL_EXPLAIN_P3'] = "Dans les cas où un enregistrement existe déjà, un téléchargement de fichier général remplacera complètement l'enregistrement existant par les données du nouvel
+	enregistrement. D'un autre côté, un téléchargement squelettique augmentera l'enregistrement existant uniquement avec de nouvelles données de terrain. Les champs ne sont ajoutés que si les données n'existent pas déjà dans le champ cible.";
 $LANG['SKEL_EXPLAIN_P4'] = "Si un enregistrement N'EXISTE PAS déjà, un nouvel enregistrement sera créé dans les deux cas, mais seul l'enregistrement squelettique sera marqué comme non traité";
 $LANG['NOT_AUTH'] = "ERREUR: vous n'êtes pas autorisé à télécharger dans cette collection";
-$LANG['PAGE_ERROR'] = "ERREUR: Soit vous avez essayé d'accéder à cette page sans passer par le menu de gestion des collections, soit vous avez essayé de télécharger un fichier trop volumineux. Vous voudrez peut-être diviser le fichier de téléchargement en fichiers plus petits ou compresser le fichier dans une archive zip (extension .zip). Vous pouvez contacter l'administrateur du portail pour demander de l'aide pour télécharger le fichier (conseil à l'administrateur : augmenter les limites de téléchargement PHP peut aider,
-upload_max_filesize actuel";
+$LANG['PAGE_ERROR'] = "ERREUR: Soit vous avez essayé d'accéder à cette page sans passer par le menu de gestion des collections, soit vous avez essayé de télécharger un fichier trop volumineux.
+	Vous voudrez peut-être diviser le fichier de téléchargement en fichiers plus petits ou compresser le fichier dans une archive zip (extension .zip). Vous pouvez contacter
+	l'administrateur du portail pour demander de l'aide pour télécharger le fichier (conseil à l'administrateur : augmenter les limites de téléchargement PHP peut aider, upload_max_filesize actuel";
 $LANG['USE_BACK'] = 'Utilisez les flèches de retour pour revenir à la page de téléchargement de fichier.';
 
 ?>

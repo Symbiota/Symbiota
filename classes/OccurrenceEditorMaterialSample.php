@@ -19,11 +19,12 @@ class OccurrenceEditorMaterialSample extends Manager{
 		$sql = 'SELECT m.matSampleID, m.sampleType, m.catalogNumber, m.guid, m.sampleCondition, m.disposition, m.preservationType, m.preparationDetails, m.preparationDate,
 			m.preparedByUid, CONCAT_WS(", ",u.lastname,u.firstname) as preparedBy, m.individualCount, m.sampleSize, m.storageLocation, m.remarks, m.dynamicFields, m.recordID, m.initialTimestamp
 			FROM ommaterialsample m LEFT JOIN users u ON m.preparedByUid = u.uid WHERE m.occid = '.$this->occid;
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_assoc()){
-			$retArr[$r['matSampleID']] = $r;
+		if($rs = $this->conn->query($sql)){
+			while($r = $rs->fetch_assoc()){
+				$retArr[$r['matSampleID']] = $r;
+			}
+			$rs->free();
 		}
-		$rs->free();
 		return $retArr;
 	}
 
@@ -85,19 +86,19 @@ class OccurrenceEditorMaterialSample extends Manager{
 
 	private function getRequestArr($postArr){
 		$retArr = array();
-		$retArr['sampleType'] = ($postArr['ms_sampleType']?$this->cleanInStr($postArr['ms_sampleType']):NULL);
-		$retArr['catalogNumber'] = ($postArr['ms_catalogNumber']?$this->cleanInStr($postArr['ms_catalogNumber']):NULL);
-		$retArr['guid'] = ($postArr['ms_guid']?$this->cleanInStr($postArr['ms_guid']):NULL);
-		$retArr['sampleCondition'] = ($postArr['ms_sampleCondition']?$this->cleanInStr($postArr['ms_sampleCondition']):NULL);
-		$retArr['disposition'] = ($postArr['ms_disposition']?$this->cleanInStr($postArr['ms_disposition']):NULL);
-		$retArr['preservationType'] = ($postArr['ms_preservationType']?$this->cleanInStr($postArr['ms_preservationType']):NULL);
-		$retArr['preparationDetails'] = ($postArr['ms_preparationDetails']?$this->cleanInStr($postArr['ms_preparationDetails']):NULL);
-		$retArr['preparationDate'] = ($postArr['ms_preparationDate']?$this->cleanInStr($postArr['ms_preparationDate']):NULL);
+		$retArr['sampleType'] = ($postArr['ms_sampleType']?trim($postArr['ms_sampleType']):NULL);
+		$retArr['catalogNumber'] = ($postArr['ms_catalogNumber']?trim($postArr['ms_catalogNumber']):NULL);
+		$retArr['guid'] = ($postArr['ms_guid']?trim($postArr['ms_guid']):NULL);
+		$retArr['sampleCondition'] = ($postArr['ms_sampleCondition']?trim($postArr['ms_sampleCondition']):NULL);
+		$retArr['disposition'] = ($postArr['ms_disposition']?trim($postArr['ms_disposition']):NULL);
+		$retArr['preservationType'] = ($postArr['ms_preservationType']?trim($postArr['ms_preservationType']):NULL);
+		$retArr['preparationDetails'] = ($postArr['ms_preparationDetails']?trim($postArr['ms_preparationDetails']):NULL);
+		$retArr['preparationDate'] = ($postArr['ms_preparationDate']?trim($postArr['ms_preparationDate']):NULL);
 		$retArr['preparedByUid'] = (is_numeric($postArr['ms_preparedByUid'])?$postArr['ms_preparedByUid']:NULL);
-		$retArr['individualCount'] = ($postArr['ms_individualCount']?$this->cleanInStr($postArr['ms_individualCount']):NULL);
-		$retArr['sampleSize'] = ($postArr['ms_sampleSize']?$this->cleanInStr($postArr['ms_sampleSize']):NULL);
-		$retArr['storageLocation'] = ($postArr['ms_storageLocation']?$this->cleanInStr($postArr['ms_storageLocation']):NULL);
-		$retArr['remarks'] = ($postArr['ms_remarks']?$this->cleanInStr($postArr['ms_remarks']):NULL);
+		$retArr['individualCount'] = ($postArr['ms_individualCount']?trim($postArr['ms_individualCount']):NULL);
+		$retArr['sampleSize'] = ($postArr['ms_sampleSize']?trim($postArr['ms_sampleSize']):NULL);
+		$retArr['storageLocation'] = ($postArr['ms_storageLocation']?trim($postArr['ms_storageLocation']):NULL);
+		$retArr['remarks'] = ($postArr['ms_remarks']?trim($postArr['ms_remarks']):NULL);
 		return $retArr;
 	}
 

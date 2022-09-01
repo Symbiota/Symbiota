@@ -204,7 +204,8 @@ class TaxonomyUpload{
 							foreach($inputArr as $k => $v){
 								$sql1 .= ','.$k;
 								$inValue = $this->cleanInStr($v);
-								$sql2 .= ','.($inValue?'"'.$inValue.'"':'NULL');
+								if($k == 'author') $sql2 .= ',"'.($inValue?$inValue:'').'"';
+								else $sql2 .= ','.($inValue?'"'.$inValue.'"':'NULL');
 							}
 							$sql = 'INSERT INTO uploadtaxa('.substr($sql1,1).') VALUES('.substr($sql2,1).')';
 							//echo "<div>".$sql."</div>";
@@ -362,17 +363,17 @@ class TaxonomyUpload{
 				}
 				unset($extraArr[$sourceId]);
 			}
-			$sql = "INSERT INTO uploadtaxa(SourceId,scinameinput,sciname,unitind1,unitname1,unitind2,unitname2,unitind3,".
-				"unitname3,SourceParentId,author,rankid,SourceAcceptedId,acceptance,vernacular,vernlang) ".
-				"VALUES (".$sourceId.',"'.$sciName.'","'.$sciName.'",'.
-				($tuArr[2]?'"'.$tuArr[2].'"':"NULL").",".
-				($tuArr[3]?'"'.$tuArr[3].'"':"NULL").",".
-				($tuArr[4]?'"'.$tuArr[4].'"':"NULL").",".
-				($tuArr[5]?'"'.$tuArr[5].'"':"NULL").",".
-				($unitInd3?'"'.$unitInd3.'"':"NULL").",".($unitName3?'"'.$unitName3.'"':"NULL").",".
-				($tuArr[18]?$tuArr[18]:"NULL").",".
-				($author?'"'.$author.'"':"NULL").",".
-				($tuArr[24]?$tuArr[24]:"NULL").",".
+			$sql = 'INSERT INTO uploadtaxa(SourceId,scinameinput,sciname,unitind1,unitname1,unitind2,unitname2,unitind3,'.
+				'unitname3,SourceParentId,author,rankid,SourceAcceptedId,acceptance,vernacular,vernlang) '.
+				'VALUES ('.$sourceId.',"'.$sciName.'","'.$sciName.'",'.
+				($tuArr[2]?'"'.$tuArr[2].'"':'NULL').','.
+				($tuArr[3]?'"'.$tuArr[3].'"':'NULL').','.
+				($tuArr[4]?'"'.$tuArr[4].'"':'NULL').','.
+				($tuArr[5]?'"'.$tuArr[5].'"':'NULL').','.
+				($unitInd3?'"'.$unitInd3.'"':'NULL').','.($unitName3?'"'.$unitName3.'"':'NULL').','.
+				($tuArr[18]?$tuArr[18]:'NULL').',"'.
+				($author?$author:'NULL').'",'.
+				($tuArr[24]?$tuArr[24]:'NULL').','.
 				($sourceAcceptedId?$sourceAcceptedId:'NULL').','.$acceptance.','.
 				($vernacular?'"'.$vernacular.'"':'NULL').','.
 				($vernlang?'"'.$vernlang.'"':'NULL').')';
@@ -400,7 +401,7 @@ class TaxonomyUpload{
 		$rs->free();
 		//Remove unaccepted, illegal homonyms
 		if($homonymArr){
-			$sql2 = 'DELETE FROM uploadtaxa WHERE (sciname IN("'.implode('","',$homonymArr).'")) AND (acceptance = 0) ';
+			$sql2 = 'DELETE FROM uploadtaxa WHERE (sciname IN("'.implode('','',$homonymArr).'")) AND (acceptance = 0) ';
 			$this->conn->query($sql2);
 		}
 	}
@@ -710,7 +711,7 @@ class TaxonomyUpload{
 		}
 		//Prime table with kingdoms that are not yet in table
 		$sql = 'INSERT INTO taxa(kingdomName, SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes, modifiedUid, modifiedTimeStamp) '.
-			'SELECT DISTINCT "'.$this->kingdomName.'", SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes, '.$GLOBALS['SYMB_UID'].' as uid, now() '.
+			'SELECT DISTINCT "'.$this->kingdomName.'", SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, IFNULL(Author,"") AS author, Source, Notes, '.$GLOBALS['SYMB_UID'].' as uid, now() '.
 			'FROM uploadtaxa '.
 			'WHERE (TID IS NULL) AND (rankid = 10)';
 		if($this->conn->query($sql)){
@@ -1021,7 +1022,7 @@ class TaxonomyUpload{
 
 	public function getTaxonomicResourceList(){
 		$taArr = array('worms'=>'World Register of Marine Species','col'=>'Catalog of Life');
-		//$taArr = array('col'=>'Catalog of Life','worms'=>'World Register of Marine Species','tropicos'=>'TROPICOS','eol'=>'Encyclopedia of Life','IndexFungorum'=>'Index Fungorum');
+		$taArr = array('col'=>'Catalog of Life', 'worms'=>'World Register of Marine Species', 'bryonames' => 'The Bryophyte Nomenclator', 'fdex'=>'Index Fungorum via F-Dex', 'tropicos'=>'TROPICOS', 'eol'=>'Encyclopedia of Life');
 		if(!isset($GLOBALS['TAXONOMIC_AUTHORITIES'])) return $taArr;
 		return array_intersect_key($taArr,array_change_key_case($GLOBALS['TAXONOMIC_AUTHORITIES']));
 	}

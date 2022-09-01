@@ -63,9 +63,7 @@ $LANG['BOTH_CATS'] = 'Si ambas casillas son seleccionadas, las coincidencias ser
 $LANG['ID_SOURCE'] = 'Identificar Fuente de Datos';
 $LANG['IPT_URL'] = 'URL de Recurso IPT';
 $LANG['RES_URL'] = 'Dirección o URL del Recurso';
-$LANG['WORKAROUND'] = 'Esta opción es para dirigirse a un archivo de datos que fue subido
-						manualmente a un servidor. Esta opción ofrece un atajo para importar archivos que son más grandes que lo permitido
-						por los límites de carga del servidor (e.g. límites de configuración PHP)';
+$LANG['WORKAROUND'] = 'Esta opción es para dirigirse a un archivo de datos que fue subido manualmente a un servidor. Esta opción ofrece un atajo para importar archivos que son más grandes que lo permitido por los límites de carga del servidor (e.g. límites de configuración PHP)';
 $LANG['DISPLAY_OPS'] = 'Desplegar Opciones Adicionales';
 $LANG['AUTOMAP'] = 'Automapear Campos';
 $LANG['ANALYZE_FILE'] = 'Analizar Archivo';
@@ -114,22 +112,20 @@ $LANG['LEARN_MORE'] = 'Para aprender más acerca de mapear campos de Symbiota (y
 $LANG['LOADING_DATA'] = 'Cargar Datos a Symbiota';
 $LANG['VER_MAPPING'] = 'Verificar Mapeo';
 $LANG['SAVE_MAP'] = 'Guardar Mapeo';
+$LANG['VERSION_DATA_CHANGES'] = 'Version data changes';
 $LANG['VER_LINKS_MEDIA'] = 'Verificar enlaces de imágenes en el campo associatedMedia';
 $LANG['SKEL_EXPLAIN'] = 'Los Archivos Esqueléticos consisten en un conjunnto de datos que son fáciles de capturar por lote durante el procesamiento de imágenes.
-						Los datos son utilizados para crear nuevos registros a los cuales las imágenes son vinculados.
-						Los archivos esqueléticos típicamente colectados incluyen quién creó el registro, nombre científico, país, estado/provincia, y a veces condado, aunque cualquier campo puede ser incluído.
-						Las cargas de archivos esqueléticos son muy similares a las cargas regulares aunque varían en distintos aspectos.';
+	Los datos son utilizados para crear nuevos registros a los cuales las imágenes son vinculados.
+	Los archivos esqueléticos típicamente colectados incluyen quién creó el registro, nombre científico, país, estado/provincia, y a veces condado, aunque cualquier campo puede ser incluído.
+	Las cargas de archivos esqueléticos son muy similares a las cargas regulares aunque varían en distintos aspectos.';
 $LANG['SKEL_EXPLAIN_P1'] = 'Las cargas generales de archivos típicamente consisten en registros completos, mientras que las cargas de archivos esqueléticos casi siempre serán registros anotados con datos de sólo algunos de los campos';
 $LANG['SKEL_EXPLAIN_P2'] = 'El campo de número de catálogo es requerido para cargas de archivos esqueléticos ya que este campo es utilizado para encontrar coincidencias con imágenes o registros existentes';
 $LANG['SKEL_EXPLAIN_P3'] = 'En casos donde el registro ya exista, una carga general de archivos reemplazará por completo al registro existente con los datos del nuevo registro.
 							Por otro lado, una carga esquelética actualizará el registro existente únicamente con los nuevos datos en los campos. Los campos únicament son añadidos si aún no hay datos en el campo objetivo.';
 $LANG['SKEL_EXPLAIN_P4'] = 'Si un registro NO existe aún, un nuevo registro será creado en ambos casos, pero sólo el registro esquelético será marcado como no procesado';
 $LANG['NOT_AUTH'] = 'ERROR: no está autorizado para cargar archivos en esta colección';
-$LANG['PAGE_ERROR'] = 'ERROR: O intentó llegar a esta página sin pasar por el menú de administración de colecciones
-				o trató de subir un archivo que es muy grande.
-				Tal vez quiera dividir el archivo en archivos más pequeños, o comprimirlo en un archivo zip  (extensión .zip).
-				Puede contactar al administrador del portal para solicitar asistencia para cargar el archivo (pista para el admin: incrementar el límite de carga PHP puede ayudar,
-				current upload_max_filesize';
+$LANG['PAGE_ERROR'] = 'ERROR: O intentó llegar a esta página sin pasar por el menú de administración de colecciones o trató de subir un archivo que es muy grande.
+	Tal vez quiera dividir el archivo en archivos más pequeños, o comprimirlo en un archivo zip  (extensión .zip).
+	Puede contactar al administrador del portal para solicitar asistencia para cargar el archivo (pista para el admin: incrementar el límite de carga PHP puede ayudar, current upload_max_filesize';
 $LANG['USE_BACK'] = 'Use las flechas para regresar a la página de carga de archivos.';
-
 ?>

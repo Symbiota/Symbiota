@@ -4,10 +4,15 @@ include_once($SERVER_ROOT.'/classes/ChecklistVoucherManager.php');
 @include_once($SERVER_ROOT.'/content/lang/checklists/clsppeditor.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:"";
-$tid = array_key_exists("tid",$_REQUEST)?$_REQUEST["tid"]:"";
-$tabIndex = array_key_exists("tabindex",$_POST)?$_POST["tabindex"]:0;
-$action = array_key_exists("action",$_POST)?$_POST["action"]:"";
+$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
+$tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']:0;
+$tabIndex = array_key_exists('tabindex',$_POST)?$_POST['tabindex']:0;
+$action = array_key_exists('action',$_POST)?$_POST['action']:'';
+
+//Sanitation
+if(!is_numeric($clid)) $clid = 0;
+if(!is_numeric($tid)) $tid = 0;
+if(!is_numeric($tabIndex)) $tabIndex = 0;
 
 $isEditor = false;
 if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USER_RIGHTS["ClAdmin"]))){

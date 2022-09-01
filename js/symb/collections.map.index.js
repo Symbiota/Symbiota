@@ -531,7 +531,7 @@ function verifyCollForm(f){
 	//make sure they have filled out at least one field.
 	if((f.taxa.value == '') && (f.country.value == '') && (f.state.value == '') && (f.county.value == '') && 
 		(f.locality.value == '') && (f.upperlat.value == '') && (f.pointlat.value == '') && 
-		(f.collector.value == '') && (f.collnum.value == '') && (f.eventdate.value == '')){
+		(f.collector.value == '') && (f.collnum.value == '') && (f.eventdate1.value == '')){
         alert("Please fill in at least one search parameter!");
         return false;
     }

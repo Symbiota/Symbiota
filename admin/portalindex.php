@@ -8,11 +8,13 @@ if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../ad
 
 $portalID = array_key_exists('portalid',$_REQUEST)?$_REQUEST['portalid']:0;
 $remoteID = array_key_exists('remoteid',$_REQUEST)?$_REQUEST['remoteid']:0;
+$remotePath = array_key_exists('remotePath',$_POST)?$_POST['remotePath']:'';
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 //Sanitation
 if(!is_numeric($portalID)) $portalID = 0;
 if(!is_numeric($remoteID)) $remoteID = 0;
+$remotePath = filter_var($remotePath, FILTER_SANITIZE_URL);
 
 $portalManager = new PortalIndex();
 
@@ -29,6 +31,13 @@ if($IS_ADMIN) $isEditor = 1;
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>
 		<script type="text/javascript">
+			function validateHandshakeForm(f){
+				if(f.remotePath.value == ""){
+					alert("Enter URL to remote portal base index page");
+					return false;
+				}
+				return true;
+			}
 		</script>
 		<style type="text/css">
 			fieldset{ margin:20px; padding:15px; }
@@ -36,6 +45,7 @@ if($IS_ADMIN) $isEditor = 1;
 			label{  }
 			button{ margin: 20px; }
 			hr{ margin-top: 15px; margin-bottom: 15px; }
+			.field-row{  }
 		</style>
 	</head>
 	<body>
@@ -49,16 +59,53 @@ if($IS_ADMIN) $isEditor = 1;
 		</div>
 		<div id="innertext">
 			<?php
-			if($isEditor){
-				if($formSubmit == 'importProfile'){
-					if($collid = $portalManager->importProfile($portalID, $remoteID)) echo '<div><a href="../collections/misc/collprofiles.php?collid='.$collid.'" target="_blank">New snapshot collection created</a></div>';
-					else echo '<div>failed to insert new collections: '.$portalManager->getErrorMessage().'</div>';
+			if(!isset($GLOBALS['ACTIVATE_PORTAL_INDEX'])){
+				echo 'This feature has not yet been activated within this portal';
+			}
+			elseif($isEditor){
+				if($formSubmit && $formSubmit != 'listCollections'){
+					echo '<fieldset>';
+					echo '<legend>Action Panel</legend>';
+					if($formSubmit == 'importProfile'){
+						if($collid = $portalManager->importProfile($portalID, $remoteID)) echo '<div><a href="../collections/misc/collprofiles.php?collid='.$collid.'" target="_blank">New snapshot collection created</a></div>';
+						else echo '<div>failed to insert new collections: '.$portalManager->getErrorMessage().'</div>';
+					}
+					elseif($formSubmit == 'initiateHandshake'){
+						if($resArr = $portalManager->initiateHandshake($remotePath)){
+							if($resArr['status']) echo '<div>Success - handshake successful: '.$resArr['message'].'</div>';
+							else echo '<div>ERROR - handshake failed: '.$resArr['message'].'</div>';
+							//print_r($resArr);
+						}
+						else echo '<div>ERROR initiating handshake: '.$portalManager->getErrorMessage().'</div>';
+					}
+					echo '</fieldset>';
 				}
-				$indexArr = $portalManager->getPortalIndexArr($portalID);
+				$selfArr = $portalManager->getSelfDetails();
+				if($formSubmit != 'listCollections'){
+					?>
+					<fieldset>
+						<legend>Current Portal Details</legend>
+						<div class="field-row"><label>Portal title:</label> <?php echo $selfArr['portalName']; ?></div>
+						<div class="field-row"><label>Root URL:</label> <?php echo $selfArr['urlRoot']; ?></div>
+						<div class="field-row"><label>Global Unique Identifier:</label> <?php echo $selfArr['guid']; ?></div>
+						<div class="field-row"><label>Manager email:</label> <?php echo $selfArr['managerEmail']; ?></div>
+						<div class="field-row"><label>Software version:</label> <?php echo $selfArr['symbiotaVersion']; ?></div>
+						<hr />
+						<div class="handshake-div"><a href="#" onclick="$('.handshake-div').toggle(); return false;">Initiate Handshake with External Portal</a></div>
+						<div class="handshake-div" style="display:none">
+							<form action="portalindex.php" method="post" onsubmit="return validateHandshakeForm(this)">
+								<div class="field-row"><label>Path to Remote Portal:</label> <input name="remotePath" type="text" value="<?php echo $remotePath; ?>" style="width: 500px" /></div>
+								<div class="field-row"><button name="formsubmit" type="submit" value="initiateHandshake">Initiate Handshake</button></div>
+							</form>
+						</div>
+					</fieldset>
+					<?php
+				}
 				?>
 				<fieldset>
 					<legend>Portal Index</legend>
 					<?php
+					$indexArr = $portalManager->getPortalIndexArr($portalID);
 					foreach($indexArr as $portalID => $portalArr){
 						foreach($portalArr as $fieldName => $fieldValue){
 							if($fieldValue){
@@ -160,6 +207,7 @@ if($IS_ADMIN) $isEditor = 1;
 						}
 						echo '<hr/>';
 					}
+					if(!$indexArr) echo '<div>Portal Index empty. No portals have yet been registered.</div>';
 					?>
 				</fieldset>
 				<?php

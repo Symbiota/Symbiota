@@ -18,7 +18,8 @@ $importImage = array_key_exists('importimage',$_REQUEST)?true:false;
 $observerUid = array_key_exists('observeruid',$_POST)?$_POST['observeruid']:'';
 $matchCatNum = array_key_exists('matchcatnum',$_REQUEST)?true:false;
 $matchOtherCatNum = array_key_exists('matchothercatnum',$_REQUEST)&&$_REQUEST['matchothercatnum']?true:false;
-$verifyImages = array_key_exists('verifyimages',$_REQUEST)&&$_REQUEST['verifyimages']?true:false;
+$versionData = array_key_exists('versiondata',$_REQUEST) && $_REQUEST['versiondata']?true:false;
+$verifyImages = array_key_exists('verifyimages',$_REQUEST) && $_REQUEST['verifyimages']?true:false;
 $processingStatus = array_key_exists('processingstatus',$_REQUEST)?$_REQUEST['processingstatus']:'';
 $dbpk = array_key_exists('dbpk',$_REQUEST)?$_REQUEST['dbpk']:'';
 
@@ -37,6 +38,7 @@ if($importImage !== true) $importImage = false;
 if(!is_numeric($observerUid)) $observerUid = 0;
 if($matchCatNum !== true) $matchCatNum = false;
 if($matchOtherCatNum !== true) $matchOtherCatNum = false;
+if($versionData !== true) $versionData = false;
 if($verifyImages !== true) $verifyImages = false;
 if(!preg_match('/^[a-zA-Z0-9\s_-]+$/',$processingStatus)) $processingStatus = '';
 if($dbpk) $dbpk = htmlspecialchars($dbpk);
@@ -71,6 +73,7 @@ $duManager->setUploadType($uploadType);
 $duManager->setObserverUid($observerUid);
 $duManager->setMatchCatalogNumber($matchCatNum);
 $duManager->setMatchOtherCatalogNumbers($matchOtherCatNum);
+$duManager->setVersionDataEdits($versionData);
 $duManager->setVerifyImageUrls($verifyImages);
 $duManager->setProcessingStatus($processingStatus);
 
@@ -623,6 +626,10 @@ include($SERVER_ROOT.'/includes/header.php');
 								<?php
 							}
 							?>
+							<div style="margin:10px 0px;">
+								<input name="versiondata" type="checkbox" value="1" checked />
+								<?php echo (isset($LANG['VERSION_DATA_CHANGES'])?$LANG['VERSION_DATA_CHANGES']:'Version data changes'); ?>
+							</div>
 							<div style="margin:10px 0px;">
 								<input name="verifyimages" type="checkbox" value="1" />
 								<?php echo (isset($LANG['VER_LINKS_MEDIA'])?$LANG['VER_LINKS_MEDIA']:'Verify image links from associatedMedia field'); ?>

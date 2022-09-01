@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Collection;
+use App\Models\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -37,14 +37,14 @@ class CollectionController extends Controller{
 	 *	 @OA\Parameter(
 	 *		 name="limit",
 	 *		 in="query",
-	 *		 description="Pagination parameter: maximum number of records per page",
+	 *		 description="Controls the number of results per page",
 	 *		 required=false,
 	 *		 @OA\Schema(type="integer", default=1000)
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="offset",
 	 *		 in="query",
-	 *		 description="Pagination parameter: page number",
+	 *		 description="Determines the offset for the search results. A limit of 200 and offset of 100, will get the third page of 100 results.",
 	 *		 required=false,
 	 *		 @OA\Schema(type="integer", default=0)
 	 *	 ),

@@ -6,6 +6,10 @@ header("Content-Type: text/html; charset=".$CHARSET);
 
 $pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']:0;
 
+//Sanitation
+if(!is_numeric($pid)) $pid = 0;
+$pid = filter_var($pid, FILTER_SANITIZE_STRING);
+
 $clManager = new ChecklistManager();
 $clManager->setProj($pid);
 ?>

@@ -15,6 +15,7 @@ class SpecUploadBase extends SpecUpload{
 	private $observerUid;
 	private $matchCatalogNumber = 1;
 	private $matchOtherCatalogNumbers = 0;
+	private $versionDataEdits = false;
 	private $verifyImageUrls = false;
 	private $processingStatus = '';
 	protected $nfnIdentifier;
@@ -35,7 +36,6 @@ class SpecUploadBase extends SpecUpload{
 	private $targetCharset = 'UTF-8';
 	private $imgFormatDefault = '';
 	private $sourceDatabaseType = '';
-	protected $sourcePortalIndex = 0;
 	private $dbpkCnt = 0;
 
 	function __construct() {
@@ -543,12 +543,8 @@ class SpecUploadBase extends SpecUpload{
 				$this->cleanUpload();
 			}
 		}
-		if($finalTransfer){
-			$this->finalTransfer();
-		}
-		else{
-			$this->outputMsg('<li>Record upload complete, ready for final transfer and activation</li>');
-		}
+		if($finalTransfer) $this->finalTransfer();
+		else $this->outputMsg('<li>Record upload complete, ready for final transfer and activation</li>');
 	}
 
 	protected function cleanUpload(){
@@ -817,19 +813,17 @@ class SpecUploadBase extends SpecUpload{
 	}
 
 	public function finalTransfer(){
-		global $QUICK_HOST_ENTRY_IS_ACTIVE;
 		$this->recordCleaningStage2();
 		$this->transferOccurrences();
 		$this->transferIdentificationHistory();
 		$this->transferImages();
-		if($QUICK_HOST_ENTRY_IS_ACTIVE) $this->transferHostAssociations();
-		$this->crossMapSymbiotaOccurrences();
+		if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']) $this->transferHostAssociations();
 		$this->finalCleanup();
 		$this->outputMsg('<li style="">Upload Procedure Complete ('.date('Y-m-d h:i:s A').')!</li>');
 		$this->outputMsg(' ');
 	}
 
-	private function recordCleaningStage2(){
+	protected function recordCleaningStage2(){
 		$this->outputMsg('<li>Starting Stage 2 cleaning</li>');
 		if($this->uploadType == $this->NFNUPLOAD){
 			//Remove specimens without links back to source
@@ -870,7 +864,10 @@ class SpecUploadBase extends SpecUpload{
 		if($this->uploadType == $this->NFNUPLOAD){
 			//Transfer edits to revision history table
 			$this->outputMsg('<li>Transferring edits to versioning tables...</li>');
-			$this->versionOccurrenceEdits();
+			$this->versionExternalEdits();
+		}
+		elseif($this->collMetadataArr['managementtype'] == 'Live Data' && $this->uploadType != $this->RESTOREBACKUP){
+			$this->versionInternalEdits();
 		}
 		$transactionInterval = 1000;
 		$this->outputMsg('<li>Updating existing records in batches of '.$transactionInterval.'... </li>');
@@ -903,7 +900,7 @@ class SpecUploadBase extends SpecUpload{
 		if($this->uploadType == $this->RESTOREBACKUP) $obsUidTarget = 'u.observeruid';
 		elseif($this->observerUid) $obsUidTarget = $this->observerUid;
 		$sqlBase = 'UPDATE IGNORE uploadspectemp u INNER JOIN omoccurrences o ON u.occid = o.occid SET o.observeruid = '.$obsUidTarget.','.implode(',',$sqlFragArr);
-		if($this->collMetadataArr["managementtype"] == 'Snapshot') $sqlBase .= ', o.dateLastModified = CURRENT_TIMESTAMP() ';
+		if($this->collMetadataArr['managementtype'] == 'Snapshot') $sqlBase .= ', o.dateLastModified = CURRENT_TIMESTAMP() ';
 		$sqlBase .= ' WHERE (u.collid IN('.$this->collId.')) ';
 		$cnt = 1;
 		$previousInterval = 0;
@@ -984,9 +981,56 @@ class SpecUploadBase extends SpecUpload{
 		}
 	}
 
-	private function versionOccurrenceEdits(){
+	private function versionInternalEdits(){
+		if($this->versionDataEdits){
+			$fieldArr = array();
+			$sql = 'SHOW COLUMNS FROM omoccurrences';
+			$rs = $this->conn->query($sql);
+			while($row = $rs->fetch_object()){
+				$field = strtolower($row->Field);
+				if(in_array($field, $this->symbFields)) $fieldArr[] = $field;
+			}
+			$rs->free();
+
+			$sqlFrag = '';
+			foreach($fieldArr as $field){
+				$sqlFrag .= ',u.'.$field.',o.'.$field.' as old_'.$field;
+			}
+			$sql = 'SELECT o.occid'.$sqlFrag.' FROM omoccurrences o INNER JOIN uploadspectemp u ON o.occid = u.occid WHERE o.collid IN('.$this->collId.') AND u.collid IN('.$this->collId.')';
+			$rs = $this->conn->query($sql);
+			$excludedFieldArr = array('dateentered','observeruid');
+			while($r = $rs->fetch_assoc()){
+				foreach($fieldArr as $field){
+					if(in_array($field, $excludedFieldArr)) continue;
+					if($r[$field] != $r['old_'.$field]){
+						if($this->uploadType == $this->SKELETAL && $r['old_'.$field]) continue;
+						$this->insertOccurEdit($r['occid'], $field, $r[$field], $r['old_'.$field]);
+					}
+				}
+			}
+			$rs->free();
+		}
+	}
+
+	private function insertOccurEdit($occid, $fieldName, $fieldValueNew, $fieldValueOld){
+		if($fieldValueNew == NULL) $fieldValueNew = '';
+		if($fieldValueOld == NULL) $fieldValueOld = '';
+		$sql = 'INSERT INTO omoccuredits(occid, fieldName, fieldValueNew, fieldValueOld, uid) VALUES(?,?,?,?,?)';
+		if($stmt = $this->conn->prepare($sql)) {
+			$stmt->bind_param('isssi', $occid, $fieldName, $fieldValueNew, $fieldValueOld, $GLOBALS['SYMB_UID']);
+			if(!$stmt->execute()){
+				$this->errorStr = 'ERROR inserting Occurrence Edit: '.$stmt->error;
+				echo $this->errorStr.'<br/>';
+				return false;
+			}
+			$stmt->close();
+		}
+		else $this->errorStr = mysqli_error($this->conn);
+	}
+
+	private function versionExternalEdits(){
 		$nfnFieldArr = array();
-		$sql = "SHOW COLUMNS FROM omoccurrences";
+		$sql = 'SHOW COLUMNS FROM omoccurrences';
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
 			$field = strtolower($row->Field);
@@ -1017,7 +1061,7 @@ class SpecUploadBase extends SpecUpload{
 			//Load into revisions table
 			foreach($editArr as $appliedStatus => $eArr){
 				$sql = 'INSERT INTO omoccurrevisions(occid, oldValues, newValues, externalSource, reviewStatus, appliedStatus) '.
-						'VALUES('.$r['occid'].',"'.$this->cleanInStr(json_encode($eArr['old'])).'","'.$this->cleanInStr(json_encode($eArr['new'])).'","Notes from Nature Expedition",1,'.$appliedStatus.')';
+					'VALUES('.$r['occid'].',"'.$this->cleanInStr(json_encode($eArr['old'])).'","'.$this->cleanInStr(json_encode($eArr['new'])).'","Notes from Nature Expedition",1,'.$appliedStatus.')';
 				if(!$this->conn->query($sql)){
 					$this->outputMsg('<li style="margin-left:10px;">ERROR adding edit revision ('.$this->conn->error.')</li>');
 				}
@@ -1410,16 +1454,6 @@ class SpecUploadBase extends SpecUpload{
 		$rs->free();
 	}
 
-	private function crossMapSymbiotaOccurrences(){
-		if($this->sourcePortalIndex && $this->collMetadataArr['managementtype'] == 'Snapshot'){
-			$sql = 'INSERT INTO portaloccurrences(occid, targetOccid, portalID, refreshTimestamp)
-				SELECT u.occid, u.dbpk, '.$this->sourcePortalIndex.', NOW() FROM uploadspectemp u LEFT JOIN portaloccurrences l ON u.occid = l.occid
-				WHERE u.occid IS NOT NULL AND u.dbpk IS NOT NULL AND u.collid = '.$this->collId.' AND l.occid IS NULL';
-			if($this->conn->query($sql)) $this->outputMsg('<li>Occurrences cross-mapped to Symbiota source portal</li> ');
-			//else $this->outputMsg('<li>ERROR linking occurrences to source portal: '.$this->conn->error.'</li> ');
-		}
-	}
-
 	protected function finalCleanup(){
 		$this->outputMsg('<li>Record transfer complete!</li>');
 		$this->outputMsg('<li>Cleaning house...</li>');
@@ -1520,9 +1554,6 @@ class SpecUploadBase extends SpecUpload{
 			//Set processingStatus to value defined by loader
 			if($this->processingStatus){
 				$recMap['processingstatus'] = $this->processingStatus;
-			}
-			elseif($this->uploadType == $this->SKELETAL){
-				$recMap['processingstatus'] = 'unprocessed';
 			}
 
 			//Temporarily code until Specify output UUID as occurrenceID
@@ -1933,6 +1964,10 @@ class SpecUploadBase extends SpecUpload{
 		$this->matchOtherCatalogNumbers = $match;
 	}
 
+	public function setVersionDataEdits($v){
+		$this->versionDataEdits = $v;
+	}
+
 	public function setVerifyImageUrls($v){
 		$this->verifyImageUrls = $v;
 	}
@@ -2001,14 +2036,6 @@ class SpecUploadBase extends SpecUpload{
 		}
 		asort($retArr);
 		return $retArr;
-	}
-
-	public function setSourcePortalIndex($index){
-		if($index) $this->sourcePortalIndex = $index;
-	}
-
-	public function getSourcePortalIndex(){
-		return $this->sourcePortalIndex;
 	}
 
 	//Misc functions

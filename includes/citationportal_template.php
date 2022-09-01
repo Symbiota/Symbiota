@@ -1,0 +1,1 @@
+Biodiversity occurrence data published by: <?php echo ($DEFAULT_TITLE) ? $DEFAULT_TITLE : "Name of people or institutional reponsible for maintaining the portal"; ?> (accessed through the <?php echo ($DEFAULT_TITLE) ? $DEFAULT_TITLE : "Custom title for the portal"; ?> Portal, <?php echo $SERVER_HOST . $CLIENT_ROOT; ?>, <?php echo date('Y-m-d'); ?>).

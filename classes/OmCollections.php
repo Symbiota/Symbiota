@@ -142,7 +142,7 @@ class OmCollections extends Manager{
 
 	private function addIconImageFile($postArr){
 		$targetPath = $GLOBALS['SERVER_ROOT'].'/content/collicon/';
-		$urlBase = $this->getDomainPath().$GLOBALS['CLIENT_ROOT'].'/content/collicon/';
+		$urlBase = $this->getDomain().$GLOBALS['CLIENT_ROOT'].'/content/collicon/';
 
 		//Clean file name
 		$fileName = basename($_FILES['iconFile']['name']);

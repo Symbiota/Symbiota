@@ -112,7 +112,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 <html>
 <head>
 	<meta charset="<?php echo $CHARSET; ?>">
-	<title><?php echo $DEFAULT_TITLE; ?><?php echo $LANG['RESCHECK'];?>: <?php echo $clManager->getClName(); ?></title>
+	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['CHECKLIST'])?$LANG['CHECKLIST']:'Checklist').': '.$clManager->getClName(); ?></title>
 	<?php
 	$activateJQuery = true;
 	include_once($SERVER_ROOT.'/includes/head.php');

@@ -1,4 +1,6 @@
 var polyType = 'POLYGON';
+var switchCoord = false;
+var trimCoord = false;
 
 function validatePolygon(footprintWkt){
 	footprintWkt = footprintWkt.trim();
@@ -13,7 +15,11 @@ function validatePolygon(footprintWkt){
 			for(i in footPolyArr){
 				let keys = Object.keys(footPolyArr[i]);
 				if(!isNaN(footPolyArr[i][keys[0]]) && !isNaN(footPolyArr[i][keys[1]])){
-					newStr = newStr + "," + parseFloat(footPolyArr[i][keys[0]]).toFixed(6) + " " + parseFloat(footPolyArr[i][keys[1]]).toFixed(6);
+					let lat = parseFloat(footPolyArr[i][keys[0]]);
+					if(trimCoord) lat = lat.toFixed(6);
+					let lng = parseFloat(footPolyArr[i][keys[1]]);
+					if(trimCoord) lng = lng.toFixed(6);
+					newStr = newStr + "," + lat + " " + lng;
 				}
 				else{
 					alert("The footprint is not in the proper format. Please recreate it using the map tools.");
@@ -40,7 +46,11 @@ function validatePolygon(footprintWkt){
 			let klmArr = footprintWkt.split(" ");
 			for(var i=0; i < klmArr.length; i++){
 				let pArr = klmArr[i].split(",");
-				newStr = newStr + "," + parseFloat(pArr[1]).toFixed(6) + " " + parseFloat(pArr[0]).toFixed(6);
+				let lat = parseFloat(pArr[1]);
+				if(trimCoord) lat = lat.toFixed(6);
+				let lng = parseFloat(pArr[0]);
+				if(trimCoord) lng = lng.toFixed(6);
+				newStr = newStr + "," + lat + " " + lng;
 			}
 			footprintWkt = newStr.substr(1)+"";
 		}
@@ -50,7 +60,11 @@ function validatePolygon(footprintWkt){
 				let tempArr = [];
 				for (i = 0; i < coordArr.length; i++) {
 					tempArr = coordArr[i].split(",");
-					coordArr[i] = parseFloat(tempArr[1]).toFixed(6)+" "+parseFloat(tempArr[0]).toFixed(6);
+					let lat = parseFloat(tempArr[1]);
+					if(trimCoord) lat = lat.toFixed(6);
+					let lng = parseFloat(tempArr[0]);
+					if(trimCoord) lng = lng.toFixed(6);
+					coordArr[i] = lat + " " + lng;
 				}
 				footprintWkt = coordArr.join(",");
 			}
@@ -93,7 +107,6 @@ function trimPoly(polyStr){
 }
 
 function formatPolyFragment(polyStr){
-	let switchPoints = 0;
 	let newStr = "";
 	let patt = new RegExp(/^[\d-\.]+,[\d-\.]+/);
 	if(patt.test(polyStr)){
@@ -101,10 +114,14 @@ function formatPolyFragment(polyStr){
 		let coordArr = polyStr.split(",");
 		for(var i=0; i < coordArr.length; i++){
 			if((i % 2) == 1){
-				let latDec = parseFloat(coordArr[i-1]).toFixed(6);
-				let lngDec = parseFloat(coordArr[i]).toFixed(6);
-				if(switchPoints == 0 && Math.abs(latDec) > 90) switchPoints = 1;
-				else if(switchPoints == 1 && Math.abs(lngDec) > 90) switchPoints = 2;
+				let latDec = parseFloat(coordArr[i-1]);
+				if(trimCoord) latDec = latDec.toFixed(6);
+				let lngDec = parseFloat(coordArr[i]);
+				if(trimCoord) lngDec = lngDec.toFixed(6);
+				if(Math.abs(latDec) > 90){
+					alert("One or more of the latitude values are out of range. Perhaps the coordinates need to be switched?");
+					return false;
+				} 
 				newStr = newStr + "," + latDec + " " + lngDec;
 			}
 		}
@@ -117,10 +134,14 @@ function formatPolyFragment(polyStr){
 			let xy = strArr[i].trim().split(" ");
 			if(i<1 || strArr[i-1].trim() != strArr[i].trim()){
 				if(!isNaN(xy[0]) && !isNaN(xy[1])){
-					let latDec = parseFloat(xy[0]).toFixed(6);
-					let lngDec = parseFloat(xy[1]).toFixed(6);
-					if(switchPoints == 0 && Math.abs(latDec) > 90) switchPoints = 1;
-					else if(switchPoints == 1 && Math.abs(lngDec) > 90) switchPoints = 2;
+					let latDec = parseFloat(xy[0]);
+					if(trimCoord) latDec = latDec.toFixed(6);
+					let lngDec = parseFloat(xy[1]);
+					if(trimCoord) lngDec = lngDec.toFixed(6);
+					if(Math.abs(latDec) > 90){
+						alert("One or more of the latitude values are out of range. Perhaps the coordinates need to be switched?");
+						return false;
+					} 
 					newStr = newStr + "," + latDec + " " + lngDec;
 				}
 			}
@@ -128,7 +149,7 @@ function formatPolyFragment(polyStr){
 		}
 	}
 	if(newStr) polyStr = newStr.substr(1);
-	if(switchPoints) polyStr = switchCoordinates(polyStr);
+	if(switchCoord) polyStr = switchCoordinates(polyStr);
 
 	//Make sure first and last points are the same
 	if(polyStr.indexOf(",") > -1){

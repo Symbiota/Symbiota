@@ -2591,299 +2591,301 @@ class SpecProcNlpSalix
 		$ScoreArray = array();
 		$TempString = $this->LabelLines[$L];
 		$TempString = str_replace("'","`",$TempString);
-		$Found = preg_match_all("(\b[A-Za-z`]{1,20}\b)",$TempString,$WordsArray, PREG_OFFSET_CAPTURE);//Break the string up into words
-		$FieldScoreArray = array();
-		$StatSums = array("occurrenceRemarks"=>0,"habitat"=>0,"locality"=>0,"verbatimAttributes"=>0,"substrate"=>0);
-		for($w=0;$w<count($WordsArray[0])-1;$w++)
-			{//Get the wordstats values for each word and word pair in a line
-			$Loc = $WordsArray[0][$w][1];
-			$Word1 = $WordsArray[0][$w][0];
-			$Word2 = $WordsArray[0][$w+1][0];
-			$ScoreArray = $this->ScoreTwoWords($Word1,$Word2);//Get word stats score for these two words
-			if(max($ScoreArray) == 0)
-				{//Could be a locality.  See if it looks like a capitalized word.
-				//This could be putting too many things into locality and may be better removed.
-				if($w>0 && $this->MaxKey($FieldScoreArray[$w-1]) == 'locality' && preg_match("([A-Z][a-z]{2,20})", $Word1) > 0)
-					$ScoreArray['locality'] = 100;
+		$WordsArray = array();
+		if(preg_match_all("(\b[A-Za-z`]{1,20}\b)", $TempString, $WordsArray, PREG_OFFSET_CAPTURE)){ //Break the string up into words
+			$FieldScoreArray = array();
+			$StatSums = array("occurrenceRemarks"=>0,"habitat"=>0,"locality"=>0,"verbatimAttributes"=>0,"substrate"=>0);
+			for($w=0;$w<count($WordsArray[0])-1;$w++)
+				{//Get the wordstats values for each word and word pair in a line
+				$Loc = $WordsArray[0][$w][1];
+				$Word1 = $WordsArray[0][$w][0];
+				$Word2 = $WordsArray[0][$w+1][0];
+				$ScoreArray = $this->ScoreTwoWords($Word1,$Word2);//Get word stats score for these two words
+				if(max($ScoreArray) == 0)
+					{//Could be a locality.  See if it looks like a capitalized word.
+					//This could be putting too many things into locality and may be better removed.
+					if($w>0 && $this->MaxKey($FieldScoreArray[$w-1]) == 'locality' && preg_match("([A-Z][a-z]{2,20})", $Word1) > 0)
+						$ScoreArray['locality'] = 100;
+					}
+				$FieldScoreArray[$w] = $ScoreArray;
+				foreach($Fields as $F)
+					{
+					$StatSums[$F] += $ScoreArray[$F];
+					}
 				}
-			$FieldScoreArray[$w] = $ScoreArray;
+
+			//Get the value for the single last word (which doesn't have a following paired word, of course.)
+			$w = count($WordsArray[0])-1;
+			$ScoreArray = $this->ScoreTwoWords($WordsArray[0][$w][0],"");
+
 			foreach($Fields as $F)
-				{
+				{ //Put all the scores into FieldScoreArray
+				$FieldScoreArray[$w][$F] = $ScoreArray[$F];
 				$StatSums[$F] += $ScoreArray[$F];
 				}
-			}
-
-		//Get the value for the single last word (which doesn't have a following paired word, of course.)
-		$w = count($WordsArray[0])-1;
-		$ScoreArray = $this->ScoreTwoWords($WordsArray[0][$w][0],"");
-
-		foreach($Fields as $F)
-			{ //Put all the scores into FieldScoreArray
-			$FieldScoreArray[$w][$F] = $ScoreArray[$F];
-			$StatSums[$F] += $ScoreArray[$F];
-			}
-		/*
-		//Debug routines used often enough to leave here.  For now.
-		foreach($WordsArray[0] as $w=>$Word)
-			{
-			echo "$Word[0], ";
-			foreach($Fields as $F)
-				echo $FieldScoreArray[$w][$F].",";
+			/*
+			//Debug routines used often enough to leave here.  For now.
+			foreach($WordsArray[0] as $w=>$Word)
+				{
+				echo "$Word[0], ";
+				foreach($Fields as $F)
+					echo $FieldScoreArray[$w][$F].",";
+				echo"<br>";
+				}
 			echo"<br>";
-			}
-		echo"<br>";
-		*/
-		if(count($FieldScoreArray) == 0)
-				return;
+			*/
+			if(count($FieldScoreArray) == 0)
+					return;
 
-		//Check for first/last words same field and larger than any other field for the rest of the words.
-		//If so, then assume whole line is the same field.
-		$Size = count($WordsArray[0])-2;
-		if($Size > 0)
-			{
-			$Field1 = $this->MaxKey($FieldScoreArray[0]);
-			$Field2 = $this->MaxKey($FieldScoreArray[$Size]);
-			if(max($FieldScoreArray[0]) != 0 && $Field1 == $Field2)
-				{//First and last the same field
-				//echo "First and last ($Size) both $Field1<br>";
-				$this->AddToResults($Field1,$this->LabelLines[$L],$L);
-				return;
-				}
-			}
-
-		//Smooth the array, removing isolated high and low points
-		foreach($Fields as $F)
-			{
-			for($w=1;$w < count($FieldScoreArray)-1;$w++)
+			//Check for first/last words same field and larger than any other field for the rest of the words.
+			//If so, then assume whole line is the same field.
+			$Size = count($WordsArray[0])-2;
+			if($Size > 0)
 				{
-				if($FieldScoreArray[$w][$F] < $FieldScoreArray[$w-1][$F] && $FieldScoreArray[$w][$F] < $FieldScoreArray[$w+1][$F])
-					$FieldScoreArray[$w][$F] = ($FieldScoreArray[$w][$F]+$FieldScoreArray[$w-1][$F]+$FieldScoreArray[$w+1][$F])/3;
-				if($FieldScoreArray[$w][$F] > $FieldScoreArray[$w-1][$F] && $FieldScoreArray[$w][$F] > $FieldScoreArray[$w+1][$F])
-					$FieldScoreArray[$w][$F] = ($FieldScoreArray[$w][$F]+$FieldScoreArray[$w-1][$F]+$FieldScoreArray[$w+1][$F])/3;
+				$Field1 = $this->MaxKey($FieldScoreArray[0]);
+				$Field2 = $this->MaxKey($FieldScoreArray[$Size]);
+				if(max($FieldScoreArray[0]) != 0 && $Field1 == $Field2)
+					{//First and last the same field
+					//echo "First and last ($Size) both $Field1<br>";
+					$this->AddToResults($Field1,$this->LabelLines[$L],$L);
+					return;
+					}
 				}
-			}
 
-		//Find the maximum score for any field.
-		if(count($WordsArray[0]) > 0)
-			$Max = max($StatSums)/(count($WordsArray[0]));
-		else
-			return;  //Array is empty.
-
-		if($Max < 20)
-			return; //Maximum wordstats score too low.
-
-		//Now try to split into Fields.
-		$ResultFields = array();
-		$ChangeFields = array();
-
-		//Some prepositions that influence where to split a line.
-		$Prep = array("in","on","of","by","inside","along","ca","de","en");
-
-		//Find any zero value words and set to the following word...?
-		do
-			{
-			$Flag = false;
-			$w=0;
-			while($w < count($FieldScoreArray)-1)
+			//Smooth the array, removing isolated high and low points
+			foreach($Fields as $F)
 				{
-				if(max($FieldScoreArray[$w]) == 0)
-					if(max($FieldScoreArray[$w+1]) > 0)
-						{
-						//echo "Setting $w to ".($w+1)."<br>";
-						$FieldScoreArray[$w] = $FieldScoreArray[$w+1];
-						$Flag = true;
-						}
-				$w++;
-				}
-			}while($Flag);
-
-		//Walk through the array of word scores and make adjustments.
-		for($w=0;$w<count($FieldScoreArray);$w++)
-			{
-			$Word1 = $WordsArray[0][$w][0];//Word "w" in the line
-			$ResultFields[$w] = $this->MaxKey($FieldScoreArray[$w]);
-			//$Max = max($FieldScoreArray[$w]);
-			//$Field = array_search($Max,$FieldScoreArray[$w]);
-			//$ResultFields[$w] = $Field;
-
-			//echo "Max $Max in $Field<br>";
-
-			//ChangeFields is an array of locations in the line where the field changes
-			if($w==0)
-				$ChangeFields[0] = 0;
-
-			//If the previous word was locality and this word is title-case, then probably also locality, unless some cases
-			if($w > 0 && $ResultFields[$w-1] == 'locality' && $Word1 == mb_convert_case($Word1,MB_CASE_TITLE))
-				{
-				//echo "Setting {$WordsArray[0][$w][0]} to locality<br>";
-				$Pos = $WordsArray[0][$w-1][1] + strlen($WordsArray[0][$w-1][0])+1;
-				if(strpos(".,;",$TempString[$Pos]=== false)) //Unless previous word was followed by period, comma, semicolon...
-					$ResultFields[$w] = 'locality'; //last field was locality, and this word is capitalized.  Probably part of previous.
-				}
-
-			//If this word is a preposition, set it to the same field as the previous word
-			if($w>0 && array_search($WordsArray[0][$w][0],$Prep))
-				{
-				//echo "Change $Word1 to {$ResultFields[$w-1]}<br>";
-				$ResultFields[$w] = $ResultFields[$w-1];
-				}
-
-			//Find points in the line where the field changes.
-			if($w>0 && $ResultFields[$w] != $ResultFields[$w-1])
-				{ //Add this as a point in the line where the field changes.
-				//echo "Change at $w<br>";
-				$ChangeFields[] = $w;
-				}
-			}
-
-		//Now adjust fields
-		//Look for and correct anomalies, such as single words in a field
-		//Loop through the following until nothing changes, indicated by $Adjust['Flag']
-		//It's a complicated and somewhat tangled routine.
-		do
-			{ //First check for widows or orphans
-			$Adjust = array('Flag'=>false);
-			if(count($ChangeFields) > 1) //Otherwise don't bother.
-				{
-				if($ChangeFields[1] < 3) //Changing on second or third word is suspicious
+				for($w=1;$w < count($FieldScoreArray)-1;$w++)
 					{
-					if(count($ChangeFields) == 2)
-						{
-						if(count($WordsArray[0] < 5) || count($WordsArray[0]) - $ChangeFields[1] > 3)
+					if($FieldScoreArray[$w][$F] < $FieldScoreArray[$w-1][$F] && $FieldScoreArray[$w][$F] < $FieldScoreArray[$w+1][$F])
+						$FieldScoreArray[$w][$F] = ($FieldScoreArray[$w][$F]+$FieldScoreArray[$w-1][$F]+$FieldScoreArray[$w+1][$F])/3;
+					if($FieldScoreArray[$w][$F] > $FieldScoreArray[$w-1][$F] && $FieldScoreArray[$w][$F] > $FieldScoreArray[$w+1][$F])
+						$FieldScoreArray[$w][$F] = ($FieldScoreArray[$w][$F]+$FieldScoreArray[$w-1][$F]+$FieldScoreArray[$w+1][$F])/3;
+					}
+				}
+
+			//Find the maximum score for any field.
+			if(count($WordsArray[0]) > 0)
+				$Max = max($StatSums)/(count($WordsArray[0]));
+			else
+				return;  //Array is empty.
+
+			if($Max < 20)
+				return; //Maximum wordstats score too low.
+
+			//Now try to split into Fields.
+			$ResultFields = array();
+			$ChangeFields = array();
+
+			//Some prepositions that influence where to split a line.
+			$Prep = array("in","on","of","by","inside","along","ca","de","en");
+
+			//Find any zero value words and set to the following word...?
+			do
+				{
+				$Flag = false;
+				$w=0;
+				while($w < count($FieldScoreArray)-1)
+					{
+					if(max($FieldScoreArray[$w]) == 0)
+						if(max($FieldScoreArray[$w+1]) > 0)
 							{
-							if($FieldScoreArray[$ChangeFields[1]][$ResultFields[1]] > ($FieldScoreArray[$ChangeFields[1]-1][$ResultFields[0]])/2)
+							//echo "Setting $w to ".($w+1)."<br>";
+							$FieldScoreArray[$w] = $FieldScoreArray[$w+1];
+							$Flag = true;
+							}
+					$w++;
+					}
+				}while($Flag);
+
+			//Walk through the array of word scores and make adjustments.
+			for($w=0;$w<count($FieldScoreArray);$w++)
+				{
+				$Word1 = $WordsArray[0][$w][0];//Word "w" in the line
+				$ResultFields[$w] = $this->MaxKey($FieldScoreArray[$w]);
+				//$Max = max($FieldScoreArray[$w]);
+				//$Field = array_search($Max,$FieldScoreArray[$w]);
+				//$ResultFields[$w] = $Field;
+
+				//echo "Max $Max in $Field<br>";
+
+				//ChangeFields is an array of locations in the line where the field changes
+				if($w==0)
+					$ChangeFields[0] = 0;
+
+				//If the previous word was locality and this word is title-case, then probably also locality, unless some cases
+				if($w > 0 && $ResultFields[$w-1] == 'locality' && $Word1 == mb_convert_case($Word1,MB_CASE_TITLE))
+					{
+					//echo "Setting {$WordsArray[0][$w][0]} to locality<br>";
+					$Pos = $WordsArray[0][$w-1][1] + strlen($WordsArray[0][$w-1][0])+1;
+					if(strpos(".,;",$TempString[$Pos]=== false)) //Unless previous word was followed by period, comma, semicolon...
+						$ResultFields[$w] = 'locality'; //last field was locality, and this word is capitalized.  Probably part of previous.
+					}
+
+				//If this word is a preposition, set it to the same field as the previous word
+				if($w>0 && array_search($WordsArray[0][$w][0],$Prep))
+					{
+					//echo "Change $Word1 to {$ResultFields[$w-1]}<br>";
+					$ResultFields[$w] = $ResultFields[$w-1];
+					}
+
+				//Find points in the line where the field changes.
+				if($w>0 && $ResultFields[$w] != $ResultFields[$w-1])
+					{ //Add this as a point in the line where the field changes.
+					//echo "Change at $w<br>";
+					$ChangeFields[] = $w;
+					}
+				}
+
+			//Now adjust fields
+			//Look for and correct anomalies, such as single words in a field
+			//Loop through the following until nothing changes, indicated by $Adjust['Flag']
+			//It's a complicated and somewhat tangled routine.
+			do
+				{ //First check for widows or orphans
+				$Adjust = array('Flag'=>false);
+				if(count($ChangeFields) > 1) //Otherwise don't bother.
+					{
+					if($ChangeFields[1] < 3) //Changing on second or third word is suspicious
+						{
+						if(count($ChangeFields) == 2)
+							{
+							if(count($WordsArray[0]) < 5 || count($WordsArray[0]) - $ChangeFields[1] > 3)
 								{
-								//echo "Adjust 1<br>";
-								$Adjust = array('RemovePoint' => 1, 'NewField'=> $ResultFields[1],'FieldStart' =>0,'FieldEnd'=>0,'Flag'=>true);
-								}
-							}
-						}
-					else if($ChangeFields[2] - $ChangeFields[1] > 3)
-						{
-						$Adjust = array('RemovePoint' => 1, 'NewField'=> $ResultFields[1],'FieldStart' =>0,'FieldEnd'=>0,'Flag'=>true);
-						//echo "Adjust 2<br>";
-						}
-					}
-
-				if(!$Adjust['Flag'])
-					{
-					$LastChange = count($ChangeFields)-1;
-					$LastWord = count($WordsArray[0])-1;
-					if($LastWord - $ChangeFields[$LastChange] < 4 && $FieldScoreArray[$ChangeFields[$LastChange]][$ResultFields[$ChangeFields[$LastChange]]] < 500)
-							{
-							$Adjust = array('RemovePoint' => $LastChange, 'NewField'=> $ResultFields[$ChangeFields[$LastChange-1]],'FieldStart' =>$ChangeFields[$LastChange],'FieldEnd'=>$LastWord,'Flag'=>true);
-							}
-					}
-
-				if(!$Adjust['Flag'])
-					for($c=0;$c<count($ChangeFields)-1;$c++)
-						{
-						$w1 = $ChangeFields[$c];
-						$w2 = $ChangeFields[$c+1];
-						if($w2 - $w1 < 4)
-							{
-							//echo "Found $w1, $w2 {$WordsArray[0][$w1][0]} in:  {$this->LabelLines[$L]}<br>";
-							if($c>0 && $ResultFields[$ChangeFields[$c-1]] == $ResultFields[$w2])
-								{//A few on one field in the middle of another field.  Use the surrounding field.
-								//echo "Adjust 4<br>";
-								$Adjust = array('RemovePoint' => $c, 'RemovePoint2'=>$c+1, 'NewField'=> $ResultFields[$w2],'FieldStart' =>$w1,'FieldEnd'=>$w2,'Flag'=>true);
-								}
-							else
-								{ //Not a simple change/change back.  Find which field it shoud belong too.
-								//echo "---{$WordsArray[0][$w1][0]} is {$ResultFields[$w1]}, {$WordsArray[0][$w2][0]} is {$ResultFields[$w2]}<br>";
-								if($w2 < count($FieldScoreArray) && $FieldScoreArray[$w2][$ResultFields[$w1]] > 50)
-									{//Reasonable score on previous value.  Set back to that
-									//echo "Adjust 6<br>";
-									if($w2 < count($ResultFields)-1 && $ResultFields[$w2+1] != $ResultFields[$w1])
-										{
-										$ChangeFields[]= $w2+1;
-										asort($ChangeFields);
-										}
-									//echo "Adjust 5<br>";
-
-									$Adjust = array('RemovePoint' => $c+1, 'NewField'=> $ResultFields[$w1],'FieldStart' =>$w2,'FieldEnd'=>$w2,'Flag'=>true);
-									break;
-									}
-								else if($w2 < count($WordsArray[0])-1)
+								if($FieldScoreArray[$ChangeFields[1]][$ResultFields[1]] > ($FieldScoreArray[$ChangeFields[1]-1][$ResultFields[0]])/2)
 									{
-									;//$w3 =
-
+									//echo "Adjust 1<br>";
+									$Adjust = array('RemovePoint' => 1, 'NewField'=> $ResultFields[1],'FieldStart' =>0,'FieldEnd'=>0,'Flag'=>true);
 									}
 								}
 							}
-						}
-				if(!$Adjust['Flag'])
-					{
-					$LastChange = count($ChangeFields)-1;
-					$LastWord = count($WordsArray[0])-2;
-					if($ResultFields[0] == $ResultFields[$LastWord] && $LastChange > 0)
-						{
-						for($w=0;$w<$LastWord;$w++)
+						else if($ChangeFields[2] - $ChangeFields[1] > 3)
 							{
-							$ResultFields[$w] = $ResultFields[0];
+							$Adjust = array('RemovePoint' => 1, 'NewField'=> $ResultFields[1],'FieldStart' =>0,'FieldEnd'=>0,'Flag'=>true);
+							//echo "Adjust 2<br>";
 							}
-						$ChangeFields = array(0=>0);
+						}
+
+					if(!$Adjust['Flag'])
+						{
+						$LastChange = count($ChangeFields)-1;
+						$LastWord = count($WordsArray[0])-1;
+						if($LastWord - $ChangeFields[$LastChange] < 4 && $FieldScoreArray[$ChangeFields[$LastChange]][$ResultFields[$ChangeFields[$LastChange]]] < 500)
+								{
+								$Adjust = array('RemovePoint' => $LastChange, 'NewField'=> $ResultFields[$ChangeFields[$LastChange-1]],'FieldStart' =>$ChangeFields[$LastChange],'FieldEnd'=>$LastWord,'Flag'=>true);
+								}
+						}
+
+					if(!$Adjust['Flag'])
+						for($c=0;$c<count($ChangeFields)-1;$c++)
+							{
+							$w1 = $ChangeFields[$c];
+							$w2 = $ChangeFields[$c+1];
+							if($w2 - $w1 < 4)
+								{
+								//echo "Found $w1, $w2 {$WordsArray[0][$w1][0]} in:  {$this->LabelLines[$L]}<br>";
+								if($c>0 && $ResultFields[$ChangeFields[$c-1]] == $ResultFields[$w2])
+									{//A few on one field in the middle of another field.  Use the surrounding field.
+									//echo "Adjust 4<br>";
+									$Adjust = array('RemovePoint' => $c, 'RemovePoint2'=>$c+1, 'NewField'=> $ResultFields[$w2],'FieldStart' =>$w1,'FieldEnd'=>$w2,'Flag'=>true);
+									}
+								else
+									{ //Not a simple change/change back.  Find which field it shoud belong too.
+									//echo "---{$WordsArray[0][$w1][0]} is {$ResultFields[$w1]}, {$WordsArray[0][$w2][0]} is {$ResultFields[$w2]}<br>";
+									if($w2 < count($FieldScoreArray) && $FieldScoreArray[$w2][$ResultFields[$w1]] > 50)
+										{//Reasonable score on previous value.  Set back to that
+										//echo "Adjust 6<br>";
+										if($w2 < count($ResultFields)-1 && $ResultFields[$w2+1] != $ResultFields[$w1])
+											{
+											$ChangeFields[]= $w2+1;
+											asort($ChangeFields);
+											}
+										//echo "Adjust 5<br>";
+
+										$Adjust = array('RemovePoint' => $c+1, 'NewField'=> $ResultFields[$w1],'FieldStart' =>$w2,'FieldEnd'=>$w2,'Flag'=>true);
+										break;
+										}
+									else if($w2 < count($WordsArray[0])-1)
+										{
+										;//$w3 =
+
+										}
+									}
+								}
+							}
+					if(!$Adjust['Flag'])
+						{
+						$LastChange = count($ChangeFields)-1;
+						$LastWord = count($WordsArray[0])-2;
+						if($ResultFields[0] == $ResultFields[$LastWord] && $LastChange > 0)
+							{
+							for($w=0;$w<$LastWord;$w++)
+								{
+								$ResultFields[$w] = $ResultFields[0];
+								}
+							$ChangeFields = array(0=>0);
+							}
+						}
+					if($Adjust['Flag'])
+						{//Adjust or remove the point in the string where the field changes, as indicated in the $Adjust array.
+						for($w=$Adjust['FieldStart'];$w<=$Adjust['FieldEnd'];$w++)
+							$ResultFields[$w] = $Adjust['NewField'];
+						unset($ChangeFields[$Adjust['RemovePoint']]);
+						if(isset($Adjust['RemovePoint2']))
+							unset($ChangeFields[$Adjust['RemovePoint2']]);
+						$ChangeFields = array_values($ChangeFields);
 						}
 					}
-				if($Adjust['Flag'])
-					{//Adjust or remove the point in the string where the field changes, as indicated in the $Adjust array.
-					for($w=$Adjust['FieldStart'];$w<=$Adjust['FieldEnd'];$w++)
-						$ResultFields[$w] = $Adjust['NewField'];
-					unset($ChangeFields[$Adjust['RemovePoint']]);
-					if(isset($Adjust['RemovePoint2']))
-						unset($ChangeFields[$Adjust['RemovePoint2']]);
-					$ChangeFields = array_values($ChangeFields);
-					}
+				}while($Adjust['Flag']);
+
+
+			if(count($ChangeFields) == 1)
+				{//Only the first word is a change point, which means the whole line is a single field
+				$Field = $ResultFields[0];
+				$this->AddToResults($Field,trim($this->LabelLines[$L],": ,;"),$L);
 				}
-			}while($Adjust['Flag']);
-
-
-		if(count($ChangeFields) == 1)
-			{//Only the first word is a change point, which means the whole line is a single field
-			$Field = $ResultFields[0];
-			$this->AddToResults($Field,trim($this->LabelLines[$L],": ,;"),$L);
-			}
-		else
-			{//The line should be split into two fields
-			for($c=0;$c<count($ChangeFields)-1;$c++)
-				{
-				$w1 = $ChangeFields[$c];
-				$w2 = $ChangeFields[$c+1];
-				$p1 = $WordsArray[0][$w1][1];
-				if($w2 < count($WordsArray[0])-1)
-					$p2 = $WordsArray[0][$w2][1];
-				else
+			else
+				{//The line should be split into two fields
+				for($c=0;$c<count($ChangeFields)-1;$c++)
 					{
-					$p2 = strlen($this->LabelLines[$L]);
+					$w1 = $ChangeFields[$c];
+					$w2 = $ChangeFields[$c+1];
+					$p1 = $WordsArray[0][$w1][1];
+					if($w2 < count($WordsArray[0])-1)
+						$p2 = $WordsArray[0][$w2][1];
+					else
+						{
+						$p2 = strlen($this->LabelLines[$L]);
+						}
+					$Field = $ResultFields[$ChangeFields[$c]];
+					$TempString = trim(substr($this->LabelLines[$L],$p1,$p2 - $p1),": ,;");
+					$this->AddToResults($Field,$TempString,$L);
 					}
-				$Field = $ResultFields[$ChangeFields[$c]];
-				$TempString = trim(substr($this->LabelLines[$L],$p1,$p2 - $p1),": ,;");
-				$this->AddToResults($Field,$TempString,$L);
+				if($p2 < strlen($this->LabelLines[$L]))
+					{
+					$Field = $ResultFields[$w2];
+					$TempString = trim(substr($this->LabelLines[$L],$p2),": ,;");
+					$this->AddToResults($Field,$TempString,$L);
+					}
+
+
 				}
-			if($p2 < strlen($this->LabelLines[$L]))
+			/*
+			$this->printr($Fields);
+			echo "{$this->LabelLines[$L]}<br>";
+			for($w=0;$w < count($FieldScoreArray)-1;$w++)
 				{
-				$Field = $ResultFields[$w2];
-				$TempString = trim(substr($this->LabelLines[$L],$p2),": ,;");
-				$this->AddToResults($Field,$TempString,$L);
+				echo $WordsArray[0][$w][0]." ".$WordsArray[0][$w+1][0];
+				echo " {$ResultFields[$w]}, ";
+				foreach($Fields as $F)
+					echo ", ".floor($FieldScoreArray[$w][$F]);
+				echo"<br>";
+
 				}
-
-
-			}
-		/*
-		$this->printr($Fields);
-		echo "{$this->LabelLines[$L]}<br>";
-		for($w=0;$w < count($FieldScoreArray)-1;$w++)
-			{
-			echo $WordsArray[0][$w][0]." ".$WordsArray[0][$w+1][0];
-			echo " {$ResultFields[$w]}, ";
-			foreach($Fields as $F)
-				echo ", ".floor($FieldScoreArray[$w][$F]);
-			echo"<br>";
-
-			}
-		*/
-		return;
+			*/
 		}
+		return;
+	}
 
 	//************************************************************************************************
 	private function ScoreTwoWords($Word1,$Word2)

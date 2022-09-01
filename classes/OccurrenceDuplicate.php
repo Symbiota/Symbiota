@@ -226,7 +226,8 @@ class OccurrenceDuplicate {
 		$retArr = array();
 		$sql = 'SELECT el.occid '.
 			'FROM omexsiccatiocclink el INNER JOIN omexsiccatinumbers en ON el.omenid = en.omenid '.
-			'WHERE (en.ometid = '.$ometid.') AND (en.exsnumber = "'.$exsNumber.'") AND (occid != '.$currentOccid.') ';
+			'WHERE (en.ometid = '.$ometid.') AND (en.exsnumber = "'.$exsNumber.'") ';
+		if($currentOccid) $sql .= 'AND (occid != '.$currentOccid.') ';
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -246,10 +247,9 @@ class OccurrenceDuplicate {
 				//Need to avoid FULLTEXT stopwords interfering with return
 				$sql .= 'WHERE (o.recordedby LIKE "%'.$lastName.'%") ';
 			}
-			else{
-				$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid WHERE (MATCH(f.recordedby) AGAINST("'.$lastName.'")) ';
-			}
-			$sql .= 'AND (o.recordnumber = "'.$collNum.'") AND (o.occid != '.$skipOccid.') ';
+			else $sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid WHERE (MATCH(f.recordedby) AGAINST("'.$lastName.'")) ';
+			$sql .= 'AND (o.recordnumber = "'.$collNum.'") ';
+			if($skipOccid) $sql .= 'AND (o.occid != '.$skipOccid.') ';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
@@ -269,10 +269,9 @@ class OccurrenceDuplicate {
 				//Need to avoid FULLTEXT stopwords interfering with return
 				$sql .= 'WHERE (o.recordedby LIKE "%'.$lastName.'%") ';
 			}
-			else{
-				$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid WHERE (MATCH(f.recordedby) AGAINST("'.$lastName.'")) ';
-			}
-			$sql .= 'AND (o.processingstatus IS NULL OR o.processingstatus != "unprocessed" OR o.locality IS NOT NULL) AND (o.occid != '.$skipOccid.') ';
+			else $sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid WHERE (MATCH(f.recordedby) AGAINST("'.$lastName.'")) ';
+			$sql .= 'AND (o.processingstatus IS NULL OR o.processingstatus != "unprocessed" OR o.locality IS NOT NULL) ';
+			if($skipOccid) $sql .= 'AND (o.occid != '.$skipOccid.') ';
 
 			$runQry = true;
 			if($collNum){

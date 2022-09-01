@@ -6,13 +6,20 @@ if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../co
 
 $collid = $_REQUEST['collid'];
 $loanId = array_key_exists('loanid',$_REQUEST)?$_REQUEST['loanid']:0;
-$formSubmit = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
+$sortTag = (isset($_REQUEST['sortTag'])?$_REQUEST['sortTag']:'');
+$formSubmit = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
+
+//Sanitation
+if(!is_numeric($collid)) $collid = 0;
+if(!is_numeric($loanId)) $loanId = 0;
+if(!is_numeric($tabIndex)) $tabIndex = 0;
+$sortTag = filter_var($sortTag, FILTER_SANITIZE_STRING);
 
 $isEditor = 0;
 if($SYMB_UID && $collid){
-	if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))
-		|| (array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollEditor"]))){
+	if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin']))
+		|| (array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollEditor']))){
 		$isEditor = 1;
 	}
 }
@@ -161,7 +168,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 			<div id="tabs" style="margin:0px;">
 			    <ul>
 					<li><a href="#outloandetaildiv"><span>Loan Details</span></a></li>
-					<li><a href="specimentab.php?collid=<?php echo $collid.'&loanid='.$loanId; ?>"><span>Specimens</span></a></li>
+					<li><a href="specimentab.php?collid=<?php echo $collid.'&loanid='.$loanId.'&sortTag='.$sortTag; ?>"><span>Specimens</span></a></li>
 					<li><a href="#outloandeldiv"><span>Admin</span></a></li>
 				</ul>
 				<div id="outloandetaildiv">

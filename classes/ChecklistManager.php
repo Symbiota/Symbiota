@@ -13,7 +13,7 @@ class ChecklistManager {
 	private $voucherArr = array();
 	private $pid = '';
 	private $projName = '';
-	private $taxaList = Array();
+	private $taxaList = array();
 	private $langId;
 	private $thesFilter = 0;
 	private $taxonFilter;
@@ -26,7 +26,7 @@ class ChecklistManager {
 	private $showAlphaTaxa = false;
 	private $searchCommon = false;
 	private $searchSynonyms = true;
-	private $filterArr = Array();
+	private $filterArr = array();
 	private $imageLimit = 100;
 	private $taxaLimit = 500;
 	private $speciesCount = 0;
@@ -186,7 +186,7 @@ class ChecklistManager {
 
 	//return an array: family => array(TID => sciName)
 	public function getTaxaList($pageNumber = 1,$retLimit = 500){
-		if(!$this->clid && !$this->dynClid) return;
+		if(!$this->clid && !$this->dynClid) return array();
 		//Get species list
 		$speciesPrev="";
 		$taxonPrev="";
@@ -264,6 +264,7 @@ class ChecklistManager {
 		if($this->taxaCount < (($pageNumber-1)*$retLimit)){
 			$this->taxaCount = 0; $this->genusCount = 0; $this->familyCount = 0;
 			unset($this->filterArr);
+			$this->filterArr = array();
 			return $this->getTaxaList(1,$retLimit);
 		}
 		if($this->taxaList){

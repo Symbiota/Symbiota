@@ -42,7 +42,7 @@
                     {
                         "name": "limit",
                         "in": "query",
-                        "description": "Pagination parameter: maximum number of records per page",
+                        "description": "Controls the number of results per page",
                         "required": false,
                         "schema": {
                             "type": "integer",
@@ -52,7 +52,7 @@
                     {
                         "name": "offset",
                         "in": "query",
-                        "description": "Pagination parameter: page number",
+                        "description": "Determines the offset for the search results. A limit of 200 and offset of 100, will get the third page of 100 results.",
                         "required": false,
                         "schema": {
                             "type": "integer",
@@ -296,12 +296,232 @@
                 }
             }
         },
-        "/api/v2/occurrence": {
+        "/api/v2/inventory": {
             "get": {
                 "tags": [
                     ""
                 ],
-                "operationId": "/api/v2/occurrence",
+                "operationId": "/api/v2/inventory",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Controls the number of results in the page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 100
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Determines the offset for the search results. A limit of 200 and offset of 100, will get the third page of 100 results.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns list of inventories registered within system",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. "
+                    }
+                }
+            }
+        },
+        "/api/v2/inventory/{identifier}": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/inventory/identifier",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "PK, GUID, or recordID associated with target inventory",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns metabase on inventory registered within system with matching ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. Inventory identifier is required."
+                    }
+                }
+            }
+        },
+        "/api/v2/inventory/{identifier}/taxa": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/inventory/identifier/taxa",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Controls the number of results per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 100
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Determines the offset for the search results. A limit of 200 and offset of 100, will get the third page of 100 results.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns list of inventories registered within system",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. "
+                    }
+                }
+            }
+        },
+        "/api/v2/occurrence/annotation/search": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/occurrence/annotation/search",
+                "parameters": [
+                    {
+                        "name": "collid",
+                        "in": "query",
+                        "description": "Internal identifier (PK) for collection",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Annoration type (internal, external) ",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "internal",
+                            "enum": [
+                                "internal",
+                                "external"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "source",
+                        "in": "query",
+                        "description": "External source of Annoration (e.g. geolocate) ",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "fieldName",
+                        "in": "query",
+                        "description": "Name of occurrence field that was annotated (e.g. recordedBy, eventDate) ",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "fromDate",
+                        "in": "query",
+                        "description": "The start date of a date range the annotation was created (e.g. 2022-02-05) ",
+                        "required": false,
+                        "schema": {
+                            "type": "date"
+                        }
+                    },
+                    {
+                        "name": "toDate",
+                        "in": "query",
+                        "description": "The end date of a date range the annotation was created (e.g. 2022-02-05) ",
+                        "required": false,
+                        "schema": {
+                            "type": "date"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Controls the number of results per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 500
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Determines the offset for the search results. A limit of 200 and offset of 100, will get the third page of 100 results.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns list of occurrence edits",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. "
+                    }
+                }
+            }
+        },
+        "/api/v2/occurrence/search": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/occurrence/search",
                 "parameters": [
                     {
                         "name": "catalogNumber",
@@ -349,9 +569,54 @@
                         }
                     },
                     {
+                        "name": "collid",
+                        "in": "query",
+                        "description": "collid - collection identifier in portal",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "datasetID",
+                        "in": "query",
+                        "description": "dataset ID within portal",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "family",
+                        "in": "query",
+                        "description": "family",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sciname",
+                        "in": "query",
+                        "description": "Scientific Name - binomen only without authorship",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "eventDate",
+                        "in": "query",
+                        "description": "Date as YYYY, YYYY-MM or YYYY-MM-DD",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "limit",
                         "in": "query",
-                        "description": "Pagination parameter: maximum number of records per page",
+                        "description": "Controls the number of results per page",
                         "required": false,
                         "schema": {
                             "type": "integer",
@@ -361,7 +626,7 @@
                     {
                         "name": "offset",
                         "in": "query",
-                        "description": "Pagination parameter: page number",
+                        "description": "Determines the offset for the search results. A limit of 200 and offset of 100, will get the third page of 100 results.",
                         "required": false,
                         "schema": {
                             "type": "integer",
@@ -397,7 +662,7 @@
                         "description": "occid or specimen GUID (occurrenceID) associated with target occurrence",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
@@ -408,11 +673,20 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "name": "includeIdentifications",
+                        "in": "query",
+                        "description": "Whether to include full Identification History within output",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Returns occurrence data",
+                        "description": "Returns single occurrence record",
                         "content": {
                             "application/json": {
                                 "schema": {}
@@ -422,6 +696,99 @@
                     "400": {
                         "description": "Error: Bad request. Occurrence identifier is required."
                     }
+                }
+            }
+        },
+        "/api/v2/occurrence/{identifier}/identification": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/occurrence/identifier/identification",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "occid or specimen GUID (occurrenceID) associated with target occurrence",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns identification records associated with a given occurrence record",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. Occurrence identifier is required."
+                    }
+                }
+            }
+        },
+        "/api/v2/occurrence/{identifier}/media": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/occurrence/identifier/media",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "occid or specimen GUID (occurrenceID) associated with target occurrence",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns media records associated with a given occurrence record",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. Occurrence identifier is required."
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "responses": {
+            "200": {
+                "description": "Triggers a reharvest event of a snapshot record. If record is Live managed, request is ignored",
+                "content": {
+                    "application/json": {
+                        "schema": {}
+                    }
+                }
+            },
+            "400": {
+                "description": "Error: Bad request: Occurrence identifier is required, API can only be triggered locally (at this time)."
+            },
+            "500": {
+                "description": "Error: unable to locate record"
+            }
+        },
+        "parameters": {
+            "identifier": {
+                "name": "identifier",
+                "in": "path",
+                "description": "occid or specimen GUID (occurrenceID) associated with target occurrence",
+                "required": true,
+                "schema": {
+                    "type": "string"
                 }
             }
         }

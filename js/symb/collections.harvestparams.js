@@ -91,10 +91,9 @@ function checkHarvestParamsForm(frm){
 	return true;
 }
 
-function setHarvestParamsForm(){
+function setHarvestParamsForm(frm){
 	if(sessionStorage.querystr){
 		var urlVar = parseUrlVariables(sessionStorage.querystr);
-		var frm = document.harvestparams;
 
 		if(typeof urlVar.usethes !== 'undefined' && (urlVar.usethes == "" || urlVar.usethes == "0")){frm.usethes.checked = false;}
 		if(urlVar.taxontype){frm.taxontype.value = urlVar.taxontype;}

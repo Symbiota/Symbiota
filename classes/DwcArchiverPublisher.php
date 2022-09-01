@@ -256,8 +256,9 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 			$retArr[$r->collid]['name'] = $r->collectionname.' ('.$r->instcode.')';
 			$retArr[$r->collid]['guid'] = $r->guidtarget;
 			$retArr[$r->collid]['url'] = substr($r->dwcaurl,0,strpos($r->dwcaurl,'/content')).'/collections/datasets/datapublisher.php';
+			$serverName = $this->getDomain();
 			if(!$r->guidtarget) $retArr[$r->collid]['err'] = 'MISSING_GUID';
-			elseif($r->dwcaurl && !strpos($r->dwcaurl,str_replace('www.', '', $_SERVER['SERVER_NAME']))) $retArr[$r->collid]['err'] = 'ALREADY_PUB_DOMAIN';
+			elseif($r->dwcaurl && !strpos($serverName, 'localhost') && strpos($r->dwcaurl, str_replace('www.', '', $serverName)) === false) $retArr[$r->collid]['err'] = 'ALREADY_PUB_DOMAIN';
 			if($r->dynamicProperties && strpos($r->dynamicProperties,'matSample":{"status":1')) $this->materialSampleIsActive = true;
 		}
 		$rs->free();

@@ -7,11 +7,15 @@ $imgId = $_REQUEST["imgid"];
 $action = array_key_exists("submitaction",$_REQUEST)?$_REQUEST["submitaction"]:"";
 $eMode = array_key_exists("emode",$_REQUEST)?$_REQUEST["emode"]:0;
 
+//Sanitation
+if(!is_numeric($imgId)) $imgId = 0;
+if(!is_numeric($eMode)) $eMode = 0;
+
 $imgManager = new ImageDetailManager($imgId,($action?'write':'readonly'));
 
 $imgArr = $imgManager->getImageMetadata();
 $isEditor = false;
-if($IS_ADMIN || $imgArr["username"] === $USERNAME || ($imgArr["photographeruid"] && $imgArr["photographeruid"] == $SYMB_UID)){
+if($IS_ADMIN || ($imgArr && ($imgArr['username'] === $USERNAME || ($imgArr['photographeruid'] && $imgArr['photographeruid'] == $SYMB_UID)))){
     $isEditor = true;
 }
 
@@ -36,9 +40,7 @@ if($isEditor){
 	$imgArr = $imgManager->getImageMetadata($imgId);
 }
 
-$serverPath = 'http://';
-if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $serverPath = 'https://';
-$serverPath .= $_SERVER['SERVER_NAME'];
+$serverPath = $imgManager->getDomain();
 if($imgArr){
 	$imgUrl = $imgArr["url"];
 	$origUrl = $imgArr["originalurl"];

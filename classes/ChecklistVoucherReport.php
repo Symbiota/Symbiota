@@ -508,11 +508,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
  			'o.decimalLatitude', 'o.decimalLongitude', 'o.coordinateUncertaintyInMeters', 'o.minimumElevationInMeters', 'o.maximumelevationinmeters',
 			'o.verbatimelevation', 'o.habitat', 'o.occurrenceRemarks', 'o.associatedTaxa', 'o.reproductivecondition', 'o.informationWithheld', 'o.occid');
 		$retArr[] = 'g.guid AS recordID';
-		$serverDomain = "http://";
-		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $serverDomain = "https://";
-		$serverDomain .= $_SERVER["SERVER_NAME"];
-		if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80 && $_SERVER['SERVER_PORT'] != 443) $serverDomain .= ':'.$_SERVER["SERVER_PORT"];
-		$retArr[] = 'CONCAT("'.$serverDomain.$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid=",o.occid) as `references`';
+		$retArr[] = 'CONCAT("' . $this->getDomain() . $GLOBALS['CLIENT_ROOT'] . '/collections/individual/index.php?occid=",o.occid) as `references`';
 		return $retArr;
 
 		/*

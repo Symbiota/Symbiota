@@ -88,8 +88,10 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 
 			function zipChanged(cbObj){
 				if(cbObj.checked == false){
-					cbObj.form.identifications.checked = false;
-					cbObj.form.images.checked = false;
+					var f = cbObj.form;
+					f.identifications.checked = false;
+					f.images.checked = false;
+					if(f.attributes) f.attributes.checked = false;
 				}
 			}
 		</script>

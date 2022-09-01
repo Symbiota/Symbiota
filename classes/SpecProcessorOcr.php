@@ -156,7 +156,7 @@ class SpecProcessorOcr extends Manager{
 					$imgUrl = $GLOBALS["imageDomain"].$imgUrl;
 				}
 				else{
-					$imgUrl = $this->getDomainPath().$imgUrl;
+					$imgUrl = $this->getDomain().$imgUrl;
 				}
 			}
 			//Set temp folder path and file names

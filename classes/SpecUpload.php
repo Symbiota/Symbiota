@@ -179,23 +179,24 @@ class SpecUpload{
 			header ('Content-Type: text/csv');
 			header ('Content-Disposition: attachment; filename="'.$fileName.'"');
 			$outstream = fopen("php://output", "w");
+			//Add BOM to fix UTF-8 in Excel
+			fputs($outstream, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 			$outputHeader = true;
 
 			$sql = $this->getPendingImportSql($searchVariables) ;
 			//echo "<div>".$sql."</div>";
-			$rs = $this->conn->query($sql);
-			if($rs->num_rows){
-				//Determine which fields have data
-				$fieldMap = array();
-				while($r = $rs->fetch_assoc()){
-					foreach($r as $k => $v){
-						if($v && $v !== '0') $fieldMap[$k] = '';
-					}
+			$fieldMap = array();
+			$rs = $this->conn->query($sql, MYSQLI_USE_RESULT);
+			//Determine which fields have data
+			while($r = $rs->fetch_assoc()){
+				foreach($r as $k => $v){
+					if($v && $v !== '0') $fieldMap[$k] = '';
 				}
-				//Add BOM to fix UTF-8 in Excel
-				fputs($outstream, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+			}
+			$rs->free();
+			if($fieldMap){
 				//Export only fields with data
-				$rs->data_seek(0);
+				$rs = $this->conn->query($sql, MYSQLI_USE_RESULT);
 				while($r = $rs->fetch_assoc()){
 					if($outputHeader){
 						fputcsv($outstream,array_keys(array_intersect_key($r, $fieldMap)));
@@ -203,11 +204,11 @@ class SpecUpload{
 					}
 					fputcsv($outstream,array_intersect_key($r, $fieldMap));
 				}
+				$rs->free();
 			}
 			else{
 				echo "Recordset is empty.\n";
 			}
-			$rs->free();
 		}
 		fclose($outstream);
 	}

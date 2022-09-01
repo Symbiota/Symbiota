@@ -65,11 +65,7 @@ if($exportType == 'translation'){
 		$header->addPreserveText($metaArr['sciname'].' - p.{PAGE} '.date("Y-m-d"),null,array('align'=>'right'));
 		$textrun = $section->addTextRun('titlePara');
 		if(isset($GLOSSARY_BANNER) && $GLOSSARY_BANNER){
-			$serverDomain = "http://";
-			if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $serverDomain = "https://";
-			$serverDomain .= $_SERVER["SERVER_NAME"];
-			if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80 && $_SERVER['SERVER_PORT'] != 443) $serverDomain .= ':'.$_SERVER["SERVER_PORT"];
-			$textrun->addImage($serverDomain.$CLIENT_ROOT.'/images/layout/'.$GLOSSARY_BANNER,array('width'=>500,'align'=>'center'));
+			$textrun->addImage($glosManager->getDomain() . $CLIENT_ROOT . '/images/layout/' . $GLOSSARY_BANNER, array('width'=>500, 'align'=>'center'));
 			$textrun->addTextBreak(1);
 		}
 		$textrun->addText(htmlspecialchars('Translation Table for '.$metaArr['sciname']),'titleFont');
@@ -200,11 +196,7 @@ elseif($exportType == 'singlelanguage'){
 		$header->addPreserveText($metaArr['sciname'].' - p.{PAGE} '.date("Y-m-d"),null,array('align'=>'right'));
 		$textrun = $section->addTextRun('titlePara');
 		if(isset($GLOSSARY_BANNER) && $GLOSSARY_BANNER){
-			$serverDomain = "http://";
-			if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $serverDomain = "https://";
-			$serverDomain .= $_SERVER["SERVER_NAME"];
-			if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80 && $_SERVER['SERVER_PORT'] != 443) $serverDomain .= ':'.$_SERVER["SERVER_PORT"];
-			$textrun->addImage($serverDomain.$CLIENT_ROOT.'/images/layout/'.$GLOSSARY_BANNER,array('width'=>500,'align'=>'center'));
+			$textrun->addImage($glosManager->getDomain() . $CLIENT_ROOT . '/images/layout/' . $GLOSSARY_BANNER, array('width'=>500, 'align'=>'center'));
 			$textrun->addTextBreak(1);
 		}
 		$textrun->addText(htmlspecialchars('Single Language Glossary for '.$metaArr['sciname']),'titleFont');
@@ -310,7 +302,8 @@ elseif($exportType == 'singlelanguage'){
 	}
 }
 
-$fileName = str_replace(" ","_",$fileName);
+$fileName = str_replace(array(' ', '/'), '_', $fileName);
+$fileName = preg_replace('/[^0-9A-Za-z\-_]/', '', $fileName);
 $targetFile = $SERVER_ROOT.'/temp/report/'.$fileName.'.docx';
 $phpWord->save($targetFile, 'Word2007');
 

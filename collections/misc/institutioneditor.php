@@ -36,6 +36,7 @@ if($editorCode){
 		$iid = $instManager->submitInstitutionAdd($_POST);
 		if($iid){
 			if($targetCollid) header('Location: ../misc/collprofiles.php?collid='.$targetCollid);
+			$statusStr = 'SUCCESS! Institution added.';
 		}
 		else{
 			$statusStr = $instManager->getErrorStr();
@@ -87,7 +88,7 @@ if($editorCode){
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Institution Editor</title>
   <?php
-      $activateJQuery = false;
+      $activateJQuery = true;
       if(file_exists($SERVER_ROOT.'/includes/head.php')){
         include_once($SERVER_ROOT.'/includes/head.php');
       }
@@ -97,6 +98,9 @@ if($editorCode){
         echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
       }
   ?>
+  <script src="../../js/jquery.js?ver=140310" type="text/javascript"></script>
+  <script src="../../js/jquery-ui.js?ver=140310" type="text/javascript"></script>
+  <script src="../../js/symb/collections.grscicoll.js?ver=2" type="text/javascript"></script>
 	<script language=javascript>
 		
 		function toggle(target){
@@ -157,6 +161,11 @@ include($SERVER_ROOT.'/includes/header.php');
 </div>
 <!-- This is inner text! -->
 <div id="innertext">
+	<div id="dialog" title="" style="display: none;">
+		<div id="dialogmsg"></div>
+	  <select id="getresult">
+	  </select>
+	</div>
 	<?php
 	if($statusStr){
 		?>
@@ -185,7 +194,7 @@ include($SERVER_ROOT.'/includes/header.php');
 				?>
 			</div>
 			<div style="clear:both;">
-				<form name="insteditform" action="institutioneditor.php" method="post">
+				<form id="insteditform" name="insteditform" action="institutioneditor.php" method="post">
 					<fieldset style="padding:20px;">
 						<legend><b>Address Details</b></legend>
 						<div style="position:relative;">
@@ -197,6 +206,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							</div>
 							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
 								<input name="institutioncode" type="text" value="<?php echo $instArr['institutioncode']; ?>" />
+								<input name="getgrscicoll" type="button" value="Update from GrSciColl" onClick="grscicoll('insteditform')"/>
 							</div>
 						</div>
 						<div style="position:relative;clear:both;">
@@ -353,7 +363,7 @@ include($SERVER_ROOT.'/includes/header.php');
 				</form>
 				<div style="clear:both;">
 					<fieldset style="padding:20px;">
-						<legend><b>Collecitons Linked to Institution Address</b></legend>
+						<legend><b>Collections Linked to Institution Address</b></legend>
 						<div>
 							<?php 
 							if($collList){
@@ -431,7 +441,7 @@ include($SERVER_ROOT.'/includes/header.php');
 				</a>
 			</div>
 			<div id="instadddiv" style="display:<?php echo ($eMode?'block':'none'); ?>;margin-bottom:8px;">
-				<form name="instaddform" action="institutioneditor.php" method="post">
+				<form id="instaddform" name="instaddform" action="institutioneditor.php" method="post">
 					<fieldset style="padding:20px;">
 						<legend><b>Add New Institution</b></legend>
 						<div style="position:relative;">
@@ -440,6 +450,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							</div>
 							<div>
 								<input name="institutioncode" type="text" value="<?php echo $instCodeDefault; ?>" />
+								<input name="getgrscicoll" type="button" value="Get data from GrSciColl" onClick="grscicoll('instaddform')"/>
 							</div>
 						</div>
 						<div style="position:relative;clear:both;">

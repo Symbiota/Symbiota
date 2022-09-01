@@ -252,9 +252,10 @@ else{
 		}
 	}
 }
-$fileName = str_replace(' ','_',$clManager->getClName());
-$fileName = str_replace('/','_',$fileName);
-$targetFile = $SERVER_ROOT.'/temp/report/'.$fileName.'.docx';
+$fileName = str_replace(array(' ', '/', '.'), '_', $clManager->getClName());
+$fileName = preg_replace('/[^0-9A-Za-z\-]/', '', $fileName);
+if(strlen($fileName) > 30) $fileName = substr($fileName, 0, 30);
+$targetFile = $SERVER_ROOT.'/temp/report/'.$fileName.'_'.date('Y-m-d').'.docx';
 $phpWord->save($targetFile, 'Word2007');
 
 header('Content-Description: File Transfer');

@@ -37,9 +37,7 @@ $LANG['ACTION_STATUS'] = 'Statut de l\'Action';
 $LANG['RETURN_TO_SEARCH'] = 'Retour à Page de Recherche';
 $LANG['NONE_FOUND'] = 'Aucun enregistrement trouvé correspondant à requête';
 $LANG['REC_LOCKED'] = 'Enregistrement verrouillé!';
-$LANG['LOCK_EXPLAIN'] = "Cet enregistrement est verrouillé pour modification par un autre utilisateur.
-					Une fois que l'utilisateur a terminé avec l'enregistrement, le verrou sera supprimé.
-					Les enregistrements sont verrouillés pour un maximum de 15 minutes";
+$LANG['LOCK_EXPLAIN'] = "Cet enregistrement est verrouillé pour modification par un autre utilisateur. Une fois que l'utilisateur a terminé avec l'enregistrement, le verrou sera supprimé. Les enregistrements sont verrouillés pour un maximum de 15 minutes";
 $LANG['READ_ONLY'] = 'Affichage en Lecture Seule';
 $LANG['OCC_DATA'] = "Données d'Occurrence";
 $LANG['NEW_OCC_RECORD'] = "Nouveau record d'Occurrence";
@@ -129,6 +127,7 @@ $LANG['CARRY_OVER_IMAGES'] = 'Transférer des images';
 $LANG['COLL_EVENT_FIELDS'] = "Champs d'événement de collection";
 $LANG['ALL_FIELDS'] = 'Tous Champs';
 $LANG['RELATIONSHIP'] = 'Relations';
+$LANG['UNDEFINED'] = 'Undefined';
 $LANG['TARGET_COLL'] = 'Collection Cible';
 $LANG['CURRENT_COLL'] = 'Collection Actuelle';
 $LANG['NUMBER_RECORDS'] = "Nombre d'Enregistrements";
@@ -141,6 +140,7 @@ $LANG['GO_NEW_CARRYOVER'] = 'Accédez aux Unformations sur Nouvel Enregistrement
 $LANG['REMAIN_ON_PAGE'] = "Rester sur la page d'Édition (ajouter des images, des déterminations, etc.)";
 $LANG['ERROR_ID_NULL'] = "ERREUR:</b> identifiants d'enregistrement sont NULL";
 $LANG['ERROR_NO_CROWDSOURCING'] = "ERREUR:</b> Désolé, cet événement semble avoir été retiré de file d'attente de crowdsourcing et n'est plus modifiable. Contactez administrateur de collection si vous pensez que cela est incorrect";
+$LANG['RETURN_TO_CROWDSOURCING'] = 'Return to Crowdsource Central';
 $LANG['ERROR_NOT_AUTHORIZED'] = "ERREUR:</b> Désolé, vous n'êtes pas autorisé à modifier occurrences dans cette collection. Contactez administrateur de collection si vous pensez que cela est incorrect";
 $LANG['ERROR_CANT_ADD'] = "ERREUR:</b> ne sont pas autorisés à ajouter des enregistrements d'occurrence";
 

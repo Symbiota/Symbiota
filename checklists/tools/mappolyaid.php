@@ -5,10 +5,16 @@ include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:0;
+$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 $latDef = array_key_exists('latdef',$_REQUEST)?$_REQUEST['latdef']:'';
 $lngDef = array_key_exists('lngdef',$_REQUEST)?$_REQUEST['lngdef']:'';
 $zoom = array_key_exists('zoom',$_REQUEST)&&$_REQUEST['zoom']?$_REQUEST['zoom']:5;
+
+//Sanitation
+if(!is_numeric($clid)) $clid = 0;
+if(!is_numeric($latDef)) $latDef = 0;
+if(!is_numeric($lngDef)) $lngDef = 0;
+if(!is_numeric($zoom)) $zoom = 0;
 
 $clManager = new ChecklistAdmin();
 $clManager->setClid($clid);
@@ -46,7 +52,7 @@ else{
 		<title><?php echo $DEFAULT_TITLE; ?> - Coordinate Aid</title>
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 		<script src="//maps.googleapis.com/maps/api/js?<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'key='.$GOOGLE_MAP_KEY:''); ?>&libraries=drawing&v=weekly"></script>
-		<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/wktpolygontools.js?ver=3d" type="text/javascript"></script>
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/wktpolygontools.js?ver=4" type="text/javascript"></script>
 		<script type="text/javascript">
 			var map;
 			var polygons = [];
@@ -54,7 +60,7 @@ else{
 			var selectedPolygon = null;
 			var drawingManager = null;
 			<?php
-			if($formSubmit && $formSubmit == 'exit') echo 'window.close();';
+			if($formSubmit == 'exit') echo 'window.close();';
 			?>
 			function initialize(){
 				if(opener.document.getElementById("footprintwkt") && opener.document.getElementById("footprintwkt").value != ""){
@@ -168,14 +174,20 @@ else{
 
 			function reformatPolygons(f){
 				let footprintWkt = f.footprintwkt.value.trim();
+				if(f.trimCoord.checked) trimCoord = true;
+				else trimCoord = false;
+				if(f.switchCoord.checked) switchCoord = true;
+				else switchCoord = false;
 				f.footprintwkt.value = validatePolygon(footprintWkt);
 				clearSelection();
 				for(var h=0;h<polygons.length;h++){
 					polygons[h].setMap(null);
 				}
+				polyBounds = null;
+				polyBounds = new google.maps.LatLngBounds();
 				drawPolygons();
 				drawingManager.setDrawingMode(null);
-				f.formatButton.disabled = true;
+				f.redrawButton.disabled = true;
 			}
 
 			function clearSelection() {
@@ -216,7 +228,7 @@ else{
 					}
 					document.getElementById("footprintwkt").value = "MULTIPOLYGON ("+outStr.substring(1)+")";
 				}
-				document.getElementById("formatButton").disabled = true;
+				document.getElementById("redrawButton").disabled = true;
 			}
 
 			function deleteSelectedPolygon() {
@@ -252,7 +264,7 @@ else{
 			}
 
 			function polygonModified(f){
-				f.formatButton.disabled = false;
+				f.redrawButton.disabled = false;
 			}
 
 			function toggle(target){
@@ -275,18 +287,23 @@ else{
 				Use Switch Coordinate Order button to convert Long-Lat coordinate pairs to Lat-Long format.
 			</div>
 			<form name="polygonSubmitForm" method="post" action="mappolyaid.php" onsubmit="return submitPolygonForm(this)">
-				<div style="float:left;width:800px">
+				<div style="">
 					<textarea id="footprintwkt" name="footprintwkt" style="width:98%;height:90px;" oninput="polygonModified(this.form)"><?php echo $clManager->getFootprintWkt(); ?></textarea>
 					<input name="clid" type="hidden" value="<?php echo $clid; ?>" />
 					<input name="latdef" type="hidden" value="<?php echo $latDef; ?>" />
 					<input name="lngdef" type="hidden" value="<?php echo $lngDef; ?>" />
 					<input name="zoom" type="hidden" value="<?php echo $zoom; ?>" />
 				</div>
-				<div style="float:left">
-					<button name="formsubmit" type="submit" value="save">Save Polygons</button>
-					<a href="#" onclick="toggle('helptext')"><img alt="Display Help Text" src="../../images/qmark_big.png" style="width:15px;" /></a><br/>
-					<button name="deleteButton" type="button" onclick="deleteSelectedPolygon()">Delete Selected Shape</button><br/>
-					<button id="formatButton" name="formatButton" type="button" onclick="reformatPolygons(this.form);" disabled>Reformat Polygons</button><br/>
+				<div style="">
+					<button name="formsubmit" type="submit" value="save" style="margin-right: 10px">Save Polygons</button>
+					<button name="deleteButton" type="button" onclick="deleteSelectedPolygon()">Delete Selected Shape</button>
+					<a href="#" onclick="toggle('helptext')"><img alt="Display Help Text" src="../../images/qmark_big.png" style="width:15px;" /></a>
+					<fieldset id="reformatFieldset" style="width:300px;">
+						<legend>Redraw / Reformat Polygons</legend>
+						<button id="redrawButton" name="redrawButton" type="button" onclick="reformatPolygons(this.form);" disabled>Redraw</button><br />
+						<input type="checkbox" name="trimCoord" value="1" onclick="polygonModified(this.form)" checked /> Trim to 6 significant digits<br />
+						<input type="checkbox" name="switchCoord" value="1" onclick="polygonModified(this.form)" /> Switch lat/long coordinates
+					</fieldset>
 				</div>
 			</form>
 		</div>

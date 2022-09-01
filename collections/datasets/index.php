@@ -14,8 +14,13 @@ $datasetManager = new OccurrenceDataset();
 
 $statusStr = '';
 if($action == 'createNewDataset'){
-	if(!$datasetManager->createDataset($_POST['name'],$_POST['notes'],$_POST['description'],$_POST['ispublic'],$SYMB_UID)){
-		$statusStr = implode(',',$datasetManager->getErrorArr());
+	if($IS_ADMIN || array_key_exists('ClCreate',$USER_RIGHTS)){
+		if(!$datasetManager->createDataset($_POST['name'],$_POST['notes'],$_POST['description'],$_POST['ispublic'],$SYMB_UID)){
+			$statusStr = implode(',',$datasetManager->getErrorArr());
+		}
+	}
+	else {
+		$statusStr = 'You don\'t have permission to create a dataset';
 	}
 }
 elseif($action == 'addSelectedToDataset'){

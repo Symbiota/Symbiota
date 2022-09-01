@@ -15,20 +15,19 @@ if($collid && is_numeric($collid)){
 		$processingStatus = array_key_exists('ps',$_REQUEST)?$_REQUEST['ps']:'';
 		$customField1 = array_key_exists('cf1',$_REQUEST)?$_REQUEST['cf1']:'';
 		$customField2 = array_key_exists('cf2',$_REQUEST)?$_REQUEST['cf2']:'';
+		$customField3 = array_key_exists('cf3',$_REQUEST)?$_REQUEST['cf3']:'';
 
 		$dwcaHandler = new DwcArchiverCore();
 		$dwcaHandler->setCollArr($collid);
 		$dwcaHandler->setVerboseMode(0);
 		$dwcaHandler->setOverrideConditionLimit(true);
-		$dwcaHandler->addCondition('decimallatitude','NULL');
-		$dwcaHandler->addCondition('decimallongitude','NULL');
 		$dwcaHandler->addCondition('catalognumber','NOTNULL');
 		$dwcaHandler->addCondition('locality','NOTNULL');
 		if($processingStatus) $dwcaHandler->addCondition('processingstatus','EQUALS',$processingStatus);
 		if($customField1) $dwcaHandler->addCondition($customField1,$_REQUEST['ct1'],$_REQUEST['cv1']);
 		if($customField2) $dwcaHandler->addCondition($customField2,$_REQUEST['ct2'],$_REQUEST['cv2']);
+		if($customField3) $dwcaHandler->addCondition($customField3,$_REQUEST['ct3'],$_REQUEST['cv3']);
 		$cntStr = $dwcaHandler->getOccurrenceCnt();
-
 	}
 }
 echo json_encode($cntStr)

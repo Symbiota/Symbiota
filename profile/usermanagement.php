@@ -240,6 +240,20 @@ if($IS_ADMIN){
 								</li>
 								<?php
 							}
+							if(array_key_exists("ClCreate",$userPermissions)){
+								?>
+								<li>
+									<b><?php
+									echo '<span title="'.$userPermissions['ClCreate']['aby'].'">';
+									echo str_replace('ClCreate',(isset($LANG['CL_CREATE'])?$LANG['CL_CREATE']:'Create a Checklist'),$userPermissions['ClCreate']['role']);
+									echo '</span>';
+									?></b>
+									<a href="usermanagement.php?delrole=clCreate&userid=<?php echo $userId; ?>">
+										<img src="../images/del.png" style="border:0px;width:15px;" title=<?php echo (isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'); ?> />
+									</a>
+								</li>
+								<?php
+							}
 							if(array_key_exists("RareSppAdmin",$userPermissions)){
 								?>
 								<li>
@@ -447,6 +461,9 @@ if($IS_ADMIN){
 							}
 							if(!array_key_exists("KeyEditor",$userPermissions)){
 								echo "<div><input type='checkbox' name='p[]' value='KeyEditor' /> ".(isset($LANG['ID_KEY_EDITOR'])?$LANG['ID_KEY_EDITOR']:'Identification Keys Editor')."</div>";
+							}
+							if(!array_key_exists("ClCreate",$userPermissions)){
+								echo "<div><input type='checkbox' name='p[]' value='ClCreate' /> ".(isset($LANG['CL_CREATE'])?$LANG['CL_CREATE']:'Create a Checklist')."</div>";
 							}
 							?>
 						</div>

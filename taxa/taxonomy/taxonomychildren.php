@@ -1,9 +1,14 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyEditorManager.php');
+include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomychildren.'.$LANG_TAG.'.php');
 
-$tid = $_REQUEST["tid"];
-$taxAuthId = array_key_exists('taxauthid', $_REQUEST)?$_REQUEST["taxauthid"]:1;
+$tid = $_REQUEST['tid'];
+$taxAuthId = array_key_exists('taxauthid', $_REQUEST)?$_REQUEST['taxauthid']:1;
+
+//Sanitation
+if(!is_numeric($tid)) $tid = 0;
+if(!is_numeric($taxAuthId)) $taxAuthId = 1;
 
 $taxonEditorObj = new TaxonomyEditorManager();
 $taxonEditorObj->setTid($tid);
@@ -15,7 +20,7 @@ $childrenArr = $taxonEditorObj->getChildren();
 </script>
 <div style="min-height:400px; height:auto !important; height:400px; ">
 	<div style="margin:15px;">
-		<b>Children Taxa</b>
+		<b><?php echo (isset($LANG['CHILDREN_TAXA'])?$LANG['CHILDREN_TAXA']:'Children Taxa'); ?></b>
 		<div style="margin:10px">
 			<?php
 			if($childrenArr){
@@ -27,9 +32,9 @@ $childrenArr = $taxonEditorObj->getChildren();
 					}
 					echo '</div>';
 				}
-				echo '<div style="margin-top:20px;">* Showing direct children only</div>';
+				echo '<div style="margin-top:20px;">* '.(isset($LANG['SHOWING_DIRECT'])?$LANG['SHOWING_DIRECT']:'Showing direct children only').'</div>';
 			}
-			else echo '<div style="margin:15px">No children taxa exist for this taxon</div>';
+			else echo '<div style="margin:15px">'.(isset($LANG['NO_CHILDREN'])?$LANG['NO_CHILDREN']:'No children taxa exist for this taxon').'</div>';
 			?>
 		</div>
 	</div>

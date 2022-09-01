@@ -19,6 +19,7 @@ $importImage = array_key_exists('importimage',$_REQUEST)?true:false;
 $observerUid = array_key_exists('observeruid',$_POST)?$_POST['observeruid']:'';
 $matchCatNum = array_key_exists('matchcatnum',$_REQUEST)?true:false;
 $matchOtherCatNum = array_key_exists('matchothercatnum',$_REQUEST)&&$_REQUEST['matchothercatnum']?true:false;
+$versionData = array_key_exists('versiondata',$_REQUEST) && $_REQUEST['versiondata']?true:false;
 $verifyImages = array_key_exists('verifyimages',$_REQUEST)&&$_REQUEST['verifyimages']?true:false;
 $processingStatus = array_key_exists('processingstatus',$_REQUEST)?$_REQUEST['processingstatus']:'';
 $finalTransfer = array_key_exists('finaltransfer',$_REQUEST)?$_REQUEST['finaltransfer']:0;
@@ -38,6 +39,7 @@ if($importIdent !== true) $importIdent = false;
 if(!is_numeric($observerUid)) $observerUid = 0;
 if($matchCatNum !== true) $matchCatNum = false;
 if($matchOtherCatNum !== true) $matchOtherCatNum = false;
+if($versionData !== true) $versionData = false;
 if($verifyImages !== true) $verifyImages = false;
 if(!preg_match('/^[a-zA-Z0-9\s_-]+$/',$processingStatus)) $processingStatus = '';
 if(!is_numeric($finalTransfer)) $finalTransfer = 0;
@@ -69,6 +71,7 @@ elseif($uploadType == $DWCAUPLOAD || $uploadType == $IPTUPLOAD || $uploadType ==
 			$duManager->addFilterCondition($_POST['filter'.$i], $_POST['condition'.$i], $_POST['value'.$i]);
 		}
 	}
+	$duManager->setSourcePortalIndex($sourceIndex);
 }
 
 $duManager->setCollId($collid);
@@ -77,9 +80,9 @@ $duManager->setUploadType($uploadType);
 $duManager->setObserverUid($observerUid);
 $duManager->setMatchCatalogNumber($matchCatNum);
 $duManager->setMatchOtherCatalogNumbers($matchOtherCatNum);
+$duManager->setVersionDataEdits($versionData);
 $duManager->setVerifyImageUrls($verifyImages);
 $duManager->setProcessingStatus($processingStatus);
-$duManager->setSourcePortalIndex($sourceIndex);
 
 $isEditor = 0;
 if($IS_ADMIN) $isEditor = 1;
@@ -225,6 +228,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						<input type="hidden" name="collid" value="<?php echo $collid;?>" />
 						<input type="hidden" name="uploadtype" value="<?php echo $uploadType; ?>" />
 						<input type="hidden" name="observeruid" value="<?php echo $observerUid; ?>" />
+						<input type="hidden" name="versiondata" value="<?php echo ($versionData?'1':'0'); ?>" />
 						<input type="hidden" name="verifyimages" value="<?php echo ($verifyImages?'1':'0'); ?>" />
 						<input type="hidden" name="processingstatus" value="<?php echo $processingStatus;?>" />
 						<input type="hidden" name="uspid" value="<?php echo $uspid;?>" />

@@ -11,6 +11,7 @@ CollAdmin-#			Upload records; modify metadata
 CollEditor-#		Edit collection records
 CollTaxon-#:#		Edit collection records within taxonomic speciality
 
+ClCreate			Create a Checklist
 ClAdmin-#			Checklist write access
 ProjAdmin-#			Project admin access
 KeyAdmin			Edit identification key characters and character states

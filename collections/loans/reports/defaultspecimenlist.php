@@ -58,7 +58,7 @@ if($outputMode == 'doc'){
 	$table = $section->addTable('listTable');
 	foreach($specList as $specArr){
 		$table->addRow();
-		$table->addCell(2250,$cellStyle)->addText(htmlspecialchars($specArr['catalognumber'].(isset($specArr['othercatalognumbers'])?', '.implode(', '.$specArr['othercatalognumbers']):'')),'colFont','colSpace');
+		$table->addCell(2250,$cellStyle)->addText(htmlspecialchars(trim($specArr['catalognumber'].(isset($specArr['othercatalognumbers'])?', '.implode(', ',$specArr['othercatalognumbers']):''),' ,')),'colFont','colSpace');
 		$table->addCell(4500,$cellStyle)->addText(htmlspecialchars($specArr['collector']),'colFont','colSpace');
 		$table->addCell(6000,$cellStyle)->addText(htmlspecialchars($specArr['sciname']),'colFont','colSpace');
 	}
@@ -123,7 +123,7 @@ else{
 					<?php
 					foreach($specList as $specArr){
 						echo '<tr>';
-						echo '<td style="width:150px;">'.$specArr['catalognumber'].(isset($specArr['othercatalognumbers'])?'<br/>'.implode(', '.$specArr['othercatalognumbers']):'').'</td>';
+						echo '<td style="width:150px;">'.$specArr['catalognumber'].(isset($specArr['othercatalognumbers'])?'<br/>'.implode(', ',$specArr['othercatalognumbers']):'').'</td>';
 						echo '<td style="width:300px;">'.$specArr['collector'].'</td>';
 						echo '<td style="width:400px;">'.$specArr['sciname'].'</td>';
 						echo '<td> </td>';

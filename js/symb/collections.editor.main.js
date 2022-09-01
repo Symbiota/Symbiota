@@ -702,9 +702,6 @@ function parseVerbatimCoordinates(f,verbose){
 
 //Form verification code
 function verifyFullForm(f){
-	f.submitaction.focus();
-
-	if(searchDupesCatalogNumber(f,false)) return false;
 	var validformat1 = /^\d{4}-[0]{1}[0-9]{1}-\d{1,2}$/; //Format: yyyy-mm-dd
 	var validformat2 = /^\d{4}-[1]{1}[0-2]{1}-\d{1,2}$/; //Format: yyyy-mm-dd
 	if(f.eventdate.value && !(validformat1.test(f.eventdate.value) || validformat2.test(f.eventdate.value))){
@@ -732,7 +729,7 @@ function verifyFullForm(f){
 		return false;
 	}
 	if(f.ometid && ((f.ometid.value != "" && f.exsnumber.value == "") || (f.ometid.value == "" && f.exsnumber.value != ""))){
-		alert("You must have both an exsiccati title and exsiccati number or neither");
+		alert("You must have both an exsiccati title and number, or neither. If there is no number, s.n. can be entered.");
 		return false;
 	}
 	if(!verifyDecimalLatitude(f)){
@@ -765,6 +762,7 @@ function verifyFullForm(f){
 		alert("Duplicate Quantity field must be numeric only");
 		return false;
 	}
+	if(searchCatalogNumber(f,false)) return false;
 	return true;
 }
 

@@ -25,51 +25,101 @@ class OccurrenceAccessStats extends Manager{
 
 	public function recordAccessEventByArr($occidArr, $accessType){
 		$status = true;
-		foreach($occidArr as $occid){
-			if(!$this->recordAccessEvent($occid, $accessType)){
-				$status = false;
+		if(isset($GLOBALS['STORE_STATISTICS'])){
+			if($occurAccessID = $this->insertAccessEvent($accessType)){
+				foreach($occidArr as $occid){
+					if(is_numeric($occid)){
+						if(!$this->insertAccessOccurrence($occurAccessID, $occid)){
+							$status = false;
+						}
+					}
+				}
 			}
 		}
 		return $status;
 	}
 
-	public function recordAccessEvent($occid,$accessType){
+	public function recordAccessEvent($occid, $accessType){
 		$status = false;
-		if(is_numeric($occid)){
-			if(isset($GLOBALS['RECORD_STATS'])){
+		if(isset($GLOBALS['STORE_STATISTICS'])){
+			if(is_numeric($occid)){
 				$this->verboseMode = 1;
 				$this->setLogFH($this->logPath);
-				$remoteAddr = $_SERVER['REMOTE_ADDR'];
-				$sql = 'INSERT INTO omoccuraccessstats(occid, ipaddress, accesstype) VALUES(?, ?, ?)';
-				$stmt = $this->conn->stmt_init();
-				$stmt->prepare($sql);
-				$stmt->bind_param('iss', $occid, $remoteAddr, $accessType);
-				if($stmt->execute()) $status = true;
-				else{
-					$this->errorMessage = date('Y-m-d H:i:s').' - ERROR recording access event: '.$this->conn->error;
-					$this->logOrEcho($this->errorMessage);
+				if($occurAccessID = $this->insertAccessEvent($accessType)){
+					$status = $this->insertAccessOccurrence($occurAccessID,$occid);
 				}
-				$stmt->close();
 			}
 		}
 		return $status;
 	}
 
-	public function batchRecordEventsBySql($sqlFrag,$accessType){
+	public function batchRecordEventsBySql($sqlFrag, $accessType){
 		$status = true;
-		if(isset($GLOBALS['RECORD_STATS'])){
+		if(isset($GLOBALS['STORE_STATISTICS'])){
 			$this->verboseMode = 1;
 			$this->setLogFH($this->logPath);
-			$sql = 'INSERT INTO omoccuraccessstats(occid, ipaddress, accesstype)
-				SELECT o.occid, "'.$this->cleanInStr($_SERVER['REMOTE_ADDR']).'", 1, "'.$this->cleanInStr($accessType).'" ';
-			$sql .= $sqlFrag;
-			if(!$this->conn->query($sql)){
-				$this->errorMessage = date('Y-m-d H:i:s').' - ERROR batch recording access event by SQL: '.$this->conn->error;
+			if($occurAccessID = $this->insertAccessEvent($accessType, $sqlFrag)){
+				$status = $this->insertAccessOccurrenceBatch($occurAccessID, $sqlFrag);
+			}
+		}
+		return $status;
+	}
+
+	public function insertAccessEvent($accessType, $queryStr = null){
+		$occurAccessID = false;
+		if(isset($GLOBALS['STORE_STATISTICS'])){
+			$remoteAddr = $_SERVER['REMOTE_ADDR'];
+			$userData = @get_browser();
+			if($userData) $userData = json_encode($userData);
+			else $userData = $_SERVER['HTTP_USER_AGENT'];
+			$sql = 'INSERT INTO omoccuraccess(ipAddress, accessType, queryStr, userAgent) VALUES(?, ?, ?, ?)';
+			$stmt = $this->conn->stmt_init();
+			$stmt->prepare($sql);
+			$stmt->bind_param('ssss', $remoteAddr, $accessType, $queryStr, $userData);
+			if($stmt->execute()){
+				$occurAccessID = $this->conn->insert_id;
+			}
+			else{
+				$this->errorMessage = date('Y-m-d H:i:s').' - ERROR creating access event: '.$this->conn->error;
+				$this->logOrEcho($this->errorMessage);
+			}
+			$stmt->close();
+		}
+		return $occurAccessID;
+	}
+
+	public function insertAccessOccurrence($occurAccessID, $occid){
+		$status = false;
+		$sql = 'INSERT INTO omoccuraccesslink(occurAccessID, occid) VALUES(?, ?)';
+		$stmt = $this->conn->stmt_init();
+		$stmt->prepare($sql);
+		$stmt->bind_param('ii', $occurAccessID, $occid);
+		if($stmt->execute()) $status = true;
+		else{
+			$this->errorMessage = date('Y-m-d H:i:s').' - ERROR creating access occurrence instance: '.$this->conn->error;
+			$this->logOrEcho($this->errorMessage);
+		}
+		$stmt->close();
+		return $status;
+	}
+
+	private function insertAccessOccurrenceBatch($occurAccessID, $sqlFrag){
+		$status = false;
+		if(is_numeric($occurAccessID)){
+			$sql = 'INSERT INTO omoccuraccesslink(occurAccessID, occid) SELECT '.$occurAccessID.', o.occid '.$sqlFrag;
+			if($this->conn->query($sql)){
+				$status = true;
+			}
+			else{
+				$this->errorMessage = date('Y-m-d H:i:s').' - ERROR batch recording access instance by SQL: '.$this->conn->error;
 				$this->logOrEcho($this->errorMessage);
 			}
 		}
 		return $status;
 	}
+
+	//Create summary reports and cache statistics
+
 
 	//Reports
 	public function getSummaryReport(){

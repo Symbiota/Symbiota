@@ -142,11 +142,15 @@ if(!isset($params['connections']['mysql']['database']) || !$params['connections'
 		require_once($symbBasePath.'/config/dbconnection.php');
 		foreach(MySQLiConnectionFactory::$SERVERS as $dbArr){
 			if($dbArr['type'] = 'write'){
-				$params['connections']['mysql']['host'] = $dbArr['host'];
-				$params['connections']['mysql']['port'] = $dbArr['port'];
+				$host = 'localhost';
+				if(isset($dbArr['host'])) $host = $dbArr['host'];
+				$params['connections']['mysql']['host'] = $host;
 				$params['connections']['mysql']['database'] = $dbArr['database'];
 				$params['connections']['mysql']['username'] = $dbArr['username'];
 				$params['connections']['mysql']['password'] = $dbArr['password'];
+				$port = '3306';
+				if(isset($dbArr['port'])) $port = $dbArr['port'];
+				$params['connections']['mysql']['port'] = $port;
 			}
 		}
 	}

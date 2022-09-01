@@ -6,61 +6,32 @@ if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/spec
 else include_once($SERVER_ROOT.'/content/lang/collections/specprocessor/geolocate.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-
-//Sanitation
-if(!is_numeric($collid)) $collid = 0;
-
-$customField1 = array_key_exists('customfield1',$_REQUEST)?$_REQUEST['customfield1']:'';
-$customType1 = array_key_exists('customtype1',$_REQUEST)?$_REQUEST['customtype1']:'';
-$customValue1 = array_key_exists('customvalue1',$_REQUEST)?$_REQUEST['customvalue1']:'';
-$customField2 = array_key_exists('customfield2',$_REQUEST)?$_REQUEST['customfield2']:'';
-$customType2 = array_key_exists('customtype2',$_REQUEST)?$_REQUEST['customtype2']:'';
-$customValue2 = array_key_exists('customvalue2',$_REQUEST)?$_REQUEST['customvalue2']:'';
-$customField3 = array_key_exists('customfield3',$_REQUEST)?$_REQUEST['customfield3']:'';
-$customType3 = array_key_exists('customtype3',$_REQUEST)?$_REQUEST['customtype3']:'';
-$customValue3 = array_key_exists('customvalue3',$_REQUEST)?$_REQUEST['customvalue3']:'';
+$collid = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid']) ? $_REQUEST['collid'] : 0;
+$customArr = array();
+for($h = 1; $h < 4; $h++){
+	$customArr[$h]['f'] = array_key_exists('customfield'.$h,$_REQUEST)?filter_var($_REQUEST['customfield'].$h,FILTER_SANITIZE_STRING):'';
+	$customArr[$h]['t'] = array_key_exists('customtype'.$h,$_REQUEST)?filter_var($_REQUEST['customtype'].$h,FILTER_SANITIZE_STRING):'';
+	$customArr[$h]['v'] = array_key_exists('customvalue'.$h,$_REQUEST)?filter_var($_REQUEST['customvalue'].$h,FILTER_SANITIZE_STRING):'';
+}
 
 $dlManager = new OccurrenceDownload();
 $collMeta = $dlManager->getCollectionMetadata($collid);
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
+if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin']))){
  	$isEditor = true;
 }
-
-$advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identifiedBy'=>'Identified By','typeStatus'=>'Type Status',
-	'catalogNumber'=>'Catalog Number','otherCatalogNumbers'=>'Other Catalog Numbers','occurrenceId'=>'Occurrence ID (GUID)',
-	'recordedBy'=>'Collector/Observer','recordNumber'=>'Collector Number','associatedCollectors'=>'Associated Collectors',
-	'eventDate'=>'Collection Date','verbatimEventDate'=>'Verbatim Date','habitat'=>'Habitat','substrate'=>'Substrate','occurrenceRemarks'=>'Occurrence Remarks',
-	'associatedTaxa'=>'Associated Taxa','verbatimAttributes'=>'Description','reproductiveCondition'=>'Reproductive Condition',
-	'establishmentMeans'=>'Establishment Means','cultivationStatus'=>'Cultivation Status','lifeStage'=>'Life Stage','sex'=>'Sex',
-	'individualCount'=>'Individual Count','samplingProtocol'=>'Sampling Protocol','country'=>'Country',
-	'stateProvince'=>'State/Province','county'=>'County','municipality'=>'Municipality','locality'=>'Locality',
-	'decimalLatitude'=>'Decimal Latitude','decimalLongitude'=>'Decimal Longitude','geodeticDatum'=>'Geodetic Datum',
-	'coordinateUncertaintyInMeters'=>'Uncertainty (m)','verbatimCoordinates'=>'Verbatim Coordinates',
-	'georeferencedBy'=>'Georeferenced By','georeferenceProtocol'=>'Georeference Protocol','georeferenceSources'=>'Georeference Sources',
-	'georeferenceVerificationStatus'=>'Georeference Verification Status','georeferenceRemarks'=>'Georeference Remarks',
-	'minimumElevationInMeters'=>'Elevation Minimum (m)','maximumElevationInMeters'=>'Elevation Maximum (m)',
-	'verbatimElevation'=>'Verbatim Elevation','disposition'=>'Disposition');
 ?>
 <html>
 	<head>
 		<title><?php echo $LANG['OCC_EXP_MAN']; ?></title>
 		<?php
 		$activateJQuery = false;
-		if(file_exists($SERVER_ROOT.'/includes/head.php')){
-			include_once($SERVER_ROOT.'/includes/head.php');
-		}
-		else{
-			echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-			echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-			echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-		}
+		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
 		<script src="../../js/jquery-3.2.1.min.js" type="text/javascript"></script>
 		<script src="../../js/symb/shared.js" type="text/javascript"></script>
-		<script src="../../js/symb/geolocate.js?ver=1.0" type="text/javascript"></script>
+		<script src="../../js/symb/geolocate.js?ver=2e" type="text/javascript"></script>
 	</head>
 	<body>
 		<!-- This is inner text! -->
@@ -105,46 +76,51 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 									</td>
 									<td>
 										<?php
+										$advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identifiedBy'=>'Identified By','typeStatus'=>'Type Status',
+											'catalogNumber'=>'Catalog Number','otherCatalogNumbers'=>'Other Catalog Numbers','occurrenceId'=>'Occurrence ID (GUID)',
+											'recordedBy'=>'Collector/Observer','recordNumber'=>'Collector Number','associatedCollectors'=>'Associated Collectors',
+											'eventDate'=>'Collection Date','verbatimEventDate'=>'Verbatim Date','habitat'=>'Habitat','substrate'=>'Substrate','occurrenceRemarks'=>'Occurrence Remarks',
+											'associatedTaxa'=>'Associated Taxa','verbatimAttributes'=>'Description','reproductiveCondition'=>'Reproductive Condition',
+											'establishmentMeans'=>'Establishment Means','cultivationStatus'=>'Cultivation Status','lifeStage'=>'Life Stage','sex'=>'Sex',
+											'individualCount'=>'Individual Count','samplingProtocol'=>'Sampling Protocol','country'=>'Country',
+											'stateProvince'=>'State/Province','county'=>'County','municipality'=>'Municipality','locality'=>'Locality',
+											'decimalLatitude'=>'Decimal Latitude','decimalLongitude'=>'Decimal Longitude','geodeticDatum'=>'Geodetic Datum',
+											'coordinateUncertaintyInMeters'=>'Uncertainty (m)','verbatimCoordinates'=>'Verbatim Coordinates',
+											'georeferencedBy'=>'Georeferenced By','georeferenceProtocol'=>'Georeference Protocol','georeferenceSources'=>'Georeference Sources',
+											'georeferenceVerificationStatus'=>'Georeference Verification Status','georeferenceRemarks'=>'Georeference Remarks',
+											'minimumElevationInMeters'=>'Elevation Minimum (m)','maximumElevationInMeters'=>'Elevation Maximum (m)',
+											'verbatimElevation'=>'Verbatim Elevation','disposition'=>'Disposition');
 										$conditionArr = array('EQUALS'=>'EQUALS','NOTEQUALS'=>'NOT EQUALS','STARTS'=>'STARTS WITH','LIKE'=>'CONTAINS','NOTLIKE'=>'DOES NOT CONTAIN','NULL'=>'IS NULL','NOTNULL'=>'IS NOT NULL');
+										foreach($customArr as $i => $unitArr){
+											$field = $unitArr['f'];
+											$type = $unitArr['t'];
+											if($i == 1 && !$field){
+												$field = 'decimalLatitude';
+												$type = 'NULL';
+											}
+											?>
+											<div style="margin:10px 0px;">
+												<select name="customfield<?php echo $i; ?>" style="width:200px">
+													<option value=""><?php echo $LANG['SELECT_FIELD']; ?></option>
+													<option value="">---------------------------------</option>
+													<?php
+													foreach($advFieldArr as $k => $v){
+														echo '<option value="'.$k.'" '.($k==$field?'SELECTED':'').'>'.$v.'</option>';
+													}
+													?>
+												</select>
+												<select name="customtype<?php echo $i; ?>" onchange="cogeUpdateCount(this)">
+													<?php
+													foreach($conditionArr as $condKey => $condValue){
+														echo '<option '.($condKey == $type ? 'SELECTED' : '').' value="'.$condKey.'">'.$condValue.'</option>';
+													}
+													?>
+												</select>
+												<input name="customvalue<?php echo $i; ?>" type="text" value="<?php echo $unitArr['v']; ?>" style="width:200px;" onchange="cogeUpdateCount(this)" />
+											</div>
+											<?php
+										}
 										?>
-										<div style="margin:10px 0px;">
-											<select name="customfield1" style="width:200px">
-												<option value=""><?php echo $LANG['SELECT_FIELD']; ?></option>
-												<option value="">---------------------------------</option>
-												<?php
-												foreach($advFieldArr as $k => $v){
-													echo '<option value="'.$k.'" '.($k==$customField1?'SELECTED':'').'>'.$v.'</option>';
-												}
-												?>
-											</select>
-											<select name="customtype1" onchange="cogeUpdateCount(this)">
-												<?php
-												foreach($conditionArr as $condKey => $condValue){
-													echo '<option '.($customType1==$condKey?'SELECTED':'').' value="'.$condKey.'">'.$condValue.'</option>';
-												}
-												?>
-											</select>
-											<input name="customvalue1" type="text" value="<?php echo $customValue1; ?>" style="width:200px;" onchange="cogeUpdateCount(this)" />
-										</div>
-										<div style="margin:10px 0px;">
-											<select name="customfield2" style="width:200px">
-												<option value=""><?php echo $LANG['SELECT_FIELD']; ?></option>
-												<option value="">---------------------------------</option>
-												<?php
-												foreach($advFieldArr as $k => $v){
-													echo '<option value="'.$k.'" '.($k==$customField2?'SELECTED':'').'>'.$v.'</option>';
-												}
-												?>
-											</select>
-											<select name="customtype2" onchange="cogeUpdateCount(this)">
-												<?php
-												foreach($conditionArr as $condKey2 => $condValue2){
-													echo '<option '.($customType2==$condKey2?'SELECTED':'').' value="'.$condKey2.'">'.$condValue2.'</option>';
-												}
-												?>
-											</select>
-											<input name="customvalue2" type="text" value="<?php echo $customValue2; ?>" style="width:200px;" onchange="cogeUpdateCount(this)" />
-										</div>
 									</td>
 								</tr>
 								<tr>
@@ -157,18 +133,22 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 												$dwcaHandler = new DwcArchiverCore();
 												$dwcaHandler->setCollArr($collid);
 												$dwcaHandler->setVerboseMode(0);
-												$dwcaHandler->addCondition('decimallatitude','NULL');
-												$dwcaHandler->addCondition('decimallongitude','NULL');
+												$dwcaHandler->setOverrideConditionLimit(true);
+												if(!$customArr[1]['f']){
+													$dwcaHandler->addCondition('decimallatitude','NULL');
+													$dwcaHandler->addCondition('decimallongitude','NULL');
+												}
 												$dwcaHandler->addCondition('locality','NOTNULL');
 												$dwcaHandler->addCondition('catalognumber','NOTNULL');
 												echo '<span id="countdiv">'.$dwcaHandler->getOccurrenceCnt().'</span> records';
 												?>
 												<span id="recalspan" style="color:orange;display:none;"><?php echo $LANG['RECALCULATING']; ?>... <img src="../../images/workingcircle.gif" style="width:13px;" /></span>
+												<span style="margin-left:15px;"><button type="button" onclick="cogeUpdateCount(this)">Reset Count</button></span>
 											</div>
 											<div>
 												<b><?php echo $LANG['COGE_AUTH']; ?>:</b>
 												<span id="coge-status" style="width:150px;color:red;"><?php echo $LANG['DISCONNECTED']; ?></span>
-												<span style="margin-left:40px"><button name="cogeCheckStatusButton" value="Check Status" onclick="cogeCheckAuthentication()"><?php echo $LANG['CHECK_STATUS']; ?></button></span>
+												<span style="margin-left:40px"><button name="cogeCheckStatusButton" type="button" value="Check Status" onclick="cogeCheckAuthentication()"><?php echo $LANG['CHECK_STATUS']; ?></button></span>
 												<span style="margin-left:40px"><a href="http://coge.geo-locate.org" target="_blank" onclick="startAuthMonitoring()"><?php echo $LANG['LOGIN_COGE']; ?></a></span>
 											</div>
 										</fieldset>
@@ -198,7 +178,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 											<input name="format" type="hidden" value="csv" />
 											<input name="schema" type="hidden" value="coge" />
 											<div style="margin:5px">
-												<button id="builddwcabutton" name="builddwcabutton" value="Push Data to GeoLocate CoGe" onclick="cogePublishDwca(this.form)" disabled ><?php echo $LANG['PUSH_DATA']; ?></button>
+												<button id="builddwcabutton" name="builddwcabutton" type="button" value="Push Data to GeoLocate CoGe" onclick="cogePublishDwca(this.form)" disabled><?php echo $LANG['PUSH_DATA']; ?></button>
 												<span id="coge-download" style="display:none;color:orange"><?php echo $LANG['CREATING_PACKAGE']; ?>... <img src="../../images/workingcircle.gif" style="width:13px;" /></span>
 												<span id="coge-push2coge" style="display:none;color:orange"><?php echo $LANG['PUSHING_TO_COGE']; ?>... <img src="../../images/workingcircle.gif" style="width:13px;" /></span>
 												<span id="coge-importcomplete" style="display:none;color:green">

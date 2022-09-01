@@ -272,7 +272,7 @@ echo '</div>';
 			</fieldset>
 		</div>
 		<?php
-		if($isEditor){
+		if($clid && $isEditor){
 			?>
 			<div style="float:right;margin:15px;" title="Edit Character Matrix">
 				<a href="tools/matrixeditor.php?clid=<?php echo $clid; ?>"><img class="editimg" src="../images/edit.png" /><span style="font-size:70%;">CM</span></a>

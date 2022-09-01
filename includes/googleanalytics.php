@@ -1,4 +1,5 @@
 <?php
+include_once ($SERVER_ROOT.'/classes/UtilityFunctions.php');
 if(isset($GOOGLE_ANALYTICS_KEY) && $GOOGLE_ANALYTICS_KEY) {
 	?>
 	<script type="text/javascript">
@@ -7,7 +8,7 @@ if(isset($GOOGLE_ANALYTICS_KEY) && $GOOGLE_ANALYTICS_KEY) {
 		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-		  ga('create', '<?php echo $GOOGLE_ANALYTICS_KEY; ?>', '<?php echo $_SERVER["SERVER_NAME"]; ?>');
+		  ga('create', '<?php echo $GOOGLE_ANALYTICS_KEY; ?>', '<?php echo UtilityFunctions::getDomain(); ?>');
 		  ga('send', 'pageview');
 	</script>
 	<?php

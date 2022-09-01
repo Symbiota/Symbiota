@@ -206,15 +206,11 @@ if($glossId){
 						foreach($termImgArr as $imgId => $imgArr){
 							$imgUrl = $imgArr["url"];
 							if(substr($imgUrl,0,1)=="/"){
-								if(array_key_exists("imageDomain",$GLOBALS) && $GLOBALS["imageDomain"]){
-									$imgUrl = $GLOBALS["imageDomain"].$imgUrl;
+								if(array_key_exists('imageDomain',$GLOBALS) && $GLOBALS['imageDomain']){
+									$imgUrl = $GLOBALS['imageDomain'].$imgUrl;
 								}
 								else{
-									$urlPrefix = "http://";
-									if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = "https://";
-									$urlPrefix .= $_SERVER["SERVER_NAME"];
-									if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80 && $_SERVER['SERVER_PORT'] != 443) $urlPrefix .= ':'.$_SERVER["SERVER_PORT"];
-									$imgUrl = $urlPrefix.$imgUrl;
+									$imgUrl = $glosManager->getDomain() . $imgUrl;
 								}
 							}
 							?>

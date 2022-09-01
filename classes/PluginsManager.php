@@ -1,8 +1,8 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/Manager.php');
 include_once($SERVER_ROOT.'/classes/ImageShared.php');
 
-class PluginsManager {
+class PluginsManager extends Manager {
 
  	public function __construct(){
  	}
@@ -107,10 +107,7 @@ class PluginsManager {
 			$sql .= 'ORDER BY i.sortsequence LIMIT 200 ';
 			//echo '<div>'.$sql.'</div>';
 			//Set local domain
-			$localDomain = "http://";
-			if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $localDomain = "https://";
-			$localDomain .= $_SERVER["SERVER_NAME"];
-			if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80 && $_SERVER['SERVER_PORT'] != 443) $localDomain .= ':'.$_SERVER["SERVER_PORT"];
+			$localDomain = $this->getDomain();
 			//Get records
 			$cnt = 1;
  			$conn = MySQLiConnectionFactory::getCon("readonly");

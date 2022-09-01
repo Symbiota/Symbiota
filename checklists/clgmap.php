@@ -7,6 +7,9 @@ header("Content-Type: text/html; charset=".$CHARSET);
 $pid = $_REQUEST['pid'];
 $target = array_key_exists('target',$_REQUEST)?$_REQUEST['target']:'checklists';
 
+//Sanitation
+if(!is_numeric($pid)) $pid = 0;
+
 $clManager = new ChecklistManager();
 $clManager->setProj($pid);
 ?>

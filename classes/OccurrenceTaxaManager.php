@@ -353,6 +353,11 @@ class OccurrenceTaxaManager {
 		return implode(", ", $returnArr);
 	}
 
+	public function getTaxaSearchTerm(){
+		if(isset($this->taxaArr['search'])) return $this->taxaArr['search'];
+		return '';
+	}
+
 	protected function cleanOutStr($str){
 		return htmlspecialchars($str);
 	}
@@ -363,7 +368,9 @@ class OccurrenceTaxaManager {
 		$str = preg_replace('/^[\s%]+/', '',$str);
 		$str = trim($str,' ,;');
 		if($str == '%') $str = '';
-		return strip_tags(trim($str));
+		$str = strip_tags($str);
+		$str = filter_var($str, FILTER_SANITIZE_STRING);
+		return $str;
 	}
 
 	protected function cleanInStr($str){

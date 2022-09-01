@@ -20,8 +20,8 @@ $attribSearch = new OccurrenceAttributeSearch();
 	<script src="../js/jquery-3.2.1.min.js?ver=3" type="text/javascript"></script>
 	<script src="../js/jquery-ui/jquery-ui.min.js?ver=3" type="text/javascript"></script>
 	<link href="../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
-	<script src="../js/symb/collections.harvestparams.js?ver=180721" type="text/javascript"></script>
-	<script src="../js/symb/collections.traitsearch.js?ver=8" type="text/javascript"></script> <!-- Contains serach-by-trait modifications -->
+	<script src="../js/symb/collections.harvestparams.js?ver=1" type="text/javascript"></script>
+	<script src="../js/symb/collections.traitsearch.js?ver=8" type="text/javascript"></script> <!-- Contains search-by-trait modifications -->
 	<script src="../js/symb/wktpolygontools.js?ver=1c" type="text/javascript"></script>
 	<script type="text/javascript">
 		var clientRoot = "<?php echo $CLIENT_ROOT; ?>";
@@ -33,7 +33,7 @@ $attribSearch = new OccurrenceAttributeSearch();
 				<?php
 			}
 			?>
-			setHarvestParamsForm();
+			setHarvestParamsForm(document.harvestparams);
 		});
 	</script>
 	<script src="../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>

@@ -22,7 +22,7 @@ class LanguageAdmin extends Manager {
 		$filePath = substr($filePath, 0, strlen($filePath)-4);
 		foreach($this->langArr as $langCode){
 			$path = $filePath.'.'.$langCode.'.php';
-			$handlerUrl = $this->getDomainPath().$GLOBALS['CLIENT_ROOT'].'/content/lang/admin/varhandler.php?path='.$path;
+			$handlerUrl = $this->getDomain().$GLOBALS['CLIENT_ROOT'].'/content/lang/admin/varhandler.php?path='.$path;
 			if($jsonStr = file_get_contents($handlerUrl)){
 				$retArr[$langCode] = json_decode($jsonStr,true);
 			}

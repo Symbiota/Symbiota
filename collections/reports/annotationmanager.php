@@ -1,5 +1,7 @@
 <?php
 include_once('../../config/symbini.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/reports/annotationmanager.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/reports/annotationmanager.'.$LANG_TAG.'.php');
+else include_once($SERVER_ROOT.'/content/lang/collections/reports/annotationmanager.en.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLabel.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
@@ -26,7 +28,7 @@ if($isEditor){
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-		<title><?php echo $DEFAULT_TITLE; ?> Annotation Label Manager</title>
+		<title><?php echo $DEFAULT_TITLE.' '.$LANG['ANN_LAB_MAN']; ?></title>
     <?php
       $activateJQuery = false;
       if(file_exists($SERVER_ROOT.'/includes/head.php')){
@@ -57,7 +59,7 @@ if($isEditor){
 					var dbElement = dbElements[i];
 					if(dbElement.checked) return true;
 				}
-			   	alert("Please select at least one annotation record!");
+			   	alert("<?php echo $LANG['SEL_ANN']; ?>");
 			  	return false;
 			}
 
@@ -97,16 +99,16 @@ if($isEditor){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href='../../index.php'>Home</a> &gt;&gt;
+		<a href='../../index.php'><?php echo $LANG['NAV_HOME']; ?></a> &gt;&gt;
 		<?php
 		if(stripos(strtolower($datasetManager->getMetaDataTerm('colltype')), "observation") !== false){
-			echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Management Menu</a> &gt;&gt; ';
+			echo '<a href="../../profile/viewprofile.php?tabindex=1">'.$LANG['PERS_MAN_MEN'].'</a> &gt;&gt; ';
 		}
 		else{
-			echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management Panel</a> &gt;&gt; ';
+			echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">'.$LANG['COL_MAN_PAN'].'</a> &gt;&gt; ';
 		}
 		?>
-		<b>Annotation Label Printing</b>
+		<b><?php echo $LANG['ANN_LAB_PRINT']; ?></b>
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
@@ -117,7 +119,7 @@ if($isEditor){
 			if(!$reportsWritable){
 				?>
 				<div style="padding:5px;">
-					<span style="color:red;">Please contact the site administrator to make temp/report folder writable in order to export to docx files.</span>
+					<span style="color:red;"><?php echo $LANG['CONTACT_FOR_DOC']; ?></span>
 				</div>
 				<?php
 			}
@@ -130,11 +132,11 @@ if($isEditor){
 					<form name="annoselectform" id="annoselectform" action="defaultannotations.php" method="post" onsubmit="return validateSelectForm(this);">
 						<table class="styledtable" style="width:800px;">
 							<tr>
-								<th title="Select/Deselect all Specimens" style="width:30px;"><input name="" value="" type="checkbox" onclick="selectAll(this);" /></th>
+								<th title="<?php echo $LANG['SEL_DESEL']; ?>" style="width:30px;"><input name="" value="" type="checkbox" onclick="selectAll(this);" /></th>
 								<th style="width:25px;text-align:center;">#</th>
-								<th style="width:125px;text-align:center;">Collector</th>
-								<th style="width:300px;text-align:center;">Scientific Name</th>
-								<th style="width:400px;text-align:center;">Determination</th>
+				<th style="width:125px;text-align:center;"><?php echo $LANG['COLLECTOR']; ?></th>
+								<th style="width:300px;text-align:center;"><?php echo $LANG['SCI_NAME']; ?></th>
+								<th style="width:400px;text-align:center;"><?php echo $LANG['DETERMINATION']; ?></th>
 							</tr>
 							<?php
 							$trCnt = 0;
@@ -168,34 +170,34 @@ if($isEditor){
 							?>
 						</table>
 						<fieldset style="margin-top:15px;">
-							<legend><b>Annotation Printing</b></legend>
+							<legend><b><?php echo $LANG['ANN_PRINT']; ?></b></legend>
 							<div>
 								<div style="margin:4px;">
-									<b>Header:</b>
+									<b><?php echo $LANG['HEADER']; ?>:</b>
 									<input type="text" name="lheading" value="" style="width:450px" />
 								</div>
 								<div style="margin:4px;">
-									<b>Footer:</b>
+									<b><?php echo $LANG['FOOTER']; ?>:</b>
 									<input type="text" name="lfooter" value="<?php echo $datasetManager->getAnnoCollName(); ?>" style="width:450px" />
 								</div>
 							</div>
 							<div style="float:left">
 								<div style="margin:4px;">
 									<input type="checkbox" name="speciesauthors" value="1" onclick="" />
-									<b>Print species authors for infraspecific taxa</b>
+									<b><?php echo $LANG['PRINT_INF_AUTH']; ?></b>
 								</div>
 								<div style="margin:4px;">
 									<input type="checkbox" name="printcatnum" value="1" />
-									<b>Print Catalog Numbers</b>
+									<b><?php echo $LANG['PRINT_CATNUM']; ?></b>
 								</div>
 								<div style="margin:4px;">
 									<input type="checkbox" name="clearqueue" value="1" onclick="" />
-									<b>Remove selected annotations from queue</b>
+									<b><?php echo $LANG['REM_ANNO']; ?></b>
 								</div>
 							</div>
 							<div style="float:left;margin-left:50px">
 								<div style="">
-									<b>Border Width:</b>
+									<b><?php echo $LANG['BORDER_WIDTH']; ?>:</b>
 									<select name="borderwidth">
 										<option value="0">0</option>
 										<option value="1" selected>1</option>
@@ -204,7 +206,7 @@ if($isEditor){
 									</select>
 								</div>
 								<div style="margin-top:4px;">
-									<b>Rows per page:</b>
+									<b><?php echo $LANG['ROWS_PER_PAGE']; ?>:</b>
 									<select name="rowcount">
 										<option value="1">1</option>
 										<option value="2">2</option>
@@ -212,17 +214,17 @@ if($isEditor){
 									</select>
 								</div>
 								<div style="margin-top:4px;">
-									<b>Spacing between labels:</b>
+									<b><?php echo $LANG['SPACE_BW_LABELS']; ?>:</b>
 									<input type="text" name="marginsize" value="5" style="width:25px" />
 								</div>
 							</div>
 							<div style="float:left;margin-left:50px">
 								<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
-								<input type="submit" name="submitaction" onclick="changeAnnoFormTarget(this.form, 'browser');" value="Print in Browser" />
+								<button type="submit" name="submitaction" onclick="changeAnnoFormTarget(this.form, 'browser')" value="Print in Browser"><?php echo $LANG['PRINT_IN_BROWSER']; ?></button>
 								<?php
 								if($reportsWritable){
 									?>
-									<div style="margin-top:5px"><input type="submit" name="submitaction" onclick="changeAnnoFormTarget(this.form, 'word');" value="Export to DOCX" /></div>
+									<div style="margin-top:5px"><button type="submit" name="submitaction" onclick="changeAnnoFormTarget(this.form, 'word');" value="Export to DOCX"><?php echo $LANG['EXPORT_TO_DOC']; ?></button></div>
 									<?php
 								}
 								?>
@@ -234,7 +236,7 @@ if($isEditor){
 				else{
 					?>
 					<div style="font-weight:bold;margin:20px;font-weight:150%;">
-						There are no annotations queued to be printed.
+						<?php echo $LANG['NO_ANNO']; ?>
 					</div>
 					<?php
 				}
@@ -245,8 +247,7 @@ if($isEditor){
 		else{
 			?>
 			<div style="font-weight:bold;margin:20px;font-weight:150%;">
-				You do not have permissions to print annotation labels for this collection.
-				Please contact the site administrator to obtain the necessary permissions.
+				<?php echo $LANG['NO_ANNO_PERMISSIONS']; ?>
 			</div>
 			<?php
 		}
