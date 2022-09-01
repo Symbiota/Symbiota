@@ -118,9 +118,9 @@ class TaxonomyUtilities {
 						if($testArr = self::cleanInfra($sciStr)){
 							self::setInfraNode($sciStr, $sciNameArr, $retArr, $authorArr, $testArr['infra']);
 						}
-						elseif($kingdomName == 'Animalia' && !$retArr['unitname3'] && ($rankId == 230 || preg_match('/^[a-z]{5,}$/',$sciStr))){
+						elseif($kingdomName == 'Animalia' && !$retArr['unitname3'] && ($rankId == 230 || preg_match('/^[a-z]{5,}$/',$sciStr) || preg_match('/^[A-Z]{5,}$/',$sciStr))){
 							$retArr['unitind3'] = '';
-							$retArr['unitname3'] = $sciStr;
+							$retArr['unitname3'] = strtolower($sciStr);
 							unset($authorArr);
 							$authorArr = array();
 						}

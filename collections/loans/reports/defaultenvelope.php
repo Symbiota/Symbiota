@@ -50,7 +50,7 @@ if($outputMode == 'doc'){
 		$textrun->addText(htmlspecialchars($invoiceArr['address2']),'toAddressFont');
 		$textrun->addTextBreak(1);
 	}
-	$textrun->addText(htmlspecialchars($invoiceArr['city'].', '.$invoiceArr['stateprovince'].' '.$invoiceArr['postalcode']),'toAddressFont');
+	$textrun->addText(htmlspecialchars($invoiceArr['city'].($invoiceArr['stateprovince']?', ':'').$invoiceArr['stateprovince'].' '.$invoiceArr['postalcode']),'toAddressFont');
 	$textrun->addTextBreak(1);
 	$textrun->addText(htmlspecialchars($invoiceArr['country']),'toAddressFont');
 
@@ -113,7 +113,7 @@ else{
 								if($invoiceArr['institutionname2']) echo $invoiceArr['institutionname2'].'<br />';
 								if($invoiceArr['address1']) echo $invoiceArr['address1'].'<br />';
 								if($invoiceArr['address2']) echo $invoiceArr['address2'].'<br />';
-								echo $invoiceArr['city'].', '.$invoiceArr['stateprovince'].' '.$invoiceArr['postalcode'].'<br/>';
+								echo $invoiceArr['city'].($invoiceArr['stateprovince']?', ':'').$invoiceArr['stateprovince'].' '.$invoiceArr['postalcode'].'<br/>';
 								echo $invoiceArr['country'];
 								?>
 							</div>

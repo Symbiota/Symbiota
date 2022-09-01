@@ -18,8 +18,6 @@ $spanish = ($languageDef == 1 || $languageDef == 2);
 
 $invoiceArr = $loanManager->getInvoiceInfo($identifier,$loanType);
 $addressArr = $loanManager->getFromAddress($collId);
-$isInternational = true;
-if($invoiceArr['country'] == $addressArr['country']) $isInternational = false;
 
 if($loanType == 'exchange'){
 	$transType = 0;
@@ -97,7 +95,7 @@ if($outputMode == 'doc'){
 		$textrun->addText(htmlspecialchars($addressArr['address2']),'headerFont');
 		$textrun->addTextBreak(1);
 	}
-	$textrun->addText(htmlspecialchars($addressArr['city'].', '.$addressArr['stateprovince'].' '.$addressArr['postalcode'].($isInternational?' '.$addressArr['country']:'')),'headerFont');
+	$textrun->addText(htmlspecialchars($addressArr['city'].($addressArr['stateprovince']?', ':'').$addressArr['stateprovince'].' '.$addressArr['postalcode'].' '.$addressArr['country']),'headerFont');
 	$textrun->addTextBreak(1);
 	$textrun->addText(htmlspecialchars($addressArr['phone']),'headerFont');
 	$textrun->addTextBreak(2);
@@ -123,11 +121,9 @@ if($outputMode == 'doc'){
 		$textrun->addText(htmlspecialchars($invoiceArr['address2']),'toAddressFont');
 		$textrun->addTextBreak(1);
 	}
-	$textrun->addText(htmlspecialchars($invoiceArr['city'].', '.$invoiceArr['stateprovince'].' '.$invoiceArr['postalcode']),'toAddressFont');
-	if($isInternational){
-		$textrun->addTextBreak(1);
-		$textrun->addText(htmlspecialchars($invoiceArr['country']),'toAddressFont');
-	}
+	$textrun->addText(htmlspecialchars($invoiceArr['city'].($invoiceArr['stateprovince']?', ':'').$invoiceArr['stateprovince'].' '.$invoiceArr['postalcode']),'toAddressFont');
+	$textrun->addTextBreak(1);
+	$textrun->addText(htmlspecialchars($invoiceArr['country']),'toAddressFont');
 	$cell = $table->addCell(5000,$cellStyle);
 	$textrun = $cell->addTextRun('identifier');
 	$textrun->addText(htmlspecialchars(date('l').', '.date('F').' '.date('j').', '.date('Y')),'identifierFont');
@@ -426,7 +422,7 @@ else{
 									</tr>
 								<?php } ?>
 								<tr>
-									<td><?php echo $addressArr['city'].', '.$addressArr['stateprovince'].' '.$addressArr['postalcode']; ?> <?php if($isInternational){echo $addressArr['country'];} ?></td>
+									<td><?php echo $addressArr['city'].($addressArr['stateprovince']?', ':'').$addressArr['stateprovince'].' '.$addressArr['postalcode'].' '.$addressArr['country']; ?></td>
 								</tr>
 								<tr>
 									<td><?php echo $addressArr['phone']; ?></td>
@@ -452,8 +448,8 @@ else{
 											if($invoiceArr['institutionname2']) echo $invoiceArr['institutionname2'].'<br />';
 											if($invoiceArr['address1']) echo $invoiceArr['address1'].'<br />';
 											if($invoiceArr['address2']) echo $invoiceArr['address2'].'<br />';
-											echo $invoiceArr['city'].', '.$invoiceArr['stateprovince'].' '.$invoiceArr['postalcode'];
-											if($isInternational) echo '<br />'.$invoiceArr['country'];
+											echo $invoiceArr['city'].($invoiceArr['stateprovince']?', ':'').$invoiceArr['stateprovince'].' '.$invoiceArr['postalcode'];
+											echo '<br />'.$invoiceArr['country'];
 											?>
 										</div>
 									</td>

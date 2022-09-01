@@ -20,8 +20,6 @@ else{
 	$invoiceArr = $loanManager->getInvoiceInfo($identifier,$loanType);
 }
 $addressArr = $loanManager->getFromAddress($collId);
-$isInternational = true;
-if($invoiceArr['country'] == $addressArr['country']) $isInternational = false;
 
 if($outputMode == 'doc'){
 	$phpWord = new \PhpOffice\PhpWord\PhpWord();
@@ -47,11 +45,9 @@ if($outputMode == 'doc'){
 		$textrun->addText(htmlspecialchars($addressArr['address2']),'fromAddressFont');
 		$textrun->addTextBreak(1);
 	}
-	$textrun->addText(htmlspecialchars($addressArr['city'].', '.$addressArr['stateprovince'].' '.$addressArr['postalcode']),'fromAddressFont');
-	if($isInternational){
-		$textrun->addTextBreak(1);
-		$textrun->addText(htmlspecialchars($addressArr['country']),'fromAddressFont');
-	}
+	$textrun->addText(htmlspecialchars($addressArr['city'].($addressArr['stateprovince']?', ':'').$addressArr['stateprovince'].' '.$addressArr['postalcode']),'fromAddressFont');
+	$textrun->addTextBreak(1);
+	$textrun->addText(htmlspecialchars($addressArr['country']),'fromAddressFont');
 	if($accountNum){
 		$textrun->addTextBreak(1);
 		$textrun->addText(htmlspecialchars('(Acct. #'.$accountNum.')'),'fromAddressFont');
@@ -74,12 +70,9 @@ if($outputMode == 'doc'){
 		$textrun->addText(htmlspecialchars($invoiceArr['address2']),'toAddressFont');
 		$textrun->addTextBreak(1);
 	}
-	$textrun->addText(htmlspecialchars($invoiceArr['city'].', '.$invoiceArr['stateprovince'].' '.$invoiceArr['postalcode']),'toAddressFont');
-	if($isInternational){
-		$textrun->addTextBreak(1);
-		$textrun->addText(htmlspecialchars($invoiceArr['country']),'toAddressFont');
-	}
-
+	$textrun->addText(htmlspecialchars($invoiceArr['city'].($invoiceArr['stateprovince']?', ':'').$invoiceArr['stateprovince'].' '.$invoiceArr['postalcode']),'toAddressFont');
+	$textrun->addTextBreak(1);
+	$textrun->addText(htmlspecialchars($invoiceArr['country']),'toAddressFont');
 	$targetFile = $SERVER_ROOT.'/temp/report/'.$PARAMS_ARR['un'].'_mailing_label.docx';
 	$phpWord->save($targetFile, 'Word2007');
 
@@ -132,10 +125,7 @@ else{
 								if($addressArr['address2']){
 									echo $addressArr['address2'].'<br />';
 								}
-								echo $addressArr['city'].', '.$addressArr['stateprovince'].' '.$addressArr['postalcode'].'<br />';
-								if($isInternational){
-									echo $addressArr['country'].'<br />';
-								}
+								echo $addressArr['city'].($addressArr['stateprovince']?', ':'').$addressArr['stateprovince'].' '.$addressArr['postalcode'].'<br />'.$addressArr['country'].'<br />';
 								if($accountNum){
 									echo '(Acct. #'.$accountNum.')<br />';
 								}
@@ -157,10 +147,7 @@ else{
 								if($invoiceArr['address2']){
 									echo $invoiceArr['address2'].'<br />';
 								}
-								echo $invoiceArr['city'].', '.$invoiceArr['stateprovince'].' '.$invoiceArr['postalcode'];
-								if($isInternational){
-									echo '<br />'.$invoiceArr['country'];
-								}
+								echo $invoiceArr['city'].($invoiceArr['stateprovince']?', ':'').$invoiceArr['stateprovince'].' '.$invoiceArr['postalcode'].'<br />'.$invoiceArr['country'];
 								?>
 							</div>
 						</td>
