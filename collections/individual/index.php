@@ -1017,41 +1017,36 @@ $traitArr = $indManager->getTraitArr();
 						</div>
 						<div style="margin:3px 0px;"><?php echo '<label>'.(isset($LANG['RECORDID'])?$LANG['RECORDID']:'Record ID').': </label>'.$occArr['recordid']; ?></div>
 						<?php
-						if($collMetadata['managementtype'] != 'Live Data'){
-							if(isset($occArr['source'])){
-								$recordType = (isset($occArr['source']['type'])?$occArr['source']['type']:'');
-								$displayTitle = $LANG['SOURCE_RECORD'];
-								if(isset($occArr['source']['title'])) $displayTitle = $occArr['source']['title'];
-								$displayStr = $occArr['source']['url'];
-								if(isset($occArr['source']['displayStr'])) $displayStr = $occArr['source']['displayStr'];
-								elseif(isset($occArr['source']['sourceID'])) $displayStr = '#'.$occArr['source']['sourceID'];
-								echo '<fieldset><legend>Externally Managed Snapshot Record</legend>';
-								echo '<div><label>'.$displayTitle.':</label> <a href="'.$occArr['source']['url'].'" target="_blank">'.$displayStr.'</a></div>';
-								echo '<div style="float:left;">';
-								if(isset($occArr['source']['sourceName'])){
-									echo '<div>'.(isset($LANG['DATA_SOURCE'])?$LANG['DATA_SOURCE']:'Data source').': '.$occArr['source']['sourceName'].'</div>';
-									if($recordType == 'symbiota') echo '<div><label>Source management: </label>Live managed record within a Symbiota portal</div>';
-								}
+						if(isset($occArr['source'])){
+							$recordType = (isset($occArr['source']['type'])?$occArr['source']['type']:'');
+							$displayTitle = $LANG['SOURCE_RECORD'];
+							if(isset($occArr['source']['title'])) $displayTitle = $occArr['source']['title'];
+							$displayStr = $occArr['source']['url'];
+							if(isset($occArr['source']['displayStr'])) $displayStr = $occArr['source']['displayStr'];
+							elseif(isset($occArr['source']['sourceID'])) $displayStr = '#'.$occArr['source']['sourceID'];
+							if($recordType == 'symbiota') echo '<fieldset><legend>Externally Managed Snapshot Record</legend>';
+							echo '<div><label>'.$displayTitle.':</label> <a href="'.$occArr['source']['url'].'" target="_blank">'.$displayStr.'</a></div>';
+							echo '<div style="float:left;">';
+							if(isset($occArr['source']['sourceName'])){
+								echo '<div>'.(isset($LANG['DATA_SOURCE'])?$LANG['DATA_SOURCE']:'Data source').': '.$occArr['source']['sourceName'].'</div>';
+								if($recordType == 'symbiota') echo '<div><label>Source management: </label>Live managed record within a Symbiota portal</div>';
+							}
+							if(array_key_exists('fieldsModified',$_POST)){
 								echo '<div>'.(isset($LANG['REFRESH_DATE'])?$LANG['REFRESH_DATE']:'Last refresh date').': '.(isset($occArr['source']['refreshTimestamp'])?$occArr['source']['refreshTimestamp']:'').'</div>';
-								if(array_key_exists('fieldsModified',$_POST)){
-									//Input from refersh event
-									$dataStatus = filter_var($_POST['dataStatus'], FILTER_SANITIZE_STRING);
-									$fieldsModified = filter_var($_POST['fieldsModified'], FILTER_SANITIZE_STRING);
-									$sourceDateLastModified = filter_var($_POST['sourceDateLastModified'], FILTER_SANITIZE_STRING);
-									echo '<div>'.(isset($LANG['UPDATE_STATUS'])?$LANG['UPDATE_STATUS']:'Update status').': '.$dataStatus.'</div>';
-									echo '<div>'.(isset($LANG['FIELDS_MODIFIED'])?$LANG['FIELDS_MODIFIED']:'Fields modified').': '.$fieldsModified.'</div>';
-									echo '<div>'.(isset($LANG['SOURCE_DATE_LAST_MODIFIED'])?$LANG['SOURCE_DATE_LAST_MODIFIED']:'Source date last modified').': '.$sourceDateLastModified.'</div>';
-								}
-								echo '</div>';
-								if($SYMB_UID && $recordType == 'symbiota'){
-									?>
-									<div style="float:left;margin-left:30px;">
-										<button name="formsubmit" type="submit" onclick="refreshRecord(<?php echo $occid; ?>)">Refresh Record</button>
-									</div>
-									<?php
-								}
-								echo '</fieldset>';
+								//Input from refersh event
+								$dataStatus = filter_var($_POST['dataStatus'], FILTER_SANITIZE_STRING);
+								$fieldsModified = filter_var($_POST['fieldsModified'], FILTER_SANITIZE_STRING);
+								$sourceDateLastModified = filter_var($_POST['sourceDateLastModified'], FILTER_SANITIZE_STRING);
+								echo '<div>'.(isset($LANG['UPDATE_STATUS'])?$LANG['UPDATE_STATUS']:'Update status').': '.$dataStatus.'</div>';
+								echo '<div>'.(isset($LANG['FIELDS_MODIFIED'])?$LANG['FIELDS_MODIFIED']:'Fields modified').': '.$fieldsModified.'</div>';
+								echo '<div>'.(isset($LANG['SOURCE_DATE_LAST_MODIFIED'])?$LANG['SOURCE_DATE_LAST_MODIFIED']:'Source date last modified').': '.$sourceDateLastModified.'</div>';
+							}
+							echo '</div>';
+							if($SYMB_UID && $recordType == 'symbiota'){
 								?>
+								<div style="float:left;margin-left:30px;">
+									<button name="formsubmit" type="submit" onclick="refreshRecord(<?php echo $occid; ?>)">Refresh Record</button>
+								</div>
 								<form id="refreshForm" action="index.php" method="post">
 									<input id="dataStatus" name="dataStatus" type="hidden" value="" >
 									<input id="fieldsModified" name="fieldsModified" type="hidden" value="" >
@@ -1062,6 +1057,7 @@ $traitArr = $indManager->getTraitArr();
 								</form>
 								<?php
 							}
+							if($recordType == 'symbiota') echo '</fieldset>';
 						}
 						?>
 						<div style="margin-top:10px;clear:both;">

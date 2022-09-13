@@ -37,17 +37,19 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverCore.php');
 
-$collid = array_key_exists("collid", $_REQUEST) ? $_REQUEST["collid"] : 0;
-$cond = array_key_exists("cond", $_REQUEST) ? $_REQUEST["cond"] : '';
-$collType = array_key_exists("colltype", $_REQUEST) ? $_REQUEST["colltype"] : 'specimens';
+$collid = array_key_exists('collid', $_REQUEST) ? $_REQUEST['collid'] : 0;
+$cond = array_key_exists('cond', $_REQUEST) ? $_REQUEST['cond'] : '';
+$collType = array_key_exists('colltype', $_REQUEST) ? $_REQUEST['colltype'] : 'specimens';
 $schemaType = array_key_exists('schema', $_REQUEST) ? $_REQUEST['schema'] : 'dwc';
 $extended = array_key_exists('extended', $_REQUEST) ? $_REQUEST['extended'] : 0;
-$includeDets = array_key_exists("dets", $_REQUEST) ? $_REQUEST["dets"] : 1;
-$includeImgs = array_key_exists("imgs", $_REQUEST) ? $_REQUEST["imgs"] : 1;
-$includeAttributes = array_key_exists("attr", $_REQUEST) ? $_REQUEST["attr"] : 0;
-$includeMaterialSample = array_key_exists("matsample", $_REQUEST) ? $_REQUEST["matsample"] : 0;
+$includeDets = array_key_exists('dets', $_REQUEST) ? $_REQUEST['dets'] : 1;
+$includeImgs = array_key_exists('imgs', $_REQUEST) ? $_REQUEST['imgs'] : 1;
+$includeAttributes = array_key_exists('attr', $_REQUEST) ? $_REQUEST['attr'] : 0;
+$includeMaterialSample = array_key_exists('matsample', $_REQUEST) ? $_REQUEST['matsample'] : 0;
+$pubGuid = array_key_exists('publicationguid', $_REQUEST) ? $_REQUEST['publicationguid'] : 0;
+$requestPortalGuid = array_key_exists('portalguid', $_REQUEST) ? $_REQUEST['portalguid'] : 0;
 
-$_SESSION['citationvar'] = "collid=" . $collid;
+$_SESSION['citationvar'] = 'collid=' . $collid;
 
 $dwcaHandler = new DwcArchiverCore();
 
@@ -55,9 +57,9 @@ $dwcaHandler->setVerboseMode(0);
 $dwcaHandler->setCollArr($collid, $collType);
 
 $redactLocalities = 1;
-if ($IS_ADMIN || array_key_exists("CollAdmin", $USER_RIGHTS)) {
+if ($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS)) {
 	$redactLocalities = 0;
-} elseif (array_key_exists("RareSppAdmin", $USER_RIGHTS) || array_key_exists("RareSppReadAll", $USER_RIGHTS)) {
+} elseif (array_key_exists('RareSppAdmin', $USER_RIGHTS) || array_key_exists('RareSppReadAll', $USER_RIGHTS)) {
 	$redactLocalities = 0;
 } elseif (array_key_exists('CollEditor', $USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'])) {
 	$redactLocalities = 0;
@@ -98,6 +100,8 @@ $dwcaHandler->setIncludeDets($includeDets);
 $dwcaHandler->setIncludeImgs($includeImgs);
 $dwcaHandler->setIncludeAttributes($includeAttributes);
 $dwcaHandler->setIncludeMaterialSample($includeMaterialSample);
+$dwcaHandler->setPublicationGuid($pubGuid);
+$dwcaHandler->setRequestPortalGuid($requestPortalGuid);
 
 $archiveFile = $dwcaHandler->createDwcArchive();
 if ($archiveFile) {

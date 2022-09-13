@@ -287,13 +287,13 @@ if($isEditor){
 				</form>
 				<?php
 			}
-			elseif(substr($action,0,6) == 'Upload' || $action == 'Analyze Taxa'){
+			elseif($action == 'uploadTaxa' || $action == 'Upload ITIS File' || $action == 'Analyze Taxa'){
 				echo '<ul>';
 				if($action == 'uploadTaxa'){
 					$loaderManager->loadFile($fieldMap);
 					$loaderManager->cleanUpload();
 				}
-				elseif($action == "Upload ITIS File"){
+				elseif($action == 'Upload ITIS File'){
 					$loaderManager->loadItisFile($fieldMap);
 					$loaderManager->cleanUpload();
 				}

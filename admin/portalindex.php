@@ -153,7 +153,8 @@ if($IS_ADMIN) $isEditor = 1;
 											echo '<div><label>Path</label>: '.$profileArr['path'].'</div>';
 											echo '<div><label>Query string</label>: '.$profileArr['queryStr'].'</div>';
 											echo '<div><label>Stored procedure (cleaning)</label>: '.$profileArr['cleanUpSp'].'</div>';
-											echo '<div>Go to <a href="../collections/admin/specuploadmap.php?uploadtype=13&uspid='.$uspid.'&collid='.$collid.'" target="_blank">Import Profile</a></div>';
+											echo '<div>Display all <a href="../collections/admin/specuploadmanagement.php?collid='.$collid.'" target="_blank">Import Profiles</a></div>';
+											echo '<div>Initiate <a href="../collections/admin/specuploadmap.php?uploadtype=13&uspid='.$uspid.'&collid='.$collid.'" target="_blank">Data Import</a></div>';
 											echo '</div>';
 										}
 									}

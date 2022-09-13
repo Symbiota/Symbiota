@@ -1778,6 +1778,7 @@ class SpecUploadBase extends SpecUpload{
 				$sqlFields .= ','.$symbField;
 				$valueStr = $this->encodeString($valueStr);
 				$valueStr = $this->cleanInStr($valueStr);
+				$valueStr = $this->removeEmoji($valueStr);
 				if($valueStr) $hasValue = true;
 				//Load data
 				$type = '';
@@ -2151,6 +2152,38 @@ class SpecUploadBase extends SpecUpload{
 			$inStr = str_replace($badwordchars, $fixedwordchars, $inStr);
 		}
 		return $retStr;
+	}
+
+	function removeEmoji($string){
+		// Match Enclosed Alphanumeric Supplement
+		$regexAlphanumeric = '/[\x{1F100}-\x{1F1FF}]/u';
+		$clearString = preg_replace($regexAlphanumeric, '', $string);
+
+		// Match Miscellaneous Symbols and Pictographs
+		$regexSymbols = '/[\x{1F300}-\x{1F5FF}]/u';
+		$clearString = preg_replace($regexSymbols, '', $clearString);
+
+		// Match Emoticons
+		$regexEmoticons = '/[\x{1F600}-\x{1F64F}]/u';
+		$clearString = preg_replace($regexEmoticons, '', $clearString);
+
+		// Match Transport And Map Symbols
+		$regexTransport = '/[\x{1F680}-\x{1F6FF}]/u';
+		$clearString = preg_replace($regexTransport, '', $clearString);
+
+		// Match Supplemental Symbols and Pictographs
+		$regexSupplemental = '/[\x{1F900}-\x{1F9FF}]/u';
+		$clearString = preg_replace($regexSupplemental, '', $clearString);
+
+		// Match Miscellaneous Symbols
+		$regexMisc = '/[\x{2600}-\x{26FF}]/u';
+		$clearString = preg_replace($regexMisc, '', $clearString);
+
+		// Match Dingbats
+		$regexDingbats = '/[\x{2700}-\x{27BF}]/u';
+		$clearString = preg_replace($regexDingbats, '', $clearString);
+
+		return $clearString;
 	}
 }
 ?>

@@ -364,6 +364,7 @@ CREATE TABLE `omoccuraccess` (
   `accessType` VARCHAR(45) NOT NULL,
   `queryStr` TEXT NULL,
   `userAgent` TEXT NULL,
+  `frontendGuid` VARCHAR(45) NULL,
   `initialTimestamp` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP(),
   PRIMARY KEY (`occurAccessID`)
 ) ENGINE = MyISAM;
@@ -543,7 +544,8 @@ CREATE TABLE `portalpublications` (
   `pubid` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `pubTitle` varchar(45) NOT NULL,
   `description` varchar(250) DEFAULT NULL,
-  `collid` int(10) unsigned NOT NULL,
+  `guid` VARCHAR(45) NULL,
+  `collid` int(10) unsigned NULL,
   `portalID` int(11) NOT NULL,
   `direction` varchar(45) NOT NULL,
   `criteriaJson` text DEFAULT NULL,
@@ -558,6 +560,7 @@ CREATE TABLE `portalpublications` (
   KEY `FK_portalpub_collid_idx` (`collid`),
   KEY `FK_portalpub_portalID_idx` (`portalID`),
   KEY `FK_portalpub_uid_idx` (`createdUid`),
+  UNIQUE INDEX `UQ_portalpub_guid` (`guid` ASC),
   CONSTRAINT `FK_portalpub_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`collID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_portalpub_createdUid` FOREIGN KEY (`createdUid`) REFERENCES `users` (`uid`) ON UPDATE CASCADE,
   CONSTRAINT `FK_portalpub_portalID` FOREIGN KEY (`portalID`) REFERENCES `portalindex` (`portalID`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -567,7 +570,7 @@ CREATE TABLE `portaloccurrences` (
   `portalOccurrencesID` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `occid` int(10) unsigned NOT NULL,
   `pubid` int(10) unsigned NOT NULL,
-  `targetOccid` int(11) NOT NULL,
+  `remoteOccid` int(11) NULL DEFAULT NULL,
   `verification` int(11) NOT NULL DEFAULT 0,
   `refreshTimestamp` datetime NOT NULL,
   `initialTimestamp` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -614,6 +617,13 @@ ALTER TABLE `taxa`
   
 ALTER TABLE `taxstatus` 
   CHANGE COLUMN `taxonomicSource` `taxonomicSource` VARCHAR(500) NULL DEFAULT NULL;
+
+ALTER TABLE `taxalinks` 
+  ADD INDEX `FK_taxaLinks_tid` (`tid` ASC),
+  ADD UNIQUE INDEX `UQ_taxaLinks_tid_url` (`tid` ASC, `url` ASC);
+
+ALTER TABLE `taxalinks` 
+  DROP INDEX `Index_unique` ;
 
 ALTER TABLE `uploadspectemp` 
   ADD COLUMN `eventTime` VARCHAR(45) NULL AFTER `verbatimEventDate`,

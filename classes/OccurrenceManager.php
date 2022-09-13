@@ -76,7 +76,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 					$sql = 'SELECT DISTINCT v.occid '.
 						'FROM fmvouchers v INNER JOIN taxstatus ts ON v.tid = ts.tidaccepted '.
 						'INNER JOIN taxstatus ts2 ON ts.tidaccepted = ts2.tidaccepted '.
-						'WHERE (v.clid = '.$this->searchTermArr["targetclid"].') AND (v.tid = '.$this->taxaArr['search'].')';
+						'WHERE (v.clid = '.$this->searchTermArr['targetclid'].') AND (v.tid IN('.$this->taxaArr['search'].'))';
 					$rs = $this->conn->query($sql);
 					while($r = $rs->fetch_object()){
 						$clOccidArr[] = $r->occid;
@@ -698,7 +698,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		}
 		elseif(array_key_exists('db',$_REQUEST) && $_REQUEST['db']){
 			$dbStr = $this->cleanInputStr(OccurrenceSearchSupport::getDbRequestVariable($_REQUEST));
-			if(preg_match('/^[0-9,]+$/', $dbStr)) $this->searchTermArr['db'] = $dbStr;
+			if(preg_match('/^[0-9,;]+$/', $dbStr)) $this->searchTermArr['db'] = $dbStr;
 		}
 		if(array_key_exists('datasetid',$_REQUEST) && $_REQUEST['datasetid']){
 			if(is_array($_REQUEST['datasetid'])){

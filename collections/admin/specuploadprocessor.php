@@ -25,6 +25,7 @@ $processingStatus = array_key_exists('processingstatus',$_REQUEST)?$_REQUEST['pr
 $finalTransfer = array_key_exists('finaltransfer',$_REQUEST)?$_REQUEST['finaltransfer']:0;
 $dbpk = array_key_exists('dbpk',$_REQUEST)?$_REQUEST['dbpk']:'';
 $sourceIndex = isset($_REQUEST['sourceindex'])?$_REQUEST['sourceindex']:0;
+$publicationGuid = array_key_exists('publicationGuid',$_POST)?$_POST['publicationGuid']:'';
 
 if(strpos($uspid,'-')){
 	$tok = explode('-',$uspid);
@@ -72,6 +73,7 @@ elseif($uploadType == $DWCAUPLOAD || $uploadType == $IPTUPLOAD || $uploadType ==
 		}
 	}
 	$duManager->setSourcePortalIndex($sourceIndex);
+	$duManager->setPublicationGuid($publicationGuid);
 }
 
 $duManager->setCollId($collid);
@@ -221,7 +223,10 @@ include($SERVER_ROOT.'/includes/header.php');
 						//Extensions
 						if(isset($reportArr['ident'])) echo '<div>'.$LANG['IDENT_TRANSFER'].': '.$reportArr['ident'].'</div>';
 						if(isset($reportArr['image'])) echo '<div>'.$LANG['IMAGE_TRANSFER'].': '.$reportArr['image'].'</div>';
-						if($uploadType == $DWCAUPLOAD || $uploadType == $IPTUPLOAD || $uploadType == $SYMBIOTA) $sourceIndex = $duManager->getSourcePortalIndex();
+						if($uploadType == $DWCAUPLOAD || $uploadType == $IPTUPLOAD || $uploadType == $SYMBIOTA){
+							$sourceIndex = $duManager->getSourcePortalIndex();
+							$publicationGuid = $duManager->getPublicationGuid();
+						}
 						?>
 					</div>
 					<form name="finaltransferform" action="specuploadprocessor.php" method="post" style="margin-top:10px;" onsubmit="return confirm('<?php echo $LANG['FINAL_TRANSFER']; ?>');">
@@ -233,6 +238,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						<input type="hidden" name="processingstatus" value="<?php echo $processingStatus;?>" />
 						<input type="hidden" name="uspid" value="<?php echo $uspid;?>" />
 						<input type="hidden" name="sourceindex" value="<?php echo $sourceIndex;?>" />
+						<input type="hidden" name="publicationGuid" value="<?php echo $publicationGuid;?>" />
 						<div style="margin:5px;">
 							<button type="submit" name="action" value="activateOccurrences"><?php echo (isset($LANG['TRANS_RECS'])?$LANG['TRANS_RECS']:'Transfer Records to Central Specimen Table'); ?></button>
 						</div>

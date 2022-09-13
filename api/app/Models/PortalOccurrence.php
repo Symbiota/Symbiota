@@ -7,7 +7,7 @@ class PortalOccurrence extends Model{
 
 	protected $table = 'portaloccurrences';
 	protected $primaryKey = 'portalOccurrencesID';
-	protected $fillable = ['occid', 'pubid', 'targetOccid', 'verification', 'refreshTimestamp' ];
+	protected $fillable = ['occid', 'pubid', 'remoteOccid', 'verification', 'refreshTimestamp' ];
 	public $timestamps = false;
 
 	public function portalIndex() {

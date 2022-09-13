@@ -105,7 +105,7 @@ class OccurrenceDownload{
 			}
 		}
 		else{
-			//Create regular file and then sreamed out to user
+			//Create regular file and then streamed out to user
 			$fh = fopen($filePath.$fileName, "w");
 			$this->writeOutData($fh);
 			fclose($fh);

@@ -1,5 +1,4 @@
 <?php
-include_once($SERVER_ROOT . '/config/dbconnection.php');
 include_once($SERVER_ROOT . '/classes/Manager.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverOccurrence.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverDetermination.php');
@@ -9,6 +8,7 @@ include_once($SERVER_ROOT . '/classes/DwcArchiverMaterialSample.php');
 include_once($SERVER_ROOT . '/classes/UuidFactory.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceTaxaManager.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceAccessStats.php');
+include_once($SERVER_ROOT . '/classes/PortalIndex.php');
 
 class DwcArchiverCore extends Manager{
 
@@ -36,6 +36,8 @@ class DwcArchiverCore extends Manager{
 	private $attributeFieldArr = array();
 	private $fieldArrMap = array();
 	private $isPublicDownload = false;
+	private $publicationGuid;
+	private $requestPortalGuid;
 
 	private $securityArr = array();
 	private $includeDets = 1;
@@ -732,7 +734,7 @@ class DwcArchiverCore extends Manager{
 					}
 				}
 
-				$r['recordID'] = 'urn:uuid:' . $r['recordID'];
+				$r['recordID'] = $r['recordID'];
 				//Add collection GUID based on management type
 				$managementType = $this->collArr[$r['collid']]['managementtype'];
 				if ($managementType && $managementType == 'Live Data') {
@@ -893,7 +895,8 @@ class DwcArchiverCore extends Manager{
 			unlink($this->targetPath . $this->ts . '-meta.xml');
 			if ($this->schemaType == 'dwc') rename($this->targetPath . $this->ts . '-eml.xml', $this->targetPath . str_replace('.zip', '.eml', $fileName));
 			else unlink($this->targetPath . $this->ts . '-eml.xml');
-		} else {
+		}
+		else {
 			$this->errorMessage = 'FAILED to create archive file due to failure to return occurrence records; check and adjust search variables';
 			$this->logOrEcho($this->errorMessage);
 			$collid = key($this->collArr);
@@ -1643,7 +1646,17 @@ class DwcArchiverCore extends Manager{
 				$typeArr = array('Other material', 'Holotype', 'Paratype', 'Isotype', 'Isoparatype', 'Isolectotype', 'Isoneotype', 'Isosyntype');
 				//$typeArr = array('Other material', 'Holotype', 'Paratype', 'Hapantotype', 'Syntype', 'Isotype', 'Neotype', 'Lectotype', 'Paralectotype', 'Isoparatype', 'Isolectotype', 'Isoneotype', 'Isosyntype');
 			}
+			$portalManager = null;
+			$pubID = 0;
+			if($this->publicationGuid && $this->requestPortalGuid){
+				$portalManager = new PortalIndex();
+				$pubArr = array('pubTitle' => 'Symbiota Portal Index export - '.date('Y-m-d'), 'portalID' => $this->requestPortalGuid, 'direction' => 'export', 'lastDateUpdate' => date('Y-m-d h:i:s'), 'guid' => $this->publicationGuid);
+				$pubID = $portalManager->createPortalPublication($pubArr);
+			}
 			$statsManager = new OccurrenceAccessStats();
+			$sqlFrag = substr($sql, strpos($sql, 'WHERE '));
+			if($p = strpos($sqlFrag, 'LIMIT ')) $sqlFrag = substr($sqlFrag, 0, $p);
+			$occurAccessID = $statsManager->insertAccessEvent('download', $sqlFrag);
 			$batchOccidArr = array();
 			while ($r = $rs->fetch_assoc()) {
 				if (!$r['occurrenceID']) {
@@ -1670,7 +1683,6 @@ class DwcArchiverCore extends Manager{
 				}
 
 				if ($urlPathPrefix) $r['t_references'] = $urlPathPrefix . 'collections/individual/index.php?occid=' . $r['occid'];
-				$r['recordID'] = 'urn:uuid:' . $r['recordID'];
 				//Add collection GUID based on management type
 				$managementType = $this->collArr[$r['collID']]['managementtype'];
 				if ($managementType && $managementType == 'Live Data') {
@@ -1683,7 +1695,8 @@ class DwcArchiverCore extends Manager{
 				if ($this->schemaType == 'dwc') {
 					unset($r['localitySecurity']);
 					unset($r['collID']);
-				} elseif ($this->schemaType == 'pensoft') {
+				}
+				elseif ($this->schemaType == 'pensoft') {
 					unset($r['localitySecurity']);
 					unset($r['collID']);
 					if ($r['typeStatus']) {
@@ -1709,8 +1722,10 @@ class DwcArchiverCore extends Manager{
 							if ($r['occurrenceRemarks']) $invalidText = $r['occurrenceRemarks'] . '; ' . $invalidText;
 							$r['occurrenceRemarks'] = $invalidText;
 						}
-					} else $r['typeStatus'] = 'Other material';
-				} elseif ($this->schemaType == 'backup') unset($r['collID']);
+					}
+					else $r['typeStatus'] = 'Other material';
+				}
+				elseif ($this->schemaType == 'backup') unset($r['collID']);
 
 				if ($ocnStr = $dwcOccurManager->getAdditionalCatalogNumberStr($r['occid'])) $r['otherCatalogNumbers'] = $ocnStr;
 				if ($this->schemaType != 'coge') {
@@ -1737,6 +1752,7 @@ class DwcArchiverCore extends Manager{
 				$batchOccidArr[] = $r['occid'];
 				if (count($batchOccidArr) > 1000) {
 					if ($materialSampleHandler) $materialSampleHandler->writeOutRecordBlock($batchOccidArr);
+					if ($pubID && $portalManager) $portalManager->insertPortalOccurrences($pubID, $batchOccidArr);
 					unset($batchOccidArr);
 					$batchOccidArr = array();
 				}
@@ -1744,16 +1760,20 @@ class DwcArchiverCore extends Manager{
 				if ($this->isPublicDownload) {
 					if ($this->schemaType == 'dwc' || $this->schemaType == 'symbiota') {
 						//Don't count if dl is backup, GeoLocate transfer, or pensoft
-						$statsManager->recordAccessEvent($r['occid'], 'download');
+						$statsManager->insertAccessOccurrence($occurAccessID, $r['occid']);
 					}
 				}
 			}
 			$rs->free();
-			if ($materialSampleHandler) {
-				if ($batchOccidArr) $materialSampleHandler->writeOutRecordBlock($batchOccidArr);
-				$materialSampleHandler->__destruct();
+			if ($batchOccidArr) {
+				if ($pubID && $portalManager) $portalManager->insertPortalOccurrences($pubID, $batchOccidArr);
+				if ($materialSampleHandler) {
+					$materialSampleHandler->writeOutRecordBlock($batchOccidArr);
+					$materialSampleHandler->__destruct();
+				}
 			}
-		} else {
+		}
+		else {
 			$this->errorMessage = 'ERROR creating occurrence file: ' . $this->conn->error;
 			$this->logOrEcho($this->errorMessage);
 			//$this->logOrEcho("\tSQL: ".$sql."\n");
@@ -1985,7 +2005,7 @@ class DwcArchiverCore extends Manager{
 			case "collid":
 				$collData = $_SESSION['colldata'];
 				// if collData includes a gbiftitle, pass it to the citation
-				if (array_key_exists('gbiftitle', $collData)) {
+				if ($collData && array_key_exists('gbiftitle', $collData)) {
 					$citationFormat = "gbif";
 				} else {
 					$citationFormat = "collection";
@@ -2157,6 +2177,14 @@ class DwcArchiverCore extends Manager{
 
 	public function setIsPublicDownload(){
 		$this->isPublicDownload = true;
+	}
+
+	public function setPublicationGuid($guid){
+		if(UuidFactory::is_valid($guid)) $this->publicationGuid = $guid;
+	}
+
+	public function setRequestPortalGuid($guid){
+		if(UuidFactory::is_valid($guid)) $this->requestPortalGuid = $guid;
 	}
 
 	public function setCharSetOut($cs){

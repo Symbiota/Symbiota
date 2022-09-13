@@ -11,24 +11,24 @@ $occurManager = new OccurrenceMapManager();
 $coordArr = $occurManager->getMappingData(0);
 
 //Build taxa mapping key
-$colorKey = Array();
 $taxaKey = Array();
 $taxaArr = $occurManager->getTaxaArr();
 if(array_key_exists('taxa', $taxaArr)){
 	foreach($taxaArr['taxa'] as $scinameStr => $snArr){
 		if(isset($snArr['tid'])){
 			$snTid = key($snArr['tid']);
-			$taxaKey[$snTid]['str'] = $scinameStr;
-			$taxaKey[$snTid]['target'] = $snTid;
-			if(array_key_exists('synonyms', $snArr)){
-				foreach($snArr['synonyms'] as $synTid => $synStr){
-					$taxaKey[$synTid]['str'] = $synStr;
-					$taxaKey[$synTid]['target'] = $snTid;
+			$taxaKey[$snTid]['t'] = $scinameStr;
+			if(array_key_exists('TID_BATCH', $snArr)){
+				foreach($snArr['TID_BATCH'] as $synTid => $synValue){
+					$taxaKey[$synTid]['s'] = $snTid;
 				}
 			}
-		}
-		else{
-			$taxaKey['orphan'][$scinameStr] = '';
+			if(array_key_exists('synonyms', $snArr)){
+				foreach($snArr['synonyms'] as $synTid => $synSciname){
+					$taxaKey[$synTid]['s'] = $snTid;
+					$taxaKey[$synTid]['t'] = $synSciname;
+				}
+			}
 		}
 	}
 }
@@ -112,39 +112,57 @@ if(array_key_exists('taxa', $taxaArr)){
 			$markerCnt = 0;
 			$spCnt = 0;
 			$minLng = 180; $minLat = 90; $maxLng = -180; $maxLat = -90;
-			$iconColors = array('fc6355','5781fc','fcf357','00e13c','e14f9e','55d7d7','ff9900','7e55fc');
-			$iconColorKey = 0;
+			$defaultColor = 'B2BEB5';
+			$iconColors = array('FC6355','5781FC','FCf357','00E13C','E14f9E','55D7D7','FF9900','7E55FC');
+			$legendArr = Array();
 			foreach($coordArr as $sciName => $valueArr){
 				?>
 				markers = [];
 				<?php
-				$iconColor = '';
 				$tid = 0;
 				if(array_key_exists('tid', $valueArr)){
 					$tid = $valueArr['tid'];
 					unset($valueArr['tid']);
-					if(isset($taxaKey[$tid]['target'])){
-						$tid = $taxaKey[$tid]['target'];
-					}
-					elseif($sciName != 'undefined' && isset($taxaKey['orphan'])){
-						foreach($taxaKey['orphan'] as $nameKey => $nameRaw){
-							if(stripos($sciName,$nameKey) !== false) $tid = $nameKey;
+					if(isset($taxaKey[$tid])){
+						if(isset($taxaKey[$tid]['s'])){
+							$correctedTid = $taxaKey[$tid]['s'];
+							if(isset($taxaKey[$tid]['t'])) $legendArr[$correctedTid]['s'][] = $taxaKey[$tid]['t'];
+							$tid = $correctedTid;
+						}
+						if(!isset($legendArr[$tid]['t'])){
+							$legendArr[$tid]['t'] = $taxaKey[$tid]['t'];
+							$legendArr[$tid]['c'] = $iconColors[(count($legendArr)%8)];
 						}
 					}
-					else{
-						$tid = 0;
+				}
+				$iconColor = 0;
+				if(isset($legendArr[$tid])){
+					$iconColor = $legendArr[$tid]['c'];
+				}
+				else{
+					foreach($legendArr as $legArr){
+						if(isset($legArr['t']) && strpos($sciName, $legArr['t']) === 0){
+							$iconColor = $legArr['c'];
+							echo 'cond1'."\n";
+							break;
+						}
+					}
+					if(!$iconColor){
+						foreach($taxaKey as $tkTid => $tkArr){
+							if(isset($tkArr['t']) && strpos($sciName, $tkArr['t']) === 0){
+								$legendArr[$tkTid]['t'] = $tkArr['t'];
+								$iconColor = $iconColors[(count($legendArr)%8)];
+								$legendArr[$tkTid]['c'] = $iconColor;
+								echo 'cond2'."\n";
+								break;
+							}
+						}
+					}
+					if(!$iconColor){
+						$legendArr['last']['c'] = $defaultColor;
+						$iconColor = $defaultColor;
 					}
 				}
-				elseif($sciName != 'undefined' && isset($taxaKey['orphan'])){
-					foreach($taxaKey['orphan'] as $nameKey => $nameRaw){
-						if(stripos($sciName,$nameKey) !== false) $tid = $nameKey;
-					}
-				}
-				if(!array_key_exists($tid, $colorKey)){
-					$colorKey[$tid] = $iconColors[$iconColorKey%8];
-					$iconColorKey++;
-				}
-				$iconColor = $colorKey[$tid];
 				foreach($valueArr as $occid => $spArr){
 					//Find max/min point values
 					if($spArr['lat'] < $minLat) $minLat = $spArr['lat'];
@@ -309,7 +327,7 @@ if(array_key_exists('taxa', $taxaArr)){
 
 	</script>
 </head>
-<body style="background-color:#ffffff;width:100%" onload="initialize();">
+<body style="width:100%; min-width: 900px" onload="initialize();">
 	<?php
 	if(!$coordArr){
 		?>
@@ -329,96 +347,98 @@ if(array_key_exists('taxa', $taxaArr)){
 	}
 	?>
 	<div id="map_canvas" style="width:100%;height:700px"></div>
-	<table title='Add Point of Reference' style="width:100%;" >
-		<tr>
-			<td style="width:330px" valign='top'>
-				<fieldset>
-					<legend>Legend</legend>
-					<div style="float:left;">
-						<?php
-						foreach($colorKey as $iconKey => $colorCode){
-							echo '<div>';
-							echo '<svg xmlns="http://www.w3.org/2000/svg" style="height:12px;width:12px;margin-bottom:-2px;"><g><rect x="1" y="1" width="11" height="10" fill="#'.$colorCode.'" stroke="#000000" stroke-width="1px" /></g></svg> ';
-							if(!$iconKey) echo '= various taxa';
-							elseif(is_numeric($iconKey)) echo '= <i>'.$taxaKey[$iconKey]['str'].'</i>';
-							elseif(isset($taxaKey['orphan'][$iconKey])) echo '= <i>'.$iconKey.'</i>';
-							else echo '= various taxa';
-							echo '</div>';
-						}
-						?>
-					</div>
-					<div style="float:right;">
-						<div>
-							<svg xmlns="http://www.w3.org/2000/svg" style="height:15px;width:15px;margin-bottom:-2px;">">
-								<g>
-									<circle cx="7.5" cy="7.5" r="7" fill="white" stroke="#000000" stroke-width="1px" ></circle>
-								</g>
-							</svg> = Collection
-						</div>
-						<div>
-							<svg style="height:14px;width:14px;margin-bottom:-2px;">" xmlns="http://www.w3.org/2000/svg">
-								<g>
-									<path stroke="#000000" d="m6.70496,0.23296l-6.70496,13.48356l13.88754,0.12255l-7.18258,-13.60611z" stroke-width="1px" fill="white"/>
-								</g>
-							</svg> = Observation
-						</div>
-					</div>
-				</fieldset>
-			</td>
-			<td style="width:375px;" valign='top'>
+	<div style="width:500px;float:left;">
+		<fieldset>
+			<legend>Legend</legend>
+			<div style="float: left; margin-right: 25px; margin-bottom: 10px">
+				<?php
+				$tailItem = '';
+				foreach($legendArr as $subArr){
+					echo '<div>';
+					if(isset($subArr['t'])){
+						echo '<svg xmlns="http://www.w3.org/2000/svg" style="height:12px;width:12px;margin-bottom:-2px;"><g><rect x="1" y="1" width="11" height="10" fill="#'.$subArr['c'].'" stroke="#000000" stroke-width="1px" /></g></svg> ';
+						echo '= <i>'.$subArr['t'].'</i> ';
+						if(isset($subArr['s'])) echo ' ('.implode(', ', $subArr['s']).')';
+					}
+					else{
+						$tailItem = '<div>';
+						$tailItem .= '<svg xmlns="http://www.w3.org/2000/svg" style="height:12px;width:12px;margin-bottom:-2px;"><g><rect x="1" y="1" width="11" height="10" fill="#'.$subArr['c'].'" stroke="#000000" stroke-width="1px" /></g></svg> ';
+						$tailItem .= '= non-indexed taxa';
+						$tailItem .= '</div>';
+					}
+					echo '</div>';
+				}
+				echo $tailItem;
+				?>
+			</div>
+			<div style="float: left;">
 				<div>
-					<fieldset>
-						<legend>Add Point of Reference</legend>
-						<div style='float:left;width:350px;'>
-							<div class="latlongdiv">
-								<div>
-									Latitude decimal: <input name='lat' id='lat' size='10' type='text' /> eg: 34.57
-								</div>
-								<div style="margin-top:5px;">
-									Longitude decimal: <input name='lng' id='lng' size='10' type='text' /> eg: -112.38
-								</div>
-								<div style='font-size:80%;margin-top:5px;'>
-									<a href='#' onclick='toggleLatLongDivs();'>Enter in D:M:S format</a>
-								</div>
-							</div>
-							<div class='latlongdiv' style='display:none;'>
-								<div>
-									Latitude:
-									<input name='latdeg' id='latdeg' size='2' type='text' />&deg;
-									<input name='latmin' id='latmin' size='5' type='text' />&prime;
-									<input name='latsec' id='latsec' size='5' type='text' />&Prime;
-									<select name='latns' id='latns'>
-										<option value='N'>N</option>
-										<option value='S'>S</option>
-									</select>
-								</div>
-								<div style="margin-top:5px;">
-									Longitude:
-									<input name='longdeg' id='longdeg' size='2' type='text' />&deg;
-									<input name='longmin' id='longmin' size='5' type='text' />&prime;
-									<input name='longsec' id='longsec' size='5' type='text' />&Prime;
-									<select name='longew' id='longew'>
-										<option value='E'>E</option>
-										<option value='W' selected>W</option>
-									</select>
-								</div>
-								<div style='font-size:80%;margin-top:5px;'>
-									<a href='#' onclick='toggleLatLongDivs();'>Enter in Decimal format</a>
-								</div>
-							</div>
-						</div>
-						<div style="float:right;width:100px;">
-							<div style="float:right;">
-								Marker Name: <input name='title' id='title' size='20' type='text' />
-							</div><br />
-							<div style="float:right;margin-top:10px;">
-								<input type='submit' value='Add Marker' onclick='addRefPoint();' />
-							</div>
-						</div>
-					</fieldset>
+					<svg xmlns="http://www.w3.org/2000/svg" style="height:15px;width:15px;margin-bottom:-2px;">">
+						<g>
+							<circle cx="7.5" cy="7.5" r="7" fill="white" stroke="#000000" stroke-width="1px" ></circle>
+						</g>
+					</svg> = Collection
 				</div>
-			</td>
-		</tr>
-	</table>
+				<div>
+					<svg style="height:14px;width:14px;margin-bottom:-2px;">" xmlns="http://www.w3.org/2000/svg">
+						<g>
+							<path stroke="#000000" d="m6.70496,0.23296l-6.70496,13.48356l13.88754,0.12255l-7.18258,-13.60611z" stroke-width="1px" fill="white"/>
+						</g>
+					</svg> = Observation
+				</div>
+			</div>
+		</fieldset>
+	</div>
+	<div style="width:400px;float:left;">
+		<fieldset>
+			<legend>Add Point of Reference</legend>
+			<div style='clear:both'>
+				<div class="latlongdiv">
+					<div>
+						Latitude decimal: <input name='lat' id='lat' size='10' type='text' /> eg: 34.57
+					</div>
+					<div style="margin-top:5px;">
+						Longitude decimal: <input name='lng' id='lng' size='10' type='text' /> eg: -112.38
+					</div>
+					<div style='font-size:80%;margin-top:5px;'>
+						<a href='#' onclick='toggleLatLongDivs();'>Enter in D:M:S format</a>
+					</div>
+				</div>
+				<div class='latlongdiv' style='display:none;'>
+					<div>
+						Latitude:
+						<input name='latdeg' id='latdeg' size='2' type='text' />&deg;
+						<input name='latmin' id='latmin' size='4' type='text' />&prime;
+						<input name='latsec' id='latsec' size='4' type='text' />&Prime;
+						<select name='latns' id='latns'>
+							<option value='N'>N</option>
+							<option value='S'>S</option>
+						</select>
+					</div>
+					<div style="margin-top:5px;">
+						Longitude:
+						<input name='longdeg' id='longdeg' size='2' type='text' />&deg;
+						<input name='longmin' id='longmin' size='4' type='text' />&prime;
+						<input name='longsec' id='longsec' size='4' type='text' />&Prime;
+						<select name='longew' id='longew'>
+							<option value='E'>E</option>
+							<option value='W' selected>W</option>
+						</select>
+					</div>
+					<div style='font-size:80%;margin-top:5px;'>
+						<a href='#' onclick='toggleLatLongDivs();'>Enter in Decimal format</a>
+					</div>
+				</div>
+			</div>
+			<div>
+				<div>
+					Marker Name: <input name='title' id='title' size='20' type='text' />
+				</div>
+				<div style="margin-top:10px;">
+					<input type='submit' value='Add Marker' onclick='addRefPoint();' />
+				</div>
+			</div>
+		</fieldset>
+	</div>
 </body>
 </html>

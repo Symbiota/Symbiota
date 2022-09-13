@@ -473,58 +473,57 @@ class OccurrenceIndividual extends Manager{
 					$rs2->free();
 				}
 			}
+		}
 
-			//Format link out to source
-			if(!isset($this->occArr['source']) && $this->metadataArr['individualurl']){
-				$sourceTitle = '';
-				$iUrl = trim($this->metadataArr['individualurl']);
-				if(substr($iUrl, 0, 4) != 'http'){
-					if($pos = strpos($iUrl, ':')){
-						$this->occArr['source']['title'] = substr($iUrl, 0, $pos);
-						$iUrl = trim(substr($iUrl, $pos+1));
-					}
+		//Format link out to source
+		if(!isset($this->occArr['source']) && $this->metadataArr['individualurl']){
+			$iUrl = trim($this->metadataArr['individualurl']);
+			if(substr($iUrl, 0, 4) != 'http'){
+				if($pos = strpos($iUrl, ':')){
+					$this->occArr['source']['title'] = substr($iUrl, 0, $pos);
+					$iUrl = trim(substr($iUrl, $pos+1));
 				}
-				$displayStr = '';
-				$indUrl = '';
-				if(strpos($iUrl,'--DBPK--') !== false && $this->occArr['dbpk']){
-					$indUrl = str_replace('--DBPK--',$this->occArr['dbpk'],$iUrl);
-					$displayStr = $indUrl;
-				}
-				elseif(strpos($iUrl,'--CATALOGNUMBER--') !== false && $this->occArr['catalognumber']){
-					$indUrl = str_replace('--CATALOGNUMBER--',$this->occArr['catalognumber'],$iUrl);
-					$displayStr = $this->occArr['catalognumber'];
-				}
-				elseif(strpos($iUrl,'--OTHERCATALOGNUMBERS--') !== false && $this->occArr['othercatalognumbers']){
-					if(substr($this->occArr['othercatalognumbers'],0,1) == '{'){
-						if($ocnArr = json_decode($this->occArr['othercatalognumbers'],true)){
-							foreach($ocnArr as $idKey => $idArr){
-								if(!$displayStr || $idKey == 'NEON sampleID' || $idKey == 'NEON sampleCode (barcode)'){
-									$displayStr = $idArr[0];
-									if($idKey == 'NEON sampleCode (barcode)') $iUrl = str_replace('sampleTag','barcode',$iUrl);
-									$indUrl = str_replace('--OTHERCATALOGNUMBERS--',$idArr[0],$iUrl);
-									if($idKey == 'NEON sampleCode (barcode)') break;
-								}
+			}
+			$displayStr = '';
+			$indUrl = '';
+			if(strpos($iUrl,'--DBPK--') !== false && $this->occArr['dbpk']){
+				$indUrl = str_replace('--DBPK--',$this->occArr['dbpk'],$iUrl);
+				$displayStr = $indUrl;
+			}
+			elseif(strpos($iUrl,'--CATALOGNUMBER--') !== false && $this->occArr['catalognumber']){
+				$indUrl = str_replace('--CATALOGNUMBER--',$this->occArr['catalognumber'],$iUrl);
+				$displayStr = $this->occArr['catalognumber'];
+			}
+			elseif(strpos($iUrl,'--OTHERCATALOGNUMBERS--') !== false && $this->occArr['othercatalognumbers']){
+				if(substr($this->occArr['othercatalognumbers'],0,1) == '{'){
+					if($ocnArr = json_decode($this->occArr['othercatalognumbers'],true)){
+						foreach($ocnArr as $idKey => $idArr){
+							if(!$displayStr || $idKey == 'NEON sampleID' || $idKey == 'NEON sampleCode (barcode)'){
+								$displayStr = $idArr[0];
+								if($idKey == 'NEON sampleCode (barcode)') $iUrl = str_replace('sampleTag','barcode',$iUrl);
+								$indUrl = str_replace('--OTHERCATALOGNUMBERS--',$idArr[0],$iUrl);
+								if($idKey == 'NEON sampleCode (barcode)') break;
 							}
 						}
 					}
-					else{
-						$ocn = str_replace($this->occArr['othercatalognumbers'], ',', ';');
-						$ocnArr = explode(';',$ocn);
-						$ocnValue = trim(array_pop($ocnArr));
-						if(stripos($ocnValue,':')) $ocnValue = trim(array_pop(explode(':',$ocnValue)));
-						$indUrl = str_replace('--OTHERCATALOGNUMBERS--',$ocnValue,$iUrl);
-						$displayStr = $ocnValue;
-					}
 				}
-				elseif(strpos($iUrl,'--OCCURRENCEID--') !== false && $this->occArr['occurrenceid']){
-					$indUrl = str_replace('--OCCURRENCEID--',$this->occArr['occurrenceid'],$iUrl);
-					$displayStr = $this->occArr['occurrenceid'];
+				else{
+					$ocn = str_replace($this->occArr['othercatalognumbers'], ',', ';');
+					$ocnArr = explode(';',$ocn);
+					$ocnValue = trim(array_pop($ocnArr));
+					if(stripos($ocnValue,':')) $ocnValue = trim(array_pop(explode(':',$ocnValue)));
+					$indUrl = str_replace('--OTHERCATALOGNUMBERS--',$ocnValue,$iUrl);
+					$displayStr = $ocnValue;
 				}
-				$this->occArr['source']['type'] = 'external';
-				$this->occArr['source']['url'] = $indUrl;
-				$this->occArr['source']['displayStr'] = $displayStr;
-				$this->occArr['source']['refreshTimestamp'] = $this->metadataArr['uploaddate'];
 			}
+			elseif(strpos($iUrl,'--OCCURRENCEID--') !== false && $this->occArr['occurrenceid']){
+				$indUrl = str_replace('--OCCURRENCEID--',$this->occArr['occurrenceid'],$iUrl);
+				$displayStr = $this->occArr['occurrenceid'];
+			}
+			$this->occArr['source']['type'] = 'external';
+			$this->occArr['source']['url'] = $indUrl;
+			$this->occArr['source']['displayStr'] = $displayStr;
+			$this->occArr['source']['refreshTimestamp'] = $this->metadataArr['uploaddate'];
 		}
 	}
 
@@ -617,7 +616,7 @@ class OccurrenceIndividual extends Manager{
 	}
 
 	public function echoTraitUnit($outArr, $label = '', $indent=0){
-		if($outArr){
+		if(isset($outArr['name'])){
 			echo '<div style="margin-left:'.$indent.'px">';
 			if(!empty($outArr['url'])) echo '<a href="'.$outArr['url'].'" target="_blank">';
 			echo '<span class="traitName">';

@@ -83,21 +83,36 @@ class OccurrenceEditReview extends Manager{
 
 	private function getOccurEditArr(){
 		$retArr = Array();
-		$sql = 'SELECT e.ocedid,e.occid,o.catalognumber,e.fieldname,e.fieldvaluenew,e.fieldvalueold,e.reviewstatus,e.appliedstatus,e.uid, e.initialtimestamp '.
+		$sql = 'SELECT e.ocedid,e.occid,o.catalognumber,o.othercatalognumbers,e.fieldname,e.fieldvaluenew,e.fieldvalueold,e.reviewstatus,e.appliedstatus,e.uid, e.initialtimestamp '.
 			$this->getEditSqlBase().' ORDER BY e.initialtimestamp DESC, e.fieldname ASC '.
 			'LIMIT '.($this->pageNumber*$this->limitNumber).','.($this->limitNumber+1);
 		//echo '<div>'.$sql.'</div>';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr[$r->occid][$r->ocedid][$r->appliedstatus]['ts'] = $r->initialtimestamp;
-			$retArr[$r->occid][$r->ocedid][$r->appliedstatus]['catnum'] = $r->catalognumber;
 			$retArr[$r->occid][$r->ocedid][$r->appliedstatus]['rstatus'] = $r->reviewstatus;
 			$retArr[$r->occid][$r->ocedid][$r->appliedstatus]['uid'] = $r->uid;
 			$retArr[$r->occid][$r->ocedid][$r->appliedstatus]['f'][$r->fieldname]['old'] = $r->fieldvalueold;
 			$retArr[$r->occid][$r->ocedid][$r->appliedstatus]['f'][$r->fieldname]['new'] = $r->fieldvaluenew;
+			$retArr[$r->occid]['catnum'] = $r->catalognumber.($r->othercatalognumbers?', ':'').$r->othercatalognumbers;
 		}
 		$rs->free();
+		$this->appendAdditionalIdentifiers($retArr);
 		return $retArr;
+	}
+
+	private function appendAdditionalIdentifiers(&$occArr){
+		if($occArr){
+			$sql = 'SELECT occid, identifierValue, identifierName FROM omoccuridentifiers WHERE occid IN('.implode(',',array_keys($occArr)).') ORDER BY sortBy';
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_object()){
+				if(!$occArr[$r->occid]['catnum'] || strpos($occArr[$r->occid]['catnum'], $r->identifierValue) === false){
+					if($occArr[$r->occid]['catnum']) $occArr[$r->occid]['catnum'] .= ', ';
+					$occArr[$r->occid]['catnum'] .= $r->identifierValue;
+				}
+			}
+			$rs->free();
+		}
 	}
 
 	private function getEditSqlBase($includeUserTable=false){

@@ -1005,7 +1005,7 @@ class TaxonomyHarvester extends Manager{
 						if($parentTid) $taxonArr['parent']['tid'] = $parentTid;
 					}
 					if(isset($unitArr['taxonomicStatus']) && $unitArr['taxonomicStatus'] != 'accepted' && isset($unitArr['acceptedNameUsage'])){
-						$acceptedArr = TaxonomyUtilities::parseScientificName($unitArr['acceptedNameUsage'], 0, $this->kingdomName);
+						$acceptedArr = TaxonomyUtilities::parseScientificName($unitArr['acceptedNameUsage'], $this->conn, $this->kingdomName);
 						$tidAccepted = $this->getTid($taxonArr);
 						if(!$tidAccepted) $tidAccepted = $this->addBryoNamesTaxon($acceptedArr);
 					}

@@ -41,6 +41,7 @@ if(isset($ACTIVATE_GEOLOCATION) && $ACTIVATE_GEOLOCATION == 1) $activateGeolocat
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title><?php echo $DEFAULT_TITLE; ?> - Map Interface</title>
 	<?php
+	$activateJQuery = false;
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>

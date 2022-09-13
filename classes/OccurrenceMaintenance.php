@@ -139,6 +139,7 @@ class OccurrenceMaintenance {
 		$rs->free();
 		if(isset($occidArr)) $this->batchUpdateAuthor($occidArr);
 
+		/*
 		if($this->verbose) $this->outputMsg('Updating georeference index... ',1);
 		$sql = 'INSERT IGNORE INTO omoccurgeoindex(tid,decimallatitude,decimallongitude)
 			SELECT DISTINCT o.tidinterpreted, round(o.decimallatitude,2), round(o.decimallongitude,2)
@@ -151,6 +152,7 @@ class OccurrenceMaintenance {
 			if($this->verbose) $this->outputMsg($errStr,2);
 			$status = false;
 		}
+		*/
 
 		return $status;
 	}

@@ -53,7 +53,7 @@ class OccurrenceTaxaManager {
 			$taxaStr = $this->cleanInputStr($inputArr['taxa']);
 		}
 		else{
-			$taxaStr = str_replace(',',';',$this->cleanInputStr($_REQUEST['taxa']));
+			$taxaStr = str_replace(';',',',$this->cleanInputStr($_REQUEST['taxa']));
 		}
 		if($taxaStr){
 			$this->taxaArr['search'] = $taxaStr;
@@ -75,7 +75,7 @@ class OccurrenceTaxaManager {
 			}
 			$this->taxaArr['taxontype'] = $defaultTaxaType;
 			//Initerate through taxa and process
-			$this->taxaSearchTerms = explode(';',$taxaStr);
+			$this->taxaSearchTerms = explode(',',$taxaStr);
 			foreach($this->taxaSearchTerms as $k => $term){
 				$searchTerm = $this->cleanInputStr($term);
 				if(!$searchTerm){
@@ -172,6 +172,7 @@ class OccurrenceTaxaManager {
 			foreach($this->taxaArr['taxa'] as $searchStr => $searchArr){
 				if(isset($searchArr['tid']) && $searchArr['tid']){
 					foreach($searchArr['tid'] as $tid => $rankid){
+						$accArr = array();
 						$accArr[] = $tid;
 						if($rankid >= 180 && $rankid <= 220){
 							//Get accepted children
@@ -183,7 +184,7 @@ class OccurrenceTaxaManager {
 								$accArr[] = $r1->tid;
 								if(!isset($this->taxaArr['taxa'][$r1->sciname])){
 									if($rankid == 220) $this->taxaArr['taxa'][$r1->sciname]['tid'][$r1->tid] = $r1->rankid;
-									else $this->taxaArr['taxa']['TID_BATCH'][$r1->tid] = '';
+									else $this->taxaArr['taxa'][$searchStr]['TID_BATCH'][$r1->tid] = '';
 								}
 							}
 							$rs1->free();
@@ -196,7 +197,7 @@ class OccurrenceTaxaManager {
 						$rs2 = $this->conn->query($sql2);
 						while($r2 = $rs2->fetch_object()) {
  							if($rankid >= 220) $this->taxaArr['taxa'][$r2->accepted]['synonyms'][$r2->tid] = $r2->sciname;
-							else $this->taxaArr['taxa']['TID_BATCH'][$r2->tid] = '';
+ 							else $this->taxaArr['taxa'][$searchStr]['TID_BATCH'][$r2->tid] = '';
 						}
 						$rs2->free();
 					}
@@ -266,8 +267,8 @@ class OccurrenceTaxaManager {
 							$sqlWhereTaxa .= 'OR (o.family IN("'.implode('","',$famArr).'")) ';
 						}
 					}
-					elseif($searchTaxon == 'TID_BATCH'){
-						$tidInArr = array_merge($tidInArr,array_keys($searchArr));
+					elseif(isset($searchArr['TID_BATCH'])){
+						$tidInArr = array_merge($tidInArr, array_keys($searchArr['TID_BATCH']));
 					}
 					else{
 						$term = $this->cleanInStr(trim($searchTaxon,'%'));
@@ -336,18 +337,16 @@ class OccurrenceTaxaManager {
 		$returnArr = Array();
 		if(isset($this->taxaArr['taxa'])){
 			foreach($this->taxaArr['taxa'] as $taxonName => $taxonArr){
-				if($taxonName != 'TID_BATCH'){
-					$str = '';
-					if(isset($taxonArr['taxontype']) && $this->taxaArr['taxontype'] == TaxaSearchType::ANY_NAME) $str .= TaxaSearchType::anyNameSearchTag($taxonArr['taxontype']).': ';
-					$str .= $taxonName;
-					if(array_key_exists("scinames",$taxonArr)){
-						$str .= " => ".implode(",",$taxonArr["scinames"]);
-					}
-					if(array_key_exists("synonyms",$taxonArr)){
-						$str .= " (".implode(", ",$taxonArr["synonyms"]).")";
-					}
-					$returnArr[] = $str;
+				$str = '';
+				if(isset($taxonArr['taxontype']) && $this->taxaArr['taxontype'] == TaxaSearchType::ANY_NAME) $str .= TaxaSearchType::anyNameSearchTag($taxonArr['taxontype']).': ';
+				$str .= $taxonName;
+				if(array_key_exists("scinames",$taxonArr)){
+					$str .= " => ".implode(",",$taxonArr["scinames"]);
 				}
+				if(array_key_exists("synonyms",$taxonArr)){
+					$str .= " (".implode(", ",$taxonArr["synonyms"]).")";
+				}
+				$returnArr[] = $str;
 			}
 		}
 		return implode(", ", $returnArr);

@@ -51,7 +51,7 @@ class Occurrence extends Model{
 	}
 
 	public function portalPublications(){
-		return $this->belongsToMany(PortalPublication::class, 'portaloccurrences', 'occid', 'pubid')->withPivot('targetOccid');;
+		return $this->belongsToMany(PortalPublication::class, 'portaloccurrences', 'occid', 'pubid')->withPivot('remoteOccid');;
 	}
 
 

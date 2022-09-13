@@ -10,6 +10,7 @@ class SpecUploadDwca extends SpecUploadBase{
 	private $encoding = 'utf-8';
 	private $loopCnt = 0;
 	private $sourcePortalIndex = 0;
+	private $publicationGuid = null;
 	private $coreIdArr = array();
 
 	function __construct() {
@@ -33,6 +34,12 @@ class SpecUploadDwca extends SpecUploadBase{
 				//If IPT resource URL was provided, adjust ULR to point to the Archive file
 				if(strpos($this->path,'/resource.do')) $this->path = str_replace('/resource.do','/archive.do',$this->path);
 				elseif(strpos($this->path,'/resource?')) $this->path = str_replace('/resource','/archive.do',$this->path);
+			}
+			elseif($this->uploadType == $this->SYMBIOTA){
+				if(strpos($this->path, 'webservices/dwc/dwcapubhandler.php')){
+					$this->publicationGuid = UuidFactory::getUuidV4();
+					$this->path .= '&publicationguid='.$this->publicationGuid.'&portalguid='.$GLOBALS['PORTAL_GUID'];
+				}
 			}
 			if((substr($this->path,0,1) == '/' || preg_match('/^[A-Za-z]{1}:/', $this->path)) && is_dir($this->path)){
 				//Path is a local directory, possible manually extracted local DWCA directory
@@ -82,7 +89,7 @@ class SpecUploadDwca extends SpecUploadBase{
 	}
 
 	private function createTargetSubDir(){
-		$localFolder = $this->collMetadataArr["institutioncode"].($this->collMetadataArr["collectioncode"]?$this->collMetadataArr["collectioncode"].'_':'').time().'/';
+		$localFolder = str_replace(' ','',$this->collMetadataArr['institutioncode'].($this->collMetadataArr['collectioncode']?$this->collMetadataArr['collectioncode'].'_':'')).time().'/';
 		if(mkdir($this->uploadTargetPath.$localFolder)) $this->uploadTargetPath .= $localFolder;
 	}
 
@@ -418,7 +425,7 @@ class SpecUploadDwca extends SpecUploadBase{
 							break;
 						}
 					}
-					elseif(is_dir($this->uploadTargetPath.$pathFrag) && $item != '.' && $item != '..'){
+					elseif(is_dir($this->uploadTargetPath.$pathFrag.$item) && $item != '.' && $item != '..'){
 						$pathFrag .= $item.'/';
 						$this->locateBaseFolder($pathFrag);
 					}
@@ -721,7 +728,7 @@ class SpecUploadDwca extends SpecUploadBase{
 		$dirPath = $this->uploadTargetPath.$pathFrag;
 		if(!$pathFrag){
 			//If files were not uploaded to temp directory, don't delete
-			$this->setUploadTargetPath();
+			//$this->setUploadTargetPath();
 			if(stripos($dirPath,$this->uploadTargetPath) === false){
 				return false;
 			}
@@ -734,7 +741,7 @@ class SpecUploadDwca extends SpecUploadBase{
 							unlink($dirPath.$item);
 						}
 					}
-					elseif(is_dir($dirPath) && $item != '.' && $item != '..'){
+					elseif(is_dir($dirPath.$item) && $item != '.' && $item != '..'){
 						$pathFrag .= $item.'/';
 						$this->removeFiles($pathFrag);
 					}
@@ -879,7 +886,8 @@ class SpecUploadDwca extends SpecUploadBase{
 		if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']) $this->transferHostAssociations();
 		if($this->sourcePortalIndex && $this->collMetadataArr['managementtype'] == 'Snapshot'){
 			$portalManager = new PortalIndex();
-			$pubID = $portalManager->createPortalPublication(array('pubTitle' => 'Symbiota Portal Index import - '.date('Y-m-d'), 'portalID' => $this->sourcePortalIndex, 'collid' => $this->collId, 'direction' => 'import', 'lastDateUpdate' => date('Y-m-d h:i:s')));
+			$pubArr = array('pubTitle' => 'Symbiota Portal Index import - '.date('Y-m-d'), 'portalID' => $this->sourcePortalIndex, 'collid' => $this->collId, 'direction' => 'import', 'lastDateUpdate' => date('Y-m-d h:i:s'), 'guid' => $this->publicationGuid);
+			$pubID = $portalManager->createPortalPublication($pubArr);
 			if($pubID){
 				if($portalManager->crossMapUploadedOccurrences($pubID, $this->collId)){
 					$this->outputMsg('<li>Occurrences cross-mapped to Symbiota source portal</li> ');
@@ -965,6 +973,14 @@ class SpecUploadDwca extends SpecUploadBase{
 
 	public function getSourcePortalIndex(){
 		return $this->sourcePortalIndex;
+	}
+
+	public function setPublicationGuid($guid){
+		if(UuidFactory::is_valid($guid)) $this->publicationGuid = $guid;
+	}
+
+	public function getPublicationGuid(){
+		return $this->publicationGuid;
 	}
 }
 ?>

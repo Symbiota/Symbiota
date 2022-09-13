@@ -72,10 +72,11 @@ class OccurrenceAccessStats extends Manager{
 			$userData = @get_browser();
 			if($userData) $userData = json_encode($userData);
 			else $userData = $_SERVER['HTTP_USER_AGENT'];
-			$sql = 'INSERT INTO omoccuraccess(ipAddress, accessType, queryStr, userAgent) VALUES(?, ?, ?, ?)';
+			$portalGuid = $GLOBALS['PORTAL_GUID'];
+			$sql = 'INSERT INTO omoccuraccess(ipAddress, accessType, queryStr, userAgent, frontendGuid) VALUES(?, ?, ?, ?, ?)';
 			$stmt = $this->conn->stmt_init();
 			$stmt->prepare($sql);
-			$stmt->bind_param('ssss', $remoteAddr, $accessType, $queryStr, $userData);
+			$stmt->bind_param('sssss', $remoteAddr, $accessType, $queryStr, $userData, $portalGuid);
 			if($stmt->execute()){
 				$occurAccessID = $this->conn->insert_id;
 			}

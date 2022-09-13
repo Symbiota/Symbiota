@@ -317,11 +317,11 @@ class OccurrenceController extends Controller{
 		foreach($publications as $pub){
 			if($pub->direction == 'import'){
 				$sourcePortalID = $pub->portalID;
-				$targetOccid = $pub->pivot->targetOccid;
-				if($sourcePortalID && $targetOccid){
+				$remoteOccid = $pub->pivot->remoteOccid;
+				if($sourcePortalID && $remoteOccid){
 					//Get remote occurrence data
 					$urlRoot = PortalIndex::where('portalID', $sourcePortalID)->value('urlRoot');
-					$url = $urlRoot.'/api/v2/occurrence/'.$targetOccid;
+					$url = $urlRoot.'/api/v2/occurrence/'.$remoteOccid;
 					if($remoteOccurrence = $this->getAPIResponce($url)){
 						unset($remoteOccurrence['modified']);
 						if(!$remoteOccurrence['occurrenceRemarks']) unset($remoteOccurrence['occurrenceRemarks']);
@@ -335,7 +335,7 @@ class OccurrenceController extends Controller{
 						$responseArr['sourceDateLastModified'] = $remoteOccurrence['dateLastModified'];
 						$responseArr['dateLastModified'] = $ts;
 						$responseArr['sourceCollectionUrl'] = $urlRoot.'/collections/misc/collprofiles.php?collid='.$remoteOccurrence['collid'];
-						$responseArr['sourceRecordUrl'] = $urlRoot.'/collections/individual/index.php?occid='.$targetOccid;
+						$responseArr['sourceRecordUrl'] = $urlRoot.'/collections/individual/index.php?occid='.$remoteOccid;
 						//Reset Portal Occurrence refreshDate
 						$portalOccur = PortalOccurrence::where('occid', $id)->where('pubid', $pub->pubid)->first();
 						$portalOccur->refreshTimestamp = $ts;

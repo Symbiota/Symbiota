@@ -361,6 +361,8 @@ $navStr .= '</div>';
 						if($editArr){
 							$recCnt = 0;
 							foreach($editArr as $occid => $editArr2){
+								$catNum = $editArr2['catnum'];
+								unset($editArr2['catnum']);
 								foreach($editArr2 as $id => $editArr3){
 									foreach($editArr3 as $appliedStatus => $edObj){
 										$fieldArr = $edObj['f'];
@@ -388,7 +390,7 @@ $navStr .= '</div>';
 												</td>
 												<td>
 													<div title="<?php echo $LANG['CAT_NUM']; ?>">
-														<?php if($displayAll) echo $edObj['catnum']; ?>
+														<?php if($displayAll) echo $catNum; ?>
 													</div>
 												</td>
 												<td>
