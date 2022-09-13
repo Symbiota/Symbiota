@@ -22,7 +22,7 @@ class OccurrenceChecklistManager extends OccurrenceManager{
 		$this->checklistTaxaCnt = 0;
 		$sqlWhere = $this->getSqlWhere();
 		if($sqlWhere){
-			$sql = "";
+			$sql = '';
 			if($taxonAuthorityId && is_numeric($taxonAuthorityId)){
 				$sql = 'SELECT DISTINCT ts2.family, t.sciname, t.tid '.
 					'FROM omoccurrences o INNER JOIN taxstatus ts1 ON o.TidInterpreted = ts1.Tid '.
@@ -37,7 +37,7 @@ class OccurrenceChecklistManager extends OccurrenceManager{
 					'FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.tid '.
 					'LEFT JOIN taxstatus ts1 ON t.tid = ts1.tid '.
 					$this->getTableJoins($sqlWhere).
-					$sqlWhere.' AND (t.rankid > 140) AND (ts1.taxauthid = 1) ';
+					$sqlWhere.' AND ((t.rankid > 140 AND ts1.taxauthid = 1) OR t.tid IS NULL) ';
 			}
 			//echo '<div>'.$sql.'</div>';
 			$result = $this->conn->query($sql);

@@ -143,7 +143,6 @@ if(array_key_exists('taxa', $taxaArr)){
 					foreach($legendArr as $legArr){
 						if(isset($legArr['t']) && strpos($sciName, $legArr['t']) === 0){
 							$iconColor = $legArr['c'];
-							echo 'cond1'."\n";
 							break;
 						}
 					}
@@ -153,7 +152,6 @@ if(array_key_exists('taxa', $taxaArr)){
 								$legendArr[$tkTid]['t'] = $tkArr['t'];
 								$iconColor = $iconColors[(count($legendArr)%8)];
 								$legendArr[$tkTid]['c'] = $iconColor;
-								echo 'cond2'."\n";
 								break;
 							}
 						}
@@ -392,19 +390,24 @@ if(array_key_exists('taxa', $taxaArr)){
 	<div style="width:400px;float:left;">
 		<fieldset>
 			<legend>Add Point of Reference</legend>
-			<div style='clear:both'>
+			<div>
+				<div>
+					Marker Name: <input name='title' id='title' size='15' type='text' />
+				</div>
 				<div class="latlongdiv">
 					<div>
-						Latitude decimal: <input name='lat' id='lat' size='10' type='text' /> eg: 34.57
+						<div style="float:left;margin-right:5px">Latitude decimal: <input name='lat' id='lat' size='10' type='text' /> </div>
+						<div style="float:left;">eg: 34.57</div>
 					</div>
-					<div style="margin-top:5px;">
-						Longitude decimal: <input name='lng' id='lng' size='10' type='text' /> eg: -112.38
+					<div style="margin-top:5px;clear:both">
+						<div style="float:left;margin-right:5px">Longitude decimal: <input name='lng' id='lng' size='10' type='text' /> </div>
+						<div style="float:left;">eg: -112.38</div>
 					</div>
-					<div style='font-size:80%;margin-top:5px;'>
+					<div style='font-size:80%;margin-top:5px;clear:both'>
 						<a href='#' onclick='toggleLatLongDivs();'>Enter in D:M:S format</a>
 					</div>
 				</div>
-				<div class='latlongdiv' style='display:none;'>
+				<div class='latlongdiv' style='display:none;clear:both'>
 					<div>
 						Latitude:
 						<input name='latdeg' id='latdeg' size='2' type='text' />&deg;
@@ -428,11 +431,6 @@ if(array_key_exists('taxa', $taxaArr)){
 					<div style='font-size:80%;margin-top:5px;'>
 						<a href='#' onclick='toggleLatLongDivs();'>Enter in Decimal format</a>
 					</div>
-				</div>
-			</div>
-			<div>
-				<div>
-					Marker Name: <input name='title' id='title' size='20' type='text' />
 				</div>
 				<div style="margin-top:10px;">
 					<input type='submit' value='Add Marker' onclick='addRefPoint();' />

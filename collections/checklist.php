@@ -67,16 +67,16 @@ $searchVarEncoded = urlencode($searchVar);
 	<div style="clear:both;"><hr/></div>
 		<?php
 		$checklistArr = $checklistManager->getChecklist($taxonFilter);
-		echo '<div style="font-weight:bold;font-size:125%;">'.$LANG['TAXA_COUNT'].': '.$checklistManager->getChecklistTaxaCnt().'</div>';
+		echo '<div style="font-size:110%;margin-bottom: 10px">'.$LANG['TAXA_COUNT'].': '.$checklistManager->getChecklistTaxaCnt().'</div>';
 		$undFamilyArray = Array();
-		if(array_key_exists("undefined",$checklistArr)){
-			$undFamilyArray = $checklistArr["undefined"];
-			unset($checklistArr["undefined"]);
+		if(array_key_exists('undefined',$checklistArr)){
+			$undFamilyArray = $checklistArr['undefined'];
+			unset($checklistArr['undefined']);
 		}
 		ksort($checklistArr);
 		foreach($checklistArr as $family => $sciNameArr){
 			ksort($sciNameArr);
-			echo '<div style="margin-left:5;margin-top:5;"><h3>'.$family.'</h3></div>';
+			echo '<div style="margin-left:5;margin-top:5;">'.$family.'</div>';
 			foreach($sciNameArr as $sciName => $tid){
 				echo '<div style="margin-left:20;font-style:italic;">';
 				if($tid) echo '<a target="_blank" href="../taxa/index.php?tid='.$tid.'">';
@@ -86,9 +86,13 @@ $searchVarEncoded = urlencode($searchVar);
 			}
 		}
 		if($undFamilyArray){
-			echo '<div style="margin-left:5;margin-top:5;"><h3>'.$LANG['FAMILY_NOT_DEFINED'].'</h3></div>';
-			foreach($undFamilyArray as $sciName){
-				echo '<div style="margin-left:20;font-style:italic;"><a target="_blank" href="../taxa/index.php?taxon='.$sciName.'">'.$sciName.'</a></div>';
+			echo '<div style="margin-left:5;margin-top:5;">'.$LANG['FAMILY_NOT_DEFINED'].'</div>';
+			foreach($undFamilyArray as $sciName => $tid){
+				echo '<div style="margin-left:20;font-style:italic;">';
+				if($tid) echo '<a target="_blank" href="../taxa/index.php?tid='.$tid.'">';
+				echo $sciName;
+				if($tid) echo '</a>';
+				echo '</div>';
 			}
 		}
 	?>
