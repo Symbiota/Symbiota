@@ -1,10 +1,9 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/Manager.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
 
-class ChecklistManager {
+class ChecklistManager extends Manager{
 
-	private $conn;
 	private $clid;
 	private $dynClid;
 	private $clName;
@@ -36,11 +35,11 @@ class ChecklistManager {
 	private $basicSql;
 
 	function __construct() {
-		$this->conn = MySQLiConnectionFactory::getCon("readonly");
+		parent::__construct();
 	}
 
 	function __destruct(){
- 		if(!($this->conn === false)) $this->conn->close();
+		parent::__destruct();
 	}
 
 	public function setClid($clid){
@@ -883,17 +882,12 @@ class ChecklistManager {
 	}
 
 	//Misc functions
-	private function cleanOutStr($str){
-		$str = str_replace('"',"&quot;",$str);
-		$str = str_replace("'","&apos;",$str);
+	public function cleanOutText($str){
+		//Need to clean for MS Word ouput: strip html tags, convert all html entities and then reset as html tags
+		$str = strip_tags($str);
+		$str = html_entity_decode($str);
+		$str = htmlspecialchars($str);
 		return $str;
-	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 }
 ?>

@@ -306,16 +306,10 @@ if(!$clid){
 			<div style="clear:both;float:left;margin-top:15px;">
 				<?php
 				if($clid){
-					?>
-					<input type='submit' name='submit' value='<?php echo (isset($LANG['EDITCHECKLIST'])?$LANG['EDITCHECKLIST']:'Edit Checklist');?>' />
-					<input type="hidden" name="submitaction" value="SubmitEdit" />
-					<?php
+					echo '<button type="submit" name="submitaction" value="submitEdit">'.(isset($LANG['EDITCHECKLIST'])?$LANG['EDITCHECKLIST']:'Edit Checklist').'</button>';
 				}
 				else{
-					?>
-					<input type='submit' name='submit' value='<?php echo (isset($LANG['ADDCHECKLIST'])?$LANG['ADDCHECKLIST']:'Add Checklist');?>' />
-					<input type="hidden" name="submitaction" value="SubmitAdd" />
-					<?php
+					echo '<button type="submit" name="submitaction" value="submitAdd">'.(isset($LANG['ADDCHECKLIST'])?$LANG['ADDCHECKLIST']:'Add Checklist').'</button>';
 				}
 				?>
 			</div>

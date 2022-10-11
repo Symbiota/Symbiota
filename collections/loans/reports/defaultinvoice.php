@@ -388,10 +388,33 @@ else{
 				.message {width:100%;text-align:left;font:10pt arial,sans-serif;}
 				.saludos {width:100%;text-align:left;font:10pt arial,sans-serif;}
 				.return {width:100%;text-align:left;font:10pt arial,sans-serif;position:relative;bottom:0;margin-top:20%;}
+				/* Hide the edit button div when printing */
+				@media print {.controls {display: none;}}
 			</style>
+
+			<script language="javascript">
+
+				// Function to toggle editing of the invoice on or off
+				function toggleEdits() {
+					var invoice = document.getElementById('invoice');
+					let isEditable = invoice.contentEditable === 'true';
+					if (isEditable) {
+						invoice.contentEditable = 'false';
+						document.querySelector('#edit').innerText = 'Edit Invoice';
+						invoice.style.border = 'none';
+					} else {
+						invoice.contentEditable = 'true';
+						document.querySelector('#edit').innerText = 'Save';
+						invoice.style.border = '2px solid #03fc88';
+					}
+				}
+			</script>			
 		</head>
 		<body style="background-color:#ffffff;">
-			<table style="height:10in;">
+			<div class="controls">
+				<button id="edit" style="font-weight: bold;" onclick="toggleEdits();">Edit Invoice</button>
+			</div>
+			<table id="invoice" style="height:10in;">
 				<tr>
 					<td>
 						<div>

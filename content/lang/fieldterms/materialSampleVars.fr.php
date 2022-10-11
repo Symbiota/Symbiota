@@ -1,0 +1,36 @@
+<?php
+$MS_LABEL_ARR = array(
+	'sampleType' => 'Sample Type',
+	'catalogNumber' => 'Catalog Number / Barcode',
+	'guid' => 'Material Sample ID',
+	'sampleCondition' => 'Condition',
+	'disposition' => 'Disposition',
+	'preservationType' => 'Preservation type',
+	'preparationDetails' => 'Preparation details',
+	'preparationDate' => 'Preparation date',
+	'preparedBy' => 'Prepared by',
+	'individualCount' => 'Individual count',
+	'sampleSize' => 'Sample size',
+	'storageLocation' => 'Storage location',
+	'remarks' => 'Remarks',
+
+	'concentration' => 'Concentration',
+	'concentrationUnit' => 'Concentration Unit',
+	'ratioOfAbsorbance260/230' => 'Ratio of Absorbance (260/230)',
+	'ratioOfAbsorbance260/230' => 'Ratio of Absorbance (260/280)',
+	'volume' => 'Volume',
+	'weight' => 'Weight',
+	'weightMethod' => 'Weight Method',
+	'purification Method' => 'Purification Method',
+	'quality' => 'Quality',
+	'qualityRemarks' => 'Quality Remarks',
+	'qualityCheckDate' => 'Quality Check Date',
+	'sampleSize' => 'Sample Size',
+	'sieving' => 'Sieving',
+	'dnaHybridization' => 'DNA Hybridization',
+	'dnaMeltingPoint' => 'DNA Melting Point',
+	'estimatedSize' => 'Estimated Size',
+	'poolDnaExtracts' => 'Pool DNA Extracts',
+	'sampleDesignation' => 'Sample Designation'
+);
+?>

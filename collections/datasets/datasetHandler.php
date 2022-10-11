@@ -11,29 +11,31 @@ if($SYMB_UID){
 	$occid = array_key_exists('occid',$_POST)?$_POST['occid']:0;
 
 	//Sanitation
-	if(!is_numeric($datasetID)) $datasetID = 0;
+	if(!is_numeric($datasetID) && $datasetID != '--newDataset') $datasetID = 0;
 
 	if($action){
 		$datasetManager = new OccurrenceDataset();
 		if($datasetID == '--newDataset'){
 			$name = 'newDataset ('.date('Y-m-d H:i:s').')';
-			$datasetManager->createDataset($name,'','','',$SYMB_UID);
-			$datasetID = $datasetManager->getDatasetId();
+			if($datasetManager->createDataset($name, '', '', '', $SYMB_UID)) $datasetID = $datasetManager->getDatasetId();
+			else echo $datasetManager->getErrorMessage();
 		}
 		$targetLink = 'datasetmanager.php?datasetid='.$datasetID;
 		if($sourcePage == 'individual') $targetLink = '../individual/index.php?occid='.$occid;
-		if($action == 'addSelectedToDataset'){
-			if($occid){
-				if($datasetManager->addSelectedOccurrences($datasetID, $occid)){
-					header('Location: '.$targetLink);
+		if($datasetID){
+			if($action == 'addSelectedToDataset'){
+				if($occid){
+					if($datasetManager->addSelectedOccurrences($datasetID, $occid)){
+						header('Location: '.$targetLink);
+					}
+					else echo $datasetManager->getErrorMessage();
 				}
-				else echo $datasetManager->getErrorMessage();
 			}
-		}
-		elseif($action == 'addAllToDataset'){
-			$occurManager = new OccurrenceManager('write');
-			if($occurManager->addOccurrencesToDataset($datasetID)) header('Location: '.$targetLink);
-			else echo $occurManager->getErrorMessage();
+			elseif($action == 'addAllToDataset'){
+				$occurManager = new OccurrenceManager('write');
+				if($occurManager->addOccurrencesToDataset($datasetID)) header('Location: '.$targetLink);
+				else echo $occurManager->getErrorMessage();
+			}
 		}
 	}
 }

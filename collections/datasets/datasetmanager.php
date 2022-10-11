@@ -58,7 +58,7 @@ if($isEditor){
 	}
 	if($isEditor == 1){
 		if($action == 'Save Edits'){
-      $isPublic = (isset($_POST['ispublic'])&&is_numeric($_POST['ispublic'])?1:0);
+			$isPublic = (isset($_POST['ispublic'])&&is_numeric($_POST['ispublic'])?1:0);
 			if($datasetManager->editDataset($_POST['datasetid'],$_POST['name'],$_POST['notes'],$_POST['description'],$isPublic)){
 				$mdArr = $datasetManager->getDatasetMetadata($datasetId);
 				$statusStr = 'Success! Dataset edits saved. ';
@@ -117,14 +117,7 @@ if($isEditor){
 		<title><?php echo $DEFAULT_TITLE; ?> Occurrence Dataset Manager</title>
 		<?php
 		$activateJQuery = true;
-		if(file_exists($SERVER_ROOT.'/includes/head.php')){
-			include_once($SERVER_ROOT.'/includes/head.php');
-	    }
-		else{
-			echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-			echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-			echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-		}
+		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
 		<script type="text/javascript" src="../../js/jquery.js"></script>
 		<script type="text/javascript" src="../../js/jquery-ui.js"></script>
@@ -398,19 +391,19 @@ if($isEditor){
 										<p><b>Name</p>
 										<input name="name" type="text" value="<?php echo $mdArr['name']; ?>" style="width:70%" />
 									</div>
-                  <div>
-                  <p>
-                  <input type="checkbox" name="ispublic" id="ispublic" value="1" <?php echo ($mdArr['ispublic']?'CHECKED':''); ?> />
-                  <b>Publicly Visible</b>
-                  </p>
-                  </div>
-                  <div>
+									<div>
+										<p>
+											<input type="checkbox" name="ispublic" id="ispublic" value="1" <?php echo ($mdArr['ispublic']?'CHECKED':''); ?> />
+											<b>Publicly Visible</b>
+										</p>
+									</div>
+									<div>
 										<p><b>Notes (Internal usage, not displayed publicly)</b></p>
 										<input name="notes" type="text" value="<?php echo $mdArr['notes']; ?>" style="width:70%" />
 									</div>
 									<div>
-										<p><b>Description</p>
-                    <textarea name="description" id="description" cols="100" rows="10" width="70%"><?php echo $mdArr['description']; ?></textarea>
+										<p><b>Description</b></p>
+										<textarea name="description" id="description" cols="100" rows="10" width="70%"><?php echo $mdArr['description']; ?></textarea>
 									</div>
 									<div style="margin:15px;">
 										<input name="tabindex" type="hidden" value="1" />

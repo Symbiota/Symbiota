@@ -1036,8 +1036,8 @@ class ImageShared{
 		$urlPrefix .= $_SERVER["SERVER_NAME"];
 		if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80 && $_SERVER['SERVER_PORT'] != 443) $urlPrefix .= ':'.$_SERVER["SERVER_PORT"];
 
-		if(strpos($imgUrl,$urlPrefix) === 0){
-			$imgUrl = substr($imgUrl,strlen($urlPrefix));
+		if(strpos($imgUrl,$urlPrefix.$GLOBALS['IMAGE_ROOT_URL']) === 0){
+			$imgUrl = substr($imgUrl, strlen($urlPrefix));
 		}
 		if(substr($imgUrl,0,1) == '/'){
 			if($GLOBALS['IMAGE_ROOT_URL'] && strpos($imgUrl,$GLOBALS['IMAGE_ROOT_URL']) === 0){

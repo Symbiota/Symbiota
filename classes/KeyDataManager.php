@@ -389,21 +389,19 @@ class KeyDataManager extends Manager {
 	public function setTaxaListSQL(){
 		if(!$this->sql){
 			if($this->clid || $this->dynClid){
-				$sqlFromBase = 'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-					'INNER JOIN taxa t1 ON t.UnitName1 = t1.UnitName1 AND t.UnitName2 = t1.UnitName2 '.
-					'INNER JOIN taxstatus ts1 ON ts1.tidaccepted = t1.tid ';
-				$sqlWhere = 'WHERE (ts.taxauthid = 1) AND (ts1.taxauthid = 1) AND (t.RankId = 220) AND (ts.tid = ts.tidaccepted) ';
+				$sqlFromBase = 'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid ';
+				$sqlWhere = 'WHERE (ts.taxauthid = 1) AND (t.RankId BETWEEN 180 AND 220) AND (ts.tid = ts.tidaccepted) ';
 				if($this->dynClid){
-					$sqlFromBase .= 'INNER JOIN fmdyncltaxalink clk ON ts.tid = clk.tid ';
+					$sqlFromBase .= 'INNER JOIN fmdyncltaxalink clk ON t.tid = clk.tid ';
 					$sqlWhere .= 'AND (clk.dynclid = '.$this->dynClid.') ';
 				}
 				else{
 					if($this->clType == 'dynamic'){
-						$sqlFromBase .= 'INNER JOIN omoccurrences o ON ts1.tid = o.TidInterpreted ';
+						$sqlFromBase .= 'INNER JOIN omoccurrences o ON t.tid = o.TidInterpreted ';
 						$sqlWhere .= 'AND ('.$this->dynamicSql.') ';
 					}
 					else{
-						$sqlFromBase .= 'INNER JOIN fmchklsttaxalink clk ON ts1.tid = clk.tid ';
+						$sqlFromBase .= 'INNER JOIN fmchklsttaxalink clk ON t.tid = clk.tid ';
 						$clidStr = $this->clid;
 						if($this->childClidArr){
 							$clidStr .= ','.implode(',',array_keys($this->childClidArr));
@@ -436,7 +434,6 @@ class KeyDataManager extends Manager {
 					}
 				}
 				$this->sql = 'SELECT DISTINCT t.tid, ts.family, t.sciname '.$sqlFromBase.$sqlWhere;
-				//echo $this->sql;
 			}
 		}
 	}

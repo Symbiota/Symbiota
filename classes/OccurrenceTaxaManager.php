@@ -176,9 +176,16 @@ class OccurrenceTaxaManager {
 						$accArr[] = $tid;
 						if($rankid >= 180 && $rankid <= 220){
 							//Get accepted children
+							$sql1 = 'SELECT DISTINCT t.tid, t.sciname, t.rankid
+								FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
+								INNER JOIN taxaenumtree e ON t.tid = e.tid
+								WHERE (e.parenttid IN('.$tid.')) AND (ts.TidAccepted = ts.tid) AND (ts.taxauthid = ' . $this->taxAuthId . ') AND (e.taxauthid = ' . $this->taxAuthId . ')' ;
+							/*
 							$sql1 = 'SELECT DISTINCT t.tid, t.sciname, t.rankid '.
 								'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
 								'WHERE (ts.parenttid IN('.$tid.')) AND (ts.TidAccepted = ts.tid) AND (ts.taxauthid = ' . $this->taxAuthId . ') ' ;
+							*/
+							//echo 'sql1: '.$sql1.'<br>';
 							$rs1 = $this->conn->query($sql1);
 							while($r1 = $rs1->fetch_object()){
 								$accArr[] = $r1->tid;

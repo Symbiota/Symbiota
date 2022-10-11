@@ -39,7 +39,7 @@ include_once($SERVER_ROOT . '/classes/DwcArchiverCore.php');
 
 $collid = array_key_exists('collid', $_REQUEST) ? $_REQUEST['collid'] : 0;
 $cond = array_key_exists('cond', $_REQUEST) ? $_REQUEST['cond'] : '';
-$collType = array_key_exists('colltype', $_REQUEST) ? $_REQUEST['colltype'] : 'specimens';
+$collType = array_key_exists('colltype', $_REQUEST) ? $_REQUEST['colltype'] : '';
 $schemaType = array_key_exists('schema', $_REQUEST) ? $_REQUEST['schema'] : 'dwc';
 $extended = array_key_exists('extended', $_REQUEST) ? $_REQUEST['extended'] : 0;
 $includeDets = array_key_exists('dets', $_REQUEST) ? $_REQUEST['dets'] : 1;

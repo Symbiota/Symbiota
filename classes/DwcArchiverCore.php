@@ -43,7 +43,7 @@ class DwcArchiverCore extends Manager{
 	private $includeDets = 1;
 	private $includeImgs = 1;
 	private $includeAttributes = 0;
-	private $includeMaterialSample = 0;
+	private $includeMaterialSample = 0;		// 0 = off, 1 = on, 2 = active (activated within at least one collection)
 	private $hasPaleo = false;
 	private $redactLocalities = 1;
 	private $rareReaderArr = array();
@@ -75,7 +75,7 @@ class DwcArchiverCore extends Manager{
 		);
 
 		$this->securityArr = array(
-			'eventDate', 'month', 'day', 'startDayOfYear', 'endDayOfYear', 'verbatimEventDate',
+			'eventDate', 'eventDate2', 'month', 'day', 'startDayOfYear', 'endDayOfYear', 'verbatimEventDate',
 			'recordNumber', 'locality', 'locationRemarks', 'minimumElevationInMeters', 'maximumElevationInMeters', 'verbatimElevation',
 			'decimalLatitude', 'decimalLongitude', 'geodeticDatum', 'coordinateUncertaintyInMeters', 'footprintWKT',
 			'verbatimCoordinates', 'georeferenceRemarks', 'georeferencedBy', 'georeferenceProtocol', 'georeferenceSources',
@@ -93,6 +93,7 @@ class DwcArchiverCore extends Manager{
 	public function getOccurrenceCnt(){
 		$retStr = 0;
 		$this->applyConditions();
+		if (!$this->conditionSql) return false;
 		$dwcOccurManager = new DwcArchiverOccurrence($this->conn);
 		$dwcOccurManager->setSchemaType($this->schemaType);
 		$dwcOccurManager->setExtended($this->extended);
@@ -140,18 +141,16 @@ class DwcArchiverCore extends Manager{
 
 	public function setCollArr($collTarget, $collType = ''){
 		$collTarget = $this->cleanInStr($collTarget);
-		$collType = $this->cleanInStr($collType);
 		$sqlWhere = '';
 		if ($collType == 'specimens') {
 			$sqlWhere = '(c.colltype = "Preserved Specimens") ';
-		} elseif ($collType == 'observations') {
-			$sqlWhere = '(c.colltype = "Observations" OR c.colltype = "General Observations") ';
 		}
-		if ($collTarget) {
-			$this->addCondition('collid', 'EQUALS', $collTarget);
-			if ($collTarget != 'all') $sqlWhere .= ($sqlWhere ? 'AND ' : '') . '(c.collid IN(' . $collTarget . ')) ';
-		} else {
-			//Don't limit by collection id
+		elseif ($collType == 'observations') {
+			$sqlWhere = '(c.colltype IN("Observations", "General Observations")) ';
+		}
+		if ($collTarget && $collTarget != 'all') {
+			if($collType != 'internalCall') $this->conditionArr['collid'] = $collTarget;
+			$sqlWhere .= ($sqlWhere ? 'AND ' : '') . '(c.collid IN(' . $collTarget . ')) ';
 		}
 		if ($sqlWhere) {
 			$sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.fulldescription, c.collectionguid, IFNULL(c.homepage,i.url) AS url, c.contact, c.email, ' .
@@ -159,7 +158,6 @@ class DwcArchiverCore extends Manager{
 				'i.address1, i.address2, i.city, i.stateprovince, i.postalcode, i.country, i.phone ' .
 				'FROM omcollections c LEFT JOIN institutions i ON c.iid = i.iid ' .
 				'WHERE ' . $sqlWhere;
-			//echo 'SQL: '.$sql.'<br/>';
 			if ($rs = $this->conn->query($sql)) {
 				while ($r = $rs->fetch_object()) {
 					$this->collArr[$r->collid]['instcode'] = $r->institutioncode;
@@ -192,7 +190,10 @@ class DwcArchiverCore extends Manager{
 							if (isset($propArr['editorProps']['modules-panel'])) {
 								foreach ($propArr['editorProps']['modules-panel'] as $k => $modArr) {
 									if (isset($modArr['paleo']['status'])) $this->hasPaleo = true;
-									elseif (isset($modArr['matSample']['status'])) $this->collArr[$r->collid]['matSample'] = 1;
+									elseif (isset($modArr['matSample']['status'])){
+										$this->collArr[$r->collid]['matSample'] = 1;
+										$this->includeMaterialSample = 2;
+									}
 								}
 							}
 							if (isset($propArr['publicationProps']['titleOverride']) && $propArr['publicationProps']['titleOverride']) {
@@ -207,32 +208,37 @@ class DwcArchiverCore extends Manager{
 				$rs->free();
 				$this->setJsonResources();
 			}
+			else{
+				echo 'error: '.$this->conn->error.'<br>';
+			}
 		}
 	}
 
 	private function setJsonResources(){
 		//Temporary function needed until pending patch is pushed to production
-		$sql = 'SELECT collid, resourceJson, contactJson FROM omcollections WHERE collid IN(' . implode(',', array_keys($this->collArr)) . ')';
-		if ($rs = $this->conn->query($sql)) {
-			while ($r = $rs->fetch_object()) {
-				if ($r->resourceJson) {
-					if ($resourceArr = json_decode($r->resourceJson, true)) {
-						$this->collArr[$r->collid]['url'] = $resourceArr[0]['url'];
+		if($this->collArr){
+			$sql = 'SELECT collid, resourceJson, contactJson FROM omcollections WHERE collid IN(' . implode(',', array_keys($this->collArr)) . ')';
+			if ($rs = $this->conn->query($sql)) {
+				while ($r = $rs->fetch_object()) {
+					if ($r->resourceJson) {
+						if ($resourceArr = json_decode($r->resourceJson, true)) {
+							$this->collArr[$r->collid]['url'] = $resourceArr[0]['url'];
+						}
 					}
-				}
-				if ($r->contactJson) {
-					if ($contactArr = json_decode($r->contactJson, true)) {
-						foreach ($contactArr as $key => $cArr) {
-							$this->collArr[$r->collid]['contact'][$key]['individualName']['surName'] = $cArr['lastName'];
-							$this->collArr[$r->collid]['contact'][$key]['individualName']['givenName'] = $cArr['firstName'];
-							if (isset($cArr['role']) && $cArr['role']) $this->collArr[$r->collid]['contact'][$key]['positionName'] = $cArr['role'];
-							if (isset($cArr['email']) && $cArr['email']) $this->collArr[$r->collid]['contact'][$key]['electronicMailAddress'] = $cArr['email'];
-							if (isset($cArr['orcid']) && $cArr['orcid']) $this->collArr[$r->collid]['contact'][$key]['userId'] = 'https://orcid.org/' . $cArr['orcid'];
+					if ($r->contactJson) {
+						if ($contactArr = json_decode($r->contactJson, true)) {
+							foreach ($contactArr as $key => $cArr) {
+								$this->collArr[$r->collid]['contact'][$key]['individualName']['surName'] = $cArr['lastName'];
+								$this->collArr[$r->collid]['contact'][$key]['individualName']['givenName'] = $cArr['firstName'];
+								if (isset($cArr['role']) && $cArr['role']) $this->collArr[$r->collid]['contact'][$key]['positionName'] = $cArr['role'];
+								if (isset($cArr['email']) && $cArr['email']) $this->collArr[$r->collid]['contact'][$key]['electronicMailAddress'] = $cArr['email'];
+								if (isset($cArr['orcid']) && $cArr['orcid']) $this->collArr[$r->collid]['contact'][$key]['userId'] = 'https://orcid.org/' . $cArr['orcid'];
+							}
 						}
 					}
 				}
+				$rs->free();
 			}
-			$rs->free();
 		}
 	}
 
@@ -266,14 +272,16 @@ class DwcArchiverCore extends Manager{
 			$this->conditionSql = $this->customWhereSql . ' ';
 		}
 		if (array_key_exists('collid', $this->conditionArr) && $this->conditionArr['collid']) {
-			if ($this->conditionArr['collid']['EQUALS'][0] != 'all') {
-				$this->conditionSql .= 'AND (o.collid IN(' . $this->conditionArr['collid']['EQUALS'][0] . ')) ';
+			if (preg_match('/^[\d,]+$/', $this->conditionArr['collid'])) {
+				$this->conditionSql .= 'AND (o.collid IN(' . $this->conditionArr['collid'] . ')) ';
 			}
 			unset($this->conditionArr['collid']);
-		} else {
-			if ($this->collArr && (!$this->conditionSql || !stripos($this->conditionSql, 'collid in('))) {
-				$this->conditionSql .= 'AND (o.collid IN(' . implode(',', array_keys($this->collArr)) . ')) ';
-			}
+		}
+		if (array_key_exists('exclude', $_REQUEST) && preg_match('/^[\d,]+$/', $_REQUEST['exclude'])) {
+			$this->conditionSql .= 'AND (o.collid NOT IN(' . $_REQUEST['exclude'] . ')) ';
+		}
+		if (array_key_exists('datasetid', $_REQUEST) && is_numeric($_REQUEST['datasetid'])) {
+			$this->conditionSql .= 'AND (d.datasetid IN(' . $_REQUEST['datasetid'] . ')) ';
 		}
 		$sqlFrag = '';
 		if ($this->conditionArr) {
@@ -321,7 +329,8 @@ class DwcArchiverCore extends Manager{
 			//Make sure it starts with WHERE
 			if (substr($this->conditionSql, 0, 4) == 'AND ') {
 				$this->conditionSql = 'WHERE' . substr($this->conditionSql, 3);
-			} elseif (substr($this->conditionSql, 0, 6) != 'WHERE ') {
+			}
+			elseif (substr($this->conditionSql, 0, 6) != 'WHERE ') {
 				$this->conditionSql = 'WHERE ' . $this->conditionSql;
 			}
 		}
@@ -672,6 +681,7 @@ class DwcArchiverCore extends Manager{
 		$dwcOccurManager->setIncludePaleo($this->hasPaleo);
 		if (!$this->occurrenceFieldArr) $this->occurrenceFieldArr = $dwcOccurManager->getOccurrenceArr($this->schemaType, $this->extended);
 		$this->applyConditions();
+		if (!$this->conditionSql) return false;
 		$sql = $dwcOccurManager->getSqlOccurrences($this->occurrenceFieldArr['fields']);
 		$sql .= $this->getTableJoins() . $this->conditionSql;
 		if (!$sql) return false;
@@ -682,20 +692,6 @@ class DwcArchiverCore extends Manager{
 		}
 		if ($this->schemaType == 'dwc' || $this->schemaType == 'pensoft' || $this->schemaType == 'backup') {
 			unset($fieldArr['collID']);
-		}
-		if (!$this->collArr) {
-			//Collection array not previously primed by source
-			$sql1 = 'SELECT DISTINCT o.collid FROM omoccurrences o ';
-			if ($this->conditionSql) {
-				$sql1 .= $this->getTableJoins() . $this->conditionSql;
-			}
-			$rs1 = $this->conn->query($sql1);
-			$collidStr = '';
-			while ($r1 = $rs1->fetch_object()) {
-				$collidStr .= ',' . $r1->collid;
-			}
-			$rs1->free();
-			if ($collidStr) $this->setCollArr(trim($collidStr, ','));
 		}
 
 		$dwcOccurManager->setUpperTaxonomy();
@@ -899,9 +895,11 @@ class DwcArchiverCore extends Manager{
 		else {
 			$this->errorMessage = 'FAILED to create archive file due to failure to return occurrence records; check and adjust search variables';
 			$this->logOrEcho($this->errorMessage);
-			$collid = key($this->collArr);
-			if ($collid) $this->deleteArchive($collid);
-			unset($this->collArr[$collid]);
+			if($this->collArr){
+				$collid = key($this->collArr);
+				if ($collid) $this->deleteArchive($collid);
+				unset($this->collArr[$collid]);
+			}
 		}
 		$this->logOrEcho("\n-----------------------------------------------------\n");
 		$this->dataConn->close();
@@ -1054,7 +1052,7 @@ class DwcArchiverCore extends Manager{
 		}
 
 		//MaterialSample extension
-		if ($this->includeMaterialSample && isset($this->fieldArrMap['materialSample'])) {
+		if ($this->includeMaterialSample == 2 && isset($this->fieldArrMap['materialSample'])) {
 			$extElem3 = $newDoc->createElement('extension');
 			$extElem3->setAttribute('encoding', $this->charSetOut);
 			$extElem3->setAttribute('fieldsTerminatedBy', $this->delimiter);
@@ -1579,11 +1577,10 @@ class DwcArchiverCore extends Manager{
 		if (!$this->occurrenceFieldArr) $this->occurrenceFieldArr = $dwcOccurManager->getOccurrenceArr($this->schemaType, $this->extended);
 		//Output records
 		$this->applyConditions();
+		if (!$this->conditionSql) return false;
 		$sql = $dwcOccurManager->getSqlOccurrences($this->occurrenceFieldArr['fields']);
 		$sql .= $this->getTableJoins() . $this->conditionSql;
-		if (!$this->conditionSql) return false;
 		if ($this->schemaType != 'backup') $sql .= ' LIMIT 1000000';
-
 		//Output header
 		$fieldArr = $this->occurrenceFieldArr['fields'];
 		if ($this->schemaType == 'dwc' || $this->schemaType == 'pensoft') {
@@ -1604,40 +1601,14 @@ class DwcArchiverCore extends Manager{
 				else $fieldOutArr[] = strtoupper(substr($k, 0, 1)) . substr($k, 1);
 			}
 		} else $fieldOutArr = array_keys($fieldArr);
+		if ($this->schemaType == 'dwc') unset($fieldOutArr[array_search('eventDate2', $fieldOutArr)]);
 		$this->writeOutRecord($fh, $fieldOutArr);
-		if (!$this->collArr) {
-			//Collection array not previously primed by source
-			$sql1 = 'SELECT DISTINCT o.collid FROM omoccurrences o ';
-			if ($this->conditionSql) {
-				$sql1 .= $this->getTableJoins() . $this->conditionSql;
-			}
-			$rs1 = $this->conn->query($sql1);
-			$collidStr = '';
-			while ($r1 = $rs1->fetch_object()) {
-				$collidStr .= ',' . $r1->collid;
-			}
-			$rs1->free();
-			if ($collidStr) $this->setCollArr(trim($collidStr, ','));
-		}
 
 		$materialSampleHandler = null;
 		if ($this->schemaType != 'coge') {
 			//$dwcOccurManager->setUpperTaxonomy();
 			$dwcOccurManager->setTaxonRank();
-
-			if ($this->includeMaterialSample) {
-				$collid = key($this->collArr);
-				if (isset($this->collArr[$collid]['matSample'])) {
-					$this->logOrEcho('Creating material sample extension file (' . date('h:i:s A') . ')... ');
-					$materialSampleHandler = new DwcArchiverMaterialSample($this->conn);
-					$materialSampleHandler->initiateProcess($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
-					$materialSampleHandler->setSchemaType($this->schemaType);
-					$this->fieldArrMap['materialSample'] = $materialSampleHandler->getFieldArrTerms();
-				}
-			}
 		}
-
-		//echo $sql; exit;
 		if ($rs = $this->dataConn->query($sql, MYSQLI_USE_RESULT)) {
 			$this->setServerDomain();
 			$urlPathPrefix = $this->serverDomain . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) == '/' ? '' : '/');
@@ -1659,11 +1630,15 @@ class DwcArchiverCore extends Manager{
 			$occurAccessID = $statsManager->insertAccessEvent('download', $sqlFrag);
 			$batchOccidArr = array();
 			while ($r = $rs->fetch_assoc()) {
+				if(!isset($this->collArr[$r['collID']])){
+					$this->setCollArr($r['collID'], 'internalCall');
+				}
 				if (!$r['occurrenceID']) {
-					//Set occurrence GUID based on GUID target, but only if occurrenceID field isn't already populated
-					$guidTarget = $this->collArr[$r['collID']]['guidtarget'];
-					if ($guidTarget == 'catalogNumber') $r['occurrenceID'] = $r['catalogNumber'];
-					elseif ($guidTarget == 'symbiotaUUID') $r['occurrenceID'] = $r['recordID'];
+					if($guidTarget = $this->collArr[$r['collID']]['guidtarget']){
+						//Set occurrence GUID based on GUID target, but only if occurrenceID field isn't already populated
+						if ($guidTarget == 'catalogNumber') $r['occurrenceID'] = $r['catalogNumber'];
+						elseif ($guidTarget == 'symbiotaUUID') $r['occurrenceID'] = $r['recordID'];
+					}
 				}
 				if ($this->limitToGuids && (!$r['occurrenceID'] || !$r['basisOfRecord'])) {
 					// Skip record because there is no occurrenceID guid
@@ -1695,6 +1670,18 @@ class DwcArchiverCore extends Manager{
 				if ($this->schemaType == 'dwc') {
 					unset($r['localitySecurity']);
 					unset($r['collID']);
+					//Format dates
+					if($r['eventDate'] == '0000-00-00') $r['eventDate'] = '';
+					$r['eventDate'] = str_replace('-00', '', $r['eventDate']);
+					if($r['eventDate2']){
+						if($r['eventDate2'] == '0000-00-00') $r['eventDate2'] = '';
+						$r['eventDate2'] = str_replace('-00', '', $r['eventDate2']);
+						if(!$r['endDayOfYear'] && preg_match('/\d{4}-\d{2}-\d{2}/', $r['eventDate2'])){
+							if($t = strtotime($r['eventDate2'])) $r['endDayOfYear'] = date('z', $t) + 1;
+						}
+						$r['eventDate'] .= '/'.$r['eventDate2'];
+					}
+					unset($r['eventDate2']);
 				}
 				elseif ($this->schemaType == 'pensoft') {
 					unset($r['localitySecurity']);
@@ -1751,7 +1738,7 @@ class DwcArchiverCore extends Manager{
 
 				$batchOccidArr[] = $r['occid'];
 				if (count($batchOccidArr) > 1000) {
-					if ($materialSampleHandler) $materialSampleHandler->writeOutRecordBlock($batchOccidArr);
+					if ($this->includeMaterialSample == 2) $this->writeMaterialSampleData($materialSampleHandler, $batchOccidArr);
 					if ($pubID && $portalManager) $portalManager->insertPortalOccurrences($pubID, $batchOccidArr);
 					unset($batchOccidArr);
 					$batchOccidArr = array();
@@ -1767,10 +1754,10 @@ class DwcArchiverCore extends Manager{
 			$rs->free();
 			if ($batchOccidArr) {
 				if ($pubID && $portalManager) $portalManager->insertPortalOccurrences($pubID, $batchOccidArr);
-				if ($materialSampleHandler) {
-					$materialSampleHandler->writeOutRecordBlock($batchOccidArr);
-					$materialSampleHandler->__destruct();
-				}
+			}
+			if ($this->includeMaterialSample == 2){
+				$this->writeMaterialSampleData($materialSampleHandler, $batchOccidArr);
+				$materialSampleHandler->__destruct();
 			}
 		}
 		else {
@@ -1787,6 +1774,7 @@ class DwcArchiverCore extends Manager{
 			$this->logOrEcho($this->errorMessage);
 		}
 		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n");
+		if ($this->includeMaterialSample == 2) $this->logOrEcho('Material Sample extension file created (' . date('h:i:s A') . ')... ');
 		return $filePath;
 	}
 
@@ -1816,7 +1804,7 @@ class DwcArchiverCore extends Manager{
 		$this->writeOutRecord($fh, $headerArr);
 
 		//Output records
-		$sql = DwcArchiverDetermination::getSqlDeterminations($this->determinationFieldArr['fields'], $this->conditionSql);
+		$sql = DwcArchiverDetermination::getSql($this->determinationFieldArr['fields'], $this->getTableJoins(), $this->conditionSql);
 		if ($rs = $this->dataConn->query($sql, MYSQLI_USE_RESULT)) {
 			$previousDetID = 0;
 			while ($r = $rs->fetch_assoc()) {
@@ -1829,7 +1817,8 @@ class DwcArchiverCore extends Manager{
 				$this->writeOutRecord($fh, $r);
 			}
 			$rs->free();
-		} else {
+		}
+		else {
 			$this->logOrEcho("ERROR creating identification extension file: " . $this->dataConn->error . "\n");
 			$this->logOrEcho("\tSQL: " . $sql . "\n");
 		}
@@ -1964,6 +1953,16 @@ class DwcArchiverCore extends Manager{
 
 		fclose($fh);
 		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n");
+	}
+
+	private function writeMaterialSampleData(&$materialSampleHandler, $batchOccidArr){
+		if(!$materialSampleHandler){
+			$materialSampleHandler = new DwcArchiverMaterialSample($this->conn);
+			$materialSampleHandler->initiateProcess($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
+			$materialSampleHandler->setSchemaType($this->schemaType);
+			$this->fieldArrMap['materialSample'] = $materialSampleHandler->getFieldArrTerms();
+		}
+		if ($materialSampleHandler) $materialSampleHandler->writeOutRecordBlock($batchOccidArr);
 	}
 
 	private function writeCitationFile(){

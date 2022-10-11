@@ -415,6 +415,60 @@ ALTER TABLE `omoccurdeterminations`
 
 ALTER TABLE `omoccurdeterminations` 
   DROP INDEX `FK_omoccurdets_idby_idx` ;
+  
+ALTER TABLE `omoccurdeterminations` 
+  DROP COLUMN `idbyid`;
+
+ALTER TABLE `omoccurdeterminations` 
+  ADD COLUMN `identifiedByAgentID` BIGINT NULL AFTER `identifiedBy`,
+  ADD COLUMN `identifiedByID` VARCHAR(45) NULL AFTER `identifiedByAgentID`,
+  ADD COLUMN `higherClassification` VARCHAR(150) NULL AFTER `dateIdentifiedInterpreted`,
+  ADD COLUMN `verbatimIdentification` VARCHAR(250) NULL AFTER `sciname`,
+  ADD COLUMN `genus` VARCHAR(45) NULL AFTER `identificationQualifier`,
+  ADD COLUMN `specificEpithet` VARCHAR(45) NULL AFTER `genus`,
+  ADD COLUMN `verbatimTaxonRank` VARCHAR(45) NULL AFTER `specificEpithet`,
+  ADD COLUMN `taxonRank` VARCHAR(45) NULL AFTER `verbatimTaxonRank`,
+  ADD COLUMN `infraSpecificEpithet` VARCHAR(45) NULL AFTER `taxonRank`,
+  ADD COLUMN `securityStatus` INT NOT NULL DEFAULT 0 AFTER `appliedStatus`,
+  ADD COLUMN `identificationVerificationStatus` VARCHAR(45) NULL AFTER `taxonRemarks`,
+  ADD COLUMN `taxonConceptID` VARCHAR(45) NULL AFTER `scientificNameID`,
+  ADD COLUMN `recordID` VARCHAR(45) NULL AFTER `sortSequence`,
+  CHANGE COLUMN `identifiedBy` `identifiedBy` VARCHAR(60) NOT NULL DEFAULT 'unknown' ,
+  CHANGE COLUMN `dateIdentified` `dateIdentified` VARCHAR(45) NOT NULL DEFAULT 's.d.' ,
+  CHANGE COLUMN `sourceIdentifier` `identificationID` VARCHAR(45) NULL DEFAULT NULL ,
+  ADD INDEX `FK_omoccurdets_agentID_idx` (`identifiedByAgentID` ASC);
+
+ALTER TABLE `omoccurdeterminations` 
+  ADD CONSTRAINT `FK_omoccurdets_agentID`  FOREIGN KEY (`identifiedByAgentID`)  REFERENCES `agents` (`agentID`)  ON DELETE SET NULL  ON UPDATE CASCADE;
+
+ALTER TABLE `omoccurdeterminations` 
+  ADD COLUMN `enteredByUid` INT UNSIGNED NULL AFTER `recordID`,
+  ADD COLUMN `dateLastModified` TIMESTAMP NULL AFTER `enteredByUid`,
+  ADD INDEX `FK_omoccurdets_uid_idx` (`enteredByUid` ASC);
+
+ALTER TABLE `omoccurdeterminations` 
+  ADD CONSTRAINT `FK_omoccurdets_uid`  FOREIGN KEY (`enteredByUid`)  REFERENCES `users` (`uid`)  ON DELETE SET NULL  ON UPDATE CASCADE;
+
+ALTER TABLE `omoccurdeterminations` 
+  ADD INDEX `FK_omoccurdets_dateModified` (`dateLastModified` ASC),
+  ADD INDEX `FK_omoccurdets_initialTimestamp` (`initialTimestamp` ASC);
+
+INSERT IGNORE INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, family, sciname, verbatimIdentification, scientificNameAuthorship, tidInterpreted, 
+identificationQualifier, genus, specificEpithet, verbatimTaxonRank, infraSpecificEpithet, isCurrent, identificationReferences, identificationRemarks, 
+taxonRemarks)
+SELECT occid, IFNULL(identifiedBy, "unknown"), IFNULL(dateIdentified, "s.d."), family, IFNULL(sciname, "undefined"), scientificName, scientificNameAuthorship, tidInterpreted, identificationQualifier, 
+genus, specificEpithet, taxonRank, infraSpecificEpithet, 1 as isCurrent, identificationReferences, identificationRemarks, taxonRemarks
+FROM omoccurrences;
+
+INSERT IGNORE INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, family, sciname, verbatimIdentification, scientificNameAuthorship, tidInterpreted, 
+identificationQualifier, genus, specificEpithet, verbatimTaxonRank, infraSpecificEpithet, isCurrent, identificationReferences, identificationRemarks, 
+taxonRemarks)
+SELECT o.occid, IFNULL(identifiedBy, "unknown"), IFNULL(dateIdentified, "s.d."), o.family, IFNULL(o.sciname, "undefined"), o.scientificName, o.scientificNameAuthorship, o.tidInterpreted, 
+o.identificationQualifier, o.genus, o.specificEpithet, o.taxonRank, o.infraSpecificEpithet, 1 as isCurrent, o.identificationReferences, o.identificationRemarks, 
+o.taxonRemarks
+FROM omoccurrences o LEFT JOIN omoccurdeterminations d ON o.occid = d.occid
+WHERE d.occid IS NULL;
+
 
 ALTER TABLE `omoccuredits` 
   CHANGE COLUMN `FieldName` `fieldName` VARCHAR(45) NOT NULL ,
@@ -436,6 +490,15 @@ ALTER TABLE `omoccuredits`
 
 ALTER TABLE `omoccuredits` 
   ADD INDEX `IX_omoccuredits_timestamp` (`initialtimestamp` ASC);
+
+ALTER TABLE `omoccuredits` 
+  ADD COLUMN `tableName` VARCHAR(45) NULL AFTER `occid`;
+
+ALTER TABLE `omoccuredits` 
+  ADD INDEX `FK_omoccuredits_tableName` (`tableName` ASC),
+  ADD INDEX `FK_omoccuredits_fieldName` (`fieldName` ASC),
+  ADD INDEX `FK_omoccuredits_reviewedStatus` (`reviewStatus` ASC),
+  ADD INDEX `FK_omoccuredits_appliedStatus` (`appliedStatus` ASC);
 
 
 UPDATE omoccuridentifiers SET identifiername = "" WHERE identifiername IS NULL;
@@ -618,6 +681,54 @@ ALTER TABLE `taxa`
 ALTER TABLE `taxstatus` 
   CHANGE COLUMN `taxonomicSource` `taxonomicSource` VARCHAR(500) NULL DEFAULT NULL;
 
+CREATE TABLE `taxadescrprofile` (
+  `tdProfileID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(150) NOT NULL,
+  `authors` VARCHAR(100) NULL,
+  `caption` VARCHAR(40) NOT NULL,
+  `projectDescription` VARCHAR(500) NULL,
+  `abstract` TEXT NULL,
+  `publication` VARCHAR(500) NULL,
+  `urlTemplate` VARCHAR(250) NULL,
+  `internalNotes` VARCHAR(250) NULL,
+  `langid` INT NULL DEFAULT 1,
+  `defaultDisplayLevel` INT NULL DEFAULT 1,
+  `dynamicProperties` TEXT NULL,
+  `modifiedUid` INT UNSIGNED NULL,
+  `modifiedTimestamp` TIMESTAMP NULL,
+  `initialTimestamp` TIMESTAMP NOT NULL DEFAULT current_timestamp,
+  PRIMARY KEY (`tdProfileID`),
+  INDEX `FK_taxadescrprofile_langid_idx` (`langid` ASC),
+  INDEX `FK_taxadescrprofile_uid_idx` (`modifiedUid` ASC),
+  CONSTRAINT `FK_taxadescrprofile_langid`  FOREIGN KEY (`langid`)  REFERENCES `adminlanguages` (`langid`)  ON DELETE SET NULL  ON UPDATE CASCADE,
+  CONSTRAINT `FK_taxadescrprofile_uid`  FOREIGN KEY (`modifiedUid`)  REFERENCES `users` (`uid`)  ON DELETE SET NULL  ON UPDATE CASCADE
+);
+
+ALTER TABLE `taxadescrblock` 
+  ADD COLUMN `tdProfileID` INT UNSIGNED NULL AFTER `tdbid`,
+  ADD INDEX `FK_taxadescrblock_tdProfileID_idx` (`tdProfileID` ASC);
+
+ALTER TABLE `taxadescrblock` 
+  ADD CONSTRAINT `FK_taxadescrblock_tdProfileID`  FOREIGN KEY (`tdProfileID`)  REFERENCES `taxadescrprofile` (`tdProfileID`)  ON DELETE RESTRICT  ON UPDATE CASCADE;
+
+INSERT INTO taxadescrprofile(title, caption, langid)
+SELECT DISTINCT IFNULL(caption, "Undefined"), IFNULL(caption, "Undefined"), IFNULL(langid, 1)
+FROM taxadescrblock;
+
+UPDATE taxadescrblock b INNER JOIN taxadescrprofile p ON IFNULL(b.caption, "Undefined") = p.caption AND IFNULL(b.langid, 1) = p.langid
+SET b.tdProfileID = p.tdProfileID 
+WHERE b.tdProfileID IS NULL;
+
+ALTER TABLE `taxadescrblock` 
+  DROP FOREIGN KEY `FK_taxadescrblock_tdProfileID`;
+
+ALTER TABLE `taxadescrblock` 
+  CHANGE COLUMN `tdProfileID` `tdProfileID` INT(10) UNSIGNED NOT NULL ;
+
+ALTER TABLE `taxadescrblock` 
+  ADD CONSTRAINT `FK_taxadescrblock_tdProfileID`  FOREIGN KEY (`tdProfileID`)  REFERENCES `taxadescrprofile` (`tdProfileID`)  ON UPDATE CASCADE  ON DELETE CASCADE;
+
+
 ALTER TABLE `taxalinks` 
   ADD INDEX `FK_taxaLinks_tid` (`tid` ASC),
   ADD UNIQUE INDEX `UQ_taxaLinks_tid_url` (`tid` ASC, `url` ASC);
@@ -664,6 +775,9 @@ ALTER TABLE `uploadspectemp`
 ALTER TABLE `uploadspectemp` 
   DROP COLUMN `materialSampleID`,
   ADD COLUMN `materialSampleJSON` TEXT NULL AFTER `paleoJSON`;
+
+UPDATE userroles SET tablename = "fmprojects" WHERE tablename = "fmproject";
+
 
 #Material Sample schema developments
 CREATE TABLE `ommaterialsample` (
@@ -778,6 +892,24 @@ INSERT INTO ctcontrolvocabterm(cvID, term, resourceUrl, activeStatus) SELECT cvI
 INSERT INTO ctcontrolvocabterm(cvID, term, resourceUrl, activeStatus) SELECT cvID, "estimatedSize", "http://gensc.org/ns/mixs/estimated_size", 1 FROM ctcontrolvocab WHERE tableName = "ommaterialsampleextended" AND fieldName = "fieldName";
 INSERT INTO ctcontrolvocabterm(cvID, term, resourceUrl, activeStatus) SELECT cvID, "poolDnaExtracts", "http://gensc.org/ns/mixs/pool_dna_extracts", 1 FROM ctcontrolvocab WHERE tableName = "ommaterialsampleextended" AND fieldName = "fieldName";
 INSERT INTO ctcontrolvocabterm(cvID, term, resourceUrl, activeStatus) SELECT cvID, "sampleDesignation", "http://data.ggbn.org/schemas/ggbn/terms/sampleDesignation", 1 FROM ctcontrolvocab WHERE tableName = "ommaterialsampleextended" AND fieldName = "fieldName";
+
+# Table for correspondance attachments for loans/exchanges/gifts etc.
+CREATE TABLE `omoccurloansattachment` (
+  `attachmentid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `loanid` int(10) UNSIGNED DEFAULT NULL,
+  `exchangeid` int(10) UNSIGNED DEFAULT NULL,
+  `title` varchar(80) NOT NULL,
+  `path` varchar(255) NOT NULL,
+  `filename` varchar(255) NOT NULL,
+  `initialTimestamp` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`attachmentid`),
+  KEY `FK_occurloansattachment_loanid_idx` (`loanid`),
+  KEY `FK_occurloansattachment_exchangeid_idx` (`exchangeid`)
+) ;
+
+ALTER TABLE `omoccurloansattachment`
+  ADD CONSTRAINT `FK_occurloansattachment_exchangeid` FOREIGN KEY (`exchangeid`) REFERENCES `omoccurexchange` (`exchangeid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_occurloansattachment_loanid` FOREIGN KEY (`loanid`) REFERENCES `omoccurloans` (`loanid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 # Modify the institutions table so that some fields can hold more data
 # This is to allow extra content from GrSciColl/Index Herbariorum (e.g., multiple contacts)

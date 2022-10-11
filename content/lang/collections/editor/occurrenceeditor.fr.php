@@ -198,6 +198,5 @@ $LANG['GEN_RES_ADD_SUCCESS'] = 'Ressource génétique ajoutée avec succès!';
 $LANG['ERROR_UNABLE_INSERT'] = "ERREUR: impossible d'INSÉRER un fragment de texte";
 $LANG['ERROR_UNABLE_UPDATE'] = 'ERREUR: impossible de mettre à jour le fragment de texte';
 $LANG['ERROR_UNABLE_DELETE'] = 'ERREUR: impossible de supprimer le fragment de texte';
-$LANG['UNABLE_GET_EDITS'] = "Impossible d'obtenir les modifications";
 
 ?>

@@ -57,6 +57,7 @@ if($isEditor){
 }
 
 ?>
+<!DOCTYPE html>
 <html>
 	<head>
 		<title>Page Title</title>

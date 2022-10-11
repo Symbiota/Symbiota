@@ -29,6 +29,7 @@ $LANG['TAX_PROF_EDITOR'] = 'Éditeur de Profil des Taxons';
 $LANG['GLOSSARY_EDITOR'] = 'Éditeur de Glossaire';
 $LANG['ID_KEY_ADMIN'] = "Administrateur des Clés d'Identification";
 $LANG['ID_KEY_EDITOR'] = "Éditeur des Clés d'Identification";
+$LANG['CL_CREATE'] = 'Créateur des listes';
 $LANG['RARE_SP_ADMIN'] = 'Administrateur des Listes des Espèces Rares';
 $LANG['RARE_SP_VIEWER'] = "Afficher et Cartographier Spécimens d'Espèces Rares de Toutes Collections";
 $LANG['ADMIN_FOR'] = 'Administrateur pour les Collections Suivantes';

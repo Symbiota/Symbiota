@@ -54,7 +54,3 @@ function showImagesDefaultChecked(f){
 		f.dauthors.disabled = false; 
 	}
 }
-
-function validateAddChildForm(f){
-	
-}

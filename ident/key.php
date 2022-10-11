@@ -291,7 +291,7 @@ echo '</div>';
 			<?php
 			if(!$dynClid && $dataManager->getClAuthors()) echo '<div>'.$dataManager->getClAuthors().'</div>';
 			$count = $dataManager->getTaxaCount();
-			if($count > 0) echo '<div style="margin-bottom:15px;">'.$LANG['SPECCOUNT'].': '.$count.'</div>';
+			if($count) echo '<div style="margin-bottom:15px;">'.$LANG['SPECCOUNT'].': '.$count.'</div>';
 			else echo '<div>'.$LANG['NOMATCH'].'</div>';
 			$clType =$dataManager->getClType();
 			ksort($taxa);
@@ -331,9 +331,4 @@ echo '</div>';
 include($SERVER_ROOT.'/includes/footer.php');
 ?>
 </body>
-<script src="../js/alerts.js" type="text/javascript"></script>
-<script>
-	let alerts = [{'alertMsg': 'Looking for the previous version of Key? You can still access it above via the breadcrumb links located just below top menu bar.'}];
-	handleAlerts(alerts,"keyAlert",true);
-</script>
 </html>

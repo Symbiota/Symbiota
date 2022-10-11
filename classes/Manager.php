@@ -90,9 +90,8 @@ class Manager  {
 	}
 
 	protected function cleanOutStr($str){
-		$newStr = str_replace('"',"&quot;",$str);
-		$newStr = str_replace("'","&apos;",$newStr);
-		return $newStr;
+		$str = htmlspecialchars($str);
+		return $str;
 	}
 
 	protected function cleanInStr($str){

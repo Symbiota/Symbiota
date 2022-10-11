@@ -50,8 +50,11 @@ if($isEditor){
 		$permManager->addPermission($pTokens[0],'CollTaxon',$collId,$pTokens[1]);
 		//$permManager->addPermission($pTokens[0],'CollTaxon-'.$collId.':'.$pTokens[1]);
 	}
-	elseif($action == 'Sponsor User'){
+	elseif($action == 'Sponsor Personal Observation User'){
 		$permManager->addPermission($_POST['uid'],'CollEditor',$_POST['persobscollid']);
+	}
+	elseif($action == 'Sponsor Checklist User'){
+		$permManager->addClCreateRole($_POST['uid']);
 	}
 	elseif(array_key_exists('delpersobs',$_GET)){
 		$permManager->deletePermission($_GET['delpersobs'],'CollEditor',$_GET['persobscollid']);
@@ -336,7 +339,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 								</div>
 								<div style="margin:15px;">
 									<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
-									<button name="action" type="submit" value="Sponsor User"><?php echo (isset($LANG['SPONSOR_USER'])?$LANG['SPONSOR_USER']:'Sponsor User'); ?></button>
+									<button name="action" type="submit" value="Sponsor Personal Observation User"><?php echo (isset($LANG['SPONSOR_USER'])?$LANG['SPONSOR_USER']:'Sponsor User'); ?></button>
 								</div>
 							</form>
 						</fieldset>
@@ -346,6 +349,45 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 				</fieldset>
 				<?php
 			}
+			//Checklist / Dataset sponsorship
+				?>
+				<fieldset style="margin:15px;padding:15px;">
+					<legend><b><?php echo (isset($LANG['CHECKLIST_SPONSOR'])?$LANG['CHECKLIST_SPONSOR']:'Checklist / Dataset Management Sponsorship'); ?></b></legend>
+					<div style="margin:10px">
+					<?php echo (isset($LANG['CHECKLIST_SPONSOR_EXPLAIN'])?$LANG['CHECKLIST_SPONSOR_EXPLAIN']:'
+						Collection administrators listed above can sponsor users for Checklist and Dataset Management.
+						This allows users to create new public and private checklists or datasets that are linked directly to their user profile.  Public Checklists and Datasets are visible to all portal visitors.');
+						?>
+					</div>
+					<?php
+					if((array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"]))){
+						?>
+						<fieldset style="margin:40px 15px 0px 15px;padding:15px;">
+							<legend><b><?php echo (isset($LANG['NEW_SPONSOR'])?$LANG['NEW_SPONSOR']:'New Sponsorship'); ?></b></legend>
+							<form name="addchecklistman" action="collpermissions.php" method="post" onsubmit="return verifyAddRights(this)">
+								<div>
+									<select name="uid">
+										<option value=""><?php echo (isset($LANG['SEL_USER'])?$LANG['SEL_USER']:'Select User'); ?></option>
+										<option value="">-----------------------------------</option>
+										<?php
+										foreach($userArr as $uid => $uName){
+											echo '<option value="'.$uid.'">'.$uName.'</option>';
+										}
+										?>
+									</select>
+								</div>
+								<div style="margin:15px;">
+									<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
+									<button name="action" type="submit" value="Sponsor Checklist User"><?php echo (isset($LANG['SPONSOR_USER'])?$LANG['SPONSOR_USER']:'Sponsor User'); ?></button>
+								</div>
+							</form>
+						</fieldset>
+						<?php
+					}
+					?>
+				</fieldset>
+				<?php
+
 			//Identification Editors
 			$taxonEditorArr = $permManager->getTaxonEditorArr($collId,1);
 			$taxonSelectArr = $permManager->getTaxonEditorArr($collId,0);

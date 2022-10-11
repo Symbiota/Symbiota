@@ -2,6 +2,7 @@
 include_once('../config/symbini.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 ?>
+<!DOCTYPE html>
 <html>
 	<head>
 		<title>Page Title</title>

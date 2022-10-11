@@ -1,67 +1,76 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/InventoryProjectManager.php');
+include_once($SERVER_ROOT.'/classes/ImInventories.php');
 include_once($SERVER_ROOT.'/classes/MapSupport.php');
 include_once($SERVER_ROOT.'/content/lang/projects/index.'.$LANG_TAG.'.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset='.$CHARSET);
 
-$pid = array_key_exists("pid",$_REQUEST)?$_REQUEST["pid"]:"";
-$editMode = array_key_exists("emode",$_REQUEST)?$_REQUEST["emode"]:0;
-$newProj = array_key_exists("newproj",$_REQUEST)?1:0;
-$projSubmit = array_key_exists("projsubmit",$_REQUEST)?$_REQUEST["projsubmit"]:'';
-$tabIndex = array_key_exists("tabindex",$_REQUEST)?$_REQUEST["tabindex"]:0;
+$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']:'';
+if(!$pid && array_key_exists('proj',$_GET)) $pid = $_GET['proj'];
+$editMode = array_key_exists('emode',$_REQUEST)?$_REQUEST['emode']:0;
+$newProj = array_key_exists('newproj',$_REQUEST)?1:0;
+$projSubmit = array_key_exists('projsubmit',$_REQUEST)?$_REQUEST['projsubmit']:'';
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
 $statusStr = '';
 
-if(!$pid && array_key_exists("proj",$_GET) && is_numeric($_GET['proj'])) $pid = $_GET['proj'];
+//Sanitation
 if(!is_numeric($pid)) $pid = 0;
 if(!is_numeric($editMode)) $editMode = 0;
 if(!is_numeric($tabIndex)) $tabIndex = 0;
 
-$projManager = new InventoryProjectManager($projSubmit?'write':'readonly');
-if($pid) $projManager->setPid($pid);
+$projManager = new ImInventories($projSubmit?'write':'readonly');
+$projManager->setPid($pid);
 
 $isEditor = 0;
-if($IS_ADMIN || (array_key_exists("ProjAdmin",$USER_RIGHTS) && in_array($pid,$USER_RIGHTS["ProjAdmin"]))){
+if($IS_ADMIN || (array_key_exists('ProjAdmin', $USER_RIGHTS) && in_array($pid, $USER_RIGHTS['ProjAdmin']))){
 	$isEditor = 1;
 }
 
 if($isEditor && $projSubmit){
-	if($projSubmit == 'addnewproj'){
-		$pid = $projManager->addNewProject($_POST);
-		if(!$pid) $statusStr = $projManager->getErrorStr();
+	if($projSubmit == 'addNewProject'){
+		$pid = $projManager->insertProject($_POST);
+		if(!$pid) $statusStr = $projManager->getErrorMessage();
 	}
-	elseif($projSubmit == 'subedit'){
-		$projManager->submitProjEdits($_POST);
+	elseif($projSubmit == 'submitEdit'){
+		$projManager->updateProject($_POST);
 	}
-	elseif($projSubmit == 'subdelete'){
+	elseif($projSubmit == 'submitDelete'){
 		if($projManager->deleteProject($_POST['pid'])){
 			$pid = 0;
 		}
 		else{
-			$statusStr = $projManager->getErrorStr();
+			$statusStr = $projManager->getErrorMessage();
 		}
 	}
 	elseif($projSubmit == 'deluid'){
-		if(!$projManager->deleteManager($_GET['uid'])){
-			$statusStr = $projManager->getErrorStr();
+		if(!$projManager->deleteUserRole('ProjAdmin', $pid, $_GET['uid'])){
+			$statusStr = $projManager->getErrorMessage();
 		}
 	}
 	elseif($projSubmit == 'Add to Manager List'){
-		if(!$projManager->addManager($_POST['uid'])){
-			$statusStr = $projManager->getErrorStr();
+		if(!$projManager->insertUserRole($_POST['uid'], 'ProjAdmin', 'fmprojects', $pid, $SYMB_UID)){
+			$statusStr = $projManager->getErrorMessage();
 		}
 	}
 	elseif($projSubmit == 'Add Checklist'){
-		$projManager->addChecklist($_POST['clid']);
+		if(!$projManager->insertChecklistProjectLink($_POST['clid'])){
+			$statusStr = $projManager->getErrorMessage();
+		}
 	}
 	elseif($projSubmit == 'Delete Checklist'){
-		$projManager->deleteChecklist($_POST['clid']);
+		if(!$projManager->deleteChecklistProjectLink($_POST['clid'])){
+			$statusStr = $projManager->getErrorMessage();
+		}
 	}
 }
 
-$projArr = $projManager->getProjectData();
-$researchList = $projManager->getResearchChecklists();
-$managerArr = $projManager->getManagers();
+$projArr = $projManager->getProjectMetadata();
+$researchList = $projManager->getChecklistArr($pid);
+foreach($researchList as $clid => $clArr){
+	if($clArr['access'] == 'private' && !in_array($clid, $USER_RIGHTS['ClAdmin'])) unset($clArr[$clid]);
+}
+
+$managerArr = $projManager->getManagers('ProjAdmin', 'fmprojects', 'fmprojects', $pid);
 if(!$researchList && !$editMode){
 	$editMode = 1;
 	$tabIndex = 2;
@@ -321,15 +330,13 @@ if(!$researchList && !$editMode){
 												<?php
 												if($newProj){
 													?>
-													<input type="submit" name="submit" value="<?php echo $LANG['ADDNEWPR'];?>" />
-													<input type="hidden" name="projsubmit" value="addnewproj" />
+													<button name="projsubmit" type="submit" value="addNewProject"><?php echo $LANG['ADDNEWPR'];?></button>
 													<?php
 												}
 												else{
 													?>
 													<input type="hidden" name="pid" value="<?php echo $pid;?>">
-													<input type="hidden" name="projsubmit" value="subedit" />
-													<input type="submit" name="submit" value="<?php echo $LANG['SUBMITEDIT'];?>" />
+													<button name="projsubmit" type="submit" value="submitEdit"><?php echo $LANG['SUBMITEDIT'];?></button>
 													<?php
 												}
 												?>
@@ -346,7 +353,7 @@ if(!$researchList && !$editMode){
 								<legend><?php echo (isset($LANG['DELPROJECT'])?$LANG['DELPROJECT']:'Delete Project') ?></legend>
 								<form action="index.php" method="post" onsubmit="return confirm('<?php echo (isset($LANG['CONFIRMDEL'])?$LANG['CONFIRMDEL']:'Are you sure you want to delete this inventory Project') ?>')">
 									<input type="hidden" name="pid" value="<?php echo $pid;?>">
-									<input type="hidden" name="projsubmit" value="subdelete" />
+									<input type="hidden" name="projsubmit" value="submitDelete" />
 									<?php
 									echo '<input type="submit" name="submit" value="'.(isset($LANG['SUBMITDELETE'])?$LANG['SUBMITDELETE']:'Delete Project').'" '.((count($managerArr)>1 || $researchList)?'disabled':'').' />';
 									echo '<div style="margin:10px;color:orange">';
@@ -397,7 +404,14 @@ if(!$researchList && !$editMode){
 							</div>
 							<?php
 						}
-						$coordArr = $projManager->getChecklistCoordArr();
+						$coordArr = array();
+						$cnt = 0;
+						foreach($researchList as $listArr){
+							if($cnt < 50 && $listArr['lat']){
+								$coordArr[] = $listArr['lat'].','.$listArr['lng'];
+							}
+							$cnt++;
+						}
 						if($coordArr){
 							$tnUrl = MapSupport::getStaticMap($coordArr);
 							$tnWidth = 200;
@@ -418,11 +432,11 @@ if(!$researchList && !$editMode){
 						<div>
 							<ul>
 								<?php
-								foreach($researchList as $key=>$value){
+								foreach($researchList as $key => $listArr){
 									?>
 									<li>
 										<a href='../checklists/checklist.php?clid=<?php echo $key."&pid=".$pid; ?>'>
-											<?php echo $value; ?>
+											<?php echo $listArr['name'].($listArr['access']=='private'?' <span title="Viewable only to editors">(private)</span>':''); ?>
 										</a>
 										<?php
 										if($KEY_MOD_IS_ACTIVE){

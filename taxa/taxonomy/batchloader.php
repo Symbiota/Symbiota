@@ -236,24 +236,22 @@ if($isEditor){
 											<option value=""><?php echo (isset($LANG['FIELD_UNMAPPED'])?$LANG['FIELD_UNMAPPED']:'Field Unmapped'); ?></option>
 											<option value="">-------------------------</option>
 											<?php
+											$selStr = '';
 											$mappedTarget = (array_key_exists($sField,$fieldMap)?$fieldMap[$sField]:"");
-											$selStr = "";
-											if($mappedTarget=="unmapped") $selStr = "SELECTED";
-											echo "<option value='unmapped' ".$selStr.">".(isset($LANG['LEAVE_UNMAPPED'])?$LANG['LEAVE_UNMAPPED']:'Leave Field Unmapped')."</option>";
-											if($selStr){
-												$selStr = 0;
-											}
+											if($mappedTarget=='unmapped') $selStr = 'SELECTED';
+											echo '<option value="unmapped" '.$selStr.'>'.(isset($LANG['LEAVE_UNMAPPED'])?$LANG['LEAVE_UNMAPPED']:'Leave Field Unmapped').'</option>';
+											if($selStr) $selStr = 0;
 											foreach($tArr as $k => $tField){
 												if($selStr !== 0){
 													$sTestField = str_replace(array(' ','_'), '', $sField);
-													if($mappedTarget && $mappedTarget == $tField){
-														$selStr = "SELECTED";
+													if($mappedTarget && $mappedTarget == $k){
+														$selStr = 'SELECTED';
 													}
-													elseif($tField==$sTestField && $tField != "sciname"){
-														$selStr = "SELECTED";
+													elseif($tField==$sTestField && $tField != 'sciname'){
+														$selStr = 'SELECTED';
 													}
 													elseif(isset($translationMap[strtolower($sTestField)]) && $translationMap[strtolower($sTestField)] == $tField){
-														$selStr = "SELECTED";
+														$selStr = 'SELECTED';
 													}
 												}
 												echo '<option value="'.$k.'" '.($selStr?$selStr:'').'>'.$tField."</option>\n";

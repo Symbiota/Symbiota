@@ -13,7 +13,6 @@ $pageNumber = array_key_exists('page', $_REQUEST) ? $_REQUEST['page'] : 1;
 $datasetid = array_key_exists("datasetid", $_REQUEST) ? $_REQUEST["datasetid"] : '';
 $_SESSION['datasetid'] = $datasetid;
 
-
 //Sanitation
 if (!is_numeric($taxonFilter)) $taxonFilter = 1;
 if (!is_numeric($targetTid)) $targetTid = '';
@@ -47,15 +46,16 @@ $_SESSION['citationvar'] = $searchVar;
 		$(document).ready(function() {
 			<?php
 			if ($searchVar) {
-			?>
+				?>
 				sessionStorage.querystr = "<?php echo $searchVar; ?>";
-			<?php
-			} else {
-			?>
+				<?php
+			}
+			else {
+				?>
 				if (sessionStorage.querystr) {
 					window.location = "list.php?" + sessionStorage.querystr + "&tabindex=<?php echo $tabIndex ?>";
 				}
-			<?php
+				<?php
 			}
 			?>
 
@@ -135,7 +135,8 @@ $_SESSION['citationvar'] = $searchVar;
 			echo '<b>' . $LANG['NAV_SPECIMEN_LIST'] . '</b>';
 			echo '</div>';
 		}
-	} else {
+	}
+	else {
 		echo '<div class="navpath">';
 		echo '<a href="../index.php">' . $LANG['NAV_HOME'] . '</a> &gt;&gt; ';
 		echo '<a href="index.php">' . $LANG['NAV_COLLECTIONS'] . '</a> &gt;&gt; ';
@@ -257,7 +258,7 @@ $_SESSION['citationvar'] = $searchVar;
 
 					//Add search return
 					if ($occurArr) {
-					?>
+						?>
 						<form name="occurListForm" method="post" action="datasets/datasetHandler.php" onsubmit="return validateOccurListForm(this)" target="_blank">
 							<?php include('datasetinclude.php'); ?>
 							<table id="omlisttable">
@@ -340,10 +341,11 @@ $_SESSION['citationvar'] = $searchVar;
 								?>
 							</table>
 						</form>
-					<?php
+						<?php
 						echo $paginationStr;
 						echo '<hr/>';
-					} else {
+					}
+					else {
 						echo '<div><h3>' . $LANG['NO_RESULTS'] . '</h3>';
 						$tn = $collManager->getTaxaSearchStr();
 						if ($p = strpos($tn, ';')) {

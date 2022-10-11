@@ -198,6 +198,9 @@ class TaxonomyUpload{
 							foreach($sciArr as $sciKey => $sciValue){
 								if(!array_key_exists($sciKey, $inputArr) && $sciValue) $inputArr[$sciKey] = $sciValue;
 							}
+							if(isset($inputArr['unitind3']) && $inputArr['unitind3'] && isset($inputArr['unitname3']) && $inputArr['unitname3']){
+								if(stripos($inputArr['unitname3'], $inputArr['unitind3'].' ') === 0) $inputArr['unitname3'] = trim(substr($inputArr['unitname3'], strlen($inputArr['unitind3']) + 1));
+							}
 							unset($inputArr['identificationqualifier']);
 							if(isset($childParentArr[$inputArr['sciname']]['r']) && isset($inputArr['rankid']) && $childParentArr[$inputArr['sciname']]['r'] == $inputArr['rankid']) $childParentArr[$inputArr['sciname']]['s'] = 'skip';
 							$sql1 = ''; $sql2 = '';
@@ -931,12 +934,11 @@ class TaxonomyUpload{
 		$rs = $this->conn->query('SHOW COLUMNS FROM uploadtaxa');
 		while($row = $rs->fetch_object()){
 			$field = strtolower($row->Field);
-			if(strtolower($field) != 'tid' && strtolower($field) != 'tidaccepted' && strtolower($field) != 'parenttid'){
+			if($field != 'tid' && $field != 'tidaccepted' && $field != 'parenttid'){
 				$targetArr[$field] = $field;
 			}
 		}
 		$rs->free();
-
 		return $targetArr;
 	}
 

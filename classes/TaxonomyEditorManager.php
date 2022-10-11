@@ -146,9 +146,7 @@ class TaxonomyEditorManager extends Manager{
 
 	private function setRankName(){
 		if($this->rankid){
-			$sql = 'SELECT rankname, kingdomname '.
-				'FROM taxonunits '.
-				'WHERE (rankid = '.$this->rankid.') ';
+			$sql = 'SELECT rankname, kingdomname FROM taxonunits WHERE (rankid = '.$this->rankid.') ';
 			//echo $sql;
 			$rankArr = array();
 			$rs = $this->conn->query($sql);
@@ -639,6 +637,13 @@ class TaxonomyEditorManager extends Manager{
 				'AND (o.cultivationStatus IS NULL OR o.cultivationStatus = 0) AND (o.coordinateUncertaintyInMeters IS NULL OR o.coordinateUncertaintyInMeters < 10000) ';
 
 			$this->conn->query($sql3);
+
+			//Populate NULL kingdomName values
+			$sql4 = 'UPDATE IGNORE taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid
+				INNER JOIN taxa p ON e.parenttid = p.tid
+				SET t.kingdomname = p.sciname
+				WHERE p.rankid = 10 AND (t.kingdomname IS NULL or t.kingdomname = "")';
+			$this->conn->query($sql4);
 		}
 		else{
 			$this->errorMessage = (isset($this->langArr['ERROR_INSERT'])?$this->langArr['ERROR_INSERT']:'ERROR inserting new taxon').': '.$this->conn->error;
@@ -1003,9 +1008,8 @@ class TaxonomyEditorManager extends Manager{
 
 	public function getRankArr(){
 		$retArr = array();
-		$sql = 'SELECT DISTINCT rankid, rankname FROM taxonunits '.
-			'WHERE (kingdomname = "'.($this->kingdomName?$this->kingdomName:'Organism').'") '.
-			'ORDER BY rankid, rankname DESC';
+		$sql = 'SELECT DISTINCT rankid, rankname FROM taxonunits ORDER BY rankid, rankname DESC';
+		if($this->kingdomName) $sql = 'SELECT DISTINCT rankid, rankname FROM taxonunits WHERE (kingdomname = "'.$this->kingdomName.'") ORDER BY rankid, rankname DESC';
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
 			$retArr[$row->rankid][] = $row->rankname;

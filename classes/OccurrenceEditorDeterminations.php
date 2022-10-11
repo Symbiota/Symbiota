@@ -204,7 +204,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		$occid = 0;
 
 		$sql = 'SELECT occid, identifiedBy, dateIdentified, family, sciname, scientificNameAuthorship, tidInterpreted, identificationQualifier, isCurrent, printQueue,
-			appliedStatus, detType, identificationReferences, identificationRemarks, taxonRemarks, sourceIdentifier, sortSequence
+			appliedStatus, detType, identificationReferences, identificationRemarks, taxonRemarks, sortSequence
 			FROM omoccurdeterminations WHERE detid = '.$detId;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_assoc()){

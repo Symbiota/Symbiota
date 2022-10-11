@@ -94,6 +94,8 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['recordNumber'] = 'o.recordNumber';
 		$this->occurDefArr['terms']['eventDate'] = 'http://rs.tdwg.org/dwc/terms/eventDate';
 		$this->occurDefArr['fields']['eventDate'] = 'o.eventDate';
+		$this->occurDefArr['terms']['eventDate2'] = 'https://symbiota.org/terms/eventDate2';
+		$this->occurDefArr['fields']['eventDate2'] = 'o.eventDate2';
 		$this->occurDefArr['terms']['year'] = 'http://rs.tdwg.org/dwc/terms/year';
 		$this->occurDefArr['fields']['year'] = 'o.year';
 		$this->occurDefArr['terms']['month'] = 'http://rs.tdwg.org/dwc/terms/month';

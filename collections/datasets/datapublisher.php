@@ -471,7 +471,7 @@ if ($isEditor) {
 									if ($errMsg) $inputAttr = 'DISABLED';
 									elseif ($v['url']) $inputAttr = 'CHECKED';
 									echo '<input name="coll[]" type="checkbox" value="' . $k . '" ' . $inputAttr . ' />';
-									echo '<a href="../misc/collprofiles.php?collid=' . $k . '" target="_blank">' . $v['name'] . '</a>';
+									echo '<a href="../misc/collprofiles.php?collid=' . $k . '" target="_blank">' . $v['name'] . '</a> ';
 									if ($errMsg) echo '<span style="color:red;margin-left:15px;">' . $errMsg . '</span>';
 									elseif ($v['url']) echo '<span> - published</span>';
 									echo '<br/>';
