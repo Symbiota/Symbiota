@@ -215,7 +215,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 	}
 
 	public function triggerGBIFCrawl($dwcUri, $collid, $collectionName){
-		if(isset($GLOBALS['GBIF_USERNAME'])){
+		if(isset($GLOBALS['GBIF_USERNAME']) && $GLOBALS['GBIF_USERNAME']){
 			if($this->organizationKey){
 				if(!$this->logFH){
 					$this->setVerboseMode(3);

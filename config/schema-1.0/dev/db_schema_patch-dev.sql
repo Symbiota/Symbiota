@@ -410,6 +410,7 @@ ALTER TABLE `omoccurdatasets`
   CHANGE COLUMN `sortsequence` `sortSequence` INT(11) NULL DEFAULT NULL ,
   CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
 
+
 ALTER TABLE `omoccurdeterminations` 
   DROP FOREIGN KEY `FK_omoccurdets_idby`;
 
@@ -430,13 +431,24 @@ ALTER TABLE `omoccurdeterminations`
   ADD COLUMN `taxonRank` VARCHAR(45) NULL AFTER `verbatimTaxonRank`,
   ADD COLUMN `infraSpecificEpithet` VARCHAR(45) NULL AFTER `taxonRank`,
   ADD COLUMN `securityStatus` INT NOT NULL DEFAULT 0 AFTER `appliedStatus`,
+  ADD COLUMN `securityStatusReason` VARCHAR(100) NULL AFTER `securityStatus`,
   ADD COLUMN `identificationVerificationStatus` VARCHAR(45) NULL AFTER `taxonRemarks`,
-  ADD COLUMN `taxonConceptID` VARCHAR(45) NULL AFTER `scientificNameID`,
+  ADD COLUMN `taxonConceptID` VARCHAR(45) NULL AFTER `identificationVerificationStatus`,
   ADD COLUMN `recordID` VARCHAR(45) NULL AFTER `sortSequence`,
   CHANGE COLUMN `identifiedBy` `identifiedBy` VARCHAR(60) NOT NULL DEFAULT 'unknown' ,
   CHANGE COLUMN `dateIdentified` `dateIdentified` VARCHAR(45) NOT NULL DEFAULT 's.d.' ,
   CHANGE COLUMN `sourceIdentifier` `identificationID` VARCHAR(45) NULL DEFAULT NULL ,
   ADD INDEX `FK_omoccurdets_agentID_idx` (`identifiedByAgentID` ASC);
+
+ALTER TABLE `omoccurdeterminations` 
+  CHANGE COLUMN `identifiedBy` `identifiedBy` VARCHAR(255) NOT NULL ,
+  CHANGE COLUMN `family` `family` VARCHAR(255) NULL DEFAULT NULL ,
+  CHANGE COLUMN `sciname` `sciname` VARCHAR(255) NOT NULL ,
+  CHANGE COLUMN `scientificNameAuthorship` `scientificNameAuthorship` VARCHAR(255) NULL DEFAULT NULL ,
+  CHANGE COLUMN `identificationQualifier` `identificationQualifier` VARCHAR(255) NULL DEFAULT NULL ,
+  CHANGE COLUMN `identificationReferences` `identificationReferences` VARCHAR(2000) NULL DEFAULT NULL ,
+  CHANGE COLUMN `identificationRemarks` `identificationRemarks` VARCHAR(2000) NULL DEFAULT NULL ,
+  CHANGE COLUMN `taxonRemarks` `taxonRemarks` VARCHAR(2000) NULL DEFAULT NULL;
 
 ALTER TABLE `omoccurdeterminations` 
   ADD CONSTRAINT `FK_omoccurdets_agentID`  FOREIGN KEY (`identifiedByAgentID`)  REFERENCES `agents` (`agentID`)  ON DELETE SET NULL  ON UPDATE CASCADE;
@@ -463,7 +475,7 @@ FROM omoccurrences;
 INSERT IGNORE INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, family, sciname, verbatimIdentification, scientificNameAuthorship, tidInterpreted, 
 identificationQualifier, genus, specificEpithet, verbatimTaxonRank, infraSpecificEpithet, isCurrent, identificationReferences, identificationRemarks, 
 taxonRemarks)
-SELECT o.occid, IFNULL(identifiedBy, "unknown"), IFNULL(dateIdentified, "s.d."), o.family, IFNULL(o.sciname, "undefined"), o.scientificName, o.scientificNameAuthorship, o.tidInterpreted, 
+SELECT o.occid, IFNULL(o.identifiedBy, "unknown"), IFNULL(o.dateIdentified, "s.d."), o.family, IFNULL(o.sciname, "undefined"), o.scientificName, o.scientificNameAuthorship, o.tidInterpreted, 
 o.identificationQualifier, o.genus, o.specificEpithet, o.taxonRank, o.infraSpecificEpithet, 1 as isCurrent, o.identificationReferences, o.identificationRemarks, 
 o.taxonRemarks
 FROM omoccurrences o LEFT JOIN omoccurdeterminations d ON o.occid = d.occid
@@ -736,10 +748,6 @@ ALTER TABLE `taxalinks`
 ALTER TABLE `taxalinks` 
   DROP INDEX `Index_unique` ;
 
-ALTER TABLE `uploadspectemp` 
-  ADD COLUMN `eventTime` VARCHAR(45) NULL AFTER `verbatimEventDate`,
-  CHANGE COLUMN `LatestDateCollected` `eventDate2` DATE NULL DEFAULT NULL AFTER `eventDate`;
-
 ALTER TABLE `uploadspecparameters` 
   DROP FOREIGN KEY `FK_uploadspecparameters_coll`;
 
@@ -764,17 +772,21 @@ ALTER TABLE `uploadspecparameters`
   ADD CONSTRAINT `FK_uploadspecparameters_coll`  FOREIGN KEY (`collid`)  REFERENCES `omcollections` (`collID`)  ON DELETE CASCADE  ON UPDATE CASCADE;
 
 ALTER TABLE `uploadspectemp` 
+  ADD COLUMN `eventTime` VARCHAR(45) NULL AFTER `verbatimEventDate`,
+  ADD COLUMN `observeruid` INT NULL AFTER `language`,
+  ADD COLUMN `dateEntered` DATETIME NULL AFTER `recordEnteredBy`,
+  ADD COLUMN `eventID` VARCHAR(45) NULL AFTER `fieldnumber`,
+  CHANGE COLUMN `taxonRemarks` `taxonRemarks` VARCHAR(2000) NULL DEFAULT NULL ,
+  CHANGE COLUMN `identificationReferences` `identificationReferences` VARCHAR(2000) NULL DEFAULT NULL ,
+  CHANGE COLUMN `identificationRemarks` `identificationRemarks` VARCHAR(2000) NULL DEFAULT NULL ,
   CHANGE COLUMN `establishmentMeans` `establishmentMeans` VARCHAR(150) NULL DEFAULT NULL,
   CHANGE COLUMN `disposition` `disposition` varchar(250) NULL DEFAULT NULL,
-  ADD COLUMN `observeruid` INT NULL AFTER `language`,
-  ADD COLUMN `dateEntered` DATETIME NULL AFTER `recordEnteredBy`;
-
-ALTER TABLE `uploadspectemp` 
-  ADD COLUMN `eventID` VARCHAR(45) NULL AFTER `fieldnumber`;
+  CHANGE COLUMN `LatestDateCollected` `eventDate2` DATE NULL DEFAULT NULL AFTER `eventDate`;
 
 ALTER TABLE `uploadspectemp` 
   DROP COLUMN `materialSampleID`,
   ADD COLUMN `materialSampleJSON` TEXT NULL AFTER `paleoJSON`;
+
 
 UPDATE userroles SET tablename = "fmprojects" WHERE tablename = "fmproject";
 

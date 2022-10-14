@@ -34,7 +34,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		$retArr = Array();
 		$this->setSqlWhere();
 		$this->setRecordCnt();
-		$sql = 'SELECT DISTINCT i.imgid, i.tid, IFNULL(t.sciname,o.sciname) as sciname, i.url, i.thumbnailurl, i.originalurl, i.photographeruid, i.caption, i.occid ';
+		$sql = 'SELECT i.imgid, i.tid, IFNULL(t.sciname,o.sciname) as sciname, i.url, i.thumbnailurl, i.originalurl, i.photographeruid, i.caption, i.occid ';
 		/*
 		$sql = 'SELECT DISTINCT i.imgid, o.tidinterpreted, t.tid, t.sciname, i.url, i.thumbnailurl, i.originalurl, i.photographeruid, i.caption, '.
 			'o.occid, o.stateprovince, o.catalognumber, CONCAT_WS("-",c.institutioncode, c.collectioncode) as instcode ';
@@ -42,13 +42,15 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		$sqlWhere = $this->sqlWhere;
 		if($this->imageCount == 'taxon') $sqlWhere .= 'GROUP BY sciname ';
 		elseif($this->imageCount == 'specimen') $sqlWhere .= 'GROUP BY i.occid ';
-		if($this->sqlWhere) $sqlWhere .= 'ORDER BY sciname ';
+		if($this->sqlWhere) $sqlWhere .= 'ORDER BY o.sciname ';
 		$bottomLimit = ($pageRequest - 1)*$cntPerPage;
 		$sql .= $this->getSqlBase().$sqlWhere.'LIMIT '.$bottomLimit.','.$cntPerPage;
 		//echo '<div>Spec sql: '.$sql.'</div>';
 		$occArr = array();
 		$result = $this->conn->query($sql);
+		$imgId = 0;
 		while($r = $result->fetch_object()){
+			if($imgId == $r->imgid) continue;
 			$imgId = $r->imgid;
 			$retArr[$imgId]['imgid'] = $r->imgid;
 			//$retArr[$imgId]['tidaccepted'] = $r->tidinterpreted;
