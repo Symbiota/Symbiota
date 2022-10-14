@@ -115,7 +115,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
                                 El portal está alojado en los servidores del Centro de
                                 <a href="https://biokic.asu.edu" target="_blank">Integración del Conocimiento de la Biodiversidad (BIOKIC)</a> de la Universidad Estatal de Arizona (ASU),
                                 en Estados Unidos. Para más información o para gestionar un perfil por favor comunicarse con
-                                Samanta Orellana (<a href="mailto:sorellana@asu.edu">sorellana@asu.edu</a>) o Zabdi López (<a href="mailto:zabdi@uvg.edu.gt)">zabdi@uvg.edu.gt)</a>).
+                                Samanta Orellana (<a href="mailto:sorellana@asu.edu">sorellana@asu.edu</a>) o Zabdi López (<a href="mailto:zabdi@uvg.edu.gt">zabdi@uvg.edu.gt</a>).
                                 </p>
                         </div>
                         <?php
