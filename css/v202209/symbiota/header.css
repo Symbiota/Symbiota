@@ -1,0 +1,258 @@
+/* Header
+========================================================================== */
+.header-wrapper {
+  padding: 20px;
+  background-color: var(--menu-top-bg-color);
+}
+
+header {
+  display: grid;
+  gap: 2rem;
+  place-items: center;
+  color: var(--header-font-color);
+  min-width: 0;
+  width: 100%;
+}
+
+.top-wrapper {
+  background-color: var(--menu-top-bg-color);
+  min-width: 0;
+}
+
+.top-login {
+  padding-bottom: 20px;
+}
+
+.top-login > .button {
+  margin-left: 0.8rem;
+}
+
+.top-brand {
+  /* align a and brand-name */
+  grid-column: 1;
+  display: flex;
+  align-items: stretch;
+}
+
+.top-brand img {
+  width: var(--logo-width);
+  max-width: 100px;
+  height: auto;
+  object-fit: contain; /* scale image keeping proportions */
+}
+
+.top-brand .brand-name {
+  margin-left: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.brand-name h1,
+.brand-name h2 {
+  color: var(--header-font-color);
+  margin: 0;
+  letter-spacing: 0.05em;
+}
+
+.brand-name h1 {
+  font-size: var(--brand-font-size);
+}
+
+.brand-name h2 {
+  font-size: calc(var(--brand-font-size) * 0.7);
+}
+
+header a {
+  color: var(--header-font-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+header a:hover {
+  color: var(--bright-color);
+  text-decoration: none;
+}
+
+/* MENU */
+.menu-wrapper {
+  position: sticky;
+  z-index: 1;
+  background-color: var(--menu-top-bg-color);
+  min-width: 0;
+}
+
+.top-menu {
+  width: 100%;
+  height: 100%;
+  max-height: 0;
+  transition: max-height 0.5s ease-out;
+  position: fixed;
+  left: 0;
+  background-color: var(--menu-top-bg-color);
+  overflow: hidden;
+}
+
+/* Hamburger icon */
+.hamb {
+  cursor: pointer;
+  /* float: right; */
+  padding: 40px 20px;
+}
+
+.hamb-line {
+  background: white;
+  display: block;
+  height: 2px;
+  position: relative;
+  width: 24px;
+}
+
+.hamb-line::before,
+.hamb-line::after {
+  background: white;
+  content: '';
+  display: block;
+  height: 100%;
+  position: absolute;
+  transition: all 0.2s ease-out;
+  width: 100%;
+}
+
+.hamb-line::before {
+  top: 6px;
+}
+
+.hamb-line::after {
+  top: -6px;
+}
+
+/* Hides checkbox */
+.side-menu {
+  display: none;
+}
+
+ul.menu {
+  list-style: none;
+  padding-left: 0;
+}
+
+.menu a {
+  display: block;
+  color: var(--header-font-color);
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.menu li {
+  padding: 10px 20px;
+}
+
+/* Toggles menu icon */
+.side-menu:checked ~ nav.top-menu {
+  max-height: 100%;
+}
+
+.side-menu:checked ~ .hamb .hamb-line {
+  background: transparent;
+}
+
+.side-menu:checked ~ .hamb .hamb-line::before {
+  transform: rotate(-45deg);
+  top: 0;
+}
+
+.side-menu:checked ~ .hamb .hamb-line::after {
+  transform: rotate(45deg);
+  top: 0;
+}
+
+/* Media queries
+========================================================================== */
+/* Medium screens and up */
+@media (min-width: 768px) {
+  .header-wrapper > * {
+    min-width: 0;
+  }
+  .header-wrapper {
+    padding: 0;
+  }
+  header {
+    gap: 0;
+    grid-template-areas:
+      'top'
+      'menu';
+    grid-template-rows: auto fit-content(100%);
+    background-image: var(--header-bg-image);
+    background-position: center;
+    background-size: cover;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .top-wrapper {
+    background-color: var(--header-bg-color);
+    display: grid;
+    grid-template-areas: 'brand login';
+    grid-template-columns: 3fr 1fr;
+    align-items: center;
+    min-width: 0;
+    width: 100%;
+    padding: 1rem 0;
+  }
+
+  .top-login {
+    grid-area: login;
+    justify-self: end;
+    padding-right: 3rem;
+  }
+
+  .top-brand {
+    grid-area: brand;
+    justify-self: start;
+    padding-left: 3rem;
+  }
+
+  .menu-wrapper {
+    grid-area: menu;
+    min-width: 0;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .hamb {
+    display: none;
+  }
+
+  nav.top-menu {
+    max-height: none;
+    position: relative;
+  }
+
+  .menu li {
+    display: inline-block;
+    padding: 0 10px;
+  }
+
+  .menu a {
+    padding: 0;
+  }
+}
+
+/* Medium-large desktop screens and up */
+@media screen and (min-width: 1024px) {
+  .top-brand img {
+    max-width: var(--logo-width);
+  }
+}
+
+/* Huge desktop screens and up */
+@media screen and (min-width: 2560px) {
+  .top-wrapper {
+    padding: 0 20%;
+  }
+}
