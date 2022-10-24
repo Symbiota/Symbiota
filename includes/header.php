@@ -1,102 +1,62 @@
-<script>
-	//if(top.frames.length!=0) top.location=self.document.location;
-</script>
-<table id="maintable" cellspacing="0">
-	<tr>
-		<td id="header" colspan="3">
-			<div style="clear:both;width:100%;height:200px;clear:both;border-bottom:1px solid #000000;">
-				<img style="height:inherit;display:block;margin:auto;" src="/madpaleo/portal/images/layout/madpaleoheader.png" />
-			</div>
-			<div id="top_navbar">
-				<div id="right_navbarlinks">
-					<?php
-					if($USER_DISPLAY_NAME){
-						?>
-						<span style="">
-							Welcome <?php echo $USER_DISPLAY_NAME; ?>!
-						</span>
-						<span style="margin-left:5px;">
-							<a href="<?php echo $CLIENT_ROOT; ?>/profile/viewprofile.php">My Profile</a>
-						</span>
-						<span style="margin-left:5px;">
-							<a href="<?php echo $CLIENT_ROOT; ?>/profile/index.php?submit=logout">Logout</a>
-						</span>
-						<?php
-					}
-					else{
-						?>
-						<span style="">
-							<a href="<?php echo $CLIENT_ROOT.'/profile/index.php?refurl='.$_SERVER['SCRIPT_NAME'].'?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES); ?>">
-								Log In
-							</a>
-						</span>
-						<span style="margin-left:5px;">
-							<a href="<?php echo $CLIENT_ROOT; ?>/profile/newprofile.php">
-								New Account
-							</a>
-						</span>
-						<?php
-					}
-					?>
-					<span style="margin-left:5px;margin-right:5px;">
-						<a href='<?php echo $CLIENT_ROOT; ?>/sitemap.php'>Sitemap</a>
-					</span>
+<div class="header-wrapper">
+        <header>
+                <nav class="top-login">
+                        <?php
+                        if ($USER_DISPLAY_NAME) {
+                        ?>
+                                <span>
+                                        Welcome <?php echo $USER_DISPLAY_NAME; ?>!
+                                </span>
+                                <span class="button button-tertiary">
+                                        <a href="<?php echo $CLIENT_ROOT; ?>/profile/viewprofile.php">My profile</a>
+                                </span>
+                                <span class="button button-secondary">
+                                        <a href="<?php echo $CLIENT_ROOT; ?>/profile/index.php?submit=logout">Log out</a>
+                                </span>
+                        <?php
+                        } else {
+                        ?>
+                                <span>
+                                        <a href="#">
+                                                Contact Us
+                                        </a>
+                                </span>
+                                <span class="button button-secondary">
+                                        <a href="<?php echo $CLIENT_ROOT . "/profile/index.php?refurl=" . $_SERVER['SCRIPT_NAME'] . "?" . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES); ?>">
+                                                Log in
+                                        </a>
+                                </span>
+                        <?php
+                        }
+                        ?>
 
-				</div>
-				<ul id="hor_dropdown">
-					<li>
-						<a href="<?php echo $CLIENT_ROOT; ?>/index.php" >Home</a>
-					</li>
-					<li>
-						<a href="#" >Search</a>
-						<ul>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/collections/index.php" >Search Collections</a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/collections/map/index.php" target="_blank">Map Search</a>
-							</li>
-						</ul>
-					</li>
-					<li>
-						<a href="#" >Images</a>
-						<ul>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/imagelib/index.php" >Image Browser</a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/imagelib/search.php" >Search Images</a>
-							</li>
-						</ul>
-					</li>
-					<li>
-						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php" >Inventories</a>
-						<ul>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=1" >Project 1</a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=2" >Project 2</a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=3" >Project 3</a>
-							</li>
-						</ul>
-					</li>
-					<li>
-						<a href="#" >Interactive Tools</a>
-						<ul>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist" >Dynamic Checklist</a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=key" >Dynamic Key</a>
-							</li>
-						</ul>
-					</li>
-				</ul>
-			</div>
-		</td>
-	</tr>
-	<tr>
-		<td id='middlecenter'  colspan="3">
+                </nav>
+                <div class="top-brand">
+                        <a href="https://symbiota.org">
+                                <img src="<?php echo $CLIENT_ROOT; ?>/images/layout/logo_symbiota.png" alt="Symbiota logo" width="100%">
+                        </a>
+                        <div class="brand-name">
+                                <h1>Cretaceous Vertebrates of Madagascar</h1>
+                        </div>
+                </div>
+                <div class="menu-wrapper">
+                        <!-- Hamburger icon -->
+                        <input class="side-menu" type="checkbox" id="side-menu" />
+                        <label class="hamb" for="side-menu"><span class="hamb-line"></span></label>
+                        <!-- Menu -->
+                        <nav class="top-menu">
+                                <ul class="menu">
+                                        <li><a href="<?php echo $CLIENT_ROOT; ?>/index.php">Home</a></li>
+                                        <li><a href="<?php echo $CLIENT_ROOT; ?>/collections/index.php">Search Collections</a></li>
+                                        <li><a href="<?php echo $CLIENT_ROOT; ?>/collections/map/index.php" target="_blank">Map Search</a></li>
+                                        <li><a href="<?php echo $CLIENT_ROOT; ?>/checklists/index.php">Checklists</a></li>
+                                        <li><a href="<?php echo $CLIENT_ROOT; ?>/imagelib/search.php">Image Search</a></li>
+                                        <li><a href="<?php echo $CLIENT_ROOT; ?>/includes/usagepolicy.php">Data Use</a></li>
+                                        <li><a href="https://symbiota.org/" target="_blank">About Symbiota</a></li>
+                                        <li><a href="<?php echo $CLIENT_ROOT; ?>/sitemap.php">Sitemap</a></li>
+                                        <li><a href="https://biokic.github.io/symbiota-docs/" target="_blank">Help</a></li>
+                                </ul>
+                        </nav>
+                </div>
+        </header>
+</div>
