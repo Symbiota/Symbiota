@@ -183,8 +183,8 @@ ul.menu {
   header {
     gap: 0;
     grid-template-areas:
-      'brand login'
-      'menu menu';
+      'top'
+      'menu';
     grid-template-rows: auto fit-content(100%);
     background-image: var(--header-bg-image);
     background-position: center;
