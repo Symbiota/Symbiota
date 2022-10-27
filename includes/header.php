@@ -34,7 +34,7 @@
                         </nav>
                         <div class="top-brand">
                                 <a href="https://symbiota.org">
-                                        <img src="<?php echo $CLIENT_ROOT; ?>/images/layout/adalatherium.png" alt="Adalatherium" width="100%">
+                                        <img src="<?php echo $CLIENT_ROOT; ?>/images/layout/adalatheriumicon.png" alt="Adalatherium" width="100%">
                                 </a>
                                 <div class="brand-name">
                                         <h1>Cretaceous Vertebrates of Madagascar</h1>
