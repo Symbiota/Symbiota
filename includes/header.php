@@ -33,7 +33,7 @@
 
                         </nav>
                         <div class="top-brand">
-                                <a href="https://symbiota.org">
+                                <a href="/madpaleo/portal/index.php">
                                         <img src="<?php echo $CLIENT_ROOT; ?>/images/layout/adalatheriumicon.png" alt="Adalatherium" width="100%">
                                 </a>
                                 <div class="brand-name">

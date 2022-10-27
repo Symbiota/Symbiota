@@ -46,7 +46,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 		</div>
 		<div style="padding: 0px 10px;">
 			<p>
-				The Madagascar Paleontology Project (MPP), initiated in 1993, is designed to elucidate the biogeographic and plate tectonic history of the southern supercontinent of Gondwana in general and the 
+				The <a href="https://www.dmns.org/science/earth-sciences/projects/madagascar-paleontology-projects/">Madagascar Paleontology Project (MPP)</a>, initiated in 1993, is designed to elucidate the biogeographic and plate tectonic history of the southern supercontinent of Gondwana in general and the 
 				island of Madagascar in particular. Our paleontological discoveries in the Mahajanga Basin of northwestern Madagascar during the course of 13 highly successful expeditions as well as 
 				recent expansion into the Ambilobe Basin in northernmost Madagascar and the Morondava Basin in western Madagascar have established the island as having some of the most complete and 
 				scientifically significant specimens of Cretaceous vertebrate animals from all of Gondwana and, indeed, the world. The discoveries in the Mahajanga Basin, most of them from a small area in 
@@ -54,6 +54,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 				fishes, frogs, turtles, lizards, snakes, crocodyliforms, pterosaurs, non-avian dinosaurs, birds, and mammals. Many of the specimens recovered represent animals that are new to science––we have 
 				named and described 20 new taxa––and include complete skulls and skeletons that are the most complete for entire clades.
 			</p>
+			<button>
 			<img src="/madpaleo/portal/images/layout/madpaleofooterbanner.png" style="width:100%">
 		</div>
 	</div>

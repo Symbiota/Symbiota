@@ -21,12 +21,12 @@
   --body-text-color: #000000;
   --body-font-size: 1.2rem;
   --body-font-family: 'Roboto', sans-serif;
-  --footer-bg-color: #DBE2E6;
+  --footer-bg-color: #EDF1F3;
   --heading-font-family: 'Roboto', sans-serif;
-  --link-color: #886E60;
-  --darkest-color: #0E1113;
-  --medium-color: #455761;
-  --light-color: #6E8B9B;
-  --bright-color: #8B9B6E;
+  --link-color: #9B7E6E;
+  --darkest-color: #29343A;
+  --medium-color: #6E8B9B;
+  --light-color: ##DBE2E6;
+  --bright-color: #946E9B;
   --max-innertext-width: 1024px;
 }
