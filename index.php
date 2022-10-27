@@ -54,7 +54,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 				fishes, frogs, turtles, lizards, snakes, crocodyliforms, pterosaurs, non-avian dinosaurs, birds, and mammals. Many of the specimens recovered represent animals that are new to science––we have 
 				named and described 20 new taxa––and include complete skulls and skeletons that are the most complete for entire clades.
 			</p>
-			<img src="/images/layout/madpaleofooterbanner.png">
+			<img src="/madpaleo/portal/images/layout/madpaleofooterbanner.png">
 		</div>
 	</div>
 	<?php
