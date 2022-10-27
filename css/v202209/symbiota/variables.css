@@ -16,17 +16,17 @@
   --brand-font-size: 2rem;
   --title-font-family: 'Averia Serif Libre', serif;
   --logo-width: 120px;
-  --menu-top-bg-color: #1b3d2f;
+  --menu-top-bg-color: #37464E;
   --body-bg-color: #fafafa;
   --body-text-color: #000000;
   --body-font-size: 1.2rem;
   --body-font-family: 'Roboto', sans-serif;
-  --footer-bg-color: #f2f0e9;
+  --footer-bg-color: #DBE2E6;
   --heading-font-family: 'Roboto', sans-serif;
-  --link-color: #126c00;
-  --darkest-color: #1b3d2f;
-  --medium-color: #5a5a53;
-  --light-color: #f2f0e9;
-  --bright-color: #00d084;
+  --link-color: #886E60;
+  --darkest-color: #0E1113;
+  --medium-color: #455761;
+  --light-color: #6E8B9B;
+  --bright-color: #8B9B6E;
   --max-innertext-width: 1024px;
 }
