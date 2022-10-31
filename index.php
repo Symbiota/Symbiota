@@ -51,7 +51,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 				recent expansion into the Ambilobe Basin in northernmost Madagascar and the Morondava Basin in western Madagascar have established the island as having some of the most complete and 
 				scientifically significant specimens of Cretaceous vertebrate animals from all of Gondwana and, indeed, the world. The discoveries in the Mahajanga Basin, most of them from a small area in 
 				the Maevarano Formation near the village of Berivotra, have more than quintupled the previously known diversity of Late Cretaceous vertebrates from Madagascar and now include specimens of 
-				fishes, frogs, turtles, lizards, snakes, crocodyliforms, pterosaurs, non-avian dinosaurs, birds, and mammals. Many of the specimens recovered represent animals that are new to science––we have 
+				fishes, frogs, turtles, lizards, snakes, crocodyliforms, non-avian dinosaurs, birds, and mammals. Many of the specimens recovered represent animals that are new to science––we have 
 				named and described 20 new taxa––and include complete skulls and skeletons that are the most complete for entire clades.
 			</p>
 			<button>
