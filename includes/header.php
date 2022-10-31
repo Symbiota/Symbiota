@@ -51,11 +51,11 @@
                                         <li><a href="<?php echo $CLIENT_ROOT; ?>/index.php">Home</a></li>
                                         <li><a href="<?php echo $CLIENT_ROOT; ?>/collections/index.php">Search Collections</a></li>
                                         <li><a href="<?php echo $CLIENT_ROOT; ?>/collections/map/index.php" target="_blank" rel="noopener noreferrer">Map Search</a></li>
-                                        <li><a href="<?php echo $CLIENT_ROOT; ?>/checklists/index.php">Checklists</a></li>
                                         <li><a href="<?php echo $CLIENT_ROOT; ?>/imagelib/search.php">Image Search</a></li>
                                         <li><a href="<?php echo $CLIENT_ROOT; ?>/includes/usagepolicy.php">Data Use</a></li>
 					<li><a href="<?php echo $CLIENT_ROOT; ?>/sitemap.php">Sitemap</a></li>
                                         <li><a href="https://symbiota.org/" target="_blank" rel="noopener noreferrer">About Symbiota</a></li>
+					<li><a href="<?php echo $CLIENT_ROOT; ?>/misc/contacts.php">Contacts</a></li>
                                         <li><a href="https://symbiota.org/docs" target="_blank" rel="noopener noreferrer">Help</a></li>
                                 </ul>
                         </nav>
