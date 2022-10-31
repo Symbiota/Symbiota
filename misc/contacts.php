@@ -25,7 +25,6 @@ include_once('content/lang/misc/aboutproject.'.$LANG_TAG.'.php');
 			<h1><?php echo (isset($LANG['CONTACTS'])?$LANG['CONTACTS']:'Contacts'); ?>:</h1>
 			<h3>The Madagascar Paleontology Project (MPP) Team:</h3>
 			<p>The following researchers and administrators lead <a href="https://www.dmns.org/science/earth-sciences/projects/madagascar-paleontology-projects/">the MPP team</a>:</p>
-			<ul>
 				<li>Dr. David W. Krause, project co-lead, Senior Curator of Vertebrate Paleontology, Denver Museum of Nature & Science</li>
 				<li>Dr. Patrick M. O'Connor, project co-lead, Professor, Department of Biomedical Sciences, Ohio University</li>
 				<li>Dr. Jean Freddy Ranaivoarisoa, Head, Mention Anthropobiologie et Développement Durable, Université d'Antananarivo</li>
