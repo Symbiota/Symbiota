@@ -21,25 +21,25 @@ include_once('content/lang/misc/aboutproject.'.$LANG_TAG.'.php');
 			<b><?php echo (isset($LANG['CONTACTS'])?$LANG['CONTACTS']:'Contacts'); ?></b>
 		</div>
 		<!-- This is inner text! -->
-		<div id="innertext" style="margin:10px 20px">
+		<div id="innertext">
 			<h1><?php echo (isset($LANG['CONTACTS'])?$LANG['CONTACTS']:'Contacts'); ?>:</h1>
-			<h2>The Madagascar Paleontology Project (MPP) Team:</h2>
-			<p><b>The following researchers and administrators lead <a href="https://www.dmns.org/science/earth-sciences/projects/madagascar-paleontology-projects/">the MPP team</a>:</b></p>
+			<h3>The Madagascar Paleontology Project (MPP) Team:</h3>
+			<p>The following researchers and administrators lead <a href="https://www.dmns.org/science/earth-sciences/projects/madagascar-paleontology-projects/">the MPP team</a>:</p>
 			<ul>
-				<li><b>-Dr. David W. Krause</b>, project co-lead, Senior Curator of Vertebrate Paleontology, Denver Museum of Nature & Science</li>
-				<li><b>-Dr. Patrick M. O'Connor</b>, project co-lead, Professor, Department of Biomedical Sciences, Ohio University</li>
-				<li><b>-Dr. Jean Freddy Ranaivoarisoa</b>, Head, Mention Anthropobiologie et Développement Durable, Université d'Antananarivo</li>
-				<li><b>-Dr. Hasina N. Randrianaly</b>, Professor, Mention Bassins Sédimentaires Evolution Conservation, Université d'Antananarivo</li>
-				<li><b>-Dr. Edmond Rasolofotiana</b>, Head, Mention Bassins Sédimentaires Evolution Conservation, Université d'Antananarivo</li>
-				<li><b>-Dr. Raymond R. Rogers</b>, Professor, Department of Geology, Macalester College</li>
-				<li><b>-Dr. Kristina Curry Rogers</b>, Professor, Biology and Geology Departments, Macalester College</li>
-				<li><b>-Dr. Alan Turner</b>, Professor, Department of Anatomical Sciences, Stony Brook University</li>
+				<li>Dr. David W. Krause, project co-lead, Senior Curator of Vertebrate Paleontology, Denver Museum of Nature & Science</li>
+				<li>Dr. Patrick M. O'Connor, project co-lead, Professor, Department of Biomedical Sciences, Ohio University</li>
+				<li>Dr. Jean Freddy Ranaivoarisoa, Head, Mention Anthropobiologie et Développement Durable, Université d'Antananarivo</li>
+				<li>Dr. Hasina N. Randrianaly, Professor, Mention Bassins Sédimentaires Evolution Conservation, Université d'Antananarivo</li>
+				<li>Dr. Edmond Rasolofotiana, Head, Mention Bassins Sédimentaires Evolution Conservation, Université d'Antananarivo</li>
+				<li>Dr. Raymond R. Rogers, Professor, Department of Geology, Macalester College</li>
+				<li>Dr. Kristina Curry Rogers, Professor, Biology and Geology Departments, Macalester College</li>
+				<li>Dr. Alan Turner, Professor, Department of Anatomical Sciences, Stony Brook University</li>
 			
-			<p><b>The following individuals provide technical support for the collections work:</b></p>
-				<li><b>-Joseph R. Groenke</b>, Laboratory Coordinator, Department of Biomedical Sciences, Ohio University</li>
-				<li><b>-Kristen A. MacKenzie</b>, Earth Sciences Collections Manager, Denver Museum of Nature & Science</li>
-				<li><b>-Nicole Neu-Yagle</b>, Earth Sciences Collections Manager, Denver Museum of Nature & Science</li>
-				<li><b>-Bakoliarisoa Rakotozafy</b>, Collections Manager, Mention Bassins Sédimentaires Evolution Conservation, Université d'Antananarivo</li>
+			<p>The following individuals provide technical support for the collections work:</p>
+				<li>Joseph R. Groenke, Laboratory Coordinator, Department of Biomedical Sciences, Ohio University</li>
+				<li>Kristen A. MacKenzie, Earth Sciences Collections Manager, Denver Museum of Nature & Science</li>
+				<li>Nicole Neu-Yagle, Earth Sciences Collections Manager, Denver Museum of Nature & Science</li>
+				<li>Bakoliarisoa Rakotozafy, Collections Manager, Mention Bassins Sédimentaires Evolution Conservation, Université d'Antananarivo</li>
 		</div>
 		<?php
 		include($SERVER_ROOT.'/includes/footer.php');
