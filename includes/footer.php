@@ -4,7 +4,7 @@
                         <img src="<?php echo $CLIENT_ROOT; ?>/images/layout/logo_nsf.gif"/>
                 </a>
                 <a href="https://www.dmns.org/" target="_blank" title="DMNS">
-                        <img src="<?php echo $CLIENT_ROOT; ?>/images/layout/logo_dmns.png"/>
+                        <img src="<?php echo $CLIENT_ROOT; ?>/images/logo_dmns.png"/>
                 </a>
                 <a href="https://www.univ-antananarivo.mg/" target="_blank" title="UA">
                         <img src="<?php echo $CLIENT_ROOT; ?>/images/logo_ua.jpeg"/>
