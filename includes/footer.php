@@ -1,12 +1,15 @@
 <footer>
         <div class="logo-gallery">
-                <a href="https://www.nsf.gov" target="_blank">
+                <a href="https://www.nsf.gov" target="_blank" title="National Science Foundation">
                         <img src="<?php echo $CLIENT_ROOT; ?>/images/layout/logo_nsf.gif" />
                 </a>
-                <a href="http://idigbio.org" target="_blank" title="iDigBio">
-                        <img src="<?php echo $CLIENT_ROOT; ?>/images/layout/logo_idig.png" />
+                <a href="https://www.dmns.org/" target="_blank" title="DMNS">
+                        <img src="<?php echo $CLIENT_ROOT; ?>/images/layout/logo_dmns.png" />
                 </a>
-                <a href="https://biokic.asu.edu" target="_blank" title="Biodiversity Knowledge Integration Center">
+                <a href="https://www.univ-antananarivo.mg/" target="_blank" title="UA">
+                        <img src="<?php echo $CLIENT_ROOT; ?>/images/layout/logo_ua.jpeg" />
+                </a>
+                <a href="https://www.nationalgeographic.com/" target="_blank" title="National Geographic">
                         <img src="<?php echo $CLIENT_ROOT; ?>/images/layout/logo-asu-biokic.png" />
                 </a>
         </div>
