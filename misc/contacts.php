@@ -22,7 +22,7 @@ include_once('content/lang/misc/aboutproject.'.$LANG_TAG.'.php');
 		</div>
 		<!-- This is inner text! -->
 		<div id="innertext">
-			<h1><?php echo (isset($LANG['CONTACTS'])?$LANG['CONTACTS']:'The Madagascar Paleontology Project (MPP) Team:'); ?>:</h1>
+			<h1><?php echo (isset($LANG['CONTACTS'])?$LANG['CONTACTS']:'The Madagascar Paleontology Project (MPP) Team'); ?>:</h1>
 			<p>The following researchers and administrators lead <a href="https://www.dmns.org/science/earth-sciences/projects/madagascar-paleontology-projects/">the MPP team</a>:</p>
 			<ul>
 				<li>Dr. David W. Krause, project co-lead, Senior Curator of Vertebrate Paleontology, Denver Museum of Nature & Science</li>
