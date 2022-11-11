@@ -37,7 +37,7 @@
                                         <img src="<?php echo $CLIENT_ROOT; ?>/images/layout/adalatheriumicon.png" alt="Adalatherium" width="100%">
                                 </a>
                                 <div class="brand-name">
-                                        <h1>Cretaceous Vertebrates of Madagascar</h1>
+                                        <h1 style="text-shadow: 1.5px 1.5px #29343A;">Cretaceous Vertebrates of Madagascar</h1>
                                 </div>
                         </div>
                 </div>
