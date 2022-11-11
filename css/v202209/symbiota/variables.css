@@ -11,12 +11,12 @@
    ========================================================================== */
 :root {
   --header-bg-image: url('../../../images/layout/Berivotra_cropped.jpg');
-  --header-bg-color: #2121216e; /** Transparent color if adding header bg-image **/
+  --header-bg-color: #21212101; /** Transparent color if adding header bg-image **/
   --header-font-color: #fff;
-  --brand-font-size: 2rem;
+  --brand-font-size: 2.5rem;
   --title-font-family: 'Averia Serif Libre', serif;
-  --logo-width: 120px;
-  --menu-top-bg-color: #ffffff00;
+  --logo-width: 225px;
+  --menu-top-bg-color: #37464e;
   --body-bg-color: #fafafa;
   --body-text-color: #000000;
   --body-font-size: 1.2rem;
