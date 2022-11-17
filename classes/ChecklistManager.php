@@ -744,7 +744,7 @@ class ChecklistManager extends Manager{
 
 	//Setters and getters
 	public function setThesFilter($filt){
-		$this->thesFilter = $filt;
+		if(is_numeric($filt)) $this->thesFilter = $filt;
 	}
 
 	public function getThesFilter(){

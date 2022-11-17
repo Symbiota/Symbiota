@@ -127,32 +127,4 @@ else{
 
 //Sanitization
 if($LANG_TAG != 'en' && !in_array($LANG_TAG, $AVAILABLE_LANGS)) $LANG_TAG = 'en';
-
-$RIGHTS_TERMS_DEFS = array(
-    'http://creativecommons.org/publicdomain/zero/1.0/' => array(
-        'title' => 'CC0 1.0 (Public-domain)',
-        'url' => 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
-        'def' => 'Users can copy, modify, distribute and perform the work, even for commercial purposes, all without asking permission.'
-    ),
-    'http://creativecommons.org/licenses/by/3.0/' => array(
-        'title' => 'CC BY (Attribution)',
-        'url' => 'http://creativecommons.org/licenses/by/3.0/legalcode',
-        'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material for any purpose, even commercially. The licensor cannot revoke these freedoms as long as you follow the license terms.'
-    ),
-	'http://creativecommons.org/licenses/by-nc/3.0/' => array(
-        'title' => 'CC BY-NC (Attribution-Non-Commercial)',
-        'url' => 'http://creativecommons.org/licenses/by-nc/3.0/legalcode',
-        'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material. The licensor cannot revoke these freedoms as long as you follow the license terms.'
-    ),
-	'http://creativecommons.org/licenses/by/4.0/' => array(
-        'title' => 'CC BY (Attribution)',
-        'url' => 'http://creativecommons.org/licenses/by/4.0/legalcode',
-        'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material for any purpose, even commercially. The licensor cannot revoke these freedoms as long as you follow the license terms.'
-    ),
-	'http://creativecommons.org/licenses/by-nc/4.0/' => array(
-        'title' => 'CC BY-NC (Attribution-Non-Commercial)',
-        'url' => 'http://creativecommons.org/licenses/by-nc/4.0/legalcode',
-        'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material. The licensor cannot revoke these freedoms as long as you follow the license terms.'
-    )
-);
 ?>

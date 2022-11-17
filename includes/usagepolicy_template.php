@@ -33,17 +33,20 @@ $serverHost = UtilityFunctions::getDomain();
 			<?php
 			if (file_exists($SERVER_ROOT . '/includes/citationportal.php')) {
 				include($SERVER_ROOT . '/includes/citationportal.php');
-			} else {
+			}
+			else {
 				echo 'Biodiversity occurrence data published by: ';
 				if ($DEFAULT_TITLE) {
 					echo $DEFAULT_TITLE;
-				} else {
+				}
+				else {
 					echo 'Name of people or institutional reponsible for maintaining the portal';
 				};
 				echo ' (accessed through the ';
 				if ($DEFAULT_TITLE) {
 					echo $DEFAULT_TITLE;
-				} else {
+				}
+				else {
 					echo 'Name of people or institutional reponsible for maintaining the portal';
 				};
 				echo ' Portal, ' . $serverHost . $CLIENT_ROOT . ', ' . date('Y-m-d') . ').';
@@ -91,14 +94,24 @@ $serverHost = UtilityFunctions::getDomain();
 		</div>
 
 		<h2>Images</h2>
-		<p>Images within this website have been generously contributed by their owners to promote education and research. These contributors retain the full copyright for their images. Unless stated otherwise, images are made available under the Creative Commons Attribution-ShareAlike (<a href="http://creativecommons.org/licenses/by-sa/3.0/" target="_blank">CC BY-SA</a>). Users are allowed to copy, transmit, reuse, and/or adapt content, as long as attribution regarding the source of the content is made. If the content is altered, transformed, or enhanced, it may be re-distributed only under the same or similar license by which it was acquired.
+		<p>Images within this website have been generously contributed by their owners to promote education and research. These contributors retain the full copyright for their images.
+		Unless stated otherwise, images are made available under the Creative Commons Attribution-ShareAlike
+		(<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA</a>).
+		Users are allowed to copy, transmit, reuse, and/or adapt content, as long as attribution regarding the source of the content is made. If the content is altered, transformed,
+		or enhanced, it may be re-distributed only under the same or similar license by which it was acquired.
 		</p>
 
 		<h2>Notes on Specimen Records and Images</h2>
-		<p>Specimens are used for scientific research and because of skilled preparation and careful use they may last for hundreds of years. Some collections have specimens that were collected over 100 years ago that are no longer occur within the area. By making these specimens available on the web as images, their availability and value improves without an increase in inadvertent damage caused by use. Note that if you are considering making specimens, remember collecting normally requires permission of the landowner and, in the case of rare and endangered plants, additional permits may be required. It is best to coordinate such efforts with a regional institution that manages a publically accessible collection.
+		<p>Specimens are used for scientific research and because of skilled preparation and careful use they may last for hundreds of years. Some collections have specimens that were
+		collected over 100 years ago that are no longer occur within the area. By making these specimens available on the web as images, their availability and value improves without
+		an increase in inadvertent damage caused by use. Note that if you are considering making specimens, remember collecting normally requires permission of the landowner and,
+		in the case of rare and endangered plants, additional permits may be required. It is best to coordinate such efforts with a regional institution that manages a publically
+		accessible collection.
 		</p>
 
-		<p><b>Disclaimer:</b> This data portal may contain specimens and historical records that are culturally sensitive. The collections include specimens dating back over 200 years collected from all around the world. Some records may also include offensive language. These records do not reflect the portal community's current viewpoint but rather the social attitudes and circumstances of the time period when specimens were collected or cataloged.
+		<p><b>Disclaimer:</b> This data portal may contain specimens and historical records that are culturally sensitive. The collections include specimens dating back over 200 years
+		collected from all around the world. Some records may also include offensive language. These records do not reflect the portal community's current viewpoint but rather the
+		social attitudes and circumstances of the time period when specimens were collected or cataloged.
 		</p>
 	</div>
 	<?php

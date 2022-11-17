@@ -117,30 +117,30 @@ $collManager->cleanOutArr($collData);
 		});
 
 		function verifyCollEditForm(f) {
-			if (f.institutioncode.value == '') {
+			if (f["institutioncode"].value == '') {
 				alert("<?php echo (isset($LANG['NEED_INST_CODE']) ? $LANG['NEED_INST_CODE'] : 'Institution Code must have a value'); ?>");
 				return false;
 			}
-			if (f.collectionname.value == '') {
+			if (f["collectionname"].value == '') {
 				alert("<?php echo (isset($LANG['NEED_COLL_VALUE']) ? $LANG['NEED_COLL_VALUE'] : 'Collection Name must have a value'); ?>");
 				return false;
 			}
-			if (f.managementtype.value == "Snapshot") {
-				if (f.guidtarget.value == "symbiotaUUID") {
+			if (f["managementtype"].value == "Snapshot") {
+				if (f["guidtarget"].value == "symbiotaUUID") {
 					alert("<?php echo (isset($LANG['CANNOT_GUID']) ? $LANG['CANNOT_GUID'] : 'The Symbiota Generated GUID option cannot be selected for a collection that is managed locally outside of the data portal (e.g. Snapshot management type). In this case, the GUID must be generated within the source collection database and delivered to the data portal as part of the upload process.'); ?>");
 					return false;
 				}
 			}
-			if (!isNumeric(f.latitudedecimal.value) || !isNumeric(f.longitudedecimal.value)) {
+			if (!isNumeric(f["latitudedecimal"].value) || !isNumeric(f["longitudedecimal"].value)) {
 				alert("<?php echo (isset($LANG['NEED_DECIMAL']) ? $LANG['NEED_DECIMAL'] : 'Latitude and longitude values must be in the decimal format (numeric only)'); ?>");
 				return false;
 			}
-			if (f.rights.value == "") {
+			if (f["rights"].value == "") {
 				alert("<?php echo (isset($LANG['NEED_RIGHTS']) ? $LANG['NEED_RIGHTS'] : 'Rights field (e.g. Creative Commons license) must have a selection'); ?>");
 				return false;
 			}
 			try {
-				if (!isNumeric(f.sortseq.value)) {
+				if (!isNumeric(f["sortseq"].value)) {
 					alert("<?php echo (isset($LANG['SORT_NUMERIC']) ? $LANG['SORT_NUMERIC'] : 'Sort sequence must be numeric only'); ?>");
 					return false;
 				}
@@ -155,27 +155,27 @@ $collManager->cleanOutArr($collData);
 		}
 
 		function checkManagementTypeGuidSource(f) {
-			if (f.managementtype.value == "Snapshot" && f.guidtarget.value == "symbiotaUUID") {
+			if (f["managementtype"].value == "Snapshot" && f["guidtarget"].value == "symbiotaUUID") {
 				alert("<?php echo (isset($LANG['CANNOT_GUID']) ? $LANG['CANNOT_GUID'] : 'The Symbiota Generated GUID option cannot be selected for a collection that is managed locally outside of the data portal (e.g. Snapshot management type). In this case, the GUID must be generated within the source collection database and delivered to the data portal as part of the upload process.'); ?>");
-				f.guidtarget.value = '';
-			} else if (f.managementtype.value == "Aggregate" && f.guidtarget.value != "" && f.guidtarget.value != "occurrenceId") {
+				f["guidtarget"].value = '';
+			} else if (f["managementtype"].value == "Aggregate" && f["guidtarget"].value != "" && f["guidtarget"].value != "occurrenceId") {
 				alert("<?php echo (isset($LANG['AGG_GUID']) ? $LANG['AGG_GUID'] : 'An Aggregate dataset (e.g. specimens coming from multiple collections) can only have occurrenceID selected for the GUID source'); ?>");
-				f.guidtarget.value = 'occurrenceId';
+				f["guidtarget"].value = 'occurrenceId';
 			}
-			if (!f.guidtarget.value) f.publishToGbif.checked = false;
+			if (!f["guidtarget"].value) f["publishToGbif"].checked = false;
 		}
 
 		function checkGUIDSource(f) {
-			if (f.publishToGbif.checked == true) {
-				if (!f.guidtarget.value) {
+			if (f["publishToGbif"].checked == true) {
+				if (!f["guidtarget"].value) {
 					alert("<?php echo (isset($LANG['NEED_GUID']) ? $LANG['NEED_GUID'] : 'You must select a GUID source in order to publish to data aggregators.'); ?>");
-					f.publishToGbif.checked = false;
+					f["publishToGbif"].checked = false;
 				}
 			}
 		}
 
 		function verifyAddAddressForm(f) {
-			if (f.iid.value == "") {
+			if (f["iid"].value == "") {
 				alert("<?php echo (isset($LANG['SEL_INST']) ? $LANG['SEL_INST'] : 'Select an institution to be linked'); ?>");
 				return false;
 			}

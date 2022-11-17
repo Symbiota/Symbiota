@@ -1253,7 +1253,7 @@ function dwcDoc(dcTag){
 
 function openOccurrenceSearch(target) {
 	collId = document.fullform.collid.value;
-	occWindow=open("../misc/occurrencesearch.php?targetid="+target+"&collid="+collId,"occsearch","resizable=1,scrollbars=1,toolbar=0,width=750,height=600,left=20,top=20");
+	occWindow=open("../misc/occurrencesearch.php?targetid="+target+"&collid="+collId,"occsearch","resizable=1,scrollbars=1,toolbar=0,width=750,height=600,left=200,top=40");
 	occWindow.focus();
 	if (occWindow.opener == null) occWindow.opener = self;
 }

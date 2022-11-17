@@ -4,25 +4,19 @@ include_once($SERVER_ROOT.'/classes/TaxonomyUpload.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyHarvester.php');
 include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/batchloader.'.$LANG_TAG.'.php');
 
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' . $CHARSET);
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl='.$CLIENT_ROOT.'/taxa/taxonomy/batchloader.php');
 ini_set('max_execution_time', 3600);
 
-$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
-$taxAuthId = (array_key_exists('taxauthid',$_REQUEST)?$_REQUEST['taxauthid']:1);
-$kingdomName = (array_key_exists('kingdomname',$_REQUEST)?$_REQUEST['kingdomname']:'');
-$sciname = (array_key_exists('sciname',$_REQUEST)?$_REQUEST['sciname']:'');
-$targetApi = (array_key_exists('targetapi',$_REQUEST)?$_REQUEST['targetapi']:'');
-$rankLimit = (array_key_exists('ranklimit',$_REQUEST)?$_REQUEST['ranklimit']:'');
-
-//Sanitation
-if(!is_numeric($taxAuthId)) $taxAuthId = 1;
-$kingdomName = filter_var ( $kingdomName, FILTER_SANITIZE_STRING);
-$sciname = filter_var ( $sciname, FILTER_SANITIZE_STRING);
-if(!is_numeric($rankLimit)) $rankLimit = 0;
+$action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
+$taxAuthId = (array_key_exists('taxauthid', $_REQUEST) ? filter_var($_REQUEST['taxauthid'], FILTER_SANITIZE_NUMBER_INT) : 1);
+$kingdomName = (array_key_exists('kingdomname', $_REQUEST) ? filter_var($_REQUEST['kingdomname'], FILTER_SANITIZE_STRING) : '');
+$sciname = (array_key_exists('sciname', $_REQUEST) ? filter_var($_REQUEST['sciname'], FILTER_SANITIZE_STRING) : '');
+$targetApi = (array_key_exists('targetapi',$_REQUEST) ? filter_var($_REQUEST['targetapi'], FILTER_SANITIZE_STRING) : '');
+$rankLimit = (array_key_exists('ranklimit', $_REQUEST) ? filter_var($_REQUEST['ranklimit'], FILTER_SANITIZE_NUMBER_INT):'');
 
 $isEditor = false;
-if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
+if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 	$isEditor = true;
 }
 
@@ -30,7 +24,6 @@ $loaderManager = new TaxonomyUpload();
 $loaderManager->setTaxaAuthId($taxAuthId);
 $loaderManager->setKingdomName($kingdomName);
 
-$status = "";
 $fieldMap = Array();
 if($isEditor){
 	$ulFileName = array_key_exists('ulfilename',$_REQUEST)?$_REQUEST['ulfilename']:'';
@@ -187,8 +180,8 @@ include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath">
 	<a href="../../index.php"><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
-	<a href="taxonomydisplay.php"><b><?php echo (isset($LANG['BASIC_TREE_VIEWER'])?$LANG['BASIC_TREE_VIEWER']:'Basic Tree Viewer'); ?></b></a> &gt;&gt;
-	<a href="taxonomydynamicdisplay.php"><b><?php echo (isset($LANG['DYN_TREE_VIEWER'])?$LANG['DYN_TREE_VIEWER']:'Dynamic Tree Viewer'); ?></b></a> &gt;&gt;
+	<a href="taxonomydisplay.php"><?php echo (isset($LANG['BASIC_TREE_VIEWER'])?$LANG['BASIC_TREE_VIEWER']:'Basic Tree Viewer'); ?></a> &gt;&gt;
+	<a href="taxonomydynamicdisplay.php"><?php echo (isset($LANG['DYN_TREE_VIEWER'])?$LANG['DYN_TREE_VIEWER']:'Dynamic Tree Viewer'); ?></a> &gt;&gt;
 	<a href="batchloader.php"><b><?php echo (isset($LANG['TAX_BATCH_LOADER'])?$LANG['TAX_BATCH_LOADER']:'Taxa Batch Loader'); ?></b></a>
 </div>
 <?php
@@ -219,8 +212,8 @@ if($isEditor){
 								</th>
 							</tr>
 							<?php
-							$translationMap = array('phylum'=>'division','division'=>'phylum','sciname'=>'scinameinput','scientificname'=>'scinameinput',
-								'scientificnameauthorship'=>'author','acceptedname'=>'acceptedstr','vernacularname'=>'vernacular');
+							$translationMap = array('phylum'=>'division', 'division'=>'phylum', 'subphylum'=>'subdivision', 'subdivision'=>'subphylum', 'sciname'=>'scinameinput',
+								'scientificname'=>'scinameinput', 'scientificnameauthorship'=>'author', 'acceptedname'=>'acceptedstr', 'vernacularname'=>'vernacular');
 							$sArr = $loaderManager->getSourceArr();
 							$tArr = $loaderManager->getTargetArr();
 							asort($tArr);

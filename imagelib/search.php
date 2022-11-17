@@ -4,18 +4,18 @@ include_once($SERVER_ROOT.'/content/lang/imagelib/search.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/ImageLibrarySearch.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 
-$taxonType = isset($_REQUEST['taxontype'])?$_REQUEST['taxontype']:0;
-$useThes = array_key_exists('usethes',$_REQUEST)?$_REQUEST['usethes']:0;
-$taxaStr = isset($_REQUEST['taxa'])?$_REQUEST['taxa']:'';
-$phUid = array_key_exists('phuid',$_REQUEST)?$_REQUEST['phuid']:0;
-$tags = array_key_exists('tags',$_REQUEST)?$_REQUEST['tags']:'';
-$keywords = array_key_exists('keywords',$_REQUEST)?$_REQUEST['keywords']:'';
-$imageCount = isset($_REQUEST['imagecount'])?$_REQUEST['imagecount']:'all';
-$imageType = isset($_REQUEST['imagetype'])?$_REQUEST['imagetype']:0;
-$pageNumber = array_key_exists('page',$_REQUEST)?$_REQUEST['page']:1;
-$cntPerPage = array_key_exists('cntperpage',$_REQUEST)?$_REQUEST['cntperpage']:200;
-$catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
+$taxonType = isset($_REQUEST['taxontype']) ? filter_var($_REQUEST['taxontype'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$useThes = array_key_exists('usethes',$_REQUEST) ? filter_var($_REQUEST['usethes'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$taxaStr = isset($_REQUEST['taxa']) ? filter_var($_REQUEST['taxa'], FILTER_SANITIZE_STRING) : '';
+$phUid = array_key_exists('phuid',$_REQUEST) ? filter_var($_REQUEST['phuid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$tags = array_key_exists('tags',$_REQUEST) ? filter_var($_REQUEST['tags'], FILTER_SANITIZE_STRING) : '';
+$keywords = array_key_exists('keywords',$_REQUEST) ? filter_var($_REQUEST['keywords'], FILTER_SANITIZE_STRING) : '';
+$imageCount = isset($_REQUEST['imagecount']) ? filter_var($_REQUEST['imagecount'], FILTER_SANITIZE_STRING) : 'all';
+$imageType = isset($_REQUEST['imagetype']) ? filter_var($_REQUEST['imagetype'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$pageNumber = array_key_exists('page',$_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
+$cntPerPage = array_key_exists('cntperpage',$_REQUEST) ? filter_var($_REQUEST['cntperpage'], FILTER_SANITIZE_NUMBER_INT) : 200;
+$catId = array_key_exists('catid',$_REQUEST) ? filter_var($_REQUEST['catid'], FILTER_SANITIZE_STRING) : 0;
+$action = array_key_exists('submitaction',$_REQUEST) ? filter_var($_REQUEST['submitaction'], FILTER_SANITIZE_STRING) : '';
 
 if(!$useThes && !$action) $useThes = 1;
 if(!$taxonType && isset($DEFAULT_TAXON_SEARCH)) $taxonType = $DEFAULT_TAXON_SEARCH;
@@ -110,7 +110,7 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 							<input id="taxa" name="taxa" type="text" style="width:450px;" value="<?php echo $imgLibManager->getTaxaStr(); ?>" title="Separate multiple names w/ commas" autocomplete="off" />
 						</div>
 						<div style="float:left;margin-left:10px;" >
-							<input name="usethes" type="checkbox" value="1" <?php if(!$action || $imgLibManager->getUseThes()) echo "CHECKED"; ?> >Include Synonyms
+							<input name="usethes" type="checkbox" value="1" <?php if(!$action || $imgLibManager->getUseThes()) echo 'CHECKED'; ?> >Include Synonyms
 						</div>
 					</div>
 					<div style="clear:both;margin-bottom:5px;">

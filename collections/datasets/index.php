@@ -9,13 +9,14 @@ $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'
 
 //Sanitize input variables
 if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) $action = '';
+$isPublic = (isset($_POST['ispublic'])&&is_numeric($_POST['ispublic'])?1:0);
 
 $datasetManager = new OccurrenceDataset();
 
 $statusStr = '';
 if($action == 'createNewDataset'){
 	if($IS_ADMIN || array_key_exists('ClCreate',$USER_RIGHTS)){
-		if(!$datasetManager->createDataset($_POST['name'],$_POST['notes'],$_POST['description'],$_POST['ispublic'],$SYMB_UID)){
+		if(!$datasetManager->createDataset($_POST['name'],$_POST['notes'],$_POST['description'],$isPublic,$SYMB_UID)){
 			$statusStr = implode(',',$datasetManager->getErrorArr());
 		}
 	}

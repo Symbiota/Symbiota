@@ -17,9 +17,9 @@ class DwcArchiverImage{
 		$fieldArr['Owner'] = 'IFNULL(c.rightsholder,CONCAT(c.collectionname," (",CONCAT_WS("-",c.institutioncode,c.collectioncode),")")) AS owner';
 		$termArr['creator'] = 'http://purl.org/dc/elements/1.1/creator';
 		$fieldArr['creator'] = 'IF(i.photographeruid IS NOT NULL,CONCAT_WS(" ",u.firstname,u.lastname),i.photographer) AS creator';
-		$termArr['UsageTerms'] = 'http://ns.adobe.com/xap/1.0/rights/UsageTerms';	//Creative Commons BY-SA 3.0 license
+		$termArr['UsageTerms'] = 'http://ns.adobe.com/xap/1.0/rights/UsageTerms';	//Creative Commons BY-SA 4.0 license
 		$fieldArr['UsageTerms'] = 'i.copyright AS usageterms';
-		$termArr['WebStatement'] = 'http://ns.adobe.com/xap/1.0/rights/WebStatement';	//http://creativecommons.org/licenses/by-nc-sa/3.0/us/
+		$termArr['WebStatement'] = 'http://ns.adobe.com/xap/1.0/rights/WebStatement';	//https://creativecommons.org/licenses/by-nc-sa/4.0/us/
 		$fieldArr['WebStatement'] = 'c.accessrights AS webstatement';
 		$termArr['caption'] = 'http://rs.tdwg.org/ac/terms/caption';
 		$fieldArr['caption'] = 'i.caption';
