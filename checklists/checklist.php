@@ -141,23 +141,15 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 	if(!$printMode) include($SERVER_ROOT.'/includes/header.php');
 	echo '<div class="navpath printoff">';
 	if($pid){
-		echo '<a href="../index.php">'.$LANG['NAV_HOME'].'</a> &gt; ';
-		echo '<a href="'.$CLIENT_ROOT.'/projects/index.php?pid='.$pid.'">';
+		echo '<a href="../index.php">' . $LANG['NAV_HOME'] . '</a> &gt; ';
+		echo '<a href="' . $CLIENT_ROOT . '/projects/index.php?pid=' . $pid . '">';
 		echo $clManager->getProjName();
 		echo '</a> &gt; ';
-		echo '<b>'.$clManager->getClName().'</b>';
+		echo '<b>' . $clManager->getClName() . '</b>';
 	}
 	else{
-		if(isset($checklists_checklistCrumbs)){
-			if($checklists_checklistCrumbs){
-				echo $checklists_checklistCrumbs;
-				echo " <b>".$clManager->getClName()."</b>";
-			}
-		}
-		else{
-			echo '<a href="../index.php">'.$LANG['NAV_HOME'].'</a> &gt;&gt; ';
-			echo ' <b>'.$clManager->getClName().'</b>';
-		}
+		echo '<a href="../index.php">' . $LANG['NAV_HOME'] . '</a> &gt;&gt; ';
+		echo '<a href="checklist.php?clid='. $clid . '&pid=' . $pid . ($dynClid ? '&dynclid=' . $dynClid : $dynClid) . '"><b>' . $clManager->getClName() . '</b></a>';
 	}
 	echo '</div>';
 	?>
@@ -185,9 +177,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 			}
 			?>
 			<div id="title-div">
-				<a href="checklist.php?clid=<?php echo $clid."&pid=".$pid."&dynclid=".$dynClid; ?>">
-					<?php echo $clManager->getClName(); ?>
-				</a>
+				<?php echo $clManager->getClName(); ?>
 			</div>
 			<?php
 			if($activateKey){

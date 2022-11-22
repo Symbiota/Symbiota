@@ -4,11 +4,7 @@ include_once($SERVER_ROOT.'/classes/ChecklistManager.php');
 include_once($SERVER_ROOT.'/content/lang/checklists/index.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']:0;
-
-//Sanitation
-if(!is_numeric($pid)) $pid = 0;
-$pid = filter_var($pid, FILTER_SANITIZE_STRING);
+$pid = array_key_exists('pid', $_REQUEST) ? filter_var($_REQUEST['pid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 
 $clManager = new ChecklistManager();
 $clManager->setProj($pid);
