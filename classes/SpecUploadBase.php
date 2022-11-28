@@ -31,6 +31,7 @@ class SpecUploadBase extends SpecUpload{
 	protected $identSymbFields = array();
 	protected $imageSymbFields = array();
 	protected $filterArr = array();
+	private $targetFieldArr = array();
 
 	private $sourceCharset;
 	private $targetCharset = 'UTF-8';
@@ -101,6 +102,14 @@ class SpecUploadBase extends SpecUpload{
 
 	public function getFieldMap(){
 		return $this->fieldMap;
+	}
+
+	public function getFieldList(){
+		$retStr = '';
+		if($fieldArr = array_keys($this->fieldMap)){
+			$retStr = implode(',', $fieldArr);
+		}
+		return $retStr;
 	}
 
 	public function setIdentFieldMap($fm){
@@ -825,6 +834,13 @@ class SpecUploadBase extends SpecUpload{
 
 	protected function recordCleaningStage2(){
 		$this->outputMsg('<li>Starting Stage 2 cleaning</li>');
+
+		//Make sure default value, based on management type, is set for basisOfRecord
+		$borValue = 'HumanObservation';
+		if($this->collMetadataArr['colltype'] == 'Preserved Specimens') $borValue = 'HumanObservation';
+		$sql = 'UPDATE uploadspectemp SET basisOfRecord = "'.$borValue.'" WHERE basisOfRecord IS NULL AND occid IS NULL';
+		$this->conn->query($sql);
+
 		if($this->uploadType == $this->NFNUPLOAD){
 			//Remove specimens without links back to source
 			$sql = 'DELETE FROM uploadspectemp WHERE (occid IS NULL) AND (collid IN('.$this->collId.'))';
@@ -983,24 +999,16 @@ class SpecUploadBase extends SpecUpload{
 
 	private function versionInternalEdits(){
 		if($this->versionDataEdits){
-			$fieldArr = array();
-			$sql = 'SHOW COLUMNS FROM omoccurrences';
-			$rs = $this->conn->query($sql);
-			while($row = $rs->fetch_object()){
-				$field = strtolower($row->Field);
-				if(in_array($field, $this->symbFields)) $fieldArr[] = $field;
-			}
-			$rs->free();
-
 			$sqlFrag = '';
-			foreach($fieldArr as $field){
-				$sqlFrag .= ',u.'.$field.',o.'.$field.' as old_'.$field;
+			$excludedFieldArr = array('dateentered','observeruid');
+			foreach($this->targetFieldArr as $field){
+				if(!in_array($field, $excludedFieldArr)) $sqlFrag .= ',u.'.$field.',o.'.$field.' as old_'.$field;
 			}
 			$sql = 'SELECT o.occid'.$sqlFrag.' FROM omoccurrences o INNER JOIN uploadspectemp u ON o.occid = u.occid WHERE o.collid IN('.$this->collId.') AND u.collid IN('.$this->collId.')';
+			echo $sql;
 			$rs = $this->conn->query($sql);
-			$excludedFieldArr = array('dateentered','observeruid');
 			while($r = $rs->fetch_assoc()){
-				foreach($fieldArr as $field){
+				foreach($this->targetFieldArr as $field){
 					if(in_array($field, $excludedFieldArr)) continue;
 					if($r[$field] != $r['old_'.$field]){
 						if($this->uploadType == $this->SKELETAL && $r['old_'.$field]) continue;
@@ -1015,9 +1023,11 @@ class SpecUploadBase extends SpecUpload{
 	private function insertOccurEdit($occid, $fieldName, $fieldValueNew, $fieldValueOld){
 		if($fieldValueNew == NULL) $fieldValueNew = '';
 		if($fieldValueOld == NULL) $fieldValueOld = '';
-		$sql = 'INSERT INTO omoccuredits(occid, fieldName, fieldValueNew, fieldValueOld, uid) VALUES(?,?,?,?,?)';
+		$symbUid = $GLOBALS['SYMB_UID'];
+		$appliedStatus = 1;
+		$sql = 'INSERT INTO omoccuredits(occid, fieldName, fieldValueNew, fieldValueOld, appliedStatus, uid) VALUES(?,?,?,?,?,?)';
 		if($stmt = $this->conn->prepare($sql)) {
-			$stmt->bind_param('isssi', $occid, $fieldName, $fieldValueNew, $fieldValueOld, $GLOBALS['SYMB_UID']);
+			$stmt->bind_param('isssii', $occid, $fieldName, $fieldValueNew, $fieldValueOld, $appliedStatus, $symbUid);
 			if(!$stmt->execute()){
 				$this->errorStr = 'ERROR inserting Occurrence Edit: '.$stmt->error;
 				echo $this->errorStr.'<br/>';
@@ -1486,7 +1496,7 @@ class SpecUploadBase extends SpecUpload{
 			$this->conn->query($sql);
 		}
 
-		//Do some more cleaning of the data after it haas been indexed in the omoccurrences table
+		//Do some more cleaning of the data after it has been indexed in the omoccurrences table
 		$occurMain = new OccurrenceMaintenance($this->conn);
 
 		if(!$occurMain->generalOccurrenceCleaning($this->collId)){
@@ -1559,10 +1569,6 @@ class SpecUploadBase extends SpecUpload{
 			//Temporarily code until Specify output UUID as occurrenceID
 			if($this->sourceDatabaseType == 'specify' && (!isset($recMap['occurrenceid']) || !$recMap['occurrenceid'])){
 				if(strlen($recMap['dbpk']) == 36) $recMap['occurrenceid'] = $recMap['dbpk'];
-			}
-
-			if(!array_key_exists('basisofrecord',$recMap) || !$recMap['basisofrecord']){
-				$recMap['basisofrecord'] = ($this->collMetadataArr["colltype"]=="Preserved Specimens"?'PreservedSpecimen':'HumanObservation');
 			}
 
 			$this->buildPaleoJSON($recMap);
@@ -1945,6 +1951,57 @@ class SpecUploadBase extends SpecUpload{
 		}
 	}
 
+	private function getPaleoTerms(){
+		$paleoTermArr = array_merge($this->getPaleoDwcTerms(),$this->getPaleoSymbTerms());
+		sort($paleoTermArr);
+		return $paleoTermArr;
+	}
+
+	private function getPaleoDwcTerms(){
+		$paleoTermArr = array('paleo-earliesteonorlowesteonothem','paleo-latesteonorhighesteonothem','paleo-earliesteraorlowesterathem',
+				'paleo-latesteraorhighesterathem','paleo-earliestperiodorlowestsystem','paleo-latestperiodorhighestsystem','paleo-earliestepochorlowestseries',
+				'paleo-latestepochorhighestseries','paleo-earliestageorloweststage','paleo-latestageorhigheststage','paleo-lowestbiostratigraphiczone','paleo-highestbiostratigraphiczone');
+		return $paleoTermArr;
+	}
+
+	private function getPaleoSymbTerms(){
+		$paleoTermArr = array('paleo-geologicalcontextid','paleo-lithogroup','paleo-formation','paleo-member','paleo-bed','paleo-eon','paleo-era','paleo-period','paleo-epoch',
+				'paleo-earlyinterval','paleo-lateinterval','paleo-absoluteage','paleo-storageage','paleo-stage','paleo-localstage','paleo-biota','paleo-biostratigraphy',
+				'paleo-taxonenvironment','paleo-lithology','paleo-stratremarks','paleo-element','paleo-slideproperties');
+		return $paleoTermArr;
+	}
+
+	private function getMaterialSampleTerms(){
+		$msTermArr = array('materialSample-materialSampleID','materialSample-sampleType','materialSample-catalogNumber','materialSample-sampleCondition','materialSample-disposition',
+				'materialSample-preservationType','materialSample-preparationProcess','materialSample-preparationDate','materialSample-individualCount',
+				'materialSample-sampleSize','materialSample-storageLocation','materialSample-remarks');
+		//Get dynamic fields
+		$sql = 'SELECT t.term FROM ctcontrolvocab v INNER JOIN ctcontrolvocabterm t ON v.cvID = t.cvID WHERE v.tableName = "ommaterialsampleextended" AND v.fieldName = "fieldName"';
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$msTermArr[] = 'materialSample-'.$r->term;
+		}
+		$rs->free();
+		return $msTermArr;
+	}
+
+	public function getObserverUidArr(){
+		$retArr = array();
+		if($this->collId){
+			$sql = 'SELECT u.uid, CONCAT_WS(", ",u.lastname, u.firstname) as user '.
+					'FROM users u INNER JOIN userroles r ON u.uid = r.uid '.
+					'WHERE r.tablepk = '.$this->collId.' AND r.role IN("CollEditor","CollAdmin")';
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_object()){
+				$retArr[$r->uid] = $r->user;
+			}
+			$rs->free();
+		}
+		asort($retArr);
+		return $retArr;
+	}
+
+	//Setters and getters
 	public function setIncludeIdentificationHistory($boolIn){
 		$this->includeIdentificationHistory = $boolIn;
 	}
@@ -1989,57 +2046,11 @@ class SpecUploadBase extends SpecUpload{
 		return $this->sourceArr;
 	}
 
-	private function getPaleoTerms(){
-		$paleoTermArr = array_merge($this->getPaleoDwcTerms(),$this->getPaleoSymbTerms());
-		sort($paleoTermArr);
-		return $paleoTermArr;
+	public function setTargetFields($targetStr){
+		$this->targetFieldArr = explode(',', $targetStr);
 	}
 
-	private function getPaleoDwcTerms(){
-		$paleoTermArr = array('paleo-earliesteonorlowesteonothem','paleo-latesteonorhighesteonothem','paleo-earliesteraorlowesterathem',
-			'paleo-latesteraorhighesterathem','paleo-earliestperiodorlowestsystem','paleo-latestperiodorhighestsystem','paleo-earliestepochorlowestseries',
-			'paleo-latestepochorhighestseries','paleo-earliestageorloweststage','paleo-latestageorhigheststage','paleo-lowestbiostratigraphiczone','paleo-highestbiostratigraphiczone');
-		return $paleoTermArr;
-	}
-
-	private function getPaleoSymbTerms(){
-		$paleoTermArr = array('paleo-geologicalcontextid','paleo-lithogroup','paleo-formation','paleo-member','paleo-bed','paleo-eon','paleo-era','paleo-period','paleo-epoch',
-			'paleo-earlyinterval','paleo-lateinterval','paleo-absoluteage','paleo-storageage','paleo-stage','paleo-localstage','paleo-biota','paleo-biostratigraphy',
-			'paleo-taxonenvironment','paleo-lithology','paleo-stratremarks','paleo-element','paleo-slideproperties');
-		return $paleoTermArr;
-	}
-
-	private function getMaterialSampleTerms(){
-		$msTermArr = array('materialSample-materialSampleID','materialSample-sampleType','materialSample-catalogNumber','materialSample-sampleCondition','materialSample-disposition',
-			'materialSample-preservationType','materialSample-preparationProcess','materialSample-preparationDate','materialSample-individualCount',
-			'materialSample-sampleSize','materialSample-storageLocation','materialSample-remarks');
-		//Get dynamic fields
-		$sql = 'SELECT t.term FROM ctcontrolvocab v INNER JOIN ctcontrolvocabterm t ON v.cvID = t.cvID WHERE v.tableName = "ommaterialsampleextended" AND v.fieldName = "fieldName"';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$msTermArr[] = 'materialSample-'.$r->term;
-		}
-		$rs->free();
-		return $msTermArr;
-	}
-
-	public function getObserverUidArr(){
-		$retArr = array();
-		if($this->collId){
-			$sql = 'SELECT u.uid, CONCAT_WS(", ",u.lastname, u.firstname) as user '.
-				'FROM users u INNER JOIN userroles r ON u.uid = r.uid '.
-				'WHERE r.tablepk = '.$this->collId.' AND r.role IN("CollEditor","CollAdmin")';
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$retArr[$r->uid] = $r->user;
-			}
-			$rs->free();
-		}
-		asort($retArr);
-		return $retArr;
-	}
-
-	//Misc functions
+	//Misc support functions
 	protected function copyChunked($from, $to){
 		/*
 		 * If transfers fail for large files, you may need to increase following php.ini variables:

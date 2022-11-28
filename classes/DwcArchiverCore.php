@@ -17,7 +17,7 @@ class DwcArchiverCore extends Manager{
 
 	protected $collArr;
 	private $customWhereSql;
-	private $conditionSql;
+	private $conditionSql = '';
 	private $conditionArr = array();
 	private $condAllowArr;
 	private $overrideConditionLimit = false;
@@ -266,7 +266,7 @@ class DwcArchiverCore extends Manager{
 	}
 
 	private function applyConditions(){
-		$this->conditionSql = '';
+		if($this->conditionSql) return true;
 		if ($this->customWhereSql) {
 			$this->conditionSql = $this->customWhereSql . ' ';
 		}

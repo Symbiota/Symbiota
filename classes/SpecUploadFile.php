@@ -133,9 +133,6 @@ class SpecUploadFile extends SpecUploadBase{
 					unset($recMap);
 					continue;
 				}
-				if($this->uploadType == $this->SKELETAL && (!array_key_exists('recordenteredby', $recMap) || !$recMap['recordenteredby'])){
-					$recMap['recordenteredby'] = 'preprocessed';
-				}
 				$this->loadRecord($recMap);
 				unset($recMap);
 			}

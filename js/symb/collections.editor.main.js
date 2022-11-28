@@ -1275,7 +1275,7 @@ function localitySecurityReasonChanged(){
 
 function securityLockChanged(cb){
 	if(cb.checked == true){
-		if($("input[name=localitysecurityreason]").val() == '') $("input[name=localitysecurityreason]").val("<Security Setting Locked>");
+		if($("input[name=localitysecurityreason]").val() == '') $("input[name=localitysecurityreason]").val("[Security Setting Locked]");
 	}
 	else{
 		$("input[name=localitysecurityreason]").val("")

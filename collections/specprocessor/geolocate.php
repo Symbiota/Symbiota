@@ -31,7 +31,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 		?>
 		<script src="../../js/jquery-3.2.1.min.js" type="text/javascript"></script>
 		<script src="../../js/symb/shared.js" type="text/javascript"></script>
-		<script src="../../js/symb/geolocate.js?ver=2e" type="text/javascript"></script>
+		<script src="../../js/symb/geolocate.js?ver=3" type="text/javascript"></script>
 	</head>
 	<body>
 		<!-- This is inner text! -->
@@ -178,7 +178,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 											<input name="format" type="hidden" value="csv" />
 											<input name="schema" type="hidden" value="coge" />
 											<div style="margin:5px">
-												<button id="builddwcabutton" name="builddwcabutton" type="button" value="Push Data to GeoLocate CoGe" onclick="cogePublishDwca(this.form)" disabled><?php echo $LANG['PUSH_DATA']; ?></button>
+												<button id="builddwcabutton" name="builddwcabutton" type="button" onclick="cogePublishDwca(this.form)" ><?php echo $LANG['PUSH_DATA']; ?></button>
 												<span id="coge-download" style="display:none;color:orange"><?php echo $LANG['CREATING_PACKAGE']; ?>... <img src="../../images/workingcircle.gif" style="width:13px;" /></span>
 												<span id="coge-push2coge" style="display:none;color:orange"><?php echo $LANG['PUSHING_TO_COGE']; ?>... <img src="../../images/workingcircle.gif" style="width:13px;" /></span>
 												<span id="coge-importcomplete" style="display:none;color:green">
