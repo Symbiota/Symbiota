@@ -3,12 +3,12 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDuplicate.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$dupeDepth = array_key_exists('dupedepth',$_REQUEST)?$_REQUEST['dupedepth']:0;
-$start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
-$limit = array_key_exists('limit',$_REQUEST)?$_REQUEST['limit']:1000;
-$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
+$collId = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$dupeDepth = array_key_exists('dupedepth', $_REQUEST) ? filter_var($_REQUEST['dupedepth'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$start = array_key_exists('start', $_REQUEST) ? filter_var($_REQUEST['start'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$limit = array_key_exists('limit', $_REQUEST) ? filter_var($_REQUEST['limit'], FILTER_SANITIZE_NUMBER_INT) : 1000;
+$action = array_key_exists('action', $_REQUEST) ? filter_var($_REQUEST['action'], FILTER_SANITIZE_STRING) : '';
+$formSubmit = array_key_exists('formsubmit' , $_POST) ? $_POST['formsubmit'] : '';
 
 if(!$SYMB_UID){
 	header('Location: ../../profile/index.php?refurl=../collections/datasets/duplicatemanager.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
@@ -19,15 +19,15 @@ $collMap = $dupManager->getCollMap($collId);
 
 $statusStr = '';
 $isEditor = 0;
-if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"]))
-	|| ($collMap['colltype'] == 'General Observations')){
+if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin']))){
+	$isEditor = 1;
+}
+elseif($collMap['colltype'] == 'General Observations' && array_key_exists('CollEditor', $USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'])){
 	$isEditor = 1;
 }
 
 //If collection is a general observation project, limit to User
-if($collMap['colltype'] == 'General Observations'){
-	$dupManager->setObsUid($SYMB_UID);
-}
+if($collMap['colltype'] == 'General Observations') $dupManager->setObsUid($SYMB_UID);
 
 if($isEditor && $formSubmit){
 	if($formSubmit == 'clusteredit'){
@@ -47,18 +47,8 @@ if($isEditor && $formSubmit){
 	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Cleaner</title>
 	<?php
 	$activateJQuery = false;
-	if(file_exists($SERVER_ROOT.'/includes/head.php')){
-		include_once($SERVER_ROOT.'/includes/head.php');
-    }
-	else{
-		echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-		echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-		echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-	}
+	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-    <style type="text/css">
-		table.styledtable td { white-space: nowrap; }
-    </style>
 	<script type="text/javascript">
 		function verifyEditForm(f){
 			if(f.title == ""){
@@ -69,7 +59,7 @@ if($isEditor && $formSubmit){
 		}
 
 		function openOccurPopup(occid) {
-			occWindow=open("../individual/index.php?occid="+occid,"occwin"+occid,"resizable=1,scrollbars=1,toolbar=0,width=750,height=600,left=20,top=20");
+			occWindow=open("../individual/index.php?occid="+occid,"occwin"+occid,"resizable=1,scrollbars=1,toolbar=0,width=900,height=600,left=20,top=20");
 			if(occWindow.opener == null) occWindow.opener = self;
 		}
 
@@ -99,6 +89,10 @@ if($isEditor && $formSubmit){
 			}
 		}
 	</script>
+    <style type="text/css">
+		table.styledtable td { white-space: nowrap; }
+		fieldset{ min-height: 400px }
+    </style>
 </head>
 <body>
 	<?php
@@ -107,12 +101,15 @@ if($isEditor && $formSubmit){
 	?>
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Management</a> &gt;&gt;
 		<?php
+		if($collMap['colltype'] == 'General Observations'){
+			echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Management Menu</a> &gt;&gt; ';
+		}
+		else{
+			echo '<a href="../misc/collprofiles.php?collid='.$collId.'&emode=1">Collection Management</a> &gt;&gt; ';
+		}
 		if($action){
-			echo '<a href="duplicatemanager.php?collid='.$collId.'">';
-			echo 'Duplicate Management';
-			echo '</a> &gt;&gt; ';
+			echo '<a href="duplicatemanager.php?collid='.$collId.'">Duplicate Management</a> &gt;&gt; ';
 			echo '<b>Duplicate Clusters</b>';
 		}
 		else{
@@ -159,10 +156,10 @@ if($isEditor && $formSubmit){
 						</a> - tool for batch clustering specimen duplicates based on matching last name of collector, collector number, and collection date
 					</div>
 					<?php
-					if(isset($ACTIVATE_EXSICCATI) && $ACTIVATE_EXSICCATI){
+					if(!empty($ACTIVATE_EXSICCATI) && $collMap['colltype'] == 'Preserved Specimens'){
 						?>
 						<div style="margin:25px;">
-							<a href="../exsiccati/index.php?collid=<?php echo $collId; ?>">
+							<a href="../exsiccati/index.php?collid=<?php echo $collId; ?>" target="_blank">
 								Exsiccatae duplicates
 							</a> - list of exsiccatae titles that are associated with this collection (including data filtering and download capabilities)
 						</div>

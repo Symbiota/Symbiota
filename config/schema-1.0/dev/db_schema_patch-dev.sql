@@ -148,6 +148,63 @@ ALTER TABLE `fmchecklists`
   ADD COLUMN `recordID` VARCHAR(45) NULL AFTER `guid`,
   ADD COLUMN `modifiedUid` INT UNSIGNED NULL AFTER `recordID`;
 
+ALTER TABLE `fmvouchers` 
+  DROP FOREIGN KEY `FK_vouchers_cl`;
+
+ALTER TABLE `fmvouchers` 
+  DROP INDEX `chklst_taxavouchers` ;
+
+ALTER TABLE `fmvouchers` 
+  DROP FOREIGN KEY `FK_fmvouchers_occ`;
+
+ALTER TABLE `fmchklsttaxalink` 
+  ADD COLUMN `clTaxaID` INT UNSIGNED NOT NULL AUTO_INCREMENT FIRST,
+  CHANGE COLUMN `morphospecies` `morphospecies` VARCHAR(45) NULL DEFAULT '' ,
+  DROP PRIMARY KEY,
+  ADD PRIMARY KEY (`clTaxaID`),
+  ADD UNIQUE INDEX `UQ_chklsttaxalink` (`TID` ASC, `CLID` ASC, `morphospecies` ASC);
+
+ALTER TABLE `fmchklsttaxalink` 
+  DROP FOREIGN KEY `FK_chklsttaxalink_cid`,
+  DROP FOREIGN KEY `FK_chklsttaxalink_tid`;
+
+ALTER TABLE `fmchklsttaxalink` 
+  CHANGE COLUMN `TID` `tid` INT(10) UNSIGNED NOT NULL,
+  CHANGE COLUMN `CLID` `clid` INT(10) UNSIGNED NOT NULL,
+  CHANGE COLUMN `morphospecies` `morphoSpecies` VARCHAR(45) NULL DEFAULT '' ,
+  CHANGE COLUMN `familyoverride` `familyOverride` VARCHAR(50) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Habitat` `habitat` VARCHAR(250) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Abundance` `abundance` VARCHAR(50) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Notes` `notes` VARCHAR(2000) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Nativity` `nativity` VARCHAR(50) NULL DEFAULT NULL COMMENT 'native, introducted' ,
+  CHANGE COLUMN `Endemic` `endemic` VARCHAR(45) NULL DEFAULT NULL ,
+  CHANGE COLUMN `internalnotes` `internalNotes` VARCHAR(250) NULL DEFAULT NULL ,
+  CHANGE COLUMN `InitialTimeStamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
+
+ALTER TABLE `fmchklsttaxalink` 
+  ADD CONSTRAINT `FK_chklsttaxalink_tid`  FOREIGN KEY (`tid`)  REFERENCES `taxa` (`TID`)  ON DELETE CASCADE  ON UPDATE CASCADE;
+
+ALTER TABLE `fmchklsttaxalink` 
+  ADD CONSTRAINT `FK_chklsttaxalink_cid`  FOREIGN KEY (`clid`)  REFERENCES `fmchecklists` (`CLID`)  ON DELETE CASCADE  ON UPDATE CASCADE;
+
+
+ALTER TABLE `fmvouchers` 
+  DROP PRIMARY KEY;
+
+ALTER TABLE `fmvouchers` 
+  ADD COLUMN `clVoucherID` INT UNSIGNED NOT NULL AUTO_INCREMENT FIRST,
+  ADD PRIMARY KEY (`clVoucherID`);
+
+ALTER TABLE `fmvouchers` 
+  ADD COLUMN `clTaxaID` INT UNSIGNED NULL AFTER `clVoucherID`,
+  ADD INDEX `FK_fmvouchers_occ_idx` (`occid` ASC),
+  ADD INDEX `FK_fmvouchers_tidclid_idx` (`clTaxaID` ASC);
+
+ALTER TABLE `fmvouchers` 
+  ADD CONSTRAINT `FK_fmvouchers_occ`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_fmvouchers_tidclid`  FOREIGN KEY (`clTaxaID`)  REFERENCES `fmchklsttaxalink` (`clTaxaID`)  ON DELETE CASCADE  ON UPDATE CASCADE;
+
+
 ALTER TABLE `fmchklstcoordinates`
   ADD COLUMN `sourceName` VARCHAR(75) NULL AFTER `decimalLongitude`,
   ADD COLUMN `sourceIdentifier` VARCHAR(45) NULL AFTER `sourceName`,

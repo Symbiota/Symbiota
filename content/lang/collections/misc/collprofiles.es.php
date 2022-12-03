@@ -5,12 +5,16 @@ Language: Español (Spanish)
 ------------------
 */
 
+include_once($SERVER_ROOT.'/content/lang/collections/misc/sharedterms.es.php');
+
 $LANG['RSS_FEED'] = 'RSS Feed';
 $LANG['CONTACT'] = 'Contactos';
 $LANG['HOMEPAGE'] = 'Sitio Web';
 $LANG['MORE_INFO'] = 'M&aacute;s Informaci&oacute;n';
 $LANG['COLLECTION_SEARCH'] = 'P&aacute;gina de B&uacute;squeda de Colecci&oacute;n';
 $LANG['UPDATE_STATISTICS'] = 'Actualizando las estad&iacute;sticas relacionadas con esta colecci&oacute;n...';
+$LANG['TOGGLE_MAN'] = 'Alternar el panel de control del administrador';
+$LANG['DAT_EDIT'] = 'Panel de control del editor de datos';
 $LANG['SUBMIT_IMAGE_V'] = 'Someter una imagen voucher (observaci&oacute;n con el apoyo de una foto)';
 $LANG['ADD_NEW_OCCUR'] = 'Agregar nuevo registro de ocurrencias';
 $LANG['CREATE_NEW_REC'] = 'Crear Registros Nuevos Usando Im&aacute;gen';

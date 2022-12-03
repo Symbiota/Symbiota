@@ -10,6 +10,7 @@ $LANG['TOTAL_RECORDS'] = "Nombre total d'Occurrences";
 $LANG['DISPLAY_ALL'] = 'Afficher Tous Enregistrements';
 $LANG['SEARCH_RECORDS'] = 'Rechercher des Enregistrements';
 $LANG['ADD_RECORD'] = 'Ajouter Nouvelle Occurrence';
+$LANG['DUP_CLUSTER'] = 'regroupement en Double';
 $LANG['PRINT_LABELS'] = 'Imprimer des Étiquettes';
 $LANG['PRINT_ANNOTATIONS'] = 'Imprimer des Étiquettes d\'Annotation';
 $LANG['SUBMIT_OBSERVATION'] = "Soumettre des Observations avec un Échantillon d'Image";
@@ -25,3 +26,4 @@ $LANG['MISC_TOOLS'] = 'Outils Divers';
 $LANG['DATASET_MANAGEMENT'] = 'Gestion des Jeux de Données';
 $LANG['CROSS_COL_GEOREF'] = 'Outil de Géoréférencement de Collections Multiples';
 $LANG['CROSS_COL_TAXON'] = 'Outil de Nettoyage de Taxonomie de Collections Multiples';
+?>
