@@ -35,6 +35,12 @@ const fieldProps = [
     id: 'scientificname',
     group: 'taxon',
   },
+  {
+    block: 'labelBlock',
+    name: 'Binomial Name',
+    id: 'speciesname',
+    group: 'taxon',
+  },
   { block: 'labelBlock', name: 'Taxon Rank', id: 'taxonrank', group: 'taxon' },
   {
     block: 'labelBlock',
