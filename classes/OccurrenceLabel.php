@@ -187,6 +187,22 @@ class OccurrenceLabel{
 				while($row2 = $rs2->fetch_assoc()){
 					$row2 = array_change_key_case($row2);
 					if(array_key_exists($row2['occid'],$authorArr)) $row2['parentauthor'] = $authorArr[$row2['occid']];
+
+					// The name is not in the taxonomic thesaurus, so attempt a fix to add species name, taxon rank, and infraspecific epithet
+					if($row2['speciesname'] == "" && $row2['scientificname'] != "") {
+						$pattern = '/(.*) (ssp.|var.|nothossp.|f.) (.*)/';
+						// Check for infrataxa and split out
+						if(preg_match($pattern, $row2['scientificname'])) {
+							$row2['speciesname'] = preg_replace($pattern, "$1", $row2['scientificname']);
+							$row2['taxonrank'] = preg_replace($pattern, "$2", $row2['scientificname']);
+							$row2['infraspecificepithet'] = preg_replace($pattern, "$3", $row2['scientificname']);
+						} else {
+							$row2['speciesname'] = $row2['scientificname'];
+						}
+					}
+					// Remove autonym authors if they are specified in the occurrence record, they should not be included
+					if($speciesAuthors && $row2['infraspecificepithet'] != "" && $row2['scientificnameauthorship'] == $row2['parentauthor'] && preg_match('/.* '.$row2['infraspecificepithet']."/", $row2['speciesname'])) $row2['scientificnameauthorship'] = "";
+
 					$retArr[$row2['occid']] = $row2;
 				}
 				$rs2->free();
