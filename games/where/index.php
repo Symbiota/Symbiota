@@ -20,8 +20,8 @@ $whereManager = new GamesWhereManager();
 <html>
 	<head>
 		<title>Where in the World</title>
+		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
-		$activateJQuery = true;
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
 		<link href="css/ol.css" type="text/css" rel="stylesheet" />
@@ -31,7 +31,6 @@ $whereManager = new GamesWhereManager();
 			.thumb span { position:absolute; visibility:hidden; }
 			.thumb:hover span { visibility:visible; top:100px; left:1350px; }
 		</style>
-
 		<script src="js/ol.js" type="text/javascript"></script>
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>

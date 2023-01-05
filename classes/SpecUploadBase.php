@@ -21,10 +21,10 @@ class SpecUploadBase extends SpecUpload{
 	protected $nfnIdentifier;
 	protected $uploadTargetPath;
 
-	protected $sourceArr = Array();
+	protected $occurSourceArr = Array();
 	protected $identSourceArr = Array();
 	protected $imageSourceArr = Array();
-	protected $fieldMap = Array();
+	protected $occurFieldMap = Array();
 	protected $identFieldMap = Array();
 	protected $imageFieldMap = Array();
 	protected $symbFields = array();
@@ -64,10 +64,10 @@ class SpecUploadBase extends SpecUpload{
 				if($targetFields[$x]){
 					$tField = $targetFields[$x];
 					if($tField == 'unmapped') $tField .= '-'.$x;
-					$this->fieldMap[$tField]['field'] = $sourceFields[$x];
+					$this->occurFieldMap[$tField]['field'] = $sourceFields[$x];
 				}
 			}
-			if(isset($postArr['dbpk']) && $postArr['dbpk']) $this->fieldMap['dbpk']['field'] = $postArr['dbpk'];
+			if(isset($postArr['dbpk']) && $postArr['dbpk']) $this->occurFieldMap['dbpk']['field'] = $postArr['dbpk'];
 
 			//Set field map for identification history
 			if(array_key_exists('ID-sf',$postArr)){
@@ -97,19 +97,11 @@ class SpecUploadBase extends SpecUpload{
 	}
 
 	public function setFieldMap($fm){
-		$this->fieldMap = $fm;
+		$this->occurFieldMap = $fm;
 	}
 
 	public function getFieldMap(){
-		return $this->fieldMap;
-	}
-
-	public function getFieldList(){
-		$retStr = '';
-		if($fieldArr = array_keys($this->fieldMap)){
-			$retStr = implode(',', $fieldArr);
-		}
-		return $retStr;
+		return $this->occurFieldMap;
 	}
 
 	public function setIdentFieldMap($fm){
@@ -122,13 +114,13 @@ class SpecUploadBase extends SpecUpload{
 
 	public function getDbpk(){
 		$dbpk = '';
-		if(array_key_exists('dbpk',$this->fieldMap)) $dbpk = strtolower($this->fieldMap['dbpk']['field']);
+		if(array_key_exists('dbpk',$this->occurFieldMap)) $dbpk = strtolower($this->occurFieldMap['dbpk']['field']);
 		return $dbpk;
 	}
 
 	public function loadFieldMap($autoBuildFieldMap = false){
 		//Get Field Map for $fieldMap
-		if($this->uspid && !$this->fieldMap){
+		if($this->uspid && !$this->occurFieldMap){
 			switch ($this->uploadType) {
 				case $this->FILEUPLOAD:
 				case $this->SKELETAL:
@@ -149,7 +141,7 @@ class SpecUploadBase extends SpecUpload{
 							$this->imageFieldMap[$symbFieldName]["field"] = $row->sourcefield;
 						}
 						else{
-							$this->fieldMap[$row->symbspecfield]["field"] = $row->sourcefield;
+							$this->occurFieldMap[$row->symbspecfield]["field"] = $row->sourcefield;
 						}
 					}
 					$rs->free();
@@ -169,27 +161,27 @@ class SpecUploadBase extends SpecUpload{
 			$field = strtolower($row->Field);
 			if(!in_array($field,$this->skipOccurFieldArr)){
 				if($autoBuildFieldMap){
-					$this->fieldMap[$field]["field"] = $field;
+					$this->occurFieldMap[$field]["field"] = $field;
 				}
 				$type = $row->Type;
 				$this->symbFields[] = $field;
-				if(array_key_exists($field,$this->fieldMap)){
+				if(array_key_exists($field,$this->occurFieldMap)){
 					if(strpos($type,"double") !== false || strpos($type,"int") !== false){
-						$this->fieldMap[$field]["type"] = "numeric";
+						$this->occurFieldMap[$field]["type"] = "numeric";
 					}
 					elseif(strpos($type,"decimal") !== false){
-						$this->fieldMap[$field]["type"] = "decimal";
+						$this->occurFieldMap[$field]["type"] = "decimal";
 						if(preg_match('/\((.*)\)$/', $type, $matches)){
-							$this->fieldMap[$field]["size"] = $matches[1];
+							$this->occurFieldMap[$field]["size"] = $matches[1];
 						}
 					}
 					elseif(strpos($type,"date") !== false){
-						$this->fieldMap[$field]["type"] = "date";
+						$this->occurFieldMap[$field]["type"] = "date";
 					}
 					else{
-						$this->fieldMap[$field]["type"] = "string";
+						$this->occurFieldMap[$field]["type"] = "string";
 						if(preg_match('/\((\d+)\)$/', $type, $matches)){
-							$this->fieldMap[$field]["size"] = substr($matches[0],1,strlen($matches[0])-2);
+							$this->occurFieldMap[$field]["size"] = substr($matches[0],1,strlen($matches[0])-2);
 						}
 					}
 				}
@@ -323,9 +315,9 @@ class SpecUploadBase extends SpecUpload{
 
 	public function echoFieldMapTable($autoMap, $mode){
 		$prefix = '';
-		$fieldMap = $this->fieldMap;
+		$fieldMap = $this->occurFieldMap;
 		$symbFieldsRaw = $this->symbFields;
-		$sourceArr = $this->sourceArr;
+		$sourceArr = $this->occurSourceArr;
 		$translationMap = array('accession'=>'catalognumber','accessionid'=>'catalognumber','accessionnumber'=>'catalognumber','guid'=>'occurrenceid',
 			'taxonfamilyname'=>'family','scientificname'=>'sciname','fullname'=>'sciname','speciesauthor'=>'authorspecies','species'=>'specificepithet','commonname'=>'taxonremarks',
 			'observer'=>'recordedby','collector'=>'recordedby','primarycollector'=>'recordedby','field:collector'=>'recordedby','collectedby'=>'recordedby',
@@ -389,7 +381,7 @@ class SpecUploadBase extends SpecUpload{
 			if($symbField != 'dbpk') $sourceSymbArr[$fArr["field"]] = $symbField;
 		}
 
-		if($this->uploadType == $this->NFNUPLOAD && !in_array('subject_references', $this->sourceArr) && !in_array('subject_recordid', $this->sourceArr)){
+		if($this->uploadType == $this->NFNUPLOAD && !in_array('subject_references', $this->occurSourceArr) && !in_array('subject_recordid', $this->occurSourceArr)){
 			echo '<div style="color:red">ERROR: input file does not contain proper identifier field (e.g. occid as subject_references or recordID as subject_recordid)</div>';
 			return false;
 		}
@@ -468,7 +460,7 @@ class SpecUploadBase extends SpecUpload{
 				$this->deleteFieldMap();
 				$sqlInsert = 'INSERT INTO uploadspecmap(uspid,symbspecfield,sourcefield) ';
 				$sqlValues = 'VALUES ('.$this->uspid;
-				foreach($this->fieldMap as $k => $v){
+				foreach($this->occurFieldMap as $k => $v){
 					$sourceField = $v['field'];
 					$sql = $sqlInsert.$sqlValues.',"'.$k.'","'.$sourceField.'")';
 					if(!$this->conn->query($sql)){
@@ -1005,7 +997,6 @@ class SpecUploadBase extends SpecUpload{
 				if(!in_array($field, $excludedFieldArr)) $sqlFrag .= ',u.'.$field.',o.'.$field.' as old_'.$field;
 			}
 			$sql = 'SELECT o.occid'.$sqlFrag.' FROM omoccurrences o INNER JOIN uploadspectemp u ON o.occid = u.occid WHERE o.collid IN('.$this->collId.') AND u.collid IN('.$this->collId.')';
-			echo $sql;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_assoc()){
 				foreach($this->targetFieldArr as $field){
@@ -1039,15 +1030,7 @@ class SpecUploadBase extends SpecUpload{
 	}
 
 	private function versionExternalEdits(){
-		$nfnFieldArr = array();
-		$sql = 'SHOW COLUMNS FROM omoccurrences';
-		$rs = $this->conn->query($sql);
-		while($row = $rs->fetch_object()){
-			$field = strtolower($row->Field);
-			if(in_array($field, $this->symbFields)) $nfnFieldArr[] = $field;
-		}
-		$rs->free();
-
+		$nfnFieldArr = $this->getOccurrenceFieldArr($this->symbFields);
 		$sqlFrag = '';
 		foreach($nfnFieldArr as $field){
 			$sqlFrag .= ',u.'.$field.',o.'.$field.' as old_'.$field;
@@ -1530,6 +1513,8 @@ class SpecUploadBase extends SpecUpload{
 	protected function loadRecord($recMap){
 		//Only import record if at least one of the minimal fields have data
 		$recMap = OccurrenceUtilities::occurrenceArrayCleaning($recMap);
+		//Prime the targetFieldArr
+		if(!$this->targetFieldArr) $this->targetFieldArr = $this->getOccurrenceFieldArr(array_keys($recMap));
 		$loadRecord = false;
 		if($this->uploadType == $this->NFNUPLOAD) $loadRecord = true;
 		elseif(isset($recMap['occid']) && $recMap['occid']) $loadRecord = true;
@@ -1542,10 +1527,10 @@ class SpecUploadBase extends SpecUpload{
 		elseif(isset($recMap['sciname']) && $recMap['sciname']) $loadRecord = true;
 		if($loadRecord){
 			//Remove institution and collection codes when they match what is in omcollections
-			if(array_key_exists('institutioncode',$recMap) && $recMap['institutioncode'] == $this->collMetadataArr["institutioncode"]){
+			if(array_key_exists('institutioncode',$recMap) && $recMap['institutioncode'] == $this->collMetadataArr['institutioncode']){
 				unset($recMap['institutioncode']);
 			}
-			if(array_key_exists('collectioncode',$recMap) && $recMap['collectioncode'] == $this->collMetadataArr["collectioncode"]){
+			if(array_key_exists('collectioncode',$recMap) && $recMap['collectioncode'] == $this->collMetadataArr['collectioncode']){
 				unset($recMap['collectioncode']);
 			}
 
@@ -1573,7 +1558,7 @@ class SpecUploadBase extends SpecUpload{
 
 			$this->buildPaleoJSON($recMap);
 			$this->buildMaterialSampleJSON($recMap);
-			$sqlFragments = $this->getSqlFragments($recMap,$this->fieldMap);
+			$sqlFragments = $this->getSqlFragments($recMap,$this->occurFieldMap);
 			if($sqlFragments){
 				$sql = 'INSERT INTO uploadspectemp(collid'.$sqlFragments['fieldstr'].') VALUES('.$this->collId.$sqlFragments['valuestr'].')';
 				if($this->conn->query($sql)){
@@ -2001,6 +1986,18 @@ class SpecUploadBase extends SpecUpload{
 		return $retArr;
 	}
 
+	private function getOccurrenceFieldArr($filterArr){
+		$retArr = array();
+		$sql = 'SHOW COLUMNS FROM omoccurrences';
+		$rs = $this->conn->query($sql);
+		while($row = $rs->fetch_object()){
+			$field = strtolower($row->Field);
+			if(in_array($field, $filterArr)) $retArr[] = $field;
+		}
+		$rs->free();
+		return $retArr;
+	}
+
 	//Setters and getters
 	public function setIncludeIdentificationHistory($boolIn){
 		$this->includeIdentificationHistory = $boolIn;
@@ -2043,11 +2040,15 @@ class SpecUploadBase extends SpecUpload{
 	}
 
 	public function getSourceArr(){
-		return $this->sourceArr;
+		return $this->occurSourceArr;
 	}
 
-	public function setTargetFields($targetStr){
+	public function setTargetFieldArr($targetStr){
 		$this->targetFieldArr = explode(',', $targetStr);
+	}
+
+	public function getTargetFieldStr(){
+		return implode(',', $this->targetFieldArr);
 	}
 
 	//Misc support functions

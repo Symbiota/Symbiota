@@ -4,23 +4,13 @@ include_once($SERVER_ROOT.'/classes/TaxonomyDisplayManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.'.$LANG_TAG.'.php');
 
-$target = array_key_exists('target',$_REQUEST)?$_REQUEST['target']:'';
-$displayAuthor = array_key_exists('displayauthor',$_REQUEST)?$_REQUEST['displayauthor']:0;
-$matchOnWords = array_key_exists('matchonwords',$_POST)?$_POST['matchonwords']:0;
-$displayFullTree = array_key_exists('displayfulltree',$_REQUEST)?$_REQUEST['displayfulltree']:0;
-$displaySubGenera = array_key_exists('displaysubgenera',$_REQUEST)?$_REQUEST['displaysubgenera']:0;
-$taxAuthId = array_key_exists('taxauthid',$_REQUEST)?$_REQUEST['taxauthid']:1;
-$statusStr = array_key_exists('statusstr',$_REQUEST)?$_REQUEST['statusstr']:'';
-
-//Sanitation
-$target = filter_var($target, FILTER_SANITIZE_STRING);
-if(!is_numeric($displayAuthor)) $displayAuthor = 0;
-if(!is_numeric($matchOnWords)) $matchOnWords = 0;
-if(!is_numeric($displayFullTree)) $displayFullTree = 0;
-if(!is_numeric($displaySubGenera)) $displaySubGenera = 0;
-if(!is_numeric($taxAuthId)) $taxAuthId = 1;
-$statusStr = strip_tags($statusStr);
-if($statusStr) str_replace(';', '<br/>', $statusStr);
+$target = array_key_exists('target', $_REQUEST) ? filter_var($_REQUEST['target'], FILTER_SANITIZE_STRING) : '';
+$displayAuthor = array_key_exists('displayauthor', $_REQUEST) ? filter_var($_REQUEST['displayauthor'], FILTER_SANITIZE_NUMBER_INT): 0;
+$matchOnWords = array_key_exists('matchonwords', $_POST) ? filter_var($_POST['matchonwords'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$displayFullTree = array_key_exists('displayfulltree', $_REQUEST) ? filter_var($_REQUEST['displayfulltree'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$displaySubGenera = array_key_exists('displaysubgenera', $_REQUEST) ? filter_var($_REQUEST['displaysubgenera'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$taxAuthId = array_key_exists('taxauthid', $_REQUEST) ? filter_var($_REQUEST['taxauthid'], FILTER_SANITIZE_NUMBER_INT) : 1;
+$statusStr = array_key_exists('statusstr', $_REQUEST) ? filter_var($_REQUEST['statusstr'], FILTER_SANITIZE_STRING) : '';
 
 if(!$target) $matchOnWords = 1;
 $taxonDisplayObj = new TaxonomyDisplayManager();
@@ -40,20 +30,13 @@ if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
 <head>
 	<title><?php echo $DEFAULT_TITLE." ".(isset($LANG['TAX_DISPLAY'])?$LANG['TAX_DISPLAY']:'Taxonomy Display').": ".$taxonDisplayObj->getTargetStr(); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	$activateJQuery = true;
-	if(file_exists($SERVER_ROOT.'/includes/head.php')){
-		include_once($SERVER_ROOT.'/includes/head.php');
-	}
-	else{
-		echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-		echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-		echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-	}
+	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<script type="text/javascript" src="../../js/jquery.js"></script>
-	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
+	<script src="../../js/jquery.js" type="text/javascript"></script>
+	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$("#taxontarget").autocomplete({
@@ -83,6 +66,7 @@ if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
 	<div id="innertext">
 		<?php
 		if($statusStr){
+			$statusStr = str_replace(';', '<br/>', $statusStr);
 			?>
 			<hr/>
 			<div style="color:<?php echo (stripos($statusStr,'SUCCESS') !== false?'green':'red'); ?>;margin:15px;">

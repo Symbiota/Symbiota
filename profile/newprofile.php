@@ -72,7 +72,7 @@ if($action == "Create Login"){
 <head>
 	<title><?php echo $DEFAULT_TITLE.' - '.(isset($LANG['NEW_USER'])?$LANG['NEW_USER']:'New User Profile'); ?></title>
 	<?php
-	$activateJQuery = false;
+
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script type="text/javascript">

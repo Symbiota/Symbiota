@@ -39,7 +39,7 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Thumbnail Builder</title>
 	<?php
-	$activateJQuery = false;
+
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script type="text/javascript">

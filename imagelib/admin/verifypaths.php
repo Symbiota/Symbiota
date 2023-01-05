@@ -13,17 +13,9 @@ $verifyPathsObj = new VerifyPaths();
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Verify Image Paths</title>
-  <?php
-      $activateJQuery = false;
-      if(file_exists($SERVER_ROOT.'/includes/head.php')){
-        include_once($SERVER_ROOT.'/includes/head.php');
-      }
-      else{
-        echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-        echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-        echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-      }
-  ?>
+	<?php
+	include_once($SERVER_ROOT.'/includes/head.php');
+	?>
 </head>
 <body>
 	<?php
@@ -33,20 +25,20 @@ $verifyPathsObj = new VerifyPaths();
 		echo "<div class='navpath'>";
 		echo "<a href='../index.php'>Home</a> &gt; ";
 		echo $imagelib_misc_verifypathsCrumbs;
-		echo " <b>Verify Paths</b>"; 
+		echo " <b>Verify Paths</b>";
 		echo "</div>";
 	}
-	?> 
+	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
 		<h1>Image Path Verification</h1>
-		<div>Clicking the button below will go through all the images in the image directory and 
+		<div>Clicking the button below will go through all the images in the image directory and
 		verify mapping within the database. Two following two error files will be produced:</div>
-		
+
 		<div style="margin:10px 0px 0px 10px;">Images in Directory but not in Database (= absent link): <?php echo $verifyPathsObj->getErrorAbsentDbRecordsLogPath(); ?></div>
 		<div style="margin:5px 0px 20px 10px;">Images in Database but not in Directory (= broken link): <?php echo $verifyPathsObj->getErrorAbsentFilesLogPath(); ?></div>
 
-		<?php 
+		<?php
 			if($action){
 				$verifyPathsObj->searchAndVerify($buildThumbnails);
 			}
@@ -56,21 +48,21 @@ $verifyPathsObj = new VerifyPaths();
 			<div>
 				<input type="checkbox" name="buildthumbnails" value="1"> Build thumbnails for images without
 			</div>
-			<div> 
+			<div>
 				<input type="submit" name="action" value="Start Verification Process">
 			</div>
 		</form>
 	</div>
-	<?php 
+	<?php
 	include($SERVER_ROOT.'/includes/footer.php');
 	?>
-	
+
 </body>
 </html>
 
-<?php 
+<?php
 class VerifyPaths{
-	
+
 	private $rootPath = "";
 	private $urlPath = "";
 	private $errorAbsentFilesLogName = "ErrorAbsentImageFiles.log";
@@ -85,36 +77,36 @@ class VerifyPaths{
 
 	function __construct() {
 		$this->rootPath = $GLOBALS["imageRootPath"];
-		if(substr($this->rootPath,-1) != "/") $this->rootPath .= "/";  
+		if(substr($this->rootPath,-1) != "/") $this->rootPath .= "/";
 		$this->urlPath = $GLOBALS["imageRootUrl"];
-		if(substr($this->urlPath,-1) != "/") $this->urlPath .= "/";  
+		if(substr($this->urlPath,-1) != "/") $this->urlPath .= "/";
 		$this->tempRoot = $GLOBALS["tempDirRoot"];
 		if(!$this->tempRoot){
 			$this->tempRoot = ini_get('upload_tmp_dir');
 		}
-		if(substr($this->tempRoot,-1) != "/") $this->tempRoot .= "/";  
+		if(substr($this->tempRoot,-1) != "/") $this->tempRoot .= "/";
 		$this->conn = MySQLiConnectionFactory::getCon("readonly");
 	}
-	
+
 	function __destruct(){
 		$this->conn->close();
 	}
-	
+
 	public function getErrorAbsentFilesLogPath(){
 		return $this->tempRoot.$errorAbsentFilesLogName;
 	}
-	
+
 	public function getErrorAbsentDbRecordsLogPath(){
 		return $this->tempRoot.$errorAbsentDbRecordsLogName;
 	}
-	
+
 	public function searchAndVerify($buildTns = true){
 		$this->buildThumbnails = $buildTns;
 		$errorAbsentFilesLog = $this->tempRoot."images/".$this->errorAbsentFilesLogName;
 		$errorAbsentDbRecordsLog = $this->tempRoot."images/".$this->errorAbsentDbRecordsLogName;
-		$absentFilesFH = fopen($errorAbsentFilesLog, 'w') 
+		$absentFilesFH = fopen($errorAbsentFilesLog, 'w')
 			or die("Can't open file: ".$errorAbsentFilesLog);
-		$this->absentDbRecordsFH = fopen($errorAbsentDbRecordsLog, 'w') 
+		$this->absentDbRecordsFH = fopen($errorAbsentDbRecordsLog, 'w')
 			or die("Can't open file: ".$errorAbsentDbRecordsLog);
 		set_time_limit(600);
 		$this->loadImageArr();
@@ -126,7 +118,7 @@ class VerifyPaths{
 		fclose($absentFilesFH);
 		fclose($this->absentDbRecordsFH);
 	}
-	
+
 	private function evaluateFolder($dirPath){
 		if($handle = opendir($dirPath)){
 			$urlPath = str_replace($this->rootPath,$this->urlPath,$dirPath);
@@ -155,7 +147,7 @@ class VerifyPaths{
 		}
    		closedir($handle);
 	}
-	
+
 	private function createThumbnail($filePath, $imgId){
 		$newThumbnailPath = str_ireplace(".jpg","_tn.jpg",$filePath);
 		$newThumbnailUrl = str_replace($this->rootPath,$this->urlPath,$newThumbnailPath);
@@ -170,22 +162,22 @@ class VerifyPaths{
 	        		$newHeight = $maxHeight;
 	        		$newWidth = round($sourceWidth*($maxHeight/$sourceHeight));
 	        	}
-	        	
+
 			    switch ($imageType){
-			        case 1: 
-			        	$sourceImg = imagecreatefromgif($filePath); 
+			        case 1:
+			        	$sourceImg = imagecreatefromgif($filePath);
 			        	break;
-			        case 2: 
-			        	$sourceImg = imagecreatefromjpeg($filePath);  
+			        case 2:
+			        	$sourceImg = imagecreatefromjpeg($filePath);
 			        	break;
-			        case 3: 
-			        	$sourceImg = imagecreatefrompng($filePath); 
+			        case 3:
+			        	$sourceImg = imagecreatefrompng($filePath);
 			        	break;
 			        default: return '';  break;
 			    }
-	        	
+
 	    		$tmpImg = imagecreatetruecolor($newWidth,$newHeight);
-	
+
 			    /* Check if this image is PNG or GIF to preserve its transparency */
 			    if(($imageType == 1) || ($imageType==3)){
 			        imagealphablending($tmpImg, false);
@@ -194,19 +186,19 @@ class VerifyPaths{
 			        imagefilledrectangle($tmpImg, 0, 0, $newWidth, $newHeight, $transparent);
 			    }
 				imagecopyresampled($tmpImg,$sourceImg,0,0,0,0,$newWidth, $newHeight,$sourceWidth,$sourceHeight);
-	
+
 				switch ($imageType){
-			        case 1: 
+			        case 1:
 			        	if(!imagegif($tmpImg,$newThumbnailPath)){
 			        		echo "<div>Failed to write GIF thumbnail: $newThumbnailPath</div>";
 			        	}
 			        	break;
-			        case 2: 
+			        case 2:
 			        	if(!imagejpeg($tmpImg, $newThumbnailPath, 50)){
 			        		echo "<div>Failed to write JPG thumbnail: $newThumbnailPath</div>";
 			        	}
 			        	break; // best quality
-			        case 3: 
+			        case 3:
 			        	if(!imagepng($tmpImg, $newThumbnailPath, 0)){
 			        		echo "<div>Failed to write PNG thumbnail: $newThumbnailPath</div>";
 			        	}
@@ -214,7 +206,7 @@ class VerifyPaths{
 			    }
 				imagedestroy($tmpImg);
 			}
-		    
+
 		    if(file_exists($newThumbnailPath)){
 			    //Insert thumbnail path into database
 				$con = MySQLiConnectionFactory::getCon("write");
@@ -224,7 +216,7 @@ class VerifyPaths{
 		    }
 		}
 	}
-	
+
 	private function loadImageArr(){
 		$sql = "SELECT ti.imgid, ti.url, ti.thumbnailurl FROM images ti ";
 		$result = $this->conn->query($sql);
@@ -236,7 +228,7 @@ class VerifyPaths{
 		}
 		$result->close();
 	}
-	
+
 	private function inImageArr($str){
     	foreach($this->imageArr as $k=>$v){
         	if(strtolower($v)==strtolower($str)){

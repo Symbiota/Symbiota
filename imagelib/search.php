@@ -41,16 +41,20 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Image Library</title>
+	<meta name='keywords' content='' />
 	<?php
-	$activateJQuery = true;
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
+	<link href="../js/jquery-ui/jquery-ui.min.css?ver=1" type="text/css" rel="Stylesheet" />
+	<style type="text/css">
+		fieldset{ padding: 15px }
+		fieldset legend{ font-weight:bold }
+	</style>
 	<script src="../js/jquery-3.2.1.min.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
-	<link href="../js/jquery-ui/jquery-ui.min.css?ver=1" type="text/css" rel="Stylesheet" />
 	<script src="../js/symb/collections.index.js?ver=2" type="text/javascript"></script>
-	<meta name='keywords' content='' />
 	<script type="text/javascript">
 		var clientRoot = "<?php echo $CLIENT_ROOT; ?>";
 
@@ -65,11 +69,6 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 	</script>
 	<script src="../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
 	<script src="../js/symb/imagelib.search.js?ver=201910" type="text/javascript"></script>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/collection.css" type="text/css" rel="stylesheet" />
-	<style type="text/css">
-		fieldset{ padding: 15px }
-		fieldset legend{ font-weight:bold }
-	</style>
 </head>
 <body>
 	<?php

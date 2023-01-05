@@ -6,20 +6,15 @@ include_once($SERVER_ROOT.'/content/lang/collections/admin/specupload.'.$LANG_TA
 header('Content-Type: text/html; charset='.$CHARSET);
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/admin/specupload.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$collid = $_REQUEST['collid'];
-$uploadType = $_REQUEST['uploadtype'];
-$uspid = array_key_exists('uspid',$_REQUEST)?$_REQUEST['uspid']:'';
+$collid = filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT);
+$uploadType = filter_var($_REQUEST['uploadtype'], FILTER_SANITIZE_NUMBER_INT);
+$uspid = array_key_exists('uspid', $_REQUEST) ? filter_var($_REQUEST['uspid'], FILTER_SANITIZE_NUMBER_INT) : '';
 
 if(strpos($uspid,'-')){
 	$tok = explode('-',$uspid);
 	$uspid = $tok[0];
 	$uploadType = $tok[1];
 }
-
-//Sanitation
-if(!is_numeric($collid)) $collid = 0;
-if(!is_numeric($uploadType)) $uploadType = 0;
-if(!is_numeric($uspid)) $uspid = 0;
 
 $DIRECTUPLOAD = 1; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9; $STOREDPROCEDURE = 4; $SCRIPTUPLOAD = 5; $SYMBIOTA = 13;
 
@@ -45,8 +40,8 @@ elseif($uploadType == $DIRECTUPLOAD || $uploadType == $STOREDPROCEDURE || $uploa
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['SPEC_UPLOAD'])?$LANG['SPEC_UPLOAD']:'Specimen Uploader - file selector'); ?></title>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	$activateJQuery = true;
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script src="../../js/jquery.js" type="text/javascript"></script>

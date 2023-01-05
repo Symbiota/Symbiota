@@ -18,6 +18,7 @@
 
 /* Fonts imports
   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
 /* Global variables and components
    ========================================================================== */
@@ -92,6 +93,7 @@ button {
   letter-spacing: 1px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
+  white-space: nowrap;
 }
 
 button:hover {
@@ -116,7 +118,9 @@ hr {
 }
 
 .navpath {
-  margin: 10px;
+  margin: 10px auto;
+  width: 100%;
+  max-width: var(--max-innertext-width);
 }
 
 /**
@@ -263,7 +267,7 @@ hr {
 @media (min-width: 768px) {
   body {
     display: grid;
-    grid-template-rows: auto 1fr auto; /* header, main, footer */
+    grid-template-rows: auto auto 1fr auto; /* header, breadcrumbs, main, footer */
   }
 }
 

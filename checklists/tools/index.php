@@ -1,20 +1,18 @@
 <?php
-//error_reporting(E_ALL);
 include_once('../../config/symbini.php');
-header("Content-Type: text/html; charset=".$CHARSET);
-
+header('Content-Type: text/html; charset=' . $CHARSET);
+header('Location: '.$CLIENT_ROOT.'/index.php');
 ?>
 <html>
 	<head>
-		<title>Page</title>
+		<title>Forbidden</title>
 		<?php
-		$activateJQuery = true;
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
 	</head>
 	<body>
 		<?php
-		$displayLeftMenu = true;
+		$displayLeftMenu = false;
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<!-- This is inner text! -->
@@ -28,7 +26,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 			</div>
 		</div>
 		<?php
-			include($SERVER_ROOT.'/includes/footer.php');
+		include($SERVER_ROOT.'/includes/footer.php');
 		?>
 	</body>
 </html>

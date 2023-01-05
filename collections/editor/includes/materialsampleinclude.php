@@ -49,8 +49,8 @@ $controlTermArr = $materialSampleManager->getMSTypeControlValues();
 		});
 	});
 </script>
-<link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
-<link href="<?php echo $CLIENT_ROOT; ?>/css/symb/occureditormaterialsample.css?ver=3" type="text/css" rel="stylesheet" />
+<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet" />
+<link href="<?php echo $CSS_BASE_PATH; ?>/symbiota/collections/editor/occureditormaterialsample.css" type="text/css" rel="stylesheet" >
 <style type="text/css">
 	botton { margin: 10px; }
 	.edit-control{ float:right; }

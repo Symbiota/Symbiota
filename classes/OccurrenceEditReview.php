@@ -30,8 +30,7 @@ class OccurrenceEditReview extends Manager{
 	public function setCollId($id){
 		if(is_numeric($id)){
 			$this->collid = $id;
-			$sql = 'SELECT collectionname, institutioncode, collectioncode, colltype '.
-				'FROM omcollections WHERE (collid = '.$id.')';
+			$sql = 'SELECT collectionname, institutioncode, collectioncode, colltype FROM omcollections WHERE (collid = '.$id.')';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$collName = $r->collectionname.' (';
@@ -72,7 +71,6 @@ class OccurrenceEditReview extends Manager{
 	//Occurrence edits (omoccuredits)
 	private function getOccurEditCnt(){
 		$sql = 'SELECT COUNT(e.ocedid) AS fullcnt '.$this->getEditSqlBase();
-		//echo 'cnt: '.$sql.'<br/>';
 		$rsCnt = $this->conn->query($sql);
 		if($rCnt = $rsCnt->fetch_object()){
 			$recCnt = $rCnt->fullcnt;
@@ -94,7 +92,7 @@ class OccurrenceEditReview extends Manager{
 			$retArr[$r->occid][$r->ocedid][$r->appliedstatus]['uid'] = $r->uid;
 			$retArr[$r->occid][$r->ocedid][$r->appliedstatus]['f'][$r->fieldname]['old'] = $r->fieldvalueold;
 			$retArr[$r->occid][$r->ocedid][$r->appliedstatus]['f'][$r->fieldname]['new'] = $r->fieldvaluenew;
-			$retArr[$r->occid]['catnum'] = $r->catalognumber.($r->othercatalognumbers?', ':'').$r->othercatalognumbers;
+			$retArr[$r->occid]['catnum'] = $r->catalognumber . ($r->catalognumber && $r->othercatalognumbers ? '<br>' : '') . $r->othercatalognumbers;
 		}
 		$rs->free();
 		$this->appendAdditionalIdentifiers($retArr);
@@ -252,9 +250,7 @@ class OccurrenceEditReview extends Manager{
 			//Apply edits
 			$applyTask = $postArr['applytask'];
 			//Apply edits with applied status = 0
-			$sql = 'SELECT ocedid, occid, fieldname, fieldvalueold, fieldvaluenew '.
-				'FROM omoccuredits '.
-				'WHERE appliedstatus = '.($applyTask == 'apply'?'0':'1').' AND (ocedid IN('.$idStr.')) ORDER BY initialtimestamp';
+			$sql = 'SELECT ocedid, occid, fieldname, fieldvalueold, fieldvaluenew, appliedstatus FROM omoccuredits WHERE (ocedid IN('.$idStr.')) ORDER BY initialtimestamp';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$status = false;
@@ -268,18 +264,21 @@ class OccurrenceEditReview extends Manager{
 					$tableName = $pArr[0];
 					$fieldName = $pArr[1];
 				}
-				if($tableName == 'omoccuridentifiers'){
-					$status = $this->applyIdentifierEdits($r->occid, $fieldName, $r->fieldvalueold, $r->fieldvaluenew, $applyTask);
+				if(($applyTask == 'apply' && !$r->appliedstatus) || ($applyTask != 'apply' && $r->appliedstatus)){
+					if($tableName == 'omoccuridentifiers'){
+						$status = $this->applyIdentifierEdits($r->occid, $fieldName, $r->fieldvalueold, $r->fieldvaluenew, $applyTask);
+					}
+					elseif($tableName == 'omoccurpaleo'){
+						$status = $this->applyPaleoEdits($r->occid, $fieldName, $value, $applyTask);
+					}
+					elseif($tableName == 'omexsiccatiocclink'){
+						$status = $this->applyExsiccatiEdits($r->occid, $fieldName, $value, $applyTask);
+					}
+					elseif($tableName == 'omoccurrences'){
+						$status = $this->applyOccurrenceEdit($r->occid, $fieldName, $value, $applyTask);
+					}
 				}
-				elseif($tableName == 'omoccurpaleo'){
-					$status = $this->applyPaleoEdits($r->occid, $fieldName, $value, $applyTask);
-				}
-				elseif($tableName == 'omexsiccatiocclink'){
-					$status = $this->applyExsiccatiEdits($r->occid, $fieldName, $value, $applyTask);
-				}
-				elseif($tableName == 'omoccurrences'){
-					$status = $this->applyOccurrenceEdit($r->occid, $fieldName, $value, $applyTask);
-				}
+				if($postArr['rstatus']) $status = true;
 				if($status) $this->setEditStatus($r->ocedid, $applyTask, $postArr['rstatus']);
 			}
 			$rs->free();
@@ -366,9 +365,7 @@ class OccurrenceEditReview extends Manager{
 		$sql = 'UPDATE omoccuredits SET appliedstatus = '.$applyStatus;
 		if($reviewStatus) $sql .= ',reviewstatus = '.$reviewStatus;
 		$sql .= ' WHERE (ocedid = '.$ocedid.')';
-		//echo '<div>'.$sql.'</div>'; exit;
 		$this->conn->query($sql);
-
 	}
 
 	private function updateRevisionRecords($postArr){

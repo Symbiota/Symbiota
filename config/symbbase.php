@@ -41,12 +41,14 @@ if(isset($_COOKIE['SymbiotaCrumb']) && !$PARAMS_ARR){
 	}
 }
 
-if(!isset($CSS_BASE_PATH)) $CSS_BASE_PATH = $CLIENT_ROOT.'/css/symb';
+if(!isset($CSS_BASE_PATH) || $CSS_BASE_PATH == $CLIENT_ROOT . '/css/symb') $CSS_BASE_PATH = $CLIENT_ROOT . '/css/';
+if(!isset($CSS_VERSION_RELEASE)) $CSS_BASE_PATH .= 'v202209';
+
 $CSS_VERSION = '13';
-$USER_DISPLAY_NAME = (array_key_exists("dn",$PARAMS_ARR)?$PARAMS_ARR["dn"]:"");
-$USERNAME = (array_key_exists("un",$PARAMS_ARR)?$PARAMS_ARR["un"]:0);
-$SYMB_UID = (array_key_exists("uid",$PARAMS_ARR)?$PARAMS_ARR["uid"]:0);
-$IS_ADMIN = (array_key_exists("SuperAdmin",$USER_RIGHTS)?1:0);
+$USER_DISPLAY_NAME = (array_key_exists('dn',$PARAMS_ARR)?$PARAMS_ARR['dn']:'');
+$USERNAME = (array_key_exists('un',$PARAMS_ARR)?$PARAMS_ARR['un']:0);
+$SYMB_UID = (array_key_exists('uid',$PARAMS_ARR)?$PARAMS_ARR['uid']:0);
+$IS_ADMIN = (array_key_exists('SuperAdmin',$USER_RIGHTS)?1:0);
 
 //Temporarly needed so that old configuration will still work
 if(!isset($DEFAULT_LANG) && isset($defaultLang)) $DEFAULT_LANG = $defaultLang;

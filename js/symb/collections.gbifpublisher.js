@@ -53,13 +53,13 @@ function processGbifOrgKey(f){
 
 function createGbifInstallation(gbifOrgKey,collName){
 	var type = 'POST';
-	var url = 'https://api.gbif.org/v1/installation';
 	var data = JSON.stringify({
+		endpoint: 'installation',
 		organizationKey: gbifOrgKey,
 		type: "SYMBIOTA_INSTALLATION",
 		title: collName
 	});
-	var instKey = callGbifCurl(type,url,data);
+	var instKey = callGbifCurl(type,data);
 	if(!instKey){
 		alert("ERROR: Contact administrator, creation of GBIF installation failed using data: "+data);
 	}
@@ -68,34 +68,35 @@ function createGbifInstallation(gbifOrgKey,collName){
 
 function createGbifDataset(gbifInstKey,gbifOrgKey,collName){
 	var type = 'POST';
-	var url = 'https://api.gbif.org/v1/dataset';
 	var data = JSON.stringify({
+		endpoint: 'dataset',
 		installationKey: gbifInstKey,
 		publishingOrganizationKey: gbifOrgKey,
 		title: collName,
 		type: "OCCURRENCE"
 	});
-	return callGbifCurl(type,url,data);
+	return callGbifCurl(type,data);
 }
 
 function createGbifEndpoint(gbifDatasetKey,dwcUri){
 	var type = 'POST';
-	var url = 'https://api.gbif.org/v1/dataset/'+gbifDatasetKey+'/endpoint';
 	var data = JSON.stringify({
+		endpoint: 'dataset',
 		type: "DWC_ARCHIVE",
-		url: dwcUri
+		url: dwcUri,
+		datasetkey: gbifDatasetKey
 	});
 	var retStr = callGbifCurl(type,url,data);
 	if(retStr.indexOf(" ") > -1 || retStr.length < 34 || retStr.length > 40) retStr = "";
 	return retStr;
 }
 
-function callGbifCurl(type,url,data){
+function callGbifCurl(type,data){
 	var key;
 	$.ajax({
 		type: "POST",
 		url: "rpc/getgbifcurl.php",
-		data: {type: type, url: url, data: data},
+		data: {type: type, data: data},
 		async: false,
 		success: function(response) {
 			key = response.trim();

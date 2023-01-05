@@ -1462,7 +1462,7 @@ class OccurrenceEditorManager {
 			}
 			if(isset($postArr['carryover']) && $postArr['carryover'] == 1){
 				$clearEventArr = array('family','sciname','tidinterpreted','scientificnameauthorship','identifiedby','dateidentified','identificationreferences','identificationremarks',
-					'taxonremarks','identificationqualifier','recordnumber','occurrenceremarks','verbatimattributes','dynamicproperties','lifestage','sex');
+					'taxonremarks','identificationqualifier','recordnumber','occurrenceremarks','verbatimattributes','dynamicproperties','lifestage','sex','reproductivecondition','behavior','preparations');
 				$postArr = array_diff_key($postArr,array_flip($clearEventArr));
 			}
 			$cloneCatNum = array();
@@ -2450,7 +2450,7 @@ class OccurrenceEditorManager {
 	//Setters and getters
 	public function setOccId($id){
 		if(is_numeric($id)){
-			$this->occid = $this->cleanInStr($id);
+			$this->occid = $id;
 		}
 	}
 

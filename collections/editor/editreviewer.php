@@ -6,24 +6,20 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/editreviewer.en
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/editreviewer.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 header('Content-Type: text/html; charset='.$CHARSET);
 
-$collid = $_REQUEST['collid'];
-$displayMode = array_key_exists('display',$_REQUEST)?$_REQUEST['display']:'1';
-$faStatus = array_key_exists('fastatus',$_REQUEST)?strip_tags($_REQUEST['fastatus']):'';
-$frStatus = array_key_exists('frstatus',$_REQUEST)?strip_tags($_REQUEST['frstatus']):'1,2';
-$filterFieldName = array_key_exists('ffieldname',$_POST)?strip_tags($_POST['ffieldname']):'';
-$editor = array_key_exists('editor',$_REQUEST)?strip_tags($_REQUEST['editor']):'';
-$queryOccid = array_key_exists('occid',$_REQUEST)?strip_tags($_REQUEST['occid']):'';
-$startDate = array_key_exists('startdate',$_REQUEST)?strip_tags($_REQUEST['startdate']):'';
-$endDate = array_key_exists('enddate',$_REQUEST)?strip_tags($_REQUEST['enddate']):'';
-$pageNum = array_key_exists('pagenum',$_REQUEST)?$_REQUEST['pagenum']:'0';
-$limitCnt = array_key_exists('limitcnt',$_REQUEST)?$_REQUEST['limitcnt']:'1000';
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
+$collid = filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT);
+$displayMode = array_key_exists('display', $_REQUEST) ? filter_var($_REQUEST['display'], FILTER_SANITIZE_NUMBER_INT) : '1';
+$faStatus = array_key_exists('fastatus', $_REQUEST) ? filter_var($_REQUEST['fastatus'], FILTER_SANITIZE_NUMBER_INT) : '';
+$frStatus = array_key_exists('frstatus', $_REQUEST)? filter_var($_REQUEST['frstatus'], FILTER_SANITIZE_STRING) : '1,2';
+$filterFieldName = array_key_exists('ffieldname', $_POST) ? filter_var($_POST['ffieldname'], FILTER_SANITIZE_STRING) : '';
+$editor = array_key_exists('editor', $_REQUEST) ? filter_var($_REQUEST['editor'], FILTER_SANITIZE_STRING) : '';
+$queryOccid = array_key_exists('occid', $_REQUEST) ? filter_var($_REQUEST['occid'], FILTER_SANITIZE_NUMBER_INT) : '';
+$startDate = array_key_exists('startdate', $_REQUEST) ? filter_var($_REQUEST['startdate'], FILTER_SANITIZE_STRING) : '';
+$endDate = array_key_exists('enddate', $_REQUEST) ? filter_var($_REQUEST['enddate'], FILTER_SANITIZE_STRING) : '';
+$pageNum = array_key_exists('pagenum', $_REQUEST) ? filter_var($_REQUEST['pagenum'], FILTER_SANITIZE_NUMBER_INT) : '0';
+$limitCnt = array_key_exists('limitcnt', $_REQUEST) ? filter_var($_REQUEST['limitcnt'], FILTER_SANITIZE_NUMBER_INT) : '1000';
+$recCnt = array_key_exists('reccnt', $_REQUEST) ? filter_var($_REQUEST['reccnt'], FILTER_SANITIZE_NUMBER_INT) : '';
 
-if(!is_numeric($collid)) $collid = 0;
-if(!is_numeric($displayMode)) $displayMode = 1;
-if(!is_numeric($queryOccid)) $queryOccid = '';
-if(!is_numeric($pageNum)) $pageNum = 0;
-if(!is_numeric($limitCnt)) $limitCnt = 1000;
+$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $reviewManager = new OccurrenceEditReview();
 $collName = $reviewManager->setCollId($collid);
@@ -81,11 +77,11 @@ if($isEditor){
 		}
 	}
 }
-$recCnt = $reviewManager->getEditCnt();
+if(!$recCnt) $recCnt = $reviewManager->getEditCnt();
 
 $subCnt = $limitCnt*($pageNum + 1);
 if($subCnt > $recCnt) $subCnt = $recCnt;
-$navPageBase = 'editreviewer.php?collid='.$collid.'&display='.$displayMode.'&fastatus='.$faStatus.'&frstatus='.$frStatus.'&editor='.$editor;
+$navPageBase = 'editreviewer.php?collid='.$collid.'&display='.$displayMode.'&fastatus='.$faStatus.'&frstatus='.$frStatus.'&editor='.$editor.'&reccnt='.$recCnt;
 
 $navStr = '<div class="navbarDiv" style="float:right;">';
 if($pageNum) $navStr .= '<a href="'.$navPageBase.'&pagenum='.($pageNum-1).'&limitcnt='.$limitCnt.'" title="Previous '.$limitCnt.' records">&lt;&lt;</a>';
@@ -100,8 +96,8 @@ $navStr .= '</div>';
 <html>
 	<head>
 		<title><?php echo $LANG['EDIT_REVIEWER']; ?></title>
+		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
-		$activateJQuery = true;
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>

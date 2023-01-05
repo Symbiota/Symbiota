@@ -62,7 +62,7 @@ if(isset($PORTAL_GUID) && $PORTAL_GUID){
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title>GEOLocate Tool</title>
 	<?php
-	$activateJQuery = false;
+
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<style>

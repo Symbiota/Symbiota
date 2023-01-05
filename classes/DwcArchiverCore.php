@@ -17,8 +17,8 @@ class DwcArchiverCore extends Manager{
 
 	protected $collArr;
 	private $customWhereSql;
-	private $conditionSql = '';
-	private $conditionArr = array();
+	protected $conditionSql = '';
+	protected $conditionArr = array();
 	private $condAllowArr;
 	private $overrideConditionLimit = false;
 
@@ -821,7 +821,8 @@ class DwcArchiverCore extends Manager{
 				if ($this->schemaType == 'backup') {
 					$fileNameSeed .= '_backup_' . date('Y-m-d_His', $this->ts);
 				}
-			} else {
+			}
+			else {
 				$fileNameSeed = 'SymbOutput_' . date('Y-m-d_His', $this->ts);
 			}
 		}

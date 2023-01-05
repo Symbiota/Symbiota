@@ -91,7 +91,7 @@ class SpecUploadFile extends SpecUploadBase{
 		if($fullPath){
 			//Open and grab header fields
 			$fh = fopen($fullPath,'rb') or die("Can't open file");
-			$this->sourceArr = $this->getHeaderArr($fh);
+			$this->occurSourceArr = $this->getHeaderArr($fh);
 			fclose($fh);
 		}
 	}
@@ -116,7 +116,7 @@ class SpecUploadFile extends SpecUploadBase{
 			$this->outputMsg('<li>Beginning to load records...</li>',1);
 			while($recordArr = $this->getRecordArr($fh)){
 				$recMap = Array();
-				foreach($this->fieldMap as $symbField => $sMap){
+				foreach($this->occurFieldMap as $symbField => $sMap){
 					$indexArr = array_keys($headerArr,$sMap['field']);
 					$index = array_shift($indexArr);
 					if(array_key_exists($index,$recordArr)){
@@ -264,7 +264,7 @@ class SpecUploadFile extends SpecUploadBase{
 	}
 
 	public function getDbpkOptions(){
-		$sFields = $this->sourceArr;
+		$sFields = $this->occurSourceArr;
 		sort($sFields);
 		return $sFields;
 	}

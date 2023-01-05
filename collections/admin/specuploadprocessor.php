@@ -99,8 +99,8 @@ if($isEditor && $collid){
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['SPEC_UPLOAD'])?$LANG['SPEC_UPLOAD']:'Specimen Uploader'); ?></title>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	$activateJQuery = true;
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
@@ -239,7 +239,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						<input type="hidden" name="uspid" value="<?php echo $uspid;?>" >
 						<input type="hidden" name="sourceindex" value="<?php echo $sourceIndex;?>" >
 						<input type="hidden" name="publicationGuid" value="<?php echo $publicationGuid;?>" >
-						<input type="hidden" name="fieldlist" value="<?php echo $duManager->getFieldList(); ?>" >
+						<input type="hidden" name="fieldlist" value="<?php echo $duManager->getTargetFieldStr(); ?>" >
 						<div style="margin:5px;">
 							<button type="submit" name="action" value="activateOccurrences"><?php echo (isset($LANG['TRANS_RECS'])?$LANG['TRANS_RECS']:'Transfer Records to Central Specimen Table'); ?></button>
 						</div>
@@ -250,7 +250,7 @@ include($SERVER_ROOT.'/includes/header.php');
 		}
 		elseif($action == 'activateOccurrences' || $finalTransfer){
 			echo '<ul>';
-			$duManager->setTargetFields(filter_var($_POST['fieldlist'], FILTER_SANITIZE_STRING));
+			$duManager->setTargetFieldArr(filter_var($_POST['fieldlist'], FILTER_SANITIZE_STRING));
 			$duManager->finalTransfer();
 			echo '</ul>';
 		}

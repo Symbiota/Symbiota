@@ -2,16 +2,25 @@
 ========================================================================== */
 .header-wrapper {
   padding: 20px;
-  background-color: var(--header-bg-color);
+  background-color: var(--menu-top-bg-color);
 }
 
 header {
   display: grid;
   gap: 2rem;
   place-items: center;
-  background-color: var(--header-bg-color);
   color: var(--header-font-color);
+  min-width: 0;
   width: 100%;
+}
+
+.top-wrapper {
+  background-color: var(--menu-top-bg-color);
+  min-width: 0;
+}
+
+.top-login {
+  padding-bottom: 20px;
 }
 
 .top-login > .button {
@@ -30,6 +39,7 @@ header {
   max-width: 100px;
   height: auto;
   object-fit: contain; /* scale image keeping proportions */
+  filter: brightness(1);
 }
 
 .top-brand .brand-name {
@@ -69,6 +79,9 @@ header a:hover {
 /* MENU */
 .menu-wrapper {
   position: sticky;
+  z-index: 1;
+  background-color: var(--menu-top-bg-color);
+  min-width: 0;
 }
 
 .top-menu {
@@ -78,7 +91,7 @@ header a:hover {
   transition: max-height 0.5s ease-out;
   position: fixed;
   left: 0;
-  background-color: var(--header-bg-color);
+  background-color: var(--menu-top-bg-color);
   overflow: hidden;
 }
 
@@ -132,6 +145,7 @@ ul.menu {
   font-size: 1.4rem;
   font-weight: 600;
   letter-spacing: 1px;
+  text-align: center;
 }
 
 .menu li {
@@ -161,29 +175,53 @@ ul.menu {
 ========================================================================== */
 /* Medium screens and up */
 @media (min-width: 768px) {
+  .header-wrapper > * {
+    min-width: 0;
+  }
   .header-wrapper {
-    padding: 20px;
+    padding: 0;
   }
   header {
-    display: grid;
+    gap: 0;
     grid-template-areas:
-      'brand login'
-      'menu menu';
+      'top'
+      'menu';
     grid-template-rows: auto fit-content(100%);
+    background-image: var(--header-bg-image);
+    background-position: center;
+    background-size: cover;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .top-wrapper {
+    background-color: var(--header-bg-color);
+    display: grid;
+    grid-template-areas: 'brand login';
+    grid-template-columns: 3fr 1fr;
+    align-items: center;
+    min-width: 0;
+    width: 100%;
+    padding: 1rem 0;
   }
 
   .top-login {
-    grid-area: login;
-    justify-self: end;
+    display: grid;
+    grid-template-columns: auto auto auto;
   }
 
   .top-brand {
     grid-area: brand;
     justify-self: start;
+    padding-left: 3rem;
   }
 
   .menu-wrapper {
     grid-area: menu;
+    min-width: 0;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
   }
 
   .hamb {
@@ -212,10 +250,9 @@ ul.menu {
   }
 }
 
-/* Large desktop screens and up */
-@media screen and (min-width: 1440px) {
-  header {
-    margin: 0 auto;
-    max-width: var(--max-innertext-width);
+/* Huge desktop screens and up */
+@media screen and (min-width: 2560px) {
+  .top-wrapper {
+    padding: 0 20%;
   }
 }
