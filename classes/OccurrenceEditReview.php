@@ -30,8 +30,7 @@ class OccurrenceEditReview extends Manager{
 	public function setCollId($id){
 		if(is_numeric($id)){
 			$this->collid = $id;
-			$sql = 'SELECT collectionname, institutioncode, collectioncode, colltype '.
-				'FROM omcollections WHERE (collid = '.$id.')';
+			$sql = 'SELECT collectionname, institutioncode, collectioncode, colltype FROM omcollections WHERE (collid = '.$id.')';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$collName = $r->collectionname.' (';
@@ -72,7 +71,6 @@ class OccurrenceEditReview extends Manager{
 	//Occurrence edits (omoccuredits)
 	private function getOccurEditCnt(){
 		$sql = 'SELECT COUNT(e.ocedid) AS fullcnt '.$this->getEditSqlBase();
-		//echo 'cnt: '.$sql.'<br/>';
 		$rsCnt = $this->conn->query($sql);
 		if($rCnt = $rsCnt->fetch_object()){
 			$recCnt = $rCnt->fullcnt;
@@ -94,7 +92,7 @@ class OccurrenceEditReview extends Manager{
 			$retArr[$r->occid][$r->ocedid][$r->appliedstatus]['uid'] = $r->uid;
 			$retArr[$r->occid][$r->ocedid][$r->appliedstatus]['f'][$r->fieldname]['old'] = $r->fieldvalueold;
 			$retArr[$r->occid][$r->ocedid][$r->appliedstatus]['f'][$r->fieldname]['new'] = $r->fieldvaluenew;
-			$retArr[$r->occid]['catnum'] = $r->catalognumber.($r->othercatalognumbers?', ':'').$r->othercatalognumbers;
+			$retArr[$r->occid]['catnum'] = $r->catalognumber . ($r->catalognumber && $r->othercatalognumbers ? '<br>' : '') . $r->othercatalognumbers;
 		}
 		$rs->free();
 		$this->appendAdditionalIdentifiers($retArr);
@@ -107,7 +105,7 @@ class OccurrenceEditReview extends Manager{
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				if(!$occArr[$r->occid]['catnum'] || strpos($occArr[$r->occid]['catnum'], $r->identifierValue) === false){
-					if($occArr[$r->occid]['catnum']) $occArr[$r->occid]['catnum'] .= ', ';
+					if($occArr[$r->occid]['catnum']) $occArr[$r->occid]['catnum'] .= '<br>';
 					$occArr[$r->occid]['catnum'] .= $r->identifierValue;
 				}
 			}
@@ -252,34 +250,122 @@ class OccurrenceEditReview extends Manager{
 			//Apply edits
 			$applyTask = $postArr['applytask'];
 			//Apply edits with applied status = 0
-			$sql = 'SELECT occid, fieldname, fieldvalueold, fieldvaluenew '.
-				'FROM omoccuredits '.
-				'WHERE appliedstatus = '.($applyTask == 'apply'?'0':'1').' AND (ocedid IN('.$idStr.')) ORDER BY initialtimestamp';
-			//echo '<div>'.$sql.'</div>'; exit;
+			$sql = 'SELECT ocedid, occid, fieldname, fieldvalueold, fieldvaluenew, appliedstatus FROM omoccuredits WHERE (ocedid IN('.$idStr.')) ORDER BY initialtimestamp';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
+				$status = false;
 				if($applyTask == 'apply') $value = $r->fieldvaluenew;
 				else $value = $r->fieldvalueold;
-				$uSql = 'UPDATE omoccurrences '.
-					'SET '.$r->fieldname.' = '.($value?'"'.$this->cleanInStr($value).'"':'NULL').' '.
-					'WHERE (occid = '.$r->occid.')';
-				//echo '<div>'.$uSql.'</div>';
-				if(!$this->conn->query($uSql)){
-					$this->warningArr[] = 'ERROR '.($applyTask == 'apply'?'applying':'reverting').' edits: '.$this->conn->error;
-					$status = false;
+				$tableName = 'omoccurrences';
+				$fieldName = $r->fieldname;
+				if($fieldName == 'omoccuridentifiers') $tableName = 'omoccuridentifiers';
+				if(strpos($fieldName, ':')){
+					$pArr = explode(':', $fieldName);
+					$tableName = $pArr[0];
+					$fieldName = $pArr[1];
 				}
+				if(($applyTask == 'apply' && !$r->appliedstatus) || ($applyTask != 'apply' && $r->appliedstatus)){
+					if($tableName == 'omoccuridentifiers'){
+						$status = $this->applyIdentifierEdits($r->occid, $fieldName, $r->fieldvalueold, $r->fieldvaluenew, $applyTask);
+					}
+					elseif($tableName == 'omoccurpaleo'){
+						$status = $this->applyPaleoEdits($r->occid, $fieldName, $value, $applyTask);
+					}
+					elseif($tableName == 'omexsiccatiocclink'){
+						$status = $this->applyExsiccatiEdits($r->occid, $fieldName, $value, $applyTask);
+					}
+					elseif($tableName == 'omoccurrences'){
+						$status = $this->applyOccurrenceEdit($r->occid, $fieldName, $value, $applyTask);
+					}
+				}
+				if($postArr['rstatus']) $status = true;
+				if($status) $this->setEditStatus($r->ocedid, $applyTask, $postArr['rstatus']);
 			}
 			$rs->free();
-			//Change status
-			$sql = 'UPDATE omoccuredits SET appliedstatus = '.($applyTask=='apply'?1:0);
-			if($postArr['rstatus']){
-				$sql .= ',reviewstatus = '.$postArr['rstatus'];
-			}
-			$sql .= ' WHERE (ocedid IN('.$idStr.'))';
-			//echo '<div>'.$sql.'</div>'; exit;
-			$this->conn->query($sql);
 		}
 		return $status;
+	}
+
+	private function applyOccurrenceEdit($occid, $fieldName, $value, $applyTask){
+		$status = true;
+		$sql = 'UPDATE omoccurrences SET '.$fieldName.' = '.($value !== ''?'"'.$this->cleanInStr($value).'"':'NULL').' WHERE (occid = '.$occid.')';
+		if(!$this->conn->query($sql)){
+			$this->warningArr[] = 'ERROR '.($applyTask == 'apply'?'applying':'reverting').' occurrence edits: '.$this->conn->error;
+			$status = false;
+		}
+		return $status;
+	}
+
+	private function applyIdentifierEdits($occid, $fieldName, $oldValue, $newValue, $applyTask){
+		$status = true;
+		$matchValue = $oldValue;
+		$changeValue = $newValue;
+		if($applyTask == 'revert'){
+			$matchValue = $newValue;
+			$changeValue = $oldValue;
+		}
+		$matchTag = '';
+		$changeTag = '';
+		if($p = strpos($matchValue, ':')){
+			$matchTag = substr($matchValue, 0, $p);
+			$matchValue = trim(substr($matchValue, $p + 1));
+		}
+		if($p = strpos($changeValue, ':')){
+			$changeTag = substr($changeValue, 0, $p);
+			$changeValue = trim(substr($changeValue, $p + 1));
+		}
+		$sql = '';
+		$idPK = 0;
+		if($matchValue){
+			$rs = $this->conn->query('SELECT idomoccuridentifiers FROM omoccuridentifiers WHERE (occid = '.$occid.') AND (identifierName = "'.$this->cleanInStr($matchTag).'") AND (identifierValue = "'.$this->cleanInStr($matchValue).'")');
+			if($r = $rs->fetch_object()){
+				$idPK = $r->idomoccuridentifiers;
+			}
+			$rs->free();
+			if($idPK){
+				$sql = 'DELETE FROM omoccuridentifiers ';
+				if($changeValue) $sql = 'UPDATE omoccuridentifiers SET identifierName = "'.$this->cleanInStr($changeTag).'", identifierValue = "'.$this->cleanInStr($changeValue).'" ';
+				$sql .= 'WHERE idomoccuridentifiers = '.$idPK;
+			}
+		}
+		if(!$idPK && $changeValue){
+			$sql = 'INSERT INTO omoccuridentifiers(occid, identifierName, identifierValue, modifiedUid)
+				VALUES('.$occid.', "'.$this->cleanInStr($changeTag).'", "'.$this->cleanInStr($changeValue).'", '.$GLOBALS['SYMB_UID'].') ';
+		}
+		if($sql){
+			if(!$this->conn->query($sql)){
+				$this->warningArr[] = 'ERROR '.($applyTask == 'apply'?'applying':'reverting').' omoccuridentifiers edits: '.$this->conn->error;
+				$status = false;
+			}
+		}
+		return $status;
+	}
+
+	private function applyPaleoEdits($occid, $fieldName, $value, $applyTask){
+		$status = true;
+		$sql = 'DELETE FROM omoccurpaleo WHERE (occid = '.$occid.')';
+		if($value) $sql = 'UPDATE omoccurpaleo SET '.$fieldName.' = '.($value !== ''?'"'.$this->cleanInStr($value).'"':'NULL').' WHERE (occid = '.$occid.')';
+		echo '<div>'.$sql.'</div>';
+		if(!$this->conn->query($sql)){
+			$this->warningArr[] = 'ERROR '.($applyTask == 'apply'?'applying':'reverting').' omoccurpaleo edits: '.$this->conn->error;
+			$status = false;
+		}
+		return $status;
+	}
+
+	private function applyExsiccatiEdits($occid, $fieldName, $value, $applyTask){
+		$status = false;
+
+		return $status;
+	}
+
+	private function setEditStatus($ocedid, $applyStatus, $reviewStatus){
+		if($applyStatus == 'apply') $applyStatus = 1;
+		else $applyStatus = 0;
+		$sql = 'UPDATE omoccuredits SET appliedstatus = '.$applyStatus;
+		if($reviewStatus) $sql .= ',reviewstatus = '.$reviewStatus;
+		$sql .= ' WHERE (ocedid = '.$ocedid.')';
+		$this->conn->query($sql);
 	}
 
 	private function updateRevisionRecords($postArr){

@@ -38,18 +38,9 @@ if($coorArr && count($coorArr) == 4){
 <html>
 	<head>
 		<title>Georeference Clone Tool</title>
-		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    <?php
-      $activateJQuery = false;
-      if(file_exists($SERVER_ROOT.'/includes/head.php')){
-        include_once($SERVER_ROOT.'/includes/head.php');
-      }
-      else{
-        echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-        echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-        echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-      }
-    ?>
+		<?php
+		include_once($SERVER_ROOT.'/includes/head.php');
+		?>
 		<script src="//www.google.com/jsapi"></script>
 		<script src="//maps.googleapis.com/maps/api/js?<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'key='.$GOOGLE_MAP_KEY:''); ?>"></script>
 		<script type="text/javascript">
@@ -77,7 +68,7 @@ if($coorArr && count($coorArr) == 4){
 					if($occArr['lat'] > $maxLat) $maxLat = $occArr['lat'];
 					if($occArr['lng'] < $minLng) $minLng = $occArr['lng'];
 					if($occArr['lng'] > $maxLng) $maxLng = $occArr['lng'];
-					
+
 					$outStr = '<div>'.$occArr['lat'].' '.$occArr['lng'].' ';
 					if($occArr['err']) $outStr .= ' (+-'.$occArr['err'].'m)';
 					if($occArr['georefby']) $outStr .= '<br/>Georeferenced by: '.$occArr['georefby'];
@@ -100,10 +91,10 @@ if($coorArr && count($coorArr) == 4){
 						infoWins.push( iWin );
 						iWin.open(map,m<?php echo $id; ?>);
 					});
-					<?php 
+					<?php
 				}
 				?>
-				
+
 				var swLatLng = new google.maps.LatLng(<?php echo $minLat.','.$minLng; ?>);
 				var neLatLng = new google.maps.LatLng(<?php echo $maxLat.','.$maxLng; ?>);
 				var llBounds = new google.maps.LatLngBounds(swLatLng, neLatLng);
@@ -151,7 +142,7 @@ if($coorArr && count($coorArr) == 4){
 				<legend><b>Search Form</b></legend>
 				<form name="cloneform" action="georefclone.php" method="post" onsubmit="return verifyCloneForm(this)">
 					<div>
-						Locality: 
+						Locality:
 						<input name="locality" type="text" value="<?php echo $locality; ?>" style="width:600px" />
 					</div>
 					<div>
@@ -159,14 +150,14 @@ if($coorArr && count($coorArr) == 4){
 						<input id="wildsearch" name="searchtype" type="radio" value="2" <?php echo ($searchType=='2'?'checked':''); ?> /> Contains
 						<input id="deepsearch" name="searchtype" type="radio" value="3" <?php echo ($searchType=='3'?'checked':''); ?> /> Deep Search
 					</div>
-					<?php 
+					<?php
 					if($collid){
 						?>
 						<div>
 							<input name="colltype" type="radio" value="0" <?php echo ($collType?'':'checked'); ?> /> Search all collections
 							<input name="colltype" type="radio" value="1" <?php echo ($collType?'checked':''); ?> /> Target collection only
 						</div>
-						<?php 
+						<?php
 					}
 					?>
 					<div style="float:left;margin:5px 20px;">
@@ -176,21 +167,21 @@ if($coorArr && count($coorArr) == 4){
 						<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 						<input name="submitaction" type="submit" value="Search" />
 					</div>
-				</form> 
+				</form>
 			</fieldset>
-			<?php 
+			<?php
 			if($clones){
 				?>
 				<div style="margin:3px;font-weight:bold;">
 					Click on markers to view and clone coordinates
 				</div>
 				<div id='map_canvas' style='width:750px; height:600px; clear:both;'></div>
-				<?php 
+				<?php
 			}
 			else{
 				?>
 				<div style="margin:30px"><h2>Search failed to return specimen matches</h2></div>
-				<?php 
+				<?php
 			}
 			?>
 		</div>

@@ -90,7 +90,7 @@ else{
 		<head>
 			<title>Mailing Label</title>
 			<?php
-			$activateJQuery = false;
+	
 			include_once($SERVER_ROOT.'/includes/head.php');
 			?>
 			<style type="text/css">

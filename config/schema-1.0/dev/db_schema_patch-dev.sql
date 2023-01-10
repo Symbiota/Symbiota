@@ -83,8 +83,7 @@ ALTER TABLE `agentnames`
   DROP INDEX `ft_collectorname` ;
 
 ALTER TABLE `agentnames` 
-  ADD UNIQUE INDEX `UQ_agentnames_unique` (`agentID` ASC, `nameType` ASC, `agentName` ASC),
-  ADD INDEX `IX_agentnames_type` (`nameType` ASC);
+  ADD UNIQUE INDEX `UQ_agentnames_unique` (`agentID` ASC, `nameType` ASC, `agentName` ASC);
 
 ALTER TABLE `agentnames` 
   DROP INDEX `type`,
@@ -147,6 +146,63 @@ ALTER TABLE `fmchecklists`
   ADD COLUMN `guid` VARCHAR(45) NULL AFTER `expiration`,
   ADD COLUMN `recordID` VARCHAR(45) NULL AFTER `guid`,
   ADD COLUMN `modifiedUid` INT UNSIGNED NULL AFTER `recordID`;
+
+ALTER TABLE `fmvouchers` 
+  DROP FOREIGN KEY `FK_vouchers_cl`;
+
+ALTER TABLE `fmvouchers` 
+  DROP INDEX `chklst_taxavouchers` ;
+
+ALTER TABLE `fmvouchers` 
+  DROP FOREIGN KEY `FK_fmvouchers_occ`;
+
+ALTER TABLE `fmchklstcoordinates` 
+  DROP FOREIGN KEY `FKchklsttaxalink`;
+  
+ALTER TABLE `fmchklstcoordinates` 
+  DROP INDEX `IndexUnique` ;
+
+DROP TABLE IF EXISTS `fmchklsttaxastatus`;
+
+DROP TABLE IF EXISTS `fmcltaxacomments`;
+
+ALTER TABLE `fmchklsttaxalink` 
+  ADD COLUMN `clTaxaID` INT UNSIGNED NOT NULL AUTO_INCREMENT FIRST,
+  CHANGE COLUMN `morphospecies` `morphospecies` VARCHAR(45) NULL DEFAULT '' ,
+  DROP PRIMARY KEY,
+  ADD PRIMARY KEY (`clTaxaID`),
+  ADD UNIQUE INDEX `UQ_chklsttaxalink` (`CLID` ASC, `TID` ASC, `morphospecies` ASC);
+
+ALTER TABLE `fmchklsttaxalink` 
+  CHANGE COLUMN `TID` `tid` INT(10) UNSIGNED NOT NULL,
+  CHANGE COLUMN `CLID` `clid` INT(10) UNSIGNED NOT NULL,
+  CHANGE COLUMN `morphospecies` `morphoSpecies` VARCHAR(45) NULL DEFAULT '' ,
+  CHANGE COLUMN `familyoverride` `familyOverride` VARCHAR(50) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Habitat` `habitat` VARCHAR(250) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Abundance` `abundance` VARCHAR(50) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Notes` `notes` VARCHAR(2000) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Nativity` `nativity` VARCHAR(50) NULL DEFAULT NULL COMMENT 'native, introducted' ,
+  CHANGE COLUMN `Endemic` `endemic` VARCHAR(45) NULL DEFAULT NULL ,
+  CHANGE COLUMN `internalnotes` `internalNotes` VARCHAR(250) NULL DEFAULT NULL ,
+  CHANGE COLUMN `InitialTimeStamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
+
+
+ALTER TABLE `fmvouchers` 
+  DROP PRIMARY KEY;
+
+ALTER TABLE `fmvouchers` 
+  ADD COLUMN `clVoucherID` INT UNSIGNED NOT NULL AUTO_INCREMENT FIRST,
+  ADD PRIMARY KEY (`clVoucherID`);
+
+ALTER TABLE `fmvouchers` 
+  ADD COLUMN `clTaxaID` INT UNSIGNED NULL AFTER `clVoucherID`,
+  ADD INDEX `FK_fmvouchers_occ_idx` (`occid` ASC),
+  ADD INDEX `FK_fmvouchers_tidclid_idx` (`clTaxaID` ASC);
+
+ALTER TABLE `fmvouchers` 
+  ADD CONSTRAINT `FK_fmvouchers_occ`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_fmvouchers_tidclid`  FOREIGN KEY (`clTaxaID`)  REFERENCES `fmchklsttaxalink` (`clTaxaID`)  ON DELETE CASCADE  ON UPDATE CASCADE;
+
 
 ALTER TABLE `fmchklstcoordinates`
   ADD COLUMN `sourceName` VARCHAR(75) NULL AFTER `decimalLongitude`,
@@ -219,7 +275,7 @@ CREATE TABLE `glossarycategory` (
   UNIQUE INDEX `UQ_glossary_category_term` (`category` ASC, `langID` ASC, `rankid` ASC),
   CONSTRAINT `FK_glossarycategory_lang`   FOREIGN KEY (`langID`)  REFERENCES `adminlanguages` (`langid`)  ON DELETE SET NULL  ON UPDATE CASCADE,
   CONSTRAINT `FK_glossarycategory_transCatID`  FOREIGN KEY (`translationCatID`)  REFERENCES `glossarycategory` (`glossCatID`)  ON DELETE SET NULL  ON UPDATE CASCADE,
-  CONSTRAINT `FK_glossarycategory_parentCatID`  FOREIGN KEY (`parentCatID`)  REFERENCES `glossarycategory` (`glossCatID`)  ON DELETE SET NULL  ON UPDATE CASCADE;
+  CONSTRAINT `FK_glossarycategory_parentCatID`  FOREIGN KEY (`parentCatID`)  REFERENCES `glossarycategory` (`glossCatID`)  ON DELETE SET NULL  ON UPDATE CASCADE
 );
 
 CREATE TABLE `glossarycategorylink` (
@@ -337,6 +393,22 @@ ALTER TABLE `omcollections`
 ALTER TABLE `omcollections` 
   ADD COLUMN `recordID` TEXT NULL AFTER `aggKeysStr`;
 
+ALTER TABLE `omoccurrences` 
+  DROP FOREIGN KEY `FK_omoccurrences_recbyid`;
+
+ALTER TABLE `omoccurrences` 
+  DROP COLUMN `recordedbyid`,
+  DROP INDEX `FK_recordedbyid` ;
+
+ALTER TABLE `omoccurdeterminations` 
+  DROP FOREIGN KEY `FK_omoccurdets_idby`;
+
+ALTER TABLE `omoccurdeterminations` 
+  DROP INDEX `FK_omoccurdets_idby_idx` ;
+  
+ALTER TABLE `omoccurdeterminations` 
+  DROP COLUMN `idbyid`;
+
 DROP TABLE omcollectors;
 
 
@@ -410,15 +482,6 @@ ALTER TABLE `omoccurdatasets`
   CHANGE COLUMN `sortsequence` `sortSequence` INT(11) NULL DEFAULT NULL ,
   CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
 
-
-ALTER TABLE `omoccurdeterminations` 
-  DROP FOREIGN KEY `FK_omoccurdets_idby`;
-
-ALTER TABLE `omoccurdeterminations` 
-  DROP INDEX `FK_omoccurdets_idby_idx` ;
-  
-ALTER TABLE `omoccurdeterminations` 
-  DROP COLUMN `idbyid`;
 
 ALTER TABLE `omoccurdeterminations` 
   ADD COLUMN `identifiedByAgentID` BIGINT NULL AFTER `identifiedBy`,
@@ -562,13 +625,6 @@ ALTER TABLE `omcrowdsourcequeue`
 
 ALTER TABLE `omoccurassociations` 
   CHANGE COLUMN `condition` `conditionOfAssociate` VARCHAR(250) NULL DEFAULT NULL ;
-
-ALTER TABLE `omoccurrences` 
-  DROP FOREIGN KEY `FK_omoccurrences_recbyid`;
-
-ALTER TABLE `omoccurrences` 
-  DROP COLUMN `recordedbyid`,
-  DROP INDEX `FK_recordedbyid` ;
 
 ALTER TABLE `omoccurrences` 
   DROP INDEX `Index_latlng`,

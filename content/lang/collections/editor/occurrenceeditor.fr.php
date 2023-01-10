@@ -5,7 +5,7 @@ Language: Français (French)
 ------------------
 */
 
-include_once('fieldterms.fr.php');
+include_once($SERVER_ROOT.'/content/lang/collections/editor/editorterms.fr.php');
 
 $LANG['HOME'] = 'Accueil';
 $LANG['CLONES_CREATED'] = 'Succès! Les nouveaux enregistrements clones suivants ont été créés';
@@ -66,7 +66,6 @@ $LANG['END_DOY'] = 'Jour de fin Année';
 $LANG['EXS_TITLE'] = 'Titre de Exsiccati';
 $LANG['NUMBER'] = 'Nombre';
 $LANG['LATEST_ID'] = 'Dernière Identification';
-$LANG['SCINAME'] = 'Nom Scientifique';
 $LANG['LIMITED_EDITING'] = 'Droits de modification limités: utilisez onglet de détermination pour modifier identification';
 $LANG['NEED_FULL'] = "Remarque: Des autorisations d'édition complètes sont nécessaires pour modifier une identification";
 $LANG['UNDEFINED'] = 'Indéfini';
@@ -81,7 +80,6 @@ $LANG['UNDEFINED'] = 'Indéfini';
 ///$LANG['LOW'] = 'Low';
 ///$LANG['LOW_ID'] = 'Low - ID Requested';
 ///$LANG['ID_REQUESTED'] = 'ID Requested';
-$LANG['LOCALITY'] = 'Localité';
 $LANG['DEACTIVATE_LOOKUP'] = 'Désactiver Recherche de Localité';
 $LANG['LOCALITY_SECURITY'] = 'Sécurité de Localité';
 $LANG['TAXONOMIC_SECURITY'] = 'Sécurité Taxonomique';

@@ -71,21 +71,21 @@ class ImInventories extends Manager{
 		$clid = false;
 		if($fieldArr['name']){
 			$clName = $fieldArr['name'];
-			$authors = (isset($fieldArr['authors'])?$fieldArr['authors']:NULL);
-			$type = (isset($fieldArr['type'])?$fieldArr['type']:'static');
-			$locality = (isset($fieldArr['locality'])?$fieldArr['locality']:NULL);
-			$publication = (isset($fieldArr['publication'])?$fieldArr['publication']:NULL);
-			$abstract = (isset($fieldArr['abstract'])?strip_tags($fieldArr['abstract'], '<i><u><b><a>'):NULL);
-			$notes = (isset($fieldArr['notes'])?$fieldArr['notes']:NULL);
-			$latCentroid = (isset($fieldArr['latcentroid'])?$fieldArr['latcentroid']:NULL);
-			$longCentroid = (isset($fieldArr['longcentroid'])?$fieldArr['longcentroid']:NULL);
-			$pointRadiusMeters = (isset($fieldArr['pointradiusmeters'])?$fieldArr['pointradiusmeters']:NULL);
-			$access = (isset($fieldArr['access'])?$fieldArr['access']:'private');
-			$defaultSettings = (isset($fieldArr['defaultsettings'])?$fieldArr['defaultsettings']:NULL);
-			$dynamicSql = (isset($fieldArr['dynamicsql'])?$fieldArr['dynamicsql']:NULL);
-			$uid = (isset($fieldArr['uid'])?$fieldArr['uid']:NULL);
-			$footprintWkt = (isset($fieldArr['type'])?$fieldArr['type']:NULL);
-			$sortSequence = (isset($fieldArr['sortsequence'])?$fieldArr['sortsequence']:50);
+			$authors = (!empty($fieldArr['authors']) ? $fieldArr['authors'] : NULL);
+			$type = (!empty($fieldArr['type']) ? $fieldArr['type'] : 'static');
+			$locality = (!empty($fieldArr['locality']) ? $fieldArr['locality'] : NULL);
+			$publication = (!empty($fieldArr['publication']) ? $fieldArr['publication'] : NULL);
+			$abstract = (!empty($fieldArr['abstract']) ? strip_tags($fieldArr['abstract'], '<i><u><b><a>') : NULL);
+			$notes = (!empty($fieldArr['notes']) ? $fieldArr['notes'] : NULL);
+			$latCentroid = (!empty($fieldArr['latcentroid']) && is_numeric($fieldArr['latcentroid']) ? $fieldArr['latcentroid'] : NULL);
+			$longCentroid = (!empty($fieldArr['longcentroid']) && is_numeric($fieldArr['longcentroid']) ? $fieldArr['longcentroid'] : NULL);
+			$pointRadiusMeters = (!empty($fieldArr['pointradiusmeters']) && is_numeric($fieldArr['pointradiusmeters']) ? $fieldArr['pointradiusmeters'] : NULL);
+			$access = (!empty($fieldArr['access']) ? $fieldArr['access'] : 'private');
+			$defaultSettings = (!empty($fieldArr['defaultsettings']) ? $fieldArr['defaultsettings'] : NULL);
+			$dynamicSql = (!empty($fieldArr['dynamicsql']) ? $fieldArr['dynamicsql'] : NULL);
+			$uid = (!empty($fieldArr['uid']) && is_numeric($fieldArr['uid']) && $fieldArr['uid'] ? $fieldArr['uid'] : NULL);
+			$footprintWkt = (!empty($fieldArr['footprintwkt']) ? $fieldArr['footprintwkt'] : NULL);
+			$sortSequence = (!empty($fieldArr['sortsequence']) && is_numeric($fieldArr['sortsequence']) ? $fieldArr['sortsequence'] : 50);
 			$sql = 'INSERT INTO fmchecklists(name, authors, type, locality, publication, abstract, notes, latcentroid, longcentroid, pointradiusmeters, access, defaultsettings, dynamicsql, uid, footprintWkt, sortsequence) '.
 				'VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ';
 			if($stmt = $this->conn->prepare($sql)){
@@ -112,7 +112,14 @@ class ImInventories extends Manager{
 		$paramArr = array();
 		foreach($inputArr as $fieldName => $fieldValue){
 			$fieldName = strtolower($fieldName);
-			if(array_key_exists($fieldName, $fieldArr) && $fieldValue !== ''){
+			if(array_key_exists($fieldName, $fieldArr)){
+				if($fieldArr[$fieldName] == 'i' || $fieldArr[$fieldName] == 'd'){
+					if(!is_numeric($fieldValue)) $fieldValue = NULL;
+					if($fieldName == 'sortsequence' && !$fieldValue) $fieldValue = 50;
+				}
+				else{
+					if(!$fieldValue) $fieldValue = NULL;
+				}
 				$sqlFrag .= $fieldName.' = ?, ';
 				$paramArr[] = $fieldValue;
 				$typeStr .= $fieldArr[$fieldName];
@@ -146,9 +153,13 @@ class ImInventories extends Manager{
 					}
 				}
 				elseif($inputArr['type'] == 'excludespp' && is_numeric($inputArr['excludeparent'])){
-					$sql = 'UPDATE fmchklstchildren SET clid = '.$inputArr['excludeparent'].' WHERE clidchild = '.$this->clid;
-					if(!$this->conn->query($sql)){
-						$this->errorMessage = 'Error updating parent checklist for exclusion species list: '.$this->conn->error;
+					$sql = 'INSERT IGNORE INTO fmchklstchildren(clid, clidchild) VALUES(?, ?)';
+					if($stmt = $this->conn->prepare($sql)){
+						$stmt->bind_param('ii', $inputArr['excludeparent'], $this->clid);
+						if(!$stmt->execute()){
+							$this->errorMessage = 'Error updating parent checklist for exclusion species list: '.$this->conn->error;
+						}
+						$stmt->close();
 					}
 				}
 			}

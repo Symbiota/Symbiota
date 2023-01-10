@@ -33,7 +33,6 @@ if($IS_ADMIN) $isEditor = 1;
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Coordinate Validator</title>
 	<?php
-    $activateJQuery = true;
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script src="../../js/jquery-3.2.1.min.js" type="text/javascript"></script>

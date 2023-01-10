@@ -12,7 +12,7 @@ $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 $geoLocateManager = new OccurrenceGeoLocate.php();
 $geoLocateManager->setCollid($collid);
 
-$isEditor = 0; 
+$isEditor = 0;
 if($SYMB_UID){
 	if($IS_ADMIN){
 		$isEditor = 1;
@@ -48,24 +48,17 @@ if($isEditor){
 	elseif($formSubmit == 'Submit Batch Coordinates'){
 		$statusStr = $geoLocateManager->loadOccurrences($_POST);
 	}
-	
+
 }
 
 ?>
 <html>
 	<head>
 		<title>GeoLocate Batch Processes</title>
-    <?php
-      $activateJQuery = true;
-      if(file_exists($SERVER_ROOT.'/includes/head.php')){
-        include_once($SERVER_ROOT.'/includes/head.php');
-      }
-      else{
-        echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-        echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-        echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-      }
-    ?>
+		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+		<?php
+		include_once($SERVER_ROOT.'/includes/head.php');
+		?>
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>
 	</head>
@@ -75,13 +68,13 @@ if($isEditor){
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div class="navpath">
-			<a href="<?php echo $CLIENT_ROOT; ?>/index.php">Home</a> &gt;&gt; 
+			<a href="<?php echo $CLIENT_ROOT; ?>/index.php">Home</a> &gt;&gt;
 			<a href="../misc/collprofiles.php?emode=1&collid=<?php echo $collId; ?>">Collection Management Menu</a> &gt;&gt;
 			<b>Batch GeoLocate Tools</b>
 		</div>
 		<!-- This is inner text! -->
 		<div id="innertext">
-		<?php 
+		<?php
 		if($collId){
 			if($isEditor){
 				?>
@@ -117,12 +110,12 @@ if($isEditor){
 						</div>
 					</form>
 				</fieldset>
-				<?php 
+				<?php
 				if($occRecArr){
 					//Review conversions before submitting
-					//Reviews need to be limited to a few hunred 
-					//More than 100 records can be batch processed, but without review 
-					
+					//Reviews need to be limited to a few hunred
+					//More than 100 records can be batch processed, but without review
+
 					?>
 					<form name="coordsubmitform" action="geolocatetool" method="post">
 						<table class="styledtable" style="font-family:Arial;font-size:12px;">
@@ -134,7 +127,7 @@ if($isEditor){
 								<th>Decimal Long.</th>
 								<th>Coord. Error in meters</th>
 							</tr>
-							<?php 
+							<?php
 							foreach($occRecArr as $occid => $occArr){
 								echo '<tr>';
 								echo '<td><a href="">'.$occid.'</a></td>';
@@ -152,7 +145,7 @@ if($isEditor){
 							<input name="formsubmit" type="submit" value="Submit Batch Coordinates" />
 						</div>
 					</form>
-					<?php 
+					<?php
 				}
 			}
 			else{
@@ -160,7 +153,7 @@ if($isEditor){
 				<div style='font-weight:bold;font-size:120%;'>
 					ERROR: You do not have permission to edit this collection
 				</div>
-				<?php 
+				<?php
 			}
 		}
 		else{
@@ -168,11 +161,11 @@ if($isEditor){
 			<div style='font-weight:bold;font-size:120%;'>
 				ERROR: Collection identifier is null
 			</div>
-			<?php 
+			<?php
 		}
-		
 
-		?>	
+
+		?>
 		</div>
 		<?php
 			include($SERVER_ROOT.'/includes/footer.php');

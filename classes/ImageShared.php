@@ -455,8 +455,17 @@ class ImageShared{
 				}
 				else{
 					//JPG assumed
-			   		$this->sourceGdImg = imagecreatefromjpeg($this->sourcePath);
-					if(!$this->format) $this->format = 'image/jpeg';
+					$opts = array(
+						'ssl' => array(
+							'verify_peer' => false,
+							'verify_peer_name' => false,
+						)
+					);
+					$context = stream_context_create($opts);
+					if($file = file_get_contents($this->sourcePath, false, $context)){
+						$this->sourceGdImg = imagecreatefromstring($file);
+						if(!$this->format) $this->format = 'image/jpeg';
+					}
 				}
 			}
 
@@ -678,7 +687,7 @@ class ImageShared{
 	   return $returnArr;
 	}
 
-	//Getter and setter
+	//Setter and Getter
 	public function getActiveImgId(){
 		return $this->activeImgId;
 	}
@@ -701,6 +710,14 @@ class ImageShared{
 
 	public function getImgExt(){
 		return $this->imgExt;
+	}
+
+	public function getSourceWidth(){
+		return $this->sourceWidth;
+	}
+
+	public function getSourceHeight(){
+		return $this->sourceHeight;
 	}
 
 	public function getTnPixWidth(){
@@ -906,10 +923,10 @@ class ImageShared{
 	}
 
 	private function getDomainUrl(){
-		$domainPath = "http://";
-		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $domainPath = "https://";
-		$domainPath .= $_SERVER["SERVER_NAME"];
-		if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80 && $_SERVER['SERVER_PORT'] != 443) $domainPath .= ':'.$_SERVER["SERVER_PORT"];
+		$domainPath = 'http://';
+		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $domainPath = 'https://';
+		$domainPath .= $_SERVER['SERVER_NAME'];
+		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443) $domainPath .= ':'.$_SERVER['SERVER_PORT'];
 		return $domainPath;
 	}
 
@@ -1021,7 +1038,10 @@ class ImageShared{
 
 		//One last check
 		if(!$exists){
-			$exists = (@fclose(@fopen($uri,'r')));
+			if($testFH = @fopen($uri,'r')){
+				$exists = true;
+				fclose($testFH);
+			}
 		}
 		//Test to see if file is an image
 		//if(!@exif_imagetype($uri)) $exists = false;
@@ -1031,10 +1051,11 @@ class ImageShared{
 	public static function getImgDim($imgUrl){
 		if(!$imgUrl) return false;
 		$imgDim = false;
-		$urlPrefix = "http://";
-		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = "https://";
-		$urlPrefix .= $_SERVER["SERVER_NAME"];
-		if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80 && $_SERVER['SERVER_PORT'] != 443) $urlPrefix .= ':'.$_SERVER["SERVER_PORT"];
+
+		$urlPrefix = 'http://';
+		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = 'https://';
+		$urlPrefix .= $_SERVER['SERVER_NAME'];
+		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443) $urlPrefix .= ':'.$_SERVER['SERVER_PORT'];
 
 		if(strpos($imgUrl,$urlPrefix.$GLOBALS['IMAGE_ROOT_URL']) === 0){
 			$imgUrl = substr($imgUrl, strlen($urlPrefix));
@@ -1056,10 +1077,14 @@ class ImageShared{
 	// Retrieve JPEG width and height without downloading/reading entire image.
 	private static function getImgDim1($imgUrl) {
 		$opts = array(
-			'http'=>array(
+			'http' => array(
 				'user_agent' => $GLOBALS['DEFAULT_TITLE'],
 				'method'=>"GET",
 				'header'=> implode("\r\n", array('Content-type: text/plain;'))
+			),
+			'ssl' => array(
+				'verify_peer' => false,
+				'verify_peer_name' => false,
 			)
 		);
 		$context = stream_context_create($opts);
@@ -1115,6 +1140,7 @@ class ImageShared{
 		$curl = curl_init($imgUrl);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, array( "Range: bytes=0-65536" ));
 		//curl_setopt($curl, CURLOPT_HTTPHEADER, array( "Range: bytes=0-32768" ));
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36');
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);

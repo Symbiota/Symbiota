@@ -1,23 +1,13 @@
 <?php
 include_once('../config/symbini.php');
-header('Content-Type: text/html; charset='.$CHARSET);
+header('Content-Type: text/html; charset=' . $CHARSET);
 header('Location: '.$CLIENT_ROOT.'/index.php');
-include_once($SERVER_ROOT.'/content/lang/prohibit.'.$LANG_TAG.'.php');
-
 ?>
 <html>
 	<head>
-		<title><?php echo (isset($LANG['FORBIDDEN'])?$LANG['FORBIDDEN']:'Forbidden'); ?></title>
+		<title>Forbidden</title>
 		<?php
-		$activateJQuery = false;
-		if(file_exists($SERVER_ROOT.'/includes/head.php')){
-			include_once($SERVER_ROOT.'/includes/head.php');
-		}
-		else{
-			echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-			echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-			echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-		}
+		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
 	</head>
 	<body>
@@ -27,12 +17,12 @@ include_once($SERVER_ROOT.'/content/lang/prohibit.'.$LANG_TAG.'.php');
 		?>
 		<!-- This is inner text! -->
 		<div id="innertext">
-			<h1><?php echo (isset($LANG['FORBIDDEN'])?$LANG['FORBIDDEN']:'Forbidden'); ?></h1>
+			<h1>Forbidden</h1>
 			<div style="font-weight:bold;">
-				<?php echo (isset($LANG['NO_PERMISSION'])?$LANG['NO_PERMISSION']:'You don\'t have permission to access this page.'); ?>
+				You don't have permission to access this page.
 			</div>
 			<div style="font-weight:bold;margin:10px;">
-				<a href="<?php echo $CLIENT_ROOT; ?>/index.php"><?php echo (isset($LANG['RETURN'])?$LANG['RETURN']:'Return to index page'); ?></a>
+				<a href="<?php echo $CLIENT_ROOT; ?>/index.php">Return to index page</a>
 			</div>
 		</div>
 		<?php

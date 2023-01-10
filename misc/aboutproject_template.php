@@ -7,7 +7,7 @@ include_once('content/lang/misc/aboutproject.'.$LANG_TAG.'.php');
 	<head>
 		<title>About Project</title>
 		<?php
-		$activateJQuery = false;
+
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
 	</head>

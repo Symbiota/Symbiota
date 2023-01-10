@@ -34,7 +34,7 @@ class OccurrenceEditorManager {
 			$this->isShareConn = true;
 		}
 		else $this->conn = MySQLiConnectionFactory::getCon("write");
-		$this->fieldArr['occurrence'] = array('basisofrecord' => 's', 'catalognumber' => 's', 'othercatalognumbers' => 's', 'occurrenceid' => 's', 'ownerinstitutioncode' => 's',
+		$this->fieldArr['omoccurrences'] = array('basisofrecord' => 's', 'catalognumber' => 's', 'othercatalognumbers' => 's', 'occurrenceid' => 's', 'ownerinstitutioncode' => 's',
 			'institutioncode' => 's', 'collectioncode' => 's', 'eventid' => 's',
 			'family' => 's', 'sciname' => 's', 'tidinterpreted' => 'n', 'scientificnameauthorship' => 's', 'identifiedby' => 's', 'dateidentified' => 's',
 			'identificationreferences' => 's', 'identificationremarks' => 's', 'taxonremarks' => 's', 'identificationqualifier' => 's', 'typestatus' => 's',
@@ -48,10 +48,10 @@ class OccurrenceEditorManager {
 			'georeferenceremarks' => 's', 'minimumelevationinmeters' => 'n', 'maximumelevationinmeters' => 'n','verbatimelevation' => 's',
 			'minimumdepthinmeters' => 'n', 'maximumdepthinmeters' => 'n', 'verbatimdepth' => 's','disposition' => 's', 'language' => 's', 'duplicatequantity' => 'n',
 			'labelproject' => 's','processingstatus' => 's', 'recordenteredby' => 's', 'observeruid' => 'n', 'dateentered' => 'd');
-		$this->fieldArr['paleo'] = array('eon','era','period','epoch','earlyinterval','lateinterval','absoluteage','storageage','stage','localstage','biota',
+		$this->fieldArr['omoccurpaleo'] = array('eon','era','period','epoch','earlyinterval','lateinterval','absoluteage','storageage','stage','localstage','biota',
 			'biostratigraphy','lithogroup','formation','taxonenvironment','member','bed','lithology','stratremarks','element','slideproperties','geologicalcontextid');
-		$this->fieldArr['identifier'] = array('idname','idvalue');
-		$this->fieldArr['exsiccati'] = array('ometid','exstitle','exsnumber');
+		$this->fieldArr['omoccuridentifiers'] = array('idname','idvalue');
+		$this->fieldArr['omexsiccatiocclink'] = array('ometid','exstitle','exsnumber');
 	}
 
 	public function __destruct(){
@@ -684,13 +684,14 @@ class OccurrenceEditorManager {
 			}
 		}
 		if($sqlFrag){
-			$sql = 'SELECT DISTINCT o.occid, o.collid, o.'.implode(',o.',array_keys($this->fieldArr['occurrence'])).', datelastmodified FROM omoccurrences o '.$sqlFrag;
+			$sql = 'SELECT DISTINCT o.occid, o.collid, o.'.implode(',o.',array_keys($this->fieldArr['omoccurrences'])).', datelastmodified FROM omoccurrences o '.$sqlFrag;
 			$previousOccid = 0;
 			$rs = $this->conn->query($sql);
 			$rsCnt = 0;
 			$indexArr = array();
 			while($row = $rs->fetch_assoc()){
 				if($previousOccid == $row['occid']) continue;
+				if($row['localitysecurityreason'] == '<Security Setting Locked>') $row['localitysecurityreason'] = '[Security Setting Locked]';
 				if($limit){
 					//Table request, thus load all within query
 					$retArr[$row['occid']] = $row;
@@ -861,41 +862,41 @@ class OccurrenceEditorManager {
 				$oldValueArr = array();
 				//Get current values to be saved within versioning tables
 				$editFieldArr = array();
-				$editFieldArr['omoccurrences'] = array_intersect($editArr,array_keys($this->fieldArr['occurrence']));
+				$editFieldArr['omoccurrences'] = array_intersect($editArr,array_keys($this->fieldArr['omoccurrences']));
 				if($editFieldArr['omoccurrences']){
 					$sql = 'SELECT o.collid, '.implode(',',$editFieldArr['omoccurrences']).(in_array('processingstatus',$editFieldArr['omoccurrences'])?'':',processingstatus').
 						(in_array('recordenteredby',$editFieldArr['omoccurrences'])?'':',recordenteredby').' FROM omoccurrences o WHERE o.occid = '.$this->occid;
 					$rs = $this->conn->query($sql);
-					$oldValueArr['occurrence'] = $rs->fetch_assoc();
+					$oldValueArr['omoccurrences'] = $rs->fetch_assoc();
 					$rs->free();
 				}
 				//Get current paleo values to be saved within versioning tables
-				$editFieldArr['omoccurpaleo'] = array_intersect($editArr, $this->fieldArr['paleo']);
+				$editFieldArr['omoccurpaleo'] = array_intersect($editArr, $this->fieldArr['omoccurpaleo']);
 				if($this->paleoActivated && $editFieldArr['omoccurpaleo']){
 					$sql = 'SELECT '.implode(',',$editFieldArr['omoccurpaleo']).' FROM omoccurpaleo WHERE occid = '.$this->occid;
 					$rs = $this->conn->query($sql);
-					if($rs->num_rows) $oldValueArr['paleo'] = $rs->fetch_assoc();
+					if($rs->num_rows) $oldValueArr['omoccurpaleo'] = $rs->fetch_assoc();
 					$rs->free();
 				}
 				//Get current identifiers values to be saved within versioning tables
-				$editFieldArr['omoccuridentifiers'] = array_intersect($editArr, $this->fieldArr['identifier']);
+				$editFieldArr['omoccuridentifiers'] = array_intersect($editArr, $this->fieldArr['omoccuridentifiers']);
 				if($editFieldArr['omoccuridentifiers'] && $identArr){
 					foreach($identArr[$this->occid] as $idKey => $idArr){
 						$idStr = '';
 						if($idArr['name']) $idStr = $idArr['name'].': ';
 						$idStr .= $idArr['value'];
-						$oldValueArr['identifier'][$idKey] = $idStr;
+						$oldValueArr['omoccuridentifiers'][$idKey] = $idStr;
 					}
 				}
 				//Get current exsiccati values to be saved within versioning tables
-				$editFieldArr['omexsiccatiocclink'] = array_intersect($editArr, $this->fieldArr['exsiccati']);
+				$editFieldArr['omexsiccatiocclink'] = array_intersect($editArr, $this->fieldArr['omexsiccatiocclink']);
 				if($editFieldArr['omexsiccatiocclink']){
 					$sql = 'SELECT et.ometid, et.title, exsnumber '.
 						'FROM omexsiccatiocclink el INNER JOIN omexsiccatinumbers en ON el.omenid = en.omenid '.
 						'INNER JOIN omexsiccatititles et ON en.ometid = et.ometid '.
 						'WHERE el.occid = '.$this->occid;
 					$rs = $this->conn->query($sql);
-					$oldValueArr['exsiccati'] = $rs->fetch_assoc();
+					$oldValueArr['omexsiccatiocclink'] = $rs->fetch_assoc();
 					$rs->free();
 				}
 				if($editArr){
@@ -916,9 +917,9 @@ class OccurrenceEditorManager {
 					if($postArr['idvalue'][0]) $postArr['othercatalognumbers'] = '';
 
 					//If processing status was "unprocessed" and recordEnteredBy is null, populate with user login
-					$oldProcessingStatus = isset($oldValueArr['occurrence']['processingstatus'])?$oldValueArr['occurrence']['processingstatus']:'';
-					$oldRecordEnteredBy = isset($oldValueArr['occurrence']['recordenteredby'])?$oldValueArr['occurrence']['recordenteredby']:'';
-					if($oldRecordEnteredBy == 'preprocessed' || (!$oldRecordEnteredBy && ($oldProcessingStatus == 'unprocessed' || $oldProcessingStatus == 'stage 1'))){
+					$oldProcessingStatus = isset($oldValueArr['omoccurrences']['processingstatus'])?$oldValueArr['omoccurrences']['processingstatus']:'';
+					$oldRecordEnteredBy = isset($oldValueArr['omoccurrences']['recordenteredby'])?$oldValueArr['omoccurrences']['recordenteredby']:'';
+					if(!$oldRecordEnteredBy && ($oldProcessingStatus == 'unprocessed' || $oldProcessingStatus == 'stage 1')){
 						$postArr['recordenteredby'] = $GLOBALS['USERNAME'];
 						$editFieldArr['omoccurrences'][] = 'recordenteredby';
 					}
@@ -931,7 +932,7 @@ class OccurrenceEditorManager {
 								foreach($postArr['idkey'] as $idIndex => $idKey){
 									$newValue = $postArr['idname'][$idIndex].($postArr['idname'][$idIndex]?': ':'').$postArr['idvalue'][$idIndex];
 									$oldValue = '';
-									if(is_numeric($idKey)) $oldValue = $oldValueArr['identifier'][$idKey];
+									if(is_numeric($idKey)) $oldValue = $oldValueArr['omoccuridentifiers'][$idKey];
 									if($oldValue != $newValue){
 										$sqlEdit = $sqlEditsBase.'"omoccuridentifiers","'.$newValue.'","'.$oldValue.'")';
 										if(!$this->conn->query($sqlEdit)){
@@ -956,7 +957,6 @@ class OccurrenceEditorManager {
 								if($oldValue != $newValue){
 									if($fieldName != 'tidinterpreted'){
 										$sqlEdit = $sqlEditsBase.'"'.$prefix.$fieldName.'","'.$this->cleanInStr($newValue).'","'.$this->cleanInStr($oldValue).'")';
-										//echo '<div>'.$sqlEdit.'</div>';
 										if(!$this->conn->query($sqlEdit)){
 											$this->errorArr[] = ''.$this->conn->error;
 										}
@@ -979,7 +979,7 @@ class OccurrenceEditorManager {
 						if(isset($postArr['collectioncode']) && $postArr['collectioncode'] == $this->collMap['collectioncode']) $postArr['collectioncode'] = '';
 						if(isset($postArr['ownerinstitutioncode']) && $postArr['ownerinstitutioncode'] == $this->collMap['institutioncode']) $postArr['ownerinstitutioncode'] = '';
 					}
-					$occurFieldArr = array_keys($this->fieldArr['occurrence']);
+					$occurFieldArr = array_keys($this->fieldArr['omoccurrences']);
 					foreach($postArr as $oField => $ov){
 						if(in_array($oField,$occurFieldArr) && $oField != 'observeruid'){
 							$vStr = $this->cleanInStr($ov);
@@ -1036,7 +1036,7 @@ class OccurrenceEditorManager {
 								//Edit existing record
 								$paleoHasValue = false;
 								$paleoFrag = '';
-								foreach($this->fieldArr['paleo'] as $paleoField){
+								foreach($this->fieldArr['omoccurpaleo'] as $paleoField){
 									if(array_key_exists($paleoField,$postArr)){
 										$paleoFrag .= ','.$paleoField.' = '.($postArr[$paleoField]?'"'.$this->cleanInStr($postArr[$paleoField]).'"':'NULL');
 										if($postArr[$paleoField]) $paleoHasValue = true;
@@ -1060,7 +1060,7 @@ class OccurrenceEditorManager {
 								//Add new record
 								$paleoFrag1 = '';
 								$paleoFrag2 = '';
-								foreach($this->fieldArr['paleo'] as $paleoField){
+								foreach($this->fieldArr['omoccurpaleo'] as $paleoField){
 									if(array_key_exists($paleoField,$postArr) && $postArr[$paleoField]){
 										$paleoFrag1 .= ','.$paleoField;
 										$paleoFrag2 .= ',"'.$this->cleanInStr($postArr[$paleoField]).'" ';
@@ -1154,7 +1154,7 @@ class OccurrenceEditorManager {
 		global $LANG;
 		$status = $LANG['SUCCESS_NEW_OCC_SUBMITTED'];
 		if($postArr){
-			$sql = 'INSERT INTO omoccurrences(collid, '.implode(',',array_keys($this->fieldArr['occurrence'])).') VALUES ('.$postArr['collid'];
+			$sql = 'INSERT INTO omoccurrences(collid, '.implode(',',array_keys($this->fieldArr['omoccurrences'])).') VALUES ('.$postArr['collid'];
 			//if(array_key_exists('cultivationstatus',$postArr) && $postArr['cultivationstatus']) $postArr['cultivationstatus'] = $postArr['cultivationstatus'];
 			//if(array_key_exists('localitysecurity',$postArr) && $postArr['localitysecurity']) $postArr['localitysecurity'] = $postArr['localitysecurity'];
 			if(!isset($postArr['dateentered']) || !$postArr['dateentered']) $postArr['dateentered'] = date('Y-m-d H:i:s');
@@ -1162,7 +1162,7 @@ class OccurrenceEditorManager {
 			if(isset($postArr['institutioncode']) && $postArr['institutioncode'] == $this->collMap['institutioncode']) $postArr['institutionCode'] = '';
 			if(isset($postArr['collectioncode']) && $postArr['collectioncode'] == $this->collMap['collectioncode']) $postArr['collectionCode'] = '';
 
-			foreach($this->fieldArr['occurrence'] as $fieldStr => $fieldType){
+			foreach($this->fieldArr['omoccurrences'] as $fieldStr => $fieldType){
 				$fieldValue = '';
 				if(array_key_exists($fieldStr,$postArr)) $fieldValue = $postArr[$fieldStr];
 				if($fieldValue){
@@ -1191,7 +1191,7 @@ class OccurrenceEditorManager {
 					//Add new record
 					$paleoFrag1 = '';
 					$paleoFrag2 = '';
-					foreach($this->fieldArr['paleo'] as $paleoField){
+					foreach($this->fieldArr['omoccurpaleo'] as $paleoField){
 						if(array_key_exists($paleoField,$postArr)){
 							$paleoFrag1 .= ','.$paleoField;
 							$paleoFrag2 .= ','.($postArr[$paleoField]?'"'.$this->cleanInStr($postArr[$paleoField]).'"':'NULL');
@@ -1462,7 +1462,7 @@ class OccurrenceEditorManager {
 			}
 			if(isset($postArr['carryover']) && $postArr['carryover'] == 1){
 				$clearEventArr = array('family','sciname','tidinterpreted','scientificnameauthorship','identifiedby','dateidentified','identificationreferences','identificationremarks',
-					'taxonremarks','identificationqualifier','recordnumber','occurrenceremarks','verbatimattributes','dynamicproperties','lifestage','sex');
+					'taxonremarks','identificationqualifier','recordnumber','occurrenceremarks','verbatimattributes','dynamicproperties','lifestage','sex','reproductivecondition','behavior','preparations');
 				$postArr = array_diff_key($postArr,array_flip($clearEventArr));
 			}
 			$cloneCatNum = array();
@@ -1692,11 +1692,11 @@ class OccurrenceEditorManager {
 
 	private function setPaleoData(){
 		if($this->paleoActivated){
-			$sql = 'SELECT '.implode(',',$this->fieldArr['paleo']).' FROM omoccurpaleo WHERE occid = '.$this->occid;
+			$sql = 'SELECT '.implode(',',$this->fieldArr['omoccurpaleo']).' FROM omoccurpaleo WHERE occid = '.$this->occid;
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_assoc()){
-				foreach($this->fieldArr['paleo'] as $term){
+				foreach($this->fieldArr['omoccurpaleo'] as $term){
 					$this->occurrenceMap[$this->occid][$term] = $r[$term];
 				}
 			}
@@ -1789,7 +1789,7 @@ class OccurrenceEditorManager {
 					$statusStr = $LANG['ERROR_ADDING_UPDATE'].': '.$this->conn->error;
 				}
 				//Apply edits to core tables
-				if($this->paleoActivated && array_key_exists($fn, $this->fieldArr['paleo'])){
+				if($this->paleoActivated && array_key_exists($fn, $this->fieldArr['omoccurpaleo'])){
 					$sql = 'UPDATE omoccurpaleo SET '.$fn.' = '.$nvSqlFrag.' '.$sqlWhere;
 				}
 				else{
@@ -2111,7 +2111,6 @@ class OccurrenceEditorManager {
 	}
 
 	public function getImageMap($imgId = 0){
-		global $LANG;
 		$imageMap = Array();
 		if($this->occid){
 			$sql = 'SELECT imgid, url, thumbnailurl, originalurl, caption, photographer, photographeruid, sourceurl, copyright, notes, occid, username, sortoccurrence, initialtimestamp FROM images ';
@@ -2170,9 +2169,11 @@ class OccurrenceEditorManager {
 				$retArr[$k]['edits'][$r->appliedstatus][$r->ocedid]['old'] = $r->fieldvalueold;
 				$retArr[$k]['edits'][$r->appliedstatus][$r->ocedid]['new'] = $r->fieldvaluenew;
 				$currentCode = 0;
-				$fName = $this->occurrenceMap[$this->occid][strtolower($r->fieldname)];
-				if($fName == $r->fieldvaluenew) $currentCode = 1;
-				elseif($fName == $r->fieldvalueold) $currentCode = 2;
+				if(isset($this->occurrenceMap[$this->occid][strtolower($r->fieldname)])){
+					$fName = $this->occurrenceMap[$this->occid][strtolower($r->fieldname)];
+					if($fName == $r->fieldvaluenew) $currentCode = 1;
+					elseif($fName == $r->fieldvalueold) $currentCode = 2;
+				}
 				$retArr[$k]['edits'][$r->appliedstatus][$r->ocedid]['current'] = $currentCode;
 			}
 			$result->free();
@@ -2334,27 +2335,6 @@ class OccurrenceEditorManager {
 		return $isEditor;
 	}
 
-	//Form field functions
-	public function getFieldArr(){
-		global $LANG;
-		$fieldArr = array();
-		$panelName = (isset($LANG['COLLECTOR_INFO'])?$LANG['COLLECTOR_INFO']:'Collector Info');
-		$fieldArr[$panelName][0]['catalogNumber']['onChange'][] = "fieldChanged('catalognumber')";
-		$fieldArr[$panelName][0]['catalogNumber']['onChange'][] = 'searchCatalogNumber(this.form,true)';
-		if($isEditor > 2) $fieldArr[$panelName]['catalogNumber']['attr'][] = 'disabled';
-		$fieldArr[$panelName][0]['catalogNumber']['attr'][] = 'autocomplete="off"';
-		$fieldArr[$panelName][0]['catalogNumber']['title'] = (defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:'Catalog Number');
-		$fieldArr[$panelName][0]['catalogNumber']['type'] = 'text';
-
-		$fieldArr[$panelName][1]['otherCatalogNumbers']['onChange'][] = "fieldChanged('othercatalognumbers')";
-		$fieldArr[$panelName][0]['otherCatalogNumbers']['onChange'][] = 'searchOtherCatalogNumbers(this.form)';
-		$fieldArr[$panelName][0]['otherCatalogNumbers']['attr'][] = 'autocomplete="off"';
-		$fieldArr[$panelName][0]['otherCatalogNumbers']['title'] = (defined('OTHERCATALOGNUMBERSLABEL')?OTHERCATALOGNUMBERSLABEL:'Catalog Number');
-		$fieldArr[$panelName][0]['otherCatalogNumbers']['type'] = 'text';
-
-		return $fieldArr;
-	}
-
 	//Misc data support functions
 	public function getCollectionList($limitToUser = true){
 		$retArr = array();
@@ -2470,7 +2450,7 @@ class OccurrenceEditorManager {
 	//Setters and getters
 	public function setOccId($id){
 		if(is_numeric($id)){
-			$this->occid = $this->cleanInStr($id);
+			$this->occid = $id;
 		}
 	}
 

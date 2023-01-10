@@ -8,7 +8,7 @@ class TaxonSearchSupport{
 	private $conn;
 	private $queryString;
 	private $taxonType;
-	private $rankLow;
+	private $rankLow = 0;
 	private $rankHigh;
 
  	public function __construct(){
@@ -37,13 +37,13 @@ class TaxonSearchSupport{
 
 			    "UNION ".
 
-			    "SELECT DISTINCT tid, CONCAT('".$LANG['SELECT_1-2'].": ',sciname         ) AS sciname ".
+			    "SELECT DISTINCT tid, CONCAT('".$LANG['SELECT_1-2'].": ', sciname) AS sciname ".
 			    "FROM taxa ".
 			    "WHERE sciname LIKE '%".$this->queryString."%' AND rankid > 179 ".
 
 			    "UNION ".
 
-			    "SELECT DISTINCT tid, CONCAT('".$LANG['SELECT_1-3'].": ',sciname         ) AS sciname ".
+			    "SELECT DISTINCT tid, CONCAT('".$LANG['SELECT_1-3'].": ', sciname) AS sciname ".
 			    "FROM taxa ".
 			    "WHERE sciname LIKE '".$this->queryString."%' AND rankid = 140 ".
 
@@ -82,7 +82,7 @@ class TaxonSearchSupport{
 		$retArr = Array();
 		if($this->queryString){
 			$sql = 'SELECT sciname FROM taxa WHERE (sciname LIKE "'.$this->queryString.'%") ';
-			if($this->rankLow){
+			if(is_numeric($this->rankLow)){
 				if($this->rankHigh) $sql .= 'AND (rankid BETWEEN '.$this->rankLow.' AND '.$this->rankHigh.') ';
 				else $sql .= 'AND (rankid = '.$this->rankLow.') ';
 			}

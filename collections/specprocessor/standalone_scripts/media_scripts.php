@@ -58,7 +58,6 @@ if($IS_ADMIN) $isEditor = true;
 	<title>Media Tools</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<?php
-	$activateJQuery = true;
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script src="../../../js/jquery.js" type="text/javascript"></script>

@@ -726,25 +726,9 @@ class ChecklistManager extends Manager{
 		return $retArr;
 	}
 
-	public function getUpperTaxa($term){
-		$retArr = array();
-		$param = "{$term}%";
-		$sql = 'SELECT tid, sciname FROM taxa WHERE (rankid < 180) AND (sciname LIKE ?) ORDER BY sciname';
-		$stmt = $this->conn->prepare($sql);
-		$stmt->bind_param('s', $param);
-		$stmt->execute();
-		$stmt->bind_result($tid,$sciname);
-		while ($stmt->fetch()) {
-			$retArr[$tid]['id'] = $tid;
-			$retArr[$tid]['value'] = $sciname;
-		}
-		$stmt->close();
-		return $retArr;
-	}
-
 	//Setters and getters
 	public function setThesFilter($filt){
-		$this->thesFilter = $filt;
+		if(is_numeric($filt)) $this->thesFilter = $filt;
 	}
 
 	public function getThesFilter(){

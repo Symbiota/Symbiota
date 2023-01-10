@@ -129,7 +129,7 @@ class SpecUploadDwca extends SpecUploadBase{
 		$status = false;
 		if($this->readMetaFile()){
 			if(isset($this->metaArr['occur']['fields'])){
-				$this->sourceArr = $this->metaArr['occur']['fields'];
+				$this->occurSourceArr = $this->metaArr['occur']['fields'];
 				//Set identification and image source fields
 				if(isset($this->metaArr['ident']['fields'])){
 					$this->identSourceArr = $this->metaArr['ident']['fields'];
@@ -476,9 +476,9 @@ class SpecUploadDwca extends SpecUploadBase{
 
 					$cset = strtolower(str_replace('-','',$CHARSET));
 					//Set source array
-					$this->sourceArr = array();
+					$this->occurSourceArr = array();
 					foreach($this->metaArr['occur']['fields'] as $k => $v){
-						$this->sourceArr[$k] = strtolower($v);
+						$this->occurSourceArr[$k] = strtolower($v);
 					}
 					//Set custom filters if they haven't yet been set
 					if($this->queryStr && !$this->filterArr){
@@ -497,12 +497,12 @@ class SpecUploadDwca extends SpecUploadBase{
 					//Grab data
 					$this->transferCount = 0;
 					if($this->uploadType == $this->RESTOREBACKUP){
-						$this->fieldMap['dbpk']['field'] = 'sourceprimarykey-dbpk';
-						$this->fieldMap['occid']['field'] = 'id';
-						$this->fieldMap['sciname']['field'] = 'scientificname';
+						$this->occurFieldMap['dbpk']['field'] = 'sourceprimarykey-dbpk';
+						$this->occurFieldMap['occid']['field'] = 'id';
+						$this->occurFieldMap['sciname']['field'] = 'scientificname';
 					}
-			 		if(!isset($this->fieldMap['dbpk']['field']) || !in_array($this->fieldMap['dbpk']['field'],$this->sourceArr)){
-						$this->fieldMap['dbpk']['field'] = strtolower($this->metaArr['occur']['fields'][$id]);
+			 		if(!isset($this->occurFieldMap['dbpk']['field']) || !in_array($this->occurFieldMap['dbpk']['field'],$this->occurSourceArr)){
+						$this->occurFieldMap['dbpk']['field'] = strtolower($this->metaArr['occur']['fields'][$id]);
 					}
 					$collName = $this->collMetadataArr["name"].' ('.$this->collMetadataArr["institutioncode"];
 					if($this->collMetadataArr["collectioncode"]) $collName .= '-'.$this->collMetadataArr["collectioncode"];
@@ -514,7 +514,7 @@ class SpecUploadDwca extends SpecUploadBase{
 					while($recordArr = $this->getRecordArr($fh)){
 						$addRecord = true;
 						foreach($this->filterArr as $fieldName => $condArr){
-							$filterIndexArr = array_keys($this->sourceArr,$fieldName);
+							$filterIndexArr = array_keys($this->occurSourceArr,$fieldName);
 							$filterIndex = array_shift($filterIndexArr);
 							$targetValue = '';
 							if(array_key_exists($filterIndex, $recordArr)) $targetValue = trim(strtolower($recordArr[$filterIndex]));
@@ -594,10 +594,10 @@ class SpecUploadDwca extends SpecUploadBase{
 								$this->coreIdArr[$recordArr[0]] = '';
 							}
 							$recMap = Array();
-							foreach($this->fieldMap as $symbField => $sMap){
+							foreach($this->occurFieldMap as $symbField => $sMap){
 								if(substr($symbField,0,8) != 'unmapped'){
 									//Apply source filter if they exist
-									$indexArr = array_keys($this->sourceArr,$sMap['field']);
+									$indexArr = array_keys($this->occurSourceArr, $sMap['field']);
 									$index = array_shift($indexArr);
 									if(array_key_exists($index,$recordArr)){
 										$valueStr = trim($recordArr[$index]);

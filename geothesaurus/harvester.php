@@ -31,15 +31,12 @@ if($isEditor && $submitAction) {
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> - Geographic Thesaurus Havester</title>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	$activateJQuery = true;
 	include_once ($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>
-	<script type="text/javascript">
-
-	</script>
 	<style type="text/css">
 		fieldset{ margin: 10px; padding: 15px; }
 		legend{ font-weight: bold; }

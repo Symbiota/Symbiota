@@ -1,55 +1,42 @@
 <?php
 include_once('config/symbini.php');
-include_once('content/lang/index.'.$LANG_TAG.'.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/index.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/index.en.php');
+else include_once($SERVER_ROOT.'/content/lang/index.'.$LANG_TAG.'.php');
+header('Content-Type: text/html; charset=' . $CHARSET);
 ?>
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Home</title>
 	<?php
-	$activateJQuery = true;
-	include_once($SERVER_ROOT.'/includes/head.php');
-	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
+	include_once($SERVER_ROOT . '/includes/head.php');
+	include_once($SERVER_ROOT . '/includes/googleanalytics.php');
 	?>
-	<link href="css/quicksearch.css" type="text/css" rel="Stylesheet" />
-	<script src="js/jquery-3.2.1.min.js" type="text/javascript"></script>
-	<script src="js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
-	<link href="js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
-	<script type="text/javascript">
-		var clientRoot = "<?php echo $CLIENT_ROOT; ?>";
-	</script>
-	<script src="js/symb/api.taxonomy.taxasuggest.js" type="text/javascript"></script>
-	<style>
-		#slideshowcontainer{
-			border: 2px solid black;
-			border-radius:10px;
-			padding:10px;
-			margin-left: auto;
-			margin-right: auto;
-		}
-	</style>
 </head>
 <body>
 	<?php
-	include($SERVER_ROOT.'/includes/header.php');
+	include($SERVER_ROOT . '/includes/header.php');
 	?>
-	<!-- This is inner text! -->
+	<div class="navpath"></div>
 	<div id="innertext">
-		<h1></h1>
-		<div id="quicksearchdiv">
-			<!-- -------------------------QUICK SEARCH SETTINGS--------------------------------------- -->
-			<form name="quicksearch" id="quicksearch" action="<?php echo $CLIENT_ROOT; ?>/taxa/index.php" method="get" onsubmit="return verifyQuickSearch(this);">
-				<div id="quicksearchtext" ><?php echo (isset($LANG['QSEARCH_SEARCH'])?$LANG['QSEARCH_SEARCH']:'Taxon Search'); ?></div>
-				<input id="taxa" type="text" name="taxon" />
-				<button name="formsubmit"  id="quicksearchbutton" type="submit" value="Search Terms"><?php echo (isset($LANG['QSEARCH_SEARCH_BUTTON'])?$LANG['QSEARCH_SEARCH_BUTTON']:'Search'); ?></button>
-			</form>
+		<div class="lang en">
+			<h1>Welcome</h1>
+			<p>This data portal has been established to promote collaborative... Replace with introductory text in English.
+			If the portal is not meant to be multilingual, remove the unneeded language sections</p>
 		</div>
-		<div style="padding: 0px 10px;">
-			Description and introduction of project
+		<div class="lang es">
+			<h1 class="headline">Bienvenidos</h1>
+			<p>Este portal de datos se ha establecido para promover la colaboración... Reemplazar con texto introductorio en inglés</p>
+		</div>
+		<div class="lang fr">
+			<h1 class="headline">Bienvenue</h1>
+			<p>Ce portail de données a été créé pour promouvoir la collaboration... Remplacer par le texte d'introduction en anglais</p>
 		</div>
 	</div>
 	<?php
-	include($SERVER_ROOT.'/includes/footer.php');
+	include($SERVER_ROOT . '/includes/footer.php');
 	?>
+	<script type="text/javascript">
+		setLanguageDiv();
+	</script>
 </body>
 </html>

@@ -32,16 +32,9 @@ $genusAnswer = strtok($scinameAnswer, " ");
 <html>
 <head>
 	<title><?php echo $ootdTitle; ?></title>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	$activateJQuery = true;
-	if(file_exists($SERVER_ROOT.'/includes/head.php')){
-		include_once($SERVER_ROOT.'/includes/head.php');
-	}
-	else{
-		echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-		echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-		echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-	}
+	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
@@ -106,8 +99,6 @@ $genusAnswer = strtok($scinameAnswer, " ");
 		}
 	</script>
 	<script src="../../js/symb/api.taxonomy.taxasuggest.js" type="text/javascript"></script>
-	<style>
-	</style>
 </head>
 <body>
 	<?php

@@ -10,7 +10,7 @@ $refUrl = array_key_exists('refurl',$_REQUEST)?$_REQUEST['refurl']:'';
 
 $langManager = new LanguageAdmin();
 
-$isEditor = 0; 
+$isEditor = 0;
 if($SYMB_UID){
 	if($IS_ADMIN){
 		$isEditor = 1;
@@ -21,17 +21,9 @@ if($SYMB_UID){
 <html>
 	<head>
 		<title>Language Variables Manager</title>
-    <?php
-      $activateJQuery = false;
-      if(file_exists($SERVER_ROOT.'/includes/head.php')){
-        include_once($SERVER_ROOT.'/includes/head.php');
-      }
-      else{
-        echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-        echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-        echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-      }
-	?>
+		<?php
+		include_once($SERVER_ROOT.'/includes/head.php');
+		?>
 	</head>
 	<body>
 		<?php
@@ -39,7 +31,7 @@ if($SYMB_UID){
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div class="navpath">
-			<a href="<?php echo $CLIENT_ROOT; ?>/index.php">Home</a> &gt;&gt; 
+			<a href="<?php echo $CLIENT_ROOT; ?>/index.php">Home</a> &gt;&gt;
 			<b>Language Variable Management</b>
 		</div>
 		<!-- This is inner text! -->
@@ -50,7 +42,7 @@ if($SYMB_UID){
 					<tr>
 						<th>Variable Code</th>
 						<th>en</th>
-						<?php 
+						<?php
 						$langArr = $langManager->getLanguageVariables($refUrl);
 						$enArr = array();
 						if(isset($langArr['en'])){
@@ -63,7 +55,7 @@ if($SYMB_UID){
 						}
 						?>
 					</tr>
-					<?php 
+					<?php
 					foreach($enArr as $varCode => $varValue){
 						echo '<tr>';
 						echo '<td>'.$varCode.'</td><td>'.$varValue.'</td>';

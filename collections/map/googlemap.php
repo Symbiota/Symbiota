@@ -37,7 +37,7 @@ if(array_key_exists('taxa', $taxaArr)){
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> - Google Map</title>
 	<?php
-	$activateJQuery = false;
+
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script src="//www.google.com/jsapi"></script>

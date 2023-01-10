@@ -7,7 +7,6 @@ class OccurrenceDuplicate {
 	private $conn;
 	private $obsUid;
 	private $relevantFields = array();
-
 	private $errorStr;
 
 	public function __construct(){
@@ -559,7 +558,6 @@ class OccurrenceDuplicate {
 			$rsCnt->free();
 
 			$sql = $sqlPrefix.$sqlSuffix.' ORDER BY o.recordedby,o.recordnumber LIMIT '.$start.','.$limit;
-			//echo 'sql: '.$sql; exit;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retArr[$r->duplicateid]['title'] = $r->title;
@@ -630,7 +628,7 @@ class OccurrenceDuplicate {
 					if(strpos($lastName,'.')) $lastName = $r2->recordedby;
 					if(isset($lastName) && $lastName && !preg_match('#\d#',$lastName)){
 						$rArr[$recNum][$lastName][$r2->dupid][] = $r2->occid;
-						if($r2->collid == $collid && ($this->obsUid || $r2->observeruid == $this->obsUid)) $keepArr[$recNum][$lastName] = 1;
+						if($r2->collid == $collid && (!$this->obsUid || $r2->observeruid == $this->obsUid)) $keepArr[$recNum][$lastName] = 1;
 					}
 				}
 			}
@@ -651,7 +649,7 @@ class OccurrenceDuplicate {
 				foreach($collArr as $lastnameStr => $mArr){
 					$unlinkedArr = isset($mArr[0])?$mArr[0]:null;
 					unset($mArr[0]);
-					if(count($unlinkedArr) > 1 || ($unlinkedArr && $mArr)){
+					if($unlinkedArr && (count($unlinkedArr) > 1 || $mArr)){
 						$dupIdStr = $lastnameStr.' '.$numStr.' '.$r->eventdate;
 						if($verbose) echo '<li style="margin-left:10px;">Duplicates located: '.$dupIdStr.'</li>';
 						ob_flush();

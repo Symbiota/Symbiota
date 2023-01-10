@@ -29,7 +29,7 @@ class SpecUploadDirect extends SpecUploadBase {
 					return false;
 				}
 				$rs->close();
-				$this->sourceArr = $sourceArr;
+				$this->occurSourceArr = $sourceArr;
 				//$this->echoFieldMapTable($sourceArr);
 			}
 			else{
@@ -59,7 +59,7 @@ class SpecUploadDirect extends SpecUploadBase {
 				while($row = $result->fetch_assoc()){
 					$recMap = Array();
 					$row = array_change_key_case($row);
-					foreach($this->fieldMap as $symbField => $sMap){
+					foreach($this->occurFieldMap as $symbField => $sMap){
 						$valueStr = $row[$sMap['field']];
 						$recMap[$symbField] = $valueStr;
 					}
@@ -98,7 +98,7 @@ class SpecUploadDirect extends SpecUploadBase {
     }
 
 	public function getDbpkOptions(){
-		$sFields = $this->sourceArr;
+		$sFields = $this->occurSourceArr;
 		sort($sFields);
 		return $sFields;
 	}

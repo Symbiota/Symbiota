@@ -199,13 +199,17 @@ class ProfileManager extends Manager{
 			if($uid){
 				$subject = 'RE: Password reset';
 				$serverPath = $this->getDomain().$GLOBALS['CLIENT_ROOT'];
+				$from = '';
+				if (array_key_exists("SYSTEM_EMAIL", $GLOBALS) && !empty($GLOBALS["SYSTEM_EMAIL"])){
+					$from = 'Reset Request <'.$GLOBALS["SYSTEM_EMAIL"].'>';
+				}
 				$body = 'Your '.$GLOBALS['DEFAULT_TITLE'].' password has been reset to: '.$newPassword.'<br/><br/> '.
 					'After logging in, you can change your password by clicking on the My Profile link within the site menu and then selecting the Edit Profile tab. '.
 					'If you have problems, contact the System Administrator: '.$GLOBALS['ADMIN_EMAIL'].'<br/><br/>'.
 					'Data portal: <a href="'.$serverPath.'">'.$serverPath.'</a><br/>'.
 					'Direct link to your user profile: <a href="'.$serverPath.'/profile/viewprofile.php?tabindex=2">'.$serverPath.'/profile/viewprofile.php</a>';
 
-				$status = $this->sendEmail($email, $subject, $body);
+				$status = $this->sendEmail($email, $subject, $body, $from);
 				if($status){
 					$this->resetConnection();
 					$sql = 'UPDATE userlogin SET password = PASSWORD("'.$this->cleanInStr($newPassword).'") WHERE (uid = '.$uid.')';
@@ -351,9 +355,11 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	private function sendEmail($to, $subject, $body){
+	private function sendEmail($to, $subject, $body, $from = ''){
 		$status = true;
-		$from = 'portal admin <'.$GLOBALS["ADMIN_EMAIL"].'>';
+		if (empty($from)){
+			$from = 'portal admin <'.$GLOBALS["ADMIN_EMAIL"].'>';
+		}
 		$smtpArr = null;
 		if(isset($GLOBALS['SMTP_ARR']) && $GLOBALS['SMTP_ARR']) $smtpArr = $GLOBALS['SMTP_ARR'];
 		if(class_exists('Mail') && $smtpArr){

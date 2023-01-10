@@ -7,7 +7,7 @@ include_once('content/lang/misc/aboutproject.'.$LANG_TAG.'.php');
 	<head>
 		<title><?php echo (isset($LANG['CONTACTS'])?$LANG['CONTACTS']:'Contacts'); ?></title>
 		<?php
-		$activateJQuery = false;
+
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
 	</head>

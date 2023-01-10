@@ -80,7 +80,7 @@ else{
 		<head>
 			<title><?php echo $sourceCode.' '.$invoiceArr['loanidentifierown']; ?> Specimen List</title>
 			<?php
-			$activateJQuery = false;
+	
 			include_once($SERVER_ROOT.'/includes/head.php');
 			?>
 			<style type="text/css">

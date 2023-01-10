@@ -909,14 +909,3 @@ CREATE TABLE `useraccesstokens` (
   CONSTRAINT `FK_useraccess_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE  ON UPDATE CASCADE
 );
 
-
-
-
-
-
-
-#Review pubprofile (adminpublications)
-
-
-#Collection GUID issue
-

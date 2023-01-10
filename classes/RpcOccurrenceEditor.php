@@ -25,7 +25,8 @@ class RpcOccurrenceEditor extends RpcBase{
 			if($this->conn->query($sql)){
 				$bool = true;
 				if($origOcnStr){
-					$sql = 'INSERT INTO omoccuredits(occid, fieldName, fieldValueNew, fieldValueOld, uid) VALUES('.$occid.',"othercatalognumbers","","'.$this->cleanInStr($origOcnStr).'",'.$GLOBALS['SYMB_UID'].')';
+					$sql = 'INSERT INTO omoccuredits(occid, fieldName, fieldValueNew, fieldValueOld, appliedStatus, uid)
+						VALUES('.$occid.',"omoccuridentifiers","","'.$this->cleanInStr($origOcnStr).'",1,'.$GLOBALS['SYMB_UID'].')';
 					$this->conn->query($sql);
 				}
 			}
@@ -64,7 +65,8 @@ class RpcOccurrenceEditor extends RpcBase{
 					$sql = 'UPDATE omoccurrences SET otherCatalogNumbers = '.($newOcnStr?'"'.$this->cleanInStr($newOcnStr).'"':'NULL').' WHERE occid = '.$occid;
 					if($this->conn->query($sql)){
 						$bool = true;
-						$sql = 'INSERT INTO omoccuredits(occid, fieldName, fieldValueNew, fieldValueOld, uid) VALUES('.$occid.',"othercatalognumbers","'.$this->cleanInStr($newOcnStr).'","'.$this->cleanInStr($origOcnStr).'",'.$GLOBALS['SYMB_UID'].')';
+						$sql = 'INSERT INTO omoccuredits(occid, fieldName, fieldValueNew, fieldValueOld, appliedStatus, uid)
+							VALUES('.$occid.',"omoccuridentifiers","'.$this->cleanInStr($newOcnStr).'","'.$this->cleanInStr($origOcnStr).'",1,'.$GLOBALS['SYMB_UID'].')';
 						$this->conn->query($sql);
 					}
 					else echo 'ERROR deleting occurrence identifier: '.$this->conn->error;

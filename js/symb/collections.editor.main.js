@@ -513,9 +513,9 @@ function parseVerbatimCoordinates(f,verbose){
 		var z = null;
 		var e = null;
 		var n = null;
-		var zoneEx = /^\D{0,1}(\d{1,2})\D*$/;
-		var eEx1 = /^(\d{6,7})E/i;
-		var nEx1 = /^(\d{7})N/i;
+		var zoneEx = /^\D{0,5}(\d{1,2}[A-Z]{0,1})\D*$/i;
+		var eEx1 = /^(\d{6,7})m{0,1}E/i;
+		var nEx1 = /^(\d{7})m{0,1}N/i;
 		var eEx2 = /^E(\d{6,7})\D*$/i;
 		var nEx2 = /^N(\d{4,7})\D*$/i;
 		var eEx3 = /^0{0,1}(\d{6})\D*$/i;
@@ -545,13 +545,12 @@ function parseVerbatimCoordinates(f,verbose){
 		}
 		
 		if(z && e && n){
-			var datum = f.geodeticdatum.value
-			var llStr = utm2LatLng(z, e, n, datum);
+			var llStr = utm2LatLng(z, e, n, f.geodeticdatum.value, null);
 			if(llStr){
 				var llArr = llStr.split(",");
 				if(llArr.length == 2){
-					latDec = Math.round(llArr[0]*1000000)/1000000;
-					lngDec = Math.round(llArr[1]*1000000)/1000000;
+					latDec = llArr[0];
+					lngDec = llArr[1];
 				}
 			}
 		}
@@ -1253,7 +1252,7 @@ function dwcDoc(dcTag){
 
 function openOccurrenceSearch(target) {
 	collId = document.fullform.collid.value;
-	occWindow=open("../misc/occurrencesearch.php?targetid="+target+"&collid="+collId,"occsearch","resizable=1,scrollbars=1,toolbar=0,width=750,height=600,left=20,top=20");
+	occWindow=open("../misc/occurrencesearch.php?targetid="+target+"&collid="+collId,"occsearch","resizable=1,scrollbars=1,toolbar=0,width=750,height=600,left=200,top=40");
 	occWindow.focus();
 	if (occWindow.opener == null) occWindow.opener = self;
 }
@@ -1275,7 +1274,7 @@ function localitySecurityReasonChanged(){
 
 function securityLockChanged(cb){
 	if(cb.checked == true){
-		if($("input[name=localitysecurityreason]").val() == '') $("input[name=localitysecurityreason]").val("<Security Setting Locked>");
+		if($("input[name=localitysecurityreason]").val() == '') $("input[name=localitysecurityreason]").val("[Security Setting Locked]");
 	}
 	else{
 		$("input[name=localitysecurityreason]").val("")
