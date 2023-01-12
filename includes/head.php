@@ -1,21 +1,16 @@
 <?php
 /*
- * Customize styling by adding or modifying CSS file links below
- * Default styling for individual page is defined within /css/symb/
- * Individual styling can be customized by:
- *     1) Uncommenting the $CUSTOM_CSS_PATH variable below
- *     2) Copying individual CCS file to the /css/symb/custom directory
- *     3) Modifying the sytle definiation within the file
- */
+** Symbiota Redesign
+** The version is determined by the number of the release
+** set in config/symbini.php ($CSS_VERSION_RELEASE).
+** To customize the styles, add your own CSS files to the
+** css folder and include them here.
+*/
+?>
+<!-- Responsive viewport -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-//$CUSTOM_CSS_PATH = '/css/symb/custom';
-?>
-<meta name="viewport" content="initial-scale=1.0, user-scalable=yes" />
-<?php
-if($activateJQuery){
-	//For an alternate jQuery UI styling, point link below to another css file
-	echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet">';
-}
-?>
-<link href="<?php echo $CLIENT_ROOT; ?>/css/base.css?ver=1" type="text/css" rel="stylesheet">
-<link href="<?php echo $CLIENT_ROOT; ?>/css/symb/main.css?ver=1" type="text/css" rel="stylesheet">
+<!-- Symbiota styles -->
+<link href="<?php echo $CSS_BASE_PATH; ?>/symbiota/normalize.slim.css" type="text/css" rel="stylesheet">
+<link href="<?php echo $CSS_BASE_PATH; ?>/symbiota/main.css" type="text/css" rel="stylesheet">
+<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/lang.js" type="text/javascript"></script>
