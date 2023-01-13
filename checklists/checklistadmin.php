@@ -102,8 +102,8 @@ $clArray = $clManager->getMetaData();
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script src="../js/jquery.js type="text/javascript""></script>
-	<script src="../js/jquery-ui.js type="text/javascript""></script>
+	<script src="../js/jquery.js" type="text/javascript"></script>
+	<script src="../js/jquery-ui.js" type="text/javascript"></script>
 	<script src="../js/tinymce/tinymce.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		var clid = <?php echo $clid; ?>;
