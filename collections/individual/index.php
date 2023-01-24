@@ -949,6 +949,7 @@ $traitArr = $indManager->getTraitArr();
 											<img border="1" src="<?php echo $thumbUrl; ?>" title="<?php echo $imgArr['caption']; ?>" style="max-width:170;" />
 										</a>
 										<?php
+										if($imgArr['caption']) echo '<div><i>'.$imgArr['caption'].'</i></div>';
 										if($imgArr['photographer']) echo '<div>'.(isset($LANG['AUTHOR'])?$LANG['AUTHOR']:'Author').': '.$imgArr['photographer'].'</div>';
 										if($imgArr['url'] && substr($thumbUrl,0,7)!='process' && $imgArr['url'] != $imgArr['lgurl']) echo '<div><a href="'.$imgArr['url'].'" target="_blank">'.$LANG['OPEN_MEDIUM'].'</a></div>';
 										if($imgArr['lgurl']) echo '<div><a href="'.$imgArr['lgurl'].'" target="_blank">'.$LANG['OPEN_LARGE'].'</a></div>';
@@ -997,18 +998,18 @@ $traitArr = $indManager->getTraitArr();
 							echo '<div><label>'.$displayTitle.':</label> <a href="'.$occArr['source']['url'].'" target="_blank">'.$displayStr.'</a></div>';
 							echo '<div style="float:left;">';
 							if(isset($occArr['source']['sourceName'])){
-								echo '<div>'.$LANG['DATA_SOURCE'].': '.$occArr['source']['sourceName'].'</div>';
-								if($recordType == 'symbiota') echo '<div><label>Source management: </label>Live managed record within a Symbiota portal</div>';
+								echo '<div><label>'.$LANG['DATA_SOURCE'].':</label> '.$occArr['source']['sourceName'].'</div>';
+								if($recordType == 'symbiota') echo '<div><label>Source management:</label> Live managed record within a Symbiota portal</div>';
 							}
 							if(array_key_exists('fieldsModified',$_POST)){
-								echo '<div>'.$LANG['REFRESH_DATE'].': '.(isset($occArr['source']['refreshTimestamp'])?$occArr['source']['refreshTimestamp']:'').'</div>';
+								echo '<div><label>'.$LANG['REFRESH_DATE'].':</label> '.(isset($occArr['source']['refreshTimestamp'])?$occArr['source']['refreshTimestamp']:'').'</div>';
 								//Input from refersh event
 								$dataStatus = filter_var($_POST['dataStatus'], FILTER_SANITIZE_STRING);
 								$fieldsModified = filter_var($_POST['fieldsModified'], FILTER_SANITIZE_STRING);
 								$sourceDateLastModified = filter_var($_POST['sourceDateLastModified'], FILTER_SANITIZE_STRING);
-								echo '<div>'.$LANG['UPDATE_STATUS'].': '.$dataStatus.'</div>';
-								echo '<div>'.$LANG['FIELDS_MODIFIED'].': '.$fieldsModified.'</div>';
-								echo '<div>'.$LANG['SOURCE_DATE_LAST_MODIFIED'].': '.$sourceDateLastModified.'</div>';
+								echo '<div><label>'.$LANG['UPDATE_STATUS'].':</label> '.$dataStatus.'</div>';
+								echo '<div><label>'.$LANG['FIELDS_MODIFIED'].':</label> '.$fieldsModified.'</div>';
+								echo '<div><label>'.$LANG['SOURCE_DATE_LAST_MODIFIED'].':</label> '.$sourceDateLastModified.'</div>';
 							}
 							echo '</div>';
 							if($SYMB_UID && $recordType == 'symbiota'){

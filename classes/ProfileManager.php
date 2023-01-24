@@ -331,6 +331,10 @@ class ProfileManager extends Manager{
 
 	public function lookupUserName($emailAddr){
 		$status = false;
+		$from = '';
+		if (array_key_exists("SYSTEM_EMAIL", $GLOBALS) && !empty($GLOBALS["SYSTEM_EMAIL"])){
+			$from = 'Reset Request <'.$GLOBALS["SYSTEM_EMAIL"].'>';
+		}
 		if(!$this->validateEmailAddress($emailAddr)) return false;
 		$loginStr = '';
 		$sql = 'SELECT u.uid, ul.username, concat_ws("; ",u.lastname,u.firstname) '.
@@ -347,7 +351,7 @@ class ProfileManager extends Manager{
 			$serverPath = $this->getDomain().$GLOBALS['CLIENT_ROOT'];
 			$bodyStr = 'Your '.$GLOBALS['DEFAULT_TITLE'].' (<a href="'.$serverPath.'">'.$serverPath.'</a>) login name is: '.
 				$loginStr.'<br/><br/>If you continue to have login issues, contact the System Administrator: '.$GLOBALS['ADMIN_EMAIL'];
-			$status = $this->sendEmail($emailAddr, $subject, $bodyStr);
+			$status = $this->sendEmail($emailAddr, $subject, $bodyStr, $from);
 		}
 		else{
 			$this->errorStr = 'There are no users registered to email address: '.$emailAddr;
@@ -374,15 +378,13 @@ class ProfileManager extends Manager{
 		else{
 			$header = "Organization: ".$GLOBALS["DEFAULT_TITLE"]." \r\n".
 				"MIME-Version: 1.0 \r\n".
-				"Content-type: text/html; charset=iso-8859-1 \r\n".
-				"To: ".$to." \r\n";
+				"Content-type: text/html; charset=iso-8859-1 \r\n";
 			if(array_key_exists("ADMIN_EMAIL",$GLOBALS) && $GLOBALS["ADMIN_EMAIL"]){
 				$header .= "From: ".$from." \r\n".
 					"Reply-To: ".$GLOBALS["ADMIN_EMAIL"]." \r\n".
 					"Return-Path: ".$GLOBALS["ADMIN_EMAIL"]." \r\n";
 			}
-			$header .= "X-Priority: 3\r\n".
-				"X-Mailer: PHP". phpversion() ."\r\n";
+
 			if(!mail($to,$subject,$body,$header)){
 				$status = false;
 				$this->errorStr = 'mailserver might not be properly setup';
