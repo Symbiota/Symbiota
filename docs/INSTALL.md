@@ -54,10 +54,11 @@
       and then override the css definitions called within base.css 
    6. Misc: rename usagepolicy_template.php to usagepolicy.php, and modify as needed
 4. File permissions - the web server needs write access to the following files and folders
-   * All folders in /temp/ (e.g. sudo chmod -R 777 temp/) 
-   * /content/collicon/
-   * /content/dwca/
-   * /content/logs/
+   * All folders in /temp (e.g. sudo chmod -R 777 temp/) 
+   * /content/collicon
+   * /content/dwca
+   * /content/logs
+   * /api/storage/logs
 
 
 ## DATA
@@ -66,20 +67,19 @@
    checklist, identification, key, and taxon profile (common names, text descriptions, etc). 
    While user interfaces have been developed for web management for most of these data layers, some table tables still need to be managed via the backend (e.g. loaded by hand). 
    1. User and permissions - Default administrative user has been installed with following login: username = admin; password: admin.
-      It is highly recommend that you change the password, or better yet, create a new admin user, assign admin rights, and then delete default admin user. 
+      It is highly recommend that you change the password, or better yet, create a new admin user, assign admin rights,
+      and then delete default admin user. 
       Management control panel for permissions is available within Data Managment Panel on the sitemap page. 
    2. Taxonomic Thesaurus - Taxon names are stored within the 'taxa' table. 
-      Taxonomic hierarchy and placement definitions are controled in the 
-      'taxstatus' table. A recursive data relationship within the 'taxstatus' 
-      table defines the taxonomic hierarchy. While multiple taxonomic thesauri 
-      can be defined, one of the thesauri needs to function as the central 
-      taxonomy. Names must be added in order from upper taxonomic levels to 
-      lower (e.g. kingdom, class, order, variety). Accepted names must be 
-      loaded before non-accepted names.  
+      Taxonomic hierarchy and placement definitions are controled in the 'taxstatus' table. 
+      A recursive data relationship within the 'taxstatus' table defines the taxonomic hierarchy. 
+      While multiple taxonomic thesauri can be defined, one of the thesauri needs to function as the central taxonomy. 
+      Names must be added in order from upper taxonomic levels to lower (e.g. kingdom, class, order, variety). 
+      Accepted names must be loaded before non-accepted names.  
       1. Names can be added one-by-one using taxonomic management tools (see sitemap.php)
       2. Name can be imported from taxnomic authorities (e.g. Catalog of Life, WoRMS, TROPICOS, etc)
-          based on occurrence data loaded into the system using cleaning tools 
-          found in Data Cleaning Tools => Analyze taxonomic names... This is recommended.  
+         based on occurrence data loaded into the system using cleaning tools 
+         found in Data Cleaning Tools => Analyze taxonomic names... This is recommended.  
       3. Batch Loader - Multiple names can be loaded from a flat, 
          tab-delimited text file. See instructions on the Batch Taxon 
          Loader for detailed instructions. See instructions on the 
@@ -87,9 +87,8 @@
       4. Look in /config/schema/data/ folder to find taxonomic 
          thesaurus data that may serve as a base for your taxonomic 
          thesaurus.
-   3. Occurrence (Specimen) Data: SuperAdmin can create new collection instances via
-   Data Management pane within sitemap. Within the collection's data managment menu, one can  
-   provide admin and read access to new users, add/edit occurrences, batch load data, etc.
+   3. Occurrence (Specimen) Data: SuperAdmin can create new collection instances via Data Management pane within sitemap. 
+      Within the collection's data managment menu, one can provide admin and read access to new users, add/edit occurrences, batch load data, etc.
    4. Images - to be completed
    5. Floristic data - to be completed
    6. Identification key data - to be completed
@@ -98,14 +97,9 @@
 
 UPDATES
 =======
-1. Code updates - If you installed through the GitHub using the clone command,  
-   code changes and bugs fixes can be integrated into your local checkout 
-   using the Git Desktop client of running the "git pull" command
-2. Database schema updates - Some php code updates will require database  
-   schema modifications. Schema changes can be applied by running new 
-   schema patches added since the last update (MySQL command line: 
-   source db_schema_patch_1.1.sql). Current Symbiota version numbers are 
-   listed at the bottom of sitemap.php page. Make sure to run the scripts 
-   in the correct order (e.g. db_schema_patch_1.1.sql, then 
-   db_schema_patch_1.2.sql, etc) 
+1. Code updates - If you installed through the GitHub using the clone command, code changes and bugs fixes can be integrated into your local checkout using the Git Desktop client of running the "git pull" command
+2. Database schema updates - Some php code updates will require database schema modifications. 
+   Schema changes can be applied by running new schema patches added since the last update (MySQL command line: source db_schema_patch_1.1.sql). 
+   Current Symbiota version numbers are listed at the bottom of sitemap.php page. 
+   Make sure to run the scripts in the correct order (e.g. db_schema_patch_1.1.sql, then db_schema_patch_1.2.sql, etc) 
    

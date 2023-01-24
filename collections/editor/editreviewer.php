@@ -308,6 +308,8 @@ $navStr .= '</div>';
 									<input name="frstatus" type="hidden" value="<?php echo $frStatus; ?>" />
 									<input name="ffieldname" type="hidden" value="<?php echo $filterFieldName; ?>" />
 									<input name="editor" type="hidden" value="<?php echo $editor; ?>" />
+									<input name="startdate" type="hidden" value="<?php echo $startDate; ?>" />
+									<input name="enddate" type="hidden" value="<?php echo $endDate; ?>" />
 									<input name="occid" type="hidden" value="<?php echo $queryOccid; ?>" />
 									<input name="pagenum" type="hidden" value="<?php echo $pageNum; ?>" />
 									<input name="limitcnt" type="hidden" value="<?php echo $limitCnt; ?>" />
