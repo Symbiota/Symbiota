@@ -48,8 +48,6 @@ class OccurrenceDownload{
 	}
 
 	public function downloadData(){
-		$archiveFile = '';
-		$outstream = null;
 		$contentDesc = '';
 		$filePath = $this->getOutputFilePath();
 		$fileName = $this->getOutputFileName();
@@ -472,7 +470,7 @@ class OccurrenceDownload{
 			else{
 				$sql = 'SELECT DISTINCT IFNULL(o.family,"not entered") AS family, o.sciname, CONCAT_WS(" ",t.unitind1,t.unitname1) AS genus, '.
 					'CONCAT_WS(" ",t.unitind2,t.unitname2) AS specificEpithet, t.unitind3 AS taxonRank, t.unitname3 AS infraSpecificEpithet, t.author AS scientificNameAuthorship '.
-					'FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.tid ';
+					'FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.tid LEFT JOIN taxstatus ts ON t.tid = ts.tid ';
 				$sql .= $this->setTableJoins($this->sqlWhere);
 				$sql .= $this->sqlWhere.'AND o.SciName NOT LIKE "%aceae" AND o.SciName NOT LIKE "%idea" AND o.SciName NOT IN ("Plantae","Polypodiophyta") ';
 				if($this->redactLocalities){
@@ -483,7 +481,7 @@ class OccurrenceDownload{
 						$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL) ';
 					}
 				}
-				$sql .= 'ORDER BY IFNULL(o.family,"not entered"), o.SciName ';
+				$sql .= 'ORDER BY IFNULL(IFNULL(ts.family, o.family),"not entered"), o.SciName ';
 			}
 		}
 		elseif($this->schemaType == 'georef'){
