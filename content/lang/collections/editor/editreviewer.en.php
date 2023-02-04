@@ -6,7 +6,11 @@ Language: English
 */
 
 $LANG['EDIT_REVIEWER'] = 'Specimen Edit Reviewer';
+$LANG['PREVIOUS'] = 'Previous';
+$LANG['RECORDS1'] = 'records';
 $LANG['FIELDS_EDITED'] = 'fields edited';
+$LANG['NEXT'] = 'Next';
+$LANG['RECORDS2'] = 'records'; //this is necessary because in some languages (e.g., Spanish), the word order is different than in English
 $LANG['DATE_PROBLEM'] = 'Start date cannot be after end date';
 $LANG['PLEASE_CHECK_EDIT'] = 'Please check at least one edit from list below!';
 $LANG['SURE_DELETE_HISTORY'] = 'Are you sure you want to permanently remove selected edits from history?';
@@ -57,5 +61,15 @@ $LANG['NEW_VALUE'] = 'New Value';
 $LANG['UNKNOWN'] = 'UNKNOWN';
 $LANG['NONE_FOUND'] = 'There are no Edits matching search criteria.';
 $LANG['ERROR'] = 'Error!';
+
+$LANG['ERROR_APPLYING_EDITS'] = 'ERROR applying occurrence edits';
+$LANG['ERROR_REVERTING_EDITS'] = 'ERROR reverting occurrence edits';
+$LANG['ERROR_APPLYING_ID'] = 'ERROR applying omoccuridentifiers edits';
+$LANG['ERROR_REVERTING_ID'] = 'ERROR reverting omoccuridentifiers edits';
+$LANG['ERROR_APPLYING_PALEO'] = 'ERROR applying omoccurpaleo edits';
+$LANG['ERROR_REVERTING_PALEO'] = 'ERROR reverting omoccurpaleo edits';
+$LANG['ERROR_APPLYING_REVISIONS'] = 'ERROR applying revisions';
+$LANG['ERROR_REVERTING_REVISIONS'] = 'ERROR reverting revisions';
+$LANG['ERROR_DEL_EDITS'] = 'ERROR deleting edits';
 
 ?>

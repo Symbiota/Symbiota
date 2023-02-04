@@ -119,7 +119,24 @@ class OccurrenceEditorManager {
 			if(array_key_exists('q_recordedby',$_REQUEST) && $_REQUEST['q_recordedby']) $this->qryArr['rb'] = trim($_REQUEST['q_recordedby']);
 			if(array_key_exists('q_recordnumber',$_REQUEST) && $_REQUEST['q_recordnumber']) $this->qryArr['rn'] = trim($_REQUEST['q_recordnumber']);
 			if(array_key_exists('q_eventdate',$_REQUEST) && $_REQUEST['q_eventdate']) $this->qryArr['ed'] = trim($_REQUEST['q_eventdate']);
-			if(array_key_exists('q_recordenteredby',$_REQUEST) && $_REQUEST['q_recordenteredby']) $this->qryArr['eb'] = trim($_REQUEST['q_recordenteredby']);
+
+			// Check for a useraction (editedby or modifiedby)
+			if(array_key_exists('useraction',$_REQUEST) && $_REQUEST['useraction']) {
+
+				$this->qryArr['useraction'] = $_REQUEST['useraction'];
+
+				// Check if a username was specified
+				if(array_key_exists('q_user',$_REQUEST) && $_REQUEST['q_user']) {
+
+					// Get the username
+					$user = trim($_REQUEST['q_user']);
+
+					// If a username was specified save it to either recordeditedby or recordmodifiedby
+					if($_REQUEST['useraction'] == 'enteredby') $this->qryArr['eb'] = $user;
+					if($_REQUEST['useraction'] == 'modifiedby') $this->qryArr['mb'] = $user;
+				}
+			}
+
 			if(array_key_exists('q_returnall',$_REQUEST) && is_numeric($_REQUEST['q_returnall'])) $this->qryArr['returnall'] = $_REQUEST['q_returnall'];
 			if(array_key_exists('q_processingstatus',$_REQUEST) && $_REQUEST['q_processingstatus']) $this->qryArr['ps'] = trim($_REQUEST['q_processingstatus']);
 			if(array_key_exists('q_datelastmodified',$_REQUEST) && $_REQUEST['q_datelastmodified']) $this->qryArr['dm'] = trim($_REQUEST['q_datelastmodified']);
@@ -415,6 +432,16 @@ class OccurrenceEditorManager {
 				$sqlWhere .= 'AND (o.recordEnteredBy = "'.$this->cleanInStr($this->qryArr['eb']).'") ';
 			}
 		}
+
+		// Adds modifiedby to the where clause
+		if(array_key_exists('mb',$this->qryArr)){
+			if(strtolower($this->qryArr['mb']) == 'is null'){
+				$sqlWhere .= 'AND (user.username IS NULL) ';
+			}
+			else{
+				$sqlWhere .= 'AND (user.username = "'.$this->cleanInStr($this->qryArr['mb']).'") ';
+			}
+		}
 		if(array_key_exists('de',$this->qryArr)){
 			$de = $this->cleanInStr($this->qryArr['de']);
 			if(preg_match('/^>{1}.*\s{1,3}AND\s{1,3}<{1}.*/i',$de)){
@@ -589,7 +616,12 @@ class OccurrenceEditorManager {
 			else{
 				$sqlOrderBy = $orderBy;
 			}
-			if($sqlOrderBy) $sql .= 'ORDER BY (o.'.$sqlOrderBy.') '.$this->qryArr['orderbydir'].' ';
+			// // Allows the inclusion of a modified by column (which comes from different tables)
+			if($sqlOrderBy == "recordmodifiedby") {
+				$sql .= 'ORDER BY ('.$sqlOrderBy.') '.$this->qryArr['orderbydir'].' ';
+			} else if($sqlOrderBy) {
+				$sql .= 'ORDER BY (o.'.$sqlOrderBy.') '.$this->qryArr['orderbydir'].' ';
+			}
 		}
 	}
 
@@ -662,6 +694,7 @@ class OccurrenceEditorManager {
 		$localIndex = false;
 		$sqlFrag = '';
 		if($this->occid && !$this->direction){
+			$this->addTableJoins($sqlFrag);
 			$sqlFrag .= 'WHERE (o.occid = '.$this->occid.')';
 		}
 		elseif($this->sqlWhere){
@@ -684,7 +717,7 @@ class OccurrenceEditorManager {
 			}
 		}
 		if($sqlFrag){
-			$sql = 'SELECT DISTINCT o.occid, o.collid, o.'.implode(',o.',array_keys($this->fieldArr['omoccurrences'])).', datelastmodified FROM omoccurrences o '.$sqlFrag;
+			$sql = 'SELECT DISTINCT o.occid, o.collid, lastuser.username as recordmodifiedby, o.'.implode(',o.',array_keys($this->fieldArr['omoccurrences'])).', datelastmodified FROM omoccurrences o '.$sqlFrag;
 			$previousOccid = 0;
 			$rs = $this->conn->query($sql);
 			$rsCnt = 0;
@@ -730,6 +763,22 @@ class OccurrenceEditorManager {
 	}
 
 	private function addTableJoins(&$sql){
+
+		// Allows the inclusion of a last modified by column
+		// NB: Is this the the most efficient query? Another option, below
+		$sql .=	'LEFT JOIN omoccuredits as lastedit ON o.occid = lastedit.occid AND lastedit.initialtimestamp = (SELECT MAX(initialtimestamp) FROM omoccuredits oe WHERE oe.occid = o.occid)';
+		// This doesn't work, apparently o.datelastmodified is sometimes not modified by users, leading to blank last modified by fields
+		//$sql .=	'LEFT JOIN omoccuredits as lastedit ON o.occid = lastedit.occid AND o.datelastmodified = lastedit.initialtimestamp ';
+		$sql .= 'LEFT JOIN userlogin as lastuser ON lastedit.uid = lastuser.uid ';
+		// A single join alternative
+		//$sql .= 'LEFT JOIN userlogin as lastuser ON (SELECT oe.uid FROM omoccuredits oe WHERE oe.occid = o.occid ORDER BY oe.initialtimestamp DESC LIMIT 1) = lastuser.uid ';
+
+		// Allows searching for records modified by a user
+		if(array_key_exists('mb',$this->qryArr)){
+			$sql .=	'LEFT JOIN omoccuredits as edits ON o.occid = edits.occid ';
+			$sql .= 'LEFT JOIN userlogin as user ON edits.uid = user.uid ';
+		}
+
 		if(strpos($this->sqlWhere,'ocr.rawstr')){
 			if(strpos($this->sqlWhere,'ocr.rawstr IS NULL') && array_key_exists('io',$this->qryArr)){
 				$sql .= 'INNER JOIN images i ON o.occid = i.occid LEFT JOIN specprocessorrawlabels ocr ON i.imgid = ocr.imgid ';

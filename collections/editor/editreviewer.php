@@ -52,28 +52,27 @@ $statusStr = "";
 if($isEditor){
 	if($formSubmit == 'updateRecords'){
 		if(!$reviewManager->updateRecords($_POST)){
-			$statusStr = '<br>'.implode('</br><br>',$reviewManager->getWarningArr()).'</br>';
+			$warningArr = $reviewManager->getWarningArr();
+			foreach($warningArr as $warningKey => $warningText){
+				$statusStr .= $LANG[$warningKey] . ': ' . $warningText . '<br>';
+			}
 		}
 	}
 	elseif($formSubmit == 'deleteSelectedEdits'){
 		$idStr = implode(',',$_POST['id']);
-		$reviewManager->deleteEdits($idStr);
+		if(!$reviewManager->deleteEdits($idStr)){
+			$statusStr = $LANG['ERROR_DEL_EDITS'] . ': ' . $reviewManager->getErrorMessage();
+		}
 	}
 	elseif($formSubmit == 'downloadSelectedEdits'){
 		$idStr = implode(',',$_POST['id']);
 		if($reviewManager->exportCsvFile($idStr)){
 			exit();
 		}
-		else{
-			$statusStr = $reviewManager->getErrorMessage();
-		}
 	}
 	elseif($formSubmit == "downloadAllRecords"){
 		if($reviewManager->exportCsvFile('', true)){
 			exit();
-		}
-		else{
-			$statusStr = $reviewManager->getErrorMessage();
 		}
 	}
 }
@@ -84,12 +83,12 @@ if($subCnt > $recCnt) $subCnt = $recCnt;
 $navPageBase = 'editreviewer.php?collid='.$collid.'&display='.$displayMode.'&fastatus='.$faStatus.'&frstatus='.$frStatus.'&editor='.$editor.'&reccnt='.$recCnt;
 
 $navStr = '<div class="navbarDiv" style="float:right;">';
-if($pageNum) $navStr .= '<a href="'.$navPageBase.'&pagenum='.($pageNum-1).'&limitcnt='.$limitCnt.'" title="Previous '.$limitCnt.' records">&lt;&lt;</a>';
+if($pageNum) $navStr .= '<a href="'.$navPageBase.'&pagenum='.($pageNum-1).'&limitcnt='.$limitCnt.'" title="'.$LANG['PREVIOUS'].' '.$limitCnt.' '.$LANG['RECORDS1'].'">&lt;&lt;</a>';
 else $navStr .= '&lt;&lt;';
 $navStr .= ' | ';
 $navStr .= ($pageNum*$limitCnt).'-'.$subCnt.' of '.$recCnt.' '.$LANG['FIELDS_EDITED'];
 $navStr .= ' | ';
-if($subCnt < $recCnt) $navStr .= '<a href="'.$navPageBase.'&pagenum='.($pageNum+1).'&limitcnt='.$limitCnt.'" title="Next '.$limitCnt.' records">&gt;&gt;</a>';
+if($subCnt < $recCnt) $navStr .= '<a href="'.$navPageBase.'&pagenum='.($pageNum+1).'&limitcnt='.$limitCnt.'" title="'.$LANG['NEXT'].' '.$limitCnt.' '.$LANG['RECORDS2'].'">&gt;&gt;</a>';
 else $navStr .= '&gt;&gt;';
 $navStr .= '</div>';
 ?>

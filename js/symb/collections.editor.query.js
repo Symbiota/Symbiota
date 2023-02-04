@@ -2,7 +2,7 @@
 function verifyQueryForm(f){
 	//if(f.q_catalognumber.value == "" && f.q_othercatalognumbers.value == ""  
 	//	&& f.q_recordedby.value == "" && f.q_recordnumber.value == "" && f.q_eventdate.value == ""
-	//	&& f.q_recordenteredby.value == "" && f.q_processingstatus.value == "" && f.q_datelastmodified.value == "" 
+	//	&& f.q_user.value == "" && f.q_processingstatus.value == "" && f.q_datelastmodified.value == "" 
 	//	&& (f.q_customfield1.selectedIndex == 0 && (f.q_customvalue1.value == "" || f.q_customtype1.selectedIndex != 1)) 
 	//	alert("Query form is empty! Please enter a value to query by.");
 	//	return false;

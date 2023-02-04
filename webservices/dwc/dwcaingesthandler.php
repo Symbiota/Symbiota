@@ -8,7 +8,7 @@
  *
  * uploadtype (required): $FILEUPLOAD = 3; $DWCAUPLOAD = 6
  * key (required): security key used to authorize
- * filepath: URI path to locality where DWCA file was placed for retrieval (file must have read accessible to portal)
+ * filepath: URI path to locality where DWCA file was placed for retrieval (file must be read accessible to portal)
  * uploadfile: file streamed in for upload; POST protocol must be used when streaming file
  * importident (default = false): 0 = identification history NOT included for ingestion, 1 = identification history included for ingestion
  * importimage (default = false): 0 = image URLs NOT included for ingestion, 1 = image URLs included for ingestion
