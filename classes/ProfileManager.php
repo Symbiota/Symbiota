@@ -84,7 +84,7 @@ class ProfileManager extends Manager{
 
 	public function getPerson(){
 		$sqlStr = 'SELECT u.uid, u.firstname, u.lastname, u.title, u.institution, u.department, u.address, u.city, u.state, u.zip, u.country, u.phone, u.email, '.
-			'u.url, u.guid, u.biography, u.ispublic, u.notes, ul.username, ul.lastlogindate '.
+			'u.url, u.guid, u.notes, ul.username, ul.lastlogindate '.
 			'FROM users u LEFT JOIN userlogin ul ON u.uid = ul.uid '.
 			'WHERE (u.uid = '.$this->uid.')';
 		$person = new Person();

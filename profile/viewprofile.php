@@ -49,8 +49,6 @@ if($isEditor){
 		$country = array_key_exists("country",$_REQUEST)?$_REQUEST["country"]:"";
 		$url = array_key_exists("url",$_REQUEST)?$_REQUEST["url"]:"";
 		$guid = array_key_exists('guid',$_REQUEST)?$_REQUEST['guid']:'';
-		$biography = array_key_exists("biography",$_REQUEST)?$_REQUEST["biography"]:"";
-		$isPublic = array_key_exists("ispublic",$_REQUEST)?$_REQUEST["ispublic"]:"";
 
 		$newPerson = new Person();
 		$newPerson->setUid($userId);

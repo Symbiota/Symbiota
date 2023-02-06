@@ -1925,7 +1925,7 @@ class SpecUploadBase extends SpecUpload{
 			$tPath .= '/';
 		}
 		if(file_exists($tPath.'downloads')){
-			$tPath .= 'downloads/';
+			$tPath .= 'data/';
 		}
 		$this->uploadTargetPath = $tPath;
 	}
