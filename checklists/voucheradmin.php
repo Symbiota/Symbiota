@@ -11,7 +11,7 @@ $startPos = (array_key_exists('start',$_REQUEST)?(int)$_REQUEST['start']:0);
 $tabIndex = array_key_exists("tabindex",$_REQUEST)?$_REQUEST["tabindex"]:0;
 $action = array_key_exists("submitaction",$_REQUEST)?$_REQUEST["submitaction"]:"";
 
-$displayMode = (array_key_exists('displaymode',$_REQUEST)?$_REQUEST['displaymode']:0);
+$displayMode = (array_key_exists('displaymode',$_REQUEST)?$_REQUEST['displaymode']:2);
 
 $clManager = new ChecklistVoucherReport();
 $clManager->setClid($clid);
