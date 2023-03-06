@@ -6,18 +6,6 @@ function setLanguage(selObj){
 	location.reload(true);
 }
 
-function setLanguageDiv(){
-	var activeLang = readLangCookie();
-	if(activeLang){
-		const langs = document.querySelectorAll(".lang");
-		for (const l of langs) {
-			if(l.getAttribute('class') != "lang " + activeLang){
-				l.style.display = "none";
-			}
-		}
-	}
-}
-
 function readLangCookie() {
 	var cookieName = "lang=";
 	var ca = document.cookie.split(';');

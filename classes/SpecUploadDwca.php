@@ -618,20 +618,19 @@ class SpecUploadDwca extends SpecUploadBase{
 					$this->conn->query('SET unique_checks=1');
 					$this->conn->query('SET foreign_key_checks=1');
 					$this->outputMsg('<li style="margin-left:10px;">Complete: '.$this->getTransferCount().' occurrence records loaded</li>');
-
 					if($this->getTransferCount()){
 						//Upload identification history
 						if($this->includeIdentificationHistory && isset($this->metaArr['ident'])){
 							$this->outputMsg('<li>Loading identification history extension... </li>');
 							if($this->uploadType == $this->RESTOREBACKUP){
 								$this->identFieldMap['occid']['field'] = 'coreid';
-								$this->identFieldMap['sciname']['field'] = 'scientificname';
 								$this->identFieldMap['initialtimestamp']['field'] = 'modified';
 							}
+							$this->identFieldMap['sciname']['field'] = 'sciname,scientificname';
 							foreach($this->metaArr['ident']['fields'] as $k => $v){
 								$this->identSourceArr[$k] = strtolower($v);
 							}
-							$this->uploadExtension('ident',$this->identFieldMap,$this->identSourceArr);
+							$this->uploadExtension('ident', $this->identFieldMap, $this->identSourceArr);
 							$this->outputMsg('<li style="margin-left:10px;">Complete: '.$this->identTransferCount.' records loaded</li>');
 						}
 
@@ -757,7 +756,7 @@ class SpecUploadDwca extends SpecUploadBase{
 		}
 	}
 
-	private function uploadExtension($targetStr,$fieldMap,$sourceArr){
+	private function uploadExtension($targetStr, $fieldMap, $sourceArr){
 		global $CHARSET;
 		$fullPathExt = '';
 		if($this->metaArr[$targetStr]['name']){
@@ -782,7 +781,6 @@ class SpecUploadDwca extends SpecUploadBase{
 				if(isset($this->metaArr[$targetStr]['encoding']) && $this->metaArr[$targetStr]['encoding']){
 					$this->encoding = strtolower(str_replace('-','',$this->metaArr[$targetStr]['encoding']));
 				}
-
 		 		$fh = fopen($fullPathExt,'r') or die("Can't open extension file");
 
 		 		if($this->metaArr[$targetStr]['ignoreHeaderLines'] == '1'){
@@ -800,15 +798,18 @@ class SpecUploadDwca extends SpecUploadBase{
 					if(!$this->coreIdArr || isset($this->coreIdArr[$recordArr[0]])){
 						$recMap = Array();
 						foreach($fieldMap as $symbField => $iMap){
-							if(substr($symbField,0,8) != 'unmapped'){
-								$indexArr = array_keys($sourceArr,$iMap['field']);
-								$index = array_shift($indexArr);
-								if(array_key_exists($index,$recordArr)){
-									$valueStr = trim($recordArr[$index]);
-									if($valueStr){
+							if(substr($symbField, 0, 8) != 'unmapped'){
+								$valueStr = '';
+								$fieldTargetArr = explode(',', $iMap['field']);
+								foreach($fieldTargetArr as $fieldTarget){
+									$indexArr = array_keys($sourceArr, $fieldTarget);
+									$index = array_shift($indexArr);
+									if(array_key_exists($index, $recordArr)){
+										$valueStr = trim($recordArr[$index]);
 										if($cset != $this->encoding) $valueStr = $this->encodeString($valueStr);
 										$recMap[$symbField] = $valueStr;
 									}
+									if($valueStr) break;
 								}
 							}
 						}

@@ -325,7 +325,14 @@ ALTER TABLE `images`
 
 ALTER TABLE `images` 
   ADD COLUMN `hashFunction` VARCHAR(45) NULL AFTER `sourceIdentifier`,
-  ADD COLUMN `hashValue` VARCHAR(45) NULL AFTER `hashFunction`;
+  ADD COLUMN `hashValue` VARCHAR(45) NULL AFTER `hashFunction`,
+  ADD COLUMN `recordID` VARCHAR(45) NULL AFTER `defaultDisplay`;
+
+ALTER TABLE `images` 
+  ADD INDEX `IX_images_recordID` (`recordID` ASC)
+  
+UPDATE images i INNER JOIN guidimages g ON i.imgid = g.imgid SET i.recordID = g.guid WHERE i.recordID IS NULL;
+
 
 ALTER TABLE `imagetagkey` 
   ADD COLUMN `resourceLink` VARCHAR(250) NULL AFTER `description_en`,
@@ -405,7 +412,7 @@ ALTER TABLE `omcollections`
 #  ADD COLUMN `collectionGuid` TEXT NULL AFTER `aggKeysStr`;
 
 ALTER TABLE `omcollections` 
-  ADD COLUMN `recordID` TEXT NULL AFTER `aggKeysStr`;
+  ADD COLUMN `recordID` VARCHAR(45) NULL AFTER `aggKeysStr`;
 
 ALTER TABLE `omoccurdeterminations` 
   DROP FOREIGN KEY `FK_omoccurdets_idby`;
@@ -503,7 +510,7 @@ CREATE TABLE `omoccurarchive` (
 INSERT INTO omoccurarchive(archiveObj, occid, recordID)
 SELECT archiveObj, occid, guid FROM guidoccurrences WHERE archiveObj IS NOT NULL;
 
-UPDATE omoccurarchive SET occid = SUBSTRING_INDEX(SUBSTRING(archiveObj, 11), '"', 1) WHERE occid IS NULL;
+UPDATE omarchive SET occid = SUBSTRING_INDEX(SUBSTRING(archiveObj, 11), '"', 1) WHERE occid IS NULL;
 
 
 ALTER TABLE `omoccurdatasets` 
@@ -530,13 +537,12 @@ ALTER TABLE `omoccurdeterminations`
   ADD COLUMN `identificationVerificationStatus` VARCHAR(45) NULL AFTER `taxonRemarks`,
   ADD COLUMN `taxonConceptID` VARCHAR(45) NULL AFTER `identificationVerificationStatus`,
   ADD COLUMN `recordID` VARCHAR(45) NULL AFTER `sortSequence`,
-  CHANGE COLUMN `identifiedBy` `identifiedBy` VARCHAR(60) NOT NULL DEFAULT 'unknown' ,
-  CHANGE COLUMN `dateIdentified` `dateIdentified` VARCHAR(45) NOT NULL DEFAULT 's.d.' ,
+  CHANGE COLUMN `identifiedBy` `identifiedBy` VARCHAR(255) NOT NULL DEFAULT '' ,
+  CHANGE COLUMN `dateIdentified` `dateIdentified` VARCHAR(45) NOT NULL DEFAULT '' ,
   CHANGE COLUMN `sourceIdentifier` `identificationID` VARCHAR(45) NULL DEFAULT NULL ,
   ADD INDEX `FK_omoccurdets_agentID_idx` (`identifiedByAgentID` ASC);
 
 ALTER TABLE `omoccurdeterminations` 
-  CHANGE COLUMN `identifiedBy` `identifiedBy` VARCHAR(255) NOT NULL ,
   CHANGE COLUMN `family` `family` VARCHAR(255) NULL DEFAULT NULL ,
   CHANGE COLUMN `sciname` `sciname` VARCHAR(255) NOT NULL ,
   CHANGE COLUMN `scientificNameAuthorship` `scientificNameAuthorship` VARCHAR(255) NULL DEFAULT NULL ,
@@ -557,8 +563,12 @@ ALTER TABLE `omoccurdeterminations`
   ADD CONSTRAINT `FK_omoccurdets_uid`  FOREIGN KEY (`enteredByUid`)  REFERENCES `users` (`uid`)  ON DELETE SET NULL  ON UPDATE CASCADE;
 
 ALTER TABLE `omoccurdeterminations` 
+  ADD INDEX `IX_omoccurdets_recordID` (`recordID` ASC),
   ADD INDEX `FK_omoccurdets_dateModified` (`dateLastModified` ASC),
   ADD INDEX `FK_omoccurdets_initialTimestamp` (`initialTimestamp` ASC);
+  
+UPDATE omoccurdeterminations d INNER JOIN guidoccurdeterminations g ON d.detid = g.detid SET d.recordID = g.guid WHERE d.recordID IS NULL;
+
 
 INSERT IGNORE INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, family, sciname, verbatimIdentification, scientificNameAuthorship, tidInterpreted, 
 identificationQualifier, genus, specificEpithet, verbatimTaxonRank, infraSpecificEpithet, isCurrent, identificationReferences, identificationRemarks, 
@@ -696,6 +706,9 @@ ALTER TABLE `omoccurrences`
 UPDATE omoccurrences o INNER JOIN guidoccurrences g ON o.occid = g.occid SET o.recordID = g.guid WHERE o.recordID IS NULL;
 
 ALTER TABLE `omoccurrences` 
+  ADD INDEX `IX_omoccurrences_recordID` (`recordID` ASC);
+
+ALTER TABLE `omoccurrences` 
   ADD CONSTRAINT `FK_omoccurrences_tid`  FOREIGN KEY (`tidInterpreted`)  REFERENCES `taxa` (`tid`)  ON DELETE SET NULL  ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_omoccurrences_uid`  FOREIGN KEY (`observerUid`)  REFERENCES `users` (`uid`);
 
@@ -735,7 +748,7 @@ CREATE TABLE `portalpublications` (
   `criteriaJson` text DEFAULT NULL,
   `includeDeterminations` int(11) DEFAULT 1,
   `includeImages` int(11) DEFAULT 1,
-  `autoUpdate` int(11) DEFAULT 0,
+  `autoUpdate` int(11) DEFAULT 1,
   `lastDateUpdate` datetime DEFAULT NULL,
   `updateInterval` int(11) DEFAULT NULL,
   `createdUid` int(10) unsigned DEFAULT NULL,
@@ -857,6 +870,23 @@ ALTER TABLE `taxalinks`
 ALTER TABLE `taxalinks` 
   DROP INDEX `Index_unique` ;
 
+ALTER TABLE `uploaddetermtemp` 
+  ADD COLUMN `higherClassification` VARCHAR(150) NULL AFTER `dateIdentifiedInterpreted`,
+  ADD COLUMN `verbatimIdentification` VARCHAR(250) NULL AFTER `sciname`,
+  ADD COLUMN `family` VARCHAR(255) NULL AFTER `identificationQualifier`,
+  ADD COLUMN `genus` VARCHAR(45) NULL AFTER `family`,
+  ADD COLUMN `specificEpithet` VARCHAR(45) NULL AFTER `genus`,
+  ADD COLUMN `verbatimTaxonRank` VARCHAR(45) NULL AFTER `specificEpithet`,
+  ADD COLUMN `taxonRank` VARCHAR(45) NULL AFTER `verbatimTaxonRank`,
+  ADD COLUMN `infraSpecificEpithet` VARCHAR(45) NULL AFTER `taxonRank`,
+  ADD COLUMN `taxonRemarks` VARCHAR(2000) NULL AFTER `identificationRemarks`,
+  ADD COLUMN `identificationVerificationStatus` VARCHAR(45) NULL AFTER `taxonRemarks`,
+  ADD COLUMN `taxonConceptID` VARCHAR(45) NULL AFTER `identificationVerificationStatus`,
+  CHANGE COLUMN `identifiedBy` `identifiedBy` VARCHAR(255) NOT NULL DEFAULT '',
+  CHANGE COLUMN `dateIdentified` `dateIdentified` VARCHAR(45) NOT NULL DEFAULT '',
+  CHANGE COLUMN `sciname` `sciname` VARCHAR(255) NOT NULL ;
+
+
 ALTER TABLE `uploadspecparameters` 
   DROP FOREIGN KEY `FK_uploadspecparameters_coll`;
 
@@ -968,6 +998,18 @@ CREATE TABLE `ommaterialsample` (
 
 ALTER TABLE `ommaterialsample`
   ADD UNIQUE INDEX `UQ_ommatsample_recordID` (`recordID`);
+  
+ALTER TABLE `ommaterialsample`
+  ADD UNIQUE INDEX `UQ_ommatsample_catNum` (`occid`, `catalogNumber`);
+#FIX: Run query below to identify records with duplicate material sample catalogNumbers for a given occurrence record. Catalog numbers need to be unique for each occurrence. The duplicate records need to be removed.  
+#SELECT occid, catalogNumber, count(*) as cnt FROM ommaterialsample WHERE catalogNumber IS NOT NULL GROUP BY occid, catalogNumber HAVING cnt > 1;
+
+
+ALTER TABLE `ommaterialsample`
+  ADD UNIQUE INDEX `UQ_ommatsample_guid` (`occid`, `guid`);
+#FIX: Run query below to identify records with duplicate material sample guid values for a given occurrence record. GUIDs need to be unique for each occurrence. The duplicate records need to be removed.  
+#SELECT occid, guid, count(*) as cnt FROM ommaterialsample WHERE guid IS NOT NULL GROUP BY occid, guid HAVING cnt > 1;
+
 
 INSERT INTO ctcontrolvocab(title,tableName,fieldName, limitToList)
   VALUES("Material Sample Type","ommaterialsample","sampleType",1);

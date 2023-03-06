@@ -2345,6 +2345,7 @@ CREATE TABLE `omoccurrences` (
   CONSTRAINT `FK_omoccurrences_tid` FOREIGN KEY (`tidinterpreted`) REFERENCES `taxa` (`TID`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `FK_omoccurrences_uid` FOREIGN KEY (`observeruid`) REFERENCES `users` (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -2354,6 +2355,7 @@ CREATE TABLE `omoccurrences` (
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+
 DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `omoccurrencesfulltext_insert` AFTER INSERT ON `omoccurrences`
 FOR EACH ROW BEGIN
@@ -2367,6 +2369,7 @@ FOR EACH ROW BEGIN
     NEW.`locality`
   );
 END */;;
+
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -3921,12 +3924,12 @@ CREATE TABLE `usertaxonomy` (
 
 
 -- Prime some tables with default data values
-INSERT INTO schemaversion (versionnumber) values ("1.0");
+INSERT INTO `schemaversion` (versionnumber) values ("1.0");
 
 -- Create the general admin user
-INSERT INTO users(uid,firstname,lastname,state,country,email) VALUES (1,"General","Administrator","NA","NA","NA");
-INSERT INTO userlogin(uid,username,password) VALUES (1,"admin",password("admin"));
-INSERT INTO userroles(uid,role) VALUES (1,"SuperAdmin");
+INSERT INTO `users`(uid,firstname,lastname,state,country,email) VALUES (1,"General","Administrator","NA","NA","NA");
+INSERT INTO `userlogin`(uid,username,password) VALUES (1,"admin",password("admin"));
+INSERT INTO `userroles`(uid,role) VALUES (1,"SuperAdmin");
 
 -- Prime taxonunits table
 INSERT IGNORE INTO `taxonunits`(kingdomName,rankid,rankName, dirparentrankid, reqparentrankid) 

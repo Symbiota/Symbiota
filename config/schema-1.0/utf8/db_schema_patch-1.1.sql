@@ -1,7 +1,7 @@
 ALTER TABLE `schemaversion` 
   ADD UNIQUE INDEX `versionnumber_UNIQUE` (`versionnumber` ASC);
 
-INSERT IGNORE INTO schemaversion (versionnumber) values ("1.1");
+INSERT IGNORE INTO `schemaversion` (versionnumber) values ("1.1");
 
 
 #Specimen attribute (traits) model
@@ -104,10 +104,8 @@ CREATE TABLE `tmtraitdependencies` (
   PRIMARY KEY (`traitid`, `parentstateid`),
   INDEX `FK_tmdepend_traitid_idx` (`traitid` ASC),
   INDEX `FK_tmdepend_stateid_idx` (`parentstateid` ASC),
-  CONSTRAINT `FK_tmdepend_traitid` 
-    FOREIGN KEY (`traitid`) REFERENCES `tmtraits` (`traitid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
-  CONSTRAINT `FK_tmdepend_stateid`
-    FOREIGN KEY (`parentstateid`)  REFERENCES `tmstates` (`stateid`)  ON DELETE CASCADE  ON UPDATE CASCADE  
+  CONSTRAINT `FK_tmdepend_traitid`  FOREIGN KEY (`traitid`) REFERENCES `tmtraits` (`traitid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
+  CONSTRAINT `FK_tmdepend_stateid`  FOREIGN KEY (`parentstateid`)  REFERENCES `tmstates` (`stateid`)  ON DELETE CASCADE  ON UPDATE CASCADE  
 );
 
 
@@ -149,8 +147,6 @@ ALTER TABLE `omoccurassociations`
 
 DROP TABLE IF EXISTS `omoccurassoctaxa`;
 
-
-#lookup table for municipality
 CREATE TABLE `lkupmunicipality` (
   `municipalityId` int NOT NULL AUTO_INCREMENT,
   `stateId` int NOT NULL,
@@ -334,7 +330,7 @@ INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('Im
 insert into ctrelationshiptypes (relationship, inverse, collective) values ('Child of', 'Parent of', 'Children');
 insert into ctrelationshiptypes (relationship, inverse, collective) values ('Student of', 'Teacher of', 'Students');
 insert into ctrelationshiptypes (relationship, inverse, collective) values ('Spouse of', 'Spouse of', 'Married to');
-insert into ctrelationshiptypes (relationship, inverse, collective) values ('Could be', 'Confused with', 'Confused with');  -- to accompany notOtherwiseSpecified 
+insert into ctrelationshiptypes (relationship, inverse, collective) values ('Could be', 'Confused with', 'Confused with');
 
 insert into ctnametypes (type) values ('Full Name');
 insert into ctnametypes (type) values ('Initials Last Name');
@@ -548,7 +544,7 @@ ALTER TABLE `omoccurrences`
   ADD INDEX `Index_otherCatalogNumbers` (`otherCatalogNumbers` ASC);
 
 ALTER TABLE `omoccurrences` 
-  ADD COLUMN `waterBody`  varchar(255) NULL AFTER `preparations`,
+  ADD COLUMN `waterBody`  varchar(75) NULL AFTER `preparations`,
   ADD COLUMN `locationID` VARCHAR(100) NULL AFTER `preparations`,
   ADD COLUMN `eventID` VARCHAR(45) NULL AFTER `fieldnumber`,
   ADD COLUMN `latestDateCollected` DATE NULL AFTER `eventDate`,
@@ -707,7 +703,7 @@ ALTER TABLE `glossarytermlink`
   ADD CONSTRAINT `FK_glossarytermlink_glossgrpid`  FOREIGN KEY (`glossgrpid`)  REFERENCES `glossary` (`glossid`)  ON DELETE CASCADE  ON UPDATE CASCADE;
 
   
--- Paleo Tables
+#Paleo Tables
 CREATE TABLE `paleochronostratigraphy` (
   `chronoId` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `Eon` varchar(255) DEFAULT NULL,

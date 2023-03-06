@@ -576,18 +576,6 @@ class ImageShared{
 				$imgOriginalUrl = $r->originalurl;
 				$this->tid = $r->tid;
 				$occid = $r->occid;
-				//Archive image
-				$imgArr = array();
-				$imgObj = '';
-				foreach($r as $k => $v){
-					if($v) $imgArr[$k] = $v;
-					$imgObj .= '"'.$k.'":"'.$this->cleanInStr($v).'",';
-				}
-				$imgObj = json_encode($imgArr);
-				$sqlArchive = 'UPDATE guidimages '.
-				"SET archivestatus = 1, archiveobj = '{".trim($imgObj,',')."}' ".
-				'WHERE (imgid = '.$imgIdDel.')';
-				$this->conn->query($sqlArchive);
 			}
 			$rs->free();
 

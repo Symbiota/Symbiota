@@ -314,7 +314,7 @@ class DwcArchiverCore extends Manager{
 							if ($cond == 'NOTEQUALS' || $cond == 'NOTLIKE') $sqlFrag2 .= ' OR id.identifierValue IS NULL';
 							$sqlFrag2 .= ')) ';
 						} else {
-							$sqlFrag2 = $this->getSqlFragment($field, $cond, $valueArr);
+							$sqlFrag2 .= $this->getSqlFragment($field, $cond, $valueArr);
 						}
 					}
 					if ($sqlFrag2) $sqlFrag .= 'AND (' . substr($sqlFrag2, 4) . ') ';
@@ -1119,25 +1119,23 @@ class DwcArchiverCore extends Manager{
 			//Dataset contains multiple collection data
 			$emlArr['title'] = $GLOBALS['DEFAULT_TITLE'] . ' general data extract';
 			if (isset($GLOBALS['SYMB_UID']) && $GLOBALS['SYMB_UID']) {
-				$sql = 'SELECT uid, lastname, firstname, title, institution, department, address, city, state, zip, country, phone, email, ispublic FROM users WHERE (uid = ' . $GLOBALS['SYMB_UID'] . ')';
+				$sql = 'SELECT uid, lastname, firstname, title, institution, department, address, city, state, zip, country, phone, email FROM users WHERE (uid = ' . $GLOBALS['SYMB_UID'] . ')';
 				$rs = $this->conn->query($sql);
 				if ($r = $rs->fetch_object()) {
 					$emlArr['associatedParty'][0]['individualName']['surName'] = $r->lastname;
 					if ($r->firstname) $emlArr['associatedParty'][0]['individualName']['givenName'] = $r->firstname;
 					if ($r->email) $emlArr['associatedParty'][0]['electronicMailAddress'] = $r->email;
 					$emlArr['associatedParty'][0]['role'] = 'datasetOriginator';
-					if ($r->ispublic) {
-						if ($r->institution) $emlArr['associatedParty'][0]['organizationName'] = $r->institution;
-						if ($r->title) $emlArr['associatedParty'][0]['positionName'] = $r->title;
-						if ($r->phone) $emlArr['associatedParty'][0]['phone'] = $r->phone;
-						if ($r->state) {
-							if ($r->department) $emlArr['associatedParty'][0]['address']['deliveryPoint'][] = $r->department;
-							if ($r->address) $emlArr['associatedParty'][0]['address']['deliveryPoint'][] = $r->address;
-							if ($r->city) $emlArr['associatedParty'][0]['address']['city'] = $r->city;
-							$emlArr['associatedParty'][0]['address']['administrativeArea'] = $r->state;
-							if ($r->zip) $emlArr['associatedParty'][0]['address']['postalCode'] = $r->zip;
-							if ($r->country) $emlArr['associatedParty'][0]['address']['country'] = $r->country;
-						}
+					if ($r->institution) $emlArr['associatedParty'][0]['organizationName'] = $r->institution;
+					if ($r->title) $emlArr['associatedParty'][0]['positionName'] = $r->title;
+					if ($r->phone) $emlArr['associatedParty'][0]['phone'] = $r->phone;
+					if ($r->state) {
+						if ($r->department) $emlArr['associatedParty'][0]['address']['deliveryPoint'][] = $r->department;
+						if ($r->address) $emlArr['associatedParty'][0]['address']['deliveryPoint'][] = $r->address;
+						if ($r->city) $emlArr['associatedParty'][0]['address']['city'] = $r->city;
+						$emlArr['associatedParty'][0]['address']['administrativeArea'] = $r->state;
+						if ($r->zip) $emlArr['associatedParty'][0]['address']['postalCode'] = $r->zip;
+						if ($r->country) $emlArr['associatedParty'][0]['address']['country'] = $r->country;
 					}
 					$rs->free();
 				}

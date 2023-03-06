@@ -1357,45 +1357,31 @@ class OccurrenceEditorManager {
 			$rs->free();
 			if($archiveArr){
 				//Archive determinations history
-				$detArr = array();
 				$sql = 'SELECT * FROM omoccurdeterminations WHERE occid = '.$delOccid;
 				$rs = $this->conn->query($sql);
 				while($r = $rs->fetch_assoc()){
 					$detId = $r['detid'];
 					foreach($r as $k => $v){
-						if($v) $detArr[$detId][$k] = $this->encodeStrTargeted($v,$CHARSET,'utf8');
+						if($v) $archiveArr['dets'][$detId][$k] = $this->encodeStrTargeted($v,$CHARSET,'utf8');
 					}
-					//Archive determinations
-					$detObj = json_encode($detArr[$detId]);
-					$sqlArchive = 'UPDATE guidoccurdeterminations '.
-						'SET archivestatus = 1, archiveobj = "'.$this->cleanInStr($this->encodeStrTargeted($detObj,'utf8',$CHARSET)).'" '.
-						'WHERE (detid = '.$detId.')';
-					$this->conn->query($sqlArchive);
 				}
 				$rs->free();
-				$archiveArr['dets'] = $detArr;
 
 				//Archive image history
 				$sql = 'SELECT * FROM images WHERE occid = '.$delOccid;
 				if($rs = $this->conn->query($sql)){
-					$imgArr = array();
+					$imgidStr = '';
 					while($r = $rs->fetch_assoc()){
 						$imgId = $r['imgid'];
+						$imgidStr .= ','.$imgId;
 						foreach($r as $k => $v){
-							if($v) $imgArr[$imgId][$k] = $this->encodeStrTargeted($v,$CHARSET,'utf8');
+							if($v) $archiveArr['imgs'][$imgId][$k] = $this->encodeStrTargeted($v,$CHARSET,'utf8');
 						}
-						//Archive determinations
-						$imgObj = json_encode($imgArr[$imgId]);
-						$sqlArchive = 'UPDATE guidimages '.
-							'SET archivestatus = 1, archiveobj = "'.$this->cleanInStr($this->encodeStrTargeted($imgObj,'utf8',$CHARSET)).'" '.
-							'WHERE (imgid = '.$imgId.')';
-						$this->conn->query($sqlArchive);
 					}
 					$rs->free();
 					//Delete images
-					if($imgArr){
-						$archiveArr['imgs'] = $imgArr;
-						$imgidStr = implode(',',array_keys($imgArr));
+					if($imgidStr){
+						$imgidStr = trim($imgidStr, ', ');
 						//Remove any OCR text blocks linked to the image
 						if(!$this->conn->query('DELETE FROM specprocessorrawlabels WHERE (imgid IN('.$imgidStr.'))')){
 							$this->errorArr[] = $LANG['ERROR_REMOVING_OCR'].': '.$this->conn->error;
@@ -1415,14 +1401,12 @@ class OccurrenceEditorManager {
 				if($this->paleoActivated){
 					$sql = 'SELECT * FROM omoccurpaleo WHERE occid = '.$delOccid;
 					if($rs = $this->conn->query($sql)){
-						$paleoArr = array();
 						if($r = $rs->fetch_assoc()){
 							foreach($r as $k => $v){
-								if($v) $paleoArr[$k] = $this->encodeStrTargeted($v,$CHARSET,'utf8');
+								if($v) $archiveArr['paleo'][$k] = $this->encodeStrTargeted($v,$CHARSET,'utf8');
 							}
 						}
 						$rs->free();
-						$archiveArr['paleo'] = $paleoArr;
 					}
 				}
 
@@ -1433,42 +1417,36 @@ class OccurrenceEditorManager {
 					'INNER JOIN omexsiccatititles t ON n.ometid = t.ometid '.
 					'WHERE l.occid = '.$delOccid;
 				if($rs = $this->conn->query($sql)){
-					$exsArr = array();
 					if($r = $rs->fetch_assoc()){
 						foreach($r as $k => $v){
-							if($v) $exsArr[$k] = $this->encodeStrTargeted($v,$CHARSET,'utf8');
+							if($v) $archiveArr['exsiccati'][$k] = $this->encodeStrTargeted($v,$CHARSET,'utf8');
 						}
 					}
 					$rs->free();
-					$archiveArr['exsiccati'] = $exsArr;
 				}
 
 				//Archive associations info
 				$sql = 'SELECT * FROM omoccurassociations WHERE occid = '.$delOccid;
 				if($rs = $this->conn->query($sql)){
-					$assocArr = array();
 					while($r = $rs->fetch_assoc()){
 						$id = $r['associd'];
 						foreach($r as $k => $v){
-							if($v) $assocArr[$id][$k] = $this->encodeStrTargeted($v,$CHARSET,'utf8');
+							if($v) $archiveArr['assoc'][$id][$k] = $this->encodeStrTargeted($v,$CHARSET,'utf8');
 						}
 					}
 					$rs->free();
-					$archiveArr['assoc'] = $assocArr;
 				}
 
 				//Archive Material Sample info
 				$sql = 'SELECT * FROM ommaterialsample WHERE occid = '.$delOccid;
 				if($rs = $this->conn->query($sql)){
-					$msArr = array();
 					while($r = $rs->fetch_assoc()){
 						foreach($r as $k => $v){
 							$id = $r['matSampleID'];
-							if($v) $msArr[$id][$k] = $this->encodeStrTargeted($v,$CHARSET,'utf8');
+							if($v) $archiveArr['matSample'][$id][$k] = $this->encodeStrTargeted($v,$CHARSET,'utf8');
 						}
 					}
 					$rs->free();
-					$archiveArr['matSample'] = $msArr;
 				}
 
 				//Archive complete occurrence record

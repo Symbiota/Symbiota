@@ -208,19 +208,10 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			FROM omoccurdeterminations WHERE detid = '.$detId;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_assoc()){
-			$detArr = array();
 			$isCurrent = $r['isCurrent'];
 			$occid = $r['occid'];
-			foreach($r as $k => $v){
-				if($v) $detArr[$k] = $this->encodeStr($v);
-			}
-			//Archive determinations
-			$detObj = json_encode($detArr);
-			$sqlArchive = 'UPDATE guidoccurdeterminations '.
-			'SET archivestatus = 1, archiveobj = "'.$this->cleanInStr($detObj).'" '.
-			'WHERE (detid = '.$detId.')';
-			$this->conn->query($sqlArchive);
 		}
+		$rs->free();
 
 		if($isCurrent){
 			$prevDetId = 0;
