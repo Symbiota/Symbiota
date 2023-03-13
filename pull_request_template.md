@@ -1,11 +1,12 @@
 Pull request checklist:
 
-- [ ] Features and bugfixes should be PRed into the `Development` branch, **not** `master`
-- [ ] All text is internationalized (i.e., no end-user-visible text is hard-coded on the PHP pages)
+- [ ] Features and backlog bugs should be PRed into the `Development` branch, **not** `master`
+- [ ] Hotfixes shoulde be PRed into both the Development and master branches.
+- [ ] All new text is internationalized (i.e., no end-user-visible text is hard-coded on the PHP pages)
 - [ ] There are no linter errors
 - [ ] New features have responsive design (i.e., look aesthetically pleasing both full screen and with small or mobile screens)
 - [ ] [Symbiota coding standards](https://docs.google.com/document/d/1-FwCZP5Zu4f-bPwsKeVVsZErytALOJyA2szjbfSUjmc/edit?usp=sharing) have been followed
-- [ ] If any files have been reformatted (e.g., but an autoformatter), the reformat is its own, separate commit in the PR
+- [ ] If any files have been reformatted (e.g., by an autoformatter), the reformat is its own, separate commit in the PR
 - [ ] Which GitHub issue(s), if any does this PR address?
 - [ ] It is the code author's responsibility to merge their own pull request after it has been approved
 - [ ] If this PR represents a merge into the Development branch, remember to use the "squash & merge" option
