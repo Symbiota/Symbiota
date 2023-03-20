@@ -10,7 +10,7 @@
   - Optional: Install Pear Mail for SMTP mail support: https://pear.php.net/package/Mail/redirected
   - Notes for Mac installations: macOS version 12 and beyond no longer ship with PHP. We have had success setting up Symbiota instances on Macs using the Apache shipped with the OS and installing PHP as indicated [here](https://wpbeaches.com/updating-to-php-versions-7-4-and-8-on-macos-12-monterey/), including the Code Signing section linked therein.
 - MariaDB (v10.2.2+) or MySQL (v5.8+)
-- GIT Client - not required, though recommend for updating source code
+- GIT Client - not required, though recommended for updating source code
 
 ## INSTRUCTIONS
 
