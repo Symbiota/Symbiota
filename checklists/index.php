@@ -47,14 +47,14 @@ $clManager->setProj($pid);
 						if($projName == 'Miscellaneous Inventories') $projName = (isset($LANG['MISC_INVENTORIES'])?$LANG['MISC_INVENTORIES']:'Miscellaneous Inventories');
 						echo $projName;
 						?>
-						<a href="<?php echo "clgmap.php?pid=". $pid; ?>" title='<?php echo (isset($LANG['SHOW_MAP'])?$LANG['SHOW_MAP']:'Show inventories on map'); ?>'>
+						<a href="<?php echo "clgmap.php?pid=" . $pid; ?>" title='<?php echo (isset($LANG['SHOW_MAP'])?$LANG['SHOW_MAP']:'Show inventories on map'); ?>'>
 							<img src='../images/world.png' style='width:10px;border:0' />
 						</a>
 					</h3>
 					<ul>
 						<?php
 						foreach($projArr['clid'] as $clid => $clName){
-							echo '<li><a href="checklist.php?clid='.$clid.'&pid='.$pid.'">'.$clName.'</a></li>';
+							echo '<li><a href="checklist.php?clid='.$clid.'&pid=' . $pid.'">' . $clName.'</a></li>';
 						}
 						?>
 					</ul>
