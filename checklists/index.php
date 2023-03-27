@@ -7,8 +7,10 @@ header("Content-Type: text/html; charset=".$CHARSET);
 $pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']:0;
 
 //Sanitation
+const HTML_SPECIAL_CHARS_FLAGS = ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE;
+$pid = htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS);
 if(!is_numeric($pid)) $pid = 0;
-$pid = filter_var($pid, FILTER_SANITIZE_STRING);
+
 
 $clManager = new ChecklistManager();
 $clManager->setProj($pid);
@@ -45,7 +47,7 @@ $clManager->setProj($pid);
 						if($projName == 'Miscellaneous Inventories') $projName = (isset($LANG['MISC_INVENTORIES'])?$LANG['MISC_INVENTORIES']:'Miscellaneous Inventories');
 						echo $projName;
 						?>
-						<a href="<?php echo "clgmap.php?pid=".$pid; ?>" title='<?php echo (isset($LANG['SHOW_MAP'])?$LANG['SHOW_MAP']:'Show inventories on map'); ?>'>
+						<a href="<?php echo "clgmap.php?pid=". $pid; ?>" title='<?php echo (isset($LANG['SHOW_MAP'])?$LANG['SHOW_MAP']:'Show inventories on map'); ?>'>
 							<img src='../images/world.png' style='width:10px;border:0' />
 						</a>
 					</h3>
