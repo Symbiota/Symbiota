@@ -18,7 +18,6 @@ $clManager->setProj($pid);
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Species Lists</title>
 	<?php
-	$activateJQuery = false;
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>

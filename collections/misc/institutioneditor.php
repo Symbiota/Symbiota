@@ -1,4 +1,4 @@
-<?php 
+<?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/InstitutionManager.php');
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/admin/institutioneditor.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
@@ -87,22 +87,14 @@ if($editorCode){
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Institution Editor</title>
-  <?php
-      $activateJQuery = true;
-      if(file_exists($SERVER_ROOT.'/includes/head.php')){
-        include_once($SERVER_ROOT.'/includes/head.php');
-      }
-      else{
-        echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-        echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-        echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-      }
-  ?>
-  <script src="../../js/jquery.js?ver=140310" type="text/javascript"></script>
-  <script src="../../js/jquery-ui.js?ver=140310" type="text/javascript"></script>
-  <script src="../../js/symb/collections.grscicoll.js?ver=2" type="text/javascript"></script>
-	<script language=javascript>
-		
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<?php
+	include_once($SERVER_ROOT.'/includes/head.php');
+	?>
+	<script src="../../js/jquery.js?ver=140310" type="text/javascript"></script>
+	<script src="../../js/jquery-ui.js?ver=140310" type="text/javascript"></script>
+	<script src="../../js/symb/collections.grscicoll.js?ver=2" type="text/javascript"></script>
+	<script>
 		function toggle(target){
 			var tDiv = document.getElementById(target);
 			if(tDiv != null){
@@ -145,8 +137,8 @@ $displayLeftMenu = (isset($collections_admin_institutioneditor)?$collections_adm
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class='navpath'>
-	<a href='../../index.php'>Home</a> &gt;&gt; 
-	<?php 
+	<a href='../../index.php'>Home</a> &gt;&gt;
+	<?php
 	if(!$targetCollid && count($collList) == 1){
 		$targetCollid = key($collList);
 	}
@@ -157,14 +149,14 @@ include($SERVER_ROOT.'/includes/header.php');
 		echo '<a href="institutioneditor.php">Full Address List</a> &gt;&gt;';
 	}
 	?>
-	<b>Institution Editor</b> 
+	<b>Institution Editor</b>
 </div>
 <!-- This is inner text! -->
 <div id="innertext">
 	<div id="dialog" title="" style="display: none;">
 		<div id="dialogmsg"></div>
-	  <select id="getresult">
-	  </select>
+		<select id="getresult">
+		</select>
 	</div>
 	<?php
 	if($statusStr){
@@ -174,7 +166,7 @@ include($SERVER_ROOT.'/includes/header.php');
 			<?php echo $statusStr; ?>
 		</div>
 		<hr />
-		<?php 
+		<?php
 	}
 	if($iid){
 		if($instArr = $instManager->getInstitutionData()){
@@ -183,13 +175,13 @@ include($SERVER_ROOT.'/includes/header.php');
 				<a href="institutioneditor.php">
 					<img src="<?php echo $CLIENT_ROOT;?>/images/toparent.png" style="width:15px;border:0px;" title="Return to Institution List" />
 				</a>
-				<?php 
+				<?php
 				if($editorCode > 1){
 					?>
 					<a href="#" onclick="toggle('editdiv');">
 						<img src="<?php echo $CLIENT_ROOT;?>/images/edit.png" style="width:15px;border:0px;" title="Edit Institution" />
 					</a>
-					<?php 
+					<?php
 				}
 				?>
 			</div>
@@ -365,12 +357,12 @@ include($SERVER_ROOT.'/includes/header.php');
 					<fieldset style="padding:20px;">
 						<legend><b>Collections Linked to Institution Address</b></legend>
 						<div>
-							<?php 
+							<?php
 							if($collList){
 								foreach($collList as $id => $collName){
 									echo '<div style="margin:5px;font-weight:bold;clear:both;height:15px;">';
 									echo '<div style="float:left;"><a href="../misc/collprofiles.php?collid='.$id.'">'.$collName.'</a></div> ';
-									if($editorCode == 3 || in_array($id,$USER_RIGHTS["CollAdmin"])) 
+									if($editorCode == 3 || in_array($id,$USER_RIGHTS["CollAdmin"]))
 										echo ' <div class="editdiv" style="margin-left:10px;display:'.($eMode?'':'none').'"><a href="institutioneditor.php?iid='.$iid.'&removecollid='.$id.'"><img src="../../images/del.png" style="width:15px;"/></a></div>';
 									echo '</div>';
 								}
@@ -382,7 +374,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						</div>
 						<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
 							<div style="margin:15px;clear:both;">* Click on red X to unlink collection</div>
-							<?php 
+							<?php
 							//Don't show collection that already linked and only show one that user can admin
 							$addList = array();
 							foreach($fullCollList as $collid => $collArr){
@@ -399,7 +391,7 @@ include($SERVER_ROOT.'/includes/header.php');
 									<select name="addcollid" style="width:400px;">
 										<option value="">Select collection to add</option>
 										<option value="">------------------------------------</option>
-										<?php 
+										<?php
 										foreach($addList as $collid => $collArr){
 											echo '<option value="'.$collid.'">'.$collArr['name'].'</option>';
 										}
@@ -408,7 +400,7 @@ include($SERVER_ROOT.'/includes/header.php');
 									<input name="iid" type="hidden" value="<?php echo $iid; ?>" />
 									<input name="formsubmit" type="submit" value="Add Collection" />
 								</form>
-								<?php 
+								<?php
 							}
 							?>
 						</div>
@@ -420,15 +412,15 @@ include($SERVER_ROOT.'/includes/header.php');
 								<div style="position:relative;clear:both;">
 									<input name="formsubmit" type="submit" value="Delete Institution" <?php if($collList) echo 'disabled'; ?> />
 									<input name="deliid" type="hidden" value="<?php echo $iid; ?>" />
-									<?php 
-									if($collList) echo '<div style="margin:15px;color:red;">Deletion of addresses that have linked collections is not allowed</div>'; 
+									<?php
+									if($collList) echo '<div style="margin:15px;color:red;">Deletion of addresses that have linked collections is not allowed</div>';
 									?>
 								</div>
 							</form>
 						</fieldset>
 					</div>
 				</div>
-			</div>		
+			</div>
 			<?php
 		}
 	}
@@ -565,7 +557,7 @@ include($SERVER_ROOT.'/includes/header.php');
 								<select name="targetcollid" style="width:400px;">
 									<option value="">Leave Orphaned</option>
 									<option value="">--------------------------------------</option>
-									<?php 
+									<?php
 									foreach($fullCollList as $collid => $collArr){
 										//Don't show collection that already linked and only show one that user can admin
 										if($collArr['iid'] && ($IS_ADMIN || ($USER_RIGHTS["CollAdmin"] && in_array($collid,$USER_RIGHTS["CollAdmin"])))){
@@ -573,7 +565,7 @@ include($SERVER_ROOT.'/includes/header.php');
 										}
 									}
 									?>
-								</select> 
+								</select>
 							</div>
 						</div>
 						<div style="margin:20px;clear:both;">
@@ -582,13 +574,13 @@ include($SERVER_ROOT.'/includes/header.php');
 					</fieldset>
 				</form>
 			</div>
-			<?php 
+			<?php
 			if(!$eMode){
 				?>
 				<div style="padding-left:10px;">
 					<h2>Select an Institution from the list</h2>
 					<ul>
-						<?php 
+						<?php
 						$instList = $instManager->getInstitutionList();
 						if($instList){
 							foreach($instList as $iid => $iArr){
@@ -615,7 +607,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	}
 	?>
 </div>
-<?php 
+<?php
 include($SERVER_ROOT.'/includes/footer.php');
 ?>
 </body>

@@ -27,8 +27,8 @@ $imgloc = "../images/games/namegame/";
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Name Game</title>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	$activateJQuery = true;
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
     ?>

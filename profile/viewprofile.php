@@ -49,8 +49,6 @@ if($isEditor){
 		$country = array_key_exists("country",$_REQUEST)?$_REQUEST["country"]:"";
 		$url = array_key_exists("url",$_REQUEST)?$_REQUEST["url"]:"";
 		$guid = array_key_exists('guid',$_REQUEST)?$_REQUEST['guid']:'';
-		$biography = array_key_exists("biography",$_REQUEST)?$_REQUEST["biography"]:"";
-		$isPublic = array_key_exists("ispublic",$_REQUEST)?$_REQUEST["ispublic"]:"";
 
 		$newPerson = new Person();
 		$newPerson->setUid($userId);
@@ -129,8 +127,8 @@ if($isEditor){
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE.' - '. (isset($LANG['VIEW_PROFILE'])?$LANG['VIEW_PROFILE']:'View User Profile'); ?></title>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	$activateJQuery = true;
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script type="text/javascript">

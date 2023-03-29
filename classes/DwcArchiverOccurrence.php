@@ -94,6 +94,8 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['recordNumber'] = 'o.recordNumber';
 		$this->occurDefArr['terms']['eventDate'] = 'http://rs.tdwg.org/dwc/terms/eventDate';
 		$this->occurDefArr['fields']['eventDate'] = 'o.eventDate';
+		$this->occurDefArr['terms']['eventDate2'] = 'https://symbiota.org/terms/eventDate2';
+		$this->occurDefArr['fields']['eventDate2'] = 'o.eventDate2';
 		$this->occurDefArr['terms']['year'] = 'http://rs.tdwg.org/dwc/terms/year';
 		$this->occurDefArr['fields']['year'] = 'o.year';
 		$this->occurDefArr['terms']['month'] = 'http://rs.tdwg.org/dwc/terms/month';
@@ -412,13 +414,14 @@ class DwcArchiverOccurrence extends Manager{
 	}
 
 	public function getAssociationStr($occid){
-		$retStr = '';
 		if(is_numeric($occid)){
-			$sql = 'SELECT assocID, occid, occidAssociate, relationship, subType, resourceUrl, identifier FROM omoccurassociations WHERE (occid = '.$occid.' OR occidAssociate = '.$occid.') AND verbatimSciname IS NULL ';
+			$relOccidArr = array();
+			$assocArr = array();
+			//Get associations defined within omoccurassociations
+			$sql = 'SELECT assocID, occid, occidAssociate, relationship, subType, resourceUrl, identifier FROM omoccurassociations
+				WHERE (occid = '.$occid.' OR occidAssociate = '.$occid.') AND verbatimSciname IS NULL ';
 			$rs = $this->conn->query($sql);
 			if($rs){
-				$relOccidArr = array();
-				$assocArr = array();
 				while($r = $rs->fetch_object()){
 					$relOccid = $r->occidAssociate;
 					$relationship = $r->relationship;
@@ -440,23 +443,57 @@ class DwcArchiverOccurrence extends Manager{
 					}
 				}
 				$rs->free();
+			}
+			//Append duplicate specimen duplicate associations
+			$sql = 'SELECT s.occid, l.occid as occidAssociate
+				FROM omoccurduplicatelink s INNER JOIN omoccurduplicates d ON s.duplicateid = d.duplicateid
+				INNER JOIN omoccurduplicatelink l ON d.duplicateid = l.duplicateid
+				WHERE s.occid IN('.$occid.') AND s.occid != l.occid ';
+			$rs = $this->conn->query($sql);
+			if($rs){
+				while($r = $rs->fetch_object()){
+					$assocKey = 'sd-'.$r->occidAssociate;
+					$assocArr[$assocKey]['occidassoc'] = $r->occidAssociate;
+					$assocArr[$assocKey]['relationship'] = 'herbariumSpecimenDuplicate';
+					$relOccidArr[$r->occidAssociate][] = $assocKey;
+				}
+				$rs->free();
+			}
+			//Append resource URLs to each output record
+			if($relOccidArr){
+				$this->setServerDomain();
+				//Replace GUID identifiers with occurrenceID values
+				$sql = 'SELECT occid, occurrenceid FROM omoccurrences WHERE occid IN('.implode(',',array_keys($relOccidArr)).') AND occurrenceid IS NOT NULL';
+				$rs = $this->conn->query($sql);
+				while($r = $rs->fetch_object()){
+					foreach($relOccidArr[$r->occid] as $k => $targetAssocID){
+						if($r->occurrenceid){
+							$url = $r->occurrenceid;
+							if(substr($url, 0, 4) != 'http') $url = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?guid='.$r->occurrenceid;
+							$assocArr[$targetAssocID]['resourceurl'] = $url;
+							unset($relOccidArr[$r->occid][$k]);
+						}
+					}
+				}
+				$rs->free();
 				if($relOccidArr){
-					$this->setServerDomain();
-					$sql = 'SELECT o.occid, IFNULL(o.occurrenceid,g.guid) as guid FROM omoccurrences o INNER JOIN guidoccurrences g ON o.occid = g.occid WHERE o.occid IN('.implode(',',array_keys($relOccidArr)).')';
+					//Get recordID/occurrenceID guids for specimens live managed records
+					$sql = 'SELECT occid, guid FROM guidoccurrences WHERE occid IN('.implode(',',array_keys($relOccidArr)).')';
 					$rs = $this->conn->query($sql);
 					while($r = $rs->fetch_object()){
 						foreach($relOccidArr[$r->occid] as $targetAssocID){
-							$assocArr[$targetAssocID]['identifier'] = $r->guid;
 							$assocArr[$targetAssocID]['resourceurl'] = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?guid='.$r->guid;
 						}
 					}
 					$rs->free();
 				}
-				foreach($assocArr as $assocateArr){
-					$retStr .= '|'.$assocateArr['relationship'];
-					if($assocateArr['subtype']) $retStr .= ' ('.$assocateArr['subtype'].')';
-					$retStr .= ': '.$assocateArr['resourceurl'];
-				}
+			}
+			//Create output strings
+			$retStr = '';
+			foreach($assocArr as $assocateArr){
+				$retStr .= ' | '.$assocateArr['relationship'];
+				if(!empty($assocateArr['subtype'])) $retStr .= ' ('.$assocateArr['subtype'].')';
+				$retStr .= ': '.$assocateArr['resourceurl'];
 			}
 		}
 		return trim($retStr,' |');

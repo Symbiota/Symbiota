@@ -84,7 +84,7 @@ class ProfileManager extends Manager{
 
 	public function getPerson(){
 		$sqlStr = 'SELECT u.uid, u.firstname, u.lastname, u.title, u.institution, u.department, u.address, u.city, u.state, u.zip, u.country, u.phone, u.email, '.
-			'u.url, u.guid, u.biography, u.ispublic, u.notes, ul.username, ul.lastlogindate '.
+			'u.url, u.guid, u.notes, ul.username, ul.lastlogindate '.
 			'FROM users u LEFT JOIN userlogin ul ON u.uid = ul.uid '.
 			'WHERE (u.uid = '.$this->uid.')';
 		$person = new Person();
@@ -199,13 +199,17 @@ class ProfileManager extends Manager{
 			if($uid){
 				$subject = 'RE: Password reset';
 				$serverPath = $this->getDomain().$GLOBALS['CLIENT_ROOT'];
+				$from = '';
+				if (array_key_exists("SYSTEM_EMAIL", $GLOBALS) && !empty($GLOBALS["SYSTEM_EMAIL"])){
+					$from = 'Reset Request <'.$GLOBALS["SYSTEM_EMAIL"].'>';
+				}
 				$body = 'Your '.$GLOBALS['DEFAULT_TITLE'].' password has been reset to: '.$newPassword.'<br/><br/> '.
 					'After logging in, you can change your password by clicking on the My Profile link within the site menu and then selecting the Edit Profile tab. '.
 					'If you have problems, contact the System Administrator: '.$GLOBALS['ADMIN_EMAIL'].'<br/><br/>'.
 					'Data portal: <a href="'.$serverPath.'">'.$serverPath.'</a><br/>'.
 					'Direct link to your user profile: <a href="'.$serverPath.'/profile/viewprofile.php?tabindex=2">'.$serverPath.'/profile/viewprofile.php</a>';
 
-				$status = $this->sendEmail($email, $subject, $body);
+				$status = $this->sendEmail($email, $subject, $body, $from);
 				if($status){
 					$this->resetConnection();
 					$sql = 'UPDATE userlogin SET password = PASSWORD("'.$this->cleanInStr($newPassword).'") WHERE (uid = '.$uid.')';
@@ -327,6 +331,10 @@ class ProfileManager extends Manager{
 
 	public function lookupUserName($emailAddr){
 		$status = false;
+		$from = '';
+		if (array_key_exists("SYSTEM_EMAIL", $GLOBALS) && !empty($GLOBALS["SYSTEM_EMAIL"])){
+			$from = 'Reset Request <'.$GLOBALS["SYSTEM_EMAIL"].'>';
+		}
 		if(!$this->validateEmailAddress($emailAddr)) return false;
 		$loginStr = '';
 		$sql = 'SELECT u.uid, ul.username, concat_ws("; ",u.lastname,u.firstname) '.
@@ -343,7 +351,7 @@ class ProfileManager extends Manager{
 			$serverPath = $this->getDomain().$GLOBALS['CLIENT_ROOT'];
 			$bodyStr = 'Your '.$GLOBALS['DEFAULT_TITLE'].' (<a href="'.$serverPath.'">'.$serverPath.'</a>) login name is: '.
 				$loginStr.'<br/><br/>If you continue to have login issues, contact the System Administrator: '.$GLOBALS['ADMIN_EMAIL'];
-			$status = $this->sendEmail($emailAddr, $subject, $bodyStr);
+			$status = $this->sendEmail($emailAddr, $subject, $bodyStr, $from);
 		}
 		else{
 			$this->errorStr = 'There are no users registered to email address: '.$emailAddr;
@@ -351,9 +359,11 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	private function sendEmail($to, $subject, $body){
+	private function sendEmail($to, $subject, $body, $from = ''){
 		$status = true;
-		$from = 'portal admin <'.$GLOBALS["ADMIN_EMAIL"].'>';
+		if (empty($from)){
+			$from = 'portal admin <'.$GLOBALS["ADMIN_EMAIL"].'>';
+		}
 		$smtpArr = null;
 		if(isset($GLOBALS['SMTP_ARR']) && $GLOBALS['SMTP_ARR']) $smtpArr = $GLOBALS['SMTP_ARR'];
 		if(class_exists('Mail') && $smtpArr){
@@ -368,15 +378,13 @@ class ProfileManager extends Manager{
 		else{
 			$header = "Organization: ".$GLOBALS["DEFAULT_TITLE"]." \r\n".
 				"MIME-Version: 1.0 \r\n".
-				"Content-type: text/html; charset=iso-8859-1 \r\n".
-				"To: ".$to." \r\n";
+				"Content-type: text/html; charset=iso-8859-1 \r\n";
 			if(array_key_exists("ADMIN_EMAIL",$GLOBALS) && $GLOBALS["ADMIN_EMAIL"]){
 				$header .= "From: ".$from." \r\n".
 					"Reply-To: ".$GLOBALS["ADMIN_EMAIL"]." \r\n".
 					"Return-Path: ".$GLOBALS["ADMIN_EMAIL"]." \r\n";
 			}
-			$header .= "X-Priority: 3\r\n".
-				"X-Mailer: PHP". phpversion() ."\r\n";
+
 			if(!mail($to,$subject,$body,$header)){
 				$status = false;
 				$this->errorStr = 'mailserver might not be properly setup';

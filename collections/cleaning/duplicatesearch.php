@@ -52,20 +52,12 @@ elseif($action == 'listdupsrecordedby'){
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['OCC_CLEANER']; ?></title>
-  <?php
-    $activateJQuery = false;
-    if(file_exists($SERVER_ROOT.'/includes/head.php')){
-      include_once($SERVER_ROOT.'/includes/head.php');
-    }
-    else{
-      echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-      echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-      echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-    }
-  ?>
-  <style type="text/css">
-  table.styledtable td { white-space: nowrap; }
-  </style>
+	<?php
+	include_once($SERVER_ROOT.'/includes/head.php');
+	?>
+	<style type="text/css">
+		table.styledtable td { white-space: nowrap; }
+	</style>
 	<script type="text/javascript">
 		function validateMergeForm(f){
 			var dbElements = document.getElementsByName("dupid[]");

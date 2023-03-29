@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once('../../../config/symbini.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 header('Location: '.$CLIENT_ROOT.'/index.php');
 ?>
@@ -7,7 +7,7 @@ header('Location: '.$CLIENT_ROOT.'/index.php');
 	<head>
 		<title>Forbidden</title>
 		<?php
-		$activateJQuery = false;
+
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
 	</head>

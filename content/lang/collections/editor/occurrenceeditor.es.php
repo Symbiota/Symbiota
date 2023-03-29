@@ -5,7 +5,7 @@ Language: Español
 ------------------
 */
 
-include_once('fieldterms.es.php');
+include_once($SERVER_ROOT.'/content/lang/collections/editor/editorterms.es.php');
 
 $LANG['HOME'] = 'Inicio';
 $LANG['CLONES_CREATED'] = '¡Éxito! Los siguientes registros clonados ha sido creados';
@@ -66,7 +66,6 @@ $LANG['END_DOY'] = 'Día Final del Año';
 $LANG['EXS_TITLE'] = 'Título de Exsiccati';
 $LANG['NUMBER'] = 'Número';
 $LANG['LATEST_ID'] = 'Última Identificación';
-$LANG['SCINAME'] = 'Nombre Científico';
 $LANG['LIMITED_EDITING'] = 'Derechos de edición limitados: use la pestaña de determinación para editar identificación';
 $LANG['NEED_FULL'] = 'Nota: Se necesitan permisos completos de edición para editar una identificación';
 $LANG['UNDEFINED'] = 'No Identificado';
@@ -81,7 +80,6 @@ $LANG['UNDEFINED'] = 'No Identificado';
 ///$LANG['LOW'] = 'Baja';
 ///$LANG['LOW_ID'] = 'Baja - identificación requerida';
 ///$LANG['ID_REQUESTED'] = 'Identificación Requerida';
-$LANG['LOCALITY'] = 'Localidad';
 $LANG['DEACTIVATE_LOOKUP'] = 'Desactivar Búsqueda de Localidad';
 $LANG['LOCALITY_SECURITY'] = 'Seguridad de Localidad';
 $LANG['TAXONOMIC_SECURITY'] = 'Seguridad Taxonómica';
@@ -198,6 +196,5 @@ $LANG['GEN_RES_ADD_SUCCESS'] = 'Genetic resource added successfully!';
 $LANG['ERROR_UNABLE_INSERT'] = 'ERROR: unable to INSERT text fragment';
 $LANG['ERROR_UNABLE_UPDATE'] = 'ERROR: unable to UPDATE text fragment';
 $LANG['ERROR_UNABLE_DELETE'] = 'ERROR: unable DELETE text fragment';
-$LANG['UNABLE_GET_EDITS'] = 'Unable to get edits';
 
 ?>

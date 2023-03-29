@@ -85,7 +85,7 @@ if(!$transInstList) echo '<script type="text/javascript">displayNewExchange();</
 			foreach($transInstList as $k => $transArr){
 				?>
 				<li>
-					<a href="#" onclick="toggle('<?php echo $k; ?>');"><?php echo $transArr['institutioncode']; ?></a>
+					<a href="#" onclick="toggle('<?php echo $k; ?>');"><?php echo ($transArr['institutioncode'] ? $transArr['institutioncode'] : ($transArr['institutionname'] ? $transArr['institutionname'] : '[no name]')); ?></a>
 					<?php
 					$bal = $transArr['invoicebalance'];
 					echo '(Balance: '.($bal?($bal < 0?'<span style="color:red;font-weight:bold;">'.$bal.'</span>':$bal):0).')';

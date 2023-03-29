@@ -30,7 +30,6 @@ $searchVar = $collManager->getQueryTermStr();
 		}
 	</style>
 	<?php
-	$activateJQuery = true;
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>

@@ -7,7 +7,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 	<head>
 		<title>Page Title</title>
 		<?php
-		$activateJQuery = false;
+
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
 	</head>

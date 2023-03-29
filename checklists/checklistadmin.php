@@ -5,10 +5,15 @@ include_once($SERVER_ROOT.'/content/lang/checklists/checklistadmin.'.$LANG_TAG.'
 header('Content-Type: text/html; charset='.$CHARSET);
 if(!$SYMB_UID) header('Location: ../profile/index.php?refurl=../checklists/checklistadmin.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
-$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']:'';
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
+$clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$pid = array_key_exists('pid', $_REQUEST) ? filter_var($_REQUEST['pid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$targetClid = array_key_exists('targetclid', $_REQUEST) ? filter_var($_REQUEST['targetclid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$transferMethod = array_key_exists('transmethod', $_POST) ? filter_var($_POST['transmethod'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$parentClid = array_key_exists('parentclid', $_REQUEST) ? filter_var($_REQUEST['parentclid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$targetPid = array_key_exists('targetpid', $_REQUEST) ? filter_var($_REQUEST['targetpid'], FILTER_SANITIZE_NUMBER_INT) : '';
+$copyAttributes = array_key_exists('copyattributes', $_REQUEST) ? filter_var($_REQUEST['copyattributes'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
 
 $clManager = new ChecklistAdmin();
 if(!$clid && isset($_POST['delclid'])) $clid = $_POST['delclid'];
@@ -28,55 +33,78 @@ if($action == 'submitAdd'){
 $isEditor = 0;
 if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USER_RIGHTS['ClAdmin']))){
 	$isEditor = 1;
-
 	//Submit checklist MetaData edits
 	if($action == 'submitEdit'){
-		$clManager->editMetaData($_POST);
-		header('Location: checklist.php?clid='.$clid.'&pid='.$pid);
+		if($clManager->editChecklist($_POST)){
+			header('Location: checklist.php?clid='.$clid.'&pid='.$pid);
+		}
+		else{
+			$statusStr = $clManager->getErrorMessage();
+		}
 	}
-	elseif($action == 'DeleteCheck'){
-		$statusStr = $clManager->deleteChecklist($_POST['delclid']);
-		if($statusStr === true) header('Location: ../index.php');
+	elseif($action == 'deleteChecklist'){
+		$status = $clManager->deleteChecklist($_POST['delclid']);
+		if($status === true) header('Location: ../index.php');
+		echo $statusStr = $clManager->getErrorMessage();
 	}
-	elseif($action == 'Addeditor'){
+	elseif($action == 'addEditor'){
 		$statusStr = $clManager->addEditor($_POST['editoruid']);
 	}
 	elseif(array_key_exists('deleteuid',$_REQUEST)){
 		$statusStr = $clManager->deleteEditor($_REQUEST['deleteuid']);
 	}
-	elseif($action == 'AddToProject'){
+	elseif($action == 'addToProject'){
 		$statusStr = $clManager->addProject($_POST['pid']);
 	}
-	elseif($action == 'DeleteProject'){
+	elseif($action == 'deleteProject'){
 		$statusStr = $clManager->deleteProject($_POST['pid']);
 	}
-	elseif($action == 'Add Point'){
+	elseif($action == 'addPoint'){
 		$statusStr = $clManager->addPoint($_POST['pointtid'],$_POST['pointlat'],$_POST['pointlng'],$_POST['notes']);
 	}
 	elseif($action && array_key_exists('clidadd',$_POST)){
-		$statusStr = $clManager->addChildChecklist($_POST['clidadd']);
+		if(!$clManager->addChildChecklist($_POST['clidadd'])){
+			$statusStr = 'ERROR adding child checklist link';
+		}
 	}
 	elseif($action && array_key_exists('cliddel',$_GET)){
-		$statusStr = $clManager->deleteChildChecklist($_GET['cliddel']);
+		if(!$clManager->deleteChildChecklist($_GET['cliddel'])){
+			$statusStr = $clManager->getErrorMessage();
+		}
+	}
+	elseif($action == 'parseChecklist'){
+		$parseTid = 0;
+		if(array_key_exists('parsetid',$_POST) && is_numeric($_POST['parsetid'])) $parseTid = $_POST['parsetid'];
+		$taxon = '';
+		if(array_key_exists('taxon',$_POST)) $taxon = filter_var($_POST['taxon'], FILTER_SANITIZE_STRING);
+		$resultArr = $clManager->parseChecklist($parseTid, $taxon, $targetClid, $parentClid, $targetPid, $transferMethod, $copyAttributes);
+		if($resultArr){
+			$statusStr = '<div>Checklist parsed successfully!</div>';
+			if(isset($resultArr['targetPid'])){
+				$targetPid = $resultArr['targetPid'];
+				$statusStr .= '<div style="margin-left:15px"><a href="../projects/index.php?pid='.$targetPid.'" target="_blank">Target project</a></div>';
+			}
+			if(isset($resultArr['targetClid'])) $statusStr .= '<div style="margin-left:15px"><a href="checklist.php?clid='.$resultArr['targetClid'].'&pid='.$targetPid.'" target="_blank">Target checklist</a></div>';
+			if(isset($resultArr['parentClid'])){
+				$parentClid = $resultArr['parentClid'];
+				$statusStr .= '<div style="margin-left:15px"><a href="checklist.php?clid='.$resultArr['parentClid'].'&pid='.$targetPid.'" target="_blank">Parent checklist</a></div>';
+			}
+		}
 	}
 }
 $clArray = $clManager->getMetaData();
-$defaultArr = array();
-if(array_key_exists('defaultsettings',$clArray)){
-	$defaultArr = json_decode($clArray['defaultsettings'], true);
-}
 ?>
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<title><?php echo $DEFAULT_TITLE.' - '.$LANG['CHECKLIST_ADMIN'];?></title>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	$activateJQuery = true;
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script type="text/javascript" src="../js/jquery.js"></script>
-	<script type="text/javascript" src="../js/jquery-ui.js"></script>
-	<script type="text/javascript" src="../js/tinymce/tinymce.min.js"></script>
+	<script src="../js/jquery.js" type="text/javascript"></script>
+	<script src="../js/jquery-ui.js" type="text/javascript"></script>
+	<script src="../js/tinymce/tinymce.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		var clid = <?php echo $clid; ?>;
 		var tabIndex = <?php echo $tabIndex; ?>;
@@ -137,9 +165,11 @@ include($SERVER_ROOT.'/includes/header.php');
 	</div>
 	<?php
 	if($statusStr){
+		$statusColor = 'green';
+		if(strpos($statusStr, 'ERROR') !== false) $statusColor = 'red';
 		?>
 		<hr />
-		<div style="margin:20px;font-weight:bold;color:red;">
+		<div style="margin:20px;font-weight:bold;color:<?php echo $statusColor;?>;">
 			<?php echo $statusStr; ?>
 		</div>
 		<hr />
@@ -147,13 +177,16 @@ include($SERVER_ROOT.'/includes/header.php');
 	}
 
 	if($clid && $isEditor){
+		$varBase = 'clid='.$clid.'&pid='.$pid;
+		$varChildren = $varBase.'&targetclid='.$targetClid.'&parentclid='.$parentClid.'&targetpid='.$targetPid.'&transmethod='.$transferMethod.'&copyattributes='.$copyAttributes;
 		?>
 		<div id="tabs" style="margin:10px;">
 			<ul>
 				<li><a href="#admintab"><span><?php echo $LANG['ADMIN'];?></span></a></li>
-				<li><a href="checklistadminmeta.php?clid=<?php echo $clid.'&pid='.$pid; ?>"><span><?php echo $LANG['DESCRIPTION'];?></span></a></li>
-				<!--					<li><a href="#pointtab"><span>Non-vouchered Points</span></a></li> -->
-				<li><a href="checklistadminchildren.php?clid=<?php echo $clid.'&pid='.$pid; ?>"><span><?php echo $LANG['RELATEDCHECK'];?></span></a></li>
+				<li><a href="checklistadminmeta.php?<?php echo $varBase; ?>"><span><?php echo $LANG['DESCRIPTION'];?></span></a></li>
+				<!-- <li><a href="#pointtab"><span>Non-vouchered Points</span></a></li> -->
+				<li><a href="checklistadminchildren.php?<?php echo $varChildren; ?>"><span><?php echo $LANG['RELATEDCHECK'];?></span></a></li>
+
 				<?php
 				if($clManager->hasVoucherProjects()) echo '<li><a href="imgvouchertab.php?clid='.$clid.'">'.(isset($LANG['ADDIMGVOUCHER'])?$LANG['ADDIMGVOUCHER']:'Add Image Voucher').'</a></li>';
 				?>
@@ -203,7 +236,7 @@ include($SERVER_ROOT.'/includes/header.php');
 									}
 									?>
 								</select>
-								<button name="submitaction" type="submit" value="Addeditor"><?php echo $LANG['ADDEDITOR'];?></button>
+								<button name="submitaction" type="submit" value="addEditor"><?php echo $LANG['ADDEDITOR'];?></button>
 								<input type="hidden" name="pid" value="<?php echo $pid; ?>" />
 								<input type="hidden" name="clid" value="<?php echo $clid; ?>" />
 							</div>
@@ -227,7 +260,7 @@ include($SERVER_ROOT.'/includes/header.php');
 										<form name="delProjectForm-<?php echo $pid; ?>" action="checklistadmin.php" method="post" onclick="return confirm(<?php echo $LANG['REMOVEPROJECTCONFIRM']; ?>);" title="<?php echo $LANG['REMOVEPROJECT'];?>" style="display:inline">
 											<input name="clid" type="hidden" value="<?php echo $clid; ?>" />
 											<input name="pid" type="hidden" value="<?php echo $pid; ?>" />
-											<input name="submitaction" type="hidden" value="DeleteProject" />
+											<input name="submitaction" type="hidden" value="deleteProject" />
 											<input name="submit" type="image" src="../images/drop.png" style="width:12px;" />
 										</form>
 										<?php
@@ -259,7 +292,7 @@ include($SERVER_ROOT.'/includes/header.php');
 										?>
 									</select>
 									<input name="clid" type="hidden" value="<?php echo $clid; ?>" />
-									<button name="submitaction" type="submit" value="AddToProject"><?php echo isset($LANG['SUBMIT'])?$LANG['SUBMIT']:'Submit';?></button>
+									<button name="submitaction" type="submit" value="addToProject"><?php echo isset($LANG['SUBMIT'])?$LANG['SUBMIT']:'Submit';?></button>
 								</form>
 							</fieldset>
 							<?php
@@ -278,8 +311,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					<div style="margin:15px;">
 						<form name="deleteclform" action="checklistadmin.php" method="post" onsubmit="return window.confirm('<?php echo $LANG['CONFIRMDELETE'];?>')">
 							<input name="delclid" type="hidden" value="<?php echo $clid; ?>" />
-							<input name="submit" type="submit" value="<?php echo $LANG['DELETECHECK'];?>" <?php if($projArr || count($editorArr) > 1) echo 'DISABLED'; ?> />
-							<input type="hidden" name="submitaction" value="DeleteCheck" />
+							<button name="submitaction" type="submit" value="deleteChecklist" <?php if($projArr || count($editorArr) > 1) echo 'DISABLED'; ?>><?php echo $LANG['DELETECHECK'];?></button>
 						</form>
 					</div>
 				</div>
@@ -317,7 +349,7 @@ include($SERVER_ROOT.'/includes/header.php');
 								<input type="text" name="notes" style="width:95%" value="" />
 							</div>
 							<div>
-								<input name="submitaction" type="submit" value="Add Point" />
+								<button name="submitaction" type="submit" value="addPoint">Add Point</button>
 								<input type="hidden" name="tabindex" value="2" />
 								<input type="hidden" name="pid" value="<?php echo $pid; ?>" />
 								<input type="hidden" name="clid" value="<?php echo $clid; ?>" />

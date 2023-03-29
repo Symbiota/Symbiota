@@ -188,7 +188,7 @@ class WordCloud{
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>'.$GLOBALS['DEFAULT_TITLE'].' - Word Cloud </title>';
 		$htmlStr .= '<?php
-		$activateJQuery = false;
+
 		include_once($SERVER_ROOT."/includes/head.php");
 		?>';
 		$htmlStr .= '

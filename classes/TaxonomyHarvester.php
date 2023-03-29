@@ -162,11 +162,16 @@ class TaxonomyHarvester extends Manager{
 					$this->setColClassification($tArr,$taxonArr);
 					if(isset($tArr['formattedClassification'])) $resultArr['result'][$k]['formattedClassification'] = $tArr['formattedClassification'];
 					$taxonKingdom = $this->getColParent($tArr, 'Kingdom');
-					if($this->kingdomName && $this->kingdomName != $taxonKingdom){
+					if($this->kingdomName && $taxonKingdom && $this->kingdomName != $taxonKingdom){
 						//Skip if kingdom doesn't match target kingdom
 						unset($rankArr[$k]);
-						$msg = 'Target taxon (<a href="https://www.catalogueoflife.org/data/taxon/'.$resultArr['result'][$k]['id'].'" target="_blank">#'.$resultArr['result'][$k]['id'].' - ';
-						$msg .= $sciName.'</a>) skipped due to not matching targeted kingdom: '.$this->kingdomName.' (!= '.$taxonKingdom.')';
+						$msg = $sciName;
+						$id = '';
+						if(isset($resultArr['result'][$k]['id'])){
+							$id = $resultArr['result'][$k]['id'];
+							$msg = '<a href="https://www.catalogueoflife.org/data/taxon/'.$id.'" target="_blank">#'.$id.' - '.$sciName.'</a>';
+						}
+						$msg = 'Target taxon ('.$msg.') skipped due to not matching targeted kingdom: '.$this->kingdomName.' (!= '.$taxonKingdom.')';
 						$this->logOrEcho($msg,2);
 						continue;
 					}
@@ -225,7 +230,7 @@ class TaxonomyHarvester extends Manager{
 			}
 			//Get parent
 			if(isset($baseArr['parent']['tid'])) $taxonArr['parent']['tid'] = $baseArr['parent']['tid'];
-			elseif($taxonArr['rankid'] == 10) $taxonArr['parent']['tid'] = 'self';
+			elseif(isset($taxonArr['rankid']) && $taxonArr['rankid'] == 10) $taxonArr['parent']['tid'] = 'self';
 			else{
 				$directParentTid = 0;
 				if(isset($baseArr['formattedClassification'])){

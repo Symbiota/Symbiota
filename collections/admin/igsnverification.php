@@ -30,7 +30,6 @@ $guidManager->setNamespace($namespace);
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title>IGSN GUID Management</title>
 	<?php
-	$activateJQuery = false;
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script type="text/javascript" src="../../js/jquery.js"></script>

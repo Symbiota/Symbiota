@@ -50,16 +50,9 @@ if($isEditor){
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Loan Management</title>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	$activateJQuery = true;
-	if(file_exists($SERVER_ROOT.'/includes/head.php')){
-		include_once($SERVER_ROOT.'/includes/head.php');
-	}
-	else{
-		echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-		echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-		echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-	}
+	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
@@ -177,10 +170,11 @@ if($isEditor){
 			});
 		}
 	</script>
-	<script type="text/javascript" src="../../js/symb/collections.loans.js?ver=1"></script>
+	<script type="text/javascript" src="../../js/symb/collections.loans.js?ver=2"></script>
 	<style>
 		fieldset{ padding:10px; }
 		fieldset legend{ font-weight:bold }
+		.important{ color: red; }
 	</style>
 </head>
 <body>
@@ -306,10 +300,23 @@ if($isEditor){
 							foreach($loanOutList as $k => $loanArr){
 								$targetCollid = $collid;
 								if(isset($loanArr['isexternal'])) $targetCollid = $loanArr['isexternal'];
+
+								// Loan has a due date and is not closed
+								$due = '';
+								if ($loanArr['datedue'] && !$loanArr['dateclosed']) {
+									// Test whether the loan is overdue
+									$overdue = strtotime($loanArr['datedue']) - time() < 0;
+
+									// construct due date string
+									$due = ' (<span class="'.($overdue?'important':'').'">due: ' . $loanArr['datedue'] . '</span>)';
+								}
+
 								echo '<li>';
 								echo '<a href="outgoing.php?collid='.$targetCollid.'&loanid='.$k.'">'.$loanArr['loanidentifierown'].' <img src="../../images/edit.png" style="width:12px" /></a> ';
 								if(isset($loanArr['isexternal'])) echo '<span style="color:orange">external collection</span>';
-								echo ': '.$loanArr['institutioncode'].' ('.$loanArr['forwhom'].') - '.($loanArr['dateclosed']?'Closed: '.$loanArr['dateclosed']:'<b>OPEN</b>');
+								echo ': '.($loanArr['institutioncode'] ? $loanArr['institutioncode'] : ($loanArr['institutionname'] ? $loanArr['institutionname'] : '[no name]'));
+								echo ' ('.$loanArr['forwhom'].') - '.($loanArr['dateclosed']?'Closed: '.$loanArr['dateclosed']:'<b>OPEN</b>');
+								echo ($loanArr['dateclosed'] ? '' : ($loanArr['datedue'] ? $due : ''));
 								echo '</li>';
 							}
 							echo '</ul>';
@@ -409,9 +416,21 @@ if($isEditor){
 						if($loanInList){
 							echo '<ul>';
 							foreach($loanInList as $k => $loanArr){
+
+								// Loan has a due date and is not closed
+								$due = '';
+								if ($loanArr['datedue'] && !$loanArr['dateclosed']) {
+									// Test whether the loan is overdue
+									$overdue = strtotime($loanArr['datedue']) - time() < 0;
+
+									// construct due date string
+									$due = ' (<span class="'.($overdue?'important':'').'">due: ' . $loanArr['datedue'] . '</span>)';
+								}
 								echo '<li>';
 								echo '<a href="incoming.php?collid='.$collid.'&loanid='.$k.'">'.$loanArr['loanidentifierborr'].' <img src="../../images/edit.png" style="width:12px" /></a>: ';
-								echo $loanArr['institutioncode'].' ('.$loanArr['forwhom'].') - '.($loanArr['dateclosed']?'Closed: '.$loanArr['dateclosed']:'<b>OPEN</b>');
+								echo ($loanArr['institutioncode'] ? $loanArr['institutioncode'] : ($loanArr['institutionname'] ? $loanArr['institutionname'] : '[no name]'));
+								echo ' ('.$loanArr['forwhom'].') - '.($loanArr['dateclosed']?'Closed: '.$loanArr['dateclosed']:'<b>OPEN</b>');
+								echo ($loanArr['dateclosed'] ? '' : ($loanArr['datedue'] ? $due : ''));
 								echo '</li>';
 							}
 							echo '</ul>';

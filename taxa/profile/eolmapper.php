@@ -16,23 +16,15 @@ if($IS_ADMIN){
 }
 
 $eolManager = new EOLManager();
- 
+
 ?>
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE." EOL Manager: "; ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>"/>
-    <?php
-      $activateJQuery = false;
-      if(file_exists($SERVER_ROOT.'/includes/head.php')){
-        include_once($SERVER_ROOT.'/includes/head.php');
-      }
-      else{
-        echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-        echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-        echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-      }
-    ?>
+	<?php
+	include_once($SERVER_ROOT.'/includes/head.php');
+	?>
 	<script language=javascript>
 
 	</script>
@@ -57,7 +49,7 @@ include($SERVER_ROOT.'/includes/header.php');
 				<?php echo $statusStr; ?>
 			</div>
 			<hr/>
-			<?php 
+			<?php
 		}
 		if($isEditor){
 			if($submitAction){
@@ -86,7 +78,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					?>
 				</div>
 				<hr/>
-				<?php 
+				<?php
 			}
 			?>
 			<div style="color:red;margin:15px;">
@@ -96,12 +88,12 @@ include($SERVER_ROOT.'/includes/header.php');
 				<fieldset style="padding:15px;">
 					<legend><b>Taxa Mapping</b></legend>
 					<div>
-						This module will query EOL for all accepted taxa that do not currently have an EOL link nor identifier assignment. 
-						If an EOL taxon object is found, a link to EOL will be created for that taxon. 
+						This module will query EOL for all accepted taxa that do not currently have an EOL link nor identifier assignment.
+						If an EOL taxon object is found, a link to EOL will be created for that taxon.
 					</div>
 					<div style="margin:10px;">
-						Number of taxa not mapped to EOL: 
-						<b><?php echo $eolManager->getEmptyIdentifierCount(); ?></b> 
+						Number of taxa not mapped to EOL:
+						<b><?php echo $eolManager->getEmptyIdentifierCount(); ?></b>
 						<div style="margin:10px;">
 							<form name="taxamappingform" action="eolmapper.php" method="post">
 								<input type="submit" name="submitaction" value="Map Taxa" />
@@ -117,13 +109,13 @@ include($SERVER_ROOT.'/includes/header.php');
 				<fieldset style="margin-top:15px;padding:15px;">
 					<legend><b>Image Mapping</b></legend>
 					<div>
-						This module will query the EOL image library for all accepted taxa currently linked to EOL  
-						that do not have any field images. 
-						Up to 5 images will be automatically linked in the mapping procedure. 
+						This module will query the EOL image library for all accepted taxa currently linked to EOL
+						that do not have any field images.
+						Up to 5 images will be automatically linked in the mapping procedure.
 					</div>
 					<div style="margin:10px;">
-						Number of accpeted taxa without images: 
-						<b><?php echo $eolManager->getImageDeficiencyCount(); ?></b> 
+						Number of accpeted taxa without images:
+						<b><?php echo $eolManager->getImageDeficiencyCount(); ?></b>
 						<div style="margin:10px;">
 							<form name="imagemappingform" action="eolmapper.php" method="post">
 								TID Start Index: <input type="text" name="startindex" value="" /><br/>
@@ -134,14 +126,14 @@ include($SERVER_ROOT.'/includes/header.php');
 					</div>
 				</fieldset>
 			</div>
-			<?php 
+			<?php
 		}
 		else{
 			echo '<div>You need to be a portal administrator to use this module</div>';
 		}
 		?>
 	</div>
-	<?php 
+	<?php
 	include($SERVER_ROOT.'/includes/footer.php');
 	?>
 </body>

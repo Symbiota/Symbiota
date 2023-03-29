@@ -1,15 +1,11 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ImageDetailManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset='.$CHARSET);
 
-$imgId = $_REQUEST["imgid"];
-$action = array_key_exists("submitaction",$_REQUEST)?$_REQUEST["submitaction"]:"";
-$eMode = array_key_exists("emode",$_REQUEST)?$_REQUEST["emode"]:0;
-
-//Sanitation
-if(!is_numeric($imgId)) $imgId = 0;
-if(!is_numeric($eMode)) $eMode = 0;
+$imgId = filter_var($_REQUEST['imgid'], FILTER_SANITIZE_NUMBER_INT);
+$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
+$eMode = array_key_exists('emode',$_REQUEST)?filter_var($_REQUEST['emode'], FILTER_SANITIZE_NUMBER_INT):0;
 
 $imgManager = new ImageDetailManager($imgId,($action?'write':'readonly'));
 
@@ -19,19 +15,19 @@ if($IS_ADMIN || ($imgArr && ($imgArr['username'] === $USERNAME || ($imgArr['phot
     $isEditor = true;
 }
 
-$status = "";
+$status = '';
 if($isEditor){
-	if($action == "Submit Image Edits"){
+	if($action == 'Submit Image Edits'){
 		$status = $imgManager->editImage($_POST);
 		if(is_numeric($status)) header( 'Location: ../taxa/profile/tpeditor.php?tid='.$status.'&tabindex=1' );
 	}
-	elseif($action == "Transfer Image"){
-		$imgManager->changeTaxon($_REQUEST["targettid"],$_REQUEST["sourcetid"]);
-		header( 'Location: ../taxa/profile/tpeditor.php?tid='.$_REQUEST["targettid"].'&tabindex=1' );
+	elseif($action == 'Transfer Image'){
+		$imgManager->changeTaxon($_REQUEST['targettid'],$_REQUEST['sourcetid']);
+		header( 'Location: ../taxa/profile/tpeditor.php?tid='.$_REQUEST['targettid'].'&tabindex=1' );
 	}
-	elseif($action == "Delete Image"){
-		$imgDel = $_REQUEST["imgid"];
-		$removeImg = (array_key_exists("removeimg",$_REQUEST)?$_REQUEST["removeimg"]:0);
+	elseif($action == 'Delete Image'){
+		$imgDel = $_REQUEST['imgid'];
+		$removeImg = (array_key_exists('removeimg',$_REQUEST)?$_REQUEST['removeimg']:0);
 		$status = $imgManager->deleteImage($imgDel, $removeImg);
 		if(is_numeric($status)){
 			header( 'Location: ../taxa/profile/tpeditor.php?tid='.$status.'&tabindex=1' );
@@ -42,19 +38,19 @@ if($isEditor){
 
 $serverPath = $imgManager->getDomain();
 if($imgArr){
-	$imgUrl = $imgArr["url"];
-	$origUrl = $imgArr["originalurl"];
-	$metaUrl = $imgArr["url"];
-	if(array_key_exists("imageDomain",$GLOBALS)){
-		if(substr($imgUrl,0,1)=="/"){
-			$imgUrl = $GLOBALS["imageDomain"].$imgUrl;
-			$metaUrl = $GLOBALS["imageDomain"].$metaUrl;
+	$imgUrl = $imgArr['url'];
+	$origUrl = $imgArr['originalurl'];
+	$metaUrl = $imgArr['url'];
+	if(array_key_exists('imageDomain',$GLOBALS)){
+		if(substr($imgUrl,0,1)=='/'){
+			$imgUrl = $GLOBALS['imageDomain'].$imgUrl;
+			$metaUrl = $GLOBALS['imageDomain'].$metaUrl;
 		}
-		if($origUrl && substr($origUrl,0,1)=="/"){
-			$origUrl = $GLOBALS["imageDomain"].$origUrl;
+		if($origUrl && substr($origUrl,0,1)=='/'){
+			$origUrl = $GLOBALS['imageDomain'].$origUrl;
 		}
 	}
-	if(substr($metaUrl,0,1)=="/"){
+	if(substr($metaUrl,0,1)=='/'){
 		$metaUrl = $serverPath.$metaUrl;
 	}
 }
@@ -76,19 +72,17 @@ if($imgArr){
 	}
 	?>
 	<title><?php echo $DEFAULT_TITLE." Image Details: #".$imgId; ?></title>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	$activateJQuery = true;
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
 	<script src="../js/jquery.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
 	<script src="../js/symb/shared.js" type="text/javascript"></script>
-	<script src="../js/symb/api.taxonomy.taxasuggest.js?ver=3" type="text/javascript"></script>
-</head>
-<body>
-	<div id="fb-root"></div>
 	<script>
+		var clientRoot = "<?php echo $CLIENT_ROOT; ?>";
+
 		(function(d, s, id) {
 			var js, fjs = d.getElementsByTagName(s)[0];
 			if (d.getElementById(id)) return;
@@ -117,30 +111,71 @@ if($imgArr){
 		}
 
 		function openOccurrenceSearch(target) {
-			occWindow=open("../collections/misc/occurrencesearch.php?targetid="+target,"occsearch","resizable=1,scrollbars=0,width=750,height=500,left=20,top=20");
+			occWindow=open("../collections/misc/occurrencesearch.php?targetid="+target,"occsearch","resizable=1,scrollbars=1,toolbar=0,width=750,height=750,left=400,top=40");
 			if (occWindow.opener == null) occWindow.opener = self;
 		}
 	</script>
+	<script src="../js/symb/api.taxonomy.taxasuggest.js?ver=3" type="text/javascript"></script>
+	<style type="text/css">
+		body{ min-width: 400px; }
+		#imageedit{ min-width: 800px; padding: 10px; background-color: #FFFFFF; }
+	</style>
+</head>
+<body>
+	<div id="fb-root"></div>
 	<?php
-	$displayLeftMenu = (isset($taxa_imgdetailsMenu)?$taxa_imgdetailsMenu:false);
-	include($SERVER_ROOT.'/includes/header.php');
+	//$displayLeftMenu = (isset($taxa_imgdetailsMenu)?$taxa_imgdetailsMenu:false);
+	//include($SERVER_ROOT.'/includes/header.php');
 	?>
+	<!--
 	<div class="navpath">
 		<a href="../index.php">Home</a> &gt;&gt;
 		<a href="index.php">Image Browser</a> &gt;&gt;
 		<a href="search.php">Image Search</a> &gt;&gt;
 		<?php
-		if(isset($imgArr['tid']) && $imgArr['tid']) echo '<a href="../taxa/index.php?tid='.$imgArr['tid'].'">Image Search</a> &gt;&gt;';
-		echo '<b>Image Profile: image <a href="imgdetails.php?imgid='.$imgId.'">#'.$imgId.'</a></b>';
+		//if(isset($imgArr['tid']) && $imgArr['tid']) echo '<a href="../taxa/index.php?tid='.$imgArr['tid'].'">Image Search</a> &gt;&gt;';
+		//echo '<b>Image Profile: image <a href="imgdetails.php?imgid='.$imgId.'">#'.$imgId.'</a></b>';
 		?>
 	</div>
+	 -->
 	<div id="innertext">
 		<!-- This is inner text! -->
 		<?php
 		if($imgArr){
 			?>
 			<div style="width:100%;float:right;clear:both;margin-top:10px;">
-				<div style="float:right;">
+				<?php
+				if($SYMB_UID && ($IS_ADMIN || array_key_exists("TaxonProfile",$USER_RIGHTS))){
+					?>
+					<div style="float:right;margin-right:15px;" title="Go to Taxon Profile editing page">
+						<a href="../taxa/profile/tpeditor.php?tid=<?php echo $imgArr['tid']; ?>&tabindex=1" target="_blank">
+							<img src="../images/edit.png" style="border:0px;" /><span style="font-size:70%">TP</span>
+						</a>
+					</div>
+					<?php
+				}
+				if($imgArr['occid']){
+					?>
+					<div style="float:right;margin-right:15px;" title="Must have editing privileges for this collection managing image">
+						<a href="../collections/editor/occurrenceeditor.php?occid=<?php echo $imgArr['occid']; ?>&tabtarget=2" target="_blank">
+							<img src="../images/edit.png" style="border:0px;" /><span style="font-size:70%">SPEC</span>
+						</a>
+					</div>
+					<?php
+				}
+				else{
+					if($isEditor){
+						?>
+						<div style="float:right;margin-right:15px;">
+							<a href="#" onclick="toggle('imageedit');return false" title="Edit Image">
+								<img src="../images/edit.png" style="border:0px;" /><span style="font-size:70%">IMG</span>
+							</a>
+						</div>
+						<?php
+					}
+				}
+				?>
+				<div style="float:right;margin-right:10px;">
 					<a class="twitter-share-button" data-text="<?php echo $imgArr["sciname"]; ?>" href="https://twitter.com/share" data-url="<?php echo $_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/imagelib/imgdetails.php?imgid='.$imgId; ?>">Tweet</a>
 					<script>
 						window.twttr=(function(d,s,id){
@@ -169,7 +204,7 @@ if($imgArr){
 			<?php
 		}
 		if($imgArr){
-			if($isEditor){
+			if($isEditor && !$imgArr['occid']){
 				?>
 				<div id="imageedit" style="display:<?php echo ($eMode?'block':'none'); ?>;">
 					<form name="editform" action="imgdetails.php" method="post" target="_self" onsubmit="return verifyEditForm(this);">
@@ -218,8 +253,9 @@ if($imgArr){
 							</div>
 							<div style="margin-top:2px;">
 								<b>Occurrence Record #:</b>
-								<input id="occid" name="occid" type="text" value="<?php  echo $imgArr["occid"];?>" />
-								<span style="cursor:pointer;color:blue;"  onclick="openOccurrenceSearch('occid')">Link to Occurrence Record</span>
+								<input id="imgdisplay-<?php echo $imgId; ?>" name="displayoccid" type="text" value="" disabled style="width:70px" />
+								<input id="imgoccid-<?php echo $imgId; ?>" name="occid" type="hidden" value="" />
+								<span onclick="openOccurrenceSearch('<?php echo $imgId; ?>');return false"><a href="#">Link to Occurrence Record</a></span>
 							</div>
 							<div style="margin-top:2px;">
 								<b>Notes:</b>
@@ -325,38 +361,7 @@ if($imgArr){
 					?>
 				</div>
 				<div style="padding:10px;float:left;">
-					<?php
-					if($SYMB_UID && ($IS_ADMIN || array_key_exists("TaxonProfile",$USER_RIGHTS))){
-						?>
-						<div style="float:right;margin-right:15px;" title="Go to Taxon Profile editing page">
-							<a href="../taxa/profile/tpeditor.php?tid=<?php echo $imgArr['tid']; ?>&tabindex=1">
-								<img src="../images/edit.png" style="border:0px;" /><span style="font-size:70%">TP</span>
-							</a>
-						</div>
-						<?php
-					}
-					if($imgArr['occid']){
-						?>
-						<div style="float:right;margin-right:15px;" title="Must have editing privileges for this collection managing image">
-							<a href="../collections/editor/occurrenceeditor.php?occid=<?php echo $imgArr['occid']; ?>&tabtarget=2">
-								<img src="../images/edit.png" style="border:0px;" /><span style="font-size:70%">SPEC</span>
-							</a>
-						</div>
-						<?php
-					}
-					else{
-						if($isEditor){
-							?>
-							<div style="float:right;margin-right:15px;">
-								<a href="#" onclick="toggle('imageedit');return false" title="Edit Image">
-									<img src="../images/edit.png" style="border:0px;" /><span style="font-size:70%">IMG</span>
-								</a>
-							</div>
-							<?php
-						}
-					}
-					?>
-					<div style="clear:both;margin-top:80px;">
+					<div style="clear:both;margin-top:40px;">
 						<b>Scientific Name:</b> <?php echo '<a href="../taxa/index.php?taxon='.$imgArr["tid"].'"><i>'.$imgArr["sciname"].'</i> '.$imgArr["author"].'</a>'; ?>
 					</div>
 					<?php
@@ -400,6 +405,7 @@ if($imgArr){
 						?>
 					</div>
 				</div>
+				<div style="clear:both;"></div>
 			</div>
 			<?php
 		}
@@ -408,8 +414,8 @@ if($imgArr){
 		}
 		?>
 	</div>
-<?php
-include($SERVER_ROOT.'/includes/footer.php');
-?>
+	<?php
+	//include($SERVER_ROOT.'/includes/footer.php');
+	?>
 </body>
 </html>

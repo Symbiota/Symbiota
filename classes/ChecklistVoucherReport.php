@@ -244,12 +244,10 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 			$fileName = 'Missing_'.$this->getExportFileName().'.csv';
 
 			$fieldArr = $this->getOccurrenceFieldArr();
-			$localitySecurityFields = $this->getLocalitySecurityArr();
-
 			$exportSql = 'SELECT '.implode(',',$fieldArr).', o.localitysecurity, o.collid '.
 				$this->getMissingTaxaBaseSql($sqlFrag,true);
 			//echo $exportSql;
-			$this->exportCsv($fileName,$exportSql,$localitySecurityFields);
+			$this->exportCsv($fileName, $exportSql);
 		}
 	}
 
@@ -306,9 +304,8 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 
 		if($sqlFrag = $this->getSqlFrag()){
 			$fieldArr = $this->getOccurrenceFieldArr();
-			$localitySecurityFields = $this->getLocalitySecurityArr();
 			$sql = 'SELECT DISTINCT '.implode(',',$fieldArr).', o.localitysecurity, o.collid '.$this->getProblemTaxaSql($sqlFrag,true);
-			$this->exportCsv($fileName,$sql,$localitySecurityFields);
+			$this->exportCsv($fileName, $sql);
 		}
 	}
 
@@ -352,27 +349,53 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 
 	public function downloadChecklistCsv(){
 		if($this->clid){
-			$fieldArr = array('tid'=>'t.tid AS Taxon_Local_ID');
-			$fieldArr['clhabitat'] = 'ctl.habitat AS habitat';
-			$fieldArr['clabundance'] = 'ctl.abundance';
-			$fieldArr['clNotes'] = 'ctl.notes';
-			$fieldArr['clSource'] = 'ctl.source';
-			$fieldArr['editorNotes'] = 'ctl.internalnotes';
-			$fieldArr['family'] = 'IFNULL(ctl.familyoverride,ts.family) AS family';
-			$fieldArr['scientificName'] = 't.sciName AS scientificName';
-			$fieldArr['author'] = 't.author AS scientificNameAuthorship';
-
 			$clidStr = $this->clid;
-			if($this->childClidArr){
-				$clidStr .= ','.implode(',',$this->childClidArr);
-			}
-
+			if($this->childClidArr) $clidStr .= ','.implode(',',$this->childClidArr);
 			$fileName = $this->getExportFileName().'.csv';
-			$sql = 'SELECT DISTINCT '.implode(',',$fieldArr).' '.
-				'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-				'INNER JOIN fmchklsttaxalink ctl ON ctl.tid = t.tid '.
-				'WHERE (ts.taxauthid = 1) AND (ctl.clid IN('.$clidStr.')) ';
-			$this->exportCsv($fileName,$sql);
+			$sql = 'SELECT DISTINCT ctl.clid, t.tid AS taxonID, ctl.habitat AS habitat, ctl.abundance, ctl.notes, ctl.source, ctl.internalnotes,
+				IFNULL(ctl.familyoverride, ts.family) AS family, t.sciName AS scientificName, t.author AS scientificNameAuthorship
+				FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
+				INNER JOIN fmchklsttaxalink ctl ON ctl.tid = t.tid
+				WHERE (ts.taxauthid = 1) AND (ctl.clid IN('.$clidStr.'))
+				ORDER BY ctl.familyoverride, ts.family, t.sciName';
+			header ('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+			header ('Content-Type: text/csv');
+			header ('Content-Disposition: attachment; filename="'.$fileName.'"');
+			$rs = $this->conn->query($sql);
+			if($rs->num_rows){
+				$headerArr = array();
+				$fields = mysqli_fetch_fields($rs);
+				foreach ($fields as $val) {
+					$headerArr[] = $val->name;
+				}
+				$out = fopen('php://output', 'w');
+				fputcsv($out, $headerArr);
+				$rowOut = null;
+				while($row = $rs->fetch_assoc()){
+					foreach($row as $k => $v){
+						$row[$k] = strip_tags($v);
+					}
+					if($rowOut){
+						if($rowOut['taxonID'] == $row['taxonID']){
+							if($row['clid'] == $this->clid){
+								$rowOut = $row;
+							}
+						}
+						else{
+							$this->encodeArr($rowOut);
+							fputcsv($out, $rowOut);
+							$rowOut = $row;
+						}
+					}
+					else $rowOut = $row;
+				}
+				if($rowOut) fputcsv($out, $rowOut);
+				$rs->free();
+				fclose($out);
+			}
+			else{
+				echo "Recordset is empty.\n";
+			}
 		}
 	}
 
@@ -390,8 +413,6 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 			$fieldArr['family'] = 'ts.family';
 			$fieldArr['scientificName'] = 't.sciName AS scientificName';
 
-			$localitySecurityFields = $this->getLocalitySecurityArr();
-
 			$clidStr = $this->clid;
 			if($this->childClidArr){
 				$clidStr .= ','.implode(',',$this->childClidArr);
@@ -405,7 +426,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 				'LEFT JOIN omcollections c ON o.collid = c.collid '.
 				'LEFT JOIN guidoccurrences g ON o.occid = g.occid '.
 				'WHERE (ts.taxauthid = 1) AND (ctl.clid IN('.$clidStr.')) ';
-			$this->exportCsv($fileName,$sql,$localitySecurityFields);
+			$this->exportCsv($fileName, $sql);
 		}
 	}
 
@@ -423,8 +444,6 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 				$fieldArr['family'] = 'ts.family';
 				$fieldArr['scientificName'] = 't.sciName AS scientificName';
 
-				$localitySecurityFields = $this->getLocalitySecurityArr();
-
 				$clidStr = $this->clid;
 				if($this->childClidArr){
 					$clidStr .= ','.implode(',',$this->childClidArr);
@@ -439,12 +458,12 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 					'LEFT JOIN guidoccurrences g ON o.occid = g.occid '.
 					$this->getTableJoinFrag($sqlFrag).
 					'WHERE ('.$sqlFrag.') AND (ts.taxauthid = 1) AND (ts2.taxauthid = 1) AND (ctl.clid IN('.$clidStr.')) ';
-				$this->exportCsv($fileName,$sql,$localitySecurityFields);
+				$this->exportCsv($fileName, $sql);
 			}
 		}
 	}
 
-	private function exportCsv($fileName,$sql,$localitySecurityFields = null){
+	private function exportCsv($fileName, $sql){
 		header ('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 		header ('Content-Type: text/csv');
 		header ('Content-Disposition: attachment; filename="'.$fileName.'"');
@@ -456,19 +475,18 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 			foreach ($fields as $val) {
 				$headerArr[] = $val->name;
 			}
+			$localitySecurityFields = array('recordNumber','eventDate','locality','decimalLatitude','decimalLongitude','minimumElevationInMeters','minimumElevationInMeters','habitat','occurrenceRemarks');
 			$rareSpeciesReader = $this->isRareSpeciesReader();
 			$out = fopen('php://output', 'w');
 			fputcsv($out, $headerArr);
 			while($row = $rs->fetch_assoc()){
-				if($localitySecurityFields){
-					$localSecurity = ($row["localitysecurity"]?$row["localitysecurity"]:0);
-					if(!$rareSpeciesReader && $localSecurity != 1 && (!array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS']) || !in_array($row['collid'],$GLOBALS['USER_RIGHTS']['RareSppReader']))){
-						$redactStr = '';
-						foreach($localitySecurityFields as $fieldName){
-							if($row[$fieldName]) $redactStr .= ','.$fieldName;
-						}
-						if($redactStr) $row['informationWithheld'] = 'Fields with redacted values (e.g. rare species localities):'.trim($redactStr,', ');
+				$localSecurity = ($row["localitysecurity"]?$row["localitysecurity"]:0);
+				if(!$rareSpeciesReader && $localSecurity != 1 && (!array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS']) || !in_array($row['collid'],$GLOBALS['USER_RIGHTS']['RareSppReader']))){
+					$redactStr = '';
+					foreach($localitySecurityFields as $fieldName){
+						if($row[$fieldName]) $redactStr .= ','.$fieldName;
 					}
+					if($redactStr) $row['informationWithheld'] = 'Fields with redacted values (e.g. rare species localities):'.trim($redactStr,', ');
 				}
 				$this->encodeArr($row);
 				fputcsv($out, $row);
@@ -522,11 +540,6 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 			'habitat'=>'o.habitat','occurrenceRemarks'=>'o.occurrenceRemarks','associatedTaxa'=>'o.associatedTaxa',
 			'reproductiveCondition'=>'o.reproductivecondition','informationWithheld'=>'o.informationWithheld','occid'=>'o.occid');
 		*/
-	}
-
-	private function getLocalitySecurityArr(){
-		return array('recordNumber','eventDate','locality','decimalLatitude','decimalLongitude','minimumElevationInMeters',
-			'minimumElevationInMeters','habitat','occurrenceRemarks');
 	}
 
 	//Misc fucntions

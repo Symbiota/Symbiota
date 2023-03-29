@@ -1,69 +1,28 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once('Manager.php');
+include_once('ImInventories.php');
 include_once('ProfileManager.php');
 
-class ChecklistAdmin{
+class ChecklistAdmin extends Manager{
 
-	private $conn;
 	private $clid;
 	private $clName;
 
 	function __construct() {
-		$this->conn = MySQLiConnectionFactory::getCon("write");
+		parent::__construct(null, 'write');
 	}
 
 	function __destruct(){
-		if(!($this->conn === false)) $this->conn->close();
+		parent::__destruct();
 	}
 
 	public function getMetaData($pid = null){
 		$retArr = array();
 		if($this->clid){
-			$sql = 'SELECT clid, name, locality, publication, abstract, authors, parentclid, notes, latcentroid, longcentroid, pointradiusmeters, '.
-				'access, defaultsettings, dynamicsql, datelastmodified, uid, type, footprintwkt, sortsequence, initialtimestamp '.
-				'FROM fmchecklists WHERE (clid = '.$this->clid.')';
-			$result = $this->conn->query($sql);
-			if($row = $result->fetch_object()){
-				$this->clName = $this->cleanOutStr($row->name);
-				$retArr["locality"] = $this->cleanOutStr($row->locality);
-				$retArr["notes"] = $this->cleanOutStr($row->notes);
-				$retArr["type"] = $row->type;
-				$retArr["publication"] = $this->cleanOutStr($row->publication);
-				$retArr["abstract"] = $this->cleanOutStr($row->abstract);
-				$retArr["authors"] = $this->cleanOutStr($row->authors);
-				$retArr["parentclid"] = $row->parentclid;
-				$retArr["uid"] = $row->uid;
-				$retArr["latcentroid"] = $row->latcentroid;
-				$retArr["longcentroid"] = $row->longcentroid;
-				$retArr["pointradiusmeters"] = $row->pointradiusmeters;
-				$retArr["access"] = $row->access;
-				$retArr["defaultsettings"] = $row->defaultsettings;
-				$retArr["dynamicsql"] = $row->dynamicsql;
-				$retArr["hasfootprintwkt"] = ($row->footprintwkt?'1':'0');
-				$retArr['sortsequence'] = $row->sortsequence;
-				$retArr["datelastmodified"] = $row->datelastmodified;
-			}
-			$result->free();
-			if($retArr['type'] == 'excludespp'){
-				$sql = 'SELECT clid FROM fmchklstchildren WHERE clidchild = '.$this->clid;
-				$rs = $this->conn->query($sql);
-				while($r = $rs->fetch_object()){
-					$retArr['excludeparent'] = $r->clid;
-				}
-				$rs->free();
-			}
-			if($pid && is_numeric($pid)){
-				$sql = 'SELECT clNameOverride, mapChecklist, sortSequence, notes FROM fmchklstprojlink WHERE clid = '.$this->clid.' AND pid = '.$pid;
-				$rs = $this->conn->query($sql);
-				if($rs){
-					if($r = $rs->fetch_object()){
-						if($r->clNameOverride) $this->clName = $this->cleanOutStr($r->clNameOverride);
-						if(is_numeric($r->mapChecklist)) $retArr['mapchecklist'] = $r->mapChecklist;
-						if(is_numeric($r->sortSequence)) $retArr['sortsequence'] = $r->sortSequence;
-					}
-					$rs->free();
-				}
-			}
+			$inventoryManager = new ImInventories();
+			$inventoryManager->setClid($this->clid);
+			$retArr = $inventoryManager->getChecklistMetadata($pid);
+			$this->clName = $retArr['name'];
 		}
 		return $retArr;
 	}
@@ -71,58 +30,21 @@ class ChecklistAdmin{
 	public function createChecklist($postArr){
 		$newClid = 0;
 		if($GLOBALS['SYMB_UID'] && isset($postArr['name'])){
-			$defaultViewArr = Array();
-			$defaultViewArr["ddetails"] = array_key_exists("ddetails",$postArr)?1:0;
-			$defaultViewArr["dsynonyms"] = array_key_exists("dsynonyms",$postArr)?1:0;
-			$defaultViewArr["dcommon"] = array_key_exists("dcommon",$postArr)?1:0;
-			$defaultViewArr["dimages"] = array_key_exists("dimages",$postArr)?1:0;
-			$defaultViewArr['dvoucherimages'] = array_key_exists('dvoucherimages',$postArr)?1:0;
-			$defaultViewArr["dvouchers"] = array_key_exists("dvouchers",$postArr)?1:0;
-			$defaultViewArr["dauthors"] = array_key_exists("dauthors",$postArr)?1:0;
-			$defaultViewArr["dalpha"] = array_key_exists("dalpha",$postArr)?1:0;
-			$defaultViewArr["activatekey"] = array_key_exists("activatekey",$postArr)?1:0;
-			if($defaultViewArr) $postArr["defaultsettings"] = json_encode($defaultViewArr);
+			$postArr['defaultsettings'] = $this->getDefaultJson($postArr);
 
-			$fieldArr = array('name'=>'s','authors'=>'s','type'=>'s','locality'=>'s','publication'=>'s','abstract'=>'s','notes'=>'s','latcentroid'=>'n',
-				'longcentroid'=>'n','pointradiusmeters'=>'n','footprintwkt'=>'s','parentclid'=>'n','sortsequence'=>'n','access'=>'s','uid'=>'n','defaultsettings'=>'s');
+			$inventoryManager = new ImInventories();
+			$newClid = $inventoryManager->insertChecklist($postArr);
 
-			$sqlInsert = '';
-			$sqlValues = '';
-			foreach($fieldArr as $fieldName => $fieldType){
-				$sqlInsert .= ','.$fieldName;
-				$v = $this->cleanInStr($postArr[$fieldName]);
-				if($fieldName != 'abstract') $v = strip_tags($v, '<i><u><b><a>');
-				if($v){
-					if($fieldType == 's'){
-						$sqlValues .= ',"'.$v.'"';
-					}
-					else{
-						if(is_numeric($v)){
-							$sqlValues .= ','.$v;
-						}
-						else{
-							$sqlValues .= ',NULL';
-						}
-					}
-				}
-				else{
-					$sqlValues .= ',NULL';
-				}
-			}
-			$sql = 'INSERT INTO fmchecklists ('.substr($sqlInsert,1).') VALUES ('.substr($sqlValues,1).')';
-			if($this->conn->query($sql)){
-				$newClid = $this->conn->insert_id;
-				//Set permissions to allow creater to be an editor
-				$this->conn->query('INSERT INTO userroles (uid, role, tablename, tablepk,uidassignedby) VALUES('.$GLOBALS['SYMB_UID'].',"ClAdmin","fmchecklists",'.$newClid.','.$GLOBALS['SYMB_UID'].') ');
-				//$this->conn->query("INSERT INTO userpermissions (uid, pname) VALUES(".$GLOBALS["symbUid"].",'ClAdmin-".$newClid."') ");
+			if($newClid){
+				//Add permissions to allow creater to be an editor and then reset user permissions stored in browser cache
+				$inventoryManager->insertUserRole($GLOBALS['SYMB_UID'], 'ClAdmin', 'fmchecklists', $newClid, $GLOBALS['SYMB_UID']);
 				$newPManager = new ProfileManager();
 				$newPManager->setUserName($GLOBALS['USERNAME']);
 				$newPManager->authenticate();
 				if($postArr['type'] == 'excludespp' && $postArr['excludeparent']){
 					//If is an exclusion checklists, link to parent checklist
-					$sql2 = 'INSERT INTO fmchklstchildren(clid, clidchild, modifiedUid) VALUES('.$postArr['excludeparent'].','.$newClid.','.$GLOBALS['SYMB_UID'].') ';
-					if(!$this->conn->query($sql2)){
-						echo 'ERROR linking exclusion checklist to parent: '.$this->conn->error;
+					if(!$inventoryManager->insertChildChecklist($postArr['excludeparent'], $newClid, $GLOBALS['SYMB_UID'])){
+						$this->errorMessage = 'ERROR linking exclusion checklist to parent: '.$this->conn->error;
 					}
 				}
 			}
@@ -130,103 +52,39 @@ class ChecklistAdmin{
 		return $newClid;
 	}
 
-	public function editMetaData($postArr){
-		$statusStr = '';
+	public function editChecklist($postArr){
+		$status = false;
 		if($GLOBALS['SYMB_UID'] && isset($postArr['name'])){
-			$setSql = "";
-			$defaultViewArr = Array();
-			$defaultViewArr["ddetails"] = array_key_exists("ddetails",$postArr)?1:0;
-			$defaultViewArr["dsynonyms"] = array_key_exists("dsynonyms",$postArr)?1:0;
-			$defaultViewArr["dcommon"] = array_key_exists("dcommon",$postArr)?1:0;
-			$defaultViewArr['dimages'] = array_key_exists('dimages',$postArr)?1:0;
-			$defaultViewArr['dvoucherimages'] = array_key_exists('dvoucherimages',$postArr)?1:0;
-			$defaultViewArr["dvouchers"] = array_key_exists("dvouchers",$postArr)?1:0;
-			$defaultViewArr["dauthors"] = array_key_exists("dauthors",$postArr)?1:0;
-			$defaultViewArr["dalpha"] = array_key_exists("dalpha",$postArr)?1:0;
-			$defaultViewArr["activatekey"] = array_key_exists("activatekey",$postArr)?1:0;
-			if($defaultViewArr) $postArr["defaultsettings"] = json_encode($defaultViewArr);
+			$postArr['defaultsettings'] = $this->getDefaultJson($postArr);
 
-			$fieldArr = array('name'=>'s','authors'=>'s','type'=>'s','locality'=>'s','publication'=>'s','abstract'=>'s','notes'=>'s','latcentroid'=>'n',
-				'longcentroid'=>'n','pointradiusmeters'=>'n','parentclid'=>'n','sortsequence'=>'n','access'=>'s','defaultsettings'=>'s');
-			foreach($fieldArr as $fieldName => $fieldType){
-				$v = $this->cleanInStr($postArr[$fieldName]);
-				if($fieldName != 'abstract') $v = strip_tags($v, '<i><u><b><a>');
-				if($v){
-					if($fieldType == 's'){
-						$setSql .= ', '.$fieldName.' = "'.$v.'"';
-					}
-					elseif($fieldType == 'n' && is_numeric($v)){
-						$setSql .= ', '.$fieldName.' = "'.$v.'"';
-					}
-					else{
-						$setSql .= ', '.$fieldName.' = NULL';
-					}
-				}
-				else{
-					if($fieldName != 'name' && $fieldName != 'type' && $fieldName != 'access') $setSql .= ', '.$fieldName.' = NULL';
-				}
-			}
-			$sql = 'UPDATE fmchecklists SET '.substr($setSql,2).' WHERE (clid = '.$this->clid.')';
-			//echo $sql; exit;
-			if($this->conn->query($sql)){
-				if($postArr['type'] == 'rarespp'){
-					if($postArr['locality']){
-						$sql = 'UPDATE omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid '.
-							'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-							'INNER JOIN fmchklsttaxalink cl ON ts2.tid = cl.tid '.
-							'SET o.localitysecurity = 1 '.
-							'WHERE (cl.clid = '.$this->clid.') AND (o.stateprovince = "'.$postArr['locality'].'") AND (o.localitySecurityReason IS NULL) '.
-							'AND (o.localitysecurity IS NULL OR o.localitysecurity = 0) AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1) ';
-						if(!$this->conn->query($sql)){
-							$statusStr = 'Error updating rare state species: '.$this->conn->error;
-						}
-					}
-				}
-				elseif($postArr['type'] == 'excludespp' && is_numeric($postArr['excludeparent'])){
-					$sql = 'UPDATE fmchklstchildren SET clid = '.$postArr['excludeparent'].' WHERE clidchild = '.$this->clid;
-					if(!$this->conn->query($sql)){
-						$statusStr = 'Error updating parent checklist for exclusion species list: '.$this->conn->error;
-					}
-				}
-			}
-			else $statusStr = 'Error: unable to update checklist metadata. SQL: '.$this->conn->error;
+			$inventoryManager = new ImInventories();
+			$inventoryManager->setClid($this->clid);
+			$status = $inventoryManager->updateChecklist($postArr);
+			if(!$status) $this->errorMessage = $inventoryManager->getErrorMessage();
 		}
-		return $statusStr;
+		return $status;
 	}
 
 	public function deleteChecklist($delClid){
-		$statusStr = true;
-		$sql1 = 'SELECT uid FROM userroles '.
-			'WHERE (role = "ClAdmin") AND (tablepk = "'.$delClid.'") AND uid <> '.$GLOBALS['SYMB_UID'];
-		$rs1 = $this->conn->query($sql1);
-		if($rs1->num_rows == 0){
-			$sql2 = "DELETE FROM fmvouchers WHERE (clid = ".$delClid.')';
-			if($this->conn->query($sql2)){
-				$sql3 = "DELETE FROM fmchklsttaxalink WHERE (clid = ".$delClid.')';
-				if($this->conn->query($sql3)){
-					$sql4 = "DELETE FROM fmchecklists WHERE (clid = ".$delClid.')';
-					if($this->conn->query($sql4)){
-						//Delete userpermissions reference once patch is submitted
-						$sql5 = 'DELETE FROM userroles WHERE (role = "ClAdmin") AND (tablepk = "'.$delClid.'")';
-						$this->conn->query($sql5);
-					}
-					else{
-						$statusStr = 'ERROR attempting to delete checklist: '.$this->conn->error;
-					}
-				}
-				else{
-					$statusStr = 'ERROR attempting to delete checklist taxa links: '.$this->conn->error;
-				}
-			}
-			else{
-				$statusStr = 'ERROR attempting to delete checklist vouchers: '.$this->conn->error;
-			}
-		}
-		else{
-			$statusStr = 'Checklist cannot be deleted until all editors are removed. Remove editors and then try again.';
-		}
-		$rs1->free();
-		return $statusStr;
+		$inventoryManager = new ImInventories();
+		$inventoryManager->setClid($delClid);
+		$status = $inventoryManager->deleteChecklist();
+		if(!$status) $this->errorMessage = $inventoryManager->getErrorMessage();
+		return $status;
+	}
+
+	private function getDefaultJson($postArr){
+		$defaultArr = Array();
+		$defaultArr['ddetails'] = array_key_exists('ddetails',$postArr)?1:0;
+		$defaultArr['dsynonyms'] = array_key_exists('dsynonyms',$postArr)?1:0;
+		$defaultArr['dcommon'] = array_key_exists('dcommon',$postArr)?1:0;
+		$defaultArr['dimages'] = array_key_exists('dimages',$postArr)?1:0;
+		$defaultArr['dvoucherimages'] = array_key_exists('dvoucherimages',$postArr)?1:0;
+		$defaultArr['dvouchers'] = array_key_exists('dvouchers',$postArr)?1:0;
+		$defaultArr['dauthors'] = array_key_exists('dauthors',$postArr)?1:0;
+		$defaultArr['dalpha'] = array_key_exists('dalpha',$postArr)?1:0;
+		$defaultArr['activatekey'] = array_key_exists('activatekey',$postArr)?1:0;
+		return json_encode($defaultArr);
 	}
 
 	//Polygon functions
@@ -305,7 +163,6 @@ class ChecklistAdmin{
 				$sql = 'SELECT clid, name FROM fmchecklists WHERE (clid IN('.$clidStr.')) AND (type != "excludespp") ';
 				if($this->clid) $sql .= 'AND (clid <> '.$this->clid.') ';
 				$sql .= 'ORDER BY name';
-				//echo $sql;
 				$rs = $this->conn->query($sql);
 				while($r = $rs->fetch_object()){
 					$retArr[$r->clid] = $r->name;
@@ -316,34 +173,48 @@ class ChecklistAdmin{
 		return $retArr;
 	}
 
-	public function addChildChecklist($clidAdd){
-		$statusStr = '';
-		$sql = 'INSERT INTO fmchklstchildren(clid, clidchild, modifieduid) VALUES('.$this->clid.','.$clidAdd.','.$GLOBALS['SYMB_UID'].') ';
-		if(!$this->conn->query($sql)){
-			$statusStr = 'ERROR adding child checklist link';
+	public function getUserProjectArr(){
+		$retArr = array();
+		if(isset($GLOBALS['USER_RIGHTS']['ProjAdmin'])){
+			$pidStr = implode(',',$GLOBALS['USER_RIGHTS']['ProjAdmin']);
+			if($pidStr){
+				$sql = 'SELECT pid, projname FROM fmprojects WHERE (pid IN('.$pidStr.')) ORDER BY projname';
+				$rs = $this->conn->query($sql);
+				while($r = $rs->fetch_object()){
+					$retArr[$r->pid] = $r->projname;
+				}
+				$rs->free();
+			}
 		}
-		return $statusStr;
+		return $retArr;
+	}
+
+	public function addChildChecklist($clidAdd){
+		$inventoryManager = new ImInventories();
+		$inventoryManager->setClid($this->clid);
+		$status = $inventoryManager->insertChildChecklist($clidAdd, $GLOBALS['SYMB_UID']);
+		if(!$status) $this->errorMessage = $inventoryManager->getErrorMessage();
+		return $status;
 	}
 
 	public function deleteChildChecklist($clidDel){
-		$statusStr = '';
-		$sql = 'DELETE FROM fmchklstchildren WHERE clid = '.$this->clid.' AND clidchild = '.$clidDel;
-		if(!$this->conn->query($sql)){
-			$statusStr = 'ERROR deleting child checklist link';
-		}
-		return $statusStr;
+		$inventoryManager = new ImInventories();
+		$inventoryManager->setClid($this->clid);
+		$status = $inventoryManager->deleteChildChecklist($clidDel);
+		if(!$status) $this->errorMessage = $inventoryManager->getErrorMessage();
+		return $status;
 	}
 
 	//Point functions
 	public function addPoint($tid,$lat,$lng,$notes){
-		$statusStr = '';
+		$status = '';
 		if(is_numeric($tid) && is_numeric($lat) && is_numeric($lng)){
 			$sql = 'INSERT INTO fmchklstcoordinates(clid,tid,decimallatitude,decimallongitude,notes) VALUES('.$this->clid.','.$tid.','.$lat.','.$lng.',"'.$this->cleanInStr($notes).'")';
 			if(!$this->conn->query($sql)){
-				$statusStr = 'ERROR: unable to add point. '.$this->conn->error;
+				$this->errorMessage = 'ERROR: unable to add point. '.$this->conn->error;
 			}
 		}
-		return $statusStr;
+		return $status;
 	}
 
 	public function removePoint($pointPK){
@@ -381,7 +252,7 @@ class ChecklistAdmin{
 	public function addEditor($u){
 		$statusStr = '';
 		if(is_numeric($u) && $this->clid){
-			$sql = 'INSERT INTO userroles(uid,role,tablename,tablepk,uidassignedby) VALUES('.$u.',"ClAdmin","fmchecklists",'.$this->clid.','.$GLOBALS["SYMB_UID"].')';
+			$sql = 'INSERT INTO userroles(uid,role,tablename,tablepk,uidassignedby) VALUES('.$u.',"ClAdmin","fmchecklists",'.$this->clid.','.$GLOBALS['SYMB_UID'].')';
 			if(!$this->conn->query($sql)){
 				$statusStr = 'ERROR: unable to add editor; SQL: '.$this->conn->error;
 			}
@@ -569,6 +440,101 @@ class ChecklistAdmin{
 		return $returnArr;
 	}
 
+	public function parseChecklist($tidNode, $taxa, $targetClid, $parentClid, $targetPid, $transferMethod, $copyAttributes){
+		$statusArr = false;
+		if(is_numeric($tidNode)){
+			$inventoryManager = new ImInventories();
+			$fieldArr = array();
+			$clMeta = $this->getMetaData();
+			if($copyAttributes){
+				$extraArr = array('authors','type','locality','publication','abstract','notes','latcentroid','longcentroid','pointradiusmeters','access','defaultsettings','dynamicsql','uid','type','sortsequence');
+				foreach($extraArr as $fieldName){
+					$fieldArr[$fieldName] = $clMeta[$fieldName];
+				}
+			}
+			$clManagerArr = array();
+			if($copyAttributes) $clManagerArr = $inventoryManager->getManagers('ClAdmin', 'fmchecklists', $this->clid);
+			if(!array_key_exists($GLOBALS['SYMB_UID'], $clManagerArr)) $clManagerArr[$GLOBALS['SYMB_UID']] = '';
+			if(!$targetClid){
+				$fieldArr['name'] = $clMeta['name'].' new sub-checklist - '.$taxa;
+				$targetClid = $inventoryManager->insertChecklist($fieldArr);
+				if($targetClid && $copyAttributes){
+					foreach($clManagerArr as $managerUid => $managerArr){
+						$inventoryManager->insertUserRole($managerUid, 'ClAdmin', 'fmchecklists', $targetClid, $GLOBALS['SYMB_UID']);
+					}
+				}
+			}
+			if($targetClid && is_numeric($targetClid)){
+				if($this->transferTaxa($targetClid, $tidNode, $transferMethod)){
+					$statusArr['targetClid'] = $targetClid;
+					if($targetPid === '0'){
+						$projectFieldArr = array(
+							'projname' => $clMeta['name'].' project',
+							'managers' => $clMeta['authors'],
+							'ispublic' => ($clMeta['access'] == 'private'?0:1));
+						$targetPid = $inventoryManager->insertProject($projectFieldArr);
+						if($targetPid && $copyAttributes){
+							foreach($clManagerArr as $managerUid => $managerArr){
+								$inventoryManager->insertUserRole($managerUid, 'ProjAdmin', 'fmprojects', $targetPid, $GLOBALS['SYMB_UID']);
+							}
+						}
+					}
+					if($targetPid && is_numeric($targetPid)){
+						$inventoryManager->setPid($targetPid);
+						$inventoryManager->insertChecklistProjectLink($targetClid);
+						$statusArr['targetPid'] = $targetPid;
+					}
+					if($parentClid === '0'){
+						$fieldArr['name'] = $clMeta['name'].' parent checklist';
+						$parentClid = $inventoryManager->insertChecklist($fieldArr);
+						if($parentClid && $copyAttributes){
+							foreach($clManagerArr as $managerUid => $managerArr){
+								$inventoryManager->insertUserRole($managerUid, 'ClAdmin', 'fmchecklists', $parentClid, $GLOBALS['SYMB_UID']);
+							}
+						}
+					}
+					if($parentClid && is_numeric($parentClid)){
+						$inventoryManager->setClid($parentClid);
+						$inventoryManager->insertChildChecklist($targetClid, $GLOBALS['SYMB_UID']);
+						if($targetPid && is_numeric($targetPid)){
+							$inventoryManager->insertChecklistProjectLink($parentClid);
+						}
+						$statusArr['parentClid'] = $parentClid;
+					}
+				}
+				if($copyAttributes  ){
+					$newPManager = new ProfileManager();
+					$newPManager->setUserName($GLOBALS['USERNAME']);
+					$newPManager->authenticate();
+				}
+			}
+		}
+		return $statusArr;
+	}
+
+	private function transferTaxa($targetClid, $tidNode, $transferMethod){
+		$status = true;
+		if($tidNode && is_numeric($tidNode)){
+			$sql = 'UPDATE fmchklsttaxalink c INNER JOIN taxa t ON c.tid = t.tid
+				INNER JOIN taxaenumtree e ON c.tid = e.tid
+				SET c.clid = '.$targetClid.'
+				WHERE e.taxauthid = 1 AND c.clid = '.$this->clid.' AND e.parenttid = '.$tidNode;
+			if($transferMethod){
+				$sql = 'INSERT INTO fmchklsttaxalink(tid, clid, morphoSpecies, familyOverride, habitat, abundance, notes, explicitExclude, source, nativity, endemic, invasive, internalnotes, dynamicProperties)
+					SELECT c.tid, '.$targetClid.', c.morphoSpecies, c.familyOverride, c.habitat, c.abundance, c.notes, c.explicitExclude, c.source,
+					c.nativity, c.endemic, c.invasive, c.internalnotes, c.dynamicProperties
+					FROM fmchklsttaxalink c INNER JOIN taxa t ON c.tid = t.tid
+					INNER JOIN taxaenumtree e ON c.tid = e.tid
+					WHERE e.taxauthid = 1 AND c.clid = '.$this->clid.' AND e.parenttid = '.$tidNode;
+			}
+			if(!$this->conn->query($sql)){
+				$this->errorMessage = 'ERROR transferring taxa to checklist: '.$this->conn->error;
+				$status = false;
+			}
+		}
+		return $status;
+	}
+
 	//Misc set/get functions
 	public function setClid($clid){
 		if(is_numeric($clid)) $this->clid = $clid;
@@ -576,20 +542,6 @@ class ChecklistAdmin{
 
 	public function getClName(){
 		return $this->clName;
-	}
-
-	//Misc functions
-	private function cleanOutStr($str){
-		$str = str_replace('"',"&quot;",$str);
-		$str = str_replace("'","&apos;",$str);
-		return $str;
-	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 }
 ?>

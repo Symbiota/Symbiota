@@ -17,8 +17,8 @@ class DwcArchiverCore extends Manager{
 
 	protected $collArr;
 	private $customWhereSql;
-	private $conditionSql;
-	private $conditionArr = array();
+	protected $conditionSql = '';
+	protected $conditionArr = array();
 	private $condAllowArr;
 	private $overrideConditionLimit = false;
 
@@ -75,7 +75,7 @@ class DwcArchiverCore extends Manager{
 		);
 
 		$this->securityArr = array(
-			'eventDate', 'month', 'day', 'startDayOfYear', 'endDayOfYear', 'verbatimEventDate',
+			'eventDate', 'eventDate2', 'month', 'day', 'startDayOfYear', 'endDayOfYear', 'verbatimEventDate',
 			'recordNumber', 'locality', 'locationRemarks', 'minimumElevationInMeters', 'maximumElevationInMeters', 'verbatimElevation',
 			'decimalLatitude', 'decimalLongitude', 'geodeticDatum', 'coordinateUncertaintyInMeters', 'footprintWKT',
 			'verbatimCoordinates', 'georeferenceRemarks', 'georeferencedBy', 'georeferenceProtocol', 'georeferenceSources',
@@ -140,7 +140,6 @@ class DwcArchiverCore extends Manager{
 	}
 
 	public function setCollArr($collTarget, $collType = ''){
-		$collTarget = $this->cleanInStr($collTarget);
 		$sqlWhere = '';
 		if ($collType == 'specimens') {
 			$sqlWhere = '(c.colltype = "Preserved Specimens") ';
@@ -267,7 +266,7 @@ class DwcArchiverCore extends Manager{
 	}
 
 	private function applyConditions(){
-		$this->conditionSql = '';
+		if($this->conditionSql) return true;
 		if ($this->customWhereSql) {
 			$this->conditionSql = $this->customWhereSql . ' ';
 		}
@@ -315,7 +314,7 @@ class DwcArchiverCore extends Manager{
 							if ($cond == 'NOTEQUALS' || $cond == 'NOTLIKE') $sqlFrag2 .= ' OR id.identifierValue IS NULL';
 							$sqlFrag2 .= ')) ';
 						} else {
-							$sqlFrag2 = $this->getSqlFragment($field, $cond, $valueArr);
+							$sqlFrag2 .= $this->getSqlFragment($field, $cond, $valueArr);
 						}
 					}
 					if ($sqlFrag2) $sqlFrag .= 'AND (' . substr($sqlFrag2, 4) . ') ';
@@ -483,7 +482,7 @@ class DwcArchiverCore extends Manager{
 								break;
 							case "rights":
 								// RDF Guide Section 3.3 dcterms:licence for IRI, xmpRights:UsageTerms for literal
-								if (stripos("http://creativecommons.org/licenses/", $value) == 0) {
+								if (stripos('creativecommons.org/licenses/', $value)) {
 									$returnvalue .= "$separator   dcterms:license <$value>";
 								} else {
 									$returnvalue .= "$separator   dc:$key \"$value\"";
@@ -615,7 +614,7 @@ class DwcArchiverCore extends Manager{
 								break;
 							case "rights":
 								// RDF Guide Section 3.3 dcterms:licence for IRI, xmpRights:UsageTerms for literal
-								if (stripos("http://creativecommons.org/licenses/", $value) == 0) {
+								if (stripos('creativecommons.org/licenses/', $value)) {
 									$elem = $newDoc->createElement("dcterms:license");
 									$elem->setAttribute("rdf:resource", "$value");
 								} else {
@@ -822,7 +821,8 @@ class DwcArchiverCore extends Manager{
 				if ($this->schemaType == 'backup') {
 					$fileNameSeed .= '_backup_' . date('Y-m-d_His', $this->ts);
 				}
-			} else {
+			}
+			else {
 				$fileNameSeed = 'SymbOutput_' . date('Y-m-d_His', $this->ts);
 			}
 		}
@@ -891,6 +891,7 @@ class DwcArchiverCore extends Manager{
 			unlink($this->targetPath . $this->ts . '-meta.xml');
 			if ($this->schemaType == 'dwc') rename($this->targetPath . $this->ts . '-eml.xml', $this->targetPath . str_replace('.zip', '.eml', $fileName));
 			else unlink($this->targetPath . $this->ts . '-eml.xml');
+			if (file_exists($this->targetPath . $this->ts . '-citation.txt')) unlink($this->targetPath . $this->ts . '-citation.txt');
 		}
 		else {
 			$this->errorMessage = 'FAILED to create archive file due to failure to return occurrence records; check and adjust search variables';
@@ -942,6 +943,7 @@ class DwcArchiverCore extends Manager{
 		$occCnt = 1;
 		$termArr = $this->occurrenceFieldArr['terms'];
 		if ($this->schemaType == 'dwc' || $this->schemaType == 'pensoft') {
+			unset($termArr['eventDate2']);
 			unset($termArr['localitySecurity']);
 		}
 		if ($this->schemaType == 'dwc' || $this->schemaType == 'pensoft' || $this->schemaType == 'backup') {
@@ -1117,25 +1119,23 @@ class DwcArchiverCore extends Manager{
 			//Dataset contains multiple collection data
 			$emlArr['title'] = $GLOBALS['DEFAULT_TITLE'] . ' general data extract';
 			if (isset($GLOBALS['SYMB_UID']) && $GLOBALS['SYMB_UID']) {
-				$sql = 'SELECT uid, lastname, firstname, title, institution, department, address, city, state, zip, country, phone, email, ispublic FROM users WHERE (uid = ' . $GLOBALS['SYMB_UID'] . ')';
+				$sql = 'SELECT uid, lastname, firstname, title, institution, department, address, city, state, zip, country, phone, email FROM users WHERE (uid = ' . $GLOBALS['SYMB_UID'] . ')';
 				$rs = $this->conn->query($sql);
 				if ($r = $rs->fetch_object()) {
 					$emlArr['associatedParty'][0]['individualName']['surName'] = $r->lastname;
 					if ($r->firstname) $emlArr['associatedParty'][0]['individualName']['givenName'] = $r->firstname;
 					if ($r->email) $emlArr['associatedParty'][0]['electronicMailAddress'] = $r->email;
 					$emlArr['associatedParty'][0]['role'] = 'datasetOriginator';
-					if ($r->ispublic) {
-						if ($r->institution) $emlArr['associatedParty'][0]['organizationName'] = $r->institution;
-						if ($r->title) $emlArr['associatedParty'][0]['positionName'] = $r->title;
-						if ($r->phone) $emlArr['associatedParty'][0]['phone'] = $r->phone;
-						if ($r->state) {
-							if ($r->department) $emlArr['associatedParty'][0]['address']['deliveryPoint'][] = $r->department;
-							if ($r->address) $emlArr['associatedParty'][0]['address']['deliveryPoint'][] = $r->address;
-							if ($r->city) $emlArr['associatedParty'][0]['address']['city'] = $r->city;
-							$emlArr['associatedParty'][0]['address']['administrativeArea'] = $r->state;
-							if ($r->zip) $emlArr['associatedParty'][0]['address']['postalCode'] = $r->zip;
-							if ($r->country) $emlArr['associatedParty'][0]['address']['country'] = $r->country;
-						}
+					if ($r->institution) $emlArr['associatedParty'][0]['organizationName'] = $r->institution;
+					if ($r->title) $emlArr['associatedParty'][0]['positionName'] = $r->title;
+					if ($r->phone) $emlArr['associatedParty'][0]['phone'] = $r->phone;
+					if ($r->state) {
+						if ($r->department) $emlArr['associatedParty'][0]['address']['deliveryPoint'][] = $r->department;
+						if ($r->address) $emlArr['associatedParty'][0]['address']['deliveryPoint'][] = $r->address;
+						if ($r->city) $emlArr['associatedParty'][0]['address']['city'] = $r->city;
+						$emlArr['associatedParty'][0]['address']['administrativeArea'] = $r->state;
+						if ($r->zip) $emlArr['associatedParty'][0]['address']['postalCode'] = $r->zip;
+						if ($r->country) $emlArr['associatedParty'][0]['address']['country'] = $r->country;
 					}
 					$rs->free();
 				}
@@ -1214,7 +1214,33 @@ class DwcArchiverCore extends Manager{
 	 * USED BY: this class, and emlhandler.php
 	 */
 	public function getEmlDom($emlArr = null){
-		global $RIGHTS_TERMS_DEFS;
+		$RIGHTS_TERMS_DEFS = array(
+			'https://creativecommons.org/publicdomain/zero/1.0/' => array(
+				'title' => 'CC0 1.0 (Public-domain)',
+				'url' => 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
+				'def' => 'Users can copy, modify, distribute and perform the work, even for commercial purposes, all without asking permission.'
+			),
+			'https://creativecommons.org/licenses/by/4.0/' => array(
+				'title' => 'CC BY (Attribution)',
+				'url' => 'https://creativecommons.org/licenses/by/4.0/legalcode',
+				'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material for any purpose, even commercially. The licensor cannot revoke these freedoms as long as you follow the license terms.'
+			),
+			'https://creativecommons.org/licenses/by-nc/4.0/' => array(
+				'title' => 'CC BY-NC (Attribution-Non-Commercial)',
+				'url' => 'https://creativecommons.org/licenses/by-nc/4.0/legalcode',
+				'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material. The licensor cannot revoke these freedoms as long as you follow the license terms.'
+			),
+			'https://creativecommons.org/licenses/by/4.0/' => array(
+				'title' => 'CC BY (Attribution)',
+				'url' => 'https://creativecommons.org/licenses/by/4.0/legalcode',
+				'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material for any purpose, even commercially. The licensor cannot revoke these freedoms as long as you follow the license terms.'
+			),
+			'https://creativecommons.org/licenses/by-nc/4.0/' => array(
+				'title' => 'CC BY-NC (Attribution-Non-Commercial)',
+				'url' => 'https://creativecommons.org/licenses/by-nc/4.0/legalcode',
+				'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material. The licensor cannot revoke these freedoms as long as you follow the license terms.'
+			)
+		);
 
 		if (!$emlArr) $emlArr = $this->getEmlArr();
 
@@ -1601,6 +1627,7 @@ class DwcArchiverCore extends Manager{
 				else $fieldOutArr[] = strtoupper(substr($k, 0, 1)) . substr($k, 1);
 			}
 		} else $fieldOutArr = array_keys($fieldArr);
+		if ($this->schemaType == 'dwc') unset($fieldOutArr[array_search('eventDate2', $fieldOutArr)]);
 		$this->writeOutRecord($fh, $fieldOutArr);
 
 		$materialSampleHandler = null;
@@ -1669,6 +1696,18 @@ class DwcArchiverCore extends Manager{
 				if ($this->schemaType == 'dwc') {
 					unset($r['localitySecurity']);
 					unset($r['collID']);
+					//Format dates
+					if($r['eventDate'] == '0000-00-00') $r['eventDate'] = '';
+					$r['eventDate'] = str_replace('-00', '', $r['eventDate']);
+					if($r['eventDate2']){
+						if($r['eventDate2'] == '0000-00-00') $r['eventDate2'] = '';
+						$r['eventDate2'] = str_replace('-00', '', $r['eventDate2']);
+						if(!$r['endDayOfYear'] && preg_match('/\d{4}-\d{2}-\d{2}/', $r['eventDate2'])){
+							if($t = strtotime($r['eventDate2'])) $r['endDayOfYear'] = date('z', $t) + 1;
+						}
+						$r['eventDate'] .= '/'.$r['eventDate2'];
+					}
+					unset($r['eventDate2']);
 				}
 				elseif ($this->schemaType == 'pensoft') {
 					unset($r['localitySecurity']);
@@ -1839,7 +1878,8 @@ class DwcArchiverCore extends Manager{
 			$localDomain = '';
 			if (isset($GLOBALS['IMAGE_DOMAIN']) && $GLOBALS['IMAGE_DOMAIN']) {
 				$localDomain = $GLOBALS['IMAGE_DOMAIN'];
-			} else {
+			}
+			else {
 				$localDomain = $this->serverDomain;
 			}
 			$previousImgID = 0;
@@ -1855,19 +1895,23 @@ class DwcArchiverCore extends Manager{
 				if ($r['goodQualityAccessURI'] == 'empty' || substr($r['goodQualityAccessURI'], 0, 10) == 'processing') $r['goodQualityAccessURI'] = '';
 				if (substr($r['thumbnailAccessURI'], 0, 10) == 'processing') $r['thumbnailAccessURI'] = '';
 				if ($this->schemaType != 'backup') {
-					if (stripos($r['rights'], 'http://creativecommons.org') === 0) {
+					if (stripos($r['rights'], 'creativecommons.org') === 0) {
 						$r['webstatement'] = $r['rights'];
 						$r['rights'] = '';
 						if (!$r['usageterms']) {
-							if ($r['webstatement'] == 'http://creativecommons.org/publicdomain/zero/1.0/') {
+							if (strpos($r['webstatement'], '/zero/1.0/')) {
 								$r['usageterms'] = 'CC0 1.0 (Public-domain)';
-							} elseif ($r['webstatement'] == 'http://creativecommons.org/licenses/by/3.0/') {
+							}
+							elseif (strpos($r['webstatement'], '/by/')) {
 								$r['usageterms'] = 'CC BY (Attribution)';
-							} elseif ($r['webstatement'] == 'http://creativecommons.org/licenses/by-sa/3.0/') {
+							}
+							elseif (strpos($r['webstatement'], '/by-sa/')) {
 								$r['usageterms'] = 'CC BY-SA (Attribution-ShareAlike)';
-							} elseif ($r['webstatement'] == 'http://creativecommons.org/licenses/by-nc/3.0/') {
-								$r['usageterms'] = 'CC BY-NC (Attribution-Non-Commercial)';
-							} elseif ($r['webstatement'] == 'http://creativecommons.org/licenses/by-nc-sa/3.0/') {
+							}
+							elseif (strpos($r['webstatement'], '/by-nc/')) {
+								$r['usageterms'] = 'CC BY-NC (Attribution-NonCommercial-ShareAlike)';
+							}
+							elseif (strpos($r['webstatement'], '/by-nc-sa/')) {
 								$r['usageterms'] = 'CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)';
 							}
 						}
@@ -1882,13 +1926,17 @@ class DwcArchiverCore extends Manager{
 				if ($r['format'] == '') {
 					if ($extStr == 'jpg' || $extStr == 'jpeg') {
 						$r['format'] = 'image/jpeg';
-					} elseif ($extStr == 'gif') {
+					}
+					elseif ($extStr == 'gif') {
 						$r['format'] = 'image/gif';
-					} elseif ($extStr == 'png') {
+					}
+					elseif ($extStr == 'png') {
 						$r['format'] = 'image/png';
-					} elseif ($extStr == 'tiff' || $extStr == 'tif') {
+					}
+					elseif ($extStr == 'tiff' || $extStr == 'tif') {
 						$r['format'] = 'image/tiff';
-					} else {
+					}
+					else {
 						$r['format'] = '';
 					}
 				}
@@ -1977,11 +2025,12 @@ class DwcArchiverCore extends Manager{
 
 		// Decides which citation format to use according to $citationVarArr
 		// Checks first argument in query params
+		$citationFormat = 'portal';
+		$citationPrefix = 'Portal';
 		switch (array_key_first($citationParamsArr)) {
 			case "archivedcollid":
-				$collData = $_SESSION['colldata'];
 				// if collData includes a gbiftitle, pass it to the citation
-				if (array_key_exists('gbiftitle', $collData)) {
+				if (isset($_SESSION['colldata']) && array_key_exists('gbiftitle', $_SESSION['colldata'])) {
 					$citationFormat = "gbif";
 				} else {
 					$citationFormat = "collection";
@@ -1989,14 +2038,13 @@ class DwcArchiverCore extends Manager{
 				$citationPrefix = "Collection Page, Archived DwC-A package created";
 				break;
 			case "collid":
-				$collData = $_SESSION['colldata'];
 				// if collData includes a gbiftitle, pass it to the citation
-				if ($collData && array_key_exists('gbiftitle', $collData)) {
-					$citationFormat = "gbif";
+				if (isset($_SESSION['colldata']) && array_key_exists('gbiftitle', $_SESSION['colldata'])) {
+					$citationFormat = 'gbif';
 				} else {
-					$citationFormat = "collection";
+					$citationFormat = 'collection';
 				}
-				$citationPrefix = "Collection Page, Live data downloaded";
+				$citationPrefix = 'Collection Page, Live data downloaded';
 				break;
 			case "db":
 				$citationFormat = "portal";
@@ -2008,9 +2056,6 @@ class DwcArchiverCore extends Manager{
 				$dArr['name'] = $_SESSION['datasetName'];
 				$datasetid = $_SESSION['datasetid'];
 				break;
-			default:
-				$citationFormat = "portal";
-				$citationPrefix = "Portal";
 		}
 
 		$output = "This data package was downloaded from a " . $GLOBALS['DEFAULT_TITLE'] . " " . $citationPrefix . " on " . date('Y-m-d H:i:s') . ".\n\nPlease use the following format to cite this dataset:\n";

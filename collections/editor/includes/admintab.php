@@ -22,40 +22,36 @@ $occManager->setOccId($occid);
 			<fieldset style="padding:15px;margin:10px 0px;">
 				<legend><b><?php echo $LANG['EDIT_HISTORY_INT']; ?></b></legend>
 				<?php
-				if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId,$USER_RIGHTS['CollAdmin'])){
+				if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId,$USER_RIGHTS['CollAdmin']))){
 					?>
 					<div style="float:right;" title="<?php echo $LANG['MANAGE_HISTORY']; ?>">
 						<a href="../editor/editreviewer.php?collid=<?php echo $collId.'&occid='.$occid; ?>" target="_blank"><img src="../../images/edit.png" style="border:0px;width:14px;" /></a>
 					</div>
 					<?php
 				}
-				foreach($editArr as $ts => $eArr){
-					$reviewStr = $LANG['OPEN'];
-					if($eArr['reviewstatus'] == 2){
-						$reviewStr = $LANG['PENDING'];
-					}
-					elseif($eArr['reviewstatus'] == 3){
-						$reviewStr = $LANG['CLOSED'];
-					}
+				foreach($editArr as $ts => $tsArr){
 					?>
 					<div>
-						<b><?php echo $LANG['EDITOR']; ?>:</b> <?php echo $eArr['editor']; ?>
+						<b><?php echo $LANG['EDITOR']; ?>:</b> <?php echo $tsArr['editor']; ?>
 						<span style="margin-left:30px;"><b><?php echo $LANG['DATE']; ?>:</b> <?php echo $ts; ?></span>
 					</div>
-					<div>
-						<span><b><?php echo $LANG['APPLIED_STATUS']; ?>:</b> <?php echo ($eArr['appliedstatus']?'applied':'not applied'); ?></span>
-						<span style="margin-left:30px;"><b><?php echo $LANG['REVIEW_STATUS']; ?>:</b> <?php echo $reviewStr; ?></span>
-					</div>
 					<?php
-					$edArr = $eArr['edits'];
-					foreach($edArr as $vArr){
-						echo '<div style="margin:10px 15px;">';
-						echo '<b>'.$LANG['FIELD'].':</b> '.$vArr['fieldname'].'<br/>';
-						echo '<b>'.$LANG['OLD_VALUE'].':</b> '.$vArr['old'].'<br/>';
-						echo '<b>'.$LANG['NEW_VALUE'].':</b> '.$vArr['new'].'<br/>';
-						echo '</div>';
+					foreach($tsArr['edits'] as $appliedStatus => $appliedArr){
+						?>
+						<div>
+							<span><b><?php echo $LANG['APPLIED_STATUS']; ?>:</b> <?php echo ($appliedStatus?$LANG['APPLIED']:$LANG['NOT_APPLIED']); ?></span>
+						</div>
+						<?php
+						foreach($appliedArr as $vArr){
+							echo '<div style="margin:10px 15px;">';
+							echo '<b>'.$LANG['FIELD'].':</b> '.$vArr['fieldname'].'<br/>';
+							echo '<b>'.$LANG['OLD_VALUE'].($vArr['current'] == 2?' (current)':'').':</b> '.$vArr['old'].'<br/>';
+							echo '<b>'.$LANG['NEW_VALUE'].($vArr['current'] == 1?' (current)':'').':</b> '.$vArr['new'].'<br/>';
+							echo '</div>';
+						}
 					}
 					echo '<div style="margin:5px 0px;">&nbsp;</div>';
+					echo '<div style=""><hr></div>';
 				}
 				?>
 			</fieldset>

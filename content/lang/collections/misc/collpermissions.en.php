@@ -33,10 +33,13 @@ $LANG['NO_RARE_READERS'] ='There are no Sensitive Species Reader permissions';
 $LANG['ADMINS_EDITS_INHERIT'] = 'Administrators and editors automatically inherit protected species viewing rights';
 $LANG['ADD_PERMS'] = 'Add Permissions for User';
 $LANG['PERS_OBS_SPONSOR'] = 'Personal Observation Management Sponsorship';
-$LANG['SPONSOR_EXPLAIN'] = 'Collection administrators listed above can sponsor users for Personal Observation Management.
+$LANG['PERS_OBS_SPONSOR_EXPLAIN'] = 'Collection administrators listed above can sponsor users for Personal Observation Management.
 						This allows users to enter field data as observations that are linked directly to their user profile, print labels,
 						and later collection data can be transferred once specimens are donated to this collection.
 						Listed below are all users that have been given such rights by one of the collection administrators listed above.';
+$LANG['CHECKLIST_SPONSOR'] = 'Checklist / Dataset Management Sponsorship';
+$LANG['CHECKLIST_SPONSOR_EXPLAIN'] = 'Collection administrators listed above can sponsor users for Checklist and Dataset Management.
+						This allows users to create new public and private checklists or datasets that are linked directly to their user profile.  Public Checklists and Datasets are visible to all portal visitors.';
 $LANG['SURE_DELETE'] = 'Are you sure you want to delete these permissions?';
 $LANG['NONE_SPONSORED'] = 'No users have yet been sponsored';
 $LANG['NEW_SPONSOR'] = 'New Sponsorship';

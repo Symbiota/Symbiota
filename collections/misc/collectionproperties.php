@@ -32,7 +32,7 @@ if($isEditor){
 <head>
 	<title><?php echo $collMeta['collName'].(isset($LANG['SPECIAL_PROPS'])?$LANG['SPECIAL_PROPS']:'Special Properties'); ?></title>
 	<?php
-	$activateJQuery = false;
+
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script>

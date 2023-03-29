@@ -39,7 +39,6 @@ $statusStr = "";
 	<head>
 		<title>Specimen Processor Control Panel</title>
 		<?php
-		$activateJQuery = true;
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
 	</head>

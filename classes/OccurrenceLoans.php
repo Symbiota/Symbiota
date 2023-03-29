@@ -33,7 +33,7 @@ class OccurrenceLoans extends Manager{
 		*/
 
 		//Get loan details
-		$sql = 'SELECT l.loanid, l.datesent, l.loanidentifierown, l.loanidentifierborr, i.institutioncode AS instcode1, c.institutioncode AS instcode2, l.forwhom, l.dateclosed '.
+		$sql = 'SELECT l.loanid, l.datesent, l.loanidentifierown, l.loanidentifierborr, i.institutioncode AS instcode1, c.institutioncode AS instcode2, i.institutionname, l.forwhom, l.dateclosed, l.datedue '.
 			'FROM omoccurloans l LEFT JOIN institutions i ON l.iidborrower = i.iid '.
 			'LEFT JOIN omcollections c ON l.collidborr = c.collid '.
 			'WHERE (l.collidown = '.$this->collid.' ';
@@ -46,8 +46,10 @@ class OccurrenceLoans extends Manager{
 				if(!$searchTerm || stripos($r->instcode1,$searchTerm) !== false || stripos($r->instcode2,$searchTerm) !== false || stripos($r->forwhom,$searchTerm) !== false){
 					$retArr[$r->loanid]['loanidentifierown'] = $r->loanidentifierown;
 					$retArr[$r->loanid]['institutioncode'] = $r->instcode1;
+					$retArr[$r->loanid]['institutionname'] = $r->institutionname;
 					$retArr[$r->loanid]['forwhom'] = $r->forwhom;
 					$retArr[$r->loanid]['dateclosed'] = $r->dateclosed;
+					$retArr[$r->loanid]['datedue'] = $r->datedue;
 					if(array_key_exists($r->loanid, $extLoanArr)) $retArr[$r->loanid]['isexternal'] = $extLoanArr[$r->loanid];
 				}
 			}
@@ -131,6 +133,17 @@ class OccurrenceLoans extends Manager{
 	public function deleteLoan($loanid){
 		$status = false;
 		if(is_numeric($loanid)){
+
+			// First, delete any file attachments
+			$sql = 'SELECT attachmentid FROM omoccurloansattachment WHERE (loanid = ' . $loanid . ')';
+			if($rs = $this->conn->query($sql)) {
+				while($r = $rs->fetch_object()){
+					$this->deleteAttachment($r->attachmentid);
+				}
+				$rs->free();
+			}
+
+			// Delete loan in database
 			$sql = 'DELETE FROM omoccurloans WHERE (loanid = '.$loanid.')';
 			if($this->conn->query($sql)){
 				$status = true;
@@ -142,7 +155,7 @@ class OccurrenceLoans extends Manager{
 	//Loan in functions
 	public function getLoanInList($searchTerm,$displayAll){
 		$retArr = array();
-		$sql = 'SELECT l.loanid, l.loanidentifierborr, l.dateclosed, i.institutioncode AS instcode1, c.institutioncode AS instcode2, l.forwhom '.
+		$sql = 'SELECT l.loanid, l.loanidentifierborr, l.dateclosed, i.institutioncode AS instcode1, c.institutioncode AS instcode2, i.institutionname, l.forwhom, l.datedue '.
 			'FROM omoccurloans l INNER JOIN institutions i ON l.iidowner = i.iid '.
 			'LEFT JOIN omcollections c ON l.collidown = c.collid '.
 			'WHERE l.collidborr = '.$this->collid.' ';
@@ -153,8 +166,10 @@ class OccurrenceLoans extends Manager{
 				if(!$searchTerm || stripos($r->instcode1,$searchTerm) !== false || stripos($r->instcode2,$searchTerm) !== false || stripos($r->forwhom,$searchTerm) !== false){
 					$retArr[$r->loanid]['loanidentifierborr'] = $r->loanidentifierborr;
 					$retArr[$r->loanid]['institutioncode'] = $r->instcode1;
+					$retArr[$r->loanid]['institutionname'] = $r->institutionname;
 					$retArr[$r->loanid]['forwhom'] = $r->forwhom;
 					$retArr[$r->loanid]['dateclosed'] = $r->dateclosed;
+					$retArr[$r->loanid]['datedue'] = $r->datedue;
 				}
 			}
 			$rs->free();
@@ -388,6 +403,17 @@ class OccurrenceLoans extends Manager{
 	public function deleteExchange($exchangeId){
 		$status = false;
 		if(is_numeric($exchangeId)){
+
+			// First, delete any file attachments
+			$sql = 'SELECT attachmentid FROM omoccurloansattachment WHERE (exchangeid = ' . $exchangeId . ')';
+			if($rs = $this->conn->query($sql)) {
+				while($r = $rs->fetch_object()){
+					$this->deleteAttachment($r->attachmentid);
+				}
+				$rs->free();
+			}
+
+			// Delete exchange in database
 			$sql = 'DELETE FROM omoccurexchange WHERE (exchangeid = '.$exchangeId.')';
 			if($this->conn->query($sql)){
 				$status = true;
@@ -399,13 +425,14 @@ class OccurrenceLoans extends Manager{
 	public function getTransInstList($collid){
 		$iidArr = array();
 		if(is_numeric($collid)){
-			$sql = 'SELECT DISTINCT e.iid, i.institutioncode '.
+			$sql = 'SELECT DISTINCT e.iid, i.institutioncode, i.institutionname '.
 				'FROM omoccurexchange AS e INNER JOIN institutions AS i ON e.iid = i.iid '.
 				'WHERE e.collid = '.$this->collid.' AND e.iid IS NOT NULL '.
 				'ORDER BY i.institutioncode';
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
 					$iidArr[$r->iid]['institutioncode'] = $r->institutioncode;
+					$iidArr[$r->iid]['institutionname'] = $r->institutionname;
 				}
 			}
 			$sql = 'SELECT rt.iid, e.invoicebalance FROM omoccurexchange AS e '.
@@ -890,7 +917,7 @@ class OccurrenceLoans extends Manager{
 	}
 
 	public function generateNextID($idType){
-		$retStr = '';
+		$retStr = 1;
 		if($this->collid){
 			$sql = '';
 			if($idType == 'out'){
@@ -907,33 +934,179 @@ class OccurrenceLoans extends Manager{
 			}
 
 			if($rs = $this->conn->query($sql)){
-				$parsedArr = array();
+				$maxnum = 1;
 				while($r = $rs->fetch_object()){
+					$num = '';
+
+					// Replace all non-digits with -
 					$id = preg_replace('/[^\d]+/', '-', $r->id);
 					$id = preg_replace('/-{2,}/','-',$id);
+
+					// Split into an array containing the number(s) in the string
 					$numArr = explode('-',$id);
-					$cnt = 0;
-					foreach($numArr as $n){
-						$parsedArr[$cnt][] = $n;
-						$cnt++;
+
+					// Get the last array element that is a number
+					// Note: NOT the highest number, this could be something like a year, e.g., 2022-5.
+					// The last number in the string is most likely the right one to increment
+					while (!is_numeric($num)) $num = array_pop($numArr);
+
+					// Check if the number found is the highest so far, if so, use that one to increment.
+					if ($num > $maxnum) {
+						$maxnum = $num;
+
+						// Rather than using the number itself, replace the old number in the string with the incremented one & return that
+						// This allows for alphanumeric identifiers like loan-102 or OSC-V-1524
+						$retStr = str_replace($num, $num + 1, $r->id);
 					}
 				}
 				$rs->free();
-				foreach($parsedArr as $vArr){
-					$previousValue = '';
-					foreach($vArr as $v){
-						if($v == $previousValue){
-							$retStr = '';
-							break;
-						}
-						if($v++ > $retStr) $retStr = $v++;
-						$previousValue = $v;
-					}
-				}
-				if(!$parsedArr) $retStr = 1;
 			}
 		}
 		return $retStr;
+	}
+
+	// Correspondence attachments management functions
+	public function uploadAttachment($collid, $type, $transid, $identifier, $title, $file) {
+
+		// Permissable mimetypes, see http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types
+		$mimetypes = array('text/plain', 'image/jpeg', 'image/png', 'application/pdf', 'application/msword',
+			'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+		// File checking
+		// Check to make sure it is an uploaded file and not spoofed
+		if (!is_uploaded_file($file['tmp_name'])) {
+			$this->errorMessage = 'Error: Not an uploaded file';
+			return false;
+
+		// Check to make sure the filesize is permissable
+		} else if ($file['size'] > 10000000) {
+			$this->errorMessage = 'Error: File size is too large: max size is 10 MB';
+			return false;
+
+		// Check the mimetype of the file, don't rely on the file extension
+		} else if (!in_array(mime_content_type($file['tmp_name']), $mimetypes)) {
+			$this->errorMessage = 'Error: File type does not match extension. File must be a PDF (.pdf), MS Word document (.doc or .docx), MS Excel file (.xls or .xlsx), image (.jpg, .jpeg, or .png). or a text file (.txt, .csv).';
+			return false;
+		}
+
+		// Create the path for the attachment, storing under a subfolder for the particular collection
+		$relPath = 'content/collections/loans/coll' . $collid . '/';
+		$fullPath = $GLOBALS['SERVER_ROOT'] . '/' . $relPath;
+
+		// Check to make sure the save path exists, creating it if permissions are sufficient
+		if (!is_dir($fullPath)) {
+			if (!mkdir($fullPath, 0775, true)) {
+				$this->errorMessage = 'Error: Insufficient permissions to save files in content/collections/loans';
+				return false;
+			}
+		}
+
+		// Recreate the filename, appending the loan identifier and current date stamp to make the filename more unique
+		$filename = pathinfo($file['name'], PATHINFO_FILENAME) . '_' . $type . $identifier .
+			'_' . date('Y-m-d', time()) . '.' . pathinfo($file['name'], PATHINFO_EXTENSION);
+
+		// Replace any invalid filename characters and sanitize filename
+		$filename = $this->cleanInStr(str_replace(array('\\','/',':','*','?','"','<','>','|', '..'),'_',$filename));
+
+		// Keep filename size within 255 bytes
+		if (mb_strlen($filename, "UTF-8") > 255) {
+			$this->errorMessage = 'Error: The filename of the attachment: ' . $file['name'] . 'is too long';
+			return false;
+		}
+
+		// Check to make sure same filename doesn't already exist for this loan/date combo
+		if (file_exists($fullPath . $filename)) {
+				$this->errorMessage = 'Error: A file with the same name has already been uploaded today for this loan.';
+				return false;
+		}
+
+		// Check to make sure this is an uploaded file and that it can be moved successfully
+		if (move_uploaded_file($file['tmp_name'], $fullPath . $filename)) {
+
+			// Moved successfully, save in database
+			if ($this->saveAttachment($type, $transid, $title, $relPath, $filename)) {
+				$this->errorMessage = "SUCCESS: Correspondence attachment saved successfully.";
+				return true;
+			}
+
+			// Attachment failed to be saved in database
+			return false;
+		}
+		else {
+			$this->errorMessage = 'Error: The uploaded file could not be saved successfully.';
+			return false;
+		}
+	}
+
+	public function saveAttachment($type, $transid, $title, $path, $filename){
+		$sql = 'INSERT INTO omoccurloansattachment (' . ($type == "loan" ? 'loanid' : 'exchangeid') . ', title, path, filename) '.
+		'VALUES('.$transid . ',"' . $this->cleanInStr($title) . '","' . $path . '","' . $filename .'") ';
+
+		if($this->conn->query($sql)){
+			$attachmentid = $this->conn->insert_id;
+			return $attachmentid;
+		}
+		else{
+			$this->errorMessage = 'ERROR: attachment could not be saved in database: '.$this->conn->error.'<br/>';
+			return false;
+		}
+	}
+
+	public function deleteAttachment($attachid){
+
+		if(is_numeric($attachid)){
+
+			// First get the file path to delete
+			$sql = 'SELECT path, filename FROM omoccurloansattachment WHERE (attachmentid = ' . $attachid . ')';
+			if($rs = $this->conn->query($sql)) {
+				while($r = $rs->fetch_object()){
+					$path = $GLOBALS['SERVER_ROOT'] . '/' . $r->path . $r->filename;
+				}
+				$rs->free();
+			}
+
+			// Make sure we got a file path
+			if(!isset($path)) {
+				$this->errorMessage = 'Error: Attachment to delete not found in database';
+				return false;
+			}
+
+			// Next delete from the database
+			$sql = 'DELETE FROM omoccurloansattachment WHERE (attachmentid = '.$attachid.')';
+			if(!$this->conn->query($sql)){
+				$this->errorMessage = 'Error: Attachment could not be deleted from database';
+				return false;
+			}
+
+			// Finally, delete the physical file
+			if(!unlink($path)){
+				$this->errorMessage = 'Error: Attachment file could not be deleted from server';
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public function getAttachments($type, $transid) {
+		$retArr = false;
+		$sql = 'SELECT attachmentid, title, path, filename, initialTimestamp ' .
+			'FROM omoccurloansattachment ' .
+			'WHERE '. ($type == "loan" ? 'loanid' : 'exchangeid') . ' = ' . $transid . ' ' .
+			'ORDER BY initialTimestamp ASC;';
+
+		if($rs = $this->conn->query($sql)){
+			$retArr = array();
+			while($r = $rs->fetch_object()){
+				$retArr[$r->attachmentid]['title'] = $r->title;
+				$retArr[$r->attachmentid]['path'] = $r->path;
+				$retArr[$r->attachmentid]['filename'] = $r->filename;
+				$retArr[$r->attachmentid]['timestamp'] = $r->initialTimestamp;
+			}
+			$rs->free();
+		}
+		return $retArr;
 	}
 
 	//General look up functions

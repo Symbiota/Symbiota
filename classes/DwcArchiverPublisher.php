@@ -61,6 +61,8 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		foreach($collIdArr as $id){
 			//Create a separate DWCA object for each collection
 			$this->resetCollArr($id);
+			$this->conditionArr['collid'] = $id;
+			$this->conditionSql = '';
 			if($this->createDwcArchive()){
 				$successArr[] = $id;
 				$status = true;

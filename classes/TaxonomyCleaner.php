@@ -298,7 +298,7 @@ class TaxonomyCleaner extends Manager{
 			'SET ts.family = t2.sciname '.
 			'WHERE (e.taxauthid = '.$this->taxAuthId.') AND (ts.taxauthid = '.$this->taxAuthId.') AND (t2.rankid = 140) AND (ts.family IS NULL)';
 		if($this->conn->query($sql)){
-			$this->logOrEcho('Populating null family lookuk tags within thesaurus... '.$this->conn->affected_rows.' taxon records updated', 1);
+			$this->logOrEcho('Populating null family lookup tags within thesaurus... '.$this->conn->affected_rows.' taxon records updated', 1);
 		}
 		else{
 			$this->logOrEcho('ERROR updating family lookup field: '.$this->conn->error, 1);

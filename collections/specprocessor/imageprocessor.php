@@ -24,15 +24,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 	<head>
 		<title>Image Processor</title>
 		<?php
-		$activateJQuery = true;
-		if(file_exists($SERVER_ROOT.'/includes/head.php')){
-			include_once($SERVER_ROOT.'/includes/head.php');
-		}
-		else{
-			echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-			echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-			echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-		}
+		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
 		<style type="text/css">.profileDiv{ clear:both; margin:2px 0px } </style>
 		<script src="../../js/jquery-3.2.1.min.js" type="text/javascript"></script>
@@ -223,7 +215,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 			<div style="padding:15px;">
 				These tools are designed to aid collection managers in batch processing specimen images. Contact portal manager for help in setting up a new workflow.
 				 Once a profile is established, the collection manager can use this form to manually trigger image processing. For more information, see the Symbiota documentation for
-				 <b><a href="https://symbiota.org/batch-loading-specimen-images-2/" target="_blank">recommended practices</a></b> for integrating images.
+				 <b><a href="https://biokic.github.io/symbiota-docs/coll_manager/images/batch/" target="_blank">recommended practices</a></b> for integrating images.
 			</div>
 			<?php
 			if($SYMB_UID){

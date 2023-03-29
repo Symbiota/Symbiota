@@ -788,7 +788,7 @@ ALTER TABLE `omoccurrences`
   ADD COLUMN `availability` INT(2) NULL AFTER `previousIdentifications`,
   CHANGE COLUMN `waterBody` `waterBody` VARCHAR(75) NULL DEFAULT NULL AFTER `continent`,
   DROP INDEX `idx_occrecordedby`;
-  
+
 ALTER TABLE `omoccurrences` 
   DROP INDEX `Index_gui`;  
 
@@ -841,7 +841,6 @@ UPDATE omoccuredits e INNER JOIN (SELECT initialtimestamp, uid, count(DISTINCT o
 	#Add measurementMethod field
 	#Add exportHeader for trait name
 	#Add exportHeader for state name
-
 
 
 DELIMITER //
