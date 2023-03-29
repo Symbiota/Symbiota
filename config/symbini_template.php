@@ -81,10 +81,10 @@ $IGSN_ACTIVATION = 0;
 //$SMTP_ARR = array('host'=>'','port'=>587,'username'=>'','password'=>'','timeout'=>60);  //Host is requiered, others are optional and can be removed
 
 $RIGHTS_TERMS = array(
-		'CC0 1.0 (Public-domain)' => 'https://creativecommons.org/publicdomain/zero/1.0/',
-		'CC BY (Attribution)' => 'https://creativecommons.org/licenses/by/4.0/',
-		'CC BY-NC (Attribution-Non-Commercial)' => 'https://creativecommons.org/licenses/by-nc/4.0/',
-		'CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)' => 'https://creativecommons.org/licenses/by-nc-sa/4.0/',
+	'CC0 1.0 (Public-domain)' => 'https://creativecommons.org/publicdomain/zero/1.0/',
+	'CC BY (Attribution)' => 'https://creativecommons.org/licenses/by/4.0/',
+	'CC BY-NC (Attribution-Non-Commercial)' => 'https://creativecommons.org/licenses/by-nc/4.0/',
+	'CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)' => 'https://creativecommons.org/licenses/by-nc-sa/4.0/',
 );
 
 /*
