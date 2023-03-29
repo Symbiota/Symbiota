@@ -7,7 +7,6 @@ header("Content-Type: text/html; charset=".$CHARSET);
 $pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']:0;
 
 //Sanitation
-const HTML_SPECIAL_CHARS_FLAGS = ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE;
 $pid = htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS);
 if(!is_numeric($pid)) $pid = 0;
 

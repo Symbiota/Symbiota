@@ -8,7 +8,6 @@ $pid = $_REQUEST['pid'];
 $target = array_key_exists('target',$_REQUEST)?$_REQUEST['target']:'checklists';
 
 //Sanitation
-const HTML_SPECIAL_CHARS_FLAGS = ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE;
 $pid = htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS);
 if(!is_numeric($pid)) $pid = 0;
 
