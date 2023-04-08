@@ -52,7 +52,7 @@ $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 		<title><?php echo $DEFAULT_TITLE; ?> Specimen Label Manager</title>
-		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -130,10 +130,10 @@ $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General
 		<?php
 		if($isGeneralObservation) echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Management Menu</a> &gt;&gt; ';
 		elseif($collid){
-			echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management Panel</a> &gt;&gt; ';
+			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">Collection Management Panel</a> &gt;&gt; ';
 		}
 		?>
-		<a href="labelmanager.php?collid=<?php echo $collid; ?>&emode=1">Label Manager</a> &gt;&gt;
+		<a href="labelmanager.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">Label Manager</a> &gt;&gt;
 		<b>Label Profile Editor</b>
 	</div>
 	<!-- This is inner text! -->

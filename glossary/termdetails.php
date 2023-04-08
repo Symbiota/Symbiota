@@ -100,7 +100,7 @@ if($glossId){
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE.(isset($LANG['G_MGMNT'])?$LANG['G_MGMNT']:'Glossary Management'); ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -204,11 +204,11 @@ if($glossId){
 			?>
 			<div id="tabs" style="margin:0px;">
 				<ul>
-					<li><a href="#termdetaildiv"><?php echo (isset($LANG['DETAILS'])?$LANG['DETAILS']:'Details'); ?></a></li>
-					<li><a href="#termrelateddiv"><?php echo (isset($LANG['REL_TERMS'])?$LANG['REL_TERMS']:'Related Terms'); ?></a></li>
-					<li><a href="#termtransdiv"><?php echo (isset($LANG['TRANSS'])?$LANG['TRANSS']:'Translations'); ?></a></li>
-					<li><a href="#termimagediv"><?php echo (isset($LANG['IMGS'])?$LANG['IMGS']:'Images'); ?></a></li>
-					<li><a href="#termadmindiv"><?php echo (isset($LANG['ADMIN'])?$LANG['ADMIN']:'Admin'); ?></a></li>
+					<li><a href="#termdetaildiv"><?php echo htmlspecialchars((isset($LANG['DETAILS'])?$LANG['DETAILS']:'Details'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
+					<li><a href="#termrelateddiv"><?php echo htmlspecialchars((isset($LANG['REL_TERMS'])?$LANG['REL_TERMS']:'Related Terms'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
+					<li><a href="#termtransdiv"><?php echo htmlspecialchars((isset($LANG['TRANSS'])?$LANG['TRANSS']:'Translations'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
+					<li><a href="#termimagediv"><?php echo htmlspecialchars((isset($LANG['TRANSS'])?$LANG['TRANSS']:'Translations'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
+					<li><a href="#termadmindiv"><?php echo htmlspecialchars((isset($LANG['ADMIN'])?$LANG['ADMIN']:'Admin'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
 				</ul>
 				<div id="termdetaildiv" style="">
 					<div id="termdetails" style="overflow:auto;">
@@ -372,7 +372,7 @@ if($glossId){
 								</div>
 								<div style="clear:both;"></div>
 								<div style="clear:both;margin:30px 10px;">
-									<div style="margin:3px"><?php echo (isset($LANG['OR_ADD'])?$LANG['OR_ADD']:'Or add a'); ?> <a href="addterm.php?relationship=synonym&relglossid=<?php echo $glossId.'&rellanguage='.$glosManager->getTermLanguage(); ?>"><?php echo (isset($LANG['NEW_SYN'])?$LANG['NEW_SYN']:'New Synonym'); ?></a> <?php echo (isset($LANG['NOT_YET'])?$LANG['NOT_YET']:'that is not yet in the system'); ?></div>
+									<div style="margin:3px"><?php echo (isset($LANG['OR_ADD'])?$LANG['OR_ADD']:'Or add a'); ?> <a href="addterm.php?relationship=synonym&relglossid=<?php echo htmlspecialchars($glossId, HTML_SPECIAL_CHARS_FLAGS) . '&rellanguage=' . htmlspecialchars($glosManager->getTermLanguage(), HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars((isset($LANG['NEW_SYN'])?$LANG['NEW_SYN']:'New Synonym'), HTML_SPECIAL_CHARS_FLAGS); ?></a> <?php echo htmlspecialchars((isset($LANG['NOT_YET'])?$LANG['NOT_YET']:'that is not yet in the system'), HTML_SPECIAL_CHARS_FLAGS); ?></div>
 								</div>
 							</fieldset>
 						</form>
@@ -403,7 +403,7 @@ if($glossId){
 										</form>
 									</div>
 									<div style="float:right;margin:5px;cursor:pointer;" title="Edit Term">
-										<a href="termdetails.php?glossid=<?php echo $synGlossId; ?>">
+										<a href="termdetails.php?glossid=<?php echo htmlspecialchars($synGlossId, HTML_SPECIAL_CHARS_FLAGS); ?>">
 											<img style="border:0px;width:12px;" src="../images/edit.png" />
 										</a>
 									</div>
@@ -456,7 +456,7 @@ if($glossId){
 											</form>
 										</div>
 										<div style="float:right;margin:5px;" title="<?php echo (isset($LANG['EDIT_T'])?$LANG['EDIT_T']:'Edit Term'); ?>">
-											<a href="termdetails.php?glossid=<?php echo $relGlossId; ?>">
+											<a href="termdetails.php?glossid=<?php echo htmlspecialchars($relGlossId, HTML_SPECIAL_CHARS_FLAGS); ?>">
 												<img style="border:0px;width:12px;" src="../images/edit.png" />
 											</a>
 										</div>
@@ -512,7 +512,7 @@ if($glossId){
 								</div>
 								<div style="clear:both;"></div>
 								<div style="clear:both;margin: 30px 10px;">
-									<?php echo (isset($LANG['OR_ADD'])?$LANG['OR_ADD']:'Or add a'); ?> <a href="addterm.php?relationship=translation&relglossid=<?php echo $glossId.'&rellanguage='.$glosManager->getTermLanguage(); ?>"><?php echo (isset($LANG['NEW_TRANS'])?$LANG['NEW_TRANS']:'New Translation'); ?></a> <?php echo (isset($LANG['TO_T'])?$LANG['TO_T']:'to this term'); ?>
+									<?php echo (isset($LANG['OR_ADD'])?$LANG['OR_ADD']:'Or add a'); ?> <a href="addterm.php?relationship=translation&relglossid=<?php echo htmlspecialchars($glossId, HTML_SPECIAL_CHARS_FLAGS) . '&rellanguage=' . htmlspecialchars($glosManager->getTermLanguage(), HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars((isset($LANG['NEW_TRANS'])?$LANG['NEW_TRANS']:'New Translation'), HTML_SPECIAL_CHARS_FLAGS); ?></a> <?php echo htmlspecialchars((isset($LANG['TO_T'])?$LANG['TO_T']:'to this term'), HTML_SPECIAL_CHARS_FLAGS); ?>
 								</div>
 							</fieldset>
 						</form>
@@ -538,7 +538,7 @@ if($glossId){
 									}
 									?>
 									<div style="float:right;margin:5px;" title="<?php echo (isset($LANG['EDIT_T_DAT'])?$LANG['EDIT_T_DAT']:'Edit Term Data'); ?>">
-										<a href="termdetails.php?glossid=<?php echo $transGlossId; ?>">
+										<a href="termdetails.php?glossid=<?php echo ≈; ?>">
 											<img style="border:0px;width:12px;" src="../images/edit.png" />
 										</a>
 									</div>
@@ -581,7 +581,7 @@ if($glossId){
 											</div>
 											<!-- following line sets MAX_FILE_SIZE (must precede the file input field)  -->
 											<div style="height:10px;float:right;text-decoration:underline;font-weight:bold;">
-												<a href="#" onclick="toggle('targetdiv');return false;"><?php echo (isset($LANG['ENT_URL'])?$LANG['ENT_URL']:'Enter URL'); ?></a>
+												<a href="#" onclick="toggle('targetdiv');return false;"><?php echo htmlspecialchars((isset($LANG['ENT_URL'])?$LANG['ENT_URL']:'Enter URL'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
 											</div>
 											<input type='hidden' name='MAX_FILE_SIZE' value='20000000' />
 											<div>
@@ -658,7 +658,7 @@ if($glossId){
 											}
 											$displayUrl = $imgUrl;
 											?>
-											<a href="<?php echo $imgUrl;?>" target="_blank">
+											<a href="<?php echo htmlspecialchars($imgUrl, HTML_SPECIAL_CHARS_FLAGS);?>" target="_blank">
 												<img src="<?php echo $displayUrl;?>" style="width:250px;" title="<?php echo $imgArr["structures"]; ?>" />
 											</a>
 										</div>

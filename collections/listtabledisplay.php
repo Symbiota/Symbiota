@@ -130,13 +130,13 @@ $searchVar = $collManager->getQueryTermStr();
 		$qryCnt = $collManager->getRecordCnt();
 		$navStr = '<div style="float:right;">';
 		if($page > 1){
-			$navStr .= '<a href="listtabledisplay.php?'.$searchVar.'&page='.($page-1).'" title="'.$LANG['PAGINATION_PREVIOUS'].' '.$tableCount.' '.$LANG['PAGINATION_RECORDS'].'">&lt;&lt;</a>';
+			$navStr .= '<a href="listtabledisplay.php?' . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '&page=' . htmlspecialchars(($page-1), HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars($LANG['PAGINATION_PREVIOUS'], HTML_SPECIAL_CHARS_FLAGS) . ' ' . htmlspecialchars($tableCount, HTML_SPECIAL_CHARS_FLAGS) . ' ' . htmlspecialchars($LANG['PAGINATION_RECORDS'], HTML_SPECIAL_CHARS_FLAGS) . '">&lt;&lt;</a>';
 		}
 		$navStr .= ' | ';
 		$navStr .= ($page==1?1:(($page-1)*$tableCount)).'-'.($qryCnt<$tableCount*$page?$qryCnt:$tableCount*$page).' '.$LANG['PAGINATION_OF'].' '.$qryCnt.' '.$LANG['PAGINATION_RECORDS'];
 		$navStr .= ' | ';
 		if($qryCnt > ($page*$tableCount)){
-			$navStr .= '<a href="listtabledisplay.php?'.$searchVar.'&page='.($page+1).'" title="'.$LANG['PAGINATION_NEXT'].' '.$tableCount.' '.$LANG['PAGINATION_RECORDS'].'">&gt;&gt;</a>';
+			$navStr .= '<a href="listtabledisplay.php?' . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '&page=' . htmlspecialchars(($page+1), HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars($LANG['PAGINATION_NEXT'], HTML_SPECIAL_CHARS_FLAGS) . ' ' . htmlspecialchars($tableCount, HTML_SPECIAL_CHARS_FLAGS) . ' ' . htmlspecialchars($LANG['PAGINATION_RECORDS'], HTML_SPECIAL_CHARS_FLAGS) . '">&gt;&gt;</a>';
 		}
 		$navStr .= '</div>';
 		?>
@@ -147,9 +147,9 @@ $searchVar = $collManager->getQueryTermStr();
 				?>
 			</div>
 			<div class="navpath">
-				<a href="../index.php"><?php echo (isset($LANG['NAV_HOME'])?$LANG['NAV_HOME']:'Home'); ?></a> &gt;&gt;
-				<a href="index.php"><?php echo (isset($LANG['NAV_COLLECTIONS'])?$LANG['NAV_COLLECTIONS']:'Collections'); ?></a> &gt;&gt;
-				<a href="harvestparams.php"><?php echo (isset($LANG['NAV_SEARCH'])?$LANG['NAV_SEARCH']:'Search Criteria'); ?></a> &gt;&gt;
+				<a href="../index.php"><?php echo htmlspecialchars((isset($LANG['NAV_HOME'])?$LANG['NAV_HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+				<a href="index.php"><?php echo htmlspecialchars((isset($LANG['NAV_COLLECTIONS'])?$LANG['NAV_COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+				<a href="harvestparams.php"><?php echo htmlspecialchars((isset($LANG['NAV_SEARCH'])?$LANG['NAV_SEARCH']:'Search Criteria'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 				<b><?php echo (isset($LANG['SPEC_REC_TAB'])?$LANG['SPEC_REC_TAB']:'Specimen Records Table'); ?></b>
 			</div>
 		</div>
@@ -199,7 +199,7 @@ $searchVar = $collManager->getQueryTermStr();
 									<?php
 									echo '<a href="#" onclick="return openIndPU('.$occid.",".($targetClid?$targetClid:"0").');">'.$occid.'</a> ';
 									if($isEditor || ($SYMB_UID && $SYMB_UID == $occArr['obsuid'])){
-										echo '<a href="editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">';
+										echo '<a href="editor/occurrenceeditor.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 										echo '<img src="../images/edit.png" style="height:13px;" title="'.(isset($LANG['EDIT_REC'])?$LANG['EDIT_REC']:'Edit Record').'" />';
 										echo '</a>';
 									}

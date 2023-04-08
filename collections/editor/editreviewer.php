@@ -83,19 +83,19 @@ if($subCnt > $recCnt) $subCnt = $recCnt;
 $navPageBase = 'editreviewer.php?collid='.$collid.'&display='.$displayMode.'&fastatus='.$faStatus.'&frstatus='.$frStatus.'&editor='.$editor.'&reccnt='.$recCnt;
 
 $navStr = '<div class="navbarDiv" style="float:right;">';
-if($pageNum) $navStr .= '<a href="'.$navPageBase.'&pagenum='.($pageNum-1).'&limitcnt='.$limitCnt.'" title="'.$LANG['PREVIOUS'].' '.$limitCnt.' '.$LANG['RECORDS1'].'">&lt;&lt;</a>';
+if($pageNum) $navStr .= '<a href="' . htmlspecialchars($navPageBase, HTML_SPECIAL_CHARS_FLAGS) . '&pagenum=' . htmlspecialchars(($pageNum-1), HTML_SPECIAL_CHARS_FLAGS) . '&limitcnt=' . htmlspecialchars($limitCnt, HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars($LANG['PREVIOUS'], HTML_SPECIAL_CHARS_FLAGS) . ' ' . htmlspecialchars($limitCnt, HTML_SPECIAL_CHARS_FLAGS) . ' ' . htmlspecialchars($LANG['RECORDS1'], HTML_SPECIAL_CHARS_FLAGS) . '">&lt;&lt;</a>';
 else $navStr .= '&lt;&lt;';
 $navStr .= ' | ';
 $navStr .= ($pageNum*$limitCnt).'-'.$subCnt.' of '.$recCnt.' '.$LANG['FIELDS_EDITED'];
 $navStr .= ' | ';
-if($subCnt < $recCnt) $navStr .= '<a href="'.$navPageBase.'&pagenum='.($pageNum+1).'&limitcnt='.$limitCnt.'" title="'.$LANG['NEXT'].' '.$limitCnt.' '.$LANG['RECORDS2'].'">&gt;&gt;</a>';
+if($subCnt < $recCnt) $navStr .= '<a href="' . htmlspecialchars($navPageBase, HTML_SPECIAL_CHARS_FLAGS) . '&pagenum=' . htmlspecialchars(($pageNum+1), HTML_SPECIAL_CHARS_FLAGS) . '&limitcnt=' . htmlspecialchars($limitCnt, HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars($LANG['NEXT'], HTML_SPECIAL_CHARS_FLAGS) . ' ' . htmlspecialchars($limitCnt, HTML_SPECIAL_CHARS_FLAGS) . ' ' . htmlspecialchars($LANG['RECORDS2'], HTML_SPECIAL_CHARS_FLAGS) . '">&gt;&gt;</a>';
 else $navStr .= '&gt;&gt;';
 $navStr .= '</div>';
 ?>
 <html>
 	<head>
 		<title><?php echo $LANG['EDIT_REVIEWER']; ?></title>
-		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -179,10 +179,10 @@ $navStr .= '</div>';
 		echo '<div class="navpath">';
 		echo '<a href="../../index.php">Home</a> &gt;&gt; ';
 		if($reviewManager->getObsUid()){
-			echo '<a href="../../profile/viewprofile.php?tabindex=1">'.$LANG['PERS_SPEC_MNG'].'</a> &gt;&gt; ';
+			echo '<a href="../../profile/viewprofile.php?tabindex=1">' . htmlspecialchars($LANG['PERS_SPEC_MNG'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
 		}
 		else{
-			echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">'.$LANG['COL_MAN_PAN'].'</a> &gt;&gt; ';
+			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . htmlspecialchars($LANG['COL_MAN_PAN'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
 		}
 		echo '<b>'.$LANG['EDIT_REVIEWER'].'</b>';
 		echo '</div>';

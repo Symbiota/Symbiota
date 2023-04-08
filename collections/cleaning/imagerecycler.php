@@ -47,7 +47,7 @@ if($isEditor){
 	?>
 	<div class="navpath">
 		<a href="../../index.php">Homepage</a> &gt;&gt;
-		<a href="../../collections/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management Menu</a> &gt;&gt;
+		<a href="../../collections/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">Collection Management Menu</a> &gt;&gt;
 		<b>Bulk Image Recycler</b>
 	</div>
 	<?php

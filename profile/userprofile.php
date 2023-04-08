@@ -48,10 +48,10 @@ if($isEditor){
 				echo '<div>Login name: '.($person->getUserName()?$person->getUserName():'not registered').'</div>';
 				?>
 				<div style="font-weight:bold;margin-top:10px;">
-					<div><a href="#" onclick="toggleEditingTools('profileeditdiv');return false;"><?php echo (isset($LANG['EDIT_PROFILE'])?$LANG['EDIT_PROFILE']:'Edit Profile'); ?></a></div>
-					<div><a href="#" onclick="toggleEditingTools('pwdeditdiv');return false;"><?php echo (isset($LANG['CHANGE_PASSWORD'])?$LANG['CHANGE_PASSWORD']:'Change Password'); ?></a></div>
-					<div><a href="#" onclick="toggleEditingTools('logineditdiv');return false;"><?php echo (isset($LANG['CHANGE_LOGIN'])?$LANG['CHANGE_LOGIN']:'Change Login'); ?></a></div>
-					<div><a href="#" onclick="toggleEditingTools('managetokensdiv');return false;"><?php echo (isset($LANG['MANAGE_ACCESS'])?$LANG['MANAGE_ACCESS']:'Manage Access'); ?></a></div>
+					<div><a href="#" onclick="toggleEditingTools('profileeditdiv');return false;"><?php echo htmlspecialchars((isset($LANG['EDIT_PROFILE'])?$LANG['EDIT_PROFILE']:'Edit Profile'), HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
+					<div><a href="#" onclick="toggleEditingTools('pwdeditdiv');return false;"><?php echo htmlspecialchars((isset($LANG['CHANGE_PASSWORD'])?$LANG['CHANGE_PASSWORD']:'Change Password'), HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
+					<div><a href="#" onclick="toggleEditingTools('logineditdiv');return false;"><?php echo htmlspecialchars((isset($LANG['CHANGE_LOGIN'])?$LANG['CHANGE_LOGIN']:'Change Login'), HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
+					<div><a href="#" onclick="toggleEditingTools('managetokensdiv');return false;"><?php echo htmlspecialchars((isset($LANG['MANAGE_ACCESS'])?$LANG['MANAGE_ACCESS']:'Manage Access'), HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
 				</div>
 			</div>
 		</div>
@@ -295,7 +295,7 @@ if($isEditor){
 						echo $utArr['sciname'];
 						if($utArr['geographicScope']) echo ' - '.$utArr['geographicScope'].' ';
 						if($utArr['notes']) echo ', '.$utArr['notes'];
-						echo ' <a href="viewprofile.php?action=delusertaxonomy&utid='.$utid.'&userid='.$userId.'"><img src="../images/drop.png" style="width:14px;" /></a>';
+						echo ' <a href="viewprofile.php?action=delusertaxonomy&utid=' . htmlspecialchars($utid, HTML_SPECIAL_CHARS_FLAGS) . '&userid=' . htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../images/drop.png" style="width:14px;" /></a>';
 						echo '</li>';
 					}
 					echo '</ul>';

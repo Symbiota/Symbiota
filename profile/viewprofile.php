@@ -127,7 +127,7 @@ if($isEditor){
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE.' - '. (isset($LANG['VIEW_PROFILE'])?$LANG['VIEW_PROFILE']:'View User Profile'); ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -150,8 +150,8 @@ if($isEditor){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href='../index.php'><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
-		<a href="../profile/viewprofile.php"><?php echo (isset($LANG['MY_PROFILE'])?$LANG['MY_PROFILE']:'My Profile'); ?></a>
+		<a href='../index.php'><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+		<a href="../profile/viewprofile.php"><?php echo htmlspecialchars((isset($LANG['MY_PROFILE'])?$LANG['MY_PROFILE']:'My Profile'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
 	</div>
 	<!-- inner text -->
 	<div id="innertext">
@@ -166,16 +166,16 @@ if($isEditor){
 				<?php
 				if($floraModIsActive){
 					?>
-					<li><a href="../checklists/checklistadminmeta.php?userid=<?php echo $userId; ?>"><?php echo (isset($LANG['SPEC_CHECKLIST'])?$LANG['SPEC_CHECKLIST']:'Species Checklists'); ?></a></li>
+					<li><a href="../checklists/checklistadminmeta.php?userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars((isset($LANG['SPEC_CHECKLIST'])?$LANG['SPEC_CHECKLIST']:'Species Checklists'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
 					<?php
 				}
 				?>
-				<li><a href="occurrencemenu.php"><?php echo (isset($LANG['OCC_MGMNT'])?$LANG['OCC_MGMNT']:'Occurrence Management'); ?></a></li>
-				<li><a href="userprofile.php?userid=<?php echo $userId; ?>"><?php echo (isset($LANG['USER_PROFILE'])?$LANG['USER_PROFILE']:'User Profile'); ?></a></li>
+				<li><a href="occurrencemenu.php"><?php echo htmlspecialchars((isset($LANG['OCC_MGMNT'])?$LANG['OCC_MGMNT']:'Occurrence Management'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
+				<li><a href="userprofile.php?userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars((isset($LANG['USER_PROFILE'])?$LANG['USER_PROFILE']:'User Profile'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
 				<?php
 				if($person->getIsTaxonomyEditor()) {
-					echo '<li><a href="specimenstoid.php?userid='.$userId.'&action='.$action.'">'.(isset($LANG['IDS_NEEDED'])?$LANG['IDS_NEEDED']:'IDs Needed').'</a></li>';
-					echo '<li><a href="imagesforid.php">'.(isset($LANG['IMAGES_ID'])?$LANG['IMAGES_ID']:'Images for ID').'</a></li>';
+					echo '<li><a href="specimenstoid.php?userid=' . htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS) . '&action=' . htmlspecialchars($action, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars((isset($LANG['IDS_NEEDED'])?$LANG['IDS_NEEDED']:'IDs Needed'), HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
+					echo '<li><a href="imagesforid.php">' . htmlspecialchars((isset($LANG['IMAGES_ID'])?$LANG['IMAGES_ID']:'Images for ID'), HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
 				}
 				?>
 			</ul>

@@ -59,7 +59,7 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 				$childArr = $verifyArr['child'];
 				echo '<div style="color:red;">'.(isset($LANG['CHILDREN_EXIST'])?$LANG['CHILDREN_EXIST']:'Warning: children taxa exist for this taxon. They must be remapped before this taxon can be removed').'</div>';
 				foreach($childArr as $childTid => $childSciname){
-					echo '<div style="margin:3px 10px;"><a href="taxoneditor.php?tid='.$childTid.'" target="_blank">'.$childSciname.'</a></div>';
+					echo '<div style="margin:3px 10px;"><a href="taxoneditor.php?tid=' . htmlspecialchars($childTid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($childSciname, HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 				}
 			}
 			else{
@@ -78,7 +78,7 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 				$synArr = $verifyArr['syn'];
 				echo '<div style="color:red;">'.(isset($LANG['SYN_EXISTS'])?$LANG['SYN_EXISTS']:'Warning: synonym links exist for this taxon. They must be remapped before this taxon can be removed').'</div>';
 				foreach($synArr as $synTid => $synSciname){
-					echo '<div style="margin:3px 10px;"><a href="taxoneditor.php?tid='.$synTid.'" target="_blank">'.$synSciname.'</a></div>';
+					echo '<div style="margin:3px 10px;"><a href="taxoneditor.php?tid=' . htmlspecialchars($synTid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($synSciname, HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 				}
 			}
 			else{
@@ -158,7 +158,7 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 					<?php
 					foreach($verifyArr['occur'] as $occid){
 						echo '<li>';
-						echo '<a href="../../collections/individual/index.php?occid='.$occid.'">#'.$occid.'</a>';
+						echo '<a href="../../collections/individual/index.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '">#' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 						echo '</li>';
 					}
 					?>
@@ -179,7 +179,7 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 					<?php
 					foreach($verifyArr['dets'] as $occid){
 						echo '<li>';
-						echo '<a href="../../collections/individual/index.php?occid='.$occid.'" target="_blank">#'.$occid.'</a>';
+						echo '<a href="../../collections/individual/index.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">#' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 						echo '</li>';
 					}
 					?>
@@ -205,7 +205,7 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 				<ul>
 					<?php
 					foreach($clArr as $k => $v){
-						echo '<li><a href="../../checklists/checklist.php?clid='.$k.'" target="_blank">';
+						echo '<li><a href="../../checklists/checklist.php?clid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 						echo $v;
 						echo '</a></li>';
 					}

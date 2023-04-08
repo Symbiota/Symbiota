@@ -64,7 +64,7 @@ if($chars){
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE.$LANG['WEBKEY'].preg_replace('/\<[^\>]+\>/','',$dataManager->getClName()); ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
@@ -167,25 +167,25 @@ if($chars){
 $displayLeftMenu = (isset($ident_keyMenu)?$ident_keyMenu:true);
 include($SERVER_ROOT.'/includes/header.php');
 echo '<div class="navpath">';
-echo '<a href="../index.php">'.$LANG['HOME'].'</a> &gt;&gt; ';
+echo '<a href="../index.php">' . htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
 if($dynClid){
 	if($dataManager->getClType() == 'Specimen Checklist'){
-		echo '<a href="'.$CLIENT_ROOT.'/collections/list.php?tabindex=0">';
+		echo '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . ' /collections/list.php?tabindex=0">';
 		echo 'Occurrence Checklist';
 		echo '</a> &gt;&gt; ';
 	}
 }
 elseif($clid){
-	echo '<a href="'.$CLIENT_ROOT.'/checklists/checklist.php?clid='.$clid.'&pid='.$pid.'">';
+	echo '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . ' /checklists/checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">';
 	echo 'Checklist: '.$dataManager->getClName();
 	echo '</a> &gt;&gt; ';
 }
 elseif($pid){
-	echo '<a href="'.$CLIENT_ROOT.'/projects/index.php?pid='.$pid.'">';
+	echo '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . ' /projects/index.php?pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">';
 	echo 'Project Checklists';
 	echo '</a> &gt;&gt; ';
 }
-echo '<a href="key-v1.php?clid='.$clid.'&pid='.$pid.'&taxon=All+Species" alt="Traditional key">Previous version of Key</a> &gt;&gt; ';
+echo '<a href="key-v1.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&taxon=All+Species" alt="Traditional key">Previous version of Key</a> &gt;&gt; ';
 echo '<b>Identification Key (new version): '.$dataManager->getClName().'</b>';
 echo '</div>';
 ?>
@@ -268,14 +268,14 @@ echo '</div>';
 		if($clid && $isEditor){
 			?>
 			<div style="float:right;margin:15px;" title="Edit Character Matrix">
-				<a href="tools/matrixeditor.php?clid=<?php echo $clid; ?>"><img class="editimg" src="../images/edit.png" /><span style="font-size:70%;">CM</span></a>
+				<a href="tools/matrixeditor.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>"><img class="editimg" src="../images/edit.png" /><span style="font-size:70%;">CM</span></a>
 			</div>
 			<?php
 		}
 		?>
 		<div id="title-div">
 			<?php
-			if($FLORA_MOD_IS_ACTIVE) echo '<a href="../checklists/checklist.php?clid='.$clid.'&dynclid='.$dynClid.'&pid='.$pid.'">';
+			if($FLORA_MOD_IS_ACTIVE) echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&dynclid=' . htmlspecialchars($dynClid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS).'">';
 			echo $dataManager->getClName().' ';
 			if($FLORA_MOD_IS_ACTIVE) echo '</a>';
 			?>
@@ -295,14 +295,14 @@ echo '</div>';
 					echo '<div class="taxon-div">';
 					if($displayImages){
 						echo '<div class="img-div">';
-						echo '<a href="../taxa/index.php?taxon='.$tid."&clid=".($clType=="static"?$clid:"").'" target="_blank">';
+						echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . "&clid=" . htmlspecialchars(($clType=="static"?$clid:""), HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 						if(isset($taxonArr['i'])) echo '<img src="'.$taxonArr['i'].'" />';
 						else echo '<div>Image<br/>Not<br/>Available</div>';
 						echo '</a>';
 						echo '</div>';
 					}
 					echo '<div class="sciname-div">';
-					echo '<a href="../taxa/index.php?taxon='.$tid."&clid=".($clType=="static"?$clid:"").'" target="_blank"><i>'.$taxonArr['s'].'</i></a>';
+					echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . "&clid=" . htmlspecialchars(($clType=="static"?$clid:""), HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><i>' . htmlspecialchars($taxonArr['s'], HTML_SPECIAL_CHARS_FLAGS) . '</i></a>';
 					if($displayCommon) echo ($displayImages?'<br/>':(isset($taxonArr['v'])?' - ':'')).'<span class="vern-span">'.(isset($taxonArr['v'])?$taxonArr['v']:'&nbsp;').'</span>';
 					if($isEditor && !$displayImages){
 						echo '<a href="#" onclick="openEditorPopup('.$tid.')">';

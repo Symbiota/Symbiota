@@ -66,8 +66,8 @@ if (!$fileExists) {
 
         foreach ($annotations as $annotation) {
             echo "<h1>" . $_GET['scientificName'] . " - (" . $annotation->scientificNameAuthorship . ")</h1>";
-            echo '<p><a href="response.php?uri='.$annotation->uri.'" onclick="window.open(this.href, \'popupwindow\', \'width=500,height=400\'); return false;">'.(isset($LANG['RESPOND'])?$LANG['RESPOND']:'Respond').'</a><br />';
-            echo "<a href=\"".CLIENTHELPER_ENDPOINT."/clientHelper/getAnnotation/?uri=" . $annotation->uri . "\" target=\"_blank\">View</a><br /></p>";
+            echo '<p><a href="response.php?uri=' . htmlspecialchars($annotation->uri, HTML_SPECIAL_CHARS_FLAGS) . '" onclick="window.open(this.href, \'popupwindow\', \'width=500,height=400\'); return false;">' . htmlspecialchars((isset($LANG['RESPOND'])?$LANG['RESPOND']:'Respond'), HTML_SPECIAL_CHARS_FLAGS) . '</a><br />';
+            echo "<a href=\"" . htmlspecialchars($CLIENTHELPER_ENDPOINT, HTML_SPECIAL_CHARS_FLAGS) . "/clientHelper/getAnnotation/?uri=" . htmlspecialchars($annotation->uri, HTML_SPECIAL_CHARS_FLAGS) . "\" target=\"_blank\">View</a><br /></p>";
             ?>
             <table>
                 <tr>

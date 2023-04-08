@@ -96,7 +96,7 @@ if(!$transInstList) echo '<script type="text/javascript">displayNewExchange();</
 							$transList = $loanManager->getTransactions($collid,$k);
 							foreach($transList as $t => $transArr){
 								echo '<li>';
-								echo '<a href="exchange.php?collid='.$collid.'&exchangeid='.$t.'">#'.$transArr['identifier'].' <img src="../../images/edit.png" style="width:12px" /></a>: ';
+								echo '<a href="exchange.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&exchangeid=' . htmlspecialchars($t, HTML_SPECIAL_CHARS_FLAGS) . '">#' . $transArr['identifier'] . ' <img src="../../images/edit.png" style="width:12px" /></a>: ';
 								if($transArr['transactiontype'] == 'Shipment'){
 									if($transArr['in_out'] == 'Out'){
 										echo 'Outgoing exchange; Sent ';

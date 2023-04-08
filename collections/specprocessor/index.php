@@ -119,7 +119,7 @@ if($isEditor){
 		else{
 			echo '<div class="navpath">';
 			echo '<a href="../../index.php">Home</a> &gt;&gt; ';
-			echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
+			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">Collection Control Panel</a> &gt;&gt; ';
 			echo '<b>Specimen Processor Control Panel</b>';
 			echo '</div>';
 		}
@@ -143,18 +143,18 @@ if($isEditor){
 				?>
 				<div id="tabs" class="taxondisplaydiv">
 				    <ul>
-				        <li><a href="imageprocessor.php?collid=<?php echo $collid.'&spprid='.$spprId.'&submitaction='.$action.'&filename='.$fileName; ?>">Image Loading</a></li>
-				        <li><a href="crowdsource/controlpanel.php?collid=<?php echo $collid; ?>">Crowdsourcing</a></li>
-				        <li><a href="ocrprocessor.php?collid=<?php echo $collid.'&procstatus='.$procStatus.'&spprid='.$spprId; ?>">OCR</a></li>
+				        <li><a href="imageprocessor.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&spprid=' . htmlspecialchars($spprId, HTML_SPECIAL_CHARS_FLAGS) . '&submitaction=' . htmlspecialchars($action, HTML_SPECIAL_CHARS_FLAGS) . '&filename=' . htmlspecialchars($fileName, HTML_SPECIAL_CHARS_FLAGS); ?>">Image Loading</a></li>
+				        <li><a href="crowdsource/controlpanel.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">Crowdsourcing</a></li>
+				        <li><a href="ocrprocessor.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&procstatus=' . htmlspecialchars($procStatus, HTML_SPECIAL_CHARS_FLAGS) . '&spprid=' . htmlspecialchars($spprId, HTML_SPECIAL_CHARS_FLAGS); ?>">OCR</a></li>
 				        <!--
-				        <li><a href="nlpprocessor.php?collid=<?php echo $collid.'&spnlpid='.$spNlpId; ?>">NLP</a></li>
+				        <li><a href="nlpprocessor.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&spnlpid=' . htmlspecialchars($spNlpId, HTML_SPECIAL_CHARS_FLAGS); ?>">NLP</a></li>
 				         -->
-				        <li><a href="reports.php?<?php echo $_SERVER['QUERY_STRING']; ?>">Reports</a></li>
-				        <li><a href="exporter.php?collid=<?php echo $collid.'&displaymode='.$displayMode; ?>">Exporter</a></li>
+				        <li><a href="reports.php?<?php echo htmlspecialchars($_SERVER['QUERY_STRING'], HTML_SPECIAL_CHARS_FLAGS); ?>">Reports</a></li>
+				        <li><a href="exporter.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&displaymode=' . htmlspecialchars($displayMode, HTML_SPECIAL_CHARS_FLAGS); ?>">Exporter</a></li>
 				        <?php
 				        if($ACTIVATE_GEOLOCATE_TOOLKIT){
 					        ?>
-					        <li><a href="geolocate.php?collid=<?php echo $collid; ?>">GeoLocate CoGe</a></li>
+					        <li><a href="geolocate.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">GeoLocate CoGe</a></li>
 					        <?php
 				        }
 				        ?>

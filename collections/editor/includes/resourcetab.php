@@ -360,10 +360,10 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 		if($checklistArr){
 			foreach($checklistArr as $vClid => $vClName){
 				echo '<div style="margin:3px">';
-				echo '<a href="../../checklists/checklist.php?showvouchers=1&clid='.$vClid.'" target="_blank">'.$vClName.'</a> ';
+				echo '<a href="../../checklists/checklist.php?showvouchers=1&clid=' . htmlspecialchars($vClid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($vClName, HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
 				if(array_key_exists($vClid, $userChecklists)){
 				?>
-					<a href="occurrenceeditor.php?submitaction=deletevoucher&delclid=<?php echo $vClid.'&occid='.$occid.'&tabtarget=3'; ?>" title="<?php echo $LANG['DELETE_VOUCHER_LINK']; ?>" onclick="return confirm('<?php echo $LANG['SURE_REMOVE_VOUCHER']; ?>">;
+					<a href="occurrenceeditor.php?submitaction=deletevoucher&delclid=<?php echo htmlspecialchars($vClid, HTML_SPECIAL_CHARS_FLAGS) . '&occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '&tabtarget=3'; ?>" title="<?php echo htmlspecialchars($LANG['DELETE_VOUCHER_LINK'], HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="return confirm('<?php echo htmlspecialchars($LANG['SURE_REMOVE_VOUCHER'], HTML_SPECIAL_CHARS_FLAGS); ?>">;
 				<?php
 					echo '<img src="../../images/drop.png" style="width:12px;" />';
 					echo '</a>';
@@ -506,7 +506,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 					<div style="margin-left:15px;"><b><?php echo $LANG['IDENTIFIER']; ?>:</b> <?php echo $gArr['id']; ?></div>
 					<div style="margin-left:15px;"><b><?php echo $LANG['LOCUS']; ?>:</b> <?php echo $gArr['locus']; ?></div>
 					<div style="margin-left:15px;">
-						<b><?php echo $LANG['URL']; ?>:</b> <a href="<?php echo $gArr['resourceurl']; ?>" target="_blank"><?php echo $gArr['resourceurl']; ?></a>
+						<b><?php echo $LANG['URL']; ?>:</b> <a href="<?php echo htmlspecialchars($gArr['resourceurl'], HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars($gArr['resourceurl'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
 					</div>
 					<div style="margin-left:15px;"><b><?php echo $LANG['NOTES']; ?>:</b> <?php echo $gArr['notes']; ?></div>
 				</div>

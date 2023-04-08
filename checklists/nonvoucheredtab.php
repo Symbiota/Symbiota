@@ -48,7 +48,7 @@ if($isEditor){
 					}
 					?>
 					<span>
-						<a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>"><img src="../images/refresh.png" style="width:14px;vertical-align: middle;" title="<?php echo $LANG['REFRESHLIST'];?>" /></a>
+						<a href="voucheradmin.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><img src="../images/refresh.png" style="width:14px;vertical-align: middle;" title="<?php echo htmlspecialchars($LANG['REFRESHLIST'], HTML_SPECIAL_CHARS_FLAGS);?>" /></a>
 					</span>
 				</div>
 			<?php
@@ -80,11 +80,11 @@ if($isEditor){
 										foreach($occArr as $occid => $oArr){
 											echo '<tr>';
 											echo '<td><input name="occids[]" type="checkbox" value="'.$occid.'-'.$cltid.'" /></td>';
-											echo '<td><a href="../taxa/index.php?taxon='.$oArr['tid'].'" target="_blank">'.$oArr['sciname'].'</a></td>';
+											echo '<td><a href="../taxa/index.php?taxon=' . htmlspecialchars($oArr['tid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($oArr['sciname'], HTML_SPECIAL_CHARS_FLAGS) . '</a></td>';
 											echo '<td>';
 											echo $oArr['recordedby'].' '.$oArr['recordnumber'].'<br/>';
 											if($oArr['eventdate']) echo $oArr['eventdate'].'<br/>';
-											echo '<a href="../collections/individual/index.php?occid='.$occid.'" target="_blank">';
+											echo '<a href="../collections/individual/index.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 											echo $oArr['collcode'];
 											echo '</a>';
 											echo '</td>';
@@ -127,8 +127,8 @@ if($isEditor){
 								foreach($tArr as $tid => $sciname){
 									?>
 									<div>
-										<a href="#" onclick="openPopup('../taxa/index.php?taxauthid=1&taxon=<?php echo $tid.'&clid='.$clid; ?>','taxawindow');return false;"><?php echo $sciname; ?></a>
-										<a href="#" onclick="openPopup('../collections/list.php?db=all&usethes=1&reset=1&mode=voucher&taxa=<?php echo $sciname.'&targetclid='.$clid.'&targettid='.$tid;?>','editorwindow');return false;">
+										<a href="#" onclick="openPopup('../taxa/index.php?taxauthid=1&taxon=<?php echo htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>','taxawindow');return false;"><?php echo $sciname; ?></a>
+										<a href="#" onclick="openPopup('../collections/list.php?db=all&usethes=1&reset=1&mode=voucher&taxa=<?php echo htmlspecialchars($sciname, HTML_SPECIAL_CHARS_FLAGS) . '&targetclid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&targettid=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS);?>','editorwindow');return false;">
 											<img src="../images/link.png" style="width:13px;" title="<?php echo $LANG['LINKVOUCHSPECIMEN'];?>" />
 										</a>
 									</div>
@@ -139,11 +139,11 @@ if($isEditor){
 							$arrCnt = $nonVoucherArr;
 							if($startPos || $nonVoucherCnt > 100){
 								echo '<div style="text-weight:bold;">';
-								if($startPos > 0) echo '<a href="voucheradmin.php?clid='.$clid.'&pid='.$pid.'&start='.($startPos-100).'">';
+								if($startPos > 0) echo '<a href="voucheradmin.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&start=' . htmlspecialchars(($startPos-100), HTML_SPECIAL_CHARS_FLAGS) . '">';
 								echo '&lt;&lt; '.$LANG['PREVIOUS'].'';
 								if($startPos > 0) echo '</a>';
 								echo ' || <b>'.$startPos.'-'.($startPos+($arrCnt<100?$arrCnt:100)).''.$LANG['RECORDS'].'</b> || ';
-								if(($startPos + 100) <= $nonVoucherCnt) echo '<a href="voucheradmin.php?clid='.$clid.'&pid='.$pid.'&start='.($startPos+100).'">';
+								if(($startPos + 100) <= $nonVoucherCnt) echo '<a href="voucheradmin.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&start=' . htmlspecialchars(($startPos+100), HTML_SPECIAL_CHARS_FLAGS) . '">';
 								echo ''.$LANG['NEXT'].' &gt;&gt;';
 								if(($startPos + 100) <= $nonVoucherCnt) echo '</a>';
 								echo '</div>';

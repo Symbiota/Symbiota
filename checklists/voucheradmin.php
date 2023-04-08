@@ -47,7 +47,7 @@ $clMetaArr = $clManager->getClMetadata();
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['CHECKLIST_ADMIN'];?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -71,14 +71,14 @@ $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath">
-	<a href="../index.php"><?php echo $LANG['NAV_HOME']?></a> &gt;&gt;
-	<a href="checklist.php?clid=<?php echo $clid.'&pid='.$pid; ?>"><?php echo $LANG['RETURNCHECK'];?></a> &gt;&gt;
+	<a href="../index.php"><?php echo htmlspecialchars($LANG['NAV_HOME'], HTML_SPECIAL_CHARS_FLAGS)?></a> &gt;&gt;
+	<a href="checklist.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['RETURNCHECK'], HTML_SPECIAL_CHARS_FLAGS);?></a> &gt;&gt;
 	<b><?php echo $LANG['CHECKLIST_ADMIN'];?></b>
 </div>
 <!-- This is inner text! -->
 <div id='innertext'>
 <div style="color:#990000;font-size:20px;font-weight:bold;margin:0px 10px 10px 0px;">
-	<a href="checklist.php?clid=<?php echo $clid.'&pid='.$pid; ?>">
+	<a href="checklist.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>">
 		<?php echo $clManager->getClName(); ?>
 	</a>
 </div>
@@ -162,7 +162,7 @@ if($clid && $isEditor){
 									<?php
 									$coordAidUrl = '../collections/tools/mapcoordaid.php?mapmode=rectangle&latdef='.$clMetaArr['latcentroid'].'&lngdef='.$clMetaArr['longcentroid'];
 									?>
-									<a href="#" onclick="openPopup('<?php echo $coordAidUrl; ?>','boundingbox')"><img src="../images/world.png" style="width:12px" title="Find Coordinate" /></a>
+									<a href="#" onclick="openPopup('<?php echo htmlspecialchars($coordAidUrl, HTML_SPECIAL_CHARS_FLAGS); ?>','boundingbox')"><img src="../images/world.png" style="width:12px" title="Find Coordinate" /></a>
 								</div>
 								<div>
 									<b><?php echo $LANG['LATS'];?>:</b>
@@ -183,7 +183,7 @@ if($clid && $isEditor){
 								<div>
 									<input name="includewkt" value="1" type="checkbox" <?php if(isset($termArr['includewkt'])) echo 'CHECKED'; ?> onclick="coordInputSelected(this)" />
 									<?php echo (isset($LANG['POLYGON_SEARCH'])?$LANG['POLYGON_SEARCH']:'Search based on polygon defining checklist research boundaries'); ?>
-									<a href="#"  onclick="openPopup('tools/mappolyaid.php?clid=<?php echo $clid; ?>','mappopup');return false;" title="Edit Metadata and polygon"><img src="../images/edit.png" style="width:12px" /></a>
+									<a href="#"  onclick="openPopup('tools/mappolyaid.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>','mappopup');return false;" title="Edit Metadata and polygon"><img src="../images/edit.png" style="width:12px" /></a>
 								</div>
 								<div>
 									<input name="excludecult" value="1" type="checkbox" <?php if(isset($termArr['excludecult'])) echo 'CHECKED'; ?> />
@@ -228,39 +228,39 @@ if($clid && $isEditor){
 		?>
 		<div id="tabs" style="margin-top:25px;">
 			<ul>
-				<li><a href="nonvoucheredtab.php?clid=<?php echo $clid.'&pid='.$pid.'&start='.$startPos.'&displaymode='.$displayMode; ?>"><span><?php echo $LANG['NON_VOUCHERED'];?></span></a></li>
-				<li><a href="vamissingtaxa.php?clid=<?php echo $clid.'&pid='.$pid.'&start='.$startPos.'&displaymode='.($tabIndex==1?$displayMode:0).'&excludevouchers='.(isset($_POST['excludevouchers'])?$_POST['excludevouchers']:''); ?>"><span><?php echo $LANG['MISSINGTAXA'];?></span></a></li>
-				<li><a href="vaconflicts.php?clid=<?php echo $clid.'&pid='.$pid.'&start='.$startPos; ?>"><span><?php echo $LANG['VOUCHCONF'];?></span></a></li>
+				<li><a href="nonvoucheredtab.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&start=' . htmlspecialchars($startPos, HTML_SPECIAL_CHARS_FLAGS) . '&displaymode=' . htmlspecialchars($displayMode, HTML_SPECIAL_CHARS_FLAGS); ?>"><span><?php echo htmlspecialchars($LANG['NON_VOUCHERED'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
+				<li><a href="vamissingtaxa.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&start=' . htmlspecialchars($startPos, HTML_SPECIAL_CHARS_FLAGS) . '&displaymode=' . htmlspecialchars(($tabIndex==1?$displayMode:0), HTML_SPECIAL_CHARS_FLAGS) . '&excludevouchers=' . htmlspecialchars((isset($_POST['excludevouchers'])?$_POST['excludevouchers']:''), HTML_SPECIAL_CHARS_FLAGS); ?>"><span><?php echo htmlspecialchars($LANG['MISSINGTAXA'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
+				<li><a href="vaconflicts.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&start=' . htmlspecialchars($startPos, HTML_SPECIAL_CHARS_FLAGS) ;  ?>"><span><?php echo htmlspecialchars($LANG['VOUCHCONF'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
 				<?php
-				if($clManager->hasVoucherProjects()) echo '<li><a href="imgvouchertab.php?clid='.$clid.'">'.(isset($LANG['ADDIMGV'])?$LANG['ADDIMGV']:'Add Image Voucher').'</a></li>';
+				if($clManager->hasVoucherProjects()) echo '<li><a href="imgvouchertab.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '">'.(isset($LANG['ADDIMGV'])?$LANG['ADDIMGV']:'Add Image Voucher').'</a></li>';
 				?>
-				<li><a href="#reportDiv"><span><?php echo $LANG['REPORTS'];?></span></a></li>
+				<li><a href="#reportDiv"><span><?php echo htmlspecialchars($LANG['REPORTS'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
 			</ul>
 			<div id="reportDiv">
 				<div style="margin:25px;height:400px;">
 					<div style="margin:10px 5px;"><?php echo $LANG['ADDITIONAL'];?>.</div>
 					<ul>
-						<li><a href="voucherreporthandler.php?rtype=fullcsv&clid=<?php echo $clid; ?>"><?php echo $LANG['FULLSPECLIST'];?></a></li>
+						<li><a href="voucherreporthandler.php?rtype=fullcsv&clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['FULLSPECLIST'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
 						<?php
 						$vouchersExist = $clManager->vouchersExist();
 						if($vouchersExist){
 							?>
-							<li><a href="voucherreporthandler.php?rtype=fullvoucherscsv&clid=<?php echo $clid; ?>"><?php echo $LANG['FULLSPECLISTVOUCHER'];?></a></li>
+							<li><a href="voucherreporthandler.php?rtype=fullvoucherscsv&clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['FULLSPECLISTVOUCHER'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
 							<li>
-								<a href="#" onclick="openPopup('../collections/download/index.php?searchvar=<?php echo urlencode('clid='.$clid); ?>&noheader=1','repvouchers');return false;">
+								<a href="#" onclick="openPopup('../collections/download/index.php?searchvar=<?php echo urlencode('clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS)); ?>&noheader=1','repvouchers');return false;">
 									<?php echo (isset($LANG['VOUCHERONLY'])?$LANG['VOUCHERONLY']:'Occurrence vouchers only (DwC-A, CSV, Tab-delimited)'); ?>
 								</a>
 							</li>
 							<?php
 						}
 						?>
-						<li><a href="voucherreporthandler.php?rtype=fullalloccurcsv&clid=<?php echo $clid; ?>"><?php echo $LANG['FULLSPECLISTALLOCCUR'];?></a></li>
-						<li><a href="voucherreporthandler.php?rtype=pensoftxlsx&clid=<?php echo $clid; ?>" target="_blank"><?php echo (isset($LANG['PENSOFT_XLSX_EXPORT'])?$LANG['PENSOFT_XLSX_EXPORT']:'Pensoft Excel Export');?></a></li>
+						<li><a href="voucherreporthandler.php?rtype=fullalloccurcsv&clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['FULLSPECLISTALLOCCUR'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
+						<li><a href="voucherreporthandler.php?rtype=pensoftxlsx&clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars((isset($LANG['PENSOFT_XLSX_EXPORT'])?$LANG['PENSOFT_XLSX_EXPORT']:'Pensoft Excel Export'), HTML_SPECIAL_CHARS_FLAGS);?></a></li>
 						<li><?php echo $LANG['SPECMISSINGTITLE'];?></li>
 					</ul>
 					<ul style="margin:-10 0px 0px 25px;list-style-type:circle">
-						<li><a href="voucherreporthandler.php?rtype=missingoccurcsv&clid=<?php echo $clid; ?>"><?php echo $LANG['SPECMISSTAXA'];?></a></li>
-						<li><a href="voucherreporthandler.php?rtype=problemtaxacsv&clid=<?php echo $clid; ?>"><?php echo $LANG['SPECMISSPELLED'];?></a></li>
+						<li><a href="voucherreporthandler.php?rtype=missingoccurcsv&clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['SPECMISSTAXA'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
+						<li><a href="voucherreporthandler.php?rtype=problemtaxacsv&clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['SPECMISSPELLED'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
 					</ul>
 				</div>
 			</div>

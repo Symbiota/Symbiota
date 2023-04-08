@@ -47,7 +47,7 @@ $clArr = $obsManager->getChecklists();
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['OBS_SUBMIT']; ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -100,7 +100,7 @@ $clArr = $obsManager->getChecklists();
 						<?php echo $LANG['SUCCESS_IMAGE']; ?>
 					</div>
 					<div style="font:weight;font-size:120%;margin-top:10px;">
-						<?php echo $LANG['OPEN']; ?> <a href="../individual/index.php?occid=<?php echo $occid; ?>" target="_blank"><?php echo $LANG['OCC_DET_VIEW']; ?></a> <?php echo $LANG['TO_SEE_NEW']; ?>
+						<?php echo $LANG['OPEN']; ?> <a href="../individual/index.php?occid=<?php echo htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars($LANG['OCC_DET_VIEW'], HTML_SPECIAL_CHARS_FLAGS); ?></a> <?php echo htmlspecialchars($LANG['TO_SEE_NEW'], HTML_SPECIAL_CHARS_FLAGS); ?>
 					</div>
 					<?php
 					if($clid){
@@ -108,7 +108,7 @@ $clArr = $obsManager->getChecklists();
 						if(isset($clArr[$clid])) $checklistName = $clArr[$clid];
 						?>
 						<div style="font:weight;font-size:120%;margin-top:10px;">
-							<?php echo $LANG['GO_TO']; ?> <a href="../checklists/checklist.php?clid=<?php echo $clid; ?>" target="_blank"><?php echo $checklistName; ?></a> <?php echo $LANG['CHECKLIST']; ?>
+							<?php echo $LANG['GO_TO']; ?> <a href="../checklists/checklist.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars($checklistName, HTML_SPECIAL_CHARS_FLAGS); ?></a> <?php echo htmlspecialchars($LANG['CHECKLIST'], HTML_SPECIAL_CHARS_FLAGS); ?>
 						</div>
 						<?php
 					}

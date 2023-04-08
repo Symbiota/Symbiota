@@ -156,7 +156,7 @@ if($action == "Create Login"){
 			echo (isset($LANG['USERNAME_EXISTS_1'])?$LANG['USERNAME_EXISTS_1']:'This username');
 			echo '('.$login.') '.(isset($LANG['USERNAME_EXISTS_2'])?$LANG['USERNAME_EXISTS_2']:'is already being used').'.<br>';
 			echo (isset($LANG['USERNAME_EXISTS_3'])?$LANG['USERNAME_EXISTS_3']:'Please choose a different login name or visit the');
-			echo ' <a href="index.php?login='.$login.'">'.(isset($LANG['LOGIN_PAGE'])?$LANG['LOGIN_PAGE']:'login page').'</a> ';
+			echo ' <a href="index.php?login=' . htmlspecialchars($login, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars((isset($LANG['LOGIN_PAGE'])?$LANG['LOGIN_PAGE']:'login page'), HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
 			echo (isset($LANG['USERNAME_EXISTS_4'])?$LANG['USERNAME_EXISTS_4']:'if you believe this might be you').'.';
 		}
 		elseif($displayStr == 'email_registered'){

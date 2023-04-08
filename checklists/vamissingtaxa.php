@@ -35,10 +35,10 @@ if($isEditor){
 			echo $vManager->getMissingTaxaCount();
 			?>
 			<span style="margin-left:5px">
-				<a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid.'&displaymode='.$displayMode; ?>&tabindex=1"><img src="../images/refresh.png" style="width:14px;vertical-align: middle;" title="<?php echo (isset($LANG['REFRESH'])?$LANG['REFRESH']:'Refresh List'); ?>" /></a>
+				<a href="voucheradmin.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&displaymode=' . htmlspecialchars($displayMode, HTML_SPECIAL_CHARS_FLAGS); ?>&tabindex=1"><img src="../images/refresh.png" style="width:14px;vertical-align: middle;" title="<?php echo htmlspecialchars((isset($LANG['REFRESH'])?$LANG['REFRESH']:'Refresh List'), HTML_SPECIAL_CHARS_FLAGS); ?>" /></a>
 			</span>
 			<span style="margin-left:5px;">
-				<a href="voucherreporthandler.php?rtype=<?php echo ($displayMode==2?'problemtaxacsv':'missingoccurcsv').'&clid='.$clid; ?>" target="_blank" title="<?php echo (isset($LANG['DOWNLOAD'])?$LANG['DOWNLOAD']:'Download Specimen Records'); ?>">
+				<a href="voucherreporthandler.php?rtype=<?php echo htmlspecialchars(($displayMode==2?'problemtaxacsv':'missingoccurcsv'), HTML_SPECIAL_CHARS_FLAGS) . '&clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank" title="<?php echo htmlspecialchars((isset($LANG['DOWNLOAD'])?$LANG['DOWNLOAD']:'Download Specimen Records'), HTML_SPECIAL_CHARS_FLAGS); ?>">
 					<img src="<?php echo $CLIENT_ROOT; ?>/images/dl.png" style="vertical-align: middle;" />
 				</a>
 			</span>
@@ -88,11 +88,11 @@ if($isEditor){
 									if($sciStr != $oArr['o_sn']) $sciStr .= ' (syn: '.$oArr['o_sn'].')';
 									echo '<tr>';
 									echo '<td><input name="occids[]" type="checkbox" value="'.$occid.'-'.$oArr['tid'].'" /></td>';
-									echo '<td><a href="../taxa/index.php?taxon='.$oArr['tid'].'" target="_blank">'.$sciStr.'</a></td>';
+									echo '<td><a href="../taxa/index.php?taxon=' . htmlspecialchars($oArr['tid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($sciStr, HTML_SPECIAL_CHARS_FLAGS) . '</a></td>';
 									echo '<td>';
 									echo $oArr['recordedby'].' '.$oArr['recordnumber'].'<br/>';
 									if($oArr['eventdate']) echo $oArr['eventdate'].'<br/>';
-									echo '<a href="../collections/individual/index.php?occid='.$occid.'" target="_blank">';
+									echo '<a href="../collections/individual/index.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 									echo $oArr['collcode'];
 									echo '</a>';
 									echo '</td>';
@@ -121,7 +121,7 @@ if($isEditor){
 					<?php
 					echo '<div style="float:left">'.(isset($LANG['SPEC_COUNT'])?$LANG['SPEC_COUNT']:'Specimen Count').' '.$recCnt.'</div>';
 					$queryStr = 'tabindex=1&displaymode=1&clid='.$clid.'&pid='.$pid.'&start='.(++$startIndex);
-					if($recCnt > $limitRange) echo '<div style="float:right;margin-right:30px;"><a style="margin-left:10px;" href="voucheradmin.php?'.$queryStr.'">'.(isset($LANG['VIEW_NEXT'])?$LANG['VIEW_NEXT']:'View Next').' '.$limitRange.'</a></div>';
+					if($recCnt > $limitRange) echo '<div style="float:right;margin-right:30px;"><a style="margin-left:10px;" href="voucheradmin.php?' . htmlspecialchars($queryStr, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars((isset($LANG['VIEW_NEXT'])?$LANG['VIEW_NEXT']:'View Next'), HTML_SPECIAL_CHARS_FLAGS) . ' ' . htmlspecialchars($limitRange, HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 				}
 				elseif($displayMode==2){
 					?>
@@ -154,7 +154,7 @@ if($isEditor){
 									echo '<td>';
 									echo $oArr['recordedby'].' '.$oArr['recordnumber'].'<br/>';
 									if($oArr['eventdate']) echo $oArr['eventdate'].'<br/>';
-									echo '<a href="../collections/individual/index.php?occid='.$occid.'" target="_blank">';
+									echo '<a href="../collections/individual/index.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 									echo $oArr['collcode'];
 									echo '</a>';
 									echo '</td>';
@@ -181,8 +181,8 @@ if($isEditor){
 						foreach($missingArr as $tid => $sn){
 							?>
 							<div>
-								<a href="#" onclick="openPopup('../taxa/index.php?taxauthid=1&taxon=<?php echo $tid.'&clid='.$clid; ?>','taxawindow');return false;"><?php echo $sn; ?></a>
-								<a href="#" onclick="openPopup('../collections/list.php?db=all&usethes=1&reset=1&mode=voucher&taxa=<?php echo $tid.'&targetclid='.$clid.'&targettid='.$tid;?>','editorwindow');return false;">
+								<a href="#" onclick="openPopup('../taxa/index.php?taxauthid=1&taxon=<?php echo htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>','taxawindow');return false;"><?php echo htmlspecialchars($sn, HTML_SPECIAL_CHARS_FLAGS); ?></a>
+								<a href="#" onclick="openPopup('../collections/list.php?db=all&usethes=1&reset=1&mode=voucher&taxa=<?php echo htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&targetclid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&targettid=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS);?>','editorwindow');return false;">
 									<img src="../images/link.png" style="width:13px;" title="<?php echo (isset($LANG['LINK_VOUCHERS'])?$LANG['LINK_VOUCHERS']:'Link Voucher Specimens'); ?>" />
 								</a>
 							</div>

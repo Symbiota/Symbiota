@@ -76,7 +76,7 @@ if($IS_ADMIN) $isEditor = 1;
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
 		<a href="../../sitemap.php">Sitemap</a> &gt;&gt;
-		<b><a href="coordinatevalidator.php?collid='.$collid.'">Coordinate Validator</a></b>
+		<b><a href="coordinatevalidator.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '">Coordinate Validator</a></b>
 	</div>
 	<!-- inner text -->
 	<div id="innertext">
@@ -115,7 +115,7 @@ if($IS_ADMIN) $isEditor = 1;
 							if($occurList){
 								foreach($occurList as $occid => $inArr){
 									echo '<div>';
-									echo '<a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>';
+									echo '<a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 									echo ' - checked by '.$inArr['username'].' on '.$inArr['ts'];
 									echo '</div>';
 								}
@@ -143,7 +143,7 @@ if($IS_ADMIN) $isEditor = 1;
 							echo '<td>'.$rank.'</td>';
 							echo '<td>'.$protocolStr.'</td>';
 							echo '<td>'.number_format($cnt);
-							//if(is_numeric($cnt)) echo ' <a href="coordinatevalidator.php?ranking='.$rank.'&action=displayranklist" title="List specimens"><img src="'.$CLIENT_ROOT.'/images/list.png" style="width:12px" /></a>';
+							//if(is_numeric($cnt)) echo ' <a href="coordinatevalidator.php?ranking=' . htmlspecialchars($rank, HTML_SPECIAL_CHARS_FLAGS) . '&action=displayranklist" title="List specimens"><img src="'.$CLIENT_ROOT.'/images/list.png" style="width:12px" /></a>';
 							echo '</td>';
 							echo '</tr>';
 						}
@@ -162,7 +162,7 @@ if($IS_ADMIN) $isEditor = 1;
 						echo '<tr>';
 						echo '<td>';
 						echo $country;
-						echo ' <a href="../list.php?db=all&country='.$country.'" target="_blank"><img src="../../images/list.png" style="width:12px" /></a>';
+						echo ' <a href="../list.php?db=all&country=' . htmlspecialchars($country, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><img src="../../images/list.png" style="width:12px" /></a>';
 						echo '</td>';
 						echo '<td>'.number_format($cnt).'</td>';
 						echo '<td>';

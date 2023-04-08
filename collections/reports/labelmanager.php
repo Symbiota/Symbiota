@@ -177,7 +177,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 			echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Management Menu</a> &gt;&gt; ';
 		}
 		else{
-			echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management Panel</a> &gt;&gt; ';
+			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">Collection Management Panel</a> &gt;&gt; ';
 		}
 		?>
 		<b>Label Printing</b>
@@ -344,7 +344,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 										<div class="fieldDiv">
 											<div class="fieldLabel">Label Profiles:
 												<?php
-												echo '<span title="Open label profile manager"><a href="labelprofile.php?collid='.$collid.'"><img src="../../images/edit.png" style="width:13px" /></a></span>';
+												echo '<span title="Open label profile manager"><a href="labelprofile.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:13px" /></a></span>';
 												?>
 											</div>
 											<div class="fieldElement">

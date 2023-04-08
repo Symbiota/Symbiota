@@ -50,7 +50,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['GLOSSARY'])?$LANG['GLOSSARY']:'Glossary'); ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
@@ -151,9 +151,9 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 		if($glossary_indexCrumbs){
 			?>
 			<div class='navpath'>
-				<a href='../index.php'><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
+				<a href='../index.php'><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 				<?php echo $glossary_indexCrumbs; ?>
-				<a href='index.php'> <b><?php echo (isset($LANG['GLOSSARY'])?$LANG['GLOSSARY']:'Glossary'); ?></b></a>
+				<a href='index.php'> <b><?php echo htmlspecialchars((isset($LANG['GLOSSARY'])?$LANG['GLOSSARY']:'Glossary'), HTML_SPECIAL_CHARS_FLAGS); ?></b></a>
 			</div>
 			<?php
 		}
@@ -161,8 +161,8 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 	else{
 		?>
 		<div class='navpath'>
-			<a href='../index.php'><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
-			<a href='index.php'> <b><?php echo (isset($LANG['GLOSSARY'])?$LANG['GLOSSARY']:'Glossary'); ?></b></a>
+			<a href='../index.php'><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+			<a href='index.php'> <b><?php echo htmlspecialchars((isset($LANG['GLOSSARY'])?$LANG['GLOSSARY']:'Glossary'), HTML_SPECIAL_CHARS_FLAGS); ?></b></a>
 		</div>
 		<?php
 	}
@@ -368,7 +368,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 							if($isEditor){
 								?>
 								<div style="float:left;margin-left:5px;">
-									<a href="sources.php?emode=1&tid=<?php echo $tid.'&searchterm='.$searchTerm.'&language='.$language.'&taxa='.$tid; ?>"><?php echo (isset($LANG['ADD_SRC'])?$LANG['ADD_SRC']:'(Add Sources)'); ?></a>
+									<a href="sources.php?emode=1&tid=<?php echo htmlspecialchars($tid , HTML_SPECIAL_CHARS_FLAGS) . '&searchterm=' . htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS) . '&language=' . htmlspecialchars($language, HTML_SPECIAL_CHARS_FLAGS) . '&taxa=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars((isset($LANG['ADD_SRC'])?$LANG['ADD_SRC']:'(Add Sources)'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
 								</div>
 								<?php
 							}
@@ -385,7 +385,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 								if($isEditor){
 									?>
 									<div style="float:right;">
-										<a href="sources.php?emode=1&tid=<?php echo $tid.'&searchterm='.$searchTerm.'&language='.$language.'&taxa='.$tid; ?>"><img src="../images/edit.png" style="width:13px" /></a>
+										<a href="sources.php?emode=1&tid=<?php echo htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&searchterm=' . htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS) . '&language=' . htmlspecialchars($language, HTML_SPECIAL_CHARS_FLAGS) . '&taxa=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS); ?>"><img src="../images/edit.png" style="width:13px" /></a>
 									</div>
 									<?php
 								}
@@ -425,7 +425,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 					echo '<div style="clear:both;padding:10px;"><ul>';
 					foreach($termList as $glossId => $termName){
 						echo '<li>';
-						echo '<a href="#" onclick="openTermPopup('.$glossId.'); return false;"><b>'.$termName.'</b></a>';
+						echo '<a href="#" onclick="openTermPopup(' . htmlspecialchars($glossId, HTML_SPECIAL_CHARS_FLAGS) . '); return false;"><b>' . htmlspecialchars($termName, HTML_SPECIAL_CHARS_FLAGS) . '</b></a>';
 						echo '</li>';
 					}
 					echo '</ul></div>';

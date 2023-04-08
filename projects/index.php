@@ -80,7 +80,7 @@ if(!$researchList && !$editMode){
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['INVPROJ'];?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
@@ -211,7 +211,7 @@ if(!$researchList && !$editMode){
 	else{
 		echo "<a href='../index.php'>Home</a> &gt;&gt; ";
 	}
-	echo '<b><a href="index.php?pid='.$pid.'">'.($projArr?$projArr['projname']:'Inventory Project List').'</a></b>';
+	echo '<b><a href="index.php?pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars(($projArr?$projArr['projname']:'Inventory Project List'), HTML_SPECIAL_CHARS_FLAGS) . '</a></b>';
 	echo "</div>";
 	?>
 
@@ -256,12 +256,12 @@ if(!$researchList && !$editMode){
 				?>
 				<div id="tabs" style="height:auto;margin:10px;display:<?php echo ($newProj||$editMode?'block':'none'); ?>;">
 					<ul>
-						<li><a href="#mdtab"><span><?php echo $LANG['METADATA'];?></span></a></li>
+						<li><a href="#mdtab"><span><?php echo htmlspecialchars($LANG['METADATA'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
 						<?php
 						if($pid){
 							?>
-							<li><a href="managertab.php?pid=<?php echo $pid; ?>"><span><?php echo $LANG['INVMANAG'];?></span></a></li>
-							<li><a href="checklisttab.php?pid=<?php echo $pid; ?>"><span><?php echo $LANG['CHECKMANAG'];?></span></a></li>
+							<li><a href="managertab.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><span><?php echo htmlspecialchars($LANG['INVMANAG'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
+							<li><a href="checklisttab.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><span><?php echo htmlspecialchars($LANG['CHECKMANAG'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
 							<?php
 						}
 						?>
@@ -387,7 +387,7 @@ if(!$researchList && !$editMode){
 							<span onclick="toggleResearchInfoBox(this);" title="<?php echo $LANG['QUESRESSPEC'];?>" style="cursor:pointer;">
 								<img src="../images/qmark_big.png" srcset="../images/help-circle.svg" style="width:15px; height:15px;" />
 							</span>
-							<a href="../checklists/clgmap.php?pid=<?php echo $pid;?>" title="<?php echo $LANG['MAPCHECK'];?>">
+							<a href="../checklists/clgmap.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS);?>" title="<?php echo htmlspecialchars($LANG['MAPCHECK'], HTML_SPECIAL_CHARS_FLAGS);?>">
 								<img src='../images/world.png'  srcset="../images/globe.svg" style="width:15px; height:15px;" />
 							</a>
 						</div>
@@ -420,8 +420,8 @@ if(!$researchList && !$editMode){
 							if(isset($LANG['MAPREP'])) $mapTitle = $LANG['MAPREP'];
 							?>
 							<div style="float:right;text-align:center;">
-								<a href="../checklists/clgmap.php?pid=<?php echo $pid;?>" title="<?php echo $mapTitle; ?>">
-									<img src="<?php echo $tnUrl; ?>" style="width:<?php echo $tnWidth; ?>px;" alt="<?php echo $mapTitle; ?>" />
+								<a href="../checklists/clgmap.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS);?>" title="<?php echo htmlspecialchars($mapTitle, HTML_SPECIAL_CHARS_FLAGS); ?>">
+									<img src="<?php echo htmlspecialchars($tnUrl, HTML_SPECIAL_CHARS_FLAGS); ?>" style="width:<?php echo $tnWidth; ?>px;" alt="<?php echo htmlspecialchars($mapTitle, HTML_SPECIAL_CHARS_FLAGS); ?>" />
 									<br/>
 									<?php echo $LANG['OPENMAP'];?>
 								</a>
@@ -435,13 +435,13 @@ if(!$researchList && !$editMode){
 								foreach($researchList as $key => $listArr){
 									?>
 									<li>
-										<a href='../checklists/checklist.php?clid=<?php echo $key."&pid=".$pid; ?>'>
+										<a href='../checklists/checklist.php?clid=<?php echo htmlspecialchars($key, HTML_SPECIAL_CHARS_FLAGS) . "&pid=" . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
 											<?php echo $listArr['name'].($listArr['access']=='private'?' <span title="Viewable only to editors">(private)</span>':''); ?>
 										</a>
 										<?php
 										if($KEY_MOD_IS_ACTIVE){
 											?>
-											<a href='../ident/key.php?clid=<?php echo $key; ?>&pid=<?php echo $pid; ?>&taxon=All+Species'>
+											<a href='../ident/key.php?clid=<?php echo htmlspecialchars($key, HTML_SPECIAL_CHARS_FLAGS); ?>&pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>&taxon=All+Species'>
 												<img style='width:12px;border:0px;' src='../images/key.png'/>
 											</a>
 											<?php
@@ -465,7 +465,7 @@ if(!$researchList && !$editMode){
 			$projectArr = $projManager->getProjectList();
 			foreach($projectArr as $pid => $projList){
 				?>
-				<h2><a href="index.php?pid=<?php echo $pid; ?>"><?php echo $projList["projname"]; ?></a></h2>
+				<h2><a href="index.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($projList["projname"], HTML_SPECIAL_CHARS_FLAGS); ?></a></h2>
 				<div style="margin:0px 0px 30px 15px;">
 					<div><b><?php echo $LANG['MANAG'];?>:</b> <?php echo ($projList["managers"]?$projList["managers"]:'Not defined'); ?></div>
 					<div style='margin-top:10px;'><?php echo $projList["descr"]; ?></div>

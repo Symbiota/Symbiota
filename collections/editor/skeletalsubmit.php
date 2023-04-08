@@ -33,7 +33,7 @@ if($collid){
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['OCC_SKEL_SUBMIT']; ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -53,13 +53,13 @@ if($collid){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href="../../index.php"><?php echo $LANG['HOME']; ?></a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1"><?php echo $LANG['COL_MNGMT']; ?></a> &gt;&gt;
+		<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars($LANG['COL_MNGMT'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 		<b><?php echo $LANG['OCC_SKEL_SUBMIT']; ?></b>
 	</div>
 	<!-- inner text -->
 	<div id="innertext">
-		<div style="float:right;"><a href="#" onclick="toggle('descriptiondiv')"><b><?php echo $LANG['DISPLAY_INSTRUCTIONS']; ?></b></a></div>
+		<div style="float:right;"><a href="#" onclick="toggle('descriptiondiv')"><b><?php echo htmlspecialchars($LANG['DISPLAY_INSTRUCTIONS'], HTML_SPECIAL_CHARS_FLAGS); ?></b></a></div>
 		<h1><?php echo $collMap['collectionname']; ?></h1>
 		<?php
 		if($statusStr){

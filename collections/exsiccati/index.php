@@ -397,7 +397,7 @@ if($ometid) unset($selectLookupArr[$ometid]);
 						?>
 						<li>
 							<?php
-							echo '<a href="index.php?ometid='.$k.'&specimenonly='.$specimenOnly.'&imagesonly='.$imagesOnly.'&collid='.$collId.'&sortBy='.$sortBy.'">';
+							echo '<a href="index.php?ometid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '&specimenonly=' . htmlspecialchars($specimenOnly, HTML_SPECIAL_CHARS_FLAGS) . '&imagesonly=' . htmlspecialchars($imagesOnly, HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&sortBy=' . htmlspecialchars($sortBy, HTML_SPECIAL_CHARS_FLAGS) . '">';
 							echo $tArr['title'];
 							echo '</a>';
 							if($tArr['editor']) echo ', '.$tArr['editor'];
@@ -431,7 +431,7 @@ if($ometid) unset($selectLookupArr[$ometid]);
 				}
 				echo '<div style="font-weight:bold;font-size:120%;">'.$exsArr['title'].'</div>';
 				if(isset($exsArr['sourceidentifier'])){
-					if(preg_match('/^http.+IndExs.+={1}(\d+)$/', $exsArr['sourceidentifier'], $m)) echo ' (<a href="'.$exsArr['sourceidentifier'].'" target="_blank">IndExs #'.$m[1].'</a>)';
+					if(preg_match('/^http.+IndExs.+={1}(\d+)$/', $exsArr['sourceidentifier'], $m)) echo ' (<a href="' . htmlspecialchars($exsArr['sourceidentifier'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">IndExs #' . htmlspecialchars($m[1], HTML_SPECIAL_CHARS_FLAGS) . '</a>)';
 				}
 				if($exsArr['abbreviation']) echo '<div>Abbreviation: '.$exsArr['abbreviation'].'</div>';
 				if($exsArr['editor']) echo '<div>Editor(s): '.$exsArr['editor'].'</div>';
@@ -532,7 +532,7 @@ if($ometid) unset($selectLookupArr[$ometid]);
 							?>
 							<li>
 								<?php
-								echo '<div><a href="index.php?omenid='.$k.'">';
+								echo '<div><a href="index.php?omenid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '">';
 								echo '#'.$numArr['number'];
 								if($numArr['sciname']) echo ' - <i>'.$numArr['sciname'].'</i>';
 								if($numArr['occurstr']) echo ', '.$numArr['occurstr'];
@@ -570,7 +570,7 @@ if($ometid) unset($selectLookupArr[$ometid]);
 			?>
 			<div style="font-weight:bold;font-size:120%;">
 				<?php
-				echo '<a href="index.php?ometid='.$mdArr['ometid'].'">'.$mdArr['title'].'</a> #'.$mdArr['exsnumber'];
+				echo '<a href="index.php?ometid=' . htmlspecialchars($mdArr['ometid'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($mdArr['title'], HTML_SPECIAL_CHARS_FLAGS) . '</a> #' . htmlspecialchars($mdArr['exsnumber'], HTML_SPECIAL_CHARS_FLAGS);
 				?>
 			</div>
 			<div style="margin-left:15px;">
@@ -580,7 +580,7 @@ if($ometid) unset($selectLookupArr[$ometid]);
 				if($mdArr['exsrange']) echo ' ['.$mdArr['exsrange'].']';
 				if($mdArr['notes']) echo '</br>'.$mdArr['notes'];
 				if(isset($mdArr['sourceidentifier'])){
-					if(preg_match('/^http.+IndExs.+={1}(\d+)$/', $mdArr['sourceidentifier'], $m)) echo '<br/><a href="'.$mdArr['sourceidentifier'].'" target="_blank">IndExs #'.$m[1].'</a>';
+					if(preg_match('/^http.+IndExs.+={1}(\d+)$/', $mdArr['sourceidentifier'], $m)) echo '<br/><a href="' . htmlspecialchars($mdArr['sourceidentifier'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">IndExs #' . htmlspecialchars($m[1], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 				}
 				?>
 			</div>
@@ -741,7 +741,7 @@ if($ometid) unset($selectLookupArr[$ometid]);
 									if(array_key_exists('img',$occArr)){
 										$imgArr = array_shift($occArr['img']);
 										?>
-										<a href="<?php echo $imgArr['url']; ?>">
+										<a href="<?php echo htmlspecialchars($imgArr['url'], HTML_SPECIAL_CHARS_FLAGS); ?>">
 											<img src="<?php echo $imgArr['tnurl']; ?>" style="width:75px;" />
 										</a>
 										<?php

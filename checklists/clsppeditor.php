@@ -64,7 +64,7 @@ $clArray = $vManager->getChecklistData();
 <html>
 	<head>
 		<title><?php echo (isset($LANG['SPEC_DETAILS'])?$LANG['SPEC_DETAILS']:'Species Details'); ?>: <?php echo $vManager->getTaxonName()." of ".$vManager->getClName(); ?></title>
-		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -153,8 +153,8 @@ $clArray = $vManager->getChecklistData();
 				?>
 				<div id="tabs" style="margin:10px;">
 				    <ul>
-						<li><a href="#gendiv"><?php echo (isset($LANG['GEN_EDIT'])?$LANG['GEN_EDIT']:'General Editing'); ?></a></li>
-						<li><a href="#voucherdiv"><?php echo (isset($LANG['VOUCHER_EDIT'])?$LANG['VOUCHER_EDIT']:'Voucher Admin'); ?></a></li>
+						<li><a href="#gendiv"><?php echo htmlspecialchars((isset($LANG['GEN_EDIT'])?$LANG['GEN_EDIT']:'General Editing'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
+						<li><a href="#voucherdiv"><?php echo htmlspecialchars((isset($LANG['VOUCHER_EDIT'])?$LANG['VOUCHER_EDIT']:'Voucher Admin'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
 						<!--
 						<li><a href="#coorddiv">Coordinate Admin</a></li>
 						-->
@@ -263,7 +263,7 @@ $clArray = $vManager->getChecklistData();
 						if($OCCURRENCE_MOD_IS_ACTIVE){
 							?>
 							<div style="float:right;margin-top:10px;">
-								<a href="../collections/list.php?mode=voucher&db=all&usethes=1&reset=1&taxa=<?php echo $vManager->getTaxonName()."&targetclid=".$vManager->getClid()."&targettid=".$tid;?>">
+								<a href="../collections/list.php?mode=voucher&db=all&usethes=1&reset=1&taxa=<?php echo htmlspecialchars($vManager->getTaxonName(), HTML_SPECIAL_CHARS_FLAGS) . "&targetclid=" . htmlspecialchars($vManager->getClid(), HTML_SPECIAL_CHARS_FLAGS) . "&targettid=" . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS);?>">
 									<img src="../images/link.png"  style="border:0px;" />
 								</a>
 							</div>
@@ -279,7 +279,7 @@ $clArray = $vManager->getChecklistData();
 								foreach($vArray as $occid => $iArray){
 									?>
 									<li>
-										<a href="#" onclick="openPopup('../collections/individual/index.php?occid=<?php echo $occid; ?>','indpane')"><?php echo $occid; ?></a>:
+										<a href="#" onclick="openPopup('../collections/individual/index.php?occid=<?php echo htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS); ?>','indpane')"><?php echo htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS); ?></a>:
 										<?php
 										if($iArray['catalognumber']) echo $iArray['catalognumber'].', ';
 										echo '<b>'.$iArray['collector'].'</b>, ';

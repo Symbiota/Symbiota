@@ -102,11 +102,11 @@ $childArr = $clManager->getChildrenChecklist()
 				foreach($childArr as $k => $cArr){
 					?>
 					<li>
-						<a href="checklist.php?clid=<?php echo $k; ?>" target="_blank"><?php echo $cArr['name']; ?></a>
+						<a href="checklist.php?clid=<?php echo htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars($cArr['name'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
 						<?php
 						if($cArr['pclid'] == $clid){
 							$confirmStr = (isset($LANG['SURE'])?$LANG['SURE']:'Are you sure you want to remove').$cArr['name'].(isset($LANG['AS_CHILD'])?$LANG['AS_CHILD']:'as a child checklist');
-							echo '<a href="checklistadmin.php?submitaction=delchild&tabindex=2&cliddel='.$k.'&clid='.$clid.'&pid='.$pid.'" onclick="return confirm(\''.$confirmStr.'\')">';
+							echo '<a href="checklistadmin.php?submitaction=delchild&tabindex=2&cliddel=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '&clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '" onclick="return confirm(\'' . htmlspecialchars($confirmStr, HTML_SPECIAL_CHARS_FLAGS) . '\')">';
 							echo '<img src="../images/del.png" style="width:14px;" /></a>';
 							echo '</a>';
 						}
@@ -130,7 +130,7 @@ $childArr = $clManager->getChildrenChecklist()
 				foreach($parentArr as $k => $name){
 					?>
 					<li>
-						<a href="checklist.php?clid=<?php echo $k; ?>" target="_blank"><?php echo $name; ?></a>
+						<a href="checklist.php?clid=<?php echo htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars($name, HTML_SPECIAL_CHARS_FLAGS); ?></a>
 					</li>
 					<?php
 				}
@@ -206,7 +206,7 @@ $childArr = $clManager->getChildrenChecklist()
 					<button name="submitaction" type="submit" value="parseChecklist">Parse Checklist</button>
 				</div>
 			</form>
-			<div><a href="<?php echo $CLIENT_ROOT; ?>/taxa/taxonomy/taxonomydisplay.php" target="_blank">Open Taxonomic Thesaurus Explorer</a></div>
+			<div><a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/taxa/taxonomy/taxonomydisplay.php" target="_blank">Open Taxonomic Thesaurus Explorer</a></div>
 		</fieldset>
 	</div>
 </div>
