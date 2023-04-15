@@ -53,8 +53,9 @@ $qryCnt = false;
 $moduleActivation = array();
 $statusStr = '';
 $navStr = '';
-
+$jumpStr = '';
 $isEditor = 0;
+
 if($SYMB_UID){
 	//Set variables
 	$occManager->setOccId($occId);
@@ -417,6 +418,18 @@ if($SYMB_UID){
 		$navStr .= '</b>';
 	}
 
+	// the string for jump
+	if($qryCnt !== false){			
+		$jumpStr .= '&nbsp;&nbsp file '.$recIndex.' of '.$qryCnt.' &nbsp;&nbsp;';
+	}
+
+	if(isset($_POST['jump']) && $_POST['jump'] !== '') {
+		$jumpIndex = intval($_POST['jump']);
+		if($jumpIndex >= 0 && $jumpIndex < $qryCnt) {
+		  $occIndex = $jumpIndex;
+		}
+	  }
+
 	//Images and other things needed for OCR
 	$specImgArr = $occManager->getImageMap();
 	if($specImgArr){
@@ -521,6 +534,18 @@ else{
 	<script src="../../js/symb/collections.editor.imgtools.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.query.js?ver=5" type="text/javascript"></script>
+	<script type="text/javascript">
+		function toggleDetail(){
+			var btn = document.getElementById("detail-btn");
+			if (btn.value === "detailed") {
+				btn.value = "minimal";
+				btn.innerHTML = "Minimal";
+			} else {
+				btn.value = "detailed";
+				btn.innerHTML = "Detailed";
+			}
+		}
+	</script>
 	<style type="text/css">
 		fieldset{ padding:15px }
 		fieldset > legend{ font-weight:bold; }
@@ -542,25 +567,22 @@ else{
             float: left;
             padding:10px;
         }
-
         .left{
             width: 65%;
         }
         .right{
             width: 35%;
         }
-        
-
+		.info{
+			width: 100%;
+			display: flex;
+			align-items: center;
+			padding: 8px;
+		}
         .row:after {
             content: "";
             display: table;
             clear: both;
-
-        }
-
-        .nav-bar{
-           
-           
         }
         .nav-bar a{
             background-color: #00FFFF;
@@ -568,7 +590,6 @@ else{
            border-style: solid;
            border-color: black;
            margin: 0;
-           
         }
         .nav-bar label{
            background-color: #00FFFF;
@@ -576,9 +597,10 @@ else{
            border-style: solid;
            border-color: black;
         }
-        .btn{
-            
-           
+        .function-bar{
+            border:1px solid black; 
+			display: flex;
+			align-items: center;
         }
         button{
             color:black;
@@ -590,7 +612,6 @@ else{
             border-style: solid;
             border-color: black;
         }
-
         .data{
             border-style: solid;
             border-color: black;
@@ -599,17 +620,24 @@ else{
             border-style: solid;
             border-color: black;
         }
-        #wrapper {
+        #editdiv {
             margin-left:auto;
             margin-right:auto;
             width:960px;
         }
-
-        img{
-            
-        }
-		/* style for the new form end ------------------------------------ */
-
+        .field-block {
+			margin: 5px 0px;
+			display: flex;
+		}
+		.field-label {
+			text-align: left;
+			width: 120px;
+		}
+		.title{
+			backgroufnd-color:#86C5D8; 
+			display: block;
+			width: 100%;
+		}
 	</style>
 </head>
 <body>
@@ -688,134 +716,544 @@ else{
 			</div>
 
 
-
-
-
-			
-
 	<!-- body part of the new form start from here -->
 	<!-- TODO: we leave the old form so that some of its funcitons can be reused in the new form  -->
-	<div id="wrapper">
-    	<div class = "row">
-    	<form id="fullform" name="fullform" action="test.php" method="post" onsubmit="return verifyFullForm(this);">
-    
-         <!-- navigation bar -->
-        <section>
-            <div class="btn" style = "border:1px solid black;">
-				<!-- TODO: these buttons need to have corresponding functions(more detailes are needed) -->
-				<!-- see button functionality in old code below, interpret their uses -->
-                    <button href="#restart">Restart</button>
-                    <button href="#ping">Ping</button>
-                    <button href="#detail">Detailed</button>
-                    <button href="#aws">AWS</button>
-                    <label for="" styles= "color">Jump to:</label>
-				<!-- TODO: the "input" needs functions to jumps to corresponding page number -->
-				<!-- TODO: the text need to be updated with the data info(connect to the database) -->
-                    <input type="text"> [cpellegrini/2022-11-03] file 1 of 427
-            </div>
-        </section> 
-		<!-- make sure all of the inputs connect to the corresponding database -->
-        <div class = "column left" style = "background-color: #F2F2F2">
-			<table style = "border:1px solid black;">
-				
-				<tr style = "backgroufnd-color:#86C5D8"><td colspan = '2'><h2>Transcribe into Fields</h2></td></tr>
-				
-				<!-- TODO: figure out where in the databses these fields go, implement database connection -->
-				<tr><td width = "40%">Barcode</td><td><input size = '50'    id = 'barcode' name = 'barcode'></td></tr>
-				<!-- TODO: figure out what are the options and update the texts -->
-				<tr><td>Herbarium</td><td><select id = 'herbarium'>
-									<option value = 'unit_1'> Unit 1
-									<option value = 'unit_2'> Unit 2
-				</td></tr>
-				<tr><td>Accession Num.</td><td><input size = '50'    id = 'accessionnum' name = 'accessionnum'></td></tr>
-				<!-- TODO: this input will trigger a list of existing file names the user chan choose -->
-				<tr><td>Filed Under</td><td><input size = '50'    id = 'filed' name = 'filed'></td></tr>
-				<tr><td>Current Name</td><td><input size = '50'    id = 'current' name = 'current'></td></tr>
-				<!-- TODO: figure out what are the options and update the texts -->
-				<tr><td>ID Qualifier</td><td><select id = 'id'>
-									<option value = 'unit_1'> Unit 1
-									<option value = 'unit_2'> Unit 2
-				</td></tr>
-				<!-- TODO: this input will trigger a list of existing file names the user chan choose -->
-				<tr><td>ID Qualifier</td><td><select id = 'id'>
-				<tr><td>Identified By</td><td><input size = '50'    id = 'identifiedby' name = 'identifiedby'></td></tr>
-				<tr><td>Date Identified</td><td><input size = '50'    id = 'dateidentified' name = 'dateidentified'></td></tr>	
-				<tr><td>Det. Text</td><td><input size = '50'    id = 'det' name = 'det'></td></tr>
-				<tr><td>Provenance</td><td><input size = '50'    id = 'provenence' name = 'provenence'></td></tr>
-				<tr><td>Collectors</td><td><input size = '50'    id = 'collectors' name = 'collectors'></td></tr>
-				<tr><td>Et al.</td><td><input size = '50'    id = 'etal' name = 'etal'></td></tr>
-				<tr><td>Collector Number</td><td><input size = '50'    id = 'collectornum' name = 'collectornum'></td></tr>
-				<tr><td>Date Collected</td><td><input size = '50'    id = 'datecollected' name = 'datecollected'></td></tr>
-				<tr><td>Verbatim Date</td><td><input size = '50'    id = 'vdate' name = 'vdate'></td></tr>
-				<!-- TODO: this input will trigger a list of existing file names the user chan choose -->
-				<tr><td>Container</td><td><input size = '50'    id = 'container' name = 'container'></td></tr>
-				<tr><td>Collecting Trip</td><td><input size = '50'    id = 'colltrip' name = 'colltrip'></td></tr>            <tr><td>Collectors</td><td><input size = '50'    id = 'collctors' name = 'collectors'></td></tr>
-				<tr><td>Geography Within</td><td><input size = '50'    id = 'geowithin' name = 'geowithin'></td></tr>
-				<tr><td>Higher Geography</td><td><input size = '50'    id = 'highgeo' name = 'highgeo'></td></tr>
-				<tr><td>VerbtimLocality</td><td><input size = '50'    id = 'vlocality' name = 'vlocality'></td></tr>
-				<tr><td>Habitat</td><td><input size = '50'    id = 'habitat' name = 'habitat'></td></tr>
-				<tr><td>Frequency</td><td><input size = '50'    id = 'frequency' name = 'frequency'></td></tr>
-				<tr><td>Description</td><td><input size = '50'    id = 'description' name = 'description'></td></tr>
-				<tr><td>Remarks</td><td><input size = '50'    id = 'remarks' name = 'remarks'></td></tr>
-				<tr><td>Project</td><td><input size = '50'    id = 'project' name = 'project'></td></tr>
-
-				
-				<!-- TODO: implement button functionality, examine relevant button divs in old code below ie saveedits button to get started -->
-				<!-- see old code for these buttons by searching for next_rec, prev_rec etc -->
-				<tr>
-					<td>
-					<div class = "btn">
-						<button href= "">Save</button>
-						<button href = "">Next</button>
-						<button href = "">Done</button>
-						<button href = "">Previous</button>
-					</div>
-					</td>
-				</tr>
-			</table>
-        <div class = "data">
-            <p>Loaded</p>  
-        </div>
-		
-        <div class = "login-info">
-            <p>123</p>
-        </div>
-        <p>12</p>
-    </div>
-
-    <!-- image part -->
-	<!-- TODO: implement image code from old form, see collections/editor/includes/imagetab.php and check the embedded code to get started -->
-    <div class = "column right" style = "border: 1; background-color:#F2F2F3;">
-        <div style = "border:1px solid black;">
-            <table>
-                <tr style = "backgroufnd-color:#34ace0"><td colspan = '2'><h2>Click to zoom in other window.</h2></td></tr>
-                <!-- TODO: the image should be updated with database -->
-				<!-- TODO: the image should be clickable and have some functions(zoom in/out) -->
-				<tr style = "text-align: center;"><td><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOwxvSve1jvNKgXtY40U7wyrTGKuYGUcWCTg&usqp=CAU"></td></tr>
-            </table>
-        </div>
-        <div style = "border:1px solid black;">
-            <table>
-				<!-- TODO: this text should be changed according to database(more info needed) -->
-                <tr><td>Record Created:</td> <td>New Record</td></tr>
-                <tr><td>Pre Method</td><td><input size = '20' id = 'premethod' name = 'premethod'></td></tr>
-                <tr><td>Format</td><td><input size = '20' id = 'format' name = 'format'></td></tr>
-            </table>
-        </div>
-        <div style = "border:1px solid black;">
-            <table> 
-                <tr><td width = '15%'>Verb. Elev.</td><td><input size = '25' id = 'verbelev' name = 'verbelev'></td></tr>
-                <tr><td width = '15%'>Verb. Lat.</td><td><input size = '25' id = 'verblat' name = 'verblat'></td></tr>
-                <tr><td width = '15%'>Verb. Long.</td><td><input size = '25' id = 'verblong' name = 'verblong'></td></tr>
-                <tr><td width = '15%'>Dec. Lat.</td><td><input size = '25' id = 'declat' name = 'declat'></td></tr>
-                <tr><td width = '15%'>Method</td><td><input size = '25' id = 'method' name = 'method'></td></tr>
-                <tr><td width = '15%'>Uncertainty</td><td><input size = '25' id = 'Uncertainty' name = 'Uncertainty'></td></tr>
-    </table>
-        </div>
-    </div>  
-    </form>
+	<?php
+		if($statusStr){
+			?>
+			<div id="statusdiv" style="margin:5px 0px 5px 15px;">
+				<b><?php echo (isset($LANG['ACTION_STATUS'])?$LANG['ACTION_STATUS']:'Action Status'); ?>: </b>
+				<span style="color:<?php echo (stripos($statusStr,'ERROR')!==false?'red':'green'); ?>;"><?php echo $statusStr; ?></span>
+				<?php
+				if($action == 'Delete Occurrence'){
+					?>
+					<br/>
+					<a href="#" style="margin:5px;" onclick="window.opener.location.href = window.opener.location.href;window.close();">
+						<?php echo (isset($LANG['RETURN_TO_SEARCH'])?$LANG['RETURN_TO_SEARCH']:'Return to Search Page'); ?>
+					</a>
+					<?php
+				}
+				?>
 			</div>
-<!-- the body part of the new form end at here -->
+			<?php
+		}
+	?>
+	<div id="editdiv">
+    	<div class = "row">
+			<section>
+				<div class="btn function-bar" name="jumpform">
+					<!-- TODO: these buttons need to have corresponding functions(more detailes are needed) -->
+					<!-- see button functionality in old code below, interpret their uses -->
+					<!-- TODO: the "input" needs functions to jumps to corresponding page number -->
+					<!-- TODO: the text need to be updated with the data info(connect to the database) -->				
+					<form method="post">
+						<button type="submit" name="toggle-button" value="<?php echo isset($_POST['toggle-button']) && $_POST['toggle-button'] === 'Minimal' ? 'Detailed' : 'Minimal'; ?>">
+							<?php echo isset($_POST['toggle-button']) ? $_POST['toggle-button'] : 'Detailed'; ?>
+						</button>
+						<button type="button" onclick="jumpToPage()">Jump to:</button>
+  						<input type="text" name="page" size="3">
+					</form>
+					<div id="jumpDiv">
+						<?php
+						if($jumpStr){
+						?>
+							<div>
+								<?php if(array_key_exists('recordenteredby',$occArr)){
+											echo ($occArr['recordenteredby']?$occArr['recordenteredby']:$LANG['NOT_RECORDED']);
+										}
+										if(isset($occArr['dateentered']) && $occArr['dateentered']) echo ' ['.$occArr['dateentered'].']'; 
+										?>
+								<?php echo $jumpStr; ?>
+							</div>
+						<?php
+						}
+						if(isset($collections_editor_occurrenceeditorCrumbs)){
+							if($collections_editor_occurrenceeditorCrumbs){
+						?>
+								<div class="navpath">
+									<a href='../../index.php'><?php echo (isset($LANG['HOME'])?$LANG['Home']:'Home'); ?></a> &gt;&gt;
+									<?php
+									echo $collections_editor_occurrenceeditorCrumbs;
+									echo '<b>'.(isset($LANG['EDITOR'])?$LANG['EDITOR']:'Editor').'</b>';
+									?>
+								</div>
+								<?php
+							}
+						} ?>
+					</div>
+					<!-- <button id="detail-btn" onclick="toggleDetail()" value="detailed">Detailed</button> -->
+				</div>
+			</section> 
+			<form id="editform" name="editform" action="<?php //echo $_SERVER['MORE_INFO'];, originally "=test.php" ?>" method="post" onsubmit="">
+				<!-- navigation bar -->
+				<!-- make sure all of the inputs connect to the corresponding database -->
+				<!-- left part of the form starts -->
+				<div class = "column left login-info" style = "background-color: #F2F2F2; ">
+					<!-- try to use this format for all the input  -->
+					<!-- first check if this input data exists -->
+					<!-- then check if we have data in dataset, if true, get it -->
+					<!-- need the data feature name in database,  more INFO needed-->
+					<div class="field-block title">
+						<h2>Transcribe into Fields</h2>
+					</div>
+					<div class="field-block">
+						<span class="field-label"><?php echo (isset($LANG['BARCODE']) ? $LANG['BARCODE'] : 'Barcode'); ?></span>
+						<span class="field-elem">
+							<!-- this $occArr array connects to the old form's database -->
+							<?php if(array_key_exists('barcode',$occArr)) { ?>
+								<input type="text" size = '50' id="barcode" name="barcode" value="<?php echo $occArr['barcode'] ?>" onchange="fieldChanged('barcode');" <?php if($isEditor > 2) echo 'disabled'; ?> autocomplete="off" />
+							<?php 
+							} else { 
+							?>
+								NOT FOUND
+							<?php 
+							} 
+							?>
+						</span>
+					</div>
+					<?php if(!isset($_POST['toggle-button']) || (isset($_POST['toggle-button']) && $_POST['toggle-button'] != 'Minimal')): ?>
+						<div class="field-block">
+							<span class="field-label"><?php echo (isset($LANG['ACCE_NUM']) ? $LANG['ACCE_NUM'] : 'Accession Num.'); ?></span>
+							<span class="field-elem">
+								<?php if(array_key_exists('accesNum',$occArr)) { ?>
+									<input type="text" size = '50' name="accesNum" value="<?php echo $occArr["accesNum"]; ?>" />
+								<?php 
+								} else { 
+								?>
+									NOT FOUND
+								<?php 
+								} 
+								?>
+							</span>
+						</div>
+					<?php endif; ?>
+					<div class="field-block">
+						<span class="field-label"><?php echo (isset($LANG['FILED_UNDER']) ? $LANG['FILED_UNDER'] : 'Filed Under'); ?></span>
+						<span class="field-elem">
+							<?php if(array_key_exists('filedUnder',$occArr)) { ?>
+								<input type="text" size = '50' name="filedUnder" value="<?php echo $occArr["filedUnder"]; ?>" />
+							<?php 
+							} else { 
+							?>
+								NOT FOUND
+							<?php 
+							} 
+							?>
+						</span>
+					</div>
+					<div class="field-block">
+						<span class="field-label"><?php echo (isset($LANG['CURR_NAME']) ? $LANG['CURR_NAME'] : 'Current Name'); ?></span>
+						<span class="field-elem">
+							<?php if(array_key_exists('currName',$occArr)) { ?>
+								<input type="text" size = '50' name="currName" value="<?php echo $occArr["currName"]; ?>" />
+							<?php 
+							} else { 
+							?>
+								NOT FOUND
+							<?php 
+							} 
+							?>
+						</span>
+					</div>
+					<?php if(!isset($_POST['toggle-button']) || (isset($_POST['toggle-button']) && $_POST['toggle-button'] != 'Minimal')): ?>
+						<div class="field-block">
+							<span class="field-label"><?php echo (isset($LANG['IDQUALIFIER']) ? $LANG['IDQUALIFIER'] : 'ID Qualifier'); ?></span>
+							<span class="field-elem">
+								<!-- the drop list needs to be update -->
+								<?php
+									if(!array_key_exists('idQualifier',$occArr)) {
+								?>
+									<select name="idQualifier">
+										<option value=""><?php echo $LANG['IDQUALIFIER']; ?>NOT FOUND</option>
+										<option value="">---------------------------------------</option>
+										<?php
+										$qulifier = array('s. str.', '?', 'not', 'cf.', 's. lat.', 'aff.');
+										foreach ($qulifier as $k) {
+											echo '<option value="' . $k . '" ' . $selectedTerm . '>' . $k . '</option>' . "\n";
+										}
+										?>
+									</select>
+								<?php
+								} else {
+								?>
+									NOT FOUND
+									<!-- <input size = '50' type="text" name="rights" value="<?php // echo ($collid ? $collData["rights"] : ''); ?>" style="width:90%;" /> -->
+								<?php
+								}
+								?>
+							</span>
+						</div>
+						<div class="field-block">
+							<span class="field-label"><?php echo (defined('IDENTIFIEDBYLABEL')?IDENTIFIEDBYLABEL:'Identified By'); ?></span>
+							<span class="field-elem">
+								<input size = '50' type="text"  maxlength="255" name="identifiedby" value="<?php echo array_key_exists('identifiedby',$occArr)?$occArr['identifiedby']:''; ?>" onchange="fieldChanged('identifiedby');" />
+								<a href="#" onclick="return dwcDoc('identifiedBy')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+							</span>
+						</div>
+						<div class="field-block">
+							<span class="field-label"><?php echo (defined('DATEIDENTIFIEDLABEL')?DATEIDENTIFIEDLABEL:'Date Identified'); ?></span>
+							<span class="field-elem">
+								<input size = '50' type="text" name="dateidentified" maxlength="45" value="<?php echo array_key_exists('dateidentified',$occArr)?$occArr['dateidentified']:''; ?>" onchange="fieldChanged('dateidentified');" />
+								<a href="#" onclick="return dwcDoc('dateIdentified')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+							</span>
+						</div>
+						<!-- There is a tab below is for determiation -->
+						<div class="field-block">
+							<span class="field-label"><?php echo (isset($LANG['DET_TEXT']) ? $LANG['DET_TEXT'] : 'Det. Text'); ?></span>
+							<span class="field-elem">
+								<?php if(array_key_exists('detText',$occArr)) { ?>
+									<input size = '50' type="text" name="detText" value="<?php echo $occArr["detText"]; ?>" />
+								<?php 
+								} else { 
+								?>
+									NOT FOUND
+								<?php 
+								} 
+								?>
+							</span>
+						</div>
+						<div class="field-block">
+							<span class="field-label"><?php echo (isset($LANG['PROVENANCE']) ? $LANG['PROVENANCE'] : 'Provenance'); ?></span>
+							<span class="field-elem">
+								<?php if(array_key_exists('provenance',$occArr)) { ?>
+									<input type="text" size = '50' name="currName" value="<?php echo $occArr["provenance"]; ?>" />
+								<?php 
+								} else { 
+								?>
+									NOT FOUND
+								<?php 
+								} 
+								?>
+							</span>
+						</div>
+					<?php endif; ?>
+					<div class="field-block">
+						<span class="field-label"><?php echo (defined('RECORDEDBYLABEL')?RECORDEDBYLABEL:'Collectors'); ?></span>
+						<span class="field-elem">
+							<input size = '50' type="text" name="recordedby" maxlength="255" value="<?php echo array_key_exists('recordedby',$occArr)?$occArr['recordedby']:''; ?>" onchange="fieldChanged('recordedby');" />
+							<a href="#" onclick="return dwcDoc('recordedBy')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+						</span>
+					</div>
+					<!-- I put associated collectors here -->
+					<div class="field-block">
+						<span class="field-label"><?php echo (defined('ASSOCIATEDCOLLECTORSLABEL')?ASSOCIATEDCOLLECTORSLABEL:'Et al.'); ?></span>
+						<span class="field-elem">
+							<input size = '50' type="text" name="associatedcollectors" maxlength="255" value="<?php echo array_key_exists('associatedcollectors',$occArr)?$occArr['associatedcollectors']:''; ?>" onchange="fieldChanged('associatedcollectors');" />
+							<a href="#" onclick="return dwcDoc('associatedCollectors')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+						</span>
+					</div>
+					<div class="field-block">
+						<span class="field-label"><?php echo (defined('RECORDNUMBERLABEL')?RECORDNUMBERLABEL:'Collector Number'); ?></span>
+						<span class="field-elem">
+							<input size = '50' type="text" name="recordnumber" maxlength="45" value="<?php echo array_key_exists('recordnumber',$occArr)?$occArr['recordnumber']:''; ?>" onchange="recordNumberChanged(this);" />
+							<a href="#" onclick="return dwcDoc('recordNumber')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+						</span>
+					</div> 
+					<div class="field-block">
+						<span class="field-label"><?php echo (defined('EVENTDATELABEL')?EVENTDATELABEL:'Date Collected'); ?></span>
+						<span class="field-elem">
+							<input size = '50' type="text" name="eventdate" value="<?php echo array_key_exists('eventdate',$occArr)?$occArr['eventdate']:''; ?>" onchange="eventDateChanged(this);" />
+							<a href="#" onclick="return dwcDoc('eventDate')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+						</span>
+					</div>
+					<div class="field-block">
+						<span class="field-label"><?php echo (defined('VERBATIMEVENTDATELABEL')?VERBATIMEVENTDATELABEL:'Verbatim Date'); ?></span>
+						<span class="field-elem">
+							<input size = '50' type="text" name="verbatimeventdate" maxlength="255" value="<?php echo array_key_exists('verbatimeventdate',$occArr)?$occArr['verbatimeventdate']:''; ?>" onchange="verbatimEventDateChanged(this)" />
+							<a href="#" onclick="return dwcDoc('verbatimEventDate')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+						</span>
+					</div>
+					<?php if(!isset($_POST['toggle-button']) || (isset($_POST['toggle-button']) && $_POST['toggle-button'] != 'Minimal')): ?>
+						<div class="field-block">
+							<span class="field-label"><?php echo (isset($LANG['CONTAINER']) ? $LANG['CONTAINER'] : 'Container'); ?></span>
+							<span class="field-elem">
+								<?php if(array_key_exists('container',$occArr)) { ?>
+									<input size = '50' type="text" name="container" value="<?php echo $collData["container"]; ?>" />
+								<?php 
+								} else { 
+								?>
+									NOT FOUND
+								<?php 
+								} 
+								?>
+							</span>
+						</div>
+						<div class="field-block">
+							<span class="field-label"><?php echo (isset($LANG['COLL_TRIP']) ? $LANG['COLL_TRIP'] : 'Collecting Trip'); ?></span>
+							<span class="field-elem">
+								<?php if(array_key_exists('collTrip',$occArr)) { ?>
+									<input size = '50' type="text" name="collTrip" value="<?php echo $collData["collTrip"]; ?>" />
+								<?php 
+								} else { 
+								?>
+									NOT FOUND
+								<?php 
+								} 
+								?>
+							</span>
+						</div>
+					<?php endif; ?>
+					<div class="field-block">
+						<span class="field-label"><?php echo (isset($LANG['GEO_WITHIN']) ? $LANG['GEO_WITHIN'] : 'Geography Within'); ?></span>
+						<span class="field-elem">
+							<?php if(array_key_exists('geoWithin',$occArr)) { ?>
+								<input size = '50' type="text" name="geoWithin" value="<?php echo $collData["geoWithin"]; ?>" />
+							<?php 
+							} else { 
+							?>
+								NOT FOUND
+							<?php 
+							} 
+							?>
+						</span>
+					</div>
+					<div class="field-block">
+						<span class="field-label"><?php echo (isset($LANG['HIGH_GEO']) ? $LANG['HIGH_GEO'] : 'Higher Geography'); ?></span>
+						<span class="field-elem">
+							<?php if(array_key_exists('highGeo',$occArr)) { ?>
+								<input type="text" size = '50' name="highGeo" value="<?php echo $collData["highGeo"]; ?>" />
+							<?php 
+							} else { 
+							?>
+								NOT FOUND
+							<?php 
+							} 
+							?>
+						</span>
+					</div>
+					<?php if(!isset($_POST['toggle-button']) || (isset($_POST['toggle-button']) && $_POST['toggle-button'] != 'Minimal')): ?>
+						<div class="field-block">
+							<span class="field-label"><?php echo (defined('LOCALITYLABEL')?LOCALITYLABEL:'Verbatim Locality'); ?></span>
+							<span class="field-elem">
+								<input id="fflocality" type="text" size = '50'  onchange="fieldChanged('locality');" name="locality" value="<?php echo array_key_exists('locality',$occArr)?$occArr['locality']:''; ?>" />
+								<a href="#" onclick="return dwcDoc('locality')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" style="width:9px" /></a>
+							</span>
+						</div>
+						<div class="field-block">
+							<span class="field-label"><?php echo (defined('HABITATLABEL')?HABITATLABEL:'Habitat'); ?></span>
+							<span class="field-elem">
+								<input size = '50' type="text" name="habitat" value="<?php echo array_key_exists('habitat',$occArr)?$occArr['habitat']:''; ?>" onchange="fieldChanged('habitat');" />
+								<a href="#" onclick="return dwcDoc('habitat')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+							</span>
+						</div>
+						<div class="field-block">
+							<span class="field-label"><?php echo (isset($LANG['FREQUENCY']) ? $LANG['FREQUENCY'] : 'Frequency'); ?></span>
+							<span class="field-elem">
+								<?php if(array_key_exists('frequency',$occArr)) { ?>
+									<input size = '50' type="text" name="frequency" value="<?php echo $collData["frequency"]; ?>" />
+								<?php 
+								} else { 
+								?>
+									NOT FOUND
+								<?php 
+								} 
+								?>
+							</span>
+						</div>
+						<div class="field-block">
+							<span class="field-label"><?php echo (defined('VERBATIMATTRIBUTESLABEL')?VERBATIMATTRIBUTESLABEL:'Description'); ?></span>
+							<span class="field-elem">
+								<input size = '50' type="text" name="verbatimattributes" value="<?php echo array_key_exists('verbatimattributes',$occArr)?$occArr['verbatimattributes']:''; ?>" onchange="fieldChanged('verbatimattributes');" />
+								<a href="#" onclick="return dwcDoc('verbatimAttributes')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+							</span>
+						</div>
+						<div class="field-block">
+							<span class="field-label"><?php echo (defined('OCCURRENCEREMARKSLABEL')?OCCURRENCEREMARKSLABEL:'Remarks'); ?></span>
+							<span class="field-elem">
+								<input size = '50' type="text" name="occurrenceremarks" value="<?php echo array_key_exists('occurrenceremarks',$occArr)?$occArr['occurrenceremarks']:''; ?>" onchange="fieldChanged('occurrenceremarks');" title="<?php echo $LANG['OCC_REMARKS']; ?>" />
+								<a href="#" onclick="return dwcDoc('occurrenceRemarks')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+							</span>
+						</div>
+					<?php endif; ?>
+					<!-- I use the label project here from the old form, not sure if it's the same thing -->
+					<div class="field-block">
+						<span class="field-label"><?php echo (defined('LABELPROJECTLABEL')?LABELPROJECTLABEL:'Project'); ?></span>
+						<span class="field-elem">
+							<input size = '50' type="text" name="labelproject" maxlength="45" value="<?php echo array_key_exists('labelproject',$occArr)?$occArr['labelproject']:''; ?>" onchange="fieldChanged('labelproject');" />
+						</span>
+					</div>
+				</div>  <!-- column left ends -->
+				<!-- image part -->
+				<!-- TODO: implement image code from old form, see collections/editor/includes/imagetab.php and check the embedded code to get started -->
+				<div class = "column right" style = "border: 1; background-color:#F2F2F3;">
+					<div class="field-block title">
+						<h2>Click to Zoom in Other Window</h2>
+					</div>
+					<div class="login-info" style = "backgroufnd-color:#86C5D8; text-align: center;">
+						<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOwxvSve1jvNKgXtY40U7wyrTGKuYGUcWCTg&usqp=CAU" />
+					</div>
+					<div class="login-info">
+						<div class="field-block">
+							<span class="field-label"><?php echo (isset($LANG['RECCORECTED']) ? $LANG['RECCORECTED'] : 'Recotd Created'); ?>:</span>
+							<span class="field-elem">
+								<?php echo ($accesNum ? $collData["recCreated"] : 'New Record'); ?>
+							</span>
+						</div>
+						<div class="field-block">
+							<span class="field-label"><?php echo (isset($LANG['PREPMETHOD']) ? $LANG['PREPMETHOD'] : 'Prep Method'); ?></span>
+							<span class="field-elem">
+								<?php if(array_key_exists('prepMethod',$occArr)) { ?>
+									<input size = '25' type="text" name="prepMethod" value="<?php echo $collData["prepMethod"]; ?>" />
+								<?php 
+								} else { 
+								?>
+									NOT FOUND
+								<?php 
+								} 
+								?>
+							</span>
+						</div>
+						<div class="field-block">
+							<span class="field-label"><?php echo (isset($LANG['FORMAT']) ? $LANG['FORMAT'] : 'Format'); ?></span>
+							<span class="field-elem">
+								<?php if(array_key_exists('format',$occArr)) { ?>
+									<input size = '25' type="text" name="format" value="<?php echo $collData["format"]; ?>" />
+								<?php 
+								} else { 
+								?>
+									NOT FOUND
+								<?php 
+								} 
+								?>
+							</span>
+						</div>
+					</div>
+					<?php if(!isset($_POST['toggle-button']) || (isset($_POST['toggle-button']) && $_POST['toggle-button'] != 'Minimal')): ?>
+						<div class="login-info">
+							<div class="field-block">
+								<span class="field-label"><?php echo (defined('VERBATIMELEVATIONLABEL')?VERBATIMELEVATIONLABEL:'Verb. Elev.'); ?></span>
+								<span class="field-elem">
+									<input size = '25' type="text" name="verbatimelevation" maxlength="255" value="<?php echo array_key_exists('verbatimelevation',$occArr)?$occArr['verbatimelevation']:''; ?>" onchange="verbatimElevationChanged(this.form);" />
+									<a href="#" onclick="return dwcDoc('verbatimElevation')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+								</span>
+							</div>
+							<div class="field-block">
+								<span class="field-label"><?php echo (isset($LANG['VERBLAT']) ? $LANG['VERBLAT'] : 'Verb. Lat.'); ?></span>
+								<span class="field-elem">
+									<?php if(array_key_exists('verbLat',$occArr)) { ?>
+										<input size = '25' type="text" name="verbLat" value="<?php echo $collData["verbLat"]; ?>" />
+									<?php 
+									} else { 
+									?>
+										NOT FOUND
+									<?php 
+									} 
+									?>
+								</span>
+							</div>
+							<div class="field-block">
+								<span class="field-label"><?php echo (isset($LANG['VERBLONG']) ? $LANG['VERBLONG'] : 'Verb. Long.'); ?></span>
+								<span class="field-elem">
+									<?php if(array_key_exists('verbLong',$occArr)) { ?>
+										<input size = '25' type="text" name="verbLong" value="<?php echo $collData["verbLong"]; ?>" />
+									<?php 
+									} else { 
+									?>
+										NOT FOUND
+									<?php 
+									} 
+									?>
+								</span>
+							</div>
+							<div class="field-block">
+								<span class="field-label"><?php echo (defined('DECIMALLATITUDELABEL')?DECIMALLATITUDELABEL:'Dec. Lat.'); ?></span>
+								<span class="field-elem">
+									<?php
+									$latValue = "";
+									if(array_key_exists("decimallatitude",$occArr) && $occArr["decimallatitude"] != "") {
+										$latValue = $occArr["decimallatitude"];
+									}
+									?>
+									<input size = '25' type="text" name="decimallatitude" maxlength="15" value="<?php echo $latValue; ?>" onchange="decimalLatitudeChanged(this.form)" />
+								</span>
+							</div>
+							<div class="field-block">
+								<span class="field-label"><?php echo (defined('DECIMALLONGITUDELABEL')?DECIMALLONGITUDELABEL:'Dec. Long.'); ?></span>
+								<span class="field-elem">
+									<?php
+									$longValue = "";
+									if(array_key_exists("decimallongitude",$occArr) && $occArr["decimallongitude"] != "") {
+										$longValue = $occArr["decimallongitude"];
+									}
+									?>
+									<input size = '25' type="text" name="decimallongitude" maxlength="15" value="<?php echo $longValue; ?>" onchange="decimalLongitudeChanged(this.form);" />
+								</span>
+							</div>
+							<div class="field-block">
+								<span class="field-label"><?php echo (isset($LANG['METHOD']) ? $LANG['METHOD'] : 'Method'); ?></span>
+								<span class="field-elem">
+									<?php if(array_key_exists('method',$occArr)) { ?>
+										<input size = '25' type="text" name="method" value="<?php echo $collData["method"]; ?>" />
+										<?php 
+									} else { 
+									?>
+										NOT FOUND
+									<?php 
+									} 
+									?>
+								</span>
+							</div>
+							<div class="field-block">
+								<span class="field-label"><?php echo (defined('COORDINATEUNCERTAINITYINMETERSLABEL')?COORDINATEUNCERTAINITYINMETERSLABEL:'Uncertainty'); ?></span>
+								<span class="field-elem">
+									<input size = '25' type="text" name="coordinateuncertaintyinmeters" maxlength="10" value="<?php echo array_key_exists('coordinateuncertaintyinmeters',$occArr)?$occArr['coordinateuncertaintyinmeters']:''; ?>" onchange="coordinateUncertaintyInMetersChanged(this.form);" title="<?php echo (isset($LANG['UNCERTAINTY_METERS'])?$LANG['UNCERTAINTY_METERS']:'Uncertainty in Meters'); ?>" />
+									<a href="#" onclick="return dwcDoc('coordinateUncertaintyInMeters')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+								</span>
+							</div>
+						</div>
+					<?php endif; ?>
+				</div>  <!-- image ends -->
+				<table class = "column left" style = "border:1px solid black;">									
+					<!-- TODO: implement button functionality, examine relevant button divs in old code below ie saveedits button to get started -->
+					<!-- see old code for these buttons by searching for next_rec, prev_rec etc -->
+					<div id="editButtonDiv">
+						<input type="hidden" name="occindex" value="<?php echo is_numeric($occIndex)?$occIndex:''; ?>" />
+						<input type="hidden" name="editedfields" value="" />
+					</div>
+					<tr>
+						<td>
+						<div class = "btn">
+							<button type="submit" name="submitaction" value="saveOccurEdits" onclick="return verifyFullFormEdits(this.form)" disabled>Save</button>
+							<button 
+								type="submit" 
+								value="Next" 
+								onclick="<?php if($occIndex>0) { ?>submitQueryForm('back');<?php } ?> return false;">
+								Previous
+							</button>
+							<button type="button" value="Done" onClick="">Done</button>
+							<button 
+								type="submit" 
+								value="Next" 
+								onclick="<?php if($occIndex<$qryCnt-1) { ?>submitQueryForm('forward');<?php } ?> return false;">
+								Next
+							</button>
+						</div>
+						</td>
+					</tr>
+				</table>
+			</form>
+			<section>
+				<div class="info function-bar">
+					<?php echo "info needed   " ?>
+					<div style="float:left;" title="<?php echo $LANG['PRIMARY_KEY']; ?>">
+						<?php if($occId) echo 'Key: '.$occManager->getOccId(); ?>
+					</div>
+				</div>
+				<div class="info function-bar">
+					<?php
+						if(array_key_exists('recordenteredby',$occArr)){
+							echo $LANG['ENTERED_BY'].': '.($occArr['recordenteredby']?$occArr['recordenteredby']:$LANG['NOT_RECORDED']);
+						}
+						if(isset($occArr['dateentered']) && $occArr['dateentered']) echo ' ['.$occArr['dateentered'].']';
+					?>
+				</div>
+				<div class="info">
+					<?php echo "info needed" ?>
+				</div>
+			</section> 
+		</div>
+	</div>
+	<!-- the body part of the new form end at here -->
 
 			<?php
 			if($statusStr){
@@ -934,9 +1372,6 @@ else{
 								</ul>
 								<div id="occdiv">
 									<!-- the main form starts from here -->
-									<?php 
-										echo("test")
-									?>
 									<form id="fullform" name="fullform" action="occurrenceeditor.php" method="post" onsubmit="return verifyFullForm(this);">
 										<fieldset>
 											<!-- collector info starts form here -->
@@ -1693,7 +2128,7 @@ else{
 										</fieldset>
 										<?php
 										if($navStr){
-											//echo '<div style="float:right;margin-right:20px;">'.$navStr.'</div>'."\n";
+											echo '<div style="float:right;margin-right:20px;">'.$navStr.'</div>'."\n";
 										}
 										if(!$occId){
 											$userChecklists = $occManager->getUserChecklists();

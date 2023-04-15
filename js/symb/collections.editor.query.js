@@ -173,6 +173,15 @@ function submitQueryForm(qryIndex){
 	if(verifyQueryForm(f)) f.submit();
 }
 
+function jumpToPage() {
+	var f = document.queryform;
+	var page = parseInt(f.page.value);
+	var maxPage = parseInt(f.maxpage.value);
+	if (page >= 1 && page <= maxPage) {
+	  submitQueryForm(page - 1);
+	}
+}
+
 function submitQueryEditor(f){
 	f.action = "occurrenceeditor.php"
 	f.direction.value = "";
