@@ -6,6 +6,8 @@ Language: English
 */
 
 $LANG['H_HOME'] = 'Home';
+$LANG['H_TITLE'] = 'Guatemala Biodiversity Portal';
+$LANG['H_SUBTITLE']= 'Specimen data from Guatemala’s collections';
 
 $LANG['H_SEARCH'] = 'Search';
 $LANG['H_COLLECTIONS'] = 'Collections';
