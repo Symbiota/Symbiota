@@ -16,7 +16,10 @@ include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 					<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/GuatemalaHeader2.jpg" style="height:150px;" />
 				</div>
 				<div style="margin-left: 50px; color: #fff; font-family: 'Mate', serif; letter-spacing: 1px; ">
-					<div style="font-size:45px; line-height:48px; padding-top: 20px">Portal de Biodiversidad<br/>de Guatemala</div>
+					<div style="font-size:45px; line-height:48px; padding-top: 20px"><?php echo $LANG['TITLE']; ?></div>
+				</div>
+				<div style="margin-left: 50px; color: #e6e6e6; font-family: 'Mate', serif; letter-spacing: 1px; ">
+					<div style="font-size:35px; line-height:48px"><?php echo $LANG['SUBTITLE']; ?></div>
 				</div>
 			</div>
 			<div id="top_navbar">
