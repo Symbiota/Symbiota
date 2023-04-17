@@ -1,11 +1,13 @@
 <?php
 /*
 ------------------
-Language: Espa�ol (Spanish)
+Language: Español (Spanish)
 ------------------
 */
 
 $LANG['H_HOME'] = 'Inicio';
+$LANG['H_TITLE'] = 'Portal de Biodiversidad de Guatemala';
+$LANG['H_SUBTITLE'] = 'Digitalización y Manejo de Colecciones Biológicas';
 
 $LANG['H_SEARCH'] = 'B&uacute;squeda';
 $LANG['H_COLLECTIONS'] = 'Colecciones';
@@ -24,7 +26,7 @@ $LANG['H_PROJECT_3'] = 'Proyecto 3';
 $LANG['H_PROJECT_4'] = 'Proyecto 4';
 
 $LANG['H_MORE_INFO'] = 'M&aacute;s Informaci&oacute;n';
-$LANG['H_ABOUT_PROJECT'] = 'Información sobre el Proyecto';
+$LANG['H_ABOUT_PROJECT'] = 'InformaciÃ³n sobre el Proyecto';
 $LANG['H_PARTNERS'] = 'Socios';
 $LANG['H_CONTACTS'] = 'Contactos';
 $LANG['H_HELP'] = 'Ayuda de Symbiota';
