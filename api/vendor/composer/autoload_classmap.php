@@ -34,7 +34,6 @@ return array(
     'App\\Models\\Occurrence' => $baseDir . '/app/Models/Occurrence.php',
     'App\\Models\\OccurrenceAnnotationExternal' => $baseDir . '/app/Models/OccurrenceAnnotationExternal.php',
     'App\\Models\\OccurrenceAnnotationInternal' => $baseDir . '/app/Models/OccurrenceAnnotationInternal.php',
-    'App\\Models\\OccurrenceGuid' => $baseDir . '/app/Models/OccurrenceGuid.php',
     'App\\Models\\OccurrenceIdentification' => $baseDir . '/app/Models/OccurrenceIdentification.php',
     'App\\Models\\PortalIndex' => $baseDir . '/app/Models/PortalIndex.php',
     'App\\Models\\PortalOccurrence' => $baseDir . '/app/Models/PortalOccurrence.php',

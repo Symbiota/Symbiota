@@ -12,8 +12,7 @@ $qOtherCatalogNumbers = (array_key_exists('ocn',$qryArr)?$qryArr['ocn']:'');
 $qRecordedBy = (array_key_exists('rb',$qryArr)?$qryArr['rb']:'');
 $qRecordNumber = (array_key_exists('rn',$qryArr)?$qryArr['rn']:'');
 $qEventDate = (array_key_exists('ed',$qryArr)?$qryArr['ed']:'');
-// Try entered by first, fall back to modified by
-$qUser = (array_key_exists('eb',$qryArr)?$qryArr['eb']:(array_key_exists('mb',$qryArr) && $qryArr['mb']!= ''?$qryArr['mb']:''));
+$qRecordEnteredBy = (array_key_exists('eb',$qryArr)?$qryArr['eb']:'');
 $qReturnAll = (array_key_exists('returnall',$qryArr)?$qryArr['returnall']:0);
 $qProcessingStatus = (array_key_exists('ps',$qryArr)?$qryArr['ps']:'');
 $qDateEntered = (array_key_exists('de',$qryArr)?$qryArr['de']:'');
@@ -71,7 +70,6 @@ $qCustomCloseParen8 = (array_key_exists('ccp8',$qryArr)?$qryArr['ccp8']:'');
 $qOcrFrag = (array_key_exists('ocr',$qryArr)?htmlentities($qryArr['ocr'], ENT_COMPAT, $CHARSET):'');
 $qOrderBy = (array_key_exists('orderby',$qryArr)?$qryArr['orderby']:'');
 $qOrderByDir = (array_key_exists('orderbydir',$qryArr)?$qryArr['orderbydir']:'');
-$qUserAction= (array_key_exists('useraction',$qryArr)?$qryArr['useraction']:'');
 
 //Set processing status
 $processingStatusArr = array();
@@ -136,11 +134,8 @@ else{
 				?>
 				<div class="fieldGroupDiv">
 					<div class="fieldDiv" style="<?php echo ($isGenObs?'display:none':''); ?>">
-						<select name="useraction">
-							<option value='enteredby' <?php echo ($qUserAction=='enteredby'?'SELECTED':''); ?>><?php echo $LANG['ENTERED_BY']; ?></option>
-							<option value='modifiedby'<?php echo ($qUserAction=='modifiedby'?'SELECTED':''); ?>><?php echo $LANG['MODIFIED_BY']; ?></option>
-						</select>
-						<input type="text" name="q_user" value="<?php echo $qUser; ?>" style="width:70px;" onchange="setOrderBy(this)" />
+						<?php echo $LANG['ENTERED_BY']; ?>:
+						<input type="text" name="q_recordenteredby" value="<?php echo $qRecordEnteredBy; ?>" style="width:70px;" onchange="setOrderBy(this)" />
 						<button type="button" onclick="enteredByCurrentUser()" style="font-size:70%" title="<?php echo $LANG['LIMIT_TO_CURRENT']; ?>"><?php echo $LANG['CU']; ?></button>
 					</div>
 					<div class="fieldDiv" title="<?php echo $LANG['ENTER_RANGES']; ?>">
@@ -590,7 +585,7 @@ else{
 						if($qEventDate) $qryStr .= '&eventdate='.$qEventDate;
 						if($qCatalogNumber) $qryStr .= '&catalognumber='.$qCatalogNumber;
 						if($qOtherCatalogNumbers) $qryStr .= '&othercatalognumbers='.$qOtherCatalogNumbers;
-						if($qUser && $qUserAction == 'enteredby') $qryStr .= '&recordenteredby='.$qUser;
+						if($qRecordEnteredBy) $qryStr .= '&recordenteredby='.$qRecordEnteredBy;
 						if($qDateEntered) $qryStr .= '&dateentered='.$qDateEntered;
 						if($qDateLastModified) $qryStr .= '&datelastmodified='.$qDateLastModified;
 						if($qryStr){
@@ -625,7 +620,6 @@ else{
 						<option value="eventdate" <?php echo ($qOrderBy=='eventdate'?'SELECTED':''); ?>><?php echo $LANG['DATE']; ?></option>
 						<option value="catalognumber" <?php echo ($qOrderBy=='catalognumber'?'SELECTED':''); ?>><?php echo $LANG['CAT_NUM']; ?></option>
 						<option value="recordenteredby" <?php echo ($qOrderBy=='recordenteredby'?'SELECTED':''); ?>><?php echo $LANG['ENTERED_BY']; ?></option>
-						<option value="recordmodifiedby" <?php echo ($qOrderBy=='recordmodifiedby'?'SELECTED':''); ?>><?php echo $LANG['LAST_MODIFIED_BY']; ?></option>
 						<option value="dateentered" <?php echo ($qOrderBy=='dateentered'?'SELECTED':''); ?>><?php echo $LANG['DATE_ENTERED']; ?></option>
 						<option value="datelastmodified" <?php echo ($qOrderBy=='datelastmodified'?'SELECTED':''); ?>><?php echo $LANG['DATE_LAST_MODIFIED']; ?></option>
 						<option value="processingstatus" <?php echo ($qOrderBy=='processingstatus'?'SELECTED':''); ?>><?php echo $LANG['PROC_STATUS']; ?></option>
@@ -694,7 +688,7 @@ else{
 	function enteredByCurrentUser(){
 		var f = document.queryform;
 		resetQueryForm(f);
-		f.q_user.value = "<?php echo $GLOBALS['USERNAME']?>";
+		f.q_recordenteredby.value = "<?php echo $GLOBALS['USERNAME']?>";
 		var today = new Date();
 		var dd = String(today.getDate()).padStart(2, '0');
 		var mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -711,8 +705,7 @@ else{
 		f.q_recordedby.value = "";
 		f.q_recordnumber.value = "";
 		f.q_eventdate.value = "";
-		f.q_user.value = "";
-		f.useraction.options[0].selected = true;
+		f.q_recordenteredby.value = "";
 		f.q_dateentered.value = "";
 		f.q_datelastmodified.value = "";
 		f.q_processingstatus.value = "";

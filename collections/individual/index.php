@@ -95,8 +95,8 @@ if(isset($_SERVER['HTTP_ACCEPT'])){
 
 if($SYMB_UID){
 	//Form action submitted
-	if(array_key_exists('delvouch',$_GET) && $occid){
-		if(!$indManager->deleteVoucher($occid,$_GET['delvouch'])){
+	if(array_key_exists('delvouch',$_GET)){
+		if(!$indManager->deleteVoucher($_GET['delvouch'])){
 			$statusStr = $indManager->getErrorMessage();
 		}
 	}
@@ -405,7 +405,8 @@ $traitArr = $indManager->getTraitArr();
 							<?php
 						}
 						if($occArr['othercatalognumbers']){
-							if(substr($occArr['othercatalognumbers'],0,1)=='{'){
+							$char = substr($occArr['othercatalognumbers'],0,1);
+							if($char == '{' || $char == '['){
 								$otherCatArr = json_decode($occArr['othercatalognumbers'],true);
 								foreach($otherCatArr as $catTag => $catValueArr){
 									if(!$catTag) $catTag = $LANG['OTHER_CATALOG_NUMBERS'];

@@ -365,9 +365,8 @@ class ImInventories extends Manager{
 	public function getManagers($role, $tableName, $tablePK){
 		$retArr = array();
 		if(is_numeric($tablePK)){
-			$sql = 'SELECT u.uid, CONCAT_WS(", ", u.lastname, u.firstname) as fullname, l.username '.
+			$sql = 'SELECT u.uid, CONCAT_WS(", ", u.lastname, u.firstname) as fullname, u.username '.
 				'FROM userroles r INNER JOIN users u ON r.uid = u.uid '.
-				'INNER JOIN userlogin l ON u.uid = l.uid '.
 				'WHERE r.role = "'.$this->cleanInStr($role).'" AND r.tableName = "'.$this->cleanInStr($tableName).'" AND r.tablepk = '.$tablePK;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
@@ -405,9 +404,7 @@ class ImInventories extends Manager{
 
 	public function getUserArr(){
 		$retArr = array();
-		$sql = 'SELECT u.uid, CONCAT_WS(", ", u.lastname, u.firstname) as fullname, l.username '.
-			'FROM users u INNER JOIN userlogin l ON u.uid = l.uid '.
-			'ORDER BY u.lastname, u.firstname';
+		$sql = 'SELECT uid, CONCAT_WS(", ", lastname, firstname) as fullname, username FROM users ORDER BY lastname, firstname';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr[$r->uid] = $r->fullname.' ('.$r->username.')';

@@ -292,6 +292,7 @@ class TaxonomyUtilities {
 		return $status;
 	}
 
+	/*
 	public static function buildHierarchyNestedTree($conn, $taxAuthId = 1){
 		if($conn){
 			set_time_limit(1200);
@@ -335,6 +336,7 @@ class TaxonomyUtilities {
 		$endIndex++;
 		return $endIndex;
 	}
+	*/
 
 	public static function linkOccurrenceTaxa($conn = null){
 		if(!$conn) $conn = MySQLiConnectionFactory::getCon("write");
