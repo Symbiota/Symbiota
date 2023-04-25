@@ -290,7 +290,7 @@ class DwcArchiverCore extends Manager{
 				} elseif ($field == 'traitid') {
 					$sqlFrag .= 'AND (s.traitid IN(' . implode(',', $condArr['EQUALS']) . ')) ';
 				} elseif ($field == 'clid') {
-					$sqlFrag .= 'AND (v.clid IN(' . implode(',', $condArr['EQUALS']) . ')) ';
+					$sqlFrag .= 'AND (ctl.clid IN(' . implode(',', $condArr['EQUALS']) . ')) ';
 				} elseif (($field == 'sciname' || $field == 'family') && isset($condArr['EQUALS'])) {
 					$taxaManager = new OccurrenceTaxaManager();
 					$taxaArr = array();
@@ -374,9 +374,9 @@ class DwcArchiverCore extends Manager{
 			if (stripos($this->conditionSql, 'e.parenttid')) {
 				$sql .= 'LEFT JOIN taxaenumtree e ON o.tidinterpreted = e.tid ';
 			}
-			if (stripos($this->conditionSql, 'v.clid')) {
+			if (stripos($this->conditionSql, 'ctl.clid')) {
 				//Search criteria came from custom search page
-				$sql .= 'LEFT JOIN fmvouchers v ON o.occid = v.occid ';
+				$sql .= 'LEFT JOIN fmvouchers v ON o.occid = v.occid LEFT JOIN fmchklsttaxalink ctl ON v.clTaxaID = ctl.clTaxaID ';
 			}
 			if (stripos($this->conditionSql, 'd.datasetid')) {
 				$sql .= 'INNER JOIN omoccurdatasetlink d ON o.occid = d.occid ';
@@ -511,8 +511,8 @@ class DwcArchiverCore extends Manager{
 								break;
 							default:
 								if (isset($occurTermArr[$key])) {
-									$ns = RdfUtility::namespaceAbbrev($occurTermArr[$key]);
-									$returnvalue .= $separator . "   " . $ns . " \"$value\"";
+									//$ns = RdfUtility::namespaceAbbrev($occurTermArr[$key]);
+									//$returnvalue .= $separator . "   " . $ns . " \"$value\"";
 								}
 						}
 					}
@@ -648,9 +648,9 @@ class DwcArchiverCore extends Manager{
 								break;
 							default:
 								if (isset($occurTermArr[$key])) {
-									$ns = RdfUtility::namespaceAbbrev($occurTermArr[$key]);
-									$elem = $newDoc->createElement($ns);
-									$elem->appendChild($newDoc->createTextNode($value));
+									//$ns = RdfUtility::namespaceAbbrev($occurTermArr[$key]);
+									//$elem = $newDoc->createElement($ns);
+									//$elem->appendChild($newDoc->createTextNode($value));
 								}
 						}
 						if ($elem != null) {

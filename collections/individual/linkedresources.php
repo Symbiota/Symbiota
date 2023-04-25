@@ -30,13 +30,13 @@ $indManager->setOccid($occid);
 		if($vClArr){
 			echo '<div class="section-title">'.(isset($LANG['VOUCHEROFFOLLOWING'])?$LANG['VOUCHEROFFOLLOWING']:'Specimen voucher of the following checklists').'</div>';
 			echo '<ul style="margin:15px 0px 25px 0px;">';
-			foreach($vClArr as $id => $clName){
+			foreach($vClArr as $vClid => $vClArr){
 				echo '<li>';
-				echo '<a href="../../checklists/checklist.php?showvouchers=1&clid=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($clName, HTML_SPECIAL_CHARS_FLAGS) . '</a>&nbsp;&nbsp;';
-				if(isset($USER_RIGHTS['ClAdmin']) && in_array($id,$USER_RIGHTS['ClAdmin'])){
+				echo '<a href="../../checklists/checklist.php?showvouchers=1&clid=' . htmlspecialchars($vClid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($vClArr['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a>&nbsp;&nbsp;';
+				if(isset($USER_RIGHTS['ClAdmin']) && in_array($vClid, $USER_RIGHTS['ClAdmin'])){
 					$delStr = (isset($LANG['DELVOUCHER'])?$LANG['DELVOUCHER']:'Delete voucher link');
 					$confirmStr = (isset($LANG['CONFIRMVOUCHER'])?$LANG['CONFIRMVOUCHER']:'Are you sure you want to remove this voucher link?');
-					echo '<a href="index.php?delvouch=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '&occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" title=' . htmlspecialchars($delStr, HTML_SPECIAL_CHARS_FLAGS) . ' onclick="return confirm(\"' . htmlspecialchars($confirmStr, HTML_SPECIAL_CHARS_FLAGS) . '\")"><img src="../../images/drop.png" style="width:12px;" /></a>';
+					echo '<a href="index.php?delvouch=' . htmlspecialchars($vClArr['voucherID'], HTML_SPECIAL_CHARS_FLAGS) . '&occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" title=' . htmlspecialchars($delStr, HTML_SPECIAL_CHARS_FLAGS) . ' onclick="return confirm(\"' . htmlspecialchars($confirmStr, HTML_SPECIAL_CHARS_FLAGS) . '\")"><img src="../../images/drop.png" style="width:12px;" /></a>';
 				}
 				echo '</li>';
 			}

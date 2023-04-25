@@ -74,9 +74,9 @@ class DwcArchiverImage{
 			if(stripos($conditionSql,'e.parenttid')){
 				$sql .= 'LEFT JOIN taxaenumtree e ON o.tidinterpreted = e.tid ';
 			}
-			if(strpos($conditionSql,'v.clid')){
+			if(strpos($conditionSql,'ctl.clid')){
 				//Search criteria came from custom search page
-				$sql .= 'LEFT JOIN fmvouchers v ON o.occid = v.occid ';
+				$sql .= 'LEFT JOIN fmvouchers v ON o.occid = v.occid LEFT JOIN fmchklsttaxalink ctl ON v.clTaxaID = ctl.clTaxaID ';
 			}
 			if(strpos($conditionSql,'p.point')){
 				//Search criteria came from map search page

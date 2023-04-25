@@ -73,10 +73,11 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 				//Exclude vouchers already linked to target checklist
 				$clOccidArr = array();
 				if(isset($this->taxaArr['search']) && is_numeric($this->taxaArr['search'])){
-					$sql = 'SELECT DISTINCT v.occid '.
-						'FROM fmvouchers v INNER JOIN taxstatus ts ON v.tid = ts.tidaccepted '.
-						'INNER JOIN taxstatus ts2 ON ts.tidaccepted = ts2.tidaccepted '.
-						'WHERE (v.clid = '.$this->searchTermArr['targetclid'].') AND (v.tid IN('.$this->taxaArr['search'].'))';
+					$sql = 'SELECT DISTINCT v.occid
+						FROM fmvouchers v INNER JOIN fmchklsttaxalink ctl ON v.clTaxaID = ctl.clTaxaID
+						INNER JOIN taxstatus ts ON ctl.tid = ts.tidaccepted
+						INNER JOIN taxstatus ts2 ON ts.tidaccepted = ts2.tidaccepted
+						WHERE (ctl.clid = '.$this->searchTermArr['targetclid'].') AND (ctl.tid IN('.$this->taxaArr['search'].'))';
 					$rs = $this->conn->query($sql);
 					while($r = $rs->fetch_object()){
 						$clOccidArr[] = $r->occid;
@@ -92,7 +93,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 				$sqlWhere .= 'AND (cl.clid IN('.$this->searchTermArr['clid'].')) ';
 			}
 			else{
-				$sqlWhere .= 'AND (v.clid IN('.$this->searchTermArr['clid'].')) ';
+				$sqlWhere .= 'AND (ctl.clid IN('.$this->searchTermArr['clid'].')) ';
 			}
 			$this->displaySearchArr[] = 'Checklist ID: '.$this->searchTermArr['clid'];
 		}
@@ -408,14 +409,9 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 				if($includeOtherCatNum){
 					$catWhere .= 'OR (o.othercatalognumbers IN("'.implode('","',$inFrag).'")) ';
 					$catWhere .= 'OR (o.occurrenceID IN("'.implode('","',$inFrag).'")) ';
+					$catWhere .= 'OR (o.recordID IN("'.implode('","',$inFrag).'")) ';
 					//$catWhere .= 'OR (oi.identifiervalue IN("'.implode('","',$inFrag).'")) ';
 					$identFrag[] = '(identifiervalue IN("'.implode('","',$inFrag).'"))';
-					if(strlen($inFrag[0]) == 36){
-						$guidOccid = $this->queryRecordID($inFrag);
-						if($guidOccid){
-							$catWhere .= 'OR (o.occid IN('.implode(',',$guidOccid).')) ';
-						}
-					}
 				}
 			}
 			if($identFrag){
@@ -491,19 +487,6 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		return $retArr;
 	}
 
-	private function queryRecordID($idArr){
-		$retArr = array();
-		if($idArr){
-			$sql = 'SELECT occid FROM guidoccurrences WHERE guid IN("'.implode('","', $idArr).'")';
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$retArr[] = $r->occid;
-			}
-			$rs->free();
-		}
-		return $retArr;
-	}
-
 	protected function formatDate($inDate){
 		$retDate = OccurrenceUtilities::formatDate($inDate);
 		return $retDate;
@@ -512,8 +495,8 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	protected function getTableJoins($sqlWhere){
 		$sqlJoin = '';
 		if(array_key_exists('clid',$this->searchTermArr) && $this->searchTermArr['clid']){
-			if(strpos($sqlWhere,'v.clid')){
-				$sqlJoin .= 'INNER JOIN fmvouchers v ON o.occid = v.occid ';
+			if(strpos($sqlWhere,'ctl.clid')){
+				$sqlJoin .= 'INNER JOIN fmvouchers v ON o.occid = v.occid INNER JOIN fmchklsttaxalink ctl ON v.clTaxaID = ctl.clTaxaID ';
 			}
 			else{
 				$sqlJoin .= 'INNER JOIN fmchklsttaxalink cl ON o.tidinterpreted = cl.tid ';

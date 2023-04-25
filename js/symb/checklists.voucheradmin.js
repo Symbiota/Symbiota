@@ -66,6 +66,7 @@ function initAutoComplete(formElem){
 				}
 			});
         },
+		autoFocus: true,
 		minLength: 3 
 	});
 }
@@ -74,17 +75,9 @@ function linkVoucher(occidIn, clidIn){
 	$.ajax({
 		type: "POST",
 		url: "rpc/linkvoucher.php",
-		data: { clid: clidIn, occid: occidIn, sciname: document.getElementById("tid-"+occidIn).value }
+		data: { clid: clidIn, occid: occidIn, taxon: document.getElementById("tid-"+occidIn).value }
 	}).done(function( msg ) {
-		if(msg == 1){
-			alert("Voucher linked successfully!");
-		}
-		else if(msg == 2){
-			alert("Specimen already a voucher for checklist");
-		}
-		else{
-			alert("Voucher link failed: "+msg);
-		}
+		alert(msg);
 	});
 }
 

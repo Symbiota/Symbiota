@@ -38,8 +38,7 @@ class UuidFactory {
 		if($rs->num_rows){
 			while($r = $rs->fetch_object()){
 				$guid = UuidFactory::getUuidV4();
-				$insSql = 'UPDATE omcollections SET collectionguid = "'.$guid.'" '.
-					'WHERE collectionguid IS NULL AND collid = '.$r->collid;
+				$insSql = 'UPDATE omcollections SET collectionguid = "'.$guid.'" WHERE collectionguid IS NULL AND collid = '.$r->collid;
 				if(!$this->conn->query($insSql)){
 					$this->echoStr('ERROR: '.$this->conn->error);
 				}
@@ -52,7 +51,7 @@ class UuidFactory {
 		//Populate occurrence GUIDs
 		$this->echoStr("Populating occurrence GUIDs\n");
 		$sql = 'SELECT occid FROM omoccurrences WHERE recordID IS NULL ';
-		if($collId) $sql .= 'AND o.collid = '.$collId;
+		if($collId) $sql .= 'AND collid = '.$collId;
 		$rs = $this->conn->query($sql);
 		$recCnt = 0;
 		if($rs->num_rows){
@@ -118,7 +117,7 @@ class UuidFactory {
 
 	public function getCollectionCount(){
 		$retCnt = 0;
-		$sql = 'SELECT count(c.collid) as reccnt FROM omcollections WHERE collectionguid IS NULL ';
+		$sql = 'SELECT count(collid) as reccnt FROM omcollections WHERE collectionguid IS NULL ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retCnt = $r->reccnt;
@@ -130,7 +129,7 @@ class UuidFactory {
 	public function getOccurrenceCount($collId = 0){
 		$retCnt = 0;
 		$sql = 'SELECT COUNT(occid) as reccnt FROM omoccurrences WHERE recordID IS NULL ';
-		if($collId) $sql .= 'AND o.collid = '.$collId;
+		if($collId) $sql .= 'AND collid = '.$collId;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retCnt = $r->reccnt;

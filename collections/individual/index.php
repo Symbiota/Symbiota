@@ -95,8 +95,8 @@ if(isset($_SERVER['HTTP_ACCEPT'])){
 
 if($SYMB_UID){
 	//Form action submitted
-	if(array_key_exists('delvouch',$_GET) && $occid){
-		if(!$indManager->deleteVoucher($occid,$_GET['delvouch'])){
+	if(array_key_exists('delvouch',$_GET)){
+		if(!$indManager->deleteVoucher($_GET['delvouch'])){
 			$statusStr = $indManager->getErrorMessage();
 		}
 	}

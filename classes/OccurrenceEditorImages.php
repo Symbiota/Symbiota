@@ -361,7 +361,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 	}
 
 	public function addImage($postArr){
-		$status = true;
+		$status = false;
 		$imgManager = new ImageShared();
 		//Set target path
 		$subTargetPath = $this->collMap['institutioncode'];
@@ -414,18 +414,19 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 			if($imgWeb) $imgManager->setImgWebUrl($imgWeb);
 			if($imgThumb) $imgManager->setImgTnUrl($imgThumb);
 			if(array_key_exists('copytoserver',$postArr) && $postArr['copytoserver']){
-				if(!$imgManager->copyImageFromUrl()) $status = false;
+				if($imgManager->copyImageFromUrl()) $status = true;
 			}
 			else $imgManager->setImgLgUrl($sourceImgUri);
 		}
 		else{
 			//Image is a file upload
-			if(!$imgManager->uploadImage()) $status = false;
+			if($imgManager->uploadImage()) $status = true;
 		}
 		$imgManager->setOccid($this->occid);
 		if(isset($this->occurrenceMap[$this->occid]['tidinterpreted'])) $imgManager->setTid($this->occurrenceMap[$this->occid]['tidinterpreted']);
 		if($imgManager->processImage()){
 			$this->activeImgId = $imgManager->getActiveImgId();
+			$status = true;
 		}
 
 		//Load tags

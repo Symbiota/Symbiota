@@ -362,9 +362,8 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 				echo '<div style="margin:3px">';
 				echo '<a href="../../checklists/checklist.php?showvouchers=1&clid=' . htmlspecialchars($vClid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($vClName, HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
 				if(array_key_exists($vClid, $userChecklists)){
-				?>
-					<a href="occurrenceeditor.php?submitaction=deletevoucher&delclid=<?php echo htmlspecialchars($vClid, HTML_SPECIAL_CHARS_FLAGS) . '&occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '&tabtarget=3'; ?>" title="<?php echo htmlspecialchars($LANG['DELETE_VOUCHER_LINK'], HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="return confirm('<?php echo htmlspecialchars($LANG['SURE_REMOVE_VOUCHER'], HTML_SPECIAL_CHARS_FLAGS); ?>">;
-				<?php
+					$href = 'occurrenceeditor.php?submitaction=deletevoucher&delclid='.$vClid.'&occid='.$occid.'&tabtarget=3';
+					echo '<a href="' . htmlspecialchars($href, HTML_SPECIAL_CHARS_FLAGS) .'" title="' . htmlspecialchars($LANG['DELETE_VOUCHER_LINK'], HTML_SPECIAL_CHARS_FLAGS) . '" onclick="return confirm(\'' . htmlspecialchars($LANG['SURE_REMOVE_VOUCHER'], HTML_SPECIAL_CHARS_FLAGS) . '\'">';
 					echo '<img src="../../images/drop.png" style="width:12px;" />';
 					echo '</a>';
 				}

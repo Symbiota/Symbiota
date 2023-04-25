@@ -3,17 +3,17 @@ include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherReport.php');
 include_once($SERVER_ROOT.'/content/lang/checklists/voucheradmin.'.$LANG_TAG.'.php');
 
-$clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:0;
-$pid = array_key_exists("pid",$_REQUEST)?$_REQUEST["pid"]:"";
-$startPos = (array_key_exists('start',$_REQUEST)?(int)$_REQUEST['start']:0);
-$displayMode = (array_key_exists('displaymode',$_REQUEST)?$_REQUEST['displaymode']:0);
+$clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$pid = array_key_exists('pid', $_REQUEST) ? filter_var($_REQUEST['pid'], FILTER_SANITIZE_NUMBER_INT) : '';
+$startPos = (array_key_exists('start', $_REQUEST) ? filter_var($_REQUEST['start'], FILTER_SANITIZE_NUMBER_INT) : 0);
+$displayMode = (array_key_exists('displaymode', $_REQUEST) ? filter_var($_REQUEST['displaymode'], FILTER_SANITIZE_NUMBER_INT) : 0);
 
 $clManager = new ChecklistVoucherReport();
 $clManager->setClid($clid);
 $clManager->setCollectionVariables();
 
 $isEditor = 0;
-if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USER_RIGHTS["ClAdmin"]))){
+if($IS_ADMIN || (array_key_exists('ClAdmin', $USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin']))){
 	$isEditor = 1;
 }
 if($isEditor){
@@ -51,7 +51,7 @@ if($isEditor){
 						<a href="voucheradmin.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><img src="../images/refresh.png" style="width:14px;vertical-align: middle;" title="<?php echo htmlspecialchars($LANG['REFRESHLIST'], HTML_SPECIAL_CHARS_FLAGS);?>" /></a>
 					</span>
 				</div>
-			<?php
+				<?php
 			}
 			if($displayMode){
 				?>
@@ -76,7 +76,7 @@ if($isEditor){
 										<th><?php echo $LANG['LOCALITY'];?></th>
 									</tr>
 									<?php
-									foreach($specArr as $cltid => $occArr){
+									foreach($specArr as $clTaxaID => $occArr){
 										foreach($occArr as $occid => $oArr){
 											echo '<tr>';
 											echo '<td><input name="occids[]" type="checkbox" value="'.$occid.'-'.$cltid.'" /></td>';
@@ -99,9 +99,9 @@ if($isEditor){
 								<input name="pid" value="<?php echo $pid; ?>" type="hidden" />
 								<input name="displaymode" value="<?php echo $displayMode; ?>" type="hidden" />
 								<input name="usecurrent" value="1" type="checkbox" checked /><?php echo $LANG['ADDNAMECURRTAX'];?><br/>
-								<input name="submitaction" value="Add Vouchers" type="submit" />
+								<button name="submitaction" type="submit" value="addVouchers">Add Vouchers</button>
 							</form>
-						<?php
+							<?php
 						}
 						else{
 							echo '<div style="font-weight:bold;font-size:120%;">'.$LANG['NOVOUCHLOCA'].'</div>';
@@ -109,8 +109,7 @@ if($isEditor){
 						?>
 					</div>
 				</div>
-
-			<?php
+				<?php
 			}
 			else{
 				?>
@@ -122,9 +121,11 @@ if($isEditor){
 						<?php
 						if($nonVoucherArr = $clManager->getNonVoucheredTaxa($startPos)){
 							foreach($nonVoucherArr as $family => $tArr){
-								echo '<div style="font-weight:bold;">'.strtoupper($family).'</div>';
-								echo '<div style="margin:10px;text-decoration:italic;">';
-								foreach($tArr as $tid => $sciname){
+								echo '<div class="family-div">'.strtoupper($family).'</div>';
+								echo '<div class="taxa-block">';
+								foreach($tArr as $clTaxaID => $taxaArr){
+									$tid = $taxaArr['t'];
+									$sciname = htmlspecialchars($taxaArr['s'], HTML_SPECIAL_CHARS_FLAGS);
 									?>
 									<div>
 										<a href="#" onclick="openPopup('../taxa/index.php?taxauthid=1&taxon=<?php echo htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>','taxawindow');return false;"><?php echo $sciname; ?></a>
@@ -155,7 +156,7 @@ if($isEditor){
 						?>
 					</div>
 				</div>
-			<?php
+				<?php
 			}
 			?>
 		</div>

@@ -1547,6 +1547,26 @@ class TaxonomyHarvester extends Manager{
 		}
 	}
 
+	public function rebuildHierarchyEnumTree(){
+		$status = TaxonomyUtilities::rebuildHierarchyEnumTree($this->conn);
+		if($status === true){
+			return true;
+		}
+		else{
+			$this->errorMessage = $status;
+		}
+	}
+
+	public function buildHierarchyEnumTree(){
+		$status = TaxonomyUtilities::buildHierarchyEnumTree($this->conn);
+		if($status === true){
+			return true;
+		}
+		else{
+			$this->errorMessage = $status;
+		}
+	}
+
 	//Data retrival functions
 	public function getKingdomArr(){
 		$retArr = array();
