@@ -3,8 +3,9 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditReview.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/editreviewer.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/editreviewer.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/editor/editreviewer.en.php');
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/editreviewer.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 header('Content-Type: text/html; charset='.$CHARSET);
+
+if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/editreviewer.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $collid = filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT);
 $displayMode = array_key_exists('display', $_REQUEST) ? filter_var($_REQUEST['display'], FILTER_SANITIZE_NUMBER_INT) : '1';
@@ -124,6 +125,10 @@ $navStr .= '</div>';
 			}
 
 			function validateEditForm(f){
+				if(f.applytask.value == "" && f.rstatus.value == 0){
+					alert("<?php echo $LANG['NO_ACTION']; ?>");
+					return false;
+				}
 				var elements = document.getElementsByName("id[]");
 				for(i = 0; i < elements.length; i++){
 					var elem = elements[i];
@@ -288,8 +293,9 @@ $navStr .= '</div>';
 							<legend><b><?php echo $LANG['ACTION_PANEL']; ?></b></legend>
 							<div style="margin:10px 10px;">
 								<div style="float:left;margin-bottom:10px;">
-									<input name="applytask" type="radio" value="apply" CHECKED title="<?php echo $LANG['APPLY_EDITS_IF']; ?>" /><?php echo $LANG['APPLY_EDITS']; ?><br/>
-									<input name="applytask" type="radio" value="revert" title="<?php echo $LANG['REVERT_EDITS']; ?>" /><?php echo $LANG['REVERT_EDITS']; ?>
+									<input name="applytask" type="radio" value="" CHECKED title="<?php echo $LANG['LEAVE_AS_IS']; ?>"> <?php echo $LANG['LEAVE_AS_IS']; ?><br/>
+									<input name="applytask" type="radio" value="apply" title="<?php echo $LANG['APPLY_EDITS_IF']; ?>"> <?php echo $LANG['APPLY_EDITS']; ?><br/>
+									<input name="applytask" type="radio" value="revert" title="<?php echo $LANG['REVERT_EDITS']; ?>"> <?php echo $LANG['REVERT_EDITS']; ?>
 								</div>
 								<div style="float:left;margin-left:30px;">
 									<b><?php echo $LANG['REVIEW_STATUS']; ?>:</b>
@@ -302,17 +308,17 @@ $navStr .= '</div>';
 								</div>
 								<div style="clear:both;margin:15px 5px;">
 									<button name="formsubmit" type="submit" value="updateRecords" onclick="return validateEditForm(this.form);"><?php echo $LANG['UPDATE_SELECTED']; ?></button>
-									<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-									<input name="fastatus" type="hidden" value="<?php echo $faStatus; ?>" />
-									<input name="frstatus" type="hidden" value="<?php echo $frStatus; ?>" />
-									<input name="ffieldname" type="hidden" value="<?php echo $filterFieldName; ?>" />
-									<input name="editor" type="hidden" value="<?php echo $editor; ?>" />
-									<input name="startdate" type="hidden" value="<?php echo $startDate; ?>" />
-									<input name="enddate" type="hidden" value="<?php echo $endDate; ?>" />
-									<input name="occid" type="hidden" value="<?php echo $queryOccid; ?>" />
-									<input name="pagenum" type="hidden" value="<?php echo $pageNum; ?>" />
-									<input name="limitcnt" type="hidden" value="<?php echo $limitCnt; ?>" />
-									<input name="display" type="hidden" value="<?php echo $displayMode; ?>" />
+									<input name="collid" type="hidden" value="<?php echo $collid; ?>">
+									<input name="fastatus" type="hidden" value="<?php echo $faStatus; ?>">
+									<input name="frstatus" type="hidden" value="<?php echo $frStatus; ?>">
+									<input name="ffieldname" type="hidden" value="<?php echo $filterFieldName; ?>">
+									<input name="editor" type="hidden" value="<?php echo $editor; ?>">
+									<input name="startdate" type="hidden" value="<?php echo $startDate; ?>">
+									<input name="enddate" type="hidden" value="<?php echo $endDate; ?>">
+									<input name="occid" type="hidden" value="<?php echo $queryOccid; ?>">
+									<input name="pagenum" type="hidden" value="<?php echo $pageNum; ?>">
+									<input name="limitcnt" type="hidden" value="<?php echo $limitCnt; ?>">
+									<input name="display" type="hidden" value="<?php echo $displayMode; ?>">
 								</div>
 							</div>
 							<div style="clear:both;margin:15px 0px;">
