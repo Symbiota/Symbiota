@@ -1,6 +1,19 @@
 INSERT IGNORE INTO schemaversion (versionnumber) values ("HUH");
 
 --
+-- Table structure for table `image_batch`
+--
+
+DROP TABLE IF EXISTS `image_batch`;
+CREATE TABLE `image_batch` (
+  `image_batch_id` int(11) NOT NULL AUTO_INCREMENT,
+  `ingest_date` timestamp NOT NULL,
+  `batch_name` varchar(100) NOT NULL,
+  `image_batch_path` varchar(100) NOT NULL,
+  PRIMARY KEY (`image_batch_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
 -- Table structure for table 'image_batch_XREF'
 --
 
@@ -16,18 +29,6 @@ CREATE TABLE `image_batch_XREF` (
   CONSTRAINT `FK_image_batch_XREF_image_batch_id` FOREIGN KEY (`image_batch_id`) REFERENCES `image_batch` (`image_batch_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Table structure for table `image_batch`
---
-
-DROP TABLE IF EXISTS `image_batch`;
-CREATE TABLE `image_batch` (
-  `image_batch_id` int(11) NOT NULL AUTO_INCREMENT,
-  `ingest_date` timestamp NOT NULL,
-  `batch_name` varchar(100) NOT NULL,
-  `image_batch_path` varchar(100) NOT NULL,
-  PRIMARY KEY (`image_batch_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Table structure for table `image_barcode`
