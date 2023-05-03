@@ -372,6 +372,7 @@ function localAutoChanged(cbObj){
 function fieldChanged(fieldName){
 	try{
 		document.fullform.editedfields.value = document.fullform.editedfields.value + fieldName + ";";
+		//document.editForm.editedfields.value = document.editForm.editedfields.value + fieldName + ";";
 	}
 	catch(ex){
 	}
