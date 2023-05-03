@@ -1215,7 +1215,7 @@ else{
 											<button type="submit" id="saveEditsButton" name="submitaction" value="saveOccurEdits" onclick="return verifyFullFormEdits(this.form)" disabled><?php echo $LANG['SAVE_EDITS']; ?></button>
 											<button 
 												type="submit" 
-												value="Next" 
+												value="Previous" 
 												onclick="<?php if($occIndex>0) { ?>submitQueryForm('back');<?php } ?> return false;">
 												Previous
 											</button>
@@ -1223,7 +1223,7 @@ else{
 											<button 
 												type="submit" 
 												value="Next" 
-												onclick="<?php //if($occIndex<$qryCnt-1) { ?>submitQueryForm('forward');<?php //} ?> return false;">
+												onclick="<?php if($occIndex<$qryCnt-1) { ?>submitQueryForm('forward');<?php } ?> return false;">
 												Next
 											</button>
 											<input type="hidden" name="occindex" value="<?php echo is_numeric($occIndex)?$occIndex:''; ?>" />
