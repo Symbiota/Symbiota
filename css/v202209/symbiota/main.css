@@ -22,8 +22,8 @@
 
 /* Global variables and components
    ========================================================================== */
-   @import 'base.css';
-   @import 'variables.css';
+@import 'base.css';
+@import 'variables.css';
 @import 'header.css';
 @import 'footer.css';
 
