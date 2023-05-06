@@ -1395,7 +1395,7 @@ else{
 								</ul>
 								<div id="occdiv">
 									<!-- the main form starts from here -->
-									<form id="fullform" name="fullform" action="occurrenceeditor.php" method="post" onsubmit="return verifyFullForm(this);">
+									<form id="oldform" name="oldform" action="occurrenceeditor.php" method="post" onsubmit="return verifyFullForm(this);">
 										<fieldset>
 											<!-- collector info starts form here -->
 											<legend><?php echo (isset($LANG['COLLECTOR_INFO'])?$LANG['COLLECTOR_INFO']:'Collector Info'); ?></legend>
