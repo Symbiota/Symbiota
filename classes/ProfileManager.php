@@ -673,7 +673,8 @@ class ProfileManager extends Manager{
 		$fileName = $tempPath.$buFileName;
 		$specFH = fopen($fileName.'_spec.csv', "w");
 		//Output header
-		$headerStr = 'occid,dbpk,basisOfRecord,otherCatalogNumbers,ownerInstitutionCode, '.
+		// input of the new quick entry form
+		$headerStr = 'barcode, occid,dbpk,basisOfRecord,otherCatalogNumbers,ownerInstitutionCode, '.
 			'family,scientificName,sciname,tidinterpreted,genus,specificEpithet,taxonRank,infraspecificEpithet,scientificNameAuthorship, '.
 			'taxonRemarks,identifiedBy,dateIdentified,identificationReferences,identificationRemarks,identificationQualifier, '.
 			'typeStatus,recordedBy,recordNumber,associatedCollectors,eventDate,year,month,day,startDayOfYear,endDayOfYear, '.

@@ -161,7 +161,10 @@ class OccurrenceSupport {
 		'establishmentMeans','lifeStage','sex','individualCount','preparations','country','stateProvince',
 		'county','municipality','locality','decimalLatitude','decimalLongitude','geodeticDatum','coordinateUncertaintyInMeters','locationRemarks',
 		'verbatimCoordinates','minimumElevationInMeters','maximumElevationInMeters','verbatimElevation','minimumDepthInMeters',
-		'maximumDepthInMeters','verbatimDepth','dateEntered','dateLastModified');
+		'maximumDepthInMeters','verbatimDepth','dateEntered','dateLastModified',
+		// input of the new quick entry form
+		'barcode',
+	);
 		//,'samplingProtocol','samplingEffort'
 		$fileName = 'specimenOutput_'.time().'.csv';
 		header ('Cache-Control: must-revalidate, post-check=0, pre-check=0');

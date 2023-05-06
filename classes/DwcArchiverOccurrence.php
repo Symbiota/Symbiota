@@ -296,6 +296,11 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['recordID'] = 'g.guid AS recordID';
 		$this->occurDefArr['terms']['references'] = 'http://purl.org/dc/terms/references';
 		$this->occurDefArr['fields']['references'] = '';
+		// input of the new quick entry form
+		// need to figure out what is this for(occurDefArr???)
+		$this->occurDefArr['terms']['barcode'] = '';
+		$this->occurDefArr['fields']['barcode'] = '';
+
 		if($this->schemaType == 'pensoft'){
 			$this->occurDefArr['fields']['occid'] = 'o.occid';
 		}
@@ -310,7 +315,10 @@ class DwcArchiverOccurrence extends Manager{
 			elseif($this->schemaType == 'symbiota'){
 				$trimArr = array();
 				if(!$this->extended){
-					$trimArr = array('collectionID','rights','rightsHolder','accessRights','storageLocation','observerUid','processingStatus','duplicateQuantity','labelProject','dateEntered','dateLastModified');
+					$trimArr = array('collectionID','rights','rightsHolder','accessRights','storageLocation','observerUid','processingStatus','duplicateQuantity','labelProject','dateEntered','dateLastModified',
+									// input of the new quick entry form
+									// TODO: guessing the type, need to figure out the real type of each new input
+									'barcode');
 				}
 				$this->occurDefArr[$k] = array_diff_key($vArr,array_flip($trimArr));
 			}

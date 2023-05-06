@@ -415,7 +415,8 @@ $_SESSION['citationvar'] = $searchVar;
 						<fieldset>
 							<?php
 							$occFieldArr = array(
-								'occurrenceid', 'identifiedby', 'dateidentified', 'identificationreferences',
+								// input of the new quick entry form
+								'barcode', 'occurrenceid', 'identifiedby', 'dateidentified', 'identificationreferences',
 								'identificationremarks', 'taxonremarks', 'recordedby', 'recordnumber', 'associatedcollectors', 'eventdate', 'year', 'month', 'day',
 								'verbatimeventdate', 'habitat', 'substrate', 'occurrenceremarks', 'associatedtaxa', 'verbatimattributes',
 								'reproductivecondition', 'cultivationstatus', 'establishmentmeans', 'lifestage', 'sex', 'individualcount', 'samplingprotocol', 'preparations',

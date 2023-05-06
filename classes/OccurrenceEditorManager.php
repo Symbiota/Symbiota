@@ -47,7 +47,10 @@ class OccurrenceEditorManager {
 			'footprintwkt' => 's', 'georeferencedby' => 's', 'georeferenceprotocol' => 's', 'georeferencesources' => 's', 'georeferenceverificationstatus' => 's',
 			'georeferenceremarks' => 's', 'minimumelevationinmeters' => 'n', 'maximumelevationinmeters' => 'n','verbatimelevation' => 's',
 			'minimumdepthinmeters' => 'n', 'maximumdepthinmeters' => 'n', 'verbatimdepth' => 's','disposition' => 's', 'language' => 's', 'duplicatequantity' => 'n',
-			'labelproject' => 's','processingstatus' => 's', 'recordenteredby' => 's', 'observeruid' => 'n', 'dateentered' => 'd');
+			'labelproject' => 's','processingstatus' => 's', 'recordenteredby' => 's', 'observeruid' => 'n', 'dateentered' => 'd',
+			// input of the new quick entry form
+			'barcode' => 's'
+		);
 		$this->fieldArr['paleo'] = array('eon','era','period','epoch','earlyinterval','lateinterval','absoluteage','storageage','stage','localstage','biota',
 			'biostratigraphy','lithogroup','formation','taxonenvironment','member','bed','lithology','stratremarks','element','slideproperties','geologicalcontextid');
 		$this->fieldArr['identifier'] = array('idname','idvalue');
@@ -1453,7 +1456,10 @@ class OccurrenceEditorManager {
 		if(isset($postArr['clonecount']) && $postArr['clonecount']){
 			$postArr['recordenteredby'] = $GLOBALS['USERNAME'];
 			$sourceOccid = $this->occid;
-			$clearAllArr = array('ownerinstitutioncode','institutioncode','collectioncode','catalognumber','othercatalognumbers','occurrenceid','individualcount','duplicatequantity','processingstatus','dateentered');
+			$clearAllArr = array('ownerinstitutioncode','institutioncode','collectioncode','catalognumber','othercatalognumbers','occurrenceid','individualcount','duplicatequantity','processingstatus','dateentered', 
+								// input of the new quick entry form
+								'barcode'
+								);
 			$postArr = array_diff_key($postArr,array_flip($clearAllArr));
 			if(isset($postArr['targetcollid']) && $postArr['targetcollid'] && $postArr['targetcollid'] != $this->collId){
 				$clearCollArr = array('basisofrecord');

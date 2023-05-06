@@ -27,7 +27,9 @@ class APIOccurEditor extends APIBase{
 			'locationremarks', 'verbatimcoordinates', 'georeferencedby', 'georeferenceprotocol', 'georeferencesources',
 			'georeferenceverificationstatus', 'georeferenceremarks', 'minimumelevationinmeters', 'maximumelevationinmeters',
 			'verbatimelevation', 'disposition', 'language', 'duplicatequantity',
-			'basisofrecord', 'processingstatus', 'recordenteredby');
+			'basisofrecord', 'processingstatus', 'recordenteredby', 
+			// input of the new quick entry form
+			'barcode');
 		$this->fieldTranslation = array('species'=>'specificepithet','scientificnameauthor'=>'scientificnameauthorship','collector'=>'recordedby','collectornumber'=>'recordnumber',
 			'yearcollected'=>'year','monthcollected'=>'month','daycollected'=>'day','latitude'=>'decimallatitude','longitude'=>'decimallongitude',
 			'minimumelevation'=>'minimumelevationinmeters','maximumelevation'=>'maximumelevationinmeters','minimumdepth'=>'minimumdepthinmeters',
