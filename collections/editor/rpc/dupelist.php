@@ -47,30 +47,30 @@ $dupArr = $dupeManager->getDupeList($recordedBy, $recordNumber, $eventDate, $cat
 		<fieldset style="padding:15px;">
 			<legend><b>Link New Specimen</b></legend>
 			<form name="adddupform" method="post" action="dupelist.php" onsubmit="return validateDupeForm(this)">
-				<div style="margin:3px;">
-					<b>Last Name:</b>
-					<input name="recordedby" type="text" value="<?php echo $recordedBy; ?>" />
-				</div>
-				<div style="margin:3px;">
-					<b>Number:</b>
-					<input name="recordnumber" type="text" value="<?php echo $recordNumber; ?>" />
-				</div>
-				<div style="margin:3px;">
-					<b>Date:</b>
-					<input name="eventdate" type="text" value="<?php echo $eventDate; ?>" />
-				</div>
-				<div style="margin:3px;">
-					<b>Catalog Number:</b>
-					<input name="catnum" type="text" value="" />
-				</div>
-				<div style="margin:3px;">
-					<b>occid:</b>
-					<input name="occid" type="text" value="" />
- 				</div>
-				<div style="margin:20px;">
+				<section style="margin-bottom: 10px;">
+					<label for="recordedby"><b>Last Name:</b></label>
+					<input name="recordedby" id="recordedby" type="text" value="<?php echo $recordedBy; ?>" />
+				</section>
+				<section style="margin-bottom: 10px;">
+					<label for="recordnumber"><b>Number:</b></label>
+					<input name="recordnumber" id="recordnumber" type="text" value="<?php echo $recordNumber; ?>" />
+				</section>
+				<section style="margin-bottom: 10px;">
+					<label for="eventdate"><b>Date:</b></label>
+					<input name="eventdate" id="eventdate" type="date" value="<?php echo $eventDate; ?>" />
+				</section>
+				<section style="margin-bottom: 10px;">
+					<label for="catnum"><b>Catalog Number:</b></label>
+					<input name="catnum" id="catnum" type="text" value="" />
+				</section>
+				<section style="margin-bottom: 10px;">
+					<label for="occid"><b>Occurrence ID:</b></label>
+					<input name="occid" id="occid" type="text" value="" />
+				</section>
+				<section style="margin-bottom: 10px;">
 					<input name="curoccid" type="hidden" value="<?php echo $currentOccid; ?>" />
 					<input name="" type="submit" value="Search for Duplicates" />
- 				</div>
+ 				</section>
 			</form>
 		</fieldset>
 		<fieldset>
