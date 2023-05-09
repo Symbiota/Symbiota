@@ -767,12 +767,6 @@ class TaxonomyEditorManager extends Manager{
 			$sql ='UPDATE IGNORE fmchklsttaxalink SET tid = '.$targetTid.' WHERE tid = '.$this->tid;
 			if(!$this->conn->query($sql)) $this->warningArr[] = (isset($this->langArr['ERROR_TRANSFER_CHECKLIST'])?$this->langArr['ERROR_TRANSFER_CHECKLIST']:'ERROR transferring checklist links').' ('.$this->conn->error.')';
 
-			$sql ='UPDATE IGNORE fmvouchers SET tid = '.$targetTid.' WHERE tid = '.$this->tid;
-			if(!$this->conn->query($sql)) $this->warningArr[] = (isset($this->langArr['ERROR_TRANSFER_VOUCHERS'])?$this->langArr['ERROR_TRANSFER_VOUCHERS']:'ERROR transferring vouchers').' ('.$this->conn->error.')';
-
-			$sql ='DELETE FROM fmvouchers WHERE tid = '.$this->tid;
-			if(!$this->conn->query($sql)) $this->warningArr[] = (isset($this->langArr['ERROR_TRANSFER_LVOUCHERS'])?$this->langArr['ERROR_TRANSFER_LVOUCHERS']:'ERROR deleting leftover vouchers').' ('.$this->conn->error.')';
-
 			$sql ='DELETE FROM fmchklsttaxalink WHERE tid = '.$this->tid;
 			if(!$this->conn->query($sql)) $this->warningArr[] = (isset($this->langArr['ERROR_TRANSFER_LCHECKLISTS'])?$this->langArr['ERROR_TRANSFER_LCHECKLISTS']:'ERROR deleting leftover checklist links').' ('.$this->conn->error.')';
 
@@ -825,10 +819,6 @@ class TaxonomyEditorManager extends Manager{
 
 		$sql ='UPDATE omoccurdeterminations SET tidinterpreted = NULL WHERE tidinterpreted = '.$this->tid;
 		if(!$this->conn->query($sql)) $this->warningArr[] = (isset($this->langArr['ERROR_TRANSFER_DETS'])?$this->langArr['ERROR_TRANSFER_DETS']:'ERROR transferring occurrence determination records').' ('.$this->conn->error.')';
-
-		//Vouchers
-		$sql ='DELETE FROM fmvouchers WHERE tid = '.$this->tid;
-		if(!$this->conn->query($sql)) $this->warningArr[] = (isset($this->langArr['ERROR_DEL_VOUCHER'])?$this->langArr['ERROR_DEL_VOUCHER']:'ERROR deleting voucher links in deleteTaxon method').' ('.$this->conn->error.')';
 
 		//Links to checklists
 		$sql ='DELETE FROM fmchklsttaxalink WHERE tid = '.$this->tid;

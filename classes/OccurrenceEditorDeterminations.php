@@ -81,39 +81,26 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		if($isEditor==3 && is_numeric($detArr['confidenceranking'])) {
 			$notes .= ($notes?'; ':'').'ConfidenceRanking: '.$detArr['confidenceranking'];
 		}
+		$guid = UuidFactory::getUuidV4();
 		$sql = 'INSERT INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
-			'identificationQualifier, iscurrent, printqueue, appliedStatus, identificationReferences, identificationRemarks, sortsequence) '.
+			'identificationQualifier, iscurrent, printqueue, appliedStatus, identificationReferences, identificationRemarks, recordID, sortsequence) '.
 			'VALUES ('.$this->occid.',"'.$this->cleanInStr($detArr['identifiedby']).'","'.$this->cleanInStr($detArr['dateidentified']).'","'.
 			$sciname.'",'.($detArr['scientificnameauthorship']?'"'.$this->cleanInStr($detArr['scientificnameauthorship']).'"':'NULL').','.
 			($detArr['identificationqualifier']?'"'.$this->cleanInStr($detArr['identificationqualifier']).'"':'NULL').','.
 			$detArr['makecurrent'].','.$detArr['printqueue'].','.($isEditor==3?0:1).','.
 			($detArr['identificationreferences']?'"'.$this->cleanInStr($detArr['identificationreferences']).'"':'NULL').','.
-			($notes?'"'.$notes.'"':'NULL').','.
-			$sortSeq.')';
+			($notes?'"'.$notes.'"':'NULL').',"'.$guid.'",'.$sortSeq.')';
 		if($this->conn->query($sql)){
-			//Create and insert Symbiota GUID for determination(UUID)
-			$guid = UuidFactory::getUuidV4();
-			$detId = $this->conn->insert_id;
-			if(!$this->conn->query('INSERT INTO guidoccurdeterminations(guid,detid) VALUES("'.$guid.'",'.$detId.')')){
-				$status .= ' ('.$LANG['WARNING_GUID_1_FAILED'].')';
-			}
 			//If is current, move old determination from omoccurrences to omoccurdeterminations and then load new record into omoccurrences
 			if($isCurrent){
 				//If determination is already in omoccurdeterminations, INSERT will fail move omoccurrences determination to  table
+				$guid = UuidFactory::getUuidV4();
 				$sqlInsert = 'INSERT INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
-					'identificationQualifier, identificationReferences, identificationRemarks, sortsequence) '.
+					'identificationQualifier, identificationReferences, identificationRemarks, recordID, sortsequence) '.
 					'SELECT occid, IFNULL(identifiedby,"unknown") AS idby, IFNULL(dateidentified,"s.d.") AS di, '.
-					'sciname, scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, 10 AS sortseq '.
+					'sciname, scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, "'.$guid.'", 10 AS sortseq '.
 					'FROM omoccurrences WHERE (occid = '.$this->occid.') AND (identifiedBy IS NOT NULL OR dateIdentified IS NOT NULL OR sciname IS NOT NULL)';
-				if($this->conn->query($sqlInsert)){
-					//Create and insert Symbiota GUID for determination(UUID)
-					$guid = UuidFactory::getUuidV4();
-					$detId = $this->conn->insert_id;
-					if(!$this->conn->query('INSERT INTO guidoccurdeterminations(guid,detid) VALUES("'.$guid.'",'.$detId.')')){
-						$status .= ' ('.$LANG['WARNING_GUID_2_FAILED'].')';
-					}
-				}
-
+				$this->conn->query($sqlInsert);
 				$tidToAdd = $detArr['tidtoadd'];
 				if($tidToAdd && !is_numeric($tidToAdd)) $tidToAdd = 0;
 
@@ -208,19 +195,10 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			FROM omoccurdeterminations WHERE detid = '.$detId;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_assoc()){
-			$detArr = array();
 			$isCurrent = $r['isCurrent'];
 			$occid = $r['occid'];
-			foreach($r as $k => $v){
-				if($v) $detArr[$k] = $this->encodeStr($v);
-			}
-			//Archive determinations
-			$detObj = json_encode($detArr);
-			$sqlArchive = 'UPDATE guidoccurdeterminations '.
-			'SET archivestatus = 1, archiveobj = "'.$this->cleanInStr($detObj).'" '.
-			'WHERE (detid = '.$detId.')';
-			$this->conn->query($sqlArchive);
 		}
+		$rs->free();
 
 		if($isCurrent){
 			$prevDetId = 0;
@@ -273,19 +251,13 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		global $LANG;
 		$status = $LANG['DET_NOW_CURRENT'];
 		//Make sure determination data within omoccurrences is in omoccurdeterminations. If already there, INSERT will fail and nothing lost
+		$guid = UuidFactory::getUuidV4();
 		$sqlInsert = 'INSERT INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
-			'identificationQualifier, identificationReferences, identificationRemarks, sortsequence) '.
+			'identificationQualifier, identificationReferences, identificationRemarks, recordID, sortsequence) '.
 			'SELECT occid, IFNULL(identifiedby,"unknown") AS idby, IFNULL(dateidentified,"s.d.") AS iddate, sciname, scientificnameauthorship, '.
-			'identificationqualifier, identificationreferences, identificationremarks, 10 AS sortseq '.
+			'identificationqualifier, identificationreferences, identificationremarks, "'.$guid.'", 10 AS sortseq '.
 			'FROM omoccurrences WHERE (occid = '.$this->occid.') AND (identifiedBy IS NOT NULL OR dateIdentified IS NOT NULL OR sciname IS NOT NULL)';
-		if($this->conn->query($sqlInsert)){
-			//Create and insert Symbiota GUID for determination(UUID)
-			$guid = UuidFactory::getUuidV4();
-			if(!$this->conn->query('INSERT INTO guidoccurdeterminations(guid,detid) VALUES("'.$guid.'",'.$this->conn->insert_id.')')){
-				$status .= ' ('.$LANG['WARNING_GUID_1_FAILED'].')';
-			}
-		}
-		//echo "<div>".$sqlInsert."</div>";
+		$this->conn->query($sqlInsert);
 		//Update omoccurrences to reflect this determination
 		$tid = 0;
 		$sStatus = 0;

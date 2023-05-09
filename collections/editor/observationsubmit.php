@@ -76,7 +76,7 @@ $clArr = $obsManager->getChecklists();
 	$displayLeftMenu = (isset($collections_editor_observationsubmitMenu)?$collections_editor_observationsubmitMenu:false);
 	include($SERVER_ROOT.'/includes/header.php');
 	echo '<div class="navpath">';
-	echo '<a href="../index.php">Home</a> &gt;&gt; ';
+	echo '<a href="../../index.php">Home</a> &gt;&gt; ';
 	if(isset($collections_editor_observationsubmitCrumbs)){
 		echo $collections_editor_observationsubmitCrumbs;
 	}
@@ -108,7 +108,7 @@ $clArr = $obsManager->getChecklists();
 						if(isset($clArr[$clid])) $checklistName = $clArr[$clid];
 						?>
 						<div style="font:weight;font-size:120%;margin-top:10px;">
-							<?php echo $LANG['GO_TO']; ?> <a href="../checklists/checklist.php?clid=<?php echo $clid; ?>" target="_blank"><?php echo $checklistName; ?></a> <?php echo $LANG['CHECKLIST']; ?>
+							<?php echo $LANG['GO_TO']; ?> <a href="../../checklists/checklist.php?clid=<?php echo $clid; ?>" target="_blank"><?php echo $checklistName; ?></a> <?php echo $LANG['CHECKLIST']; ?>
 						</div>
 						<?php
 					}

@@ -92,7 +92,9 @@ class ImageCleaner extends Manager{
 			$this->conn->autocommit(true);
 
 			$setFormat = ($row->format?false:true);
-			if(!$this->buildImageDerivatives($imgId, $row->catalognumber, $row->url, $row->thumbnailurl, $row->originalurl, $setFormat)){
+			$catNum = '';
+			if(isset($row->catalognumber)) $catNum = $row->catalognumber;
+			if(!$this->buildImageDerivatives($imgId, $catNum, $row->url, $row->thumbnailurl, $row->originalurl, $setFormat)){
 				$this->logOrEcho($this->errorMessage, 1);
 				//$tagSql = 'UPDATE images SET thumbnailurl = "" WHERE (imgid = '.$imgId.') AND thumbnailurl LIKE "processing %"';
 				//$this->conn->query($tagSql);

@@ -26,7 +26,7 @@ if($isEditor){
 	if($formSubmit == 'Add New Determinations'){
 		$occidArr = $_REQUEST['occid'];
 		foreach($occidArr as $k){
-			$occManager->setOccId(filter_var($k, filter_SANITIZE_NUMBER_INT));
+			$occManager->setOccId(filter_var($k, FILTER_SANITIZE_NUMBER_INT));
 			$occManager->addDetermination($_REQUEST,$isEditor);
 		}
 		$statusStr = 'SUCCESS: ' . count($occidArr) . ' annotations submitted';
@@ -34,7 +34,7 @@ if($isEditor){
 	elseif($formSubmit == 'Adjust Nomenclature'){
 		$occidArr = $_REQUEST['occid'];
 		foreach($occidArr as $k){
-			$occManager->setOccId(filter_var($k, filter_SANITIZE_NUMBER_INT));
+			$occManager->setOccId(filter_var($k, FILTER_SANITIZE_NUMBER_INT));
 			$occManager->addNomAdjustment($_REQUEST,$isEditor);
 		}
 	}
