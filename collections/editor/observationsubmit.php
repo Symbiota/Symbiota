@@ -208,7 +208,7 @@ $clArr = $obsManager->getChecklists();
 							</div>
 							<div>
 								<label for="eventdate"><?php echo $LANG['DATE']; ?>:</label>
-								<input type="text" id="eventdate" name="eventdate" style="width:120px;" onchange="verifyDate(this);" title="format: yyyy-mm-dd" required />
+								<input id="eventdate" name="eventdate" style="width:120px;" onchange="verifyDate(this);" title="format: yyyy-mm-dd" required placeholder="yyyy-mm-dd" />
 								<a style="margin:15px 0px 0px 5px;" onclick="toggle('obsextradiv');return false" title="Display additional fields">
 									<img src="../../images/editplus.png" style="width:15px;" />
 								</a>
