@@ -573,9 +573,6 @@ class SpecUploadBase extends SpecUpload{
 			}
 		}
 
-		//Prefrom general cleaning and parsing tasks
-		$this->recordCleaningStage1();
-
 		if($this->collMetadataArr["managementtype"] == 'Live Data' || $this->uploadType == $this->SKELETAL){
 			if($this->matchCatalogNumber){
 				//Match records based on Catalog Number
@@ -613,6 +610,9 @@ class SpecUploadBase extends SpecUpload{
 				$this->outputMsg('<li><span style="color:red;">Warning: issue attempting to preserve explicitly defined GUID (e.g. externally generated GUIDs) within a Live Managed collection: '.$this->conn->error.'</span></li>');
 			}
 		}
+
+		//Prefrom general cleaning and parsing tasks
+		$this->recordCleaningStage1();
 
 		$this->cleanImages();
 		//Reset $treansferCnt so that count is accurate since some records may have been deleted due to data integrety issues
@@ -739,6 +739,11 @@ class SpecUploadBase extends SpecUpload{
 			WHERE s.collid IN('.$this->collId.') AND d.collid IN('.$this->collId.') AND d.isCurrent = 1 AND s.sciname IS NULL AND s.identifiedBy IS NULL AND s.dateIdentified IS NULL ';
 		$this->conn->query($sql);
 
+		$this->outputMsg('<li style="margin-left:10px;">Setting basisOfRecord for new records, if not designated within import file...</li>');
+		$borValue = 'PreservedSpecimen';
+		if(strpos($this->collMetadataArr['colltype'], 'Observations') !== false) $borValue = 'HumanObservation';
+		$sql = 'UPDATE uploadspectemp SET basisOfRecord = "'.$borValue.'" WHERE basisOfRecord IS NULL AND occid IS NULL';
+		$this->conn->query($sql);
 	}
 
 	public function getTransferReport(){
@@ -841,12 +846,6 @@ class SpecUploadBase extends SpecUpload{
 
 	protected function recordCleaningStage2(){
 		$this->outputMsg('<li>Starting Stage 2 cleaning</li>');
-
-		//Make sure default value, based on management type, is set for basisOfRecord
-		$borValue = 'HumanObservation';
-		if($this->collMetadataArr['colltype'] == 'Preserved Specimens') $borValue = 'HumanObservation';
-		$sql = 'UPDATE uploadspectemp SET basisOfRecord = "'.$borValue.'" WHERE basisOfRecord IS NULL AND occid IS NULL';
-		$this->conn->query($sql);
 
 		if($this->uploadType == $this->NFNUPLOAD){
 			//Remove specimens without links back to source

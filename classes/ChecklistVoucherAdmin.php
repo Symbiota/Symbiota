@@ -651,7 +651,7 @@ class ChecklistVoucherAdmin extends Manager {
 				}
 				$rs->free();
 			}
-			if($retArr){
+			if($retArr && $this->clid){
 				//Tag collection most likely to be target
 				$sql = 'SELECT o.collid, COUNT(v.occid) as cnt
 					FROM fmvouchers v INNER JOIN omoccurrences o ON v.occid = o.occid
