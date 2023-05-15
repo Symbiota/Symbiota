@@ -1,7 +1,7 @@
 Pull Request Checklist:
 
+- [ ] Hotfixes should be branched off of the `master` branch and merged back into the `master` branch. Subsequently, a PR from `master` into Development should be made.
 - [ ] Features and backlog bugs should be merged into the `Development` branch, **NOT** `master`
-- [ ] Hotfixes should be merged into both the `Development` and `master` branches (at the same time).
 - [ ] All new text is preferrably internationalized (i.e., no end-user-visible text is hard-coded on the PHP pages)
 - [ ] There are no linter errors
 - [ ] New features have responsive design (i.e., look aesthetically pleasing both full screen and with small or mobile screens)
