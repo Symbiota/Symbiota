@@ -36,7 +36,7 @@ header {
 
 .top-brand img {
   width: var(--logo-width);
-  max-width: 100px;
+  max-width: 50px;
   height: auto;
   object-fit: contain; /* scale image keeping proportions */
   filter: brightness(1);
