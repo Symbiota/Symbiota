@@ -37,7 +37,7 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 			</nav>
 			<div class="top-brand">
 				<a href="https://symbiota.org">
-					<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/logo_symbiota.png" alt="Symbiota logo" width="100%">
+					<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/AfricaTCN.png" alt="Tropical Africa TCN" width="100%">
 				</a>
 				<div class="brand-name">
 					<h1>Africa plantae</h1>
