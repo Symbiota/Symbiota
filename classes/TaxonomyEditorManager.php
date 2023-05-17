@@ -536,7 +536,7 @@ class TaxonomyEditorManager extends Manager{
 			'source, notes, securitystatus, modifiedUid, modifiedTimeStamp) '.
 			'VALUES ("'.$this->cleanInStr($dataArr['sciname']).'","'.
 			($dataArr['author']?$this->cleanInStr($dataArr['author']):'').'",'.
-			($dataArr['rankid']?$dataArr['rankid']:'NULL').','.
+			(isset($dataArr['rankid'])?$dataArr['rankid']:0).','.
 			($dataArr['unitind1']?'"'.$this->cleanInStr($dataArr['unitind1']).'"':'NULL').',"'.
 			$this->cleanInStr($dataArr['unitname1']).'",'.
 			($dataArr['unitind2']?'"'.$this->cleanInStr($dataArr['unitind2']).'"':'NULL').','.
@@ -547,7 +547,6 @@ class TaxonomyEditorManager extends Manager{
 			($dataArr['notes']?'"'.$this->cleanInStr($dataArr['notes']).'"':'NULL').','.
 			$this->cleanInStr($dataArr['securitystatus']).','.
 			$GLOBALS['SYMB_UID'].',"'.date('Y-m-d H:i:s').'")';
-		//echo "sqlTaxa: ".$sqlTaxa;
 		if($this->conn->query($sqlTaxa)){
 			$tid = $this->conn->insert_id;
 		 	//Load accepteance status into taxstatus table

@@ -874,6 +874,8 @@ ALTER TABLE `taxa`
 
 UPDATE taxa SET kingdomName = "" WHERE kingdomName IS NULL;
 
+UPDATE taxa SET rankID = 0 WHERE rankID IS NULL;
+
 ALTER TABLE `taxa` 
   CHANGE COLUMN `kingdomName` `kingdomName` VARCHAR(45) NOT NULL DEFAULT '' ,
   CHANGE COLUMN `rankID` `rankID` SMALLINT(5) UNSIGNED NOT NULL DEFAULT 0 ;

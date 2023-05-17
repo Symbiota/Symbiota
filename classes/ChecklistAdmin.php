@@ -22,7 +22,7 @@ class ChecklistAdmin extends Manager{
 			$inventoryManager = new ImInventories();
 			$inventoryManager->setClid($this->clid);
 			$retArr = $inventoryManager->getChecklistMetadata($pid);
-			$this->clName = $retArr['name'];
+			if($retArr) $this->clName = $retArr['name'];
 		}
 		return $retArr;
 	}

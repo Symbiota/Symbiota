@@ -146,7 +146,7 @@ else{
 		);
 	</script>
 	<script src="../../js/symb/collections.editor.table.js?ver=2" type="text/javascript" ></script>
-	<script src="../../js/symb/collections.editor.query.js?ver=4" type="text/javascript" ></script>
+	<script src="../../js/symb/collections.editor.query.js?ver=6" type="text/javascript" ></script>
 	<style type="text/css">
 		#titleDiv { font-weight: bold; font-size: 14px; width:790px; margin-bottom: 5px; }
 		table.styledtable td { white-space: nowrap; }
@@ -193,14 +193,13 @@ else{
 						}
 					}
 				}
-				if($qCustomField1 && !array_key_exists(strtolower($qCustomField1),$headerArr)){
-					$headerArr[strtolower($qCustomField1)] = strtolower($qCustomField1);
-				}
-				if(isset($qCustomField2) && !array_key_exists(strtolower($qCustomField2),$headerArr)){
-					$headerArr[strtolower($qCustomField2)] = strtolower($qCustomField2);
-				}
-				if(isset($qCustomField3) && !array_key_exists(strtolower($qCustomField3),$headerArr)){
-					$headerArr[strtolower($qCustomField3)] = strtolower($qCustomField3);
+				for($x=1; $x<9; $x++){
+					if(isset($customArr[$x]['field'])){
+						$customField = $customArr[$x]['field'];
+						if($customField && !array_key_exists(strtolower($customField), $headerArr)){
+							$headerArr[strtolower($customField)] = $customField;
+						}
+					}
 				}
 				$headerMap = array_intersect_key($headerMapBase, $headerArr);
 			}
