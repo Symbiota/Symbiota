@@ -775,17 +775,17 @@ class OccurrenceEditorManager {
 			//Iterate through occurrences and merge addtional identifiers and otherCatalogNumbers field values
 			foreach($occurrenceArr as $occid => $occurArr){
 				$otherCatNumArr = array();
-				$trimableOccurArr = $occurArr['othercatalognumbers'] ?? "";
-				if($ocnStr = trim($trimableOccurArr,',;| ')){
+				$trimmableOccurArr = $occurArr['othercatalognumbers'] ?? "";
+				if($ocnStr = trim($trimmableOccurArr,',;| ')){
 					$ocnStr = str_replace(array(',',';'),'|',$ocnStr);
 					$ocnArr = explode('|',$ocnStr);
 					foreach($ocnArr as $identUnit){
-						$trimableIdentUnit = $identUnit ?? "";
-						$unitArr = explode(':',trim($trimableIdentUnit,': '));
+						$trimmableIdentUnit = $identUnit ?? "";
+						$unitArr = explode(':',trim($trimmableIdentUnit,': '));
 						$safeUnitArr = $unitArr ?? array();
 						$tag = '';
-						$trimableShiftedUnitArr = array_shift($safeUnitArr) ?? "";
-						if(count($safeUnitArr) > 1) $tag = trim($trimableShiftedUnitArr);
+						$trimmableShiftedUnitArr = array_shift($safeUnitArr) ?? "";
+						if(count($safeUnitArr) > 1) $tag = trim($trimmableShiftedUnitArr);
 						$value = trim(implode(', ',$safeUnitArr));
 						$otherCatNumArr[$value] = $tag;
 					}
