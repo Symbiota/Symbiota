@@ -65,42 +65,42 @@ class MediaController extends Controller{
 	 *		 in="query",
 	 *		 description="Media Type (MIME type)",
 	 *		 required=true,
-	 *		 @OA\Schema(type="string", maxLength: 45)
+	 *		 @OA\Schema(type="string", maxLength=45)
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="originalUrl",
 	 *		 in="query",
 	 *		 description="URL returning original large image; image should be a web-ready JPG  ",
 	 *		 required=true,
-	 *		 @OA\Schema(type="string", maxLength: 255)
+	 *		 @OA\Schema(type="string", maxLength=255)
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="mediumUrl",
 	 *		 in="query",
 	 *		 description="URL returning medium sized image of original large image; image should be a web-ready JPG  ",
 	 *		 required=false,
-	 *		 @OA\Schema(type="string", maxLength: 255)
+	 *		 @OA\Schema(type="string", maxLength=255)
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="thumbnailUrl",
 	 *		 in="query",
 	 *		 description="URL returning thumbnail derivative of original large image; image should be a web-ready JPG  ",
 	 *		 required=false,
-	 *		 @OA\Schema(type="string", maxLength: 255)
+	 *		 @OA\Schema(type="string", maxLength=255)
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="archiveUrl",
 	 *		 in="query",
 	 *		 description="URL returning large archival image (e.g. DNG, TIFF, etc), if web accessible ",
 	 *		 required=false,
-	 *		 @OA\Schema(type="string", maxLength: 255)
+	 *		 @OA\Schema(type="string", maxLength=255)
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="referenceUrl",
 	 *		 in="query",
 	 *		 description="",
 	 *		 required=false,
-	 *		 @OA\Schema(type="string", maxLength: 255)
+	 *		 @OA\Schema(type="string", maxLength=255)
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="occid",
@@ -121,7 +121,7 @@ class MediaController extends Controller{
 	 *		 in="query",
 	 *		 description="Verbatim name of author/photographer media object. Leave NULL if photographerUid is supplied",
 	 *		 required=false,
-	 *		 @OA\Schema(type="string", maxLength: 100)
+	 *		 @OA\Schema(type="string", maxLength=100)
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="photographerUid",
@@ -135,56 +135,56 @@ class MediaController extends Controller{
 	 *		 in="query",
 	 *		 description="Term name of image type (e.g. stillImage)",
 	 *		 required=false,
-	 *		 @OA\Schema(type="string", maxLength: 45)
+	 *		 @OA\Schema(type="string", maxLength=45)
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="caption",
 	 *		 in="query",
 	 *		 description="Consist, free-form text describing content of media object",
 	 *		 required=false,
-	 *		 @OA\Schema(type="string", maxLength: 100)
+	 *		 @OA\Schema(type="string", maxLength=100)
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="copyright",
 	 *		 in="query",
 	 *		 description="Copyright Owner",
 	 *		 required=false,
-	 *		 @OA\Schema(type="string", maxLength: 255)
+	 *		 @OA\Schema(type="string", maxLength=255)
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="rights",
 	 *		 in="query",
 	 *		 description="A URI pointing to structured information about rights held in and over the resource (e.g. https://creativecommons.org/publicdomain/zero/1.0/, https://creativecommons.org/licenses/by/4.0/legalcode)",
 	 *		 required=false,
-	 *		 @OA\Schema(type="string", maxLength: 255)
+	 *		 @OA\Schema(type="string", maxLength=255)
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="accessRights",
 	 *		 in="query",
 	 *		 description="Information about who can access the resource or an indication of its security status",
 	 *		 required=false,
-	 *		 @OA\Schema(type="string", maxLength: 255)
+	 *		 @OA\Schema(type="string", maxLength=255)
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="locality",
 	 *		 in="query",
 	 *		 description="Short description of locality. Leave null if locality is available via the occurrence record",
 	 *		 required=false,
-	 *		 @OA\Schema(type="string", maxLength: 250)
+	 *		 @OA\Schema(type="string", maxLength=250)
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="notes",
 	 *		 in="query",
 	 *		 description="General notes",
 	 *		 required=false,
-	 *		 @OA\Schema(type="string", maxLength: 350)
+	 *		 @OA\Schema(type="string", maxLength=350)
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="sourceIdentifier",
 	 *		 in="query",
 	 *		 description="The source identifier, if media was harvested from an external resource",
 	 *		 required=false,
-	 *		 @OA\Schema(type="string", maxLength: 150)
+	 *		 @OA\Schema(type="string", maxLength=150)
 	 *	 ),
 	 *	 @OA\Response(
 	 *		 response="200",

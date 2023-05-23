@@ -60,7 +60,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 					}
 					if($rawStr){
 						if($ocrSource) $ocrSource .= ': '.date('Y-m-d');
-						$sql = 'INSERT INTO specprocessorrawlabels(imgid, rawstr, source) VALUES('.$this->activeImgId.',"'.$this->cleanInStr($rawStr).'","'.$this->cleanInStr($ocrSource).'")';
+						$sql = 'INSERT INTO specprocessorrawlabels(imgid, rawstr, source) VALUES('.$this->activeImgId.',"'.$this->cleanRawFragment($rawStr).'","'.$this->cleanInStr($ocrSource).'")';
 						if(!$this->conn->query($sql)){
 							$this->errorStr = $LANG['ERROR_LOAD_OCR'].': '.$this->conn->error;
 						}

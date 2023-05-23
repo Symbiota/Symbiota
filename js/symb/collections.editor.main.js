@@ -226,7 +226,7 @@ $(document).ready(function() {
 	
 	$("textarea[name=associatedtaxa]").autocomplete({
 		source: function( request, response ) {
-			$.getJSON( "rpc/getassocspp.php", { term: extractLast( request.term ) }, response );
+			$.getJSON( "rpc/getspeciessuggest.php", { term: extractLast( request.term ) }, response );
 		},
 		search: function() {
 			// custom minLength

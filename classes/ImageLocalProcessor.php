@@ -27,8 +27,8 @@ class ImageLocalProcessor {
 	private $webPixWidth = '';
 	private $tnPixWidth = '';
 	private $lgPixWidth = '';
-	private $webFileSizeLimit = 300000;
-	private $lgFileSizeLimit = 3000000;
+	private $webFileSizeLimit = 500000;
+	private $lgFileSizeLimit = 10000000;
 	private $jpgQuality= 80;
 	private $webImg = 1;			// 1 = evaluate source and import, 2 = import source and use as is, 3 = map to source
 	private $tnImg = 1;				// 1 = create from source, 2 = import source, 3 = map to source, 0 = exclude
@@ -664,12 +664,12 @@ class ImageLocalProcessor {
 							// Image file size is too big, thus let's resize and import
 
 							// Figure out what factor to reduce filesize by
-							$ratio = $fileSize / $this->lgFileSizeLimit;
+							$scaleFactor = sqrt($this->lgFileSizeLimit / $fileSize);
 
 							// Scale by a factor of the square root of the filesize ratio
 							// Note, this is a good approximation to reduce the filesize, but will not be exact
 							// True reduction will also depend on the JPEG quality of the source & the large file
-							$newWidth = round($width * sqrt($ratio));
+							$newWidth = round($width * $scaleFactor);
 
 							// Resize the image
 							if($this->createNewImage($sourcePath.$fileName, $targetPath.$lgTargetFileName, $newWidth, round($newWidth*$height/$width), $width, $height)){

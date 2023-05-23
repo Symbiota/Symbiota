@@ -1,5 +1,21 @@
 INSERT IGNORE INTO schemaversion (versionnumber) values ("3.0");
 
+CREATE TABLE `adminconfig` (
+  `configID` INT NOT NULL AUTO_INCREMENT,
+  `category` VARCHAR(45) NULL,
+  `attributeName` VARCHAR(45) NOT NULL,
+  `attributeValue` VARCHAR(1000) NOT NULL,
+  `dynamicProperties` text DEFAULT NULL,
+  `notes` VARCHAR(45) NULL,
+  `modifiedUid` INT UNSIGNED NULL,
+  `modifiedTimestamp` DATETIME NULL,
+  `initialTimestamp` TIMESTAMP NOT NULL DEFAULT current_timestamp,
+  PRIMARY KEY (`configID`),
+  INDEX `FK_adminConfig_uid_idx` (`modifiedUid` ASC),
+  UNIQUE INDEX `UQ_adminconfig_name` (`attributeName` ASC),
+  CONSTRAINT `FK_adminConfig_uid`  FOREIGN KEY (`modifiedUid`)  REFERENCES `users` (`uid`)  ON DELETE RESTRICT  ON UPDATE RESTRICT
+);
+
 ALTER TABLE `agents` 
   CHANGE COLUMN `taxonomicgroups` `taxonomicGroups` VARCHAR(900) NULL DEFAULT NULL ,
   CHANGE COLUMN `collectionsat` `collectionsAt` VARCHAR(900) NULL DEFAULT NULL ,
@@ -207,7 +223,7 @@ UPDATE IGNORE fmvouchers v INNER JOIN fmchklsttaxalink c ON v.clid = c.clid AND 
   SET v.clTaxaID = c.clTaxaID
   WHERE v.clTaxaID IS NULL;
 
-#Fix if following statement falis: DELETE FROM fmvouchers WHERE clTaxaID IS NULL;
+#Fix if following statement falis: DELETE FROM fmvouchers WHERE clTaxaID IS NULL
 ALTER TABLE `fmvouchers` 
   CHANGE COLUMN `clTaxaID` `clTaxaID` INT(10) UNSIGNED NOT NULL ,
   CHANGE COLUMN `CLID` `CLID` INT(10) UNSIGNED NULL ;
@@ -758,7 +774,6 @@ ALTER TABLE `omoccurrences`
   ADD CONSTRAINT `FK_omoccurrences_uid`  FOREIGN KEY (`observerUid`)  REFERENCES `users` (`uid`);
 
 
-
 #DROP TABLE IF EXISTS `portaloccurrences`
 #DROP TABLE IF EXISTS `portalpublications`
 #DROP TABLE IF EXISTS `portalindex`
@@ -825,12 +840,17 @@ CREATE TABLE `portaloccurrences` (
 
 
 ALTER TABLE `specprocessorprojects` 
-  ADD COLUMN `customStoredProcedure` VARCHAR(45) NULL AFTER `source`,
-  ADD COLUMN `createdByUid` INT UNSIGNED NULL AFTER `lastrundate`,
+  ADD COLUMN `additionalOptions` TEXT NULL AFTER `createLgImg`,
+  ADD COLUMN `createdByUid` INT UNSIGNED NULL AFTER `lastRunDate`,
+  ADD COLUMN `processingCode` INT NULL AFTER `source`,
+  CHANGE COLUMN `projecttype` `projectType` VARCHAR(45) NULL DEFAULT NULL,
+  CHANGE COLUMN `speckeyretrieval` `specKeyRetrieval` VARCHAR(45) NULL DEFAULT NULL,
+  CHANGE COLUMN `lastrundate` `lastRunDate` DATE NULL DEFAULT NULL,
   ADD INDEX `FK_specprocprojects_uid_idx` (`createdByUid` ASC);
 
 ALTER TABLE `specprocessorprojects`
   ADD CONSTRAINT `FK_specprocprojects_uid`  FOREIGN KEY (`createdByUid`)  REFERENCES `users` (`uid`)  ON DELETE SET NULL  ON UPDATE CASCADE;
+
 
 ALTER TABLE `taxa` 
   CHANGE COLUMN `TID` `tid` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
@@ -854,6 +874,8 @@ ALTER TABLE `taxa`
 
 UPDATE taxa SET kingdomName = "" WHERE kingdomName IS NULL;
 
+UPDATE taxa SET rankID = 0 WHERE rankID IS NULL;
+
 ALTER TABLE `taxa` 
   CHANGE COLUMN `kingdomName` `kingdomName` VARCHAR(45) NOT NULL DEFAULT '' ,
   CHANGE COLUMN `rankID` `rankID` SMALLINT(5) UNSIGNED NOT NULL DEFAULT 0 ;
@@ -865,12 +887,13 @@ ALTER TABLE `taxa`
 # If UNIQUE INDEX fails, run following query below to identify duplicate records. Duplicates can be deleted, or you can apply the alternate index that supports the existance of homonyms 
 # Duplicate check: SELECT sciname, rankID, kingdomName, count(*) as cnt FROM taxa GROUP BY sciname, rankID, kingdomName HAVING cnt > 1
 ALTER TABLE `taxa` 
-  ADD UNIQUE INDEX `sciname_unique` (`sciName` ASC, `rankId` ASC, `kingdomName` ASC);
+  ADD UNIQUE INDEX `UQ_taxa_sciname` (`sciName` ASC, `rankId` ASC, `kingdomName` ASC);
 
-# Alternate UNIQUE INDEX that support single kingdom homonyms. Above index supports cross-kingdom homonyms
-#  ADD UNIQUE INDEX `sciname_unique` (`sciName` ASC, `author` ASC, `rankId` ASC, `kingdomName` ASC)
+# The default UNIQUE INDEX applied above supports cross-kingdom homonyms
+# Alternate UNIQUE INDEX that support homonyms within a single kingdom (not recommended) 
+#  ALTER TABLE `taxa` ADD UNIQUE INDEX `UQ_taxa_sciname` (`sciName` ASC, `author` ASC, `rankId` ASC, `kingdomName` ASC)
 # Alternate more restrictive UNIQUE INDEX that can be used for a single kingdom portal. Cross-kingdom homonyms are not supported
-#  ADD UNIQUE INDEX `sciname_unique` (`sciName` ASC, `rankId` ASC)
+#  ALTER TABLE `taxa` ADD UNIQUE INDEX `UQ_taxa_sciname` (`sciName` ASC, `rankId` ASC)
   
 ALTER TABLE `taxstatus` 
   CHANGE COLUMN `taxonomicSource` `taxonomicSource` VARCHAR(500) NULL DEFAULT NULL;

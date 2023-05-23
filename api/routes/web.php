@@ -49,7 +49,7 @@ $router->group(['prefix' => 'v2'], function () use ($router) {
 
 	$router->get('media',  ['uses' => 'MediaController@showAllMedia']);
 	$router->get('media/{id}', ['uses' => 'MediaController@showOneMedia']);
-	$router->get('mediaadd', ['uses' => 'MediaController@insertOccurrenceMedia']);
+	//$router->get('mediaadd', ['uses' => 'MediaController@insertOccurrenceMedia']);
 	//$router->delete('media/{id}', ['uses' => 'MediaController@delete']);
 	//$router->put('media/{id}', ['uses' => 'MediaController@update']);
 

@@ -2,7 +2,7 @@
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/RpcOccurrenceEditor.php');
 
-$occid = isset($_REQUEST['occid']) ? filter_var($_REQUEST['occid'], FILTER_SANITIZE_NUMBER_INT) : false;
+$occid = $_POST['occid'];
 
 $retArr = array();
 if(is_numeric($occid)){

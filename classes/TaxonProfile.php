@@ -340,17 +340,18 @@ class TaxonProfile extends Manager {
 		$retArr = Array();
 		if($this->tid){
 			$rsArr = array();
-			$sql = 'SELECT d.tid, d.tdbid, d.caption, d.source, d.sourceurl, s.tdsid, s.heading, s.statement, s.displayheader, d.language, d.langid ';
+			$sql = 'SELECT p.tdProfileID, IFNULL(p.caption, d.caption) as caption, IFNULL(p.publication, d.source) AS source, IFNULL(p.urlTemplate, d.sourceurl) AS sourceurl,
+				IFNULL(p.defaultDisplayLevel, d.displaylevel) AS displaylevel, d.tid, d.tdbid, s.tdsid, s.heading, s.statement, s.displayheader, d.language, p.langid
+				FROM taxadescrprofile p INNER JOIN taxadescrblock d ON p.tdProfileID = d.tdProfileID
+				INNER JOIN taxadescrstmts s ON d.tdbid = s.tdbid
+				LEFT JOIN adminlanguages l ON p.langid = l.langid ';
 			if($this->acceptance){
-				$sql .= 'FROM taxstatus ts INNER JOIN taxadescrblock d ON ts.tid = d.tid '.
-					'INNER JOIN taxadescrstmts s ON d.tdbid = s.tdbid '.
-					'WHERE (ts.tidaccepted = '.$this->tid.') AND (ts.taxauthid = '.$this->taxAuthId.') ';
+				$sql .= 'INNER JOIN taxstatus ts ON ts.tid = d.tid WHERE (ts.tidaccepted = '.$this->tid.') AND (ts.taxauthid = '.$this->taxAuthId.') ';
 			}
 			else{
-				$sql .= 'FROM taxadescrblock d INNER JOIN taxadescrstmts s ON d.tdbid = s.tdbid WHERE (d.tid = '.$this->tid.') ';
+				$sql .= 'WHERE (d.tid = '.$this->tid.') ';
 			}
-			$sql .= 'ORDER BY d.displaylevel, s.sortsequence';
-			//echo $sql; exit;
+			$sql .= 'ORDER BY p.defaultDisplayLevel, d.displayLevel, s.sortsequence';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_assoc()){
 				$rsArr[] = $r;

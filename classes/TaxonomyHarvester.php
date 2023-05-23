@@ -1162,7 +1162,7 @@ class TaxonomyHarvester extends Manager{
 					(isset($taxonArr['unitind3']) && $taxonArr['unitind3']?'"'.$this->cleanInStr($taxonArr['unitind3']).'"':'NULL').','.
 					(isset($taxonArr['unitname3']) && $taxonArr['unitname3']?'"'.$this->cleanInStr($taxonArr['unitname3']).'"':'NULL').',"'.
 					(isset($taxonArr['author']) && $taxonArr['author']?$this->cleanInStr($taxonArr['author']):'').'",'.
-					(isset($taxonArr['rankid']) && is_numeric($taxonArr['rankid'])?$taxonArr['rankid']:'NULL').','.
+					(isset($taxonArr['rankid']) && is_numeric($taxonArr['rankid'])?$taxonArr['rankid']:0).','.
 					(isset($taxonArr['source']) && $taxonArr['source']?'"'.$this->cleanInStr($taxonArr['source']).'"':'NULL').','.
 					$GLOBALS['SYMB_UID'].')';
 				if($this->conn->query($sqlInsert)){
@@ -1544,6 +1544,26 @@ class TaxonomyHarvester extends Manager{
 				$this->langArr[$r->iso639_1] = $r->langid;
 			}
 			$rs->free();
+		}
+	}
+
+	public function rebuildHierarchyEnumTree(){
+		$status = TaxonomyUtilities::rebuildHierarchyEnumTree($this->conn);
+		if($status === true){
+			return true;
+		}
+		else{
+			$this->errorMessage = $status;
+		}
+	}
+
+	public function buildHierarchyEnumTree(){
+		$status = TaxonomyUtilities::buildHierarchyEnumTree($this->conn);
+		if($status === true){
+			return true;
+		}
+		else{
+			$this->errorMessage = $status;
 		}
 	}
 

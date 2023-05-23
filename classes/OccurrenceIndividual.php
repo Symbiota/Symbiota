@@ -446,7 +446,7 @@ class OccurrenceIndividual extends Manager{
 				$sql2 = 'SELECT uploadDate FROM omcollectionstats WHERE collid = '.$this->collid;
 				if($rs2 = $this->conn->query($sql2)){
 					if($r2 = $rs2->fetch_object()){
-						if($r2->uploadDate > $this->occArr['source']['refreshTimestamp']) $this->occArr['source']['refreshTimestamp'] = $r->uploadDate.' (batch update)';
+						if($r2->uploadDate > $this->occArr['source']['refreshTimestamp']) $this->occArr['source']['refreshTimestamp'] = $r2->uploadDate.' (batch update)';
 					}
 					$rs2->free();
 				}
@@ -749,9 +749,11 @@ class OccurrenceIndividual extends Manager{
 				$retArr[$k]['edits'][$r->appliedstatus][$r->ocedid]['old'] = $r->fieldvalueold;
 				$retArr[$k]['edits'][$r->appliedstatus][$r->ocedid]['new'] = $r->fieldvaluenew;
 				$currentCode = 0;
-				$fName = $this->occArr[strtolower($r->fieldname)];
-				if($fName == $r->fieldvaluenew) $currentCode = 1;
-				elseif($fName == $r->fieldvalueold) $currentCode = 2;
+				if(isset($this->occArr[strtolower($r->fieldname)])){
+					$fName = $this->occArr[strtolower($r->fieldname)];
+					if($fName == $r->fieldvaluenew) $currentCode = 1;
+					elseif($fName == $r->fieldvalueold) $currentCode = 2;
+				}
 				$retArr[$k]['edits'][$r->appliedstatus][$r->ocedid]['current'] = $currentCode;
 			}
 			$rs->free();

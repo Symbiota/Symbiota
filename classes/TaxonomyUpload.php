@@ -1114,8 +1114,8 @@ class TaxonomyUpload{
 	private function outputMsg($str, $indent = 0){
 		if($this->verboseMode > 0 || substr($str,0,5) == 'ERROR'){
 			echo '<li style="margin-left:'.(10*$indent).'px;'.(substr($str,0,5)=='ERROR'?'color:red':'').'">'.$str.'</li>';
-			ob_flush();
-			flush();
+			@ob_flush();
+			@flush();
 		}
 		if($this->verboseMode == 2){
 			if($this->logFH) fwrite($this->logFH,($indent?str_repeat("\t",$indent):'').strip_tags($str)."\n");

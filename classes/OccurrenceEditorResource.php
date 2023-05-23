@@ -178,7 +178,7 @@ class OccurrenceEditorResource extends OccurrenceEditorManager {
 		$retArr = array();
 		$sql = 'SELECT c.clid, c.name
 			FROM fmchecklists c INNER JOIN fmchklsttaxalink ctl ON c.clid = ctl.clid
-			INNER JOIN fmvouchers v ON c.clTaxaID = v.clTaxaID
+			INNER JOIN fmvouchers v ON ctl.clTaxaID = v.clTaxaID
 			WHERE v.occid = '.$this->occid;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
