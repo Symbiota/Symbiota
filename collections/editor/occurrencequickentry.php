@@ -1078,7 +1078,7 @@ else{
 					</div>
 					<div class="login-info">
 						<div class="field-block">
-							<span class="field-label"><?php echo (isset($LANG['RECCORECTED']) ? $LANG['RECCORECTED'] : 'Recotd Created'); ?>:</span>
+							<span class="field-label"><?php echo (isset($LANG['RECCORECTED']) ? $LANG['RECCORECTED'] : 'Record Created'); ?>:</span>
 							<span class="field-elem">
 								<?php echo ($accesNum ? $collData["recCreated"] : 'New Record'); ?>
 							</span>
