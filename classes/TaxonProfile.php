@@ -340,8 +340,8 @@ class TaxonProfile extends Manager {
 		$retArr = Array();
 		if($this->tid){
 			$rsArr = array();
-			$sql = 'SELECT p.tdProfileID, IFNULL(p.caption, d.caption) as caption, IFNULL(p.publication, d.source) AS source, IFNULL(p.urlTemplate, d.sourceurl) AS sourceurl,
-				IFNULL(p.defaultDisplayLevel, d.displaylevel) AS displaylevel, d.tid, d.tdbid, s.tdsid, s.heading, s.statement, s.displayheader, d.language, p.langid
+			$sql = 'SELECT p.tdProfileID, IFNULL(d.caption, p.caption) as caption, IFNULL(d.source, p.publication) AS source, IFNULL(d.sourceurl, p.urlTemplate) AS sourceurl,
+				IFNULL(d.displaylevel, p.defaultDisplayLevel) AS displaylevel, d.tid, d.tdbid, s.tdsid, s.heading, s.statement, s.displayheader, d.language, p.langid
 				FROM taxadescrprofile p INNER JOIN taxadescrblock d ON p.tdProfileID = d.tdProfileID
 				INNER JOIN taxadescrstmts s ON d.tdbid = s.tdbid
 				LEFT JOIN adminlanguages l ON p.langid = l.langid ';
