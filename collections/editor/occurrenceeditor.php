@@ -1393,6 +1393,12 @@ else{
 									}
 									?>
 								</ul>
+								<!-- a link to the quick entry form -->
+								<div>
+									<a href='../editor/occurrencequickentry.php'>
+										<h3>Go to the quick entry form</h3>
+									</a>
+								</div>
 								<div id="occdiv">
 									<!-- the main form starts from here -->
 									<form id="oldform" name="oldform" action="occurrenceeditor.php" method="post" onsubmit="return verifyFullForm(this);">
