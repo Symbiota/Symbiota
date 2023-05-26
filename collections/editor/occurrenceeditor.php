@@ -807,7 +807,7 @@ else{
 					</div>
 					<?php if(!isset($_POST['toggle-button']) || (isset($_POST['toggle-button']) && $_POST['toggle-button'] != 'Minimal')): ?>
 						<div class="field-block">
-							<span class="field-label"><?php echo (isset($LANG['ACCE_NUM']) ? $LANG['ACCE_NUM'] : 'Accession Num.'); ?></span>
+							<span class="field-label"><?php echo (isset($LANG['ACCES_NUM']) ? $LANG['ACCES_NUM'] : 'Accession Num.'); ?></span>
 							<span class="field-elem">
 								<?php if(array_key_exists('accesNum',$occArr)) { ?>
 									<input type="text" size = '50' name="accesNum" value="<?php echo $occArr["accesNum"]; ?>" />
@@ -962,7 +962,7 @@ else{
 							<span class="field-label"><?php echo (isset($LANG['CONTAINER']) ? $LANG['CONTAINER'] : 'Container'); ?></span>
 							<span class="field-elem">
 								<?php if(array_key_exists('container',$occArr)) { ?>
-									<input size = '50' type="text" name="container" value="<?php echo $collData["container"]; ?>" />
+									<input size = '50' type="text" name="container" value="<?php echo $occArr["container"]; ?>" />
 								<?php 
 								} else { 
 								?>
@@ -976,7 +976,7 @@ else{
 							<span class="field-label"><?php echo (isset($LANG['COLL_TRIP']) ? $LANG['COLL_TRIP'] : 'Collecting Trip'); ?></span>
 							<span class="field-elem">
 								<?php if(array_key_exists('collTrip',$occArr)) { ?>
-									<input size = '50' type="text" name="collTrip" value="<?php echo $collData["collTrip"]; ?>" />
+									<input size = '50' type="text" name="collTrip" value="<?php echo $occArr["collTrip"]; ?>" />
 								<?php 
 								} else { 
 								?>
@@ -991,7 +991,7 @@ else{
 						<span class="field-label"><?php echo (isset($LANG['GEO_WITHIN']) ? $LANG['GEO_WITHIN'] : 'Geography Within'); ?></span>
 						<span class="field-elem">
 							<?php if(array_key_exists('geoWithin',$occArr)) { ?>
-								<input size = '50' type="text" name="geoWithin" value="<?php echo $collData["geoWithin"]; ?>" />
+								<input size = '50' type="text" name="geoWithin" value="<?php echo $occArr["geoWithin"]; ?>" />
 							<?php 
 							} else { 
 							?>
@@ -1005,7 +1005,7 @@ else{
 						<span class="field-label"><?php echo (isset($LANG['HIGH_GEO']) ? $LANG['HIGH_GEO'] : 'Higher Geography'); ?></span>
 						<span class="field-elem">
 							<?php if(array_key_exists('highGeo',$occArr)) { ?>
-								<input type="text" size = '50' name="highGeo" value="<?php echo $collData["highGeo"]; ?>" />
+								<input type="text" size = '50' name="highGeo" value="<?php echo $occArr["highGeo"]; ?>" />
 							<?php 
 							} else { 
 							?>
@@ -1034,7 +1034,7 @@ else{
 							<span class="field-label"><?php echo (isset($LANG['FREQUENCY']) ? $LANG['FREQUENCY'] : 'Frequency'); ?></span>
 							<span class="field-elem">
 								<?php if(array_key_exists('frequency',$occArr)) { ?>
-									<input size = '50' type="text" name="frequency" value="<?php echo $collData["frequency"]; ?>" />
+									<input size = '50' type="text" name="frequency" value="<?php echo $occArr["frequency"]; ?>" />
 								<?php 
 								} else { 
 								?>
@@ -1080,14 +1080,14 @@ else{
 						<div class="field-block">
 							<span class="field-label"><?php echo (isset($LANG['RECCORECTED']) ? $LANG['RECCORECTED'] : 'Record Created'); ?>:</span>
 							<span class="field-elem">
-								<?php echo ($accesNum ? $collData["recCreated"] : 'New Record'); ?>
+								<?php echo ($accesNum ? $occArr["recCreated"] : 'New Record'); ?>
 							</span>
 						</div>
 						<div class="field-block">
 							<span class="field-label"><?php echo (isset($LANG['PREPMETHOD']) ? $LANG['PREPMETHOD'] : 'Prep Method'); ?></span>
 							<span class="field-elem">
 								<?php if(array_key_exists('prepMethod',$occArr)) { ?>
-									<input size = '25' type="text" name="prepMethod" value="<?php echo $collData["prepMethod"]; ?>" />
+									<input size = '25' type="text" name="prepMethod" value="<?php echo $occArr["prepMethod"]; ?>" />
 								<?php 
 								} else { 
 								?>
@@ -1101,7 +1101,7 @@ else{
 							<span class="field-label"><?php echo (isset($LANG['FORMAT']) ? $LANG['FORMAT'] : 'Format'); ?></span>
 							<span class="field-elem">
 								<?php if(array_key_exists('format',$occArr)) { ?>
-									<input size = '25' type="text" name="format" value="<?php echo $collData["format"]; ?>" />
+									<input size = '25' type="text" name="format" value="<?php echo $occArr["format"]; ?>" />
 								<?php 
 								} else { 
 								?>
@@ -1125,7 +1125,7 @@ else{
 								<span class="field-label"><?php echo (isset($LANG['VERBLAT']) ? $LANG['VERBLAT'] : 'Verb. Lat.'); ?></span>
 								<span class="field-elem">
 									<?php if(array_key_exists('verbLat',$occArr)) { ?>
-										<input size = '25' type="text" name="verbLat" value="<?php echo $collData["verbLat"]; ?>" />
+										<input size = '25' type="text" name="verbLat" value="<?php echo $occArr["verbLat"]; ?>" />
 									<?php 
 									} else { 
 									?>
@@ -1139,7 +1139,7 @@ else{
 								<span class="field-label"><?php echo (isset($LANG['VERBLONG']) ? $LANG['VERBLONG'] : 'Verb. Long.'); ?></span>
 								<span class="field-elem">
 									<?php if(array_key_exists('verbLong',$occArr)) { ?>
-										<input size = '25' type="text" name="verbLong" value="<?php echo $collData["verbLong"]; ?>" />
+										<input size = '25' type="text" name="verbLong" value="<?php echo $occArr["verbLong"]; ?>" />
 									<?php 
 									} else { 
 									?>
@@ -1177,7 +1177,7 @@ else{
 								<span class="field-label"><?php echo (isset($LANG['METHOD']) ? $LANG['METHOD'] : 'Method'); ?></span>
 								<span class="field-elem">
 									<?php if(array_key_exists('method',$occArr)) { ?>
-										<input size = '25' type="text" name="method" value="<?php echo $collData["method"]; ?>" />
+										<input size = '25' type="text" name="method" value="<?php echo $occArr["method"]; ?>" />
 										<?php 
 									} else { 
 									?>
