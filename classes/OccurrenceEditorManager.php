@@ -49,7 +49,9 @@ class OccurrenceEditorManager {
 			'minimumdepthinmeters' => 'n', 'maximumdepthinmeters' => 'n', 'verbatimdepth' => 's','disposition' => 's', 'language' => 's', 'duplicatequantity' => 'n',
 			'labelproject' => 's','processingstatus' => 's', 'recordenteredby' => 's', 'observeruid' => 'n', 'dateentered' => 'd',
 			// input of the new quick entry form
-			'barcode' => 's'
+			// The key update of the new quick entry form 
+			'barcode' => 's', 'accesNum' => 's', 'filedUnder' => 's', 'currName' => 's', 'detText' => 's', 'provenance' => 's', 'container' => 's', 'collTrip' => 's', 'geoWithin' => 's',
+			'highGeo' => 's', 'frequency' => 's', 'prepMethod' => 's', 'format' => 's', 'verbLat' => 's', 'verbLong' => 's', 'method' => 's'	
 		);
 		$this->fieldArr['paleo'] = array('eon','era','period','epoch','earlyinterval','lateinterval','absoluteage','storageage','stage','localstage','biota',
 			'biostratigraphy','lithogroup','formation','taxonenvironment','member','bed','lithology','stratremarks','element','slideproperties','geologicalcontextid');
@@ -1458,7 +1460,7 @@ class OccurrenceEditorManager {
 			$sourceOccid = $this->occid;
 			$clearAllArr = array('ownerinstitutioncode','institutioncode','collectioncode','catalognumber','othercatalognumbers','occurrenceid','individualcount','duplicatequantity','processingstatus','dateentered', 
 								// input of the new quick entry form
-								'barcode'
+								'barcode', 'accesNum'
 								);
 			$postArr = array_diff_key($postArr,array_flip($clearAllArr));
 			if(isset($postArr['targetcollid']) && $postArr['targetcollid'] && $postArr['targetcollid'] != $this->collId){
