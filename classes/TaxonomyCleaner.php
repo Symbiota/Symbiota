@@ -309,6 +309,7 @@ class TaxonomyCleaner extends Manager{
 
 		$occurMaintenance = new OccurrenceMaintenance($this->conn);
 		$occurMaintenance->setCollidStr($this->collid);
+		$occurMaintenance->setVerbose(true);
 		$occurMaintenance->generalOccurrenceCleaning();
 	}
 

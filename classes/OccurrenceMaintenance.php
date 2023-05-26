@@ -565,7 +565,7 @@ class OccurrenceMaintenance {
 	//Misc support functions
 	private function outputMsg($str, $indent = 0){
 		if($this->verbose){
-			echo '<li style="margin-left:'.($indent*10).'px;">'.$str.'</li>';
+			echo '<li style="margin-left:'.($indent*15).'px;">'.$str.'</li>';
 			ob_flush();
 			flush();
 		}

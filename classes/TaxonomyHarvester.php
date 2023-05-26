@@ -344,8 +344,9 @@ class TaxonomyHarvester extends Manager{
 		elseif(isset($nodeArr['name']['authorship'])) $taxonArr['author'] = $nodeArr['name']['authorship'];
 		if(isset($nodeArr['source_database'])) $taxonArr['source'] = $nodeArr['source_database'];
 		elseif(isset($nodeArr['datasetKey'])) $taxonArr['source'] = '<a href="https://www.catalogueoflife.org/data/dataset/'.$nodeArr['datasetKey'].'" target="_blank">https://www.catalogueoflife.org/data/dataset/'.$nodeArr['datasetKey'].'</a>';
-		if(isset($nodeArr['source_database_url'])) $taxonArr['sourceURL'] = $nodeArr['source_database_url'];
+		if(isset($nodeArr['online_resource'])) $taxonArr['sourceURL'] = $nodeArr['online_resource'];
 		elseif(isset($nodeArr['link'])) $taxonArr['sourceURL'] = $nodeArr['link'];
+		if(isset($nodeArr['url'])) $taxonArr['resourceURL'] = $nodeArr['url'];
 		$rankID = $this->getRankIdByTaxonArr($taxonArr);
 		if($rankID){
 			$taxonArr['rankid'] = $rankID;
@@ -1250,6 +1251,15 @@ class TaxonomyHarvester extends Manager{
 					}
 					$this->logOrEcho('Taxon <b>'.$taxonDisplay.'</b> added to thesaurus as '.$accStr,2);
 				}
+				//Load taxonomic resources identifiers
+				if(isset($taxonArr['resourceURL'])){
+					$this->insertTaxonomicResource($newTid, 'Catalog of Life', $taxonArr['id'], $taxonArr['resourceURL']);
+				}
+				if(isset($taxonArr['sourceURL'])){
+					if(preg_match('/molluscabase.+\D+(\d+)$/', $taxonArr['sourceURL'], $m)){
+						$this->insertTaxonomicResource($newTid, 'MolluscaBase', $m[1], $taxonArr['sourceURL']);
+					}
+				}
 			}
 		}
 		//Add Synonyms
@@ -1377,6 +1387,15 @@ class TaxonomyHarvester extends Manager{
 			}
 		}
 		return $parArr;
+	}
+
+	private function insertTaxonomicResource($tid, $sourceName, $sourceIdentifier, $sourceUrl){
+		$sql = 'INSERT INTO taxaresourcelinks(tid, sourceName, sourceIdentifier, url) VALUES(?, ?, ?, ?)';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('isss', $tid, $sourceName, $sourceIdentifier, $sourceUrl);
+			$stmt->execute();
+			$stmt->close();
+		}
 	}
 
 	//Misc functions

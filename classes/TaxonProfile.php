@@ -482,6 +482,23 @@ class TaxonProfile extends Manager {
 		return $this->linkArr;
 	}
 
+	public function getResourceLinkArr(){
+		$retArr = array();
+		if($this->tid){
+			$sql = 'SELECT taxaResourceID, sourceName, sourceIdentifier, sourceGuid, url, notes FROM taxaresourcelinks WHERE tid = '.$this->tid.' ORDER BY ranking, sourceName';
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_object()){
+				$retArr[$r->taxaResourceID]['name'] = $r->sourceName;
+				$retArr[$r->taxaResourceID]['id'] = $r->sourceIdentifier;
+				$retArr[$r->taxaResourceID]['guid'] = $r->sourceGuid;
+				$retArr[$r->taxaResourceID]['url'] = $r->url;
+				$retArr[$r->taxaResourceID]['notes'] = $r->notes;
+			}
+			$rs->free();
+		}
+		return $retArr;
+	}
+
 	//Set children data for taxon higher than species level
 	public function getSppArray($page, $taxaLimit, $pid, $clid){
 		if(!$this->sppArray && $this->tid){
