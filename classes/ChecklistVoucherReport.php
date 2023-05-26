@@ -271,8 +271,6 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 	public function getMissingProblemTaxa(){
 		$retArr = Array();
 		if($sqlFrag = $this->getSqlFrag()){
-			//Make sure tidinterpreted are valid
-			//$this->conn->query('UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname SET o.tidinterpreted = t.tid WHERE o.tidinterpreted IS NULL');
 			//Grab records
 			$sql = 'SELECT DISTINCT o.occid, c.institutioncode, c.collectioncode, o.catalognumber, o.sciname, o.recordedby, o.recordnumber, o.eventdate, '.
 				'CONCAT_WS("; ",o.country, o.stateprovince, o.county, o.locality) as locality '.

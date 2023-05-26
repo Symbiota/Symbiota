@@ -1499,8 +1499,9 @@ class SpecUploadBase extends SpecUpload{
 
 		//Do some more cleaning of the data after it has been indexed in the omoccurrences table
 		$occurMain = new OccurrenceMaintenance($this->conn);
+		$occurMain->setCollidStr($this->collId);
 
-		if(!$occurMain->generalOccurrenceCleaning($this->collId)){
+		if(!$occurMain->generalOccurrenceCleaning()){
 			$errorArr = $occurMain->getErrorArr();
 			foreach($errorArr as $errorStr){
 				$this->outputMsg('<li style="margin-left:20px;">'.$errorStr.'</li>',1);
@@ -1508,10 +1509,10 @@ class SpecUploadBase extends SpecUpload{
 		}
 
 		$this->outputMsg('<li style="margin-left:10px;">Protecting sensitive species...</li>');
-		$protectCnt = $occurMain->protectRareSpecies($this->collId);
+		$protectCnt = $occurMain->protectRareSpecies();
 
 		$this->outputMsg('<li style="margin-left:10px;">Updating statistics...</li>');
-		if(!$occurMain->updateCollectionStats($this->collId)){
+		if(!$occurMain->updateCollectionStatsFull()){
 			$errorArr = $occurMain->getErrorArr();
 			foreach($errorArr as $errorStr){
 				$this->outputMsg('<li style="margin-left:20px;">'.$errorStr.'</li>',1);

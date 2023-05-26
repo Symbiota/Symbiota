@@ -339,28 +339,5 @@ class TaxonomyUtilities {
 		return $endIndex;
 	}
 	*/
-
-	public static function linkOccurrenceTaxa($conn = null){
-		if(!$conn) $conn = MySQLiConnectionFactory::getCon('write');
-
-		$sql1 = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname AND o.scientificnameauthorship = t.author SET o.TidInterpreted = t.tid WHERE (o.TidInterpreted IS NULL)';
-		if(!$conn->query($sql1)){
-			echo '<div>ERROR indexing occurrences by matching sciname and author</div>';
-		}
-
-		$sql2 = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname '.
-			'INNER JOIN taxaenumtree e ON t.tid = e.tid '.
-			'INNER JOIN taxa t2 ON e.parenttid = t2.tid '.
-			'SET o.TidInterpreted = t.tid '.
-			'WHERE (o.TidInterpreted IS NULL) AND (t2.rankid = 140) AND (t.sciname = o.family)';
-		if(!$conn->query($sql2)){
-			echo '<div>ERROR indexing occurrences by matching sciname and family</div>';
-		}
-
-		$sql3 = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname SET o.TidInterpreted = t.tid WHERE (o.TidInterpreted IS NULL)';
-		if(!$conn->query($sql3)){
-			echo '<div>ERROR indexing occurrences by matching just sciname</div>';
-		}
-	}
 }
 ?>

@@ -1557,7 +1557,8 @@ class ImageLocalProcessor {
 
 			$this->logOrEcho('Cleaning house...');
 			$collString = implode(',',$this->collProcessedArr);
-			if(!$occurMain->generalOccurrenceCleaning($collString)){
+			$occurMain->setCollidStr($collString);
+			if(!$occurMain->generalOccurrenceCleaning()){
 				$errorArr = $occurMain->getErrorArr();
 				foreach($errorArr as $errorStr){
 					$this->logOrEcho($errorStr,1);
@@ -1570,7 +1571,8 @@ class ImageLocalProcessor {
 
 			$this->logOrEcho('Updating statistics...');
 			foreach($this->collProcessedArr as $collid){
-				if(!$occurMain->updateCollectionStats($collid)){
+				$occurMain->setCollidStr($collid);
+				if(!$occurMain->updateCollectionStatsBasic()){
 					$errorArr = $occurMain->getErrorArr();
 					foreach($errorArr as $errorStr){
 						$this->logOrEcho($errorStr,1);
