@@ -810,7 +810,7 @@ else{
 							<span class="field-label"><?php echo (isset($LANG['ACCES_NUM']) ? $LANG['ACCES_NUM'] : 'Accession Num.'); ?></span>
 							<span class="field-elem">
 								<?php if(array_key_exists('accesNum',$occArr)) { ?>
-									<input type="text" size = '50' name="accesNum" value="<?php echo $occArr["accesNum"]; ?>" />
+									<input type="text" size = '50' name="accesNum" value="<?php echo $occArr["accesNum"]; ?>" onchange="fieldChanged('accesNum');" />
 								<?php 
 								} else { 
 								?>
@@ -825,7 +825,7 @@ else{
 						<span class="field-label"><?php echo (isset($LANG['FILED_UNDER']) ? $LANG['FILED_UNDER'] : 'Filed Under'); ?></span>
 						<span class="field-elem">
 							<?php if(array_key_exists('filedUnder',$occArr)) { ?>
-								<input type="text" size = '50' name="filedUnder" value="<?php echo $occArr["filedUnder"]; ?>" />
+								<input type="text" size = '50' name="filedUnder" value="<?php echo $occArr["filedUnder"]; ?>" onchange="fieldChanged('filedUnder');" />
 							<?php 
 							} else { 
 							?>
@@ -839,7 +839,7 @@ else{
 						<span class="field-label"><?php echo (isset($LANG['CURR_NAME']) ? $LANG['CURR_NAME'] : 'Current Name'); ?></span>
 						<span class="field-elem">
 							<?php if(array_key_exists('currName',$occArr)) { ?>
-								<input type="text" size = '50' name="currName" value="<?php echo $occArr["currName"]; ?>" />
+								<input type="text" size = '50' name="currName" value="<?php echo $occArr["currName"]; ?>" onchange="fieldChanged('currName');" />
 							<?php 
 							} else { 
 							?>
@@ -855,15 +855,16 @@ else{
 							<span class="field-elem">
 								<!-- the drop list needs to be update -->
 								<?php
-									if(!array_key_exists('idQualifier',$occArr)) {
+									if(array_key_exists('idQualifier',$occArr)) {
 								?>
-									<select name="idQualifier">
-										<option value=""><?php echo $LANG['IDQUALIFIER']; ?>NOT FOUND</option>
+									<select name="idQualifier" onchange="fieldChanged('idQualifier');">
+										<option value=""><?php echo $LANG['IDQUALIFIER']; ?>Select Your ID Qualifier</option>
 										<option value="">---------------------------------------</option>
 										<?php
-										$qulifier = array('s. str.', '?', 'not', 'cf.', 's. lat.', 'aff.');
-										foreach ($qulifier as $k) {
-											echo '<option value="' . $k . '" ' . $selectedTerm . '>' . $k . '</option>' . "\n";
+										$idqArr = array('s. str.', '?', 'not', 'cf.', 's. lat.', 'aff.');
+										foreach ($idqArr as $k) {
+											$selected = ($k == $occArr['idQualifier']) ? 'selected' : '';
+											echo '<option value="' . $k . '" ' . $selected . '>' . $k . '</option>' . "\n";
 										}
 										?>
 									</select>
@@ -871,7 +872,6 @@ else{
 								} else {
 								?>
 									NOT FOUND
-									<!-- <input size = '50' type="text" name="rights" value="<?php // echo ($collid ? $collData["rights"] : ''); ?>" style="width:90%;" /> -->
 								<?php
 								}
 								?>
@@ -896,7 +896,7 @@ else{
 							<span class="field-label"><?php echo (isset($LANG['DET_TEXT']) ? $LANG['DET_TEXT'] : 'Det. Text'); ?></span>
 							<span class="field-elem">
 								<?php if(array_key_exists('detText',$occArr)) { ?>
-									<input size = '50' type="text" name="detText" value="<?php echo $occArr["detText"]; ?>" />
+									<input size = '50' type="text" name="detText" value="<?php echo $occArr["detText"]; ?>" onchange="fieldChanged('detText');" />
 								<?php 
 								} else { 
 								?>
@@ -910,7 +910,7 @@ else{
 							<span class="field-label"><?php echo (isset($LANG['PROVENANCE']) ? $LANG['PROVENANCE'] : 'Provenance'); ?></span>
 							<span class="field-elem">
 								<?php if(array_key_exists('provenance',$occArr)) { ?>
-									<input type="text" size = '50' name="currName" value="<?php echo $occArr["provenance"]; ?>" />
+									<input type="text" size = '50' name="currName" value="<?php echo $occArr["provenance"]; ?>" onchange="fieldChanged('provenance');" />
 								<?php 
 								} else { 
 								?>
@@ -962,7 +962,7 @@ else{
 							<span class="field-label"><?php echo (isset($LANG['CONTAINER']) ? $LANG['CONTAINER'] : 'Container'); ?></span>
 							<span class="field-elem">
 								<?php if(array_key_exists('container',$occArr)) { ?>
-									<input size = '50' type="text" name="container" value="<?php echo $occArr["container"]; ?>" />
+									<input size = '50' type="text" name="container" value="<?php echo $occArr["container"]; ?>" onchange="fieldChanged('container');" />
 								<?php 
 								} else { 
 								?>
@@ -976,7 +976,7 @@ else{
 							<span class="field-label"><?php echo (isset($LANG['COLL_TRIP']) ? $LANG['COLL_TRIP'] : 'Collecting Trip'); ?></span>
 							<span class="field-elem">
 								<?php if(array_key_exists('collTrip',$occArr)) { ?>
-									<input size = '50' type="text" name="collTrip" value="<?php echo $occArr["collTrip"]; ?>" />
+									<input size = '50' type="text" name="collTrip" value="<?php echo $occArr["collTrip"]; ?>" onchange="fieldChanged('collTrip');" />
 								<?php 
 								} else { 
 								?>
@@ -991,7 +991,7 @@ else{
 						<span class="field-label"><?php echo (isset($LANG['GEO_WITHIN']) ? $LANG['GEO_WITHIN'] : 'Geography Within'); ?></span>
 						<span class="field-elem">
 							<?php if(array_key_exists('geoWithin',$occArr)) { ?>
-								<input size = '50' type="text" name="geoWithin" value="<?php echo $occArr["geoWithin"]; ?>" />
+								<input size = '50' type="text" name="geoWithin" value="<?php echo $occArr["geoWithin"]; ?>" onchange="fieldChanged('geoWithin');" />
 							<?php 
 							} else { 
 							?>
@@ -1005,7 +1005,7 @@ else{
 						<span class="field-label"><?php echo (isset($LANG['HIGH_GEO']) ? $LANG['HIGH_GEO'] : 'Higher Geography'); ?></span>
 						<span class="field-elem">
 							<?php if(array_key_exists('highGeo',$occArr)) { ?>
-								<input type="text" size = '50' name="highGeo" value="<?php echo $occArr["highGeo"]; ?>" />
+								<input type="text" size = '50' name="highGeo" value="<?php echo $occArr["highGeo"]; ?>" onchange="fieldChanged('highGeo');" />
 							<?php 
 							} else { 
 							?>
@@ -1034,7 +1034,7 @@ else{
 							<span class="field-label"><?php echo (isset($LANG['FREQUENCY']) ? $LANG['FREQUENCY'] : 'Frequency'); ?></span>
 							<span class="field-elem">
 								<?php if(array_key_exists('frequency',$occArr)) { ?>
-									<input size = '50' type="text" name="frequency" value="<?php echo $occArr["frequency"]; ?>" />
+									<input size = '50' type="text" name="frequency" value="<?php echo $occArr["frequency"]; ?>" onchange="fieldChanged('frequency');" />
 								<?php 
 								} else { 
 								?>
@@ -1077,6 +1077,7 @@ else{
 						<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOwxvSve1jvNKgXtY40U7wyrTGKuYGUcWCTg&usqp=CAU" />
 					</div>
 					<div class="login-info">
+						<!-- TODO: need to figure out how to deal with this input. It supposes to be generated automatically based on the form -->
 						<div class="field-block">
 							<span class="field-label"><?php echo (isset($LANG['RECCORECTED']) ? $LANG['RECCORECTED'] : 'Record Created'); ?>:</span>
 							<span class="field-elem">
@@ -1087,7 +1088,7 @@ else{
 							<span class="field-label"><?php echo (isset($LANG['PREPMETHOD']) ? $LANG['PREPMETHOD'] : 'Prep Method'); ?></span>
 							<span class="field-elem">
 								<?php if(array_key_exists('prepMethod',$occArr)) { ?>
-									<input size = '25' type="text" name="prepMethod" value="<?php echo $occArr["prepMethod"]; ?>" />
+									<input size = '25' type="text" name="prepMethod" value="<?php echo $occArr["prepMethod"]; ?>" onchange="fieldChanged('prepMethod');"  />
 								<?php 
 								} else { 
 								?>
@@ -1101,7 +1102,7 @@ else{
 							<span class="field-label"><?php echo (isset($LANG['FORMAT']) ? $LANG['FORMAT'] : 'Format'); ?></span>
 							<span class="field-elem">
 								<?php if(array_key_exists('format',$occArr)) { ?>
-									<input size = '25' type="text" name="format" value="<?php echo $occArr["format"]; ?>" />
+									<input size = '25' type="text" name="format" value="<?php echo $occArr["format"]; ?>" onchange="fieldChanged('format');" />
 								<?php 
 								} else { 
 								?>
