@@ -112,3 +112,22 @@ ALTER TABLE `omoccurrences`
     ADD COLUMN `verbLat` varchar(255) DEFAULT NULL,
     ADD COLUMN `verbLong` varchar(255) DEFAULT NULL,
     ADD COLUMN `method` varchar(255) DEFAULT NULL;
+
+-- Create tables to hold dropdown list values
+
+-- Table to hold values for the filedUnder column
+
+DROP TABLE IF EXISTS `filedUnder_values`;
+CREATE TABLE `filedUnder_values` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `value` text NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+ALTER TABLE `omoccurrences`
+    CHANGE `filedUnder` `filedUnder` int DEFAULT NULL,
+    ADD CONSTRAINT `FK_omoccurrences_filedUnder` FOREIGN KEY (`filedUnder`) REFERENCES `filedUnder_values`(`id`);
+
+-- two ways of designing it, one of it is to link both the value of the record and the value of the dropdown list together,
+-- the second method is to separate them completely into two tables, and when we insert values we insert into both of the tables simultaneously
+-- the above code uses the first method
