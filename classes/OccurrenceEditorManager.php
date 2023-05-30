@@ -1458,11 +1458,7 @@ class OccurrenceEditorManager {
 		if(isset($postArr['clonecount']) && $postArr['clonecount']){
 			$postArr['recordenteredby'] = $GLOBALS['USERNAME'];
 			$sourceOccid = $this->occid;
-			$clearAllArr = array('ownerinstitutioncode','institutioncode','collectioncode','catalognumber','othercatalognumbers','occurrenceid','individualcount','duplicatequantity','processingstatus','dateentered', 
-								// input of the new quick entry form
-								'barcode', 'accesNum', 'fieldUnder', 'currname', 'idQualifier','detText', 'provenance', 'container', 'collTrip', 'geoWithin', 'highGeo', 'frequencey',
-								'prepMethod', 'format', 'verbLat', 'verbLong', 'method'
-								);
+			$clearAllArr = array('ownerinstitutioncode','institutioncode','collectioncode','catalognumber','othercatalognumbers','occurrenceid','individualcount','duplicatequantity','processingstatus','dateentered');
 			$postArr = array_diff_key($postArr,array_flip($clearAllArr));
 			if(isset($postArr['targetcollid']) && $postArr['targetcollid'] && $postArr['targetcollid'] != $this->collId){
 				$clearCollArr = array('basisofrecord');

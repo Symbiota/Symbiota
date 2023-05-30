@@ -50,7 +50,9 @@ $headerMapBase = array('institutioncode'=>'Institution Code (override)','collect
 	'processingstatus' => 'Processing Status','recordenteredby' => 'Entered By','dbpk' => 'dbpk','basisofrecord' => 'Basis Of Record',
 	'language' => 'Language', 
 	// input of the new quick entry form
-	'barcode' => 'Barcode');
+	'barcode'=> 'barcode', 'accesNum' => 'Accession Num.', 'filedUnder' => 'Filed Under', 'currName' => 'Current Name', 'idQualifier' => 'ID Qualifier',
+	'detText' => 'Det. Text', 'provenance' => 'Provenance', 'container' => 'Container', 'collTrip' => 'Collecting Trip', 'geoWithin' => 'Geography Within', 'highGeo' => 'Higher Geography', 
+	'frequencey' => 'Frequency', 'prepMethod' => 'Prep Method', 'format' => 'Format', 'verbLat' => 'Verb. Lat.', 'verbLong' => 'Verb. Long.', 'method' => 'Method');
 $headMap = array();
 
 $qryCnt = 0;

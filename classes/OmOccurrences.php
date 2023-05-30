@@ -443,7 +443,23 @@ CREATE TABLE `omoccurrences` (
    // UniqueGlobalIdentifier
    // input of the new quick entry form
    const BARCODE = 'barcode';
-
+   const ACCESNUM = 'accesNum';
+   const FILEDUNDER = 'filedUnder';
+   const CURRNAME = 'currName';
+   const IDQUALIFIER = 'idQualifier';
+   const DETTEXT = 'detText';
+   const PROVENANCE = 'provenance';
+   const CONTAINER = 'container';
+   const COLLTRIP = 'collTrip';
+   const GEOWITHIN = 'geoWithin';
+   const HIGHGEO = 'highGeo';
+   const FREQUENCY = 'frequency';
+   const PREPMETHOD = 'prepMethod';
+   const FORMAT = 'format';
+   const VERBLAT = 'verbLat';
+   const VERBLONG = 'verbLong';
+   const METHOD = 'method';
+ 
    const OCCURRENCEID      = 'occurrenceID';
    const CATALOGNUMBER     = 'catalogNumber';
    const OTHERCATALOGNUMBERS = 'otherCatalogNumbers';
@@ -686,6 +702,22 @@ CREATE TABLE `omoccurrences` (
 
    // input of the new quick entry form
    private $barcode;
+   private $accesNum;
+   private $filedUnder;
+   private $currName;
+   private $idQualifier;
+   private $detText;
+   private $provenance;
+   private $container;
+   private $collTrip;
+   private $geoWithin;
+   private $highGeo;
+   private $frequency;
+   private $prepMethod;
+   private $format;
+   private $verbLat;
+   private $verbLong;
+   private $method;
 
    private $occid; // PK INTEGER 
    private $collid; // INT 
@@ -810,12 +842,24 @@ CREATE TABLE `omoccurrences` (
    private $loaded;
    private $error;
    // input of the new quick entry form
-   const FIELDLIST = ' barcode, occid, collid, dbpk, basisOfRecord, occurrenceID, catalogNumber, otherCatalogNumbers, ownerInstitutionCode, institutionID, collectionID, datasetID, institutionCode, collectionCode, family, scientificName, sciname, tidinterpreted, genus, specificEpithet, taxonRank, infraspecificEpithet, scientificNameAuthorship, taxonRemarks, identifiedBy, dateIdentified, identificationReferences, identificationRemarks, identificationQualifier, typeStatus, recordedBy, recordNumber, recordedById, associatedCollectors, eventDate, latestDateCollected, year, month, day, startDayOfYear, endDayOfYear, verbatimEventDate, habitat, substrate, fieldNotes, fieldnumber, eventID, occurrenceRemarks, informationWithheld, dataGeneralizations, associatedOccurrences, associatedTaxa, dynamicProperties, verbatimAttributes, behavior, reproductiveCondition, cultivationStatus, establishmentMeans, lifeStage, sex, individualCount, samplingProtocol, samplingEffort, preparations, waterBody,locationID, country, stateProvince, county, municipality, locality, localitySecurity, localitySecurityReason, decimalLatitude, decimalLongitude, geodeticDatum, coordinateUncertaintyInMeters, footprintWKT, coordinatePrecision, locationRemarks, verbatimCoordinates, verbatimCoordinateSystem, georeferencedBy, georeferenceProtocol, georeferenceSources, georeferenceVerificationStatus, georeferenceRemarks, minimumElevationInMeters, maximumElevationInMeters, verbatimElevation, previousIdentifications, disposition, genericcolumn1, genericcolumn2, modified, language, observeruid, processingstatus, recordEnteredBy, duplicateQuantity, labelProject, dynamicFields, dateEntered, dateLastModified, minimumDepthInMeters, maximumDepthInMeters, verbatimDepth, storageLocation ';
+   const FIELDLIST = ' barcode, accesNum, fieldUnder, currName, idQualifier, detText, provenance, container, collTrip, geoWithin, highGeo, frequency, prepMethod, format, verbLat, verbLong, method, occid, collid, dbpk, basisOfRecord, occurrenceID, catalogNumber, otherCatalogNumbers, ownerInstitutionCode, institutionID, collectionID, datasetID, institutionCode, collectionCode, family, scientificName, sciname, tidinterpreted, genus, specificEpithet, taxonRank, infraspecificEpithet, scientificNameAuthorship, taxonRemarks, identifiedBy, dateIdentified, identificationReferences, identificationRemarks, identificationQualifier, typeStatus, recordedBy, recordNumber, recordedById, associatedCollectors, eventDate, latestDateCollected, year, month, day, startDayOfYear, endDayOfYear, verbatimEventDate, habitat, substrate, fieldNotes, fieldnumber, eventID, occurrenceRemarks, informationWithheld, dataGeneralizations, associatedOccurrences, associatedTaxa, dynamicProperties, verbatimAttributes, behavior, reproductiveCondition, cultivationStatus, establishmentMeans, lifeStage, sex, individualCount, samplingProtocol, samplingEffort, preparations, waterBody,locationID, country, stateProvince, county, municipality, locality, localitySecurity, localitySecurityReason, decimalLatitude, decimalLongitude, geodeticDatum, coordinateUncertaintyInMeters, footprintWKT, coordinatePrecision, locationRemarks, verbatimCoordinates, verbatimCoordinateSystem, georeferencedBy, georeferenceProtocol, georeferenceSources, georeferenceVerificationStatus, georeferenceRemarks, minimumElevationInMeters, maximumElevationInMeters, verbatimElevation, previousIdentifications, disposition, genericcolumn1, genericcolumn2, modified, language, observeruid, processingstatus, recordEnteredBy, duplicateQuantity, labelProject, dynamicFields, dateEntered, dateLastModified, minimumDepthInMeters, maximumDepthInMeters, verbatimDepth, storageLocation ';
    const PKFIELDLIST = ' occid, ';
    const NUMBER_OF_PRIMARY_KEYS = 1;
    private $primaryKeyArray = array( 1 => 'occid'  ) ;
-   // input of the new quick entry form
-   private $allFieldsArray = array( 0 => 'occid' , 1 => 'collid' , 2 => 'dbpk' , 3 => 'basisOfRecord' , 4 => 'occurrenceID' , 5 => 'catalogNumber' , 6 => 'otherCatalogNumbers' , 7 => 'ownerInstitutionCode' , 8 => 'institutionID' , 9 => 'collectionID' , 10 => 'datasetID' , 11 => 'institutionCode' , 12 => 'collectionCode' , 13 => 'family' , 14 => 'scientificName' , 15 => 'sciname' , 16 => 'tidinterpreted' , 17 => 'genus' , 18 => 'specificEpithet' , 19 => 'taxonRank' , 20 => 'infraspecificEpithet' , 21 => 'scientificNameAuthorship' , 22 => 'taxonRemarks' , 23 => 'identifiedBy' , 24 => 'dateIdentified' , 25 => 'identificationReferences' , 26 => 'identificationRemarks' , 27 => 'identificationQualifier' , 28 => 'typeStatus' , 29 => 'recordedBy' , 30 => 'recordNumber' , 31 => 'recordedById' , 32 => 'associatedCollectors' , 33 => 'eventDate' , 106 => 'latestDateCollected' , 34 => 'year' , 35 => 'month' , 36 => 'day' , 37 => 'startDayOfYear' , 38 => 'endDayOfYear' , 39 => 'verbatimEventDate' , 40 => 'habitat' , 41 => 'substrate' , 42 => 'fieldNotes' , 43 => 'fieldnumber' , 105 => 'eventID' , 44 => 'occurrenceRemarks' , 45 => 'informationWithheld' , 46 => 'dataGeneralizations' , 47 => 'associatedOccurrences' , 48 => 'associatedTaxa' , 49 => 'dynamicProperties' , 50 => 'verbatimAttributes' , 51 => 'behavior' , 52 => 'reproductiveCondition' , 53 => 'cultivationStatus' , 54 => 'establishmentMeans' , 55 => 'lifeStage' , 56 => 'sex' , 57 => 'individualCount' , 58 => 'samplingProtocol' , 101 => 'samplingEffort' , 59 => 'preparations' , 103 => 'waterBody' , 104 => 'locationID' , 60 => 'country' , 61 => 'stateProvince' , 62 => 'county' , 63 => 'municipality' , 64 => 'locality' , 65 => 'localitySecurity' , 66 => 'localitySecurityReason' , 67 => 'decimalLatitude' , 68 => 'decimalLongitude' , 69 => 'geodeticDatum' , 70 => 'coordinateUncertaintyInMeters' , 71 => 'footprintWKT' , 72 => 'coordinatePrecision' , 73 => 'locationRemarks' , 74 => 'verbatimCoordinates' , 75 => 'verbatimCoordinateSystem' , 76 => 'georeferencedBy' , 77 => 'georeferenceProtocol' , 78 => 'georeferenceSources' , 79 => 'georeferenceVerificationStatus' , 80 => 'georeferenceRemarks' , 81 => 'minimumElevationInMeters' , 82 => 'maximumElevationInMeters' , 83 => 'verbatimElevation' , 84 => 'previousIdentifications' , 85 => 'disposition' , 86 => 'genericcolumn1' , 87 => 'genericcolumn2' , 88 => 'modified' , 89 => 'language' , 91 => 'observeruid' , 92 => 'processingstatus' , 93 => 'recordEnteredBy' , 94 => 'duplicateQuantity' , 95 => 'labelProject' , 107 => 'dynamicFields' , 102 =>'dateEntered' , 96 => 'dateLastModified', 97 => 'minimumDepthInMeters', 98 => 'maximumDepthInMeters', 99 => 'verbatimDepth', 100 => 'storageLocation', 101 => 'barcode' ) ;
+   private $allFieldsArray = array( 0 => 'occid' , 1 => 'collid' , 2 => 'dbpk' , 3 => 'basisOfRecord' , 4 => 'occurrenceID' , 5 => 'catalogNumber' , 6 => 'otherCatalogNumbers' , 7 => 'ownerInstitutionCode' , 8 => 'institutionID' , 9 => 'collectionID' , 10 => 'datasetID' , 11 => 'institutionCode' , 
+                                    12 => 'collectionCode' , 13 => 'family' , 14 => 'scientificName' , 15 => 'sciname' , 16 => 'tidinterpreted' , 17 => 'genus' , 18 => 'specificEpithet' , 19 => 'taxonRank' , 20 => 'infraspecificEpithet' , 21 => 'scientificNameAuthorship' , 22 => 'taxonRemarks' , 
+                                    23 => 'identifiedBy' , 24 => 'dateIdentified' , 25 => 'identificationReferences' , 26 => 'identificationRemarks' , 27 => 'identificationQualifier' , 28 => 'typeStatus' , 29 => 'recordedBy' , 30 => 'recordNumber' , 31 => 'recordedById' , 32 => 'associatedCollectors' , 
+                                    33 => 'eventDate' , 106 => 'latestDateCollected' , 34 => 'year' , 35 => 'month' , 36 => 'day' , 37 => 'startDayOfYear' , 38 => 'endDayOfYear' , 39 => 'verbatimEventDate' , 40 => 'habitat' , 41 => 'substrate' , 42 => 'fieldNotes' , 43 => 'fieldnumber' , 
+                                    105 => 'eventID' , 44 => 'occurrenceRemarks' , 45 => 'informationWithheld' , 46 => 'dataGeneralizations' , 47 => 'associatedOccurrences' , 48 => 'associatedTaxa' , 49 => 'dynamicProperties' , 50 => 'verbatimAttributes' , 51 => 'behavior' , 52 => 'reproductiveCondition' , 
+                                    53 => 'cultivationStatus' , 54 => 'establishmentMeans' , 55 => 'lifeStage' , 56 => 'sex' , 57 => 'individualCount' , 58 => 'samplingProtocol' , 101 => 'samplingEffort' , 59 => 'preparations' , 103 => 'waterBody' , 104 => 'locationID' , 60 => 'country' , 
+                                    61 => 'stateProvince' , 62 => 'county' , 63 => 'municipality' , 64 => 'locality' , 65 => 'localitySecurity' , 66 => 'localitySecurityReason' , 67 => 'decimalLatitude' , 68 => 'decimalLongitude' , 69 => 'geodeticDatum' , 70 => 'coordinateUncertaintyInMeters' , 
+                                    71 => 'footprintWKT' , 72 => 'coordinatePrecision' , 73 => 'locationRemarks' , 74 => 'verbatimCoordinates' , 75 => 'verbatimCoordinateSystem' , 76 => 'georeferencedBy' , 77 => 'georeferenceProtocol' , 78 => 'georeferenceSources' , 79 => 'georeferenceVerificationStatus' , 
+                                    80 => 'georeferenceRemarks' , 81 => 'minimumElevationInMeters' , 82 => 'maximumElevationInMeters' , 83 => 'verbatimElevation' , 84 => 'previousIdentifications' , 85 => 'disposition' , 86 => 'genericcolumn1' , 87 => 'genericcolumn2' , 88 => 'modified' , 89 => 'language' , 
+                                    91 => 'observeruid' , 92 => 'processingstatus' , 93 => 'recordEnteredBy' , 94 => 'duplicateQuantity' , 95 => 'labelProject' , 107 => 'dynamicFields' , 102 =>'dateEntered' , 96 => 'dateLastModified', 97 => 'minimumDepthInMeters', 98 => 'maximumDepthInMeters', 99 => 'verbatimDepth', 
+                                    100 => 'storageLocation', 
+                                    // input of the new quick entry form
+                                    110 => 'barcode', 111 => 'accesNum', 112 => 'filedUnder', 113 => 'currName', 114 => 'idQualifier', 115 => 'detText', 116 => 'provenance', 117 => 'container', 118 => 'collTrip', 119 => 'geoWithin', 120 => 'highGeo', 121 => 'frequency', 122 => 'prepMethod',
+                                    123 => 'format', 124 => 'verbLat', 125 => 'verbLong', 126 => 'method' ) ;
    private $selectDistinctFieldsArray = array( 1 => 'collid' , 2 => 'dbpk' , 4 => 'occurrenceID' , 5 => 'catalogNumber' , 7 => 'ownerInstitutionCode' , 13 => 'family' , 15 => 'sciname' , 16 => 'tidinterpreted' , 29 => 'recordedBy' , 30 => 'recordNumber' , 31 => 'recordedById' , 33 => 'eventDate' , 60 => 'country' , 61 => 'stateProvince' , 62 => 'county' , 63 => 'municipality' , 91 => 'observeruid' , 92 => 'processingstatus'  ) ;
 
    //---------------------------------------------------------------------------
@@ -824,6 +868,22 @@ CREATE TABLE `omoccurrences` (
    function __construct(){
        // input of the new quick entry form
        $this->barcode = NULL;
+       $this->accesNum = NULL;
+       $this->filedUnder = NULL;
+       $this->currName = NULL;
+       $this->idQualifier = NULL;
+       $this->detText = NULL;
+       $this->provenance = NULL;
+       $this->container = NULL;
+       $this->collTrip = NULL;
+       $this->geoWithin = NULL;
+       $this->highGeo = NULL;
+       $this->frequency = NULL;
+       $this->prepMethod = NULL;
+       $this->format = NULL;
+       $this->verbLat = NULL;
+       $this->verbLong = NULL;
+       $this->method = NULL;
 
        $this->occid = NULL;
        $this->collid = NULL;
@@ -965,7 +1025,9 @@ CREATE TABLE `omoccurrences` (
     $this->occid = null;
     if($institutionCode != NULL && $collectionCode !=NULL && $catalogNumber!=NULL) {
         // input of the new quick entry form
-        $preparesql = 'SELECT barcode, occid, collid, dbpk, basisOfRecord, occurrenceID, catalogNumber, otherCatalogNumbers, ownerInstitutionCode, 
+        $preparesql = 'SELECT barcode, accesNum, fieldUnder, currName, idQualifier, detText, provenance, container, collTrip, 
+        geoWithin, highGeo, frequency, prepMethod, format, verbLat, verbLong, method
+        occid, collid, dbpk, basisOfRecord, occurrenceID, catalogNumber, otherCatalogNumbers, ownerInstitutionCode, 
         institutionID, collectionID, datasetID, institutionCode, collectionCode, family, scientificName, sciname, tidinterpreted, genus, 
         specificEpithet, taxonRank, infraspecificEpithet, scientificNameAuthorship, taxonRemarks, identifiedBy, dateIdentified, identificationReferences, 
         identificationRemarks, identificationQualifier, typeStatus, recordedBy, recordNumber, recordedById, associatedCollectors, 
@@ -984,7 +1046,24 @@ CREATE TABLE `omoccurrences` (
             $statement->bind_param("sss", $institutionCode, $collectionCode, $catalogNumber);
             $statement->execute();
             // input of the new quick entry form
-            $statement->bind_result( $this->barcode,$this->occid, $this->collid, $this->dbpk, $this->basisOfRecord, $this->occurrenceID, $this->catalogNumber, $this->otherCatalogNumbers, $this->ownerInstitutionCode, $this->institutionID, $this->collectionID, $this->datasetID, $this->institutionCode, $this->collectionCode, $this->family, $this->scientificName, $this->sciname, $this->tidinterpreted, $this->genus, $this->specificEpithet, $this->taxonRank, $this->infraspecificEpithet, $this->scientificNameAuthorship, $this->taxonRemarks, $this->identifiedBy, $this->dateIdentified, $this->identificationReferences, $this->identificationRemarks, $this->identificationQualifier, $this->typeStatus, $this->recordedBy, $this->recordNumber, $this->recordedById, $this->associatedCollectors, $this->eventDate, $this->latestDateCollected, $this->year, $this->month, $this->day, $this->startDayOfYear, $this->endDayOfYear, $this->verbatimEventDate, $this->habitat, $this->substrate, $this->fieldNotes, $this->fieldnumber, $this->eventID, $this->occurrenceRemarks, $this->informationWithheld, $this->dataGeneralizations, $this->associatedOccurrences, $this->associatedTaxa, $this->dynamicProperties, $this->verbatimAttributes, $this->behavior, $this->reproductiveCondition, $this->cultivationStatus, $this->establishmentMeans, $this->lifeStage, $this->sex, $this->individualCount, $this->samplingProtocol, $this->samplingEffort, $this->preparations, $this->waterBody, $this->locationID, $this->country, $this->stateProvince, $this->county, $this->municipality, $this->locality, $this->localitySecurity, $this->localitySecurityReason, $this->decimalLatitude, $this->decimalLongitude, $this->geodeticDatum, $this->coordinateUncertaintyInMeters, $this->footprintWKT, $this->coordinatePrecision, $this->locationRemarks, $this->verbatimCoordinates, $this->verbatimCoordinateSystem, $this->georeferencedBy, $this->georeferenceProtocol, $this->georeferenceSources, $this->georeferenceVerificationStatus, $this->georeferenceRemarks, $this->minimumElevationInMeters, $this->maximumElevationInMeters, $this->verbatimElevation, $this->previousIdentifications, $this->disposition, $this->genericcolumn1, $this->genericcolumn2, $this->modified, $this->language, $this->observeruid, $this->processingstatus, $this->recordEnteredBy, $this->duplicateQuantity, $this->labelProject, $this->dynamicFields, $this->dateEntered, $this->dateLastModified, $this->minimumDepthInMeters, $this->maximumDepthInMeters, $this->verbatimDepth, $this->storageLocation);
+            $statement->bind_result( $this->barcode, $this->accesNum, $this->filedUnder, $this->currName, $this->idQualifier, $this->detText, $this->provenance, $this->container, $this->collTrip, 
+                                     $this->geoWithin, $this->highGeo, $this->frequency, $this->prepMethod, $this->format, $this->verbLat, $this->verblong, $this->method, 
+                                     $this->occid, $this->collid, $this->dbpk, $this->basisOfRecord, $this->occurrenceID, $this->catalogNumber, $this->otherCatalogNumbers, 
+                                     $this->ownerInstitutionCode, $this->institutionID, $this->collectionID, $this->datasetID, $this->institutionCode, $this->collectionCode, $this->family, 
+                                     $this->scientificName, $this->sciname, $this->tidinterpreted, $this->genus, $this->specificEpithet, $this->taxonRank, $this->infraspecificEpithet, 
+                                     $this->scientificNameAuthorship, $this->taxonRemarks, $this->identifiedBy, $this->dateIdentified, $this->identificationReferences, $this->identificationRemarks, 
+                                     $this->identificationQualifier, $this->typeStatus, $this->recordedBy, $this->recordNumber, $this->recordedById, $this->associatedCollectors, $this->eventDate, 
+                                     $this->latestDateCollected, $this->year, $this->month, $this->day, $this->startDayOfYear, $this->endDayOfYear, $this->verbatimEventDate, $this->habitat, 
+                                     $this->substrate, $this->fieldNotes, $this->fieldnumber, $this->eventID, $this->occurrenceRemarks, $this->informationWithheld, $this->dataGeneralizations, 
+                                     $this->associatedOccurrences, $this->associatedTaxa, $this->dynamicProperties, $this->verbatimAttributes, $this->behavior, $this->reproductiveCondition,
+                                     $this->cultivationStatus, $this->establishmentMeans, $this->lifeStage, $this->sex, $this->individualCount, $this->samplingProtocol, $this->samplingEffort, 
+                                     $this->preparations, $this->waterBody, $this->locationID, $this->country, $this->stateProvince, $this->county, $this->municipality, $this->locality, 
+                                     $this->localitySecurity, $this->localitySecurityReason, $this->decimalLatitude, $this->decimalLongitude, $this->geodeticDatum, $this->coordinateUncertaintyInMeters, 
+                                     $this->footprintWKT, $this->coordinatePrecision, $this->locationRemarks, $this->verbatimCoordinates, $this->verbatimCoordinateSystem, $this->georeferencedBy, 
+                                     $this->georeferenceProtocol, $this->georeferenceSources, $this->georeferenceVerificationStatus, $this->georeferenceRemarks, $this->minimumElevationInMeters, 
+                                     $this->maximumElevationInMeters, $this->verbatimElevation, $this->previousIdentifications, $this->disposition, $this->genericcolumn1, $this->genericcolumn2, 
+                                     $this->modified, $this->language, $this->observeruid, $this->processingstatus, $this->recordEnteredBy, $this->duplicateQuantity, $this->labelProject, 
+                                     $this->dynamicFields, $this->dateEntered, $this->dateLastModified, $this->minimumDepthInMeters, $this->maximumDepthInMeters, $this->verbatimDepth, $this->storageLocation);
             $statement->fetch();
             if ($this->occid!=null) { 
                 $returnvalue = true;
@@ -1005,12 +1084,14 @@ CREATE TABLE `omoccurrences` (
     $this->occid = null;
     if($collid !=NULL && $catalogNumber!=NULL) {
          // input of the new quick entry form
-        $preparesql = 'SELECT barcode, occid, collid, dbpk, basisOfRecord, occurrenceID, catalogNumber, otherCatalogNumbers, ownerInstitutionCode, institutionID, collectionID, datasetID, institutionCode, collectionCode, family, scientificName, sciname, tidinterpreted, genus, specificEpithet, taxonRank, infraspecificEpithet, scientificNameAuthorship, taxonRemarks, identifiedBy, dateIdentified, identificationReferences, identificationRemarks, identificationQualifier, typeStatus, recordedBy, recordNumber, recordedById, associatedCollectors, eventDate, latestDateCollected, year, month, day, startDayOfYear, endDayOfYear, verbatimEventDate, habitat, substrate, fieldNotes, fieldnumber, eventID, occurrenceRemarks, informationWithheld, dataGeneralizations, associatedOccurrences, associatedTaxa, dynamicProperties, verbatimAttributes, behavior, reproductiveCondition, cultivationStatus, establishmentMeans, lifeStage, sex, individualCount, samplingProtocol, samplingEffort, preparations, waterBody, locationID, country, stateProvince, county, municipality, locality, localitySecurity, localitySecurityReason, decimalLatitude, decimalLongitude, geodeticDatum, coordinateUncertaintyInMeters, footprintWKT, coordinatePrecision, locationRemarks, verbatimCoordinates, verbatimCoordinateSystem, georeferencedBy, georeferenceProtocol, georeferenceSources, georeferenceVerificationStatus, georeferenceRemarks, minimumElevationInMeters, maximumElevationInMeters, verbatimElevation, previousIdentifications, disposition, genericcolumn1, genericcolumn2, modified, language, observeruid, processingstatus, recordEnteredBy, duplicateQuantity, labelProject, dynamicFields, dateEntered, dateLastModified, minimumDepthInMeters, maximumDepthInMeters, verbatimDepth, storageLocation FROM omoccurrences WHERE collid = ? and catalogNumber = ?';
+        $preparesql = 'SELECT barcode, accesNum, fieldUnder, currName, idQualifier, detText, provenance, container, collTrip, geoWithin, highGeo, frequency, prepMethod, format, verbLat, verbLong, method, occid, collid, dbpk, basisOfRecord, occurrenceID, catalogNumber, otherCatalogNumbers, ownerInstitutionCode, institutionID, collectionID, datasetID, institutionCode, collectionCode, family, scientificName, sciname, tidinterpreted, genus, specificEpithet, taxonRank, infraspecificEpithet, scientificNameAuthorship, taxonRemarks, identifiedBy, dateIdentified, identificationReferences, identificationRemarks, identificationQualifier, typeStatus, recordedBy, recordNumber, recordedById, associatedCollectors, eventDate, latestDateCollected, year, month, day, startDayOfYear, endDayOfYear, verbatimEventDate, habitat, substrate, fieldNotes, fieldnumber, eventID, occurrenceRemarks, informationWithheld, dataGeneralizations, associatedOccurrences, associatedTaxa, dynamicProperties, verbatimAttributes, behavior, reproductiveCondition, cultivationStatus, establishmentMeans, lifeStage, sex, individualCount, samplingProtocol, samplingEffort, preparations, waterBody, locationID, country, stateProvince, county, municipality, locality, localitySecurity, localitySecurityReason, decimalLatitude, decimalLongitude, geodeticDatum, coordinateUncertaintyInMeters, footprintWKT, coordinatePrecision, locationRemarks, verbatimCoordinates, verbatimCoordinateSystem, georeferencedBy, georeferenceProtocol, georeferenceSources, georeferenceVerificationStatus, georeferenceRemarks, minimumElevationInMeters, maximumElevationInMeters, verbatimElevation, previousIdentifications, disposition, genericcolumn1, genericcolumn2, modified, language, observeruid, processingstatus, recordEnteredBy, duplicateQuantity, labelProject, dynamicFields, dateEntered, dateLastModified, minimumDepthInMeters, maximumDepthInMeters, verbatimDepth, storageLocation FROM omoccurrences WHERE collid = ? and catalogNumber = ?';
         if ($statement = $connection->prepare($preparesql)) {
             $statement->bind_param("ss", $collid, $catalogNumber);
             $statement->execute();
             // input of the new quick entry form
-            $statement->bind_result( $this->barcode, $this->occid, $this->collid, $this->dbpk, $this->basisOfRecord, $this->occurrenceID, $this->catalogNumber, $this->otherCatalogNumbers, $this->ownerInstitutionCode, $this->institutionID, $this->collectionID, $this->datasetID, $this->institutionCode, $this->collectionCode, $this->family, $this->scientificName, $this->sciname, $this->tidinterpreted, $this->genus, $this->specificEpithet, $this->taxonRank, $this->infraspecificEpithet, $this->scientificNameAuthorship, $this->taxonRemarks, $this->identifiedBy, $this->dateIdentified, $this->identificationReferences, $this->identificationRemarks, $this->identificationQualifier, $this->typeStatus, $this->recordedBy, $this->recordNumber, $this->recordedById, $this->associatedCollectors, $this->eventDate, $this->latestDateCollected, $this->year, $this->month, $this->day, $this->startDayOfYear, $this->endDayOfYear, $this->verbatimEventDate, $this->habitat, $this->substrate, $this->fieldNotes, $this->fieldnumber, $this->eventID, $this->occurrenceRemarks, $this->informationWithheld, $this->dataGeneralizations, $this->associatedOccurrences, $this->associatedTaxa, $this->dynamicProperties, $this->verbatimAttributes, $this->behavior, $this->reproductiveCondition, $this->cultivationStatus, $this->establishmentMeans, $this->lifeStage, $this->sex, $this->individualCount, $this->samplingProtocol, $this->samplingEffort, $this->preparations, $this->locationID, $this->waterBody, $this->country, $this->stateProvince, $this->county, $this->municipality, $this->locality, $this->localitySecurity, $this->localitySecurityReason, $this->decimalLatitude, $this->decimalLongitude, $this->geodeticDatum, $this->coordinateUncertaintyInMeters, $this->footprintWKT, $this->coordinatePrecision, $this->locationRemarks, $this->verbatimCoordinates, $this->verbatimCoordinateSystem, $this->georeferencedBy, $this->georeferenceProtocol, $this->georeferenceSources, $this->georeferenceVerificationStatus, $this->georeferenceRemarks, $this->minimumElevationInMeters, $this->maximumElevationInMeters, $this->verbatimElevation, $this->previousIdentifications, $this->disposition, $this->genericcolumn1, $this->genericcolumn2, $this->modified, $this->language, $this->observeruid, $this->processingstatus, $this->recordEnteredBy, $this->duplicateQuantity, $this->labelProject, $this->dynamicFields, $this->dateEntered, $this->dateLastModified, $this->minimumDepthInMeters, $this->maximumDepthInMeters, $this->verbatimDepth, $this->storageLocation);
+            $statement->bind_result( $this->barcode,$this->accesNum, $this->filedUnder, $this->currName, $this->idQualifier, $this->detText, $this->provenance, $this->container, 
+                                     $this->collTrip, $this->geoWithin, $this->highGeo, $this->frequency, $this->prepMethod, $this->format, $this->verbLat, $this->verblong, $this->method,
+                                     $this->occid, $this->collid, $this->dbpk, $this->basisOfRecord, $this->occurrenceID, $this->catalogNumber, $this->otherCatalogNumbers, $this->ownerInstitutionCode, $this->institutionID, $this->collectionID, $this->datasetID, $this->institutionCode, $this->collectionCode, $this->family, $this->scientificName, $this->sciname, $this->tidinterpreted, $this->genus, $this->specificEpithet, $this->taxonRank, $this->infraspecificEpithet, $this->scientificNameAuthorship, $this->taxonRemarks, $this->identifiedBy, $this->dateIdentified, $this->identificationReferences, $this->identificationRemarks, $this->identificationQualifier, $this->typeStatus, $this->recordedBy, $this->recordNumber, $this->recordedById, $this->associatedCollectors, $this->eventDate, $this->latestDateCollected, $this->year, $this->month, $this->day, $this->startDayOfYear, $this->endDayOfYear, $this->verbatimEventDate, $this->habitat, $this->substrate, $this->fieldNotes, $this->fieldnumber, $this->eventID, $this->occurrenceRemarks, $this->informationWithheld, $this->dataGeneralizations, $this->associatedOccurrences, $this->associatedTaxa, $this->dynamicProperties, $this->verbatimAttributes, $this->behavior, $this->reproductiveCondition, $this->cultivationStatus, $this->establishmentMeans, $this->lifeStage, $this->sex, $this->individualCount, $this->samplingProtocol, $this->samplingEffort, $this->preparations, $this->locationID, $this->waterBody, $this->country, $this->stateProvince, $this->county, $this->municipality, $this->locality, $this->localitySecurity, $this->localitySecurityReason, $this->decimalLatitude, $this->decimalLongitude, $this->geodeticDatum, $this->coordinateUncertaintyInMeters, $this->footprintWKT, $this->coordinatePrecision, $this->locationRemarks, $this->verbatimCoordinates, $this->verbatimCoordinateSystem, $this->georeferencedBy, $this->georeferenceProtocol, $this->georeferenceSources, $this->georeferenceVerificationStatus, $this->georeferenceRemarks, $this->minimumElevationInMeters, $this->maximumElevationInMeters, $this->verbatimElevation, $this->previousIdentifications, $this->disposition, $this->genericcolumn1, $this->genericcolumn2, $this->modified, $this->language, $this->observeruid, $this->processingstatus, $this->recordEnteredBy, $this->duplicateQuantity, $this->labelProject, $this->dynamicFields, $this->dateEntered, $this->dateLastModified, $this->minimumDepthInMeters, $this->maximumDepthInMeters, $this->verbatimDepth, $this->storageLocation);
             $statement->fetch();
             if ($this->occid!=null) {
                 $returnvalue = true;
@@ -1205,7 +1286,24 @@ CREATE TABLE `omoccurrences` (
        if ($this->hasField($fieldname)) { 
           try {
             // input of the new quick entry form
-             if ($fieldname=='barcode') {$returnvalue = $this->setbarcode($barcode); }
+             if ($fieldname=='barcode') {$returnvalue = $this->setbarcode($value); }
+             if ($fieldname=='accesNum') {$returnvalue = $this->setaccesNum($value); }
+             if ($fieldname=='filedUnder') {$returnvalue = $this->setfiledUnder($value); }
+             if ($fieldname=='currName') {$returnvalue = $this->setcurrName($value); }
+             if ($fieldname=='idQualifier') {$returnvalue = $this->setidQualifier($value); }
+             if ($fieldname=='detText') {$returnvalue = $this->setdetText($value); }
+             if ($fieldname=='provenance') {$returnvalue = $this->setprovenance($value); }
+             if ($fieldname=='container') {$returnvalue = $this->setcontainer($value); }
+             if ($fieldname=='collTrip') {$returnvalue = $this->setcollTrip($value); }
+             if ($fieldname=='geoWithin') {$returnvalue = $this->setgeoWithin($value); }
+             if ($fieldname=='highGeo') {$returnvalue = $this->sethighGeo($value); }
+             if ($fieldname=='frequency') {$returnvalue = $this->setfrequency($value); }
+             if ($fieldname=='prepMethod') {$returnvalue = $this->setprepMethod($value); }
+             if ($fieldname=='format') {$returnvalue = $this->setformat($value); }
+             if ($fieldname=='verbLat') {$returnvalue = $this->setverbLat($value); }
+             if ($fieldname=='verbLong') {$returnvalue = $this->setverbLong($value); }
+             if ($fieldname=='method') {$returnvalue = $this->setmethod($value); }
+
              if ($fieldname=='occid') { $returnvalue = $this->setoccid($value); } 
              if ($fieldname=='collid') { $returnvalue = $this->setcollid($value); } 
              if ($fieldname=='dbpk') { $returnvalue = $this->setdbpk($value); } 
@@ -1330,6 +1428,23 @@ CREATE TABLE `omoccurrences` (
           try {
             // input of the new quick entry form
              if ($fieldname=='barcode') {$returnvalue = $this->getbarcode(); }
+             if ($fieldname=='accesNum') {$returnvalue = $this->getaccesNum(); }
+             if ($fieldname=='filedUnder') {$returnvalue = $this->getfiledUnder(); }
+             if ($fieldname=='currName') {$returnvalue = $this->getcurrName(); }
+             if ($fieldname=='idQualifier') {$returnvalue = $this->getidQualifier(); }
+             if ($fieldname=='detText') {$returnvalue = $this->getdetText(); }
+             if ($fieldname=='provenance') {$returnvalue = $this->getprovenance(); }
+             if ($fieldname=='container') {$returnvalue = $this->getcontainer(); }
+             if ($fieldname=='collTrip') {$returnvalue = $this->getcollTrip(); }
+             if ($fieldname=='geoWithin') {$returnvalue = $this->getgeoWithin(); }
+             if ($fieldname=='highGeo') {$returnvalue = $this->gethighGeo(); }
+             if ($fieldname=='frequency') {$returnvalue = $this->getfrequency(); }
+             if ($fieldname=='prepMethod') {$returnvalue = $this->getprepMethod(); }
+             if ($fieldname=='format') {$returnvalue = $this->getformat(); }
+             if ($fieldname=='verbLat') {$returnvalue = $this->getverbLat(); }
+             if ($fieldname=='verbLong') {$returnvalue = $this->getverbLong(); }
+             if ($fieldname=='method') {$returnvalue = $this->getmethod(); }
+
              if ($fieldname=='occid') { $returnvalue = $this->getoccid(); } 
              if ($fieldname=='collid') { $returnvalue = $this->getcollid(); } 
              if ($fieldname=='dbpk') { $returnvalue = $this->getdbpk(); } 
@@ -1445,6 +1560,8 @@ CREATE TABLE `omoccurrences` (
        return $returnvalue;
    }
 // input of the new quick entry form
+// For all the functions below, especially for the set functions, we need to double check the input requirements
+// TODO: check the input requirements and update/complete the set functions
 /*barcode*/
    public function getbarcode() {
       if ($this->barcode==null) {
@@ -1458,6 +1575,217 @@ CREATE TABLE `omoccurrences` (
          throw new Exception("Value must be an integer");
       }
       $this->occid = $this->l_addslashes($barcode);
+      $this->dirty = true;
+   }
+
+/*accesNum*/
+   public function getaccesNum() {
+      if ($this->accesNum==null) {
+         return null;
+      } else {
+         return trim($this->l_stripslashes($this->accesNum));
+      }
+   }
+   public function setaccesNum($accesNum) {
+      if (!ctype_digit(strval($accesNum)) && trim(strval($accesNum))!='' ) {
+         throw new Exception("Value must be an integer");
+      }
+      $this->occid = $this->l_addslashes($accesNum);
+      $this->dirty = true;
+   }
+
+/*filedUnder*/
+   public function getfiledUnder() {
+      if ($this->filedUnder==null) {
+         return null;
+      } else {
+         return trim($this->l_stripslashes($this->filedUnder));
+      }
+   }
+   public function setfiledUnder($filedUnder) {
+      $this->occid = $this->l_addslashes($filedUnder);
+      $this->dirty = true;
+   }
+
+/*currName*/
+   public function getcurrName() {
+      if ($this->currName==null) {
+         return null;
+      } else {
+         return trim($this->l_stripslashes($this->currName));
+      }
+   }
+   public function setcurrName($currName) {
+      $this->occid = $this->l_addslashes($currName);
+      $this->dirty = true;
+   }
+   
+/*idQualifier*/
+   public function getidQualifier() {
+      if ($this->idQualifier==null) {
+         return null;
+      } else {
+         return trim($this->l_stripslashes($this->idQualifier));
+      }
+   }
+   public function setidQualifier($idQualifier) {
+      $this->occid = $this->l_addslashes($idQualifier);
+      $this->dirty = true;
+   }
+
+/*detText*/
+   public function getdetText() {
+      if ($this->detText==null) {
+         return null;
+      } else {
+         return trim($this->l_stripslashes($this->detText));
+      }
+   }
+   public function setdetText($detText) {
+      $this->occid = $this->l_addslashes($detText);
+      $this->dirty = true;
+   }
+
+/*provenance*/
+   public function getprovenance() {
+      if ($this->provenance==null) {
+         return null;
+      } else {
+         return trim($this->l_stripslashes($this->provenance));
+      }
+   }
+   public function setprovenance($provenance) {
+      $this->occid = $this->l_addslashes($provenance);
+      $this->dirty = true;
+   }
+
+/*container*/
+   public function getcontainer() {
+      if ($this->container==null) {
+         return null;
+      } else {
+         return trim($this->l_stripslashes($this->container));
+      }
+   }
+   public function setcontainer($container) {
+      $this->occid = $this->l_addslashes($container);
+      $this->dirty = true;
+   }
+
+/*collTrip*/
+   public function getcollTrip() {
+      if ($this->collTrip==null) {
+         return null;
+      } else {
+         return trim($this->l_stripslashes($this->collTrip));
+      }
+   }
+   public function setcollTrip($collTrip) {
+      $this->occid = $this->l_addslashes($collTrip);
+      $this->dirty = true;
+   }
+
+/*geoWithin*/
+   public function getgeoWithin() {
+      if ($this->geoWithin==null) {
+         return null;
+      } else {
+         return trim($this->l_stripslashes($this->geoWithin));
+      }
+   }
+   public function setgeoWithin($geoWithin) {
+      $this->occid = $this->l_addslashes($geoWithin);
+      $this->dirty = true;
+   }
+
+/*highGeo*/
+   public function gethighGeo() {
+      if ($this->highGeo==null) {
+         return null;
+      } else {
+         return trim($this->l_stripslashes($this->highGeo));
+      }
+   }
+   public function sethighGeo($highGeo) {
+      $this->occid = $this->l_addslashes($highGeo);
+      $this->dirty = true;
+   }
+
+/*frequency*/
+   public function getfrequency() {
+      if ($this->frequency==null) {
+         return null;
+      } else {
+         return trim($this->l_stripslashes($this->frequency));
+      }
+   }
+   public function setfrequency($frequency) {
+      $this->occid = $this->l_addslashes($frequency);
+      $this->dirty = true;
+   }
+
+/*prepMethod*/
+   public function getprepMethod() {
+      if ($this->prepMethod==null) {
+         return null;
+      } else {
+         return trim($this->l_stripslashes($this->prepMethod));
+      }
+   }
+   public function setprepMethod($prepMethod) {
+      $this->occid = $this->l_addslashes($prepMethod);
+      $this->dirty = true;
+   }
+
+/*format*/
+   public function getformat() {
+      if ($this->format==null) {
+         return null;
+      } else {
+         return trim($this->l_stripslashes($this->format));
+      }
+   }
+   public function setformat($format) {
+      $this->occid = $this->l_addslashes($format);
+      $this->dirty = true;
+   }
+
+/*verbLat*/
+   public function getverbLat() {
+      if ($this->verbLat==null) {
+         return null;
+      } else {
+         return trim($this->l_stripslashes($this->verbLat));
+      }
+   }
+   public function setverbLat($verbLat) {
+      $this->occid = $this->l_addslashes($verbLat);
+      $this->dirty = true;
+   }
+
+/*verbLong*/
+   public function getverbLong() {
+      if ($this->verbLong==null) {
+         return null;
+      } else {
+         return trim($this->l_stripslashes($this->verbLong));
+      }
+   }
+   public function setverbLong($verbLong) {
+      $this->occid = $this->l_addslashes($verbLong);
+      $this->dirty = true;
+   }
+
+/*method*/
+   public function getmethod() {
+      if ($this->method==null) {
+         return null;
+      } else {
+         return trim($this->l_stripslashes($this->method));
+      }
+   }
+   public function setmethod($method) {
+      $this->occid = $this->l_addslashes($method);
       $this->dirty = true;
    }
 
@@ -3282,6 +3610,23 @@ CREATE TABLE `omoccurrences` (
    // Constants holding the mysqli field type character (s,i,d) for each field
    // input of the new quick entry form
   const C_barcodeMYSQLI_TYPE = 'i';
+  const C_accesNumMYSQLI_TYPE = 'i';
+  const C_filedUnderMYSQLI_TYPE = 's';
+  const C_currNameMYSQLI_TYPE = 's';
+  const C_idQualifierMYSQLI_TYPE = 's';
+  const C_detTextMYSQLI_TYPE = 's';
+  const C_provenanceMYSQLI_TYPE = 's';
+  const C_containerMYSQLI_TYPE = 's';
+  const C_collTripMYSQLI_TYPE = 's';
+  const C_geoWithinMYSQLI_TYPE = 's';
+  const C_highGeoMYSQLI_TYPE = 's';
+  const C_frequencyMYSQLI_TYPE = 's';
+  const C_prepMethodMYSQLI_TYPE = 's';
+  const C_formatMYSQLI_TYPE = 's';
+  const C_verbLatMYSQLI_TYPE = 's';
+  const C_verbLongMYSQLI_TYPE = 's';
+  const C_methodMYSQLI_TYPE = 's';
+
   const C_occidMYSQLI_TYPE = 'i';
   const C_collidMYSQLI_TYPE = 'i';
   const C_dbpkMYSQLI_TYPE = 's';
@@ -3395,6 +3740,23 @@ CREATE TABLE `omoccurrences` (
       $retval = '';
       // input of the new quick entry form
       if ($aFieldname=='barcode') { $retval = self::C_barcodeMYSQLI_TYPE; }
+      if ($aFieldname=='accesNum') { $retval = self::C_accesNumMYSQLI_TYPE; }
+      if ($aFieldname=='filedUnder') { $retval = self::C_filedUnderMYSQLI_TYPE; }
+      if ($aFieldname=='currName') { $retval = self::C_currNameMYSQLI_TYPE; }
+      if ($aFieldname=='idQualifier') { $retval = self::C_idQualifierMYSQLI_TYPE; }
+      if ($aFieldname=='detText') { $retval = self::C_detTextMYSQLI_TYPE; }
+      if ($aFieldname=='provenance') { $retval = self::C_provenanceMYSQLI_TYPE; }
+      if ($aFieldname=='container') { $retval = self::C_containerMYSQLI_TYPE; }
+      if ($aFieldname=='collTrip') { $retval = self::C_collTripMYSQLI_TYPE; }
+      if ($aFieldname=='geoWithin') { $retval = self::C_geoWithinMYSQLI_TYPE; }
+      if ($aFieldname=='highGeo') { $retval = self::C_highGeoMYSQLI_TYPE; }
+      if ($aFieldname=='frequency') { $retval = self::C_frequencyMYSQLI_TYPE; }
+      if ($aFieldname=='prepMethod') { $retval = self::C_prepMethodMYSQLI_TYPE; }
+      if ($aFieldname=='format') { $retval = self::C_formatMYSQLI_TYPE; }
+      if ($aFieldname=='verbLat') { $retval = self::C_verbLatMYSQLI_TYPE; }
+      if ($aFieldname=='verbLong') { $retval = self::C_verbLongMYSQLI_TYPE; }
+      if ($aFieldname=='method') { $retval = self::C_methodMYSQLI_TYPE; }
+
 
       if ($aFieldname=='occid') { $retval = self::C_occidMYSQLI_TYPE; }
       if ($aFieldname=='collid') { $retval = self::C_collidMYSQLI_TYPE; }
@@ -3525,7 +3887,8 @@ CREATE TABLE `omoccurrences` (
         }
         if($this->occid != NULL) {
             // input of the new quick entry form
-           $preparesql = 'SELECT barcode, occid, collid, dbpk, basisOfRecord, occurrenceID, catalogNumber, otherCatalogNumbers, ownerInstitutionCode, institutionID, collectionID, datasetID, institutionCode, collectionCode, family, scientificName, sciname, tidinterpreted, genus, specificEpithet, taxonRank, infraspecificEpithet, scientificNameAuthorship, taxonRemarks, identifiedBy, dateIdentified, identificationReferences, identificationRemarks, identificationQualifier, typeStatus, recordedBy, recordNumber, recordedById, associatedCollectors, eventDate, latestDateCollected, year, month, day, startDayOfYear, endDayOfYear, verbatimEventDate, habitat, substrate, fieldNotes, fieldnumber, eventID, occurrenceRemarks, informationWithheld, dataGeneralizations, associatedOccurrences, associatedTaxa, dynamicProperties, verbatimAttributes, behavior, reproductiveCondition, cultivationStatus, establishmentMeans, lifeStage, sex, individualCount, samplingProtocol, samplingEffort, preparations, locationID, waterBody, country, stateProvince, county, municipality, locality, localitySecurity, localitySecurityReason, decimalLatitude, decimalLongitude, geodeticDatum, coordinateUncertaintyInMeters, footprintWKT, coordinatePrecision, locationRemarks, verbatimCoordinates, verbatimCoordinateSystem, georeferencedBy, georeferenceProtocol, georeferenceSources, georeferenceVerificationStatus, georeferenceRemarks, minimumElevationInMeters, maximumElevationInMeters, verbatimElevation, previousIdentifications, disposition, genericcolumn1, genericcolumn2, modified, language, observeruid, processingstatus, recordEnteredBy, duplicateQuantity, labelProject, dynamicFields, dateEntered, dateLastModified, minimumDepthInMeters, maximumDepthInMeters, verbatimDepth, storageLocation FROM omoccurrences WHERE occid = ? ';
+           $preparesql = 'SELECT barcode, barcode, accesNum, fieldUnder, currName, idQualifier, detText, provenance, container, collTrip, geoWithin, highGeo, frequency, prepMethod, format, verbLat, verbLong, method,
+                                 occid, collid, dbpk, basisOfRecord, occurrenceID, catalogNumber, otherCatalogNumbers, ownerInstitutionCode, institutionID, collectionID, datasetID, institutionCode, collectionCode, family, scientificName, sciname, tidinterpreted, genus, specificEpithet, taxonRank, infraspecificEpithet, scientificNameAuthorship, taxonRemarks, identifiedBy, dateIdentified, identificationReferences, identificationRemarks, identificationQualifier, typeStatus, recordedBy, recordNumber, recordedById, associatedCollectors, eventDate, latestDateCollected, year, month, day, startDayOfYear, endDayOfYear, verbatimEventDate, habitat, substrate, fieldNotes, fieldnumber, eventID, occurrenceRemarks, informationWithheld, dataGeneralizations, associatedOccurrences, associatedTaxa, dynamicProperties, verbatimAttributes, behavior, reproductiveCondition, cultivationStatus, establishmentMeans, lifeStage, sex, individualCount, samplingProtocol, samplingEffort, preparations, locationID, waterBody, country, stateProvince, county, municipality, locality, localitySecurity, localitySecurityReason, decimalLatitude, decimalLongitude, geodeticDatum, coordinateUncertaintyInMeters, footprintWKT, coordinatePrecision, locationRemarks, verbatimCoordinates, verbatimCoordinateSystem, georeferencedBy, georeferenceProtocol, georeferenceSources, georeferenceVerificationStatus, georeferenceRemarks, minimumElevationInMeters, maximumElevationInMeters, verbatimElevation, previousIdentifications, disposition, genericcolumn1, genericcolumn2, modified, language, observeruid, processingstatus, recordEnteredBy, duplicateQuantity, labelProject, dynamicFields, dateEntered, dateLastModified, minimumDepthInMeters, maximumDepthInMeters, verbatimDepth, storageLocation FROM omoccurrences WHERE occid = ? ';
 
            if ($statement = $connection->prepare($preparesql)) { 
               $statement->bind_param("i", $this->occid);
@@ -3557,6 +3920,21 @@ CREATE TABLE `omoccurrences` (
             $isInsert = false;
             // input of the new quick entry form
             $sql .=  "  barcode = ? ";
+            $sql .=  ", accesNum = ? ";
+            $sql .=  ", currName = ? ";
+            $sql .=  ", idQualifier = ? ";
+            $sql .=  ", detText = ? ";
+            $sql .=  ", provenance = ? ";
+            $sql .=  ", container = ? ";
+            $sql .=  ", collTrip = ? ";
+            $sql .=  ", geoWithin = ? ";
+            $sql .=  ", highGeo = ? ";
+            $sql .=  ", frequency = ? ";
+            $sql .=  ", prepMethod = ? ";
+            $sql .=  ", format = ? ";
+            $sql .=  ", verbLat = ? ";
+            $sql .=  ", verbLong = ? ";
+            $sql .=  ", method = ? ";
 
             $sql .=  ", collid = ? ";
             $sql .=  ", dbpk = ? ";
@@ -3669,7 +4047,8 @@ CREATE TABLE `omoccurrences` (
             $sql  = 'INSERT INTO omoccurrences ';
             $isInsert = true;
             // input of the new quick entry form
-            $sql .= '( barcode, collid ,  dbpk ,  basisOfRecord ,  occurrenceID ,  catalogNumber ,  otherCatalogNumbers ,  ownerInstitutionCode ,  institutionID ,  collectionID ,  datasetID ,  institutionCode ,  collectionCode ,  family ,  scientificName ,  sciname ,  tidinterpreted ,  genus ,  specificEpithet ,  taxonRank ,  infraspecificEpithet ,  scientificNameAuthorship ,  taxonRemarks ,  identifiedBy ,  dateIdentified ,  identificationReferences ,  identificationRemarks ,  identificationQualifier ,  typeStatus ,  recordedBy ,  recordNumber ,  recordedById ,  associatedCollectors ,  eventDate , latestDateCollected,  year ,  month ,  day ,  startDayOfYear ,  endDayOfYear ,  verbatimEventDate ,  habitat ,  substrate ,  fieldNotes ,  fieldnumber , eventID, occurrenceRemarks ,  informationWithheld ,  dataGeneralizations ,  associatedOccurrences ,  associatedTaxa ,  dynamicProperties ,  verbatimAttributes ,  behavior ,  reproductiveCondition ,  cultivationStatus ,  establishmentMeans ,  lifeStage ,  sex ,  individualCount ,  samplingProtocol , samplingEffort , preparations , locationID, waterBody,  country ,  stateProvince ,  county ,  municipality ,  locality ,  localitySecurity ,  localitySecurityReason ,  decimalLatitude ,  decimalLongitude ,  geodeticDatum ,  coordinateUncertaintyInMeters ,  footprintWKT ,  coordinatePrecision ,  locationRemarks ,  verbatimCoordinates ,  verbatimCoordinateSystem ,  georeferencedBy ,  georeferenceProtocol ,  georeferenceSources ,  georeferenceVerificationStatus ,  georeferenceRemarks ,  minimumElevationInMeters ,  maximumElevationInMeters ,  verbatimElevation ,  previousIdentifications ,  disposition ,  genericcolumn1 ,  genericcolumn2 ,  modified ,  language ,  observeruid ,  processingstatus ,  recordEnteredBy ,  duplicateQuantity ,  labelProject, dynamicFields, dateEntered, minimumDepthInMeters, maximumDepthInMeters, verbatimDepth, storageLocation) VALUES (';
+            $sql .= '( barcode, barcode, accesNum, fieldUnder, currName, idQualifier, detText, provenance, container, collTrip, geoWithin, highGeo, frequency, prepMethod, format, verbLat, verbLong, method,
+                       collid ,  dbpk ,  basisOfRecord ,  occurrenceID ,  catalogNumber ,  otherCatalogNumbers ,  ownerInstitutionCode ,  institutionID ,  collectionID ,  datasetID ,  institutionCode ,  collectionCode ,  family ,  scientificName ,  sciname ,  tidinterpreted ,  genus ,  specificEpithet ,  taxonRank ,  infraspecificEpithet ,  scientificNameAuthorship ,  taxonRemarks ,  identifiedBy ,  dateIdentified ,  identificationReferences ,  identificationRemarks ,  identificationQualifier ,  typeStatus ,  recordedBy ,  recordNumber ,  recordedById ,  associatedCollectors ,  eventDate , latestDateCollected,  year ,  month ,  day ,  startDayOfYear ,  endDayOfYear ,  verbatimEventDate ,  habitat ,  substrate ,  fieldNotes ,  fieldnumber , eventID, occurrenceRemarks ,  informationWithheld ,  dataGeneralizations ,  associatedOccurrences ,  associatedTaxa ,  dynamicProperties ,  verbatimAttributes ,  behavior ,  reproductiveCondition ,  cultivationStatus ,  establishmentMeans ,  lifeStage ,  sex ,  individualCount ,  samplingProtocol , samplingEffort , preparations , locationID, waterBody,  country ,  stateProvince ,  county ,  municipality ,  locality ,  localitySecurity ,  localitySecurityReason ,  decimalLatitude ,  decimalLongitude ,  geodeticDatum ,  coordinateUncertaintyInMeters ,  footprintWKT ,  coordinatePrecision ,  locationRemarks ,  verbatimCoordinates ,  verbatimCoordinateSystem ,  georeferencedBy ,  georeferenceProtocol ,  georeferenceSources ,  georeferenceVerificationStatus ,  georeferenceRemarks ,  minimumElevationInMeters ,  maximumElevationInMeters ,  verbatimElevation ,  previousIdentifications ,  disposition ,  genericcolumn1 ,  genericcolumn2 ,  modified ,  language ,  observeruid ,  processingstatus ,  recordEnteredBy ,  duplicateQuantity ,  labelProject, dynamicFields, dateEntered, minimumDepthInMeters, maximumDepthInMeters, verbatimDepth, storageLocation) VALUES (';
             $sql .=  "  ? ";
             $sql .=  " ,  ? ";
             $sql .=  " ,  ? ";
@@ -3781,9 +4160,11 @@ CREATE TABLE `omoccurrences` (
         if ($statement = $connection->prepare($sql)) { 
            if ($this->occid!= NULL ) {
                // input of the new quick entry form
+               // this is not updated, but can double check later
               $statement->bind_param("issssssssssssssissssssssssssssssssiiiiisssssssssssssssissssssssssssssisddsisdssssssssiisssssssississsiissi", $this->barcode,$this->collid , $this->dbpk , $this->basisOfRecord , $this->occurrenceID , $this->catalogNumber , $this->otherCatalogNumbers , $this->ownerInstitutionCode , $this->institutionID , $this->collectionID , $this->datasetID , $this->institutionCode , $this->collectionCode , $this->family , $this->scientificName , $this->sciname , $this->tidinterpreted , $this->genus , $this->specificEpithet , $this->taxonRank , $this->infraspecificEpithet , $this->scientificNameAuthorship , $this->taxonRemarks , $this->identifiedBy , $this->dateIdentified , $this->identificationReferences , $this->identificationRemarks , $this->identificationQualifier , $this->typeStatus , $this->recordedBy , $this->recordNumber , $this->recordedById , $this->associatedCollectors , $this->eventDate , $this->latestDateCollected , $this->year , $this->month , $this->day , $this->startDayOfYear , $this->endDayOfYear , $this->verbatimEventDate , $this->habitat , $this->substrate , $this->fieldNotes , $this->fieldnumber , $this->eventID , $this->occurrenceRemarks , $this->informationWithheld , $this->dataGeneralizations , $this->associatedOccurrences , $this->associatedTaxa , $this->dynamicProperties , $this->verbatimAttributes , $this->behavior , $this->reproductiveCondition , $this->cultivationStatus , $this->establishmentMeans , $this->lifeStage , $this->sex , $this->individualCount , $this->samplingProtocol , $this->samplingEffort , $this->preparations , $this->locationID , $this->waterBody , $this->country , $this->stateProvince , $this->county , $this->municipality , $this->locality , $this->localitySecurity , $this->localitySecurityReason , $this->decimalLatitude , $this->decimalLongitude , $this->geodeticDatum , $this->coordinateUncertaintyInMeters , $this->footprintWKT , $this->coordinatePrecision , $this->locationRemarks , $this->verbatimCoordinates , $this->verbatimCoordinateSystem , $this->georeferencedBy , $this->georeferenceProtocol , $this->georeferenceSources , $this->georeferenceVerificationStatus , $this->georeferenceRemarks , $this->minimumElevationInMeters , $this->maximumElevationInMeters , $this->verbatimElevation , $this->previousIdentifications , $this->disposition , $this->genericcolumn1 , $this->genericcolumn2 , $this->modified , $this->language , $this->observeruid , $this->processingstatus , $this->recordEnteredBy , $this->duplicateQuantity , $this->labelProject , $this->dynamicFields , $this->dateEntered , $this->minimumDepthInMeters , $this->maximumDepthInMeters , $this->verbatimDepth , $this->storageLocation , $this->occid );
            } else { 
                // input of the new quick entry form
+               // this is not updated, but can double check later
               $statement->bind_param("issssssssssssssissssssssssssssssssiiiiisssssssssssssssissssssssssssssisddsisdssssssssiisssssssississsiiss",  $this->barcode, $this->collid , $this->dbpk , $this->basisOfRecord , $this->occurrenceID , $this->catalogNumber , $this->otherCatalogNumbers , $this->ownerInstitutionCode , $this->institutionID , $this->collectionID , $this->datasetID , $this->institutionCode , $this->collectionCode , $this->family , $this->scientificName , $this->sciname , $this->tidinterpreted , $this->genus , $this->specificEpithet , $this->taxonRank , $this->infraspecificEpithet , $this->scientificNameAuthorship , $this->taxonRemarks , $this->identifiedBy , $this->dateIdentified , $this->identificationReferences , $this->identificationRemarks , $this->identificationQualifier , $this->typeStatus , $this->recordedBy , $this->recordNumber , $this->recordedById , $this->associatedCollectors , $this->eventDate , $this->latestDateCollected , $this->year , $this->month , $this->day , $this->startDayOfYear , $this->endDayOfYear , $this->verbatimEventDate , $this->habitat , $this->substrate , $this->fieldNotes , $this->fieldnumber , $this->eventID , $this->occurrenceRemarks , $this->informationWithheld , $this->dataGeneralizations , $this->associatedOccurrences , $this->associatedTaxa , $this->dynamicProperties , $this->verbatimAttributes , $this->behavior , $this->reproductiveCondition , $this->cultivationStatus , $this->establishmentMeans , $this->lifeStage , $this->sex , $this->individualCount , $this->samplingProtocol , $this->samplingEffort , $this->preparations , $this->locationID , $this->waterBody , $this->country , $this->stateProvince , $this->county , $this->municipality , $this->locality , $this->localitySecurity , $this->localitySecurityReason , $this->decimalLatitude , $this->decimalLongitude , $this->geodeticDatum , $this->coordinateUncertaintyInMeters , $this->footprintWKT , $this->coordinatePrecision , $this->locationRemarks , $this->verbatimCoordinates , $this->verbatimCoordinateSystem , $this->georeferencedBy , $this->georeferenceProtocol , $this->georeferenceSources , $this->georeferenceVerificationStatus , $this->georeferenceRemarks , $this->minimumElevationInMeters , $this->maximumElevationInMeters , $this->verbatimElevation , $this->previousIdentifications , $this->disposition , $this->genericcolumn1 , $this->genericcolumn2 , $this->modified , $this->language , $this->observeruid , $this->processingstatus , $this->recordEnteredBy , $this->duplicateQuantity , $this->labelProject , $this->dynamicFields , $this->dateEntered , $this->minimumDepthInMeters , $this->maximumDepthInMeters , $this->verbatimDepth , $this->storageLocation );
            } 
            $statement->execute();
