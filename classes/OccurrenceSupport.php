@@ -163,7 +163,8 @@ class OccurrenceSupport {
 		'verbatimCoordinates','minimumElevationInMeters','maximumElevationInMeters','verbatimElevation','minimumDepthInMeters',
 		'maximumDepthInMeters','verbatimDepth','dateEntered','dateLastModified',
 		// input of the new quick entry form
-		'barcode',
+		'barcode', 'accesNum', 'filedUnder', 'currName', 'idQualifier','detText', 'provenance', 'container', 'collTrip', 'geoWithin', 'highGeo', 
+		'frequencey', 'prepMethod', 'format', 'verbLat', 'verbLong', 'method'
 	);
 		//,'samplingProtocol','samplingEffort'
 		$fileName = 'specimenOutput_'.time().'.csv';

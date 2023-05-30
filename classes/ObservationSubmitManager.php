@@ -55,11 +55,12 @@ class ObservationSubmitManager {
 			$sql = 'INSERT INTO omoccurrences(collid, 
 				-- input of the new quick entry form
 				-- need to double check what is this for
-				barcode, 
-				basisofrecord, family, sciname, scientificname, '.
+				barcode, accesNum, fieldUnder, currName, idQualifier, detText, provenance, container, collTrip, geoWithin, highGeo, '.
+				'frequency, prepMethod, format, verbLat, verbLong, method'.
+				'basisofrecord, family, sciname, scientificname, '.
 				'scientificNameAuthorship, tidinterpreted, taxonRemarks, identifiedBy, dateIdentified, '.
 				'identificationReferences, recordedBy, recordNumber, '.
-				'associatedCollectors, eventDate, year, month, day, startDayOfYear, habitat, substrate, occurrenceRemarks, associatedTaxa, '.
+				'associas, evetedCollectorntDate, year, month, day, startDayOfYear, habitat, substrate, occurrenceRemarks, associatedTaxa, '.
 				'verbatimattributes, reproductiveCondition, cultivationStatus, establishmentMeans, country, '.
 				'stateProvince, county, locality, localitySecurity, decimalLatitude, decimalLongitude, '.
 				'geodeticDatum, coordinateUncertaintyInMeters, georeferenceRemarks, minimumElevationInMeters, verbatimElevation, observeruid, dateEntered) '.

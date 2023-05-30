@@ -96,7 +96,10 @@ if($SYMB_UID){
 					}
 				}
 				// input of the new quick entry form
-				$translationMap = array( 'barcode'=> 'barcode', 'catalognumber' => 'catalogNumber','occurrenceid' => 'occurrenceID','othercatalognumbers' => 'otherCatalogNumbers',
+				$translationMap = array( 'barcode'=> 'barcode', 'accesNum' => 'accesNum', 'filedUnder' => 'filedUnder', 'currName' => 'currName', 'idQualifier' => 'idQualifier',
+					'detText' => 'detText', 'provenance' => 'provenance', 'container' => 'container', 'collTrip' => 'collTrip', 'geoWithin' => 'geoWithin', 'highGeo' => 'highGeo', 
+					'frequencey' => 'frequency', 'prepMethod' => 'prepMethod', 'format' => 'format', 'verbLat' => 'verbLat', 'verbLong' => 'verbLong', 'method' => 'method',
+					'catalognumber' => 'catalogNumber','occurrenceid' => 'occurrenceID','othercatalognumbers' => 'otherCatalogNumbers',
 					'identificationqualifier' => 'identificationQualifier','sciname' => 'scientificName','scientificnameauthorship'=>'scientificNameAuthorship',
 					'recordedby' => 'recordedBy (collector)','recordnumber' => 'Number','associatedcollectors' => 'associatedCollectors','eventdate' => 'eventDate',
 					'verbatimeventdate' => 'verbatimEventDate','identificationremarks' => 'identificationRemarks','taxonremarks' => 'taxonRemarks','identifiedby' => 'identifiedBy',
