@@ -131,3 +131,12 @@ ALTER TABLE `omoccurrences`
 -- two ways of designing it, one of it is to link both the value of the record and the value of the dropdown list together,
 -- the second method is to separate them completely into two tables, and when we insert values we insert into both of the tables simultaneously
 -- the above code uses the first method
+
+DROP TABLE IF EXISTS `currentName_values`;
+CREATE TABLE `currentName_values` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `value` text NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+-- create a table using the second method
