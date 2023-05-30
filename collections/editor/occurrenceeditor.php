@@ -1126,7 +1126,8 @@ else{
 								<span class="field-label"><?php echo (isset($LANG['VERBLAT']) ? $LANG['VERBLAT'] : 'Verb. Lat.'); ?></span>
 								<span class="field-elem">
 									<?php if(array_key_exists('verbLat',$occArr)) { ?>
-										<input size = '25' type="text" name="verbLat" value="<?php echo $occArr["verbLat"]; ?>" />
+										<!-- TODO: need to update the onchange function later to make sure the input format is correct -->
+										<input size = '25' type="text" name="verbLat" value="<?php echo $occArr["verbLat"]; ?>" onchange="decimalLatitudeChanged(this.form)" />
 									<?php 
 									} else { 
 									?>
@@ -1140,7 +1141,8 @@ else{
 								<span class="field-label"><?php echo (isset($LANG['VERBLONG']) ? $LANG['VERBLONG'] : 'Verb. Long.'); ?></span>
 								<span class="field-elem">
 									<?php if(array_key_exists('verbLong',$occArr)) { ?>
-										<input size = '25' type="text" name="verbLong" value="<?php echo $occArr["verbLong"]; ?>" />
+										<!-- TODO: need to update the onchange function later to make sure the input format is correct -->
+										<input size = '25' type="text" name="verbLong" value="<?php echo $occArr["verbLong"]; ?>" onchange="decimalLatitudeChanged(this.form)" />
 									<?php 
 									} else { 
 									?>
@@ -1178,7 +1180,7 @@ else{
 								<span class="field-label"><?php echo (isset($LANG['METHOD']) ? $LANG['METHOD'] : 'Method'); ?></span>
 								<span class="field-elem">
 									<?php if(array_key_exists('method',$occArr)) { ?>
-										<input size = '25' type="text" name="method" value="<?php echo $occArr["method"]; ?>" />
+										<input size = '25' type="text" name="method" value="<?php echo $occArr["method"]; ?>" onchange="fieldChanged('method');" />
 										<?php 
 									} else { 
 									?>
