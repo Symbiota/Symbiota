@@ -14,8 +14,8 @@ class TPDescEditorManager extends TPEditorManager{
 	public function getDescriptions(){
 		$descrArr = Array();
 		$langArr = false;
-		$sql = 'SELECT p.tdProfileID, IFNULL(p.caption, d.caption) as caption, IFNULL(p.publication, d.source) AS source, IFNULL(p.urlTemplate, d.sourceurl) AS sourceurl,
-			IFNULL(p.defaultDisplayLevel, d.displaylevel) AS displaylevel, t.tid, t.sciname, d.tdbid, d.notes, l.langid, d.language
+		$sql = 'SELECT p.tdProfileID, IFNULL(d.caption, p.caption) as caption, IFNULL(d.source, p.publication) AS source, IFNULL(d.sourceurl, p.urlTemplate) AS sourceurl,
+			IFNULL(d.displaylevel, p.defaultDisplayLevel) AS displaylevel, t.tid, t.sciname, d.tdbid, d.notes, l.langid, d.language
 			FROM taxadescrprofile p INNER JOIN taxadescrblock d ON p.tdProfileID = d.tdProfileID
 			LEFT JOIN adminlanguages l ON p.langid = l.langid ';
 		if($this->acceptance){
