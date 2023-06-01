@@ -127,7 +127,7 @@ CREATE TABLE `dropdown_filedUnder_values` (
 /*
 ALTER TABLE `omoccurrences`
     CHANGE `filedUnder` `filedUnder` int DEFAULT NULL,
-    ADD CONSTRAINT `FK_omoccurrences_filedUnder` FOREIGN KEY (`filedUnder`) REFERENCES `filedUnder_values`(`id`);
+    ADD CONSTRAINT `FK_omoccurrences_filedUnder` FOREIGN KEY (`filedUnder`) REFERENCES `dropdown_filedUnder_values`(`id`);
 
 -- Code to reverse the changes if needed
 ALTER TABLE `omoccurrences`
@@ -136,10 +136,6 @@ ALTER TABLE `omoccurrences`
 
 DROP TABLE IF EXISTS `filedUnder_values`;
 */
-
--- two ways of designing it, one of it is to link both the value of the record and the value of the dropdown list together,
--- the second method is to separate them completely into two tables, and when we insert values we insert into both of the tables simultaneously
--- the above code uses the first method
 
 -- Table to hold values for the currentName column
 DROP TABLE IF EXISTS `dropdown_currName_values`;
