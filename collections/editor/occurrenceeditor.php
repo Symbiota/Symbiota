@@ -534,18 +534,6 @@ else{
 	<script src="../../js/symb/collections.editor.imgtools.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.query.js?ver=5" type="text/javascript"></script>
-	<script type="text/javascript">
-		function toggleDetail(){
-			var btn = document.getElementById("detail-btn");
-			if (btn.value === "detailed") {
-				btn.value = "minimal";
-				btn.innerHTML = "Minimal";
-			} else {
-				btn.value = "detailed";
-				btn.innerHTML = "Detailed";
-			}
-		}
-	</script>
 	<style type="text/css">
 		fieldset{ padding:15px }
 		fieldset > legend{ font-weight:bold; }
@@ -1222,7 +1210,7 @@ else{
 												onclick="<?php if($occIndex>0) { ?>submitQueryForm('back');<?php } ?> return false;">
 												Previous
 											</button>
-											<button type="button" value="Done" onClick="">Done</button>
+											<button type="button" value="Done" onclick="navigateToURL(<?php echo($collId) ?>)">Done</button>
 											<button 
 												type="submit" 
 												value="Next" 

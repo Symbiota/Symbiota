@@ -186,6 +186,17 @@ function jumpToPage() {
 	}
 }
 
+function toggleDetail(){
+	var btn = document.getElementById("detail-btn");
+	if (btn.value === "detailed") {
+		btn.value = "minimal";
+		btn.innerHTML = "Minimal";
+	} else {
+		btn.value = "detailed";
+		btn.innerHTML = "Detailed";
+	}
+}
+
 function submitQueryEditor(f){
 	f.action = "occurrenceeditor.php"
 	f.direction.value = "";
@@ -205,6 +216,11 @@ function submitQueryTable(f){
 	//f.submit();
 	return true;
 }
+
+function navigateToURL(coll) {
+    var url = "../editor/occurrencetabledisplay.php?displayquery=1&collid=" + coll;
+    window.location.href = url;
+  }
 
 function setOrderBy(formObject){
 	/*
