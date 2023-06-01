@@ -91,6 +91,7 @@ CREATE TABLE `tr_batchImage` (
   CONSTRAINT `FK_tr_batchImage_tr_batch_id` FOREIGN KEY (`tr_batch_id`) REFERENCES `tr_batch` (`tr_batch_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Spark! Summer 2023 changes:
 -- Add missing columns to the omocurrences table where the quick entry data is stored
 
 ALTER TABLE `omoccurrences` 
@@ -123,20 +124,27 @@ CREATE TABLE `filedUnder_values` (
   `value` text NOT NULL,
   PRIMARY KEY (`id`)
 );
-
+/*
 ALTER TABLE `omoccurrences`
     CHANGE `filedUnder` `filedUnder` int DEFAULT NULL,
     ADD CONSTRAINT `FK_omoccurrences_filedUnder` FOREIGN KEY (`filedUnder`) REFERENCES `filedUnder_values`(`id`);
+
+-- Code to reverse the changes if needed
+ALTER TABLE `omoccurrences`
+    DROP FOREIGN KEY `FK_omoccurrences_filedUnder`,
+    CHANGE `filedUnder` `filedUnder` varchar(255) DEFAULT NULL;
+
+DROP TABLE IF EXISTS `filedUnder_values`;
+*/
 
 -- two ways of designing it, one of it is to link both the value of the record and the value of the dropdown list together,
 -- the second method is to separate them completely into two tables, and when we insert values we insert into both of the tables simultaneously
 -- the above code uses the first method
 
+-- Table to hold values for the currentName column
 DROP TABLE IF EXISTS `currentName_values`;
 CREATE TABLE `currentName_values` (
   `id` int NOT NULL AUTO_INCREMENT,
   `value` text NOT NULL,
   PRIMARY KEY (`id`)
 );
-
--- create a table using the second method
