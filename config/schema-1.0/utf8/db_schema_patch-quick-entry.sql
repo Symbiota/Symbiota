@@ -91,6 +91,7 @@ CREATE TABLE `tr_batchImage` (
   CONSTRAINT `FK_tr_batchImage_tr_batch_id` FOREIGN KEY (`tr_batch_id`) REFERENCES `tr_batch` (`tr_batch_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Spark! Summer 2023 changes:
 -- Add missing columns to the omocurrences table where the quick entry data is stored
 
 ALTER TABLE `omoccurrences` 
@@ -123,11 +124,91 @@ CREATE TABLE `filedUnder_values` (
   `value` text NOT NULL,
   PRIMARY KEY (`id`)
 );
-
+/*
 ALTER TABLE `omoccurrences`
     CHANGE `filedUnder` `filedUnder` int DEFAULT NULL,
     ADD CONSTRAINT `FK_omoccurrences_filedUnder` FOREIGN KEY (`filedUnder`) REFERENCES `filedUnder_values`(`id`);
 
+-- Code to reverse the changes if needed
+ALTER TABLE `omoccurrences`
+    DROP FOREIGN KEY `FK_omoccurrences_filedUnder`,
+    CHANGE `filedUnder` `filedUnder` varchar(255) DEFAULT NULL;
+
+DROP TABLE IF EXISTS `filedUnder_values`;
+*/
+
 -- two ways of designing it, one of it is to link both the value of the record and the value of the dropdown list together,
 -- the second method is to separate them completely into two tables, and when we insert values we insert into both of the tables simultaneously
 -- the above code uses the first method
+
+-- Table to hold values for the currentName column
+DROP TABLE IF EXISTS `currName_values`;
+CREATE TABLE `currName_values` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `value` text NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+-- Table to hold values for the identifiedBy column
+DROP TABLE IF EXISTS `identifiedBy_values`;
+CREATE TABLE `identifiedBy_values` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `value` text NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+-- Table to hold values for the collectors column
+DROP TABLE IF EXISTS `recordedBy_values`;
+CREATE TABLE `recordedBy_values` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `value` text NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+-- Table to hold values for the container column
+DROP TABLE IF EXISTS `container_values`;
+CREATE TABLE `container_values` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `value` text NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+-- Table to hold values for the collTrip column
+DROP TABLE IF EXISTS `collTrip_values`;
+CREATE TABLE `collTrip_values` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `value` text NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+-- Table to hold values for the geoWithin column
+DROP TABLE IF EXISTS `geoWithin_values`;
+CREATE TABLE `geoWithin_values` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `value` text NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+-- Table to hold values for the highGeo column
+DROP TABLE IF EXISTS `highGeo_values`;
+CREATE TABLE `highGeo_values` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `value` text NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+-- Table to hold values for the prepMethod column
+DROP TABLE IF EXISTS `prepMethod_values`;
+CREATE TABLE `prepMethod_values` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `value` text NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+-- Table to hold values for the format column
+DROP TABLE IF EXISTS `format_values`;
+CREATE TABLE `format_values` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `value` text NOT NULL,
+  PRIMARY KEY (`id`)
+);
