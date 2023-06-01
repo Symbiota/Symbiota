@@ -1,5 +1,5 @@
 div {
-  /* background-color: orange; */
+  /* background-color: greenyellow; */
 }
 
 .flex-form {
@@ -8,12 +8,8 @@ div {
 }
 
 .flex-form > * {
-  flex-basis: 100%;
+  flex-basis: auto;
   margin-left: 10px;
   margin-right: 10px;
   margin-bottom: 5px;
-}
-
-.override-flex {
-  flex-basis: auto;
 }

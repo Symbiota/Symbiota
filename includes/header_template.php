@@ -4,7 +4,6 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 ?>
 <div class="header-wrapper">
 	<header>
-		<button onclick="toggleAccessibilityStyles('<?php echo $CLIENT_ROOT . '/includes' . '/' ?>')" id="accessibility-button" name="accessibility-button" data-target-css="<?php echo $CSS_BASE_PATH . "/symbiota/condensed.css?ver=6.css" ?>" ><?php echo (isset($LANG['TOGGLE_508_ON'])?$LANG['TOGGLE_508_ON']:'View accessible form'); ?></button>
 		<div class="top-wrapper">
 			<nav class="top-login">
 				<?php
@@ -22,6 +21,9 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 					<?php
 				} else {
 					?>
+					<span>
+						<button style="font-size:14" onclick="toggleAccessibilityStyles('<?php echo $CLIENT_ROOT . '/includes' . '/' ?>', '<?php echo $CSS_BASE_PATH ?>', '<?php echo $LANG['TOGGLE_508_OFF'] ?>', '<?php echo $LANG['TOGGLE_508_ON'] ?>')" id="accessibility-button" name="accessibility-button" data-target-css="<?php echo $CSS_BASE_PATH . "/symbiota/condensed.css?ver=6.css" ?>" ><?php echo (isset($LANG['TOGGLE_508_ON'])?$LANG['TOGGLE_508_ON']:'View Accessible Form'); ?></button>
+					</span>
 					<span>
 						<a href="#">
 							Contact Us
@@ -53,6 +55,9 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 			<!-- Menu -->
 			<nav class="top-menu">
 				<ul class="menu">
+					<li>
+						<button style="font-size:14" onclick="toggleAccessibilityStyles('<?php echo $CLIENT_ROOT . '/includes' . '/' ?>', '<?php echo $CSS_BASE_PATH ?>', '<?php echo $LANG['TOGGLE_508_OFF'] ?>', '<?php echo $LANG['TOGGLE_508_ON'] ?>')" id="accessibility-button" name="accessibility-button" data-target-css="<?php echo $CSS_BASE_PATH . "/symbiota/condensed.css?ver=6.css" ?>" ><?php echo (isset($LANG['TOGGLE_508_ON'])?$LANG['TOGGLE_508_ON']:'View Accessible Form'); ?></button>
+					</li>
 					<li>
 						<a href="<?php echo $CLIENT_ROOT; ?>/index.php">
 							<?php echo (isset($LANG['H_HOME'])?$LANG['H_HOME']:'Home'); ?>

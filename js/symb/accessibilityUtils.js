@@ -1,7 +1,8 @@
-function sendRequest(url, method) {
+function sendRequest(url, method, data) {
   return new Promise((resolve, reject) => {
     const xmlRequest = new XMLHttpRequest();
     xmlRequest.open(method, url);
+    xmlRequest.setRequestHeader("Content-Type", "application/json");
     xmlRequest.onreadystatechange = () => {
       if (xmlRequest.readyState === 4) {
         if (xmlRequest.status === 200) {
@@ -11,41 +12,44 @@ function sendRequest(url, method) {
         }
       }
     };
-    xmlRequest.send();
+    xmlRequest.send(JSON.stringify({ data: data }));
   });
 }
 
-async function toggleAccessibilityStyles(urlBase) {
+async function toggleAccessibilityStyles(
+  pathToToggleStyles,
+  cssPath,
+  viewCondensed,
+  viewAccessible
+) {
+  console.log("deleteMe viewCondensed is: ");
+  console.log(viewCondensed);
+  console.log("deleteMe viewAccessible is: ");
+  console.log(viewAccessible);
   try {
-    console.log("deleteMe got here a1");
-    console.log("deleteMe urlBase is: ");
-    console.log(urlBase);
-    const response = await sendRequest(urlBase + "/toggle-styles.php", "POST");
-    handleResponse(response);
+    const response = await sendRequest(
+      pathToToggleStyles + "/toggle-styles.php",
+      "POST",
+      cssPath
+    );
+    handleResponse(response, viewCondensed, viewAccessible);
   } catch (error) {
     console.log(error);
   }
 }
 
-function handleResponse(activeStylesheet) {
+function handleResponse(activeStylesheet, viewCondensed, viewAccessible) {
   const links = document.getElementsByName("accessibility-css-link");
   const button = document.getElementById("accessibility-button");
 
-  const regexQuery = RegExp(".*(/symbiota)"); // @TODO figure out how to generalize this more
-  const secondpart = activeStylesheet.replace(regexQuery, "$1");
-  console.log("deleteMe secondpart is: ");
-  console.log(secondpart);
-  const newCss =
-    secondpart === "/symbiota/condensed.css?ver=6.css"
-      ? "/symbiota/accessibility-compliant.css?ver=6.css"
-      : "/symbiota/condensed.css?ver=6.css"; // @TODO generalize this
+  const isCurrentlyCondensed =
+    activeStylesheet.indexOf("/symbiota/condensed.css?ver=6.css") > 0;
+  const newCss = isCurrentlyCondensed
+    ? "/symbiota/accessibility-compliant.css?ver=6.css"
+    : "/symbiota/condensed.css?ver=6.css";
   button.setAttribute("data-target-css", newCss);
 
-  const currentText = button.textContent;
-  const newText =
-    secondpart === "/symbiota/condensed.css?ver=6.css"
-      ? "View condensed form"
-      : "View accessible form";
+  const newText = isCurrentlyCondensed ? viewCondensed : viewAccessible;
   button.textContent = newText;
 
   for (let i = 0; i < links.length; i++) {

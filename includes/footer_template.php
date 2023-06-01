@@ -16,10 +16,7 @@
 	<p>Powered by <a href="https://symbiota.org/" target="_blank">Symbiota</a>.</p>
 	<script type="text/javascript">
 		document.addEventListener('DOMContentLoaded', ()=>{
-			console.log('deleteMe got here d1');
 			document.getElementById('accessibility-button').disabled=false;
-			document.getElementById('accessibility-button').textContent = "View accessible form";
-			console.log('deleteMe got here d3');
 		});
 	</script>
 </footer>

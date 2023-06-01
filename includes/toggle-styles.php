@@ -1,7 +1,6 @@
 <?php
-// include_once('../../config/symbini.php');
-// echo 'CSS_BASE_PATH is: ' . $CSS_BASE_PATH;
-$CSS_BASE_PATH = "/Symbiota/css/v202209";
+$data = json_decode(file_get_contents('php://input'), true);
+$CSS_BASE_PATH = $data['data'];
 session_start();
 $accessiblePath = $CSS_BASE_PATH . "/symbiota/condensed.css?ver=6.css";
 $condensedPath = $CSS_BASE_PATH . "/symbiota/accessibility-compliant.css?ver=6.css";
