@@ -14,4 +14,12 @@
 	<p>For more information about Symbiota, <a href="https://symbiota.org/docs" target="_blank" rel="noopener noreferrer">read the docs</a> or contact the <a href="https://symbiota.org/contact-the-support-hub/" target="_blank" rel="noopener noreferrer">Symbiota Support Hub</a>.</p>
 	</p>
 	<p>Powered by <a href="https://symbiota.org/" target="_blank">Symbiota</a>.</p>
+	<script type="text/javascript">
+		document.addEventListener('DOMContentLoaded', ()=>{
+			console.log('deleteMe got here d1');
+			document.getElementById('accessibility-button').disabled=false;
+			document.getElementById('accessibility-button').textContent = "View accessible form";
+			console.log('deleteMe got here d3');
+		});
+	</script>
 </footer>

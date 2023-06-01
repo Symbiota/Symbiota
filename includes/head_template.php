@@ -14,3 +14,6 @@
 <link href="<?php echo $CSS_BASE_PATH; ?>/symbiota/normalize.slim.css" type="text/css" rel="stylesheet">
 <link href="<?php echo $CSS_BASE_PATH; ?>/symbiota/main.css" type="text/css" rel="stylesheet">
 <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/lang.js" type="text/javascript"></script>
+<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/accessibilityUtils.js" type="text/javascript"></script>
+<link href="<?php echo $CSS_BASE_PATH; ?>/symbiota/accessibility-compliant.css?ver=6.css" type="text/css" rel="stylesheet" name="accessibility-css-link" disabled >
+<link href="<?php echo $CSS_BASE_PATH; ?>/symbiota/condensed.css?ver=6.css" type="text/css" rel="stylesheet" name="accessibility-css-link" >
