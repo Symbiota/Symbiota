@@ -750,7 +750,7 @@ else{
 							<?php echo isset($_POST['toggle-button']) ? $_POST['toggle-button'] : 'Detailed'; ?>
 						</button>
 						<button type="button" onclick="jumpToPage()">Jump to:</button>
-  						<input type="text" name="page" size="3">
+  						<input type="number" id="pageNumber" size="3" />
 					</form>
 					<div id="jumpDiv">
 						<?php

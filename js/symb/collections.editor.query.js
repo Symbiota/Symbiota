@@ -174,11 +174,15 @@ function submitQueryForm(qryIndex){
 }
 
 function jumpToPage() {
-	var f = document.queryform;
-	var page = parseInt(f.page.value);
-	var maxPage = parseInt(f.maxpage.value);
-	if (page >= 1 && page <= maxPage) {
-	  submitQueryForm(page - 1);
+	var pageInput = document.getElementById("pageNumber");
+	var page = parseInt(pageInput.value);
+	// var maxPage = qryCnt - 1;
+	console.log(pageInput)
+	if (page >= 1) {
+		submitQueryForm(page - 1);
+	} else {
+		alert('Please enter a valid page number.');
+		return;
 	}
 }
 
