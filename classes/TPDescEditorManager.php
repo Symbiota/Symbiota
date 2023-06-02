@@ -84,7 +84,7 @@ class TPDescEditorManager extends TPEditorManager{
 			$langid = isset($postArr['langid']) ? $postArr['langid'] : 1;
 			$defaultDisplayLevel = isset($postArr['defaultDisplayLevel']) ? $postArr['defaultDisplayLevel'] : 1;
 			$dynamicProperties = isset($postArr['dynamicProperties']) ? $postArr['dynamicProperties'] : null;
-			$modifiedUid = isset($GLOBALS['SYMB_UID']);
+			$modifiedUid = $GLOBALS['SYMB_UID'];
 			$sql = 'INSERT INTO taxadescrprofile(title, authors, caption, projectDescription, abstract, publication, urlTemplate, internalNotes, langid,
 				defaultDisplayLevel, dynamicProperties, modifiedUid, modifiedTimestamp)
 				VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())';
@@ -159,7 +159,7 @@ class TPDescEditorManager extends TPEditorManager{
 			if($tdProfileID = $this->insertDescriptionProfile($profileArr)){
 				$tid = $postArr['tid'];
 				$note = isset($postArr['notes']) ? $postArr['notes'] : null;
-				$modifiedUid = isset($GLOBALS['SYMB_UID']);
+				$modifiedUid = $GLOBALS['SYMB_UID'];
 				$sql = 'INSERT INTO taxadescrblock(tdProfileID, tid, source, sourceurl, displaylevel, notes, uid) VALUES(?, ?, ?, ?, ?, ?, ?)';
 				if($stmt = $this->conn->prepare($sql)){
 					$stmt->bind_param('iissisi', $tdProfileID, $tid, $source, $sourceUrl, $displayLevel, $note, $modifiedUid);
