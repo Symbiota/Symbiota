@@ -180,7 +180,7 @@ class OccurrenceMaintenance {
 	private function batchUpdateTidInterpreted(&$occidArr){
 		$status = false;
 		foreach($occidArr as $tid => $idArr){
-			$sql = 'UPDATE omoccurrences SET tidInterpreted = '.$tid.' WHERE occid IN('.implode(',',$idArr).') ';
+			$sql = 'UPDATE omoccurrences SET tidInterpreted = '.$tid.' WHERE tidinterpreted IS NULL AND occid IN('.implode(',',$idArr).') ';
 			if($this->conn->query($sql)){
 				$status = true;
 			}
@@ -189,8 +189,8 @@ class OccurrenceMaintenance {
 				$this->outputMsg($this->errorArr,2);
 				$status = false;
 			}
+			unset($occidArr[$tid]);
 		}
-		unset($occidArr);
 		return $status;
 	}
 
