@@ -115,20 +115,23 @@ ALTER TABLE `omoccurrences`
     ADD COLUMN `method` varchar(255) DEFAULT NULL;
 
 -- Create tables to hold dropdown list values
+/*Methodology:
+1. Create empty table to hold values
+2. Link the primary key of that table to the omoccurrences table
+*/
 
 -- Table to hold values for the filedUnder column
-
 DROP TABLE IF EXISTS `dropdown_filedUnder_values`;
 CREATE TABLE `dropdown_filedUnder_values` (
   `id` int NOT NULL AUTO_INCREMENT,
   `value` text NOT NULL,
   PRIMARY KEY (`id`)
 );
-/*
+
 ALTER TABLE `omoccurrences`
     CHANGE `filedUnder` `filedUnder` int DEFAULT NULL,
     ADD CONSTRAINT `FK_omoccurrences_filedUnder` FOREIGN KEY (`filedUnder`) REFERENCES `dropdown_filedUnder_values`(`id`);
-
+/*
 -- Code to reverse the changes if needed
 ALTER TABLE `omoccurrences`
     DROP FOREIGN KEY `FK_omoccurrences_filedUnder`,
@@ -145,6 +148,10 @@ CREATE TABLE `dropdown_currName_values` (
   PRIMARY KEY (`id`)
 );
 
+ALTER TABLE `omoccurrences`
+    CHANGE `currName` `currName` int DEFAULT NULL,
+    ADD CONSTRAINT `FK_omoccurrences_currName` FOREIGN KEY (`currName`) REFERENCES `dropdown_currName_values`(`id`);
+
 -- Table to hold values for the identifiedBy column
 DROP TABLE IF EXISTS `dropdown_identifiedBy_values`;
 CREATE TABLE `dropdown_identifiedBy_values` (
@@ -152,6 +159,10 @@ CREATE TABLE `dropdown_identifiedBy_values` (
   `value` text NOT NULL,
   PRIMARY KEY (`id`)
 );
+
+ALTER TABLE `omoccurrences`
+    CHANGE `identifiedBy` `identifiedBy` int DEFAULT NULL,
+    ADD CONSTRAINT `FK_omoccurrences_identifiedBy` FOREIGN KEY (`identifiedBy`) REFERENCES `dropdown_identifiedBy_values`(`id`);
 
 -- Table to hold values for the collectors column
 DROP TABLE IF EXISTS `dropdown_recordedBy_values`;
@@ -161,6 +172,10 @@ CREATE TABLE `dropdown_recordedBy_values` (
   PRIMARY KEY (`id`)
 );
 
+ALTER TABLE `omoccurrences`
+    CHANGE `recordedBy` `recordedBy` int DEFAULT NULL,
+    ADD CONSTRAINT `FK_omoccurrences_recordedBy` FOREIGN KEY (`recordedBy`) REFERENCES `dropdown_recordedBy_values`(`id`);
+
 -- Table to hold values for the container column
 DROP TABLE IF EXISTS `dropdown_container_values`;
 CREATE TABLE `dropdown_container_values` (
@@ -168,6 +183,10 @@ CREATE TABLE `dropdown_container_values` (
   `value` text NOT NULL,
   PRIMARY KEY (`id`)
 );
+
+ALTER TABLE `omoccurrences`
+    CHANGE `container` `container` int DEFAULT NULL,
+    ADD CONSTRAINT `FK_omoccurrences_container` FOREIGN KEY (`container`) REFERENCES `dropdown_container_values`(`id`);
 
 -- Table to hold values for the collTrip column
 DROP TABLE IF EXISTS `dropdown_collTrip_values`;
@@ -177,6 +196,10 @@ CREATE TABLE `dropdown_collTrip_values` (
   PRIMARY KEY (`id`)
 );
 
+ALTER TABLE `omoccurrences`
+    CHANGE `collTrip` `collTrip` int DEFAULT NULL,
+    ADD CONSTRAINT `FK_omoccurrences_collTrip` FOREIGN KEY (`collTrip`) REFERENCES `dropdown_collTrip_values`(`id`);
+
 -- Table to hold values for the geoWithin column
 DROP TABLE IF EXISTS `dropdown_geoWithin_values`;
 CREATE TABLE `dropdown_geoWithin_values` (
@@ -184,6 +207,10 @@ CREATE TABLE `dropdown_geoWithin_values` (
   `value` text NOT NULL,
   PRIMARY KEY (`id`)
 );
+
+ALTER TABLE `omoccurrences`
+    CHANGE `geoWithin` `geoWithin` int DEFAULT NULL,
+    ADD CONSTRAINT `FK_omoccurrences_geoWithin` FOREIGN KEY (`geoWithin`) REFERENCES `dropdown_geoWithin_values`(`id`);
 
 -- Table to hold values for the highGeo column
 DROP TABLE IF EXISTS `dropdown_highGeo_values`;
@@ -193,6 +220,10 @@ CREATE TABLE `dropdown_highGeo_values` (
   PRIMARY KEY (`id`)
 );
 
+ALTER TABLE `omoccurrences`
+    CHANGE `highGeo` `highGeo` int DEFAULT NULL,
+    ADD CONSTRAINT `FK_omoccurrences_highGeo` FOREIGN KEY (`highGeo`) REFERENCES `dropdown_highGeo_values`(`id`);
+
 -- Table to hold values for the prepMethod column
 DROP TABLE IF EXISTS `dropdown_prepMethod_values`;
 CREATE TABLE `dropdown_prepMethod_values` (
@@ -201,6 +232,10 @@ CREATE TABLE `dropdown_prepMethod_values` (
   PRIMARY KEY (`id`)
 );
 
+ALTER TABLE `omoccurrences`
+    CHANGE `prepMethod` `prepMethod` int DEFAULT NULL,
+    ADD CONSTRAINT `FK_omoccurrences_prepMethod` FOREIGN KEY (`prepMethod`) REFERENCES `dropdown_prepMethod_values`(`id`);
+
 -- Table to hold values for the format column
 DROP TABLE IF EXISTS `dropdown_format_values`;
 CREATE TABLE `dropdown_format_values` (
@@ -208,3 +243,7 @@ CREATE TABLE `dropdown_format_values` (
   `value` text NOT NULL,
   PRIMARY KEY (`id`)
 );
+
+ALTER TABLE `omoccurrences`
+    CHANGE `format` `format` int DEFAULT NULL,
+    ADD CONSTRAINT `FK_omoccurrences_format` FOREIGN KEY (`format`) REFERENCES `dropdown_format_values`(`id`);
