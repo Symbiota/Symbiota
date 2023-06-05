@@ -50,7 +50,7 @@ class OccurrenceEditorManager {
 			'labelproject' => 's','processingstatus' => 's', 'recordenteredby' => 's', 'observeruid' => 'n', 'dateentered' => 'd',
 			// input of the new quick entry form
 			// The key update of the new quick entry form 
-			'barcode' => 's', 'accesNum' => 's', 'filedUnder' => 's', 'currName' => 's', 'idQualifier' => 's','detText' => 's', 'provenance' => 's', 'container' => 's', 'collTrip' => 's', 'geoWithin' => 's',
+			'barcode' => 'n', 'accesNum' => 'n', 'filedUnder' => 's', 'currName' => 's', 'idQualifier' => 's','detText' => 's', 'provenance' => 's', 'container' => 's', 'collTrip' => 's', 'geoWithin' => 's',
 			'highGeo' => 's', 'frequency' => 's', 'prepMethod' => 's', 'format' => 's', 'verbLat' => 's', 'verbLong' => 's', 'method' => 's'	
 		);
 		$this->fieldArr['paleo'] = array('eon','era','period','epoch','earlyinterval','lateinterval','absoluteage','storageage','stage','localstage','biota',
@@ -596,6 +596,17 @@ class OccurrenceEditorManager {
 			}
 			if($sqlOrderBy) $sql .= 'ORDER BY (o.'.$sqlOrderBy.') '.$this->qryArr['orderbydir'].' ';
 		}
+	}
+	
+	public function getFiledUnderValues() {
+		$filedUnderValues = array();	
+        $query = "SELECT id, value FROM dropdown_filedUnder_values";
+        $result = $this->conn->query($query);
+        while ($row = $result->fetch_assoc()) {
+            $filedUnderValues[$row['id']] = $row['value'];
+        }
+        $result->free();
+        return $filedUnderValues;
 	}
 
 	public function getQueryRecordCount($reset = 0){

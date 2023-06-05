@@ -56,6 +56,11 @@ $navStr = '';
 $jumpStr = '';
 $isEditor = 0;
 
+// Dropdown arrays
+
+$filedUnderDrop = $occManager->getFiledUnderValues();
+
+
 if($SYMB_UID){
 	//Set variables
 	$occManager->setOccId($occId);
@@ -777,6 +782,7 @@ else{
 				<div class = "column left login-info" style = "background-color: #F2F2F2; ">
 					<div class="field-block title">
 						<h2>Transcribe into Fields</h2>
+						<h1><?php print_r($filedUnderDrop) ?></h1>
 					</div>
 					<div class="field-block">
 						<span class="field-label"><?php echo (isset($LANG['BARCODE']) ? $LANG['BARCODE'] : 'Barcode'); ?></span>
@@ -812,8 +818,10 @@ else{
 					<div class="field-block">
 						<span class="field-label"><?php echo (isset($LANG['FILED_UNDER']) ? $LANG['FILED_UNDER'] : 'Filed Under'); ?></span>
 						<span class="field-elem">
-							<?php if(array_key_exists('filedUnder',$occArr)) { ?>
-								<input type="text" size = '50' name="filedUnder" value="<?php echo $occArr["filedUnder"]; ?>" onchange="fieldChanged('filedUnder');" />
+							<?php if(array_key_exists('filedUnder',$occArr)) { 
+								$filedUnderValue = isset($filedUnderDrop[$occArr["filedUnder"]]) ? $filedUnderDrop[$occArr["filedUnder"]] : null;
+							?>
+								<input type="text" size = '50' name="filedUnder" value="<?php echo $filedUnderValue; ?>" onchange="fieldChanged('filedUnder');" />
 							<?php 
 							} else { 
 							?>
