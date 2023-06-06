@@ -1338,3 +1338,37 @@ function getCookie(cName){
 		}
 	}
 }
+
+function filterDropdown(displayId, listId, options) {
+	var input = document.getElementById(displayId).value.toLowerCase();
+	var dropdown = document.getElementById(listId);
+	var filteredOptions = [];
+	
+	dropdown.innerHTML = '';
+
+	for (var key in options) {
+		var optionValue = options[key].toLowerCase();
+		if (optionValue.includes(input)) {
+		  var option = document.createElement('option');
+		  option.value = key;
+		  option.text = options[key];
+		  dropdown.appendChild(option);
+		}
+	}
+	dropdown.style.display = "block";
+	
+	// document.getElementById("demo").innerHTML = JSON.stringify(options);
+  }
+
+  function selectOption(select, inputId, displayId, options) {
+	var selectedId = select.value;
+	var selectedValue = options[selectedId];
+
+	document.getElementById(displayId).value = selectedValue;
+	document.getElementById(inputId).value = selectedId;
+
+	select.style.display = "none";
+
+	var event = new Event('change');
+    document.getElementById(inputId).dispatchEvent(event);
+  }

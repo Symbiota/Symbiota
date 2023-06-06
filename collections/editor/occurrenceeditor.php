@@ -782,7 +782,7 @@ else{
 				<div class = "column left login-info" style = "background-color: #F2F2F2; ">
 					<div class="field-block title">
 						<h2>Transcribe into Fields</h2>
-						<h1><?php print_r($filedUnderDrop) ?></h1>
+						<!-- <h1><?php //print_r($filedUnderDrop) ?></h1> -->
 					</div>
 					<div class="field-block">
 						<span class="field-label"><?php echo (isset($LANG['BARCODE']) ? $LANG['BARCODE'] : 'Barcode'); ?></span>
@@ -820,8 +820,14 @@ else{
 						<span class="field-elem">
 							<?php if(array_key_exists('filedUnder',$occArr)) { 
 								$filedUnderValue = isset($filedUnderDrop[$occArr["filedUnder"]]) ? $filedUnderDrop[$occArr["filedUnder"]] : null;
-							?>
-								<input type="text" size = '50' name="filedUnder" value="<?php echo $filedUnderValue; ?>" onchange="fieldChanged('filedUnder');" />
+							?>	
+								<div>
+									<input type="text" name="filedUnder" id="filedUnder" value="<?php echo $occArr["filedUnder"]; ?>" onchange="fieldChanged('filedUnder');" />
+								</div>
+								<div>
+									<input type="text" size="50" name="filedUnderDisplay" id="filedUnderDisplay" value="<?php echo $filedUnderValue; ?>" onkeyup="filterDropdown('filedUnderDisplay', 'filedUnder_dropdownList', <?php echo htmlspecialchars(json_encode($filedUnderDrop), ENT_QUOTES, 'UTF-8'); ?>)" />
+									<select id="filedUnder_dropdownList" style="display: none;" onchange="selectOption(this, 'filedUnder', 'filedUnderDisplay',<?php echo htmlspecialchars(json_encode($filedUnderDrop), ENT_QUOTES, 'UTF-8'); ?>);"></select>
+								</div>
 							<?php 
 							} else { 
 							?>
@@ -1394,6 +1400,7 @@ else{
 								</ul>
 								<!-- a link to the quick entry form -->
 								<div>
+									<!-- $url = 'occurrenceeditor.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$recStart).'&occid='.$id.'&collid='.$collId; -->
 									<a href='../editor/occurrencequickentry.php'>
 										<h3>Go to the quick entry form</h3>
 									</a>
