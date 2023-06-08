@@ -821,13 +821,8 @@ else{
 							<?php if(array_key_exists('filedUnder',$occArr)) { 
 								$filedUnderValue = isset($filedUnderDrop[$occArr["filedUnder"]]) ? $filedUnderDrop[$occArr["filedUnder"]] : null;
 							?>	
-								<div>
-									<input type="text" name="filedUnder" id="filedUnder" value="<?php echo $occArr["filedUnder"]; ?>" onchange="fieldChanged('filedUnder');" />
-								</div>
-								<div>
-									<input type="text" size="50" name="filedUnderDisplay" id="filedUnderDisplay" value="<?php echo $filedUnderValue; ?>" onkeyup="filterDropdown('filedUnderDisplay', 'filedUnder_dropdownList', <?php echo htmlspecialchars(json_encode($filedUnderDrop), ENT_QUOTES, 'UTF-8'); ?>)" />
-									<select id="filedUnder_dropdownList" style="display: none;" onchange="selectOption(this, 'filedUnder', 'filedUnderDisplay',<?php echo htmlspecialchars(json_encode($filedUnderDrop), ENT_QUOTES, 'UTF-8'); ?>);"></select>
-								</div>
+								<input type="text" size="50" name="filedUnderDisplay" id="filedUnderDisplay" value="<?php echo $filedUnderValue; ?>" onkeyup="filterDropdown('filedUnderDisplay', 'filedUnder', <?php echo htmlspecialchars(json_encode($filedUnderDrop), ENT_QUOTES, 'UTF-8'); ?>)" />
+								<select name="filedUnder" id="filedUnder" style="display: none;" onchange="selectOption(this, 'filedUnderDisplay',<?php echo htmlspecialchars(json_encode($filedUnderDrop), ENT_QUOTES, 'UTF-8'); ?>);"></select>
 							<?php 
 							} else { 
 							?>

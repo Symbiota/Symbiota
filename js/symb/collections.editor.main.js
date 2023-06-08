@@ -1356,19 +1356,14 @@ function filterDropdown(displayId, listId, options) {
 		}
 	}
 	dropdown.style.display = "block";
-	
-	// document.getElementById("demo").innerHTML = JSON.stringify(options);
-  }
+}
 
-  function selectOption(select, inputId, displayId, options) {
+  function selectOption(select, displayId, options) {
 	var selectedId = select.value;
 	var selectedValue = options[selectedId];
 
 	document.getElementById(displayId).value = selectedValue;
-	document.getElementById(inputId).value = selectedId;
-
 	select.style.display = "none";
 
-	var event = new Event('change');
-    document.getElementById(inputId).dispatchEvent(event);
+	fieldChanged('filedUnder');
   }
