@@ -137,7 +137,7 @@ ALTER TABLE `omoccurrences`
     DROP FOREIGN KEY `FK_omoccurrences_filedUnder`,
     CHANGE `filedUnder` `filedUnder` varchar(255) DEFAULT NULL;
 
-DROP TABLE IF EXISTS `filedUnder_values`;
+DROP TABLE IF EXISTS `dropdown_filedUnder_values`;
 */
 
 -- Table to hold values for the currentName column
@@ -247,3 +247,125 @@ CREATE TABLE `dropdown_format_values` (
 ALTER TABLE `omoccurrences`
     CHANGE `format` `format` int DEFAULT NULL,
     ADD CONSTRAINT `FK_omoccurrences_format` FOREIGN KEY (`format`) REFERENCES `dropdown_format_values`(`id`);
+
+-- Updates made in the week of June 5th 2023 to standardize primary key naming, add occid column and initialtimestamp
+
+-- reformatting dropdown_filedUnder_values
+ALTER TABLE `omoccurrences`
+    DROP FOREIGN KEY `FK_omoccurrences_filedUnder`;
+
+ALTER TABLE `dropdown_filedUnder_values`
+    CHANGE `id` `dd_filedUnderID` int NOT NULL AUTO_INCREMENT,
+    ADD `occid` int unsigned NOT NULL,
+    ADD `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp;
+
+ALTER TABLE `omoccurrences`
+    ADD CONSTRAINT `FK_omoccurrences_filedUnder` FOREIGN KEY (`filedUnder`) REFERENCES `dropdown_filedUnder_values`(`dd_filedUnderID`);
+
+-- reformatting dropdown_currName_values
+ALTER TABLE `omoccurrences`
+    DROP FOREIGN KEY `FK_omoccurrences_currName`;
+
+ALTER TABLE `dropdown_currName_values`
+    CHANGE `id` `dd_currNameID` int NOT NULL AUTO_INCREMENT,
+    ADD `occid` int unsigned NOT NULL,
+    ADD `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp;
+
+ALTER TABLE `omoccurrences`
+    ADD CONSTRAINT `FK_omoccurrences_currName` FOREIGN KEY (`currName`) REFERENCES `dropdown_currName_values`(`dd_currNameID`);
+
+-- reformatting dropdown_identifiedBy_values
+ALTER TABLE `omoccurrences`
+    DROP FOREIGN KEY `FK_omoccurrences_identifiedBy`;
+
+ALTER TABLE `dropdown_identifiedBy_values`
+    CHANGE `id` `dd_identifiedByID` int NOT NULL AUTO_INCREMENT,
+    ADD `occid` int unsigned NOT NULL,
+    ADD `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp;
+
+ALTER TABLE `omoccurrences`
+    ADD CONSTRAINT `FK_omoccurrences_identifiedBy` FOREIGN KEY (`identifiedBy`) REFERENCES `dropdown_identifiedBy_values`(`dd_identifiedByID`);
+
+-- reformatting dropdown_recordedBy_values
+ALTER TABLE `omoccurrences`
+    DROP FOREIGN KEY `FK_omoccurrences_recordedBy`;
+
+ALTER TABLE `dropdown_recordedBy_values`
+    CHANGE `id` `dd_recordedByID` int NOT NULL AUTO_INCREMENT,
+    ADD `occid` int unsigned NOT NULL,
+    ADD `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp;
+
+ALTER TABLE `omoccurrences`
+    ADD CONSTRAINT `FK_omoccurrences_recordedBy` FOREIGN KEY (`recordedBy`) REFERENCES `dropdown_recordedBy_values`(`dd_recordedByID`);
+
+-- reformatting dropdown_container_values
+ALTER TABLE `omoccurrences`
+    DROP FOREIGN KEY `FK_omoccurrences_container`;
+
+ALTER TABLE `dropdown_container_values`
+    CHANGE `id` `dd_containerID` int NOT NULL AUTO_INCREMENT,
+    ADD `occid` int unsigned NOT NULL,
+    ADD `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp;
+
+ALTER TABLE `omoccurrences`
+    ADD CONSTRAINT `FK_omoccurrences_container` FOREIGN KEY (`container`) REFERENCES `dropdown_container_values`(`dd_containerID`);
+
+-- reformatting dropdown_collTrip_values
+ALTER TABLE `omoccurrences`
+    DROP FOREIGN KEY `FK_omoccurrences_collTrip`;
+
+ALTER TABLE `dropdown_collTrip_values`
+    CHANGE `id` `dd_collTripID` int NOT NULL AUTO_INCREMENT,
+    ADD `occid` int unsigned NOT NULL,
+    ADD `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp;
+
+ALTER TABLE `omoccurrences`
+    ADD CONSTRAINT `FK_omoccurrences_collTrip` FOREIGN KEY (`collTrip`) REFERENCES `dropdown_collTrip_values`(`dd_collTripID`);
+
+-- reformatting dropdown_geoWithin_values
+ALTER TABLE `omoccurrences`
+    DROP FOREIGN KEY `FK_omoccurrences_geoWithin`;
+
+ALTER TABLE `dropdown_geoWithin_values`
+    CHANGE `id` `dd_geoWithinID` int NOT NULL AUTO_INCREMENT,
+    ADD `occid` int unsigned NOT NULL,
+    ADD `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp;
+
+ALTER TABLE `omoccurrences`
+    ADD CONSTRAINT `FK_omoccurrences_geoWithin` FOREIGN KEY (`geoWithin`) REFERENCES `dropdown_geoWithin_values`(`dd_geoWithinID`);
+
+-- reformatting dropdown_highGeo_values
+ALTER TABLE `omoccurrences`
+    DROP FOREIGN KEY `FK_omoccurrences_highGeo`;
+
+ALTER TABLE `dropdown_highGeo_values`
+    CHANGE `id` `dd_highGeoID` int NOT NULL AUTO_INCREMENT,
+    ADD `occid` int unsigned NOT NULL,
+    ADD `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp;
+
+ALTER TABLE `omoccurrences`
+    ADD CONSTRAINT `FK_omoccurrences_highGeo` FOREIGN KEY (`highGeo`) REFERENCES `dropdown_highGeo_values`(`dd_highGeoID`);
+
+-- reformatting dropdown_prepMethod_values
+ALTER TABLE `omoccurrences`
+    DROP FOREIGN KEY `FK_omoccurrences_prepMethod`;
+
+ALTER TABLE `dropdown_prepMethod_values`
+    CHANGE `id` `dd_prepMethodID` int NOT NULL AUTO_INCREMENT,
+    ADD `occid` int unsigned NOT NULL,
+    ADD `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp;
+
+ALTER TABLE `omoccurrences`
+    ADD CONSTRAINT `FK_omoccurrences_prepMethod` FOREIGN KEY (`prepMethod`) REFERENCES `dropdown_prepMethod_values`(`dd_prepMethodID`);
+
+-- reformatting dropdown_format_values
+ALTER TABLE `omoccurrences`
+    DROP FOREIGN KEY `FK_omoccurrences_format`;
+
+ALTER TABLE `dropdown_format_values`
+    CHANGE `id` `dd_formatID` int NOT NULL AUTO_INCREMENT,
+    ADD `occid` int unsigned NOT NULL,
+    ADD `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp;
+
+ALTER TABLE `omoccurrences`
+    ADD CONSTRAINT `FK_omoccurrences_format` FOREIGN KEY (`format`) REFERENCES `dropdown_format_values`(`dd_formatID`);
