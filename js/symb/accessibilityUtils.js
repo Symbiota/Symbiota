@@ -20,7 +20,8 @@ async function toggleAccessibilityStyles(
   pathToToggleStyles,
   cssPath,
   viewCondensed,
-  viewAccessible
+  viewAccessible,
+  alternateButtonId = ""
 ) {
   try {
     const response = await sendRequest(
@@ -28,15 +29,23 @@ async function toggleAccessibilityStyles(
       "POST",
       cssPath
     );
-    handleResponse(response, viewCondensed, viewAccessible);
+    handleResponse(response, viewCondensed, viewAccessible, alternateButtonId);
   } catch (error) {
     console.log(error);
   }
 }
 
-function handleResponse(activeStylesheet, viewCondensed, viewAccessible) {
+function handleResponse(
+  activeStylesheet,
+  viewCondensed,
+  viewAccessible,
+  alternateButtonId
+) {
   const links = document.getElementsByName("accessibility-css-link");
-  const button = document.getElementById("accessibility-button");
+  let button = document.getElementById("accessibility-button");
+  if (alternateButtonId) {
+    button = document.getElementById(alternateButtonId);
+  }
 
   const isCurrentlyCondensed =
     activeStylesheet.indexOf("/symbiota/condensed.css?ver=6.css") > 0;
