@@ -912,7 +912,7 @@ else{
 							<span class="field-label"><?php echo (isset($LANG['PROVENANCE']) ? $LANG['PROVENANCE'] : 'Provenance'); ?></span>
 							<span class="field-elem">
 								<?php if(array_key_exists('provenance',$occArr)) { ?>
-									<input type="text" size = '50' name="currName" value="<?php echo $occArr["provenance"]; ?>" onchange="fieldChanged('provenance');" />
+									<input type="text" size = '50' name="provenance" value="<?php echo $occArr["provenance"]; ?>" onchange="fieldChanged('provenance');" />
 								<?php 
 								} else { 
 								?>
@@ -1400,8 +1400,8 @@ else{
 								</ul>
 								<!-- a link to the quick entry form -->
 								<div>
-									<!-- $url = 'occurrenceeditor.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$recStart).'&occid='.$id.'&collid='.$collId; -->
-									<a href='../editor/occurrencequickentry.php'>
+									<?php $url = 'occurrencequickentry.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$recStart).'&occid='.$id.'&collid='.$collId; ?>
+									<a href="occurrencequickentry.php?csmode=<?php echo $crowdSourceMode; ?> &occindex=<?php echo ($recCnt+$recStart); ?> &occid=<?php echo $id; ?>&collid=<?php echo $collId; ?>" >
 										<h3>Go to the quick entry form</h3>
 									</a>
 								</div>
