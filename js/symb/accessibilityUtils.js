@@ -49,10 +49,6 @@ function handleResponse(
 
   const isCurrentlyCondensed =
     activeStylesheet.indexOf("/symbiota/condensed.css?ver=6.css") > 0;
-  const newCss = isCurrentlyCondensed
-    ? "/symbiota/accessibility-compliant.css?ver=6.css"
-    : "/symbiota/condensed.css?ver=6.css";
-  button.setAttribute("data-target-css", newCss);
 
   const newText = isCurrentlyCondensed ? viewCondensed : viewAccessible;
   button.textContent = newText;
