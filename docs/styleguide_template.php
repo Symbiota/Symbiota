@@ -43,8 +43,6 @@ header("Content-Type: text/html; charset=" . $CHARSET);
 				<input id="input-2" name="input-2" type="text" value="" required autocomplete="off">
 			</section>
 		</section>
-		<div class="form-section">
-		</div>
 	</main>
 	<?php
 	include($SERVER_ROOT . '/includes/footer.php');
