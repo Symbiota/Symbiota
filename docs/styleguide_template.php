@@ -33,7 +33,7 @@ header("Content-Type: text/html; charset=" . $CHARSET);
 		<section style="margin-bottom: 10;">
 			<button style="font-size:14" onclick="toggleAccessibilityStyles('<?php echo $CLIENT_ROOT . '/includes' . '/' ?>', '<?php echo $CSS_BASE_PATH ?>', '<?php echo $LANG['TOGGLE_508_OFF'] ?>', '<?php echo $LANG['TOGGLE_508_ON'] ?>', 'accessibility-button-2')" id="accessibility-button-2" name="accessibility-button" ?><?php echo (isset($LANG['TOGGLE_508_ON'])?$LANG['TOGGLE_508_ON']:'Accessibility Mode'); ?></button>
 		</section>
-		<section class="form-section flex-form">
+		<section class="flex-form">
 			<section>
 				<label for="input-1">Input 1: </label>
 				<input id="input-1" name="input-1" type="text" value="" required autocomplete="off">
