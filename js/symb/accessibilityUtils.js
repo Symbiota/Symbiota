@@ -22,10 +22,6 @@ async function toggleAccessibilityStyles(
   viewCondensed,
   viewAccessible
 ) {
-  console.log("deleteMe viewCondensed is: ");
-  console.log(viewCondensed);
-  console.log("deleteMe viewAccessible is: ");
-  console.log(viewAccessible);
   try {
     const response = await sendRequest(
       pathToToggleStyles + "/toggle-styles.php",
