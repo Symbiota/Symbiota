@@ -600,10 +600,10 @@ class OccurrenceEditorManager {
 	
 	public function getFiledUnderValues() {
 		$filedUnderValues = array();	
-        $query = "SELECT id, value FROM dropdown_filedUnder_values";
+        $query = "SELECT dd_filedUnderID, value FROM dropdown_filedUnder_values";
         $result = $this->conn->query($query);
         while ($row = $result->fetch_assoc()) {
-            $filedUnderValues[$row['id']] = $row['value'];
+            $filedUnderValues[$row['dd_filedUnderID']] = $row['value'];
         }
         $result->free();
         return $filedUnderValues;
