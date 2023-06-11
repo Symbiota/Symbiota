@@ -598,15 +598,15 @@ class OccurrenceEditorManager {
 		}
 	}
 	
-	public function getFiledUnderValues() {
-		$filedUnderValues = array();	
-        $query = "SELECT dd_filedUnderID, value FROM dropdown_filedUnder_values";
+	public function getValues($columnId, $table) {
+		$dropDownValues = array();	
+        $query = "SELECT $columnId, displayValue FROM $table";
         $result = $this->conn->query($query);
         while ($row = $result->fetch_assoc()) {
-            $filedUnderValues[$row['dd_filedUnderID']] = $row['value'];
+            $dropDownValues[$row[$columnId]] = $row['displayValue'];
         }
         $result->free();
-        return $filedUnderValues;
+        return $dropDownValues;
 	}
 
 	public function getQueryRecordCount($reset = 0){

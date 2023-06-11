@@ -58,7 +58,7 @@ $isEditor = 0;
 
 // Dropdown arrays
 
-$filedUnderDrop = $occManager->getFiledUnderValues();
+$filedUnderDrop = $occManager->getValues('dd_filedUnderID', 'dropdown_filedUnder_values');
 
 
 if($SYMB_UID){
@@ -782,7 +782,7 @@ else{
 				<div class = "column left login-info" style = "background-color: #F2F2F2; ">
 					<div class="field-block title">
 						<h2>Transcribe into Fields</h2>
-						<!-- <h1><?php //print_r($filedUnderDrop) ?></h1> -->
+						<h1><?php print_r($test) ?></h1>
 					</div>
 					<div class="field-block">
 						<span class="field-label"><?php echo (isset($LANG['BARCODE']) ? $LANG['BARCODE'] : 'Barcode'); ?></span>
