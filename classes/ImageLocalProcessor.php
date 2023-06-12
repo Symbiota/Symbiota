@@ -634,6 +634,10 @@ class ImageLocalProcessor {
 						$webUrl = $targetFileName;
 						$this->logOrEcho("Source image imported as web image (".date('Y-m-d h:i:s A').") ",1);
 					}
+					else {
+						$this->logOrEcho("Copy ".$sourcePath.$webFileName." ->".$targetPath.$targetFileName." - Failed. Confirm destination folder exists and write permission set. (".date('Y-m-d h:i:s A').") ",1);
+						return false;
+					}
 				}
 				elseif($this->webImg == 3){
 					// 3 = map to source as the web image
