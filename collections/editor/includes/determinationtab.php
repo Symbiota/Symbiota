@@ -155,50 +155,50 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 						}
 						?>
 						<div style='margin:3px;'>
-							<label for="identificationqualifier"><b><?php echo $LANG['ID_QUALIFIER']; ?>:</b></label>
-							<input type="text" name="identificationqualifier" id="identificationqualifier" title="e.g. cf, aff, etc" />
+							<b><?php echo $LANG['ID_QUALIFIER']; ?>:</b>
+							<input type="text" name="identificationqualifier" title="e.g. cf, aff, etc" />
 						</div>
 						<div style='margin:3px;'>
-							<label for="dafsciname"><b><?php echo $LANG['SCI_NAME']; ?>:</b></label>
+							<b><?php echo $LANG['SCI_NAME']; ?>:</b>
 							<input type="text" id="dafsciname" name="sciname" style="background-color:lightyellow;width:350px;" onfocus="initDetAutocomplete(this.form)" />
 							<input type="hidden" id="daftidtoadd" name="tidtoadd" value="" />
 							<input type="hidden" name="family" value="" />
 						</div>
 						<div style='margin:3px;'>
-							<label for="scientificnameauthorship"><b><?php echo $LANG['AUTHOR']; ?>:</b></label>
-							<input type="text" name="scientificnameauthorship" id="scientificnameauthorship" style="width:200px;" />
+							<b><?php echo $LANG['AUTHOR']; ?>:</b>
+							<input type="text" name="scientificnameauthorship" style="width:200px;" />
 						</div>
 						<div style='margin:3px;'>
-							<label for="confidenceranking"><b><?php echo $LANG['CONFIDENCE_IN_DET']; ?>:</b></label>
-							<select name="confidenceranking" id="confidenceranking">
+							<b><?php echo $LANG['CONFIDENCE_IN_DET']; ?>:</b>
+							<select name="confidenceranking">
 								<option value="8"><?php echo $LANG['HIGH']; ?></option>
 								<option value="5" selected><?php echo $LANG['MEDIUM']; ?></option>
 								<option value="2"><?php echo $LANG['LOW']; ?></option>
 							</select>
 						</div>
 						<div style='margin:3px;'>
-							<label for="identifiedby"><b><?php echo $LANG['DETERMINER']; ?>:</b></label>
-							<input type="text" name="identifiedby" id="identifiedby" style="background-color:lightyellow;width:200px;" />
+							<b><?php echo $LANG['DETERMINER']; ?>:</b>
+							<input type="text" name="identifiedby" style="background-color:lightyellow;width:200px;" />
 						</div>
 						<div style='margin:3px;'>
-							<label for="dateidentified"><b><?php echo $LANG['DATE']; ?>:</b></label>
-							<input type="text" name="dateidentified" id="dateidentified" style="background-color:lightyellow;" onchange="detDateChanged(this.form);" />
+							<b><?php echo $LANG['DATE']; ?>:</b>
+							<input type="text" name="dateidentified" style="background-color:lightyellow;" onchange="detDateChanged(this.form);" />
 						</div>
 						<div style='margin:3px;'>
-							<label for="identificationreferences"><b><?php echo $LANG['REFERENCE']; ?>:</b></label>
-							<input type="text" name="identificationreferences" id="identificationreferences" style="width:350px;" />
+							<b><?php echo $LANG['REFERENCE']; ?>:</b>
+							<input type="text" name="identificationreferences" style="width:350px;" />
 						</div>
 						<div style='margin:3px;'>
-							<label for="identificationremarks"><b><?php echo $LANG['NOTES']; ?>:</b></label>
-							<input type="text" name="identificationremarks" id="identificationremarks" style="width:350px;" />
+							<b><?php echo $LANG['NOTES']; ?>:</b>
+							<input type="text" name="identificationremarks" style="width:350px;" />
 						</div>
 						<div style='margin:3px;'>
-							<input type="checkbox" name="makecurrent" id="makecurrent" value="1" /><label for="makecurrent"> <?php echo $LANG['MAKE_THIS_CURRENT']; ?></label>
+							<input type="checkbox" name="makecurrent" value="1" /> <?php echo $LANG['MAKE_THIS_CURRENT']; ?>
 						</div>
 						<div style='margin:3px;'>
-							<input type="checkbox" name="printqueue" id="printqueue" value="1" /><label for="printqueue"> <?php echo $LANG['ADD_TO_PRINT']; ?></label>
+							<input type="checkbox" name="printqueue" value="1" /> <?php echo $LANG['ADD_TO_PRINT']; ?>
 						</div>
-						<div style='margin:3px; margin-top: 10px'>
+						<div style='margin:15px;'>
 							<input type="hidden" name="occid" value="<?php echo $occId; ?>" />
 							<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
 							<input type="hidden" name="annotatorname" value="<?php echo $annotatorname; ?>" />
@@ -206,8 +206,8 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 							<input type="hidden" name="catalognumber" value="<?php echo $catalognumber; ?>" />
 							<input type="hidden" name="institutioncode" value="<?php echo $institutioncode; ?>" />
 							<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
-							<div>
-								<button type="submit" name="submitaction" id="submitaction" value="submitDetermination" ><?php echo $LANG['SUBMIT_DET']; ?></button>
+							<div style="float:left;">
+								<button type="submit" name="submitaction" value="submitDetermination" ><?php echo $LANG['SUBMIT_DET']; ?></button>
 							</div>
 						</div>
 					</fieldset>

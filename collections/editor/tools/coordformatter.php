@@ -182,70 +182,50 @@ header("Content-Type: text/html; charset=".$CHARSET);
 	<style type="text/css">
 		body{ background-color: #ffffff; }
 		#coordAidDiv{  }
-		.toolDiv{ margin-bottom: 10px;}
+		.toolDiv{ float: left; padding: 15px 10px; }
 		#dmsAidDiv{ }
 		#utmAidDiv{  }
 		#trsAidDiv{  }
 		.fieldDiv{ padding: 3px 0px }
-		.labelSection{ font-weight: bold;  font-size: 14; margin-bottom: 10px;}
+		.labelSpan{  }
 		.buttonDiv{ margin-top: 5px }
 	</style>
 </head>
 <body>
 	<div id="coordAidDiv">
 		<form name="formatterForm" onsubmit="return false">
-			<div id="dmsAidDiv" class="toolDiv" style="margin-top: 10px;">
+			<div id="dmsAidDiv" class="toolDiv">
 				<fieldset>
 					<legend>DMS Converter</legend>
-					<section class="labelSection">Latitude</section>
-					<section>
-						<label for="latdeg">Latitude Degree: </label>
-						<input name="latdeg" id="latdeg" style="width:35px;" title="Latitude Degree" />
-					</section>
-					<section>
-						<label for="latmin">Latitude Minutes: </label>
-						<input name="latmin" id="latmin" style="width:50px;" title="Latitude Minutes" />
-					</section>
-					<section>
-						<label for="latsec">Latitude Seconds: </label>
-						<input name="latsec" id="latsec" style="width:50px;" title="Latitude Seconds" />
-					</section>
-					<section>
-						<label for="latns">Direction: </label>
-						<select name="latns" id="latns">
+					<div class="fieldDiv">
+						<span class="labelSpan">Lat:</span>
+						<input name="latdeg" style="width:35px;" title="Latitude Degree" />&deg;
+						<input name="latmin" style="width:50px;" title="Latitude Minutes" />'
+						<input name="latsec" style="width:50px;" title="Latitude Seconds" />&quot;
+						<select name="latns">
 							<option>N</option>
 							<option>S</option>
 						</select>
-					</section>
-					<section class="labelSection">Longitude</section>
-					<section>
-						<label for="lngdeg">Longitude Degree: </label>
-						<input name="lngdeg" id="lngdeg" style="width:35px;" title="Longitude Degree" />
-					</section>
-					<section>
-						<label for="lngmin">Longitude Minutes: </label>
-						<input name="lngmin" id="lngmin' style="width:50px;" title="Longitude Minutes" />
-					</section>
-					<section>
-						<label for="lngsec">Longitude Seconds: </label>
-						<input name="lngsec" id="lngsec" style="width:50px;" title="Longitude Seconds" />
-					</section>
-					<section>
-						<label for="lngew">Direction: </label>
-						<select name="lngew" id="lngew">
+					</div>
+					<div class="fieldDiv">
+						<span class="labelSpan">Long:</span>
+						<input name="lngdeg" style="width:35px;" title="Longitude Degree" />&deg;
+						<input name="lngmin" style="width:50px;" title="Longitude Minutes" />'
+						<input name="lngsec" style="width:50px;" title="Longitude Seconds" />&quot;
+						<select name="lngew">
 							<option>E</option>
 							<option SELECTED>W</option>
 						</select>
-					</section>
-					<section>
-						<label for="lldatum">Datum: </label>
-						<select name="lldatum" id="lldatum">
+					</div>
+					<div class="fieldDiv">
+						<span class="labelSpan">Datum:</span>
+						<select name="lldatum">
 							<option value="WGS84" selected>WGS84</option>
 							<option value="NAD27">NAD27</option>
 							<option value="NAD83">NAD83</option>
 						</select>
-					</section>
-					<div>
+					</div>
+					<div style="margin:5px;">
 						<button type="button" onclick="fomatDWS(this.form)">Insert Lat/Long Values</button>
 					</div>
 				</fieldset>
@@ -253,109 +233,94 @@ header("Content-Type: text/html; charset=".$CHARSET);
 			<div id="utmAidDiv" class="toolDiv">
 				<fieldset>
 					<legend>UTM Converter</legend>
-					<section>
-						<label for="utmzone">Zone:</label>
-						<input name="utmzone" id="utmzone" style="width:40px;" />
-					</section>
-					<section>
-						<label for="utmeast">East:</label>
-						<input name="utmeast" id="utmeast" type="text" style="width:100px;" />
-					</section>
-					<section>
-						<label for="utmnorth">North:</label>
-						<input name="utmnorth" id="utmnorth" type="text" style="width:100px;" />
-					</section>
-					<section>
-						<label for="hemisphere">Hemisphere:</label>
-						<select name="hemisphere" id="hemisphere" title="Use hemisphere designator (e.g. 12N) rather than grid zone ">
+					<div class="fieldDiv">
+						<span class="labelSpan">Zone:</span>
+						<input name="utmzone" style="width:40px;" />
+					</div>
+					<div class="fieldDiv">
+						<span class="labelSpan">East:</span>
+						<input name="utmeast" type="text" style="width:100px;" />
+					</div>
+					<div class="fieldDiv">
+						<span class="labelSpan">North:</span>
+						<input name="utmnorth" type="text" style="width:100px;" />
+					</div>
+					<div class="fieldDiv">
+						<span class="labelSpan">Hemisphere:</span>
+						<select name="hemisphere" title="Use hemisphere designator (e.g. 12N) rather than grid zone ">
 							<option value="N">North</option>
 							<option value="S">South</option>
 						</select>
-					</section>
-					<section>
-						<label for="utmdatum">Datum:</label>
-						<select name="utmdatum" id="utmdatum">
+					</div>
+					<div class="fieldDiv">
+						<span class="labelSpan">Datum:</span>
+						<select name="utmdatum">
 							<option value="WGS84" selected>WGS84</option>
 							<option value="NAD27">NAD27</option>
 							<option value="NAD83">NAD83</option>
 						</select>
-					</section>
-					<div>
+					</div>
+					<div class="buttonDiv">
 						<button type="button" onclick="formatUTM(this.form)">Insert UTM Values</button>
 					</div>
 				</fieldset>
 			</div>
 			<div id="trsAidDiv" class="toolDiv">
 				<fieldset>
-					<legend>Township Range Section Converter</legend>
-					<section>
-						<label for="township">Township:</label>
-						<input name="township" id="township" style="width:30px;" title="Township" />
-					</section>
-					<section>
-						<label for="townshipNS">Township (N/S):</label>
-						<select name="townshipNS" id="townshipNS">
+					<legend>TRS Converter</legend>
+					<div class="fieldDiv">
+						T<input name="township" style="width:30px;" title="Township" />
+						<select name="townshipNS">
 							<option>N</option>
 							<option>S</option>
 						</select>
-					</section>
-					<section>
-						<label for="range">Range:</label>
-						<input name="range" id="range" style="width:30px;" title="Range" />
-					</section>
-					<section>
-						<label for="rangeEW">Range (E/W):</label>
-						<select name="rangeEW" id="rangeEW">
+						R<input name="range" style="width:30px;" title="Range" />
+						<select name="rangeEW">
 							<option>E</option>
 							<option>W</option>
 						</select>
-					</section>
-					<section>
-						<label for="section">Sec:</label>
-						<input name="section" id="section" type="input" style="width:30px;" title="Section" />
-					</section>
-					<section>
-						<label for="secdetails">Details:</label>
-						<input name="secdetails" id="secdetails" type="input" style="width:90px;" title="Section Details" />
-					</section>
-					<section>
-						<label for="meridian">Meridian: </label>
-						<select name="meridian" title="Meridian" id="meridian">
-							<option value="">Meridian Selection</option>
-							<option value="">----------------------------------</option>
-							<option value="G-AZ">Arizona, Gila &amp; Salt River</option>
-							<option value="NAAZ">Arizona, Navajo</option>
-							<option value="F-AR">Arkansas, Fifth Principal</option>
-							<option value="H-CA">California, Humboldt</option>
-							<option value="M-CA">California, Mt. Diablo</option>
-							<option value="S-CA">California, San Bernardino</option>
-							<option value="NMCO">Colorado, New Mexico</option>
-							<option value="SPCO">Colorado, Sixth Principal</option>
-							<option value="UTCO">Colorado, Ute</option>
-							<option value="B-ID">Idaho, Boise</option>
-							<option value="SPKS">Kansas, Sixth Principal</option>
-							<option value="F-MO">Missouri, Fifth Principal</option>
-							<option value="P-MT">Montana, Principal</option>
-							<option value="SPNE">Nebraska, Sixth Principal</option>
-							<option value="M-NV">Nevada, Mt. Diablo</option>
-							<option value="NMNM">New Mexico, New Mexico</option>
-							<option value="F-ND">North Dakota, Fifth Principal</option>
-							<option value="C-OK">Oklahoma, Cimarron</option>
-							<option value="I-OK">Oklahoma, Indian</option>
-							<option value="W-OR">Oregon, Willamette</option>
-							<option value="BHSD">South Dakota, Black Hills</option>
-							<option value="F-SD">South Dakota, Fifth Principal</option>
-							<option value="SPSD">South Dakota, Sixth Principal</option>
-							<option value="SLUT">Utah, Salt Lake</option>
-							<option value="U-UT">Utah, Uinta</option>
-							<option value="W-WA">Washington, Willamette</option>
-							<option value="SPWY">Wyoming, Sixth Principal</option>
-							<option value="WRWY">Wyoming, Wind River</option>
-						</select>
-					</section>
-					<section class="buttonDiv">
+					</div>
+					<div class="fieldDiv">
+						Sec:
+						<input name="section" type="input" style="width:30px;" title="Section" />
+						Details:
+						<input name="secdetails" type="input" style="width:90px;" title="Section Details" />
+					</div>
+					<select name="meridian" title="Meridian">
+						<option value="">Meridian Selection</option>
+						<option value="">----------------------------------</option>
+						<option value="G-AZ">Arizona, Gila &amp; Salt River</option>
+						<option value="NAAZ">Arizona, Navajo</option>
+						<option value="F-AR">Arkansas, Fifth Principal</option>
+						<option value="H-CA">California, Humboldt</option>
+						<option value="M-CA">California, Mt. Diablo</option>
+						<option value="S-CA">California, San Bernardino</option>
+						<option value="NMCO">Colorado, New Mexico</option>
+						<option value="SPCO">Colorado, Sixth Principal</option>
+						<option value="UTCO">Colorado, Ute</option>
+						<option value="B-ID">Idaho, Boise</option>
+						<option value="SPKS">Kansas, Sixth Principal</option>
+						<option value="F-MO">Missouri, Fifth Principal</option>
+						<option value="P-MT">Montana, Principal</option>
+						<option value="SPNE">Nebraska, Sixth Principal</option>
+						<option value="M-NV">Nevada, Mt. Diablo</option>
+						<option value="NMNM">New Mexico, New Mexico</option>
+						<option value="F-ND">North Dakota, Fifth Principal</option>
+						<option value="C-OK">Oklahoma, Cimarron</option>
+						<option value="I-OK">Oklahoma, Indian</option>
+						<option value="W-OR">Oregon, Willamette</option>
+						<option value="BHSD">South Dakota, Black Hills</option>
+						<option value="F-SD">South Dakota, Fifth Principal</option>
+						<option value="SPSD">South Dakota, Sixth Principal</option>
+						<option value="SLUT">Utah, Salt Lake</option>
+						<option value="U-UT">Utah, Uinta</option>
+						<option value="W-WA">Washington, Willamette</option>
+						<option value="SPWY">Wyoming, Sixth Principal</option>
+						<option value="WRWY">Wyoming, Wind River</option>
+					</select>
+					<div class="buttonDiv">
 						<button type="button" onclick="formatTRS(this.form)">Insert TRS Values</button>
-					</section>
+					</div>
 				</fieldset>
 			</div>
 		</form>
