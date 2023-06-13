@@ -369,3 +369,39 @@ ALTER TABLE `dropdown_format_values`
 
 ALTER TABLE `omoccurrences`
     ADD CONSTRAINT `FK_omoccurrences_format` FOREIGN KEY (`format`) REFERENCES `dropdown_format_values`(`dd_formatID`);
+
+-- constraining the format of the data in the dropdown table filedUnder
+ALTER TABLE `dropdown_filedUnder_values`
+    ADD `genus` text,
+    ADD `species` text,
+    ADD `authorName` text,
+    ADD `vascularity` text,
+    ADD `family` text,
+    CHANGE `value` `displayValue` varchar(255);
+/* function for getting the scientific name for filedUnder and currName (abandoned because using system function CONCAT is sufficient)
+DELIMITER //
+
+CREATE FUNCTION get_sciname(
+    genus text,
+    species text,
+    authorName text,
+    vascularity text,
+    family text
+)
+RETURNS text
+BEGIN
+    DECLARE result text;
+    
+    SET result = CONCAT(genus, " ", species, " ", authorName, " [", vascularity, ", ", family, "]");
+    
+    RETURN result;
+END //
+
+DELIMITER ;
+*/
+
+-- Create trigger to update the displayValue column in dropdown_filedUnder_values with the right value with every insert
+CREATE TRIGGER TR_insert_dd_filedUnder
+BEFORE INSERT ON dropdown_filedUnder_values
+FOR EACH ROW
+SET NEW.displayValue = CONCAT(NEW.genus, " ", NEW.species, " ", NEW.authorName, " [", NEW.vascularity, ", ", NEW.family, "]");
