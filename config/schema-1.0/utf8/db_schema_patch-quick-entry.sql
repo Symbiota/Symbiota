@@ -400,8 +400,13 @@ END //
 DELIMITER ;
 */
 
--- Create trigger to update the displayValue column in dropdown_filedUnder_values with the right value with every insert
+-- Create trigger to update the displayValue column in dropdown_filedUnder_values with the right value with every insert and update
 CREATE TRIGGER TR_insert_dd_filedUnder
 BEFORE INSERT ON dropdown_filedUnder_values
+FOR EACH ROW
+SET NEW.displayValue = CONCAT(NEW.genus, " ", NEW.species, " ", NEW.authorName, " [", NEW.vascularity, ", ", NEW.family, "]");
+
+CREATE TRIGGER TR_update_dd_filedUnder
+BEFORE UPDATE ON dropdown_filedUnder_values
 FOR EACH ROW
 SET NEW.displayValue = CONCAT(NEW.genus, " ", NEW.species, " ", NEW.authorName, " [", NEW.vascularity, ", ", NEW.family, "]");
