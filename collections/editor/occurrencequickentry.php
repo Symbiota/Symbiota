@@ -58,7 +58,7 @@ $isEditor = 0;
 
 // Dropdown arrays
 
-$filedUnderDrop = $occManager->getFiledUnderValues();
+$filedUnderDrop = $occManager->getValues('dd_filedUnderID', 'dropdown_filedUnder_values');
 
 
 if($SYMB_UID){
@@ -466,173 +466,173 @@ else{
 }
 ?>
 <html>
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
-	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['OCCEDITOR'])?$LANG['OCCEDITOR']:'Occurrence Editor'); ?></title>
-	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
-    <?php
-    if($crowdSourceMode == 1){
-		?>
-		<link href="includes/config/occureditorcrowdsource.css?ver=2" type="text/css" rel="stylesheet" id="editorCssLink" />
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
+		<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['OCCEDITOR'])?$LANG['OCCEDITOR']:'Occurrence Editor'); ?></title>
+		<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 		<?php
-    }
-    else{
-		?>
-		<link href="../../css/symb/occurrenceeditor.css?ver=6" type="text/css" rel="stylesheet" id="editorCssLink" />
-		<?php
-		if(isset($CSSARR)){
-			foreach($CSSARR as $cssVal){
-				echo '<link href="includes/config/'.$cssVal.'?ver=170601" type="text/css" rel="stylesheet" />';
-			}
-		}
-		if(isset($JSARR)){
-			foreach($JSARR as $jsVal){
-				echo '<script src="includes/config/'.$jsVal.'?ver=170601" type="text/javascript"></script>';
-			}
-		}
-	}
-	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
-	?>
-	<script src="../../js/jquery.js?ver=140310" type="text/javascript"></script>
-	<script src="../../js/jquery-ui.js?ver=140310" type="text/javascript"></script>
-	<script type="text/javascript">
-		var collId = "<?php echo (isset($collMap['collid'])?$collMap['collid']:(is_numeric($collId)?$collId:0)); ?>";
-		var csMode = "<?php echo $crowdSourceMode; ?>";
-		var tabTarget = <?php echo (is_numeric($tabTarget)?$tabTarget:'0'); ?>;
-		var imgArr = [];
-		var imgLgArr = [];
-		var localityAutoLookup = <?php echo (defined('LOCALITYAUTOLOOKUP') && !LOCALITYAUTOLOOKUP?'0':'1'); ?>;
-
-		<?php
-		if($imgArr){
-			foreach($imgArr as $iCnt => $iArr){
-				echo 'imgArr['.$iCnt.'] = "'.$iArr['web'].'";'."\n";
-				if(isset($iArr['lg'])) echo 'imgLgArr['.$iCnt.'] = "'.$iArr['lg'].'";'."\n";
-			}
-		}
-		?>
-
-		$(document).ready(function() {
-			<?php
-			if(!defined('CATNUMDUPECHECK') || CATNUMDUPECHECK) echo '$("#catalognumber").on("change", function(e) { searchCatalogNumber(this.form,true); });'."\n";
-			if(!defined('OTHERCATNUMDUPECHECK') || OTHERCATNUMDUPECHECK) echo '$("input[name=\'idvalue[]\']").on("change", function(e) { searchOtherCatalogNumbers(this); });'."\n";
+		if($crowdSourceMode == 1){
 			?>
-		});
+			<link href="includes/config/occureditorcrowdsource.css?ver=2" type="text/css" rel="stylesheet" id="editorCssLink" />
+			<?php
+		}
+		else{
+			?>
+			<link href="../../css/symb/occurrenceeditor.css?ver=6" type="text/css" rel="stylesheet" id="editorCssLink" />
+			<?php
+			if(isset($CSSARR)){
+				foreach($CSSARR as $cssVal){
+					echo '<link href="includes/config/'.$cssVal.'?ver=170601" type="text/css" rel="stylesheet" />';
+				}
+			}
+			if(isset($JSARR)){
+				foreach($JSARR as $jsVal){
+					echo '<script src="includes/config/'.$jsVal.'?ver=170601" type="text/javascript"></script>';
+				}
+			}
+		}
+		include_once($SERVER_ROOT.'/includes/googleanalytics.php');
+		?>
+		<script src="../../js/jquery.js?ver=140310" type="text/javascript"></script>
+		<script src="../../js/jquery-ui.js?ver=140310" type="text/javascript"></script>
+		<script type="text/javascript">
+			var collId = "<?php echo (isset($collMap['collid'])?$collMap['collid']:(is_numeric($collId)?$collId:0)); ?>";
+			var csMode = "<?php echo $crowdSourceMode; ?>";
+			var tabTarget = <?php echo (is_numeric($tabTarget)?$tabTarget:'0'); ?>;
+			var imgArr = [];
+			var imgLgArr = [];
+			var localityAutoLookup = <?php echo (defined('LOCALITYAUTOLOOKUP') && !LOCALITYAUTOLOOKUP?'0':'1'); ?>;
 
-		function requestImage(){
-            $.ajax({
-                type: "POST",
-                url: 'rpc/makeactionrequest.php',
-                data: { <?php echo ' occid: '.$occManager->getOccId(); ?>, requesttype: 'Image' },
-                success: function( response ) {
-                   $('div#imagerequestresult').html(response);
-                }
-            });
-        }
+			<?php
+			if($imgArr){
+				foreach($imgArr as $iCnt => $iArr){
+					echo 'imgArr['.$iCnt.'] = "'.$iArr['web'].'";'."\n";
+					if(isset($iArr['lg'])) echo 'imgLgArr['.$iCnt.'] = "'.$iArr['lg'].'";'."\n";
+				}
+			}
+			?>
 
-	</script>
-	<script src="../../js/symb/collections.coordinateValidation.js?ver=2" type="text/javascript"></script>
-	<script src="../../js/symb/wktpolygontools.js?ver=2" type="text/javascript"></script>
-	<script src="../../js/symb/collections.georef.js?ver=1" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.main.js?ver=14" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.tools.js?ver=4" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.imgtools.js?ver=2" type="text/javascript"></script>
-	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.query.js?ver=5" type="text/javascript"></script>
-	<style type="text/css">
-		fieldset{ padding:15px }
-		fieldset > legend{ font-weight:bold; }
-		.fieldGroupDiv{ clear:both; margin-bottom:2px; }
-		.fieldDiv{ float:left; margin-right: 20px; }
-		#identifierDiv img{ width:10px; margin-left: 5px; }
-		.editimg{ width: 15px; }
+			$(document).ready(function() {
+				<?php
+				if(!defined('CATNUMDUPECHECK') || CATNUMDUPECHECK) echo '$("#catalognumber").on("change", function(e) { searchCatalogNumber(this.form,true); });'."\n";
+				if(!defined('OTHERCATNUMDUPECHECK') || OTHERCATNUMDUPECHECK) echo '$("input[name=\'idvalue[]\']").on("change", function(e) { searchOtherCatalogNumbers(this); });'."\n";
+				?>
+			});
 
-		/* this is the style for the new form ------------------------------------*/
-		*{
-            box-sizing: border-box;
-            font-family: sans-serif;
-        }
-        h2{
-            background: linear-gradient(1000deg, rgb(218, 200, 255), #34ace0);;
-            color: white;
-        }
-        .column{
-            float: left;
-            padding:10px;
-        }
-        .left{
-            width: 65%;
-        }
-        .right{
-            width: 35%;
-        }
-		.info{
-			width: 100%;
-			display: flex;
-			align-items: center;
-			padding: 8px;
-		}
-        .row:after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-        .nav-bar a{
-            background-color: #00FFFF;
-           color: black;
-           border-style: solid;
-           border-color: black;
-           margin: 0;
-        }
-        .nav-bar label{
-           background-color: #00FFFF;
-           color: black;
-           border-style: solid;
-           border-color: black;
-        }
-        .function-bar{
-            border:1px solid black; 
-			display: flex;
-			align-items: center;
-        }
-        button{
-            color:black;
-            background-color: #34ace0;
-        }
-        .btn label{
-            color:black;
-            background-color: #34ace0;
-            border-style: solid;
-            border-color: black;
-        }
-        .data{
-            border-style: solid;
-            border-color: black;
-        }
-        .login-info{
-            border-style: solid;
-            border-color: black;
-        }
-        #editdiv {
-            margin-left:auto;
-            margin-right:auto;
-            width:960px;
-        }
-        .field-block {
-			margin: 5px 0px;
-			display: flex;
-		}
-		.field-label {
-			text-align: left;
-			width: 120px;
-		}
-		.title{
-			backgroufnd-color:#86C5D8; 
-			display: block;
-			width: 100%;
-		}
-	</style>
-</head>
+			function requestImage(){
+				$.ajax({
+					type: "POST",
+					url: 'rpc/makeactionrequest.php',
+					data: { <?php echo ' occid: '.$occManager->getOccId(); ?>, requesttype: 'Image' },
+					success: function( response ) {
+					$('div#imagerequestresult').html(response);
+					}
+				});
+			}
+
+		</script>
+		<script src="../../js/symb/collections.coordinateValidation.js?ver=2" type="text/javascript"></script>
+		<script src="../../js/symb/wktpolygontools.js?ver=2" type="text/javascript"></script>
+		<script src="../../js/symb/collections.georef.js?ver=1" type="text/javascript"></script>
+		<script src="../../js/symb/collections.editor.main.js?ver=14" type="text/javascript"></script>
+		<script src="../../js/symb/collections.editor.tools.js?ver=4" type="text/javascript"></script>
+		<script src="../../js/symb/collections.editor.imgtools.js?ver=2" type="text/javascript"></script>
+		<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
+		<script src="../../js/symb/collections.editor.query.js?ver=5" type="text/javascript"></script>
+		<style type="text/css">
+			fieldset{ padding:15px }
+			fieldset > legend{ font-weight:bold; }
+			.fieldGroupDiv{ clear:both; margin-bottom:2px; }
+			.fieldDiv{ float:left; margin-right: 20px; }
+			#identifierDiv img{ width:10px; margin-left: 5px; }
+			.editimg{ width: 15px; }
+
+			/* this is the style for the new form ------------------------------------*/
+			*{
+				box-sizing: border-box;
+				font-family: sans-serif;
+			}
+			h2{
+				background: linear-gradient(1000deg, rgb(218, 200, 255), #34ace0);;
+				color: white;
+			}
+			.column{
+				float: left;
+				padding:10px;
+			}
+			.left{
+				width: 65%;
+			}
+			.right{
+				width: 35%;
+			}
+			.info{
+				width: 100%;
+				display: flex;
+				align-items: center;
+				padding: 8px;
+			}
+			.row:after {
+				content: "";
+				display: table;
+				clear: both;
+			}
+			.nav-bar a{
+				background-color: #00FFFF;
+			color: black;
+			border-style: solid;
+			border-color: black;
+			margin: 0;
+			}
+			.nav-bar label{
+			background-color: #00FFFF;
+			color: black;
+			border-style: solid;
+			border-color: black;
+			}
+			.function-bar{
+				border:1px solid black; 
+				display: flex;
+				align-items: center;
+			}
+			button{
+				color:black;
+				background-color: #34ace0;
+			}
+			.btn label{
+				color:black;
+				background-color: #34ace0;
+				border-style: solid;
+				border-color: black;
+			}
+			.data{
+				border-style: solid;
+				border-color: black;
+			}
+			.login-info{
+				border-style: solid;
+				border-color: black;
+			}
+			#editdiv {
+				margin-left:auto;
+				margin-right:auto;
+				width:960px;
+			}
+			.field-block {
+				margin: 5px 0px;
+				display: flex;
+			}
+			.field-label {
+				text-align: left;
+				width: 120px;
+			}
+			.title{
+				backgroufnd-color:#86C5D8; 
+				display: block;
+				width: 100%;
+			}
+		</style>
+	</head>
 <body>
 	<div id="innertext">
 		<div id="titleDiv">
@@ -709,576 +709,9 @@ else{
 			</div>
 
 
-	<!-- body part of the new form start from here -->
-	<!-- TODO: we leave the old form so that some of its funcitons can be reused in the new form  -->
-	<?php
-		if($statusStr){
-			?>
-			<div id="statusdiv" style="margin:5px 0px 5px 15px;">
-				<b><?php echo (isset($LANG['ACTION_STATUS'])?$LANG['ACTION_STATUS']:'Action Status'); ?>: </b>
-				<span style="color:<?php echo (stripos($statusStr,'ERROR')!==false?'red':'green'); ?>;"><?php echo $statusStr; ?></span>
-				<?php
-				if($action == 'Delete Occurrence'){
-					?>
-					<br/>
-					<a href="#" style="margin:5px;" onclick="window.opener.location.href = window.opener.location.href;window.close();">
-						<?php echo (isset($LANG['RETURN_TO_SEARCH'])?$LANG['RETURN_TO_SEARCH']:'Return to Search Page'); ?>
-					</a>
-					<?php
-				}
-				?>
-			</div>
-			<?php
-		}
-	?>
-	<div id="editdiv">
-    	<div class = "row">
-			<section>
-				<div class="btn function-bar" name="jumpform">
-					<!-- TODO: these buttons need to have corresponding functions(more detailes are needed) -->
-					<!-- see button functionality in old code below, interpret their uses -->
-					<!-- TODO: the "input" needs functions to jumps to corresponding page number -->
-					<form method="post">
-						<button type="submit" name="toggle-button" value="<?php echo isset($_POST['toggle-button']) && $_POST['toggle-button'] === 'Minimal' ? 'Detailed' : 'Minimal'; ?>">
-							<?php echo isset($_POST['toggle-button']) ? $_POST['toggle-button'] : 'Detailed'; ?>
-						</button>
-						<button type="button" onclick="jumpToPage()">Jump to:</button>
-  						<input type="number" id="pageNumber" size="3" />
-					</form>
-					<div id="jumpDiv">
-						<?php
-						if($jumpStr){
-						?>
-							<div>
-								<?php if(array_key_exists('recordenteredby',$occArr)){
-											echo ($occArr['recordenteredby']?$occArr['recordenteredby']:$LANG['NOT_RECORDED']);
-										}
-										if(isset($occArr['dateentered']) && $occArr['dateentered']) echo ' ['.$occArr['dateentered'].']'; 
-										?>
-								<?php echo $jumpStr; ?>
-							</div>
-						<?php
-						}
-						if(isset($collections_editor_occurrenceeditorCrumbs)){
-							if($collections_editor_occurrenceeditorCrumbs){
-						?>
-								<div class="navpath">
-									<a href='../../index.php'><?php echo (isset($LANG['HOME'])?$LANG['Home']:'Home'); ?></a> &gt;&gt;
-									<?php
-									echo $collections_editor_occurrenceeditorCrumbs;
-									echo '<b>'.(isset($LANG['EDITOR'])?$LANG['EDITOR']:'Editor').'</b>';
-									?>
-								</div>
-								<?php
-							}
-						} ?>
-					</div>
-					<!-- <button id="detail-btn" onclick="toggleDetail()" value="detailed">Detailed</button> -->
-				</div>
-			</section> 
-			<form id="fullform" name="fullform" action="occurrenceeditor.php" method="post" onsubmit="return verifyFullForm(this);">
-				<!-- navigation bar -->
-				<!-- left part of the form starts -->
-				<div class = "column left login-info" style = "background-color: #F2F2F2; ">
-					<div class="field-block title">
-						<h2>Transcribe into Fields</h2>
-						<!-- <h1><?php //print_r($filedUnderDrop) ?></h1> -->
-					</div>
-					<div class="field-block">
-						<span class="field-label"><?php echo (isset($LANG['BARCODE']) ? $LANG['BARCODE'] : 'Barcode'); ?></span>
-						<span class="field-elem">
-							<!-- this $occArr array connects to the old form's database -->
-							<?php if(array_key_exists('barcode',$occArr)) { ?>
-								<input type="text" size = '50' id="barcode" name="barcode" value="<?php echo $occArr['barcode'] ?>" onchange="fieldChanged('barcode');" <?php if($isEditor > 2) echo 'disabled'; ?> autocomplete="off" />
-							<?php 
-							} else { 
-							?>
-								NOT FOUND
-							<?php 
-							} 
-							?>
-						</span>
-					</div>
-					<?php if(!isset($_POST['toggle-button']) || (isset($_POST['toggle-button']) && $_POST['toggle-button'] != 'Minimal')): ?>
-						<div class="field-block">
-							<span class="field-label"><?php echo (isset($LANG['ACCES_NUM']) ? $LANG['ACCES_NUM'] : 'Accession Num.'); ?></span>
-							<span class="field-elem">
-								<?php if(array_key_exists('accesNum',$occArr)) { ?>
-									<input type="text" size = '50' name="accesNum" value="<?php echo $occArr["accesNum"]; ?>" onchange="fieldChanged('accesNum');" />
-								<?php 
-								} else { 
-								?>
-									NOT FOUND
-								<?php 
-								} 
-								?>
-							</span>
-						</div>
-					<?php endif; ?>
-					<div class="field-block">
-						<span class="field-label"><?php echo (isset($LANG['FILED_UNDER']) ? $LANG['FILED_UNDER'] : 'Filed Under'); ?></span>
-						<span class="field-elem">
-							<?php if(array_key_exists('filedUnder',$occArr)) { 
-								$filedUnderValue = isset($filedUnderDrop[$occArr["filedUnder"]]) ? $filedUnderDrop[$occArr["filedUnder"]] : null;
-							?>	
-								<input type="text" size="50" name="filedUnderDisplay" id="filedUnderDisplay" value="<?php echo $filedUnderValue; ?>" onkeyup="filterDropdown('filedUnderDisplay', 'filedUnder', <?php echo htmlspecialchars(json_encode($filedUnderDrop), ENT_QUOTES, 'UTF-8'); ?>)" />
-								<select name="filedUnder" id="filedUnder" style="display: none;" onchange="selectOption(this, 'filedUnderDisplay',<?php echo htmlspecialchars(json_encode($filedUnderDrop), ENT_QUOTES, 'UTF-8'); ?>);"></select>
-							<?php 
-							} else { 
-							?>
-								NOT FOUND
-							<?php 
-							} 
-							?>
-						</span>
-					</div>
-					<div class="field-block">
-						<span class="field-label"><?php echo (isset($LANG['CURR_NAME']) ? $LANG['CURR_NAME'] : 'Current Name'); ?></span>
-						<span class="field-elem">
-							<?php if(array_key_exists('currName',$occArr)) { ?>
-								<input type="text" size = '50' name="currName" value="<?php echo $occArr["currName"]; ?>" onchange="fieldChanged('currName');" />
-							<?php 
-							} else { 
-							?>
-								NOT FOUND
-							<?php 
-							} 
-							?>
-						</span>
-					</div>
-					<?php if(!isset($_POST['toggle-button']) || (isset($_POST['toggle-button']) && $_POST['toggle-button'] != 'Minimal')): ?>
-						<div class="field-block">
-							<span class="field-label"><?php echo (isset($LANG['IDQUALIFIER']) ? $LANG['IDQUALIFIER'] : 'ID Qualifier'); ?></span>
-							<span class="field-elem">
-								<!-- the drop list needs to be update -->
-								<?php
-									if(array_key_exists('idQualifier',$occArr)) {
-								?>
-									<select name="idQualifier" onchange="fieldChanged('idQualifier');">
-										<option value=""><?php echo $LANG['IDQUALIFIER']; ?>Select Your ID Qualifier</option>
-										<option value="">---------------------------------------</option>
-										<?php
-										$idqArr = array('s. str.', '?', 'not', 'cf.', 's. lat.', 'aff.');
-										foreach ($idqArr as $k) {
-											$selected = ($k == $occArr['idQualifier']) ? 'selected' : '';
-											echo '<option value="' . $k . '" ' . $selected . '>' . $k . '</option>' . "\n";
-										}
-										?>
-									</select>
-								<?php
-								} else {
-								?>
-									NOT FOUND
-								<?php
-								}
-								?>
-							</span>
-						</div>
-						<div class="field-block">
-							<span class="field-label"><?php echo (defined('IDENTIFIEDBYLABEL')?IDENTIFIEDBYLABEL:'Identified By'); ?></span>
-							<span class="field-elem">
-								<input size = '50' type="text"  maxlength="255" name="identifiedby" value="<?php echo array_key_exists('identifiedby',$occArr)?$occArr['identifiedby']:''; ?>" onchange="fieldChanged('identifiedby');" />
-								<a href="#" onclick="return dwcDoc('identifiedBy')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-							</span>
-						</div>
-						<div class="field-block">
-							<span class="field-label"><?php echo (defined('DATEIDENTIFIEDLABEL')?DATEIDENTIFIEDLABEL:'Date Identified'); ?></span>
-							<span class="field-elem">
-								<input size = '50' type="text" name="dateidentified" maxlength="45" value="<?php echo array_key_exists('dateidentified',$occArr)?$occArr['dateidentified']:''; ?>" onchange="fieldChanged('dateidentified');" />
-								<a href="#" onclick="return dwcDoc('dateIdentified')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-							</span>
-						</div>
-						<!-- There is a tab below is for determiation -->
-						<div class="field-block">
-							<span class="field-label"><?php echo (isset($LANG['DET_TEXT']) ? $LANG['DET_TEXT'] : 'Det. Text'); ?></span>
-							<span class="field-elem">
-								<?php if(array_key_exists('detText',$occArr)) { ?>
-									<input size = '50' type="text" name="detText" value="<?php echo $occArr["detText"]; ?>" onchange="fieldChanged('detText');" />
-								<?php 
-								} else { 
-								?>
-									NOT FOUND
-								<?php 
-								} 
-								?>
-							</span>
-						</div>
-						<div class="field-block">
-							<span class="field-label"><?php echo (isset($LANG['PROVENANCE']) ? $LANG['PROVENANCE'] : 'Provenance'); ?></span>
-							<span class="field-elem">
-								<?php if(array_key_exists('provenance',$occArr)) { ?>
-									<input type="text" size = '50' name="provenance" value="<?php echo $occArr["provenance"]; ?>" onchange="fieldChanged('provenance');" />
-								<?php 
-								} else { 
-								?>
-									NOT FOUND
-								<?php 
-								} 
-								?>
-							</span>
-						</div>
-					<?php endif; ?>
-					<div class="field-block">
-						<span class="field-label"><?php echo (defined('RECORDEDBYLABEL')?RECORDEDBYLABEL:'Collectors'); ?></span>
-						<span class="field-elem">
-							<input size = '50' type="text" name="recordedby" maxlength="255" value="<?php echo array_key_exists('recordedby',$occArr)?$occArr['recordedby']:''; ?>" onchange="fieldChanged('recordedby');" />
-							<a href="#" onclick="return dwcDoc('recordedBy')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-						</span>
-					</div>
-					<!-- I put associated collectors here -->
-					<div class="field-block">
-						<span class="field-label"><?php echo (defined('ASSOCIATEDCOLLECTORSLABEL')?ASSOCIATEDCOLLECTORSLABEL:'Et al.'); ?></span>
-						<span class="field-elem">
-							<input size = '50' type="text" name="associatedcollectors" maxlength="255" value="<?php echo array_key_exists('associatedcollectors',$occArr)?$occArr['associatedcollectors']:''; ?>" onchange="fieldChanged('associatedcollectors');" />
-							<a href="#" onclick="return dwcDoc('associatedCollectors')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-						</span>
-					</div>
-					<div class="field-block">
-						<span class="field-label"><?php echo (defined('RECORDNUMBERLABEL')?RECORDNUMBERLABEL:'Collector Number'); ?></span>
-						<span class="field-elem">
-							<input size = '50' type="text" name="recordnumber" maxlength="45" value="<?php echo array_key_exists('recordnumber',$occArr)?$occArr['recordnumber']:''; ?>" onchange="recordNumberChanged(this);" />
-							<a href="#" onclick="return dwcDoc('recordNumber')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-						</span>
-					</div> 
-					<div class="field-block">
-						<span class="field-label"><?php echo (defined('EVENTDATELABEL')?EVENTDATELABEL:'Date Collected'); ?></span>
-						<span class="field-elem">
-							<input size = '50' type="text" name="eventdate" value="<?php echo array_key_exists('eventdate',$occArr)?$occArr['eventdate']:''; ?>" onchange="eventDateChanged(this);" />
-							<a href="#" onclick="return dwcDoc('eventDate')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-						</span>
-					</div>
-					<div class="field-block">
-						<span class="field-label"><?php echo (defined('VERBATIMEVENTDATELABEL')?VERBATIMEVENTDATELABEL:'Verbatim Date'); ?></span>
-						<span class="field-elem">
-							<input size = '50' type="text" name="verbatimeventdate" maxlength="255" value="<?php echo array_key_exists('verbatimeventdate',$occArr)?$occArr['verbatimeventdate']:''; ?>" onchange="verbatimEventDateChanged(this)" />
-							<a href="#" onclick="return dwcDoc('verbatimEventDate')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-						</span>
-					</div>
-					<?php if(!isset($_POST['toggle-button']) || (isset($_POST['toggle-button']) && $_POST['toggle-button'] != 'Minimal')): ?>
-						<div class="field-block">
-							<span class="field-label"><?php echo (isset($LANG['CONTAINER']) ? $LANG['CONTAINER'] : 'Container'); ?></span>
-							<span class="field-elem">
-								<?php if(array_key_exists('container',$occArr)) { ?>
-									<input size = '50' type="text" name="container" value="<?php echo $occArr["container"]; ?>" onchange="fieldChanged('container');" />
-								<?php 
-								} else { 
-								?>
-									NOT FOUND
-								<?php 
-								} 
-								?>
-							</span>
-						</div>
-						<div class="field-block">
-							<span class="field-label"><?php echo (isset($LANG['COLL_TRIP']) ? $LANG['COLL_TRIP'] : 'Collecting Trip'); ?></span>
-							<span class="field-elem">
-								<?php if(array_key_exists('collTrip',$occArr)) { ?>
-									<input size = '50' type="text" name="collTrip" value="<?php echo $occArr["collTrip"]; ?>" onchange="fieldChanged('collTrip');" />
-								<?php 
-								} else { 
-								?>
-									NOT FOUND
-								<?php 
-								} 
-								?>
-							</span>
-						</div>
-					<?php endif; ?>
-					<div class="field-block">
-						<span class="field-label"><?php echo (isset($LANG['GEO_WITHIN']) ? $LANG['GEO_WITHIN'] : 'Geography Within'); ?></span>
-						<span class="field-elem">
-							<?php if(array_key_exists('geoWithin',$occArr)) { ?>
-								<input size = '50' type="text" name="geoWithin" value="<?php echo $occArr["geoWithin"]; ?>" onchange="fieldChanged('geoWithin');" />
-							<?php 
-							} else { 
-							?>
-								NOT FOUND
-							<?php 
-							} 
-							?>
-						</span>
-					</div>
-					<div class="field-block">
-						<span class="field-label"><?php echo (isset($LANG['HIGH_GEO']) ? $LANG['HIGH_GEO'] : 'Higher Geography'); ?></span>
-						<span class="field-elem">
-							<?php if(array_key_exists('highGeo',$occArr)) { ?>
-								<input type="text" size = '50' name="highGeo" value="<?php echo $occArr["highGeo"]; ?>" onchange="fieldChanged('highGeo');" />
-							<?php 
-							} else { 
-							?>
-								NOT FOUND
-							<?php 
-							} 
-							?>
-						</span>
-					</div>
-					<?php if(!isset($_POST['toggle-button']) || (isset($_POST['toggle-button']) && $_POST['toggle-button'] != 'Minimal')): ?>
-						<div class="field-block">
-							<span class="field-label"><?php echo (defined('LOCALITYLABEL')?LOCALITYLABEL:'Verbatim Locality'); ?></span>
-							<span class="field-elem">
-								<input id="fflocality" type="text" size = '50'  onchange="fieldChanged('locality');" name="locality" value="<?php echo array_key_exists('locality',$occArr)?$occArr['locality']:''; ?>" />
-								<a href="#" onclick="return dwcDoc('locality')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" style="width:9px" /></a>
-							</span>
-						</div>
-						<div class="field-block">
-							<span class="field-label"><?php echo (defined('HABITATLABEL')?HABITATLABEL:'Habitat'); ?></span>
-							<span class="field-elem">
-								<input size = '50' type="text" name="habitat" value="<?php echo array_key_exists('habitat',$occArr)?$occArr['habitat']:''; ?>" onchange="fieldChanged('habitat');" />
-								<a href="#" onclick="return dwcDoc('habitat')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-							</span>
-						</div>
-						<div class="field-block">
-							<span class="field-label"><?php echo (isset($LANG['FREQUENCY']) ? $LANG['FREQUENCY'] : 'Frequency'); ?></span>
-							<span class="field-elem">
-								<?php if(array_key_exists('frequency',$occArr)) { ?>
-									<input size = '50' type="text" name="frequency" value="<?php echo $occArr["frequency"]; ?>" onchange="fieldChanged('frequency');" />
-								<?php 
-								} else { 
-								?>
-									NOT FOUND
-								<?php 
-								} 
-								?>
-							</span>
-						</div>
-						<div class="field-block">
-							<span class="field-label"><?php echo (defined('VERBATIMATTRIBUTESLABEL')?VERBATIMATTRIBUTESLABEL:'Description'); ?></span>
-							<span class="field-elem">
-								<input size = '50' type="text" name="verbatimattributes" value="<?php echo array_key_exists('verbatimattributes',$occArr)?$occArr['verbatimattributes']:''; ?>" onchange="fieldChanged('verbatimattributes');" />
-								<a href="#" onclick="return dwcDoc('verbatimAttributes')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-							</span>
-						</div>
-						<div class="field-block">
-							<span class="field-label"><?php echo (defined('OCCURRENCEREMARKSLABEL')?OCCURRENCEREMARKSLABEL:'Remarks'); ?></span>
-							<span class="field-elem">
-								<input size = '50' type="text" name="occurrenceremarks" value="<?php echo array_key_exists('occurrenceremarks',$occArr)?$occArr['occurrenceremarks']:''; ?>" onchange="fieldChanged('occurrenceremarks');" title="<?php echo $LANG['OCC_REMARKS']; ?>" />
-								<a href="#" onclick="return dwcDoc('occurrenceRemarks')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-							</span>
-						</div>
-					<?php endif; ?>
-					<!-- I use the label project here from the old form, not sure if it's the same thing -->
-					<div class="field-block">
-						<span class="field-label"><?php echo (defined('LABELPROJECTLABEL')?LABELPROJECTLABEL:'Project'); ?></span>
-						<span class="field-elem">
-							<input size = '50' type="text" name="labelproject" maxlength="45" value="<?php echo array_key_exists('labelproject',$occArr)?$occArr['labelproject']:''; ?>" onchange="fieldChanged('labelproject');" />
-						</span>
-					</div>
-				</div>  <!-- column left ends -->
-				<!-- image part -->
-				<!-- TODO: implement image code from old form, see collections/editor/includes/imagetab.php and check the embedded code to get started -->
-				<div class = "column right" style = "border: 1; background-color:#F2F2F3;">
-					<div class="field-block title">
-						<h2>Click to Zoom in Other Window</h2>
-					</div>
-					<div class="login-info" style = "backgroufnd-color:#86C5D8; text-align: center;">
-						<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOwxvSve1jvNKgXtY40U7wyrTGKuYGUcWCTg&usqp=CAU" />
-					</div>
-					<div class="login-info">
-						<!-- TODO: need to figure out how to deal with this input. It supposes to be generated automatically based on the form -->
-						<div class="field-block">
-							<span class="field-label"><?php echo (isset($LANG['RECCORECTED']) ? $LANG['RECCORECTED'] : 'Record Created'); ?>:</span>
-							<span class="field-elem">
-								<?php echo ($accesNum ? $occArr["recCreated"] : 'New Record'); ?>
-							</span>
-						</div>
-						<div class="field-block">
-							<span class="field-label"><?php echo (isset($LANG['PREPMETHOD']) ? $LANG['PREPMETHOD'] : 'Prep Method'); ?></span>
-							<span class="field-elem">
-								<?php if(array_key_exists('prepMethod',$occArr)) { ?>
-									<input size = '25' type="text" name="prepMethod" value="<?php echo $occArr["prepMethod"]; ?>" onchange="fieldChanged('prepMethod');"  />
-								<?php 
-								} else { 
-								?>
-									NOT FOUND
-								<?php 
-								} 
-								?>
-							</span>
-						</div>
-						<div class="field-block">
-							<span class="field-label"><?php echo (isset($LANG['FORMAT']) ? $LANG['FORMAT'] : 'Format'); ?></span>
-							<span class="field-elem">
-								<?php if(array_key_exists('format',$occArr)) { ?>
-									<input size = '25' type="text" name="format" value="<?php echo $occArr["format"]; ?>" onchange="fieldChanged('format');" />
-								<?php 
-								} else { 
-								?>
-									NOT FOUND
-								<?php 
-								} 
-								?>
-							</span>
-						</div>
-					</div>
-					<?php if(!isset($_POST['toggle-button']) || (isset($_POST['toggle-button']) && $_POST['toggle-button'] != 'Minimal')): ?>
-						<div class="login-info">
-							<div class="field-block">
-								<span class="field-label"><?php echo (defined('VERBATIMELEVATIONLABEL')?VERBATIMELEVATIONLABEL:'Verb. Elev.'); ?></span>
-								<span class="field-elem">
-									<input size = '25' type="text" name="verbatimelevation" maxlength="255" value="<?php echo array_key_exists('verbatimelevation',$occArr)?$occArr['verbatimelevation']:''; ?>" onchange="verbatimElevationChanged(this.form);" />
-									<a href="#" onclick="return dwcDoc('verbatimElevation')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-								</span>
-							</div>
-							<div class="field-block">
-								<span class="field-label"><?php echo (isset($LANG['VERBLAT']) ? $LANG['VERBLAT'] : 'Verb. Lat.'); ?></span>
-								<span class="field-elem">
-									<?php if(array_key_exists('verbLat',$occArr)) { ?>
-										<!-- TODO: need to update the onchange function later to make sure the input format is correct -->
-										<input size = '25' type="text" name="verbLat" value="<?php echo $occArr["verbLat"]; ?>" onchange="decimalLatitudeChanged(this.form)" />
-									<?php 
-									} else { 
-									?>
-										NOT FOUND
-									<?php 
-									} 
-									?>
-								</span>
-							</div>
-							<div class="field-block">
-								<span class="field-label"><?php echo (isset($LANG['VERBLONG']) ? $LANG['VERBLONG'] : 'Verb. Long.'); ?></span>
-								<span class="field-elem">
-									<?php if(array_key_exists('verbLong',$occArr)) { ?>
-										<!-- TODO: need to update the onchange function later to make sure the input format is correct -->
-										<input size = '25' type="text" name="verbLong" value="<?php echo $occArr["verbLong"]; ?>" onchange="decimalLatitudeChanged(this.form)" />
-									<?php 
-									} else { 
-									?>
-										NOT FOUND
-									<?php 
-									} 
-									?>
-								</span>
-							</div>
-							<div class="field-block">
-								<span class="field-label"><?php echo (defined('DECIMALLATITUDELABEL')?DECIMALLATITUDELABEL:'Dec. Lat.'); ?></span>
-								<span class="field-elem">
-									<?php
-									$latValue = "";
-									if(array_key_exists("decimallatitude",$occArr) && $occArr["decimallatitude"] != "") {
-										$latValue = $occArr["decimallatitude"];
-									}
-									?>
-									<input size = '25' type="text" name="decimallatitude" maxlength="15" value="<?php echo $latValue; ?>" onchange="decimalLatitudeChanged(this.form)" />
-								</span>
-							</div>
-							<div class="field-block">
-								<span class="field-label"><?php echo (defined('DECIMALLONGITUDELABEL')?DECIMALLONGITUDELABEL:'Dec. Long.'); ?></span>
-								<span class="field-elem">
-									<?php
-									$longValue = "";
-									if(array_key_exists("decimallongitude",$occArr) && $occArr["decimallongitude"] != "") {
-										$longValue = $occArr["decimallongitude"];
-									}
-									?>
-									<input size = '25' type="text" name="decimallongitude" maxlength="15" value="<?php echo $longValue; ?>" onchange="decimalLongitudeChanged(this.form);" />
-								</span>
-							</div>
-							<div class="field-block">
-								<span class="field-label"><?php echo (isset($LANG['METHOD']) ? $LANG['METHOD'] : 'Method'); ?></span>
-								<span class="field-elem">
-									<?php if(array_key_exists('method',$occArr)) { ?>
-										<input size = '25' type="text" name="method" value="<?php echo $occArr["method"]; ?>" onchange="fieldChanged('method');" />
-										<?php 
-									} else { 
-									?>
-										NOT FOUND
-									<?php 
-									} 
-									?>
-								</span>
-							</div>
-							<div class="field-block">
-								<span class="field-label"><?php echo (defined('COORDINATEUNCERTAINITYINMETERSLABEL')?COORDINATEUNCERTAINITYINMETERSLABEL:'Uncertainty'); ?></span>
-								<span class="field-elem">
-									<input size = '25' type="text" name="coordinateuncertaintyinmeters" maxlength="10" value="<?php echo array_key_exists('coordinateuncertaintyinmeters',$occArr)?$occArr['coordinateuncertaintyinmeters']:''; ?>" onchange="coordinateUncertaintyInMetersChanged(this.form);" title="<?php echo (isset($LANG['UNCERTAINTY_METERS'])?$LANG['UNCERTAINTY_METERS']:'Uncertainty in Meters'); ?>" />
-									<a href="#" onclick="return dwcDoc('coordinateUncertaintyInMeters')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-								</span>
-							</div>
-						</div>
-					<?php endif; ?>
-				</div>  <!-- image ends -->
-				<table class = "column left" style = "border:1px solid black;">									
-					<!-- TODO: implement button functionality, examine relevant button divs in old code below ie saveedits button to get started -->
-					<tr>
-						<td>
-							<div id="bottomSubmitDiv">
-								<input type="hidden" name="occid" value="<?php echo $occManager->getOccId(); ?>" />
-								<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
-								<input type="hidden" name="observeruid" value="<?php echo $SYMB_UID; ?>" />
-								<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
-								<input type="hidden" name="linkdupe" value="" />
-								<?php
-								if($occId){
-									?>
-									<div style="float:left">
-										<div id="editButtonDiv">
-											<button type="submit" id="saveEditsButton" name="submitaction" value="saveOccurEdits" onclick="return verifyFullFormEdits(this.form)" disabled><?php echo $LANG['SAVE_EDITS']; ?></button>
-											<button 
-												type="submit" 
-												value="Previous" 
-												onclick="<?php if($occIndex>0) { ?>submitQueryForm('back');<?php } ?> return false;">
-												Previous
-											</button>
-											<button type="button" value="Done" onclick="navigateToURL(<?php echo($collId) ?>)">Done</button>
-											<button 
-												type="submit" 
-												value="Next" 
-												onclick="<?php if($occIndex<$qryCnt-1) { ?>submitQueryForm('forward');<?php } ?> return false;">
-												Next
-											</button>
-											<input type="hidden" name="occindex" value="<?php echo is_numeric($occIndex)?$occIndex:''; ?>" />
-											<input name="editedfields" value="" />
-										</div>
-									</div>
-										<?php
-								}
-								else{
-									?>
-									<div id="addButtonDiv">
-										<input name="recordenteredby" type="hidden" value="<?php echo $PARAMS_ARR['un']; ?>" />
-										<button name="submitaction" type="submit" value="addOccurRecord" style="width:150px;font-weight:bold;margin:10px;"><?php echo $LANG['ADD_RECORD']; ?></button>
-										<input name="qrycnt" type="hidden" value="<?php echo $qryCnt?$qryCnt:''; ?>" />
-										<div style="margin-left:15px;font-weight:bold;">
-											<?php echo $LANG['FOLLOW_UP']; ?>:
-										</div>
-										<div style="margin-left:20px;">
-											<input name="gotomode" type="radio" value="1" <?php echo ($goToMode==1?'CHECKED':''); ?> /> <?php echo $LANG['GO_TO_NEW']; ?><br/>
-											<input name="gotomode" type="radio" value="2" <?php echo ($goToMode==2?'CHECKED':''); ?> /> <?php echo $LANG['GO_NEW_CARRYOVER']; ?><br/>
-											<input name="gotomode" type="radio" value="0" <?php echo (!$goToMode?'CHECKED':''); ?> /> <?php echo $LANG['REMAIN_ON_PAGE']; ?>
-										</div>
-									</div>
-									<?php
-								}
-								?>
-							</div>
-						</td>
-					</tr>
-				</table>
-			</form>
-			<section>
-				<div class="info function-bar">
-					<?php echo "info needed   " ?>
-					<div style="float:left;" title="<?php echo $LANG['PRIMARY_KEY']; ?>">
-						<?php if($occId) echo 'Key: '.$occManager->getOccId(); ?>
-					</div>
-				</div>
-				<div class="info function-bar">
-					<?php
-						if(array_key_exists('recordenteredby',$occArr)){
-							echo $LANG['ENTERED_BY'].': '.($occArr['recordenteredby']?$occArr['recordenteredby']:$LANG['NOT_RECORDED']);
-						}
-						if(isset($occArr['dateentered']) && $occArr['dateentered']) echo ' ['.$occArr['dateentered'].']';
-					?>
-				</div>
-				<div class="info">
-					<?php echo "info needed" ?>
-				</div>
-			</section> 
-		</div>
-	</div>
-	<!-- the body part of the new form end at here -->
-
-			<?php
+		<!-- body part of the new form start from here -->
+		<!-- TODO: we leave the old form so that some of its funcitons can be reused in the new form  -->
+		<?php
 			if($statusStr){
 				?>
 				<div id="statusdiv" style="margin:5px 0px 5px 15px;">
@@ -1297,1037 +730,552 @@ else{
 				</div>
 				<?php
 			}
-			if($qryCnt == 0 && !$occId && array_key_exists('q_catalognumber',$_POST)){
-				?>
-				<div style="clear:both;padding:20px;font-weight:bold;font-size:120%;">
-					<?php echo (isset($LANG['NONE_FOUND'])?$LANG['NONE_FOUND']:'No records found matching the query'); ?>
-				</div>
-				<?php
-			}
-			if($occArr || $goToMode == 1 || $goToMode == 2){		//$action == 'gotonew'
-				if($occId && $isLocked){
-					?>
-					<div style="margin:25px;border:2px double;padding:20px;width:90%;">
-						<div style="color:red;font-weight:bold;font-size:110%;">
-							<?php echo $LANG['REC_LOCKED']; ?>
-						</div>
-						<div>
-							<?php echo $LANG['LOCK_EXPLAIN']; ?>
-						</div>
-						<div style="margin:20px;font-weight:bold;">
-							<a href="../individual/index.php?occid=<?php echo $occManager->getOccId(); ?>" target="_blank"><?php echo (isset($LANG['READ_ONLY'])?$LANG['READ_ONLY']:'Read-only Display'); ?></a>
-						</div>
-					</div>
-					<?php
-				}
-				else{
-					?>
-					<!-- the tabs start from here -->
-					<table id="edittable" style="">
-						<tr><td id="editortd" style="" valign="top">
-							<div id="occedittabs" style="clear:both;">
-								<ul>
-									<li>
-										<a href="#occdiv"  style="">
-											<?php
-											if($occId) echo (isset($LANG['OCC_DATA'])?$LANG['OCC_DATA']:'Occurrence Data');
-											else echo '<span style="color:red;">'.(isset($LANG['NEW_OCC_RECORD'])?$LANG['NEW_OCC_RECORD']:'New Occurrence RecorT').'</span>';
+		}?>
+		<div id="editdiv">
+			<div class = "row">
+				<section>
+					<div class="btn function-bar" name="jumpform">
+						<!-- TODO: these buttons need to have corresponding functions(more detailes are needed) -->
+						<!-- see button functionality in old code below, interpret their uses -->
+						<!-- TODO: the "input" needs functions to jumps to corresponding page number -->
+						<form method="post">
+							<button type="submit" name="toggle-button" value="<?php echo isset($_POST['toggle-button']) && $_POST['toggle-button'] === 'Minimal' ? 'Detailed' : 'Minimal'; ?>">
+								<?php echo isset($_POST['toggle-button']) ? $_POST['toggle-button'] : 'Detailed'; ?>
+							</button>
+							<button type="button" onclick="jumpToPage()">Jump to:</button>
+							<input type="number" id="pageNumber" size="3" />
+						</form>
+						<div id="jumpDiv">
+							<?php
+							if($jumpStr){
+							?>
+								<div>
+									<?php if(array_key_exists('recordenteredby',$occArr)){
+												echo ($occArr['recordenteredby']?$occArr['recordenteredby']:$LANG['NOT_RECORDED']);
+											}
+											if(isset($occArr['dateentered']) && $occArr['dateentered']) echo ' ['.$occArr['dateentered'].']'; 
 											?>
-										</a>
-									</li>
+									<?php echo $jumpStr; ?>
+								</div>
+							<?php
+							}
+							if(isset($collections_editor_occurrenceeditorCrumbs)){
+								if($collections_editor_occurrenceeditorCrumbs){
+							?>
+									<div class="navpath">
+										<a href='../../index.php'><?php echo (isset($LANG['HOME'])?$LANG['Home']:'Home'); ?></a> &gt;&gt;
+										<?php
+										echo $collections_editor_occurrenceeditorCrumbs;
+										echo '<b>'.(isset($LANG['EDITOR'])?$LANG['EDITOR']:'Editor').'</b>';
+										?>
+									</div>
 									<?php
-									if($occId && $isEditor){
-										// Get symbiota user email as the annotator email (for fp)
-										include_once($SERVER_ROOT.'/classes/ProfileManager.php');
-										$pHandler = new ProfileManager();
-										$pHandler->setUid($SYMB_UID);
-										$person = $pHandler->getPerson();
-										$userEmail = ($person?$person->getEmail():'');
-
-										$anchorVars = 'occid='.$occManager->getOccId().'&occindex='.$occIndex.'&csmode='.$crowdSourceMode.'&collid='.$collId;
-										$detVars = 'identby='.urlencode($occArr['identifiedby']).'&dateident='.urlencode($occArr['dateidentified']).
-											'&sciname='.urlencode($occArr['sciname']).'&em='.$isEditor.
-											'&annotatorname='.urlencode($USER_DISPLAY_NAME).'&annotatoremail='.urlencode($userEmail).
-											(isset($collMap['collectioncode'])?'&collectioncode='.urlencode($collMap['collectioncode']):'').
-											(isset($collMap['institutioncode'])?'&institutioncode='.urlencode($collMap['institutioncode']):'').
-											'&catalognumber='.urlencode($occArr['catalognumber']);
-										if($isEditor < 4){
-											?>
-											<li id="detTab">
-												<a href="includes/determinationtab.php?<?php echo $anchorVars.'&'.$detVars; ?>" style=""><?php echo (isset($LANG['DET_HISTORY'])?$LANG['DET_HISTORY']:'Determination History'); ?></a>
-											</li>
+								}
+							} ?>
+						</div>
+						<!-- <button id="detail-btn" onclick="toggleDetail()" value="detailed">Detailed</button> -->
+					</div>
+				</section> 
+				<form id="fullform" name="fullform" action="occurrenceeditor.php" method="post" onsubmit="return verifyFullForm(this);">
+					<!-- navigation bar -->
+					<!-- left part of the form starts -->
+					<div class = "column left login-info" style = "background-color: #F2F2F2; ">
+						<div class="field-block title">
+							<h2>Transcribe into Fields</h2>
+							<h1><?php print_r($test) ?></h1>
+						</div>
+						<div class="field-block">
+							<span class="field-label"><?php echo (isset($LANG['BARCODE']) ? $LANG['BARCODE'] : 'Barcode'); ?></span>
+							<span class="field-elem">
+								<!-- this $occArr array connects to the old form's database -->
+								<?php if(array_key_exists('barcode',$occArr)) { ?>
+									<input type="text" size = '50' id="barcode" name="barcode" value="<?php echo $occArr['barcode'] ?>" onchange="fieldChanged('barcode');" <?php if($isEditor > 2) echo 'disabled'; ?> autocomplete="off" />
+								<?php 
+								} else { 
+								?>
+									NOT FOUND
+								<?php 
+								} 
+								?>
+							</span>
+						</div>
+						<?php if(!isset($_POST['toggle-button']) || (isset($_POST['toggle-button']) && $_POST['toggle-button'] != 'Minimal')): ?>
+							<div class="field-block">
+								<span class="field-label"><?php echo (isset($LANG['ACCES_NUM']) ? $LANG['ACCES_NUM'] : 'Accession Num.'); ?></span>
+								<span class="field-elem">
+									<?php if(array_key_exists('accesNum',$occArr)) { ?>
+										<input type="text" size = '50' name="accesNum" value="<?php echo $occArr["accesNum"]; ?>" onchange="fieldChanged('accesNum');" />
+									<?php 
+									} else { 
+									?>
+										NOT FOUND
+									<?php 
+									} 
+									?>
+								</span>
+							</div>
+						<?php endif; ?>
+						<div class="field-block">
+							<span class="field-label"><?php echo (isset($LANG['FILED_UNDER']) ? $LANG['FILED_UNDER'] : 'Filed Under'); ?></span>
+							<span class="field-elem">
+								<?php if(array_key_exists('filedUnder',$occArr)) { 
+									$filedUnderValue = isset($filedUnderDrop[$occArr["filedUnder"]]) ? $filedUnderDrop[$occArr["filedUnder"]] : null;
+								?>	
+									<input type="text" size="50" name="filedUnderDisplay" id="filedUnderDisplay" value="<?php echo $filedUnderValue; ?>" onkeyup="filterDropdown('filedUnderDisplay', 'filedUnder', <?php echo htmlspecialchars(json_encode($filedUnderDrop), ENT_QUOTES, 'UTF-8'); ?>)" />
+									<select name="filedUnder" id="filedUnder" style="display: none;" onchange="selectOption(this, 'filedUnderDisplay',<?php echo htmlspecialchars(json_encode($filedUnderDrop), ENT_QUOTES, 'UTF-8'); ?>);"></select>
+								<?php 
+								} else { 
+								?>
+									NOT FOUND
+								<?php 
+								} 
+								?>
+							</span>
+						</div>
+						<div class="field-block">
+							<span class="field-label"><?php echo (isset($LANG['CURR_NAME']) ? $LANG['CURR_NAME'] : 'Current Name'); ?></span>
+							<span class="field-elem">
+								<?php if(array_key_exists('currName',$occArr)) { ?>
+									<input type="text" size = '50' name="currName" value="<?php echo $occArr["currName"]; ?>" onchange="fieldChanged('currName');" />
+								<?php 
+								} else { 
+								?>
+									NOT FOUND
+								<?php 
+								} 
+								?>
+							</span>
+						</div>
+						<?php if(!isset($_POST['toggle-button']) || (isset($_POST['toggle-button']) && $_POST['toggle-button'] != 'Minimal')): ?>
+							<div class="field-block">
+								<span class="field-label"><?php echo (isset($LANG['IDQUALIFIER']) ? $LANG['IDQUALIFIER'] : 'ID Qualifier'); ?></span>
+								<span class="field-elem">
+									<!-- the drop list needs to be update -->
+									<?php
+										if(array_key_exists('idQualifier',$occArr)) {
+									?>
+										<select name="idQualifier" onchange="fieldChanged('idQualifier');">
+											<option value=""><?php echo $LANG['IDQUALIFIER']; ?>Select Your ID Qualifier</option>
+											<option value="">---------------------------------------</option>
 											<?php
-										}
-										if($isEditor == 1 || $isEditor == 2){
-											?>
-											<li id="imgTab">
-												<a href="includes/imagetab.php?<?php echo $anchorVars; ?>" style=""><?php echo (isset($LANG['IMAGES'])?$LANG['IMAGES']:'Images'); ?></a>
-											</li>
-											<?php
-											if(in_array('matSample',$moduleActivation)){
-												?>
-												<li id="matSampleTab">
-													<a href="includes/materialsampleinclude.php?<?php echo $anchorVars; ?>"><?php echo $LANG['MATERIAL_SAMPLE']; ?></a>
-												</li>
-												<?php
+											$idqArr = array('s. str.', '?', 'not', 'cf.', 's. lat.', 'aff.');
+											foreach ($idqArr as $k) {
+												$selected = ($k == $occArr['idQualifier']) ? 'selected' : '';
+												echo '<option value="' . $k . '" ' . $selected . '>' . $k . '</option>' . "\n";
 											}
 											?>
-											<li id="resourceTab">
-												<a href="includes/resourcetab.php?<?php echo $anchorVars; ?>" style=""><?php echo (isset($LANG['LINKED_RES'])?$LANG['LINKED_RES']:'Linked Resources'); ?></a>
-											</li>
-											<?php
-											if($occManager->traitCodingActivated()){
-												$traitAnchor = $anchorVars;
-												?>
-												<li id="traitTab">
-													<a href="includes/traittab.php?<?php echo $traitAnchor; ?>" style=""><?php echo (isset($LANG['TRAITS'])?$LANG['TRAITS']:'Traits'); ?></a>
-												</li>
-												<?php
-											}
-											?>
-											<li id="adminTab">
-												<a href="includes/admintab.php?<?php echo $anchorVars; ?>" style=""><?php echo (isset($LANG['ADMIN'])?$LANG['ADMIN']:'Admin'); ?></a>
-											</li>
-											<?php
-										}
+										</select>
+									<?php
+									} else {
+									?>
+										NOT FOUND
+									<?php
 									}
 									?>
-								</ul>
-								<!-- a link to the quick entry form -->
-								<div>
-									<?php $url = 'occurrencequickentry.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$recStart).'&occid='.$id.'&collid='.$collId; ?>
-									<a href="occurrencequickentry.php?csmode=<?php echo $crowdSourceMode; ?> &occindex=<?php echo ($recCnt+$recStart); ?> &occid=<?php echo $id; ?>&collid=<?php echo $collId; ?>" >
-										<h3>Go to the quick entry form</h3>
-									</a>
+								</span>
+							</div>
+							<div class="field-block">
+								<span class="field-label"><?php echo (defined('IDENTIFIEDBYLABEL')?IDENTIFIEDBYLABEL:'Identified By'); ?></span>
+								<span class="field-elem">
+									<input size = '50' type="text"  maxlength="255" name="identifiedby" value="<?php echo array_key_exists('identifiedby',$occArr)?$occArr['identifiedby']:''; ?>" onchange="fieldChanged('identifiedby');" />
+									<a href="#" onclick="return dwcDoc('identifiedBy')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+								</span>
+							</div>
+							<div class="field-block">
+								<span class="field-label"><?php echo (defined('DATEIDENTIFIEDLABEL')?DATEIDENTIFIEDLABEL:'Date Identified'); ?></span>
+								<span class="field-elem">
+									<input size = '50' type="text" name="dateidentified" maxlength="45" value="<?php echo array_key_exists('dateidentified',$occArr)?$occArr['dateidentified']:''; ?>" onchange="fieldChanged('dateidentified');" />
+									<a href="#" onclick="return dwcDoc('dateIdentified')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+								</span>
+							</div>
+							<!-- There is a tab below is for determiation -->
+							<div class="field-block">
+								<span class="field-label"><?php echo (isset($LANG['DET_TEXT']) ? $LANG['DET_TEXT'] : 'Det. Text'); ?></span>
+								<span class="field-elem">
+									<?php if(array_key_exists('detText',$occArr)) { ?>
+										<input size = '50' type="text" name="detText" value="<?php echo $occArr["detText"]; ?>" onchange="fieldChanged('detText');" />
+									<?php 
+									} else { 
+									?>
+										NOT FOUND
+									<?php 
+									} 
+									?>
+								</span>
+							</div>
+							<div class="field-block">
+								<span class="field-label"><?php echo (isset($LANG['PROVENANCE']) ? $LANG['PROVENANCE'] : 'Provenance'); ?></span>
+								<span class="field-elem">
+									<?php if(array_key_exists('provenance',$occArr)) { ?>
+										<input type="text" size = '50' name="provenance" value="<?php echo $occArr["provenance"]; ?>" onchange="fieldChanged('provenance');" />
+									<?php 
+									} else { 
+									?>
+										NOT FOUND
+									<?php 
+									} 
+									?>
+								</span>
+							</div>
+						<?php endif; ?>
+						<div class="field-block">
+							<span class="field-label"><?php echo (defined('RECORDEDBYLABEL')?RECORDEDBYLABEL:'Collectors'); ?></span>
+							<span class="field-elem">
+								<input size = '50' type="text" name="recordedby" maxlength="255" value="<?php echo array_key_exists('recordedby',$occArr)?$occArr['recordedby']:''; ?>" onchange="fieldChanged('recordedby');" />
+								<a href="#" onclick="return dwcDoc('recordedBy')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+							</span>
+						</div>
+						<!-- I put associated collectors here -->
+						<div class="field-block">
+							<span class="field-label"><?php echo (defined('ASSOCIATEDCOLLECTORSLABEL')?ASSOCIATEDCOLLECTORSLABEL:'Et al.'); ?></span>
+							<span class="field-elem">
+								<input size = '50' type="text" name="associatedcollectors" maxlength="255" value="<?php echo array_key_exists('associatedcollectors',$occArr)?$occArr['associatedcollectors']:''; ?>" onchange="fieldChanged('associatedcollectors');" />
+								<a href="#" onclick="return dwcDoc('associatedCollectors')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+							</span>
+						</div>
+						<div class="field-block">
+							<span class="field-label"><?php echo (defined('RECORDNUMBERLABEL')?RECORDNUMBERLABEL:'Collector Number'); ?></span>
+							<span class="field-elem">
+								<input size = '50' type="text" name="recordnumber" maxlength="45" value="<?php echo array_key_exists('recordnumber',$occArr)?$occArr['recordnumber']:''; ?>" onchange="recordNumberChanged(this);" />
+								<a href="#" onclick="return dwcDoc('recordNumber')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+							</span>
+						</div> 
+						<div class="field-block">
+							<span class="field-label"><?php echo (defined('EVENTDATELABEL')?EVENTDATELABEL:'Date Collected'); ?></span>
+							<span class="field-elem">
+								<input size = '50' type="text" name="eventdate" value="<?php echo array_key_exists('eventdate',$occArr)?$occArr['eventdate']:''; ?>" onchange="eventDateChanged(this);" />
+								<a href="#" onclick="return dwcDoc('eventDate')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+							</span>
+						</div>
+						<div class="field-block">
+							<span class="field-label"><?php echo (defined('VERBATIMEVENTDATELABEL')?VERBATIMEVENTDATELABEL:'Verbatim Date'); ?></span>
+							<span class="field-elem">
+								<input size = '50' type="text" name="verbatimeventdate" maxlength="255" value="<?php echo array_key_exists('verbatimeventdate',$occArr)?$occArr['verbatimeventdate']:''; ?>" onchange="verbatimEventDateChanged(this)" />
+								<a href="#" onclick="return dwcDoc('verbatimEventDate')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+							</span>
+						</div>
+						<?php if(!isset($_POST['toggle-button']) || (isset($_POST['toggle-button']) && $_POST['toggle-button'] != 'Minimal')): ?>
+							<div class="field-block">
+								<span class="field-label"><?php echo (isset($LANG['CONTAINER']) ? $LANG['CONTAINER'] : 'Container'); ?></span>
+								<span class="field-elem">
+									<?php if(array_key_exists('container',$occArr)) { ?>
+										<input size = '50' type="text" name="container" value="<?php echo $occArr["container"]; ?>" onchange="fieldChanged('container');" />
+									<?php 
+									} else { 
+									?>
+										NOT FOUND
+									<?php 
+									} 
+									?>
+								</span>
+							</div>
+							<div class="field-block">
+								<span class="field-label"><?php echo (isset($LANG['COLL_TRIP']) ? $LANG['COLL_TRIP'] : 'Collecting Trip'); ?></span>
+								<span class="field-elem">
+									<?php if(array_key_exists('collTrip',$occArr)) { ?>
+										<input size = '50' type="text" name="collTrip" value="<?php echo $occArr["collTrip"]; ?>" onchange="fieldChanged('collTrip');" />
+									<?php 
+									} else { 
+									?>
+										NOT FOUND
+									<?php 
+									} 
+									?>
+								</span>
+							</div>
+						<?php endif; ?>
+						<div class="field-block">
+							<span class="field-label"><?php echo (isset($LANG['GEO_WITHIN']) ? $LANG['GEO_WITHIN'] : 'Geography Within'); ?></span>
+							<span class="field-elem">
+								<?php if(array_key_exists('geoWithin',$occArr)) { ?>
+									<input size = '50' type="text" name="geoWithin" value="<?php echo $occArr["geoWithin"]; ?>" onchange="fieldChanged('geoWithin');" />
+								<?php 
+								} else { 
+								?>
+									NOT FOUND
+								<?php 
+								} 
+								?>
+							</span>
+						</div>
+						<div class="field-block">
+							<span class="field-label"><?php echo (isset($LANG['HIGH_GEO']) ? $LANG['HIGH_GEO'] : 'Higher Geography'); ?></span>
+							<span class="field-elem">
+								<?php if(array_key_exists('highGeo',$occArr)) { ?>
+									<input type="text" size = '50' name="highGeo" value="<?php echo $occArr["highGeo"]; ?>" onchange="fieldChanged('highGeo');" />
+								<?php 
+								} else { 
+								?>
+									NOT FOUND
+								<?php 
+								} 
+								?>
+							</span>
+						</div>
+						<?php if(!isset($_POST['toggle-button']) || (isset($_POST['toggle-button']) && $_POST['toggle-button'] != 'Minimal')): ?>
+							<div class="field-block">
+								<span class="field-label"><?php echo (defined('LOCALITYLABEL')?LOCALITYLABEL:'Verbatim Locality'); ?></span>
+								<span class="field-elem">
+									<input id="fflocality" type="text" size = '50'  onchange="fieldChanged('locality');" name="locality" value="<?php echo array_key_exists('locality',$occArr)?$occArr['locality']:''; ?>" />
+									<a href="#" onclick="return dwcDoc('locality')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" style="width:9px" /></a>
+								</span>
+							</div>
+							<div class="field-block">
+								<span class="field-label"><?php echo (defined('HABITATLABEL')?HABITATLABEL:'Habitat'); ?></span>
+								<span class="field-elem">
+									<input size = '50' type="text" name="habitat" value="<?php echo array_key_exists('habitat',$occArr)?$occArr['habitat']:''; ?>" onchange="fieldChanged('habitat');" />
+									<a href="#" onclick="return dwcDoc('habitat')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+								</span>
+							</div>
+							<div class="field-block">
+								<span class="field-label"><?php echo (isset($LANG['FREQUENCY']) ? $LANG['FREQUENCY'] : 'Frequency'); ?></span>
+								<span class="field-elem">
+									<?php if(array_key_exists('frequency',$occArr)) { ?>
+										<input size = '50' type="text" name="frequency" value="<?php echo $occArr["frequency"]; ?>" onchange="fieldChanged('frequency');" />
+									<?php 
+									} else { 
+									?>
+										NOT FOUND
+									<?php 
+									} 
+									?>
+								</span>
+							</div>
+							<div class="field-block">
+								<span class="field-label"><?php echo (defined('VERBATIMATTRIBUTESLABEL')?VERBATIMATTRIBUTESLABEL:'Description'); ?></span>
+								<span class="field-elem">
+									<input size = '50' type="text" name="verbatimattributes" value="<?php echo array_key_exists('verbatimattributes',$occArr)?$occArr['verbatimattributes']:''; ?>" onchange="fieldChanged('verbatimattributes');" />
+									<a href="#" onclick="return dwcDoc('verbatimAttributes')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+								</span>
+							</div>
+							<div class="field-block">
+								<span class="field-label"><?php echo (defined('OCCURRENCEREMARKSLABEL')?OCCURRENCEREMARKSLABEL:'Remarks'); ?></span>
+								<span class="field-elem">
+									<input size = '50' type="text" name="occurrenceremarks" value="<?php echo array_key_exists('occurrenceremarks',$occArr)?$occArr['occurrenceremarks']:''; ?>" onchange="fieldChanged('occurrenceremarks');" title="<?php echo $LANG['OCC_REMARKS']; ?>" />
+									<a href="#" onclick="return dwcDoc('occurrenceRemarks')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+								</span>
+							</div>
+						<?php endif; ?>
+						<!-- I use the label project here from the old form, not sure if it's the same thing -->
+						<div class="field-block">
+							<span class="field-label"><?php echo (defined('LABELPROJECTLABEL')?LABELPROJECTLABEL:'Project'); ?></span>
+							<span class="field-elem">
+								<input size = '50' type="text" name="labelproject" maxlength="45" value="<?php echo array_key_exists('labelproject',$occArr)?$occArr['labelproject']:''; ?>" onchange="fieldChanged('labelproject');" />
+							</span>
+						</div>
+					</div>  <!-- column left ends -->
+					<!-- image part -->
+					<!-- TODO: implement image code from old form, see collections/editor/includes/imagetab.php and check the embedded code to get started -->
+					<div class = "column right" style = "border: 1; background-color:#F2F2F3;">
+						<div class="field-block title">
+							<h2>Click to Zoom in Other Window</h2>
+						</div>
+						<div class="login-info" style = "backgroufnd-color:#86C5D8; text-align: center;">
+							<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOwxvSve1jvNKgXtY40U7wyrTGKuYGUcWCTg&usqp=CAU" />
+						</div>
+						<div class="login-info">
+							<!-- TODO: need to figure out how to deal with this input. It supposes to be generated automatically based on the form -->
+							<div class="field-block">
+								<span class="field-label"><?php echo (isset($LANG['RECCORECTED']) ? $LANG['RECCORECTED'] : 'Record Created'); ?>:</span>
+								<span class="field-elem">
+									<?php echo ($accesNum ? $occArr["recCreated"] : 'New Record'); ?>
+								</span>
+							</div>
+							<div class="field-block">
+								<span class="field-label"><?php echo (isset($LANG['PREPMETHOD']) ? $LANG['PREPMETHOD'] : 'Prep Method'); ?></span>
+								<span class="field-elem">
+									<?php if(array_key_exists('prepMethod',$occArr)) { ?>
+										<input size = '25' type="text" name="prepMethod" value="<?php echo $occArr["prepMethod"]; ?>" onchange="fieldChanged('prepMethod');"  />
+									<?php 
+									} else { 
+									?>
+										NOT FOUND
+									<?php 
+									} 
+									?>
+								</span>
+							</div>
+							<div class="field-block">
+								<span class="field-label"><?php echo (isset($LANG['FORMAT']) ? $LANG['FORMAT'] : 'Format'); ?></span>
+								<span class="field-elem">
+									<?php if(array_key_exists('format',$occArr)) { ?>
+										<input size = '25' type="text" name="format" value="<?php echo $occArr["format"]; ?>" onchange="fieldChanged('format');" />
+									<?php 
+									} else { 
+									?>
+										NOT FOUND
+									<?php 
+									} 
+									?>
+								</span>
+							</div>
+						</div>
+						<?php if(!isset($_POST['toggle-button']) || (isset($_POST['toggle-button']) && $_POST['toggle-button'] != 'Minimal')): ?>
+							<div class="login-info">
+								<div class="field-block">
+									<span class="field-label"><?php echo (defined('VERBATIMELEVATIONLABEL')?VERBATIMELEVATIONLABEL:'Verb. Elev.'); ?></span>
+									<span class="field-elem">
+										<input size = '25' type="text" name="verbatimelevation" maxlength="255" value="<?php echo array_key_exists('verbatimelevation',$occArr)?$occArr['verbatimelevation']:''; ?>" onchange="verbatimElevationChanged(this.form);" />
+										<a href="#" onclick="return dwcDoc('verbatimElevation')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+									</span>
 								</div>
-								<div id="occdiv">
-									<!-- the main form starts from here -->
-									<form id="oldform" name="oldform" action="occurrenceeditor.php" method="post" onsubmit="return verifyFullForm(this);">
-										<fieldset>
-											<!-- collector info starts form here -->
-											<legend><?php echo (isset($LANG['COLLECTOR_INFO'])?$LANG['COLLECTOR_INFO']:'Collector Info'); ?></legend>
-											<?php
-											if($occId){
-												if($fragArr || $specImgArr){
-													?>
-													<div style="float:right;margin:-7px -4px 0px 0px;font-weight:bold;">
-														<span id="imgProcOnSpan" style="display:block;">
-															<a href="#" onclick="toggleImageTdOn();return false;">&gt;&gt;</a>
-														</span>
-														<span id="imgProcOffSpan" style="display:none;">
-															<a href="#" onclick="toggleImageTdOff();return false;">&lt;&lt;</a>
-														</span>
-													</div>
-													<?php
-												}
-												if($crowdSourceMode){
-													?>
-													<div style="float:right;margin:-7px 10px 0px 0px;font-weight:bold;">
-														<span id="longtagspan" style="cursor:pointer;" onclick="toggleCsMode(0);return false;"><?php echo (isset($LANG['LONG_FORM'])?$LANG['LONG_FORM']:'Long Form'); ?></span>
-														<span id="shorttagspan" style="cursor:pointer;display:none;" onclick="toggleCsMode(1);return false;"><?php echo (isset($LANG['SHORT_FORM'])?$LANG['SHORT_FORM']:'Short Form'); ?></span>
-													</div>
-													<?php
-												}
-											}
-											?>
-											<div style="clear:both;">
-												<div id="catalogNumberDiv">
-													<?php echo (defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:'Catalog Number'); ?>
-													<a href="#" onclick="return dwcDoc('catalogNumber')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
-													<input type="text" id="catalognumber" name="catalognumber" value="<?php echo array_key_exists('catalognumber',$occArr)?$occArr['catalognumber']:''; ?>" onchange="fieldChanged('catalognumber');" <?php if($isEditor > 2) echo 'disabled'; ?> autocomplete="off" />
-												</div>
-												<div id="otherCatalogNumbersDiv">
-													<div id="identifierDiv" class="divTable">
-														<div class="divTableHeading">
-															<div class="divTableRow">
-																<div class="divTableHead"><?php echo $LANG['IDNAME']; ?> <a href="#" onclick="return dwcDoc('otherCatalogNumbers')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a></div>
-																<div class="divTableHead"><?php echo $LANG['IDVALUE']; ?></div>
-															</div>
-														</div>
-														<div id="identifierBody" class="divTableBody">
-															<?php
-															if(isset($occArr['identifiers'])){
-																foreach($occArr['identifiers'] as $idKey => $idArr){
-																	?>
-																	<div id="idRow-<?php echo $idKey; ?>" class="divTableRow">
-																		<div class="divTableCell">
-																			<input name="idkey[]" type="hidden" value="<?php echo $idKey; ?>" />
-																			<input class="idNameInput" name="idname[]" type="text" value="<?php echo $idArr['name']; ?>" onchange="fieldChanged('idname');" autocomplete="off" />
-																		</div>
-																		<div class="divTableCell">
-																			<input class="idValueInput" name="idvalue[]" type="text" value="<?php echo $idArr['value']; ?>" onchange="fieldChanged('idvalue');" autocomplete="off" /><a href="#" onclick="deleteIdentifier(<?php echo "'".$idKey."',".$occId; ?>);return false" tabindex="-1"><img src="../../images/del.png" /></a>
-																		</div>
-																	</div>
-																	<?php
-																}
-															}
-															?>
-															<div class="divTableRow">
-																<div class="divTableCell">
-																	<input name="idkey[]" type="hidden" value="newidentifier" />
-																	<input class="idNameInput" name="idname[]" type="text" value="" onchange="fieldChanged('idname');" autocomplete="off" />
-																</div>
-																<div class="divTableCell">
-																	<input class="idValueInput" name="idvalue[]" type="text" value="" onchange="fieldChanged('idvalue');" autocomplete="off" /><a href="#" onclick="addIdentifierField(this);return false" tabindex="-1"><img src="../../images/plus.png" /></a>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-											<div style="clear:both;">
-												<div id="recordedByDiv">
-													<?php echo (defined('RECORDEDBYLABEL')?RECORDEDBYLABEL:'Collector'); ?>
-													<a href="#" onclick="return dwcDoc('recordedBy')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
-													<input type="text" name="recordedby" maxlength="255" value="<?php echo array_key_exists('recordedby',$occArr)?$occArr['recordedby']:''; ?>" onchange="fieldChanged('recordedby');" />
-												</div>
-												<div id="recordNumberDiv">
-													<?php echo (defined('RECORDNUMBERLABEL')?RECORDNUMBERLABEL:'Number'); ?>
-													<a href="#" onclick="return dwcDoc('recordNumber')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
-													<input type="text" name="recordnumber" maxlength="45" value="<?php echo array_key_exists('recordnumber',$occArr)?$occArr['recordnumber']:''; ?>" onchange="recordNumberChanged(this);" />
-												</div>
-												<div id="eventDateDiv" title="Earliest Date Collected">
-													<?php echo (defined('EVENTDATELABEL')?EVENTDATELABEL:'Date'); ?>
-													<a href="#" onclick="return dwcDoc('eventDate')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
-													<input type="text" name="eventdate" value="<?php echo array_key_exists('eventdate',$occArr)?$occArr['eventdate']:''; ?>" onchange="eventDateChanged(this);" />
-												</div>
-												<?php
-												if(!defined('DUPESEARCH') || DUPESEARCH){
-													?>
-													<div id="dupesDiv">
-														<input type="button" value="Duplicates" onclick="searchDupes(this.form);" /><br/>
-														<input type="checkbox" name="autodupe" value="1" onchange="autoDupeChanged(this)" tabindex="-1" />
-														<?php echo (isset($LANG['AUTO_SEARCH'])?$LANG['AUTO_SEARCH']:'Auto search'); ?>
-													</div>
-													<?php
-												}
-												?>
-											</div>
-											<div style="clear:both;">
-												<div id="associatedCollectorsDiv">
-													<div class="flabel">
-														<?php echo (defined('ASSOCIATEDCOLLECTORSLABEL')?ASSOCIATEDCOLLECTORSLABEL:'Associated Collectors'); ?>
-														<a href="#" onclick="return dwcDoc('associatedCollectors')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													</div>
-													<input type="text" name="associatedcollectors" maxlength="255" value="<?php echo array_key_exists('associatedcollectors',$occArr)?$occArr['associatedcollectors']:''; ?>" onchange="fieldChanged('associatedcollectors');" />
-												</div>
-												<div id="verbatimEventDateDiv">
-													<div class="flabel">
-														<?php echo (defined('VERBATIMEVENTDATELABEL')?VERBATIMEVENTDATELABEL:'Verbatim Date'); ?>
-														<a href="#" onclick="return dwcDoc('verbatimEventDate')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													</div>
-													<input type="text" name="verbatimeventdate" maxlength="255" value="<?php echo array_key_exists('verbatimeventdate',$occArr)?$occArr['verbatimeventdate']:''; ?>" onchange="verbatimEventDateChanged(this)" />
-												</div>
-												<div id="dateToggleDiv">
-													<a href="#" onclick="toggle('dateextradiv');return false;" tabindex="-1"><img class="editimg" src="../../images/editplus.png" /></a>
-												</div>
-												<?php
-												if($loanArr = $occManager->getLoanData()){
-													?>
-													<fieldset style="float:right;margin:3px;padding:5px;border:1px solid red;">
-														<legend style="color:red;"><?php echo (isset($LANG['OUT_ON_LOAN'])?$LANG['OUT_ON_LOAN']:'Out On Loan'); ?></legend>
-														<b><?php echo (isset($LANG['TO'])?$LANG['TO']:'To'); ?>:</b> <a href="../loans/outgoing.php?tabindex=1&collid=<?php echo $occManager->getCollId().'&loanid='.$loanArr['id']; ?>"><?php echo $loanArr['code']; ?></a><br/>
-														<b><?php echo (isset($LANG['DUE_DATE'])?$LANG['DUE_DATE']:'Due date'); ?>:</b> <?php echo (isset($loanArr['date'])?$loanArr['date']:(isset($LANG['NOT_DEFINED'])?$LANG['NOT_DEFINED']:'Not Defined')); ?>
-													</fieldset>
-													<?php
-												}
-												?>
-												<div id="dupeMsgDiv">
-													<div id="dupesearch"><?php echo (isset($LANG['SEARCHING_DUPE'])?$LANG['SEARCHING_DUPE']:'Searching for Duplicates'); ?>...</div>
-													<div id="dupenone" style="display:none;color:red;"><?php echo (isset($LANG['NO_DUPES_FOUND'])?$LANG['NO_DUPES_FOUND']:'No Duplicates Found'); ?></div>
-													<div id="dupedisplay" style="display:none;color:green;"><?php echo (isset($LANG['DISPLAY_DUPES'])?$LANG['DISPLAY_DUPES']:'Displaying Duplicates'); ?></div>
-												</div>
-											</div>
-											<div id="dateextradiv">
-												<div id="ymdDiv">
-													<?php echo (defined('YYYYMMDDLABEL')?YYYYMMDDLABEL:'YYYY-MM-DD'); ?>:
-													<a href="#" onclick="return dwcDoc('year')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<input type="text" name="year" value="<?php echo array_key_exists('year',$occArr)?$occArr['year']:''; ?>" onchange="inputIsNumeric(this, 'Year');fieldChanged('year');" title="<?php echo (isset($LANG['NUM_YEAR'])?$LANG['NUM_YEAR']:'Numeric Year'); ?>" />-
-													<input type="text" name="month" value="<?php echo array_key_exists('month',$occArr)?$occArr['month']:''; ?>" onchange="inputIsNumeric(this, 'Month');fieldChanged('month');" title="<?php echo (isset($LANG['NUM_MONTH'])?$LANG['NUM_MONTH']:'Numeric Month'); ?>" />-
-													<input type="text" name="day" value="<?php echo array_key_exists('day',$occArr)?$occArr['day']:''; ?>" onchange="inputIsNumeric(this, 'Day');fieldChanged('day');" title="<?php echo (isset($LANG['NUM_DAY'])?$LANG['NUM_DAY']:'Numeric Day'); ?>" />
-												</div>
-												<div id="dayOfYearDiv">
-													<?php echo (defined('DAYOFYEARLABEL')?DAYOFYEARLABEL:'Day of Year'); ?>:
-													<a href="#" onclick="return dwcDoc('startDayOfYear')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<input type="text" name="startdayofyear" value="<?php echo array_key_exists('startdayofyear',$occArr)?$occArr['startdayofyear']:''; ?>" onchange="inputIsNumeric(this, 'Start Day of Year');fieldChanged('startdayofyear');" title="<?php echo (isset($LANG['START_DOY'])?$LANG['START_DOY']:'Start Day of Year'); ?>" /> -
-													<input type="text" name="enddayofyear" value="<?php echo array_key_exists('enddayofyear',$occArr)?$occArr['enddayofyear']:''; ?>" onchange="inputIsNumeric(this, 'End Day of Year');fieldChanged('enddayofyear');" title="<?php echo $LANG['END_DOY']; ?>" />
-												</div>
-											</div>
-											<?php
-											if(isset($ACTIVATE_EXSICCATI) && $ACTIVATE_EXSICCATI){
-												$exsArr = $occManager->getExsiccati();
-												?>
-												<div id="exsDiv">
-													<div id="ometidDiv">
-														<?php echo (isset($LANG['EXS_TITLE'])?$LANG['EXS_TITLE']:'Exsiccati Title'); ?><br/>
-														<input id="exstitleinput" name="exstitle" value="<?php echo (isset($exsArr['exstitle'])?$exsArr['exstitle']:''); ?>" />
-														<input id="ometidinput" name="ometid" type="text" style="display: none;" value="<?php echo (isset($exsArr['ometid'])?$exsArr['ometid']:''); ?>" onchange="fieldChanged('ometid')" />
-													</div>
-													<div id="exsnumberDiv">
-														<?php echo (isset($LANG['NUMBER'])?$LANG['NUMBER']:'Number'); ?><br/>
-														<input name="exsnumber" type="text" value="<?php echo isset($exsArr['exsnumber'])?$exsArr['exsnumber']:''; ?>" onchange="fieldChanged('exsnumber')" />
-													</div>
-												</div>
-												<?php
-											}
-											?>
-										</fieldset>
-										<fieldset>
-											<legend><?php echo (isset($LANG['LATEST_ID'])?$LANG['LATEST_ID']:'Latest'); ?></legend>
-											<div style="clear:both;">
-												<div id="scinameDiv">
-													<?php echo (defined('SCIENTIFICNAMELABEL')?SCIENTIFICNAMELABEL:(isset($LANG['SCINAME'])?$LANG['SCINAME']:'Scientific Name')); ?>
-													<a href="#" onclick="return dwcDoc('scientificName')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
-													<input type="text" id="ffsciname" name="sciname" maxlength="250" value="<?php echo array_key_exists('sciname',$occArr)?$occArr['sciname']:''; ?>" onchange="fieldChanged('sciname');" <?php if($isEditor > 2) echo 'disabled'; ?> />
-													<input type="hidden" id="tidinterpreted" name="tidinterpreted" value="<?php echo array_key_exists('tidinterpreted',$occArr)?$occArr['tidinterpreted']:''; ?>" />
-													<?php
-													if($isEditor == 3){
-														echo '<div style="clear:both;color:red;margin-left:5px;">'.(isset($LANG['LIMITED_EDITING'])?$LANG['LIMITED_EDITING']:'Limited editing rights: use determination tab to edit identification').'</div>';
-													}
-													elseif($isEditor == 4){
-														echo '<div style="clear:both;color:red;margin-left:5px;">'.(isset($LANG['NEED_FULL'])?$LANG['NEED_FULL']:'Note: Full editing permissions are needed to edit an identification').'</div>';
-													}
-													?>
-												</div>
-												<div id="scientificNameAuthorshipDiv">
-													<?php echo (defined('SCIENTIFICNAMEAUTHORSHIPLABEL')?SCIENTIFICNAMEAUTHORSHIPLABEL:'Author'); ?>
-													<a href="#" onclick="return dwcDoc('scientificNameAuthorship')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
-													<input type="text" name="scientificnameauthorship" maxlength="100" tabindex="0" value="<?php echo array_key_exists('scientificnameauthorship',$occArr)?$occArr['scientificnameauthorship']:''; ?>" onchange="fieldChanged('scientificnameauthorship');" <?php if($isEditor > 2) echo 'disabled'; ?> />
-												</div>
-											</div>
-											<div style="clear:both;padding:3px 0px 0px 10px;">
-												<?php
-												if(!$occId){
-													echo '<div id="idRankDiv">';
-													echo (defined('IDCONFIDENCELABEL')?IDCONFIDENCELABEL:'ID Confidence');
-													echo ' <a href="#" onclick="return dwcDoc(\'idConfidence\')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a> ';
-													echo '<select name="confidenceranking" onchange="fieldChanged(\'confidenceranking\')">';
-													echo '<option value="">'.(isset($LANG['UNDEFINED'])?$LANG['UNDEFINED']:'Undefined').'</option>';
-													$idRankArr = array(10 => 'Absolute', 9 => 'Very High', 8 => 'High', 7 => 'High - verification requested', 6 => 'Medium - insignificant material', 5 => 'Medium', 4 => 'Medium - verification requested',3 => 'Low - insignificant material', 2 => 'Low', 1 => 'Low - ID Requested', 0 => 'ID Requested');
-													foreach($idRankArr as $rankKey => $rankText){
-														echo '<option value="'.$rankKey.'">'.$rankKey.' - '.$rankText.'</option>';
-													}
-													echo '</select>';
-													echo '</div>';
-												}
-												?>
-												<div id="identificationQualifierDiv">
-													<?php echo (defined('IDENTIFICATIONQUALIFIERLABEL')?IDENTIFICATIONQUALIFIERLABEL:'ID Qualifier'); ?>
-													<a href="#" onclick="return dwcDoc('identificationQualifier')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<input type="text" name="identificationqualifier" size="25" value="<?php echo array_key_exists('identificationqualifier',$occArr)?$occArr['identificationqualifier']:''; ?>" onchange="fieldChanged('identificationqualifier');" <?php if($isEditor > 2) echo 'disabled'; ?> />
-												</div>
-												<div  id="familyDiv">
-													<?php echo (defined('FAMILYLABEL')?FAMILYLABEL:'Family'); ?>
-													<a href="#" onclick="return dwcDoc('family')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<input type="text" name="family" maxlength="50" tabindex="0" value="<?php echo array_key_exists('family',$occArr)?$occArr['family']:''; ?>" onchange="fieldChanged('family');" />
-												</div>
-											</div>
-											<div style="clear:both;padding:3px 0px 0px 10px;">
-												<div id="identifiedByDiv">
-													<?php echo (defined('IDENTIFIEDBYLABEL')?IDENTIFIEDBYLABEL:'Identified By'); ?>
-													<a href="#" onclick="return dwcDoc('identifiedBy')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<input type="text" name="identifiedby" maxlength="255" value="<?php echo array_key_exists('identifiedby',$occArr)?$occArr['identifiedby']:''; ?>" onchange="fieldChanged('identifiedby');" />
-												</div>
-												<div id="dateIdentifiedDiv">
-													<?php echo (defined('DATEIDENTIFIEDLABEL')?DATEIDENTIFIEDLABEL:'Date Identified'); ?>
-													<a href="#" onclick="return dwcDoc('dateIdentified')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<input type="text" name="dateidentified" maxlength="45" value="<?php echo array_key_exists('dateidentified',$occArr)?$occArr['dateidentified']:''; ?>" onchange="fieldChanged('dateidentified');" />
-												</div>
-												<div id="idrefToggleDiv" onclick="toggle('idrefdiv');">
-													<img class="editimg" src="../../images/editplus.png" />
-												</div>
-											</div>
-											<div  id="idrefdiv">
-												<div id="identificationReferencesDiv">
-													<?php echo (defined('IDENTIFICATIONREFERENCELABEL')?IDENTIFICATIONREFERENCELABEL:'ID References'); ?>:
-													<a href="#" onclick="return dwcDoc('identificationReferences')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<input type="text" name="identificationreferences" value="<?php echo array_key_exists('identificationreferences',$occArr)?$occArr['identificationreferences']:''; ?>" onchange="fieldChanged('identificationreferences');" />
-												</div>
-												<div id="identificationRemarksDiv">
-													<?php echo (defined('IDENTIFICATIONREMARKSLABEL')?IDENTIFICATIONREMARKSLABEL:'ID Remarks'); ?>:
-													<a href="#" onclick="return dwcDoc('identificationRemarks')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<input type="text" name="identificationremarks" value="<?php echo array_key_exists('identificationremarks',$occArr)?$occArr['identificationremarks']:''; ?>" onchange="fieldChanged('identificationremarks');" />
-												</div>
-												<div id="taxonRemarksDiv">
-													<?php echo (defined('TAXONREMARKSLABEL')?TAXONREMARKSLABEL:'Taxon Remarks'); ?>:
-													<a href="#" onclick="return dwcDoc('taxonRemarks')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<input type="text" name="taxonremarks" value="<?php echo array_key_exists('taxonremarks',$occArr)?$occArr['taxonremarks']:''; ?>" onchange="fieldChanged('taxonremarks');" />
-												</div>
-											</div>
-										</fieldset>
-										<fieldset>
-											<legend><?php echo (isset($LANG['LOCALITY'])?$LANG['LOCALITY']:'Locality'); ?></legend>
-											<div style="clear:both;">
-												<div id="countryDiv">
-													<?php echo (defined('COUNTRYLABEL')?COUNTRYLABEL:'Country'); ?>
-													<a href="#" onclick="return dwcDoc('country')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
-													<input type="text" id="ffcountry" name="country" value="<?php echo array_key_exists('country',$occArr)?$occArr['country']:''; ?>" onchange="fieldChanged('country');" autocomplete="off" />
-												</div>
-												<div id="stateProvinceDiv">
-													<?php echo (defined('STATEPROVINCELABEL')?STATEPROVINCELABEL:'State/Province'); ?>
-													<a href="#" onclick="return dwcDoc('stateProvince')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
-													<input type="text" id="ffstate" name="stateprovince" value="<?php echo array_key_exists('stateprovince',$occArr)?$occArr['stateprovince']:''; ?>" onchange="stateProvinceChanged(this.value)" autocomplete="off" />
-												</div>
-												<div id="countyDiv">
-													<?php echo (defined('COUNTYLABEL')?COUNTYLABEL:'County'); ?>
-													<a href="#" onclick="return dwcDoc('county')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
-													<input type="text" id="ffcounty" name="county" value="<?php echo array_key_exists('county',$occArr)?$occArr['county']:''; ?>" onchange="fieldChanged('county');" autocomplete="off" />
-												</div>
-												<div id="municipalityDiv">
-													<?php echo (defined('MUNICIPALITYLABEL')?MUNICIPALITYLABEL:'Municipality'); ?>
-													<a href="#" onclick="return dwcDoc('municipality')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
-													<input type="text" id="ffmunicipality" name="municipality" value="<?php echo array_key_exists('municipality',$occArr)?$occArr['municipality']:''; ?>" onchange="fieldChanged('municipality');" autocomplete="off" />
-												</div>
-												<div id="locationIdDiv">
-													<?php echo (defined('LOCATIONIDLABEL')?LOCATIONIDLABEL:'Location ID'); ?>
-													<a href="#" onclick="return dwcDoc('locationID')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
-													<input type="text" id="locationid" name="locationid" value="<?php echo array_key_exists('locationid',$occArr)?$occArr['locationid']:''; ?>" onchange="fieldChanged('locationid');" autocomplete="off" />
-												</div>
-											</div>
-											<div id="localityDiv">
-												<?php echo (defined('LOCALITYLABEL')?LOCALITYLABEL:'Locality'); ?>
-												<a href="#" onclick="return dwcDoc('locality')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" style="width:9px" /></a>
-												<br />
-												<textarea id="fflocality" name="locality" onchange="fieldChanged('locality');"><?php echo array_key_exists('locality',$occArr)?$occArr['locality']:''; ?></textarea>
-												<a id="localityExtraToggle" onclick="toggle('localityExtraDiv');">
-													<img class="editimg" src="../../images/editplus.png" />
-												</a>
-											</div>
-											<?php
-											$localityExtraDiv = 'none';
-											if(array_key_exists("locationremarks",$occArr) && $occArr["locationremarks"]) $localityExtraDiv = "block";
-											?>
-											<div id="localityExtraDiv" style="display:<?php echo $localityExtraDiv; ?>">
-												<div id="locationRemarksDiv">
-													<?php echo (defined('LOCATIONREMARKSLABEL')?LOCATIONREMARKSLABEL:'Location Remarks'); ?>
-													<a href="#" onclick="return dwcDoc('locationRemarks')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
-													<input type="text" id="locationremarks" name="locationremarks" value="<?php echo array_key_exists('locationremarks',$occArr)?$occArr['locationremarks']:''; ?>" onchange="fieldChanged('locationremarks');" />
-												</div>
-											</div>
-											<?php
-											if(!defined('LOCALITYAUTOLOOKUP') || LOCALITYAUTOLOOKUP){
-												echo '<div id="localAutoDeactivatedDiv">';
-												echo '<input name="localautodeactivated" type="checkbox" value="1" onchange="localAutoChanged(this)" '.(defined('LOCALITYAUTOLOOKUP') && LOCALITYAUTOLOOKUP==2?'checked':'').' tabindex="-1" /> ';
-												echo (isset($LANG['DEACTIVATE_LOOKUP'])?$LANG['DEACTIVATE_LOOKUP']:'Deactivate Locality Lookup').'</div>';
-											}
-											?>
-											<div id="localSecurityDiv">
-												<div style="float:left;">
-													<?php
-													echo (defined('LOCALITYSECURITYLABEL')?LOCALITYSECURITYLABEL:'Security');
-													$securityCode = array_key_exists('localitysecurity',$occArr)&&$occArr['localitysecurity']?$occArr['localitysecurity']:0;
-													$lsrValue = array_key_exists('localitysecurityreason',$occArr)?$occArr['localitysecurityreason']:'';
-													?>:
-													<select name="localitysecurity" onchange="securityChanged(this.form);" title="<?php echo (isset($LANG['SECURITY_SETTINGS'])?$LANG['SECURITY_SETTINGS']:'Security Settings'); ?>" tabindex="-1">
-														<option value="0"><?php echo (isset($LANG['SEC_NOT_APPLIED'])?$LANG['SEC_NOT_APPLIED']:'Security not applied'); ?></option>
-														<option value="0">--------------------------</option>
-														<?php
-														echo '<option value="1" '.($securityCode?'SELECTED':'').'>'.(isset($LANG['LOCALITY_SECURITY'])?$LANG['LOCALITY_SECURITY']:'Locality Security').'</option>';
-														?>
-													</select>
-													<a href="#" onclick="return dwcDoc('localitySecurity')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-												</div>
-												<div id="locsecreason" style="margin-left:5px;border:2px solid gray;float:left;display:<?php echo ($lsrValue||$securityCode?'inline':'none') ?>;padding:3px">
-													<div ><input name="lockLocalitySecurity" type="checkbox" onchange="securityLockChanged(this)" tabindex="-1" <?php echo ($lsrValue?'checked':'') ?> /> <?php echo (isset($LANG['LOCK_SEC_SETTING'])?$LANG['LOCK_SEC_SETTING']:'Lock Security Setting'); ?></div>
-													<?php
-													echo (defined('LOCALITYSECURITYREASONLABEL')?LOCALITYSECURITYREASONLABEL:'Reason');
-													?>:
-													<input type="text" name="localitysecurityreason" tabindex="-1" onchange="localitySecurityReasonChanged();" value="<?php echo $lsrValue; ?>" title="<?php echo (isset($LANG['EXPLAIN_SEC_STATUS'])?$LANG['EXPLAIN_SEC_STATUS']:'Entering any text will lock security status on or off; leave blank to accept default security status'); ?>" />
-												</div>
-											</div>
-											<div style="clear:both;">
-												<div id="decimalLatitudeDiv">
-													<?php echo (defined('DECIMALLATITUDELABEL')?DECIMALLATITUDELABEL:'Latitude'); ?>
-													<br/>
-													<?php
-													$latValue = "";
-													if(array_key_exists("decimallatitude",$occArr) && $occArr["decimallatitude"] != "") {
-														$latValue = $occArr["decimallatitude"];
-													}
-													?>
-													<input type="text" id="decimallatitude" name="decimallatitude" maxlength="15" value="<?php echo $latValue; ?>" onchange="decimalLatitudeChanged(this.form)" />
-												</div>
-												<div id="decimalLongitudeDiv">
-													<?php echo (defined('DECIMALLONGITUDELABEL')?DECIMALLONGITUDELABEL:'Longitude'); ?>
-													<br/>
-													<?php
-													$longValue = "";
-													if(array_key_exists("decimallongitude",$occArr) && $occArr["decimallongitude"] != "") {
-														$longValue = $occArr["decimallongitude"];
-													}
-													?>
-													<input type="text" id="decimallongitude" name="decimallongitude" maxlength="15" value="<?php echo $longValue; ?>" onchange="decimalLongitudeChanged(this.form);" />
-												</div>
-												<div id="coordinateUncertaintyInMetersDiv">
-													<?php echo (defined('COORDINATEUNCERTAINITYINMETERSLABEL')?COORDINATEUNCERTAINITYINMETERSLABEL:'Uncertainty'); ?>
-													<a href="#" onclick="return dwcDoc('coordinateUncertaintyInMeters')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
-													<input type="text" id="coordinateuncertaintyinmeters" name="coordinateuncertaintyinmeters" maxlength="10" value="<?php echo array_key_exists('coordinateuncertaintyinmeters',$occArr)?$occArr['coordinateuncertaintyinmeters']:''; ?>" onchange="coordinateUncertaintyInMetersChanged(this.form);" title="<?php echo (isset($LANG['UNCERTAINTY_METERS'])?$LANG['UNCERTAINTY_METERS']:'Uncertainty in Meters'); ?>" />
-												</div>
-												<div id="googleDiv" onclick="openMappingAid();" title="<?php echo (isset($LANG['GOOGLE_MAPS'])?$LANG['GOOGLE_MAPS']:'Google Maps'); ?>">
-													<img src="../../images/world.png" />
-												</div>
-												<div id="geoLocateDiv" title="<?php echo (isset($LANG['GEOLOCATE_LOC'])?$LANG['GEOLOCATE_LOC']:'GeoLocate Locality'); ?>">
-													<a href="#" onclick="geoLocateLocality();" tabindex="-1"><img src="../../images/geolocate.png"/></a>
-												</div>
-												<div id="coordCloningDiv" title="<?php echo (isset($LANG['COORD_CLONE_TOOL'])?$LANG['COORD_CLONE_TOOL']:'Coordinate Cloning Tool'); ?>" >
-													<input type="button" value="C" tabindex="-1" onclick="geoCloneTool()" />
-												</div>
-												<div id="geoToolsDiv" title="<?php echo (isset($LANG['CONVERSION_TOOLS'])?$LANG['CONVERSION_TOOLS']:'Tools for converting additional formats'); ?>" >
-													<input type="button" value="F" tabindex="-1" onclick="toggleCoordDiv()" />
-												</div>
-												<div id="geodeticDatumDiv">
-													<?php echo (defined('GEODETICDATIMLABEL')?GEODETICDATIMLABEL:'Datum'); ?>
-													<a href="#" onclick="return dwcDoc('geodeticDatum')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
-													<input type="text" id="geodeticdatum" name="geodeticdatum" maxlength="255" value="<?php echo array_key_exists('geodeticdatum',$occArr)?$occArr['geodeticdatum']:''; ?>" onchange="fieldChanged('geodeticdatum');" />
-												</div>
-												<div id="verbatimCoordinatesDiv">
-													<div style="float:left;margin:18px 2px 0px 2px" title="<?php echo (isset($LANG['RECALCULATE_COORDS'])?$LANG['RECALCULATE_COORDS']:'Recalculate Decimal Coordinates'); ?>">
-														<a href="#" onclick="parseVerbatimCoordinates(document.fullform,1);return false" tabindex="-1">&lt;&lt;</a>
-													</div>
-													<div style="float:left;">
-														<?php echo (defined('VERBATIMCOORDINATESLABEL')?VERBATIMCOORDINATESLABEL:'Verbatim Coordinates'); ?>
-														<a href="#" onclick="return dwcDoc('verbatimCoordinates')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-														<br/>
-														<input type="text" name="verbatimcoordinates" maxlength="255" value="<?php echo array_key_exists('verbatimcoordinates',$occArr)?$occArr['verbatimcoordinates']:''; ?>" onchange="verbatimCoordinatesChanged(this.form);" title="" />
-													</div>
-												</div>
-											</div>
-											<div style="clear:both;">
-												<div id="elevationDiv">
-													<?php echo (defined('ELEVATIONINMETERSLABEL')?ELEVATIONINMETERSLABEL:'Elevation in Meters'); ?>
-													<a href="#" onclick="return dwcDoc('minimumElevationInMeters')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
-													<input type="text" name="minimumelevationinmeters" maxlength="6" value="<?php echo array_key_exists('minimumelevationinmeters',$occArr)?$occArr['minimumelevationinmeters']:''; ?>" onchange="minimumElevationInMetersChanged(this.form);" title="<?php echo (isset($LANG['MIN_ELEVATION'])?$LANG['MIN_ELEVATION']:'Minimum Elevation in Meters'); ?>" /> -
-													<input type="text" name="maximumelevationinmeters" maxlength="6" value="<?php echo array_key_exists('maximumelevationinmeters',$occArr)?$occArr['maximumelevationinmeters']:''; ?>" onchange="maximumElevationInMetersChanged(this.form);" title="<?php echo (isset($LANG['MAX_ELEVATION'])?$LANG['MAX_ELEVATION']:'Maximum Elevation in Meters'); ?>" />
-												</div>
-												<div id="verbatimElevationDiv">
-													<div style="float:left;margin:18px 2px 0px 2px" title="<?php echo (isset($LANG['RECALCULATE_ELEV'])?$LANG['RECALCULATE_ELEV']:'Recalculate Elevation in Meters'); ?>">
-														<a href="#" onclick="parseVerbatimElevation(document.fullform);return false" tabindex="-1">&lt;&lt;</a>
-													</div>
-													<div style="float:left;">
-														<?php echo (defined('VERBATIMELEVATIONLABEL')?VERBATIMELEVATIONLABEL:'Verbatim Elevation'); ?>
-														<a href="#" onclick="return dwcDoc('verbatimElevation')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-														<br/>
-														<input type="text" name="verbatimelevation" maxlength="255" value="<?php echo array_key_exists('verbatimelevation',$occArr)?$occArr['verbatimelevation']:''; ?>" onchange="verbatimElevationChanged(this.form);" />
-													</div>
-												</div>
-												<div id="depthDiv">
-													<?php echo (defined('DEPTHINMETERSLABEL')?DEPTHINMETERSLABEL:'Depth in Meters'); ?>
-													<a href="#" onclick="return dwcDoc('minimumDepthInMeters')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
-													<input type="text" name="minimumdepthinmeters" maxlength="6" value="<?php echo array_key_exists('minimumdepthinmeters',$occArr)?$occArr['minimumdepthinmeters']:''; ?>" onchange="minimumDepthInMetersChanged(this.form);" title="<?php echo $LANG['MIN_DEPTH']; ?>" /> -
-													<input type="text" name="maximumdepthinmeters" maxlength="6" value="<?php echo array_key_exists('maximumdepthinmeters',$occArr)?$occArr['maximumdepthinmeters']:''; ?>" onchange="maximumDepthInMetersChanged(this.form);" title="<?php echo $LANG['MAX_DEPTH']; ?>" />
-												</div>
-												<div id="verbatimDepthDiv">
-													<div style="float:left;">
-														<?php echo (defined('VERBATIMDEPTHLABEL')?VERBATIMDEPTHLABEL:'Verbatim Depth'); ?>
-														<a href="#" onclick="return dwcDoc('verbatimDepth')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-														<br/>
-														<input type="text" name="verbatimdepth" maxlength="255" value="<?php echo array_key_exists('verbatimdepth',$occArr)?$occArr['verbatimdepth']:''; ?>" onchange="fieldChanged('verbatimdepth');" />
-													</div>
-												</div>
-												<div id="georefExtraToggleDiv" onclick="toggle('georefExtraDiv');">
-													<img class="editimg" src="../../images/editplus.png" tabindex="-1" />
-												</div>
-											</div>
-											<?php
-											include_once('includes/geotools.php');
-											$georefExtraDiv = 'display:';
-											if(array_key_exists("georeferencedby",$occArr) && $occArr["georeferencedby"]){
-												$georefExtraDiv .= "block";
-											}
-											elseif(array_key_exists("footprintwkt",$occArr) && $occArr["footprintwkt"]){
-												$georefExtraDiv .= "block";
-											}
-											elseif(array_key_exists("georeferenceprotocol",$occArr) && $occArr["georeferenceprotocol"]){
-												$georefExtraDiv .= "block";
-											}
-											elseif(array_key_exists("georeferencesources",$occArr) && $occArr["georeferencesources"]){
-												$georefExtraDiv .= "block";
-											}
-											elseif(array_key_exists("georeferenceverificationstatus",$occArr) && $occArr["georeferenceverificationstatus"]){
-												$georefExtraDiv .= "block";
-											}
-											elseif(array_key_exists("georeferenceremarks",$occArr) && $occArr["georeferenceremarks"]){
-												$georefExtraDiv .= "block";
-											}
-											?>
-											<div id="georefExtraDiv" style="<?php echo $georefExtraDiv; ?>;">
-												<div style="clear:both;">
-													<div id="georeferencedByDiv">
-														<?php echo (defined('GEOREFERENCEDBYLABEL')?GEOREFERENCEDBYLABEL:'Georeferenced By'); ?>
-														<br/>
-														<input type="text" name="georeferencedby" maxlength="255" value="<?php echo array_key_exists('georeferencedby',$occArr)?$occArr['georeferencedby']:''; ?>" onchange="fieldChanged('georeferencedby');" />
-													</div>
-													<div id="georeferenceSourcesDiv">
-														<?php echo (defined('GEOREFERENCESOURCESLABEL')?GEOREFERENCESOURCESLABEL:'Georeference Sources'); ?>
-														<a href="#" onclick="return dwcDoc('georeferenceSources')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-														<br/>
-														<input type="text" name="georeferencesources" maxlength="255" value="<?php echo array_key_exists('georeferencesources',$occArr)?$occArr['georeferencesources']:''; ?>" onchange="fieldChanged('georeferencesources');" />
-													</div>
-													<div id="georeferenceRemarksDiv">
-														<?php echo (defined('GEOREFERENCEREMARKSLABEL')?GEOREFERENCEREMARKSLABEL:'Georeference Remarks'); ?>
-														<br/>
-														<input type="text" name="georeferenceremarks" maxlength="255" value="<?php echo array_key_exists('georeferenceremarks',$occArr)?$occArr['georeferenceremarks']:''; ?>" onchange="fieldChanged('georeferenceremarks');" />
-													</div>
-												</div>
-												<div style="clear:both;">
-													<div id="georeferenceProtocolDiv">
-														<?php echo (defined('GEOREFERENCEPROTOCOLLABEL')?GEOREFERENCEPROTOCOLLABEL:'Georeference Protocol'); ?>
-														<a href="#" onclick="return dwcDoc('georeferenceProtocol')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-														<br/>
-														<input type="text" name="georeferenceprotocol" maxlength="255" value="<?php echo array_key_exists('georeferenceprotocol',$occArr)?$occArr['georeferenceprotocol']:''; ?>" onchange="fieldChanged('georeferenceprotocol');" />
-													</div>
-													<div id="georeferenceVerificationStatusDiv">
-														<?php echo (defined('GEOREFERENCEVERIFICATIONSTATUSLABEL')?GEOREFERENCEVERIFICATIONSTATUSLABEL:'Georef Verification Status'); ?>
-														<a href="#" onclick="return dwcDoc('georeferenceVerificationStatus')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-														<br/>
-														<input type="text" name="georeferenceverificationstatus" maxlength="32" value="<?php echo array_key_exists('georeferenceverificationstatus',$occArr)?$occArr['georeferenceverificationstatus']:''; ?>" onchange="fieldChanged('georeferenceverificationstatus');" />
-													</div>
-													<div id="footprintWktDiv">
-														<?php echo (defined('FOOTPRINTWKTLABEL')?FOOTPRINTWKTLABEL:'Footprint Polygon'); ?>
-														<br/>
-														<div style="float:right;margin-top:-2px;margin-left:2px;" id="googleDiv" onclick="openMappingPolyAid();" title="<?php echo $LANG['GOOGLE_MAPS']; ?>">
-															<img src="../../images/world.png" />
-														</div>
-														<textarea name="footprintwkt" id="footprintwkt" onchange="footPrintWktChanged(this)" style="height:40px;resize:vertical;" ><?php echo array_key_exists('footprintwkt',$occArr)?$occArr['footprintwkt']:''; ?></textarea>
-													</div>
-												</div>
-											</div>
-										</fieldset>
-										<?php
-										if(in_array('paleo',$moduleActivation)) include('includes/paleoinclude.php');
+								<div class="field-block">
+									<span class="field-label"><?php echo (isset($LANG['VERBLAT']) ? $LANG['VERBLAT'] : 'Verb. Lat.'); ?></span>
+									<span class="field-elem">
+										<?php if(array_key_exists('verbLat',$occArr)) { ?>
+											<!-- TODO: need to update the onchange function later to make sure the input format is correct -->
+											<input size = '25' type="text" name="verbLat" value="<?php echo $occArr["verbLat"]; ?>" onchange="decimalLatitudeChanged(this.form)" />
+										<?php 
+										} else { 
 										?>
-										<fieldset>
-											<legend><?php echo $LANG['MISC']; ?></legend>
-											<div id="habitatDiv">
-												<?php echo (defined('HABITATLABEL')?HABITATLABEL:'Habitat'); ?>
-												<a href="#" onclick="return dwcDoc('habitat')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-												<br/>
-												<input type="text" name="habitat" value="<?php echo array_key_exists('habitat',$occArr)?$occArr['habitat']:''; ?>" onchange="fieldChanged('habitat');" />
-											</div>
-											<div id="substrateDiv">
-												<?php echo (defined('SUBSTRATELABEL')?SUBSTRATELABEL:'Substrate'); ?>
-												<a href="#" onclick="return dwcDoc('substrate')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-												<br/>
-												<input type="text" name="substrate" maxlength="500" value="<?php echo array_key_exists('substrate',$occArr)?$occArr['substrate']:''; ?>" onchange="fieldChanged('substrate');" />
-											</div>
-											<?php
-											if(isset($QuickHostEntryIsActive) && $QuickHostEntryIsActive) { // Quick host field
-												$quickHostArr = $occManager->getQuickHost();
-												?>
-												<div id="hostDiv">
-													<?php echo (defined('HOSTLABEL')?HOSTLABEL:'Host'); ?><br/>
-													<input type="text" name="host" id="quickhost" maxlength="500" value="<?php echo ($quickHostArr?$quickHostArr['verbatimsciname']:''); ?>" onchange="fieldChanged('host');" />
-													<input type="hidden" name="hostassocid" value="<?php echo ($quickHostArr?$quickHostArr['associd']:''); ?>" />
-												</div>
-												<?php
-											}
-											?>
-											<div id="associatedTaxaDiv">
-												<?php echo (defined('ASSOCIATEDTAXALABEL')?ASSOCIATEDTAXALABEL:'Associated Taxa'); ?>
-												<a href="#" onclick="return dwcDoc('associatedTaxa')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-												<br/>
-												<textarea name="associatedtaxa" onchange="fieldChanged('associatedtaxa');"><?php echo array_key_exists('associatedtaxa',$occArr)?$occArr['associatedtaxa']:''; ?></textarea>
-												<?php
-												if(!isset($ACTIVATEASSOCTAXAAID) || $ACTIVATEASSOCTAXAAID){
-													echo '<a href="#" onclick="openAssocSppAid();return false;"><img class="editimg" src="../../images/list.png" /></a>';
-												}
-												?>
-											</div>
-											<div id="verbatimAttributesDiv">
-												<?php echo (defined('VERBATIMATTRIBUTESLABEL')?VERBATIMATTRIBUTESLABEL:'Description'); ?>
-												<a href="#" onclick="return dwcDoc('verbatimAttributes')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-												<br/>
-												<input type="text" name="verbatimattributes" value="<?php echo array_key_exists('verbatimattributes',$occArr)?$occArr['verbatimattributes']:''; ?>" onchange="fieldChanged('verbatimattributes');" />
-											</div>
-											<div id="occurrenceRemarksDiv">
-												<?php echo (defined('OCCURRENCEREMARKSLABEL')?OCCURRENCEREMARKSLABEL:'Notes (Occurrence Remarks)'); ?>
-												<a href="#" onclick="return dwcDoc('occurrenceRemarks')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-												<br/>
-												<input type="text" name="occurrenceremarks" value="<?php echo array_key_exists('occurrenceremarks',$occArr)?$occArr['occurrenceremarks']:''; ?>" onchange="fieldChanged('occurrenceremarks');" title="<?php echo $LANG['OCC_REMARKS']; ?>" />
-												<span id="dynPropToggleSpan" onclick="toggle('dynamicPropertiesDiv');">
-													<img class="editimg" src="../../images/editplus.png" />
-												</span>
-											</div>
-											<div id="dynamicPropertiesDiv" style="display:<?php echo array_key_exists('dynamicproperties',$occArr)&&$occArr['dynamicproperties']?'':'none'; ?>">
-												<?php echo (defined('DYNAMICPROPERTIESLABEL')?DYNAMICPROPERTIESLABEL:'Dynamic Properties'); ?>
-												<a href="#" onclick="return dwcDoc('dynamicProperties')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-												<input type="text" name="dynamicproperties" value="<?php echo array_key_exists('dynamicproperties',$occArr)?$occArr['dynamicproperties']:''; ?>" onchange="fieldChanged('dynamicproperties');" />
-											</div>
-											<div style="padding:2px;">
-												<div id="lifeStageDiv">
-													<?php echo (defined('LIFESTAGELABEL')?LIFESTAGELABEL:'Life Stage'); ?>
-													<a href="#" onclick="return dwcDoc('lifeStage')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-													<input type="text" name="lifestage" maxlength="45" value="<?php echo array_key_exists('lifestage',$occArr)?$occArr['lifestage']:''; ?>" onchange="fieldChanged('lifestage');" />
-												</div>
-												<div id="sexDiv">
-													<?php echo (defined('SEXLABEL')?SEXLABEL:'Sex'); ?>
-													<a href="#" onclick="return dwcDoc('sex')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-													<input type="text" name="sex" maxlength="45" value="<?php echo array_key_exists('sex',$occArr)?$occArr['sex']:''; ?>" onchange="fieldChanged('sex');" />
-												</div>
-												<div id="individualCountDiv">
-													<?php echo (defined('INDIVIDUALCOUNTLABEL')?INDIVIDUALCOUNTLABEL:'Individual Count'); ?>
-													<a href="#" onclick="return dwcDoc('individualCount')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-													<input type="text" name="individualcount" maxlength="45" value="<?php echo array_key_exists('individualcount',$occArr)?$occArr['individualcount']:''; ?>" onchange="fieldChanged('individualcount');" />
-												</div>
-												<div id="samplingProtocolDiv">
-													<?php echo (defined('SAMPLINGPROTOCOLLABEL')?SAMPLINGPROTOCOLLABEL:'Sampling Protocol'); ?>
-													<a href="#" onclick="return dwcDoc('samplingProtocol')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-													<input type="text" name="samplingprotocol" maxlength="100" value="<?php echo array_key_exists('samplingprotocol',$occArr)?$occArr['samplingprotocol']:''; ?>" onchange="fieldChanged('samplingprotocol');" />
-												</div>
-												<div id="preparationsDiv">
-													<?php echo (defined('PREPARATIONSLABEL')?PREPARATIONSLABEL:'Preparations'); ?>
-													<a href="#" onclick="return dwcDoc('preparations')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-													<input type="text" name="preparations" maxlength="100" value="<?php echo array_key_exists('preparations',$occArr)?$occArr['preparations']:''; ?>" onchange="fieldChanged('preparations');" />
-												</div>
-												<div id="reproductiveConditionDiv">
-													<?php echo (defined('REPRODUCTIVECONDITIONLABEL')?REPRODUCTIVECONDITIONLABEL:'Phenology'); ?>
-													<a href="#" onclick="return dwcDoc('reproductiveCondition')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-													<?php
-													if(isset($reproductiveConditionTerms) && $reproductiveConditionTerms){
-														?>
-														<select name="reproductivecondition" onchange="fieldChanged('reproductivecondition');">
-															<option value="">-----------------</option>
-															<?php
-															foreach($reproductiveConditionTerms as $term){
-																echo '<option value="'.$term.'" '.(isset($occArr['reproductivecondition']) && $term==$occArr['reproductivecondition']?'SELECTED':'').'>'.$term.'</option>';
-															}
-															?>
-														</select>
-														<?php
-													}
-													else echo '<input type="text" name="reproductivecondition" maxlength="255" value="'.(array_key_exists('reproductivecondition',$occArr)?$occArr['reproductivecondition']:'').'" onchange="fieldChanged(\'reproductivecondition\');" />';
-													?>
-												</div>
-												<div id="establishmentMeansDiv">
-													<?php echo (defined('ESTABLISHMENTMEANSLABEL')?ESTABLISHMENTMEANSLABEL:'Establishment Means'); ?>
-													<a href="#" onclick="return dwcDoc('establishmentMeans')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-													<input type="text" name="establishmentmeans" maxlength="32" value="<?php echo array_key_exists('establishmentmeans',$occArr)?$occArr['establishmentmeans']:''; ?>" onchange="fieldChanged('establishmentmeans');" />
-												</div>
-												<div id="cultivationStatusDiv">
-													<?php $hasValue = array_key_exists("cultivationstatus",$occArr)&&$occArr["cultivationstatus"]?1:0; ?>
-													<input type="checkbox" name="cultivationstatus" value="1" <?php echo $hasValue?'CHECKED':''; ?> onchange="fieldChanged('cultivationstatus');" />
-													<?php echo (defined('CULTIVATIONSTATUSLABEL')?CULTIVATIONSTATUSLABEL:'Cultivated/Captive'); ?>
-												</div>
-											</div>
-										</fieldset>
-										<fieldset>
-											<legend><?php echo $LANG['CURATION']; ?></legend>
-											<div style="padding:3px;clear:both;">
-												<div id="typeStatusDiv">
-													<?php echo (defined('TYPESTATUSLABEL')?TYPESTATUSLABEL:'Type Status'); ?>
-													<a href="#" onclick="return dwcDoc('typeStatus')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-													<input type="text" name="typestatus" maxlength="255" value="<?php echo array_key_exists('typestatus',$occArr)?$occArr['typestatus']:''; ?>" onchange="fieldChanged('typestatus');" />
-												</div>
-												<div id="dispositionDiv">
-													<?php echo (defined('DISPOSITIONLABEL')?DISPOSITIONLABEL:'Disposition'); ?>
-													<a href="#" onclick="return dwcDoc('disposition')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-													<input type="text" name="disposition" value="<?php echo array_key_exists('disposition',$occArr)?$occArr['disposition']:''; ?>" onchange="fieldChanged('disposition');" />
-												</div>
-												<div id="occurrenceIdDiv" title="If different than institution code">
-													<?php echo (defined('OCCURRENCEIDLABEL')?OCCURRENCEIDLABEL:'Occurrence ID'); ?>
-													<a href="#" onclick="return dwcDoc('occurrenceid')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-													<input type="text" name="occurrenceid" maxlength="255" value="<?php echo array_key_exists('occurrenceid',$occArr)?$occArr['occurrenceid']:''; ?>" onchange="fieldChanged('occurrenceid');" />
-												</div>
-												<div id="fieldNumberDiv" title="An identifier given to the collecting event in the field">
-													<?php echo (defined('FIELDNUMBERLABEL')?FIELDNUMBERLABEL:'Field Number'); ?>
-													<a href="#" onclick="return dwcDoc('fieldnumber')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-													<input type="text" name="fieldnumber" maxlength="45" value="<?php echo array_key_exists('fieldnumber',$occArr)?$occArr['fieldnumber']:''; ?>" onchange="fieldChanged('fieldnumber');" />
-												</div>
-												<div id="basisOfRecordDiv">
-													<?php echo (defined('BASISOFRECORDLABEL')?BASISOFRECORDLABEL:'Basis of Record'); ?>
-													<a href="#" onclick="return dwcDoc('basisOfRecord')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-													<?php
-													$borArr = array('FossilSpecimen'=>0,'HumanObservation'=>0,'LivingSpecimen'=>0,'MachineObservation'=>0,'PreservedSpecimen'=>0);
-													if(isset($occArr['basisofrecord']) && $occArr['basisofrecord']){
-														if(in_array($occArr['basisofrecord'],$borArr)) $borArr[$occArr['basisofrecord']] = 1;
-														else $borArr[$occArr['basisofrecord']] = 2;
-													}
-													if(!isset($occArr['basisofrecord']) || !$occArr['basisofrecord']){
-														if($collType == 'obs') $borArr['HumanObservation'] = 1;
-														elseif($collType == 'paleo') $borArr['FossilSpecimen'] = 1;
-														elseif($collType == 'spec') $borArr['PreservedSpecimen'] = 1;
-													}
-													?>
-													<select name="basisofrecord" onchange="fieldChanged('basisofrecord');">
-														<?php
-														foreach($borArr as $bValue => $statueCode){
-															if($statueCode == 2) echo '<option value="">---'.$LANG['NON_SANCTIONED'].'---</option><option SELECTED>'.$bValue.'</option>';
-															else echo '<option '.($statueCode?'SELECTED':'').'>'.$bValue.'</option>';
-														}
-														?>
-													</select>
-												</div>
-												<div id="languageDiv">
-													<?php echo (defined('LANGUAGELABEL')?LANGUAGELABEL:'Language'); ?><br/>
-													<input type="text" name="language" maxlength="20" value="<?php echo array_key_exists('language',$occArr)?$occArr['language']:''; ?>" onchange="fieldChanged('language');" />
-												</div>
-												<div id="labelProjectDiv">
-													<?php echo (defined('LABELPROJECTLABEL')?LABELPROJECTLABEL:'Label Project'); ?><br/>
-													<input type="text" name="labelproject" maxlength="45" value="<?php echo array_key_exists('labelproject',$occArr)?$occArr['labelproject']:''; ?>" onchange="fieldChanged('labelproject');" />
-												</div>
-												<div id="duplicateQuantityDiv" title="aka label quantity">
-													<?php echo (defined('DUPLICATEQUALITYCOUNTLABEL')?DUPLICATEQUALITYCOUNTLABEL:'Dupe Count'); ?><br/>
-													<input type="text" name="duplicatequantity" value="<?php echo array_key_exists('duplicatequantity',$occArr)?$occArr['duplicatequantity']:''; ?>" onchange="fieldChanged('duplicatequantity');" />
-												</div>
-											</div>
-											<div style="padding:3px;clear:both;">
-												<div id="institutionCodeDiv" title="<?php echo $LANG['INST_CODE_EXPLAIN']; ?>">
-													<?php echo (defined('INSTITUTIONCODELABEL')?INSTITUTIONCODELABEL:'Institution Code (override)'); ?>
-													<a href="#" onclick="return dwcDoc('institutionCode')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-													<input type="text" name="institutioncode" maxlength="32" value="<?php echo array_key_exists('institutioncode',$occArr)?$occArr['institutioncode']:''; ?>" onchange="fieldChanged('institutioncode');" />
-												</div>
-												<div id="collectionCodeDiv" title="<?php echo $LANG['COLL_CODE_EXPLAIN']; ?>">
-													<?php echo (defined('COLLECTIONCODELABEL')?COLLECTIONCODELABEL:'Collection Code (override)'); ?>
-													<a href="#" onclick="return dwcDoc('collectionCode')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-													<input type="text" name="collectioncode" maxlength="32" value="<?php echo array_key_exists('collectioncode',$occArr)?$occArr['collectioncode']:''; ?>" onchange="fieldChanged('collectioncode');" />
-												</div>
-												<div id="ownerInstitutionCodeDiv" title="<?php echo $LANG['OWNER_CODE_EXPLAIN']; ?>">
-													<?php echo (defined('OWNERINSTITUTIONCODELABEL')?OWNERINSTITUTIONCODELABEL:'Owner Code (override)'); ?>
-													<a href="#" onclick="return dwcDoc('ownerInstitutionCode')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-													<input type="text" name="ownerinstitutioncode" maxlength="32" value="<?php echo array_key_exists('ownerinstitutioncode',$occArr)?$occArr['ownerinstitutioncode']:''; ?>" onchange="fieldChanged('ownerinstitutioncode');" />
-												</div>
-												<div id="processingStatusDiv">
-													<?php echo (defined('PROCESSINGSTATUSLABEL')?PROCESSINGSTATUSLABEL:'Processing Status'); ?><br/>
-													<?php
-														$pStatus = array_key_exists('processingstatus',$occArr)?strtolower($occArr['processingstatus']):'';
-														if(!$pStatus && !$occId) $pStatus = 'pending review';
-													?>
-													<select name="processingstatus" onchange="fieldChanged('processingstatus');">
-														<option value=''><?php echo $LANG['NO_SET_STATUS']; ?></option>
-														<option value=''>-------------------</option>
-														<?php
-														foreach($processingStatusArr as $v){
-															//Don't display these options if editor is crowd sourced
-															$keyOut = strtolower($v);
-															if($isEditor < 4 || ($keyOut != 'reviewed' && $keyOut != 'closed')){
-																echo '<option value="'.$keyOut.'" '.($pStatus==$keyOut?'SELECTED':'').'>'.ucwords($v).'</option>';
-															}
-														}
-														if($pStatus && $pStatus != 'isnull' && !in_array($pStatus,$processingStatusArr)){
-															echo '<option value="'.$pStatus.'" SELECTED>'.$pStatus.'</option>';
-														}
-														?>
-													</select>
-												</div>
-                                                <div id="dataGeneralizationsDiv" title="<?php echo $LANG['AKA_GENERAL']; ?>">
-                                                    <?php echo (defined('DATAGENERALIZATIONSLABEL')?DATAGENERALIZATIONSLABEL:'Data Generalizations'); ?><br/>
-                                                    <input type="text" name="datageneralizations" value="<?php echo array_key_exists('datageneralizations',$occArr)?$occArr['datageneralizations']:''; ?>" onchange="fieldChanged('datageneralizations');" />
-                                                </div>
-												<!-- data generalization ends at here -->
-											</div>
-											<?php
-											if($occId){
-												?>
-												<div id="pkDiv">
-													<hr/>
-													<div style="float:left;" title="<?php echo $LANG['PRIMARY_KEY']; ?>">
-														<?php if($occId) echo 'Key: '.$occManager->getOccId(); ?>
-													</div>
-													<div style="float:left;margin-left:50px;">
-														<?php if(array_key_exists('datelastmodified',$occArr)) echo $LANG['MODIFIED'].': '.$occArr['datelastmodified']; ?>
-													</div>
-													<div style="float:left;margin-left:50px;">
-														<?php
-														if(array_key_exists('recordenteredby',$occArr)){
-															echo $LANG['ENTERED_BY'].': '.($occArr['recordenteredby']?$occArr['recordenteredby']:$LANG['NOT_RECORDED']);
-														}
-														if(isset($occArr['dateentered']) && $occArr['dateentered']) echo ' ['.$occArr['dateentered'].']';
-														?>
-													</div>
-													<!-- record info ends at here -->
-												</div>
-												<?php
-											}
-											?>
-										</fieldset>
+											NOT FOUND
+										<?php 
+										} 
+										?>
+									</span>
+								</div>
+								<div class="field-block">
+									<span class="field-label"><?php echo (isset($LANG['VERBLONG']) ? $LANG['VERBLONG'] : 'Verb. Long.'); ?></span>
+									<span class="field-elem">
+										<?php if(array_key_exists('verbLong',$occArr)) { ?>
+											<!-- TODO: need to update the onchange function later to make sure the input format is correct -->
+											<input size = '25' type="text" name="verbLong" value="<?php echo $occArr["verbLong"]; ?>" onchange="decimalLatitudeChanged(this.form)" />
+										<?php 
+										} else { 
+										?>
+											NOT FOUND
+										<?php 
+										} 
+										?>
+									</span>
+								</div>
+								<div class="field-block">
+									<span class="field-label"><?php echo (defined('DECIMALLATITUDELABEL')?DECIMALLATITUDELABEL:'Dec. Lat.'); ?></span>
+									<span class="field-elem">
 										<?php
-										if($navStr){
-											echo '<div style="float:right;margin-right:20px;">'.$navStr.'</div>'."\n";
-										}
-										if(!$occId){
-											$userChecklists = $occManager->getUserChecklists();
-											if($userChecklists){
-												?>
-												<fieldset>
-													<legend><?php echo $LANG['CHECKLIST_VOUCHER']; ?></legend>
-													<?php echo $LANG['LINK_TO_CHECK']; ?>:
-													<select name="clidvoucher">
-														<option value=""><?php echo $LANG['NO_CHECKLIST']; ?></option>
-														<option value="">---------------------------------------------</option>
-														<?php
-														foreach($userChecklists as $clid => $clName){
-															echo '<option value="'.$clid.'">'.$clName.'</option>';
-														}
-														?>
-													</select>
-												</fieldset>
-												<?php
-											}
+										$latValue = "";
+										if(array_key_exists("decimallatitude",$occArr) && $occArr["decimallatitude"] != "") {
+											$latValue = $occArr["decimallatitude"];
 										}
 										?>
-										<div id="bottomSubmitDiv">
-											<input type="hidden" name="occid" value="<?php echo $occManager->getOccId(); ?>" />
-											<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
-											<input type="hidden" name="observeruid" value="<?php echo $SYMB_UID; ?>" />
-											<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
-											<input type="hidden" name="linkdupe" value="" />
-											<?php
-											if($occId){
-												?>
-												<div style="float:left">
-													<?php echo $LANG['STATUS_AUTO_SET']; ?>:
-													<select name="autoprocessingstatus" onchange="autoProcessingStatusChanged(this)">
-														<option value=''><?php echo $LANG['NOT_ACTIVATED']; ?></option>
-														<option value=''>-------------------</option>
-														<?php
-														foreach($processingStatusArr as $v){
-															$keyOut = strtolower($v);
-															//Don't display all options if editor is crowd sourced
-															if($isEditor < 4 || ($keyOut != 'reviewed' && $keyOut != 'closed')){
-																echo '<option value="'.$keyOut.'" '.($crowdSourceMode && $keyOut == "pending review"?'SELECTED':'').'>'.ucwords($v).'</option>';
-															}
-														}
-														?>
-													</select>
-													<div id="editButtonDiv">
-														<button type="submit" id="saveEditsButton" name="submitaction" value="saveOccurEdits" style="width:150px;" onclick="return verifyFullFormEdits(this.form)" disabled><?php echo $LANG['SAVE_EDITS']; ?></button>
-														<input type="hidden" name="occindex" value="<?php echo is_numeric($occIndex)?$occIndex:''; ?>" />
-														<input name="editedfields" value="" />
-													</div>
-												</div>
-												<?php
-												if($isEditor == 1 || $isEditor == 2){
-													?>
-													<div id="cloneDiv" style="float:right;">
-														<fieldset class="optionBox">
-															<legend><?php echo $LANG['RECORD_CLONING']; ?></legend>
-															<div class="fieldGroupDiv">
-																<label><?php echo $LANG['CARRY_OVER']; ?>:</label>
-																<span>
-																	<input name="carryover" type="radio" value="1" checked /><?php echo $LANG['COLL_EVENT_FIELDS']; ?>
-																	<input name="carryover" type="radio" value="0" /><?php echo $LANG['ALL_FIELDS']; ?>
-																</span>
-															</div>
-															<div class="fieldGroupDiv">
-																<span><input name="carryoverimages" type="checkbox" value="1" /></span>
-																<label><?php echo $LANG['CARRY_OVER_IMAGES']; ?></label>
-															</div>
-															<div class="fieldGroupDiv" title="Relationship to this occurrence">
-																<label><?php echo $LANG['RELATIONSHIP']; ?>:</label>
-																<select name="assocrelation">
-																	<option value="0"><?php echo $LANG['UNDEFINED']; ?></option>
-																	<option value="0">---------------------------------</option>
-																	<?php
-																	$vocabArr = $occManager->getAssociationControlVocab();
-																	foreach($vocabArr as $id => $termVal){
-																		echo '<option value="'.$termVal.'">'.$termVal.'</option>';
-																	}
-																	?>
-																</select>
-															</div>
-															<?php
-															$targetArr = $occManager->getCollectionList(true);
-															unset($targetArr[$collId]);
-															if(count($targetArr) > 1){
-																?>
-																<div class="fieldGroupDiv">
-																	<label><?php echo $LANG['TARGET_COLL']; ?>:</label>
-																	<select name="targetcollid" style="max-width: 250px">
-																		<option value="0"><?php echo $LANG['CURRENT_COLL']; ?></option>
-																		<option value="0">---------------------------------</option>
-																		<?php
-																		foreach($targetArr as $id => $collVal){
-																			echo '<option value="'.$id.'">'.$collVal.'</option>';
-																		}
-																		?>
-																	</select>
-																</div>
-																<?php
-															}
-															?>
-															<div class="fieldGroupDiv">
-																<label><?php echo $LANG['NUMBER_RECORDS']; ?>:</label> <input id="clonecount" name="clonecount" type="text" value="1" style="width:40px" />
-															</div>
-															<div class="fieldGroupDiv"><a href="#" onclick="return prePopulateCatalogNumbers();"><?php echo $LANG['PRE_POPULATE']; ?></a></div>
-															<fieldset id="cloneCatalogNumber-Fieldset" style="display:none">
-																<div id="cloneCatalogNumberDiv" class="fieldGroupDiv"></div>
-															</fieldset>
-															<div style="margin:10px">
-																<button name="submitaction" type="submit" value="cloneRecord"><?php echo $LANG['CREATE_RECORD']; ?></button>
-															</div>
-														</fieldset>
-													</div>
-													<?php
-												}
-											}
-											else{
-												?>
-												<div id="addButtonDiv">
-													<input name="recordenteredby" type="hidden" value="<?php echo $PARAMS_ARR['un']; ?>" />
-													<button name="submitaction" type="submit" value="addOccurRecord" style="width:150px;font-weight:bold;margin:10px;"><?php echo $LANG['ADD_RECORD']; ?></button>
-													<input name="qrycnt" type="hidden" value="<?php echo $qryCnt?$qryCnt:''; ?>" />
-													<div style="margin-left:15px;font-weight:bold;">
-														<?php echo $LANG['FOLLOW_UP']; ?>:
-													</div>
-													<div style="margin-left:20px;">
-														<input name="gotomode" type="radio" value="1" <?php echo ($goToMode==1?'CHECKED':''); ?> /> <?php echo $LANG['GO_TO_NEW']; ?><br/>
-														<input name="gotomode" type="radio" value="2" <?php echo ($goToMode==2?'CHECKED':''); ?> /> <?php echo $LANG['GO_NEW_CARRYOVER']; ?><br/>
-														<input name="gotomode" type="radio" value="0" <?php echo (!$goToMode?'CHECKED':''); ?> /> <?php echo $LANG['REMAIN_ON_PAGE']; ?>
-													</div>
-												</div>
-												<?php
-											}
-											?>
-										</div>
-										<div style="clear:both;">&nbsp;</div>
-									</form>
-									<!-- the form ends at here -->
+										<input size = '25' type="text" name="decimallatitude" maxlength="15" value="<?php echo $latValue; ?>" onchange="decimalLatitudeChanged(this.form)" />
+									</span>
+								</div>
+								<div class="field-block">
+									<span class="field-label"><?php echo (defined('DECIMALLONGITUDELABEL')?DECIMALLONGITUDELABEL:'Dec. Long.'); ?></span>
+									<span class="field-elem">
+										<?php
+										$longValue = "";
+										if(array_key_exists("decimallongitude",$occArr) && $occArr["decimallongitude"] != "") {
+											$longValue = $occArr["decimallongitude"];
+										}
+										?>
+										<input size = '25' type="text" name="decimallongitude" maxlength="15" value="<?php echo $longValue; ?>" onchange="decimalLongitudeChanged(this.form);" />
+									</span>
+								</div>
+								<div class="field-block">
+									<span class="field-label"><?php echo (isset($LANG['METHOD']) ? $LANG['METHOD'] : 'Method'); ?></span>
+									<span class="field-elem">
+										<?php if(array_key_exists('method',$occArr)) { ?>
+											<input size = '25' type="text" name="method" value="<?php echo $occArr["method"]; ?>" onchange="fieldChanged('method');" />
+											<?php 
+										} else { 
+										?>
+											NOT FOUND
+										<?php 
+										} 
+										?>
+									</span>
+								</div>
+								<div class="field-block">
+									<span class="field-label"><?php echo (defined('COORDINATEUNCERTAINITYINMETERSLABEL')?COORDINATEUNCERTAINITYINMETERSLABEL:'Uncertainty'); ?></span>
+									<span class="field-elem">
+										<input size = '25' type="text" name="coordinateuncertaintyinmeters" maxlength="10" value="<?php echo array_key_exists('coordinateuncertaintyinmeters',$occArr)?$occArr['coordinateuncertaintyinmeters']:''; ?>" onchange="coordinateUncertaintyInMetersChanged(this.form);" title="<?php echo (isset($LANG['UNCERTAINTY_METERS'])?$LANG['UNCERTAINTY_METERS']:'Uncertainty in Meters'); ?>" />
+										<a href="#" onclick="return dwcDoc('coordinateUncertaintyInMeters')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+									</span>
 								</div>
 							</div>
-						</td>
-						<td id="imgtd" style="display:none;width:430px;" valign="top">
-							<?php
-							if($occId && ($fragArr || $specImgArr )){
-								include_once('includes/imgprocessor.php');
-							}
-							?>
-						</td></tr>
+						<?php endif; ?>
+					</div>  <!-- image ends -->
+					<table class = "column left" style = "border:1px solid black;">									
+						<!-- TODO: implement button functionality, examine relevant button divs in old code below ie saveedits button to get started -->
+						<tr>
+							<td>
+								<div id="bottomSubmitDiv">
+									<input type="hidden" name="occid" value="<?php echo $occManager->getOccId(); ?>" />
+									<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
+									<input type="hidden" name="observeruid" value="<?php echo $SYMB_UID; ?>" />
+									<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
+									<input type="hidden" name="linkdupe" value="" />
+									<?php
+									if($occId){
+										?>
+										<div style="float:left">
+											<div id="editButtonDiv">
+												<button type="submit" id="saveEditsButton" name="submitaction" value="saveOccurEdits" onclick="return verifyFullFormEdits(this.form)" disabled><?php echo $LANG['SAVE_EDITS']; ?></button>
+												<button 
+													type="submit" 
+													value="Previous" 
+													onclick="<?php if($occIndex>0) { ?>submitQueryForm('back');<?php } ?> return false;">
+													Previous
+												</button>
+												<button type="button" value="Done" onclick="navigateToURL(<?php echo($collId) ?>)">Done</button>
+												<button 
+													type="submit" 
+													value="Next" 
+													onclick="<?php if($occIndex<$qryCnt-1) { ?>submitQueryForm('forward');<?php } ?> return false;">
+													Next
+												</button>
+												<input type="hidden" name="occindex" value="<?php echo is_numeric($occIndex)?$occIndex:''; ?>" />
+												<input name="editedfields" value="" />
+											</div>
+										</div>
+											<?php
+									}
+									else{
+										?>
+										<div id="addButtonDiv">
+											<input name="recordenteredby" type="hidden" value="<?php echo $PARAMS_ARR['un']; ?>" />
+											<button name="submitaction" type="submit" value="addOccurRecord" style="width:150px;font-weight:bold;margin:10px;"><?php echo $LANG['ADD_RECORD']; ?></button>
+											<input name="qrycnt" type="hidden" value="<?php echo $qryCnt?$qryCnt:''; ?>" />
+											<div style="margin-left:15px;font-weight:bold;">
+												<?php echo $LANG['FOLLOW_UP']; ?>:
+											</div>
+											<div style="margin-left:20px;">
+												<input name="gotomode" type="radio" value="1" <?php echo ($goToMode==1?'CHECKED':''); ?> /> <?php echo $LANG['GO_TO_NEW']; ?><br/>
+												<input name="gotomode" type="radio" value="2" <?php echo ($goToMode==2?'CHECKED':''); ?> /> <?php echo $LANG['GO_NEW_CARRYOVER']; ?><br/>
+												<input name="gotomode" type="radio" value="0" <?php echo (!$goToMode?'CHECKED':''); ?> /> <?php echo $LANG['REMAIN_ON_PAGE']; ?>
+											</div>
+										</div>
+										<?php
+									}
+									?>
+								</div>
+							</td>
+						</tr>
 					</table>
-					<?php
-				}
-			}
-		}
-		else{
-			if(!$collId && !$occId) echo $LANG['ERROR_ID_NULL'];
-			elseif(!$isEditor){
-				echo '<div style="margin:30px;">';
-				if($crowdSourceMode){
-					echo $LANG['ERROR_NO_CROWDSOURCING'].'<div style="margin:15px"><a href="../specprocessor/crowdsource/index.php">'.$LANG['RETURN_TO_CROWDSOURCING'].'</a></div>';
-				}
-				else echo $LANG['ERROR_NOT_AUTHORIZED'];
-				echo '</div>';
-			}
-			elseif($isEditor == 4 && !$occId){
-				echo '<b>'.$LANG['ERROR_CANT_ADD'];
-			}
-		}
-		?>
+				</form>
+				<section>
+					<div class="info function-bar">
+						<?php echo "info needed   " ?>
+						<div style="float:left;" title="<?php echo $LANG['PRIMARY_KEY']; ?>">
+							<?php if($occId) echo 'Key: '.$occManager->getOccId(); ?>
+						</div>
+					</div>
+					<div class="info function-bar">
+						<?php
+							if(array_key_exists('recordenteredby',$occArr)){
+								echo $LANG['ENTERED_BY'].': '.($occArr['recordenteredby']?$occArr['recordenteredby']:$LANG['NOT_RECORDED']);
+							}
+							if(isset($occArr['dateentered']) && $occArr['dateentered']) echo ' ['.$occArr['dateentered'].']';
+						?>
+					</div>
+					<div class="info">
+						<?php echo "info needed" ?>
+					</div>
+				</section> 
+			</div>
+		</div>			
 	</div>
 </body>
 </html>
