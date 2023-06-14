@@ -18,7 +18,7 @@ $curentVersion = $schemaManager->getCurrentVersion();
 //if(!$IS_ADMIN && $curentVersion) header('Location: ../profile/index.php?refurl=../admin/schemamanager.php');
 $IS_ADMIN = true;
 ?>
-<html>
+<html lang="en">
 	<head>
 		<title>Database Schema Manager</title>
 		<?php

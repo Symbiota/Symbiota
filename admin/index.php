@@ -3,7 +3,7 @@ include_once('../config/symbini.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 header("Location: ".$CLIENT_ROOT."/index.php");
 ?>
-<html>
+<html lang="en">
 	<head>
 		<title>Forbidden</title>
 		<?php

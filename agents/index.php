@@ -91,7 +91,7 @@ function searchform($name="") {
 function pageheader($name) {
    global $SERVER_ROOT, $DEFAULT_TITLE, $spDisplay, $CLIENT_ROOT, $agents_indexMenu, $agents_indexCrumbs;
 echo '<!DOCTYPE HTML>
-<html>
+<html lang="en">
 <head>
 	<title>'.$DEFAULT_TITLE.' - '.$spDisplay. '</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>

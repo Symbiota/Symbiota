@@ -18,14 +18,14 @@
 
 /* Fonts imports
   ========================================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
 
 /* Global variables and components
    ========================================================================== */
-@import 'base.css';
-@import 'variables.css';
-@import 'header.css';
-@import 'footer.css';
+@import "base.css";
+@import "variables.css";
+@import "header.css";
+@import "footer.css";
 
 /* Global styles
    ========================================================================== */
@@ -199,7 +199,6 @@ table.styledtable tr.alt td {
   background-color: #dfdfdf;
 }
 
-
 /***********************************************************************/
 
 /* Utility classes
@@ -287,6 +286,11 @@ table.styledtable tr.alt td {
   background-color: none;
   border: 1px solid var(--bright-color);
   padding: 0.5rem 0.9rem;
+}
+
+.skip-link {
+  position: absolute;
+  left: -10000px;
 }
 
 /* Media queries

@@ -41,8 +41,11 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 			?>
 			<div>
 				<h1>Welcome</h1>
-				<p>This data portal has been established to promote collaborative... Replace with introductory text in English.
-				If the portal is not meant to be multilingual, remove the unneeded language sections</p>
+				<p>
+					This data portal has been established to promote collaborative... Replace
+					with introductory text in English. If the portal is not meant to be
+					multilingual, remove the unneeded language sections
+				</p>
 			</div>
 			<?php
 		}
