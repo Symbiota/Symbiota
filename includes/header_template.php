@@ -6,7 +6,7 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 	<header>
 		<div class="top-wrapper">
 			<a class="skip-link" href="#end-nav"><?php echo $LANG['SKIP_NAV'] ?></a>
-			<nav class="top-login">
+			<nav class="top-login" aria-label="horizontal-nav">
 				<?php
 				if ($USER_DISPLAY_NAME) {
 					?>
@@ -51,9 +51,9 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 		<div class="menu-wrapper">
 			<!-- Hamburger icon -->
 			<input class="side-menu" type="checkbox" id="side-menu" name="side-menu" />
-			<label class="hamb" for="side-menu"><span class="hamb-line"></span></label>
+			<label class="hamb hamb-line hamb-label" for="side-menu" tabindex="0">☰</label>
 			<!-- Menu -->
-			<nav class="top-menu">
+			<nav class="top-menu" aria-label="hamburger-nav">
 				<ul class="menu">
 					<li>
 						<a href="<?php echo $CLIENT_ROOT; ?>/index.php">

@@ -112,16 +112,22 @@ header a:hover {
 }
 
 .hamb-line {
-  background: white;
   display: block;
   height: 2px;
   position: relative;
   width: 24px;
 }
 
+.hamb-label {
+  display: block;
+  height: 2px;
+  position: relative;
+  width: 24px;
+  font-size: 4rem;
+}
+
 .hamb-line::before,
 .hamb-line::after {
-  background: white;
   content: "";
   display: block;
   height: 100%;
