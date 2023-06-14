@@ -347,8 +347,7 @@ class ImageProcessor {
 				$occurMain = new OccurrenceMaintenance($this->conn);
 
 				$this->logOrEcho('Updating statistics...');
-				$occurMain->setCollidStr($this->collid);
-				if(!$occurMain->updateCollectionStatsBasic()){
+				if(!$occurMain->updateCollectionStatsBasic($this->collid)){
 					$errorArr = $occurMain->getErrorArr();
 					foreach($errorArr as $errorStr){
 						$this->logOrEcho($errorStr,1);
@@ -561,8 +560,7 @@ class ImageProcessor {
 		if($collList){
 			$this->logOrEcho('Updating collection statistics...',2);
 			foreach($collList as $collid){
-				$occurMain->setCollidStr($collid);
-				if(!$occurMain->updateCollectionStatsBasic()){
+				if(!$occurMain->updateCollectionStatsBasic($collid)){
 					$errorArr = $occurMain->getErrorArr();
 					foreach($errorArr as $errorStr){
 						$this->logOrEcho($errorStr,1);
