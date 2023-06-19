@@ -39,6 +39,7 @@ class TaxonomyHarvester extends Manager{
 			}
 			foreach($this->taxonomicResources as $authCode => $apiKey){
 				$newTid = $this->addSciname($taxonArr, $authCode);
+				if($newTid) break;
 			}
 		}
 		return $newTid;
@@ -228,7 +229,7 @@ class TaxonomyHarvester extends Manager{
 				}
 				else $this->logOrEcho('Targeted taxon return does not exist',2);
 			}
-			else $this->logOrEcho($sciName.' not found in CoL',2);
+			else $this->logOrEcho('Taxon not found',2);
 		}
 		else $this->logOrEcho('ERROR harvesting COL name: null input name',1);
 		return $tid;
