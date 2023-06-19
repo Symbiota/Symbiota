@@ -1,4 +1,4 @@
-function sendRequest(url, method, data) {
+function sendRequest(url, method, path, currentEnabledStylesheet) {
   return new Promise((resolve, reject) => {
     const xmlRequest = new XMLHttpRequest();
     xmlRequest.open(method, url);
@@ -12,7 +12,12 @@ function sendRequest(url, method, data) {
         }
       }
     };
-    xmlRequest.send(JSON.stringify({ data: data }));
+    xmlRequest.send(
+      JSON.stringify({
+        path: path,
+        currentEnabledStylesheet: currentEnabledStylesheet,
+      })
+    );
   });
 }
 
@@ -20,44 +25,62 @@ async function toggleAccessibilityStyles(
   pathToToggleStyles,
   cssPath,
   viewCondensed,
-  viewAccessible,
-  alternateButtonId = ""
+  viewAccessible
 ) {
   try {
+    const currentEnabledStylesheet = getEnabledLink().getAttribute("href");
     const response = await sendRequest(
       pathToToggleStyles + "/toggle-styles.php",
       "POST",
-      cssPath
+      cssPath,
+      currentEnabledStylesheet
     );
-    handleResponse(response, viewCondensed, viewAccessible, alternateButtonId);
+    await handleResponse(response, viewCondensed, viewAccessible);
   } catch (error) {
     console.log(error);
   }
 }
 
-function handleResponse(
-  activeStylesheet,
+async function handleResponse(
+  stylesheetReferencedInSession,
   viewCondensed,
-  viewAccessible,
-  alternateButtonId
+  viewAccessible
 ) {
-  const links = document.getElementsByName("accessibility-css-link");
-  let button = document.getElementById("accessibility-button");
-  if (alternateButtonId) {
-    button = document.getElementById(alternateButtonId);
-  }
-
-  const isCurrentlyCondensed =
-    activeStylesheet.indexOf("/symbiota/condensed.css?ver=6.css") > 0;
-
-  const newText = isCurrentlyCondensed ? viewCondensed : viewAccessible;
-  button.textContent = newText;
+  let links = document.querySelectorAll("[data-accessibility-link]");
 
   for (let i = 0; i < links.length; i++) {
-    if (links[i].getAttribute("href") === activeStylesheet) {
-      links[i].disabled = true;
-    } else {
+    if (links[i].getAttribute("href") === stylesheetReferencedInSession) {
       links[i].disabled = false;
+    } else {
+      links[i].disabled = true;
     }
   }
+  updateButtonTextBasedOnEnabledStylesheet(viewCondensed, viewAccessible);
+}
+
+function updateButtonTextBasedOnEnabledStylesheet(
+  viewCondensed,
+  viewAccessible
+) {
+  let enabledLink = getEnabledLink();
+  const isAccessibleLinkEnabled =
+    enabledLink
+      ?.getAttribute("href")
+      ?.indexOf("/symbiota/accessibility-compliant.css") > 0;
+  let buttons = document.querySelectorAll("[data-accessibility]");
+  const newText = isAccessibleLinkEnabled ? viewCondensed : viewAccessible;
+  for (let j = 0; j < buttons.length; j++) {
+    buttons[j].textContent = newText;
+  }
+}
+
+function getEnabledLink() {
+  let links = document.querySelectorAll("[data-accessibility-link]");
+  let enabledLink;
+  for (let i = 0; i < links.length; i++) {
+    if (!links[i].disabled) {
+      enabledLink = links[i];
+    }
+  }
+  return enabledLink;
 }

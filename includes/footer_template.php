@@ -17,6 +17,7 @@
 	<script type="text/javascript">
 		document.addEventListener('DOMContentLoaded', ()=>{
 			document.getElementById('accessibility-button').disabled=false;
+			updateButtonTextBasedOnEnabledStylesheet('<?php echo $LANG['TOGGLE_508_OFF'] ?>', '<?php echo $LANG['TOGGLE_508_ON'] ?>');
 		});
 	</script>
 </footer>

@@ -1,11 +1,18 @@
 <?php
 if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/header.en.php');
 else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
+
+include_once($SERVER_ROOT.'/classes/ProfileManager.php');
+$pHandler = new ProfileManager();
+$isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
 ?>
 <div class="header-wrapper">
 	<header>
 		<div class="top-wrapper">
 			<nav class="top-login">
+				<span>
+					<button style="font-size:14" onclick="toggleAccessibilityStyles('<?php echo $CLIENT_ROOT . '/includes' . '/' ?>', '<?php echo $CSS_BASE_PATH ?>', '<?php echo $LANG['TOGGLE_508_OFF'] ?>', '<?php echo $LANG['TOGGLE_508_ON'] ?>')" id="accessibility-button" name="accessibility-button" data-accessibility="accessibility-button" ><?php echo (isset($LANG['TOGGLE_508_ON'])?$LANG['TOGGLE_508_ON']:'Accessibility Mode'); ?></button>
+				</span>
 				<?php
 				if ($USER_DISPLAY_NAME) {
 					?>
@@ -21,9 +28,6 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 					<?php
 				} else {
 					?>
-					<span>
-						<button style="font-size:14" onclick="toggleAccessibilityStyles('<?php echo $CLIENT_ROOT . '/includes' . '/' ?>', '<?php echo $CSS_BASE_PATH ?>', '<?php echo $LANG['TOGGLE_508_OFF'] ?>', '<?php echo $LANG['TOGGLE_508_ON'] ?>')" id="accessibility-button" name="accessibility-button" ><?php echo (isset($LANG['TOGGLE_508_ON'])?$LANG['TOGGLE_508_ON']:'Accessibility Mode'); ?></button>
-					</span>
 					<span>
 						<a href="#">
 							Contact Us

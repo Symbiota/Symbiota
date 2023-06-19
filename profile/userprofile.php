@@ -12,6 +12,7 @@ if(!is_numeric($userId)) $userId = 0;
 $pHandler = new ProfileManager();
 $pHandler->setUid($userId);
 $person = $pHandler->getPerson();
+$isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
 
 $isSelf = true;
 if($userId != $SYMB_UID) $isSelf = false;
@@ -81,6 +82,15 @@ if($isEditor){
 							<td>
 								<div>
 									<input id="email" name="email" type="email" size="40" value="<?php echo $person->getEmail();?>" required />
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td><b><?php echo (isset($LANG['ACCESSIBILITY_PREF'])?$LANG['ACCESSIBILITY_PREF']:'Accessibility Preferences'); ?>:</b></td>
+							<td>
+								<div>
+									<input type="checkbox" name="accessibility-pref" id="accessibility-pref" value="1" <?php echo $isAccessiblePreferred ? 'checked' : ''; ?> />
+									<label for="accessibility-pref"><?php echo (isset($LANG['ACCESSIBILITY_PREF_DESC'])?$LANG['ACCESSIBILITY_PREF_DESC']:'Check to indicate a preference for accessibility-optimized styles'); ?></label>
 								</div>
 							</td>
 						</tr>
