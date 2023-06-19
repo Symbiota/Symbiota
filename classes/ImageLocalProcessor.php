@@ -30,7 +30,7 @@ class ImageLocalProcessor {
 	private $webFileSizeLimit = 500000;
 	private $lgFileSizeLimit = 10000000;
 	private $jpgQuality= 80;
-	private $medProcessingCode = 1;			// 1 = evaluate source and import, 2 = import source and use as is, 3 = map to source, 4 = import designated medium (_med.jpg), 5 = map to designated medium (_med.jpg)
+	private $medProcessingCode = 1;			// 1 = evaluate source and import, 2 = import and use as is, 3 = map to source, 0 = exclude
 	private $tnProcessingCode = 1;				// 1 = create from source, 2 = import source (_tn.jpg), 3 = map to source (_tn.jpg), 0 = exclude
 	private $lgProcessingCode = 1;				// 1 = import source, 2 = map to source, 3 = import large version (_lg.jpg), 4 = map large version (_lg.jpg), 0 = exclude
 	private $medSourceSuffix = '_med';
@@ -338,22 +338,22 @@ class ImageLocalProcessor {
 
 	private function processFile($fileName, $pathFrag){
 		//Only target source input files, thus skip any predesignated files, unless _lg is the source file (largest res)
-		if($this->tnProcessingCode > 1 && stripos($fileName, $this->tnSourceSuffix.'.j')) continue;
-		if($this->medProcessingCode > 3 && stripos($fileName, $this->medSourceSuffix.'.j')) continue;
-		if($this->lgProcessingCode > 2 && stripos($fileName,$this->lgSourceSuffix.'.j') && $this->medProcessingCode < 4) continue;
+		if($this->tnProcessingCode > 1 && stripos($fileName, $this->tnSourceSuffix.'.j')) return false;
+		if($this->medProcessingCode > 3 && stripos($fileName, $this->medSourceSuffix.'.j')) return false;
+		if($this->lgProcessingCode > 2 && stripos($fileName,$this->lgSourceSuffix.'.j') && $this->medProcessingCode < 4) return false;
 		$this->logOrEcho('Processing File ('.date('Y-m-d h:i:s A').'): '.$fileName);
 		$fileExt = strtolower(substr($fileName, strrpos($fileName, '.') + 1));
 		if($fileExt == 'jpg' || $fileExt == 'jpeg'){
 			$catalogNumber = $this->getPrimaryKey($fileName);
 			if(!$catalogNumber){
 				$this->logOrEcho('File skipped ('.$fileName.'), unable to extract specimen identifier',1);
-				continue;
+				return false;
 			}
 			$targetPathFrag = $this->getTargetPathFrag($catalogNumber);
 			$occid = $this->getOccid($catalogNumber);
-			if($occid === false) continue;
+			if($occid === false) return false;
 			$targetFileName = $this->prepTarget($this->targetPathBase.$targetPathFrag, $fileName, $occid);
-			if(!$targetFileName) continue;
+			if(!$targetFileName) return false;
 			$sourceArr['originalurl'] = $fileName;
 			if($imgArr = $this->processImageFile($sourceArr, $targetFileName, $this->targetPathBase.$targetPathFrag, $pathFrag)){
 				$imgArr['occid'] = $occid;
@@ -400,6 +400,12 @@ class ImageLocalProcessor {
 	private function processImageMap(){
 		set_time_limit(3600);
 		//Read image map and loop through image names
+		$this->medProcessingCode = 2;
+		$this->tnProcessingCode = 2;
+		$this->lgProcessingCode = 3;
+		$this->medSourceSuffix = '';
+		$this->tnSourceSuffix = '';
+		$this->lgSourceSuffix = '';
 		$fh = fopen($this->sourcePathBase.$this->collArr[$this->activeCollid]['pmterm'],'r');
 		//Read header
 		$this->setImageTableMap();
@@ -407,7 +413,9 @@ class ImageLocalProcessor {
 		if($headArr = fgetcsv($fh)){
 			foreach($headArr as $k => $fieldName){
 				$fieldName = strtolower($fieldName);
-				if(array_key_exists(strtolower($fieldName), $this->imageTableMap)) $headerMap[$fieldName] = $k;
+				if($fieldName == 'catalognumber' || $fieldName == 'othercatalognumbers' || array_key_exists($fieldName, $this->imageTableMap)){
+					$headerMap[$fieldName] = $k;
+				}
 			}
 		}
 		if(!isset($headerMap['catalognumber'])){
@@ -424,7 +432,7 @@ class ImageLocalProcessor {
 		while($recArr = fgetcsv($fh)){
 			$sourceArr = array();
 			foreach($headerMap as $field => $index){
-				$sourceArr[$field] = trim($recArr[$headerMap['catalognumber']]);
+				$sourceArr[$field] = trim($recArr[$index]);
 			}
 			if(!isset($sourceArr['catalognumber']) || !$sourceArr['catalognumber']){
 				if(isset($sourceArr['othercatalognumbers']) && $sourceArr['othercatalognumbers']){
@@ -593,59 +601,45 @@ class ImageLocalProcessor {
 			//Set medium web image
 			$medUrl = '';
 			if($this->medProcessingCode){
+				$medFileName = $fileNameBase.$this->medSourceSuffix.$fileNameExt;
 				$medTargetFileName = substr($targetFileName,0,-4).$this->medSourceSuffix.'.jpg';
+				if(isset($imageArr['url']) && $imageArr['url']){
+					$medFileName = $imageArr['url'];
+					$medTargetFileName = $imageArr['url'];
+				}
 				if($this->medProcessingCode == 1){
 					// evaluate source and import
 					if($fileSize < $this->webFileSizeLimit && $width < ($this->webPixWidth*2)){
 						if(copy($sourcePath.$sourceFileName, $targetPath.$medTargetFileName)){
 							$medUrl = $medTargetFileName;
-							$this->logOrEcho('Source image imported as web image ('.date('Y-m-d h:i:s A').') ', 1);
+							$this->logOrEcho('Source image imported as web image ', 1);
 						}
 					}
 					else{
 						if($this->createNewImage($sourcePath.$sourceFileName, $targetPath.$medTargetFileName, $this->webPixWidth, round($this->webPixWidth*$height/$width), $width, $height)){
 							$medUrl = $medTargetFileName;
-							$this->logOrEcho('Web image created from source image ('.date('Y-m-d h:i:s A').') ', 1);
+							$this->logOrEcho('Web image created from source image ', 1);
 						}
 					}
 				}
 				elseif($this->medProcessingCode == 2){
 					// import source and use as is
-					$medFileName = $fileNameBase.$this->medSourceSuffix.$fileNameExt;
-					if(copy($sourcePath.$medFileName, $targetPath.$medTargetFileName)){
-						$medUrl = $medTargetFileName;
-						$this->logOrEcho('Source image imported as web image ('.date('Y-m-d h:i:s A').') ', 1);
+					if($this->uriExists($sourcePath.$medFileName)){
+						if(copy($sourcePath.$medFileName, $targetPath.$medTargetFileName)){
+							$medUrl = $medTargetFileName;
+							$this->logOrEcho('Web image imported as is ', 1);
+						}
 					}
+					else $this->logOrEcho('WARNING: predesignated medium does not appear to exist ('.$sourcePath.$medFileName.') ', 1);
 				}
 				elseif($this->medProcessingCode == 3){
 					// map to source as the web image
-					$medFileName = $fileNameBase.$this->medSourceSuffix.$fileNameExt;
-					$medUrl = $sourcePath.$medFileName;
-					$this->logOrEcho('Source used as web image ('.date('Y-m-d h:i:s A').') ', 1);
-				}
-				elseif($this->medProcessingCode == 4){
-					// import predesignated web image (_med.jpg)
-					$medSourceFileName = $fileNameBase.$this->medSourceSuffix.$fileNameExt;
-					if($this->uriExists($sourcePath.$medSourceFileName)){
-						if(copy($sourcePath.$medSourceFileName, $targetPath.$medTargetFileName)){
-							if(substr($sourcePath,0,4) != 'http') @unlink($sourcePath.$medSourceFileName);
-							$medUrl = $medTargetFileName;
-							$this->logOrEcho('Imported predesignated medium derivative ('.date('Y-m-d h:i:s A').') ', 1);
-						}
+					if($this->uriExists($sourcePath.$medFileName)){
+						$medUrl = $sourcePath.$medFileName;
+						$this->logOrEcho('Source used as web image ', 1);
 					}
 					else{
-						$this->logOrEcho('WARNING: predesignated medium does not appear to exist ('.$sourcePath.$medSourceFileName.') ', 1);
-					}
-				}
-				elseif($this->medProcessingCode == 5){
-					// map to predesignated web image (_med.jpg)
-					$medSourceFileName = $fileNameBase.$this->medSourceSuffix.$fileNameExt;
-					if($this->uriExists($sourcePath.$medSourceFileName)){
-						$medUrl = $sourcePath.$medSourceFileName;
-						$this->logOrEcho('Mapped to predesignated medium derivative ('.date('Y-m-d h:i:s A').') ',1);
-					}
-					else{
-						$this->logOrEcho('WARNING: predesignated medium does not appear to exist ('.$sourcePath.$medSourceFileName.') ',1);
+						$this->logOrEcho('WARNING: predesignated medium does not appear to exist ('.$sourcePath.$medFileName.') ',1);
 					}
 				}
 			}
@@ -664,7 +658,7 @@ class ImageLocalProcessor {
 							//Image is too wide, thus let's resize and import
 							if($this->createNewImage($sourcePath.$sourceFileName, $targetPath.$lgTargetFileName, $this->lgPixWidth, round($this->lgPixWidth*$height/$width), $width, $height)){
 								$lgUrl = $lgTargetFileName;
-								$this->logOrEcho("Resized source as large derivative (".date('Y-m-d h:i:s A').") ",1);
+								$this->logOrEcho('Resized source as large derivative ',1);
 							}
 						}
 						elseif($fileSize && $fileSize > $this->lgFileSizeLimit) {
@@ -681,14 +675,14 @@ class ImageLocalProcessor {
 							// Resize the image
 							if($this->createNewImage($sourcePath.$sourceFileName, $targetPath.$lgTargetFileName, $newWidth, round($newWidth*$height/$width), $width, $height)){
 								$lgUrl = $lgTargetFileName;
-								$this->logOrEcho("Resized source as large derivative (".date('Y-m-d h:i:s A').") ",1);
+								$this->logOrEcho('Resized source as large derivative ',1);
 							}
 						}
 						else{
 							//Source can serve as large version, thus just import as is
 							if(copy($sourcePath.$sourceFileName, $targetPath.$lgTargetFileName)){
 								$lgUrl = $lgTargetFileName;
-								$this->logOrEcho("Imported source as large derivative (".date('Y-m-d h:i:s A').") ",1);
+								$this->logOrEcho('Imported source as large derivative ',1);
 							}
 							else{
 								$this->logOrEcho("WARNING: unable to import large derivative (".$sourcePath.$sourceFileName.") ",1);
@@ -701,21 +695,21 @@ class ImageLocalProcessor {
 					// 2 = map to source
 					$lgUrl = $sourcePath.$sourceFileName;
 					$imgHash = md5_file($sourcePath.$sourceFileName);
-					$this->logOrEcho("Used source as large derivative (".date('Y-m-d h:i:s A').") ",1);
+					$this->logOrEcho('Mapped to source as large derivative ',1);
 				}
 				elseif($this->lgProcessingCode == 3){
-					// 3 = import predesignated large version: look for and use file with $this->lgSourceSuffix, if it exists
+					// 3 = import predesignated large version from image map or look for file with $this->lgSourceSuffix
 					$lgSourceFileName = $fileNameBase.$this->lgSourceSuffix.$fileNameExt;
 					if($this->uriExists($sourcePath.$lgSourceFileName)){
 						if(copy($sourcePath.$lgSourceFileName, $targetPath.$lgTargetFileName)){
 							if(substr($sourcePath,0,4) != 'http') unlink($sourcePath.$lgSourceFileName);
 							$lgUrl = $lgTargetFileName;
 							$imgHash = md5_file($targetPath.$lgTargetFileName);
-							$this->logOrEcho("Imported large derivative of source for large version(".date('Y-m-d h:i:s A').") ",1);
+							$this->logOrEcho('Large derivative imported as is ',1);
 						}
 					}
 					else{
-						$this->logOrEcho("WARNING: unable to import large derivative (".$sourcePath.$lgSourceFileName.") ",1);
+						$this->logOrEcho('WARNING: unable to import large derivative ('.$sourcePath.$lgSourceFileName.') ',1);
 					}
 				}
 				elseif($this->lgProcessingCode == 4){
@@ -724,41 +718,45 @@ class ImageLocalProcessor {
 					if($this->uriExists($sourcePath.$lgSourceFileName)){
 						$lgUrl = $sourcePath.$lgSourceFileName;
 						$imgHash = md5_file($sourcePath.$lgSourceFileName);
-						$this->logOrEcho("Large version mapped to large derivative of source (".date('Y-m-d h:i:s A').") ",1);
+						$this->logOrEcho('Large derivative mapped to existing source ',1);
 					}
 					else{
-						$this->logOrEcho("WARNING: unable to map to large derivative (".$sourcePath.$lgSourceFileName.") ",1);
+						$this->logOrEcho('WARNING: unable to map to large derivative ('.$sourcePath.$lgSourceFileName.') ',1);
 					}
 				}
 			}
 			if($lgUrl) $imageArr['originalurl'] = $lgUrl;
 			if($imgHash) $imageArr['mediamd5'] = $imgHash;
 			//Set thumbnail image
-			$tnUrl = "";
+			$tnUrl = '';
 			if($this->tnProcessingCode){
-				$tnTargetFileName = substr($targetFileName,0,-4)."_tn.jpg";
+				$tnFileName = $fileNameBase.$this->tnSourceSuffix.$fileNameExt;
+				$tnTargetFileName = substr($targetFileName,0,-4).$this->tnSourceSuffix.'.jpg';
+				if(isset($imageArr['thumbnailurl']) && $imageArr['thumbnailurl']){
+					$tnFileName = $imageArr['thumbnailurl'];
+					$tnTargetFileName = $imageArr['thumbnailurl'];
+				}
 				if($this->tnProcessingCode == 1){
 					// create tn from source
 					if($this->createNewImage($sourcePath.$sourceFileName,$targetPath.$tnTargetFileName,$this->tnPixWidth,round($this->tnPixWidth*$height/$width),$width,$height)){
 						$tnUrl = $tnTargetFileName;
-						$this->logOrEcho("Created thumbnail from source (".date('Y-m-d h:i:s A').") ",1);
+						$this->logOrEcho('Created thumbnail from source ',1);
 					}
 				}
 				elseif($this->tnProcessingCode == 2){
 					// import predesignated tn; look for and use file with $this->tnSourceSuffix, if it exists
-					$tnFileName = $fileNameBase.$this->tnSourceSuffix.$fileNameExt;
 					if($this->uriExists($sourcePath.$tnFileName)){
-						rename($sourcePath.$tnFileName,$targetPath.$tnTargetFileName);
+						copy($sourcePath.$tnFileName,$targetPath.$tnTargetFileName);
+						if(substr($sourcePath,0,4) != 'http') unlink($sourcePath.$tnFileName);
 					}
 					$tnUrl = $tnTargetFileName;
-					$this->logOrEcho("Imported source as thumbnail (".date('Y-m-d h:i:s A').") ",1);
+					$this->logOrEcho('Thumbnail derivative imported as is ',1);
 				}
 				elseif($this->tnProcessingCode == 3){
 					// 3 = map to predesignated tn: look for and use file with $this->tnSourceSuffix, if it exists
-					$tnFileName = $fileNameBase.$this->tnSourceSuffix.$fileNameExt;
 					if($this->uriExists($sourcePath.$tnFileName)){
 						$tnUrl = $sourcePath.$tnFileName;
-						$this->logOrEcho("Thumbnail is map of source thumbnail (".date('Y-m-d h:i:s A').") ",1);
+						$this->logOrEcho('Thumbnail is map of source thumbnail ',1);
 					}
 				}
 			}
@@ -774,14 +772,15 @@ class ImageLocalProcessor {
 				$this->sourceImagickImg = null;
 			}
 			//Final cleaning stage
-			if(file_exists($sourcePath.$sourceFileName)){
-				if($this->keepOrig){
-					if(file_exists($this->targetPathBase.$this->targetPathFrag.$this->origPathFrag)){
-						rename($sourcePath.$sourceFileName,$this->targetPathBase.$this->targetPathFrag.$this->origPathFrag.$sourceFileName.".orig");
-					}
-				} else {
-					unlink($sourcePath.$sourceFileName);
+			if($this->keepOrig){
+				if(file_exists($this->targetPathBase.$this->targetPathFrag.$this->origPathFrag)){
+					rename($sourcePath.$sourceFileName,$this->targetPathBase.$this->targetPathFrag.$this->origPathFrag.$sourceFileName.".orig");
 				}
+			}
+			else {
+				if(file_exists($sourcePath.$sourceFileName)) unlink($sourcePath.$sourceFileName);
+				if($this->tnProcessingCode < 3 && isset($imageArr['thunbnailurl'])) @unlink($sourcePath.$imageArr['thunbnailurl']);
+				if($this->medProcessingCode < 3 && isset($imageArr['url'])) @unlink($sourcePath.$imageArr['url']);
 			}
 			$this->logOrEcho('Image processed successfully ('.date('Y-m-d h:i:s A').')!',1);
 		}
@@ -1024,7 +1023,7 @@ class ImageLocalProcessor {
 				if(array_key_exists($fieldName, $this->imageTableMap)){
 					$sql1 .= $fieldName.',';
 					$sql2 .= '?, ';
-					$paramType .= $this->imageTableMap['$fieldName']['type'];
+					$paramType .= $this->imageTableMap[$fieldName]['type'];
 					$paramArr[] = $fieldValue;
 				}
 			}
@@ -2037,6 +2036,9 @@ class ImageLocalProcessor {
 
 	private function uriExists($url) {
 		$exists = false;
+		//First simple check
+		if(file_exists($url)) return true;
+
 		$localUrl = '';
 		if(substr($url,0,1) == '/'){
 			if(isset($GLOBALS['imageDomain']) && $GLOBALS['imageDomain']){
@@ -2047,19 +2049,18 @@ class ImageLocalProcessor {
 			}
 			else{
 				$urlPrefix = "http://";
-				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = "https://";
-				$urlPrefix .= $_SERVER["SERVER_NAME"];
-				if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80 && $_SERVER['SERVER_PORT'] != 443) $urlPrefix .= ':'.$_SERVER["SERVER_PORT"];
+				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = 'https://';
+				$urlPrefix .= $_SERVER['SERVER_NAME'];
+				if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443) $urlPrefix .= ':'.$_SERVER['SERVER_PORT'];
 				$url = $urlPrefix.$url;
 			}
 		}
 
-		//First simple check
-		if(file_exists($url) || ($localUrl && file_exists($localUrl))){
-			return true;
-		}
+		//Second simple check
+		if(file_exists($url)) return true;
+		if($localUrl && file_exists($localUrl)) return true;
 
-		//Second check
+		//Third check
 		if(!$exists){
 			// Version 4.x supported
 			$handle   = curl_init($url);
@@ -2076,7 +2077,12 @@ class ImageLocalProcessor {
 		}
 
 		//One last check
-		if(!$exists) $exists = (@fclose(@fopen($url,'r')));
+		if(!$exists){
+			if($fh = @fopen($url,'r')){
+				$exists = true;
+				@fclose($fh);
+			}
+		}
 
 		//Test to see if file is an image
 		if(!@exif_imagetype($url)) $exists = false;
