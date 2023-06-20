@@ -31,8 +31,8 @@ class ImageLocalProcessor {
 	private $lgFileSizeLimit = 10000000;
 	private $jpgQuality= 80;
 	private $medProcessingCode = 1;			// 1 = evaluate source and import, 2 = import and use as is, 3 = map to source, 0 = exclude
-	private $tnProcessingCode = 1;				// 1 = create from source, 2 = import source (_tn.jpg), 3 = map to source (_tn.jpg), 0 = exclude
-	private $lgProcessingCode = 1;				// 1 = import source, 2 = map to source, 3 = import large version (_lg.jpg), 4 = map large version (_lg.jpg), 0 = exclude
+	private $tnProcessingCode = 1;			// 1 = create from source, 2 = import source (_tn.jpg), 3 = map to source (_tn.jpg), 0 = exclude
+	private $lgProcessingCode = 1;			// 1 = import source, 2 = map to source, 3 = import large version (_lg.jpg), 4 = map large version (_lg.jpg), 0 = exclude
 	private $medSourceSuffix = '_med';
 	private $tnSourceSuffix = '_tn';
 	private $lgSourceSuffix = '_lg';
@@ -646,7 +646,6 @@ class ImageLocalProcessor {
 			if($medUrl) $imageArr['url'] = $medUrl;
 			else $this->logOrEcho('Failed to create web image ', 1);
 			//Set large image
-			$imgHash = '';
 			$lgUrl = '';
 			if($this->lgProcessingCode){
 				$lgTargetFileName = $targetFileName;
@@ -689,12 +688,17 @@ class ImageLocalProcessor {
 							}
 						}
 						$imgHash = md5_file($targetPath.$lgTargetFileName);
+						if($imgHash) $imageArr['mediamd5'] = $imgHash;
 					}
 				}
 				elseif($this->lgProcessingCode == 2){
 					// 2 = map to source
 					$lgUrl = $sourcePath.$sourceFileName;
-					$imgHash = md5_file($sourcePath.$sourceFileName);
+					if(!isset($imageArr['mediamd5']) || !$imageArr['mediamd5']){
+						//Don't override MD5 hash is supplied by source (possible todo: compare source hash with new hash and report if they mismatch)
+						$imgHash = md5_file($sourcePath.$sourceFileName);
+						if($imgHash) $imageArr['mediamd5'] = $imgHash;
+					}
 					$this->logOrEcho('Mapped to source as large derivative ',1);
 				}
 				elseif($this->lgProcessingCode == 3){
@@ -702,9 +706,13 @@ class ImageLocalProcessor {
 					$lgSourceFileName = $fileNameBase.$this->lgSourceSuffix.$fileNameExt;
 					if($this->uriExists($sourcePath.$lgSourceFileName)){
 						if(copy($sourcePath.$lgSourceFileName, $targetPath.$lgTargetFileName)){
-							if(substr($sourcePath,0,4) != 'http') unlink($sourcePath.$lgSourceFileName);
+							if(substr($sourcePath,0,4) != 'http') @unlink($sourcePath.$lgSourceFileName);
 							$lgUrl = $lgTargetFileName;
-							$imgHash = md5_file($targetPath.$lgTargetFileName);
+							if(!isset($imageArr['mediamd5']) || !$imageArr['mediamd5']){
+								//Don't override MD5 hash is supplied by source (possible todo: compare source hash with new hash and report if they mismatch)
+								$imgHash = md5_file($targetPath.$lgTargetFileName);
+								if($imgHash) $imageArr['mediamd5'] = $imgHash;
+							}
 							$this->logOrEcho('Large derivative imported as is ',1);
 						}
 					}
@@ -717,7 +725,11 @@ class ImageLocalProcessor {
 					$lgSourceFileName = $fileNameBase.$this->lgSourceSuffix.$fileNameExt;
 					if($this->uriExists($sourcePath.$lgSourceFileName)){
 						$lgUrl = $sourcePath.$lgSourceFileName;
-						$imgHash = md5_file($sourcePath.$lgSourceFileName);
+						if(!isset($imageArr['mediamd5']) || !$imageArr['mediamd5']){
+							//Don't override MD5 hash is supplied by source (possible todo: compare source hash with new hash and report if they mismatch)
+							$imgHash = md5_file($sourcePath.$lgSourceFileName);
+							if($imgHash) $imageArr['mediamd5'] = $imgHash;
+						}
 						$this->logOrEcho('Large derivative mapped to existing source ',1);
 					}
 					else{
@@ -726,7 +738,6 @@ class ImageLocalProcessor {
 				}
 			}
 			if($lgUrl) $imageArr['originalurl'] = $lgUrl;
-			if($imgHash) $imageArr['mediamd5'] = $imgHash;
 			//Set thumbnail image
 			$tnUrl = '';
 			if($this->tnProcessingCode){
@@ -747,7 +758,7 @@ class ImageLocalProcessor {
 					// import predesignated tn; look for and use file with $this->tnSourceSuffix, if it exists
 					if($this->uriExists($sourcePath.$tnFileName)){
 						copy($sourcePath.$tnFileName,$targetPath.$tnTargetFileName);
-						if(substr($sourcePath,0,4) != 'http') unlink($sourcePath.$tnFileName);
+						if(substr($sourcePath,0,4) != 'http') @unlink($sourcePath.$tnFileName);
 					}
 					$tnUrl = $tnTargetFileName;
 					$this->logOrEcho('Thumbnail derivative imported as is ',1);
