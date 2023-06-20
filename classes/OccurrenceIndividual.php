@@ -968,20 +968,34 @@ class OccurrenceIndividual extends Manager{
 		return $returnArr;
 	}
 
-	public function checkArchive(){
+	public function checkArchive($guid){
 		$retArr = array();
+		$archiveObject = '';
+		$notes = '';
+		$sql = 'SELECT archiveobj, remarks FROM omoccurarchive ';
 		if($this->occid){
-			$sql = 'SELECT archiveobj, remarks FROM omoccurarchive WHERE occid = '.$this->occid;
-			if($rs = $this->conn->query($sql)){
-				if($r = $rs->fetch_object()){
-					$retArr['obj'] = json_decode($r->archiveobj, true);
-					$retArr['notes'] = $r->remarks;
-				}
-				$rs->free();
+			$sql .= 'WHERE occid = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->occid);
+				$stmt->execute();
+				$stmt->bind_result($archiveObject, $notes);
+				$stmt->fetch();
+				$stmt->close();
 			}
-			else{
-				trigger_error('ERROR checking archive: '.$this->conn->error,E_USER_WARNING);
+		}
+		if(!$retArr && $guid){
+			$sql .= 'WHERE (occurrenceid = ?) OR (recordID = ?) ';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('ss', $guid, $guid);
+				$stmt->execute();
+				$stmt->bind_result($archiveObject, $notes);
+				$stmt->fetch();
+				$stmt->close();
 			}
+		}
+		if($archiveObject){
+			$retArr['obj'] = json_decode($archiveObject, true);
+			$retArr['notes'] = $notes;
 		}
 		return $retArr;
 	}
