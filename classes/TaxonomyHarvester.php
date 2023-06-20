@@ -785,7 +785,7 @@ class TaxonomyHarvester extends Manager{
 		$sciName = str_replace(array(' subsp.',' ssp.',' var.',' f.'), '', $sciName);
 		$sciName = str_replace('.','', $sciName);
 		$sciName = str_replace(' ','%20', $sciName);
-		$url = 'http://services.tropicos.org/Name/Search?type='.$searchType.'&format=json&name='.$sciName.'&apikey='.$this->taxonomicResources['tropicos'];
+		$url = 'https://services.tropicos.org/Name/Search?type='.$searchType.'&format=json&name='.$sciName.'&apikey='.$this->taxonomicResources['tropicos'];
 		if($fh = fopen($url, 'r')){
 			$content = "";
 			while($line = fread($fh, 1024)){
@@ -794,14 +794,27 @@ class TaxonomyHarvester extends Manager{
 			fclose($fh);
 			$resultArr = json_decode($content,true);
 			$id = 0;
+			$closeMatchArr = array();
 			foreach($resultArr as $arr){
+				$unitSciname = $arr['ScientificName'];
+				if(strpos($unitSciname, ' fo. ')) $unitSciname = str_replace(' fo. ', ' f. ', $unitSciname);
 				if(array_key_exists('Error', $arr)){
 					$this->logOrEcho('Taxon not found (code:1)',2);
 					return;
 				}
-				if(!array_key_exists('NomenclatureStatusID', $arr) || $arr['NomenclatureStatusID'] == 1){
-					$id = $arr['NameId'];
-					break;
+				if($taxonArr['sciname'] != $unitSciname){
+					$pattern = '/^\D+\s{1}\D+\s{1}(subsp|ssp|var|f)\.\s{1}\D+$/';
+					if(preg_match($pattern, $taxonArr['sciname'])){
+						if(preg_match($pattern, $unitSciname)){
+							$closeMatchArr[] = $arr['NameId'];
+						}
+					}
+				}
+				else{
+					if(!array_key_exists('NomenclatureStatusID', $arr) || $arr['NomenclatureStatusID'] == 1){
+						$id = $arr['NameId'];
+						break;
+					}
 				}
 			}
 			if($id){
@@ -810,6 +823,11 @@ class TaxonomyHarvester extends Manager{
 			}
 			else{
 				$this->logOrEcho('Taxon not found (code:2)',2);
+				if($closeMatchArr){
+					foreach($closeMatchArr as $closeID){
+						$this->addTropicosTaxonByID($closeID);
+					}
+				}
 			}
 		}
 		else{
@@ -820,7 +838,7 @@ class TaxonomyHarvester extends Manager{
 
 	private function addTropicosTaxonByID($id){
 		$taxonArr= Array();
-		$url = 'http://services.tropicos.org/Name/'.$id.'?apikey='.$this->taxonomicResources['tropicos'].'&format=json';
+		$url = 'https://services.tropicos.org/Name/'.$id.'?apikey='.$this->taxonomicResources['tropicos'].'&format=json';
 		if($fh = fopen($url, 'r')){
 			$content = "";
 			while($line = fread($fh, 1024)){
@@ -835,7 +853,7 @@ class TaxonomyHarvester extends Manager{
 				$taxonArr['parent']['tid'] = 'self';
 			}
 			else{
-				$url = 'http://services.tropicos.org/Name/'.$id.'/HigherTaxa?apikey='.$this->taxonomicResources['tropicos'].'&format=json';
+				$url = 'https://services.tropicos.org/Name/'.$id.'/HigherTaxa?apikey='.$this->taxonomicResources['tropicos'].'&format=json';
 				if($fh = fopen($url, 'r')){
 					$content = '';
 					while($line = fread($fh, 1024)){
@@ -859,7 +877,7 @@ class TaxonomyHarvester extends Manager{
 			//Get accepted name
 			$acceptedTid = 0;
 			if($taxonArr['acceptedNameCount'] > 0 && $taxonArr['synonymCount'] == 0){
-				$url = 'http://services.tropicos.org/Name/'.$id.'/AcceptedNames?apikey='.$this->taxonomicResources['tropicos'].'&format=json';
+				$url = 'https://services.tropicos.org/Name/'.$id.'/AcceptedNames?apikey='.$this->taxonomicResources['tropicos'].'&format=json';
 				if($fh = fopen($url, 'r')){
 					$content = '';
 					while($line = fread($fh, 1024)){
@@ -907,14 +925,18 @@ class TaxonomyHarvester extends Manager{
 		if(isset($nodeArr['Genus'])) $taxonArr['unitname1'] = $nodeArr['Genus'];
 		if(isset($nodeArr['SpeciesEpithet'])) $taxonArr['unitname2'] = $nodeArr['SpeciesEpithet'];
 		if(isset($nodeArr['source'])) $taxonArr['source'] = $nodeArr['source'];
-		if(!isset($taxonArr['unitname1']) && !strpos($taxonArr['sciname'],' ')) $taxonArr['unitname1'] = $taxonArr['sciname'];
+		if(!isset($taxonArr['unitname1']) && $taxonArr['sciname'] && !strpos($taxonArr['sciname'],' ')) $taxonArr['unitname1'] = $taxonArr['sciname'];
 		$taxonArr['rankid'] = $this->getRankIdByTaxonArr($taxonArr);
 		if(isset($taxonArr['unitname2']) && isset($nodeArr['OtherEpithet'])){
 			$taxonArr['unitname3'] = $nodeArr['OtherEpithet'];
 			if($this->kingdomName != 'Animalia'){
 				if($taxonArr['rankid'] == 230) $taxonArr['unitind3'] = 'subsp.';
 				elseif($taxonArr['rankid'] == 240) $taxonArr['unitind3'] = 'var.';
-				elseif($taxonArr['rankid'] == 260) $taxonArr['unitind3'] = 'f.';
+				elseif($taxonArr['rankid'] == 260){
+					$taxonArr['unitind3'] = 'f.';
+					$taxonArr['sciname'] = str_replace(' fo. ', ' f. ', $taxonArr['sciname']);
+				}
+
 			}
 		}
 		return $taxonArr;
@@ -1161,7 +1183,7 @@ class TaxonomyHarvester extends Manager{
 			$sql = 'SELECT tidaccepted FROM taxstatus WHERE (taxauthid = '.$this->taxAuthId.') AND (tid = '.$newTid.')';
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
-				//Taxon is already in this thesaurus, thus link synonyms to accepted name of this taxon
+				//Taxon is already in this thesaurus, thus skip loading and jsut link synonyms to accepted name of this taxon
 				$tidAccepted = $r->tidaccepted;
 				$loadTaxon= false;
 			}
@@ -1412,22 +1434,22 @@ class TaxonomyHarvester extends Manager{
 		$retArr = array();
 		$taxonStr = $this->cleanInStr($taxonStr);
 		if($taxonStr){
-			$infraArr = array('subsp','ssp','var','f');
-			$taxonStringArr = explode(' ',$taxonStr);
-			$unitname1 = array_shift($taxonStringArr);
-			if(strlen($unitname1) == 1) $unitname1 = array_shift($taxonStringArr);
-			$unitname2 = array_shift($taxonStringArr);
-			if(strlen($unitname2) == 1) $unitname2 = array_shift($taxonStringArr);
-			$unitname3 = array_shift($taxonStringArr);
-			if($taxonStringArr){
-				while($val = array_shift($taxonStringArr)){
-					if(in_array(str_replace('.', '', $val),$infraArr)) $unitname3 = array_shift($taxonStringArr);
+			$infraArr = array('subsp.','ssp.','var.','f.');
+			$unitArr = explode(' ', $taxonStr);
+			$unitname1 = $this->cleanInStr(array_shift($unitArr));
+			if(strlen($unitname1) == 1) $unitname1 = $this->cleanInStr(array_shift($unitArr));
+			$unitname2 = $this->cleanInStr(array_shift($unitArr));
+			if(strlen($unitname2) == 1) $unitname2 = $this->cleanInStr(array_shift($unitArr));
+			$infraEpithetArr = array();
+			foreach($unitArr as $str){
+				if(!in_array($str, $infraArr)){
+					$infraEpithetArr[] = $this->cleanInStr($str);
 				}
 			}
-			if($unitname3){
+			if($infraEpithetArr){
 				//Look for infraspecific species with different rank indicators
-				$sql = 'SELECT tid, sciname FROM taxa WHERE (unitname1 = "'.$unitname1.'") AND (unitname2 = "'.$unitname2.'") AND (unitname3 = "'.$unitname3.'") ';
-				if($this->kingdomName) $sql .= 'AND (kingdomname = "'.$this->kingdomName.'" OR kingdomname IS NULL) ';
+				$sql = 'SELECT tid, sciname FROM taxa WHERE (unitname1 = "'.$unitname1.'") AND (unitname2 = "'.$unitname2.'") ';
+				if($this->kingdomName) $sql .= 'AND (kingdomname = "'.$this->cleanInStr($this->kingdomName).'" OR kingdomname IS NULL) ';
 				$sql .= 'ORDER BY sciname';
 				$rs = $this->conn->query($sql);
 				while($row = $rs->fetch_object()){
@@ -1435,15 +1457,14 @@ class TaxonomyHarvester extends Manager{
 				}
 				$rs->free();
 			}
-
 			if($unitname2){
 				if(!$retArr){
 					//Look for match where
-					$searchStr = substr($unitname1,0,4).'%';
-					$searchStr .= ' '.substr($unitname2,0,4).'%';
-					if(strlen($unitname3) > 2) $searchStr .= ' '.substr($unitname3,0,5).'%';
+					$searchStr = substr($unitname1, 0, 4).'%';
+					$searchStr .= ' '.substr($unitname2, 0, 4).'%';
+					if($infraEpithetArr) $searchStr .= ' '.substr($infraEpithetArr[0], 0, 5).'%';
 					$sql = 'SELECT tid, sciname FROM taxa WHERE (sciname LIKE "'.$searchStr.'") ';
-					if($this->kingdomName) $sql .= 'AND (kingdomname = "'.$this->kingdomName.'" OR kingdomname IS NULL) ';
+					if($this->kingdomName) $sql .= 'AND (kingdomname = "'.$this->cleanInStr($this->kingdomName).'" OR kingdomname IS NULL) ';
 					$sql .= 'ORDER BY sciname LIMIT 15';
 					$rs = $this->conn->query($sql);
 					while($row = $rs->fetch_object()){
@@ -1457,7 +1478,7 @@ class TaxonomyHarvester extends Manager{
 				if(!$retArr){
 					//Look for matches based on same edithet but different genus
 					$sql = 'SELECT tid, sciname FROM taxa WHERE (sciname LIKE "'.substr($unitname1,0,2).'% '.$unitname2.'") ';
-					if($this->kingdomName) $sql .= 'AND (kingdomname = "'.$this->kingdomName.'" OR kingdomname IS NULL) ';
+					if($this->kingdomName) $sql .= 'AND (kingdomname = "'.$this->cleanInStr($this->kingdomName).'" OR kingdomname IS NULL) ';
 					$sql .= 'ORDER BY sciname';
 					$rs = $this->conn->query($sql);
 					while($row = $rs->fetch_object()){
@@ -1467,8 +1488,8 @@ class TaxonomyHarvester extends Manager{
 				}
 			}
 			//Get soundex matches
-			$sql = 'SELECT tid, sciname FROM taxa WHERE SOUNDEX(sciname) = SOUNDEX("'.$taxonStr.'") ';
-			if($this->kingdomName) $sql .= 'AND (kingdomname = "'.$this->kingdomName.'" OR kingdomname IS NULL) ';
+			$sql = 'SELECT tid, sciname FROM taxa WHERE SOUNDEX(sciname) = SOUNDEX("'.$this->cleanInStr($taxonStr).'") ';
+			if($this->kingdomName) $sql .= 'AND (kingdomname = "'.$this->cleanInStr($this->kingdomName).'" OR kingdomname IS NULL) ';
 			$sql .= 'ORDER BY sciname LIMIT 5';
 			$rs = $this->conn->query($sql);
 			while($row = $rs->fetch_object()){
@@ -1742,6 +1763,7 @@ class TaxonomyHarvester extends Manager{
 			if(isset($this->rankIdArr['form'])){
 				$this->rankIdArr['f.'] = $this->rankIdArr['form'];
 				$this->rankIdArr['fo.'] = $this->rankIdArr['form'];
+				$this->rankIdArr['forma'] = $this->rankIdArr['form'];
 			}
 		}
 	}
