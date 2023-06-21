@@ -411,9 +411,11 @@ class ImageLocalProcessor {
 		$this->setImageTableMap();
 		$headerMap = array();
 		if($headArr = fgetcsv($fh)){
+			//Remove BOM in first element of csv if present
+			$headArr[0] = preg_replace( '/[^[:print:]\r\n]/', '', $headArr[0]);
 			foreach($headArr as $k => $fieldName){
-				$fieldName = strtolower($fieldName);
-				if($fieldName == 'catalognumber' || $fieldName == 'othercatalognumbers' || array_key_exists($fieldName, $this->imageTableMap)){
+				$fieldName = trim(strtolower($fieldName));
+				if($fieldName === 'catalognumber' || $fieldName === 'othercatalognumbers' || array_key_exists($fieldName, $this->imageTableMap)){
 					$headerMap[$fieldName] = $k;
 				}
 			}
