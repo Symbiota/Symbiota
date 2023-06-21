@@ -516,7 +516,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 			ob_flush();
 		}
 		$occurMaintenance->generalOccurrenceCleaning();
-		$occurMaintenance->batchUpdateGeoreferenceIndex();
+		//$occurMaintenance->batchUpdateGeoreferenceIndex();
 		if($verbose){
 			echo '<li>Updating statistics...</li>';
 			flush();
