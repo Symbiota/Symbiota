@@ -11,7 +11,7 @@ $collid = filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT);
 $displayMode = array_key_exists('display', $_REQUEST) ? filter_var($_REQUEST['display'], FILTER_SANITIZE_NUMBER_INT) : '1';
 $faStatus = array_key_exists('fastatus', $_REQUEST) ? filter_var($_REQUEST['fastatus'], FILTER_SANITIZE_NUMBER_INT) : '';
 $frStatus = array_key_exists('frstatus', $_REQUEST)? filter_var($_REQUEST['frstatus'], FILTER_SANITIZE_STRING) : '1,2';
-$filterFieldName = array_key_exists('ffieldname', $_POST) ? filter_var($_POST['ffieldname'], FILTER_SANITIZE_STRING) : '';
+$filterFieldName = array_key_exists('ffieldname', $_REQUEST) ? filter_var($_REQUEST['ffieldname'], FILTER_SANITIZE_STRING) : '';
 $editor = array_key_exists('editor', $_REQUEST) ? filter_var($_REQUEST['editor'], FILTER_SANITIZE_STRING) : '';
 $queryOccid = array_key_exists('occid', $_REQUEST) ? filter_var($_REQUEST['occid'], FILTER_SANITIZE_NUMBER_INT) : '';
 $startDate = array_key_exists('startdate', $_REQUEST) ? filter_var($_REQUEST['startdate'], FILTER_SANITIZE_STRING) : '';
@@ -81,7 +81,8 @@ if(!$recCnt) $recCnt = $reviewManager->getEditCnt();
 
 $subCnt = $limitCnt*($pageNum + 1);
 if($subCnt > $recCnt) $subCnt = $recCnt;
-$navPageBase = 'editreviewer.php?collid='.$collid.'&display='.$displayMode.'&fastatus='.$faStatus.'&frstatus='.$frStatus.'&editor='.$editor.'&reccnt='.$recCnt;
+$navPageBase = 'editreviewer.php?collid='.$collid.'&display='.$displayMode.'&fastatus='.$faStatus.'&frstatus='.$frStatus.'&ffieldname='.$filterFieldName.
+	'&startdate='.$startDate.'&enddate='.$endDate.'&editor='.$editor.'&reccnt='.$recCnt;
 
 $navStr = '<div class="navbarDiv" style="float:right;">';
 if($pageNum) $navStr .= '<a href="'.$navPageBase.'&pagenum='.($pageNum-1).'&limitcnt='.$limitCnt.'" title="'.$LANG['PREVIOUS'].' '.$limitCnt.' '.$LANG['RECORDS1'].'">&lt;&lt;</a>';
