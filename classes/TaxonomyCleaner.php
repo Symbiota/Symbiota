@@ -94,27 +94,27 @@ class TaxonomyCleaner extends Manager{
 				$sciname = $r->sciname;
 				$tid = 0;
 				$manualCheck = true;
-				$taxonArr = TaxonomyUtilities::parseScientificName($r->sciname,$this->conn,0,$this->targetKingdomName);
-				if(isset($taxonArr['sciname']) && $taxonArr['sciname']){
-					$sciname = $taxonArr['sciname'];
-					if($sciname != $r->sciname){
-						$this->logOrEcho('Interpreted base name: <b>'.$sciname.'</b>',1);
-					}
-					$tid = $taxonHarvester->getTid($taxonArr);
-					if($tid && $this->autoClean){
-						$this->remapOccurrenceTaxon($this->collid, $r->sciname, $tid, (isset($taxonArr['identificationqualifier'])?$taxonArr['identificationqualifier']:''));
-						$this->logOrEcho('Taxon remapped to <b>'.$sciname.'</b>',1);
+				if($tid = $taxonHarvester->processSciname($sciname)){
+					$taxaAdded= true;
+					if($taxonHarvester->isFullyResolved()){
 						$manualCheck = false;
 					}
+					else{
+						$this->logOrEcho('Taxon not fully resolved...',1);
+					}
 				}
-				if(!$tid){
-					if($taxonHarvester->processSciname($sciname)){
-						$taxaAdded= true;
-						if($taxonHarvester->isFullyResolved()){
-							$manualCheck = false;
+				$taxonArr = TaxonomyUtilities::parseScientificName($r->sciname,$this->conn,0,$this->targetKingdomName);
+				if(!$tid && $this->autoClean){
+					if(isset($taxonArr['sciname']) && $taxonArr['sciname']){
+						$sciname = $taxonArr['sciname'];
+						if($sciname != $r->sciname){
+							$this->logOrEcho('Interpreted base name: <b>'.$sciname.'</b>',1);
 						}
-						else{
-							$this->logOrEcho('Taxon not fully resolved...',1);
+						$tid = $taxonHarvester->getTid($taxonArr);
+						if($tid){
+							$this->remapOccurrenceTaxon($this->collid, $r->sciname, $tid, (isset($taxonArr['identificationqualifier'])?$taxonArr['identificationqualifier']:''));
+							$this->logOrEcho('Taxon remapped to <b>'.$sciname.'</b>',1);
+							$manualCheck = false;
 						}
 					}
 				}
@@ -129,14 +129,14 @@ class TaxonomyCleaner extends Manager{
 						for($x=1; $x <= 3; $x++){
 							if(isset($taxonArr['unitname'.$x]) && $taxonArr['unitname'.$x]) $strTestArr[] = $taxonArr['unitname'.$x];
 						}
-						foreach($matchArr as $tid => $scinameMatch){
+						foreach($matchArr as $tidMatch => $scinameMatch){
 							$snTokens = explode(' ',$scinameMatch);
 							foreach($snTokens as $k => $v){
 								if(in_array($v, $strTestArr)) $snTokens[$k] = '<b>'.$v.'</b>';
 							}
 							$idQual = (isset($taxonArr['identificationqualifier'])?str_replace("'", '', $taxonArr['identificationqualifier']):'');
 							$echoStr = '<i>'.implode(' ',$snTokens).'</i> =&gt; <span class="hideOnLoad">wait for page to finish loading...</span><span class="displayOnLoad" style="display:none">'.
-								'<a href="#" onclick="return remappTaxon(\''.urlencode($r->sciname).'\','.$tid.',\''.$idQual.'\','.$itemCnt.')" style="color:blue"> remap to this taxon</a>'.
+								'<a href="#" onclick="return remappTaxon(\''.urlencode($r->sciname).'\','.$tidMatch.',\''.$idQual.'\','.$itemCnt.')" style="color:blue"> remap to this taxon</a>'.
 								'<span id="remapSpan-'.$itemCnt.'"></span></span>';
 							$this->logOrEcho($echoStr,2);
 							$itemCnt++;

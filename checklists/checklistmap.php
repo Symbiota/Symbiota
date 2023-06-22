@@ -67,33 +67,34 @@ $coordArr = $clManager->getVoucherCoordinates();
 					}
 				}
 			}
-			//Check for and add checklist polygon
 			$clMeta = $clManager->getClMetaData();
 			if($clMeta['footprintwkt']){
-				?>
-				var polyPointArr = [];
-				<?php
-				$footPrintWkt = $clMeta['footprintwkt'];
-				if(substr($footPrintWkt, 0, 7) == 'POLYGON'){
-					$footPrintWkt = substr($footPrintWkt, 10, -2);
-					$pointArr = explode(',', $footPrintWkt);
-					foreach($pointArr as $pointStr){
-						$llArr = explode(' ', trim($pointStr));
-						if($llArr[0] > 90 || $llArr[0] < -90) break;
+				//Add checklist polygon
+				$wkt = $clMeta['footprintwkt'];
+				if(substr($wkt,0,7) == 'POLYGON') $wkt = substr($wkt,7);
+				else if(substr($wkt,0,12) == 'MULTIPOLYGON') $wkt = substr($wkt,12);
+				$coordArr = explode('),(', $wkt);
+				foreach($coordArr as $k => $polyFrag){
+					if($pointArr = explode(',', trim($polyFrag,' (),'))){
+						echo 'var polyPointArr'.$k.' = [];';
+						foreach($pointArr as $pointStr){
+							$llArr = explode(' ', trim($pointStr));
+							if($llArr[0] > 90 || $llArr[0] < -90) break;
+							?>
+							var polyPt = new google.maps.LatLng(<?php echo $llArr[0].','.$llArr[1]; ?>);
+							polyPointArr<?php echo $k; ?>.push(polyPt);
+							llBounds.extend(polyPt);
+							<?php
+						}
 						?>
-						var polyPt = new google.maps.LatLng(<?php echo $llArr[0].','.$llArr[1]; ?>);
-						polyPointArr.push(polyPt);
-						llBounds.extend(polyPt);
+						var footPoly<?php echo $k; ?> = new google.maps.Polygon({
+							paths: polyPointArr<?php echo $k; ?>,
+							strokeWeight: 2,
+							fillOpacity: 0.4,
+							map: map
+						});
 						<?php
 					}
-					?>
-					var footPoly = new google.maps.Polygon({
-						paths: polyPointArr,
-						strokeWeight: 2,
-						fillOpacity: 0.4,
-						map: map
-					});
-					<?php
 				}
 			}
 			?>
