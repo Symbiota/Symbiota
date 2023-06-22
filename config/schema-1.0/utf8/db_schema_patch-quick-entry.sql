@@ -410,3 +410,129 @@ CREATE TRIGGER TR_update_dd_filedUnder
 BEFORE UPDATE ON dropdown_filedUnder_values
 FOR EACH ROW
 SET NEW.displayValue = CONCAT(NEW.genus, " ", NEW.species, " ", NEW.authorName, " [", NEW.vascularity, ", ", NEW.family, "]");
+
+-- constraining the format of the data in the dropdown table currName
+ALTER TABLE `dropdown_currName_values`
+    ADD `genus` text,
+    ADD `species` text,
+    ADD `authorName` text,
+    ADD `vascularity` text,
+    ADD `family` text,
+    CHANGE `value` `displayValue` varchar(255);
+    
+-- Create trigger to update the displayValue column in dropdown_currName_values with the right value with every insert and update
+CREATE TRIGGER TR_insert_dd_currName
+BEFORE INSERT ON dropdown_currName_values
+FOR EACH ROW
+SET NEW.displayValue = CONCAT(NEW.genus, " ", NEW.species, " ", NEW.authorName, " [", NEW.vascularity, ", ", NEW.family, "]");
+
+CREATE TRIGGER TR_update_dd_currName
+BEFORE UPDATE ON dropdown_currName_values
+FOR EACH ROW
+SET NEW.displayValue = CONCAT(NEW.genus, " ", NEW.species, " ", NEW.authorName, " [", NEW.vascularity, ", ", NEW.family, "]");
+
+-- constraining the format of the data in the dropdown table identifiedBy
+ALTER TABLE `dropdown_identifiedBy_values`
+    ADD `names` text,
+    ADD `type` text,
+    ADD `activeYears` text,
+    ADD `area` text,
+    CHANGE `value` `displayValue` varchar(255);
+
+-- Create trigger to update the displayValue column in dropdown_identifiedBy_values with the right value with every insert and update
+CREATE TRIGGER TR_insert_dd_identifiedBy
+BEFORE INSERT ON dropdown_identifiedBy_values
+FOR EACH ROW
+SET NEW.displayValue = CONCAT(NEW.names, " [", NEW.type, " ", NEW.activeYears, "] (", NEW.area, ")");
+
+CREATE TRIGGER TR_update_dd_identifiedBy
+BEFORE UPDATE ON dropdown_identifiedBy_values
+FOR EACH ROW
+SET NEW.displayValue = CONCAT(NEW.names, " [", NEW.type, " ", NEW.activeYears, "] (", NEW.area, ")");
+
+-- constraining the format of the data in the dropdown table recordedBy
+ALTER TABLE `dropdown_recordedBy_values`
+    ADD `names` text,
+    ADD `type` text,
+    ADD `activeYears` text,
+    ADD `area` text,
+    CHANGE `value` `displayValue` varchar(255);
+
+-- Create trigger to update the displayValue column in dropdown_recordedBy_values with the right value with every insert and update
+CREATE TRIGGER TR_insert_dd_recordedBy
+BEFORE INSERT ON dropdown_recordedBy_values
+FOR EACH ROW
+SET NEW.displayValue = CONCAT(NEW.names, " [", NEW.type, " ", NEW.activeYears, "] (", NEW.area, ")");
+
+CREATE TRIGGER TR_update_dd_recordedBy
+BEFORE UPDATE ON dropdown_recordedBy_values
+FOR EACH ROW
+SET NEW.displayValue = CONCAT(NEW.names, " [", NEW.type, " ", NEW.activeYears, "] (", NEW.area, ")");
+
+-- constraining the format of the data in the dropdown table geoWithin
+ALTER TABLE `dropdown_geoWithin_values`
+    ADD `area` text,
+    ADD `areaType` text,
+    ADD `synonym` text DEFAULT NULL,
+    CHANGE `value` `displayValue` varchar(255);
+
+-- Create trigger to update the displayValue column in dropdown_geoWithin_values with the right value with every insert and update
+CREATE TRIGGER TR_insert_dd_geoWithin
+BEFORE INSERT ON dropdown_geoWithin_values
+FOR EACH ROW
+SET NEW.displayValue = CONCAT(NEW.area, " [", NEW.areaType, "] ", NEW.synonym);
+
+CREATE TRIGGER TR_update_dd_geoWithin
+BEFORE UPDATE ON dropdown_geoWithin_values
+FOR EACH ROW
+SET NEW.displayValue = CONCAT(NEW.area, " [", NEW.areaType, "] ", NEW.synonym);
+
+-- constraining the format of the data in the dropdown table highGeo
+ALTER TABLE `dropdown_highGeo_values`
+    ADD `area` text,
+    ADD `country` text,
+    ADD `areaType` text,
+    CHANGE `value` `displayValue` varchar(255);
+
+-- Create trigger to update the displayValue column in dropdown_highGeo_values with the right value with every insert and update
+CREATE TRIGGER TR_insert_dd_highGeo
+BEFORE INSERT ON dropdown_highGeo_values
+FOR EACH ROW
+SET NEW.displayValue = CONCAT(NEW.area, " (", NEW.country, ") [", NEW.areaType, "]");
+
+CREATE TRIGGER TR_update_dd_highGeo
+BEFORE UPDATE ON dropdown_highGeo_values
+FOR EACH ROW
+SET NEW.displayValue = CONCAT(NEW.area, " (", NEW.country, ") [", NEW.areaType, "]");
+
+-- constraining the format of the data in the dropdown table container
+ALTER TABLE `dropdown_container_values`
+    ADD `container` text,
+    CHANGE `value` `displayValue` varchar(255);
+
+-- Create trigger to update the displayValue column in dropdown_container_values with the right value with every insert and update
+CREATE TRIGGER TR_insert_dd_container
+BEFORE INSERT ON dropdown_container_values
+FOR EACH ROW
+SET NEW.displayValue = NEW.container;
+
+CREATE TRIGGER TR_update_dd_container
+BEFORE UPDATE ON dropdown_container_values
+FOR EACH ROW
+SET NEW.displayValue = NEW.container;
+
+-- constraining the format of the data in the dropdown table collTrip
+ALTER TABLE `dropdown_collTrip_values`
+    ADD `collTrip` text,
+    CHANGE `value` `displayValue` varchar(255);
+
+-- Create trigger to update the displayValue column in dropdown_collTrip_values with the right value with every insert and update
+CREATE TRIGGER TR_insert_dd_collTrip
+BEFORE INSERT ON dropdown_collTrip_values
+FOR EACH ROW
+SET NEW.displayValue = NEW.collTrip;
+
+CREATE TRIGGER TR_update_dd_collTrip
+BEFORE UPDATE ON dropdown_collTrip_values
+FOR EACH ROW
+SET NEW.displayValue = NEW.collTrip;
