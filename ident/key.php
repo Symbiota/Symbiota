@@ -195,7 +195,7 @@ echo '</div>';
 		?>
 		<div id="char-div">
 			<fieldset id="key-chars">
-				<legend>Filter/Display Options</legend>
+				<legend><?php echo $LANG['FILTER_OPTIONS']; ?></legend>
 				<form name="keyform" id="keyform" action="key.php" method="post">
 					<div>
 						<div style="float:right"><button type="button" onclick="resetForm(this.form)">Reset</button></div>
@@ -216,7 +216,7 @@ echo '</div>';
 					//echo "<div style=''>Relevance value: <input name='rv' type='text' size='3' title='Only characters with > ".($rv*100)."% relevance to the active spp. list will be displayed.' value='".$dataManager->getRelevanceValue()."'></div>";
 					//List char Data with selected states checked
 					if(count($languages) > 1){
-						echo '<div id="langlist" style="margin:0.5em;">Languages: <select name="lang" onchange="setLang(this);">';
+						echo '<div id="langlist" style="margin:0.5em;">'.$LANG['LANGUAGES'].': <select name="lang" onchange="setLang(this);">';
 						foreach($languages as $l){
 							echo '<option value="'.$l.'" '.($defaultLang == $l?'SELECTED':'').'>'.$l.'</option>';
 						}
@@ -244,7 +244,7 @@ echo '</div>';
 					?>
 					<div style="margin:5px">
 						<input name="displayimages" type="checkbox" value="1" onchange="this.form.submit();" <?php if($displayImages) echo 'checked'; ?> />
-						<?php echo (isset($LANG['DISPLAY_IMAGES'])?$LANG['DISPLAY_IMAGES']:'Display images').': '; ?>
+						<?php echo (isset($LANG['DISPLAY_IMAGES'])?$LANG['DISPLAY_IMAGES']:'Display images'); ?>
 					</div>
 					<?php
 					if($chars){
@@ -267,7 +267,7 @@ echo '</div>';
 		<?php
 		if($clid && $isEditor){
 			?>
-			<div style="float:right;margin:15px;" title="Edit Character Matrix">
+			<div style="float:right;margin:15px;" title="<?php echo $LANG['EDIT_CHAR_MATRIX']; ?>">
 				<a href="tools/matrixeditor.php?clid=<?php echo $clid; ?>"><img class="editimg" src="../images/edit.png" /><span style="font-size:70%;">CM</span></a>
 			</div>
 			<?php
@@ -297,7 +297,7 @@ echo '</div>';
 						echo '<div class="img-div">';
 						echo '<a href="../taxa/index.php?taxon='.$tid."&clid=".($clType=="static"?$clid:"").'" target="_blank">';
 						if(isset($taxonArr['i'])) echo '<img src="'.$taxonArr['i'].'" />';
-						else echo '<div>Image<br/>Not<br/>Available</div>';
+						else echo '<div>'.$LANG['IMG_NOT_AVAILABLE'].'</div>';
 						echo '</a>';
 						echo '</div>';
 					}
