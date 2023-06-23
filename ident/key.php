@@ -171,22 +171,22 @@ echo '<a href="../index.php">'.$LANG['HOME'].'</a> &gt;&gt; ';
 if($dynClid){
 	if($dataManager->getClType() == 'Specimen Checklist'){
 		echo '<a href="'.$CLIENT_ROOT.'/collections/list.php?tabindex=0">';
-		echo 'Occurrence Checklist';
+		echo $LANG['OCC_CHECKLIST'];
 		echo '</a> &gt;&gt; ';
 	}
 }
 elseif($clid){
 	echo '<a href="'.$CLIENT_ROOT.'/checklists/checklist.php?clid='.$clid.'&pid='.$pid.'">';
-	echo 'Checklist: '.$dataManager->getClName();
+	echo $LANG['CHECKLIST'].': '.$dataManager->getClName();
 	echo '</a> &gt;&gt; ';
 }
 elseif($pid){
 	echo '<a href="'.$CLIENT_ROOT.'/projects/index.php?pid='.$pid.'">';
-	echo 'Project Checklists';
+	echo $LANG['PROJ_CHECKLISTS'];
 	echo '</a> &gt;&gt; ';
 }
-echo '<a href="key-v1.php?clid='.$clid.'&pid='.$pid.'&taxon=All+Species" alt="Traditional key">Previous version of Key</a> &gt;&gt; ';
-echo '<b>Identification Key (new version): '.$dataManager->getClName().'</b>';
+echo '<a href="key-v1.php?clid='.$clid.'&pid='.$pid.'&taxon=All+Species" alt="'.$LANG['TRAD_KEY'].'">'.$LANG['PREV_KEY'].'</a> &gt;&gt; ';
+echo '<b>'.$LANG['NEW_ID_KEY'].': '.$dataManager->getClName().'</b>';
 echo '</div>';
 ?>
 <div id="innertext">

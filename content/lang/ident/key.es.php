@@ -8,6 +8,12 @@ Language: Espa�ol
 $LANG['WEBKEY'] = 'Web-Key';
 $LANG['OCCURCHECK'] = 'Listado de Comprobaci&oacute;n de Ocurrencia';
 $LANG['HOME'] = 'Inicio';
+$LANG['OCC_CHECKLIST'] = 'Lista de Ocurrencias';
+$LANG['CHECKLIST'] = 'Lista';
+$LANG['PROJ_CHECKLISTS'] = 'Listas del Proyecto';
+$LANG['TRAD_KEY'] = 'Clave tradicional';
+$LANG['PREV_KEY'] = 'Versi&oacute;n anterior de Clave';
+$LANG['NEW_ID_KEY'] = 'Clave de Identificaci&oacute;n (nueva versi&oacute;n)';
 $LANG['FILTER_OPTIONS'] = 'Opciones de Filtro/Visualizaci&oacute;n';
 $LANG['TAXON_SEARCH'] = 'Filtro de Familia/G&eacute;nero';
 $LANG['SELECTTAX'] = '-- Selecciona un Grupo Taxon&oacute;mico --';

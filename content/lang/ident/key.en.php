@@ -8,6 +8,12 @@ Language: English
 $LANG['WEBKEY'] = 'Web-Key';
 $LANG['OCCURCHECK'] = 'Occurrence Checklist';
 $LANG['HOME'] = 'Home';
+$LANG['OCC_CHECKLIST'] = 'Occurrence Checklist';
+$LANG['CHECKLIST'] = 'Checklist';
+$LANG['PROJ_CHECKLISTS'] = 'Project Checklists';
+$LANG['TRAD_KEY'] = 'Traditional key';
+$LANG['PREV_KEY'] = 'Previous version of Key';
+$LANG['NEW_ID_KEY'] = 'Identification Key (new version)';
 $LANG['FILTER_OPTIONS'] = 'Filter/Display Options';
 $LANG['TAXON_SEARCH'] = 'Family/Genus Filter';
 $LANG['SELECTTAX'] = '-- Select a Taxonomic Group --';
