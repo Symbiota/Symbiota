@@ -173,13 +173,24 @@ function submitQueryForm(qryIndex){
 	if(verifyQueryForm(f)) f.submit();
 }
 
-function jumpToPage() {
+function navigateToRecord(occIndex, occId, collId, crowdSourceMode) {
+    var url = 'occurrenceeditor.php?csmode=' + crowdSourceMode + '&occindex=' + occIndex + '&occid=' + occId + '&collid=' + collId;
+    window.location.href = url;
+	event.preventDefault();
+}
+
+function navigateToRecordNew(occIndex, occId, collId, crowdSourceMode) {
+    var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&occindex=' + occIndex + '&occid=' + occId + '&collid=' + collId;
+    window.location.href = url;
+	event.preventDefault();
+}
+
+function jumpToPage(collId, crowdSourceMode) {
 	var pageInput = document.getElementById("pageNumber");
 	var page = parseInt(pageInput.value);
-	// var maxPage = qryCnt - 1;
-	console.log(pageInput)
 	if (page >= 1) {
-		submitQueryForm(page - 1);
+		navigateToRecordNew(page - 1, page, collId, crowdSourceMode);
+		// submitQueryForm(page - 1);
 	} else {
 		alert('Please enter a valid page number.');
 		return;

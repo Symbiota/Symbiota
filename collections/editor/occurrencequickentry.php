@@ -398,22 +398,27 @@ if($SYMB_UID){
 	if(!$isEditor && $crowdSourceMode && $occManager->isCrowdsourceEditor()) $isEditor = 4;
 
 	// TODO: check here for navigation functionality examples
+
+	$nextRecord = 'occurrencequickentry.php?csmode='.$crowdSourceMode.'&occindex='.($occIndex+1).'&occid='.($occIndex+2).'&collid='.$collId;
+
+	$firstRecord = 1;
+
 	if($qryCnt !== false){
 		$navStr = '<b>';
-		if($occIndex > 0) $navStr .= '<a href="#" onclick="return submitQueryForm(0);" title="'.(isset($LANG['FIRST_REC'])?$LANG['FIRST_REC']:'First Record').'">';
+		if($occIndex > 0) $navStr .= '<a href="#" onclick="return navigateToRecordNew('.($firstRecord-1).', '.$firstRecord.', '.$collId.', '.$crowdSourceMode.')" title="'.(isset($LANG['FIRST_REC'])?$LANG['FIRST_REC']:'First Record').'">';
 		$navStr .= '|&lt;';
 		if($occIndex > 0) $navStr .= '</a>';
 		$navStr .= '&nbsp;&nbsp;&nbsp;&nbsp;';
-		if($occIndex > 0) $navStr .= '<a href="#" onclick="return submitQueryForm(\'back\');" title="'.(isset($LANG['PREV_REC'])?$LANG['PREV_REC']:'Previous Record').'">';
+		$navStr .= '<a href="#" onclick="return navigateToRecordNew('.($occIndex-1).', '.$occIndex.', '.$collId.', '.$crowdSourceMode.')" title="'.(isset($LANG['PREV_REC']) ? $LANG['PREV_REC'] : 'Previous Record').'">';
 		$navStr .= '&lt;&lt;';
 		if($occIndex > 0) $navStr .= '</a>';
 		$recIndex = ($occIndex<$qryCnt?($occIndex + 1):'*');
 		$navStr .= '&nbsp;&nbsp;| '.$recIndex.' of '.$qryCnt.' |&nbsp;&nbsp;';
-		if($occIndex<$qryCnt-1) $navStr .= '<a href="#" onclick="return submitQueryForm(\'forward\');"  title="'.(isset($LANG['NEXT_REC'])?$LANG['NEXT_REC']:'Next Record').'">';
+		if ($occIndex < $qryCnt-1) $navStr .= '<a href="#" onclick="return navigateToRecordNew('.($occIndex+1).', '.($occIndex+2).', '.$collId.', '.$crowdSourceMode.')" title="'.(isset($LANG['PREV_REC']) ? $LANG['PREV_REC'] : 'Previous Record').'">';
 		$navStr .= '&gt;&gt;';
 		if($occIndex<$qryCnt-1) $navStr .= '</a>';
 		$navStr .= '&nbsp;&nbsp;&nbsp;&nbsp;';
-		if($occIndex<$qryCnt-1) $navStr .= '<a href="#" onclick="return submitQueryForm('.($qryCnt-1).');" title="'.(isset($LANG['LAST_REC'])?$LANG['LAST_REC']:'Last Record').'">';
+		if($occIndex<$qryCnt-1) $navStr .= '<a href="#" onclick="return navigateToRecordNew('.($qryCnt-1).', '.$qryCnt.', '.$collId.', '.$crowdSourceMode.')" title="'.(isset($LANG['LAST_REC'])?$LANG['LAST_REC']:'Last Record').'">';
 		$navStr .= '&gt;|';
 		if($occIndex<$qryCnt-1) $navStr .= '</a> ';
 		if(!$crowdSourceMode){
@@ -742,7 +747,7 @@ else{
 							<button type="submit" name="toggle-button" value="<?php echo isset($_POST['toggle-button']) && $_POST['toggle-button'] === 'Minimal' ? 'Detailed' : 'Minimal'; ?>">
 								<?php echo isset($_POST['toggle-button']) ? $_POST['toggle-button'] : 'Detailed'; ?>
 							</button>
-							<button type="button" onclick="jumpToPage()">Jump to:</button>
+							<button type="button" onclick="jumpToPage(<?php echo($collId) ?>, <?php echo($crowdSourceMode) ?>)">Jump to:</button>
 							<input type="number" id="pageNumber" size="3" />
 						</form>
 						<div id="jumpDiv">
