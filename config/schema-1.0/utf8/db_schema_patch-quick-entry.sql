@@ -536,3 +536,60 @@ CREATE TRIGGER TR_update_dd_collTrip
 BEFORE UPDATE ON dropdown_collTrip_values
 FOR EACH ROW
 SET NEW.displayValue = NEW.collTrip;
+
+-- reformatting image_barcode
+ALTER TABLE `image_barcode`
+    CHANGE `imgid` `imgID` int(10) unsigned NOT NULL,
+    ADD `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp;
+
+-- reformatting image_batch_XREF
+ALTER TABLE `image_batch_XREF`
+    CHANGE `imgid` `imgID` int(10) unsigned NOT NULL,
+    CHANGE `image_batch_id` `image_batchID` int(11) NOT NULL,
+    ADD `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp;
+
+-- reformatting image_batch
+ALTER TABLE `tr_batch`
+    DROP FOREIGN KEY `FK_tr_batch_image_batch_id`;
+ALTER TABLE `image_batch_XREF`
+    DROP FOREIGN KEY `FK_image_batch_XREF_image_batch_id`;
+
+ALTER TABLE `image_batch`
+    CHANGE `image_batch_id` `image_batchID` int(11) NOT NULL,
+    ADD `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp;
+
+ALTER TABLE `tr_batch`
+    ADD CONSTRAINT `FK_tr_batch_image_batch_id` FOREIGN KEY (`image_batch_id`) REFERENCES `image_batch` (`image_batchID`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `image_batch_XREF`
+    ADD CONSTRAINT `FK_image_batch_XREF_image_batch_id` FOREIGN KEY (`image_batchID`) REFERENCES `image_batch` (`image_batchID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- reformatting tr_batch
+ALTER TABLE `tr_batchImage`
+    DROP FOREIGN KEY `FK_tr_batchImage_tr_batch_id`;
+ALTER TABLE `tr_user_batch`
+    DROP FOREIGN KEY `FK_tr_user_batch_tr_batch_id`;
+ALTER TABLE `tr_batch`
+    DROP FOREIGN KEY `FK_tr_batch_image_batch_id`;
+
+ALTER TABLE `tr_batch`
+    CHANGE `tr_batch_id` `tr_batchID` int(10) NOT NULL,
+    CHANGE `image_batch_id` `image_batchID` int(11) NOT NULL,
+    ADD `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp;
+
+ALTER TABLE `tr_batchImage`
+    ADD CONSTRAINT `FK_tr_batchImage_tr_batch_id` FOREIGN KEY (`tr_batch_id`) REFERENCES `tr_batch` (`tr_batchID`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `tr_user_batch`
+    ADD CONSTRAINT `FK_tr_user_batch_tr_batch_id` FOREIGN KEY (`tr_batch_id`) REFERENCES `tr_batch` (`tr_batchID`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `tr_batch`
+    ADD CONSTRAINT `FK_tr_batch_image_batch_id` FOREIGN KEY (`image_batchID`) REFERENCES `image_batch` (`image_batchID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- reformatting tr_batchImage
+ALTER TABLE `tr_batchImage`
+    CHANGE `tr_batch_id` `tr_batchID` int(10) NOT NULL,
+    ADD `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp;
+
+-- reformatting tr_user_batch
+ALTER TABLE `tr_user_batch`
+    CHANGE `tr_user_batch_id` `tr_user_batchID` int(10) NOT NULL AUTO_INCREMENT,
+    CHANGE `tr_batch_id` `tr_batchID` int(10) NOT NULL,
+    ADD `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp;
