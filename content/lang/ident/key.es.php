@@ -28,5 +28,6 @@ $LANG['NOMATCH'] = 'No hay especies que correspondan a sus criterios. Por favor,
 $LANG['SPECCOUNT'] = 'Cuenta de especies';
 $LANG['IMG_NOT_AVAILABLE'] = 'Imagen<br/>no<br/>disponible';
 $LANG['EDITMORP'] = 'Editar la morfolog&iacute;a';
+$LANG['ERROR_CLID_NULL'] = 'Error: el identificador de la lista es NULL';
 
 ?>

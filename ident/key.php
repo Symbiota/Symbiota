@@ -317,7 +317,7 @@ echo '</div>';
 		</div>
 		<?php
 	}
-	else echo '<div style="margin: 40px 20px; font-weight:bold">Error: checklist identifier is NULL</div>';
+	else echo '<div style="margin: 40px 20px; font-weight:bold">' . $LANG['ERROR_CLID_NULL'] . '</div>';
 	?>
 </div>
 <?php

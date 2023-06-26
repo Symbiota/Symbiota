@@ -28,5 +28,6 @@ $LANG['NOMATCH'] = 'There are no species matching your criteria. Please deselect
 $LANG['SPECCOUNT'] = 'Species Count';
 $LANG['IMG_NOT_AVAILABLE'] = 'Image<br/>Not<br/>Available';
 $LANG['EDITMORP'] = 'Edit morphology';
+$LANG['ERROR_CLID_NULL'] = 'Error: checklist identifier is NULL';
 
 ?>
