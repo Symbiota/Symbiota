@@ -163,6 +163,12 @@ if ($SYMB_UID) {
 									<?php echo (isset($LANG['ADD_BATCH_DETER']) ? $LANG['ADD_BATCH_DETER'] : 'Add Batch Determinations/Nomenclatural Adjustments'); ?>
 								</a>
 							</li>
+							<!-- add a bullet point to link to the image batch -->
+							<li>
+								<a href="../editor/transcribe.php?collid=<?php echo $collid;?>">
+									<?php echo (isset($LANG['IMAGE_BATCH']) ? $LANG['IMAGE_BATCH'] : 'Transcribe data from Images into Specify'); ?>
+								</a>
+							</li>
 							<li>
 								<a href="../reports/labelmanager.php?collid=<?php echo $collid; ?>">
 									<?php echo (isset($LANG['PRINT_LABELS']) ? $LANG['PRINT_LABELS'] : 'Print Specimen Labels'); ?>
