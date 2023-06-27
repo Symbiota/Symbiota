@@ -16,8 +16,10 @@ $LOG_PATH = $SERVER_ROOT.'/content/logs';					//Must be writable by Apache; will
 
 //the root for the image directory
 $IMAGE_DOMAIN = '';				//Domain path to images, if different from portal 
-$IMAGE_ROOT_URL = '';				//URL path to images
-$IMAGE_ROOT_PATH = '';			//Writable path to images, especially needed for downloading images
+//$IMAGE_ROOT_URL = '';				//URL path to images
+$IMAGE_ROOT_URL = '/content/imglib';
+//$IMAGE_ROOT_PATH = '';			//Writable path to images, especially needed for downloading images
+$IMAGE_ROOT_PATH = $GLOBALS['SERVER_ROOT'].'/content/imglib';
 
 //Pixel width of web images
 $IMG_WEB_WIDTH = 1400;
