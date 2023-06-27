@@ -1395,7 +1395,7 @@ $traitArr = $indManager->getTraitArr();
 					<?php
 					ob_flush();
 					flush();
-					$rawArchArr = $indManager->checkArchive();
+					$rawArchArr = $indManager->checkArchive($guid);
 					if($rawArchArr && $rawArchArr['obj']){
 						$archArr = $rawArchArr['obj'];
 						if($isEditor){

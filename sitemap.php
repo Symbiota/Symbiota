@@ -7,7 +7,7 @@ $submitAction = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitacti
 
 $smManager = new SiteMapManager();
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['SITEMAP'];?></title>
 	<?php

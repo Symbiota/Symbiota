@@ -1642,7 +1642,7 @@ class SpecUploadBase extends SpecUpload{
 				//Do some cleaning
 				//Populate sciname if null
 				if(!array_key_exists('sciname',$recMap) || !$recMap['sciname']){
-					if(array_key_exists('genus',$recMap)){
+					if(array_key_exists('genus',$recMap) && array_key_exists('specificepithet',$recMap) && array_key_exists('infraspecificepithet',$recMap)){
 						//Build sciname from individual units supplied by source
 						$sciName = $recMap['genus'];
 						if(array_key_exists('specificepithet',$recMap) && $recMap['specificepithet']) $sciName .= ' '.$recMap['specificepithet'];
@@ -1961,7 +1961,7 @@ class SpecUploadBase extends SpecUpload{
 
 	public function addFilterCondition($columnName, $condition, $value){
 		if($columnName && ($value || $condition == 'ISNULL' || $condition == 'NOTNULL')){
-			$this->filterArr[strtolower($columnName)][$condition][] = strtolower(trim($value));
+			$this->filterArr[strtolower($columnName)][$condition][] = strtolower(trim($value,'; '));
 		}
 	}
 

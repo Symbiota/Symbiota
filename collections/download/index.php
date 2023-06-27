@@ -209,6 +209,9 @@ $dwcManager = new DwcArchiverCore();
 						<button type="submit" name="submitaction">Download Data</button>
 						<img id="workingcircle" src="../../images/ajax-loader_sm.gif" style="margin-bottom:-4px;width:20px;display:none;" />
 					</div>
+					<div class="sectionDiv">
+						* There is a 1,000,000 record limit to occurrence downloads
+					</div>
 				</fieldset>
 			</form>
 		</div>

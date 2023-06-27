@@ -44,4 +44,5 @@ $LANG['H_MY_PROFILE'] = 'Mi Perfil';
 $LANG['H_LOGOUT'] = 'Finalizar Sesi&oacute;n';
 $LANG['H_LOGIN'] = 'Iniciar Sesi&oacute;n';
 $LANG['H_NEW_ACCOUNT'] = 'Nueva Cuenta';
+$LANG['SELECT_LANGUAGE'] = 'Seleccionar un Idioma';
 ?>
