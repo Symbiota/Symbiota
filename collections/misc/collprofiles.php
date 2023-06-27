@@ -166,7 +166,7 @@ if ($SYMB_UID) {
 							<!-- add a bullet point to link to the image batch -->
 							<li>
 								<a href="../editor/transcribe.php?collid=<?php echo $collid;?>">
-									<?php echo (isset($LANG['IMAGE_BATCH']) ? $LANG['IMAGE_BATCH'] : 'Transcribe data from Images into Specify'); ?>
+									<?php echo (isset($LANG['IMAGE_BATCH']) ? $LANG['IMAGE_BATCH'] : 'Image Transcription Quick Entry'); ?>
 								</a>
 							</li>
 							<li>

@@ -6,7 +6,7 @@ Language: English
 */
 
 $LANG['BATCH_DETERS'] = 'Transcribe data from image';
-$LANG['TRANSCRIBE_INTO_SPECIFY'] = 'Transcribe data from Images into Specify';
+$LANG['TRANSCRIBE_INTO_SPECIFY'] = 'Image Transcription Quick Entry';
 $LANG['START_FROM'] = 'Start from';
 $LANG['WORK_ON_BATCH'] = 'Work on another batch:';
 $LANG['STATUS'] = 'Status';
