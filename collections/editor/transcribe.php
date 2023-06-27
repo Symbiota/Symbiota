@@ -8,7 +8,9 @@ header("Content-Type: text/html; charset=".$CHARSET);
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/transcribe.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
+$crowdSourceMode = array_key_exists('csmode',$_REQUEST)?$_REQUEST['csmode']:0;
 $collid = $_REQUEST["collid"];
+$firstOcc = 0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 if(!is_numeric($collid)) $collid = 0;
@@ -69,6 +71,12 @@ $statusStr = '';
 		<script src="../../js/jquery.js" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 		<script type="text/javascript">
+			function navigateToRecordNew(occIndex, occId, collId, crowdSourceMode) {
+				var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&occindex=' + occIndex + '&occid=' + occId + '&collid=' + collId;
+				window.location.href = url;
+				event.preventDefault();
+			}
+
 			function initScinameAutocomplete(f){
 				$( f.sciname ).autocomplete({
 					source: "rpc/getspeciessuggest.php",
@@ -134,8 +142,6 @@ $statusStr = '';
 		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1"><?php echo $LANG['COLL_MANAGE']; ?></a> &gt;&gt;
 		<b><?php echo $LANG['BATCH_DETERS']; ?></b>
 	</div>
-	<h1><?php //echo($collid) ?></h1>
-	<h1><?php //echo($collType) ?></h1>
 	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php
@@ -151,10 +157,16 @@ $statusStr = '';
                             <div style="margin-bottom:15px;">
                                 <!-- TODO: figure out what is this line is, then customized the content -->
                                 <!-- TODO: onclick function of the buttons -->
+								<div>
+									<?php $url = 'occurrencequickentry.php?csmode='.$crowdSourceMode.'&occindex='.($firstOcc).'&occid='.($firstOcc+1).'&collid='.$collid; ?>
+									<a href=<?php echo($url) ?> >
+										<h3>Go to the quick entry form</h3>
+									</a>
+								</div>
                                 <b>Batch: <?php echo('[hmerchant/202209-08]') ?></b>
-                                <button type="button"><?php echo $LANG['START_FROM']; ?> first.</button>
-                                <!-- TODO: need to customize the page number -->
-                                <button type="button"><?php echo $LANG['START_FROM']; ?> 188</button>
+                                <button type="button" onclick="return navigateToRecordNew(<?php echo($firstOcc.', '.($firstOcc+1).', '.$collid.', '.$crowdSourceMode) ?>)"><?php echo $LANG['START_FROM']; ?> first.</button>
+                                <!-- TODO: need to customize the page number and set a veriable to start from the last page-->
+                                <button type="button"><?php echo $LANG['START_FROM']; ?> Last</button>
                             </div>
 							<div>
 								<b><?php echo $LANG['WORK_ON_BATCH']; ?></b>
