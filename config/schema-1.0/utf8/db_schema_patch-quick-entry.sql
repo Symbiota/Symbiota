@@ -593,3 +593,48 @@ ALTER TABLE `tr_user_batch`
     CHANGE `tr_user_batch_id` `tr_user_batchID` int(10) NOT NULL AUTO_INCREMENT,
     CHANGE `tr_batch_id` `tr_batchID` int(10) NOT NULL,
     ADD `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp;
+
+-- Code for rehauling the batch tables (reducing two types of batches into one)
+
+DROP TABLE IF EXISTS `image_batch_XREF`;
+DROP TABLE IF EXISTS `image_batch`;
+DROP TABLE IF EXISTS `tr_batchImage`;
+DROP TABLE IF EXISTS `tr_batch`;
+DROP TABLE IF EXISTS `tr_user_batch`;
+
+DROP TABLE IF EXISTS `batch`;
+CREATE TABLE `batch` (
+  `batchID` int(11) NOT NULL AUTO_INCREMENT,
+  `ingest_date` timestamp NOT NULL,
+  `completed_date` timestamp NULL,
+  `batch_name` varchar(100) NOT NULL,
+  `image_batch_path` varchar(100) NOT NULL,
+  `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
+  PRIMARY KEY (`batchID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `batch_XREF`;
+CREATE TABLE `batch_XREF` (
+  `imgid` int(10) unsigned NOT NULL,
+  `batchID` int(11) NOT NULL,
+  `ordinal` INT(10) NOT NULL,
+  `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
+  PRIMARY KEY (`imgid`,`batchID`),
+  KEY `FK_batch_XREF_img` (`imgid`),
+  KEY `FK_batch_XREF_batch` (`batchID`),
+  CONSTRAINT `FK_batch_XREF_img` FOREIGN KEY (`imgid`) REFERENCES `images` (`imgid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_batch_XREF_batch` FOREIGN KEY (`batchID`) REFERENCES `batch` (`batchID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `batch_user`;
+CREATE TABLE `batch_user` (
+  `batch_userID` int(10) NOT NULL AUTO_INCREMENT,
+  `batchID` int(10) NOT NULL,
+  `uid` int(10) unsigned NOT NULL,
+  `last_position` int(10) NOT NULL,
+  PRIMARY KEY (`batch_userID`),
+  KEY `FK_batch_user_batch` (`batchID`),
+  KEY `FK_batch_user_user` (`uid`),
+  CONSTRAINT `FK_batch_user_batch` FOREIGN KEY (`batchID`) REFERENCES `batch` (`batchID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_batch_user_user` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
