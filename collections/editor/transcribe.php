@@ -181,18 +181,19 @@ $statusStr = '';
 						<p style="margin:0px;"><?php echo $LANG['STATUS']; ?></p>
 					</div>
 				</fieldset>
-				<fieldset>
+				<!-- TODO: double check if we can just get ride of this parts -->
+				<!-- <fieldset>
 					<div>
 						<b style="margin:0px;">
-							<?php if(array_key_exists('recordenteredby',$collArr)){
-									echo ($collArr['recordenteredby']?$collArr['recordenteredby']:$LANG['NO_RECORDS']);
-								}
-								if(isset($collArr['dateentered']) && $collArr['dateentered']) echo ' ['.$collArr['dateentered'].']'; 
+							<?php // if(array_key_exists('recordenteredby',$collArr)){
+									//echo ($collArr['recordenteredby']?$collArr['recordenteredby']:$LANG['NO_RECORDS']);
+								//}
+								//if(isset($collArr['dateentered']) && $collArr['dateentered']) echo ' ['.$collArr['dateentered'].']'; 
 								?>
-							<?php echo $jumpStr; ?>
+							<?php //echo $jumpStr; ?>
 						</b>
 					</div>
-				</fieldset>
+				</fieldset> -->
 			</div>
 			<?php
 		}
