@@ -53,13 +53,8 @@ $qryCnt = false;
 $moduleActivation = array();
 $statusStr = '';
 $navStr = '';
+
 $isEditor = 0;
-
-// Dropdown arrays
-
-$filedUnderDrop = $occManager->getValues('dd_filedUnderID', 'dropdown_filedUnder_values');
-
-
 if($SYMB_UID){
 	//Set variables
 	$occManager->setOccId($occId);
@@ -396,25 +391,22 @@ if($SYMB_UID){
 	elseif($goToMode == 2) $occArr = $occManager->carryOverValues($_REQUEST);
 	if(!$isEditor && $crowdSourceMode && $occManager->isCrowdsourceEditor()) $isEditor = 4;
 
-	// TODO: check here for navigation functionality examples
-	$firstRecord = 1;
-
 	if($qryCnt !== false){
 		$navStr = '<b>';
-		if($occIndex > 0) $navStr .= '<a href="#" onclick="return navigateToRecord('.($firstRecord-1).', '.$firstRecord.', '.$collId.', '.$crowdSourceMode.')" title="'.(isset($LANG['FIRST_REC'])?$LANG['FIRST_REC']:'First Record').'">';
+		if($occIndex > 0) $navStr .= '<a href="#" onclick="return submitQueryForm(0);" title="'.(isset($LANG['FIRST_REC'])?$LANG['FIRST_REC']:'First Record').'">';
 		$navStr .= '|&lt;';
 		if($occIndex > 0) $navStr .= '</a>';
 		$navStr .= '&nbsp;&nbsp;&nbsp;&nbsp;';
-		$navStr .= '<a href="#" onclick="return navigateToRecord('.($occIndex-1).', '.$occIndex.', '.$collId.', '.$crowdSourceMode.')" title="'.(isset($LANG['PREV_REC']) ? $LANG['PREV_REC'] : 'Previous Record').'">';
+		if($occIndex > 0) $navStr .= '<a href="#" onclick="return submitQueryForm(\'back\');" title="'.(isset($LANG['PREV_REC'])?$LANG['PREV_REC']:'Previous Record').'">';
 		$navStr .= '&lt;&lt;';
 		if($occIndex > 0) $navStr .= '</a>';
 		$recIndex = ($occIndex<$qryCnt?($occIndex + 1):'*');
 		$navStr .= '&nbsp;&nbsp;| '.$recIndex.' of '.$qryCnt.' |&nbsp;&nbsp;';
-		if ($occIndex < $qryCnt-1) $navStr .= '<a href="#" onclick="return navigateToRecord('.($occIndex+1).', '.($occIndex+2).', '.$collId.', '.$crowdSourceMode.')" title="'.(isset($LANG['PREV_REC']) ? $LANG['PREV_REC'] : 'Previous Record').'">';
+		if($occIndex<$qryCnt-1) $navStr .= '<a href="#" onclick="return submitQueryForm(\'forward\');"  title="'.(isset($LANG['NEXT_REC'])?$LANG['NEXT_REC']:'Next Record').'">';
 		$navStr .= '&gt;&gt;';
 		if($occIndex<$qryCnt-1) $navStr .= '</a>';
 		$navStr .= '&nbsp;&nbsp;&nbsp;&nbsp;';
-		if($occIndex<$qryCnt-1) $navStr .= '<a href="#" onclick="return navigateToRecord('.($qryCnt-1).', '.$qryCnt.', '.$collId.', '.$crowdSourceMode.')" title="'.(isset($LANG['LAST_REC'])?$LANG['LAST_REC']:'Last Record').'">';
+		if($occIndex<$qryCnt-1) $navStr .= '<a href="#" onclick="return submitQueryForm('.($qryCnt-1).');" title="'.(isset($LANG['LAST_REC'])?$LANG['LAST_REC']:'Last Record').'">';
 		$navStr .= '&gt;|';
 		if($occIndex<$qryCnt-1) $navStr .= '</a> ';
 		if(!$crowdSourceMode){
@@ -423,13 +415,6 @@ if($SYMB_UID){
 		}
 		$navStr .= '</b>';
 	}
-
-	if(isset($_POST['jump']) && $_POST['jump'] !== '') {
-		$jumpIndex = intval($_POST['jump']);
-		if($jumpIndex >= 0 && $jumpIndex < $qryCnt) {
-		  $occIndex = $jumpIndex;
-		}
-	  }
 
 	//Images and other things needed for OCR
 	$specImgArr = $occManager->getImageMap();
@@ -542,91 +527,6 @@ else{
 		.fieldDiv{ float:left; margin-right: 20px; }
 		#identifierDiv img{ width:10px; margin-left: 5px; }
 		.editimg{ width: 15px; }
-
-		/* this is the style for the new form ------------------------------------*/
-		*{
-            box-sizing: border-box;
-            font-family: sans-serif;
-        }
-        h2{
-            background: linear-gradient(1000deg, rgb(218, 200, 255), #34ace0);;
-            color: white;
-        }
-        .column{
-            float: left;
-            padding:10px;
-        }
-        .left{
-            width: 65%;
-        }
-        .right{
-            width: 35%;
-        }
-		.info{
-			width: 100%;
-			display: flex;
-			align-items: center;
-			padding: 8px;
-		}
-        .row:after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-        .nav-bar a{
-            background-color: #00FFFF;
-           color: black;
-           border-style: solid;
-           border-color: black;
-           margin: 0;
-        }
-        .nav-bar label{
-           background-color: #00FFFF;
-           color: black;
-           border-style: solid;
-           border-color: black;
-        }
-        .function-bar{
-            border:1px solid black; 
-			display: flex;
-			align-items: center;
-        }
-        button{
-            color:black;
-            background-color: #34ace0;
-        }
-        .btn label{
-            color:black;
-            background-color: #34ace0;
-            border-style: solid;
-            border-color: black;
-        }
-        .data{
-            border-style: solid;
-            border-color: black;
-        }
-        .login-info{
-            border-style: solid;
-            border-color: black;
-        }
-        #editdiv {
-            margin-left:auto;
-            margin-right:auto;
-            width:960px;
-        }
-        .field-block {
-			margin: 5px 0px;
-			display: flex;
-		}
-		.field-label {
-			text-align: left;
-			width: 120px;
-		}
-		.title{
-			backgroufnd-color:#86C5D8; 
-			display: block;
-			width: 100%;
-		}
 	</style>
 </head>
 <body>
@@ -648,7 +548,6 @@ else{
 			if(!$occArr && !$goToMode) $displayQuery = 1;
 			include 'includes/queryform.php';
 			?>
-			<!-- this is nav bar division Home>>collection management>>... -->
 			<div id="navDiv">
 				<?php
 				if($navStr){
@@ -703,9 +602,6 @@ else{
 				}
 				?>
 			</div>
-
-<!-- NOTE: The new quick entry form is moved to the occurrencequickentry.php file now. This is where the quick entry was -->
-
 			<?php
 			if($statusStr){
 				?>
@@ -750,7 +646,6 @@ else{
 				}
 				else{
 					?>
-					<!-- the tabs start from here -->
 					<table id="edittable" style="">
 						<tr><td id="editortd" style="" valign="top">
 							<div id="occedittabs" style="clear:both;">
@@ -821,18 +716,9 @@ else{
 									}
 									?>
 								</ul>
-								<!-- a link to the quick entry form -->
-								<div>
-									<?php $url = 'occurrencequickentry.php?csmode='.$crowdSourceMode.'&occindex='.($occIndex).'&occid='.($occIndex+1).'&collid='.$collId; ?>
-									<a href=<?php echo($url) ?> >
-										<h3>Go to the quick entry form</h3>
-									</a>
-								</div>
 								<div id="occdiv">
-									<!-- the main form starts from here -->
 									<form id="fullform" name="fullform" action="occurrenceeditor.php" method="post" onsubmit="return verifyFullForm(this);">
 										<fieldset>
-											<!-- collector info starts form here -->
 											<legend><?php echo (isset($LANG['COLLECTOR_INFO'])?$LANG['COLLECTOR_INFO']:'Collector Info'); ?></legend>
 											<?php
 											if($occId){
@@ -1557,7 +1443,6 @@ else{
                                                     <?php echo (defined('DATAGENERALIZATIONSLABEL')?DATAGENERALIZATIONSLABEL:'Data Generalizations'); ?><br/>
                                                     <input type="text" name="datageneralizations" value="<?php echo array_key_exists('datageneralizations',$occArr)?$occArr['datageneralizations']:''; ?>" onchange="fieldChanged('datageneralizations');" />
                                                 </div>
-												<!-- data generalization ends at here -->
 											</div>
 											<?php
 											if($occId){
@@ -1578,7 +1463,6 @@ else{
 														if(isset($occArr['dateentered']) && $occArr['dateentered']) echo ' ['.$occArr['dateentered'].']';
 														?>
 													</div>
-													<!-- record info ends at here -->
 												</div>
 												<?php
 											}
@@ -1586,7 +1470,7 @@ else{
 										</fieldset>
 										<?php
 										if($navStr){
-											echo '<div style="float:right;margin-right:20px;">'.$navStr.'</div>'."\n";
+											// echo '<div style="float:right;margin-right:20px;">'.$navStr.'</div>'."\n";
 										}
 										if(!$occId){
 											$userChecklists = $occManager->getUserChecklists();
@@ -1725,7 +1609,6 @@ else{
 										</div>
 										<div style="clear:both;">&nbsp;</div>
 									</form>
-									<!-- the form ends at here -->
 								</div>
 							</div>
 						</td>
