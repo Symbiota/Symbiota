@@ -634,6 +634,7 @@ CREATE TABLE `batch_user` (
   `batchID` int(10) NOT NULL,
   `uid` int(10) unsigned NOT NULL,
   `last_position` int(10) NOT NULL,
+  `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
   PRIMARY KEY (`batch_userID`),
   KEY `FK_batch_user_batch` (`batchID`),
   KEY `FK_batch_user_user` (`uid`),
