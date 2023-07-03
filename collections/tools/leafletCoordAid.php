@@ -65,7 +65,36 @@ else{
 		</div>
     <div id="map"></div>
       <script>
-      //map.map.setView([<?php echo $latCenter?>, <?php echo $lngCenter ?>], 5);
+
+      /* Type Definitions
+       *
+       * lat: -90 < float < 90;
+       * lng: -180 < float < 180;
+       *
+       */
+
+      /* Shape Defintions:
+       *
+       * Polygon {
+       *    type: polygon, 
+       *    latlngs: [[lat, lng]...],
+       *    wkt: String (Wkt format),
+       * }
+       *
+       * Rectangle {
+       *    type: "rectangle",
+       *    upperLat: lat,
+       *    lowerLat: lat,
+       *    rightLng: lng,
+       *    leftLng: lng,
+       * }
+       *
+       * Circle { 
+       *    type: "circle"
+       *    radius: float,
+       *    center [lat, lng]
+       * }
+       */
 
       const setField = (id, v) => {
          var elem = opener.document.getElementById(id);
@@ -111,8 +140,14 @@ else{
          setField("footprintwkt", wkt);
       }
 
-      //Fires after every leafletDraw
-      function setShapeToSearchForm(active_shape) {
+      /* setShapeToSearchForm: 
+       *
+       * Sets Shape data to search form.
+       *
+       * activeShape: Shape Type (See Def at top of script)
+       * 
+       */
+      function setShapeToSearchForm(activeShape) {
          //Clear Form
          setField("pointlat", "")
          setField("pointlong", "")
@@ -127,24 +162,30 @@ else{
          setField("rightlong", "")
 
          //If Active Shape is null bail
-         if(!active_shape)
+         if(!activeShape)
             return;
 
-         switch(active_shape.type) {
+         switch(activeShape.type) {
             case "polygon":
-               setPolygon(active_shape.wkt)
+               setPolygon(activeShape.wkt)
                break;
             case "rectangle":
-               const rec = active_shape
+               const rec = activeShape 
                setRectangle(rec.upperLat, rec.lowerLat, rec.leftLng, rec.rightLng);
                break;
             case "circle":
-               const circ = active_shape
+               const circ = activeShape 
                setCircle(circ.radius, circ.center.lat, circ.center.lng)
                break;
          }
       }
 
+      /* LoadShape Reads Coordinates from Form: 
+       *
+       * mapMode: enum ("polygon", "rectangle", "circle")
+       *
+       * Returns A Shape (See top of script):
+       */
       function loadShape(mapMode) {
          switch(mapMode) {
             case "polygon":
@@ -215,28 +256,28 @@ else{
             break;
          } 
       }
-      let loaded_shape = loadShape("<?php echo $mapMode?>")
+      let formShape = loadShape("<?php echo $mapMode?>")
 
       //LEAFLET SPECIFIC
 
-      const map_options = {
+      const MapOptions = {
          center: [<?php echo $latCenter?>, <?php echo $latCenter?>],
          zoom: <?php echo $zoom?>
       }
 
-      var map = new LeafletMap('map', map_options);
+      var map = new LeafletMap('map', MapOptions );
 
       map.enableDrawing({
          polyline: false,
          circlemarker: false,
          marker: false,
-         draw_color: {opacity: 0.85, fillOpacity: 0.55, color: '#000' }
+         drawColor: {opacity: 0.85, fillOpacity: 0.55, color: '#000' }
       }, setShapeToSearchForm);
 
-      if(loaded_shape) {
-         map.drawShape(loaded_shape)
-         map.map_layer.setView([map.active_shape.center.lat, map.active_shape.center.lng])
-         map.map_layer.fitBounds(map.active_shape.layer.getBounds())
+      if(formShape) {
+         map.drawShape(formShape)
+         map.mapLayer.setView([map.activeShape.center.lat, map.activeShape.center.lng])
+         map.mapLayer.fitBounds(map.activeShape.layer.getBounds())
       }
       //LEAFLET SPECIFIC END
 

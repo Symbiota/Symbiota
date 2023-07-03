@@ -2,8 +2,8 @@ const DEFAULT_DRAW_OPTIONS = {
    polyline: false,
    circlemarker: false,
    marker: false,
-   multi_draw: false,
-   draw_color: { color: '#000', opacity: 0.85, fillOpacity: 0.55 }
+   multiDraw: false,
+   drawColor: { color: '#000', opacity: 0.85, fillOpacity: 0.55 }
 }
 
 const DEFAULT_MAP_OPTIONS = {
@@ -19,27 +19,27 @@ const DEFAULT_SHAPE_OPTIONS = {
 
 class LeafletMap {
    /* To Hold Reference to Leaflet Map */
-   map_layer;
+   mapLayer;
 
    /* Active_Shape Type
     * type: String represenation of shape 
     * layer: leaflet layer
     * center: { lat: float, lng float }
     */
-   active_shape;
+   activeShape;
 
    /* Reference Leaflet Feature Group for all drawn items*/
-   draw_layer;
+   drawLayer;
 
    constructor(map_id, map_options=DEFAULT_MAP_OPTIONS) {
-      this.map_layer = L.map(map_id, map_options);
+      this.mapLayer = L.map(map_id, map_options);
 
       const terrainLayer = L.tileLayer('https://{s}.google.com/vt?lyrs=p&x={x}&y={y}&z={z}', {
          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
          subdomains:['mt0','mt1','mt2','mt3'],
          maxZoom: 20, 
          tileSize: 256,
-      }).addTo(this.map_layer);
+      }).addTo(this.mapLayer);
 
       const satelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -51,31 +51,32 @@ class LeafletMap {
       L.control.layers({
          "Terrain": terrainLayer,
          "Satellite": satelliteLayer
-      }).addTo(this.map_layer);
+      }).addTo(this.mapLayer);
 
    }
 
-   enableDrawing(draw_options = DEFAULT_DRAW_OPTIONS, onDrawChange) {
+   enableDrawing(drawOptions = DEFAULT_DRAW_OPTIONS, onDrawChange) {
 
       var drawnItems = new L.FeatureGroup();
-      this.draw_layer = drawnItems;
-      this.map_layer.addLayer(drawnItems);
+      this.drawLayer = drawnItems;
+      this.mapLayer.addLayer(drawnItems);
+
 
       //Jank workaround for leaflet-draw api
-      const setDrawColor = (draw_option) => {
-         if(draw_options[draw_option] === false)
+      const setDrawColor = (drawOption) => {
+         if(drawOptions[drawOption] === false)
             return;
 
-         if(!draw_options[draw_option]) draw_options[draw_option] = { }
+         if(!drawOptions[drawOption]) drawOptions[drawOption] = { }
 
-         if(!draw_options[draw_option].shapeOptions)
-            draw_options[draw_option].shapeOptions = draw_options.draw_color
+         if(!drawOptions[drawOption].shapeOptions)
+            drawOptions[drawOption].shapeOptions = drawOptions.drawColor
       }
 
-      if(draw_options.draw_color) {
+      if(drawOptions.drawColor) {
          //Setting Styles for Pre Rendered
-         L.Path.mergeOptions(draw_options.draw_color)
-         //Force to Manually Each Color unfortunately
+         L.Path.mergeOptions(drawOptions.drawColor)
+         //Set Color for All Manual Draws 
          setDrawColor("polyline")
          setDrawColor("polygon")
          setDrawColor("rectangle")
@@ -83,40 +84,43 @@ class LeafletMap {
       }
 
       var drawControl = new L.Control.Draw({
-         draw: draw_options,
+         draw: drawOptions,
          edit: {
             featureGroup: drawnItems,
          }
       });
 
-      this.map_layer.addControl(drawControl);
+      this.mapLayer.addControl(drawControl);
 
-      this.map_layer.on('draw:edited', function(e) {
+      //Event saved edit 
+      this.mapLayer.on('draw:edited', function(e) {
          ///Some Extra steps to get at the layer
          const layer = e.layers._layers;
          const keys = Object.keys(layer);
-         let type = this.active_shape.type;
+         let type = this.activeShape.type;
 
-         if(keys.length > 0) this.active_shape = getShapeCoords(type, layer[keys[0]]);
+         if(keys.length > 0) this.activeShape = getShapeCoords(type, layer[keys[0]]);
 
-         if(onDrawChange) onDrawChange(this.active_shape);
+         if(onDrawChange) onDrawChange(this.activeShape);
       }.bind(this))
          
-      this.map_layer.on('draw:deleted', function(e) {
-         this.active_shape = null;
-         if(onDrawChange) onDrawChange(this.active_shape);
+      //Event saved delete 
+      this.mapLayer.on('draw:deleted', function(e) {
+         this.activeShape = null;
+         if(onDrawChange) onDrawChange(this.activeShape);
       }.bind(this))
 
-      this.map_layer.on('draw:created', function (e) {
-         if(!draw_options || !draw_options.multi_draw)
+      //Fires on New Draw
+      this.mapLayer.on('draw:created', function (e) {
+         if(!drawOptions || !drawOptions.multiDraw)
             drawnItems.clearLayers();
 
          const layer = e.layer;
          drawnItems.addLayer(layer);
 
-         this.active_shape = getShapeCoords(e.layerType, e.layer);
+         this.activeShape = getShapeCoords(e.layerType, e.layer);
 
-         if(onDrawChange) onDrawChange(this.active_shape);
+         if(onDrawChange) onDrawChange(this.activeShape);
       }.bind(this))
    }
 
@@ -124,21 +128,22 @@ class LeafletMap {
       switch(shape.type) {
          case "polygon":
             const poly = L.polygon(shape.latlngs)
-            this.active_shape = getShapeCoords(shape.type, poly);
-            poly.addTo(this.draw_layer);
+            this.activeShape = getShapeCoords(shape.type, poly);
+            poly.addTo(this.drawLayer);
             break;
          case "rectangle":
             const rec = L.rectangle([
                [shape.upperLat, shape.rightLng],
                [shape.lowerLat, shape.leftLng]
             ])
-            this.active_shape = getShapeCoords(shape.type, rec);
-            rec.addTo(this.draw_layer)
+            this.activeShape = getShapeCoords(shape.type, rec);
+            rec.addTo(this.drawLayer)
             break;
          case "circle":
             const circ = L.circle(shape.latlng, shape.radius);
-            this.active_shape = getShapeCoords(shape.type, circ);
-            circ.addTo(this.draw_layer)
+            this.activeShape = getShapeCoords(shape.type, circ);
+            circ.addTo(this.drawLayer)
+            break;
          default:
             throw Error(`Can't draw ${shape.type}`)
       } 
@@ -189,9 +194,3 @@ function getShapeCoords(layerType, layer) {
 
    return shape;
 }
-
-/*
-      L.marker([51.5, -0.09]).addTo(map)
-         .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-         .openPopup();    
- */
