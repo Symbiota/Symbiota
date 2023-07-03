@@ -63,7 +63,10 @@ else{
 		<div style="float:right;margin-top:5px;margin-right:15px;">
 			<button name="closebutton" type="button" onclick="self.close()">Save and Close</button>
 		</div>
-    <div id="map"></div>
+		<div id="helptext">
+			Click on shape symbol to create a rectangle, circle, or polygon.<br/>Close mapping tool to transfer shape definition to search form.
+		</div>
+      <div id="map"></div>
       <script>
 
       /* Type Definitions
