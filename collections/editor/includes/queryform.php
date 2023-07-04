@@ -85,15 +85,15 @@ else{
 			if(!$crowdSourceMode){
 				?>
 				<div class="fieldGroupDiv">
-					<div title="<?php echo $LANG['WILD_EXPLAIN']; ?>">
+					<div class="fieldDiv" title="<?php echo $LANG['WILD_EXPLAIN']; ?>">
 						<label for="q_recordedby"><?php echo $LANG['COLLECTOR']; ?>:</label>
 						<input type="text" name="q_recordedby" id="q_recordedby" value="<?php echo $qRecordedBy; ?>" onchange="setOrderBy(this)" />
 					</div>
-					<div title="<?php echo $LANG['SEPARATE_RANGES']; ?>">
+					<div class="fieldDiv" title="<?php echo $LANG['SEPARATE_RANGES']; ?>">
 						<label for="q_recordnumber"><?php echo $LANG['NUMBER']; ?>:</label>
 						<input type="text" name="q_recordnumber" id="q_recordnumber" value="<?php echo $qRecordNumber; ?>" style="width:120px;" onchange="setOrderBy(this)" />
 					</div>
-					<div title="<?php echo $LANG['ENTER_RANGES']; ?>">
+					<div class="fieldDiv" title="<?php echo $LANG['ENTER_RANGES']; ?>">
 						<label for="q_eventdate"><?php echo $LANG['DATE']; ?>:</label>
 						<input type="text" name="q_eventdate" id="q_eventdate" value="<?php echo $qEventDate; ?>" style="width:160px" onchange="setOrderBy(this)" />
 					</div>
@@ -102,14 +102,14 @@ else{
 			}
 			?>
 			<div class="fieldGroupDiv">
-				<div title="<?php echo $LANG['SEPARATE_RANGES']; ?>">
+				<div class="fieldDiv" title="<?php echo $LANG['SEPARATE_RANGES']; ?>">
 					<label for="q_catalognumber"><?php echo $LANG['CAT_NUM']; ?>:</label>
 					<input type="text" name="q_catalognumber" id="q_catalognumber" value="<?php echo $qCatalogNumber; ?>" onchange="setOrderBy(this)" />
 				</div>
 				<?php
 				if($crowdSourceMode){
 					?>
-					<div title="Search for term embedded within OCR block of text">
+					<div class="fieldDiv" title="Search for term embedded within OCR block of text">
 						<label for="q_ocrfrag"></label><?php echo $LANG['OCR_FRAGMENT']; ?>:
 						<input type="text" name="q_ocrfrag" id="q_ocrfrag" value="<?php echo $qOcrFrag; ?>" style="width:200px;" />
 					</div>
@@ -117,7 +117,7 @@ else{
 				}
 				else{
 					?>
-					<div title="<?php echo $LANG['SEPARATE_RANGES']; ?>">
+					<div class="fieldDiv" title="<?php echo $LANG['SEPARATE_RANGES']; ?>">
 						<label for="q_othercatalognumbers"><?php echo $LANG['OTHER_CAT_NUMS']; ?>:</label>
 						<input type="text" name="q_othercatalognumbers" id="q_othercatalognumbers" value="<?php echo $qOtherCatalogNumbers; ?>" />
 					</div>
@@ -129,24 +129,24 @@ else{
 			if(!$crowdSourceMode){
 				?>
 				<div class="fieldGroupDiv">
-					<div style="<?php echo ($isGenObs?'display:none':''); ?>">
+					<div class="fieldDiv" style="<?php echo ($isGenObs?'display:none':''); ?>">
 						<label for="q_recordenteredby"><?php echo $LANG['ENTERED_BY']; ?>:</label>
 						<input type="text" name="q_recordenteredby" id="q_recordenteredby" value="<?php echo $qRecordEnteredBy; ?>" style="width:70px;" onchange="setOrderBy(this)" />
 					</div>
 					<div>
 						<button type="button" onclick="enteredByCurrentUser()" style="font-size:70%" title="<?php echo $LANG['LIMIT_TO_CURRENT']; ?>"><?php echo $LANG['CU']; ?></button>
 					</div>
-					<div title="<?php echo $LANG['ENTER_RANGES']; ?>">
+					<div class="fieldDiv" title="<?php echo $LANG['ENTER_RANGES']; ?>">
 						<label for="q_dateentered"><?php echo $LANG['DATE_ENTERED']; ?>:</label>
 						<input type="text" name="q_dateentered" id="q_dateentered" value="<?php echo $qDateEntered; ?>" style="width:160px" onchange="setOrderBy(this)" />
 					</div>
-					<div title="<?php echo $LANG['ENTER_RANGES']; ?>">
+					<div class="fieldDiv" title="<?php echo $LANG['ENTER_RANGES']; ?>">
 						<label for="q_datelastmodified"><?php echo $LANG['DATE_MODIFIED']; ?>:</label>
 						<input type="text" name="q_datelastmodified" id="q_datelastmodified" value="<?php echo $qDateLastModified; ?>" style="width:160px" onchange="setOrderBy(this)" />
 					</div>
 				</div>
 				<div class="fieldGroupDiv">
-					<div>
+					<div class="fieldDiv">
 						<?php echo $LANG['PROC_STATUS']; ?>:
 						<select name="q_processingstatus" onchange="setOrderBy(this)">
 							<option value=''><?php echo $LANG['ALL_RECORDS']; ?></option>
@@ -164,11 +164,11 @@ else{
 							?>
 						</select>
 					</div>
-					<div>
+					<div class="fieldDiv">
 						<input name="q_imgonly" id="q_imgonly" type="checkbox" value="1" <?php echo ($qImgOnly==1?'checked':''); ?> onchange="this.form.q_withoutimg.checked = false;" />
 						<label for="q_imgonly"><?php echo $LANG['WITH_IMAGES']; ?></label>
 					</div>
-					<div>
+					<div class="fieldDiv">
 						<input name="q_withoutimg" id="q_withoutimg" type="checkbox" value="1" <?php echo ($qWithoutImg==1?'checked':''); ?> onchange="this.form.q_imgonly.checked = false;" />
 						<label for="q_withoutimg"><?php echo $LANG['WITHOUT_IMAGES']; ?></label>
 					</div>
@@ -178,7 +178,7 @@ else{
 					if($exsList = $occManager->getExsiccatiList()){
 						?>
 						<div class="fieldGroupDiv" title="<?php echo $LANG['ENTER_EXS_TITLE']; ?>">
-							<div>
+							<div class="fieldDiv">
 								<?php echo $LANG['EXS_TITLE']; ?>:
 								<select name="q_exsiccatiid" style="max-width:650px">
 									<option value=""></option>
