@@ -95,7 +95,7 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 			<?php
 			if($verifyArr['img'] > 0){
 				?>
-				<span style="color:red;"><?php echo (isset($LANG['WARNING'])?$LANG['WARNING']:'Warning').": ".$verifyArr['img'].(isset($LANG['IMGS_LINKED'])?$LANG['IMGS_LINKED']:'images linked to this taxon'); ?></span>
+				<span style="color:red;"><?php echo (isset($LANG['WARNING'])?$LANG['WARNING']:'Warning').": ".$verifyArr['img'].' '.(isset($LANG['IMGS_LINKED'])?$LANG['IMGS_LINKED']:'images linked to this taxon'); ?></span>
 				<?php
 			}
 			else{

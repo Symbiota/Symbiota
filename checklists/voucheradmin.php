@@ -251,7 +251,7 @@ if($clid && $isEditor){
 							?>
 							<li><a href="voucherreporthandler.php?rtype=fullvoucherscsv&clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['FULLSPECLISTVOUCHER'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
 							<li>
-								<a href="#" onclick="openPopup('../collections/download/index.php?searchvar=<?php echo urlencode('clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS)); ?>&noheader=1','repvouchers');return false;">
+								<a href="#" onclick="openPopup('../collections/download/index.php?searchvar=<?php echo urlencode('clid=' . htmlspecialchars($clManager->getClidFullStr(), HTML_SPECIAL_CHARS_FLAGS)); ?>&noheader=1','repvouchers');return false;">
 									<?php echo (isset($LANG['VOUCHERONLY'])?$LANG['VOUCHERONLY']:'Occurrence vouchers only (DwC-A, CSV, Tab-delimited)'); ?>
 								</a>
 							</li>

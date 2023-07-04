@@ -15,21 +15,21 @@ $refUrl = '';
 if(array_key_exists('refurl',$_REQUEST)){
 	$refGetStr = '';
 	foreach($_GET as $k => $v){
-		$k = filter_var($k, FILTER_SANITIZE_STRING);
+		$k = htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS);
 		if($k != 'refurl'){
 			if($k == 'attr' && is_array($v)){
 				foreach($v as $v2){
-					$v2 = filter_var($v2, FILTER_SANITIZE_STRING);
+					$v2 = htmlspecialchars($v2, HTML_SPECIAL_CHARS_FLAGS);
 					$refGetStr .= '&attr[]='.$v2;
 				}
 			}
 			else{
-				$v = filter_var($v, FILTER_SANITIZE_STRING);
+				$v = htmlspecialchars($v, HTML_SPECIAL_CHARS_FLAGS);
 				$refGetStr .= '&'.$k.'='.$v;
 			}
 		}
 	}
-	$refUrl = str_replace('&amp;','&',htmlspecialchars(filter_var($_REQUEST['refurl'], FILTER_SANITIZE_STRING)));
+	$refUrl = str_replace('&amp;','&',htmlspecialchars($_REQUEST['refurl'], HTML_SPECIAL_CHARS_FLAGS));
 	if(substr($refUrl,-4) == '.php') $refUrl .= '?'.substr($refGetStr,1);
 	else $refUrl .= $refGetStr;
 }
@@ -176,7 +176,7 @@ include($SERVER_ROOT.'/includes/header.php');
 			<legend><?php echo (isset($LANG['PORTAL_LOGIN'])?$LANG['PORTAL_LOGIN']:'Portal Login'); ?></legend>
 			<form id="loginform" name="loginform" action="index.php" onsubmit="return checkCreds();" method="post">
 				<div style="margin: 10px;">
-					<?php echo (isset($LANG['LOGIN_NAME'])?$LANG['LOGIN_NAME']:'Login'); ?>: <input id="login" name="login" value="<?php echo $login; ?>" style="border-style:inset;" />
+					<label for="login"><?php echo (isset($LANG['LOGIN_NAME'])?$LANG['LOGIN_NAME']:'Login'); ?>:</label> <input id="login" name="login" value="<?php echo $login; ?>" style="border-style:inset;" />
 				</div>
 				<div style="margin:10px;">
 					<?php echo (isset($LANG['PASSWORD'])?$LANG['PASSWORD']:"Password"); ?>:

@@ -63,8 +63,8 @@ if($chars){
 ?>
 <html>
 <head>
-	<title><?php echo $DEFAULT_TITLE.$LANG['WEBKEY'].preg_replace('/\<[^\>]+\>/','',$dataManager->getClName()); ?></title>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<title><?php echo htmlspecialchars($DEFAULT_TITLE.$LANG['WEBKEY'], HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars(preg_replace('/\<[^\>]+\>/','',$dataManager->getClName()), HTML_SPECIAL_CHARS_FLAGS); ?></title>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
@@ -167,26 +167,26 @@ if($chars){
 $displayLeftMenu = (isset($ident_keyMenu)?$ident_keyMenu:true);
 include($SERVER_ROOT.'/includes/header.php');
 echo '<div class="navpath">';
-echo '<a href="../index.php">' . htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
+echo '<a href="../index.php">' . $LANG['HOME'] . '</a> &gt;&gt; ';
 if($dynClid){
 	if($dataManager->getClType() == 'Specimen Checklist'){
-		echo '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . ' /collections/list.php?tabindex=0">';
-		echo 'Occurrence Checklist';
+		echo '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/collections/list.php?tabindex=0">';
+		echo $LANG['OCC_CHECKLIST'];
 		echo '</a> &gt;&gt; ';
 	}
 }
 elseif($clid){
-	echo '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . ' /checklists/checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">';
-	echo 'Checklist: '.$dataManager->getClName();
+	echo '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/checklists/checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">';
+	echo $LANG['CHECKLIST'] . ': ' . htmlspecialchars($dataManager->getClName(), HTML_SPECIAL_CHARS_FLAGS);
 	echo '</a> &gt;&gt; ';
 }
 elseif($pid){
-	echo '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . ' /projects/index.php?pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">';
-	echo 'Project Checklists';
+	echo '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/projects/index.php?pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">';
+	echo $LANG['PROJ_CHECKLISTS'];
 	echo '</a> &gt;&gt; ';
 }
-echo '<a href="key-v1.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&taxon=All+Species" alt="Traditional key">Previous version of Key</a> &gt;&gt; ';
-echo '<b>Identification Key (new version): '.$dataManager->getClName().'</b>';
+echo '<a href="key-v1.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&taxon=All+Species" alt="' . htmlspecialchars($LANG['TRAD_KEY'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($LANG['PREV_KEY'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
+echo '<b>' . htmlspecialchars($LANG['NEW_ID_KEY'], HTML_SPECIAL_CHARS_FLAGS) . ': ' . htmlspecialchars($dataManager->getClName(), HTML_SPECIAL_CHARS_FLAGS) . '</b>';
 echo '</div>';
 ?>
 <div id="innertext">
@@ -195,18 +195,18 @@ echo '</div>';
 		?>
 		<div id="char-div">
 			<fieldset id="key-chars">
-				<legend>Filter/Display Options</legend>
+				<legend><?php echo $LANG['FILTER_OPTIONS']; ?></legend>
 				<form name="keyform" id="keyform" action="key.php" method="post">
 					<div>
 						<div style="float:right"><button type="button" onclick="resetForm(this.form)">Reset</button></div>
 						<div><span><?php echo (isset($LANG['TAXON_SEARCH'])?$LANG['TAXON_SEARCH']:'Family/Genus Filter');?>:</span></div>
 						<select name="taxon" onchange="this.form.submit();">
 							<?php
-							echo '<option value="All Species">'.$LANG['SELECTTAX'].'</option>';
+							echo '<option value="All Species">' . $LANG['SELECTTAX'] . '</option>';
 							$selectList = $dataManager->getTaxaFilterList();
 							foreach($selectList as $value){
 								$selectStr = ($value==$taxonValue?'SELECTED':'');
-								echo '<option '.$selectStr.'>'.$value.'</option>';
+								echo '<option ' . $selectStr . '>' . $value . '</option>';
 							}
 							?>
 						</select>
@@ -216,19 +216,19 @@ echo '</div>';
 					//echo "<div style=''>Relevance value: <input name='rv' type='text' size='3' title='Only characters with > ".($rv*100)."% relevance to the active spp. list will be displayed.' value='".$dataManager->getRelevanceValue()."'></div>";
 					//List char Data with selected states checked
 					if(count($languages) > 1){
-						echo '<div id="langlist" style="margin:0.5em;">Languages: <select name="lang" onchange="setLang(this);">';
+						echo '<div id="langlist" style="margin:0.5em;">' . $LANG['LANGUAGES'] . ': <select name="lang" onchange="setLang(this);">';
 						foreach($languages as $l){
-							echo '<option value="'.$l.'" '.($defaultLang == $l?'SELECTED':'').'>'.$l.'</option>';
+							echo '<option value="' . $l . '" ' . ($defaultLang == $l?'SELECTED':'') . '>' . $l . '</option>';
 						}
 						echo '</select></div>';
 					}
 					?>
 					<div style="margin:5px">
-						<?php echo (isset($LANG['SORT'])?$LANG['SORT']:'Sort by').': '; ?>
+						<?php echo (isset($LANG['SORT'])?$LANG['SORT']:'Sort by') . ': '; ?>
 						<select name="sortby" onchange="this.form.submit();">
 							<?php
-							echo '<option value="0">'.(isset($LANG['SORT_SCINAME_FAMILY'])?$LANG['SORT_SCINAME_FAMILY']:'Family/Scientific Name').'</option>';
-							echo '<option value="1" '.($sortBy?'SELECTED':'').'>'.(isset($LANG['SORT_SCINAME'])?$LANG['SORT_SCINAME']:'Scientific Name').'</option>';
+							echo '<option value="0">' . (isset($LANG['SORT_SCINAME_FAMILY'])?$LANG['SORT_SCINAME_FAMILY']:'Family/Scientific Name') . '</option>';
+							echo '<option value="1" ' . ($sortBy?'SELECTED':'') . '>' . (isset($LANG['SORT_SCINAME'])?$LANG['SORT_SCINAME']:'Scientific Name') . '</option>';
 							?>
 						</select>
 					</div>
@@ -244,7 +244,7 @@ echo '</div>';
 					?>
 					<div style="margin:5px">
 						<input name="displayimages" type="checkbox" value="1" onchange="this.form.submit();" <?php if($displayImages) echo 'checked'; ?> />
-						<?php echo (isset($LANG['DISPLAY_IMAGES'])?$LANG['DISPLAY_IMAGES']:'Display images').': '; ?>
+						<?php echo (isset($LANG['DISPLAY_IMAGES'])?$LANG['DISPLAY_IMAGES']:'Display images'); ?>
 					</div>
 					<?php
 					if($chars){
@@ -267,7 +267,7 @@ echo '</div>';
 		<?php
 		if($clid && $isEditor){
 			?>
-			<div style="float:right;margin:15px;" title="Edit Character Matrix">
+			<div style="float:right;margin:15px;" title="<?php echo htmlspecialchars($LANG['EDIT_CHAR_MATRIX'], HTML_SPECIAL_CHARS_FLAGS); ?>">
 				<a href="tools/matrixeditor.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>"><img class="editimg" src="../images/edit.png" /><span style="font-size:70%;">CM</span></a>
 			</div>
 			<?php
@@ -275,38 +275,38 @@ echo '</div>';
 		?>
 		<div id="title-div">
 			<?php
-			if($FLORA_MOD_IS_ACTIVE) echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&dynclid=' . htmlspecialchars($dynClid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS).'">';
-			echo $dataManager->getClName().' ';
+			if($FLORA_MOD_IS_ACTIVE) echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&dynclid=' . htmlspecialchars($dynClid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">';
+			echo htmlspecialchars($dataManager->getClName(), HTML_SPECIAL_CHARS_FLAGS) . ' ';
 			if($FLORA_MOD_IS_ACTIVE) echo '</a>';
 			?>
 		</div>
 		<div id="key-taxa">
 			<?php
-			if(!$dynClid && $dataManager->getClAuthors()) echo '<div>'.$dataManager->getClAuthors().'</div>';
+			if(!$dynClid && $dataManager->getClAuthors()) echo '<div>' . $dataManager->getClAuthors() . '</div>';
 			$count = $dataManager->getTaxaCount();
-			if($count) echo '<div style="margin-bottom:15px;">'.$LANG['SPECCOUNT'].': '.$count.'</div>';
-			else echo '<div>'.$LANG['NOMATCH'].'</div>';
+			if($count) echo '<div style="margin-bottom:15px;">' . $LANG['SPECCOUNT'] . ': ' . $count . '</div>';
+			else echo '<div>' . $LANG['NOMATCH'] . '</div>';
 			$clType =$dataManager->getClType();
 			ksort($taxa);
 			foreach($taxa as $family => $taxaArr){
-				if($family) echo '<div class="family-div">'.$family.'</div>';
+				if($family) echo '<div class="family-div">' . $family . '</div>';
 				//natcasesort($taxaArr);
 				foreach($taxaArr as $tid => $taxonArr){
 					echo '<div class="taxon-div">';
 					if($displayImages){
 						echo '<div class="img-div">';
 						echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . "&clid=" . htmlspecialchars(($clType=="static"?$clid:""), HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
-						if(isset($taxonArr['i'])) echo '<img src="'.$taxonArr['i'].'" />';
-						else echo '<div>Image<br/>Not<br/>Available</div>';
+						if(isset($taxonArr['i'])) echo '<img src="' . $taxonArr['i'] . '" />';
+						else echo '<div>' . htmlspecialchars($LANG['IMG_NOT_AVAILABLE'], HTML_SPECIAL_CHARS_FLAGS) . '</div>';
 						echo '</a>';
 						echo '</div>';
 					}
 					echo '<div class="sciname-div">';
 					echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . "&clid=" . htmlspecialchars(($clType=="static"?$clid:""), HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><i>' . htmlspecialchars($taxonArr['s'], HTML_SPECIAL_CHARS_FLAGS) . '</i></a>';
-					if($displayCommon) echo ($displayImages?'<br/>':(isset($taxonArr['v'])?' - ':'')).'<span class="vern-span">'.(isset($taxonArr['v'])?$taxonArr['v']:'&nbsp;').'</span>';
+					if($displayCommon) echo ($displayImages?'<br/>':(isset($taxonArr['v'])?' - ':'')) . '<span class="vern-span">' . (isset($taxonArr['v'])?$taxonArr['v']:'&nbsp;') . '</span>';
 					if($isEditor && !$displayImages){
 						echo '<a href="#" onclick="openEditorPopup('.$tid.')">';
-						echo '<img class="editimg" src="../images/edit.png" title="'.$LANG['EDITMORP'].'" />';
+						echo '<img class="editimg" src="../images/edit.png" title="' . $LANG['EDITMORP'] . '" />';
 						echo '</a>';
 					}
 					echo '</div>';
@@ -317,7 +317,7 @@ echo '</div>';
 		</div>
 		<?php
 	}
-	else echo '<div style="margin: 40px 20px; font-weight:bold">Error: checklist identifier is NULL</div>';
+	else echo '<div style="margin: 40px 20px; font-weight:bold">' . $LANG['ERROR_CLID_NULL'] . '</div>';
 	?>
 </div>
 <?php

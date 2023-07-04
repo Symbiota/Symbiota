@@ -1,15 +1,23 @@
 <?php
 if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/header.en.php');
 else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
+
+include_once($SERVER_ROOT.'/classes/ProfileManager.php');
+$pHandler = new ProfileManager();
+$isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
 ?>
 <div class="header-wrapper">
 	<header>
 		<div class="top-wrapper">
-			<nav class="top-login">
+			<a class="skip-link" href="#end-nav"><?php echo $LANG['SKIP_NAV'] ?></a>
+			<nav class="top-login" aria-label="horizontal-nav">
+				<span>
+					<button style="font-size:14" onclick="toggleAccessibilityStyles('<?php echo $CLIENT_ROOT . '/includes' . '/' ?>', '<?php echo $CSS_BASE_PATH ?>', '<?php echo $LANG['TOGGLE_508_OFF'] ?>', '<?php echo $LANG['TOGGLE_508_ON'] ?>')" id="accessibility-button" name="accessibility-button" data-accessibility="accessibility-button" ><?php echo (isset($LANG['TOGGLE_508_ON'])?$LANG['TOGGLE_508_ON']:'Accessibility Mode'); ?></button>
+				</span>
 				<?php
 				if ($USER_DISPLAY_NAME) {
 					?>
-					<span style="">
+					<span>
 						<?php echo (isset($LANG['H_WELCOME'])?$LANG['H_WELCOME']:'Welcome').' '.$USER_DISPLAY_NAME; ?>!
 					</span>
 					<span class="button button-tertiary">
@@ -22,7 +30,7 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 				} else {
 					?>
 					<span>
-						<a href="#">
+						<a onclick="window.location.href='#'">
 							Contact Us
 						</a>
 					</span>
@@ -37,7 +45,9 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 			</nav>
 			<div class="top-brand">
 				<a href="https://symbiota.org">
-					<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/logo_symbiota.png" alt="Symbiota logo" width="100%">
+					<div class="image-container">
+						<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/logo_symbiota.png" alt="Symbiota logo">
+					</div>
 				</a>
 				<div class="brand-name">
 					<h1>Symbiota Brand New Portal</h1>
@@ -47,10 +57,10 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 		</div>
 		<div class="menu-wrapper">
 			<!-- Hamburger icon -->
-			<input class="side-menu" type="checkbox" id="side-menu" />
-			<label class="hamb" for="side-menu"><span class="hamb-line"></span></label>
+			<input class="side-menu" type="checkbox" id="side-menu" name="side-menu" />
+			<label class="hamb hamb-line hamb-label" for="side-menu" tabindex="0">☰</label>
 			<!-- Menu -->
-			<nav class="top-menu">
+			<nav class="top-menu" aria-label="hamburger-nav">
 				<ul class="menu">
 					<li>
 						<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php">
@@ -93,7 +103,8 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 						</a>
 					</li>
 					<li>
-						<select onchange="setLanguage(this)">
+						<label for="language-selection"><?php echo $LANG['SELECT_LANGUAGE'] ?>: </label>
+						<select oninput="setLanguage(this)" id="language-selection" name="language-selection">
 							<option value="en">English</option>
 							<option value="es" <?php echo ($LANG_TAG=='es'?'SELECTED':''); ?>>Espa&ntilde;ol</option>
 							<option value="fr" <?php echo ($LANG_TAG=='fr'?'SELECTED':''); ?>>Français</option>
@@ -102,5 +113,6 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 				</ul>
 			</nav>
 		</div>
+		<div id="end-nav"></div>
 	</header>
 </div>

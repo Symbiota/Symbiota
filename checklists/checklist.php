@@ -37,7 +37,7 @@ elseif($dynClid) $clManager->setDynClid($dynClid);
 $clArray = $clManager->getClMetaData();
 $activateKey = $KEY_MOD_IS_ACTIVE;
 $showDetails = 0;
-if($clid && $clArray['defaultSettings']){
+if(isset($clArray['defaultSettings'])){
 	$defaultArr = json_decode($clArray['defaultSettings'], true);
 	$showDetails = $defaultArr['ddetails'];
 	if(!$defaultOverride){
@@ -156,7 +156,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 	<!-- This is inner text! -->
 	<div id='innertext'>
 		<?php
-		if($clid || $dynClid){
+		if(($clid || $dynClid) && $clArray){
 			if($clid && $isEditor){
 				?>
 				<div class="printoff" style="float:right;width:auto;">
@@ -325,16 +325,18 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 								<div id="taxonfilterdiv">
 									<div>
 										<b><?php echo $LANG['SEARCH'];?>:</b>
+										<label for="taxonfilter"><?php echo $LANG['TAXONFILTER'] ?></label>
 										<input type="text" id="taxonfilter" name="taxonfilter" value="<?php echo $taxonFilter;?>" size="20" />
 									</div>
 									<div>
 										<div style="margin-left:10px;">
 											<?php
 											if($DISPLAY_COMMON_NAMES){
-												echo "<input type='checkbox' name='searchcommon' value='1'".($searchCommon?"checked":"")."/> ".$LANG['COMMON']."<br/>";
+												echo "<label for='searchcommon'>Search common names</label><input type='checkbox' name='searchcommon' id='searchcommon' value='1'" . ($searchCommon?"checked":"") . "/> " . $LANG['COMMON'] . "<br/>";
 											}
 											?>
-											<input type="checkbox" name="searchsynonyms" value="1"<?php echo ($searchSynonyms?"checked":"");?>/> <?php echo $LANG['SYNONYMS'];?>
+											<input type="checkbox" name="searchsynonyms" id="searchsynonyms" value="1"<?php echo ($searchSynonyms?"checked":"");?>/> <?php echo $LANG['SYNONYMS'];?>
+											<label for="searchsynonyms"><?php echo $LANG['SEARCHSYNONYMS'] ?></label>
 										</div>
 									</div>
 								</div>
@@ -352,26 +354,26 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 									</select>
 								</div>
 								<div id="showsynonymsdiv" style="display:<?php echo ($showImages?"none":"block");?>">
-									<input name='showsynonyms' type='checkbox' value='1' <?php echo ($showSynonyms?"checked":""); ?> />
-									<?php echo $LANG['DISPLAY_SYNONYMS'];?>
+									<input name='showsynonyms' id='showsynonyms' type='checkbox' value='1' <?php echo ($showSynonyms?"checked":""); ?> />
+									<label for="showsynonyms"><?php echo $LANG['DISPLAY_SYNONYMS'];?></label>
 								</div>
 								<?php
 								if($DISPLAY_COMMON_NAMES){
 									echo '<div>';
-									echo "<input id='showcommon' name='showcommon' type='checkbox' value='1' ".($showCommon?"checked":"")."/> ".$LANG['COMMON']."";
+									echo "<input id='showcommon' name='showcommon' type='checkbox' value='1' " . ($showCommon?"checked":"") . "/> " . "<label for='showcommon'>" . $LANG['COMMON'] . "</label>";
 									echo '</div>';
 								}
 								?>
 								<div>
-									<input name='showimages' type='checkbox' value='1' <?php echo ($showImages?"checked":""); ?> onclick="showImagesChecked(this.form);" />
-									<?php echo $LANG['DISPLAYIMAGES'];?>
+									<input name='showimages' id='showimages' type='checkbox' value='1' <?php echo ($showImages?"checked":""); ?> onclick="showImagesChecked(this.form);" />
+									<label for="showimages"><?php echo $LANG['DISPLAYIMAGES'];?></label>
 								</div>
 								<?php
 								if($clid){
 									?>
 									<div id="showvouchersdiv" style="display:<?php echo ($showImages?"none":"block");?>">
-										<input name='showvouchers' type='checkbox' value='1' <?php echo ($showVouchers?"checked":""); ?>/>
-										<?php echo $LANG['NOTESVOUC'];?>
+										<input name='showvouchers' id='showvouchers' type='checkbox' value='1' <?php echo ($showVouchers?"checked":""); ?>/>
+										<label for="showvouchers"><?php echo $LANG['NOTESVOUC'];?></label>
 									</div>
 									<?php
 								}
@@ -548,12 +550,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 					</div>
 					<div style="margin:3px;">
 						<?php
-						echo '<b>';
-						echo $LANG['TOTAL_TAXA'];
-						echo '<span class="printoff"> (<a href="https://symbiota.org/symbiota-species-checklist-data-fields/" target="_blank" >';
-						echo '<span style="font-style:italic;color:green" title="'.(isset($LANG['DETAILS_EXPLANATION'])?$LANG['DETAILS_EXPLANATION']:'').'" >'.(isset($LANG['DETAILS'])?$LANG['DETAILS']:'details').'</span>';
-						echo '</a>)</span>';
-						echo '</b>: ';
+						echo '<b>' . $LANG['TOTAL_TAXA'] . '</b>: ';
 						echo $clManager->getTaxaCount();
 						?>
 					</div>

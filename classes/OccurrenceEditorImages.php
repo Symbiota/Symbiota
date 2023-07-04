@@ -60,7 +60,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 					}
 					if($rawStr){
 						if($ocrSource) $ocrSource .= ': '.date('Y-m-d');
-						$sql = 'INSERT INTO specprocessorrawlabels(imgid, rawstr, source) VALUES('.$this->activeImgId.',"'.$this->cleanInStr($rawStr).'","'.$this->cleanInStr($ocrSource).'")';
+						$sql = 'INSERT INTO specprocessorrawlabels(imgid, rawstr, source) VALUES('.$this->activeImgId.',"'.$this->cleanRawFragment($rawStr).'","'.$this->cleanInStr($ocrSource).'")';
 						if(!$this->conn->query($sql)){
 							$this->errorStr = $LANG['ERROR_LOAD_OCR'].': '.$this->conn->error;
 						}
@@ -401,6 +401,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 		if(array_key_exists('copyright',$postArr)) $imgManager->setCopyright($postArr['copyright']);
 		if(array_key_exists('notes',$postArr)) $imgManager->setNotes($postArr['notes']);
 		if(array_key_exists('sortoccurrence',$postArr)) $imgManager->setSortOccurrence($postArr['sortoccurrence']);
+		if(strpos($this->collMap['colltype'], 'Observations') !== false)  $imgManager->setSortSeq(40);
 
 		$sourceImgUri = $postArr['imgurl'];
 		if($sourceImgUri){

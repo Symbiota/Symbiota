@@ -229,6 +229,15 @@ if($action == "Create Login"){
 						</td>
 					</tr>
 					<tr>
+						<td><b><?php echo (isset($LANG['ACCESSIBILITY_PREF'])?$LANG['ACCESSIBILITY_PREF']:'Accessibility Preferences'); ?>:</b></td>
+						<td>
+							<div>
+								<input type="checkbox" name="accessibility-pref" id="accessibility-pref" value="1" />
+								<label for="accessibility-pref"><?php echo (isset($LANG['ACCESSIBILITY_PREF_DESC'])?$LANG['ACCESSIBILITY_PREF_DESC']:'Check to indicate a preference for accessibility-optimized styles'); ?></label>
+							</div>
+						</td>
+					</tr>
+					<tr>
 						<td>&nbsp;</td>
 						<td><span style="color:red;">* <?php echo (isset($LANG['REQUIRED'])?$LANG['REQUIRED']:'required fields'); ?></span></td>
 					</tr>

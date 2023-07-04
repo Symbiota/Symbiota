@@ -142,12 +142,16 @@ if($isEditor){
 		<div style="margin:20px 0px">
 			<hr/>
 		</div>
-		<div style="width:450px;float:right;">
+		<div style="margin-bottom:10px;">
+			<label for="occidsubmit">Occurrence ID:</label>
+			<input type="text" name="occidsubmit" id="occidsubmit" onchange="loadOccurRecord(this)" />
+		</div>
+		<div style="width:450px;">
 			<form name="dlform" method="post" action="occurharvester.php" target="_blank">
 				<fieldset>
 					<legend><b>Specimen Queue</b></legend>
 					<div id="emptylistdiv" style="margin:20px;">
-						<b>List Empty: </b>enter barcode in field to left
+						<b>List Empty: </b>enter barcode in Occurrence ID field
 					</div>
 					<div id="occidlist" style="margin:10px;">
 					</div>
@@ -165,10 +169,6 @@ if($isEditor){
 					</div>
 				</fieldset>
 			</form>
-		</div>
-		<div style="">
-			<b>Occurrence ID:</b><br/>
-			<input type="text" name="occidsubmit" onchange="loadOccurRecord(this)" />
 		</div>
 
 	</div>

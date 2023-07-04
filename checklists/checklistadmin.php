@@ -43,9 +43,10 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USE
 		}
 	}
 	elseif($action == 'deleteChecklist'){
-		$status = $clManager->deleteChecklist($_POST['delclid']);
-		if($status === true) header('Location: ../index.php');
-		echo $statusStr = $clManager->getErrorMessage();
+		if($clManager->deleteChecklist($_POST['delclid'])){
+			header('Location: ../index.php');
+		}
+		else $statusStr = 'ERROR deleting checklist: '.$clManager->getErrorMessage();
 	}
 	elseif($action == 'addEditor'){
 		$statusStr = $clManager->addEditor($_POST['editoruid']);

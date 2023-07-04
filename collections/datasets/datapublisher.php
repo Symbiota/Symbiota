@@ -199,7 +199,8 @@ if ($isEditor) {
 		<b><?php echo $LANG['DWCA_PUBLISHER']; ?></b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div id="innertext" style="font-size:14px;">
+	<!-- I could not figure out which css file to modify to get the above styling to work -->
 		<?php
 		if (!$collid && $IS_ADMIN) {
 			?>
@@ -289,7 +290,7 @@ if ($isEditor) {
 						<form action="datapublisher.php" method="post" style="display:inline;" onsubmit="return window.confirm('<?php echo $LANG['SURE_DELETE']; ?>');">
 							<input type="hidden" name="colliddel" value="<?php echo $dArr['collid']; ?>">
 							<input type="hidden" name="collid" value="<?php echo $dArr['collid']; ?>">
-							<input type="image" src="../../images/del.png" name="action" value="DeleteCollid" title="<?php echo $LANG['DELETE_ARCHIVE']; ?>" style="width:15px;">
+							<input type="image" src="../../images/del.png" name="action" alt="<?php echo $LANG['DELETE_ARCHIVE']; ?>" value="DeleteCollid" title="<?php echo $LANG['DELETE_ARCHIVE']; ?>" style="width:15px;">
 						</form>
 					</div>
 					<div><b><?php echo $LANG['DESCRIPTION']; ?>:</b> <?php echo $dArr['description']; ?></div>

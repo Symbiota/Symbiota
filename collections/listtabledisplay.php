@@ -83,8 +83,8 @@ $searchVar = $collManager->getQueryTermStr();
 				<legend><b><?php echo (isset($LANG['SORT'])?$LANG['SORT']:'Sort Results'); ?></b></legend>
 				<form name="sortform" action="listtabledisplay.php" method="post">
 					<div style="float:left;">
-						<b><?php echo (isset($LANG['SORT_BY'])?$LANG['SORT_BY']:'Sort By'); ?>:</b>
-						<select name="sortfield1">
+						<label for="sortfield1"><?php echo (isset($LANG['SORT_BY'])?$LANG['SORT_BY']:'Sort By'); ?>:</label>
+						<select name="sortfield1" id="sortfield1">
 							<?php
 							$sortFields = array('c.collectionname' => (isset($LANG['COLLECTION'])?$LANG['COLLECTION']:'Collection'), 'o.catalogNumber' => (isset($LANG['CATALOGNUMBER'])?$LANG['CATALOGNUMBER']:'Catalog Number'), 'o.family' => (isset($LANG['FAMILY'])?$LANG['FAMILY']:'Family'), 'o.sciname' => (isset($LANG['SCINAME'])?$LANG['SCINAME']:'Scientific Name'), 'o.recordedBy' => (isset($LANG['COLLECTOR'])?$LANG['COLLECTOR']:'Collector'),
 								'o.recordNumber' => (isset($LANG['NUMBER'])?$LANG['NUMBER']:'Number'), 'o.eventDate' => (isset($LANG['EVENTDATE'])?$LANG['EVENTDATE']:'Date'), 'o.country' => (isset($LANG['COUNTRY'])?$LANG['COUNTRY']:'Country'), 'o.StateProvince' => (isset($LANG['STATE_PROVINCE'])?$LANG['STATE_PROVINCE']:'State/Province'), 'o.county' => (isset($LANG['COUNTY'])?$LANG['COUNTY']:'County'), 'o.minimumElevationInMeters' => (isset($LANG['ELEVATION'])?$LANG['ELEVATION']:'Elevation'));
@@ -95,8 +95,8 @@ $searchVar = $collManager->getQueryTermStr();
 						</select>
 					</div>
 					<div style="float:left;margin-left:10px;">
-						<b><?php echo (isset($LANG['THEN_BY'])?$LANG['THEN_BY']:'Then By'); ?>:</b>
-						<select name="sortfield2">
+						<label for="sortfield2"><?php echo (isset($LANG['THEN_BY'])?$LANG['THEN_BY']:'Then Sort By'); ?>:</label>
+						<select name="sortfield2" id="sortfield2">
 							<option value=""><?php echo (isset($LANG['SEL_FIELD'])?$LANG['SEL_FIELD']:'Select Field Name'); ?></option>
 							<?php
 							foreach($sortFields as $k => $v){

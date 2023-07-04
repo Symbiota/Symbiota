@@ -13,7 +13,7 @@ $zoomInt = array_key_exists('zoom',$_REQUEST)?$_REQUEST['zoom']:'';
 
 //Sanitation
 if(!is_numeric($tid)) $tid = 0;
-$taxa = filter_var($taxa,FILTER_SANITIZE_STRING);
+$taxa = htmlspecialchars($taxa, HTML_SPECIAL_CHARS_FLAGS);
 if($interface && $interface != 'key') $interface = 'checklist';
 
 //$dynClManager = new DynamicChecklistManager();
@@ -167,13 +167,13 @@ if(!$zoomInt){
 					</div>
 					<div style="float:left;">
 						<div style="margin-right:35px;">
-							<b><?php echo (isset($LANG['TAXON_FILTER'])?$LANG['TAXON_FILTER']:'Taxon Filter'); ?>:</b>
+							<label for="taxa"><?php echo (isset($LANG['TAXON_FILTER'])?$LANG['TAXON_FILTER']:'Taxon Filter'); ?>:</label>
 							<input id="taxa" name="taxa" type="text" value="<?php echo $taxa; ?>" />
 							<input id="tid" name="tid" type="hidden" value="<?php echo $tid; ?>" />
 						</div>
 						<div>
-							<b><?php echo (isset($LANG['RADIUS'])?$LANG['RADIUS']:'Radius'); ?>:</b>
-							<input name="radius" value="(optional)" type="text" style="width:140px;" onfocus="this.value = ''" />
+							<label for="radius"><?php echo (isset($LANG['RADIUS'])?$LANG['RADIUS']:'Radius'); ?>:</label>
+							<input name="radius" id="radius" value="(optional)" type="text" style="width:140px;" onfocus="this.value = ''" />
 							<select name="radiusunits">
 								<option value="km"><?php echo (isset($LANG['KM'])?$LANG['KM']:'Kilometers'); ?></option>
 								<option value="mi"><?php echo (isset($LANG['MILES'])?$LANG['MILES']:'Miles'); ?></option>

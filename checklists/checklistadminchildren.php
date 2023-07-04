@@ -148,15 +148,16 @@ $childArr = $clManager->getChildrenChecklist()
 			<div style="margin:10px 0px;">Use the following tool to parse a list into multiple children checklists based on taxonomic nodes (Liliopsida, Eudicots, Pinopsida, etc)</div>
 			<form name="parsechecklistform" target="checklistadmin.php" method="post" onsubmit="validateParseChecklistForm(this)">
 				<div class="section-div">
-					<label>Taxonomic node:</label>
+					<label for="taxon"><?php echo $LANG['TAXONOMICNODE'] ?>:</label>
 					<input id="taxon" name="taxon" type="text" required />
+					<label for="parsetid"><?php echo $LANG['PARSETID'] ?>:</label>
 					<input id="parsetid" name="parsetid" type="text" required >
 				</div>
 				<div class="section-div">
-					<label>Target checklist:</label>
-					<select name="targetclid" required>
-						<option value="">Select Target Checklist</option>
-						<option value="0">Create New Checklist</option>
+					<label for="targetclid"><?php echo $LANG['TARGETCHECKLIST'] ?>:</label>
+					<select name="targetclid" id="targetclid" required>
+						<option value=""><?php echo $LANG['SELECTTARGETCHECKLIST'] ?></option>
+						<option value="0"><?php echo $LANG['CREATENEWCHECKLIST'] ?></option>
 						<option value="">--------------------------</option>
 						<?php
 						foreach($clArr as $k => $name){
@@ -167,14 +168,16 @@ $childArr = $clManager->getChildrenChecklist()
 				</div>
 				<div class="section-div">
 					<label>Transfer method:</label>
-					<input name="transmethod" type="radio" value="0" <?php if(!$transferMethod) echo 'checked'; ?>> transfer taxa
-					<input name="transmethod" type="radio" value="1" <?php if($transferMethod == 1) echo 'checked'; ?>> copy taxa
+					<input name="transmethod" id="transtaxa" type="radio" value="0" <?php if(!$transferMethod) echo 'checked'; ?>> 
+					<label for="transtaxa"><?php echo $LANG['TRANSFERTAXA'] ?></label>
+					<input name="transmethod" id="copytaxa" type="radio" value="1" <?php if($transferMethod == 1) echo 'checked'; ?>> 
+					<label for="copytaxa"><?php echo $LANG['COPYTAXA'] ?></label>
 				</div>
 				<div class="section-div">
 					<label>Link to parent checklist:</label>
 					<select name="parentclid">
-						<option value="">No Parent Checklist</option>
-						<option value="0" <?php if($parentClid === 0) echo 'SELECTED'; ?>>Create New Checklist</option>
+						<option value=""><?php echo $LANG['NOPARENTCHECKLIST'] ?></option>
+						<option value="0" <?php if($parentClid === 0) echo 'SELECTED'; ?>><?php echo $LANG['CREATENEWCHECKLIST'] ?></option>
 						<option value="">--------------------------</option>
 						<?php
 						foreach($clArr as $k => $name){
@@ -187,7 +190,7 @@ $childArr = $clManager->getChildrenChecklist()
 					<label>Add to project:</label>
 					<select name="targetpid">
 						<option value="">--no action--</option>
-						<option value="0">New Project</option>
+						<option value="0"><?php echo $LANG['NEWPROJECT'] ?></option>
 						<option value="">--------------------------</option>
 						<?php
 						$projArr = $clManager->getUserProjectArr();
@@ -198,8 +201,8 @@ $childArr = $clManager->getChildrenChecklist()
 					</select>
 				</div>
 				<div class="section-div">
-					<input name="copyattributes" type="checkbox" value="1" <?php if($copyAttributes) echo 'checked'; ?>>
-					<label>copy over permission and general attributes</label>
+					<input name="copyattributes" id="copyattributes" type="checkbox" value="1" <?php if($copyAttributes) echo 'checked'; ?>>
+					<label for="copyattributes"><?php echo $LANG['COPYPERMISSIONANDGENERAL'] ?></label>
 				</div>
 				<div class="section-div">
 					<input name="tabindex" type="hidden" value="2" >

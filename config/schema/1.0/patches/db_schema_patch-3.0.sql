@@ -5,6 +5,7 @@ CREATE TABLE `adminconfig` (
   `category` VARCHAR(45) NULL,
   `attributeName` VARCHAR(45) NOT NULL,
   `attributeValue` VARCHAR(1000) NOT NULL,
+  `dynamicProperties` text DEFAULT NULL,
   `notes` VARCHAR(45) NULL,
   `modifiedUid` INT UNSIGNED NULL,
   `modifiedTimestamp` DATETIME NULL,
@@ -222,7 +223,7 @@ UPDATE IGNORE fmvouchers v INNER JOIN fmchklsttaxalink c ON v.clid = c.clid AND 
   SET v.clTaxaID = c.clTaxaID
   WHERE v.clTaxaID IS NULL;
 
-#Fix if following statement falis: DELETE FROM fmvouchers WHERE clTaxaID IS NULL;
+#Fix if following statement falis: DELETE FROM fmvouchers WHERE clTaxaID IS NULL
 ALTER TABLE `fmvouchers` 
   CHANGE COLUMN `clTaxaID` `clTaxaID` INT(10) UNSIGNED NOT NULL ,
   CHANGE COLUMN `CLID` `CLID` INT(10) UNSIGNED NULL ;
@@ -773,7 +774,6 @@ ALTER TABLE `omoccurrences`
   ADD CONSTRAINT `FK_omoccurrences_uid`  FOREIGN KEY (`observerUid`)  REFERENCES `users` (`uid`);
 
 
-
 #DROP TABLE IF EXISTS `portaloccurrences`
 #DROP TABLE IF EXISTS `portalpublications`
 #DROP TABLE IF EXISTS `portalindex`
@@ -840,10 +840,9 @@ CREATE TABLE `portaloccurrences` (
 
 
 ALTER TABLE `specprocessorprojects` 
-  ADD COLUMN `customStoredProcedure` VARCHAR(45) NULL AFTER `source`,
-  ADD COLUMN `createdByUid` INT UNSIGNED NULL AFTER `lastrundate`,
-  ADD COLUMN `processingCode` INT NULL AFTER `customStoredProcedure`,
-  ADD COLUMN `dynamicProperties` TEXT NULL AFTER `lastRunDate`,
+  ADD COLUMN `additionalOptions` TEXT NULL AFTER `createLgImg`,
+  ADD COLUMN `createdByUid` INT UNSIGNED NULL AFTER `lastRunDate`,
+  ADD COLUMN `processingCode` INT NULL AFTER `source`,
   CHANGE COLUMN `projecttype` `projectType` VARCHAR(45) NULL DEFAULT NULL,
   CHANGE COLUMN `speckeyretrieval` `specKeyRetrieval` VARCHAR(45) NULL DEFAULT NULL,
   CHANGE COLUMN `lastrundate` `lastRunDate` DATE NULL DEFAULT NULL,
@@ -875,6 +874,8 @@ ALTER TABLE `taxa`
 
 UPDATE taxa SET kingdomName = "" WHERE kingdomName IS NULL;
 
+UPDATE taxa SET rankID = 0 WHERE rankID IS NULL;
+
 ALTER TABLE `taxa` 
   CHANGE COLUMN `kingdomName` `kingdomName` VARCHAR(45) NOT NULL DEFAULT '' ,
   CHANGE COLUMN `rankID` `rankID` SMALLINT(5) UNSIGNED NOT NULL DEFAULT 0 ;
@@ -890,9 +891,9 @@ ALTER TABLE `taxa`
 
 # The default UNIQUE INDEX applied above supports cross-kingdom homonyms
 # Alternate UNIQUE INDEX that support homonyms within a single kingdom (not recommended) 
-#  ADD UNIQUE INDEX `UQ_taxa_sciname` (`sciName` ASC, `author` ASC, `rankId` ASC, `kingdomName` ASC)
+#  ALTER TABLE `taxa` ADD UNIQUE INDEX `UQ_taxa_sciname` (`sciName` ASC, `author` ASC, `rankId` ASC, `kingdomName` ASC)
 # Alternate more restrictive UNIQUE INDEX that can be used for a single kingdom portal. Cross-kingdom homonyms are not supported
-#  ADD UNIQUE INDEX `UQ_taxa_sciname` (`sciName` ASC, `rankId` ASC)
+#  ALTER TABLE `taxa` ADD UNIQUE INDEX `UQ_taxa_sciname` (`sciName` ASC, `rankId` ASC)
   
 ALTER TABLE `taxstatus` 
   CHANGE COLUMN `taxonomicSource` `taxonomicSource` VARCHAR(500) NULL DEFAULT NULL;

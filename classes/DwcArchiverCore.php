@@ -706,8 +706,9 @@ class DwcArchiverCore extends Manager{
 			$urlPathPrefix = $this->serverDomain . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) == '/' ? '' : '/');
 			$cnt = 0;
 			while ($r = $rs->fetch_assoc()) {
+				if(!$this->collArr) $this->setCollArr($r['collID']);
 				//Protect sensitive records
-				if ($this->redactLocalities && $r["localitySecurity"] == 1 && !in_array($r['collid'], $this->rareReaderArr)) {
+				if ($this->redactLocalities && $r["localitySecurity"] == 1 && !in_array($r['collID'], $this->rareReaderArr)) {
 					$protectedFields = array();
 					foreach ($this->securityArr as $v) {
 						if (array_key_exists($v, $r) && $r[$v]) {
@@ -721,7 +722,7 @@ class DwcArchiverCore extends Manager{
 				}
 				if (!$r['occurrenceID']) {
 					//Set occurrence GUID based on GUID target, but only if occurrenceID field isn't already populated
-					$guidTarget = $this->collArr[$r['collid']]['guidtarget'];
+					$guidTarget = $this->collArr[$r['collID']]['guidtarget'];
 					if ($guidTarget == 'catalogNumber') {
 						$r['occurrenceID'] = $r['catalogNumber'];
 					} elseif ($guidTarget == 'symbiotaUUID') {
@@ -731,10 +732,10 @@ class DwcArchiverCore extends Manager{
 
 				$r['recordID'] = $r['recordID'];
 				//Add collection GUID based on management type
-				$managementType = $this->collArr[$r['collid']]['managementtype'];
+				$managementType = $this->collArr[$r['collID']]['managementtype'];
 				if ($managementType && $managementType == 'Live Data') {
 					if (array_key_exists('collectionID', $r) && !$r['collectionID']) {
-						$guid = $this->collArr[$r['collid']]['collectionguid'];
+						$guid = $this->collArr[$r['collID']]['collectionguid'];
 						if (strlen($guid) == 36) $guid = 'urn:uuid:' . $guid;
 						$r['collectionID'] = $guid;
 					}
@@ -743,11 +744,11 @@ class DwcArchiverCore extends Manager{
 					unset($r['localitySecurity']);
 				}
 				if ($this->schemaType == 'dwc' || $this->schemaType == 'backup') {
-					unset($r['collid']);
+					unset($r['collID']);
 				}
 				if ($this->schemaType == 'pensoft') {
 					unset($r['localitySecurity']);
-					unset($r['collid']);
+					unset($r['collID']);
 					if ($r['typeStatus']) {
 						$typeValue = strtolower($r['typeStatus']);
 						$typeInvalid = true;

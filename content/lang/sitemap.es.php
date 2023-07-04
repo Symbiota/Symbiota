@@ -127,5 +127,4 @@ $LANG['ADDNEWIMG'] = 'Añadir nuevo imagen';
 $LANG['DATASETS'] = 'Conjuntos de datos';
 $LANG['ALLPUBDAT'] = 'Todos los conjuntos de datos visibles públicamente';
 $LANG['DATMANPAG'] = 'Página de Administración de Conjuntos de Datos</a> - conjuntos de datos que está autorizado a editar';
-
 ?>

@@ -187,11 +187,24 @@ if($IS_ADMIN) $isEditor = 1;
 					<legend><b>Collection Selector</b></legend>
 					<form name="selectcollidform" action="coordinatevalidator.php" method="post" onsubmit="return checkSelectCollidForm(this)">
 						<div>
-							<input type="checkbox" onclick="selectAllCollections(this,'');" /> Select / Unselect All<br/>
-							<input type="checkbox" onclick="selectAllCollections(this,'specimen');" /> Select / Unselect All Specimens<br/>
-							<input type="checkbox" onclick="selectAllCollections(this,'observation');" /> Select / Unselect All Observations<br/>
-							<input type="checkbox" onclick="selectAllCollections(this,'live');" /> Select / Unselect All Live Management<br/>
-							<input type="checkbox" onclick="selectAllCollections(this,'snapshot');" /> Select / Unselect All Snapshot Management
+							<input type="checkbox" name="select-all" id="select-all" onclick="selectAllCollections(this,'');" />
+							<label for="select-all"> Select / Unselect All</label>
+						</div>
+						<div>
+							<input type="checkbox" name="select-all-specimens" id="select-all-specimens" onclick="selectAllCollections(this,'specimen');" />
+							<label for="select-all-specimens">Select / Unselect All Specimens</label>
+						</div>
+						<div>
+							<input type="checkbox" name="select-all-observations" id="select-all-observations" onclick="selectAllCollections(this,'observation');" />
+							<label for="select-all-observations">Select / Unselect All Observations</label>
+						</div>
+						<div>
+							<input type="checkbox" name="select-all-live-management" id="select-all-live-management" onclick="selectAllCollections(this,'live');" />
+							<label for="select-all-live-management">Select / Unselect All Live Management</label>
+						</div>
+						<div>
+							<input type="checkbox" name="select-all-snapshot-management" id="select-all-snapshot-management" onclick="selectAllCollections(this,'snapshot');" />
+							<label for="select-all-snapshot-management">Select / Unselect All Snapshot Management</label>
 						</div>
 						<hr/>
 						<?php
@@ -203,8 +216,8 @@ if($IS_ADMIN) $isEditor = 1;
 							if($collArr['managementtype'] == 'Live Data') $classStr .= ' live';
 							elseif($collArr['managementtype'] == 'Snapshot') $classStr .= ' snapshot';
 							elseif($collArr['managementtype'] == 'Aggregate') $classStr .= ' aggregate';
-							echo '<input name="collid[]" class="'.$classStr.'" type="checkbox" value="'.$id.'" /> ';
-							echo $collArr['collectionname'].' ('.$collArr['code'].') - '.$collArr['colltype'].':'.$collArr['managementtype'];
+							echo '<input name="collid[]" id="collid[]" class="' . $classStr . '" type="checkbox" value="' . $id . '" /> ';
+							echo '<label for="collid[]">' . $collArr['collectionname'].' ('.$collArr['code'].') - '.$collArr['colltype'].':'.$collArr['managementtype'] . '</label>';
 							echo '</div>';
 						}
 						?>

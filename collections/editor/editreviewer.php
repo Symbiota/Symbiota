@@ -3,14 +3,15 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditReview.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/editreviewer.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/editreviewer.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/editor/editreviewer.en.php');
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/editreviewer.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 header('Content-Type: text/html; charset='.$CHARSET);
+
+if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/editreviewer.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $collid = filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT);
 $displayMode = array_key_exists('display', $_REQUEST) ? filter_var($_REQUEST['display'], FILTER_SANITIZE_NUMBER_INT) : '1';
 $faStatus = array_key_exists('fastatus', $_REQUEST) ? filter_var($_REQUEST['fastatus'], FILTER_SANITIZE_NUMBER_INT) : '';
 $frStatus = array_key_exists('frstatus', $_REQUEST)? filter_var($_REQUEST['frstatus'], FILTER_SANITIZE_STRING) : '1,2';
-$filterFieldName = array_key_exists('ffieldname', $_POST) ? filter_var($_POST['ffieldname'], FILTER_SANITIZE_STRING) : '';
+$filterFieldName = array_key_exists('ffieldname', $_REQUEST) ? filter_var($_REQUEST['ffieldname'], FILTER_SANITIZE_STRING) : '';
 $editor = array_key_exists('editor', $_REQUEST) ? filter_var($_REQUEST['editor'], FILTER_SANITIZE_STRING) : '';
 $queryOccid = array_key_exists('occid', $_REQUEST) ? filter_var($_REQUEST['occid'], FILTER_SANITIZE_NUMBER_INT) : '';
 $startDate = array_key_exists('startdate', $_REQUEST) ? filter_var($_REQUEST['startdate'], FILTER_SANITIZE_STRING) : '';
@@ -80,7 +81,8 @@ if(!$recCnt) $recCnt = $reviewManager->getEditCnt();
 
 $subCnt = $limitCnt*($pageNum + 1);
 if($subCnt > $recCnt) $subCnt = $recCnt;
-$navPageBase = 'editreviewer.php?collid='.$collid.'&display='.$displayMode.'&fastatus='.$faStatus.'&frstatus='.$frStatus.'&editor='.$editor.'&reccnt='.$recCnt;
+$navPageBase = 'editreviewer.php?collid='.$collid.'&display='.$displayMode.'&fastatus='.$faStatus.'&frstatus='.$frStatus.'&ffieldname='.$filterFieldName.
+	'&startdate='.$startDate.'&enddate='.$endDate.'&editor='.$editor.'&reccnt='.$recCnt;
 
 $navStr = '<div class="navbarDiv" style="float:right;">';
 if($pageNum) $navStr .= '<a href="' . htmlspecialchars($navPageBase, HTML_SPECIAL_CHARS_FLAGS) . '&pagenum=' . htmlspecialchars(($pageNum-1), HTML_SPECIAL_CHARS_FLAGS) . '&limitcnt=' . htmlspecialchars($limitCnt, HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars($LANG['PREVIOUS'], HTML_SPECIAL_CHARS_FLAGS) . ' ' . htmlspecialchars($limitCnt, HTML_SPECIAL_CHARS_FLAGS) . ' ' . htmlspecialchars($LANG['RECORDS1'], HTML_SPECIAL_CHARS_FLAGS) . '">&lt;&lt;</a>';
@@ -124,6 +126,24 @@ $navStr .= '</div>';
 			}
 
 			function validateEditForm(f){
+				if(validateEditSelection(f)){
+					if(f.applytask.value == "" && f.rstatus.value == 0){
+						alert("<?php echo $LANG['NO_ACTION']; ?>");
+						return false;
+					}
+					return true;
+				}
+				return false;
+			}
+
+			function validateDelete(f){
+				if(validateEditSelection(f)){
+					return confirm("<?php echo $LANG['SURE_DELETE_HISTORY']; ?>");
+				}
+				return false;
+			}
+
+			function validateEditSelection(f){
 				var elements = document.getElementsByName("id[]");
 				for(i = 0; i < elements.length; i++){
 					var elem = elements[i];
@@ -131,13 +151,6 @@ $navStr .= '</div>';
 				}
 			   	alert("<?php echo $LANG['PLEASE_CHECK_EDIT']; ?>");
 		      	return false;
-			}
-
-			function validateDelete(f){
-				 if(validateEditForm(f)){
-					 return confirm("<?php echo $LANG['SURE_DELETE_HISTORY']; ?>");
-				 }
-				 return false;
 			}
 
 			function printFriendlyMode(status){
@@ -288,8 +301,9 @@ $navStr .= '</div>';
 							<legend><b><?php echo $LANG['ACTION_PANEL']; ?></b></legend>
 							<div style="margin:10px 10px;">
 								<div style="float:left;margin-bottom:10px;">
-									<input name="applytask" type="radio" value="apply" CHECKED title="<?php echo $LANG['APPLY_EDITS_IF']; ?>" /><?php echo $LANG['APPLY_EDITS']; ?><br/>
-									<input name="applytask" type="radio" value="revert" title="<?php echo $LANG['REVERT_EDITS']; ?>" /><?php echo $LANG['REVERT_EDITS']; ?>
+									<input name="applytask" type="radio" value="" CHECKED title="<?php echo $LANG['LEAVE_AS_IS']; ?>"> <?php echo $LANG['LEAVE_AS_IS']; ?><br/>
+									<input name="applytask" type="radio" value="apply" title="<?php echo $LANG['APPLY_EDITS_IF']; ?>"> <?php echo $LANG['APPLY_EDITS']; ?><br/>
+									<input name="applytask" type="radio" value="revert" title="<?php echo $LANG['REVERT_EDITS']; ?>"> <?php echo $LANG['REVERT_EDITS']; ?>
 								</div>
 								<div style="float:left;margin-left:30px;">
 									<b><?php echo $LANG['REVIEW_STATUS']; ?>:</b>
@@ -302,17 +316,17 @@ $navStr .= '</div>';
 								</div>
 								<div style="clear:both;margin:15px 5px;">
 									<button name="formsubmit" type="submit" value="updateRecords" onclick="return validateEditForm(this.form);"><?php echo $LANG['UPDATE_SELECTED']; ?></button>
-									<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-									<input name="fastatus" type="hidden" value="<?php echo $faStatus; ?>" />
-									<input name="frstatus" type="hidden" value="<?php echo $frStatus; ?>" />
-									<input name="ffieldname" type="hidden" value="<?php echo $filterFieldName; ?>" />
-									<input name="editor" type="hidden" value="<?php echo $editor; ?>" />
-									<input name="startdate" type="hidden" value="<?php echo $startDate; ?>" />
-									<input name="enddate" type="hidden" value="<?php echo $endDate; ?>" />
-									<input name="occid" type="hidden" value="<?php echo $queryOccid; ?>" />
-									<input name="pagenum" type="hidden" value="<?php echo $pageNum; ?>" />
-									<input name="limitcnt" type="hidden" value="<?php echo $limitCnt; ?>" />
-									<input name="display" type="hidden" value="<?php echo $displayMode; ?>" />
+									<input name="collid" type="hidden" value="<?php echo $collid; ?>">
+									<input name="fastatus" type="hidden" value="<?php echo $faStatus; ?>">
+									<input name="frstatus" type="hidden" value="<?php echo $frStatus; ?>">
+									<input name="ffieldname" type="hidden" value="<?php echo $filterFieldName; ?>">
+									<input name="editor" type="hidden" value="<?php echo $editor; ?>">
+									<input name="startdate" type="hidden" value="<?php echo $startDate; ?>">
+									<input name="enddate" type="hidden" value="<?php echo $endDate; ?>">
+									<input name="occid" type="hidden" value="<?php echo $queryOccid; ?>">
+									<input name="pagenum" type="hidden" value="<?php echo $pageNum; ?>">
+									<input name="limitcnt" type="hidden" value="<?php echo $limitCnt; ?>">
+									<input name="display" type="hidden" value="<?php echo $displayMode; ?>">
 								</div>
 							</div>
 							<div style="clear:both;margin:15px 0px;">
@@ -325,7 +339,7 @@ $navStr .= '</div>';
 									<div style="margin:5px 0px 10px 10px;">* <?php echo $LANG['PERMANENTLY_CLEAR']; ?></div>
 								</div>
 								<div style="margin:5px 0px 10px 15px;">
-									<button name="formsubmit" type="submit" value="downloadSelectedEdits" onclick="return validateEditForm(this.form);" ><?php echo $LANG['DOWNLOAD_SELECTED']; ?></button>
+									<button name="formsubmit" type="submit" value="downloadSelectedEdits" onclick="return validateEditSelection(this.form);" ><?php echo $LANG['DOWNLOAD_SELECTED']; ?></button>
 								</div>
 								<div style="margin:5px 0px 10px 15px;">
 									<button name="formsubmit" type="submit" value="downloadAllRecords"><?php echo $LANG['DOWNLOAD_ALL']; ?></button>

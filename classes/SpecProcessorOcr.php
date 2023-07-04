@@ -197,10 +197,11 @@ class SpecProcessorOcr extends Manager{
 
 	private function databaseRawStr($imgId,$rawStr,$notes,$source){
 		if(is_numeric($imgId) && $rawStr){
+			$rawStr = $this->cleanInStr($this->encodeString($rawStr));
 			$score = '';
 			if($rawStr == 'Failed OCR return') $score = 0;
 			$sql = 'INSERT INTO specprocessorrawlabels(imgid,rawstr,notes,source,score) '.
-				'VALUE ('.$imgId.',"'.$this->cleanInStr($rawStr).'",'.
+				'VALUE ('.$imgId.',"'.$rawStr.'",'.
 				($notes?'"'.$this->cleanInStr($notes).'"':'NULL').','.
 				($source?'"'.$this->cleanInStr($source).'"':'NULL').','.
 				($score?'"'.$this->cleanInStr($score).'"':'NULL').')';

@@ -78,7 +78,8 @@ if($collMap['colltype'] == 'General Observations' && $obsUid !== 0){
 			<fieldset style="padding:20px;">
 				<legend><b>Country</b></legend>
 				<div style="margin:5px">
-					<select name="country_old">
+					<label for="country-old-field">Old field:</label>
+					<select name="country-old-field" id="country-old-field">
 						<option value="">Select Target Field</option>
 						<option value="">--------------------------------</option>
 						<?php
@@ -88,7 +89,10 @@ if($collMap['colltype'] == 'General Observations' && $obsUid !== 0){
 
 						?>
 					</select>
-					<select name="country_old">
+				</div>
+				<div style="margin:5px">
+					<label for="country-old-value">Old value:</label>
+					<select name="country-old-value" id="country-old-value">
 						<option value="">Select Target Value</option>
 						<option value="">--------------------------------</option>
 						<?php
@@ -100,8 +104,8 @@ if($collMap['colltype'] == 'General Observations' && $obsUid !== 0){
 					</select>
 				</div>
 				<div style="margin:5px">
-					<b>Replacement Value:</b>
-					<input name="country_new" type="text" value="" />
+					<label for="country-new">Replacement Value:</label>
+					<input name="country-new" id="country-new" type="text" value="" />
 				</div>
 			</fieldset>
 			<?php

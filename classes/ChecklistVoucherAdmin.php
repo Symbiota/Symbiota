@@ -6,7 +6,7 @@ class ChecklistVoucherAdmin extends Manager {
 	protected $clid;
 	protected $clName;
 	protected $clMetadata;
-	protected $childClidArr = array();
+	private $childClidArr = array();
 	private $footprintWkt;
 	private $queryVariablesArr = array();
 
@@ -651,7 +651,7 @@ class ChecklistVoucherAdmin extends Manager {
 				}
 				$rs->free();
 			}
-			if($retArr){
+			if($retArr && $this->clid){
 				//Tag collection most likely to be target
 				$sql = 'SELECT o.collid, COUNT(v.occid) as cnt
 					FROM fmvouchers v INNER JOIN omoccurrences o ON v.occid = o.occid
@@ -706,6 +706,12 @@ class ChecklistVoucherAdmin extends Manager {
 
 	public function getChildClidArr(){
 		return $this->childClidArr;
+	}
+
+	public function getClidFullStr(){
+		$clidStr = $this->clid;
+		if($this->childClidArr) $clidStr .= ','.implode(',',$this->childClidArr);
+		return $clidStr;
 	}
 
 	public function getClName(){

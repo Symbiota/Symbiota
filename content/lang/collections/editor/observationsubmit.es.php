@@ -65,5 +65,6 @@ $LANG['SP_LIST'] = 'Listado de Especies';
 $LANG['SEL_CHECKLIST'] = 'Seleccionar Listado de Especies';
 $LANG['SUBMIT_OBS'] = 'Enviar Observación';
 $LANG['NOT_AUTH'] = 'No está autorizado para enviar observaciones.';
+$LANG['DIRECTION'] = 'Dirección';
 
 ?>

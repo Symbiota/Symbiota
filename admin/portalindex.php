@@ -16,7 +16,7 @@ $portalManager = new PortalIndex();
 $isEditor = 0;
 if($IS_ADMIN) $isEditor = 1;
 ?>
-<html>
+<html lang="en">
 	<head>
 		<title><?php echo $DEFAULT_TITLE; ?> Portal Index Control Panel</title>
 		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
@@ -89,7 +89,7 @@ if($IS_ADMIN) $isEditor = 1;
 						<div class="handshake-div"><a href="#" onclick="$('.handshake-div').toggle(); return false;">Initiate Handshake with External Portal</a></div>
 						<div class="handshake-div" style="display:none">
 							<form action="portalindex.php" method="post" onsubmit="return validateHandshakeForm(this)">
-								<div class="field-row"><label>Path to Remote Portal:</label> <input name="remotePath" type="text" value="<?php echo $remotePath; ?>" style="width: 500px" /></div>
+								<div class="field-row"><label for="remotePath">Path to Remote Portal</label> <input name="remotePath" id="remotePath" type="text" value="<?php echo $remotePath; ?>" style="width: 500px" /></div>
 								<div class="field-row"><button name="formsubmit" type="submit" value="initiateHandshake">Initiate Handshake</button></div>
 							</form>
 						</div>

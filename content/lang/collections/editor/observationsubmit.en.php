@@ -23,7 +23,7 @@ $LANG['CAPTION'] = 'Caption';
 $LANG['IMG_REMARKS'] = 'Image Remarks';
 $LANG['ADD_ANOTHER'] = 'Add Another Image';
 $LANG['OBSERVATION'] = 'Observation';
-$LANG['OBSERVER'] = 'Observer';
+$LANG['OBSERVER'] = 'Recorded by';
 $LANG['NUMBER'] = 'Number';
 $LANG['ASSOC_OBSERVERS'] = 'Associated Observers';
 $LANG['IDED_BY'] = 'Identified By';
@@ -65,5 +65,6 @@ $LANG['SP_LIST'] = 'Species List';
 $LANG['SEL_CHECKLIST'] = 'Select Checklist';
 $LANG['SUBMIT_OBS'] = 'Submit Observation';
 $LANG['NOT_AUTH'] = 'You are not authorized to submit to an observation.';
+$LANG['DIRECTION'] = 'Direction';
 
 ?>

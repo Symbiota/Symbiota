@@ -353,7 +353,8 @@ if(!$IS_ADMIN){
 							if(!isset($ACTIVATE_DUPLICATES) || $ACTIVATE_DUPLICATES){
 								?>
 								<div style="margin-left:30px;float:left;">
-									<input id="linkdupe-<?php echo $occId; ?>" type="checkbox" <?php echo ($dupeType == 'exact'?'checked':''); ?> /> <?php echo $LANG['LINK_DUPE']; ?>
+									<input id="linkdupe-<?php echo $occId; ?>" type="checkbox" <?php echo ($dupeType == 'exact'?'checked':''); ?> /> 
+									<label for="linkdupe-<?php echo $occId; ?>"><?php echo $LANG['LINK_DUPE']; ?></label>
 								</div>
 								<?php
 							}
