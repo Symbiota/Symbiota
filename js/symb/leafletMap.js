@@ -4,18 +4,18 @@ const DEFAULT_DRAW_OPTIONS = {
    marker: false,
    multiDraw: false,
    drawColor: { color: '#000', opacity: 0.85, fillOpacity: 0.55 }
-}
+};
 
 const DEFAULT_MAP_OPTIONS = {
    center: [43.64701, -79.39425],
    zoom: 15,
-}
+};
 
 const DEFAULT_SHAPE_OPTIONS = {
    color: '#000',
    opacity: 0.85,
    fillOpacity: 0.55
-}
+};
 
 class LeafletMap {
    /* To Hold Reference to Leaflet Map */
@@ -67,20 +67,20 @@ class LeafletMap {
          if(drawOptions[drawOption] === false)
             return;
 
-         if(!drawOptions[drawOption]) drawOptions[drawOption] = { }
+         if(!drawOptions[drawOption]) drawOptions[drawOption] = { };
 
          if(!drawOptions[drawOption].shapeOptions)
-            drawOptions[drawOption].shapeOptions = drawOptions.drawColor
+            drawOptions[drawOption].shapeOptions = drawOptions.drawColor;
       }
 
       if(drawOptions.drawColor) {
          //Setting Styles for Pre Rendered
-         L.Path.mergeOptions(drawOptions.drawColor)
+         L.Path.mergeOptions(drawOptions.drawColor);
          //Set Color for All Manual Draws 
-         setDrawColor("polyline")
-         setDrawColor("polygon")
-         setDrawColor("rectangle")
-         setDrawColor("circle")
+         setDrawColor("polyline");
+         setDrawColor("polygon");
+         setDrawColor("rectangle");
+         setDrawColor("circle");
       }
 
       var drawControl = new L.Control.Draw({
@@ -112,7 +112,7 @@ class LeafletMap {
 
       //Fires on New Draw
       this.mapLayer.on('draw:created', function (e) {
-         if(!drawOptions || !drawOptions.multiDraw)
+         if(!drawOptions || !drawOptions.multiDraw);
             drawnItems.clearLayers();
 
          const layer = e.layer;
@@ -127,7 +127,7 @@ class LeafletMap {
    drawShape(shape) {
       switch(shape.type) {
          case "polygon":
-            const poly = L.polygon(shape.latlngs)
+            const poly = L.polygon(shape.latlngs);
             this.activeShape = getShapeCoords(shape.type, poly);
             poly.addTo(this.drawLayer);
             break;
@@ -135,14 +135,14 @@ class LeafletMap {
             const rec = L.rectangle([
                [shape.upperLat, shape.rightLng],
                [shape.lowerLat, shape.leftLng]
-            ])
+            ]);
             this.activeShape = getShapeCoords(shape.type, rec);
             rec.addTo(this.drawLayer)
             break;
          case "circle":
             const circ = L.circle(shape.latlng, shape.radius);
             this.activeShape = getShapeCoords(shape.type, circ);
-            circ.addTo(this.drawLayer)
+            circ.addTo(this.drawLayer);
             break;
          default:
             throw Error(`Can't draw ${shape.type}`)
@@ -158,7 +158,7 @@ function getShapeCoords(layerType, layer) {
    let shape ={
       type: layerType,
       layer: layer,
-   }
+   };
 
    const SIG_FIGS = 6;
 
@@ -172,12 +172,12 @@ function getShapeCoords(layerType, layer) {
          break;
       case "rectangle":
          const northEast = layer._bounds._northEast;
-         shape.upperLat =  northEast.lat.toFixed(SIG_FIGS)
-         shape.rightLng =  northEast.lng.toFixed(SIG_FIGS)
+         shape.upperLat =  northEast.lat.toFixed(SIG_FIGS);
+         shape.rightLng =  northEast.lng.toFixed(SIG_FIGS);
 
          const southWest = layer._bounds._southWest;
-         shape.lowerLat =southWest.lat.toFixed(SIG_FIGS)
-         shape.leftLng = southWest.lng.toFixed(SIG_FIGS)
+         shape.lowerLat =southWest.lat.toFixed(SIG_FIGS);
+         shape.leftLng = southWest.lng.toFixed(SIG_FIGS);
 
          shape.center = layer.getBounds().getCenter();
          break;
@@ -186,7 +186,7 @@ function getShapeCoords(layerType, layer) {
          shape.center = {
             lat: layer._latlng.lat.toFixed(SIG_FIGS),
             lng: layer._latlng.lng.toFixed(SIG_FIGS)
-         }
+         };
          break;
       default:
          throw Error("Couldn't parse this shape type");

@@ -115,28 +115,28 @@ else{
 
       function setRectangle(upperLat, lowerLat, leftLng, rightLng) {
 
-         setField("upperlat_NS", upperLat > 0 ? "N": "S")
+         setField("upperlat_NS", upperLat > 0 ? "N": "S");
          setField("upperlat", Math.abs(upperLat));
 
-         setField("bottomlat_NS", lowerLat > 0 ? "N": "S")
+         setField("bottomlat_NS", lowerLat > 0 ? "N": "S");
          setField("bottomlat", Math.abs(lowerLat));
 
-         setField("leftlong_EW", leftLng > 0 ? "E": "W")
+         setField("leftlong_EW", leftLng > 0 ? "E": "W");
          setField("leftlong", Math.abs(leftLng));
 
-         setField("rightlong_EW", rightLng> 0 ? "E": "W")
+         setField("rightlong_EW", rightLng> 0 ? "E": "W");
          setField("rightlong", Math.abs(rightLng));
       }
       
       function setCircle(radius, center_lat, center_lng) {
-         setField("radius", isNaN(radius)? radius: Math.abs(radius))
-         setField("radiusunits", "km")
+         setField("radius", isNaN(radius)? radius: Math.abs(radius));
+         setField("radiusunits", "km");
 
-         setField("pointlat_NS", center_lat > 0? "N": "S")
-         setField("pointlat", Math.abs(center_lat))
+         setField("pointlat_NS", center_lat > 0? "N": "S");
+         setField("pointlat", Math.abs(center_lat));
 
-         setField("pointlong_EW", center_lng > 0? "E": "W")
-         setField("pointlong", Math.abs(center_lng))
+         setField("pointlong_EW", center_lng > 0? "E": "W");
+         setField("pointlong", Math.abs(center_lng));
       }
 
       function setPolygon(wkt) {
@@ -152,33 +152,33 @@ else{
        */
       function setShapeToSearchForm(activeShape) {
          //Clear Form
-         setField("pointlat", "")
-         setField("pointlong", "")
-         setField("radius", "")
-         setField("radiusunits", "")
+         setField("pointlat", "");
+         setField("pointlong", "");
+         setField("radius", "");
+         setField("radiusunits", "");
 
-         setField("footprintwkt", "")
+         setField("footprintwkt", "");
 
-         setField("upperlat", "")
-         setField("bottomlat", "")
-         setField("leftlong", "")
-         setField("rightlong", "")
+         setField("upperlat", "");
+         setField("bottomlat", "");
+         setField("leftlong", "");
+         setField("rightlong", "");
 
          //If Active Shape is null bail
-         if(!activeShape)
+         if(!activeShape);
             return;
 
          switch(activeShape.type) {
             case "polygon":
-               setPolygon(activeShape.wkt)
+               setPolygon(activeShape.wkt);
                break;
             case "rectangle":
-               const rec = activeShape 
+               const rec = activeShape;
                setRectangle(rec.upperLat, rec.lowerLat, rec.leftLng, rec.rightLng);
                break;
             case "circle":
-               const circ = activeShape 
-               setCircle(circ.radius, circ.center.lat, circ.center.lng)
+               const circ = activeShape; 
+               setCircle(circ.radius, circ.center.lat, circ.center.lng);
                break;
          }
       }
@@ -255,18 +255,19 @@ else{
                }
                break;
             default:
-               console.log(mapMode)
+               console.log(mapMode);
+               return false;
             break;
          } 
       }
-      let formShape = loadShape("<?php echo $mapMode?>")
+      let formShape = loadShape("<?php echo $mapMode?>");
 
       //LEAFLET SPECIFIC
 
       const MapOptions = {
          center: [<?php echo $latCenter?>, <?php echo $latCenter?>],
          zoom: <?php echo $zoom?>
-      }
+      };
 
       var map = new LeafletMap('map', MapOptions );
 
@@ -278,9 +279,9 @@ else{
       }, setShapeToSearchForm);
 
       if(formShape) {
-         map.drawShape(formShape)
-         map.mapLayer.setView([map.activeShape.center.lat, map.activeShape.center.lng])
-         map.mapLayer.fitBounds(map.activeShape.layer.getBounds())
+         map.drawShape(formShape);
+         map.mapLayer.setView([map.activeShape.center.lat, map.activeShape.center.lng]);
+         map.mapLayer.fitBounds(map.activeShape.layer.getBounds());
       }
       //LEAFLET SPECIFIC END
 
