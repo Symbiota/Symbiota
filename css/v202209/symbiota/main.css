@@ -323,7 +323,16 @@ table.styledtable tr.alt td {
     font-size: 2.5rem;
   }
 }
+/* -------------------- */
 
 .lat-long-group-label {
   margin-top: 4px;
+}
+
+.accessible-font {
+  font-size: 1.4em;
+}
+
+.bottom-breathing-room {
+  margin-bottom: 10px;
 }
