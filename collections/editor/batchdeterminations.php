@@ -320,11 +320,11 @@ if($isEditor){
 								<input type="text" id="nomsciname" name="sciname" style="width:260px;" onfocus="initScinameAutocomplete(this.form)" />
 							</div>
 							<section class="flex-form">
-								<div style="margin-top:5px;">
+								<div class="top-tiny-breathing-room">
 									<button name="addrecord" type="submit"><?php echo $LANG['ADD_RECORDS']; ?></button>
 									<img id="workingcircle" src="../../images/workingcircle.gif" style="display:none;" alt="progress is being made" />
 								</div>
-								<div style="margin-top:5px;">
+								<div class="top-tiny-breathing-room">
 									<button name="clearaccform" type="button" onclick='clearAccForm(this.form)'><?php echo $LANG['CLEAR_LIST']; ?></button>
 									<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 								</div>

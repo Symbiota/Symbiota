@@ -336,3 +336,7 @@ table.styledtable tr.alt td {
 .bottom-breathing-room {
   margin-bottom: 10px;
 }
+
+.top-tiny-breathing-room {
+  margin-top: 5px;
+}
