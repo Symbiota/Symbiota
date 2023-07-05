@@ -36,7 +36,7 @@ elseif($action == 'addAllToDataset'){
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 		<title><?php echo $DEFAULT_TITLE; ?> Occurrence Dataset Manager</title>
-		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -191,7 +191,7 @@ elseif($action == 'addAllToDataset'){
 					foreach($otherArr as $dsid => $dsArr){
 						?>
 						<div>
-							<a href="datasetmanager.php?datasetid=<?php echo $dsid; ?>" title="Access Dataset">
+							<a href="datasetmanager.php?datasetid=<?php echo htmlspecialchars($dsid, HTML_SPECIAL_CHARS_FLAGS); ?>" title="Access Dataset">
 								<?php
 								$role = 'Dataset reader';
 								if($dsArr['role'] == 'DatasetAdmin') $role = 'Dataset Administator';

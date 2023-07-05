@@ -87,7 +87,7 @@ if($editorCode){
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Institution Editor</title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -143,7 +143,7 @@ include($SERVER_ROOT.'/includes/header.php');
 		$targetCollid = key($collList);
 	}
 	if($targetCollid){
-		echo '<a href="../misc/collprofiles.php?collid='.$targetCollid.'&emode=1">'.$collList[$targetCollid].' Management</a> &gt;&gt;';
+		echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($targetCollid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . htmlspecialchars($collList[$targetCollid], HTML_SPECIAL_CHARS_FLAGS) . ' Management</a> &gt;&gt;';
 	}
 	else{
 		echo '<a href="institutioneditor.php">Full Address List</a> &gt;&gt;';
@@ -327,7 +327,7 @@ include($SERVER_ROOT.'/includes/header.php');
 								URL:
 							</div>
 							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<a href="<?php echo $instArr['url']; ?>" target="_blank">
+								<a href="<?php echo htmlspecialchars($instArr['url'], HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank">
 									<?php echo $instArr['url']; ?>
 								</a>
 							</div>
@@ -361,9 +361,9 @@ include($SERVER_ROOT.'/includes/header.php');
 							if($collList){
 								foreach($collList as $id => $collName){
 									echo '<div style="margin:5px;font-weight:bold;clear:both;height:15px;">';
-									echo '<div style="float:left;"><a href="../misc/collprofiles.php?collid='.$id.'">'.$collName.'</a></div> ';
+									echo '<div style="float:left;"><a href="../misc/collprofiles.php?collid=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($collName, HTML_SPECIAL_CHARS_FLAGS) . '</a></div> ';
 									if($editorCode == 3 || in_array($id,$USER_RIGHTS["CollAdmin"]))
-										echo ' <div class="editdiv" style="margin-left:10px;display:'.($eMode?'':'none').'"><a href="institutioneditor.php?iid='.$iid.'&removecollid='.$id.'"><img src="../../images/del.png" style="width:15px;"/></a></div>';
+										echo ' <div class="editdiv" style="margin-left:10px;display:'.($eMode?'':'none').'"><a href="institutioneditor.php?iid=' . htmlspecialchars($iid, HTML_SPECIAL_CHARS_FLAGS) . '&removecollid=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/del.png" style="width:15px;"/></a></div>';
 									echo '</div>';
 								}
 							}
@@ -587,7 +587,7 @@ include($SERVER_ROOT.'/includes/header.php');
 								echo '<li><a href="institutioneditor.php?iid='.$iid.'">';
 								echo $iArr['institutionname'].' ('.$iArr['institutioncode'].')';
 								if($editorCode == 3 || array_intersect(explode(',',$iArr['collid']),$USER_RIGHTS["CollAdmin"])){
-									echo ' <a href="institutioneditor.php?emode=1&iid='.$iid.'"><img src="'.$CLIENT_ROOT.'/images/edit.png" style="width:13px;" /></a>';
+									echo ' <a href="institutioneditor.php?emode=1&iid=' .htmlspecialchars($iid, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/images/edit.png" style="width:13px;" /></a>';
 								}
 								echo '</a></li>';
 							}

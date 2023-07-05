@@ -26,7 +26,7 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE.(isset($LANG['G_SOURCES'])?$LANG['G_SOURCES']:'Glossary Sources Management'); ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -40,8 +40,8 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href='../index.php'><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
-		<a href='index.php'> <b><?php echo (isset($LANG['MAIN_G'])?$LANG['MAIN_G']:'Main Glossary'); ?></b></a> &gt;&gt;
+		<a href='../index.php'><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+		<a href='index.php'> <b><?php echo htmlspecialchars((isset($LANG['MAIN_G'])?$LANG['MAIN_G']:'Main Glossary'), HTML_SPECIAL_CHARS_FLAGS); ?></b></a> &gt;&gt;
 		<b><?php echo (isset($LANG['G_CONTR'])?$LANG['G_CONTR']:'Glossary Contributors'); ?></b>
 	</div>
 	<!-- This is inner text! -->

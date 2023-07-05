@@ -74,7 +74,7 @@ else{
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Reference Management</title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -163,7 +163,7 @@ else{
 										echo '<ul>';
 										foreach($authArr as $k => $v){
 											echo '<li>';
-											echo '<a href="authoreditor.php?authid='.$k.'" target="_blank">'.$v.'</a>';
+											echo '<a href="authoreditor.php?authid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($v, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 											echo ' <input type="image" style="margin-left:5px;" src="../images/del.png" onclick="deleteRefAuthor('.$k.');" title="Delete author">';
 											echo '</li>';
 										}
@@ -444,7 +444,7 @@ else{
 								echo '<ul>';
 								foreach($refChecklistArr as $k => $v){
 									echo '<li>';
-									echo '<a href="../checklists/checklist.php?clid='.$k.'&pid=" target="_blank" >';
+									echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '&pid=" target="_blank" >';
 									echo $v;
 									echo '</a>';
 									echo '</li>';
@@ -462,7 +462,7 @@ else{
 								echo '<ul>';
 								foreach($refCollArr as $k => $v){
 									echo '<li>';
-									echo '<a href="../collections/misc/collprofiles.php?collid='.$k.'" target="_blank" >';
+									echo '<a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" >';
 									echo $v;
 									echo '</a>';
 									echo '</li>';
@@ -480,7 +480,7 @@ else{
 								echo '<ul>';
 								foreach($refOccArr as $k => $v){
 									echo '<li>';
-									echo '<a href="../collections/individual/index.php?occid='.$k.'&clid=0" target="_blank" >';
+									echo '<a href="../collections/individual/index.php?occid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '&clid=0" target="_blank" >';
 									echo $v;
 									echo '</a>';
 									echo '</li>';
@@ -499,7 +499,7 @@ else{
 								foreach($refTaxaArr as $k => $v){
 									$name = str_replace(' ','%20',$v);
 									echo '<li>';
-									echo '<a href="../taxa/index.php?taxon='.$name.'" target="_blank" >';
+									echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($name, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" >';
 									echo $v;
 									echo '</a>';
 									echo '</li>';

@@ -40,7 +40,7 @@ if($tid){
 										?>
 										<td align='center' valign='bottom'>
 											<div style='margin:20px 0px 0px 0px;'>
-												<a href="<?php echo $webUrl; ?>" target="_blank">
+												<a href="<?php echo htmlspecialchars($webUrl, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank">
 													<img width="150" src="<?php echo $tnUrl;?>" />
 												</a>
 
@@ -56,7 +56,7 @@ if($tid){
 											if($imgArr["tid"] != $tid){
 												?>
 												<div>
-													<a href="tpeditor.php?tid=<?php echo $imgArr["tid"];?>" target="" title="Linked from"><?php echo $imgArr["sciname"];?></a>
+													<a href="tpeditor.php?tid=<?php echo htmlspecialchars($imgArr["tid"], HTML_SPECIAL_CHARS_FLAGS);?>" target="" title="Linked from"><?php echo htmlspecialchars($imgArr["sciname"], HTML_SPECIAL_CHARS_FLAGS);?></a>
 												</div>
 												<?php
 											}
@@ -226,14 +226,14 @@ if($tid){
 									}
 									if(!$tnUrl) $tnUrl = $webUrl;
 									?>
-									<a href="../../imagelib/imgdetails.php?imgid=<?php echo $imgArr['imgid']; ?>">
+									<a href="../../imagelib/imgdetails.php?imgid=<?php echo htmlspecialchars($imgArr['imgid'], HTML_SPECIAL_CHARS_FLAGS); ?>">
 										<img src="<?php echo $tnUrl;?>" style="width:200px;"/>
 									</a>
 									<?php
 									if($imgArr["originalurl"]){
 										$origUrl = (array_key_exists("imageDomain",$GLOBALS)&&substr($imgArr["originalurl"],0,1)=="/"?$GLOBALS["imageDomain"]:"").$imgArr["originalurl"];
 										?>
-										<br /><a href="<?php echo $origUrl;?>"><?php echo $LANG['OPEN_LARGE_IMAGE']; ?></a>
+										<br /><a href="<?php echo htmlspecialchars($origUrl, HTML_SPECIAL_CHARS_FLAGS);?>"><?php echo htmlspecialchars($LANG['OPEN_LARGE_IMAGE'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
 										<?php
 									}
 									?>
@@ -244,7 +244,7 @@ if($tid){
 								if($imgArr['occid']){
 									?>
 									<div style="float:right;margin-right:10px;" title="<?php echo $LANG['MUST_HAVE_EDIT_PERM']; ?>">
-										<a href="../../collections/editor/occurrenceeditor.php?occid=<?php echo $imgArr['occid']; ?>&tabtarget=2" target="_blank">
+										<a href="../../collections/editor/occurrenceeditor.php?occid=<?php echo htmlspecialchars($imgArr['occid'], HTML_SPECIAL_CHARS_FLAGS); ?>&tabtarget=2" target="_blank">
 											<img src="../../images/edit.png" style="border:0px;"/>
 										</a>
 									</div>
@@ -253,7 +253,7 @@ if($tid){
 								else{
 									?>
 									<div style='float:right;margin-right:10px;'>
-										<a href="../../imagelib/imgdetails.php?imgid=<?php echo $imgArr["imgid"];?>&emode=1">
+										<a href="../../imagelib/imgdetails.php?imgid=<?php echo htmlspecialchars($imgArr["imgid"], HTML_SPECIAL_CHARS_FLAGS);?>&emode=1">
 											<img src="../../images/edit.png" style="border:0px;" />
 										</a>
 									</div>
@@ -266,7 +266,7 @@ if($tid){
 										?>
 										<div>
 											<b><?php echo $LANG['IMAGE_LINKED_FROM']; ?>:</b>
-											<a href="tpeditor.php?tid=<?php echo $imgArr["tid"];?>" target=""><?php echo $imgArr["sciname"];?></a>
+											<a href="tpeditor.php?tid=<?php echo htmlspecialchars($imgArr["tid"], HTML_SPECIAL_CHARS_FLAGS);?>" target=""><?php echo htmlspecialchars($imgArr["sciname"], HTML_SPECIAL_CHARS_FLAGS);?></a>
 										</div>
 										<?php
 									}
@@ -296,7 +296,7 @@ if($tid){
 										?>
 										<div>
 											<b><?php echo $LANG['SOURCE_URL']; ?>:</b>
-											<a href="<?php echo $imgArr["sourceurl"];?>" target="_blank"><?php echo $imgArr["sourceurl"]; ?></a>
+											<a href="<?php echo htmlspecialchars($imgArr["sourceurl"], HTML_SPECIAL_CHARS_FLAGS);?>" target="_blank"><?php echo htmlspecialchars($imgArr["sourceurl"], HTML_SPECIAL_CHARS_FLAGS); ?></a>
 										</div>
 										<?php
 									}
@@ -320,7 +320,7 @@ if($tid){
 										?>
 										<div>
 											<b><?php echo $LANG['OCC_REC_NUM']; ?>:</b>
-											<a href="<?php echo $CLIENT_ROOT;?>/collections/individual/index.php?occid=<?php echo $imgArr["occid"]; ?>">
+											<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS);?>/collections/individual/index.php?occid=<?php echo htmlspecialchars($imgArr["occid"], HTML_SPECIAL_CHARS_FLAGS); ?>">
 												<?php echo $imgArr["occid"];?>
 											</a>
 										</div>

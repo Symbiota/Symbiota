@@ -46,7 +46,7 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
 	<link href="../js/jquery-ui/jquery-ui.min.css?ver=1" type="text/css" rel="Stylesheet" />
 	<style type="text/css">
 		fieldset{ padding: 15px }
@@ -222,20 +222,20 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 							$url = 'search.php?'.$imgLibManager->getQueryTermStr().'&submitaction=search';
 							$pageBar = '<div style="float:left" >';
 							if($startPage > 1){
-								$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="'.$url.'&page=1">First</a></span>';
-								$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="'.$url.'&page='.(($pageNumber - 10) < 1 ?1:$pageNumber - 10).'">&lt;&lt;</a></span>';
+								$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="' . htmlspecialchars($url , HTML_SPECIAL_CHARS_FLAGS). '&page=1">First</a></span>';
+								$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="' . htmlspecialchars($url , HTML_SPECIAL_CHARS_FLAGS). '&page=' . htmlspecialchars((($pageNumber - 10) < 1 ?1:$pageNumber - 10), HTML_SPECIAL_CHARS_FLAGS) . '">&lt;&lt;</a></span>';
 							}
 							for($x = $startPage; $x <= $endPage; $x++){
 								if($pageNumber != $x){
-									$pageBar .= '<span class="pagination" style="margin-right:3px;"><a href="'.$url.'&page='.$x.'">'.$x.'</a></span>';
+									$pageBar .= '<span class="pagination" style="margin-right:3px;"><a href="' . htmlspecialchars($url , HTML_SPECIAL_CHARS_FLAGS). '&page=' . htmlspecialchars($x, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($x, HTML_SPECIAL_CHARS_FLAGS) . '</a></span>';
 								}
 								else{
 									$pageBar .= "<span class='pagination' style='margin-right:3px;font-weight:bold;'>".$x."</span>";
 								}
 							}
 							if(($lastPage - $startPage) >= 10){
-								$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="'.$url.'&page='.(($pageNumber + 10) > $lastPage?$lastPage:($pageNumber + 10)).'">&gt;&gt;</a></span>';
-								if($recordCnt < 10000) $pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="'.$url.'&page='.$lastPage.'">Last</a></span>';
+								$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="' . htmlspecialchars($url , HTML_SPECIAL_CHARS_FLAGS). '&page=' . htmlspecialchars((($pageNumber + 10) > $lastPage?$lastPage:($pageNumber + 10)), HTML_SPECIAL_CHARS_FLAGS) . '">&gt;&gt;</a></span>';
+								if($recordCnt < 10000) $pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="' . htmlspecialchars($url , HTML_SPECIAL_CHARS_FLAGS). '&page=' . htmlspecialchars($lastPage, HTML_SPECIAL_CHARS_FLAGS) . '">Last</a></span>';
 							}
 							$pageBar .= '</div><div style="float:right;margin-top:4px;margin-bottom:8px;">';
 							$beginNum = ($pageNumber - 1)*$cntPerPage + 1;

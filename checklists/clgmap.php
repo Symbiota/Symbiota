@@ -50,7 +50,7 @@ $clManager->setProj($pid);
 					else{
 						echo "var lStr".$clid." = 'checklist.php?clid=".$clid."&pid=" . $pid."';\n";
 					}
-					echo "google.maps.event.addListener(marker".$clid.", 'dblclick', function(){ closeAllInfoWins(); marker".$clid.".setAnimation(google.maps.Animation.BOUNCE); window.location.href = lStr".$clid."; });\n";
+					echo "google.maps.event.addListener(marker".$clid.", 'dblclick', function(){ closeAllInfoWins(); marker".$clid.".setAnimation(google.maps.Animation.BOUNCE); window.location.href = lStr" . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . "; });\n";
 				}
 				?>
 				resizeMap();

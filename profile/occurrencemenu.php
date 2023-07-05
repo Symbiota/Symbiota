@@ -34,66 +34,66 @@ if($SYMB_UID){
 			</div>
 			<ul>
 				<li>
-					<a href="../collections/editor/occurrencetabledisplay.php?collid=<?php echo $collId; ?>">
-						<?php echo (isset($LANG['DISPLAY_ALL'])?$LANG['DISPLAY_ALL']:'Display All Records'); ?>
+					<a href="../collections/editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>">
+						<?php echo htmlspecialchars((isset($LANG['DISPLAY_ALL'])?$LANG['DISPLAY_ALL']:'Display All Records'), HTML_SPECIAL_CHARS_FLAGS); ?>
 					</a>
 				</li>
 				<li>
-					<a href="../collections/editor/occurrencetabledisplay.php?collid=<?php echo $collId; ?>&displayquery=1">
-						<?php echo (isset($LANG['SEARCH_RECORDS'])?$LANG['SEARCH_RECORDS']:'Search Records'); ?>
+					<a href="../collections/editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>&displayquery=1">
+						<?php echo htmlspecialchars((isset($LANG['SEARCH_RECORDS'])?$LANG['SEARCH_RECORDS']:'Search Records'), HTML_SPECIAL_CHARS_FLAGS); ?>
 					</a>
 				</li>
 				<li>
-					<a href="../collections/editor/occurrenceeditor.php?gotomode=1&collid=<?php echo $collId; ?>">
-						<?php echo (isset($LANG['ADD_RECORD'])?$LANG['ADD_RECORD']:'Add a New Record'); ?>
+					<a href="../collections/editor/occurrenceeditor.php?gotomode=1&collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>">
+						<?php echo htmlspecialchars((isset($LANG['ADD_RECORD'])?$LANG['ADD_RECORD']:'Add a New Record'), HTML_SPECIAL_CHARS_FLAGS); ?>
 					</a>
 				</li>
 				<li>
-					<a href="../collections/reports/labelmanager.php?collid=<?php echo $collId; ?>">
-						<?php echo (isset($LANG['PRINT_LABELS'])?$LANG['PRINT_LABELS']:'Print Labels'); ?>
+					<a href="../collections/reports/labelmanager.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>">
+						<?php echo htmlspecialchars((isset($LANG['PRINT_LABELS'])?$LANG['PRINT_LABELS']:'Print Labels'), HTML_SPECIAL_CHARS_FLAGS); ?>
 					</a>
 				</li>
 				<li>
-					<a href="../collections/reports/annotationmanager.php?collid=<?php echo $collId; ?>">
-						<?php echo (isset($LANG['PRINT_ANNOTATIONS'])?$LANG['PRINT_ANNOTATIONS']:'Print Annotation Labels'); ?>
+					<a href="../collections/reports/annotationmanager.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>">
+						<?php echo htmlspecialchars((isset($LANG['PRINT_ANNOTATIONS'])?$LANG['PRINT_ANNOTATIONS']:'Print Annotation Labels'), HTML_SPECIAL_CHARS_FLAGS); ?>
 					</a>
 				</li>
 				<li>
-					<a href="../collections/editor/observationsubmit.php?collid=<?php echo $collId; ?>">
-						<?php echo (isset($LANG['SUBMIT_OBSERVATION'])?$LANG['SUBMIT_OBSERVATION']:'Submit image-vouchered observation'); ?>
+					<a href="../collections/editor/observationsubmit.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>">
+						<?php echo htmlspecialchars((isset($LANG['SUBMIT_OBSERVATION'])?$LANG['SUBMIT_OBSERVATION']:'Submit image-vouchered observation'), HTML_SPECIAL_CHARS_FLAGS); ?>
 					</a>
 				</li>
 				<li>
-					<a href="../collections/editor/editreviewer.php?display=1&collid=<?php echo $collId; ?>">
-						<?php echo (isset($LANG['REVIEW_EDITS'])?$LANG['REVIEW_EDITS']:'Review/Verify Occurrence Edits'); ?>
+					<a href="../collections/editor/editreviewer.php?display=1&collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>">
+						<?php echo htmlspecialchars((isset($LANG['REVIEW_EDITS'])?$LANG['REVIEW_EDITS']:'Review/Verify Occurrence Edits'), HTML_SPECIAL_CHARS_FLAGS); ?>
 					</a>
 				</li>
 				<?php
 				if (!empty($ACTIVATE_DUPLICATES)) {
 					?>
 					<li>
-						<a href="../collections/datasets/duplicatemanager.php?collid=<?php echo $collId; ?>">
-							<?php echo (isset($LANG['DUP_CLUSTER']) ? $LANG['DUP_CLUSTER'] : 'Duplicate Clustering'); ?>
+						<a href="../collections/datasets/duplicatemanager.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>">
+							<?php echo htmlspecialchars((isset($LANG['DUP_CLUSTER']) ? $LANG['DUP_CLUSTER'] : 'Duplicate Clustering'), HTML_SPECIAL_CHARS_FLAGS); ?>
 						</a>
 					</li>
 					<?php
 				}
 				?>
 				<li>
-					<a href="#" onclick="newWindow = window.open('personalspecbackup.php?collid=<?php echo $collId; ?>','bucollid','scrollbars=1,toolbar=0,resizable=1,width=400,height=200,left=20,top=20');">
-						<?php echo (isset($LANG['DOWNLOAD_BACKUP'])?$LANG['DOWNLOAD_BACKUP']:'Download backup file (CSV extract)'); ?>
+					<a href="#" onclick="newWindow = window.open('personalspecbackup.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>','bucollid','scrollbars=1,toolbar=0,resizable=1,width=400,height=200,left=20,top=20');">
+						<?php echo htmlspecialchars((isset($LANG['DOWNLOAD_BACKUP'])?$LANG['DOWNLOAD_BACKUP']:'Download backup file (CSV extract)'), HTML_SPECIAL_CHARS_FLAGS); ?>
 					</a>
 				</li>
 				<li>
-					<a href="../collections/misc/commentlist.php?collid=<?php echo $collId; ?>">
-						<?php echo (isset($LANG['VIEW_COMMENTS'])?$LANG['VIEW_COMMENTS']:'View User Comments'); ?>
+					<a href="../collections/misc/commentlist.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>">
+						<?php echo htmlspecialchars((isset($LANG['VIEW_COMMENTS'])?$LANG['VIEW_COMMENTS']:'View User Comments'), HTML_SPECIAL_CHARS_FLAGS); ?>
 					</a>
 					<?php if($commCnt = $specHandler->unreviewedCommentsExist($collId)) echo '- <span style="color:orange">'.$commCnt.' '.(isset($LANG['UNREVIEWED'])?$LANG['UNREVIEWED']:'unreviewed comments').'</span>'; ?>
 				</li>
 				<!--
 				<li>
-					<a href="../collections/cleaning/index.php?collid=<?php echo $collId; ?>">
-						<?php echo (isset($LANG['DATA_CLEANING'])?$LANG['DATA_CLEANING']:'Data Cleaning Module'); ?>
+					<a href="../collections/cleaning/index.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>">
+						<?php echo htmlspecialchars((isset($LANG['DATA_CLEANING'])?$LANG['DATA_CLEANING']:'Data Cleaning Module'), HTML_SPECIAL_CHARS_FLAGS); ?>
 					</a>
 				</li>
 				 -->
@@ -109,7 +109,7 @@ if($SYMB_UID){
 				<?php
 				foreach($cArr as $collId => $secArr){
 					$cName = $secArr['collectionname'].' ('.$secArr['institutioncode'].($secArr['collectioncode']?'-'.$secArr['collectioncode']:'').')';
-					echo '<li><a href="../collections/misc/collprofiles.php?collid='.$collId.'&emode=1">'.$cName.'</a></li>';
+					echo '<li><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . htmlspecialchars($cName, HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
 				}
 				?>
 			</ul>
@@ -124,7 +124,7 @@ if($SYMB_UID){
 				<?php
 				foreach($oArr as $collId => $secArr){
 					$cName = $secArr['collectionname'].' ('.$secArr['institutioncode'].($secArr['collectioncode']?'-'.$secArr['collectioncode']:'').')';
-					echo '<li><a href="../collections/misc/collprofiles.php?collid='.$collId.'&emode=1">'.$cName.'</a></li>';
+					echo '<li><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . htmlspecialchars($cName, HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
 				}
 				?>
 			</ul>
@@ -142,7 +142,7 @@ if($SYMB_UID){
 					<?php
 					foreach($genAdminArr as $id => $secArr){
 						$cName = $secArr['collectionname'].' ('.$secArr['institutioncode'].($secArr['collectioncode']?'-'.$secArr['collectioncode']:'').')';
-						echo '<li><a href="../collections/misc/collprofiles.php?collid='.$id.'&emode=1">'.$cName.'</a></li>';
+						echo '<li><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . htmlspecialchars($cName, HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
 					}
 					?>
 				</ul>
@@ -154,15 +154,15 @@ if($SYMB_UID){
 	<fieldset>
 		<legend><?php echo (isset($LANG['MISC_TOOLS'])?$LANG['MISC_TOOLS']:'Miscellaneous Tools'); ?></legend>
 		<ul>
-			<li><a href="../collections/datasets/index.php"><?php echo (isset($LANG['DATASET_MANAGEMENT'])?$LANG['DATASET_MANAGEMENT']:'Dataset Management'); ?></a></li>
+			<li><a href="../collections/datasets/index.php"><?php echo htmlspecialchars((isset($LANG['DATASET_MANAGEMENT'])?$LANG['DATASET_MANAGEMENT']:'Dataset Management'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
 			<?php
 			if((count($cArr)+count($oArr)) > 1){
 				?>
-				<li><a href="../collections/georef/batchgeoreftool.php"><?php echo (isset($LANG['CROSS_COL_GEOREF'])?$LANG['CROSS_COL_GEOREF']:'Cross-Collection Georeferencing Tool'); ?></a></li>
+				<li><a href="../collections/georef/batchgeoreftool.php"><?php echo htmlspecialchars((isset($LANG['CROSS_COL_GEOREF'])?$LANG['CROSS_COL_GEOREF']:'Cross-Collection Georeferencing Tool'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
 				<?php
 				if(isset($USER_RIGHTS['CollAdmin']) && count(array_diff($USER_RIGHTS['CollAdmin'],array_keys($genAdminArr))) > 1){
 					?>
-					<li><a href="../collections/cleaning/taxonomycleaner.php"><?php echo (isset($LANG['CROSS_COL_TAXON'])?$LANG['CROSS_COL_TAXON']:'Cross Collection Taxonomy Cleaning Tool'); ?></a></li>
+					<li><a href="../collections/cleaning/taxonomycleaner.php"><?php echo htmlspecialchars((isset($LANG['CROSS_COL_TAXON'])?$LANG['CROSS_COL_TAXON']:'Cross Collection Taxonomy Cleaning Tool'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
 					<?php
 				}
 			}

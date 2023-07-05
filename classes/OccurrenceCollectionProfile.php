@@ -83,7 +83,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 					$outStr .= $cArr['firstName'].' '.$cArr['lastName'];
 					if(isset($cArr['email']) && $cArr['email']) $outStr .= ', '.$cArr['email'];
 					if(isset($cArr['phone']) && $cArr['phone']) $outStr .= ', '.$cArr['phone'];
-					if(isset($cArr['orcid']) && $cArr['orcid']) $outStr .= ' (ORCID #: <a href="https://orcid.org/'.$cArr['orcid'].'" target="_blank">'.$cArr['orcid'].'</a>)';
+					if(isset($cArr['orcid']) && $cArr['orcid']) $outStr .= ' (ORCID #: <a href="https://orcid.org/' . htmlspecialchars($cArr['orcid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">'. htmlspecialchars($cArr['orcid'], HTML_SPECIAL_CHARS_FLAGS) . '</a>)';
 					$outStr .= '</div>';
 				}
 			}
@@ -94,7 +94,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 				foreach($resourceArr as $rArr){
 					if(isset($rArr['title'][$LANG_TAG]) && $rArr['title'][$LANG_TAG]) $title = $rArr['title'][$LANG_TAG];
 					$outStr .= '<div class="field-div"><span class="label">'.$title.':</span> ';
-					$outStr .= '<a href="'.$rArr['url'].'" target="_blank">'.$rArr['url'].'</a>';
+					$outStr .= '<a href="' . htmlspecialchars($rArr['url'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($rArr['url'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 					$outStr .= '</div>';
 				}
 			}
@@ -126,14 +126,14 @@ class OccurrenceCollectionProfile extends OmCollections{
 			$dwcaUrl = $this->collMeta[$this->collid]['dwcaurl'];
 			$outStr .= '<div class="field-div">';
 			$outStr .= '<span class="label">'.(isset($LANG['DWCA_PUB'])?$LANG['DWCA_PUB']:'DwC-Archive Access Point').':</span> ';
-			$outStr .= '<a href="'.$dwcaUrl.'">'.$dwcaUrl.'</a>';
+			$outStr .= '<a href="' . htmlspecialchars($dwcaUrl, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($dwcaUrl, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 			$outStr .= '</div>';
 		}
 		$outStr .= '<div class="field-div">';
 		if($this->collMeta[$this->collid]['managementtype'] == 'Live Data'){
 			if($GLOBALS['SYMB_UID']){
 				$outStr .= '<span class="label">'.(isset($LANG['LIVE_DOWNLOAD'])?$LANG['LIVE_DOWNLOAD']:'Live Data Download').':</span> ';
-				$outStr .= '<a href="../../webservices/dwc/dwcapubhandler.php?collid='.$this->collMeta[$this->collid]['collid'].'">'.(isset($LANG['FULL_DATA'])?$LANG['FULL_DATA']:'DwC-Archive File').'</a>';
+				$outStr .= '<a href="../../webservices/dwc/dwcapubhandler.php?collid=' . htmlspecialchars($this->collMeta[$this->collid]['collid'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars((isset($LANG['FULL_DATA'])?$LANG['FULL_DATA']:'DwC-Archive File'), HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 			}
 		}
 		elseif($this->collMeta[$this->collid]['managementtype'] == 'Snapshot'){
@@ -142,13 +142,13 @@ class OccurrenceCollectionProfile extends OmCollections{
 				$outStr .= '<div style="float:left"><span class="label">'.(isset($LANG['IPT_SOURCE'])?$LANG['IPT_SOURCE']:'IPT / DwC-A Source').':</span> </div>';
 				$outStr .= '<div style="float:left;margin-left:5px;">';
 				foreach($pathArr as $titleStr => $pathStr){
-					$outStr .= '<a href="'.$pathStr.'" target="_blank">'.$titleStr.'</a><br/>';
+					$outStr .= '<a href="' . htmlspecialchars($pathStr, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($titleStr, HTML_SPECIAL_CHARS_FLAGS) . '</a><br/>';
 				}
 				$outStr .= '</div>';
 			}
 		}
 		$outStr .= '</div>';
-		$outStr .= '<div class="field-div"><span class="label">'.(isset($LANG['DIGITAL_METADATA'])?$LANG['DIGITAL_METADATA']:'Digital Metadata').':</span> <a href="../datasets/emlhandler.php?collid='.$this->collMeta[$this->collid]['collid'].'" target="_blank">EML File</a></div>';
+		$outStr .= '<div class="field-div"><span class="label">' . htmlspecialchars((isset($LANG['DIGITAL_METADATA'])?$LANG['DIGITAL_METADATA']:'Digital Metadata'), HTML_SPECIAL_CHARS_FLAGS) . ':</span> <a href="../datasets/emlhandler.php?collid=' . htmlspecialchars($this->collMeta[$this->collid]['collid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">EML File</a></div>';
 		$outStr .= '<div class="field-div"><span class="label">'.$LANG['USAGE_RIGHTS'].':</span> ';
 		if($this->collMeta[$this->collid]['rights']){
 			$rights = $this->collMeta[$this->collid]['rights'];
@@ -161,7 +161,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 					}
 				}
 			}
-			if($rightsUrl) $outStr .= '<a href="'.$rightsUrl.'" target="_blank">';
+			if($rightsUrl) $outStr .= '<a href="' . htmlspecialchars($rightsUrl, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 			$outStr .= $rights;
 			if($rightsUrl) $outStr .= '</a>';
 		}

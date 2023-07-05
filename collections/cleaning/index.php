@@ -44,7 +44,7 @@ if($collMap['colltype'] == 'General Observations'){
 	?>
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
+		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">Collection Management</a> &gt;&gt;
 		<b>Data Cleaning Module</b>
 	</div>
 
@@ -69,18 +69,18 @@ if($collMap['colltype'] == 'General Observations'){
 						<legend style="font-weight:bold"><b>List Duplicates based on...</b></legend>
 						<ul>
 							<li>
-								<a href="duplicatesearch.php?collid=<?php echo $collid; ?>&action=listdupscatalog">
+								<a href="duplicatesearch.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&action=listdupscatalog">
 									Catalog Numbers
 								</a>
 							</li>
 							<li>
-								<a href="duplicatesearch.php?collid=<?php echo $collid; ?>&action=listdupsothercatalog">
+								<a href="duplicatesearch.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&action=listdupsothercatalog">
 									Other Catalog Numbers
 								</a>
 							</li>
 							<!--
 							<li>
-								<a href="duplicatesearch.php?collid=<?php echo $collid; ?>&action=listdupsrecordedby">
+								<a href="duplicatesearch.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&action=listdupsrecordedby">
 									Collector/Observer and numbers
 								</a>
 							</li>
@@ -103,10 +103,10 @@ if($collMap['colltype'] == 'General Observations'){
 					<legend style="font-weight:bold">Statistics and Action Panel</legend>
 					<ul>
 						<li>
-							<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&stat=geography#geographystats" target="_blank">Geographic Distributions</a>
+							<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&stat=geography#geographystats" target="_blank">Geographic Distributions</a>
 						</li>
 						<li>
-							<a href="politicalunits.php?collid=<?php echo $collid; ?>">Geography Cleaning Tools</a>
+							<a href="politicalunits.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">Geography Cleaning Tools</a>
 						</li>
 					</ul>
 				</fieldset>
@@ -127,7 +127,7 @@ if($collMap['colltype'] == 'General Observations'){
 							<?php
 							if($statsArr['coord']){
 								?>
-								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo $collid; ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NOTNULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NOTNULL" style="margin-left:5px;" title="Open Editor" target="_blank">
 									<img src="../../images/edit.png" style="width:10px" />
 								</a>
 								<?php
@@ -138,10 +138,10 @@ if($collMap['colltype'] == 'General Observations'){
 							<?php
 							if($statsArr['noCoord']){
 								?>
-								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo $collid; ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
 									<img src="../../images/edit.png" style="width:10px" />
 								</a>
-								<a href="../georef/batchgeoreftool.php?collid=<?php echo $collid; ?>" style="margin-left:5px;" title="Open Batch Georeference Tool" target="_blank">
+								<a href="../georef/batchgeoreftool.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>" style="margin-left:5px;" title="Open Batch Georeference Tool" target="_blank">
 									<img src="../../images/edit.png" style="width:10px" /><span style="font-size:70%;margin-left:-3;">b-geo</span>
 								</a>
 								<?php
@@ -152,7 +152,7 @@ if($collMap['colltype'] == 'General Observations'){
 							<?php
 							if($statsArr['noCoord_verbatim']){
 								?>
-								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo $collid; ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL&q_customfield2=verbatimcoordinates&q_customtype2=NOTNULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL&q_customfield2=verbatimcoordinates&q_customtype2=NOTNULL" style="margin-left:5px;" title="Open Editor" target="_blank">
 									<img src="../../images/edit.png" style="width:10px" />
 								</a>
 								<?php
@@ -163,7 +163,7 @@ if($collMap['colltype'] == 'General Observations'){
 							<?php
 							if($statsArr['noCoord_noVerbatim']){
 								?>
-								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo $collid; ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL&q_customfield2=verbatimcoordinates&q_customtype2=NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL&q_customfield2=verbatimcoordinates&q_customtype2=NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
 									<img src="../../images/edit.png" style="width:10px" />
 								</a>
 								<?php
@@ -171,7 +171,7 @@ if($collMap['colltype'] == 'General Observations'){
 							?>
 						</li>
 						<li>
-							<a href="coordinatevalidator.php?collid=<?php echo $collid; ?>">Verify coordinates against political boundaries</a>
+							<a href="coordinatevalidator.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">Verify coordinates against political boundaries</a>
 						</li>
 					</ul>
 				</fieldset>
@@ -185,11 +185,11 @@ if($collMap['colltype'] == 'General Observations'){
 				<fieldset style="margin:10px 0px;padding:5px;width:550px">
 					<legend style="font-weight:bold">Statistics and Action panel</legend>
 					<ul>
-						<li><a href="taxonomycleaner.php?collid=<?php echo $collid; ?>">Analyze taxonomic names...</a></li>
-						<li><a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&stat=taxonomy#taxonomystats">Taxonomic Distributions...</a></li>
+						<li><a href="taxonomycleaner.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">Analyze taxonomic names...</a></li>
+						<li><a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&stat=taxonomy#taxonomystats">Taxonomic Distributions...</a></li>
 						<?php
 						if($cleanManager->hasDuplicateClusters()){
-							echo '<li><a href="../datasets/duplicatemanager.php?collid='.$collid.'&dupedepth=3&action=listdupeconflicts">';
+							echo '<li><a href="../datasets/duplicatemanager.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&dupedepth=3&action=listdupeconflicts">';
 							echo 'Duplicate specimens with potential identification conflicts...';
 							echo '</a></li>';
 						}

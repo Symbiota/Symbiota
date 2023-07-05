@@ -198,7 +198,7 @@ include($SERVER_ROOT.'/includes/header.php');
 				<?php echo (isset($LANG['NO_ACCOUNT'])?$LANG['NO_ACCOUNT']:"Don't have an Account?"); ?>
 			</div>
 			<div style="">
-				<a href="newprofile.php?refurl=<?php echo $refUrl; ?>"><?php echo (isset($LANG['CREATE_ACCOUNT'])?$LANG['CREATE_ACCOUNT']:'Create an account'); ?></a>
+				<a href="newprofile.php?refurl=<?php echo htmlspecialchars($refUrl, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars((isset($LANG['CREATE_ACCOUNT'])?$LANG['CREATE_ACCOUNT']:'Create an account'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
 			</div>
 			<div style="font-weight:bold;margin-top:5px">
 				<?php echo (isset($LANG['REMEMBER_PWD'])?$LANG['REMEMBER_PWD']:"Can't Remember your password?"); ?>
@@ -208,7 +208,7 @@ include($SERVER_ROOT.'/includes/header.php');
 				<?php echo (isset($LANG['REMEMBER_LOGIN'])?$LANG['REMEMBER_LOGIN']:"Can't Remember Login Name?"); ?>
 			</div>
 			<div>
-				<div><a href="#" onclick="toggle('emaildiv');"><?php echo (isset($LANG['RETRIEVE'])?$LANG['RETRIEVE']:'Retrieve Login'); ?></a></div>
+				<div><a href="#" onclick="toggle('emaildiv');"><?php echo htmlspecialchars((isset($LANG['RETRIEVE'])?$LANG['RETRIEVE']:'Retrieve Login'), HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
 				<div id="emaildiv" style="display:none;margin:10px 0px 10px 40px;">
 					<fieldset>
 						<form id="retrieveloginform" name="retrieveloginform" action="index.php" method="post">

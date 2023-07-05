@@ -170,7 +170,7 @@ class WordCloud{
 			$maxCount = max($this->frequencyArr);
 			foreach ($topTags as $tag => $useCount){
 				$grade = $this->gradeFrequency(($useCount * 100) / $maxCount);
-				$retStr .= ('<a href="'. $this->tagUrl.urlencode($tag).'" style="color:'.$this->wordColors[$grade].';" target="_blank">'.
+				$retStr .= ('<a href="'. $this->tagUrl.urlencode($tag).'" style="color:' . $this->wordColors[$grade] . ';" target="_blank">'.
 					'<span style="color:'.$this->wordColors[$grade].'; letter-spacing:3px; '.
 					'padding:4px; font-family:Tahoma; font-weight:900; font-size:'.
 					(0.6 + 0.1 * $grade).'em">'.$tag.'</span></a> ');

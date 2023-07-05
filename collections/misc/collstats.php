@@ -226,11 +226,11 @@ if($action != "Update Statistics"){
 		<head>
 			<meta name="keywords" content="Natural history collections statistics" />
 			<title><?php echo $DEFAULT_TITLE.(isset($LANG['COL_STATS'])?$LANG['COL_STATS']:'Collection Statistics'); ?></title>
-			<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+			<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 			<?php
 			include_once($SERVER_ROOT.'/includes/head.php');
 			?>
-			<link href="<?php echo $CSS_BASE_PATH; ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
+			<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
             <script src="../../js/jquery.js" type="text/javascript"></script>
 			<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 			<script src="../../js/symb/collections.index.js" type="text/javascript"></script>
@@ -380,8 +380,8 @@ if($action != "Update Statistics"){
 			else{
 				?>
 				<div class='navpath'>
-					<a href='../../index.php'><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
-					<a href='collprofiles.php'><?php echo (isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'); ?></a> &gt;&gt;
+					<a href='../../index.php'><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+					<a href='collprofiles.php'><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 					<b><?php echo (isset($LANG['COL_STATS'])?$LANG['COL_STATS']:'Collection Statistics'); ?></b>
 				</div>
 				<?php
@@ -392,10 +392,10 @@ if($action != "Update Statistics"){
 				<h1><?php echo (isset($LANG['SELECT_COLS'])?$LANG['SELECT_COLS']:'Select Collections to be Analyzed'); ?></h1>
 				<div id="tabs" style="margin:0px;">
 					<ul>
-						<li><a href="#specobsdiv"><?php echo (isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'); ?></a></li>
+						<li><a href="#specobsdiv"><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
 						<?php
                         if($action == "Run Statistics"){
-							echo '<li><a href="#statsdiv">'.(isset($LANG['STATISTICS'])?$LANG['STATISTICS']:'Statistics').'</a></li>';
+							echo '<li><a href="#statsdiv">' . htmlspecialchars((isset($LANG['STATISTICS'])?$LANG['STATISTICS']:'Statistics'), HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
 						}
 						?>
 					</ul>
@@ -422,7 +422,7 @@ if($action != "Update Statistics"){
                                 ?>
                                 <div style="margin:20px 0px 10px 20px;">
 									<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" />
-									<?php echo (isset($LANG['SEL_OR_DESEL'])?$LANG['SEL_OR_DESEL']:'Select/Deselect all'); ?> <a href="collprofiles.php"><?php echo (isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'); ?></a>
+									<?php echo (isset($LANG['SEL_OR_DESEL'])?$LANG['SEL_OR_DESEL']:'Select/Deselect all'); ?> <a href="collprofiles.php"><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
 								</div>
 								<?php
 								$collArrIndex = 0;
@@ -487,7 +487,7 @@ if($action != "Update Statistics"){
 																		</td>
 																		<td style="padding:6px">
 																			<div class="collectiontitle">
-																				<a href='collprofiles.php?collid=<?php echo $collid; ?>'>
+																				<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
 																					<?php
 																					$codeStr = ' ('.$collName2['instcode'];
 																					if($collName2['collcode']) $codeStr .= '-'.$collName2['collcode'];
@@ -495,7 +495,7 @@ if($action != "Update Statistics"){
 																					echo $collName2["collname"].$codeStr;
 																					?>
 																				</a>
-																				<a href='collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>
+																				<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
 																					<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
 																				</a>
 																			</div>
@@ -529,7 +529,7 @@ if($action != "Update Statistics"){
 													</td>
 													<td style="padding:6px">
 														<div class="collectiontitle">
-															<a href='collprofiles.php?collid=<?php echo $collid; ?>'>
+															<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
 																<?php
 																$codeStr = ' ('.$cArr['instcode'];
 																if($cArr['collcode']) $codeStr .= '-'.$cArr['collcode'];
@@ -537,7 +537,7 @@ if($action != "Update Statistics"){
 																echo $cArr["collname"].$codeStr;
 																?>
 															</a>
-															<a href='collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>
+															<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
 																<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
 															</a>
 														</div>
@@ -628,7 +628,7 @@ if($action != "Update Statistics"){
 																		</td>
 																		<td style="padding:6px">
 																			<div class="collectiontitle">
-																				<a href = 'collprofiles.php?collid=<?php echo $collid; ?>'>
+																				<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
 																					<?php
 																					$codeStr = ' ('.$collName2['instcode'];
 																					if($collName2['collcode']) $codeStr .= '-'.$collName2['collcode'];
@@ -636,7 +636,7 @@ if($action != "Update Statistics"){
 																					echo $collName2["collname"].$codeStr;
 																					?>
 																				</a>
-																				<a href = 'collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>
+																				<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
 																					<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
 																				</a>
 																			</div>
@@ -670,7 +670,7 @@ if($action != "Update Statistics"){
 													</td>
 													<td style="padding:6px">
 														<div class="collectiontitle">
-															<a href = 'collprofiles.php?collid=<?php echo $collid; ?>'>
+															<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
 																<?php
 																$codeStr = ' ('.$cArr['instcode'];
 																if($cArr['collcode']) $codeStr .= '-'.$cArr['collcode'];
@@ -678,7 +678,7 @@ if($action != "Update Statistics"){
 																echo $cArr["collname"].$codeStr;
 																?>
 															</a>
-															<a href = 'collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>
+															<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
 																<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
 															</a>
 														</div>
@@ -918,7 +918,7 @@ if($action != "Update Statistics"){
 											echo '<td>'.wordwrap($name,52,"<br />\n",true).'</td>';
 											echo '<td>';
 											if(count($resultsTemp) == 1){
-												echo '<a href="../list.php?db[]='.$collId.'&reset=1&taxa='.$name.'" target="_blank">';
+												echo '<a href="../list.php?db[]=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&reset=1&taxa=' . htmlspecialchars($name, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 											}
 											echo number_format($data['SpecimensPerFamily']);
 											if(count($resultsTemp) == 1){
@@ -955,7 +955,7 @@ if($action != "Update Statistics"){
 											echo '<td>'.wordwrap($name,52,"<br />\n",true).'</td>';
 											echo '<td>';
 											if(count($resultsTemp) == 1){
-												echo '<a href="../list.php?db[]='.$collId.'&reset=1&country='.$name.'" target="_blank">';
+												echo '<a href="../list.php?db[]=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&reset=1&country=' . htmlspecialchars($name, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 											}
 											echo number_format($data['CountryCount']);
 											if(count($resultsTemp) == 1){

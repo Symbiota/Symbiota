@@ -39,7 +39,7 @@ reset($treePath);
 <head>
 	<title><?php echo $DEFAULT_TITLE.' Taxonomy Explorer: '.$taxonDisplayObj->getTargetStr(); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
@@ -82,8 +82,8 @@ reset($treePath);
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="../../index.php"><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
-		<a href="taxonomydynamicdisplay.php"><b><?php echo (isset($LANG['TAX_EXPLORE'])?$LANG['TAX_EXPLORE']:'Taxonomy Explorer'); ?></b></a>
+		<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+		<a href="taxonomydynamicdisplay.php"><b><?php echo htmlspecialchars((isset($LANG['TAX_EXPLORE'])?$LANG['TAX_EXPLORE']:'Taxonomy Explorer'), HTML_SPECIAL_CHARS_FLAGS); ?></b></a>
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">

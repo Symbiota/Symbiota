@@ -119,8 +119,8 @@ if($IS_ADMIN || array_key_exists("KeyEditor",$USER_RIGHTS) || array_key_exists("
 				  			foreach($tList as $f=>$sArr){
 				  				echo "<div style='margin-top:1em;font-size:125%;'>$f</div>\n";
 				  				foreach($sArr as $idValue => $spValue){
-				  					echo "<div style=''>&nbsp;&nbsp;<a href='editor.php?tid=".$idValue."&lang=English&lang=English' target='_blank'>$spValue</a> ";
-				  					echo "(<a href=\"#\" onclick=\"openPopup('editor.php?tid=".$idValue."&char=".$cidValue."','technical');\">@</a>)</div>\n";
+				  					echo "<div style=''>&nbsp;&nbsp;<a href='editor.php?tid=" . htmlspecialchars($idValue, HTML_SPECIAL_CHARS_FLAGS) . "&lang=English&lang=English' target='_blank'>$spValue</a> ";
+				  					echo "(<a href=\"#\" onclick=\"openPopup('editor.php?tid=" . htmlspecialchars($idValue, HTML_SPECIAL_CHARS_FLAGS) . "&char=" . htmlspecialchars($cidValue, HTML_SPECIAL_CHARS_FLAGS) . "','technical');\">@</a>)</div>\n";
 				  				}
 				  			}
 				  		}
