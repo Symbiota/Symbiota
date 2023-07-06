@@ -1520,7 +1520,7 @@ else{
 													<div id="editButtonDiv">
 														<button type="submit" id="saveEditsButton" name="submitaction" value="saveOccurEdits" style="width:150px;" onclick="return verifyFullFormEdits(this.form)" disabled><?php echo $LANG['SAVE_EDITS']; ?></button>
 														<input type="hidden" name="occindex" value="<?php echo is_numeric($occIndex)?$occIndex:''; ?>" />
-														<input name="editedfields" value="" />
+														<input type="hidden" name="editedfields" value="" />
 													</div>
 												</div>
 												<?php
