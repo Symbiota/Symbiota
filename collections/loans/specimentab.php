@@ -256,7 +256,7 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 				<li><a href="#" onclick="displayBatchPanel(true,'speccheckin');return false;">Check-in specimens via list of catalog numbers</a></li>
 				<li><a href="#" onclick="displayBarcodePanel(true,'speccheckin');return false;">Check-in specimens via scanning barcode</a></li>
 				<li><a href="#" onclick="displayNewDetPanel(true);return false;">Add New Determinations</a></li>
-				<li><a href="outgoing.php?formsubmit=exportSpecimenList&loanid=<?php echo $loanId.'&collid='.$collid; ?>">Export Full Specimen List</a></li>
+				<li><a href="outgoing.php?formsubmit=exportSpecimenList&loanid=<?php echo htmlspecialchars($loanId, HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">Export Full Specimen List</a></li>
 				<li><a href="#" onclick="displayBatchActionPanel(true);return false;">Display batch form select actions</a></li>
 			</ul>
 		</fieldset>

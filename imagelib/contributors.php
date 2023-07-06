@@ -36,7 +36,7 @@ $imgManager = new ImageLibraryBrowser();
 			foreach($pList as $uid => $pArr){
 				echo '<div>';
 				$phLink = 'search.php?imagetype=all&phuid='.$uid.'&submitaction=search';
-				echo '<a href="'.$phLink.'">'.$pArr['name'].'</a> ('.$pArr['imgcnt'].')</div>';
+				echo '<a href="' . htmlspecialchars($phLink, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($pArr['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a> (' . htmlspecialchars($pArr['imgcnt'], HTML_SPECIAL_CHARS_FLAGS) . ')</div>';
 			}
 			echo '</div>';
 			echo '</div>';
@@ -55,7 +55,7 @@ $imgManager = new ImageLibraryBrowser();
 				foreach($specList as $k => $cArr){
 					echo '<div>';
 					$phLink = 'search.php?taxontype=2&imagecount=all&imagetype=all&submitaction=search&db[]='.$k;
-					echo '<a href="'.$phLink.'">'.$cArr['name'].'</a> ('.$cArr['imgcnt'].')</div>';
+					echo '<a href="' . htmlspecialchars($phLink, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($cArr['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a> (' . htmlspecialchars($cArr['imgcnt'], HTML_SPECIAL_CHARS_FLAGS) . ')</div>';
 				}
 				echo '</div>';
 			}
@@ -67,7 +67,7 @@ $imgManager = new ImageLibraryBrowser();
 				foreach($obsList as $k => $cArr){
 					echo '<div>';
 					$phLink = 'search.php?taxontype=2&imagecount=all&imagetype=all&submitaction=search&db[]='.$k;
-					echo '<a href="'.$phLink.'">'.$cArr['name'].'</a> ('.$cArr['imgcnt'].')</div>';
+					echo '<a href="' . htmlspecialchars($phLink, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($cArr['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a> (' . htmlspecialchars($cArr['imgcnt'], HTML_SPECIAL_CHARS_FLAGS) . ')</div>';
 				}
 				echo '</div>';
 			}

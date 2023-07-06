@@ -222,7 +222,7 @@ ul.menu {
 
   .top-login {
     display: grid;
-    grid-template-columns: auto auto auto;
+    grid-template-columns: auto auto auto auto;
   }
 
   .top-brand {

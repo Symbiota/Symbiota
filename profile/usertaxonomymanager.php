@@ -39,7 +39,7 @@ $editorArr = $utManager->getTaxonomyEditors();
 <html>
 <head>
 	<title><?php echo (isset($LANG['TAX_PERMISSIONS'])?$LANG['TAX_PERMISSIONS']:'Taxonomic Interest User permissions'); ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -175,7 +175,7 @@ $editorArr = $utManager->getTaxonomyEditors();
 						echo '<b>'.$username.'</b>';
 						$confirmStr = (isset($LANG['REMOVE_LINKS'])?$LANG['REMOVE_LINKS']:'Are you sure you want to remove all taxonomy links for this user?');
 						$titleStr = (isset($LANG['DELETE_LINKS'])?$LANG['DELETE_LINKS']:'Delete all taxonomic relationships for this user');
-						echo '<a href="usertaxonomymanager.php?delutid=all&deluid='.$uid.'&es='.$editorStatus.'" onclick="return confirm(\''.$confirmStr.'\'" title="'.$titleStr.'">';
+						echo '<a href="usertaxonomymanager.php?delutid=all&deluid=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS) . '&es=' . htmlspecialchars($editorStatus, HTML_SPECIAL_CHARS_FLAGS) . '" onclick="return confirm(\'' . htmlspecialchars($confirmStr, HTML_SPECIAL_CHARS_FLAGS) . '\'" title="' . htmlspecialchars($titleStr, HTML_SPECIAL_CHARS_FLAGS) . '">';
 						echo '<img src="../images/drop.png" style="width:12px;" />';
 						echo '</a>';
 						foreach($uArr as $utid => $utArr){
@@ -184,7 +184,7 @@ $editorArr = $utManager->getTaxonomyEditors();
 							if($utArr['notes']) echo ': '.$utArr['notes'];
 							$confirmStr2 = (isset($LANG['REMOVE_ONE_LINK'])?$LANG['REMOVE_ONE_LINK']:'Are you sure you want to remove this taxonomy link for this user?');
 							$titleStr2 = (isset($LANG['DELETE_A_LINK'])?$LANG['DELETE_A_LINK']:'Delete this user taxonomic relationship');
-							echo '<a href="usertaxonomymanager.php?delutid='.$utid.'" onclick="return confirm(\''.$confirmStr2.'\'" title="'.$titleStr2.'">';
+							echo '<a href="usertaxonomymanager.php?delutid=' . htmlspecialchars($utid, HTML_SPECIAL_CHARS_FLAGS) . '" onclick="return confirm(\'' . htmlspecialchars($confirmStr2, HTML_SPECIAL_CHARS_FLAGS) . '\'" title="' . htmlspecialchars($titleStr2, HTML_SPECIAL_CHARS_FLAGS) . '">';
 							echo '<img src="../images/drop.png" style="width:12px;" />';
 							echo '</a>';
 							echo '</li>';

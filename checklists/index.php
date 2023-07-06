@@ -30,7 +30,7 @@ $clManager->setProj($pid);
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="../index.php"><?php echo (isset($LANG['NAV_HOME'])?$LANG['NAV_HOME']:'Home'); ?></a> &gt;&gt;
+		<a href="../index.php"><?php echo htmlspecialchars((isset($LANG['NAV_HOME'])?$LANG['NAV_HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 		<b><?php echo (isset($LANG['SPECIES_INVENTORIES'])?$LANG['SPECIES_INVENTORIES']:'Species Inventories'); ?></b>
 	</div>
 	<div id="innertext">
@@ -47,14 +47,14 @@ $clManager->setProj($pid);
 						if($projName == 'Miscellaneous Inventories') $projName = (isset($LANG['MISC_INVENTORIES'])?$LANG['MISC_INVENTORIES']:'Miscellaneous Inventories');
 						echo $projName;
 						?>
-						<a class="button button-tertiary btn-medium-font" href="<?php echo "clgmap.php?pid=" . $pid; ?>" title='<?php echo (isset($LANG['SHOW_MAP'])?$LANG['SHOW_MAP']:'Show inventories on map'); ?>'>
+						<a class="button button-tertiary btn-medium-font" href="<?php echo "clgmap.php?pid=" . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>" title='<?php echo htmlspecialchars((isset($LANG['SHOW_MAP'])?$LANG['SHOW_MAP']:'Show inventories on map'), HTML_SPECIAL_CHARS_FLAGS); ?>'>
 							Map <img src='../images/world.png' style='width:10px;border:0' alt='Image of the globe' />
 						</a>
 					</h2>
 					<ul>
 						<?php
 						foreach($projArr['clid'] as $clid => $clName){
-							echo '<li><a href="checklist.php?clid='.$clid.'&pid=' . $pid.'">' . $clName.'</a></li>';
+							echo '<li><a href="checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($clName, HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
 						}
 						?>
 					</ul>

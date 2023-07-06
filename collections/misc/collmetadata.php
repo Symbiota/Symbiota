@@ -67,7 +67,7 @@ $collManager->cleanOutArr($collData);
 
 <head>
 	<title><?php echo $DEFAULT_TITLE . ' ' . ($collid ? $collData['collectionname'] : '') . ' ' . (isset($LANG['COLL_PROFS']) ? $LANG['COLL_PROFS'] : 'Collection Profiles'); ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
@@ -241,9 +241,9 @@ $collManager->cleanOutArr($collData);
 	$displayLeftMenu = (isset($collections_misc_collmetadataMenu) ? $collections_misc_collmetadataMenu : true);
 	include($SERVER_ROOT . '/includes/header.php');
 	echo '<div class="navpath">';
-	echo '<a href="../../index.php">' . (isset($LANG['HOME']) ? $LANG['HOME'] : 'Home') . '</a> &gt;&gt; ';
+	echo '<a href="../../index.php">' . htmlspecialchars((isset($LANG['HOME']) ? $LANG['HOME'] : 'Home'), HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
 	if ($collid) {
-		echo '<a href="collprofiles.php?collid=' . $collid . '&emode=1">' . (isset($LANG['COL_MGMNT']) ? $LANG['COL_MGMNT'] : 'Collection Management') . '</a> &gt;&gt; ';
+		echo '<a href="collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . htmlspecialchars((isset($LANG['COL_MGMNT']) ? $LANG['COL_MGMNT'] : 'Collection Management'), HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
 		echo '<b>' . $collData['collectionname'] . ' ' . (isset($LANG['META_EDIT']) ? $LANG['META_EDIT'] : 'Metadata Editor') . '</b>';
 	}
 	else echo '<b>' . (isset($LANG['CREATE_COLL']) ? $LANG['CREATE_COLL'] : 'Create New Collection Profile') . '</b>';
@@ -267,9 +267,9 @@ $collManager->cleanOutArr($collData);
 				if ($collid) echo '<h1>' . $collData['collectionname'] . (array_key_exists('institutioncode', $collData) ? ' (' . $collData['institutioncode'] . ')' : '') . '</h1>';
 				?>
 				<ul>
-					<li><a href="#colleditor"><?php echo (isset($LANG['COL_META_EDIT']) ? $LANG['COL_META_EDIT'] : 'Collection Metadata Editor'); ?></a></li>
+					<li><a href="#colleditor"><?php echo htmlspecialchars((isset($LANG['COL_META_EDIT']) ? $LANG['COL_META_EDIT'] : 'Collection Metadata Editor'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
 					<?php
-					if ($collid) echo '<li><a href="collmetaresources.php?collid=' . $collid . '">' . (isset($LANG['CONT_RES']) ? $LANG['CONT_RES'] : 'Contacts & Resources') . '</a></li>';
+					if ($collid) echo '<li><a href="collmetaresources.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars((isset($LANG['CONT_RES']) ? $LANG['CONT_RES'] : 'Contacts & Resources'), HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
 					?>
 				</ul>
 				<div id="colleditor">
@@ -286,7 +286,7 @@ $collManager->cleanOutArr($collData);
 									<span id="instcodeinfodialog">
 										<?php
 										echo (isset($LANG['NAME_ONE']) ? $LANG['NAME_ONE'] : '') . ' ';
-										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#institutionCode" target="_blank">' . (isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition') . '</a>.';
+										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#institutionCode" target="_blank">' . htmlspecialchars((isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition'), HTML_SPECIAL_CHARS_FLAGS) . '</a>.';
 										?>
 									</span>
 								</span>
@@ -301,7 +301,7 @@ $collManager->cleanOutArr($collData);
 									<span id="collcodeinfodialog">
 										<?php
 										echo (isset($LANG['NAME_ACRO']) ? $LANG['NAME_ACRO'] : '') . ' ';
-										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#institutionCode" target="_blank">' . (isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition') . '</a>.'
+										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#institutionCode" target="_blank">' . htmlspecialchars((isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition'), HTML_SPECIAL_CHARS_FLAGS) . '</a>.'
 										?>
 									</span>
 								</span>
@@ -420,7 +420,7 @@ $collManager->cleanOutArr($collData);
 									<span id="rightsholderinfodialog">
 										<?php
 										echo (isset($LANG['HOLDER_DEF']) ? $LANG['HOLDER_DEF'] : 'The organization or person managing or owning the rights of the resource. For more details, see') . ' ';
-										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#dcterms:rightsHolder" target="_blank">' . (isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition') . '</a>.'
+										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#dcterms:rightsHolder" target="_blank">' . htmlspecialchars((isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition'), HTML_SPECIAL_CHARS_FLAGS) . '</a>.'
 										?>
 									</span>
 								</span>
@@ -429,13 +429,13 @@ $collManager->cleanOutArr($collData);
 								<span class="field-label"><?php echo (isset($LANG['ACCESS_RIGHTS']) ? $LANG['ACCESS_RIGHTS'] : 'Access Rights'); ?>:</span>
 								<span class="field-elem">
 									<input type="text" name="accessRights" value="<?php echo ($collid ? $collData["accessrights"] : ''); ?>" style="width:600px" />
-									<a id="accessrightsinfo" href="#" onclick="return false" title="<?php echo (isset($LANG['MORE_INFO_ACCESS_RIGHTS']) ? $LANG['MORE_INFO_ACCESS_RIGHTS'] : 'More information about Access Rights'); ?>" tabindex="-1">
+									<a id="accessrightsinfo" href="#" onclick="return false" title="<?php echo htmlspecialchars((isset($LANG['MORE_INFO_ACCESS_RIGHTS']) ? $LANG['MORE_INFO_ACCESS_RIGHTS'] : 'More information about Access Rights'), HTML_SPECIAL_CHARS_FLAGS); ?>" tabindex="-1">
 										<img src="../../images/info.png" style="width:15px;" />
 									</a>
 									<span id="accessrightsinfodialog">
 										<?php
 										echo (isset($LANG['ACCESS_DEF']) ? $LANG['ACCESS_DEF'] : 'Information or a URL link to page with details explaining how one can use the data. See') . ' ';
-										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#dcterms:accessRights" target="_blank">' . (isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition') . '</a>.';
+										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#dcterms:accessRights" target="_blank">' . htmlspecialchars((isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition'), HTML_SPECIAL_CHARS_FLAGS) . '</a>.';
 										?>
 									</span>
 								</span>
@@ -595,7 +595,7 @@ $collManager->cleanOutArr($collData);
 									</a>
 									<span id="collectionidinfodialog">
 										<?php echo (isset($LANG['EXPLAIN_COLLID']) ? $LANG['EXPLAIN_COLLID'] : 'Global Unique Identifier for this collection (see') .
-											' <a href="https://dwc.tdwg.org/terms/#dwc:collectionID" target="_blank">' . (isset($LANG['DWC_COLLID']) ? $LANG['DWC_COLLID'] : 'dwc:collectionID') .
+											' <a href="https://dwc.tdwg.org/terms/#dwc:collectionID" target="_blank">' . htmlspecialchars((isset($LANG['DWC_COLLID']) ? $LANG['DWC_COLLID'] : 'dwc:collectionID'), HTML_SPECIAL_CHARS_FLAGS) .
 											'</a>): ' . (isset($LANG['EXPLAIN_COLLID_2']) ? $LANG['EXPLAIN_COLLID_2'] : 'If your collection already has a previously assigned GUID, that identifier should be represented here.
 										For physical specimens, the recommended best practice is to use an identifier from a collections registry such as the
 										Global Registry of Biodiversity Repositories') . ' (<a href="http://grbio.org" target="_blank">http://grbio.org</a>).';

@@ -596,7 +596,7 @@ class OccurrenceIndividual extends Manager{
 	public function echoTraitUnit($outArr, $label = '', $indent=0){
 		if(isset($outArr['name'])){
 			echo '<div style="margin-left:'.$indent.'px">';
-			if(!empty($outArr['url'])) echo '<a href="'.$outArr['url'].'" target="_blank">';
+			if(!empty($outArr['url'])) echo '<a href="' . htmlspecialchars($outArr['url'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 			echo '<span class="trait-name">';
 			if(!empty($label)) echo $label.' ';
 			echo $outArr['name'];
@@ -681,7 +681,7 @@ class OccurrenceIndividual extends Manager{
 			$emailAddr = $GLOBALS['ADMIN_EMAIL'];
 			$comUrl = $this->getDomain().$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$this->occid.'#commenttab';
 			$subject = $GLOBALS['DEFAULT_TITLE'].' inappropriate comment reported<br/>';
-			$bodyStr = 'The following comment has been recorted as inappropriate:<br/> <a href="'.$comUrl.'">'.$comUrl.'</a>';
+			$bodyStr = 'The following comment has been recorted as inappropriate:<br/> <a href="' . htmlspecialchars($comUrl, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($comUrl, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 			$headerStr = "MIME-Version: 1.0 \r\nContent-type: text/html \r\nTo: ".$emailAddr." \r\nFrom: Admin <".$emailAddr."> \r\n";
 			if(!mail($emailAddr,$subject,$bodyStr,$headerStr)){
 				$this->errorMessage = 'ERROR sending email to portal manager, error unknown';
@@ -1240,7 +1240,7 @@ class OccurrenceIndividual extends Manager{
 		if(preg_match('#ORCID[\s:]+((https://orcid.org/)?\d{4}-\d{4}-\d{4}-\d{3}[0-9X])#', $inStr,$m)){
 			$orcidAnchor = $m[1];
 			if(substr($orcidAnchor,5) != 'https') $orcidAnchor = 'https://orcid.org/'.$orcidAnchor;
-			$orcidAnchor = '<a href="'.$orcidAnchor.'" target="_blank">'.$m[1].'</a>';
+			$orcidAnchor = '<a href="' . htmlspecialchars($orcidAnchor, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($m[1], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 			$retStr = str_replace($m[1], $orcidAnchor, $retStr);
 		}
 		return $retStr;

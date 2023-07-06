@@ -98,9 +98,9 @@ elseif($action == 'listdupsrecordedby'){
 </head>
 <body style="margin-left:0px;margin-right:0px">
 	<div class='navpath'>
-		<a href="../../index.php"><?php echo $LANG['HOME']; ?></a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1"><?php echo $LANG['COL_MAN']; ?></a> &gt;&gt;
-		<a href="index.php?collid=<?php echo $collid; ?>"><?php echo $LANG['CLEAN_MOD_INDEX']; ?></a> &gt;&gt;
+		<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars($LANG['COL_MAN'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+		<a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['CLEAN_MOD_INDEX'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 		<b><?php echo $LANG['DUP_OCCS']; ?></b>
 	</div>
 
@@ -122,8 +122,8 @@ elseif($action == 'listdupsrecordedby'){
 						<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 						<?php
 						if($recCnt > $limit){
-							$href = 'duplicatesearch.php?collid='.$collid.'&action='.$action.'&start='.($start+$limit);
-							echo '<div style="float:right;"><a href="'.$href.'"><b>'.$LANG['NEXT'].' '.$limit.' '.$LANG['RECORDS'].' &gt;&gt;</b></a></div>';
+							$href = 'duplicatesearch.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&action=' . htmlspecialchars($action, HTML_SPECIAL_CHARS_FLAGS) . '&start=' . htmlspecialchars(($start+$limit), HTML_SPECIAL_CHARS_FLAGS);
+							echo '<div style="float:right;"><a href="' . htmlspecialchars($href, HTML_SPECIAL_CHARS_FLAGS) . '"><b>' . htmlspecialchars($LANG['NEXT'], HTML_SPECIAL_CHARS_FLAGS) . ' ' . htmlspecialchars($limit, HTML_SPECIAL_CHARS_FLAGS) . ' ' . htmlspecialchars($LANG['RECORDS'], HTML_SPECIAL_CHARS_FLAGS) . ' &gt;&gt;</b></a></div>';
 						}
 						echo '<div style="float:left;margin-bottom:4px;margin-left:15px;"><input name="action" type="submit" value="Merge Duplicate Records" /></div>';
 						echo '<div style="float:left;margin-left:15px;"><b>'.($start+1).' '.$LANG['TO'].' '.($start+$recCnt).' '.$LANG['DUP_CLUSTERS'].' </b></div>';
@@ -155,7 +155,7 @@ elseif($action == 'listdupsrecordedby'){
 									$first = true;
 									foreach($occArr as $occId => $occArr){
 										echo '<tr '.(($setCnt % 2) == 1?'class="alt"':'').'>';
-										echo '<td><a href="../editor/occurrenceeditor.php?occid='.$occId.'" target="_blank">'.$occId.'</a></td>'."\n";
+										echo '<td><a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($occId, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($occId, HTML_SPECIAL_CHARS_FLAGS) . '</a></td>' . "\n";
 										echo '<td><input name="dupid[]" type="checkbox" value="'.$dupKey.':'.$occId.'" /></td>'."\n";
 										echo '<td><input name="dup'.$dupKey.'target" type="radio" value="'.$occId.'" '.($first?'checked':'').'/></td>'."\n";
 										echo '<td>'.$occArr['catalognumber'].'</td>'."\n";
@@ -214,13 +214,13 @@ elseif($action == 'listdupsrecordedby'){
 					if((count($dupArr)+2)>$limit){
 						?>
 							<div>
-								<a href="index.php?collid=<?php echo $collid; ?>"><?php echo $LANG['RETURN_TO_FORM']; ?></a>
+								<a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['RETURN_TO_FORM'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
 							</div>
 							<?php
 						}
 					?>
 					<div>
-						<a href="index.php?collid=<?php echo $collid; ?>"><?php echo $LANG['RETURN_TO_MAIN']; ?></a>
+						<a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['RETURN_TO_MAIN'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
 					</div>
 				</div>
 				<?php

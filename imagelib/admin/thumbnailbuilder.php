@@ -62,10 +62,10 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="../../index.php"><?php echo $LANG['HOME']; ?></a> &gt;&gt;
+		<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 		<?php
-		if($collid) echo '<a href="../../collections/misc/collprofiles.php?collid='.$collid.'&emode=1">'.$LANG['COL_MAN_MENU'].'</a> &gt;&gt;';
-		else echo '<a href="../../sitemap.php">'.$LANG['SITEMAP'].'</a> &gt;&gt;';
+		if($collid) echo '<a href="../../collections/misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . htmlspecialchars($LANG['COL_MAN_MENU'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt;';
+		else echo '<a href="../../sitemap.php">' . htmlspecialchars($LANG['SITEMAP'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt;';
 		?>
 		<b>Thumbnail Builder</b>
 	</div>
@@ -110,7 +110,7 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 						echo '<ul>';
 						foreach($reportArr as $id => $retArr){
 							echo '<li>';
-							echo '<a href="thumbnailbuilder.php?collid='.$id.'&tid='.$tid.'&action=none">';
+							echo '<a href="thumbnailbuilder.php?collid=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '&tid=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&action=none">';
 							echo $retArr['name'];
 							echo '</a>';
 							echo ': '.$retArr['cnt'].' images';

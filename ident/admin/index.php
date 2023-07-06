@@ -141,7 +141,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 												<?php
 												$charList = $charArr[$hid];
 												foreach($charList as $cid => $charName){
-													echo '<li><a href="chardetails.php?cid='.$cid.'">'.$charName.'</a></li>';
+													echo '<li><a href="chardetails.php?cid=' . htmlspecialchars($cid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($charName, HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
 												}
 												?>
 											</ul>
@@ -159,7 +159,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 										<ul>
 											<?php
 											foreach($noHeaderArr as $cid => $charName){
-												echo '<li><a href="chardetails.php?cid='.$cid.'">'.$charName.'</a></li>';
+												echo '<li><a href="chardetails.php?cid=' . htmlspecialchars($cid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($charName, HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
 											}
 											?>
 										</ul>

@@ -148,7 +148,7 @@ class OccurrenceSesar extends Manager {
 			//$this->logOrEcho('#'.$increment.': IGSN created for <a href="../editor/occurrenceeditor.php?occid='.$this->fieldMap['occid']['value'].'" target="_blank">'.$this->fieldMap['catalogNumber']['value'].'</a>',1);
 			if($this->registrationMethod == 'api'){
 				if($this->registerIdentifiersViaApi()){
-					$this->logOrEcho('#'.$increment.': IGSN registered: <a href="../editor/occurrenceeditor.php?occid='.$r['occid'].'" target="_blank">'.$igsn.'</a>',1);
+					$this->logOrEcho('#' . htmlspecialchars($increment, HTML_SPECIAL_CHARS_FLAGS) . ': IGSN registered: <a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($r['occid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($igsn, HTML_SPECIAL_CHARS_FLAGS) . '</a>',1);
 				}
 				$this->igsnDom = null;
 			}

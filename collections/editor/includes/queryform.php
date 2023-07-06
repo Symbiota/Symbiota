@@ -288,7 +288,7 @@ else{
 						if($qDateLastModified) $qryStr .= '&datelastmodified='.$qDateLastModified;
 						if($qryStr){
 							?>
-							<a href="../reports/labelmanager.php?collid=<?php echo $collId.$qryStr; ?>" target="_blank">
+							<a href="../reports/labelmanager.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars($qryStr, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank">
 								<button type="button" class="icon-button" title="<?php echo $LANG['GO_LABEL_PRINT']; ?>">
 									<img src="../../images/list.png" style="width:15px; height:15px" />
 								</button>

@@ -267,8 +267,8 @@ class ProfileManager extends Manager{
 				$body = 'Your '.$GLOBALS['DEFAULT_TITLE'].' password has been reset to: '.$newPassword.'<br/><br/> '.
 					'After logging in, you can change your password by clicking on the My Profile link within the site menu and then selecting the Edit Profile tab. '.
 					'If you have problems, contact the System Administrator: '.$GLOBALS['ADMIN_EMAIL'].'<br/><br/>'.
-					'Data portal: <a href="'.$serverPath.'">'.$serverPath.'</a><br/>'.
-					'Direct link to your user profile: <a href="'.$serverPath.'/profile/viewprofile.php?tabindex=2">'.$serverPath.'/profile/viewprofile.php</a>';
+					'Data portal: <a href="' . htmlspecialchars($serverPath, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($serverPath, HTML_SPECIAL_CHARS_FLAGS) . '</a><br/>'.
+					'Direct link to your user profile: <a href="' . htmlspecialchars($serverPath, HTML_SPECIAL_CHARS_FLAGS) . '/profile/viewprofile.php?tabindex=2">' . htmlspecialchars($serverPath, HTML_SPECIAL_CHARS_FLAGS) . '/profile/viewprofile.php</a>';
 
 				if($this->sendEmail($email, $subject, $body, $from)){
 					$this->resetConnection();
@@ -367,7 +367,7 @@ class ProfileManager extends Manager{
 		if($loginStr){
 			$subject = $GLOBALS['DEFAULT_TITLE'].' Login Name';
 			$serverPath = $this->getDomain().$GLOBALS['CLIENT_ROOT'];
-			$bodyStr = 'Your '.$GLOBALS['DEFAULT_TITLE'].' (<a href="'.$serverPath.'">'.$serverPath.'</a>) login name is: '.
+			$bodyStr = 'Your '.$GLOBALS['DEFAULT_TITLE'].' (<a href="' . htmlspecialchars($serverPath, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($serverPath, HTML_SPECIAL_CHARS_FLAGS) . '</a>) login name is: '.
 				$loginStr.'<br/><br/>If you continue to have login issues, contact the System Administrator: '.$GLOBALS['ADMIN_EMAIL'];
 			$status = $this->sendEmail($emailAddr, $subject, $bodyStr, $from);
 		}
@@ -661,7 +661,7 @@ class ProfileManager extends Manager{
 					if($rs->num_rows){
 						while($r = $rs->fetch_object()){
 							echo '<li><i>'.$r->sciname.'</i>, ';
-							echo '<a href="../collections/editor/occurrenceeditor.php?occid='.$r->occid.'" target="_blank">';
+							echo '<a href="../collections/editor/occurrenceeditor.php?occid=' . htmlspecialchars($r->occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 							echo $r->catalognumber.'</a> ['.$r->collcode.']'.($r->stateprovince?', '.$r->stateprovince:'');
 							echo '</li>'."\n";
 						}
@@ -695,7 +695,7 @@ class ProfileManager extends Manager{
 			if($rs->num_rows){
 				while($r = $rs->fetch_object()){
 					echo '<li>';
-					echo '<a href="../collections/editor/occurrenceeditor.php?occid='.$r->occid.'" target="_blank">';
+					echo '<a href="../collections/editor/occurrenceeditor.php?occid=' . htmlspecialchars($r->occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 					echo $r->catalognumber.'</a> ['.$r->collcode.']'.($r->stateprovince?', '.$r->stateprovince:'');
 					echo '</li>'."\n";
 				}

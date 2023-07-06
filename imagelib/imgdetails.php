@@ -72,7 +72,7 @@ if($imgArr){
 	}
 	?>
 	<title><?php echo $DEFAULT_TITLE." Image Details: #".$imgId; ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
@@ -133,8 +133,8 @@ if($imgArr){
 		<a href="index.php">Image Browser</a> &gt;&gt;
 		<a href="search.php">Image Search</a> &gt;&gt;
 		<?php
-		//if(isset($imgArr['tid']) && $imgArr['tid']) echo '<a href="../taxa/index.php?tid='.$imgArr['tid'].'">Image Search</a> &gt;&gt;';
-		//echo '<b>Image Profile: image <a href="imgdetails.php?imgid='.$imgId.'">#'.$imgId.'</a></b>';
+		//if(isset($imgArr['tid']) && $imgArr['tid']) echo '<a href="../taxa/index.php?tid=' . htmlspecialchars($imgArr['tid'], HTML_SPECIAL_CHARS_FLAGS) . '">Image Search</a> &gt;&gt;';
+		//echo '<b>Image Profile: image <a href="imgdetails.php?imgid=' . htmlspecialchars($imgId, HTML_SPECIAL_CHARS_FLAGS) . '">#' . htmlspecialchars($imgId, HTML_SPECIAL_CHARS_FLAGS) . '</a></b>';
 		?>
 	</div>
 	 -->
@@ -148,7 +148,7 @@ if($imgArr){
 				if($SYMB_UID && ($IS_ADMIN || array_key_exists("TaxonProfile",$USER_RIGHTS))){
 					?>
 					<div style="float:right;margin-right:15px;" title="Go to Taxon Profile editing page">
-						<a href="../taxa/profile/tpeditor.php?tid=<?php echo $imgArr['tid']; ?>&tabindex=1" target="_blank">
+						<a href="../taxa/profile/tpeditor.php?tid=<?php echo htmlspecialchars($imgArr['tid'], HTML_SPECIAL_CHARS_FLAGS); ?>&tabindex=1" target="_blank">
 							<img src="../images/edit.png" style="border:0px;" /><span style="font-size:70%">TP</span>
 						</a>
 					</div>
@@ -157,7 +157,7 @@ if($imgArr){
 				if($imgArr['occid']){
 					?>
 					<div style="float:right;margin-right:15px;" title="Must have editing privileges for this collection managing image">
-						<a href="../collections/editor/occurrenceeditor.php?occid=<?php echo $imgArr['occid']; ?>&tabtarget=2" target="_blank">
+						<a href="../collections/editor/occurrenceeditor.php?occid=<?php echo htmlspecialchars($imgArr['occid'], HTML_SPECIAL_CHARS_FLAGS); ?>&tabtarget=2" target="_blank">
 							<img src="../images/edit.png" style="border:0px;" /><span style="font-size:70%">SPEC</span>
 						</a>
 					</div>
@@ -176,7 +176,7 @@ if($imgArr){
 				}
 				?>
 				<div style="float:right;margin-right:10px;">
-					<a class="twitter-share-button" data-text="<?php echo $imgArr["sciname"]; ?>" href="https://twitter.com/share" data-url="<?php echo $_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/imagelib/imgdetails.php?imgid='.$imgId; ?>">Tweet</a>
+					<a class="twitter-share-button" data-text="<?php echo $imgArr["sciname"]; ?>" href="https://twitter.com/share" data-url="<?php echo htmlspecialchars($_SERVER['HTTP_HOST'], HTML_SPECIAL_CHARS_FLAGS). htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/imagelib/imgdetails.php?imgid=' . htmlspecialchars($imgId, HTML_SPECIAL_CHARS_FLAGS); ?>">Tweet</a>
 					<script>
 						window.twttr=(function(d,s,id){
 							var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};
@@ -353,16 +353,16 @@ if($imgArr){
 					$imgDisplay = $imgUrl;
 					if((!$imgDisplay || $imgDisplay == 'empty') && $origUrl) $imgDisplay = $origUrl;
 					?>
-					<a href="<?php echo $imgDisplay;?>">
-						<img src="<?php echo $imgDisplay;?>" style="width:300px;" />
+					<a href="<?php echo htmlspecialchars($imgDisplay, HTML_SPECIAL_CHARS_FLAGS);?>">
+						<img src="<?php echo htmlspecialchars($imgDisplay, HTML_SPECIAL_CHARS_FLAGS);?>" style="width:300px;" />
 					</a>
 					<?php
-					if($origUrl) echo '<div><a href="'.$origUrl.'">Click on Image to Enlarge</a></div>';
+					if($origUrl) echo '<div><a href="' . htmlspecialchars($origUrl, HTML_SPECIAL_CHARS_FLAGS) . '">Click on Image to Enlarge</a></div>';
 					?>
 				</div>
 				<div style="padding:10px;float:left;">
 					<div style="clear:both;margin-top:40px;">
-						<b>Scientific Name:</b> <?php echo '<a href="../taxa/index.php?taxon='.$imgArr["tid"].'"><i>'.$imgArr["sciname"].'</i> '.$imgArr["author"].'</a>'; ?>
+						<b>Scientific Name:</b> <?php echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($imgArr["tid"], HTML_SPECIAL_CHARS_FLAGS) . '"><i>' . htmlspecialchars($imgArr["sciname"], HTML_SPECIAL_CHARS_FLAGS) . '</i> ' . htmlspecialchars($imgArr["author"], HTML_SPECIAL_CHARS_FLAGS) . '</a>'; ?>
 					</div>
 					<?php
 					if($imgArr['caption']) echo '<div><b>Caption:</b> '.$imgArr['caption'].'</div>';
@@ -370,30 +370,30 @@ if($imgArr){
 						echo '<div><b>Photographer:</b> ';
 						if(!$imgArr['photographer']){
 							$phLink = 'search.php?imagetype=all&phuid='.$imgArr['photographeruid'].'&submitaction=search';
-							echo '<a href="'.$phLink.'">';
+							echo '<a href="' . htmlspecialchars($phLink, HTML_SPECIAL_CHARS_FLAGS) . '">';
 						}
 						echo $imgArr['photographerdisplay'];
 						if(!$imgArr['photographer']) echo '</a>';
 						echo '</div>';
 					}
 					if($imgArr['owner']) echo '<div><b>Manager:</b> '.$imgArr['owner'].'</div>';
-					if($imgArr['sourceurl']) echo '<div><b>Image Source:</b> <a href="'.$imgArr['sourceurl'].'" target="_blank">'.$imgArr['sourceurl'].'</a></div>';
+					if($imgArr['sourceurl']) echo '<div><b>Image Source:</b> <a href="' . htmlspecialchars($imgArr['sourceurl'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($imgArr['sourceurl'], HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 					if($imgArr['locality']) echo '<div><b>Locality:</b> '.$imgArr['locality'].'</div>';
 					if($imgArr['notes']) echo '<div><b>Notes:</b> '.$imgArr['notes'].'</div>';
 					if($imgArr['rights']) echo '<div><b>Rights:</b> '.$imgArr['rights'].'</div>';
 					if($imgArr['copyright']){
 						echo '<div>';
 						echo '<b>Copyright:</b> ';
-						if(stripos($imgArr['copyright'],'http') === 0) echo '<a href="'.$imgArr['copyright'].'">'.$imgArr['copyright'].'</a>';
+						if(stripos($imgArr['copyright'],'http') === 0) echo '<a href="' . htmlspecialchars($imgArr['copyright'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($imgArr['copyright'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 						else echo $imgArr['copyright'];
 						echo '</div>';
 					}
 					else{
 						echo '<div><a href="../includes/usagepolicy.php#images">Copyright Details</a></div>';
 					}
-					if($imgArr['occid']) echo '<div><a href="../collections/individual/index.php?occid='.$imgArr['occid'].'">Display Specimen Details</a></div>';
-					if($imgUrl) echo '<div><a href="'.$imgUrl.'">Open Medium Sized Image</a></div>';
-					if($origUrl) echo '<div><a href="'.$origUrl.'">Open Large Image</a></div>';
+					if($imgArr['occid']) echo '<div><a href="../collections/individual/index.php?occid=' .htmlspecialchars($imgArr['occid'], HTML_SPECIAL_CHARS_FLAGS) . '">Display Specimen Details</a></div>';
+					if($imgUrl) echo '<div><a href="' . htmlspecialchars($imgUrl, HTML_SPECIAL_CHARS_FLAGS) . '">Open Medium Sized Image</a></div>';
+					if($origUrl) echo '<div><a href="' . htmlspecialchars($origUrl, HTML_SPECIAL_CHARS_FLAGS) . '">Open Large Image</a></div>';
 					?>
 					<div style="margin-top:20px;">
 						Do you see an error or have a comment about this image? <br/>If so, send email to:
@@ -401,7 +401,7 @@ if($imgArr){
 						$emailSubject = $DEFAULT_TITLE.' Image #'.$imgId;
 						$emailBody = 'Image being referenced: '.$serverPath.$CLIENT_ROOT.'/imagelib/imgdetails.php?imgid='.$imgId;
 						$emailRef = 'subject='.$emailSubject.'&cc='.$ADMIN_EMAIL.'&body='.$emailBody;
-						echo '<a href="mailto:'.$ADMIN_EMAIL.'?'.$emailRef.'">'.$ADMIN_EMAIL.'</a>';
+						echo '<a href="mailto:' . htmlspecialchars($ADMIN_EMAIL, HTML_SPECIAL_CHARS_FLAGS) . '?' . htmlspecialchars($emailRef, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($ADMIN_EMAIL, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 						?>
 					</div>
 				</div>
