@@ -15,22 +15,22 @@
 <!-- Importing Leaflet Draw Plugin --> 
 <link 
    rel="stylesheet" 
-   href="../../js/leaflet-draw/dist/leaflet.draw.css"
+   href="/Portal/js/leaflet-draw/dist/leaflet.draw.css"
 />
 <script 
-   src="../../js/leaflet-draw/dist/leaflet.draw.js" 
+   src="<?php echo $CLIENT_ROOT?>/js/leaflet-draw/dist/leaflet.draw.js"
    type="text/javascript">
 </script>
 
 <!-- Importing Leaflet Draw Drag --> 
 <script 
-   src="../../js/leaflet-draw-drag/dist/Leaflet.draw.drag.js" 
+   src= <?php echo $CLIENT_ROOT."/js/leaflet-draw-drag/dist/Leaflet.draw.drag.js" ?>
    type="text/javascript">
 </script>
 
 <!-- Importing Leaflet Related Functions--> 
 <script 
-   src="../../js/symb/LeafletMap.js" 
+   src=<?php echo $CLIENT_ROOT."/js/symb/LeafletMap.js" ?>
    type="text/javascript">
 </script>
 
