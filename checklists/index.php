@@ -16,7 +16,7 @@ if(!is_numeric($pid)) $pid = 0;
 $clManager = new ChecklistManager();
 $clManager->setProj($pid);
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Species Lists</title>
 	<?php
@@ -47,8 +47,8 @@ $clManager->setProj($pid);
 						if($projName == 'Miscellaneous Inventories') $projName = (isset($LANG['MISC_INVENTORIES'])?$LANG['MISC_INVENTORIES']:'Miscellaneous Inventories');
 						echo $projName;
 						?>
-						<a href="<?php echo "clgmap.php?pid=" . $pid; ?>" title='<?php echo (isset($LANG['SHOW_MAP'])?$LANG['SHOW_MAP']:'Show inventories on map'); ?>'>
-							<img src='../images/world.png' style='width:10px;border:0' alt='Image of the globe' />
+						<a class="button button-tertiary btn-medium-font" href="<?php echo "clgmap.php?pid=" . $pid; ?>" title='<?php echo (isset($LANG['SHOW_MAP'])?$LANG['SHOW_MAP']:'Show inventories on map'); ?>'>
+							Map <img src='../images/world.png' style='width:10px;border:0' alt='Image of the globe' />
 						</a>
 					</h2>
 					<ul>
