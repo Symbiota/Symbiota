@@ -48,7 +48,7 @@ if($collMap['colltype'] == 'General Observations' && $obsUid !== 0){
 	?>
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
+		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">Collection Management</a> &gt;&gt;
 		<b>Batch Field Cleaning Tools</b>
 	</div>
 

@@ -30,7 +30,7 @@ $rsArr = $rsManager->getProtectedSpeciesList();
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title>Rare, Threatened, Sensitive Species</title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -178,11 +178,11 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 					<div style='margin-left:20px;'>
 						<?php
 						foreach($speciesArr as $tid => $nameArr){
-							echo '<div id="tid-'.$tid.'"><a href="../../taxa/index.php?taxon='.$tid.'" target="_blank"><i>'.$nameArr['sciname'].'</i> '.$nameArr['author'].'</a> ';
+							echo '<div id="tid-'.$tid.'"><a href="../../taxa/index.php?taxon=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><i>' . htmlspecialchars($nameArr['sciname'], HTML_SPECIAL_CHARS_FLAGS) . '</i> ' . htmlspecialchars($nameArr['author'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
 							if($isEditor){
 								?>
 								<span class="editobj" style="display:none;">
-									<a href="protectedspecies.php?submitaction=deletespecies&tidtodel=<?php echo $tid;?>">
+									<a href="protectedspecies.php?submitaction=deletespecies&tidtodel=<?php echo htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS);?>">
 										<img src="../../images/del.png" style="width:13px;border:0px;" title="remove species from list" />
 									</a>
 								</span>
@@ -212,7 +212,7 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 			foreach($stateList as $clid => $stateArr){
 				if($isEditor || $stateArr['access'] == 'public'){
 					echo '<div>';
-					echo '<a href="../../checklists/checklist.php?clid='.$clid.'">';
+					echo '<a href="../../checklists/checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '">';
 					echo $stateArr['locality'].': '.$stateArr['name'];
 					echo '</a>';
 					if($stateArr['access'] == 'private') echo ' (private)';

@@ -19,7 +19,7 @@ if($IS_ADMIN) $isEditor = 1;
 <html lang="en">
 	<head>
 		<title><?php echo $DEFAULT_TITLE; ?> Portal Index Control Panel</title>
-		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -62,8 +62,8 @@ if($IS_ADMIN) $isEditor = 1;
 					echo '<fieldset>';
 					echo '<legend>Action Panel</legend>';
 					if($formSubmit == 'importProfile'){
-						if($collid = $portalManager->importProfile($portalID, $remoteID)) echo '<div><a href="../collections/misc/collprofiles.php?collid='.$collid.'" target="_blank">New snapshot collection created</a></div>';
-						else echo '<div>failed to insert new collections: '.$portalManager->getErrorMessage().'</div>';
+						if($collid = $portalManager->importProfile($portalID, $remoteID)) echo '<div><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">New snapshot collection created</a></div>';
+						else echo '<div>failed to insert new collections: ' . $portalManager->getErrorMessage() . '</div>';
 					}
 					elseif($formSubmit == 'initiateHandshake'){
 						if($resArr = $portalManager->initiateHandshake($remotePath)){
@@ -108,7 +108,7 @@ if($IS_ADMIN) $isEditor = 1;
 								$href = '';
 								if($fieldName=='urlRoot') $href = $fieldValue;
 								elseif($fieldName=='guid') $href = $portalArr['urlRoot'].'/api/v2/installation/ping';
-								if($href) echo '<a href="'.$href.'" target="_blank">';
+								if($href) echo '<a href="' . htmlspecialchars($href, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 								echo $fieldValue;
 								if($href) echo '</a>';
 								echo '</div>';
@@ -130,7 +130,7 @@ if($IS_ADMIN) $isEditor = 1;
 								}
 							}
 							$remoteUrl = $portalArr['urlRoot'].'/collections/misc/collprofiles.php?collid='.$remoteCollid;
-							echo '<div><label>Remote collection</label>: <a href="'.$remoteUrl.'" target="_blank">'.$remoteUrl.'</a></div>';
+							echo '<div><label>Remote collection</label>: <a href="' . htmlspecialchars($remoteUrl, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($remoteUrl, HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 							if($internalArr){
 								echo '<fieldset>';
 								echo '<legend>Internally Mapped Snapshot Collection</legend>';
@@ -139,7 +139,7 @@ if($IS_ADMIN) $isEditor = 1;
 									echo '<div><label>Specimen count</label>: '.number_format($intArr['recordCnt']).'</div>';
 									echo '<div><label>Refresh date</label>: '.$intArr['uploadDate'].'</div>';
 									$internalUrl = $CLIENT_ROOT.'/collections/misc/collprofiles.php?collid='.$collid;
-									echo '<div><label>Internal collection</label>: <a href="'.$internalUrl.'" target="_blank">'.$internalUrl.'</a></div>';
+									echo '<div><label>Internal collection</label>: <a href="' . htmlspecialchars($internalUrl, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($internalUrl, HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 									if($importProfile = $portalManager->getDataImportProfile($collid)){
 										foreach($importProfile as $uspid => $profileArr){
 											echo '<hr/>';
@@ -148,8 +148,8 @@ if($IS_ADMIN) $isEditor = 1;
 											echo '<div><label>Path</label>: '.$profileArr['path'].'</div>';
 											echo '<div><label>Query string</label>: '.$profileArr['queryStr'].'</div>';
 											echo '<div><label>Stored procedure (cleaning)</label>: '.$profileArr['cleanUpSp'].'</div>';
-											echo '<div>Display all <a href="../collections/admin/specuploadmanagement.php?collid='.$collid.'" target="_blank">Import Profiles</a></div>';
-											echo '<div>Initiate <a href="../collections/admin/specuploadmap.php?uploadtype=13&uspid='.$uspid.'&collid='.$collid.'" target="_blank">Data Import</a></div>';
+											echo '<div>Display all <a href="../collections/admin/specuploadmanagement.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">Import Profiles</a></div>';
+											echo '<div>Initiate <a href="../collections/admin/specuploadmap.php?uploadtype=13&uspid=' . htmlspecialchars($uspid, HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">Data Import</a></div>';
 											echo '</div>';
 										}
 									}
@@ -176,14 +176,14 @@ if($IS_ADMIN) $isEditor = 1;
 								echo '<tr><th>ID</th><th>Institution Code</th><th>Collection Code</th><th>Collection Name</th><th>Dataset Type</th><th>Management</th><th>Mapped Internally</th></tr>';
 								foreach($collList as $collArr){
 									echo '<tr>';
-									echo '<td><a href="portalindex.php?portalid='.$portalID.'&remoteid='.$collArr['collID'].'">'.$collArr['collID'].'</a></td>';
+									echo '<td><a href="portalindex.php?portalid=' . htmlspecialchars($portalID, HTML_SPECIAL_CHARS_FLAGS) . '&remoteid=' . htmlspecialchars($collArr['collID'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($collArr['collID'], HTML_SPECIAL_CHARS_FLAGS) . '</a></td>';
 									echo '<td>'.$collArr['institutionCode'].'</td>';
 									echo '<td>'.$collArr['collectionCode'].'</td>';
 									echo '<td>'.$collArr['collectionName'].'</td>';
 									echo '<td>'.$collArr['collType'].'</td>';
 									echo '<td>'.$collArr['managementType'].'</td>';
 									if(isset($collArr['internal']) && $collArr['internal'])
-										$internal = '<a href="'.$CLIENT_ROOT.'/collections/misc/collprofiles.php?collid='.key($collArr['internal']).'" target="_blank">Yes</a>';
+										$internal = '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/collections/misc/collprofiles.php?collid=' . htmlspecialchars(key($collArr['internal']), HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">Yes</a>';
 									else $internal = 'No';
 									echo '<td>'.$internal.'</td>';
 									echo '</tr>';

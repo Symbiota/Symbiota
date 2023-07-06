@@ -70,7 +70,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 							<input name="occid[]" type="checkbox" value="<?php echo $vArr['occid']; ?>" />
 						</td>
 						<td>
-							<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo $vArr['tid']."&clid=".$vArr['clid']; ?>','editorwindow');">
+							<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo htmlspecialchars($vArr['tid'], HTML_SPECIAL_CHARS_FLAGS) . "&clid=" . htmlspecialchars($vArr['clid'], HTML_SPECIAL_CHARS_FLAGS); ?>','editorwindow');">
 								<?php echo $vArr['listid']; ?>
 							</a>
 							<?php
@@ -78,7 +78,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 							?>
 						</td>
 						<td>
-							<a href="#" onclick="return openPopup('../collections/individual/index.php?occid=<?php echo $vArr['occid']; ?>','occwindow');">
+							<a href="#" onclick="return openPopup('../collections/individual/index.php?occid=<?php echo htmlspecialchars($vArr['occid'], HTML_SPECIAL_CHARS_FLAGS); ?>','occwindow');">
 								<?php echo $vArr['recordnumber']; ?>
 							</a>
 						</td>

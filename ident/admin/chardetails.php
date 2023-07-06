@@ -71,7 +71,7 @@ if(!$cid) header('Location: index.php');
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 	<title>Character Admin</title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -269,7 +269,7 @@ if(!$cid) header('Location: index.php');
 			    <ul>
 					<li><a href="#chardetaildiv"><span>Details</span></a></li>
 					<li><a href="#charstatediv"><span>Character States</span></a></li>
-					<li><a href="taxonomylinkage.php?cid=<?php echo $cid; ?>"><span>Taxonomic Linkages</span></a></li>
+					<li><a href="taxonomylinkage.php?cid=<?php echo htmlspecialchars($cid, HTML_SPECIAL_CHARS_FLAGS); ?>"><span>Taxonomic Linkages</span></a></li>
 					<li><a href="#chardeldiv"><span>Admin</span></a></li>
 				</ul>
 				<div id="chardetaildiv">
@@ -322,7 +322,7 @@ if(!$cid) header('Location: index.php');
 								<b>Help URL</b><br />
 								<input type="text" name="helpurl" maxlength="500" style="width:80%;" value="<?php echo $charArr['helpurl']; ?>" />
 								<?php
-								if($charArr['helpurl'] && substr($charArr['helpurl'],0,4) == 'http') echo '<a href="'.$charArr['helpurl'].'" target="_blank"><img src="../../images/link2.png" style="width:15px" /></a>';
+								if($charArr['helpurl'] && substr($charArr['helpurl'],0,4) == 'http') echo '<a href="' . htmlspecialchars($charArr['helpurl'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><img src="../../images/link2.png" style="width:15px" /></a>';
 								?>
 							</div>
 							<?php
@@ -498,7 +498,7 @@ if(!$cid) header('Location: index.php');
 										if(isset($stateArr['csimgid'])){
 											?>
 											<div style="padding-top:2px;">
-												<a href="<?php echo $stateArr['url']; ?>" target="_blank"><img src="<?php echo $stateArr['url']; ?>" style="width:200px;" /></a>
+												<a href="<?php echo htmlspecialchars($stateArr['url'], HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><img src="<?php echo htmlspecialchars($stateArr['url'], HTML_SPECIAL_CHARS_FLAGS); ?>" style="width:200px;" /></a>
 											</div>
 											<form name="stateillustdelform-<?php echo $stateArr['csimgid']; ?>" action="chardetails.php" method="post" onsubmit="return verifyStateIllustDelForm(this)" >
 												<div style="margin:10px;">

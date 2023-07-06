@@ -43,10 +43,10 @@ $clManager->setPid($pid);
 			foreach($projArr as $pidKey => $pArr){
 				$clArr = $pArr['clid'];
 				echo '<div style="margin:3px 0px 0px 15px;">';
-				echo '<h3>'.$pArr['name'].' <a href="../checklists/clgmap.php?pid='.$pidKey.'&target=keys"><img src="../images/world.png" style="width:10px;border:0" /></a></h3>';
+				echo '<h3>'.$pArr['name'].' <a href="../checklists/clgmap.php?pid=' . htmlspecialchars($pidKey, HTML_SPECIAL_CHARS_FLAGS) . '&target=keys"><img src="../images/world.png" style="width:10px;border:0" /></a></h3>';
 				echo '<div><ul>';
 				foreach($clArr as $clid => $clName){
-					echo '<li><a href="key.php?clid='.$clid.'&pid='.$pidKey.'&taxon=All+Species">'.$clName.'</a></li>';
+					echo '<li><a href="key.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pidKey, HTML_SPECIAL_CHARS_FLAGS) . '&taxon=All+Species">' . htmlspecialchars($clName, HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
 				}
 				echo "</ul></div>";
 				echo "</div>";

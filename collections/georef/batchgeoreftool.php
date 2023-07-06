@@ -96,7 +96,7 @@ if($isEditor && $submitAction){
 <html>
 	<head>
 		<title><?php echo $DEFAULT_TITLE.' '.$LANG['GEOREF_TOOLS']; ?></title>
-		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -126,16 +126,16 @@ if($isEditor && $submitAction){
 					}
 					?>
 					<div class='navpath' style="margin:10px;clear:both;">
-						<a href='../../index.php'><?php echo $LANG['HOME']; ?></a> &gt;&gt;
+						<a href='../../index.php'><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 						<?php
 						if(is_numeric($collid)){
 							?>
-							<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1"><?php echo $LANG['COL_MAN_MENU']; ?></a> &gt;&gt;
+							<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars( $collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars($LANG['COL_MAN_MENU'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 							<?php
 						}
 						else{
 							?>
-							<a href="../../profile/viewprofile.php?tabindex=1"><?php echo $LANG['SPEC_MANAGEMENT']; ?></a> &gt;&gt;
+							<a href="../../profile/viewprofile.php?tabindex=1"><?php echo htmlspecialchars($LANG['SPEC_MANAGEMENT'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 							<?php
 						}
 						?>

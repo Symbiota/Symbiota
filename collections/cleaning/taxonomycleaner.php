@@ -148,17 +148,17 @@ elseif($activeCollArr){
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div class='navpath'>
-			<a href="../../index.php"><?php echo $LANG['HOME']; ?></a> &gt;&gt;
+			<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 			<?php
 			if($collid && is_numeric($collid)){
 				?>
-				<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1"><?php echo $LANG['COL_MAN_MEN']; ?></a> &gt;&gt;
-				<a href="index.php?collid=<?php echo $collid; ?>&emode=1"><?php echo $LANG['DATA_CLEAN_MEN']; ?></a> &gt;&gt;
+				<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars($LANG['COL_MAN_MEN'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+				<a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars($LANG['DATA_CLEAN_MEN'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 				<?php
 			}
 			else{
 				?>
-				<a href="../../profile/viewprofile.php?tabindex=1"><?php echo $LANG['SPEC_MAN']; ?></a> &gt;&gt;
+				<a href="../../profile/viewprofile.php?tabindex=1"><?php echo htmlspecialchars($LANG['SPEC_MAN'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 				<?php
 			}
 			?>
@@ -177,7 +177,7 @@ elseif($activeCollArr){
 							echo $collMap[$collid]['collectionname'].' ('.$collMap[$collid]['code'].')';
 						}
 						else{
-							echo $LANG['MULT_CLEAN_TOOL'].' '.'(<a href="#" onclick="$(\'#collDiv\').show()" style="color:blue;text-decoration:underline">'.count($activeCollArr).' '.$LANG['COLS'].'</a>)';
+							echo $LANG['MULT_CLEAN_TOOL'].' '.'(<a href="#" onclick="$(\'#collDiv\').show()" style="color:blue;text-decoration:underline">' . htmlspecialchars(count($activeCollArr), HTML_SPECIAL_CHARS_FLAGS) . ' ' . htmlspecialchars($LANG['COLS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>)';
 						}
 						?>
 					</div>

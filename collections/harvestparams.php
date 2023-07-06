@@ -61,8 +61,8 @@ $attribSearch = new OccurrenceAttributeSearch();
 	else{
 		?>
 		<div class='navpath'>
-			<a href="../index.php"><?php echo $LANG['NAV_HOME']; ?></a> &gt;&gt;
-			<a href="index.php"><?php echo $LANG['NAV_COLLECTIONS']; ?></a> &gt;&gt;
+			<a href="../index.php"><?php echo htmlspecialchars($LANG['NAV_HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+			<a href="index.php"><?php echo htmlspecialchars($LANG['NAV_COLLECTIONS'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 			<b><?php echo $LANG['NAV_SEARCH']; ?></b>
 		</div>
 		<?php
@@ -139,7 +139,7 @@ $attribSearch = new OccurrenceAttributeSearch();
 						<?php echo $LANG['LL_BOUND_TEXT']; ?>
 					</div>
 					<div class="iconDiv">
-						<a href="#" onclick="openCoordAid('rectangle');return false;"><img src="../images/map.png" title="<?php echo (isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'); ?>" /></a>
+						<a href="#" onclick="openCoordAid('rectangle');return false;"><img src="../images/map.png" title="<?php echo htmlspecialchars((isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'), HTML_SPECIAL_CHARS_FLAGS); ?>" /></a>
 					</div>
 					<div class="elemDiv">
 						<div>
@@ -187,7 +187,7 @@ $attribSearch = new OccurrenceAttributeSearch();
 						</label>
 					</div>
 					<div class="iconDiv">
-						&nbsp;<a href="#" onclick="openCoordAid('polygon');return false;"><img src="../images/map.png" title="<?php echo (isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'); ?>" /></a>
+						&nbsp;<a href="#" onclick="openCoordAid('polygon');return false;"><img src="../images/map.png" title="<?php echo htmlspecialchars((isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'), HTML_SPECIAL_CHARS_FLAGS); ?>" /></a>
 					</div>
 					<div class="elemDiv">
 						<textarea id="footprintwkt" name="footprintwkt" onchange="this.value = validatePolygon(this.value)" style="zIndex:999;width:100%;height:90px"></textarea>

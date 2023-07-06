@@ -69,7 +69,7 @@ if ($isEditor) {
 	<meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate">
 	<meta http-equiv="Pragma" content="no-cache">
 	<title><?php echo $LANG['DWCA_PUBLISHER']; ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
@@ -184,15 +184,15 @@ if ($isEditor) {
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href="../../index.php"><?php echo $LANG['HOME']; ?></a> &gt;&gt;
+		<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 		<?php
 		if ($collid) {
 			?>
-			<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1"><?php echo $LANG['COL_MANAGEMENT']; ?></a> &gt;&gt;
+			<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars($LANG['COL_MANAGEMENT'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 			<?php
 		} else {
 			?>
-			<a href="../../sitemap.php"><?php echo $LANG['SITEMAP']; ?></a> &gt;&gt;
+			<a href="../../sitemap.php"><?php echo htmlspecialchars($LANG['SITEMAP'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 			<?php
 		}
 		?>
@@ -205,7 +205,7 @@ if ($isEditor) {
 		if (!$collid && $IS_ADMIN) {
 			?>
 			<div style="float:right;">
-				<a href="#" title="<?php echo $LANG['DISPLAY_CONTROL_PANEL']; ?>" onclick="toggle('dwcaadmindiv')">
+				<a href="#" title="<?php echo htmlspecialchars($LANG['DISPLAY_CONTROL_PANEL'], HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="toggle('dwcaadmindiv')">
 					<img style="border:0;width:12px;" src="../../images/edit.png" />
 				</a>
 			</div>
@@ -218,9 +218,9 @@ if ($isEditor) {
 			<div style="margin:10px;">
 				<?php
 				echo $LANG['DWCA_EXPLAIN_1'] . ' <a href="https://en.wikipedia.org/wiki/Darwin_Core_Archive" target="_blank">' . $LANG['DWCA'] . '</a> ' . $LANG['DWCA_EXPLAIN_2'] .
-					' <a href="http://rs.tdwg.org/dwc/terms/" target="_blank">' . $LANG['DWC'] . '</a> ' . $LANG['DWCA_EXPLAIN_3'] .
-					' <a href="https://biokic.github.io/symbiota-docs/coll_manager/data_publishing/idigbio/" target="_blank"> ' . $LANG['PUBLISH_IDIGBIO'] . '</a> &amp;' .
-					' <a href="https://biokic.github.io/symbiota-docs/coll_manager/data_publishing/gbif/" target="_blank"> ' . $LANG['PUBLISH_GBIF'] . '</a>.';
+					' <a href="http://rs.tdwg.org/dwc/terms/" target="_blank">' . htmlspecialchars($LANG['DWC'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($LANG['DWCA_EXPLAIN_3'], HTML_SPECIAL_CHARS_FLAGS) .
+					' <a href="https://biokic.github.io/symbiota-docs/coll_manager/data_publishing/idigbio/" target="_blank"> ' . htmlspecialchars($LANG['PUBLISH_IDIGBIO'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &amp;' .
+					' <a href="https://biokic.github.io/symbiota-docs/coll_manager/data_publishing/gbif/" target="_blank"> ' . htmlspecialchars($LANG['PUBLISH_GBIF'], HTML_SPECIAL_CHARS_FLAGS) . '</a>.';
 				?>
 			</div>
 			<?php
@@ -228,14 +228,14 @@ if ($isEditor) {
 			?>
 			<div style="margin:10px;">
 				<?php
-				echo $LANG['DWCA_DOWNLOAD_EXPLAIN_1'] . ' <a href="https://en.wikipedia.org/wiki/Darwin_Core_Archive" target="_blank">' . $LANG['DWCA'] . '</a> ';
-				echo $LANG['DWCA_DOWNLOAD_EXPLAIN_2'] . ' <a href="http://rs.tdwg.org/dwc/terms/" target="_blank">' . $LANG['DWC'] . '</a> ' . $LANG['DWCA_DOWNLOAD_EXPLAIN_3'];
+				echo $LANG['DWCA_DOWNLOAD_EXPLAIN_1'] . ' <a href="https://en.wikipedia.org/wiki/Darwin_Core_Archive" target="_blank">' . htmlspecialchars($LANG['DWCA'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
+				echo $LANG['DWCA_DOWNLOAD_EXPLAIN_2'] . ' <a href="http://rs.tdwg.org/dwc/terms/" target="_blank">' . htmlspecialchars($LANG['DWC'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($LANG['DWCA_DOWNLOAD_EXPLAIN_3'], HTML_SPECIAL_CHARS_FLAGS);
 				?>
 			</div>
 			<div style="margin:10px;">
 				<?php
 				echo '<h3>' . $LANG['DATA_USE_POLICY'] . ':</h3>';
-				echo $LANG['DATA_POLICY_1'] . ' <a href="../../includes/usagepolicy.php">' . $LANG['DATA_USE_POLICY'] . '</a>. ' . $LANG['DATA_POLICY_2'];
+				echo $LANG['DATA_POLICY_1'] . ' <a href="../../includes/usagepolicy.php">' . htmlspecialchars($LANG['DATA_USE_POLICY'], HTML_SPECIAL_CHARS_FLAGS) . '</a>. ' . htmlspecialchars($LANG['DATA_POLICY_2'], HTML_SPECIAL_CHARS_FLAGS);
 				?>
 			</div>
 			<?php
@@ -247,7 +247,7 @@ if ($isEditor) {
 			$urlPrefix = $dwcaManager->getServerDomain() . $CLIENT_ROOT . (substr($CLIENT_ROOT, -1) == '/' ? '' : '/');
 			if (file_exists('../../content/dwca/rss.xml')) {
 				$feedLink = $urlPrefix . 'content/dwca/rss.xml';
-				echo '<a href="' . $feedLink . '" target="_blank">' . $feedLink . '</a>';
+				echo '<a href="' . htmlspecialchars($feedLink, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($feedLink, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 			} else {
 				echo '--' . $LANG['FEED_NOT_PUBLISHED'] . '--';
 			}
@@ -297,8 +297,8 @@ if ($isEditor) {
 					<?php
 					$emlLink = $urlPrefix . 'collections/datasets/emlhandler.php?collid=' . $collid;
 					?>
-					<div><b>EML:</b> <a href="<?php echo $emlLink; ?>" target="_blank"><?php echo $emlLink; ?></a></div>
-					<div><b><?php echo $LANG['DWCA_FILE']; ?>:</b> <a href="<?php echo $dArr['link']; ?>"><?php echo $dArr['link']; ?></a></div>
+					<div><b>EML:</b> <a href="<?php echo htmlspecialchars($emlLink, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars($emlLink, HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
+					<div><b><?php echo $LANG['DWCA_FILE']; ?>:</b> <a href="<?php echo htmlspecialchars($dArr['link'], HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($dArr['link'], HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
 					<div><b><?php echo $LANG['PUB_DATE']; ?>:</b> <?php echo $dArr['pubDate']; ?></div>
 				</div>
 				<?php
@@ -315,14 +315,14 @@ if ($isEditor) {
 					if (isset($recFlagArr['nullGUIDs']) && $recFlagArr['nullGUIDs']) {
 						echo '<div style="margin:10px;">';
 						if ($collArr['guidtarget'] == 'occurrenceId') {
-							echo '<b>' . $LANG['RECORDS_MISSING'] . ' <a href="" target="_blank">' . $LANG['OCCID_GUIDS'] . '</a>:</b> ' . $recFlagArr['nullGUIDs'];
+							echo '<b>' . $LANG['RECORDS_MISSING'] . ' <a href="" target="_blank">' . htmlspecialchars($LANG['OCCID_GUIDS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>:</b> ' . htmlspecialchars($recFlagArr['nullGUIDs'], HTML_SPECIAL_CHARS_FLAGS);
 							echo ' <span style="color:red;margin-left:15px;">' . $LANG['RECS_TO_NOT_PUBLISH'] . '</span> ';
 						} elseif ($collArr['guidtarget'] == 'catalogNumber') {
 							echo '<b>' . $LANG['RECS_WO_CATNUMS'] . ':</b> ' . $recFlagArr['nullGUIDs'];
 							echo ' <span style="color:red;margin-left:15px;">' . $LANG['RECS_WILL_NOT_PUBLISH'] . '</span> ';
 						} else {
 							echo $LANG['RECS_MISSING_GUIDS'] . ': ' . $recFlagArr['nullGUIDs'] . '<br/>';
-							echo $LANG['PLEASE_GO_TO'] . ' <a href="../admin/guidmapper.php?collid=' . $collid . '">' . $LANG['COLL_GUID_MAP'] . '</a> ' . $LANG['TO_ASSIGN_GUIDS'];
+							echo $LANG['PLEASE_GO_TO'] . ' <a href="../admin/guidmapper.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($LANG['COLL_GUID_MAP'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($LANG['TO_ASSIGN_GUIDS'], HTML_SPECIAL_CHARS_FLAGS);
 						}
 						echo '</div>';
 					}
@@ -331,22 +331,22 @@ if ($isEditor) {
 						if(substr($serverName, 0, 4) == 'www.') $serverName = str_replace('www.', '', $serverName);
 						if(!strpos($serverName, 'localhost') && strpos($collArr['dwcaurl'], $serverName) === false) {
 							$baseUrl = substr($collArr['dwcaurl'], 0, strpos($collArr['dwcaurl'], '/content')) . '/collections/datasets/datapublisher.php';
-							$blockSubmitMsg = $LANG['ALREADY_PUBLISHED'] . ' (<a href="' . $baseUrl . '" target="_blank">' . substr($baseUrl, 0, strpos($baseUrl, '/', 10)) . '</a>) ';
+							$blockSubmitMsg = $LANG['ALREADY_PUBLISHED'] . ' (<a href="' . htmlspecialchars($baseUrl, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars(substr($baseUrl, 0, strpos($baseUrl, '/', 10)), HTML_SPECIAL_CHARS_FLAGS) . '</a>) ';
 						}
 					}
 				} else {
-					echo '<div style="margin:10px;font-weight:bold;color:red;">' . $LANG['GUID_NOT_SET'] . ' <a href="../misc/collmetadata.php?collid=' . $collid . '">' . $LANG['EDIT_METADATA'] . '</a> ' . $LANG['TO_SET_GUID'] . '.</div>';
+					echo '<div style="margin:10px;font-weight:bold;color:red;">' . $LANG['GUID_NOT_SET'] . ' <a href="../misc/collmetadata.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($LANG['EDIT_METADATA'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($LANG['TO_SET_GUID'], HTML_SPECIAL_CHARS_FLAGS) . '.</div>';
 					$blockSubmitMsg = $LANG['CANNOT_PUBLISH'] . '<br/>';
 				}
 				if ($recFlagArr['nullBasisRec']) {
-					echo '<div style="margin:10px;font-weight:bold;color:red;">' . $LANG['THERE_ARE'] . ' ' . $recFlagArr['nullBasisRec'] . $LANG['MISSING_BASISOFRECORD'] . ' ' . ' <a href="../editor/occurrencetabledisplay.php?q_recordedby=&q_recordnumber=&q_catalognumber&collid=' . $collid . '&csmode=0&occid=&occindex=0">' . $LANG['EDIT_EXISTING'] . '</a> ' . $LANG['TO_CORRECT'] . '</div>';
+					echo '<div style="margin:10px;font-weight:bold;color:red;">' . $LANG['THERE_ARE'] . ' ' . $recFlagArr['nullBasisRec'] . $LANG['MISSING_BASISOFRECORD'] . ' ' . ' <a href="../editor/occurrencetabledisplay.php?q_recordedby=&q_recordnumber=&q_catalognumber&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&csmode=0&occid=&occindex=0">' . htmlspecialchars($LANG['EDIT_EXISTING'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($LANG['TO_CORRECT'], HTML_SPECIAL_CHARS_FLAGS) . '</div>';
 				}
 				if ($publishGBIF && $dwcUri && isset($GBIF_USERNAME) && isset($GBIF_PASSWORD) && isset($GBIF_ORG_KEY) && $GBIF_ORG_KEY) {
 					if ($collManager->getDatasetKey()) {
 						$dataUrl = 'http://www.gbif.org/dataset/' . $collManager->getDatasetKey();
 						?>
 						<div style="margin:10px;">
-							<div><b><?php echo $LANG['GBIF_DATASET']; ?>:</b> <a href="<?php echo $dataUrl; ?>" target="_blank"><?php echo $dataUrl; ?></a></div>
+							<div><b><?php echo $LANG['GBIF_DATASET']; ?>:</b> <a href="<?php echo htmlspecialchars($dataUrl, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars($dataUrl, HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
 						</div>
 						<?php
 					} else {
@@ -354,7 +354,7 @@ if ($isEditor) {
 						<div style="margin:10px;">
 							<?php
 							echo $LANG['YOU_SELECTED_GBIF_1'] .
-							' <a href="https://www.gbif.org/become-a-publisher" target="_blank">' . $LANG['GBIF_ENDORSE'] .
+							' <a href="https://www.gbif.org/become-a-publisher" target="_blank">' . htmlspecialchars($LANG['GBIF_ENDORSE'], HTML_SPECIAL_CHARS_FLAGS) .
 							'</a> ' . $LANG['TO'] . ' ' . $LANG['YOU_SELECTED_GBIF_2'];
 							?>
 							<form style="margin-top:10px;" name="gbifpubform" action="datapublisher.php" method="post" onsubmit="return validateGbifForm(this)">
@@ -385,7 +385,7 @@ if ($isEditor) {
 										echo $LANG['BEFORE_SUBMITTING'];
 										echo ' (<a href="mailto:helpdesk@gbif.org?subject=Publishing%20data%20from%20Symbiota%20portal%20to%20GBIF...&body=' . rawurlencode(str_replace('<br/>', "\n", $bodyStr)) . '">helpdesk@gbif.org</a>) ';
 										echo $LANG['WITH_REQUEST_1'] . ' &quot;<b>' . $GBIF_USERNAME . '</b>&quot; ' . $LANG['WITH_REQUEST_2'];
-										echo ' <a href="#" onclick="toggle(\'emailMsg\');return false;" style="color:blue">' . $LANG['HERE'] . '</a> ' . $LANG['WITH_REQUEST_3'];
+										echo ' <a href="#" onclick="toggle(\'emailMsg\');return false;" style="color:blue">' . htmlspecialchars($LANG['HERE'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($LANG['WITH_REQUEST_3'], HTML_SPECIAL_CHARS_FLAGS);
 										?>
 										<fieldset id="emailMsg" style="display:none;padding:15px;margin:15px">
 											<legend><?php echo $LANG['EMAIL_DRAFT']; ?></legend><?php echo trim($bodyStr, ' <br/>'); ?>
@@ -406,7 +406,7 @@ if ($isEditor) {
 					$dataUrl = 'https://www.idigbio.org/portal/recordsets/' . $idigbioKey;
 					?>
 					<div style="margin:10px;">
-						<div><b><?php echo $LANG['IDIGBIO_DATASET']; ?>:</b> <a href="<?php echo $dataUrl; ?>" target="_blank"><?php echo $dataUrl; ?></a></div>
+						<div><b><?php echo $LANG['IDIGBIO_DATASET']; ?>:</b> <a href="<?php echo htmlspecialchars($dataUrl, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars($dataUrl, HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
 					</div>
 					<?php
 				}
@@ -468,13 +468,13 @@ if ($isEditor) {
 									$errMsg = '';
 									if (isset($v['err']) && $v['err']) {
 										$errMsg = $LANG[$v['err']];
-										if ($v['err'] == 'ALREADY_PUB_DOMAIN') $errMsg .= ' (<a href="' . $v['url'] . '" target="_blank">' . substr($v['url'], 0, strpos($v['url'], '/', 10)) . '</a>)';
+										if ($v['err'] == 'ALREADY_PUB_DOMAIN') $errMsg .= ' (<a href="' . htmlspecialchars($v['url'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars(substr($v['url'], 0, strpos($v['url'], '/', 10)), HTML_SPECIAL_CHARS_FLAGS) . '</a>)';
 									}
 									$inputAttr = '';
 									if ($errMsg) $inputAttr = 'DISABLED';
 									elseif ($v['url']) $inputAttr = 'CHECKED';
 									echo '<input name="coll[]" type="checkbox" value="' . $k . '" ' . $inputAttr . ' />';
-									echo '<a href="../misc/collprofiles.php?collid=' . $k . '" target="_blank">' . $v['name'] . '</a> ';
+									echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($v['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
 									if ($errMsg) echo '<span style="color:red;margin-left:15px;">' . $errMsg . '</span>';
 									elseif ($v['url']) echo '<span> - published</span>';
 									echo '<br/>';
@@ -513,11 +513,11 @@ if ($isEditor) {
 					foreach ($dwcaArr as $k => $v) {
 						?>
 						<tr>
-							<td><?php echo '<a href="../misc/collprofiles.php?collid=' . $v['collid'] . '">' . str_replace(' DwC-Archive', '', $v['title']) . '</a>'; ?></td>
+							<td><?php echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($v['collid'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars(str_replace(' DwC-Archive', '', $v['title']), HTML_SPECIAL_CHARS_FLAGS) . '</a>'; ?></td>
 							<td><?php echo substr($v['description'], 24); ?></td>
 							<td class="nowrap">
 								<?php
-								echo '<a href="' . $v['link'] . '">DwC-A (' . $dwcaManager->humanFileSize($v['link']) . ')</a>';
+								echo '<a href="' . htmlspecialchars($v['link'], HTML_SPECIAL_CHARS_FLAGS) . '">DwC-A (' . htmlspecialchars($dwcaManager->humanFileSize($v['link']), HTML_SPECIAL_CHARS_FLAGS) . ')</a>';
 								if ($IS_ADMIN) {
 									?>
 									<form action="datapublisher.php" method="post" style="display:inline;" onsubmit="return window.confirm('<?php echo $LANG['SURE_DELETE']; ?>');">
@@ -530,7 +530,7 @@ if ($isEditor) {
 							</td>
 							<td>
 								<?php
-								echo '<a href="' . $urlPrefix . 'collections/datasets/emlhandler.php?collid=' . $v['collid'] . '">EML</a>';
+								echo '<a href="' . htmlspecialchars($urlPrefix, HTML_SPECIAL_CHARS_FLAGS) . 'collections/datasets/emlhandler.php?collid=' . htmlspecialchars($v['collid'], HTML_SPECIAL_CHARS_FLAGS) . '">EML</a>';
 								?>
 							</td>
 							<td class="nowrap"><?php echo date('Y-m-d', strtotime($v['pubDate'])); ?></td>
@@ -548,7 +548,7 @@ if ($isEditor) {
 					echo '<div style="font-weight:bold;font-size:140%;margin:50px 0px 15px 0px;">' . $LANG['ADDIT_SOURCES'] . '</div>';
 					echo '<ul>';
 					foreach ($addDwca as $domanName => $domainArr) {
-						echo '<li><a href="' . $domainArr['url'] . '" target="_blank">' . $domanName . '</a> - ' . $domainArr['cnt'] . ' Archives</li>';
+						echo '<li><a href="' . htmlspecialchars($domainArr['url'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($domanName, HTML_SPECIAL_CHARS_FLAGS) . '</a> - ' . htmlspecialchars($domainArr['cnt'], HTML_SPECIAL_CHARS_FLAGS) . ' Archives</li>';
 					}
 					echo '</ul>';
 				}

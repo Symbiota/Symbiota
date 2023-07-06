@@ -87,7 +87,7 @@ $duManager->loadFieldMap(true);
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['RESTORE'])?$LANG['RESTORE']:'Restore Backup'); ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -146,8 +146,8 @@ $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath">
-	<a href="../../index.php"><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
-	<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1"><?php echo (isset($LANG['COL_MGMNT'])?$LANG['COL_MGMNT']:'Collection Management Panel'); ?></a> &gt;&gt;
+	<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars((isset($LANG['COL_MGMNT'])?$LANG['COL_MGMNT']:'Collection Management Panel'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 	<b><?php echo (isset($LANG['BACKUP_MOD'])?$LANG['BACKUP_MOD']:'Backup Restore Module'); ?></b>
 </div>
 <!-- This is inner text! -->
@@ -188,7 +188,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							<input name="MAX_FILE_SIZE" type="hidden" value="100000000" />
 						</div>
 						<div class="ulfnoptions">
-							<a href="#" onclick="toggle('ulfnoptions');return false;"><?php echo (isset($LANG['MANUAL'])?$LANG['MANUAL']:'Manual File Upload Option'); ?></a>
+							<a href="#" onclick="toggle('ulfnoptions');return false;"><?php echo htmlspecialchars((isset($LANG['MANUAL'])?$LANG['MANUAL']:'Manual File Upload Option'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
 						</div>
 					</fieldset>
 				</form>
@@ -263,24 +263,24 @@ include($SERVER_ROOT.'/includes/header.php');
 								$reportArr = $duManager->getTransferReport();
 								echo '<div>'.(isset($LANG['OCCS_TRANSFERING'])?$LANG['OCCS_TRANSFERING']:'Occurrences pending transfer').': '.$reportArr['occur'];
 								if($reportArr['occur']){
-									echo ' <a href="uploadreviewer.php?collid='.$collid.'" target="_blank" title="'.(isset($LANG['PREVIEW'])?$LANG['PREVIEW']:'Preview 1st 1000 Records').'"><img src="../../images/list.png" style="width:12px;" /></a>';
-									echo ' <a href="uploadreviewer.php?action=export&collid='.$collid.'" target="_self" title="'.(isset($LANG['DOWNLOAD_RECS'])?$LANG['DOWNLOAD_RECS']:'Download Records').'"><img src="../../images/dl.png" style="width:12px;" /></a>';
+									echo ' <a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="' . htmlspecialchars((isset($LANG['PREVIEW'])?$LANG['PREVIEW']:'Preview 1st 1000 Records'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/list.png" style="width:12px;" /></a>';
+									echo ' <a href="uploadreviewer.php?action=export&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_self" title="' . htmlspecialchars((isset($LANG['DOWNLOAD_RECS'])?$LANG['DOWNLOAD_RECS']:'Download Records'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/dl.png" style="width:12px;" /></a>';
 								}
 								echo '</div>';
 								echo '<div style="margin-left:15px;">';
 								echo '<div>Records to be updated: ';
 								echo $reportArr['update'];
 								if($reportArr['update']){
-									echo ' <a href="uploadreviewer.php?collid='.$collid.'&searchvar=occid:ISNOTNULL" target="_blank" title="'.(isset($LANG['PREVIEW'])?$LANG['PREVIEW']:'Preview 1st 1000 Records').'"><img src="../../images/list.png" style="width:12px;" /></a>';
-									echo ' <a href="uploadreviewer.php?action=export&collid='.$collid.'&searchvar=occid:ISNOTNULL" target="_self" title="'.(isset($LANG['DOWNLOAD_RECS'])?$LANG['DOWNLOAD_RECS']:'Download Records').'"><img src="../../images/dl.png" style="width:12px;" /></a>';
+									echo ' <a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&searchvar=occid:ISNOTNULL" target="_blank" title="' . htmlspecialchars((isset($LANG['PREVIEW'])?$LANG['PREVIEW']:'Preview 1st 1000 Records'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/list.png" style="width:12px;" /></a>';
+									echo ' <a href="uploadreviewer.php?action=export&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&searchvar=occid:ISNOTNULL" target="_self" title="' . htmlspecialchars((isset($LANG['DOWNLOAD_RECS'])?$LANG['DOWNLOAD_RECS']:'Download Records'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/dl.png" style="width:12px;" /></a>';
 								}
 								echo '</div>';
 								if($reportArr['new']){
 									echo '<div>Records to be restored: ';
 									echo $reportArr['new'];
 									if($reportArr['new']){
-										echo ' <a href="uploadreviewer.php?collid='.$collid.'&searchvar=new" target="_blank" title="'.(isset($LANG['PREVIEW'])?$LANG['PREVIEW']:'Preview 1st 1000 Records').'"><img src="../../images/list.png" style="width:12px;" /></a>';
-										echo ' <a href="uploadreviewer.php?action=export&collid='.$collid.'&searchvar=new" target="_self" title="'.(isset($LANG['DOWNLOAD_RECS'])?$LANG['DOWNLOAD_RECS']:'Download Records').'"><img src="../../images/dl.png" style="width:12px;" /></a>';
+										echo ' <a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&searchvar=new" target="_blank" title="' . htmlspecialchars((isset($LANG['PREVIEW'])?$LANG['PREVIEW']:'Preview 1st 1000 Records'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/list.png" style="width:12px;" /></a>';
+										echo ' <a href="uploadreviewer.php?action=export&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&searchvar=new" target="_self" title="' . htmlspecialchars((isset($LANG['DOWNLOAD_RECS'])?$LANG['DOWNLOAD_RECS']:'Download Records'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/dl.png" style="width:12px;" /></a>';
 									}
 									echo '</div>';
 								}
@@ -288,8 +288,8 @@ include($SERVER_ROOT.'/includes/header.php');
 									echo '<div>Previous loaded records not matching incoming records: ';
 									echo $reportArr['exist'];
 									if($reportArr['exist']){
-										echo ' <a href="uploadreviewer.php?collid='.$collid.'&searchvar=exist" target="_blank" title="'.(isset($LANG['PREVIEW'])?$LANG['PREVIEW']:'Preview 1st 1000 Records').'"><img src="../../images/list.png" style="width:12px;" /></a>';
-										echo ' <a href="uploadreviewer.php?action=export&collid='.$collid.'&searchvar=exist" target="_self" title="'.(isset($LANG['DOWNLOAD_RECS'])?$LANG['DOWNLOAD_RECS']:'Download Records').'"><img src="../../images/dl.png" style="width:12px;" /></a>';
+										echo ' <a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&searchvar=exist" target="_blank" title="' . htmlspecialchars((isset($LANG['PREVIEW'])?$LANG['PREVIEW']:'Preview 1st 1000 Records'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/list.png" style="width:12px;" /></a>';
+										echo ' <a href="uploadreviewer.php?action=export&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&searchvar=exist" target="_self" title="' . htmlspecialchars((isset($LANG['DOWNLOAD_RECS'])?$LANG['DOWNLOAD_RECS']:'Download Records'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/dl.png" style="width:12px;" /></a>';
 									}
 									echo '</div>';
 									echo '<div style="margin-left:15px;">';
