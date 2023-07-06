@@ -165,7 +165,7 @@ else{
          setField("rightlong", "");
 
          //If Active Shape is null bail
-         if(!activeShape);
+         if(!activeShape)
             return;
 
          switch(activeShape.type) {
