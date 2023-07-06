@@ -193,33 +193,14 @@ else{
          switch(mapMode) {
             case "polygon":
                let origFootprintWkt = getField("footprintwkt");
-               if(origFootprintWkt) { 
-						var footprintWKT = validatePolygon(origFootprintWkt);
-
-						if(footprintWKT != origFootprintWkt) setField("footprintwkt", footprintWKT);
- 
-						footprintWKT = trimPolygon(footprintWKT);
-
-						var pointArr = [];
-						var strArr = footprintWKT.split(",");
-						for(var i=1; i < strArr.length; i++){
-							var xy = strArr[i].trim().split(" ");
-							var lat = xy[0];
-							var lng = xy[1];
-							if(!isNumeric(lat) || !isNumeric(lng)){
-								alert("One or more coordinates are illegal (lat: "+lat+"   long: "+lng+")");
-								opener.document.getElementById("footprintwkt").value = origFootprintWkt;
-								return false;
-							}
-							else if(parseInt(Math.abs(lat)) > 90 || parseInt(Math.abs(lng)) > 180){
-								alert("One or more coordinates are out-of-range or ordered incorrectly (lat: "+lat+"   long: "+lng+")");
-								opener.document.getElementById("footprintwkt").value = origFootprintWkt;
-								return false;
-							}
-							pointArr.push([lat, lng]);
+               try {
+                  let polyPoints = parseWkt(origFootprintWkt);
+                  if(polyPoints) {
+                     return { type: "polygon", latlngs: polyPoints, wkt: getField("footprintwkt")};
                   }
-
-                  return { type: "polygon", latlngs: pointArr, wkt: getField("footprintwkt")};
+               } catch(e) {
+                  alert(e.message);
+						opener.document.getElementById("footprintwkt").value = origFootprintWkt;
                }
             break;
             case "rectangle":
