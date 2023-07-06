@@ -597,10 +597,12 @@ ALTER TABLE `tr_user_batch`
 -- Code for rehauling the batch tables (reducing two types of batches into one)
 
 DROP TABLE IF EXISTS `image_batch_XREF`;
-DROP TABLE IF EXISTS `image_batch`;
 DROP TABLE IF EXISTS `tr_batchImage`;
-DROP TABLE IF EXISTS `tr_batch`;
+ALTER TABLE `tr_batch`
+    DROP FOREIGN KEY `FK_tr_batch_image_batch_id`;
+DROP TABLE IF EXISTS `image_batch`;
 DROP TABLE IF EXISTS `tr_user_batch`;
+DROP TABLE IF EXISTS `tr_batch`;
 
 DROP TABLE IF EXISTS `batch`;
 CREATE TABLE `batch` (
@@ -632,6 +634,7 @@ CREATE TABLE `batch_user` (
   `batchID` int(10) NOT NULL,
   `uid` int(10) unsigned NOT NULL,
   `last_position` int(10) NOT NULL,
+  `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
   PRIMARY KEY (`batch_userID`),
   KEY `FK_batch_user_batch` (`batchID`),
   KEY `FK_batch_user_user` (`uid`),
