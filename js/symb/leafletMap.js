@@ -1,5 +1,6 @@
 const DEFAULT_DRAW_OPTIONS = {
    polyline: false,
+   control: true,
    circlemarker: false,
    marker: false,
    multiDraw: false,
@@ -52,7 +53,6 @@ class LeafletMap {
          "Terrain": terrainLayer,
          "Satellite": satelliteLayer
       }).addTo(this.mapLayer);
-
    }
 
    enableDrawing(drawOptions = DEFAULT_DRAW_OPTIONS, onDrawChange) {
@@ -83,45 +83,48 @@ class LeafletMap {
          setDrawColor("circle");
       }
 
-      var drawControl = new L.Control.Draw({
-         draw: drawOptions,
-         edit: {
-            featureGroup: drawnItems,
-         }
-      });
+      if(drawOptions.control || drawOptions.control === undefined) {
+         var drawControl = new L.Control.Draw({
+            draw: drawOptions,
+            edit: {
+               featureGroup: drawnItems,
+            }
+         });
 
-      this.mapLayer.addControl(drawControl);
+         this.mapLayer.addControl(drawControl);
 
-      //Event saved edit 
-      this.mapLayer.on('draw:edited', function(e) {
-         ///Some Extra steps to get at the layer
-         const layer = e.layers._layers;
-         const keys = Object.keys(layer);
-         let type = this.activeShape.type;
+         //Event saved edit 
+         this.mapLayer.on('draw:edited', function(e) {
+            ///Some Extra steps to get at the layer
+            const layer = e.layers._layers;
+            const keys = Object.keys(layer);
+            let type = this.activeShape.type;
 
-         if(keys.length > 0) this.activeShape = getShapeCoords(type, layer[keys[0]]);
+            if(keys.length > 0) this.activeShape = getShapeCoords(type, layer[keys[0]]);
 
-         if(onDrawChange) onDrawChange(this.activeShape);
-      }.bind(this))
-         
-      //Event saved delete 
-      this.mapLayer.on('draw:deleted', function(e) {
-         this.activeShape = null;
-         if(onDrawChange) onDrawChange(this.activeShape);
-      }.bind(this))
+            if(onDrawChange) onDrawChange(this.activeShape);
+         }.bind(this))
 
-      //Fires on New Draw
-      this.mapLayer.on('draw:created', function (e) {
-         if(!drawOptions || !drawOptions.multiDraw);
+         //Event saved delete 
+         this.mapLayer.on('draw:deleted', function(e) {
+            this.activeShape = null;
+            if(onDrawChange) onDrawChange(this.activeShape);
+         }.bind(this))
+
+         //Fires on New Draw
+         this.mapLayer.on('draw:created', function (e) {
+            if(!drawOptions || !drawOptions.multiDraw);
             drawnItems.clearLayers();
 
-         const layer = e.layer;
-         drawnItems.addLayer(layer);
+            const layer = e.layer;
+            drawnItems.addLayer(layer);
 
-         this.activeShape = getShapeCoords(e.layerType, e.layer);
+            this.activeShape = getShapeCoords(e.layerType, e.layer);
 
-         if(onDrawChange) onDrawChange(this.activeShape);
-      }.bind(this))
+            if(onDrawChange) onDrawChange(this.activeShape);
+         }.bind(this))
+      }
+
    }
 
    drawShape(shape) {

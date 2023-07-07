@@ -232,7 +232,7 @@ function parseWkt(origin_wkt) {
 
    let wkt = validatePolygon(origin_wkt);
 
-   if(wkt != origin_wkt) return false;
+   //if(wkt != origin_wkt) 
 
    wkt = trimPolygon(wkt);
 
