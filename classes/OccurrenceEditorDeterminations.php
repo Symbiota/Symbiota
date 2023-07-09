@@ -13,6 +13,29 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
  		parent::__destruct();
 	}
 
+	public function getBatch() {
+		$batchValues = array();	
+        $query = "SELECT batchID FROM batch";
+        $result = $this->conn->query($query);
+        while ($row = $result->fetch_assoc()) {
+            $batchValues[] = $row['batchID'];
+        }
+        $result->free();
+        return $batchValues;
+	}
+	
+	public function getImgIDs($batchID) {
+		$imgIDs = array();
+		$query = "SELECT imgid FROM batch_XREF WHERE batchID = '$batchID'";
+		$result = $this->conn->query($query);
+		while ($row = $result->fetch_assoc()) {
+			$imgIDs[] = $row['imgid'];
+		}
+		$result->free();
+		return $imgIDs;
+	}
+	
+
 	public function getDetMap($identBy, $dateIdent, $sciName){
 		$retArr = array();
 		$hasCurrent = 0;

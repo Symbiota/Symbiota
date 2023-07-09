@@ -1267,7 +1267,7 @@ else{
 													Next
 												</button>
 												<input type="hidden" name="occindex" value="<?php echo is_numeric($occIndex)?$occIndex:''; ?>" />
-												<input name="editedfields" value="" />
+												<input type="hidden" name="editedfields" value="" />
 											</div>
 										</div>
 											<?php

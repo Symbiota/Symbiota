@@ -11,7 +11,7 @@ if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/e
 $crowdSourceMode = array_key_exists('csmode',$_REQUEST)?$_REQUEST['csmode']:0;
 $collid = $_REQUEST["collid"];
 $firstOcc = 0;
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
+// $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 if(!is_numeric($collid)) $collid = 0;
 
@@ -44,6 +44,8 @@ if($collMap){
 }
 
 $isEditor = 0;
+$batchIds = $occManager->getBatch();
+
 if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
 	$isEditor = 1;
 }
@@ -51,6 +53,23 @@ elseif(array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collid,$USER_RIG
 	$isEditor = 1;
 }
 $statusStr = '';
+
+// post the selected batch ID
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    if (isset($_POST["batchID"])) {
+        $selectedBatchID = $_POST["batchID"];
+        $imgIDs = $occManager->getImgIDs($selectedBatchID);
+
+        if (isset($_POST["startFromFirst"])) {
+            // TODO: Perform actions when "Start from First" button is clicked
+            // TODO: Store the corresponding imgIDs, retrieve occIDs, and store them in an array
+        } elseif (isset($_POST["startFromLast"])) {
+            // TODO: Perform actions when "Start from Last" button is clicked
+            // TODO: Store the corresponding imgIDs, retrieve occIDs, and store them in an array
+        }
+    }
+}
+
 ?>
 
 <html>
@@ -63,14 +82,16 @@ $statusStr = '';
 			include_once($SERVER_ROOT.'/includes/head.php');
 		}
 		else{
-			echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-			echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-			echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
+			// echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
+			// echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
+			// echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
 		}
 		?>
 		<script src="../../js/jquery.js" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 		<script type="text/javascript">
+			// function 
+
 			function navigateToRecordNew(occIndex, occId, collId, crowdSourceMode) {
 				var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&occindex=' + occIndex + '&occid=' + occId + '&collid=' + collId;
 				window.location.href = url;
@@ -130,7 +151,13 @@ $statusStr = '';
 				workingObj.style.display = "none";
 				return false;
 			}
-			
+			function updateSelectedBatch(selectElement) {
+				var selectedValue = selectElement.value; // Get the selected value
+				var selectedBatchElement = document.getElementById('slectedBatch'); // Get the <b> element
+				
+				// Update the value of the <b> element
+				selectedBatchElement.textContent = 'Batch: ' + selectedValue;
+			}
 		</script>
 	</head>
 	<body>
@@ -146,14 +173,13 @@ $statusStr = '';
 	<div id="innertext">
 		<?php
 		if($isEditor){
-			echo '<h2>'.$occManager->getCollName().'</h2>';
 			?>
 			<div style="margin:0px;">
 				<fieldset style="padding:10px;">
 					<legend><b><?php echo $LANG['TRANSCRIBE_INTO_SPECIFY']; ?></b></legend>
 					<div style="margin:15px;width:700px;">
                         <!-- TODO: update the submit function of the form -->
-						<form name="batchform" action="transcribe.php" method="post" onsubmit="return submitBatchForm(this);">
+						<form name="batchform" action="transcribe.php" method="post">
                             <div style="margin-bottom:15px;">
                                 <!-- TODO: figure out what is this line is, then customized the content -->
                                 <!-- TODO: onclick function of the buttons -->
@@ -163,14 +189,33 @@ $statusStr = '';
 										<h3>Go to the quick entry form</h3>
 									</a>
 								</div>
-                                <b>Batch: <?php echo('[hmerchant/202209-08]') ?></b>
-                                <button type="button" onclick="return navigateToRecordNew(<?php echo($firstOcc.', '.($firstOcc+1).', '.$collid.', '.$crowdSourceMode) ?>)"><?php echo $LANG['START_FROM']; ?> first.</button>
+                                <b id="slectedBatch">Batch: </b><br>
+                                <!-- <button type="button" onclick="return navigateToRecordNew(<?php //echo($firstOcc.', '.($firstOcc+1).', '.$collid.', '.$crowdSourceMode) ?>)"><?php //echo $LANG['START_FROM']; ?> first.</button> -->
+								<button type="submit" name="first"><?php echo $LANG['START_FROM']; ?> first.</button>
                                 <!-- TODO: need to customize the page number and set a veriable to start from the last page-->
-                                <button type="button"><?php echo $LANG['START_FROM']; ?> Last</button>
+                                <button type="submit" name="last"><?php echo $LANG['START_FROM']; ?> Last</button>
                             </div>
 							<div>
 								<b><?php echo $LANG['WORK_ON_BATCH']; ?></b>
-								<input type="text" id="batch" name="batch" style="width:400px;" />
+								<select id="batchID" name="batchID" style="width:400px;" onchange="updateSelectedBatch(this)">
+									<?php
+									foreach ($batchIds as $batchID) {
+										echo "<option value=\"$batchID\">Batch $batchID</option>";
+									}
+									?>
+								</select>
+								<div id="imgIDsContainer" style="display: block; margin-top: 10px;">
+								<?php if (!empty($imgIDs)) { ?>
+									<div id="imgIDsContainer" style="display: block; margin-top: 10px;">
+										<h3>Image IDs:</h3>
+										<pre><?php echo implode(", ", $imgIDs); ?></pre>
+									</div>
+								<?php } else { ?>
+									<div id="imgIDsContainer" style="display: block; margin-top: 10px;">
+										<p>No image IDs found for the selected batch.</p>
+									</div>
+								<?php } ?>
+								</div>
 							</div>
 						</form>
 					</div>
