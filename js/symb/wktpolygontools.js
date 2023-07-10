@@ -254,7 +254,7 @@ function parseWkt(origin_wkt) {
       else if (parseInt(Math.abs(lat)) > 90 || parseInt(Math.abs(lng)) > 180) {
          throw Error("One or more coordinates are out-of-range or ordered incorrectly (lat: "+lat+"   long: "+lng+")");
       }
-      pointArr.push([lat, lng]);
+      pointArr.push([parseFloat(lat), parseFloat(lng)]);
    }
 
    return pointArr;
