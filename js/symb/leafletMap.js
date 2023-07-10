@@ -49,6 +49,8 @@ class LeafletMap {
          tileSize: 256,
       });
 
+      L.control.scale().addTo(this.mapLayer);
+
       L.control.layers({
          "Terrain": terrainLayer,
          "Satellite": satelliteLayer

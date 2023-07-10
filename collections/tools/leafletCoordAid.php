@@ -53,7 +53,7 @@ else{
 
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/wktpolygontools.js" type="text/javascript"></script>
 	<style>
-		#map { width:100%; height:100vh; }
+		#map { width:100%; height: auto; }
 	</style>
 </head>
 <body style="background-color:#ffffff;width:100%;height:100%;image-rendering: auto;
@@ -99,6 +99,9 @@ else{
        * }
        */
 
+      const MILEStoKM = 1.60934;
+      const KMtoM = 1000;
+
       const setField = (id, v) => {
          var elem = opener.document.getElementById(id);
          if(elem) elem.value = v;
@@ -129,7 +132,8 @@ else{
       }
       
       function setCircle(radius, center_lat, center_lng) {
-         setField("radius", isNaN(radius)? radius: Math.abs(radius));
+         //Assuming Radius is always in meters
+         setField("radius", (isNaN(radius)? radius: Math.abs(radius)) / KMtoM);
          setField("radiusunits", "km");
 
          setField("pointlat_NS", center_lat > 0? "N": "S");
@@ -224,10 +228,12 @@ else{
                const radius = getField("radius");
                const pointlat = getField("pointlat");
                const pointlng = getField("pointlong");
+               const radUnits = getField("radiusunits", "");
+
                if(isNumeric(radius) && isNumeric(pointlng) && isNumeric(pointlng)) {
                   return {
                      type: "circle",
-                     radius: parseFloat(radius),
+                     radius: (radUnits === "mi"? radius * MILEStoKM: parseFloat(radius)) * KMtoM,
                      latlng: [
                         pointlat * (getField("pointlat_NS") === "N"? 1: -1), 
                         pointlng * (getField("pointlong_EW") === "E"? 1: -1)
