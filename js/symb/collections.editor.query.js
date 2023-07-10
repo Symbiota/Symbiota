@@ -229,9 +229,9 @@ function submitQueryTable(f){
 }
 
 function navigateToURL(coll) {
-    var url = "../editor/occurrencetabledisplay.php?displayquery=1&collid=" + coll;
+    var url = "../editor/transcribe.php?collid=" + coll;
     window.location.href = url;
-  }
+}
 
 function setOrderBy(formObject){
 	/*

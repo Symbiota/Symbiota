@@ -59,7 +59,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (isset($_POST["batchID"])) {
         $selectedBatchID = $_POST["batchID"];
         $imgIDs = $occManager->getImgIDs($selectedBatchID);
+		$occData = array();
+		foreach ($imgIDs as $imgID) {
+			$occIDs = $occManager->getOccIDs($imgID);
+			$occData[$imgID] = $occIDs;
+		}
+		$allOccIDs = array();
+		foreach ($occData as $occIDs) {
+			$allOccIDs = array_merge($allOccIDs, $occIDs);
+		}
 
+		$firstOccIDs = reset($occData);
+		$lastOccIDs = end($occData);
         if (isset($_POST["startFromFirst"])) {
             // TODO: Perform actions when "Start from First" button is clicked
             // TODO: Store the corresponding imgIDs, retrieve occIDs, and store them in an array
@@ -83,15 +94,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 		}
 		else{
 			// echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-			// echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
+			// echo '<link href="'.$CLIENT_ROOT.'/css/basse.css?ver=1" type="text/css" rel="stylesheet" />';
 			// echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
 		}
 		?>
 		<script src="../../js/jquery.js" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
+		<script src="../../js/symb/collections.editor.query.js?ver=5" type="text/javascript"></script>
 		<script type="text/javascript">
 			// function 
-
 			function navigateToRecordNew(occIndex, occId, collId, crowdSourceMode) {
 				var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&occindex=' + occIndex + '&occid=' + occId + '&collid=' + collId;
 				window.location.href = url;
@@ -151,13 +162,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 				workingObj.style.display = "none";
 				return false;
 			}
-			function updateSelectedBatch(selectElement) {
-				var selectedValue = selectElement.value; // Get the selected value
-				var selectedBatchElement = document.getElementById('slectedBatch'); // Get the <b> element
-				
-				// Update the value of the <b> element
-				selectedBatchElement.textContent = 'Batch: ' + selectedValue;
-			}
+			// function updateSelectedBatch(selectElement) {
+			// 	var selectedValue = selectElement.value; // Get the selected value
+			// 	var selectedBatchElement = document.getElementById('slectedBatch'); // Get the <b> element
+			// 	// Update the value of the <b> element
+			// 	selectedBatchElement.textContent = 'Batch: ' + selectedValue;
+			// }
 		</script>
 	</head>
 	<body>
@@ -189,33 +199,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 										<h3>Go to the quick entry form</h3>
 									</a>
 								</div>
-                                <b id="slectedBatch">Batch: </b><br>
-                                <!-- <button type="button" onclick="return navigateToRecordNew(<?php //echo($firstOcc.', '.($firstOcc+1).', '.$collid.', '.$crowdSourceMode) ?>)"><?php //echo $LANG['START_FROM']; ?> first.</button> -->
-								<button type="submit" name="first"><?php echo $LANG['START_FROM']; ?> first.</button>
+                                <!-- <b id="slectedBatch">Batch: </b><br> -->
+								<button type="button" name="first" onclick="return navigateToRecordNew(<?php echo ($firstOccIDs[0]-1).', '.$firstOccIDs[0].', '.$collid.', '.$crowdSourceMode; ?>)"><?php echo $LANG['START_FROM']; ?> first.</button>
                                 <!-- TODO: need to customize the page number and set a veriable to start from the last page-->
-                                <button type="submit" name="last"><?php echo $LANG['START_FROM']; ?> Last</button>
+                                <button type="button" name="last"  onclick="return navigateToRecordNew(<?php echo ($lastOccIDs[0]-1).', '.$lastOccIDs[0].', '.$collid.', '.$crowdSourceMode; ?>)"><?php echo $LANG['START_FROM']; ?> last.</button>
+								<button type="button" name="lastView"><?php echo $LANG['START_FROM']; ?> last view.</button>
                             </div>
 							<div>
 								<b><?php echo $LANG['WORK_ON_BATCH']; ?></b>
-								<select id="batchID" name="batchID" style="width:400px;" onchange="updateSelectedBatch(this)">
+								<select id="batchID" name="batchID" style="width:400px;" onchange="this.form.submit()">
+									<option value="">-- Select Batch --</option>
 									<?php
 									foreach ($batchIds as $batchID) {
 										echo "<option value=\"$batchID\">Batch $batchID</option>";
 									}
 									?>
 								</select>
-								<div id="imgIDsContainer" style="display: block; margin-top: 10px;">
-								<?php if (!empty($imgIDs)) { ?>
-									<div id="imgIDsContainer" style="display: block; margin-top: 10px;">
-										<h3>Image IDs:</h3>
-										<pre><?php echo implode(", ", $imgIDs); ?></pre>
-									</div>
-								<?php } else { ?>
-									<div id="imgIDsContainer" style="display: block; margin-top: 10px;">
-										<p>No image IDs found for the selected batch.</p>
-									</div>
-								<?php } ?>
-								</div>
 							</div>
 						</form>
 					</div>

@@ -1259,7 +1259,9 @@ else{
 													onclick="<?php if($occIndex>0) { ?>submitQueryForm('back');<?php } ?> return false;">
 													Previous
 												</button>
-												<button type="button" value="Done" onclick="navigateToURL(<?php echo($collId) ?>)">Done</button>
+												<a href="../editor/transcribe.php?collid=" + <?php echo $collId; ?> >
+													<button type="button" value="Done" onclick="navigateToURL(<?php echo $collId; ?>)">Done</button>
+												</a>
 												<button 
 													type="submit" 
 													value="Next" 
