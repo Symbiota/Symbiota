@@ -52,6 +52,10 @@ else{
    <meta charset="utf-8">
 
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/wktpolygontools.js" type="text/javascript"></script>
+
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/googleMap.js" type="text/javascript"></script>
+
+		<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'&key='.$GOOGLE_MAP_KEY:''); ?>"></script>
 	<style>
 		#map { width:100%; height: auto; }
 	</style>
@@ -100,7 +104,8 @@ else{
        */
 
       const MILEStoKM = 1.60934;
-      const KMtoM = 1000;
+      const KMtoM = 1000; 
+      const SIG_FIGS = 6;
 
       const setField = (id, v) => {
          var elem = opener.document.getElementById(id);
@@ -119,28 +124,28 @@ else{
       function setRectangle(upperLat, lowerLat, leftLng, rightLng) {
 
          setField("upperlat_NS", upperLat > 0 ? "N": "S");
-         setField("upperlat", Math.abs(upperLat));
+         setField("upperlat", Math.abs(upperLat).toFixed(SIG_FIGS));
 
          setField("bottomlat_NS", lowerLat > 0 ? "N": "S");
-         setField("bottomlat", Math.abs(lowerLat));
+         setField("bottomlat", Math.abs(lowerLat).toFixed(SIG_FIGS));
 
          setField("leftlong_EW", leftLng > 0 ? "E": "W");
-         setField("leftlong", Math.abs(leftLng));
+         setField("leftlong", Math.abs(leftLng).toFixed(SIG_FIGS));
 
          setField("rightlong_EW", rightLng> 0 ? "E": "W");
-         setField("rightlong", Math.abs(rightLng));
+         setField("rightlong", Math.abs(rightLng).toFixed(SIG_FIGS));
       }
       
       function setCircle(radius, center_lat, center_lng) {
          //Assuming Radius is always in meters
-         setField("radius", (isNaN(radius)? radius: Math.abs(radius)) / KMtoM);
+         setField("radius", ((isNaN(radius)? radius: Math.abs(radius)) / KMtoM).toFixed(SIG_FIGS));
          setField("radiusunits", "km");
 
          setField("pointlat_NS", center_lat > 0? "N": "S");
-         setField("pointlat", Math.abs(center_lat));
+         setField("pointlat", Math.abs(center_lat).toFixed(SIG_FIGS));
 
          setField("pointlong_EW", center_lng > 0? "E": "W");
-         setField("pointlong", Math.abs(center_lng));
+         setField("pointlong", Math.abs(center_lng).toFixed(SIG_FIGS));
       }
 
       function setPolygon(wkt) {
@@ -249,29 +254,44 @@ else{
       }
       let formShape = loadShape("<?php echo $mapMode?>");
 
-      //LEAFLET SPECIFIC
+      if("<?php echo $LEAFLET ?>") { //LEAFLET SPECIFIC
 
-      const MapOptions = {
-         center: [<?php echo $latCenter?>, <?php echo $latCenter?>],
-         zoom: <?php echo $zoom?>
-      };
+         const MapOptions = {
+            center: [<?php echo $latCenter?>, <?php echo $latCenter?>],
+            zoom: <?php echo $zoom?>
+         };
 
-      var map = new LeafletMap('map', MapOptions );
+         var map = new LeafletMap('map', MapOptions );
 
-      map.enableDrawing({
+         map.enableDrawing({
          polyline: false,
-         circlemarker: false,
-         marker: false,
-         drawColor: {opacity: 0.85, fillOpacity: 0.55, color: '#000' }
-      }, setShapeToSearchForm);
+            circlemarker: false,
+            marker: false,
+            drawColor: {opacity: 0.85, fillOpacity: 0.55, color: '#000' }
+         }, setShapeToSearchForm);
 
-      if(formShape) {
-         map.drawShape(formShape);
-         map.mapLayer.setView([map.activeShape.center.lat, map.activeShape.center.lng]);
-         map.mapLayer.fitBounds(map.activeShape.layer.getBounds());
+         if(formShape) {
+            map.drawShape(formShape);
+            map.mapLayer.setView([map.activeShape.center.lat, map.activeShape.center.lng]);
+            map.mapLayer.fitBounds(map.activeShape.layer.getBounds());
+         }
+
+      } else { //GOOGLE SPECIFIC
+		   const MapOptions= {
+				zoom: <?php echo $zoom; ?>,
+				center: new google.maps.LatLng(<?php echo $latCenter.','.$lngCenter; ?>),
+				mapTypeId: google.maps.MapTypeId.TERRAIN,
+				scaleControl: true
+			};
+
+         let map = new GoogleMap('map', MapOptions)
+         map.enableDrawing({mapMode: "<?php echo $mapMode?>"}, setShapeToSearchForm);
+
+         console.log(formShape)
+
+         if(formShape) 
+            map.drawShape(formShape, setShapeToSearchForm)
       }
-      //LEAFLET SPECIFIC END
-
    </script>
 </body>
 </html>
