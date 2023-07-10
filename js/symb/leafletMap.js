@@ -49,12 +49,12 @@ class LeafletMap {
          tileSize: 256,
       });
 
-      L.control.scale().addTo(this.mapLayer);
-
       L.control.layers({
          "Terrain": terrainLayer,
          "Satellite": satelliteLayer
       }).addTo(this.mapLayer);
+
+      L.control.scale().addTo(this.mapLayer);
    }
 
    enableDrawing(drawOptions = DEFAULT_DRAW_OPTIONS, onDrawChange) {
@@ -177,20 +177,20 @@ function getShapeCoords(layerType, layer) {
          break;
       case "rectangle":
          const northEast = layer._bounds._northEast;
-         shape.upperLat =  northEast.lat.toFixed(SIG_FIGS);
-         shape.rightLng =  northEast.lng.toFixed(SIG_FIGS);
+         shape.upperLat =  northEast.lat;
+         shape.rightLng =  northEast.lng;
 
          const southWest = layer._bounds._southWest;
-         shape.lowerLat =southWest.lat.toFixed(SIG_FIGS);
-         shape.leftLng = southWest.lng.toFixed(SIG_FIGS);
+         shape.lowerLat =southWest.lat;
+         shape.leftLng = southWest.lng;
 
          shape.center = layer.getBounds().getCenter();
          break;
       case "circle":
-         shape.radius = layer._mRadius.toFixed(SIG_FIGS);
+         shape.radius = layer._mRadius;
          shape.center = {
-            lat: layer._latlng.lat.toFixed(SIG_FIGS),
-            lng: layer._latlng.lng.toFixed(SIG_FIGS)
+            lat: layer._latlng.lat,
+            lng: layer._latlng.lng
          };
          break;
       default:
