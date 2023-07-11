@@ -258,7 +258,7 @@ else{
             zoom: <?php echo $zoom?>
          };
 
-         var map = new LeafletMap('map', MapOptions );
+         let map = new LeafletMap('map', MapOptions );
 
          map.enableDrawing({
          polyline: false,
