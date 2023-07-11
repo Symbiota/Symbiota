@@ -58,7 +58,7 @@ $GOOGLE_MAP_KEY = '';				//Needed for Google Map; get from Google
 $MAPBOX_API_KEY = '';
 $MAP_THUMBNAILS = false;				//Display Static Map thumbnails within taxon profile, checklist, etc
 
-$LEAFLET = true;				//Will overwrite google maps with leaflet
+$LEAFLET = false;				//Will overwrite google maps if possible
 
 $STORE_STATISTICS = 0;
 $MAPPING_BOUNDARIES = '';			//Project bounding box; default map centering; (e.g. 42.3;-100.5;18.0;-127)

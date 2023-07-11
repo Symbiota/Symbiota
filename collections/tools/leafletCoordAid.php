@@ -47,15 +47,12 @@ else{
 	<title><?php echo $DEFAULT_TITLE; ?> - Taxon Map</title>
 	<?php
 	   include_once($SERVER_ROOT.'/includes/head.php');
-	   include_once($SERVER_ROOT.'/includes/leafletMap.php');
+      include_once($SERVER_ROOT.'/includes/leafletMap.php');
+      include_once($SERVER_ROOT.'/includes/googleMap.php');
 	?>
    <meta charset="utf-8">
 
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/wktpolygontools.js" type="text/javascript"></script>
-
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/googleMap.js" type="text/javascript"></script>
-
-		<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'&key='.$GOOGLE_MAP_KEY:''); ?>"></script>
 	<style>
 		#map { width:100%; height: auto; }
 	</style>
@@ -247,7 +244,7 @@ else{
                }
                break;
             default:
-               console.log(mapMode);
+               alert(`No Settings fo Map Mode: ${mapMode}`)
                return false;
             break;
          } 
@@ -286,8 +283,6 @@ else{
 
          let map = new GoogleMap('map', MapOptions)
          map.enableDrawing({mapMode: "<?php echo $mapMode?>"}, setShapeToSearchForm);
-
-         console.log(formShape)
 
          if(formShape) 
             map.drawShape(formShape, setShapeToSearchForm)

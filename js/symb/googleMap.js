@@ -6,7 +6,7 @@ class GoogleMap {
       scaleControl: true
    }
 
-   /* To Hold Reference to Leaflet Map */
+   /* To Hold Reference to Google Map */
    mapLayer;
 
    /* Active_Shape Type
@@ -17,7 +17,7 @@ class GoogleMap {
    activeShape;
 
    /* Reference Leaflet Feature Group for all drawn items*/
-   drawLayer;
+   _drawManager;
    onDrawChange;
 
    constructor(map_id, map_options=DEFAULT_MAP_OPTIONS) {
@@ -127,12 +127,15 @@ class GoogleMap {
             onDrawChange(this.activeShape);
          }
       }.bind(this));
+
+      this._drawingManager = drawingManager;
    }
 
    drawShape(shape) {
       let listeners = ['click', 'dragend']
       let bounds = false;
 
+		this._drawingManager.setDrawingMode(null);
       switch(shape.type) {
          case "polygon":
 				bounds = new google.maps.LatLngBounds();
@@ -238,7 +241,6 @@ function setSelection(overlay) {
          shape.lowerLat = southWest.lat();
          shape.leftLng = southWest.lng();
          break;
-         //Bounds
       case "circle":
          shape.radius = overlay.getRadius();
 

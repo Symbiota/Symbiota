@@ -266,22 +266,12 @@ function resetHarvestParamsForm(f) {
 }
 
 function openCoordAid(mapMode) {
-   /* Google */
-
-   /*
   mapWindow = open(
     "tools/mapcoordaid.php?mapmode=" + mapMode,
     "polygon",
     "resizable=0,width=900,height=630,left=20,top=20"
   );
-   */
 
-   /* Leaflet */
-	mapWindow=open(
-    "tools/leafletCoordAid.php?mapmode="+mapMode,
-    "polygon",
-    "resizable=0,width=900,height=630,left=20,top=20"
-    );
   if (mapWindow.opener == null) mapWindow.opener = self;
   mapWindow.focus();
 }
