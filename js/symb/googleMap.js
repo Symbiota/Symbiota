@@ -6,6 +6,14 @@ class GoogleMap {
       scaleControl: true
    }
 
+   DEFAULT_DRAW_OPTIONS = {
+      strokeWeight: 0,
+      fillOpacity: 0.45,
+      editable: true,
+      draggable: true,
+      drawControl: true,
+   }
+
    /* To Hold Reference to Google Map */
    mapLayer;
 
@@ -24,15 +32,17 @@ class GoogleMap {
       this.mapLayer = new google.maps.Map(document.getElementById(map_id), map_options);
    }
 
-   DrawOptions = {
-      strokeWeight: 0,
-      fillOpacity: 0.45,
-      editable: true,
-      draggable: true
-   }
+   DrawOptions;
 
    enableDrawing(drawOptions = DEFAULT_DRAW_OPTIONS, onDrawChange) {
       this.onDrawChange = onDrawChange;
+
+      drawOptions = {
+         ...drawOptions,
+         ...this.DEFAULT_DRAW_OPTIONS,
+      }
+ 
+      this.DrawOptions = drawOptions;
 
       function getMapMode(mode) {
          switch (mode) {
@@ -47,88 +57,90 @@ class GoogleMap {
          }
       }
 
-      let drawingManager = new google.maps.drawing.DrawingManager({
-         drawingMode: getMapMode(drawOptions.mapMode),
-         drawingControl: true,
-         drawingControlOptions: {
-            position: google.maps.ControlPosition.TOP_CENTER,
-            drawingModes: [
-               google.maps.drawing.OverlayType.POLYGON,
-               google.maps.drawing.OverlayType.RECTANGLE,
-               google.maps.drawing.OverlayType.CIRCLE
-            ]
-         },
-         markerOptions: {
-            draggable: true
-         },
-         polygonOptions: this.DrawOptions,
-         circleOptions: this.DrawOptions,
-         rectangleOptions: this.DrawOptions,
-      });
+      if(drawOptions.drawControl) {
+         let drawingManager = new google.maps.drawing.DrawingManager({
+            drawingMode: getMapMode(drawOptions.mapMode),
+            drawingControl: true,
+            drawingControlOptions: {
+               position: google.maps.ControlPosition.TOP_CENTER,
+               drawingModes: [
+                  google.maps.drawing.OverlayType.POLYGON,
+                  google.maps.drawing.OverlayType.RECTANGLE,
+                  google.maps.drawing.OverlayType.CIRCLE
+               ]
+            },
+            markerOptions: {
+               draggable: true
+            },
+            polygonOptions: drawOptions,
+            circleOptions: drawOptions,
+            rectangleOptions: drawOptions,
+         });
 
-		drawingManager.setMap(this.mapLayer);
+         drawingManager.setMap(this.mapLayer);
 
-      google.maps.event.addListener(drawingManager, 'click', function(e) {
-         alert("control clicked on");
-         alert(drawingManager.getDrawingMode());
-      });
+         google.maps.event.addListener(drawingManager, 'click', function(e) {
+            alert("control clicked on");
+            alert(drawingManager.getDrawingMode());
+         });
 
-      drawingManager.addListener('click', function(e) {
-         alert("control clicked on 2");
-         alert(drawingManager.getDrawingMode());
-      });
+         drawingManager.addListener('click', function(e) {
+            alert("control clicked on 2");
+            alert(drawingManager.getDrawingMode());
+         });
 
-      google.maps.event.addListener(drawingManager, 'at_insert', function(e) {
-         alert("at insert");
-         alert(drawingManager.getDrawingMode());
-      });
+         google.maps.event.addListener(drawingManager, 'at_insert', function(e) {
+            alert("at insert");
+            alert(drawingManager.getDrawingMode());
+         });
 
-      drawingManager.addListener('at_insert', function(e) {
-         alert("at insert2");
-         alert(drawingManager.getDrawingMode());
-      });
+         drawingManager.addListener('at_insert', function(e) {
+            alert("at insert2");
+            alert(drawingManager.getDrawingMode());
+         });
 
-      google.maps.event.addListener(drawingManager, 'overlaycomplete', function(e) {
-         if (e.type != google.maps.drawing.OverlayType.MARKER) {
-            // Switch back to non-drawing mode after drawing a shape.
-            drawingManager.setDrawingMode(null);
+         google.maps.event.addListener(drawingManager, 'overlaycomplete', function(e) {
+            if (e.type != google.maps.drawing.OverlayType.MARKER) {
+               // Switch back to non-drawing mode after drawing a shape.
+               drawingManager.setDrawingMode(null);
 
-            var shapeType = e.type;
-            // Add an event listener that selects the newly-drawn shape when the user
-            // mouses down on it.
-            var newShape = e.overlay;
-            newShape.type = e.type;
+               var shapeType = e.type;
+               // Add an event listener that selects the newly-drawn shape when the user
+               // mouses down on it.
+               var newShape = e.overlay;
+               newShape.type = e.type;
 
-            //Clear if Shape Isn't the same
-            if (this.activeShape && this.activeShape.layer != newShape) 
-               this.activeShape.layer.setMap(null);
+               //Clear if Shape Isn't the same
+               if (this.activeShape && this.activeShape.layer != newShape) 
+                  this.activeShape.layer.setMap(null);
 
-            let listeners = ['click', 'dragend']
+               let listeners = ['click', 'dragend']
 
-            if(shapeType === "circle") {
-               listeners.push('radius_changed');
-               listeners.push('center_changed');
-            } else if (shapeType === "rectangle") {
-               listeners.push('bounds_changed');
-            } else if(shapeType === "polygon") {
-               listeners.push('insert_at');
-               listeners.push('remove_at');
-               listeners.push('set_at');
+               if(shapeType === "circle") {
+                  listeners.push('radius_changed');
+                  listeners.push('center_changed');
+               } else if (shapeType === "rectangle") {
+                  listeners.push('bounds_changed');
+               } else if(shapeType === "polygon") {
+                  listeners.push('insert_at');
+                  listeners.push('remove_at');
+                  listeners.push('set_at');
+               }
+
+               listeners.forEach(eventListener => {
+                  google.maps.event.addListener(newShape, eventListener, function () {
+                     this.activeShape = setSelection(newShape);
+                     onDrawChange(this.activeShape);
+                  }.bind(this))
+               })
+
+               this.activeShape = setSelection(newShape);
+               onDrawChange(this.activeShape);
             }
+         }.bind(this));
 
-            listeners.forEach(eventListener => {
-               google.maps.event.addListener(newShape, eventListener, function () {
-                  this.activeShape = setSelection(newShape);
-                  onDrawChange(this.activeShape);
-               }.bind(this))
-            })
-
-            this.activeShape = setSelection(newShape);
-            onDrawChange(this.activeShape);
-         }
-      }.bind(this));
-
-      this._drawingManager = drawingManager;
+         this._drawingManager = drawingManager;
+      }
    }
 
    drawShape(shape) {
@@ -200,7 +212,7 @@ class GoogleMap {
       listeners.forEach(eventListener => {
          google.maps.event.addListener(shape.layer, eventListener, function () {
             this.activeShape = setSelection(shape.layer);
-            this.onDrawChange(this.activeShape);
+            if(this.onDrawChange) this.onDrawChange(this.activeShape);
          }.bind(this))
       })
 
