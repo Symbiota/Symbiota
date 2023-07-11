@@ -15,7 +15,7 @@
 <!-- Importing Leaflet Draw Plugin --> 
 <link 
    rel="stylesheet" 
-   href="/Portal/js/leaflet-draw/dist/leaflet.draw.css"
+   href="<?php echo $CLIENT_ROOT?>/js/leaflet-draw/dist/leaflet.draw.css"
 />
 <script 
    src="<?php echo $CLIENT_ROOT?>/js/leaflet-draw/dist/leaflet.draw.js"
@@ -27,6 +27,17 @@
    src= <?php echo $CLIENT_ROOT."/js/leaflet-draw-drag/dist/Leaflet.draw.drag.js" ?>
    type="text/javascript">
 </script>
+
+<!-- Importing Cluster Plugin --> 
+<script 
+   src= <?php echo $CLIENT_ROOT."/js/Leaflet.markercluster-1.4.1/dist/Leaflet.markercluster.js" ?>
+   type="text/javascript">
+</script>
+
+<link 
+   rel="stylesheet" 
+   href="<?php echo $CLIENT_ROOT?>/js/Leaflet.markercluster-1.4.1/dist/MarkerCluster.css"
+/>
 
 <!-- Importing Leaflet Related Functions--> 
 <script 
