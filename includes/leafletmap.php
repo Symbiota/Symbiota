@@ -38,6 +38,10 @@
    rel="stylesheet" 
    href="<?php echo $CLIENT_ROOT?>/js/Leaflet.markercluster-1.4.1/dist/MarkerCluster.css"
 />
+<link 
+   rel="stylesheet" 
+   href="<?php echo $CLIENT_ROOT?>/js/Leaflet.markercluster-1.4.1/dist/MarkerCluster.Default.css"
+/>
 
 <!-- Importing Leaflet Related Functions--> 
 <script 
