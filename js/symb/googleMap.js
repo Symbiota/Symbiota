@@ -1,7 +1,8 @@
 class GoogleMap {
 
    DEFAULT_MAP_OPTIONS = {
-      center: [43.64701, -79.39425],
+      zoom: 8,
+      center: new google.maps.LatLng(43.64701, -79.39425),
       mapTypeId: google.maps.MapTypeId.TERRAIN,
       scaleControl: true
    }
@@ -28,7 +29,7 @@ class GoogleMap {
    _drawManager;
    onDrawChange;
 
-   constructor(map_id, map_options=DEFAULT_MAP_OPTIONS) {
+   constructor(map_id, map_options=this.DEFAULT_MAP_OPTIONS) {
       this.mapLayer = new google.maps.Map(document.getElementById(map_id), map_options);
    }
 
@@ -114,7 +115,7 @@ class GoogleMap {
                if (this.activeShape && this.activeShape.layer != newShape) 
                   this.activeShape.layer.setMap(null);
 
-               let listeners = ['click', 'dragend']
+               let listeners = ['click', 'dragend', 'mouseup']
 
                if(shapeType === "circle") {
                   listeners.push('radius_changed');
@@ -144,7 +145,7 @@ class GoogleMap {
    }
 
    drawShape(shape) {
-      let listeners = ['click', 'dragend']
+      let listeners = ['click', 'dragend', 'mouseup']
       let bounds = false;
 
 		this._drawingManager.setDrawingMode(null);
@@ -229,12 +230,12 @@ function setSelection(overlay) {
       layer: overlay
    }
 
+
    const SIG_FIGS = 6;
 
    switch(overlay.type) {
       case "polygon":
          //LatLngs
-         console.log(overlay)
          shape.latlngs = overlay.getPath().getArray().map(
             pt=> [pt.lat() , pt.lng()]);
          shape.wkt = "POLYGON ((" + shape.latlngs.map(pt => {
