@@ -974,7 +974,7 @@ function eventDateChanged(eventDateInput){
 				var testDate = new Date(dateArr['y'],dateArr['m']-1,dateArr['d']);
 				var today = new Date();
 				if(testDate > today){
-					alert("Was this plant really collected in the future? The date you entered has not happened yet. Please revise.");
+					alert("Was this specimen really collected in the future? The date you entered has not happened yet. Please revise.");
 					return false;
 				}
 			}
@@ -1027,7 +1027,7 @@ function distributeEventDate(y,m,d){
 	}
 	else{
 		f.month.value = m;
-		fieldChanged("year");
+		fieldChanged("month");
 	}
 	if(d == "00"){
 		f.day.value = "";
