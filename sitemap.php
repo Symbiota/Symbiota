@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <?php
 include_once('config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SiteMapManager.php');
@@ -54,10 +55,8 @@ $smManager = new SiteMapManager();
 				}
 				?>
 				<li><?php echo (isset($LANG['DATA_PUBLISHING'])?$LANG['DATA_PUBLISHING']:'Data Publishing');?></li>
-				<ul>
-					<li><a href="collections/datasets/rsshandler.php" target="_blank"><?php echo htmlspecialchars($LANG['COLLECTIONS_RSS'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
-					<li><a href="collections/datasets/datapublisher.php"><?php echo htmlspecialchars($LANG['DARWINCORE'], HTML_SPECIAL_CHARS_FLAGS);?></a> - <?php echo htmlspecialchars($LANG['PUBDATA'], HTML_SPECIAL_CHARS_FLAGS);?></li>
-				</ul>
+				<li class="nested-li"><a href="collections/datasets/rsshandler.php" target="_blank"><?php echo htmlspecialchars($LANG['COLLECTIONS_RSS'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
+				<li class="nested-li"><a href="collections/datasets/datapublisher.php"><?php echo htmlspecialchars($LANG['DARWINCORE'], HTML_SPECIAL_CHARS_FLAGS);?></a> - <?php echo htmlspecialchars($LANG['PUBDATA'], HTML_SPECIAL_CHARS_FLAGS);?></li>
 				<?php
 				$rssPath = 'content/dwca/rss.xml';
 				$deprecatedRssPath = 'webservices/dwc/rss.xml';
@@ -101,7 +100,7 @@ $smManager = new SiteMapManager();
 				if($projList){
 					foreach($projList as $pid => $pArr){
 						echo "<li><a href='projects/index.php?pid=" . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . "'>" . $pArr["name"] . "</a></li>\n";
-						echo "<ul><li>Manager: ".$pArr["managers"]."</li></ul>\n";
+						echo "<li class='nested-li'>Manager: " . $pArr["managers"] . "</li>\n";
 					}
 				}
 				?>
@@ -126,8 +125,12 @@ $smManager = new SiteMapManager();
 				</li>
 			</ul>
 
-			<fieldset id="admin">
-				<legend><b><?php echo $LANG['MANAGTOOL'];?></b></legend>
+			<section id="admin" class="fieldset-like">
+				<h1>
+					<span>
+						<?php echo $LANG['MANAGTOOL'];?>
+					</span>
+				</h1>
 				<?php
 				if($SYMB_UID){
 					if($IS_ADMIN){
@@ -469,10 +472,10 @@ $smManager = new SiteMapManager();
 					echo ''.$LANG['PLEASE'].' <a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/profile/index.php?refurl=../sitemap.php">' . htmlspecialchars($LANG['LOGIN'], HTML_SPECIAL_CHARS_FLAGS) . '</a>' . htmlspecialchars($LANG['TOACCESS'], HTML_SPECIAL_CHARS_FLAGS) . '<br/>' . htmlspecialchars($LANG['CONTACTPORTAL'], HTML_SPECIAL_CHARS_FLAGS) . '.';
 				}
 			?>
-			</fieldset>
+			</section>
 			<div id="symbiotaschema">
-				<img src="https://img.shields.io/badge/Symbiota-v<?php echo $CODE_VERSION; ?>-blue.svg" />
-				<img src="https://img.shields.io/badge/Schema-<?php echo 'v'.$smManager->getSchemaVersion(); ?>-blue.svg" />
+				<img src="https://img.shields.io/badge/Symbiota-v<?php echo $CODE_VERSION; ?>-blue.svg" alt="a blue badge depicting Symbiota software version" />
+				<img src="https://img.shields.io/badge/Schema-<?php echo 'v'.$smManager->getSchemaVersion(); ?>-blue.svg" alt="a blue badge depicting Symbiota database schema version" />
 			</div>
 		</div>
 	</div>

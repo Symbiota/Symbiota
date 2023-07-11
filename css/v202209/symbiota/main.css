@@ -323,3 +323,44 @@ table.styledtable tr.alt td {
     font-size: 2.5rem;
   }
 }
+
+.nested-li {
+  margin-left: 1.5em;
+}
+
+.fieldset-like {
+  /* borrowed from: https://www.geeksforgeeks.org/how-to-achieve-fieldset-like-effect-without-using-fieldset-tag/ */
+  border: 2px solid;
+  border-top: none;
+  margin: 32px 2px;
+  padding: 8px;
+}
+
+.fieldset-like h1 {
+  font: 16px normal;
+  margin: -16px -8px 0;
+}
+
+.fieldset-like h1 span {
+  float: left;
+}
+
+.fieldset-like h1:before {
+  border-top: 2px solid;
+  content: " ";
+  float: left;
+  margin: 8px 2px 0 -1px;
+  width: 12px;
+}
+
+.fieldset-like h1:after {
+  border-top: 2px solid;
+  content: " ";
+  display: block;
+  height: 24px;
+  left: 2px;
+  margin: 0 1px 0 0;
+  overflow: hidden;
+  position: relative;
+  top: 8px;
+}
