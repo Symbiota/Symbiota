@@ -284,7 +284,7 @@ $smManager = new SiteMapManager();
 
 					<h3><?php echo (isset($LANG['DATASETS'])?$LANG['DATASETS']:'Datasets') ;?></h3>
 					<ul>
-						<li><a href="collections/datasets/index.php"><?php echo htmlspecialchars((isset($LANG['DATMANPAG'])?$LANG['DATMANPAG']:'Dataset Management Page</a> - datasets you are authorized to edit'), HTML_SPECIAL_CHARS_FLAGS) ;?></li>
+						<li><a href="collections/datasets/index.php"><?php echo htmlspecialchars((isset($LANG['DATMANPAG'])?$LANG['DATMANPAG']:'Dataset Management Page'), HTML_SPECIAL_CHARS_FLAGS) ;?></a> - <?php echo htmlspecialchars($LANG['DATA_AUTHORIZED_TO_EDIT'], HTML_SPECIAL_CHARS_FLAGS) ?></li>
 					</ul>
 					<h3><?php echo $LANG['TAXONPROF'];?></h3>
 					<?php
