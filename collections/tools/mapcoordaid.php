@@ -269,7 +269,6 @@ else{
 
          if(formShape) {
             map.drawShape(formShape);
-            map.mapLayer.setView([map.activeShape.center.lat, map.activeShape.center.lng]);
             map.mapLayer.fitBounds(map.activeShape.layer.getBounds());
          }
 
