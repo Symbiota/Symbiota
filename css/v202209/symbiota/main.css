@@ -364,3 +364,8 @@ table.styledtable tr.alt td {
   position: relative;
   top: 8px;
 }
+
+.btn-medium-font {
+  font-size: 0.6em;
+  text-decoration: none;
+}
