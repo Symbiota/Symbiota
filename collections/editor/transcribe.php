@@ -200,9 +200,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 									</a>
 								</div>
                                 <!-- <b id="slectedBatch">Batch: </b><br> -->
-								<button type="button" name="first" onclick="return navigateToRecordNew(<?php echo ($firstOccIDs[0]-1).', '.$firstOccIDs[0].', '.$collid.', '.$crowdSourceMode; ?>)"><?php echo $LANG['START_FROM']; ?> first.</button>
+								<button type="button" name="first" onclick="return navigateToRecordNew(<?php echo ($firstOccIDs[0]-1).', '.$firstOccIDs[0].', '.($collid + 1).', '.$crowdSourceMode; ?>)"><?php echo $LANG['START_FROM']; ?> first.</button>
                                 <!-- TODO: need to customize the page number and set a veriable to start from the last page-->
-                                <button type="button" name="last"  onclick="return navigateToRecordNew(<?php echo ($lastOccIDs[0]-1).', '.$lastOccIDs[0].', '.$collid.', '.$crowdSourceMode; ?>)"><?php echo $LANG['START_FROM']; ?> last.</button>
+                                <button type="button" name="last"  onclick="return navigateToRecordNew(<?php echo ($lastOccIDs[0]-1).', '.$lastOccIDs[0].', '.($collid + 1).', '.$crowdSourceMode; ?>)"><?php echo $LANG['START_FROM']; ?> last.</button>
 								<button type="button" name="lastView"><?php echo $LANG['START_FROM']; ?> last view.</button>
                             </div>
 							<div>
