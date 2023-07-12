@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
@@ -70,7 +71,7 @@ if($action == "Create Login"){
 }
 
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' - '.(isset($LANG['NEW_USER'])?$LANG['NEW_USER']:'New User Profile'); ?></title>
 	<?php
