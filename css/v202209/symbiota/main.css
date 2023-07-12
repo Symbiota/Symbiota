@@ -328,3 +328,18 @@ table.styledtable tr.alt td {
   font-size: 0.6em;
   text-decoration: none;
 }
+
+.profile-fieldset {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 2px outset #808080;
+}
+
+.profile-login {
+  margin: 20px;
+  width: 350px;
+}
+
+.profile-legend {
+  font-weight: bold;
+}
