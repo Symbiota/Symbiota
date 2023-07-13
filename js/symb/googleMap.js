@@ -38,12 +38,12 @@ class GoogleMap {
 
    DrawOptions;
 
-   enableDrawing(drawOptions = DEFAULT_DRAW_OPTIONS, onDrawChange) {
+   enableDrawing(drawOptions = this.DEFAULT_DRAW_OPTIONS, onDrawChange) {
       this.onDrawChange = onDrawChange;
 
       drawOptions = {
-         ...drawOptions,
          ...this.DEFAULT_DRAW_OPTIONS,
+         ...drawOptions,
       }
  
       this.DrawOptions = drawOptions;
@@ -67,6 +67,8 @@ class GoogleMap {
          if(drawOptions.polygon) shapeModes.push(google.maps.drawing.OverlayType.POLYGON);
          if(drawOptions.rectangle) shapeModes.push(google.maps.drawing.OverlayType.RECTANGLE);
          if(drawOptions.circle) shapeModes.push(google.maps.drawing.OverlayType.CIRCLE);
+
+         console.log(shapeModes)
             
          let drawingManager = new google.maps.drawing.DrawingManager({
             drawingMode: getMapMode(drawOptions.mapMode),
