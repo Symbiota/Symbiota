@@ -242,7 +242,7 @@ CREATE TABLE `dropdown_geoWithin_values` (
   `displayValue` varchar(255),
   `area` text,
   `areaType` text,
-  `synonym` text, DEFAULT NULL,
+  `synonym` text DEFAULT NULL,
   `occid` int unsigned NOT NULL,
   `initialtimestamp` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`dd_geoWithinID`)
