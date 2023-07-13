@@ -236,6 +236,8 @@ function parseWkt(origin_wkt) {
 
    wkt = trimPolygon(wkt);
 
+   console.log(wkt)
+
    let pointArr = [];
    let strArr = wkt.split(',');
 
@@ -243,7 +245,7 @@ function parseWkt(origin_wkt) {
 		return !isNaN(parseFloat(n)) && isFinite(n);
 	}
 
-   for(let i = 1; i < strArr.length; i++) {
+   for(let i = 0; i < strArr.length; i++) {
       let xy = strArr[i].trim().split(" ");
       let lat = xy[0];
       let lng = xy[1];
