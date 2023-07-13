@@ -68,8 +68,6 @@ class GoogleMap {
          if(drawOptions.rectangle) shapeModes.push(google.maps.drawing.OverlayType.RECTANGLE);
          if(drawOptions.circle) shapeModes.push(google.maps.drawing.OverlayType.CIRCLE);
 
-         console.log(shapeModes)
-            
          let drawingManager = new google.maps.drawing.DrawingManager({
             drawingMode: getMapMode(drawOptions.mapMode),
             drawingControl: true,
