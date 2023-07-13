@@ -16,6 +16,7 @@ class GoogleMap {
       polygon: true,
       rectangle: true,
       circle: true,
+      multipolygon: false,
    }
 
    /* To Hold Reference to Google Map */
@@ -27,6 +28,7 @@ class GoogleMap {
     * center: { lat: float, lng float }
     */
    activeShape;
+   shapes = [];
 
    /* Reference Leaflet Feature Group for all drawn items*/
    _drawManager;
@@ -117,8 +119,9 @@ class GoogleMap {
                newShape.type = e.type;
 
                //Clear if Shape Isn't the same
-               if (this.activeShape && this.activeShape.layer != newShape) 
+               if (!this.DrawOptions.multipolygon && this.activeShape && this.activeShape.layer != newShape) {
                   this.activeShape.layer.setMap(null);
+               }
 
                let listeners = ['click', 'dragend', 'mouseup']
 
@@ -141,7 +144,10 @@ class GoogleMap {
                })
 
                this.activeShape = setSelection(newShape);
+               this.shapes.push(this.activeShape);
+
                onDrawChange(this.activeShape);
+
             }
          }.bind(this));
 
@@ -213,7 +219,8 @@ class GoogleMap {
             break;
          default:
             throw Error(`Can't draw ${shape.type}`)
-      } 
+      }
+
 
       listeners.forEach(eventListener => {
          google.maps.event.addListener(shape.layer, eventListener, function () {
@@ -221,6 +228,8 @@ class GoogleMap {
             if(this.onDrawChange) this.onDrawChange(this.activeShape);
          }.bind(this))
       })
+
+      this.shapes.push(this.activeShape);
 
       if(bounds) {
          this.mapLayer.fitBounds(bounds);
