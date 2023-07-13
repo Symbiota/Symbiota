@@ -13,6 +13,9 @@ class GoogleMap {
       editable: true,
       draggable: true,
       drawControl: true,
+      polygon: true,
+      rectangle: true,
+      circle: true,
    }
 
    /* To Hold Reference to Google Map */
@@ -59,23 +62,25 @@ class GoogleMap {
       }
 
       if(drawOptions.drawControl) {
+         let shapeModes = []
+
+         if(drawOptions.polygon) shapeModes.push(google.maps.drawing.OverlayType.POLYGON);
+         if(drawOptions.rectangle) shapeModes.push(google.maps.drawing.OverlayType.RECTANGLE);
+         if(drawOptions.circle) shapeModes.push(google.maps.drawing.OverlayType.CIRCLE);
+            
          let drawingManager = new google.maps.drawing.DrawingManager({
             drawingMode: getMapMode(drawOptions.mapMode),
             drawingControl: true,
             drawingControlOptions: {
                position: google.maps.ControlPosition.TOP_CENTER,
-               drawingModes: [
-                  google.maps.drawing.OverlayType.POLYGON,
-                  google.maps.drawing.OverlayType.RECTANGLE,
-                  google.maps.drawing.OverlayType.CIRCLE
-               ]
+               drawingModes: shapeModes,
             },
             markerOptions: {
                draggable: true
             },
-            polygonOptions: drawOptions,
-            circleOptions: drawOptions,
-            rectangleOptions: drawOptions,
+            polygonOptions: drawOptions.polygon? drawOptions: undefined,
+            circleOptions: drawOptions.circle? drawOptions: undefined,
+            rectangleOptions: drawOptions.rectangle? drawOptions: undefined,
          });
 
          drawingManager.setMap(this.mapLayer);
