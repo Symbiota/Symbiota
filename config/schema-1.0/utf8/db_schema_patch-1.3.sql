@@ -85,7 +85,7 @@ CREATE TABLE `dropdown_filedUnder_values` (
 );
 
 ALTER TABLE `omoccurrences`
-    ADD CONSTRAINT `FK_omoccurrences_filedUnder` FOREIGN KEY (`filedUnder`) REFERENCES `dropdown_filedUnder_values`(`id`);
+    ADD CONSTRAINT `FK_omoccurrences_filedUnder` FOREIGN KEY (`filedUnder`) REFERENCES `dropdown_filedUnder_values`(`dd_filedUnderID`);
 
 -- Create trigger to update the displayValue column in dropdown_filedUnder_values with the right value with every insert and update
 CREATE TRIGGER TR_insert_dd_filedUnder
@@ -114,7 +114,7 @@ CREATE TABLE `dropdown_currName_values` (
 );
 
 ALTER TABLE `omoccurrences`
-    ADD CONSTRAINT `FK_omoccurrences_currName` FOREIGN KEY (`currName`) REFERENCES `dropdown_currName_values`(`id`);
+    ADD CONSTRAINT `FK_omoccurrences_currName` FOREIGN KEY (`currName`) REFERENCES `dropdown_currName_values`(`dd_currNameID`);
 
 -- Create trigger to update the displayValue column in dropdown_currName_values with the right value with every insert and update
 CREATE TRIGGER TR_insert_dd_currName
@@ -143,7 +143,7 @@ CREATE TABLE `dropdown_identifiedBy_values` (
 
 ALTER TABLE `omoccurrences`
     CHANGE `identifiedBy` `identifiedBy` int DEFAULT NULL,
-    ADD CONSTRAINT `FK_omoccurrences_identifiedBy` FOREIGN KEY (`identifiedBy`) REFERENCES `dropdown_identifiedBy_values`(`id`);
+    ADD CONSTRAINT `FK_omoccurrences_identifiedBy` FOREIGN KEY (`identifiedBy`) REFERENCES `dropdown_identifiedBy_values`(`dd_identifiedByID`);
 
 -- Create trigger to update the displayValue column in dropdown_identifiedBy_values with the right value with every insert and update
 CREATE TRIGGER TR_insert_dd_identifiedBy
@@ -172,7 +172,7 @@ CREATE TABLE `dropdown_recordedBy_values` (
 
 ALTER TABLE `omoccurrences`
     CHANGE `recordedBy` `recordedBy` int DEFAULT NULL,
-    ADD CONSTRAINT `FK_omoccurrences_recordedBy` FOREIGN KEY (`recordedBy`) REFERENCES `dropdown_recordedBy_values`(`id`);
+    ADD CONSTRAINT `FK_omoccurrences_recordedBy` FOREIGN KEY (`recordedBy`) REFERENCES `dropdown_recordedBy_values`(`dd_recordedByID`);
 
 -- Create trigger to update the displayValue column in dropdown_recordedBy_values with the right value with every insert and update
 CREATE TRIGGER TR_insert_dd_recordedBy
@@ -197,7 +197,7 @@ CREATE TABLE `dropdown_container_values` (
 );
 
 ALTER TABLE `omoccurrences`
-    ADD CONSTRAINT `FK_omoccurrences_container` FOREIGN KEY (`container`) REFERENCES `dropdown_container_values`(`id`);
+    ADD CONSTRAINT `FK_omoccurrences_container` FOREIGN KEY (`container`) REFERENCES `dropdown_container_values`(`dd_containerID`);
 
 -- Create trigger to update the displayValue column in dropdown_container_values with the right value with every insert and update
 CREATE TRIGGER TR_insert_dd_container
@@ -222,7 +222,7 @@ CREATE TABLE `dropdown_collTrip_values` (
 );
 
 ALTER TABLE `omoccurrences`
-    ADD CONSTRAINT `FK_omoccurrences_collTrip` FOREIGN KEY (`collTrip`) REFERENCES `dropdown_collTrip_values`(`id`);
+    ADD CONSTRAINT `FK_omoccurrences_collTrip` FOREIGN KEY (`collTrip`) REFERENCES `dropdown_collTrip_values`(`dd_collTripID`);
 
 -- Create trigger to update the displayValue column in dropdown_collTrip_values with the right value with every insert and update
 CREATE TRIGGER TR_insert_dd_collTrip
@@ -249,7 +249,7 @@ CREATE TABLE `dropdown_geoWithin_values` (
 );
 
 ALTER TABLE `omoccurrences`
-    ADD CONSTRAINT `FK_omoccurrences_geoWithin` FOREIGN KEY (`geoWithin`) REFERENCES `dropdown_geoWithin_values`(`id`);
+    ADD CONSTRAINT `FK_omoccurrences_geoWithin` FOREIGN KEY (`geoWithin`) REFERENCES `dropdown_geoWithin_values`(`dd_geoWithinID`);
 
 -- Create trigger to update the displayValue column in dropdown_geoWithin_values with the right value with every insert and update
 CREATE TRIGGER TR_insert_dd_geoWithin
@@ -276,7 +276,7 @@ CREATE TABLE `dropdown_highGeo_values` (
 );
 
 ALTER TABLE `omoccurrences`
-    ADD CONSTRAINT `FK_omoccurrences_highGeo` FOREIGN KEY (`highGeo`) REFERENCES `dropdown_highGeo_values`(`id`);
+    ADD CONSTRAINT `FK_omoccurrences_highGeo` FOREIGN KEY (`highGeo`) REFERENCES `dropdown_highGeo_values`(`dd_highGeoID`);
 
 -- Create trigger to update the displayValue column in dropdown_highGeo_values with the right value with every insert and update
 CREATE TRIGGER TR_insert_dd_highGeo
@@ -301,7 +301,7 @@ CREATE TABLE `dropdown_prepMethod_values` (
 );
 
 ALTER TABLE `omoccurrences`
-    ADD CONSTRAINT `FK_omoccurrences_prepMethod` FOREIGN KEY (`prepMethod`) REFERENCES `dropdown_prepMethod_values`(`id`);
+    ADD CONSTRAINT `FK_omoccurrences_prepMethod` FOREIGN KEY (`prepMethod`) REFERENCES `dropdown_prepMethod_values`(`dd_prepMethodID`);
 
 -- Create trigger to update the displayValue column in dropdown_prepMethod_values with the right value with every insert and update
 CREATE TRIGGER TR_insert_dd_prepMethod
@@ -326,7 +326,7 @@ CREATE TABLE `dropdown_format_values` (
 );
 
 ALTER TABLE `omoccurrences`
-    ADD CONSTRAINT `FK_omoccurrences_format` FOREIGN KEY (`format`) REFERENCES `dropdown_format_values`(`id`);
+    ADD CONSTRAINT `FK_omoccurrences_format` FOREIGN KEY (`format`) REFERENCES `dropdown_format_values`(`dd_formatID`);
 
 -- Create trigger to update the displayValue column in dropdown_format_values with the right value with every insert and update
 CREATE TRIGGER TR_insert_dd_format
