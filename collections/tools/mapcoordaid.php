@@ -254,7 +254,7 @@ else{
       if("<?php echo $LEAFLET ?>") { //LEAFLET SPECIFIC
 
          const MapOptions = {
-            center: [<?php echo $latCenter?>, <?php echo $latCenter?>],
+            center: [<?php echo $latCenter?>, <?php echo $lngCenter?>],
             zoom: <?php echo $zoom?>
          };
 
@@ -275,7 +275,7 @@ else{
       } else { //GOOGLE SPECIFIC
 		   const MapOptions= {
 				zoom: <?php echo $zoom; ?>,
-				center: new google.maps.LatLng(<?php echo $latCenter.','.$lngCenter; ?>),
+				center: new google.maps.LatLng(<?php echo $latCenter . ',' . $lngCenter; ?>),
 				mapTypeId: google.maps.MapTypeId.TERRAIN,
 				scaleControl: true
 			};

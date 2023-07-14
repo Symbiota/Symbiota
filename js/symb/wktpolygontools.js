@@ -236,8 +236,6 @@ function parseWkt(origin_wkt) {
 
    wkt = trimPolygon(wkt);
 
-   console.log(wkt)
-
    let pointArr = [];
    let strArr = wkt.split(',');
 
