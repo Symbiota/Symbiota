@@ -168,9 +168,9 @@ if($action == "Create Login"){
 		echo '</div>';
 	}
 	?>
-	<fieldset style='margin:10px;width:95%;'>
-		<legend><b><?php echo (isset($LANG['LOGIN_DETAILS'])?$LANG['LOGIN_DETAILS']:'Login Details'); ?></b></legend>
-		<form action="newprofile.php" method="post" onsubmit="return validateform(this);">
+	<form action="newprofile.php" method="post" onsubmit="return validateform(this);">
+		<fieldset style='margin:10px;width:95%;'>
+			<legend><b><?php echo (isset($LANG['LOGIN_DETAILS'])?$LANG['LOGIN_DETAILS']:'Login Details'); ?></b></legend>
 			<div style="margin:15px;">
 				<table cellspacing='3'>
 					<tr>
@@ -295,8 +295,8 @@ if($action == "Create Login"){
 					</tr>
 				</table>
 			</div>
-		</form>
-	</fieldset>
+		</fieldset>
+	</form>
 	</div>
 	<?php
 	include($SERVER_ROOT.'/includes/footer.php');
