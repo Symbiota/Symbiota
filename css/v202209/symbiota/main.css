@@ -340,3 +340,8 @@ table.styledtable tr.alt td {
 .top-tiny-breathing-room {
   margin-top: 5px;
 }
+
+.btn-medium-font {
+  font-size: 0.6em;
+  text-decoration: none;
+}

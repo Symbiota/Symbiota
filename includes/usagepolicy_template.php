@@ -1,10 +1,11 @@
+<!DOCTYPE html>
 <?php
 include_once('../config/symbini.php');
 include_once ($SERVER_ROOT.'/classes/UtilityFunctions.php');
 header("Content-Type: text/html; charset=" . $CHARSET);
 $serverHost = UtilityFunctions::getDomain();
 ?>
-<html>
+<html lang="en">
 
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Data Usage Guidelines</title>
@@ -78,8 +79,8 @@ $serverHost = UtilityFunctions::getDomain();
 					directed to the appropriate curators and/or collections managers.
 				</li>
 				<li>
-					<?php echo $DEFAULT_TITLE; ?> cannot assume responsibility for damages resulting from mis-use or
-					mis-interpretation of datasets or from errors or omissions that may exist in the data.
+					<?php echo $DEFAULT_TITLE; ?> cannot assume responsibility for damages resulting from misuse or
+					misinterpretation of datasets or from errors or omissions that may exist in the data.
 				</li>
 				<li>
 					It is considered a matter of professional ethics to cite and acknowledge the work of other scientists that
@@ -105,7 +106,7 @@ $serverHost = UtilityFunctions::getDomain();
 		<p>Specimens are used for scientific research and because of skilled preparation and careful use they may last for hundreds of years. Some collections have specimens that were
 		collected over 100 years ago that are no longer occur within the area. By making these specimens available on the web as images, their availability and value improves without
 		an increase in inadvertent damage caused by use. Note that if you are considering making specimens, remember collecting normally requires permission of the landowner and,
-		in the case of rare and endangered plants, additional permits may be required. It is best to coordinate such efforts with a regional institution that manages a publically
+		in the case of rare and endangered plants, additional permits may be required. It is best to coordinate such efforts with a regional institution that manages a publicly
 		accessible collection.
 		</p>
 

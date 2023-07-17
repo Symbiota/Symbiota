@@ -10,7 +10,7 @@ include_once($SERVER_ROOT.'/classes/ProfileManager.php');
 $pHandler = new ProfileManager();
 $isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
 // $_SESSION['active_stylesheet'] = null; // use this if you want to troubleshoot the behavior of just the persisted preference
-$localSession = $_SESSION['active_stylesheet'];
+$localSession = isset($_SESSION['active_stylesheet']) ? $_SESSION['active_stylesheet'] : null;
 ?>
 <!-- Responsive viewport -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,7 +22,7 @@ $localSession = $_SESSION['active_stylesheet'];
 <script src="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/js/symb/accessibilityUtils.js" type="text/javascript"></script>
 <?php 
     if($isAccessiblePreferred){
-        if(strpos($localSession, "condensed.css")){
+        if(isset($localSession) && strpos($localSession, "condensed.css")){
             ?>
             <link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/accessibility-compliant.css?ver=6.css" type="text/css" rel="stylesheet" data-accessibility-link="accessibility-css-link" disabled >
             <link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/condensed.css?ver=6.css" type="text/css" rel="stylesheet" data-accessibility-link="accessibility-css-link" >
@@ -34,7 +34,7 @@ $localSession = $_SESSION['active_stylesheet'];
             <?php
         }
     } else{
-        if(strpos($localSession, "accessibility-compliant.css")){
+        if(isset($localSession) && strpos($localSession, "accessibility-compliant.css")){
             ?>
             <link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/accessibility-compliant.css?ver=6.css" type="text/css" rel="stylesheet" data-accessibility-link="accessibility-css-link" >
             <link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/condensed.css?ver=6.css" type="text/css" rel="stylesheet" data-accessibility-link="accessibility-css-link" disabled >
