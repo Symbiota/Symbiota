@@ -306,25 +306,29 @@ if($isEditor){
 					</div>
 					<div style="margin:15px;width:700px;">
 						<form name="accqueryform" action="batchdeterminations.php" method="post" onsubmit="return submitAccForm(this);">
-							<div style="margin-bottom: 10px;">
-								<label for="catalognumber"><?php echo $LANG['CATNUM']; ?>:</label>
-								<input name="catalognumber" id="catalognumber" type="text" style="border-color:green;width:200px;" />
-							</div>
-							<div style="margin-bottom:10px;">
-								<input name="allcatnum" id="allcatnum" type="checkbox" checked /> <label for="allcatnum"><?php echo $LANG['TARGET_ALL']; ?></label>
-							</div>
+							<section class="flex-form">
+								<div class="bottom-breathing-room">
+									<label for="catalognumber"><?php echo $LANG['CATNUM']; ?>:</label>
+									<input name="catalognumber" id="catalognumber" type="text" style="border-color:green;width:200px;" />
+								</div>
+								<div class="bottom-breathing-room">
+									<input name="allcatnum" id="allcatnum" type="checkbox" checked /> <label for="allcatnum"><?php echo $LANG['TARGET_ALL']; ?></label>
+								</div>
+							</section>
 							<div>
 								<label for="nomsciname"><?php echo $LANG['TAXON']; ?>:</label>
 								<input type="text" id="nomsciname" name="sciname" style="width:260px;" onfocus="initScinameAutocomplete(this.form)" />
 							</div>
-							<div style="margin-top:5px;">
-								<button name="clearaccform" type="button" onclick='clearAccForm(this.form)'><?php echo $LANG['CLEAR_LIST']; ?></button>
-								<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-							</div>
-							<div style="margin-top:5px;">
-								<button name="addrecord" type="submit"><?php echo $LANG['ADD_RECORDS']; ?></button>
-								<img id="workingcircle" src="../../images/workingcircle.gif" style="display:none;" alt="progress is being made" />
-							</div>
+							<section class="flex-form">
+								<div class="top-tiny-breathing-room">
+									<button name="addrecord" type="submit"><?php echo $LANG['ADD_RECORDS']; ?></button>
+									<img id="workingcircle" src="../../images/workingcircle.gif" style="display:none;" alt="progress is being made" />
+								</div>
+								<div class="top-tiny-breathing-room">
+									<button name="clearaccform" type="button" onclick='clearAccForm(this.form)'><?php echo $LANG['CLEAR_LIST']; ?></button>
+									<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
+								</div>
+							</section>
 						</form>
 					</div>
 					<div style="margin:15px">

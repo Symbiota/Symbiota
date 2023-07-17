@@ -78,24 +78,26 @@ $attribSearch = new OccurrenceAttributeSearch();
 						<div style="margin:10px 0px 0px 5px;"><input type='checkbox' name='usethes' id='usethes' value='1' CHECKED />
 						<label for="usethes"><?php echo $LANG['INCLUDE_SYNONYMS']; ?></div></label>
 					</div>
-					<div>
-						<label for="taxontype"><?php echo $LANG['SELECT_TAXON_TYPE'] ?>:</label>
-						<select id="taxontype" name="taxontype">
-							<?php
-							$taxonType = 1;
-							if(isset($DEFAULT_TAXON_SEARCH) && $DEFAULT_TAXON_SEARCH) $taxonType = $DEFAULT_TAXON_SEARCH;
-							$taxonTypeRange = 6;
-							if(isset($DISPLAY_COMMON_NAMES) && !$DISPLAY_COMMON_NAMES) $taxonTypeRange = 5;
-							for($h=1;$h<$taxonTypeRange;$h++){
-								echo '<option value="'.$h.'" '.($taxonType==$h?'SELECTED':'').'>'.$LANG['SELECT_1-'.$h].'</option>';
-							}
-							?>
-						</select>
-					</div>
-					<div>
-						<label for="taxa"><?php echo $LANG['TYPE_TAXON'] ?>:</label>
-						<input id="taxa" type="text" size="60" name="taxa" id="taxa" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
-					</div>
+					<section class="flex-form">
+						<div>
+							<label for="taxontype"><?php echo $LANG['SELECT_TAXON_TYPE'] ?>:</label>
+							<select id="taxontype" name="taxontype">
+								<?php
+								$taxonType = 1;
+								if(isset($DEFAULT_TAXON_SEARCH) && $DEFAULT_TAXON_SEARCH) $taxonType = $DEFAULT_TAXON_SEARCH;
+								$taxonTypeRange = 6;
+								if(isset($DISPLAY_COMMON_NAMES) && !$DISPLAY_COMMON_NAMES) $taxonTypeRange = 5;
+								for($h=1;$h<$taxonTypeRange;$h++){
+									echo '<option value="'.$h.'" '.($taxonType==$h?'SELECTED':'').'>'.$LANG['SELECT_1-'.$h].'</option>';
+								}
+								?>
+							</select>
+						</div>
+						<div>
+							<label for="taxa"><?php echo $LANG['TYPE_TAXON'] ?>:</label>
+							<input id="taxa" type="text" size="60" name="taxa" id="taxa" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
+						</div>
+					</section>
 				</div>
 				<div style='float:right;margin:0px 10px;'>
 					<div><button type="submit" style="width:100%"><?php echo isset($LANG['BUTTON_NEXT_LIST'])?$LANG['BUTTON_NEXT_LIST']:'List Display'; ?></button></div>
@@ -123,14 +125,16 @@ $attribSearch = new OccurrenceAttributeSearch();
 				<label for="locality"><?php echo $LANG['LOCALITY']; ?>:</label>
 				<input type="text" id="locality" size="43" name="local" value="" />
 			</div>
-			<div>
-				<label for="elevlow"><?php echo $LANG['ELEV_INPUT_1']; ?>:</label>
-				<input type="text" id="elevlow" size="10" name="elevlow" value="" onchange="cleanNumericInput(this);" />
-			</div>
-			<div>
-				<label for="elevhigh"><?php echo $LANG['ELEV_INPUT_2']; ?>:</label>
-				<input type="text" id="elevhigh" size="10" name="elevhigh" value="" onchange="cleanNumericInput(this);" />
-			</div>
+			<section class="flex-form">
+				<div>
+					<label for="elevlow"><?php echo $LANG['ELEV_INPUT_1']; ?>:</label>
+					<input type="text" id="elevlow" size="10" name="elevlow" value="" onchange="cleanNumericInput(this);" />
+				</div>
+				<div>
+					<label for="elevhigh"><?php echo $LANG['ELEV_INPUT_2']; ?>:</label>
+					<input type="text" id="elevhigh" size="10" name="elevhigh" value="" onchange="cleanNumericInput(this);" />
+				</div>
+			</section>
 			<hr>
 			<div class="catHeaderDiv"><?php echo $LANG['LAT_LNG_HEADER']; ?></div>
 			<div>
@@ -201,39 +205,45 @@ $attribSearch = new OccurrenceAttributeSearch();
 						<a href="#" onclick="openCoordAid('circle');return false;"><img src="../images/map.png" title="<?php echo (isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'); ?>" /></a>
 					</div>
 					<div class="elemDiv">
-						<div>
-							<label for="pointlat"><?php echo $LANG['LL_P-RADIUS_LAT']; ?>:</label>
-							<input type="text" id="pointlat" name="pointlat" size="7" value="" onchange="cleanNumericInput(this);">
-						</div>
-						<div>
-							<label for="pointlat_NS"><?php echo $LANG['DIRECTION'] ?>:</label>
-							<select id="pointlat_NS" name="pointlat_NS">
-								<option id="N" value="N"><?php echo $LANG['LL_N_SYMB']; ?></option>
-								<option id="S" value="S"><?php echo $LANG['LL_S_SYMB']; ?></option>
-							</select>
-						</div>
-						<div>
-							<label for="pointlong"><?php echo $LANG['LL_P-RADIUS_LNG']; ?>:</label>
-							<input type="text" id="pointlong" name="pointlong" size="7" value="" onchange="cleanNumericInput(this);">
-						</div>
-						<div>
-							<label for="pointlong_EW"><?php echo $LANG['DIRECTION'] ?>:</label>
-							<select id="pointlong_EW" name="pointlong_EW">
-								<option id="W" value="W"><?php echo $LANG['LL_W_SYMB']; ?></option>
-								<option id="E" value="E"><?php echo $LANG['LL_E_SYMB']; ?></option>
-							</select>
-						</div>
-						<div>
-							<label for="radius"><?php echo $LANG['LL_P-RADIUS_RADIUS']; ?>:</label>
-							<input type="text" id="radius" name="radius" size="5" value="" onchange="cleanNumericInput(this);">
-						</div>
-						<div>
-							<label for="radiusunits"><?php echo $LANG['DISTANCE_UNIT'] ?>:</label>
-							<select id="radiusunits" name="radiusunits">
-								<option value="km"><?php echo $LANG['LL_P-RADIUS_KM']; ?></option>
-								<option value="mi"><?php echo $LANG['LL_P-RADIUS_MI']; ?></option>
-							</select>
-						</div>
+						<section class="flex-form">
+							<div>
+								<label for="pointlat"><?php echo $LANG['LL_P-RADIUS_LAT']; ?>:</label>
+								<input type="text" id="pointlat" name="pointlat" size="7" value="" onchange="cleanNumericInput(this);">
+							</div>
+							<div>
+								<label for="pointlat_NS"><?php echo $LANG['DIRECTION'] ?>:</label>
+								<select id="pointlat_NS" name="pointlat_NS">
+									<option id="N" value="N"><?php echo $LANG['LL_N_SYMB']; ?></option>
+									<option id="S" value="S"><?php echo $LANG['LL_S_SYMB']; ?></option>
+								</select>
+							</div>
+						</section>
+						<section class="flex-form">
+							<div>
+								<label for="pointlong"><?php echo $LANG['LL_P-RADIUS_LNG']; ?>:</label>
+								<input type="text" id="pointlong" name="pointlong" size="7" value="" onchange="cleanNumericInput(this);">
+							</div>
+							<div>
+								<label for="pointlong_EW"><?php echo $LANG['DIRECTION'] ?>:</label>
+								<select id="pointlong_EW" name="pointlong_EW">
+									<option id="W" value="W"><?php echo $LANG['LL_W_SYMB']; ?></option>
+									<option id="E" value="E"><?php echo $LANG['LL_E_SYMB']; ?></option>
+								</select>
+							</div>
+						</section>
+						<section class="flex-form">
+							<div>
+								<label for="radius"><?php echo $LANG['LL_P-RADIUS_RADIUS']; ?>:</label>
+								<input type="text" id="radius" name="radius" size="5" value="" onchange="cleanNumericInput(this);">
+							</div>
+							<div>
+								<label for="radiusunits"><?php echo $LANG['DISTANCE_UNIT'] ?>:</label>
+								<select id="radiusunits" name="radiusunits">
+									<option value="km"><?php echo $LANG['LL_P-RADIUS_KM']; ?></option>
+									<option value="mi"><?php echo $LANG['LL_P-RADIUS_MI']; ?></option>
+								</select>
+							</div>
+						</section>
 					</div>
 				</div>
 			</div>
@@ -247,14 +257,16 @@ $attribSearch = new OccurrenceAttributeSearch();
 				<label for="collnum"><?php echo $LANG['COLLECTOR_NUMBER']; ?>:</label>
 				<input type="text" id="collnum" size="31" name="collnum" value="" title="<?php echo $LANG['TITLE_TEXT_2']; ?>" />
 			</div>
-			<div>
-				<label for="eventdate1"><?php echo $LANG['COLLECTOR_DATE']; ?>:</label>
-				<input type="text" id="eventdate1" size="32" name="eventdate1" style="width:100px;" value="" title="<?php echo $LANG['TITLE_TEXT_3']; ?>" /> -
-			</div>
-			<div>
-				<label for="eventdate2"><?php echo $LANG['COLLECTOR_DATE_END']; ?>:</label>
-				<input type="text" id="eventdate2" size="32" name="eventdate2" style="width:100px;" value="" title="<?php echo $LANG['TITLE_TEXT_4']; ?>" />
-			</div>
+			<section class="flex-form">
+				<div>
+					<label for="eventdate1"><?php echo $LANG['COLLECTOR_DATE']; ?>:</label>
+					<input type="text" id="eventdate1" size="32" name="eventdate1" style="width:100px;" value="" title="<?php echo $LANG['TITLE_TEXT_3']; ?>" /> -
+				</div>
+				<div>
+					<label for="eventdate2"><?php echo $LANG['COLLECTOR_DATE_END']; ?>:</label>
+					<input type="text" id="eventdate2" size="32" name="eventdate2" style="width:100px;" value="" title="<?php echo $LANG['TITLE_TEXT_4']; ?>" />
+				</div>
+			</section>
 			<hr/>
 			<div style="float:left">
 				<div>

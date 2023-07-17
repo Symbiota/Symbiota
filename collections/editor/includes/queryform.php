@@ -85,15 +85,15 @@ else{
 			if(!$crowdSourceMode){
 				?>
 				<div class="fieldGroupDiv">
-					<div title="<?php echo $LANG['WILD_EXPLAIN']; ?>">
+					<div class="fieldDiv" title="<?php echo $LANG['WILD_EXPLAIN']; ?>">
 						<label for="q_recordedby"><?php echo $LANG['COLLECTOR']; ?>:</label>
 						<input type="text" name="q_recordedby" id="q_recordedby" value="<?php echo $qRecordedBy; ?>" onchange="setOrderBy(this)" />
 					</div>
-					<div title="<?php echo $LANG['SEPARATE_RANGES']; ?>">
+					<div class="fieldDiv" title="<?php echo $LANG['SEPARATE_RANGES']; ?>">
 						<label for="q_recordnumber"><?php echo $LANG['NUMBER']; ?>:</label>
 						<input type="text" name="q_recordnumber" id="q_recordnumber" value="<?php echo $qRecordNumber; ?>" style="width:120px;" onchange="setOrderBy(this)" />
 					</div>
-					<div title="<?php echo $LANG['ENTER_RANGES']; ?>">
+					<div class="fieldDiv" title="<?php echo $LANG['ENTER_RANGES']; ?>">
 						<label for="q_eventdate"><?php echo $LANG['DATE']; ?>:</label>
 						<input type="text" name="q_eventdate" id="q_eventdate" value="<?php echo $qEventDate; ?>" style="width:160px" onchange="setOrderBy(this)" />
 					</div>
@@ -102,14 +102,14 @@ else{
 			}
 			?>
 			<div class="fieldGroupDiv">
-				<div title="<?php echo $LANG['SEPARATE_RANGES']; ?>">
+				<div class="fieldDiv" title="<?php echo $LANG['SEPARATE_RANGES']; ?>">
 					<label for="q_catalognumber"><?php echo $LANG['CAT_NUM']; ?>:</label>
 					<input type="text" name="q_catalognumber" id="q_catalognumber" value="<?php echo $qCatalogNumber; ?>" onchange="setOrderBy(this)" />
 				</div>
 				<?php
 				if($crowdSourceMode){
 					?>
-					<div title="Search for term embedded within OCR block of text">
+					<div class="fieldDiv" title="Search for term embedded within OCR block of text">
 						<label for="q_ocrfrag"></label><?php echo $LANG['OCR_FRAGMENT']; ?>:
 						<input type="text" name="q_ocrfrag" id="q_ocrfrag" value="<?php echo $qOcrFrag; ?>" style="width:200px;" />
 					</div>
@@ -117,7 +117,7 @@ else{
 				}
 				else{
 					?>
-					<div title="<?php echo $LANG['SEPARATE_RANGES']; ?>">
+					<div class="fieldDiv" title="<?php echo $LANG['SEPARATE_RANGES']; ?>">
 						<label for="q_othercatalognumbers"><?php echo $LANG['OTHER_CAT_NUMS']; ?>:</label>
 						<input type="text" name="q_othercatalognumbers" id="q_othercatalognumbers" value="<?php echo $qOtherCatalogNumbers; ?>" />
 					</div>
@@ -129,24 +129,24 @@ else{
 			if(!$crowdSourceMode){
 				?>
 				<div class="fieldGroupDiv">
-					<div style="<?php echo ($isGenObs?'display:none':''); ?>">
+					<div class="fieldDiv" style="<?php echo ($isGenObs?'display:none':''); ?>">
 						<label for="q_recordenteredby"><?php echo $LANG['ENTERED_BY']; ?>:</label>
 						<input type="text" name="q_recordenteredby" id="q_recordenteredby" value="<?php echo $qRecordEnteredBy; ?>" style="width:70px;" onchange="setOrderBy(this)" />
 					</div>
 					<div>
 						<button type="button" onclick="enteredByCurrentUser()" style="font-size:70%" title="<?php echo $LANG['LIMIT_TO_CURRENT']; ?>"><?php echo $LANG['CU']; ?></button>
 					</div>
-					<div title="<?php echo $LANG['ENTER_RANGES']; ?>">
+					<div class="fieldDiv" title="<?php echo $LANG['ENTER_RANGES']; ?>">
 						<label for="q_dateentered"><?php echo $LANG['DATE_ENTERED']; ?>:</label>
 						<input type="text" name="q_dateentered" id="q_dateentered" value="<?php echo $qDateEntered; ?>" style="width:160px" onchange="setOrderBy(this)" />
 					</div>
-					<div title="<?php echo $LANG['ENTER_RANGES']; ?>">
+					<div class="fieldDiv" title="<?php echo $LANG['ENTER_RANGES']; ?>">
 						<label for="q_datelastmodified"><?php echo $LANG['DATE_MODIFIED']; ?>:</label>
 						<input type="text" name="q_datelastmodified" id="q_datelastmodified" value="<?php echo $qDateLastModified; ?>" style="width:160px" onchange="setOrderBy(this)" />
 					</div>
 				</div>
 				<div class="fieldGroupDiv">
-					<div>
+					<div class="fieldDiv">
 						<?php echo $LANG['PROC_STATUS']; ?>:
 						<select name="q_processingstatus" onchange="setOrderBy(this)">
 							<option value=''><?php echo $LANG['ALL_RECORDS']; ?></option>
@@ -164,11 +164,11 @@ else{
 							?>
 						</select>
 					</div>
-					<div>
+					<div class="fieldDiv">
 						<input name="q_imgonly" id="q_imgonly" type="checkbox" value="1" <?php echo ($qImgOnly==1?'checked':''); ?> onchange="this.form.q_withoutimg.checked = false;" />
 						<label for="q_imgonly"><?php echo $LANG['WITH_IMAGES']; ?></label>
 					</div>
-					<div>
+					<div class="fieldDiv">
 						<input name="q_withoutimg" id="q_withoutimg" type="checkbox" value="1" <?php echo ($qWithoutImg==1?'checked':''); ?> onchange="this.form.q_imgonly.checked = false;" />
 						<label for="q_withoutimg"><?php echo $LANG['WITHOUT_IMAGES']; ?></label>
 					</div>
@@ -178,7 +178,7 @@ else{
 					if($exsList = $occManager->getExsiccatiList()){
 						?>
 						<div class="fieldGroupDiv" title="<?php echo $LANG['ENTER_EXS_TITLE']; ?>">
-							<div>
+							<div class="fieldDiv">
 								<?php echo $LANG['EXS_TITLE']; ?>:
 								<select name="q_exsiccatiid" style="max-width:650px">
 									<option value=""></option>
@@ -304,60 +304,62 @@ else{
 				<input type="hidden" name="occindex" value="<?php echo $occManager->getOccIndex(); ?>" />
 				<input type="hidden" name="occidlist" value="<?php echo $occManager->getOccidIndexStr(); ?>" />
 				<input type="hidden" name="direction" value="" />
-				<div>
-					<button name="submitaction" type="submit" onclick="submitQueryEditor(this.form)" ><?php echo $LANG['DISPLAY_EDITOR']; ?></button>
-				</div>
-				<div>
-					<button name="submitaction" type="submit" onclick="submitQueryTable(this.form)" ><?php echo $LANG['DISPLAY_TABLE']; ?></button>
-				</div>
-				<div>
-					<button type="button" name="reset" value="Reset Form" onclick="resetQueryForm(this.form)">Reset Form</button>
-				</div>
-				<div>
-					<label for="orderby"><?php echo $LANG['SORT_BY']; ?>:</label>
-					<select name="orderby" id="orderby">
-						<option value=""></option>
-						<option value="recordedby" <?php echo ($qOrderBy=='recordedby'?'SELECTED':''); ?>><?php echo $LANG['COLLECTOR']; ?></option>
-						<option value="recordnumber" <?php echo ($qOrderBy=='recordnumber'?'SELECTED':''); ?>><?php echo $LANG['NUMBER']; ?></option>
-						<option value="eventdate" <?php echo ($qOrderBy=='eventdate'?'SELECTED':''); ?>><?php echo $LANG['DATE']; ?></option>
-						<option value="catalognumber" <?php echo ($qOrderBy=='catalognumber'?'SELECTED':''); ?>><?php echo $LANG['CAT_NUM']; ?></option>
-						<option value="recordenteredby" <?php echo ($qOrderBy=='recordenteredby'?'SELECTED':''); ?>><?php echo $LANG['ENTERED_BY']; ?></option>
-						<option value="dateentered" <?php echo ($qOrderBy=='dateentered'?'SELECTED':''); ?>><?php echo $LANG['DATE_ENTERED']; ?></option>
-						<option value="datelastmodified" <?php echo ($qOrderBy=='datelastmodified'?'SELECTED':''); ?>><?php echo $LANG['DATE_LAST_MODIFIED']; ?></option>
-						<option value="processingstatus" <?php echo ($qOrderBy=='processingstatus'?'SELECTED':''); ?>><?php echo $LANG['PROC_STATUS']; ?></option>
-						<option value="sciname" <?php echo ($qOrderBy=='sciname'?'SELECTED':''); ?>><?php echo $LANG['SCI_NAME']; ?></option>
-						<option value="family" <?php echo ($qOrderBy=='family'?'SELECTED':''); ?>><?php echo $LANG['FAMILY']; ?></option>
-						<option value="country" <?php echo ($qOrderBy=='country'?'SELECTED':''); ?>><?php echo $LANG['COUNTRY']; ?></option>
-						<option value="stateprovince" <?php echo ($qOrderBy=='stateprovince'?'SELECTED':''); ?>><?php echo $LANG['STATE_PROVINCE']; ?></option>
-						<option value="county" <?php echo ($qOrderBy=='county'?'SELECTED':''); ?>><?php echo $LANG['COUNTY']; ?></option>
-						<option value="municipality" <?php echo ($qOrderBy=='municipality'?'SELECTED':''); ?>><?php echo $LANG['MUNICIPALITY']; ?></option>
-						<option value="locationid" <?php echo ($qOrderBy=='locationid'?'SELECTED':''); ?>><?php echo $LANG['LOCATION_ID']; ?></option>
-						<option value="locality" <?php echo ($qOrderBy=='locality'?'SELECTED':''); ?>><?php echo $LANG['LOCALITY']; ?></option>
-						<option value="decimallatitude" <?php echo ($qOrderBy=='decimallatitude'?'SELECTED':''); ?>><?php echo $LANG['DEC_LAT']; ?></option>
-						<option value="decimallongitude" <?php echo ($qOrderBy=='decimallongitude'?'SELECTED':''); ?>><?php echo $LANG['DEC_LONG']; ?></option>
-						<option value="minimumelevationinmeters" <?php echo ($qOrderBy=='minimumelevationinmeters'?'SELECTED':''); ?>><?php echo $LANG['ELEV_MIN']; ?></option>
-						<option value="maximumelevationinmeters" <?php echo ($qOrderBy=='maximumelevationinmeters'?'SELECTED':''); ?>><?php echo $LANG['ELEV_MAX']; ?></option>
-					</select>
-				</div>
-				<div>
-					<label for="orderbydir"><?php echo $LANG['ORDER_BY'] ?>:</label>
-					<select name="orderbydir" id="orderbydir">
-						<option value="ASC"><?php echo $LANG['ASCENDING']; ?></option>
-						<option value="DESC" <?php echo ($qOrderByDir=='DESC'?'SELECTED':''); ?>><?php echo $LANG['DESCENDING']; ?></option>
-					</select>
-				</div>
-					<label for="reclimit">
-						<?php
-						if(!isset($recLimit) || !$recLimit) $recLimit = 1000;
-						echo $LANG['OUTPUT'] . ':';
-						?>
-					</label>
-					<select name="reclimit" id="reclimit">
-						<option <?php echo ($recLimit==500?'selected':''); ?>>500</option>
-						<option <?php echo ($recLimit==1000?'selected':''); ?>>1000</option>
-						<option <?php echo ($recLimit==2000?'selected':''); ?>>2000</option>
-						<option <?php echo ($recLimit==3000?'selected':''); ?>>3000</option>
-					</select> <?php //echo $LANG['RECORDS']; ?>
+				<section class="flex-form">
+					<div>
+						<button name="submitaction" type="submit" onclick="submitQueryEditor(this.form)" ><?php echo $LANG['DISPLAY_EDITOR']; ?></button>
+					</div>
+					<div>
+						<button name="submitaction" type="submit" onclick="submitQueryTable(this.form)" ><?php echo $LANG['DISPLAY_TABLE']; ?></button>
+					</div>
+					<div>
+						<button type="button" name="reset" value="Reset Form" onclick="resetQueryForm(this.form)">Reset Form</button>
+					</div>
+					<div>
+						<label for="orderby"><?php echo $LANG['SORT_BY']; ?>:</label>
+						<select name="orderby" id="orderby">
+							<option value=""></option>
+							<option value="recordedby" <?php echo ($qOrderBy=='recordedby'?'SELECTED':''); ?>><?php echo $LANG['COLLECTOR']; ?></option>
+							<option value="recordnumber" <?php echo ($qOrderBy=='recordnumber'?'SELECTED':''); ?>><?php echo $LANG['NUMBER']; ?></option>
+							<option value="eventdate" <?php echo ($qOrderBy=='eventdate'?'SELECTED':''); ?>><?php echo $LANG['DATE']; ?></option>
+							<option value="catalognumber" <?php echo ($qOrderBy=='catalognumber'?'SELECTED':''); ?>><?php echo $LANG['CAT_NUM']; ?></option>
+							<option value="recordenteredby" <?php echo ($qOrderBy=='recordenteredby'?'SELECTED':''); ?>><?php echo $LANG['ENTERED_BY']; ?></option>
+							<option value="dateentered" <?php echo ($qOrderBy=='dateentered'?'SELECTED':''); ?>><?php echo $LANG['DATE_ENTERED']; ?></option>
+							<option value="datelastmodified" <?php echo ($qOrderBy=='datelastmodified'?'SELECTED':''); ?>><?php echo $LANG['DATE_LAST_MODIFIED']; ?></option>
+							<option value="processingstatus" <?php echo ($qOrderBy=='processingstatus'?'SELECTED':''); ?>><?php echo $LANG['PROC_STATUS']; ?></option>
+							<option value="sciname" <?php echo ($qOrderBy=='sciname'?'SELECTED':''); ?>><?php echo $LANG['SCI_NAME']; ?></option>
+							<option value="family" <?php echo ($qOrderBy=='family'?'SELECTED':''); ?>><?php echo $LANG['FAMILY']; ?></option>
+							<option value="country" <?php echo ($qOrderBy=='country'?'SELECTED':''); ?>><?php echo $LANG['COUNTRY']; ?></option>
+							<option value="stateprovince" <?php echo ($qOrderBy=='stateprovince'?'SELECTED':''); ?>><?php echo $LANG['STATE_PROVINCE']; ?></option>
+							<option value="county" <?php echo ($qOrderBy=='county'?'SELECTED':''); ?>><?php echo $LANG['COUNTY']; ?></option>
+							<option value="municipality" <?php echo ($qOrderBy=='municipality'?'SELECTED':''); ?>><?php echo $LANG['MUNICIPALITY']; ?></option>
+							<option value="locationid" <?php echo ($qOrderBy=='locationid'?'SELECTED':''); ?>><?php echo $LANG['LOCATION_ID']; ?></option>
+							<option value="locality" <?php echo ($qOrderBy=='locality'?'SELECTED':''); ?>><?php echo $LANG['LOCALITY']; ?></option>
+							<option value="decimallatitude" <?php echo ($qOrderBy=='decimallatitude'?'SELECTED':''); ?>><?php echo $LANG['DEC_LAT']; ?></option>
+							<option value="decimallongitude" <?php echo ($qOrderBy=='decimallongitude'?'SELECTED':''); ?>><?php echo $LANG['DEC_LONG']; ?></option>
+							<option value="minimumelevationinmeters" <?php echo ($qOrderBy=='minimumelevationinmeters'?'SELECTED':''); ?>><?php echo $LANG['ELEV_MIN']; ?></option>
+							<option value="maximumelevationinmeters" <?php echo ($qOrderBy=='maximumelevationinmeters'?'SELECTED':''); ?>><?php echo $LANG['ELEV_MAX']; ?></option>
+						</select>
+					</div>
+					<div>
+						<label for="orderbydir"><?php echo $LANG['ORDER_BY'] ?>:</label>
+						<select name="orderbydir" id="orderbydir">
+							<option value="ASC"><?php echo $LANG['ASCENDING']; ?></option>
+							<option value="DESC" <?php echo ($qOrderByDir=='DESC'?'SELECTED':''); ?>><?php echo $LANG['DESCENDING']; ?></option>
+						</select>
+					</div>
+						<label for="reclimit">
+							<?php
+							if(!isset($recLimit) || !$recLimit) $recLimit = 1000;
+							echo $LANG['OUTPUT'] . ':';
+							?>
+						</label>
+						<select name="reclimit" id="reclimit">
+							<option <?php echo ($recLimit==500?'selected':''); ?>>500</option>
+							<option <?php echo ($recLimit==1000?'selected':''); ?>>1000</option>
+							<option <?php echo ($recLimit==2000?'selected':''); ?>>2000</option>
+							<option <?php echo ($recLimit==3000?'selected':''); ?>>3000</option>
+						</select> <?php //echo $LANG['RECORDS']; ?>
+				</section>
 				<div>
 					<label for="dynamictable-1"><?php echo $LANG['DYNAMIC_TABLE']; ?></label>
 					<input name="dynamictable" id="dynamictable-1" type="checkbox" value="1" <?php if(isset($dynamicTable) && $dynamicTable) echo 'checked'; ?> /> 

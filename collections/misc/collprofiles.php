@@ -167,7 +167,7 @@ if ($SYMB_UID) {
 							}
 							?>
 							<li>
-								<a href="../editor/occurrencetabledisplay.php?displayquery=1&collid=<?php echo $htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">
+								<a href="../editor/occurrencetabledisplay.php?displayquery=1&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">
 									<?php echo htmlspecialchars((isset($LANG['EDIT_EXISTING']) ? $LANG['EDIT_EXISTING'] : 'Edit Existing Occurrence Records'), HTML_SPECIAL_CHARS_FLAGS); ?>
 								</a>
 							</li>
@@ -275,27 +275,27 @@ if ($SYMB_UID) {
 									</a>
 								</li>
 								<li class="importItem" style="margin-left:10px;display:none;">
-									<a href="../admin/specupload.php?uploadtype=7&collid=<?php echo $htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">
+									<a href="../admin/specupload.php?uploadtype=7&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">
 										<?php echo htmlspecialchars((isset($LANG['SKELETAL_FILE_IMPORT']) ? $LANG['SKELETAL_FILE_IMPORT'] : 'Skeletal File Import'), HTML_SPECIAL_CHARS_FLAGS); ?>
 									</a>
 								</li>
 								<li class="importItem" style="margin-left:10px;display:none">
-									<a href="../admin/specupload.php?uploadtype=3&collid=<?php echo $htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">
+									<a href="../admin/specupload.php?uploadtype=3&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">
 										<?php echo htmlspecialchars((isset($LANG['TEXT_FILE_IMPORT']) ? $LANG['TEXT_FILE_IMPORT'] : 'Text File Import'), HTML_SPECIAL_CHARS_FLAGS); ?>
 									</a>
 								</li>
 								<li class="importItem" style="margin-left:10px;display:none;">
-									<a href="../admin/specupload.php?uploadtype=6&collid=<?php echo $htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">
+									<a href="../admin/specupload.php?uploadtype=6&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">
 										<?php echo htmlspecialchars((isset($LANG['DWCA_IMPORT']) ? $LANG['DWCA_IMPORT'] : 'DwC-Archive Import'), HTML_SPECIAL_CHARS_FLAGS); ?>
 									</a>
 								</li>
 								<li class="importItem" style="margin-left:10px;display:none;">
-									<a href="../admin/specupload.php?uploadtype=8&collid=<?php echo $htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">
+									<a href="../admin/specupload.php?uploadtype=8&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">
 										<?php echo htmlspecialchars((isset($LANG['IPT_IMPORT']) ? $LANG['IPT_IMPORT'] : 'IPT Import'), HTML_SPECIAL_CHARS_FLAGS); ?>
 									</a>
 								</li>
 								<li class="importItem" style="margin-left:10px;display:none;">
-									<a href="../admin/specupload.php?uploadtype=9&collid=<?php echo $htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">
+									<a href="../admin/specupload.php?uploadtype=9&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">
 										<?php echo htmlspecialchars((isset($LANG['NFN_IMPORT']) ? $LANG['NFN_IMPORT'] : 'Notes from Nature Import'), HTML_SPECIAL_CHARS_FLAGS); ?>
 									</a>
 								</li>
@@ -305,7 +305,7 @@ if ($SYMB_UID) {
 									</a>
 								</li>
 								<li class="importItem" style="margin-left:10px;display:none;">
-									<a href="../admin/specuploadmanagement.php?action=addprofile&collid=<?php echo $htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">
+									<a href="../admin/specuploadmanagement.php?action=addprofile&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">
 										<?php echo htmlspecialchars((isset($LANG['CREATE_PROFILE']) ? $LANG['CREATE_PROFILE'] : 'Create a new Import Profile'), HTML_SPECIAL_CHARS_FLAGS); ?>
 									</a>
 								</li>
@@ -357,7 +357,7 @@ if ($SYMB_UID) {
 								if ($collData['colltype'] != 'General Observations') {
 									?>
 									<li style="margin-left:10px;">
-										<a href="../cleaning/index.php?obsuid=0&collid=<?php echo $htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">
+										<a href="../cleaning/index.php?obsuid=0&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">
 											<?php echo htmlspecialchars((isset($LANG['DATA_CLEANING']) ? $LANG['DATA_CLEANING'] : 'Data Cleaning Tools'), HTML_SPECIAL_CHARS_FLAGS); ?>
 										</a>
 									</li>
