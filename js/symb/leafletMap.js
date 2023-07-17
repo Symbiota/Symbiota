@@ -1,10 +1,3 @@
-
-const DEFAULT_SHAPE_OPTIONS = {
-   color: '#000',
-   opacity: 0.85,
-   fillOpacity: 0.55
-};
-
 class LeafletMap {
    //DEFAULTS
    DEFAULT_MAP_OPTIONS = {
@@ -108,6 +101,7 @@ class LeafletMap {
 
          //Event saved edit 
          this.mapLayer.on('draw:edited', function(e) {
+            if(!e.layers || !e.layers._layers) return;
             ///Some Extra steps to get at the layer
             const layer = e.layers._layers;
             const keys = Object.keys(layer);
@@ -126,6 +120,8 @@ class LeafletMap {
 
          //Fires on New Draw
          this.mapLayer.on('draw:created', function (e) {
+            if(!e.layers || !e.layers._layers) return;
+
             if(!drawOptions || !drawOptions.multiDraw);
                drawnItems.clearLayers();
 
