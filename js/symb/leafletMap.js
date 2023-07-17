@@ -1,16 +1,3 @@
-const DEFAULT_DRAW_OPTIONS = {
-   polyline: false,
-   control: true,
-   circlemarker: false,
-   marker: false,
-   multiDraw: false,
-   drawColor: { color: '#000', opacity: 0.85, fillOpacity: 0.55 }
-};
-
-const DEFAULT_MAP_OPTIONS = {
-   center: [43.64701, -79.39425],
-   zoom: 15,
-};
 
 const DEFAULT_SHAPE_OPTIONS = {
    color: '#000',
@@ -19,6 +6,27 @@ const DEFAULT_SHAPE_OPTIONS = {
 };
 
 class LeafletMap {
+   //DEFAULTS
+   DEFAULT_MAP_OPTIONS = {
+      center: [43.64701, -79.39425],
+      zoom: 15,
+   };
+
+   DEFAULT_SHAPE_OPTIONS = {
+      color: '#000',
+      opacity: 0.85,
+      fillOpacity: 0.55
+   };
+
+   DEFAULT_DRAW_OPTIONS = {
+      polyline: false,
+      control: true,
+      circlemarker: false,
+      marker: false,
+      multiDraw: false,
+      drawColor: this.DEFAULT_SHAPE_OPTIONS 
+   };
+   
    /* To Hold Reference to Leaflet Map */
    mapLayer;
 
@@ -29,10 +37,13 @@ class LeafletMap {
     */
    activeShape;
 
+   //List of drawn shapes
+   shapes = [];
+
    /* Reference Leaflet Feature Group for all drawn items*/
    drawLayer;
 
-   constructor(map_id, map_options=DEFAULT_MAP_OPTIONS) {
+   constructor(map_id, map_options=this.DEFAULT_MAP_OPTIONS) {
       this.mapLayer = L.map(map_id, map_options);
 
       const terrainLayer = L.tileLayer('https://{s}.google.com/vt?lyrs=p&x={x}&y={y}&z={z}', {
@@ -57,7 +68,7 @@ class LeafletMap {
       L.control.scale().addTo(this.mapLayer);
    }
 
-   enableDrawing(drawOptions = DEFAULT_DRAW_OPTIONS, onDrawChange) {
+   enableDrawing(drawOptions = this.DEFAULT_DRAW_OPTIONS, onDrawChange) {
 
       var drawnItems = new L.FeatureGroup();
       this.drawLayer = drawnItems;
@@ -116,12 +127,16 @@ class LeafletMap {
          //Fires on New Draw
          this.mapLayer.on('draw:created', function (e) {
             if(!drawOptions || !drawOptions.multiDraw);
-            drawnItems.clearLayers();
+               drawnItems.clearLayers();
+
+            const id = this.shapes.length;
 
             const layer = e.layer;
             drawnItems.addLayer(layer);
 
             this.activeShape = getShapeCoords(e.layerType, e.layer);
+            this.activeShape.id = id;
+            this.shapes.push(this.activeShape);
 
             if(onDrawChange) onDrawChange(this.activeShape);
          }.bind(this))
@@ -130,6 +145,7 @@ class LeafletMap {
    }
 
    drawShape(shape) {
+      const id = this.shapes.length;
       switch(shape.type) {
          case "polygon":
             const poly = L.polygon(shape.latlngs);
@@ -151,7 +167,10 @@ class LeafletMap {
             break;
          default:
             throw Error(`Can't draw ${shape.type}`)
-      } 
+      }
+
+      this.activeShape.id = id;
+      this.shapes.push(this.activeShape);
    }
 
 }
@@ -171,6 +190,9 @@ function getShapeCoords(layerType, layer) {
       case "polygon":
          let polygon = layer._latlngs[0].map(coord => 
             (`${coord.lat.toFixed(SIG_FIGS)} ${coord.lng.toFixed(SIG_FIGS)}`));
+
+         polygon.push(polygon[0]);
+
          shape.points = layer._latlngs[0];
          shape.wkt = "POLYGON ((" + polygon.join(',') + "))";
          shape.center = layer.getBounds().getCenter();

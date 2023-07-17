@@ -111,6 +111,7 @@ class GoogleMap {
             if (e.type != google.maps.drawing.OverlayType.MARKER) {
                // Switch back to non-drawing mode after drawing a shape.
                drawingManager.setDrawingMode(null);
+               const id = this.shapes.length;
 
                var shapeType = e.type;
                // Add an event listener that selects the newly-drawn shape when the user
@@ -120,6 +121,7 @@ class GoogleMap {
 
                //Clear if Shape Isn't the same
                if (!this.DrawOptions.multipolygon && this.activeShape && this.activeShape.layer != newShape) {
+                  this.shapes = [];
                   this.activeShape.layer.setMap(null);
                }
 
@@ -139,12 +141,15 @@ class GoogleMap {
                listeners.forEach(eventListener => {
                   google.maps.event.addListener(newShape, eventListener, function () {
                      this.activeShape = setSelection(newShape);
+                     this.activeShape.id = id;
+                     this.shapes[id] = this.activeShape;
                      onDrawChange(this.activeShape);
                   }.bind(this))
                })
 
                this.activeShape = setSelection(newShape);
                this.shapes.push(this.activeShape);
+               this.activeShape.id = id;
 
                onDrawChange(this.activeShape);
 
@@ -160,6 +165,9 @@ class GoogleMap {
       let bounds = false;
 
 		this._drawingManager.setDrawingMode(null);
+      const id = this.shapes.length;
+      shape.id = id;
+
       switch(shape.type) {
          case "polygon":
 				bounds = new google.maps.LatLngBounds();
@@ -225,6 +233,8 @@ class GoogleMap {
       listeners.forEach(eventListener => {
          google.maps.event.addListener(shape.layer, eventListener, function () {
             this.activeShape = setSelection(shape.layer);
+            this.activeShape.id = id;
+            this.shapes[id] = this.activeShape;
             if(this.onDrawChange) this.onDrawChange(this.activeShape);
          }.bind(this))
       })
@@ -244,7 +254,6 @@ function setSelection(overlay) {
       layer: overlay
    }
 
-
    const SIG_FIGS = 6;
 
    switch(overlay.type) {
@@ -252,6 +261,7 @@ function setSelection(overlay) {
          //LatLngs
          shape.latlngs = overlay.getPath().getArray().map(
             pt=> [pt.lat() , pt.lng()]);
+         shape.latlngs.push(shape.latlngs[0]);
          shape.wkt = "POLYGON ((" + shape.latlngs.map(pt => {
             return `${pt[0].toFixed(SIG_FIGS)} ${pt[1].toFixed(SIG_FIGS)}`;
          }).join(",") + "))";

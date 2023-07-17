@@ -201,6 +201,7 @@ else{
                let origFootprintWkt = getField("footprintwkt");
                try {
                   let polyPoints = parseWkt(origFootprintWkt);
+                  console.log(polyPoints)
                   if(polyPoints) {
                      return { type: "polygon", latlngs: polyPoints, wkt: getField("footprintwkt")};
                   }
@@ -261,7 +262,7 @@ else{
          let map = new LeafletMap('map', MapOptions );
 
          map.enableDrawing({
-         polyline: false,
+            polyline: false,
             circlemarker: false,
             marker: false,
             drawColor: {opacity: 0.85, fillOpacity: 0.55, color: '#000' }
