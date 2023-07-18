@@ -31,7 +31,7 @@ $clManager->setProj($pid);
          let pid;
 
          function navigateToCheckList(clid, pid) { 
-            window.location.href = `../ident/key.php?clid=${clid}&pid=${pid}&taxon=All+Species`
+            window.location.href = `../ident/key.php?clid=${clid}&pid=${pid}&taxon=All+Species`;
          }
 
          function leafletInit() {
@@ -49,7 +49,7 @@ $clManager->setProj($pid);
                   .on('dblclick', () => navigateToCheckList(checklistId, pid)));
             }
             const markerGroup = L.featureGroup(markers).addTo(map.mapLayer);
-            map.mapLayer.fitBounds(markerGroup.getBounds())
+            map.mapLayer.fitBounds(markerGroup.getBounds());
          }
 
          function googleInit() {
@@ -112,7 +112,6 @@ $clManager->setProj($pid);
             } else {
                googleInit();
             }
-            console.log(checklists)
 			}
 
 		</script>
