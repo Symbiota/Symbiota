@@ -186,7 +186,15 @@ else{
          }
 
          function drawLoadedShape() {
-            let wkt = document.getElementById("footprintwkt").value;
+
+            let wkt = opener.document.getElementById("footprintwkt").value;
+
+            if(!wkt) {
+               wkt = document.getElementById("footprintwkt").value;
+            } else {
+               document.getElementById("footprintwkt").value = wkt;
+            }
+
             const loadedShape = loadPoly(wkt);
 
             if(Array.isArray(loadedShape)) {
@@ -245,10 +253,12 @@ else{
 					opener.document.getElementById("polyNotDefDiv").style.display = str2;
 				}
             opener.document.getElementById("footprintwkt").value = f.footprintwkt.value;
+            console.log(f.footprintwkt.value)
 				if(f.clid.value == 0){
 					window.close();
 					return false;
             }
+				window.close();
 				return true;
 			}
 		</script>
