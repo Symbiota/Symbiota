@@ -123,7 +123,6 @@ else{
                let latlngs = trimPolyFlag? 
                   shape.latlngs.map(ll => trimLatLng(ll)): 
                   shape.latlngs;
-               console.log(lnglatLayoutFlag)
 
                if(lnglatLayoutFlag) {
                   latlngs = swapCoords(latlngs);
@@ -136,7 +135,6 @@ else{
             }
 
             let geoJson = {type: shapeArr.length > 1?"MultiPolygon":"Polygon", coordinates}
-
             document.getElementById('footprintwkt').value = Terraformer.WKT.convert(geoJson);
          }
 
@@ -187,13 +185,7 @@ else{
 
          function drawLoadedShape() {
 
-            let wkt = opener.document.getElementById("footprintwkt").value;
-
-            if(!wkt) {
-               wkt = document.getElementById("footprintwkt").value;
-            } else {
-               document.getElementById("footprintwkt").value = wkt;
-            }
+            let wkt = document.getElementById("footprintwkt").value;
 
             const loadedShape = loadPoly(wkt);
 
@@ -207,6 +199,10 @@ else{
          function initialize() {
             let polygons;
 
+            //Loads wkt from opener value otherwise db value is used 
+            let wkt = opener.document.getElementById("footprintwkt").value;
+            if(wkt) document.getElementById("footprintwkt").value = wkt;
+
             if("<?php echo $LEAFLET?>") {
                leafletInit();
             } else {
@@ -217,12 +213,13 @@ else{
          }
 
          function reformatPolygons() {
+
+            setWkt(map.shapes);
             //Clear out stuff
             map.clearMap();
             //Redraw
             drawLoadedShape();
             //initialize();
-            setWkt(map.shapes);
             //Reset Switch because swap was made
          }
 
@@ -253,13 +250,8 @@ else{
 					opener.document.getElementById("polyNotDefDiv").style.display = str2;
 				}
             opener.document.getElementById("footprintwkt").value = f.footprintwkt.value;
-            console.log(f.footprintwkt.value)
-				if(f.clid.value == 0){
-					window.close();
-					return false;
-            }
 				window.close();
-				return true;
+				return f.clid.value != 0;
 			}
 		</script>
 	</head>
