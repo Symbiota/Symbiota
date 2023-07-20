@@ -179,12 +179,6 @@ function navigateToRecord(occIndex, occId, collId, crowdSourceMode) {
 	event.preventDefault();
 }
 
-function navigateToRecordNew(occIndex, occId, collId, crowdSourceMode) {
-    var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&occindex=' + occIndex + '&occid=' + occId + '&collid=' + collId;
-    window.location.href = url;
-	event.preventDefault();
-}
-
 function jumpToPage(collId, crowdSourceMode) {
 	var pageInput = document.getElementById("pageNumber");
 	var page = parseInt(pageInput.value);

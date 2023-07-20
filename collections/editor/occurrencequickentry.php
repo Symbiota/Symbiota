@@ -11,6 +11,48 @@ $goToMode = array_key_exists('gotomode',$_REQUEST)?$_REQUEST['gotomode']:0;
 $occIndex = array_key_exists('occindex',$_REQUEST)?$_REQUEST['occindex']:false;
 $crowdSourceMode = array_key_exists('csmode',$_REQUEST)?$_REQUEST['csmode']:0;
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
+
+$imgIndex = $_REQUEST['imgindex'];
+
+if (isset($_REQUEST['batchid'])) {
+    $batchId = $_REQUEST['batchid'];
+    // Use $batchId as needed
+	$imgIDs = $occManager->getImgIDs($batchId);
+	$batchSize = count($imgIDs);
+	// $occData = array();
+	// foreach ($imgIDs as $imgID) {
+	// 	$occIDs = $occManager->getOccIDs($imgID);
+	// 	$occData[$imgID] = $occIDs;
+	// }
+	// $allOccIDs = array();
+	// foreach ($occData as $occIDs) {
+	// 	$allOccIDs = array_merge($allOccIDs, $occIDs);
+	// }
+} else {
+    $batchId = 0;
+	$batchSize = 0;
+}
+
+if (isset($_REQUEST['imgid'])) {
+    $imageId = $_REQUEST['imgid'];
+	// TODO: need to chec, if occID exists later
+	// $occID = $occManager->getOccIDs($imageId);
+	// $occIndex = $occID - 1
+} else {
+    $imageId = 1;
+}
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    if (isset($_POST["occIDs"])) {
+        $occIDs = json_decode($_POST["occIDs"], true);
+
+        // Print the occurrence IDs for testing
+        echo "<pre>";
+        print_r($occIDs);
+        echo "</pre>";
+    }
+}
+
 if(!$action && array_key_exists('carryover',$_REQUEST)) $goToMode = 2;
 
 //Sanitation
@@ -58,7 +100,7 @@ $isEditor = 0;
 
 // Dropdown arrays
 $filedUnderDrop = $occManager->getValues('dd_filedUnderID', 'dropdown_filedUnder_values');
-
+$specImgArr = $occManager->getImageMap();
 
 if($SYMB_UID){
 	//Set variables
@@ -398,26 +440,40 @@ if($SYMB_UID){
 
 	// TODO: check here for navigation functionality examples
 
-	$nextRecord = 'occurrencequickentry.php?csmode='.$crowdSourceMode.'&occindex='.($occIndex+1).'&occid='.($occIndex+2).'&collid='.$collId;
+	if ($batchId == 0) {
+		$firstImgId = 1;
+		$firstImgIndex = 0;
+		// $firstOccId = $occManager->getOneOccID($firstImgId);
+		// $firstOccIndex = $firstOccId - 1;
+	} else {
+		$firstImgId = $imgIDs[0] ;
+		$firstImgIndex = 0;
+		// $firstOccId = $occManager->getOneOccID($firstImgId);
+		// $firstOccIndex = $firstOccId - 1;
+	}
 
-	$firstRecord = 1;
-
+	// TODO: dig into the variable qryCnt. Figure out what is this for...
+	// For now, i'm just using the exising qryCnt for if statement to see if it brings any error
 	if($qryCnt !== false){
 		$navStr = '<b>';
-		if($occIndex > 0) $navStr .= '<a href="#" onclick="return navigateToRecordNew('.($firstRecord-1).', '.$firstRecord.', '.$collId.', '.$crowdSourceMode.')" title="'.(isset($LANG['FIRST_REC'])?$LANG['FIRST_REC']:'First Record').'">';
+
+		if($imgIndex > 0) {
+			// $navStr .= '<a href="#" onclick="return navigateToRecordNew('.($firstRecord - 1).', '.$firstRecord.', '.$collId.', '.$crowdSourceMode.', '.$batchId.', '.$imageId.')" title="'.(isset($LANG['FIRST_REC']) ? $LANG['FIRST_REC'] : 'First Record').'">';
+			$navStr .= '<a href="#" onclick="return navigateToRecordNew('.$crowdSourceMode.', '.$collId.', '.$batchId.', '.$batchSize.', '.$firstImgId.', '.$firstImgIndex.', '.$firstOccId.', '.$firstOccIndex.')" title="'.(isset($LANG['FIRST_REC']) ? $LANG['FIRST_REC'] : 'First Record').'">';
+		}
 		$navStr .= '|&lt;';
 		if($occIndex > 0) $navStr .= '</a>';
 		$navStr .= '&nbsp;&nbsp;&nbsp;&nbsp;';
-		$navStr .= '<a href="#" onclick="return navigateToRecordNew('.($occIndex-1).', '.$occIndex.', '.$collId.', '.$crowdSourceMode.')" title="'.(isset($LANG['PREV_REC']) ? $LANG['PREV_REC'] : 'Previous Record').'">';
+		$navStr .= '<a href="#" onclick="return navigateToRecordNew('.($occIndex-1).', '.$occIndex.', '.$collId.', '.$crowdSourceMode.', '.$batchId.', '.$imageId.')" title="'.(isset($LANG['PREV_REC']) ? $LANG['PREV_REC'] : 'Previous Record').'">';
 		$navStr .= '&lt;&lt;';
 		if($occIndex > 0) $navStr .= '</a>';
 		$recIndex = ($occIndex<$qryCnt?($occIndex + 1):'*');
 		$navStr .= '&nbsp;&nbsp;| '.$recIndex.' of '.$qryCnt.' |&nbsp;&nbsp;';
-		if ($occIndex < $qryCnt-1) $navStr .= '<a href="#" onclick="return navigateToRecordNew('.($occIndex+1).', '.($occIndex+2).', '.$collId.', '.$crowdSourceMode.')" title="'.(isset($LANG['PREV_REC']) ? $LANG['PREV_REC'] : 'Previous Record').'">';
+		if ($occIndex < $qryCnt-1) $navStr .= '<a href="#" onclick="return navigateToRecordNew('.($occIndex+1).', '.($occIndex+2).', '.$collId.', '.$crowdSourceMode.', '.$batchId.', '.$imageId.')" title="'.(isset($LANG['PREV_REC']) ? $LANG['PREV_REC'] : 'Previous Record').'">';
 		$navStr .= '&gt;&gt;';
 		if($occIndex<$qryCnt-1) $navStr .= '</a>';
 		$navStr .= '&nbsp;&nbsp;&nbsp;&nbsp;';
-		if($occIndex<$qryCnt-1) $navStr .= '<a href="#" onclick="return navigateToRecordNew('.($qryCnt-1).', '.$qryCnt.', '.$collId.', '.$crowdSourceMode.')" title="'.(isset($LANG['LAST_REC'])?$LANG['LAST_REC']:'Last Record').'">';
+		if($occIndex<$qryCnt-1) $navStr .= '<a href="#" onclick="return navigateToRecordNew('.($qryCnt-1).', '.$qryCnt.', '.$collId.', '.$crowdSourceMode.', '.$batchId.', '.$imageId.')" title="'.(isset($LANG['LAST_REC'])?$LANG['LAST_REC']:'Last Record').'">';
 		$navStr .= '&gt;|';
 		if($occIndex<$qryCnt-1) $navStr .= '</a> ';
 		if(!$crowdSourceMode){
@@ -440,7 +496,6 @@ if($SYMB_UID){
 	  }
 
 	//Images and other things needed for OCR
-	$specImgArr = $occManager->getImageMap();
 	if($specImgArr){
 		$imgUrlPrefix = (isset($IMAGE_DOMAIN)?$IMAGE_DOMAIN:'');
 		$imgCnt = 1;
@@ -544,6 +599,51 @@ else{
 		<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
 		<script src="../../js/symb/collections.editor.query.js?ver=5" type="text/javascript"></script>
 		<script>
+			function navigateToRecordNew(csmode, collid, batchid, batchsize, imgid, imgindex, occid, occindex) {
+				if (batchid == 0) {
+					var url = 'occurrencequickentry.php?';
+					url += 'csmode=' + csmode;
+					url += '&collid=' + collid;
+					url += '&imgid=' + imgid;
+					url += '&imgindex=' + imgid;
+					url += '&occindex=' + occindex;
+					url += '&occid=' + occid;
+				} else {
+					var url = 'occurrencequickentry.php?';
+					url += 'csmode=' + csmode;
+					url += '&collid=' + collid;
+					url += '&batchid=' + batchid;
+					url += '&batchsize=' + batchid;
+					url += '&imgid=' + imgid;
+					url += '&imgindex=' + imgid;
+					url += '&occindex=' + occindex;
+					url += '&occid=' + occid;
+				}
+
+				window.location.href = url;
+				return false;
+			}
+			// function navigateToRecordNew(occindex, occid, collid, csmode, batchid, imgid) {
+			// 	var url = 'occurrencequickentry.php?';
+			// 	url += 'csmode=' + csmode;
+			// 	url += '&occindex=' + occindex;
+			// 	url += '&occid=' + occid;
+			// 	url += '&collid=' + collid;
+			// 	url += '&batchid=' + batchid;
+			// 	url += '&imgid=' + imgid;
+
+			// 	window.location.href = url;
+			// 	return false;
+			// }
+			// function navigateToRecordNew(occIndex, occId, collId, crowdSourceMode, batchId) {
+			// 	if (batchId == 0) {
+			// 		var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&occindex=' + occIndex + '&occid=' + occId + '&collid=' + collId;
+			// 	} else {
+			// 		var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&occindex=' + occIndex + '&occid=' + occId + '&collid=' + collId + '&batchid=' + batchId;
+			// 	}
+			// 	window.location.href = url;
+			// 	event.preventDefault();
+			// }
 			var zoomWindow;
 			function openZoomWindow(event) {
 				// Get the source image and its dimensions
@@ -748,9 +848,6 @@ else{
 				?>
 			</div>
 
-
-		<!-- body part of the new form start from here -->
-		<!-- TODO: we leave the old form so that some of its funcitons can be reused in the new form  -->
 		<?php
 			if($statusStr){
 				?>
@@ -771,6 +868,7 @@ else{
 				<?php
 			}
 		}?>
+		<!-- <h1>test<?php // echo($batchId) ?></h1> -->
 		<div id="editdiv">
 			<div class = "row">
 				<section>

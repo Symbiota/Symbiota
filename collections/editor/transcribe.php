@@ -10,8 +10,9 @@ if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/e
 
 $crowdSourceMode = array_key_exists('csmode',$_REQUEST)?$_REQUEST['csmode']:0;
 $collid = $_REQUEST["collid"];
-$firstOcc = 0;
-// $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
+$firstImgId = 1;
+$firstImgIndex = 0;
+// $FirstoccIDs = $occManager->getOneOccID($firstImgId);
 
 if(!is_numeric($collid)) $collid = 0;
 
@@ -56,29 +57,21 @@ $statusStr = '';
 
 // post the selected batch ID
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    if (isset($_POST["batchID"])) {
-        $selectedBatchID = $_POST["batchID"];
-        $imgIDs = $occManager->getImgIDs($selectedBatchID);
-		$occData = array();
-		foreach ($imgIDs as $imgID) {
-			$occIDs = $occManager->getOccIDs($imgID);
-			$occData[$imgID] = $occIDs;
-		}
-		$allOccIDs = array();
-		foreach ($occData as $occIDs) {
-			$allOccIDs = array_merge($allOccIDs, $occIDs);
-		}
-
-		$firstOccIDs = reset($occData);
-		$lastOccIDs = end($occData);
-        if (isset($_POST["startFromFirst"])) {
-            // TODO: Perform actions when "Start from First" button is clicked
-            // TODO: Store the corresponding imgIDs, retrieve occIDs, and store them in an array
-        } elseif (isset($_POST["startFromLast"])) {
-            // TODO: Perform actions when "Start from Last" button is clicked
-            // TODO: Store the corresponding imgIDs, retrieve occIDs, and store them in an array
-        }
-    }
+	if (isset($_POST["batchID"])) {
+		$selectedBatchID = $_POST["batchID"];
+		$imgIDs = $occManager->getImgIDs($selectedBatchID);
+	} 
+} else {
+	$imgIDs = $occManager->getAllImgIDs();
+}
+$occData = array();
+foreach ($imgIDs as $imgID) {
+	$occIDs = $occManager->getOccIDs($imgID);
+	$occData[$imgID] = $occIDs;
+}
+$allOccIDs = array();
+foreach ($occData as $occIDs) {
+	$allOccIDs = array_merge($allOccIDs, $occIDs);
 }
 
 ?>
@@ -93,9 +86,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 			include_once($SERVER_ROOT.'/includes/head.php');
 		}
 		else{
-			// echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-			// echo '<link href="'.$CLIENT_ROOT.'/css/basse.css?ver=1" type="text/css" rel="stylesheet" />';
-			// echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
+			echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
+			echo '<link href="'.$CLIENT_ROOT.'/css/basse.css?ver=1" type="text/css" rel="stylesheet" />';
+			echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
 		}
 		?>
 		<script src="../../js/jquery.js" type="text/javascript"></script>
@@ -103,10 +96,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 		<script src="../../js/symb/collections.editor.query.js?ver=5" type="text/javascript"></script>
 		<script type="text/javascript">
 			// function 
-			function navigateToRecordNew(occIndex, occId, collId, crowdSourceMode) {
-				var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&occindex=' + occIndex + '&occid=' + occId + '&collid=' + collId;
+			function navigateToRecordNew(occindex, occid, collid, csmode, batchid, imgid) {
+				var url = 'occurrencequickentry.php?';
+				url += 'csmode=' + csmode;
+				url += '&occindex=' + occindex;
+				url += '&occid=' + occid;
+				url += '&collid=' + collid;
+				url += '&batchid=' + batchid;
+				url += '&imgid=' + imgid;
+
 				window.location.href = url;
-				event.preventDefault();
+				return false;
 			}
 
 			function initScinameAutocomplete(f){
@@ -189,20 +189,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 					<legend><b><?php echo $LANG['TRANSCRIBE_INTO_SPECIFY']; ?></b></legend>
 					<div style="margin:15px;width:700px;">
                         <!-- TODO: update the submit function of the form -->
+						<div><h1><?php //print_r($imgIDs) ?></h1><div>
+						<div><h1><?php print_r($occData) ?></h1><div>
+						<div><h1><?php print_r($occData) ?></h1><div>
 						<form name="batchform" action="transcribe.php" method="post">
                             <div style="margin-bottom:15px;">
                                 <!-- TODO: figure out what is this line is, then customized the content -->
                                 <!-- TODO: onclick function of the buttons -->
 								<div>
-									<?php $url = 'occurrencequickentry.php?csmode='.$crowdSourceMode.'&occindex='.($firstOcc).'&occid='.($firstOcc+1).'&collid='.$collid; ?>
+									<?php //$url = 'occurrencequickentry.php?csmode='.$crowdSourceMode.'&occindex='.($firstOcc).'&occid='.($firstOcc+1).'&collid='.$collid; ?>
+									<?php //$url = 'occurrencequickentry.php?csmode='.$crowdSourceMode.'&collid='.$collid.'&imgid='.($firstImgId).'&imgindex='.($firstImgIndex).'&occid='.($).'&occindex='.($firstOcc).'&occindex='.($firstOcc); ?>
 									<a href=<?php echo($url) ?> >
 										<h3>Go to the quick entry form</h3>
 									</a>
 								</div>
                                 <!-- <b id="slectedBatch">Batch: </b><br> -->
-								<button type="button" name="first" onclick="return navigateToRecordNew(<?php echo ($firstOccIDs[0]-1).', '.$firstOccIDs[0].', '.($collid + 1).', '.$crowdSourceMode; ?>)"><?php echo $LANG['START_FROM']; ?> first.</button>
+								<button type="button" name="first" onclick="return navigateToRecordNew(<?php echo ($firstOccIDs[0]-1).', '.$firstOccIDs[0].', '.($collid + 1).', '.$crowdSourceMode.', '.$selectedBatchID; ?>)"><?php echo $LANG['START_FROM']; ?> first.</button>
                                 <!-- TODO: need to customize the page number and set a veriable to start from the last page-->
-                                <button type="button" name="last"  onclick="return navigateToRecordNew(<?php echo ($lastOccIDs[0]-1).', '.$lastOccIDs[0].', '.($collid + 1).', '.$crowdSourceMode; ?>)"><?php echo $LANG['START_FROM']; ?> last.</button>
+                                <button type="button" name="last"  onclick="return navigateToRecordNew(<?php echo ($lastOccIDs[0]-1).', '.$lastOccIDs[0].', '.($collid + 1).', '.$crowdSourceMode.', '.$selectedBatchID; ?>)"><?php echo $LANG['START_FROM']; ?> last.</button>
 								<button type="button" name="lastView"><?php echo $LANG['START_FROM']; ?> last view.</button>
                             </div>
 							<div>
