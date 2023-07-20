@@ -203,7 +203,7 @@ include($SERVER_ROOT.'/includes/header.php');
 			<div style="font-weight:bold;margin-top:5px">
 				<?php echo (isset($LANG['REMEMBER_PWD'])?$LANG['REMEMBER_PWD']:"Can't Remember your password?"); ?>
 			</div>
-			<div style="color:blue;cursor:pointer;" onclick="resetPassword();"><?php echo (isset($LANG['REST_PWD'])?$LANG['REST_PWD']:'Reset Password'); ?></div>
+			<a href="#" style="color:blue;cursor:pointer;" onclick="resetPassword();"><?php echo (isset($LANG['REST_PWD'])?$LANG['REST_PWD']:'Reset Password'); ?></a>
 			<div style="font-weight:bold;margin-top:5px">
 				<?php echo (isset($LANG['REMEMBER_LOGIN'])?$LANG['REMEMBER_LOGIN']:"Can't Remember Login Name?"); ?>
 			</div>
