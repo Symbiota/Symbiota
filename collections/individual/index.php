@@ -263,7 +263,7 @@ $traitArr = $indManager->getTraitArr();
          }
          function leafletInit() {
 				var mLatLng = [<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>];
-            map = new LeafletMap("map_canvas", {center: mLatLng, zoom: 15});
+            map = new LeafletMap("map_canvas", {center: mLatLng, zoom: 8});
             const marker = L.marker(mLatLng).addTo(map.mapLayer);
          }
 			function initializeMap(){
