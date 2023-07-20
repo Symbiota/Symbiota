@@ -609,24 +609,6 @@ class OccurrenceEditorManager {
         return $dropDownValues;
 	}
 
-	public function getImageRecordCount($reset = 0){
-		if(!$reset && array_key_exists('rc',$this->qryArr)) return $this->qryArr['rc'];
-		$recCnt = false;
-		if($this->sqlWhere){
-			$sql = 'SELECT COUNT(DISTINCT i.imgid) AS reccnt FROM images i ';
-			$this->addTableJoins($sql);
-			$sql .= $this->sqlWhere;
-			$rs = $this->conn->query($sql);
-			if($r = $rs->fetch_object()){
-				$recCnt = $r->reccnt;
-			}
-			$rs->free();
-			$this->qryArr['rc'] = (int)$recCnt;
-			$_SESSION['editorquery'] = json_encode($this->qryArr);
-		}
-		return $recCnt;
-	}
-
 	public function getQueryRecordCount($reset = 0){
 		if(!$reset && array_key_exists('rc',$this->qryArr)) return $this->qryArr['rc'];
 		$recCnt = false;
