@@ -20,7 +20,6 @@ $clManager->setProj($pid);
         include_once($SERVER_ROOT.'/includes/leafletMap.php');
 	     include_once($SERVER_ROOT.'/includes/googleMap.php');
       ?>
-      <script type="text/javascript" src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js"></script>
 		<title><?php echo $DEFAULT_TITLE.' - '.(isset($LANG['H_INVENTORIES'])?$LANG['H_INVENTORIES']:'Species Checklists'); ?></title>
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 
@@ -99,13 +98,14 @@ $clManager->setProj($pid);
          }
 
 			function initialize(){
-
-            //Load Server Data from HTML Data Attributes
-            $('.service-container').each(function() {
-               let container = $(this);
-               checklists = container.data('checklists');
-               pid = container.data('pid');
-            })
+            //Try to Load Server Data from HTML Data Attributes
+            try {
+               const data = document.getElementById('service-container');
+               pid = data.getAttribute('data-pid');
+               checklists = JSON.parse(data.getAttribute('data-checklists'));
+            } catch (err) {
+               alert("Failed to load checklist data");
+            }
 
             if("<?php echo $LEAFLET?>") {
                leafletInit();
@@ -113,7 +113,6 @@ $clManager->setProj($pid);
                googleInit();
             }
 			}
-
 		</script>
 		<style>
 			html, body, #map_canvas {
@@ -126,7 +125,9 @@ $clManager->setProj($pid);
 	</head>
 	<body style="background-color:#ffffff;" onload="initialize()">
 		<div id="map_canvas"></div>
-      <div class="service-container" 
+      <div 
+        id="service-container" 
+        class="service-container" 
         data-checklists="<?= htmlspecialchars(json_encode($clManager->getResearchPoints()))?>"
         data-pid="<?= htmlspecialchars($pid)?>"
    />
