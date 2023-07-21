@@ -308,7 +308,7 @@ $_SESSION['citationvar'] = $searchVar;
 									echo '<div style="margin:4px;">';
 									if (isset($fieldArr['sciname'])) {
 										$sciStr = '<span style="font-style:italic;">' . $fieldArr['sciname'] . '</span>';
-										if (isset($fieldArr['tid']) && $fieldArr['tid']) $sciStr = '<a target="_blank" href="../taxa/index.php?tid=' . htmlspecialchars($fieldArr['tid'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($sciStr, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+										if (isset($fieldArr['tid']) && $fieldArr['tid']) $sciStr = '<a target="_blank" href="../taxa/index.php?tid=' . strip_tags($fieldArr['tid'], HTML_SPECIAL_CHARS_FLAGS) . '">' . strip_tags($sciStr, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 										if (isset($fieldArr['author']) && $fieldArr['author']) $sciStr .= ' ' . $fieldArr['author'];
 										echo $sciStr;
 									} elseif ($fieldArr['localitysecurity'] > 1) {
