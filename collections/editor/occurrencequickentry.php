@@ -533,7 +533,6 @@ else{
 					}
 				});
 			}
-
 		</script>
 		<script src="../../js/symb/collections.coordinateValidation.js?ver=2" type="text/javascript"></script>
 		<script src="../../js/symb/wktpolygontools.js?ver=2" type="text/javascript"></script>
@@ -544,39 +543,10 @@ else{
 		<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
 		<script src="../../js/symb/collections.editor.query.js?ver=5" type="text/javascript"></script>
 		<script>
-			var zoomWindow;
-			function openZoomWindow(event) {
-				// Get the source image and its dimensions
-				var sourceImage = event.target;
-				var imgWidth = sourceImage.width;
-				var imgHeight = sourceImage.height;
-
-				// Calculate the click position relative to the image
-				var offsetX = event.offsetX;
-				var offsetY = event.offsetY;
-
-				// Calculate the ratio of click position to image size
-				var clickRatioX = offsetX / imgWidth;
-				var clickRatioY = offsetY / imgHeight;
-
-				// Calculate the position in the zoomed-in image
-				var zoomedImgWidth = imgWidth * 2;
-				var zoomedImgHeight = imgHeight * 2;
-				var zoomedPosX = (clickRatioX * zoomedImgWidth) - (imgWidth / 2);
-        		var zoomedPosY = (clickRatioY * zoomedImgHeight) - (imgHeight / 2);
-
-				// Open or focus the zoom window
-				if (zoomWindow && !zoomWindow.closed) {
-					zoomWindow.focus();
-				} else {
-					zoomWindow = window.open('', '_blank');
-				}
-
-				// Write the HTML content to the zoom window
-				zoomWindow.document.write('<html><head><title>Zoomed In Image</title></head><body style="text-align: center;">');
-				zoomWindow.document.write('<img src="' + sourceImage.src + '" style="width: ' + zoomedImgWidth + 'px; object-fit: none; object-position: -' + zoomedPosX + 'px -' + zoomedPosY + 'px;">');
-				zoomWindow.document.write('</body></html>');
-				zoomWindow.document.close();
+			function navigateToRecordNew(occIndex, occId, collId, crowdSourceMode) {
+				var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&occindex=' + occIndex + '&occid=' + occId + '&collid=' + collId;
+				window.location.href = url;
+				event.preventDefault();
 			}
 		</script>
 		<style type="text/css">
@@ -1111,7 +1081,7 @@ else{
 							<h2>Click to Zoom in Other Window</h2>
 						</div>
 						<div class="login-info" style = "backgroufnd-color:#86C5D8; text-align: center;">
-							<img id="activeimg-<?php echo $imgCnt; ?>" src="<?php echo $iUrl; ?>" style="width:300px" onclick="openZoomWindow(event)" />
+							<img id="activeimg-<?php echo $imgCnt; ?>" src="<?php echo $iUrl; ?>" style="width:300px" />
 						</div>
 						<div class="login-info">
 							<!-- TODO: need to figure out how to deal with this input. It supposes to be generated automatically based on the form -->
@@ -1316,13 +1286,6 @@ else{
 						<?php echo "info needed" ?>
 					</div>
 				</section> 
-				<section id="imgtd" style="width:430px;" valign="top">
-					<?php
-					if($occId && ($fragArr || $specImgArr )){
-						include_once('includes/imgprocessor.php');
-					}
-					?>
-				</section>
 			</div>
 		</div>			
 	</div>
