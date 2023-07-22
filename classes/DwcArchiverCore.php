@@ -43,7 +43,7 @@ class DwcArchiverCore extends Manager{
 	private $includeDets = 1;
 	private $includeImgs = 1;
 	private $includeAttributes = 0;
-	private $includeMaterialSample = 0;		// 0 = off, 1 = on, 2 = active (activated within at least one collection)
+	private $includeMaterialSample = 0;
 	private $hasPaleo = false;
 	private $redactLocalities = 1;
 	private $rareReaderArr = array();
@@ -191,7 +191,6 @@ class DwcArchiverCore extends Manager{
 									if (isset($modArr['paleo']['status'])) $this->hasPaleo = true;
 									elseif (isset($modArr['matSample']['status'])){
 										$this->collArr[$r->collid]['matSample'] = 1;
-										$this->includeMaterialSample = 2;
 									}
 								}
 							}
@@ -1055,7 +1054,7 @@ class DwcArchiverCore extends Manager{
 		}
 
 		//MaterialSample extension
-		if ($this->includeMaterialSample == 2 && isset($this->fieldArrMap['materialSample'])) {
+		if ($this->includeMaterialSample && isset($this->fieldArrMap['materialSample'])) {
 			$extElem3 = $newDoc->createElement('extension');
 			$extElem3->setAttribute('encoding', $this->charSetOut);
 			$extElem3->setAttribute('fieldsTerminatedBy', $this->delimiter);
@@ -1765,7 +1764,7 @@ class DwcArchiverCore extends Manager{
 
 				$batchOccidArr[] = $r['occid'];
 				if (count($batchOccidArr) > 1000) {
-					if ($this->includeMaterialSample == 2) $this->writeMaterialSampleData($materialSampleHandler, $batchOccidArr);
+					if ($this->includeMaterialSample) $this->writeMaterialSampleData($materialSampleHandler, $batchOccidArr);
 					if ($pubID && $portalManager) $portalManager->insertPortalOccurrences($pubID, $batchOccidArr);
 					unset($batchOccidArr);
 					$batchOccidArr = array();
@@ -1782,7 +1781,7 @@ class DwcArchiverCore extends Manager{
 			if ($batchOccidArr) {
 				if ($pubID && $portalManager) $portalManager->insertPortalOccurrences($pubID, $batchOccidArr);
 			}
-			if ($this->includeMaterialSample == 2){
+			if ($this->includeMaterialSample){
 				$this->writeMaterialSampleData($materialSampleHandler, $batchOccidArr);
 				$materialSampleHandler->__destruct();
 			}
@@ -1801,7 +1800,7 @@ class DwcArchiverCore extends Manager{
 			$this->logOrEcho($this->errorMessage);
 		}
 		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n");
-		if ($this->includeMaterialSample == 2) $this->logOrEcho('Material Sample extension file created (' . date('h:i:s A') . ')... ');
+		if ($this->includeMaterialSample) $this->logOrEcho('Material Sample extension file created (' . date('h:i:s A') . ')... ');
 		return $filePath;
 	}
 
@@ -2161,19 +2160,19 @@ class DwcArchiverCore extends Manager{
 	}
 
 	public function setIncludeDets($includeDets){
-		$this->includeDets = $includeDets;
+		if($includeDets) $this->includeDets = true;
 	}
 
 	public function setIncludeImgs($includeImgs){
-		$this->includeImgs = $includeImgs;
+		if($includeImgs) $this->includeImgs = true;
 	}
 
 	public function setIncludeAttributes($include){
-		$this->includeAttributes = $include;
+		if($include) $this->includeAttributes = true;
 	}
 
 	public function setIncludeMaterialSample($include){
-		$this->includeMaterialSample = $include;
+		if($include) $this->includeMaterialSample = true;
 	}
 
 	public function hasAttributes(){
