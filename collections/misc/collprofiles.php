@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php');
@@ -32,11 +33,11 @@ if ($SYMB_UID) {
 	}
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE . ' ' . ($collid && isset($collData[$collid])? $collData[$collid]['collectionname'] : ''); ?></title>
 	<meta name="keywords" content="Natural history collections,<?php echo ($collid ? $collData[$collid]['collectionname'] : ''); ?>" />
-	<meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate">
+	<meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
 	<meta http-equiv="Pragma" content="no-cache">
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
@@ -57,7 +58,7 @@ if ($SYMB_UID) {
 			return false;
 		}
 	</script>
-	<style type="text/css">
+	<style>
 		.field-div {
 			margin: 10px 0px;
 			clear: both
@@ -532,9 +533,7 @@ if ($SYMB_UID) {
 			?>
 			<h2><?php echo $DEFAULT_TITLE . ' ' . (isset($LANG['COLLECTION_PROJECTS']) ? $LANG['COLLECTION_PROJECTS'] : 'Natural History Collections and Observation Projects'); ?></h2>
 			<div style='margin:10px;clear:both;'>
-				<?php
-				echo (isset($LANG['RSS_FEED']) ? $LANG['RSS_FEED'] : 'RSS feed') . ': <a href="../datasets/rsshandler.php" target="_blank">' . htmlspecialchars($collManager->getDomain(), HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . 'collections/datasets/rsshandler.php</a>';
-				?>
+				<a href="../datasets/rsshandler.php" target="_blank"><?php echo (isset($LANG['RSS_FEED']) ? $LANG['RSS_FEED'] : 'RSS feed'); ?></a>
 				<hr />
 			</div>
 			<table style='margin:10px;'>

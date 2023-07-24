@@ -93,8 +93,8 @@ class OccurrenceCollectionProfile extends OmCollections{
 				$title = (isset($LANG['HOMEPAGE'])?$LANG['HOMEPAGE']:'Homepage');
 				foreach($resourceArr as $rArr){
 					if(isset($rArr['title'][$LANG_TAG]) && $rArr['title'][$LANG_TAG]) $title = $rArr['title'][$LANG_TAG];
-					$outStr .= '<div class="field-div"><span class="label">'.$title.':</span> ';
-					$outStr .= '<a href="' . htmlspecialchars($rArr['url'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($rArr['url'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+					$outStr .= '<div class="field-div">';
+					$outStr .= '<a href="' . htmlspecialchars($rArr['url'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . $title . '</a>';
 					$outStr .= '</div>';
 				}
 			}
@@ -125,8 +125,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 		if($this->collMeta[$this->collid]['dwcaurl']){
 			$dwcaUrl = $this->collMeta[$this->collid]['dwcaurl'];
 			$outStr .= '<div class="field-div">';
-			$outStr .= '<span class="label">'.(isset($LANG['DWCA_PUB'])?$LANG['DWCA_PUB']:'DwC-Archive Access Point').':</span> ';
-			$outStr .= '<a href="' . htmlspecialchars($dwcaUrl, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($dwcaUrl, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+			$outStr .= '<a href="' . htmlspecialchars($dwcaUrl, HTML_SPECIAL_CHARS_FLAGS) . '">' . (isset($LANG['DWCA_PUB'])?$LANG['DWCA_PUB']:'DwC-Archive Access Point') . '</a>';
 			$outStr .= '</div>';
 		}
 		$outStr .= '<div class="field-div">';
@@ -149,7 +148,8 @@ class OccurrenceCollectionProfile extends OmCollections{
 		}
 		$outStr .= '</div>';
 		$outStr .= '<div class="field-div"><span class="label">' . htmlspecialchars((isset($LANG['DIGITAL_METADATA'])?$LANG['DIGITAL_METADATA']:'Digital Metadata'), HTML_SPECIAL_CHARS_FLAGS) . ':</span> <a href="../datasets/emlhandler.php?collid=' . htmlspecialchars($this->collMeta[$this->collid]['collid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">EML File</a></div>';
-		$outStr .= '<div class="field-div"><span class="label">'.$LANG['USAGE_RIGHTS'].':</span> ';
+		// $outStr .= '<div class="field-div"><span class="label">'.$LANG['USAGE_RIGHTS'].':</span> ';
+		$outStr .= '<div class="field-div">';
 		if($this->collMeta[$this->collid]['rights']){
 			$rights = $this->collMeta[$this->collid]['rights'];
 			$rightsUrl = '';
@@ -162,7 +162,8 @@ class OccurrenceCollectionProfile extends OmCollections{
 				}
 			}
 			if($rightsUrl) $outStr .= '<a href="' . htmlspecialchars($rightsUrl, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
-			$outStr .= $rights;
+			// $outStr .= $rights;
+			$outStr .= $LANG['USAGE_RIGHTS'];
 			if($rightsUrl) $outStr .= '</a>';
 		}
 		elseif(file_exists('../../includes/usagepolicy.php')){
