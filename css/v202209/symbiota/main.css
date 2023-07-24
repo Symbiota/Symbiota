@@ -330,15 +330,15 @@ table.styledtable tr.alt td {
 
 .fieldset-like {
   /* borrowed from: https://www.geeksforgeeks.org/how-to-achieve-fieldset-like-effect-without-using-fieldset-tag/ */
-  border: 2px solid;
+  border: 0.2em solid;
   border-top: none;
-  margin: 32px 2px;
-  padding: 8px;
+  margin: 2rem 0 1rem 1rem;
+  padding: 0.8rem;
 }
 
 .fieldset-like h1 {
-  font: 16px normal;
-  margin: -16px -8px 0;
+  font: 1.5rem normal;
+  margin: -1.6rem -0.8rem 0rem;
 }
 
 .fieldset-like h1 span {
@@ -346,23 +346,23 @@ table.styledtable tr.alt td {
 }
 
 .fieldset-like h1:before {
-  border-top: 2px solid;
+  border-top: 0.15em solid;
   content: " ";
   float: left;
-  margin: 8px 2px 0 -1px;
-  width: 12px;
+  margin: 0.8rem 0.1rem 0 -0.2rem;
+  width: 1.2rem;
 }
 
 .fieldset-like h1:after {
-  border-top: 2px solid;
+  border-top: 0.15em solid;
   content: " ";
   display: block;
-  height: 24px;
-  left: 2px;
-  margin: 0 1px 0 0;
+  height: 2.4rem;
+  left: 0.3rem;
+  margin: 0 0.1rem 0 0;
   overflow: hidden;
   position: relative;
-  top: 8px;
+  top: 0.8rem;
 }
 
 .btn-medium-font {
