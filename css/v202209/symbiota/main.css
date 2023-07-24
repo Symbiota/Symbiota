@@ -401,3 +401,33 @@ table.styledtable tr.alt td {
 .profile-legend {
   font-weight: bold;
 }
+
+.checkbox-pre-label {
+  margin-bottom: 10px;
+}
+
+.small-header {
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
+.gridlike-form {
+  margin: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.gridlike-form-row {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gridlike-form-row-label {
+  width: 100px;
+}
+
+.gridlike-form-row-input {
+  width: 40%;
+}
