@@ -105,7 +105,7 @@ if ($SYMB_UID) {
 			// GBIF citations widget
 			if ($datasetKey) {
 				echo '<div style="margin-left: 10px; margin-bottom: 20px;">';
-				echo '<iframe src="https://www.gbif.org/api/widgets/literature/button?gbifDatasetKey=' . $datasetKey . '" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="false" style="width: 140px; height: 24px;"></iframe>';
+				echo '<iframe title="GBIF citations" src="https://www.gbif.org/api/widgets/literature/button?gbifDatasetKey=' . $datasetKey . '" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="false" style="width: 140px; height: 24px;"></iframe>';
 				// Check if the Bionomia badge has been created yet - typically lags ~2 weeks behind GBIF publication
 				$bionomiaUrl = 'https://api.bionomia.net/dataset/' . $datasetKey . '/badge.svg';
 				$ch = curl_init($bionomiaUrl);
@@ -548,7 +548,7 @@ if ($SYMB_UID) {
 								if (substr($iconStr, 0, 6) == 'images') $iconStr = '../../' . $iconStr;
 								?>
 								<div class="justify-center">
-									<img src='<?php echo $iconStr; ?>' class="col-profile-img" /><br />
+									<img src='<?php echo $iconStr; ?>' class="col-profile-img" alt="icon for collection" /><br />
 								</div>
 							<?php
 							} else{
@@ -583,10 +583,6 @@ if ($SYMB_UID) {
 							<div style='margin:5px 0px 15px 10px;'>
 								<a href='collprofiles.php?collid=<?php echo htmlspecialchars($cid, HTML_SPECIAL_CHARS_FLAGS); ?>'><?php echo htmlspecialchars((isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'More Information'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
 							</div>
-						</div>
-					</section>
-					<section class="bottom-breathing-room gridlike-form-row">
-						<div colspan='2'>
 						</div>
 					</section>
 					<hr class="test" />
