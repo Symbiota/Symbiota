@@ -13,6 +13,31 @@ $crowdSourceMode = array_key_exists('csmode',$_REQUEST)?$_REQUEST['csmode']:0;
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 if(!$action && array_key_exists('carryover',$_REQUEST)) $goToMode = 2;
 
+if (isset($_REQUEST['batchid'])) {
+    $batchId = $_REQUEST['batchid'];
+    // Use $batchId as needed
+	$imgIDs = $occManager->getImgIDs($batchId);
+	$batchSize = count($imgIDs);
+	$firstImgId = $imgIDs[0] ;
+	$firstImgIndex = 0;
+} else {
+    $batchId = 0;
+	$batchSize = 0;
+	$firstImgId = 1;
+	$firstImgIndex = 0;
+}
+
+if (isset($_REQUEST['imgid'])) {
+    $imageId = $_REQUEST['imgid'];
+	$imgIndex = $_REQUEST['imgindex'];
+	// TODO: need to chec, if occID exists later
+	// $occID = $occManager->getOccIDs($imageId);
+	// $occIndex = $occID - 1
+} else {
+    $imageId = 1;
+	$imgIndex = 0;
+}
+
 //Sanitation
 if(!is_numeric($occId)) $occId = '';
 if(!is_numeric($collId)) $collId = false;
@@ -58,7 +83,7 @@ $isEditor = 0;
 
 // Dropdown arrays
 $filedUnderDrop = $occManager->getValues('dd_filedUnderID', 'dropdown_filedUnder_values');
-
+$specImgArr = $occManager->getImageMap();
 
 if($SYMB_UID){
 	//Set variables
@@ -799,7 +824,7 @@ else{
 							<span class="field-elem">
 								<!-- this $occArr array connects to the old form's database -->
 								<?php if(array_key_exists('barcode',$occArr)) { ?>
-									<input type="text" size = '50' id="barcode" name="barcode" value="<?php echo $occArr['barcode'] ?>" onchange="fieldChanged('barcode');" <?php if($isEditor > 2) echo 'disabled'; ?> autocomplete="off" />
+									<input type="text" size = '50' id="barcode" name="barcode" value="<?php // echo $occArr['barcode'] ?>" onchange="fieldChanged('barcode');" <?php if($isEditor > 2) echo 'disabled'; ?> autocomplete="off" />
 								<?php 
 								} else { 
 								?>
