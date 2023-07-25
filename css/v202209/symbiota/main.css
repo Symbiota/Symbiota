@@ -434,8 +434,8 @@ table.styledtable tr.alt td {
 
 .col-profile-img {
   border: 1px;
-  height: 30px;
-  width: 30px;
+  height: 6.4rem;
+  width: 6.4rem;
 }
 
 .col-profile-header {
@@ -444,4 +444,14 @@ table.styledtable tr.alt td {
 
 .test {
   background-color: black;
+}
+
+.col-profile-inst-code {
+  min-width: 9rem;
+  max-width: 9rem;
+}
+
+.justify-center {
+  display: flex;
+  justify-content: center;
 }

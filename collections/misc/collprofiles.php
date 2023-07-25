@@ -541,22 +541,32 @@ if ($SYMB_UID) {
 				foreach ($collData as $cid => $collArr) {
 					?>
 					<section class="bottom-breathing-room gridlike-form-row">
-						<div style='text-align:center;vertical-align:top; max-width:50px;'>
+						<div class="gridlike-form">
 							<?php
 							$iconStr = $collArr['icon'];
 							if ($iconStr) {
 								if (substr($iconStr, 0, 6) == 'images') $iconStr = '../../' . $iconStr;
 								?>
-								<img src='<?php echo $iconStr; ?>' class="col-profile-img" /><br />
-								<div>
-									<?php
-									echo $collArr['institutioncode'];
-									if ($collArr['collectioncode']) echo '-' . $collArr['collectioncode'];
-									?>
+								<div class="justify-center">
+									<img src='<?php echo $iconStr; ?>' class="col-profile-img" /><br />
 								</div>
 							<?php
+							} else{
+								?>
+								<div class="justify-center">
+									<p class="col-profile-img"></p><br />
+								</div>
+								<?php
 							}
 							?>
+							<div class="gridlike-form-row col-profile-inst-code justify-center">
+									<p>
+										<?php
+										echo $collArr['institutioncode'] ?? '';
+										if ($collArr['collectioncode']) echo '-' . $collArr['collectioncode'];
+										?>
+									</p>
+								</div>
 						</div>
 						<div>
 							<h3>
