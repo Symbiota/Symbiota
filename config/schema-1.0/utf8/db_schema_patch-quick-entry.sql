@@ -646,9 +646,12 @@ DROP TABLE IF EXISTS `images_barcode`;
 CREATE TABLE `images_barcode` (
   `imgid` int(10) unsigned NOT NULL,
   `barcode` varchar(255) NOT NULL,
+  `occid` int unsigned NOT NULL,
   PRIMARY KEY (`barcode`),
   KEY `FK_images_barcode_images` (`imgid`),
-  CONSTRAINT `FK_images_barcode_images` FOREIGN KEY (`imgid`) REFERENCES `images` (`imgid`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `FK_images_barcode_omoccurrences` (`occid`),
+  CONSTRAINT `FK_images_barcode_images` FOREIGN KEY (`imgid`) REFERENCES `images` (`imgid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_images_barcode_omoccurrences` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `omoccurrences`
