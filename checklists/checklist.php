@@ -662,7 +662,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 								//Edit family name display style here
 								?>
 								<div class="family-div" id="<?php echo strip_tags($group);?>">
-									<a href="<?php echo strip_tags($famUrl, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank" style="color:black;"><?php echo strip_tags($group, HTML_SPECIAL_CHARS_FLAGS);?></a>
+									<i><a href="<?php echo strip_tags($famUrl); ?>" target="_blank" style="color:black;"><?php echo strip_tags($group);?></a> </i>
 								</div>
 								<?php
 								$prevGroup = $group;
