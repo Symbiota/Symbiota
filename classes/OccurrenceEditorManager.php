@@ -50,7 +50,7 @@ class OccurrenceEditorManager {
 			'labelproject' => 's','processingstatus' => 's', 'recordenteredby' => 's', 'observeruid' => 'n', 'dateentered' => 'd',
 			// input of the new quick entry form
 			// The key update of the new quick entry form 
-			'barcode' => 'n', 'accesNum' => 'n', 'filedUnder' => 's', 'currName' => 's', 'idQualifier' => 's','detText' => 's', 'provenance' => 's', 'container' => 's', 'collTrip' => 's', 'geoWithin' => 's',
+			'accesNum' => 'n', 'filedUnder' => 's', 'currName' => 's', 'idQualifier' => 's','detText' => 's', 'provenance' => 's', 'container' => 's', 'collTrip' => 's', 'geoWithin' => 's',
 			'highGeo' => 's', 'frequency' => 's', 'prepMethod' => 's', 'format' => 's', 'verbLat' => 's', 'verbLong' => 's', 'method' => 's'	
 		);
 		$this->fieldArr['paleo'] = array('eon','era','period','epoch','earlyinterval','lateinterval','absoluteage','storageage','stage','localstage','biota',
