@@ -1,7 +1,3 @@
-<!DOCTYPE html>
-
-<html lang="<?php echo $LANG_TAG ?>">
-
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/collections/index.'.$LANG_TAG.'.php');
@@ -29,7 +25,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 		include_once($SERVER_ROOT.'/includes/head.php');
 		include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 		?>
-		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
+		<link href="<?php echo $CSS_BASE_PATH; ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
 		<script src="../js/jquery-3.2.1.min.js" type="text/javascript"></script>
 		<script src="../js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
 		<link href="../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
@@ -63,7 +59,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 	}
 	else{
 		echo '<div class="navpath">';
-		echo '<a href="../index.php">' . htmlspecialchars((isset($LANG['NAV_HOME'])?$LANG['NAV_HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
+		echo '<a href="../index.php">'.(isset($LANG['NAV_HOME'])?$LANG['NAV_HOME']:'Home').'</a> &gt;&gt; ';
 		echo '<b>'.(isset($LANG['NAV_COLLECTIONS'])?$LANG['NAV_COLLECTIONS']:'Collections').'</b>';
 		echo "</div>";
 	}
@@ -73,10 +69,10 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
         <div id="tabs" style="margin:0px;">
 			<ul>
 				<?php
-				if($specArr && $obsArr) echo '<li><a href="#specobsdiv">' . htmlspecialchars((isset($LANG['TAB_1'])?$LANG['TAB_1']:'Specimens & Observations'), HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
-				if($specArr) echo '<li><a href="#specimendiv">' . htmlspecialchars((isset($LANG['TAB_2'])?$LANG['TAB_2']:'Specimens'), HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
-				if($obsArr) echo '<li><a href="#observationdiv">' . htmlspecialchars((isset($LANG['TAB_3'])?$LANG['TAB_3']:'Observations'), HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
-				if($otherCatArr) echo '<li><a href="#otherdiv">' . htmlspecialchars((isset($LANG['TAB_4'])?$LANG['TAB_4']:'Federal Units'), HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
+				if($specArr && $obsArr) echo '<li><a href="#specobsdiv">'.(isset($LANG['TAB_1'])?$LANG['TAB_1']:'Specimens & Observations').'</a></li>';
+				if($specArr) echo '<li><a href="#specimendiv">'.(isset($LANG['TAB_2'])?$LANG['TAB_2']:'Specimens').'</a></li>';
+				if($obsArr) echo '<li><a href="#observationdiv">'.(isset($LANG['TAB_3'])?$LANG['TAB_3']:'Observations').'</a></li>';
+				if($otherCatArr) echo '<li><a href="#otherdiv">'.(isset($LANG['TAB_4'])?$LANG['TAB_4']:'Federal Units').'</a></li>';
 				?>
 			</ul>
 			<?php
@@ -86,7 +82,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 					<form name="collform1" action="harvestparams.php" method="post" onsubmit="return verifyCollForm(this)">
 						<div style="margin:0px 0px 10px 5px;">
 							<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" checked />
-					 		<?php echo $LANG['SELECT_DESELECT'].' <a href="misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>'; ?>
+					 		<?php echo $LANG['SELECT_DESELECT'].' <a href="misc/collprofiles.php">'.$LANG['ALL_COLLECTIONS'].'</a>'; ?>
 						</div>
 						<?php
 						$collManager->outputFullCollArr($specArr, $catId);
@@ -104,7 +100,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 					<form name="collform2" action="harvestparams.php" method="post" onsubmit="return verifyCollForm(this)">
 						<div style="margin:0px 0px 10px 20px;">
 							<input id="dballspeccb" name="db[]" class="spec" value='allspec' type="checkbox" onclick="selectAll(this);" checked />
-					 		<?php echo $LANG['SELECT_DESELECT'].' <a href="misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>'; ?>
+					 		<?php echo $LANG['SELECT_DESELECT'].' <a href="misc/collprofiles.php">'.$LANG['ALL_COLLECTIONS'].'</a>'; ?>
 						</div>
 						<?php
 						$collManager->outputFullCollArr($specArr, $catId);
@@ -142,7 +138,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 							<fieldset style="margin:10px;padding:10px;">
 								<legend style="font-weight:bold;"><?php echo $catTitle; ?></legend>
 								<div style="margin:0px 15px;float:right;">
-									<button type="submit" name="action"><?php echo isset($LANG['BUTTON_NEXT'])?$LANG['BUTTON_NEXT']:'Next >'; ?></button>
+									<button type="submit" name="submitaction"><?php echo isset($LANG['BUTTON_NEXT'])?$LANG['BUTTON_NEXT']:'Next >'; ?></button>
 								</div>
 								<?php
 								$projTitleArr = $otherCatArr['titles'][$catPid]['proj'];
@@ -150,7 +146,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 								foreach($projTitleArr as $pid => $projTitle){
 									?>
 									<div>
-										<a href="#" onclick="togglePid('<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>');return false;"><img id="plus-pid-<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>" src="../images/plus_sm.png" alt='Plus Sign' /><img id="minus-pid-<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>" src="../images/minus_sm.png" style="display:none;" alt='Minus Sign' /></a>
+										<a href="#" onclick="togglePid('<?php echo $pid; ?>');return false;"><img id="plus-pid-<?php echo $pid; ?>" src="../images/plus_sm.png" /><img id="minus-pid-<?php echo $pid; ?>" src="../images/minus_sm.png" style="display:none;" /></a>
 										<input name="pid[]" type="checkbox" value="<?php echo $pid; ?>" onchange="selectAllPid(this);" />
 										<b><?php echo $projTitle; ?></b>
 									</div>
