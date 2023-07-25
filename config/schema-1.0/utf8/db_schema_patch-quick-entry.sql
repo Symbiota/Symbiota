@@ -642,14 +642,5 @@ CREATE TABLE `batch_user` (
   CONSTRAINT `FK_batch_user_user` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `images_barcode`;
-CREATE TABLE `images_barcode` (
-  `imgid` int(10) unsigned NOT NULL,
-  `barcode` varchar(255) NOT NULL,
-  PRIMARY KEY (`barcode`),
-  KEY `FK_images_barcode_images` (`imgid`),
-  CONSTRAINT `FK_images_barcode_images` FOREIGN KEY (`imgid`) REFERENCES `images` (`imgid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 ALTER TABLE `omoccurrences`
     DROP COLUMN `barcode`;
