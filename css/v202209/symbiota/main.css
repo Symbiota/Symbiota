@@ -431,3 +431,17 @@ table.styledtable tr.alt td {
 .gridlike-form-row-input {
   width: 40%;
 }
+
+.col-profile-img {
+  border: 1px;
+  height: 30px;
+  width: 30px;
+}
+
+.col-profile-header {
+  margin-left: 0.5em;
+}
+
+.test {
+  background-color: black;
+}

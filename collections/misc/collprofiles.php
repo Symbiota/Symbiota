@@ -536,27 +536,31 @@ if ($SYMB_UID) {
 				<a href="../datasets/rsshandler.php" target="_blank"><?php echo (isset($LANG['RSS_FEED']) ? $LANG['RSS_FEED'] : 'RSS feed'); ?></a>
 				<hr />
 			</div>
-			<table style='margin:10px;'>
+			<div class="gridlike-form">
 				<?php
 				foreach ($collData as $cid => $collArr) {
 					?>
-					<tr>
-						<td style='text-align:center;vertical-align:top;'>
+					<section class="bottom-breathing-room gridlike-form-row">
+						<div style='text-align:center;vertical-align:top; max-width:50px;'>
 							<?php
 							$iconStr = $collArr['icon'];
 							if ($iconStr) {
 								if (substr($iconStr, 0, 6) == 'images') $iconStr = '../../' . $iconStr;
 								?>
-								<img src='<?php echo $iconStr; ?>' style='border-size:1px;height:30;width:30;' /><br />
-								<?php
-								echo $collArr['institutioncode'];
-								if ($collArr['collectioncode']) echo '-' . $collArr['collectioncode'];
+								<img src='<?php echo $iconStr; ?>' class="col-profile-img" /><br />
+								<div>
+									<?php
+									echo $collArr['institutioncode'];
+									if ($collArr['collectioncode']) echo '-' . $collArr['collectioncode'];
+									?>
+								</div>
+							<?php
 							}
 							?>
-						</td>
-						<td>
+						</div>
+						<div>
 							<h3>
-								<a href='collprofiles.php?collid=<?php echo htmlspecialchars($cid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
+								<a class="col-profile-header" href='collprofiles.php?collid=<?php echo htmlspecialchars($cid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
 									<?php echo $collArr['collectionname']; ?>
 								</a>
 							</h3>
@@ -569,17 +573,17 @@ if ($SYMB_UID) {
 							<div style='margin:5px 0px 15px 10px;'>
 								<a href='collprofiles.php?collid=<?php echo htmlspecialchars($cid, HTML_SPECIAL_CHARS_FLAGS); ?>'><?php echo htmlspecialchars((isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'More Information'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
 							</div>
-						</td>
-					</tr>
-					<tr>
-						<td colspan='2'>
-							<hr />
-						</td>
-					</tr>
+						</div>
+					</section>
+					<section class="bottom-breathing-room gridlike-form-row">
+						<div colspan='2'>
+						</div>
+					</section>
+					<hr class="test" />
 					<?php
 				}
 				?>
-			</table>
+			</div>
 			<?php
 		}
 		?>
