@@ -366,7 +366,7 @@ class OccurrenceTaxaManager {
 	}
 
 	protected function cleanOutStr($str){
-		return htmlspecialchars($str);
+		return htmlspecialchars($str ?? "");
 	}
 
 	protected function cleanInputStr($str){
