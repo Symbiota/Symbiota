@@ -199,8 +199,7 @@ if ($isEditor) {
 		<b><?php echo $LANG['DWCA_PUBLISHER']; ?></b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext" style="font-size:14px;">
-	<!-- I could not figure out which css file to modify to get the above styling to work -->
+	<div id="innertext" class="accessible-font">
 		<?php
 		if (!$collid && $IS_ADMIN) {
 			?>

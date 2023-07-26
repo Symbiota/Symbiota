@@ -271,6 +271,7 @@ function openCoordAid(mapMode) {
     "polygon",
     "resizable=0,width=900,height=630,left=20,top=20"
   );
+
   if (mapWindow.opener == null) mapWindow.opener = self;
   mapWindow.focus();
 }

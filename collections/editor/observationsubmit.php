@@ -52,7 +52,7 @@ $clArr = $obsManager->getChecklists();
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<style>
-		.imgSubmitDiv{ padding:10px; width:700px; height:145px; border:1px solid grey; background-color:#F5F5F5; margin-bottom:10px; }
+		.imgSubmitDiv{ padding:10px; width:700px; border:1px solid grey; background-color:#F5F5F5; }
 	</style>
 	<script type="text/javascript">
 		<?php
@@ -67,7 +67,7 @@ $clArr = $obsManager->getChecklists();
 	<script src="../../js/symb/collections.coordinateValidation.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.observations.js?ver=1" type="text/javascript"></script>
 	<style>
-		#dmsdiv{ display: none; clear: both; padding: 15px; width: 300px; background-color: #f2f2f2; border: 2px outset #E8EEFA; }
+		#dmsdiv{ display: none; clear: both; padding: 15px; width: 565px; background-color: #f2f2f2; border: 2px outset #E8EEFA; }
 		#dmsButton { margin: 0px 3px; }
 	</style>
 </head>
@@ -149,14 +149,16 @@ $clArr = $obsManager->getChecklists();
 									<input name='imgfile<?php echo $x; ?>' id='imgfile<?php echo $x; ?>' type='file' onchange="verifyImageSize(this)" <?php if($x == 1) echo 'required'; ?> />
 								</div>
 								<div>
-									<div style="margin-bottom: 10px;">
-										<label for="caption<?php echo $x; ?>"><?php echo $LANG['CAPTION']; ?>:</label>
-										<input name="caption<?php echo $x; ?>" id="caption<?php echo $x; ?>" type="text" style="width:200px;" />
-									</div>
-									<div style="margin-bottom: 10px;">
-										<label for="notes<?php echo $x; ?>"><?php echo $LANG['IMG_REMARKS']; ?>:</label>
-										<input name="notes<?php echo $x; ?>" id="notes<?php echo $x; ?>" type="text" style="width:275px;" />
-									</div>
+									<section class="flex-form">
+										<div style="margin-bottom: 10px;">
+											<label for="caption<?php echo $x; ?>"><?php echo $LANG['CAPTION']; ?>:</label>
+											<input name="caption<?php echo $x; ?>" id="caption<?php echo $x; ?>" type="text" style="width:200px;" />
+										</div>
+										<div style="margin-bottom: 10px;">
+											<label for="notes<?php echo $x; ?>"><?php echo $LANG['IMG_REMARKS']; ?>:</label>
+											<input name="notes<?php echo $x; ?>" id="notes<?php echo $x; ?>" type="text" style="width:275px;" />
+										</div>
+									</section>
 
 									<?php
 									if($x < 5){
@@ -183,21 +185,23 @@ $clArr = $obsManager->getChecklists();
 					<fieldset>
 						<legend><b><?php echo $LANG['OBSERVATION']; ?></b></legend>
 						<div style="clear:both;" class="p1">
-							<div>
-								<label for="sciname"><?php echo $LANG['SCINAME']; ?>:</label>
-								<input type="text" id="sciname" name="sciname" maxlength="250" style="width:390px;" required />
-								<input type="hidden" id="tidtoadd" name="tidtoadd" value="" />
-							</div>
-							<div style="clear:both;">
+							<section class="flex-form">
+								<div>
+									<label for="sciname"><?php echo $LANG['SCINAME']; ?>:</label>
+									<input type="text" id="sciname" name="sciname" maxlength="250" style="width:390px;" required />
+									<input type="hidden" id="tidtoadd" name="tidtoadd" value="" />
+								</div>
+								<div>
+									<label for="scientificnameauthorship"><?php echo $LANG['AUTHOR']; ?>:</label>
+									<input type="text" name="scientificnameauthorship" id="scientificnameauthorship" maxlength="100" tabindex="-1" value="" />
+								</div>
+							</section>
+							<div style="clear:both;" class="flex-form">
 								<label for="family"><?php echo $LANG['FAMILY']; ?>:</label>
 								<input type="text" name="family" id="family" size="30" maxlength="50" style="" tabindex="-1" value="" />
 							</div>
-							<div >
-								<label for="scientificnameauthorship"><?php echo $LANG['AUTHOR']; ?>:</label>
-								<input type="text" name="scientificnameauthorship" id="scientificnameauthorship" maxlength="100" tabindex="-1" value="" />
-							</div>
 						</div>
-						<div style="clear:both;">
+						<div style="clear:both;" class="flex-form">
 							<div>
 								<label for="recordedby"><?php echo $LANG['OBSERVER']; ?>:</label>
 								<input type="text" name="recordedby" id="recordedby" maxlength="255" style="width:250px;" value="<?php echo $recordedBy; ?>" required />
@@ -220,14 +224,16 @@ $clArr = $obsManager->getChecklists();
 								</label>
 								<input type="text" name="associatedcollectors" id="associatedcollectors" maxlength="255" style="width:350px;" value="" />
 							</div>
-							<div>
-								<label for="identifiedby"><?php echo $LANG['IDED_BY']; ?>:</label>
-								<input type="text" name="identifiedby" id="identifiedby" maxlength="255" style="" value="" />
-							</div>
-							<div>
-								<label for="dateidentified"><?php echo $LANG['DATE_IDED']; ?>:</label>
-								<input type="text" name="dateidentified" id="dateidentified" maxlength="45" style="" value="" />
-							</div>
+							<section class="flex-form">
+								<div>
+									<label for="identifiedby"><?php echo $LANG['IDED_BY']; ?>:</label>
+									<input type="text" name="identifiedby" id="identifiedby" maxlength="255" style="" value="" />
+								</div>
+								<div>
+									<label for="dateidentified"><?php echo $LANG['DATE_IDED']; ?>:</label>
+									<input type="text" name="dateidentified" id="dateidentified" maxlength="45" style="" value="" />
+								</div>
+							</section>
 							<div>
 								<label for="identificationreferences"><?php echo $LANG['ID_REFS']; ?>:</label>
 								<input type="text" name="identificationreferences" id="identificationreferences" style="width:450px;" title="cf, aff, etc" />
@@ -240,7 +246,7 @@ $clArr = $obsManager->getChecklists();
 					</fieldset>
 					<fieldset style="margin-top:10px;">
 						<legend><b><?php echo $LANG['LOCALITY']; ?></b></legend>
-						<div style="clear:both;">
+						<div style="clear:both;" class="flex-form">
 							<div>
 								<label for="country"><?php echo $LANG['COUNTRY']; ?>:</label>
 								<input type="text" name="country" id="country" style="width:150px;" value="" required />
@@ -262,7 +268,7 @@ $clArr = $obsManager->getChecklists();
 							<input type="checkbox" name="localitysecurity" id="localitysecurity" style="" value="1" title="<?php echo $LANG['HIDE_LOC_SHORT']; ?>" />
 							<label for="localitysecurity"><?php echo $LANG['HIDE_LOC_LONG']; ?></label>
 						</div>
-						<div style="clear:both;">
+						<div style="clear:both;" class="flex-form">
 							<div>
 								<label for="decimallatitude"><?php echo $LANG['LATITUDE']; ?>:</label>
 								<input type="text" id="decimallatitude" name="decimallatitude" maxlength="10" style="width:88px;" value="" onchange="verifyLatValue(this.form)" title="Decimal Format (eg 34.5436)" required />
@@ -299,50 +305,54 @@ $clArr = $obsManager->getChecklists();
 							</div>
 						</div>
 						<div id="dmsdiv">
-							<div style="margin-bottom: 10px;">
-								<em><?php echo $LANG['LATITUDE']; ?></em><br>
-							</div>
-							<div>
-								<label for="latdeg"><?php echo $LANG['LATITUDE_DEG']; ?>:</label>
-								<input id="latdeg" style="width:35px;" title="<?php echo $LANG['LATITUDE_DEG']; ?>" />
-							</div>
-							<div>
-								<label for="latmin"><?php echo $LANG['LATITUDE_MIN']; ?>:</label>
-								<input id="latmin" style="width:50px;" title="<?php echo $LANG['LATITUDE_MIN']; ?>" />
-							</div>
-							<div>
-								<label for="latsec"><?php echo $LANG['LATITUDE_SEC']; ?>:</label>
-								<input id="latsec" style="width:50px;" title="<?php echo $LANG['LATITUDE_SEC']; ?>" />
-							</div>
-							<div>
-								<label for="latns"><?php echo $LANG['DIRECTION'] ?>:</label>
-								<select id="latns">
-									<option><?php echo $LANG['N']; ?></option>
-									<option><?php echo $LANG['S']; ?></option>
-								</select>
-							</div>
-							<div style="margin-bottom: 10px;  margin-top: 10px;">
-								<em><?php echo $LANG['LONGITUDE']; ?></em><br>
-							</div>
-							<div>
-								<label for="lngdeg"><?php echo $LANG['LONGITUDE_DEG']; ?>:</label>
-								<input id="lngdeg" style="width:35px;" title="<?php echo $LANG['LONGITUDE_DEG']; ?>" />
-							</div>
-							<div>
-								<label for="lngmin"><?php echo $LANG['LONGITUDE_MIN']; ?>:</label>
-								<input id="lngmin" style="width:50px;" title="<?php echo $LANG['LONGITUDE_MIN']; ?>" />
-							</div>
-							<div>
-								<label for="lngsec"><?php echo $LANG['LONGITUDE_SEC']; ?>:</label>
-								<input id="lngsec" style="width:50px;" title="<?php echo $LANG['LONGITUDE_SEC']; ?>" />
-							</div>
-							<div>
-								<label for="lngew"><?php echo $LANG['DIRECTION'] ?>:</label>
-								<select id="lngew">
-									<option><?php echo $LANG['E']; ?></option>
-									<option SELECTED><?php echo $LANG['W']; ?></option>
-								</select>
-							</div>
+							<section class="flex-form">
+								<div class="lat-long-group-label">
+									<em><?php echo $LANG['LATITUDE']; ?>: </em><br>
+								</div>
+								<div>
+									<label for="latdeg"><?php echo $LANG['LATITUDE_DEG']; ?>: </label>
+									<input id="latdeg" style="width:35px;" title="<?php echo $LANG['LATITUDE_DEG']; ?>" />
+								</div>
+								<div>
+									<label for="latmin"><?php echo $LANG['LATITUDE_MIN']; ?>:</label>
+									<input id="latmin" style="width:50px;" title="<?php echo $LANG['LATITUDE_MIN']; ?>" />
+								</div>
+								<div>
+									<label for="latsec"><?php echo $LANG['LATITUDE_SEC']; ?>:</label>
+									<input id="latsec" style="width:50px;" title="<?php echo $LANG['LATITUDE_SEC']; ?>" />
+								</div>
+								<div>
+									<label for="latns"><?php echo $LANG['DIRECTION'] ?>:</label>
+									<select id="latns">
+										<option><?php echo $LANG['N']; ?></option>
+										<option><?php echo $LANG['S']; ?></option>
+									</select>
+								</div>
+							</section>
+							<section class="flex-form">
+								<div class="lat-long-group-label">
+									<em><?php echo $LANG['LONGITUDE']; ?>:</em><br>
+								</div>
+								<div>
+									<label for="lngdeg"><?php echo $LANG['LONGITUDE_DEG']; ?>:</label>
+									<input id="lngdeg" style="width:35px;" title="<?php echo $LANG['LONGITUDE_DEG']; ?>" />
+								</div>
+								<div>
+									<label for="lngmin"><?php echo $LANG['LONGITUDE_MIN']; ?>:</label>
+									<input id="lngmin" style="width:50px;" title="<?php echo $LANG['LONGITUDE_MIN']; ?>" />
+								</div>
+								<div>
+									<label for="lngsec"><?php echo $LANG['LONGITUDE_SEC']; ?>:</label>
+									<input id="lngsec" style="width:50px;" title="<?php echo $LANG['LONGITUDE_SEC']; ?>" />
+								</div>
+								<div>
+									<label for="lngew"><?php echo $LANG['DIRECTION'] ?>:</label>
+									<select id="lngew">
+										<option><?php echo $LANG['E']; ?></option>
+										<option SELECTED><?php echo $LANG['W']; ?></option>
+									</select>
+								</div>
+							</section>
 							<div style="margin:5px;">
 								<input type="button" value="Insert Lat/Long Values" onclick="insertLatLng(this.form)" />
 							</div>
@@ -370,24 +380,26 @@ $clArr = $obsManager->getChecklists();
 							<label for="occurrenceremarks"><?php echo $LANG['GENERAL_NOTES']; ?>:</label>
 							<input type="text" name="occurrenceremarks" id="occurrenceremarks" style="width:600px;" value="" title="Occurrence Remarks" />
 						</div>
-						<div style="padding:3px;">
-							<span title="e.g. sterile, flw, frt, flw/frt ">
-								<label for="reproductivecondition"><?php echo $LANG['REP_COND']; ?>:</label>
-								<input type="text" name="reproductivecondition" id="reproductivecondition" maxlength="255" style="width:140px;" value="" placeholder="e.g. sterile, flw, frt, flw/frt " />
-							</span>
-						</div>
-						<div style="padding:3px;">
-							<span title="e.g. planted, seeded, garden excape, etc.">
-								<label for="establishmentmeans"><?php echo $LANG['EST_MEANS']; ?>:</label>
-								<input type="text" name="establishmentmeans" id="establishmentmeans" maxlength="32" style="width: 230px;" value="" placeholder="e.g. planted, seeded, garden escape, etc." />
-							</span>
-						</div>
-						<div style="padding:3px;">
-							<span title="Click if specimen was cultivated or captive">
-								<input type="checkbox" name="cultivationstatus" id="<?php echo $LANG['REP_COND']; ?>:" style="" value="" />
-								<label for="<?php echo $LANG['REP_COND']; ?>:"><?php echo $LANG['CULT_CAPT']; ?></label>
-							</span>
-						</div>
+						<section class="flex-form">
+							<div style="padding:3px;">
+								<span title="e.g. sterile, flw, frt, flw/frt ">
+									<label for="reproductivecondition"><?php echo $LANG['REP_COND']; ?>:</label>
+									<input type="text" name="reproductivecondition" id="reproductivecondition" maxlength="255" style="width:140px;" value="" placeholder="e.g. sterile, flw, frt, flw/frt " />
+								</span>
+							</div>
+							<div style="padding:3px;">
+								<span title="e.g. planted, seeded, garden excape, etc.">
+									<label for="establishmentmeans"><?php echo $LANG['EST_MEANS']; ?>:</label>
+									<input type="text" name="establishmentmeans" id="establishmentmeans" maxlength="32" style="width: 230px;" value="" placeholder="e.g. planted, seeded, garden escape, etc." />
+								</span>
+							</div>
+							<div style="padding:3px;">
+								<span title="Click if specimen was cultivated or captive">
+									<input type="checkbox" name="cultivationstatus" id="<?php echo $LANG['REP_COND']; ?>:" style="" value="" />
+									<label for="<?php echo $LANG['REP_COND']; ?>:"><?php echo $LANG['CULT_CAPT']; ?></label>
+								</span>
+							</div>
+						</section>
 					</fieldset>
 					<?php
 					if($clArr){
