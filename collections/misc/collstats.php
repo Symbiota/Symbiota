@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCollectionProfile.php');
@@ -222,7 +223,7 @@ if($collId){
 }
 if($action != "Update Statistics"){
 	?>
-	<html>
+	<html lang="<?php echo $LANG_TAG ?>">
 		<head>
 			<meta name="keywords" content="Natural history collections statistics" />
 			<title><?php echo $DEFAULT_TITLE.(isset($LANG['COL_STATS'])?$LANG['COL_STATS']:'Collection Statistics'); ?></title>
@@ -404,17 +405,19 @@ if($action != "Update Statistics"){
 						<?php
 						if($specArr || $obsArr){
 							?>
-							<form name="collections" id="collform" action="collstats.php" method="post" onsubmit="return changeCollForm(this);">
+							<form name="collform" id="collform" action="collstats.php" method="post" onsubmit="return changeCollForm(this);">
                                 <?php
                                 if($SYMB_UID && ($IS_ADMIN || array_key_exists("CollAdmin",$USER_RIGHTS))){
                                     ?>
-                                    <fieldset style="padding:10px;padding-left:25px;">
+                                    <fieldset style="padding:10px;padding-left:25px;" class="flex-form">
                                         <legend><b><?php echo (isset($LANG['REC_CRITERIA'])?$LANG['REC_CRITERIA']:'Record Criteria'); ?></b></legend>
                                         <div style="margin:10px;float:left;">
-                                            <?php echo (isset($LANG['PARENT_CRITERIA'])?$LANG['PARENT_CRITERIA']:'Parent Taxon'); ?>: <input type="text" id="taxon" size="43" name="taxon" value="<?php echo $cPartentTaxon; ?>" />
+                                            <label for="taxon"><?php echo (isset($LANG['PARENT_CRITERIA'])?$LANG['PARENT_CRITERIA']:'Parent Taxon'); ?>: </label>
+											<input type="text" id="taxon" name="taxon" size="43" name="taxon" value="<?php echo $cPartentTaxon; ?>" />
                                         </div>
                                         <div style="margin:10px;float:left;">
-                                            <?php echo (isset($LANG['COUNTRY'])?$LANG['COUNTRY']:'Country'); ?>: <input type="text" id="country" size="43" name="country" value="<?php echo $cCountry; ?>" />
+                                            <label for="country"><?php echo (isset($LANG['COUNTRY'])?$LANG['COUNTRY']:'Country'); ?>: </label>
+											<input type="text" id="country" name="country" size="43" name="country" value="<?php echo $cCountry; ?>" />
                                         </div>
                                     </fieldset>
                                     <?php
@@ -439,7 +442,7 @@ if($action != "Update Statistics"){
 											if($SYMB_UID && $IS_ADMIN){
 												?>
 												<div style="clear:both;margin-top:8px;">
-													<button type="submit" name="submitaction" value="Update Statistics" /><?php echo (isset($LANG['UPDATE_STATS'])?$LANG['UPDATE_STATS']:'Update Statistics'); ?></button>
+													<button type="submit" name="submitaction" value="Update Statistics"><?php echo (isset($LANG['UPDATE_STATS'])?$LANG['UPDATE_STATS']:'Update Statistics'); ?></button>
 												</div>
 												<?php
 											}
@@ -462,8 +465,17 @@ if($action != "Update Statistics"){
 														<input id="cat-<?php echo $idStr; ?>-Input" name="cat[]" value="<?php echo $catid; ?>" type="checkbox" onclick="selectAllCat(this,'cat-<?php echo $idStr; ?>')" <?php echo ($collIdArr&&($collIdArr==array_keys($catArr))?'checked':''); ?> />
 													</td>
 													<td style="padding:9px 5px;width:10px;">
-														<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-															<img id="plus-<?php echo $idStr; ?>" src="../../images/plus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../../images/minus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" />
+														<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;" style="display:flex; flex-direction:row;">
+															<div style="display:flex; flex-direction:row; align-items:center; gap:1rem;">
+																<img id="plus-<?php echo $idStr; ?>" src="../../images/plus_sm.png" alt="plus sign to expand menu" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?> width: 0.9rem; height: 0.9rem;" />
+																<img id="minus-<?php echo $idStr; ?>" src="../../images/minus_sm.png" alt="minus sign to condense menu" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?> width: 0.9rem; height: 0.9rem;" />
+																<p id="ptext-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>">
+																	Expand
+																</p>
+																<p id="mtext-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" >
+																	Condense
+																</p>
+															</div>
 														</a>
 													</td>
 													<td style="padding-top:8px;">
@@ -525,7 +537,8 @@ if($action != "Update Statistics"){
 												?>
 												<tr>
 													<td style="padding:6px;width:25px;">
-														<input name="db[]" value="<?php echo $collid; ?>" type="checkbox" onclick="uncheckAll();" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
+														<input id="current-collid" name="current-collid" value="<?php echo $collid; ?>" type="checkbox" onclick="uncheckAll();" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
+														<label for="current-collid">TODO</label>
 													</td>
 													<td style="padding:6px">
 														<div class="collectiontitle">
