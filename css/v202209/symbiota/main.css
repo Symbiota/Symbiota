@@ -442,10 +442,6 @@ table.styledtable tr.alt td {
   margin-left: 0.5em;
 }
 
-.test {
-  background-color: black;
-}
-
 .col-profile-inst-code {
   min-width: 9rem;
   max-width: 9rem;

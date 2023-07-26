@@ -148,7 +148,6 @@ class OccurrenceCollectionProfile extends OmCollections{
 		}
 		$outStr .= '</div>';
 		$outStr .= '<div class="field-div"><span class="label">' . htmlspecialchars((isset($LANG['DIGITAL_METADATA'])?$LANG['DIGITAL_METADATA']:'Digital Metadata'), HTML_SPECIAL_CHARS_FLAGS) . ':</span> <a href="../datasets/emlhandler.php?collid=' . htmlspecialchars($this->collMeta[$this->collid]['collid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">EML File</a></div>';
-		// $outStr .= '<div class="field-div"><span class="label">'.$LANG['USAGE_RIGHTS'].':</span> ';
 		$outStr .= '<div class="field-div">';
 		if($this->collMeta[$this->collid]['rights']){
 			$rights = $this->collMeta[$this->collid]['rights'];
@@ -162,7 +161,6 @@ class OccurrenceCollectionProfile extends OmCollections{
 				}
 			}
 			if($rightsUrl) $outStr .= '<a href="' . htmlspecialchars($rightsUrl, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
-			// $outStr .= $rights;
 			$outStr .= $LANG['USAGE_RIGHTS'];
 			if($rightsUrl) $outStr .= '</a>';
 		}
