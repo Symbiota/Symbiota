@@ -1,3 +1,26 @@
+function getObservationSvg(opts = {color: "#7A8BE7", size: 24}) {
+   const default_ops = {color: "#7A8BE7", size: 24};
+   opts = {...default_ops, ...opts};
+   const half = opts.size/2;
+
+   return L.divIcon({
+      html: `
+<svg
+width="${opts.size}"
+height="${opts.size}"
+viewBox="-10 -10 ${opts.size + 20} ${opts.size + 20}"
+version="1.1"
+preserveAspectRatio="none"
+xmlns="http://www.w3.org/2000/svg"
+>
+<polygon points="${half},0 0,${opts.size} ${opts.size},${opts.size}" style="fill:${opts.color};stroke:black;stroke-width:3" />
+</svg>`,
+      className: "",
+      iconSize: [opts.size, opts.size],
+      iconAnchor: [half, half],
+   });
+}
+
 class LeafletMap {
    //DEFAULTS
    DEFAULT_MAP_OPTIONS = {
