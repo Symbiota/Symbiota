@@ -406,325 +406,331 @@ if($action != "Update Statistics"){
 						if($specArr || $obsArr){
 							?>
 							<form name="collform" id="collform" action="collstats.php" method="post" onsubmit="return changeCollForm(this);">
-                                <?php
-                                if($SYMB_UID && ($IS_ADMIN || array_key_exists("CollAdmin",$USER_RIGHTS))){
-                                    ?>
-                                    <fieldset style="padding:10px;padding-left:25px;" class="flex-form">
-                                        <legend><b><?php echo (isset($LANG['REC_CRITERIA'])?$LANG['REC_CRITERIA']:'Record Criteria'); ?></b></legend>
-                                        <div style="margin:10px;float:left;">
-                                            <label for="taxon"><?php echo (isset($LANG['PARENT_CRITERIA'])?$LANG['PARENT_CRITERIA']:'Parent Taxon'); ?>: </label>
-											<input type="text" id="taxon" name="taxon" size="43" name="taxon" value="<?php echo $cPartentTaxon; ?>" />
-                                        </div>
-                                        <div style="margin:10px;float:left;">
-                                            <label for="country"><?php echo (isset($LANG['COUNTRY'])?$LANG['COUNTRY']:'Country'); ?>: </label>
-											<input type="text" id="country" name="country" size="43" name="country" value="<?php echo $cCountry; ?>" />
-                                        </div>
-                                    </fieldset>
-                                    <?php
-                                }
-                                ?>
-                                <div style="margin:20px 0px 10px 20px;">
-									<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" />
-									<?php echo (isset($LANG['SEL_OR_DESEL'])?$LANG['SEL_OR_DESEL']:'Select/Deselect all'); ?> <a href="collprofiles.php"><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
-								</div>
-								<?php
-								$collArrIndex = 0;
-								if($specArr){
-									$collCnt = 0;
-									if(isset($specArr['cat'])){
-										$categoryArr = $specArr['cat'];
+								<div style="position: relative;">
+									<?php
+									if($SYMB_UID && ($IS_ADMIN || array_key_exists("CollAdmin",$USER_RIGHTS))){
 										?>
-										<div style="float:right;margin-top:20px;margin-bottom:10px;">
-											<div>
-												<button type="submit" name="submitaction" value="Run Statistics"><?php echo (isset($LANG['RUN_STATS'])?$LANG['RUN_STATS']:'Run Statistics'); ?></button>
+										<fieldset style="padding:10px;padding-left:25px;" class="flex-form">
+											<legend><b><?php echo (isset($LANG['REC_CRITERIA'])?$LANG['REC_CRITERIA']:'Record Criteria'); ?></b></legend>
+											<div style="margin:10px;float:left;">
+												<label for="taxon"><?php echo (isset($LANG['PARENT_CRITERIA'])?$LANG['PARENT_CRITERIA']:'Parent Taxon'); ?>: </label>
+												<input type="text" id="taxon" name="taxon" size="43" value="<?php echo $cPartentTaxon; ?>" />
 											</div>
-											<?php
-											if($SYMB_UID && $IS_ADMIN){
-												?>
-												<div style="clear:both;margin-top:8px;">
-													<button type="submit" name="submitaction" value="Update Statistics"><?php echo (isset($LANG['UPDATE_STATS'])?$LANG['UPDATE_STATS']:'Update Statistics'); ?></button>
+											<div style="margin:10px;float:left;">
+												<label for="country"><?php echo (isset($LANG['COUNTRY'])?$LANG['COUNTRY']:'Country'); ?>: </label>
+												<input type="text" id="country" name="country" size="43" value="<?php echo $cCountry; ?>" />
+											</div>
+										</fieldset>
+										<?php
+									}
+									?>
+									<div style="margin-top: 2.5rem;">
+										<hr/>
+										<h2>Sample Collections</h2>
+									</div>
+									<div style="margin:20px 0px 10px 20px;">
+										<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" />
+										<label for="dballcb"><?php echo (isset($LANG['SEL_OR_DESEL'])?$LANG['SEL_OR_DESEL']:'Select/Deselect all'); ?> <a href="collprofiles.php"><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></a></label>
+									</div>
+									<?php
+									$collArrIndex = 0;
+									if($specArr){
+										$collCnt = 0;
+										if(isset($specArr['cat'])){
+											$categoryArr = $specArr['cat'];
+											?>
+											<div style="position: sticky;">
+												<div>
+													<button type="submit" name="submitaction" value="Run Statistics"><?php echo (isset($LANG['RUN_STATS'])?$LANG['RUN_STATS']:'Run Statistics'); ?></button>
 												</div>
 												<?php
-											}
-											?>
-										</div>
-										<table style="float:left;width:80%;">
-											<?php
-											$cnt = 0;
-											foreach($categoryArr as $catid => $catArr){
-												$name = $catArr['name'];
-												if($catArr['acronym']) $name .= ' ('.$catArr['acronym'].')';
-												$catIcon = $catArr['icon'];
-												unset($catArr['name']);
-												unset($catArr['acronym']);
-												unset($catArr['icon']);
-												$idStr = $collArrIndex.'-'.$catid;
+												if($SYMB_UID && $IS_ADMIN){
+													?>
+													<div style="clear:both;margin-top:8px;">
+														<button type="submit" name="submitaction" value="Update Statistics"><?php echo (isset($LANG['UPDATE_STATS'])?$LANG['UPDATE_STATS']:'Update Statistics'); ?></button>
+													</div>
+													<?php
+												}
 												?>
-												<tr>
-													<td style="padding:6px;width:25px;">
-														<input id="cat-<?php echo $idStr; ?>-Input" name="cat[]" value="<?php echo $catid; ?>" type="checkbox" onclick="selectAllCat(this,'cat-<?php echo $idStr; ?>')" <?php echo ($collIdArr&&($collIdArr==array_keys($catArr))?'checked':''); ?> />
-													</td>
-													<td style="padding:9px 5px;width:10px;">
-														<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;" style="display:flex; flex-direction:row;">
-															<div style="display:flex; flex-direction:row; align-items:center; gap:1rem;">
-																<img id="plus-<?php echo $idStr; ?>" src="../../images/plus_sm.png" alt="plus sign to expand menu" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?> width: 0.9rem; height: 0.9rem;" />
-																<img id="minus-<?php echo $idStr; ?>" src="../../images/minus_sm.png" alt="minus sign to condense menu" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?> width: 0.9rem; height: 0.9rem;" />
-																<p id="ptext-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>">
-																	Expand
-																</p>
-																<p id="mtext-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" >
-																	Condense
-																</p>
+											</div>
+											<table style="float:left;width:80%;">
+												<?php
+												$cnt = 0;
+												foreach($categoryArr as $catid => $catArr){
+													$name = $catArr['name'];
+													if($catArr['acronym']) $name .= ' ('.$catArr['acronym'].')';
+													$catIcon = $catArr['icon'];
+													unset($catArr['name']);
+													unset($catArr['acronym']);
+													unset($catArr['icon']);
+													$idStr = $collArrIndex.'-'.$catid;
+													?>
+													<tr>
+														<td style="padding:6px;width:25px;">
+															<input id="cat-<?php echo $idStr; ?>-Input" name="cat[]" value="<?php echo $catid; ?>" type="checkbox" onclick="selectAllCat(this,'cat-<?php echo $idStr; ?>')" <?php echo ($collIdArr&&($collIdArr==array_keys($catArr))?'checked':''); ?> />
+														</td>
+														<td style="padding:9px 5px;width:10px;">
+															<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;" style="display:flex; flex-direction:row;">
+																<div style="display:flex; flex-direction:row; align-items:center; gap:1rem;">
+																	<img id="plus-<?php echo $idStr; ?>" src="../../images/plus_sm.png" alt="plus sign to expand menu" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?> width: 0.9rem; height: 0.9rem;" />
+																	<img id="minus-<?php echo $idStr; ?>" src="../../images/minus_sm.png" alt="minus sign to condense menu" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?> width: 0.9rem; height: 0.9rem;" />
+																	<p id="ptext-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>">
+																		Expand
+																	</p>
+																	<p id="mtext-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" >
+																		Condense
+																	</p>
+																</div>
+															</a>
+														</td>
+														<td style="padding-top:8px;">
+															<div class="categorytitle">
+																<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
+																	<?php echo $name; ?>
+																</a>
 															</div>
-														</a>
-													</td>
-													<td style="padding-top:8px;">
-														<div class="categorytitle">
-															<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-																<?php echo $name; ?>
-															</a>
-														</div>
-													</td>
-												</tr>
-												<tr>
-													<td colspan="3">
-														<div id="cat-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset">
-															<table>
-																<?php
-																foreach($catArr as $collid => $collName2){
-																	?>
-																	<tr>
-																		<td style="padding:6px;width:25px;">
-																			<input name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
-																		</td>
-																		<td style="padding:6px">
-																			<div class="collectiontitle">
-																				<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
-																					<?php
-																					$codeStr = ' ('.$collName2['instcode'];
-																					if($collName2['collcode']) $codeStr .= '-'.$collName2['collcode'];
-																					$codeStr .= ')';
-																					echo $collName2["collname"].$codeStr;
-																					?>
-																				</a>
-																				<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
-																					<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
-																				</a>
-																			</div>
-																		</td>
-																	</tr>
+														</td>
+													</tr>
+													<tr>
+														<td colspan="3">
+															<div id="cat-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset">
+																<table>
 																	<?php
-																	$collCnt++;
-																}
-																?>
-															</table>
-														</div>
-													</td>
-												</tr>
-												<?php
-												$cnt++;
-											}
-											?>
-										</table>
-										<?php
-									}
-									if(isset($specArr['coll'])){
-										$collArr = $specArr['coll'];
-										?>
-										<table style="float:left;width:80%;">
-											<?php
-											foreach($collArr as $collid => $cArr){
-												?>
-												<tr>
-													<td style="padding:6px;width:25px;">
-														<input id="current-collid" name="current-collid" value="<?php echo $collid; ?>" type="checkbox" onclick="uncheckAll();" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
-														<label for="current-collid">TODO</label>
-													</td>
-													<td style="padding:6px">
-														<div class="collectiontitle">
-															<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
-																<?php
-																$codeStr = ' ('.$cArr['instcode'];
-																if($cArr['collcode']) $codeStr .= '-'.$cArr['collcode'];
-																$codeStr .= ')';
-																echo $cArr["collname"].$codeStr;
-																?>
-															</a>
-															<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
-																<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
-															</a>
-														</div>
-													</td>
-												</tr>
-												<?php
-												$collCnt++;
-											}
-											?>
-										</table>
-										<div style="float:right;margin-top:20px;margin-bottom:10px;">
-											<div>
-												<button type="submit" name="submitaction" value="Run Statistics"><?php echo (isset($LANG['RUN_STATS'])?$LANG['RUN_STATS']:'Run Statistics'); ?></button>
-											</div>
-											<?php
-											if($SYMB_UID && $IS_ADMIN){
-												?>
-												<div style="clear:both;margin-top:8px;">
-													<button type="submit" name="submitaction" value="Update Statistics"><?php echo (isset($LANG['UPDATE_STATS'])?$LANG['UPDATE_STATS']:'Update Statistics'); ?></button>
-												</div>
-												<?php
-											}
-											?>
-										</div>
-										<?php
-									}
-									$collArrIndex++;
-								}
-								if($specArr && $obsArr) echo '<hr style="clear:both;margin:20px 0px;"/>';
-								if($obsArr){
-									$collCnt = 0;
-									if(isset($obsArr['cat'])){
-										$categoryArr = $obsArr['cat'];
-										?>
-										<div style="float:right;margin-top:20px;margin-bottom:10px;">
-											<div>
-												<button type="submit" name="submitaction" value="Run Statistics"><?php echo (isset($LANG['RUN_STATS'])?$LANG['RUN_STATS']:'Run Statistics'); ?></button>
-											</div>
-											<?php
-											if($SYMB_UID && $IS_ADMIN){
-												?>
-												<div style="clear:both;margin-top:8px;">
-													<button type="submit" name="submitaction" value="Update Statistics"><?php echo (isset($LANG['UPDATE_STATS'])?$LANG['UPDATE_STATS']:'Update Statistics'); ?></button>
-												</div>
-												<?php
-											}
-											?>
-										</div>
-										<table style="float:left;width:80%;">
-											<?php
-											$cnt = 0;
-											foreach($categoryArr as $catid => $catArr){
-												$name = $catArr['name'];
-												if($catArr['acronym']) $name .= ' ('.$catArr['acronym'].')';
-												$catIcon = $catArr['icon'];
-												unset($catArr['name']);
-												unset($catArr['acronym']);
-												unset($catArr['icon']);
-												$idStr = $collArrIndex.'-'.$catid;
-												?>
-												<tr>
-													<td style="padding:6px;width:25px;">
-														<input id="cat-<?php echo $idStr; ?>-Input" name="cat[]" value="<?php echo $catid; ?>" type="checkbox" onclick="selectAllCat(this,'cat-<?php echo $idStr; ?>')" <?php echo ($collIdArr&&($collIdArr==array_keys($catArr))?'checked':''); ?> />
-													</td>
-													<td style="padding:9px 5px;width:10px;">
-														<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-                                                            <img id="plus-<?php echo $idStr; ?>" src="../../images/plus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../../images/minus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" />
-														</a>
-													</td>
-													<td style="padding-top:8px;">
-														<div class="categorytitle">
-															<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-																<?php echo $name; ?>
-															</a>
-														</div>
-													</td>
-												</tr>
-												<tr>
-													<td colspan="3">
-                                                        <div id="cat-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset">
-															<table>
-																<?php
-																foreach($catArr as $collid => $collName2){
+																	foreach($catArr as $collid => $collName2){
+																		?>
+																		<tr>
+																			<td style="padding:6px;width:25px;">
+																				<input name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
+																			</td>
+																			<td style="padding:6px">
+																				<div class="collectiontitle">
+																					<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
+																						<?php
+																						$codeStr = ' ('.$collName2['instcode'];
+																						if($collName2['collcode']) $codeStr .= '-'.$collName2['collcode'];
+																						$codeStr .= ')';
+																						echo $collName2["collname"].$codeStr;
+																						?>
+																					</a>
+																					<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
+																						<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
+																					</a>
+																				</div>
+																			</td>
+																		</tr>
+																		<?php
+																		$collCnt++;
+																	}
 																	?>
-																	<tr>
-																		<td style="padding:6px;width:25px;">
-																			<input name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
-																		</td>
-																		<td style="padding:6px">
-																			<div class="collectiontitle">
-																				<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
-																					<?php
-																					$codeStr = ' ('.$collName2['instcode'];
-																					if($collName2['collcode']) $codeStr .= '-'.$collName2['collcode'];
-																					$codeStr .= ')';
-																					echo $collName2["collname"].$codeStr;
-																					?>
-																				</a>
-																				<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
-																					<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
-																				</a>
-																			</div>
-																		</td>
-																	</tr>
+																</table>
+															</div>
+														</td>
+													</tr>
+													<?php
+													$cnt++;
+												}
+												?>
+											</table>
+											<?php
+										}
+										if(isset($specArr['coll'])){
+											$collArr = $specArr['coll'];
+											?>
+											<table style="float:left;width:80%;">
+												<?php
+												foreach($collArr as $collid => $cArr){
+													?>
+													<tr>
+														<td style="padding:6px;width:25px;">
+															<input id="current-collid" name="current-collid" value="<?php echo $collid; ?>" type="checkbox" onclick="uncheckAll();" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
+															<label for="current-collid">TODO</label>
+														</td>
+														<td style="padding:6px">
+															<div class="collectiontitle">
+																<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
 																	<?php
-																	$collCnt++;
-																}
-																?>
-															</table>
-														</div>
-													</td>
-												</tr>
-												<?php
-												$cnt++;
-											}
-											?>
-										</table>
-										<?php
-									}
-									if(isset($obsArr['coll'])){
-										$collArr = $obsArr['coll'];
-										?>
-										<table style="float:left;width:80%;">
-											<?php
-											foreach($collArr as $collid => $cArr){
+																	$codeStr = ' ('.$cArr['instcode'];
+																	if($cArr['collcode']) $codeStr .= '-'.$cArr['collcode'];
+																	$codeStr .= ')';
+																	echo $cArr["collname"].$codeStr;
+																	?>
+																</a>
+																<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
+																	<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
+																</a>
+															</div>
+														</td>
+													</tr>
+													<?php
+													$collCnt++;
+												}
 												?>
-												<tr>
-													<td style="padding:6px;width:25px;">
-														<input name="db[]" value="<?php echo $collid; ?>" type="checkbox" onclick="uncheckAll();" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
-													</td>
-													<td style="padding:6px">
-														<div class="collectiontitle">
-															<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
-																<?php
-																$codeStr = ' ('.$cArr['instcode'];
-																if($cArr['collcode']) $codeStr .= '-'.$cArr['collcode'];
-																$codeStr .= ')';
-																echo $cArr["collname"].$codeStr;
-																?>
-															</a>
-															<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
-																<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
-															</a>
-														</div>
-													</td>
-												</tr>
-												<?php
-												$collCnt++;
-											}
-											?>
-										</table>
-										<div style="float:right;margin-top:20px;margin-bottom:10px;">
-											<div>
-												<button type="submit" name="submitaction" value="Run Statistics"><?php echo (isset($LANG['RUN_STATS'])?$LANG['RUN_STATS']:'Run Statistics'); ?></button>
-											</div>
-											<?php
-											if($SYMB_UID && $IS_ADMIN){
-												?>
-												<div style="clear:both;margin-top:8px;">
-													<button type="submit" name="submitaction" value="Update Statistics" /><?php echo (isset($LANG['UPDATE_STATS'])?$LANG['UPDATE_STATS']:'Update Statistics'); ?></button>
+											</table>
+											<div style="float:right;margin-top:20px;margin-bottom:10px;">
+												<div>
+													<button type="submit" name="submitaction" value="Run Statistics"><?php echo (isset($LANG['RUN_STATS'])?$LANG['RUN_STATS']:'Run Statistics'); ?></button>
 												</div>
 												<?php
-											}
-											?>
-										</div>
-										<?php
+												if($SYMB_UID && $IS_ADMIN){
+													?>
+													<div style="clear:both;margin-top:8px;">
+														<button type="submit" name="submitaction" value="Update Statistics"><?php echo (isset($LANG['UPDATE_STATS'])?$LANG['UPDATE_STATS']:'Update Statistics'); ?></button>
+													</div>
+													<?php
+												}
+												?>
+											</div>
+											<?php
+										}
+										$collArrIndex++;
 									}
-									$collArrIndex++;
-								}
-								?>
-								<div style="clear:both;">&nbsp;</div>
-								<input type="hidden" name="collid" id="colltxt" value="" />
-								<input type="hidden" name="days" value="<?php echo $days; ?>" />
-								<input type="hidden" name="months" value="<?php echo $months; ?>" />
+									if($specArr && $obsArr) echo '<hr style="clear:both;margin:20px 0px;"/><h2>Observation Collections</h2>';
+									if($obsArr){
+										$collCnt = 0;
+										if(isset($obsArr['cat'])){
+											$categoryArr = $obsArr['cat'];
+											?>
+											<div style="float:right;margin-top:20px;margin-bottom:10px;">
+												<div>
+													<button type="submit" name="submitaction" value="Run Statistics"><?php echo (isset($LANG['RUN_STATS'])?$LANG['RUN_STATS']:'Run Statistics'); ?></button>
+												</div>
+												<?php
+												if($SYMB_UID && $IS_ADMIN){
+													?>
+													<div style="clear:both;margin-top:8px;">
+														<button type="submit" name="submitaction" value="Update Statistics"><?php echo (isset($LANG['UPDATE_STATS'])?$LANG['UPDATE_STATS']:'Update Statistics'); ?></button>
+													</div>
+													<?php
+												}
+												?>
+											</div>
+											<table style="float:left;width:80%;">
+												<?php
+												$cnt = 0;
+												foreach($categoryArr as $catid => $catArr){
+													$name = $catArr['name'];
+													if($catArr['acronym']) $name .= ' ('.$catArr['acronym'].')';
+													$catIcon = $catArr['icon'];
+													unset($catArr['name']);
+													unset($catArr['acronym']);
+													unset($catArr['icon']);
+													$idStr = $collArrIndex.'-'.$catid;
+													?>
+													<tr>
+														<td style="padding:6px;width:25px;">
+															<input id="cat-<?php echo $idStr; ?>-Input" name="cat[]" value="<?php echo $catid; ?>" type="checkbox" onclick="selectAllCat(this,'cat-<?php echo $idStr; ?>')" <?php echo ($collIdArr&&($collIdArr==array_keys($catArr))?'checked':''); ?> />
+														</td>
+														<td style="padding:9px 5px;width:10px;">
+															<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
+																<img id="plus-<?php echo $idStr; ?>" src="../../images/plus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../../images/minus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" />
+															</a>
+														</td>
+														<td style="padding-top:8px;">
+															<div class="categorytitle">
+																<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
+																	<?php echo $name; ?>
+																</a>
+															</div>
+														</td>
+													</tr>
+													<tr>
+														<td colspan="3">
+															<div id="cat-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset">
+																<table>
+																	<?php
+																	foreach($catArr as $collid => $collName2){
+																		?>
+																		<tr>
+																			<td style="padding:6px;width:25px;">
+																				<input name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
+																			</td>
+																			<td style="padding:6px">
+																				<div class="collectiontitle">
+																					<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
+																						<?php
+																						$codeStr = ' ('.$collName2['instcode'];
+																						if($collName2['collcode']) $codeStr .= '-'.$collName2['collcode'];
+																						$codeStr .= ')';
+																						echo $collName2["collname"].$codeStr;
+																						?>
+																					</a>
+																					<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
+																						<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
+																					</a>
+																				</div>
+																			</td>
+																		</tr>
+																		<?php
+																		$collCnt++;
+																	}
+																	?>
+																</table>
+															</div>
+														</td>
+													</tr>
+													<?php
+													$cnt++;
+												}
+												?>
+											</table>
+											<?php
+										}
+										if(isset($obsArr['coll'])){
+											$collArr = $obsArr['coll'];
+											?>
+											<table style="float:left;width:80%;">
+												<?php
+												foreach($collArr as $collid => $cArr){
+													?>
+													<tr>
+														<td style="padding:6px;width:25px;">
+															<input name="db[]" value="<?php echo $collid; ?>" type="checkbox" onclick="uncheckAll();" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
+														</td>
+														<td style="padding:6px">
+															<div class="collectiontitle">
+																<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
+																	<?php
+																	$codeStr = ' ('.$cArr['instcode'];
+																	if($cArr['collcode']) $codeStr .= '-'.$cArr['collcode'];
+																	$codeStr .= ')';
+																	echo $cArr["collname"].$codeStr;
+																	?>
+																</a>
+																<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
+																	<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
+																</a>
+															</div>
+														</td>
+													</tr>
+													<?php
+													$collCnt++;
+												}
+												?>
+											</table>
+											<div style="float:right;margin-top:20px;margin-bottom:10px;">
+												<div>
+													<button type="submit" name="submitaction" value="Run Statistics"><?php echo (isset($LANG['RUN_STATS'])?$LANG['RUN_STATS']:'Run Statistics'); ?></button>
+												</div>
+												<?php
+												if($SYMB_UID && $IS_ADMIN){
+													?>
+													<div style="clear:both;margin-top:8px;">
+														<button type="submit" name="submitaction" value="Update Statistics" /><?php echo (isset($LANG['UPDATE_STATS'])?$LANG['UPDATE_STATS']:'Update Statistics'); ?></button>
+													</div>
+													<?php
+												}
+												?>
+											</div>
+											<?php
+										}
+										$collArrIndex++;
+									}
+									?>
+									<div style="clear:both;">&nbsp;</div>
+									<input type="hidden" name="collid" id="colltxt" value="" />
+									<input type="hidden" name="days" value="<?php echo $days; ?>" />
+									<input type="hidden" name="months" value="<?php echo $months; ?>" />
+								</div>
                             </form>
                             <?php
                         }
