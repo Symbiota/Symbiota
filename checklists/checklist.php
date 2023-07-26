@@ -149,7 +149,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 	}
 	else{
 		echo '<a href="../index.php">' . htmlspecialchars($LANG['NAV_HOME'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
-		echo '<a href="checklist.php?clid='. htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . ($dynClid ? '&dynclid=' . htmlspecialchars($dynClid, HTML_SPECIAL_CHARS_FLAGS) : htmlspecialchars($dynClid, HTML_SPECIAL_CHARS_FLAGS)) . '"><b>' . $clManager->getClName() . '</b></a>';
+		echo '<a href="checklist.php?clid='. htmlspecialchars($clid ?? '', HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid ?? '', HTML_SPECIAL_CHARS_FLAGS) . ($dynClid ? '&dynclid=' . htmlspecialchars($dynClid ?? '', HTML_SPECIAL_CHARS_FLAGS) : htmlspecialchars($dynClid ?? '', HTML_SPECIAL_CHARS_FLAGS)) . '"><b>' . $clManager->getClName() . '</b></a>';
 	}
 	echo '</div>';
 	?>
@@ -662,7 +662,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 								//Edit family name display style here
 								?>
 								<div class="family-div" id="<?php echo strip_tags($group);?>">
-									<a href="<?php echo htmlspecialchars($famUrl, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank" style="color:black;"><?php echo htmlspecialchars($group, HTML_SPECIAL_CHARS_FLAGS);?></a>
+									<i><a href="<?php echo strip_tags($famUrl); ?>" target="_blank" style="color:black;"><?php echo strip_tags($group);?></a> </i>
 								</div>
 								<?php
 								$prevGroup = $group;

@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/collections/index.'.$LANG_TAG.'.php');
@@ -17,7 +19,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 
 $otherCatArr = $collManager->getOccurVoucherProjects();
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 		<title><?php echo $DEFAULT_TITLE.' '.$LANG['PAGE_TITLE']; ?></title>
@@ -69,10 +71,10 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
         <div id="tabs" style="margin:0px;">
 			<ul>
 				<?php
-				if($specArr && $obsArr) echo '<li><a href="#specobsdiv">' . htmlspecialchars((isset($LANG['TAB_1'])?$LANG['TAB_1']:'Specimens & Observations'), HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
-				if($specArr) echo '<li><a href="#specimendiv">' . htmlspecialchars((isset($LANG['TAB_2'])?$LANG['TAB_2']:'Specimens'), HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
-				if($obsArr) echo '<li><a href="#observationdiv">' . htmlspecialchars((isset($LANG['TAB_3'])?$LANG['TAB_3']:'Observations'), HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
-				if($otherCatArr) echo '<li><a href="#otherdiv">' . htmlspecialchars((isset($LANG['TAB_4'])?$LANG['TAB_4']:'Federal Units'), HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
+				if($specArr && $obsArr) echo '<li><a href="#specobsdiv">' . strip_tags((isset($LANG['TAB_1'])?$LANG['TAB_1']:'Specimens & Observations')) . '</a></li>';
+				if($specArr) echo '<li><a href="#specimendiv">' . strip_tags((isset($LANG['TAB_2'])?$LANG['TAB_2']:'Specimens')) . '</a></li>';
+				if($obsArr) echo '<li><a href="#observationdiv">' . strip_tags((isset($LANG['TAB_3'])?$LANG['TAB_3']:'Observations')) . '</a></li>';
+				if($otherCatArr) echo '<li><a href="#otherdiv">' . strip_tags((isset($LANG['TAB_4'])?$LANG['TAB_4']:'Federal Units')) . '</a></li>';
 				?>
 			</ul>
 			<?php
@@ -82,7 +84,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 					<form name="collform1" action="harvestparams.php" method="post" onsubmit="return verifyCollForm(this)">
 						<div style="margin:0px 0px 10px 5px;">
 							<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" checked />
-					 		<?php echo $LANG['SELECT_DESELECT'].' <a href="misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>'; ?>
+							<?php echo $LANG['SELECT_DESELECT'].' <a href="misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>'; ?>
 						</div>
 						<?php
 						$collManager->outputFullCollArr($specArr, $catId);
