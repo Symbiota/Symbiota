@@ -37,8 +37,6 @@ if ($SYMB_UID) {
 <head>
 	<title><?php echo $DEFAULT_TITLE . ' ' . ($collid && isset($collData[$collid])? $collData[$collid]['collectionname'] : ''); ?></title>
 	<meta name="keywords" content="Natural history collections,<?php echo ($collid ? $collData[$collid]['collectionname'] : ''); ?>" />
-	<meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
-	<meta http-equiv="Pragma" content="no-cache">
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT . '/includes/head.php');
@@ -105,7 +103,7 @@ if ($SYMB_UID) {
 			// GBIF citations widget
 			if ($datasetKey) {
 				echo '<div style="margin-left: 10px; margin-bottom: 20px;">';
-				echo '<iframe title="GBIF citations" src="https://www.gbif.org/api/widgets/literature/button?gbifDatasetKey=' . $datasetKey . '" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="false" style="width: 140px; height: 24px;"></iframe>';
+				echo '<iframe title="GBIF citation" src="https://www.gbif.org/api/widgets/literature/button?gbifDatasetKey=' . $datasetKey . '" frameborder="0" allowtransparency="true" style="width: 140px; height: 24px;"></iframe>';
 				// Check if the Bionomia badge has been created yet - typically lags ~2 weeks behind GBIF publication
 				$bionomiaUrl = 'https://api.bionomia.net/dataset/' . $datasetKey . '/badge.svg';
 				$ch = curl_init($bionomiaUrl);
@@ -551,7 +549,7 @@ if ($SYMB_UID) {
 									<img src='<?php echo $iconStr; ?>' class="col-profile-img" alt="icon for collection" /><br />
 								</div>
 							<?php
-							} else{
+							} else{ // placeholder for missing icon
 								?>
 								<div class="justify-center">
 									<p class="col-profile-img"></p><br />
