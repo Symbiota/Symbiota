@@ -14,7 +14,7 @@ $LANG['STATISTICS'] = 'Statistics';
 $LANG['SELECT_COLS'] = 'Select Collections to be Analyzed';
 $LANG['REC_CRITERIA'] = 'Record Criteria';
 $LANG['PARENT_CRITERIA'] = 'Parent Taxon';
-$LANG['SEL_OR_DESEL'] = 'Select/Deselect all';
+$LANG['SEL_OR_DESEL'] = 'Select/Deselect All';
 $LANG['MORE_INFO'] = 'more info';
 $LANG['RUN_STATS'] = 'Run Statistics';
 $LANG['UPDATE_STATS'] = 'Update Statistics';
@@ -61,5 +61,8 @@ $LANG['GEO_DIST'] = 'Geographic Distribution';
 $LANG['COUNTRY'] = 'Country';
 $LANG['SPEC_W_COUNTRY'] = 'Total Specimens with Country';
 $LANG['SPEC_WO_COUNTRY'] = 'Specimens without Country or Georeferencing';
+$LANG['SELECT_DESELECT'] = 'Select/Deselect';
+$LANG['RUN_OBSERVATION_STATS'] = 'Run Observation Statistics';
+$LANG['UPDATE_OBSERVATION_STATS'] = 'Update Observation Statistics';
 
 ?>

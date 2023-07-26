@@ -61,5 +61,9 @@ $LANG['GEO_DIST'] = 'Distribución Geográfica';
 $LANG['COUNTRY'] = 'País';
 $LANG['SPEC_W_COUNTRY'] = 'Total de Especímenes con País';
 $LANG['SPEC_WO_COUNTRY'] = 'Especímenes sin País o Georreferenciación';
+$LANG['SELECT_DESELECT'] = 'Seleccionar/Deseleccionar';
+$LANG['RUN_OBSERVATION_STATS'] = 'Ejecutar estadísticas de observación';
+$LANG['UPDATE_OBSERVATION_STATS'] = 'Actualizar estadísticas de observación';
+
 
 ?>
