@@ -45,6 +45,19 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		$result->free();
 		return $OccIDs;
 	}
+
+	public function getOneOccID($imgID) {
+		$occid = false;
+		$query = "SELECT occid FROM images WHERE imgid = '$imgID' LIMIT 1";
+		$result = $this->conn->query($query);
+
+		if ($result && $row = $result->fetch_assoc()) {
+			$occid = $row['occid'];
+		}
+		$result->free();
+
+		return $occid;
+	}
 	
 	public function getDetMap($identBy, $dateIdent, $sciName){
 		$retArr = array();
