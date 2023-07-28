@@ -6,43 +6,24 @@ include_once($SERVER_ROOT.'/content/lang/checklists/checklist.'.$LANG_TAG.'.php'
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
-$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
+$clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 if(!$clid && array_key_exists('cl',$_REQUEST)) $clid = $_REQUEST['cl'];
-$dynClid = array_key_exists('dynclid',$_REQUEST)?$_REQUEST['dynclid']:0;
-$pageNumber = array_key_exists('pagenumber',$_REQUEST)?$_REQUEST['pagenumber']:1;
-$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']:'';
-$thesFilter = array_key_exists('thesfilter',$_REQUEST)?$_REQUEST['thesfilter']:0;
-$taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?$_REQUEST['taxonfilter']:'';
-$showAuthors = array_key_exists('showauthors',$_REQUEST)?$_REQUEST['showauthors']:0;
-$showSynonyms = array_key_exists('showsynonyms',$_REQUEST)?$_REQUEST['showsynonyms']:0;
-$showCommon = array_key_exists('showcommon',$_REQUEST)?$_REQUEST['showcommon']:0;
-$showImages = array_key_exists('showimages',$_REQUEST)?$_REQUEST['showimages']:0;
-$limitImagesToVouchers = array_key_exists('voucherimages',$_REQUEST)?$_REQUEST['voucherimages']:0;
-$showVouchers = array_key_exists('showvouchers',$_REQUEST)?$_REQUEST['showvouchers']:0;
-$showAlphaTaxa = array_key_exists('showalphataxa',$_REQUEST)?$_REQUEST['showalphataxa']:0;
-$searchCommon = array_key_exists('searchcommon',$_REQUEST)?$_REQUEST['searchcommon']:0;
-$searchSynonyms = array_key_exists('searchsynonyms',$_REQUEST)?$_REQUEST['searchsynonyms']:0;
-$defaultOverride = array_key_exists('defaultoverride',$_REQUEST)?$_REQUEST['defaultoverride']:0;
-$printMode = array_key_exists('printmode',$_REQUEST)?$_REQUEST['printmode']:0;
-
-//Sanitation
-if(!is_numeric($clid)) $clid = 0;
-if(!is_numeric($dynClid)) $dynClid = 0;
-if(!is_numeric($pid)) $pid = 0;
-if(!is_numeric($pageNumber)) $pageNumber = 1;
-if(!is_numeric($thesFilter)) $thesFilter = 0;
-if(!preg_match('/^[a-z\-\s]+$/i', $taxonFilter)) $taxonFilter = '';
-if(!is_numeric($showAuthors)) $showAuthors = 0;
-if(!is_numeric($showSynonyms)) $showSynonyms = 0;
-if(!is_numeric($showCommon)) $showCommon = 0;
-if(!is_numeric($showImages)) $showImages = 0;
-if(!is_numeric($limitImagesToVouchers)) $limitImagesToVouchers = 0;
-if(!is_numeric($showVouchers)) $showVouchers = 0;
-if(!is_numeric($showAlphaTaxa)) $showAlphaTaxa = 0;
-if(!is_numeric($searchCommon)) $searchCommon = 0;
-if(!is_numeric($searchSynonyms)) $searchSynonyms = 0;
-if(!is_numeric($defaultOverride)) $defaultOverride = 0;
-if(!is_numeric($printMode)) $printMode = 0;
+$dynClid = array_key_exists('dynclid', $_REQUEST) ? filter_var($_REQUEST['dynclid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$pageNumber = array_key_exists('pagenumber', $_REQUEST) ? filter_var($_REQUEST['pagenumber'], FILTER_SANITIZE_NUMBER_INT) : 1;
+$pid = array_key_exists('pid', $_REQUEST) ? filter_var($_REQUEST['pid'], FILTER_SANITIZE_NUMBER_INT) : '';
+$thesFilter = array_key_exists('thesfilter', $_REQUEST) ? filter_var($_REQUEST['thesfilter'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$taxonFilter = array_key_exists('taxonfilter', $_REQUEST) ? filter_var($_REQUEST['taxonfilter'], FILTER_SANITIZE_STRING) : '';
+$showAuthors = array_key_exists('showauthors', $_REQUEST) ? filter_var($_REQUEST['showauthors'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$showSynonyms = array_key_exists('showsynonyms', $_REQUEST) ? filter_var($_REQUEST['showsynonyms'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$showCommon = array_key_exists('showcommon', $_REQUEST) ? filter_var($_REQUEST['showcommon'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$showImages = array_key_exists('showimages', $_REQUEST) ? filter_var($_REQUEST['showimages'], FILTER_SANITIZE_NUMBER_INT) : 0 ;
+$limitImagesToVouchers = array_key_exists('voucherimages', $_REQUEST) ? filter_var($_REQUEST['voucherimages'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$showVouchers = array_key_exists('showvouchers', $_REQUEST) ? filter_var($_REQUEST['showvouchers'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$showAlphaTaxa = array_key_exists('showalphataxa', $_REQUEST) ? filter_var($_REQUEST['showalphataxa'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$searchCommon = array_key_exists('searchcommon', $_REQUEST) ? filter_var($_REQUEST['searchcommon'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$searchSynonyms = array_key_exists('searchsynonyms', $_REQUEST) ? filter_var($_REQUEST['searchsynonyms'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$defaultOverride = array_key_exists('defaultoverride', $_REQUEST) ? filter_var($_REQUEST['defaultoverride'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$printMode = array_key_exists('printmode', $_REQUEST) ? filter_var($_REQUEST['printmode'], FILTER_SANITIZE_NUMBER_INT) : 0;
 
 $statusStr='';
 
@@ -56,7 +37,7 @@ elseif($dynClid) $clManager->setDynClid($dynClid);
 $clArray = $clManager->getClMetaData();
 $activateKey = $KEY_MOD_IS_ACTIVE;
 $showDetails = 0;
-if($clid && $clArray['defaultSettings']){
+if(isset($clArray['defaultSettings'])){
 	$defaultArr = json_decode($clArray['defaultSettings'], true);
 	$showDetails = $defaultArr['ddetails'];
 	if(!$defaultOverride){
@@ -113,14 +94,14 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 <head>
 	<meta charset="<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['CHECKLIST'])?$LANG['CHECKLIST']:'Checklist').': '.$clManager->getClName(); ?></title>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	$activateJQuery = true;
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/checklist.css?ver=1" type="text/css" rel="stylesheet" />
-	<script type="text/javascript" src="../js/jquery.js"></script>
-	<script type="text/javascript" src="../js/jquery-ui.js"></script>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/symbiota/checklists/checklist.css" type="text/css" rel="stylesheet" />
+	<script src="../js/jquery.js" type="text/javascript"></script>
+	<script src="../js/jquery-ui.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		<?php
 		if($clid) echo 'var clid = '.$clid.';'."\n";
@@ -160,30 +141,22 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 	if(!$printMode) include($SERVER_ROOT.'/includes/header.php');
 	echo '<div class="navpath printoff">';
 	if($pid){
-		echo '<a href="../index.php">'.$LANG['NAV_HOME'].'</a> &gt; ';
-		echo '<a href="'.$CLIENT_ROOT.'/projects/index.php?pid='.$pid.'">';
+		echo '<a href="../index.php">' . $LANG['NAV_HOME'] . '</a> &gt; ';
+		echo '<a href="' . $CLIENT_ROOT . '/projects/index.php?pid=' . $pid . '">';
 		echo $clManager->getProjName();
 		echo '</a> &gt; ';
-		echo '<b>'.$clManager->getClName().'</b>';
+		echo '<b>' . $clManager->getClName() . '</b>';
 	}
 	else{
-		if(isset($checklists_checklistCrumbs)){
-			if($checklists_checklistCrumbs){
-				echo $checklists_checklistCrumbs;
-				echo " <b>".$clManager->getClName()."</b>";
-			}
-		}
-		else{
-			echo '<a href="../index.php">'.$LANG['NAV_HOME'].'</a> &gt;&gt; ';
-			echo ' <b>'.$clManager->getClName().'</b>';
-		}
+		echo '<a href="../index.php">' . $LANG['NAV_HOME'] . '</a> &gt;&gt; ';
+		echo '<a href="checklist.php?clid='. $clid . '&pid=' . $pid . ($dynClid ? '&dynclid=' . $dynClid : $dynClid) . '"><b>' . $clManager->getClName() . '</b></a>';
 	}
 	echo '</div>';
 	?>
 	<!-- This is inner text! -->
 	<div id='innertext'>
 		<?php
-		if($clid || $dynClid){
+		if(($clid || $dynClid) && $clArray){
 			if($clid && $isEditor){
 				?>
 				<div class="printoff" style="float:right;width:auto;">
@@ -204,9 +177,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 			}
 			?>
 			<div id="title-div">
-				<a href="checklist.php?clid=<?php echo $clid."&pid=".$pid."&dynclid=".$dynClid; ?>">
-					<?php echo $clManager->getClName(); ?>
-				</a>
+				<?php echo $clManager->getClName(); ?>
 			</div>
 			<?php
 			if($activateKey){
@@ -577,12 +548,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 					</div>
 					<div style="margin:3px;">
 						<?php
-						echo '<b>';
-						echo $LANG['TOTAL_TAXA'];
-						echo '<span class="printoff"> (<a href="https://symbiota.org/symbiota-species-checklist-data-fields/" target="_blank" >';
-						echo '<span style="font-style:italic;color:green" title="'.(isset($LANG['DETAILS_EXPLANATION'])?$LANG['DETAILS_EXPLANATION']:'').'" >'.(isset($LANG['DETAILS'])?$LANG['DETAILS']:'details').'</span>';
-						echo '</a>)</span>';
-						echo '</b>: ';
+						echo '<b>' . $LANG['TOTAL_TAXA'] . '</b>: ';
 						echo $clManager->getTaxaCount();
 						?>
 					</div>

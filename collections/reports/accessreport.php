@@ -56,8 +56,8 @@ else{
 <html>
 	<head>
 		<title>Occurrence Access Reporting</title>
+		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
-		$activateJQuery = true;
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>

@@ -91,8 +91,7 @@ class PluginsManager extends Manager {
 				'LEFT JOIN omoccurrences o ON i.occid = o.occid '.
 				'LEFT JOIN taxa t ON i.tid = t.tid ';
 			if($clid){
-				$sql .= 'INNER JOIN fmchklsttaxalink v ON i.tid = v.TID ';
-				$sql .= 'WHERE v.CLID IN('.$clid.') ';
+				$sql .= 'INNER JOIN fmchklsttaxalink cl ON i.tid = cl.tid WHERE cl.clid IN('.$clid.') ';
 			}
 			else{
 				$sql .= 'WHERE i.InitialTimeStamp < "'.$sinceDate.'" AND i.tid IS NOT NULL ';
@@ -170,10 +169,10 @@ class PluginsManager extends Manager {
 			<style>
 				@font-face{
 					font-family:"FontAwesome";
-					src:url("'.$GLOBALS['CLIENT_ROOT'].'/css/images/fontawesome-webfont.eot?v=3.0.1");
-					src:url("'.$GLOBALS['CLIENT_ROOT'].'/css/images/fontawesome-webfont.eot?#iefix&v=3.0.1") format("embedded-opentype"),
-						url("'.$GLOBALS['CLIENT_ROOT'].'/css/images/fontawesome-webfont.woff?v=3.0.1") format("woff"),
-						url("'.$GLOBALS['CLIENT_ROOT'].'/css/images/fontawesome-webfont.ttf?v=3.0.1") format("truetype");
+					src:url("'.$GLOBALS['CLIENT_ROOT'].'/images/css/images/fontawesome-webfont.eot?v=3.0.1");
+					src:url("'.$GLOBALS['CLIENT_ROOT'].'/images/css/images/fontawesome-webfont.eot?#iefix&v=3.0.1") format("embedded-opentype"),
+						url("'.$GLOBALS['CLIENT_ROOT'].'/images/css/images/fontawesome-webfont.woff?v=3.0.1") format("woff"),
+						url("'.$GLOBALS['CLIENT_ROOT'].'/images/css/images/fontawesome-webfont.ttf?v=3.0.1") format("truetype");
 					font-weight: normal;
 					font-style:normal
 				}
@@ -182,10 +181,10 @@ class PluginsManager extends Manager {
 				a.slidesjs-previous,
 				a.slidesjs-play,
 				a.slidesjs-stop {
-					background-image: url('.$GLOBALS['CLIENT_ROOT'].'/css/images/btns-next-prev.png); background-repeat: no-repeat;
+					background-image: url('.$GLOBALS['CLIENT_ROOT'].'/images/css/images/btns-next-prev.png); background-repeat: no-repeat;
 				}
 				.slidesjs-pagination li a {
-					background-image: url('.$GLOBALS['CLIENT_ROOT'].'/css/images/pagination.png); background-position: 0 0;
+					background-image: url('.$GLOBALS['CLIENT_ROOT'].'/images/css/images/pagination.png); background-position: 0 0;
 				}
 				#slideshowcontainer{ clear:both; width:'.$width.'px; height:'.($width + 75).'px; }
 				.slideshowDiv{ width:'.$width.'px; height:'.($width+50).'px;position:relative; }
@@ -256,4 +255,3 @@ class PluginsManager extends Manager {
 		return $html;
 	}
 }
-?>

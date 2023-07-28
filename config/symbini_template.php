@@ -5,7 +5,8 @@ $DEFAULTCATID = 0;
 $DEFAULT_TITLE = '';
 $EXTENDED_LANG = 'en';		//Add all languages you want to support separated by commas (e.g. en,es); currently supported languages: en,es
 $TID_FOCUS = '';
-$ADMIN_EMAIL = '';
+$ADMIN_EMAIL = '';			//This is the email address used to contact the primary on this portal
+$SYSTEM_EMAIL = ''; 	//This email address is used for system notifications (password reset requests, etc...) ex: noreply@yourdomain.edu
 $CHARSET = 'UTF-8';					//ISO-8859-1 or UTF-8
 $PORTAL_GUID = '';				//Typically a UUID
 $SECURITY_KEY = '';				//Typically a UUID used to verify access to certain web service
@@ -17,8 +18,8 @@ $TEMP_DIR_ROOT = $SERVER_ROOT . '/temp';				//Must be writable by Apache; will u
 $LOG_PATH = $SERVER_ROOT . '/content/logs';					//Must be writable by Apache; will use <SYMBIOTA_ROOT>/temp/logs if not specified
 
 //Path to CSS files
-$CSS_BASE_PATH = $CLIENT_ROOT . '/css/symb';
-$CSS_VERSION_LOCAL = '1';		//Changing this variable will force a refresh of main.css styles within users browser cache for all pages
+$CSS_VERSION_RELEASE = 'v202209';
+$CSS_BASE_PATH = $CLIENT_ROOT . '/css/' . $CSS_VERSION_RELEASE;
 
 //Path to user uploaded images files.  Used by tinyMCE. This is NOT for collection images. See section immediatly below for collection image location
 $PUBLIC_IMAGE_UPLOAD_ROOT = '/content/imglib';
@@ -69,7 +70,7 @@ $QUICK_HOST_ENTRY_IS_ACTIVE = 0;   	//Allows quick entry for host taxa in occurr
 $GLOSSARY_EXPORT_BANNER = '';		//Banner image for glossary exports. Place in images/layout folder.
 $DYN_CHECKLIST_RADIUS = 10;			//Controls size of concentric rings that are sampled when building Dynamic Checklist
 $DISPLAY_COMMON_NAMES = 1;			//Display common names in species profile page and checklists displays
-$ACTIVATE_DUPLICATES = 1;			//Activates Specimen Duplicate listings and support features. Mainly relavent for herabrium collections
+$ACTIVATE_DUPLICATES = 0;			//Activates Specimen Duplicate listings and support features. Mainly relavent for herabrium collections
 $ACTIVATE_EXSICCATI = 0;			//Activates exsiccati fields within data entry pages; adding link to exsiccati search tools to portal menu is recommended
 $ACTIVATE_GEOLOCATE_TOOLKIT = 0;	//Activates GeoLocate Toolkit located within the Processing Toolkit menu items
 $SEARCH_BY_TRAITS = '0';			//Activates search fields for searching by traits (if trait data have been encoded): 0 = trait search off; any number of non-zeros separated by commas (e.g., '1,6') = trait search on for the traits with these id numbers in table tmtraits.
@@ -80,9 +81,10 @@ $IGSN_ACTIVATION = 0;
 //$SMTP_ARR = array('host'=>'','port'=>587,'username'=>'','password'=>'','timeout'=>60);  //Host is requiered, others are optional and can be removed
 
 $RIGHTS_TERMS = array(
-	'CC0 1.0 (Public-domain)' => 'http://creativecommons.org/publicdomain/zero/1.0/',
-	'CC BY (Attribution)' => 'http://creativecommons.org/licenses/by/4.0/',
-	'CC BY-NC (Attribution-Non-Commercial)' => 'http://creativecommons.org/licenses/by-nc/4.0/'
+	'CC0 1.0 (Public-domain)' => 'https://creativecommons.org/publicdomain/zero/1.0/',
+	'CC BY (Attribution)' => 'https://creativecommons.org/licenses/by/4.0/',
+	'CC BY-NC (Attribution-Non-Commercial)' => 'https://creativecommons.org/licenses/by-nc/4.0/',
+	'CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)' => 'https://creativecommons.org/licenses/by-nc-sa/4.0/',
 );
 
 /*

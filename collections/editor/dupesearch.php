@@ -54,7 +54,7 @@ if(!$IS_ADMIN){
 	<head>
 		<title><?php echo $DEFAULT_TITLE; ?> - Duplicate Record Search</title>
 		<?php
-		$activateJQuery = false;
+
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
 		<script type="text/javascript">

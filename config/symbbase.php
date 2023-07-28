@@ -2,7 +2,7 @@
 header('X-Frame-Options: DENY');
 header('Cache-control: private'); // IE 6 FIX
 date_default_timezone_set('America/Phoenix');
-$CODE_VERSION = '1.2.1.202206';
+$CODE_VERSION = '3.0.9';
 
 if(!isset($CLIENT_ROOT) && isset($clientRoot)) $CLIENT_ROOT = $clientRoot;
 if(substr($CLIENT_ROOT,-1) == '/') $CLIENT_ROOT = substr($CLIENT_ROOT,0,strlen($CLIENT_ROOT)-1);
@@ -41,12 +41,14 @@ if(isset($_COOKIE['SymbiotaCrumb']) && !$PARAMS_ARR){
 	}
 }
 
-if(!isset($CSS_BASE_PATH)) $CSS_BASE_PATH = $CLIENT_ROOT.'/css/symb';
+if(!isset($CSS_BASE_PATH) || $CSS_BASE_PATH == $CLIENT_ROOT . '/css/symb') $CSS_BASE_PATH = $CLIENT_ROOT . '/css/';
+if(!isset($CSS_VERSION_RELEASE)) $CSS_BASE_PATH .= 'v202209';
+
 $CSS_VERSION = '13';
-$USER_DISPLAY_NAME = (array_key_exists("dn",$PARAMS_ARR)?$PARAMS_ARR["dn"]:"");
-$USERNAME = (array_key_exists("un",$PARAMS_ARR)?$PARAMS_ARR["un"]:0);
-$SYMB_UID = (array_key_exists("uid",$PARAMS_ARR)?$PARAMS_ARR["uid"]:0);
-$IS_ADMIN = (array_key_exists("SuperAdmin",$USER_RIGHTS)?1:0);
+$USER_DISPLAY_NAME = (array_key_exists('dn',$PARAMS_ARR)?$PARAMS_ARR['dn']:'');
+$USERNAME = (array_key_exists('un',$PARAMS_ARR)?$PARAMS_ARR['un']:0);
+$SYMB_UID = (array_key_exists('uid',$PARAMS_ARR)?$PARAMS_ARR['uid']:0);
+$IS_ADMIN = (array_key_exists('SuperAdmin',$USER_RIGHTS)?1:0);
 
 //Temporarly needed so that old configuration will still work
 if(!isset($DEFAULT_LANG) && isset($defaultLang)) $DEFAULT_LANG = $defaultLang;
@@ -115,7 +117,7 @@ $AVAILABLE_LANGS = array('en','es','fr','pt');
 $LANG_TAG = 'en';
 if(isset($_REQUEST['lang']) && $_REQUEST['lang']){
 	$LANG_TAG = $_REQUEST['lang'];
-	setcookie('lang', $LANG_TAG, time() + (3600 * 24 * 30),$CLIENT_ROOT);
+	setcookie('lang', $LANG_TAG, time() + (3600 * 24 * 30),'/');
 }
 else if(isset($_COOKIE['lang']) && $_COOKIE['lang']){
 	$LANG_TAG = $_COOKIE['lang'];
@@ -126,33 +128,7 @@ else{
 //if(!$LANG_TAG || strlen($LANG_TAG) != 2) $LANG_TAG = 'en';
 
 //Sanitization
-if($LANG_TAG != 'en' && !in_array($LANG_TAG, $AVAILABLE_LANGS)) $LANG_TAG = 'en';
+const HTML_SPECIAL_CHARS_FLAGS = ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE;
 
-$RIGHTS_TERMS_DEFS = array(
-    'http://creativecommons.org/publicdomain/zero/1.0/' => array(
-        'title' => 'CC0 1.0 (Public-domain)',
-        'url' => 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
-        'def' => 'Users can copy, modify, distribute and perform the work, even for commercial purposes, all without asking permission.'
-    ),
-    'http://creativecommons.org/licenses/by/3.0/' => array(
-        'title' => 'CC BY (Attribution)',
-        'url' => 'http://creativecommons.org/licenses/by/3.0/legalcode',
-        'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material for any purpose, even commercially. The licensor cannot revoke these freedoms as long as you follow the license terms.'
-    ),
-	'http://creativecommons.org/licenses/by-nc/3.0/' => array(
-        'title' => 'CC BY-NC (Attribution-Non-Commercial)',
-        'url' => 'http://creativecommons.org/licenses/by-nc/3.0/legalcode',
-        'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material. The licensor cannot revoke these freedoms as long as you follow the license terms.'
-    ),
-	'http://creativecommons.org/licenses/by/4.0/' => array(
-        'title' => 'CC BY (Attribution)',
-        'url' => 'http://creativecommons.org/licenses/by/4.0/legalcode',
-        'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material for any purpose, even commercially. The licensor cannot revoke these freedoms as long as you follow the license terms.'
-    ),
-	'http://creativecommons.org/licenses/by-nc/4.0/' => array(
-        'title' => 'CC BY-NC (Attribution-Non-Commercial)',
-        'url' => 'http://creativecommons.org/licenses/by-nc/4.0/legalcode',
-        'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material. The licensor cannot revoke these freedoms as long as you follow the license terms.'
-    )
-);
+if($LANG_TAG != 'en' && !in_array($LANG_TAG, $AVAILABLE_LANGS)) $LANG_TAG = 'en';
 ?>

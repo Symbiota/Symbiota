@@ -2,6 +2,7 @@
 include_once($SERVER_ROOT.'/config/dbconnection.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyHarvester.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
 
 class TaxonomyUpload{
 
@@ -79,6 +80,7 @@ class TaxonomyUpload{
 			foreach($taxonUnitArr as $tuKey => $tuVal){
 				if($tuKey > 219) unset($taxonUnitArr[$tuKey]);
 			}
+			$scinameInputKey = false;
 			$uploadTaxaIndexArr = array();		//Array of index values associated with uploadtaxa table; array(index => targetName)
 			$taxonUnitIndexArr = array();		//Array of index values associated with taxonunits table;
 			foreach($headerArr as $k => $sourceName){
@@ -89,6 +91,7 @@ class TaxonomyUpload{
 						//Is a taxa table target field
 						$uploadTaxaIndexArr[$k] = $targetName;
 					}
+					if($targetName == 'scinameinput') $scinameInputKey = $k;
 					if($targetName == 'unitname1') $targetName = 'genus';
 					if(in_array($targetName,$taxonUnitArr)){
 						$taxonUnitIndexArr[$k] = array_search($targetName,$taxonUnitArr);  //array(recIndex => rankid)
@@ -130,13 +133,14 @@ class TaxonomyUpload{
 									}
 								}
 							}
+							if($recordArr[$scinameInputKey] == $taxonStr) break;
 							$parentStr = $taxonStr;
 						}
 					}
 					if($parentIndex){
 						$recordArr[$parentIndex] = 'PENDING:'.$parentStr;
 					}
-					if(in_array("scinameinput",$fieldMap)){
+					if(in_array('scinameinput',$fieldMap)){
 						//Load relavent fields into uploadtaxa table
 						$inputArr = array();
 						foreach($uploadTaxaIndexArr as $recIndex => $targetField){
@@ -211,7 +215,7 @@ class TaxonomyUpload{
 								else $sql2 .= ','.($inValue?'"'.$inValue.'"':'NULL');
 							}
 							$sql = 'INSERT INTO uploadtaxa('.substr($sql1,1).') VALUES('.substr($sql2,1).')';
-							//echo "<div>".$sql."</div>";
+							//echo '<div>'.$sql.'</div>';
 							if($this->conn->query($sql)){
 								if($recordCnt%1000 == 0){
 									$this->outputMsg('Upload count: '.$recordCnt,1);
@@ -807,21 +811,10 @@ class TaxonomyUpload{
 		TaxonomyUtilities::buildHierarchyEnumTree($this->conn, $this->taxAuthId);
 
 		//Update occurrences with new tids
-		TaxonomyUtilities::linkOccurrenceTaxa($this->conn);
-
-		//Update occurrence images with new tids
-		$sql2 = 'UPDATE images i INNER JOIN omoccurrences o ON i.occid = o.occid '.
-			'SET i.tid = o.TidInterpreted '.
-			'WHERE (i.tid IS NULL) AND (o.TidInterpreted IS NOT NULL)';
-		$this->conn->query($sql2);
-
-		//Update geo lookup table
-		$sql3 = 'INSERT IGNORE INTO omoccurgeoindex(tid,decimallatitude,decimallongitude) '.
-			'SELECT DISTINCT o.tidinterpreted, round(o.decimallatitude,2), round(o.decimallongitude,2) '.
-			'FROM omoccurrences o '.
-			'WHERE (o.tidinterpreted IS NOT NULL) AND (o.decimallatitude between -90 and 90) AND (o.decimallongitude between -180 and 180) '.
-			'AND (o.cultivationStatus IS NULL OR o.cultivationStatus = 0) AND (o.coordinateUncertaintyInMeters IS NULL OR o.coordinateUncertaintyInMeters < 10000) ';
-		$this->conn->query($sql3);
+		$occurMaintenance = new OccurrenceMaintenance($this->conn);
+		$occurMaintenance->setCollidStr($this->collid);
+		$occurMaintenance->generalOccurrenceCleaning();
+		$occurMaintenance->batchUpdateGeoreferenceIndex();
 	}
 
 	private function transferVernaculars($secondRound = 0){
@@ -1111,8 +1104,8 @@ class TaxonomyUpload{
 	private function outputMsg($str, $indent = 0){
 		if($this->verboseMode > 0 || substr($str,0,5) == 'ERROR'){
 			echo '<li style="margin-left:'.(10*$indent).'px;'.(substr($str,0,5)=='ERROR'?'color:red':'').'">'.$str.'</li>';
-			ob_flush();
-			flush();
+			@ob_flush();
+			@flush();
 		}
 		if($this->verboseMode == 2){
 			if($this->logFH) fwrite($this->logFH,($indent?str_repeat("\t",$indent):'').strip_tags($str)."\n");

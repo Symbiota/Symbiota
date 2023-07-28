@@ -1,42 +1,32 @@
 <?php
-//error_reporting(E_ALL);
 include_once('../../config/symbini.php');
-header("Content-Type: text/html; charset=".$CHARSET);
-header("Location: ".$CLIENT_ROOT."/index.php");
- 
+header('Content-Type: text/html; charset=' . $CHARSET);
+header('Location: '.$CLIENT_ROOT.'/index.php');
 ?>
 <html>
 	<head>
-		<title>Page</title>
-    <?php
-      $activateJQuery = false;
-      if(file_exists($SERVER_ROOT.'/includes/head.php')){
-        include_once($SERVER_ROOT.'/includes/head.php');
-      }
-      else{
-        echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-        echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-        echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-      }
-    ?>
+		<title>Forbidden</title>
+		<?php
+		include_once($SERVER_ROOT.'/includes/head.php');
+		?>
 	</head>
 	<body>
 		<?php
-		$displayLeftMenu = true;
+		$displayLeftMenu = false;
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<!-- This is inner text! -->
 		<div id="innertext">
 			<h1>Forbidden</h1>
 			<div style="font-weight:bold;">
-				You don't have permission to access /seinet/checklists/rpc/ on this server.
+				You don't have permission to access this page.
 			</div>
 			<div style="font-weight:bold;margin:10px;">
-				<a href="../../index.php">Return to index page</a>
+				<a href="<?php echo $CLIENT_ROOT; ?>/index.php">Return to index page</a>
 			</div>
 		</div>
 		<?php
-			include($SERVER_ROOT.'/config/footer.php');
+		include($SERVER_ROOT.'/includes/footer.php');
 		?>
 	</body>
 </html>

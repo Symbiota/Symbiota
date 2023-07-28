@@ -9,13 +9,14 @@ $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'
 
 //Sanitize input variables
 if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) $action = '';
+$isPublic = (isset($_POST['ispublic'])&&is_numeric($_POST['ispublic'])?1:0);
 
 $datasetManager = new OccurrenceDataset();
 
 $statusStr = '';
 if($action == 'createNewDataset'){
 	if($IS_ADMIN || array_key_exists('ClCreate',$USER_RIGHTS)){
-		if(!$datasetManager->createDataset($_POST['name'],$_POST['notes'],$_POST['description'],$_POST['ispublic'],$SYMB_UID)){
+		if(!$datasetManager->createDataset($_POST['name'],$_POST['notes'],$_POST['description'],$isPublic,$SYMB_UID)){
 			$statusStr = implode(',',$datasetManager->getErrorArr());
 		}
 	}
@@ -35,16 +36,9 @@ elseif($action == 'addAllToDataset'){
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 		<title><?php echo $DEFAULT_TITLE; ?> Occurrence Dataset Manager</title>
+		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
-		$activateJQuery = true;
-		if(file_exists($SERVER_ROOT.'/includes/head.php')){
-			include_once($SERVER_ROOT.'/includes/head.php');
-	    }
-		else{
-			echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-			echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-			echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-		}
+		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
 		<script type="text/javascript" src="../../js/jquery.js"></script>
 		<script type="text/javascript" src="../../js/jquery-ui.js"></script>
@@ -126,7 +120,7 @@ elseif($action == 'addAllToDataset'){
 	 		<a href="#" onclick="toggle('adddiv');return false;"><img src="../../images/add.png" style="width:14px;" /></a>
 		</div>
 		<h2>Occurrence Dataset Management</h2>
-		<div>These tools will allow you to define and manage datasets profiles. Once a profile is created, you can link occurrence records via the occurrence search and display pages.</div>
+		<div>These tools will allow you to define and manage dataset profiles. Once a profile is created, you can link occurrence records via the occurrence search and display pages.</div>
 		<div id=adddiv style="display:none">
 			<fieldset>
 				<legend><b>Create New Dataset</b></legend>

@@ -52,8 +52,8 @@ $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 		<title><?php echo $DEFAULT_TITLE; ?> Specimen Label Manager</title>
+		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
-		$activateJQuery = true;
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
 		<script src="../../js/jquery.js" type="text/javascript"></script>
@@ -305,7 +305,7 @@ $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General
 							<div class="field-block">
 								<div class="label">Default CSS:</div>
 								<div class="field-block">
-									<input name="defaultCss" type="text" value="<?php echo (isset($formatArr['defaultCss'])?$formatArr['defaultCss']:'../../css/symb/labelhelpers.css'); ?>" />
+									<input name="defaultCss" type="text" value="<?php echo (isset($formatArr['defaultCss']) ? $formatArr['defaultCss'] : $CSS_BASE_PATH . '/symbiota/collections/reports/labelhelpers.css'); ?>" />
 								</div>
 							</div>
 							<div class="field-block">

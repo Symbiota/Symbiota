@@ -21,17 +21,9 @@ $uuidManager = new UuidFactory();
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo (isset($LANG['UID_MAP'])?$LANG['UID_MAP']:'GUID (UUID) Mapper'); ?></title>
-  <?php
-    $activateJQuery = false;
-    if(file_exists($SERVER_ROOT.'/includes/head.php')){
-      include_once($SERVER_ROOT.'/includes/head.php');
-    }
-    else{
-      echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-      echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-      echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-    }
-  ?>
+	<?php
+	include_once($SERVER_ROOT.'/includes/head.php');
+	?>
 	<script type="text/javascript">
 		function toggle(target){
 			var objDiv = document.getElementById(target);
@@ -72,20 +64,20 @@ $uuidManager = new UuidFactory();
     </script>
 </head>
 <body>
-<?php 
+<?php
 $displayLeftMenu = (isset($admin_guidmapperMenu)?$admin_guidmapperMenu:"true");
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <!-- This is inner text! -->
 <div id="innertext">
-	<?php 
+	<?php
 	if($isEditor){
 		?>
 		<h3><?php echo (isset($LANG['GUID_CP'])?$LANG['GUID_CP']:'GUID Maintenance Control Panel'); ?></h3>
 		<div style="margin:10px;">
-			 
+
 		</div>
-		<?php 
+		<?php
 		if($action == 'Populate Collection GUIDs'){
 			echo '<ul>';
 			$uuidManager->populateGuids($collId);
@@ -96,7 +88,7 @@ include($SERVER_ROOT.'/includes/header.php');
 			$uuidManager->populateGuids();
 			echo '</ul>';
 		}
-		
+
 		//$collCnt = $uuidManager->getCollectionCount();
 		$occCnt = $uuidManager->getOccurrenceCount($collId);
 		$detCnt = $uuidManager->getDeterminationCount($collId);
@@ -109,7 +101,7 @@ include($SERVER_ROOT.'/includes/header.php');
 			<div><?php echo '<b>'.(isset($LANG['DETS'])?$LANG['DETS']:'Determinations').': </b>'.$detCnt; ?></div>
 			<div><?php echo '<b>'.(isset($LANG['IMGS'])?$LANG['IMGS']:'Images').': </b>'.$imgCnt; ?></div>
 		</div>
-		<?php 
+		<?php
 		if($collId){
 			?>
 			<form name="guidform" action="guidmapper.php" method="post" onsubmit="return verifyGuidForm(this)">
@@ -144,7 +136,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	}
 	?>
 </div>
-<?php 
+<?php
 include($SERVER_ROOT.'/includes/footer.php');
 ?>
 </body>

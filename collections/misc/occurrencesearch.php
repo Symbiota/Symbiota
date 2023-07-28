@@ -3,34 +3,26 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceSupport.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 
-$targetId = $_REQUEST['targetid'];
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$action = array_key_exists('action',$_POST)?$_POST['action']:'';
-$catalogNumber = array_key_exists('catalognumber',$_POST)?$_POST['catalognumber']:'';
-$otherCatalogNumbers = array_key_exists('othercatalognumbers',$_POST)?$_POST['othercatalognumbers']:'';
-$recordedBy = array_key_exists('recordedby',$_POST)?$_POST['recordedby']:'';
-$recordNumber = array_key_exists('recordnumber',$_POST)?$_POST['recordnumber']:'';
-
-//Sanitation
-if(!is_numeric($collid)) $collid = 0;
-$catalogNumber = filter_var($catalogNumber,FILTER_SANITIZE_STRING);
-$otherCatalogNumbers = filter_var($otherCatalogNumbers,FILTER_SANITIZE_STRING);
-$recordedBy = filter_var($recordedBy,FILTER_SANITIZE_STRING);
-$recordNumber = filter_var($recordNumber,FILTER_SANITIZE_STRING);
+$targetId = filter_var($_REQUEST['targetid'], FILTER_SANITIZE_NUMBER_INT);
+$collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$action = array_key_exists('action', $_POST) ? $_POST['action'] : '';
+$catalogNumber = array_key_exists('catalognumber',$_POST) ? filter_var($_POST['catalognumber'], FILTER_SANITIZE_STRING) : '';
+$otherCatalogNumbers = array_key_exists('othercatalognumbers',$_POST) ? filter_var($_POST['othercatalognumbers'], FILTER_SANITIZE_STRING) : '';
+$recordedBy = array_key_exists('recordedby',$_POST) ? filter_var($_POST['recordedby'], FILTER_SANITIZE_STRING) : '';
+$recordNumber = array_key_exists('recordnumber',$_POST) ? filter_var($_POST['recordnumber'], FILTER_SANITIZE_STRING) : '';
 
 $collEditorArr = array();
 if(array_key_exists('CollAdmin',$USER_RIGHTS)) $collEditorArr = $USER_RIGHTS['CollAdmin'];
 if(array_key_exists('CollEditor',$USER_RIGHTS)) $collEditorArr = array_unique(array_merge($collEditorArr,$USER_RIGHTS['CollEditor']));
 
 $occManager = new OccurrenceSupport();
-$collArr = $occManager->getCollectionArr($IS_ADMIN?'all':$collEditorArr);
 ?>
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Search Page</title>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	$activateJQuery = true;
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
@@ -92,15 +84,22 @@ $collArr = $occManager->getCollectionArr($IS_ADMIN?'all':$collEditorArr);
 	    	return isNumber;
 	    }
 	</script>
+	<style type="text/css">
+		body{ width: 700px; min-width: 400px; }
+		innertext{ padding: 15px; }
+		fieldset{ margin:15px; padding:15px }
+		select{ width: 100%; }
+	</style>
 </head>
 <body>
 	<div id="innertext">
 		<?php
 		if($collEditorArr){
+			$collArr = $occManager->getCollectionArr($IS_ADMIN?'':$collEditorArr);
 			?>
 			<form name="occform" action="occurrencesearch.php" method="post" onsubmit="return verifyOccurSearchForm(this)" >
-				<fieldset style="width:650px;">
-					<legend><b>Voucher Search Pane</b></legend>
+				<fieldset>
+					<legend>Voucher Search Panel</legend>
 					<div style="clear:both;padding:2px;">
 						<div style="float:left;width:130px;">Target Collection:</div>
 						<div style="float:left;">
@@ -144,9 +143,9 @@ $collArr = $occManager->getCollectionArr($IS_ADMIN?'all':$collEditorArr);
 					foreach($occArr as $occid => $vArr){
 						?>
 						<div style="margin:10px;">
-							<?php echo "<b>OccId ".$occid.":</b> ".$vArr["recordedby"]." [".($vArr["recordnumber"]?$vArr["recordnumber"]:$vArr["eventdate"])."]; ".$vArr["locality"];?>
-							<div style="margin-left:10px;cursor:pointer;color:blue;" onclick="updateParentForm('<?php echo $occid;?>')">
-								Select Occurrence Record
+							<?php echo '<b>OccId '.$occid.':</b> '.$vArr["recordedby"].' ['.($vArr['recordnumber']?$vArr['recordnumber']:$vArr['eventdate']).']; '.$vArr['locality'];?>
+							<div style="margin-left:10px;">
+								<a href="#" onclick="updateParentForm('<?php echo $occid;?>');return false;">Select Occurrence Record</a>
 							</div>
 						</div>
 						<hr />
@@ -163,9 +162,9 @@ $collArr = $occManager->getCollectionArr($IS_ADMIN?'all':$collEditorArr);
 				}
 			}
 			?>
-			<form name="occform" action="occurrencesearch.php" method="post" onsubmit="return false" >
-				<fieldset style="width:650px;padding:20px">
-					<legend><b>Link to New Occurrence Record</b></legend>
+			<fieldset>
+				<legend>Link to New Occurrence Record</legend>
+				<form name="occform" action="occurrencesearch.php" method="post" onsubmit="return false" >
 					<select name="collid">
 						<option value="">Select Collection</option>
 						<option value="">--------------------------------</option>
@@ -176,8 +175,8 @@ $collArr = $occManager->getCollectionArr($IS_ADMIN?'all':$collEditorArr);
 						?>
 					</select>
 					<button type="button" onclick="linkToNewOccurrence(this.form)">Create New Occurrence</button>
-				</fieldset>
-			</form>
+				</form>
+			</fieldset>
 			<?php
 		}
 		else{

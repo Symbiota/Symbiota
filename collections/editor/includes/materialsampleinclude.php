@@ -1,7 +1,7 @@
 <?php
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorMaterialSample.php');
-include_once($SERVER_ROOT.'/content/lang/fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $occid = $_REQUEST['occid'];
@@ -49,8 +49,8 @@ $controlTermArr = $materialSampleManager->getMSTypeControlValues();
 		});
 	});
 </script>
-<link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
-<link href="<?php echo $CLIENT_ROOT; ?>/css/symb/occureditormaterialsample.css?ver=3" type="text/css" rel="stylesheet" />
+<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet" />
+<link href="<?php echo $CSS_BASE_PATH; ?>/symbiota/collections/editor/occureditormaterialsample.css" type="text/css" rel="stylesheet" >
 <style type="text/css">
 	botton { margin: 10px; }
 	.edit-control{ float:right; }

@@ -46,7 +46,6 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 	<head>
 		<title><?php echo $LANG['OCC_EXP_MAN']; ?></title>
 		<?php
-		$activateJQuery = true;
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
 		<script src="../../js/jquery-3.2.1.min.js" type="text/javascript"></script>

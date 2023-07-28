@@ -12,7 +12,7 @@ $csMode = array_key_exists('csmode',$_REQUEST)?$_REQUEST['csmode']:false;
 	    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 		<title><?php echo $DEFAULT_TITLE; ?> - Word Cloud Handler Collections</title>
 		<?php
-		$activateJQuery = false;
+
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
 		<script type="text/javascript">

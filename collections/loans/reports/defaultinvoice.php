@@ -368,7 +368,7 @@ else{
 		<head>
 			<title><?php echo $identifier; ?> Invoice</title>
 			<?php
-			$activateJQuery = false;
+	
 			include_once($SERVER_ROOT.'/includes/head.php');
 			?>
 			<style type="text/css">

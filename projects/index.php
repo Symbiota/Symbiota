@@ -67,7 +67,7 @@ if($isEditor && $projSubmit){
 $projArr = $projManager->getProjectMetadata();
 $researchList = $projManager->getChecklistArr($pid);
 foreach($researchList as $clid => $clArr){
-	if($clArr['access'] == 'private' && !in_array($clid, $USER_RIGHTS['ClAdmin'])) unset($clArr[$clid]);
+	if($clArr['access'] == 'private' && (!isset($USER_RIGHTS['ClAdmin']) || !in_array($clid, $USER_RIGHTS['ClAdmin']))) unset($clArr[$clid]);
 }
 
 $managerArr = $projManager->getManagers('ProjAdmin', 'fmprojects', 'fmprojects', $pid);
@@ -80,8 +80,8 @@ if(!$researchList && !$editMode){
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['INVPROJ'];?></title>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	$activateJQuery = true;
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>

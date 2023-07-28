@@ -2,7 +2,7 @@
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
 @include_once($SERVER_ROOT.'/content/lang/profile/occurrencemenu.'.$LANG_TAG.'.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' . $CHARSET);
 unset($_SESSION['editorquery']);
 
 $specHandler = new ProfileManager();
@@ -68,9 +68,17 @@ if($SYMB_UID){
 						<?php echo (isset($LANG['REVIEW_EDITS'])?$LANG['REVIEW_EDITS']:'Review/Verify Occurrence Edits'); ?>
 					</a>
 				</li>
-				<!--
-				<li>Import csv file</li>
-				 -->
+				<?php
+				if (!empty($ACTIVATE_DUPLICATES)) {
+					?>
+					<li>
+						<a href="../collections/datasets/duplicatemanager.php?collid=<?php echo $collId; ?>">
+							<?php echo (isset($LANG['DUP_CLUSTER']) ? $LANG['DUP_CLUSTER'] : 'Duplicate Clustering'); ?>
+						</a>
+					</li>
+					<?php
+				}
+				?>
 				<li>
 					<a href="#" onclick="newWindow = window.open('personalspecbackup.php?collid=<?php echo $collId; ?>','bucollid','scrollbars=1,toolbar=0,resizable=1,width=400,height=200,left=20,top=20');">
 						<?php echo (isset($LANG['DOWNLOAD_BACKUP'])?$LANG['DOWNLOAD_BACKUP']:'Download backup file (CSV extract)'); ?>

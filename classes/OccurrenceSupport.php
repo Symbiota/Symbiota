@@ -191,9 +191,10 @@ class OccurrenceSupport {
 	public function getCollectionArr($filter){
 		//Used by /collections/misc/occurrencesearch.php
 		$retArr = array();
-		if(!$filter) return $retArr;
-		$sql = "SELECT collid, collectionname FROM omcollections ";
-		if($filter != 'all' && is_array($filter)) $sql .= 'WHERE collid IN('.implode(',',$filter).')';
+		$filterStr = implode(',', $filter);
+		if($filter && !preg_match('/^[,\d]+$/', $filterStr)) return false;
+		$sql = 'SELECT collid, collectionname FROM omcollections ';
+		if($filter) $sql .= 'WHERE collid IN('.$filterStr.')';
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
 			$retArr[$row->collid] = $row->collectionname;

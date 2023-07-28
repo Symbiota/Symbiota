@@ -104,14 +104,19 @@ if($SYMB_UID){
 	$recStart = floor($occIndex/$recLimit)*$recLimit;
 	$recArr = $occManager->getOccurMap($recStart, $recLimit);
 	$navStr = '<div class="navpath" style="float:right;">';
+
+
 	if($recStart >= $recLimit){
+		$navStr .= '<a href="#" onclick="return submitQueryForm(0);" title="'.(isset($LANG['FIRST'])?$LANG['FIRST']:'First').' '.$recLimit.' '.(isset($LANG['RECORDS'])?$LANG['RECORDS']:'records').'">|&lt;</a>&nbsp;&nbsp;&nbsp;&nbsp;';
 		$navStr .= '<a href="#" onclick="return submitQueryForm('.($recStart-$recLimit).');" title="'.(isset($LANG['PREVIOUS'])?$LANG['PREVIOUS']:'Previous').' '.$recLimit.' '.(isset($LANG['RECORDS'])?$LANG['RECORDS']:'records').'">&lt;&lt;</a>';
 	}
 	$navStr .= ' | ';
 	$navStr .= ($recStart+1).'-'.($qryCnt<$recLimit+$recStart?$qryCnt:$recLimit+$recStart).' '.(isset($LANG['OF'])?$LANG['OF']:'of').' '.$qryCnt.' '.(isset($LANG['RECORDS'])?$LANG['RECORDS']:'records');
 	$navStr .= ' | ';
 	if($qryCnt > ($recLimit+$recStart)){
-		$navStr .= '<a href="#" onclick="return submitQueryForm('.($recStart+$recLimit).');" title="'.(isset($LANG['NEXT'])?$LANG['NEXT']:'Next').' '.$recLimit.' '.(isset($LANG['RECORDS'])?$LANG['RECORDS']:'records').'">&gt;&gt;</a>';
+		$navStr .= '<a href="#" onclick="return submitQueryForm('.($recStart+$recLimit).');" title="'.(isset($LANG['NEXT'])?$LANG['NEXT']:'Next').' '.$recLimit.' '.(isset($LANG['RECORDS'])?$LANG['RECORDS']:'records').'">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;&nbsp;';
+
+		$navStr .= '<a href="#" onclick="return submitQueryForm('.(floor($qryCnt/$recLimit) * $recLimit).');" title="'.(isset($LANG['LAST'])?$LANG['LAST']:'Last').' '.$recLimit.' '.(isset($LANG['RECORDS'])?$LANG['RECORDS']:'records').'">&gt;|</a>';
 	}
 	$navStr .= '</div>';
 }
@@ -123,10 +128,10 @@ else{
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['TABLE_VIEW'])?$LANG['TABLE_VIEW']:'Occurrence Table View'); ?></title>
-	<meta name="viewport" content="initial-scale=1.0, user-scalable=yes" />
-	<link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet">
-	<link href="<?php echo $CLIENT_ROOT; ?>/css/base.css?ver=5" type="text/css" rel="stylesheet">
-	<link href="<?php echo $CLIENT_ROOT; ?>/css/symb/main.css?ver=1" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<?php
+	include_once($SERVER_ROOT.'/includes/head.php');
+	?>
 	<link href="<?php echo $CLIENT_ROOT; ?>/js/datatables/datatables.min.css" type="text/css" rel="stylesheet">
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
@@ -145,7 +150,7 @@ else{
 		);
 	</script>
 	<script src="../../js/symb/collections.editor.table.js?ver=2" type="text/javascript" ></script>
-	<script src="../../js/symb/collections.editor.query.js?ver=4" type="text/javascript" ></script>
+	<script src="../../js/symb/collections.editor.query.js?ver=6" type="text/javascript" ></script>
 	<style type="text/css">
 		#titleDiv { font-weight: bold; font-size: 14px; width:790px; margin-bottom: 5px; }
 		table.styledtable td { white-space: nowrap; }
@@ -192,14 +197,13 @@ else{
 						}
 					}
 				}
-				if($qCustomField1 && !array_key_exists(strtolower($qCustomField1),$headerArr)){
-					$headerArr[strtolower($qCustomField1)] = strtolower($qCustomField1);
-				}
-				if(isset($qCustomField2) && !array_key_exists(strtolower($qCustomField2),$headerArr)){
-					$headerArr[strtolower($qCustomField2)] = strtolower($qCustomField2);
-				}
-				if(isset($qCustomField3) && !array_key_exists(strtolower($qCustomField3),$headerArr)){
-					$headerArr[strtolower($qCustomField3)] = strtolower($qCustomField3);
+				for($x=1; $x<9; $x++){
+					if(isset($customArr[$x]['field'])){
+						$customField = $customArr[$x]['field'];
+						if($customField && !array_key_exists(strtolower($customField), $headerArr)){
+							$headerArr[strtolower($customField)] = $customField;
+						}
+					}
 				}
 				$headerMap = array_intersect_key($headerMapBase, $headerArr);
 			}

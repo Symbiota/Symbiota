@@ -7,7 +7,6 @@ header("Location: ".$CLIENT_ROOT."/index.php");
 	<head>
 		<title>Forbidden</title>
 		<?php
-		$activateJQuery = false;
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
 	</head>

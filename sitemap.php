@@ -9,11 +9,16 @@ $smManager = new SiteMapManager();
 ?>
 <html>
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?><?php echo $LANG['SITEMAP'];?></title>
+	<title><?php echo $DEFAULT_TITLE.' '.$LANG['SITEMAP'];?></title>
 	<?php
-	$activateJQuery = false;
+
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
+
+	//detect custom css file
+	if(file_exists($_SERVER['DOCUMENT_ROOT'].$CSS_BASE_PATH.'/symbiota/sitemap.css')){
+		echo '<link href="' . $CSS_BASE_PATH . '/symbiota/sitemap.css" type="text/css" rel="stylesheet">'."\r\n";
+	}
 	?>
 	<script type="text/javascript">
 		function submitTaxaNoImgForm(f){
@@ -37,7 +42,7 @@ $smManager = new SiteMapManager();
 	<!-- This is inner text! -->
 	<div id="innertext">
 		<h1><?php echo $LANG['SITEMAP']; ?></h1>
-		<div style="margin:10px;">
+		<div id="sitemap">
 			<h2><?php echo $LANG['COLLECTIONS']; ?></h2>
 			<ul>
 				<li><a href="collections/index.php"><?php echo $LANG['SEARCHENGINE'];?></a> - <?php echo $LANG['SEARCH_COLL'];?></li>
@@ -49,17 +54,19 @@ $smManager = new SiteMapManager();
 				}
 				?>
 				<li><?php echo (isset($LANG['DATA_PUBLISHING'])?$LANG['DATA_PUBLISHING']:'Data Publishing');?></li>
-				<li style="margin-left:15px"><a href="collections/datasets/rsshandler.php" target="_blank"><?php echo $LANG['COLLECTIONS_RSS'];?></a></li>
-				<li style="margin-left:15px"><a href="collections/datasets/datapublisher.php"><?php echo $LANG['DARWINCORE'];?></a> - <?php echo $LANG['PUBDATA'];?></li>
+				<ul>
+					<li><a href="collections/datasets/rsshandler.php" target="_blank"><?php echo $LANG['COLLECTIONS_RSS'];?></a></li>
+					<li><a href="collections/datasets/datapublisher.php"><?php echo $LANG['DARWINCORE'];?></a> - <?php echo $LANG['PUBDATA'];?></li>
+				</ul>
 				<?php
-				$rssPath = '/content/dwca/rss.xml';
-				$deprecatedRssPath = '/webservices/dwc/rss.xml';
+				$rssPath = 'content/dwca/rss.xml';
+				$deprecatedRssPath = 'webservices/dwc/rss.xml';
 				if(!file_exists($GLOBALS['SERVER_ROOT'].$rssPath) && file_exists($GLOBALS['SERVER_ROOT'].$deprecatedRssPath)) $rssPath = $deprecatedRssPath;
 				if(file_exists($GLOBALS['SERVER_ROOT'].$rssPath)) echo '<li style="margin-left:15px;"><a href="'.$GLOBALS['CLIENT_ROOT'].$rssPath.'" target="_blank">'.$LANG['RSS'].'</a></li>';
 				?>
 				<li><a href="collections/misc/protectedspecies.php"><?php echo $LANG['PROTECTED_SPECIES'];?></a> - <?php echo $LANG['LISTOFTAXA'];?></li>
 			</ul>
-			<div style="margin-top:10px;"><h2><?php echo $LANG['IMGLIB'];?></h2></div>
+			<div id="imglib"><h2><?php echo $LANG['IMGLIB'];?></h2></div>
 			<ul>
 				<li><a href="imagelib/index.php"><?php echo $LANG['IMGLIB'];?></a></li>
 				<li><a href="imagelib/search.php"><?php echo ($LANG['IMAGE_SEARCH']?$LANG['IMAGE_SEARCH']:'Interactive Search Tool'); ?></a></li>
@@ -67,7 +74,7 @@ $smManager = new SiteMapManager();
 				<li><a href="includes/usagepolicy.php"><?php echo $LANG['USAGEPOLICY'];?></a></li>
 			</ul>
 
-			<div style="margin-top:10px;"><h2><?php echo isset($LANG['ADDITIONAL_RESOURCES'])?$LANG['ADDITIONAL_RESOURCES']:'Additional Resources';?></h2></div>
+			<div id="resources"><h2><?php echo isset($LANG['ADDITIONAL_RESOURCES'])?$LANG['ADDITIONAL_RESOURCES']:'Additional Resources';?></h2></div>
 			<ul>
 				<?php
 				if($smManager->hasGlossary()){
@@ -87,7 +94,7 @@ $smManager = new SiteMapManager();
 				$clAdmin = array_intersect_key($clList,array_flip($USER_RIGHTS['ClAdmin']));
 			}
 			?>
-			<div style="margin-top:10px;"><h2><?php echo (isset($LANG['BIOTIC_INVENTORIES'])?$LANG['BIOTIC_INVENTORIES']:'Biotic Inventory Projects'); ?></h2></div>
+			<div id="bioinventory"><h2><?php echo (isset($LANG['BIOTIC_INVENTORIES'])?$LANG['BIOTIC_INVENTORIES']:'Biotic Inventory Projects'); ?></h2></div>
 			<ul>
 				<?php
 				$projList = $smManager->getProjectList();
@@ -105,7 +112,7 @@ $smManager = new SiteMapManager();
 			<ul>
 				<li><a href="collections/datasets/publiclist.php"><?php echo (isset($LANG['ALLPUBDAT'])?$LANG['ALLPUBDAT']:'All Publicly Viewable Datasets') ;?></a></li>
 			</ul>
-			<div style="margin-top:10px;"><h2><?php echo $LANG['DYNAMIC'];?></h2></div>
+			<div id="dynamiclists"><h2><?php echo $LANG['DYNAMIC'];?></h2></div>
 			<ul>
 				<li>
 					<a href="checklists/dynamicmap.php?interface=checklist">
@@ -119,7 +126,7 @@ $smManager = new SiteMapManager();
 				</li>
 			</ul>
 
-			<fieldset style="margin:30px 0px 10px 10px;padding-left:25px;padding-right:15px;">
+			<fieldset id="admin">
 				<legend><b><?php echo $LANG['MANAGTOOL'];?></b></legend>
 				<?php
 				if($SYMB_UID){
@@ -177,7 +184,7 @@ $smManager = new SiteMapManager();
 						echo '<h3>'.$LANG['IDKEYS'].'</h3>';
 						if(!$KEY_MOD_IS_ACTIVE && array_key_exists("KeyAdmin",$USER_RIGHTS)){
 							?>
-							<div style="color:red;margin-left:10px;">
+							<div id="keymodule">
 								<?php echo $LANG['KEYMODULE'];?>
 							</div>
 							<?php
@@ -219,10 +226,12 @@ $smManager = new SiteMapManager();
 					}
 					?>
 					<h3><?php echo $LANG['IMAGES'];?></h3>
-					<div style="margin:10px;">
-						<?php echo $LANG['SEESYMBDOC'];?>
-						<a href="https://biokic.github.io/symbiota-docs/editor/images/"><?php echo $LANG['IMGSUB'];?></a>
-						<?php echo $LANG['FORANOVERVIEW'];?>
+					<div id="images">
+						<p class="description">
+							<?php echo $LANG['SEESYMBDOC'];?>
+							<a href="https://biokic.github.io/symbiota-docs/editor/images/"><?php echo $LANG['IMGSUB'];?></a>
+							<?php echo $LANG['FORANOVERVIEW'];?>
+						</p>
 					</div>
 					<ul>
 						<?php
@@ -278,15 +287,17 @@ $smManager = new SiteMapManager();
 					<?php
 					if($IS_ADMIN || array_key_exists("TaxonProfile",$USER_RIGHTS)){
 						?>
-						<div style="margin:10px;">
+						<p class="description">
 							<?php echo $LANG['THEFOLLOWINGSPEC'];?>
-						</div>
+					</p>
 						<ul>
 							<li><a href="taxa/profile/tpeditor.php?taxon="><?php echo $LANG['SYN_COM'];?></a></li>
 							<li><a href="taxa/profile/tpeditor.php?taxon=&tabindex=4"><?php echo $LANG['TEXTDESC'];?></a></li>
 							<li><a href="taxa/profile/tpeditor.php?taxon=&tabindex=1"><?php echo $LANG['EDITIMG'];?></a></li>
-							<li style="margin-left:15px;"><a href="taxa/profile/tpeditor.php?taxon=&category=imagequicksort&tabindex=2"><?php echo $LANG['IMGSORTORD'];?></a></li>
-							<li style="margin-left:15px;"><a href="taxa/profile/tpeditor.php?taxon=&category=imageadd&tabindex=3"><?php echo $LANG['ADDNEWIMG'];?></a></li>
+							<ul>
+								<li><a href="taxa/profile/tpeditor.php?taxon=&category=imagequicksort&tabindex=2"><?php echo $LANG['IMGSORTORD'];?></a></li>
+								<li><a href="taxa/profile/tpeditor.php?taxon=&category=imageadd&tabindex=3"><?php echo $LANG['ADDNEWIMG'];?></a></li>
+							</ul>
 						</ul>
 						<?php
 					}
@@ -320,9 +331,9 @@ $smManager = new SiteMapManager();
 					</ul>
 
 					<h3><?php echo $LANG['CHECKLISTS'];?></h3>
-					<div style="margin:10px;">
+					<p class="description">
 						<?php echo $LANG['TOOLSFORMANAGE'];?>.
-					</div>
+					</p>
 					<ul>
 						<?php
 						if($clAdmin){
@@ -340,9 +351,9 @@ $smManager = new SiteMapManager();
 					if(isset($ACTIVATE_EXSICCATI) && $ACTIVATE_EXSICCATI){
 						?>
 						<h3><?php echo $LANG['EXSICCATII'];?></h3>
-						<div style="margin:10px;">
+						<p class="description">
 							<?php echo $LANG['ESCMOD'];?>.
-						</div>
+						</p>
 						<ul>
 							<li><a href="collections/exsiccati/index.php"><?php echo $LANG['EXSICC'];?></a></li>
 						</ul>
@@ -351,13 +362,13 @@ $smManager = new SiteMapManager();
 					?>
 
 					<h3><?php echo $LANG['COLLECTIONS'];?></h3>
-					<div style="margin:10px;">
+					<p class="description">
 						<?php echo $LANG['PARA1'];?>
-					</div>
-					<div style="margin:10px;">
-						<div style="font-weight:bold;">
+					</p>
+					<div id="admincollection">
+						<h4>
 							<?php echo $LANG['COLLLIST'];?>
-						</div>
+						</h4>
 						<ul>
 						<?php
 						$smManager->setCollectionList();
@@ -378,21 +389,20 @@ $smManager = new SiteMapManager();
 					</div>
 
 					<h3><?php echo $LANG['OBSERV'];?></h3>
-					<div style="margin:10px;">
+					<p class="description">
 						<?php echo $LANG['PARA2'];?>
 						<a href="https://symbiota.org/specimen-data-management/" target="_blank"><?php echo $LANG['SYMBDOCU'];?></a> <?php echo $LANG['FORMOREINFO'];?>.
-					</div>
-					<div style="margin:10px;">
-						<?php
-						$obsList = $smManager->getObsArr();
-						$genObsList = $smManager->getGenObsArr();
-						$obsManagementStr = '';
-						?>
-						<div style="font-weight:bold;">
+					<p class="description">
+					<div id="adminobservation">
+						<h4>
 							<?php echo $LANG['OIVS'];?>
-						</div>
+						</h4>
 						<ul>
 							<?php
+							$obsList = $smManager->getObsArr();
+							$genObsList = $smManager->getGenObsArr();
+							$obsManagementStr = '';
+
 							if($obsList){
 								foreach($genObsList as $k => $oArr){
 									?>
@@ -423,9 +433,9 @@ $smManager = new SiteMapManager();
 						<?php
 						if($genObsList){
 							?>
-							<div style="font-weight:bold;">
+							<h4>
 								<?php echo $LANG['PERSONAL'];?>
-							</div>
+							</h4>
 							<ul>
 								<?php
 								foreach($genObsList as $k => $oArr){
@@ -443,9 +453,9 @@ $smManager = new SiteMapManager();
 						}
 						if($obsManagementStr){
 							?>
-							<div style="font-weight:bold;">
+							<h4>
 								<?php echo $LANG['OPM'];?>
-							</div>
+							</h4>
 							<ul>
 								<?php echo $obsManagementStr; ?>
 							</ul>
@@ -460,9 +470,9 @@ $smManager = new SiteMapManager();
 				}
 			?>
 			</fieldset>
-			<div style="margin: 15px">
-				<div style="margin: 5px"><img src="https://img.shields.io/badge/Symbiota-v<?php echo $CODE_VERSION; ?>-blue.svg" /></div>
-				<div style="margin: 5px"><img src="https://img.shields.io/badge/Schema-<?php echo 'v'.$smManager->getSchemaVersion(); ?>-blue.svg" /></div>
+			<div id="symbiotaschema">
+				<img src="https://img.shields.io/badge/Symbiota-v<?php echo $CODE_VERSION; ?>-blue.svg" />
+				<img src="https://img.shields.io/badge/Schema-<?php echo 'v'.$smManager->getSchemaVersion(); ?>-blue.svg" />
 			</div>
 		</div>
 	</div>

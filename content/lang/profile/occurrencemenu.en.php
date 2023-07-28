@@ -10,6 +10,7 @@ $LANG['TOTAL_RECORDS'] = 'Total Record Count';
 $LANG['DISPLAY_ALL'] = 'Display All Records';
 $LANG['SEARCH_RECORDS'] = 'Search Records';
 $LANG['ADD_RECORD'] = 'Add a New Record';
+$LANG['DUP_CLUSTER'] = 'Duplicate Clustering';
 $LANG['PRINT_LABELS'] = 'Print Labels';
 $LANG['PRINT_ANNOTATIONS'] = 'Print Annotation Labels';
 $LANG['SUBMIT_OBSERVATION'] = 'Submit image-vouchered observation';
@@ -25,5 +26,4 @@ $LANG['MISC_TOOLS'] = 'Miscellaneous Tools';
 $LANG['DATASET_MANAGEMENT'] = 'Dataset Management';
 $LANG['CROSS_COL_GEOREF'] = 'Cross-Collection Georeferencing Tool';
 $LANG['CROSS_COL_TAXON'] = 'Cross Collection Taxonomy Cleaning Tool';
-
 ?>

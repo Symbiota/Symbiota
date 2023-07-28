@@ -47,17 +47,10 @@ $clArr = $obsManager->getChecklists();
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['OBS_SUBMIT']; ?></title>
-  <?php
-    $activateJQuery = true;
-    if(file_exists($SERVER_ROOT.'/includes/head.php')){
-      include_once($SERVER_ROOT.'/includes/head.php');
-    }
-    else{
-      echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-      echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-      echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-    }
-  ?>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<?php
+	include_once($SERVER_ROOT.'/includes/head.php');
+	?>
 	<style>
 		.imgSubmitDiv{ padding:10px; width:700px; height:80px; border:1px solid grey; background-color:#F5F5F5; }
 	</style>
@@ -75,7 +68,7 @@ $clArr = $obsManager->getChecklists();
 	<script src="../../js/symb/collections.editor.observations.js?ver=1" type="text/javascript"></script>
 	<style>
 		#dmsdiv{ display: none; clear: both; padding: 15px; width: 300px; background-color: #f2f2f2; border: 2px outset #E8EEFA; }
-		#dmsButton { margin: 0px 3px; font-weight: bold; background-color: #f2f2f2; }
+		#dmsButton { margin: 0px 3px; }
 	</style>
 </head>
 <body>
@@ -83,7 +76,7 @@ $clArr = $obsManager->getChecklists();
 	$displayLeftMenu = (isset($collections_editor_observationsubmitMenu)?$collections_editor_observationsubmitMenu:false);
 	include($SERVER_ROOT.'/includes/header.php');
 	echo '<div class="navpath">';
-	echo '<a href="../index.php">Home</a> &gt;&gt; ';
+	echo '<a href="../../index.php">Home</a> &gt;&gt; ';
 	if(isset($collections_editor_observationsubmitCrumbs)){
 		echo $collections_editor_observationsubmitCrumbs;
 	}
@@ -115,7 +108,7 @@ $clArr = $obsManager->getChecklists();
 						if(isset($clArr[$clid])) $checklistName = $clArr[$clid];
 						?>
 						<div style="font:weight;font-size:120%;margin-top:10px;">
-							<?php echo $LANG['GO_TO']; ?> <a href="../checklists/checklist.php?clid=<?php echo $clid; ?>" target="_blank"><?php echo $checklistName; ?></a> <?php echo $LANG['CHECKLIST']; ?>
+							<?php echo $LANG['GO_TO']; ?> <a href="../../checklists/checklist.php?clid=<?php echo $clid; ?>" target="_blank"><?php echo $checklistName; ?></a> <?php echo $LANG['CHECKLIST']; ?>
 						</div>
 						<?php
 					}

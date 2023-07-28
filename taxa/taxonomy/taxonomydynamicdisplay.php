@@ -39,8 +39,8 @@ reset($treePath);
 <head>
 	<title><?php echo $DEFAULT_TITLE.' Taxonomy Explorer: '.$taxonDisplayObj->getTargetStr(); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	$activateJQuery = true;
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>

@@ -41,8 +41,8 @@ $geoArr = $geoManager->getGeograpicList($parentID);
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> - Geographic Thesaurus Manager</title>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	$activateJQuery = true;
 	include_once ($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>

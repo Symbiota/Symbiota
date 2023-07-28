@@ -5,7 +5,7 @@ Language: English
 ------------------
 */
 
-include_once('fieldterms.en.php');
+include_once($SERVER_ROOT.'/content/lang/collections/editor/editorterms.en.php');
 
 $LANG['HOME'] = 'Home';
 $LANG['CLONES_CREATED'] = 'Success! The following new clone record(s) have been created';
@@ -66,7 +66,6 @@ $LANG['END_DOY'] = 'End Day of Year';
 $LANG['EXS_TITLE'] = 'Exsiccati Title';
 $LANG['NUMBER'] = 'Number';
 $LANG['LATEST_ID'] = 'Latest Identification';
-$LANG['SCINAME'] = 'Scientific Name';
 $LANG['LIMITED_EDITING'] = 'Limited editing rights: use determination tab to edit identification';
 $LANG['NEED_FULL'] = 'Note: Full editing permissions are needed to edit an identification';
 $LANG['UNDEFINED'] = 'Undefined';
@@ -81,7 +80,6 @@ $LANG['UNDEFINED'] = 'Undefined';
 ///$LANG['LOW'] = 'Low';
 ///$LANG['LOW_ID'] = 'Low - ID Requested';
 ///$LANG['ID_REQUESTED'] = 'ID Requested';
-$LANG['LOCALITY'] = 'Locality';
 $LANG['DEACTIVATE_LOOKUP'] = 'Deactivate Locality Lookup';
 $LANG['LOCALITY_SECURITY'] = 'Locality Security';
 $LANG['TAXONOMIC_SECURITY'] = 'Taxonomic Security';
@@ -155,7 +153,6 @@ $LANG['FAILED_TO_EDIT_OCC'] = 'ERROR: failed to edit occurrence record';
 $LANG['EDIT_SUBMITTED_NOT_ACTIVATED'] = 'Edits submitted, but not activated.<br/>Once edits are reviewed and approved by a data manager, they will be activated.<br/>Thank you for aiding us in improving the data.';
 $LANG['ERROR_EDITS_EMPTY'] = 'ERROR: edits empty for occid';
 $LANG['SUCCESS_NEW_OCC_SUBMITTED'] = 'SUCCESS: new occurrence record submitted successfully';
-$LANG['GUID_FAILED'] = 'WARNING: Symbiota GUID mapping failed';
 $LANG['WARNING_ADD_EXS_NO'] = 'WARNING adding exsiccati number';
 $LANG['WARNING_ADD_EXS'] = 'WARNING adding exsiccati';
 $LANG['FAILED_ADD_OCC'] = "ERROR - failed to add occurrence record";

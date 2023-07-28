@@ -5,25 +5,15 @@ include_once($SERVER_ROOT.'/content/lang/checklists/checklistadmin.'.$LANG_TAG.'
 header('Content-Type: text/html; charset='.$CHARSET);
 if(!$SYMB_UID) header('Location: ../profile/index.php?refurl=../checklists/checklistadmin.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
-$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']:0;
-$targetClid = array_key_exists('targetclid',$_REQUEST)?$_REQUEST['targetclid']:0;
-$transferMethod = array_key_exists('transmethod',$_POST)?$_POST['transmethod']:0;
-$parentClid = array_key_exists('parentclid',$_REQUEST)?$_REQUEST['parentclid']:0;
-$targetPid = array_key_exists('targetpid',$_REQUEST)?$_REQUEST['targetpid']:'';
-$copyAttributes = array_key_exists('copyattributes',$_REQUEST)?$_REQUEST['copyattributes']:0;
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
-
-//Sanitation
-if(!is_numeric($clid)) $clid = 0;
-if(!is_numeric($pid)) $pid = 0;
-if(!is_numeric($targetClid)) $targetClid = 0;
-if(!is_numeric($transferMethod)) $transferMethod = 0;
-if(!is_numeric($parentClid)) $parentClid = '';
-if(!is_numeric($targetPid)) $targetPid = 0;
-if(!is_numeric($copyAttributes)) $copyAttributes = 0;
-if(!is_numeric($tabIndex)) $tabIndex = 0;
+$clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$pid = array_key_exists('pid', $_REQUEST) ? filter_var($_REQUEST['pid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$targetClid = array_key_exists('targetclid', $_REQUEST) ? filter_var($_REQUEST['targetclid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$transferMethod = array_key_exists('transmethod', $_POST) ? filter_var($_POST['transmethod'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$parentClid = array_key_exists('parentclid', $_REQUEST) ? filter_var($_REQUEST['parentclid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$targetPid = array_key_exists('targetpid', $_REQUEST) ? filter_var($_REQUEST['targetpid'], FILTER_SANITIZE_NUMBER_INT) : '';
+$copyAttributes = array_key_exists('copyattributes', $_REQUEST) ? filter_var($_REQUEST['copyattributes'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
 
 $clManager = new ChecklistAdmin();
 if(!$clid && isset($_POST['delclid'])) $clid = $_POST['delclid'];
@@ -53,9 +43,10 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USE
 		}
 	}
 	elseif($action == 'deleteChecklist'){
-		$status = $clManager->deleteChecklist($_POST['delclid']);
-		if($status === true) header('Location: ../index.php');
-		echo $statusStr = $clManager->getErrorMessage();
+		if($clManager->deleteChecklist($_POST['delclid'])){
+			header('Location: ../index.php');
+		}
+		else $statusStr = 'ERROR deleting checklist: '.$clManager->getErrorMessage();
 	}
 	elseif($action == 'addEditor'){
 		$statusStr = $clManager->addEditor($_POST['editoruid']);
@@ -108,13 +99,13 @@ $clArray = $clManager->getMetaData();
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<title><?php echo $DEFAULT_TITLE.' - '.$LANG['CHECKLIST_ADMIN'];?></title>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	$activateJQuery = true;
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script type="text/javascript" src="../js/jquery.js"></script>
-	<script type="text/javascript" src="../js/jquery-ui.js"></script>
-	<script type="text/javascript" src="../js/tinymce/tinymce.min.js"></script>
+	<script src="../js/jquery.js" type="text/javascript"></script>
+	<script src="../js/jquery-ui.js" type="text/javascript"></script>
+	<script src="../js/tinymce/tinymce.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		var clid = <?php echo $clid; ?>;
 		var tabIndex = <?php echo $tabIndex; ?>;

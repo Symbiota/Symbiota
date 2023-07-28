@@ -2,27 +2,25 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCollectionProfile.php');
 include_once($SERVER_ROOT . '/content/lang/collections/misc/collmetadata.' . $LANG_TAG . '.php');
-header("Content-Type: text/html; charset=" . $CHARSET);
+header('Content-Type: text/html; charset=' . $CHARSET);
 
 if (!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/misc/collmetadata.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$collid = array_key_exists('collid', $_REQUEST) ? $_REQUEST['collid'] : 0;
-$tabIndex = array_key_exists('tabindex', $_REQUEST) ? $_REQUEST['tabindex'] : 0;
+$collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
-
-if (!is_numeric($collid)) $collid = 0;
-if (!is_numeric($tabIndex)) $tabIndex = 0;
-if (preg_match('/[^a-zA-Z\s]+/', $action)) $action = '';
 
 $isEditor = 0;
 if ($IS_ADMIN) $isEditor = 1;
 elseif ($collid) {
-	if (array_key_exists("CollAdmin", $USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'])) {
+	if (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'])) {
 		$isEditor = 1;
 	}
 }
 
-$collManager = new OccurrenceCollectionProfile($isEditor && ($action || !$collid) ? 'write' : 'readonly');
+$connType = 'readonly';
+if($isEditor && ($action || !$collid)) $connType = 'write';
+$collManager = new OccurrenceCollectionProfile($connType);
 $collManager->setCollid($collid);
 
 $statusStr = '';
@@ -30,7 +28,8 @@ if ($isEditor) {
 	if ($action == 'saveEdits') {
 		$statusStr = $collManager->collectionUpdate($_POST);
 		if ($statusStr === true) header('Location: collprofiles.php?collid=' . $collid);
-	} elseif ($action == 'newCollection') {
+	}
+	elseif ($action == 'newCollection') {
 		if ($IS_ADMIN) {
 			$newCollid = $collManager->collectionInsert($_POST);
 			if ($newCollid) {
@@ -38,20 +37,26 @@ if ($isEditor) {
 					(isset($LANG['ADD_STUFF']) ? $LANG['ADD_STUFF'] : 'Add contacts, resource links, or institution address below') . '.';
 				$collid = $newCollid;
 				$tabIndex = 1;
-			} else $statusStr = $collManager->getErrorMessage();
+			}
+			else $statusStr = $collManager->getErrorMessage();
 		}
-	} elseif ($action == 'saveResourceLink') {
+	}
+	elseif ($action == 'saveResourceLink') {
 		if (!$collManager->saveResourceLink($_POST)) $statusStr = $collManager->getErrorMessage();
 		$tabIndex = 1;
-	} elseif ($action == 'saveContact') {
+	}
+	elseif ($action == 'saveContact') {
 		if (!$collManager->saveContact($_POST)) $statusStr = $collManager->getErrorMessage();
 		$tabIndex = 1;
-	} elseif ($action == 'deleteContact') {
+	}
+	elseif ($action == 'deleteContact') {
 		if (!$collManager->deleteContact($_POST['contactIndex'])) $statusStr = $collManager->getErrorMessage();
 		$tabIndex = 1;
-	} elseif ($action == 'Link Address') {
+	}
+	elseif ($action == 'Link Address') {
 		if (!$collManager->linkAddress($_POST['iid'])) $statusStr = $collManager->getErrorMessage();
-	} elseif (array_key_exists('removeiid', $_GET)) {
+	}
+	elseif (array_key_exists('removeiid', $_GET)) {
 		if (!$collManager->removeAddress($_GET['removeiid'])) $statusStr = $collManager->getErrorMessage();
 	}
 }
@@ -62,8 +67,8 @@ $collManager->cleanOutArr($collData);
 
 <head>
 	<title><?php echo $DEFAULT_TITLE . ' ' . ($collid ? $collData['collectionname'] : '') . ' ' . (isset($LANG['COLL_PROFS']) ? $LANG['COLL_PROFS'] : 'Collection Profiles'); ?></title>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	$activateJQuery = true;
 	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
@@ -117,21 +122,21 @@ $collManager->cleanOutArr($collData);
 		});
 
 		function verifyCollEditForm(f) {
-			if (f.institutioncode.value == '') {
+			if (f.institutionCode.value == '') {
 				alert("<?php echo (isset($LANG['NEED_INST_CODE']) ? $LANG['NEED_INST_CODE'] : 'Institution Code must have a value'); ?>");
 				return false;
 			}
-			if (f.collectionname.value == '') {
+			if (f.collectionName.value == '') {
 				alert("<?php echo (isset($LANG['NEED_COLL_VALUE']) ? $LANG['NEED_COLL_VALUE'] : 'Collection Name must have a value'); ?>");
 				return false;
 			}
-			if (f.managementtype.value == "Snapshot") {
-				if (f.guidtarget.value == "symbiotaUUID") {
+			if (f.managementType && f.managementType.value == "Snapshot") {
+				if (f.guidTarget.value == "symbiotaUUID") {
 					alert("<?php echo (isset($LANG['CANNOT_GUID']) ? $LANG['CANNOT_GUID'] : 'The Symbiota Generated GUID option cannot be selected for a collection that is managed locally outside of the data portal (e.g. Snapshot management type). In this case, the GUID must be generated within the source collection database and delivered to the data portal as part of the upload process.'); ?>");
 					return false;
 				}
 			}
-			if (!isNumeric(f.latitudedecimal.value) || !isNumeric(f.longitudedecimal.value)) {
+			if (!isNumeric(f.latitudeDecimal.value) || !isNumeric(f.longitudeDecimal.value)) {
 				alert("<?php echo (isset($LANG['NEED_DECIMAL']) ? $LANG['NEED_DECIMAL'] : 'Latitude and longitude values must be in the decimal format (numeric only)'); ?>");
 				return false;
 			}
@@ -139,12 +144,10 @@ $collManager->cleanOutArr($collData);
 				alert("<?php echo (isset($LANG['NEED_RIGHTS']) ? $LANG['NEED_RIGHTS'] : 'Rights field (e.g. Creative Commons license) must have a selection'); ?>");
 				return false;
 			}
-			try {
-				if (!isNumeric(f.sortseq.value)) {
-					alert("<?php echo (isset($LANG['SORT_NUMERIC']) ? $LANG['SORT_NUMERIC'] : 'Sort sequence must be numeric only'); ?>");
-					return false;
-				}
-			} catch (ex) {}
+			if (f.sortSeq && !isNumeric(f.sortSeq.value)) {
+				alert("<?php echo (isset($LANG['SORT_NUMERIC']) ? $LANG['SORT_NUMERIC'] : 'Sort sequence must be numeric only'); ?>");
+				return false;
+			}
 			return true;
 		}
 
@@ -155,19 +158,19 @@ $collManager->cleanOutArr($collData);
 		}
 
 		function checkManagementTypeGuidSource(f) {
-			if (f.managementtype.value == "Snapshot" && f.guidtarget.value == "symbiotaUUID") {
+			if (f.managementType.value == "Snapshot" && f.guidTarget.value == "symbiotaUUID") {
 				alert("<?php echo (isset($LANG['CANNOT_GUID']) ? $LANG['CANNOT_GUID'] : 'The Symbiota Generated GUID option cannot be selected for a collection that is managed locally outside of the data portal (e.g. Snapshot management type). In this case, the GUID must be generated within the source collection database and delivered to the data portal as part of the upload process.'); ?>");
-				f.guidtarget.value = '';
-			} else if (f.managementtype.value == "Aggregate" && f.guidtarget.value != "" && f.guidtarget.value != "occurrenceId") {
+				f.guidTarget.value = '';
+			} else if (f.managementType.value == "Aggregate" && f.guidTarget.value != "" && f.guidTarget.value != "occurrenceId") {
 				alert("<?php echo (isset($LANG['AGG_GUID']) ? $LANG['AGG_GUID'] : 'An Aggregate dataset (e.g. specimens coming from multiple collections) can only have occurrenceID selected for the GUID source'); ?>");
-				f.guidtarget.value = 'occurrenceId';
+				f.guidTarget.value = 'occurrenceId';
 			}
-			if (!f.guidtarget.value) f.publishToGbif.checked = false;
+			if (!f.guidTarget.value) f.publishToGbif.checked = false;
 		}
 
 		function checkGUIDSource(f) {
 			if (f.publishToGbif.checked == true) {
-				if (!f.guidtarget.value) {
+				if (!f.guidTarget.value) {
 					alert("<?php echo (isset($LANG['NEED_GUID']) ? $LANG['NEED_GUID'] : 'You must select a GUID source in order to publish to data aggregators.'); ?>");
 					f.publishToGbif.checked = false;
 				}
@@ -245,19 +248,20 @@ $collManager->cleanOutArr($collData);
 	if ($collid) {
 		echo '<a href="collprofiles.php?collid=' . $collid . '&emode=1">' . (isset($LANG['COL_MGMNT']) ? $LANG['COL_MGMNT'] : 'Collection Management') . '</a> &gt;&gt; ';
 		echo '<b>' . $collData['collectionname'] . ' ' . (isset($LANG['META_EDIT']) ? $LANG['META_EDIT'] : 'Metadata Editor') . '</b>';
-	} else echo '<b>' . (isset($LANG['CREATE_COLL']) ? $LANG['CREATE_COLL'] : 'Create New Collection Profile') . '</b>';
+	}
+	else echo '<b>' . (isset($LANG['CREATE_COLL']) ? $LANG['CREATE_COLL'] : 'Create New Collection Profile') . '</b>';
 	echo '</div>';
 	?>
 	<div id="innertext">
 		<?php
 		if ($statusStr) {
-		?>
+			?>
 			<hr />
 			<div style="margin:20px;">
 				<?php echo $statusStr; ?>
 			</div>
 			<hr />
-		<?php
+			<?php
 		}
 		?>
 		<h2>test</h2>
@@ -265,7 +269,7 @@ $collManager->cleanOutArr($collData);
 			<?php
 			if ($isEditor) {
 				if ($collid) echo '<h1>' . $collData['collectionname'] . (array_key_exists('institutioncode', $collData) ? ' (' . $collData['institutioncode'] . ')' : '') . '</h1>';
-			?>
+				?>
 				<ul>
 					<li><a href="#colleditor"><?php echo (isset($LANG['COL_META_EDIT']) ? $LANG['COL_META_EDIT'] : 'Collection Metadata Editor'); ?></a></li>
 					<?php
@@ -285,9 +289,8 @@ $collManager->cleanOutArr($collData);
 									</a>
 									<span id="instcodeinfodialog">
 										<?php
-										echo (isset($LANG['NAME_ONE']) ? $LANG['NAME_ONE'] : 'The name (or acronym) in use by the institution having custody
-										of the occurrence records. This field is required. For more details, see') . ' ' . '<a href="http://rs.tdwg.org/dwc/terms/index.htm#institutionCode"
-										target="_blank">' . (isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition') . '</a>.'
+										echo (isset($LANG['NAME_ONE']) ? $LANG['NAME_ONE'] : '') . ' ';
+										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#institutionCode" target="_blank">' . (isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition') . '</a>.';
 										?>
 									</span>
 								</span>
@@ -295,16 +298,14 @@ $collManager->cleanOutArr($collData);
 							<div class="field-block">
 								<span class="field-label"><?php echo (isset($LANG['COLL_CODE']) ? $LANG['COLL_CODE'] : 'Collection Code'); ?>:</span>
 								<span class="field-elem">
-									<input type="text" name="collectionCode" value="<?php echo ($collid ? $collData["collectioncode"] : ''); ?>" />
+									<input type="text" name="collectionCode" value="<?php echo ($collid ? $collData['collectioncode'] : ''); ?>" />
 									<a id="collcodeinfo" href="#" onclick="return false" title="<?php echo (isset($LANG['MORE_COLL_CODE']) ? $LANG['MORE_COLL_CODE'] : 'More information about Collection Code'); ?>" tabindex="-1">
 										<img src="../../images/info.png" style="width:15px;" />
 									</a>
 									<span id="collcodeinfodialog">
 										<?php
-										echo (isset($LANG['NAME_ACRO']) ? $LANG['NAME_ACRO'] : 'The name, acronym, or code identifying the collection or data set
-										from which the record was derived. This field is optional. For more details, see') . ' ' .
-											'<a href="http://rs.tdwg.org/dwc/terms/index.htm#institutionCode" target="_blank">' .
-											(isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition') . '</a>.'
+										echo (isset($LANG['NAME_ACRO']) ? $LANG['NAME_ACRO'] : '') . ' ';
+										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#institutionCode" target="_blank">' . (isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition') . '</a>.'
 										?>
 									</span>
 								</span>
@@ -312,7 +313,7 @@ $collManager->cleanOutArr($collData);
 							<div class="field-block">
 								<span class="field-label"><?php echo (isset($LANG['COLL_NAME']) ? $LANG['COLL_NAME'] : 'Collection Name'); ?>:</span>
 								<span class="field-elem">
-									<input type="text" name="collectionName" value="<?php echo ($collid ? $collData["collectionname"] : ''); ?>" style="width:600px;" required />
+									<input type="text" name="collectionName" value="<?php echo ($collid ? $collData['collectionname'] : ''); ?>" style="width:600px;" required />
 								</span>
 							</div>
 							<div class="field-block">
@@ -337,7 +338,7 @@ $collManager->cleanOutArr($collData);
 							<?php
 							$fullCatArr = $collManager->getCategoryArr();
 							if ($fullCatArr) {
-							?>
+								?>
 								<div class="field-block">
 									<span class="field-label"><?php echo (isset($LANG['CATEGORY']) ? $LANG['CATEGORY'] : 'Category'); ?>:</span>
 									<span class="field-elem">
@@ -353,7 +354,7 @@ $collManager->cleanOutArr($collData);
 										</select>
 									</span>
 								</div>
-							<?php
+								<?php
 							}
 							?>
 							<div class="field-block">
@@ -364,11 +365,7 @@ $collManager->cleanOutArr($collData);
 										<img src="../../images/info.png" style="width:15px;" />
 									</a>
 									<span id="peditsinfodialog">
-										<?php echo (isset($LANG['EXPLAIN_PUBLIC']) ? $LANG['EXPLAIN_PUBLIC'] : 'Checking public edits will allow any user logged into the system to modify specimen records
-										and resolve errors found within the collection. However, if the user does not have explicit
-										authorization for the given collection, edits will not be applied until they are
-										reviewed and approved by collection administrator.');
-										?>
+										<?php  echo (isset($LANG['EXPLAIN_PUBLIC']) ? $LANG['EXPLAIN_PUBLIC'] : ''); ?>
 									</span>
 								</span>
 							</div>
@@ -377,38 +374,42 @@ $collManager->cleanOutArr($collData);
 								<span class="field-elem">
 									<?php
 									if (isset($RIGHTS_TERMS)) {
-									?>
+										?>
 										<select name="rights">
 											<?php
 											$hasOrphanTerm = true;
 											if (!$collid) $hasOrphanTerm = false;
+											$rightsCurrent = strtolower(substr($collData['rights'], strpos($collData['rights'], '//'), -4));
 											foreach ($RIGHTS_TERMS as $k => $v) {
 												$selectedTerm = '';
-												if ($collid && strtolower($collData["rights"]) == strtolower($v)) {
+												$rightsValue = strtolower(substr($v, strpos($v, '//'), -4));
+												if ($collid && $rightsCurrent == $rightsValue) {
 													$selectedTerm = 'SELECTED';
 													$hasOrphanTerm = false;
 												}
 												echo '<option value="' . $v . '" ' . $selectedTerm . '>' . $k . '</option>' . "\n";
 											}
-											if ($hasOrphanTerm && array_key_exists("rights", $collData)) {
-												echo '<option value="' . $collData["rights"] . '" SELECTED>' . $collData["rights"] . ' [' . (isset($LANG['ORPHANED']) ? $LANG['ORPHANED'] : 'orphaned term') . ']</option>' . "\n";
+											if ($hasOrphanTerm && array_key_exists('rights', $collData)) {
+												echo '<option value="' . $collData['rights'] . '" SELECTED>' . $collData['rights'] . ' [' . (isset($LANG['ORPHANED']) ? $LANG['ORPHANED'] : 'orphaned term') . ']</option>' . "\n";
 											}
 											?>
 										</select>
-									<?php
-									} else {
-									?>
-										<input type="text" name="rights" value="<?php echo ($collid ? $collData["rights"] : ''); ?>" style="width:90%;" />
-									<?php
+										<?php
+									}
+									else {
+										?>
+										<input type="text" name="rights" value="<?php echo ($collid ? $collData['rights'] : ''); ?>" style="width:90%;" />
+										<?php
 									}
 									?>
 									<a id="rightsinfo" href="#" onclick="return false" title="<?php echo (isset($LANG['MORE_INFO_RIGHTS']) ? $LANG['MORE_INFO_RIGHTS'] : 'More information about Rights'); ?>" tabindex="-1">
 										<img src="../../images/info.png" style="width:15px;" />
 									</a>
 									<span id="rightsinfodialog">
-										<?php echo (isset($LANG['LEGAL_DOC']) ? $LANG['LEGAL_DOC'] : 'A legal document giving official permission to do something with the resource.
-										This field can be limited to a set of values by modifying the portal\'s central configuration file.
-										For more details, see') . ' ' . '<a href="http://rs.tdwg.org/dwc/terms/index.htm#dcterms:license" target="_blank">' . (isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition') . '</a>.'
+										<?php
+										echo (isset($LANG['LEGAL_DOC']) ? $LANG['LEGAL_DOC'] : '') . ' ';
+										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#dcterms:license" target="_blank">';
+										echo (isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition') . '</a>.'
 										?>
 									</span>
 								</span>
@@ -421,8 +422,9 @@ $collManager->cleanOutArr($collData);
 										<img src="../../images/info.png" style="width:15px;" />
 									</a>
 									<span id="rightsholderinfodialog">
-										<?php echo (isset($LANG['HOLDER_DEF']) ? $LANG['HOLDER_DEF'] : 'The organization or person managing or owning the rights of the resource.
-										For more details, see') . ' ' . '<a href="http://rs.tdwg.org/dwc/terms/index.htm#dcterms:rightsHolder" target="_blank">' . (isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition') . '</a>.'
+										<?php
+										echo (isset($LANG['HOLDER_DEF']) ? $LANG['HOLDER_DEF'] : 'The organization or person managing or owning the rights of the resource. For more details, see') . ' ';
+										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#dcterms:rightsHolder" target="_blank">' . (isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition') . '</a>.'
 										?>
 									</span>
 								</span>
@@ -435,37 +437,29 @@ $collManager->cleanOutArr($collData);
 										<img src="../../images/info.png" style="width:15px;" />
 									</a>
 									<span id="accessrightsinfodialog">
-										<?php echo (isset($LANG['ACCESS_DEF']) ? $LANG['ACCESS_DEF'] : 'Information or a URL link to page with details explaining
-										how one can use the data. See') . ' ' . '<a href="http://rs.tdwg.org/dwc/terms/index.htm#dcterms:accessRights" target="_blank">' . (isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition') . '</a>.'
+										<?php
+										echo (isset($LANG['ACCESS_DEF']) ? $LANG['ACCESS_DEF'] : 'Information or a URL link to page with details explaining how one can use the data. See') . ' ';
+										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#dcterms:accessRights" target="_blank">' . (isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition') . '</a>.';
 										?>
 									</span>
 								</span>
 							</div>
 							<?php
 							if ($IS_ADMIN) {
-							?>
+								?>
 								<div class="field-block">
 									<span class="field-label"><?php echo (isset($LANG['DATASET_TYPE']) ? $LANG['DATASET_TYPE'] : 'Dataset Type'); ?>:</span>
 									<span class="field-elem">
 										<select name="collType">
 											<option value="Preserved Specimens"><?php echo (isset($LANG['PRES_SPECS']) ? $LANG['PRES_SPECS'] : 'Preserved Specimens'); ?></option>
-											<option <?php echo ($collid && $collData["colltype"] == 'Observations' ? 'SELECTED' : ''); ?> value="Observations"><?php echo (isset($LANG['OBSERVATIONS']) ? $LANG['OBSERVATIONS'] : 'Observations'); ?></option>
-											<option <?php echo ($collid && $collData["colltype"] == 'General Observations' ? 'SELECTED' : ''); ?> value="General Observations"><?php echo (isset($LANG['PERS_OBS_MAN']) ? $LANG['PERS_OBS_MAN'] : 'Personal Observation Management'); ?></option>
+											<option value="Observations" <?php echo ($collid && $collData["colltype"] == 'Observations' ? 'SELECTED' : ''); ?>><?php echo $LANG['OBSERVATIONS']; ?></option>
+											<option value="General Observations" <?php echo ($collid && $collData["colltype"] == 'General Observations' ? 'SELECTED' : ''); ?>><?php echo $LANG['PERS_OBS_MAN']; ?></option>
 										</select>
 										<a id="colltypeinfo" href="#" onclick="return false" title="<?php echo (isset($LANG['MORE_COL_TYPE']) ? $LANG['MORE_COL_TYPE'] : 'More information about Collection Type'); ?>" tabindex="-1">
 											<img src="../../images/info.png" style="width:15px;" />
 										</a>
 										<span id="colltypeinfodialog">
-											<?php echo (isset($LANG['COL_TYPE_DEF']) ? $LANG['COL_TYPE_DEF'] : 'Preserved Specimens signify a collection type that contains physical samples that are
-											available for inspection by researchers and taxonomic experts. Use Observations when the record is not based on a physical specimen.
-											Personal Observation Management is a dataset where registered users
-											can independently manage their own subset of records. Records entered into this dataset are explicitly linked to the user&apos;s profile
-											and can only be edited by them. This type of collection
-											is typically used by field researchers to manage their collection data and print labels
-											prior to depositing the physical material within a collection. Even though personal collections
-											are represented by a physical sample, they are classified as &quot;observations&quot; until the
-											physical material is publicly available within a collection.');
-											?>
+											<?php echo (isset($LANG['COL_TYPE_DEF']) ? $LANG['COL_TYPE_DEF'] : ''); ?>
 										</span>
 									</span>
 								</div>
@@ -473,22 +467,19 @@ $collManager->cleanOutArr($collData);
 									<span class="field-label"><?php echo (isset($LANG['MANAGEMENT']) ? $LANG['MANAGEMENT'] : 'Management'); ?>:</span>
 									<span class="field-elem">
 										<select name="managementType" onchange="managementTypeChanged(this)">
-											<option><?php echo (isset($LANG['SNAPSHOT']) ? $LANG['SNAPSHOT'] : 'Snapshot'); ?></option>
-											<option <?php echo ($collid && $collData["managementtype"] == 'Live Data' ? 'SELECTED' : ''); ?>><?php echo (isset($LANG['LIVE_DATA']) ? $LANG['LIVE_DATA'] : 'Live Data'); ?></option>
-											<option <?php echo ($collid && $collData["managementtype"] == 'Aggregate' ? 'SELECTED' : ''); ?>><?php echo (isset($LANG['AGGREGATE']) ? $LANG['AGGREGATE'] : 'Aggregate'); ?></option>
+											<option value="Snapshot"><?php echo (isset($LANG['SNAPSHOT']) ? $LANG['SNAPSHOT'] : 'Snapshot'); ?></option>
+											<option value="Live Data" <?php echo ($collid && $collData['managementtype'] == 'Live Data' ? 'SELECTED' : ''); ?>><?php echo $LANG['LIVE_DATA']; ?></option>
+											<option value="Aggregate" <?php echo ($collid && $collData['managementtype'] == 'Aggregate' ? 'SELECTED' : ''); ?>><?php echo $LANG['AGGREGATE']; ?></option>
 										</select>
 										<a id="managementinfo" href="#" onclick="return false" title="<?php echo (isset($LANG['MORE_INFO_TYPE']) ? $LANG['MORE_INFO_TYPE'] : 'More information about Management Type'); ?>" tabindex="-1">
 											<img src="../../images/info.png" style="width:15px;" />
 										</a>
 										<span id="managementinfodialog">
-											<?php echo (isset($LANG['SNAPSHOT_DEF']) ? $LANG['SNAPSHOT_DEF'] : 'Use Snapshot when there is a separate in-house database maintained in the collection and the dataset
-											within the Symbiota portal is only a periodically updated snapshot of the central database.
-											A Live dataset is when the data is managed directly within the portal and the central database is the portal data.');
-											?>
+											<?php echo (isset($LANG['SNAPSHOT_DEF']) ? $LANG['SNAPSHOT_DEF'] : ''); ?>
 										</span>
 									</span>
 								</div>
-							<?php
+								<?php
 							}
 							?>
 							<div class="field-block">
@@ -505,22 +496,18 @@ $collManager->cleanOutArr($collData);
 										<img src="../../images/info.png" style="width:15px;" />
 									</a>
 									<span id="guidinfodialog">
-										<?php echo (isset($LANG['OCCID_DEF_1']) ? $LANG['OCCID_DEF_1'] : 'Occurrence Id is generally used for
-										Snapshot datasets when a Global Unique Identifier (GUID) field
-										is supplied by the source database (e.g. Specify database) and the GUID is mapped to the') .
-											' <a href="http://rs.tdwg.org/dwc/terms/index.htm#occurrenceID" target="_blank">' . (isset($LANG['OCCURRENCEID']) ? $LANG['OCCURRENCEID'] : 'occurrenceId') . '</a>' .
-											(isset($LANG['OCCID_DEF_2']) ? $LANG['OCCID_DEF_2'] : 'field. The use of the Occurrence Id as the GUID is not recommended for live datasets.
-										Catalog Number can be used when the value within the catalog number field is globally unique.
-										The Symbiota Generated GUID (UUID) option will trigger the Symbiota data portal to automatically
-										generate UUID GUIDs for each record. This option is recommended for many for Live Datasets
-										but not allowed for Snapshot collections that are managed in local management system.');
+										<?php
+										echo (isset($LANG['OCCID_DEF_1']) ? $LANG['OCCID_DEF_1'] : '');
+										echo ' <a href="http://rs.tdwg.org/dwc/terms/index.htm#occurrenceID" target="_blank">';
+										echo (isset($LANG['OCCURRENCEID']) ? $LANG['OCCURRENCEID'] : 'occurrenceId') . '</a>';
+										echo (isset($LANG['OCCID_DEF_2']) ? $LANG['OCCID_DEF_2'] : '');
 										?>
 									</span>
 								</span>
 							</div>
 							<?php
 							if (isset($GBIF_USERNAME) && isset($GBIF_PASSWORD) && isset($GBIF_ORG_KEY) && $GBIF_ORG_KEY) {
-							?>
+								?>
 								<div class="field-block">
 									<span class="field-label"><?php echo (isset($LANG['PUBLISH_TO_AGGS']) ? $LANG['PUBLISH_TO_AGGS'] : 'Publish to Aggregators'); ?>:</span>
 									<span class="field-elem">
@@ -538,7 +525,7 @@ $collManager->cleanOutArr($collData);
 										</span>
 									</span>
 								</div>
-							<?php
+								<?php
 							}
 							?>
 							<div class="field-block">
@@ -550,14 +537,12 @@ $collManager->cleanOutArr($collData);
 											<img src="../../images/info.png" style="width:15px;" />
 										</a>
 										<span id="sourceurlinfodialog">
-											<?php echo (isset($LANG['ADVANCE_SETTING']) ? $LANG['ADVANCE_SETTING'] : 'Advance setting: Adding a
-											URL template here will insert a link to the source record within the specimen details page.
-											A optional URL title can be include with a colon delimiting the title and URL.
-											For example, &quot;SEINet source record') . ':http://swbiodiversity.org/seinet/collections/individual/index.php?occid=--DBPK--&quot; ' .
-												(isset($LANG['ADVANCE_SETTING_2']) ? $LANG['ADVANCE_SETTING_2'] : 'will display the ID with the url pointing to the original
-											record managed within SEINet. Or') . ' &quot;http://www.inaturalist.org/observations/--DBPK--&quot; ' . (isset($LANG['ADVANCE_SETTING_3'])
-													? $LANG['ADVANCE_SETTING_3'] : 'can be used for an	iNaturalist import if you mapped their ID field as the source
-											Identifier (e.g. dbpk) during import. Template patterns --CATALOGNUMBER--, --OTHERCATALOGNUMBERS--, and --OCCURRENCEID-- are additional options.');
+											<?php
+											echo (isset($LANG['ADVANCE_SETTING']) ? $LANG['ADVANCE_SETTING'] : '');
+											echo ':http://swbiodiversity.org/seinet/collections/individual/index.php?occid=--DBPK--&quot; ';
+											echo (isset($LANG['ADVANCE_SETTING_2']) ? $LANG['ADVANCE_SETTING_2'] : '');
+											echo ' &quot;http://www.inaturalist.org/observations/--DBPK--&quot; ';
+											echo (isset($LANG['ADVANCE_SETTING_3']) ? $LANG['ADVANCE_SETTING_3'] : '');
 											?>
 										</span>
 									</span>
@@ -575,8 +560,7 @@ $collManager->cleanOutArr($collData);
 									</span>
 									<a id="iconinfo" href="#" onclick="return false" title="<?php echo (isset($LANG['WHAT_ICON']) ? $LANG['WHAT_ICON'] : 'What is an Icon?'); ?>" tabindex="-1"><img src="../../images/info.png" style="width:15px;" /></a>
 									<span id="iconinfodialog">
-										<?php echo (isset($LANG['UPLOAD_ICON']) ? $LANG['UPLOAD_ICON'] : '');
-										?>
+										<?php echo (isset($LANG['UPLOAD_ICON']) ? $LANG['UPLOAD_ICON'] : ''); ?>
 									</span>
 								</span>
 								<span class="icon-elem" style="display:<?php echo (($collid && $collData["icon"]) ? 'none;' : ''); ?>">
@@ -590,7 +574,7 @@ $collManager->cleanOutArr($collData);
 							</div>
 							<?php
 							if ($IS_ADMIN) {
-							?>
+								?>
 								<div class="field-block" style="clear:both">
 									<span class="field-label"><?php echo (isset($LANG['SORT_SEQUENCE']) ? $LANG['SORT_SEQUENCE'] : 'Sort Sequence'); ?>:</span>
 									<span class="field-elem">
@@ -603,7 +587,7 @@ $collManager->cleanOutArr($collData);
 										</span>
 									</span>
 								</div>
-							<?php
+								<?php
 							}
 							?>
 							<div class="field-block">
@@ -625,7 +609,7 @@ $collManager->cleanOutArr($collData);
 							</div>
 							<?php
 							if ($collid) {
-							?>
+								?>
 								<div class="field-block">
 									<span class="field-label"><?php echo (isset($LANG['SECURITY_KEY']) ? $LANG['SECURITY_KEY'] : 'Security Key'); ?>:</span>
 									<span class="field-elem">
@@ -638,23 +622,24 @@ $collManager->cleanOutArr($collData);
 										<?php echo $collData['recordid']; ?>
 									</span>
 								</div>
-							<?php
+								<?php
 							}
 							?>
 							<div class="field-block">
 								<div style="margin:20px;">
 									<?php
 									if ($collid) {
-									?>
+										?>
 										<input type="hidden" name="securityKey" value="<?php echo $collData['securitykey']; ?>" />
 										<input type="hidden" name="recordID" value="<?php echo $collData['recordid']; ?>" />
 										<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
 										<button type="submit" name="action" value="saveEdits"><?php echo (isset($LANG['SAVE_EDITS']) ? $LANG['SAVE_EDITS'] : 'Save Edits'); ?></button>
-									<?php
-									} else {
-									?>
+										<?php
+									}
+									else {
+										?>
 										<button type="submit" name="action" value="newCollection"><?php echo (isset($LANG['CREATE_COLL_2']) ? $LANG['CREATE_COLL_2'] : 'Create New Collection'); ?></button>
-									<?php
+										<?php
 									}
 									?>
 								</div>
@@ -662,7 +647,7 @@ $collManager->cleanOutArr($collData);
 						</form>
 					</fieldset>
 				</div>
-			<?php
+				<?php
 			}
 			?>
 		</div>

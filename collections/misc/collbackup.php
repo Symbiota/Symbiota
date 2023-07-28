@@ -17,7 +17,7 @@ if($IS_ADMIN || array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>" />
 	<title><?php echo (isset($LANG['OCC_DWNLD'])?$LANG['OCC_DWNLD']:'Occurrences download'); ?></title>
 	<?php
-	$activateJQuery = false;
+
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
     <script>
