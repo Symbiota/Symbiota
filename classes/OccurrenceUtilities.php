@@ -704,11 +704,13 @@ class OccurrenceUtilities {
 			}
 		}
 		else{
-			if(array_key_exists('genus',$recMap) && array_key_exists('specificepithet',$recMap) && array_key_exists('infraspecificepithet',$recMap)){
+			if(array_key_exists('genus',$recMap) && array_key_exists('specificepithet',$recMap)){
 				//Build sciname from individual units supplied by source
 				$sciName = trim($recMap['genus'].' '.$recMap['specificepithet']);
-				if(array_key_exists('taxonrank',$recMap)) $sciName .= ' '.$recMap['taxonrank'];
-				$sciName .= ' '.$recMap['infraspecificepithet'];
+				if(array_key_exists('infraspecificepithet',$recMap)){
+					if(array_key_exists('taxonrank',$recMap)) $sciName .= ' '.$recMap['taxonrank'];
+					$sciName .= ' '.$recMap['infraspecificepithet'];
+				}
 				$recMap['sciname'] = trim($sciName);
 			}
 			elseif(array_key_exists('scientificname',$recMap)){

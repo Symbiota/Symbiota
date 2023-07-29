@@ -107,10 +107,6 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 		if($clid) echo 'var clid = '.$clid.';'."\n";
 		echo 'var taxaCount = '.count($taxaArray).';'."\n";
 		?>
-		$( function() {
-			$( document ).tooltip();
-		} );
-
 		function changeImageSource(elem){
 			let f = document.optionform;
 			if(elem.id == "vi_voucher") f.voucherimages.value = "1";
@@ -118,7 +114,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 			f.submit();
 		}
 	</script>
-	<script type="text/javascript" src="../js/symb/checklists.checklist.js?ver=3"></script>
+	<script type="text/javascript" src="../js/symb/checklists.checklist.js?ver=4"></script>
 	<style type="text/css">
 		<?php
 		if($printMode){
