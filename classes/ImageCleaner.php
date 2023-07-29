@@ -68,7 +68,7 @@ class ImageCleaner extends Manager{
 			$status = true;
 			$cnt++;
 			$imgId = $row->imgid;
-			$this->logOrEcho($cnt.': Building thumbnail: <a href="../imgdetails.php?imgid='.$imgId.'" target="_blank">'.$imgId.'</a>...');
+			$this->logOrEcho($cnt.': Building thumbnail: <a href="../imgdetails.php?imgid=' . htmlspecialchars($imgId, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($imgId, HTML_SPECIAL_CHARS_FLAGS) . '</a>...');
 			$this->conn->autocommit(false);
 			//Tag for updating; needed to ensure two parallel processes are not processing the same image
 			$testSql = 'SELECT thumbnailurl, url FROM images WHERE (imgid = '.$imgId.') FOR UPDATE ';
@@ -374,7 +374,7 @@ class ImageCleaner extends Manager{
 			$url = $r->url;
 			$urlTn = $r->thumbnailurl;
 			$urlOrig = $r->originalurl;
-			$this->logOrEcho($cnt.'. Rebuilding thumbnail: <a href="../imgdetails.php?imgid='.$r->imgid.'" target="_blank">'.$r->imgid.'</a> [cat#: '.$r->catalognumber.']...',0,'div');
+			$this->logOrEcho($cnt.'. Rebuilding thumbnail: <a href="../imgdetails.php?imgid=' . htmlspecialchars($r->imgid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($r->imgid, HTML_SPECIAL_CHARS_FLAGS) . '</a> [cat#: ' . htmlspecialchars($r->catalognumber, HTML_SPECIAL_CHARS_FLAGS) . ']...',0,'div');
 			//echo 'evaluate_ts: '.$postArr['evaluate_ts'].'<br/>';
 			$tsSource = 0;
 			if($postArr['evaluate_ts']){

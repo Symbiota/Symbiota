@@ -33,8 +33,8 @@ $recCnt = $uploadManager->getUploadCount();
 $navStr = '<div style="float:right;">';
 if($SYMB_UID){
 	if(($pageIndex) >= $recLimit){
-		$navStr .= '<a href="uploadreviewer.php?collid='.$collid.'&reclimit='.$reclimit.'&pageindex=0" title="First page">|&lt;&lt;</a> | ';
-		$navStr .= '<a href="uploadreviewer.php?collid='.$collid.'&reclimit='.$reclimit.'&pageindex='.($pageIndex-1).'" title="Previous '.$recLimit.' record">&lt;&lt;</a>';
+		$navStr .= '<a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&reclimit=' . htmlspecialchars($reclimit, HTML_SPECIAL_CHARS_FLAGS) . '&pageindex=0" title="First page">|&lt;&lt;</a> | ';
+		$navStr .= '<a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&reclimit=' . htmlspecialchars($reclimit, HTML_SPECIAL_CHARS_FLAGS) . '&pageindex=' . htmlspecialchars(($pageIndex-1), HTML_SPECIAL_CHARS_FLAGS) . '" title="Previous ' . htmlspecialchars($recLimit, HTML_SPECIAL_CHARS_FLAGS) . ' record">&lt;&lt;</a>';
 	}
 	else{
 		$navStr .= '|&lt;&lt;</a> | &lt;&lt;';
@@ -44,8 +44,8 @@ if($SYMB_UID){
 	$navStr .= (($pageIndex*$recLimit)+1).'-'.($recCnt<$highRange?$recCnt:$highRange).' of '.$recCnt.' records';
 	$navStr .= ' | ';
 	if($recCnt > $highRange){
-		$navStr .= '<a href="uploadreviewer.php?collid='.$collid.'&reclimit='.$reclimit.'&pageindex='.($pageIndex+1).'" title="Next '.$recLimit.' records">&gt;&gt;</a> | ';
-		$navStr .= '<a href="uploadreviewer.php?collid='.$collid.'&reclimit='.$reclimit.'&pageindex='.($recCnt/$recLimit).'" title="Last page">&gt;&gt;|</a>';
+		$navStr .= '<a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&reclimit=' . htmlspecialchars($reclimit, HTML_SPECIAL_CHARS_FLAGS) . '&pageindex=' . htmlspecialchars(($pageIndex+1), HTML_SPECIAL_CHARS_FLAGS) . '" title="Next ' . htmlspecialchars($recLimit, HTML_SPECIAL_CHARS_FLAGS) . ' records">&gt;&gt;</a> | ';
+		$navStr .= '<a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&reclimit=' . htmlspecialchars($reclimit, HTML_SPECIAL_CHARS_FLAGS) . '&pageindex=' . htmlspecialchars(($recCnt/$recLimit), HTML_SPECIAL_CHARS_FLAGS) . '" title="Last page">&gt;&gt;|</a>';
 	}
 	else{
 		$navStr .= '&gt;&gt; | &gt;&gt;|';
@@ -124,7 +124,7 @@ if($SYMB_UID){
 								$displayStr = substr($displayStr,0,60).'...';
 							}
 							if($k == 'occid' && $displayStr && $searchVar != 'new') {
-								$displayStr = '<a href="../editor/occurrenceeditor.php?occid='.$displayStr.'" target="_blank">'.$displayStr.'</a>';
+								$displayStr = '<a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($displayStr, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($displayStr, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 							}
 							if(!$displayStr) $displayStr = '&nbsp;';
 							echo '<td>'.$displayStr.'</td>'."\n";

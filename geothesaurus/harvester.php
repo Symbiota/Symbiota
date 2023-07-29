@@ -31,7 +31,7 @@ if($isEditor && $submitAction) {
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> - Geographic Thesaurus Havester</title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once ($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -121,7 +121,7 @@ if($isEditor && $submitAction) {
 							$countryList = $geoManager->getGBCountryList();
 							foreach($countryList as $iso => $cArr){
 								echo '<tr class="'.(isset($cArr['geoThesID'])?'nodb':'').(isset($cArr['polygon'])?' nopoly':'').'">';
-								echo '<td><a href="harvester.php?gbAction='.$iso.'">'.$cArr['name'].'</a></td>';
+								echo '<td><a href="harvester.php?gbAction=' . htmlspecialchars($iso, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($cArr['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a></td>';
 								echo '<td>'.$iso.'</td>';
 								echo '<td>'.(isset($cArr['geoThesID'])?'Yes':'No').'</td>';
 								echo '<td>'.(isset($cArr['polygon'])?'Yes':'No').'</td>';
@@ -129,8 +129,8 @@ if($isEditor && $submitAction) {
 								echo '<td>'.$cArr['canonical'].'</td>';
 								echo '<td>'.$cArr['license'].'</td>';
 								echo '<td>'.$cArr['region'].'</td>';
-								echo '<td><a href="'.$cArr['link'].'" target="_blank">link</a></td>';
-								echo '<td><a href="'.$cArr['img'].'" target="_blank">IMG</a></td>';
+								echo '<td><a href="' . htmlspecialchars($cArr['link'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">link</a></td>';
+								echo '<td><a href="' . htmlspecialchars($cArr['img'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">IMG</a></td>';
 								echo '</tr>';
 							}
 							?>
@@ -156,8 +156,8 @@ if($isEditor && $submitAction) {
 									echo '<td>'.$gArr['canonical'].'</td>';
 									echo '<td>'.$gArr['region'].'</td>';
 									echo '<td>'.$gArr['license'].'</td>';
-									echo '<td><a href="'.$gArr['link'].'" target="_blank">link</a></td>';
-									echo '<td><a href="'.$gArr['img'].'" target="_blank">IMG</a></td>';
+									echo '<td><a href="' . htmlspecialchars($gArr['link'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">link</a></td>';
+									echo '<td><a href="' . htmlspecialchars($gArr['img'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">IMG</a></td>';
 									echo '</tr>';
 								}
 								?>

@@ -32,7 +32,7 @@ if($isEditor){
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['TAXON_LOADER'])?$LANG['TAXON_LOADER']:'Taxon Loader'); ?>: </title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -46,8 +46,8 @@ if($isEditor){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="../../index.php"><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
-		<a href="taxonomydisplay.php"><?php echo (isset($LANG['TAX_TREE_VIEW'])?$LANG['TAX_TREE_VIEW']:'Taxonomy Tree Viewer'); ?></a> &gt;&gt;
+		<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+		<a href="taxonomydisplay.php"><?php echo htmlspecialchars((isset($LANG['TAX_TREE_VIEW'])?$LANG['TAX_TREE_VIEW']:'Taxonomy Tree Viewer'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 		<b><?php echo (isset($LANG['TAXONOMY_LOADER'])?$LANG['TAXONOMY_LOADER']:'Taxonomy Loader'); ?></b>
 	</div>
 	<!-- This is inner text! -->
@@ -111,7 +111,7 @@ if($isEditor){
 						<div style="float:left;width:170px;"><?php echo (isset($LANG['PARENT_TAXON'])?$LANG['PARENT_TAXON']:'Parent Taxon'); ?>:</div>
 						<input type="text" id="parentname" name="parentname" style="width:300px;border:inset;" />
 						<span id="addparentspan" style="display:none;">
-							<a id="addparentanchor" href="taxonomyloader.php?target=" target="_blank"><?php echo (isset($LANG['ADD_PARENT'])?$LANG['ADD_PARENT']:'Add Parent'); ?></a>
+							<a id="addparentanchor" href="taxonomyloader.php?target=" target="_blank"><?php echo htmlspecialchars((isset($LANG['ADD_PARENT'])?$LANG['ADD_PARENT']:'Add Parent'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
 						</span>
 						<input id="parenttid" name="parenttid" type="hidden" value="" />
 					</div>

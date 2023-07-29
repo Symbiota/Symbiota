@@ -41,7 +41,7 @@ $geoArr = $geoManager->getGeograpicList($parentID);
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> - Geographic Thesaurus Manager</title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once ($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -147,7 +147,7 @@ $geoArr = $geoManager->getGeograpicList($parentID);
 						if($geoUnit['geoLevel']){
 							if($parentList = $geoManager->getParentGeoTermArr($geoUnit['geoLevel'])){
 								$parentStr = '';
-								if($geoUnit['parentTerm']) $parentStr = '<a href="index.php?geoThesID='.$geoUnit['parentID'].'">'.$geoUnit['parentTerm'].'</a>';
+								if($geoUnit['parentTerm']) $parentStr = '<a href="index.php?geoThesID=' . htmlspecialchars($geoUnit['parentID'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($geoUnit['parentTerm'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 								?>
 								<div class="field-div">
 									<label>Parent term</label>:
@@ -167,7 +167,7 @@ $geoArr = $geoManager->getGeograpicList($parentID);
 							}
 						}
 						$acceptedStr = '';
-						if($geoUnit['acceptedTerm']) $acceptedStr = '<a href="index.php?geoThesID='.$geoUnit['acceptedID'].'">'.$geoUnit['acceptedTerm'].'</a>';
+						if($geoUnit['acceptedTerm']) $acceptedStr = '<a href="index.php?geoThesID=' . htmlspecialchars($geoUnit['acceptedID'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($geoUnit['acceptedTerm'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 						?>
 						<div class="field-div">
 							<label>Accepted term</label>:
@@ -212,8 +212,8 @@ $geoArr = $geoManager->getGeograpicList($parentID);
 			</div>
 			<?php
 			echo '<div class="link-div">';
-			echo '<div><a href="index.php?'.(isset($geoUnit['parentID'])?'parentID='.$geoUnit['parentID']:'').'">Show '.(isset($geoUnit['geoLevel'])?$rankArr[$geoUnit['geoLevel']]:'').' terms</a></div>';
-			if(isset($geoUnit['childCnt']) && $geoUnit['childCnt']) echo '<div><a href="index.php?parentID='.$geoThesID.'">Show children</a></div>';
+			echo '<div><a href="index.php?' . htmlspecialchars((isset($geoUnit['parentID'])?'parentID='.$geoUnit['parentID']:''), HTML_SPECIAL_CHARS_FLAGS) . '">Show ' . htmlspecialchars((isset($geoUnit['geoLevel'])?$rankArr[$geoUnit['geoLevel']]:''), HTML_SPECIAL_CHARS_FLAGS) . ' terms</a></div>';
+			if(isset($geoUnit['childCnt']) && $geoUnit['childCnt']) echo '<div><a href="index.php?parentID=' . htmlspecialchars($geoThesID, HTML_SPECIAL_CHARS_FLAGS) . '">Show children</a></div>';
 			echo '</div>';
 		}
 		else{
@@ -319,7 +319,7 @@ $geoArr = $geoManager->getGeograpicList($parentID);
 				echo '<div style=";font-size:1.3em;margin: 10px 0px">'.$titleStr.'</div>';
 				echo '<ul>';
 				foreach($geoArr as $geoID => $unitArr){
-					$termDisplay = '<a href="index.php?geoThesID='.$geoID.'">'.$unitArr['geoTerm'].'</a>';
+					$termDisplay = '<a href="index.php?geoThesID=' . htmlspecialchars($geoID, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($unitArr['geoTerm'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 					if($unitArr['abbreviation']) $termDisplay .= ' ('.$unitArr['abbreviation'].') ';
 					else{
 						$codeStr = '';
@@ -328,12 +328,12 @@ $geoArr = $geoManager->getGeograpicList($parentID);
 						if($unitArr['numCode']) $codeStr .= $unitArr['numCode'].', ';
 						if($codeStr) $termDisplay .= ' ('.trim($codeStr,', ').') ';
 					}
-					if($unitArr['acceptedTerm']) $termDisplay .= ' => <a href="index.php?geoThesID='.$unitArr['acceptedID'].'">'.$unitArr['acceptedTerm'].'</a>';
-					elseif(isset($unitArr['childCnt']) && $unitArr['childCnt']) $termDisplay .= ' - <a href="index.php?parentID='.$geoID.'">'.$unitArr['childCnt'].' children</a>';
+					if($unitArr['acceptedTerm']) $termDisplay .= ' => <a href="index.php?geoThesID=' . htmlspecialchars($unitArr['acceptedID'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($unitArr['acceptedTerm'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+					elseif(isset($unitArr['childCnt']) && $unitArr['childCnt']) $termDisplay .= ' - <a href="index.php?parentID=' . htmlspecialchars($geoID, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($unitArr['childCnt'], HTML_SPECIAL_CHARS_FLAGS) . ' children</a>';
 					echo '<li>'.$termDisplay.'</li>';
 				}
 				echo '</ul>';
-				if($parentID) echo '<div class="link-div"><a href="index.php?parentID='.$parentArr['parentID'].'">Show Parent list</a></div>';
+				if($parentID) echo '<div class="link-div"><a href="index.php?parentID=' . htmlspecialchars($parentArr['parentID'], HTML_SPECIAL_CHARS_FLAGS) . '">Show Parent list</a></div>';
 			}
 			else echo '<div>No records returned</div>';
 			if($geoThesID || $parentID) echo '<div class="link-div"><a href="index.php">Show base list</a></div>';

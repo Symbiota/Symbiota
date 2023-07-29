@@ -137,7 +137,7 @@ function deliverRdfXml() {
 function pageheader($agent) {
    global $SERVER_ROOT, $DEFAULT_TITLE, $spDisplay, $CLIENT_ROOT, $agent_indexCrumbs, $charset;
 echo '<!DOCTYPE HTML>
-<html>
+<html lang="en">
 <head>
 	<title>'.$DEFAULT_TITLE.' - '.$spDisplay. '</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>

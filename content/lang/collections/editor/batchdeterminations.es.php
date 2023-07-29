@@ -21,7 +21,7 @@ $LANG['RECORDSET_EXPLAIN'] = 'Escanear números de catálogo/códigos de barra e
 						Múltiples números de catálogo pueden ser entrados secuencialmente o en conjunto, separados por comas.
 						Una vez el listado esté completo, seleccione/deseleccione especímenes objetivos, introduzca la información de la anotación, y envíe.';
 $LANG['CATNUM'] = 'Número de Catálogo';
-$LANG['TARGET_ALL'] = 'tener en cuenta todos los números de catálogo';
+$LANG['TARGET_ALL'] = 'Tener en cuenta todos los números de catálogo';
 $LANG['TAXON'] = 'Taxón';
 $LANG['CLEAR_LIST'] = 'Limpiar Listado';
 $LANG['ADD_RECORDS'] = 'Añadir Registro(s) al Listado';

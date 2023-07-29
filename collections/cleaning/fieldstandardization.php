@@ -48,7 +48,7 @@ if($collMap['colltype'] == 'General Observations' && $obsUid !== 0){
 	?>
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
+		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">Collection Management</a> &gt;&gt;
 		<b>Batch Field Cleaning Tools</b>
 	</div>
 
@@ -77,31 +77,37 @@ if($collMap['colltype'] == 'General Observations' && $obsUid !== 0){
 			?>
 			<fieldset style="padding:20px;">
 				<legend><b>Country</b></legend>
+				<section class="flex-form">
+					<div>
+						<label for="country-old-field">Old field:</label>
+						<select name="country-old-field" id="country-old-field">
+							<option value="">Select Target Field</option>
+							<option value="">--------------------------------</option>
+							<?php
+	
+	
+	
+	
+							?>
+						</select>
+					</div>
+					<div>
+						<label for="country-old-value">Old value:</label>
+						<select name="country-old-value" id="country-old-value">
+							<option value="">Select Target Value</option>
+							<option value="">--------------------------------</option>
+							<?php
+	
+	
+	
+	
+							?>
+						</select>
+					</div>
+				</section>
 				<div style="margin:5px">
-					<select name="country_old">
-						<option value="">Select Target Field</option>
-						<option value="">--------------------------------</option>
-						<?php
-
-
-
-
-						?>
-					</select>
-					<select name="country_old">
-						<option value="">Select Target Value</option>
-						<option value="">--------------------------------</option>
-						<?php
-
-
-
-
-						?>
-					</select>
-				</div>
-				<div style="margin:5px">
-					<b>Replacement Value:</b>
-					<input name="country_new" type="text" value="" />
+					<label for="country-new">Replacement Value:</label>
+					<input name="country-new" id="country-new" type="text" value="" />
 				</div>
 			</fieldset>
 			<?php

@@ -23,7 +23,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 				<?php echo $LANG['NO_PERMISSION']; ?>.
 			</div>
 			<div style="font-weight:bold;margin:10px;">
-				<a href="<?php echo $CLIENT_ROOT; ?>/index.php"><?php echo $LANG['RETURN']; ?></a>
+				<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php"><?php echo htmlspecialchars($LANG['RETURN'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
 			</div>
 		</div>
 		<?php

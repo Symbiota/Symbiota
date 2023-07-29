@@ -52,5 +52,6 @@ $LANG['URL'] = 'URL';
 $LANG['BIOGRAPHY'] = 'Biografía';
 $LANG['PUBLIC_PROF'] = 'El público puede ver el correo electrónico y la biografía en el sitio (e.g. listado de fotógrafos)';
 $LANG['CREATE_LOGIN'] = 'Crear Usuario';
-
+$LANG['ACCESSIBILITY_PREF'] = 'Preferencias de accesibilidad';
+$LANG['ACCESSIBILITY_PREF_DESC'] = 'Marque para indicar una preferencia por estilos optimizados para accesibilidad';
 ?>

@@ -35,7 +35,7 @@ $_SESSION['citationvar'] = $searchVar;
 	include_once($SERVER_ROOT . '/includes/head.php');
 	include_once($SERVER_ROOT . '/includes/googleanalytics.php');
 	?>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
 	<script src="../js/jquery-3.2.1.min.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
 	<link href="../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
@@ -129,7 +129,7 @@ $_SESSION['citationvar'] = $searchVar;
 	if (isset($collections_listCrumbs)) {
 		if ($collections_listCrumbs) {
 			echo '<div class="navpath">';
-			echo '<a href="../index.php">' . $LANG['NAV_HOME'] . '</a> &gt;&gt; ';
+			echo '<a href="../index.php">' . htmlspecialchars($LANG['NAV_HOME'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
 			echo $collections_listCrumbs . ' &gt;&gt; ';
 			echo '<b>' . $LANG['NAV_SPECIMEN_LIST'] . '</b>';
 			echo '</div>';
@@ -137,9 +137,9 @@ $_SESSION['citationvar'] = $searchVar;
 	}
 	else {
 		echo '<div class="navpath">';
-		echo '<a href="../index.php">' . $LANG['NAV_HOME'] . '</a> &gt;&gt; ';
-		echo '<a href="index.php">' . $LANG['NAV_COLLECTIONS'] . '</a> &gt;&gt; ';
-		echo '<a href="harvestparams.php">' . $LANG['NAV_SEARCH'] . '</a> &gt;&gt; ';
+		echo '<a href="../index.php">' . htmlspecialchars($LANG['NAV_HOME'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
+		echo '<a href="index.php">' . htmlspecialchars($LANG['NAV_COLLECTIONS'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
+		echo '<a href="harvestparams.php">' . htmlspecialchars($LANG['NAV_SEARCH'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
 		echo '<b>' . $LANG['NAV_SPECIMEN_LIST'] . '</b>';
 		echo '</div>';
 	}
@@ -149,7 +149,7 @@ $_SESSION['citationvar'] = $searchVar;
 		<div id="tabs" style="width:95%;">
 			<ul>
 				<li>
-					<a id="taxatablink" href='<?php echo 'checklist.php?' . $searchVar . '&taxonfilter=' . $taxonFilter; ?>'>
+					<a id="taxatablink" href='<?php echo 'checklist.php?' . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '&taxonfilter=' . htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS); ?>'>
 						<span><?php echo $LANG['TAB_CHECKLIST']; ?></span>
 					</a>
 				</li>
@@ -207,7 +207,7 @@ $_SESSION['citationvar'] = $searchVar;
 							while ($collElem = array_shift($collSearchArr)) {
 								$collSearchStr .= $collElem . '; ';
 								if ($cnt == 10 && $collSearchArr) {
-									$collSearchStr = trim($collSearchStr, '; ') . '<span class="inst-span">... (<a href="#" onclick="$(\'.inst-span\').toggle();return false;">' . $LANG['SHOW_ALL'] . '</a>)</span><span class="inst-span" style="display:none">; ';
+									$collSearchStr = trim($collSearchStr, '; ') . '<span class="inst-span">... (<a href="#" onclick="$(\'.inst-span\').toggle();return false;">' . htmlspecialchars($LANG['SHOW_ALL'], HTML_SPECIAL_CHARS_FLAGS) . '</a>)</span><span class="inst-span" style="display:none">; ';
 								}
 								$cnt++;
 							}
@@ -215,7 +215,7 @@ $_SESSION['citationvar'] = $searchVar;
 						}
 						echo '<div><b>' . $LANG['DATASET'] . ':</b> ' . $collSearchStr . '</div>';
 						if ($taxaSearchStr = $collManager->getTaxaSearchStr()) {
-							if (strlen($taxaSearchStr) > 300) $taxaSearchStr = substr($taxaSearchStr, 0, 300) . '<span class="taxa-span">... (<a href="#" onclick="$(\'.taxa-span\').toggle();return false;">' . $LANG['SHOW_ALL'] . '</a>)</span><span class="taxa-span" style="display:none;">' . substr($taxaSearchStr, 300) . '</span>';
+							if (strlen($taxaSearchStr) > 300) $taxaSearchStr = substr($taxaSearchStr, 0, 300) . '<span class="taxa-span">... (<a href="#" onclick="$(\'.taxa-span\').toggle();return false;">' . htmlspecialchars($LANG['SHOW_ALL'], HTML_SPECIAL_CHARS_FLAGS) . '</a>)</span><span class="taxa-span" style="display:none;">' . substr($taxaSearchStr, 300) . '</span>';
 							echo '<div><b>' . $LANG['TAXA'] . ':</b> ' . $taxaSearchStr . '</div>';
 						}
 						if ($localSearchStr = $collManager->getLocalSearchStr()) {
@@ -232,19 +232,19 @@ $_SESSION['citationvar'] = $searchVar;
 					$endPage = ($lastPage > $startPage + 10 ? $startPage + 10 : $lastPage);
 					$pageBar = '';
 					if ($startPage > 1) {
-						$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="list.php?' . $searchVar . '" >' . $LANG['PAGINATION_FIRST'] . '</a></span>';
-						$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="list.php?' . $searchVar . '&page=' . (($pageNumber - 10) < 1 ? 1 : $pageNumber - 10) . '">&lt;&lt;</a></span>';
+						$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="list.php?' . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '" >' . htmlspecialchars($LANG['PAGINATION_FIRST'], HTML_SPECIAL_CHARS_FLAGS) . '</a></span>';
+						$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="list.php?' . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '&page=' . htmlspecialchars((($pageNumber - 10) < 1 ? 1 : $pageNumber - 10), HTML_SPECIAL_CHARS_FLAGS) . '">&lt;&lt;</a></span>';
 					}
 					for ($x = $startPage; $x <= $endPage; $x++) {
 						if ($pageNumber != $x) {
-							$pageBar .= '<span class="pagination" style="margin-right:3px;margin-right:3px;"><a href="list.php?' . $searchVar . '&page=' . $x . '">' . $x . '</a></span>';
+							$pageBar .= '<span class="pagination" style="margin-right:3px;margin-right:3px;"><a href="list.php?' . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '&page=' . htmlspecialchars($x, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($x, HTML_SPECIAL_CHARS_FLAGS) . '</a></span>';
 						} else {
 							$pageBar .= '<span class="pagination" style="margin-right:3px;margin-right:3px;font-weight:bold;">' . $x . '</span>';
 						}
 					}
 					if (($lastPage - $startPage) >= 10) {
-						$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="list.php?' . $searchVar . '&page=' . (($pageNumber + 10) > $lastPage ? $lastPage : ($pageNumber + 10)) . '">&gt;&gt;</a></span>';
-						$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="list.php?' . $searchVar . '&page=' . $lastPage . '">Last</a></span>';
+						$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="list.php?' . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '&page=' . htmlspecialchars((($pageNumber + 10) > $lastPage ? $lastPage : ($pageNumber + 10)), HTML_SPECIAL_CHARS_FLAGS) . '">&gt;&gt;</a></span>';
+						$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="list.php?' . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '&page=' . htmlspecialchars($lastPage, HTML_SPECIAL_CHARS_FLAGS) . '">Last</a></span>';
 					}
 					$pageBar .= '</div><div style="float:right;margin:5px;">';
 					$beginNum = ($pageNumber - 1) * $cntPerPage + 1;
@@ -272,11 +272,11 @@ $_SESSION['citationvar'] = $searchVar;
 											$isEditor = true;
 										}
 										echo '<tr><td colspan="2"><h2>';
-										echo '<a href="misc/collprofiles.php?collid=' . $collId . '">' . $fieldArr["collname"] . '</a>';
+										echo '<a href="misc/collprofiles.php?collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($fieldArr["collname"], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 										echo '</h2><hr /></td></tr>';
 									}
 									echo '<tr><td width="60" valign="top" align="center">';
-									echo '<a href="misc/collprofiles.php?collid=' . $collId . '&acronym=' . $fieldArr["instcode"] . '">';
+									echo '<a href="misc/collprofiles.php?collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&acronym=' . htmlspecialchars($fieldArr["instcode"], HTML_SPECIAL_CHARS_FLAGS) . '">';
 									if ($fieldArr["icon"]) {
 										$icon = (substr($fieldArr["icon"], 0, 6) == 'images' ? '../' : '') . $fieldArr["icon"];
 										echo '<img align="bottom" src="' . $icon . '" style="width:35px;border:0px;" />';
@@ -291,7 +291,7 @@ $_SESSION['citationvar'] = $searchVar;
 									echo '</td><td>';
 									if ($isEditor || ($SYMB_UID && $SYMB_UID == $fieldArr['obsuid'])) {
 										echo '<div style="float:right;" title="' . $LANG['OCCUR_EDIT_TITLE'] . '">';
-										echo '<a href="editor/occurrenceeditor.php?occid=' . $occid . '" target="_blank">';
+										echo '<a href="editor/occurrenceeditor.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 										echo '<img src="../images/edit.png" srcset="../images/edit.svg" style="width:15px;height:15px;" /></a></div>';
 									}
 									$targetClid = $collManager->getSearchTerm("targetclid");
@@ -308,7 +308,7 @@ $_SESSION['citationvar'] = $searchVar;
 									echo '<div style="margin:4px;">';
 									if (isset($fieldArr['sciname'])) {
 										$sciStr = '<span style="font-style:italic;">' . $fieldArr['sciname'] . '</span>';
-										if (isset($fieldArr['tid']) && $fieldArr['tid']) $sciStr = '<a target="_blank" href="../taxa/index.php?tid=' . $fieldArr['tid'] . '">' . $sciStr . '</a>';
+										if (isset($fieldArr['tid']) && $fieldArr['tid']) $sciStr = '<i> <a target="_blank" href="../taxa/index.php?tid=' . strip_tags($fieldArr['tid']) . '">' . strip_tags($sciStr) . '</a> </i>' ;
 										if (isset($fieldArr['author']) && $fieldArr['author']) $sciStr .= ' ' . $fieldArr['author'];
 										echo $sciStr;
 									} elseif ($fieldArr['localitysecurity'] > 1) {
@@ -361,7 +361,7 @@ $_SESSION['citationvar'] = $searchVar;
 							echo $LANG['PERHAPS_LOOKING_FOR'] . ' ';
 							$outStr = '';
 							foreach ($closeArr as $v) {
-								$outStr .= '<a href="harvestparams.php?taxa=' . $v . '">' . $v . '</a>, ';
+								$outStr .= '<a href="harvestparams.php?taxa=' . htmlspecialchars($v, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($v, HTML_SPECIAL_CHARS_FLAGS) . '</a>, ';
 							}
 							echo trim($outStr, ' ,');
 							echo '</div>';

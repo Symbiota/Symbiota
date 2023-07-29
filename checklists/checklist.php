@@ -94,12 +94,12 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 <head>
 	<meta charset="<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['CHECKLIST'])?$LANG['CHECKLIST']:'Checklist').': '.$clManager->getClName(); ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/symbiota/checklists/checklist.css" type="text/css" rel="stylesheet" />
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/checklists/checklist.css" type="text/css" rel="stylesheet" />
 	<script src="../js/jquery.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
 	<script type="text/javascript">
@@ -141,15 +141,15 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 	if(!$printMode) include($SERVER_ROOT.'/includes/header.php');
 	echo '<div class="navpath printoff">';
 	if($pid){
-		echo '<a href="../index.php">' . $LANG['NAV_HOME'] . '</a> &gt; ';
-		echo '<a href="' . $CLIENT_ROOT . '/projects/index.php?pid=' . $pid . '">';
+		echo '<a href="../index.php">' . htmlspecialchars($LANG['NAV_HOME'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt; ';
+		echo '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/projects/index.php?pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">';
 		echo $clManager->getProjName();
 		echo '</a> &gt; ';
 		echo '<b>' . $clManager->getClName() . '</b>';
 	}
 	else{
-		echo '<a href="../index.php">' . $LANG['NAV_HOME'] . '</a> &gt;&gt; ';
-		echo '<a href="checklist.php?clid='. $clid . '&pid=' . $pid . ($dynClid ? '&dynclid=' . $dynClid : $dynClid) . '"><b>' . $clManager->getClName() . '</b></a>';
+		echo '<a href="../index.php">' . htmlspecialchars($LANG['NAV_HOME'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
+		echo '<a href="checklist.php?clid='. htmlspecialchars($clid ?? '', HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid ?? '', HTML_SPECIAL_CHARS_FLAGS) . ($dynClid ? '&dynclid=' . htmlspecialchars($dynClid ?? '', HTML_SPECIAL_CHARS_FLAGS) : htmlspecialchars($dynClid ?? '', HTML_SPECIAL_CHARS_FLAGS)) . '"><b>' . $clManager->getClName() . '</b></a>';
 	}
 	echo '</div>';
 	?>
@@ -161,15 +161,15 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 				?>
 				<div class="printoff" style="float:right;width:auto;">
 					<span style="">
-						<a href="checklistadmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" style="margin-right:10px;" title="<?php echo (isset($LANG['CHECKLIST_ADMIN'])?$LANG['CHECKLIST_ADMIN']:'Checklist Administration'); ?>">
+						<a href="checklistadmin.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>" style="margin-right:10px;" title="<?php echo htmlspecialchars((isset($LANG['CHECKLIST_ADMIN'])?$LANG['CHECKLIST_ADMIN']:'Checklist Administration'), HTML_SPECIAL_CHARS_FLAGS); ?>">
 						<img src="../images/editadmin.png" srcset="../images/editA.svg" style="height:15px" /></a>
 					</span>
 					<span style="">
-						<a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" style="margin-right:10px;" title="<?php echo (isset($LANG['MANAGE_VOUCHERS'])?$LANG['MANAGE_VOUCHERS']:'Manage Linked Vouchers'); ?>">
+						<a href="voucheradmin.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>" style="margin-right:10px;" title="<?php echo htmlspecialchars((isset($LANG['MANAGE_VOUCHERS'])?$LANG['MANAGE_VOUCHERS']:'Manage Linked Vouchers'), HTML_SPECIAL_CHARS_FLAGS); ?>">
 							<img style="border:0px;height:15px;" src="../images/editvoucher.png" srcset="../images/editV.svg" style="height:15px" /></a>
 					</span>
 					<span style="" onclick="toggleSppEditControls();return false;">
-						<a href="#" title="<?php echo (isset($LANG['EDIT_LIST'])?$LANG['EDIT_LIST']:'Edit Species List'); ?>">
+						<a href="#" title="<?php echo htmlspecialchars((isset($LANG['EDIT_LIST'])?$LANG['EDIT_LIST']:'Edit Species List'), HTML_SPECIAL_CHARS_FLAGS); ?>">
 							<img style="border:0px;height:15px;" src="../images/editspp.png" srcset="../images/editspp.svg" style="height:15px" /><span id="editsppon">-ON</span></a>
 					</span>
 				</div>
@@ -183,7 +183,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 			if($activateKey){
 				?>
 				<div class="printoff" style="float:left;padding:5px;">
-					<a href="../ident/key.php?clid=<?php echo $clid."&pid=".$pid."&dynclid=".$dynClid;?>&taxon=All+Species">
+					<a href="../ident/key.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . "&pid=" . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . "&dynclid=" . htmlspecialchars($dynClid, HTML_SPECIAL_CHARS_FLAGS);?>&taxon=All+Species">
 						<img src='../images/key.png' srcset="../images/key.svg" style="width:15px; height:15px" title='<?php echo (isset($LANG['OPEN_KEY'])?$LANG['OPEN_KEY']:'Open Symbiota Key'); ?>' />
 					</a>
 				</div>
@@ -201,8 +201,8 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 								<?php
 								$varStr = "?clid=".$clid."&dynclid=".$dynClid."&listname=".$clManager->getClName()."&taxonfilter=".$taxonFilter."&showcommon=".$showCommon.($clManager->getThesFilter()?"&thesfilter=".$clManager->getThesFilter():"");
 								?>
-								<a href="../games/namegame.php<?php echo $varStr; ?>"><?php echo $LANG['NAMEGAME'];?></a>
-								<a href="../games/flashcards.php<?php echo $varStr; ?>"><?php echo $LANG['FLASH'];?></a>
+								<a href="../games/namegame.php<?php echo htmlspecialchars($varStr, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['NAMEGAME'], HTML_SPECIAL_CHARS_FLAGS);?></a>
+								<a href="../games/flashcards.php<?php echo htmlspecialchars($varStr, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['FLASH'], HTML_SPECIAL_CHARS_FLAGS);?></a>
 							</div>
 						</li>
 					</ul>
@@ -232,13 +232,13 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 							$protectCnt = $occurMaintenance->getStateProtectionCount($clid, $clArray["locality"]);
 							echo $protectCnt;
 							if($protectCnt){
-								echo '<span style="margin-left:10px"><a href="checklist.php?submitaction=protectspp'.$argStr.'">';
-								echo '<button style="font-size:70%">'.(isset($LANG['PROTECT_LOCALITY'])?$LANG['PROTECT_LOCALITY']:'Protect Localities').'</button>';
+								echo '<span style="margin-left:10px"><a href="checklist.php?submitaction=protectspp'. htmlspecialchars($argStr, HTML_SPECIAL_CHARS_FLAGS) . '">';
+								echo '<button style="font-size:70%">' . htmlspecialchars((isset($LANG['PROTECT_LOCALITY'])?$LANG['PROTECT_LOCALITY']:'Protect Localities'), HTML_SPECIAL_CHARS_FLAGS) . '</button>';
 								echo '</a></span>';
 							}
 						}
 						else{
-							echo '<span style="margin-left:10px"><a href="checklist.php?submitaction=checkstatus'.$argStr.'">';
+							echo '<span style="margin-left:10px"><a href="checklist.php?submitaction=checkstatus' . htmlspecialchars($argStr, HTML_SPECIAL_CHARS_FLAGS) . '">';
 							echo '<button style="font-size:70%">'.(isset($LANG['CHECK_STATUS'])?$LANG['CHECK_STATUS']:'Check Status').'</button>';
 							echo '</a></span>';
 						}
@@ -247,18 +247,18 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 				}
 				elseif($clArray['type'] == 'excludespp'){
 					$parentArr = $clManager->getParentChecklist();
-					echo '<div style="clear:both;">'.(isset($LANG['EXCLUSION_LIST'])?$LANG['EXCLUSION_LIST']:'Exclusion Species List for').' <b><a href="checklist.php?pid='.$pid.'&clid='.key($parentArr).'">'.current($parentArr).'</a></b></div>';
+					echo '<div style="clear:both;">' . htmlspecialchars((isset($LANG['EXCLUSION_LIST'])?$LANG['EXCLUSION_LIST']:'Exclusion Species List for'), HTML_SPECIAL_CHARS_FLAGS) . ' <b><a href="checklist.php?pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&clid=' . htmlspecialchars(key($parentArr), HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars(current($parentArr), HTML_SPECIAL_CHARS_FLAGS) . '</a></b></div>';
 				}
 				if($childArr = $clManager->getChildClidArr()){
 					echo '<div style="float:left;">'.(isset($LANG['INCLUDE_TAXA'])?$LANG['INCLUDE_TAXA']:'Includes taxa from following child checklists').':</div>';
 					echo '<div style="margin-left:10px;float:left">';
 					foreach($childArr as $childClid => $childName){
-						echo '<div style="clear:both;"><b><a href="checklist.php?pid='.$pid.'&clid='.$childClid.'">'.$childName.'</a></b></div>';
+						echo '<div style="clear:both;"><b><a href="checklist.php?pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&clid=' . htmlspecialchars($childClid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($childName, HTML_SPECIAL_CHARS_FLAGS) . '</a></b></div>';
 					}
 					echo '</div>';
 				}
 				if($exclusionArr = $clManager->getExclusionChecklist()){
-					echo '<div class="printoff" style="clear:both">'.(isset($LANG['TAXA_EXCLUDED'])?$LANG['TAXA_EXCLUDED']:'Taxa explicitly excluded').': <b><a href="checklist.php?pid='.$pid.'&clid='.key($exclusionArr).'">'.current($exclusionArr).'</a></b></div>';
+					echo '<div class="printoff" style="clear:both">'.(isset($LANG['TAXA_EXCLUDED'])?$LANG['TAXA_EXCLUDED']:'Taxa explicitly excluded').': <b><a href="checklist.php?pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&clid=' . htmlspecialchars(key($exclusionArr), HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars(current($exclusionArr), HTML_SPECIAL_CHARS_FLAGS) . '</a></b></div>';
 				}
 				if($clArray["authors"] && $clArray['type'] != 'excludespp'){
 					?>
@@ -272,13 +272,13 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 				}
 				if($clArray['publication']){
 					$pubStr = $clArray['publication'];
-					if(substr($pubStr,0,4)=='http' && !strpos($pubStr,' ')) $pubStr = '<a href="'.$pubStr.'" target="_blank">'.$pubStr.'</a>';
-					echo '<div style="clear:both;"><span class="md-label">'.(isset($LANG['CITATION'])?$LANG['CITATION']:'Citation').':</span> '.$pubStr.'</div>';
+					if(substr($pubStr,0,4)=='http' && !strpos($pubStr,' ')) $pubStr = '<a href="' . htmlspecialchars($pubStr, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($pubStr, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+					echo '<div style="clear:both;"><span class="md-label">' . htmlspecialchars((isset($LANG['CITATION'])?$LANG['CITATION']:'Citation'), HTML_SPECIAL_CHARS_FLAGS) . ':</span> ' . htmlspecialchars($pubStr, HTML_SPECIAL_CHARS_FLAGS) . '</div>';
 				}
 			}
 			if(($clArray["locality"] || ($clid && ($clArray["latcentroid"] || $clArray["abstract"])) || $clArray["notes"])){
 				?>
-				<div class="moredetails printoff" style="<?php echo (($showDetails)?'display:none;':''); ?>"><a href="#" onclick="toggle('moredetails');return false;"><?php echo $LANG['MOREDETAILS'];?></a></div>
+				<div class="moredetails printoff" style="<?php echo (($showDetails)?'display:none;':''); ?>"><a href="#" onclick="toggle('moredetails');return false;"><?php echo htmlspecialchars($LANG['MOREDETAILS'], HTML_SPECIAL_CHARS_FLAGS);?></a></div>
 				<div class="moredetails" style="display:<?php echo (($showDetails || $printMode)?'block':'none'); ?>;">
 					<?php
 					if($clArray['type'] != 'excludespp'){
@@ -298,7 +298,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 					}
 					?>
 				</div>
-				<div class="moredetails printoff" style="display:<?php echo (($showDetails)?'block':'none'); ?>"><a href="#" onclick="toggle('moredetails');return false;"><?php echo $LANG['LESSDETAILS'];?></a></div>
+				<div class="moredetails printoff" style="display:<?php echo (($showDetails)?'block':'none'); ?>"><a href="#" onclick="toggle('moredetails');return false;"><?php echo htmlspecialchars($LANG['LESSDETAILS'], HTML_SPECIAL_CHARS_FLAGS);?></a></div>
 				<?php
 			}
 			if($statusStr){
@@ -325,16 +325,18 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 								<div id="taxonfilterdiv">
 									<div>
 										<b><?php echo $LANG['SEARCH'];?>:</b>
+										<label for="taxonfilter"><?php echo $LANG['TAXONFILTER'] ?></label>
 										<input type="text" id="taxonfilter" name="taxonfilter" value="<?php echo $taxonFilter;?>" size="20" />
 									</div>
 									<div>
 										<div style="margin-left:10px;">
 											<?php
 											if($DISPLAY_COMMON_NAMES){
-												echo "<input type='checkbox' name='searchcommon' value='1'".($searchCommon?"checked":"")."/> ".$LANG['COMMON']."<br/>";
+												echo "<label for='searchcommon'>Search common names</label><input type='checkbox' name='searchcommon' id='searchcommon' value='1'" . ($searchCommon?"checked":"") . "/> " . $LANG['COMMON'] . "<br/>";
 											}
 											?>
-											<input type="checkbox" name="searchsynonyms" value="1"<?php echo ($searchSynonyms?"checked":"");?>/> <?php echo $LANG['SYNONYMS'];?>
+											<input type="checkbox" name="searchsynonyms" id="searchsynonyms" value="1"<?php echo ($searchSynonyms?"checked":"");?>/> <?php echo $LANG['SYNONYMS'];?>
+											<label for="searchsynonyms"><?php echo $LANG['SEARCHSYNONYMS'] ?></label>
 										</div>
 									</div>
 								</div>
@@ -352,26 +354,26 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 									</select>
 								</div>
 								<div id="showsynonymsdiv" style="display:<?php echo ($showImages?"none":"block");?>">
-									<input name='showsynonyms' type='checkbox' value='1' <?php echo ($showSynonyms?"checked":""); ?> />
-									<?php echo $LANG['DISPLAY_SYNONYMS'];?>
+									<input name='showsynonyms' id='showsynonyms' type='checkbox' value='1' <?php echo ($showSynonyms?"checked":""); ?> />
+									<label for="showsynonyms"><?php echo $LANG['DISPLAY_SYNONYMS'];?></label>
 								</div>
 								<?php
 								if($DISPLAY_COMMON_NAMES){
 									echo '<div>';
-									echo "<input id='showcommon' name='showcommon' type='checkbox' value='1' ".($showCommon?"checked":"")."/> ".$LANG['COMMON']."";
+									echo "<input id='showcommon' name='showcommon' type='checkbox' value='1' " . ($showCommon?"checked":"") . "/> " . "<label for='showcommon'>" . $LANG['COMMON'] . "</label>";
 									echo '</div>';
 								}
 								?>
 								<div>
-									<input name='showimages' type='checkbox' value='1' <?php echo ($showImages?"checked":""); ?> onclick="showImagesChecked(this.form);" />
-									<?php echo $LANG['DISPLAYIMAGES'];?>
+									<input name='showimages' id='showimages' type='checkbox' value='1' <?php echo ($showImages?"checked":""); ?> onclick="showImagesChecked(this.form);" />
+									<label for="showimages"><?php echo $LANG['DISPLAYIMAGES'];?></label>
 								</div>
 								<?php
 								if($clid){
 									?>
 									<div id="showvouchersdiv" style="display:<?php echo ($showImages?"none":"block");?>">
-										<input name='showvouchers' type='checkbox' value='1' <?php echo ($showVouchers?"checked":""); ?>/>
-										<?php echo $LANG['NOTESVOUC'];?>
+										<input name='showvouchers' id='showvouchers' type='checkbox' value='1' <?php echo ($showVouchers?"checked":""); ?>/>
+										<label for="showvouchers"><?php echo $LANG['NOTESVOUC'];?></label>
 									</div>
 									<?php
 								}
@@ -468,7 +470,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 										<hr />
 									</div>
 									<div style="text-align:center;">
-										<a href="tools/checklistloader.php?clid=<?php echo $clid.'&pid='.$pid;?>"><?php echo $LANG['BATCH_LOAD_SPREADSHEET'];?></a>
+										<a href="tools/checklistloader.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) ;?>"><?php echo $LANG['BATCH_LOAD_SPREADSHEET'];?></a>
 									</div>
 								</fieldset>
 							</form>
@@ -488,15 +490,15 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 								<div style="text-align:center;font-weight:bold;margin-bottom:5px"><?php echo (isset($LANG['VOUCHER_MAPPING'])?$LANG['VOUCHER_MAPPING']:'Voucher Mapping'); ?></div>
 								<div style="display: flex; align-items: center; justify-content: center;">
 									<div style="float:left;" title="<?php echo (isset($LANG['VOUCHERS_SIMPLE_MAP'])?$LANG['VOUCHERS_SIMPLE_MAP']:'Display Vouchers in Simply Map'); ?>">
-										<a href="checklistmap.php?clid=<?php echo $clid.'&thesfilter='.$thesFilter.'&taxonfilter='.$taxonFilter; ?>" target="_blank">
+										<a href="checklistmap.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&thesfilter=' . htmlspecialchars($thesFilter, HTML_SPECIAL_CHARS_FLAGS) . '&taxonfilter=' . htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank">
 											<img src="<?php echo $tnUrl; ?>" style="border:0px;width:<?php echo $tnWidth; ?>px" /><br/>
 											<?php echo (isset($LANG['SIMPLE_MAP'])?$LANG['SIMPLE_MAP']:'Simply Map'); ?>
 										</a>
 									</div>
 									<div style="float:left;margin-left:15px" title="<?php echo (isset($LANG['VOUCHERS_DYNAMIC_MAP'])?$LANG['VOUCHERS_DYNAMIC_MAP']:'Display Vouchers in Dynamic Map'); ?>">
-										<a href="../collections/map/index.php?clid=<?php echo $clid.'&cltype=vouchers&taxonfilter='.$taxonFilter; ?>&db=all&type=1&reset=1" target="_blank">
-											<img src="<?php echo $tnUrl; ?>" style="width:<?php echo $tnWidth; ?>px" /><br/>
-											<?php echo (isset($LANG['DYNAMIC_MAP'])?$LANG['DYNAMIC_MAP']:'Dynamic Map'); ?>
+										<a href="../collections/map/index.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&cltype=vouchers&taxonfilter=' . htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS); ?>&db=all&type=1&reset=1" target="_blank">
+											<img src="<?php echo htmlspecialchars($tnUrl, HTML_SPECIAL_CHARS_FLAGS); ?>" style="width:<?php echo $tnWidth; ?>px" /><br/>
+											<?php echo htmlspecialchars((isset($LANG['DYNAMIC_MAP'])?$LANG['DYNAMIC_MAP']:'Dynamic Map'), HTML_SPECIAL_CHARS_FLAGS); ?>
 										</a>
 									</div>
 								</div>
@@ -506,7 +508,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 								//Temporarily turned off
 								?>
 								<span style="margin:5px">
-									<a href="../collections/map/index.php?clid=<?php echo $clid.'&cltype=all&taxonfilter='.$taxonFilter; ?>&db=all&type=1&reset=1" target="_blank">
+									<a href="../collections/map/index.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&cltype=all&taxonfilter=' . htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS); ?>&db=all&type=1&reset=1" target="_blank">
 										<?php
 										if($coordArr){
 											echo '<img src="../images/world.png" style="width:30px" title="'.(isset($LANG['OCCUR_DYNAMIC_MAP'])?$LANG['OCCUR_DYNAMIC_MAP']:'Display All Occurrence in Dynamic Map').'" />';
@@ -562,7 +564,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 						for($x=1;$x<=$pageCount;$x++){
 							if($x>1) echo " | ";
 							if(($pageNumber) == $x) echo '<b>';
-							else echo '<a href="checklist.php?pagenumber='.$x.$argStr.'">';
+							else echo '<a href="checklist.php?pagenumber=' . htmlspecialchars($x, HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars($argStr, HTML_SPECIAL_CHARS_FLAGS) . '">';
 							echo ($x);
 							if(($pageNumber) == $x) echo '</b>';
 							else echo '</a>';
@@ -593,8 +595,8 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 									$spUrl = "../taxa/index.php?taxauthid=1&taxon=$tid&clid=".$clid;
 									if($imgSrc){
 										$imgSrc = (array_key_exists("imageDomain",$GLOBALS)&&substr($imgSrc,0,4)!="http"?$GLOBALS["imageDomain"]:"").$imgSrc;
-										echo "<a href='".$spUrl."' target='_blank'>";
-										echo "<img src='".$imgSrc."' />";
+										echo "<a href='" . htmlspecialchars($spUrl, HTML_SPECIAL_CHARS_FLAGS) . "' target='_blank'>";
+										echo "<img src='" . htmlspecialchars($imgSrc, HTML_SPECIAL_CHARS_FLAGS) . "' />";
 										echo "</a>";
 									}
 									else{
@@ -608,7 +610,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 								</div>
 								<div style="clear:both">
 									<?php
-									echo '<a href="'.$spUrl.'" target="_blank">';
+									echo '<a href="' . htmlspecialchars($spUrl, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 									echo '<b>'.$sppArr['sciname'].'</b>';
 									echo '</a>';
 									?>
@@ -660,7 +662,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 								//Edit family name display style here
 								?>
 								<div class="family-div" id="<?php echo strip_tags($group);?>">
-									<a href="<?php echo $famUrl; ?>" target="_blank" style="color:black;"><?php echo $group;?></a>
+									<i><a href="<?php echo strip_tags($famUrl); ?>" target="_blank" style="color:black;"><?php echo strip_tags($group);?></a> </i>
 								</div>
 								<?php
 								$prevGroup = $group;
@@ -668,7 +670,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 							echo '<div id="tid-'.$tid.'" class="taxon-container">';
 							//Edit species name display style here
 							echo '<div class="taxon-div">';
-							if(!preg_match('/\ssp\d/',$sppArr["sciname"])) echo '<a href="../taxa/index.php?taxauthid=1&taxon='.$tid.'&clid='.$clid.'" target="_blank">';
+							if(!preg_match('/\ssp\d/',$sppArr["sciname"])) echo '<a href="../taxa/index.php?taxauthid=1&taxon=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 							echo '<span class="taxon-span">'.$sppArr['sciname'].'</span> ';
 							if(array_key_exists("author",$sppArr)) echo $sppArr["author"];
 							if(!preg_match('/\ssp\d/',$sppArr["sciname"])) echo "</a>";
@@ -678,7 +680,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 							if($clid && $clArray['dynamicsql']){
 								?>
 								<span class="view-specimen-span printoff">
-									<a href="../collections/list.php?usethes=1&taxontype=2&taxa=<?php echo $tid."&targetclid=".$clid."&targettid=".$tid;?>" target="_blank">
+									<a href="../collections/list.php?usethes=1&taxontype=2&taxa=<?php echo htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . "&targetclid=" . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . "&targettid=" . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS);?>" target="_blank">
 										<img src="../images/list.png" style="width:12px;" title="<?php echo (isset($LANG['VIEW_RELATED'])?$LANG['VIEW_RELATED']:'View Related Specimens'); ?>" />
 									</a>
 								</span>
@@ -690,7 +692,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 									foreach($clidArr as $id){
 										?>
 										<span class="editspp" style="display:none;">
-											<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo $tid."&clid=".$id; ?>','editorwindow');">
+											<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . "&clid=" . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS); ?>','editorwindow');">
 												<img src="../images/edit.png" style="width:13px;" title="<?php echo (isset($LANG['EDIT_DETAILS'])?$LANG['EDIT_DETAILS']:'edit details'); ?> (clid = <?php echo $id; ?>)" />
 											</a>
 										</span>
@@ -699,7 +701,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 									if(in_array($clid, $clidArr) && $showVouchers && $clArray['dynamicsql']){
 										?>
 										<span class="editspp" style="margin-left:5px;display:none">
-											<a href="../collections/list.php?usethes=1&taxontype=2&taxa=<?php echo $tid."&targetclid=".$clid."&targettid=".$tid.'&mode=voucher'; ?>" target="_blank">
+											<a href="../collections/list.php?usethes=1&taxontype=2&taxa=<?php echo htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . "&targetclid=" . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . "&targettid=" . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&mode=voucher'; ?>" target="_blank">
 												<img src="../images/link.png" style="width:12px;" title="<?php echo (isset($LANG['VIEW_RELATED'])?$LANG['VIEW_RELATED']:'Link Specimen Vouchers'); ?>" /><span style="font-size:70%">V</span>
 											</a>
 										</span>
@@ -718,13 +720,13 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 									$voucCnt = 0;
 									foreach($voucherArr[$tid] as $occid => $collName){
 										if($voucCnt == 4 && !$printMode){
-											$voucStr .= '<a href="#" id="morevouch-'.$tid.'" onclick="return toggleVoucherDiv('.$tid.');">'.$LANG['MORE'].'...</a>'.
+											$voucStr .= '<a href="#" id="morevouch-'.$tid.'" onclick="return toggleVoucherDiv('.$tid.');">' . htmlspecialchars($LANG['MORE'], HTML_SPECIAL_CHARS_FLAGS) . '...</a>'.
 												'<span id="voucdiv-'.$tid.'" style="display:none;">';
 										}
-										$voucStr .= '<a href="#" onclick="return openIndividualPopup('.$occid.')">'.$collName.'</a>, ';
+										$voucStr .= '<a href="#" onclick="return openIndividualPopup(' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . ')">' . htmlspecialchars($collName, HTML_SPECIAL_CHARS_FLAGS) . '</a>, ';
 										$voucCnt++;
 									}
-									if($voucCnt > 4 && !$printMode) $voucStr .= '</span><a href="#" id="lessvouch-'.$tid.'" style="display:none;" onclick="return toggleVoucherDiv('.$tid.');">...'.$LANG['LESS'].'</a>';
+									if($voucCnt > 4 && !$printMode) $voucStr .= '</span><a href="#" id="lessvouch-'.$tid.'" style="display:none;" onclick="return toggleVoucherDiv('.$tid.');">...' . htmlspecialchars($LANG['LESS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 								}
 								$voucStr = trim($voucStr,' ;,');
 								if($voucStr) echo '<div class="note-div">'.$voucStr.'</div>';
@@ -736,7 +738,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 					$taxaLimit = ($showImages?$clManager->getImageLimit():$clManager->getTaxaLimit());
 					if($clManager->getTaxaCount() > (($pageNumber)*$taxaLimit)){
 						echo '<div class="printoff" style="margin:20px;clear:both;">';
-						echo '<a href="checklist.php?pagenumber='.($pageNumber+1).$argStr.'"> '.$LANG['DISPLAYNEXT'].' '.$taxaLimit.' '.$LANG['TAXA'].'...</a>';
+						echo '<a href="checklist.php?pagenumber=' . htmlspecialchars(($pageNumber+1).$argStr, HTML_SPECIAL_CHARS_FLAGS) . '"> ' . htmlspecialchars($LANG['DISPLAYNEXT'], HTML_SPECIAL_CHARS_FLAGS) . ' ' . htmlspecialchars($taxaLimit, HTML_SPECIAL_CHARS_FLAGS) . ' ' . htmlspecialchars($LANG['TAXA'], HTML_SPECIAL_CHARS_FLAGS) . '...</a>';
 						echo '</div>';
 					}
 					if(!$taxaArray) echo "<h1 style='margin:40px;'>".$LANG['NOTAXA']."</h1>";
