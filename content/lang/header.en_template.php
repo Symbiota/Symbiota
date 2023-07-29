@@ -44,4 +44,7 @@ $LANG['H_MY_PROFILE'] = 'My Profile';
 $LANG['H_LOGOUT'] = 'Sign Out';
 $LANG['H_LOGIN'] = 'Sign In';
 $LANG['H_NEW_ACCOUNT'] = 'New Account';
+$LANG['TOGGLE_508_OFF'] = "Condensed Mode";
+$LANG['TOGGLE_508_ON'] = "Accessibility Mode";
+$LANG['SELECT_LANGUAGE'] = 'Select Language';
 ?>

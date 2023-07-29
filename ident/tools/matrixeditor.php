@@ -117,12 +117,12 @@ include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class='navpath'>
 	<a href="../../index.php">Home</a> &gt;&gt;
-	<a href="../../checklists/checklist.php?clid=<?php echo $clid; ?>">Open Checklist</a> &gt;&gt;
-	<a href="../key.php?clid=<?php echo $clid; ?>&taxon=All+Species">Open Key</a> &gt;&gt;
+	<a href="../../checklists/checklist.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>">Open Checklist</a> &gt;&gt;
+	<a href="../key.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>&taxon=All+Species">Open Key</a> &gt;&gt;
 	<?php
 	if($cidValue){
 		?>
-		<a href='matrixeditor.php?clid=<?php echo $clid.'&tf='.$taxonFilter.'&lang='.$langValue; ?>'>
+		<a href='matrixeditor.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&tf=' . htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS) . '&lang=' . htmlspecialchars($langValue, HTML_SPECIAL_CHARS_FLAGS); ?>'>
 			Return to Character List
 		</a> &gt;&gt;
 		<?php

@@ -105,7 +105,7 @@ if($isEditor && $collid){
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['SPEC_UPLOAD'])?$LANG['SPEC_UPLOAD']:'Specimen Uploader'); ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -259,9 +259,9 @@ $displayLeftMenu = (isset($collections_admin_specuploadMenu)?$collections_admin_
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath">
-	<a href="../../index.php"><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
-	<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1"><?php echo (isset($LANG['COL_MGMNT'])?$LANG['COL_MGMNT']:'Collection Management Panel'); ?></a> &gt;&gt;
-	<a href="specuploadmanagement.php?collid=<?php echo $collid; ?>"><?php echo (isset($LANG['LIST_UPLOAD'])?$LANG['LIST_UPLOAD']:'List of Upload Profiles'); ?></a> &gt;&gt;
+	<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars((isset($LANG['COL_MGMNT'])?$LANG['COL_MGMNT']:'Collection Management Panel'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+	<a href="specuploadmanagement.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars((isset($LANG['LIST_UPLOAD'])?$LANG['LIST_UPLOAD']:'List of Upload Profiles'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 	<b><?php echo (isset($LANG['SPEC_UPLOAD'])?$LANG['SPEC_UPLOAD']:'Specimen Uploader'); ?></b>
 </div>
 <div id="innertext">
@@ -301,7 +301,7 @@ include($SERVER_ROOT.'/includes/header.php');
 								<div style="margin:10px;">
 									<div>
 										<input name="importspec" value="1" type="checkbox" checked />
-										<?php echo (isset($LANG['IMPORT_OCCS'])?$LANG['IMPORT_OCCS']:'Import Occurrence Records'); ?> (<a href="#" onclick="toggle('dwcaOccurDiv');return false;"><?php echo (isset($LANG['VIEW_DETS'])?$LANG['VIEW_DETS']:'view details'); ?></a>)
+										<?php echo (isset($LANG['IMPORT_OCCS'])?$LANG['IMPORT_OCCS']:'Import Occurrence Records'); ?> (<a href="#" onclick="toggle('dwcaOccurDiv');return false;"><?php echo htmlspecialchars((isset($LANG['VIEW_DETS'])?$LANG['VIEW_DETS']:'view details'), HTML_SPECIAL_CHARS_FLAGS); ?></a>)
 									</div>
 									<div id="dwcaOccurDiv" style="display:none;margin:20px;">
 										<div style="margin-bottom:5px">
@@ -378,7 +378,7 @@ include($SERVER_ROOT.'/includes/header.php');
 										<?php
 										echo (isset($LANG['IMPORT_ID'])?$LANG['IMPORT_ID']:'Import Identification History');
 										if(isset($metaArr['ident'])){
-											echo '(<a href="#" onclick="toggle(\'dwcaIdentDiv\');return false;">'.(isset($LANG['VIEW_DETS'])?$LANG['VIEW_DETS']:'view details').'</a>)';
+											echo '(<a href="#" onclick="toggle(\'dwcaIdentDiv\');return false;">' . htmlspecialchars((isset($LANG['VIEW_DETS'])?$LANG['VIEW_DETS']:'view details'), HTML_SPECIAL_CHARS_FLAGS) . '</a>)';
 											?>
 											<div id="dwcaIdentDiv" style="display:none;margin:20px;">
 												<?php $duManager->echoFieldMapTable(true,'ident'); ?>
@@ -575,7 +575,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							?>
 							<div style="margin-left:15px;">
 								<a href="https://symbiota.org/wp-content/uploads/SymbiotaOccurrenceFields.pdf" target="_blank">SymbiotaOccurrenceFields.pdf</a><br/>
-								<a href="https://symbiota.org/symbiota-introduction/loading-specimen-data/" target="_blank"><?php echo (isset($LANG['LOADING_DATA'])?$LANG['LOADING_DATA']:'Loading Data into Symbiota'); ?></a>
+								<a href="https://symbiota.org/symbiota-introduction/loading-specimen-data/" target="_blank"><?php echo htmlspecialchars((isset($LANG['LOADING_DATA'])?$LANG['LOADING_DATA']:'Loading Data into Symbiota'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
 							</div>
 						</div>
 						<div style="margin:10px;">

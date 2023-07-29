@@ -93,13 +93,13 @@ if($isEditor){
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div class="navpath">
-			<a href="<?php echo $CLIENT_ROOT; ?>/index.php"><?php echo $LANG['HOME']; ?></a> &gt;&gt;
+			<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 			<?php
 			if($collMeta['colltype'] == 'General Observations'){
-				echo '<a href="../../profile/viewprofile.php?tabindex=1">'.$LANG['COL_MANAGE'].'</a> &gt;&gt;';
+				echo '<a href="../../profile/viewprofile.php?tabindex=1">' . htmlspecialchars($LANG['COL_MANAGE'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt;';
 			}
 			else{
-				echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management</a> &gt;&gt;';
+				echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">Collection Management</a> &gt;&gt;';
 			}
 			?>
 			<b><?php echo $LANG['OCC_COMMENTS_LISTING']; ?></b>
@@ -128,13 +128,13 @@ if($isEditor){
 					$lastPage = ceil($recCnt / $limit);
 					$startPage = $currentPage > 4?$currentPage - 4:1;
 					$endPage = ($lastPage > $startPage + 9?$startPage + 9:$lastPage);
-					$hrefPrefix = 'commentlist.php?'.$urlVars."&start=";
+					$hrefPrefix = 'commentlist.php?' . $urlVars . "&start=";
 					$pageBar .= "<span style='margin:5px;'>\n";
 					if($endPage > 1){
-					    $pageBar .= "<span style='margin-right:5px;'><a href='".$hrefPrefix."0'>".$LANG['FIRST_PAGE']."</a> &lt;&lt;</span>";
+					    $pageBar .= "<span style='margin-right:5px;'><a href='" . htmlspecialchars($hrefPrefix, HTML_SPECIAL_CHARS_FLAGS) . "0'>" . htmlspecialchars($LANG['FIRST_PAGE'], HTML_SPECIAL_CHARS_FLAGS) . "</a> &lt;&lt;</span>";
 						for($x = $startPage; $x <= $endPage; $x++){
 						    if($currentPage != $x){
-						        $pageBar .= "<span style='margin-right:3px;margin-right:3px;'><a href='".$hrefPrefix.(($x-1)*$limit)."'>".$x."</a></span>";
+						        $pageBar .= "<span style='margin-right:3px;margin-right:3px;'><a href='" . htmlspecialchars($hrefPrefix, HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars((($x-1)*$limit), HTML_SPECIAL_CHARS_FLAGS) . "'>" . htmlspecialchars($x, HTML_SPECIAL_CHARS_FLAGS) . "</a></span>";
 						    }
 						    else{
 						        $pageBar .= "<span style='margin-right:3px;margin-right:3px;font-weight:bold;'>".$x."</span>";
@@ -142,7 +142,7 @@ if($isEditor){
 						}
 					}
 					if($lastPage > $endPage){
-					    $pageBar .= "<span style='margin-left:5px;'>&gt;&gt; <a href='".$hrefPrefix.(($lastPage-1)*$limit)."'>Last Page</a></span>";
+					    $pageBar .= "<span style='margin-left:5px;'>&gt;&gt; <a href='" . htmlspecialchars($hrefPrefix, HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars((($lastPage-1)*$limit), HTML_SPECIAL_CHARS_FLAGS) . "'>Last Page</a></span>";
 					}
 					$pageBar .= "</span>";
 					$endNum = $start + $limit;
@@ -198,7 +198,7 @@ if($isEditor){
 				if($commentArr){
 					foreach($commentArr as $comid => $cArr){
 						echo '<div style="margin:15px;">';
-						echo '<div style="margin-bottom:10px;"><a href="../individual/index.php?occid='.$cArr['occid'].'" target="_blank">'.$cArr['occurstr'].'</a></div>';
+						echo '<div style="margin-bottom:10px;"><a href="../individual/index.php?occid=' . htmlspecialchars($cArr['occid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($cArr['occurstr'], HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 						echo '<div>';
 						echo '<b>'.$userArr[$cArr['uid']].'</b> <span style="color:gray;">'.$LANG['POSTED_ON'].' '.$cArr['ts'].'</span>';
 						if($cArr['rs'] == 2 || $cArr['rs'] === '0'){

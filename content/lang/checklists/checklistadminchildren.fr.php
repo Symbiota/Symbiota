@@ -18,4 +18,14 @@ $LANG['PARENTS'] = "Listes des Parents";
 $LANG['NO_PARENTS'] = 'Il n&apos;y a pas de listes des parents';
 $LANG['SURE'] = 'Êtes-vous sûr de vouloir supprimer';
 $LANG['AS_CHILD'] = 'tant que liste d&apos;enfant';
+$LANG['TAXONOMICNODE'] = "Sci name";
+$LANG['PARSETID'] = "ID taxonomique";
+$LANG['TARGETCHECKLIST'] = "Liste de contrôle cible";
+$LANG['SELECTTARGETCHECKLIST'] = "Sélectionner la Liste de Contrôle Cible";
+$LANG['CREATENEWCHECKLIST'] = "Créer une nouvelle liste de contrôle";
+$LANG['TRANSFERTAXA'] = "Taxon de transfert";
+$LANG['COPYTAXA'] = "Copier le taxon";
+$LANG['COPYPERMISSIONANDGENERAL'] = "Copier l'autorisation et les attributs généraux";
+$LANG['NOPARENTCHECKLIST'] = "Aucune Liste de Contrôle Pour les Parents";
+$LANG['NEWPROJECT'] = "Nouveau Projet";
 ?>

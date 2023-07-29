@@ -85,9 +85,9 @@ class TaxonomyCleaner extends Manager{
 			$taxaCnt = 1;
 			$itemCnt = 0;
 			while($r = $rs->fetch_object()){
-				$editLink = '[<a href="#" onclick="openPopup(\''.$GLOBALS['CLIENT_ROOT'].
-					'/collections/editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=sciname&q_customtype1=EQUALS&q_customvalue1='.urlencode($r->sciname).'&collid='.
-					$this->collid.'\'); return false;">'.$r->cnt.' specimens <img src="../../images/edit.png" style="width:12px;" /></a>]';
+				$editLink = '[<a href="#" onclick="openPopup(\'' . htmlspecialchars($GLOBALS['CLIENT_ROOT'], HTML_SPECIAL_CHARS_FLAGS) .
+					'/collections/editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=sciname&q_customtype1=EQUALS&q_customvalue1=' . urlencode($r->sciname) . '&collid=' . 
+					htmlspecialchars($this->collid, HTML_SPECIAL_CHARS_FLAGS) . '\'); return false;">' . htmlspecialchars($r->cnt, HTML_SPECIAL_CHARS_FLAGS) . ' specimens <img src="../../images/edit.png" style="width:12px;" /></a>]';
 				$this->logOrEcho('<div style="margin-top:5px">Resolving #'.$taxaCnt.': <b><i>'.$r->sciname.'</i></b>'.($r->family?' ('.$r->family.')':'').'</b> '.$editLink.'</div>');
 				if($r->family) $taxonHarvester->setDefaultFamily($r->family);
 				if($r->scientificnameauthorship) $taxonHarvester->setDefaultAuthor($r->scientificnameauthorship);
@@ -136,7 +136,7 @@ class TaxonomyCleaner extends Manager{
 							}
 							$idQual = (isset($taxonArr['identificationqualifier'])?str_replace("'", '', $taxonArr['identificationqualifier']):'');
 							$echoStr = '<i>'.implode(' ',$snTokens).'</i> =&gt; <span class="hideOnLoad">wait for page to finish loading...</span><span class="displayOnLoad" style="display:none">'.
-								'<a href="#" onclick="return remappTaxon(\''.urlencode($r->sciname).'\','.$tidMatch.',\''.$idQual.'\','.$itemCnt.')" style="color:blue"> remap to this taxon</a>'.
+								'<a href="#" onclick="return remappTaxon(\''.urlencode($r->sciname) . '\',' . htmlspecialchars($tidMatch, HTML_SPECIAL_CHARS_FLAGS)  . ',\'' . htmlspecialchars($idQual, HTML_SPECIAL_CHARS_FLAGS) . '\',' . htmlspecialchars($itemCnt, HTML_SPECIAL_CHARS_FLAGS) . ')" style="color:blue"> remap to this taxon</a>'.
 								'<span id="remapSpan-'.$itemCnt.'"></span></span>';
 							$this->logOrEcho($echoStr,2);
 							$itemCnt++;

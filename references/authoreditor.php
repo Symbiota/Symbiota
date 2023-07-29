@@ -52,7 +52,7 @@ if(!$addAuth){
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Author Management</title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -133,7 +133,7 @@ if(!$addAuth){
 							echo '<div><ul>';
 							foreach($authArr as $authId => $recArr){
 								echo '<li>';
-								echo '<a href="authoreditor.php?authid='.$authId.'"><b>'.$recArr["authorName"].'</b></a>';
+								echo '<a href="authoreditor.php?authid=' . htmlspecialchars($authId, HTML_SPECIAL_CHARS_FLAGS) . '"><b>' . htmlspecialchars($recArr["authorName"], HTML_SPECIAL_CHARS_FLAGS) . '</b></a>';
 								echo '</li>';
 							}
 							echo '</ul></div>';
@@ -186,7 +186,7 @@ if(!$addAuth){
 									echo '<div><ul>';
 									foreach($authPubArr as $refId => $recArr){
 										echo '<li>';
-										echo '<a href="refdetails.php?refid='.$refId.'" target="_blank"><b>'.$recArr["title"].'</b></a>';
+										echo '<a href="refdetails.php?refid=' . htmlspecialchars($refId, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><b>' . htmlspecialchars($recArr["title"], HTML_SPECIAL_CHARS_FLAGS) . '</b></a>';
 										echo ($recArr["secondarytitle"]?', '.$recArr["secondarytitle"].'.':'');
 										echo ($recArr["shorttitle"]?', '.$recArr["shorttitle"].'.':'');
 										echo ($recArr["pubdate"]?$recArr["pubdate"].'.':'');

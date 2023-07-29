@@ -33,7 +33,7 @@ if($SYMB_UID){
 <html>
 	<head>
 		<title><?php echo (isset($LANG['OCC_BATCH'])?$LANG['OCC_BATCH']:'Occurrence Association Batch Build'); ?></title>
-		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -50,9 +50,9 @@ if($SYMB_UID){
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div class="navpath">
-			<a href="../../index.php"><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
+			<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 			<?php
-			if($collid) echo '<a href="collprofiles.php?collid='.$collid.'&emode=1">Collection Management</a> &gt;&gt; ';
+			if($collid) echo '<a href="collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">Collection Management</a> &gt;&gt; ';
 			?>
 			<b><?php echo (isset($LANG['OCC_AS_MAN'])?$LANG['OCC_AS_MAN']:'Occurrence Association Manager'); ?></b>
 		</div>

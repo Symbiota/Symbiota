@@ -112,14 +112,14 @@ if($SYMB_UID){
 			if(substr($cssPath,0,1) == '/' && !file_exists($cssPath)){
 				if(file_exists($SERVER_ROOT.$targetLabelFormatArr['defaultCss'])) $cssPath = $CLIENT_ROOT.$targetLabelFormatArr['defaultCss'];
 			}
-			echo '<link href="'.$cssPath.'" type="text/css" rel="stylesheet" />'."\n";
+			echo '<link href="' . htmlspecialchars($cssPath, HTML_SPECIAL_CHARS_FLAGS) . '" type="text/css" rel="stylesheet" />'."\n";
 		}
 		if(isset($targetLabelFormatArr['customCss']) && $targetLabelFormatArr['customCss']){
 			$cssPath = $targetLabelFormatArr['customCss'];
 			if(substr($cssPath,0,1) == '/' && !file_exists($cssPath)){
 				if(file_exists($SERVER_ROOT.$targetLabelFormatArr['customCss'])) $cssPath = $CLIENT_ROOT.$targetLabelFormatArr['customCss'];
 			}
-			echo '<link href="'.$cssPath.'" type="text/css" rel="stylesheet" />'."\n";
+			echo '<link href="' . htmlspecialchars($cssPath, HTML_SPECIAL_CHARS_FLAGS) . '" type="text/css" rel="stylesheet" />'."\n";
 		}
 		?>
 		<style>

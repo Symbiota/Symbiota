@@ -78,4 +78,6 @@ $LANG['COMMENTS'] = 'Comments';
 $LANG['PAGE'] = 'Page';
 $LANG['OF'] = 'of';
 $LANG['CHECKLIST'] = 'Checklist';
+$LANG['SEARCHSYNONYMS'] = "Search Synonyms";
+$LANG['TAXONFILTER'] = 'Taxon Filter';
 ?>

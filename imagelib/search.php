@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/imagelib/search.'.$LANG_TAG.'.php');
@@ -6,16 +8,16 @@ header('Content-Type: text/html; charset='.$CHARSET);
 
 $taxonType = isset($_REQUEST['taxontype']) ? filter_var($_REQUEST['taxontype'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $useThes = array_key_exists('usethes',$_REQUEST) ? filter_var($_REQUEST['usethes'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$taxaStr = isset($_REQUEST['taxa']) ? filter_var($_REQUEST['taxa'], FILTER_SANITIZE_STRING) : '';
+$taxaStr = isset($_REQUEST['taxa']) ? htmlspecialchars($_REQUEST['taxa'], HTML_SPECIAL_CHARS_FLAGS) : '';
 $phUid = array_key_exists('phuid',$_REQUEST) ? filter_var($_REQUEST['phuid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$tags = array_key_exists('tags',$_REQUEST) ? filter_var($_REQUEST['tags'], FILTER_SANITIZE_STRING) : '';
-$keywords = array_key_exists('keywords',$_REQUEST) ? filter_var($_REQUEST['keywords'], FILTER_SANITIZE_STRING) : '';
-$imageCount = isset($_REQUEST['imagecount']) ? filter_var($_REQUEST['imagecount'], FILTER_SANITIZE_STRING) : 'all';
+$tags = array_key_exists('tags',$_REQUEST) ? htmlspecialchars($_REQUEST['tags'], HTML_SPECIAL_CHARS_FLAGS) : '';
+$keywords = array_key_exists('keywords',$_REQUEST) ? htmlspecialchars($_REQUEST['keywords'], HTML_SPECIAL_CHARS_FLAGS) : '';
+$imageCount = isset($_REQUEST['imagecount']) ? htmlspecialchars($_REQUEST['imagecount'], HTML_SPECIAL_CHARS_FLAGS) : 'all';
 $imageType = isset($_REQUEST['imagetype']) ? filter_var($_REQUEST['imagetype'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $pageNumber = array_key_exists('page',$_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $cntPerPage = array_key_exists('cntperpage',$_REQUEST) ? filter_var($_REQUEST['cntperpage'], FILTER_SANITIZE_NUMBER_INT) : 200;
-$catId = array_key_exists('catid',$_REQUEST) ? filter_var($_REQUEST['catid'], FILTER_SANITIZE_STRING) : 0;
-$action = array_key_exists('submitaction',$_REQUEST) ? filter_var($_REQUEST['submitaction'], FILTER_SANITIZE_STRING) : '';
+$catId = array_key_exists('catid',$_REQUEST) ? htmlspecialchars($_REQUEST['catid'], HTML_SPECIAL_CHARS_FLAGS) : 0;
+$action = array_key_exists('submitaction',$_REQUEST) ? htmlspecialchars($_REQUEST['submitaction'], HTML_SPECIAL_CHARS_FLAGS) : '';
 
 if(!$useThes && !$action) $useThes = 1;
 if(!$taxonType && isset($DEFAULT_TAXON_SEARCH)) $taxonType = $DEFAULT_TAXON_SEARCH;
@@ -38,17 +40,17 @@ $imgLibManager->setImageCount($imageCount);
 $imgLibManager->setImageType($imageType);
 if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Image Library</title>
-	<meta name='keywords' content='' />
+	<meta name='keywords' content='Search, Images, Taxon' />
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
 	<link href="../js/jquery-ui/jquery-ui.min.css?ver=1" type="text/css" rel="Stylesheet" />
-	<style type="text/css">
+	<style>
 		fieldset{ padding: 15px }
 		fieldset legend{ font-weight:bold }
 	</style>
@@ -97,6 +99,7 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 				<div id="criteriadiv">
 					<div style="clear:both;height:50px">
 						<div style="float:left;margin-top:3px">
+							<label for="taxontype"><?php echo htmlspecialchars($LANG['TAXON_TYPE'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
 							<select id="taxontype" name="taxontype">
 								<?php
 								for($h=1;$h<6;$h++){
@@ -106,15 +109,17 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 							</select>
 						</div>
 						<div style="float:left;">
+							<label for="taxa"  > <?php echo htmlspecialchars($LANG['TAXON'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
 							<input id="taxa" name="taxa" type="text" style="width:450px;" value="<?php echo $imgLibManager->getTaxaStr(); ?>" title="Separate multiple names w/ commas" autocomplete="off" />
 						</div>
 						<div style="float:left;margin-left:10px;" >
-							<input name="usethes" type="checkbox" value="1" <?php if(!$action || $imgLibManager->getUseThes()) echo 'CHECKED'; ?> >Include Synonyms
+							<input id ="usethes" name="usethes" type="checkbox" value="1" <?php if(!$action || $imgLibManager->getUseThes()) echo 'CHECKED'; ?> >
+							<label for="usethes"><?php echo htmlspecialchars($LANG['USE_THES'], HTML_SPECIAL_CHARS_FLAGS) ?> </label>
 						</div>
 					</div>
 					<div style="clear:both;margin-bottom:5px;">
-						Photographer:
-						<select name="phuid">
+						<label for="phuid"><?php echo htmlspecialchars($LANG['PHU_ID'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
+						<select id="phuid" name="phuid">
 							<option value="">All Image Contributors</option>
 							<option value="">-----------------------------</option>
 							<?php
@@ -129,8 +134,8 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 					if($tagArr = $imgLibManager->getTagArr()){
 						?>
 						<div style="margin-bottom:5px;">
-							Image Tag:
-							<select name="tags" >
+							<label for="tags"><?php echo htmlspecialchars($LANG['IMG_TAGS'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
+							<select id="tags" name="tags" >
 								<option value="">Select Tag</option>
 								<option value="">--------------</option>
 								<?php
@@ -155,7 +160,7 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 					$obsArr = (isset($collList['obs'])?$collList['obs']:null);
 					?>
 					<div style="margin-bottom:5px;">
-						Image Counts:
+						<label for="imagecount"><?php echo htmlspecialchars($LANG['IMG_COUNT'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
 						<select id="imagecount" name="imagecount">
 							<option value="all" <?php echo ($imgLibManager->getImageCount()=='all'?'SELECTED ':''); ?>>All images</option>
 							<option value="taxon" <?php echo ($imgLibManager->getImageCount()=='taxon'?'SELECTED ':''); ?>>One per taxon</option>
@@ -170,8 +175,8 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 					</div>
 					<div style="height: 40px">
 						<div style="margin-bottom:5px;float:left;">
-							Image Type:
-							<select name="imagetype" onchange="imageTypeChanged(this)">
+							<label for="imagetype"><?php echo htmlspecialchars($LANG['IMG_TYPE'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
+							<select id="imagetype" name="imagetypes" onchange="imageTypeChanged(this)" onkeypress="imageTypeChanged(this)">
 								<option value="0">All Images</option>
 								<option value="1" <?php echo ($imgLibManager->getImageType() == 1?'SELECTED':''); ?>>Specimen Images</option>
 								<option value="2" <?php echo ($imgLibManager->getImageType() == 2?'SELECTED':''); ?>>Image Vouchered Observations</option>
@@ -222,20 +227,20 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 							$url = 'search.php?'.$imgLibManager->getQueryTermStr().'&submitaction=search';
 							$pageBar = '<div style="float:left" >';
 							if($startPage > 1){
-								$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="'.$url.'&page=1">First</a></span>';
-								$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="'.$url.'&page='.(($pageNumber - 10) < 1 ?1:$pageNumber - 10).'">&lt;&lt;</a></span>';
+								$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="' . htmlspecialchars($url , HTML_SPECIAL_CHARS_FLAGS). '&page=1">First</a></span>';
+								$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="' . htmlspecialchars($url , HTML_SPECIAL_CHARS_FLAGS). '&page=' . htmlspecialchars((($pageNumber - 10) < 1 ?1:$pageNumber - 10), HTML_SPECIAL_CHARS_FLAGS) . '">&lt;&lt;</a></span>';
 							}
 							for($x = $startPage; $x <= $endPage; $x++){
 								if($pageNumber != $x){
-									$pageBar .= '<span class="pagination" style="margin-right:3px;"><a href="'.$url.'&page='.$x.'">'.$x.'</a></span>';
+									$pageBar .= '<span class="pagination" style="margin-right:3px;"><a href="' . htmlspecialchars($url , HTML_SPECIAL_CHARS_FLAGS). '&page=' . htmlspecialchars($x, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($x, HTML_SPECIAL_CHARS_FLAGS) . '</a></span>';
 								}
 								else{
 									$pageBar .= "<span class='pagination' style='margin-right:3px;font-weight:bold;'>".$x."</span>";
 								}
 							}
 							if(($lastPage - $startPage) >= 10){
-								$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="'.$url.'&page='.(($pageNumber + 10) > $lastPage?$lastPage:($pageNumber + 10)).'">&gt;&gt;</a></span>';
-								if($recordCnt < 10000) $pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="'.$url.'&page='.$lastPage.'">Last</a></span>';
+								$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="' . htmlspecialchars($url , HTML_SPECIAL_CHARS_FLAGS). '&page=' . htmlspecialchars((($pageNumber + 10) > $lastPage?$lastPage:($pageNumber + 10)), HTML_SPECIAL_CHARS_FLAGS) . '">&gt;&gt;</a></span>';
+								if($recordCnt < 10000) $pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="' . htmlspecialchars($url , HTML_SPECIAL_CHARS_FLAGS). '&page=' . htmlspecialchars($lastPage, HTML_SPECIAL_CHARS_FLAGS) . '">Last</a></span>';
 							}
 							$pageBar .= '</div><div style="float:right;margin-top:4px;margin-bottom:8px;">';
 							$beginNum = ($pageNumber - 1)*$cntPerPage + 1;

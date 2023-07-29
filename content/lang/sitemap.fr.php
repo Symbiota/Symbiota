@@ -124,6 +124,6 @@ $LANG['EDITIMG'] = 'Modifier Images';
 $LANG['IMGSORTORD'] = "Modifier l'Ordre de Tri des Images";
 $LANG['ADDNEWIMG'] = 'Ajouter une nouvelle image';
 $LANG['ALLPUBDAT'] = 'Tous les Ensembles de Données Consultables Publiquement';
-$LANG['DATMANPAG'] = 'Page de Gestion des Ensembles de Données</a> - ensembles de données que vous êtes autorisé à modifier';
-
+$LANG['DATMANPAG'] = 'Page de Gestion des Ensembles de Données';
+$LANG['DATA_AUTHORIZED_TO_EDIT'] = 'ensembles de données que vous êtes autorisé à modifier';
 ?>

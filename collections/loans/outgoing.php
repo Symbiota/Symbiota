@@ -117,7 +117,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 	<title><?php echo $DEFAULT_TITLE; ?>: Outgoing Loan Management</title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -154,9 +154,9 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'>Home</a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management Menu</a> &gt;&gt;
-		<a href="index.php?collid=<?php echo $collid; ?>">Loan Index</a> &gt;&gt;
-		<a href="outgoing.php?collid=<?php echo $collid.'&loanid='.$loanId; ?>"><b>Outgoing Loan Management</b></a>
+		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">Collection Management Menu</a> &gt;&gt;
+		<a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">Loan Index</a> &gt;&gt;
+		<a href="outgoing.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($loanId, HTML_SPECIAL_CHARS_FLAGS); ?>"><b>Outgoing Loan Management</b></a>
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
@@ -178,7 +178,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 			<div id="tabs" style="margin:0px;">
 			    <ul>
 					<li><a href="#outloandetaildiv"><span>Loan Details</span></a></li>
-					<li><a href="specimentab.php?collid=<?php echo $collid.'&loanid='.$loanId.'&sortTag='.$sortTag; ?>"><span>Specimens</span></a></li>
+					<li><a href="specimentab.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($loanId, HTML_SPECIAL_CHARS_FLAGS) . '&sortTag=' . htmlspecialchars($sortTag, HTML_SPECIAL_CHARS_FLAGS); ?>"><span>Specimens</span></a></li>
 					<li><a href="#outloandeldiv"><span>Admin</span></a></li>
 				</ul>
 				<div id="outloandetaildiv">
@@ -243,7 +243,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 								if($IS_ADMIN){
 									?>
 									<span>
-										<a href="../misc/institutioneditor.php?iid=<?php echo $loanArr['iidborrower']; ?>" target="_blank" title="Edit institution details (option available only to Super Admin)">
+										<a href="../misc/institutioneditor.php?iid=<?php echo htmlspecialchars($loanArr['iidborrower'], HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank" title="Edit institution details (option available only to Super Admin)">
 											<img src="../../images/edit.png" style="width:15px;" />
 										</a>
 									</span>
@@ -366,7 +366,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 											echo '<div style="float: left; margin-left: 5px;"><a href="../../' .
 												$attachArr['path'] . $attachArr['filename']  .'" target="_blank">' .
 												($attachArr['title'] != "" ? $attachArr['title'] : $attachArr['filename']) . '</a></div>';
-											echo '<a href="outgoing.php?collid='.$collid . '&loanid=' . $loanId . '&attachid='. $attachId . '&formsubmit=delAttachment"><img src="../../images/del.png" style="width: 15px; margin-left: 5px;"></a></li>';
+											echo '<a href="outgoing.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($loanId, HTML_SPECIAL_CHARS_FLAGS) . '&attachid='. htmlspecialchars($attachId, HTML_SPECIAL_CHARS_FLAGS) . '&formsubmit=delAttachment"><img src="../../images/del.png" style="width: 15px; margin-left: 5px;"></a></li>';
 										}
 										echo '</ul>';
 									}
@@ -389,7 +389,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 						<?php
 					}
 					?>
-					<div style="margin:20px"><b>&lt;&lt; <a href="index.php?collid=<?php echo $collid; ?>">Return to Loan Index Page</a></b></div>
+					<div style="margin:20px"><b>&lt;&lt; <a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">Return to Loan Index Page</a></b></div>
 				</div>
 				<div id="outloandeldiv">
 					<form name="deloutloanform" action="index.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this loan?')">

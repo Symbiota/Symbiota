@@ -123,8 +123,8 @@ include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class='navpath'>
 	<a href="../../index.php">Home</a> &gt;&gt;
-	<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
-	<a href="igsnmapper.php?collid=<?php echo $collid; ?>">IGSN GUID Generator</a> &gt;&gt;
+	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">Collection Management</a> &gt;&gt;
+	<a href="igsnmapper.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">IGSN GUID Generator</a> &gt;&gt;
 	<b>IGSN Management</b>
 </div>
 <div id="innertext">
@@ -168,7 +168,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							<button name="formsubmit" type="submit" value="deleteProfile" onclick="return confirm('Are you sure you want to delete this profile?')">Delete Profile</button>
 						</span>
 						<span style="margin-left:10px;">
-							<a href="igsnmapper.php?collid=<?php echo $collid; ?>"><button type="button">Go to Mapper</button></a>
+							<a href="igsnmapper.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><button type="button">Go to Mapper</button></a>
 						</span>
 					</form>
 				</div>
