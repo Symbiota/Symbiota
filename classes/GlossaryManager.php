@@ -58,6 +58,7 @@ class GlossaryManager extends Manager {
 		if(!is_numeric($tid)) $tid = 0;
 		$sqlWhere = '';
 		if($keyword){
+			$keyword = str_replace(array(' ','-'), array('% %','%-%'), $keyword);
 			$sqlWhere .= 'AND (g.term LIKE "%'.$this->cleanInStr($keyword).'%"';
 			if($deepSearch) $sqlWhere .= ' OR g.definition LIKE "%'.$this->cleanInStr($keyword).'%"';
 			$sqlWhere .= ') ';
@@ -1006,6 +1007,7 @@ class GlossaryManager extends Manager {
 			INNER JOIN glossary g2 ON gt2.glossid = g2.glossid ';
 		$sqlWhere = '';
 		if($keyword){
+			$keyword = str_replace(array(' ','-'), array('% %','%-%'), $keyword);
 			$sqlWhere .= '(g.term LIKE "%'.$this->cleanInStr($keyword).'%"';
 			if($deepSearch) $sqlWhere .= ' OR g.definition LIKE "%'.$this->cleanInStr($keyword).'%"';
 			$sqlWhere .= ') ';
