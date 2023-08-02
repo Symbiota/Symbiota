@@ -53,20 +53,19 @@ class GlossaryManager extends Manager {
  		parent::__destruct();
 	}
 
-	public function getTermSearch($keyword,$language,$tid,$deepSearch = 1){
+	public function getTermSearch($keyword, $language, $tid, $deepSearch = 1){
 		$retArr = array();
+		if(!is_numeric($tid)) $tid = 0;
 		$sqlWhere = '';
 		if($keyword){
-			$sqlWhere .= 'AND (g.term LIKE "'.$this->cleanInStr($keyword).'%" OR g.term LIKE "% '.$this->cleanInStr($keyword).'%" ';
-			if($deepSearch) $sqlWhere .= 'OR g.definition LIKE "%'.$this->cleanInStr($keyword).'%"';
+			$sqlWhere .= 'AND (g.term LIKE "%'.$this->cleanInStr($keyword).'%"';
+			if($deepSearch) $sqlWhere .= ' OR g.definition LIKE "%'.$this->cleanInStr($keyword).'%"';
 			$sqlWhere .= ') ';
 		}
-		if($language) $sqlWhere .= 'AND (g.`language` = "'.$this->cleanInStr($language).'") ';
-		if($tid && is_numeric($tid)) $sqlWhere .= 'AND (t.tid = '.$tid.' OR t2.tid = '.$tid.' OR (t.tid IS NULL AND t2.tid IS NULL)) ';
-		$sql = 'SELECT DISTINCT g.glossid, g.term '.
-			'FROM glossary g LEFT JOIN glossarytermlink tl ON g.glossid = tl.glossid '.
-			'LEFT JOIN glossarytaxalink t ON tl.glossgrpid = t.glossid '.
-			'LEFT JOIN glossarytaxalink t2 ON g.glossid = t2.glossid ';
+		if($language) $sqlWhere .= 'AND (g.language = "'.$this->cleanInStr($language).'") ';
+		if($tid) $sqlWhere .= 'AND (t.tid = '.$tid.' OR t2.tid = '.$tid.') ';
+		$sql = 'SELECT DISTINCT g.glossid, g.term FROM glossary g INNER JOIN glossarytermlink tl ON g.glossid = tl.glossid ';
+		if($tid) $sql .= 'INNER JOIN glossarytaxalink t ON tl.glossgrpid = t.glossid INNER JOIN glossarytaxalink t2 ON g.glossid = t2.glossid ';
 		if($sqlWhere) $sql .= 'WHERE '.substr($sqlWhere, 3);
 		$sql .= 'ORDER BY g.term ';
 		//echo '<div>'.$sql.'</div>';
@@ -82,10 +81,7 @@ class GlossaryManager extends Manager {
 	public function getTermArr(){
 		$retArr = array();
 		if($this->glossId){
-			$sql = 'SELECT glossid, term, definition, `language`, source, notes, resourceurl, author, translator '.
-				'FROM glossary '.
-				'WHERE glossid = '.$this->glossId;
-			//echo $sql;
+			$sql = 'SELECT glossid, term, definition, `language`, source, notes, resourceurl, author, translator FROM glossary WHERE glossid = '.$this->glossId;
 			if($rs = $this->conn->query($sql)){
 				if($r = $rs->fetch_object()){
 					$retArr['term'] = $r->term;
@@ -998,155 +994,159 @@ class GlossaryManager extends Manager {
 	}
 
 	//Export functions
-	public function getExportArr($language,$taxon,$images,$translations='',$definitions=''){
-		$isTranslationTableRequest = ($definitions?true:false);
+	public function getExportArr($language, $tid, $keyword, $deepSearch=0, $images=0, $translations='', $definitions=''){
+		if(!is_numeric($tid)) $tid = 0;
 		$retArr = array();
 		$referencesArr = array();
 		$contributorsArr = array();
 		$groupMap = array();
-		$sql = 'SELECT DISTINCT g.glossid, g.term, g.definition, g.language, g.source, g.translator, g.author, gt.glossgrpid '.
-			'FROM glossary g LEFT JOIN glossarytermlink gt ON gt.glossid = g.glossid '.
-			'LEFT JOIN glossarytaxalink gx ON gt.glossgrpid = gx.glossid '.
-			'LEFT JOIN glossarytaxalink gx2 ON g.glossid = gx2.glossid '.
-			'WHERE ((gx.tid = '.$taxon.') OR (gx2.tid = '.$taxon.')) AND (g.`language` = "'.$language.'") '.
-			'ORDER BY g.term ';
-		//echo $sql.'<br/>';
+		$sql = 'SELECT DISTINCT g2.glossid, g2.term, g2.definition, g2.language, g2.source, g2.translator, g2.author, g.term as searchterm, gt.glossgrpid
+			FROM glossary g INNER JOIN glossarytermlink gt ON g.glossid = gt.glossid
+			INNER JOIN glossarytermlink gt2 ON gt.glossgrpid = gt2.glossgrpid
+			INNER JOIN glossary g2 ON gt2.glossid = g2.glossid ';
+		$sqlWhere = '';
+		if($keyword){
+			$sqlWhere .= '(g.term LIKE "%'.$this->cleanInStr($keyword).'%"';
+			if($deepSearch) $sqlWhere .= ' OR g.definition LIKE "%'.$this->cleanInStr($keyword).'%"';
+			$sqlWhere .= ') ';
+		}
+		if($tid){
+			$sql .= 'LEFT JOIN glossarytaxalink gx ON gt.glossgrpid = gx.glossid LEFT JOIN glossarytaxalink gx2 ON g.glossid = gx2.glossid ';
+			$sqlWhere .= '(gx.tid = '.$tid.' OR gx2.tid = '.$tid.') ';
+		}
+		if($language) $sqlWhere .= ($sqlWhere?'AND ':'').'(g.language = "'.$this->cleanInStr($language).'" and g2.language = "'.$this->cleanInStr($language).'") ';
+		if($sqlWhere) $sql .= 'WHERE '.$sqlWhere;
+		$sql .= 'ORDER BY g2.term ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			if($r->source && !in_array($r->source,$referencesArr)) $referencesArr[] = $r->source;
-			if($r->translator && !in_array($r->translator,$contributorsArr)) $contributorsArr[] = $r->translator;
-			if($r->author && !in_array($r->author,$contributorsArr)) $contributorsArr[] = $r->author;
-			$retArr[$r->glossid]['term'] = $r->term;
-			if(!$definitions || $definitions != 'nodef') $retArr[$r->glossid]['definition'] = $r->definition;
+			if($r->source && !in_array($r->source, $referencesArr)) $referencesArr[] = $r->source;
+			if($r->translator && !in_array($r->translator, $contributorsArr)) $contributorsArr[] = $r->translator;
+			if($r->author && !in_array($r->author, $contributorsArr)) $contributorsArr[] = $r->author;
+			$retArr[$r->glossid]['term'] = strip_tags($r->term);
+			$retArr[$r->glossid]['searchTerm'] = strip_tags($r->searchterm);
+			if(!$definitions || $definitions != 'nodef') $retArr[$r->glossid]['definition'] = strip_tags($r->definition);
 			if($r->glossgrpid && $r->glossgrpid != $r->glossid) $groupMap[$r->glossgrpid][] = $r->glossid;
 		}
 		$rs->free();
 
-		//Get translations; Is a translation table request
-		$glossIdArr = array();
-		if($translations){
+		if($retArr){
 			$glossIdArr = array_keys($retArr);
-			if($groupMap) $glossIdArr = array_unique(array_merge($glossIdArr,array_keys($groupMap)));
-			$sql = 'SELECT DISTINCT g.glossid, g.term, g.definition, g.language, g.source, g.translator, g.author, gt.glossgrpid '.
-				'FROM glossary g LEFT JOIN glossarytermlink gt ON gt.glossid = g.glossid '.
-				'WHERE (g.`language` IN("'.implode('","',$translations).'")) AND (g.`language` != "'.$language.'") '.
-				'AND (g.glossid IN('.implode(',',$glossIdArr).') OR gt.glossgrpid IN('.implode(',',$glossIdArr).'))';
-			//echo $sql; exit;
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				if($r->source && !in_array($r->source,$referencesArr)) $referencesArr[] = $r->source;
-				if($r->translator && !in_array($r->translator,$contributorsArr)) $contributorsArr[] = $r->translator;
-				if($r->author && !in_array($r->author,$contributorsArr)) $contributorsArr[] = $r->author;
-				$targetArr = array();
-				if(isset($retArr[$r->glossid])) $targetArr[] = $r->glossid;
-				if(isset($groupMap[$r->glossid])){
-					$grpArr = $groupMap[$r->glossid];
-					foreach($grpArr as $altId){
-						if(isset($retArr[$altId])) $targetArr[] = $altId;
-					}
-				}
-				if($r->glossgrpid && $r->glossgrpid != $r->glossid){
-					if(isset($retArr[$r->glossgrpid])) $targetArr[] = $r->glossgrpid;
-					if(isset($groupMap[$r->glossgrpid])){
-						$grpArr = $groupMap[$r->glossgrpid];
+			if($translations){
+				//Get translations; Is a translation table request
+				if($groupMap) $glossIdArr = array_unique(array_merge($glossIdArr,array_keys($groupMap)));
+				$sql = 'SELECT DISTINCT g.glossid, g.term, g.definition, g.language, g.source, g.translator, g.author, gt.glossgrpid '.
+					'FROM glossary g LEFT JOIN glossarytermlink gt ON gt.glossid = g.glossid '.
+					'WHERE (g.language IN("'.implode('","',$translations).'")) AND (g.language != "'.$this->cleanInStr($language).'") '.
+					'AND (g.glossid IN('.implode(',',$glossIdArr).') OR gt.glossgrpid IN('.implode(',',$glossIdArr).'))';
+				$rs = $this->conn->query($sql);
+				while($r = $rs->fetch_object()){
+					if($r->source && !in_array($r->source, $referencesArr)) $referencesArr[] = $r->source;
+					if($r->translator && !in_array($r->translator, $contributorsArr)) $contributorsArr[] = $r->translator;
+					if($r->author && !in_array($r->author, $contributorsArr)) $contributorsArr[] = $r->author;
+					$targetArr = array();
+					if(isset($retArr[$r->glossid])) $targetArr[] = $r->glossid;
+					if(isset($groupMap[$r->glossid])){
+						$grpArr = $groupMap[$r->glossid];
 						foreach($grpArr as $altId){
 							if(isset($retArr[$altId])) $targetArr[] = $altId;
 						}
 					}
-				}
-				$targetArr = array_unique($targetArr);
-
-				foreach($targetArr as $targetId){
-					$targetTerm = $r->term;
-					if(isset($retArr[$targetId]['trans'][$r->language]['term'])){
-						//Term already exists, thus append it
-						$targetTerm .= '; '.$retArr[$targetId]['trans'][$r->language]['term'];
-					}
-					$retArr[$targetId]['trans'][$r->language]['term'] = $targetTerm;
-					if($definitions == 'alldef'){
-						$targetDef =  $r->definition;
-						if(isset($retArr[$targetId]['trans'][$r->language]['definition'])){
-							$targetTerm .= '; '.$retArr[$targetId]['trans'][$r->language]['definition'];
+					if($r->glossgrpid && $r->glossgrpid != $r->glossid){
+						if(isset($retArr[$r->glossgrpid])) $targetArr[] = $r->glossgrpid;
+						if(isset($groupMap[$r->glossgrpid])){
+							$grpArr = $groupMap[$r->glossgrpid];
+							foreach($grpArr as $altId){
+								if(isset($retArr[$altId])) $targetArr[] = $altId;
+							}
 						}
-						$retArr[$targetId]['trans'][$r->language]['definition'] = $targetDef;
 					}
-				}
-			}
-			$rs->free();
-		}
+					$targetArr = array_unique($targetArr);
 
-		//Get images
-		if($images && $retArr){
-			if(!$glossIdArr){
-				$glossIdArr = array_keys($retArr);
+					foreach($targetArr as $targetId){
+						$targetTerm = $r->term;
+						if(isset($retArr[$targetId]['trans'][$r->language]['term'])){
+							//Term already exists, thus append it
+							$targetTerm .= '; '.$retArr[$targetId]['trans'][$r->language]['term'];
+						}
+						$retArr[$targetId]['trans'][$r->language]['term'] = $targetTerm;
+						if($definitions == 'alldef'){
+							$targetDef =  $r->definition;
+							if(isset($retArr[$targetId]['trans'][$r->language]['definition'])){
+								$targetTerm .= '; '.$retArr[$targetId]['trans'][$r->language]['definition'];
+							}
+							$retArr[$targetId]['trans'][$r->language]['definition'] = $targetDef;
+						}
+					}
+				}
+				$rs->free();
+			}
+
+			if($images){
+				//Get images
 				if($groupMap) $glossIdArr = array_unique(array_merge($glossIdArr,array_keys($groupMap)));
-			}
-			$sql2 = 'SELECT glossid, glimgid, url, createdBy, structures, notes '.
-				'FROM glossaryimages '.
-				'WHERE glossid IN('.implode(',', $glossIdArr).') ';
-			//echo $sql2.'<br/>'; exit;
-			$rs2 = $this->conn->query($sql2);
-			while($r2 = $rs2->fetch_object()){
-				$targetId = $r2->glossid;
-				if(!isset($retArr[$targetId]) && isset($groupMap[$targetId])){
-					$grpArr = $groupMap[$r2->glossid];
-					foreach($grpArr as $altId){
-						if(isset($retArr[$altId])) $targetId = $altId;
+				$sql2 = 'SELECT glossid, glimgid, url, createdBy, structures, notes FROM glossaryimages WHERE glossid IN('.implode(',', $glossIdArr).') ';
+				//echo $sql2.'<br/>'; exit;
+				$rs2 = $this->conn->query($sql2);
+				while($r2 = $rs2->fetch_object()){
+					$targetId = $r2->glossid;
+					if(!isset($retArr[$targetId]) && isset($groupMap[$targetId])){
+						$grpArr = $groupMap[$r2->glossid];
+						foreach($grpArr as $altId){
+							if(isset($retArr[$altId])) $targetId = $altId;
+						}
+					}
+					if(isset($retArr[$targetId])){
+						if($r2->url && !isset($retArr[$targetId]['images'])){
+							$retArr[$targetId]['images'][$r2->glimgid]['url'] = $r2->url;
+							$retArr[$targetId]['images'][$r2->glimgid]['createdBy'] = $r2->createdBy;
+							$retArr[$targetId]['images'][$r2->glimgid]['structures'] = $r2->structures;
+							$retArr[$targetId]['images'][$r2->glimgid]['notes'] = $r2->notes;
+						}
 					}
 				}
-				if(isset($retArr[$targetId])){
-					if($r2->url && !isset($retArr[$targetId]['images'])){
-						$retArr[$targetId]['images'][$r2->glimgid]['url'] = $r2->url;
-						$retArr[$targetId]['images'][$r2->glimgid]['createdBy'] = $r2->createdBy;
-						$retArr[$targetId]['images'][$r2->glimgid]['structures'] = $r2->structures;
-						$retArr[$targetId]['images'][$r2->glimgid]['notes'] = $r2->notes;
-					}
-				}
+				$rs2->free();
 			}
-			$rs2->free();
 		}
-		$retArr['meta'] = $this->getExportMetadata($taxon, $referencesArr, $contributorsArr);
+		$retArr['meta'] = $this->getExportMetadata($tid, $referencesArr, $contributorsArr);
 		return $retArr;
 	}
 
-	private function getExportMetadata($taxon,$referencesArr,$contributorsArr){
+	private function getExportMetadata($tid, $referencesArr, $contributorsArr){
 		$retArr = array();
-		//Get taxa for group
-		$sql = 'SELECT t.SciName, v.VernacularName '.
-			'FROM taxa t LEFT JOIN taxavernaculars v ON t.tid = v.tid '.
-			'WHERE (t.tid = '.$taxon.') ';
-		//echo $sql;
-		$rs = $this->conn->query($sql);
-		if($r = $rs->fetch_object()){
-			$sciName = $r->SciName;
-			if($r->VernacularName) $sciName .= ' ('.$r->VernacularName.')';
-			$retArr['sciname'] = $sciName;
+		if($tid){
+			//Get taxa for group
+			$sql = 'SELECT t.SciName, v.VernacularName FROM taxa t LEFT JOIN taxavernaculars v ON t.tid = v.tid WHERE (t.tid = '.$tid.') ';
+			//echo $sql;
+			$rs = $this->conn->query($sql);
+			if($r = $rs->fetch_object()){
+				$sciName = $r->SciName;
+				if($r->VernacularName) $sciName .= ' ('.$r->VernacularName.')';
+				$retArr['sciname'] = $sciName;
+			}
+			$rs->free();
+			//Append contributor information from glossarysource table
+			$sourceArr = $this->getGlossarySources($tid);
+			if(isset($sourceArr['ref'])) $referencesArr = array_unique(array_merge($sourceArr['ref'],$referencesArr));
+			if(isset($sourceArr['con'])) $contributorsArr = array_unique(array_merge($sourceArr['con'],$contributorsArr));
 		}
-		$rs->free();
-		//Append contributor information from glossarysource table
-		$sourceArr = $this->getGlossarySources($taxon);
-		if(isset($sourceArr['ref'])) $referencesArr = array_unique(array_merge($sourceArr['ref'],$referencesArr));
-		if(isset($sourceArr['con'])) $contributorsArr = array_unique(array_merge($sourceArr['con'],$contributorsArr));
-
-		$retArr['references'] = $referencesArr;
-		$retArr['contributors'] = $contributorsArr;
+		if($referencesArr) $retArr['references'] = $referencesArr;
+		if($contributorsArr) $retArr['contributors'] = $contributorsArr;
 		return $retArr;
 	}
 
 	private function getGlossarySources($tid){
 		$retArr = array();
-		$sql = 'SELECT contributorTerm, contributorImage, translator, additionalSources '.
-			'FROM glossarysources '.
-			'WHERE tid = '.$tid;
-		//echo $sql;
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			if($r->additionalSources) $retArr['ref'][] = $r->additionalSources;
-			if($r->translator) $retArr['con'][] = $r->translator;
-			if($r->contributorTerm) $retArr['con'][] = $r->contributorTerm;
-			if($r->contributorImage) $retArr['img'][] = $r->contributorImage;
+		if($tid){
+			$sql = 'SELECT contributorTerm, contributorImage, translator, additionalSources FROM glossarysources WHERE tid = '.$tid;
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_object()){
+				if($r->additionalSources) $retArr['ref'][] = $r->additionalSources;
+				if($r->translator) $retArr['con'][] = $r->translator;
+				if($r->contributorTerm) $retArr['con'][] = $r->contributorTerm;
+				if($r->contributorImage) $retArr['img'][] = $r->contributorImage;
+			}
+			$rs->free();
 		}
-		$rs->free();
 		return $retArr;
 	}
 
@@ -1248,11 +1248,11 @@ class GlossaryManager extends Manager {
 	public function getLanguageArr($returnTag = ''){
 		$allArr = array();
 		$byTid = array();
-		$sql = 'SELECT DISTINCT g.`language`, IFNULL(t.tid, t2.tid) as tid, l.iso639_1 as code '.
-			'FROM glossary g LEFT JOIN glossarytermlink p ON g.glossid = p.glossid '.
-			'LEFT JOIN glossarytaxalink t ON g.glossid = t.glossid '.
-			'LEFT JOIN glossarytaxalink t2 ON p.glossgrpid = t2.glossid '.
-			'LEFT JOIN adminlanguages l ON g.language = l.`langname`';
+		$sql = 'SELECT DISTINCT g.language, IFNULL(t.tid, t2.tid) as tid, l.iso639_1 as code
+			FROM glossary g LEFT JOIN glossarytermlink p ON g.glossid = p.glossid
+			LEFT JOIN glossarytaxalink t ON g.glossid = t.glossid
+			LEFT JOIN glossarytaxalink t2 ON p.glossgrpid = t2.glossid
+			LEFT JOIN adminlanguages l ON g.language = l.langname';
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
 				$code = $r->code;
