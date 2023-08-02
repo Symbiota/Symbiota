@@ -62,7 +62,11 @@ $LANG['COUNTRY'] = 'Country';
 $LANG['SPEC_W_COUNTRY'] = 'Total Specimens with Country';
 $LANG['SPEC_WO_COUNTRY'] = 'Specimens without Country or Georeferencing';
 $LANG['SELECT_DESELECT'] = 'Select/Deselect';
-$LANG['RUN_OBSERVATION_STATS'] = 'Run Observation Statistics';
+$LANG['VIEW_STATS'] = 'View Statistics';
 $LANG['UPDATE_OBSERVATION_STATS'] = 'Update Observation Statistics';
+$LANG['OBSERVATION_COLLECTIONS'] = 'Observation Collections';
+$LANG['SPECIMEN_COLLECTIONS'] = 'Specimen Collections';
+$LANG['EXPAND'] = 'Expand';
+$LANG['CONDENSE'] = 'Condense';
 
 ?>
