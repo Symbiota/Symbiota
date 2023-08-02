@@ -52,7 +52,7 @@ class OccurrenceEditorManager {
 			// The key update of the new quick entry form 
 			'accesNum' => 'n', 'filedUnder' => 's', 'currName' => 's', 'idQualifier' => 's','detText' => 's', 'provenance' => 's', 'container' => 's', 'collTrip' => 's', 'geoWithin' => 's',
 			'highGeo' => 's', 'frequency' => 's', 'prepMethod' => 's', 'format' => 's', 'verbLat' => 's', 'verbLong' => 's', 'method' => 's'	
-		););
+		);
 		$this->fieldArr['omoccurpaleo'] = array('eon','era','period','epoch','earlyinterval','lateinterval','absoluteage','storageage','stage','localstage','biota',
 			'biostratigraphy','lithogroup','formation','taxonenvironment','member','bed','lithology','stratremarks','element','slideproperties','geologicalcontextid');
 		$this->fieldArr['omoccuridentifiers'] = array('idname','idvalue');
