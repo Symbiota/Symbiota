@@ -330,6 +330,9 @@ class TaxonomyHarvester extends Manager{
 		elseif(isset($nodeArr['name']['scientificName'])) $taxonArr['sciname'] = $nodeArr['name']['scientificName'];
 		if(isset($nodeArr['rank'])) $taxonArr['taxonRank'] = $nodeArr['rank'];
 		elseif(isset($nodeArr['name']['rank'])) $taxonArr['taxonRank'] = $nodeArr['name']['rank'];
+		if($taxonArr['taxonRank'] == 'Unranked'){
+			if(isset($nodeArr['accepted_name']['rank'])) $taxonArr['taxonRank'] = $nodeArr['accepted_name']['rank'];
+		}
 		if(isset($nodeArr['genus'])) $taxonArr['unitname1'] = $nodeArr['genus'];
 		elseif(isset($nodeArr['name']['genus'])) $taxonArr['unitname1'] = $nodeArr['name']['genus'];
 		elseif(isset($nodeArr['name']['uninomial'])) $taxonArr['unitname1'] = $nodeArr['name']['uninomial'];
