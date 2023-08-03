@@ -242,40 +242,39 @@ $traitArr = $indManager->getTraitArr();
 			if (occWindow.opener == null) occWindow.opener = self;
 		}
 
-		<?php
-		if($displayMap){
-			?>
+      <?php if($displayMap){ ?>
+
          function googleInit() {
-			   var mLatLng = new google.maps.LatLng(<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>);
-			   var dmOptions = {
-				   zoom: 8,
-				   center: mLatLng,
-				   marker: mLatLng,
-				   mapTypeId: google.maps.MapTypeId.TERRAIN,
-				   scaleControl: true
-				};
-				map = new google.maps.Map(document.getElementById("map_canvas"), dmOptions);
-				//Add marker
-				var marker = new google.maps.Marker({
-					position: mLatLng,
-					map: map
-				});
+            var mLatLng = new google.maps.LatLng(<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>);
+            var dmOptions = {
+               zoom: 8,
+               center: mLatLng,
+               marker: mLatLng,
+               mapTypeId: google.maps.MapTypeId.TERRAIN,
+               scaleControl: true
+            };
+            map = new google.maps.Map(document.getElementById("map_canvas"), dmOptions);
+            //Add marker
+            var marker = new google.maps.Marker({
+            position: mLatLng,
+               map: map
+            });
          }
          function leafletInit() {
-			   let mLatLng = [<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>];
+            let mLatLng = [<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>];
             map = new LeafletMap("map_canvas", {center: mLatLng, zoom: 8});
             const marker = L.marker(mLatLng).addTo(map.mapLayer);
          }
-			function initializeMap(){
-            <?php if($LEAFLET) { ?> 
-              leafletInit();
+
+         function initializeMap(){
+            <?php if($LEAFLET) { ?>
+               leafletInit();
             <?php } else { ?>
                googleInit();
             <?php } ?>
-			}
-			<?php
-		}
-		?>
+         }
+
+      <?php } ?>
 	</script>
 </head>
 <body>
