@@ -13,40 +13,6 @@ $crowdSourceMode = array_key_exists('csmode',$_REQUEST)?$_REQUEST['csmode']:0;
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 if(!$action && array_key_exists('carryover',$_REQUEST)) $goToMode = 2;
 
-if (isset($_REQUEST['batchid'])) {
-    $batchId = $_REQUEST['batchid'];
-    // Use $batchId as needed
-	$imgIDs = $occManager->getImgIDs($batchId);
-	$batchSize = count($imgIDs);
-	$firstImgId = $imgIDs[0] ;
-	$firstImgIndex = 0;
-} else {
-    $batchId = 0;
-	$batchSize = 0;
-	$firstImgId = 1;
-	$firstImgIndex = 0;
-}
-
-if (isset($_REQUEST['imgid'])) {
-    $imageId = $_REQUEST['imgid'];
-	$imgIndex = $_REQUEST['imgindex'];
-	// TODO: need to chec, if occID exists later
-	// $occID = $occManager->getOccIDs($imageId);
-	// $occIndex = $occID - 1
-} else {
-    $imageId = 1;
-	$imgIndex = 0;
-}
-
-//Sanitation
-if(!is_numeric($occId)) $occId = '';
-if(!is_numeric($collId)) $collId = false;
-if(!is_numeric($tabTarget)) $tabTarget = 0;
-if(!is_numeric($goToMode)) $goToMode = 0;
-if(!is_numeric($occIndex)) $occIndex = false;
-if(!is_numeric($crowdSourceMode)) $crowdSourceMode = 0;
-$action = filter_var($action,FILTER_SANITIZE_STRING);
-
 //Create Occurrence Manager
 $occManager = null;
 if(strpos($action,'Determination') || strpos($action,'Verification')){
@@ -65,6 +31,40 @@ else{
 if($crowdSourceMode){
 	$occManager->setCrowdSourceMode(1);
 }
+
+if (isset($_REQUEST['batchid'])) {
+    $batchId = $_REQUEST['batchid'];
+    // Use $batchId as needed
+	$imgIDs = $occManager->getImgIDs($batchId);
+	// $batchSize = count($imgIDs);
+	// $firstImgId = $imgIDs[0] ;
+	$firstImgIndex = 0;
+} else {
+    $batchId = 0;
+	$batchSize = 0;
+	$firstImgId = 1;
+	$firstImgIndex = 0;
+}
+
+if (isset($_REQUEST['imgid'])) {
+    $imageId = $_REQUEST['imgid'];
+	$imgIndex = $_REQUEST['imgindex'];
+	// TODO: need to chec, if occID exists later
+	$occID = $occManager->getOccIDs($imageId);
+	// $occIndex = $occID - 1
+} else {
+    $imageId = 1;
+	$imgIndex = 0;
+}
+
+//Sanitation
+if(!is_numeric($occId)) $occId = '';
+if(!is_numeric($collId)) $collId = false;
+if(!is_numeric($tabTarget)) $tabTarget = 0;
+if(!is_numeric($goToMode)) $goToMode = 0;
+if(!is_numeric($occIndex)) $occIndex = false;
+if(!is_numeric($crowdSourceMode)) $crowdSourceMode = 0;
+$action = filter_var($action,FILTER_SANITIZE_STRING);
 
 $displayQuery = 0;
 $isGenObs = 0;
@@ -568,8 +568,8 @@ else{
 		<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
 		<script src="../../js/symb/collections.editor.query.js?ver=5" type="text/javascript"></script>
 		<script>
-			function navigateToRecordNew(occIndex, occId, collId, crowdSourceMode) {
-				var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&occindex=' + occIndex + '&occid=' + occId + '&collid=' + collId;
+			function navigateToRecordNew(crowdSourceMode, collId, batchId, imgId, imgIndex, occId, occIndex) {
+				var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&collid=' + collId +'&batchid=' + batchId + '&imgid=' + imgId + '&imgindex=' + imgIndex + '&occid=' + occId + '&occindex=' + occIndex;
 				window.location.href = url;
 				event.preventDefault();
 			}
@@ -770,9 +770,6 @@ else{
 			<div class = "row">
 				<section>
 					<div class="btn function-bar" name="jumpform">
-						<!-- TODO: these buttons need to have corresponding functions(more detailes are needed) -->
-						<!-- see button functionality in old code below, interpret their uses -->
-						<!-- TODO: the "input" needs functions to jumps to corresponding page number -->
 						<form method="post">
 							<button type="submit" name="toggle-button" value="<?php echo isset($_POST['toggle-button']) && $_POST['toggle-button'] === 'Minimal' ? 'Detailed' : 'Minimal'; ?>">
 								<?php echo isset($_POST['toggle-button']) ? $_POST['toggle-button'] : 'Detailed'; ?>

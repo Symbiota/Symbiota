@@ -15,10 +15,8 @@ if(!is_numeric($collid)) $collid = 0;
 $occManager = new OccurrenceEditorDeterminations();
 $occManager->setCollId($collid);
 $collMap = $occManager->getCollMap();
-
 $collid = $_REQUEST["collid"];
-$firstImgId = '1';
-$firstImgIndex = '0';
+
 $firstOccId = $occManager->getOneOccID($firstImgId);
 
 if($collId && isset($collMap['collid']) && $collId != $collMap['collid']){
@@ -62,19 +60,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 		$selectedBatchID = $_POST["batchID"];
 		$imgIDs = $occManager->getImgIDs($selectedBatchID);
 	} else {
-		$imgIDs = $occManager->getAllImgIDs();
+		$imgIDs = $occManager->getAllImgIDs();		
 	}
+	$firstImgId = $imgIDs[0];
+	$firstImgIndex = 0;
+	$lastImgId = end($imgIDs);
+	$lastImgIndex = count($imgIDs) - 1;
 	$occData = array();
+	// occData is a hashtable, which has imgid as key, and occid as value
 	foreach ($imgIDs as $imgID) {
 		$occIDs = $occManager->getOccIDs($imgID);
 		$occData[$imgID] = $occIDs;
 	}
-	$allOccIDs = array();
-	foreach ($occData as $occIDs) {
-		$allOccIDs = array_merge($allOccIDs, $occIDs);
-	}
-	$firstOccIDs = reset($occData);
-	$lastOccIDs = end($occData);
+	// $allOccIDs = array();
+	// foreach ($occData as $occIDs) {
+	// 	$allOccIDs = array_merge($allOccIDs, $occIDs);
+	// }
+	// $firstOccIDs = reset($occData);
+	// $lastOccIDs = end($occData);
 }
 
 ?>
@@ -158,12 +161,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 				workingObj.style.display = "none";
 				return false;
 			}
-			// function updateSelectedBatch(selectElement) {
-			// 	var selectedValue = selectElement.value; // Get the selected value
-			// 	var selectedBatchElement = document.getElementById('slectedBatch'); // Get the <b> element
-			// 	// Update the value of the <b> element
-			// 	selectedBatchElement.textContent = 'Batch: ' + selectedValue;
-			// }
 		</script>
 	</head>
 	<body>
@@ -187,8 +184,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         <!-- TODO: update the submit function of the form -->
 						<form name="batchform" action="transcribe.php" method="post">
                             <div style="margin-bottom:15px;">
-                                <!-- TODO: figure out what is this line is, then customized the content -->
-                                <!-- TODO: onclick function of the buttons -->
 								<h3><?php echo($firstOccIDs[0]) ?></h3>
 								<div>
 									<?php $url = 'occurrencequickentry.php?csmode='.$crowdSourceMode.'&collid='.$collid.'&batchid=0&imgid=1&imgindex=0&occid='.$firstOccId.'&occindex='.($firstOccId-1); ?>
@@ -196,10 +191,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 										<h3>Go to the quick entry form</h3>
 									</a>
 								</div>
-                                <!-- <b id="slectedBatch">Batch: </b><br> -->
-								<button type="button" name="first" onclick="return navigateToRecordNew(<?php echo ($firstOccIDs[0]-1).', '.$firstOccIDs[0].', '.($collid).', '.$crowdSourceMode; ?>)"><?php echo $LANG['START_FROM']; ?> first.</button>
-                                <!-- TODO: need to customize the page number and set a veriable to start from the last page-->
-                                <button type="button" name="last"  onclick="return navigateToRecordNew(<?php echo ($lastOccIDs[0]-1).', '.$lastOccIDs[0].', '.($collid).', '.$crowdSourceMode; ?>)"><?php echo $LANG['START_FROM']; ?> last.</button>
+								<button type="button" name="first" onclick="return navigateToRecordNew(<?php echo ($crowdSourceMode).', '.($collid).', '.($selectedBatchID).', '.($firstImgId).', '.($firstImgIndex).', '.($occData[$firstImgId]).', '.($occData[$firstImgId]-1) ; ?>)"><?php echo $LANG['START_FROM']; ?> first.</button>
+                                <button type="button" name="last"  onclick="return navigateToRecordNew(<?php echo ($crowdSourceMode).', '.($collid).', '.($selectedBatchID).', '.($lastImgId).', '.($lastImgIndex).', '.($occData[$lastImgId]).', '.($occData[$lastImgId]-1); ?>)"><?php echo $LANG['START_FROM']; ?> last.</button>
 								<button type="button" name="lastView"><?php echo $LANG['START_FROM']; ?> last view.</button>
                             </div>
 							<div>
@@ -222,19 +215,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 						<p style="margin:0px;"><?php echo $LANG['STATUS']; ?></p>
 					</div>
 				</fieldset>
-				<!-- TODO: double check if we can just get ride of this parts -->
-				<!-- <fieldset>
-					<div>
-						<b style="margin:0px;">
-							<?php // if(array_key_exists('recordenteredby',$collArr)){
-									//echo ($collArr['recordenteredby']?$collArr['recordenteredby']:$LANG['NO_RECORDS']);
-								//}
-								//if(isset($collArr['dateentered']) && $collArr['dateentered']) echo ' ['.$collArr['dateentered'].']'; 
-								?>
-							<?php //echo $jumpStr; ?>
-						</b>
-					</div>
-				</fieldset> -->
 			</div>
 			<?php
 		}

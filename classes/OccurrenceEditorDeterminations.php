@@ -23,7 +23,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
         $result->free();
         return $batchValues;
 	}
-	
+
 	public function getImgIDs($batchID) {
 		$imgIDs = array();
 		$query = "SELECT imgid FROM batch_XREF WHERE batchID = '$batchID'";
@@ -33,17 +33,6 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		}
 		$result->free();
 		return $imgIDs;
-	}
-
-	public function getOccIDs($imgID) {
-		$OccIDs = array();
-		$query = "SELECT occid FROM images WHERE imgid = '$imgID'";
-		$result = $this->conn->query($query);
-		while ($row = $result->fetch_assoc()) {
-			$OccIDs[] = $row['occid'];
-		}
-		$result->free();
-		return $OccIDs;
 	}
 
 	public function getOneOccID($imgID) {
