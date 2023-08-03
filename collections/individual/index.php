@@ -246,13 +246,13 @@ $traitArr = $indManager->getTraitArr();
 		if($displayMap){
 			?>
          function googleInit() {
-				var mLatLng = new google.maps.LatLng(<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>);
-				var dmOptions = {
-					zoom: 8,
-					center: mLatLng,
-					marker: mLatLng,
-					mapTypeId: google.maps.MapTypeId.TERRAIN,
-					scaleControl: true
+			   var mLatLng = new google.maps.LatLng(<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>);
+			   var dmOptions = {
+				   zoom: 8,
+				   center: mLatLng,
+				   marker: mLatLng,
+				   mapTypeId: google.maps.MapTypeId.TERRAIN,
+				   scaleControl: true
 				};
 				map = new google.maps.Map(document.getElementById("map_canvas"), dmOptions);
 				//Add marker
@@ -262,16 +262,16 @@ $traitArr = $indManager->getTraitArr();
 				});
          }
          function leafletInit() {
-				var mLatLng = [<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>];
+			   let mLatLng = [<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>];
             map = new LeafletMap("map_canvas", {center: mLatLng, zoom: 8});
             const marker = L.marker(mLatLng).addTo(map.mapLayer);
          }
 			function initializeMap(){
-            if("<?php echo $LEAFLET?>") {
+            <?php if($LEAFLET) { ?> 
               leafletInit();
-            } else {
+            <?php } else { ?>
                googleInit();
-            }
+            <?php } ?>
 			}
 			<?php
 		}
