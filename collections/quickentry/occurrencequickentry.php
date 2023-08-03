@@ -498,30 +498,7 @@ else{
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 		<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['OCCEDITOR'])?$LANG['OCCEDITOR']:'Occurrence Editor'); ?></title>
-		<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
-		<?php
-		if($crowdSourceMode == 1){
-			?>
-			<link href="includes/config/occureditorcrowdsource.css?ver=2" type="text/css" rel="stylesheet" id="editorCssLink" />
-			<?php
-		}
-		else{
-			?>
-			<link href="../../css/symb/occurrenceeditor.css?ver=6" type="text/css" rel="stylesheet" id="editorCssLink" />
-			<?php
-			if(isset($CSSARR)){
-				foreach($CSSARR as $cssVal){
-					echo '<link href="includes/config/'.$cssVal.'?ver=170601" type="text/css" rel="stylesheet" />';
-				}
-			}
-			if(isset($JSARR)){
-				foreach($JSARR as $jsVal){
-					echo '<script src="includes/config/'.$jsVal.'?ver=170601" type="text/javascript"></script>';
-				}
-			}
-		}
-		include_once($SERVER_ROOT.'/includes/googleanalytics.php');
-		?>
+		
 		<script src="../../js/jquery.js?ver=140310" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js?ver=140310" type="text/javascript"></script>
 		<script type="text/javascript">
@@ -575,21 +552,26 @@ else{
 			}
 		</script>
 		<style type="text/css">
-			fieldset{ padding:15px }
-			fieldset > legend{ font-weight:bold; }
-			.fieldGroupDiv{ clear:both; margin-bottom:2px; }
-			.fieldDiv{ float:left; margin-right: 20px; }
-			#identifierDiv img{ width:10px; margin-left: 5px; }
-			.editimg{ width: 15px; }
-
-			/* this is the style for the new form ------------------------------------*/
 			*{
 				box-sizing: border-box;
 				font-family: sans-serif;
+				font-size: 12px;
 			}
 			h2{
 				background: linear-gradient(1000deg, rgb(218, 200, 255), #34ace0);;
 				color: white;
+				margin-top: -5px;
+				font-size: 20px;
+			}
+			#titleDiv {
+				font-size: 20px;
+				margin: 10px;
+				font-weight: 700;
+			}
+			#top {
+				margin-bottom: 10px;
+				margin-right: 17%;
+				margin-left: 17%;
 			}
 			.column{
 				float: left;
@@ -614,16 +596,16 @@ else{
 			}
 			.nav-bar a{
 				background-color: #00FFFF;
-			color: black;
-			border-style: solid;
-			border-color: black;
-			margin: 0;
+				color: black;
+				border-style: solid;
+				border-color: black;
+				margin: 0;
 			}
 			.nav-bar label{
-			background-color: #00FFFF;
-			color: black;
-			border-style: solid;
-			border-color: black;
+				background-color: #00FFFF;
+				color: black;
+				border-style: solid;
+				border-color: black;
 			}
 			.function-bar{
 				border:1px solid black; 
@@ -659,6 +641,7 @@ else{
 			}
 			.field-label {
 				text-align: left;
+				margin-left: 5px;
 				width: 120px;
 			}
 			.title{
@@ -670,107 +653,102 @@ else{
 	</head>
 <body>
 	<div id="innertext">
-		<div id="titleDiv">
-			<?php
-			if($collMap) echo $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').')';
-			if($isEditor && $isEditor != 3){
+		<div id="top">
+			<div id="titleDiv">
+				<?php
+					if($collMap) echo $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').')'; 
 				?>
-				<div id="querySymbolDiv" style="margin:5px 5px 5px 5px;">
-					<a href="#" title="<?php echo $LANG['SEARCH_FILTER']; ?>" onclick="toggleQueryForm();"><img src="../../images/find.png" style="width:18px;" /></a>
-				</div>
-				<?php
-			}
-			?>
-		</div>
-		<?php
-		if($isEditor && ($occId || ($collId && $isEditor < 3))){
-			if(!$occArr && !$goToMode) $displayQuery = 1;
-			include 'includes/queryform.php';
-			?>
-			<!-- this is nav bar division Home>>collection management>>... -->
-			<div id="navDiv">
-				<?php
-				if($navStr){
-					?>
-					<div style="float:right;">
-						<?php echo $navStr; ?>
-					</div>
+			</div>
+			<?php
+			if($isEditor && ($occId || ($collId && $isEditor < 3))){
+				if(!$occArr && !$goToMode) $displayQuery = 1;
+				include 'includes/queryform.php';
+				?>
+				<!-- this is nav bar division Home>>collection management>>... -->
+				<div id="navDiv">
 					<?php
-				}
-				if(isset($collections_editor_occurrenceeditorCrumbs)){
-					if($collections_editor_occurrenceeditorCrumbs){
+					if($navStr){
 						?>
-						<div class="navpath">
-							<a href='../../index.php'><?php echo (isset($LANG['HOME'])?$LANG['Home']:'Home'); ?></a> &gt;&gt;
-							<?php
-							echo $collections_editor_occurrenceeditorCrumbs;
-							echo '<b>'.(isset($LANG['EDITOR'])?$LANG['EDITOR']:'Editor').'</b>';
-							?>
+						<div style="float:right;">
+							<?php echo $navStr; ?>
 						</div>
 						<?php
 					}
-				}
-				else{
-					?>
-					<div class='navpath'>
-						<a href="../../index.php" onclick="return verifyLeaveForm()"><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
-						<?php
-						if($crowdSourceMode){
+					if(isset($collections_editor_occurrenceeditorCrumbs)){
+						if($collections_editor_occurrenceeditorCrumbs){
 							?>
-							<a href="../specprocessor/crowdsource/index.php"><?php echo (isset($LANG['CENTRAL_CROWD'])?$LANG['CENTRAL_CROWD']:'Crowd Source Central'); ?></a> &gt;&gt;
+							<div class="navpath">
+								<a href='../../index.php'><?php echo (isset($LANG['HOME'])?$LANG['Home']:'Home'); ?></a> &gt;&gt;
+								<?php
+								echo $collections_editor_occurrenceeditorCrumbs;
+								echo '<b>'.(isset($LANG['EDITOR'])?$LANG['EDITOR']:'Editor').'</b>';
+								?>
+							</div>
 							<?php
 						}
-						else{
-							if($isGenObs){
+					}
+					else{
+						?>
+						<div class='navpath'>
+							<a href="../../index.php" onclick="return verifyLeaveForm()"><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
+							<?php
+							if($crowdSourceMode){
 								?>
-								<a href="../../profile/viewprofile.php?tabindex=1" onclick="return verifyLeaveForm()"><?php echo (isset($LANG['PERS_MANAGEMENT'])?$LANG['PERS_MANAGEMENT']:'Personal Management'); ?></a> &gt;&gt;
+								<a href="../specprocessor/crowdsource/index.php"><?php echo (isset($LANG['CENTRAL_CROWD'])?$LANG['CENTRAL_CROWD']:'Crowd Source Central'); ?></a> &gt;&gt;
 								<?php
 							}
 							else{
-								if($isEditor == 1 || $isEditor == 2){
+								if($isGenObs){
 									?>
-									<a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1" onclick="return verifyLeaveForm()"><?php echo (isset($LANG['COL_MANAGEMENT'])?$LANG['COL_MANAGEMENT']:'Collection Management'); ?></a> &gt;&gt;
+									<a href="../../profile/viewprofile.php?tabindex=1" onclick="return verifyLeaveForm()"><?php echo (isset($LANG['PERS_MANAGEMENT'])?$LANG['PERS_MANAGEMENT']:'Personal Management'); ?></a> &gt;&gt;
 									<?php
 								}
+								else{
+									if($isEditor == 1 || $isEditor == 2){
+										?>
+										<a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1" onclick="return verifyLeaveForm()"><?php echo (isset($LANG['COL_MANAGEMENT'])?$LANG['COL_MANAGEMENT']:'Collection Management'); ?></a> &gt;&gt;
+										<?php
+									}
+								}
 							}
-						}
-						if($occId) echo '<a href="../individual/index.php?occid='.$occManager->getOccId().'">'.(isset($LANG['PUBLIC_DISPLAY'])?$LANG['PUBLIC_DISPLAY']:'Public Display').'</a> &gt;&gt;';
-						?>
-						<b><?php if($isEditor == 3) echo $LANG['TAXONOMIC_EDITOR']; ?></b>
-					</div>
-					<?php
-				}
-				?>
-			</div>
-
-
-		<!-- body part of the new form start from here -->
-		<!-- TODO: we leave the old form so that some of its funcitons can be reused in the new form  -->
-		<?php
-			if($statusStr){
-				?>
-				<div id="statusdiv" style="margin:5px 0px 5px 15px;">
-					<b><?php echo (isset($LANG['ACTION_STATUS'])?$LANG['ACTION_STATUS']:'Action Status'); ?>: </b>
-					<span style="color:<?php echo (stripos($statusStr,'ERROR')!==false?'red':'green'); ?>;"><?php echo $statusStr; ?></span>
-					<?php
-					if($action == 'Delete Occurrence'){
-						?>
-						<br/>
-						<a href="#" style="margin:5px;" onclick="window.opener.location.href = window.opener.location.href;window.close();">
-							<?php echo (isset($LANG['RETURN_TO_SEARCH'])?$LANG['RETURN_TO_SEARCH']:'Return to Search Page'); ?>
-						</a>
+							if($occId) echo '<a href="../individual/index.php?occid='.$occManager->getOccId().'">'.(isset($LANG['PUBLIC_DISPLAY'])?$LANG['PUBLIC_DISPLAY']:'Public Display').'</a> &gt;&gt;';
+							?>
+							<b><?php if($isEditor == 3) echo $LANG['TAXONOMIC_EDITOR']; ?></b>
+						</div>
 						<?php
 					}
 					?>
 				</div>
-				<?php
-			}
-		}?>
+
+
+			<!-- body part of the new form start from here -->
+			<!-- TODO: we leave the old form so that some of its funcitons can be reused in the new form  -->
+			<?php
+				if($statusStr){
+					?>
+					<div id="statusdiv" style="margin:5px 0px 5px 15px;">
+						<b><?php echo (isset($LANG['ACTION_STATUS'])?$LANG['ACTION_STATUS']:'Action Status'); ?>: </b>
+						<span style="color:<?php echo (stripos($statusStr,'ERROR')!==false?'red':'green'); ?>;"><?php echo $statusStr; ?></span>
+						<?php
+						if($action == 'Delete Occurrence'){
+							?>
+							<br/>
+							<a href="#" style="margin:5px;" onclick="window.opener.location.href = window.opener.location.href;window.close();">
+								<?php echo (isset($LANG['RETURN_TO_SEARCH'])?$LANG['RETURN_TO_SEARCH']:'Return to Search Page'); ?>
+							</a>
+							<?php
+						}
+						?>
+					</div>
+					<?php
+				}
+			}?>
+		</div>
 		<div id="editdiv">
 			<div class = "row">
 				<section>
 					<div class="btn function-bar" name="jumpform">
-						<form method="post">
+						<form method="post" style="margin: 5px;">
 							<button type="submit" name="toggle-button" value="<?php echo isset($_POST['toggle-button']) && $_POST['toggle-button'] === 'Minimal' ? 'Detailed' : 'Minimal'; ?>">
 								<?php echo isset($_POST['toggle-button']) ? $_POST['toggle-button'] : 'Detailed'; ?>
 							</button>
@@ -805,7 +783,6 @@ else{
 								}
 							} ?>
 						</div>
-						<!-- <button id="detail-btn" onclick="toggleDetail()" value="detailed">Detailed</button> -->
 					</div>
 				</section> 
 				<form id="fullform" name="fullform" action="occurrenceeditor.php" method="post" onsubmit="return verifyFullForm(this);">
@@ -910,14 +887,12 @@ else{
 								<span class="field-label"><?php echo (defined('IDENTIFIEDBYLABEL')?IDENTIFIEDBYLABEL:'Identified By'); ?></span>
 								<span class="field-elem">
 									<input size = '50' type="text"  maxlength="255" name="identifiedby" value="<?php echo array_key_exists('identifiedby',$occArr)?$occArr['identifiedby']:''; ?>" onchange="fieldChanged('identifiedby');" />
-									<a href="#" onclick="return dwcDoc('identifiedBy')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 								</span>
 							</div>
 							<div class="field-block">
 								<span class="field-label"><?php echo (defined('DATEIDENTIFIEDLABEL')?DATEIDENTIFIEDLABEL:'Date Identified'); ?></span>
 								<span class="field-elem">
 									<input size = '50' type="text" name="dateidentified" maxlength="45" value="<?php echo array_key_exists('dateidentified',$occArr)?$occArr['dateidentified']:''; ?>" onchange="fieldChanged('dateidentified');" />
-									<a href="#" onclick="return dwcDoc('dateIdentified')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 								</span>
 							</div>
 							<!-- There is a tab below is for determiation -->
@@ -954,7 +929,6 @@ else{
 							<span class="field-label"><?php echo (defined('RECORDEDBYLABEL')?RECORDEDBYLABEL:'Collectors'); ?></span>
 							<span class="field-elem">
 								<input size = '50' type="text" name="recordedby" maxlength="255" value="<?php echo array_key_exists('recordedby',$occArr)?$occArr['recordedby']:''; ?>" onchange="fieldChanged('recordedby');" />
-								<a href="#" onclick="return dwcDoc('recordedBy')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 							</span>
 						</div>
 						<!-- I put associated collectors here -->
@@ -962,28 +936,24 @@ else{
 							<span class="field-label"><?php echo (defined('ASSOCIATEDCOLLECTORSLABEL')?ASSOCIATEDCOLLECTORSLABEL:'Et al.'); ?></span>
 							<span class="field-elem">
 								<input size = '50' type="text" name="associatedcollectors" maxlength="255" value="<?php echo array_key_exists('associatedcollectors',$occArr)?$occArr['associatedcollectors']:''; ?>" onchange="fieldChanged('associatedcollectors');" />
-								<a href="#" onclick="return dwcDoc('associatedCollectors')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 							</span>
 						</div>
 						<div class="field-block">
 							<span class="field-label"><?php echo (defined('RECORDNUMBERLABEL')?RECORDNUMBERLABEL:'Collector Number'); ?></span>
 							<span class="field-elem">
 								<input size = '50' type="text" name="recordnumber" maxlength="45" value="<?php echo array_key_exists('recordnumber',$occArr)?$occArr['recordnumber']:''; ?>" onchange="recordNumberChanged(this);" />
-								<a href="#" onclick="return dwcDoc('recordNumber')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 							</span>
 						</div> 
 						<div class="field-block">
 							<span class="field-label"><?php echo (defined('EVENTDATELABEL')?EVENTDATELABEL:'Date Collected'); ?></span>
 							<span class="field-elem">
 								<input size = '50' type="text" name="eventdate" value="<?php echo array_key_exists('eventdate',$occArr)?$occArr['eventdate']:''; ?>" onchange="eventDateChanged(this);" />
-								<a href="#" onclick="return dwcDoc('eventDate')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 							</span>
 						</div>
 						<div class="field-block">
 							<span class="field-label"><?php echo (defined('VERBATIMEVENTDATELABEL')?VERBATIMEVENTDATELABEL:'Verbatim Date'); ?></span>
 							<span class="field-elem">
 								<input size = '50' type="text" name="verbatimeventdate" maxlength="255" value="<?php echo array_key_exists('verbatimeventdate',$occArr)?$occArr['verbatimeventdate']:''; ?>" onchange="verbatimEventDateChanged(this)" />
-								<a href="#" onclick="return dwcDoc('verbatimEventDate')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 							</span>
 						</div>
 						<?php if(!isset($_POST['toggle-button']) || (isset($_POST['toggle-button']) && $_POST['toggle-button'] != 'Minimal')): ?>
@@ -1049,14 +1019,12 @@ else{
 								<span class="field-label"><?php echo (defined('LOCALITYLABEL')?LOCALITYLABEL:'Verbatim Locality'); ?></span>
 								<span class="field-elem">
 									<input id="fflocality" type="text" size = '50'  onchange="fieldChanged('locality');" name="locality" value="<?php echo array_key_exists('locality',$occArr)?$occArr['locality']:''; ?>" />
-									<a href="#" onclick="return dwcDoc('locality')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" style="width:9px" /></a>
 								</span>
 							</div>
 							<div class="field-block">
 								<span class="field-label"><?php echo (defined('HABITATLABEL')?HABITATLABEL:'Habitat'); ?></span>
 								<span class="field-elem">
 									<input size = '50' type="text" name="habitat" value="<?php echo array_key_exists('habitat',$occArr)?$occArr['habitat']:''; ?>" onchange="fieldChanged('habitat');" />
-									<a href="#" onclick="return dwcDoc('habitat')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 								</span>
 							</div>
 							<div class="field-block">
@@ -1077,14 +1045,12 @@ else{
 								<span class="field-label"><?php echo (defined('VERBATIMATTRIBUTESLABEL')?VERBATIMATTRIBUTESLABEL:'Description'); ?></span>
 								<span class="field-elem">
 									<input size = '50' type="text" name="verbatimattributes" value="<?php echo array_key_exists('verbatimattributes',$occArr)?$occArr['verbatimattributes']:''; ?>" onchange="fieldChanged('verbatimattributes');" />
-									<a href="#" onclick="return dwcDoc('verbatimAttributes')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 								</span>
 							</div>
 							<div class="field-block">
 								<span class="field-label"><?php echo (defined('OCCURRENCEREMARKSLABEL')?OCCURRENCEREMARKSLABEL:'Remarks'); ?></span>
 								<span class="field-elem">
 									<input size = '50' type="text" name="occurrenceremarks" value="<?php echo array_key_exists('occurrenceremarks',$occArr)?$occArr['occurrenceremarks']:''; ?>" onchange="fieldChanged('occurrenceremarks');" title="<?php echo $LANG['OCC_REMARKS']; ?>" />
-									<a href="#" onclick="return dwcDoc('occurrenceRemarks')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 								</span>
 							</div>
 						<?php endif; ?>
@@ -1148,7 +1114,6 @@ else{
 									<span class="field-label"><?php echo (defined('VERBATIMELEVATIONLABEL')?VERBATIMELEVATIONLABEL:'Verb. Elev.'); ?></span>
 									<span class="field-elem">
 										<input size = '25' type="text" name="verbatimelevation" maxlength="255" value="<?php echo array_key_exists('verbatimelevation',$occArr)?$occArr['verbatimelevation']:''; ?>" onchange="verbatimElevationChanged(this.form);" />
-										<a href="#" onclick="return dwcDoc('verbatimElevation')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 									</span>
 								</div>
 								<div class="field-block">
@@ -1223,7 +1188,6 @@ else{
 									<span class="field-label"><?php echo (defined('COORDINATEUNCERTAINITYINMETERSLABEL')?COORDINATEUNCERTAINITYINMETERSLABEL:'Uncertainty'); ?></span>
 									<span class="field-elem">
 										<input size = '25' type="text" name="coordinateuncertaintyinmeters" maxlength="10" value="<?php echo array_key_exists('coordinateuncertaintyinmeters',$occArr)?$occArr['coordinateuncertaintyinmeters']:''; ?>" onchange="coordinateUncertaintyInMetersChanged(this.form);" title="<?php echo (isset($LANG['UNCERTAINTY_METERS'])?$LANG['UNCERTAINTY_METERS']:'Uncertainty in Meters'); ?>" />
-										<a href="#" onclick="return dwcDoc('coordinateUncertaintyInMeters')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 									</span>
 								</div>
 							</div>
