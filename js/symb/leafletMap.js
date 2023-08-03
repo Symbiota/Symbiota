@@ -59,6 +59,8 @@ class LeafletMap {
       }).addTo(this.mapLayer);
 
       L.control.scale().addTo(this.mapLayer);
+
+      this.mapLayer._onResize();
    }
 
    enableDrawing(drawOptions = this.DEFAULT_DRAW_OPTIONS, onDrawChange) {
