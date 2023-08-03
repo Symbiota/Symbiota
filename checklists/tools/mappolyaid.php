@@ -51,7 +51,7 @@ else{
 <html>
    <head>
 
-<?php
+      <?php
 	   include_once($SERVER_ROOT.'/includes/head.php');
 	   include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	   include_once($SERVER_ROOT.'/includes/leafletMap.php');
@@ -139,7 +139,12 @@ else{
          }
 
          function leafletInit() {
-            map = new LeafletMap('map_canvas');
+            const mapOptions = {
+               zoom: <?php echo $zoom; ?>, 
+               center: [<?php echo $latCenter?>, <?php echo $lngCenter?>]
+            }
+
+            map = new LeafletMap('map_canvas', mapOptions);
             map.enableDrawing({
                polyline: false,
                circlemarker: false,
@@ -152,7 +157,15 @@ else{
          }
 
          function googleInit() {
-            map = new GoogleMap('map_canvas');
+
+            const mapOptions= {
+               zoom: <?php echo $zoom; ?>,
+               center: new google.maps.LatLng(<?php echo $latCenter . ',' . $lngCenter; ?>),
+               mapTypeId: google.maps.MapTypeId.TERRAIN,
+               scaleControl: true
+            };
+
+            map = new GoogleMap('map_canvas', mapOptions);
             const resetSelect = () => map.shapes.map( s => {
                   s.layer.setEditable(false);
                   s.layer.setDraggable(false);
@@ -213,14 +226,12 @@ else{
          }
 
          function reformatPolygons() {
-
+            //setWkt with new settings
             setWkt(map.shapes);
-            //Clear out stuff
+            //Clear out currently draw shapes
             map.clearMap();
             //Redraw
             drawLoadedShape();
-            //initialize();
-            //Reset Switch because swap was made
          }
 
 			function polygonModified(f){
