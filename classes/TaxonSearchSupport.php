@@ -99,12 +99,13 @@ class TaxonSearchSupport{
 	//Setters and getters
 	public function setQueryString($queryString){
 		//$queryString = $this->cleanInStr($queryString);
-		$queryString = preg_replace('/[\'"+\=@$%]+/i', '', $queryString);
+		$queryString = preg_replace('/[\+\=@$%]+/i', '', $queryString);
 		if(strpos($queryString, ' ')){
+			$queryString = str_ireplace(array('"', "'"), '_', $queryString);
 			$queryString = preg_replace('/\s{1}x{1}$/i', ' _', $queryString);
 			$queryString = preg_replace('/\s{1}x{1}\s{1}/i', ' _ ', $queryString);
-			$queryString = str_ireplace(' x', ' _', $queryString);
 			$queryString = str_ireplace(' x ', ' _ ', $queryString);
+			$queryString = str_ireplace(' x', ' _', $queryString);
 		}
 		$this->queryString = $queryString;
 	}

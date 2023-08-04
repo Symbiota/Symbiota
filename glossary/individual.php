@@ -212,14 +212,15 @@ if($glossId){
 									<?php
 									$imgWidth = 0;
 									$imgHeight = 0;
-									$size = getimagesize(str_replace(' ', '%20', $imgUrl));
-									if($size[0] > 240){
-										$imgWidth = 240;
-										$imgHeight = 0;
-									}
-									if($size[0] < 245 && $size[1] > 500){
-										$imgWidth = 0;
-										$imgHeight = 500;
+									if($size = getimagesize(str_replace(' ', '%20', $imgUrl))){
+										if($size[0] > 240){
+											$imgWidth = 240;
+											$imgHeight = 0;
+										}
+										if($size[0] < 245 && $size[1] > 500){
+											$imgWidth = 0;
+											$imgHeight = 500;
+										}
 									}
 									?>
 									<img src='<?php echo $imgUrl; ?>' style="margin:auto;display:block;border:1px;<?php echo ($imgWidth?'width:'.$imgWidth.'px;':'').($imgHeight?'height:'.$imgHeight.'px;':''); ?>" title='<?php echo $imgArr['structures']; ?>'/>
