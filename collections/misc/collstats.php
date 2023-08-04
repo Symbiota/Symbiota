@@ -391,8 +391,8 @@ if($action != "Update Statistics"){
 			<!-- This is inner text! -->
 			<div id="innertext">
 				<h1><?php echo (isset($LANG['SELECT_COLS'])?$LANG['SELECT_COLS']:'Select Collections to be Analyzed'); ?></h1>
-				<div id="tabs" style="margin:0px;">
-					<ul>
+				<div id="tabs" style="margin:0px; display:flex; flex-wrap: wrap;">
+					<ul style="flex-basis: 100%;">
 						<li><a href="#specobsdiv"><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
 						<?php
                         if($action == "Run Statistics"){
@@ -439,7 +439,7 @@ if($action != "Update Statistics"){
 										if(isset($specArr['cat'])){
 											$categoryArr = $specArr['cat'];
 											?>
-											<div style="position: fixed; top: 28rem; margin-left: 59%;" id="statistics-button-panel">
+											<div style="position: sticky; top:1rem; align-self: flex-end; margin-left: 59%;" id="statistics-button-panel">
 												<div>
 													<button id="deleteMe12" type="submit" name="submitaction" value="Run Statistics"><?php echo (isset($LANG['RUN_STATS'])?$LANG['RUN_STATS']:'Run Statistics'); ?></button>
 												</div>
