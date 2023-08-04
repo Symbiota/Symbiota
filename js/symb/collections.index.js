@@ -5,18 +5,21 @@ $(document).ready(function () {
 });
 
 function toggle(target) {
+  console.log("deleteMe toggle entered and target is: ");
+  console.log(target);
   var ele = document.getElementById(target);
   if (ele) {
-    if (ele.style.display == "none") {
+    if (ele.style.display === "none") {
       if (
-        ele.id.substring(0, 5) == "minus" ||
-        ele.id.substring(0, 4) == "plus"
+        ele.id.substring(0, 5) === "minus" ||
+        ele.id.substring(0, 4) === "plus"
       ) {
         ele.style.display = "inline";
       } else {
         ele.style.display = "block";
       }
     } else {
+      console.log("deleteMe got here c1");
       ele.style.display = "none";
     }
   }

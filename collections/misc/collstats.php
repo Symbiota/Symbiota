@@ -441,7 +441,7 @@ if($action != "Update Statistics"){
 											?>
 											<div style="position: sticky; top:1rem; float: right;" id="statistics-button-panel">
 												<div>
-													<button id="deleteMe12" type="submit" name="submitaction" value="Run Statistics"><?php echo (isset($LANG['RUN_STATS'])?$LANG['RUN_STATS']:'Run Statistics'); ?></button>
+													<button id="deleteMe12" type="submit" name="submitaction" value="Run Statistics"><?php echo (isset($LANG['VIEW_STATS'])?$LANG['VIEW_STATS']:'View Statistics'); ?></button>
 												</div>
 												<?php
 												if($SYMB_UID && $IS_ADMIN){
@@ -600,6 +600,7 @@ if($action != "Update Statistics"){
 													<div class="gridlike-form-row bottom-breathing-room-relative">
 														<div>
 															<input id="cat-<?php echo $idStr; ?>-Input" name="cat[]" value="<?php echo $catid; ?>" type="checkbox" onclick="selectAllCat(this,'cat-<?php echo $idStr; ?>')" <?php echo ($collIdArr&&($collIdArr==array_keys($catArr))?'checked':''); ?> />
+															<label for="cat-<?php echo $idStr; ?>-Input"><?php echo $LANG['SELECT_DESELECT'] ?></label>
 														</div>
 														<div>
 															<a id="deleteMe-b" href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;" style="display:flex; flex-direction:row;">
@@ -687,7 +688,7 @@ if($action != "Update Statistics"){
 											</section>
 											<div style="float:right;margin-top:20px;margin-bottom:10px;">
 												<div>
-													<button id="deleteMe5" type="submit" name="submitaction" value="Run Statistics"><?php echo (isset($LANG['RUN_STATS'])?$LANG['RUN_STATS']:'Run Statistics'); ?></button>
+													<button id="deleteMe5" type="submit" name="submitaction" value="Run Statistics"><?php echo (isset($LANG['VIEW_STATS'])?$LANG['VIEW_STATS']:'View Statistics'); ?></button>
 												</div>
 												<?php
 												if($SYMB_UID && $IS_ADMIN){

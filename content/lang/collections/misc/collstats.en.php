@@ -16,7 +16,6 @@ $LANG['REC_CRITERIA'] = 'Record Criteria';
 $LANG['PARENT_CRITERIA'] = 'Parent Taxon';
 $LANG['SEL_OR_DESEL'] = 'Select/Deselect All';
 $LANG['MORE_INFO'] = 'more info';
-$LANG['RUN_STATS'] = 'Run Statistics';
 $LANG['UPDATE_STATS'] = 'Update Statistics';
 $LANG['NO_COLLECTIONS'] = 'There are currently no collections to analyze.';
 $LANG['SEL_COL_STATS'] = 'Selected Collection Statistics';
