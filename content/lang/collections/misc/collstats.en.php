@@ -67,5 +67,8 @@ $LANG['OBSERVATION_COLLECTIONS'] = 'Observation Collections';
 $LANG['SPECIMEN_COLLECTIONS'] = 'Specimen Collections';
 $LANG['EXPAND'] = 'Expand';
 $LANG['CONDENSE'] = 'Condense';
+$LANG['OBSERVATION'] = 'Observation';
+$LANG['SPECIMEN'] = 'Specimen';
+
 
 ?>

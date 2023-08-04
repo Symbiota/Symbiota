@@ -468,7 +468,11 @@ if($action != "Update Statistics"){
 													<section class="gridlike-form-row">
 														<div>
 															<input id="cat-<?php echo $idStr; ?>-Input" name="cat[]" value="<?php echo $catid; ?>" type="checkbox" onclick="selectAllCat(this,'cat-<?php echo $idStr; ?>')" <?php echo ($collIdArr&&($collIdArr==array_keys($catArr))?'checked':''); ?> />
-															<label for="cat-<?php echo $idStr; ?>-Input"><?php echo $LANG['SELECT_DESELECT'] ?></label>
+															<label for="cat-<?php echo $idStr; ?>-Input">
+																<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
+																<?php echo $name; ?> (<?php echo isset($LANG['SPECIMEN']) ? $LANG['SPECIMEN'] : "Specimen" ?>)
+															</a>
+															</label>
 														</div>
 														<div>
 															<a href="#" id="deleteMe-a" onclick="toggleCat('<?php echo $idStr; ?>');return false;" style="display:flex; flex-direction:row;">
@@ -484,11 +488,6 @@ if($action != "Update Statistics"){
 																</div>
 															</a>
 														</div>
-														<div class="categorytitle">
-															<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-																<?php echo $name; ?>
-															</a>
-														</div>
 													</section>
 													<section class="gridlike-form-row bottom-breathing-room-relative">
 														<div>
@@ -499,17 +498,19 @@ if($action != "Update Statistics"){
 																		?>
 																		<div class="gridlike-form-row bottom-breathing-room-relative">
 																			<div>
-																				<input name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
+																				<input id="db-<?php echo $collid?>" name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
+																				<label for="db-<?php echo $collid?>">
+																					<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
+																						<?php
+																						$codeStr = ' ('.$collName2['instcode'];
+																						if($collName2['collcode']) $codeStr .= '-'.$collName2['collcode'];
+																						$codeStr .= ')';
+																						echo $collName2["collname"].$codeStr;
+																						?>
+																					</a>
+																				</label>
 																			</div>
 																			<div>
-																				<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
-																					<?php
-																					$codeStr = ' ('.$collName2['instcode'];
-																					if($collName2['collcode']) $codeStr .= '-'.$collName2['collcode'];
-																					$codeStr .= ')';
-																					echo $collName2["collname"].$codeStr;
-																					?>
-																				</a>
 																				<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
 																					<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
 																				</a>
@@ -600,13 +601,17 @@ if($action != "Update Statistics"){
 													<div class="gridlike-form-row bottom-breathing-room-relative">
 														<div>
 															<input id="cat-<?php echo $idStr; ?>-Input" name="cat[]" value="<?php echo $catid; ?>" type="checkbox" onclick="selectAllCat(this,'cat-<?php echo $idStr; ?>')" <?php echo ($collIdArr&&($collIdArr==array_keys($catArr))?'checked':''); ?> />
-															<label for="cat-<?php echo $idStr; ?>-Input"><?php echo $LANG['SELECT_DESELECT'] ?></label>
+															<label for="cat-<?php echo $idStr; ?>-Input">
+																<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
+																<?php echo $name; ?> (<?php echo isset($LANG['OBSERVATION']) ? $LANG['OBSERVATION'] : "Observation" ?>)
+																</a>
+															</label>
 														</div>
 														<div>
 															<a id="deleteMe-b" href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;" style="display:flex; flex-direction:row;">
 																<div style="display:flex; flex-direction:row; align-items:center; gap:1rem;">
-																	<img id="plus-<?php echo $idStr; ?>" src="../../images/plus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>" />
-																	<img id="minus-<?php echo $idStr; ?>" src="../../images/minus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" />
+																	<img id="plus-<?php echo $idStr; ?>" alt="plus sign to expand menu" src="../../images/plus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>" />
+																	<img id="minus-<?php echo $idStr; ?>" alt="minus sign to condense menu" src="../../images/minus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" />
 																	<p id="ptext-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>">
 																			<?php echo $LANG['EXPAND'] ?>
 																	</p>
@@ -616,11 +621,7 @@ if($action != "Update Statistics"){
 																</div>
 															</a>
 														</div>
-														<div class="categorytitle">
-															<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-																<?php echo $name; ?>
-															</a>
-														</div>
+														
 													</div>
 													<div>
 														<div style="border:inset; padding-top:2rem;">
@@ -631,15 +632,17 @@ if($action != "Update Statistics"){
 																		?>
 																			<div class="gridlike-form-row bottom-breathing-room-relative">
 																				<div>
-																					<input style="margin-right: 0.7rem;" name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
-																					<a style="font-size:1.35rem;" href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
-																						<?php
-																						$codeStr = ' ('.$collName2['instcode'];
-																						if($collName2['collcode']) $codeStr .= '-'.$collName2['collcode'];
-																						$codeStr .= ')';
-																						echo $collName2["collname"].$codeStr;
-																						?>
-																					</a>
+																					<input style="margin-right: 0.7rem;" id="db-<?php echo $collid ?>" name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
+																					<label for="db-<?php echo $collid ?>">
+																						<a style="font-size:1.35rem;" href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
+																							<?php
+																							$codeStr = ' ('.$collName2['instcode'];
+																							if($collName2['collcode']) $codeStr .= '-'.$collName2['collcode'];
+																							$codeStr .= ')';
+																							echo $collName2["collname"].$codeStr;
+																							?>
+																						</a>
+																					</label>
 																					<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
 																						<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
 																					</a>
@@ -668,7 +671,8 @@ if($action != "Update Statistics"){
 												foreach($collArr as $collid => $cArr){
 													?>
 														<div>
-															<input name="db[]" value="<?php echo $collid; ?>" type="checkbox" onclick="uncheckAll();" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
+															<input id="db-<?php echo $collid ?>" name="db[]" value="<?php echo $collid; ?>" type="checkbox" onclick="uncheckAll();" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
+															<label for="db-<?php echo $collid ?>"><?php echo $LANG['SELECT_DESELECT'] ?></label>
 														</div>
 														<div class="gridlike-form-row bottom-breathing-room-relative">
 														<div class="collectiontitle">
