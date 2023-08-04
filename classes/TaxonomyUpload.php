@@ -435,13 +435,13 @@ class TaxonomyUpload{
 
 		$sql = 'UPDATE uploadtaxa u INNER JOIN uploadtaxa u2 ON u.sourceParentId = u2.sourceId '.
 			'SET u.parentstr = u2.sciname '.
-			'WHERE (u.parentstr IS NULL) AND (u.sourceParentId IS NOT NULL) AND (u2.sourceId IS NOT NULL)';
+			'WHERE (u.parentstr IS NULL)';
 		if(!$this->conn->query($sql)){
 			$this->outputMsg('ERROR: '.$this->conn->error,1);
 		}
 		$sql = 'UPDATE uploadtaxa u INNER JOIN uploadtaxa u2 ON u.sourceAcceptedId = u2.sourceId '.
 			'SET u.acceptedstr = u2.sciname '.
-			'WHERE (u.acceptedstr IS NULL) AND (u.sourceAcceptedId IS NOT NULL) AND (u2.sourceId IS NOT NULL)';
+			'WHERE (u.acceptedstr IS NULL)';
 		if(!$this->conn->query($sql)){
 			$this->outputMsg('ERROR: '.$this->conn->error,1);
 		}
@@ -452,7 +452,8 @@ class TaxonomyUpload{
 
 		//Link names already in theusaurus
 		$this->outputMsg('Linking names already in thesaurus... ');
-		$sql = 'UPDATE uploadtaxa u INNER JOIN taxa t ON u.sciname = t.sciname SET u.tid = t.tid WHERE (u.tid IS NULL) AND (t.kingdomname = "'.$this->kingdomName.'") ';
+		$sql = 'UPDATE uploadtaxa u INNER JOIN taxa t ON u.sciname = t.sciname SET u.tid = t.tid
+			WHERE (u.tid IS NULL) AND (t.kingdomname = "'.$this->kingdomName.'" OR t.sciname = "'.$this->kingdomName.'" OR t.rankid < 10) ';
 		if(!$this->conn->query($sql)){
 			$this->outputMsg('ERROR: '.$this->conn->error,1);
 		}
@@ -465,7 +466,7 @@ class TaxonomyUpload{
 		}
 		$sql = 'UPDATE uploadtaxa u INNER JOIN taxa t ON u.acceptedstr = t.sciname '.
 			'SET u.tidaccepted = t.tid '.
-			'WHERE (u.tidaccepted IS NULL) AND (t.kingdomname = "'.$this->kingdomName.'")';
+			'WHERE (u.tidaccepted IS NULL) AND (t.kingdomname = "'.$this->kingdomName.'" OR t.sciname = "'.$this->kingdomName.'" OR t.rankid < 10)';
 		if(!$this->conn->query($sql)){
 			$this->outputMsg('ERROR: '.$this->conn->error,1);
 		}
@@ -570,7 +571,9 @@ class TaxonomyUpload{
 			$this->outputMsg('ERROR: '.$this->conn->error,1);
 		}
 
-		$sql = 'UPDATE uploadtaxa up INNER JOIN taxa t ON up.parentstr = t.sciname SET parenttid = t.tid WHERE (parenttid IS NULL) AND (t.kingdomname = "'.$this->kingdomName.'")';
+		$sql = 'UPDATE uploadtaxa up INNER JOIN taxa t ON up.parentstr = t.sciname
+			SET parenttid = t.tid
+			WHERE (parenttid IS NULL) AND (t.kingdomname = "'.$this->kingdomName.'" OR t.sciname = "'.$this->kingdomName.'" OR t.rankid < 10)';
 		if(!$this->conn->query($sql)){
 			$this->outputMsg('ERROR: '.$this->conn->error,1);
 		}
@@ -584,7 +587,7 @@ class TaxonomyUpload{
 		$this->conn->query($sql);
 		$sql = 'UPDATE uploadtaxa up INNER JOIN taxa t ON up.parentstr = t.sciname '.
 			'SET up.parenttid = t.tid '.
-			'WHERE (up.parenttid IS NULL) AND (t.kingdomname = "'.$this->kingdomName.'")';
+			'WHERE (up.parenttid IS NULL) AND (t.kingdomname = "'.$this->kingdomName.'" OR t.sciname = "'.$this->kingdomName.'" OR t.rankid < 10)';
 		$this->conn->query($sql);
 
 		//Load into uploadtaxa parents of species not yet in taxa table
@@ -595,7 +598,7 @@ class TaxonomyUpload{
 		$this->conn->query($sql);
 		$sql = 'UPDATE uploadtaxa up LEFT JOIN taxa t ON up.parentstr = t.sciname '.
 			'SET up.parenttid = t.tid '.
-			'WHERE ISNULL(up.parenttid) AND (t.kingdomname = "'.$this->kingdomName.'")';
+			'WHERE ISNULL(up.parenttid) AND (t.kingdomname = "'.$this->kingdomName.'" OR t.sciname = "'.$this->kingdomName.'" OR t.rankid < 10)';
 		$this->conn->query($sql);
 
 		//Set acceptance to 0 where sciname <> acceptedstr
