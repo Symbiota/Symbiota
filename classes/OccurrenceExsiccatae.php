@@ -591,7 +591,7 @@ class OccurrenceExsiccatae {
 		}
 		if($transferCnt){
 			$statusStr = 'SUCCESS transferring '.$transferCnt.' records ';
-			//if($datasetId) $statusStr = '<br/>Records linked to dataset: <a href="">'.$datasetTitle.'</a>';
+			//if($datasetId) $statusStr = '<br/>Records linked to dataset: <a href="">' . htmlspecialchars($datasetTitle, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 		}
 		return $statusStr;
 	}
@@ -761,7 +761,7 @@ class OccurrenceExsiccatae {
 		$retStr .= '<td align="center"><a href="#" onclick="openExsPU('.$omenid.')">#'.$oArr['exsnum'].'</a></td>';
 		$retStr .= '<td>';
 		$retStr .= '<span '.($isTarget?'style="color:red;"':'').' title="'.$oArr['collname'].'">'.$oArr['collcode'].'</span>, ';
-		$retStr .= '<a href="#" onclick="openIndPU('.$occid.')">'.$oArr['recby'].' '.($oArr['recnum']?$oArr['recnum']:'s.n.').'</a>';
+		$retStr .= '<a href="#" onclick="openIndPU(' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . ')">' . htmlspecialchars($oArr['recby'], HTML_SPECIAL_CHARS_FLAGS) . ' ' . htmlspecialchars(($oArr['recnum']?$oArr['recnum']:'s.n.'), HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 		$retStr .= ($oArr['eventdate']?', '.$oArr['eventdate']:'');
 		$retStr .= ', <i>'.$oArr['sciname'].'</i> '.$oArr['author'];
 		$retStr .= $oArr['country'].', '.$oArr['state'].', '.$oArr['county'].', '.(strlen($oArr['locality'])>75?substr($oArr['locality'],0,75).'...':$oArr['locality']);

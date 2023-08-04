@@ -23,7 +23,7 @@ $_SESSION['statsOrderArr'] = $orderArr;
 	<head>
 		<meta name="keywords" content="Natural history collections yearly statistics" />
 		<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['ORDER_DIST'])?$LANG['ORDER_DIST']:'Order Distribution'); ?></title>
-		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -54,7 +54,7 @@ $_SESSION['statsOrderArr'] = $orderArr;
 						echo '<td>'.wordwrap($name,52,"<br />\n",true).'</td>';
 						echo '<td>';
 						if($data['SpecimensPerOrder'] == 1){
-							echo '<a href="../list.php?db[]='.$collId.'&reset=1&taxa='.$name.'" target="_blank">';
+							echo '<a href="../list.php?db[]=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&reset=1&taxa=' . htmlspecialchars($name, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 						}
 						echo number_format($data['SpecimensPerOrder']);
 						if($data['SpecimensPerOrder'] == 1){

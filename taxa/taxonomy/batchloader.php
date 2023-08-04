@@ -178,10 +178,10 @@ $displayLeftMenu = (isset($taxa_admin_taxaloaderMenu)?$taxa_admin_taxaloaderMenu
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath">
-	<a href="../../index.php"><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
-	<a href="taxonomydisplay.php"><?php echo (isset($LANG['BASIC_TREE_VIEWER'])?$LANG['BASIC_TREE_VIEWER']:'Basic Tree Viewer'); ?></a> &gt;&gt;
-	<a href="taxonomydynamicdisplay.php"><?php echo (isset($LANG['DYN_TREE_VIEWER'])?$LANG['DYN_TREE_VIEWER']:'Dynamic Tree Viewer'); ?></a> &gt;&gt;
-	<a href="batchloader.php"><b><?php echo (isset($LANG['TAX_BATCH_LOADER'])?$LANG['TAX_BATCH_LOADER']:'Taxa Batch Loader'); ?></b></a>
+	<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+	<a href="taxonomydisplay.php"><?php echo htmlspecialchars((isset($LANG['BASIC_TREE_VIEWER'])?$LANG['BASIC_TREE_VIEWER']:'Basic Tree Viewer'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+	<a href="taxonomydynamicdisplay.php"><?php echo htmlspecialchars((isset($LANG['DYN_TREE_VIEWER'])?$LANG['DYN_TREE_VIEWER']:'Dynamic Tree Viewer'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+	<a href="batchloader.php"><b><?php echo htmlspecialchars((isset($LANG['TAX_BATCH_LOADER'])?$LANG['TAX_BATCH_LOADER']:'Taxa Batch Loader'), HTML_SPECIAL_CHARS_FLAGS); ?></b></a>
 </div>
 <?php
 if($isEditor){
@@ -191,7 +191,7 @@ if($isEditor){
 		<h1><?php echo (isset($LANG['TAX_NAME_BATCH_LOADER'])?$LANG['TAX_NAME_BATCH_LOADER']:'Taxonomic Name Batch Loader'); ?></h1>
 		<div style="margin:30px;">
 			<div style="margin-bottom:30px;">
-				<?php echo (isset($LANG['TAX_UPLOAD_EXPLAIN1'])?$LANG['TAX_UPLOAD_EXPLAIN1']:'This page allows a Taxonomic Administrator to batch upload taxonomic data files. See').' '; ?><a href="https://biokic.github.io/symbiota-docs/portal_manager/taxonomy/batch_load/"><?php echo (isset($LANG['SYMB_DOC'])?$LANG['SYMB_DOC']:'Symbiota Documentation'); ?></a><?php echo ' '.(isset($LANG['TAX_UPLOAD_EXPLAIN2'])?$LANG['TAX_UPLOAD_EXPLAIN2']:'pages for more details on the Taxonomic Thesaurus layout.'); ?>
+				<?php echo (isset($LANG['TAX_UPLOAD_EXPLAIN1'])?$LANG['TAX_UPLOAD_EXPLAIN1']:'This page allows a Taxonomic Administrator to batch upload taxonomic data files. See').' '; ?><a href="https://biokic.github.io/symbiota-docs/portal_manager/taxonomy/batch_load/"><?php echo htmlspecialchars((isset($LANG['SYMB_DOC'])?$LANG['SYMB_DOC']:'Symbiota Documentation'), HTML_SPECIAL_CHARS_FLAGS); ?></a><?php echo ' ' . htmlspecialchars((isset($LANG['TAX_UPLOAD_EXPLAIN2'])?$LANG['TAX_UPLOAD_EXPLAIN2']:'pages for more details on the Taxonomic Thesaurus layout.'), HTML_SPECIAL_CHARS_FLAGS); ?>
 			</div>
 			<?php
 			if($action == 'mapInputFile' || $action == 'verifyMapping'){
@@ -353,7 +353,7 @@ if($isEditor){
 							<button type="submit" name="action" value="activateTaxa"><?php echo (isset($LANG['ACTIVATE_TAXA'])?$LANG['ACTIVATE_TAXA']:'Activate Taxa'); ?></button>
 						</div>
 						<div style="float:right;margin:10px;">
-							<a href="batchloader.php?action=downloadcsv" target="_blank"><?php echo (isset($LANG['DOWNLOAD_CSV'])?$LANG['DOWNLOAD_CSV']:'Download CSV Taxa File'); ?></a>
+							<a href="batchloader.php?action=downloadcsv" target="_blank"><?php echo htmlspecialchars((isset($LANG['DOWNLOAD_CSV'])?$LANG['DOWNLOAD_CSV']:'Download CSV Taxa File'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
 						</div>
 					</fieldset>
 				</form>
@@ -363,7 +363,7 @@ if($isEditor){
 				echo '<ul>';
 				$loaderManager->transferUpload($taxAuthId);
 				echo "<li>".(isset($LANG['TAX_UPLOAD_SUCCESS'])?$LANG['TAX_UPLOAD_SUCCESS']:'Taxa upload appears to have been successful').".</li>";
-				echo "<li>".(isset($LANG['GO_TO'])?$LANG['GO_TO']:'Go to')." <a href='taxonomydisplay.php'>".(isset($LANG['TAX_TREE_SEARCH'])?$LANG['TAX_TREE_SEARCH']:'Taxonomic Tree Search').'</a> '.(isset($LANG['TO_QUERY'])?$LANG['TO_QUERY']:'page to query for a loaded name').".</li>";
+				echo "<li>".(isset($LANG['GO_TO'])?$LANG['GO_TO']:'Go to')." <a href='taxonomydisplay.php'>" . htmlspecialchars((isset($LANG['TAX_TREE_SEARCH'])?$LANG['TAX_TREE_SEARCH']:'Taxonomic Tree Search'), HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars((isset($LANG['TO_QUERY'])?$LANG['TO_QUERY']:'page to query for a loaded name'), HTML_SPECIAL_CHARS_FLAGS) . ".</li>";
 				echo '</ul>';
 			}
 			elseif($action == 'loadApiNode'){
@@ -402,20 +402,20 @@ if($isEditor){
 								}
 								else{
 									echo '<div>'.(isset($LANG['NAME'])?$LANG['NAME']:'Name').': '.$colArr['label'].'</div>';
-									echo '<div>'.(isset($LANG['DATSET_KEY'])?$LANG['DATSET_KEY']:'Dataset key').': <a href="https://api.catalogueoflife.org/dataset/'.$colArr['datasetKey'].'" target="_blank">'.$colArr['datasetKey'].'</a></div>';
+									echo '<div>'.(isset($LANG['DATSET_KEY'])?$LANG['DATSET_KEY']:'Dataset key').': <a href="https://api.catalogueoflife.org/dataset/' . htmlspecialchars($colArr['datasetKey'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($colArr['datasetKey'], HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 									echo '<div>'.(isset($LANG['STATUS'])?$LANG['STATUS']:'Status').': '.$colArr['status'].'</div>';
 									if(isset($colArr['accordingTo'])) echo '<div>'.(isset($LANG['ACC_TO'])?$LANG['ACC_TO']:'According to').': '.$colArr['accordingTo'].'</div>';
-									if(isset($colArr['link'])) echo '<div>'.(isset($LANG['SOURCE_LINK'])?$LANG['SOURCE_LINK']:'Source link').': <a href="'.$colArr['link'].'" target="_blank">'.$colArr['link'].'</a></div>';
+									if(isset($colArr['link'])) echo '<div>'.(isset($LANG['SOURCE_LINK'])?$LANG['SOURCE_LINK']:'Source link').': <a href="' . htmlspecialchars($colArr['link'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($colArr['link'], HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 									if(isset($colArr['scrutinizer'])) echo '<div>'.(isset($LANG['SCRUTINIZER'])?$LANG['SCRUTINIZER']:'Scrutinizer').': '.$colArr['scrutinizer'].'</div>';
 									$targetStatus = '<span style="color:orange">'.(isset($LANG['NOT_PREF'])?$LANG['NOT_PREF']:'not preferred').'</span>';
 									if($colArr['isPreferred']) $targetStatus = '<span style="color:green">'.(isset($LANG['PREF_TARGET'])?$LANG['PREF_TARGET']:'preferred target').'</span>';
 									echo '<div>'.(isset($LANG['TARGET_STATUS'])?$LANG['TARGET_STATUS']:'Target status').': '.$targetStatus.'</div>';
-									if(isset($colArr['webServiceUrl'])) echo '<div>'.(isset($LANG['WEB_SERVICE_URL'])?$LANG['WEB_SERVICE_URL']:'Web Service URL').': <a href="'.$colArr['webServiceUrl'].'" target="_blank">'.$colArr['webServiceUrl'].'</a></div>';
-									if(isset($colArr['apiUrl'])) echo '<div>'.(isset($LANG['API_URL'])?$LANG['API_URL']:'API URL').': <a href="'.$colArr['apiUrl'].'" target="_blank">'.$colArr['apiUrl'].'</a></div>';
-									echo '<div>'.(isset($LANG['COL_URL'])?$LANG['COL_URL']:'CoL URL').': <a href="'.$colArr['colUrl'].'" target="_blank">'.$colArr['colUrl'].'</a></div>';
+									if(isset($colArr['webServiceUrl'])) echo '<div>'.(isset($LANG['WEB_SERVICE_URL'])?$LANG['WEB_SERVICE_URL']:'Web Service URL').': <a href="' . htmlspecialchars($colArr['webServiceUrl'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($colArr['webServiceUrl'], HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
+									if(isset($colArr['apiUrl'])) echo '<div>'.(isset($LANG['API_URL'])?$LANG['API_URL']:'API URL').': <a href="' . htmlspecialchars($colArr['apiUrl'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($colArr['apiUrl'], HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
+									echo '<div>'.(isset($LANG['COL_URL'])?$LANG['COL_URL']:'CoL URL').': <a href="' . htmlspecialchars($colArr['colUrl'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($colArr['colUrl'], HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 									$harvestLink = 'batchloader.php?id='.$colID.'&dskey='.$colArr['datasetKey'].'&targetapi=col&taxauthid='.$_POST['taxauthid'].
 										'&kingdomname='.$_POST['kingdomname'].'&ranklimit='.$_POST['ranklimit'].'&sciname='.$sciname.'&action=loadApiNode';
-									if($colArr['datasetKey']) echo '<div><b><a href="'.$harvestLink.'">'.(isset($LANG['TARGET_THIS_NODE'])?$LANG['TARGET_THIS_NODE']:'Target this node to harvest children').'</a></b></div>';
+									if($colArr['datasetKey']) echo '<div><b><a href="' . htmlspecialchars($harvestLink, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars((isset($LANG['TARGET_THIS_NODE'])?$LANG['TARGET_THIS_NODE']:'Target this node to harvest children'), HTML_SPECIAL_CHARS_FLAGS) . '</a></b></div>';
 								}
 								echo '</div>';
 							}
@@ -435,7 +435,7 @@ if($isEditor){
 					echo '<ul>';
 					if($harvester->addWormsNode($_POST)){
 						echo '<li>'.$harvester->getTransactionCount().' '.(isset($LANG['TAXA_LOADED_SUCCESS'])?$LANG['TAXA_LOADED_SUCCESS']:'taxa within the target node have been loaded successfully').'</li>';
-						echo '<li>'.(isset($LANG['GO_TO'])?$LANG['GO_TO']:'Go to').' <a href="taxonomydisplay.php">'.(isset($LANG['TAX_TREE_SEARCH'])?$LANG['TAX_TREE_SEARCH']:'Taxonomic Tree Search').'</a> '.(isset($LANG['TO_QUERY'])?$LANG['TO_QUERY']:'page to query for a loaded name').'</li>';
+						echo '<li>'.(isset($LANG['GO_TO'])?$LANG['GO_TO']:'Go to').' <a href="taxonomydisplay.php">' . htmlspecialchars((isset($LANG['TAX_TREE_SEARCH'])?$LANG['TAX_TREE_SEARCH']:'Taxonomic Tree Search'), HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars((isset($LANG['TO_QUERY'])?$LANG['TO_QUERY']:'page to query for a loaded name'), HTML_SPECIAL_CHARS_FLAGS) . '</li>';
 					}
 					echo '</ul>';
 				}

@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
@@ -70,7 +71,7 @@ if($action == "Create Login"){
 }
 
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' - '.(isset($LANG['NEW_USER'])?$LANG['NEW_USER']:'New User Profile'); ?></title>
 	<?php
@@ -141,7 +142,7 @@ if($action == "Create Login"){
 			echo (isset($LANG['USERNAME_EXISTS_1'])?$LANG['USERNAME_EXISTS_1']:'This username');
 			echo '('.$login.') '.(isset($LANG['USERNAME_EXISTS_2'])?$LANG['USERNAME_EXISTS_2']:'is already being used').'.<br>';
 			echo (isset($LANG['USERNAME_EXISTS_3'])?$LANG['USERNAME_EXISTS_3']:'Please choose a different login name or visit the');
-			echo ' <a href="index.php?login='.$login.'">'.(isset($LANG['LOGIN_PAGE'])?$LANG['LOGIN_PAGE']:'login page').'</a> ';
+			echo ' <a href="index.php?login=' . htmlspecialchars($login, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars((isset($LANG['LOGIN_PAGE'])?$LANG['LOGIN_PAGE']:'login page'), HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
 			echo (isset($LANG['USERNAME_EXISTS_4'])?$LANG['USERNAME_EXISTS_4']:'if you believe this might be you').'.';
 		}
 		elseif($displayStr == 'email_registered'){
@@ -167,126 +168,91 @@ if($action == "Create Login"){
 		echo '</div>';
 	}
 	?>
-	<fieldset style='margin:10px;width:95%;'>
-		<legend><b><?php echo (isset($LANG['LOGIN_DETAILS'])?$LANG['LOGIN_DETAILS']:'Login Details'); ?></b></legend>
-		<form action="newprofile.php" method="post" onsubmit="return validateform(this);">
-			<div style="margin:15px;">
-				<table cellspacing='3'>
-					<tr>
-						<td style="width:120px;">
-							<b><?php echo (isset($LANG['USERNAME'])?$LANG['USERNAME']:'Username'); ?>:</b>
-						</td>
-						<td>
-							<input name="login" value="<?php echo $login; ?>" type="text" size="20" required />
-							<span style="color:red;">*</span>
-							<br/>&nbsp;
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<b><?php echo (isset($LANG['PASSWORD'])?$LANG['PASSWORD']:'Password'); ?>:</b>
-						</td>
-						<td>
-							<input name="pwd" id="pwd" value="" size="20" type="password" autocomplete="off" required />
-							<span style="color:red;">*</span>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<b><?php echo (isset($LANG['PASSWORD_AGAIN'])?$LANG['PASSWORD_AGAIN']:'Password Again'); ?>:</b>
-						</td>
-						<td>
-							<input id="pwd2" name="pwd2" value="" size="20" type="password" autocomplete="off" required />
-							<span style="color:red;">*</span>
-							<br/>
-						</td>
-					</tr>
-					<tr>
-						<td><span style="font-weight:bold;"><?php echo (isset($LANG['FIRST_NAME'])?$LANG['FIRST_NAME']:'First Name'); ?>:</span></td>
-						<td>
-							<input id="firstname" name="firstname" type="text" size="40" value="<?php echo (isset($_POST['firstname'])?htmlspecialchars($_POST['firstname']):''); ?>" />
-							<span style="color:red;">*</span>
-						</td>
-					</tr>
-					<tr>
-						<td><span style="font-weight:bold;"><?php echo (isset($LANG['LAST_NAME'])?$LANG['LAST_NAME']:'Last Name'); ?>:</span></td>
-						<td>
-							<input id="lastname" name="lastname" type="text" size="40" value="<?php echo (isset($_POST['lastname'])?htmlspecialchars($_POST['lastname']):''); ?>" required />
-							<span style="color:red;">*</span>
-						</td>
-					</tr>
-					<tr>
-						<td><span style="font-weight:bold;"><?php echo (isset($LANG['EMAIL'])?$LANG['EMAIL']:'Email Address'); ?>:</span></td>
-						<td>
-							<span class="profile"><input name="email" type="email" size="40" value="<?php echo $emailAddr; ?>" required /></span>
-							<span style="color:red;">*</span>
-						</td>
-					</tr>
-					<tr>
-						<td><span style="font-weight:bold;"><?php echo (isset($LANG['ORCID'])?$LANG['ORCID']:'ORCID or other GUID'); ?>:</span></td>
-						<td>
-							<span class="profile"><input name="guid" type="text" size="40" value="<?php echo (isset($_POST['guid'])?htmlspecialchars($_POST['guid']):''); ?>" /></span>
-						</td>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-						<td><span style="color:red;">* <?php echo (isset($LANG['REQUIRED'])?$LANG['REQUIRED']:'required fields'); ?></span></td>
-					</tr>
-				</table>
-				<div style="margin:15px 0px 10px 0px;"><b><u><?php echo (isset($LANG['OPTIONAL'])?$LANG['OPTIONAL']:'Information below is optional, but encouraged'); ?></u></b></div>
-				<table cellspacing='3'>
-					<tr>
-						<td><b><?php echo (isset($LANG['TITLE'])?$LANG['TITLE']:'Title'); ?>:</b></td>
-						<td>
-							<span class="profile"><input name="title" type="text" size="40" value="<?php echo (isset($_POST['title'])?htmlspecialchars($_POST['title']):''); ?>"></span>
-						</td>
-					</tr>
-					<tr>
-						<td><b><?php echo (isset($LANG['INSTITUTION'])?$LANG['INSTITUTION']:'Institution'); ?>:</b></td>
-						<td>
-							<span class="profile"><input name="institution"  type="text" size="40" value="<?php echo (isset($_POST['institution'])?htmlspecialchars($_POST['institution']):'') ?>"></span>
-						</td>
-					</tr>
-					<tr>
-						<td><span style="font-weight:bold;"><?php echo (isset($LANG['CITY'])?$LANG['CITY']:'City'); ?>:</span></td>
-						<td>
-							<span class="profile"><input id="city" name="city" type="text" size="40" value="<?php echo (isset($_POST['city'])?$_POST['city']:''); ?>"></span>
-						</td>
-					</tr>
-					<tr>
-						<td><span style="font-weight:bold;"><?php echo (isset($LANG['STATE'])?$LANG['STATE']:'State'); ?>:</span></td>
-						<td>
-							<span class="profile"><input id="state" name="state" type="text" size="40" value="<?php echo (isset($_POST['state'])?htmlspecialchars($_POST['state']):''); ?>"></span>
-						</td>
-					</tr>
-					<tr>
-						<td><b><?php echo (isset($LANG['ZIP_CODE'])?$LANG['ZIP_CODE']:'Zip Code'); ?>:</b></td>
-						<td>
-							<span class="profile"><input name="zip" type="text" size="40" value="<?php echo (isset($_POST['zip'])?htmlspecialchars($_POST['zip']):''); ?>"></span>
-						</td>
-					</tr>
-					<tr>
-						<td><span style="font-weight:bold;"><?php echo (isset($LANG['COUNTRY'])?$LANG['COUNTRY']:'Country'); ?>:</span></td>
-						<td>
-							<span class="profile"><input id="country" name="country" type="text" size="40" value="<?php echo (isset($_POST['country'])?htmlspecialchars($_POST['country']):''); ?>"></span>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<div style="margin:10px;">
-								<?php
-								if($useRecaptcha) echo '<div class="g-recaptcha" data-sitekey="'.$RECAPTCHA_PUBLIC_KEY.'"></div>';
-								?>
-							</div>
-							<div style="float:right;margin:20px;">
-								<button id="submit" name="submit" type="submit" value="Create Login"><?php echo (isset($LANG['CREATE_LOGIN'])?$LANG['CREATE_LOGIN']:'Create Login'); ?></button>
-							</div>
-						</td>
-					</tr>
-				</table>
+	<form action="newprofile.php" method="post" onsubmit="return validateform(this);">
+		<fieldset style='margin:10px;width:95%;'>
+			<legend><b><?php echo (isset($LANG['LOGIN_DETAILS'])?$LANG['LOGIN_DETAILS']:'Login Details'); ?></b></legend>
+			<div class="gridlike-form">
+				<section class="bottom-breathing-room gridlike-form-row">
+					<label class="gridlike-form-row-label" for="login"><?php echo (isset($LANG['USERNAME'])?$LANG['USERNAME']:'Username'); ?>:</label>
+					<input class="gridlike-form-row-input" name="login" id="login" value="<?php echo $login; ?>" type="text" size="20" required />
+					<span style="color:red;">*</span>
+				</section>
+				<section class="bottom-breathing-room gridlike-form-row">
+					<label class="gridlike-form-row-label" for="pwd"><?php echo (isset($LANG['PASSWORD'])?$LANG['PASSWORD']:'Password'); ?>:</label>
+					<input class="gridlike-form-row-input" name="pwd" id="pwd" value="" size="20" type="password" autocomplete="off" required />
+					<span style="color:red;">*</span>
+				</section>
+				<section class="bottom-breathing-room gridlike-form-row">
+					<label class="gridlike-form-row-label" for="pwd2"><?php echo (isset($LANG['PASSWORD_AGAIN'])?$LANG['PASSWORD_AGAIN']:'Password Again'); ?>:</label>
+					<input class="gridlike-form-row-input" id="pwd2" name="pwd2" value="" size="20" type="password" autocomplete="off" required />
+					<span style="color:red;">*</span>
+				</section>
+				<section class="bottom-breathing-room gridlike-form-row">
+					<label class="gridlike-form-row-label" for="firstname"><?php echo (isset($LANG['FIRST_NAME'])?$LANG['FIRST_NAME']:'First Name'); ?>:</label>
+					<input class="gridlike-form-row-input" id="firstname" name="firstname" type="text" size="40" value="<?php echo (isset($_POST['firstname'])?htmlspecialchars($_POST['firstname']):''); ?>" required />
+					<span style="color:red;">*</span>
+				</section>
+				<section class="bottom-breathing-room gridlike-form-row">
+					<label class="gridlike-form-row-label" for="lastname"><?php echo (isset($LANG['LAST_NAME'])?$LANG['LAST_NAME']:'Last Name'); ?>:</label>
+					<input class="gridlike-form-row-input" id="lastname" name="lastname" type="text" size="40" value="<?php echo (isset($_POST['lastname'])?htmlspecialchars($_POST['lastname']):''); ?>" required />
+					<span style="color:red;">*</span>
+				</section>
+				<section class="bottom-breathing-room gridlike-form-row">
+					<label class="gridlike-form-row-label" for="email"><?php echo (isset($LANG['EMAIL'])?$LANG['EMAIL']:'Email Address'); ?>:</label>
+					<input class="gridlike-form-row-input" name="email" id="email" type="email" size="40" value="<?php echo $emailAddr; ?>" required />
+					<span style="color:red;">*</span>
+				</section>
+				<section class="bottom-breathing-room gridlike-form-row">
+					<label class="gridlike-form-row-label" for="guid"><?php echo (isset($LANG['ORCID'])?$LANG['ORCID']:'ORCID or other GUID'); ?>:</label>
+					<input class="gridlike-form-row-input" name="guid" id="guid" type="text" size="40" value="<?php echo (isset($_POST['guid'])?htmlspecialchars($_POST['guid']):''); ?>" />
+				</section>
+				<section class="bottom-breathing-room gridlike-form-row">
+						<span class="gridlike-form-row-label"><?php echo (isset($LANG['ACCESSIBILITY_PREF'])?$LANG['ACCESSIBILITY_PREF']:'Accessibility Preferences'); ?>:</span>
+						<input type="checkbox" name="accessibility-pref" id="accessibility-pref" value="1" />
+						<label for="accessibility-pref"><?php echo (isset($LANG['ACCESSIBILITY_PREF_DESC'])?$LANG['ACCESSIBILITY_PREF_DESC']:'Check to indicate a preference for accessibility-optimized styles'); ?></label>
+				</section>
+				<section class="bottom-breathing-room gridlike-form-row">
+					<span style="color:red;">* <?php echo (isset($LANG['REQUIRED'])?$LANG['REQUIRED']:'required fields'); ?></span>
+				</section>
+				<section>
+					<section class="bottom-breathing-room gridlike-form-row">
+						<h1 class="small-header"><?php echo (isset($LANG['OPTIONAL'])?$LANG['OPTIONAL']:'Information below is optional, but encouraged'); ?></h1>
+						<hr/>
+					</section>
+					<section class="gridlike-form-row">
+						<label class="gridlike-form-row-label" for="title"><?php echo (isset($LANG['TITLE'])?$LANG['TITLE']:'Title'); ?>:</label>
+						<input class="gridlike-form-row-input" name="title" id="title" type="text" size="40" value="<?php echo (isset($_POST['title'])?htmlspecialchars($_POST['title']):''); ?>">
+					</section>
+					<section class="gridlike-form-row">
+						<label class="gridlike-form-row-label" for="institution"><?php echo (isset($LANG['INSTITUTION'])?$LANG['INSTITUTION']:'Institution'); ?>:</label>
+						<input class="gridlike-form-row-input" name="institution" id="institution"  type="text" size="40" value="<?php echo (isset($_POST['institution'])?htmlspecialchars($_POST['institution']):'') ?>">
+					</section>
+					<section class="gridlike-form-row">
+						<label class="gridlike-form-row-label" for="city"><?php echo (isset($LANG['CITY'])?$LANG['CITY']:'City'); ?>:</label>
+						<input class="gridlike-form-row-input" id="city" name="city" type="text" size="40" value="<?php echo (isset($_POST['city'])?$_POST['city']:''); ?>">
+					</section>
+					<section class="gridlike-form-row">
+						<label class="gridlike-form-row-label" for="state"><?php echo (isset($LANG['STATE'])?$LANG['STATE']:'State'); ?>:</label>
+						<input class="gridlike-form-row-input" id="state" name="state" type="text" size="40" value="<?php echo (isset($_POST['state'])?htmlspecialchars($_POST['state']):''); ?>">
+					</section>
+					<section class="gridlike-form-row">
+						<label class="gridlike-form-row-label" for="zip"><?php echo (isset($LANG['ZIP_CODE'])?$LANG['ZIP_CODE']:'Zip Code'); ?>:</label>
+						<input class="gridlike-form-row-input" name="zip" id="zip" type="text" size="40" value="<?php echo (isset($_POST['zip'])?htmlspecialchars($_POST['zip']):''); ?>">
+					</section>
+					<section class="gridlike-form-row">
+						<label class="gridlike-form-row-label" for="country"><?php echo (isset($LANG['COUNTRY'])?$LANG['COUNTRY']:'Country'); ?>:</label>
+						<input class="gridlike-form-row-input" id="country" name="country" type="text" size="40" value="<?php echo (isset($_POST['country'])?htmlspecialchars($_POST['country']):''); ?>">
+					</section>
+						<div style="margin:10px;">
+							<?php
+							if($useRecaptcha) echo '<div class="g-recaptcha" data-sitekey="'.$RECAPTCHA_PUBLIC_KEY.'"></div>';
+							?>
+						</div>
+						<button id="submit" name="submit" type="submit" value="Create Login"><?php echo (isset($LANG['CREATE_LOGIN'])?$LANG['CREATE_LOGIN']:'Create Login'); ?></button>
+				</section>
 			</div>
-		</form>
-	</fieldset>
+		</fieldset>
+	</form>
 	</div>
 	<?php
 	include($SERVER_ROOT.'/includes/footer.php');

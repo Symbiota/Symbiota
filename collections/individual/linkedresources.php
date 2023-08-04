@@ -32,11 +32,11 @@ $indManager->setOccid($occid);
 			echo '<ul style="margin:15px 0px 25px 0px;">';
 			foreach($vClArr as $vClid => $vClArr){
 				echo '<li>';
-				echo '<a href="../../checklists/checklist.php?showvouchers=1&clid='.$vClid.'" target="_blank">'.$vClArr['name'].'</a>&nbsp;&nbsp;';
+				echo '<a href="../../checklists/checklist.php?showvouchers=1&clid=' . htmlspecialchars($vClid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($vClArr['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a>&nbsp;&nbsp;';
 				if(isset($USER_RIGHTS['ClAdmin']) && in_array($vClid, $USER_RIGHTS['ClAdmin'])){
 					$delStr = (isset($LANG['DELVOUCHER'])?$LANG['DELVOUCHER']:'Delete voucher link');
 					$confirmStr = (isset($LANG['CONFIRMVOUCHER'])?$LANG['CONFIRMVOUCHER']:'Are you sure you want to remove this voucher link?');
-					echo '<a href="index.php?delvouch='.$vClArr['voucherID'].'&occid='.$occid.'" title='.$delStr.' onclick="return confirm(\"'.$confirmStr.'\")"><img src="../../images/drop.png" style="width:12px;" /></a>';
+					echo '<a href="index.php?delvouch=' . htmlspecialchars($vClArr['voucherID'], HTML_SPECIAL_CHARS_FLAGS) . '&occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" title=' . htmlspecialchars($delStr, HTML_SPECIAL_CHARS_FLAGS) . ' onclick="return confirm(\"' . htmlspecialchars($confirmStr, HTML_SPECIAL_CHARS_FLAGS) . '\")"><img src="../../images/drop.png" style="width:12px;" /></a>';
 				}
 				echo '</li>';
 			}
@@ -109,7 +109,7 @@ $indManager->setOccid($occid);
 		foreach($datasetArr as $dsid => $dsArr){
 			if(isset($dsArr['linked']) && $dsArr['linked']){
 				$dsDisplayStr .= '<li>';
-				$dsDisplayStr .= '<a href="../datasets/datasetmanager.php?datasetid='.$dsid.'" target="_blank">'.$dsArr['name'].'</a>';
+				$dsDisplayStr .= '<a href="../datasets/datasetmanager.php?datasetid=' . htmlspecialchars($dsid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($dsArr['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 				if(isset($dsArr['role']) && $dsArr['role']) $dsDisplayStr .= ' (role: '.$dsArr['role'].')';
 				if(isset($dsArr['notes']) && $dsArr['notes']) $dsDisplayStr .= ' - '.$dsArr['notes'];
 				$dsDisplayStr .= '</li>';

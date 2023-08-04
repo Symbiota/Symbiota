@@ -32,7 +32,7 @@ $genusAnswer = strtok($scinameAnswer, " ");
 <html>
 <head>
 	<title><?php echo $ootdTitle; ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -235,11 +235,11 @@ $genusAnswer = strtok($scinameAnswer, " ");
 								</div>
 								<div style="margin-top:40px;font-size:16px;" >
 									<div>
-										<a href = "index.php?oodid=<?php echo $oodID.'&cl='.$clidStr.'&title='.$ootdTitle.'&type='.$ootdType; ?>">Click here to try again!</a>
+										<a href = "index.php?oodid=<?php echo htmlspecialchars($oodID, HTML_SPECIAL_CHARS_FLAGS) . '&cl=' . htmlspecialchars($clidStr, HTML_SPECIAL_CHARS_FLAGS) . '&title=' . htmlspecialchars($ootdTitle, HTML_SPECIAL_CHARS_FLAGS) . '&type=' . htmlspecialchars($ootdType, HTML_SPECIAL_CHARS_FLAGS); ?>">Click here to try again!</a>
 									</div>
 									<div>-- OR --</div>
 									<div>
-										<a href = "index.php?submitaction=giveup?oodid=<?php echo $oodID.'&cl='.$clidStr.'&title='.$ootdTitle.'&type='.$ootdType; ?>" onClick="openTaxonProfile()" >-Click here reveal what the <?php echo $ootdType; ?> was-</a>
+										<a href = "index.php?submitaction=giveup?oodid=<?php echo htmlspecialchars($oodID, HTML_SPECIAL_CHARS_FLAGS) .'&cl=' . htmlspecialchars($clidStr, HTML_SPECIAL_CHARS_FLAGS) . '&title=' . htmlspecialchars($ootdTitle, HTML_SPECIAL_CHARS_FLAGS) . '&type=' . htmlspecialchars($ootdType, HTML_SPECIAL_CHARS_FLAGS); ?>" onClick="openTaxonProfile()" >-Click here reveal what the <?php echo htmlspecialchars($ootdType, HTML_SPECIAL_CHARS_FLAGS); ?> was-</a>
 									</div>
 								</div>
 							</div>

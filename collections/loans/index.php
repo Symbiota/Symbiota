@@ -50,7 +50,7 @@ if($isEditor){
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Loan Management</title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -184,8 +184,8 @@ if($isEditor){
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'>Home</a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management Menu</a> &gt;&gt;
-		<a href="index.php?collid=<?php echo $collid; ?>"><b>Loan Index</b></a>
+		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">Collection Management Menu</a> &gt;&gt;
+		<a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><b>Loan Index</b></a>
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
@@ -207,7 +207,7 @@ if($isEditor){
 			    <ul>
 					<li><a href="#loanoutdiv"><span>Outgoing Loans</span></a></li>
 					<li><a href="#loanindiv"><span>Incoming Loans</span></a></li>
-					<li><a href="exchangetab.php?collid=<?php echo $collid; ?>"><span>Gifts/Exchanges</span></a></li>
+					<li><a href="exchangetab.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><span>Gifts/Exchanges</span></a></li>
 				</ul>
 				<div id="loanoutdiv" style="">
 					<div style="float:right;">
@@ -312,7 +312,7 @@ if($isEditor){
 								}
 
 								echo '<li>';
-								echo '<a href="outgoing.php?collid='.$targetCollid.'&loanid='.$k.'">'.$loanArr['loanidentifierown'].' <img src="../../images/edit.png" style="width:12px" /></a> ';
+								echo '<a href="outgoing.php?collid=' . htmlspecialchars($targetCollid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($loanArr['loanidentifierown'], HTML_SPECIAL_CHARS_FLAGS) . ' <img src="../../images/edit.png" style="width:12px" /></a> ';
 								if(isset($loanArr['isexternal'])) echo '<span style="color:orange">external collection</span>';
 								echo ': '.($loanArr['institutioncode'] ? $loanArr['institutioncode'] : ($loanArr['institutionname'] ? $loanArr['institutionname'] : '[no name]'));
 								echo ' ('.$loanArr['forwhom'].') - '.($loanArr['dateclosed']?'Closed: '.$loanArr['dateclosed']:'<b>OPEN</b>');
@@ -427,7 +427,7 @@ if($isEditor){
 									$due = ' (<span class="'.($overdue?'important':'').'">due: ' . $loanArr['datedue'] . '</span>)';
 								}
 								echo '<li>';
-								echo '<a href="incoming.php?collid='.$collid.'&loanid='.$k.'">'.$loanArr['loanidentifierborr'].' <img src="../../images/edit.png" style="width:12px" /></a>: ';
+								echo '<a href="incoming.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($loanArr['loanidentifierborr'], HTML_SPECIAL_CHARS_FLAGS) . ' <img src="../../images/edit.png" style="width:12px" /></a>: ';
 								echo ($loanArr['institutioncode'] ? $loanArr['institutioncode'] : ($loanArr['institutionname'] ? $loanArr['institutionname'] : '[no name]'));
 								echo ' ('.$loanArr['forwhom'].') - '.($loanArr['dateclosed']?'Closed: '.$loanArr['dateclosed']:'<b>OPEN</b>');
 								echo ($loanArr['dateclosed'] ? '' : ($loanArr['datedue'] ? $due : ''));
@@ -451,7 +451,7 @@ if($isEditor){
 							echo '<ul>';
 							foreach($loansOnWay as $k => $loanArr){
 								echo '<li>';
-								echo '<a href="incoming.php?collid='.$collid.'&loanid='.$k.'">';
+								echo '<a href="incoming.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '">';
 								echo $loanArr['loanidentifierown'];
 								echo ' from '.$loanArr['collectionname'].'</a>';
 								echo '</li>';

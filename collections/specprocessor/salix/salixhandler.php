@@ -28,7 +28,7 @@ if($SYMB_UID){
 <html>
 	<head>
 		<title>SALIX Wordstat Manager</title>
-		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -52,7 +52,7 @@ if($SYMB_UID){
 			<?php
 			if($collid){
 				?>
-				<a href="../../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
+				<a href="../../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">Collection Management</a> &gt;&gt;
 				<?php
 			}
 			else{
@@ -60,7 +60,7 @@ if($SYMB_UID){
 				<a href="../../../sitemap.php">Sitemap</a> &gt;&gt;
 				<?php
 			}
-			echo '<a href="salixhandler.php?collid='.$collid.'&actiontype='.$actionType.'&limit='.$limit.'">';
+			echo '<a href="salixhandler.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&actiontype=' . htmlspecialchars($actionType, HTML_SPECIAL_CHARS_FLAGS) . '&limit=' . htmlspecialchars($limit, HTML_SPECIAL_CHARS_FLAGS) . '">';
 			echo '<b>SALIX Wordstat Manager</b>';
 			echo '</a>';
 			?>
@@ -74,7 +74,7 @@ if($SYMB_UID){
 				$salixHanlder->setVerbose($verbose);
 				if($action == 'Build Wordstat Tables'){
 					$salixHanlder->buildWordStats($collid,$actionType,$limit);
-					echo '<div style="margin:15px;"><a href="salixhandler.php?collid='.$collid.'&actiontype='.$actionType.'&limit='.$limit.'">Return to Main Menu</a></div>';
+					echo '<div style="margin:15px;"><a href="salixhandler.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&actiontype=' . htmlspecialchars($actionType, HTML_SPECIAL_CHARS_FLAGS) . '&limit=' . htmlspecialchars($limit, HTML_SPECIAL_CHARS_FLAGS) . '">Return to Main Menu</a></div>';
 				}
 				else{
 					?>

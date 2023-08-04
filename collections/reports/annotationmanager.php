@@ -91,13 +91,13 @@ if($isEditor){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href='../../index.php'><?php echo $LANG['NAV_HOME']; ?></a> &gt;&gt;
+		<a href='../../index.php'><?php echo htmlspecialchars($LANG['NAV_HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 		<?php
 		if(stripos(strtolower($datasetManager->getMetaDataTerm('colltype')), "observation") !== false){
-			echo '<a href="../../profile/viewprofile.php?tabindex=1">'.$LANG['PERS_MAN_MEN'].'</a> &gt;&gt; ';
+			echo '<a href="../../profile/viewprofile.php?tabindex=1">' . htmlspecialchars($LANG['PERS_MAN_MEN'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
 		}
 		else{
-			echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">'.$LANG['COL_MAN_PAN'].'</a> &gt;&gt; ';
+			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . htmlspecialchars($LANG['COL_MAN_PAN'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
 		}
 		?>
 		<b><?php echo $LANG['ANN_LAB_PRINT']; ?></b>

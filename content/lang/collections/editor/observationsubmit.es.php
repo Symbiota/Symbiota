@@ -41,14 +41,14 @@ $LANG['DATUM'] = 'Datum';
 $LANG['ELEV_M'] = 'Elev. (metros)';
 $LANG['ELEV_FT'] = 'Elev. (pies)';
 $LANG['GEO_REMARKS'] = 'Comentarios de Georeferenciación';
-$LANG['LATITUDE_DEG'] = 'Latitud Grados';
-$LANG['LATITUDE_MIN'] = 'Latitud Minutos';
-$LANG['LATITUDE_SEC'] = 'Latitud Segundos';
+$LANG['LATITUDE_DEG'] = 'Grados';
+$LANG['LATITUDE_MIN'] = 'Minutos';
+$LANG['LATITUDE_SEC'] = 'Segundos';
 $LANG['N'] = 'N'; //As in North
 $LANG['S'] = 'S'; //As in South
-$LANG['LONGITUDE_DEG'] = 'Longitud Grados';
-$LANG['LONGITUDE_MIN'] = 'Longitud Minutos';
-$LANG['LONGITUDE_SEC'] = 'Longitud Segundos';
+$LANG['LONGITUDE_DEG'] = 'Grados';
+$LANG['LONGITUDE_MIN'] = 'Minutos';
+$LANG['LONGITUDE_SEC'] = 'Segundos';
 $LANG['E'] = 'E'; //As in East
 $LANG['W'] = 'W'; //As in West
 $LANG['MISC'] = 'Misc';
@@ -65,5 +65,6 @@ $LANG['SP_LIST'] = 'Listado de Especies';
 $LANG['SEL_CHECKLIST'] = 'Seleccionar Listado de Especies';
 $LANG['SUBMIT_OBS'] = 'Enviar Observación';
 $LANG['NOT_AUTH'] = 'No está autorizado para enviar observaciones.';
+$LANG['DIRECTION'] = 'Dirección';
 
 ?>

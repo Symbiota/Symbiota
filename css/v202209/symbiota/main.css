@@ -18,14 +18,14 @@
 
 /* Fonts imports
   ========================================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
 
 /* Global variables and components
    ========================================================================== */
-@import 'base.css';
-@import 'variables.css';
-@import 'header.css';
-@import 'footer.css';
+@import "base.css";
+@import "variables.css";
+@import "header.css";
+@import "footer.css";
 
 /* Global styles
    ========================================================================== */
@@ -199,7 +199,6 @@ table.styledtable tr.alt td {
   background-color: #dfdfdf;
 }
 
-
 /***********************************************************************/
 
 /* Utility classes
@@ -289,6 +288,11 @@ table.styledtable tr.alt td {
   padding: 0.5rem 0.9rem;
 }
 
+.skip-link {
+  position: absolute;
+  left: -10000px;
+}
+
 /* Media queries
 ========================================================================== */
 /* Medium screens and up */
@@ -318,4 +322,112 @@ table.styledtable tr.alt td {
   .text-big {
     font-size: 2.5rem;
   }
+}
+/* -------------------- */
+
+.lat-long-group-label {
+  margin-top: 4px;
+}
+
+.accessible-font {
+  font-size: 1.4em;
+}
+
+.bottom-breathing-room {
+  margin-bottom: 10px;
+}
+
+.top-tiny-breathing-room {
+  margin-top: 5px;
+}
+
+.nested-li {
+  margin-left: 1.5em;
+}
+
+.fieldset-like {
+  /* borrowed from: https://www.geeksforgeeks.org/how-to-achieve-fieldset-like-effect-without-using-fieldset-tag/ */
+  border: 0.2em solid;
+  border-top: none;
+  margin: 2rem 0 1rem 1rem;
+  padding: 0.8rem;
+}
+
+.fieldset-like h1 {
+  font: 1.5rem normal;
+  margin: -1.6rem -0.8rem 0rem;
+}
+
+.fieldset-like h1 span {
+  float: left;
+}
+
+.fieldset-like h1:before {
+  border-top: 0.15em solid;
+  content: " ";
+  float: left;
+  margin: 0.8rem 0.1rem 0 -0.2rem;
+  width: 1.2rem;
+}
+
+.fieldset-like h1:after {
+  border-top: 0.15em solid;
+  content: " ";
+  display: block;
+  height: 2.4rem;
+  left: 0.3rem;
+  margin: 0 0.1rem 0 0;
+  overflow: hidden;
+  position: relative;
+  top: 0.8rem;
+}
+
+.btn-medium-font {
+  font-size: 0.6em;
+  text-decoration: none;
+}
+
+.profile-fieldset {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 2px outset #808080;
+}
+
+.profile-login {
+  margin: 20px;
+  width: 350px;
+}
+
+.profile-legend {
+  font-weight: bold;
+}
+
+.checkbox-pre-label {
+  margin-bottom: 10px;
+}
+
+.small-header {
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
+.gridlike-form {
+  margin: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.gridlike-form-row {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gridlike-form-row-label {
+  width: 100px;
+}
+
+.gridlike-form-row-input {
+  width: 40%;
 }

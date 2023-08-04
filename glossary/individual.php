@@ -41,7 +41,7 @@ if($glossId){
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE.(isset($LANG['GLOSS_TERM_INFO'])?$LANG['GLOSS_TERM_INFO']:'Glossary Term Information'); ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
@@ -69,7 +69,7 @@ if($glossId){
 				if($isEditor){
 					?>
 					<div style="float:right;margin-right:15px;" title="Edit Term Data">
-						<a href="termdetails.php?glossid=<?php echo $glossId;?>" onclick="self.resizeTo(1250, 900);">
+						<a href="termdetails.php?glossid=<?php echo htmlspecialchars($glossId, HTML_SPECIAL_CHARS_FLAGS);?>" onclick="self.resizeTo(1250, 900);">
 							<img style="border:0px;width:12px;" src="../images/edit.png" />
 						</a>
 					</div>
@@ -110,7 +110,7 @@ if($glossId){
 								$i = 0;
 								foreach($synonymArr as $synGlossId => $synArr){
 									if($i) echo ', ';
-									echo '<a href="individual.php?glossid='.$synGlossId.'">'.$synArr['term'].'</a>';
+									echo '<a href="individual.php?glossid=' . htmlspecialchars($synGlossId, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($synArr['term'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 									$i++;
 								}
 								echo '</div>';
@@ -121,7 +121,7 @@ if($glossId){
 								$i = 0;
 								foreach($translationArr as $transGlossId => $transArr){
 									if($i) echo ', ';
-									echo '<a href="individual.php?glossid='.$transGlossId.'">'.$transArr['term'].'</a> ('.$transArr['language'].')';
+									echo '<a href="individual.php?glossid=' . htmlspecialchars($transGlossId, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($transArr['term'], HTML_SPECIAL_CHARS_FLAGS) . '</a> (' . htmlspecialchars($transArr['language'], HTML_SPECIAL_CHARS_FLAGS) . ')';
 									$i++;
 								}
 								echo '</div>';
@@ -137,7 +137,7 @@ if($glossId){
 									elseif($relType == 'subClassOf') $relStr = 'superclass or parent term';
 									elseif($relType == 'superClassOf') $relStr = 'subclass or child term';
 									foreach($relTypeArr as $relGlossId => $relArr){
-										echo $delimter.'<a href="individual.php?glossid='.$relGlossId.'">'.$relArr['term'].'</a> ('.$relStr.')';
+										echo $delimter . '<a href="individual.php?glossid=' . htmlspecialchars($relGlossId, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($relArr['term'], HTML_SPECIAL_CHARS_FLAGS) . '</a> (' . htmlspecialchars($relStr, HTML_SPECIAL_CHARS_FLAGS) . ')';
 										$delimter = ', ';
 									}
 								}
@@ -154,7 +154,7 @@ if($glossId){
 							if($termArr['resourceurl']){
 								$resource = '';
 								if(substr($termArr['resourceurl'],0,4)=="http" || substr($termArr['resourceurl'],0,4)=="www."){
-									$resource = "<a href='".$termArr['resourceurl']."' target='_blank'>".wordwrap($termArr['resourceurl'],($termImgArr?37:70),'<br />\n',true)."</a>";
+									$resource = "<a href='" . htmlspecialchars($termArr['resourceurl'], HTML_SPECIAL_CHARS_FLAGS) . "' target='_blank'>" . htmlspecialchars(wordwrap($termArr['resourceurl'],($termImgArr?37:70),'<br />\n',true), HTML_SPECIAL_CHARS_FLAGS) . "</a>";
 								}
 								else{
 									$resource = $termArr['resourceurl'];

@@ -78,4 +78,6 @@ $LANG['COMMENTS'] = 'Comentarios';
 $LANG['PAGE'] = 'P&aacute;gina';
 $LANG['OF'] = 'de';
 $LANG['CHECKLIST'] = 'Listado de Comprobaci&oacute;n';
+$LANG['SEARCHSYNONYMS'] = "Buscar sinónimos";
+$LANG['TAXONFILTER'] = 'Filtro Taxonómico';
 ?>

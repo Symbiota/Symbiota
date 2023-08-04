@@ -30,7 +30,7 @@ if($isEditor){
 	if($action == 'Submit Occurrence'){
 		if($occurManager->addImageOccurrence($_POST)){
 			$occid = $occurManager->getOccid();
-			if($occid) $statusStr = $LANG['NEW_RECORD_CREATED'].': <a href="occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>';
+			if($occid) $statusStr = $LANG['NEW_RECORD_CREATED'].': <a href="occurrenceeditor.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 		}
 		else{
 			$statusStr = $occurManager->getErrorStr();
@@ -50,7 +50,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['IMAGE_SUBMIT']?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
     ?>
@@ -106,8 +106,8 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href="../../index.php"><?php echo $LANG['HOME']?></a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1"><?php echo $LANG['COL_MNT']?></a> &gt;&gt;
+		<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS)?></a> &gt;&gt;
+		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars($LANG['COL_MNT'], HTML_SPECIAL_CHARS_FLAGS)?></a> &gt;&gt;
 		<b><?php echo $LANG['OCC_IMAGE_SUBMIT']?></b>
 	</div>
 	<!-- inner text -->

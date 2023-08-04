@@ -79,7 +79,7 @@ if($chars){
 			echo '<div class="navpath">';
 			if($dynClid){
 				if($dataManager->getClType() == 'Specimen Checklist'){
-					echo '<a href="'.$CLIENT_ROOT.'/collections/list.php?tabindex=0">';
+					echo '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/collections/list.php?tabindex=0">';
 					echo 'Occurrence Checklist';
 					echo '</a> &gt; ';
 				}
@@ -93,21 +93,21 @@ if($chars){
 	}
 	else{
 		echo '<div class="navpath">';
-		echo '<a href="../index.php">'.$LANG['HOME'].'</a> &gt;&gt; ';
+		echo '<a href="../index.php">' . htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
 		if($dynClid){
 			if($dataManager->getClType() == 'Specimen Checklist'){
-				echo '<a href="'.$CLIENT_ROOT.'/collections/list.php?tabindex=0">';
+				echo '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/collections/list.php?tabindex=0">';
 				echo 'Occurrence Checklist';
 				echo '</a> &gt;&gt; ';
 			}
 		}
 		elseif($clid){
-			echo '<a href="'.$CLIENT_ROOT.'/checklists/checklist.php?clid='.$clid.'&pid='.$pid.'">';
+			echo '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/checklists/checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">';
 			echo 'Checklist: '.$dataManager->getClName();
 			echo '</a> &gt;&gt; ';
 		}
 		elseif($pid){
-			echo '<a href="'.$CLIENT_ROOT.'/projects/index.php?pid='.$pid.'">';
+			echo '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/projects/index.php?pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">';
 			echo 'Project Checklists';
 			echo '</a> &gt;&gt; ';
 		}
@@ -121,7 +121,7 @@ if($chars){
 	if($isEditor){
 		?>
 		<div style="float:right;margin:15px;" title="Edit Character Matrix">
-			<a href="tools/matrixeditor.php?clid=<?php echo $clid; ?>"><img src="../images/edit.png" /><span style="font-size:70%;">CM</span></a>
+			<a href="tools/matrixeditor.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>"><img src="../images/edit.png" /><span style="font-size:70%;">CM</span></a>
 		</div>
 		<?php
 	}
@@ -186,7 +186,7 @@ if($chars){
 								<h2>
 									<?php
 									if($FLORA_MOD_IS_ACTIVE){
-										echo '<a href="../checklists/checklist.php?clid='.$clid.'&dynclid='.$dynClid.'&pid='.$pid.'">';
+										echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&dynclid=' . htmlspecialchars($dynClid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">';
 									}
 									echo $dataManager->getClName()." ";
 									if($FLORA_MOD_IS_ACTIVE){
@@ -212,10 +212,10 @@ if($chars){
 								natcasesort($species);
 								foreach($species as $tid => $disName){
 									$newSpLink = '../taxa/index.php?taxon='.$tid."&clid=".($dataManager->getClType()=="static"?$dataManager->getClid():"");
-									echo "<tr><td><div style='margin:0px 5px 0px 10px;'><a href='".$newSpLink."' target='_blank'><i>$disName</i></a></div></td>\n";
+									echo "<tr><td><div style='margin:0px 5px 0px 10px;'><a href='" . htmlspecialchars($newSpLink, HTML_SPECIAL_CHARS_FLAGS) . "' target='_blank'><i>$disName</i></a></div></td>\n";
 									echo "<td align='right'>\n";
 									if($isEditor){
-										echo "<a href='tools/editor.php?tid=$tid&lang=".$DEFAULT_LANG."' target='_blank'><img src='../images/edit.png' width='15px' border='0' title='".$LANG['EDITMORP']."' /></a>\n";
+										echo "<a href='tools/editor.php?tid=$tid&lang=" . htmlspecialchars($DEFAULT_LANG, HTML_SPECIAL_CHARS_FLAGS) . "' target='_blank'><img src='../images/edit.png' width='15px' border='0' title='" . htmlspecialchars($LANG['EDITMORP'], HTML_SPECIAL_CHARS_FLAGS) . "' /></a>\n";
 									}
 									echo "</td></tr>\n";
 								}

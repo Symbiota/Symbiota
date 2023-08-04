@@ -318,7 +318,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 							if($isEditor){
 								?>
 								<div style="float:left;margin-left:5px;">
-									(<a href="sources.php?emode=1&tid=<?php echo $tid.'&searchterm='.$searchTerm.'&language='.$language.'&taxa='.$tid; ?>"><?php echo (isset($LANG['ADD_SRC'])?$LANG['ADD_SRC']:'Add Sources'); ?></a>)
+									(<a href="sources.php?emode=1&tid=<?php echo htmlspecialchars($tid , HTML_SPECIAL_CHARS_FLAGS) . '&searchterm=' . htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS) . '&language=' . htmlspecialchars($language, HTML_SPECIAL_CHARS_FLAGS) . '&taxa=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo $LANG['ADD_SRC']; ?></a>)
 								</div>
 								<?php
 							}
@@ -335,7 +335,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 								if($isEditor){
 									?>
 									<div style="float:right;">
-										<a href="sources.php?emode=1&tid=<?php echo $tid.'&searchterm='.$searchTerm.'&language='.$language.'&taxa='.$tid; ?>"><img src="../images/edit.png" style="width:13px" /></a>
+										<a href="sources.php?emode=1&tid=<?php echo htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&searchterm=' . htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS) . '&language=' . htmlspecialchars($language, HTML_SPECIAL_CHARS_FLAGS) . '&taxa=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS); ?>"><img src="../images/edit.png" style="width:13px" /></a>
 									</div>
 									<?php
 								}
@@ -375,7 +375,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 					echo '<div style="padding:10px;"><ul>';
 					foreach($termList as $glossId => $termName){
 						echo '<li>';
-						echo '<a href="#" onclick="openTermPopup('.$glossId.'); return false;"><b>'.$termName.'</b></a>';
+						echo '<a href="#" onclick="openTermPopup(' . htmlspecialchars($glossId, HTML_SPECIAL_CHARS_FLAGS) . '); return false;"><b>' . htmlspecialchars($termName, HTML_SPECIAL_CHARS_FLAGS) . '</b></a>';
 						echo '</li>';
 					}
 					echo '</ul></div>';

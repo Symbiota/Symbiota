@@ -48,7 +48,7 @@ if($isEditor){
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 	<title><?php echo $DEFAULT_TITLE; ?>: Incoming Loan Management</title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -93,9 +93,9 @@ if($isEditor){
 	?>
 	<div class="navpath">
 		<a href='../../index.php'>Home</a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management Menu</a> &gt;&gt;
-		<a href="index.php?tabindex=1&collid=<?php echo $collid; ?>">Loan Index</a> &gt;&gt;
-		<a href="incoming.php?collid=<?php echo $collid.'&loanid='.$loanId; ?>"><b>Incoming Loan Management</b></a>
+		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">Collection Management Menu</a> &gt;&gt;
+		<a href="index.php?tabindex=1&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">Loan Index</a> &gt;&gt;
+		<a href="incoming.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($loanId, HTML_SPECIAL_CHARS_FLAGS); ?>"><b>Incoming Loan Management</b></a>
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
@@ -312,7 +312,7 @@ if($isEditor){
 											echo '<div style="float: left; margin-left: 5px;"><a href="../../' .
 												$attachArr['path'] . $attachArr['filename']  .'" target="_blank">' .
 												($attachArr['title'] != "" ? $attachArr['title'] : $attachArr['filename']) . '</a></div>';
-											echo '<a href="incoming.php?collid='.$collid . '&loanid=' . $loanId . '&attachid='. $attachId . '&formsubmit=delAttachment"><img src="../../images/del.png" style="width: 15px; margin-left: 5px;"></a></li>';
+											echo '<a href="incoming.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($loanId, HTML_SPECIAL_CHARS_FLAGS) . '&attachid='. htmlspecialchars($attachId, HTML_SPECIAL_CHARS_FLAGS) . '&formsubmit=delAttachment"><img src="../../images/del.png" style="width: 15px; margin-left: 5px;"></a></li>';
 										}
 										echo '</ul>';
 									}
@@ -336,7 +336,7 @@ if($isEditor){
 						<?php
 					}
 					?>
-					<div style="margin:20px"><b>&lt;&lt; <a href="index.php?collid=<?php echo $collid; ?>">Return to Loan Index Page</a></b></div>
+					<div style="margin:20px"><b>&lt;&lt; <a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">Return to Loan Index Page</a></b></div>
 				</div>
 				<?php
 				if($specList){

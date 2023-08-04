@@ -88,18 +88,18 @@ $statusStr = '';
 					if($userStats['nonvolcnt']) echo '<span style="margin-left:25px">(Additional as non-volunteer: '.number_format($userStats['nonvolcnt']).'*)</span>';
 					echo '</div>';
 					echo '<div style="margin-top:5px">Pending points: '.number_format($userStats['ppoints']);
-					if($userStats['ppoints']) echo ' (<a href="review.php?rstatus=5&uid='.$SYMB_UID.'">'.$LANG['VIEW_RECORDS'].'</a>)';
+					if($userStats['ppoints']) echo ' (<a href="review.php?rstatus=5&uid=' . htmlspecialchars($SYMB_UID, HTML_SPECIAL_CHARS_FLAGS) .  '">' . htmlspecialchars($LANG['VIEW_RECORDS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>)';
 					echo '</div>';
 					echo '<div style="margin-top:5px">Approved points: '.number_format($userStats['apoints']);
-					if($userStats['apoints']) echo ' (<a href="review.php?rstatus=10&uid='.$SYMB_UID.'">'.$LANG['VIEW_RECORDS'].'</a>)';
+					if($userStats['apoints']) echo ' (<a href="review.php?rstatus=10&uid=' . htmlspecialchars($SYMB_UID, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($LANG['VIEW_RECORDS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>)';
 					echo '</div>';
 					echo '<div style="margin-top:5px">Total possible score: '.number_format($userStats['ppoints']+$userStats['apoints']).'</div>';
-					if($userStats['nonvolcnt']) echo '<div style="margin-top:10px">* '.$LANG['ONLY_PROCESSED_SPECIMENS_ELIGIBLE'].'</div>';
+					if($userStats['nonvolcnt']) echo '<div style="margin-top:10px">* ' . $LANG['ONLY_PROCESSED_SPECIMENS_ELIGIBLE'] . '</div>';
 				}
 				else{
 					?>
 					<div>
-						<a href="../../../profile/index.php?refurl=../collections/specprocessor/crowdsource/index.php"><?php echo $LANG['LOGIN']; ?></a> <?php echo $LANG['TO_VIEW_CURRENT']; ?>
+						<a href="../../../profile/index.php?refurl=../collections/specprocessor/crowdsource/index.php"><?php echo htmlspecialchars($LANG['LOGIN'], HTML_SPECIAL_CHARS_FLAGS); ?></a> <?php echo htmlspecialchars($LANG['TO_VIEW_CURRENT'], HTML_SPECIAL_CHARS_FLAGS); ?>
 					</div>
 					<?php
 				}
@@ -127,12 +127,12 @@ $statusStr = '';
 					echo '<tr>';
 					echo '<td>';
 					echo '<b>'.$sArr['name'].'</b>';
-					if($IS_ADMIN || in_array($collId, $pArr)) echo ' <a href="../index.php?tabindex=1&collid='.$collId.'"><img src="../../../images/edit.png" style="width:14px;" /></a>';
+					if($IS_ADMIN || in_array($collId, $pArr)) echo ' <a href="../index.php?tabindex=1&collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../../images/edit.png" style="width:14px;" /></a>';
 					echo '</td>';
 					echo '<td>'.number_format((array_key_exists(5,$cntArr)?$cntArr[5]:0)+(array_key_exists(10,$cntArr)?$cntArr[10]:0)).'</td>';
 					echo '<td>'.number_format(array_key_exists(5,$pointArr)?$pointArr[5]:0).'</td>';
 					echo '<td>'.number_format(array_key_exists(10,$pointArr)?$pointArr[10]:0).'</td>';
-					echo '<td><a href="../../editor/occurrencetabledisplay.php?csmode=1&occindex=0&displayquery=1&reset=1&collid='.$collId.'" target="_blank">'.number_format(array_key_exists(0,$cntArr)?$cntArr[0]:0).'</a></td>';
+					echo '<td><a href="../../editor/occurrencetabledisplay.php?csmode=1&occindex=0&displayquery=1&reset=1&collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars(number_format(array_key_exists(0,$cntArr)?$cntArr[0]:0), HTML_SPECIAL_CHARS_FLAGS) . '</a></td>';
 					echo '</tr>';
 				}
 				?>

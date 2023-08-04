@@ -36,7 +36,7 @@ if($isEditor && $action){
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Identification Character Editor</title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -95,10 +95,10 @@ if($isEditor && $action){
 			if($editorManager->getRankId() > 140) $sn = "<i>$sn</i>";
 			echo "<div style='float:right;'>";
 			if($editorManager->getRankId() > 140){
-				echo "<a href='editor.php?tid=".$editorManager->getParentTid()."&children=".($childrenStr?$childrenStr.',':'').$tid."'>edit parent</a>&nbsp;&nbsp;";
+				echo "<a href='editor.php?tid=" . htmlspecialchars($editorManager->getParentTid(), HTML_SPECIAL_CHARS_FLAGS) . "&children=" . htmlspecialchars(($childrenStr?$childrenStr.',':''), HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . "'>edit parent</a>&nbsp;&nbsp;";
 			}
 			if($childrenStr){
-				echo "<br><a href='editor.php?children=".$childrenStr."'>back to child</a>";
+				echo "<br><a href='editor.php?children=" . htmlspecialchars($childrenStr, HTML_SPECIAL_CHARS_FLAGS) . "'>back to child</a>";
 			}
 			echo '</div>';
 			echo '<h2>'.$sn.'</h2>';
@@ -124,7 +124,7 @@ if($isEditor && $action){
 							echo "<div style='margin-top:1em;'><span style='font-weight:bold;'>$charNameStr</span>\n";
 							if($editorManager->getRankId() > 140){
 								echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='font-size:smaller;'>";
-								echo "<a href=\"#\" onclick=\"openPopup('editor.php?tid=".$editorManager->getParentTid()."&char=".$cidKey."','technical');\">parent</a>";
+								echo "<a href=\"#\" onclick=\"openPopup('editor.php?tid=" . htmlspecialchars($editorManager->getParentTid(), HTML_SPECIAL_CHARS_FLAGS) . "&char=" . htmlspecialchars($cidKey, HTML_SPECIAL_CHARS_FLAGS) . "','technical');\">parent</a>";
 								echo "</span>\n";
 							}
 							echo "</div>\n";

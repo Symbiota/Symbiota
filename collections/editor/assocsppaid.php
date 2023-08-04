@@ -8,7 +8,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $LANG['ASSOC_SPP_AID']; ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -47,7 +47,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 		<fieldset style="width:450px;">
 			<legend><b><?php echo $LANG['ASSOC_SPP_AID']; ?></b></legend>
 			<div style="">
-				<?php echo $LANG['TAXON']; ?>:
+				<label for="taxonname"><?php echo $LANG['TAXON']; ?>:</label>
 				<input id="taxonname" type="text" style="width:350px;" /><br/>
 				<button id="transbutton" type="button" value="Add Name" onclick="addName();"><?php echo $LANG['ADD_NAME']; ?></button>
 			</div>

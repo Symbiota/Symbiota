@@ -3,7 +3,7 @@ include_once('../config/symbini.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 header("Location: ".$CLIENT_ROOT."/index.php");
 ?>
-<html>
+<html lang="en">
 	<head>
 		<title>Forbidden</title>
 		<?php
@@ -21,7 +21,7 @@ header("Location: ".$CLIENT_ROOT."/index.php");
 				You don't have permission to access this page.
 			</div>
 			<div style="font-weight:bold;margin:10px;">
-				<a href="<?php echo $CLIENT_ROOT; ?>/index.php">Return to index page</a>
+				<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php">Return to index page</a>
 			</div>
 		</div>
 		<?php
