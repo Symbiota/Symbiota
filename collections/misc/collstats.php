@@ -624,29 +624,33 @@ if($action != "Update Statistics"){
 													</div>
 													<div>
 														<div style="border:inset; padding-top:2rem;">
-														<?php
-																foreach($catArr as $collid => $collName2){
-																	?>
-																	<div class="gridlike-form-row bottom-breathing-room-relative" id="cat-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?> margin-left:4rem;">
-																		<div>
-																			<input style="margin-right: 0.7rem;" name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
-																			<a style="font-size:1.35rem;" href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
-																				<?php
-																				$codeStr = ' ('.$collName2['instcode'];
-																				if($collName2['collcode']) $codeStr .= '-'.$collName2['collcode'];
-																				$codeStr .= ')';
-																				echo $collName2["collname"].$codeStr;
-																				?>
-																			</a>
-																			<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
-																				<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
-																			</a>
-																		</div>
-																	</div>
-																	<?php
-																	$collCnt++;
-																}
+														<div class="gridlike-form-row bottom-breathing-room-relative" id="cat-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?> margin-left:2rem;">
+															<section class="gridlike-form">
+																<?php
+																	foreach($catArr as $collid => $collName2){
+																		?>
+																			<div class="gridlike-form-row bottom-breathing-room-relative">
+																				<div>
+																					<input style="margin-right: 0.7rem;" name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
+																					<a style="font-size:1.35rem;" href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
+																						<?php
+																						$codeStr = ' ('.$collName2['instcode'];
+																						if($collName2['collcode']) $codeStr .= '-'.$collName2['collcode'];
+																						$codeStr .= ')';
+																						echo $collName2["collname"].$codeStr;
+																						?>
+																					</a>
+																					<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
+																						<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
+																					</a>
+																				</div>
+																			</div>
+																		<?php
+																		$collCnt++;
+																	}
 																?>
+															</section>
+														</div>
 													</div>
 													<?php
 													$cnt++;
