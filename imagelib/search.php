@@ -45,7 +45,7 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 	<title><?php echo $DEFAULT_TITLE; ?> Image Library</title>
 	<meta name='keywords' content='Search, Images, Taxon' />
 	<?php
-	include_once($SERVER_ROOT.'/includes/head.php');
+	include_once($SERVER_ROOT.'/includes/head_template.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
@@ -75,7 +75,7 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 <body>
 	<?php
 	$displayLeftMenu = (isset($imagelib_searchMenu)?$imagelib_searchMenu:false);
-	include($SERVER_ROOT.'/includes/header.php');
+	include($SERVER_ROOT.'/includes/header_template.php');
 	?>
 	<div class="navpath">
 		<a href="../index.php">Home</a> &gt;&gt;
@@ -97,8 +97,8 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 			</ul>
 			<form name="imagesearchform" id="imagesearchform" action="search.php" method="post">
 				<div id="criteriadiv">
-					<div style="clear:both;height:50px">
-						<div style="float:left;margin-top:3px">
+					<div class="flex-form">
+						<div>
 							<label for="taxontype"><?php echo htmlspecialchars($LANG['TAXON_TYPE'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
 							<select id="taxontype" name="taxontype">
 								<?php
@@ -108,42 +108,46 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 								?>
 							</select>
 						</div>
-						<div style="float:left;">
+						<div>
 							<label for="taxa"  > <?php echo htmlspecialchars($LANG['TAXON'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
 							<input id="taxa" name="taxa" type="text" style="width:450px;" value="<?php echo $imgLibManager->getTaxaStr(); ?>" title="Separate multiple names w/ commas" autocomplete="off" />
 						</div>
-						<div style="float:left;margin-left:10px;" >
+						<div>
 							<input id ="usethes" name="usethes" type="checkbox" value="1" <?php if(!$action || $imgLibManager->getUseThes()) echo 'CHECKED'; ?> >
 							<label for="usethes"><?php echo htmlspecialchars($LANG['USE_THES'], HTML_SPECIAL_CHARS_FLAGS) ?> </label>
 						</div>
 					</div>
-					<div style="clear:both;margin-bottom:5px;">
-						<label for="phuid"><?php echo htmlspecialchars($LANG['PHU_ID'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
-						<select id="phuid" name="phuid">
-							<option value="">All Image Contributors</option>
-							<option value="">-----------------------------</option>
-							<?php
-							$uidList = $imgLibManager->getPhotographerUidArr();
-							foreach($uidList as $uid => $name){
-								echo '<option value="'.$uid.'" '.($imgLibManager->getPhotographerUid()==$uid?'SELECTED':'').'>'.$name.'</option>';
-							}
-							?>
-						</select>
+					<div class="flex-form">
+						<div>
+							<label for="phuid"><?php echo htmlspecialchars($LANG['PHU_ID'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
+							<select id="phuid" name="phuid">
+								<option value="">All Image Contributors</option>
+								<option value="">-----------------------------</option>
+								<?php
+								$uidList = $imgLibManager->getPhotographerUidArr();
+								foreach($uidList as $uid => $name){
+									echo '<option value="'.$uid.'" '.($imgLibManager->getPhotographerUid()==$uid?'SELECTED':'').'>'.$name.'</option>';
+								}
+								?>
+							</select>
+						</div>
 					</div>
 					<?php
 					if($tagArr = $imgLibManager->getTagArr()){
 						?>
-						<div style="margin-bottom:5px;">
-							<label for="tags"><?php echo htmlspecialchars($LANG['IMG_TAGS'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
-							<select id="tags" name="tags" >
-								<option value="">Select Tag</option>
-								<option value="">--------------</option>
-								<?php
-								foreach($tagArr as $k){
-									echo '<option value="'.$k.'" '.($imgLibManager->getTags()==$k?'SELECTED ':'').'>'.$k.'</option>';
-								}
-								?>
-							</select>
+						<div class="flex-form">
+							<div>
+								<label for="tags"><?php echo htmlspecialchars($LANG['IMG_TAGS'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
+								<select id="tags" name="tags" >
+									<option value="">Select Tag</option>
+									<option value="">--------------</option>
+									<?php
+									foreach($tagArr as $k){
+										echo '<option value="'.$k.'" '.($imgLibManager->getTags()==$k?'SELECTED ':'').'>'.$k.'</option>';
+									}
+									?>
+								</select>
+							</div>	
 						</div>
 						<?php
 					}
@@ -159,32 +163,47 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 					$specArr = (isset($collList['spec'])?$collList['spec']:null);
 					$obsArr = (isset($collList['obs'])?$collList['obs']:null);
 					?>
-					<div style="margin-bottom:5px;">
-						<label for="imagecount"><?php echo htmlspecialchars($LANG['IMG_COUNT'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
-						<select id="imagecount" name="imagecount">
-							<option value="all" <?php echo ($imgLibManager->getImageCount()=='all'?'SELECTED ':''); ?>>All images</option>
-							<option value="taxon" <?php echo ($imgLibManager->getImageCount()=='taxon'?'SELECTED ':''); ?>>One per taxon</option>
-							<?php
-							if($specArr){
-								?>
-								<option value="specimen" <?php echo ($imgLibManager->getImageCount()=='specimen'?'SELECTED ':''); ?>>One per specimen</option>
+					<div class="flex-form">
+						<div>
+							<label for="imagecount"><?php echo htmlspecialchars($LANG['IMG_COUNT'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
+							<select id="imagecount" name="imagecount">
+								<option value="all" <?php echo ($imgLibManager->getImageCount()=='all'?'SELECTED ':''); ?>>All images</option>
+								<option value="taxon" <?php echo ($imgLibManager->getImageCount()=='taxon'?'SELECTED ':''); ?>>One per taxon</option>
 								<?php
-							}
-							?>
-						</select>
-					</div>
-					<div style="height: 40px">
-						<div style="margin-bottom:5px;float:left;">
-							<label for="imagetype"><?php echo htmlspecialchars($LANG['IMG_TYPE'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
-							<select id="imagetype" name="imagetypes" onchange="imageTypeChanged(this)" onkeypress="imageTypeChanged(this)">
-								<option value="0">All Images</option>
-								<option value="1" <?php echo ($imgLibManager->getImageType() == 1?'SELECTED':''); ?>>Specimen Images</option>
-								<option value="2" <?php echo ($imgLibManager->getImageType() == 2?'SELECTED':''); ?>>Image Vouchered Observations</option>
-								<option value="3" <?php echo ($imgLibManager->getImageType() == 3?'SELECTED':''); ?>>Field Images (lacking specific locality details)</option>
+								if($specArr){
+									?>
+									<option value="specimen" <?php echo ($imgLibManager->getImageCount()=='specimen'?'SELECTED ':''); ?>>One per specimen</option>
+									<?php
+								}
+								?>
 							</select>
 						</div>
-						<div style="margin:0px 40px;float:left">
-							<button name="submitaction" type="submit" value="search">Load Images</button>
+					</div>
+					<div >
+						<div class="flex-form">
+							<div>
+								<label for="imagetype"><?php echo htmlspecialchars($LANG['IMG_TYPE'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
+								<select id="imagetype" name="imagetypes">
+									<option value="0">All Images</option>
+									<option value="1" <?php echo ($imgLibManager->getImageType() == 1?'SELECTED':''); ?>>Specimen Images</option>
+									<option value="2" <?php echo ($imgLibManager->getImageType() == 2?'SELECTED':''); ?>>Image Vouchered Observations</option>
+									<option value="3" <?php echo ($imgLibManager->getImageType() == 3?'SELECTED':''); ?>>Field Images (lacking specific locality details)</option>
+								</select>
+								<script src="../imagelib/selectUtilities.js?v=2"></script>
+								<script>
+									const select = document.getElementById("imagetype");
+									
+									select.addEventListener("blur", function() {
+										if (isSelectionMade(select))
+											imageTypeChanged(this);
+									});
+								</script>
+							</div>
+						</div>
+						<div class="flex-form">
+							<div>
+								<button name="submitaction" type="submit" value="search">Load Images</button>
+							</div>
 						</div>
 					</div>
 					<?php
