@@ -74,7 +74,7 @@ if(!$IS_ADMIN){
 						//Matching event, thus limit output
 						unset($tempOcc['family']);
 						unset($tempOcc['sciname']);
-						unset($tempOcc['tid']);
+						unset($tempOcc['tidinterpreted']);
 						unset($tempOcc['scientificnameauthorship']);
 						unset($tempOcc['taxonremarks']);
 						unset($tempOcc['identifiedby']);
@@ -98,12 +98,11 @@ if(!$IS_ADMIN){
 				var openerForm = opener.document.fullform;
 				if(document.getElementById("linkdupe-"+occId).checked == true){
 					openerForm.linkdupe.value = occId;
-
 				}
 				for(var k in tArr){
 					try{
 						var elem = openerForm.elements[k];
-						if(elem.disabled == false && elem.type != 'hidden' && (appendMode == false || elem.value == "")){
+						if(elem.disabled == false && (elem.type != 'hidden' || k == "tidinterpreted") && (appendMode == false || elem.value == "")){
 							elem.value = tArr[k];
 							elem.style.backgroundColor = "lightblue";
 							if(k != "tid") opener.fieldChanged(k);
