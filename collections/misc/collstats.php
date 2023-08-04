@@ -439,7 +439,7 @@ if($action != "Update Statistics"){
 										if(isset($specArr['cat'])){
 											$categoryArr = $specArr['cat'];
 											?>
-											<div style="position: sticky; top:1rem; align-self: flex-end; margin-left: 59%;" id="statistics-button-panel">
+											<div style="position: sticky; top:1rem; float: right;" id="statistics-button-panel">
 												<div>
 													<button id="deleteMe12" type="submit" name="submitaction" value="Run Statistics"><?php echo (isset($LANG['RUN_STATS'])?$LANG['RUN_STATS']:'Run Statistics'); ?></button>
 												</div>
