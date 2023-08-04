@@ -98,7 +98,7 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 			<form name="imagesearchform" id="imagesearchform" action="search.php" method="post">
 				<div id="criteriadiv">
 					<div class="flex-form">
-						<div>
+						<div style="margin-top: 1.5px">
 							<label for="taxontype"><?php echo htmlspecialchars($LANG['TAXON_TYPE'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
 							<select id="taxontype" name="taxontype">
 								<?php
@@ -109,7 +109,7 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 							</select>
 						</div>
 						<div>
-							<label for="taxa"  > <?php echo htmlspecialchars($LANG['TAXON'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
+							<label for="taxa"><?php echo htmlspecialchars($LANG['TAXON'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
 							<input id="taxa" name="taxa" type="text" style="width:450px;" value="<?php echo $imgLibManager->getTaxaStr(); ?>" title="Separate multiple names w/ commas" autocomplete="off" />
 						</div>
 						<div>
@@ -179,7 +179,7 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 							</select>
 						</div>
 					</div>
-					<div >
+					<div>
 						<div class="flex-form">
 							<div>
 								<label for="imagetype"><?php echo htmlspecialchars($LANG['IMG_TYPE'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
