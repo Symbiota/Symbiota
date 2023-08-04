@@ -32,7 +32,7 @@ if(!$transInstList) echo '<script type="text/javascript">displayNewExchange();</
 					<?php echo $LANG['TRANS_TYPE']; ?>:
 				</span><br />
 				<span>
-					<select name="transactiontype" style="width:100px;" >
+					<select name="transactiontype" style="width:120px;" >
 						<option value="Shipment" SELECTED ><?php echo $LANG['SHIPMENT']; ?></option>
 						<option value="Adjustment"><?php echo $LANG['ADJUSTMENT']; ?></option>
 					</select>

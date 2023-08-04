@@ -99,4 +99,35 @@ $LANG['DEL_INC_LOAN'] = 'Delete Incoming Loan';
 $LANG['REMOVE_SPECIMENS_TO_DEL'] = 'Loan cannot be deleted until all linked specimens are removed (can only be done by lending institution)';
 $LANG['DELETE_LOAN'] = 'Delete Loan';
 
+// from index.php
+$LANG['LOAN_MANAGE'] = 'Loan Management';
+$LANG['ENTER_LOAN_ID'] = 'Enter a loan identifier';
+$LANG['ID_EXISTS'] = 'There is already a transaction with that identifier. Please enter a different one.';
+$LANG['ENTER_EX_ID'] = 'Enter an exchange identifier';
+$LANG['OUTGOING_LOANS'] = 'Outgoing Loans';
+$LANG['INCOMING_LOANS'] = 'Incoming Loans';
+$LANG['GIFTS_EX'] = 'Gifts/Exchanges';
+$LANG['DISP_OUTSTANDING'] = 'Display outstanding loans only';
+$LANG['DISP_ALL'] = 'Display all loans';
+$LANG['REFRESH_LIST'] = 'Refresh List';
+$LANG['CREATE_NEW_LOAN'] = 'Create New Loan';
+$LANG['CREATE_OUTGOING'] = 'New Outgoing Loan';
+$LANG['LOAN_ID'] = 'Loan Identifier';
+$LANG['SEND_INSTITUTION'] = 'Send to Institution';
+$LANG['CREATE_LOAN'] = 'Create Loan';
+$LANG['EXTERNAL_COLL'] = 'external collection';
+$LANG['DUE'] = 'due';
+$LANG['CLOSED'] = 'Closed';
+$LANG['OPEN'] = 'OPEN';
+$LANG['NO_OUTGOING_LOANS'] = 'There are no outgoing loans matching your search criteria';
+$LANG['NO_OUTGOING_LOANS_REG'] = 'There are no outgoing loans registered for this collection';
+$LANG['OPTIONS'] = 'Options';
+$LANG['NEW_INCOMING_LOAN'] = 'New Incoming Loan';
+$LANG['SENT_FROM'] = 'Sent From';
+$LANG['NO_NAME'] = 'no name';
+$LANG['NO_LOANS'] = 'There are no loans matching your search criteria';
+$LANG['NO_LOANS_RECD'] = 'There are no loans received';
+$LANG['LOANS_TO_CHECK_IN'] = 'Loans to be Checked-in';
+$LANG['NOT_AUTH_LOANS'] = 'You are not authorized to manage loans for this collection';
+
 ?>
