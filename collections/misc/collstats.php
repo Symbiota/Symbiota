@@ -470,8 +470,8 @@ if($action != "Update Statistics"){
 															<input id="cat-<?php echo $idStr; ?>-Input" name="cat[]" value="<?php echo $catid; ?>" type="checkbox" onclick="selectAllCat(this,'cat-<?php echo $idStr; ?>')" <?php echo ($collIdArr&&($collIdArr==array_keys($catArr))?'checked':''); ?> />
 															<label for="cat-<?php echo $idStr; ?>-Input">
 																<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-																<?php echo $name; ?> (<?php echo isset($LANG['SPECIMEN']) ? $LANG['SPECIMEN'] : "Specimen" ?>)
-															</a>
+																	<?php echo $name; ?> (<?php echo isset($LANG['SPECIMEN']) ? $LANG['SPECIMEN'] : "Specimen" ?>)
+																</a>
 															</label>
 														</div>
 														<div>
@@ -491,13 +491,13 @@ if($action != "Update Statistics"){
 													</section>
 													<section class="gridlike-form-row bottom-breathing-room-relative">
 														<div>
-															<div id="cat-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset">
+															<div id="cat-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>">
 																<section class="gridlike-form">
+																	<fieldset>
 																	<?php
 																	foreach($catArr as $collid => $collName2){
 																		?>
 																		<div class="gridlike-form-row bottom-breathing-room-relative">
-																			<div>
 																				<input id="db-<?php echo $collid?>" name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
 																				<label for="db-<?php echo $collid?>">
 																					<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
@@ -509,17 +509,17 @@ if($action != "Update Statistics"){
 																						?>
 																					</a>
 																				</label>
+																				<div>
+																					<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
+																						<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
+																					</a>
+																				</div>
 																			</div>
-																			<div>
-																				<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
-																					<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
-																				</a>
-																			</div>
-																		</div>
-																		<?php
+																			<?php
 																		$collCnt++;
 																	}
 																	?>
+																	</fieldset>
 																</section>
 															</div>
 														</div>
@@ -624,37 +624,38 @@ if($action != "Update Statistics"){
 														
 													</div>
 													<div>
-														<div style="border:inset; padding-top:2rem;">
+														
 														<div class="gridlike-form-row bottom-breathing-room-relative" id="cat-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?> margin-left:2rem;">
 															<section class="gridlike-form">
-																<?php
-																	foreach($catArr as $collid => $collName2){
-																		?>
-																			<div class="gridlike-form-row bottom-breathing-room-relative">
-																				<div>
-																					<input style="margin-right: 0.7rem;" id="db-<?php echo $collid ?>" name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
-																					<label for="db-<?php echo $collid ?>">
-																						<a style="font-size:1.35rem;" href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
-																							<?php
-																							$codeStr = ' ('.$collName2['instcode'];
-																							if($collName2['collcode']) $codeStr .= '-'.$collName2['collcode'];
-																							$codeStr .= ')';
-																							echo $collName2["collname"].$codeStr;
-																							?>
+																<fieldset>
+																	<?php
+																		foreach($catArr as $collid => $collName2){
+																			?>
+																				<div class="gridlike-form-row bottom-breathing-room-relative">
+																					<div>
+																						<input style="margin-right: 0.7rem;" id="db-<?php echo $collid ?>" name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
+																						<label for="db-<?php echo $collid ?>">
+																							<a style="font-size:1.35rem;" href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
+																								<?php
+																								$codeStr = ' ('.$collName2['instcode'];
+																								if($collName2['collcode']) $codeStr .= '-'.$collName2['collcode'];
+																								$codeStr .= ')';
+																								echo $collName2["collname"].$codeStr;
+																								?>
+																							</a>
+																						</label>
+																						<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
+																							<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
 																						</a>
-																					</label>
-																					<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
-																						<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
-																					</a>
+																					</div>
 																				</div>
-																			</div>
-																		<?php
-																		$collCnt++;
-																	}
-																?>
+																			<?php
+																			$collCnt++;
+																		}
+																	?>
+																</fieldset>
 															</section>
 														</div>
-													</div>
 													<?php
 													$cnt++;
 													}
@@ -667,32 +668,34 @@ if($action != "Update Statistics"){
 											$collArr = $obsArr['coll'];
 											?>
 											<section class="gridlike-form-row">
-												<?php
-												foreach($collArr as $collid => $cArr){
-													?>
-														<div>
-															<input id="db-<?php echo $collid ?>" name="db[]" value="<?php echo $collid; ?>" type="checkbox" onclick="uncheckAll();" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
-															<label for="db-<?php echo $collid ?>"><?php echo $LANG['SELECT_DESELECT'] ?></label>
-														</div>
-														<div class="gridlike-form-row bottom-breathing-room-relative">
-														<div class="collectiontitle">
-															<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
-																<?php
-																$codeStr = ' ('.$cArr['instcode'];
-																if($cArr['collcode']) $codeStr .= '-'.$cArr['collcode'];
-																$codeStr .= ')';
-																echo $cArr["collname"].$codeStr;
-																?>
-															</a>
-															<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
-																<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
-															</a>
-														</div>
-													</div>
+												<fieldset>
 													<?php
-													$collCnt++;
-												}
-												?>
+													foreach($collArr as $collid => $cArr){
+														?>
+															<div>
+																<input id="db-<?php echo $collid ?>" name="db[]" value="<?php echo $collid; ?>" type="checkbox" onclick="uncheckAll();" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
+																<label for="db-<?php echo $collid ?>"><?php echo $LANG['SELECT_DESELECT'] ?></label>
+															</div>
+															<div class="gridlike-form-row bottom-breathing-room-relative">
+															<div class="collectiontitle">
+																<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
+																	<?php
+																	$codeStr = ' ('.$cArr['instcode'];
+																	if($cArr['collcode']) $codeStr .= '-'.$cArr['collcode'];
+																	$codeStr .= ')';
+																	echo $cArr["collname"].$codeStr;
+																	?>
+																</a>
+																<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' style='font-size:75%;'>
+																	<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info'); ?>
+																</a>
+															</div>
+														</div>
+														<?php
+														$collCnt++;
+													}
+													?>
+												</fieldset>
 											</section>
 											<div style="float:right;margin-top:20px;margin-bottom:10px;">
 												<div>
