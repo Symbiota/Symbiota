@@ -21,7 +21,7 @@ if($term){
 	$searchManager->setRankLow($rankLow);
 	$searchManager->setRankHigh($rankHigh);
 
-	$nameArr = $searchManager->getTaxaSuggest($term, $taxonType);
+	$nameArr = $searchManager->getTaxaSuggest();
 }
 echo json_encode($nameArr);
 ?>

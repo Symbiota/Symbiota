@@ -5,7 +5,7 @@ $(document).ready(function () {
       source: function (request, response) {
         $.getJSON(
           "rpc/searchsuggest.php",
-          { term: request.term, clid: clid },
+          { term: request.term, clid: clid, deep: 1 },
           response
         );
       },
@@ -26,11 +26,6 @@ $(document).ready(function () {
     }
   );
 
-  $("#speciestoadd").autocomplete({
-    source: "rpc/speciessuggest.php",
-    minLength: 4,
-    autoFocus: true,
-  });
   if (document.cookie.indexOf("editspp") > -1) {
     $(".editspp").show();
     document.getElementById("editsppon").style.display = "inline";

@@ -40,6 +40,12 @@ class GoogleMap {
 
    DrawOptions;
 
+   clearMap() {
+      this.shapes.map(s=> s.layer.setMap(null))
+      this.shapes = [];
+      this.activeShape = null;
+   }
+
    enableDrawing(drawOptions = this.DEFAULT_DRAW_OPTIONS, onDrawChange) {
       this.onDrawChange = onDrawChange;
 
@@ -173,7 +179,10 @@ class GoogleMap {
 				bounds = new google.maps.LatLngBounds();
             const polygon = new google.maps.Polygon({
                paths: shape.latlngs.map(pt=> {
-                  const coord = new google.maps.LatLng(pt[0],pt[1]);
+                  let coord = shape.format && shape.format === "lnglat"?
+                     new google.maps.LatLng(pt[1],pt[0]):
+                     new google.maps.LatLng(pt[0],pt[1]);
+
                   bounds.extend(coord);
                   return coord; 
                }),
