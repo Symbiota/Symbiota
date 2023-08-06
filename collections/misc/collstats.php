@@ -780,13 +780,13 @@ if($action != "Update Statistics"){
 										</ul>
 										<form name="statscsv" id="statscsv" action="collstatscsv.php" method="post" onsubmit="">
 											<div class="stat-csv-margin">
-												<div id="showstatspercoll" style="float:left;display:block;" >
+												<div id="showstatspercoll" class="float-and-block" >
 													<a href="#" onclick="return toggleStatsPerColl()"><?php echo (isset($LANG['SHOW_PER_COL'])?$LANG['SHOW_PER_COL']:'Show Statistics per Collection'); ?></a>
 												</div>
-												<div id="hidestatspercoll" style="float:left;display:none;" >
+												<div id="hidestatspercoll" class="float-and-no-display" >
 													<a href="#" onclick="return toggleStatsPerColl()"><?php echo (isset($LANG['HIDE_STATS'])?$LANG['HIDE_STATS']:'Hide Statistics per Collection'); ?></a>
 												</div>
-												<div style='float:left;margin-left:6px;width:16px;height:16px;padding:2px;' title="<?php echo (isset($LANG['SAVE_CSV'])?$LANG['SAVE_CSV']:'Save CSV'); ?>">
+												<div class="stat-csv-float-margins" title="<?php echo (isset($LANG['SAVE_CSV'])?$LANG['SAVE_CSV']:'Save CSV'); ?>">
 													<input type="hidden" name="collids" id="collids" value='<?php echo $collId; ?>' />
                                                     <input type="hidden" name="taxon" value='<?php echo $cPartentTaxon; ?>' />
                                                     <input type="hidden" name="country" value='<?php echo $cCountry; ?>' />
@@ -797,32 +797,32 @@ if($action != "Update Statistics"){
 											</div>
 										</form>
 									</fieldset>
-									<div style="">
+									<div>
 										<fieldset class="special-indent extra-stats">
 											<form name="famstatscsv" id="famstatscsv" action="collstatscsv.php" method="post" onsubmit="">
 												<div class='legend'><b><?php echo (isset($LANG['EXTRA_STATS'])?$LANG['EXTRA_STATS']:'Extra Statistics'); ?></b></div>
-												<div style="margin-top:8px;">
-													<div id="showfamdist" style="float:left;display:block;" >
+												<div class="stat-csv-margin">
+													<div id="showfamdist" class="float-and-block" >
 														<a href="#" onclick="return toggleFamilyDist()"><?php echo (isset($LANG['SHOW_FAMILY'])?$LANG['SHOW_FAMILY']:'Show Family Distribution'); ?></a>
 													</div>
-													<div id="hidefamdist" style="float:left;display:none;" >
+													<div id="hidefamdist" class="float-and-no-display" >
 														<a href="#" onclick="return toggleFamilyDist()"><?php echo (isset($LANG['HIDE_FAMILY'])?$LANG['HIDE_FAMILY']:'Hide Family Distribution'); ?></a>
 													</div>
-													<div style='float:left;margin-left:6px;width:16px;height:16px;padding:2px;' title="<?php echo (isset($LANG['SAVE_CSV'])?$LANG['SAVE_CSV']:'Save CSV'); ?>">
+													<div class="stat-csv-float-margins" title="<?php echo (isset($LANG['SAVE_CSV'])?$LANG['SAVE_CSV']:'Save CSV'); ?>">
 														<input type="hidden" name="action" value='Download Family Dist'/>
 														<input type="image" name="action" src="../../images/dl.png" onclick="" />
 													</div>
 												</div>
 											</form>
 											<form name="geostatscsv" id="geostatscsv" action="collstatscsv.php" method="post" onsubmit="">
-												<div style="clear:both;">
-													<div id="showgeodist" style="float:left;display:block;" >
+												<div class="clr">
+													<div id="showgeodist" class="float-and-block" >
 														<a href="#" onclick="return toggleGeoDist()"><?php echo (isset($LANG['SHOW_GEO'])?$LANG['SHOW_GEO']:'Show Geographic Distribution'); ?></a>
 													</div>
-													<div id="hidegeodist" style="float:left;display:none;" >
+													<div id="hidegeodist" class="float-and-no-display">
 														<a href="#" onclick="return toggleGeoDist();"><?php echo (isset($LANG['HIDE_GEO'])?$LANG['HIDE_GEO']:'Hide Geographic Distribution'); ?></a>
 													</div>
-													<div style='float:left;margin-left:6px;width:16px;height:16px;padding:2px;' title="<?php echo (isset($LANG['SAVE_CSV'])?$LANG['SAVE_CSV']:'Save CSV'); ?>">
+													<div class="stat-csv-float-margins" title="<?php echo (isset($LANG['SAVE_CSV'])?$LANG['SAVE_CSV']:'Save CSV'); ?>">
 														<input type="hidden" name="action" value='Download Geo Dist' />
 														<input type="image" name="action" src="../../images/dl.png" onclick="" />
 													</div>
@@ -831,8 +831,8 @@ if($action != "Update Statistics"){
                                             <?php
                                             if(!$cPartentTaxon && !$cCountry){
                                                 ?>
-                                                <div style="margin-top:25px;">
-                                                    <form name="orderstats" style="margin-bottom:0px" action="collorderstats.php" method="post" target="_blank">
+                                                <div class="mrgn-tp">
+                                                    <form name="orderstats" class="no-btm-mrgn" action="collorderstats.php" method="post" target="_blank">
                                                         <input type="hidden" name="collid" id="collid" value='<?php echo $collId; ?>'/>
                                                         <input type="hidden" name="totalcnt" id="totalcnt" value='<?php echo $results['SpecimenCount']; ?>'/>
                                                         <button type="submit" name="action" value="Load Order Distribution"><?php echo $LANG['LOAD_ORDER']; ?></button>
@@ -846,16 +846,16 @@ if($action != "Update Statistics"){
 										if(!$cPartentTaxon && !$cCountry){
                                             if ($SYMB_UID && ($IS_ADMIN || array_key_exists("CollAdmin", $USER_RIGHTS))) {
                                                 ?>
-                                                <fieldset id="yearstatsbox" style="width:350px;">
+                                                <fieldset id="yearstatsbox" class="yearstatbox-width">
                                                     <legend><b><?php echo (isset($LANG['YEAR_STATS'])?$LANG['YEAR_STATS']:'Year Stats'); ?></b></legend>
-                                                    <form name="yearstats" style="margin-bottom:0px" action="collyearstats.php" method="post" target="_blank" class="flex-form">
+                                                    <form name="yearstats" class="no-btm-mrgn" action="collyearstats.php" method="post" target="_blank" class="flex-form">
                                                         <input type="hidden" name="collid" id="collid" value='<?php echo $collId; ?>'/>
                                                         <input type="hidden" name="days" value="<?php echo $days; ?>"/>
                                                         <input type="hidden" name="months" value="<?php echo $months; ?>"/>
-                                                        <div style="float:left;">
+                                                        <div class="yearstatbox-left-float">
                                                             <?php echo (isset($LANG['YEARS'])?$LANG['YEARS']:'Years'); ?>: <input type="text" id="years" size="5" name="years" value="1" />
                                                         </div>
-                                                        <div style="margin-left:10px;float:left;">
+                                                        <div class="yearstatbox-submit-btn-margin">
                                                             <button type="submit" name="action" value="Load Stats"><?php echo (isset($LANG['LOAD_STATS'])?$LANG['LOAD_STATS']:'Load Stats'); ?></button>
                                                         </div>
                                                     </form>
@@ -865,23 +865,23 @@ if($action != "Update Statistics"){
                                         }
                                         ?>
 									</div>
-									<div style="clear:both;"> </div>
+									<div class="clr"> </div>
 								</div>
 
-								<fieldset id="statspercollbox" style="clear:both;margin-top:15px;width:90%;display:none;">
+								<fieldset id="statspercollbox" class="statspercollbox">
 									<legend><b><?php echo (isset($LANG['STATS_PER_COL'])?$LANG['STATS_PER_COL']:'Statistics per Collection'); ?></b></legend>
 									<section class="gridlike-form">
 										<section class="gridlike-form-row">
-											<div style="text-align:center;"><?php echo (isset($LANG['COLLECTION'])?$LANG['COLLECTION']:'Collection'); ?></div>
-											<div style="text-align:center;"><?php echo (isset($LANG['OCCS'])?$LANG['OCCS']:'Occurrences'); ?></div>
-											<div style="text-align:center;"><?php echo (isset($LANG['G_GEOREFERENCED'])?$LANG['G_GEOREFERENCED']:'Georeferenced'); ?></div>
-											<div style="text-align:center;"><?php echo (isset($LANG['IMAGED'])?$LANG['IMAGED']:'Imaged'); ?></div>
-											<div style="text-align:center;"><?php echo (isset($LANG['SPECIES_ID'])?$LANG['SPECIES_ID']:'Species ID'); ?></div>
-											<div style="text-align:center;"><?php echo (isset($LANG['F_FAMILIES'])?$LANG['F_FAMILIES']:'Families'); ?></div>
-											<div style="text-align:center;"><?php echo (isset($LANG['G_GENERA'])?$LANG['G_GENERA']:'Genera'); ?></div>
-											<div style="text-align:center;"><?php echo (isset($LANG['S_SPECIES'])?$LANG['S_SPECIES']:'Species'); ?></div>
-											<div style="text-align:center;"><?php echo (isset($LANG['T_TOTAL_TAXA'])?$LANG['T_TOTAL_TAXA']:'Total Taxa'); ?></div>
-											<!-- <th style="text-align:center;">Types</th> -->
+											<div class="cntr-text"><?php echo (isset($LANG['COLLECTION'])?$LANG['COLLECTION']:'Collection'); ?></div>
+											<div class="cntr-text"><?php echo (isset($LANG['OCCS'])?$LANG['OCCS']:'Occurrences'); ?></div>
+											<div class="cntr-text"><?php echo (isset($LANG['G_GEOREFERENCED'])?$LANG['G_GEOREFERENCED']:'Georeferenced'); ?></div>
+											<div class="cntr-text"><?php echo (isset($LANG['IMAGED'])?$LANG['IMAGED']:'Imaged'); ?></div>
+											<div class="cntr-text"><?php echo (isset($LANG['SPECIES_ID'])?$LANG['SPECIES_ID']:'Species ID'); ?></div>
+											<div class="cntr-text"><?php echo (isset($LANG['F_FAMILIES'])?$LANG['F_FAMILIES']:'Families'); ?></div>
+											<div class="cntr-text"><?php echo (isset($LANG['G_GENERA'])?$LANG['G_GENERA']:'Genera'); ?></div>
+											<div class="cntr-text"><?php echo (isset($LANG['S_SPECIES'])?$LANG['S_SPECIES']:'Species'); ?></div>
+											<div class="cntr-text"><?php echo (isset($LANG['T_TOTAL_TAXA'])?$LANG['T_TOTAL_TAXA']:'Total Taxa'); ?></div>
+											<!-- <th class="cntr-text">Types</th> -->
 										</section>
 										<?php
 										foreach($resultsTemp as $name => $data){
@@ -901,23 +901,23 @@ if($action != "Update Statistics"){
 										?>
 									</section>
 								</fieldset>
-								<fieldset id="famdistbox" style="clear:both;margin-top:15px;width:800px;display:none;">
+								<fieldset id="famdistbox" class="famdistbox">
 									<legend><b><?php echo (isset($LANG['FAM_DIST'])?$LANG['FAM_DIST']:'Family Distribution'); ?></b></legend>
 									<section class="gridlike-form">
 										<section class="gridlike-form-row">
-											<div style="text-align:center;">
+											<div class="cntr-text">
 											<?php echo (isset($LANG['FAMILY'])?$LANG['FAMILY']:'Family'); ?>
 										</div>
-											<div style="text-align:center;">
+											<div class="cntr-text">
 											<?php echo (isset($LANG['SPECIMENS'])?$LANG['SPECIMENS']:'Specimens'); ?>
 										</div>
-											<div style="text-align:center;">
+											<div class="cntr-text">
 											<?php echo (isset($LANG['G_GEOREFERENCED'])?$LANG['G_GEOREFERENCED']:'Georeferenced'); ?>
 										</div>
-											<div style="text-align:center;">
+											<div class="cntr-text">
 											<?php echo (isset($LANG['SPECIES_ID'])?$LANG['SPECIES_ID']:'Species ID'); ?>
 										</div>
-											<div style="text-align:center;">
+											<div class="cntr-text">
 												<?php echo (isset($LANG['G_GEOREFERENCED'])?$LANG['G_GEOREFERENCED']:'Georeferenced'); ?>
 												<br />
 												<?php echo (isset($LANG['AND'])?$LANG['AND']:'and'); ?>
@@ -947,20 +947,20 @@ if($action != "Update Statistics"){
 										}
 										?>
 									</section>
-									<div style="margin-top:10px;">
+									<div class="top-marg">
 										<b><?php echo (isset($LANG['SPEC_W_FAMILY'])?$LANG['SPEC_W_FAMILY']:'Total Specimens with Family'); ?>:</b> <?php echo number_format($total); ?><br />
 										<?php echo (isset($LANG['SPEC_WO_FAMILY'])?$LANG['SPEC_WO_FAMILY']:'Specimens without Family'); ?>: <?php echo number_format($results['SpecimenCount']-$total); ?><br />
 									</div>
 								</fieldset>
-								<fieldset id="geodistbox" style="margin-top:15px;width:800px;display:none;">
+								<fieldset id="geodistbox" class="geodistbox">
 									<legend><b><?php echo (isset($LANG['GEO_DIST'])?$LANG['GEO_DIST']:'Geographic Distribution'); ?></b></legend>
 									<section class="gridlike-form">
 										<section class="gridlike-form-row">
-											<th style="text-align:center;"><?php echo (isset($LANG['COUNTRY'])?$LANG['COUNTRY']:'Country'); ?></th>
-											<th style="text-align:center;"><?php echo (isset($LANG['SPECIMENS'])?$LANG['SPECIMENS']:'Specimens'); ?></th>
-											<th style="text-align:center;"><?php echo (isset($LANG['G_GEOREFERENCED'])?$LANG['G_GEOREFERENCED']:'Georeferenced'); ?></th>
-											<th style="text-align:center;"><?php echo (isset($LANG['SPECIES_ID'])?$LANG['SPECIES_ID']:'Species ID'); ?></th>
-											<th style="text-align:center;"><?php echo (isset($LANG['G_GEOREFERENCED'])?$LANG['G_GEOREFERENCED']:'Georeferenced'); ?><br /><?php echo (isset($LANG['AND'])?$LANG['AND']:'and'); ?><br /><?php echo (isset($LANG['SPECIES_ID'])?$LANG['SPECIES_ID']:'Species ID'); ?></th>
+											<th class="cntr-text"><?php echo (isset($LANG['COUNTRY'])?$LANG['COUNTRY']:'Country'); ?></th>
+											<th class="cntr-text"><?php echo (isset($LANG['SPECIMENS'])?$LANG['SPECIMENS']:'Specimens'); ?></th>
+											<th class="cntr-text"><?php echo (isset($LANG['G_GEOREFERENCED'])?$LANG['G_GEOREFERENCED']:'Georeferenced'); ?></th>
+											<th class="cntr-text"><?php echo (isset($LANG['SPECIES_ID'])?$LANG['SPECIES_ID']:'Species ID'); ?></th>
+											<th class="cntr-text"><?php echo (isset($LANG['G_GEOREFERENCED'])?$LANG['G_GEOREFERENCED']:'Georeferenced'); ?><br /><?php echo (isset($LANG['AND'])?$LANG['AND']:'and'); ?><br /><?php echo (isset($LANG['SPECIES_ID'])?$LANG['SPECIES_ID']:'Species ID'); ?></th>
 										</section>
 										<?php
 										$total = 0;
@@ -984,7 +984,7 @@ if($action != "Update Statistics"){
 										}
 										?>
 									</section>
-									<div style="margin-top:10px;">
+									<div class="top-marg">
 										<b><?php echo (isset($LANG['SPEC_W_COUNTRY'])?$LANG['SPEC_W_COUNTRY']:'Total Specimens with Country'); ?>:</b> <?php echo number_format($total); ?><br />
 										<?php echo (isset($LANG['SPEC_WO_COUNTRY'])?$LANG['SPEC_WO_COUNTRY']:'Specimens without Country or Georeferencing'); ?>: <?php echo number_format(($results['SpecimenCount']-$total)+$results['SpecimensNullLatitude']); ?><br />
 									</div>

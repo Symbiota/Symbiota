@@ -130,3 +130,66 @@
 .stat-csv-margin {
   margin-top: 8px;
 }
+
+.float-and-block {
+  float: left;
+  display: block;
+}
+
+.float-and-no-display {
+  float: left;
+  display: none;
+}
+
+.stat-csv-float-margins {
+  float: left;
+  margin-left: 6px;
+  width: 16px;
+  height: 16px;
+  padding: 2px;
+}
+
+.mrgn-tp {
+  margin-top: 25px;
+}
+
+.no-btm-mrgn {
+  margin-bottom: 0px;
+}
+
+.yearstatbox-width {
+  width: 350px;
+}
+
+.yearstatbox-left-float {
+  float: left;
+}
+
+.yearstatbox-submit-btn-margin {
+  margin-left: 10px;
+  float: left;
+}
+
+.cntr-text {
+  text-align: center;
+}
+
+.statspercollbox {
+  clear: both;
+  margin-top: 15px;
+  width: 90%;
+  display: none;
+}
+
+.famdistbox {
+  clear: both;
+  margin-top: 15px;
+  width: 800px;
+  display: none;
+}
+
+.geodistbox {
+  margin-top: 15px;
+  width: 800px;
+  display: none;
+}
