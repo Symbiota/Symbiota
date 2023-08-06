@@ -1,0 +1,132 @@
+.tabby {
+  margin: 0px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.pin-things-here {
+  position: relative;
+}
+
+.sticky-buttons {
+  position: sticky;
+  top: 1rem;
+  float: right;
+}
+
+.full-tab {
+  flex-basis: 100%;
+}
+
+.fieldset-padding {
+  padding: 10px;
+  padding-left: 25px;
+}
+
+.fieldset-padding-rem {
+  padding-top: 2rem;
+  padding-left: 2rem;
+}
+
+.fieldset-observation-padding-rem {
+  padding-right: 20rem;
+  padding-top: 2rem;
+  padding-left: 2rem;
+}
+
+.record-criteria-inputs {
+  margin: 10px;
+  float: left;
+}
+
+.specimen-header-margin {
+  margin-top: 2.5rem;
+}
+
+.special-indent {
+  margin: 20px 0px 10px 20px;
+}
+
+.extra-stats {
+  width: 350px;
+  background-color: #ffffcc;
+}
+
+.submit-button-div {
+  clear: both;
+  margin-top: 8px;
+}
+
+.condense-expand-button-set {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+
+.condense-expand-flex {
+  display: flex;
+  flex-direction: row;
+}
+
+.input-margin {
+  margin-right: 0.7rem;
+}
+
+.rel-fontsize {
+  font-size: 1.35rem;
+}
+
+.observation-fieldset {
+  padding-top: 2rem;
+  padding-left: 2rem;
+}
+
+.run-stat-btn {
+  float: right;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.clr {
+  clear: both;
+}
+
+.top-marg {
+  margin-top: 10px;
+}
+
+.heavy-txt {
+  font-weight: bold;
+  font-size: 120%;
+}
+
+.mn-ht {
+  min-height: 300px;
+}
+
+.big-fnt-margin {
+  font-weight: bold;
+  font-size: 105%;
+  margin: 10px;
+}
+
+.dsply-none {
+  display: none;
+}
+
+.stats-display-fieldset {
+  float: left;
+  width: 400px;
+  margin-bottom: 15px;
+  margin-right: 15px;
+}
+
+.stats-display-ul {
+  margin: 0px;
+  padding-left: 10px;
+}
+
+.stat-csv-margin {
+  margin-top: 8px;
+}

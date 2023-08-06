@@ -232,6 +232,7 @@ if($action != "Update Statistics"){
 			include_once($SERVER_ROOT.'/includes/head.php');
 			?>
 			<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
+			<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/collstats.css" type="text/css" rel="stylesheet" />
             <script src="../../js/jquery.js" type="text/javascript"></script>
 			<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 			<script src="../../js/symb/collections.index.js" type="text/javascript"></script>
@@ -391,8 +392,8 @@ if($action != "Update Statistics"){
 			<!-- This is inner text! -->
 			<div id="innertext">
 				<h1><?php echo (isset($LANG['SELECT_COLS'])?$LANG['SELECT_COLS']:'Select Collections to be Analyzed'); ?></h1>
-				<div id="tabs" style="margin:0px; display:flex; flex-wrap: wrap;">
-					<ul style="flex-basis: 100%;">
+				<div id="tabs" class="tabby">
+					<ul class="full-tab">
 						<li><a href="#specobsdiv"><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
 						<?php
                         if($action == "Run Statistics"){
@@ -401,7 +402,7 @@ if($action != "Update Statistics"){
 						?>
 					</ul>
 
-					<div id="specobsdiv" style="position: relative;">
+					<div id="specobsdiv" class="pin-things-here">
 						<?php
 						if($specArr || $obsArr){
 							?>
@@ -410,13 +411,13 @@ if($action != "Update Statistics"){
 									<?php
 									if($SYMB_UID && ($IS_ADMIN || array_key_exists("CollAdmin",$USER_RIGHTS))){
 										?>
-										<fieldset style="padding:10px;padding-left:25px;" class="flex-form">
+										<fieldset class="fieldset-padding flex-form">
 											<legend><b><?php echo (isset($LANG['REC_CRITERIA'])?$LANG['REC_CRITERIA']:'Record Criteria'); ?></b></legend>
-											<div style="margin:10px;float:left;">
+											<div class="record-criteria-inputs">
 												<label for="taxon"><?php echo (isset($LANG['PARENT_CRITERIA'])?$LANG['PARENT_CRITERIA']:'Parent Taxon'); ?>: </label>
 												<input type="text" id="taxon" name="taxon" size="43" value="<?php echo $cPartentTaxon; ?>" />
 											</div>
-											<div style="margin:10px;float:left;">
+											<div class="record-criteria-inputs">
 												<label for="country"><?php echo (isset($LANG['COUNTRY'])?$LANG['COUNTRY']:'Country'); ?>: </label>
 												<input type="text" id="country" name="country" size="43" value="<?php echo $cCountry; ?>" />
 											</div>
@@ -424,11 +425,11 @@ if($action != "Update Statistics"){
 										<?php
 									}
 									?>
-									<div style="margin-top: 2.5rem;">
+									<div class="specimen-header-margin">
 										<hr/>
 										<h2><?php echo $LANG['SPECIMEN_COLLECTIONS'] ?></h2>
 									</div>
-									<div style="margin:20px 0px 10px 20px;">
+									<div class="special-indent">
 										<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" />
 										<label for="dballcb"><?php echo (isset($LANG['SEL_OR_DESEL'])?$LANG['SEL_OR_DESEL']:'Select/Deselect All'); ?> <a href="collprofiles.php"><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></a></label>
 									</div>
@@ -439,14 +440,14 @@ if($action != "Update Statistics"){
 										if(isset($specArr['cat'])){
 											$categoryArr = $specArr['cat'];
 											?>
-											<div style="position: sticky; top:1rem; float: right;" id="statistics-button-panel">
+											<div class="sticky-buttons" id="statistics-button-panel">
 												<div>
 													<button type="submit" name="submitaction" value="Run Statistics"><?php echo (isset($LANG['VIEW_STATS'])?$LANG['VIEW_STATS']:'View Statistics'); ?></button>
 												</div>
 												<?php
 												if($SYMB_UID && $IS_ADMIN){
 													?>
-													<div style="clear:both;margin-top:8px;">
+													<div class="submit-button-div">
 														<button type="submit" name="submitaction" value="Update Statistics"><?php echo (isset($LANG['UPDATE_STATS'])?$LANG['UPDATE_STATS']:'Update Statistics'); ?></button>
 													</div>
 													<?php
@@ -473,8 +474,8 @@ if($action != "Update Statistics"){
 															</label>
 														</div>
 														<div>
-															<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;" style="display:flex; flex-direction:row;">
-																<div style="display:flex; flex-direction:row; align-items:center; gap:1rem;">
+															<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;" class="condense-expand-flex" >
+																<div class="condense-expand-button-set">
 																	<img id="plus-<?php echo $idStr; ?>" src="../../images/plus_sm.png" alt="plus sign to expand menu" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?> width: 0.9rem; height: 0.9rem;" />
 																	<img id="minus-<?php echo $idStr; ?>" src="../../images/minus_sm.png" alt="minus sign to condense menu" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?> width: 0.9rem; height: 0.9rem;" />
 																	<p id="ptext-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>">
@@ -491,7 +492,7 @@ if($action != "Update Statistics"){
 														<div>
 															<div id="cat-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>">
 																<section class="gridlike-form">
-																	<fieldset style="padding-top:2rem; padding-left:2rem;">
+																	<fieldset class="fieldset-padding-rem">
 																		<legend>
 																			<?php echo $name; ?> (<?php echo isset($LANG['SPECIMEN']) ? $LANG['SPECIMEN'] : "Specimen" ?>)
 																		</legend>
@@ -564,7 +565,7 @@ if($action != "Update Statistics"){
 												<?php
 												if($SYMB_UID && $IS_ADMIN){
 													?>
-													<div style="clear:both;margin-top:8px;">
+													<div class="submit-button-div">
 														<button type="submit" name="submitaction" value="Update Statistics"><?php echo (isset($LANG['UPDATE_OBSERVATION_STATS'])?$LANG['UPDATE_OBSERVATION_STATS']:'Update Observation Statistics'); ?></button>
 													</div>
 													<?php
@@ -601,8 +602,8 @@ if($action != "Update Statistics"){
 															</label>
 														</div>
 														<div>
-															<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;" style="display:flex; flex-direction:row;">
-																<div style="display:flex; flex-direction:row; align-items:center; gap:1rem;">
+															<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;" class="condense-expand-flex">
+																<div class="condense-expand-button-set">
 																	<img id="plus-<?php echo $idStr; ?>" alt="plus sign to expand menu" src="../../images/plus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>" />
 																	<img id="minus-<?php echo $idStr; ?>" alt="minus sign to condense menu" src="../../images/minus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" />
 																	<p id="ptext-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>">
@@ -618,7 +619,7 @@ if($action != "Update Statistics"){
 													<div>
 														<div class="gridlike-form-row bottom-breathing-room-relative" id="cat-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?> margin-left:2rem;">
 															<section class="gridlike-form">
-																<fieldset style="padding-right: 20rem; padding-top:2rem; padding-left:2rem;">
+																<fieldset class="fieldset-observation-padding-rem">
 																	<legend>
 																		<?php echo $name; ?> (<?php echo isset($LANG['OBSERVATION']) ? $LANG['OBSERVATION'] : "Observation" ?>)
 																	</legend>
@@ -627,9 +628,9 @@ if($action != "Update Statistics"){
 																			?>
 																				<div class="gridlike-form-row bottom-breathing-room-relative">
 																					<div>
-																						<input style="margin-right: 0.7rem;" id="db-<?php echo $collid ?>" name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
+																						<input class="input-margin" id="db-<?php echo $collid ?>" name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
 																						<label for="db-<?php echo $collid ?>">
-																							<a style="font-size:1.35rem;" href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
+																							<a class="rel-fontsize" href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
 																								<?php
 																								$codeStr = ' ('.$collName2['instcode'];
 																								if($collName2['collcode']) $codeStr .= '-'.$collName2['collcode'];
@@ -660,7 +661,7 @@ if($action != "Update Statistics"){
 											$collArr = $obsArr['coll'];
 											?>
 											<section class="gridlike-form-row">
-												<fieldset style="padding-top:2rem; padding-left:2rem;">
+												<fieldset class="observation-fieldset">
 													<?php
 													foreach($collArr as $collid => $cArr){
 														?>
@@ -687,14 +688,14 @@ if($action != "Update Statistics"){
 													?>
 												</fieldset>
 											</section>
-											<div style="float:right;margin-top:20px;margin-bottom:10px;">
+											<div class="run-stat-btn">
 												<div>
 													<button type="submit" name="submitaction" value="Run Statistics"><?php echo (isset($LANG['VIEW_STATS'])?$LANG['VIEW_STATS']:'View Statistics'); ?></button>
 												</div>
 												<?php
 												if($SYMB_UID && $IS_ADMIN){
 													?>
-													<div style="clear:both;margin-top:8px;">
+													<div class="submit-button-div">
 														<button type="submit" name="submitaction" value="Update Statistics" /><?php echo (isset($LANG['UPDATE_STATS'])?$LANG['UPDATE_STATS']:'Update Statistics'); ?></button>
 													</div>
 													<?php
@@ -706,7 +707,7 @@ if($action != "Update Statistics"){
 										$collArrIndex++;
 									}
 									?>
-									<div style="clear:both;">&nbsp;</div>
+									<div class="clr">&nbsp;</div>
 									<input type="hidden" name="collid" id="colltxt" value="" />
 									<input type="hidden" name="days" value="<?php echo $days; ?>" />
 									<input type="hidden" name="months" value="<?php echo $months; ?>" />
@@ -715,7 +716,7 @@ if($action != "Update Statistics"){
                             <?php
                         }
 						else{
-							echo '<div style="margin-top:10px;"><div style="font-weight:bold;font-size:120%;">'.(isset($LANG['NO_COLLECTIONS'])?$LANG['NO_COLLECTIONS']:'There are currently no collections to analyze.').'</div></div>';
+							echo '<div class="top-marg"><div class="heavy-txt">'.(isset($LANG['NO_COLLECTIONS'])?$LANG['NO_COLLECTIONS']:'There are currently no collections to analyze.').'</div></div>';
 						}
 						?>
 					</div>
@@ -724,17 +725,17 @@ if($action != "Update Statistics"){
 					if($action == "Run Statistics"){
 						?>
 						<div id="statsdiv">
-							<div style="min-height:300px;">
+							<div class="mn-ht">
 								<div>
 									<h1><?php echo (isset($LANG['SEL_COL_STATS'])?$LANG['SEL_COL_STATS']:'Selected Collection Statistics'); ?></h1>
-									<div style="font-weight:bold;font-size:105%;margin:10px;">
+									<div class="big-fnt-margin">
 										<div id="colllistlabel"><a href="#" onclick="toggle('colllist');toggle('colllistlabel');"><?php echo (isset($LANG['DISPLAY_LIST'])?$LANG['DISPLAY_LIST']:'Display List of Collections Analyzed'); ?></a></div>
-										<div id="colllist" style="display:none">
+										<div id="colllist" class="dsply-none">
 											<?php echo $collStr; ?>
 										</div>
 									</div>
-									<fieldset style="float:left;width:400px;margin-bottom:15px;margin-right:15px;">
-										<ul style="margin:0px;padding-left:10px;">
+									<fieldset class="stats-display-fieldset">
+										<ul class="stats-display-ul">
 											<?php
 											echo "<li>";
 											echo ($results['SpecimenCount']?number_format($results['SpecimenCount']):0)." ".(isset($LANG['OCC_RECORDS'])?$LANG['OCC_RECORDS']:'occurrence records');
@@ -778,7 +779,7 @@ if($action != "Update Statistics"){
 											?>
 										</ul>
 										<form name="statscsv" id="statscsv" action="collstatscsv.php" method="post" onsubmit="">
-											<div style="margin-top:8px;">
+											<div class="stat-csv-margin">
 												<div id="showstatspercoll" style="float:left;display:block;" >
 													<a href="#" onclick="return toggleStatsPerColl()"><?php echo (isset($LANG['SHOW_PER_COL'])?$LANG['SHOW_PER_COL']:'Show Statistics per Collection'); ?></a>
 												</div>
@@ -797,7 +798,7 @@ if($action != "Update Statistics"){
 										</form>
 									</fieldset>
 									<div style="">
-										<fieldset style="width:350px;margin:20px 0px 10px 20px;background-color:#FFFFCC;">
+										<fieldset class="special-indent extra-stats">
 											<form name="famstatscsv" id="famstatscsv" action="collstatscsv.php" method="post" onsubmit="">
 												<div class='legend'><b><?php echo (isset($LANG['EXTRA_STATS'])?$LANG['EXTRA_STATS']:'Extra Statistics'); ?></b></div>
 												<div style="margin-top:8px;">
@@ -847,7 +848,7 @@ if($action != "Update Statistics"){
                                                 ?>
                                                 <fieldset id="yearstatsbox" style="width:350px;">
                                                     <legend><b><?php echo (isset($LANG['YEAR_STATS'])?$LANG['YEAR_STATS']:'Year Stats'); ?></b></legend>
-                                                    <form name="yearstats" style="margin-bottom:0px" action="collyearstats.php" method="post" target="_blank">
+                                                    <form name="yearstats" style="margin-bottom:0px" action="collyearstats.php" method="post" target="_blank" class="flex-form">
                                                         <input type="hidden" name="collid" id="collid" value='<?php echo $collId; ?>'/>
                                                         <input type="hidden" name="days" value="<?php echo $days; ?>"/>
                                                         <input type="hidden" name="months" value="<?php echo $months; ?>"/>
