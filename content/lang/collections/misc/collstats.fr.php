@@ -15,7 +15,7 @@ $LANG['SELECT_COLS'] = 'Sélectionnez Collections à Analyser';
 $LANG['REC_CRITERIA'] = "Critères d'Enregistrement";
 $LANG['PARENT_CRITERIA'] = 'Taxon Parent';
 $LANG['SEL_OR_DESEL'] = 'Tout Sélectionner/Désélectionner';
-$LANG['MORE_INFO'] = "plus d'informations";
+$LANG['MORE_INFO'] = "Plus d'Informations";
 $LANG['RUN_STATS'] = 'Exécuter Statistiques';
 $LANG['UPDATE_STATS'] = 'Mettre à Jour Statistiques';
 $LANG['NO_COLLECTIONS'] = "Il n'y a actuellement aucune collection à analyser.";
@@ -63,8 +63,15 @@ $LANG['COUNTRY'] = 'Pays';
 $LANG['SPEC_W_COUNTRY'] = 'Total des Spécimens avec Pays';
 $LANG['SPEC_WO_COUNTRY'] = 'Spécimens sans Pays ni Géoréférencement';
 $LANG['SELECT_DESELECT'] = 'Sélectionner/Désélectionner';
-$LANG['RUN_OBSERVATION_STATS'] = 'Exécuter les statistiques d\'observation';
-$LANG['UPDATE_OBSERVATION_STATS'] = 'Mettre à jour les statistiques d\'observation';
+$LANG['VIEW_STATS'] = 'Afficher les Statistiques';
+$LANG['UPDATE_OBSERVATION_STATS'] = 'Mettre à jour les Statistiques d\'Observation';
+$LANG['OBSERVATION_COLLECTIONS'] = 'Collectes d\'Observations';
+$LANG['SPECIMEN_COLLECTIONS'] = 'Collections de Spécimens';
+$LANG['EXPAND'] = 'Développer';
+$LANG['CONDENSE'] = 'Condenser';
+$LANG['OBSERVATION'] = 'Observation';
+$LANG['SPECIMEN'] = 'Spécimen';
+
 
 
 ?>
