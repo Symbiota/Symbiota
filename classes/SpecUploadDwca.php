@@ -601,10 +601,8 @@ class SpecUploadDwca extends SpecUploadBase{
 									$index = array_shift($indexArr);
 									if(array_key_exists($index,$recordArr)){
 										$valueStr = trim($recordArr[$index]);
-										if($valueStr){
-											if($cset != $this->encoding) $valueStr = $this->encodeString($valueStr);
-											$recMap[$symbField] = $valueStr;
-										}
+										if($cset != $this->encoding) $valueStr = $this->encodeString($valueStr);
+										$recMap[$symbField] = $valueStr;
 									}
 								}
 							}

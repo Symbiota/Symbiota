@@ -84,6 +84,12 @@ class LeafletMap {
       L.control.scale().addTo(this.mapLayer);
    }
 
+   clearMap() {
+      this.drawLayer.clearLayers();
+      this.activeShape = null;
+      this.shapes = [];
+   }
+
    enableDrawing(drawOptions = this.DEFAULT_DRAW_OPTIONS, onDrawChange) {
 
       var drawnItems = new L.FeatureGroup();
@@ -130,28 +136,33 @@ class LeafletMap {
             const keys = Object.keys(layer);
             let type = this.activeShape.type;
 
-            if(keys.length > 0) this.activeShape = getShapeCoords(type, layer[keys[0]]);
+            if(keys.length > 0) {
+               const edited_shape = getShapeCoords(type, layer[keys[0]]);
+               this.activeShape = edited_shape;
+               this.shapes = this.shapes.map(s=> s.layer._leaflet_id === edited_shape.layer._leaflet_id? edited_shape: s);
+            }
 
             if(onDrawChange) onDrawChange(this.activeShape);
          }.bind(this))
 
          //Event saved delete 
          this.mapLayer.on('draw:deleted', function(e) {
+            const ids = Object.keys(e.layers._layers);
+            this.shapes = this.shapes.filter(s => !ids.includes(`${s.layer._leaflet_id}`))
             this.activeShape = null;
             if(onDrawChange) onDrawChange(this.activeShape);
          }.bind(this))
 
          //Fires on New Draw
          this.mapLayer.on('draw:created', function (e) {
-            if(!e.layers || !e.layers._layers) return;
-
-            if(!drawOptions || !drawOptions.multiDraw);
-               drawnItems.clearLayers();
+            if(!drawOptions || !drawOptions.multiDraw) {
+               this.drawLayer.clearLayers();
+            }
 
             const id = this.shapes.length;
 
             const layer = e.layer;
-            drawnItems.addLayer(layer);
+            this.drawLayer.addLayer(layer);
 
             this.activeShape = getShapeCoords(e.layerType, e.layer);
             this.activeShape.id = id;
@@ -190,6 +201,8 @@ class LeafletMap {
 
       this.activeShape.id = id;
       this.shapes.push(this.activeShape);
+
+      this.mapLayer.fitBounds(map.activeShape.layer.getBounds());
    }
 
 }
@@ -207,12 +220,13 @@ function getShapeCoords(layerType, layer) {
 
    switch(layerType) {
       case "polygon":
-         let polygon = layer._latlngs[0].map(coord => 
-            (`${coord.lat.toFixed(SIG_FIGS)} ${coord.lng.toFixed(SIG_FIGS)}`));
+         let latlngs = layer._latlngs[0].map(coord=> [coord.lat, coord.lng]);
+         latlngs.push(latlngs[0]);
 
-         polygon.push(polygon[0]);
+         let polygon = latlngs.map(coord => 
+            (`${coord[0].toFixed(SIG_FIGS)} ${coord[1].toFixed(SIG_FIGS)}`));
 
-         shape.points = layer._latlngs[0];
+         shape.latlngs = latlngs;
          shape.wkt = "POLYGON ((" + polygon.join(',') + "))";
          shape.center = layer.getBounds().getCenter();
          break;

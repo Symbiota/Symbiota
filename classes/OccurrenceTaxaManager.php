@@ -366,7 +366,7 @@ class OccurrenceTaxaManager {
 	}
 
 	protected function cleanOutStr($str){
-		return htmlspecialchars($str);
+		return htmlspecialchars($str ?? "");
 	}
 
 	protected function cleanInputStr($str){
@@ -376,7 +376,7 @@ class OccurrenceTaxaManager {
 		$str = trim($str,' ,;');
 		if($str == '%') $str = '';
 		$str = strip_tags($str);
-		$str = filter_var($str, FILTER_SANITIZE_STRING);
+		$str = htmlspecialchars($str, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML401);
 		return $str;
 	}
 

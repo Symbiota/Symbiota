@@ -442,7 +442,7 @@ if(isset($ACTIVATE_GEOLOCATION) && $ACTIVATE_GEOLOCATION == 1) $activateGeolocat
 			buildCollKey();
 			buildTaxaKey();
 			jscolor.init();
-			if(pointBounds){
+			if(!pointBounds.isEmpty){
 				map.fitBounds(pointBounds);
 				map.panToBounds(pointBounds);
 			}

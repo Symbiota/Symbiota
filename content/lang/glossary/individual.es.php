@@ -5,7 +5,7 @@ Language: Español (Spanish)
 ------------------
 */
 
-include_once($SERVER_ROOT.'/content/lang/glossary/index.en.php');
+include_once($SERVER_ROOT.'/content/lang/glossary/index.es.php');
 
 $LANG['GLOSS_TERM_INFO'] = 'Información de Términos del Glosario';
 $LANG['LOADING'] = 'Descargando';

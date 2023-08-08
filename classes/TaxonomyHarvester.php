@@ -330,6 +330,9 @@ class TaxonomyHarvester extends Manager{
 		elseif(isset($nodeArr['name']['scientificName'])) $taxonArr['sciname'] = $nodeArr['name']['scientificName'];
 		if(isset($nodeArr['rank'])) $taxonArr['taxonRank'] = $nodeArr['rank'];
 		elseif(isset($nodeArr['name']['rank'])) $taxonArr['taxonRank'] = $nodeArr['name']['rank'];
+		if($taxonArr['taxonRank'] == 'Unranked'){
+			if(isset($nodeArr['accepted_name']['rank'])) $taxonArr['taxonRank'] = $nodeArr['accepted_name']['rank'];
+		}
 		if(isset($nodeArr['genus'])) $taxonArr['unitname1'] = $nodeArr['genus'];
 		elseif(isset($nodeArr['name']['genus'])) $taxonArr['unitname1'] = $nodeArr['name']['genus'];
 		elseif(isset($nodeArr['name']['uninomial'])) $taxonArr['unitname1'] = $nodeArr['name']['uninomial'];
@@ -965,28 +968,26 @@ class TaxonomyHarvester extends Manager{
 				if($numResults){
 					$tidAccepted = 0;
 					foreach($resultArr as $unitArr){
-						if($unitArr['recordSource'] == 'Index Fungorum'){
-							$taxonArr['sciname'] = $unitArr['taxon'];
-							$taxonArr['author'] = $unitArr['authors'];
-							$rankID = $this->getRankId($unitArr['rank']);
-							if($rankID) $taxonArr['rankid'] = $rankID;
-							$taxonArr['source'] = 'Via fDex: '.$unitArr['recordSource'];
-							$taxonArr['notes'] = 'taxonomicStatus: '.$unitArr['taxonomicStatus'].'; currentStatus: '.$unitArr['currentStatus'];
-							if(isset($unitArr['parentTaxon'])){
-								$parentTaxon = $unitArr['parentTaxon'];
-								$parentTid = 0;
-								$parentArr = $this->parseCleanCheck($parentTaxon);
-								if(isset($parentArr['tid']) && $parentArr['tid']) $parentTid = $parentArr['tid'];
-								else $parentTid = $this->addFdexTaxon($parentArr);
-								if($parentTid) $taxonArr['parent']['tid'] = $parentTid;
-							}
-							if($unitArr['taxon'] != $unitArr['currentTaxon']){
-								$acceptedArr = $this->parseCleanCheck($unitArr['currentTaxon']);
-								if(isset($acceptedArr['tid']) && $acceptedArr['tid']) $tidAccepted = $acceptedArr['tid'];
-								else $tidAccepted = $this->addFdexTaxon($acceptedArr);
-							}
+						$taxonArr['sciname'] = $unitArr['taxon'];
+						$taxonArr['author'] = $unitArr['authors'];
+						$rankID = $this->getRankId($unitArr['rank']);
+						if($rankID) $taxonArr['rankid'] = $rankID;
+						$taxonArr['source'] = 'Via fDex: '.$unitArr['recordSource'];
+						$taxonArr['notes'] = 'taxonomicStatus: '.$unitArr['taxonomicStatus'].'; currentStatus: '.$unitArr['currentStatus'];
+						if(isset($unitArr['parentTaxon'])){
+							$parentTaxon = $unitArr['parentTaxon'];
+							$parentTid = 0;
+							$parentArr = $this->parseCleanCheck($parentTaxon);
+							if(isset($parentArr['tid']) && $parentArr['tid']) $parentTid = $parentArr['tid'];
+							else $parentTid = $this->addFdexTaxon($parentArr);
+							if($parentTid) $taxonArr['parent']['tid'] = $parentTid;
 						}
-						break;
+						if($unitArr['taxon'] != $unitArr['currentTaxon']){
+							$acceptedArr = $this->parseCleanCheck($unitArr['currentTaxon']);
+							if(isset($acceptedArr['tid']) && $acceptedArr['tid']) $tidAccepted = $acceptedArr['tid'];
+							else $tidAccepted = $this->addFdexTaxon($acceptedArr);
+						}
+						if($unitArr['recordSource'] == 'Index Fungorum') break;
 					}
 					if($taxonArr) $tid = $this->loadNewTaxon($taxonArr, $tidAccepted);
 				}
