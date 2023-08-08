@@ -22,7 +22,6 @@ $LANG['ADJ_AMOUNT'] = 'Adjustment Amount';
 $LANG['EDIT_GIFT_EX'] = 'Edit Gift/Exchange';
 $LANG['DATE_SHIPPED'] = 'Date Shipped';
 $LANG['DATE_RECEIVED'] = 'Date Received';
-$LANG['INSTITUTION'] = 'Institution';
 $LANG['IN_OUT'] = 'In/Out';
 $LANG['OUT'] = 'Out';
 $LANG['IN'] = 'In';
@@ -129,5 +128,21 @@ $LANG['NO_LOANS'] = 'There are no loans matching your search criteria';
 $LANG['NO_LOANS_RECD'] = 'There are no loans received';
 $LANG['LOANS_TO_CHECK_IN'] = 'Loans to be Checked-in';
 $LANG['NOT_AUTH_LOANS'] = 'You are not authorized to manage loans for this collection';
+
+//from outgoing.php
+$LANG['PROC_SUCCESS'] = 'specimens processed successfully';
+$LANG['CATNUMS_NOT_LOCATED'] = 'Unable to locate following catalog numbers';
+$LANG['CATNUM_MULTIPLE_MATCHES'] = 'Catalog numbers with multiple matches';
+$LANG['SPECS_ALREADY_LINKED'] = 'Specimens already linked to loan';
+$LANG['ALREADY_CHECKED_IN'] = 'Already checked-in or not associated with this loan';
+$LANG['MISC_ERROR'] = 'Misc errors';
+$LANG['OUTGOING_LOAN_MANAGE'] = 'Outgoing Loan Management';
+$LANG['CAP_SPECIMENS'] = 'Specimens';
+$LANG['LOAN_OUT_DETAILS'] = 'Loan Out Details';
+$LANG['DATE_SENT'] = 'Date Sent';
+$LANG['SENT_TO'] = 'Sent To';
+$LANG['EDIT_INST_DETAILS'] = 'Edit institution details (option available only to Super Admin)';
+$LANG['DEL_OUTGOING_LOAN'] = 'Delete Outgoing Loan';
+$LANG['CANNOT_DEL_LOAN'] = 'Loan cannot be deleted until all linked specimens are removed';
 
 ?>
