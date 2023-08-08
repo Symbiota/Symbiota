@@ -126,5 +126,6 @@ $LANG['IMGSORTORD'] = 'Edit Image Sorting Order';
 $LANG['ADDNEWIMG'] = 'Add a new image';
 $LANG['DATASETS'] = 'Datasets';
 $LANG['ALLPUBDAT'] = 'All Publicly Viewable Datasets';
-$LANG['DATMANPAG'] = 'Dataset Management Page</a> - datasets you are authorized to edit';
+$LANG['DATMANPAG'] = 'Dataset Management Page';
+$LANG['DATA_AUTHORIZED_TO_EDIT'] = 'datasets you are authorized to edit';
 ?>

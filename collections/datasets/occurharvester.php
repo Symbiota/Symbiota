@@ -142,7 +142,7 @@ if($isEditor){
 		<div style="margin:20px 0px">
 			<hr/>
 		</div>
-		<div style="margin-bottom:10px;">
+		<div class="bottom-breathing-room">
 			<label for="occidsubmit">Occurrence ID:</label>
 			<input type="text" name="occidsubmit" id="occidsubmit" onchange="loadOccurRecord(this)" />
 		</div>

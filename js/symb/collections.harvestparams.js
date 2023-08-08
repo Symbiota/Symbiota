@@ -11,61 +11,30 @@ function cleanNumericInput(formElem) {
   }
 }
 
-function checkHarvestParamsForm(frm) {
-  //make sure they have filled out at least one field.
-  if (
-    frm.taxa.value.trim() === "" &&
-    frm.country.value.trim() === "" &&
-    frm.state.value.trim() === "" &&
-    frm.county.value.trim() === "" &&
-    frm.local.value.trim() === "" &&
-    frm.elevlow.value.trim() === "" &&
-    frm.upperlat.value.trim() === "" &&
-    frm.footprintwkt.value.trim() === "" &&
-    frm.pointlat.value.trim() === "" &&
-    frm.collector.value.trim() === "" &&
-    frm.collnum.value.trim() === "" &&
-    frm.eventdate1.value.trim() === "" &&
-    frm.catnum.value.trim() === "" &&
-    frm.typestatus.checked == false &&
-    frm.hasimages.checked == false &&
-    frm.hasgenetic.checked == false &&
-    frm.hascoords.checked == false
-  ) {
-    //Check trait search fields if present
-    if (
-      typeof frm.SearchByTraits !== "undefined" &&
-      frm.SearchByTraits.value == "true"
-    ) {
-      var traitinputs = frm.elements;
-      var traitselected = false;
-      for (var i = 0; i < traitinputs.length; i++) {
-        if (traitinputs[i].name.indexOf("traitid-") == 0) {
-          if (
-            traitinputs[i].type == "checkbox" ||
-            traitinputs[i].type == "radio"
-          ) {
-            if (traitinputs[i].checked == true) {
-              traitselected = traitinputs[i].checked;
-              break;
-            }
-          } else {
-            if (traitinputs[i].value.trim() !== "") {
-              traitselected = true;
-              break;
-            }
-          }
-        }
-      }
-      if (!traitselected) {
-        alert("Please fill in at least one search parameter!");
-        return false;
-      }
-    } else {
-      alert("Please fill in at least one search parameter!");
-      return false;
-    }
-  }
+function checkHarvestParamsForm(frm){
+	//make sure they have filled out at least one field.
+	let searchDefined = false;
+	let traitInputs = frm.elements;
+ 	for(var i = 0; i < traitInputs.length; i++) {
+		if(traitInputs[i].type == "text" || traitInputs[i].type == "textarea"){
+			if(traitInputs[i].value.trim() != ""){
+				searchDefined = true;
+				break;
+			}
+		}
+		else if(traitInputs[i].type == "checkbox" || traitInputs[i].type == "radio"){
+			if(traitInputs[i].name != "usethes" && traitInputs[i].name != "includeothercatnum" && traitInputs[i].name != "includecult"){
+				if(traitInputs[i].checked){
+					searchDefined = true;
+					break;
+				}
+			}
+		}
+	}
+	if(!searchDefined) {
+		alert("Please fill in at least one search parameter!");
+		return false;
+	}
 
   if (
     frm.upperlat.value != "" ||
@@ -86,44 +55,32 @@ function checkHarvestParamsForm(frm) {
       return false;
     }
 
-    // Check to make sure lat/longs are valid.
-    if (
-      Math.abs(frm.upperlat.value) > 90 ||
-      Math.abs(frm.bottomlat.value) > 90 ||
-      Math.abs(frm.pointlat.value) > 90
-    ) {
-      alert("Latitude values can not be greater than 90 or less than -90.");
-      return false;
-    }
-    if (
-      Math.abs(frm.leftlong.value) > 180 ||
-      Math.abs(frm.rightlong.value) > 180 ||
-      Math.abs(frm.pointlong.value) > 180
-    ) {
-      alert("Longitude values can not be greater than 180 or less than -180.");
-      return false;
-    }
-    var uLat = frm.upperlat.value;
-    if (frm.upperlat_NS.value == "S") uLat = uLat * -1;
-    var bLat = frm.bottomlat.value;
-    if (frm.bottomlat_NS.value == "S") bLat = bLat * -1;
-    if (uLat < bLat) {
-      alert(
-        "Your northern latitude value is less then your southern latitude value. Please correct this."
-      );
-      return false;
-    }
-    var lLng = frm.leftlong.value;
-    if (frm.leftlong_EW.value == "W") lLng = lLng * -1;
-    var rLng = frm.rightlong.value;
-    if (frm.rightlong_EW.value == "W") rLng = rLng * -1;
-    if (lLng > rLng) {
-      alert(
-        "Your western longitude value is greater then your eastern longitude value. Please correct this. Note that western hemisphere longitudes in the decimal format are negitive."
-      );
-      return false;
-    }
-  }
+		// Check to make sure lat/longs are valid.
+		if(Math.abs(frm.upperlat.value) > 90 || Math.abs(frm.bottomlat.value) > 90 || Math.abs(frm.pointlat.value) > 90){
+			alert("Latitude values can not be greater than 90 or less than -90.");
+			return false;
+		}
+		if(Math.abs(frm.leftlong.value) > 180 || Math.abs(frm.rightlong.value) > 180 || Math.abs(frm.pointlong.value) > 180){
+			alert("Longitude values can not be greater than 180 or less than -180.");
+			return false;
+		}
+		let uLat = frm.upperlat.value;
+		if(frm.upperlat_NS.value == 'S') uLat = uLat * -1;
+		let bLat = frm.bottomlat.value;
+		if(frm.bottomlat_NS.value == 'S') bLat = bLat * -1;
+		if(uLat < bLat){
+			alert("Your northern latitude value is less then your southern latitude value. Please correct this.");
+			return false;
+		}
+		let lLng = frm.leftlong.value;
+		if(frm.leftlong_EW.value == 'W') lLng = lLng * -1;
+		let rLng = frm.rightlong.value;
+		if(frm.rightlong_EW.value == 'W') rLng = rLng * -1;
+		if(lLng > rLng){
+			alert("Your western longitude value is greater then your eastern longitude value. Please correct this. Note that western hemisphere longitudes in the decimal format are negitive.");
+			return false;
+		}
+	}
 
   //Same with point radius fields
   if (
@@ -271,6 +228,7 @@ function openCoordAid(mapMode) {
     "polygon",
     "resizable=0,width=900,height=630,left=20,top=20"
   );
+
   if (mapWindow.opener == null) mapWindow.opener = self;
   mapWindow.focus();
 }

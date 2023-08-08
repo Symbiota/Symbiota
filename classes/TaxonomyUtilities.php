@@ -46,8 +46,13 @@ class TaxonomyUtilities {
 			$okToCloseConn = true;
 			if($conn !== null) $okToCloseConn = false;
 			if(count($sciNameArr)){
-				if(strtolower($sciNameArr[0]) == 'x' || $sciNameArr[0] == '×' || mb_ord($sciNameArr[0]) == 215){
+				if(strtolower($sciNameArr[0]) == 'x' || $sciNameArr[0] == '×'){
 					$retArr['unitind1'] = array_shift($sciNameArr);
+				}
+				elseif(mb_ord($sciNameArr[0]) == 215){
+					$retArr['unitind1'] = '×';
+					$unitStr = substr(array_shift($sciNameArr), 2);
+					if($unitStr) array_unshift($sciNameArr, $unitStr);
 				}
 				elseif($sciNameArr[0] == '†' || mb_ord($sciNameArr[0]) == 8224){
 					$retArr['unitind1'] = array_shift($sciNameArr);
@@ -59,10 +64,15 @@ class TaxonomyUtilities {
 				//Genus
 				$retArr['unitname1'] = ucfirst(strtolower(array_shift($sciNameArr)));
 				if(count($sciNameArr)){
-					if(strtolower($sciNameArr[0]) == 'x' || mb_ord($sciNameArr[0]) == 215){
-						//Species level hybrid
+					if(strtolower($sciNameArr[0]) == 'x' || $sciNameArr[0] == '×'){
 						$retArr['unitind2'] = array_shift($sciNameArr);
 						$retArr['unitname2'] = array_shift($sciNameArr);
+					}
+					elseif(mb_ord($sciNameArr[0]) == 215){
+						$retArr['unitind2'] = '×';
+						$unitStr = substr(array_shift($sciNameArr), 2);
+						if($unitStr) $retArr['unitname2'] = $unitStr;
+						else $retArr['unitname2'] = array_shift($sciNameArr);
 					}
 					elseif(strpos($sciNameArr[0],'.') !== false){
 						//It is assumed that Author has been reached, thus stop process

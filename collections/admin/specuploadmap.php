@@ -627,9 +627,11 @@ include($SERVER_ROOT.'/includes/header.php');
 								</ul>
 								<?php
 							}
+							$versionCheckedStr = '';
+							if($isLiveData) $versionCheckedStr = 'checked';
 							?>
 							<div style="margin:10px 0px;">
-								<input name="versiondata" type="checkbox" value="1" checked />
+								<input name="versiondata" type="checkbox" value="1" <?php echo $versionCheckedStr; ?> />
 								<?php echo (isset($LANG['VERSION_DATA_CHANGES'])?$LANG['VERSION_DATA_CHANGES']:'Version data changes'); ?>
 							</div>
 							<div style="margin:10px 0px;">
