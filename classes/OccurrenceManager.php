@@ -649,9 +649,10 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		if(array_key_exists('searchvar',$_REQUEST)){
 			$parsedArr = array();
 			$taxaArr = array();
-			parse_str($this->cleanInputStr($_REQUEST['searchvar']), $parsedArr);
+			parse_str($_REQUEST['searchvar'], $parsedArr);
+
 			if(isset($parsedArr['taxa'])){
-				$taxaArr['taxa'] = $parsedArr['taxa'];
+				$taxaArr['taxa'] = $this->cleanInputStr($parsedArr['taxa']);
 				unset($parsedArr['taxa']);
 				if(isset($parsedArr['usethes']) && is_numeric($parsedArr['usethes'])){
 					$taxaArr['usethes'] = $parsedArr['usethes'];
