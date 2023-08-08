@@ -2447,15 +2447,18 @@ class OccurrenceEditorManager {
 		return $imgIDs;
 	}
 
-	public function getOccIDs($imgID) {
-		$OccIDs = array();
-		$query = "SELECT occid FROM images WHERE imgid = '$imgID'";
+	public function getOccIDofImage($imgID) {
+		// $OccIDs = array();
+		$query = "SELECT occurrenceID FROM images WHERE imgid = '$imgID' LIMIT 1";
 		$result = $this->conn->query($query);
-		while ($row = $result->fetch_assoc()) {
-			$OccIDs[] = $row['occid'];
+		if ($result && $row = $result->fetch_assoc()) {
+			$occID = $row['occurrenceID'];
+		} else {
+			$occID = null; // Return null if no occurrence ID is found
 		}
+		
 		$result->free();
-		return $OccIDs;
+		return $occID;
 	}
 
 	public function getOccId(){

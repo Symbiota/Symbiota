@@ -8,21 +8,13 @@ header("Content-Type: text/html; charset=".$CHARSET);
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/transcribe.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$crowdSourceMode = array_key_exists('csmode',$_REQUEST)?$_REQUEST['csmode']:0;
-
-if(!is_numeric($collid)) $collid = 0;
+$crowdSourceMode = array_key_exists('csmode', $_REQUEST) ? filter_var($_REQUEST['csmode'], FILTER_SANITIZE_NUMBER_INT) : 0;
 
 $occManager = new OccurrenceEditorDeterminations();
 $occManager->setCollId($collid);
 $collMap = $occManager->getCollMap();
-$collid = $_REQUEST["collid"];
+$collid = $_REQUEST['collid'];
 
-$firstOccId = $occManager->getOneOccID($firstImgId);
-
-if($collId && isset($collMap['collid']) && $collId != $collMap['collid']){
-	$collId = $collMap['collid'];
-	$occManager->setCollId($collId);
-}
 if($collMap){
 	if($collMap['colltype']=='General Observations'){
 		$isGenObs = 1;
@@ -54,7 +46,6 @@ elseif(array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collid,$USER_RIG
 }
 $statusStr = '';
 
-// post the selected batch ID
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 	if (isset($_POST["batchID"])) {
 		$selectedBatchID = $_POST["batchID"];
@@ -63,21 +54,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 		$imgIDs = $occManager->getAllImgIDs();		
 	}
 	$firstImgId = $imgIDs[0];
-	$firstImgIndex = 0;
+	$firstIndex = 0;
 	$lastImgId = end($imgIDs);
-	$lastImgIndex = count($imgIDs) - 1;
+	$lastIndex = count($imgIDs) - 1;
 	$occData = array();
 	// occData is a hashtable, which has imgid as key, and occid as value
 	foreach ($imgIDs as $imgID) {
-		$occIDs = $occManager->getOccIDs($imgID);
-		$occData[$imgID] = $occIDs;
-	}
-	// $allOccIDs = array();
-	// foreach ($occData as $occIDs) {
-	// 	$allOccIDs = array_merge($allOccIDs, $occIDs);
-	// }
-	// $firstOccIDs = reset($occData);
-	// $lastOccIDs = end($occData);
+        $occData[$imgID] = $occManager->getOccIDofImage($imgID);
+    }
+	$firstOccId = $occManager->getOneOccID($occData[$firstImgId]);
+	$lastOccId = $occManager->getOneOccID($occData[$lastImgId]);
 }
 
 ?>
@@ -102,6 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 		<script src="../../js/symb/collections.editor.query.js?ver=5" type="text/javascript"></script>
 		<script type="text/javascript">
 			// function 
+			// TODO: currently, we leave the occIndex, it is exactly the same value as imgIndex
 			function navigateToRecordNew(crowdSourceMode, collId, batchId, imgId, imgIndex, occId, occIndex) {
 				var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&collid=' + collId +'&batchid=' + batchId + '&imgid=' + imgId + '&imgindex=' + imgIndex + '&occid=' + occId + '&occindex=' + occIndex;
 				window.location.href = url;
@@ -117,50 +104,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 				});
 			}
 
-            // TODO: update this batch form accordingly
-			function submitBatchForm(f){
-				var workingObj = document.getElementById("workingcircle");
-				workingObj.style.display = "inline"
-				var allCatNum = 0;
-				if(f.allcatnum.checked) allCatNum = 1;
-
-				$.ajax({
-					type: "POST",
-					url: "rpc/getnewdetitem.php",
-					dataType: "json",
-					data: {
-						catalognumber: f.catalognumber.value,
-						allcatnum: allCatNum,
-						sciname: f.sciname.value,
-						collid: f.collid.value
-					}
-				}).done(function( retStr ) {
-					if(retStr != ""){
-						for (var occid in retStr) {
-							var occObj = retStr[occid];
-							if(f.catalognumber.value && checkCatalogNumber(occid, occObj["cn"])){
-								alert("<?php echo $LANG['RECORD_EXISTS']; ?>");
-							}
-							else{
-								var trNode = createNewTableRow(occid, occObj);
-								var tableBody = document.getElementById("catrecordstbody");
-								tableBody.insertBefore(trNode, tableBody.firstElementChild);
-							}
-						}
-						document.getElementById("accrecordlistdviv").style.display = "block";
-					}
-					else{
-						alert("<?php echo $LANG['NO_RECORDS']; ?>");
-					}
-				});
-
-				if(f.catalognumber.value != ""){
-					f.catalognumber.value = '';
-					f.catalognumber.focus();
-				}
-				workingObj.style.display = "none";
-				return false;
-			}
 		</script>
 	</head>
 	<body>
@@ -182,17 +125,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 					<legend><b><?php echo $LANG['TRANSCRIBE_INTO_SPECIFY']; ?></b></legend>
 					<div style="margin:15px;width:700px;">
                         <!-- TODO: update the submit function of the form -->
-						<form name="batchform" action="transcribe.php" method="post">
+						<form name="batchform" method="post">
                             <div style="margin-bottom:15px;">
-								<h3><?php echo($firstOccIDs[0]) ?></h3>
 								<div>
-									<?php $url = 'occurrencequickentry.php?csmode='.$crowdSourceMode.'&collid='.$collid.'&batchid=0&imgid=1&imgindex=0&occid='.$firstOccId.'&occindex='.($firstOccId-1); ?>
+									<?php $url = 'occurrencequickentry.php?csmode='.$crowdSourceMode.'&collid='.$collid.'&batchid=0&imgid=1&imgindex=0&occid='.$firstOccId.'&occindex=0'; ?>
 									<a href=<?php echo($url) ?> >
 										<h3>Go to the quick entry form</h3>
 									</a>
 								</div>
-								<button type="button" name="first" onclick="return navigateToRecordNew(<?php echo ($crowdSourceMode).', '.($collid).', '.($selectedBatchID).', '.($firstImgId).', '.($firstImgIndex).', '.($occData[$firstImgId]).', '.($occData[$firstImgId]-1) ; ?>)"><?php echo $LANG['START_FROM']; ?> first.</button>
-                                <button type="button" name="last"  onclick="return navigateToRecordNew(<?php echo ($crowdSourceMode).', '.($collid).', '.($selectedBatchID).', '.($lastImgId).', '.($lastImgIndex).', '.($occData[$lastImgId]).', '.($occData[$lastImgId]-1); ?>)"><?php echo $LANG['START_FROM']; ?> last.</button>
+								<h4>Work On batch: <?php echo($selectedBatchID) ?> </h4>
+								<button type="button" name="first" onclick="return navigateToRecordNew(<?php echo ($crowdSourceMode).', '.($collid).', '.($selectedBatchID).', '.($firstImgId).', '.($firstIndex).', '.($firstOccId).', '.($firstIndex) ; ?>)"><?php echo $LANG['START_FROM']; ?> first.</button>
+                                <button type="button" name="last"  onclick="return navigateToRecordNew(<?php echo ($crowdSourceMode).', '.($collid).', '.($selectedBatchID).', '.($lastImgId).', '.($lastIndex).', '.($lastOccId).', '.($lastIndex); ?>)"><?php echo $LANG['START_FROM']; ?> last.</button>
 								<button type="button" name="lastView"><?php echo $LANG['START_FROM']; ?> last view.</button>
                             </div>
 							<div>

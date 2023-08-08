@@ -35,9 +35,9 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		return $imgIDs;
 	}
 
-	public function getOneOccID($imgID) {
+	public function getOneOccID($occurrenceID) {
 		$occid = false;
-		$query = "SELECT occid FROM images WHERE imgid = '$imgID' LIMIT 1";
+		$query = "SELECT occid FROM omoccurrences WHERE occurrenceID = '$occurrenceID' LIMIT 1";
 		$result = $this->conn->query($query);
 
 		if ($result && $row = $result->fetch_assoc()) {
