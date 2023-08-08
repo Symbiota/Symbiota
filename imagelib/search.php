@@ -45,7 +45,7 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 	<title><?php echo $DEFAULT_TITLE; ?> Image Library</title>
 	<meta name='keywords' content='Search, Images, Taxon' />
 	<?php
-	include_once($SERVER_ROOT.'/includes/head_template.php');
+	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
@@ -75,7 +75,7 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 <body>
 	<?php
 	$displayLeftMenu = (isset($imagelib_searchMenu)?$imagelib_searchMenu:false);
-	include($SERVER_ROOT.'/includes/header_template.php');
+	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
 		<a href="../index.php">Home</a> &gt;&gt;
