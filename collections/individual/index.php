@@ -267,7 +267,7 @@ $traitArr = $indManager->getTraitArr();
          }
 
          function initializeMap(){
-            <?php if($LEAFLET) { ?>
+            <?php if(!empty($LEAFLET)) { ?>
                leafletInit();
             <?php } else { ?>
                googleInit();
