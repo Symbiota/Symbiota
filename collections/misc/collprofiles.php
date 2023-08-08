@@ -530,7 +530,7 @@ if ($SYMB_UID) {
 		} elseif($collData) {
 			?>
 			<h2><?php echo $DEFAULT_TITLE . ' ' . (isset($LANG['COLLECTION_PROJECTS']) ? $LANG['COLLECTION_PROJECTS'] : 'Natural History Collections and Observation Projects'); ?></h2>
-			<div style='margin:10px;clear:both;'>
+			<div>
 				<a href="../datasets/rsshandler.php" target="_blank"><?php echo (isset($LANG['RSS_FEED']) ? $LANG['RSS_FEED'] : 'RSS feed'); ?></a>
 				<hr />
 			</div>
