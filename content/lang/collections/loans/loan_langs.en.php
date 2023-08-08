@@ -145,4 +145,18 @@ $LANG['EDIT_INST_DETAILS'] = 'Edit institution details (option available only to
 $LANG['DEL_OUTGOING_LOAN'] = 'Delete Outgoing Loan';
 $LANG['CANNOT_DEL_LOAN'] = 'Loan cannot be deleted until all linked specimens are removed';
 
+//from reportsinclude.php
+$LANG['GENERATE_LOAN_PAPERWORK'] = 'Generate Loan Paperwork';
+$LANG['MAILING_ACCT_NO'] = 'Mailing Account #';
+$LANG['PRINT_METHOD'] = 'Print Method';
+$LANG['PRINT_BROWSER'] = 'Print in Browser';
+$LANG['EXPORT_TO_DOC'] = 'Export to DOCX';
+$LANG['ENGLISH'] = 'English';
+$LANG['ENG_SPN'] = 'English/Spanish';
+$LANG['SPANISH'] = 'Spanish';
+$LANG['INVOICE'] = 'Invoice';
+$LANG['SPEC_LIST'] = 'Specimen List';
+$LANG['MAILING_LABEL'] = 'Mailing Label';
+$LANG['ENVELOPE'] = 'Envelope';
+
 ?>
