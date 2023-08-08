@@ -251,7 +251,47 @@ else{
          } 
       }
       let formShape = loadShape("<?php echo $mapMode?>");
+      function leafletInit() {
+         const MapOptions = {
+            center: [<?php echo $latCenter?>, <?php echo $lngCenter?>],
+            zoom: <?php echo $zoom?>
+         };
 
+         let map = new LeafletMap('map', MapOptions );
+
+         map.enableDrawing({
+            polyline: false,
+            circlemarker: false,
+            marker: false,
+            drawColor: {opacity: 0.85, fillOpacity: 0.55, color: '#000' }
+         }, setShapeToSearchForm);
+
+         if(formShape) {
+            map.drawShape(formShape);
+            map.mapLayer.fitBounds(map.activeShape.layer.getBounds());
+         }
+      }
+      function googleInit() {
+		   const MapOptions= {
+				zoom: <?php echo $zoom; ?>,
+				center: new google.maps.LatLng(<?php echo $latCenter . ',' . $lngCenter; ?>),
+				mapTypeId: google.maps.MapTypeId.TERRAIN,
+				scaleControl: true
+			};
+
+         let map = new GoogleMap('map', MapOptions)
+         map.enableDrawing({mapMode: "<?php echo $mapMode?>"}, setShapeToSearchForm);
+
+         if(formShape) 
+            map.drawShape(formShape, setShapeToSearchForm)
+      }
+
+      <?php if(!empty($LEAFLET)) { ?> 
+         leafletInit();
+      <?php } else { ?> 
+         googleInit();
+      <?php } ?>
+/*
       if("<?php echo $LEAFLET ?>") { //LEAFLET SPECIFIC
 
          const MapOptions = {
@@ -286,7 +326,7 @@ else{
 
          if(formShape) 
             map.drawShape(formShape, setShapeToSearchForm)
-      }
+      }*/
    </script>
 </body>
 </html>
