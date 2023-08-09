@@ -451,3 +451,7 @@ table.styledtable tr.alt td {
   display: flex;
   justify-content: center;
 }
+
+.margin-rt-rel {
+  margin-right: 1rem;
+}
