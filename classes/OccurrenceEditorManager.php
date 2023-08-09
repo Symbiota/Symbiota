@@ -2448,17 +2448,29 @@ class OccurrenceEditorManager {
 	}
 
 	public function getOccIDofImage($imgID) {
-		// $OccIDs = array();
 		$query = "SELECT occurrenceID FROM images WHERE imgid = '$imgID' LIMIT 1";
 		$result = $this->conn->query($query);
 		if ($result && $row = $result->fetch_assoc()) {
 			$occID = $row['occurrenceID'];
 		} else {
-			$occID = null; // Return null if no occurrence ID is found
+			$occID = null; 
 		}
 		
 		$result->free();
 		return $occID;
+	}
+
+	public function getBarcode($imgID) {
+		$query = "SELECT barcode FROM images_barcode WHERE imgid = '$imgID' LIMIT 1";
+		$result = $this->conn->query($query);
+		if ($result && $row = $result->fetch_assoc()) {
+			$barcode = $row['barcode'];
+		} else {
+			$barcode = 100; 
+		}
+		
+		$result->free();
+		return $barcode;
 	}
 
 	public function getOccId(){

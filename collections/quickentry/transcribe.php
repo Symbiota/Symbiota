@@ -127,12 +127,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         <!-- TODO: update the submit function of the form -->
 						<form name="batchform" method="post">
                             <div style="margin-bottom:15px;">
-								<div>
-									<?php $url = 'occurrencequickentry.php?csmode='.$crowdSourceMode.'&collid='.$collid.'&batchid=0&imgid=1&imgindex=0&occid='.$firstOccId.'&occindex=0'; ?>
-									<a href=<?php echo($url) ?> >
+							<!-- We have this div to testing. Currently, we don't need it any more. -->
+								<!-- <div>
+									<?php //$url = 'occurrencequickentry.php?csmode='.$crowdSourceMode.'&collid='.$collid.'&batchid=0&imgid=1&imgindex=0&occid='.$firstOccId.'&occindex=0'; ?>
+									<a href=<?php//echo($url) ?> >
 										<h3>Go to the quick entry form</h3>
 									</a>
-								</div>
+								</div> -->
 								<h4>Work On batch: <?php echo($selectedBatchID) ?> </h4>
 								<button type="button" name="first" onclick="return navigateToRecordNew(<?php echo ($crowdSourceMode).', '.($collid).', '.($selectedBatchID).', '.($firstImgId).', '.($firstIndex).', '.($firstOccId).', '.($firstIndex) ; ?>)"><?php echo $LANG['START_FROM']; ?> first.</button>
                                 <button type="button" name="last"  onclick="return navigateToRecordNew(<?php echo ($crowdSourceMode).', '.($collid).', '.($selectedBatchID).', '.($lastImgId).', '.($lastIndex).', '.($lastOccId).', '.($lastIndex); ?>)"><?php echo $LANG['START_FROM']; ?> last.</button>

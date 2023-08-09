@@ -36,26 +36,18 @@ if (isset($_REQUEST['batchid'])) {
     $batchId = $_REQUEST['batchid'];
     // Use $batchId as needed
 	$imgIDs = $occManager->getImgIDs($batchId);
-	// $batchSize = count($imgIDs);
-	// $firstImgId = $imgIDs[0] ;
-	$firstImgIndex = 0;
-} else {
-    $batchId = 0;
-	$batchSize = 0;
-	$firstImgId = 1;
-	$firstImgIndex = 0;
-}
+	$lastIndex = count($imgIDs) - 1;
+	$currentImgId = $_REQUEST['imgid'];
+	$currentImgIndex = $_REQUEST['imgindex'];
+} 
 
 if (isset($_REQUEST['imgid'])) {
-    $imageId = $_REQUEST['imgid'];
-	$imgIndex = $_REQUEST['imgindex'];
-	// TODO: need to chec, if occID exists later
-	$occID = $occManager->getOccIDs($imageId);
-	// $occIndex = $occID - 1
-} else {
-    $imageId = 1;
-	$imgIndex = 0;
-}
+	$barcode = $occManager->getBarcode($currentImgId);
+	if ($barcode != null) {
+
+	}
+	
+} 
 
 //Sanitation
 if(!is_numeric($occId)) $occId = '';
@@ -791,14 +783,13 @@ else{
 					<div class = "column left login-info" style = "background-color: #F2F2F2; ">
 						<div class="field-block title">
 							<h2>Transcribe into Fields</h2>
-							<h1><?php print_r($test) ?></h1>
+							<h1><?php //print_r($imgIDs) ?></h1>
 						</div>
 						<div class="field-block">
 							<span class="field-label"><?php echo (isset($LANG['BARCODE']) ? $LANG['BARCODE'] : 'Barcode'); ?></span>
 							<span class="field-elem">
-								<!-- this $occArr array connects to the old form's database -->
-								<?php if(array_key_exists('barcode',$occArr)) { ?>
-									<input type="text" size = '50' id="barcode" name="barcode" value="<?php // echo $occArr['barcode'] ?>" onchange="fieldChanged('barcode');" <?php if($isEditor > 2) echo 'disabled'; ?> autocomplete="off" />
+								<?php if($barcode) { ?>
+									<input type="text" size = '50' id="barcode" name="barcode" value="<?php echo($barcode) ?>" onchange="fieldChanged('barcode');" <?php if($isEditor > 2) echo 'disabled'; ?> autocomplete="off" />
 								<?php 
 								} else { 
 								?>
