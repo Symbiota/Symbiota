@@ -183,21 +183,12 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 						<div class="flex-form">
 							<div>
 								<label for="imagetype"><?php echo htmlspecialchars($LANG['IMG_TYPE'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
-								<select id="imagetype" name="imagetypes">
+								<select id="imagetype" name="imagetypes" onchange="imageTypeChanged(this)">>
 									<option value="0">All Images</option>
 									<option value="1" <?php echo ($imgLibManager->getImageType() == 1?'SELECTED':''); ?>>Specimen Images</option>
 									<option value="2" <?php echo ($imgLibManager->getImageType() == 2?'SELECTED':''); ?>>Image Vouchered Observations</option>
 									<option value="3" <?php echo ($imgLibManager->getImageType() == 3?'SELECTED':''); ?>>Field Images (lacking specific locality details)</option>
 								</select>
-								<script src="../imagelib/selectUtilities.js?v=2"></script>
-								<script>
-									const select = document.getElementById("imagetype");
-									
-									select.addEventListener("blur", function() {
-										if (isSelectionMade(select))
-											imageTypeChanged(this);
-									});
-								</script>
 							</div>
 						</div>
 						<div class="flex-form">
