@@ -188,7 +188,7 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 									<label for="imagetype" ><?php echo htmlspecialchars($LANG['IMG_TYPE'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
 								</div>
 								
-								<input style="margin-top: 0.5rem" id="typeAll" type="radio" name="imagetype" value="0" CHECKED><label for="all">  All Images</label> <br/>
+								<input style="margin-top: 0.5rem" id="typeAll" type="radio" name="imagetype" value="0" CHECKED><label for="typeall">  All Images</label> <br/>
 								<input id="typeSpecimen" type="radio" name="imagetype" value="1" ><label for="typeSpecimen">  Specimen Images</label> <br/>
 								<input id="typeObs" type="radio" name="imagetype" value="2" ><label for="typeObs">  Image Vouchered Observations</label> <br/>
 								<input id="typeField" type="radio" name="imagetype" value="3" ><label for="typeField">  Field Images (lacking specific locality details)</label> <br/>
