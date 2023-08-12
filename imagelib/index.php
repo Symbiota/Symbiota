@@ -35,8 +35,8 @@ $imgManager->setSearchTerm($taxon);
 		<h1><?php echo $LANG['TAXA_W_IMGS']; ?></h1>
 		<div style="margin:0px 0px 5px 20px;"><?php echo $LANG['TAXA_IMG_EXPLAIN']; ?>
 		</div>
-		<div style="float:left;margin:10px 0px 10px 30px;">
-			<div style=''>
+		<div class="sciname-search">
+			<div>
 				<a href='index.php?target=family'><?php echo htmlspecialchars($LANG['BROWSE_FAMILY'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
 			</div>
 			<div style='margin-top:10px;'>

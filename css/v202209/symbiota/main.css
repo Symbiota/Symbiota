@@ -451,3 +451,8 @@ table.styledtable tr.alt td {
   display: flex;
   justify-content: center;
 }
+
+.sciname-search {
+  float: left;
+  margin: 10px 0px 10px 30px;
+}
