@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ImageLibraryBrowser.php');
@@ -11,7 +12,7 @@ $target = array_key_exists('target',$_REQUEST)?trim($_REQUEST['target']):'';
 $imgManager = new ImageLibraryBrowser();
 $imgManager->setSearchTerm($taxon);
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['IMG_LIBRARY']; ?></title>
 	<?php
@@ -50,12 +51,13 @@ $imgManager->setSearchTerm($taxon);
 				<div><a href='index.php?taxon=R'>R</a>|<a href='index.php?taxon=S'>S</a>|<a href='index.php?taxon=T'>T</a>|<a href='index.php?taxon=U'>U</a>|<a href='index.php?taxon=V'>V</a>|<a href='index.php?taxon=W'>W</a>|<a href='index.php?taxon=X'>X</a>|<a href='index.php?taxon=Y'>Y</a>|<a href='index.php?taxon=Z'>Z</a></div>
 			</div>
 		</div>
-		<div style="float:right;width:250px;">
+		<div style="float: right;width: 30rem; margin-bottom: 1rem;">
 			<div style="margin:10px 0px 0px 0px;">
 				<form name="searchform1" action="index.php" method="post">
 					<fieldset style="background-color:#FFFFCC;padding:10px;">
 						<legend style="font-weight:bold;"><?php echo $LANG['SCINAME_SEARCH']; ?></legend>
-						<input type="text" name="taxon" value="<?php echo $taxon; ?>" title="<?php echo $LANG['ENTER_TAXON_NAME']; ?>" />
+						<label for="taxon">Taxon: </label>
+						<input type="text" name="taxon" id="taxon" value="<?php echo $taxon; ?>" title="<?php echo $LANG['ENTER_TAXON_NAME']; ?>" placeholder="<?php echo $LANG['ENTER_TAXON_NAME']; ?>" />
 						<button name="submit" value="Search" type="submit"><?php echo $LANG['SEARCH']; ?></button>
 					</fieldset>
 				</form>
