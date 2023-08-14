@@ -267,6 +267,7 @@ $traitArr = $indManager->getTraitArr();
 	</script>
 </head>
 <body>
+	<script src="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/individual/individualCollectionReorg.js" type="text/javascript"></script>
 	<div id="fb-root"></div>
 	<script>
 		(function(d, s, id) {
@@ -1466,5 +1467,10 @@ $traitArr = $indManager->getTraitArr();
 		}
 		?>
 	</div>
+	<script type="text/javascript">
+		document.addEventListener('DOMContentLoaded', ()=>{
+			reorderElements("occur-div", ["cat-div", "hr", "sciname-div", "family-div", "assoccatnum-div", "assoccatnum-div", "idqualifier-div", "determination-div", "hr", "identby-div", "identdate-div"], ["occurrenceid-div", "disposition-div"]);
+		});
+	</script>
 </body>
 </html>
