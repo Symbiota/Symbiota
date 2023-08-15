@@ -48,7 +48,7 @@ $LANG['SAVE_ATTACH'] = 'Save Attachment';
 $LANG['ATTACH_DESCRIPTION'] = 'Supported file types include PDF, Word, Excel, images (.jpg/.jpeg or png), and text files (.txt). </br>
 									PDFs, images, and text files are preferred, since they will display in the browser.';
 $LANG['RETURN_LOAN_INDEX'] = 'Return to Loan Index Page';
-$LANG['SURE_DELETE'] = 'Are you sure you want to permanently delete this exchange?';
+$LANG['SURE_DELETE_EX'] = 'Are you sure you want to permanently delete this exchange?';
 $LANG['DEL_EXCHANGE'] = 'Delete Exchange';
 $LANG['NOT_AUTHORIZED'] = 'You are not authorized to add occurrence records';
 $LANG['UNKNOWN_ERROR'] = 'ERROR: unknown error, please contact system administrator';
@@ -158,5 +158,58 @@ $LANG['INVOICE'] = 'Invoice';
 $LANG['SPEC_LIST'] = 'Specimen List';
 $LANG['MAILING_LABEL'] = 'Mailing Label';
 $LANG['ENVELOPE'] = 'Envelope';
+
+//from specimentab.php
+$LANG['TAXON_NOT_FOUND'] = 'WARNING: Taxon not found. It may be misspelled or needs to be added to taxonomic thesaurus by a taxonomic editor.';
+$LANG['SCINAME_NEEDS_VALUE'] = 'Scientific Name field must have a value';
+$LANG['DET_NEEDS_VALUE'] = "Determiner field must have a value (enter 'unknown' if not defined)";
+$LANG['DET_DATE_NEEDS_VALUE'] = "Determination Date field must have a value (enter 's.d.' if not defined)";
+$LANG['PLS_SEL_SPECIMENS'] = 'Please select specimens to which you wish to apply the action';
+$LANG['PLS_ENTER_CATNO'] = 'Please enter a catalog number!';
+$LANG['ERROR_NO_SPECS'] = 'ERROR: No specimens found with that catalog number';
+$LANG['SUCCESS_SPEC'] = 'SUCCESS: specimen record';
+$LANG['LINKED'] = 'linked';
+$LANG['CHECKED_IN'] = 'checked-in';
+$LANG['MORE_THAN_ONE'] = 'ERROR: more than one specimen located with same catalog number';
+$LANG['SUCCESS_MORE_THAN'] = 'SUCCESS: but more than one specimen was checked-in';
+$LANG['WARNING_ALREADY_LINKED'] = 'Warning: already linked to loan';
+$LANG['WARNING_ALREADY_CHECKED'] = 'Warning: already checked-in or not linked to loan';
+$LANG['TECHNICAL_ERROR'] = 'Technical error: processing specimen failed';
+$LANG['MENU_OPTIONS'] = 'Menu Options';
+$LANG['LINK_VIA_CATNUM'] = 'Link specimens via list of catalog numbers';
+$LANG['LINK_VIA_BARCODE'] = 'Link specimens via scanning barcode';
+$LANG['CHECKIN_VIA_CATNUM'] = 'Check-in specimens via list of catalog numbers';
+$LANG['CHECKIN_VIA_BARCODE'] = 'Check-in specimens via scanning barcode';
+$LANG['ADD_DETS'] = 'Add New Determinations';
+$LANG['EXPORT_FULL_LIST'] = 'Export Full Specimen List';
+$LANG['DISPLAY_BATCH_FORM'] = 'Display batch form select actions';
+$LANG['BATCH_PROCESS_CATNUMS'] = 'Batch Process Catalog Numbers';
+$LANG['BATCH_PROCESS_EXPLAIN'] = 'Process multiple specimens at once by entering a list of catalog numbers on separate lines or delimited by commas.';
+$LANG['PROC_MODE'] = 'Processing mode';
+$LANG['SPEC_LINKING'] = 'Specimen Linking';
+$LANG['SPEC_CHECKIN'] = 'Specimen Check-in';
+$LANG['CATNUMS'] = 'Catalog numbers';
+$LANG['ALL_IDS'] = 'All Identifiers';
+$LANG['OTHER_CATNUMS'] = 'Other Catalog Numbers';
+$LANG['PROCESS_SPECS'] = 'Process Specimens';
+$LANG['BARCODE_SCANNING'] = 'Barcode Scanning';
+$LANG['BARCODE_SCANNING_EXPLAIN'] = 'Processing specimens by scanning barcodes. Barcode reader should includes a "return" after each scan (typically the default)';
+$LANG['BARCODE_CATNUM'] = 'Barcode/Catalog #';
+$LANG['PROCESS_SPEC'] = 'Process Specimen';
+$LANG['ADD_A_DET'] = 'Add a New Determination';
+$LANG['ID_QUALIFIER_EX'] = 'e.g. cf, aff, etc.';
+$LANG['BATCH_FORM_ACTIONS'] = 'Batch Form Select Actions';
+$LANG['BATCH_CHECK_IN'] = 'Batch Check-in Specimens';
+$LANG['SURE_REMOVE_FROM_LOAN'] = 'Are you sure you want to remove selected specimens from this loan?';
+$LANG['REMOVE_SPECS'] = 'Remove Selected Specimens';
+$LANG['EDIT_NOTES'] = 'Edit Notes';
+$LANG['NO_SPECS_REGISTERED'] = 'There are no specimens registered for this loan.';
+
+// from specnoteseditor.php
+$LANG['LOAN_NOTES_EDITOR'] = 'Loan Specimen Notes Editor';
+$LANG['LOAN_SPEC_EDIT'] = 'Loan Specimen Editor';
+$LANG['SPEC_NOTES'] = 'Specimen Notes';
+$LANG['SAVE_EDITS'] = 'Save Edits';
+
 
 ?>

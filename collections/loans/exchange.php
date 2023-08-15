@@ -371,7 +371,7 @@ if($isEditor){
 					<div style="margin:20px"><b>&lt;&lt; <a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo $LANG['RETURN_LOAN_INDEX']; ?></a></b></div>
 				</div>
 				<div id="exchangedeldiv">
-					<form name="delexchangeform" action="index.php" method="post" onsubmit="return confirm('<?php echo $LANG['SURE_DELETE']; ?>')">
+					<form name="delexchangeform" action="index.php" method="post" onsubmit="return confirm('<?php echo $LANG['SURE_DELETE_EX']; ?>')">
 						<fieldset>
 							<legend><?php echo $LANG['DEL_EXCHANGE']; ?></legend>
 							<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
