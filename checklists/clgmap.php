@@ -107,11 +107,11 @@ $clManager->setProj($pid);
                alert("Failed to load checklist data");
             }
 
-            if("<?php echo $LEAFLET?>") {
+            <?php if(!empty($LEAFLET)) { ?>
                leafletInit();
-            } else {
+            <?php } else { ?>
                googleInit();
-            }
+            <?php } ?>
 			}
 		</script>
 		<style>

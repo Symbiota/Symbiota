@@ -152,4 +152,5 @@ $LANG['CHECKING'] = 'Checking archive';
 $LANG['RESTORE_RECORD'] = 'Restore Record';
 $LANG['RECORD_DELETED'] = 'Record deleted';
 $LANG['VALUE'] = 'Value';
+$LANG['LAT_LNG'] = 'Latitude/Longitude';
 ?>

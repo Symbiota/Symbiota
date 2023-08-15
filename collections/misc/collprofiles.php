@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php');
@@ -32,12 +33,10 @@ if ($SYMB_UID) {
 	}
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE . ' ' . ($collid && isset($collData[$collid])? $collData[$collid]['collectionname'] : ''); ?></title>
 	<meta name="keywords" content="Natural history collections,<?php echo ($collid ? $collData[$collid]['collectionname'] : ''); ?>" />
-	<meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate">
-	<meta http-equiv="Pragma" content="no-cache">
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT . '/includes/head.php');
@@ -57,7 +56,7 @@ if ($SYMB_UID) {
 			return false;
 		}
 	</script>
-	<style type="text/css">
+	<style>
 		.field-div {
 			margin: 10px 0px;
 			clear: both
@@ -104,7 +103,7 @@ if ($SYMB_UID) {
 			// GBIF citations widget
 			if ($datasetKey) {
 				echo '<div style="margin-left: 10px; margin-bottom: 20px;">';
-				echo '<iframe src="https://www.gbif.org/api/widgets/literature/button?gbifDatasetKey=' . $datasetKey . '" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="false" style="width: 140px; height: 24px;"></iframe>';
+				echo '<iframe title="GBIF citation" src="https://www.gbif.org/api/widgets/literature/button?gbifDatasetKey=' . $datasetKey . '" frameborder="0" allowtransparency="true" style="width: 140px; height: 24px;"></iframe>';
 				// Check if the Bionomia badge has been created yet - typically lags ~2 weeks behind GBIF publication
 				$bionomiaUrl = 'https://api.bionomia.net/dataset/' . $datasetKey . '/badge.svg';
 				$ch = curl_init($bionomiaUrl);
@@ -531,33 +530,45 @@ if ($SYMB_UID) {
 		} elseif($collData) {
 			?>
 			<h2><?php echo $DEFAULT_TITLE . ' ' . (isset($LANG['COLLECTION_PROJECTS']) ? $LANG['COLLECTION_PROJECTS'] : 'Natural History Collections and Observation Projects'); ?></h2>
-			<div style='margin:10px;clear:both;'>
-				<?php
-				echo (isset($LANG['RSS_FEED']) ? $LANG['RSS_FEED'] : 'RSS feed') . ': <a href="../datasets/rsshandler.php" target="_blank">' . htmlspecialchars($collManager->getDomain(), HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . 'collections/datasets/rsshandler.php</a>';
-				?>
+			<div>
+				<a href="../datasets/rsshandler.php" target="_blank"><?php echo (isset($LANG['RSS_FEED']) ? $LANG['RSS_FEED'] : 'RSS feed'); ?></a>
 				<hr />
 			</div>
-			<table style='margin:10px;'>
+			<div class="gridlike-form">
 				<?php
 				foreach ($collData as $cid => $collArr) {
 					?>
-					<tr>
-						<td style='text-align:center;vertical-align:top;'>
+					<section class="bottom-breathing-room gridlike-form-row">
+						<div class="gridlike-form">
 							<?php
 							$iconStr = $collArr['icon'];
 							if ($iconStr) {
 								if (substr($iconStr, 0, 6) == 'images') $iconStr = '../../' . $iconStr;
 								?>
-								<img src='<?php echo $iconStr; ?>' style='border-size:1px;height:30;width:30;' /><br />
+								<div class="justify-center">
+									<img src='<?php echo $iconStr; ?>' class="col-profile-img" alt="icon for collection" /><br />
+								</div>
+							<?php
+							} else{ // placeholder for missing icon
+								?>
+								<div class="justify-center">
+									<p class="col-profile-img"></p><br />
+								</div>
 								<?php
-								echo $collArr['institutioncode'];
-								if ($collArr['collectioncode']) echo '-' . $collArr['collectioncode'];
 							}
 							?>
-						</td>
-						<td>
+							<div class="gridlike-form-row col-profile-inst-code justify-center">
+									<p>
+										<?php
+										echo $collArr['institutioncode'] ?? '';
+										if ($collArr['collectioncode']) echo '-' . $collArr['collectioncode'];
+										?>
+									</p>
+								</div>
+						</div>
+						<div>
 							<h3>
-								<a href='collprofiles.php?collid=<?php echo htmlspecialchars($cid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
+								<a class="col-profile-header" href='collprofiles.php?collid=<?php echo htmlspecialchars($cid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
 									<?php echo $collArr['collectionname']; ?>
 								</a>
 							</h3>
@@ -570,17 +581,13 @@ if ($SYMB_UID) {
 							<div style='margin:5px 0px 15px 10px;'>
 								<a href='collprofiles.php?collid=<?php echo htmlspecialchars($cid, HTML_SPECIAL_CHARS_FLAGS); ?>'><?php echo htmlspecialchars((isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'More Information'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
 							</div>
-						</td>
-					</tr>
-					<tr>
-						<td colspan='2'>
-							<hr />
-						</td>
-					</tr>
+						</div>
+					</section>
+					<hr class="test" />
 					<?php
 				}
 				?>
-			</table>
+			</div>
 			<?php
 		}
 		?>
