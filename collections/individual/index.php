@@ -343,7 +343,7 @@ $traitArr = $indManager->getTraitArr();
 					$instCode = $collMetadata['institutioncode'];
 					if($collMetadata['collectioncode']) $instCode .= ':'.$collMetadata['collectioncode'];
 					?>
-					<div class="title1-div">
+					<div id="title1-div" class="title1-div">
 						<?php echo $collMetadata['collectionname'].' ('.$instCode.')'; ?>
 					</div>
 					<div  id="occur-div">
@@ -416,12 +416,12 @@ $traitArr = $indManager->getTraitArr();
 								$otherCatArr = json_decode($occArr['othercatalognumbers'],true);
 								foreach($otherCatArr as $catTag => $catValueArr){
 									if(!$catTag) $catTag = $LANG['OTHER_CATALOG_NUMBERS'];
-									echo '<div class="assoccatnum-div"><label>'.$catTag.':</label> '.implode('; ', $catValueArr).'</div>';
+									echo '<div id="assoccatnum-div" class="assoccatnum-div"><label>'.$catTag.':</label> '.implode('; ', $catValueArr).'</div>';
 								}
 							}
 							else{
 								?>
-								<div class="assoccatnum-div" class="bottom-breathing-room-sm-rel">
+								<div id="assoccatnum-div" class="assoccatnum-div bottom-breathing-room-sm-rel">
 									<?php
 									echo '<label>'.$LANG['OTHER_CATALOG_NUMBERS'].': </label>';
 									echo $occArr['othercatalognumbers'];
@@ -452,7 +452,7 @@ $traitArr = $indManager->getTraitArr();
 						if($occArr['family']) echo '<div id="family-div" class="bottom-breathing-room-sm-rel"><label>'.$LANG['FAMILY'].':</label> ' . $occArr['family'] . '</div>';
 						if($occArr['identifiedby']){
 							?>
-							<div class="identby-div" class="bottom-breathing-room-sm-rel">
+							<div id="identby-div" class="identby-div bottom-breathing-room-sm-rel">
 								<?php
 								echo '<label>'.(isset($LANG['DETERMINER'])?$LANG['DETERMINER']:'Determiner').': </label>'.$indManager->activateOrcidID($occArr['identifiedby']);
 								if($occArr['dateidentified']) echo ' ('.$occArr['dateidentified'].')';
@@ -462,7 +462,7 @@ $traitArr = $indManager->getTraitArr();
 						}
 						if($occArr['taxonremarks']){
 							?>
-							<div class="taxonremarks-div" class="bottom-breathing-room-sm-rel">
+							<div id="taxonremarks-div" class="taxonremarks-div bottom-breathing-room-sm-rel">
 								<?php
 								echo '<label>'.$LANG['TAXON_REMARKS'].': </label>';
 								echo $occArr['taxonremarks'];
@@ -471,7 +471,7 @@ $traitArr = $indManager->getTraitArr();
 							<?php
 						}
 						if($occArr['identificationreferences']){ ?>
-							<div class="identref-div" class="bottom-breathing-room-sm-rel">
+							<div id="identref-div" class="identref-div bottom-breathing-room-sm-rel">
 								<?php
 								echo '<label>'.$LANG['ID_REFERENCES'].': </label>';
 								echo $occArr['identificationreferences'];
@@ -481,7 +481,7 @@ $traitArr = $indManager->getTraitArr();
 						}
 						if($occArr['identificationremarks']){
 							?>
-							<div class="identremarks-div" class="bottom-breathing-room-sm-rel">
+							<div id="identremarks-div" class="identremarks-div bottom-breathing-room-sm-rel">
 								<?php
 								echo '<label>'.$LANG['ID_REMARKS'].': </label>';
 								echo $occArr['identificationremarks'];
@@ -492,11 +492,11 @@ $traitArr = $indManager->getTraitArr();
 						if(array_key_exists('dets',$occArr) && (count($occArr['dets']) > 1 || $occArr['dets'][key($occArr['dets'])]['iscurrent'] == 0)){
 							?>
 							<div id="determination-div" class="bottom-breathing-room-sm-rel">
-								<div class="det-toogle-div">
+								<div id="det-toogle-div" class="det-toogle-div">
 									<a href="#" onclick="toggle('det-toogle-div');return false"><img src="../../images/plus_sm.png" alt="image of a plus sign, indicating desire to show determination history"></a>
 									<?php echo $LANG['SHOW_DET_HISTORY']; ?>
 								</div>
-								<div class="det-toogle-div" style="display:none;">
+								<div id="det-toogle-div" class="det-toogle-div" style="display:none;">
 									<div>
 										<a href="#" onclick="toggle('det-toogle-div');return false"><img src="../../images/minus_sm.png" alt="image of a minu sign, indicating desire to hide determination history"></a>
 										<?php echo $LANG['HIDE_DET_HISTORY']; ?>
@@ -515,13 +515,13 @@ $traitArr = $indManager->getTraitArr();
 												if($detArr['qualifier']) echo $detArr['qualifier'];
 												echo ' <label><i>'.$detArr['sciname'].'</i></label> '.$detArr['author'];
 												?>
-												<div class="identby-div">
+												<div id="identby-div" class="identby-div">
 													<?php
 													echo '<label>'.(isset($LANG['DETERMINER'])?$LANG['DETERMINER']:'Determiner').': </label>';
 													echo $detArr['identifiedby'];
 													?>
 												</div>
-												<div class="identdate-div">
+												<div id="identdate-div" class="identdate-div">
 													<?php
 													echo '<label>'.$LANG['DATE'].': </label>';
 													echo $detArr['date'];
@@ -529,7 +529,7 @@ $traitArr = $indManager->getTraitArr();
 												</div>
 												<?php
 												if($detArr['ref']){ ?>
-													<div class="identref-div">
+													<div id="identref-div" class="identref-div">
 														<?php
 														echo '<label>'.$LANG['ID_REFERENCES'].': </label>';
 														echo $detArr['ref'];
@@ -539,7 +539,7 @@ $traitArr = $indManager->getTraitArr();
 												}
 												if($detArr['notes']){
 													?>
-													<div class="identremarks-div">
+													<div id="identremarks-div" class="identremarks-div">
 														<?php
 														echo '<label>'.$LANG['ID_REMARKS'].': </label>';
 														echo $detArr['notes'];
@@ -919,7 +919,7 @@ $traitArr = $indManager->getTraitArr();
 							echo '<fieldset><legend>'.$LANG['MATERIAL_SAMPLES'].'</legend>';
 							do{
 								if($msKey = key($matSampleArr)){
-									echo '<div class="mat-sample-div" style="'.($msCnt?'display:none':'').'">';
+									echo '<div id="mat-sample-div" class="mat-sample-div" style="'.($msCnt?'display:none':'').'">';
 									foreach($matSampleArr[$msKey] as $msLabelKey => $msValue){
 										if($msValue && isset($MS_LABEL_ARR[$msLabelKey])) echo '<div><label>'.$MS_LABEL_ARR[$msLabelKey].'</label>: '.$msValue.'</div>';
 									}
@@ -952,7 +952,7 @@ $traitArr = $indManager->getTraitArr();
 										else $thumbUrl = $imgArr['lgurl'];
 									}
 									?>
-									<div class="thumbnail-div">
+									<div id="thumbnail-div" class="thumbnail-div">
 										<a href='<?php echo htmlspecialchars($imgArr['url'], HTML_SPECIAL_CHARS_FLAGS); ?>' target="_blank">
 											<img border="1" src="<?php echo $thumbUrl; ?>" title="<?php echo $imgArr['caption']; ?>" style="max-width:170;" alt="thumbnail image of current specimen" />
 										</a>
@@ -1081,7 +1081,7 @@ $traitArr = $indManager->getTraitArr();
 								<legend><?php echo $LANG['ASSOCIATED_REFS']; ?></legend>
 								<?php
 								foreach($occArr['ref'] as $refid => $refArr){
-									echo '<div class="occur-ref">';
+									echo '<div id="occur-ref" class="occur-ref">';
 									if($refArr['url']) echo '<a href="' . htmlspecialchars($refArr['url'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 									echo $refArr['display'];
 									if($refArr['url']) echo '</a>';
@@ -1127,9 +1127,9 @@ $traitArr = $indManager->getTraitArr();
 				if($dupClusterArr){
 					?>
 					<div id="dupestab-div">
-						<div class="title2-div" style="margin-bottom:10px;text-decoration:underline"><?php echo $LANG['CURRENT_RECORD']; ?></div>
+						<div id="title2-div" class="title2-div" style="margin-bottom:10px;text-decoration:underline"><?php echo $LANG['CURRENT_RECORD']; ?></div>
 						<?php
-						echo '<div class="title2-div>'.$collMetadata['collectionname'].' ('.$collMetadata['institutioncode'].($collMetadata['collectioncode']?':'.$collMetadata['collectioncode']:'').')</div>';
+						echo '<div class="title2-div">'.$collMetadata['collectionname'].' ('.$collMetadata['institutioncode'].($collMetadata['collectioncode']?':'.$collMetadata['collectioncode']:'').')</div>';
 						echo '<div style="margin:5px 15px">';
 						if($occArr['recordedby']) echo '<div>'.$occArr['recordedby'].' '.$occArr['recordnumber'].'<span style="margin-left:40px;">'.$occArr['eventdate'].'</span></div>';
 						if($occArr['catalognumber']) echo '<div><label>'.$LANG['CATALOG_NUMBER'].':</label> '.$occArr['catalognumber'].'</div>';
