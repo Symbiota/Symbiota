@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverPublisher.php');
@@ -62,18 +63,15 @@ if ($isEditor) {
 	}
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
-	<meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate">
-	<meta http-equiv="Pragma" content="no-cache">
 	<title><?php echo $LANG['DWCA_PUBLISHER']; ?></title>
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
-	<style type="text/css">
+	<style>
 		.nowrap {
 			white-space: nowrap;
 		}
@@ -205,7 +203,8 @@ if ($isEditor) {
 			?>
 			<div style="float:right;">
 				<a href="#" title="<?php echo htmlspecialchars($LANG['DISPLAY_CONTROL_PANEL'], HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="toggle('dwcaadmindiv')">
-					<img style="border:0;width:12px;" src="../../images/edit.png" />
+					<?php echo $LANG['EDIT'] ?> 
+					<img style="border:0;width:12px;" src="../../images/edit.png" alt="pencil icon to indicate edit mode toggle" />
 				</a>
 			</div>
 			<?php
@@ -233,7 +232,7 @@ if ($isEditor) {
 			</div>
 			<div style="margin:10px;">
 				<?php
-				echo '<h3>' . $LANG['DATA_USE_POLICY'] . ':</h3>';
+				echo '<h2>' . $LANG['DATA_USE_POLICY'] . ':</h2>';
 				echo $LANG['DATA_POLICY_1'] . ' <a href="../../includes/usagepolicy.php">' . htmlspecialchars($LANG['DATA_USE_POLICY'], HTML_SPECIAL_CHARS_FLAGS) . '</a>. ' . htmlspecialchars($LANG['DATA_POLICY_2'], HTML_SPECIAL_CHARS_FLAGS);
 				?>
 			</div>
@@ -472,10 +471,12 @@ if ($isEditor) {
 									$inputAttr = '';
 									if ($errMsg) $inputAttr = 'DISABLED';
 									elseif ($v['url']) $inputAttr = 'CHECKED';
-									echo '<input name="coll[]" type="checkbox" value="' . $k . '" ' . $inputAttr . ' />';
+									echo '<div class="bottom-breathing-room">';
+									echo '<input class="margin-rt-rel" name="coll[]" type="checkbox" value="' . $k . '" ' . $inputAttr . ' />';
 									echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($v['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
 									if ($errMsg) echo '<span style="color:red;margin-left:15px;">' . $errMsg . '</span>';
 									elseif ($v['url']) echo '<span> - published</span>';
+									echo '</div>';
 									echo '<br/>';
 								}
 								?>

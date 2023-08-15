@@ -96,6 +96,6 @@ $LANG['METADATA'] = 'Metadatos';
 $LANG['PUB_DATE'] = 'Fecha de Publicación';
 $LANG['NO_PUBLISHABLE'] = 'No existen colecciones publicables';
 $LANG['ADDIT_SOURCES'] = 'Fuentes Adicionales de Datos en la Red del Portal';
-
+$LANG['EDIT'] = 'Editar';
 
 ?>
