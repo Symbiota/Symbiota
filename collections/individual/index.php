@@ -279,7 +279,7 @@ $traitArr = $indManager->getTraitArr();
 	</script>
 </head>
 <body>
-	<script src="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/individual/individualCollectionReorg.js" type="text/javascript"></script>
+	<script src="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/individual/domManipulationUtils.js" type="text/javascript"></script>
 	<div id="fb-root"></div>
 	<script>
 		(function(d, s, id) {
