@@ -51,7 +51,7 @@ $imgManager->setSearchTerm($taxon);
 				<div><a href='index.php?taxon=R'>R</a>|<a href='index.php?taxon=S'>S</a>|<a href='index.php?taxon=T'>T</a>|<a href='index.php?taxon=U'>U</a>|<a href='index.php?taxon=V'>V</a>|<a href='index.php?taxon=W'>W</a>|<a href='index.php?taxon=X'>X</a>|<a href='index.php?taxon=Y'>Y</a>|<a href='index.php?taxon=Z'>Z</a></div>
 			</div>
 		</div>
-		<div style="float: right;width: 30rem; margin-bottom: 1rem;">
+		<div class="sciname-search-container">
 			<div style="margin:10px 0px 0px 0px;">
 				<form name="searchform1" action="index.php" method="post">
 					<fieldset style="background-color:#FFFFCC;padding:10px;">
