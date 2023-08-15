@@ -36,17 +36,23 @@ if (isset($_REQUEST['batchid'])) {
     $batchId = $_REQUEST['batchid'];
     // Use $batchId as needed
 	$imgIDs = $occManager->getImgIDs($batchId);
+	$firstImgId = $imgIDs[0];
+	$firstBarcode = $occManager->getBarcode($firstImgId);
+	$firstIndex = 0;
+	$lastImgId = end($imgIDs);
+	$lastBarcode = $occManager->getBarcode($lastImgId);
 	$lastIndex = count($imgIDs) - 1;
+	$imgNum = count($imgIDs);
 	$currentImgId = $_REQUEST['imgid'];
 	$currentImgIndex = $_REQUEST['imgindex'];
-} 
-
-if (isset($_REQUEST['imgid'])) {
+	$occData = array();
+	// occData is a hashtable, which has imgid as key, and occid as value
+	foreach ($imgIDs as $imgID) {
+        $occData[$imgID] = $occManager->getOneOccID($imgID);
+    }
+	$firstOccId = $occData[$firstImgId];
+	$lastOccId = $occData[$lastImgId];
 	$barcode = $occManager->getBarcode($currentImgId);
-	if ($barcode != null) {
-
-	}
-	
 } 
 
 //Sanitation
@@ -70,7 +76,6 @@ $qryCnt = false;
 $moduleActivation = array();
 $statusStr = '';
 $navStr = '';
-$jumpStr = '';
 $isEditor = 0;
 
 // Dropdown arrays
@@ -414,39 +419,37 @@ if($SYMB_UID){
 	if(!$isEditor && $crowdSourceMode && $occManager->isCrowdsourceEditor()) $isEditor = 4;
 
 	// TODO: check here for navigation functionality examples
-
-	$nextRecord = 'occurrencequickentry.php?csmode='.$crowdSourceMode.'&occindex='.($occIndex+1).'&occid='.($occIndex+2).'&collid='.$collId;
-
-	$firstRecord = 1;
-
-	if($qryCnt !== false){
-		$navStr = '<b>';
-		if($occIndex > 0) $navStr .= '<a href="#" onclick="return navigateToRecordNew('.($firstRecord-1).', '.$firstRecord.', '.$collId.', '.$crowdSourceMode.')" title="'.(isset($LANG['FIRST_REC'])?$LANG['FIRST_REC']:'First Record').'">';
-		$navStr .= '|&lt;';
-		if($occIndex > 0) $navStr .= '</a>';
-		$navStr .= '&nbsp;&nbsp;&nbsp;&nbsp;';
-		$navStr .= '<a href="#" onclick="return navigateToRecordNew('.($occIndex-1).', '.$occIndex.', '.$collId.', '.$crowdSourceMode.')" title="'.(isset($LANG['PREV_REC']) ? $LANG['PREV_REC'] : 'Previous Record').'">';
-		$navStr .= '&lt;&lt;';
-		if($occIndex > 0) $navStr .= '</a>';
-		$recIndex = ($occIndex<$qryCnt?($occIndex + 1):'*');
-		$navStr .= '&nbsp;&nbsp;| '.$recIndex.' of '.$qryCnt.' |&nbsp;&nbsp;';
-		if ($occIndex < $qryCnt-1) $navStr .= '<a href="#" onclick="return navigateToRecordNew('.($occIndex+1).', '.($occIndex+2).', '.$collId.', '.$crowdSourceMode.')" title="'.(isset($LANG['PREV_REC']) ? $LANG['PREV_REC'] : 'Previous Record').'">';
-		$navStr .= '&gt;&gt;';
-		if($occIndex<$qryCnt-1) $navStr .= '</a>';
-		$navStr .= '&nbsp;&nbsp;&nbsp;&nbsp;';
-		if($occIndex<$qryCnt-1) $navStr .= '<a href="#" onclick="return navigateToRecordNew('.($qryCnt-1).', '.$qryCnt.', '.$collId.', '.$crowdSourceMode.')" title="'.(isset($LANG['LAST_REC'])?$LANG['LAST_REC']:'Last Record').'">';
-		$navStr .= '&gt;|';
-		if($occIndex<$qryCnt-1) $navStr .= '</a> ';
-		if(!$crowdSourceMode){
-			$navStr .= '&nbsp;&nbsp;&nbsp;&nbsp;';
-			$navStr .= '<a href="occurrenceeditor.php?gotomode=1&collid='.$collId.'" onclick="return verifyLeaveForm()" title="'.(isset($LANG['NEW_REC'])?$LANG['NEW_REC']:'New Record').'">&gt;*</a>';
-		}
-		$navStr .= '</b>';
+	if($currentImgIndex > 0) {
+		$prevImgid = $imgIDs[$currentImgIndex-1];
+		$prevOccid = $occManager->getOneOccID($prevImgid);
+		$prevBarcode = $occManager->getBarcode($prevImgid);
 	}
 
-	// the string for jump
-	if($qryCnt !== false){			
-		$jumpStr .= '&nbsp;&nbsp file '.$recIndex.' of '.$qryCnt.' &nbsp;&nbsp;';
+	if($currentImgIndex < $imgNum-1){
+		$nextImgid = $imgIDs[$currentImgIndex+1];
+		$nextOccid = $occManager->getOneOccID($nextImgid);
+		$nextBarcode = $occManager->getBarcode($nextImgid);
+	}
+
+	if($imgNum !== false){
+		$navStr = '<b>';
+		if($currentImgIndex > 0) $navStr .= '<a href="#" onclick="return navigateToRecordNew('.($crowdSourceMode).', '.($goToMode).', '.($collId).', '.($batchId).', '.($firstImgId).', '.($firstIndex).', '.($firstBarcode).', '.($firstOccId).', '.($firstIndex).')" title="'.(isset($LANG['FIRST_REC'])?$LANG['FIRST_REC']:'First Record').'">';
+		$navStr .= '|&lt;';
+		if($currentImgIndex > 0) $navStr .= '</a>';
+		$navStr .= '&nbsp;&nbsp;&nbsp;&nbsp;';
+		if($currentImgIndex > 0) $navStr .= '<a href="#" onclick="return navigateToRecordNew('.($crowdSourceMode).', '.($goToMode).', '.($collId).', '.($batchId).', '.($prevImgid).', '.($currentImgIndex-1).', '.($prevBarcode).', '.($prevOccid).', '.($currentImgIndex-1).')" title="'.(isset($LANG['PREV_REC']) ? $LANG['PREV_REC'] : 'Previous Record').'">';
+		$navStr .= '&lt;&lt;';
+		if($currentImgIndex > 0) $navStr .= '</a>';
+		$recIndex = ($currentImgIndex<$imgNum?($currentImgIndex + 1):'*');
+		$navStr .= '&nbsp;&nbsp;| '.($recIndex).' of '.($imgNum).' |&nbsp;&nbsp;';
+		if ($currentImgIndex < $imgNum-1) $navStr .= '<a href="#" onclick="return navigateToRecordNew('.($crowdSourceMode).', '.($goToMode).', '.($collId).', '.($batchId).', '.($nextImgid).', '.($currentImgIndex+1).', '.($nextBarcode).', '.($nextOccid).', '.($currentImgIndex+1).')" title="'.(isset($LANG['NEXT_REC']) ? $LANG['NEXT_REC']:'Next Record').'">';
+		$navStr .= '&gt;&gt;';
+		if($occIndex<$imgNum-1) $navStr .= '</a>';
+		$navStr .= '&nbsp;&nbsp;&nbsp;&nbsp;';
+		if($occIndex<$imgNum-1) $navStr .= '<a href="#" onclick="return navigateToRecordNew('.($crowdSourceMode).', '.($goToMode).', '.($collId).', '.($batchId).', '.($lastImgId).', '.($imgNum-1).', '.($lastBarcode).', '.($lastOccId).', '.($imgNum-1).')" title="'.(isset($LANG['LAST_REC'])?$LANG['LAST_REC']:'Last Record').'">';
+		$navStr .= '&gt;|';
+		if($occIndex<$imgNum-1) $navStr .= '</a> ';
+		$navStr .= '</b>';
 	}
 
 	if(isset($_POST['jump']) && $_POST['jump'] !== '') {
@@ -537,8 +540,17 @@ else{
 		<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
 		<script src="../../js/symb/collections.editor.query.js?ver=5" type="text/javascript"></script>
 		<script>
-			function navigateToRecordNew(crowdSourceMode, collId, batchId, imgId, imgIndex, occId, occIndex) {
-				var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&collid=' + collId +'&batchid=' + batchId + '&imgid=' + imgId + '&imgindex=' + imgIndex + '&occid=' + occId + '&occindex=' + occIndex;
+			// function navigateToRecordNew(crowdSourceMode, collId, batchId, imgId, imgIndex, occId, occIndex) {
+			// 	var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&collid=' + collId +'&batchid=' + batchId + '&imgid=' + imgId + '&imgindex=' + imgIndex + '&occid=' + occId + '&occindex=' + occIndex;
+			// 	window.location.href = url;
+			// 	event.preventDefault();
+			// }
+			function navigateToRecordNew(crowdSourceMode, gotomode, collId, batchId, imgId, imgIndex, barcode, occId, occIndex) {
+				if(barcode == null && occId == null) {
+					var url = 'occurrencequickentry.php?gotomode=' + gotomode + '&collid=' + collId + '&imgid=' + imgId + '&imgindex=' + imgIndex;
+				} else {
+					var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&collid=' + collId +'&batchid=' + batchId + '&imgid=' + imgId + '&imgindex=' + imgIndex + '&barcode=' + barcode + '&occid=' + occId + '&occindex=' + occIndex;
+				}
 				window.location.href = url;
 				event.preventDefault();
 			}
@@ -749,18 +761,6 @@ else{
 						</form>
 						<div id="jumpDiv">
 							<?php
-							if($jumpStr){
-							?>
-								<div>
-									<?php if(array_key_exists('recordenteredby',$occArr)){
-												echo ($occArr['recordenteredby']?$occArr['recordenteredby']:$LANG['NOT_RECORDED']);
-											}
-											if(isset($occArr['dateentered']) && $occArr['dateentered']) echo ' ['.$occArr['dateentered'].']'; 
-											?>
-									<?php echo $jumpStr; ?>
-								</div>
-							<?php
-							}
 							if(isset($collections_editor_occurrenceeditorCrumbs)){
 								if($collections_editor_occurrenceeditorCrumbs){
 							?>
@@ -783,7 +783,6 @@ else{
 					<div class = "column left login-info" style = "background-color: #F2F2F2; ">
 						<div class="field-block title">
 							<h2>Transcribe into Fields</h2>
-							<h1><?php //print_r($imgIDs) ?></h1>
 						</div>
 						<div class="field-block">
 							<span class="field-label"><?php echo (isset($LANG['BARCODE']) ? $LANG['BARCODE'] : 'Barcode'); ?></span>

@@ -9,6 +9,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/transcribe.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $crowdSourceMode = array_key_exists('csmode', $_REQUEST) ? filter_var($_REQUEST['csmode'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$goToMode = array_key_exists('gotomode', $_REQUEST) ? filter_var($_REQUEST['gotomode'], FILTER_SANITIZE_NUMBER_INT) : 0;
 
 $occManager = new OccurrenceEditorDeterminations();
 $occManager->setCollId($collid);
@@ -54,16 +55,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 		$imgIDs = $occManager->getAllImgIDs();		
 	}
 	$firstImgId = $imgIDs[0];
+	$firstBarcode = $occManager->getBarcode($firstImgId);
 	$firstIndex = 0;
 	$lastImgId = end($imgIDs);
+	$lastBarcode = $occManager->getBarcode($lastImgId);
 	$lastIndex = count($imgIDs) - 1;
 	$occData = array();
 	// occData is a hashtable, which has imgid as key, and occid as value
 	foreach ($imgIDs as $imgID) {
-        $occData[$imgID] = $occManager->getOccIDofImage($imgID);
+        $occData[$imgID] = $occManager->getOneOccID($imgID);
     }
-	$firstOccId = $occManager->getOneOccID($occData[$firstImgId]);
-	$lastOccId = $occManager->getOneOccID($occData[$lastImgId]);
+	$firstOccId = $occData[$firstImgId];
+	$lastOccId = $occData[$lastImgId];
 }
 
 ?>
@@ -89,8 +92,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 		<script type="text/javascript">
 			// function 
 			// TODO: currently, we leave the occIndex, it is exactly the same value as imgIndex
-			function navigateToRecordNew(crowdSourceMode, collId, batchId, imgId, imgIndex, occId, occIndex) {
-				var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&collid=' + collId +'&batchid=' + batchId + '&imgid=' + imgId + '&imgindex=' + imgIndex + '&occid=' + occId + '&occindex=' + occIndex;
+			function navigateToRecordNew(crowdSourceMode, gotomode, collId, batchId, imgId, imgIndex, barcode, occId, occIndex) {
+				if(barcode == null && occId == null) {
+					var url = 'occurrencequickentry.php?gotomode=' + gotomode + '&collid=' + collId + '&imgid=' + imgId + '&imgindex=' + imgIndex;
+				} else {
+					var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&collid=' + collId +'&batchid=' + batchId + '&imgid=' + imgId + '&imgindex=' + imgIndex + '&barcode=' + barcode + '&occid=' + occId + '&occindex=' + occIndex;
+				}
 				window.location.href = url;
 				event.preventDefault();
 			}
@@ -134,9 +141,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 										<h3>Go to the quick entry form</h3>
 									</a>
 								</div> -->
-								<h4>Work On batch: <?php echo($selectedBatchID) ?> </h4>
-								<button type="button" name="first" onclick="return navigateToRecordNew(<?php echo ($crowdSourceMode).', '.($collid).', '.($selectedBatchID).', '.($firstImgId).', '.($firstIndex).', '.($firstOccId).', '.($firstIndex) ; ?>)"><?php echo $LANG['START_FROM']; ?> first.</button>
-                                <button type="button" name="last"  onclick="return navigateToRecordNew(<?php echo ($crowdSourceMode).', '.($collid).', '.($selectedBatchID).', '.($lastImgId).', '.($lastIndex).', '.($lastOccId).', '.($lastIndex); ?>)"><?php echo $LANG['START_FROM']; ?> last.</button>
+								<h4>Work On batch: <?php echo($selectedBatchID) ?></h4>
+								<button type="button" name="first" onclick="return navigateToRecordNew(<?php echo ($crowdSourceMode).', '.($goToMode).', '.($collid).', '.($selectedBatchID).', '.($firstImgId).', '.($firstIndex).', '.($firstBarcode).', '.($firstOccId).', '.($firstIndex) ; ?>)"><?php echo $LANG['START_FROM']; ?> first.</button>
+                                <button type="button" name="last"  onclick="return navigateToRecordNew(<?php echo ($crowdSourceMode).', '.($goToMode).', '.($collid).', '.($selectedBatchID).', '.($lastImgId).', '.($lastIndex).', '.($lastBarcode).', '.($lastOccId).', '.($lastIndex); ?>)"><?php echo $LANG['START_FROM']; ?> last.</button>
 								<button type="button" name="lastView"><?php echo $LANG['START_FROM']; ?> last view.</button>
                             </div>
 							<div>
