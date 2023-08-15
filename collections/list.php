@@ -385,9 +385,15 @@ $_SESSION['citationvar'] = $searchVar;
 				</div>
 				<div style='margin:10 0 0 20;'>
 					<button>
-						<a href="#" onclick="openMapPU();">
+               <?php if(!empty($LEAFLET)) {?>
+                  <a href="#" onclick="openLeafletMapPU();">
 							<?php echo $LANG['GOOGLE_MAP_DISPLAY']; ?>
 						</a>
+               <?php } else {?>
+                  <a href="#" onclick="openGoogleMapPU();">
+							<?php echo $LANG['GOOGLE_MAP_DISPLAY']; ?>
+						</a>
+               <?php } ?>
 					</button>
 				</div>
 				<div style='margin:10 0 0 20;'>
