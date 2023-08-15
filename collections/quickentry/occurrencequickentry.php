@@ -46,6 +46,7 @@ if (isset($_REQUEST['batchid'])) {
 	$currentImgId = $_REQUEST['imgid'];
 	$currentImgIndex = $_REQUEST['imgindex'];
 	$occData = array();
+	$imgUrl = $occManager->getImgUrl($currentImgId);
 	// occData is a hashtable, which has imgid as key, and occid as value
 	foreach ($imgIDs as $imgID) {
         $occData[$imgID] = $occManager->getOneOccID($imgID);
@@ -1059,7 +1060,7 @@ else{
 							<h2>Click to Zoom in Other Window</h2>
 						</div>
 						<div class="login-info" style = "backgroufnd-color:#86C5D8; text-align: center;">
-							<img id="activeimg-<?php echo $imgCnt; ?>" src="<?php echo $iUrl; ?>" style="width:300px" />
+							<img src="<?php echo($imgUrl); ?>" style="width:300px" />
 						</div>
 						<div class="login-info">
 							<!-- TODO: need to figure out how to deal with this input. It supposes to be generated automatically based on the form -->

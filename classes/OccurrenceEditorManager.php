@@ -2092,6 +2092,19 @@ class OccurrenceEditorManager {
 		}
 	}
 
+	public function getImgUrl($imgId) {
+		$imgUrl = false;
+		$query = "SELECT sourceIdentifier FROM images WHERE imgid = '$imgId' LIMIT 1";
+		$result = $this->conn->query($query);
+
+		if ($result && $row = $result->fetch_assoc()) {
+			$imgUrl = $row['sourceIdentifier'];
+		}
+		$result->free();
+
+		return $imgUrl;
+	}
+
 	public function getImageMap($imgId = 0){
 		$imageMap = Array();
 		if($this->occid){
