@@ -155,13 +155,14 @@ $traitArr = $indManager->getTraitArr();
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
+	include_once($SERVER_ROOT.'/includes/leafletMap.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
+	include_once($SERVER_ROOT.'/includes/googleMap.php');
 	?>
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/individual/index.css?ver=1" type="text/css" rel="stylesheet" >
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/individual/popup.css" type="text/css" rel="stylesheet" >
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
-	<script src="//maps.googleapis.com/maps/api/js?<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'key='.$GOOGLE_MAP_KEY:''); ?>"></script>
 	<script type="text/javascript">
 		var tabIndex = <?php echo $tabIndex; ?>;
 		var map;
@@ -242,28 +243,39 @@ $traitArr = $indManager->getTraitArr();
 			if (occWindow.opener == null) occWindow.opener = self;
 		}
 
-		<?php
-		if($displayMap){
-			?>
-			function initializeMap(){
-				var mLatLng = new google.maps.LatLng(<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>);
-				var dmOptions = {
-					zoom: 8,
-					center: mLatLng,
-					marker: mLatLng,
-					mapTypeId: google.maps.MapTypeId.TERRAIN,
-					scaleControl: true
-				};
-				map = new google.maps.Map(document.getElementById("map_canvas"), dmOptions);
-				//Add marker
-				var marker = new google.maps.Marker({
-					position: mLatLng,
-					map: map
-				});
-			}
-			<?php
-		}
-		?>
+      <?php if($displayMap){ ?>
+
+         function googleInit() {
+            var mLatLng = new google.maps.LatLng(<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>);
+            var dmOptions = {
+               zoom: 8,
+               center: mLatLng,
+               marker: mLatLng,
+               mapTypeId: google.maps.MapTypeId.TERRAIN,
+               scaleControl: true
+            };
+            map = new google.maps.Map(document.getElementById("map_canvas"), dmOptions);
+            //Add marker
+            var marker = new google.maps.Marker({
+            position: mLatLng,
+               map: map
+            });
+         }
+         function leafletInit() {
+            let mLatLng = [<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>];
+            map = new LeafletMap("map_canvas", {center: mLatLng, zoom: 8});
+            const marker = L.marker(mLatLng).addTo(map.mapLayer);
+         }
+
+         function initializeMap(){
+            <?php if(!empty($LEAFLET)) { ?>
+               leafletInit();
+            <?php } else { ?>
+               googleInit();
+            <?php } ?>
+         }
+
+      <?php } ?>
 	</script>
 </head>
 <body>
