@@ -993,7 +993,9 @@ $traitArr = $indManager->getTraitArr();
 							else echo '<a href="../../includes/usagepolicy.php">' . htmlspecialchars($LANG['USAGE_POLICY'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 							?>
 						</div>
-						<div style="margin:3px 0px;"><?php echo '<label>'.$LANG['RECORD_ID'].': </label>'.$occArr['recordid']; ?></div>
+						<div id="record-id-div" style="margin:3px 0px;">
+							<?php echo '<label>'.$LANG['RECORD_ID'].': </label>'.$occArr['recordid']; ?>
+						</div>
 						<?php
 						if(isset($occArr['source'])){
 							$recordType = (isset($occArr['source']['type'])?$occArr['source']['type']:'');
@@ -1469,7 +1471,7 @@ $traitArr = $indManager->getTraitArr();
 	</div>
 	<script type="text/javascript">
 		document.addEventListener('DOMContentLoaded', ()=>{
-			reorderElements("occur-div", ["cat-div", "hr", "sciname-div", "family-div", "assoccatnum-div", "assoccatnum-div", "idqualifier-div", "determination-div", "hr", "identby-div", "identdate-div"], ["occurrenceid-div", "disposition-div"]);
+			reorderElements("occur-div", ["cat-div", "hr", "sciname-div", "family-div","hr", "taxonremarks-div", "assoccatnum-div", "assoccatnum-div", "idqualifier-div","identref-div","identremarks-div", "determination-div", "hr", "identby-div", "identdate-div","verbeventid-div", "hr", "recordedby-div", "recordnumber-div", "record-id-div", "eventdate-div", "hr", "locality-div", "latlng-div", "verbcoord-div", "elev-div", "habitat-div", "assoctaxa-div", "attr-div", "notes-div", "hr", "rights-div", "contact-div", "openeditor-div"], ["occurrenceid-div", "disposition-div"]);
 		});
 	</script>
 </body>
