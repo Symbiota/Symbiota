@@ -14,7 +14,7 @@ $isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
 				<?php
 				if ($USER_DISPLAY_NAME) {
 					?>
-					<div style="margin-bottom: 0.75rem">
+					<div class="welcome-text">
 						<?php echo (isset($LANG['H_WELCOME'])?$LANG['H_WELCOME']:'Welcome').' '.$USER_DISPLAY_NAME; ?>!
 					</div>
 					<span style="white-space: nowrap; padding: 0.8rem;" class="button button-tertiary">
