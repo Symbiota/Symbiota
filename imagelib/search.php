@@ -166,16 +166,16 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 					<div class="flex-form">
 						<div>
 							<div>
-								<label for="imagecount"><?php echo htmlspecialchars($LANG['IMG_COUNT'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
+								<label> <?php echo htmlspecialchars($LANG['IMG_COUNT'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
 							</div>
 							
-							<input style="margin-top: 0.5rem" id="countAll" type="radio" name="imagecount" value="0" CHECKED><label for="countAll"> All Images</label> <br/>
-							<input id="countTaxon" type="radio" name="imagecount" value="1"><label for="countTaxon"> One per taxon</label> <br/>
+							<input style="margin-top: 0.5rem" id="countAll" type="radio" name="imagecount" value="0" CHECKED><label for="countAll"> <?php echo htmlspecialchars($LANG['COUNT_ALL'], HTML_SPECIAL_CHARS_FLAGS) ?></label> <br/>
+							<input id="countTaxon" type="radio" name="imagecount" value="1"><label for="countTaxon"> <?php echo htmlspecialchars($LANG['COUNT_TAXON'], HTML_SPECIAL_CHARS_FLAGS) ?></label> <br/>
 
 							<?php
 							if($specArr){
 								?>
-								<input id="countSpecimen" type="radio" name="imagecount" value="2"><label for="countSpecimen"> One per specimen</label> <br/>
+								<input id="countSpecimen" type="radio" name="imagecount" value="2"><label for="countSpecimen"> <?php echo htmlspecialchars($LANG['COUNT_SPECIMEN'], HTML_SPECIAL_CHARS_FLAGS) ?></label> <br/>
 								<?php
 							}
 							?>
@@ -185,29 +185,20 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 						<div class="flex-form">
 							<div>
 								<div style="margin-top: 0.5rem">
-									<label for="imagetype" ><?php echo htmlspecialchars($LANG['IMG_TYPE'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
+									<label> <?php echo htmlspecialchars($LANG['IMG_TYPE'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
 								</div>
 								
-								<input style="margin-top: 0.5rem" id="typeAll" type="radio" name="imagetype" value="0" CHECKED><label for="typeall">  All Images</label> <br/>
-								<input id="typeSpecimen" type="radio" name="imagetype" value="1" ><label for="typeSpecimen">  Specimen Images</label> <br/>
-								<input id="typeObs" type="radio" name="imagetype" value="2" ><label for="typeObs">  Image Vouchered Observations</label> <br/>
-								<input id="typeField" type="radio" name="imagetype" value="3" ><label for="typeField">  Field Images (lacking specific locality details)</label> <br/>
-								<script>
-									var initValue;
-
-									$('input[name="imagetype"]').on("click", function(e) {
-										var value = $(this).val();
-										if (value !== initValue) {
-											imageTypeChanged(this);
-											initValue = value;        
-										}    
-									});
-							</script>
+								<input style="margin-top: 0.5rem" id="typeAll" type="radio" name="imagetype" value="0" CHECKED> <label for="typeAll">  <?php echo htmlspecialchars($LANG['TYPE_ALL'], HTML_SPECIAL_CHARS_FLAGS) ?> </label> <br/>
+								<input id="typeSpecimen" type="radio" name="imagetype" value="1" > <label for="typeSpecimen">  <?php echo htmlspecialchars($LANG['TYPE_SPECIMEN'], HTML_SPECIAL_CHARS_FLAGS) ?> </label> <br/>
+								<input id="typeObs" type="radio" name="imagetype" value="2" > <label for="typeObs">  <?php echo htmlspecialchars($LANG['TYPE_OBS'], HTML_SPECIAL_CHARS_FLAGS) ?> </label> <br/>
+								<input id="typeField" type="radio" name="imagetype" value="3" > <label for="typeField">  <?php echo htmlspecialchars($LANG['TYPE_FIELD'], HTML_SPECIAL_CHARS_FLAGS) ?> </label> <br/>
+								
+								<script src="../imagelib/radioUtilities.js"></script>
 							</div>
 						</div>
 						<div class="flex-form">
 							<div>
-								<button name="submitaction" type="submit" value="search" style="margin-top: 0.75rem">Load Images</button>
+								<button name="submitaction" type="submit" value="search" class="load-button"> <?php echo htmlspecialchars($LANG['LOAD_IMAGES'], HTML_SPECIAL_CHARS_FLAGS) ?></button>
 							</div>
 						</div>
 					</div>
@@ -301,7 +292,7 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 										$anchorLink = '';
 										if($imgArr['occid']){
 											$anchorLink = '<a href="#" onclick="openIndPU('.$imgArr['occid'].');return false;">';
-										}
+									  	}
 										else{
 											$anchorLink = '<a href="#" onclick="openImagePopup('.$imgId.');return false;">';
 										}
