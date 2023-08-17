@@ -146,19 +146,19 @@ else{
             return false;
          }
       </script>
-	</head>
-	<body style="background-color:#ffffff;" onload="initialize()">
-		<div style="">
-			<div>
-				Click once to capture coordinates.
-				Submit Coordinate button will transfer to form.
-			</div>
-			<div style="margin-right:30px;">
-				<b>Latitude:</b>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="latbox" size="13" name="lat" value="<?php echo $latDef; ?>" />&nbsp;&nbsp;&nbsp;
-				<b>Longitude:</b> <input type="text" id="lngbox" size="13" name="lon" value="<?php echo $lngDef; ?>" />
-				<input type="submit" name="addcoords" value="Submit Coordinates" onclick="updateParentForm();" />&nbsp;&nbsp;&nbsp;
-			</div>
-			<div id='map_canvas' style='width:95%; height:90%; clear:both;'></div>
-		</div>
-	</body>
+   </head>
+   <body style="background-color:#ffffff;" onload="initialize()">
+      <div style="">
+         <div>
+            Click once to capture coordinates.
+            Submit Coordinate button will transfer to form.
+         </div>
+         <div style="margin-right:30px;">
+            <b>Latitude:</b>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="latbox" size="13" name="lat" value="<?php echo $latDef; ?>" />&nbsp;&nbsp;&nbsp;
+            <b>Longitude:</b> <input type="text" id="lngbox" size="13" name="lon" value="<?php echo $lngDef; ?>" />
+            <input type="submit" name="addcoords" value="Submit Coordinates" onclick="updateParentForm();" />&nbsp;&nbsp;&nbsp;
+         </div>
+         <div id='map_canvas' style='width:95%; height:90%; clear:both;'></div>
+      </div>
+   </body>
 </html>
