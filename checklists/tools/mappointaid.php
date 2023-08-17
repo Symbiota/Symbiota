@@ -36,43 +36,47 @@ else{
       <?php include_once($SERVER_ROOT.'/includes/leafletMap.php')?>
       <script src="//maps.googleapis.com/maps/api/js?<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'key='.$GOOGLE_MAP_KEY:''); ?>"></script>
       <script type="text/javascript">
-      var map;
-      var currentMarker;
+         var map;
+         var currentMarker;
 
-      function leafletInit() {
-         var latCenter = <?php echo $lat; ?>;
+         function leafletInit() {
+            var latCenter = <?php echo $lat; ?>;
             var lngCenter = <?php echo $lng; ?>;
             var latValue = opener.document.<?php echo $formName.'.'.$latName; ?>.value;
             var lngValue = opener.document.<?php echo $formName.'.'.$longName; ?>.value;
 
             if(latValue){
-            latCenter = latValue;
-            lngCenter = lngValue;
-            document.getElementById("latbox").value = latValue;
-            document.getElementById("lngbox").value = lngValue;
+               latCenter = latValue;
+               lngCenter = lngValue;
+               document.getElementById("latbox").value = latValue;
+               document.getElementById("lngbox").value = lngValue;
             }
 
             const MapOptions = {
-            center: [latCenter, lngCenter],
-            zoom: <?php echo $zoom?>
+               center: [latCenter, lngCenter],
+               zoom: <?php echo $zoom?>
             };
 
             map = new LeafletMap('map_canvas', MapOptions);
 
-         let markerGroup = L.layerGroup().addTo(map.mapLayer);
+            let markerGroup = L.layerGroup().addTo(map.mapLayer);
 
-         map.mapLayer.on('click', function(e) {
-            markerGroup.clearLayers();
-            L.marker(e.latlng).addTo(markerGroup);
+            if(latValue && lngValue) {
+               L.marker([latValue, lngValue]).addTo(markerGroup);
+            }
 
-            latValue = e.latlng.lat.toFixed(5);
-            lonValue = e.latlng.lng.toFixed(5);
-            document.getElementById("latbox").value = latValue;
-            document.getElementById("lngbox").value = lonValue;
-         })
-      }
+            map.mapLayer.on('click', function(e) {
+               markerGroup.clearLayers();
+               L.marker(e.latlng).addTo(markerGroup);
 
-      function googleInit(){
+               latValue = e.latlng.lat.toFixed(5);
+               lonValue = e.latlng.lng.toFixed(5);
+               document.getElementById("latbox").value = latValue;
+               document.getElementById("lngbox").value = lonValue;
+            })
+         }
+
+         function googleInit(){
             var latCenter = <?php echo $lat; ?>;
             var lngCenter = <?php echo $lng; ?>;
             var latValue = opener.document.<?php echo $formName.'.'.$latName; ?>.value;
