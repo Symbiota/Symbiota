@@ -285,16 +285,24 @@ $searchVar = $collManager->getQueryTermStr();
 					<input type='checkbox' name='hasimages' id='hasimages' value='1' />
 					<label for="hasimages"><?php echo isset($LANG['HAS_IMAGE'])?$LANG['HAS_IMAGE']:'Limit to Specimens with Images Only'; ?></label>
 				</div>
+				<?php 
+					if($CSS_VERSION_RELEASE !== 'uswds'){
+
+					
+				?>
 				<div>
 					<input type='checkbox' name='hasgenetic' id='hasgenetic' value='1' />
 					<label for="hasgenetic"><?php echo isset($LANG['HAS_GENETIC'])?$LANG['HAS_GENETIC']:'Limit to Specimens with Genetic Data Only'; ?></label>
 				</div>
+				<?php 
+					}
+				?>
 				<div>
 					<input type='checkbox' name='hascoords' id='hascoords' value='1' />
 					<label for="hascoords"><?php echo isset($LANG['HAS_COORDS'])?$LANG['HAS_COORDS']:'Limit to Specimens with Geocoordinates Only'; ?></label>
 				</div>
 				<div>
-					<input type='checkbox' name='includecult' id='includecult' value='1' />
+					<input type='checkbox' name='includecult' id='includecult' value='1' <?php echo $CSS_VERSION_RELEASE === 'uswds' ? 'checked' : '' ?> />
 					<label for="includecult"><?php echo isset($LANG['INCLUDE_CULTIVATED'])?$LANG['INCLUDE_CULTIVATED']:'Include cultivated/captive occurrences'; ?></label>
 				</div>
 			</div>
