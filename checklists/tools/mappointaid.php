@@ -145,8 +145,7 @@ else{
             self.close();
             return false;
          }
-		</script>
-
+      </script>
 	</head>
 	<body style="background-color:#ffffff;" onload="initialize()">
 		<div style="">
