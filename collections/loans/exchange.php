@@ -1,10 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLoans.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
-if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../collections/loans/exchange.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../collections/loans/exchange.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $collid = $_REQUEST['collid'];
 $exchangeId = array_key_exists('exchangeid',$_REQUEST)?$_REQUEST['exchangeid']:0;
@@ -49,7 +49,7 @@ if($isEditor){
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-	<title><?php echo $DEFAULT_TITLE.': '.$LANG['EXCHANGE_MNG']; ?></title>
+	<title><?php echo $DEFAULT_TITLE . ': ' . $LANG['EXCHANGE_MNG']; ?></title>
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -145,7 +145,7 @@ if($isEditor){
 												<?php
 												$instArr = $loanManager->getInstitutionArr();
 												foreach($instArr as $k => $v){
-													echo '<option value="'.$k.'" '.($k==$exchangeArr['iid']?'SELECTED':'').'>'.$v.'</option>';
+													echo '<option value="' . $k.'" ' . ($k==$exchangeArr['iid']?'SELECTED':'') . '>' . $v . '</option>';
 												}
 												?>
 											</select>
@@ -203,7 +203,7 @@ if($isEditor){
 												<?php
 												$instArr = $loanManager->getInstitutionArr();
 												foreach($instArr as $k => $v){
-													echo '<option value="'.$k.'" '.($k==$exchangeArr['iid']?'SELECTED':'').'>'.$v.'</option>';
+													echo '<option value="' . $k . '" ' . ($k==$exchangeArr['iid']?'SELECTED':'') . '>' . $v . '</option>';
 												}
 												?>
 											</select>
@@ -346,7 +346,7 @@ if($isEditor){
 											echo '<div style="float: left; margin-left: 5px;"><a href="../../' .
 												$attachArr['path'] . $attachArr['filename']  .'" target="_blank">' .
 												($attachArr['title'] != "" ? $attachArr['title'] : $attachArr['filename']) . '</a></div>';
-											echo '<a href="exchange.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&exchangeid=' . htmlspecialchars($exchangeId, HTML_SPECIAL_CHARS_FLAGS) . '&attachid='. htmlspecialchars($attachId, HTML_SPECIAL_CHARS_FLAGS) . '&formsubmit=delAttachment"><img src="../../images/del.png" style="width: 15px; margin-left: 5px;"></a></li>';
+											echo '<a href="exchange.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&exchangeid=' . htmlspecialchars($exchangeId, HTML_SPECIAL_CHARS_FLAGS) . '&attachid=' . htmlspecialchars($attachId, HTML_SPECIAL_CHARS_FLAGS) . '&formsubmit=delAttachment"><img src="../../images/del.png" style="width: 15px; margin-left: 5px;"></a></li>';
 										}
 										echo '</ul>';
 									}
@@ -385,8 +385,8 @@ if($isEditor){
 			<?php
 		}
 		else{
-			if(!$isEditor) echo '<h2>'.$LANG['NOT_AUTHORIZED'].'</h2>';
-			else echo '<h2>'.$LANG['UNKNOWN_ERROR'].'</h2>';
+			if(!$isEditor) echo '<h2>' . $LANG['NOT_AUTHORIZED'] . '</h2>';
+			else echo '<h2>' . $LANG['UNKNOWN_ERROR'] . '</h2>';
 		}
 		?>
 	</div>

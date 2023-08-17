@@ -1,6 +1,6 @@
 <?php
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.en.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.en.php');
 ?>
 
 <form name="reportsform" onsubmit="return ProcessReport();" method="post" target="_blank">

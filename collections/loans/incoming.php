@@ -1,10 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceLoans.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.en.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceLoans.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
-if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../collections/loans/incoming.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+if(!$SYMB_UID) header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=../collections/loans/incoming.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $collid = $_REQUEST['collid'];
 $loanId = array_key_exists('loanid',$_REQUEST)?$_REQUEST['loanid']:0;
@@ -49,10 +49,10 @@ if($isEditor){
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-	<title><?php echo $DEFAULT_TITLE.': '.$LANG['INCOMING_LOAN_MANAGE']; ?></title>
+	<title><?php echo $DEFAULT_TITLE . ': ' . $LANG['INCOMING_LOAN_MANAGE']; ?></title>
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	include_once($SERVER_ROOT.'/includes/head.php');
+	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
@@ -91,7 +91,7 @@ if($isEditor){
 <body>
 	<?php
 	$displayLeftMenu = false;
-	include($SERVER_ROOT.'/includes/header.php');
+	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class="navpath">
 		<a href='../../index.php'>Home</a> &gt;&gt;
@@ -182,7 +182,7 @@ if($isEditor){
 											<?php
 											$instArr = $loanManager->getInstitutionArr();
 											foreach($instArr as $k => $v){
-												echo '<option value="'.$k.'" '.($loanArr['iidowner']==$k?'SELECTED':'').'>'.$v.'</option>';
+												echo '<option value="' . $k . '" ' . ($loanArr['iidowner']==$k?'SELECTED':'') . '>' . $v . '</option>';
 											}
 											?>
 										</select>
@@ -312,9 +312,9 @@ if($isEditor){
 										foreach($attachments as $attachId => $attachArr){
 											echo '<li><div style="float: left;">' . $attachArr['timestamp'] . ' -</div>';
 											echo '<div style="float: left; margin-left: 5px;"><a href="../../' .
-												$attachArr['path'] . $attachArr['filename']  .'" target="_blank">' .
+												$attachArr['path'] . $attachArr['filename']  . '" target="_blank">' .
 												($attachArr['title'] != "" ? $attachArr['title'] : $attachArr['filename']) . '</a></div>';
-											echo '<a href="incoming.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($loanId, HTML_SPECIAL_CHARS_FLAGS) . '&attachid='. htmlspecialchars($attachId, HTML_SPECIAL_CHARS_FLAGS) . '&formsubmit=delAttachment"><img src="../../images/del.png" style="width: 15px; margin-left: 5px;"></a></li>';
+											echo '<a href="incoming.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($loanId, HTML_SPECIAL_CHARS_FLAGS) . '&attachid=' . htmlspecialchars($attachId, HTML_SPECIAL_CHARS_FLAGS) . '&formsubmit=delAttachment"><img src="../../images/del.png" style="width: 15px; margin-left: 5px;"></a></li>';
 										}
 										echo '</ul>';
 									}
@@ -359,17 +359,17 @@ if($isEditor){
 											<a href="#" onclick="openEditorPopup(<?php echo $occid; ?>); return false;"><img src="../../images/edit.png" style="width:13px" title="<?php echo $LANG['OPEN_OCC_EDITOR']; ?>" /></a>
 										</div>
 										<?php
-										if($specArr['catalognumber']) echo '<div>'.$specArr['catalognumber'].'</div>';
-										if(isset($specArr['othercatalognumbers'])) echo '<div>'.implode('; ',$specArr['othercatalognumbers']).'</a></div>';
+										if($specArr['catalognumber']) echo '<div>' . $specArr['catalognumber'] . '</div>';
+										if(isset($specArr['othercatalognumbers'])) echo '<div>' . implode('; ',$specArr['othercatalognumbers']) . '</a></div>';
 										?>
 									</td>
 									<td>
 										<?php
 										$loc = $specArr['locality'];
 										if(strlen($loc) > 500) $loc = substr($loc,400);
-										echo '<i>'.$specArr['sciname'].'</i>; ';
-										echo  $specArr['collector'].'; '.$loc;
-										if($specArr['notes']) echo '<div class="notesDiv"><b>Notes:</b> '.$specArr['notes'],'</div>';
+										echo '<i>' . $specArr['sciname'] . '</i>; ';
+										echo  $specArr['collector'] . '; ' . $loc;
+										if($specArr['notes']) echo '<div class="notesDiv"><b>Notes:</b> ' . $specArr['notes'],'</div>';
 										?>
 									</td>
 									<td><?php echo $specArr['returndate']; ?></td>
@@ -405,13 +405,13 @@ if($isEditor){
 			<?php
 		}
 		else{
-			if(!$isEditor) echo '<h2>'.$LANG['NOT_AUTHORIZED'].'</h2>';
-			else echo '<h2>'.$LANG['UNKNOWN_ERROR'].'</h2>';
+			if(!$isEditor) echo '<h2>' . $LANG['NOT_AUTHORIZED'] . '</h2>';
+			else echo '<h2>' . $LANG['UNKNOWN_ERROR'] . '</h2>';
 		}
 		?>
 	</div>
 	<?php
-	include($SERVER_ROOT.'/includes/footer.php');
+	include($SERVER_ROOT . '/includes/footer.php');
 	?>
 </body>
 </html>

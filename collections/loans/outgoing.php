@@ -1,10 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceLoans.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.en.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceLoans.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
-if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../collections/loans/outgoing.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+if(!$SYMB_UID) header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=../collections/loans/outgoing.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $collid = $_REQUEST['collid'];
 $loanId = array_key_exists('loanid',$_REQUEST)?$_REQUEST['loanid']:0;
@@ -46,7 +46,7 @@ if($isEditor){
 			if(!$loanManager->batchCheckinSpecimens($_POST['occid'], $_POST['loanid'])) $statusStr = $loanManager->getErrorMessage();
 		}
 		elseif($formSubmit == 'addDeterminations'){
-			include_once($SERVER_ROOT.'/classes/OccurrenceEditorDeterminations.php');
+			include_once($SERVER_ROOT . '/classes/OccurrenceEditorDeterminations.php');
 			$occManager = new OccurrenceEditorDeterminations();
 			$occidArr = $_REQUEST['occid'];
 			foreach($occidArr as $k){
@@ -57,36 +57,36 @@ if($isEditor){
 		elseif($formSubmit == 'batchProcessSpecimens'){
 			$cnt = $loanManager->batchProcessSpecimens($_POST);
 			$statusStr = '<ul>';
-			$statusStr .= '<li><b>'.$cnt.'</b> '.$LANG['PROC_SUCCESS'].'</li>';
+			$statusStr .= '<li><b>' . $cnt . '</b> ' . $LANG['PROC_SUCCESS'] . '</li>';
 			if($warnArr = $loanManager->getWarningArr()){
 				if(isset($warnArr['missing'])){
-					$statusStr .= '<li style="color:red;"><b>'.$LANG['CATNUMS_NOT_LOCATED'].'</b></li>';
+					$statusStr .= '<li style="color:red;"><b>' . $LANG['CATNUMS_NOT_LOCATED'] . '</b></li>';
 					foreach($warnArr['missing'] as $catNum){
-						$statusStr .= '<li style="margin-left:10px;color:black;">'.$catNum.'</li>';
+						$statusStr .= '<li style="margin-left:10px;color:black;">' . $catNum . '</li>';
 					}
 				}
 				if(isset($warnArr['multiple'])){
-					$statusStr .= '<li style="color:orange;"><b>'.$LANG['CATNUM_MULTIPLE_MATCHES'].'</b></li>';
+					$statusStr .= '<li style="color:orange;"><b>' . $LANG['CATNUM_MULTIPLE_MATCHES'] . '</b></li>';
 					foreach($warnArr['multiple'] as $catNum){
-						$statusStr .= '<li style="margin-left:10px;color:black;">'.$catNum.'</li>';
+						$statusStr .= '<li style="margin-left:10px;color:black;">' . $catNum . '</li>';
 					}
 				}
 				if(isset($warnArr['dupe'])){
-					$statusStr .= '<li style="color:orange"><b>'.$LANG['SPECS_ALREADY_LINKED'].'</b></li>';
+					$statusStr .= '<li style="color:orange"><b>' . $LANG['SPECS_ALREADY_LINKED'] . '</b></li>';
 					foreach($warnArr['dupe'] as $catNum){
-						$statusStr .= '<li style="margin-left:10px;color:black;">'.$catNum.'</li>';
+						$statusStr .= '<li style="margin-left:10px;color:black;">' . $catNum . '</li>';
 					}
 				}
 				if(isset($warnArr['zeroMatch'])){
-					$statusStr .= '<li style="color:orange;"><b>'.$LANG['ALREADY_CHECKED_IN'].'</b></li>';
+					$statusStr .= '<li style="color:orange;"><b>' . $LANG['ALREADY_CHECKED_IN'] . '</b></li>';
 					foreach($warnArr['zeroMatch'] as $catNum){
-						$statusStr .= '<li style="margin-left:10px;color:black;">'.$catNum.'</li>';
+						$statusStr .= '<li style="margin-left:10px;color:black;">' . $catNum . '</li>';
 					}
 				}
 				if(isset($warnArr['error'])){
-					$statusStr .= '<li style="color:red;"><b>'.$LANG['MISC_ERROR'].'</b></li>';
+					$statusStr .= '<li style="color:red;"><b>' . $LANG['MISC_ERROR'] . '</b></li>';
 					foreach($warnArr['error'] as $errStr){
-						$statusStr .= '<li style="margin-left:10px;color:black;">'.$errStr.'</li>';
+						$statusStr .= '<li style="margin-left:10px;color:black;">' . $errStr . '</li>';
 					}
 				}
 			}
@@ -118,10 +118,10 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-	<title><?php echo $DEFAULT_TITLE.': '.$LANG['OUTGOING_LOAN_MANAGE']; ?></title>
+	<title><?php echo $DEFAULT_TITLE . ': ' . $LANG['OUTGOING_LOAN_MANAGE']; ?></title>
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	include_once($SERVER_ROOT.'/includes/head.php');
+	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
@@ -152,7 +152,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 <body>
 	<?php
 	$displayLeftMenu = false;
-	include($SERVER_ROOT.'/includes/header.php');
+	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'>Home</a> &gt;&gt;
@@ -236,7 +236,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 										<?php
 										$instArr = $loanManager->getInstitutionArr();
 										foreach($instArr as $k => $v){
-											echo '<option value="'.$k.'" '.($loanArr['iidborrower']==$k?'SELECTED':'').'>'.$v.'</option>';
+											echo '<option value="' . $k . '" ' . ($loanArr['iidborrower']==$k?'SELECTED':'') . '>' . $v . '</option>';
 										}
 										?>
 									</select>
@@ -366,9 +366,9 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 										foreach($attachments as $attachId => $attachArr){
 											echo '<li><div style="float: left;">' . $attachArr['timestamp'] . ' -</div>';
 											echo '<div style="float: left; margin-left: 5px;"><a href="../../' .
-												$attachArr['path'] . $attachArr['filename']  .'" target="_blank">' .
+												$attachArr['path'] . $attachArr['filename']  . '" target="_blank">' .
 												($attachArr['title'] != "" ? $attachArr['title'] : $attachArr['filename']) . '</a></div>';
-											echo '<a href="outgoing.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($loanId, HTML_SPECIAL_CHARS_FLAGS) . '&attachid='. htmlspecialchars($attachId, HTML_SPECIAL_CHARS_FLAGS) . '&formsubmit=delAttachment"><img src="../../images/del.png" style="width: 15px; margin-left: 5px;"></a></li>';
+											echo '<a href="outgoing.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($loanId, HTML_SPECIAL_CHARS_FLAGS) . '&attachid=' . htmlspecialchars($attachId, HTML_SPECIAL_CHARS_FLAGS) . '&formsubmit=delAttachment"><img src="../../images/del.png" style="width: 15px; margin-left: 5px;"></a></li>';
 										}
 										echo '</ul>';
 									}
@@ -415,13 +415,13 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 			<?php
 		}
 		else{
-			if(!$isEditor) echo '<h2>'.$LANG['NOT_AUTHORIZED'].'</h2>';
-			else echo '<h2>'.$LANG['UNKNOWN_ERROR'].'</h2>';
+			if(!$isEditor) echo '<h2>' . $LANG['NOT_AUTHORIZED'] . '</h2>';
+			else echo '<h2>' . $LANG['UNKNOWN_ERROR'] . '</h2>';
 		}
 		?>
 	</div>
 	<?php
-	include($SERVER_ROOT.'/includes/footer.php');
+	include($SERVER_ROOT . '/includes/footer.php');
 	?>
 </body>
 </html>

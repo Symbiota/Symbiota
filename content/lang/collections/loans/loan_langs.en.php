@@ -67,6 +67,8 @@ $LANG['MOUNTED'] = 'mounted';
 $LANG['UNMOUNTED'] = 'unmounted';
 $LANG['GIFT'] = 'gift';
 $LANG['GIFT_FOR_DET'] = 'gift-for-det';
+$LANG['BALANCE'] = 'Balance';
+$LANG['ADJUSTMENT_OF'] = 'Adjustment of';
 $LANG['SPECIMENS'] = 'specimens';
 $LANG['NO_TRANSACTIONS'] = 'There are no transactions registered for this collection';
 
@@ -201,6 +203,8 @@ $LANG['ID_QUALIFIER_EX'] = 'e.g. cf, aff, etc.';
 $LANG['BATCH_FORM_ACTIONS'] = 'Batch Form Select Actions';
 $LANG['BATCH_CHECK_IN'] = 'Batch Check-in Specimens';
 $LANG['SURE_REMOVE_FROM_LOAN'] = 'Are you sure you want to remove selected specimens from this loan?';
+$LANG['SORT_BY'] = 'Sort by';
+$LANG['SEC_DESEL_ALL'] = 'Select/Deselect All';
 $LANG['REMOVE_SPECS'] = 'Remove Selected Specimens';
 $LANG['EDIT_NOTES'] = 'Edit Notes';
 $LANG['NO_SPECS_REGISTERED'] = 'There are no specimens registered for this loan.';

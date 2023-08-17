@@ -1,8 +1,8 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceLoans.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.en.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceLoans.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.en.php');
 
 $collid = $_REQUEST['collid'];
 
@@ -57,7 +57,7 @@ if(!$transInstList) echo '<script type="text/javascript">displayNewExchange();</
 						<?php
 						$instArr = $loanManager->getInstitutionArr();
 						foreach($instArr as $k => $v){
-							echo '<option value="'.$k.'">'.$v.'</option>';
+							echo '<option value="' . $k . '">' . $v . '</option>';
 						}
 						?>
 					</select>
@@ -90,7 +90,7 @@ if(!$transInstList) echo '<script type="text/javascript">displayNewExchange();</
 					<a href="#" onclick="toggle('<?php echo $k; ?>');"><?php echo ($transArr['institutioncode'] ? $transArr['institutioncode'] : ($transArr['institutionname'] ? $transArr['institutionname'] : '[no name]')); ?></a>
 					<?php
 					$bal = $transArr['invoicebalance'];
-					echo '(Balance: '.($bal?($bal < 0?'<span style="color:red;font-weight:bold;">'.$bal.'</span>':$bal):0).')';
+					echo '(Balance: ' . ($bal?($bal < 0?'<span style="color:red;font-weight:bold;">' . $bal . '</span>':$bal):0) . ')';
 					?>
 					<div id="<?php echo $k; ?>" style="display:none;">
 						<ul>
@@ -102,20 +102,20 @@ if(!$transInstList) echo '<script type="text/javascript">displayNewExchange();</
 								if($transArr['transactiontype'] == 'Shipment'){
 									if($transArr['in_out'] == 'Out'){
 										echo $LANG['OUTGOING_EX_SENT'];
-										echo $transArr['datesent'].'; '.$LANG['INCLUDING'].': ';
+										echo $transArr['datesent'] . '; ' . $LANG['INCLUDING'] . ': ';
 									}
 									else{
 										echo $LANG['INCOMING_EX_RECEIVED'];
-										echo $transArr['datereceived'].'; '.$LANG['INCLUDING'].': ';
+										echo $transArr['datereceived'] . '; ' . $LANG['INCLUDING'] . ': ';
 									}
-									echo ($transArr['totalexmounted']?$transArr['totalexmounted'].' '.$LANG['MOUNTED'].', ':'');
-									echo ($transArr['totalexunmounted']?$transArr['totalexunmounted'].' '.$LANG['UNMOUNTED'].', ':'');
-									echo ($transArr['totalgift']?$transArr['totalgift'].' '.$LANG['GIFT'].', ':'');
-									echo ($transArr['totalgiftdet']?$transArr['totalgiftdet'].' '.$LANG['GIFT_FOR_DET'].', ':'');
-									echo 'Balance: '.$transArr['invoicebalance'];
+									echo ($transArr['totalexmounted']?$transArr['totalexmounted'] . ' ' . $LANG['MOUNTED'] . ', ':'');
+									echo ($transArr['totalexunmounted']?$transArr['totalexunmounted'] . ' ' . $LANG['UNMOUNTED'] . ', ':'');
+									echo ($transArr['totalgift']?$transArr['totalgift'] . ' ' . $LANG['GIFT'] . ', ':'');
+									echo ($transArr['totalgiftdet']?$transArr['totalgiftdet'] . ' ' . $LANG['GIFT_FOR_DET'] . ', ':'');
+									echo $LANG['BALANCE'] . ': ' . $transArr['invoicebalance'];
 								}
 								else{
-									echo 'Adjustment of '.$transArr['adjustment'].' '.$LANG['SPECIMENS'];
+									echo $LANG['ADJUSTMENT_OF'] . $transArr['adjustment'] . ' ' . $LANG['SPECIMENS'];
 								}
 								echo '</li>';
 							}
@@ -130,7 +130,7 @@ if(!$transInstList) echo '<script type="text/javascript">displayNewExchange();</
 		<?php
 	}
 	else{
-		echo '<div style="font-weight:bold;font-size:120%;margin-top:10px;">'.$LANG['NO_TRANSACTIONS'].'</div>';
+		echo '<div style="font-weight:bold;font-size:120%;margin-top:10px;">' . $LANG['NO_TRANSACTIONS'] . '</div>';
 	}
 	?>
 </div>

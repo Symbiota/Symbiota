@@ -1,10 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLoans.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.en.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
-if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../collections/loans/index.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+if(!$SYMB_UID) header('Location: ' . $CLIENT_ROOT.'/profile/index.php?refurl=../collections/loans/index.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $collid = $_REQUEST['collid'];
 $searchTerm = array_key_exists('searchterm',$_POST)?$_POST['searchterm']:'';
@@ -54,7 +54,7 @@ if($isEditor){
 	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['LOAN_MANAGE']; ?></title>
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	include_once($SERVER_ROOT.'/includes/head.php');
+	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
@@ -182,7 +182,7 @@ if($isEditor){
 <body>
 	<?php
 	$displayLeftMenu = false;
-	include($SERVER_ROOT.'/includes/header.php');
+	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'>Home</a> &gt;&gt;
@@ -273,7 +273,7 @@ if($isEditor){
 											<?php
 											$instArr = $loanManager->getInstitutionArr();
 											foreach($instArr as $k => $v){
-												echo '<option value="'.$k.'">'.$v.'</option>';
+												echo '<option value="' . $k . '">' . $v . '</option>';
 											}
 											?>
 										</select>
@@ -310,14 +310,14 @@ if($isEditor){
 									$overdue = strtotime($loanArr['datedue']) - time() < 0;
 
 									// construct due date string
-									$due = ' (<span class="'.($overdue?'important':'').'">' . $LANG['DUE'] . ': ' . $loanArr['datedue'] . '</span>)';
+									$due = ' (<span class="' . ($overdue?'important':'') . '">' . $LANG['DUE'] . ': ' . $loanArr['datedue'] . '</span>)';
 								}
 
 								echo '<li>';
 								echo '<a href="outgoing.php?collid=' . htmlspecialchars($targetCollid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($loanArr['loanidentifierown'], HTML_SPECIAL_CHARS_FLAGS) . ' <img src="../../images/edit.png" style="width:12px" /></a> ';
 								if(isset($loanArr['isexternal'])) echo '<span style="color:orange">' . $LANG['EXTERNAL_COLL'] . '</span>';
-								echo ': '.($loanArr['institutioncode'] ? $loanArr['institutioncode'] : ($loanArr['institutionname'] ? $loanArr['institutionname'] : '[no name]'));
-								echo ' ('.$loanArr['forwhom'].') - ' . ($loanArr['dateclosed']? $LANG['CLOSED'] . ': ' . $loanArr['dateclosed']:'<b>' . $LANG['OPEN'] . '</b>');
+								echo ': ' . ($loanArr['institutioncode'] ? $loanArr['institutioncode'] : ($loanArr['institutionname'] ? $loanArr['institutionname'] : '[no name]'));
+								echo ' (' . $loanArr['forwhom'] . ') - ' . ($loanArr['dateclosed']? $LANG['CLOSED'] . ': ' . $loanArr['dateclosed']:'<b>' . $LANG['OPEN'] . '</b>');
 								echo ($loanArr['dateclosed'] ? '' : ($loanArr['datedue'] ? $due : ''));
 								echo '</li>';
 							}
@@ -393,7 +393,7 @@ if($isEditor){
 											<?php
 											$instArr = $loanManager->getInstitutionArr();
 											foreach($instArr as $k => $v){
-												echo '<option value="'.$k.'">'.$v.'</option>';
+												echo '<option value="' . $k . '">' . $v . '</option>';
 											}
 											?>
 										</select>
@@ -455,7 +455,7 @@ if($isEditor){
 								echo '<li>';
 								echo '<a href="incoming.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '">';
 								echo $loanArr['loanidentifierown'];
-								echo ' from '.$loanArr['collectionname'].'</a>';
+								echo ' from ' . $loanArr['collectionname'] . '</a>';
 								echo '</li>';
 							}
 							echo '</ul>';
@@ -474,7 +474,7 @@ if($isEditor){
 		?>
 	</div>
 	<?php
-	include($SERVER_ROOT.'/includes/footer.php');
+	include($SERVER_ROOT . '/includes/footer.php');
 	?>
 </body>
 </html>

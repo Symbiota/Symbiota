@@ -1,12 +1,12 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceLoans.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.en.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/includes/determinationtab.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/determinationtab.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/determinationtab.en.php');
-header("Content-Type: text/html; charset=".$CHARSET);
-if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../collections/loans/outgoing.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+include_once($SERVER_ROOT . '/classes/OccurrenceLoans.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.en.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/editor/includes/determinationtab.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/editor/includes/determinationtab.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/editor/includes/determinationtab.en.php');
+header("Content-Type: text/html; charset=" . $CHARSET);
+if(!$SYMB_UID) header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=../collections/loans/outgoing.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $collid = $_REQUEST['collid'];
 $loanId = $_REQUEST['loanid'];
@@ -117,7 +117,7 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 				}
 				else if(retStr == "1"){
 					f.catalognumber.value = '';
-					let msgStr = "<?php echo $LANG['SUCCESS_SPEC'].' '; ?>";
+					let msgStr = "<?php echo $LANG['SUCCESS_SPEC'] . ' '; ?>";
 					if(mode == "link") msgStr = msgStr + "<?php echo $LANG['LINKED']; ?>";
 					else msgStr = msgStr + "<?php echo $LANG['CHECKED_IN']; ?>";
 					$("#message-span").html(msgStr);
@@ -402,17 +402,17 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 			</div>
 			<table class="styledtable" style="font-family:Arial;font-size:12px;">
 				<tr>
-					<th class="form-checkbox"><input type="checkbox" onclick="selectAll(this);" title="Select/Deselect All" /></th>
+					<th class="form-checkbox"><input type="checkbox" onclick="selectAll(this);" title="<?php echo $LANG['SEC_DESEL_ALL']; ?>" /></th>
 					<th>&nbsp;</th>
 					<th><?php echo $LANG['CATNO']; ?>
 					<?php
 					$tagArr = $loanManager->getIdentifierTagArr();
 					ksort($tagArr);
 					if(count($tagArr) > 1){
-						echo '<div style="font-weight:normal">Sort by: <select name="sortTag" onchange="this.form.submit()">';
+						echo '<div style="font-weight:normal">' . $LANG['SORT_BY'] . ': <select name="sortTag" onchange="this.form.submit()">';
 						foreach($tagArr as $tagKey => $tagValue){
 							$tagKey = substr($tagKey,2);
-							echo '<option value="'.$tagKey.'" '.($sortTag==$tagKey?'selected':'').'>'.$tagValue.'</option>';
+							echo '<option value="' . $tagKey . '" ' . ($sortTag==$tagKey?'selected':'') . '>' . $tagValue . '</option>';
 						}
 						echo '</select></div>';
 					}
@@ -438,23 +438,23 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 						</td>
 						<td>
 							<?php
-							if($specArr['catalognumber']) echo '<div>'.$specArr['catalognumber'].'</div>';
-							if(isset($specArr['othercatalognumbers'])) echo '<div>'.implode('<br/>',$specArr['othercatalognumbers']).'</div>';
+							if($specArr['catalognumber']) echo '<div>' . $specArr['catalognumber'] . '</div>';
+							if(isset($specArr['othercatalognumbers'])) echo '<div>' . implode('<br/>',$specArr['othercatalognumbers']) . '</div>';
 							if($specArr['collid'] != $collid) echo '<div style="color:orange">external</div>';
 							?>
 						</td>
 						<td>
 							<?php
-							if($specArr['sciname']) echo '<i>'.$specArr['sciname'].'</i>; ';
+							if($specArr['sciname']) echo '<i>' . $specArr['sciname'] . '</i>; ';
 							$loc = $specArr['locality'];
 							if(strlen($loc) > 500) $loc = substr($loc,400);
-							if($specArr['collector']) echo $specArr['collector'].'; ';
+							if($specArr['collector']) echo $specArr['collector'] . '; ';
 							echo $loc;
-							if($specArr['notes']) echo '<div class="notesDiv"><b>Notes:</b> '.$specArr['notes'],'</div>';
+							if($specArr['notes']) echo '<div class="notesDiv"><b>Notes:</b> ' . $specArr['notes'],'</div>';
 							?>
 						</td>
 						<td><?php
-						echo '<div style="float:right"><a href="#" onclick="openCheckinPopup('.$loanId.','.$occid.','.$collid.');return false"><img src="../../images/edit.png" style="width:13px" title="'.$LANG['EDIT_NOTES'].'" /></a></div>';
+						echo '<div style="float:right"><a href="#" onclick="openCheckinPopup(' . $loanId . ',' . $occid . ',' . $collid . ');return false"><img src="../../images/edit.png" style="width:13px" title="' . $LANG['EDIT_NOTES'] . '" /></a></div>';
 						echo $specArr['returndate'];
 						?></td>
 					</tr>
