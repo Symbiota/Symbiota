@@ -46,4 +46,11 @@ $LANG['CHOOSEUSER'] = 'Choose a user from the pull-down';
 $LANG['ADDNEWPR'] = 'Add New Project';
 $LANG['TOGGLEEDIT'] = 'Toggle Editing Functions';
 $LANG['MAPREP'] = 'Map representation of checklists';
+$LANG['PENCIL_ALT'] = 'image d\'un crayon sur papier, indiquant le basculement du mode d\'édition';
+$LANG['QUESTION_ALT'] = 'image d\'un point d\'interrogation pour plus d\'informations sur les listes d\'espèces de recherche';
+$LANG['GLOBE_ALT'] = 'imaginez un globe, indiquant une version de la liste de contrôle superposée sur une carte';
+$LANG['TRIANGLE_ALT'] = 'une image d\'un triangle. Juste utilisé pour que la fenêtre contextuelle ressemble davantage à une bulle de dialogue';
+$LANG['EDIT'] = 'Modifier';
+$LANG['KEY'] = 'Clé';
+$LANG['GOLDEN_KEY_SYMBOL'] = 'Symbole de la clé d\'or';
 ?>
