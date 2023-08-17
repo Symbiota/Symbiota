@@ -163,38 +163,34 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 					$specArr = (isset($collList['spec'])?$collList['spec']:null);
 					$obsArr = (isset($collList['obs'])?$collList['obs']:null);
 					?>
-					<div class="flex-form">
-						<div>
-							<div>
-								<label> <?php echo htmlspecialchars($LANG['IMG_COUNT'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
-							</div>
-							
-							<input style="margin-top: 0.5rem" id="countAll" type="radio" name="imagecount" value="0" CHECKED><label for="countAll"> <?php echo htmlspecialchars($LANG['COUNT_ALL'], HTML_SPECIAL_CHARS_FLAGS) ?></label> <br/>
-							<input id="countTaxon" type="radio" name="imagecount" value="1"><label for="countTaxon"> <?php echo htmlspecialchars($LANG['COUNT_TAXON'], HTML_SPECIAL_CHARS_FLAGS) ?></label> <br/>
-
-							<?php
+						<div class="flex-form">
+							<fieldset>
+									<legend> <?php echo htmlspecialchars($LANG['IMG_COUNT'], HTML_SPECIAL_CHARS_FLAGS) ?>: </legend>
+								
+								<input class="top-breathing-room-rel-sm" id="countAll" type="radio" name="imagecount" value="0" CHECKED><label for="countAll"> <?php echo htmlspecialchars($LANG['COUNT_ALL'], HTML_SPECIAL_CHARS_FLAGS) ?></label> <br/>
+								<input id="countTaxon" type="radio" name="imagecount" value="1"><label for="countTaxon"> <?php echo htmlspecialchars($LANG['COUNT_TAXON'], HTML_SPECIAL_CHARS_FLAGS) ?></label> <br/>
+								
+								<?php
 							if($specArr){
 								?>
 								<input id="countSpecimen" type="radio" name="imagecount" value="2"><label for="countSpecimen"> <?php echo htmlspecialchars($LANG['COUNT_SPECIMEN'], HTML_SPECIAL_CHARS_FLAGS) ?></label> <br/>
 								<?php
 							}
 							?>
+							</fieldset>
 						</div>
-					</div>
 					<div>
 						<div class="flex-form">
-							<div>
-								<div style="margin-top: 0.5rem">
-									<label> <?php echo htmlspecialchars($LANG['IMG_TYPE'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
-								</div>
+							<fieldset>
+								<legend> <?php echo htmlspecialchars($LANG['IMG_TYPE'], HTML_SPECIAL_CHARS_FLAGS) ?>: </legend>
 								
-								<input style="margin-top: 0.5rem" id="typeAll" type="radio" name="imagetype" value="0" CHECKED> <label for="typeAll">  <?php echo htmlspecialchars($LANG['TYPE_ALL'], HTML_SPECIAL_CHARS_FLAGS) ?> </label> <br/>
+								<input class="top-breathing-room-rel-sm" id="typeAll" type="radio" name="imagetype" value="0" CHECKED> <label for="typeAll">  <?php echo htmlspecialchars($LANG['TYPE_ALL'], HTML_SPECIAL_CHARS_FLAGS) ?> </label> <br/>
 								<input id="typeSpecimen" type="radio" name="imagetype" value="1" > <label for="typeSpecimen">  <?php echo htmlspecialchars($LANG['TYPE_SPECIMEN'], HTML_SPECIAL_CHARS_FLAGS) ?> </label> <br/>
 								<input id="typeObs" type="radio" name="imagetype" value="2" > <label for="typeObs">  <?php echo htmlspecialchars($LANG['TYPE_OBS'], HTML_SPECIAL_CHARS_FLAGS) ?> </label> <br/>
 								<input id="typeField" type="radio" name="imagetype" value="3" > <label for="typeField">  <?php echo htmlspecialchars($LANG['TYPE_FIELD'], HTML_SPECIAL_CHARS_FLAGS) ?> </label> <br/>
 								
 								<script src="../imagelib/radioUtilities.js"></script>
-							</div>
+							</fieldset>
 						</div>
 						<div class="flex-form">
 							<div>
