@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ImageLibraryBrowser.php');
@@ -11,7 +12,7 @@ $target = array_key_exists('target',$_REQUEST)?trim($_REQUEST['target']):'';
 $imgManager = new ImageLibraryBrowser();
 $imgManager->setSearchTerm($taxon);
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['IMG_LIBRARY']; ?></title>
 	<?php
@@ -34,8 +35,8 @@ $imgManager->setSearchTerm($taxon);
 		<h1><?php echo $LANG['TAXA_W_IMGS']; ?></h1>
 		<div style="margin:0px 0px 5px 20px;"><?php echo $LANG['TAXA_IMG_EXPLAIN']; ?>
 		</div>
-		<div style="float:left;margin:10px 0px 10px 30px;">
-			<div style=''>
+		<div class="sciname-search">
+			<div>
 				<a href='index.php?target=family'><?php echo htmlspecialchars($LANG['BROWSE_FAMILY'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
 			</div>
 			<div style='margin-top:10px;'>
@@ -50,12 +51,13 @@ $imgManager->setSearchTerm($taxon);
 				<div><a href='index.php?taxon=R'>R</a>|<a href='index.php?taxon=S'>S</a>|<a href='index.php?taxon=T'>T</a>|<a href='index.php?taxon=U'>U</a>|<a href='index.php?taxon=V'>V</a>|<a href='index.php?taxon=W'>W</a>|<a href='index.php?taxon=X'>X</a>|<a href='index.php?taxon=Y'>Y</a>|<a href='index.php?taxon=Z'>Z</a></div>
 			</div>
 		</div>
-		<div style="float:right;width:250px;">
+		<div class="sciname-search-container">
 			<div style="margin:10px 0px 0px 0px;">
 				<form name="searchform1" action="index.php" method="post">
 					<fieldset style="background-color:#FFFFCC;padding:10px;">
 						<legend style="font-weight:bold;"><?php echo $LANG['SCINAME_SEARCH']; ?></legend>
-						<input type="text" name="taxon" value="<?php echo $taxon; ?>" title="<?php echo $LANG['ENTER_TAXON_NAME']; ?>" />
+						<label for="taxon">Taxon: </label>
+						<input type="text" name="taxon" id="taxon" value="<?php echo $taxon; ?>" title="<?php echo $LANG['ENTER_TAXON_NAME']; ?>" placeholder="<?php echo $LANG['ENTER_TAXON_NAME']; ?>" />
 						<button name="submit" value="Search" type="submit"><?php echo $LANG['SEARCH']; ?></button>
 					</fieldset>
 				</form>

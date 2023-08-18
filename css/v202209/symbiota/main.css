@@ -341,6 +341,14 @@ table.styledtable tr.alt td {
   margin-top: 5px;
 }
 
+.top-breathing-room-rel {
+  margin-top: 1rem;
+}
+
+.left-breathing-room-rel {
+  margin-left: 1rem;
+}
+
 .nested-li {
   margin-left: 1.5em;
 }
@@ -432,6 +440,10 @@ table.styledtable tr.alt td {
   width: 40%;
 }
 
+.bottom-breathing-room-relative {
+  margin-bottom: 1rem;
+}
+
 .col-profile-img {
   border: 1px;
   height: 6.4rem;
@@ -452,6 +464,29 @@ table.styledtable tr.alt td {
   justify-content: center;
 }
 
+.sciname-search {
+  float: left;
+  margin: 10px 0px 10px 30px;
+}
+
+.sciname-search-container {
+  float: right;
+  width: 30rem;
+  margin-bottom: 1rem;
+}
+
+.margin-rt-rel {
+  margin-right: 1rem;
+}
+
+.bottom-breathing-room-sm-rel {
+  margin-bottom: 0.5rem;
+}
+
 .load-button {
   margin-top: 0.75rem;
+}
+
+.top-breathing-room-rel-sm {
+  margin-top: 0.5rem;
 }
