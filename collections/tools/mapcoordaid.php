@@ -251,9 +251,7 @@ else{
          } 
       }
       let formShape = loadShape("<?php echo $mapMode?>");
-
-      if("<?php echo $LEAFLET ?>") { //LEAFLET SPECIFIC
-
+      function leafletInit() {
          const MapOptions = {
             center: [<?php echo $latCenter?>, <?php echo $lngCenter?>],
             zoom: <?php echo $zoom?>
@@ -272,8 +270,8 @@ else{
             map.drawShape(formShape);
             map.mapLayer.fitBounds(map.activeShape.layer.getBounds());
          }
-
-      } else { //GOOGLE SPECIFIC
+      }
+      function googleInit() {
 		   const MapOptions= {
 				zoom: <?php echo $zoom; ?>,
 				center: new google.maps.LatLng(<?php echo $latCenter . ',' . $lngCenter; ?>),
@@ -287,6 +285,12 @@ else{
          if(formShape) 
             map.drawShape(formShape, setShapeToSearchForm)
       }
+
+      <?php if(!empty($LEAFLET)) { ?> 
+         leafletInit();
+      <?php } else { ?> 
+         googleInit();
+      <?php } ?>
    </script>
 </body>
 </html>
