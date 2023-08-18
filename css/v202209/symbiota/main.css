@@ -482,3 +482,7 @@ table.styledtable tr.alt td {
 .bottom-breathing-room-sm-rel {
   margin-bottom: 0.5rem;
 }
+
+.taxon-search-bar {
+  width: 25rem;
+}

@@ -1,16 +1,18 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyDisplayManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.'.$LANG_TAG.'.php');
 
-$target = array_key_exists('target', $_REQUEST) ? filter_var($_REQUEST['target'], FILTER_SANITIZE_STRING) : '';
+$target = array_key_exists('target', $_REQUEST) ? htmlspecialchars($_REQUEST['target'], HTML_SPECIAL_CHARS_FLAGS) : '';
 $displayAuthor = array_key_exists('displayauthor', $_REQUEST) ? filter_var($_REQUEST['displayauthor'], FILTER_SANITIZE_NUMBER_INT): 0;
 $matchOnWords = array_key_exists('matchonwords', $_POST) ? filter_var($_POST['matchonwords'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $displayFullTree = array_key_exists('displayfulltree', $_REQUEST) ? filter_var($_REQUEST['displayfulltree'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $displaySubGenera = array_key_exists('displaysubgenera', $_REQUEST) ? filter_var($_REQUEST['displaysubgenera'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $taxAuthId = array_key_exists('taxauthid', $_REQUEST) ? filter_var($_REQUEST['taxauthid'], FILTER_SANITIZE_NUMBER_INT) : 1;
-$statusStr = array_key_exists('statusstr', $_REQUEST) ? filter_var($_REQUEST['statusstr'], FILTER_SANITIZE_STRING) : '';
+$statusStr = array_key_exists('statusstr', $_REQUEST) ? htmlspecialchars($_REQUEST['statusstr'], HTML_SPECIAL_CHARS_FLAGS) : '';
 
 if(!$target) $matchOnWords = 1;
 $taxonDisplayObj = new TaxonomyDisplayManager();
@@ -26,7 +28,7 @@ if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
 	$isEditor = true;
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE." ".(isset($LANG['TAX_DISPLAY'])?$LANG['TAX_DISPLAY']:'Taxonomy Display').": ".$taxonDisplayObj->getTargetStr(); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
@@ -79,7 +81,7 @@ if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
 			?>
 			<div style="float:right;" title="<?php echo (isset($LANG['ADD_NEW_TAXON'])?$LANG['ADD_NEW_TAXON']:'Add a New Taxon'); ?>">
 				<a href="taxonomyloader.php">
-					<img style='border:0px;width:15px;' src='../../images/add.png'/>
+					<img style='border:0px;width:15px;' src='../../images/add.png' alt="Plus sign">
 				</a>
 			</div>
 			<?php
@@ -107,8 +109,8 @@ if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
 				<fieldset style="padding:10px;max-width:850px;">
 					<legend><b><?php echo (isset($LANG['TAX_SEARCH'])?$LANG['TAX_SEARCH']:'Taxon Search'); ?></b></legend>
 					<div style="float:left;">
-						<b><?php echo (isset($LANG['TAXON'])?$LANG['TAXON']:'Taxon'); ?>:</b>
-						<input id="taxontarget" name="target" type="text" style="width:400px;" value="<?php echo $taxonDisplayObj->getTargetStr(); ?>" />
+						<label for="taxontarget"> <?php echo htmlspecialchars($LANG['TAXON'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
+						<input id="taxontarget" class="taxon-search-bar" name="target" type="text" value="<?php echo $taxonDisplayObj->getTargetStr(); ?>" />
 					</div>
 					<div style="float:left;margin-left:15px;">
 						<button name="tdsubmit" type="submit" value="displayTaxonTree"><?php echo (isset($LANG['DISP_TAX_TREE'])?$LANG['DISP_TAX_TREE']:'Display Taxon Tree'); ?></button>
@@ -116,16 +118,20 @@ if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
 					</div>
 					<div style="clear:both;padding-top:15px; margin-left:60px;">
 						<div style="margin:3px;">
-							<input name="displayauthor" type="checkbox" value="1" <?php echo ($displayAuthor?'checked':''); ?> /> <?php echo (isset($LANG['DISP_AUTHORS'])?$LANG['DISP_AUTHORS']:'Display authors'); ?>
+							<input name="displayauthor" type="checkbox" value="1" <?php echo ($displayAuthor?'checked':''); ?> />
+							<label> <?php echo (isset($LANG['DISP_AUTHORS'])?$LANG['DISP_AUTHORS']:'Display authors'); ?> </label>
 						</div>
 						<div style="margin:3px;">
-							<input name="matchonwords" type="checkbox" value="1" <?php echo ($matchOnWords?'checked':''); ?> /> <?php echo (isset($LANG['MATCH_WHOLE_WORDS'])?$LANG['MATCH_WHOLE_WORDS']:'Match on whole words'); ?>
+							<input name="matchonwords" type="checkbox" value="1" <?php echo ($matchOnWords?'checked':''); ?> /> 
+							<label> <?php echo (isset($LANG['MATCH_WHOLE_WORDS'])?$LANG['MATCH_WHOLE_WORDS']:'Match on whole words'); ?> </label>
 						</div>
 						<div style="margin:3px">
-							<input name="displayfulltree" type="checkbox" value="1" <?php echo ($displayFullTree?'checked':''); ?> /> <?php echo (isset($LANG['DISP_FULL_TREE'])?$LANG['DISP_FULL_TREE']:'Display full tree below family'); ?>
+							<input name="displayfulltree" type="checkbox" value="1" <?php echo ($displayFullTree?'checked':''); ?> /> 
+							<label> <?php echo (isset($LANG['DISP_FULL_TREE'])?$LANG['DISP_FULL_TREE']:'Display full tree below family'); ?> </label>
 						</div>
 						<div style="margin:3px;">
-							<input name="displaysubgenera" type="checkbox" value="1" <?php echo ($displaySubGenera?'checked':''); ?> /> <?php echo (isset($LANG['DISP_SUBGENERA'])?$LANG['DISP_SUBGENERA']:'Display species with subgenera'); ?>
+							<input name="displaysubgenera" type="checkbox" value="1" <?php echo ($displaySubGenera?'checked':''); ?> /> 
+							<label> <?php echo (isset($LANG['DISP_SUBGENERA'])?$LANG['DISP_SUBGENERA']:'Display species with subgenera'); ?> </label>
 						</div>
 					</div>
 				</fieldset>
