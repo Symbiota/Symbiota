@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ImageLibraryBrowser.php');
@@ -5,14 +7,14 @@ header("Content-Type: text/html; charset=".$CHARSET);
 
 $imgManager = new ImageLibraryBrowser();
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Photographer List</title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<meta name='keywords' content='' />
+	<meta name='keywords' content='Contributors, Specimens' />
 </head>
 <body>
 	<?php
@@ -30,7 +32,7 @@ $imgManager = new ImageLibraryBrowser();
 		<?php
 		$pList = $imgManager->getPhotographerList();
 		if($pList){
-			echo '<div style="float:left;;margin-right:40px;">';
+			echo '<div style="float:left; margin-right:40px;">';
 			echo '<h2>Image Contributors</h2>';
 			echo '<div style="margin-left:15px">';
 			foreach($pList as $uid => $pArr){
