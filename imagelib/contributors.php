@@ -22,9 +22,9 @@ $imgManager = new ImageLibraryBrowser();
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="../index.php">Home</a> &gt;&gt;
-		<a href="index.php">Image Library</a> &gt;&gt;
-		<b>Image contributors</b>
+		<a href="../index.php"> <?php echo htmlspecialchars($LANG['NAV_HOME'], HTML_SPECIAL_CHARS_FLAGS) ?> </a> &gt;&gt;
+		<a href="index.php"> <?php echo htmlspecialchars($LANG['NAV_IMG_LIB'], HTML_SPECIAL_CHARS_FLAGS) ?> </a> &gt;&gt;
+		<b> <?php echo htmlspecialchars($LANG['NAV_IMG_CONTR'], HTML_SPECIAL_CHARS_FLAGS) ?> </b>
 	</div>
 
 	<!-- This is inner text! -->
@@ -33,7 +33,7 @@ $imgManager = new ImageLibraryBrowser();
 		$pList = $imgManager->getPhotographerList();
 		if($pList){
 			echo '<div style="float:left; margin-right:40px;">';
-			echo '<h2>Image Contributors</h2>';
+			echo '<h2>' . htmlspecialchars($LANG['IMG_CONTR'], HTML_SPECIAL_CHARS_FLAGS) . '</h2>';
 			echo '<div style="margin-left:15px">';
 			foreach($pList as $uid => $pArr){
 				echo '<div>';
@@ -52,7 +52,7 @@ $imgManager = new ImageLibraryBrowser();
 			$collList = $imgManager->getCollectionImageList();
 			$specList = $collList['coll'];
 			if($specList){
-				echo '<h2>Specimens</h2>';
+				echo '<h2>' . htmlspecialchars($LANG['SPECIMENS'], HTML_SPECIAL_CHARS_FLAGS) . '</h2>';
 				echo '<div style="margin-left:15px;margin-bottom:20px">';
 				foreach($specList as $k => $cArr){
 					echo '<div>';
@@ -64,7 +64,7 @@ $imgManager = new ImageLibraryBrowser();
 
 			$obsList = $collList['obs'];
 			if($obsList){
-				echo '<h2>Observations</h2>';
+				echo '<h2>' . htmlspecialchars($LANG['OBS'], HTML_SPECIAL_CHARS_FLAGS) . '</h2>';
 				echo '<div style="margin-left:15px">';
 				foreach($obsList as $k => $cArr){
 					echo '<div>';

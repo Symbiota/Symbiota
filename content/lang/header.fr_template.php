@@ -44,5 +44,16 @@ $LANG['H_MY_PROFILE'] = 'Mon Profill';
 $LANG['H_LOGOUT'] = 'Se Déconnecter';
 $LANG['H_LOGIN'] = 'Se connecter';
 $LANG['H_NEW_ACCOUNT'] = 'Nouveau Compte';
+$LANG['TOGGLE_508_OFF'] = "Mode condensé";
+$LANG['TOGGLE_508_ON'] = "Mode d'accessibilité";
 $LANG['SELECT_LANGUAGE'] = 'Sélectionnez une langue';
+
+$LANG['SPECIMENS'] = 'Spécimens';
+$LANG['IMG_CONTR'] = 'Contributeurs d\'images';
+$LANG['OBS'] = 'Observations';
+
+$LANG['NAV_HOME'] = 'Accueil';
+$LANG['NAV_IMG_LIB'] = 'Bibliothèque d\'images';
+$LANG['NAV_IMG_CONTR'] = 'Contributeurs d\'images';
+$LANG['NAV_IMG_SEARCH'] = 'Recherche d\'images';
 ?>
