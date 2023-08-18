@@ -451,3 +451,7 @@ table.styledtable tr.alt td {
   display: flex;
   justify-content: center;
 }
+
+.welcome-text {
+  margin-bottom: 0.75rem
+}
