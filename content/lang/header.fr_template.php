@@ -45,4 +45,16 @@ $LANG['H_LOGOUT'] = 'Se Déconnecter';
 $LANG['H_LOGIN'] = 'Se connecter';
 $LANG['H_NEW_ACCOUNT'] = 'Nouveau Compte';
 $LANG['SELECT_LANGUAGE'] = 'Sélectionnez une langue';
+
+$LANG['TOGGLE_508_OFF'] = 'Mode Condensé';
+$LANG['TOGGLE_508_ON'] = 'Mode d\'Accessibilité';
+$LANG['SPECIMENS'] = 'Spécimens';
+$LANG['IMG_CONTR'] = 'Contributeurs d\'Images';
+$LANG['OBS'] = 'Observations';
+
+$LANG['NAV_HOME'] = 'Maison';
+$LANG['NAV_IMG_LIB'] = 'Bibliothèque d\'Images';
+$LANG['NAV_IMG_CONTR'] = 'Contributeurs d\'Images';
+$LANG['NAV_IMG_SEARCH'] = 'Recherche d\'Image';
+$LANG['SKIP_NAV'] = 'Sauter la Navigation';
 ?>
