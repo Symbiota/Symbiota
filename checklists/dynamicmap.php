@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <?php
 include_once('../config/symbini.php');
 //include_once($SERVER_ROOT.'/classes/DynamicChecklistManager.php');
@@ -35,7 +36,7 @@ if(!$zoomInt){
 	elseif($coordRange > 40) $zoomInt = 3;
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' - '.(isset($LANG['CHECKLIST_GENERATOR'])?$LANG['CHECKLIST_GENERATOR']:'Dynamic Checklist Generator'); ?></title>
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
@@ -134,8 +135,8 @@ if(!$zoomInt){
 			<?php
 		}
 		?>
-		<div id='innertext'>
-			<div>
+		<div class="flex-form" id='innertext'>
+			<div style="margin-left: 2rem; margin-bottom: 1rem;">
 				<?php echo (isset($LANG['CAPTURE_COORDS'])?$LANG['CAPTURE_COORDS']:'Pan, zoom and click on map to capture coordinates, then submit coordinates to build a species list.'); ?>
 				<span id="moredetails" style="cursor:pointer;color:blue;font-size:80%;" onclick="this.style.display='none';document.getElementById('moreinfo').style.display='inline';document.getElementById('lessdetails').style.display='inline';">
 					<?php echo (isset($LANG['MORE_DETAILS'])?$LANG['MORE_DETAILS']:'More Details'); ?>
@@ -151,32 +152,33 @@ if(!$zoomInt){
 					<?php echo (isset($LANG['LESS_DETAILS'])?$LANG['LESS_DETAILS']:'Less Details'); ?>
 				</span>
 			</div>
-			<div style="margin-top:5px;">
-				<form name="mapForm" action="dynamicchecklist.php" method="post" onsubmit="return checkForm();">
-					<div style="float:left;width:300px;">
-						<div>
-							<input type="hidden" name="interface" value="<?php echo $interface; ?>" />
-							<input type="hidden" id="latbox" name="lat" value="" />
-							<input type="hidden" id="lngbox" name="lng" value="" />
-							<button type="submit" name="buildchecklistbutton" value="Build Checklist" disabled ><?php echo (isset($LANG['BUILD_CHECKLIST'])?$LANG['BUILD_CHECKLIST']:'Build Checklist'); ?></button>
-						</div>
-						<div>
+			<div>
+				<form name="mapForm" action="dynamicchecklist.php" method="post" onsubmit="return checkForm();" class="flex-form">
+					<div>
+						<input type="hidden" name="interface" value="<?php echo $interface; ?>" />
+						<input type="hidden" id="latbox" name="lat" value="" />
+						<input type="hidden" id="lngbox" name="lng" value="" />
+						<div class="bottom-breathing-room-relative">
 							<b><?php echo (isset($LANG['POINT'])?$LANG['POINT']:'Point (Lat, Long)'); ?>:</b>
 							<span id="latlngspan"> &lt; <?php echo (isset($LANG['CLICK_MAP'])?$LANG['CLICK_MAP']:'Click on map'); ?> &gt; </span>
 						</div>
+						<button type="submit" class="bottom-breathing-room-relative" name="buildchecklistbutton" value="Build Checklist" disabled ><?php echo (isset($LANG['BUILD_CHECKLIST'])?$LANG['BUILD_CHECKLIST']:'Build Checklist'); ?></button>
 					</div>
-					<div style="float:left;">
-						<div style="margin-right:35px;">
+					<div class="flex-form">
+						<div style="margin-left: 0;">
 							<label for="taxa"><?php echo (isset($LANG['TAXON_FILTER'])?$LANG['TAXON_FILTER']:'Taxon Filter'); ?>:</label>
 							<input id="taxa" name="taxa" type="text" value="<?php echo $taxa; ?>" />
 							<input id="tid" name="tid" type="hidden" value="<?php echo $tid; ?>" />
 						</div>
-						<div>
-							<label for="radius"><?php echo (isset($LANG['RADIUS'])?$LANG['RADIUS']:'Radius'); ?>:</label>
+						<div style="margin-left: 0;">
+							<label for="radius"><?php echo (isset($LANG['RADIUS']) ? $LANG['RADIUS'] : 'Radius'); ?>:</label>
 							<input name="radius" id="radius" value="(optional)" type="text" style="width:140px;" onfocus="this.value = ''" />
-							<select name="radiusunits">
-								<option value="km"><?php echo (isset($LANG['KM'])?$LANG['KM']:'Kilometers'); ?></option>
-								<option value="mi"><?php echo (isset($LANG['MILES'])?$LANG['MILES']:'Miles'); ?></option>
+						</div>
+						<div style="margin-left: 0;">
+							<label for="radiusunits"><?php echo (isset($LANG['UNITS']) ? htmlspecialchars($LANG['UNITS'], HTML_SPECIAL_CHARS_FLAGS): 'Units'); ?>: </label>
+							<select name="radiusunits" id="radiusunits">
+								<option value="km"><?php echo (isset($LANG['KM']) ? $LANG['KM'] : 'Kilometers'); ?></option>
+								<option value="mi"><?php echo (isset($LANG['MILES']) ? $LANG['MILES'] : 'Miles'); ?></option>
 							</select>
 						</div>
 					</div>
