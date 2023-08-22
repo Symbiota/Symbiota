@@ -55,14 +55,15 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 		if($collections_indexCrumbs){
 			echo '<div class="navpath">';
 			echo $collections_indexCrumbs;
-			echo ' <b>'.$LANG['NAV_COLLECTIONS'].'</b>';
+			echo ' <b>' . $LANG['NAV_COLLECTIONS'] . '</b>';
 			echo '</div>';
 		}
 	}
 	else{
 		echo '<div class="navpath">';
-		echo '<a href="../index.php">' . htmlspecialchars((isset($LANG['NAV_HOME'])?$LANG['NAV_HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
-		echo '<b>'.(isset($LANG['NAV_COLLECTIONS'])?$LANG['NAV_COLLECTIONS']:'Collections').'</b>';
+			echo '<a href="../index.php">' . htmlspecialchars((isset($LANG['NAV_HOME'])?$LANG['NAV_HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+			echo '&gt;&gt; ';
+			echo '<b>'.(isset($LANG['NAV_COLLECTIONS'])?$LANG['NAV_COLLECTIONS']:'Collections').'</b>';
 		echo "</div>";
 	}
 	?>
@@ -71,10 +72,18 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
         <div id="tabs" style="margin:0px;">
 			<ul>
 				<?php
-				if($specArr && $obsArr) echo '<li><a href="#specobsdiv">' . strip_tags((isset($LANG['TAB_1'])?$LANG['TAB_1']:'Specimens & Observations')) . '</a></li>';
-				if($specArr) echo '<li><a href="#specimendiv">' . strip_tags((isset($LANG['TAB_2'])?$LANG['TAB_2']:'Specimens')) . '</a></li>';
-				if($obsArr) echo '<li><a href="#observationdiv">' . strip_tags((isset($LANG['TAB_3'])?$LANG['TAB_3']:'Observations')) . '</a></li>';
-				if($otherCatArr) echo '<li><a href="#otherdiv">' . strip_tags((isset($LANG['TAB_4'])?$LANG['TAB_4']:'Federal Units')) . '</a></li>';
+				if($specArr && $obsArr){
+					echo '<li><a href="#specobsdiv">' . strip_tags((isset($LANG['TAB_1'])?$LANG['TAB_1']:'Specimens & Observations')) . '</a></li>';
+				}
+				if($specArr){
+					echo '<li><a href="#specimendiv">' . strip_tags((isset($LANG['TAB_2'])?$LANG['TAB_2']:'Specimens')) . '</a></li>';
+				}
+				if($obsArr){
+					echo '<li><a href="#observationdiv">' . strip_tags((isset($LANG['TAB_3'])?$LANG['TAB_3']:'Observations')) . '</a></li>';
+				}
+				if($otherCatArr){
+					echo '<li><a href="#otherdiv">' . strip_tags((isset($LANG['TAB_4'])?$LANG['TAB_4']:'Federal Units')) . '</a></li>';
+				}
 				?>
 			</ul>
 			<?php
@@ -83,15 +92,16 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 				<div id="specobsdiv">
 					<form name="collform1" action="harvestparams.php" method="post" onsubmit="return verifyCollForm(this)">
 						<div style="margin:0px 0px 10px 5px;">
+							<label for="dballcb">
+								<?php echo $LANG['SELECT_DESELECT'].' <a href="misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>'; ?>
+							</label>
 							<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" checked />
-							<?php echo $LANG['SELECT_DESELECT'].' <a href="misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>'; ?>
 						</div>
 						<?php
-						$collManager->outputFullCollArr($specArr, $catId);
-						if($specArr && $obsArr) echo '<hr style="clear:both;margin:20px 0px;"/>';
-						$collManager->outputFullCollArr($obsArr, $catId);
+							$collManager->outputFullCollArr($specArr, $catId);
+							if($specArr && $obsArr) echo '<hr style="clear:both;margin:20px 0px;"/>';
+							$collManager->outputFullCollArr($obsArr, $catId);
 						?>
-						<div style="clear:both;">&nbsp;</div>
 					</form>
 				</div>
 				<?php
@@ -107,7 +117,6 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 						<?php
 						$collManager->outputFullCollArr($specArr, $catId);
 						?>
-						<div style="clear:both;">&nbsp;</div>
 					</form>
 				</div>
 				<?php
@@ -148,7 +157,10 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 								foreach($projTitleArr as $pid => $projTitle){
 									?>
 									<div>
-										<a href="#" onclick="togglePid('<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>');return false;"><img id="plus-pid-<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>" src="../images/plus_sm.png" alt='Plus Sign' /><img id="minus-pid-<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>" src="../images/minus_sm.png" style="display:none;" alt='Minus Sign' /></a>
+										<a href="#" onclick="togglePid('<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>');return false;">
+											<img id="plus-pid-<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>" src="../images/plus_sm.png" alt="plus sign to expand menu" />
+											<img id="minus-pid-<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>" src="../images/minus_sm.png" style="display:none;" alt="minus sign to condense menu" />
+										</a>
 										<input name="pid[]" type="checkbox" value="<?php echo $pid; ?>" onchange="selectAllPid(this);" />
 										<b><?php echo $projTitle; ?></b>
 									</div>

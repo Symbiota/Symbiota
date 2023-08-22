@@ -130,20 +130,22 @@ class OccurrenceSearchSupport {
 						}
 						?>
 						<td style="width:25px;">
-							<div style="">
+							<div>
 								<?php
 								$catSelected = false;
 								if(!$catSelArr && !$collSelArr) $catSelected = true;
 								elseif(in_array($catid, $catSelArr)) $catSelected = true;
-								echo '<input data-role="none" id="cat-'.$idStr.'-Input" name="cat[]" value="'.$catid.'" type="checkbox" onclick="selectAllCat(this,\'cat-'.$idStr.'\')" '.($catSelected?'checked':'').' />';
+								echo '<input data-role="none" id="cat-' . $idStr . '-Input" name="cat[]" value="' . $catid.'" type="checkbox" onclick="selectAllCat(this,\'cat-' . $idStr . '\')" ' . ($catSelected?'checked':'') . 'aria-label="Category ' . $idStr . '" />';
 								?>
 							</div>
 						</td>
 						<td style="width:10px;">
 							<div style="margin-top: 7px">
 								<a href="#" onclick="toggleCat('<?php echo htmlspecialchars($idStr, HTML_SPECIAL_CHARS_FLAGS); ?>');return false;">
-									<img id="plus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/plus_sm.png" style="<?php echo (in_array($catid, $targetCatArr)||in_array(0, $targetCatArr)?'display:none;':'') ?>" />
-									<img id="minus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/minus_sm.png" style="<?php echo (in_array($catid, $targetCatArr)||in_array(0, $targetCatArr)?'':'display:none;') ?>" />
+									<?php echo $LANG['EXPAND'] ?>
+									<img id="plus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/plus_sm.png" style="<?php echo (in_array($catid, $targetCatArr)||in_array(0, $targetCatArr)?'display:none;':'') ?>" alt="plus sign to expand menu" />
+									<?php echo $LANG['CONDENSE'] ?>
+									<img id="minus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/minus_sm.png" style="<?php echo (in_array($catid, $targetCatArr)||in_array(0, $targetCatArr)?'':'display:none;') ?>" alt="minus sign to condense menu" />
 								</a>
 							</div>
 						</td>
