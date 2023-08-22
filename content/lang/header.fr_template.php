@@ -45,4 +45,13 @@ $LANG['H_LOGOUT'] = 'Se Déconnecter';
 $LANG['H_LOGIN'] = 'Se connecter';
 $LANG['H_NEW_ACCOUNT'] = 'Nouveau Compte';
 $LANG['SELECT_LANGUAGE'] = 'Sélectionnez une langue';
+
+$LANG['CONTACT_US'] = 'Contactez-Nous';
+$LANG['LOGIN'] = 'Se Connecter';
+$LANG['HOME'] = 'Maison';
+$LANG['SEARCH_COLLECTIONS'] = 'Rechercher des Collections';
+$LANG['CHECKLISTS'] = 'Listes de Contrôle';
+$LANG['DATA_USE'] = 'Utilisation des Données';
+$LANG['ABOUT_SYMBIOTA'] = 'À Propos de Symbiote';
+$LANG['HELP'] = 'Aide';
 ?>

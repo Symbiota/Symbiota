@@ -34,7 +34,7 @@ $isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
 					</span>
 					<span class="button button-tertiary">
 						<a onclick="window.location.href='#'">
-							Contact Us
+							<?php echo htmlspecialchars($LANG['CONTACT_US'], HTML_SPECIAL_CHARS_FLAGS) ?>
 						</a>
 					</span>
 					<span class="button button-secondary">
