@@ -482,3 +482,14 @@ table.styledtable tr.alt td {
 .bottom-breathing-room-sm-rel {
   margin-bottom: 0.5rem;
 }
+
+.welcome-text {
+  margin-bottom: 0.75rem
+
+.load-button {
+  margin-top: 0.75rem;
+}
+
+.top-breathing-room-rel-sm {
+  margin-top: 0.5rem;
+}
