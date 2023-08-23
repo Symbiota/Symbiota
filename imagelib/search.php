@@ -163,37 +163,38 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 					$specArr = (isset($collList['spec'])?$collList['spec']:null);
 					$obsArr = (isset($collList['obs'])?$collList['obs']:null);
 					?>
-					<div class="flex-form">
-						<div>
-							<label for="imagecount"><?php echo htmlspecialchars($LANG['IMG_COUNT'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
-							<select id="imagecount" name="imagecount">
-								<option value="all" <?php echo ($imgLibManager->getImageCount()=='all'?'SELECTED ':''); ?>>All images</option>
-								<option value="taxon" <?php echo ($imgLibManager->getImageCount()=='taxon'?'SELECTED ':''); ?>>One per taxon</option>
+						<div class="flex-form">
+							<fieldset>
+									<legend> <?php echo htmlspecialchars($LANG['IMG_COUNT'], HTML_SPECIAL_CHARS_FLAGS) ?>: </legend>
+								
+								<input class="top-breathing-room-rel-sm" id="countAll" type="radio" name="imagecount" value="0" CHECKED><label for="countAll"> <?php echo htmlspecialchars($LANG['COUNT_ALL'], HTML_SPECIAL_CHARS_FLAGS) ?></label> <br/>
+								<input id="countTaxon" type="radio" name="imagecount" value="1"><label for="countTaxon"> <?php echo htmlspecialchars($LANG['COUNT_TAXON'], HTML_SPECIAL_CHARS_FLAGS) ?></label> <br/>
+								
 								<?php
-								if($specArr){
-									?>
-									<option value="specimen" <?php echo ($imgLibManager->getImageCount()=='specimen'?'SELECTED ':''); ?>>One per specimen</option>
-									<?php
-								}
+							if($specArr){
 								?>
-							</select>
+								<input id="countSpecimen" type="radio" name="imagecount" value="2"><label for="countSpecimen"> <?php echo htmlspecialchars($LANG['COUNT_SPECIMEN'], HTML_SPECIAL_CHARS_FLAGS) ?></label> <br/>
+								<?php
+							}
+							?>
+							</fieldset>
 						</div>
-					</div>
 					<div>
 						<div class="flex-form">
-							<div>
-								<label for="imagetype"><?php echo htmlspecialchars($LANG['IMG_TYPE'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
-								<select id="imagetype" name="imagetypes" onchange="imageTypeChanged(this)">>
-									<option value="0">All Images</option>
-									<option value="1" <?php echo ($imgLibManager->getImageType() == 1?'SELECTED':''); ?>>Specimen Images</option>
-									<option value="2" <?php echo ($imgLibManager->getImageType() == 2?'SELECTED':''); ?>>Image Vouchered Observations</option>
-									<option value="3" <?php echo ($imgLibManager->getImageType() == 3?'SELECTED':''); ?>>Field Images (lacking specific locality details)</option>
-								</select>
-							</div>
+							<fieldset>
+								<legend> <?php echo htmlspecialchars($LANG['IMG_TYPE'], HTML_SPECIAL_CHARS_FLAGS) ?>: </legend>
+								
+								<input class="top-breathing-room-rel-sm" id="typeAll" type="radio" name="imagetype" value="0" CHECKED> <label for="typeAll">  <?php echo htmlspecialchars($LANG['TYPE_ALL'], HTML_SPECIAL_CHARS_FLAGS) ?> </label> <br/>
+								<input id="typeSpecimen" type="radio" name="imagetype" value="1" > <label for="typeSpecimen">  <?php echo htmlspecialchars($LANG['TYPE_SPECIMEN'], HTML_SPECIAL_CHARS_FLAGS) ?> </label> <br/>
+								<input id="typeObs" type="radio" name="imagetype" value="2" > <label for="typeObs">  <?php echo htmlspecialchars($LANG['TYPE_OBS'], HTML_SPECIAL_CHARS_FLAGS) ?> </label> <br/>
+								<input id="typeField" type="radio" name="imagetype" value="3" > <label for="typeField">  <?php echo htmlspecialchars($LANG['TYPE_FIELD'], HTML_SPECIAL_CHARS_FLAGS) ?> </label> <br/>
+								
+								<script src="../imagelib/radioUtilities.js"></script>
+							</fieldset>
 						</div>
 						<div class="flex-form">
 							<div>
-								<button name="submitaction" type="submit" value="search">Load Images</button>
+								<button name="submitaction" type="submit" value="search" class="load-button"> <?php echo htmlspecialchars($LANG['LOAD_IMAGES'], HTML_SPECIAL_CHARS_FLAGS) ?></button>
 							</div>
 						</div>
 					</div>
@@ -287,7 +288,7 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 										$anchorLink = '';
 										if($imgArr['occid']){
 											$anchorLink = '<a href="#" onclick="openIndPU('.$imgArr['occid'].');return false;">';
-										}
+									  	}
 										else{
 											$anchorLink = '<a href="#" onclick="openImagePopup('.$imgId.');return false;">';
 										}
