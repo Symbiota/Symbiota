@@ -164,7 +164,7 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
                } else {
                   marker.on('drag', e => {
                      const pos = e.target.getLatLng();
-                     setLatLngForm(post.lat, pos.lng);
+                     setLatLngForm(pos.lat, pos.lng);
                   })
 
                   map.mapLayer.on('draw:editstop', e => {
