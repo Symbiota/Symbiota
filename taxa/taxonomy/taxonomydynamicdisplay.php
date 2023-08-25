@@ -1,4 +1,4 @@
-<!Doctype>
+<!Doctype html>
 
 <?php
 include_once('../../config/symbini.php');
