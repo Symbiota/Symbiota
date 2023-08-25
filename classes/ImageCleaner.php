@@ -128,8 +128,8 @@ class ImageCleaner extends Manager{
 
 	private function buildImageDerivatives($imgId, $catNum, $recUrlWeb, $recUrlTn, $recUrlOrig, $setFormat = false){
 		$status = true;
-		if(substr($recUrlWeb,0,10) == 'processing') $recUrlWeb = '';
-		if(substr($recUrlTn,0,10) == 'processing') $recUrlTn = '';
+		if(isset($recUrlWeb) && substr($recUrlWeb,0,10) == 'processing') $recUrlWeb = '';
+		if(isset($recUrlTn) && substr($recUrlTn,0,10) == 'processing') $recUrlTn = '';
 		//Build target path
 		$targetPath = '';
 		if($this->collid){
@@ -151,7 +151,7 @@ class ImageCleaner extends Manager{
 
 		$imgUrl = '';
 		$webIsEmpty = false;
-		if(strpos($recUrlOrig, 'tropicos.org/ImageDownload.aspx')){
+		if(isset($recUrlOrig) && strpos($recUrlOrig, 'tropicos.org/ImageDownload.aspx')){
 			//Is a TROPICOS image, thus try to harvest web image from their website
 			if(preg_match('/imageid=(\d+)$/', $recUrlOrig, $m)){
 				$newImgPath = $this->imgManager->getTargetPath().'mo_'.$m[1].'.jpg';

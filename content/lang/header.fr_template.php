@@ -64,4 +64,6 @@ $LANG['NAV_HOME'] = 'Accueil'; // TODO these will be renamed to BREADCRUMB_FOO
 $LANG['NAV_IMG_LIB'] = 'Bibliothèque d\'images';
 $LANG['NAV_IMG_CONTR'] = 'Contributeurs d\'images';
 $LANG['NAV_IMG_SEARCH'] = 'Recherche d\'images';
+$LANG['BREADCRUMB_THUMB_BLDR'] = 'Générateur de vignettes';
+
 ?>
