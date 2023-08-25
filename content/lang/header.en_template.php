@@ -64,5 +64,6 @@ $LANG['NAV_HOME'] = 'Home'; // TODO these will be renamed to BREADCRUMB_FOO
 $LANG['NAV_IMG_LIB'] = 'Image Library';
 $LANG['NAV_IMG_CONTR'] = 'Image Contributors';
 $LANG['NAV_IMG_SEARCH'] = 'Image Search';
+$LANG['NAV_PUB_DAT_LIST'] = 'Public Datasets List'; 
 
 ?>
