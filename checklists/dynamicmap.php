@@ -123,6 +123,7 @@ if(!$zoomInt){
             let radius = getRadius();
             if(radius > 0) {
                let circle = L.circle(center, radius)
+               .setStyle(map.DEFAULT_SHAPE_OPTIONS)
                .addTo(markerGroup);
             }
          }
