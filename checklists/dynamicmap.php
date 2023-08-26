@@ -47,10 +47,10 @@ if(!$zoomInt){
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
 	<script src="//maps.googleapis.com/maps/api/js?<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'key='.$GOOGLE_MAP_KEY:''); ?>"></script>
 
-	<script type="text/javascript">
-		var map;
-		var currentMarker;
-		var zoomLevel = 5;
+   <script type="text/javascript">
+      var map;
+      var currentMarker;
+      var zoomLevel = 5;
       var submitCoord = false;
 
       //Map Global Vars from php
@@ -58,19 +58,19 @@ if(!$zoomInt){
       let lngCent;
       let mapZoom;
 
-		$(document).ready(function() {
-			$( "#taxa" ).autocomplete({
-				source: function( request, response ) {
-					$.getJSON( "../rpc/taxasuggest.php", { term: request.term, rankhigh: 180 }, response );
-				},
-				minLength: 2,
-				autoFocus: true,
-				select: function( event, ui ) {
-					if(ui.item){
-						$( "#tid" ).val(ui.item.id);
-					}
-				}
-			});
+      $(document).ready(function() {
+         $( "#taxa" ).autocomplete({
+            source: function( request, response ) {
+               $.getJSON( "../rpc/taxasuggest.php", { term: request.term, rankhigh: 180 }, response );
+            },
+            minLength: 2,
+            autoFocus: true,
+            select: function( event, ui ) {
+               if(ui.item){
+                  $( "#tid" ).val(ui.item.id);
+               }
+            }
+         });
       });
 
       function getRadius() {
@@ -100,9 +100,9 @@ if(!$zoomInt){
 
       function leafletInit() {
 
-			let dmOptions = {
-				zoom: mapZoom,
-				center: [latCent, lngCent],
+         let dmOptions = {
+            zoom: mapZoom,
+            center: [latCent, lngCent],
          };
 
          map = new LeafletMap('map_canvas', dmOptions)
@@ -139,27 +139,27 @@ if(!$zoomInt){
       }
 
       function googleInit() {
-			var dmLatLng = new google.maps.LatLng(latCent, lngCent);
-			var dmOptions = {
-				zoom: mapZoom,
-				center: dmLatLng,
-				mapTypeId: google.maps.MapTypeId.TERRAIN
-			};
+         var dmLatLng = new google.maps.LatLng(latCent, lngCent);
+         var dmOptions = {
+            zoom: mapZoom,
+            center: dmLatLng,
+            mapTypeId: google.maps.MapTypeId.TERRAIN
+         };
 
-			map = new google.maps.Map(document.getElementById("map_canvas"), dmOptions);
+         map = new google.maps.Map(document.getElementById("map_canvas"), dmOptions);
 
          let marker;
          let circle;
          let latlng;
 
-			google.maps.event.addListener(map, 'click', function(event) {
+         google.maps.event.addListener(map, 'click', function(event) {
             if(marker) marker.setMap();
             if(circle) circle.setMap();
             latlng = event.latLng;
 
-				marker = new google.maps.Marker({
-					position: event.latLng,
-					map: map
+            marker = new google.maps.Marker({
+               position: event.latLng,
+               map: map
             });
 
             let radius = getRadius();
@@ -173,7 +173,7 @@ if(!$zoomInt){
             }
 
             updateMarkerPosition(event.latLng.lat(), event.latLng.lng());
-			});
+         });
 
          onRadiusChange(e => {
             if(circle) circle.setMap();
@@ -204,8 +204,8 @@ if(!$zoomInt){
          <?php if(!empty($LEAFLET)) { ?>
             leafletInit();
          <?php } else { ?>
-            googleInit();
-         <?php } ?>      
+         googleInit();
+      <?php } ?>      
       }
 
       function updateMarkerPosition(lat, lng) {
@@ -214,17 +214,17 @@ if(!$zoomInt){
 
          document.getElementById("latbox").value = lat;
          document.getElementById("lngbox").value = lng;
-			document.getElementById("latlngspan").innerHTML = lat + ", " + lng;
-			document.mapForm.buildchecklistbutton.disabled = false;
-			submitCoord = true;
+         document.getElementById("latlngspan").innerHTML = lat + ", " + lng;
+         document.mapForm.buildchecklistbutton.disabled = false;
+         submitCoord = true;
       }
 
-		function checkForm(){
-			if(submitCoord) return true;
-			alert("<?php echo (isset($LANG['CLICK_MAP'])?$LANG['CLICK_MAP']:'You must first click on map to capture coordinate points'); ?>");
-			return false;
-		}
-	</script>
+      function checkForm(){
+         if(submitCoord) return true;
+         alert("<?php echo (isset($LANG['CLICK_MAP'])?$LANG['CLICK_MAP']:'You must first click on map to capture coordinate points'); ?>");
+         return false;
+      }
+   </script>
 </head>
 <body style="background-color:#ffffff;" onload="initialize()">
    <div 
