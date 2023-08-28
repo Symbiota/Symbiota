@@ -69,7 +69,7 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 		if($collid) echo '<a href="../../collections/misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . htmlspecialchars($LANG['COL_MAN_MENU'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt;';
 		else echo '<a href="../../sitemap.php">' . htmlspecialchars($LANG['SITEMAP'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt;';
 		?>
-		<b> <?php echo htmlspecialchars($LANG['BREADCRUMB_THUMB_BLDR'], HTML_SPECIAL_CHARS_FLAGS) ?> </b>
+		<b> <?php echo htmlspecialchars($LANG['THUMB_BUILDER'], HTML_SPECIAL_CHARS_FLAGS) ?> </b>
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
@@ -138,7 +138,7 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 							</div>
 							<div class="fieldRowDiv">
 								<div class="fieldDiv">
-									<input name="evalorientation" type="checkbox" value="1" <?php echo ($evaluateOrientation?'checked':''); ?> />
+									<input id="evalorientation" name="evalorientation" type="checkbox" value="1" <?php echo ($evaluateOrientation?'checked':''); ?> />
 									<label for="evalorientation" class="fieldLabel"> <?php echo $LANG['ROTATE_IMGS']; ?> </label>
 								</div>
 							</div>
@@ -203,7 +203,8 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 								<span class="fieldLabel"> <?php echo $LANG['INCLUDE_MED']; ?></span>
 							</div>
 							<div style="margin-bottom:10px;">
-								<input name="evalorientation" type="checkbox" value="1" <?php echo ($evaluateOrientation?'checked':''); ?> /> <?php echo $LANG['ROTATE_IMGS']; ?>
+								<input id="evalorientation" name="evalorientation" type="checkbox" value="1" <?php echo ($evaluateOrientation?'checked':''); ?> /> <?php echo $LANG['ROTATE_IMGS']; ?>
+								
 							</div>
 							<div style="margin:20px;clear:both">
 								<input name="collid" type="hidden" value="<?php echo $collid; ?>" />

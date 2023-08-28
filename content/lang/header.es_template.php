@@ -64,6 +64,5 @@ $LANG['NAV_HOME'] = 'Inicio'; // TODO these will be renamed to BREADCRUMB_FOO
 $LANG['NAV_IMG_LIB'] = 'Biblioteca de imágenes';
 $LANG['NAV_IMG_CONTR'] = 'Contribuidores de imágenes';
 $LANG['NAV_IMG_SEARCH'] = 'Búsqueda de imágenes';
-$LANG['BREADCRUMB_THUMB_BLDR'] = 'Creador de miniaturas';
 
 ?>
