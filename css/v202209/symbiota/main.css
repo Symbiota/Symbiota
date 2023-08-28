@@ -486,3 +486,16 @@ table.styledtable tr.alt td {
 .taxon-search-bar {
   width: 25rem;
 }
+
+.welcome-text {
+  margin-bottom: 0.75rem
+}
+
+.load-button {
+  margin-top: 0.75rem;
+}
+
+.top-breathing-room-rel-sm {
+  margin-top: 0.5rem;
+}
+
