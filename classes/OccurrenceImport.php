@@ -5,36 +5,29 @@ include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
 
 class OccurrenceImport extends Manager{
 
-	private $uploadType;
-	private $matchByOccurrenceID = true;
-	private $matchByCatalogNumber = false;
-	private $matchByOtherCatalogNumbers = false;
+	private $collid;
+	private $importType;
 	private $createNewRecord = false;
-	private $processingCnt = 1;
 
 	private $uploadTargetPath;
-	private $uploadFileName;
+	private $importFileName;
 
-	private $targetArr;
+	private $translationMap = null;
 	private $fieldMap = array();		//array(sourceName => symbIndex)
-	private $translationMap = array('imageurl'=>'url','accessuri'=>'url','sciname'=>'scientificname');
 
-	const IMPORT_IMAGE_MAP = 1;
-	const IMPORT_ASSOCIATIONS = 2;
-	const IMPORT_DETERMINATIONS = 3;
+	const IMPORT_DETERMINATIONS = 1;
+	const IMPORT_IMAGE_MAP = 2;
+	const IMPORT_MATERIAL_SAMPLE = 3;
+	const IMPORT_ASSOCIATIONS = 4;
 
 	function __construct() {
 		parent::__construct(null, 'write');
 		set_time_limit(2000);
 		ini_set('auto_detect_line_endings', true);
-		$this->setUploadTargetPath();
 	}
 
 	function __destruct(){
 		parent::__destruct();
-		if(file_exists($this->uploadTargetPath.$this->uploadFileName)){
-			//unlink($this->uploadTargetPath.$this->uploadFileName);
-		}
 	}
 
 	public function loadData($postArr){
@@ -45,6 +38,7 @@ class OccurrenceImport extends Manager{
 				$this->initProcessor('processing/imgmap');
 				$this->logOrEcho('Starting to processing input file '.$postArr['filename'].' ('.date('Y-m-d H:i:s').')');
 				fgetcsv($fh);	//Advance one row to skipper header row
+				$cnt = 1;
 				while($recordArr = fgetcsv($fh)){
 					$identifierArr = array();
 					if(isset($this->fieldMap['occurrenceid'])){
@@ -56,7 +50,7 @@ class OccurrenceImport extends Manager{
 					if(isset($this->fieldMap['othercatalognumbers'])){
 						if(recordArr[$this->fieldMap['othercatalognumbers']]) $identifierArr['otherCatalogNumbers'] = $recordArr[$this->fieldMap['othercatalognumbers']];
 					}
-					$this->logOrEcho('#'.$this->processingCnt.': Processing Catalog Number: '.implode(', ', $identifierArr));
+					$this->logOrEcho('#'.$cnt.': Processing Catalog Number: '.implode(', ', $identifierArr));
 					$occidArr = $this->getOccurrencePK($identifierArr);
 					if(!$occidArr){
 						if($this->createNewRecord){
@@ -67,17 +61,17 @@ class OccurrenceImport extends Manager{
 						else $this->logOrEcho('SKIPPED: Unable to find record matching identifier; image not mapped', 1);
 					}
 					if($occidArr){
-						if($this->uploadType == IMPORT_IMAGE_MAP){
+						if($this->importType == IMPORT_IMAGE_MAP){
 							$this->importImage($recordArr, $occidArr);
 						}
-						elseif($this->uploadType == IMPORT_ASSOCIATIONS){
+						elseif($this->importType == IMPORT_ASSOCIATIONS){
 
 						}
-						elseif($this->uploadType == IMPORT_DETERMINATIONS){
+						elseif($this->importType == IMPORT_DETERMINATIONS){
 
 						}
 					}
-					$this->processingCnt++;
+					$cnt++;
 				}
 				fclose($fh);
 
@@ -168,18 +162,19 @@ class OccurrenceImport extends Manager{
 	}
 
 	private function importImage($recordArr, $occidArr){
+		$origUrl = '';
+		$baseUrl = '';
 		$originalUrl = null;
-		if(isset($this->fieldMap['originalurl'])) $originalUrl = $recordArr[$this->fieldMap['originalurl']];
+		if(isset($this->fieldMap['originalurl'])){
+			$originalUrl = $recordArr[$this->fieldMap['originalurl']];
+			if($originalUrl) $origUrl = substr($originalUrl, 5);
+		}
 		$url = null;
-		if(isset($this->fieldMap['url'])) $url = $recordArr[$this->fieldMap['url']];
-		$thumbnailUrl = null;
-		if(isset($this->fieldMap['thumbnailurl'])) $thumbnailUrl = $recordArr[$this->fieldMap['thumbnailurl']];
-		$sourceUrl = null;
-		if(isset($this->fieldMap['sourceurl'])) $sourceUrl = $recordArr[$this->fieldMap['sourceurl']];
-
+		if(isset($this->fieldMap['url'])){
+			$url = $recordArr[$this->fieldMap['url']];
+			if($url) $baseUrl = substr($url, 5);
+		}
 		//Check to see if image with matching filename is already linked. If so, remove and replace with new
-		$origUrl = substr($originalUrl, 5);
-		$baseUrl = substr($url, 5);
 		foreach($occidArr as $occid => $tid){
 			$sql = 'SELECT imgid, url, originalurl, thumbnailurl FROM images WHERE (occid = ?)';
 			if($stmt = $this->conn->prepare($sql)){
@@ -195,11 +190,31 @@ class OccurrenceImport extends Manager{
 					elseif($testOrigUrl && $testOrigUrl == $baseUrl) $replaceImg = true;
 					elseif($testBaseUrl && $testBaseUrl == $origUrl) $replaceImg = true;
 					if($replaceImg){
-						$sql2 = 'UPDATE images SET url = ?, originalurl = ?, thumbnailurl = ?, sourceurl = ? WHERE imgid = ?';
-						if($stmt = $this->conn->prepare($sql2)){
-							$stmt->bind_param('i', $imgID);
+						$fieldArr = $this->getTargetFieldArr();
+						$sqlUpdate = 'UPDATE images SET ';
+						$updateValues = array();
+						$type = '';
+						foreach($fieldArr as $fieldName){
+							$sqlUpdate .= $fieldName . '= ?, ';
+							$fieldName = strtolower($fieldName);
+							$value = null;
+							if(isset($this->fieldMap[$fieldName])) $value = $recordArr[$this->fieldMap[$fieldName]];
+							$updateValues[] = $value;
+							if($fieldName == 'sortOccurrence') $type .= 'i';
+							else $type .= 's';
+						}
+						$sqlUpdate = trim($sqlUpdate, ', ') . ' WHERE imgid = ?';
+						$updateValues[] = $imgID;
+						$type .= 'i';
+						if($stmt = $this->conn->prepare($sqlUpdate)){
+							$stmt->bind_param($type, ...$updateValues);
 							$stmt->execute();
+							if($stmt->affected_rows){
+								$this->logOrEcho('Image replacement: <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank"></a>', 1);
+								$this->deleteImage($r1->thumbnailurl);
 
+							}
+							elseif($stmt->error) $this->errorMessage = $stmt->error;
 						}
 						if($this->conn->query($sql2)){
 							$this->logOrEcho('Existing image replaced with new image mapping: <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.($catalogNumber?$catalogNumber:$otherCatalogNumbers).'</a>',1);
@@ -218,7 +233,6 @@ class OccurrenceImport extends Manager{
 				}
 				$stmt->close();
 			}
-
 
 			$rs1 = $this->conn->query($sql1);
 			while($r1 = $rs1->fetch_object()){
@@ -262,96 +276,143 @@ class OccurrenceImport extends Manager{
 
 	}
 
+	private function deleteImage($imgUrl){
+		if($imgUrl){
+			if(stripos($imgUrl, 'http') === 0) $imgUrl = parse_url($imgUrl, PHP_URL_PATH);
+			if($GLOBALS['IMAGE_ROOT_URL'] && strpos($imgUrl, $GLOBALS['IMAGE_ROOT_URL']) === 0){
+				$imgPath = $GLOBALS['IMAGE_ROOT_PATH'].substr($imgUrl, strlen($GLOBALS['IMAGE_ROOT_URL']));
+				if(is_writable($imgPath)) unlink($imgPath);
+			}
+		}
+	}
+
 	//Mapping functions
 	public function getTargetFieldArr(){
 		$retArr = array();
-		if($this->uploadType == IMPORT_IMAGE_MAP){
-			$retArr = array('url','originalUrl','scientificName','tid','photographer','photographerUid','caption','locality','sourceUrl','anatomy',
-				'notes','owner','copyright','sortSequence','institutionCode','collectionCode','catalogNumber','occid');
+		$fieldArr = array('catalogNumber', 'otherCatalogNumbers', 'occurrenceID');
+		if($this->importType == IMPORT_IMAGE_MAP){
+			$fieldArr = array('url','originalUrl','thumbnailUrl','photographer','caption','sourceUrl','anatomy','notes','owner','copyright','sortOccurrence');
 		}
-		elseif($this->uploadType == IMPORT_ASSOCIATIONS){
-			$retArr = array();
+		elseif($this->importType == IMPORT_ASSOCIATIONS){
+			$fieldArr = array();
 		}
-		elseif($this->uploadType == IMPORT_DETERMINATIONS){
-			$retArr = array();
+		elseif($this->importType == IMPORT_DETERMINATIONS){
+			$fieldArr = array();
+		}
+		elseif($this->importType == IMPORT_MATERIAL_SAMPLE){
+			$fieldArr = array();
+		}
+		foreach($fieldArr as $field){
+			$retArr[strtolower($field)] = $field;
 		}
 		return $retArr;
 	}
 
-	public function getSourceArr(){
+	public function getTranslation($sourceField){
+		$retStr = strtolower($sourceField);
+		$this->setTranslationMap();
+		$retStr = preg_replace('/[^a-z]+/', '', $retStr);
+		if(array_key_exists($retStr, $this->translationMap)) $retStr = $this->translationMap[$retStr];
+		return $retStr;
+	}
+
+	private function setTranslationMap(){
+		if($this->translationMap === null){
+			if($this->importType == IMPORT_IMAGE_MAP){
+				$this->translationMap = array('web' => 'url', 'webviewoptional' => 'url', 'thumbnail' => 'thumbnailurl','thumbnailoptional' => 'thumbnailurl',
+					'largejpg' => 'originalurl', 'large' => 'originalurl', 'imageurl' => 'url', 'accessuri' => 'url');
+			}
+			elseif($this->importType == IMPORT_ASSOCIATIONS){
+				$this->translationMap = array();
+			}
+			elseif($this->importType == IMPORT_DETERMINATIONS){
+				$this->translationMap = array();
+			}
+			elseif($this->importType == IMPORT_MATERIAL_SAMPLE){
+				$this->translationMap = array();
+			}
+		}
+	}
+
+	public function getSourceFieldArr(){
 		$sourceArr = array();
-		$fh = fopen($this->uploadTargetPath.$this->uploadFileName,'rb') or die("Can't open file");
-		$headerArr = fgetcsv($fh);
-		foreach($headerArr as $k => $field){
-			$fieldStr = strtolower(trim($field));
-			if($fieldStr){
-				$sourceArr[$k] = $fieldStr;
+		if($this->importFileName){
+			$importPath = $this->getImportTargetPath();
+			$fh = fopen($importPath . $this->importFileName, 'rb') or die('unable to open file');
+			$headerArr = fgetcsv($fh);
+			foreach($headerArr as $k => $field){
+				$fieldStr = trim($field);
+				if($fieldStr) $sourceArr[$k] = $fieldStr;
 			}
 		}
 		return $sourceArr;
 	}
 
-	public function getTranslation($inStr){
-		$retStr = '';
-		$inStr = strtolower($inStr);
-		if(array_key_exists($inStr,$this->translationMap)) $retStr = $this->translationMap[$inStr];
-		return $retStr;
-	}
-
 	//File management functions
-	public function setUploadFile($ulFileName){
-		if($ulFileName){
-			$this->uploadFileName = $ulFileName;
-		}
-		elseif(array_key_exists('uploadfile',$_FILES)){
-			$this->uploadFileName = time().'_'.$_FILES['uploadfile']['name'];
-			if(!move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->uploadFileName)){
-				//echo 'Error';
+	public function setImportFile(){
+		if($importPath = $this->getImportTargetPath()){
+			$fileName = '';
+			if(array_key_exists('importfile', $_FILES)){
+				$fileName = $this->cleanFileName($_FILES['importfile']['name']);
+				if(!move_uploaded_file($_FILES['importfile']['tmp_name'], $importPath . $fileName)){
+					$this->errorMessage = 'FATAL ERROR: unable to move upload file';
+					return false;
+				}
 			}
+			if(file_exists($importPath . $fileName) && substr($$fileName, -4) == '.zip'){
+				$zip = new ZipArchive;
+				$zip->open($importPath. $fileName);
+				$zipFile = $importPath . $fileName;
+				$fileName = $zip->getNameIndex(0);
+				$zip->extractTo($importPath);
+				$zip->close();
+				unlink($zipFile);
+				$cleanFileName = $this->cleanFileName($fileName);
+				rename($importPath.$fileName, $importPath.$cleanFileName);
+	        }
+	        if($fileName){
+		        $this->importFileName = $fileName;
+		        return true;
+	        }
 		}
-        if(file_exists($this->uploadTargetPath.$this->uploadFileName) && substr($this->uploadFileName,-4) == ".zip"){
-			$zip = new ZipArchive;
-			$zip->open($this->uploadTargetPath.$this->uploadFileName);
-			$zipFile = $this->uploadTargetPath.$this->uploadFileName;
-			$fileName = $zip->getNameIndex(0);
-			$zip->extractTo($this->uploadTargetPath);
-			$zip->close();
-			unlink($zipFile);
-			$this->uploadFileName = time().'_'.$fileName;
-			rename($this->uploadTargetPath.$fileName,$this->uploadTargetPath.$this->uploadFileName);
-        }
+		return false;
 	}
 
-	private function setUploadTargetPath(){
-		$tPath = $GLOBALS["tempDirRoot"];
-		if(!$tPath){
-			$tPath = ini_get('upload_tmp_dir');
+	public function cleanFileName($fileName){
+		$ext = strtolower(substr($fileName, -3));
+		if($ext != 'csv' && $ext != 'zip') return false;
+		$fileName = substr($fileName, 0, -4);
+		$fileName = str_replace(array('%20', '%23' ,' ','__'), '_', $fileName);
+		$fileName = preg_replace('/[^a-zA-Z0-9\-_]/', '', $fileName);
+		$fileName = trim($fileName,' _-');
+		if(strlen($fileName) > 30) $fileName = substr($fileName, 0, 30);
+		$fileName .= '_' . time() . '.' . $ext;
+		return $fileName;
+	}
+
+	private function getImportTargetPath(){
+		$targetPath = $GLOBALS['TEMP_DIR_ROOT'];
+		if(substr($targetPath,-1) != '/') $targetPath .= '/';
+		if(is_dir($targetPath . 'data/')) $targetPath .= 'data/';
+		if(!is_dir($targetPath)) $targetPath = $GLOBALS['SERVER_ROOT'].'/temp/data';
+		if(!is_writable($targetPath)){
+			$this->errorMessage = 'FATAL ERROR: target directory does not exist or is not writable by web server ('.$targetPath.')';
+			return false;
 		}
-		if(!$tPath){
-			$tPath = $GLOBALS["serverRoot"]."/temp/downloads";
-		}
-		if(substr($tPath,-1) != '/') $tPath .= "/";
-		$this->uploadTargetPath = $tPath;
+		return $targetPath;
 	}
 
 	//Basic setters and getters
-	public function setUploadType($uploadType){
-		if(is_numeric($uploadType)) $this->uploadType = $uploadType;
+	public function setCollid($id){
+		if(is_numeric($id)) $this->collid = $id;
 	}
 
-	public function setMatchByOccurrenceID($bool){
-		if($bool) $this->matchByOccurrenceID = true;
-		else $this->matchByOccurrenceID = false;
+	public function getCollid(){
+		return $this->collid;
 	}
 
-	public function setMatchByCatalogNumber($bool){
-		if($bool) $this->matchByCatalogNumber = true;
-		else $this->matchByCatalogNumber = false;
-	}
-
-	public function setMatchByOtherCatalogNumbers($bool){
-		if($bool) $this->matchByOtherCatalogNumbers = true;
-		else $this->matchByOtherCatalogNumbers = false;
+	public function setImportType($importType){
+		if(is_numeric($importType)) $this->importType = $importType;
 	}
 
 	public function setCreateNewRecord($b){
@@ -359,24 +420,12 @@ class OccurrenceImport extends Manager{
 		else $this->createNewRecord = false;
 	}
 
-	public function setUploadFileName($fileName){
-		$this->uploadFileName = $fileName;
+	public function setImportFileName($fileName){
+		if($fileName) $this->importFileName = $fileName;
 	}
 
-	public function getUploadFileName(){
-		return $this->uploadFileName;
-	}
-
-	public function getTargetArr(){
-		return $this->targetArr;
-	}
-
-	public function setFieldMap($fm){
-		$this->fieldMap = $fm;
-	}
-
-	public function getFieldMap(){
-		return $this->fieldMap;
+	public function getImportFileName(){
+		return $this->importFileName;
 	}
 }
 ?>
