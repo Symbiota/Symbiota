@@ -523,3 +523,8 @@ table.styledtable tr.alt td {
 .taxon-search-bar {
   width: 25rem;
 }
+
+.fieldset-size {
+  padding: 10px;
+  max-width: 500px;
+}

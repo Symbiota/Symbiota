@@ -47,7 +47,7 @@ reset($treePath);
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
 	<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.14.1/dijit/themes/claro/claro.css" media="screen">
-	<style type="text/css">
+	<style>
 		.dijitLeaf,
 		.dijitIconLeaf,
 		.dijitFolderClosed,
@@ -101,9 +101,9 @@ reset($treePath);
 		}
 		if($isEditor){
 			?>
-			<div style="float:right;" title="<?php echo (isset($LANG['ADD_NEW_TAXON'])?$LANG['ADD_NEW_TAXON']:'Add a New Taxon'); ?>">
+			<div style="float:right;"?>
 				<a href="taxonomyloader.php" target="_blank">
-					<img class="img-add" src="../../images/add.png" alt="Add a new Taxon">
+					<img class="img-add" src="../../images/add.png" title="<?php echo (isset($LANG['ADD_NEW_TAXON'])?$LANG['ADD_NEW_TAXON']:'Add a New Taxon');  ?>">
 				</a>
 			</div>
 			<?php
@@ -128,7 +128,7 @@ reset($treePath);
 		</div>
 		<div style="clear:both;">
 			<form id="tdform" name="tdform" action="taxonomydynamicdisplay.php" method='POST'>
-				<fieldset style="padding:10px; max-width:500px;">
+				<fieldset class="fieldset-size">
 					<legend><b><?php echo (isset($LANG['TAX_SEARCH'])?$LANG['TAX_SEARCH']:'Taxon Search'); ?></b></legend>
                     <div>
 						<label for="taxontarget"> <?php echo htmlspecialchars($LANG['TAXON'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
@@ -139,8 +139,8 @@ reset($treePath);
 						<input name="taxauthid" type="hidden" value="<?php echo $taxAuthId; ?>" />
 					</div>
 					<div style="margin:15px 15px 0px 60px;">
-						<input name="displayauthor" type="checkbox" value="1" <?php echo ($displayAuthor?'checked':''); ?> />
-						<label for="displayauthor" > <?php echo (isset($LANG['DISP_AUTHORS'])?$LANG['DISP_AUTHORS']:'Display authors'); ?> </label>
+						<input id="displayauthor" name="displayauthor" type="checkbox" value="1" <?php echo ($displayAuthor?'checked':''); ?> />
+						<label for="displayauthor"> <?php echo (isset($LANG['DISP_AUTHORS'])?$LANG['DISP_AUTHORS']:'Display authors'); ?> </label>
 						<?php
 						if($isEditor) 
 						{
