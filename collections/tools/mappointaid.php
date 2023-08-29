@@ -19,10 +19,10 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 		<title><?php echo $DEFAULT_TITLE; ?> - Point-Radius Aid</title>
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 
-      <?php
-         include_once($SERVER_ROOT.'/includes/leafletMap.php');
-         include_once($SERVER_ROOT.'/includes/googleMap.php');
-      ?>
+		<?php
+			include_once($SERVER_ROOT.'/includes/leafletMap.php');
+			include_once($SERVER_ROOT.'/includes/googleMap.php');
+		?>
 
 		<script type="text/javascript">
 		var map;
