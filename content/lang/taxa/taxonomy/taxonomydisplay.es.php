@@ -21,6 +21,8 @@ $LANG['DISP_AUTHORS'] = 'Desplegar autores';
 $LANG['MATCH_WHOLE_WORDS'] = 'Hacer coincidir con palabras completas';
 $LANG['DISP_FULL_TREE'] = 'Desplegar árbol completo abajo de familia';
 $LANG['DISP_SUBGENERA'] = 'Desplegar especies con subgéneros';
+$LANG['CREATE_NEW_TAXON'] = 'Crear un Nuevo Taxón';
+$LANG['PLUS_SIGN_DESC'] = 'Imagen de un signo más que indica crear un nuevo taxón';
 
 //Dynamic display
 $LANG['TAX_EXPLORE'] = 'Explorador Taxonómico';

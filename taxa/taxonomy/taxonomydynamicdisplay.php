@@ -101,8 +101,9 @@ reset($treePath);
 		}
 		if($isEditor){
 			?>
-			<div style="float:right;"?>
+			<div style="float:right;">
 				<a href="taxonomyloader.php" target="_blank">
+					<?php echo (isset($LANG['ADD_NEW_TAXON'])?$LANG['ADD_NEW_TAXON']:'Add a New Taxon');  ?>
 					<img class="img-add" src="../../images/add.png" title="<?php echo (isset($LANG['ADD_NEW_TAXON'])?$LANG['ADD_NEW_TAXON']:'Add a New Taxon');  ?>">
 				</a>
 			</div>
