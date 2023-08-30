@@ -483,6 +483,10 @@ table.styledtable tr.alt td {
   margin-bottom: 0.5rem;
 }
 
+.taxon-search-bar {
+  width: 25rem;
+}
+
 .welcome-text {
   margin-bottom: 0.75rem
 }
