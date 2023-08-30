@@ -3,7 +3,7 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceImport.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/admin/importextendeddata.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/admin/importextended.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $collid = array_key_exists('collid', $_REQUEST) ? $_REQUEST['collid'] : 0;
 $importType = array_key_exists('importtype', $_REQUEST) ? $_REQUEST['importtype'] : 0;
@@ -84,7 +84,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 				elseif($action == 'initiateImport'){
 					$importManager->setImportFile();
 					?>
-					<form name="mappingform" action="importextendeddata.php" method="post" onsubmit="return validateMappingForm(this)">
+					<form name="mappingform" action="importextended.php" method="post" onsubmit="return validateMappingForm(this)">
 						<fieldset>
 							<legend><b>Image File Upload Map</b></legend>
 							<div style="margin:15px;">
@@ -127,7 +127,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 				}
 				else{
 					?>
-					<form name="initiateImportForm" action="importextendeddata.php" method="post" onsubmit="return validateInitiateForm(this)">
+					<form name="initiateImportForm" action="importextended.php" method="post" onsubmit="return validateInitiateForm(this)">
 						<div class="formField-div">
 							<label>Import Type: </label>
 							<select name="importType">

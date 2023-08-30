@@ -1,6 +1,7 @@
 <?php
 include_once($SERVER_ROOT.'/classes/Manager.php');
-include_once($SERVER_ROOT.'/classes/UuidFactory.php');
+include_once($SERVER_ROOT.'/classes/ImageShared.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceEditorMaterialSample.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
 
 class OccurrenceImport extends Manager{
@@ -39,36 +40,80 @@ class OccurrenceImport extends Manager{
 				$this->logOrEcho('Starting to processing input file '.$postArr['filename'].' ('.date('Y-m-d H:i:s').')');
 				fgetcsv($fh);	//Advance one row to skipper header row
 				$cnt = 1;
+				$importManager = null;
+				if($this->importType == IMPORT_IMAGE_MAP) $importManager = new ImageShared($this->conn);
+				elseif($this->importType == IMPORT_MATERIAL_SAMPLE) $importManager = new OccurrenceEditorMaterialSample();
 				while($recordArr = fgetcsv($fh)){
 					$identifierArr = array();
 					if(isset($this->fieldMap['occurrenceid'])){
 						if($recordArr[$this->fieldMap['occurrenceid']]) $identifierArr['occurrenceID'] = $recordArr[$this->fieldMap['occurrenceid']];
+						unset($this->fieldMap['occurrenceid']);
 					}
 					if(isset($this->fieldMap['catalognumber'])){
 						if($recordArr[$this->fieldMap['catalognumber']]) $identifierArr['catalogNumber'] = $recordArr[$this->fieldMap['catalognumber']];
+						unset($this->fieldMap['catalognumber']);
 					}
 					if(isset($this->fieldMap['othercatalognumbers'])){
 						if(recordArr[$this->fieldMap['othercatalognumbers']]) $identifierArr['otherCatalogNumbers'] = $recordArr[$this->fieldMap['othercatalognumbers']];
+						unset($this->fieldMap['othercatalognumbers']);
 					}
 					$this->logOrEcho('#'.$cnt.': Processing Catalog Number: '.implode(', ', $identifierArr));
-					$occidArr = $this->getOccurrencePK($identifierArr);
-					if(!$occidArr){
-						if($this->createNewRecord){
-							$newOccid = $this->insertNewOccurrence($identifierArr);
-							if($newOccid) $occidArr[$newOccid] = 0;
-							else $this->logOrEcho('Unable to find record with matching '.($catalogNumber?'catalogNumber':'otherCatalogNumbers').'; new occurrence record created',1);
-						}
-						else $this->logOrEcho('SKIPPED: Unable to find record matching identifier; image not mapped', 1);
-					}
-					if($occidArr){
+					if($occidArr = $this->getOccurrencePK($identifierArr)){
 						if($this->importType == IMPORT_IMAGE_MAP){
-							$this->importImage($recordArr, $occidArr);
+							if(!isset($this->fieldMap['originalurl']) || $recordArr[$this->fieldMap['originalurl']]) return false;
+							foreach($occidArr as $occid => $tid){
+								$importManager->setOccid($occid);
+								$importManager->setTid($tid);
+								$importManager->setImgLgUrl($recordArr[$this->fieldMap['originalurl']]);
+								if(!empty($recordArr[$this->fieldMap['url']])) $importManager->setImgWebUrl($recordArr[$this->fieldMap['url']]);
+								if(!empty($recordArr[$this->fieldMap['thumbnailurl']])) $importManager->setImgTnUrl($recordArr[$this->fieldMap['thumbnailurl']]);
+								if(!empty($recordArr[$this->fieldMap['photographer']])) $importManager->setPhotographer($recordArr[$this->fieldMap['photographer']]);
+								if(!empty($recordArr[$this->fieldMap['caption']])) $importManager->setCaption($recordArr[$this->fieldMap['caption']]);
+								if(!empty($recordArr[$this->fieldMap['sourceUrl']])) $importManager->setSourceUrl($recordArr[$this->fieldMap['sourceUrl']]);
+								if(!empty($recordArr[$this->fieldMap['anatomy']])) $importManager->setAnatomy($recordArr[$this->fieldMap['anatomy']]);
+								if(!empty($recordArr[$this->fieldMap['notes']])) $importManager->setNotes($recordArr[$this->fieldMap['notes']]);
+								if(!empty($recordArr[$this->fieldMap['owner']])) $importManager->setOwner($recordArr[$this->fieldMap['owner']]);
+								if(!empty($recordArr[$this->fieldMap['copyright']])) $importManager->setCopyright($recordArr[$this->fieldMap['copyright']]);
+								if(!empty($recordArr[$this->fieldMap['sortoccurrence']])) $importManager->setSortOccurrence($recordArr[$this->fieldMap['sortOccurrence']]);
+								if($importManager->insertImage()){
+									$this->logOrEcho('Image loaded suucessfully!', 1);
+								}
+								else{
+									$this->logOrEcho('ERROR loading image: '.$importManager->getErrStr(), 1);
+								}
+								$importManager->reset();
+							}
 						}
 						elseif($this->importType == IMPORT_ASSOCIATIONS){
+							foreach($occidArr as $occid => $tid){
 
+							}
 						}
 						elseif($this->importType == IMPORT_DETERMINATIONS){
+							foreach($occidArr as $occid => $tid){
 
+							}
+						}
+						elseif($this->importType == IMPORT_MATERIAL_SAMPLE){
+							foreach($occidArr as $occid => $tid){
+								$msArr = array('occid' => $occid);
+								if(!empty($recordArr[$this->fieldMap['sampletype']])) $msArr['sampleType'] = $recordArr[$this->fieldMap['sampletype']];
+								if(!empty($recordArr[$this->fieldMap['catalognumber']])) $msArr['catalogNumber'] = $recordArr[$this->fieldMap['catalognumber']];
+								if(!empty($recordArr[$this->fieldMap['guid']])) $msArr['guid'] = $recordArr[$this->fieldMap['guid']];
+								if(!empty($recordArr[$this->fieldMap['samplecondition']])) $msArr['sampleCondition'] = $recordArr[$this->fieldMap['samplecondition']];
+								if(!empty($recordArr[$this->fieldMap['disposition']])) $msArr['disposition'] = $recordArr[$this->fieldMap['disposition']];
+								if(!empty($recordArr[$this->fieldMap['preservationtype']])) $msArr['preservationType'] = $recordArr[$this->fieldMap['preservationtype']];
+								if(!empty($recordArr[$this->fieldMap['preparationdetails']])) $msArr['preparationDetails'] = $recordArr[$this->fieldMap['preparationdetails']];
+								if(!empty($recordArr[$this->fieldMap['preparationdate']])) $msArr['preparationDate'] = $recordArr[$this->fieldMap['preparationdate']];
+								if(!empty($recordArr[$this->fieldMap['preparedbyuid']])) $msArr['preparedByUid'] = $recordArr[$this->fieldMap['preparedbyuid']];
+								if(!empty($recordArr[$this->fieldMap['individualcount']])) $msArr['individualCount'] = $recordArr[$this->fieldMap['individualcount']];
+								if(!empty($recordArr[$this->fieldMap['samplesize']])) $msArr['sampleSize'] = $recordArr[$this->fieldMap['samplesize']];
+								if(!empty($recordArr[$this->fieldMap['storagelocation']])) $msArr['storageLocation'] = $recordArr[$this->fieldMap['storagelocation']];
+								if(!empty($recordArr[$this->fieldMap['remarks']])) $msArr['remarks'] = $recordArr[$this->fieldMap['remarks']];
+								if($importManager->insertMaterialSample($msArr)){
+									$this->logOrEcho('ERROR loading Material Sample: '.$importManager->getErrorMessage(), 1);
+								}
+							}
 						}
 					}
 					$cnt++;
@@ -84,17 +129,13 @@ class OccurrenceImport extends Manager{
 						$this->logOrEcho($errorStr,1);
 					}
 				}
-
-				$this->logOrEcho('Generating recordID GUID for all new records...');
-				$uuidManager = new UuidFactory();
-				$uuidManager->setSilent(1);
-				$uuidManager->populateGuids($this->collid);
 			}
 			unlink($fullPath);
 			$this->logOrEcho('Done process image mapping ('.date('Y-m-d H:i:s').')');
 		}
 	}
 
+	//Identifier and occid functions
 	private function getOccurrencePK($identifierArr){
 		$retArr = array();
 		$sql = 'SELECT DISTINCT o.occid, o.tidinterpreted FROM omoccurrences o ';
@@ -119,6 +160,14 @@ class OccurrenceImport extends Manager{
 			}
 			$rs->free();
 		}
+		if(!$retArr){
+			if($this->createNewRecord){
+				$newOccid = $this->insertNewOccurrence($identifierArr);
+				if($newOccid) $retArr[$newOccid] = 0;
+			}
+			else $this->logOrEcho('SKIPPED: Unable to find record matching identifier; image not mapped', 1);
+		}
+
 		return $retArr;
 	}
 
@@ -137,8 +186,9 @@ class OccurrenceImport extends Manager{
 		$sql = $sql1.') '.$sql2.')';
 		if($this->conn->query($sql)){
 			$newOccid = $this->conn->insert_id;
-			if($newOccid && isset($identifierArr['otherCatalogNumbers'])){
-				$this->insertAdditionalIdentifier($newOccid, $identifierArr['otherCatalogNumbers']);
+			if($newOccid){
+				if(isset($identifierArr['otherCatalogNumbers'])) $this->insertAdditionalIdentifier($newOccid, $identifierArr['otherCatalogNumbers']);
+				$this->logOrEcho('Unable to find record with matching '.implode(',', $identifierArr).'; new occurrence record created',1);
 			}
 		}
 		else{
@@ -159,131 +209,6 @@ class OccurrenceImport extends Manager{
 		}
 		else $this->errorMessage = 'ERROR preparing statement for inserting additional identifier: '.$this->conn->error;
 		return $status;
-	}
-
-	private function importImage($recordArr, $occidArr){
-		$origUrl = '';
-		$baseUrl = '';
-		$originalUrl = null;
-		if(isset($this->fieldMap['originalurl'])){
-			$originalUrl = $recordArr[$this->fieldMap['originalurl']];
-			if($originalUrl) $origUrl = substr($originalUrl, 5);
-		}
-		$url = null;
-		if(isset($this->fieldMap['url'])){
-			$url = $recordArr[$this->fieldMap['url']];
-			if($url) $baseUrl = substr($url, 5);
-		}
-		//Check to see if image with matching filename is already linked. If so, remove and replace with new
-		foreach($occidArr as $occid => $tid){
-			$sql = 'SELECT imgid, url, originalurl, thumbnailurl FROM images WHERE (occid = ?)';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('i', $occid);
-				$stmt->execute();
-				$stmt->bind_result($imgID, $testBaseUrl, $testOrigUrl, $testThumbUrl);
-				while ($stmt->fetch()){
-					$testOrigUrl = substr($testOrigUrl, 5);
-					$testBaseUrl = substr($testBaseUrl, 5);
-					$replaceImg = false;
-					if($testOrigUrl && $testOrigUrl == $origUrl) $replaceImg = true;
-					elseif($testBaseUrl && $testBaseUrl == $baseUrl) $replaceImg = true;
-					elseif($testOrigUrl && $testOrigUrl == $baseUrl) $replaceImg = true;
-					elseif($testBaseUrl && $testBaseUrl == $origUrl) $replaceImg = true;
-					if($replaceImg){
-						$fieldArr = $this->getTargetFieldArr();
-						$sqlUpdate = 'UPDATE images SET ';
-						$updateValues = array();
-						$type = '';
-						foreach($fieldArr as $fieldName){
-							$sqlUpdate .= $fieldName . '= ?, ';
-							$fieldName = strtolower($fieldName);
-							$value = null;
-							if(isset($this->fieldMap[$fieldName])) $value = $recordArr[$this->fieldMap[$fieldName]];
-							$updateValues[] = $value;
-							if($fieldName == 'sortOccurrence') $type .= 'i';
-							else $type .= 's';
-						}
-						$sqlUpdate = trim($sqlUpdate, ', ') . ' WHERE imgid = ?';
-						$updateValues[] = $imgID;
-						$type .= 'i';
-						if($stmt = $this->conn->prepare($sqlUpdate)){
-							$stmt->bind_param($type, ...$updateValues);
-							$stmt->execute();
-							if($stmt->affected_rows){
-								$this->logOrEcho('Image replacement: <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank"></a>', 1);
-								$this->deleteImage($r1->thumbnailurl);
-
-							}
-							elseif($stmt->error) $this->errorMessage = $stmt->error;
-						}
-						if($this->conn->query($sql2)){
-							$this->logOrEcho('Existing image replaced with new image mapping: <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.($catalogNumber?$catalogNumber:$otherCatalogNumbers).'</a>',1);
-							//Delete physical images if previous version was mapped locally
-							$this->deleteImage($r1->url);
-							$this->deleteImage($r1->originalurl);
-							$this->deleteImage($r1->thumbnailurl);
-							unset($occArr[$occid]);
-							break;
-						}
-						else{
-							$this->logOrEcho('ERROR updating existing image record: '.$this->conn->error,1);
-						}
-
-					}
-				}
-				$stmt->close();
-			}
-
-			$rs1 = $this->conn->query($sql1);
-			while($r1 = $rs1->fetch_object()){
-				$testOrigUrl = substr($r1->originalurl,5);
-				$testBaseUrl = substr($r1->url,5);
-				$replaceImg = false;
-				if($testOrigUrl && $testOrigUrl == $origUrl) $replaceImg = true;
-				elseif($testBaseUrl && $testBaseUrl == $baseUrl) $replaceImg = true;
-				elseif($testOrigUrl && $testOrigUrl == $baseUrl) $replaceImg = true;
-				elseif($testBaseUrl && $testBaseUrl == $origUrl) $replaceImg = true;
-				if($replaceImg){
-					$sql2 = 'UPDATE images '.
-							'SET url = "'.$url.'", originalurl = "'.$originalUrl.'", thumbnailurl = '.($thumbnailUrl?'"'.$thumbnailUrl.'"':'NULL').', '.
-							'sourceurl = '.($sourceUrl?'"'.$sourceUrl.'"':'NULL').' '.
-							'WHERE imgid = '.$r1->imgid;
-					if($this->conn->query($sql2)){
-						$this->logOrEcho('Existing image replaced with new image mapping: <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.($catalogNumber?$catalogNumber:$otherCatalogNumbers).'</a>',1);
-						//Delete physical images if previous version was mapped locally
-						$this->deleteImage($r1->url);
-						$this->deleteImage($r1->originalurl);
-						$this->deleteImage($r1->thumbnailurl);
-						unset($occArr[$occid]);
-						break;
-					}
-					else{
-						$this->logOrEcho('ERROR updating existing image record: '.$this->conn->error,1);
-					}
-				}
-			}
-			$rs1->free();
-		}
-		foreach($occidArr as $occid => $tid){
-			$fieldArr = array();
-			$fieldArr['url'] =  $url;
-			if($thumbnailUrl) $fieldArr['thumbnailurl'] =  $thumbnailUrl;
-			$fieldArr['originalurl'] =  $originalUrl;
-			if($sourceUrl) $fieldArr['sourceurl'] = $sourceUrl;
-			if($tid) $fieldArr['tid'] =  $tid;
-			if(!$this->insertImage($occid,$fieldArr)) $this->logOrEcho('ERROR loading image: '.$this->conn->error,1);
-		}
-
-	}
-
-	private function deleteImage($imgUrl){
-		if($imgUrl){
-			if(stripos($imgUrl, 'http') === 0) $imgUrl = parse_url($imgUrl, PHP_URL_PATH);
-			if($GLOBALS['IMAGE_ROOT_URL'] && strpos($imgUrl, $GLOBALS['IMAGE_ROOT_URL']) === 0){
-				$imgPath = $GLOBALS['IMAGE_ROOT_PATH'].substr($imgUrl, strlen($GLOBALS['IMAGE_ROOT_URL']));
-				if(is_writable($imgPath)) unlink($imgPath);
-			}
-		}
 	}
 
 	//Mapping functions
