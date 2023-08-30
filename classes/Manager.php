@@ -105,7 +105,7 @@ class Manager  {
 	}
 
 	protected function cleanOutStr($str){
-		$str = htmlspecialchars($str);
+		isset($str) ? $str = htmlspecialchars($str) : $str = NULL;
 		return $str;
 	}
 

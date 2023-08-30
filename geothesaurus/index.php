@@ -12,7 +12,7 @@ $submitAction = array_key_exists('submitaction', $_POST) ? $_POST['submitaction'
 if(!is_numeric($geoThesID)) $geoThesID = 0;
 if(!is_numeric($parentID)) $parentID = 0;
 if(!is_numeric($geoLevel)) $geoLevel = 0;
-$submitAction = filter_var($submitAction, FILTER_SANITIZE_STRING);
+$submitAction = htmlspecialchars($submitAction, HTML_SPECIAL_CHARS_FLAGS);
 
 $geoManager = new GeographicThesaurus();
 

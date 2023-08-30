@@ -546,8 +546,8 @@ class KeyCharAdmin{
 
 	//General functions
 	private function cleanOutStr($str){
-		$newStr = str_replace('"',"&quot;",$str);
-		$newStr = str_replace("'","&apos;",$newStr);
+		isset($newStr) ? $newStr = str_replace('"',"&quot;",$str) : $newStr = NULL;
+		isset($newStr) ? $newStr = str_replace("'","&apos;",$newStr) : $newStr = NULL;
 		//$newStr = $this->conn->real_escape_string($newStr);
 		return $newStr;
 	}
