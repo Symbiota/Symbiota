@@ -23,5 +23,7 @@ $LANG['TYPE_SPECIMEN'] = 'Specimen Images';
 $LANG['TYPE_OBS'] = 'Image Vouchered Observations';
 $LANG['TYPE_FIELD'] = 'Field Images (lacking specific locality details)';
 $LANG['LOAD_IMAGES'] = 'Load Images';
+$LANG['IMG_SEARCH'] = 'Image Search';
+$LANG['IMG_LIB'] = 'Image Library';
 
 ?>

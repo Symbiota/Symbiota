@@ -60,9 +60,4 @@ $LANG['SPECIMENS'] = 'Spécimens';
 $LANG['IMG_CONTR'] = 'Contributeurs d\'images';
 $LANG['OBS'] = 'Observations';
 
-$LANG['NAV_HOME'] = 'Accueil'; // TODO these will be renamed to BREADCRUMB_FOO
-$LANG['NAV_IMG_LIB'] = 'Bibliothèque d\'images';
-$LANG['NAV_IMG_CONTR'] = 'Contributeurs d\'images';
-$LANG['NAV_IMG_SEARCH'] = 'Recherche d\'images';
-
 ?>

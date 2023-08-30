@@ -23,5 +23,7 @@ $LANG['TYPE_SPECIMEN'] = 'Images spécimens';
 $LANG['TYPE_OBS'] = 'Observations garanties par l\'image';
 $LANG['TYPE_FIELD'] = 'Images de terrain (sans détails de localité spécifiques)';
 $LANG['LOAD_IMAGES'] = 'Charger les images';
+$LANG['IMG_SEARCH'] = 'Recherche d\'images';
+$LANG['IMG_LIB'] = 'Bibliothèque d\'images';
 
 ?>

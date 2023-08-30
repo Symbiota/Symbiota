@@ -78,9 +78,9 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="../index.php"> <?php echo htmlspecialchars($LANG['NAV_HOME'], HTML_SPECIAL_CHARS_FLAGS) ?> </a> &gt;&gt;
-		<a href="index.php"> <?php echo htmlspecialchars($LANG['NAV_IMG_CONTR'], HTML_SPECIAL_CHARS_FLAGS) ?> </a> &gt;&gt;
-		<b> <?php echo htmlspecialchars($LANG['NAV_IMG_SEARCH'], HTML_SPECIAL_CHARS_FLAGS) ?> </b>
+		<a href="../index.php"> <?php echo htmlspecialchars($LANG['H_HOME'], HTML_SPECIAL_CHARS_FLAGS) ?> </a> &gt;&gt;
+		<a href="index.php"> <?php echo htmlspecialchars($LANG['IMG_LIB'], HTML_SPECIAL_CHARS_FLAGS) ?> </a> &gt;&gt;
+		<b> <?php echo htmlspecialchars($LANG['IMG_SEARCH'], HTML_SPECIAL_CHARS_FLAGS) ?> </b>
 
 	</div>
 	<!-- This is inner text! -->
