@@ -291,3 +291,16 @@ ol.mp_list li.mp_highlighted {
 .accessibility-button {
   font-size: 1.1em;
 }
+
+/*
+* OccurrenceSearchSupport
+*/
+.search-button-div {
+  float: right;
+  margin-top: 20px;
+}
+.sticky-buttons {
+  position: sticky;
+  top: 1rem;
+  float: right;
+}

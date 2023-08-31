@@ -1,4 +1,5 @@
 <?php
+include_once($SERVER_ROOT.'/content/lang/collections/misc/collstats.'.$LANG_TAG.'.php');
 class OccurrenceSearchSupport {
 
 	private $conn;
@@ -94,13 +95,13 @@ class OccurrenceSearchSupport {
 		$targetCatID = (string)$targetCatID;
 		if($targetCatID != '') $targetCatArr = explode(',', $targetCatID);
 		elseif($GLOBALS['DEFAULTCATID'] != '') $targetCatArr = explode(',', $GLOBALS['DEFAULTCATID']);
-		$buttonStr = '<button type="submit" value="search">'.(isset($LANG['BUTTON_NEXT'])?$LANG['BUTTON_NEXT']:'Next &gt;').'</button>';
+		$buttonStr = '<button class="sticky-buttons" type="submit" value="search">'.(isset($LANG['BUTTON_NEXT'])?$LANG['BUTTON_NEXT']:'Search &gt;').'</button>';
 		$collCnt = 0;
 		$borderStyle = ($displayIcons?'margin:10px;padding:10px 20px;border:inset':'margin-left:10px;');
 		echo '<div style="position:relative">';
 		if(isset($collGrpArr['cat'])){
 			$categoryArr = $collGrpArr['cat'];
-			if($displaySearchButtons) echo '<div style="float:right;margin-top:20px;">'.$buttonStr.'</div>';
+			if($displaySearchButtons) echo '<div class="search-button-div">'.$buttonStr.'</div>';
 			?>
 			<table>
 				<?php
@@ -135,7 +136,9 @@ class OccurrenceSearchSupport {
 								$catSelected = false;
 								if(!$catSelArr && !$collSelArr) $catSelected = true;
 								elseif(in_array($catid, $catSelArr)) $catSelected = true;
-								echo '<input data-role="none" id="cat-' . $idStr . '-Input" name="cat[]" value="' . $catid.'" type="checkbox" onclick="selectAllCat(this,\'cat-' . $idStr . '\')" ' . ($catSelected?'checked':'') . 'aria-label="Category ' . $idStr . '" />';
+								echo '<input style="margin-right: 1rem;" data-role="none" id="cat-' . $idStr . '-Input" name="cat[]" value="' . $catid.'" type="checkbox" onclick="selectAllCat(this,\'cat-' . $idStr . '\')" ' . ($catSelected?'checked':'') . 'aria-label="Category ' . $idStr . '" />';
+								$categoryLinkStr = '<a href="#" onclick="toggleCat(' . $idStr . ');return false;">' . $name. '</a>';
+								echo '<label  for="cat-' . $idStr . '-Input">' . $categoryLinkStr . '</label>';
 								?>
 							</div>
 						</td>
@@ -146,13 +149,6 @@ class OccurrenceSearchSupport {
 									<img id="plus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/plus_sm.png" style="<?php echo (in_array($catid, $targetCatArr)||in_array(0, $targetCatArr)?'display:none;':'') ?>" alt="plus sign to expand menu" />
 									<?php echo $LANG['CONDENSE'] ?>
 									<img id="minus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/minus_sm.png" style="<?php echo (in_array($catid, $targetCatArr)||in_array(0, $targetCatArr)?'':'display:none;') ?>" alt="minus sign to condense menu" />
-								</a>
-							</div>
-						</td>
-						<td>
-							<div class="categorytitle">
-								<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-									<?php echo $name; ?>
 								</a>
 							</div>
 						</td>

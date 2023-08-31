@@ -23,4 +23,5 @@ $LANG['COPY_TO_CLIPBOARD'] = 'Copia URL al Portapapeles';
 
 $LANG['BUTTON_NEXT'] = 'Siguiente >';
 $LANG['BUTTON_RESET'] = 'Restablecer';
+$LANG['SEARCH'] = 'Search >';
 ?>

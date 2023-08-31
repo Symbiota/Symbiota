@@ -17,10 +17,12 @@ $LANG['TAB_MAP'] = 'Maps';
 
 $LANG['SELECT_DESELECT'] = 'Select/Deselect';
 $LANG['ALL_COLLECTIONS'] = 'all collections';
+$LANG['ALL_COLLECTIONS_CAP'] = 'All Collections';
 
 $LANG['DOWNLOAD_SPECIMEN_DATA'] = 'Download Specimen Data';
 $LANG['COPY_TO_CLIPBOARD'] = 'Copy URL to Clipboard';
 
 $LANG['BUTTON_NEXT'] = 'Search >';
 $LANG['BUTTON_RESET'] = 'Reset Form';
+$LANG['SEARCH'] = 'Search >';
 ?>

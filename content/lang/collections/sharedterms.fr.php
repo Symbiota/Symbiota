@@ -23,4 +23,5 @@ $LANG['COPY_TO_CLIPBOARD'] = "Copier l'URL dans le presse-papiers";
 
 $LANG['BUTTON_NEXT'] = 'Rechercher >';
 $LANG['BUTTON_RESET'] = 'Réinitialiser Formulaire';
+$LANG['SEARCH'] = 'Search >';
 ?>
