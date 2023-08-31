@@ -99,9 +99,9 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 							</label>
 						</div>
 						<?php
-							$collManager->outputFullCollArr($specArr, $catId);
+							$collManager->outputFullCollArr($specArr, $catId, true, true, 'Specimen');
 							if($specArr && $obsArr) echo '<hr class="specimen-observation-separator"/>';
-							$collManager->outputFullCollArr($obsArr, $catId, true, false);
+							$collManager->outputFullCollArr($obsArr, $catId, true, false, 'Observation');
 						?>
 					</form>
 				</div>
@@ -113,10 +113,12 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 					<form name="collform2" action="harvestparams.php" method="post" onsubmit="return verifyCollForm(this)">
 						<div class="specimen-obs-div-select-deselect-input">
 							<input id="dballspeccb" name="db[]" class="spec" value='allspec' type="checkbox" onclick="selectAll(this);" checked />
-					 		<?php echo $LANG['SELECT_DESELECT'].' <a href="misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS_CAP'], HTML_SPECIAL_CHARS_FLAGS) . '</a>'; ?>
+							<label for="dballspeccb">
+								<?php echo $LANG['SELECT_DESELECT'].' <a href="misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS_CAP'], HTML_SPECIAL_CHARS_FLAGS) . '</a>'; ?>
+							</label>
 						</div>
 						<?php
-						$collManager->outputFullCollArr($specArr, $catId);
+						$collManager->outputFullCollArr($specArr, $catId, true, true, 'Specimen');
 						?>
 					</form>
 				</div>
@@ -128,10 +130,12 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 					<form name="collform3" action="harvestparams.php" method="post" onsubmit="return verifyCollForm(this)">
 						<div class="specimen-obs-div-select-deselect-input">
 							<input id="dballobscb" name="db[]" class="obs" value='allobs' type="checkbox" onclick="selectAll(this);" checked />
-					 		<?php echo $LANG['SELECT_DESELECT'].' <a href="misc/collprofiles.php">'.$LANG['ALL_COLLECTIONS_CAP'].'</a>'; ?>
+							<label for="dballobscb">
+								<?php echo $LANG['SELECT_DESELECT'].' <a href="misc/collprofiles.php">'.$LANG['ALL_COLLECTIONS_CAP'].'</a>'; ?>
+							</label>
 						</div>
 						<?php
-						$collManager->outputFullCollArr($obsArr, $catId);
+						$collManager->outputFullCollArr($obsArr, $catId, true, true, 'Observation');
 						?>
 						<div class="obs-div-sp">&nbsp;</div>
 					</form>
@@ -148,7 +152,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 						foreach($catTitleArr as $catPid => $catTitle){
 							?>
 							<fieldset class="cat-title-fieldset">
-								<legend class="cat-title-legend"><?php echo $catTitle; ?></legend>
+								<legend class="cat-title-legend">Glorp<?php echo $catTitle; ?></legend>
 								<div class="cat-submit-div sticky-buttons">
 									<button type="submit" name="action"><?php echo isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search >'; ?></button>
 								</div>

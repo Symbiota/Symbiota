@@ -85,7 +85,7 @@ class OccurrenceSearchSupport {
 		return $retArr;
 	}
 
-	public function outputFullCollArr($collGrpArr, $targetCatID = '', $displayIcons = true, $displaySearchButtons = true){
+	public function outputFullCollArr($collGrpArr, $targetCatID = '', $displayIcons = true, $displaySearchButtons = true, $collTypeLabel = ''){
 		global $CLIENT_ROOT, $LANG;
 		$catSelArr = array();
 		$collSelArr = array();
@@ -103,7 +103,7 @@ class OccurrenceSearchSupport {
 			$categoryArr = $collGrpArr['cat'];
 			if($displaySearchButtons) echo '<div class="search-button-div">'.$buttonStr.'</div>';
 			?>
-			<table>
+			<section class="gridlike-form">
 				<?php
 				$cnt = 0;
 				foreach($categoryArr as $catid => $catArr){
@@ -115,22 +115,22 @@ class OccurrenceSearchSupport {
 					unset($catArr['icon']);
 					$idStr = $this->collArrIndex.'-'.$catid;
 					?>
-					<tr>
+					<section class="gridlike-form-row bottom-breathing-room-relative">
 						<?php
 						if($displayIcons){
 							?>
-							<td style="<?php echo ($catIcon?'width:40px;height:35px;':''); ?>">
+							<div style="<?php echo ($catIcon?'width:40px;height:35px;':''); ?>">
 								<?php
 								if($catIcon){
 									$catIcon = (substr($catIcon,0,6)=='images'?$CLIENT_ROOT:'').$catIcon;
 									echo '<img src="'.$catIcon.'" style="border:0px;width:30px;height:30px;" />';
 								}
 								?>
-							</td>
+							</div>
 							<?php
 						}
 						?>
-						<td style="width:25px;">
+						<div style="width:25px;">
 							<div>
 								<?php
 								$catSelected = false;
@@ -141,8 +141,8 @@ class OccurrenceSearchSupport {
 								echo '<label  for="cat-' . $idStr . '-Input">' . $categoryLinkStr . '</label>';
 								?>
 							</div>
-						</td>
-						<td style="width:10px;">
+						</div>
+						<div style="width:10px;">
 							<div style="margin-top: 7px">
 								<a href="#" onclick="toggleCat('<?php echo htmlspecialchars($idStr, HTML_SPECIAL_CHARS_FLAGS); ?>');return false;">
 									<?php echo $LANG['EXPAND'] ?>
@@ -151,38 +151,54 @@ class OccurrenceSearchSupport {
 									<img id="minus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/minus_sm.png" style="<?php echo (in_array($catid, $targetCatArr)||in_array(0, $targetCatArr)?'':'display:none;') ?>" alt="minus sign to condense menu" />
 								</a>
 							</div>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="4">
-							<div id="cat-<?php echo $idStr; ?>" style="<?php echo (in_array($catid, $targetCatArr)||in_array(0, $targetCatArr)?'':'display:none;').$borderStyle; ?>">
-								<table>
+						</div>
+					</section>
+					<section class="gridlike-form-row bottom-breathing-room-relative">
+						<div>
+							<fieldset>
+								<legend>
+									<?php 
+									echo $name; 
+									$specimenLegendTxt = isset($LANG['SPECIMEN']) ? $LANG['SPECIMEN'] : "Specimen";
+									$observationLegendTxt = isset($LANG['OBSERVATION']) ? $LANG['OBSERVATION'] : "TODOshouldBeObservation";
+									$isSpecimen = $collTypeLabel === "Specimen";
+									$isObservation = $collTypeLabel === "Observation";
+									$outputTxt = 'deleteMe';
+									if($isSpecimen) $outputTxt = $specimenLegendTxt;
+									if($isObservation) $outputTxt = $observationLegendTxt;
+									?> 
+									(<?php echo $outputTxt ?>)
+								</legend>
+								<section class="gridlike-form">
 									<?php
 									foreach($catArr as $collid => $collName2){
 										?>
-										<tr>
+										<section class="gridlike-form-row bottom-breathing-room-relative">
 											<?php
 											if($displayIcons){
 												?>
-												<td style="width:40px;height:35px">
+												<div style="width:40px;height:35px">
 													<?php
 													if($collName2["icon"]){
 														$cIcon = (substr($collName2["icon"],0,6)=='images'?$CLIENT_ROOT:'').$collName2["icon"];
 														?>
-														<a href = '<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'><img src="<?php echo htmlspecialchars($cIcon, HTML_SPECIAL_CHARS_FLAGS); ?>" style="border:0px;width:30px;height:30px;" alt="Image icon associated with this collection" /></a>
+														<a href = '<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
+															<img src="<?php echo htmlspecialchars($cIcon, HTML_SPECIAL_CHARS_FLAGS); ?>" style="border:0px;width:30px;height:30px;" alt="Image icon associated with this collection" />
+														</a>
 														<?php
 													}
 													?>
-												</td>
+												</div>
 												<?php
 											}
 											?>
-											<td style="width:25px;padding-top:8px;">
+											<div style="width:25px;padding-top:8px;">
 												<?php
-												echo '<input data-role="none" name="db[]" value="'.$collid.'" type="checkbox" class="cat-'.$idStr.'" onclick="unselectCat(\'cat-'.$idStr.'-Input\')" '.($catSelected || !$collSelArr || in_array($collid, $collSelArr)?'checked':'').' />';
+												echo '<input aria-label="select collection ' . $collid . '" id="coll-' . $collid . '-' . $idStr . '" data-role="none" name="db[]" value="'.$collid.'" type="checkbox" class="cat-'.$idStr.'" onclick="unselectCat(\'cat-'.$idStr.'-Input\')" '.($catSelected || !$collSelArr || in_array($collid, $collSelArr)?'checked':'').' />';
+												// echo '<label>Beep</label>';
 												?>
-											</td>
-											<td>
+											</div>
+											<div>
 												<div class="collectiontitle">
 													<?php
 													$codeStr = ' ('.$collName2['instcode'];
@@ -194,21 +210,21 @@ class OccurrenceSearchSupport {
 														<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info...'); ?>
 													</a>
 												</div>
-											</td>
-										</tr>
+											</div>
+										</section>
 										<?php
 										$collCnt++;
 									}
 									?>
-								</table>
-							</div>
-						</td>
-					</tr>
+								</section>
+							</fieldset>
+						</div>
+					</section>
 					<?php
 					$cnt++;
 				}
 				?>
-			</table>
+			</section>
 			<?php
 		}
 		if(isset($collGrpArr['coll'])){
@@ -218,11 +234,11 @@ class OccurrenceSearchSupport {
 				<?php
 				foreach($collArr as $collid => $cArr){
 					?>
-					<tr>
+					<section class="gridlike-form-row bottom-breathing-room-relative">
 						<?php
 						if($displayIcons){
 							?>
-							<td style="<?php ($cArr["icon"]?'width:40px;height:35px':''); ?>">
+							<div style="<?php ($cArr["icon"]?'width:40px;height:35px':''); ?>">
 								<?php
 								if($cArr["icon"]){
 									$cIcon = (substr($cArr["icon"],0,6)=='images'?$CLIENT_ROOT:'').$cArr["icon"];
@@ -232,16 +248,17 @@ class OccurrenceSearchSupport {
 								}
 								?>
 								&nbsp;
-							</td>
+							</div>
 							<?php
 						}
 						?>
-						<td style="width:25px;padding-top:8px;">
+						<div style="width:25px;padding-top:8px;">
 							<?php
-							echo '<input data-role="none" name="db[]" value="'.$collid.'" type="checkbox" onclick="uncheckAll()" '.(!$collSelArr || in_array($collid, $collSelArr)?'checked':'').' />';
+							echo '<input aria-label="select collection ' . $collid . '" data-role="none" id="collection-' . $collid . '" name="db[]" value="' . $collid . '" type="checkbox" onclick="uncheckAll()" '.(!$collSelArr || in_array($collid, $collSelArr)?'checked':'').' />';
+							// echo '<label for="' . $collid . '">Boop</label>';
 							?>
-						</td>
-						<td>
+						</div>
+						<div>
 							<div class="collectiontitle">
 								<?php
 								$codeStr = '('.$cArr['instcode'];
@@ -253,8 +270,8 @@ class OccurrenceSearchSupport {
 									<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info...'); ?>
 								</a>
 							</div>
-						</td>
-					</tr>
+						</div>
+					</section>
 					<?php
 					$collCnt++;
 				}
