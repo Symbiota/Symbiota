@@ -140,12 +140,10 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 											<ul>
 												<?php
 												$charList = $charArr[$hid];
-												if (isset($cid) && isset($charName))
-												{
 													foreach($charList as $cid => $charName){
-														echo '<li><a href="chardetails.php?cid=' . htmlspecialchars($cid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($charName, HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
+														if ($charName)
+															echo '<li><a href="chardetails.php?cid=' . htmlspecialchars($cid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($charName, HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
 													}
-												}
 												?>
 											</ul>
 										</div>
