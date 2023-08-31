@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/PermissionsManager.php');
@@ -36,13 +38,13 @@ if($IS_ADMIN){
 	}
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['USER_MNGMT'])?$LANG['USER_MNGMT']:'User Management'); ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<style type="text/css">
+	<style>
 		th{ font-size: 90% }
 	</style>
 </head>
@@ -61,8 +63,8 @@ if($IS_ADMIN){
 	<div id="innertext">
 		<div style="float:right;">
 			<div style="margin:10px 0px 15px 0px;">
-				<fieldset style="background-color:#FFFFCC;padding:0px 10px 10px 10px;">
-					<legend style="font-weight:bold;"><?php echo (isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search'); ?></legend>
+				<section class="fieldset-like" style="background-color:#FFFFCC;">
+					<h1> <span> <?php echo (isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search'); ?> </span> </h1>
 					<?php echo (isset($LANG['LAST_OR_LOGIN'])?$LANG['LAST_OR_LOGIN']:'Last Name or Login Name'); ?>:
 					<form name='searchform1' action='usermanagement.php' method='post'>
 						<input type="text" name="searchterm" title="<?php echo (isset($LANG['ENTER_LAST'])?$LANG['ENTER_LAST']:'Enter Last Name'); ?>" /><br/>
@@ -74,7 +76,7 @@ if($IS_ADMIN){
 						<div><a href='usermanagement.php?searchterm=I'>I</a>|<a href='usermanagement.php?searchterm=J'>J</a>|<a href='usermanagement.php?searchterm=K'>K</a>|<a href='usermanagement.php?searchterm=L'>L</a>|<a href='usermanagement.php?searchterm=M'>M</a>|<a href='usermanagement.php?searchterm=N'>N</a>|<a href='usermanagement.php?searchterm=O'>O</a>|<a href='usermanagement.php?searchterm=P'>P</a>|<a href='usermanagement.php?searchterm=Q'>Q</a></div>
 						<div><a href='usermanagement.php?searchterm=R'>R</a>|<a href='usermanagement.php?searchterm=S'>S</a>|<a href='usermanagement.php?searchterm=T'>T</a>|<a href='usermanagement.php?searchterm=U'>U</a>|<a href='usermanagement.php?searchterm=V'>V</a>|<a href='usermanagement.php?searchterm=W'>W</a>|<a href='usermanagement.php?searchterm=X'>X</a>|<a href='usermanagement.php?searchterm=Y'>Y</a>|<a href='usermanagement.php?searchterm=Z'>Z</a></div>
 					</div>
-				</fieldset>
+				</section>
 			</div>
 		</div>
 		<?php
