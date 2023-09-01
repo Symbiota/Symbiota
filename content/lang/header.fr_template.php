@@ -50,7 +50,7 @@ $LANG['SELECT_LANGUAGE'] = 'Sélectionnez une langue';
 
 $LANG['CONTACT_US'] = 'Contactez-Nous';
 $LANG['LOGIN'] = 'Se Connecter';
-$LANG['HOME'] = 'Maison';
+$LANG['HOME'] = 'Accueil';
 $LANG['SEARCH_COLLECTIONS'] = 'Rechercher des Collections';
 $LANG['CHECKLISTS'] = 'Listes de Contrôle';
 $LANG['DATA_USE'] = 'Utilisation des Données';
