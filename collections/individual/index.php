@@ -95,11 +95,6 @@ if(isset($_SERVER['HTTP_ACCEPT'])){
 
 if($SYMB_UID){
 	//Form action submitted
-	if(array_key_exists('delvouch',$_GET)){
-		if(!$indManager->deleteVoucher($_GET['delvouch'])){
-			$statusStr = $indManager->getErrorMessage();
-		}
-	}
 	if(array_key_exists('commentstr',$_POST)){
 		if(!$indManager->addComment($_POST['commentstr'])){
 			$statusStr = $indManager->getErrorMessage();
@@ -123,8 +118,13 @@ if($SYMB_UID){
 			$statusStr = $indManager->getErrorMessage();
 		}
 	}
-	elseif($submit == 'Add Voucher'){
+	elseif($submit == 'addVoucher'){
 		if(!$indManager->linkVoucher($_POST)){
+			$statusStr = $indManager->getErrorMessage();
+		}
+	}
+	elseif(array_key_exists('delvouch',$_GET)){
+		if(!$indManager->deleteVoucher($_GET['delvouch'])){
 			$statusStr = $indManager->getErrorMessage();
 		}
 	}

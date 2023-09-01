@@ -312,7 +312,7 @@ if($SYMB_UID){
 				$statusStr = $occManager->editIdentificationRanking($_POST['confidenceranking'],$_POST['notes']);
 				$tabTarget = 1;
 			}
-			elseif($action == 'Link to Checklist as Voucher'){
+			elseif($action == 'linkChecklistVoucher'){
 				$statusStr = $occManager->linkChecklistVoucher($_POST['clidvoucher'],$_POST['tidvoucher']);
 			}
 			elseif($action == 'deletevoucher'){

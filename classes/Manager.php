@@ -104,7 +104,11 @@ class Manager  {
 		return $domain;
 	}
 
-	protected function cleanOutStr($str){
+	public function sanitizeInt($int){
+		return filter_var($int, FILTER_SANITIZE_NUMBER_INT);
+	}
+
+	public function cleanOutStr($str){
 		$str = htmlspecialchars($str);
 		return $str;
 	}
