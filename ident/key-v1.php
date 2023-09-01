@@ -149,7 +149,7 @@ if($chars){
 						<input type="hidden" id="dynclid" name="dynclid" value="<?php echo $dynClid; ?>" />
 						<input type="hidden" id="pid" name="pid" value="<?php echo $pid; ?>" />
 						<input type="hidden" id="rv" name="rv" value="<?php echo $dataManager->getRelevanceValue(); ?>" />
-						<input type="submit" name="submitbutton" id="submitbutton" value="<?php echo $LANG['DISPRESSPEC'];?>"/>
+						<button type="submit" name="submitbutton" id="submitbutton" value="displaySpeciesList"><?php echo $LANG['DISPRESSPEC'];?></button>
 					</div>
 					<hr size="2" />
 

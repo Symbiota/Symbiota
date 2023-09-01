@@ -69,9 +69,20 @@ span[class='link']:hover {
   margin-left: 3px;
 }
 
+button.icon-button {
+  margin: 2px 5px;
+  padding: 6px;
+  background-color: #f2f0e9;
+  border-width: 1px;
+  border-style: outset;
+  border-color: buttonborder;
+}
+
+button.icon-button:hover {
+  background: #e4f2fb;
+}
 
 /* Species list component */
-
 #taxalist-div {
   line-height: 1em;
 }

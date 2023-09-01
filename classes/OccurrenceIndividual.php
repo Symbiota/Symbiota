@@ -1,6 +1,7 @@
 <?php
 include_once('Manager.php');
 include_once('OccurrenceAccessStats.php');
+include_once('ChecklistVoucherAdmin.php');
 
 class OccurrenceIndividual extends Manager{
 
@@ -838,62 +839,50 @@ class OccurrenceIndividual extends Manager{
 
 	public function linkVoucher($postArr){
 		$status = false;
-		if($this->occid){
-			if($clTaxaID = $this->getClTaxaID($postArr['vclid'], $postArr['vtid'])){
-				$status = $this->insertVoucher($clTaxaID, $this->occid, $postArr['veditnotes'], $postArr['vnotes']);
-			}
-		}
-		return $status;
-	}
-
-	private function getClTaxaID($clid, $tid, $morphoSpecies = ''){
-		$clTaxaID = 0;
-		if(is_numeric($clid) && is_numeric($tid)){
-			$sql = 'SELECT clTaxaID FROM fmchklsttaxalink WHERE clid = ? AND tid = ? AND morphospecies = ?';
-			if($stmt = $this->conn->prepare($sql)) {
-				$stmt->bind_param('iis', $clid, $tid, $morphoSpecies);
-				$stmt->execute();
-				$stmt->bind_result($clTaxaID);
-				$stmt->fetch();
-				$stmt->close();
-			}
-			else $this->errorMessage = 'ERROR preparing statement for getSciname: '.$this->conn->error;
-		}
-		return $clTaxaID;
-	}
-
-	private function insertVoucher($clTaxaID, $occid, $editorNotes = null, $notes = null){
-		$status = false;
-		if(is_numeric($clTaxaID) && is_numeric($occid)){
-			if($editorNotes == '') $editorNotes = null;
-			if($notes == '') $notes = null;
-			$con = MySQLiConnectionFactory::getCon("write");
-			$sql = 'INSERT INTO fmvouchers(clTaxaID, occid, editorNotes, notes) VALUES (?,?,?,?)';
-			if($stmt = $con->prepare($sql)) {
-				$stmt->bind_param('iiss', $clTaxaID, $occid, $editorNotes, $notes);
-				$stmt->execute();
-				if($stmt->affected_rows && !$stmt->error){
-					$status = $stmt->insert_id;
+		if($this->occid && is_numeric($postArr['vclid'])){
+			if(isset($GLOBALS['USER_RIGHTS']['ClAdmin']) && in_array($postArr['vclid'], $GLOBALS['USER_RIGHTS']['ClAdmin'])){
+				$voucherManager = new ChecklistVoucherAdmin($this->conn);
+				$voucherManager->setClid($postArr['vclid']);
+				if($voucherManager->linkVoucher($postArr['vtid'], $this->occid, '', $postArr['veditnotes'], $postArr['vnotes'])){
+					$status = true;
 				}
-				elseif($stmt->error) $this->errorMessage = 'ERROR inserting voucher: '.$stmt->error;
-				$stmt->close();
+				else $this->errorMessage = $voucherManager->getErrorMessage();
 			}
-			else $this->errorMessage = 'ERROR preparing statement for voucher insert: '.$this->conn->error;
-			if(!($con === null)) $con->close();
 		}
 		return $status;
 	}
 
 	public function deleteVoucher($voucherID){
-		$status = true;
-		if(is_numeric($voucherID)){
-			$sql = 'DELETE FROM fmvouchers WHERE (voucherID = '.$voucherID.') ';
- 			$con = MySQLiConnectionFactory::getCon("write");
-			if(!$con->query($sql)){
-				$this->errorMessage = 'ERROR loading '.$con->error;
+		$status = false;
+		$clid = 0;
+		//Make sure user has checklist admin permission for checklist
+		$sql = 'SELECT c.clid
+			FROM fmvouchers v INNER JOIN fmchklsttaxalink c ON v.clTaxaID = c.clTaxaID
+			WHERE v.voucherID = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $voucherID);
+			$stmt->execute();
+			$stmt->bind_result($clid);
+			$stmt->fetch();
+			$stmt->close();
+		}
+		if(!$clid){
+			$this->errorMessage = 'ERROR deleting voucher: unable to verify target checklist for voucher';
+			return false;
+		}
+		if(isset($GLOBALS['USER_RIGHTS']['ClAdmin']) && in_array($clid, $GLOBALS['USER_RIGHTS']['ClAdmin'])){
+			$voucherManager = new ChecklistVoucherAdmin();
+			if($voucherManager->deleteVoucher($voucherID)){
+				$status = true;
+			}
+			else{
+				$this->errorMessage = $voucherManager->getErrorMessage();
 				$status = false;
 			}
-			if(!($con === null)) $con->close();
+		}
+		else{
+			$this->errorMessage = 'ERROR deleting voucher: permission error';
+			return false;
 		}
 		return $status;
 	}

@@ -354,7 +354,7 @@ class ChecklistVoucherAdmin extends Manager {
 		return $statusCnt;
 	}
 
-	public function linkVoucher($taxa, $occid, $morphoSpecies=''){
+	public function linkVoucher($taxa, $occid, $morphoSpecies = '', $editorNotes = null, $notes = null){
 		$status = false;
 		if($this->voucherIsLinked($occid)){
 			$this->errorMessage = 'voucherAlreadyLinked';
@@ -364,7 +364,7 @@ class ChecklistVoucherAdmin extends Manager {
 		$clTaxaID = $this->getClTaxaID($taxa, $morphoSpecies);
 		if(!$clTaxaID) $clTaxaID = $this->insertChecklistTaxaLink($taxa);
 		if($clTaxaID){
-			$status = $this->insertVoucher($clTaxaID, $occid);
+			$status = $this->insertVoucher($clTaxaID, $occid, $editorNotes, $notes);
 		}
 		return $status;
 	}
@@ -491,6 +491,22 @@ class ChecklistVoucherAdmin extends Manager {
 				$stmt->close();
 			}
 			else $this->errorMessage = 'ERROR preparing statement for voucher transfer: '.$this->conn->error;
+		}
+		return $status;
+	}
+
+	public function deleteVoucher($voucherID){
+		$status = false;
+		if(is_numeric($voucherID)){
+			$sql = 'DELETE FROM fmvouchers WHERE (voucherID = ?)';
+			if($stmt = $this->conn->prepare($sql)) {
+				$stmt->bind_param('i', $voucherID);
+				$stmt->execute();
+				if($stmt->affected_rows) $status = true;
+				elseif($stmt->error) $this->errorMessage = 'ERROR deleting vouchers: '.$stmt->error;
+				$stmt->close();
+			}
+			else $this->errorMessage = 'ERROR preparing statement for voucher deletion: '.$this->conn->error;
 		}
 		return $status;
 	}
