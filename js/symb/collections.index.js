@@ -37,6 +37,8 @@ function togglePid(pid) {
   toggle("minus-pid-" + pid);
   toggle("plus-pid-" + pid);
   toggle("pid-" + pid);
+  toggle("pid-ptext-" + pid);
+  toggle("pid-mtext-" + pid); // TODO LEFT OFF HERE TRYING TO GET THE BEHAVIOR OF THE EXPAND AND CONDENSE BUTTONS IN collections/index.php WORKING.
 }
 
 function selectAll(cb) {
