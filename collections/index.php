@@ -95,13 +95,13 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 						<div class="select-deselect-input">
 							<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" checked />
 							<label for="dballcb">
-								<?php echo $LANG['SELECT_DESELECT'].' <a href="misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS_CAP'], HTML_SPECIAL_CHARS_FLAGS) . '</a>'; ?>
+								<?php echo $LANG['SELECT_DESELECT'] . ' <a href="misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS_CAP'], HTML_SPECIAL_CHARS_FLAGS) . '</a>'; ?>
 							</label>
 						</div>
 						<?php
-							$collManager->outputFullCollArr($specArr, $catId, true, true, 'Specimen');
+							$collManager->outputFullCollArr($specArr, $catId, true, true, 'Specimen', 'both');
 							if($specArr && $obsArr) echo '<hr class="specimen-observation-separator"/>';
-							$collManager->outputFullCollArr($obsArr, $catId, true, false, 'Observation');
+							$collManager->outputFullCollArr($obsArr, $catId, true, false, 'Observation', 'both');
 						?>
 					</form>
 				</div>
@@ -114,11 +114,11 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 						<div class="specimen-obs-div-select-deselect-input">
 							<input id="dballspeccb" name="db[]" class="spec" value='allspec' type="checkbox" onclick="selectAll(this);" checked />
 							<label for="dballspeccb">
-								<?php echo $LANG['SELECT_DESELECT'].' <a href="misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS_CAP'], HTML_SPECIAL_CHARS_FLAGS) . '</a>'; ?>
+								<?php echo $LANG['SELECT_DESELECT_ALL_SPECIMENS']; ?>
 							</label>
 						</div>
 						<?php
-						$collManager->outputFullCollArr($specArr, $catId, true, true, 'Specimen');
+						$collManager->outputFullCollArr($specArr, $catId, true, true, 'Specimen', 'specimen-only');
 						?>
 					</form>
 				</div>
@@ -131,11 +131,11 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 						<div class="specimen-obs-div-select-deselect-input">
 							<input id="dballobscb" name="db[]" class="obs" value='allobs' type="checkbox" onclick="selectAll(this);" checked />
 							<label for="dballobscb">
-								<?php echo $LANG['SELECT_DESELECT'].' <a href="misc/collprofiles.php">'.$LANG['ALL_COLLECTIONS_CAP'].'</a>'; ?>
+								<?php echo $LANG['SELECT_DESELECT_ALL_OBSERVATIONS']; ?>
 							</label>
 						</div>
 						<?php
-						$collManager->outputFullCollArr($obsArr, $catId, true, true, 'Observation');
+						$collManager->outputFullCollArr($obsArr, $catId, true, true, 'Observation', 'observation-only');
 						?>
 						<div class="obs-div-sp">&nbsp;</div>
 					</form>
@@ -163,8 +163,15 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 									?>
 									<div>
 										<a href="#" onclick="togglePid('<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>');return false;">
-											<img id="plus-pid-<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>" src="../images/plus_sm.png" alt="plus sign to expand menu" />
-											<img id="minus-pid-<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>" src="../images/minus_sm.png" class="disp-none" alt="minus sign to condense menu" />
+											<img id="plus-<?php echo $idStr; ?>" alt="plus sign to expand menu" src="../../images/plus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>" />
+											<img id="minus-<?php echo $idStr; ?>" alt="minus sign to condense menu" src="../../images/minus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" />
+											<p id="pid-ptext-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>">
+												<?php echo $LANG['EXPAND'] ?>
+											</p>
+											<p id="pid-mtext-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" >
+												<?php echo $LANG['CONDENSE'] ?>
+											</p>
+											
 										</a>
 										<input name="pid[]" type="checkbox" value="<?php echo $pid; ?>" onchange="selectAllPid(this);" />
 										<b><?php echo $projTitle; ?></b>

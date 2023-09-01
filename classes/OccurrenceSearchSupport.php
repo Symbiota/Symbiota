@@ -85,7 +85,7 @@ class OccurrenceSearchSupport {
 		return $retArr;
 	}
 
-	public function outputFullCollArr($collGrpArr, $targetCatID = '', $displayIcons = true, $displaySearchButtons = true, $collTypeLabel = ''){
+	public function outputFullCollArr($collGrpArr, $targetCatID = '', $displayIcons = true, $displaySearchButtons = true, $collTypeLabel = '', $uniqGrouping=''){
 		global $CLIENT_ROOT, $LANG;
 		$catSelArr = array();
 		$collSelArr = array();
@@ -95,7 +95,7 @@ class OccurrenceSearchSupport {
 		$targetCatID = (string)$targetCatID;
 		if($targetCatID != '') $targetCatArr = explode(',', $targetCatID);
 		elseif($GLOBALS['DEFAULTCATID'] != '') $targetCatArr = explode(',', $GLOBALS['DEFAULTCATID']);
-		$buttonStr = '<button class="sticky-buttons" type="submit" value="search">'.(isset($LANG['BUTTON_NEXT'])?$LANG['BUTTON_NEXT']:'Search &gt;').'</button>';
+		$buttonStr = '<button class="sticky-buttons" aria-label="Search button" type="submit" value="search">'.(isset($LANG['BUTTON_NEXT'])?$LANG['BUTTON_NEXT']:'Search &gt;').'</button>';
 		$collCnt = 0;
 		$borderStyle = ($displayIcons?'margin:10px;padding:10px 20px;border:inset':'margin-left:10px;');
 		echo '<div style="position:relative">';
@@ -136,9 +136,11 @@ class OccurrenceSearchSupport {
 								$catSelected = false;
 								if(!$catSelArr && !$collSelArr) $catSelected = true;
 								elseif(in_array($catid, $catSelArr)) $catSelected = true;
-								echo '<input style="margin-right: 1rem;" data-role="none" id="cat-' . $idStr . '-Input" name="cat[]" value="' . $catid.'" type="checkbox" onclick="selectAllCat(this,\'cat-' . $idStr . '\')" ' . ($catSelected?'checked':'') . 'aria-label="Category ' . $idStr . '" />';
-								$categoryLinkStr = '<a href="#" onclick="toggleCat(' . $idStr . ');return false;">' . $name. '</a>';
-								echo '<label  for="cat-' . $idStr . '-Input">' . $categoryLinkStr . '</label>';
+								// $categoryLinkStr = '<a href="#" onclick="toggleCat(' . $idStr . ');return false;">' . $name. '</a>';
+								$ariaLabel = $name . '(' . $collTypeLabel . ')' . '-' . $uniqGrouping;
+								echo '<input aria-label="' . $ariaLabel . '"   data-role="none" id="cat-' . $idStr . '-' . $collTypeLabel . '-' . $uniqGrouping . '-Input" name="cat[]" value="' . $catid.'" type="checkbox" onclick="selectAllCat(this,\'cat-' . $idStr . '\')" ' . ($catSelected?'checked':'') . ' />';
+								// echo '<label  for="cat-' . $idStr . '-' . $collTypeLabel . '-' . $uniqGrouping . '-Input">' . $name . "(" . $collTypeLabel . ")" . '</label>';
+								echo $name . "(" . $collTypeLabel . ")";
 								?>
 							</div>
 						</div>
@@ -183,7 +185,7 @@ class OccurrenceSearchSupport {
 														$cIcon = (substr($collName2["icon"],0,6)=='images'?$CLIENT_ROOT:'').$collName2["icon"];
 														?>
 														<a href = '<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
-															<img src="<?php echo htmlspecialchars($cIcon, HTML_SPECIAL_CHARS_FLAGS); ?>" style="border:0px;width:30px;height:30px;" alt="Image icon associated with this collection" />
+															<img src="<?php echo htmlspecialchars($cIcon, HTML_SPECIAL_CHARS_FLAGS); ?>" style="border:0px;width:30px;height:30px;" alt='Image icon associated with collection <?php echo isset($collName2["collname"]) ? $collName2["collname"] : $idStr ?>' />
 														</a>
 														<?php
 													}
@@ -192,10 +194,10 @@ class OccurrenceSearchSupport {
 												<?php
 											}
 											?>
-											<div style="width:25px;padding-top:8px;">
+											<div>
 												<?php
 												echo '<input aria-label="select collection ' . $collid . '" id="coll-' . $collid . '-' . $idStr . '" data-role="none" name="db[]" value="'.$collid.'" type="checkbox" class="cat-'.$idStr.'" onclick="unselectCat(\'cat-'.$idStr.'-Input\')" '.($catSelected || !$collSelArr || in_array($collid, $collSelArr)?'checked':'').' />';
-												// echo '<label>Beep</label>';
+												// echo '<label>Select/Deselect</label>';
 												?>
 											</div>
 											<div>
