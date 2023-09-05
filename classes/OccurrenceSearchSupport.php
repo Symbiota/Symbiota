@@ -95,7 +95,8 @@ class OccurrenceSearchSupport {
 		$targetCatID = (string)$targetCatID;
 		if($targetCatID != '') $targetCatArr = explode(',', $targetCatID);
 		elseif($GLOBALS['DEFAULTCATID'] != '') $targetCatArr = explode(',', $GLOBALS['DEFAULTCATID']);
-		$buttonStr = '<button class="sticky-buttons" aria-label="Search button" type="submit" value="search">'.(isset($LANG['BUTTON_NEXT'])?$LANG['BUTTON_NEXT']:'Search &gt;').'</button>';
+		$buttonTxt = isset($LANG['BUTTON_NEXT'])?$LANG['BUTTON_NEXT']:'Search;';
+		$buttonStr = '<button class="sticky-buttons" aria-label="' . $buttonTxt . ' (' . $uniqGrouping . ')' . '" type="submit" value="search">' . $buttonTxt . ' (' . $uniqGrouping . ')' . '</button>';
 		$collCnt = 0;
 		$borderStyle = ($displayIcons?'margin:10px;padding:10px 20px;border:inset':'margin-left:10px;');
 		echo '<div style="position:relative">';
@@ -185,7 +186,7 @@ class OccurrenceSearchSupport {
 														$cIcon = (substr($collName2["icon"],0,6)=='images'?$CLIENT_ROOT:'').$collName2["icon"];
 														?>
 														<a href = '<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
-															<img src="<?php echo htmlspecialchars($cIcon, HTML_SPECIAL_CHARS_FLAGS); ?>" style="border:0px;width:30px;height:30px;" alt='Image icon associated with collection <?php echo isset($collName2["collname"]) ? $collName2["collname"] : $idStr ?>' />
+															<img src="<?php echo htmlspecialchars($cIcon, HTML_SPECIAL_CHARS_FLAGS); ?>" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection <?php echo isset($collName2["collname"]) ? substr($collName2["collname"],0, 40) : substr($idStr,0, 40) ?>' />
 														</a>
 														<?php
 													}

@@ -21,7 +21,7 @@ $LANG['ALL_COLLECTIONS'] = 'todas las colecciones';
 $LANG['DOWNLOAD_SPECIMEN_DATA'] = 'Descargar Datos de Ejemplares';
 $LANG['COPY_TO_CLIPBOARD'] = 'Copia URL al Portapapeles';
 
-$LANG['BUTTON_NEXT'] = 'Siguiente >';
+$LANG['BUTTON_NEXT'] = 'Siguiente';
 $LANG['BUTTON_RESET'] = 'Restablecer';
-$LANG['SEARCH'] = 'Search >';
+$LANG['SEARCH'] = 'Buscar';
 ?>

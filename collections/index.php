@@ -99,9 +99,9 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 							</label>
 						</div>
 						<?php
-							$collManager->outputFullCollArr($specArr, $catId, true, true, 'Specimen', 'both');
+							$collManager->outputFullCollArr($specArr, $catId, true, true, 'Specimen', 'Specimens-and-Observations');
 							if($specArr && $obsArr) echo '<hr class="specimen-observation-separator"/>';
-							$collManager->outputFullCollArr($obsArr, $catId, true, false, 'Observation', 'both');
+							$collManager->outputFullCollArr($obsArr, $catId, true, false, 'Observation', 'Specimens-and-Observations');
 						?>
 					</form>
 				</div>
@@ -118,7 +118,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 							</label>
 						</div>
 						<?php
-						$collManager->outputFullCollArr($specArr, $catId, true, true, 'Specimen', 'specimen-only');
+						$collManager->outputFullCollArr($specArr, $catId, true, true, 'Specimen', 'Specimens-Only');
 						?>
 					</form>
 				</div>
@@ -135,7 +135,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 							</label>
 						</div>
 						<?php
-						$collManager->outputFullCollArr($obsArr, $catId, true, true, 'Observation', 'observation-only');
+						$collManager->outputFullCollArr($obsArr, $catId, true, true, 'Observation', 'Observations-Only');
 						?>
 						<div class="obs-div-sp">&nbsp;</div>
 					</form>
@@ -154,7 +154,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 							<fieldset class="cat-title-fieldset">
 								<legend class="cat-title-legend">Glorp<?php echo $catTitle; ?></legend>
 								<div class="cat-submit-div sticky-buttons">
-									<button type="submit" name="action"><?php echo isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search >'; ?></button>
+									<button type="submit" name="action"><?php echo isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search &gt'; ?></button>
 								</div>
 								<?php
 								$projTitleArr = $otherCatArr['titles'][$catPid]['proj'];

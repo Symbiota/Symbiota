@@ -24,7 +24,7 @@ $LANG['SELECT_DESELECT_ALL_OBSERVATIONS'] = 'Select/Deselect All Observations';
 $LANG['DOWNLOAD_SPECIMEN_DATA'] = 'Download Specimen Data';
 $LANG['COPY_TO_CLIPBOARD'] = 'Copy URL to Clipboard';
 
-$LANG['BUTTON_NEXT'] = 'Search >';
+$LANG['BUTTON_NEXT'] = 'Search';
 $LANG['BUTTON_RESET'] = 'Reset Form';
-$LANG['SEARCH'] = 'Search >';
+$LANG['SEARCH'] = 'Search';
 ?>
