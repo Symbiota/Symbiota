@@ -98,13 +98,13 @@ class OccurrenceSearchSupport {
 		$buttonTxt = isset($LANG['BUTTON_NEXT'])?$LANG['BUTTON_NEXT']:'Search;';
 		$replacedUniqGrouping = str_replace('-',' ',$uniqGrouping);
 		$buttonTxtParenthetical = $uniqGrouping === '' ? '' : ' (' . $replacedUniqGrouping . ')';
-		$buttonStr = '<button class="sticky-buttons" aria-label="' . $buttonTxt . $buttonTxtParenthetical . '" type="submit" value="search">' . $buttonTxt . $buttonTxtParenthetical . '</button>';
+		$buttonStr = '<button aria-label="' . $buttonTxt . $buttonTxtParenthetical . '" type="submit" value="search">' . $buttonTxt . $buttonTxtParenthetical . '</button>';
 		$collCnt = 0;
 		$borderStyle = ($displayIcons?'margin:10px;padding:10px 20px;border:inset':'margin-left:10px;');
-		echo '<div style="position:relative">';
+		echo '<div>';
 		if(isset($collGrpArr['cat'])){
 			$categoryArr = $collGrpArr['cat'];
-			if($displaySearchButtons) echo '<div class="search-button-div">'.$buttonStr.'</div>';
+			if($displaySearchButtons) echo '<div class="search-button-div sticky-buttons">'.$buttonStr.'</div>';
 			?>
 			<section class="gridlike-form">
 				<?php
@@ -171,7 +171,7 @@ class OccurrenceSearchSupport {
 									<?php 
 									echo $name; 
 									$specimenLegendTxt = isset($LANG['SPECIMEN']) ? $LANG['SPECIMEN'] : "Specimen";
-									$observationLegendTxt = isset($LANG['OBSERVATION']) ? $LANG['OBSERVATION'] : "TODOshouldBeObservation";
+									$observationLegendTxt = isset($LANG['OBSERVATION']) ? $LANG['OBSERVATION'] : "Observation";
 									$isSpecimen = $collTypeLabel === "Specimen";
 									$isObservation = $collTypeLabel === "Observation";
 									$outputTxt = 'deleteMe';

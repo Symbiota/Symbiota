@@ -70,7 +70,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
-        <div id="tabs" class="inntertext-tab">
+        <div id="tabs" class="inntertext-tab pin-things-here">
 			<ul>
 				<?php
 				if($specArr && $obsArr){
@@ -90,7 +90,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 			<?php
 			if($specArr && $obsArr){
 				?>
-				<div id="specobsdiv" class="pin-things-here">
+				<div id="specobsdiv">
 					<div class="specimen-header-margin">
 						<h2><?php echo $LANG['SPECIMEN_COLLECTIONS'] ?></h2>
 					</div>
@@ -105,7 +105,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 							$collManager->outputFullCollArr($specArr, $catId, true, true, 'Specimen', '');
 							$hrAndHeaderText = '<div class="specimen-header-margin"><hr/><h2>' . $LANG['OBSERVATION_COLLECTIONS'] . '</h2></div>';
 							if($specArr && $obsArr) echo $hrAndHeaderText;
-							$collManager->outputFullCollArr($obsArr, $catId, true, false, 'Observation', '');
+							$collManager->outputFullCollArr($obsArr, $catId, true, true, 'Observation', '');
 						?>
 					</form>
 				</div>
