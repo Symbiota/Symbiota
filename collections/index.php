@@ -91,6 +91,9 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 			if($specArr && $obsArr){
 				?>
 				<div id="specobsdiv" class="pin-things-here">
+					<div class="specimen-header-margin">
+						<h2><?php echo $LANG['SPECIMEN_COLLECTIONS'] ?></h2>
+					</div>
 					<form name="collform1" action="harvestparams.php" method="post" onsubmit="return verifyCollForm(this)">
 						<div class="select-deselect-input">
 							<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" checked />
@@ -100,7 +103,8 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 						</div>
 						<?php
 							$collManager->outputFullCollArr($specArr, $catId, true, true, 'Specimen', '');
-							if($specArr && $obsArr) echo '<hr class="specimen-observation-separator"/>';
+							$hrAndHeaderText = '<div class="specimen-header-margin"><hr/><h2>' . $LANG['OBSERVATION_COLLECTIONS'] . '</h2></div>';
+							if($specArr && $obsArr) echo $hrAndHeaderText;
 							$collManager->outputFullCollArr($obsArr, $catId, true, false, 'Observation', '');
 						?>
 					</form>
