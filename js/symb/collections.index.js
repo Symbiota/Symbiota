@@ -8,6 +8,8 @@ function toggle(target) {
   console.log("deleteMe toggle entered and target is: ");
   console.log(target);
   var ele = document.getElementById(target);
+  console.log("deleteMe ele is: ");
+  console.log(ele);
   if (ele) {
     if (ele.style.display === "none") {
       if (
@@ -26,6 +28,7 @@ function toggle(target) {
 }
 
 function toggleCat(catid) {
+  console.log("deleteMe toggleCat entered");
   toggle("minus-" + catid);
   toggle("plus-" + catid);
   toggle("cat-" + catid);
@@ -34,9 +37,10 @@ function toggleCat(catid) {
 }
 
 function togglePid(pid) {
-  toggle("minus-pid-" + pid);
-  toggle("plus-pid-" + pid);
-  toggle("pid-" + pid);
+  console.log("deleteMe togglePid entered");
+  toggle("minus-" + pid);
+  toggle("plus-" + pid);
+  toggle("cat-" + pid);
   toggle("pid-ptext-" + pid);
   toggle("pid-mtext-" + pid); // TODO LEFT OFF HERE TRYING TO GET THE BEHAVIOR OF THE EXPAND AND CONDENSE BUTTONS IN collections/index.php WORKING.
 }

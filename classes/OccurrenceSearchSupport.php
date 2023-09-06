@@ -96,7 +96,9 @@ class OccurrenceSearchSupport {
 		if($targetCatID != '') $targetCatArr = explode(',', $targetCatID);
 		elseif($GLOBALS['DEFAULTCATID'] != '') $targetCatArr = explode(',', $GLOBALS['DEFAULTCATID']);
 		$buttonTxt = isset($LANG['BUTTON_NEXT'])?$LANG['BUTTON_NEXT']:'Search;';
-		$buttonStr = '<button class="sticky-buttons" aria-label="' . $buttonTxt . ' (' . $uniqGrouping . ')' . '" type="submit" value="search">' . $buttonTxt . ' (' . $uniqGrouping . ')' . '</button>';
+		$replacedUniqGrouping = str_replace('-',' ',$uniqGrouping);
+		$buttonTxtParenthetical = $uniqGrouping === '' ? '' : ' (' . $replacedUniqGrouping . ')';
+		$buttonStr = '<button class="sticky-buttons" aria-label="' . $buttonTxt . $buttonTxtParenthetical . '" type="submit" value="search">' . $buttonTxt . $buttonTxtParenthetical . '</button>';
 		$collCnt = 0;
 		$borderStyle = ($displayIcons?'margin:10px;padding:10px 20px;border:inset':'margin-left:10px;');
 		echo '<div style="position:relative">';
@@ -131,7 +133,7 @@ class OccurrenceSearchSupport {
 							<?php
 						}
 						?>
-						<div style="width:25px;">
+						<div>
 							<div>
 								<?php
 								$catSelected = false;
@@ -145,18 +147,24 @@ class OccurrenceSearchSupport {
 								?>
 							</div>
 						</div>
-						<div style="width:10px;">
-							<div style="margin-top: 7px">
-								<a href="#" onclick="toggleCat('<?php echo htmlspecialchars($idStr, HTML_SPECIAL_CHARS_FLAGS); ?>');return false;">
-									<?php echo $LANG['EXPAND'] ?>
-									<img id="plus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/plus_sm.png" style="<?php echo (in_array($catid, $targetCatArr)||in_array(0, $targetCatArr)?'display:none;':'') ?>" alt="plus sign to expand menu" />
-									<?php echo $LANG['CONDENSE'] ?>
-									<img id="minus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/minus_sm.png" style="<?php echo (in_array($catid, $targetCatArr)||in_array(0, $targetCatArr)?'':'display:none;') ?>" alt="minus sign to condense menu" />
+						<div>
+							<div>
+								<a href="#" class="condense-expand-flex" onclick="toggleCat('<?php echo htmlspecialchars($idStr, HTML_SPECIAL_CHARS_FLAGS); ?>');return false;">
+								<div class="condense-expand-button-set">
+									<img id="plus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/plus_sm.png" style="display:none;" alt="plus sign to expand menu" />
+									<img id="minus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/minus_sm.png" alt="minus sign to condense menu" />
+									<p id="ptext-<?php echo $idStr; ?>" style="<?php echo ((0 != $catid)?'':'display:none;') ?>">
+										<?php echo $LANG['CONDENSE'] ?>
+									</p>
+									<p id="mtext-<?php echo $idStr; ?>" style="<?php echo ((0 != $catid)?'display:none;':'') ?>" >
+										<?php echo $LANG['EXPAND'] ?>
+									</p>
+								</div>
 								</a>
 							</div>
 						</div>
 					</section>
-					<section class="gridlike-form-row bottom-breathing-room-relative">
+					<section id="cat-<?php echo $idStr ?>" class="gridlike-form-row bottom-breathing-room-relative">
 						<div>
 							<fieldset>
 								<legend>

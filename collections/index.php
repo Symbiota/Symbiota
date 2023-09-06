@@ -99,9 +99,9 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 							</label>
 						</div>
 						<?php
-							$collManager->outputFullCollArr($specArr, $catId, true, true, 'Specimen', 'Specimens-and-Observations');
+							$collManager->outputFullCollArr($specArr, $catId, true, true, 'Specimen', '');
 							if($specArr && $obsArr) echo '<hr class="specimen-observation-separator"/>';
-							$collManager->outputFullCollArr($obsArr, $catId, true, false, 'Observation', 'Specimens-and-Observations');
+							$collManager->outputFullCollArr($obsArr, $catId, true, false, 'Observation', '');
 						?>
 					</form>
 				</div>
@@ -163,15 +163,16 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 									?>
 									<div>
 										<a href="#" onclick="togglePid('<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>');return false;">
-											<img id="plus-<?php echo $idStr; ?>" alt="plus sign to expand menu" src="../../images/plus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>" />
-											<img id="minus-<?php echo $idStr; ?>" alt="minus sign to condense menu" src="../../images/minus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" />
-											<p id="pid-ptext-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>">
-												<?php echo $LANG['EXPAND'] ?>
-											</p>
-											<p id="pid-mtext-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" >
-												<?php echo $LANG['CONDENSE'] ?>
-											</p>
-											
+											<div style="display: flex; flex-direction: row; align-items: center; gap: 1rem;">
+												<img id="plus-<?php echo $pid; ?>" alt="plus sign to expand menu" src="../../images/plus_sm.png" style="display: none;" />
+												<img id="minus-<?php echo $pid; ?>" alt="minus sign to condense menu" src="../../images/minus_sm.png" />
+												<p id="pid-ptext-<?php echo $pid; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>">
+													<?php echo $LANG['EXPAND'] ?>
+												</p>
+												<p id="pid-mtext-<?php echo $pid; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" >
+													<?php echo $LANG['CONDENSE'] ?>
+												</p>
+											</div>
 										</a>
 										<input name="pid[]" type="checkbox" value="<?php echo $pid; ?>" onchange="selectAllPid(this);" />
 										<b><?php echo $projTitle; ?></b>
