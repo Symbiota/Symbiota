@@ -17,12 +17,15 @@ class MapSupport extends Manager{
 	//Static Map functions
 	public function getTaxaList(){
 		$retArr = array();
+		//Following SQL grabs all accepted taxa at species / infraspecific rank that don't yet have a distribution map
+		//Eventually well probably add ability to refresh all maps older than a certain date, and/or by other criteria
+		//Return limit is currently set at 1000 records, which maybe should be variable that is set by user?
 		$sql = 'SELECT DISTINCT t.tid, t.sciname
 			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted
 			INNER JOIN omoccurrences o ON ts.tid = o.tidinterpreted
 			LEFT JOIN taxamaps m ON t.tid = m.tid
-			WHERE m.tid IS NULL
-			ORDER BY t.sciname';
+			WHERE t.rankid > 219 AND m.tid IS NULL
+			ORDER BY t.sciname LIMIT 1000';
 		if($stmt = $this->conn->prepare($sql)){
 			//$stmt->bind_param();
 			$stmt->execute();
@@ -35,13 +38,24 @@ class MapSupport extends Manager{
 		return $retArr;
 	}
 
-	public function getCoordinates($tid){
+	public function getCoordinates($tid, $bounds){
 		$retArr = array();
 		$tidArr = $this->getRelatedTids($tid);
 		if($tidArr){
+			$latMin = -90;
+			$latMax = 90;
+			$lngMin = -180;
+			$lngMax = 180;
+			if($bounds){
+				$boundArr = explode(';', $bounds);
+				$latMin = $boundArr[2];
+				$latMax = $boundArr[0];
+				$lngMin = $boundArr[1];
+				$lngMax = $boundArr[3];
+			}
 			$sql = 'SELECT DISTINCT decimalLatitude, decimalLongitude
 				FROM omoccurrences
-				WHERE (decimalLatitude BETWEEN -90 AND 90) AND (decimalLongitude BETWEEN -180 AND 180)
+				WHERE (decimalLatitude BETWEEN '.$latMin.' AND '.$latMax.') AND (decimalLongitude BETWEEN '.$lngMin.' AND '.$lngMax.')
 				AND (cultivationStatus IS NULL OR cultivationStatus = 0) AND (localitySecurity IS NULL OR localitySecurity = 0)
 				AND (coordinateUncertaintyInMeters IS NULL OR coordinateUncertaintyInMeters < 5000)
 				AND tidinterpreted IN('.array_explode(',', $tidArr).')';
