@@ -78,14 +78,14 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 				</div>
 				<div id="addchardiv" style="display:none;margin-bottom:8px;">
 					<form name="newcharform" action="chardetails.php" method="post" onsubmit="return validateNewCharForm(this)">
-						<fieldset class="flex-form">
+						<fieldset>
 							<legend><b> <?php echo (isset($LANG['NEW_CHAR']) ? $LANG['NEW_CHAR'] : 'New Character'); ?> </b></legend>
 							<div>
 							<label for="charname"> <?php echo (isset($LANG['CHAR_NAME']) ? $LANG['CHAR_NAME'] : 'Character Name'); ?>: </label>
 								<input type="text" id="charname" name="charname" maxlength="255" style="width:400px;" />
 							</div>
 							<div class="flex-form">
-								<div >
+								<div>
 									<label for="chartype"> <?php echo (isset($LANG['TYPE']) ? $LANG['TYPE'] : 'Type'); ?>:</label>
 									<select id="chartype" name="chartype">
 										<option value="UM"> <?php echo (isset($LANG['MULTI_STATE']) ? $LANG['MULTI_STATE'] : 'Multi-state'); ?> </option>
