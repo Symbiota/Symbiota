@@ -71,29 +71,29 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 		if($isEditor){
 			?>
 			<div id="addeditchar">
-				<div style="float:right;margin:10px;">
+				<div>
 					<a href="#" onclick="toggle('addchardiv');">
 						<img src="../../images/add.png" alt="Create New Character" />
 					</a>
 				</div>
 				<div id="addchardiv" style="display:none;margin-bottom:8px;">
 					<form name="newcharform" action="chardetails.php" method="post" onsubmit="return validateNewCharForm(this)">
-						<fieldset style="padding:10px;">
+						<fieldset class="flex-form">
 							<legend><b> <?php echo (isset($LANG['NEW_CHAR']) ? $LANG['NEW_CHAR'] : 'New Character'); ?> </b></legend>
 							<div>
-							<?php echo (isset($LANG['CHAR_NAME']) ? $LANG['CHAR_NAME'] : 'Character Name'); ?>:<br />
-								<input type="text" name="charname" maxlength="255" style="width:400px;" />
+							<label for="charname"> <?php echo (isset($LANG['CHAR_NAME']) ? $LANG['CHAR_NAME'] : 'Character Name'); ?>: </label>
+								<input type="text" id="charname" name="charname" maxlength="255" style="width:400px;" />
 							</div>
-							<div style="padding-top:6px;">
-								<div style="float:left;">
-									<?php echo (isset($LANG['TYPE']) ? $LANG['TYPE'] : 'Type'); ?>:<br />
-									<select name="chartype" style="width:180px;">
+							<div class="flex-form">
+								<div >
+									<label for="chartype"> <?php echo (isset($LANG['TYPE']) ? $LANG['TYPE'] : 'Type'); ?>:</label>
+									<select id="chartype" name="chartype">
 										<option value="UM"> <?php echo (isset($LANG['MULTI_STATE']) ? $LANG['MULTI_STATE'] : 'Multi-state'); ?> </option>
 									</select>
 								</div>
-								<div style="margin-left:30px;float:left;">
-								<?php echo (isset($LANG['DIFFICULTY']) ? $LANG['DIFFICULTY'] : 'Difficulty'); ?>:<br />
-									<select name="difficultyrank" style="width:100px;">
+								<div>
+								<label for="difficultyrank"> <?php echo (isset($LANG['DIFFICULTY']) ? $LANG['DIFFICULTY'] : 'Difficulty'); ?>: </label>
+									<select id="difficultyrank" name="difficultyrank">
 										<option value="">---------------</option>
 										<option value="1"> <?php echo (isset($LANG['EASY']) ? $LANG['EASY'] : 'Easy'); ?> </option>
 										<option value="2"> <?php echo (isset($LANG['INTERMEDIATE']) ? $LANG['INTERMEDIATE'] : 'Intermediate'); ?> </option>
@@ -101,9 +101,9 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 										<option value="4"> <?php echo (isset($LANG['HIDDEN']) ? $LANG['HIDDEN'] : 'Difficulty'); ?> </option>
 									</select>
 								</div>
-								<div style="margin-left:30px;float:left;">
-									<?php echo (isset($LANG['GROUPING']) ? $LANG['GROUPING'] : 'Grouping'); ?>:<br />
-									<select name="hid" style="max-width:300px;">
+								<div>
+									<label for="hid"> <?php echo (isset($LANG['GROUPING']) ? $LANG['GROUPING'] : 'Grouping'); ?>: </label>
+									<select id="hid" name="hid" style="max-width:300px;">
 										<option value=""> <?php echo (isset($LANG['NOT_ASSIGNED']) ? $LANG['NOT_ASSIGNED'] : 'Not Assigned'); ?> </option>
 										<option value="">---------------------</option>
 										<?php
@@ -114,12 +114,14 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 										}
 										?>
 									</select>
-									<a href="#" onclick="openHeadingAdmin(); return false;"><img src="../../images/edit.png" /></a>
+									<a href="#" onclick="openHeadingAdmin(); return false;"> <img src="../../images/edit.png" alt="Create new group" /></a>
 								</div>
 							</div>
-							<div style="padding-top:6px;clear:both;">
-								<b> <?php echo (isset($LANG['SORT_SQNCE']) ? $LANG['SORT_SQNCE'] : 'Sort Sequence'); ?> </b><br />
-								<input type="text" name="sortsequence" />
+							<div class="flex-form">
+								<div>
+									<label for="sortsequence"> <?php echo (isset($LANG['SORT_SQNCE']) ? $LANG['SORT_SQNCE'] : 'Sort Sequence'); ?> </label>
+									<input type="text" id="sortsequence" name="sortsequence" />
+								</div>
 							</div>
 							<div style="width:100%;padding-top:6px;">
 								<button name="formsubmit" type="submit" value="Create"> <?php echo (isset($LANG['CREATE_BTN']) ? $LANG['CREATE_BTN'] : 'Create'); ?> </button>
