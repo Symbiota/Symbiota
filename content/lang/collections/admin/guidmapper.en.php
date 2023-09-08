@@ -13,4 +13,7 @@ $LANG['DETS'] = 'Determinations';
 $LANG['IMGS'] = 'Images';
 $LANG['NOT_AUTH'] = 'You are not authorized to access this page';
 
+$LANG['POP_COLL_GUID'] = 'Populate Collection GUIDs';
+$LANG['POP_GUID'] = 'Populate GUIDs';
+
 ?>
