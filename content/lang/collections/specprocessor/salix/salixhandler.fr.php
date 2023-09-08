@@ -16,6 +16,6 @@ $LANG['APPEND_LAST_BUILD'] = 'Ajouter en utilisant les occurrences saisies depui
 $LANG['LIMIT_TO'] = 'Limiter aux';
 $LANG['UNIQUE_VALS'] = 'valeurs uniques par colonne';
 $LANG['BLD_TABLES'] = 'Créer des tableaux Wordstat';
-$LANG['NOT_AUTH'] = 'Vous n\'êtes pas autorisé à créer des statistiques Word';
+$LANG['NOT_AUTH'] = 'Vous n\'êtes pas autorisé à créer Wordstat';
 
 ?>

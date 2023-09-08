@@ -16,6 +16,6 @@ $LANG['APPEND_LAST_BUILD'] = 'Agregar usando las ocurrencias ingresadas desde la
 $LANG['LIMIT_TO'] = 'Limitar a';
 $LANG['UNIQUE_VALS'] = 'valores únicos por columna';
 $LANG['BLD_TABLES'] = 'Construir tablas de Wordstat';
-$LANG['NOT_AUTH'] = 'No estás autorizado a crear estadísticas de Word';
+$LANG['NOT_AUTH'] = 'No estás autorizado a crear Wordstat';
 
 ?>
