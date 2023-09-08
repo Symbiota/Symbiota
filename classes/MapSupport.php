@@ -31,7 +31,7 @@ class MapSupport extends Manager{
 			$stmt->execute();
 			$stmt->bind_result($tid, $sciname);
 			while($stmt->fetch()){
-				$retArr[$tid] = $sciname;
+            array_push($retArr, ['tid' => $tid, 'sciname' => $sciname]);
 			}
 			$stmt->close();
 		}
@@ -48,20 +48,24 @@ class MapSupport extends Manager{
 			$lngMax = 180;
 			if($bounds){
 				$boundArr = explode(';', $bounds);
-				$latMin = $boundArr[2];
-				$latMax = $boundArr[0];
-				$lngMin = $boundArr[1];
-				$lngMax = $boundArr[3];
-			}
+				$latMin = floatval($boundArr[2]);
+				$latMax = floatval($boundArr[0]);
+				$lngMin = floatval($boundArr[3]);
+				$lngMax = floatval($boundArr[1]);
+         }
+
+         //return [$latMin, $latMax, $lngMin, $lngMax];
+         //return ['(' . implode(',', $tidArr) . ')' ];
 			$sql = 'SELECT DISTINCT decimalLatitude, decimalLongitude
 				FROM omoccurrences
 				WHERE (decimalLatitude BETWEEN '.$latMin.' AND '.$latMax.') AND (decimalLongitude BETWEEN '.$lngMin.' AND '.$lngMax.')
 				AND (cultivationStatus IS NULL OR cultivationStatus = 0) AND (localitySecurity IS NULL OR localitySecurity = 0)
 				AND (coordinateUncertaintyInMeters IS NULL OR coordinateUncertaintyInMeters < 5000)
-				AND tidinterpreted IN('.array_explode(',', $tidArr).')';
+				AND tidinterpreted IN('.implode(',', $tidArr).')';
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
-					$retArr[] = $r->decimalLongitude.','.$r->decimalLatitude;
+					//$retArr[] = $r->decimalLongitude.','.$r->decimalLatitude;
+               array_push($retArr, ['lat' => floatval($r->decimalLatitude), 'lng' => floatval($r->decimalLongitude)]);
 				}
 				$rs->free();
 			}
@@ -83,7 +87,7 @@ class MapSupport extends Manager{
 			$stmt->close();
 		}
 		//Append all non-accepted synonyms
-		$sql = 'SELECT tid FROM taxstatus WHERE taxauthid = 1 AND tidaccepted IN('.array_explode(',', $tidArr).')';
+		$sql = 'SELECT tid FROM taxstatus WHERE taxauthid = 1 AND tidaccepted IN('.implode(',', $tidArr).')';
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
 				$tidArr[$r->tid] = $r->tid;
