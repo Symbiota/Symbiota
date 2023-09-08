@@ -40,7 +40,11 @@ if(!$IS_ADMIN){
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/leafletmap.php');
-	?>
+      ?>
+<script 
+   src="<?php echo $CLIENT_ROOT?>/js/dom-to-image/dist/dom-to-image.min.js"
+   type="text/javascript">
+</script>
 	<script type="text/javascript">
 			//Only display JS if user is logged with SuperAdmin permissions
 //			Form actions will trigger JS to do following via AJAX:
@@ -71,14 +75,6 @@ if(!$IS_ADMIN){
             L.marker([bounds[2],bounds[3]]).addTo(markers);
 
             map.mapLayer.fitBounds(markers.getBounds());
-/*
-            for (let taxa of taxaList) {
-               let coords = await getTaxaCoordinates(taxa.tid, bounds);
-               if(coords && coords.length > 0) console.log(coords);
-            }
-               */
-            let coords = await getTaxaCoordinates(taxaList[50].tid, bounds.join(';'));  
-            if(coords && coords.length > 0) console.log(coords);
 
             let maptype;
             for (let maptype_option of document.getElementsByName("maptype"))  {
@@ -88,14 +84,83 @@ if(!$IS_ADMIN){
                }
             }
 
-            if(maptype === "dotmap") {
-               buildDotMap(coords);
-            } else {
-               buildHeatMap(coords);
-            }
+            /*
+
+            for (let taxa of taxaList) {
+               let coords = await getTaxaCoordinates(taxa.tid, bounds.join(';'));
+               if(coords && coords.length > 0) { 
+                  if(maptype === "dotmap") {
+                     await buildDotMap(coords);
+                  } else {
+                     await buildHeatMap(coords);
+                  }
+               }
+               incrementLoadingBar(taxaList.length);
+            }*/
+            let coords = await getTaxaCoordinates(taxaList[50].tid, bounds.join(';'));  
+            if(coords && coords.length > 0) console.log(coords);
+
+            await postImage({
+               tid: taxaList[50].tid, 
+               title: taxaList[50].sciname, 
+               coordinates: coords, 
+               maptype, 
+            })
+
+            //map.mapLayer.clearLayers();
          }
 
-         function buildHeatMap(coordinates) {
+         async function downloadMap(name) {
+            const url = await domtoimage.toPng(document.getElementById('map'))
+            // Creating an anchor(a) tag of HTML
+            const a = document.createElement("a");
+
+            // Passing the blob downloading url
+            a.setAttribute("href", url);
+
+            // Setting the anchor tag attribute for downloading
+            // and passing the download file name
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, "0");
+            var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+            var yyyy = today.getFullYear();
+
+            today = mm + "-" + dd + "-" + yyyy;
+            a.setAttribute("download", name + "-" + today + ".png");
+
+            // Performing a download with click
+            a.click();
+         }
+
+         async function getMapImage(imgName) {
+            return await domtoimage.toBlob(document.getElementById('map'))
+         }
+
+         async function postImage({tid, title, maptype, coordinates}) {
+            
+            let map_blob = maptype === "dotmap"?
+               await buildDotMap(coordinates):
+               await buildHeatMap(coordinates);
+
+            let formData = new FormData();
+            formData.append('mapupload', map_blob, `${title}.${maptype}.png`)
+            formData.append('tid', tid)
+            formData.append('title', title)
+            formData.append('maptype', maptype)
+
+            //tid, title, maptype
+            let response = await fetch('rpc/postMap.php', {
+               method: "POST",
+               credentials: "same-origin",
+               //headers: {"Content-Type": "application/formdata"},
+               body: formData
+            })
+
+            console.log(await response.json())
+         }
+         //getCoordinates -> Build Map -> Build Image -> Unbuild Map ->
+
+         async function buildHeatMap(coordinates) {
             var cfg = {
                "radius": 0.15,
                "maxOpacity": .8,
@@ -110,9 +175,14 @@ if(!$IS_ADMIN){
                data: coordinates
             });
             heatmapLayer.addTo(map.mapLayer);
+
+            //await downloadMap('heatmap');
+            let blob = await getMapImage('heatmap');
+            //map.mapLayer.removeLayer(heatmapLayer);
+            return blob;
          }
 
-         function buildDotMap(coordinates) {
+         async function buildDotMap(coordinates) {
 
             const markerGroup = L.featureGroup(coordinates.map(coord =>  {
                return L.circleMarker([coord.lat, coord.lng], {
@@ -124,12 +194,40 @@ if(!$IS_ADMIN){
                      fillOpacity: 1.0
                });
             })).addTo(map.mapLayer);
+
+            //await downloadMap('heatmap');
+
+            let blob = await getMapImage('heatmap');
+            //map.mapLayer.removeLayer(markerGroup);
+            return blob;
+         }
+
+         async function incrementLoadingBar(maxCount) {
+            let count = parseInt(document.getElementById('loading-bar-count').innerHTML) + 1;
+            document.getElementById('loading-bar-count').innerHTML = count; 
+
+            let new_percent = (count / maxCount) * 100;
+            document.getElementById('loading-bar').style.width = `${new_percent}%`;
+         }
+
+         function updateBounds() {
          }
 
 
          function initialize() {
-            console.log('initing map')
-            map = new LeafletMap('map');
+            const data = document.getElementById('service-container');
+            let latlng = [
+               parseFloat(data.getAttribute('data-lat')),
+               parseFloat(data.getAttribute('data-lng'))
+            ]
+
+            map = new LeafletMap('map', {
+               center: latlng, 
+               zoom: 6, 
+               scale: false, 
+               layer_control: false,
+               zoomControl: false
+            });
          }
 	</script>
 </head>
@@ -142,21 +240,32 @@ if(!$IS_ADMIN){
          data-lng="<?= htmlspecialchars($longCen)?>"
       ></div>
       <div id="innertext">
-         <div id="map" style="width:100%;height:50rem;"></div>
+         <div style="display:flex; justify-content:center">
+            <div id="map" style="width:50rem;height:50rem;"></div>
+         </div>
          <br/>
+         <div style="background-color:#E9E9ED">
+            <div id="loading-bar" style="height:2rem; width:0%; background-color:#1B3D2F"></div>
+         </div>
+         <div style="text-align: center; padding-top:0.5rem">
+            Maps Generated
+            <span id="loading-bar-count">0</span>
+            <span>/ <?php echo count($taxaList)?></span>
+         </div>
          <form id="thumbnailBuilder" name="thumbnailBuilder" method="post" action="">
-         Form only triggers JS functions, which processes data via AJAX functions wtihin the above list
             <div>Map Type</div>
             <input type="radio" name="maptype" id ="heatmap" value="heatmap" checked>
             <label for="heatmap">Heat Map</label><br>
             <input type="radio" name="maptype" id ="dotmap" value="dotmap">
             <label for="dotmap">Dot Map</label><br>
 
-            <label for="bounds">Bounds</label><br/>
-            <input id="bounds"/><br/>
+            <label>Bounds</label><br/>
+            <input id="bounds" style="width:20rem" value="<?php echo implode(';', $bounds)?>" placholder="<?php echo implode(';', $bounds)?>"/><br>
 
+<!---
             <label for="taxon">Taxon</label><br>
             <input id="taxon"/><br/>
+--->
 <!---
          Form options to be added now:
          - map type (radio button): heat map, dot map
