@@ -70,6 +70,11 @@ if($IS_ADMIN){
 						<input type="text" name="searchterm" title="<?php echo (isset($LANG['ENTER_LAST'])?$LANG['ENTER_LAST']:'Enter Last Name'); ?>" /><br/>
 						<button name="submit" type="submit" value="Search"><?php echo (isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search'); ?></button>
 					</form>
+
+					<span style="text-indent: -5000px; position: absolute;">
+						<a href = "#userlist">Skip to list of users</a>
+					</span>			
+
 					<?php echo (isset($LANG['QUICK_SEARCH'])?$LANG['QUICK_SEARCH']:'Quick Search'); ?>:
 					<div style='margin:2px 0px 0px 10px;'>
 						<div><a href='usermanagement.php?searchterm=A'>A</a>|<a href='usermanagement.php?searchterm=B'>B</a>|<a href='usermanagement.php?searchterm=C'>C</a>|<a href='usermanagement.php?searchterm=D'>D</a>|<a href='usermanagement.php?searchterm=E'>E</a>|<a href='usermanagement.php?searchterm=F'>F</a>|<a href='usermanagement.php?searchterm=G'>G</a>|<a href='usermanagement.php?searchterm=H'>H</a></div>
@@ -691,6 +696,9 @@ if($IS_ADMIN){
 				<?php
 			}
 			else{
+				?>
+				<a name="userlist"></a>
+				<?php
 				$users = $userManager->getUsers($searchTerm);
 				echo '<h1>Users</h1>';
 				foreach($users as $id => $name){
