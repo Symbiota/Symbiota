@@ -46,14 +46,6 @@ if(!$IS_ADMIN){
    type="text/javascript">
 </script>
 	<script type="text/javascript">
-			//Only display JS if user is logged with SuperAdmin permissions
-//			Form actions will trigger JS to do following via AJAX:
-//			1) Grab accepted taxa list (currently set to return 1000 records at a time)
-//			2) For each taxon:
-//				a) grab coordinates to be mapped
-//				b) Create map image using LeafLet
-//				c) Post image to server and save URL to database
-         //
          let map 
          async function getTaxaCoordinates(tid, bounds) {
             const response = await fetch(`rpc/getCoordinates.php?tid=${tid}&bounds=${encodeURI(bounds)}`, {
@@ -84,19 +76,20 @@ if(!$IS_ADMIN){
                }
             }
 
-            /*
 
             for (let taxa of taxaList) {
                let coords = await getTaxaCoordinates(taxa.tid, bounds.join(';'));
                if(coords && coords.length > 0) { 
-                  if(maptype === "dotmap") {
-                     await buildDotMap(coords);
-                  } else {
-                     await buildHeatMap(coords);
-                  }
+                  await postImage({
+                     tid: taxa.tid, 
+                     title: taxa.sciname, 
+                     coordinates: coords, 
+                     maptype, 
+                  })
                }
                incrementLoadingBar(taxaList.length);
-            }*/
+            }
+            /*
             let coords = await getTaxaCoordinates(taxaList[50].tid, bounds.join(';'));  
             if(coords && coords.length > 0) console.log(coords);
 
@@ -106,34 +99,15 @@ if(!$IS_ADMIN){
                coordinates: coords, 
                maptype, 
             })
+*/
 
-            //map.mapLayer.clearLayers();
-         }
-
-         async function downloadMap(name) {
-            const url = await domtoimage.toPng(document.getElementById('map'))
-            // Creating an anchor(a) tag of HTML
-            const a = document.createElement("a");
-
-            // Passing the blob downloading url
-            a.setAttribute("href", url);
-
-            // Setting the anchor tag attribute for downloading
-            // and passing the download file name
-            var today = new Date();
-            var dd = String(today.getDate()).padStart(2, "0");
-            var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-            var yyyy = today.getFullYear();
-
-            today = mm + "-" + dd + "-" + yyyy;
-            a.setAttribute("download", name + "-" + today + ".png");
-
-            // Performing a download with click
-            a.click();
          }
 
          async function getMapImage(imgName) {
-            return await domtoimage.toBlob(document.getElementById('map'))
+            return await domtoimage.toBlob(document.getElementById('map'), {
+               height: 500,
+               width: 500
+            });
          }
 
          async function postImage({tid, title, maptype, coordinates}) {
@@ -143,7 +117,7 @@ if(!$IS_ADMIN){
                await buildHeatMap(coordinates);
 
             let formData = new FormData();
-            formData.append('mapupload', map_blob, `${title}.${maptype}.png`)
+            formData.append('mapupload', map_blob, `map.png`)
             formData.append('tid', tid)
             formData.append('title', title)
             formData.append('maptype', maptype)
@@ -152,17 +126,14 @@ if(!$IS_ADMIN){
             let response = await fetch('rpc/postMap.php', {
                method: "POST",
                credentials: "same-origin",
-               //headers: {"Content-Type": "application/formdata"},
                body: formData
             })
-
-            console.log(await response.json())
          }
          //getCoordinates -> Build Map -> Build Image -> Unbuild Map ->
 
          async function buildHeatMap(coordinates) {
             var cfg = {
-               "radius": 0.15,
+               "radius": 0.2,
                "maxOpacity": .8,
                "scaleRadius": true,
                "useLocalExtrema": true,
@@ -176,9 +147,8 @@ if(!$IS_ADMIN){
             });
             heatmapLayer.addTo(map.mapLayer);
 
-            //await downloadMap('heatmap');
             let blob = await getMapImage('heatmap');
-            //map.mapLayer.removeLayer(heatmapLayer);
+            map.mapLayer.removeLayer(heatmapLayer);
             return blob;
          }
 
@@ -195,10 +165,8 @@ if(!$IS_ADMIN){
                });
             })).addTo(map.mapLayer);
 
-            //await downloadMap('heatmap');
-
             let blob = await getMapImage('heatmap');
-            //map.mapLayer.removeLayer(markerGroup);
+            map.mapLayer.removeLayer(markerGroup);
             return blob;
          }
 

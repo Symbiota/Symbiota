@@ -109,14 +109,16 @@ class MapSupport extends Manager{
 		$status = false;
 		$tid = $portArr['tid'];
 		$title = $portArr['title'];
-		$mapType = 'heatmap';
+      $mapType = 'heatmap';
+
 		if(isset($portArr['maptype'])) $mapType = $portArr['maptype'];
 		if(!empty($_FILES['mapupload']['name'])){
 			$ext = substr($_FILES['mapupload']['name'], strrpos($_FILES['mapupload']['name'], '.'));
-			$fileName = $tid.'_'.$mapType.'_'.time().'.'.$ext;
+			$fileName = $tid.'_'.$mapType.'_'.time() . $ext;
+
 			$this->setTargetPaths();
-			if(move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->targetPath.$fileName)){
-				$status = $this->insertImage($tid, $title, $this->targetPath.$fileName);
+			if(move_uploaded_file($_FILES['mapupload']['tmp_name'], $this->targetPath.$fileName)){
+				$status = $this->insertImage($tid, $title, $this->targetUrl.$fileName);
 			}
 			else{
 				$this->errorMessage = 'ERROR uploading file (code '.$_FILES['uploadfile']['error'].'): ';
@@ -173,13 +175,14 @@ class MapSupport extends Manager{
 		}
 		if(substr($targetPath, -1) != '/') $targetPath .= '/';
 		if(substr($targetUrl, -1) != '/') $targetUrl .= '/';
+
 		$targetPath .= 'maps/';
 		$targetUrl .= 'maps/';
-		if(!$targetPath) mkdir($targetPath);
+		if(!is_dir($targetPath)) mkdir($targetPath);
 		$ymd = date('Y-m-d');
 		$targetPath .= $ymd.'/';
 		$targetUrl .= $ymd.'/';
-		if(!$targetPath) mkdir($targetPath);
+		if(!is_dir($targetPath)) mkdir($targetPath);
 		$this->targetPath = $targetPath;
 		$this->targetUrl = $targetUrl;
 	}
