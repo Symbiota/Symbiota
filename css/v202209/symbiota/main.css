@@ -482,3 +482,8 @@ table.styledtable tr.alt td {
 .bottom-breathing-room-sm-rel {
   margin-bottom: 0.5rem;
 }
+
+.cat-icon-div {
+  width: 4rem;
+  height: 3rem;
+}

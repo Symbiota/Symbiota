@@ -274,7 +274,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 
 	public function outputFullCollArr($occArr, $targetCatID = 0){
 		if(!$this->searchSupportManager) $this->searchSupportManager = new OccurrenceSearchSupport($this->conn);
-		$this->searchSupportManager->outputFullCollArr($occArr, $targetCatID, false, false, '');
+		$this->searchSupportManager->outputFullCollArr($occArr, $targetCatID, false, false, '', '', '');
 	}
 
 	//Misc support functions

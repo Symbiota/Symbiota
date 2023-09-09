@@ -122,7 +122,7 @@ class OccurrenceSearchSupport {
 						<?php
 						if($displayIcons){
 							?>
-							<div style="<?php echo ($catIcon?'width:40px;height:35px;':''); ?>">
+							<div class="<?php echo ($catIcon?'cat-icon-div':''); ?>">
 								<?php
 								if($catIcon){
 									$catIcon = (substr($catIcon,0,6)=='images'?$CLIENT_ROOT:'').$catIcon;
@@ -139,10 +139,8 @@ class OccurrenceSearchSupport {
 								$catSelected = false;
 								if(!$catSelArr && !$collSelArr) $catSelected = true;
 								elseif(in_array($catid, $catSelArr)) $catSelected = true;
-								// $categoryLinkStr = '<a href="#" onclick="toggleCat(' . $idStr . ');return false;">' . $name. '</a>';
 								$ariaLabel = $name . '(' . $collTypeLabel . ')' . '-' . $uniqGrouping;
 								echo '<input aria-label="' . $ariaLabel . '"   data-role="none" id="cat-' . $idStr . '-' . $collTypeLabel . '-' . $uniqGrouping . '-Input" name="cat[]" value="' . $catid.'" type="checkbox" onclick="selectAllCat(this,\'cat-' . $idStr . '\')" ' . ($catSelected?'checked':'') . ' />';
-								// echo '<label  for="cat-' . $idStr . '-' . $collTypeLabel . '-' . $uniqGrouping . '-Input">' . $name . "(" . $collTypeLabel . ")" . '</label>';
 								echo $name . "(" . $collTypeLabel . ")";
 								?>
 							</div>
@@ -188,7 +186,7 @@ class OccurrenceSearchSupport {
 											<?php
 											if($displayIcons){
 												?>
-												<div style="width:40px;height:35px">
+												<div class="cat-icon-div">
 													<?php
 													if($collName2["icon"]){
 														$cIcon = (substr($collName2["icon"],0,6)=='images'?$CLIENT_ROOT:'').$collName2["icon"];
@@ -249,7 +247,7 @@ class OccurrenceSearchSupport {
 						<?php
 						if($displayIcons){
 							?>
-							<div style="<?php ($cArr["icon"]?'width:40px;height:35px':''); ?>">
+							<div class="<?php ($cArr["icon"]?'cat-icon-div':''); ?>">
 								<?php
 								if($cArr["icon"]){
 									$cIcon = (substr($cArr["icon"],0,6)=='images'?$CLIENT_ROOT:'').$cArr["icon"];
