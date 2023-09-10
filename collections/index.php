@@ -102,10 +102,10 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 							</label>
 						</div>
 						<?php
-							$collManager->outputFullCollArr($specArr, $catId, true, true, 'Specimen', '');
+							$collManager->outputFullCollArr($specArr, $catId, true, true, 'Specimen', 'Specimens');
 							$hrAndHeaderText = '<div class="specimen-header-margin"><hr/><h2>' . $LANG['OBSERVATION_COLLECTIONS'] . '</h2></div>';
 							if($specArr && $obsArr) echo $hrAndHeaderText;
-							$collManager->outputFullCollArr($obsArr, $catId, true, true, 'Observation', '');
+							$collManager->outputFullCollArr($obsArr, $catId, true, true, 'Observation', 'Observations');
 						?>
 					</form>
 				</div>
