@@ -95,7 +95,7 @@ class OccurrenceSearchSupport {
 		$targetCatID = (string)$targetCatID;
 		if($targetCatID != '') $targetCatArr = explode(',', $targetCatID);
 		elseif($GLOBALS['DEFAULTCATID'] != '') $targetCatArr = explode(',', $GLOBALS['DEFAULTCATID']);
-		$buttonTxt = isset($LANG['BUTTON_NEXT'])?$LANG['BUTTON_NEXT']:'Search;';
+		$buttonTxt = isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search;';
 		$replacedUniqGrouping = str_replace('-',' ',$uniqGrouping);
 		$buttonTxtParenthetical = $uniqGrouping === '' ? '' : ' (' . $replacedUniqGrouping . ')';
 		$buttonStr = '<button aria-label="' . $buttonTxt . $buttonTxtParenthetical . '" type="submit" value="search">' . $buttonTxt . $buttonTxtParenthetical . '</button>';
@@ -170,10 +170,8 @@ class OccurrenceSearchSupport {
 									echo $name; 
 									$specimenLegendTxt = isset($LANG['SPECIMEN']) ? $LANG['SPECIMEN'] : "Specimen";
 									$observationLegendTxt = isset($LANG['OBSERVATION']) ? $LANG['OBSERVATION'] : "Observation";
-									$isSpecimen = $collTypeLabel === "Specimen";
 									$isObservation = $collTypeLabel === "Observation";
-									$outputTxt = 'deleteMe';
-									if($isSpecimen) $outputTxt = $specimenLegendTxt;
+									$outputTxt = $specimenLegendTxt;
 									if($isObservation) $outputTxt = $observationLegendTxt;
 									?> 
 									(<?php echo $outputTxt ?>)
@@ -204,7 +202,6 @@ class OccurrenceSearchSupport {
 											<div>
 												<?php
 												echo '<input aria-label="select collection ' . $collid . '" id="coll-' . $collid . '-' . $idStr . '" data-role="none" name="db[]" value="'.$collid.'" type="checkbox" class="cat-'.$idStr.'" onclick="unselectCat(\'cat-'.$idStr.'-Input\')" '.($catSelected || !$collSelArr || in_array($collid, $collSelArr)?'checked':'').' />';
-												// echo '<label>Select/Deselect</label>';
 												?>
 											</div>
 											<div>
@@ -261,10 +258,9 @@ class OccurrenceSearchSupport {
 							<?php
 						}
 						?>
-						<div style="width:25px;padding-top:8px;">
+						<div class="collection-checkbox">
 							<?php
 							echo '<input aria-label="select collection ' . $collid . '" data-role="none" id="collection-' . $collid . '" name="db[]" value="' . $collid . '" type="checkbox" onclick="uncheckAll()" '.(!$collSelArr || in_array($collid, $collSelArr)?'checked':'').' />';
-							// echo '<label for="' . $collid . '">Boop</label>';
 							?>
 						</div>
 						<div>

@@ -487,3 +487,8 @@ table.styledtable tr.alt td {
   width: 4rem;
   height: 3rem;
 }
+
+.collection-checkbox {
+  width: 25px;
+  padding-top: 8px;
+}

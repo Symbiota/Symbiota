@@ -28,7 +28,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 		include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 		?>
 		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
-		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/collstats.css" type="text/css" rel="stylesheet" />
+		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />
 		<script src="../js/jquery-3.2.1.min.js" type="text/javascript"></script>
 		<script src="../js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
 		<link href="../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
@@ -64,7 +64,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 		echo '<div class="navpath">';
 			echo '<a href="../index.php">' . htmlspecialchars((isset($LANG['NAV_HOME'])?$LANG['NAV_HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 			echo '&gt;&gt; ';
-			echo '<b>'.(isset($LANG['NAV_COLLECTIONS'])?$LANG['NAV_COLLECTIONS']:'Collections').'</b>';
+			echo '<b>' . (isset($LANG['NAV_COLLECTIONS']) ? $LANG['NAV_COLLECTIONS'] : 'Collections') . '</b>';
 		echo "</div>";
 	}
 	?>
@@ -156,7 +156,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 						foreach($catTitleArr as $catPid => $catTitle){
 							?>
 							<fieldset class="cat-title-fieldset">
-								<legend class="cat-title-legend">Glorp<?php echo $catTitle; ?></legend>
+								<legend class="cat-title-legend"><?php echo $catTitle; ?></legend>
 								<div class="cat-submit-div sticky-buttons">
 									<button type="submit" name="action"><?php echo isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search &gt'; ?></button>
 								</div>
@@ -167,13 +167,13 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 									?>
 									<div>
 										<a href="#" onclick="togglePid('<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>');return false;">
-											<div style="display: flex; flex-direction: row; align-items: center; gap: 1rem;">
+											<div class="condense-expand-button-set">
 												<img id="plus-<?php echo $pid; ?>" alt="plus sign to expand menu" src="../../images/plus_sm.png" style="display: none;" />
 												<img id="minus-<?php echo $pid; ?>" alt="minus sign to condense menu" src="../../images/minus_sm.png" />
-												<p id="pid-ptext-<?php echo $pid; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>">
+												<p id="pid-ptext-<?php echo $pid; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid) ? '' : 'display:none;') ?>">
 													<?php echo $LANG['EXPAND'] ?>
 												</p>
-												<p id="pid-mtext-<?php echo $pid; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" >
+												<p id="pid-mtext-<?php echo $pid; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid) ? 'display:none;' : '') ?>" >
 													<?php echo $LANG['CONDENSE'] ?>
 												</p>
 											</div>

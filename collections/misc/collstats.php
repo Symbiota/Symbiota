@@ -232,7 +232,7 @@ if($action != "Update Statistics"){
 			include_once($SERVER_ROOT.'/includes/head.php');
 			?>
 			<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
-			<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/collstats.css" type="text/css" rel="stylesheet" />
+			<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />
             <script src="../../js/jquery.js" type="text/javascript"></script>
 			<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 			<script src="../../js/symb/collections.index.js" type="text/javascript"></script>
