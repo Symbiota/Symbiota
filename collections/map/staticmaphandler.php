@@ -46,7 +46,9 @@ if(!$IS_ADMIN){
    type="text/javascript">
 </script>
 	<script type="text/javascript">
-         let map 
+         let map;
+         let bounds;
+
          async function getTaxaCoordinates(tid, bounds) {
             const response = await fetch(`rpc/getCoordinates.php?tid=${tid}&bounds=${encodeURI(bounds)}`, {
                method: "GET",
@@ -59,14 +61,11 @@ if(!$IS_ADMIN){
          async function buildMaps(e) {
             const data = document.getElementById('service-container');
             let taxaList = JSON.parse(data.getAttribute('data-taxa-list'))
-            let bounds = JSON.parse(data.getAttribute('data-bounds'))
 
-            let markers = L.featureGroup()
+            const leafletControls = document.querySelector('.leaflet-control-container')
+            leafletControls.style.display = "none";
 
-            L.marker([bounds[0],bounds[1]]).addTo(markers);
-            L.marker([bounds[2],bounds[3]]).addTo(markers);
-
-            map.mapLayer.fitBounds(markers.getBounds());
+            updateMapBounds(bounds);
 
             let maptype;
             for (let maptype_option of document.getElementsByName("maptype"))  {
@@ -75,7 +74,6 @@ if(!$IS_ADMIN){
                   break;
                }
             }
-
 
             for (let taxa of taxaList) {
                let coords = await getTaxaCoordinates(taxa.tid, bounds.join(';'));
@@ -89,18 +87,9 @@ if(!$IS_ADMIN){
                }
                incrementLoadingBar(taxaList.length);
             }
-            /*
-            let coords = await getTaxaCoordinates(taxaList[50].tid, bounds.join(';'));  
-            if(coords && coords.length > 0) console.log(coords);
 
-            await postImage({
-               tid: taxaList[50].tid, 
-               title: taxaList[50].sciname, 
-               coordinates: coords, 
-               maptype, 
-            })
-*/
-
+            //Turn Controls back on when done processing maps
+            leafletControls.style.display = "block";
          }
 
          async function getMapImage(imgName) {
@@ -174,13 +163,24 @@ if(!$IS_ADMIN){
             let count = parseInt(document.getElementById('loading-bar-count').innerHTML) + 1;
             document.getElementById('loading-bar-count').innerHTML = count; 
 
+
             let new_percent = (count / maxCount) * 100;
             document.getElementById('loading-bar').style.width = `${new_percent}%`;
+
+            if(count === maxCount) {
+               document.getElementById('loading-bar').style.width = `0%`;
+               document.getElementById('loading-bar-count').innerHTML = 0; 
+            } 
          }
 
-         function updateBounds() {
-         }
+         function updateMapBounds() {
+            let markers = L.featureGroup()
 
+            L.marker([bounds[0],bounds[1]]).addTo(markers);
+            L.marker([bounds[2],bounds[3]]).addTo(markers);
+
+            map.mapLayer.fitBounds(markers.getBounds());
+         }
 
          function initialize() {
             const data = document.getElementById('service-container');
@@ -189,13 +189,78 @@ if(!$IS_ADMIN){
                parseFloat(data.getAttribute('data-lng'))
             ]
 
+            bounds = JSON.parse(
+               document.getElementById("service-container")
+                  .getAttribute("data-bounds")
+            )
+
             map = new LeafletMap('map', {
                center: latlng, 
                zoom: 6, 
                scale: false, 
-               layer_control: false,
-               zoomControl: false
             });
+
+            let drawControl = new L.Control.Draw({
+               draw: {
+                  ...map.DEFAULT_DRAW_OPTIONS,
+                  marker: false,
+                  polygon: false,
+                  circle: false,
+                  circle: false,
+                  rectangle: true,
+               }
+            });
+
+			   map.mapLayer.addControl(drawControl);
+
+            map.mapLayer.on('draw:created', function(e) {
+               if(e.layerType === "rectangle") {
+                  let rec = e.layer.getBounds()
+                  let northEast = rec.getNorthEast()
+                  let southWest = rec.getSouthWest()
+
+                  document.getElementById("upper_lat").value = northEast.lat;
+                  document.getElementById("upper_lng").value = northEast.lng;
+
+                  document.getElementById("lower_lat").value = southWest.lat;
+                  document.getElementById("lower_lng").value = southWest.lng;
+
+                  bounds = [northEast.lat, northEast.lng, southWest.lat, southWest.lng];
+
+                  updateMapBounds();
+               }
+            })
+
+            const boundsInput = document.getElementById("bounds");
+
+            document.getElementById("upper_lat").addEventListener("input", e => {
+               let lat = parseFloat(e.target.value);
+               if(lat <= 90 && lat >= -90) {
+                  bounds[0] = lat;
+                  updateMapBounds();
+               }
+            })
+            document.getElementById("upper_lng").addEventListener("input", e => {
+               let lng = parseFloat(e.target.value);
+               if(lng <= 180 && lng >= -180) { 
+                  bounds[1] = lng;
+                  updateMapBounds();
+               }
+            })
+            document.getElementById("lower_lat").addEventListener("input", e => {
+               let lat = parseFloat(e.target.value);
+               if(lat <= 90 && lat >= -90) {
+                  bounds[2] = lat;
+                  updateMapBounds();
+               }
+            })
+            document.getElementById("lower_lng").addEventListener("input", e => {
+               let lng = parseFloat(e.target.value);
+               if(lng <= 180 && lng >= -180) { 
+                  bounds[3] = lng;
+                  updateMapBounds();
+               }
+            })
          }
 	</script>
 </head>
@@ -227,9 +292,17 @@ if(!$IS_ADMIN){
             <input type="radio" name="maptype" id ="dotmap" value="dotmap">
             <label for="dotmap">Dot Map</label><br>
 
-            <label>Bounds</label><br/>
-            <input id="bounds" style="width:20rem" value="<?php echo implode(';', $bounds)?>" placholder="<?php echo implode(';', $bounds)?>"/><br>
+            <label>Upper Bound</label><br/>
+            <label>Lat</label>
+            <input id="upper_lat" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLatMax?>" placeholder="<?php echo $boundLatMax?>"/>
+            <label>Lng</label>
+            <input id="upper_lng" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLngMax?>" placeholder="<?php echo $boundLngMax?>"/><br>
 
+            <label>Lower Bound</label><br/>
+            <label>Lat</label>
+            <input id="lower_lat" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLatMin?>" placeholder="<?php echo $boundLatMin?>"/>
+            <label>Lng</label>
+            <input id="lower_lng" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLngMin?>" placeholder="<?php echo $boundLngMin?>"/><br>
 <!---
             <label for="taxon">Taxon</label><br>
             <input id="taxon"/><br/>
