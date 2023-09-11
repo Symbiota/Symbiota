@@ -94,12 +94,12 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 <head>
 	<meta charset="<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['CHECKLIST'])?$LANG['CHECKLIST']:'Checklist').': '.$clManager->getClName(); ?></title>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CLIENT_ROOT . '/css/' . ($CSS_VERSION_RELEASE ? 'v' . $CSS_VERSION_RELEASE . '/' : 'legacy/symb/'); ?>jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/checklists/checklist.css" type="text/css" rel="stylesheet" />
+	<link href="<?php echo $CLIENT_ROOT . '/css/' . ($CSS_VERSION_RELEASE ? 'v' . $CSS_VERSION_RELEASE . '/symbiota/checklists/' : 'legacy/symb/'); ?>checklist.css" type="text/css" rel="stylesheet" />
 	<script src="../js/jquery.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
 	<script type="text/javascript">
@@ -648,9 +648,16 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 					else{
 						//Display taxa
 						echo '<div id="taxalist-div">';
+						if($clid && $clArray['dynamicProperties']){
+							$dynamPropsArr = json_decode($clArray['dynamicProperties'], true);
+						}
 						$voucherArr = array();
-						if($showVouchers) $voucherArr = $clManager->getVoucherArr();
+						if($showVouchers) {
+							$voucherArr = $clManager->getVoucherArr();
+							$externalVoucherArr = $clManager->getExternalVoucherArr();
+						}
 						$prevGroup = '';
+						$arrforexternalserviceapi = '';
 						foreach($taxaArray as $tid => $sppArr){
 							$group = $sppArr['taxongroup'];
 							if($group != $prevGroup){
@@ -676,12 +683,26 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 							if($clid && $clArray['dynamicsql']){
 								?>
 								<span class="view-specimen-span printoff">
-									<a href="../collections/list.php?usethes=1&taxontype=2&taxa=<?php echo htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . "&targetclid=" . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . "&targettid=" . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS);?>" target="_blank">
+									<a href="../collections/list.php?usethes=1&taxontype=2&taxa=<?php echo htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . "&targetclid=" . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . "&targettid=" . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS);?>" target="_blank" style="text-decoration:none;">
 										<img src="../images/list.png" style="width:12px;" title="<?php echo (isset($LANG['VIEW_RELATED'])?$LANG['VIEW_RELATED']:'View Related Specimens'); ?>" />
 									</a>
+									<?php
+									if(isset($dynamPropsArr)){ 
+										$scinameasid = str_replace(" ", "-", $sppArr['sciname']);
+										if($arrforexternalserviceapi == '') {
+											$arrforexternalserviceapi .= "'" . $scinameasid . "'";
+										} else {
+											$arrforexternalserviceapi .= ",'" . $scinameasid . "'";
+										}
+										echo '<a href="#" target="_blank" id="a-'.$scinameasid.'">';
+										echo '<img src="../images/icons/inaturalist.png" style="width:12px;display:none;" title="'. (isset($LANG['LINKTOINAT'])?$LANG['LINKTOINAT']:'See records in iNaturalist').'" id="i-'.$scinameasid.'" />';
+										echo '</a>';
+									}
+									?>
 								</span>
 								<?php
 							}
+
 							if($isEditor){
 								if(isset($sppArr['clid'])){
 									$clidArr = explode(',',$sppArr['clid']);
@@ -724,12 +745,55 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 									}
 									if($voucCnt > 4 && !$printMode) $voucStr .= '</span><a href="#" id="lessvouch-'.$tid.'" style="display:none;" onclick="return toggleVoucherDiv('.$tid.');">...' . htmlspecialchars($LANG['LESS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 								}
+								if(count($externalVoucherArr) > 0 && $clManager->getAssociatedExternalService()) {
+									$voucStr .= ' '.$externalVoucherArr[$tid];
+								}
 								$voucStr = trim($voucStr,' ;,');
 								if($voucStr) echo '<div class="note-div">'.$voucStr.'</div>';
 							}
 							echo "</div>\n";
 						}
 						echo '</div>';
+						if(isset($dynamPropsArr) && $dynamPropsArr['externalservice'] == 'inaturalist') {
+							echo '<script>const externalProjID = "' . ($dynamPropsArr['externalserviceid']?$dynamPropsArr['externalserviceid']:'') . '";';
+							echo 'const iconictaxon = "' . ($dynamPropsArr['externalserviceiconictaxon']?$dynamPropsArr['externalserviceiconictaxon']:'') . '";';
+							echo 'const checklisttaxa = [' . $arrforexternalserviceapi . '];</script>';
+							echo '<script src="../js/symb/checklists.externalserviceapi.js"></script>';
+							?>
+							<script>
+								// iNaturalist Integration
+								// Note: the two part request (...Page1 vs ...AdditionalPages) is performed
+								// to allow for a variable number of total results. There will always be a 
+								// first page, but there may be 0 or more additional pages. The answer is
+								// extracted from the response to the first ("Page1") fetch request.
+							fetchiNatPage1(externalProjID, iconictaxon)
+								.then(pageone => {
+									const totalresults = pageone.total_results;
+									const perpage = pageone.per_page;
+									const loopnum = Math.ceil(totalresults / perpage);
+									const taxalist1 = extractiNatTaxaIdAndName(pageone.results);
+									fetchiNatAdditionalPages(loopnum, externalProjID, iconictaxon)
+									.then(pagestwoplus => {
+										const taxalist2 = pagestwoplus.map(page => extractiNatTaxaIdAndName(page.results))
+										taxalist = taxalist1.concat(taxalist2.flat());
+										checklisttaxa.forEach( taxon => { 
+											let anchortag = document.getElementById('a-'+taxon);
+											let imgtag = document.getElementById('i-'+taxon);
+											let taxonwithspaces = taxon.replaceAll('-', ' ');
+											const idx = taxalist.findIndex( elem => elem.name === taxonwithspaces);
+											if(idx >= 0) {
+												imgtag.setAttribute("style", "width:12px;display:inline;");
+												anchortag.setAttribute("href", `https://www.inaturalist.org/observations?project_id=${externalProjID}&taxon_id=${taxalist[idx].id}`);
+											}
+										})
+									})
+									.catch(error => {
+										error.message;
+									})
+								})
+							</script>
+							<?php
+						}
 					}
 					$taxaLimit = ($showImages?$clManager->getImageLimit():$clManager->getTaxaLimit());
 					if($clManager->getTaxaCount() > (($pageNumber)*$taxaLimit)){

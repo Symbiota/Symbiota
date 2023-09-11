@@ -232,11 +232,14 @@ if($clid && $isEditor){
 		?>
 		<div id="tabs" style="margin-top:25px;">
 			<ul>
-				<li><a href="nonvoucheredtab.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&start=' . htmlspecialchars($startPos, HTML_SPECIAL_CHARS_FLAGS) . '&displaymode=' . htmlspecialchars($displayMode, HTML_SPECIAL_CHARS_FLAGS); ?>"><span><?php echo htmlspecialchars($LANG['NON_VOUCHERED'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
-				<li><a href="vamissingtaxa.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&start=' . htmlspecialchars($startPos, HTML_SPECIAL_CHARS_FLAGS) . '&displaymode=' . htmlspecialchars(($tabIndex==1?$displayMode:0), HTML_SPECIAL_CHARS_FLAGS) . '&excludevouchers=' . htmlspecialchars((isset($_POST['excludevouchers'])?$_POST['excludevouchers']:''), HTML_SPECIAL_CHARS_FLAGS); ?>"><span><?php echo htmlspecialchars($LANG['MISSINGTAXA'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
-				<li><a href="vaconflicts.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&start=' . htmlspecialchars($startPos, HTML_SPECIAL_CHARS_FLAGS) ;  ?>"><span><?php echo htmlspecialchars($LANG['VOUCHCONF'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
-				<?php
-				if($clManager->hasVoucherProjects()) echo '<li><a href="imgvouchertab.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '">'.(isset($LANG['ADDIMGV'])?$LANG['ADDIMGV']:'Add Image Voucher').'</a></li>';
+
+				<li><a href="nonvoucheredtab.php?clid=<?php echo $clid.'&pid='.$pid.'&start='.$startPos.'&displaymode='.$displayMode; ?>"><span><?php echo $LANG['NON_VOUCHERED'];?></span></a></li>
+				<li><a href="vamissingtaxa.php?clid=<?php echo $clid.'&pid='.$pid.'&start='.$startPos.'&displaymode='.($tabIndex==1?$displayMode:0).'&excludevouchers='.(isset($_POST['excludevouchers'])?$_POST['excludevouchers']:''); ?>"><span><?php echo $LANG['MISSINGTAXA'];?></span></a></li>
+				<li><a href="vaconflicts.php?clid=<?php echo $clid.'&pid='.$pid.'&start='.$startPos; ?>"><span><?php echo $LANG['VOUCHCONF'];?></span></a></li>
+				<?php 
+				if($clManager->getAssociatedExternalService()) echo '<li><a href="externalvouchers.php?clid='.$clid.'&pid='.$pid.'"><span>' . $LANG['EXTVOUCH'] . '</span></a></li>';
+				if($clManager->hasVoucherProjects()) echo '<li><a href="imgvouchertab.php?clid='.$clid.'">'.(isset($LANG['ADDIMGV'])?$LANG['ADDIMGV']:'Add Image Voucher').'</a></li>';
+
 				?>
 				<li><a href="#reportDiv"><span><?php echo htmlspecialchars($LANG['REPORTS'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
 			</ul>

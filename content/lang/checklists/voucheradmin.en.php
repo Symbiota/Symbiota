@@ -31,6 +31,9 @@ $LANG['REMOVESEARCH'] = 'Remove Search Statement';
 $LANG['NON_VOUCHERED'] = 'Non-Vouchered Taxa';
 $LANG['MISSINGTAXA'] = 'Missing Taxa';
 $LANG['VOUCHCONF'] = 'Voucher Conflicts';
+$LANG['EXTVOUCH'] = 'Add Vouchers from an External Service (e.g., iNaturalist)';
+$LANG['LOOKUPEXT'] = 'Retrieve external voucher information';
+$LANG['SAVEEXTVOUCH'] = 'Save external vouchers to checklist';
 $LANG['REPORTS'] = 'Reports';
 $LANG['NONVOUCHTAX'] = 'Non-vouchered taxa list';
 $LANG['OCCURNONVOUCH'] = 'Occurrences for non-vouchered taxa';
@@ -44,6 +47,7 @@ $LANG['NOVOUCHLOCA'] = 'No vouchers located';
 $LANG['LISTEDBELOWARESPECINSTRUC'] = 'Listed below are species from the checklist that do not have linked specimen vouchers.
 Click on name to use the search statement above to dynamically query the occurrence dataset for
 possible voucher specimens. Use the pulldown to the right to display the specimens in a table format.';
+$LANG['LISTEDBELOWEXTERNAL'] = "Listed below are species from the checklist. Using the search functions from the external website, locate an observation that will serve as a possible voucher for each taxon. Copy the observation's ID (for example, from the last portion of the URL) and paste it in the corresponding text box. Multiple vouchers may be added for each taxon. Use commas to separate the ID numbers. Symbiota will search the external service for possible matches, these will appear as white text boxes and the species name will link to the external service. Click 'Retrieve external voucher information' to load voucher data for each species. When ready, click 'Save external vouchers to checklist' to commit the voucher information to Symbiota.";
 $LANG['ALLTAXACONTAINVOUCH'] = 'All taxa contain voucher links';
 $LANG['ADDITIONAL'] = 'See the Option Panel on the central page for more versatile export and print options that dynamically incorporate option selections';
 $LANG['FULLSPECLIST'] = 'Full species list (CSV)';

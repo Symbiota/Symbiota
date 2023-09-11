@@ -10,6 +10,7 @@ class ChecklistManager extends Manager{
 	private $clMetadata;
 	private $childClidArr = array();
 	private $voucherArr = array();
+	private $externalVoucherArr = array();
 	private $pid = '';
 	private $projName = '';
 	private $taxaList = array();
@@ -75,7 +76,7 @@ class ChecklistManager extends Manager{
 		if($this->clid){
 			$sql = 'SELECT c.clid, c.name, c.locality, c.publication, c.abstract, c.authors, c.parentclid, c.notes, '.
 				'c.latcentroid, c.longcentroid, c.pointradiusmeters, c.footprintwkt, c.access, c.defaultSettings, '.
-				'c.dynamicsql, c.datelastmodified, c.uid, c.type, c.initialtimestamp '.
+				'c.dynamicsql, c.datelastmodified, c.dynamicProperties, c.uid, c.type, c.initialtimestamp '.
 				'FROM fmchecklists c WHERE (c.clid = '.$this->clid.')';
 		 	$result = $this->conn->query($sql);
 			if($result){
@@ -97,6 +98,7 @@ class ChecklistManager extends Manager{
 					$this->clMetadata["defaultSettings"] = $row->defaultSettings;
 					$this->clMetadata["dynamicsql"] = $row->dynamicsql;
 					$this->clMetadata["datelastmodified"] = $row->datelastmodified;
+					$this->clMetadata['dynamicProperties'] = $row->dynamicProperties;
 				}
 				$result->free();
 			}
@@ -140,6 +142,17 @@ class ChecklistManager extends Manager{
 			else $this->setDynamicMetaData();
 		}
 		return $this->clMetadata;
+	}
+
+	public function getAssociatedExternalService(){
+		$resp = 'FALSE';
+ 		if($this->clMetadata['dynamicProperties']){
+			$dynpropArr = json_decode($this->clMetadata['dynamicProperties'], TRUE);
+			if(array_key_exists('externalservice', $dynpropArr)) {
+				$resp = $dynpropArr['externalservice'];
+			}
+		} 
+		return $resp;
 	}
 
 	public function getParentChecklist(){
@@ -793,6 +806,47 @@ class ChecklistManager extends Manager{
 
 	public function getVoucherArr(){
 		return $this->voucherArr;
+	}
+
+	private function setExternalVoucherArr(){
+		$clidStr = $this->clid;
+		if($this->childClidArr){
+			$clidStr .= ','.implode(',',array_keys($this->childClidArr));
+		}
+		$vSql = 'SELECT clid, tid, name, dynamicProperties 
+			FROM fmchklstcoordinates 
+			WHERE (clid IN ('.$clidStr.')) AND (tid IN('.implode(',',array_keys($this->taxaList)).')) AND name = "EXTERNAL_VOUCHER"';
+		$vResult = $this->conn->query($vSql);
+		while ($row = $vResult->fetch_object()){
+			$dynPropArr = json_decode($row->dynamicProperties);
+			$displayStr = '';
+			foreach($dynPropArr as $vouch) {
+				$accumulateStr = ($vouch->user?$vouch->user:'');
+				if(strlen($accumulateStr) > 25){
+					//Collector string is too big, thus reduce
+					$strPos = strpos($accumulateStr,';');
+					if(!$strPos) $strPos = strpos($accumulateStr,',');
+					if(!$strPos) $strPos = strpos($accumulateStr,' ',10);
+					if($strPos) $accumulateStr = substr($accumulateStr,0,$strPos).'...';
+				}
+				if($vouch->date) $accumulateStr .= ' '.$vouch->date;
+				if(!trim($accumulateStr)) $accumulateStr = 'undefined voucher';
+				$accumulateStr .= ' ['.$vouch->repository.($vouch->id?'-'.$vouch->id:'').']';
+				$accumulateStr = '<a href="https://www.inaturalist.org/observations/'.$vouch->id.'" target="_blank">' . $accumulateStr . '</a>, ';
+				$displayStr .= $accumulateStr;
+			}
+			$this->externalVoucherArr[$row->tid] = trim($displayStr);
+		}
+		$vResult->free();
+	}
+
+	public function getExternalVoucherArr(){
+		if(count($this->externalVoucherArr) > 0) {
+			return $this->externalVoucherArr;
+		} else {
+			$this->setExternalVoucherArr();
+			return $this->externalVoucherArr;
+		}
 	}
 
 	public function getClName(){

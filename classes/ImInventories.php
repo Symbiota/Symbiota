@@ -19,7 +19,7 @@ class ImInventories extends Manager{
 		$retArr = array();
 		if($this->clid){
 			$sql = 'SELECT clid, name, locality, publication, abstract, authors, parentclid, notes, latcentroid, longcentroid, pointradiusmeters,
-				access, defaultsettings, dynamicsql, datelastmodified, uid, type, footprintwkt, sortsequence, initialtimestamp
+				access, defaultsettings, dynamicsql, datelastmodified, dynamicProperties, uid, type, footprintwkt, sortsequence, initialtimestamp
 				FROM fmchecklists WHERE (clid = '.$this->clid.')';
 			$result = $this->conn->query($sql);
 			if($row = $result->fetch_object()){
@@ -41,6 +41,7 @@ class ImInventories extends Manager{
 				$retArr['hasfootprintwkt'] = ($row->footprintwkt?'1':'0');
 				$retArr['sortsequence'] = $row->sortsequence;
 				$retArr['datelastmodified'] = $row->datelastmodified;
+				$retArr['dynamicProperties'] = $row->dynamicProperties;
 			}
 			$result->free();
 			if($retArr){
@@ -73,6 +74,7 @@ class ImInventories extends Manager{
 		$clid = false;
 		if($fieldArr['name']){
 			$clName = $fieldArr['name'];
+
 			$authors = (!empty($fieldArr['authors']) ? $fieldArr['authors'] : NULL);
 			$type = (!empty($fieldArr['type']) ? $fieldArr['type'] : 'static');
 			$locality = (!empty($fieldArr['locality']) ? $fieldArr['locality'] : NULL);
@@ -85,13 +87,15 @@ class ImInventories extends Manager{
 			$access = (!empty($fieldArr['access']) ? $fieldArr['access'] : 'private');
 			$defaultSettings = (!empty($fieldArr['defaultsettings']) ? $fieldArr['defaultsettings'] : NULL);
 			$dynamicSql = (!empty($fieldArr['dynamicsql']) ? $fieldArr['dynamicsql'] : NULL);
-			$uid = (!empty($fieldArr['uid']) && is_numeric($fieldArr['uid']) && $fieldArr['uid'] ? $fieldArr['uid'] : NULL);
+			$dynamicProperties = (isset($fieldArr['dynamicProperties'])?$fieldArr['dynamicProperties']:NULL);
+      $uid = (!empty($fieldArr['uid']) && is_numeric($fieldArr['uid']) && $fieldArr['uid'] ? $fieldArr['uid'] : NULL);
 			$footprintWkt = (!empty($fieldArr['footprintwkt']) ? $fieldArr['footprintwkt'] : NULL);
 			$sortSequence = (!empty($fieldArr['sortsequence']) && is_numeric($fieldArr['sortsequence']) ? $fieldArr['sortsequence'] : 50);
 			$sql = 'INSERT INTO fmchecklists(name, authors, type, locality, publication, abstract, notes, latcentroid, longcentroid, pointradiusmeters, access, defaultsettings, dynamicsql, uid, footprintWkt, sortsequence) '.
-				'VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ';
+				'VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ';
+
 			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('sssssssdddsssisi', $clName, $authors, $type, $locality, $publication, $abstract, $notes, $latCentroid, $longCentroid, $pointRadiusMeters, $access, $defaultSettings, $dynamicSql, $uid, $footprintWkt, $sortSequence);
+				$stmt->bind_param('sssssssdddssssisi', $clName, $authors, $type, $locality, $publication, $abstract, $notes, $latCentroid, $longCentroid, $pointRadiusMeters, $access, $defaultSettings, $dynamicSql, $dynamicProperties, $uid, $footprintWkt, $sortSequence);
 				if($stmt->execute()){
 					if($stmt->affected_rows && !$stmt->error){
 						$clid = $stmt->insert_id;
@@ -109,7 +113,7 @@ class ImInventories extends Manager{
 		$status = false;
 		$sqlFrag = '';
 		$fieldArr = array('name' => 's', 'authors' => 's', 'type' => 's', 'locality' => 's', 'publication' => 's', 'abstract' => 's', 'notes' => 's', 'latcentroid' => 'd', 'longcentroid' => 'd',
-			'pointradiusmeters' => 'i', 'access' => 's', 'defaultsettings' => 's', 'dynamicsql' => 's', 'footprintWkt' => 's', 'uid' => 'i', 'sortsequence' => 'i');
+			'pointradiusmeters' => 'i', 'access' => 's', 'defaultsettings' => 's', 'dynamicsql' => 's', 'footprintWkt' => 's', 'dynamicproperties' => 's', 'uid' => 'i', 'sortsequence' => 'i');
 		$typeStr = '';
 		$paramArr = array();
 		foreach($inputArr as $fieldName => $fieldValue){

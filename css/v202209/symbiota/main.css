@@ -492,3 +492,53 @@ table.styledtable tr.alt td {
   width: 25px;
   padding-top: 8px;
 }
+
+.taxon-search-bar {
+  width: 25rem;
+}
+
+.welcome-text {
+  margin-bottom: 0.75rem;
+}
+
+.img-add {
+  border: 0px;
+  width: 15px;
+}
+
+.load-button {
+  margin-top: 0.75rem;
+}
+
+.top-breathing-room-rel-sm {
+  margin-top: 0.5rem;
+}
+
+.tax-meta-arr {
+  float: left;
+  margin: 1rem 0rem 2.5rem 0rem;
+  font-weight: bold;
+  font-size: 120%;
+}
+
+.tax-detail-div {
+  margin-top: 1.35rem;
+  margin-left: 0.7rem;
+  float: left;
+  font-size: 80%;
+}
+
+.tax-meta-div {
+  margin: 1rem 1.35rem 3rem 1.35rem;
+  display: none;
+  clear: both;
+}
+
+.taxon-search-bar {
+  width: 25rem;
+}
+
+.fieldset-size {
+  padding: 10px;
+  max-width: 500px;
+}

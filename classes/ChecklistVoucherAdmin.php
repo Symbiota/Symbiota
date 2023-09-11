@@ -44,7 +44,7 @@ class ChecklistVoucherAdmin extends Manager {
 	private function setMetaData(){
 		if($this->clid){
 			$sql = 'SELECT clid, name, locality, publication, abstract, authors, parentclid, notes, latcentroid, longcentroid, pointradiusmeters, '.
-				'footprintwkt, access, defaultSettings, dynamicsql, datelastmodified, uid, type, initialtimestamp '.
+				'footprintwkt, access, defaultSettings, dynamicsql, datelastmodified, dynamicProperties, uid, type, initialtimestamp '.
 				'FROM fmchecklists WHERE (clid = '.$this->clid.')';
 		 	$rs = $this->conn->query($sql);
 			if($rs){
@@ -66,6 +66,7 @@ class ChecklistVoucherAdmin extends Manager {
 					$this->clMetadata["defaultSettings"] = $row->defaultSettings;
 					$this->clMetadata["dynamicsql"] = $row->dynamicsql;
 					$this->clMetadata["datelastmodified"] = $row->datelastmodified;
+					$this->clMetadata['dynamicProperties'] = $row->dynamicProperties;
 				}
 				$rs->free();
 			}
@@ -106,6 +107,17 @@ class ChecklistVoucherAdmin extends Manager {
 			}
 		}
 		return $retArr;
+	}
+
+	public function getAssociatedExternalService(){
+		$resp = 'FALSE';
+ 		if($this->clMetadata['dynamicProperties']){
+			$dynpropArr = json_decode($this->clMetadata['dynamicProperties'], TRUE);
+			if(array_key_exists('externalservice', $dynpropArr)) {
+				$resp = $dynpropArr['externalservice'];
+			}
+		} 
+		return $resp;
 	}
 
 	//Dynamic query variable functions
