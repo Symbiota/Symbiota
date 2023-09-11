@@ -1,4 +1,6 @@
-Pull Request Checklist:
+# Pull Request Checklist:
+
+# Pre-Approval
 
 - [ ] There is a description section in the pull request that details what the proposed changes do. It can be very brief if need be, but it ought to exist.
 - [ ] Hotfixes should be branched off of the `master` branch and merged back into the `master` branch. Subsequently, a PR from `master` into `Development` should be made.
@@ -9,6 +11,10 @@ Pull Request Checklist:
 - [ ] [Symbiota coding standards](https://docs.google.com/document/d/1-FwCZP5Zu4f-bPwsKeVVsZErytALOJyA2szjbfSUjmc/edit?usp=sharing) have been followed
 - [ ] If any files have been reformatted (e.g., by an autoformatter), the reformat is its own, separate commit in the PR
 - [ ] Comment which GitHub issue(s), if any does this PR address
+- [ ] If this PR makes any changes that would require addional configuration of any Symbiota portals outside of the file tracked in this repository, make sure that those changes are detailed in [this document](https://docs.google.com/document/d/1T7xbXEf2bjjm-PMrlXpUBa69aTMAIROPXVqJqa2ow_I/edit?usp=sharing).
+
+# Post-Approval
+
 - [ ] It is the code author's responsibility to merge their own pull request after it has been approved
 - [ ] If this PR represents a merge into the `Development` branch, remember to use the **squash & merge** option
 - [ ] If this PR represents a merge from the `Development` branch into the master branch, remember to use the **merge** option
