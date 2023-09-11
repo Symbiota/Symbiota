@@ -11,7 +11,7 @@
 - [ ] [Symbiota coding standards](https://docs.google.com/document/d/1-FwCZP5Zu4f-bPwsKeVVsZErytALOJyA2szjbfSUjmc/edit?usp=sharing) have been followed
 - [ ] If any files have been reformatted (e.g., by an autoformatter), the reformat is its own, separate commit in the PR
 - [ ] Comment which GitHub issue(s), if any does this PR address
-- [ ] If this PR makes any changes that would require addional configuration of any Symbiota portals outside of the file tracked in this repository, make sure that those changes are detailed in [this document](https://docs.google.com/document/d/1T7xbXEf2bjjm-PMrlXpUBa69aTMAIROPXVqJqa2ow_I/edit?usp=sharing).
+- [ ] If this PR makes any changes that would require addional configuration of any Symbiota portals outside of the files tracked in this repository, make sure that those changes are detailed in [this document](https://docs.google.com/document/d/1T7xbXEf2bjjm-PMrlXpUBa69aTMAIROPXVqJqa2ow_I/edit?usp=sharing).
 
 # Post-Approval
 
