@@ -22,7 +22,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 }
 
 ?>
-<html lang="<?php echo $LANG_TAG ?>">>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 	<title> <?php echo (isset($LANG['CHAR_ADMIN']) ? $LANG['CHAR_ADMIN'] : 'Character Admin'); ?> </title>
