@@ -69,8 +69,8 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 	}
 	?>
 	<!-- This is inner text! -->
-	<div id="innertext">
-        <div id="tabs" class="inntertext-tab pin-things-here">
+	<div id="innertext" class="inntertext-tab pin-things-here">
+        <div id="tabs">
 			<ul>
 				<?php
 				if($specArr && $obsArr){
@@ -102,10 +102,13 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 							</label>
 						</div>
 						<?php
-							$collManager->outputFullCollArr($specArr, $catId, true, true, 'Specimen', 'Specimens');
+							$buttonTxt = isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search;';
+							$buttonStr = '<button aria-label="' . $buttonTxt . '" type="submit" value="search">' . $buttonTxt . '</button>';
+							echo '<div id="sticky-button-for-joint-specimens-observations" class="search-button-div sticky-buttons">'.$buttonStr.'</div>';
+							$collManager->outputFullCollArr($specArr, $catId, true, false, 'Specimen', '');
 							$hrAndHeaderText = '<div class="specimen-header-margin"><hr/><h2>' . $LANG['OBSERVATION_COLLECTIONS'] . '</h2></div>';
 							if($specArr && $obsArr) echo $hrAndHeaderText;
-							$collManager->outputFullCollArr($obsArr, $catId, true, true, 'Observation', 'Observations');
+							$collManager->outputFullCollArr($obsArr, $catId, true, false, 'Observation', 'Observations');
 						?>
 					</form>
 				</div>

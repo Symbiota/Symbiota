@@ -190,7 +190,7 @@ class OccurrenceSearchSupport {
 														$cIcon = (substr($collName2["icon"],0,6)=='images'?$CLIENT_ROOT:'').$collName2["icon"];
 														?>
 														<a href = '<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
-															<img src="<?php echo htmlspecialchars($cIcon, HTML_SPECIAL_CHARS_FLAGS); ?>" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection <?php echo isset($collName2["collname"]) ? substr($collName2["collname"],0, 40) : substr($idStr,0, 40) ?>' />
+															<img src="<?php echo htmlspecialchars($cIcon, HTML_SPECIAL_CHARS_FLAGS); ?>" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection <?php echo isset($collName2["collname"]) ? substr($collName2["collname"],0, 20) : substr($idStr,0, 20) ?>' />
 														</a>
 														<?php
 													}
