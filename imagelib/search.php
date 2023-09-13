@@ -191,7 +191,7 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 								<input id="typeObs" type="radio" name="imagetype" value="2" > <label for="typeObs">  <?php echo htmlspecialchars($LANG['TYPE_OBS'], HTML_SPECIAL_CHARS_FLAGS) ?> </label> <br/>
 								<input id="typeField" type="radio" name="imagetype" value="3" > <label for="typeField">  <?php echo htmlspecialchars($LANG['TYPE_FIELD'], HTML_SPECIAL_CHARS_FLAGS) ?> </label> <br/>
 								
-								<script src="../imagelib/radiobuttons.js"></script>
+								<script src="../js/symb/imagelib.radiobuttons.js"></script>
 							</fieldset>
 						</div>
 						<div class="flex-form">
