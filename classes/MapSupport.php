@@ -7,7 +7,7 @@ class MapSupport extends Manager{
 	private $targetUrl = '';
 
 	public function __construct(){
-		parent::__construct();
+		parent::__construct(null, 'write');
 	}
 
 	public function __destruct(){
@@ -15,7 +15,7 @@ class MapSupport extends Manager{
 	}
 
 	//Static Map functions
-	public function getTaxaList(){
+	public function getTaxaList($tidFilter){
 		$retArr = array();
 		//Following SQL grabs all accepted taxa at species / infraspecific rank that don't yet have a distribution map
 		//Eventually well probably add ability to refresh all maps older than a certain date, and/or by other criteria
@@ -23,15 +23,17 @@ class MapSupport extends Manager{
 		$sql = 'SELECT DISTINCT t.tid, t.sciname
 			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted
 			INNER JOIN omoccurrences o ON ts.tid = o.tidinterpreted
-			LEFT JOIN taxamaps m ON t.tid = m.tid
-			WHERE t.rankid > 219 AND m.tid IS NULL
-			ORDER BY t.sciname LIMIT 1000';
+			LEFT JOIN taxamaps m ON t.tid = m.tid ';
+		if($tidFilter) $sql .= 'INNER JOIN taxaenumtree e ON t.tid = e.tid ';
+		$sql .= 'WHERE t.rankid > 219 AND m.tid IS NULL ';
+		if($tidFilter) $sql .= 'AND (e.parentTid = ? OR ts.tid = ?) ';
+		$sql .= ' ORDER BY t.sciname LIMIT 1000';
 		if($stmt = $this->conn->prepare($sql)){
-			//$stmt->bind_param();
+			if($tidFilter) $stmt->bind_param('ii', $tidFilter, $tidFilter);
 			$stmt->execute();
 			$stmt->bind_result($tid, $sciname);
 			while($stmt->fetch()){
-            array_push($retArr, ['tid' => $tid, 'sciname' => $sciname]);
+				array_push($retArr, ['tid' => $tid, 'sciname' => $sciname]);
 			}
 			$stmt->close();
 		}
@@ -65,9 +67,10 @@ class MapSupport extends Manager{
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
 					//$retArr[] = $r->decimalLongitude.','.$r->decimalLatitude;
-               array_push($retArr, ['lat' => floatval($r->decimalLatitude), 'lng' => floatval($r->decimalLongitude)]);
+					array_push($retArr, ['lat' => floatval($r->decimalLatitude), 'lng' => floatval($r->decimalLongitude)]);
 				}
 				$rs->free();
+				//if(count($retArr) > 100) $this->removeOutliers($retArr);
 			}
 		}
 		return $retArr;
@@ -97,12 +100,12 @@ class MapSupport extends Manager{
 		return $tidArr;
 	}
 
-	private function filterPoints(){
+	private function removeOutliers(&$coodArr){
 		//Function to theoretically be used when generating a point map
 		//Remove outlier points, which are likely georeferencing errors and untagged cultivated occurrences
 		//Not needed for Heat Map, which is expected to automatically filter out outliers
 		//Remove excess points that obsure map, if needed
-
+		//https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/how-spatial-outlier-detection-works.htm
 	}
 
 	public function postImage($portArr){
