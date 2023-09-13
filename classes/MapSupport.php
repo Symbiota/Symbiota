@@ -15,7 +15,7 @@ class MapSupport extends Manager{
 	}
 
 	//Static Map functions
-	public function getTaxaList($tidFilter){
+	public function getTaxaList($tidFilter=false){
 		$retArr = array();
 		//Following SQL grabs all accepted taxa at species / infraspecific rank that don't yet have a distribution map
 		//Eventually well probably add ability to refresh all maps older than a certain date, and/or by other criteria
