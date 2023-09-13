@@ -207,7 +207,7 @@ if(!$IS_ADMIN){
             })).addTo(map.mapLayer);
 
             //Wait for Heatmap to render fully
-            //await new Promise(r => setTimeout(r, 1000));
+            await new Promise(r => setTimeout(r, 1000));
 
             let blob = await getMapImage('heatmap');
             map.mapLayer.removeLayer(markerGroup);
