@@ -65,14 +65,14 @@ if($IS_ADMIN){
 			<div style="margin:10px 0px 15px 0px;">
 				<section class="fieldset-like" style="background-color:#FFFFCC;">
 					<h1> <span> <?php echo (isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search'); ?> </span> </h1>
-					<?php echo (isset($LANG['LAST_OR_LOGIN'])?$LANG['LAST_OR_LOGIN']:'Last Name or Login Name'); ?>:
+					<label for="searchterm" > <?php echo (isset($LANG['LAST_OR_LOGIN'])?$LANG['LAST_OR_LOGIN']:'Last Name or Login Name'); ?>: </label>
 					<form name='searchform1' action='usermanagement.php' method='post'>
-						<input type="text" name="searchterm" title="<?php echo (isset($LANG['ENTER_LAST'])?$LANG['ENTER_LAST']:'Enter Last Name'); ?>" /><br/>
+						<input type="text" id="searchterm" name="searchterm" title="<?php echo (isset($LANG['ENTER_LAST'])?$LANG['ENTER_LAST']:'Enter Last Name'); ?>" /><br/>
 						<button name="submit" type="submit" value="Search"><?php echo (isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search'); ?></button>
 					</form>
 
-					<span style="text-indent: -5000px; position: absolute;">
-						<a href = "#userlist">Skip to list of users</a>
+					<span class="skip-link">
+						<a href = "#userlist"><?php echo (isset($LANG['SKIP_LINK'])?$LANG['SKIP_LINK']:'Skip to list of users'); ?></a>
 					</span>			
 
 					<?php echo (isset($LANG['QUICK_SEARCH'])?$LANG['QUICK_SEARCH']:'Quick Search'); ?>:
@@ -697,7 +697,7 @@ if($IS_ADMIN){
 			}
 			else{
 				?>
-				<a name="userlist"></a>
+				<a id="userlist"></a>
 				<?php
 				$users = $userManager->getUsers($searchTerm);
 				echo '<h1>Users</h1>';
