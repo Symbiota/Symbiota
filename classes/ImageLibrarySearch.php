@@ -272,9 +272,9 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		return $this->searchSupportManager->getFullCollectionList($catId, true);
 	}
 
-	public function outputFullCollArr($occArr, $targetCatID = 0){
+	public function outputFullCollArr($occArr, $targetCatID = 0, $collTypeLabel='', $uniqGrouping=''){
 		if(!$this->searchSupportManager) $this->searchSupportManager = new OccurrenceSearchSupport($this->conn);
-		$this->searchSupportManager->outputFullCollArr($occArr, $targetCatID, false, false, '', '', '');
+		$this->searchSupportManager->outputFullCollArr($occArr, $targetCatID, false, false, $collTypeLabel, $uniqGrouping);
 	}
 
 	//Misc support functions
