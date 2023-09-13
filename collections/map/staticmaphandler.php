@@ -47,10 +47,11 @@ if(!$IS_ADMIN){
 </script>
 	<script type="text/javascript">
          let map;
-         let bounds;
 
          async function getTaxaCoordinates(tid, bounds) {
-            const response = await fetch(`rpc/getCoordinates.php?tid=${tid}&bounds=${encodeURI(bounds)}`, {
+            let bounds_str = encodeURI(`${bounds[0][0]};${bounds[0][1]};${bounds[1][0]};${bounds[1][1]}`)
+
+            const response = await fetch(`rpc/getCoordinates.php?tid=${tid}&bounds=${bounds_str}`, {
                method: "GET",
                credentials: "same-origin",
                headers: {"Content-Type": "application/json"},
@@ -65,7 +66,7 @@ if(!$IS_ADMIN){
             const leafletControls = document.querySelector('.leaflet-control-container')
             leafletControls.style.display = "none";
 
-            updateMapBounds(bounds);
+            //updateMapBounds();
 
             let maptype;
             for (let maptype_option of document.getElementsByName("maptype"))  {
@@ -75,9 +76,21 @@ if(!$IS_ADMIN){
                }
             }
 
+            let basebounds = getMapBounds()
+            let userZoom = map.mapLayer.getZoom();
+            let baseZoom = userZoom >= 7 ? userZoom: 7;
+
             for (let taxa of taxaList) {
-               let coords = await getTaxaCoordinates(taxa.tid, bounds.join(';'));
+               let coords = await getTaxaCoordinates(taxa.tid, basebounds);
+
                if(coords && coords.length > 0) { 
+                  //Fits bounds within our search bounds for a better image
+                  map.mapLayer.fitBounds(coords.map(c => [c.lat, c.lng]));
+
+                  //Scale Back the zoom value if zoomed in too much
+                  let newZoom = map.mapLayer.getZoom()
+                  map.mapLayer.setZoom(newZoom <= baseZoom? newZoom: baseZoom);
+
                   await postImage({
                      tid: taxa.tid, 
                      title: taxa.sciname, 
@@ -87,6 +100,40 @@ if(!$IS_ADMIN){
                }
                incrementLoadingBar(taxaList.length);
             }
+
+            map.mapLayer.fitBounds(basebounds);
+
+/*
+            for (let taxa of taxaList) {
+               let coords = await getTaxaCoordinates(taxa.tid, basebounds);
+
+               if(coords && coords.length > 0) { 
+                  console.log(coords)
+                  console.log(taxa.tid)
+               }
+            }
+// sm: 8928 md: 8930 lg: 9177
+            let test = 51
+            let tid = 9177
+            let coords = await getTaxaCoordinates(tid, basebounds);
+
+            if(coords && coords.length > 0) { 
+            //Fits bounds within our search bounds for a better image
+            map.mapLayer.fitBounds(coords.map(c => [c.lat, c.lng]));
+
+            //Scale Back the zoom value if zoomed in too much
+            let newZoom = map.mapLayer.getZoom()
+            map.mapLayer.setZoom(newZoom <= baseZoom? newZoom: baseZoom);
+
+            await postImage({
+               tid: tid, 
+               title: tid, 
+               coordinates: coords, 
+               maptype, 
+               })
+            }
+
+*/
 
             //Turn Controls back on when done processing maps
             leafletControls.style.display = "block";
@@ -110,34 +157,39 @@ if(!$IS_ADMIN){
             formData.append('tid', tid)
             formData.append('title', title)
             formData.append('maptype', maptype)
-
             //tid, title, maptype
-            let response = await fetch('rpc/postMap.php', {
+            let response = fetch('rpc/postMap.php', {
                method: "POST",
                credentials: "same-origin",
                body: formData
             })
          }
-         //getCoordinates -> Build Map -> Build Image -> Unbuild Map ->
 
          async function buildHeatMap(coordinates) {
             var cfg = {
-               "radius": 0.2,
-               "maxOpacity": .8,
+               "radius": 0.7,
+               "maxOpacity": .9,
                "scaleRadius": true,
-               "useLocalExtrema": true,
+               "useLocalExtrema": false,
                latField: 'lat',
                lngField: 'lng',
             };
             var heatmapLayer = new HeatmapOverlay(cfg);
+
+            heatmapLayer.addTo(map.mapLayer);
+
             heatmapLayer.setData({
-               max: 8,
+               max: 3,
+               min: 1,
                data: coordinates
             });
-            heatmapLayer.addTo(map.mapLayer);
+ 
+            //Wait for Heatmap to render fully
+            await new Promise(r => setTimeout(r, 1000));
 
             let blob = await getMapImage('heatmap');
             map.mapLayer.removeLayer(heatmapLayer);
+
             return blob;
          }
 
@@ -145,7 +197,7 @@ if(!$IS_ADMIN){
 
             const markerGroup = L.featureGroup(coordinates.map(coord =>  {
                return L.circleMarker([coord.lat, coord.lng], {
-                     radius : 5,
+                     radius : 8,
                      color  : '#000000',
                      fillColor: `#B2BEB5`,
                      weight: 2,
@@ -153,6 +205,9 @@ if(!$IS_ADMIN){
                      fillOpacity: 1.0
                });
             })).addTo(map.mapLayer);
+
+            //Wait for Heatmap to render fully
+            //await new Promise(r => setTimeout(r, 1000));
 
             let blob = await getMapImage('heatmap');
             map.mapLayer.removeLayer(markerGroup);
@@ -173,13 +228,27 @@ if(!$IS_ADMIN){
             } 
          }
 
-         function updateMapBounds() {
-            let markers = L.featureGroup()
+         function updateMapBounds(new_bounds) {
+            map.mapLayer.fitBounds(new_bounds);
+         }
 
-            L.marker([bounds[0],bounds[1]]).addTo(markers);
-            L.marker([bounds[2],bounds[3]]).addTo(markers);
+         function refreshBoundInputs() {
+            mapBounds = map.mapLayer.getBounds();
+            let northEast = mapBounds.getNorthEast();
+            let southWest = mapBounds.getSouthWest();
 
-            map.mapLayer.fitBounds(markers.getBounds());
+            document.getElementById("upper_lat").value = northEast.lat.toFixed(6);
+            document.getElementById("upper_lng").value = northEast.lng.toFixed(6);
+
+            document.getElementById("lower_lat").value = southWest.lat.toFixed(6);
+            document.getElementById("lower_lng").value = southWest.lng.toFixed(6);
+         }
+
+         function getMapBounds() { 
+            return [
+               [document.getElementById("upper_lat").value, document.getElementById("upper_lng").value],
+               [document.getElementById("lower_lat").value, document.getElementById("lower_lng").value]
+            ];
          }
 
          function initialize() {
@@ -215,20 +284,15 @@ if(!$IS_ADMIN){
 
             map.mapLayer.on('draw:created', function(e) {
                if(e.layerType === "rectangle") {
-                  let rec = e.layer.getBounds()
-                  let northEast = rec.getNorthEast()
-                  let southWest = rec.getSouthWest()
-
-                  document.getElementById("upper_lat").value = northEast.lat;
-                  document.getElementById("upper_lng").value = northEast.lng;
-
-                  document.getElementById("lower_lat").value = southWest.lat;
-                  document.getElementById("lower_lng").value = southWest.lng;
-
-                  bounds = [northEast.lat, northEast.lng, southWest.lat, southWest.lng];
-
-                  updateMapBounds();
+                  updateMapBounds(e.layer.getBounds());
+                  refreshBoundInputs();
                }
+            })
+
+            map.mapLayer.on('dragend', () => refreshBoundInputs())
+            map.mapLayer.on('zoom', (e) => { 
+               console.log(e.target.getZoom())
+refreshBoundInputs()
             })
 
             const boundsInput = document.getElementById("bounds");
@@ -236,29 +300,34 @@ if(!$IS_ADMIN){
             document.getElementById("upper_lat").addEventListener("input", e => {
                let lat = parseFloat(e.target.value);
                if(lat <= 90 && lat >= -90) {
-                  bounds[0] = lat;
-                  updateMapBounds();
+                  let new_bounds = getMapBounds()
+                  console.log(new_bounds)
+                  new_bounds[0][0] = lat;
+                  updateMapBounds(new_bounds);
                }
             })
             document.getElementById("upper_lng").addEventListener("input", e => {
                let lng = parseFloat(e.target.value);
                if(lng <= 180 && lng >= -180) { 
-                  bounds[1] = lng;
-                  updateMapBounds();
+                  let new_bounds = getMapBounds()
+                  new_bounds[0][1] = lng;
+                  updateMapBounds(new_bounds);
                }
             })
             document.getElementById("lower_lat").addEventListener("input", e => {
                let lat = parseFloat(e.target.value);
                if(lat <= 90 && lat >= -90) {
-                  bounds[2] = lat;
-                  updateMapBounds();
+                  let new_bounds = getMapBounds()
+                  new_bounds[1][0] = lat;
+                  updateMapBounds(new_bounds);
                }
             })
             document.getElementById("lower_lng").addEventListener("input", e => {
                let lng = parseFloat(e.target.value);
                if(lng <= 180 && lng >= -180) { 
-                  bounds[3] = lng;
-                  updateMapBounds();
+                  let new_bounds = getMapBounds()
+                  new_bounds[1][1] = lng;
+                  updateMapBounds(new_bounds);
                }
             })
          }
