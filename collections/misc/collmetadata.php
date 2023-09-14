@@ -277,7 +277,6 @@ $collManager->cleanOutArr($collData);
 				<div id="colleditor">
 					<section class="fieldset-like">
 						<h1> <span> <?php echo ($collid ? 'Edit' : 'Add New') . ' ' . (isset($LANG['COL_INFO']) ? $LANG['COL_INFO'] : 'Collection Information'); ?> </span> </h1>
-						<legend></legend>
 						<form id="colleditform" name="colleditform" action="collmetadata.php" method="post" enctype="multipart/form-data" onsubmit="return verifyCollEditForm(this)">
 							<div class="field-block">
 								<span class="field-elem">
@@ -312,7 +311,7 @@ $collManager->cleanOutArr($collData);
 							<div class="field-block">
 								<span class="field-elem">
 									<label for="collectionName"> <?php echo (isset($LANG['COLL_NAME']) ? htmlspecialchars($LANG['COLL_NAME'], HTML_SPECIAL_CHARS_FLAGS) : 'Collection Name'); ?>: </label>
-									<input id="collectionName" type="text" name="collectionName" value="<?php echo ($collid ? $collData['collectionname'] : ''); ?>" style="max-width: 100%; width: 600px" required />
+									<input id="collectionName" type="text" name="collectionName" value="<?php echo ($collid ? $collData['collectionname'] : ''); ?>" class="max-width-fit-75" required />
 								</span>
 							</div>
 							<div class="field-block">
@@ -374,7 +373,7 @@ $collManager->cleanOutArr($collData);
 									<?php
 									if (isset($RIGHTS_TERMS)) {
 										?>
-										<select id="rights" name="rights" style="max-width: 100%">
+										<select id="rights" name="rights" class="max-width-fit-75">
 											<?php
 											$hasOrphanTerm = true;
 											if (!$collid) $hasOrphanTerm = false;
@@ -466,7 +465,7 @@ $collManager->cleanOutArr($collData);
 								<div class="field-block">									
 									<span class="field-elem">
 										<label for="managementType"> <?php echo (isset($LANG['MANAGEMENT']) ? htmlspecialchars($LANG['MANAGEMENT'], HTML_SPECIAL_CHARS_FLAGS) : 'Management'); ?>: </label>
-										<select name="managementType" onchange="managementTypeChanged(this)">
+										<select id="managementType" name="managementType" onchange="managementTypeChanged(this)">
 											<option value="Snapshot"><?php echo (isset($LANG['SNAPSHOT']) ? $LANG['SNAPSHOT'] : 'Snapshot'); ?></option>
 											<option value="Live Data" <?php echo ($collid && $collData['managementtype'] == 'Live Data' ? 'SELECTED' : ''); ?>><?php echo $LANG['LIVE_DATA']; ?></option>
 											<option value="Aggregate" <?php echo ($collid && $collData['managementtype'] == 'Aggregate' ? 'SELECTED' : ''); ?>><?php echo $LANG['AGGREGATE']; ?></option>
@@ -529,10 +528,10 @@ $collManager->cleanOutArr($collData);
 							}
 							?>
 							<div class="field-block">
-								<div class="sourceurl-div" style="display:<?php echo ($collData["managementtype"] == 'Live Data' ? 'none' : ''); ?>">
+								<div class="sourceurl-div" style="display:<?php echo ($collData["managementtype"] == 'Live Data' ? 'none' : 'inline'); ?>">
 									<span class="field-label"><?php echo (isset($LANG['SOURCE_REC_URL']) ? $LANG['SOURCE_REC_URL'] : 'Source Record URL'); ?>:</span>
 									<span class="field-elem">
-										<input type="text" name="individualUrl" style="max-width: 100%; width:700px" value="<?php echo ($collid ? $collData["individualurl"] : ''); ?>" title="<?php echo (isset($LANG['DYNAMIC_LINK_REC']) ? $LANG['DYNAMIC_LINK_REC'] : 'Dynamic link to source database individual record page'); ?>" />
+										<input type="text" name="individualUrl" class="max-width-fit-75" value="<?php echo ($collid ? $collData["individualurl"] : ''); ?>" title="<?php echo (isset($LANG['DYNAMIC_LINK_REC']) ? $LANG['DYNAMIC_LINK_REC'] : 'Dynamic link to source database individual record page'); ?>" />
 										<a id="sourceurlinfo" href="#" onclick="return false" tabindex="0">
 											<img src="../../images/info.png" style="width:15px;" alt="Show more information" title="<?php echo (isset($LANG['MORE_INFO_SOURCE']) ? $LANG['MORE_INFO_SOURCE'] : 'More information about Source Records URL'); ?>"/>
 										</a>
@@ -550,12 +549,12 @@ $collManager->cleanOutArr($collData);
 							</div>
 							<div class="field-block">
 								<span class="field-elem">
-									<span class="icon-elem" style="display:<?php echo (($collid && $collData["icon"]) ? 'none;' : ''); ?>">
+									<span class="icon-elem" style="display:<?php echo (($collid && $collData["icon"]) ? 'none;' : 'inline'); ?>">
 										<input type='hidden' name='MAX_FILE_SIZE' value='20000000' />
 										<label for="iconFile"> <?php echo (isset($LANG['ICON_URL']) ? htmlspecialchars($LANG['ICON_URL'], HTML_SPECIAL_CHARS_FLAGS) : 'Icon URL'); ?>: </label>
 										<input id="iconFile" name='iconFile' id='iconfile' type='file' onchange="verifyIconImage(this.form);" />
 									</span>
-									<span class="icon-elem" style="display:<?php echo (($collid && $collData["icon"]) ? '' : 'none'); ?>">
+									<span class="icon-elem" style="display:<?php echo (($collid && $collData["icon"]) ? 'inline' : 'none'); ?>">
 										<input style="max-width: 100%; width:600px;" type='text' name='iconUrl' id='iconurl' value="<?php echo ($collid ? $collData["icon"] : ''); ?>" onchange="verifyIconURL(this.form);" />
 									</span>
 									<a id="iconinfo" href="#" onclick="return false" title="<?php echo (isset($LANG['WHAT_ICON']) ? $LANG['WHAT_ICON'] : 'What is an Icon?'); ?>" tabindex="0"><img src="../../images/info.png" style="width:15px;" alt="Show more information"/></a>
@@ -563,10 +562,10 @@ $collManager->cleanOutArr($collData);
 										<?php echo (isset($LANG['UPLOAD_ICON']) ? $LANG['UPLOAD_ICON'] : ''); ?>
 									</span>
 								</span>
-								<span class="icon-elem" style="display:<?php echo (($collid && $collData["icon"]) ? 'none;' : ''); ?>">
+								<span class="icon-elem" style="display:<?php echo (($collid && $collData["icon"]) ? 'none;' : 'inline'); ?>">
 									<a href="#" onclick="toggle('icon-elem');return false;"><?php echo (isset($LANG['ENTER_URL']) ? $LANG['ENTER_URL'] : 'Enter URL'); ?></a>
 								</span>
-								<span class="icon-elem" style="display:<?php echo (($collid && $collData["icon"]) ? '' : 'none;'); ?>">
+								<span class="icon-elem" style="display:<?php echo (($collid && $collData["icon"]) ? 'inline' : 'none;'); ?>">
 									<a href="#" onclick="toggle('icon-elem');return false;">
 										<?php echo (isset($LANG['UPLOAD_LOCAL']) ? $LANG['UPLOAD_LOCAL'] : 'Upload Local Image'); ?>
 									</a>
