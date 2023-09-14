@@ -97,7 +97,7 @@ $geoArr = $geoManager->getGeograpicList($parentID);
 				<fieldset id="edit-fieldset">
 					<legend> <?php echo (isset($LANG['EDIT_GEO']) ? $LANG['EDIT_GEO'] : 'Edit Geographic') ?> <span id="edit-legend"> <?php echo (isset($LANG['UNIT']) ? $LANG['UNIT'] : 'Unit') ?> </span></legend>
 					<div style="float:right">
-						<span class="editIcon"><a href="#" onclick="toggleEditor()"><img class="editimg" src="../images/edit.png" alt="Edit"/></a></span>
+						<span class="editIcon"><a href="#" onclick="toggleEditor()"><img class="editimg" src="../images/edit.png" alt="<?php echo (isset($LANG['EDIT']) ? $LANG['EDIT'] : 'Edit'); ?>"/></a></span>
 
 					</div>
 					<form name="unitEditForm" action="index.php" method="post">
@@ -157,7 +157,7 @@ $geoArr = $geoManager->getGeograpicList($parentID);
 									<span class="editTerm"><?php echo $parentStr; ?></span>
 									<span class="editFormElem">
 										<select name="parentID">
-											<option value=""> <?php echo (isset($LANG['IS_ROOT_TERM']) ? $LANG['IS_ROOT_TERM'] : 'Is a Root Term (e.g. no parent)') ?> </option>
+											<option value=""> <?php echo (isset($LANG['IS_ROOT_TERM']) ? $LANG['IS_ROOT_TERM'] : 'Is a Root Term (i.e. no parent)') ?> </option>
 											<?php
 											foreach($parentList as $id => $term){
 												echo '<option value="'.$id.'" '.($id==$geoUnit['parentID']?'selected':'').'>'.$term.'</option>';
@@ -208,7 +208,7 @@ $geoArr = $geoManager->getGeograpicList($parentID);
 							<button type="submit" name="submitaction" value="deleteGeoUnits" onclick="return confirm(<?php echo (isset($LANG['CONFIRM_DELETE']) ? $LANG['CONFIRM_DELETE'] : 'Are you sure you want to delete this record?') ?>)" <?php echo ($geoUnit['childCnt']?(isset($LANG['DISABLED']) ? $LANG['DISABLED'] : 'disabled'):''); ?>> <?php echo (isset($LANG['DEL_GEO_UNIT']) ? $LANG['DEL_GEO_UNIT'] : 'Delete Geographic Unit') ?> </button>
 						</div>
 						<?php
-						if($geoUnit['childCnt']) echo '<div></div>';
+						if($geoUnit['childCnt']) echo '<div>' . (isset($LANG['CANT_DELETE']) ? $LANG['CANT_DELETE'] : '* Record can not be deleted until all child records are deleted') . '</div>';
 						?>
 					</fieldset>
 				</form>
@@ -222,7 +222,7 @@ $geoArr = $geoManager->getGeograpicList($parentID);
 		else{
 			?>
 			<div style="float:right">
-				<span class="editIcon"><a href="#" onclick="$('#addGeoUnit-div').toggle();"><img class="editimg" src="../images/add.png" alt="Edit" /></a></span>
+				<span class="editIcon"><a href="#" onclick="$('#addGeoUnit-div').toggle();"><img class="editimg" src="../images/add.png" alt="<?php echo (isset($LANG['EDIT']) ? $LANG['EDIT'] : 'Edit'); ?>" /></a></span>
 			</div>
 			<div id="addGeoUnit-div" style="clear:both;margin-bottom:10px;display:none">
 				<!--This should also be visible when !$geoThesID -->
@@ -276,7 +276,7 @@ $geoArr = $geoManager->getGeograpicList($parentID);
 								<select name="parentID">
 									<option value=""> <?php echo (isset($LANG['SELECT_PARENT']) ? $LANG['SELECT_PARENT'] : 'Select Parent Term') ?> </option>
 									<option value="">----------------------</option>
-									<option value=""> <?php echo (isset($LANG['IS_ROOT_TERM']) ? $LANG['IS_ROOT_TERM'] : 'Is a Root Term (e.g. no parent)') ?> </option>
+									<option value=""> <?php echo (isset($LANG['IS_ROOT_TERM']) ? $LANG['IS_ROOT_TERM'] : 'Is a Root Term (i.e. no parent)') ?> </option>
 									<?php
 									$parentList = $geoManager->getParentGeoTermArr();
 									foreach($parentList as $id => $term){
@@ -314,7 +314,7 @@ $geoArr = $geoManager->getGeograpicList($parentID);
 				$parentArr = $geoManager->getGeograpicUnit($parentID);
 				if($parentID){
 					$rankArr = $geoManager->getGeoRankArr();
-					$titleStr = '<b>'.$rankArr[$geoArr[key($geoArr)]['geoLevel']] . '</b>' . (isset($LANG['TERMS_WITHIN']) ? $LANG['TERMS_WITHIN'] : 'geographic terms within') . '<b>'.$parentArr['geoTerm'] . '</b>';
+					$titleStr = '<b>'. $rankArr[$geoArr[key($geoArr)]['geoLevel']] . '</b>' . (isset($LANG['TERMS_WITHIN']) ? $LANG['TERMS_WITHIN'] : 'geographic terms within') . '<b>' . $parentArr['geoTerm'] . '</b>';
 				}
 				else{
 					$titleStr = '<b>' . (isset($LANG['ROOT_TERMS']) ? $LANG['ROOT_TERMS'] : 'Root Terms (terms without parents)') . '</b>';

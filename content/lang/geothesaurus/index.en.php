@@ -18,7 +18,7 @@ $LANG['GEO_RANK'] = 'Geography Rank';
 $LANG['SELECT_RANK'] = 'Select Rank';
 $LANG['NOTES'] = 'Notes';
 $LANG['PARENT_TERM'] = 'Parent term';
-$LANG['IS_ROOT_TERM'] = 'Is a Root Term (e.g. no parent)';
+$LANG['IS_ROOT_TERM'] = 'Is a Root Term (i.e. no parent)';
 $LANG['ACCEPTED_TERM'] = 'Accepted term';
 $LANG['IS_ACCEPTED'] = 'Term is Accepted';
 $LANG['SAVE_EDITS'] = 'Save Edits';
@@ -37,6 +37,6 @@ $LANG['ROOT_TERMS'] = 'Root Terms (terms without parents)';
 $LANG['CHILDREN'] = 'children';
 $LANG['SHOW_LIST'] = 'Show Parent list';
 $LANG['NO_RECORDS'] = 'No records returned';
-$LANG['DISABLED'] = 'disabled';
+$LANG['EDIT'] = 'Edit';
 
 ?>
