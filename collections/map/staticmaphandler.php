@@ -253,20 +253,37 @@ if(!$IS_ADMIN){
             ];
          }
 
-         function initialize() {
+         function getState() {
             const data = document.getElementById('service-container');
             let latlng = [
                parseFloat(data.getAttribute('data-lat')),
                parseFloat(data.getAttribute('data-lng'))
             ]
 
-            bounds = JSON.parse(
+            let bounds = JSON.parse(
                document.getElementById("service-container")
                   .getAttribute("data-bounds")
-            )
+            );
+
+            bounds = bounds.map(b => parseFloat(b));
+            bounds = [
+               [bounds[0], bounds [1]],
+               [bounds[2], bounds [3]]
+            ];
+
+            return { bounds, latlng };
+         }
+
+         function resetBounds(bounds) {
+            updateMapBounds(bounds);
+            refreshBoundInputs();
+         }
+
+         function initialize() {
+            const state = getState();
 
             map = new LeafletMap('map', {
-               center: latlng, 
+               center: state.latlng, 
                zoom: 6, 
                scale: false, 
             });
@@ -293,8 +310,6 @@ if(!$IS_ADMIN){
 
             map.mapLayer.on('dragend', () => refreshBoundInputs())
             map.mapLayer.on('zoom', (e) => refreshBoundInputs())
-
-            const boundsInput = document.getElementById("bounds");
 
             document.getElementById("upper_lat").addEventListener("input", e => {
                let lat = parseFloat(e.target.value);
@@ -359,6 +374,10 @@ if(!$IS_ADMIN){
             </div>
          </div>
          <form id="thumbnailBuilder" name="thumbnailBuilder" method="post" action="">
+
+            <label for="taxa"><?php echo $LANG['TYPE_TAXON'] ?>:</label>
+            <input id="taxa" type="text" size="60" name="taxa" id="taxa" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" /><br/><br/>
+
             <fieldset>
                <legend>Map Type</legend>
             <input type="radio" name="maptype" id ="heatmap" value="heatmap" checked>
@@ -376,13 +395,10 @@ if(!$IS_ADMIN){
                </label><br/>
             <input type="radio" name="maptype" id ="dotmap" value="dotmap">
             <label for="dotmap">Dot Map</label><br/>
-            </fieldset>
+            </fieldset><br/>
 
-
-            <label for="taxa"><?php echo $LANG['TYPE_TAXON'] ?>:</label>
-            <input id="taxa" type="text" size="60" name="taxa" id="taxa" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" /><br/>
-
-
+            <fieldset>
+               <legend>Bounds</legend>
             <label>Upper Bound</label><br/>
             <label>Lat</label>
             <input id="upper_lat" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLatMax?>" placeholder="<?php echo $boundLatMax?>"/>
@@ -394,6 +410,10 @@ if(!$IS_ADMIN){
             <input id="lower_lat" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLatMin?>" placeholder="<?php echo $boundLatMin?>"/>
             <label>Lng</label>
             <input id="lower_lng" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLngMin?>" placeholder="<?php echo $boundLngMin?>"/><br>
+
+            <button type="button" onclick="resetBounds(getState().bounds)">Reset Bounds</button>
+            <button type="button" onclick="resetBounds([ [90, 180], [-90, -180]])">Global Bounds</button><br/>
+            </fieldset><br/>
 <!---
             <label for="taxon">Taxon</label><br>
             <input id="taxon"/><br/>
