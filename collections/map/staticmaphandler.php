@@ -85,6 +85,7 @@ if(!$IS_ADMIN){
             const taxa = document.getElementById('taxa').value;
 
             if(taxa) taxaList = await getTaxaList(taxa);
+            console.log(taxaList)
 
             let maptype;
             for (let maptype_option of document.getElementsByName("maptype"))  {
@@ -123,8 +124,11 @@ if(!$IS_ADMIN){
                         map_blob,
                         maptype, 
                      })
-                  }
+                  } 
+               } else if (preview) {
+                  alert(`There are no records of ${taxa.scimane} within your bounds!`)
                }
+
                if(!preview) incrementLoadingBar(taxaList.length);
             }
 
@@ -376,7 +380,8 @@ if(!$IS_ADMIN){
          Form options to add later:
          - replace maps older than a certain date (date text box)
 --->
-            <button type="button" onclick="buildMaps(true)"><?= $LANG['BUILDMAPS'] ?></button>
+            <button type="button" onclick="buildMaps(false)"><?= $LANG['BUILDMAPS'] ?></button>
+            <button type="button" onclick="buildMaps(true)"><?= $LANG['PREVIEWMAP'] ?></button>
          </form>
       </div>
       <?php include($SERVER_ROOT . '/includes/footer.php');?>
