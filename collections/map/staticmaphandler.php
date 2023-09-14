@@ -74,7 +74,8 @@ if(!$IS_ADMIN){
          async function buildMaps(preview = true) {
             //Clear Old Layer if It Exists
             if(coordLayer) map.mapLayer.removeLayer(coordLayer);
-            console.log(coordLayer)
+
+            let mapProgress = document.getElementById("map-generation-progress")
 
             const data = document.getElementById('service-container');
             let taxaList = JSON.parse(data.getAttribute('data-taxa-list'))
@@ -85,7 +86,8 @@ if(!$IS_ADMIN){
             const taxa = document.getElementById('taxa').value;
 
             if(taxa) taxaList = await getTaxaList(taxa);
-            console.log(taxaList)
+
+            if(!preview) mapProgress.style.display = "block";
 
             let maptype;
             for (let maptype_option of document.getElementsByName("maptype"))  {
@@ -98,9 +100,11 @@ if(!$IS_ADMIN){
             let basebounds = getMapBounds()
             let userZoom = map.mapLayer.getZoom();
             let baseZoom = userZoom >= 7 ? userZoom: 7;
+            let count = 0;
 
             for (let taxa of taxaList) {
                let coords = await getTaxaCoordinates(taxa.tid, basebounds);
+               count++;
 
                if(coords && coords.length > 0) { 
                   //Fits bounds within our search bounds for a better image
@@ -111,6 +115,8 @@ if(!$IS_ADMIN){
                   map.mapLayer.setZoom(newZoom <= baseZoom? newZoom: baseZoom);
 
                   coordLayer = generateMap({maptype, coordinates: coords});
+
+                  if(preview) break;
 
                   if(!preview) {
                      //Wait for Map to Render and Pan to Points
@@ -125,7 +131,7 @@ if(!$IS_ADMIN){
                         maptype, 
                      })
                   } 
-               } else if (preview) {
+               } else if (preview && count >= taxaList.length) {
                   alert(`There are no records of ${taxa.scimane} within your bounds!`)
                }
 
@@ -136,6 +142,7 @@ if(!$IS_ADMIN){
 
             //Turn Controls back on when done processing maps
             leafletControls.style.display = "block";
+            mapProgress.style.display = "none";
          }
 
          async function getMapImage() {
@@ -166,21 +173,27 @@ if(!$IS_ADMIN){
          }
 
          function buildHeatMap(coordinates) {
+            //Input is between 1 and 100 and needs to be translated between 0.1
+            //and 1
+            let radiusInput = document.getElementById("heat-radius").value;
+            let heatMaxDensity = document.getElementById("heat-max-density").value;
+            let heatMinDensity = document.getElementById("heat-min-density").value;
+
             var cfg = {
-               "radius": 0.7,
+               "radius": parseFloat(radiusInput / 100),
                "maxOpacity": .9,
                "scaleRadius": true,
                "useLocalExtrema": false,
                latField: 'lat',
                lngField: 'lng',
             };
-            var heatmapLayer = new HeatmapOverlay(cfg);
+            let heatmapLayer = new HeatmapOverlay(cfg);
 
             heatmapLayer.addTo(map.mapLayer);
 
             heatmapLayer.setData({
-               max: 3,
-               min: 1,
+               max: parseInt(heatMaxDensity) || 3,
+               min: parseInt(heatMinDensity) || 1,
                data: coordinates
             });
  
@@ -287,7 +300,6 @@ if(!$IS_ADMIN){
                let lat = parseFloat(e.target.value);
                if(lat <= 90 && lat >= -90) {
                   let new_bounds = getMapBounds()
-                  console.log(new_bounds)
                   new_bounds[0][0] = lat;
                   updateMapBounds(new_bounds);
                }
@@ -336,25 +348,40 @@ if(!$IS_ADMIN){
             <div id="map" style="width:50rem;height:50rem;"></div>
          </div>
          <br/>
-         <div style="background-color:#E9E9ED">
-            <div id="loading-bar" style="height:2rem; width:0%; background-color:#1B3D2F"></div>
-         </div>
-
-         <div>
-            <label for="taxa"><?php echo $LANG['TYPE_TAXON'] ?>:</label>
-            <input id="taxa" type="text" size="60" name="taxa" id="taxa" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
-         </div>
-         <div style="text-align: center; padding-top:0.5rem">
-            Maps Generated
-            <span id="loading-bar-count">0</span>
-            <span>/ <?php echo count($taxaList)?></span>
+         <div id="map-generation-progress" style="display: none">
+            <div style="background-color:#E9E9ED">
+               <div id="loading-bar" style="height:2rem; width:0%; background-color:#1B3D2F"></div>
+            </div>
+            <div style="text-align: center; padding-top:0.5rem">
+               Maps Generated
+               <span id="loading-bar-count">0</span>
+               <span>/ <?php echo count($taxaList)?></span>
+            </div>
          </div>
          <form id="thumbnailBuilder" name="thumbnailBuilder" method="post" action="">
-            <div>Map Type</div>
+            <fieldset>
+               <legend>Map Type</legend>
             <input type="radio" name="maptype" id ="heatmap" value="heatmap" checked>
-            <label for="heatmap">Heat Map</label><br>
+               <label for="heatmap">
+                  Heat Map
+                  <span id="heat-radius-container" style="display: flex; align-items:center">
+                     <label for="heat-radius">Heat Radius: 0.1</label>
+                     <input style="margin: 0 1rem;"type="range" value="70" id="heat-radius" name="heat-radius" min="1" max="100">1
+                  </span>
+                  <label for="heat-min-density">Min Density: </label>
+                  <input style="margin: 0 1rem; width: 5rem;"value="1" id="heat-min-density" name="heat-min-density">
+                  <label for="heat-max-density">Max Density: </label>
+                  <input style="margin: 0 1rem; width: 5rem;"value="3" id="heat-max-density" name="heat-max-density">
+                  <br/>
+               </label><br/>
             <input type="radio" name="maptype" id ="dotmap" value="dotmap">
-            <label for="dotmap">Dot Map</label><br>
+            <label for="dotmap">Dot Map</label><br/>
+            </fieldset>
+
+
+            <label for="taxa"><?php echo $LANG['TYPE_TAXON'] ?>:</label>
+            <input id="taxa" type="text" size="60" name="taxa" id="taxa" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" /><br/>
+
 
             <label>Upper Bound</label><br/>
             <label>Lat</label>
