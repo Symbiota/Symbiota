@@ -83,8 +83,6 @@ class LeafletMap {
          }).addTo(this.mapLayer);
       }
 
-      console.log(map_options)
-
       if(map_options.scale !== false) {
          L.control.scale().addTo(this.mapLayer);
       }

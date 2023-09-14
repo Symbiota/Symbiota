@@ -47,6 +47,7 @@ if(!$IS_ADMIN){
 </script>
 	<script type="text/javascript">
          let map;
+         let coordLayer;
 
          async function getTaxaCoordinates(tid, bounds) {
             let bounds_str = encodeURI(`${bounds[0][0]};${bounds[0][1]};${bounds[1][0]};${bounds[1][1]}`)
@@ -59,14 +60,31 @@ if(!$IS_ADMIN){
             return await response.json();
          }
 
-         async function buildMaps(e) {
+         async function getTaxaList(name) {
+            const response = await fetch(`<?php echo $CLIENT_ROOT?>/rpc/gettaxon.php?sciname=${name}`, {
+               method: "GET",
+               credentials: "same-origin",
+               headers: {"Content-Type": "application/json"},
+            });
+            let res = await response.json();
+
+            return Object.entries(res).map( ([k, v]) => ({tid: k, sciname: v.sciname}));
+         }
+
+         async function buildMaps(preview = true) {
+            //Clear Old Layer if It Exists
+            if(coordLayer) map.mapLayer.removeLayer(coordLayer);
+            console.log(coordLayer)
+
             const data = document.getElementById('service-container');
             let taxaList = JSON.parse(data.getAttribute('data-taxa-list'))
 
             const leafletControls = document.querySelector('.leaflet-control-container')
             leafletControls.style.display = "none";
 
-            //updateMapBounds();
+            const taxa = document.getElementById('taxa').value;
+
+            if(taxa) taxaList = await getTaxaList(taxa);
 
             let maptype;
             for (let maptype_option of document.getElementsByName("maptype"))  {
@@ -91,67 +109,39 @@ if(!$IS_ADMIN){
                   let newZoom = map.mapLayer.getZoom()
                   map.mapLayer.setZoom(newZoom <= baseZoom? newZoom: baseZoom);
 
-                  await postImage({
-                     tid: taxa.tid, 
-                     title: taxa.sciname, 
-                     coordinates: coords, 
-                     maptype, 
-                  })
+                  coordLayer = generateMap({maptype, coordinates: coords});
+
+                  if(!preview) {
+                     //Wait for Map to Render and Pan to Points
+                     await new Promise(r => setTimeout(r, 1000));
+
+                     let map_blob = await getMapImage(); 
+                     map.mapLayer.removeLayer(coordLayer);
+                     postImage({
+                        tid: taxa.tid, 
+                        title: taxa.sciname, 
+                        map_blob,
+                        maptype, 
+                     })
+                  }
                }
-               incrementLoadingBar(taxaList.length);
+               if(!preview) incrementLoadingBar(taxaList.length);
             }
 
             map.mapLayer.fitBounds(basebounds);
-
-/*
-            for (let taxa of taxaList) {
-               let coords = await getTaxaCoordinates(taxa.tid, basebounds);
-
-               if(coords && coords.length > 0) { 
-                  console.log(coords)
-                  console.log(taxa.tid)
-               }
-            }
-// sm: 8928 md: 8930 lg: 9177
-            let test = 51
-            let tid = 9177
-            let coords = await getTaxaCoordinates(tid, basebounds);
-
-            if(coords && coords.length > 0) { 
-            //Fits bounds within our search bounds for a better image
-            map.mapLayer.fitBounds(coords.map(c => [c.lat, c.lng]));
-
-            //Scale Back the zoom value if zoomed in too much
-            let newZoom = map.mapLayer.getZoom()
-            map.mapLayer.setZoom(newZoom <= baseZoom? newZoom: baseZoom);
-
-            await postImage({
-               tid: tid, 
-               title: tid, 
-               coordinates: coords, 
-               maptype, 
-               })
-            }
-
-*/
 
             //Turn Controls back on when done processing maps
             leafletControls.style.display = "block";
          }
 
-         async function getMapImage(imgName) {
+         async function getMapImage() {
             return await domtoimage.toBlob(document.getElementById('map'), {
                height: 500,
                width: 500
             });
          }
 
-         async function postImage({tid, title, maptype, coordinates}) {
-            
-            let map_blob = maptype === "dotmap"?
-               await buildDotMap(coordinates):
-               await buildHeatMap(coordinates);
-
+         async function postImage({tid, title, maptype, map_blob}) {
             let formData = new FormData();
             formData.append('mapupload', map_blob, `map.png`)
             formData.append('tid', tid)
@@ -165,7 +155,13 @@ if(!$IS_ADMIN){
             })
          }
 
-         async function buildHeatMap(coordinates) {
+         function generateMap({maptype, coordinates}) {
+            return maptype === "dotmap"?
+               buildDotMap(coordinates):
+               buildHeatMap(coordinates);
+         }
+
+         function buildHeatMap(coordinates) {
             var cfg = {
                "radius": 0.7,
                "maxOpacity": .9,
@@ -184,16 +180,10 @@ if(!$IS_ADMIN){
                data: coordinates
             });
  
-            //Wait for Heatmap to render fully
-            await new Promise(r => setTimeout(r, 1000));
-
-            let blob = await getMapImage('heatmap');
-            map.mapLayer.removeLayer(heatmapLayer);
-
-            return blob;
+            return heatmapLayer;
          }
 
-         async function buildDotMap(coordinates) {
+         function buildDotMap(coordinates) {
 
             const markerGroup = L.featureGroup(coordinates.map(coord =>  {
                return L.circleMarker([coord.lat, coord.lng], {
@@ -206,12 +196,7 @@ if(!$IS_ADMIN){
                });
             })).addTo(map.mapLayer);
 
-            //Wait for Heatmap to render fully
-            await new Promise(r => setTimeout(r, 1000));
-
-            let blob = await getMapImage('heatmap');
-            map.mapLayer.removeLayer(markerGroup);
-            return blob;
+            return markerGroup;
          }
 
          async function incrementLoadingBar(maxCount) {
@@ -290,10 +275,7 @@ if(!$IS_ADMIN){
             })
 
             map.mapLayer.on('dragend', () => refreshBoundInputs())
-            map.mapLayer.on('zoom', (e) => { 
-               console.log(e.target.getZoom())
-refreshBoundInputs()
-            })
+            map.mapLayer.on('zoom', (e) => refreshBoundInputs())
 
             const boundsInput = document.getElementById("bounds");
 
@@ -332,6 +314,10 @@ refreshBoundInputs()
             })
          }
 	</script>
+	<script src="../../js/jquery-3.2.1.min.js?ver=3" type="text/javascript"></script>
+	<script src="../../js/jquery-ui/jquery-ui.min.js?ver=3" type="text/javascript"></script>
+	<link href="../../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
+	<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
 </head>
    <body onload="initialize()">
       <?php include($SERVER_ROOT . '/includes/header.php');?>
@@ -348,6 +334,11 @@ refreshBoundInputs()
          <br/>
          <div style="background-color:#E9E9ED">
             <div id="loading-bar" style="height:2rem; width:0%; background-color:#1B3D2F"></div>
+         </div>
+
+         <div>
+            <label for="taxa"><?php echo $LANG['TYPE_TAXON'] ?>:</label>
+            <input id="taxa" type="text" size="60" name="taxa" id="taxa" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
          </div>
          <div style="text-align: center; padding-top:0.5rem">
             Maps Generated
@@ -385,7 +376,7 @@ refreshBoundInputs()
          Form options to add later:
          - replace maps older than a certain date (date text box)
 --->
-            <button type="button" onclick="buildMaps()"><?= $LANG['BUILDMAPS'] ?></button>
+            <button type="button" onclick="buildMaps(true)"><?= $LANG['BUILDMAPS'] ?></button>
          </form>
       </div>
       <?php include($SERVER_ROOT . '/includes/footer.php');?>
