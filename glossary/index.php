@@ -284,8 +284,8 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 					<input id="searchterm" type="text" autocomplete="off" name="searchterm" size="25" value="<?php echo $searchTerm; ?>" />
 				</div>
 				<div style="margin-left:40px">
-					<input name="deepsearch" type="checkbox" value="1" <?php echo $deepSearch?'checked':''; ?> />
-					<label> <?php echo (isset($LANG['SEARCH_DEF'])?$LANG['SEARCH_DEF']:'Search within definitions'); ?> </label>
+					<input id="deepsearch" name="deepsearch" type="checkbox" value="1" <?php echo $deepSearch?'checked':''; ?> />
+					<label for="deepsearch"> <?php echo (isset($LANG['SEARCH_DEF'])?$LANG['SEARCH_DEF']:'Search within definitions'); ?> </label>
 				</div>
 				<div style="margin:20px">
 					<button name="formsubmit" type="submit" value="Search Terms"><?php echo (isset($LANG['SEARCH_TERMS'])?$LANG['SEARCH_TERMS']:'Search/Browse Terms'); ?></button>
