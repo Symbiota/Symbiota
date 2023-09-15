@@ -33,5 +33,7 @@ $LANG['CHARS'] = 'Caractères';
 $LANG['NO_GRP_ASSSIGNED'] = 'Aucun groupe attribué';
 $LANG['NO_CHAR'] = 'Il n\'y a aucun caractère existant';
 $LANG['NO_AUTH'] = 'Vous n\'êtes pas autorisé à ajouter des caractères';
+$LANG['EDIT_BTN'] = 'Créer un nouveau groupe';
+$LANG['ADD_BTN'] = 'Créer un nouveau personnage';
 
 ?>

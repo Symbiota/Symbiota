@@ -33,5 +33,7 @@ $LANG['CHARS'] = 'Characters';
 $LANG['NO_GRP_ASSSIGNED'] = ' No Assigned Grouping';
 $LANG['NO_CHAR'] = 'There are no existing characters';
 $LANG['NO_AUTH'] = 'You are not authorized to add characters';
+$LANG['EDIT_BTN'] = 'Create new group';
+$LANG['ADD_BTN'] = 'Create new character';
 
 ?>

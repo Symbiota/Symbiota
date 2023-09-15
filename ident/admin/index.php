@@ -53,9 +53,6 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 			if (newWindow.opener == null) newWindow.opener = self;
 		}
 	</script>
-	<style>
-		input{ autocomplete: off; }
-	</style>
 </head>
 <body>
 	<?php
@@ -73,7 +70,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 			<div id="addeditchar">
 				<div>
 					<a href="#" onclick="toggle('addchardiv');">
-						<img src="../../images/add.png" alt="Create New Character" />
+						<img src="../../images/add.png" alt="<?php echo (isset($LANG['ADD_BTN']) ? $LANG['ADD_BTN'] : 'Create new character'); ?>" />
 					</a>
 				</div>
 				<div id="addchardiv" style="display:none;margin-bottom:8px;">
@@ -82,7 +79,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 							<legend><b> <?php echo (isset($LANG['NEW_CHAR']) ? $LANG['NEW_CHAR'] : 'New Character'); ?> </b></legend>
 							<div>
 							<label for="charname"> <?php echo (isset($LANG['CHAR_NAME']) ? $LANG['CHAR_NAME'] : 'Character Name'); ?>: </label>
-								<input type="text" id="charname" name="charname" maxlength="255" style="width:400px;" />
+								<input type="text" id="charname" name="charname" autocomplete="off" maxlength="255" style="width:400px;" />
 							</div>
 							<div class="flex-form">
 								<div>
@@ -114,13 +111,13 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 										}
 										?>
 									</select>
-									<a href="#" onclick="openHeadingAdmin(); return false;"> <img src="../../images/edit.png" alt="Create new group" /></a>
+									<a href="#" onclick="openHeadingAdmin(); return false;"> <img src="../../images/edit.png" alt="<?php echo (isset($LANG['EDIT_BTN']) ? $LANG['EDIT_BTN'] : 'Create new group'); ?>" /></a>
 								</div>
 							</div>
 							<div class="flex-form">
 								<div>
 									<label for="sortsequence"> <?php echo (isset($LANG['SORT_SQNCE']) ? $LANG['SORT_SQNCE'] : 'Sort Sequence'); ?> </label>
-									<input type="text" id="sortsequence" name="sortsequence" />
+									<input type="text" id="sortsequence" name="sortsequence" autocomplete="off" />
 								</div>
 							</div>
 							<div style="width:100%;padding-top:6px;">
@@ -145,10 +142,10 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 											<ul>
 												<?php
 												$charList = $charArr[$hid];
-													foreach($charList as $cid => $charName){
-														if ($charName)
-															echo '<li><a href="chardetails.php?cid=' . htmlspecialchars($cid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($charName, HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
-													}
+												foreach($charList as $cid => $charName){
+													if ($charName)
+														echo '<li><a href="chardetails.php?cid=' . htmlspecialchars($cid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($charName, HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
+												}
 												?>
 											</ul>
 										</div>
