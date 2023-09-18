@@ -280,7 +280,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 					?>
 				</div>
 				<div style="clear:both;">
-					<label for><?php echo (isset($LANG['SEARCH_TERM'])?$LANG['SEARCH_TERM']:'Search Term'); ?>:</label>
+					<label for="searchterm"><?php echo (isset($LANG['SEARCH_TERM'])?$LANG['SEARCH_TERM']:'Search Term'); ?>:</label>
 					<input id="searchterm" type="text" autocomplete="off" name="searchterm" size="25" value="<?php echo $searchTerm; ?>" />
 				</div>
 				<div style="margin-left:40px">
