@@ -201,12 +201,13 @@ if(!$IS_ADMIN){
          }
 
          function buildDotMap(coordinates) {
+            const color_input = document.getElementById("dot-color");
 
             const markerGroup = L.featureGroup(coordinates.map(coord =>  {
                return L.circleMarker([coord.lat, coord.lng], {
                      radius : 8,
                      color  : '#000000',
-                     fillColor: `#B2BEB5`,
+                     fillColor: `#${color_input.value? color_input.value: 'B2BEB5'}`,
                      weight: 2,
                      opacity: 1.0,
                      fillOpacity: 1.0
@@ -349,6 +350,7 @@ if(!$IS_ADMIN){
 	<script src="../../js/jquery-ui/jquery-ui.min.js?ver=3" type="text/javascript"></script>
 	<link href="../../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
 	<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
+	<script src="../../js/jscolor/jscolor.js?ver=1" type="text/javascript"></script>
 </head>
    <body onload="initialize()">
       <?php include($SERVER_ROOT . '/includes/header.php');?>
@@ -379,40 +381,46 @@ if(!$IS_ADMIN){
             <input id="taxa" type="text" size="60" name="taxa" id="taxa" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" /><br/><br/>
 
             <fieldset>
-               <legend>Map Type</legend>
+               <legend><?php echo $LANG['MAP_TYPE'] ?></legend>
             <input type="radio" name="maptype" id ="heatmap" value="heatmap" checked>
                <label for="heatmap">
-                  Heat Map
+                  <?php echo $LANG['HEAT_MAP'] ?>
                   <span id="heat-radius-container" style="display: flex; align-items:center">
-                     <label for="heat-radius">Heat Radius: 0.1</label>
+                     <label for="heat-radius"><?php echo $LANG['HEAT_RADIUS'] ?>: 0.1</label>
                      <input style="margin: 0 1rem;"type="range" value="70" id="heat-radius" name="heat-radius" min="1" max="100">1
                   </span>
-                  <label for="heat-min-density">Min Density: </label>
+                  <label for="heat-min-density"><?php echo $LANG['MIN_DENSITY'] ?>: </label>
                   <input style="margin: 0 1rem; width: 5rem;"value="1" id="heat-min-density" name="heat-min-density">
-                  <label for="heat-max-density">Max Density: </label>
+                  <label for="heat-max-density"><?php echo $LANG['MAX_DENSITY'] ?>: </label>
                   <input style="margin: 0 1rem; width: 5rem;"value="3" id="heat-max-density" name="heat-max-density">
                   <br/>
                </label><br/>
             <input type="radio" name="maptype" id ="dotmap" value="dotmap">
-            <label for="dotmap">Dot Map</label><br/>
+               <label for="dotmap">
+                  <label for="heat-max-density"><?php echo $LANG['DOT_MAP'] ?>: </label>
+                  <div style="display:flex">
+                     <label for="dotColor"><?php echo $LANG['COLOR'] ?>: </label>
+                     <input data-role="none" id="dot-color" name="dot-color" class="color" style="margin-left: 0.5rem;cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0px;" value="B2BEB5"/>
+                  </div>
+               </label><br/>
             </fieldset><br/>
 
             <fieldset>
-               <legend>Bounds</legend>
-            <label>Upper Bound</label><br/>
-            <label>Lat</label>
+               <legend><?php echo $LANG['BOUNDS'] ?></legend>
+            <label><?php echo $LANG['UPPER_BOUND'] ?></label><br/>
+            <label><?php echo $LANG['LATITUDE'] ?></label>
             <input id="upper_lat" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLatMax?>" placeholder="<?php echo $boundLatMax?>"/>
-            <label>Lng</label>
+            <label><?php echo $LANG['LONGITUDE'] ?></label>
             <input id="upper_lng" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLngMax?>" placeholder="<?php echo $boundLngMax?>"/><br>
 
-            <label>Lower Bound</label><br/>
-            <label>Lat</label>
+            <label><?php echo $LANG['LOWER_BOUND'] ?></label><br/>
+            <label><?php echo $LANG['LATITUDE'] ?></label>
             <input id="lower_lat" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLatMin?>" placeholder="<?php echo $boundLatMin?>"/>
-            <label>Lng</label>
+            <label><?php echo $LANG['LONGITUDE'] ?></label>
             <input id="lower_lng" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLngMin?>" placeholder="<?php echo $boundLngMin?>"/><br>
 
-            <button type="button" onclick="resetBounds(getState().bounds)">Reset Bounds</button>
-            <button type="button" onclick="resetBounds([ [90, 180], [-90, -180]])">Global Bounds</button><br/>
+            <button type="button" onclick="resetBounds(getState().bounds)"><?php echo $LANG['RESET_BOUNDS'] ?></button>
+            <button type="button" onclick="resetBounds([ [90, 180], [-90, -180]])"><?php echo $LANG['GLOBAL_BOUNDS'] ?></button><br/>
             </fieldset><br/>
 <!---
             <label for="taxon">Taxon</label><br>
@@ -427,8 +435,8 @@ if(!$IS_ADMIN){
          Form options to add later:
          - replace maps older than a certain date (date text box)
 --->
-            <button type="button" onclick="buildMaps(false)"><?= $LANG['BUILDMAPS'] ?></button>
-            <button type="button" onclick="buildMaps(true)"><?= $LANG['PREVIEWMAP'] ?></button>
+            <button type="button" onclick="buildMaps(false)"><?= $LANG['BUILD_MAPS'] ?></button>
+            <button type="button" onclick="buildMaps(true)"><?= $LANG['PREVIEW_MAP'] ?></button>
          </form>
       </div>
       <?php include($SERVER_ROOT . '/includes/footer.php');?>
