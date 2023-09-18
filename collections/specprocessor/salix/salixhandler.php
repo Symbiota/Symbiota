@@ -2,11 +2,11 @@
 
 <?php
 include_once('../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/SalixUtilities.php');
-include_once($SERVER_ROOT.'/content/lang/collections/specprocessor/salix/salixhandler.'.$LANG_TAG.'.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once($SERVER_ROOT . '/classes/SalixUtilities.php');
+include_once($SERVER_ROOT . '/content/lang/collections/specprocessor/salix/salixhandler.' . $LANG_TAG . '.php');
+header("Content-Type: text/html; charset=" . $CHARSET);
 if(!$SYMB_UID){
-	header('Location: ../../../profile/index.php?refurl=../collections/specprocessor/salix/salixhandler.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+	header('Location: ../../../profile/index.php?refurl=../collections/specprocessor/salix/salixhandler.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 }
 
 $action = (isset($_REQUEST['formsubmit'])?$_REQUEST['formsubmit']:'');
@@ -30,7 +30,7 @@ if($SYMB_UID){
 
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
-		<title> <?php (isset($LANG['SALIX_WRDST_MNGR'])?$LANG['SALIX_WRDST_MNGR']:'SALIX Wordstat Manager') ?> </title>
+		<title><?php echo (isset($LANG['SALIX_WRDST_MNGR']) ? $LANG['SALIX_WRDST_MNGR'] : 'SALIX Wordstat Manager'); ?></title>
 		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
