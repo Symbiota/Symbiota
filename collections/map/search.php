@@ -43,6 +43,26 @@ $recordArr = [];
 $collArr = [];
 $defaultColor = "#B2BEB5";
 
+//Set default bounding box for portal
+$boundLatMin = -90;
+$boundLatMax = 90;
+$boundLngMin = -180;
+$boundLngMax = 180;
+$latCen = 41.0;
+$longCen = -95.0;
+if(!empty($MAPPING_BOUNDARIES)){
+	$coorArr = explode(';', $MAPPING_BOUNDARIES);
+	if($coorArr && count($coorArr) == 4){
+		$boundLatMin = $coorArr[2];
+		$boundLatMax = $coorArr[0];
+		$boundLngMin = $coorArr[3];
+		$boundLngMax = $coorArr[1];
+		$latCen = ($boundLatMax + $boundLatMin)/2;
+		$longCen = ($boundLngMax + $boundLngMin)/2;
+	}
+}
+$bounds = [ [$boundLatMax, $boundLngMax], [$boundLatMin, $boundLngMin]];
+
 // Break map data into 3 arrays for simplicity
 if(!empty($coordArr)) {
    foreach ($coordArr as $collName => $coll) {
@@ -63,7 +83,7 @@ if(!empty($coordArr)) {
 
          //Collect all Collections
          if(!array_key_exists($record['collid'], $collArr)) {
-            $collArr = $collArr[$record['collid']] = [
+            $collArr[$record['collid']] = [
                'name' => $collName,
                'collid' => $record['collid'],
                'color' => $coll['c'],
@@ -113,8 +133,8 @@ if(!empty($coordArr)) {
 	<link href="../../css/jquery.mobile-1.4.0.min.css" type="text/css" rel="stylesheet" />
 	<link href="../../css/jquery.symbiota.css" type="text/css" rel="stylesheet" />
 	<script src="../../js/jquery.popupoverlay.js" type="text/javascript"></script>
-<!---	<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'&key='.$GOOGLE_MAP_KEY:''); ?>&callback=Function.prototype" ></script> -->
 	<script src="../../js/jscolor/jscolor.js?ver=1" type="text/javascript"></script>
+<!---	<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'&key='.$GOOGLE_MAP_KEY:''); ?>&callback=Function.prototype" ></script> -->
 	<script src="../../js/symb/collections.map.index.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/collections.list.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/markerclusterer.js?ver=1" type="text/javascript"></script>
@@ -126,6 +146,7 @@ if(!empty($coordArr)) {
       let taxaMap = [];
       let collArr = [];
       let searchVar = "";
+      let map_bounds= [ [90, 180], [-90, -180] ];
       let puWin;
 
 		function showWorking(){
@@ -148,6 +169,7 @@ if(!empty($coordArr)) {
          buildTaxaLegend();
          changeTaxaColor();
          buildCollectionLegend();
+         changeCollColor();
       }
 
       function legendRow(id, color, innerHTML) {
@@ -158,6 +180,7 @@ if(!empty($coordArr)) {
                      data-role="none" 
                      id="keyColor-${id}" 
                      class="color" 
+                     onchange="((color)=> console.log(color))(this.value)"
                      style="cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0px;" 
                      value="${color}"
                   />
@@ -190,17 +213,31 @@ if(!empty($coordArr)) {
             document.getElementById(`keyColor-${taxa.tid}`).style.backgroundColor = taxa.color;
          }
       }
-
+      
       function buildCollectionLegend() {
-
          let html = "<div style='display:table;'>";
          console.log(collArr)
+
+         for (let coll of Object.values(collArr)) {
+            html += legendRow(coll.collid, coll.color, coll.name);
+         }
+
+			document.getElementById("symbologykeysbox").innerHTML = html;
+
+      }
+
+      function changeCollColor() {
+         for (let coll of Object.values(collArr)) {
+            document.getElementById(`keyColor-${coll.collid}`).style.backgroundColor = coll.color;
+         }
       }
 
       function leafletInit() { 
          let map = new LeafletMap('map')
          let markers = L.markerClusterGroup();
          let color = "B2BEB5";
+
+         map.mapLayer.zoomControl.setPosition('topright');
 
          for(let record of recordArr) {
             let marker = (record.type === "specimen"?
@@ -223,7 +260,11 @@ if(!empty($coordArr)) {
                .addTo(markers)
          }
          markers.addTo(map.mapLayer);
-         if(markers && markers.length > 0) map.mapLayer.fitBounds(markers.getBounds());
+         if(markers && markers.length > 0) {
+            map.mapLayer.fitBounds(markers.getBounds());
+         } else if(map_bounds) {
+            map.mapLayer.fitBounds(map_bounds);
+         }
       }
 
       function googleInit() {
@@ -247,6 +288,7 @@ if(!empty($coordArr)) {
             recordArr = JSON.parse(data.getAttribute('data-record-arr'));
             taxaMap = JSON.parse(data.getAttribute('data-taxa-arr'));
             collArr = JSON.parse(data.getAttribute('data-coll-arr'));
+            map_bounds = JSON.parse(data.getAttribute('data-map-bounds'));
 
             searchVar = data.getAttribute('data-search-var');
             if(searchVar) sessionStorage.querystr = searchVar;
@@ -272,6 +314,7 @@ if(!empty($coordArr)) {
    data-taxa-arr="<?= htmlspecialchars(json_encode($taxaArr))?>"
    data-coll-arr="<?= htmlspecialchars(json_encode($collArr))?>"
    data-search-var="<?=htmlspecialchars($searchVar)?>"
+   data-map-bounds="<?=htmlspecialchars(json_encode($bounds))?>"
    class="service-container" 
 />
 <div data-role="page" id="page1">
