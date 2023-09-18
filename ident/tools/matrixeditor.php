@@ -1,6 +1,9 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/KeyMatrixEditor.php');
+include_once($SERVER_ROOT . '/content/lang/ident/tools/matrixeditor.' . $LANG_TAG . '.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../ident/tools/matrixeditor.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
@@ -32,9 +35,9 @@ if($isEditor){
 	}
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Character Mass Updater</title>
+	<title><?php echo $DEFAULT_TITLE; ?> <?php echo (isset($LANG['ALLOW_PUBLIC_EDITS']) ? $LANG['ALLOW_PUBLIC_EDITS'] : 'Allow Public Edits'); ?> </title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -47,7 +50,7 @@ if($isEditor){
 
 		function verifyClose() {
 			if(dataChanged == true) {
-				return "You will lose any unsaved data if you don't first save your changes!";
+				return <?php echo (isset($LANG['DATA_CHANGED']) ? $LANG['DATA_CHANGED'] : 'You will lose any unsaved data if you don\'t first save your changes!'); ?>;
 			}
 		}
 
@@ -96,10 +99,10 @@ if($isEditor){
 				submitForm = true;
 			}
 			if(submitForm) sform.submit();
-			else alert("It doesn't appear that any edits have been made");
+			else alert(<?php echo (isset($LANG['NO_EDITS_MADE']) ? $LANG['NO_EDITS_MADE'] : 'It doesn\'t appear that any edits have been made'); ?>);
 		}
 	</script>
-	<style type="text/css">
+	<style>
 		table {
 			text-align: left;
 			position: relative;
@@ -116,19 +119,19 @@ $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class='navpath'>
-	<a href="../../index.php">Home</a> &gt;&gt;
-	<a href="../../checklists/checklist.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>">Open Checklist</a> &gt;&gt;
-	<a href="../key.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>&taxon=All+Species">Open Key</a> &gt;&gt;
+	<a href="../../index.php"> <?php echo (isset($LANG['HOME']) ? $LANG['HOME'] : 'Home'); ?> </a> &gt;&gt;
+	<a href="../../checklists/checklist.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>"> <?php echo (isset($LANG['OPEN_CHKLIST']) ? $LANG['OPEN_CHKLIST'] : 'Open Checklist'); ?> </a> &gt;&gt;
+	<a href="../key.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>&taxon=All+Species"> <?php echo (isset($LANG['OPEN_KEY']) ? $LANG['OPEN_KEY'] : 'Open Key'); ?> </a> &gt;&gt;
 	<?php
 	if($cidValue){
 		?>
 		<a href='matrixeditor.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&tf=' . htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS) . '&lang=' . htmlspecialchars($langValue, HTML_SPECIAL_CHARS_FLAGS); ?>'>
-			Return to Character List
+		<?php echo (isset($LANG['RETURN_TO_LIST']) ? $LANG['RETURN_TO_LIST'] : 'Return to Character List'); ?>
 		</a> &gt;&gt;
 		<?php
 	}
 	?>
-	<b>Matrix Editor</b>
+	<b> <?php echo (isset($LANG['MTRX_EDIT']) ? $LANG['MTRX_EDIT'] : 'Matrix Editor'); ?> </b>
 </div>
 <!-- This is inner text! -->
 <div id="innertext">
@@ -136,12 +139,13 @@ include($SERVER_ROOT.'/includes/header.php');
 	if($clid && $isEditor){
 		if(!$cidValue){
 			?>
-			<form id="filterform" action="matrixeditor.php" method="post" onsubmit="return verifyFilterForm(this)">
+			<form id="filterform" action="matrixeditor.php" method="post">
 				<fieldset>
-		  			<div style="margin: 10px 0px;">Select character to edit</div>
+					<legend> <?php echo (isset($LANG['CHAR_EDIT']) ? $LANG['CHAR_EDIT'] : 'Character Edit'); ?></legend>
+		  			<label for="selection"> <?php echo (isset($LANG['SELECT_CHAR']) ? $LANG['SELECT_CHAR'] : 'Select character to edit'); ?> </label>
 		  			<div>
-						<select name="tf" onchange="this.form.submit()">
-				 			<option value="">All Taxa</option>
+						<select name="tf" id="selection">
+				 			<option value=""> <?php echo (isset($LANG['ALL_TAXA']) ? $LANG['ALL_TAXA'] : 'All Taxa'); ?> </option>
 				 			<option value="">--------------------------</option>
 					  		<?php
 					  		$selectList = $muManager->getTaxaQueryList();
@@ -149,14 +153,15 @@ include($SERVER_ROOT.'/includes/header.php');
 				  				echo '<option value="'.$tid.'" '.($tid==$taxonFilter?"SELECTED":"").'>'.$scinameValue."</option>";
 				  			}
 					  		?>
+							<script src="../../js/symb/ident.matrixeditor.js"></script>
 						</select>
 						<?php
 						count($selectList);
 						?>
 					</div>
 					<div style="margin: 10px 0px;">
-						<input type="checkbox" name="generaonly" value="1" <?php if($generaOnly) echo "checked"; ?> />
-						Exclude Species Rank
+						<input type="checkbox" id="generaonly" name="generaonly" value="1" <?php if($generaOnly) echo "checked"; ?> />
+						<label for="generaonly"> <?php echo (isset($LANG['EXCLUDE_RANK']) ? $LANG['EXCLUDE_RANK'] : 'Exclude Species Rank'); ?>
 					</div>
 			 		<?php
 	 				$cList = $muManager->getCharList($taxonFilter);
@@ -175,9 +180,9 @@ include($SERVER_ROOT.'/includes/header.php');
 			<?php
 		}
 		else{
-			$inheritStr = "&nbsp;<span title='State has been inherited from parent taxon'><b>(i)</b></span>";
+			$inheritStr = '&nbsp;<span title="' . (isset($LANG['STATE_INHERITED']) ? $LANG['STATE_INHERITED'] : 'State has been inherited from parent taxon') . '"><b>(i)</b></span>';
 			?>
-			<div><?php echo $inheritStr; ?> = character state is inherited as true from a parent taxon (genus, family, etc)</div>
+			<div><?php echo $inheritStr; ?> <?php echo (isset($LANG['INHERITED_TRUE']) ? $LANG['INHERITED_TRUE'] : ' = character state is inherited as true from a parent taxon (genus, family, etc)') ?> </div>
 		 	<table class="styledtable" style="font-family:Arial;font-size:12px;">
 				<?php
 				$muManager->echoTaxaList($taxonFilter,$generaOnly);
@@ -194,7 +199,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	 	}
 	}
 	else{
-		echo "<h1>You appear not to have necessary premissions to edit character data.</h1>";
+		echo "<h1>" . (isset($LANG['NO_PERMISSION']) ? $LANG['NO_PERMISSION'] : 'You appear not to have necessary premissions to edit character data.') . "</h1>";
 	}
 	?>
 </div>
