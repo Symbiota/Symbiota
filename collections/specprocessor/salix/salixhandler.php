@@ -89,7 +89,11 @@ if($SYMB_UID){
 								<input id="rndmSelect" name="actiontype" type="radio" value="1" /> <label for="rndmSelect"> <?php echo (isset($LANG['RNDM_SELECT'])?$LANG['RNDM_SELECT']:'Rebuild with randomly selected occurrences') ?> </label> <br/>
 								<input id="recentEnter" name="actiontype" type="radio" value="2" /> <label for="recentEnter"> <?php echo (isset($LANG['RECENTLY_ENTERED'])?$LANG['RECENTLY_ENTERED']:'Rebuild with most recently entered occurrences') ?> </label> <br/>
 								<input id="appendLast" name="actiontype" type="radio" value="3" checked /> <label for="appendLast"> <?php echo (isset($LANG['APPEND_LAST_BUILD'])?$LANG['APPEND_LAST_BUILD']:'Append using occurrences entered since last build') ?> (<?php echo $salixHanlder->getLastBuildTimestamp(); ?>) </label> <br/><br/>
-								<label for="limit"> <?php echo (isset($LANG['LIMIT_TO'])?$LANG['LIMIT_TO']:'Limit to') ?> <span class="skip-link"> <?php echo (isset($LANG['UNIQUE_VALS'])?$LANG['UNIQUE_VALS']:'unique values per column') ?> </span> </label> <input id="limit" name="limit" type="text" value="100000"> <?php echo (isset($LANG['UNIQUE_VALS'])?$LANG['UNIQUE_VALS']:'unique values per column') ?> </input>
+								<label for="limit"> <?php echo (isset($LANG['LIMIT_TO'])?$LANG['LIMIT_TO']:'Limit to') ?> 
+									<span class="skip-link"> <?php echo (isset($LANG['UNIQUE_VALS'])?$LANG['UNIQUE_VALS']:'unique values per column') ?> </span> 
+								</label> 
+								<input id="limit" name="limit" type="text" value="100000" /> 
+								<?php echo (isset($LANG['UNIQUE_VALS'])?$LANG['UNIQUE_VALS']:'unique values per column') ?>
 								<div style="margin:15px;">
 								
 									<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
