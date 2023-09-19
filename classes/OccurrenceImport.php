@@ -1,8 +1,9 @@
 <?php
-include_once($SERVER_ROOT.'/classes/Manager.php');
-include_once($SERVER_ROOT.'/classes/ImageShared.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorMaterialSample.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
+include_once('Manager.php');
+include_once('ImageShared.php');
+include_once('OccurrenceEditorMaterialSample.php');
+include_once('OmOccurAssociations.php');
+include_once('OccurrenceMaintenance.php');
 
 class OccurrenceImport extends Manager{
 
@@ -43,6 +44,7 @@ class OccurrenceImport extends Manager{
 				$importManager = null;
 				if($this->importType == IMPORT_IMAGE_MAP) $importManager = new ImageShared($this->conn);
 				elseif($this->importType == IMPORT_MATERIAL_SAMPLE) $importManager = new OccurrenceEditorMaterialSample();
+				elseif($this->importType == IMPORT_ASSOCIATIONS) $importManager = new OmOccurAssociations();
 				while($recordArr = fgetcsv($fh)){
 					$identifierArr = array();
 					if(isset($this->fieldMap['occurrenceid'])){
@@ -86,7 +88,8 @@ class OccurrenceImport extends Manager{
 						}
 						elseif($this->importType == IMPORT_ASSOCIATIONS){
 							foreach($occidArr as $occid => $tid){
-
+								$importManager->setOccid($occid);
+								$importManager->insertAssociations($postArr);
 							}
 						}
 						elseif($this->importType == IMPORT_DETERMINATIONS){
@@ -121,7 +124,6 @@ class OccurrenceImport extends Manager{
 				fclose($fh);
 
 				$occurMain = new OccurrenceMaintenance($this->conn);
-
 				$this->logOrEcho('Updating statistics...');
 				if(!$occurMain->updateCollectionStatsBasic($this->collid)){
 					$errorArr = $occurMain->getErrorArr();
@@ -219,7 +221,7 @@ class OccurrenceImport extends Manager{
 			$fieldArr = array('url','originalUrl','thumbnailUrl','photographer','caption','sourceUrl','anatomy','notes','owner','copyright','sortOccurrence');
 		}
 		elseif($this->importType == IMPORT_ASSOCIATIONS){
-			$fieldArr = array();
+			$fieldArr = array('occidAssociate', 'relationship', 'relationshipID', 'subType', 'identifier', 'basisOfRecord', 'resourceUrl', 'verbatimSciname');
 		}
 		elseif($this->importType == IMPORT_DETERMINATIONS){
 			$fieldArr = array();
