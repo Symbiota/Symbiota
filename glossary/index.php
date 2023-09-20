@@ -167,7 +167,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 				if($isEditor){
 					?>
 					<div>
-						<a href="#" onclick="openNewTermPopup();">
+						<a onclick="openNewTermPopup();">
 							<?php echo $LANG['ADD_TERM']; ?>
 						</a>
 					</div>
@@ -180,7 +180,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 				}
 				?>
 				<div>
-					<a href="#" title="Show download options" onclick="toggle('downloadoptionsdiv');return false;">
+					<a title="Show download options" onclick="toggle('downloadoptionsdiv');return false;">
 						<?php echo (isset($LANG['DOWN_OP'])?$LANG['DOWN_OP']:'Download Options'); ?>
 					</a>
 				</div>
@@ -311,7 +311,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 							?>
 							<div style="float:left;margin-left:5px;">
 								<div style="" onclick="toggle('sourcesdiv');return false;">
-									(<a href="#"><?php echo (isset($LANG['DISP_SRC'])?$LANG['DISP_SRC']:'Display Sources'); ?></a>)
+									(<a><?php echo (isset($LANG['DISP_SRC'])?$LANG['DISP_SRC']:'Display Sources'); ?></a>)
 								</div>
 							</div>
 							<?php
@@ -377,7 +377,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 					echo '<div style="padding:10px;"><ul>';
 					foreach($termList as $glossId => $termName){
 						echo '<li>';
-						echo '<a href="#" onclick="openTermPopup(' . htmlspecialchars($glossId, HTML_SPECIAL_CHARS_FLAGS) . '); return false;"><b>' . htmlspecialchars($termName, HTML_SPECIAL_CHARS_FLAGS) . '</b></a>';
+						echo '<a onclick="openTermPopup(' . htmlspecialchars($glossId, HTML_SPECIAL_CHARS_FLAGS) . '); return false;"><b>' . htmlspecialchars($termName, HTML_SPECIAL_CHARS_FLAGS) . '</b></a>';
 						echo '</li>';
 					}
 					echo '</ul></div>';
