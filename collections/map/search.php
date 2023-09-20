@@ -149,6 +149,12 @@ if(!empty($coordArr)) {
       let map_bounds= [ [90, 180], [-90, -180] ];
       let puWin;
 
+      const colorChange = new Event("colorchange",  {
+         bubbles: true,
+         cancelable: true,
+         composed: true,
+      });
+
 		function showWorking(){
 			$('#loadingOverlay').popup('show');
 		}
@@ -167,9 +173,10 @@ if(!empty($coordArr)) {
 			setPanels(true);
 			$("#accordion").accordion("option",{active: 1});
          buildTaxaLegend();
-         changeTaxaColor();
          buildCollectionLegend();
-         changeCollColor();
+
+         //Calls init again because this html is js rendered
+         jscolor.init();
       }
 
       function legendRow(id, color, innerHTML) {
@@ -178,9 +185,9 @@ if(!empty($coordArr)) {
                <div style="display:table-cell;vertical-align:middle;padding-bottom:5px;" >
                   <input 
                      data-role="none" 
-                     id="keyColor-${id}" 
+                     id="${id}" 
                      class="color" 
-                     onchange="((color)=> console.log(color))(this.value)"
+                     onchange="onColorChange(this)"
                      style="cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0px;" 
                      value="${color}"
                   />
@@ -192,12 +199,16 @@ if(!empty($coordArr)) {
          )
       }
 
+      function onColorChange(e) {
+         e.dispatchEvent(colorChange)
+      }
+
       function buildTaxaLegend() {
          let taxaHtml = "<div style='display:table;'>";
          let taxaArr = Object.values(taxaMap).sort((a, b) => a.family > b.family)
 
          for (let taxa of taxaArr) {
-            taxaHtml += legendRow(taxa.tid, taxa.color, taxa.sn);
+            taxaHtml += legendRow(`taxa-${taxa.tid}`, taxa.color, taxa.sn);
          }
 
          taxaHtml += "</div>";
@@ -210,7 +221,7 @@ if(!empty($coordArr)) {
          for (let key of Object.keys(taxaMap)) {
             const taxa = taxaMap[key];
 
-            document.getElementById(`keyColor-${taxa.tid}`).style.backgroundColor = taxa.color;
+            document.getElementById(`taxa-${taxa.tid}`).style.backgroundColor = taxa.color;
          }
       }
       
@@ -219,7 +230,7 @@ if(!empty($coordArr)) {
          console.log(collArr)
 
          for (let coll of Object.values(collArr)) {
-            html += legendRow(coll.collid, coll.color, coll.name);
+            html += legendRow(`coll-${coll.collid}`, coll.color, coll.name);
          }
 
 			document.getElementById("symbologykeysbox").innerHTML = html;
@@ -228,13 +239,100 @@ if(!empty($coordArr)) {
 
       function changeCollColor() {
          for (let coll of Object.values(collArr)) {
-            document.getElementById(`keyColor-${coll.collid}`).style.backgroundColor = coll.color;
+            document.getElementById(`coll-${coll.collid}`).style.backgroundColor = coll.color;
          }
+      }
+
+      function setQueryShape(shape) {
+
+         document.getElementById("pointlat").value = '';
+         document.getElementById("pointlong").value = '';
+         document.getElementById("radius").value = '';
+         document.getElementById("upperlat").value = '';
+         document.getElementById("leftlong").value = '';
+         document.getElementById("bottomlat").value = '';
+         document.getElementById("rightlong").value = '';
+         document.getElementById("poly_array").value = '';
+         document.getElementById("distFromMe").value = '';
+         document.getElementById("noshapecriteria").style.display = "block";
+         document.getElementById("polygeocriteria").style.display = "none";
+         document.getElementById("circlegeocriteria").style.display = "none";
+         document.getElementById("rectgeocriteria").style.display = "none";
+         document.getElementById("deleteshapediv").style.display = "none";
+
+         if(!shape) return;
+
+         if(shape.type === 'circle') {
+            setCircleCoords(shape.radius, shape.center.lat, shape.center.lng);
+         } else if(shape.type === 'rectangle') {
+            setRectangleCoords(shape.upperLat, shape.lowerLat, shape.leftLng, shape.rightLng);
+         } else if (shape.type === 'polygon') {
+            setPolyCoords(shape.wkt);
+         }
+      }
+
+      function setCircleCoords(rad, lat, lng) {
+         var radius = (rad/1000)*0.6214;
+         document.getElementById("pointlat").value = lat;
+         document.getElementById("pointlong").value = lng;
+         document.getElementById("radius").value = radius;
+         document.getElementById("upperlat").value = '';
+         document.getElementById("leftlong").value = '';
+         document.getElementById("bottomlat").value = '';
+         document.getElementById("rightlong").value = '';
+         document.getElementById("poly_array").value = '';
+         document.getElementById("distFromMe").value = '';
+         document.getElementById("noshapecriteria").style.display = "none";
+         document.getElementById("polygeocriteria").style.display = "none";
+         document.getElementById("circlegeocriteria").style.display = "block";
+         document.getElementById("rectgeocriteria").style.display = "none";
+         document.getElementById("deleteshapediv").style.display = "block";
+      }
+
+      function setRectangleCoords(upperlat, bottomlat, leftlong, rightlong) {
+         document.getElementById("upperlat").value = upperlat;
+         document.getElementById("rightlong").value = rightlong;
+         document.getElementById("bottomlat").value = bottomlat;
+         document.getElementById("leftlong").value = leftlong;
+         document.getElementById("pointlat").value = '';
+         document.getElementById("pointlong").value = '';
+         document.getElementById("radius").value = '';
+         document.getElementById("poly_array").value = '';
+         document.getElementById("distFromMe").value = '';
+         document.getElementById("noshapecriteria").style.display = "none";
+         document.getElementById("polygeocriteria").style.display = "none";
+         document.getElementById("circlegeocriteria").style.display = "none";
+         document.getElementById("rectgeocriteria").style.display = "block";
+         document.getElementById("deleteshapediv").style.display = "block";
+      }
+
+      function setPolyCoords(wkt) {
+         document.getElementById("poly_array").value = wkt;
+         document.getElementById("pointlat").value = '';
+         document.getElementById("pointlong").value = '';
+         document.getElementById("radius").value = '';
+         document.getElementById("upperlat").value = '';
+         document.getElementById("leftlong").value = '';
+         document.getElementById("bottomlat").value = '';
+         document.getElementById("rightlong").value = '';
+         document.getElementById("distFromMe").value = '';
+         document.getElementById("noshapecriteria").style.display = "none";
+         document.getElementById("polygeocriteria").style.display = "block";
+         document.getElementById("circlegeocriteria").style.display = "none";
+         document.getElementById("rectgeocriteria").style.display = "none";
+         document.getElementById("deleteshapediv").style.display = "block";
       }
 
       function leafletInit() { 
          let map = new LeafletMap('map')
-         let markers = L.markerClusterGroup();
+         map.enableDrawing({
+            polyline: false,
+            circlemarker: false,
+            marker: false,
+            drawColor: {opacity: 0.85, fillOpacity: 0.55, color: '#000' }
+         }, setQueryShape);
+         let cluster = L.markerClusterGroup();
+         let markers = [];
          let color = "B2BEB5";
 
          map.mapLayer.zoomControl.setPosition('topright');
@@ -257,11 +355,32 @@ if(!empty($coordArr)) {
                }))
                .on('click', function() { openIndPU(record.occid) })
                .bindTooltip(`<div>${record.id}`)
-               .addTo(markers)
+
+            markers.push(marker);
+
          }
-         markers.addTo(map.mapLayer);
+
+         document.addEventListener('colorchange', function(e) {
+            const [type, id] = e.target.id.split("-");
+            const color = e.target.value;
+
+            cluster.removeLayers(markers)
+
+            for (let i = 0; i < markers.length; i++) {
+               if(type === "taxa" && recordArr[i]['tid'] === id)
+                  markers[i].options.fillColor =`#${color}` 
+               else if (type === "coll" && recordArr[i]['collid'] === id) {
+                  markers[i].options.fillColor =`#${color}` 
+               }
+            }
+            cluster.addLayers(markers)
+         });
+
+         cluster.addLayers(markers)
+
+         cluster.addTo(map.mapLayer);
          if(markers && markers.length > 0) {
-            map.mapLayer.fitBounds(markers.getBounds());
+            map.mapLayer.fitBounds(cluster.getBounds());
          } else if(map_bounds) {
             map.mapLayer.fitBounds(map_bounds);
          }
@@ -296,6 +415,7 @@ if(!empty($coordArr)) {
 
          }
 
+
          <?php if(!empty($LEAFLET)) { ?> 
             leafletInit();
          <?php } else { ?> 
@@ -318,6 +438,7 @@ if(!empty($coordArr)) {
    class="service-container" 
 />
 <div data-role="page" id="page1">
+
 	<div role="main" class="ui-content" style="height:400px;">
 		<a href="#defaultpanel" style="position:absolute;top:0;left:0;margin-top:0px;z-index:10;padding-top:3px;padding-bottom:3px;text-decoration:none;" data-role="button" data-inline="true" data-icon="bars">Open Search Panel</a>
 	</div>
