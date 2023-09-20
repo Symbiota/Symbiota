@@ -487,7 +487,7 @@ table.styledtable tr.alt td {
 }
 
 .welcome-text {
-  margin-bottom: 0.75rem
+  margin-bottom: 0.75rem;
 }
 
 .img-add {
@@ -514,7 +514,7 @@ table.styledtable tr.alt td {
   margin-top: 1.35rem;
   margin-left: 0.7rem;
   float: left;
-  font-size: 80%
+  font-size: 80%;
 }
 
 .tax-meta-div {
@@ -531,3 +531,321 @@ table.styledtable tr.alt td {
   padding: 10px;
   max-width: 500px;
 }
+
+/* Accordion styling from NEON
+========================================================================== */
+
+.accordions input.accordion-selector {
+  display: none;
+}
+
+.accordions label.accordion-header {
+  font-size: 16px;
+  text-transform: uppercase;
+  font-weight: 600;
+  text-align: center;
+  display: block;
+  padding: 8px 22px;
+  margin: 0 0 1px 0;
+  cursor: pointer;
+  background-color: #ffffff;
+  border-radius: 2px;
+  border: 1px solid #0073cf;
+  color: #0073cf;
+  -webkit-transition: ease 0.5s;
+  transition: ease 0.5s;
+  position: relative;
+}
+
+.accordions label.accordion-header:hover {
+  background: #e6e6e6;
+}
+
+.accordions label.accordion-header::after {
+  font-family: "Material Icons";
+  font-size: 24px;
+  content: "\e313";
+  position: absolute;
+  right: 20px;
+  top: 10px;
+}
+
+.accordions .content {
+  background: #ffffff;
+  padding: 10px 25px;
+  border: 1px solid #d7d9d9;
+  margin: -1px 0 10px 0;
+  border-radius: 2px;
+}
+
+.accordions .accordion-selector + label + .content {
+  display: none;
+  opacity: 0;
+  height: 0;
+  padding: 0 25px;
+  -webkit-transition: ease-in-out 0.2s;
+  transition: ease-in-out 0.2s;
+}
+
+.accordions .accordion-selector:checked + label + .content {
+  display: block;
+  opacity: 1;
+  height: auto;
+  padding: 10px 25px;
+}
+
+.accordions .accordion-selector:checked + label::after {
+  content: "\e316";
+}
+
+/* End accordion styling from NEON
+========================================================================== */
+
+/* Input Text ********************************************************************************/
+.input-text-container {
+  --bg: $neon-lighter-gray;
+  --height: 46px;
+  --bg-hover1: rgba(0, 0, 0, 0.08);
+  --bbc: rgba(0, 0, 0, 0.42);
+  --opaq1: 0.08;
+  --fz: 16px;
+  margin: 0 auto;
+  padding-top: 14px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.input-text-container label {
+  position: relative;
+  width: 100%;
+  display: inline-block;
+}
+
+.input-text-container label span::after,
+.input-text-container label span::before {
+  position: absolute;
+  -webkit-transition: 200ms ease-in-out;
+  transition: 200ms ease-in-out;
+}
+
+.input-text-container label span::before {
+  content: attr(data-label);
+  left: 16px;
+  top: 16px;
+  margin: auto;
+  pointer-events: none;
+  height: 12px;
+  font-size: var(--fz);
+  color: gray;
+  line-height: 1;
+}
+
+.input-text-container label input:focus ~ span::before,
+.input-text-container label input:valid ~ span::before,
+.input-text-container label input:invalid ~ span::before {
+  font-size: 0.8em;
+  color: #005dab;
+}
+
+.input-text-container input {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 100%;
+  border: 0;
+  height: var(--height);
+  padding: 10px 5px;
+  font-size: 1em;
+}
+
+.input-text-container input:focus,
+.input-text-container input:active {
+  outline: 0;
+  border: 0;
+}
+
+.input-text-container .input-text--filled {
+  border-bottom: 1px solid var(--bbc);
+}
+
+.input-text-container .input-text--filled > input {
+  background-color: var(--bg);
+  border-radius: 4px 4px 0 0;
+}
+
+.input-text-container .input-text--filled > input:hover {
+  background-color: var(--bg-hover1);
+}
+
+.input-text-container .input-text--filled > input:focus ~ span::before,
+.input-text-container .input-text--filled > input:valid ~ span::before,
+.input-text-container .input-text--filled > input:invalid ~ span::before {
+  -webkit-transform: translateY(-12px);
+  transform: translateY(-12px);
+  font-size: 0.8em;
+  color: #005dab;
+}
+
+.input-text-container .input-text--filled > input:focus ~ span::after,
+.input-text-container .input-text--filled > input:valid ~ span::after,
+.input-text-container .input-text--filled > input:invalid ~ span::after {
+  width: 100%;
+}
+
+.input-text-container .input-text--filled span::after {
+  content: "";
+  width: 0;
+  height: 1px;
+  background-color: #005dab;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  -webkit-transition: 300ms;
+  transition: 300ms;
+}
+
+.input-text-container .input-text--outlined > input {
+  border-radius: 0;
+}
+
+.input-text-container .input-text--outlined > input:focus {
+  -webkit-box-shadow: 0 0 0 2px #005dab;
+  box-shadow: 0 0 0 2px #005dab;
+  border-color: transparent;
+}
+
+.input-text-container .input-text--outlined > input:focus ~ span::before,
+.input-text-container .input-text--outlined > input:valid ~ span::before,
+.input-text-container .input-text--outlined > input:invalid ~ span::before {
+  -webkit-transform: translateY(-22px);
+  transform: translateY(-22px);
+  background-color: white;
+  padding: 2px 4px;
+}
+
+/* End Input Text ********************************************************************************/
+
+/* Select control ***********************************/
+.select-container label {
+  font-size: 0.8em;
+  postion: relative;
+  top: 22px;
+  background-color: white;
+  padding: 2px 4px;
+}
+
+.select-container label span {
+  content: attr(data-label);
+  left: 16px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  pointer-events: none;
+  color: gray;
+  line-height: 1;
+}
+
+.select-container select {
+  margin-top: 14px;
+  height: 46px;
+  border: 2px solid #939292;
+  -webkit-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.17);
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.17);
+  font-family: inherit;
+  font-size: 1em;
+  width: 100%;
+}
+
+.select-container select:active,
+.select-container select:focus {
+  border-color: #005dab;
+}
+/* End Select control ***********************************/
+
+/* Text Area ********************************************************************************/
+.text-area-container {
+  --bg: $neon-lighter-gray;
+  --bg-hover1: rgba(0, 0, 0, 0.08);
+  --bbc: rgba(0, 0, 0, 0.42);
+  --opaq1: 0.08;
+  --padding: 10px;
+  --fz: 16px;
+  margin: 10px auto;
+  width: 100%;
+  max-width: 600px;
+}
+
+.text-area-container label {
+  position: relative;
+  width: 100%;
+  display: inline-block;
+}
+
+.text-area-container label span::after,
+.text-area-container label span::before {
+  position: absolute;
+  -webkit-transition: 200ms ease-in-out;
+  transition: 200ms ease-in-out;
+}
+
+.text-area-container label span::after {
+  position: absolute;
+  top: 0;
+  -webkit-transition: 200ms ease-in-out;
+  transition: 200ms ease-in-out;
+}
+
+.text-area-container label span::before {
+  content: attr(data-label);
+  left: 16px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  pointer-events: none;
+  height: 12px;
+  font-size: var(--fz);
+  line-height: 1;
+}
+
+.text-area-container textarea {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  resize: none;
+  border: 0;
+  height: 100px;
+  padding: var(--padding);
+  font-size: 1em;
+}
+
+.text-area-container textarea ~ span::before {
+  top: -60px;
+  font-size: 0.8em;
+  color: #005dab;
+}
+
+.text-area-container textarea:focus,
+.text-area-container textarea:active {
+  outline: 0;
+  border: 0;
+}
+
+.text-area-container .text-area--outlined > textarea {
+  border: 1px solid var(--bbc);
+  border-radius: 0;
+}
+
+.text-area-container .text-area--outlined > textarea:focus {
+  -webkit-box-shadow: 0 0 0 2px #005dab;
+  box-shadow: 0 0 0 2px #005dab;
+  border-color: transparent;
+}
+
+.text-area-container .text-area--outlined > textarea:focus ~ span::before,
+.text-area-container .text-area--outlined > textarea:valid ~ span::before {
+  -webkit-transform: translateY(-22px);
+  transform: translateY(-22px);
+  background-color: white;
+  padding: 2px 4px;
+}
+
+/* End Text Area ********************************************************************************/

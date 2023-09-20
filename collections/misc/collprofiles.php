@@ -35,6 +35,7 @@ if ($SYMB_UID) {
 	<title><?php echo $DEFAULT_TITLE . ' ' . ($collid && isset($collData[$collid])? $collData[$collid]['collectionname'] : ''); ?></title>
 	<meta name="keywords" content="Natural history collections,<?php echo ($collid ? $collData[$collid]['collectionname'] : ''); ?>" />
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
@@ -403,6 +404,7 @@ if ($SYMB_UID) {
 			}
 			?>
 			<div style='margin:10px;'>
+				
 				<?php
 				echo $collManager->getMetadataHtml($LANG, $LANG_TAG);
 				if ($collData['publishtogbif'] && $datasetKey) {

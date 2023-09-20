@@ -99,9 +99,17 @@ class OccurrenceCollectionProfile extends OmCollections{
 				}
 			}
 		}
-		$outStr .= '<div class="field-div">';
-		$outStr .= '<span class="label">'.$LANG['COLLECTION_TYPE'].':</span> '.$this->collMeta[$this->collid]['colltype'];
+		$outStr .= '<div class="accordions">';
+			$outStr .= '<section>';
+				$outStr .= '<input type="checkbox" id="more-details" class="accordion-selector" checked=false />';
+				$outStr .= '<label for="more-details" class="accordion-header">More Information</label>';
+				$outStr .= '<div id="search-form-taxonomy" class="content">';
+					$outStr .= '<span class="label">' . $LANG['COLLECTION_TYPE'] . ':</span> ' . $this->collMeta[$this->collid]['colltype'];
+					$outStr .= '</div>';
+
+			$outStr .= '</section>';
 		$outStr .= '</div>';
+
 		$outStr .= '<div class="field-div">';
 		$outStr .= '<span class="label">'.$LANG['MANAGEMENT'].':</span> ';
 		if($this->collMeta[$this->collid]['managementtype'] == 'Live Data'){
