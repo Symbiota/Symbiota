@@ -309,10 +309,16 @@ if(!$IS_ADMIN){
                }
             })
 
+            let inputChanged = false;
+
             map.mapLayer.on('dragend', () => refreshBoundInputs())
-            map.mapLayer.on('zoom', (e) => refreshBoundInputs())
+            map.mapLayer.on('zoom', (e) => {
+               if(!inputChanged) refreshBoundInputs()
+               else inputChanged = false;
+            })
 
             document.getElementById("upper_lat").addEventListener("input", e => {
+               inputChanged = true;
                let lat = parseFloat(e.target.value);
                if(lat <= 90 && lat >= -90) {
                   let new_bounds = getMapBounds()
@@ -321,6 +327,7 @@ if(!$IS_ADMIN){
                }
             })
             document.getElementById("upper_lng").addEventListener("input", e => {
+               inputChanged = true;
                let lng = parseFloat(e.target.value);
                if(lng <= 180 && lng >= -180) { 
                   let new_bounds = getMapBounds()
@@ -329,6 +336,7 @@ if(!$IS_ADMIN){
                }
             })
             document.getElementById("lower_lat").addEventListener("input", e => {
+               inputChanged = true;
                let lat = parseFloat(e.target.value);
                if(lat <= 90 && lat >= -90) {
                   let new_bounds = getMapBounds()
@@ -337,6 +345,7 @@ if(!$IS_ADMIN){
                }
             })
             document.getElementById("lower_lng").addEventListener("input", e => {
+               inputChanged = true;
                let lng = parseFloat(e.target.value);
                if(lng <= 180 && lng >= -180) { 
                   let new_bounds = getMapBounds()
@@ -382,7 +391,7 @@ if(!$IS_ADMIN){
 
             <fieldset>
                <legend><?php echo $LANG['MAP_TYPE'] ?></legend>
-            <input type="radio" name="maptype" id ="heatmap" value="heatmap" checked>
+               <input type="radio" name="maptype" id ="heatmap" value="heatmap" checked />
                <label for="heatmap">
                   <?php echo $LANG['HEAT_MAP'] ?>
                   <span id="heat-radius-container" style="display: flex; align-items:center">
@@ -395,9 +404,9 @@ if(!$IS_ADMIN){
                   <input style="margin: 0 1rem; width: 5rem;"value="3" id="heat-max-density" name="heat-max-density">
                   <br/>
                </label><br/>
-            <input type="radio" name="maptype" id ="dotmap" value="dotmap">
+            <input type="radio" name="maptype" id ="dotmap" value="dotmap"/>
                <label for="dotmap">
-                  <label for="heat-max-density"><?php echo $LANG['DOT_MAP'] ?>: </label>
+                  <?php echo $LANG['DOT_MAP'] ?>:
                   <div style="display:flex">
                      <label for="dotColor"><?php echo $LANG['COLOR'] ?>: </label>
                      <input data-role="none" id="dot-color" name="dot-color" class="color" style="margin-left: 0.5rem;cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0px;" value="B2BEB5"/>
@@ -407,20 +416,20 @@ if(!$IS_ADMIN){
 
             <fieldset>
                <legend><?php echo $LANG['BOUNDS'] ?></legend>
-            <label><?php echo $LANG['UPPER_BOUND'] ?></label><br/>
-            <label><?php echo $LANG['LATITUDE'] ?></label>
-            <input id="upper_lat" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLatMax?>" placeholder="<?php echo $boundLatMax?>"/>
-            <label><?php echo $LANG['LONGITUDE'] ?></label>
-            <input id="upper_lng" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLngMax?>" placeholder="<?php echo $boundLngMax?>"/><br>
+               <?php echo $LANG['UPPER_BOUND'] ?><br/>
+               <label for="upper_lat"><?php echo $LANG['LATITUDE'] ?></label>
+               <input id="upper_lat" name="upper_lat" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLatMax?>" placeholder="<?php echo $boundLatMax?>"/>
+               <label for="upper_lng"><?php echo $LANG['LONGITUDE'] ?></label>
+               <input id="upper_lng" name="upper_lng" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLngMax?>" placeholder="<?php echo $boundLngMax?>"/><br>
 
-            <label><?php echo $LANG['LOWER_BOUND'] ?></label><br/>
-            <label><?php echo $LANG['LATITUDE'] ?></label>
-            <input id="lower_lat" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLatMin?>" placeholder="<?php echo $boundLatMin?>"/>
-            <label><?php echo $LANG['LONGITUDE'] ?></label>
-            <input id="lower_lng" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLngMin?>" placeholder="<?php echo $boundLngMin?>"/><br>
+               <?php echo $LANG['LOWER_BOUND'] ?><br/>
+               <label for="lower_lat"><?php echo $LANG['LATITUDE'] ?></label>
+               <input id="lower_lat" name="lower_lat"onkeydown="return event.key != 'Enter';" value="<?php echo $boundLatMin?>" placeholder="<?php echo $boundLatMin?>"/>
+               <label for="lower_lng"><?php echo $LANG['LONGITUDE'] ?></label>
+               <input id="lower_lng" name="lower_lat" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLngMin?>" placeholder="<?php echo $boundLngMin?>"/><br>
 
-            <button type="button" onclick="resetBounds(getState().bounds)"><?php echo $LANG['RESET_BOUNDS'] ?></button>
-            <button type="button" onclick="resetBounds([ [90, 180], [-90, -180]])"><?php echo $LANG['GLOBAL_BOUNDS'] ?></button><br/>
+               <button type="button" onclick="resetBounds(getState().bounds)"><?php echo $LANG['RESET_BOUNDS'] ?></button>
+               <button type="button" onclick="resetBounds([ [90, 180], [-90, -180]])"><?php echo $LANG['GLOBAL_BOUNDS'] ?></button><br/>
             </fieldset><br/>
 <!---
             <label for="taxon">Taxon</label><br>
