@@ -1,13 +1,14 @@
 <?php
 include_once('Manager.php');
 include_once('ImageShared.php');
-include_once('OccurrenceEditorMaterialSample.php');
+include_once('OmMaterialSample.php');
 include_once('OmOccurAssociations.php');
 include_once('OccurrenceMaintenance.php');
 
 class OccurrenceImport extends Manager{
 
 	private $collid;
+	private $collMetaArr = array();
 	private $importType;
 	private $createNewRecord = false;
 
@@ -17,10 +18,10 @@ class OccurrenceImport extends Manager{
 	private $translationMap = null;
 	private $fieldMap = array();		//array(sourceName => symbIndex)
 
-	const IMPORT_DETERMINATIONS = 1;
-	const IMPORT_IMAGE_MAP = 2;
-	const IMPORT_MATERIAL_SAMPLE = 3;
-	const IMPORT_ASSOCIATIONS = 4;
+	private const IMPORT_DETERMINATIONS = 1;
+	private const IMPORT_IMAGE_MAP = 2;
+	private const IMPORT_MATERIAL_SAMPLE = 3;
+	private const IMPORT_ASSOCIATIONS = 4;
 
 	function __construct() {
 		parent::__construct(null, 'write');
@@ -42,9 +43,9 @@ class OccurrenceImport extends Manager{
 				fgetcsv($fh);	//Advance one row to skipper header row
 				$cnt = 1;
 				$importManager = null;
-				if($this->importType == IMPORT_IMAGE_MAP) $importManager = new ImageShared($this->conn);
-				elseif($this->importType == IMPORT_MATERIAL_SAMPLE) $importManager = new OccurrenceEditorMaterialSample();
-				elseif($this->importType == IMPORT_ASSOCIATIONS) $importManager = new OmOccurAssociations();
+				if($this->importType == self::IMPORT_IMAGE_MAP) $importManager = new ImageShared($this->conn);
+				elseif($this->importType == self::IMPORT_ASSOCIATIONS) $importManager = new OmOccurAssociations();
+				elseif($this->importType == self::IMPORT_MATERIAL_SAMPLE) $importManager = new OmMaterialSample($this->conn);
 				while($recordArr = fgetcsv($fh)){
 					$identifierArr = array();
 					if(isset($this->fieldMap['occurrenceid'])){
@@ -61,7 +62,7 @@ class OccurrenceImport extends Manager{
 					}
 					$this->logOrEcho('#'.$cnt.': Processing Catalog Number: '.implode(', ', $identifierArr));
 					if($occidArr = $this->getOccurrencePK($identifierArr)){
-						if($this->importType == IMPORT_IMAGE_MAP){
+						if($this->importType == self::IMPORT_IMAGE_MAP){
 							if(!isset($this->fieldMap['originalurl']) || $recordArr[$this->fieldMap['originalurl']]) return false;
 							foreach($occidArr as $occid => $tid){
 								$importManager->setOccid($occid);
@@ -86,34 +87,35 @@ class OccurrenceImport extends Manager{
 								$importManager->reset();
 							}
 						}
-						elseif($this->importType == IMPORT_ASSOCIATIONS){
+						elseif($this->importType == self::IMPORT_ASSOCIATIONS){
 							foreach($occidArr as $occid => $tid){
 								$importManager->setOccid($occid);
-								$importManager->insertAssociations($postArr);
+								$fieldMap = array_keys($importManager->getFieldMap());
+								$assocArr = array();
+								foreach($fieldMap as $field){
+									$fieldLower = strtolower($field);
+									if(!empty($recordArr[$this->fieldMap[$fieldLower]])) $assocArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
+								}
+								if(!$importManager->insertAssociations($assocArr)){
+									$this->logOrEcho('ERROR loading Occurrence Association: '.$importManager->getErrorMessage(), 1);
+								}
 							}
 						}
-						elseif($this->importType == IMPORT_DETERMINATIONS){
+						elseif($this->importType == self::IMPORT_DETERMINATIONS){
 							foreach($occidArr as $occid => $tid){
 
 							}
 						}
-						elseif($this->importType == IMPORT_MATERIAL_SAMPLE){
+						elseif($this->importType == self::IMPORT_MATERIAL_SAMPLE){
 							foreach($occidArr as $occid => $tid){
-								$msArr = array('occid' => $occid);
-								if(!empty($recordArr[$this->fieldMap['sampletype']])) $msArr['sampleType'] = $recordArr[$this->fieldMap['sampletype']];
-								if(!empty($recordArr[$this->fieldMap['catalognumber']])) $msArr['catalogNumber'] = $recordArr[$this->fieldMap['catalognumber']];
-								if(!empty($recordArr[$this->fieldMap['guid']])) $msArr['guid'] = $recordArr[$this->fieldMap['guid']];
-								if(!empty($recordArr[$this->fieldMap['samplecondition']])) $msArr['sampleCondition'] = $recordArr[$this->fieldMap['samplecondition']];
-								if(!empty($recordArr[$this->fieldMap['disposition']])) $msArr['disposition'] = $recordArr[$this->fieldMap['disposition']];
-								if(!empty($recordArr[$this->fieldMap['preservationtype']])) $msArr['preservationType'] = $recordArr[$this->fieldMap['preservationtype']];
-								if(!empty($recordArr[$this->fieldMap['preparationdetails']])) $msArr['preparationDetails'] = $recordArr[$this->fieldMap['preparationdetails']];
-								if(!empty($recordArr[$this->fieldMap['preparationdate']])) $msArr['preparationDate'] = $recordArr[$this->fieldMap['preparationdate']];
-								if(!empty($recordArr[$this->fieldMap['preparedbyuid']])) $msArr['preparedByUid'] = $recordArr[$this->fieldMap['preparedbyuid']];
-								if(!empty($recordArr[$this->fieldMap['individualcount']])) $msArr['individualCount'] = $recordArr[$this->fieldMap['individualcount']];
-								if(!empty($recordArr[$this->fieldMap['samplesize']])) $msArr['sampleSize'] = $recordArr[$this->fieldMap['samplesize']];
-								if(!empty($recordArr[$this->fieldMap['storagelocation']])) $msArr['storageLocation'] = $recordArr[$this->fieldMap['storagelocation']];
-								if(!empty($recordArr[$this->fieldMap['remarks']])) $msArr['remarks'] = $recordArr[$this->fieldMap['remarks']];
-								if($importManager->insertMaterialSample($msArr)){
+								$importManager->setOccid($occid);
+								$fieldMap = array_keys($importManager->getFieldMap());
+								$msArr = array();
+								foreach($fieldMap as $field){
+									$fieldLower = strtolower($field);
+									if(!empty($recordArr[$this->fieldMap[$fieldLower]])) $msArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
+								}
+								if(!$importManager->insertMaterialSample($msArr)){
 									$this->logOrEcho('ERROR loading Material Sample: '.$importManager->getErrorMessage(), 1);
 								}
 							}
@@ -142,7 +144,7 @@ class OccurrenceImport extends Manager{
 		$retArr = array();
 		$sql = 'SELECT DISTINCT o.occid, o.tidinterpreted FROM omoccurrences o ';
 		$sqlConditionArr = array();
-		if(isset($identifierArr[])){
+		if(isset($identifierArr['occurrenceID'])){
 			$occurrenceID = $this->cleanInStr($identifierArr['occurrenceID']);
 			$sqlConditionArr[] = '(o.occurrenceID = "'.$occurrenceID.'" OR o.recordID = "'.$occurrenceID.'")';
 		}
@@ -206,7 +208,7 @@ class OccurrenceImport extends Manager{
 			$stmt->bind_param('iss', $occid, $identifierValue, $GLOBALS['SYMB_UID']);
 			$stmt->execute();
 			if($stmt->affected_rows || !$stmt->error) $status = true;
-			else $this->errorMessage = 'ERROR updating omcollections record: '.$stmt->error;
+			else $this->errorMessage = 'ERROR inserting additional identifier: '.$stmt->error;
 			$stmt->close();
 		}
 		else $this->errorMessage = 'ERROR preparing statement for inserting additional identifier: '.$this->conn->error;
@@ -216,19 +218,22 @@ class OccurrenceImport extends Manager{
 	//Mapping functions
 	public function getTargetFieldArr(){
 		$retArr = array();
-		$fieldArr = array('catalogNumber', 'otherCatalogNumbers', 'occurrenceID');
-		if($this->importType == IMPORT_IMAGE_MAP){
+		$fieldArr = array();
+		if($this->importType == self::IMPORT_IMAGE_MAP){
 			$fieldArr = array('url','originalUrl','thumbnailUrl','photographer','caption','sourceUrl','anatomy','notes','owner','copyright','sortOccurrence');
 		}
-		elseif($this->importType == IMPORT_ASSOCIATIONS){
+		elseif($this->importType == self::IMPORT_ASSOCIATIONS){
 			$fieldArr = array('occidAssociate', 'relationship', 'relationshipID', 'subType', 'identifier', 'basisOfRecord', 'resourceUrl', 'verbatimSciname');
 		}
-		elseif($this->importType == IMPORT_DETERMINATIONS){
+		elseif($this->importType == self::IMPORT_DETERMINATIONS){
 			$fieldArr = array();
 		}
-		elseif($this->importType == IMPORT_MATERIAL_SAMPLE){
+		elseif($this->importType == self::IMPORT_MATERIAL_SAMPLE){
 			$fieldArr = array();
 		}
+		$fieldArr[] = 'catalogNumber';
+		$fieldArr[] = 'otherCatalogNumbers';
+		$fieldArr[] = 'occurrenceID';
 		foreach($fieldArr as $field){
 			$retArr[strtolower($field)] = $field;
 		}
@@ -238,6 +243,7 @@ class OccurrenceImport extends Manager{
 	public function getTranslation($sourceField){
 		$retStr = strtolower($sourceField);
 		$this->setTranslationMap();
+		if($p =strpos($retStr, ':')) $retStr = substr($retStr,$p);
 		$retStr = preg_replace('/[^a-z]+/', '', $retStr);
 		if(array_key_exists($retStr, $this->translationMap)) $retStr = $this->translationMap[$retStr];
 		return $retStr;
@@ -245,17 +251,17 @@ class OccurrenceImport extends Manager{
 
 	private function setTranslationMap(){
 		if($this->translationMap === null){
-			if($this->importType == IMPORT_IMAGE_MAP){
+			if($this->importType == self::IMPORT_IMAGE_MAP){
 				$this->translationMap = array('web' => 'url', 'webviewoptional' => 'url', 'thumbnail' => 'thumbnailurl','thumbnailoptional' => 'thumbnailurl',
 					'largejpg' => 'originalurl', 'large' => 'originalurl', 'imageurl' => 'url', 'accessuri' => 'url');
 			}
-			elseif($this->importType == IMPORT_ASSOCIATIONS){
+			elseif($this->importType == self::IMPORT_ASSOCIATIONS){
 				$this->translationMap = array();
 			}
-			elseif($this->importType == IMPORT_DETERMINATIONS){
+			elseif($this->importType == self::IMPORT_DETERMINATIONS){
 				$this->translationMap = array();
 			}
-			elseif($this->importType == IMPORT_MATERIAL_SAMPLE){
+			elseif($this->importType == self::IMPORT_MATERIAL_SAMPLE){
 				$this->translationMap = array();
 			}
 		}
@@ -286,7 +292,7 @@ class OccurrenceImport extends Manager{
 					return false;
 				}
 			}
-			if(file_exists($importPath . $fileName) && substr($$fileName, -4) == '.zip'){
+			if(file_exists($importPath . $fileName) && substr($fileName, -4) == '.zip'){
 				$zip = new ZipArchive;
 				$zip->open($importPath. $fileName);
 				$zipFile = $importPath . $fileName;
@@ -329,9 +335,27 @@ class OccurrenceImport extends Manager{
 		return $targetPath;
 	}
 
+	//Data set functions
+	private function setCollMetaArr(){
+		$sql = 'SELECT institutionCode, collectionCode, collectionName FROM omcollections WHERE collid = '.$this->collid;
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$this->collMetaArr['instCode'] = $r->institutionCode;
+			$this->collMetaArr['collCode'] = $r->collectionCode;
+			$this->collMetaArr['collName'] = $r->collectionName;
+		}
+		$rs->free();
+	}
+
 	//Basic setters and getters
 	public function setCollid($id){
 		if(is_numeric($id)) $this->collid = $id;
+	}
+
+	public function getCollMeta($field){
+		$fieldValue = '';
+		if(isset($this->collMetaArr[$field])) return $this->collMetaArr[$field];
+		return $fieldValue;
 	}
 
 	public function getCollid(){

@@ -1,6 +1,6 @@
 <?php
 include_once('../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorMaterialSample.php');
+include_once($SERVER_ROOT.'/classes/OmMaterialSample.php');
 include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 
@@ -8,7 +8,7 @@ $occid = $_REQUEST['occid'];
 $collid = isset($_REQUEST['collid'])?$_REQUEST['collid']:'';
 $occIndex = $_REQUEST['occindex'];
 
-$materialSampleManager = new OccurrenceEditorMaterialSample();
+$materialSampleManager = new OmMaterialSample();
 
 //Sanitation
 if(!is_numeric($occid)) $occid = 0;
