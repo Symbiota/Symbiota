@@ -409,6 +409,8 @@ if(!empty($coordArr)) {
             collArr = JSON.parse(data.getAttribute('data-coll-arr'));
             map_bounds = JSON.parse(data.getAttribute('data-map-bounds'));
 
+            console.log(JSON.parse(data.getAttribute('data-request')));
+
             searchVar = data.getAttribute('data-search-var');
             if(searchVar) sessionStorage.querystr = searchVar;
          } catch {
@@ -435,6 +437,7 @@ if(!empty($coordArr)) {
    data-coll-arr="<?= htmlspecialchars(json_encode($collArr))?>"
    data-search-var="<?=htmlspecialchars($searchVar)?>"
    data-map-bounds="<?=htmlspecialchars(json_encode($bounds))?>"
+   data-request="<?=htmlspecialchars(json_encode($_REQUEST))?>"
    class="service-container" 
 />
 <div data-role="page" id="page1">
