@@ -103,9 +103,24 @@ class OccurrenceCollectionProfile extends OmCollections{
 			$outStr .= '<section>';
 				$outStr .= '<input type="checkbox" id="more-details" class="accordion-selector" checked=false />';
 				$outStr .= '<label for="more-details" class="accordion-header">More Information</label>';
-				$outStr .= '<div id="search-form-taxonomy" class="content">';
+				$outStr .= '<div id="collection-type" class="content">';
 					$outStr .= '<span class="label">' . $LANG['COLLECTION_TYPE'] . ':</span> ' . $this->collMeta[$this->collid]['colltype'];
-					$outStr .= '</div>';
+					$outStr .= '<br>';
+
+					$outStr .= '<span class="label">'.$LANG['MANAGEMENT'].':</span> ';
+					if($this->collMeta[$this->collid]['managementtype'] == 'Live Data'){
+						$outStr .= (isset($LANG['LIVE_DATA'])?$LANG['LIVE_DATA']:'Live Data managed directly within data portal');
+					}
+					else{
+						if($this->collMeta[$this->collid]['managementtype'] == 'Aggregate'){
+							$outStr .= (isset($LANG['DATA_AGGREGATE'])?$LANG['DATA_AGGREGATE']:'Data harvested from a data aggregator');
+						}
+						else{
+							$outStr .= (isset($LANG['DATA_SNAPSHOT'])?$LANG['DATA_SNAPSHOT']:'Data snapshot of local collection database ');
+						}
+					}
+
+				$outStr .= '</div>';
 
 			$outStr .= '</section>';
 		$outStr .= '</div>';
