@@ -97,7 +97,7 @@ if(!$recLimit || $recCnt < $recLimit){
 					$trCnt = 0;
 					foreach($occArr as $occId => $recArr){
 						$trCnt++;
-						echo '<tr '.($trCnt%2?'class="alt"':'').' id="tr'.$occId.'" >';
+						echo '<tr '.($trCnt%2?'class="alt"':'').' id="tr'.$occId.'" onclick="emit_occurrence('.$occId.')">';
 						//echo '<td style="width:10px;">';
 						//echo '<input type="checkbox" class="occcheck" id="ch'.$occId.'" name="occid[]" value="'.$occId.'" onchange="findSelections(this);" '.(in_array($occId,$selections)?"checked":"").' />';
 						//echo '</td>';

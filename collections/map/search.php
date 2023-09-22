@@ -404,6 +404,15 @@ if(!empty($coordArr)) {
             cluster.addLayers(markers)
          });
 
+         document.addEventListener('occur_click', function(e) {
+            for (let i = 0; i < markers.length; i++) {
+               if(recordArr[i]['occid'] === e.detail.occid) {
+                  map.mapLayer.setView([recordArr[i]['lat'], recordArr[i]['lng']], 12)
+                  break;
+               }
+            }
+         });
+
          if(markers && markers.length > 0) {
             map.mapLayer.fitBounds(cluster.getBounds());
          } else if(map_bounds) {
@@ -445,6 +454,14 @@ if(!empty($coordArr)) {
 
          return response? await response.text(): 'Nada';
       }
+
+      function emit_occurrence(occid) {
+         document.dispatchEvent(new CustomEvent('occur_click', {
+            detail: {
+               occid: occid
+            }
+         }))
+      } 
 
       function initialize() {
          try {
