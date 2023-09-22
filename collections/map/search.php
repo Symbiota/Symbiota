@@ -337,28 +337,56 @@ if(!empty($coordArr)) {
 
          map.mapLayer.zoomControl.setPosition('topright');
 
-         for(let record of recordArr) {
-            let marker = (record.type === "specimen"?
-               L.circleMarker([record.lat, record.lng], {
-                  radius : 8,
-                  color  : '#000000',
-                  weight: 2,
-                  fillColor: `#${taxaMap[record['tid']].color}`,
-                  opacity: 1.0,
-                  fillOpacity: 1.0
-               }):               
-               L.marker([record.lat, record.lng], {
-                  icon: getObservationSvg({
-                     color: `#${taxaMap[record['tid']].color}`, 
-                     size: 30
-                  })
-               }))
+         // TODO (Logan) Clean up global usages
+         function drawPoints() {
+            for(let record of recordArr) {
+               let marker = (record.type === "specimen"?
+                  L.circleMarker([record.lat, record.lng], {
+                     radius : 8,
+                     color  : '#000000',
+                     weight: 2,
+                     fillColor: `#${taxaMap[record['tid']].color}`,
+                     opacity: 1.0,
+                     fillOpacity: 1.0
+                  }):               
+                  L.marker([record.lat, record.lng], {
+                     icon: getObservationSvg({
+                        color: `#${taxaMap[record['tid']].color}`, 
+                        size: 30
+                     })
+                  }))
                .on('click', function() { openIndPU(record.occid) })
                .bindTooltip(`<div>${record.id}`)
 
-            markers.push(marker);
+               markers.push(marker);
+            }
 
+            cluster.addLayers(markers)
+            cluster.addTo(map.mapLayer);
          }
+
+         // TODO (Logan) Clean up global usages
+         document.getElementById("mapsearchform").addEventListener('submit', async e => {
+            e.preventDefault();
+            let formData = new FormData(e.target);
+
+            cluster.removeLayers(markers)
+            markers = []; 
+
+            getOccurenceRecords(formData).then(res => {
+               if (res) document.getElementById("queryrecordsdiv").innerHTML = res;
+            });
+
+            const results = await searchCollections(formData);
+
+            recordArr = results.recordArr? results.recordArr: [];
+            taxaMap = results.taxaArr? results.taxaArr: [];
+            collArr = results.collArr? results.collArr: [];
+
+            drawPoints();
+            buildPanels();
+         });
+
 
          document.addEventListener('colorchange', function(e) {
             const [type, id] = e.target.id.split("-");
@@ -376,9 +404,6 @@ if(!empty($coordArr)) {
             cluster.addLayers(markers)
          });
 
-         cluster.addLayers(markers)
-
-         cluster.addTo(map.mapLayer);
          if(markers && markers.length > 0) {
             map.mapLayer.fitBounds(cluster.getBounds());
          } else if(map_bounds) {
@@ -401,15 +426,30 @@ if(!empty($coordArr)) {
          }
       }
 
+      async function searchCollections(body) {
+         let response = await fetch('rpc/searchcollections.php', {
+            method: "POST",
+            credentials: "same-origin",
+            body: body 
+         })
+
+         return response? await response.json(): { taxaArr: [], collArr: [], recordArr: [] };
+      }
+
+      async function getOccurenceRecords(body) {
+         let response = await fetch('occurrencelist.php', {
+            method: "POST",
+            credentials: "same-origin",
+            body: body 
+         })
+
+         return response? await response.text(): 'Nada';
+      }
+
       function initialize() {
          try {
             const data = document.getElementById('service-container');
-            recordArr = JSON.parse(data.getAttribute('data-record-arr'));
-            taxaMap = JSON.parse(data.getAttribute('data-taxa-arr'));
-            collArr = JSON.parse(data.getAttribute('data-coll-arr'));
             map_bounds = JSON.parse(data.getAttribute('data-map-bounds'));
-
-            console.log(JSON.parse(data.getAttribute('data-request')));
 
             searchVar = data.getAttribute('data-search-var');
             if(searchVar) sessionStorage.querystr = searchVar;
@@ -417,14 +457,11 @@ if(!empty($coordArr)) {
 
          }
 
-
          <?php if(!empty($LEAFLET)) { ?> 
             leafletInit();
          <?php } else { ?> 
             googleInit();
          <?php } ?>
-
-         buildPanels();
       }
 	</script>
 	<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
@@ -432,12 +469,8 @@ if(!empty($coordArr)) {
 <body style='width:100%;max-width:100%;min-width:500px;' <?php echo (!$activateGeolocation?'onload="initialize();"':''); ?>>
 <div 
    id="service-container" 
-   data-record-arr="<?= htmlspecialchars(json_encode($recordArr))?>"
-   data-taxa-arr="<?= htmlspecialchars(json_encode($taxaArr))?>"
-   data-coll-arr="<?= htmlspecialchars(json_encode($collArr))?>"
    data-search-var="<?=htmlspecialchars($searchVar)?>"
    data-map-bounds="<?=htmlspecialchars(json_encode($bounds))?>"
-   data-request="<?=htmlspecialchars(json_encode($_REQUEST))?>"
    class="service-container" 
 />
 <div data-role="page" id="page1">
@@ -707,13 +740,10 @@ if(!empty($coordArr)) {
 							<input data-role="none" name="csvreclimit" id="csvreclimit" type="hidden" value="<?php echo $recLimit; ?>" />
 						</form>
 					</div>
-					<?php
-					if($searchVar){
-						?>
 						<h3 id="recordstaxaheader" style="display:none;padding-left:30px;"><?php echo (isset($LANG['RECORDS_TAXA'])?$LANG['RECORDS_TAXA']:'Records and Taxa'); ?></h3>
 						<div id="tabs2" style="display:none;width:379px;padding:0px;">
 							<ul>
-								<li><a href='occurrencelist.php?<?php echo htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS); ?>'><span><?php echo htmlspecialchars((isset($LANG['RECORDS'])?$LANG['RECORDS']:'Records'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
+								<li><a id="occurrencelist" href='occurrencelist.php?<?php echo htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS); ?>'><span><?php echo htmlspecialchars((isset($LANG['RECORDS'])?$LANG['RECORDS']:'Records'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
 								<li><a href='#symbology'><span><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
 								<li><a href='#maptaxalist'><span><?php echo htmlspecialchars((isset($LANG['TAXA_LIST'])?$LANG['TAXA_LIST']:'Taxa List'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
 							</ul>
@@ -738,9 +768,6 @@ if(!empty($coordArr)) {
 												</svg> = <?php echo (isset($LANG['OBSERVATION'])?$LANG['OBSERVATION']:'Observation'); ?>
 											</div>
 										</div>
-										<?php
-									}
-									?>
 									<div id="symbolizeResetButt" style='float:right;margin-bottom:5px;' >
 										<div>
 											<button data-role="none" id="symbolizeReset1" name="symbolizeReset1" onclick='resetSymbology();' ><?php echo (isset($LANG['RESET_SYMBOLOGY'])?$LANG['RESET_SYMBOLOGY']:'Reset Symbology'); ?></button>
