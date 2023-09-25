@@ -64,7 +64,12 @@ $LANG['LINK_CHECK'] = 'Link to Checklist as Voucher';
 $LANG['SP_LIST'] = 'Species List';
 $LANG['SEL_CHECKLIST'] = 'Select Checklist';
 $LANG['SUBMIT_OBS'] = 'Submit Observation';
+$LANG['SUBMIT'] = 'Submit';
 $LANG['NOT_AUTH'] = 'You are not authorized to submit to an observation.';
 $LANG['DIRECTION'] = 'Direction';
+$LANG['EDIT_BTN'] = 'Display additional fields';
+$LANG['REP_COND_EG'] = 'e.g. sterile, flw, frt, flw/frt';
+$LANG['EST_MEANS_EG'] = 'e.g. planted, seeded, garden excape, etc.';
+$LANG['CULT_CAPT_EG'] = 'Click if specimen was cultivated or captive';
 
 ?>
