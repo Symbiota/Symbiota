@@ -129,8 +129,11 @@ if(!empty($coordArr)) {
 	<script src="../../js/jquery-1.10.2.min.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
 	<link href="../../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
+<!--
 	<script src="../../js/jquery.mobile-1.4.0.min.js" type="text/javascript"></script>
 	<link href="../../css/jquery.mobile-1.4.0.min.css" type="text/css" rel="stylesheet" />
+-->
+
 	<link href="../../css/jquery.symbiota.css" type="text/css" rel="stylesheet" />
 	<script src="../../js/jquery.popupoverlay.js" type="text/javascript"></script>
 	<script src="../../js/jscolor/jscolor.js?ver=1" type="text/javascript"></script>
@@ -141,6 +144,114 @@ if(!empty($coordArr)) {
 	<script src="../../js/symb/oms.min.js" type="text/javascript"></script>
 	<script src="../../js/symb/keydragzoom.js" type="text/javascript"></script>
 	<script src="../../js/symb/infobox.js" type="text/javascript"></script>
+	<style type="text/css">
+		.ui-front {
+			z-index: 9999999 !important;
+		}
+
+		/* The sidepanel menu */
+		.sidepanel {
+			resize: horizontal;
+			border-left: 2px, solid, black;
+			height: 100%;
+			width: 380;
+			position: fixed;
+			z-index: 20;
+			top: 0;
+			left: 0;
+			background-color: #ffffff;
+			overflow: hidden;
+			transition: width 0.5s;
+         transition-timing-function: ease;
+		}
+
+		.selectedrecord{
+			border: solid thick greenyellow;
+			font-weight: bold;
+		}
+
+		input[type=color]{
+			border: none;
+			background: none;
+		}
+		input[type="color"]::-webkit-color-swatch-wrapper {
+			padding: 0;
+		}
+		input[type="color"]::-webkit-color-swatch {
+			border: solid 1px #000; /*change color of the swatch border here*/
+		}
+
+		.small_color_input{
+			margin: 0,0,-2px,0;
+			height: 16px;
+			width: 16px;
+		}
+
+		.mapGroupLegend{
+			list-style-type: none;
+  			margin: 0;
+  			padding: 0;
+		}
+
+		.mapLegendEntry {
+			display: grid;
+			grid-template-columns: max-content auto;
+		}
+
+		.mapLegendEntryInputs {
+			grid-column: 1;
+		}
+
+		.mapLegendEntryText {
+			grid-column: 2;
+		}
+
+		table#mapSearchRecordsTable.styledtable tr:nth-child(odd) td{
+			background-color: #ffffff;
+		}
+
+		#divMapSearchRecords{
+			grid-column: 1;
+			height: 100%;
+		}
+		#mapLoadMoreRecords{
+			display: none;
+		}
+
+		#tabs2Items{
+			grid-column: 1;
+		}
+
+		#records{
+			display: grid;
+    		grid-template-columns:	1;
+			grid-auto-rows: minmax(min-content, max-content);
+			height: 100%;
+		}
+
+		#mapSearchDownloadData {
+			grid-column: 1;
+		}
+
+		#mapSearchRecordsTable {
+
+			font-family:Arial;
+			font-size:12px;
+		}
+
+		#mapSearchRecordsTable th {
+			top: 0;
+			position: sticky;
+		}
+
+		#tabs2 {
+			display:none;
+			padding:0px;
+			display: block;
+			height: 100%;
+			/* overflow: scroll; */
+		}
+	</style>
 	<script type="text/javascript">
       let recordArr = [];
       let taxaMap = [];
@@ -489,13 +600,13 @@ if(!empty($coordArr)) {
    data-search-var="<?=htmlspecialchars($searchVar)?>"
    data-map-bounds="<?=htmlspecialchars(json_encode($bounds))?>"
    class="service-container" 
-/>
-<div data-role="page" id="page1">
+      />
+   <div>
+      <button onclick="document.getElementById('defaultpanel').style.display='block'" style="position:absolute;top:0;left:0;margin:0px;z-index:10;font-size: 14px;">&#9776; <b>Open Search Panel</b></button>
+   </div>
 
-	<div role="main" class="ui-content" style="height:400px;">
-		<a href="#defaultpanel" style="position:absolute;top:0;left:0;margin-top:0px;z-index:10;padding-top:3px;padding-bottom:3px;text-decoration:none;" data-role="button" data-inline="true" data-icon="bars">Open Search Panel</a>
-	</div>
-	<div id="defaultpanel" data-role="panel" data-dismissible="false" class="overflow: hidden;" style="width:380px" data-position="left" data-display="overlay" >
+<div data-role="page" id="page1">
+	<div id="defaultpanel" data-role="panel" data-dismissible="false" class="overflow: hidden;" style="display: none; width:380px" data-position="left" data-display="overlay" >
 		<div class="panel-content">
 			<div id="mapinterface">
 				<div id="accordion" style="" >
