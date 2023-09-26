@@ -3,7 +3,7 @@
 # Pre-Approval
 
 - [ ] There is a description section in the pull request that details what the proposed changes do. It can be very brief if need be, but it ought to exist.
-- [ ] Hotfixes should be branched off of the `master` branch and merged back into the `master` branch.
+- [ ] Hotfixes should be branched off of the `master` branch and **squash and merged** back into the `master` branch.
 - [ ] Features and backlog bugs should be merged into the `Development` branch, **NOT** `master`
 - [ ] All new text is preferrably internationalized (i.e., no end-user-visible text is hard-coded on the PHP pages)
 - [ ] There are no linter errors
