@@ -60,6 +60,7 @@ class LeafletMap {
    drawLayer;
 
    constructor(map_id, map_options=this.DEFAULT_MAP_OPTIONS) {
+
       this.mapLayer = L.map(map_id, map_options);
 
       const terrainLayer = L.tileLayer('https://{s}.google.com/vt?lyrs=p&x={x}&y={y}&z={z}', {
@@ -122,6 +123,7 @@ class LeafletMap {
 
       if(drawOptions.control || drawOptions.control === undefined) {
          var drawControl = new L.Control.Draw({
+            position: 'topright',
             draw: drawOptions,
             edit: {
                featureGroup: drawnItems,

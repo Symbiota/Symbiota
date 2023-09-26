@@ -622,7 +622,7 @@ if(!empty($coordArr)) {
       </div>
    <div id="defaultpanel" class="sidepanel" style="width:380px">
 		<div class="panel-content">
-         <button onclick="document.getElementById('defaultpanel').style.width='0px'" > << </button>
+         <button onclick="document.getElementById('defaultpanel').style.width='0px'" style="position:absolute; top:0.7rem; right:0.7rem; z-index:1" >&times</button>
 			<div id="mapinterface">
 				<div id="accordion">
 					<h3 style="padding-left:30px;"><?php echo (isset($LANG['SEARCH_CRITERIA'])?$LANG['SEARCH_CRITERIA']:'Search Criteria and Options'); ?></h3>
