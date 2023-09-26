@@ -485,7 +485,23 @@ if(!empty($coordArr)) {
             markers = []; 
 
             getOccurenceRecords(formData).then(res => {
-               if (res) document.getElementById("queryrecordsdiv").innerHTML = res;
+               if (res) {
+                  function loadOccurenceRecords(html) {
+                     document.getElementById("queryrecordsdiv").innerHTML = html;
+
+                     $('.pagination a').click(async function(e){
+                        e.preventDefault();
+                        let response = await fetch(e.target.href, {
+                           method: "GET",
+                           credentials: "same-origin",
+                        })
+                        loadOccurenceRecords(await response.text())
+                        return false;
+                     });
+                  }
+
+                  loadOccurenceRecords(res);
+               }
             });
 
             const results = await searchCollections(formData);
@@ -601,30 +617,16 @@ if(!empty($coordArr)) {
    data-map-bounds="<?=htmlspecialchars(json_encode($bounds))?>"
    class="service-container" 
       />
-   <div>
-      <button onclick="document.getElementById('defaultpanel').style.display='block'" style="position:absolute;top:0;left:0;margin:0px;z-index:10;font-size: 14px;">&#9776; <b>Open Search Panel</b></button>
-   </div>
-
-<div data-role="page" id="page1">
-	<div id="defaultpanel" data-role="panel" data-dismissible="false" class="overflow: hidden;" style="display: none; width:380px" data-position="left" data-display="overlay" >
+      <div>
+         <button onclick="document.getElementById('defaultpanel').style.width='380px';  " style="position:absolute;top:0;left:0;margin:0px;z-index:10;font-size: 14px;">&#9776; <b>Open Search Panel</b></button>
+      </div>
+   <div id="defaultpanel" class="sidepanel" style="width:380px">
 		<div class="panel-content">
+         <button onclick="document.getElementById('defaultpanel').style.width='0px'" > << </button>
 			<div id="mapinterface">
-				<div id="accordion" style="" >
-					<?php
-					/*
-					echo "MySQL Version: ".$mysqlVersion;
-					echo $mapManager->hasFullSpatialSupport()?"yes":"no";
-					echo "Request: ".json_encode($_REQUEST);
-					echo "mapWhere: ".$mapWhere;
-					echo "coordArr: ".json_encode($coordArr);
-					echo "clusteringOff: ".$clusterOff;
-					echo "coordArr: ".$coordArr;
-					echo "tIdArr: ".json_encode($tIdArr);
-					echo "minLat:".$minLat."maxLat:".$maxLat."minLng:".$minLng."maxLng:".$maxLng;
-					*/
-					?>
+				<div id="accordion">
 					<h3 style="padding-left:30px;"><?php echo (isset($LANG['SEARCH_CRITERIA'])?$LANG['SEARCH_CRITERIA']:'Search Criteria and Options'); ?></h3>
-					<div id="tabs1" style="width:379px;padding:0px;">
+					<div id="tabs1" style="width:379px;padding:0px;height:100%">
 						<form name="mapsearchform" id="mapsearchform" data-ajax="false" action="search.php" method="post" onsubmit="return verifyCollForm(this);">
 							<ul>
 								<li><a href="#searchcollections"><span><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
@@ -961,7 +963,6 @@ if(!empty($coordArr)) {
 			<a href="#" style="position:absolute;top:2;right:0;margin-right:0px;margin-bottom:0px;margin-top:1px;padding-top:3px;padding-bottom:3px;padding-left:20px;z-index:10;height:20px;" data-rel="close" data-role="button" data-theme="a" data-icon="delete" data-inline="true"></a>
 		</div><!-- /content wrapper for padding -->
 	</div><!-- /defaultpanel -->
-</div>
 <div id='map' style='width:100%;height:100%;'></div>
 <div id="loadingOverlay" data-role="popup" style="width:100%;position:relative;">
 	<div id="loadingImage" style="width:100px;height:100px;position:absolute;top:50%;left:50%;margin-top:-50px;margin-left:-50px;">

@@ -6,15 +6,17 @@ $(document).ready(function() {
 			$(ui.panel).html("<p>Loading...</p>");
 		},
 		active: 1
-	});
-    var hijax = function(panel) {
-        $('.pagination a', panel).click(function(){
-            $(panel).load(this.href, {}, function() {
-                hijax(this);
-            });
-            return false;
-        });
-    };
+   });
+
+   var hijax = function(panel) {
+      $('.pagination a', panel).click(function(){
+         $(panel).load(this.href, {}, function() {
+            hijax(this);
+         });
+         return false;
+      });
+   };
+
 	$('#tabs2').tabs({
 		beforeLoad: function( event, ui ) {
 			$(ui.panel).html("<p>Loading...</p>");
@@ -23,6 +25,7 @@ $(document).ready(function() {
             hijax(ui.panel);
         }
 	});
+
 	$('#tabs3').tabs({
 		beforeLoad: function( event, ui ) {
 			$(ui.panel).html("<p>Loading...</p>");
@@ -53,7 +56,7 @@ $(document).on("pageloadfailed", function(event, data){
 });
 
 function setHeight(){
-	var winHeight = $(window).height();
+   var winHeight = window.innerHeight;
 	document.getElementById('mapinterface').style.height = winHeight + "px";
 	document.getElementById('loadingOverlay').style.height = winHeight + "px";
 }
