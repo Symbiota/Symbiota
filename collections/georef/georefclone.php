@@ -40,7 +40,7 @@ if($coorArr && count($coorArr) == 4){
 		<title>Georeference Clone Tool</title>
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
-		include_once($SERVER_ROOT.'/includes/leafletmap.php');
+		include_once($SERVER_ROOT.'/includes/leafletMap.php');
 		?>
 		<script src="//www.google.com/jsapi"></script>
 		<script src="//maps.googleapis.com/maps/api/js?<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'key='.$GOOGLE_MAP_KEY:''); ?>"></script>
@@ -68,7 +68,7 @@ if($coorArr && count($coorArr) == 4){
 
 			for(let point of clones) {
 				const latlng = [
-					parseFloat(point.lat), 
+					parseFloat(point.lat),
 					parseFloat(point.lng)
 				];
 
