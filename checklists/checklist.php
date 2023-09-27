@@ -751,7 +751,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 							echo "</div>\n";
 						}
 						echo '</div>';
-						if(isset($dynamPropsArr) && $dynamPropsArr['externalservice'] == 'inaturalist') {
+						if(isset($dynamPropsArr['externalservice']) && $dynamPropsArr['externalservice'] == 'inaturalist') {
 							echo '<script>const externalProjID = "' . ($dynamPropsArr['externalserviceid']?$dynamPropsArr['externalserviceid']:'') . '";';
 							echo 'const iconictaxon = "' . ($dynamPropsArr['externalserviceiconictaxon']?$dynamPropsArr['externalserviceiconictaxon']:'') . '";';
 							echo 'const checklisttaxa = [' . $arrForExternalServiceApi . '];</script>';
