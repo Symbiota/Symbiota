@@ -74,11 +74,24 @@ class OccurrenceCollectionProfile extends OmCollections{
 
 	public function getVisibleMetadataHtml($LANG, $LANG_TAG){
 		$outStr = '<div class="coll-description bottom-breathing-room-relative">' . $this->collMeta[$this->collid]["fulldescription"] . '</div>';
+
+		if(isset($this->collMeta[$this->collid]['resourcejson'])){
+			if($resourceArr = json_decode($this->collMeta[$this->collid]['resourcejson'],true)){
+				$title = (isset($LANG['HOMEPAGE'])?$LANG['HOMEPAGE']:'Homepage');
+				foreach($resourceArr as $rArr){
+					if(isset($rArr['title'][$LANG_TAG]) && $rArr['title'][$LANG_TAG]) $title = $rArr['title'][$LANG_TAG];
+					$outStr .= '<div class="field-div">';
+					$outStr .= '<a href="' . htmlspecialchars($rArr['url'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . $title . '</a>';
+					$outStr .= '</div>';
+				}
+			}
+		}
+
 		if(isset($this->collMeta[$this->collid]['contactjson'])){
 			if($contactArr = json_decode($this->collMeta[$this->collid]['contactjson'],true)){
 				if(!empty($contactArr)){
 					$title = (isset($LANG['CONTACT'])?$LANG['CONTACT']:'Contacts');
-					$outStr .= '<span class="label">' . $title . ': ' . '</span> ';
+					$outStr .= '<fieldset class="bottom-breathing-room-relative"><legend class="label">' . $title . ': ' . '</legend> ';
 					$outStr .= '<ul>';
 				}
 				foreach($contactArr as $cArr){
@@ -96,18 +109,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 					$outStr .= '</div>';
 					$outStr .= '</li>';
 				}
-				$outStr .= '</ul>';
-			}
-		}
-		if(isset($this->collMeta[$this->collid]['resourcejson'])){
-			if($resourceArr = json_decode($this->collMeta[$this->collid]['resourcejson'],true)){
-				$title = (isset($LANG['HOMEPAGE'])?$LANG['HOMEPAGE']:'Homepage');
-				foreach($resourceArr as $rArr){
-					if(isset($rArr['title'][$LANG_TAG]) && $rArr['title'][$LANG_TAG]) $title = $rArr['title'][$LANG_TAG];
-					$outStr .= '<div class="field-div">';
-					$outStr .= '<a href="' . htmlspecialchars($rArr['url'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . $title . '</a>';
-					$outStr .= '</div>';
-				}
+				$outStr .= '</ul></fieldset>';
 			}
 		}
 		return $outStr;

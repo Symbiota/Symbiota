@@ -445,7 +445,7 @@ if ($SYMB_UID) {
 				}
 				if ($addrArr = $collManager->getAddress()) {
 					?>
-					<fieldset style="margin-bottom: 1rem;">
+					<fieldset class="bottom-breathing-room-relative">
 						<legend><?php echo (isset($LANG['ADDRESS']) ? $LANG['ADDRESS'] : 'Address'); ?>:</legend>
 						<div style="float:left;margin-left:10px;">
 							<?php
