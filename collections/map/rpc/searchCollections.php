@@ -47,6 +47,7 @@ $collArr = [];
 $defaultColor = "#B2BEB5";
 
 $recordCnt = 0;
+
 foreach ($coordArr as $collName => $coll) {
    //Collect all the collections
    foreach ($coll as $recordId => $record) {
@@ -97,5 +98,5 @@ foreach ($coordArr as $collName => $coll) {
    }
 }
 
-echo json_encode(['taxaArr' => $taxaArr, 'collArr' => $collArr, 'recordArr' => $recordArr, 'post' => $_POST]);
+echo json_encode(['taxaArr' => $taxaArr, 'collArr' => $collArr, 'recordArr' => $recordArr]);
 ?>

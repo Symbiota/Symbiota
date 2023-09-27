@@ -36,13 +36,6 @@ if(!is_numeric($tabIndex)) $tabIndex = 0;
 $activateGeolocation = 0;
 if(isset($ACTIVATE_GEOLOCATION) && $ACTIVATE_GEOLOCATION == 1) $activateGeolocation = 1;
 
-//Gets Coordinates
-$coordArr = $mapManager->getCoordinateMap(0,$recLimit);
-$taxaArr = [];
-$recordArr = [];
-$collArr = [];
-$defaultColor = "#B2BEB5";
-
 //Set default bounding box for portal
 $boundLatMin = -90;
 $boundLatMax = 90;
@@ -63,47 +56,62 @@ if(!empty($MAPPING_BOUNDARIES)){
 }
 $bounds = [ [$boundLatMax, $boundLngMax], [$boundLatMin, $boundLngMin]];
 
-// Break map data into 3 arrays for simplicity
-if(!empty($coordArr)) {
-   foreach ($coordArr as $collName => $coll) {
-      //Collect all the collections
-      foreach ($coll as $recordId => $record) {
-         if($recordId == 'c') continue;
-         //Collect all taxon
-         if(!array_key_exists($record['tid'], $taxaArr)) {
-            $taxaArr[$record['tid']] = [
+//Gets Coordinates
+$coordArr = $mapManager->getCoordinateMap(0,$recLimit);
+$taxaArr = [];
+$recordArr = [];
+$collArr = [];
+$defaultColor = "#B2BEB5";
+
+$recordCnt = 0;
+
+foreach ($coordArr as $collName => $coll) {
+   //Collect all the collections
+   foreach ($coll as $recordId => $record) {
+      if($recordId == 'c') continue;
+
+      //Collect all taxon
+      if(!array_key_exists($record['tid'], $taxaArr)) {
+         $taxaArr[$record['tid']] = [
             'sn' => $record['sn'], 
             'tid' => $record['tid'], 
             'family' => $record['fam'],
-            'color' => $coll['c'] 
-            ];
-         } 
-
-         //Collect all Collections
-         if(!array_key_exists($record['collid'], $collArr)) {
-            $collArr[$record['collid']] = [
-               'name' => $collName,
-               'collid' => $record['collid'],
-               'color' => $coll['c'],
-            ];
-         }
-
-         $llstrArr = explode(',', $record['llStr']);
-         if(count($llstrArr) != 2) continue;
-
-         //Collect all records
-         array_push($recordArr, [
-            'id' => $record['id'], 
-            'tid' => $record['tid'], 
-            'collid' => $record['collid'], 
-            'family' => $record['fam'],
-            'occid' => $recordId,
-            'collname' => $collName, 
-            'type' => in_array($record['collid'], $obsIDs)? 'observation':'specimen', 
-            'lat' => floatval($llstrArr[0]),
-            'lng' => floatval($llstrArr[1]),
-         ]);
+            'color' => $coll['c'],
+            'records' => [$recordCnt] 
+         ];
+      } else {
+         array_push($taxaArr[$record['tid']]['records'], $recordCnt);
       }
+
+      //Collect all Collections
+      if(!array_key_exists($record['collid'], $collArr)) {
+         $collArr[$record['collid']] = [
+            'name' => $collName,
+            'collid' => $record['collid'],
+            'color' => $coll['c'],
+            'records' => [$recordCnt] 
+         ];
+      } else {
+         array_push($collArr[$record['collid']]['records'], $recordCnt);
+      }
+
+      $llstrArr = explode(',', $record['llStr']);
+      if(count($llstrArr) != 2) continue;
+
+      //Collect all records
+      array_push($recordArr, [
+         'id' => $record['id'], 
+         'tid' => $record['tid'], 
+         'collid' => $record['collid'], 
+         'family' => $record['fam'],
+         'occid' => $recordId,
+         'collname' => $collName, 
+         'type' => in_array($record['collid'], $obsIDs)? 'observation':'specimen', 
+         'lat' => floatval($llstrArr[0]),
+         'lng' => floatval($llstrArr[1]),
+      ]);
+
+      $recordCnt++;
    }
 }
 
@@ -127,11 +135,6 @@ if(!empty($coordArr)) {
 	<script src="../../js/jquery-1.10.2.min.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
 	<link href="../../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
-<!--
-	<script src="../../js/jquery.mobile-1.4.0.min.js" type="text/javascript"></script>
-	<link href="../../css/jquery.mobile-1.4.0.min.css" type="text/css" rel="stylesheet" />
--->
-
 	<link href="../../css/jquery.symbiota.css" type="text/css" rel="stylesheet" />
 	<script src="../../js/jquery.popupoverlay.js" type="text/javascript"></script>
 	<script src="../../js/jscolor/jscolor.js?ver=1" type="text/javascript"></script>
@@ -468,16 +471,15 @@ if(!empty($coordArr)) {
                   }))
                .on('click', function() { openIndPU(record.occid) })
                .bindTooltip(`<div>${record.id}`)
-               //.addTo(map.mapLayer)
 
                markers.push(marker);
             }
 
-            
-
             cluster.addLayers(markers)
             cluster.addTo(map.mapLayer);
          }
+
+         if(recordArr.length > 0) drawPoints();
 
          // TODO (Logan) Clean up global usages
          document.getElementById("mapsearchform").addEventListener('submit', async e => {
@@ -688,6 +690,11 @@ if(!empty($coordArr)) {
          try {
             const data = document.getElementById('service-container');
             map_bounds = JSON.parse(data.getAttribute('data-map-bounds'));
+            taxaMap = JSON.parse(data.getAttribute('data-taxa-map'));
+            collArr = JSON.parse(data.getAttribute('data-coll-map'));
+            recordArr = JSON.parse(data.getAttribute('data-records'));
+
+            console.log(recordArr)
 
             searchVar = data.getAttribute('data-search-var');
             if(searchVar) sessionStorage.querystr = searchVar;
@@ -709,6 +716,9 @@ if(!empty($coordArr)) {
    id="service-container" 
    data-search-var="<?=htmlspecialchars($searchVar)?>"
    data-map-bounds="<?=htmlspecialchars(json_encode($bounds))?>"
+   data-taxa-map="<?=htmlspecialchars(json_encode($taxaArr))?>"
+   data-coll-map="<?=htmlspecialchars(json_encode($collArr))?>"
+   data-records="<?=htmlspecialchars(json_encode($recordArr))?>"
    class="service-container" 
       />
       <div>
