@@ -67,10 +67,8 @@ $bounds = [ [$boundLatMax, $boundLngMax], [$boundLatMin, $boundLngMin]];
 if(!empty($coordArr)) {
    foreach ($coordArr as $collName => $coll) {
       //Collect all the collections
-
       foreach ($coll as $recordId => $record) {
          if($recordId == 'c') continue;
-
          //Collect all taxon
          if(!array_key_exists($record['tid'], $taxaArr)) {
             $taxaArr[$record['tid']] = [
@@ -79,7 +77,7 @@ if(!empty($coordArr)) {
             'family' => $record['fam'],
             'color' => $coll['c'] 
             ];
-         }
+         } 
 
          //Collect all Collections
          if(!array_key_exists($record['collid'], $collArr)) {
@@ -258,6 +256,7 @@ if(!empty($coordArr)) {
       let collArr = [];
       let searchVar = "";
       let map_bounds= [ [90, 180], [-90, -180] ];
+      let default_color = "E69E67";
       let puWin;
 
       const colorChange = new Event("colorchange",  {
@@ -450,6 +449,7 @@ if(!empty($coordArr)) {
 
          // TODO (Logan) Clean up global usages
          function drawPoints() {
+            let count = 0;
             for(let record of recordArr) {
                let marker = (record.type === "specimen"?
                   L.circleMarker([record.lat, record.lng], {
@@ -468,9 +468,12 @@ if(!empty($coordArr)) {
                   }))
                .on('click', function() { openIndPU(record.occid) })
                .bindTooltip(`<div>${record.id}`)
+               //.addTo(map.mapLayer)
 
                markers.push(marker);
             }
+
+            
 
             cluster.addLayers(markers)
             cluster.addTo(map.mapLayer);
@@ -478,6 +481,7 @@ if(!empty($coordArr)) {
 
          // TODO (Logan) Clean up global usages
          document.getElementById("mapsearchform").addEventListener('submit', async e => {
+            showWorking();
             e.preventDefault();
             let formData = new FormData(e.target);
 
@@ -487,7 +491,7 @@ if(!empty($coordArr)) {
             getOccurenceRecords(formData).then(res => {
                if (res) {
                   function loadOccurenceRecords(html) {
-                     document.getElementById("queryrecordsdiv").innerHTML = html;
+                     document.getElementById("occurrencelist").innerHTML = html;
 
                      $('.pagination a').click(async function(e){
                         e.preventDefault();
@@ -512,22 +516,39 @@ if(!empty($coordArr)) {
 
             drawPoints();
             buildPanels();
+            hideWorking();
          });
 
+         function updateColor(type, id, color) {
+            if(type === "taxa") {
+               for (index of taxaMap[id]['records']) {
+                  markers[index].options.fillColor =`#${color}` 
+               }
+            } else if (type === "coll") {
+               for (index of collArr[id]['records']) {
+                  markers[index].options.fillColor =`#${color}` 
+               }
+            }
+         }
 
          document.addEventListener('colorchange', function(e) {
             const [type, id] = e.target.id.split("-");
             const color = e.target.value;
 
             cluster.removeLayers(markers)
+            updateColor(type, id, color);
+            cluster.addLayers(markers)
+         });
 
-            for (let i = 0; i < markers.length; i++) {
-               if(type === "taxa" && recordArr[i]['tid'] === id)
-                  markers[i].options.fillColor =`#${color}` 
-               else if (type === "coll" && recordArr[i]['collid'] === id) {
-                  markers[i].options.fillColor =`#${color}` 
-               }
+         document.addEventListener('autocolor', function(e) {
+            const {type, colorMap} = e.detail;
+
+            cluster.removeLayers(markers)
+
+            for (let {id, color} of Object.values(colorMap)) {
+               updateColor(type, id, color)
             }
+
             cluster.addLayers(markers)
          });
 
@@ -581,6 +602,79 @@ if(!empty($coordArr)) {
 
          return response? await response.text(): 'Nada';
       }
+
+      function autoColor(type, id, usedColors = {}) {
+         var randColor = generateRandColor();
+
+         while (usedColors[randColor] !== undefined) {
+            randColor = generateRandColor();
+         }
+
+         usedColors[randColor] = {color: randColor, id: id };
+
+         const colorkey = document.getElementById(`${type}-${id}`)
+         if(colorkey){
+            colorkey.color.fromString(randColor);
+            //onColorChange(colorkey)
+         }
+      }
+
+		function autoColorTaxa(){
+			document.getElementById("randomColorTaxa").disabled = true;
+			resetSymbology();
+			var usedColors = [];
+
+			for(var taxa of Object.values(taxaMap) ) {
+            autoColor('taxa', taxa.tid, usedColors)
+         }
+
+         document.dispatchEvent(new CustomEvent('autocolor', {
+            detail: {
+               type: 'taxa',
+               colorMap: usedColors,
+            }
+         }));
+			document.getElementById("randomColorTaxa").disabled = false;
+      }
+
+      function resetTaxaSymbology(){
+         for(var taxa of Object.values(taxaMap) ) {
+            const colorkey = document.getElementById('taxa-'+ taxa.tid)
+            if(colorkey){
+               colorkey.color.fromString(default_color);
+               onColorChange(colorkey)
+            }
+         }
+      }
+
+		function autoColorColl(){
+			document.getElementById("randomColorColl").disabled = true;
+         resetTaxaSymbology();
+			var usedColors = [];
+
+			for(var coll of Object.values(collArr) ) {
+            autoColor('coll', coll.collid, usedColors)
+         }
+
+         document.dispatchEvent(new CustomEvent('autocolor', {
+            detail: {
+               type: 'coll',
+               colorMap: usedColors,
+            }
+         }));
+
+			document.getElementById("randomColorColl").disabled = false;
+      }
+
+		function resetSymbology(){
+			for(var coll of Object.values(collArr) ) {
+            const colorkey = document.getElementById('coll-'+ coll.collid)
+            if(colorkey){
+               colorkey.color.fromString(default_color);
+               onColorChange(colorkey)
+            }
+			}
+		}
 
       function emit_occurrence(occid) {
          document.dispatchEvent(new CustomEvent('occur_click', {
@@ -873,10 +967,13 @@ if(!empty($coordArr)) {
 						<h3 id="recordstaxaheader" style="display:none;padding-left:30px;"><?php echo (isset($LANG['RECORDS_TAXA'])?$LANG['RECORDS_TAXA']:'Records and Taxa'); ?></h3>
 						<div id="tabs2" style="display:none;width:379px;padding:0px;">
 							<ul>
-								<li><a id="occurrencelist" href='occurrencelist.php?<?php echo htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS); ?>'><span><?php echo htmlspecialchars((isset($LANG['RECORDS'])?$LANG['RECORDS']:'Records'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
+								<li><a href='#occurrencelist'><span><?php echo htmlspecialchars((isset($LANG['RECORDS'])?$LANG['RECORDS']:'Records'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
 								<li><a href='#symbology'><span><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
 								<li><a href='#maptaxalist'><span><?php echo htmlspecialchars((isset($LANG['TAXA_LIST'])?$LANG['TAXA_LIST']:'Taxa List'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
 							</ul>
+							<div id="occurrencelist" style="">
+                        loading...
+							</div>
 							<div id="symbology" style="">
 								<div style="height:40px;margin-bottom:15px;">
 									<?php
@@ -942,7 +1039,7 @@ if(!empty($coordArr)) {
 									?>
 									<div id="symbolizeResetButt" style='float:right;margin-bottom:5px;' >
 										<div>
-											<button data-role="none" id="symbolizeReset2" name="symbolizeReset2" onclick='resetSymbology();' ><?php echo (isset($LANG['RESET_SYMBOLOGY'])?$LANG['RESET_SYMBOLOGY']:'Reset Symbology'); ?></button>
+											<button data-role="none" id="symbolizeReset2" name="symbolizeReset2" onclick='resetTaxaSymbology();' ><?php echo (isset($LANG['RESET_SYMBOLOGY'])?$LANG['RESET_SYMBOLOGY']:'Reset Symbology'); ?></button>
 										</div>
 										<div style="margin-top:5px;">
 											<button data-role="none" id="randomColorTaxa" name="randomColorTaxa" onclick='autoColorTaxa();' ><?php echo (isset($LANG['AUTO_COLOR'])?$LANG['AUTO_COLOR']:'Auto Color'); ?></button>
