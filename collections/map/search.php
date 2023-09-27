@@ -145,6 +145,7 @@ foreach ($coordArr as $collName => $coll) {
 	<script src="../../js/symb/oms.min.js" type="text/javascript"></script>
 	<script src="../../js/symb/keydragzoom.js" type="text/javascript"></script>
 	<script src="../../js/symb/infobox.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/wktpolygontools.js" type="text/javascript"></script>
 	<style type="text/css">
 		.ui-front {
 			z-index: 9999999 !important;
@@ -261,6 +262,7 @@ foreach ($coordArr as $collName => $coll) {
       let map_bounds= [ [90, 180], [-90, -180] ];
       let default_color = "E69E67";
       let puWin;
+      let shape;
 
       const colorChange = new Event("colorchange",  {
          bubbles: true,
@@ -436,6 +438,66 @@ foreach ($coordArr as $collName => $coll) {
          document.getElementById("deleteshapediv").style.display = "block";
       }
 
+      const getField = (id) => {
+         var elem = document.getElementById(id);
+         return elem? elem.value: null;
+      };
+
+      function loadShape(mapMode) {
+         switch(mapMode) {
+            case "polygon":
+               let origFootprintWkt = getField("poly_array");
+               try {
+                  let polyPoints = parseWkt(origFootprintWkt);
+                  if(polyPoints) {
+                     return { type: "polygon", latlngs: polyPoints, wkt: getField("poly_array")};
+                  }
+               } catch(e) {
+                  alert(e.message);
+						opener.document.getElementById("footprintwkt").value = origFootprintWkt;
+               }
+            break;
+            case "rectangle":
+               const upperLat = getField("upperlat");
+               const lowerLat= getField("bottomlat");
+               const leftLng = getField("leftlong");
+               const rightLng = getField("rightlong");
+
+               if(isNumeric(upperLat) && isNumeric(lowerLat) && isNumeric(leftLng) && isNumeric(rightLng)) {
+                  return {
+                     type: "rectangle",
+                     upperLat: upperLat * (getField("upperlat_NS") === "N"? 1: -1),
+                     rightLng: rightLng * (getField("rightlong_EW") === "E"? 1: -1),
+
+                     lowerLat: lowerLat * (getField("bottomlat_NS") === "N"? 1: -1),
+                     leftLng: leftLng * (getField("leftlong_EW") === "E"? 1: -1),
+                  }
+               }
+            break;
+            case "circle":
+               const radius = getField("radius");
+               const pointlat = getField("pointlat");
+               const pointlng = getField("pointlong");
+               const radUnits = getField("radiusunits", "");
+
+               if(isNumeric(radius) && isNumeric(pointlng) && isNumeric(pointlng)) {
+                  return {
+                     type: "circle",
+                     radius: (radUnits === "mi"? radius * MILEStoKM: parseFloat(radius)) * KMtoM,
+                     latlng: [
+                        pointlat * (getField("pointlat_NS") === "N"? 1: -1), 
+                        pointlng * (getField("pointlong_EW") === "E"? 1: -1)
+                     ]
+                  }
+               }
+               break;
+            default:
+               alert(`No Settings fo Map Mode: ${mapMode}`)
+               return false;
+            break;
+         } 
+      }
+
       function leafletInit() { 
          let map = new LeafletMap('map')
          map.enableDrawing({
@@ -562,8 +624,10 @@ foreach ($coordArr as $collName => $coll) {
                }
             }
          });
-
-         if(markers && markers.length > 0) {
+         if(shape) {
+            map.drawShape(shape);
+         }
+         else if(markers && markers.length > 0) {
             map.mapLayer.fitBounds(cluster.getBounds());
          } else if(map_bounds) {
             map.mapLayer.fitBounds(map_bounds);
@@ -694,12 +758,18 @@ foreach ($coordArr as $collName => $coll) {
             collArr = JSON.parse(data.getAttribute('data-coll-map'));
             recordArr = JSON.parse(data.getAttribute('data-records'));
 
-            console.log(recordArr)
-
             searchVar = data.getAttribute('data-search-var');
             if(searchVar) sessionStorage.querystr = searchVar;
          } catch {
 
+         }
+
+         if(document.getElementById("pointlat").value) {
+            shape = loadShape("circle")
+         } else if(document.getElementById("upperlat").value) {
+            shape = loadShape("rectangle")
+         } else if(document.getElementById("poly_array").value) {
+            shape = loadShape("polygon")
          }
 
          <?php if(!empty($LEAFLET)) { ?> 
@@ -787,7 +857,7 @@ foreach ($coordArr as $collName => $coll) {
 										<input type="hidden" id="rightlong" name="rightlong" value='<?php echo $mapManager->getSearchTerm('rightlong'); ?>' />
 										<input type="hidden" id="bottomlat" name="bottomlat" value='<?php echo $mapManager->getSearchTerm('bottomlat'); ?>' />
 										<input type="hidden" id="leftlong" name="leftlong" value='<?php echo $mapManager->getSearchTerm('leftlong'); ?>' />
-										<input type="hidden" id="poly_array" name="poly_array" value='<?php echo $mapManager->getSearchTerm('poly_array'); ?>' />
+										<input type="hidden" id="poly_array" name="poly_array" value='<?php echo $mapManager->getSearchTerm('polycoords'); ?>' />
 										<button data-role="none" type="button" name="resetbutton" onclick="resetQueryForm(this.form)"><?php echo (isset($LANG['RESET'])?$LANG['RESET']:'Reset'); ?></button>
 										<button data-role="none" name="submitform" type="submit" ><?php echo (isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search'); ?></button>
 									</div>

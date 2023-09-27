@@ -206,7 +206,7 @@ class LeafletMap {
       this.activeShape.id = id;
       this.shapes.push(this.activeShape);
 
-      this.mapLayer.fitBounds(map.activeShape.layer.getBounds());
+      this.mapLayer.fitBounds(this.activeShape.layer.getBounds());
    }
 
 }
