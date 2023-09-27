@@ -73,19 +73,27 @@ class OccurrenceCollectionProfile extends OmCollections{
 	}
 
 	public function getVisibleMetadataHtml($LANG, $LANG_TAG){
-		$outStr = '<div class="coll-description">'.$this->collMeta[$this->collid]["fulldescription"].'</div>';
+		$outStr = '<div class="coll-description bottom-breathing-room-relative">' . $this->collMeta[$this->collid]["fulldescription"] . '</div>';
 		if(isset($this->collMeta[$this->collid]['contactjson'])){
 			if($contactArr = json_decode($this->collMeta[$this->collid]['contactjson'],true)){
+				if(!empty($contactArr)){
+					$title = (isset($LANG['CONTACT'])?$LANG['CONTACT']:'Contacts');
+					$outStr .= '<span class="label">' . $title . ': ' . '</span> ';
+					$outStr .= '<ul>';
+				}
 				foreach($contactArr as $cArr){
-					$title = (isset($LANG['CONTACT'])?$LANG['CONTACT']:'Contact');
-					if(isset($cArr['role']) && $cArr['role']) $title = $cArr['role'];
-					$outStr .= '<div class="field-div"><span class="label">'.$title.':</span> ';
+					$role= '';
+					$outStr .= '<li>';
+					if(isset($cArr['role']) && $cArr['role']) $role = $cArr['role'];
+					$outStr .= '<div class="field-div"><span class="label">' . $role . '</span>';
 					$outStr .= $cArr['firstName'].' '.$cArr['lastName'];
 					if(isset($cArr['email']) && $cArr['email']) $outStr .= ', '.$cArr['email'];
 					if(isset($cArr['phone']) && $cArr['phone']) $outStr .= ', '.$cArr['phone'];
 					if(isset($cArr['orcid']) && $cArr['orcid']) $outStr .= ' (ORCID #: <a href="https://orcid.org/' . htmlspecialchars($cArr['orcid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">'. htmlspecialchars($cArr['orcid'], HTML_SPECIAL_CHARS_FLAGS) . '</a>)';
 					$outStr .= '</div>';
+					$outStr .= '</li>';
 				}
+				$outStr .= '</ul>';
 			}
 		}
 		if(isset($this->collMeta[$this->collid]['resourcejson'])){
