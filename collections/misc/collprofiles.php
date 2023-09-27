@@ -406,7 +406,8 @@ if ($SYMB_UID) {
 			<div style='margin:10px;'>
 				
 				<?php
-				echo $collManager->getMetadataHtml($LANG, $LANG_TAG);
+				// echo $collManager->getMetadataHtml($LANG, $LANG_TAG);
+				echo $collManager->getVisibleMetadataHtml($LANG, $LANG_TAG);
 				if ($collData['publishtogbif'] && $datasetKey) {
 					$dataUrl = 'http://www.gbif.org/dataset/' . $datasetKey;
 					?>
@@ -525,6 +526,7 @@ if ($SYMB_UID) {
 				</div>
 			</fieldset>
 			<?php
+			echo $collManager->getAccordionMetadataHtml($LANG, $LANG_TAG);
 			include('collprofilestats.php');
 		} elseif($collData) {
 			?>
@@ -574,7 +576,7 @@ if ($SYMB_UID) {
 							<div style='margin:10px;'>
 								<?php
 								$collManager->setCollid($cid);
-								echo $collManager->getMetadataHtml($LANG, $LANG_TAG);
+								echo $collManager->getVisibleMetadataHtml($LANG, $LANG_TAG);
 								?>
 							</div>
 							<div style='margin:5px 0px 15px 10px;'>

@@ -72,7 +72,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 		return $retArr;
 	}
 
-	public function getMetadataHtml($LANG, $LANG_TAG){
+	public function getVisibleMetadataHtml($LANG, $LANG_TAG){
 		$outStr = '<div class="coll-description">'.$this->collMeta[$this->collid]["fulldescription"].'</div>';
 		if(isset($this->collMeta[$this->collid]['contactjson'])){
 			if($contactArr = json_decode($this->collMeta[$this->collid]['contactjson'],true)){
@@ -99,7 +99,11 @@ class OccurrenceCollectionProfile extends OmCollections{
 				}
 			}
 		}
-		$outStr .= '<div class="accordions">';
+		return $outStr;
+	}
+
+	public function getAccordionMetadataHtml($LANG, $LANG_TAG){
+		$outStr = '<div class="accordions">';
 			$outStr .= '<section>';
 				$outStr .= '<input type="checkbox" id="more-details" class="accordion-selector" checked=false />';
 				$outStr .= '<label for="more-details" class="accordion-header">More Information</label>';
