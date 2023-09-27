@@ -445,8 +445,8 @@ if ($SYMB_UID) {
 				}
 				if ($addrArr = $collManager->getAddress()) {
 					?>
-					<div id="test1" style="margin-top: 1rem;">
-						<div style="float:left;font-weight:bold;"><?php echo (isset($LANG['ADDRESS']) ? $LANG['ADDRESS'] : 'Address'); ?>:</div>
+					<fieldset style="margin-bottom: 1rem;">
+						<legend><?php echo (isset($LANG['ADDRESS']) ? $LANG['ADDRESS'] : 'Address'); ?>:</legend>
 						<div style="float:left;margin-left:10px;">
 							<?php
 							echo "<div>" . $addrArr["institutionname"];
@@ -462,7 +462,7 @@ if ($SYMB_UID) {
 							if ($addrArr["notes"]) echo "<div>" . $addrArr["notes"] . "</div>";
 							?>
 						</div>
-					</div>
+					</fieldset>
 					<?php
 				}
 				//Collection Statistics
