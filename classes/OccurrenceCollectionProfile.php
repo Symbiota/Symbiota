@@ -82,10 +82,13 @@ class OccurrenceCollectionProfile extends OmCollections{
 					$outStr .= '<ul>';
 				}
 				foreach($contactArr as $cArr){
-					$role= '';
+					$role= null;
 					$outStr .= '<li>';
 					if(isset($cArr['role']) && $cArr['role']) $role = $cArr['role'];
-					$outStr .= '<div class="field-div"><span class="label">' . $role . '</span>';
+					$outStr .= '<div class="field-div">';
+					if(isset($role)){
+						$outStr .= '<span class="label">' . $role . ': </span>';
+					}
 					$outStr .= $cArr['firstName'].' '.$cArr['lastName'];
 					if(isset($cArr['email']) && $cArr['email']) $outStr .= ', '.$cArr['email'];
 					if(isset($cArr['phone']) && $cArr['phone']) $outStr .= ', '.$cArr['phone'];

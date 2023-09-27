@@ -445,7 +445,7 @@ if ($SYMB_UID) {
 				}
 				if ($addrArr = $collManager->getAddress()) {
 					?>
-					<div style="margin-top:5px;">
+					<div id="test1" style="margin-top: 1rem;">
 						<div style="float:left;font-weight:bold;"><?php echo (isset($LANG['ADDRESS']) ? $LANG['ADDRESS'] : 'Address'); ?>:</div>
 						<div style="float:left;margin-left:10px;">
 							<?php
@@ -470,7 +470,7 @@ if ($SYMB_UID) {
 				$georefPerc = 0;
 				if ($statsArr['georefcnt'] && $statsArr['recordcnt']) $georefPerc = (100 * ($statsArr['georefcnt'] / $statsArr['recordcnt']));
 				?>
-				<fieldset>
+				<fieldset class="clear-both">
 					<legend><?php echo (isset($LANG['COLL_STATISTICS']) ? $LANG['COLL_STATISTICS'] : 'Collection Statistics'); ?></legend>
 					<div style="clear:both;margin-top:5px;">
 						<ul style="margin-top:5px;">

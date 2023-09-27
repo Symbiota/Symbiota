@@ -849,3 +849,7 @@ table.styledtable tr.alt td {
 }
 
 /* End Text Area ********************************************************************************/
+
+.clear-both {
+  clear: both;
+}
