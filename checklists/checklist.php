@@ -743,7 +743,12 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 									if($voucCnt > 4 && !$printMode) $voucStr .= '</span><a href="#" id="lessvouch-'.$tid.'" style="display:none;" onclick="return toggleVoucherDiv('.$tid.');">...' . $LANG['LESS'] . '</a>';
 								}
 								if(isset($externalVoucherArr[$tid])) {
-									$voucStr .= ' '.$externalVoucherArr[$tid];
+									foreach($externalVoucherArr[$tid] as $extVouchArr){
+										if(!empty($extVouchArr['display'])){
+											if(!empty($extVouchArr['url'])) $voucStr .= '<a href="'.$extVouchArr['url'].'" target="_blank">'.$extVouchArr['display'].'</a>, ';
+											else $voucStr .= $extVouchArr['display'].', ';
+										}
+									}
 								}
 								$voucStr = trim($voucStr,' ;,');
 								if($voucStr) echo '<div class="note-div">'.$voucStr.'</div>';

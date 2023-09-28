@@ -434,31 +434,31 @@ class ChecklistManager extends Manager{
 			if($this->childClidArr){
 				$clidStr .= ','.implode(',',array_keys($this->childClidArr));
 			}
-			$vSql = 'SELECT clid, tid, sourceIdentifier, sourceReference, dynamicProperties
+			$sql = 'SELECT clCoordID, clid, tid, sourceIdentifier, referenceUrl, dynamicProperties
 				FROM fmchklstcoordinates
 				WHERE (clid IN ('.$clidStr.')) AND (tid IN('.implode(',',array_keys($this->taxaList)).')) AND sourceName = "EXTERNAL_VOUCHER"';
-			$vResult = $this->conn->query($vSql);
-			while ($row = $vResult->fetch_object()){
-				$dynPropArr = json_decode($row->dynamicProperties);
-				$displayStr = '';
+			$rs = $this->conn->query($sql);
+			while ($r = $rs->fetch_object()){
+				$dynPropArr = json_decode($r->dynamicProperties);
 				foreach($dynPropArr as $vouch) {
-					$accumulateStr = ($vouch->user?$vouch->user:'');
-					if(strlen($accumulateStr) > 25){
+					$displayStr = '';
+					if(!empty($vouch->user)) $displayStr = $vouch->user;
+					if(strlen($displayStr) > 25){
 						//Collector string is too big, thus reduce
-						$strPos = strpos($accumulateStr,';');
-						if(!$strPos) $strPos = strpos($accumulateStr,',');
-						if(!$strPos) $strPos = strpos($accumulateStr,' ',10);
-						if($strPos) $accumulateStr = substr($accumulateStr,0,$strPos).'...';
+						$strPos = strpos($displayStr,';');
+						if(!$strPos) $strPos = strpos($displayStr,',');
+						if(!$strPos) $strPos = strpos($displayStr,' ',10);
+						if($strPos) $displayStr = substr($displayStr,0,$strPos).'...';
 					}
-					if($vouch->date) $accumulateStr .= ' '.$vouch->date;
-					if(!trim($accumulateStr)) $accumulateStr = 'undefined voucher';
-					$accumulateStr .= ' ['.$vouch->repository.($vouch->id?'-'.$vouch->id:'').']';
-					$accumulateStr = '<a href="https://www.inaturalist.org/observations/'.$vouch->id.'" target="_blank">' . $accumulateStr . '</a>, ';
-					$displayStr .= $accumulateStr;
+					if($vouch->date) $displayStr .= ' '.$vouch->date;
+					if(!trim($displayStr)) $displayStr = 'undefined voucher';
+					$displayStr .= ' ['.$vouch->repository.($vouch->id?'-'.$vouch->id:'').']';
+					$externalVoucherArr[$r->tid][$r->clCoordID]['display'] = trim($displayStr);
+					$url = 'https://www.inaturalist.org/observations/'.$r->sourceIdentifier;
+					$externalVoucherArr[$r->tid][$r->clCoordID]['url'] = $url;
 				}
-				$externalVoucherArr[$row->tid] = trim($displayStr);
 			}
-			$vResult->free();
+			$rs->free();
 		}
 		return $externalVoucherArr;
 	}
