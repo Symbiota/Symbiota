@@ -853,3 +853,7 @@ table.styledtable tr.alt td {
 .clear-both {
   clear: both;
 }
+
+.no-left-margin {
+  margin-left: 0;
+}

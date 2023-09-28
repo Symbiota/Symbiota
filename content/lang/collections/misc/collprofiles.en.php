@@ -104,7 +104,8 @@ $LANG['GEOG_DIST_COUNTRIES'] = 'Geographic Distribution - Countries';
 $LANG['COLLECTION_PROJECTS'] = 'Natural History Collections and Observation Projects';
 $LANG['ADVANCED_SEARCH_THIS_COLLECTION'] = 'Advanced Search this Collection';
 $LANG['IMAGE_SEARCH_THIS_COLLECTION'] = 'Image Search this Collection';
-$LANG['SEARCH'] = 'Search';
+$LANG['SEARCH_BY_IDENTIFIER'] = 'Search by Identifier';
+$LANG['SEARCH_BY_TAXON'] = 'Search by Taxon';
 $LANG['IDENTIFIER'] = 'Identifier';
 $LANG['TAXON'] = 'Taxon';
 ?>

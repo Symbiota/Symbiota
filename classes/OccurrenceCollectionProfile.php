@@ -91,7 +91,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 			if($contactArr = json_decode($this->collMeta[$this->collid]['contactjson'],true)){
 				if(!empty($contactArr)){
 					$title = (isset($LANG['CONTACT'])?$LANG['CONTACT']:'Contacts');
-					$outStr .= '<fieldset class="bottom-breathing-room-relative"><legend class="label">' . $title . ': ' . '</legend> ';
+					$outStr .= '<section class="fieldset-like no-left-margin"><h1><span>' . $title . ': ' . '</span></h1> ';
 					$outStr .= '<ul>';
 				}
 				foreach($contactArr as $cArr){
@@ -109,7 +109,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 					$outStr .= '</div>';
 					$outStr .= '</li>';
 				}
-				$outStr .= '</ul></fieldset>';
+				$outStr .= '</ul></section>';
 			}
 		}
 		return $outStr;

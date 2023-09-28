@@ -88,23 +88,23 @@ if ($SYMB_UID) {
 		<b><?php echo (isset($LANG['COLL_PROFILE']) ? $LANG['COLL_PROFILE'] : 'Collection Profile'); ?></b>
 	</div>
 	<div id="innertext">
-		<fieldset style="float:right;margin:5px" title="Quick Search">
-			<legend><b><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></b></legend>
-			<b><?php echo (isset($LANG['IDENTIFIER']) ? $LANG['IDENTIFIER'] : 'Identifier'); ?></b><br />
+		<section class="fieldset-like no-left-margin" style="float: right;">
+			<h1><span><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></span></h1>
 			<form name="id-quicksearch" action="javascript:void(0);" onsubmit="submitAndRedirect('id-quicksearch', 'q_catalognumber', '<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&includeothercatnum=1'); return false;">
-				<input name="q_catalognumber" type="text" />
+				<label for="q_catalognumber"><?php echo (isset($LANG['IDENTIFIER']) ? $LANG['IDENTIFIER'] : 'Identifier'); ?></label>
+				<input name="q_catalognumber" id="q_catalognumber" type="text" />
 				<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 				<input name="occindex" type="hidden" value="0" />
-				<button action="submit"><?php echo (isset($LANG['ISEARCH']) ? $LANG['SEARCH'] : 'Search'); ?></button>
+				<button type="submit"><?php echo (isset($LANG['SEARCH_BY_IDENTIFIER']) ? $LANG['SEARCH_BY_IDENTIFIER'] : 'Search by Identifier'); ?></button>
 			</form>
-			<b><?php echo (isset($LANG['TAXON']) ? $LANG['TAXON'] : 'Taxon'); ?></b><br />
 			<form name="taxon-quick-search" action="javascript:void(0);" onsubmit="submitAndRedirect('taxon-quick-search', 'taxon-search', '<?php echo $CLIENT_ROOT ?>/collections/list.php?db=', '&taxa=', '&usethes=1&taxontype=2 '); return false;">
-				<input name="taxon-search" type="text" />
+				<label for="taxon-search"><?php echo (isset($LANG['TAXON']) ? $LANG['TAXON'] : 'Taxon'); ?></label>
+				<input name="taxon-search" id="taxon-search" type="text" />
 				<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 				<input name="occindex" type="hidden" value="0" />
-				<button action="submit"><?php echo (isset($LANG['ISEARCH']) ? $LANG['SEARCH'] : 'Search'); ?></button>
+				<button type="submit"><?php echo (isset($LANG['SEARCH_BY_TAXON']) ? $LANG['SEARCH_BY_TAXON'] : 'Search by Taxon'); ?></button>
 			</form>
-		</fieldset>
+		</section>
 		<?php
 		if ($editCode > 1) {
 			if ($action == 'UpdateStatistics') {
@@ -116,7 +116,7 @@ if ($SYMB_UID) {
 		if ($editCode && $collid) {
 			?>
 			<div style="float:right;margin:3px;cursor:pointer;" onclick="toggleById('controlpanel');" title="<?php echo (isset($LANG['TOGGLE_MAN']) ? $LANG['TOGGLE_MAN'] : 'Toggle Manager\'s Control Panel'); ?>">
-				<img style='border:0px;' src='../../images/edit.png' />
+				<img style='border:0px;' src='../../images/edit.png' alt="edit icon" />
 			</div>
 			<?php
 		}
@@ -147,9 +147,9 @@ if ($SYMB_UID) {
 			}
 			if ($editCode) {
 				?>
-				<div id="controlpanel" style="clear:both;display:<?php echo ($eMode ? 'block' : 'none'); ?>;">
-					<fieldset style="padding:10px;padding-left:25px;">
-						<legend><b><?php echo (isset($LANG['DAT_EDIT']) ? $LANG['DAT_EDIT'] : 'Data Editor Control Panel'); ?></b></legend>
+				<div id="controlpanel" style="margin-top: 6rem; display:<?php echo ($eMode ? 'block' : 'none'); ?>;">
+					<section class="fieldset-like no-left-margin">
+						<h1><span><?php echo (isset($LANG['DAT_EDIT']) ? $LANG['DAT_EDIT'] : 'Data Editor Control Panel'); ?></span></h1>
 						<ul>
 							<?php
 							if (stripos($collData['colltype'], 'observation') !== false) {
@@ -241,12 +241,12 @@ if ($SYMB_UID) {
 							}
 							?>
 						</ul>
-					</fieldset>
+					</section>
 					<?php
 					if ($editCode > 1) {
 						?>
-						<fieldset style="padding:10px;padding-left:25px;">
-							<legend><b><?php echo (isset($LANG['ADMIN_CONTROL']) ? $LANG['ADMIN_CONTROL'] : 'Administration Control Panel'); ?></b></legend>
+						<section class="fieldset-like no-left-margin">
+							<h1><span><?php echo (isset($LANG['ADMIN_CONTROL']) ? $LANG['ADMIN_CONTROL'] : 'Administration Control Panel'); ?></span></h1>
 							<ul>
 								<li>
 									<a href="commentlist.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">
@@ -415,7 +415,7 @@ if ($SYMB_UID) {
 									</a>
 								</li>
 							</ul>
-						</fieldset>
+						</section>
 						<?php
 					}
 					?>
@@ -423,8 +423,6 @@ if ($SYMB_UID) {
 				<?php
 			}
 			?>
-			<div style='margin:10px;'>
-				
 				<?php
 				// echo $collManager->getMetadataHtml($LANG, $LANG_TAG);
 				echo $collManager->getVisibleMetadataHtml($LANG, $LANG_TAG);
@@ -465,9 +463,9 @@ if ($SYMB_UID) {
 				}
 				if ($addrArr = $collManager->getAddress()) {
 					?>
-					<fieldset class="bottom-breathing-room-relative">
-						<legend><?php echo (isset($LANG['ADDRESS']) ? $LANG['ADDRESS'] : 'Address'); ?>:</legend>
-						<div style="float:left;margin-left:10px;">
+					<section class="fieldset-like no-left-margin">
+						<h1><span><?php echo (isset($LANG['ADDRESS']) ? $LANG['ADDRESS'] : 'Address'); ?>:</span></h1>
+						<div>
 							<?php
 							echo "<div>" . $addrArr["institutionname"];
 							if ($editCode > 1) echo ' <a href="institutioneditor.php?emode=1&targetcollid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&iid=' . htmlspecialchars($addrArr['iid'], HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars((isset($LANG['EDIT_INST']) ? $LANG['EDIT_INST'] : 'Edit institution information'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:13px;" /></a>';
@@ -482,7 +480,7 @@ if ($SYMB_UID) {
 							if ($addrArr["notes"]) echo "<div>" . $addrArr["notes"] . "</div>";
 							?>
 						</div>
-					</fieldset>
+					</section>
 					<?php
 				}
 				//Collection Statistics
@@ -490,8 +488,8 @@ if ($SYMB_UID) {
 				$georefPerc = 0;
 				if ($statsArr['georefcnt'] && $statsArr['recordcnt']) $georefPerc = (100 * ($statsArr['georefcnt'] / $statsArr['recordcnt']));
 				?>
-				<fieldset class="clear-both">
-					<legend><?php echo (isset($LANG['COLL_STATISTICS']) ? $LANG['COLL_STATISTICS'] : 'Collection Statistics'); ?></legend>
+				<section class="fieldset-like no-left-margin">
+					<h1><span><?php echo (isset($LANG['COLL_STATISTICS']) ? $LANG['COLL_STATISTICS'] : 'Collection Statistics'); ?></span></h1>
 					<div style="clear:both;margin-top:5px;">
 						<ul style="margin-top:5px;">
 							<li><?php echo number_format($statsArr["recordcnt"]) . ' ' . (isset($LANG['SPECIMEN_RECORDS']) ? $LANG['SPECIMEN_RECORDS'] : 'specimen records'); ?></li>
@@ -536,17 +534,16 @@ if ($SYMB_UID) {
 							?>
 						</ul>
 					</div>
-				</fieldset>
-			</div>
-			<fieldset style='margin:1.2rem;padding:10px;width:300px;'>
-				<legend><b><?php echo (isset($LANG['EXTRA_STATS']) ? $LANG['EXTRA_STATS'] : 'Extra Statistics'); ?></b></legend>
+				</section>
+			<section class="fieldset-like no-left-margin">
+				<h1><span><?php echo (isset($LANG['EXTRA_STATS']) ? $LANG['EXTRA_STATS'] : 'Extra Statistics'); ?></span></h1>
 				<div style="margin:3px;">
 					<a href="collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&stat=geography#geographystats"><?php echo htmlspecialchars((isset($LANG['SHOW_GEOG_DIST']) ? $LANG['SHOW_GEOG_DIST'] : 'Show Geographic Distribution'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
 				</div>
 				<div style="margin:3px;">
 					<a href="collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&stat=taxonomy#taxonomystats"><?php echo htmlspecialchars((isset($LANG['SHOW_FAMILY_DIST']) ? $LANG['SHOW_FAMILY_DIST'] : 'Show Family Distribution'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
 				</div>
-			</fieldset>
+			</section>
 			<?php
 			echo $collManager->getAccordionMetadataHtml($LANG, $LANG_TAG);
 			include('collprofilestats.php');
