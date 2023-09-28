@@ -281,11 +281,16 @@ $collManager->cleanOutArr($collData);
 							<div class="field-block">
 								<span class="field-elem">
 									<label for="institutionCode"> <?php echo (isset($LANG['INST_CODE']) ? htmlspecialchars($LANG['INST_CODE'], HTML_SPECIAL_CHARS_FLAGS) : 'Institution Code'); ?>: </label>
-									<input id="institutionCode" type="text" name="institutionCode" value="<?php echo ($collid ? $collData['institution'] : ''); ?>"aria-label="" required />
+									<span class="skip-link">
+										<?php
+											echo (isset($LANG['NAME_ONE']) ? $LANG['NAME_ONE'] : '') . ' ';
+										?>
+									</span>
+									<input id="institutionCode" type="text" name="institutionCode" value="<?php echo ($collid ? $collData['institution'] : ''); ?>" required />
 									<a id="instcodeinfo" href="#" onclick="return false" tabindex="0"	>
 										<img src="../../images/info.png" style="width:15px;" alt="Show more information" title="<?php echo (isset($LANG['MORE_INST_CODE']) ? $LANG['MORE_INST_CODE'] : 'More information about Institution Code'); ?>"/>
 									</a>
-									<span id="instcodeinfodialog" aria-label="<?php echo$LANG['NAME_ONE'] ?>">
+									<span id="instcodeinfodialog" aria-live="polite">
 										<?php
 											echo (isset($LANG['NAME_ONE']) ? $LANG['NAME_ONE'] : '') . ' ';
 											echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#institutionCode" target="_blank">' . htmlspecialchars((isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition'), HTML_SPECIAL_CHARS_FLAGS) . '</a>.';
@@ -296,11 +301,16 @@ $collManager->cleanOutArr($collData);
 							<div class="field-block">
 								<span class="field-elem">
 									<label for="collectionCode"> <?php echo (isset($LANG['COLL_CODE']) ? htmlspecialchars($LANG['COLL_CODE'], HTML_SPECIAL_CHARS_FLAGS) : 'Collection Code'); ?>: </label>
+									<span class="skip-link">
+										<?php
+											echo (isset($LANG['NAME_ACRO']) ? $LANG['NAME_ACRO'] : '') . ' ';
+										?>
+									</span>
 									<input id="collectionCode" type="text" name="collectionCode" value="<?php echo ($collid ? $collData['collectioncode'] : ''); ?>" />
 									<a id="collcodeinfo" href="#" onclick="return false" tabindex="0">
 										<img src="../../images/info.png" style="width:15px;" alt="Show more information" title="<?php echo (isset($LANG['MORE_COLL_CODE']) ? $LANG['MORE_COLL_CODE'] : 'More information about Collection Code'); ?>"/>
 									</a>
-									<span id="collcodeinfodialog">
+									<span id="collcodeinfodialog" aria-live="polite">
 										<?php
 										echo (isset($LANG['NAME_ACRO']) ? $LANG['NAME_ACRO'] : '') . ' ';
 										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#institutionCode" target="_blank">' . htmlspecialchars((isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition'), HTML_SPECIAL_CHARS_FLAGS) . '</a>.'
@@ -358,17 +368,27 @@ $collManager->cleanOutArr($collData);
 							<div class="field-block">
 								<span class="field-elem">
 									<label for="publicEdits"> <?php echo (isset($LANG['ALLOW_PUBLIC_EDITS']) ? htmlspecialchars($LANG['ALLOW_PUBLIC_EDITS'], HTML_SPECIAL_CHARS_FLAGS) : 'Allow Public Edits'); ?>: </label>
+									<span class="skip-link">
+										<?php
+											echo (isset($LANG['EXPLAIN_PUBLIC']) ? $LANG['EXPLAIN_PUBLIC'] : '') . ' ';
+										?>
+									</span>
 									<input id="publicEdits" type="checkbox" name="publicEdits" value="1" <?php echo ($collData && $collData['publicedits'] ? 'CHECKED' : ''); ?> />
 									<a id="peditsinfo" href="#" onclick="return false" tabindex="0">
 										<img src="../../images/info.png" style="width:15px;" alt="Show more information" title="<?php echo (isset($LANG['MORE_PUB_EDITS']) ? $LANG['MORE_PUB_EDITS'] : 'More information about Public Edits'); ?>"/>
 									</a>
-									<span id="peditsinfodialog">
+									<span id="peditsinfodialog" aria-live="polite">
 										<?php  echo (isset($LANG['EXPLAIN_PUBLIC']) ? $LANG['EXPLAIN_PUBLIC'] : ''); ?>
 									</span>
 								</span>
 							</div>
 							<div class="field-block">
 								<span class="field-elem">
+								<a class="skip-link">
+										<?php
+											echo (isset($LANG['LEGAL_DOC']) ? $LANG['LEGAL_DOC'] : '') . ' ';
+										?>
+								</a>
 								<label for="rights"> <?php echo (isset($LANG['LICENSE']) ? htmlspecialchars($LANG['LICENSE'], HTML_SPECIAL_CHARS_FLAGS) : 'License'); ?>: </label>
 									<?php
 									if (isset($RIGHTS_TERMS)) {
@@ -403,7 +423,7 @@ $collManager->cleanOutArr($collData);
 									<a id="rightsinfo" href="#" onclick="return false" tabindex="0">
 										<img src="../../images/info.png" style="width:15px;" alt="Show more information button" title="<?php echo (isset($LANG['MORE_INFO_RIGHTS']) ? $LANG['MORE_INFO_RIGHTS'] : 'More information about Rights'); ?>"/>
 									</a>
-									<span id="rightsinfodialog">
+									<span id="rightsinfodialog" aria-live="polite">
 										<?php
 										echo (isset($LANG['LEGAL_DOC']) ? $LANG['LEGAL_DOC'] : '') . ' ';
 										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#dcterms:license" target="_blank">';
@@ -415,11 +435,16 @@ $collManager->cleanOutArr($collData);
 							<div class="field-block">
 								<span class="field-elem">
 									<label for="rightsHolder"> <?php echo (isset($LANG['RIGHTS_HOLDER']) ? htmlspecialchars($LANG['RIGHTS_HOLDER'], HTML_SPECIAL_CHARS_FLAGS) : 'Rights Holder'); ?>: </label>
+									<span class="skip-link">
+										<?php
+											echo (isset($LANG['HOLDER_DEF']) ? $LANG['HOLDER_DEF'] : '') . ' ';
+										?>
+									</span>
 									<input type="text" id="rightsHolder" name="rightsHolder" value="<?php echo ($collid ? $collData["rightsholder"] : ''); ?>" style="max-width: 100%; width:600px" />
 									<a id="rightsholderinfo" href="#" onclick="return false" tabindex="0">
 										<img src="../../images/info.png" style="width:15px;" alt="Show more information" title="<?php echo (isset($LANG['MORE_INFO_RIGHTS_H']) ? $LANG['MORE_INFO_RIGHTS_H'] : 'More information about Rights Holder'); ?>"/>
 									</a>
-									<span id="rightsholderinfodialog">
+									<span id="rightsholderinfodialog" aria-live="polite">
 										<?php
 										echo (isset($LANG['HOLDER_DEF']) ? $LANG['HOLDER_DEF'] : 'The organization or person managing or owning the rights of the resource. For more details, see') . ' ';
 										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#dcterms:rightsHolder" target="_blank">' . htmlspecialchars((isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition'), HTML_SPECIAL_CHARS_FLAGS) . '</a>.'
@@ -430,11 +455,16 @@ $collManager->cleanOutArr($collData);
 							<div class="field-block">
 								<span class="field-elem">
 									<label for="accessRights"> <?php echo (isset($LANG['ACCESS_RIGHTS']) ? htmlspecialchars($LANG['ACCESS_RIGHTS'], HTML_SPECIAL_CHARS_FLAGS) : 'Access Rights'); ?>: </label>
+									<span class="skip-link">
+										<?php
+											echo (isset($LANG['ACCESS_DEF']) ? $LANG['ACCESS_DEF'] : '') . ' ';
+										?>
+									</span>
 									<input type="text" id="accessRights" name="accessRights" value="<?php echo ($collid ? $collData["accessrights"] : ''); ?>" style="max-width: 100%; width:600px" />
 									<a id="accessrightsinfo" href="#" onclick="return false" tabindex="0">
 										<img src="../../images/info.png" style="width:15px;" alt="Show more information" title="<?php echo htmlspecialchars((isset($LANG['MORE_INFO_ACCESS_RIGHTS']) ? $LANG['MORE_INFO_ACCESS_RIGHTS'] : 'More information about Access Rights'), HTML_SPECIAL_CHARS_FLAGS); ?>"/>
 									</a>
-									<span id="accessrightsinfodialog">
+									<span id="accessrightsinfodialog" aria-live="polite">
 										<?php
 										echo (isset($LANG['ACCESS_DEF']) ? $LANG['ACCESS_DEF'] : 'Information or a URL link to page with details explaining how one can use the data. See') . ' ';
 										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#dcterms:accessRights" target="_blank">' . htmlspecialchars((isset($LANG['DWC_DEF']) ? $LANG['DWC_DEF'] : 'Darwin Core definition'), HTML_SPECIAL_CHARS_FLAGS) . '</a>.';
@@ -457,7 +487,7 @@ $collManager->cleanOutArr($collData);
 										<a id="colltypeinfo" href="#" onclick="return false" tabindex="0">
 											<img src="../../images/info.png" style="width:15px;" alt="Show more information" title="<?php echo (isset($LANG['MORE_COL_TYPE']) ? $LANG['MORE_COL_TYPE'] : 'More information about Collection Type'); ?>"/>
 										</a>
-										<span id="colltypeinfodialog">
+										<span id="colltypeinfodialog" aria-live="polite">
 											<?php echo (isset($LANG['COL_TYPE_DEF']) ? $LANG['COL_TYPE_DEF'] : ''); ?>
 										</span>
 									</span>
@@ -473,7 +503,7 @@ $collManager->cleanOutArr($collData);
 										<a id="managementinfo" href="#" onclick="return false" tabindex="0">
 											<img src="../../images/info.png" style="width:15px;" alt="Show more information" title="<?php echo (isset($LANG['MORE_INFO_TYPE']) ? $LANG['MORE_INFO_TYPE'] : 'More information about Management Type'); ?>"/>
 										</a>
-										<span id="managementinfodialog">
+										<span id="managementinfodialog" aria-live="polite">
 											<?php echo (isset($LANG['SNAPSHOT_DEF']) ? $LANG['SNAPSHOT_DEF'] : ''); ?>
 										</span>
 									</span>
@@ -494,7 +524,7 @@ $collManager->cleanOutArr($collData);
 									<a id="guidinfo" href="#" onclick="return false" tabindex="0">
 										<img src="../../images/info.png" style="width:15px;" alt="Show more information" title="<?php echo (isset($LANG['MORE_INFO_GUID']) ? $LANG['MORE_INFO_GUID'] : 'More information about Global Unique Identifier'); ?>"/>
 									</a>
-									<span id="guidinfodialog">
+									<span id="guidinfodialog" aria-live="polite">
 										<?php
 										echo (isset($LANG['OCCID_DEF_1']) ? $LANG['OCCID_DEF_1'] : '');
 										echo ' <a href="http://rs.tdwg.org/dwc/terms/index.htm#occurrenceID" target="_blank">';
@@ -519,7 +549,7 @@ $collManager->cleanOutArr($collData);
 											iDigBio <input type="checkbox" name="publishToIdigbio" value="1" onchange="checkGUIDSource(this.form);" <?php echo ($collData['publishtoidigbio'] ? 'CHECKED' : ''); ?> />
 										</span>
 										 -->
-										<span id="pubagginfodialog">
+										<span id="pubagginfodialog" aria-live="polite">
 											<?php echo (isset($LANG['ACTIVATE_GBIF']) ? $LANG['ACTIVATE_GBIF'] : 'Activates GBIF publishing tools available within Darwin Core Archive Publishing menu option'); ?>.
 										</span>
 									</span>
@@ -530,12 +560,13 @@ $collManager->cleanOutArr($collData);
 							<div class="field-block">
 								<div class="sourceurl-div" style="display:<?php echo ($collData["managementtype"] == 'Live Data' ? 'none' : 'inline'); ?>">
 									<span class="field-label"><?php echo (isset($LANG['SOURCE_REC_URL']) ? $LANG['SOURCE_REC_URL'] : 'Source Record URL'); ?>:</span>
+									
 									<span class="field-elem">
 										<input type="text" name="individualUrl" class="max-width-fit-75" value="<?php echo ($collid ? $collData["individualurl"] : ''); ?>" title="<?php echo (isset($LANG['DYNAMIC_LINK_REC']) ? $LANG['DYNAMIC_LINK_REC'] : 'Dynamic link to source database individual record page'); ?>" />
 										<a id="sourceurlinfo" href="#" onclick="return false" tabindex="0">
 											<img src="../../images/info.png" style="width:15px;" alt="Show more information" title="<?php echo (isset($LANG['MORE_INFO_SOURCE']) ? $LANG['MORE_INFO_SOURCE'] : 'More information about Source Records URL'); ?>"/>
 										</a>
-										<span id="sourceurlinfodialog">
+										<span id="sourceurlinfodialog" aria-live="polite">
 											<?php
 											echo (isset($LANG['ADVANCE_SETTING']) ? $LANG['ADVANCE_SETTING'] : '');
 											echo ':http://swbiodiversity.org/seinet/collections/individual/index.php?occid=--DBPK--&quot; ';
@@ -558,7 +589,7 @@ $collManager->cleanOutArr($collData);
 										<input style="max-width: 100%; width:600px;" type='text' name='iconUrl' id='iconurl' value="<?php echo ($collid ? $collData["icon"] : ''); ?>" onchange="verifyIconURL(this.form);" />
 									</span>
 									<a id="iconinfo" href="#" onclick="return false" title="<?php echo (isset($LANG['WHAT_ICON']) ? $LANG['WHAT_ICON'] : 'What is an Icon?'); ?>" tabindex="0"><img src="../../images/info.png" style="width:15px;" alt="Show more information"/></a>
-									<span id="iconinfodialog">
+									<span id="iconinfodialog" aria-live="polite">
 										<?php echo (isset($LANG['UPLOAD_ICON']) ? $LANG['UPLOAD_ICON'] : ''); ?>
 									</span>
 								</span>
@@ -577,11 +608,16 @@ $collManager->cleanOutArr($collData);
 								<div class="field-block" style="clear:both">
 									<span class="field-elem">
 										<label for="sortSeq"> <?php echo (isset($LANG['SORT_SEQUENCE']) ? htmlspecialchars($LANG['SORT_SEQUENCE'], HTML_SPECIAL_CHARS_FLAGS) : 'Sort Sequence'); ?>: </label>
+										<span class="skip-link">
+											<?php
+												echo (isset($LANG['LEAVE_IF_ALPHABET']) ? $LANG['LEAVE_IF_ALPHABET'] : 'Leave this field empty if you want the collections to sort alphabetically (default)') . ' ';
+											?>
+										</span>
 										<input id="sortSeq" type="text" name="sortSeq" value="<?php echo ($collid ? $collData["sortseq"] : ''); ?>" />
 										<a id="sortinfo" href="#" onclick="return false" tabindex="0">
 											<img src="../../images/info.png" style="width:15px;" alt="Show more information" title="<?php echo (isset($LANG['MORE_SORTING']) ? $LANG['MORE_SORTING'] : 'More information about Sorting'); ?>"/>
 										</a>
-										<span id="sortinfodialog">
+										<span id="sortinfodialog" aria-live="polite">
 											<?php echo (isset($LANG['LEAVE_IF_ALPHABET']) ? $LANG['LEAVE_IF_ALPHABET'] : 'Leave this field empty if you want the collections to sort alphabetically (default)'); ?>
 										</span>
 									</span>
@@ -592,11 +628,16 @@ $collManager->cleanOutArr($collData);
 							<div class="field-block">
 								<span class="field-elem">
 									<label for="collectionID"> <?php echo (isset($LANG['COLLECTION_ID']) ? htmlspecialchars($LANG['COLLECTION_ID'], HTML_SPECIAL_CHARS_FLAGS) : 'Collection ID (GUID)'); ?>: </label>
+									<span class="skip-link">
+											<?php
+												echo (isset($LANG['EXPLAIN_COLLID']) ? $LANG['EXPLAIN_COLLID'] : '') . ' ';
+											?>
+									</span>
 									<input id="collectionID" type="text" name="collectionID" value="<?php echo ($collid ? $collData["collectionid"] : ''); ?>" style="max-width: 100%; width:400px" />
 									<a id="collectionidinfo" href="#" onclick="return false" tabindex="0">
 										<img src="../../images/info.png" style="width:15px;" alt="Show more information" title="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'More information'); ?>"/>
 									</a>
-									<span id="collectionidinfodialog">
+									<span id="collectionidinfodialog" aria-live="polite">
 										<?php echo (isset($LANG['EXPLAIN_COLLID']) ? $LANG['EXPLAIN_COLLID'] : 'Global Unique Identifier for this collection (see') .
 											' <a href="https://dwc.tdwg.org/terms/#dwc:collectionID" target="_blank">' . htmlspecialchars((isset($LANG['DWC_COLLID']) ? $LANG['DWC_COLLID'] : 'dwc:collectionID'), HTML_SPECIAL_CHARS_FLAGS) .
 											'</a>): ' . (isset($LANG['EXPLAIN_COLLID_2']) ? $LANG['EXPLAIN_COLLID_2'] : 'If your collection already has a previously assigned GUID, that identifier should be represented here.
