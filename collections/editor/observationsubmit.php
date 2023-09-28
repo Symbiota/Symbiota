@@ -78,14 +78,14 @@ $clArr = $obsManager->getChecklists();
 	$displayLeftMenu = (isset($collections_editor_observationsubmitMenu)?$collections_editor_observationsubmitMenu:false);
 	include($SERVER_ROOT.'/includes/header.php');
 	echo '<div class="navpath">';
-	echo '<a href="../../index.php">Home</a> &gt;&gt; ';
+	echo '<a href="../../index.php">' . (isset($LANG['HOME'])?$LANG['HOME']:'Home') . '</a> &gt;&gt; ';
 	if(isset($collections_editor_observationsubmitCrumbs)){
 		echo $collections_editor_observationsubmitCrumbs;
 	}
 	else{
-		echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Management</a> &gt;&gt; ';
+		echo '<a href="../../profile/viewprofile.php?tabindex=1">' . (isset($LANG['PERS_MNGT'])?$LANG['PERS_MNGT']:'Personal Management') . '</a> &gt;&gt; ';
 	}
-	echo '<b>Observation Submission</b>';
+	echo '<b>' . (isset($LANG['OBS_SUB'])?$LANG['OBS_SUB']:'Observation Submission') . '</b>';
 	echo '</div>';
 	?>
 	<div id="innertext">
