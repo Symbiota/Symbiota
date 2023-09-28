@@ -54,10 +54,15 @@ if ($SYMB_UID) {
 			return false;
 		}
 
-		function submitAndRedirect() {
-			const identifier = document.forms["quicksearch"]["q_catalognumber"].value;
-			const url = "<?php echo $CLIENT_ROOT ?>/collections/list.php?db=1&catnum=" + identifier + "&includeothercatnum=1`";
-			window.location.href = url;
+		function submitAndRedirect(formName, inputName, urlPtOne, urlPtTwo, urlPtThree) { // should probably generalize this, but not enough use cases yet
+			try{
+				const collId = document?.forms[formName]['collid']?.value;
+				const val = document?.forms[formName][inputName]?.value;
+				const url = urlPtOne + collId + urlPtTwo + val + urlPtThree;
+				window.location.href = url;
+			}catch(err){
+				console.log(err);
+			}
 		}
 
 	</script>
@@ -86,8 +91,17 @@ if ($SYMB_UID) {
 		<fieldset style="float:right;margin:5px" title="Quick Search">
 			<legend><b><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></b></legend>
 			<b><?php echo (isset($LANG['IDENTIFIER']) ? $LANG['IDENTIFIER'] : 'Identifier'); ?></b><br />
-			<form name="quicksearch" action="javascript:void(0);" onsubmit="submitAndRedirect(); return false;">
+			<form name="id-quicksearch" action="javascript:void(0);" onsubmit="submitAndRedirect('id-quicksearch', 'q_catalognumber', '<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&includeothercatnum=1'); return false;">
 				<input name="q_catalognumber" type="text" />
+				<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
+				<input name="occindex" type="hidden" value="0" />
+				<button action="submit"><?php echo (isset($LANG['ISEARCH']) ? $LANG['SEARCH'] : 'Search'); ?></button>
+			</form>
+			<b><?php echo (isset($LANG['TAXON']) ? $LANG['TAXON'] : 'Taxon'); ?></b><br />
+			<form name="taxon-quick-search" action="javascript:void(0);" onsubmit="submitAndRedirect('taxon-quick-search', 'taxon-search', '<?php echo $CLIENT_ROOT ?>/collections/list.php?db=', '&taxa=', '&usethes=1&taxontype=2 '); return false;">
+				<input name="taxon-search" type="text" />
+				<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
+				<input name="occindex" type="hidden" value="0" />
 				<button action="submit"><?php echo (isset($LANG['ISEARCH']) ? $LANG['SEARCH'] : 'Search'); ?></button>
 			</form>
 		</fieldset>

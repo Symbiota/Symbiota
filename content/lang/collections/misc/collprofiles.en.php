@@ -106,4 +106,5 @@ $LANG['ADVANCED_SEARCH_THIS_COLLECTION'] = 'Advanced Search this Collection';
 $LANG['IMAGE_SEARCH_THIS_COLLECTION'] = 'Image Search this Collection';
 $LANG['SEARCH'] = 'Search';
 $LANG['IDENTIFIER'] = 'Identifier';
+$LANG['TAXON'] = 'Taxon';
 ?>
