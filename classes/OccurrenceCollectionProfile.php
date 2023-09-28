@@ -116,7 +116,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 	}
 
 	public function getAccordionMetadataHtml($LANG, $LANG_TAG){
-		$outStr = '<div class="accordions">';
+		$outStr = '<div class="accordions" style="margin-bottom: 1.5rem;">';
 			$outStr .= '<section>';
 				$outStr .= '<input type="checkbox" id="more-details" class="accordion-selector" />';
 				$outStr .= '<label for="more-details" class="accordion-header">More Information</label>';

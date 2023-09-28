@@ -53,6 +53,13 @@ if ($SYMB_UID) {
 			}
 			return false;
 		}
+
+		function submitAndRedirect() {
+			const identifier = document.forms["quicksearch"]["q_catalognumber"].value;
+			const url = "<?php echo $CLIENT_ROOT ?>/collections/list.php?db=1&catnum=" + identifier + "&includeothercatnum=1`";
+			window.location.href = url;
+		}
+
 	</script>
 	<style>
 		.field-div {
@@ -76,6 +83,14 @@ if ($SYMB_UID) {
 		<b><?php echo (isset($LANG['COLL_PROFILE']) ? $LANG['COLL_PROFILE'] : 'Collection Profile'); ?></b>
 	</div>
 	<div id="innertext">
+		<fieldset style="float:right;margin:5px" title="Quick Search">
+			<legend><b><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></b></legend>
+			<b><?php echo (isset($LANG['IDENTIFIER']) ? $LANG['IDENTIFIER'] : 'Identifier'); ?></b><br />
+			<form name="quicksearch" action="javascript:void(0);" onsubmit="submitAndRedirect(); return false;">
+				<input name="q_catalognumber" type="text" />
+				<button action="submit"><?php echo (isset($LANG['ISEARCH']) ? $LANG['SEARCH'] : 'Search'); ?></button>
+			</form>
+		</fieldset>
 		<?php
 		if ($editCode > 1) {
 			if ($action == 'UpdateStatistics') {
@@ -121,15 +136,6 @@ if ($SYMB_UID) {
 				<div id="controlpanel" style="clear:both;display:<?php echo ($eMode ? 'block' : 'none'); ?>;">
 					<fieldset style="padding:10px;padding-left:25px;">
 						<legend><b><?php echo (isset($LANG['DAT_EDIT']) ? $LANG['DAT_EDIT'] : 'Data Editor Control Panel'); ?></b></legend>
-						<fieldset style="float:right;margin:5px" title="Quick Search">
-							<legend><b><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></b></legend>
-							<b><?php echo (isset($LANG['CAT_NUM']) ? $LANG['CAT_NUM'] : 'Catalog Number'); ?></b><br />
-							<form name="quicksearch" action="../editor/occurrenceeditor.php" method="post">
-								<input name="q_catalognumber" type="text" />
-								<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-								<input name="occindex" type="hidden" value="0" />
-							</form>
-						</fieldset>
 						<ul>
 							<?php
 							if (stripos($collData['colltype'], 'observation') !== false) {
@@ -530,6 +536,18 @@ if ($SYMB_UID) {
 			<?php
 			echo $collManager->getAccordionMetadataHtml($LANG, $LANG_TAG);
 			include('collprofilestats.php');
+			?>
+			<div style="margin-bottom: 2rem;">
+				<span class="button button-primary">
+					<a id="advanced-search" href="<?php echo $CLIENT_ROOT?>/collections/harvestparams.php?db=<?php echo $collid ?>" ><?php echo (isset($LANG['ADVANCED_SEARCH_THIS_COLLECTION'])?$LANG['ADVANCED_SEARCH_THIS_COLLECTION']:'Advanced Search this Collection'); ?></a>
+				</span>
+			</div>
+			<div>
+				<span class="button button-primary">
+					<a id="image-search" href="<?php echo $CLIENT_ROOT?>/imagelib/search.php?submitaction=search&db[]=1<?php echo $collid ?>" ><?php echo (isset($LANG['IMAGE_SEARCH_THIS_COLLECTION'])?$LANG['IMAGE_SEARCH_THIS_COLLECTION']:'Image Search this Collection'); ?></a>
+				</span>
+			</div>
+			<?php
 		} elseif($collData) {
 			?>
 			<h2><?php echo $DEFAULT_TITLE . ' ' . (isset($LANG['COLLECTION_PROJECTS']) ? $LANG['COLLECTION_PROJECTS'] : 'Natural History Collections and Observation Projects'); ?></h2>
