@@ -5,8 +5,8 @@
 ------------------
 */
 
-include_once($SERVER_ROOT.'/content/lang/collections/editor/skeletalsubmit.fr.php')
-;
+include_once($SERVER_ROOT.'/content/lang/collections/editor/skeletalsubmit.fr.php');
+
 $LANG['OBS_SUBMIT'] = 'Soumission d\'observations';
 $LANG['SUCCESS_IMAGE'] = 'SUCCESS : Image chargée avec succès !';
 $LANG['OPEN'] = 'Ouvrir';
