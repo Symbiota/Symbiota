@@ -366,8 +366,12 @@ class OccurrenceTaxaManager {
 	}
 
 	protected function cleanOutStr($str){
-		if(strpos($str, '=') !== false) $str = '';
-		return htmlspecialchars($str);
+		if(isset($str)){
+			if(strpos($str, '=') !== false) $str = '';
+			return htmlspecialchars($str);
+		} else{
+			return $str;
+		}
 	}
 
 	protected function cleanInputStr($str){
