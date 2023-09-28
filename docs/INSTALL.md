@@ -57,6 +57,10 @@
    - /content/geolocate/
    - /content/logs/
    - /temp/ 
+5. Misc configurations and recommendations 
+   - Install robots.txt file within root directory - The robots.txt file is a standard method used by websites to indicate to visiting web crawlers and other web robots which portions of the website they are allowed to visit and under what conditions. A robots.txt template can be found within the /includes directory. This file should be moved into the domain's root directory, which may of may not be the Symbiota root directory. The file paths listed within the file should be adjusted to match the portal installation path (e.g. start with $CLIENT_ROOT). See links below for more information:   
+     - https://developers.google.com/search/docs/crawling-indexing/robots/create-robots-txt  
+     - https://en.wikipedia.org/wiki/Robots.txt
 
 ## DATA
 

@@ -351,7 +351,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 					<input name="csmode" type="hidden" value="<?php echo $crowdSourceMode; ?>" />
 					<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
 					<input name="tabtarget" type="hidden" value="3" />
-					<input name="submitaction" type="submit" value="<?php echo $LANG['LINK_TO_CHECKLIST_2']; ?>" />
+					<button name="submitaction" type="submit" value="linkChecklistVoucher"><?php echo $LANG['LINK_TO_CHECKLIST_2']; ?></button>
 				</form>
 			</div>
 			<?php

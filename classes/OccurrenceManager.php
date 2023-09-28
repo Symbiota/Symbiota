@@ -598,12 +598,13 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	}
 
 	protected function setSearchTerm($termKey, $termValue){
-		$this->searchTermArr[$termKey] = $this->cleanInputStr($termValue);
+		if(!$termValue) return false;
+		$this->searchTermArr[$this->cleanInputStr($termKey)] = $this->cleanInputStr($termValue);
 	}
 
 	public function getSearchTerm($k){
 		if($k && isset($this->searchTermArr[$k])){
-			return trim($this->searchTermArr[$k],' ;');
+			return $this->cleanOutStr(trim($this->searchTermArr[$k],' ;'));
 		}
 		return '';
 	}
@@ -613,14 +614,14 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		$retStr = '';
 		foreach($this->searchTermArr as $k => $v){
 			if(is_array($v)) $v = implode(',', $v);
-			$retStr .= '&'.$k.'='.urlencode($v);
+			if($v) $retStr .= '&'.$this->cleanOutStr($k).'='.$this->cleanOutStr($v);
 		}
 		if(isset($this->taxaArr['search'])){
-			$retStr .= '&taxa='.urlencode($this->taxaArr['search']);
+			$retStr .= '&taxa='.$this->cleanOutStr($this->taxaArr['search']);
 			if($this->taxaArr['usethes']) $retStr .= '&usethes=1';
 			$retStr .= '&taxontype='.$this->taxaArr['taxontype'];
 		}
-		return trim($retStr,' &');
+		return substr($retStr, 1);
 	}
 
 	public function addOccurrencesToDataset($datasetID){
@@ -649,9 +650,10 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		if(array_key_exists('searchvar',$_REQUEST)){
 			$parsedArr = array();
 			$taxaArr = array();
-			parse_str($this->cleanInputStr($_REQUEST['searchvar']), $parsedArr);
+			parse_str($_REQUEST['searchvar'], $parsedArr);
+
 			if(isset($parsedArr['taxa'])){
-				$taxaArr['taxa'] = $parsedArr['taxa'];
+				$taxaArr['taxa'] = $this->cleanInputStr($parsedArr['taxa']);
 				unset($parsedArr['taxa']);
 				if(isset($parsedArr['usethes']) && is_numeric($parsedArr['usethes'])){
 					$taxaArr['usethes'] = $parsedArr['usethes'];
@@ -663,7 +665,11 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 				}
 				$this->setTaxonRequestVariable($taxaArr);
 			}
-			if($parsedArr) $this->searchTermArr = $parsedArr;
+			foreach($parsedArr as $k => $v){
+				$k = $this->cleanInputStr($k);
+				$v = $this->cleanInputStr($v);
+				if($k && $v) $this->searchTermArr[$k] = $v;
+			}
 		}
 		//Search will be confinded to a clid vouchers, collid, catid, or will remain open to all collection
 		if(array_key_exists('targetclid',$_REQUEST) && is_numeric($_REQUEST['targetclid'])){

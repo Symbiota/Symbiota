@@ -222,6 +222,7 @@ class TaxonomyHarvester extends Manager{
 						}
 					}
 				}
+
 				//Process selected result
 				$this->logOrEcho('<i>'.$sciName.'</i> found within Catalog of Life',2);
 				if(array_key_exists($targetKey, $submitArr) && $submitArr[$targetKey]){
@@ -351,6 +352,7 @@ class TaxonomyHarvester extends Manager{
 		if(isset($nodeArr['online_resource'])) $taxonArr['sourceURL'] = $nodeArr['online_resource'];
 		elseif(isset($nodeArr['link'])) $taxonArr['sourceURL'] = $nodeArr['link'];
 		if(isset($nodeArr['url'])) $taxonArr['resourceURL'] = $nodeArr['url'];
+
 		$rankID = $this->getRankIdByTaxonArr($taxonArr);
 		if($rankID){
 			$taxonArr['rankid'] = $rankID;

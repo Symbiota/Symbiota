@@ -258,8 +258,6 @@ if(isset($MAPPING_BOUNDARIES)){
             if(lng > 0) addPoint = window.confirm("Longitude is positive, which will put the marker in the eastern hemisphere (e.g. Asia).\nIs this what you want?");
             if(!addPoint) lng = -1*lng;
 
-            console.log(title)
-
             map.mapLayer.addLayer(
                L.marker([lat, lng])
                .bindTooltip(`<div style="font-size:1.2rem">${title}</div>`)

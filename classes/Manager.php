@@ -104,10 +104,14 @@ class Manager  {
 		return $domain;
 	}
 
-	protected function cleanOutStr($str){
-		if(isset($str)){
-			$str = htmlspecialchars($str);
-		}
+	public function sanitizeInt($int){
+		return filter_var($int, FILTER_SANITIZE_NUMBER_INT);
+	}
+
+	public function cleanOutStr($str){
+		//Sanitize output
+		if(!is_string($str)) $str = '';
+		$str = htmlspecialchars($str, HTML_SPECIAL_CHARS_FLAGS);
 		return $str;
 	}
 

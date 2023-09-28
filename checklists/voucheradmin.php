@@ -8,6 +8,7 @@ if(!$SYMB_UID) header('Location: ../profile/index.php?refurl=../checklists/vouch
 $clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $pid = array_key_exists('pid', $_REQUEST) ? filter_var($_REQUEST['pid'], FILTER_SANITIZE_NUMBER_INT) : '';
 $startPos = array_key_exists('start', $_REQUEST) ? filter_var($_REQUEST['start'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$excludeVouchers = !empty($_POST['excludevouchers']) && $_POST['excludevouchers'] ? 1 : 0;
 $tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
 $displayMode = (array_key_exists('displaymode', $_REQUEST) ? filter_var($_REQUEST['displaymode'], FILTER_SANITIZE_NUMBER_INT) : 0);
@@ -32,12 +33,30 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USE
 	elseif($action == 'submitVouchers'){
 		$useCurrentTaxonomy = false;
 		if(array_key_exists('usecurrent',$_POST) && $_POST['usecurrent']) $useCurrentTaxonomy = true;
-		$linkVouchers = true;
-		if(array_key_exists('excludevouchers',$_POST) && $_POST['excludevouchers']) $linkVouchers = false;
-		$clManager->linkTaxaVouchers($_POST['occids'], $useCurrentTaxonomy, $linkVouchers);
+		$clManager->linkTaxaVouchers($_POST['occids'], $useCurrentTaxonomy, $excludeVouchers);
 	}
 	elseif($action == 'resolveconflicts'){
 		$clManager->batchTransferConflicts($_POST['occid'], (array_key_exists('removetaxa',$_POST) ? true : false));
+	}
+	elseif($action == 'linkExternalVouchers'){
+		$clManager->setClid($clid);
+		$cnt = 0;
+		foreach($_POST as $key => $value) {
+			if(substr($key, 0, 2) == 'i-') {
+				$tid = substr($key, 2);
+				if(is_numeric($tid) && !empty($_POST[$tid])) {
+					if($clManager->addExternalVouchers($tid, urldecode($_POST[$tid]))){
+						$cnt++;
+					}
+					else{
+						$statusStr .= $clManager->getErrorMessage().'<br>';
+					}
+				}
+			}
+		}
+		if($cnt){
+			$statusStr = $cnt.' external vouchers have been linked to checklist';
+		}
 	}
 }
 $clManager->setCollectionVariables();
@@ -88,10 +107,12 @@ include($SERVER_ROOT.'/includes/header.php');
 </div>
 <?php
 if($statusStr){
+	$textColor = 'green';
+	if(stripos($statusStr, 'ERROR') !== false) $textColor = 'red';
 	?>
 	<hr />
-	<div style="margin:20px;font-weight:bold;color:red;">
-		<?php echo $statusStr; ?>
+	<div style="margin:20px; font-weight:bold; color: <?= $textColor ?>;">
+		<?= $statusStr; ?>
 	</div>
 	<hr />
 <?php
@@ -232,13 +253,15 @@ if($clid && $isEditor){
 		?>
 		<div id="tabs" style="margin-top:25px;">
 			<ul>
-				<li><a href="nonvoucheredtab.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&start=' . htmlspecialchars($startPos, HTML_SPECIAL_CHARS_FLAGS) . '&displaymode=' . htmlspecialchars($displayMode, HTML_SPECIAL_CHARS_FLAGS); ?>"><span><?php echo htmlspecialchars($LANG['NON_VOUCHERED'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
-				<li><a href="vamissingtaxa.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&start=' . htmlspecialchars($startPos, HTML_SPECIAL_CHARS_FLAGS) . '&displaymode=' . htmlspecialchars(($tabIndex==1?$displayMode:0), HTML_SPECIAL_CHARS_FLAGS) . '&excludevouchers=' . htmlspecialchars((isset($_POST['excludevouchers'])?$_POST['excludevouchers']:''), HTML_SPECIAL_CHARS_FLAGS); ?>"><span><?php echo htmlspecialchars($LANG['MISSINGTAXA'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
-				<li><a href="vaconflicts.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&start=' . htmlspecialchars($startPos, HTML_SPECIAL_CHARS_FLAGS) ;  ?>"><span><?php echo htmlspecialchars($LANG['VOUCHCONF'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
+
+				<li><a href="nonvoucheredtab.php?clid=<?= $clid.'&pid='.$pid.'&start='.$startPos.'&displaymode='.$displayMode; ?>"><span><?= $LANG['NON_VOUCHERED'];?></span></a></li>
+				<li><a href="vamissingtaxa.php?clid=<?= $clid.'&pid='.$pid.'&start='.$startPos.'&displaymode='.($tabIndex==1?$displayMode:0).'&excludevouchers='.$excludeVouchers; ?>"><span><?= $LANG['MISSINGTAXA'];?></span></a></li>
+				<li><a href="vaconflicts.php?clid=<?= $clid.'&pid='.$pid.'&start='.$startPos; ?>"><span><?= $LANG['VOUCHCONF'];?></span></a></li>
 				<?php
-				if($clManager->hasVoucherProjects()) echo '<li><a href="imgvouchertab.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '">'.(isset($LANG['ADDIMGV'])?$LANG['ADDIMGV']:'Add Image Voucher').'</a></li>';
+				if($clManager->getAssociatedExternalService()) echo '<li><a href="externalvouchers.php?clid='.$clid.'&pid='.$pid.'"><span>' . $LANG['EXTERNALVOUCHERS'] . '</span></a></li>';
+				if($clManager->hasVoucherProjects()) echo '<li><a href="imgvouchertab.php?clid='.$clid.'">'.(isset($LANG['ADDIMGV'])?$LANG['ADDIMGV']:'Add Image Voucher').'</a></li>';
 				?>
-				<li><a href="#reportDiv"><span><?php echo htmlspecialchars($LANG['REPORTS'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
+				<li><a href="#reportDiv"><span><?= $LANG['REPORTS'] ?></span></a></li>
 			</ul>
 			<div id="reportDiv">
 				<div style="margin:25px;height:400px;">
