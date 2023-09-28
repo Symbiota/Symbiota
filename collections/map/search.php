@@ -140,12 +140,16 @@ foreach ($coordArr as $collName => $coll) {
 	<script src="../../js/jscolor/jscolor.js?ver=1" type="text/javascript"></script>
 <!---	<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'&key='.$GOOGLE_MAP_KEY:''); ?>&callback=Function.prototype" ></script> -->
 	<script src="../../js/symb/collections.map.index.js?ver=2" type="text/javascript"></script>
+
+	<script src="../../js/symb/wktpolygontools.js" type="text/javascript"></script>
+	<script src="../../js/symb/MapShapeHelper.js" type="text/javascript"></script>
+
 	<script src="../../js/symb/collections.list.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/markerclusterer.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/oms.min.js" type="text/javascript"></script>
 	<script src="../../js/symb/keydragzoom.js" type="text/javascript"></script>
 	<script src="../../js/symb/infobox.js" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/wktpolygontools.js" type="text/javascript"></script>
+
 	<style type="text/css">
 		.ui-front {
 			z-index: 9999999 !important;
@@ -438,66 +442,6 @@ foreach ($coordArr as $collName => $coll) {
          document.getElementById("deleteshapediv").style.display = "block";
       }
 
-      const getField = (id) => {
-         var elem = document.getElementById(id);
-         return elem? elem.value: null;
-      };
-
-      function loadShape(mapMode) {
-         switch(mapMode) {
-            case "polygon":
-               let origFootprintWkt = getField("poly_array");
-               try {
-                  let polyPoints = parseWkt(origFootprintWkt);
-                  if(polyPoints) {
-                     return { type: "polygon", latlngs: polyPoints, wkt: getField("poly_array")};
-                  }
-               } catch(e) {
-                  alert(e.message);
-						opener.document.getElementById("footprintwkt").value = origFootprintWkt;
-               }
-            break;
-            case "rectangle":
-               const upperLat = getField("upperlat");
-               const lowerLat= getField("bottomlat");
-               const leftLng = getField("leftlong");
-               const rightLng = getField("rightlong");
-
-               if(isNumeric(upperLat) && isNumeric(lowerLat) && isNumeric(leftLng) && isNumeric(rightLng)) {
-                  return {
-                     type: "rectangle",
-                     upperLat: upperLat * (getField("upperlat_NS") === "N"? 1: -1),
-                     rightLng: rightLng * (getField("rightlong_EW") === "E"? 1: -1),
-
-                     lowerLat: lowerLat * (getField("bottomlat_NS") === "N"? 1: -1),
-                     leftLng: leftLng * (getField("leftlong_EW") === "E"? 1: -1),
-                  }
-               }
-            break;
-            case "circle":
-               const radius = getField("radius");
-               const pointlat = getField("pointlat");
-               const pointlng = getField("pointlong");
-               const radUnits = getField("radiusunits", "");
-
-               if(isNumeric(radius) && isNumeric(pointlng) && isNumeric(pointlng)) {
-                  return {
-                     type: "circle",
-                     radius: (radUnits === "mi"? radius * MILEStoKM: parseFloat(radius)) * KMtoM,
-                     latlng: [
-                        pointlat * (getField("pointlat_NS") === "N"? 1: -1), 
-                        pointlng * (getField("pointlong_EW") === "E"? 1: -1)
-                     ]
-                  }
-               }
-               break;
-            default:
-               alert(`No Settings fo Map Mode: ${mapMode}`)
-               return false;
-            break;
-         } 
-      }
-
       function leafletInit() { 
          let map = new LeafletMap('map')
          map.enableDrawing({
@@ -541,8 +485,6 @@ foreach ($coordArr as $collName => $coll) {
             cluster.addTo(map.mapLayer);
          }
 
-         if(recordArr.length > 0) drawPoints();
-
          // TODO (Logan) Clean up global usages
          document.getElementById("mapsearchform").addEventListener('submit', async e => {
             showWorking();
@@ -553,23 +495,7 @@ foreach ($coordArr as $collName => $coll) {
             markers = []; 
 
             getOccurenceRecords(formData).then(res => {
-               if (res) {
-                  function loadOccurenceRecords(html) {
-                     document.getElementById("occurrencelist").innerHTML = html;
-
-                     $('.pagination a').click(async function(e){
-                        e.preventDefault();
-                        let response = await fetch(e.target.href, {
-                           method: "GET",
-                           credentials: "same-origin",
-                        })
-                        loadOccurenceRecords(await response.text())
-                        return false;
-                     });
-                  }
-
-                  loadOccurenceRecords(res);
-               }
+               if (res) loadOccurenceRecords(res);
             });
 
             const results = await searchCollections(formData);
@@ -579,7 +505,6 @@ foreach ($coordArr as $collName => $coll) {
             collArr = results.collArr? results.collArr: [];
 
             drawPoints();
-            buildPanels();
             hideWorking();
          });
 
@@ -624,10 +549,20 @@ foreach ($coordArr as $collName => $coll) {
                }
             }
          });
+
+         //Load Data if any with page Load
+         if(recordArr.length > 0) {
+            let formData = new FormData(document.getElementById("mapsearchform"));
+            drawPoints();
+            getOccurenceRecords(formData).then(res => {
+               if(res) loadOccurenceRecords(res);
+            });
+         }
+
+         //Fit Map to shape or points or project bounds
          if(shape) {
             map.drawShape(shape);
-         }
-         else if(markers && markers.length > 0) {
+         } else if(markers && markers.length > 0) {
             map.mapLayer.fitBounds(cluster.getBounds());
          } else if(map_bounds) {
             map.mapLayer.fitBounds(map_bounds);
@@ -669,6 +604,46 @@ foreach ($coordArr as $collName => $coll) {
          return response? await response.text(): 'Nada';
       }
 
+      function loadOccurenceRecords(html) {
+         document.getElementById("occurrencelist").innerHTML = html;
+
+         $('.pagination a').click(async function(e){
+            e.preventDefault();
+            let response = await fetch(e.target.href, {
+               method: "GET",
+               credentials: "same-origin",
+            })
+            loadOccurenceRecords(await response.text())
+            return false;
+         });
+
+         buildPanels();
+      }
+
+		function resetSymbology(typeMap, type, getId = v => v.id) {
+         let color_map = [];
+
+			for(var val of Object.values(typeMap) ) {
+            color_map.push({color: default_color, id: getId(val)})
+
+            const colorkey = document.getElementById(`${type}-${getId(val)}`)
+            if(colorkey) {
+               colorkey.color.fromString(default_color);
+            }
+         }
+
+         document.dispatchEvent(new CustomEvent('autocolor', {
+            detail: {
+               type: type,
+               colorMap: color_map,
+            }
+         }));
+
+      }
+
+      const resetCollSymbology = () => resetSymbology(collArr, 'coll' ,v => v.collid);
+      const resetTaxaSymbology = () => resetSymbology(taxaMap, 'taxa', v => v.tid);
+
       function autoColor(type, id, usedColors = {}) {
          var randColor = generateRandColor();
 
@@ -687,7 +662,7 @@ foreach ($coordArr as $collName => $coll) {
 
 		function autoColorTaxa(){
 			document.getElementById("randomColorTaxa").disabled = true;
-			resetSymbology();
+			resetCollSymbology();
 			var usedColors = [];
 
 			for(var taxa of Object.values(taxaMap) ) {
@@ -701,16 +676,6 @@ foreach ($coordArr as $collName => $coll) {
             }
          }));
 			document.getElementById("randomColorTaxa").disabled = false;
-      }
-
-      function resetTaxaSymbology(){
-         for(var taxa of Object.values(taxaMap) ) {
-            const colorkey = document.getElementById('taxa-'+ taxa.tid)
-            if(colorkey){
-               colorkey.color.fromString(default_color);
-               onColorChange(colorkey)
-            }
-         }
       }
 
 		function autoColorColl(){
@@ -732,16 +697,6 @@ foreach ($coordArr as $collName => $coll) {
 			document.getElementById("randomColorColl").disabled = false;
       }
 
-		function resetSymbology(){
-			for(var coll of Object.values(collArr) ) {
-            const colorkey = document.getElementById('coll-'+ coll.collid)
-            if(colorkey){
-               colorkey.color.fromString(default_color);
-               onColorChange(colorkey)
-            }
-			}
-		}
-
       function emit_occurrence(occid) {
          document.dispatchEvent(new CustomEvent('occur_click', {
             detail: {
@@ -760,16 +715,41 @@ foreach ($coordArr as $collName => $coll) {
 
             searchVar = data.getAttribute('data-search-var');
             if(searchVar) sessionStorage.querystr = searchVar;
-         } catch {
 
-         }
+            let shapeType;
 
-         if(document.getElementById("pointlat").value) {
-            shape = loadShape("circle")
-         } else if(document.getElementById("upperlat").value) {
-            shape = loadShape("rectangle")
-         } else if(document.getElementById("poly_array").value) {
-            shape = loadShape("polygon")
+            if(document.getElementById("pointlat").value) {
+               shapeType = "circle"
+            } else if(document.getElementById("upperlat").value) {
+               shapeType = "rectangle"
+            } else if(document.getElementById("poly_array").value) {
+               shapeType = "polygon"
+            }
+
+            if(shapeType) {
+               shape = loadMapShape(shapeType, {
+                  polygonLoader: () => document.getElementById("poly_array").value,
+                  circleLoader: () => {
+                     return {
+                        radius: document.getElementById("upperlat").value,
+                        radUnits: "km",
+                        pointLng: document.getElementById("pointlng").value,
+                        pointLat: document.getElementById("pointlat").value
+                     }
+                  },
+                  rectangleLoader: () => {
+                     return {
+                        upperLat: document.getElementById("upperlat").value,
+                        lowerLat: document.getElementById("bottomlat").value,
+                        rightLng: document.getElementById("rightlong").value,
+                        leftLng: document.getElementById("leftlong").value
+                     }
+                  }
+               })
+            }
+
+         } catch(e) {
+            console.log(e)
          }
 
          <?php if(!empty($LEAFLET)) { ?> 
@@ -1077,7 +1057,7 @@ foreach ($coordArr as $collName => $coll) {
 										</div>
 									<div id="symbolizeResetButt" style='float:right;margin-bottom:5px;' >
 										<div>
-											<button data-role="none" id="symbolizeReset1" name="symbolizeReset1" onclick='resetSymbology();' ><?php echo (isset($LANG['RESET_SYMBOLOGY'])?$LANG['RESET_SYMBOLOGY']:'Reset Symbology'); ?></button>
+											<button data-role="none" id="symbolizeReset1" name="symbolizeReset1" onclick="resetCollSymbology();" ><?php echo (isset($LANG['RESET_SYMBOLOGY'])?$LANG['RESET_SYMBOLOGY']:'Reset Symbology'); ?></button>
 										</div>
 										<div style="margin-top:5px;">
 											<button data-role="none" id="randomColorColl" name="randomColorColl" onclick='autoColorColl();' ><?php echo (isset($LANG['AUTO_COLOR'])?$LANG['AUTO_COLOR']:'Auto Color'); ?></button>
