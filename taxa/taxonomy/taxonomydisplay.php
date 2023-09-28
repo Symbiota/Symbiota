@@ -57,7 +57,7 @@ if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
 </head>
 <body>
 	<?php
-	$displayLeftMenu = (isset($taxa_admin_taxonomydisplayMenu)?$taxa_admin_taxonomydisplayMenu:'false');
+	$displayLeftMenu = (isset($taxa_admin_taxonomydisplayMenu)?$taxa_admin_taxonomydisplayMenu:false);
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
@@ -111,21 +111,21 @@ if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
 					<div>
 						<label for="taxontarget"> <?php echo htmlspecialchars($LANG['TAXON'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
 						<input id="taxontarget" class="taxon-search-bar" name="target" type="text" value="<?php echo $taxonDisplayObj->getTargetStr(); ?>" />
-					
+
 						<div>
 							<input id="displayauthor" name="displayauthor" type="checkbox" value="1" <?php echo ($displayAuthor?'checked':''); ?> />
 							<label for="displayauthor" > <?php echo (isset($LANG['DISP_AUTHORS'])?$LANG['DISP_AUTHORS']:'Display authors'); ?> </label>
 						</div>
 						<div>
-							<input id="matchonwords" name="matchonwords" type="checkbox" value="1" <?php echo ($matchOnWords?'checked':''); ?> /> 
+							<input id="matchonwords" name="matchonwords" type="checkbox" value="1" <?php echo ($matchOnWords?'checked':''); ?> />
 							<label for="matchonwords" > <?php echo (isset($LANG['MATCH_WHOLE_WORDS'])?$LANG['MATCH_WHOLE_WORDS']:'Match on whole words'); ?> </label>
 						</div>
 						<div>
-							<input id="displayfulltree" name="displayfulltree" type="checkbox" value="1" <?php echo ($displayFullTree?'checked':''); ?> /> 
+							<input id="displayfulltree" name="displayfulltree" type="checkbox" value="1" <?php echo ($displayFullTree?'checked':''); ?> />
 							<label for="displayfulltree" > <?php echo (isset($LANG['DISP_FULL_TREE'])?$LANG['DISP_FULL_TREE']:'Display full tree below family'); ?> </label>
 						</div>
 						<div>
-							<input id="displaysubgenera" name="displaysubgenera" type="checkbox" value="1" <?php echo ($displaySubGenera?'checked':''); ?> /> 
+							<input id="displaysubgenera" name="displaysubgenera" type="checkbox" value="1" <?php echo ($displaySubGenera?'checked':''); ?> />
 							<label for="displaysubgenera"> <?php echo (isset($LANG['DISP_SUBGENERA'])?$LANG['DISP_SUBGENERA']:'Display species with subgenera'); ?> </label>
 						</div>
 

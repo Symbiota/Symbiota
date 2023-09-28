@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/PermissionsManager.php');
@@ -36,13 +38,13 @@ if($IS_ADMIN){
 	}
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['USER_MNGMT'])?$LANG['USER_MNGMT']:'User Management'); ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<style type="text/css">
+	<style>
 		th{ font-size: 90% }
 	</style>
 </head>
@@ -61,20 +63,25 @@ if($IS_ADMIN){
 	<div id="innertext">
 		<div style="float:right;">
 			<div style="margin:10px 0px 15px 0px;">
-				<fieldset style="background-color:#FFFFCC;padding:0px 10px 10px 10px;">
-					<legend style="font-weight:bold;"><?php echo (isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search'); ?></legend>
-					<?php echo (isset($LANG['LAST_OR_LOGIN'])?$LANG['LAST_OR_LOGIN']:'Last Name or Login Name'); ?>:
+				<section class="fieldset-like" style="background-color:#FFFFCC;">
+					<h1> <span> <?php echo (isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search'); ?> </span> </h1>
 					<form name='searchform1' action='usermanagement.php' method='post'>
-						<input type="text" name="searchterm" title="<?php echo (isset($LANG['ENTER_LAST'])?$LANG['ENTER_LAST']:'Enter Last Name'); ?>" /><br/>
+					<label for="searchterm" > <?php echo (isset($LANG['LAST_OR_LOGIN'])?$LANG['LAST_OR_LOGIN']:'Last Name or Login Name'); ?>: </label> <br>
+						<input type="text" id="searchterm" name="searchterm" title="<?php echo (isset($LANG['ENTER_LAST'])?$LANG['ENTER_LAST']:'Enter Last Name'); ?>" /><br/>
 						<button name="submit" type="submit" value="Search"><?php echo (isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search'); ?></button>
 					</form>
+
+					<span class="skip-link">
+						<a href = "#userlist"><?php echo (isset($LANG['SKIP_LINK'])?$LANG['SKIP_LINK']:'Skip to list of users'); ?></a>
+					</span>			
+
 					<?php echo (isset($LANG['QUICK_SEARCH'])?$LANG['QUICK_SEARCH']:'Quick Search'); ?>:
 					<div style='margin:2px 0px 0px 10px;'>
 						<div><a href='usermanagement.php?searchterm=A'>A</a>|<a href='usermanagement.php?searchterm=B'>B</a>|<a href='usermanagement.php?searchterm=C'>C</a>|<a href='usermanagement.php?searchterm=D'>D</a>|<a href='usermanagement.php?searchterm=E'>E</a>|<a href='usermanagement.php?searchterm=F'>F</a>|<a href='usermanagement.php?searchterm=G'>G</a>|<a href='usermanagement.php?searchterm=H'>H</a></div>
 						<div><a href='usermanagement.php?searchterm=I'>I</a>|<a href='usermanagement.php?searchterm=J'>J</a>|<a href='usermanagement.php?searchterm=K'>K</a>|<a href='usermanagement.php?searchterm=L'>L</a>|<a href='usermanagement.php?searchterm=M'>M</a>|<a href='usermanagement.php?searchterm=N'>N</a>|<a href='usermanagement.php?searchterm=O'>O</a>|<a href='usermanagement.php?searchterm=P'>P</a>|<a href='usermanagement.php?searchterm=Q'>Q</a></div>
 						<div><a href='usermanagement.php?searchterm=R'>R</a>|<a href='usermanagement.php?searchterm=S'>S</a>|<a href='usermanagement.php?searchterm=T'>T</a>|<a href='usermanagement.php?searchterm=U'>U</a>|<a href='usermanagement.php?searchterm=V'>V</a>|<a href='usermanagement.php?searchterm=W'>W</a>|<a href='usermanagement.php?searchterm=X'>X</a>|<a href='usermanagement.php?searchterm=Y'>Y</a>|<a href='usermanagement.php?searchterm=Z'>Z</a></div>
 					</div>
-				</fieldset>
+				</section>
 			</div>
 		</div>
 		<?php
@@ -689,6 +696,9 @@ if($IS_ADMIN){
 				<?php
 			}
 			else{
+				?>
+				<a id="userlist"></a>
+				<?php
 				$users = $userManager->getUsers($searchTerm);
 				echo '<h1>Users</h1>';
 				foreach($users as $id => $name){

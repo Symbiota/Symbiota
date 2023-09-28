@@ -6,8 +6,8 @@ if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/imagelib/index.'
 else include_once($SERVER_ROOT.'/content/lang/imagelib/index.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$taxon = array_key_exists('taxon',$_REQUEST)?htmlspecialchars(strip_tags($_REQUEST['taxon'])):'';
-$target = array_key_exists('target',$_REQUEST)?trim($_REQUEST['target']):'';
+$taxon = array_key_exists('taxon', $_REQUEST) ? $_REQUEST['taxon'] : '';
+$target = array_key_exists('target', $_REQUEST) ? trim($_REQUEST['target']):'';
 
 $imgManager = new ImageLibraryBrowser();
 $imgManager->setSearchTerm($taxon);
@@ -55,10 +55,10 @@ $imgManager->setSearchTerm($taxon);
 			<div style="margin:10px 0px 0px 0px;">
 				<form name="searchform1" action="index.php" method="post">
 					<fieldset style="background-color:#FFFFCC;padding:10px;">
-						<legend style="font-weight:bold;"><?php echo $LANG['SCINAME_SEARCH']; ?></legend>
+						<legend style="font-weight:bold;"><?= $LANG['SCINAME_SEARCH'] ?></legend>
 						<label for="taxon">Taxon: </label>
-						<input type="text" name="taxon" id="taxon" value="<?php echo $taxon; ?>" title="<?php echo $LANG['ENTER_TAXON_NAME']; ?>" placeholder="<?php echo $LANG['ENTER_TAXON_NAME']; ?>" />
-						<button name="submit" value="Search" type="submit"><?php echo $LANG['SEARCH']; ?></button>
+						<input type="text" name="taxon" value="<?= $imgManager->cleanOutStr($taxon) ?>" title="<?= $LANG['ENTER_TAXON_NAME'] ?>" placeholder="<?= $LANG['ENTER_TAXON_NAME'] ?>" >
+						<button name="submit" value="Search" type="submit"><?= $LANG['SEARCH'] ?></button>
 					</fieldset>
 				</form>
 			</div>

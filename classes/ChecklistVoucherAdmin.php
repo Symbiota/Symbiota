@@ -1,5 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/Manager.php');
+include_once('Manager.php');
+include_once('ImInventories.php');
 
 class ChecklistVoucherAdmin extends Manager {
 
@@ -110,13 +111,13 @@ class ChecklistVoucherAdmin extends Manager {
 	}
 
 	public function getAssociatedExternalService(){
-		$resp = 'FALSE';
+		$resp = false;
  		if($this->clMetadata['dynamicProperties']){
-			$dynpropArr = json_decode($this->clMetadata['dynamicProperties'], TRUE);
+			$dynpropArr = json_decode($this->clMetadata['dynamicProperties'], true);
 			if(array_key_exists('externalservice', $dynpropArr)) {
 				$resp = $dynpropArr['externalservice'];
 			}
-		} 
+		}
 		return $resp;
 	}
 
@@ -450,6 +451,31 @@ class ChecklistVoucherAdmin extends Manager {
 				}
 			}
 		}
+	}
+
+	//Checklist Coordinate functions
+	public function addExternalVouchers($tid, $dataAsJson){
+		// EG suggested storing external (e.g., iNaturalist) voucher records in the `fmchklstcoordinates` table as this table
+		//   was un- or under-used as of schema 3.0. The `notes` column serves as a flag for these vouchers. --CDT 2023-08-21
+		$status = false;
+		$inputData = json_decode($dataAsJson, true);
+		// for single vouchers, add ll, for multiple use zero :(.
+		// we could try averaging ll for multiples, but then the software would be introducing non-real data, which is bad.
+		// not that zero/zero is real data either... CDT 8/2023
+		$lat = (count($inputData) == 1 ? $inputData[0]['lat'] : 0);
+		$lng = (count($inputData) == 1 ? $inputData[0]['lng'] : 0);
+		if(is_numeric($tid)){
+			$inputArr = array('tid' => $tid, 'decimalLatitude' => $lat, 'decimalLongitude' => $lng, 'sourceName' => 'EXTERNAL_VOUCHER', 'dynamicProperties' => $dataAsJson);
+			$inventoryManager = new ImInventories();
+			$inventoryManager->setClid($this->clid);
+			if($inventoryManager->insertChecklistCoordinates($inputArr)){
+				$status = true;
+			}
+			else{
+				$this->errorMessage = $inventoryManager->getErrorMessage();
+			}
+		}
+		return $status;
 	}
 
 	//Data mod functions

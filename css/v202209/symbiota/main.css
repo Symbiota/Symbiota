@@ -857,3 +857,6 @@ table.styledtable tr.alt td {
 .no-left-margin {
   margin-left: 0;
 }
+.underlined-text {
+  text-decoration: underline;
+}

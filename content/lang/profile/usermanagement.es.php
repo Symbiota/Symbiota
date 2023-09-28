@@ -58,5 +58,6 @@ $LANG['PERS_SP_MGMNT'] = 'Manejo de Especímenes Personales';
 $LANG['INV_MGMNT'] = 'Proyecto de Manejo de Inventario';
 $LANG['CHECKLIST_MGMNT'] = 'Manejo de Listados de Especies';
 $LANG['MUST_LOGIN'] = 'Debe estar conectado y poseer permisos de administrador para manejar usuarios';
+$LANG['SKIP_LINK'] = 'Saltar a la lista de usuarios';
 
 ?>
