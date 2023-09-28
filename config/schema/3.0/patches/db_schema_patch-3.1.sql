@@ -2,7 +2,14 @@ INSERT INTO schemaversion (versionnumber) values ("3.1");
 
 #Set foreign keys for fmchklstcoordinates
 ALTER TABLE `fmchklstcoordinates` 
-  ADD INDEX `FK_checklistCoord_tid_idx` (`tid` ASC);
+  DROP INDEX `FKchklsttaxalink` ;
+
+ALTER TABLE `fmchklstcoordinates` 
+  ADD INDEX `FK_checklistCoord_tid_idx` (`tid` ASC),
+  ADD INDEX `FK_checklistCoord_clid_idx` (`clid` ASC);
+
+ALTER TABLE `fmchklstcoordinates` 
+  ADD UNIQUE INDEX `UQ_checklistCoord_unique` (`clid` ASC, `tid` ASC, `decimalLatitude` ASC, `decimalLongitude` ASC);
 
 ALTER TABLE `fmchklstcoordinates` 
   ADD CONSTRAINT `FK_checklistCoord_clid`  FOREIGN KEY (`clid`)  REFERENCES `fmchecklists` (`clid`)  ON DELETE CASCADE  ON UPDATE CASCADE,

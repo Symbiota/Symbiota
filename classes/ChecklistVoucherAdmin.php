@@ -464,15 +464,24 @@ class ChecklistVoucherAdmin extends Manager {
 		// not that zero/zero is real data either... CDT 8/2023
 		$lat = (count($inputData) == 1 ? $inputData[0]['lat'] : 0);
 		$lng = (count($inputData) == 1 ? $inputData[0]['lng'] : 0);
-		if(is_numeric($tid)){
-			$inputArr = array('tid' => $tid, 'decimalLatitude' => $lat, 'decimalLongitude' => $lng, 'sourceName' => 'EXTERNAL_VOUCHER', 'dynamicProperties' => $dataAsJson);
+		$sourceIdentifier = $inputData[0]['id'];
+		$referenceUrl = null;
+		if($sourceIdentifier) $referenceUrl = 'https://www.inaturalist.org/observations/'.$sourceIdentifier;
+		if(is_numeric($tid) && $lat && $lng){
+			unset($inputData[0]['lat']);
+			unset($inputData[0]['lng']);
+			unset($inputData[0]['taxon']);
+			$inputArr = array('tid' => $tid, 'decimalLatitude' => $lat, 'decimalLongitude' => $lng, 'sourceName' => 'EXTERNAL_VOUCHER',
+				'sourceIdentifier' => $sourceIdentifier, 'referenceUrl' => $referenceUrl, 'dynamicProperties' => json_encode($inputData));
 			$inventoryManager = new ImInventories();
 			$inventoryManager->setClid($this->clid);
 			if($inventoryManager->insertChecklistCoordinates($inputArr)){
 				$status = true;
 			}
 			else{
-				$this->errorMessage = $inventoryManager->getErrorMessage();
+				$errStr = $inventoryManager->getErrorMessage();
+				if(strpos($errStr, 'Duplicate') !== false) $errStr = 'Voucher already linked!';
+				$this->errorMessage = $errStr;
 			}
 		}
 		return $status;

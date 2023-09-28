@@ -434,7 +434,7 @@ class ChecklistManager extends Manager{
 			if($this->childClidArr){
 				$clidStr .= ','.implode(',',array_keys($this->childClidArr));
 			}
-			$vSql = 'SELECT clid, tid, dynamicProperties
+			$vSql = 'SELECT clid, tid, sourceIdentifier, sourceReference, dynamicProperties
 				FROM fmchklstcoordinates
 				WHERE (clid IN ('.$clidStr.')) AND (tid IN('.implode(',',array_keys($this->taxaList)).')) AND sourceName = "EXTERNAL_VOUCHER"';
 			$vResult = $this->conn->query($vSql);

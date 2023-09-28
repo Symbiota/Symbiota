@@ -8,26 +8,19 @@
 //--------------------------------------------------------------------
 
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ChecklistVoucherReport.php');
 include_once($SERVER_ROOT.'/classes/ChecklistManager.php');
-include_once($SERVER_ROOT.'/classes/ImInventories.php');
 include_once($SERVER_ROOT.'/content/lang/checklists/voucheradmin.'.$LANG_TAG.'.php');
 
 $clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $pid = array_key_exists('pid', $_REQUEST) ? filter_var($_REQUEST['pid'], FILTER_SANITIZE_NUMBER_INT) : '';
 
 $clManager = new ChecklistManager();
-$clVoucherManager = new ChecklistVoucherReport();
-$inventoryManager = new ImInventories();
 
+$dynamPropsArr = array();
 if($clid) {
 	$clManager->setClid($clid);
-	$clVoucherManager->setClid($clid);
-	$inventoryManager->setClid($clid);
-	$metaArr = array();
-	$metaArr = $inventoryManager->getChecklistMetadata($pid);
-	if(isset($metaArr['dynamicProperties']) && $metaArr['dynamicProperties']){
-		$dynamPropsArr = array();
+	$metaArr = $clManager->getClMetaData();
+	if(!empty($metaArr['dynamicProperties'])){
 		$dynamPropsArr = json_decode($metaArr['dynamicProperties'], true);
 	}
 }
@@ -54,17 +47,18 @@ if($isEditor){
 					}
 					.extvoucher-label {
 						display: inline-block;
-						width: 150px;
+						width: 250px;
 						text-align: right;
 					}
 				</style>
 				<script src="../js/symb/checklists.externalserviceapi.js"></script>
 				<div id="extvoucher-taxalist-div">
 					<form name="externalVoucherForm" action="voucheradmin.php" method="post">
-						<button type="submit"><?= $LANG['SAVEEXTVOUCH'] ?></button>
 						<?php
+						$button = '<button name="submitaction" type="submit" value="linkExternalVouchers">'.$LANG['SAVEEXTVOUCH'].'</button>';
 						$prevGroup = '';
 						$arrForExternalServiceApi = '';
+						$cnt = 1;
 						foreach($taxaArray as $tid => $sppArr){
 							$group = $sppArr['taxongroup'];
 							if($group != $prevGroup){
@@ -94,15 +88,17 @@ if($isEditor){
 							echo "</div>\n";
 							$scinameasid = str_replace(' ', '-', $sppArr['sciname']);
 							$arrForExternalServiceApi .= ($arrForExternalServiceApi ? ',' : '') . "'" . $scinameasid . "'";
+							if($cnt%15 == 0) echo $button;
+							$cnt++;
 						}
+						echo $button;
 						?>
 						<input name="pid" type="hidden" value="<?= $pid ?>" >
 						<input name="clid" type="hidden" value="<?= $clid ?>" >
-						<button name="submitaction" type="submit" value="linkExternalVouchers"><?= $LANG['SAVEEXTVOUCH'] ?></button>
 					</form>
 				</div>
 				<?php
-				if(isset($dynamPropsArr) && $dynamPropsArr['externalservice'] == 'inaturalist') {
+				if(isset($dynamPropsArr['externalservice']) && $dynamPropsArr['externalservice'] == 'inaturalist') {
 					?>
 					<script>
 						<?php
