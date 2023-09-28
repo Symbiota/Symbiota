@@ -15,7 +15,7 @@ session_start(array('gc_maxlifetime'=>3600,'cookie_path'=>$CLIENT_ROOT,'cookie_s
 include_once($SERVER_ROOT.'/classes/Encryption.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
 
-//Check cookie to see if signed in
+//Check session data to see if signed in
 $PARAMS_ARR = Array();				//params => 'un=egbot&dn=Edward&uid=301'
 $USER_RIGHTS = Array();
 if(isset($_SESSION['userparams'])) $PARAMS_ARR = $_SESSION['userparams'];
