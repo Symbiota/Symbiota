@@ -102,4 +102,10 @@ $LANG['TAXON_DIST'] = 'Distribution des Taxons';
 $LANG['CLICK_ON_SPEC_FAM'] = "Cliquez sur le nombre d'enregistrements de spécimens entre parenthèses pour retourner les enregistrements de cette famille";
 $LANG['GEOG_DIST_COUNTRIES'] = 'Distribution Géographique - Pays';
 $LANG['COLLECTION_PROJECTS'] = "Collections d'Histoire Naturelle et Projets d'Observation";
+$LANG['ADVANCED_SEARCH_THIS_COLLECTION'] = 'Recherche avancée dans cette collection';
+$LANG['IMAGE_SEARCH_THIS_COLLECTION'] = 'Rechercher des images dans cette collection';
+$LANG['SEARCH_BY_IDENTIFIER'] = 'Recherche par identifiant';
+$LANG['SEARCH_BY_TAXON'] = 'Recherche par taxon';
+$LANG['IDENTIFIER'] = 'Identifiant';
+$LANG['TAXON'] = 'Taxon';
 ?>

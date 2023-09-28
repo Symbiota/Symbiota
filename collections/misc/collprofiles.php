@@ -424,7 +424,6 @@ if ($SYMB_UID) {
 			}
 			?>
 				<?php
-				// echo $collManager->getMetadataHtml($LANG, $LANG_TAG);
 				echo $collManager->getVisibleMetadataHtml($LANG, $LANG_TAG);
 				if ($collData['publishtogbif'] && $datasetKey) {
 					$dataUrl = 'http://www.gbif.org/dataset/' . $datasetKey;
