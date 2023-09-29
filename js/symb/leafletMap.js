@@ -16,6 +16,7 @@ xmlns="http://www.w3.org/2000/svg"
 <polygon points="${half},0 0,${opts.size} ${opts.size},${opts.size}" style="fill:${opts.color};stroke:black;stroke-width:3" />
 </svg>`,
       className: "",
+      observation: true,
       iconSize: [opts.size, opts.size],
       iconAnchor: [half, half],
    });
