@@ -7,6 +7,7 @@ Language: Français (French)
 
 $LANG['INVPROJ'] = 'Projets d&apos;Inventaire';
 $LANG['PROJMANAG'] = 'Chefs de Projet:';
+$LANG['INVPROJLIST'] = 'Liste des projets d\'inventaire';
 $LANG['METADATA'] = 'Métadonnées';
 $LANG['INVMANAG'] = 'Gestionnaires d&apos;Inventaire';
 $LANG['CHECKMANAG'] = 'Gestion de Liste';
@@ -53,4 +54,7 @@ $LANG['TRIANGLE_ALT'] = 'une image d\'un triangle. Juste utilisé pour que la fe
 $LANG['EDIT'] = 'Modifier';
 $LANG['KEY'] = 'Clé';
 $LANG['GOLDEN_KEY_SYMBOL'] = 'Symbole de la clé d\'or';
+$LANG['ADD_NEW'] = 'Ajouter un nouveau projet';
+$LANG['EDIT'] = 'Modifier le projet';
+
 ?>

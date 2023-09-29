@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ImInventories.php');
@@ -210,9 +211,9 @@ if(!$researchList && !$editMode){
 		if($projects_indexCrumbs) echo $projects_indexCrumbs.' &gt;&gt; ';
 	}
 	else{
-		echo "<a href='" . $CLIENT_ROOT . "'>Home</a> &gt;&gt; ";
+		echo "<a href='" . $CLIENT_ROOT . "'>" . (isset($LANG['HOME']) ? $LANG['HOME'] : 'Home') . "</a> &gt;&gt; ";
 	}
-	echo '<b><a href="index.php?pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars(($projArr?$projArr['projname']:'Inventory Project List'), HTML_SPECIAL_CHARS_FLAGS) . '</a></b>';
+	echo '<b><a href="index.php?pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars(($projArr?$projArr['projname']: (isset($LANG['INVPROJLIST']) ? $LANG['INVPROJLIST'] : 'Inventory Project List')), HTML_SPECIAL_CHARS_FLAGS) . '</a></b>';
 	echo "</div>";
 	?>
 
@@ -233,8 +234,8 @@ if(!$researchList && !$editMode){
 				?>
 				<div style="float:right;" title="<?php echo $LANG['TOGGLEEDIT'];?>">
 					<a href="#" onclick="toggleById('tabs');return false;">
-						<?php echo $LANG['EDIT'] ?>
-						<img src="../images/edit.png" srcset="../images/edit.svg" style="width:20px;height:20px;" alt="<?php echo $LANG['PENCIL_ALT'] ?>" />
+							<?php echo $LANG['EDIT'] ?>
+							<img src="../images/edit.png" srcset="../images/edit.svg" style="width:20px;height:20px;" alt="<?php echo $LANG['PENCIL_ALT'] ?>" />
 					</a>
 				</div>
 				<?php
@@ -271,85 +272,55 @@ if(!$researchList && !$editMode){
 						?>
 					</ul>
 					<div id="mdtab">
-						<fieldset class="form-color">
-							<legend><?php echo ($newProj?'Add New':'Edit'); ?> Project</legend>
+						<section class="fieldset-like background-gray-light">
+							<h1> <span> <?php echo ($newProj ? (isset($LANG['ADD_NEW']) ? $LANG['ADD_NEW'] : 'Add New Project') : (isset($LANG['EDIT']) ? $LANG['EDIT'] : 'Edit Project'));  ?> </span> </h1>
 							<form name='projeditorform' action='index.php' method='post' onsubmit="return validateProjectForm(this)">
-								<table style="width:100%;">
-									<tr>
-										<td>
-											<?php echo $LANG['PROJNAME'];?>:
-										</td>
-										<td>
-											<input type="text" name="projname" value="<?php if($projArr) echo htmlspecialchars($projArr["projname"]); ?>" style="width:95%;"/>
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<?php echo $LANG['MANAG'];?>:
-										</td>
-										<td>
-											<input type="text" name="managers" value="<?php if($projArr) echo htmlspecialchars($projArr["managers"]); ?>" style="width:95%;"/>
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<?php echo $LANG['DESCRIP'];?>:
-										</td>
-										<td>
-											<textarea rows="8" cols="45" name="fulldescription" maxlength="5000" style="width:95%"><?php if($projArr) echo htmlspecialchars($projArr["fulldescription"]);?></textarea>
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<?php echo $LANG['NOTES'];?>:
-										</td>
-										<td>
-											<input type="text" name="notes" value="<?php if($projArr) echo htmlspecialchars($projArr["notes"]);?>" style="width:95%;"/>
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<?php echo $LANG['ACCESS'];?>:
-										</td>
-										<td>
-											<select name="ispublic">
-												<option value="0"><?php echo $LANG['PRIVATE'];?></option>
-												<option value="1" <?php echo ($projArr&&$projArr['ispublic']?'SELECTED':''); ?>><?php echo $LANG['PUBLIC'];?></option>
-											</select>
-										</td>
-									</tr>
-									<!--
-									<tr>
-										<td>
-											<?php echo $LANG['SORTSEQ'];?>:
-										</td>
-										<td>
-											<input type="text" name="sortsequence" value="<?php if($projArr) echo $projArr["sortsequence"];?>" style="width:40;"/>
-										</td>
-									</tr>
-									-->
-									<tr>
-										<td colspan="2">
-											<div style="margin:15px;">
-												<?php
-												if($newProj){
-													?>
-													<button name="projsubmit" type="submit" value="addNewProject"><?php echo $LANG['ADDNEWPR'];?></button>
-													<?php
-												}
-												else{
-													?>
-													<input type="hidden" name="pid" value="<?php echo $pid;?>">
-													<button name="projsubmit" type="submit" value="submitEdit"><?php echo $LANG['SUBMITEDIT'];?></button>
-													<?php
-												}
-												?>
-											</div>
-										</td>
-									</tr>
-								</table>
+								<section class="gridlike-form">
+									<div class="bottom-breathing-room gridlike-form-row">
+										<label for="projname" class="gridlike-form-row-label"  > <?php echo (isset($LANG['PROJNAME']) ? $LANG['PROJNAME'] : 'Project Name'); ?>: </label>
+										<input id="projname" class="gridlike-form-row-input max-width-fit-65" type="text" name="projname"  value="<?php if($projArr) echo htmlspecialchars($projArr["projname"]); ?>"/>
+									</div>
+
+									<div class="bottom-breathing-room gridlike-form-row">
+										<label for="managers" class="gridlike-form-row-label" > <?php echo (isset($LANG['MANAG']) ? $LANG['MANAG'] : 'Managers'); ?>: </label>
+										<input id="managers" class="gridlike-form-row-input max-width-fit-65" type="text" name="managers" value="<?php if($projArr) echo htmlspecialchars($projArr["managers"]); ?>"/>
+									</div>
+									
+									<div class="bottom-breathing-room gridlike-form-row">
+										<label for="fulldescription" class="gridlike-form-row-label"> <?php echo (isset($LANG['DESCRIP']) ? $LANG['DESCRIP'] : 'Description'); ?>: </label>
+										<textarea class="gridlike-form-row-input max-width-fit-65" rows="8" cols="45" id="fulldescription"  name="fulldescription" maxlength="5000"><?php if($projArr) echo htmlspecialchars($projArr["fulldescription"]);?></textarea>
+									</div>
+
+									<div class="bottom-breathing-room gridlike-form-row">
+										<label for="notes" class="gridlike-form-row-label"> <?php echo (isset($LANG['NOTES']) ? $LANG['NOTES'] : 'Notes'); ?>: </label>
+										<input type="text" class="gridlike-form-row-input max-width-fit-65" id="notes" name="notes" value="<?php if($projArr) echo htmlspecialchars($projArr["notes"]);?>"/>
+									</div>
+
+									<div class="bottom-breathing-room gridlike-form-row">
+										<label for="ispublic" class="gridlike-form-row-label"> <?php echo (isset($LANG['ACCESS']) ? $LANG['ACCESS'] : 'Access'); ?>: </label>
+										<select id="ispublic" name="ispublic">
+											<option value="0"><?php echo $LANG['PRIVATE'];?></option>
+											<option value="1" <?php echo ($projArr&&$projArr['ispublic']?'SELECTED':''); ?>><?php echo $LANG['PUBLIC'];?></option>
+										</select>
+									</div>
+									<div style="margin:15px;">
+										<?php
+										if($newProj){
+											?>
+											<button name="projsubmit" type="submit" value="addNewProject"><?php echo $LANG['ADDNEWPR'];?></button>
+											<?php
+										}
+										else{
+											?>
+											<input type="hidden" name="pid" value="<?php echo $pid;?>">
+											<button name="projsubmit" type="submit" value="submitEdit"><?php echo $LANG['SUBMITEDIT'];?></button>
+											<?php
+										}
+										?>
+									</div>
+								</section>
 							</form>
-						</fieldset>
+						</section>
 						<?php
 						if($pid){
 							?>

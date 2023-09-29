@@ -6,6 +6,7 @@ Language: Espa�ol (Spanish)
 */
 
 $LANG['INVPROJ'] = 'Proyectos de Inventario';
+$LANG['INVPROJLIST'] = 'Lista de proyectos de inventario';
 $LANG['PROJMANAG'] = 'Administradores de Proyectos:';
 $LANG['METADATA'] = 'Metadatos';
 $LANG['INVMANAG'] = 'Administradores de Inventarios';
@@ -49,4 +50,7 @@ $LANG['TRIANGLE_ALT'] = 'una imagen de un triángulo. Solo se usa para hacer que
 $LANG['EDIT'] = 'Editar';
 $LANG['KEY'] = 'Clave';
 $LANG['GOLDEN_KEY_SYMBOL'] = 'Símbolo de la llave dorada';
+$LANG['ADD_NEW'] = 'Agregar nuevo proyecto';
+$LANG['EDIT'] = 'Editar proyecto';
+
 ?>

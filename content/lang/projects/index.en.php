@@ -6,6 +6,7 @@ Language: English
 */
 
 $LANG['INVPROJ'] = 'Inventory Projects';
+$LANG['INVPROJLIST'] = 'Inventory Project List';
 $LANG['PROJMANAG'] = 'Project Managers:';
 $LANG['METADATA'] = 'Metadata';
 $LANG['INVMANAG'] = 'Inventory Managers';
@@ -53,4 +54,7 @@ $LANG['TRIANGLE_ALT'] = 'an image of a triangle. Just used to make the pop up lo
 $LANG['EDIT'] = 'Edit';
 $LANG['KEY'] = 'Key';
 $LANG['GOLDEN_KEY_SYMBOL'] = 'Golden Key Symbol';
+$LANG['ADD_NEW_PRJ'] = 'Add New Project';
+$LANG['EDIT_PRJ'] = 'Edit Project';
+
 ?>
