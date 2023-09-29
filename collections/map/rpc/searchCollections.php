@@ -29,6 +29,7 @@ if(!is_numeric($tabIndex)) $tabIndex = 0;
 if(!is_numeric($recLimit)) $recLimit = 15000;
 */
 
+ob_start();
 $recLimit = array_key_exists('recordlimit',$_REQUEST)?$_REQUEST['recordlimit']:15000;
 if(!is_numeric($recLimit)) $recLimit = 15000;
 
@@ -97,6 +98,7 @@ foreach ($coordArr as $collName => $coll) {
       $recordCnt++;
    }
 }
+ob_get_clean();
 
 echo json_encode(['taxaArr' => $taxaArr, 'collArr' => $collArr, 'recordArr' => $recordArr]);
 ?>
