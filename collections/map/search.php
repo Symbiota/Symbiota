@@ -346,7 +346,6 @@ foreach ($coordArr as $collName => $coll) {
       
       function buildCollectionLegend() {
          let html = "<div style='display:table;'>";
-         console.log(collArr)
 
          for (let coll of Object.values(collArr)) {
             html += legendRow(`coll-${coll.collid}`, coll.color, coll.name);
@@ -448,6 +447,12 @@ foreach ($coordArr as $collName => $coll) {
             createIcon: function(oldIcon) {
                var icon = L.DivIcon.prototype.createIcon.call(this, oldIcon);
                icon.style.backgroundColor = this.options.color;
+
+               icon.style.textShadow="0 0 8px white, 0 0 8px white, 0 0 8px white";
+               icon.style.width="42px";
+               icon.style.height="42px";
+
+               icon.style.border=`1px solid ${this.options.mainColor}`;
                return icon;
             }
          })
@@ -507,6 +512,7 @@ foreach ($coordArr as $collName => $coll) {
                      className: `marker-cluster taxa-${taxa.tid}`, 
                      iconSize: new L.Point(40, 40),
                      color: `#${taxaMap[taxa.tid].color}77`,
+                     mainColor: `#${taxaMap[taxa.tid].color}`,
                   });
                }
 
