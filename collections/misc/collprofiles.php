@@ -91,11 +91,11 @@ if ($SYMB_UID) {
 		<section class="fieldset-like no-left-margin" style="float: right;">
 			<h1><span><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></span></h1>
 			<form name="id-quicksearch" action="javascript:void(0);" onsubmit="submitAndRedirect('id-quicksearch', 'q_catalognumber', '<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&includeothercatnum=1'); return false;">
-				<label for="q_catalognumber"><?php echo (isset($LANG['IDENTIFIER']) ? $LANG['IDENTIFIER'] : 'Identifier'); ?></label>
+				<label for="q_catalognumber"><?php echo (isset($LANG['OCCURENCE_IDENTIFIER']) ? $LANG['OCCURENCE_IDENTIFIER'] : 'Catalog Number'); ?></label>
 				<input name="q_catalognumber" id="q_catalognumber" type="text" />
 				<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 				<input name="occindex" type="hidden" value="0" />
-				<button type="submit"><?php echo (isset($LANG['SEARCH_BY_IDENTIFIER']) ? $LANG['SEARCH_BY_IDENTIFIER'] : 'Search by Identifier'); ?></button>
+				<button type="submit" title=<?php echo (isset($LANG['IIDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Occurrence ID and Record ID also accepted.'); ?>><?php echo (isset($LANG['SEARCH_BY_IDENTIFIER']) ? $LANG['SEARCH_BY_IDENTIFIER'] : 'Search by Catalog Number'); ?></button>
 			</form>
 			<form name="taxon-quick-search" action="javascript:void(0);" onsubmit="submitAndRedirect('taxon-quick-search', 'taxon-search', '<?php echo $CLIENT_ROOT ?>/collections/list.php?db=', '&taxa=', '&usethes=1&taxontype=2 '); return false;">
 				<label for="taxon-search"><?php echo (isset($LANG['TAXON']) ? $LANG['TAXON'] : 'Taxon'); ?></label>
@@ -467,7 +467,7 @@ if ($SYMB_UID) {
 						<div>
 							<?php
 							echo "<div>" . $addrArr["institutionname"];
-							if ($editCode > 1) echo ' <a href="institutioneditor.php?emode=1&targetcollid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&iid=' . htmlspecialchars($addrArr['iid'], HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars((isset($LANG['EDIT_INST']) ? $LANG['EDIT_INST'] : 'Edit institution information'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:13px;" /></a>';
+							if ($editCode > 1) echo ' <a href="institutioneditor.php?emode=1&targetcollid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&iid=' . htmlspecialchars($addrArr['iid'], HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars((isset($LANG['EDIT_INST']) ? $LANG['EDIT_INST'] : 'Edit institution information'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:13px;" alt="edit icon" /></a>';
 							echo '</div>';
 							if ($addrArr["institutionname2"]) echo "<div>" . $addrArr["institutionname2"] . "</div>";
 							if ($addrArr["address1"]) echo "<div>" . $addrArr["address1"] . "</div>";
