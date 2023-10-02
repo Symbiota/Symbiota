@@ -42,6 +42,7 @@ if ($SYMB_UID) {
 	<script src="../../js/jquery.js?ver=20130917" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js?ver=20130917" type="text/javascript"></script>
 	<script>
+
 		function toggleById(target) {
 			if (target != null) {
 				var obj = document.getElementById(target);
@@ -64,7 +65,7 @@ if ($SYMB_UID) {
 				console.log(err);
 			}
 		}
-
+		
 	</script>
 	<style>
 		.field-div {
@@ -88,21 +89,39 @@ if ($SYMB_UID) {
 		<b><?php echo (isset($LANG['COLL_PROFILE']) ? $LANG['COLL_PROFILE'] : 'Collection Profile'); ?></b>
 	</div>
 	<div id="innertext">
-		<section class="fieldset-like no-left-margin" style="float: right;">
+		<section id="tabs" class="fieldset-like no-left-margin" style="float: right;">
 			<h1><span><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></span></h1>
 			<form name="id-quicksearch" action="javascript:void(0);" onsubmit="submitAndRedirect('id-quicksearch', 'q_catalognumber', '<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&includeothercatnum=1'); return false;">
-				<label for="q_catalognumber"><?php echo (isset($LANG['OCCURENCE_IDENTIFIER']) ? $LANG['OCCURENCE_IDENTIFIER'] : 'Catalog Number'); ?></label>
-				<input name="q_catalognumber" id="q_catalognumber" type="text" />
-				<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-				<input name="occindex" type="hidden" value="0" />
-				<button type="submit" title=<?php echo (isset($LANG['IIDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Occurrence ID and Record ID also accepted.'); ?>><?php echo (isset($LANG['SEARCH_BY_IDENTIFIER']) ? $LANG['SEARCH_BY_IDENTIFIER'] : 'Search by Catalog Number'); ?></button>
+				<div id="dialogContainer" style="position: relative;">
+					<label for="catalog-number"><?php echo (isset($LANG['OCCURENCE_IDENTIFIER']) ? $LANG['OCCURENCE_IDENTIFIER'] : 'Catalog Number'); ?></label>
+					<span class="skip-link">
+						<?php
+							echo (isset($LANG['IDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Search by Catalog Number, Occurrence ID, or Record ID.') . ' ';
+						?>
+					</span>
+					<input name="catalog-number" id="catalog-number" type="text" />
+					<a href="#" id="q_catalognumberinfo" style="text-decoration:none;">
+						<img src="../../images/info.png" style="width:15px;" alt="<?php echo (isset($LANG['MORE_INFO_ALT']) ? $LANG['MORE_INFO_ALT'] : 'More information about catalog number'); ?>" title="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'More information.'); ?>"/>
+					</a>
+					<dialog id="dialogEl" aria-live="polite" aria-label="Catalog number search dialog">
+						<?php
+							echo (isset($LANG['IDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Search by Catalog Number, Occurrence ID, or Record ID.') . ' ';
+						?>
+						<button id="closeDialog">Close</button>
+					</dialog>
+					<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
+					<input name="occindex" type="hidden" value="0" />
+					<button type="submit" id="search-by-catalog-number-btn" title="<?php echo (isset($LANG['IIDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Occurrence ID and Record ID also accepted.'); ?>">
+						<?php echo (isset($LANG['SEARCH_BY_IDENTIFIER']) ? $LANG['SEARCH_BY_IDENTIFIER'] : 'Search by Catalog Number'); ?>
+					</button>
+				</div>
 			</form>
 			<form name="taxon-quick-search" action="javascript:void(0);" onsubmit="submitAndRedirect('taxon-quick-search', 'taxon-search', '<?php echo $CLIENT_ROOT ?>/collections/list.php?db=', '&taxa=', '&usethes=1&taxontype=2 '); return false;">
 				<label for="taxon-search"><?php echo (isset($LANG['TAXON']) ? $LANG['TAXON'] : 'Taxon'); ?></label>
 				<input name="taxon-search" id="taxon-search" type="text" />
 				<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 				<input name="occindex" type="hidden" value="0" />
-				<button type="submit"><?php echo (isset($LANG['SEARCH_BY_TAXON']) ? $LANG['SEARCH_BY_TAXON'] : 'Search by Taxon'); ?></button>
+				<button type="submit" id="search-by-taxon-btn"><?php echo (isset($LANG['SEARCH_BY_TAXON']) ? $LANG['SEARCH_BY_TAXON'] : 'Search by Taxon'); ?></button>
 			</form>
 		</section>
 		<?php
@@ -626,5 +645,26 @@ if ($SYMB_UID) {
 	<?php
 	include($SERVER_ROOT . '/includes/footer.php');
 	?>
+	<script>
+		const showDialogLink = document.getElementById('q_catalognumberinfo');
+		const closeDialogButton = document.getElementById('closeDialog');
+		const dialogEl = document.getElementById('dialogEl');
+		const dialogContainer = document.getElementById('dialogContainer');
+
+		showDialogLink.addEventListener('click', (e) => {
+			e.preventDefault();
+			console.log('deleteMe got here');
+			dialogEl.showModal();
+
+			dialogContainer.style.position = 'relative';
+			dialogContainer.appendChild(dialogEl);
+
+		});
+
+		closeDialogButton.addEventListener('click', (e) => {
+			e.preventDefault();
+			dialogEl.close();
+		});
+	</script>
 </body>
 </html>
