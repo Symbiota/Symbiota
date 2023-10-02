@@ -254,7 +254,7 @@ class OccurrenceTaxaManager {
 						$famArr = $this->setCommonNameWhereTerms($searchArr, $tidInArr);
 						if($famArr) $sqlWhereTaxa .= 'OR (o.family IN("'.implode('","',$famArr).'")) ';
 					}
-					elseif(isset($searchArr['TID_BATCH'])){
+					if(isset($searchArr['TID_BATCH'])){
 						$tidInArr = array_merge($tidInArr, array_keys($searchArr['TID_BATCH']));
 						if(isset($searchArr['tid'])) $tidInArr = array_merge($tidInArr, array_keys($searchArr['tid']));
 					}
