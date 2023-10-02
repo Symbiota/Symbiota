@@ -114,10 +114,12 @@ if ($SYMB_UID) {
 						?>
 						<button id="closeDialog">Close</button>
 					</dialog>
+					<br>
 					<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 					<input name="occindex" type="hidden" value="0" />
 					<label for="taxon-search"><?php echo (isset($LANG['TAXON']) ? $LANG['TAXON'] : 'Taxon'); ?></label>
 					<input name="taxon-search" id="taxon-search" type="text" />
+					<br>
 					<button type="submit" id="search-by-catalog-number-btn" title="<?php echo (isset($LANG['IIDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Occurrence ID and Record ID also accepted.'); ?>">
 						<?php echo (isset($LANG['SEARCH']) ? $LANG['SEARCH'] : 'Search'); ?>
 					</button>
@@ -166,7 +168,7 @@ if ($SYMB_UID) {
 			}
 			if ($editCode) {
 				?>
-				<div id="controlpanel" style="margin-top: 6rem; display:<?php echo ($eMode ? 'block' : 'none'); ?>;">
+				<div id="controlpanel" style="margin-top: 9rem; display:<?php echo ($eMode ? 'block' : 'none'); ?>;">
 					<section class="fieldset-like no-left-margin">
 						<h1><span><?php echo (isset($LANG['DAT_EDIT']) ? $LANG['DAT_EDIT'] : 'Data Editor Control Panel'); ?></span></h1>
 						<ul>
