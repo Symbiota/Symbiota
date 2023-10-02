@@ -104,8 +104,11 @@ $LANG['GEOG_DIST_COUNTRIES'] = 'Distribution Géographique - Pays';
 $LANG['COLLECTION_PROJECTS'] = "Collections d'Histoire Naturelle et Projets d'Observation";
 $LANG['ADVANCED_SEARCH_THIS_COLLECTION'] = 'Recherche avancée dans cette collection';
 $LANG['IMAGE_SEARCH_THIS_COLLECTION'] = 'Rechercher des images dans cette collection';
-$LANG['SEARCH_BY_IDENTIFIER'] = 'Recherche par identifiant';
+$LANG['SEARCH'] = 'Recherche';
+$LANG['IDENTIFIER_PLACEHOLDER_LIST'] = 'Rechercher par numéro de catalogue, ID d\'occurrence ou ID d\'enregistrement.';
+$LANG['MORE_INFO'] = 'Plus d\'information';
+$LANG['MORE_INFO_ALT'] = 'Plus d\'informations sur le numéro de catalogue';
 $LANG['SEARCH_BY_TAXON'] = 'Recherche par taxon';
-$LANG['IDENTIFIER'] = 'Identifiant';
+$LANG['OCCURENCE_IDENTIFIER'] = 'Numéro de Catalogue';
 $LANG['TAXON'] = 'Taxon';
 ?>
