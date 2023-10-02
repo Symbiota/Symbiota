@@ -485,7 +485,7 @@ if ($SYMB_UID) {
 					?>
 					<section class="fieldset-like no-left-margin">
 						<h1><span><?php echo (isset($LANG['ADDRESS']) ? $LANG['ADDRESS'] : 'Address'); ?>:</span></h1>
-						<div>
+						<div class="bigger-left-margin-rel">
 							<?php
 							echo "<div>" . $addrArr["institutionname"];
 							if ($editCode > 1) echo ' <a href="institutioneditor.php?emode=1&targetcollid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&iid=' . htmlspecialchars($addrArr['iid'], HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars((isset($LANG['EDIT_INST']) ? $LANG['EDIT_INST'] : 'Edit institution information'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:13px;" alt="edit icon" /></a>';

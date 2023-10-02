@@ -860,3 +860,7 @@ table.styledtable tr.alt td {
 .underlined-text {
   text-decoration: underline;
 }
+
+.bigger-left-margin-rel {
+  margin-left: 3rem;
+}
