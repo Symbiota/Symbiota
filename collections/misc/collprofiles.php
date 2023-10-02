@@ -55,12 +55,17 @@ if ($SYMB_UID) {
 			return false;
 		}
 
-		function submitAndRedirect(formName, inputName, urlPtOne, urlPtTwo, urlPtThree) { // should probably generalize this, but not enough use cases yet
+		function submitAndRedirectSearchForm(urlPtOne, urlPtTwo, urlPtTwoAlt, urlPtThree, urlPtThreeAlt) {
 			try{
-				const collId = document?.forms[formName]['collid']?.value;
-				const val = document?.forms[formName][inputName]?.value;
-				const url = urlPtOne + collId + urlPtTwo + val + urlPtThree;
-				window.location.href = url;
+				const collId = document?.forms['quicksearch']['collid']?.value;
+				const hasIdentifier = Boolean(document?.forms['quicksearch']['catalog-number']?.value);
+				const val = hasIdentifier ? document?.forms['quicksearch']['catalog-number']?.value : document?.forms['quicksearch']['taxon-search']?.value;
+				if(!val){
+					alert("You must provide a search term.");
+				}else{
+					const url = urlPtOne + collId + (hasIdentifier? urlPtTwo: urlPtTwoAlt) + val + (hasIdentifier ? urlPtThree : urlPtThreeAlt);
+					window.location.href = url;
+				}
 			}catch(err){
 				console.log(err);
 			}
@@ -91,7 +96,7 @@ if ($SYMB_UID) {
 	<div id="innertext">
 		<section id="tabs" class="fieldset-like no-left-margin" style="float: right;">
 			<h1><span><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></span></h1>
-			<form name="id-quicksearch" action="javascript:void(0);" onsubmit="submitAndRedirect('id-quicksearch', 'q_catalognumber', '<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&includeothercatnum=1'); return false;">
+			<form name="quicksearch" action="javascript:void(0);" onsubmit="submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includeothercatnum=1', '&usethes=1&taxontype=2 '); return false;">
 				<div id="dialogContainer" style="position: relative;">
 					<label for="catalog-number"><?php echo (isset($LANG['OCCURENCE_IDENTIFIER']) ? $LANG['OCCURENCE_IDENTIFIER'] : 'Catalog Number'); ?></label>
 					<span class="skip-link">
@@ -111,17 +116,12 @@ if ($SYMB_UID) {
 					</dialog>
 					<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 					<input name="occindex" type="hidden" value="0" />
+					<label for="taxon-search"><?php echo (isset($LANG['TAXON']) ? $LANG['TAXON'] : 'Taxon'); ?></label>
+					<input name="taxon-search" id="taxon-search" type="text" />
 					<button type="submit" id="search-by-catalog-number-btn" title="<?php echo (isset($LANG['IIDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Occurrence ID and Record ID also accepted.'); ?>">
-						<?php echo (isset($LANG['SEARCH_BY_IDENTIFIER']) ? $LANG['SEARCH_BY_IDENTIFIER'] : 'Search by Catalog Number'); ?>
+						<?php echo (isset($LANG['SEARCH']) ? $LANG['SEARCH'] : 'Search'); ?>
 					</button>
 				</div>
-			</form>
-			<form name="taxon-quick-search" action="javascript:void(0);" onsubmit="submitAndRedirect('taxon-quick-search', 'taxon-search', '<?php echo $CLIENT_ROOT ?>/collections/list.php?db=', '&taxa=', '&usethes=1&taxontype=2 '); return false;">
-				<label for="taxon-search"><?php echo (isset($LANG['TAXON']) ? $LANG['TAXON'] : 'Taxon'); ?></label>
-				<input name="taxon-search" id="taxon-search" type="text" />
-				<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-				<input name="occindex" type="hidden" value="0" />
-				<button type="submit" id="search-by-taxon-btn"><?php echo (isset($LANG['SEARCH_BY_TAXON']) ? $LANG['SEARCH_BY_TAXON'] : 'Search by Taxon'); ?></button>
 			</form>
 		</section>
 		<?php
