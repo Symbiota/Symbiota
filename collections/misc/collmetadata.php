@@ -154,12 +154,15 @@ $collManager->cleanOutArr($collData);
 		}
 
 		function managementTypeChanged(selElem) {
-			if (selElem.value == "Live Data") $(".sourceurl-div").hide();
+			//console.log(selElem.managementType.value);
+			if (selElem.managementType.value == "Live Data") $(".sourceurl-div").hide();
 			else $(".sourceurl-div").show();
-			checkManagementTypeGuidSource(selElem.form);
+			checkManagementTypeGuidSource(selElem);
 		}
 
 		function checkManagementTypeGuidSource(f) {
+			// console.log("guid target is: ", f.guidTarget.value);
+			// console.log("manage target is: ", f.managementType.value);
 			if (f.managementType.value == "Snapshot" && f.guidTarget.value == "symbiotaUUID") {
 				alert("<?php echo (isset($LANG['CANNOT_GUID']) ? $LANG['CANNOT_GUID'] : 'The Symbiota Generated GUID option cannot be selected for a collection that is managed locally outside of the data portal (e.g. Snapshot management type). In this case, the GUID must be generated within the source collection database and delivered to the data portal as part of the upload process.'); ?>");
 				f.guidTarget.value = '';
@@ -494,15 +497,29 @@ $collManager->cleanOutArr($collData);
 								</div>
 								<div class="field-block">									
 									<span class="field-elem">
-										<label for="managementType"> <?php echo (isset($LANG['MANAGEMENT']) ? htmlspecialchars($LANG['MANAGEMENT'], HTML_SPECIAL_CHARS_FLAGS) : 'Management'); ?>: </label>
+
+
+									<fieldset>
+										<legend> <?php echo htmlspecialchars($LANG['MANAGEMENT'], HTML_SPECIAL_CHARS_FLAGS) ?>: </legend>
+										
+										<input class="top-breathing-room-rel-sm" id="snapshot" type="radio" name="managementType" value="Snapshot" CHECKED> <label for="snapshot">  <?php echo (isset($LANG['SNAPSHOT']) ? $LANG['SNAPSHOT'] : 'Snapshot'); ?> </label> <br/>
+										<input id="liveData" type="radio" name="managementType" value="Live Data" > <label for="liveData">  <?php echo ($collid && $collData['managementtype'] == 'Live Data' ? 'SELECTED' : ''); ?> <?php echo $LANG['LIVE_DATA']; ?> </label> <br/>
+										<input id="aggregate" type="radio" name="managementType" value="Aggregate" > <label for="aggregate">  <?php echo ($collid && $collData['managementtype'] == 'Aggregate' ? 'SELECTED' : ''); ?> <?php echo $LANG['AGGREGATE']; ?> </label>
+										
+										<a id="managementinfo" href="#" onclick="return false" tabindex="0">
+											<img src="../../images/info.png" style="width:15px;" alt="Show more information" title="<?php echo (isset($LANG['MORE_INFO_TYPE']) ? $LANG['MORE_INFO_TYPE'] : 'More information about Management Type'); ?>"/>
+										</a>
+
+										<script src="../../js/symb/collections.misc.collmetadata.js"></script>
+									</fieldset>
+
+										<!-- <label for="managementType"> <?php echo (isset($LANG['MANAGEMENT']) ? htmlspecialchars($LANG['MANAGEMENT'], HTML_SPECIAL_CHARS_FLAGS) : 'Management'); ?>: </label>
 										<select id="managementType" name="managementType" onchange="managementTypeChanged(this)">
 											<option value="Snapshot"><?php echo (isset($LANG['SNAPSHOT']) ? $LANG['SNAPSHOT'] : 'Snapshot'); ?></option>
 											<option value="Live Data" <?php echo ($collid && $collData['managementtype'] == 'Live Data' ? 'SELECTED' : ''); ?>><?php echo $LANG['LIVE_DATA']; ?></option>
 											<option value="Aggregate" <?php echo ($collid && $collData['managementtype'] == 'Aggregate' ? 'SELECTED' : ''); ?>><?php echo $LANG['AGGREGATE']; ?></option>
-										</select>
-										<a id="managementinfo" href="#" onclick="return false" tabindex="0">
-											<img src="../../images/info.png" style="width:15px;" alt="Show more information" title="<?php echo (isset($LANG['MORE_INFO_TYPE']) ? $LANG['MORE_INFO_TYPE'] : 'More information about Management Type'); ?>"/>
-										</a>
+										</select> -->
+										
 										<span id="managementinfodialog" aria-live="polite">
 											<?php echo (isset($LANG['SNAPSHOT_DEF']) ? $LANG['SNAPSHOT_DEF'] : ''); ?>
 										</span>
@@ -513,7 +530,23 @@ $collManager->cleanOutArr($collData);
 							?>
 							<div class="field-block">
 								<span class="field-elem">
-									<label for="guidTarget" title="Source of Global Unique Identifier"> <?php echo (isset($LANG['GUID_SOURCE']) ? htmlspecialchars($LANG['GUID_SOURCE'], HTML_SPECIAL_CHARS_FLAGS) : 'GUID source'); ?>: </label>
+
+									<fieldset>
+										<legend> <?php echo (isset($LANG['GUID_SOURCE']) ? htmlspecialchars($LANG['GUID_SOURCE'], HTML_SPECIAL_CHARS_FLAGS) : 'GUID source'); ?>: </legend>
+										
+										<input class="top-breathing-room-rel-sm" id="occurrenceId" type="radio" name="guidTarget" value="occurrenceId" CHECKED> <label for="occurrenceId">  <?php echo (isset($LANG['OCCURRENCE_ID']) ? $LANG['OCCURRENCE_ID'] : 'occurrenceID GUID'); ?> </label> <br/>
+										<input id="catalogNumber" type="radio" name="guidTarget" value="catalogNumber" > <label for="catalogNumber"> <?php echo (isset($LANG['CAT_NUM']) ? $LANG['CAT_NUM'] : 'Catalog Number'); ?> </label> <br/>
+										<input id="symbiotaUUID" type="radio" name="guidTarget" value="symbiotaUUID" > <label for="symbiotaUUID">  <?php echo (isset($LANG['SYMB_GUID']) ? $LANG['SYMB_GUID'] : 'Symbiota Generated GUID (UUID)'); ?> </label>
+										
+										<a id="guidinfo" href="#" onclick="return false" tabindex="0">
+											<img src="../../images/info.png" style="width:15px;" alt="Show more information" title="<?php echo (isset($LANG['MORE_INFO_GUID']) ? $LANG['MORE_INFO_GUID'] : 'More information about Global Unique Identifier'); ?>"/>
+										</a>
+
+										<script src="../../js/symb/collections.misc.collmetadata.js"></script>
+									</fieldset>
+
+									<!-- <label for="guidTarget" title="Source of Global Unique Identifier"> <?php echo (isset($LANG['GUID_SOURCE']) ? htmlspecialchars($LANG['GUID_SOURCE'], HTML_SPECIAL_CHARS_FLAGS) : 'GUID source'); ?>: </label>
+									
 									<select id="guidTarget" name="guidTarget" onchange="checkManagementTypeGuidSource(this.form)">
 										<option value=""><?php echo (isset($LANG['NOT_DEFINED']) ? $LANG['NOT_DEFINED'] : 'Not defined'); ?></option>
 										<option value="">-------------------</option>
@@ -523,7 +556,8 @@ $collManager->cleanOutArr($collData);
 									</select>
 									<a id="guidinfo" href="#" onclick="return false" tabindex="0">
 										<img src="../../images/info.png" style="width:15px;" alt="Show more information" title="<?php echo (isset($LANG['MORE_INFO_GUID']) ? $LANG['MORE_INFO_GUID'] : 'More information about Global Unique Identifier'); ?>"/>
-									</a>
+									</a> -->
+
 									<span id="guidinfodialog" aria-live="polite">
 										<?php
 										echo (isset($LANG['OCCID_DEF_1']) ? $LANG['OCCID_DEF_1'] : '');
