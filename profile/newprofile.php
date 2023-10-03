@@ -8,9 +8,9 @@ header('Cache-Control: no-cache, no-cache="set-cookie", no-store, must-revalidat
 header('Pragma: no-cache'); // HTTP 1.0.
 header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
-$login = array_key_exists('login',$_POST)?$_POST['login']:'';
-$emailAddr = array_key_exists('email',$_POST)?$_POST['email']:'';
-$action = array_key_exists("submit",$_REQUEST)?$_REQUEST["submit"]:'';
+$login = array_key_exists('login', $_POST) ? htmlspecialchars($_POST['login'], HTML_SPECIAL_CHARS_FLAGS) : '';
+$emailAddr = array_key_exists('email',$_POST) ? htmlspecialchars($_POST['email'], HTML_SPECIAL_CHARS_FLAGS) : '';
+$action = array_key_exists('submit', $_POST) ? $_POST['submit'] : '';
 
 $pHandler = new ProfileManager();
 $displayStr = '';
@@ -28,14 +28,13 @@ if($emailAddr){
 		$displayStr = (isset($LANG['INVALID_EMAIL'])?$LANG['INVALID_EMAIL']:'Invalid email address');
 	}
 }
-if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) $action = '';
 
 $useRecaptcha = false;
 if(isset($RECAPTCHA_PUBLIC_KEY) && $RECAPTCHA_PUBLIC_KEY && isset($RECAPTCHA_PRIVATE_KEY) && $RECAPTCHA_PRIVATE_KEY){
 	$useRecaptcha = true;
 }
 
-if($action == "Create Login"){
+if($action == 'Create Login'){
 	$okToCreateLogin = true;
 	if($useRecaptcha){
 		$captcha = urlencode($_POST['g-recaptcha-response']);
@@ -229,7 +228,7 @@ if($action == "Create Login"){
 					</section>
 					<section class="gridlike-form-row">
 						<label class="gridlike-form-row-label" for="city"><?php echo (isset($LANG['CITY'])?$LANG['CITY']:'City'); ?>:</label>
-						<input class="gridlike-form-row-input" id="city" name="city" type="text" size="40" value="<?php echo (isset($_POST['city'])?$_POST['city']:''); ?>">
+						<input class="gridlike-form-row-input" id="city" name="city" type="text" size="40" value="<?php echo (isset($_POST['city'])?htmlspecialchars($_POST['city']):''); ?>">
 					</section>
 					<section class="gridlike-form-row">
 						<label class="gridlike-form-row-label" for="state"><?php echo (isset($LANG['STATE'])?$LANG['STATE']:'State'); ?>:</label>

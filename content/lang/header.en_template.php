@@ -44,6 +44,8 @@ $LANG['H_MY_PROFILE'] = 'My Profile';
 $LANG['H_LOGOUT'] = 'Sign Out';
 $LANG['H_LOGIN'] = 'Sign In';
 $LANG['H_NEW_ACCOUNT'] = 'New Account';
+$LANG['SELECT_LANGUAGE'] = 'Select Language';
+
 $LANG['TOGGLE_508_OFF'] = "Condensed Mode";
 $LANG['TOGGLE_508_ON'] = "Accessibility Mode";
 $LANG['SELECT_LANGUAGE'] = 'Select Language';
@@ -60,5 +62,9 @@ $LANG['SPECIMENS'] = 'Specimens';
 $LANG['IMG_CONTR'] = 'Image Contributors';
 $LANG['OBS'] = 'Observations';
 
+$LANG['NAV_HOME'] = 'Home';
+$LANG['NAV_IMG_LIB'] = 'Image Library';
+$LANG['NAV_IMG_CONTR'] = 'Image Contributors';
+$LANG['NAV_IMG_SEARCH'] = 'Image Search';
+$LANG['SKIP_NAV'] = 'Skip Navigation';
 ?>
-

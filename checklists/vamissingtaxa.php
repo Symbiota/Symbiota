@@ -84,8 +84,8 @@ if($isEditor){
 							ksort($missingArr);
 							foreach($missingArr as $sciname => $sArr){
 								foreach($sArr as $occid => $oArr){
-									$sciStr = $sciname;
-									if($sciStr != $oArr['o_sn']) $sciStr .= ' (syn: '.$oArr['o_sn'].')';
+									$sciStr = $oArr['o_sn'];
+									if(strtolower($sciname) != strtolower($oArr['o_sn'])) $sciStr .= ' (='.$sciname.')';
 									echo '<tr>';
 									echo '<td><input name="occids[]" type="checkbox" value="'.$occid.'-'.$oArr['tid'].'" /></td>';
 									echo '<td><a href="../taxa/index.php?taxon=' . htmlspecialchars($oArr['tid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($sciStr, HTML_SPECIAL_CHARS_FLAGS) . '</a></td>';

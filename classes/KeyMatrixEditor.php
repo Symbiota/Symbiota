@@ -21,10 +21,10 @@ class KeyMatrixEditor extends KeyManager{
 
 	public function getCharList($tidFilter){
 		$retArr = Array();
-		$sql = 'SELECT DISTINCT ch.headingname, c.CID, c.CharName '.
-			'FROM kmcharacters c INNER JOIN kmchartaxalink ctl ON c.CID = ctl.CID '.
+		$sql = 'SELECT DISTINCT ch.headingName, c.cid, c.charName '.
+			'FROM kmcharacters c INNER JOIN kmchartaxalink ctl ON c.cid = ctl.cid '.
 			'LEFT JOIN kmcharheading ch ON c.hid = ch.hid '.
-			'LEFT JOIN kmchardependance cd ON c.CID = cd.CID '.
+			'LEFT JOIN kmchardependance cd ON c.cid = cd.cid '.
 			'WHERE (ch.language IS NULL OR ch.language = "'.$this->language.'") AND (c.chartype IN("UM","OM")) ';
 		$strFrag = '';
 		if($tidFilter && is_numeric($tidFilter)){
@@ -35,14 +35,14 @@ class KeyMatrixEditor extends KeyManager{
 			if($parTidArr) $strFrag = implode(',',$parTidArr);
 		}
 		if($strFrag){
-			$sql .= 'AND (ctl.TID In ('.$strFrag.') AND ctl.relation = "include") '.
-				'AND (c.cid NOT In(SELECT DISTINCT CID FROM kmchartaxalink WHERE (TID In ('.$strFrag.') AND relation = "exclude"))) ';
+			$strFrag = trim($strFrag, ', ');
+			$sql .= 'AND (ctl.tid In ('.$strFrag.') AND ctl.relation = "include") '.
+				'AND (c.cid NOT In(SELECT DISTINCT cid FROM kmchartaxalink WHERE (tid In ('.$strFrag.') AND relation = "exclude"))) ';
 		}
-		$sql .= 'ORDER BY c.hid, c.SortSequence, c.CharName';
-		//echo $sql;
+		$sql .= 'ORDER BY c.hid, c.sortSequence, c.charName';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->headingname][$r->CID] = $r->CharName;
+			$retArr[$r->headingName][$r->cid] = $r->charName;
 		}
 		$rs->free();
 		return $retArr;

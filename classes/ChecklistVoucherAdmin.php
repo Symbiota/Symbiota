@@ -1,5 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/Manager.php');
+include_once('Manager.php');
+include_once('ImInventories.php');
 
 class ChecklistVoucherAdmin extends Manager {
 
@@ -110,13 +111,13 @@ class ChecklistVoucherAdmin extends Manager {
 	}
 
 	public function getAssociatedExternalService(){
-		$resp = 'FALSE';
+		$resp = false;
  		if($this->clMetadata['dynamicProperties']){
-			$dynpropArr = json_decode($this->clMetadata['dynamicProperties'], TRUE);
+			$dynpropArr = json_decode($this->clMetadata['dynamicProperties'], true);
 			if(array_key_exists('externalservice', $dynpropArr)) {
 				$resp = $dynpropArr['externalservice'];
 			}
-		} 
+		}
 		return $resp;
 	}
 
@@ -366,7 +367,7 @@ class ChecklistVoucherAdmin extends Manager {
 		return $statusCnt;
 	}
 
-	public function linkVoucher($taxa, $occid, $morphoSpecies=''){
+	public function linkVoucher($taxa, $occid, $morphoSpecies = '', $editorNotes = null, $notes = null){
 		$status = false;
 		if($this->voucherIsLinked($occid)){
 			$this->errorMessage = 'voucherAlreadyLinked';
@@ -376,23 +377,32 @@ class ChecklistVoucherAdmin extends Manager {
 		$clTaxaID = $this->getClTaxaID($taxa, $morphoSpecies);
 		if(!$clTaxaID) $clTaxaID = $this->insertChecklistTaxaLink($taxa);
 		if($clTaxaID){
-			$status = $this->insertVoucher($clTaxaID, $occid);
+			$status = $this->insertVoucher($clTaxaID, $occid, $editorNotes, $notes);
 		}
 		return $status;
 	}
 
 	public function linkTaxaVouchers($occidArr, $useCurrentTaxon = true, $linkVouchers = true){
-		$tidsUsed = array();
+		$tidMap = array();
 		foreach($occidArr as $v){
 			$vArr = explode('-',$v);
-			$tid = $vArr[1];
-			$occid = $vArr[0];
-			if(count($vArr) == 2 && is_numeric($occid) && is_numeric($tid)){
-				if($useCurrentTaxon) $tid = $this->getTidAccepted($tid);
-				if(!in_array($tid, $tidsUsed)){
-					//Add name to checklist
-					$clTaxaID = $this->insertChecklistTaxaLink($tid);
-					$tidsUsed[] = $tid;
+			if(count($vArr) == 2){
+				$tid = $vArr[1];
+				$occid = $vArr[0];
+				if(is_numeric($occid) && is_numeric($tid)){
+					$clTaxaID = 0;
+					if(isset($tidMap[$tid])) $clTaxaID = $tidMap[$tid];
+					else{
+						$clTaxaID = $this->getClTaxaID($tid);
+						if(!$clTaxaID){
+							if($useCurrentTaxon){
+								$tid = $this->getTidAccepted($tid);
+							}
+							//Add name to checklist
+							$clTaxaID = $this->insertChecklistTaxaLink($tid);
+						}
+						$tidMap[$tid] = $clTaxaID;
+					}
 					if($clTaxaID && $linkVouchers){
 						$this->insertVoucher($clTaxaID, $occid);
 					}
@@ -452,6 +462,40 @@ class ChecklistVoucherAdmin extends Manager {
 		}
 	}
 
+	//Checklist Coordinate functions
+	public function addExternalVouchers($tid, $dataAsJson){
+		// EG suggested storing external (e.g., iNaturalist) voucher records in the `fmchklstcoordinates` table as this table
+		//   was un- or under-used as of schema 3.0. The `notes` column serves as a flag for these vouchers. --CDT 2023-08-21
+		$status = false;
+		$inputData = json_decode($dataAsJson, true);
+		// for single vouchers, add ll, for multiple use zero :(.
+		// we could try averaging ll for multiples, but then the software would be introducing non-real data, which is bad.
+		// not that zero/zero is real data either... CDT 8/2023
+		$lat = (count($inputData) == 1 ? $inputData[0]['lat'] : 0);
+		$lng = (count($inputData) == 1 ? $inputData[0]['lng'] : 0);
+		$sourceIdentifier = $inputData[0]['id'];
+		$referenceUrl = null;
+		if($sourceIdentifier) $referenceUrl = 'https://www.inaturalist.org/observations/'.$sourceIdentifier;
+		if(is_numeric($tid) && $lat && $lng){
+			unset($inputData[0]['lat']);
+			unset($inputData[0]['lng']);
+			unset($inputData[0]['taxon']);
+			$inputArr = array('tid' => $tid, 'decimalLatitude' => $lat, 'decimalLongitude' => $lng, 'sourceName' => 'EXTERNAL_VOUCHER',
+				'sourceIdentifier' => $sourceIdentifier, 'referenceUrl' => $referenceUrl, 'dynamicProperties' => json_encode($inputData));
+			$inventoryManager = new ImInventories();
+			$inventoryManager->setClid($this->clid);
+			if($inventoryManager->insertChecklistCoordinates($inputArr)){
+				$status = true;
+			}
+			else{
+				$errStr = $inventoryManager->getErrorMessage();
+				if(strpos($errStr, 'Duplicate') !== false) $errStr = 'Voucher already linked!';
+				$this->errorMessage = $errStr;
+			}
+		}
+		return $status;
+	}
+
 	//Data mod functions
 	protected function insertChecklistTaxaLink($tid, $clid = null, $morpho = ''){
 		$status = false;
@@ -507,16 +551,39 @@ class ChecklistVoucherAdmin extends Manager {
 		return $status;
 	}
 
+	public function deleteVoucher($voucherID){
+		$status = false;
+		if(is_numeric($voucherID)){
+			$sql = 'DELETE FROM fmvouchers WHERE (voucherID = ?)';
+			if($stmt = $this->conn->prepare($sql)) {
+				$stmt->bind_param('i', $voucherID);
+				$stmt->execute();
+				if($stmt->affected_rows) $status = true;
+				elseif($stmt->error) $this->errorMessage = 'ERROR deleting vouchers: '.$stmt->error;
+				$stmt->close();
+			}
+			else $this->errorMessage = 'ERROR preparing statement for voucher deletion: '.$this->conn->error;
+		}
+		return $status;
+	}
+
 	//Misc support and data functions
 	protected function getClTaxaID($tid, $morphoSpecies = ''){
 		$clTaxaID = 0;
+		$resultTid = 0;
 		if(is_numeric($tid)){
-			$sql = 'SELECT clTaxaID FROM fmchklsttaxalink WHERE clid = ? AND tid = ? AND morphospecies = ?';
-			if($stmt = $this->conn->prepare($sql)) {
+			$sql = 'SELECT c.clTaxaID, c.tid
+				FROM fmchklsttaxalink c INNER JOIN taxstatus ts ON c.tid = ts.tid
+				INNER JOIN taxstatus ts2 ON ts.tidaccepted = ts2.tidaccepted
+				WHERE ts.taxAuthID = 1 AND ts2.taxAuthID = 1 AND c.clid = ? AND ts2.tid = ? AND c.morphospecies = ?';
+			if($stmt = $this->conn->prepare($sql)){
 				if($stmt->bind_param('iis', $this->clid, $tid, $morphoSpecies)){
 					$stmt->execute();
-					$stmt->bind_result($clTaxaID);
-					$stmt->fetch();
+					$stmt->bind_result($clTaxaID, $resultTid);
+					while($stmt->fetch()){
+						//If there are multiple accepted records, take preferrence to clTaxaID associated with the accepted taxon
+						if($tid == $resultTid) break;
+					}
 					$stmt->close();
 				}
 				else $this->errorMessage = 'ERROR binding params for getClTaxaID: '.$this->conn->error;

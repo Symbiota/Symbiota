@@ -32,9 +32,13 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 
 	public function getImageArr($pageRequest,$cntPerPage){
 		$retArr = Array();
+		$includeOccurrenceTable = false;
+		if($this->imageType == 1 || $this->imageType == 2 || ($this->dbStr && $this->dbStr != 'all')) $includeOccurrenceTable = true;
 		$this->setSqlWhere();
 		$this->setRecordCnt();
-		$sql = 'SELECT i.imgid, i.tid, IFNULL(t.sciname,o.sciname) as sciname, i.url, i.thumbnailurl, i.originalurl, i.photographeruid, i.caption, i.occid ';
+		$sql = 'SELECT i.imgid, i.tid, i.url, i.thumbnailurl, i.originalurl, i.photographeruid, i.caption, i.occid, ';
+		if($includeOccurrenceTable) $sql .= 'IFNULL(t.sciname,o.sciname) as sciname ';
+		else $sql .= 't.sciname ';
 		/*
 		$sql = 'SELECT DISTINCT i.imgid, o.tidinterpreted, t.tid, t.sciname, i.url, i.thumbnailurl, i.originalurl, i.photographeruid, i.caption, '.
 			'o.occid, o.stateprovince, o.catalognumber, CONCAT_WS("-",c.institutioncode, c.collectioncode) as instcode ';
@@ -42,10 +46,12 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		$sqlWhere = $this->sqlWhere;
 		if($this->imageCount == 'taxon') $sqlWhere .= 'GROUP BY sciname ';
 		elseif($this->imageCount == 'specimen') $sqlWhere .= 'GROUP BY i.occid ';
-		if($this->sqlWhere) $sqlWhere .= 'ORDER BY o.sciname ';
+		if($this->sqlWhere){
+			if($includeOccurrenceTable) $sqlWhere .= 'ORDER BY o.sciname ';
+			else  $sqlWhere .= 'ORDER BY t.sciname ';
+		}
 		$bottomLimit = ($pageRequest - 1)*$cntPerPage;
 		$sql .= $this->getSqlBase().$sqlWhere.'LIMIT '.$bottomLimit.','.$cntPerPage;
-		//echo '<div>Spec sql: '.$sql.'</div>';
 		$occArr = array();
 		$result = $this->conn->query($sql);
 		$imgId = 0;
@@ -93,105 +99,19 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		return $retArr;
 	}
 
-	private function getSqlBase(){
-		$sql = 'FROM images i ';
-		if($this->taxaArr){
-			$sql .= 'INNER JOIN taxa t ON i.tid = t.tid ';
-		}
-		else{
-			$sql .= 'LEFT JOIN taxa t ON i.tid = t.tid ';
-		}
-		if(strpos($this->sqlWhere,'ts.taxauthid')){
-			$sql .= 'INNER JOIN taxstatus ts ON i.tid = ts.tid ';
-		}
-		if(strpos($this->sqlWhere,'e.taxauthid') || $this->tidFocus){
-			$sql .= 'INNER JOIN taxaenumtree e ON i.tid = e.tid ';
-		}
-		$sql .= 'LEFT JOIN omoccurrences o ON i.occid = o.occid ';
-		if($this->imageType == 1 || $this->imageType == 2){
-			$sql .= 'LEFT JOIN omcollections c ON o.collid = c.collid ';
-		}
-		if($this->tags){
-			$sql .= 'INNER JOIN imagetag it ON i.imgid = it.imgid ';
-		}
-		if($this->keywords){
-			$sql .= 'INNER JOIN imagekeywords ik ON i.imgid = ik.imgid ';
-		}
-		return $sql;
-	}
-
 	private function setSqlWhere(){
 		$sqlWhere = '';
 		if($this->dbStr){
 			$sqlWhere .= OccurrenceSearchSupport::getDbWhereFrag($this->cleanInStr($this->dbStr));
 		}
 		if(isset($this->taxaArr['taxa'])){
-			$sqlWhereTaxa = '';
-			foreach($this->taxaArr['taxa'] as $searchTaxon => $searchArr){
-				$taxonType = $this->taxaArr['taxontype'];
-				if(isset($searchArr['taxontype'])) $taxonType = $searchArr['taxontype'];
-				if($taxonType == TaxaSearchType::TAXONOMIC_GROUP){
-					//Class, order, or other higher rank
-					if(isset($searchArr['tid'])){
-						$tidArr = array_keys($searchArr['tid']);
-						//$sqlWhereTaxa .= 'OR (o.tidinterpreted IN(SELECT DISTINCT tid FROM taxaenumtree WHERE (taxauthid = '.$this->taxAuthId.') AND (parenttid IN('.trim($tidStr,',').') OR (tid = '.trim($tidStr,',').')))) ';
-						$sqlWhereTaxa .= 'OR ((e.taxauthid = '.$this->taxAuthId.') AND ((i.tid IN('.implode(',', $tidArr).')) OR e.parenttid IN('.implode(',', $tidArr).'))) ';
-					}
-				}
-				elseif($taxonType == TaxaSearchType::FAMILY_ONLY){
-					$sqlWhereTaxa .= 'OR ((ts.family = "'.$searchTaxon.'") AND (ts.taxauthid = '.$this->taxAuthId.')) ';
-				}
-				else{
-					if($taxonType == TaxaSearchType::COMMON_NAME){
-						//Common name search
-						$famArr = array();
-						if(array_key_exists("families",$searchArr)){
-							$famArr = $searchArr["families"];
-						}
-						if(array_key_exists("tid",$searchArr)){
-							$tidArr = array_keys($searchArr['tid']);
-							$sql = 'SELECT DISTINCT t.sciname '.
-								'FROM taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
-								'WHERE (t.rankid = 140) AND (e.taxauthid = '.$this->taxAuthId.') AND (e.parenttid IN('.implode(',',$tidArr).'))';
-							$rs = $this->conn->query($sql);
-							while($r = $rs->fetch_object()){
-								$famArr[] = $r->sciname;
-							}
-						}
-						if($famArr){
-							$famArr = array_unique($famArr);
-							$sqlWhereTaxa .= 'OR (ts.family IN("'.implode('","',$famArr).'")) ';
-						}
-						/*
-						if(array_key_exists("scinames",$searchArr)){
-							foreach($searchArr["scinames"] as $sciName){
-								$sqlWhereTaxa .= "OR (o.sciname Like '".$sciName."%') ";
-							}
-						}
-						*/
-					}
-					else{
-						if(array_key_exists("tid",$searchArr)){
-							$rankid = current($searchArr['tid']);
-							$tidArr = array_keys($searchArr['tid']);
-							$sqlWhereTaxa .= "OR (i.tid IN(".implode(',',$tidArr).")) ";
-							if($rankid < 220) $sqlWhereTaxa .= 'OR ((e.taxauthid = '.$this->taxAuthId.') AND (e.parenttid IN('.implode(',', $tidArr).')) AND (ts.taxauthid = '.$this->taxAuthId.' AND ts.tid = ts.tidaccepted)) ';
-							elseif($rankid == 220) $sqlWhereTaxa .= 'OR (ts.parenttid IN('.implode(',', $tidArr).') AND ts.taxauthid = '.$this->taxAuthId.' AND ts.tid = ts.tidaccepted) ';
-						}
-						else{
-							//Return matches for "Pinus a"
-							$sqlWhereTaxa .= "OR (t.sciname LIKE '".$this->cleanInStr($searchTaxon)."%') ";
-						}
-					}
-					if(array_key_exists("synonyms",$searchArr)){
-						$synArr = $searchArr["synonyms"];
-						if($synArr){
-							$sqlWhereTaxa .= 'OR (i.tid IN('.implode(',',array_keys($synArr)).')) ';
-						}
-					}
-				}
+			$sqlWhereTaxa = $this->getTaxonWhereFrag();
+			if(!$this->imageType || $this->imageType == 3){
+				if(strpos($sqlWhereTaxa, 'o.tidinterpreted')) $sqlWhereTaxa = str_replace('o.tidinterpreted', 'i.tid', $sqlWhereTaxa);
+				if(strpos($sqlWhereTaxa, 'o.sciname')) $sqlWhereTaxa = str_replace('o.sciname', 't.sciname', $sqlWhereTaxa);
+				if(strpos($sqlWhereTaxa, 'o.family')) $sqlWhereTaxa = str_replace('o.family', 'ts.family', $sqlWhereTaxa);
 			}
-			if($sqlWhereTaxa) $sqlWhere .= "AND (".substr($sqlWhereTaxa,3).") ";
+			if($sqlWhereTaxa) $sqlWhere .= 'AND ('.substr($sqlWhereTaxa,3).') ';
 		}
 		elseif($this->tidFocus){
 			$sqlWhere .= 'AND (e.parenttid IN('.$this->tidFocus.')) AND (e.taxauthid = 1) ';
@@ -235,9 +155,21 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 			elseif($this->imageCount == 'specimen') $sql = "SELECT COUNT(DISTINCT i.occid) AS cnt ";
 			else $sql = "SELECT COUNT(DISTINCT i.imgid) AS cnt ";
 		}
-		$sql .= 'FROM images i ';
+		$sql .= $this->getSqlBase().$this->sqlWhere;
+		$rs = $this->conn->query($sql);
+		if($r = $rs->fetch_object()){
+			$this->recordCount = $r->cnt;
+		}
+		$rs->free();
+	}
+
+	private function getSqlBase(){
+		$sql = 'FROM images i ';
 		if($this->taxaArr){
 			$sql .= 'INNER JOIN taxa t ON i.tid = t.tid ';
+		}
+		else{
+			$sql .= 'LEFT JOIN taxa t ON i.tid = t.tid ';
 		}
 		if(strpos($this->sqlWhere,'ts.taxauthid')){
 			$sql .= 'INNER JOIN taxstatus ts ON i.tid = ts.tid ';
@@ -257,13 +189,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		elseif($this->dbStr && $this->dbStr != 'all'){
 			$sql .= 'INNER JOIN omoccurrences o ON i.occid = o.occid ';
 		}
-		$sql .= $this->sqlWhere;
-		//echo "<div>Count sql: ".$sql."</div>";
-		$result = $this->conn->query($sql);
-		if($row = $result->fetch_object()){
-			$this->recordCount = $row->cnt;
-		}
-		$result->free();
+		return $sql;
 	}
 
 	public function getFullCollectionList($catId = ''){

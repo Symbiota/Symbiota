@@ -71,7 +71,7 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 		});
 	</script>
 	<script src="../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
-	<script src="../js/symb/imagelib.search.js?ver=201910" type="text/javascript"></script>
+	<script src="../js/symb/imagelib.search.js?ver=2" type="text/javascript"></script>
 </head>
 <body>
 	<?php

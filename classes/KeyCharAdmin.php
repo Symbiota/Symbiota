@@ -195,13 +195,14 @@ class KeyCharAdmin{
 				$rs->free();
 			}
 			$csName = $postArr['charstatename'];
-			$glossID = $postArr['glossid'];
+			$glossID = null;
+			if(isset($postArr['glossid']) && is_numeric($postArr['glossid'])) $glossID = $postArr['glossid'];
 			$description = $postArr['description'];
 			$notes = $postArr['notes'];
 			$sortSequence = $postArr['sortsequence'];
 			$sql = 'INSERT INTO kmcs(cid,cs,charstatename,implicit,glossid,description,notes,sortsequence,enteredby) '.
 				'VALUES('.$this->cid.',"'.$csValue.'","'.$this->cleanInStr($csName).'",1,'.
-				(is_numeric($glossID)?$glossID:'NULL').','.
+				($glossID?$glossID:'NULL').','.
 				($description?'"'.$this->cleanInStr($description).'"':'NULL').','.
 				($notes?'"'.$this->cleanInStr($notes).'"':'NULL').','.
 				(is_numeric($sortSequence)?$this->cleanInStr($sortSequence):100).',"'.$un.'") ';
@@ -546,8 +547,11 @@ class KeyCharAdmin{
 
 	//General functions
 	private function cleanOutStr($str){
-		$newStr = str_replace('"',"&quot;",$str);
-		$newStr = str_replace("'","&apos;",$newStr);
+		$newStr = $str;
+		if(isset($str)){
+			$newStr = str_replace('"',"&quot;",$str);
+			$newStr = str_replace("'","&apos;",$newStr);
+		}
 		//$newStr = $this->conn->real_escape_string($newStr);
 		return $newStr;
 	}
