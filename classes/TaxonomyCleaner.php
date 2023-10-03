@@ -136,7 +136,7 @@ class TaxonomyCleaner extends Manager{
 							}
 							$idQual = (isset($taxonArr['identificationqualifier'])?str_replace("'", '', $taxonArr['identificationqualifier']):'');
 							$echoStr = '<i>'.implode(' ',$snTokens).'</i> =&gt; <span class="hideOnLoad">wait for page to finish loading...</span><span class="displayOnLoad" style="display:none">'.
-								'<a href="#" onclick="return remappTaxon(\''.urlencode($r->sciname) . '\',' . htmlspecialchars($tidMatch, HTML_SPECIAL_CHARS_FLAGS)  . ',\'' . htmlspecialchars($idQual, HTML_SPECIAL_CHARS_FLAGS) . '\',' . htmlspecialchars($itemCnt, HTML_SPECIAL_CHARS_FLAGS) . ')" style="color:blue"> remap to this taxon</a>'.
+								'<a href="#" onclick="return remappTaxon(\''.urlencode($r->sciname).'\','.$tidMatch.',\''.$idQual.'\','.$itemCnt.')" style="color:blue"> remap to this taxon</a>'.
 								'<span id="remapSpan-'.$itemCnt.'"></span></span>';
 							$this->logOrEcho($echoStr,2);
 							$itemCnt++;

@@ -1,12 +1,15 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDataset.php');
+include_once($SERVER_ROOT.'/content/lang/collections/datasets/publiclist.'.$LANG_TAG.'.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $datasetManager = new OccurrenceDataset();
 $dArr = $datasetManager->getPublicDatasets();
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title>Public Datasets List</title>
 		<?php
@@ -19,12 +22,12 @@ $dArr = $datasetManager->getPublicDatasets();
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div class="navpath">
-			<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php">Home</a> &gt;&gt;
-			<b>Public Datasets List</b>
+			<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php"> <?php echo htmlspecialchars($LANG['H_HOME'], HTML_SPECIAL_CHARS_FLAGS) ?> </a> &gt;&gt;
+			<b> <?php echo htmlspecialchars($LANG['PUB_DAT_LIST'], HTML_SPECIAL_CHARS_FLAGS) ?> </b>
 		</div>
 		<!-- This is inner text! -->
 		<div id="innertext">
-			<h1>Public Datasets List</h1>
+			<h1> <?php echo htmlspecialchars($LANG['PUB_DAT_LIST'], HTML_SPECIAL_CHARS_FLAGS) ?> </h1>
 			<ul>
 				<?php
 				if($dArr){

@@ -7,16 +7,17 @@ header("Content-Type: text/html; charset=".$CHARSET);
 if(!$SYMB_UID) header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=../collections/loans/outgoing.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $collid = $_REQUEST['collid'];
-$loanId = array_key_exists('loanid',$_REQUEST)?$_REQUEST['loanid']:0;
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
-$sortTag = (isset($_REQUEST['sortTag'])?$_REQUEST['sortTag']:'');
-$formSubmit = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
+$loanId = array_key_exists('loanid', $_REQUEST) ? $_REQUEST['loanid'] : 0;
+$tabIndex = array_key_exists('tabindex', $_REQUEST) ? $_REQUEST['tabindex'] : 0;
+$sortTag = (isset($_REQUEST['sortTag']) ? $_REQUEST['sortTag'] : '');
+$formSubmit = array_key_exists('formsubmit', $_REQUEST) ? $_REQUEST['formsubmit'] : '';
+
+$loanManager = new OccurrenceLoans();
 
 //Sanitation
-if(!is_numeric($collid)) $collid = 0;
-if(!is_numeric($loanId)) $loanId = 0;
-if(!is_numeric($tabIndex)) $tabIndex = 0;
-$sortTag = filter_var($sortTag, FILTER_SANITIZE_STRING);
+$collid = $loanManager->sanitizeInt($collid);
+$loanId = $loanManager->sanitizeInt($loanId);
+$tabIndex = $loanManager->sanitizeInt($tabIndex);
 
 $isEditor = 0;
 if($SYMB_UID && $collid){
@@ -26,7 +27,6 @@ if($SYMB_UID && $collid){
 	}
 }
 
-$loanManager = new OccurrenceLoans();
 if($collid) $loanManager->setCollId($collid);
 
 $statusStr = '';
@@ -178,10 +178,10 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 			}
 			?>
 			<div id="tabs" style="margin:0px;">
-			    <ul>
-					<li><a href="#outloandetaildiv"><span><?php echo $LANG['LOAN_DETAILS']; ?></span></a></li>
-					<li><a href="specimentab.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($loanId, HTML_SPECIAL_CHARS_FLAGS) . '&sortTag=' . htmlspecialchars($sortTag, HTML_SPECIAL_CHARS_FLAGS); ?>"><span><?php echo $LANG['CAP_SPECIMENS']; ?></span></a></li>
-					<li><a href="#outloandeldiv"><span><?php echo $LANG['ADMIN']; ?></span></a></li>
+			  <ul>
+					<li><a href="#outloandetaildiv"><span><?= $LANG['LOAN_DETAILS'] ?></span></a></li>
+					<li><a href="specimentab.php?collid=<?= $collid . '&loanid=' . $loanId . '&sortTag=' . htmlspecialchars($sortTag, HTML_SPECIAL_CHARS_FLAGS) ?>"><span><?= $LANG['CAP_SPECIMENS'] ?></span></a></li>
+					<li><a href="#outloandeldiv"><span><?= $LANG['ADMIN'] ?></span></a></li>
 				</ul>
 				<div id="outloandetaildiv">
 					<?php

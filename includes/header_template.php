@@ -14,17 +14,17 @@ $isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
 				<?php
 				if ($USER_DISPLAY_NAME) {
 					?>
-					<span>
+					<div class="welcome-text">
 						<?php echo (isset($LANG['H_WELCOME'])?$LANG['H_WELCOME']:'Welcome').' '.$USER_DISPLAY_NAME; ?>!
-					</span>
-					<span class="button button-tertiary">
+					</div>
+					<span style="white-space: nowrap; padding: 0.8rem;" class="button button-tertiary">
 						<a class="accessibility-button" onclick="toggleAccessibilityStyles('<?php echo $CLIENT_ROOT . '/includes' . '/' ?>', '<?php echo $CSS_BASE_PATH ?>', '<?php echo $LANG['TOGGLE_508_OFF'] ?>', '<?php echo $LANG['TOGGLE_508_ON'] ?>')" id="accessibility-button" data-accessibility="accessibility-button" ><?php echo (isset($LANG['TOGGLE_508_ON'])?$LANG['TOGGLE_508_ON']:'Accessibility Mode'); ?></a>
 					</span>
-					<span class="button button-tertiary">
-						<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/profile/viewprofile.php"><?php echo htmlspecialchars((isset($LANG['H_MY_PROFILE'])?$LANG['H_MY_PROFILE']:'My Profile'), HTML_SPECIAL_CHARS_FLAGS)?></a>
+					<span style="white-space: nowrap; padding: 0.8rem;" class="button button-tertiary">
+						<a style="font-size: 1.1em;" href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/profile/viewprofile.php"><?php echo htmlspecialchars((isset($LANG['H_MY_PROFILE'])?$LANG['H_MY_PROFILE']:'My Profile'), HTML_SPECIAL_CHARS_FLAGS)?></a>
 					</span>
-					<span class="button button-secondary">
-						<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/profile/index.php?submit=logout"><?php echo htmlspecialchars((isset($LANG['H_LOGOUT'])?$LANG['H_LOGOUT']:'Sign Out'), HTML_SPECIAL_CHARS_FLAGS)?></a>
+					<span style="white-space: nowrap; padding: 0.8rem;" class="button button-secondary">
+						<a style="font-size: 1.1em;" href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/profile/index.php?submit=logout"><?php echo htmlspecialchars((isset($LANG['H_LOGOUT'])?$LANG['H_LOGOUT']:'Sign Out'), HTML_SPECIAL_CHARS_FLAGS)?></a>
 					</span>
 					<?php
 				} else {
@@ -34,7 +34,7 @@ $isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
 					</span>
 					<span class="button button-tertiary">
 						<a onclick="window.location.href='#'">
-							Contact Us
+							<?php echo htmlspecialchars($LANG['CONTACT_US'], HTML_SPECIAL_CHARS_FLAGS); ?>
 						</a>
 					</span>
 					<span class="button button-secondary">

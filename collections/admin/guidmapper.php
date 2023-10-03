@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/UuidFactory.php');
@@ -17,7 +19,7 @@ if($IS_ADMIN || array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$
 
 $uuidManager = new UuidFactory();
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo (isset($LANG['UID_MAP'])?$LANG['UID_MAP']:'GUID (UUID) Mapper'); ?></title>
@@ -109,7 +111,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					<legend><b><?php echo (isset($LANG['UID_MAP'])?$LANG['UID_MAP']:'GUID (UUID) Mapper'); ?></b></legend>
 					<div style="clear:both;">
 						<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
-						<input type="submit" name="formsubmit" value="Populate Collection GUIDs" />
+						<input type="submit" name="formsubmit" value="<?php echo (isset($LANG['POP_COLL_GUID'])?$LANG['POP_COLL_GUID']:'Populate Collection GUIDs'); ?>" />
 					</div>
 				</fieldset>
 			</form>
@@ -123,7 +125,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						<legend><b><?php echo (isset($LANG['UID_MAP'])?$LANG['UID_MAP']:'GUID (UUID) Mapper'); ?></b></legend>
 						<div style="clear:both;margin:10px;">
 							<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
-							<input type="submit" name="formsubmit" value="Populate GUIDs" />
+							<input type="submit" name="formsubmit" value="<?php echo (isset($LANG['POP_GUID'])?$LANG['POP_GUID']:'Populate GUIDs'); ?>" />
 						</div>
 					</fieldset>
 				</form>

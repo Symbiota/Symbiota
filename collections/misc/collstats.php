@@ -226,7 +226,7 @@ if($action != "Update Statistics"){
 	<html lang="<?php echo $LANG_TAG ?>">
 		<head>
 			<meta name="keywords" content="Natural history collections statistics" />
-			<title><?php echo $DEFAULT_TITLE.(isset($LANG['COL_STATS'])?$LANG['COL_STATS']:'Collection Statistics'); ?></title>
+			<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['COL_STATS'])?$LANG['COL_STATS']:'Collection Statistics'); ?></title>
 			<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 			<?php
 			include_once($SERVER_ROOT.'/includes/head.php');

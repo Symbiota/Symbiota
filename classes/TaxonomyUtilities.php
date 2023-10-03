@@ -12,7 +12,8 @@ class TaxonomyUtilities {
 	public static function parseScientificName($inStr, $conn = null, $rankId = 0, $kingdomName = null){
 		//Converts scinetific name with author embedded into separate fields
 		$retArr = array('unitname1'=>'','unitname2'=>'','unitind3'=>'','unitname3'=>'');
-		$inStr = trim($inStr);
+		//Remove UTF-8 NO-BREAK SPACE codepoints
+		$inStr = trim(str_replace(chr(194).chr(160), ' ', $inStr));
 		if($inStr && is_string($inStr)){
 			//Remove underscores, common in NPS data
 			$inStr = preg_replace('/_+/',' ',$inStr);
