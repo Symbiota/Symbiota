@@ -61,7 +61,9 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USE
 		$statusStr = $clManager->deleteProject($_POST['pid']);
 	}
 	elseif($action == 'addPoint'){
-		$statusStr = $clManager->addPoint($_POST['pointtid'],$_POST['pointlat'],$_POST['pointlng'],$_POST['notes']);
+		if(!$clManager->addPoint($_POST['pointtid'], $_POST['pointlat'], $_POST['pointlng'], $_POST['notes'])){
+			$statusStr = $clManager->getErrorMessage();
+		}
 	}
 	elseif($action && array_key_exists('clidadd',$_POST)){
 		if(!$clManager->addChildChecklist($_POST['clidadd'])){

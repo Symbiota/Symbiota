@@ -4,9 +4,9 @@ include_once($SERVER_ROOT.'/content/lang/collections/misc/collprofiles.'.$LANG_T
 $statDisplay = array_key_exists('stat',$_REQUEST)?$_REQUEST['stat']:'';
 
 if($statDisplay == 'geography'){
-	$countryDist = array_key_exists('country',$_REQUEST)?htmlspecialchars($_REQUEST['country']):'';
-	$stateDist = array_key_exists('state',$_REQUEST)?htmlspecialchars($_REQUEST['state']):'';
-	$distArr = $collManager->getGeographyStats($countryDist,$stateDist);
+	$countryDist = array_key_exists('country',$_REQUEST) ? $collManager->cleanOutStr($_REQUEST['country']) : '';
+	$stateDist = array_key_exists('state',$_REQUEST) ? $collManager->cleanOutStr($_REQUEST['state']) : '';
+	$distArr = $collManager->getGeographyStats($countryDist, $stateDist);
 	if($distArr){
 		?>
 		<fieldset id="geographystats" style="margin:20px;width:90%;">
@@ -40,7 +40,7 @@ if($statDisplay == 'geography'){
 	}
 }
 elseif($statDisplay == 'taxonomy'){
-	$famDist = array_key_exists('family',$_REQUEST)?htmlspecialchars($_REQUEST['family']):'';
+	$famDist = array_key_exists('family', $_REQUEST) ? $collManager->cleanOutStr($_REQUEST['family']) : '';
 	$taxArr = $collManager->getTaxonomyStats($famDist);
 	?>
 	<fieldset id="taxonomystats" style="margin:20px;width:90%;">

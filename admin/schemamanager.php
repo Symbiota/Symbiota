@@ -53,6 +53,8 @@ $IS_ADMIN = true;
 							$schemaManager->setPort($port);
 							$schemaManager->setUsername($username);
 							$schemaManager->installPatch();
+							$verHistory = $schemaManager->getVersionHistory();
+							$curentVersion = $schemaManager->getCurrentVersion();
 						}
 						?>
 					</fieldset>

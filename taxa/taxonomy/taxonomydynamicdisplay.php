@@ -1,3 +1,5 @@
+<!Doctype html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyDisplayManager.php');
@@ -13,11 +15,11 @@ $editorMode = array_key_exists('emode',$_POST)?$_POST['emode']:0;
 $statusStr = array_key_exists('statusstr',$_REQUEST)?$_REQUEST['statusstr']:'';
 
 //Sanitation
-$target = filter_var($target, FILTER_SANITIZE_STRING);
+$target = htmlspecialchars($target, HTML_SPECIAL_CHARS_FLAGS);
 $displayAuthor = (is_numeric($displayAuthor)?$displayAuthor:0);
 $taxAuthId = (is_numeric($taxAuthId)?$taxAuthId:0);
 $editorMode = (is_numeric($editorMode)?$editorMode:0);
-$statusStr = filter_var($statusStr, FILTER_SANITIZE_STRING);
+$statusStr = htmlspecialchars($statusStr, HTML_SPECIAL_CHARS_FLAGS);
 
 $taxonDisplayObj = new TaxonomyDisplayManager();
 $taxonDisplayObj->setTargetStr($target);
@@ -35,7 +37,7 @@ $targetId = end($treePath);
 reset($treePath);
 //echo json_encode($treePath);
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' Taxonomy Explorer: '.$taxonDisplayObj->getTargetStr(); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
@@ -45,7 +47,7 @@ reset($treePath);
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
 	<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.14.1/dijit/themes/claro/claro.css" media="screen">
-	<style type="text/css">
+	<style>
 		.dijitLeaf,
 		.dijitIconLeaf,
 		.dijitFolderClosed,
@@ -78,7 +80,7 @@ reset($treePath);
 </head>
 <body class="claro">
 	<?php
-	$displayLeftMenu = (isset($taxa_admin_taxonomydisplayMenu)?$taxa_admin_taxonomydisplayMenu:'false');
+	$displayLeftMenu = (isset($taxa_admin_taxonomydisplayMenu)?$taxa_admin_taxonomydisplayMenu:false);
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
@@ -99,9 +101,10 @@ reset($treePath);
 		}
 		if($isEditor){
 			?>
-			<div style="float:right;" title="<?php echo (isset($LANG['ADD_NEW_TAXON'])?$LANG['ADD_NEW_TAXON']:'Add a New Taxon'); ?>">
+			<div style="float:right;">
 				<a href="taxonomyloader.php" target="_blank">
-					<img style='border:0px;width:15px;' src='../../images/add.png'/>
+					<?php echo (isset($LANG['CREATE_NEW_TAXON'])?$LANG['CREATE_NEW_TAXON']:'Create a New Taxon');  ?>
+					<img class="img-add" src="../../images/add.png" title="<?php echo (isset($LANG['ADD_NEW_TAXON'])?$LANG['ADD_NEW_TAXON']:'Add a New Taxon'); ?>" alt="<?php echo (isset($LANG['PLUS_SIGN_DESC'])?$LANG['PLUS_SIGN_DESC']:'Image of a plus sign, indicating create new taxon'); ?>">
 				</a>
 			</div>
 			<?php
@@ -110,10 +113,10 @@ reset($treePath);
 		<div>
 			<?php
 			$taxMetaArr = $taxonDisplayObj->getTaxonomyMeta();
-			echo '<div style="float:left;margin:10px 0px 25px 0px;font-weight:bold;font-size:120%;">'.$taxMetaArr['name'].'</div>';
+			echo '<div class="tax-meta-arr">'.$taxMetaArr['name'].'</div>';
 			if(count($taxMetaArr) > 1){
-				echo '<div id="taxDetailDiv" style="margin-top:15px;margin-left:5px;float:left;font-size:80%"><a href="#" onclick="displayTaxomonyMeta()">(more details)</a></div>';
-				echo '<div id="taxMetaDiv" style="margin:10px 15px 35px 15px;display:none;clear:both;">';
+				echo '<div id="taxDetailDiv" class="tax-detail-div"><a href="#" onclick="displayTaxomonyMeta()">(more details)</a></div>';
+				echo '<div id="taxMetaDiv" class="tax-meta-div">';
 				if(isset($taxMetaArr['description'])) echo '<div style="margin:3px 0px"><b>'.(isset($LANG['DESCRIPTION'])?$LANG['DESCRIPTION']:'Description').':</b> '.$taxMetaArr['description'].'</div>';
 				if(isset($taxMetaArr['editors'])) echo '<div style="margin:3px 0px"><b>'.(isset($LANG['EDITORS'])?$LANG['EDITORS']:'Editors').':</b> '.$taxMetaArr['editors'].'</div>';
 				if(isset($taxMetaArr['contact'])) echo '<div style="margin:3px 0px"><b>'.(isset($LANG['CONTACT'])?$LANG['CONTACT']:'Contact').':</b> '.$taxMetaArr['contact'].'</div>';
@@ -126,20 +129,25 @@ reset($treePath);
 		</div>
 		<div style="clear:both;">
 			<form id="tdform" name="tdform" action="taxonomydynamicdisplay.php" method='POST'>
-				<fieldset style="padding:10px;width:500px;">
+				<fieldset class="fieldset-size">
 					<legend><b><?php echo (isset($LANG['TAX_SEARCH'])?$LANG['TAX_SEARCH']:'Taxon Search'); ?></b></legend>
                     <div>
-						<b><?php echo (isset($LANG['TAXON'])?$LANG['TAXON']:'Taxon'); ?>:</b>
-						<input id="taxontarget" name="target" type="text" style="width:400px;" value="<?php echo $taxonDisplayObj->getTargetStr(); ?>" />
+						<label for="taxontarget"> <?php echo htmlspecialchars($LANG['TAXON'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
+						<input id="taxontarget" name="target" type="text" class="taxon-search-bar" value="<?php echo $taxonDisplayObj->getTargetStr(); ?>" />
 					</div>
 					<div style="float:right;margin:15px 80px 15px 15px;">
 						<button name="tdsubmit" type="submit" value="displayTaxonTree"><?php echo (isset($LANG['DISP_TAX_TREE'])?$LANG['DISP_TAX_TREE']:'Display Taxon Tree'); ?></button>
 						<input name="taxauthid" type="hidden" value="<?php echo $taxAuthId; ?>" />
 					</div>
 					<div style="margin:15px 15px 0px 60px;">
-						<input name="displayauthor" type="checkbox" value="1" <?php echo ($displayAuthor?'checked':''); ?> /> <?php echo (isset($LANG['DISP_AUTHORS'])?$LANG['DISP_AUTHORS']:'Display authors'); ?>
+						<input id="displayauthor" name="displayauthor" type="checkbox" value="1" <?php echo ($displayAuthor?'checked':''); ?> />
+						<label for="displayauthor"> <?php echo (isset($LANG['DISP_AUTHORS'])?$LANG['DISP_AUTHORS']:'Display authors'); ?> </label>
 						<?php
-						if($isEditor) echo '<br/><input name="emode" type="checkbox" value="1" '.($editorMode?'checked':'').' /> '.(isset($LANG['EDITOR_MODE'])?$LANG['EDITOR_MODE']:'Editor mode');
+						if($isEditor)
+						{
+							echo '<br/><input name="emode" id="emode" type="checkbox" value="1	" '.($editorMode?'checked':'').' /> ';
+							echo '<label for="emode">' . htmlspecialchars($LANG['EDITOR_MODE'], HTML_SPECIAL_CHARS_FLAGS) . '</label>';
+						}
 						?>
 					</div>
 				</fieldset>

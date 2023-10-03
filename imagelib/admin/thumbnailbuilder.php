@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ImageCleaner.php');
@@ -12,7 +14,7 @@ $tid = array_key_exists('tid', $_REQUEST) ? filter_var($_REQUEST['tid'], FILTER_
 $buildMediumDerivatives = array_key_exists('buildmed', $_POST) ? filter_var($_POST['buildmed'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $evaluateOrientation = array_key_exists('evalorientation', $_POST) ? filter_var($_POST['evalorientation'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $limit = array_key_exists('limit', $_POST) ? filter_var($_POST['limit'], FILTER_SANITIZE_NUMBER_INT) : '';
-$action = array_key_exists('action', $_REQUEST) ? filter_var($_REQUEST['action'], FILTER_SANITIZE_STRING) : '';
+$action = array_key_exists('action', $_REQUEST) ? htmlspecialchars($_REQUEST['action'], HTML_SPECIAL_CHARS_FLAGS) : '';
 
 $isEditor = false;
 if($IS_ADMIN) $isEditor = true;
@@ -31,7 +33,7 @@ $imgManager->setTestOrientation($evaluateOrientation);
 //Set default actions
 if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') $buildMediumDerivatives = true;
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['THUMB_BUILDER']; ?></title>
 	<?php
@@ -45,7 +47,7 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 			f.catNumList.value = "";
 		}
 	</script>
-	<style type="text/css">
+	<style>
 		fieldset{ padding: 10px }
 		fieldset legend{ font-weight: bold }
 		.fieldRowDiv{ clear:both; margin: 2px 0px; }
@@ -67,7 +69,7 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 		if($collid) echo '<a href="../../collections/misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . htmlspecialchars($LANG['COL_MAN_MENU'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt;';
 		else echo '<a href="../../sitemap.php">' . htmlspecialchars($LANG['SITEMAP'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt;';
 		?>
-		<b>Thumbnail Builder</b>
+		<b> <?php echo htmlspecialchars($LANG['THUMB_BUILDER'], HTML_SPECIAL_CHARS_FLAGS) ?> </b>
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
@@ -99,8 +101,8 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 				}
 			}
 			?>
-			<fieldset style="margin:30px 10px;padding:15px;">
-				<legend><b><?php echo $LANG['THUMB_BUILDER']; ?></b></legend>
+			<section class="fieldset-like">
+				<h1> <span> <?php echo $LANG['THUMB_BUILDER']; ?> </span> </h1>
 				<div>
 					<?php
 					$reportArr = $imgManager->getReportArr();
@@ -130,20 +132,20 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 						<form name="tnbuilderform" action="thumbnailbuilder.php" method="post">
 							<div class="fieldRowDiv">
 								<div class="fieldDiv">
-									<input name="buildmed" type="checkbox" value="1" <?php echo ($buildMediumDerivatives?'checked':''); ?> />
-									<span class="fieldLabel"> <?php echo $LANG['INCLUDE_MED']; ?></span>
+									<input id="buildmed" name="buildmed" type="checkbox" value="1" <?php echo ($buildMediumDerivatives?'checked':''); ?> />
+									<label for="buildmed" class="fieldLabel"> <?php echo $LANG['INCLUDE_MED']; ?> </label>
 								</div>
 							</div>
 							<div class="fieldRowDiv">
 								<div class="fieldDiv">
-									<input name="evalorientation" type="checkbox" value="1" <?php echo ($evaluateOrientation?'checked':''); ?> />
-									<span class="fieldLabel"> <?php echo $LANG['ROTATE_IMGS']; ?></span>
+									<input id="evalorientation" name="evalorientation" type="checkbox" value="1" <?php echo ($evaluateOrientation?'checked':''); ?> />
+									<label for="evalorientation" class="fieldLabel"> <?php echo $LANG['ROTATE_IMGS']; ?> </label>
 								</div>
 							</div>
 							<div class="fieldRowDiv">
 								<div class="fieldDiv">
-									<?php echo $LANG['PROCESSING_LIMIT']; ?>:
-									<input name="limit" type="number" value="<?php echo $limit; ?>" />
+									<label for="limit"> <?php echo $LANG['PROCESSING_LIMIT']; ?>: </label>
+									<input id="limit" name="limit" type="number" min=0 value="<?php echo intval($limit) ?>" />
 								</div>
 							</div>
 							<div class="fieldRowDiv">
@@ -170,11 +172,11 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 					}
 					?>
 				</div>
-			</fieldset>
+				</section>
 			<?php
 			if($collid){
 				if($remoteImgCnt = $imgManager->getRemoteImageCnt()){
-					?>
+					?>		
 					<fieldset style="margin:30px 10px;padding:15px">
 						<legend><b><?php echo $LANG['THUMB_REMAPPER']; ?></b></legend>
 						<form name="tnrebuildform" action="thumbnailbuilder.php" method="post">
@@ -201,7 +203,8 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 								<span class="fieldLabel"> <?php echo $LANG['INCLUDE_MED']; ?></span>
 							</div>
 							<div style="margin-bottom:10px;">
-								<input name="evalorientation" type="checkbox" value="1" <?php echo ($evaluateOrientation?'checked':''); ?> /> <?php echo $LANG['ROTATE_IMGS']; ?>
+								<input id="evalorientation" name="evalorientation" type="checkbox" value="1" <?php echo ($evaluateOrientation?'checked':''); ?> /> <?php echo $LANG['ROTATE_IMGS']; ?>
+								
 							</div>
 							<div style="margin:20px;clear:both">
 								<input name="collid" type="hidden" value="<?php echo $collid; ?>" />

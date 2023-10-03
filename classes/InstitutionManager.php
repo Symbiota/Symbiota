@@ -218,8 +218,11 @@ class InstitutionManager {
 	}
 
  	private function cleanOutStr($str){
-		$newStr = str_replace('"',"&quot;",$str);
-		$newStr = str_replace("'","&apos;",$newStr);
+		$newStr = $str;
+		if(isset($newStr)){
+			$newStr = str_replace('"',"&quot;",$str);
+			$newStr = str_replace("'","&apos;",$newStr);
+		}
 		//$newStr = $this->conn->real_escape_string($newStr);
 		return $newStr;
 	}

@@ -102,7 +102,7 @@ else{
          }
 
          function trimLatLng(latlng) {
-            const TRIM_COUNT = 6;  
+            const TRIM_COUNT = 6;
 
             return [
                parseFloat(latlng[0].toFixed(TRIM_COUNT)),
@@ -120,8 +120,8 @@ else{
 
             let coordinates = [];
             for(let shape of shapeArr) {
-               let latlngs = trimPolyFlag? 
-                  shape.latlngs.map(ll => trimLatLng(ll)): 
+               let latlngs = trimPolyFlag?
+                  shape.latlngs.map(ll => trimLatLng(ll)):
                   shape.latlngs;
 
                if(lnglatLayoutFlag) {
@@ -140,7 +140,7 @@ else{
 
          function leafletInit() {
             const mapOptions = {
-               zoom: <?php echo $zoom; ?>, 
+               zoom: <?php echo $zoom; ?>,
                center: [<?php echo $latCenter?>, <?php echo $lngCenter?>]
             }
 
@@ -176,13 +176,13 @@ else{
                resetSelect();
             });
 
-            map.enableDrawing({ 
+            map.enableDrawing({
                editable: false,
                draggable: false,
                circle: false,
                rectangle: false,
                multipolygon: true,
-            }, shape => { 
+            }, shape => {
             //Init it Selected
 
 				google.maps.event.addListener(shape.layer, 'click', function(e) {
@@ -191,7 +191,7 @@ else{
                   shape.layer.setEditable(true);
                   shape.layer.setDraggable(true);
             });
-               
+
                onPolyUpdate(shape)
             })
          }
@@ -212,14 +212,14 @@ else{
          function initialize() {
             let polygons;
 
-            //Loads wkt from opener value otherwise db value is used 
+            //Loads wkt from opener value otherwise db value is used
             let wkt = opener.document.getElementById("footprintwkt").value;
             if(wkt) document.getElementById("footprintwkt").value = wkt;
 
-            if("<?php echo $LEAFLET?>") {
-               leafletInit();
-            } else {
+            if(<?= (!empty($GOOGLE_MAP_KEY)?'true':'false') ?>) {
                googleInit();
+            } else {
+               leafletInit();
             }
 
             drawLoadedShape();

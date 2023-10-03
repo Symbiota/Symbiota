@@ -258,22 +258,6 @@ class ChecklistVoucherManager extends  ChecklistVoucherAdmin{
 		return false;
 	}
 
-	public function deleteVoucher($voucherID){
-		$status = false;
-		if(is_numeric($voucherID)){
-			$sql = 'DELETE FROM fmvouchers WHERE (voucherID = ?)';
-			if($stmt = $this->conn->prepare($sql)) {
-				$stmt->bind_param('i', $voucherID);
-				$stmt->execute();
-				if($stmt->affected_rows) $status = true;
-				elseif($stmt->error) $this->errorMessage = 'ERROR deleting vouchers: '.$stmt->error;
-				$stmt->close();
-			}
-			else $this->errorMessage = 'ERROR preparing statement for voucher deletion: '.$this->conn->error;
-		}
-		return $status;
-	}
-
 	//Setters and getters
 	public function setTid($t){
 		if(is_numeric($t)){
