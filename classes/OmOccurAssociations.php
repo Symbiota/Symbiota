@@ -25,20 +25,20 @@ class OmOccurAssociations{
 	public function getAssociationArr(){
 		$retArr = array();
 		$uidArr = array();
-		$sql = 'SELECT assocID, occid, '.explode(', ', array_keys($this->fieldMap)).', initialTimestamp FROM omoccurassociations WHERE ';
-		if($this->assocID) $sql .= 'WHERE assocID = '.$this->assocID;
-		elseif($this->occid) $sql .= 'WHERE occid = '.$this->occid;
+		$sql = 'SELECT assocID, occid, '.implode(', ', array_keys($this->fieldMap)).', initialTimestamp FROM omoccurassociations WHERE ';
+		if($this->assocID) $sql .= '(assocID = '.$this->assocID.') ';
+		elseif($this->occid) $sql .= '(occid = '.$this->occid.') ';
 		if($rs = $this->conn->query($sql)){
-			while($r = $rs->fetch_object()){
-				$retArr[$r->assocID] = $r;
-				$uidArr[$r->createdUid] = $r->createdUid;
-				$uidArr[$r->modifiedUid] = $r->modifiedUid;
+			while($r = $rs->fetch_assoc()){
+				$retArr[$r['assocID']] = $r;
+				$uidArr[$r['createdUid']] = $r['createdUid'];
+				$uidArr[$r['modifiedUid']] = $r['modifiedUid'];
 			}
 			$rs->free();
 		}
 		if($uidArr){
 			//Add user names for modified and created by
-			$sql = 'SELECT uid, firstname, lastname, username FROM users WHERE uid IN('.explode(',', $uidArr).')';
+			$sql = 'SELECT uid, firstname, lastname, username FROM users WHERE uid IN('.implode(',', $uidArr).')';
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
 					$uidArr[$r->uid] = $r->lastname . ($r->firstname ? ', ' . $r->firstname : '');
