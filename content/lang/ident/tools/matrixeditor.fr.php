@@ -19,5 +19,6 @@ $LANG['STATE_INHERITED'] = 'L\'état a été hérité du taxon parent';
 $LANG['CHAR_EDIT'] = 'Modification du personnage';
 $LANG['INHERITED_TRUE'] = ' = l\'état du caractère est hérité comme vrai d\'un taxon parent (genre, famille, etc.)';
 $LANG['NO_PERMISSION'] = 'Vous ne semblez pas disposer des autorisations nécessaires pour modifier les données de caractères.';
+$LANG['SUBMIT'] = 'Soumettre';
 
 ?>

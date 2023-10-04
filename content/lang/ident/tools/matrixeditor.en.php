@@ -19,5 +19,6 @@ $LANG['STATE_INHERITED'] = 'State has been inherited from parent taxon';
 $LANG['CHAR_EDIT'] = 'Character Edit';
 $LANG['INHERITED_TRUE'] = ' = character state is inherited as true from a parent taxon (genus, family, etc)';
 $LANG['NO_PERMISSION'] = 'You appear not to have necessary premissions to edit character data.';
+$LANG['SUBMIT'] = 'Submit';
 
 ?>

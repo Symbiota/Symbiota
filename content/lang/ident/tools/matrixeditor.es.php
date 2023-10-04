@@ -18,5 +18,6 @@ $LANG['STATE_INHERITED'] = 'El estado se ha heredado del taxón principal';
 $LANG['CHAR_EDIT'] = 'Edición de carácter';
 $LANG['INHERITED_TRUE'] = ' = el estado del carácter se hereda como verdadero de un taxón padre (género, familia, etc.)';
 $LANG['NO_PERMISSION'] = 'Parece que no tienes los permisos necesarios para editar datos de personajes.';
+$LANG['SUBMIT'] = 'Enviar';
 
 ?>

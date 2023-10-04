@@ -169,12 +169,15 @@ include($SERVER_ROOT.'/includes/header.php');
 						echo "<div style='margin-top:1em;font-size:125%;font-weight:bold;'>$h</div>\n";
 						ksort($charData);
 						foreach($charData as $cidKey => $charValue){
-							echo '<div> <input name="cid" type="radio" value="'.$cidKey.'" onclick="this.form.submit()">'.$charValue.'</div>'."\n";
+							echo '<div> <input name="cid" type="radio" id="' . $cidKey . '" value="' . $cidKey . '" onclick="this.form.submit()">' . '<label for="' . $cidKey . '">' . $charValue . '</label></div>'."\n";
 						}
 					}
 			 		?>
+					<script src="../../js/symb/ident.tools.matrixeditor.js"></script>
 					<input type='hidden' name='clid' value='<?php echo $clid; ?>' />
 					<input type="hidden" name="lang" value="<?php echo $langValue; ?>" />
+
+					<button type="submit" class="top-breathing-room-rel" name="action" value="Submit Observation"><?php echo (isset($LANG['SUBMIT']) ? $LANG['SUBMIT'] : 'Submit') ?></button>
 			 	</fieldset>
 			</form>
 			<?php
