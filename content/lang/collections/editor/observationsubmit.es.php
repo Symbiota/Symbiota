@@ -68,10 +68,13 @@ $LANG['SEL_CHECKLIST'] = 'Seleccionar Listado de Especies';
 $LANG['SUBMIT_OBS'] = 'Enviar Observación';
 $LANG['SUBMIT'] = 'Enviar';
 $LANG['NOT_AUTH'] = 'No está autorizado para enviar observaciones.';
-$LANG['DIRECTION'] = 'Dirección';
+$LANG['LONGDIRECTION'] = 'Dirección (longitud)';
+$LANG['LATDIRECTION'] = 'Dirección (latitud)';
 $LANG['EDIT_BTN'] = 'Mostrar campos adicionales';
 $LANG['REP_COND_EG'] = 'p.ej. estéril, flw, frt, flw/frt';
 $LANG['EST_MEANS_EG'] = 'p.ej. plantado, sembrado, escape del jardín, etc.';
 $LANG['CULT_CAPT_EG'] = 'Haga clic si el espécimen fue cultivado o cautivo';
+$LANG['IMG_GLOBE'] = 'Una pequeña imagen del globo terráqueo';
+$LANG['IMG_EDIT'] = 'Botón Mostrar campos adicionales';
 
 ?>

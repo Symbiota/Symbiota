@@ -68,10 +68,13 @@ $LANG['SEL_CHECKLIST'] = 'Sélectionner la liste de contrôle';
 $LANG['SUBMIT_OBS'] = 'Soumettre l\'observation';
 $LANG['SUBMIT'] = 'Soumettre';
 $LANG['NOT_AUTH'] = 'Vous n\'êtes pas autorisé à soumettre une observation.';
-$LANG['DIRECTION'] = 'Direction';
+$LANG['LONGDIRECTION'] = 'Direction (longitude)';
+$LANG['LATDIRECTION'] = 'Direction (latitude)';
 $LANG['EDIT_BTN'] = 'Afficher les champs supplémentaires';
 $LANG['REP_COND_EG'] = 'par ex. stérile, flw, frt, flw/frt';
-$LANG['EST_MEANS_EG'] = 'par ex. planté, ensemencé, sortie de jardin, etc.';
+$LANG['EST_MEANS_EG'] = 'par ex. planté, ensemencé, échappée de jardin, etc.';
 $LANG['CULT_CAPT_EG'] = 'Cliquez si le spécimen a été cultivé ou captif';
+$LANG['IMG_GLOBE'] = 'Une petite image du globe';
+$LANG['IMG_EDIT'] = 'Bouton Afficher les champs supplémentaires';
 
 ?>
