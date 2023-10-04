@@ -153,7 +153,6 @@ include($SERVER_ROOT.'/includes/header.php');
 				  				echo '<option value="'.$tid.'" '.($tid==$taxonFilter?"SELECTED":"").'>'.$scinameValue."</option>";
 				  			}
 					  		?>
-							<script src="../../js/symb/ident.matrixeditor.js"></script>
 						</select>
 						<?php
 						count($selectList);

@@ -1,3 +1,6 @@
+document.getElementById("selection").addEventListener("change", function() {
+    document.getElementById("filterform").submit();
+});
 
 function preventOnArrowKey(event) {
     if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
