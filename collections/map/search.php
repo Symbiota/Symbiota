@@ -534,7 +534,7 @@ foreach ($coordArr as $collName => $coll) {
          }
 
          function fitMap() {
-            if(shape) {
+            if(shape && !map.activeShape) {
                map.drawShape(shape);
             } else if(markers && markers.length > 0) {
                const group = new L.FeatureGroup(markers);
@@ -549,9 +549,11 @@ foreach ($coordArr as $collName => $coll) {
             showWorking();
             e.preventDefault();
             let formData = new FormData(e.target);
+            console.log(formData)
 
             for(let tid of Object.keys(taxaClusters)) {
                taxaClusters[tid].removeLayers(taxaMarkers[tid])
+               taxaMarkers[tid] = [];
             }
 
             markers = []; 
@@ -639,6 +641,15 @@ foreach ($coordArr as $collName => $coll) {
             }
          });
 
+         document.addEventListener('deleteShape', e => {
+
+            clid_input = document.getElementById('clid');
+            if(clid_input) clid_input.value = '';
+
+            map.clearMap();
+            shape = null;
+         });
+
          //Load Data if any with page Load
          if(recordArr.length > 0) {
             let formData = new FormData(document.getElementById("mapsearchform"));
@@ -700,9 +711,6 @@ foreach ($coordArr as $collName => $coll) {
             return false;
          });
       }
-
-      //I want to set all keys to one color
-      //I want ot set different keys to different colors
 
 		function resetSymbology(typeMap, type, getId = v => v.id) {
          let color_map = [];
@@ -786,7 +794,12 @@ foreach ($coordArr as $collName => $coll) {
                occid: occid
             }
          }))
-      } 
+      }
+      
+      function deleteMapShape() {
+         document.dispatchEvent(new Event('deleteShape'));
+         setQueryShape(shape)
+      }
 
       function initialize() {
          try {
@@ -1024,7 +1037,7 @@ foreach ($coordArr as $collName => $coll) {
 										</div>
 									</div>
 									<div id="deleteshapediv" style="margin-top:5px;display:<?php echo (($mapManager->getSearchTerm('pointlat') || $mapManager->getSearchTerm('upperlat') || $mapManager->getSearchTerm('polycoords'))?'block':'none'); ?>;">
-										<button data-role="none" type=button onclick="deleteSelectedShape()"><?php echo (isset($LANG['DELETE_SHAPE'])?$LANG['DELETE_SHAPE']:'Delete Selected Shape'); ?></button>
+										<button data-role="none" type=button onclick="deleteMapShape()"><?php echo (isset($LANG['DELETE_SHAPE'])?$LANG['DELETE_SHAPE']:'Delete Selected Shape'); ?></button>
 									</div>
 								</div>
 								<div style="margin:5 0 5 0;"><hr /></div>
