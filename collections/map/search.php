@@ -1,5 +1,6 @@
 <?php
 include_once('../../config/symbini.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/header.en.php');
 include_once($SERVER_ROOT.'/content/lang/collections/map/index.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMapManager.php');
 
@@ -857,8 +858,13 @@ foreach ($coordArr as $collName => $coll) {
          <button onclick="document.getElementById('defaultpanel').style.width='380px';  " style="position:absolute;top:0;left:0;margin:0px;z-index:10;font-size: 14px;">&#9776; <b>Open Search Panel</b></button>
       </div>
    <div id="defaultpanel" class="sidepanel" style="width:380px">
-		<div class="panel-content">
-         <button onclick="document.getElementById('defaultpanel').style.width='0px'" style="position:absolute; top:0.7rem; right:0.7rem; z-index:1" >&times</button>
+         <div class="panel-content">
+            <span style="position:absolute; top:0.7rem; right:0.7rem; z-index:1">
+               <a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php">
+						<?php echo (isset($LANG['H_HOME'])?$LANG['H_HOME']:'Home'); ?>
+               </a>
+         <button onclick="document.getElementById('defaultpanel').style.width='0px'" style="margin-left:1rem">&times</button>
+            </span>
 			<div id="mapinterface">
 				<div id="accordion">
 					<h3 style="padding-left:30px;"><?php echo (isset($LANG['SEARCH_CRITERIA'])?$LANG['SEARCH_CRITERIA']:'Search Criteria and Options'); ?></h3>
