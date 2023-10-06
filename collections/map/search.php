@@ -465,11 +465,21 @@ foreach ($coordArr as $collName => $coll) {
             marker: false,
             drawColor: {opacity: 0.85, fillOpacity: 0.55, color: '#000' }
          }, setQueryShape);
-         let cluster = L.markerClusterGroup();
-         let taxaClusters = {}
-         let markers = [];
 
+         let cluster = L.markerClusterGroup();
+         let clusteroff = false;
+
+         let taxaClusters = {}
+         let taxaGroups = {};
          let taxaMarkers = {};
+
+         let markers = [];
+         let markerGroup;
+
+         let collClusters = {}
+         let collGroups = {};
+         let collMarkers = {};
+
          let color = "B2BEB5";
 
          map.mapLayer.zoomControl.setPosition('topright');
@@ -503,6 +513,8 @@ foreach ($coordArr as $collName => $coll) {
                } else {
                   taxaMarkers[record['tid']].push(marker);
                }
+
+               count++;
             }
 
             for (let taxa of Object.values(taxaMap)) {
@@ -517,17 +529,24 @@ foreach ($coordArr as $collName => $coll) {
                   });
                }
 
-               taxaCluster = L.markerClusterGroup({
+               let taxaCluster = L.markerClusterGroup({
                   iconCreateFunction: colorCluster 
                });
 
                taxaCluster.addLayers(taxaMarkers[taxa.tid])
+
                taxaClusters[taxa.tid] = taxaCluster;
+               taxaGroups[taxa.tid] = L.layerGroup(taxaMarkers[taxa.tid]);
 
                //cluster.addLayers(taxaMarkers[taxa.tid])
-
-               taxaCluster.addTo(map.mapLayer);
+               if(clusteroff) {
+                  taxaGroups[taxa.tid].addTo(map.mapLayer);
+               } else {
+                  taxaCluster.addTo(map.mapLayer);
+               }
             }
+
+            markerGroup = L.layerGroup(markers);
 
             //cluster.addLayers(markers)
             //cluster.addTo(map.mapLayer);
@@ -552,7 +571,8 @@ foreach ($coordArr as $collName => $coll) {
             console.log(formData)
 
             for(let tid of Object.keys(taxaClusters)) {
-               taxaClusters[tid].removeLayers(taxaMarkers[tid])
+               taxaClusters[tid].removeLayers(taxaMarkers[tid]);
+               taxaGroups[tid].clearLayers();
                taxaMarkers[tid] = [];
             }
 
@@ -576,18 +596,19 @@ foreach ($coordArr as $collName => $coll) {
 
          async function updateColor(type, id, color) {
             if(type === "taxa") {
-
-               //cluster.removeLayers(taxaMarkers[id])
-               taxaClusters[id].removeLayers(taxaMarkers[id])
-               map.mapLayer.removeLayer(taxaClusters[id]);
+               if(clusteroff) {
+                  taxaGroups[id].clearLayers()
+                  map.mapLayer.removeLayer(taxaGroups[id]);
+               } else {
+                  taxaClusters[id].removeLayers(taxaMarkers[id])
+                  map.mapLayer.removeLayer(taxaClusters[id]);
+               }
                taxaMap[id].color = color;
 
                // This is need to break cached clusters than appear sometimes
                for (let taxaCluster of document.getElementsByClassName(`taxa-${id}`)) {
                   taxaCluster.style.backgroundColor = `#${color}77`
                }
-
-               taxaClusters[id].removeLayers(taxaMarkers[id])
 
                const taxa = taxaMap[id]
                for (marker of taxaMarkers[id]) {
@@ -598,8 +619,13 @@ foreach ($coordArr as $collName => $coll) {
                   }
                }
 
-               taxaClusters[id].addLayers(taxaMarkers[id])
-               map.mapLayer.addLayer(taxaClusters[id]);
+               if(clusteroff) {
+                  taxaGroups[id] = L.layerGroup(taxaMarkers[id]);
+                  map.mapLayer.addLayer(taxaGroups[id]);
+               } else {
+                  taxaClusters[id].addLayers(taxaMarkers[id])
+                  map.mapLayer.addLayer(taxaClusters[id]);
+               }
 
                //cluster.addLayers(taxaMarkers[id])
             } else if (type === "coll") {
@@ -613,11 +639,7 @@ foreach ($coordArr as $collName => $coll) {
             const [type, id] = e.target.id.split("-");
             const color = e.target.value;
 
-            //taxaCluster[id].removeLayers(markers)
-            map.mapLayer.removeLayer(taxaClusters[id])
             updateColor(type, id, color);
-            //cluster.addLayers(markers)
-            map.mapLayer.addLayer(taxaClusters[id])
          });
 
          document.addEventListener('autocolor', function(e) {
@@ -635,19 +657,34 @@ foreach ($coordArr as $collName => $coll) {
          document.addEventListener('occur_click', function(e) {
             for (let i = 0; i < markers.length; i++) {
                if(recordArr[i]['occid'] === e.detail.occid) {
-                  map.mapLayer.setView([recordArr[i]['lat'], recordArr[i]['lng']], 12)
+                  const current_zoom = map.mapLayer.getZoom()
+                  map.mapLayer.setView([recordArr[i]['lat'], recordArr[i]['lng']], current_zoom <= 12? 12: current_zoom)
                   break;
                }
             }
          });
 
          document.addEventListener('deleteShape', e => {
-
             clid_input = document.getElementById('clid');
             if(clid_input) clid_input.value = '';
 
             map.clearMap();
             shape = null;
+         });
+         
+         document.getElementById('clusteroff').addEventListener('change', e => {
+            clusteroff = e.target.checked;
+            if(e.target.checked) {
+               for(let tid of Object.keys(taxaClusters)) {
+                  map.mapLayer.removeLayer(taxaClusters[tid]);
+                  map.mapLayer.addLayer(taxaGroups[tid]);
+               }
+            } else {
+               for(let tid of Object.keys(taxaClusters)) {
+                  map.mapLayer.removeLayer(taxaGroups[tid]);
+                  taxaClusters[tid].addTo(map.mapLayer);
+               }
+            }
          });
 
          //Load Data if any with page Load
@@ -1085,32 +1122,11 @@ foreach ($coordArr as $collName => $coll) {
 						<div id="mapoptions" style="">
 							<div style="border:1px black solid;margin-top:10px;padding:5px;" >
 								<b><?php echo (isset($LANG['CLUSTERING'])?$LANG['CLUSTERING']:'Clustering'); ?></b>
-								<div style="margin-top:8px;">
-									<div>
-										<?php echo (isset($LANG['GRID_SIZE'])?$LANG['GRID_SIZE']:'Grid Size'); ?>:
-										 <input name="gridsize" id="gridsize" data-role="none" type="text" value="<?php echo $gridSize; ?>" style="width:50px;" onchange="setClustering();" />
-									</div>
-									<div>
-										<?php echo (isset($LANG['CLUSTER_SIZE'])?$LANG['CLUSTER_SIZE']:'Min. Cluster Size'); ?>:
-										 <input name="minclustersize" id="minclustersize" data-role="none" type="text" value="<?php echo $minClusterSize; ?>" style="width:50px;" onchange="setClustering();" />
-									</div>
-								</div>
 								<div style="clear:both;margin-top:8px;">
 									<?php echo (isset($LANG['TURN_OFF_CLUSTERING'])?$LANG['TURN_OFF_CLUSTERING']:'Turn Off Clustering'); ?>:
-									 <input data-role="none" type="checkbox" id="clusteroff" name="clusteroff" value='1' <?php echo ($clusterOff=="y"?'checked':'') ?> onchange="setClustering();"/>
+									 <input data-role="none" type="checkbox" id="clusteroff" name="clusteroff" value='1' <?php echo ($clusterOff=="y"?'checked':'') ?>/>
 								</div>
 							</div>
-							<?php
-							if(true){
-								?>
-								<div style="clear:both;">
-									<div style="float:right;margin-top:10px;">
-										<button data-role="none" id="refreshCluster" name="refreshCluster" onclick="refreshClustering();" ><?php echo (isset($LANG['REFRESH_MAP'])?$LANG['REFRESH_MAP']:'Refresh Map'); ?></button>
-									</div>
-								</div>
-								<?php
-							}
-							?>
 						</div>
 						<form style="display:none;" name="csvcontrolform" id="csvcontrolform" action="csvdownloadhandler.php" method="post" onsubmit="">
 							<input data-role="none" name="selectionscsv" id="selectionscsv" type="hidden" value="" />
