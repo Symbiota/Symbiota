@@ -473,7 +473,7 @@ hr {
 .no-margin-left {
   margin-left: 0;
 }
-.taxon-search-bar {
+.search-bar {
   width: 25rem;
 }
 
@@ -514,8 +514,16 @@ hr {
   clear: both;
 }
 
-.taxon-search-bar {
-  width: 25rem;
+.search-bar-long {
+  width: 35rem;
+}
+
+.search-bar-short {
+  width: 15rem;
+}
+
+.search-bar-extraShort {
+  width: 5rem;
 }
 
 .fieldset-size {
@@ -862,4 +870,9 @@ hr {
 }
 .bigger-left-margin-rel {
   margin-left: 3rem;
+}
+
+.left-column{
+  float:left;
+  width: 170px;
 }
