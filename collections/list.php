@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../config/symbini.php');
 if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php');
@@ -20,7 +22,7 @@ $occurArr = $collManager->getSpecimenMap($pageNumber, $cntPerPage);
 
 $_SESSION['citationvar'] = $searchVar;
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
@@ -91,7 +93,7 @@ $_SESSION['citationvar'] = $searchVar;
 		}
 	</script>
 	<script src="../js/symb/collections.list.js?ver=10" type="text/javascript"></script>
-	<style type="text/css">
+	<style>
 		fieldset {
 			padding: 15px;
 		}
@@ -165,8 +167,8 @@ $_SESSION['citationvar'] = $searchVar;
 						if ($SYMB_UID) {
 						?>
 							<div style="float:left">
-								<button class="icon-button" onclick="displayDatasetTools()" title="Dataset Management">
-									<img src="../images/dataset.png" style="width:15px;" />
+								<button class="icon-button" onclick="displayDatasetTools()" title="<?php echo (isset($LANG['DATASET_MANAGEMENT'])?$LANG['DATASET_MANAGEMENT']:'Dataset Management'); ?>">
+									<img src="../images/dataset.png" style="width:15px;" alt="<?php echo (isset($LANG['IMG_DATASET_MANAGEMENT'])?$LANG['IMG_DATASET_MANAGEMENT']:'Open Dataset Management'); ?>"/>
 								</button>
 							</div>
 						<?php
@@ -174,20 +176,20 @@ $_SESSION['citationvar'] = $searchVar;
 						?>
 						<form action="listtabledisplay.php" method="post" style="float:left">
 							<button class="icon-button" title="<?php echo (isset($LANG['TABLE_DISPLAY']) ? $LANG['TABLE_DISPLAY'] : 'Table Display'); ?>">
-								<img src="../images/table.png" style="width:15px; height:15px" />
+								<img src="../images/table.png" style="width:15px; height:15px" alt="<?php echo (isset($LANG['IMG_TABLE_DISPLAY']) ? $LANG['IMG_TABLE_DISPLAY'] : 'Open Table Display'); ?>"/>
 							</button>
 							<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 						</form>
 						<form action="download/index.php" method="post" style="float:left" onsubmit="targetPopup(this)">
 							<button class="icon-button" title="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>">
-								<img src="../images/dl2.png" srcset="../images/download.svg" class="svg-icon" style="width:15px; height:15px" />
+								<img src="../images/dl2.png" srcset="../images/download.svg" class="svg-icon" style="width:15px; height:15px" alt="<?php echo (isset($LANG['IMG_DWNL_DATA']) ? $LANG['IMG_DWNL_DATA'] : 'Download Button'); ?>" />
 							</button>
 							<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 							<input name="dltype" type="hidden" value="specimen" />
 						</form>
 						<div style="float:left">
 							<button class="icon-button" onclick="copyUrl()" title="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>">
-								<img src="../images/dl2.png" srcset="../images/link.svg" class="svg-icon" style="width:15px; height:15px" />
+								<img src="../images/dl2.png" srcset="../images/link.svg" class="svg-icon" style="width:15px; height:15px" alt="<?php echo (isset($LANG['IMG_COPY']) ? $LANG['IMG_COPY'] : 'Copy Button'); ?>"/>
 							</button>
 						</div>
 					</div>
@@ -286,18 +288,18 @@ $_SESSION['citationvar'] = $searchVar;
 									if ($isEditor || ($SYMB_UID && $SYMB_UID == $fieldArr['obsuid'])) {
 										echo '<div style="float:right;" title="' . $LANG['OCCUR_EDIT_TITLE'] . '">';
 										echo '<a href="editor/occurrenceeditor.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
-										echo '<img src="../images/edit.png" srcset="../images/edit.svg" style="width:15px;height:15px;" /></a></div>';
+										echo '<img src="../images/edit.png" srcset="../images/edit.svg" style="width:15px;height:15px;" alt="' . (isset($LANG['IMG_EDIT_OCC']) ? $LANG['IMG_EDIT_OCC'] : 'Edit Occurence') . '" /></a></div>';
 									}
 									$targetClid = $collManager->getSearchTerm("targetclid");
 									if ($collManager->getClName() && $targetTid && array_key_exists('mode', $_REQUEST)) {
 										echo '<div style="float:right;" >';
 										echo '<a href="#" onclick="addVoucherToCl(' . $occid . ',' . $targetClid . ',' . $targetTid . ');return false" title="' . $LANG['VOUCHER_LINK_TITLE'] . ' ' . $collManager->getClName() . ';">';
-										echo '<img src="../images/voucheradd.png" style="border:solid 1px gray;height:13px;margin-right:5px;" /></a></div>';
+										echo '<img src="../images/voucheradd.png" style="border:solid 1px gray;height:13px;margin-right:5px;" alt="' . (isset($LANG['IMG_ADD_VOUCHER']) ? $LANG['IMG_ADD_VOUCHER'] : 'Add Voucher') . '"/></a></div>';
 									}
 									if (isset($fieldArr['img'])) {
 										echo '<div style="float:right;margin:5px 25px;">';
 										echo '<a href="#" onclick="return openIndPU(' . $occid . ',' . ($targetClid ? $targetClid : "0") . ');">';
-										echo '<img src="' . $fieldArr['img'] . '" style="height:70px" /></a></div>';
+										echo '<img src="' . $fieldArr['img'] . '" style="height:70px" alt="' . (isset($LANG['IMG_OCC']) ? $LANG['IMG_OCC'] : 'Image Associated With the Occurence') . '"/></a></div>';
 									}
 									echo '<div style="margin:4px;">';
 									if (isset($fieldArr['sciname'])) {
@@ -306,7 +308,7 @@ $_SESSION['citationvar'] = $searchVar;
 										if (isset($fieldArr['author']) && $fieldArr['author']) $sciStr .= ' ' . $fieldArr['author'];
 										echo $sciStr;
 									} elseif ($fieldArr['localitysecurity'] > 1) {
-										echo 'Identification Protected';
+										echo (isset($LANG['ID_PROTECTED'])?$LANG['ID_PROTECTED']:'Identification Protected');;
 									}
 									echo '</div>';
 									echo '<div style="margin:4px">';
@@ -368,7 +370,7 @@ $_SESSION['citationvar'] = $searchVar;
 			<div id="maps" style="min-height:400px;margin-bottom:10px;">
 				<form action="download/index.php" method="post" style="float:right" onsubmit="targetPopup(this)">
 					<button class="icon-button" title="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>">
-						<img src="../../images/dl2.png" srcset="../images/download.svg" class="svg-icon" style="width:15px; height:15px" />
+						<img src="../../images/dl2.png" srcset="../images/download.svg" class="svg-icon" style="width:15px; height:15px" alt="<?php echo (isset($LANG['IMG_DWNL_DATA']) ? $LANG['IMG_DWNL_DATA'] : 'Download Button'); ?>" />
 					</button>
 					<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 					<input name="dltype" type="hidden" value="georef" />
@@ -377,12 +379,12 @@ $_SESSION['citationvar'] = $searchVar;
 				<div style='margin-top:10px;'>
 					<h2><?php echo $LANG['GOOGLE_MAP_HEADER']; ?></h2>
 				</div>
-				<div style='margin:10 0 0 20;'>
+				<div>
 					<button>
                <?php if(!empty($LEAFLET)) {?>
-                  <a href="#" onclick="openLeafletMapPU();">
+                  	<a href="#" onclick="openLeafletMapPU();">
 							<?php echo $LANG['GOOGLE_MAP_DISPLAY']; ?>
-						</a>
+					</a>
                <?php } else {?>
                   <a href="#" onclick="openGoogleMapPU();">
 							<?php echo $LANG['GOOGLE_MAP_DISPLAY']; ?>
@@ -390,7 +392,7 @@ $_SESSION['citationvar'] = $searchVar;
                <?php } ?>
 					</button>
 				</div>
-				<div style='margin:10 0 0 20;'>
+				<div>
 					<?php echo $LANG['GOOGLE_MAP_DESCRIPTION']; ?>
 				</div>
 
@@ -398,14 +400,14 @@ $_SESSION['citationvar'] = $searchVar;
 					<h2><?php echo $LANG['GOOGLE_EARTH_HEADER']; ?></h2>
 				</div>
 				<form name="kmlform" action="map/kmlhandler.php" method="post">
-					<div style='margin:10 0 0 20;'>
+					<div>
 						<?php echo $LANG['GOOGLE_EARTH_DESCRIPTION']; ?>
 					</div>
 					<div style="margin:20px;">
 						<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 						<button name="formsubmit" type="submit" value="createKML"><?php echo $LANG['CREATE_KML']; ?></button>
 					</div>
-					<div style='margin:10 0 0 20;'>
+					<div>
 						<a href="#" onclick="toggleFieldBox('fieldBox');">
 							<?php echo $LANG['GOOGLE_EARTH_EXTRA']; ?>
 						</a>
