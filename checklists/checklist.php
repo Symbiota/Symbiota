@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistManager.php');
@@ -93,7 +94,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 //Output variable sanitation
 $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['CHECKLIST'])?$LANG['CHECKLIST']:'Checklist').': '.$clManager->getClName(); ?></title>
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
@@ -117,7 +118,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 		}
 	</script>
 	<script type="text/javascript" src="../js/symb/checklists.checklist.js?ver=4"></script>
-	<style type="text/css">
+	<style>
 		<?php
 		if($printMode){
 			?>
@@ -160,15 +161,15 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 				<div class="printoff" style="float:right;width:auto;">
 					<span style="">
 						<a href="checklistadmin.php?clid=<?php echo $clid . '&pid=' . $pid; ?>" style="margin-right:10px;" title="<?php echo (isset($LANG['CHECKLIST_ADMIN'])?$LANG['CHECKLIST_ADMIN']:'Checklist Administration'); ?>">
-						<img src="../images/editadmin.png" srcset="../images/editA.svg" style="height:15px" /></a>
+						<img src="../images/editadmin.png" srcset="../images/editA.svg" style="height:15px" alt="<?php echo (isset($LANG['IMG_CHECKLIST_ADMIN'])?$LANG['IMG_CHECKLIST_ADMIN']:'Checklist Administration Button'); ?>" /></a>
 					</span>
 					<span style="">
 						<a href="voucheradmin.php?clid=<?php echo $clid . '&pid=' . $pid; ?>" style="margin-right:10px;" title="<?php echo (isset($LANG['MANAGE_VOUCHERS'])?$LANG['MANAGE_VOUCHERS']:'Manage Linked Vouchers'); ?>">
-							<img style="border:0px;height:15px;" src="../images/editvoucher.png" srcset="../images/editV.svg" style="height:15px" /></a>
+							<img src="../images/editvoucher.png" srcset="../images/editV.svg" style="height:15px" alt="<?php echo (isset($LANG['IMG_MANAGE_VOUCHERS'])?$LANG['IMG_MANAGE_VOUCHERS']:'Manage Linked Vouchers Button'); ?>" /></a>
 					</span>
 					<span style="" onclick="toggleSppEditControls();return false;">
 						<a href="#" title="<?php echo (isset($LANG['EDIT_LIST'])?$LANG['EDIT_LIST']:'Edit Species List'); ?>">
-							<img style="border:0px;height:15px;" src="../images/editspp.png" srcset="../images/editspp.svg" style="height:15px" /><span id="editsppon">-ON</span></a>
+							<img src="../images/editspp.png" srcset="../images/editspp.svg" style="height:15px" alt="<?php echo (isset($LANG['IMG_EDIT_LIST'])?$LANG['IMG_EDIT_LIST']:'Edit Species List Button'); ?>"/><span id="editsppon">-ON</span></a>
 					</span>
 				</div>
 				<?php
@@ -182,7 +183,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 				?>
 				<div class="printoff" style="float:left;padding:5px;">
 					<a href="../ident/key.php?clid=<?php echo $clid . "&pid=" . $pid . "&dynclid=" . $dynClid; ?>&taxon=All+Species">
-						<img src='../images/key.png' srcset="../images/key.svg" style="width:15px; height:15px" title='<?php echo (isset($LANG['OPEN_KEY'])?$LANG['OPEN_KEY']:'Open Symbiota Key'); ?>' />
+						<img src='../images/key.png' srcset="../images/key.svg" style="width:15px; height:15px" alt="<?php echo (isset($LANG['IMG_OPEN_KEY'])?$LANG['IMG_OPEN_KEY']:'Open Symbiota Key Button'); ?>" title='<?php echo (isset($LANG['OPEN_KEY'])?$LANG['OPEN_KEY']:'Open Symbiota Key'); ?>' />
 					</a>
 				</div>
 				<?php
@@ -192,15 +193,15 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 				<div class="printoff" style="padding:5px;">
 					<ul id="game-dropdown">
 						<li>
-							<span onmouseover="mopen('m1')" onmouseout="mclosetime()">
-								<img src="../images/games/games.png" style="height:17px;" />
+							<span onmouseover="mopen('m1')" onmouseout="mclosetime()" onfocus="mopen('m1')" onblur="mclosetime()" tabindex="0">
+								<img src="../images/games/games.png" style="height:17px;" alt="<?php echo (isset($LANG['GAMES'])?$LANG['GAMES']:'Show Games'); ?>"/>
 							</span>
 							<div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
 								<?php
 								$varStr = "?clid=".$clid."&dynclid=".$dynClid."&listname=".urlencode($clManager->getClName()).'&taxonfilter='.$taxonFilter.'&showcommon='.$showCommon.($clManager->getThesFilter()?'&thesfilter='.$clManager->getThesFilter():'');
 								?>
-								<a href="../games/namegame.php<?php echo $varStr; ?>"><?php echo $LANG['NAMEGAME'];?></a>
-								<a href="../games/flashcards.php<?php echo $varStr; ?>"><?php echo $LANG['FLASH'];?></a>
+								<a href="../games/namegame.php<?php echo $varStr; ?>" onfocus="mcancelclosetime('m1')" onblur="mclosetime()"><?php echo $LANG['NAMEGAME'];?></a>
+								<a href="../games/flashcards.php<?php echo $varStr; ?>" onfocus="mcancelclosetime('m1')" onblur="mclosetime()"><?php echo $LANG['FLASH'];?></a>
 							</div>
 						</li>
 					</ul>
@@ -330,17 +331,17 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 										<div style="margin-left:10px;">
 											<?php
 											if($DISPLAY_COMMON_NAMES){
-												echo "<label for='searchcommon'>Search common names</label><input type='checkbox' name='searchcommon' id='searchcommon' value='1'" . ($searchCommon?"checked":"") . "/> " . $LANG['COMMON'] . "<br/>";
+												echo "<input type='checkbox' name='searchcommon' id='searchcommon' value='1'" . ($searchCommon?"checked":"") . "/> " . "<label for='searchcommon'>" . (isset($LANG['SEARCH_COMMON'])?$LANG['SEARCH_COMMON']:'Search Common Names') . "</label><br/>";
 											}
 											?>
-											<input type="checkbox" name="searchsynonyms" id="searchsynonyms" value="1"<?php echo ($searchSynonyms?"checked":"");?>/> <?php echo $LANG['SYNONYMS'];?>
+											<input type="checkbox" name="searchsynonyms" id="searchsynonyms" value="1"<?php echo ($searchSynonyms?"checked":"");?>/>
 											<label for="searchsynonyms"><?php echo $LANG['SEARCHSYNONYMS'] ?></label>
 										</div>
 									</div>
 								</div>
 								<div>
-									<b><?php echo (isset($LANG['FILTER'])?$LANG['FILTER']:'Taxonomic Filter');?>:</b><br/>
-									<select name='thesfilter'>
+									<b> <label for="thesfilter"> <?php echo (isset($LANG['FILTER'])?$LANG['FILTER']:'Taxonomic Filter');?>: </label></b><br/>
+									<select id='thesfilter' name='thesfilter'>
 										<option value='0'><?php echo $LANG['OGCHECK'];?></option>
 										<?php
 										$taxonAuthList = Array();
@@ -377,12 +378,12 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 								}
 								?>
 								<div id="showauthorsdiv" style='display:<?php echo ($showImages?"none":"block");?>'>
-									<input name='showauthors' type='checkbox' value='1' <?php echo ($showAuthors?"checked":""); ?>/>
-									<?php echo $LANG['TAXONAUTHOR'];?>
+									<input id='showauthors' name='showauthors' type='checkbox' value='1' <?php echo ($showAuthors?"checked":""); ?>/>
+									<label for='showauthors'> <?php echo (isset($LANG['TAXONAUTHOR'])?$LANG['TAXONAUTHOR']:'Taxon Authors');?> </label>
 								</div>
 								<div style='' id="showalphataxadiv">
-									<input name='showalphataxa' type='checkbox' value='1' <?php echo ($showAlphaTaxa?"checked":""); ?>/>
-									<?php echo $LANG['TAXONABC'];?>
+									<input id='showalphataxa' name='showalphataxa' type='checkbox' value='1' <?php echo ($showAlphaTaxa?"checked":""); ?>/>
+									<label for='showalphataxa'> <?php echo (isset($LANG['TAXONABC'])?$LANG['TAXONABC']:'Show Taxa Alphabetically');?> </label>
 								</div>
 								<div style="margin:5px 0px 0px 5px;">
 									<div style="float:left;margin-bottom:5px">
@@ -395,14 +396,14 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 										<button name="submitaction" type="submit" value="Rebuild List" onclick="changeOptionFormAction('checklist.php?clid=<?php echo $clid."&pid=".$pid."&dynclid=".$dynClid; ?>','_self');"><?php echo (isset($LANG['BUILD_LIST'])?$LANG['BUILD_LIST']:'Build List'); ?></button>
 									</div>
 									<div style="float:right">
-										<div class="button" style="float:right;margin-right:10px;width:16px;height:16px;padding:2px;" title="<?php echo (isset($LANG['DOWNLOAD_CHECKLIST'])?$LANG['DOWNLOAD_CHECKLIST']:'Download Checklist'); ?>">
-											<input type="image" name="dllist" value="Download List" src="../images/dl.png" onclick="changeOptionFormAction('checklist.php?clid=<?php echo $clid."&pid=".$pid."&dynclid=".$dynClid; ?>','_self');" />
+										<div class="button" style="float:left;margin-right:10px;width:16px;height:16px;padding:2px;" title="<?php echo (isset($LANG['DOWNLOAD_CHECKLIST'])?$LANG['DOWNLOAD_CHECKLIST']:'Download Checklist'); ?>">
+											<input type="image" name="dllist" alt="<?php echo (isset($LANG['IMG_DWNL_LIST'])?$LANG['IMG_DWNL_LIST']:'Download List'); ?>" src="../images/dl.png" onclick="changeOptionFormAction('checklist.php?clid=<?php echo $clid."&pid=".$pid."&dynclid=".$dynClid; ?>','_self');" />
 										</div>
-										<div class="button" style="float:right;margin-right:10px;width:16px;height:16px;padding:2px;" title="<?php echo (isset($LANG['PRINT_BROWSER'])?$LANG['PRINT_BROWSER']:'Print in Browser'); ?>">
-											<input type="image" name="printlist" value="Print List" src="../images/print.png" onclick="changeOptionFormAction('checklist.php','_blank');" />
+										<div class="button" style="float:left;margin-right:10px;width:16px;height:16px;padding:2px;" title="<?php echo (isset($LANG['PRINT_BROWSER'])?$LANG['PRINT_BROWSER']:'Print in Browser'); ?>">
+											<input type="image" name="printlist" alt="<?php echo (isset($LANG['IMG_PRINT_LIST'])?$LANG['IMG_PRINT_LIST']:'Print List'); ?>" src="../images/print.png" onclick="changeOptionFormAction('checklist.php','_blank');" />
 										</div>
-										<div class="button" id="wordicondiv" style="float:right;margin-right:10px;width:16px;height:16px;padding:2px;<?php echo ($showImages?'display:none;':''); ?>" title="<?php echo (isset($LANG['EXPORT_DOCX'])?$LANG['EXPORT_DOCX']:'Export to DOCX'); ?>">
-											<input type="image" name="exportdoc" value="Export to DOCX" src="../images/wordicon.png" srcset="../images/file-text.svg" onclick="changeOptionFormAction('mswordexport.php','_self');" />
+										<div class="button" id="wordicondiv" style="float:left;margin-right:10px;width:16px;height:16px;padding:2px;<?php echo ($showImages?'display:none;':''); ?>" title="<?php echo (isset($LANG['EXPORT_DOCX'])?$LANG['EXPORT_DOCX']:'Export to DOCX'); ?>">
+											<input type="image" name="exportdoc" alt="<?php echo (isset($LANG['IMG_DOCX_EXPORT'])?$LANG['IMG_DOCX_EXPORT']:'Export to DOCX'); ?>" src="../images/wordicon.png" srcset="../images/file-text.svg" onclick="changeOptionFormAction('mswordexport.php','_self');" />
 										</div>
 									</div>
 								</div>
@@ -489,13 +490,13 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 								<div style="display: flex; align-items: center; justify-content: center;">
 									<div style="float:left;" title="<?php echo (isset($LANG['VOUCHERS_SIMPLE_MAP'])?$LANG['VOUCHERS_SIMPLE_MAP']:'Display Vouchers in Simply Map'); ?>">
 										<a href="checklistmap.php?clid=<?php echo $clid . '&thesfilter=' . $thesFilter . '&taxonfilter=' . $taxonFilter; ?>" target="_blank">
-											<img src="<?php echo $tnUrl; ?>" style="border:0px;width:<?php echo $tnWidth; ?>px" /><br/>
+											<img src="<?php echo $tnUrl; ?>" style="border:0px;width:<?php echo $tnWidth; ?>px" alt="<?php echo (isset($LANG['IMG_VOUCHERS_SIMPLE_MAP'])?$LANG['IMG_VOUCHERS_SIMPLE_MAP']:'Show Vouchers in Simply Map'); ?>" /><br/>
 											<?php echo (isset($LANG['SIMPLE_MAP'])?$LANG['SIMPLE_MAP']:'Simply Map'); ?>
 										</a>
 									</div>
 									<div style="float:left;margin-left:15px" title="<?php echo (isset($LANG['VOUCHERS_DYNAMIC_MAP'])?$LANG['VOUCHERS_DYNAMIC_MAP']:'Display Vouchers in Dynamic Map'); ?>">
 										<a href="../collections/map/index.php?clid=<?php echo $clid . '&cltype=vouchers&taxonfilter=' . $taxonFilter; ?>&db=all&type=1&reset=1" target="_blank">
-											<img src="<?php echo $tnUrl; ?>" style="width:<?php echo $tnWidth; ?>px" /><br/>
+											<img src="<?php echo $tnUrl; ?>" style="width:<?php echo $tnWidth; ?>px" alt="<?php echo (isset($LANG['IMG_VOUCHERS_DYNAMIC_MAP'])?$LANG['IMG_VOUCHERS_DYNAMIC_MAP']:'Show Vouchers in Dynamic Map'); ?>"/><br/>
 											<?php echo (isset($LANG['DYNAMIC_MAP'])?$LANG['DYNAMIC_MAP']:'Dynamic Map'); ?>
 										</a>
 									</div>
@@ -509,7 +510,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 									<a href="../collections/map/index.php?clid=<?php echo $clid . '&cltype=all&taxonfilter=' . $taxonFilter; ?>&db=all&type=1&reset=1" target="_blank">
 										<?php
 										if($coordArr){
-											echo '<img src="../images/world.png" style="width:30px" title="'.(isset($LANG['OCCUR_DYNAMIC_MAP'])?$LANG['OCCUR_DYNAMIC_MAP']:'Display All Occurrence in Dynamic Map').'" />';
+											echo '<img src="../images/world.png" style="width:30px" title="'.(isset($LANG['OCCUR_DYNAMIC_MAP'])?$LANG['OCCUR_DYNAMIC_MAP']:'Display All Occurrence in Dynamic Map').'" alt="' . (isset($LANG['IMG_OCCUR_DYNAMIC_MAP'])?$LANG['IMG_OCCUR_DYNAMIC_MAP']:'Show All Occurrence in Dynamic Map') . '" />';
 										}
 										else{
 											$polygonCoordArr = $clManager->getPolygonCoordinates();
@@ -619,7 +620,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 											foreach($clidArr as $id){
 												?>
 												<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo $tid."&clid=".$id; ?>','editorwindow');">
-													<img src='../images/edit.png' style='width:13px;' title='<?php echo (isset($LANG['EDIT_DETAILS'])?$LANG['EDIT_DETAILS']:'edit details'); ?>' />
+													<img src='../images/edit.png' style='width:13px;' alt="<?php echo (isset($LANG['IMG_EDIT_DETAILS'])?$LANG['IMG_EDIT_DETAILS']:'Edit Details Button'); ?>" title='<?php echo (isset($LANG['EDIT_DETAILS'])?$LANG['EDIT_DETAILS']:'edit details'); ?>' />
 												</a>
 												<?php
 											}
