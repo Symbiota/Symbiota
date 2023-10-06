@@ -278,7 +278,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 			if(($clArray["locality"] || ($clid && ($clArray["latcentroid"] || $clArray["abstract"])) || $clArray["notes"])){
 				?>
 				<div class="moredetails printoff" style="<?php echo (($showDetails)?'display:none;':''); ?>"><a href="#" onclick="toggle('moredetails');return false;"><?php echo $LANG['MOREDETAILS'];?></a></div>
-				<div class="moredetails" style="display:<?php echo (($showDetails || $printMode)?'block':'none'); ?>;">
+				<div class="moredetails" style="display:<?php echo (($showDetails || $printMode)?'block':'none'); ?>;" aria-live="polite">
 					<?php
 					if($clArray['type'] != 'excludespp'){
 						$locStr = $clArray["locality"];
@@ -318,6 +318,9 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 				<div class="printoff" id="cloptiondiv">
 					<div style="">
 						<form id="optionform" name="optionform" action="checklist.php" method="post">
+						<span class="skip-link">
+							<a href = "#img-container"><?php echo (isset($LANG['SKIP_LINK'])?$LANG['SKIP_LINK']:'Skip to Taxa List'); ?></a>
+						</span>
 							<fieldset style="background-color:white;padding-bottom:10px;">
 								<legend><b><?php echo $LANG['OPTIONS'];?></b></legend>
 								<!-- Taxon Filter option -->
@@ -529,29 +532,31 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 					?>
 				</div>
 				<div id="img-container">
-					<div style="margin:3px;">
-						<?php
-						echo '<b>'.$LANG['FAMILIES'].'</b>: ';
-						echo $clManager->getFamilyCount();
-						?>
-					</div>
-					<div style="margin:3px;">
-						<?php
-						echo '<b>'.$LANG['GENERA'].'</b>: ';
-						echo $clManager->getGenusCount();
-						?>
-					</div>
-					<div style="margin:3px;">
-						<?php
-						echo '<b>'.$LANG['SPECIES'].'</b>: ';
-						echo $clManager->getSpeciesCount();
-						?>
-					</div>
-					<div style="margin:3px;">
-						<?php
-						echo '<b>' . $LANG['TOTAL_TAXA'] . '</b>: ';
-						echo $clManager->getTaxaCount();
-						?>
+					<div aria-live="polite" tabindex="0">
+						<div style="margin:3px;">
+							<?php
+							echo '<b>'.$LANG['FAMILIES'].'</b>: ';
+							echo $clManager->getFamilyCount() . ".";
+							?>
+						</div>
+						<div style="margin:3px;">
+							<?php
+							echo '<b>'.$LANG['GENERA'].'</b>: ';
+							echo $clManager->getGenusCount() . ".";
+							?>
+						</div>
+						<div style="margin:3px;">
+							<?php
+							echo '<b>'.$LANG['SPECIES'].'</b>: ';
+							echo $clManager->getSpeciesCount() . ".";
+							?>
+						</div>
+						<div style="margin:3px;">
+							<?php
+							echo '<b>' . $LANG['TOTAL_TAXA'] . '</b>: ';
+							echo $clManager->getTaxaCount() . ".";
+							?>
+						</div>
 					</div>
 					<hr />
 					<div class="printoff">

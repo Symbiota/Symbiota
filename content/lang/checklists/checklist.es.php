@@ -93,5 +93,6 @@ $LANG['SEARCH_COMMON'] = 'Buscar nombres comunes';
 $LANG['IMG_DWNL_LIST'] = 'Descargar lista';
 $LANG['IMG_PRINT_LIST'] = 'Imprimir lista';
 $LANG['IMG_DOCX_EXPORT'] = 'Exportar a DOCX';
+$LANG['SKIP_LINK'] = 'Saltar a la lista de taxones';
 
 ?>
