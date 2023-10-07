@@ -1,4 +1,4 @@
-function getObservationSvg(opts = {color: "#7A8BE7", size: 24}) {
+function getObservationSvg(opts = {color: "#7A8BE7", size: 24, className:""}) {
    const default_ops = {color: "#7A8BE7", size: 24};
    opts = {...default_ops, ...opts};
    const half = opts.size/2;
@@ -13,7 +13,7 @@ version="1.1"
 preserveAspectRatio="none"
 xmlns="http://www.w3.org/2000/svg"
 >
-<polygon points="${half},0 0,${opts.size} ${opts.size},${opts.size}" style="fill:${opts.color};stroke:black;stroke-width:3" />
+<polygon class="${opts.className}" points="${half},0 0,${opts.size} ${opts.size},${opts.size}" style="fill:${opts.color};stroke:black;stroke-width:3" />
 </svg>`,
       className: "",
       observation: true,
