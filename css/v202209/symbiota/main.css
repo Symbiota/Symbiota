@@ -398,6 +398,11 @@ hr {
   flex-direction: column;
 }
 
+.gridlike-form-no-margin {
+  display: flex;
+  flex-direction: column;
+}
+
 .gridlike-form-row {
   flex: 1;
   display: flex;
@@ -870,4 +875,10 @@ hr {
 }
 .bigger-left-margin-rel {
   margin-left: 3rem;
+}
+
+.nativity-div {
+  margin-top: 1em;
+  font-size: 125%;
+  font-weight: bold;
 }

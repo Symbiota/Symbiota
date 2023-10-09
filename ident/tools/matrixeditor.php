@@ -142,17 +142,17 @@ include($SERVER_ROOT.'/includes/header.php');
 			<form id="filterform" action="matrixeditor.php" method="post">
 				<fieldset>
 					<legend> <?php echo (isset($LANG['CHAR_EDIT']) ? $LANG['CHAR_EDIT'] : 'Character Edit'); ?></legend>
-		  			<label for="selection"> <?php echo (isset($LANG['SELECT_CHAR']) ? $LANG['SELECT_CHAR'] : 'Select character to edit'); ?> </label>
-		  			<div>
+					<div class="gridlike-form-no-margin">
+						<label for="selection" class="bottom-breathing-room-relative"> <?php echo (isset($LANG['SELECT_CHAR']) ? $LANG['SELECT_CHAR'] : 'Select character to edit'); ?> </label>
 						<select name="tf" id="selection">
-				 			<option value=""> <?php echo (isset($LANG['ALL_TAXA']) ? $LANG['ALL_TAXA'] : 'All Taxa'); ?> </option>
-				 			<option value="">--------------------------</option>
-					  		<?php
-					  		$selectList = $muManager->getTaxaQueryList();
-				  			foreach($selectList as $tid => $scinameValue){
-				  				echo '<option value="'.$tid.'" '.($tid==$taxonFilter?"SELECTED":"").'>'.$scinameValue."</option>";
-				  			}
-					  		?>
+							<option value=""> <?php echo (isset($LANG['ALL_TAXA']) ? $LANG['ALL_TAXA'] : 'All Taxa'); ?> </option>
+							<option value="">--------------------------</option>
+							<?php
+							$selectList = $muManager->getTaxaQueryList();
+							foreach($selectList as $tid => $scinameValue){
+								echo '<option value="'.$tid.'" '.($tid==$taxonFilter?"SELECTED":"").'>'.$scinameValue."</option>";
+							}
+							?>
 						</select>
 					</div>
 					<div style="margin: 10px 0px;">
@@ -164,7 +164,7 @@ include($SERVER_ROOT.'/includes/header.php');
 			 		<?php
 	 				$cList = $muManager->getCharList($taxonFilter);
 					foreach($cList as $h => $charData){
-						echo "<div style='margin-top:1em;font-size:125%;font-weight:bold;'>$h</div>\n";
+						echo "<div class='nativity-div bottom-breathing-room-relative'>$h</div>\n";
 						ksort($charData);
 						foreach($charData as $cidKey => $charValue){
 							echo '<div> <input name="cid" type="radio" id="' . $cidKey . '" value="' . $cidKey . '" onclick="this.form.submit()">' . '<label for="' . $cidKey . '">' . $charValue . '</label></div>'."\n";
