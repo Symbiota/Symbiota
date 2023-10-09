@@ -52,7 +52,7 @@ $(document).on("pageloadfailed", function (event, data) {
 });
 
 function setHeight() {
-  var winHeight = $(window).height();
+  var winHeight = window.outerHeight;
   document.getElementById("mapinterface").style.height = winHeight + "px";
   document.getElementById("loadingOverlay").style.height = winHeight + "px";
 }
