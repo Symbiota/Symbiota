@@ -380,17 +380,15 @@ $_SESSION['citationvar'] = $searchVar;
 					<h2><?php echo $LANG['GOOGLE_MAP_HEADER']; ?></h2>
 				</div>
 				<div>
-					<button>
-               <?php if(!empty($LEAFLET)) {?>
-                  	<a href="#" onclick="openLeafletMapPU();">
+					<?php if (!empty($LEAFLET)) { ?>
+						<button onclick="openLeafletMapPU();">
 							<?php echo $LANG['GOOGLE_MAP_DISPLAY']; ?>
-					</a>
-               <?php } else {?>
-                  <a href="#" onclick="openGoogleMapPU();">
+						</button>
+					<?php } else { ?>
+						<button onclick="openGoogleMapPU();">
 							<?php echo $LANG['GOOGLE_MAP_DISPLAY']; ?>
-						</a>
-               <?php } ?>
-					</button>
+						</button>
+					<?php } ?>
 				</div>
 				<div>
 					<?php echo $LANG['GOOGLE_MAP_DESCRIPTION']; ?>
