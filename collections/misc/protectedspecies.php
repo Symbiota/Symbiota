@@ -5,10 +5,10 @@ use PhpOffice\PhpSpreadsheet\Reader\Xml\Style\NumberFormat;
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceProtectedSpecies.php');
 include_once($SERVER_ROOT.'/content/lang/collections/misc/protectedspecies.' . $LANG_TAG . '.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' . $CHARSET);
 
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
-$searchTaxon = array_key_exists('searchtaxon',$_POST)?$_POST['searchtaxon']:'';
+$searchTaxon = array_key_exists('searchtaxon', $_REQUEST) ? $_REQUEST['searchtaxon'] : '';
+$action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
 
 $isEditor = 0;
 if($IS_ADMIN || array_key_exists('RareSppAdmin',$USER_RIGHTS)){
@@ -25,7 +25,7 @@ if($isEditor){
 		$rsManager->deleteSpecies($_REQUEST['tidtodel']);
 	}
 }
-if($searchTaxon) $rsManager->setTaxonFilter($searchTaxon);
+$rsManager->setTaxonFilter($searchTaxon);
 $rsArr = $rsManager->getProtectedSpeciesList();
 ?>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -110,7 +110,7 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 	<?php
 	if($isEditor){
 		?>
-		<div style="float:right;cursor:pointer;" onclick="javascript:toggle('editobj');" title="Toggle Editing Functions">
+		<div style="float:right;cursor:pointer;" onclick="toggle('editobj');" title="Toggle Editing Functions">
 			<?php echo $LANG['EDIT'] ?> <img style="border:0px;" src="../../images/edit.png" alt="pencil icon depicting edit capability" />
 		</div>
 		<?php
@@ -123,7 +123,7 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 				<legend><b>Filter</b></legend>
 				<div style="margin:3px">
 					<label for="searchtaxon"><?php echo $LANG['TAXON_SEARCH'] ?>:</label>
-					<input id="searchtaxon" name="searchtaxon" type="text" value="<?php echo $searchTaxon; ?>" />
+					<input id="searchtaxon" name="searchtaxon" type="text" value="<?= htmlspecialchars($searchTaxon, HTML_SPECIAL_CHARS_FLAGS) ?>" />
 				</div>
 				<div style="margin:3px">
 					<input name="submitaction" type="submit" value="Search" />

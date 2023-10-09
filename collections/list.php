@@ -17,6 +17,7 @@ $collManager = new OccurrenceListManager();
 $searchVar = $collManager->getQueryTermStr();
 if ($targetTid && array_key_exists('mode', $_REQUEST)) $searchVar .= '&mode=voucher&targettid=' . $targetTid;
 $occurArr = $collManager->getSpecimenMap($pageNumber, $cntPerPage);
+
 $_SESSION['citationvar'] = $searchVar;
 ?>
 <html>

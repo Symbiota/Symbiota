@@ -10,14 +10,14 @@ if(!$SYMB_UID) header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=.
 
 $collid = $_REQUEST['collid'];
 $loanId = $_REQUEST['loanid'];
-$sortTag = (isset($_REQUEST['sortTag'])?$_REQUEST['sortTag']:'');
-
-//Sanitation
-if(!is_numeric($collid)) $collid = 0;
-if(!is_numeric($loanId)) $loanId = 0;
-$sortTag = filter_var($sortTag, FILTER_SANITIZE_STRING);
+$sortTag = (isset($_REQUEST['sortTag']) ? $_REQUEST['sortTag'] : '');
 
 $loanManager = new OccurrenceLoans();
+
+//Sanitation
+$collid = $loanManager->sanitizeInt($collid);
+$loanId = $loanManager->sanitizeInt($loanId);
+
 if($collid) $loanManager->setCollId($collid);
 $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 ?>

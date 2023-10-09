@@ -6,6 +6,7 @@ Language: Espa�ol (Spanish)
 */
 
 $LANG['INVPROJ'] = 'Proyectos de Inventario';
+$LANG['INVPROJLIST'] = 'Lista de proyectos de inventario';
 $LANG['PROJMANAG'] = 'Administradores de Proyectos:';
 $LANG['METADATA'] = 'Metadatos';
 $LANG['INVMANAG'] = 'Administradores de Inventarios';
@@ -42,4 +43,14 @@ $LANG['CHOOSEUSER'] = 'Elija un usuario desde la lista desplegable';
 $LANG['ADDNEWPR'] = 'Ingresar un Proyecto Nuevo';
 $LANG['TOGGLEEDIT'] = 'Intercambia Funciones de Edici&oacute;n';
 $LANG['MAPREP'] = 'Mapea representaci&oacute;n de listados de comprobaci&oacute;n';
+$LANG['PENCIL_ALT'] = 'imagen de un lápiz sobre papel, que indica alternar el modo de edición';
+$LANG['QUESTION_ALT'] = 'imagen de un signo de interrogación para obtener más información sobre las listas de especies de investigación';
+$LANG['GLOBE_ALT'] = 'imagen de un globo terráqueo, que indica una versión de la lista de verificación superpuesta en un mapa';
+$LANG['TRIANGLE_ALT'] = 'una imagen de un triángulo. Solo se usa para hacer que la ventana emergente parezca más una burbuja de diálogo';
+$LANG['EDIT'] = 'Editar';
+$LANG['KEY'] = 'Clave';
+$LANG['GOLDEN_KEY_SYMBOL'] = 'Símbolo de la llave dorada';
+$LANG['ADD_NEW'] = 'Agregar nuevo proyecto';
+$LANG['EDIT'] = 'Editar proyecto';
+
 ?>
