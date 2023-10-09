@@ -215,7 +215,7 @@ $clArr = $obsManager->getChecklists();
 							<div>
 								<label for="eventdate"><?php echo $LANG['DATE']; ?>:</label>
 								<input type="text" id="eventdate" name="eventdate" style="width:120px;" onchange="verifyDate(this);" title="format: yyyy-mm-dd" required />
-								<a href="#" style="margin:15px 0px 0px 5px;" onclick="toggle('obsextradiv');return false" title="Display additional fields">
+								<a href="#" style="margin:15px 0px 0px 5px;" onclick="toggle('obsextradiv');return false" title="<?php echo (isset($LANG['IEDIT_BTN']) ? $LANG['EDIT_BTN'] : 'Display additional fields'); ?>" aria-label="<?php echo (isset($LANG['IEDIT_BTN']) ? $LANG['EDIT_BTN'] : 'Display additional fields'); ?>">
 									<img src="../../images/editplus.png" style="width:15px;" alt="<?php echo (isset($LANG['IMG_EDIT']) ? $LANG['IMG_EDIT'] : 'Display additional fields image'); ?>"/>
 								</a>
 							</div>
