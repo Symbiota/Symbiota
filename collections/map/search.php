@@ -480,6 +480,9 @@ foreach ($coordArr as $collName => $coll) {
          let collGroups = {};
          let collMarkers = {};
 
+         let heatmapLayer;
+         let heatmap;
+
          let color = "B2BEB5";
 
          map.mapLayer.zoomControl.setPosition('topright');
@@ -516,7 +519,42 @@ foreach ($coordArr as $collName => $coll) {
             generateGroupLayers(taxaMap, "tid", "taxa", taxaMarkers, taxaClusters, taxaGroups);
             generateGroupLayers(collArr, "collid", "coll", collMarkers, collClusters, collGroups);
 
-            drawGroup(taxaMap, "tid", taxaClusters, taxaGroups);
+            if(heatmap) {
+               drawHeatMap();
+            } else {
+               drawGroup(taxaMap, "tid", taxaClusters, taxaGroups);
+            }
+         }
+
+         function drawHeatMap() {
+            if(!heatmap) return;
+
+            if(heatmapLayer) map.mapLayer.removeLayer(heatmapLayer);
+
+            let radius_input = document.getElementById('heat-radius');
+            let minDensityInput = document.getElementById('heat-min-density')
+            let maxDensityInput = document.getElementById('heat-max-density')
+
+            var cfg = {
+               "radius": (radius_input? parseFloat(radius_input.value): 50) / 100.00,
+               "maxOpacity": .9,
+               "scaleRadius": true,
+               "useLocalExtrema": false,
+               latField: 'lat',
+               lngField: 'lng',
+            };
+            heatmapLayer = new HeatmapOverlay(cfg);
+
+            let heatMaxDensity = maxDensityInput? parseInt(maxDensityInput.value) : 3
+            let heatMinDensity = minDensityInput? parseInt(minDensityInput.value) : 1
+
+            heatmapLayer.addTo(map.mapLayer);
+
+            heatmapLayer.setData({
+               max: heatMaxDensity || 3,
+               min: heatMinDensity || 1,
+               data: recordArr 
+            });
          }
 
          function popluateGroup(markerGroup, id, marker) {
@@ -733,14 +771,28 @@ foreach ($coordArr as $collName => $coll) {
          });
 
          document.getElementById('heatmap_on').addEventListener('change', e => {
-            console.log(e.target.checked);
-            //Clear points 
-            
-            //Add Heatmap
-
-            if(cluster_type === "taxa") toggleGroupClustering(taxaClusters, taxaGroups);
-            else if(cluster_type === "coll") toggleGroupClustering(collClusters, collGroups);
+            heatmap = e.target.checked;
+            if(e.target.checked) {
+               //Clear points 
+               if(cluster_type == "taxa") {
+                  removeGroup(taxaMap, "tid", taxaClusters, taxaGroups);
+               } else if(cluster_type == "coll") {
+                  removeGroup(collArr, "collid", collClusters, collGroups);
+               }
+               drawHeatMap();
+            } else {
+               map.mapLayer.removeLayer(heatmapLayer);
+               if(cluster_type == "taxa") {
+                  drawGroup(taxaMap, "tid", taxaClusters, taxaGroups);
+               } else if(cluster_type == "coll") {
+                  drawGroup(collArr, "tid", collClusters, collGroups);
+               }
+            }
          });
+
+         document.getElementById('heat-min-density').addEventListener('change', e => drawHeatMap())
+         document.getElementById('heat-radius').addEventListener('change', e => drawHeatMap())
+         document.getElementById('heat-max-density').addEventListener('change', e => drawHeatMap() )
 
          //Load Data if any with page Load
          if(recordArr.length > 0) {
@@ -1184,9 +1236,22 @@ foreach ($coordArr as $collName => $coll) {
                      </fieldset>
                      <br/>
                      <fieldset>
-                        <legend><?php echo (isset($LANG['HEATMAP'])?$LANG['HEATMAP']:'HEATMAP'); ?></legend>
+                        <legend><?php echo (isset($LANG['HEATMAP'])?$LANG['HEATMAP']:'Heatmap'); ?></legend>
                         <label><?php echo (isset($LANG['TURN_ON_HEATMAP'])?$LANG['TURN_ON_HEATMAP']:'Turn on heatmap'); ?>:</label>
                         <input data-role="none" type="checkbox" id="heatmap_on" name="heatmap_on" value='1'/>
+                        <br/>
+                        <span style="display: flex; align-items:center">
+                           <label for="heat-radius"><?php echo (isset($LANG['HEAT_RADIUS'])? $LANG['HEAT_RADIUS']:'Radius') ?>: 0.1</label>
+                           <input style="margin: 0 1rem;"type="range" value="70" id="heat-radius" name="heat-radius" min="1" max="100">1
+                        </span>
+
+                        <label for="heat-min-density"><?php echo (isset($LANG['MIN_DENSITY'])? $LANG['MIN_DENSITY']: 'Minimum Density') ?>: </label>
+                        <input style="margin: 0 1rem; width: 5rem;"value="1" id="heat-min-density" name="heat-min-density">
+
+                        <br/>
+                        <label for="heat-max-density"><?php echo (isset($LANG['MAX_DENSITY'])?$LANG['MAX_DENSITY']: 'Maximum Density') ?>: </label>
+                        <input style="margin: 0 1rem; width: 5rem;"value="3" id="heat-max-density" name="heat-max-density">
+                  <br/>
                      </fieldset>
 						</div>
 						<form style="display:none;" name="csvcontrolform" id="csvcontrolform" action="csvdownloadhandler.php" method="post" onsubmit="">
