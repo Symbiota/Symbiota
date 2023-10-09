@@ -13,9 +13,9 @@ $sortOrder = array_key_exists('sortorder',$_REQUEST)?$_REQUEST['sortorder']:'';
 //Sanitation
 if(!is_numeric($page) || $page < 1) $page = 1;
 if(!is_numeric($tableCount)) $tableCount = 1000;
-$sortField1 = strip_tags($sortField1);
-$sortField2 = strip_tags($sortField2);
-$sortOrder = strip_tags($sortOrder);
+$sortField1 = htmlspecialchars($sortField1, HTML_SPECIAL_CHARS_FLAGS);
+$sortField2 = htmlspecialchars($sortField2, HTML_SPECIAL_CHARS_FLAGS);
+$sortOrder = htmlspecialchars($sortOrder, HTML_SPECIAL_CHARS_FLAGS);
 
 $collManager = new OccurrenceListManager();
 $searchVar = $collManager->getQueryTermStr();

@@ -5,25 +5,19 @@ else include_once($SERVER_ROOT . '/content/lang/collections/list.en.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceListManager.php');
 header("Content-Type: text/html; charset=" . $CHARSET);
 
-$taxonFilter = array_key_exists('taxonfilter', $_REQUEST) ? $_REQUEST['taxonfilter'] : 0;
-$targetTid = array_key_exists('targettid', $_REQUEST) ? $_REQUEST['targettid'] : '';
-$tabIndex = array_key_exists('tabindex', $_REQUEST) ? $_REQUEST['tabindex'] : 1;
-$cntPerPage = array_key_exists('cntperpage', $_REQUEST) ? $_REQUEST['cntperpage'] : 100;
-$pageNumber = array_key_exists('page', $_REQUEST) ? $_REQUEST['page'] : 1;
-$datasetid = array_key_exists("datasetid", $_REQUEST) ? $_REQUEST["datasetid"] : '';
-$_SESSION['datasetid'] = $datasetid;
-
-//Sanitation
-if (!is_numeric($taxonFilter)) $taxonFilter = 1;
-if (!is_numeric($targetTid)) $targetTid = '';
-if (!is_numeric($tabIndex)) $tabIndex = 1;
-if (!is_numeric($cntPerPage)) $cntPerPage = 100;
-if (!is_numeric($pageNumber)) $pageNumber = 1;
+$taxonFilter = array_key_exists('taxonfilter', $_REQUEST) ? filter_var($_REQUEST['taxonfilter'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$targetTid = array_key_exists('targettid', $_REQUEST) ? filter_var($_REQUEST['targettid'], FILTER_SANITIZE_NUMBER_INT) : '';
+$tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 1;
+$cntPerPage = array_key_exists('cntperpage', $_REQUEST) ? filter_var($_REQUEST['cntperpage'], FILTER_SANITIZE_NUMBER_INT) : 100;
+$pageNumber = array_key_exists('page', $_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
+$datasetid = array_key_exists('datasetid', $_REQUEST) ? filter_var($_REQUEST['datasetid'], FILTER_SANITIZE_NUMBER_INT) : '';
+$_SESSION['datasetid'] = filter_var($datasetid, FILTER_SANITIZE_NUMBER_INT);
 
 $collManager = new OccurrenceListManager();
 $searchVar = $collManager->getQueryTermStr();
 if ($targetTid && array_key_exists('mode', $_REQUEST)) $searchVar .= '&mode=voucher&targettid=' . $targetTid;
 $occurArr = $collManager->getSpecimenMap($pageNumber, $cntPerPage);
+
 $_SESSION['citationvar'] = $searchVar;
 ?>
 <html>
@@ -40,7 +34,7 @@ $_SESSION['citationvar'] = $searchVar;
 	<script src="../js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
 	<link href="../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
 	<script type="text/javascript">
-		var urlQueryStr = "<?php echo $searchVar . '&page=' . $pageNumber; ?>";
+		var urlQueryStr = "<?php if($searchVar) echo $searchVar . '&page=' . $pageNumber; ?>";
 
 		$(document).ready(function() {
 			<?php
@@ -409,7 +403,7 @@ $_SESSION['citationvar'] = $searchVar;
 					</div>
 					<div style="margin:20px;">
 						<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
-						<button name="formsubmit" type="submit" value="<?php echo $LANG['CREATE_KML']; ?>"><?php echo $LANG['CREATE_KML']; ?></button>
+						<button name="formsubmit" type="submit" value="createKML"><?php echo $LANG['CREATE_KML']; ?></button>
 					</div>
 					<div style='margin:10 0 0 20;'>
 						<a href="#" onclick="toggleFieldBox('fieldBox');">

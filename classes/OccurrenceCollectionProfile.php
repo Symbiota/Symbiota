@@ -72,22 +72,9 @@ class OccurrenceCollectionProfile extends OmCollections{
 		return $retArr;
 	}
 
-	public function getMetadataHtml($LANG, $LANG_TAG){
-		$outStr = '<div class="coll-description">'.$this->collMeta[$this->collid]["fulldescription"].'</div>';
-		if(isset($this->collMeta[$this->collid]['contactjson'])){
-			if($contactArr = json_decode($this->collMeta[$this->collid]['contactjson'],true)){
-				foreach($contactArr as $cArr){
-					$title = (isset($LANG['CONTACT'])?$LANG['CONTACT']:'Contact');
-					if(isset($cArr['role']) && $cArr['role']) $title = $cArr['role'];
-					$outStr .= '<div class="field-div"><span class="label">'.$title.':</span> ';
-					$outStr .= $cArr['firstName'].' '.$cArr['lastName'];
-					if(isset($cArr['email']) && $cArr['email']) $outStr .= ', '.$cArr['email'];
-					if(isset($cArr['phone']) && $cArr['phone']) $outStr .= ', '.$cArr['phone'];
-					if(isset($cArr['orcid']) && $cArr['orcid']) $outStr .= ' (ORCID #: <a href="https://orcid.org/' . htmlspecialchars($cArr['orcid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">'. htmlspecialchars($cArr['orcid'], HTML_SPECIAL_CHARS_FLAGS) . '</a>)';
-					$outStr .= '</div>';
-				}
-			}
-		}
+	public function getVisibleMetadataHtml($LANG, $LANG_TAG){
+		$outStr = '<div class="coll-description bottom-breathing-room-relative">' . $this->collMeta[$this->collid]["fulldescription"] . '</div>';
+
 		if(isset($this->collMeta[$this->collid]['resourcejson'])){
 			if($resourceArr = json_decode($this->collMeta[$this->collid]['resourcejson'],true)){
 				$title = (isset($LANG['HOMEPAGE'])?$LANG['HOMEPAGE']:'Homepage');
@@ -99,87 +86,156 @@ class OccurrenceCollectionProfile extends OmCollections{
 				}
 			}
 		}
-		$outStr .= '<div class="field-div">';
-		$outStr .= '<span class="label">'.$LANG['COLLECTION_TYPE'].':</span> '.$this->collMeta[$this->collid]['colltype'];
-		$outStr .= '</div>';
-		$outStr .= '<div class="field-div">';
-		$outStr .= '<span class="label">'.$LANG['MANAGEMENT'].':</span> ';
-		if($this->collMeta[$this->collid]['managementtype'] == 'Live Data'){
-			$outStr .= (isset($LANG['LIVE_DATA'])?$LANG['LIVE_DATA']:'Live Data managed directly within data portal');
-		}
-		else{
-			if($this->collMeta[$this->collid]['managementtype'] == 'Aggregate'){
-				$outStr .= (isset($LANG['DATA_AGGREGATE'])?$LANG['DATA_AGGREGATE']:'Data harvested from a data aggregator');
-			}
-			else{
-				$outStr .= (isset($LANG['DATA_SNAPSHOT'])?$LANG['DATA_SNAPSHOT']:'Data snapshot of local collection database ');
-			}
-		}
-		$outStr .= '</div>';
-		if($this->collMeta[$this->collid]['managementtype'] != 'Live Data') $outStr .= '<div class="field-div"><span class="label">'.$LANG['LAST_UPDATE'].':</span> '.$this->collMeta[$this->collid]['uploaddate'].'</div>';
-		if($this->collMeta[$this->collid]['managementtype'] == 'Live Data'){
-			$outStr .= '<div class="field-div">';
-			$outStr .= '<span class="label">'.$LANG['GLOBAL_UNIQUE_ID'].':</span> '.$this->collMeta[$this->collid]['recordid'];
-			$outStr .= '</div>';
-		}
-		if($this->collMeta[$this->collid]['dwcaurl']){
-			$dwcaUrl = $this->collMeta[$this->collid]['dwcaurl'];
-			$outStr .= '<div class="field-div">';
-			$outStr .= '<a href="' . htmlspecialchars($dwcaUrl, HTML_SPECIAL_CHARS_FLAGS) . '">' . (isset($LANG['DWCA_PUB'])?$LANG['DWCA_PUB']:'DwC-Archive Access Point') . '</a>';
-			$outStr .= '</div>';
-		}
-		$outStr .= '<div class="field-div">';
-		if($this->collMeta[$this->collid]['managementtype'] == 'Live Data'){
-			if($GLOBALS['SYMB_UID']){
-				$outStr .= '<span class="label">'.(isset($LANG['LIVE_DOWNLOAD'])?$LANG['LIVE_DOWNLOAD']:'Live Data Download').':</span> ';
-				$outStr .= '<a href="../../webservices/dwc/dwcapubhandler.php?collid=' . htmlspecialchars($this->collMeta[$this->collid]['collid'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars((isset($LANG['FULL_DATA'])?$LANG['FULL_DATA']:'DwC-Archive File'), HTML_SPECIAL_CHARS_FLAGS) . '</a>';
-			}
-		}
-		elseif($this->collMeta[$this->collid]['managementtype'] == 'Snapshot'){
-			$pathArr = $this->getDwcaPath($this->collMeta[$this->collid]['collid']);
-			if($pathArr){
-				$outStr .= '<div style="float:left"><span class="label">'.(isset($LANG['IPT_SOURCE'])?$LANG['IPT_SOURCE']:'IPT / DwC-A Source').':</span> </div>';
-				$outStr .= '<div style="float:left;margin-left:5px;">';
-				foreach($pathArr as $titleStr => $pathStr){
-					$outStr .= '<a href="' . htmlspecialchars($pathStr, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($titleStr, HTML_SPECIAL_CHARS_FLAGS) . '</a><br/>';
+
+		if(isset($this->collMeta[$this->collid]['contactjson'])){
+			if($contactArr = json_decode($this->collMeta[$this->collid]['contactjson'],true)){
+				if(!empty($contactArr)){
+					$title = (isset($LANG['CONTACT'])?$LANG['CONTACT']:'Contacts');
+					$outStr .= '<section class=" no-left-margin"><h1 style="font: 1.5rem normal;"><span>' . $title . ': ' . '</span></h1> ';
+					$outStr .= '<ul>';
 				}
-				$outStr .= '</div>';
-			}
-		}
-		$outStr .= '</div>';
-		$outStr .= '<div class="field-div"><span class="label">' . htmlspecialchars((isset($LANG['DIGITAL_METADATA'])?$LANG['DIGITAL_METADATA']:'Digital Metadata'), HTML_SPECIAL_CHARS_FLAGS) . ':</span> <a href="../datasets/emlhandler.php?collid=' . htmlspecialchars($this->collMeta[$this->collid]['collid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">EML File</a></div>';
-		$outStr .= '<div class="field-div">';
-		if($this->collMeta[$this->collid]['rights']){
-			$rights = $this->collMeta[$this->collid]['rights'];
-			$rightsUrl = '';
-			if(substr($rights,0,4) == 'http'){
-				$rightsUrl = $rights;
-				if($GLOBALS['RIGHTS_TERMS']){
-					if($rightsArr = array_keys($GLOBALS['RIGHTS_TERMS'],$rights)){
-						$rights = current($rightsArr);
+				foreach($contactArr as $cArr){
+					$role= null;
+					$outStr .= '<li>';
+					if(isset($cArr['role']) && $cArr['role']) $role = $cArr['role'];
+					$outStr .= '<div class="field-div">';
+					if(isset($role)){
+						$outStr .= '<span class="label">' . $role . ': </span>';
 					}
+					$outStr .= $cArr['firstName'].' '.$cArr['lastName'];
+					if(isset($cArr['email']) && $cArr['email']) $outStr .= ', '.$cArr['email'];
+					if(isset($cArr['phone']) && $cArr['phone']) $outStr .= ', '.$cArr['phone'];
+					if(isset($cArr['orcid']) && $cArr['orcid']) $outStr .= ' (ORCID #: <a href="https://orcid.org/' . htmlspecialchars($cArr['orcid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">'. htmlspecialchars($cArr['orcid'], HTML_SPECIAL_CHARS_FLAGS) . '</a>)';
+					$outStr .= '</div>';
+					$outStr .= '</li>';
 				}
+				$outStr .= '</ul></section>';
 			}
-			if($rightsUrl) $outStr .= '<a href="' . htmlspecialchars($rightsUrl, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
-			$outStr .= $LANG['USAGE_RIGHTS'];
-			if($rightsUrl) $outStr .= '</a>';
 		}
-		elseif(file_exists('../../includes/usagepolicy.php')){
-			$outStr .= '<a href="../../includes/usagepolicy.php" target="_blank">'.(isset($LANG['USAGE_POLICY'])?$LANG['USAGE_POLICY']:'Usage policy').'</a>';
-		}
+		return $outStr;
+	}
+
+	public function getAccordionMetadataHtml($LANG, $LANG_TAG){
+		$outStr = '<div class="accordions" style="margin-bottom: 1.5rem;">';
+			$outStr .= '<section>';
+				$outStr .= '<input type="checkbox" id="more-details" class="accordion-selector" />';
+				$outStr .= '<label for="more-details" class="accordion-header">More Information</label>';
+				$outStr .= '<div id="collection-type" class="content">';
+
+					//Collection Type
+					$outStr .= '<div class="bottom-breathing-room-relative">';
+					$outStr .= '<span class="label">' . $LANG['COLLECTION_TYPE'] . ':</span> ' . $this->collMeta[$this->collid]['colltype'];
+					$outStr .= '</div>';
+
+					//Management
+					$outStr .= '<div class="bottom-breathing-room-relative">';
+						$outStr .= '<span class="label">'.$LANG['MANAGEMENT'].':</span> ';
+						if($this->collMeta[$this->collid]['managementtype'] == 'Live Data'){
+							$outStr .= (isset($LANG['LIVE_DATA'])?$LANG['LIVE_DATA']:'Live Data managed directly within data portal');
+						}
+						else{
+							if($this->collMeta[$this->collid]['managementtype'] == 'Aggregate'){
+								$outStr .= (isset($LANG['DATA_AGGREGATE'])?$LANG['DATA_AGGREGATE']:'Data harvested from a data aggregator');
+							}
+							else{
+								$outStr .= (isset($LANG['DATA_SNAPSHOT'])?$LANG['DATA_SNAPSHOT']:'Data snapshot of local collection database ');
+							}
+						}
+					$outStr .= '</div>';
+
+					// Last Updated
+					$outStr .= '<div class="bottom-breathing-room-relative">';
+						$outStr .= '<span class="label">' . $LANG['LAST_UPDATE'] . ':</span> ';
+						$outStr .= $this->collMeta[$this->collid]['uploaddate'];
+					$outStr .= '</div>';
+
+					// GUID
+					if($this->collMeta[$this->collid]['managementtype'] == 'Live Data'){
+						$outStr .= '<div class="bottom-breathing-room-relative">';
+							$outStr .= '<span class="label">'.$LANG['GLOBAL_UNIQUE_ID'].':</span> '.$this->collMeta[$this->collid]['recordid'];
+						$outStr .= '</div>';
+					}
+
+					// Darwin-core url
+					if($this->collMeta[$this->collid]['dwcaurl']){
+						$outStr .= '<div class="bottom-breathing-room-relative">';
+							$dwcaUrl = $this->collMeta[$this->collid]['dwcaurl'];
+							$outStr .= '<a href="' . htmlspecialchars($dwcaUrl, HTML_SPECIAL_CHARS_FLAGS) . '">' . (isset($LANG['DWCA_PUB'])?$LANG['DWCA_PUB']:'DwC-Archive Access Point') . '</a>';
+						$outStr .= '</div>';
+					}
+
+					//Digital metadata
+					$outStr .= '<div class="bottom-breathing-room-relative">';
+						$outStr .= '<span class="label">' . htmlspecialchars((isset($LANG['DIGITAL_METADATA'])?$LANG['DIGITAL_METADATA']:'Digital Metadata'), HTML_SPECIAL_CHARS_FLAGS) . ':</span>';
+						$outStr .= '<a href="../datasets/emlhandler.php?collid=' . htmlspecialchars($this->collMeta[$this->collid]['collid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">EML File</a>';
+					$outStr .= '</div>';
+
+					//Live Download
+					if($this->collMeta[$this->collid]['managementtype'] == 'Live Data'){
+						if($GLOBALS['SYMB_UID']){
+							$outStr .= '<div class="bottom-breathing-room-relative">';
+								$outStr .= '<span class="label">'.(isset($LANG['LIVE_DOWNLOAD'])?$LANG['LIVE_DOWNLOAD']:'Live Data Download').':</span> ';
+								$outStr .= '<a href="../../webservices/dwc/dwcapubhandler.php?collid=' . htmlspecialchars($this->collMeta[$this->collid]['collid'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars((isset($LANG['FULL_DATA'])?$LANG['FULL_DATA']:'DwC-Archive File'), HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+							$outStr .= '</div>';
+						}
+					}
+					// IPT Source
+					elseif($this->collMeta[$this->collid]['managementtype'] == 'Snapshot'){
+						$pathArr = $this->getDwcaPath($this->collMeta[$this->collid]['collid']);
+						if($pathArr){
+							$outStr .= '<div class="bottom-breathing-room-relative">';
+								$outStr .= '<span class="label">'.(isset($LANG['IPT_SOURCE'])?$LANG['IPT_SOURCE']:'IPT / DwC-A Source').':</span>';
+							foreach($pathArr as $titleStr => $pathStr){
+								$outStr .= '<a href="' . htmlspecialchars($pathStr, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($titleStr, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+							}
+							$outStr .= '</div>';
+						}
+					}
+
+					if($this->collMeta[$this->collid]['rights']){
+						$rights = $this->collMeta[$this->collid]['rights'];
+						$rightsUrl = '';
+						if(substr($rights,0,4) == 'http'){
+							$rightsUrl = $rights;
+							if($GLOBALS['RIGHTS_TERMS']){
+								if($rightsArr = array_keys($GLOBALS['RIGHTS_TERMS'],$rights)){
+									$rights = current($rightsArr);
+								}
+							}
+						}
+						$outStr .= '<div class="bottom-breathing-room-relative">';
+							if($rightsUrl) $outStr .= '<a href="' . htmlspecialchars($rightsUrl, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
+							$outStr .= $LANG['USAGE_RIGHTS'];
+							if($rightsUrl) $outStr .= '</a>';
+						$outStr .= '</div>';
+					}
+					elseif(file_exists('../../includes/usagepolicy.php')){
+						$outStr .= '<div class="bottom-breathing-room-relative">';
+							$outStr .= '<a href="../../includes/usagepolicy.php" target="_blank">'.(isset($LANG['USAGE_POLICY'])?$LANG['USAGE_POLICY']:'Usage policy').'</a>';
+						$outStr .= '</div>';
+					}
+
+					// Rights holder
+					if($this->collMeta[$this->collid]['rightsholder']){
+						$outStr .= '<div class="bottom-breathing-room-relative">';
+							$outStr .= '<span class="label">'.$LANG['RIGHTS_HOLDER'].':</span> ';
+							$outStr .= $this->collMeta[$this->collid]['rightsholder'];
+						$outStr .= '</div>';
+					}
+
+					// Access rights
+					if($this->collMeta[$this->collid]['accessrights']){
+						$outStr .= '<div class="bottom-breathing-room-relative">';
+							$outStr .= '<span class="label">'.$LANG['ACCESS_RIGHTS'].':</span> '. $this->collMeta[$this->collid]['accessrights'] ;
+						$outStr .= '</div>';
+					}
+
+
+				$outStr .= '</div>';
+
+			$outStr .= '</section>';
 		$outStr .= '</div>';
-		if($this->collMeta[$this->collid]['rightsholder']){
-			$outStr .= '<div class="field-div">';
-			$outStr .= '<span class="label">'.$LANG['RIGHTS_HOLDER'].':</span> ';
-			$outStr .= $this->collMeta[$this->collid]['rightsholder'];
-			$outStr .= '</div>';
-		}
-		if($this->collMeta[$this->collid]['accessrights']){
-			$outStr .= '<div class="field-div">'.
-				'<span class="label">'.$LANG['ACCESS_RIGHTS'].':</span> '.
-				$this->collMeta[$this->collid]['accessrights'].
-				'</div>';
-		}
+
 		return $outStr;
 	}
 

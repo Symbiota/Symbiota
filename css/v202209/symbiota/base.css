@@ -67,8 +67,20 @@ span[class="link"]:hover {
   margin-left: 3px;
 }
 
-/* Species list component */
+button.icon-button {
+  margin: 2px 5px;
+  padding: 6px;
+  background-color: #f2f0e9;
+  border-width: 1px;
+  border-style: outset;
+  border-color: buttonborder;
+}
 
+button.icon-button:hover {
+  background: #e4f2fb;
+}
+
+/* Species list component */
 #taxalist-div {
   line-height: 1em;
 }
@@ -156,7 +168,6 @@ div.tnimg img {
 }
 
 /* styled table */
-
 table.styledtable {
   table-layout: auto;
   width: 100%;
@@ -184,7 +195,6 @@ table.styledtable tr.alt td {
 }
 
 /* misc */
-
 div.genericpopup {
   position: absolute;
   display: none;
@@ -290,4 +300,17 @@ ol.mp_list li.mp_highlighted {
 
 .accessibility-button {
   font-size: 1.1em;
+}
+
+/*
+* OccurrenceSearchSupport
+*/
+.search-button-div {
+  float: right;
+  margin-top: 20px;
+}
+.sticky-buttons {
+  position: sticky;
+  top: 1rem;
+  float: right;
 }

@@ -34,9 +34,8 @@ class ChecklistAdmin extends Manager{
 			$postArr['dynamicProperties'] = $this->getDynamicPropertiesJsonWithExternalServiceDetails($postArr);
 
 			$inventoryManager = new ImInventories();
-			$newClid = $inventoryManager->insertChecklist($postArr);
-
-			if($newClid){
+			if($inventoryManager->insertChecklist($postArr)){
+				$newClid = $inventoryManager->getPrimaryKey();
 				//Add permissions to allow creater to be an editor and then reset user permissions stored in browser cache
 				$inventoryManager->insertUserRole($GLOBALS['SYMB_UID'], 'ClAdmin', 'fmchecklists', $newClid, $GLOBALS['SYMB_UID']);
 				$newPManager = new ProfileManager();
@@ -49,6 +48,7 @@ class ChecklistAdmin extends Manager{
 					}
 				}
 			}
+			else echo $inventoryManager->errorMessage;
 		}
 		return $newClid;
 	}
@@ -58,7 +58,6 @@ class ChecklistAdmin extends Manager{
 		if($GLOBALS['SYMB_UID'] && isset($postArr['name'])){
 			$postArr['defaultsettings'] = $this->getDefaultJson($postArr);
 			$postArr['dynamicProperties'] = $this->getDynamicPropertiesJsonWithExternalServiceDetails($postArr);
-
 			$inventoryManager = new ImInventories();
 			$inventoryManager->setClid($this->clid);
 			$status = $inventoryManager->updateChecklist($postArr);
@@ -90,53 +89,60 @@ class ChecklistAdmin extends Manager{
 	}
 
 	private function getDynamicPropertiesJsonWithExternalServiceDetails($postArr){
-		$dynpropArr = json_decode($postArr['dynamicProperties']);
-		$dynpropArr['externalservice'] = array_key_exists('externalservice',$postArr)?$postArr['externalservice']:'';
-		$dynpropArr['externalserviceid'] = array_key_exists('externalserviceid',$postArr)?$postArr['externalserviceid']:'';
-		if($dynpropArr['externalservice'] == 'inaturalist') {
-			$dynpropArr['externalserviceiconictaxon'] = array_key_exists('externalserviceiconictaxon',$postArr)?$postArr['externalserviceiconictaxon']:'';
-			$requestStr = 'https://api.inaturalist.org/v1/projects/' . $dynpropArr['externalserviceid'];
-			$inatProjectJson = json_decode(file_get_contents($requestStr));
-			$inatProjectJson = $inatProjectJson->results[0];
-			$requestStr = 'https://api.inaturalist.org/v1/places/' . $inatProjectJson->place_id;
-			$inatPlaceJson = json_decode(file_get_contents($requestStr));
-			$inatPlaceCoords = $inatPlaceJson->results[0]->bounding_box_geojson->coordinates[0];
-			$minlon = $maxlon = $prevminlon = $prevmaxlon = $inatPlaceCoords[0][0];
-			$minlat = $maxlat = $prevminlat = $prevmaxlat = $inatPlaceCoords[0][1];
-			for ($k = 1 ; $k < 4; $k++) {
-				if ($inatPlaceCoords[$k][0] < $prevminlon) {
-					$minlon = $prevminlon = $inatPlaceCoords[$k][0];
-				}
-				if ($inatPlaceCoords[$k][1] < $prevminlat) {
-					$minlat = $prevminlat = $inatPlaceCoords[$k][1];
-				}
-				if ($inatPlaceCoords[$k][0] > $prevmaxlon) {
-					$maxlon = $prevmaxlon = $inatPlaceCoords[$k][0];
-				}
-				if ($inatPlaceCoords[$k][1] > $prevmaxlat) {
-					$maxlat = $prevmaxlat = $inatPlaceCoords[$k][1];
-				}
-			}
+		$dynpropArr = array();
+		if(!empty($postArr['dynamicProperties'])) $dynpropArr = json_decode($postArr['dynamicProperties']);
+		if(!empty($postArr['externalservice']) && !empty($postArr['externalserviceid'])){
+			$dynpropArr['externalservice'] = $postArr['externalservice'];
+			$dynpropArr['externalserviceid'] = $postArr['externalserviceid'];
+			if($dynpropArr['externalservice'] == 'inaturalist') {
+				$dynpropArr['externalserviceiconictaxon'] = array_key_exists('externalserviceiconictaxon',$postArr)?$postArr['externalserviceiconictaxon']:'';
+				$requestUrl = 'https://api.inaturalist.org/v1/projects/' . $dynpropArr['externalserviceid'];
+				$inatProjectJson = json_decode(file_get_contents($requestUrl));
+				$inatProjectJson = $inatProjectJson->results[0];
+				if(!empty($inatProjectJson->place_id)){
+					$requestStr = 'https://api.inaturalist.org/v1/places/' . $inatProjectJson->place_id;
+					$inatPlaceJson = json_decode(file_get_contents($requestStr));
+					$inatPlaceCoords = $inatPlaceJson->results[0]->bounding_box_geojson->coordinates[0];
+					$minlon = $maxlon = $prevminlon = $prevmaxlon = $inatPlaceCoords[0][0];
+					$minlat = $maxlat = $prevminlat = $prevmaxlat = $inatPlaceCoords[0][1];
+					for ($k = 1 ; $k < 4; $k++) {
+						if ($inatPlaceCoords[$k][0] < $prevminlon) {
+							$minlon = $prevminlon = $inatPlaceCoords[$k][0];
+						}
+						if ($inatPlaceCoords[$k][1] < $prevminlat) {
+							$minlat = $prevminlat = $inatPlaceCoords[$k][1];
+						}
+						if ($inatPlaceCoords[$k][0] > $prevmaxlon) {
+							$maxlon = $prevmaxlon = $inatPlaceCoords[$k][0];
+						}
+						if ($inatPlaceCoords[$k][1] > $prevmaxlat) {
+							$maxlat = $prevmaxlat = $inatPlaceCoords[$k][1];
+						}
+					}
 
-/* 			$maxlondiff = $maxlatdiff = 0;
-			$bboxloncoords = $bboxlatcoords = array();
-			for ($k = 0 ; $k < 4; $k++) {
-				if(isset($prevzero)) {
-					$londiff = abs($inatPlaceCoords[$k][0] - $prevzero);
-					$latdiff = abs($inatPlaceCoords[$k][1] - $prevone);
-					$maxlondiff = ($londiff > $maxlondiff) ? $londiff : $maxlondiff;
-					$maxlatdiff = ($latdiff > $maxlatdiff) ? $latdiff : $maxlatdiff;
+					/*
+					 $maxlondiff = $maxlatdiff = 0;
+					 $bboxloncoords = $bboxlatcoords = array();
+					 for ($k = 0 ; $k < 4; $k++) {
+					 if(isset($prevzero)) {
+					 $londiff = abs($inatPlaceCoords[$k][0] - $prevzero);
+					 $latdiff = abs($inatPlaceCoords[$k][1] - $prevone);
+					 $maxlondiff = ($londiff > $maxlondiff) ? $londiff : $maxlondiff;
+					 $maxlatdiff = ($latdiff > $maxlatdiff) ? $latdiff : $maxlatdiff;
+					 }
+					 $bboxloncoords[] = $prevzero = $inatPlaceCoords[$k][0];
+					 $bboxlatcoords[] = $prevone = $inatPlaceCoords[$k][1];
+					 }
+					 $zoom = round( log(180/(max([$maxlondiff,$maxlatdiff]) / 4), 2) ) + 1;
+					 $xtilemax = floor(((max($bboxloncoords) + 180) / 360) * pow(2, $zoom));
+					 $xtilemin = floor(((min($bboxloncoords) + 180) / 360) * pow(2, $zoom));
+					 $ytilemax = floor((1 - log(tan(deg2rad(max($bboxlatcoords))) + 1 / cos(deg2rad(max($bboxlatcoords)))) / pi()) /2 * pow(2, $zoom));
+					 $ytilemin = floor((1 - log(tan(deg2rad(min($bboxlatcoords))) + 1 / cos(deg2rad(min($bboxlatcoords)))) / pi()) /2 * pow(2, $zoom));
+					 */
+					$dynpropArr['externalservicene'] = $maxlat.'|'.$maxlon;
+					$dynpropArr['externalservicesw'] = $minlat.'|'.$minlon;
 				}
-				$bboxloncoords[] = $prevzero = $inatPlaceCoords[$k][0];
-				$bboxlatcoords[] = $prevone = $inatPlaceCoords[$k][1];
 			}
-			$zoom = round( log(180/(max([$maxlondiff,$maxlatdiff]) / 4), 2) ) + 1;
-			$xtilemax = floor(((max($bboxloncoords) + 180) / 360) * pow(2, $zoom));
-			$xtilemin = floor(((min($bboxloncoords) + 180) / 360) * pow(2, $zoom));
-			$ytilemax = floor((1 - log(tan(deg2rad(max($bboxlatcoords))) + 1 / cos(deg2rad(max($bboxlatcoords)))) / pi()) /2 * pow(2, $zoom));
-			$ytilemin = floor((1 - log(tan(deg2rad(min($bboxlatcoords))) + 1 / cos(deg2rad(min($bboxlatcoords)))) / pi()) /2 * pow(2, $zoom)); */
-			$dynpropArr['externalservicene'] = $maxlat.'|'.$maxlon;
-			$dynpropArr['externalservicesw'] = $minlat.'|'.$minlon;
 		}
 		return json_encode($dynpropArr);
 	}
@@ -259,45 +265,35 @@ class ChecklistAdmin extends Manager{
 		return $status;
 	}
 
-	public function addExternalVouchers($tid,$dataAsJson){
-		// EG suggested storing external (e.g., iNaturalist) voucher records in the `fmchklstcoordinates` table as this table
-		//   was un- or under-used as of schema 3.0. The `notes` column serves as a flag for these vouchers. --CDT 2023-08-21
-		$status = 'Success';
-		$indat = json_decode($dataAsJson);
-		// for single vouchers, add ll, for multiple use zero :(.
-		// we could try averaging ll for multiples, but then the software would be introducing non-real data, which is bad.
-		// not that zero/zero is real data either... CDT 8/2023
-		$lat = (count($indat) == 1?$indat[0]['lat']:0); 
-		$lng = (count($indat) == 1?$indat[0]['lng']:0); 
-		if(is_numeric($tid)){ 
-			$sql = "INSERT INTO fmchklstcoordinates(clid,tid,decimallatitude,decimallongitude,`name`,dynamicProperties) VALUES(".$this->clid.",".$tid.",".$lat.",".$lng.",'EXTERNAL_VOUCHER','".$dataAsJson."')";
-			if(!$this->conn->query($sql)){
-				$status = 'ERROR: unable to store vouchers!. '.$this->conn->error;
-			}
-		}
-		return $status;
-	}
-
 	//Point functions
-	public function addPoint($tid,$lat,$lng,$notes){
-		$status = '';
+	public function addPoint($tid, $lat, $lng, $notes){
+		$status = false;
 		if(is_numeric($tid) && is_numeric($lat) && is_numeric($lng)){
-			$sql = 'INSERT INTO fmchklstcoordinates(clid,tid,decimallatitude,decimallongitude,notes) VALUES('.$this->clid.','.$tid.','.$lat.','.$lng.',"'.$this->cleanInStr($notes).'")';
-			if(!$this->conn->query($sql)){
-				$this->errorMessage = 'ERROR: unable to add point. '.$this->conn->error;
+			$inputArr = array('tid' => $tid, 'decimalLatitude' => $lat, 'decimalLongitude' => $lng, 'notes' => $notes);
+			$inventoryManager = new ImInventories();
+			$inventoryManager->setClid($this->clid);
+			if($inventoryManager->insertChecklistCoordinates($inputArr)){
+				$status = true;
+			}
+			else{
+				$this->errorMessage = $inventoryManager->getErrorMessage();
 			}
 		}
 		return $status;
 	}
 
 	public function removePoint($pointPK){
-		$statusStr = '';
-		if($pointPK && is_numeric($pointPK)){
-			if(!$this->conn->query('DELETE FROM fmchklstcoordinates WHERE (chklstcoordid = '.$pointPK.')')){
-				$statusStr = 'ERROR: unable to remove point. '.$this->conn->error;
+		$status = false;
+		if(is_numeric($pointPK)){
+			$inventoryManager = new ImInventories();
+			if($inventoryManager->deleteChecklistCoordinates($pointPK)){
+				$status = true;
+			}
+			else{
+				$this->errorMessage = $inventoryManager->getErrorMessage();
 			}
 		}
-		return $statusStr;
+		return $status;
 	}
 
 	//Editor management
@@ -527,7 +523,8 @@ class ChecklistAdmin extends Manager{
 			if(!array_key_exists($GLOBALS['SYMB_UID'], $clManagerArr)) $clManagerArr[$GLOBALS['SYMB_UID']] = '';
 			if(!$targetClid){
 				$fieldArr['name'] = $clMeta['name'].' new sub-checklist - '.$taxa;
-				$targetClid = $inventoryManager->insertChecklist($fieldArr);
+				$inventoryManager->insertChecklist($fieldArr);
+				$targetClid = $inventoryManager->getPrimaryKey();
 				if($targetClid && $copyAttributes){
 					foreach($clManagerArr as $managerUid => $managerArr){
 						$inventoryManager->insertUserRole($managerUid, 'ClAdmin', 'fmchecklists', $targetClid, $GLOBALS['SYMB_UID']);
@@ -556,7 +553,8 @@ class ChecklistAdmin extends Manager{
 					}
 					if($parentClid === '0'){
 						$fieldArr['name'] = $clMeta['name'].' parent checklist';
-						$parentClid = $inventoryManager->insertChecklist($fieldArr);
+						$inventoryManager->insertChecklist($fieldArr);
+						$parentClid = $inventoryManager->getPrimaryKey();
 						if($parentClid && $copyAttributes){
 							foreach($clManagerArr as $managerUid => $managerArr){
 								$inventoryManager->insertUserRole($managerUid, 'ClAdmin', 'fmchecklists', $parentClid, $GLOBALS['SYMB_UID']);

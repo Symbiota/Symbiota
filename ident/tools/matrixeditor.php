@@ -154,9 +154,6 @@ include($SERVER_ROOT.'/includes/header.php');
 				  			}
 					  		?>
 						</select>
-						<?php
-						count($selectList);
-						?>
 					</div>
 					<div style="margin: 10px 0px;">
 						<input type="checkbox" id="generaonly" name="generaonly" value="1" <?php if($generaOnly) echo "checked"; ?> />

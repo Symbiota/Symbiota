@@ -5,8 +5,6 @@ $(document).ready(function () {
 });
 
 function toggle(target) {
-  console.log("deleteMe toggle entered and target is: ");
-  console.log(target);
   var ele = document.getElementById(target);
   if (ele) {
     if (ele.style.display === "none") {
@@ -19,7 +17,6 @@ function toggle(target) {
         ele.style.display = "block";
       }
     } else {
-      console.log("deleteMe got here c1");
       ele.style.display = "none";
     }
   }
@@ -34,9 +31,11 @@ function toggleCat(catid) {
 }
 
 function togglePid(pid) {
-  toggle("minus-pid-" + pid);
-  toggle("plus-pid-" + pid);
-  toggle("pid-" + pid);
+  toggle("minus-" + pid);
+  toggle("plus-" + pid);
+  toggle("cat-" + pid);
+  toggle("pid-ptext-" + pid);
+  toggle("pid-mtext-" + pid);
 }
 
 function selectAll(cb) {
