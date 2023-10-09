@@ -168,7 +168,6 @@ div.tnimg img {
 }
 
 /* styled table */
-
 table.styledtable {
   table-layout: auto;
   width: 100%;
@@ -196,7 +195,6 @@ table.styledtable tr.alt td {
 }
 
 /* misc */
-
 div.genericpopup {
   position: absolute;
   display: none;
@@ -302,4 +300,17 @@ ol.mp_list li.mp_highlighted {
 
 .accessibility-button {
   font-size: 1.1em;
+}
+
+/*
+* OccurrenceSearchSupport
+*/
+.search-button-div {
+  float: right;
+  margin-top: 20px;
+}
+.sticky-buttons {
+  position: sticky;
+  top: 1rem;
+  float: right;
 }

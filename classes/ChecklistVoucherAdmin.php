@@ -383,17 +383,26 @@ class ChecklistVoucherAdmin extends Manager {
 	}
 
 	public function linkTaxaVouchers($occidArr, $useCurrentTaxon = true, $linkVouchers = true){
-		$tidsUsed = array();
+		$tidMap = array();
 		foreach($occidArr as $v){
 			$vArr = explode('-',$v);
-			$tid = $vArr[1];
-			$occid = $vArr[0];
-			if(count($vArr) == 2 && is_numeric($occid) && is_numeric($tid)){
-				if($useCurrentTaxon) $tid = $this->getTidAccepted($tid);
-				if(!in_array($tid, $tidsUsed)){
-					//Add name to checklist
-					$clTaxaID = $this->insertChecklistTaxaLink($tid);
-					$tidsUsed[] = $tid;
+			if(count($vArr) == 2){
+				$tid = $vArr[1];
+				$occid = $vArr[0];
+				if(is_numeric($occid) && is_numeric($tid)){
+					$clTaxaID = 0;
+					if(isset($tidMap[$tid])) $clTaxaID = $tidMap[$tid];
+					else{
+						$clTaxaID = $this->getClTaxaID($tid);
+						if(!$clTaxaID){
+							if($useCurrentTaxon){
+								$tid = $this->getTidAccepted($tid);
+							}
+							//Add name to checklist
+							$clTaxaID = $this->insertChecklistTaxaLink($tid);
+						}
+						$tidMap[$tid] = $clTaxaID;
+					}
 					if($clTaxaID && $linkVouchers){
 						$this->insertVoucher($clTaxaID, $occid);
 					}
@@ -561,13 +570,20 @@ class ChecklistVoucherAdmin extends Manager {
 	//Misc support and data functions
 	protected function getClTaxaID($tid, $morphoSpecies = ''){
 		$clTaxaID = 0;
+		$resultTid = 0;
 		if(is_numeric($tid)){
-			$sql = 'SELECT clTaxaID FROM fmchklsttaxalink WHERE clid = ? AND tid = ? AND morphospecies = ?';
-			if($stmt = $this->conn->prepare($sql)) {
+			$sql = 'SELECT c.clTaxaID, c.tid
+				FROM fmchklsttaxalink c INNER JOIN taxstatus ts ON c.tid = ts.tid
+				INNER JOIN taxstatus ts2 ON ts.tidaccepted = ts2.tidaccepted
+				WHERE ts.taxAuthID = 1 AND ts2.taxAuthID = 1 AND c.clid = ? AND ts2.tid = ? AND c.morphospecies = ?';
+			if($stmt = $this->conn->prepare($sql)){
 				if($stmt->bind_param('iis', $this->clid, $tid, $morphoSpecies)){
 					$stmt->execute();
-					$stmt->bind_result($clTaxaID);
-					$stmt->fetch();
+					$stmt->bind_result($clTaxaID, $resultTid);
+					while($stmt->fetch()){
+						//If there are multiple accepted records, take preferrence to clTaxaID associated with the accepted taxon
+						if($tid == $resultTid) break;
+					}
 					$stmt->close();
 				}
 				else $this->errorMessage = 'ERROR binding params for getClTaxaID: '.$this->conn->error;

@@ -113,7 +113,7 @@ if(isset($MAPPING_BOUNDARIES)){
 	<title><?php echo $DEFAULT_TITLE; ?> - Google Map</title>
 	<?php
 	   include_once($SERVER_ROOT.'/includes/head.php');
-	   include_once($SERVER_ROOT.'/includes/leafletmap.php');
+	   include_once($SERVER_ROOT.'/includes/leafletMap.php');
 	?>
 	<script type="text/javascript">
       let occurCoords;
@@ -137,7 +137,7 @@ if(isset($MAPPING_BOUNDARIES)){
 
          const checkLatLng = (latlng) => {
             return (
-               (!isNaN(latlng[0]) && latlng[0] <= 90 && latlng[0] >= -90) && 
+               (!isNaN(latlng[0]) && latlng[0] <= 90 && latlng[0] >= -90) &&
                (!isNaN(latlng[1]) && latlng[1] <= 180 && latlng[1] >= -180)
             )
          }
@@ -148,16 +148,16 @@ if(isset($MAPPING_BOUNDARIES)){
             //Leaftlet Cluster Override
             function colorCluster(cluster) {
                let childCount = cluster.getChildCount();
-               return new L.DivIcon.CustomColor({ 
-               html: `<div style="background-color: #${colorGroup.c}CC;"><span>` + childCount + '</span></div>', 
-                  className: 'marker-cluster', 
+               return new L.DivIcon.CustomColor({
+               html: `<div style="background-color: #${colorGroup.c}CC;"><span>` + childCount + '</span></div>',
+                  className: 'marker-cluster',
                   iconSize: new L.Point(40, 40),
                   color: `#${colorGroup.c}77`,
                });
-            } 
+            }
 
             let taxaCluster = L.markerClusterGroup({
-               iconCreateFunction: colorCluster 
+               iconCreateFunction: colorCluster
             });
 
             for(let groupId of Object.keys(colorGroup.points)) {
@@ -193,7 +193,7 @@ if(isset($MAPPING_BOUNDARIES)){
                   }):
                   L.marker(latlng, {
                      icon: getObservationSvg({
-                        color: `#${colorGroup.c}`, 
+                        color: `#${colorGroup.c}`,
                         size: 30
                      })
                   }))
@@ -211,7 +211,7 @@ if(isset($MAPPING_BOUNDARIES)){
 
       function initialize() {
          try {
-            let data = document.getElementById('service-container') 
+            let data = document.getElementById('service-container')
             occurCoords = JSON.parse(data.getAttribute('data-occur-coords'));
             colorLegend = JSON.parse(data.getAttribute('data-legend'))
             clid = JSON.parse(data.getAttribute('data-clid'))
@@ -313,7 +313,7 @@ if(isset($MAPPING_BOUNDARIES)){
 		<?php
 	}
 ?>
-   <div id="service-container" 
+   <div id="service-container"
       data-occur-coords="<?= htmlspecialchars(json_encode($coordArr, 4)) ?>"
       data-clid="<?= htmlspecialchars($clid) ?>"
       data-legend="<?= htmlspecialchars(json_encode($legendArr)) ?>"
