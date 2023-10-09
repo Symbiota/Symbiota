@@ -157,7 +157,9 @@ include($SERVER_ROOT.'/includes/header.php');
 					</div>
 					<div style="margin: 10px 0px;">
 						<input type="checkbox" id="generaonly" name="generaonly" value="1" <?php if($generaOnly) echo "checked"; ?> />
-						<label for="generaonly"> <?php echo (isset($LANG['EXCLUDE_RANK']) ? $LANG['EXCLUDE_RANK'] : 'Exclude Species Rank'); ?>
+						<label for="generaonly">
+							<?php echo (isset($LANG['EXCLUDE_RANK']) ? $LANG['EXCLUDE_RANK'] : 'Exclude Species Rank'); ?>
+						</label>
 					</div>
 			 		<?php
 	 				$cList = $muManager->getCharList($taxonFilter);
