@@ -590,17 +590,10 @@ foreach ($coordArr as $collName => $coll) {
             }
          }
 
-         // TODO (Logan) Clean up global usages
          document.getElementById("mapsearchform").addEventListener('submit', async e => {
             showWorking();
             e.preventDefault();
             let formData = new FormData(e.target);
-/*
-            for(let tid of Object.keys(taxaClusters)) {
-               taxaClusters[tid].removeLayers(taxaMarkers[tid]);
-               taxaGroups[tid].clearLayers();
-               taxaMarkers[tid] = [];
-            }*/
 
             resetGroup(taxaMap, taxaMarkers, taxaClusters, taxaGroups);
             resetGroup(collArr, collMarkers, collClusters, collGroups);
@@ -624,17 +617,13 @@ foreach ($coordArr as $collName => $coll) {
          });
 
          function removeGroupLayer(id, markerGroup, clusterGroup, layerGroup) {
-            try {
-               if(clusteroff) {
-                  layerGroup[id].clearLayers()
-                  map.mapLayer.removeLayer(layerGroup[id]);
-               } else {
-                  clusterGroup[id].removeLayers(markerGroup[id])
-                  map.mapLayer.removeLayer(clusterGroup[id]);
-               }
-            } catch(e) {
-               console.log(e)
-               console.log(map)
+            if(clusteroff) {
+               layerGroup[id].clearLayers()
+               if(map.mapLayer.hasLayer(layerGroup[id]))map.mapLayer.removeLayer(layerGroup[id]);
+            } else {
+               //clusterGroup[id].removeLayers(markerGroup[id])
+               clusterGroup[id].clearLayers();
+               if(map.mapLayer.hasLayer(clusterGroup[id])) map.mapLayer.removeLayer(clusterGroup[id]);
             }
          }
 
@@ -650,11 +639,10 @@ foreach ($coordArr as $collName => $coll) {
 
          async function updateColor(type, id, color) {
             if(type === "taxa") {
-               //removeGroupLayer(id, taxaMarkers, taxaClusters, taxaGroups);
-
-               // This is need to break cached clusters than appear sometimes
-               taxaMap[id].color = color;
                removeGroupLayer(id, taxaMarkers, taxaClusters, taxaGroups);
+
+               taxaMap[id].color = color;
+
                const taxa = taxaMap[id]
                for (marker of taxaMarkers[id]) {
                   if(marker.options.icon && marker.options.icon.options.observation) {
@@ -670,10 +658,6 @@ foreach ($coordArr as $collName => $coll) {
                removeGroupLayer(id, collMarkers, collClusters, collGroups);
 
                collArr[id].color = color;
-/*
-               for (let collCluster of document.getElementsByClassName(`coll-${id}`)) {
-                  collCluster.style.backgroundColor = `#${color}77`
-               }*/
 
                for (marker of collMarkers[id]) {
                   if(marker.options.icon && marker.options.icon.options.observation) {
@@ -686,8 +670,6 @@ foreach ($coordArr as $collName => $coll) {
                addGroupLayer(id, collMarkers, collClusters, collGroups);
             }
          }
-
-         //Figure out is active or reset regardlesss
 
          document.addEventListener('colorchange', function(e) {
             const [type, id] = e.target.id.split("-");
@@ -824,7 +806,6 @@ foreach ($coordArr as $collName => $coll) {
             }
          }
 
-         console.log(color_map)
          if(fullreset) {
             document.dispatchEvent(new CustomEvent('autocolor', {
                detail: {
@@ -855,20 +836,7 @@ foreach ($coordArr as $collName => $coll) {
          const colorkey = document.getElementById(`${type}-${id}`)
          if(colorkey){
             colorkey.color.fromString(randColor);
-            //onColorChange(colorkey)
          }
-      }
-
-      function timeOutAutoColor(time = 3000) {
-         taxa_auto_color = document.getElementById('randomColorTaxa').disabled=true;
-         coll_auto_color = document.getElementById('randomColorColl').disabled=true;
-
-         setTimeout(() => {
-            console.log("renabled")
-
-            document.getElementById('randomColorTaxa').disabled=false;
-            document.getElementById('randomColorColl').disabled=false;
-         }, time);
       }
 
 		function autoColorTaxa(e){
@@ -903,6 +871,7 @@ foreach ($coordArr as $collName => $coll) {
          }));
       }
 
+      //This is used in occurrencelist.php which is submodule of this
       function emit_occurrence(occid) {
          document.dispatchEvent(new CustomEvent('occur_click', {
             detail: {
@@ -1254,9 +1223,6 @@ foreach ($coordArr as $collName => $coll) {
 										<div>
 											<button data-role="none" id="symbolizeReset1" name="symbolizeReset1" onclick="resetCollSymbology(true);" ><?php echo (isset($LANG['RESET_SYMBOLOGY'])?$LANG['RESET_SYMBOLOGY']:'Reset Symbology'); ?></button>
 										</div>
-										<div>
-                                 <button data-role="none" id="resetTest" name="resetTest" onclick="autoColorColl('<?php echo $defaultColor?>')" >RESET TEST</button>
-										</div>
 										<div style="margin-top:5px;">
 											<button data-role="none" id="randomColorColl" name="randomColorColl" onclick='autoColorColl();' ><?php echo (isset($LANG['AUTO_COLOR'])?$LANG['AUTO_COLOR']:'Auto Color'); ?></button>
 										</div>
@@ -1314,8 +1280,6 @@ foreach ($coordArr as $collName => $coll) {
 					?>
 				</div>
 			</div>
-			<!-- <a href="../../index.php" style="position:absolute;top:0;right:0;margin-right:38px;margin-bottom:0px;margin-top:1px;padding-top:3px;padding-bottom:3px;z-index:10;" data-role="button" data-inline="true" >Home</a> -->
-			<a href="#" style="position:absolute;top:2;right:0;margin-right:0px;margin-bottom:0px;margin-top:1px;padding-top:3px;padding-bottom:3px;padding-left:20px;z-index:10;height:20px;" data-rel="close" data-role="button" data-theme="a" data-icon="delete" data-inline="true"></a>
 		</div><!-- /content wrapper for padding -->
 	</div><!-- /defaultpanel -->
 <div id='map' style='width:100%;height:100%;'></div>
