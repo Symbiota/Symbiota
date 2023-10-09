@@ -6,6 +6,7 @@ Language: English
 */
 
 $LANG['INVPROJ'] = 'Inventory Projects';
+$LANG['INVPROJLIST'] = 'Inventory Project List';
 $LANG['PROJMANAG'] = 'Project Managers:';
 $LANG['METADATA'] = 'Metadata';
 $LANG['INVMANAG'] = 'Inventory Managers';
@@ -46,4 +47,14 @@ $LANG['CHOOSEUSER'] = 'Choose a user from the pull-down';
 $LANG['ADDNEWPR'] = 'Add New Project';
 $LANG['TOGGLEEDIT'] = 'Toggle Editing Functions';
 $LANG['MAPREP'] = 'Map representation of checklists';
+$LANG['PENCIL_ALT'] = 'image of a pencil on paper, indicating edit mode toggle';
+$LANG['QUESTION_ALT'] = 'image of a question mark for more information about research species lists';
+$LANG['GLOBE_ALT'] = 'image a globe, indicating a version of the checklist superimposed on a map';
+$LANG['TRIANGLE_ALT'] = 'an image of a triangle. Just used to make the pop up look more like a dialog bubble';
+$LANG['EDIT'] = 'Edit';
+$LANG['KEY'] = 'Key';
+$LANG['GOLDEN_KEY_SYMBOL'] = 'Golden Key Symbol';
+$LANG['ADD_NEW_PRJ'] = 'Add New Project';
+$LANG['EDIT_PRJ'] = 'Edit Project';
+
 ?>

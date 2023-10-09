@@ -1,4 +1,3 @@
-
 <!-- Importing Leaflet and Leaflet Styles--> 
 <link 
    rel="stylesheet" 
@@ -42,6 +41,16 @@
    rel="stylesheet" 
    href="<?php echo $CLIENT_ROOT?>/js/Leaflet.markercluster-1.4.1/dist/MarkerCluster.Default.css"
 />
+
+<!-- Leaflt Heatmap Plugin --> 
+<script 
+   src="<?php echo $CLIENT_ROOT?>/js/leaflet-heatmap/heatmap.js"
+   type="text/javascript">
+</script>
+<script 
+   src="<?php echo $CLIENT_ROOT?>/js/leaflet-heatmap/leaflet-heatmap.js"
+   type="text/javascript">
+</script>
 
 <!-- Importing Leaflet Related Functions--> 
 <script 

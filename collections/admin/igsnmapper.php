@@ -165,7 +165,7 @@ if($action == 'populateGUIDs'){
 </head>
 <body>
 <?php
-$displayLeftMenu = 'false';
+$displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class='navpath'>

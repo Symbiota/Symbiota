@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TPEditorManager.php');
@@ -116,7 +118,7 @@ if($isEditor && $action){
 	}
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['TAXON_EDITOR'] .': '.$tEditor->getSciName(); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>" />
@@ -160,12 +162,12 @@ if($isEditor && $action){
 		}
 	</script>
 	<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
-	<style type="text/css">
+	<style>
 		.sectionDiv{ clear:both; }
 		.sectionDiv div{ float:left }
 		.labelDiv{ margin-right: 5px }
-		#redirectedfrom{ font-size:16px; margin-top:5px; margin-left:10px; font-weight:bold; }
-		#taxonDiv{ font-size:18px; margin-top:15px; margin-left:10px; }
+		#redirectedfrom{ font-size:1rem; margin-top:5px; margin-left:10px; font-weight:bold; }
+		#taxonDiv{ font-size:1.125rem; margin-top:15px; margin-left:10px; }
 		#taxonDiv a{ color:#990000; font-weight: bold; font-style: italic; }
 		#taxonDiv img{ border: 0px; margin: 0px; height: 15px; }
 		#familyDiv{ margin-left:20px; margin-top:0.25em; }
@@ -407,7 +409,7 @@ if($isEditor && $action){
 			?>
 			<div style="margin:20px;">
 				<form name="gettidform" action="tpeditor.php" method="post" onsubmit="return checkGetTidForm(this);">
-					<b><?php echo $LANG['SCINAME']; ?>: </b><input id="taxa" name="taxon" value="<?php echo $taxon; ?>" size="40" />
+					<b> <label for="taxa"> <?php echo $LANG['SCINAME']; ?>: </label> </b> <input id="taxa" name="taxon" value="<?php echo $taxon; ?>" size="40" />
 					<input type="hidden" name="tabindex" value="<?php echo $tabIndex; ?>" />
 					<button type="submit" name="action" value="Edit Taxon" ><?php echo $LANG['EDIT_TAXON']; ?></button>
 				</form>

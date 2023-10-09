@@ -49,6 +49,7 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />
 	<link href="../js/jquery-ui/jquery-ui.min.css?ver=1" type="text/css" rel="Stylesheet" />
 	<style>
 		fieldset{ padding: 15px }
@@ -70,7 +71,7 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 		});
 	</script>
 	<script src="../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
-	<script src="../js/symb/imagelib.search.js?ver=201910" type="text/javascript"></script>
+	<script src="../js/symb/imagelib.search.js?ver=2" type="text/javascript"></script>
 </head>
 <body>
 	<?php
@@ -190,7 +191,7 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 								<input id="typeObs" type="radio" name="imagetype" value="2" > <label for="typeObs">  <?php echo htmlspecialchars($LANG['TYPE_OBS'], HTML_SPECIAL_CHARS_FLAGS) ?> </label> <br/>
 								<input id="typeField" type="radio" name="imagetype" value="3" > <label for="typeField">  <?php echo htmlspecialchars($LANG['TYPE_FIELD'], HTML_SPECIAL_CHARS_FLAGS) ?> </label> <br/>
 								
-								<script src="../imagelib/radioUtilities.js"></script>
+								<script src="../js/symb/imagelib.radiobuttons.js"></script>
 							</fieldset>
 						</div>
 						<div class="flex-form">
@@ -206,14 +207,18 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 							<fieldset>
 								<legend>Collections</legend>
 								<div id="specobsdiv">
+									<div class="specimen-header-margin">
+										<h2><?php echo $LANG['SPECIMEN_COLLECTIONS'] ?></h2>
+									</div>
 									<div style="margin:0px 0px 10px 5px;">
 										<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" checked />
 								 		<?php echo (isset($LANG['SELECT_ALL'])?$LANG['SELECT_ALL']:'Select/Deselect all'); ?>
 									</div>
 									<?php
-									$imgLibManager->outputFullCollArr($specArr, $catId);
-									if($specArr && $obsArr) echo '<hr style="clear:both;margin:20px 0px;"/>';
-									$imgLibManager->outputFullCollArr($obsArr, $catId);
+									$imgLibManager->outputFullCollArr($specArr, $catId, 'Specimen', 'Specimens');
+									$hrAndHeaderText = '<div class="specimen-header-margin"><hr/><h2>' . $LANG['OBSERVATION_COLLECTIONS'] . '</h2></div>';
+									if($specArr && $obsArr) echo $hrAndHeaderText;
+									$imgLibManager->outputFullCollArr($obsArr, $catId, 'Observation', 'Observations');
 									?>
 								</div>
 							</fieldset>

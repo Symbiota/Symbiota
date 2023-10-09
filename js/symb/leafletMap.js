@@ -76,12 +76,16 @@ class LeafletMap {
          tileSize: 256,
       });
 
-      L.control.layers({
-         "Terrain": terrainLayer,
-         "Satellite": satelliteLayer
-      }).addTo(this.mapLayer);
+      if(map_options.layer_control !== false) {
+         L.control.layers({
+            "Terrain": terrainLayer,
+            "Satellite": satelliteLayer
+         }).addTo(this.mapLayer);
+      }
 
-      L.control.scale().addTo(this.mapLayer);
+      if(map_options.scale !== false) {
+         L.control.scale().addTo(this.mapLayer);
+      }
 
       this.mapLayer._onResize();
    }

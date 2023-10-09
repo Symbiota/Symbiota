@@ -47,7 +47,11 @@ $LANG['H_NEW_ACCOUNT'] = 'Nueva Cuenta';
 $LANG['TOGGLE_508_OFF'] = "Modo condensado";
 $LANG['TOGGLE_508_ON'] = "Modo de accesibilidad";
 $LANG['SELECT_LANGUAGE'] = 'Seleccionar un Idioma';
-
+$LANG['NAV_HOME'] = 'Hogar';
+$LANG['NAV_IMG_LIB'] = 'Biblioteca de Imágenes';
+$LANG['NAV_IMG_CONTR'] = 'Colaboradores de Imágenes';
+$LANG['NAV_IMG_SEARCH'] = 'Búsqueda de Imágenes';
+$LANG['SKIP_NAV'] = 'Saltar Navegación';
 $LANG['CONTACT_US'] = 'Contacta con Nosotros';
 $LANG['LOGIN'] = 'Acceso';
 $LANG['HOME'] = 'Hogar';

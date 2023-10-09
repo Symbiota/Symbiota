@@ -80,7 +80,7 @@ reset($treePath);
 </head>
 <body class="claro">
 	<?php
-	$displayLeftMenu = (isset($taxa_admin_taxonomydisplayMenu)?$taxa_admin_taxonomydisplayMenu:'false');
+	$displayLeftMenu = (isset($taxa_admin_taxonomydisplayMenu)?$taxa_admin_taxonomydisplayMenu:false);
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
@@ -143,7 +143,7 @@ reset($treePath);
 						<input id="displayauthor" name="displayauthor" type="checkbox" value="1" <?php echo ($displayAuthor?'checked':''); ?> />
 						<label for="displayauthor"> <?php echo (isset($LANG['DISP_AUTHORS'])?$LANG['DISP_AUTHORS']:'Display authors'); ?> </label>
 						<?php
-						if($isEditor) 
+						if($isEditor)
 						{
 							echo '<br/><input name="emode" id="emode" type="checkbox" value="1	" '.($editorMode?'checked':'').' /> ';
 							echo '<label for="emode">' . htmlspecialchars($LANG['EDITOR_MODE'], HTML_SPECIAL_CHARS_FLAGS) . '</label>';

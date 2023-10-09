@@ -70,10 +70,6 @@ if(isset($clArray['dynamicProperties']) && $clArray['dynamicProperties']){
 				return false;
 			}
 		}
-		if(!isNumeric(f.pointradiusmeters.value)){
-			alert("<?php echo (isset($LANG['NUMERIC_RADIUS'])?$LANG['NUMERIC_RADIUS']:'Point radius must be a numeric value only'); ?>");
-			return false;
-		}
 		if(f.type){
 			if(f.type.value == "rarespp" && f.locality.value == ""){
 				alert("<?php echo (isset($LANG['NEED_STATE'])?$LANG['NEED_STATE']:'Rare species checklists must have a state value entered into the locality field'); ?>");
@@ -196,7 +192,7 @@ if(!$clid){
 				<select name="externalservice" id="externalservice" onchange="enableDisableExtServiceFields()">
 					<option value=""></option>
 					<option value="">-------------------------------</option>
-					<option value="inaturalist" <?php echo (($dynamPropsArr['externalservice']=='inaturalist')?'selected':''); ?>>iNaturalist</option>
+					<option value="inaturalist" <?php echo ((isset($dynamPropsArr['externalservice']) && $dynamPropsArr['externalservice']=='inaturalist')?'selected':''); ?>>iNaturalist</option>
 				</select>
 			</div>
 			<div style="width:100%;margin-top:5px">
@@ -251,7 +247,7 @@ if(!$clid){
 				</div>
 				<div style="float:left;margin-left:15px;">
 					<b><?php echo (isset($LANG['REFERENCE_CHECK'])?$LANG['POINTRAD']:'Point Radius (meters)');?></b><br/>
-					<input type="text" name="pointradiusmeters" style="width:110px;" value="<?php echo ($clArray?$clArray["pointradiusmeters"]:''); ?>" />
+					<input type="number" name="pointradiusmeters" style="width:110px;" value="<?php echo ($clArray?$clArray["pointradiusmeters"]:''); ?>" />
 				</div>
 			</div>
 			<div style="clear:both;margin-top:5px;">
@@ -324,7 +320,7 @@ if(!$clid){
 			</div>
 			<div id="sortSeqDiv" style="clear:both;margin-top:15px;">
 				<b><?php echo (isset($LANG['DEFAULT_SORT'])?$LANG['DEFAULT_SORT']:'Default Sorting Sequence'); ?>:</b>
-				<input name="sortsequence" type="text" value="<?php echo ($clArray?$clArray['sortsequence']:'50'); ?>" style="width:40px" />
+				<input name="sortsequence" type="number" value="<?php echo ($clArray?$clArray['sortsequence']:'50'); ?>" style="width:40px" />
 			</div>
 			<div id="accessDiv" style="clear:both;margin-top:15px;">
 				<b><?php echo (isset($LANG['ACCESS'])?$LANG['ACCESS']:'Access'); ?>:</b>

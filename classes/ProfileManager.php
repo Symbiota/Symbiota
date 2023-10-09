@@ -75,11 +75,11 @@ class ProfileManager extends Manager{
 	private function authenticateUsingToken(){
 		$status = false;
 		if($this->token){
-			$sql = 'SELECT u.uid, u.firstname FROM users u INNER JOIN useraccesstokens t ON u.uid = t.uid WHERE (t.token = ?) AND ((u.username = ?) OR (u.email = ?)) ';
+			$sql = 'SELECT u.uid, u.firstname, u.username FROM users u INNER JOIN useraccesstokens t ON u.uid = t.uid WHERE (t.token = ?) AND ((u.username = ?) OR (u.email = ?)) ';
 			if($stmt = $this->conn->prepare($sql)){
 				if($stmt->bind_param('sss', $this->token, $this->userName, $this->userName)){
 					$stmt->execute();
-					$stmt->bind_result($this->uid, $this->displayName);
+					$stmt->bind_result($this->uid, $this->displayName, $this->userName);
 					if($stmt->fetch()) $status = true;
 					$stmt->close();
 				}
@@ -91,11 +91,11 @@ class ProfileManager extends Manager{
 	private function authenticateUsingPassword($pwdStr){
 		$status = false;
 		if($pwdStr){
-			$sql = 'SELECT uid, firstname FROM users WHERE (password = PASSWORD(?)) AND (username = ? OR email = ?) ';
+			$sql = 'SELECT uid, firstname, username FROM users WHERE (password = PASSWORD(?)) AND (username = ? OR email = ?) ';
 			if($stmt = $this->conn->prepare($sql)){
 				if($stmt->bind_param('sss', $pwdStr, $this->userName, $this->userName)){
 					$stmt->execute();
-					$stmt->bind_result($this->uid, $this->displayName);
+					$stmt->bind_result($this->uid, $this->displayName, $this->userName);
 					if($stmt->fetch()) $status = true;
 					$stmt->close();
 				}
