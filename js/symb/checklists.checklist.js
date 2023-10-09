@@ -1,36 +1,27 @@
-$(document).ready(function () {
-  //Filter autocomplete
-  $("#taxonfilter").autocomplete(
-    {
-      source: function (request, response) {
-        $.getJSON(
-          "rpc/searchsuggest.php",
-          { term: request.term, clid: clid, deep: 1 },
-          response
-        );
-      },
-    },
-    { minLength: 3 }
-  );
+$(document).ready(function() {
+	//Filter autocomplete
+	$("#taxonfilter").autocomplete({ 
+		source: function( request, response ) {
+			$.getJSON( "rpc/searchsuggest.php", { term: request.term, clid: clid, deep: 1 }, response );
+		}
+	},
+	{ minLength: 3 });
 
-  //Species add form
-  $("#speciestoadd").autocomplete(
-    {
-      source: function (request, response) {
-        $.getJSON("rpc/speciessuggest.php", { term: request.term }, response);
-      },
-    },
-    {
-      minLength: 4,
-      autoFocus: true,
-    }
-  );
-
-  if (document.cookie.indexOf("editspp") > -1) {
-    $(".editspp").show();
-    document.getElementById("editsppon").style.display = "inline";
-  }
-  if (taxaCount == 0) $(".editspp").show();
+	//Species add form
+	$("#speciestoadd").autocomplete({
+		source: function( request, response ) {
+			$.getJSON( "rpc/speciessuggest.php", { term: request.term }, response );
+		}
+	},{ 
+		minLength: 4,
+		autoFocus: true
+	});
+	
+	if(document.cookie.indexOf("editspp") > -1){
+		$(".editspp").show();
+		document.getElementById("editsppon").style.display = "inline";
+	}
+	if(taxaCount == 0) $(".editspp").show();
 });
 
 function toggleVoucherDiv(tid) {

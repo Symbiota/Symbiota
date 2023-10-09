@@ -118,6 +118,10 @@ hr {
   line-height: 1.5;
 }
 
+#popup-innertext {
+  font-size: 1.2rem;
+}
+
 .navpath {
   margin: 10px auto;
   width: 100%;
@@ -153,7 +157,6 @@ hr {
 }
 
 #tabs div:first-child {
-  padding: ;
 }
 
 #tabs a {
@@ -167,10 +170,6 @@ hr {
 
 #tabs table {
   width: 90%;
-}
-
-.ui-tabs .ui-tabs-panel {
-  padding: 10px 4px;
 }
 
 /* styled table */

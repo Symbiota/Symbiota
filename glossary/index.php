@@ -318,7 +318,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 							if($isEditor){
 								?>
 								<div style="float:left;margin-left:5px;">
-									(<a href="sources.php?emode=1&tid=<?php echo htmlspecialchars($tid , HTML_SPECIAL_CHARS_FLAGS) . '&searchterm=' . htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS) . '&language=' . htmlspecialchars($language, HTML_SPECIAL_CHARS_FLAGS) . '&taxa=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo $LANG['ADD_SRC']; ?></a>)
+									(<a href="sources.php?emode=1&tid=<?php echo $tid.'&searchterm='.$searchTerm.'&language='.$language.'&taxa='.$tid; ?>"><?php echo $LANG['ADD_SRC']; ?></a>)
 								</div>
 								<?php
 							}

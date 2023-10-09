@@ -44,7 +44,7 @@ $isEditor = false;
 if($IS_ADMIN || array_key_exists("TaxonProfile",$USER_RIGHTS)) $isEditor = true;
 
 if($isEditor && $action){
-	if($action == "Edit Synonym Sort Order"){
+	if($action == 'editSynonymSort'){
 		$synSortArr = Array();
 		foreach($_REQUEST as $sortKey => $sortValue){
 			if($sortValue && (substr($sortKey,0,4) == "syn-")){
@@ -376,7 +376,7 @@ if($isEditor && $action){
 											}
 											?>
 											<div>
-												<input type="submit" name="action" value="<?php echo $LANG['EDIT_SYN_ORDER']; ?>" />
+												<button type="submit" name="action" value="editSynonymSort"><?php echo $LANG['EDIT_SYN_ORDER']; ?></button>
 											</div>
 										</fieldset>
 									</form>

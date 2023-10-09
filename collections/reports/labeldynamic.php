@@ -156,11 +156,9 @@ if($SYMB_UID){
 					$headerStr = '';
 					if($hPrefix || $midStr || $hSuffix){
 						$headerStrArr = array();
-						// $headerStrArr[] = trim($hPrefix);
-            $headerStrArr[] = $hPrefix;
+						$headerStrArr[] = $hPrefix;
 						$headerStrArr[] = trim($midStr);
-						// $headerStrArr[] = trim($hSuffix);
-            $headerStrArr[] = $hSuffix;
+						$headerStrArr[] = $hSuffix;
 						$headerStr = implode("",$headerStrArr);
 					}
 
@@ -230,9 +228,9 @@ if($SYMB_UID){
 								<?php
 							}
 						}
-            if($columnCount == 'packet'){
-              echo '</div>';
-            }
+						if($columnCount == 'packet'){
+							echo '</div>';
+						}
 						echo '</div>';
 					}
 				}
@@ -249,14 +247,14 @@ if($SYMB_UID){
 		echo '</div>';
 		?>
 	</body>
-  <?php
-  if(isset($targetLabelFormatArr['customJS']) && $targetLabelFormatArr['customJS']){
-    $jsPath = $targetLabelFormatArr['customJS'];
-    if(substr($jsPath,0,1) == '/' && !file_exists($jsPath)){
-      if(file_exists($SERVER_ROOT.$targetLabelFormatArr['customJS'])) $jsPath = $CLIENT_ROOT.$targetLabelFormatArr['customJS'];
-    }
-    echo '<script src="'.$jsPath.'"></script>'."\n";
-  }
-  ?>
-  <script src="../../js/symb/collections.labeldynamic.js"></script>
+	<?php
+	if(isset($targetLabelFormatArr['customJS']) && $targetLabelFormatArr['customJS']){
+		$jsPath = $targetLabelFormatArr['customJS'];
+		if(substr($jsPath,0,1) == '/' && !file_exists($jsPath)){
+			if(file_exists($SERVER_ROOT.$targetLabelFormatArr['customJS'])) $jsPath = $CLIENT_ROOT.$targetLabelFormatArr['customJS'];
+		}
+		echo '<script src="'.$jsPath.'"></script>'."\n";
+	}
+	?>
+	<script src="../../js/symb/collections.labeldynamic.js"></script>
 </html>
