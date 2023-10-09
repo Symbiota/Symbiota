@@ -372,8 +372,8 @@ $collManager->cleanOutArr($collData);
 											echo (isset($LANG['EXPLAIN_PUBLIC']) ? $LANG['EXPLAIN_PUBLIC'] : '') . ' ';
 										?>
 									</span>
-									<label for="publicEdits"> <?php echo (isset($LANG['ALLOW_PUBLIC_EDITS']) ? htmlspecialchars($LANG['ALLOW_PUBLIC_EDITS'], HTML_SPECIAL_CHARS_FLAGS) : 'Allow Public Edits'); ?>: </label>
 									<input id="publicEdits" type="checkbox" name="publicEdits" value="1" <?php echo ($collData && $collData['publicedits'] ? 'CHECKED' : ''); ?> />
+									<label for="publicEdits"> <?php echo (isset($LANG['ALLOW_PUBLIC_EDITS']) ? htmlspecialchars($LANG['ALLOW_PUBLIC_EDITS'], HTML_SPECIAL_CHARS_FLAGS) : 'Allow Public Edits'); ?> </label>
 									<a id="peditsinfo" href="#" onclick="return false" tabindex="0">
 										<img src="../../images/info.png" style="width:15px;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_PUB_EDITS']) ? $LANG['MORE_PUB_EDITS'] : 'More information about Public Edits'); ?>"/>
 									</a>
