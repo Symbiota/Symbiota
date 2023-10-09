@@ -732,6 +732,16 @@ foreach ($coordArr as $collName => $coll) {
             else if(cluster_type === "coll") toggleGroupClustering(collClusters, collGroups);
          });
 
+         document.getElementById('heatmap_on').addEventListener('change', e => {
+            clusteroff = e.target.checked;
+            //Clear points 
+            
+            //Add Heatmap
+
+            if(cluster_type === "taxa") toggleGroupClustering(taxaClusters, taxaGroups);
+            else if(cluster_type === "coll") toggleGroupClustering(collClusters, collGroups);
+         });
+
          //Load Data if any with page Load
          if(recordArr.length > 0) {
             let formData = new FormData(document.getElementById("mapsearchform"));
@@ -1167,13 +1177,17 @@ foreach ($coordArr as $collName => $coll) {
 							</div>
 						</form>
 						<div id="mapoptions" style="">
-							<div style="border:1px black solid;margin-top:10px;padding:5px;" >
-								<b><?php echo (isset($LANG['CLUSTERING'])?$LANG['CLUSTERING']:'Clustering'); ?></b>
-								<div style="clear:both;margin-top:8px;">
-									<?php echo (isset($LANG['TURN_OFF_CLUSTERING'])?$LANG['TURN_OFF_CLUSTERING']:'Turn Off Clustering'); ?>:
-									 <input data-role="none" type="checkbox" id="clusteroff" name="clusteroff" value='1' <?php echo ($clusterOff=="y"?'checked':'') ?>/>
-								</div>
-							</div>
+                     <fieldset>
+                        <legend><?php echo (isset($LANG['CLUSTERING'])?$LANG['CLUSTERING']:'Clustering'); ?></legend>
+                        <label><?php echo (isset($LANG['TURN_OFF_CLUSTERING'])?$LANG['TURN_OFF_CLUSTERING']:'Turn Off Clustering'); ?>:</label>
+								<input data-role="none" type="checkbox" id="clusteroff" name="clusteroff" value='1' <?php echo ($clusterOff=="y"?'checked':'') ?>/>
+                     </fieldset>
+                     <br/>
+                     <fieldset>
+                        <legend><?php echo (isset($LANG['HEATMAP'])?$LANG['HEATMAP']:'HEATMAP'); ?></legend>
+                        <label><?php echo (isset($LANG['TURN_ON_HEATMAP'])?$LANG['TURN_ON_HEATMAP']:'Turn on heatmap'); ?>:</label>
+                        <input data-role="none" type="checkbox" id="heatmap_on" name="heatmap_on" value='1'/>
+                     </fieldset>
 						</div>
 						<form style="display:none;" name="csvcontrolform" id="csvcontrolform" action="csvdownloadhandler.php" method="post" onsubmit="">
 							<input data-role="none" name="selectionscsv" id="selectionscsv" type="hidden" value="" />
