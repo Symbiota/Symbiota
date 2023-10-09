@@ -733,7 +733,7 @@ foreach ($coordArr as $collName => $coll) {
          });
 
          document.getElementById('heatmap_on').addEventListener('change', e => {
-            clusteroff = e.target.checked;
+            console.log(e.target.checked);
             //Clear points 
             
             //Add Heatmap
