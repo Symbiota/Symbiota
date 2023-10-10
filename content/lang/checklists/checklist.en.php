@@ -94,5 +94,8 @@ $LANG['IMG_DWNL_LIST'] = 'Download List';
 $LANG['IMG_PRINT_LIST'] = 'Print List';
 $LANG['IMG_DOCX_EXPORT'] = 'Export to DOCX';
 $LANG['SKIP_LINK'] = 'Skip to Taxa List';
+$LANG['IMAGE_SRC'] = 'Image source';
+$LANG['ALL_IMG'] = 'all images';
+$LANG['LINKED_IMG'] = 'linked voucher images only';
 
 ?>

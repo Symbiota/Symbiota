@@ -94,5 +94,8 @@ $LANG['IMG_DWNL_LIST'] = 'Télécharger la liste';
 $LANG['IMG_PRINT_LIST'] = 'Imprimer la liste';
 $LANG['IMG_DOCX_EXPORT'] = 'Exporter vers DOCX';
 $LANG['SKIP_LINK'] = 'Passer à la liste des taxons';
+$LANG['IMAGE_SRC'] = 'Source de l\'image';
+$LANG['ALL_IMG'] = 'toutes les images';
+$LANG['LINKED_IMG'] = 'images de bons liés uniquement';
 
 ?>
