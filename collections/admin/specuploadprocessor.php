@@ -9,8 +9,8 @@ header('Content-Type: text/html; charset='.$CHARSET);
 ini_set('max_execution_time', 3600);
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/admin/specupload.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$collid = $_REQUEST['collid'];
-$uploadType = $_REQUEST['uploadtype'];
+$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:'';
+$uploadType = array_key_exists('uploadtype',$_REQUEST)?$_REQUEST['uploadtype']:'';
 $uspid = array_key_exists('uspid',$_REQUEST)?$_REQUEST['uspid']:'';
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 $ulPath = array_key_exists('ulpath',$_REQUEST)?$_REQUEST['ulpath']:'';

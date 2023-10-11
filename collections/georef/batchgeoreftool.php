@@ -48,19 +48,19 @@ if(is_array($collid)) $collid = implode(',',$collid);
 
 //Sanitation
 if(!preg_match('/^[,\d]+$/',$collid)) $collid = 0;
-$submitAction = filter_var($submitAction, FILTER_SANITIZE_STRING);
-$qCountry = filter_var($qCountry, FILTER_SANITIZE_STRING);
-$qState = filter_var($qState, FILTER_SANITIZE_STRING);
-$qCounty = filter_var($qCounty, FILTER_SANITIZE_STRING);
-$qMunicipality = filter_var($qMunicipality, FILTER_SANITIZE_STRING);
-$qLocality = filter_var($qLocality, FILTER_SANITIZE_STRING);
-$qDisplayAll = filter_var($qDisplayAll, FILTER_SANITIZE_STRING);
-$qVStatus = filter_var($qVStatus, FILTER_SANITIZE_STRING);
-$qSciname = filter_var($qSciname, FILTER_SANITIZE_STRING);
-$qProcessingStatus = filter_var($qProcessingStatus, FILTER_SANITIZE_STRING);
-$georeferenceSources = filter_var($georeferenceSources, FILTER_SANITIZE_STRING);
-$georeferenceProtocol = filter_var($georeferenceProtocol, FILTER_SANITIZE_STRING);
-$georeferenceVerificationStatus = filter_var($georeferenceVerificationStatus, FILTER_SANITIZE_STRING);
+$submitAction = htmlspecialchars($submitAction, HTML_SPECIAL_CHARS_FLAGS);
+$qCountry = htmlspecialchars($qCountry, HTML_SPECIAL_CHARS_FLAGS);
+$qState = htmlspecialchars($qState, HTML_SPECIAL_CHARS_FLAGS);
+$qCounty = htmlspecialchars($qCounty, HTML_SPECIAL_CHARS_FLAGS);
+$qMunicipality = htmlspecialchars($qMunicipality, HTML_SPECIAL_CHARS_FLAGS);
+$qLocality = htmlspecialchars($qLocality, HTML_SPECIAL_CHARS_FLAGS);
+$qDisplayAll = htmlspecialchars($qDisplayAll, HTML_SPECIAL_CHARS_FLAGS);
+$qVStatus = htmlspecialchars($qVStatus, HTML_SPECIAL_CHARS_FLAGS);
+$qSciname = htmlspecialchars($qSciname, HTML_SPECIAL_CHARS_FLAGS);
+$qProcessingStatus = htmlspecialchars($qProcessingStatus, HTML_SPECIAL_CHARS_FLAGS);
+$georeferenceSources = htmlspecialchars($georeferenceSources, HTML_SPECIAL_CHARS_FLAGS);
+$georeferenceProtocol = htmlspecialchars($georeferenceProtocol, HTML_SPECIAL_CHARS_FLAGS);
+$georeferenceVerificationStatus = htmlspecialchars($georeferenceVerificationStatus, HTML_SPECIAL_CHARS_FLAGS);
 
 if(!$georeferenceSources) $georeferenceSources = 'georef batch tool '.date('Y-m-d');
 //if(!$georeferenceVerificationStatus) $georeferenceVerificationStatus = 'reviewed - high confidence';

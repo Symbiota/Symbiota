@@ -413,7 +413,7 @@ class OccurrenceLabel{
 			else $retArr['g'] = array('labelFormats'=>array());
 			//Add collection defined label formats
 			if($this->collid){
-				$collFormatArr = json_decode($this->collArr['dynprops'],true);
+				$collFormatArr = json_decode($this->collArr['dynprops'] ?? '[]',true);
 				if($annotated){
 					if(isset($collFormatArr['labelFormats'])){
 						foreach($collFormatArr['labelFormats'] as $k => $labelObj){
@@ -434,7 +434,7 @@ class OccurrenceLabel{
 					$dynPropStr = $r->dynamicProperties;
 				}
 				$rs->free();
-				$dynPropArr = json_decode($dynPropStr,true);
+				$dynPropArr = json_decode($dynPropStr  ?? '',true);
 				if($annotated){
 					if(isset($dynPropArr['labelFormats'])){
 						foreach($dynPropArr['labelFormats'] as $k => $labelObj){

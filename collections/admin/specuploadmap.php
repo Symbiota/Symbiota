@@ -7,8 +7,8 @@ include_once($SERVER_ROOT.'/content/lang/collections/admin/specupload.'.$LANG_TA
 header('Content-Type: text/html; charset='.$CHARSET);
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/admin/specupload.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$collid = $_REQUEST['collid'];
-$uploadType = $_REQUEST['uploadtype'];
+$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:'';
+$uploadType = array_key_exists('uploadtype',$_REQUEST)?$_REQUEST['uploadtype']:'';
 $uspid = array_key_exists('uspid',$_REQUEST)?$_REQUEST['uspid']:'';
 $autoMap = array_key_exists('automap',$_POST)?true:false;
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
