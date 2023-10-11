@@ -5,29 +5,29 @@ Language: Español (Spanish)
 ------------------
 */
 
-$LANG['OCC_CLEANER'] = 'Occurrence Cleaner';
-$LANG['COLL_MNGMT'] = 'Collection Management';
-$LANG['DATA_CLEAN'] = 'Data Cleaning Module';
-$LANG['DOWNLOAD_BACKUP'] = 'Downloading a backup of your collection data before running any batch updates is strongly recommended';
-$LANG['DUPLICATE_RECS'] = 'Duplicate Records';
-$LANG['DUPL_REC_DESCR'] = 'These tools will assist in searching this collection of records for duplicate records of the same specimen.
-                            If duplicate records exist, this feature offers the ability to merge record values, images,
-                            and data relationships into a single record.';
-$LANG['LIST_DUPLICATES'] = 'List Duplicates based on...';
-$LANG['CAT_NUMS'] = 'Catalog Numbers';
-$LANG['OTHER_CAT_NUMS'] = 'Other Catalog Numbers';
-$LANG['POLITIC_GEO'] = 'Political Geography';
-$LANG['POLITIC_GEO_DESCR'] = 'These tools help standardize country, state/province, and county designations.
-                        They are also useful for locating and correcting misspelled geographical political units,
-                        and even mismatched units, such as a state designation that does not match the wrong country.';
-$LANG['STAT_ACT_PANEL'] = 'Statistics and Action Panel';
-$LANG['GEO_DISTR'] = 'Geographic Distributions';
-$LANG['GEO_CLEAN_TOOLS'] = 'Geography Cleaning Tools';
-$LANG['TAXONOMY'] = 'Taxonomy';
-$LANG['TAXONOMY_DESCR'] = 'These tools are meant to aid in locating and fixing taxonomic errors and inconsistencies.';
-$LANG['ANALYZE_NAMES'] = 'Analyze taxonomic names...';
-$LANG['TAXON_DISTR'] = 'Taxonomic Distributions...';
-$LANG['DUPLICATE_SPECIMENS'] = 'Duplicate specimens with potential identification conflicts...';
-$LANG['NOT_AUTH'] = 'You are not authorized to access this page. ';
+$LANG['OCC_CLEANER'] = 'Limpiador de ocurrencias';
+$LANG['COLL_MNGMT'] = 'Gestión de colecciones';
+$LANG['DATA_CLEAN'] = 'Módulo de limpieza de datos';
+$LANG['DOWNLOAD_BACKUP'] = 'Se recomienda descargar una copia de seguridad de los datos de su colección antes de ejecutar cualquier actualización por lotes';
+$LANG['DUPLICATE_RECS'] = 'Registros duplicados';
+$LANG['DUPL_REC_DESCR'] = 'Estas herramientas ayudarán a buscar en esta colección de registros registros duplicados del mismo espécimen.
+                             Si existen registros duplicados, esta función ofrece la posibilidad de fusionar valores de registros, imágenes,
+                             y relaciones de datos en un solo registro.';
+$LANG['LIST_DUPLICATES'] = 'Listar duplicados según...';
+$LANG['CAT_NUMS'] = 'Números de catálogo';
+$LANG['OTHER_CAT_NUMS'] = 'Otros números de catálogo';
+$LANG['POLITIC_GEO'] = 'Geografía política';
+$LANG['POLITIC_GEO_DESCR'] = 'Estas herramientas ayudan a estandarizar las designaciones de países, estados/provincias y condados.
+                         También son útiles para localizar y corregir unidades políticas geográficas mal escritas,
+                         e incluso unidades que no coinciden, como la designación de un estado que no coincide con el país equivocado.';
+$LANG['STAT_ACT_PANEL'] = 'Panel de estadísticas y acciones';
+$LANG['GEO_DISTR'] = 'Distribuciones geográficas';
+$LANG['GEO_CLEAN_TOOLS'] = 'Herramientas de limpieza geográfica';
+$LANG['TAXONOMY'] = 'Taxonomía';
+$LANG['TAXONOMY_DESCR'] = 'Estas herramientas están destinadas a ayudar a localizar y corregir errores e inconsistencias taxonómicas.';
+$LANG['ANALYZE_NAMES'] = 'Analizar nombres taxonómicos...';
+$LANG['TAXON_DISTR'] = 'Distribuciones taxonómicas...';
+$LANG['DUPLICATE_SPECIMENS'] = 'Especímenes duplicados con posibles conflictos de identificación...';
+$LANG['NOT_AUTH'] = 'No estás autorizado a acceder a esta página. ';
 
 ?>
