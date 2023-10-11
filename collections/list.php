@@ -167,28 +167,28 @@ $_SESSION['citationvar'] = $searchVar;
 						if ($SYMB_UID) {
 						?>
 							<div style="float:left">
-								<button class="icon-button" onclick="displayDatasetTools()" title="<?php echo (isset($LANG['DATASET_MANAGEMENT'])?$LANG['DATASET_MANAGEMENT']:'Dataset Management'); ?>">
-									<img src="../images/dataset.png" style="width:15px;" alt="<?php echo (isset($LANG['IMG_DATASET_MANAGEMENT'])?$LANG['IMG_DATASET_MANAGEMENT']:'Open Dataset Management'); ?>"/>
+								<button class="icon-button" onclick="displayDatasetTools()" aria-label="" title="<?php echo (isset($LANG['DATASET_MANAGEMENT']) ? $LANG['DATASET_MANAGEMENT'] : 'Dataset Management'); ?>">
+									<img src="../images/dataset.png" style="width:15px;" alt="<?php echo (isset($LANG['IMG_DATASET_MANAGEMENT']) ? $LANG['IMG_DATASET_MANAGEMENT'] : 'Open Dataset Management'); ?>"/>
 								</button>
 							</div>
 						<?php
 						}
 						?>
 						<form action="listtabledisplay.php" method="post" style="float:left">
-							<button class="icon-button" title="<?php echo (isset($LANG['TABLE_DISPLAY']) ? $LANG['TABLE_DISPLAY'] : 'Table Display'); ?>">
+							<button class="icon-button" aria-label="" title="<?php echo (isset($LANG['TABLE_DISPLAY']) ? $LANG['TABLE_DISPLAY'] : 'Table Display'); ?>">
 								<img src="../images/table.png" style="width:15px; height:15px" alt="<?php echo (isset($LANG['IMG_TABLE_DISPLAY']) ? $LANG['IMG_TABLE_DISPLAY'] : 'Open Table Display'); ?>"/>
 							</button>
 							<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 						</form>
 						<form action="download/index.php" method="post" style="float:left" onsubmit="targetPopup(this)">
-							<button class="icon-button" title="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>">
+							<button class="icon-button" aria-label="" title="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>">
 								<img src="../images/dl2.png" srcset="../images/download.svg" class="svg-icon" style="width:15px; height:15px" alt="<?php echo (isset($LANG['IMG_DWNL_DATA']) ? $LANG['IMG_DWNL_DATA'] : 'Download Button'); ?>" />
 							</button>
 							<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 							<input name="dltype" type="hidden" value="specimen" />
 						</form>
 						<div style="float:left">
-							<button class="icon-button" onclick="copyUrl()" title="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>">
+							<button class="icon-button" onclick="copyUrl()" aria-label="" title="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>">
 								<img src="../images/dl2.png" srcset="../images/link.svg" class="svg-icon" style="width:15px; height:15px" alt="<?php echo (isset($LANG['IMG_COPY']) ? $LANG['IMG_COPY'] : 'Copy Button'); ?>"/>
 							</button>
 						</div>
@@ -308,7 +308,7 @@ $_SESSION['citationvar'] = $searchVar;
 										if (isset($fieldArr['author']) && $fieldArr['author']) $sciStr .= ' ' . $fieldArr['author'];
 										echo $sciStr;
 									} elseif ($fieldArr['localitysecurity'] > 1) {
-										echo (isset($LANG['ID_PROTECTED'])?$LANG['ID_PROTECTED']:'Identification Protected');;
+										echo (isset($LANG['ID_PROTECTED']) ? $LANG['ID_PROTECTED'] : 'Identification Protected');;
 									}
 									echo '</div>';
 									echo '<div style="margin:4px">';
@@ -369,7 +369,7 @@ $_SESSION['citationvar'] = $searchVar;
 			</div>
 			<div id="maps" style="min-height:400px;margin-bottom:10px;">
 				<form action="download/index.php" method="post" style="float:right" onsubmit="targetPopup(this)">
-					<button class="icon-button" title="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>">
+					<button class="icon-button" aria-label="" title="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>">
 						<img src="../../images/dl2.png" srcset="../images/download.svg" class="svg-icon" style="width:15px; height:15px" alt="<?php echo (isset($LANG['IMG_DWNL_DATA']) ? $LANG['IMG_DWNL_DATA'] : 'Download Button'); ?>" />
 					</button>
 					<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
