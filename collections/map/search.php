@@ -123,9 +123,6 @@ foreach ($coordArr as $collName => $coll) {
 	<title><?php echo $DEFAULT_TITLE; ?> - Map Interface</title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
-	//include_once($SERVER_ROOT.'/includes/googleanalytics.php');
-   include_once($SERVER_ROOT.'/includes/leafletMap.php');
-   include_once($SERVER_ROOT.'/includes/googleMap.php');
 	?>
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
 	<style type="text/css">
@@ -141,6 +138,10 @@ foreach ($coordArr as $collName => $coll) {
 	<script src="../../js/jscolor/jscolor.js?ver=1" type="text/javascript"></script>
 <!---	<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'&key='.$GOOGLE_MAP_KEY:''); ?>&callback=Function.prototype" ></script> -->
 	<script src="../../js/symb/collections.map.index.js?ver=2" type="text/javascript"></script>
+	<?php
+   include_once($SERVER_ROOT.'/includes/leafletMap.php');
+   include_once($SERVER_ROOT.'/includes/googleMap.php');
+	?>
 
 	<script src="../../js/symb/wktpolygontools.js" type="text/javascript"></script>
 	<script src="../../js/symb/MapShapeHelper.js" type="text/javascript"></script>
@@ -487,8 +488,7 @@ foreach ($coordArr as $collName => $coll) {
 
          map.mapLayer.zoomControl.setPosition('topright');
 
-         // TODO (Logan) Clean up global usages
-         function drawPoints(type) {
+         function drawPoints() {
             for(let record of recordArr) {
                let marker = (record.type === "specimen"?
                   L.circleMarker([record.lat, record.lng], {
@@ -508,7 +508,7 @@ foreach ($coordArr as $collName => $coll) {
                      })
                   }))
                .on('click', function() { openIndPU(record.occid) })
-               .bindTooltip(`<div>${record.id}`)
+               .bindTooltip(`<div>${record.id}</div>`)
 
                markers.push(marker);
 
@@ -809,6 +809,142 @@ foreach ($coordArr as $collName => $coll) {
 
       function googleInit() {
          let map = new GoogleMap('map')
+
+         let taxaClusters = {};
+         let taxaMarkers = {};
+
+         let collClusters = {};
+         let collMarkers = {};
+
+         let bounds; 
+
+         map.enableDrawing({}, setQueryShape);
+
+         function drawPoints() {
+            bounds = new google.maps.LatLngBounds();
+
+            for(let record of recordArr) {
+               let marker = new google.maps.Marker({
+                  position: new google.maps.LatLng(record['lat'], record['lng']),
+                  text: "Test",
+                  //map: map.mapLayer,
+                  icon: record['type'] === "specimen"? 
+                     {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        fillColor: `#${taxaMap[record['tid']].color}`,
+                        fillOpacity: 1,
+                        scale: 7,
+                        strokeColor: "#000000",
+                        strokeWeight: 1
+                     }: {
+                        path: "m6.70496,0.23296l-6.70496,13.48356l13.88754,0.12255l-7.18258,-13.60611z",
+                        fillColor: `#${taxaMap[record['tid']].color}`,
+                        fillOpacity: 1,
+                        scale: 1,
+                        strokeColor: "#000000",
+                        strokeWeight: 1
+                     },
+                  selected: false,
+                  color: `#${taxaMap[record['tid']].color}`,
+               })
+
+               bounds.extend(marker.getPosition());
+
+               const infoWin = new google.maps.InfoWindow({content:`<div>${record.id}</div>`});
+
+               google.maps.event.addListener(marker, 'mouseover', function() {
+                  infoWin.open(map.mapLayer, marker); 
+               })
+
+               google.maps.event.addListener(marker, 'mouseout', function() {
+                  infoWin.close(); 
+               })
+               
+               google.maps.event.addListener(marker, 'click', function() { openIndPU(record.occid)})
+
+               if(!taxaMarkers[record['tid']]) {
+                  taxaMarkers[record['tid']] = [marker]
+               } else {
+                  taxaMarkers[record['tid']].push(marker);
+               }
+
+               if(!collMarkers[record['collid']]) {
+                  collMarkers[record['collid']] = [marker]
+               } else {
+                  collMarkers[record['collid']].push(marker);
+               }
+            }
+
+            for(let tid of Object.keys(taxaMarkers)) {
+               taxaClusters[tid] = new MarkerClusterer(map.mapLayer, taxaMarkers[tid],{
+						styles: [{
+							color: taxaMap[tid].color
+						}],
+						maxZoom: 13,
+						gridSize: 60,
+						minimumClusterSize: 10
+					}
+               );
+            }
+         }
+
+         function resetGroup(group_map, markerGroup, clusterGroup) {
+            
+            for(let id of Object.keys(group_map)) {
+               if(clusterGroup[id]) {
+                  clusterGroup[id].clearMarkers();
+                  clusterGroup[id].setMap(null);
+               }
+            }
+
+         }
+
+         document.getElementById("mapsearchform").addEventListener('submit', async e => {
+            showWorking();
+            e.preventDefault();
+            let formData = new FormData(e.target);
+
+            resetGroup(taxaMap, taxaMarkers, taxaClusters);
+            taxaMarkers = {}
+
+            resetGroup(collArr, collMarkers, collClusters);
+            collMarkers = {}
+
+            getOccurenceRecords(formData).then(res => {
+               if (res) loadOccurenceRecords(res);
+            });
+
+            const results = await searchCollections(formData);
+
+            recordArr = results.recordArr? results.recordArr: [];
+            taxaMap = results.taxaArr? results.taxaArr: [];
+            collArr = results.collArr? results.collArr: [];
+
+            drawPoints();
+            if(bounds) map.mapLayer.fitBounds(bounds);
+            buildPanels();
+            hideWorking();
+         });
+
+         document.addEventListener('deleteShape', e => {
+            clid_input = document.getElementById('clid');
+            if(clid_input) clid_input.value = '';
+
+            map.clearMap();
+            shape = null;
+         });
+
+         document.addEventListener('occur_click', function(e) {
+            for (let i = 0; i < recordArr.length; i++) {
+               if(recordArr[i]['occid'] === e.detail.occid) {
+                  const current_zoom = map.mapLayer.getZoom();
+                  map.mapLayer.setCenter(new google.maps.LatLng(recordArr[i]['lat'], recordArr[i]['lng'])) 
+                  map.mapLayer.setZoom(current_zoom > 12? current_zoom: 12);
+                  break;
+               }
+            }
+         });
+
       }
 
 		function setPanels(show){
