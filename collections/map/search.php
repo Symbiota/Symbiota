@@ -328,10 +328,18 @@ foreach ($coordArr as $collName => $coll) {
       }
 
       function buildTaxaLegend() {
-         let taxaHtml = "<div style='display:table;'>";
+         let taxaHtml = "";
          let taxaArr = Object.values(taxaMap).sort((a, b) => a.family > b.family)
+         let prev_family;
 
          for (let taxa of taxaArr) {
+            if(prev_family !== taxa.family) {
+              if(taxaHtml) taxaHtml += "</div>";
+
+              taxaHtml += `<div style="margin-left:5px;"><h3>${taxa.family}</h3></div>`;
+              taxaHtml += "<div style='display:table;'>";
+              prev_family = taxa.family;
+            }
             taxaHtml += legendRow(`taxa-${taxa.tid}`, taxa.color, taxa.sn);
          }
 
