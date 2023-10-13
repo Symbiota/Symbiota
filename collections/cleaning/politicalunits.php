@@ -514,7 +514,7 @@ if($action && $isEditor){
 					}
 				}
 				?>
-			</fieldset>
+			</section>
 			<!--
 			<fieldset style="padding:20px;">
 				<legend><b>All Fields</b></legend>
