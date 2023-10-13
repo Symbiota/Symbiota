@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDuplicate.php');
@@ -43,7 +45,7 @@ if($isEditor && $formSubmit){
 	}
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['DUP_CLUSTERING']; ?></title>
@@ -90,7 +92,7 @@ if($isEditor && $formSubmit){
 			}
 		}
 	</script>
-    <style type="text/css">
+    <style>
 		table.styledtable td { white-space: nowrap; }
 		fieldset{ min-height: 400px }
     </style>
@@ -101,7 +103,7 @@ if($isEditor && $formSubmit){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href="../../index.php">Home</a> &gt;&gt;
+		<a href="../../index.php"> <?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?> </a> &gt;&gt;
 		<?php
 		if($collMap['colltype'] == 'General Observations'){
 			echo '<a href="../../profile/viewprofile.php?tabindex=1">' . htmlspecialchars($LANG['PERS_MANAGE_MENU'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
@@ -134,8 +136,8 @@ if($isEditor && $formSubmit){
 		if($isEditor){
 			if(!$action){
 				?>
-				<fieldset style="padding:20px;">
-					<legend><b><?php echo $LANG['DUP_LINKAGES']; ?></b></legend>
+				<section class="fieldset-like">
+					<h1> <span> <?php echo (isset($LANG['DUP_LINKAGES']) ? $LANG['DUP_LINKAGES'] : 'Duplicate Linkages'); ?> </span> </h1>
 					<div>
 						<?php echo $LANG['DUP_EXPLANATION']; ?>
 					</div>
@@ -170,7 +172,7 @@ if($isEditor && $formSubmit){
 						<?php
 					}
 					?>
-				</fieldset>
+				</section>
 				<?php
 			}
 			else{
