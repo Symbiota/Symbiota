@@ -44,5 +44,6 @@ $LANG['NO_PERM'] = 'ERROR: no tiene permisos para editar esta colección';
 $LANG['BATCH_TAXON_CLEAN'] = 'Herramienta de Limpieza Taxonómica por Lote';
 $LANG['COL_SELECTOR'] = 'Seleccionador de Colecciones';
 $LANG['ERROR_COLID_NUL'] = 'ERROR: Identificador de la colección es nulo';
+$LANG['ADD_BUTTON'] = 'Botón Agregar';
 
 ?>
