@@ -817,11 +817,28 @@ foreach ($coordArr as $collName => $coll) {
          let collMarkers = {};
 
          let bounds; 
+         let oms;
+         let clusteroff = false;
+
+         let cluster_type = "taxa";
 
          map.enableDrawing({}, setQueryShape);
 
+         //Add polygon bounding function
+         if (!google.maps.Polygon.prototype.getBounds) {
+            google.maps.Polygon.prototype.getBounds = function () {
+               var bounds = new google.maps.LatLngBounds();
+               this.getPath().forEach(function (element, index) { bounds.extend(element); });
+               return bounds;
+            }
+         }
+
          function drawPoints() {
+            if(recordArr.length < 1) return;
+
             bounds = new google.maps.LatLngBounds();
+
+			   oms = new OverlappingMarkerSpiderfier(map.mapLayer);
 
             for(let record of recordArr) {
                let marker = new google.maps.Marker({
@@ -849,6 +866,8 @@ foreach ($coordArr as $collName => $coll) {
                })
 
                bounds.extend(marker.getPosition());
+
+					oms.addMarker(marker);
 
                const infoWin = new google.maps.InfoWindow({content:`<div>${record.id}</div>`});
 
@@ -882,21 +901,61 @@ foreach ($coordArr as $collName => $coll) {
 						}],
 						maxZoom: 13,
 						gridSize: 60,
-						minimumClusterSize: 10
+						minimumClusterSize: 2
+					}
+               );
+            }
+
+            for(let collid of Object.keys(collMarkers)) {
+               collClusters[collid] = new MarkerClusterer(null, collMarkers[collid],{
+						styles: [{
+							color: collArr[collid].color
+						}],
+						maxZoom: 13,
+						gridSize: 60,
+						minimumClusterSize: 2
 					}
                );
             }
          }
 
          function resetGroup(group_map, markerGroup, clusterGroup) {
-            
             for(let id of Object.keys(group_map)) {
-               if(clusterGroup[id]) {
-                  clusterGroup[id].clearMarkers();
-                  clusterGroup[id].setMap(null);
-               }
+               removeGroupMember(id, markerGroup, clusterGroup);
             }
+         }
 
+         function removeGroupMember(id, markerGroup, clusterGroup) {
+            if(clusterGroup[id]) {
+               clusterGroup[id].clearMarkers();
+               clusterGroup[id].setMap(null);
+            }
+         }
+         
+         function addGroupMember(id, group_map, markerGroup, clusterGroup) {
+            if(clusterGroup[id]) {
+               clusterGroup[id] = new MarkerClusterer(map.mapLayer, markerGroup[id],{
+                  styles: [{
+                     color: group_map[id].color
+                  }],
+                  maxZoom: 13,
+                  gridSize: 60,
+                  minimumClusterSize: 2
+               })
+
+               if(clusteroff) clusterGroup[id].setMap(null);
+            }
+         }
+
+         function fitMap() {
+            if(map.activeShape) map.mapLayer.fitBounds(map.activeShape.layer.getBounds())
+            else if(bounds) map.mapLayer.fitBounds(bounds);
+            else if (map_bounds) { 
+               const new_bounds = new google.maps.LatLngBounds()
+               new_bounds.extend(new google.maps.LatLng(parseFloat(map_bounds[0][0]), parseFloat(map_bounds[0][1])))
+               new_bounds.extend(new google.maps.LatLng(parseFloat(map_bounds[1][0]), parseFloat(map_bounds[1][1])))
+               map.mapLayer.fitBounds(new_bounds)
+            }
          }
 
          document.getElementById("mapsearchform").addEventListener('submit', async e => {
@@ -921,7 +980,7 @@ foreach ($coordArr as $collName => $coll) {
             collArr = results.collArr? results.collArr: [];
 
             drawPoints();
-            if(bounds) map.mapLayer.fitBounds(bounds);
+            fitMap()
             buildPanels();
             hideWorking();
          });
@@ -945,6 +1004,72 @@ foreach ($coordArr as $collName => $coll) {
             }
          });
 
+         async function updateColor(type, id, color) {
+            const updateTypeColor = (id, group_map, markerGroup, clusterGroup) => {
+               removeGroupMember(id, markerGroup, clusterGroup);
+
+               group_map[id].color = color;
+
+               for (let marker of markerGroup[id]) {
+                  marker.color = `#${color}`
+                  marker.icon.fillColor = `#${color}`
+               }
+
+               addGroupMember(id, group_map, markerGroup, clusterGroup);
+            }
+
+            if(type === "taxa") updateTypeColor(id, taxaMap, taxaMarkers, taxaClusters);
+            else if (type === "coll") updateTypeColor(id, collArr, collMarkers, collClusters);
+         }
+
+         document.addEventListener('colorchange', function(e) {
+            const [type, id] = e.target.id.split("-");
+            const color = e.target.value;
+            updateColor(type, id, color);
+         });
+
+         document.addEventListener('autocolor', async function(e) {
+            const {type, colorMap} = e.detail;
+
+            if(cluster_type === "coll" && type === "taxa") {
+               //removeGroup(collArr, "collid", collClusters, collGroups);
+               resetGroup(collArr, collMarkers, collClusters);
+            } else if(cluster_type === "taxa" && type === "coll") {
+               //removeGroup(taxaMap, "tid", taxaClusters, taxaGroups);
+               resetGroup(taxaMap, taxaMarkers, taxaClusters);
+            }
+
+            cluster_type = type;
+
+            for (let {id, color} of Object.values(colorMap)) {
+               await updateColor(type, id, color);
+            }
+         });
+
+         document.getElementById('clusteroff').addEventListener('change', e => {
+            clusteroff = e.target.checked;
+            function toggleGroupClustering(clusterGroup) {
+               for(let cluster of Object.values(clusterGroup)) {
+                  if(clusteroff) cluster.setMap(null);
+                  else cluster.setMap(map.mapLayer)
+               }
+            }
+
+            if(cluster_type === "taxa") toggleGroupClustering(taxaClusters);
+            else if(cluster_type === "coll") toggleGroupClustering(collClusters);
+         });
+
+         if(recordArr.length > 0) {
+            if(shape) map.drawShape(shape);
+            let formData = new FormData(document.getElementById("mapsearchform"));
+            drawPoints();
+            getOccurenceRecords(formData).then(res => {
+               if(res) loadOccurenceRecords(res);
+               buildPanels();
+            });
+         }
+
+         fitMap();
       }
 
 		function setPanels(show){
@@ -1505,4 +1630,3 @@ foreach ($coordArr as $collName => $coll) {
 </div>
 </body>
 </html>
-
