@@ -258,7 +258,10 @@ foreach ($coordArr as $collName => $coll) {
 			display: block;
 			height: 100%;
 			/* overflow: scroll; */
-		}
+      }
+      .cluster text {
+         text-shadow: 0 0 8px white, 0 0 8px white, 0 0 8px white;
+      }
 	</style>
 	<script type="text/javascript">
       let recordArr = [];
@@ -659,7 +662,6 @@ foreach ($coordArr as $collName => $coll) {
                layerGroup[id].clearLayers()
                if(map.mapLayer.hasLayer(layerGroup[id]))map.mapLayer.removeLayer(layerGroup[id]);
             } else {
-               //clusterGroup[id].removeLayers(markerGroup[id])
                clusterGroup[id].clearLayers();
                if(map.mapLayer.hasLayer(clusterGroup[id])) map.mapLayer.removeLayer(clusterGroup[id]);
             }
@@ -897,7 +899,7 @@ foreach ($coordArr as $collName => $coll) {
             for(let tid of Object.keys(taxaMarkers)) {
                taxaClusters[tid] = new MarkerClusterer(map.mapLayer, taxaMarkers[tid],{
 						styles: [{
-							color: taxaMap[tid].color
+							color: taxaMap[tid].color,
 						}],
 						maxZoom: 13,
 						gridSize: 60,
@@ -909,7 +911,7 @@ foreach ($coordArr as $collName => $coll) {
             for(let collid of Object.keys(collMarkers)) {
                collClusters[collid] = new MarkerClusterer(null, collMarkers[collid],{
 						styles: [{
-							color: collArr[collid].color
+							color: collArr[collid].color,
 						}],
 						maxZoom: 13,
 						gridSize: 60,
@@ -936,7 +938,7 @@ foreach ($coordArr as $collName => $coll) {
             if(clusterGroup[id]) {
                clusterGroup[id] = new MarkerClusterer(map.mapLayer, markerGroup[id],{
                   styles: [{
-                     color: group_map[id].color
+                     color: group_map[id].color,
                   }],
                   maxZoom: 13,
                   gridSize: 60,
