@@ -11,7 +11,7 @@ $collId = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid']
 $dupeDepth = array_key_exists('dupedepth', $_REQUEST) ? filter_var($_REQUEST['dupedepth'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $start = array_key_exists('start', $_REQUEST) ? filter_var($_REQUEST['start'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $limit = array_key_exists('limit', $_REQUEST) ? filter_var($_REQUEST['limit'], FILTER_SANITIZE_NUMBER_INT) : 1000;
-$action = array_key_exists('action', $_REQUEST) ? filter_var($_REQUEST['action'], FILTER_SANITIZE_STRING) : '';
+$action = array_key_exists('action', $_REQUEST) ? htmlspecialchars($_REQUEST['action'], HTML_SPECIAL_CHARS_FLAGS) : '';
 $formSubmit = array_key_exists('formsubmit' , $_POST) ? $_POST['formsubmit'] : '';
 
 if(!$SYMB_UID){
