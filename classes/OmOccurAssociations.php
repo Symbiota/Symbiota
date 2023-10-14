@@ -6,14 +6,14 @@ class OmOccurAssociations{
 	private $conn;
 	private $assocID = null;
 	private $occid = null;
-	private $fieldMap = array();
+	private $schemaMap = array();
 	private $parameterArr = array();
 	private $typeStr = '';
 	private $errorMessage = '';
 
 	public function __construct($conn){
 		$this->conn = $conn;
-		$this->fieldMap = array('occidAssociate' => 'i', 'relationship' => 's', 'relationshipID' => 's', 'subType' => 's', 'identifier' => 's', 'basisOfRecord' => 's', 'resourceUrl' => 's',
+		$this->schemaMap = array('occidAssociate' => 'i', 'relationship' => 's', 'relationshipID' => 's', 'subType' => 's', 'identifier' => 's', 'basisOfRecord' => 's', 'resourceUrl' => 's',
 			'verbatimSciname' => 's', 'tid' => 'i', 'locationOnHost' => 's', 'conditionOfAssociate' => 's', 'establishedDate' => 's', 'imageMapJSON' => 's', 'dynamicProperties' => 's',
 			'notes' => 's', 'accordingTo' => 's', 'sourceIdentifier' => 's', 'recordID' => 's', 'createdUid' => 'i', 'modifiedTimestamp' => 's',
 			'modifiedUid' => 'i');
@@ -25,7 +25,7 @@ class OmOccurAssociations{
 	public function getAssociationArr(){
 		$retArr = array();
 		$uidArr = array();
-		$sql = 'SELECT assocID, occid, '.implode(', ', array_keys($this->fieldMap)).', initialTimestamp FROM omoccurassociations WHERE ';
+		$sql = 'SELECT assocID, occid, '.implode(', ', array_keys($this->schemaMap)).', initialTimestamp FROM omoccurassociations WHERE ';
 		if($this->assocID) $sql .= '(assocID = '.$this->assocID.') ';
 		elseif($this->occid) $sql .= '(occid = '.$this->occid.') ';
 		if($rs = $this->conn->query($sql)){
@@ -112,7 +112,7 @@ class OmOccurAssociations{
 	}
 
 	private function setParameterArr($inputArr){
-		foreach($this->fieldMap as $field => $type){
+		foreach($this->schemaMap as $field => $type){
 			$postField = '';
 			if(isset($inputArr[$field])) $postField = $field;
 			elseif(isset($inputArr[strtolower($field)])) $postField = strtolower($field);
@@ -152,8 +152,8 @@ class OmOccurAssociations{
 		if(is_numeric($id)) $this->occid = $id;
 	}
 
-	public function getFieldMap(){
-		return $this->fieldMap;
+	public function getSchemaMap(){
+		return $this->schemaMap;
 	}
 
 	public function getErrorMessage(){

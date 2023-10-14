@@ -7,7 +7,7 @@ class OmMaterialSample{
 	private $connInherited = false;
 	private $matSampleID;
 	private $occid;
-	private $fieldMap = array();
+	private $schemaMap = array();
 	private $parameterArr = array();
 	private $typeStr = '';
 	private $errorMessage;
@@ -18,7 +18,7 @@ class OmMaterialSample{
 			$this->connInherited = true;
 		}
 		else $this->conn = MySQLiConnectionFactory::getCon('write');
-		$this->fieldMap = array('sampleType' => 's', 'catalogNumber' => 's', 'guid' => 's', 'sampleCondition' => 's', 'disposition' => 's', 'preservationType' => 's',
+		$this->schemaMap = array('sampleType' => 's', 'catalogNumber' => 's', 'guid' => 's', 'sampleCondition' => 's', 'disposition' => 's', 'preservationType' => 's',
 			'preparationDetails' => 's', 'preparationDate' => 's', 'preparedByUid' => 'i', 'individualCount' => 'i', 'sampleSize' => 's', 'storageLocation' => 's', 'remarks' => 's');
 	}
 
@@ -111,7 +111,7 @@ class OmMaterialSample{
 	}
 
 	private function setParameterArr($inputArr){
-		foreach($this->fieldMap as $field => $type){
+		foreach($this->schemaMap as $field => $type){
 			$postField = '';
 			if(isset($inputArr[$field])) $postField = $field;
 			elseif(isset($inputArr[strtolower($field)])) $postField = strtolower($field);
@@ -162,8 +162,8 @@ class OmMaterialSample{
 		return $this->occid;
 	}
 
-	public function getFieldMap(){
-		return $this->fieldMap;
+	public function getSchemaMap(){
+		return $this->schemaMap;
 	}
 
 	public function getErrorMessage(){

@@ -1,27 +1,23 @@
 <?php
-include_once('Manager.php');
+include_once('UtilitiesFileImport.php');
 include_once('ImageShared.php');
 include_once('OmMaterialSample.php');
 include_once('OmOccurAssociations.php');
 include_once('OccurrenceMaintenance.php');
 
-class OccurrenceImport extends Manager{
+class OccurrenceImport extends UtilitiesFileImport{
 
 	private $collid;
 	private $collMetaArr = array();
 	private $importType;
 	private $createNewRecord = false;
 
-	private $uploadTargetPath;
-	private $importFileName;
+	private $importManager = null;
 
-	private $translationMap = null;
-	private $fieldMap = array();		//array(sourceName => symbIndex)
-
-	private const IMPORT_DETERMINATIONS = 1;
-	private const IMPORT_IMAGE_MAP = 2;
-	private const IMPORT_MATERIAL_SAMPLE = 3;
-	private const IMPORT_ASSOCIATIONS = 4;
+	private const IMPORT_ASSOCIATIONS = 1;
+	private const IMPORT_DETERMINATIONS = 2;
+	private const IMPORT_IMAGE_MAP = 3;
+	private const IMPORT_MATERIAL_SAMPLE = 4;
 
 	function __construct() {
 		parent::__construct(null, 'write');
@@ -34,18 +30,13 @@ class OccurrenceImport extends Manager{
 	}
 
 	public function loadData($postArr){
-		if(isset($postArr['filename']) && isset($postArr['tf'])){
+		if($this->fileName && isset($postArr['tf'])){
 			$this->fieldMap = array_flip($postArr['tf']);
-			$fullPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) != '/'?'/':'').'temp/data/'.$postArr['filename'];
+			$fullPath = $this->targetPath . $this->fileName;
 			if($fh = fopen($fullPath,'rb')){
-				$this->initProcessor('processing/imgmap');
-				$this->logOrEcho('Starting to processing input file '.$postArr['filename'].' ('.date('Y-m-d H:i:s').')');
+				$this->logOrEcho('Starting to process input file '.$this->fileName.' ('.date('Y-m-d H:i:s').')');
 				fgetcsv($fh);	//Advance one row to skipper header row
 				$cnt = 1;
-				$importManager = null;
-				if($this->importType == self::IMPORT_IMAGE_MAP) $importManager = new ImageShared($this->conn);
-				elseif($this->importType == self::IMPORT_ASSOCIATIONS) $importManager = new OmOccurAssociations();
-				elseif($this->importType == self::IMPORT_MATERIAL_SAMPLE) $importManager = new OmMaterialSample($this->conn);
 				while($recordArr = fgetcsv($fh)){
 					$identifierArr = array();
 					if(isset($this->fieldMap['occurrenceid'])){
@@ -62,64 +53,7 @@ class OccurrenceImport extends Manager{
 					}
 					$this->logOrEcho('#'.$cnt.': Processing Catalog Number: '.implode(', ', $identifierArr));
 					if($occidArr = $this->getOccurrencePK($identifierArr)){
-						if($this->importType == self::IMPORT_IMAGE_MAP){
-							if(!isset($this->fieldMap['originalurl']) || $recordArr[$this->fieldMap['originalurl']]) return false;
-							foreach($occidArr as $occid => $tid){
-								$importManager->setOccid($occid);
-								$importManager->setTid($tid);
-								$importManager->setImgLgUrl($recordArr[$this->fieldMap['originalurl']]);
-								if(!empty($recordArr[$this->fieldMap['url']])) $importManager->setImgWebUrl($recordArr[$this->fieldMap['url']]);
-								if(!empty($recordArr[$this->fieldMap['thumbnailurl']])) $importManager->setImgTnUrl($recordArr[$this->fieldMap['thumbnailurl']]);
-								if(!empty($recordArr[$this->fieldMap['photographer']])) $importManager->setPhotographer($recordArr[$this->fieldMap['photographer']]);
-								if(!empty($recordArr[$this->fieldMap['caption']])) $importManager->setCaption($recordArr[$this->fieldMap['caption']]);
-								if(!empty($recordArr[$this->fieldMap['sourceUrl']])) $importManager->setSourceUrl($recordArr[$this->fieldMap['sourceUrl']]);
-								if(!empty($recordArr[$this->fieldMap['anatomy']])) $importManager->setAnatomy($recordArr[$this->fieldMap['anatomy']]);
-								if(!empty($recordArr[$this->fieldMap['notes']])) $importManager->setNotes($recordArr[$this->fieldMap['notes']]);
-								if(!empty($recordArr[$this->fieldMap['owner']])) $importManager->setOwner($recordArr[$this->fieldMap['owner']]);
-								if(!empty($recordArr[$this->fieldMap['copyright']])) $importManager->setCopyright($recordArr[$this->fieldMap['copyright']]);
-								if(!empty($recordArr[$this->fieldMap['sortoccurrence']])) $importManager->setSortOccurrence($recordArr[$this->fieldMap['sortOccurrence']]);
-								if($importManager->insertImage()){
-									$this->logOrEcho('Image loaded suucessfully!', 1);
-								}
-								else{
-									$this->logOrEcho('ERROR loading image: '.$importManager->getErrStr(), 1);
-								}
-								$importManager->reset();
-							}
-						}
-						elseif($this->importType == self::IMPORT_ASSOCIATIONS){
-							foreach($occidArr as $occid => $tid){
-								$importManager->setOccid($occid);
-								$fieldMap = array_keys($importManager->getFieldMap());
-								$assocArr = array();
-								foreach($fieldMap as $field){
-									$fieldLower = strtolower($field);
-									if(!empty($recordArr[$this->fieldMap[$fieldLower]])) $assocArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
-								}
-								if(!$importManager->insertAssociations($assocArr)){
-									$this->logOrEcho('ERROR loading Occurrence Association: '.$importManager->getErrorMessage(), 1);
-								}
-							}
-						}
-						elseif($this->importType == self::IMPORT_DETERMINATIONS){
-							foreach($occidArr as $occid => $tid){
-
-							}
-						}
-						elseif($this->importType == self::IMPORT_MATERIAL_SAMPLE){
-							foreach($occidArr as $occid => $tid){
-								$importManager->setOccid($occid);
-								$fieldMap = array_keys($importManager->getFieldMap());
-								$msArr = array();
-								foreach($fieldMap as $field){
-									$fieldLower = strtolower($field);
-									if(!empty($recordArr[$this->fieldMap[$fieldLower]])) $msArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
-								}
-								if(!$importManager->insertMaterialSample($msArr)){
-									$this->logOrEcho('ERROR loading Material Sample: '.$importManager->getErrorMessage(), 1);
-								}
-							}
-						}
+						$this->insertRecord($recordArr, $occidArr);
 					}
 					$cnt++;
 				}
@@ -139,10 +73,74 @@ class OccurrenceImport extends Manager{
 		}
 	}
 
+	private function insertRecord($recordArr, $occidArr){
+		if($this->importType == self::IMPORT_IMAGE_MAP){
+			$importManager = new ImageShared($this->conn);
+			if(!isset($this->fieldMap['originalurl']) || $recordArr[$this->fieldMap['originalurl']]) return false;
+			foreach($occidArr as $occid => $tid){
+				$importManager->setOccid($occid);
+				$importManager->setTid($tid);
+				$importManager->setImgLgUrl($recordArr[$this->fieldMap['originalurl']]);
+				if(!empty($recordArr[$this->fieldMap['url']])) $importManager->setImgWebUrl($recordArr[$this->fieldMap['url']]);
+				if(!empty($recordArr[$this->fieldMap['thumbnailurl']])) $importManager->setImgTnUrl($recordArr[$this->fieldMap['thumbnailurl']]);
+				if(!empty($recordArr[$this->fieldMap['photographer']])) $importManager->setPhotographer($recordArr[$this->fieldMap['photographer']]);
+				if(!empty($recordArr[$this->fieldMap['caption']])) $importManager->setCaption($recordArr[$this->fieldMap['caption']]);
+				if(!empty($recordArr[$this->fieldMap['sourceUrl']])) $importManager->setSourceUrl($recordArr[$this->fieldMap['sourceUrl']]);
+				if(!empty($recordArr[$this->fieldMap['anatomy']])) $importManager->setAnatomy($recordArr[$this->fieldMap['anatomy']]);
+				if(!empty($recordArr[$this->fieldMap['notes']])) $importManager->setNotes($recordArr[$this->fieldMap['notes']]);
+				if(!empty($recordArr[$this->fieldMap['owner']])) $importManager->setOwner($recordArr[$this->fieldMap['owner']]);
+				if(!empty($recordArr[$this->fieldMap['copyright']])) $importManager->setCopyright($recordArr[$this->fieldMap['copyright']]);
+				if(!empty($recordArr[$this->fieldMap['sortoccurrence']])) $importManager->setSortOccurrence($recordArr[$this->fieldMap['sortOccurrence']]);
+				if($importManager->insertImage()){
+					$this->logOrEcho('Image loaded suucessfully!', 1);
+				}
+				else{
+					$this->logOrEcho('ERROR loading image: '.$importManager->getErrStr(), 1);
+				}
+				$importManager->reset();
+			}
+		}
+		elseif($this->importType == self::IMPORT_DETERMINATIONS){
+			foreach($occidArr as $occid => $tid){
+
+			}
+		}
+		elseif($this->importType == self::IMPORT_ASSOCIATIONS){
+			$importManager = new OmOccurAssociations();
+			foreach($occidArr as $occid => $tid){
+				$importManager->setOccid($occid);
+				$fieldArr = array_keys($importManager->getFieldMap());
+				$assocArr = array();
+				foreach($fieldArr as $field){
+					$fieldLower = strtolower($field);
+					if(!empty($recordArr[$this->fieldMap[$fieldLower]])) $assocArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
+				}
+				if(!$importManager->insertAssociations($assocArr)){
+					$this->logOrEcho('ERROR loading Occurrence Association: '.$importManager->getErrorMessage(), 1);
+				}
+			}
+		}
+		elseif($this->importType == self::IMPORT_MATERIAL_SAMPLE){
+			$importManager = new OmMaterialSample($this->conn);
+			foreach($occidArr as $occid => $tid){
+				$importManager->setOccid($occid);
+				$fieldArr = array_keys($importManager->getFieldMap());
+				$msArr = array();
+				foreach($fieldArr as $field){
+					$fieldLower = strtolower($field);
+					if(!empty($recordArr[$this->fieldMap[$fieldLower]])) $msArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
+				}
+				if(!$importManager->insertMaterialSample($msArr)){
+					$this->logOrEcho('ERROR loading Material Sample: '.$importManager->getErrorMessage(), 1);
+				}
+			}
+		}
+	}
+
 	//Identifier and occid functions
-	private function getOccurrencePK($identifierArr){
+	protected function getOccurrencePK($identifierArr){
 		$retArr = array();
-		$sql = 'SELECT DISTINCT o.occid, o.tidinterpreted FROM omoccurrences o ';
+		$sql = 'SELECT DISTINCT o.occid FROM omoccurrences o ';
 		$sqlConditionArr = array();
 		if(isset($identifierArr['occurrenceID'])){
 			$occurrenceID = $this->cleanInStr($identifierArr['occurrenceID']);
@@ -160,14 +158,14 @@ class OccurrenceImport extends Manager{
 			$sql .= 'WHERE (o.collid = '.$this->collid.') AND ('.implode(' OR ', $sqlConditionArr).') ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$retArr[$r->occid] = $r->tidinterpreted;
+				$retArr[] = $r->occid;
 			}
 			$rs->free();
 		}
 		if(!$retArr){
 			if($this->createNewRecord){
 				$newOccid = $this->insertNewOccurrence($identifierArr);
-				if($newOccid) $retArr[$newOccid] = 0;
+				if($newOccid) $retArr[] = $newOccid;
 			}
 			else $this->logOrEcho('SKIPPED: Unable to find record matching identifier; image not mapped', 1);
 		}
@@ -175,7 +173,7 @@ class OccurrenceImport extends Manager{
 		return $retArr;
 	}
 
-	private function insertNewOccurrence($identifierArr){
+	protected function insertNewOccurrence($identifierArr){
 		$newOccid = 0;
 		if(isset($identifierArr['occurrenceID'])){
 			$this->logOrEcho('SKIPPED: Unable to create new record based on occurrenceID', 1);
@@ -201,7 +199,7 @@ class OccurrenceImport extends Manager{
 		return $newOccid;
 	}
 
-	private function insertAdditionalIdentifier($occid, $identifierValue){
+	protected function insertAdditionalIdentifier($occid, $identifierValue){
 		$status = false;
 		$sql = 'INSERT INTO omoccuridentifiers(occid, identifierValue, modifiedUid) VALUES(?, ?, ?) ';
 		if($stmt = $this->conn->prepare($sql)) {
@@ -216,8 +214,7 @@ class OccurrenceImport extends Manager{
 	}
 
 	//Mapping functions
-	public function getTargetFieldArr(){
-		$retArr = array();
+	public function setTargetFieldArr(){
 		$fieldArr = array();
 		if($this->importType == self::IMPORT_IMAGE_MAP){
 			$fieldArr = array('url','originalUrl','thumbnailUrl','photographer','caption','sourceUrl','anatomy','notes','owner','copyright','sortOccurrence');
@@ -235,21 +232,11 @@ class OccurrenceImport extends Manager{
 		$fieldArr[] = 'otherCatalogNumbers';
 		$fieldArr[] = 'occurrenceID';
 		foreach($fieldArr as $field){
-			$retArr[strtolower($field)] = $field;
+			$this->targetFieldMap[strtolower($field)] = $field;
 		}
-		return $retArr;
 	}
 
-	public function getTranslation($sourceField){
-		$retStr = strtolower($sourceField);
-		$this->setTranslationMap();
-		if($p =strpos($retStr, ':')) $retStr = substr($retStr,$p);
-		$retStr = preg_replace('/[^a-z]+/', '', $retStr);
-		if(array_key_exists($retStr, $this->translationMap)) $retStr = $this->translationMap[$retStr];
-		return $retStr;
-	}
-
-	private function setTranslationMap(){
+	private function defineTranslationMap(){
 		if($this->translationMap === null){
 			if($this->importType == self::IMPORT_IMAGE_MAP){
 				$this->translationMap = array('web' => 'url', 'webviewoptional' => 'url', 'thumbnail' => 'thumbnailurl','thumbnailoptional' => 'thumbnailurl',
@@ -265,74 +252,6 @@ class OccurrenceImport extends Manager{
 				$this->translationMap = array();
 			}
 		}
-	}
-
-	public function getSourceFieldArr(){
-		$sourceArr = array();
-		if($this->importFileName){
-			$importPath = $this->getImportTargetPath();
-			$fh = fopen($importPath . $this->importFileName, 'rb') or die('unable to open file');
-			$headerArr = fgetcsv($fh);
-			foreach($headerArr as $k => $field){
-				$fieldStr = trim($field);
-				if($fieldStr) $sourceArr[$k] = $fieldStr;
-			}
-		}
-		return $sourceArr;
-	}
-
-	//File management functions
-	public function setImportFile(){
-		if($importPath = $this->getImportTargetPath()){
-			$fileName = '';
-			if(array_key_exists('importfile', $_FILES)){
-				$fileName = $this->cleanFileName($_FILES['importfile']['name']);
-				if(!move_uploaded_file($_FILES['importfile']['tmp_name'], $importPath . $fileName)){
-					$this->errorMessage = 'FATAL ERROR: unable to move upload file';
-					return false;
-				}
-			}
-			if(file_exists($importPath . $fileName) && substr($fileName, -4) == '.zip'){
-				$zip = new ZipArchive;
-				$zip->open($importPath. $fileName);
-				$zipFile = $importPath . $fileName;
-				$fileName = $zip->getNameIndex(0);
-				$zip->extractTo($importPath);
-				$zip->close();
-				unlink($zipFile);
-				$cleanFileName = $this->cleanFileName($fileName);
-				rename($importPath.$fileName, $importPath.$cleanFileName);
-	        }
-	        if($fileName){
-		        $this->importFileName = $fileName;
-		        return true;
-	        }
-		}
-		return false;
-	}
-
-	public function cleanFileName($fileName){
-		$ext = strtolower(substr($fileName, -3));
-		if($ext != 'csv' && $ext != 'zip') return false;
-		$fileName = substr($fileName, 0, -4);
-		$fileName = str_replace(array('%20', '%23' ,' ','__'), '_', $fileName);
-		$fileName = preg_replace('/[^a-zA-Z0-9\-_]/', '', $fileName);
-		$fileName = trim($fileName,' _-');
-		if(strlen($fileName) > 30) $fileName = substr($fileName, 0, 30);
-		$fileName .= '_' . time() . '.' . $ext;
-		return $fileName;
-	}
-
-	private function getImportTargetPath(){
-		$targetPath = $GLOBALS['TEMP_DIR_ROOT'];
-		if(substr($targetPath,-1) != '/') $targetPath .= '/';
-		if(is_dir($targetPath . 'data/')) $targetPath .= 'data/';
-		if(!is_dir($targetPath)) $targetPath = $GLOBALS['SERVER_ROOT'].'/temp/data';
-		if(!is_writable($targetPath)){
-			$this->errorMessage = 'FATAL ERROR: target directory does not exist or is not writable by web server ('.$targetPath.')';
-			return false;
-		}
-		return $targetPath;
 	}
 
 	//Data set functions
@@ -352,18 +271,14 @@ class OccurrenceImport extends Manager{
 		if(is_numeric($id)) $this->collid = $id;
 	}
 
-	public function getCollMeta($field){
-		$fieldValue = '';
-		if(isset($this->collMetaArr[$field])) return $this->collMetaArr[$field];
-		return $fieldValue;
-	}
-
 	public function getCollid(){
 		return $this->collid;
 	}
 
-	public function setImportType($importType){
-		if(is_numeric($importType)) $this->importType = $importType;
+	public function getCollMeta($field){
+		$fieldValue = '';
+		if(isset($this->collMetaArr[$field])) return $this->collMetaArr[$field];
+		return $fieldValue;
 	}
 
 	public function setCreateNewRecord($b){
@@ -371,12 +286,9 @@ class OccurrenceImport extends Manager{
 		else $this->createNewRecord = false;
 	}
 
-	public function setImportFileName($fileName){
-		if($fileName) $this->importFileName = $fileName;
-	}
-
-	public function getImportFileName(){
-		return $this->importFileName;
+	public function setImportType($importType){
+		if(is_numeric($importType)) $this->importType = $importType;
+		$this->defineTranslationMap();
 	}
 }
 ?>

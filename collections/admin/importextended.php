@@ -21,7 +21,7 @@ $createNew = filter_var($createNew, FILTER_SANITIZE_NUMBER_INT);
 $importManager = new OccurrenceImport();
 $importManager->setCollid($collid);
 $importManager->setImportType($importType);
-$importManager->setImportFileName($fileName);
+$importManager->setFileName($fileName);
 
 $isEditor = false;
 if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin']))){
@@ -56,7 +56,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 			}
 
 			function validateInitiateForm(f){
-				if(f.importfile.value == ""){
+				if(f.importFile.value == ""){
 					alert("Select a file to import");
 					return false;
 				}
@@ -151,72 +151,63 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 			} elseif(!$collid){
 				echo '<h2>ERROR: Collection identifier not set</h2>';
 			} else{
-				if($action == 'importData'){
-					$importManager->setCreateNewRecord($createNew);
-					echo '<ul>';
-					$importManager->loadFileData($_POST);
-					echo '</ul>';
-				} elseif($action == 'initiateImport'){
-					if($importManager->setImportFile()){
-						?>
-						<form name="mappingform" action="importextended.php" method="post" onsubmit="return validateMappingForm(this)">
-							<fieldset>
-								<legend><b>Image File Upload Map</b></legend>
-								<div style="margin:15px;">
-									<table class="styledtable" style="width:600px;font-family:Arial;font-size:12px;">
-										<tr><th>Source Field</th><th>Target Field</th></tr>
-										<?php
-										$targetFieldMap = $importManager->getTargetFieldArr();
-										$sourceFieldArr = $importManager->getSourceFieldArr();
-										foreach($sourceFieldArr as $i => $sourceField){
-											echo '<tr><td>';
-											echo $sourceField;
-											$sourceField = strtolower($sourceField);
-											echo '<input type="hidden" name="sf['.$i.']" value="'.$sourceField.'" />';
-											$translatedSourceField = $importManager->getTranslation($sourceField);
-											echo '</td><td>';
-											echo '<select name="tf['.$i.']" style="background:'.(array_key_exists($translatedSourceField, $targetFieldMap)?'':'yellow').'">';
-											echo '<option value="">Select Target Field</option>';
-											echo '<option value="">-------------------------</option>';
-											foreach($targetFieldMap as $k => $v){
-												echo '<option value="' . $k . '" ' . ($k == $translatedSourceField ? 'SELECTED' : '') . '>' . $v . '</option>';
-											}
-											echo '</select>';
-											echo '</td></tr>';
-										}
-										?>
-									</table>
-								</div>
-								<div style="margin:15px;">
-									<input name="createNew" type="checkbox" value ="1" <?= ($createNew?'checked':'') ?> /> Link image to new blank record if catalog number does not exist
-								</div>
-								<div style="margin:15px;">
-									<input name="collid" type="hidden" value="<?= $collid; ?>" />
-									<input name="importType" type="hidden" value="<?= $importType ?>" />
-									<input name="fileName" type="hidden" value="<?= htmlspecialchars($importManager->getImportFileName(), HTML_SPECIAL_CHARS_FLAGS); ?>" />
-									<button name="submitAction" type="submit" value="importData"><?= $LANG['IMPORT_DATA'] ?></button>
-								</div>
-							</fieldset>
-						</form>
+				$actionStatus = false;
+				if($action){
+					?>
+					<fieldset>
+						<legend>Action Panel</legend>
 						<?php
-					}
-					else echo 'ERROR setting import file: '.$importManager->getErrorMessage();
-				} else{
+						if($action == 'importData'){
+							$importManager->setCreateNewRecord($createNew);
+							echo '<ul>';
+							$importManager->loadFileData($_POST);
+							echo '</ul>';
+						} elseif($action == 'initiateImport'){
+							if($actionStatus = $importManager->importFile()){
+								?>
+								<form name="mappingform" action="importextended.php" method="post" onsubmit="return validateMappingForm(this)">
+									<fieldset>
+										<legend><b>Image File Upload Map</b></legend>
+										<div style="margin:15px;">
+											<?php
+											echo $importManager->getFieldMappingTable();
+											?>
+										</div>
+										<div style="margin:15px;">
+											<input name="createNew" type="checkbox" value ="1" <?= ($createNew?'checked':'') ?> /> Link image to new blank record if catalog number does not exist
+										</div>
+										<div style="margin:15px;">
+											<input name="collid" type="hidden" value="<?= $collid; ?>" />
+											<input name="importType" type="hidden" value="<?= $importType ?>" />
+											<input name="fileName" type="hidden" value="<?= htmlspecialchars($importManager->getImportFileName(), HTML_SPECIAL_CHARS_FLAGS); ?>" />
+											<button name="submitAction" type="submit" value="importData"><?= $LANG['IMPORT_DATA'] ?></button>
+										</div>
+									</fieldset>
+								</form>
+								<?php
+							}
+							else echo 'ERROR setting import file: '.$importManager->getErrorMessage();
+						}
+						?>
+					</fieldset>
+				<?php
+				}
+				if(!$actionStatus){
 					?>
 					<form name="initiateImportForm" action="importextended.php" method="post" enctype="multipart/form-data" onsubmit="return validateInitiateForm(this)">
 						<fieldset>
 							<legend>Initial Import</legend>
 							<div class="formField-div">
-								<input name="importfile" type="file" size="50" onchange="verifyFileSize(this)" />
+								<input name="importFile" type="file" size="50" onchange="verifyFileSize(this)" />
 							</div>
 							<div class="formField-div">
 								<label for="importType">Import Type: </label>
 								<select name="importType">
 									<option value="">-------------------</option>
-									<option value="1">Determinations</option>
-									<option value="2">Image Field Map</option>
-									<option value="3">Material Sample</option>
-									<option value="4">Occurrence Associations</option>
+									<option value="1">Associations</option>
+									<option value="2">Determinations</option>
+									<option value="3">Image Field Map</option>
+									<option value="4">Material Sample</option>
 								</select>
 							</div>
 							<div class="formField-div">
