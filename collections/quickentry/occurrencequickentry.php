@@ -419,6 +419,19 @@ if($SYMB_UID){
 	elseif($goToMode == 2) $occArr = $occManager->carryOverValues($_REQUEST);
 	if(!$isEditor && $crowdSourceMode && $occManager->isCrowdsourceEditor()) $isEditor = 4;
 
+	$barcodeHashTable = array();
+	$occIdHashTable = array();
+
+	for ($i = 0; $i < $imgNum; $i++) {
+		$tempImgId = $imgIDs[$i];
+		$tempBarcode = $occManager->getBarcode($tempImgId);
+		$tempoccId = $occManager->getOneOccID($tempImgId);
+	
+		$pageNumber = $i + 1;
+		$barcodeHashTable[$pageNumber] = $tempBarcode;
+		$occIdHashTable[$pageNumber] = $tempoccId;
+	}
+
 	// TODO: check here for navigation functionality examples
 	if($currentImgIndex > 0) {
 		$prevImgid = $imgIDs[$currentImgIndex-1];
@@ -541,11 +554,6 @@ else{
 		<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
 		<script src="../../js/symb/collections.editor.query.js?ver=5" type="text/javascript"></script>
 		<script>
-			// function navigateToRecordNew(crowdSourceMode, collId, batchId, imgId, imgIndex, occId, occIndex) {
-			// 	var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&collid=' + collId +'&batchid=' + batchId + '&imgid=' + imgId + '&imgindex=' + imgIndex + '&occid=' + occId + '&occindex=' + occIndex;
-			// 	window.location.href = url;
-			// 	event.preventDefault();
-			// }
 			function navigateToRecordNew(crowdSourceMode, gotomode, collId, batchId, imgId, imgIndex, barcode, occId, occIndex) {
 				if(barcode == null && occId == null) {
 					var url = 'occurrencequickentry.php?gotomode=' + gotomode + '&collid=' + collId + '&imgid=' + imgId + '&imgindex=' + imgIndex;
@@ -554,6 +562,34 @@ else{
 				}
 				window.location.href = url;
 				event.preventDefault();
+			}
+			// TODO: find out how to get batchId and occId. Because for these ids, we need to use PHP to read from db. There is no way we can do it with pure JS
+			var barcodeHashTable = <?php echo json_encode($barcodeHashTable); ?>;
+			var occIdHashTable = <?php echo json_encode($occIdHashTable); ?>;
+			function jumpToPage() {
+				// Get the page number from the input field
+				var pageNumberInput = document.getElementById("pageNumber");
+    			var pageNumber = parseInt(pageNumberInput.value);
+				var imgids = <?php echo json_encode($imgIDs); ?>;
+
+				// Check if the page number is a valid key in the hash tables
+				if (pageNumber in barcodeHashTable && pageNumber in occIdHashTable) {
+					// Get the barcode and occid based on the page number
+					var barcode = barcodeHashTable[pageNumber];
+					var occId = occIdHashTable[pageNumber];
+					var imgId = imgids[pageNumber-1] 
+					var crowdSourceMode = <?php echo $crowdSourceMode; ?>;
+					var gotomode = <?php echo $goToMode; ?>;
+					var collId = <?php echo $collId; ?>;
+					var batchId = <?php echo $batchId; ?>;
+					var occIndex = pageNumber - 1; 
+
+					// Call the navigateToRecordNew function with the calculated parameters
+					navigateToRecordNew(crowdSourceMode, gotomode, collId, batchId, imgId, occIndex, barcode, occId, occIndex);
+				} else {
+					// Handle invalid page number input
+					alert(pageNumber);
+				}
 			}
 		</script>
 		<style type="text/css">
@@ -757,7 +793,7 @@ else{
 							<button type="submit" name="toggle-button" value="<?php echo isset($_POST['toggle-button']) && $_POST['toggle-button'] === 'Minimal' ? 'Detailed' : 'Minimal'; ?>">
 								<?php echo isset($_POST['toggle-button']) ? $_POST['toggle-button'] : 'Detailed'; ?>
 							</button>
-							<button type="button" onclick="jumpToPage(<?php echo($collId) ?>, <?php echo($crowdSourceMode) ?>)">Jump to:</button>
+							<button type="button" onclick="jumpToPage()">Jump to:</button>
 							<input type="number" id="pageNumber" size="3" />
 						</form>
 						<div id="jumpDiv">
