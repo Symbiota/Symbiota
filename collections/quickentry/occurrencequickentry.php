@@ -814,7 +814,7 @@ else{
 						</div>
 					</div>
 				</section> 
-				<form id="fullform" name="fullform" action="occurrenceeditor.php" method="post" onsubmit="return verifyFullForm(this);">
+				<form id="fullform" name="fullform" action="occurrencequickentry.php" method="post" onsubmit="return verifyFullForm(this);">
 					<!-- navigation bar -->
 					<!-- left part of the form starts -->
 					<div class = "column left login-info" style = "background-color: #F2F2F2; ">
@@ -1225,11 +1225,14 @@ else{
 						<tr>
 							<td>
 								<div id="bottomSubmitDiv">
-									<input type="hidden" name="occid" value="<?php echo $occManager->getOccId(); ?>" />
-									<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
-									<input type="hidden" name="observeruid" value="<?php echo $SYMB_UID; ?>" />
-									<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
-									<input type="hidden" name="linkdupe" value="" />
+								<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>">
+								<input type="hidden" name="collid" value="<?php echo $collId; ?>">
+								<input type="hidden" name="batchid" value="<?php echo $batchId; ?>">
+								<input type="hidden" name="imgid" value="<?php echo $imgId; ?>">
+								<input type="hidden" name="imgindex" value="<?php echo $currentImgIndex; ?>">
+								<input type="hidden" name="barcode" value="<?php echo $barcode; ?>">
+								<input type="hidden" name="occid" value="<?php echo $occId; ?>">
+								<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>">
 									<?php
 									if($occId){
 										?>
