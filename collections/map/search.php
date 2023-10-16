@@ -956,7 +956,7 @@ foreach ($coordArr as $collName => $coll) {
          
          function addGroupMember(id, group_map, markerGroup, clusterGroup) {
             if(clusterGroup[id]) {
-               clusterGroup[id] = new MarkerClusterer(map.mapLayer, markerGroup[id],{
+               clusterGroup[id] = new MarkerClusterer(clusteroff? null: map.mapLayer, markerGroup[id],{
                   styles: [{
                      color: group_map[id].color,
                   }],
@@ -965,7 +965,11 @@ foreach ($coordArr as $collName => $coll) {
                   minimumClusterSize: 2
                })
 
-               if(clusteroff) clusterGroup[id].setMap(null);
+               if(clusteroff) {
+                  for(let marker of markerGroup[id]) {
+                     marker.setMap(map.mapLayer)
+                  }
+               }
             }
          }
 
