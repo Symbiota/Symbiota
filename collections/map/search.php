@@ -855,8 +855,6 @@ foreach ($coordArr as $collName => $coll) {
 
             bounds = new google.maps.LatLngBounds();
 
-			   oms = new OverlappingMarkerSpiderfier(map.mapLayer);
-
             for(let record of recordArr) {
                let marker = new google.maps.Marker({
                   position: new google.maps.LatLng(record['lat'], record['lng']),
@@ -884,8 +882,6 @@ foreach ($coordArr as $collName => $coll) {
 
                bounds.extend(marker.getPosition());
 
-					oms.addMarker(marker);
-
                const infoWin = new google.maps.InfoWindow({content:`<div>${record.id}</div>`});
 
                google.maps.event.addListener(marker, 'mouseover', function() {
@@ -909,6 +905,10 @@ foreach ($coordArr as $collName => $coll) {
                } else {
                   collMarkers[record['collid']].push(marker);
                }
+
+               if(clusteroff && !heatmapon) {
+                  marker.setMap(map.mapLayer)
+               }
             }
 
             if(heatmapon) {
@@ -917,7 +917,7 @@ foreach ($coordArr as $collName => $coll) {
             }
 
             for(let tid of Object.keys(taxaMarkers)) {
-               taxaClusters[tid] = new MarkerClusterer(heatmapon? null: map.mapLayer, taxaMarkers[tid],{
+               taxaClusters[tid] = new MarkerClusterer(heatmapon || clusteroff? null: map.mapLayer, taxaMarkers[tid],{
                   styles: [{
                      color: taxaMap[tid].color,
                   }],
@@ -939,7 +939,6 @@ foreach ($coordArr as $collName => $coll) {
                }
                );
             }
-
          }
 
          function resetGroup(group_map, markerGroup, clusterGroup) {
@@ -1347,7 +1346,7 @@ foreach ($coordArr as $collName => $coll) {
             }
 
          } catch(e) {
-            console.log(e)
+            alert("Failed to initialize map coordinate data")
          }
 
          <?php if(!empty($LEAFLET)) { ?> 
