@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
@@ -11,7 +13,7 @@ $searchVar = array_key_exists('searchvar', $_REQUEST) ? filter_var($_REQUEST['se
 
 $dwcManager = new DwcArchiverCore();
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title>Collections Search Download</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
@@ -100,7 +102,7 @@ $dwcManager = new DwcArchiverCore();
 	}
 	?>
 	<div style="width:100%; background-color:white;">
-		<h2>Data Usage Guidelines</h2>
+		<h1>Data Usage Guidelines</h1>
 		<div style="margin:15px 0px;">
 			By downloading data, the user confirms that he/she has read and agrees with the general <a href="../../includes/usagepolicy.php#images">data usage terms</a>.
 			Note that additional terms of use specific to the individual collections may be distributed with the data download. When present, the terms
@@ -119,11 +121,11 @@ $dwcManager = new DwcArchiverCore();
 					<?php
 					if($downloadType == 'specimen'){
 						?>
-						<div class="sectionDiv">
-							<div class="labelDiv"><label for="schema">Structure:</label></div>
+						<fieldset class="sectionDiv">
+							<legend> Structure: </legend>
 							<div class="formElemDiv">
 								<input type="radio" name="schema" id="symbiota-native" value="symbiota" onclick="georefRadioClicked(this)" CHECKED />
-								Symbiota Native
+								<label for="symbiota-native"> Symbiota Native </label>
 								<a id="schemanativeinfo" href="#" onclick="return false" title="More Information">
 									<img src="../../images/info.png" alt="info icon that clarifies that Symbiota native is similar to Darwin Core with the addition of some fields" style="width:13px;" />
 								</a><br/>
@@ -132,7 +134,7 @@ $dwcManager = new DwcArchiverCore();
 									such as substrate, associated collectors, verbatim description.
 								</div>
 								<input type="radio" name="schema" id="darwin-core" value="dwc" onclick="georefRadioClicked(this)" />
-								Darwin Core
+								<label for="darwin-core"> Darwin Core </label>
 								<a id="schemadwcinfo" href="#" target="" title="More Information">
 									<img src="../../images/info.png" alt="info icon that clarifies that Darwin Core (DwC) is a TDWG endorsed exchange standard specifically for biodiversity datasets. A link to the DwC quick reference guide appears in the dialog." style="width:13px;" />
 								</a><br/>
@@ -143,9 +145,9 @@ $dwcManager = new DwcArchiverCore();
 								</div>
 								*<a href='http://rs.tdwg.org/dwc/index.htm' class='bodylink' target='_blank'>What is Darwin Core?</a>
 							</div>
-						</div>
-						<div class="sectionDiv">
-							<div class="labelDiv">Data Extensions:</div>
+						</fieldset>
+						<fieldset class="sectionDiv">
+							<legend> Data Extensions: </legend>
 							<div class="formElemDiv">
 								<input type="checkbox" name="identifications" id="identifications" value="1" onchange="extensionSelected(this)" checked />
 								<label for="identifications">include Determination History</label>
@@ -159,23 +161,19 @@ $dwcManager = new DwcArchiverCore();
 								?>
 								*Output must be a compressed archive
 							</div>
-						</div>
+						</fieldset>
 						<?php
 					}
 					?>
-					<div class="sectionDiv">
-						<div class="labelDiv">
-							<label for="format">File Format:</label>
-						</div>
+					<fieldset class="sectionDiv">
+					<legend> File Format:</legend>
 						<div class="formElemDiv">
-							<input type="radio" name="format" id="csv-format" value="csv" CHECKED /><label for="csv-format">Comma Delimited (CSV)</label><br/>
-							<input type="radio" name="format" id="tab-delimited-format" value="tab" /><label for="tab-delimited-format">Tab Delimited</label><br/>
+							<input type="radio" name="format" id="csv-format" value="csv" CHECKED /><label for="csv-format"> Comma Delimited (CSV)</label><br/>
+							<input type="radio" name="format" id="tab-delimited-format" value="tab" /><label for="tab-delimited-format"> Tab Delimited</label><br/>
 						</div>
-					</div>
-					<div class="sectionDiv">
-						<div class="labelDiv">
-							<label for="cset">Character Set:</label>
-						</div>
+					</fieldset>
+					<fieldset class="sectionDiv">
+						<legend> Character Set: </legend>
 						<div class="formElemDiv">
 							<?php
 							//$cSet = strtolower($CHARSET);
@@ -187,16 +185,14 @@ $dwcManager = new DwcArchiverCore();
 							<input type="radio" name="cset" id="utf-8" value="utf-8" <?php echo ($cSet=='utf-8'?'checked':''); ?> />
 							<label for="utf-8">UTF-8 (unicode)</label>
 						</div>
+				</fieldset>
+				<fieldset class="sectionDiv">
+					<legend> Compression: </legend>
+					<div class="formElemDiv">
+						<input type="checkbox" name="zip" id="zip" value="1" onchange="zipSelected(this)" checked />
+						<label for="zip">Compressed ZIP file</label><br/>
 					</div>
-					<div class="sectionDiv">
-						<div class="labelDiv">
-							<label for="zip">Compression:</label>
-						</div>
-						<div class="formElemDiv">
-							<input type="checkbox" name="zip" id="zip" value="1" onchange="zipSelected(this)" checked />
-							<label for="zip">Compressed ZIP file</label><br/>
-						</div>
-					</div>
+				</fieldset>
 					<div class="sectionDiv">
 						<?php
 						if($downloadType == 'checklist') echo '<input name="schema" type="hidden" value="checklist" />';
@@ -212,7 +208,7 @@ $dwcManager = new DwcArchiverCore();
 					<div class="sectionDiv">
 						* There is a 1,000,000 record limit to occurrence downloads
 					</div>
-				</fieldset>
+				</div>
 			</form>
 		</div>
 	</div>
