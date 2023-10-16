@@ -64,11 +64,19 @@ if($isEditor){
 				<fieldset>
 					<legend><b><?php echo (isset($LANG['ADD_NEW_TAXON'])?$LANG['ADD_NEW_TAXON']:'Add a New Taxon'); ?></b></legend>
 					<div>
-						<div class="left-column"><label for="sciname"> <?php echo (isset($LANG['TAXON_NAME'])?$LANG['TAXON_NAME']:'Taxon Name'); ?>: </label></div>
+						<div class="left-column">
+							<label for="sciname"> 
+								<?php echo (isset($LANG['TAXON_NAME'])?$LANG['TAXON_NAME']:'Taxon Name'); ?>: 
+							</label>
+						</div>
 						<input type="text" id="sciname" name="sciname" class="search-bar-long" value="" onchange="parseName(this.form)"/>
 					</div>
 					<div>
-						<div class="left-column"> <label for="author"> <?php echo (isset($LANG['AUTHOR'])?$LANG['AUTHOR']:'Author'); ?>: </label></div>
+						<div class="left-column">
+							<label for="author">
+								<?php echo (isset($LANG['AUTHOR'])?$LANG['AUTHOR']:'Author'); ?>:
+							</label>
+						</div>
 						<input type='text' id='author' name='author' class='search-bar-long' />
 					</div>
 					<div style="clear:both;">
@@ -88,45 +96,73 @@ if($isEditor){
 						</select>
 					</div>
 					<div style="clear:both;">
-						<div class="left-column"> <label for="unitind1"> <?php echo (isset($LANG['UNITNAME1'])?$LANG['UNITNAME1']:'UnitName1'); ?>: </label></div>
+						<div class="left-column">
+							<label for="unitind1">
+								<?php echo (isset($LANG['UNITNAME1'])?$LANG['UNITNAME1']:'UnitName1'); ?>:
+							</label>
+						</div>
 						<select id="unitind1" name="unitind1" onchange="updateFullname(this.form)">
 							<option value=""></option>
 							<option value="&#215;">&#215;</option>
 							<option value="&#8224;">&#8224;</option>
 						</select>
-						<input type='text' id='unitname1' name='unitname1' onchange="updateFullname(this.form)" class='search-bar' title='Genus or Base Name'/>
+						<input type='text' id='unitname1' name='unitname1' onchange="updateFullname(this.form)" class='search-bar' aria-label="Genus or Base Name" title="Genus or Base Name"/>
 					</div>
 					<div style="clear:both;">
-						<div class="left-column"> <label for="unitind2"> <?php echo (isset($LANG['UNITNAME2'])?$LANG['UNITNAME2']:'UnitName2'); ?>: </label></div>
+						<div class="left-column">
+							<label for="unitind2">
+								<?php echo (isset($LANG['UNITNAME2'])?$LANG['UNITNAME2']:'UnitName2'); ?>:
+							</label>
+						</div>
 						<select id="unitind2" name="unitind2" onchange="updateFullname(this.form)">
 							<option value=""></option>
 							<option value="&#215;">&#215;</option>
 						</select>
-						<input type='text' id='unitname2' name='unitname2' onchange="updateFullname(this.form)" class='search-bar' title='epithet'/>
+						<input type='text' id='unitname2' name='unitname2' onchange="updateFullname(this.form)" class='search-bar' aria-label="epithet" title="epithet"/>
 					</div>
 					<div style="clear:both;">
-						<div class="left-column"> <label for="unitind3"> <?php echo (isset($LANG['UNITNAME3'])?$LANG['UNITNAME3']:'UnitName3'); ?>: </label></div>
+						<div class="left-column">
+							<label for="unitind3">
+								<?php echo (isset($LANG['UNITNAME3'])?$LANG['UNITNAME3']:'UnitName3'); ?>:
+							</label>
+						</div>
 						<input type='text' id='unitind3' name='unitind3' onchange="updateFullname(this.form)" class='search-bar-extraShort' title='Rank: e.g. subsp., var., f.'/>
-						<input type='text' id='unitname3' name='unitname3' onchange="updateFullname(this.form)" class='search-bar' title='infrasp. epithet'/>
+						<input type='text' id='unitname3' name='unitname3' onchange="updateFullname(this.form)" class='search-bar' aria-label="infrasp. epithet" title="infrasp. epithet" />
 					</div>
 					<div style="clear:both;">
-						<div class="left-column"> <label for="parentname"> <?php echo (isset($LANG['PARENT_TAXON'])?$LANG['PARENT_TAXON']:'Parent Taxon'); ?>: </label></div>
+						<div class="left-column">
+							<label for="parentname">
+								<?php echo (isset($LANG['PARENT_TAXON'])?$LANG['PARENT_TAXON']:'Parent Taxon'); ?>:
+							</label>
+						</div>
 						<input type="text" id="parentname" name="parentname" class='search-bar' />
 						<span id="addparentspan" style="display:none;">
-							<a id="addparentanchor" href="taxonomyloader.php?target=" target="_blank"><?php echo htmlspecialchars((isset($LANG['ADD_PARENT'])?$LANG['ADD_PARENT']:'Add Parent'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
+							<a id="addparentanchor" href="taxonomyloader.php?target=" target="_blank">
+								<?php echo htmlspecialchars((isset($LANG['ADD_PARENT'])?$LANG['ADD_PARENT']:'Add Parent'), HTML_SPECIAL_CHARS_FLAGS); ?>
+							</a>
 						</span>
 						<input id="parenttid" name="parenttid" type="hidden" value="" />
 					</div>
 					<div style="clear:both;">
-						<div class="left-column"> <label for="notes"> <?php echo (isset($LANG['NOTES'])?$LANG['NOTES']:'Notes'); ?>: </label></div>
+						<div class="left-column">
+							<label for="notes">
+								<?php echo (isset($LANG['NOTES'])?$LANG['NOTES']:'Notes'); ?>:
+							</label>
+						</div>
 						<input type='text' id='notes' name='notes' class='search-bar-long'/>
 					</div>
 					<div style="clear:both;">
-						<div class="left-column"> <label for="source"> <?php echo (isset($LANG['SOURCE'])?$LANG['SOURCE']:'Source'); ?>: </label></div>
+						<div class="left-column">
+							<label for="source"> <?php echo (isset($LANG['SOURCE'])?$LANG['SOURCE']:'Source'); ?>:
+							</label>
+						</div>
 						<input type='text' id='source' name='source' class='search-bar-long'/>
 					</div>
 					<div style="clear:both;">
-						<div class="left-column"> <label for="securitystatus"> <?php echo (isset($LANG['LOC_SECURITY'])?$LANG['LOC_SECURITY']:'Locality Security'); ?>: </label></div>
+						<div class="left-column">
+							<label for="securitystatus"> <?php echo (isset($LANG['LOC_SECURITY'])?$LANG['LOC_SECURITY']:'Locality Security'); ?>:
+							</label>
+						</div>
 						<select id="securitystatus" name="securitystatus" class="search-bar-short">
 							<option value="0"><?php echo (isset($LANG['NO_SECURITY'])?$LANG['NO_SECURITY']:'No Security'); ?></option>
 							<option value="1"><?php echo (isset($LANG['HIDE_LOC_DETAILS'])?$LANG['HIDE_LOC_DETAILS']:'Hide Locality Details'); ?></option>
@@ -141,12 +177,18 @@ if($isEditor){
 							</div>
 							<div id="accdiv" style="display:none;margin-top:3px;">
 								<div>
-									<div class="left-column"> <label for="acceptedstr"> <?php echo (isset($LANG['ACCEPTED_TAXON'])?$LANG['ACCEPTED_TAXON']:'Accepted Taxon'); ?>: </label></div>
+									<div class="left-column">
+										<label for="acceptedstr"> <?php echo (isset($LANG['ACCEPTED_TAXON'])?$LANG['ACCEPTED_TAXON']:'Accepted Taxon'); ?>:
+										</label>
+									</div>
 									<input id="acceptedstr" name="acceptedstr" type="text" class="search-bar-long" />
 									<input id="tidaccepted" name="tidaccepted" type="hidden" />
 								</div>
 								<div>
-									<div class="left-column"> <label for="unacceptabilityreason"> <?php echo (isset($LANG['UNACCEPT_REASON'])?$LANG['UNACCEPT_REASON']:'Unacceptability Reason'); ?>: </label></div>
+									<div class="left-column">
+										<label for="unacceptabilityreason"> <?php echo (isset($LANG['UNACCEPT_REASON'])?$LANG['UNACCEPT_REASON']:'Unacceptability Reason'); ?>:
+										</label>
+									</div>
 									<input type='text' id='unacceptabilityreason' name='unacceptabilityreason' class='search-bar-long' />
 								</div>
 							</div>
