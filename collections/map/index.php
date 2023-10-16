@@ -140,7 +140,7 @@ foreach ($coordArr as $collName => $coll) {
 	<script src="../../js/symb/collections.map.index.js?ver=2" type="text/javascript"></script>
 
 	<?php
-      if(!empty($leaflet)) {
+      if(!empty($LEAFLET)) {
       include_once($SERVER_ROOT.'/includes/leafletMap.php');
       } else {
       include_once($SERVER_ROOT.'/includes/googleMap.php');
@@ -151,10 +151,6 @@ foreach ($coordArr as $collName => $coll) {
 	<script src="../../js/symb/MapShapeHelper.js" type="text/javascript"></script>
 
 	<script src="../../js/symb/collections.list.js?ver=1" type="text/javascript"></script>
-	<script src="../../js/symb/markerclusterer.js?ver=1" type="text/javascript"></script>
-	<script src="../../js/symb/oms.min.js" type="text/javascript"></script>
-	<script src="../../js/symb/keydragzoom.js" type="text/javascript"></script>
-	<script src="../../js/symb/infobox.js" type="text/javascript"></script>
 
 	<style type="text/css">
 		.ui-front {
@@ -1187,7 +1183,6 @@ foreach ($coordArr as $collName => $coll) {
             credentials: "same-origin",
             body: body 
          })
-
          return response? await response.json(): { taxaArr: [], collArr: [], recordArr: [] };
       }
 
