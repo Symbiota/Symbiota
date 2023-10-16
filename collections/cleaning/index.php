@@ -55,13 +55,13 @@ if($collMap['colltype'] == 'General Observations'){
 	<div id="innertext" style="background-color:white;">
 		<?php
 		if($isEditor){
-			echo '<h2>'.$collMap['collectionname'].' ('.$collMap['code'].')</h2>';
+			echo '<h1>' . $collMap['collectionname'] .' (' . $collMap['code'] . ')</h1>';
 			?>
 			<div style="color:orange;margin:20px 0px"> <?php echo (isset($LANG['DOWNLOAD_BACKUP']) ? $LANG['DOWNLOAD_BACKUP'] : 'Downloading a backup of your collection data before running any batch updates is strongly recommended') ?> </div>
 			<?php
 			if($collMap['colltype'] != 'General Observations'){
 				?>
-				<h3> <?php echo (isset($LANG['DUPLICATE_RECS']) ? $LANG['DUPLICATE_RECS'] : 'Duplicate Records') ?> </h3>
+				<h2> <?php echo (isset($LANG['DUPLICATE_RECS']) ? $LANG['DUPLICATE_RECS'] : 'Duplicate Records') ?> </h2>
 				<div style="margin:0px 0px 40px 15px;">
 					<div>
 						<?php echo (isset($LANG['DUPL_REC_DESCR']) ? $LANG['DUPL_REC_DESCR'] : 'These tools will assist in searching this collection of records for duplicate records of the same specimen.
@@ -69,7 +69,11 @@ if($collMap['colltype'] == 'General Observations'){
 																								and data relationships into a single record.') ?>
 					</div>
 					<section class="fieldset-like max-width-fit-65 ">
-						<h1> <span> <?php echo (isset($LANG['LIST_DUPLICATES']) ? $LANG['LIST_DUPLICATES'] : 'List Duplicates based on...') ?> </span> </h1>
+						<h3>
+							<span>
+								<?php echo (isset($LANG['LIST_DUPLICATES']) ? $LANG['LIST_DUPLICATES'] : 'List Duplicates based on...') ?>
+							</span>
+						</h3>
 						<ul>
 							<li>
 								<a href="duplicatesearch.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&action=listdupscatalog">
@@ -103,7 +107,11 @@ if($collMap['colltype'] == 'General Observations'){
 																					and even mismatched units, such as a state designation that does not match the wrong country.') ?>
 				</div>
 				<section class="fieldset-like max-width-fit-65 ">
-						<h1> <span> <?php echo (isset($LANG['STAT_ACT_PANEL']) ? $LANG['STAT_ACT_PANEL'] : 'Statistics and Action Panel') ?> </span> </h1>
+						<h3>
+							<span>
+								<?php echo (isset($LANG['STAT_ACT_PANEL']) ? $LANG['STAT_ACT_PANEL'] : 'Statistics and Action Panel') ?>
+							</span>
+						</h3>
 					<ul>
 						<li>
 							<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&stat=geography#geographystats" target="_blank"> <?php echo (isset($LANG['GEO_DISTR']) ? $LANG['GEO_DISTR'] : 'Geographic Distributions') ?> </a>
