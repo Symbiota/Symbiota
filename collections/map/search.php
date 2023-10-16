@@ -138,9 +138,13 @@ foreach ($coordArr as $collName => $coll) {
 	<script src="../../js/jscolor/jscolor.js?ver=1" type="text/javascript"></script>
 <!---	<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'&key='.$GOOGLE_MAP_KEY:''); ?>&callback=Function.prototype" ></script> -->
 	<script src="../../js/symb/collections.map.index.js?ver=2" type="text/javascript"></script>
+
 	<?php
-   include_once($SERVER_ROOT.'/includes/leafletMap.php');
-   include_once($SERVER_ROOT.'/includes/googleMap.php');
+      if(!empty($leaflet)) {
+      include_once($SERVER_ROOT.'/includes/leafletMap.php');
+      } else {
+      include_once($SERVER_ROOT.'/includes/googleMap.php');
+      }
 	?>
 
 	<script src="../../js/symb/wktpolygontools.js" type="text/javascript"></script>
@@ -795,7 +799,7 @@ foreach ($coordArr as $collName => $coll) {
                if(cluster_type == "taxa") {
                   drawGroup(taxaMap, "tid", taxaClusters, taxaGroups);
                } else if(cluster_type == "coll") {
-                  drawGroup(collArr, "tid", collClusters, collGroups);
+                  drawGroup(collArr, "collid", collClusters, collGroups);
                }
             }
          });
@@ -825,6 +829,9 @@ foreach ($coordArr as $collName => $coll) {
 
          let collClusters = {};
          let collMarkers = {};
+
+         let heatmapon = false;
+         let heatmapLayer;
 
          let bounds; 
          let oms;
@@ -904,29 +911,35 @@ foreach ($coordArr as $collName => $coll) {
                }
             }
 
+            if(heatmapon) {
+               if(!heatmapLayer) initHeatmap(); 
+               else updateHeatmap(); 
+            }
+
             for(let tid of Object.keys(taxaMarkers)) {
-               taxaClusters[tid] = new MarkerClusterer(map.mapLayer, taxaMarkers[tid],{
-						styles: [{
-							color: taxaMap[tid].color,
-						}],
-						maxZoom: 13,
-						gridSize: 60,
-						minimumClusterSize: 2
-					}
+               taxaClusters[tid] = new MarkerClusterer(heatmapon? null: map.mapLayer, taxaMarkers[tid],{
+                  styles: [{
+                     color: taxaMap[tid].color,
+                  }],
+                  maxZoom: 13,
+                  gridSize: 60,
+                  minimumClusterSize: 2
+               }
                );
             }
 
             for(let collid of Object.keys(collMarkers)) {
                collClusters[collid] = new MarkerClusterer(null, collMarkers[collid],{
-						styles: [{
-							color: collArr[collid].color,
-						}],
-						maxZoom: 13,
-						gridSize: 60,
-						minimumClusterSize: 2
-					}
+                  styles: [{
+                     color: collArr[collid].color,
+                  }],
+                  maxZoom: 13,
+                  gridSize: 60,
+                  minimumClusterSize: 2
+               }
                );
             }
+
          }
 
          function resetGroup(group_map, markerGroup, clusterGroup) {
@@ -957,6 +970,12 @@ foreach ($coordArr as $collName => $coll) {
             }
          }
 
+         function drawGroup(group_map, markerGroup, clusterGroup) {
+            for(let id of Object.keys(group_map)) {
+               addGroupMember(id, group_map, markerGroup, clusterGroup);
+            }
+         }
+
          function fitMap() {
             if(map.activeShape) map.mapLayer.fitBounds(map.activeShape.layer.getBounds())
             else if(bounds) map.mapLayer.fitBounds(bounds);
@@ -966,6 +985,38 @@ foreach ($coordArr as $collName => $coll) {
                new_bounds.extend(new google.maps.LatLng(parseFloat(map_bounds[1][0]), parseFloat(map_bounds[1][1])))
                map.mapLayer.fitBounds(new_bounds)
             }
+         }
+
+         function initHeatmap() {
+            if(!heatmapon) return;
+
+            let radius_input = document.getElementById('heat-radius');
+
+            var cfg = {
+               "radius": (radius_input? parseFloat(radius_input.value): 50) / 100.00,
+               "maxOpacity": .9,
+               "scaleRadius": true,
+               "useLocalExtrema": false,
+               latField: 'lat',
+               lngField: 'lng',
+            };
+            heatmapLayer = new HeatmapOverlay(map.mapLayer, cfg);
+
+            updateHeatmap();
+         }
+
+         function updateHeatmap() {
+            let minDensityInput = document.getElementById('heat-min-density')
+            let maxDensityInput = document.getElementById('heat-max-density')
+
+            let heatMaxDensity = maxDensityInput? parseInt(maxDensityInput.value) : 3
+            let heatMinDensity = minDensityInput? parseInt(minDensityInput.value) : 1
+
+            heatmapLayer.setData({
+               max: heatMaxDensity || 3,
+               min: heatMinDensity || 1,
+               data: recordArr 
+            });
          }
 
          document.getElementById("mapsearchform").addEventListener('submit', async e => {
@@ -978,6 +1029,8 @@ foreach ($coordArr as $collName => $coll) {
 
             resetGroup(collArr, collMarkers, collClusters);
             collMarkers = {}
+
+            if(heatmapLayer) heatmapLayer.setData({data: []})
 
             getOccurenceRecords(formData).then(res => {
                if (res) loadOccurenceRecords(res);
@@ -1042,10 +1095,8 @@ foreach ($coordArr as $collName => $coll) {
             const {type, colorMap} = e.detail;
 
             if(cluster_type === "coll" && type === "taxa") {
-               //removeGroup(collArr, "collid", collClusters, collGroups);
                resetGroup(collArr, collMarkers, collClusters);
             } else if(cluster_type === "taxa" && type === "coll") {
-               //removeGroup(taxaMap, "tid", taxaClusters, taxaGroups);
                resetGroup(taxaMap, taxaMarkers, taxaClusters);
             }
 
@@ -1068,6 +1119,40 @@ foreach ($coordArr as $collName => $coll) {
             if(cluster_type === "taxa") toggleGroupClustering(taxaClusters);
             else if(cluster_type === "coll") toggleGroupClustering(collClusters);
          });
+
+         document.getElementById('heatmap_on').addEventListener('change', e => {
+            heatmapon = e.target.checked;
+
+            if(e.target.checked) {
+               //Clear points 
+               if(cluster_type == "taxa") {
+                  resetGroup(taxaMap, taxaMarkers, taxaClusters);
+               } else if(cluster_type == "coll") {
+                  resetGroup(collArr, collMarkers, collClusters);
+               }
+               if(!heatmapLayer) initHeatmap();
+               else updateHeatmap();
+            } else {
+               if(heatmapLayer) {
+                  heatmapLayer.setData({data: []})
+               };
+
+               if(cluster_type == "taxa") {
+                  drawGroup(taxaMap, taxaMarkers, taxaClusters);
+               } else if(cluster_type == "coll") {
+                  drawGroup(collArr, collMarkers, collClusters);
+               }
+            }
+         });
+
+         document.getElementById('heat-min-density').addEventListener('change', e => updateHeatmap())
+         document.getElementById('heat-radius').addEventListener('change', e => {
+            if(heatmapLayer) {
+               heatmapLayer.cfg.radius = parseFloat(e.target.value) / 100.00;
+               updateHeatmap();
+            }
+         })
+         document.getElementById('heat-max-density').addEventListener('change', e => updateHeatmap())
 
          if(recordArr.length > 0) {
             if(shape) map.drawShape(shape);
