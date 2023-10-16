@@ -398,6 +398,11 @@ hr {
   flex-direction: column;
 }
 
+.gridlike-form-no-margin {
+  display: flex;
+  flex-direction: column;
+}
+
 .gridlike-form-row {
   flex: 1;
   display: flex;
@@ -531,6 +536,14 @@ hr {
   max-width: 500px;
 }
 
+.max-width-fit-75 {
+  max-width: 100%;
+  width: 75rem;
+}
+
+.underlined-text {
+  text-decoration: underline;
+}
 /* Accordion styling from NEON
 ========================================================================== */
 
@@ -872,7 +885,12 @@ hr {
   margin-left: 3rem;
 }
 
-.left-column{
-  float:left;
+.left-column {
+  float: left;
   width: 170px;
+}
+.nativity-div {
+  margin-top: 1em;
+  font-size: 125%;
+  font-weight: bold;
 }
