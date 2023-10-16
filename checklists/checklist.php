@@ -160,11 +160,11 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 				?>
 				<div class="printoff" style="float:right;width:auto;">
 					<span style="">
-						<a href="checklistadmin.php?clid=<?php echo $clid . '&pid=' . $pid; ?>" style="margin-right:10px;" aria-label="" title="<?php echo (isset($LANG['CHECKLIST_ADMIN']) ? $LANG['CHECKLIST_ADMIN'] : 'Checklist Administration'); ?>">
+						<a href="checklistadmin.php?clid=<?php echo $clid . '&pid=' . $pid; ?>" style="margin-right:10px;" aria-label="<?php echo (isset($LANG['CHECKLIST_ADMIN']) ? $LANG['CHECKLIST_ADMIN'] : 'Checklist Administration'); ?>" title="<?php echo (isset($LANG['CHECKLIST_ADMIN']) ? $LANG['CHECKLIST_ADMIN'] : 'Checklist Administration'); ?>">
 						<img src="../images/editadmin.png" srcset="../images/editA.svg" style="height:15px" alt="<?php echo (isset($LANG['IMG_CHECKLIST_ADMIN']) ? $LANG['IMG_CHECKLIST_ADMIN'] : 'Checklist Administration Button'); ?>" /></a>
 					</span>
 					<span style="">
-						<a href="voucheradmin.php?clid=<?php echo $clid . '&pid=' . $pid; ?>" style="margin-right:10px;" aria-label="" title="<?php echo (isset($LANG['MANAGE_VOUCHERS']) ? $LANG['MANAGE_VOUCHERS'] : 'Manage Linked Vouchers'); ?>">
+						<a href="voucheradmin.php?clid=<?php echo $clid . '&pid=' . $pid; ?>" style="margin-right:10px;" aria-label="<?php echo (isset($LANG['MANAGE_VOUCHERS']) ? $LANG['MANAGE_VOUCHERS'] : 'Manage Linked Vouchers'); ?>" title="<?php echo (isset($LANG['MANAGE_VOUCHERS']) ? $LANG['MANAGE_VOUCHERS'] : 'Manage Linked Vouchers'); ?>">
 							<img src="../images/editvoucher.png" srcset="../images/editV.svg" style="height:15px" alt="<?php echo (isset($LANG['IMG_MANAGE_VOUCHERS']) ? $LANG['IMG_MANAGE_VOUCHERS'] : 'Manage Linked Vouchers Button'); ?>" /></a>
 					</span>
 					<span style="" onclick="toggleSppEditControls();return false;">
@@ -183,7 +183,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 				?>
 				<div class="printoff" style="float:left;padding:5px;">
 					<a href="../ident/key.php?clid=<?php echo $clid . "&pid=" . $pid . "&dynclid=" . $dynClid; ?>&taxon=All+Species">
-						<img src='../images/key.png' srcset="../images/key.svg" style="width:15px; height:15px" aria-label="" alt="<?php echo (isset($LANG['IMG_OPEN_KEY']) ? $LANG['IMG_OPEN_KEY'] : 'Open Symbiota Key Button'); ?>" title='<?php echo (isset($LANG['OPEN_KEY']) ? $LANG['OPEN_KEY'] : 'Open Symbiota Key'); ?>' />
+						<img src='../images/key.png' srcset="../images/key.svg" style="width:15px; height:15px" aria-label="<?php echo (isset($LANG['IMG_OPEN_KEY']) ? $LANG['IMG_OPEN_KEY'] : 'Open Symbiota Key Button'); ?>" alt="<?php echo (isset($LANG['IMG_OPEN_KEY']) ? $LANG['IMG_OPEN_KEY'] : 'Open Symbiota Key Button'); ?>" title='<?php echo (isset($LANG['OPEN_KEY']) ? $LANG['OPEN_KEY'] : 'Open Symbiota Key'); ?>' />
 					</a>
 				</div>
 				<?php
@@ -406,7 +406,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 											<input type="image" name="printlist" alt="<?php echo (isset($LANG['IMG_PRINT_LIST']) ? $LANG['IMG_PRINT_LIST'] : 'Print List'); ?>" src="../images/print.png" onclick="changeOptionFormAction('checklist.php','_blank');" />
 										</div>
 										<div class="button" id="wordicondiv" style="float:left;margin-right:10px;width:16px;height:16px;padding:2px;<?php echo ($showImages?'display:none;' : ''); ?>" title="<?php echo (isset($LANG['EXPORT_DOCX']) ? $LANG['EXPORT_DOCX'] : 'Export to DOCX'); ?>">
-											<input type="image" name="exportdoc" alt="<?php echo (isset($LANG['IMG_DOCX_EXPORT']) ? $LANG['IMG_DOCX_EXPORT'] : 'Export to DOCX'); ?>" src="../images/wordicon.png" srcset="../images/file-text.svg" onclick="changeOptionFormAction('mswordexport.php','_self');" />
+											<input type="image" name="exportdoc" alt="<?php echo (isset($LANG['IMG_DOCX_EXPORT']) ? $LANG['IMG_DOCX_EXPORT'] : 'Export to DOCX'); ?>" src="../images/wordicon.png" onclick="changeOptionFormAction('mswordexport.php','_self');" />
 										</div>
 									</div>
 								</div>
