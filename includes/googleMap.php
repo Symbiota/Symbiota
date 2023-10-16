@@ -8,3 +8,6 @@
    src="<?php echo $CLIENT_ROOT; ?>/js/symb/googleMap.js" 
    type="text/javascript">
 </script>
+
+<script src="<?php echo $CLIENT_ROOT; ?>/js/heatmap/heatmap.js" type="text/javascript"></script>
+<script src="<?php echo $CLIENT_ROOT; ?>/js/heatmap/google-heatmap.js" type="text/javascript"></script>
