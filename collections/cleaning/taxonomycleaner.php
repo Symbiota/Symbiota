@@ -191,12 +191,12 @@ elseif($activeCollArr){
 							<fieldset id="mult_coll_fs" style="display:none;padding: 15px;margin:20px;">
 								<legend><b><?php echo $LANG['MULT_COL_SEL']; ?></b></legend>
 								<form name="selectcollidform" action="taxonomycleaner.php" method="post" onsubmit="return checkSelectCollidForm(this)">
-									<div><input name="selectall" type="checkbox" onclick="selectAllCollections(this);" /> <?php echo $LANG['SEL_UNSEL_ALL']; ?></div>
+									<div> <input id="selectall" name="selectall" type="checkbox" onclick="selectAllCollections(this);" /> <label for="selectall"> <?php echo $LANG['SEL_UNSEL_ALL']; ?> </label> </div>
 									<?php
 									foreach($collMap as $id => $collArr){
 										if(in_array($id, $USER_RIGHTS["CollAdmin"])){
 											echo '<div>';
-											echo '<input name="collid[]" type="checkbox" value="'.$id.'" '.(in_array($id,$activeCollArr)?'CHECKED':'').' /> ';
+											echo '<input id="collid[]" name="collid[]" type="checkbox" value="'.$id.'" ' . '<label for="collid[]"> ' . (in_array($id,$activeCollArr) ? 'CHECKED' : '').' </label> /> ';
 											echo $collArr['collectionname'].' ('.$collArr['code'].')';
 											echo '</div>';
 										}
@@ -325,9 +325,9 @@ elseif($activeCollArr){
 			}
 			elseif($collMap){
 				?>
-				<div style="margin:0px 0px 20px 20xp;font-weight:bold;font-size:120%;"><?php echo $LANG['BATCH_TAXON_CLEAN']; ?></div>
-				<fieldset style="padding: 15px;margin:20px;">
-					<legend><b><?php echo $LANG['COL_SELECTOR']; ?></b></legend>
+				<div style="margin:0px 0px 20px 20px;font-weight:bold;font-size:120%;"><?php echo $LANG['BATCH_TAXON_CLEAN']; ?></div>
+				<section class="fieldset-like">
+					<h1> <span> <?php echo $LANG['COL_SELECTOR']; ?> </span> </h1>
 					<form name="selectcollidform" action="taxonomycleaner.php" method="post" onsubmit="return checkSelectCollidForm(this)">
 						<div><input name="selectall" type="checkbox" onclick="selectAllCollections(this);" /> <?php echo $LANG['SEL_UNSEL_ALL']; ?></div>
 						<?php
@@ -343,7 +343,7 @@ elseif($activeCollArr){
 						</div>
 					</form>
 					<div>* <?php echo $LANG['ONLY_ADMIN_COLS']; ?></div>
-				</fieldset>
+				</section>
 				<?php
 			}
 			else{
