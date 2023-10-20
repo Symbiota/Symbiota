@@ -619,10 +619,10 @@ else{
 				padding:10px;
 			}
 			.left{
-				width: 65%;
+				width: 55%;
 			}
 			.right{
-				width: 35%;
+				width: 45%;
 			}
 			.info{
 				width: 100%;
@@ -1093,10 +1093,14 @@ else{
 					<!-- TODO: implement image code from old form, see collections/editor/includes/imagetab.php and check the embedded code to get started -->
 					<div class = "column right" style = "border: 1; background-color:#F2F2F3;">
 						<div class="field-block title">
-							<h2>Click to Zoom in Other Window</h2>
+							<h2>Click to Zoom in Window</h2>
 						</div>
 						<div class="login-info" style = "backgroufnd-color:#86C5D8; text-align: center;">
-							<img src="<?php echo($imgUrl); ?>" style="width:300px" />
+							<?php
+							if($occId && ($fragArr || $specImgArr )){
+								include_once('/home/herbaria/running-symbiota/collections/editor/includes/quickentryimgprocessor.php');
+							}
+							?>
 						</div>
 						<div class="login-info">
 							<!-- TODO: need to figure out how to deal with this input. It supposes to be generated automatically based on the form -->
