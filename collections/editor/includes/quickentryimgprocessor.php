@@ -14,6 +14,20 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgpro
 			$( "#zoomInfoDialog" ).dialog( "open" );
 		});
 	});
+	function rotateImage(rotationAngle){
+		var imgObj = document.getElementById("activeimg-<?php echo ($imgCnt); ?>");
+		var imgAngle = 0;
+		if(imgObj.style.transform){
+			var transformValue = imgObj.style.transform;
+			imgAngle = parseInt(transformValue.substring(7));
+		}
+		imgAngle = imgAngle + rotationAngle;
+		if(imgAngle < 0) imgAngle = 360 + imgAngle;
+		else if(imgAngle == 360) imgAngle = 0;
+		imgObj.style.transform = "rotate("+imgAngle+"deg)";
+		$(imgObj).imagetool("option","rotationAngle",imgAngle);
+		$(imgObj).imagetool("reset");
+	}
 
 	function floatImgPanel(){
 		$( "#labelProcFieldset" ).css('position', 'fixed');
@@ -55,7 +69,7 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgpro
 <style>
 
 </style>
-<div id="labelProcDiv" style="width:100%;height:445px;position:relative;">
+<div id="labelProcDiv" style="width:100%;height:425px;position:relative;">
 	<fieldset id="labelProcFieldset" style="background-color:#F2F2F3;">
 		<div id="labelHeaderDiv" style="margin-top:0px;height:15px;position:relative">
 			<div style="float:left;margin-top:3px;margin-right:15px"><a id="zoomInfoDiv" href="#"><?php echo $LANG['ZOOM']; ?></a></div>
@@ -64,17 +78,14 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgpro
 			</div>
 			<div style="float:left;margin-right:15px">
 				<div id="draggableImgDiv" style="float:left" title="<?php echo $LANG['MAKE_DRAGGABLE']; ?>"><a href="#" onclick="draggableImgPanel()"><img src="../../images/draggable.png" style="width:15px" /></a></div>
-				<div id="floatImgDiv" style="float:left;margin-left:10px" title="<?php echo $LANG['ALLOW_REMAIN_ACTIVE']; ?>"><a href="#" onclick="floatImgPanel()"><img src="../../images/floatdown.png" style="width:15px" /></a></div>
 				<div id="anchorImgDiv" style="float:left;margin-left:10px;display:none" title="<?php echo $LANG['ANCHOR_IMG']; ?>"><a href="#" onclick="anchorImgPanel()"><img src="../../images/anchor.png" style="width:15px" /></a></div>
 			</div>
 			<div style="float:left;;padding-right:10px;margin:2px 20px 0px 0px;"><?php echo $LANG['ROTATE']; ?>: <a href="#" onclick="rotateImage(-90)">&nbsp;L&nbsp;</a> &lt;&gt; <a href="#" onclick="rotateImage(90)">&nbsp;R&nbsp;</a></div>
-			<div style="float:right;padding:0px 3px;margin:0px 3px;"><input id="imgreslg" name="resradio" type="radio" onchange="changeImgRes('lg')" /><?php echo $LANG['HIGH_RES']; ?>.</div>
-			<div style="float:right;padding:0px 3px;margin:0px 3px;"><input id="imgresmed" name="resradio"  type="radio" checked onchange="changeImgRes('med')" /><?php echo $LANG['MED_RES']; ?>.</div>
 		</div>
 		<div id="labelprocessingdiv" style="clear:both;">
 				<div id="labeldiv-<?php echo $imgCnt; ?>" style="display:'block'; ?>;">
 					<div>
-						<img id="activeimg-<?php echo $imgCnt; ?>" src="<?php echo($imgUrl) ?>" style="height:380px;" />
+						<img id="activeimg-<?php echo ($imgCnt); ?>" src="<?php echo($imgUrl) ?>" style="height:380px;" />
 					</div>
 					<div style="width:100%;clear:both;">
 						<div style="float:right;margin-right:20px;font-weight:bold;">

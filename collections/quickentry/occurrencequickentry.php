@@ -1093,7 +1093,7 @@ else{
 					<!-- TODO: implement image code from old form, see collections/editor/includes/imagetab.php and check the embedded code to get started -->
 					<div class = "column right" style = "border: 1; background-color:#F2F2F3;">
 						<div class="field-block title">
-							<h2>Click to Zoom in Window</h2>
+							<h2>Image</h2>
 						</div>
 						<div class="login-info" style = "backgroufnd-color:#86C5D8; text-align: center;">
 							<?php
