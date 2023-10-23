@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorImages.php');
@@ -46,7 +48,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 	include('includes/config/occurVarDefault.php');
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['IMAGE_SUBMIT']?></title>
@@ -125,7 +127,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 					<div class="targetdiv">
 						<input type='hidden' name='MAX_FILE_SIZE' value='10000000' />
 						<div>
-							<input name='imgfile' type='file' size='70' />
+							<input name='imgfile' type='file' aria-label="<?php echo (isset($LANG['UPLOAD'])?$LANG['UPLOAD']:'Upload the File'); ?>" />
 						</div>
 						<div id="newimagediv"></div>
 						<div style="margin:10px 0px;">
@@ -162,11 +164,10 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 						</div>
 					</div>
 					<div>
-						<input type="checkbox" name="nolgimage" value="1" <?php echo (isset($_POST['nolgimage'])&&$_POST['nolgimage']?'checked':''); ?> />
-						<?php echo $LANG['DONT_MAP_LARGE']?>
+						<input type="checkbox" id="nolgimage" name="nolgimage" value="1" <?php echo (isset($_POST['nolgimage'])&&$_POST['nolgimage']?'checked':''); ?>/>
+						<label for="nolgimage"> <?php echo $LANG['DONT_MAP_LARGE']?> </label>
 					</div>
 					<div style="margin-top:10px;">
-						<b><?php echo $LANG['PROCESSING_STATUS']?>:</b>
 						<?php
 						$processingStatusArr = array();
 						if(isset($PROCESSINGSTATUS) && $PROCESSINGSTATUS){
@@ -176,7 +177,8 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 							$processingStatusArr = array('unprocessed','unprocessed/NLP','stage 1','stage 2','stage 3','pending review-nfn','pending review','expert required','reviewed','closed');
 						}
 						?>
-						<select name="processingstatus">
+						<label for="processingstatus"> <b><?php echo (isset($LANG['PROCESSING_STATUS'])?$LANG['PROCESSING_STATUS']:'Processing Status'); ?>:</b> </label>
+						<select id="processingstatus" name="processingstatus">
 							<option value=''><?php echo $LANG['NO_SET_STATUS']?></option>
 							<option value=''>-------------------</option>
 							<?php
@@ -192,27 +194,28 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 				<fieldset style="padding:15px;">
 					<legend><b><?php echo $LANG['SKELETAL_DATA']?></b></legend>
 					<div style="margin:3px;">
-						<b><?php echo $LANG['CAT_NUM']?>:</b>
-						<input name="catalognumber" type="text" onchange="<?php if(!defined('CATNUMDUPECHECK') || CATNUMDUPECHECK) echo 'searchCatalogNumber(this.form, true)'; ?>" />
+						<label for="catalognumber"> <b> <?php echo (isset($LANG['CAT_NUM'])?$LANG['CAT_NUM']:'Catalog Number'); ?>:</b> </label>
+						<input id="catalognumber" name="catalognumber" type="text" onchange="<?php if(!defined('CATNUMDUPECHECK') || CATNUMDUPECHECK) echo 'searchCatalogNumber(this.form, true)'; ?>" />
 					</div>
 					<div style="margin:3px;">
-						<b><?php echo $LANG['SCINAME']?>:</b>
+						<label for="sciname"> <b><?php echo (isset($LANG['SCINAME'])?$LANG['SCINAME']:'Scientific Name');?>:</b> </label>
 						<input id="sciname" name="sciname" type="text" value="<?php echo (isset($_POST['sciname'])?$_POST['sciname']:''); ?>" style="width:300px"/>
-						<input name="scientificnameauthorship" type="text" value="<?php echo (isset($_POST['scientificnameauthorship'])?$_POST['scientificnameauthorship']:''); ?>" /><br/>
+						<input name="scientificnameauthorship" type="text" value="<?php echo (isset($_POST['scientificnameauthorship'])?$_POST['scientificnameauthorship']:''); ?>" aria-label="<?php echo (isset($LANG['SCINAMEAUTH'])?$LANG['SCINAMEAUTH']:'Scientific Name Authorship');?>" /><br/>
 						<input type="hidden" id="tidinterpreted" name="tidinterpreted" value="<?php echo (isset($_POST['tidinterpreted'])?$_POST['tidinterpreted']:''); ?>" />
-						<b><?php echo $LANG['FAMILY']?>:</b> <input name="family" type="text" value="<?php echo (isset($_POST['family'])?$_POST['family']:''); ?>" />
+						<label for="family"> <b><?php echo (isset($LANG['FAMILY'])?$LANG['FAMILY']:'Family')?>:</b> </label>
+						<input id="family" name="family" type="text" value="<?php echo (isset($_POST['family'])?$_POST['family']:''); ?>" />
 					</div>
 					<div>
 						<div style="float:left;margin:3px;">
-							<b><?php echo $LANG['COUNTRY']?>:</b><br/>
+							<label for="country"><b><?php echo (isset($LANG['COUNTRY'])?$LANG['COUNTRY']:'Country')?>:</b><br/> </label>
 							<input id="country" name="country" type="text" value="<?php echo (isset($_POST['country'])?$_POST['country']:''); ?>" />
 						</div>
 						<div style="float:left;margin:3px;">
-							<b><?php echo $LANG['STATE_PROVINCE']?>:</b><br/>
+						<label for="country"><b><?php echo (isset($LANG['STATE_PROVINCE'])?$LANG['STATE_PROVINCE']:'State/Province')?>:</b><br/> </label>
 							<input id="state" name="stateprovince" type="text" value="<?php echo (isset($_POST['stateprovince'])?$_POST['stateprovince']:''); ?>" />
 						</div>
 						<div style="float:left;margin:3px;">
-							<b><?php echo $LANG['COUNTY']?>:</b><br/>
+						<label for="country"><b><?php echo (isset($LANG['COUNTY'])?$LANG['COUNTY']:'County')?>:</b><br/> </label>
 							<input id="county" name="county" type="text" value="<?php echo (isset($_POST['county'])?$_POST['county']:''); ?>" />
 						</div>
 					</div>
