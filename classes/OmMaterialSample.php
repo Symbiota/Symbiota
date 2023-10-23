@@ -119,7 +119,7 @@ class OmMaterialSample{
 				$value = trim($inputArr[$postField]);
 				if($value === '') $value = null;
 				$this->parameterArr[$field] = $value;
-				$this->typeStr .= ($this->typeStr ? ',' : '') . $type;
+				$this->typeStr .= $type;
 			}
 		}
 		if(isset($inputArr['occid']) && $inputArr['occid'] && !$this->occid) $this->occid = $inputArr['occid'];

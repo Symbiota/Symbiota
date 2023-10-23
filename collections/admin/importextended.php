@@ -9,8 +9,9 @@ if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/a
 
 $collid = array_key_exists('collid', $_REQUEST) ? $_REQUEST['collid'] : 0;
 $importType = array_key_exists('importType', $_REQUEST) ? $_REQUEST['importType'] : 0;
+$associationType = array_key_exists('associationType', $_POST) ? $_POST['associationType'] : '';
 $createNew = array_key_exists('createNew', $_POST) ? $_POST['createNew'] : 0;
-$fileName = array_key_exists('fileName', $_POST) ? $_POST['fileName'] : 0;
+$fileName = array_key_exists('fileName', $_POST) ? $_POST['fileName'] : '';
 $action = array_key_exists('submitAction', $_POST) ? $_POST['submitAction'] : '';
 
 //Sanitation
@@ -34,7 +35,6 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
-
 		<script>
 			function verifyFileSize(inputObj){
 				if (!window.FileReader) {
@@ -49,7 +49,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 				?>
 				var file = inputObj.files[0];
 				if(file.size > maxUpload){
-					var msg = "<?= $LANG['IMPORT_FILE'] ?>"+file.name+" ("+Math.round(file.size/100000)/10+"<?= $LANG['IS_BIGGER'] ?>"+(maxUpload/1000000)+"MB).";
+					var msg = "<?= $LANG['IMPORT_FILE'] ?>"+file.name+" ("+Math.round(file.size/100000)/10+"<?= $LANG['IS_TOO_BIG'] ?>"+(maxUpload/1000000)+"MB).";
 					if(file.name.slice(-3) != "zip") msg = msg + "<?= $LANG['MAYBE_ZIP'] ?>";
 					alert(msg);
 				}
@@ -57,46 +57,51 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 
 			function validateInitiateForm(f){
 				if(f.importFile.value == ""){
-					alert("Select a file to import");
+					alert("<?= $LANG['SELECT_FILE'] ?>");
 					return false;
 				}
 				if(f.importType.value == ""){
-					alert("Select an import type ");
+					alert("<?= $LANG['SELECT_IMPORT_TYPE'] ?>");
+					return false;
+				}
+				else if(f.importType.value == 1 && f.associationType.value == ""){
+					alert("<?= $LANG['SELECT_ASSOC_TYPE'] ?>");
 					return false;
 				}
 				return true;
 			}
 
 			function validateMappingForm(f){
-				var sourceArr = [];
-				var targetArr = [];
-				var catalogNumberIndex = 0;
-				for(var i=0;i<f.length;i++){
-					var obj = f.elements[i];
-					if(obj.name == "sf[]"){
-						if(sourceArr.indexOf(obj.value) > -1){
-							alert("<?= $LANG['ERR_UNIQUE_D'] ?>"+obj.value+")");
+				let sourceArr = [];
+				let targetArr = [];
+				let catalogNumberIndex = 0;
+				const formElements = f.elements;
+				for (const key in formElements) {
+					const value = formElements[key].value;
+					if(key.substring(0, 3) == "sf["){
+						if(sourceArr.indexOf(value) > -1){
+							alert("<?= $LANG['ERR_DUPLICATE_SOURCE'] ?>" + value + ")");
 							return false;
 						}
-						sourceArr[sourceArr.length] = obj.value;
+						sourceArr[sourceArr.length] = value;
 					}
-					else if(obj.value != ""){
-						if(obj.name == "tf[]"){
-							if(targetArr.indexOf(obj.value) > -1){
-								alert("<?= $LANG['SAME_TARGET_D'] ?>"+obj.value+")");
+					else if(value != ""){
+						if(key.substring(0, 3) == "tf["){
+							if(targetArr.indexOf(value) > -1){
+								alert("<?= $LANG['ERR_DUPLICATE_TARGET'] ?>" + value + ")");
 								return false;
 							}
-							targetArr[targetArr.length] = obj.value;
+							targetArr[targetArr.length] = value;
 						}
 					}
-					if(obj.name == "tf[]"){
-						if(obj.value == "catalognumber"){
+					if(key.substring(0, 3) == "tf["){
+						if(value == "catalognumber"){
 							catalogNumberIndex++;
 						}
-						else if(obj.value == "othercatalognumbers"){
+						else if(value == "othercatalognumbers"){
 							catalogNumberIndex++;
 						}
-						else if(obj.value == "occurrenceid"){
+						else if(value == "occurrenceid"){
 							catalogNumberIndex++;
 						}
 					}
@@ -105,11 +110,23 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 					alert("<?= $LANG['NEED_CAT'] ?>");
 					return false;
 				}
+				if(f.relationship && f.relationship.value == ""){
+					alert("<?= $LANG['SELECT_RELATIONSHIP'] ?>");
+					return false;
+				}
 				return true;
 			}
-		</script>
 
+			function importTypeChanged(selectElement){
+				let f = selectElement.form;
+				if(selectElement.value == 1){
+					document.getElementById("associationType-div").style.display = "block";
+				}
+			}
+		</script>
 		<style>
+			.formField-div{ margin: 10px; }
+			label{ font-weight: bold; }
 			fieldset{ margin: 10px; padding: 10px; }
 			legend{ font-weight: bold; }
 			.index-li{ margin-left: 10px; }
@@ -123,12 +140,12 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 		?>
 		<div class="navpath">
 			<a href="../../index.php">Home</a> &gt;&gt;
-			<a href="../misc/collprofiles.php?collid=<?= $collid ?>&emode=1">Collection Control Panel</a> &gt;&gt;
-			<a href="importextended.php?collid=<?= $collid ?>"><b>Extended Data Importer</b></a>
+			<a href="../misc/collprofiles.php?collid=<?= $collid ?>&emode=1"><?= $LANG['COLLECTION_MENU'] ?></a> &gt;&gt;
+			<a href="importextended.php?collid=<?= $collid ?>"><b><?= $LANG['DATA_IMPORTER'] ?></b></a>
 		</div>
 		<!-- This is inner text! -->
 		<div id="innertext">
-			<h2><?= $importManager->getCollMeta('collName'); ?> Extended Data Import</h2>
+			<h2><?= $importManager->getCollMeta('collName').' '.$LANG['DATA_IMPORTER']; ?></h2>
 			<div class="pageDescription-div">
 				<div>This tool is used to batch import CSV data files containing data associated with occurrence records. </div>
 				<div>Import files must contain one of the following occurrence identifiers, which is used to identify which occurrence record to link the data.</div>
@@ -155,38 +172,82 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 				if($action){
 					?>
 					<fieldset>
-						<legend>Action Panel</legend>
+						<legend><?= $LANG['ACTION_PANEL'] ?></legend>
 						<?php
 						if($action == 'importData'){
 							$importManager->setCreateNewRecord($createNew);
 							echo '<ul>';
-							$importManager->loadFileData($_POST);
+							$importManager->loadData($_POST);
 							echo '</ul>';
 						} elseif($action == 'initiateImport'){
 							if($actionStatus = $importManager->importFile()){
+								$importManager->setTargetFieldArr();
 								?>
 								<form name="mappingform" action="importextended.php" method="post" onsubmit="return validateMappingForm(this)">
 									<fieldset>
-										<legend><b>Image File Upload Map</b></legend>
-										<div style="margin:15px;">
+										<legend><b><?= $LANG['FIELD_MAPPING'] ?></b></legend>
+										<?php
+										if($associationType){
+											?>
+											<div class="formField-div">
+												<label for="associationType"><?= $LANG['ASSOCIATION_TYPE'] ?>:</label> <?= $associationType ?>
+												<input name="associationType" type="hidden" value ="<?= $associationType ?>" >
+											</div>
+											<?php
+										}
+										if($importType == 1){
+											?>
+											<div class="formField-div">
+												<label><?= $LANG['RELATIONSHIP'] ?>:</label>
+												<select name="relationship">
+													<option value="">-------------------</option>
+													<?php
+													$filter = '';
+													if($associationType == 'resource') $filter = 'associationType:resource';
+													$relationshipArr = $importManager->getControlledVocabulary('omoccurassociations', 'relationship', $filter);
+													foreach($relationshipArr as $term => $display){
+														echo '<option value="'.$term.'">'.$display.'</option>';
+													}
+													?>
+												</select>
+											</div>
+											<?php
+										}
+										?>
+										<div class="formField-div">
 											<?php
 											echo $importManager->getFieldMappingTable();
 											?>
 										</div>
+										<?php
+										if($importType == 3){
+											?>
+											<div class="formField-div">
+												<input name="createNew" type="checkbox" value ="1" <?= ($createNew?'checked':'') ?>>
+												<label for="createNew"><?= $LANG['NEW_BLANK_RECORD'] ?></label>
+											</div>
+											<?php
+										}
+										elseif($importType == 1){
+											?>
+											<div class="formField-div">
+												<input name="replace" type="checkbox" value ="1">
+												<label for="replace"><?= $LANG['MATCHING_IDENTIFIERS'] ?></label>
+											</div>
+											<?php
+										}
+										?>
 										<div style="margin:15px;">
-											<input name="createNew" type="checkbox" value ="1" <?= ($createNew?'checked':'') ?> /> Link image to new blank record if catalog number does not exist
-										</div>
-										<div style="margin:15px;">
-											<input name="collid" type="hidden" value="<?= $collid; ?>" />
-											<input name="importType" type="hidden" value="<?= $importType ?>" />
-											<input name="fileName" type="hidden" value="<?= htmlspecialchars($importManager->getImportFileName(), HTML_SPECIAL_CHARS_FLAGS); ?>" />
+											<input name="collid" type="hidden" value="<?= $collid; ?>">
+											<input name="importType" type="hidden" value="<?= $importType ?>">
+											<input name="fileName" type="hidden" value="<?= htmlspecialchars($importManager->getFileName(), HTML_SPECIAL_CHARS_FLAGS) ?>">
 											<button name="submitAction" type="submit" value="importData"><?= $LANG['IMPORT_DATA'] ?></button>
 										</div>
 									</fieldset>
 								</form>
 								<?php
 							}
-							else echo 'ERROR setting import file: '.$importManager->getErrorMessage();
+							else echo $LANG['ERR_SETTING_IMPORT'].': '.$importManager->getErrorMessage();
 						}
 						?>
 					</fieldset>
@@ -196,18 +257,30 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 					?>
 					<form name="initiateImportForm" action="importextended.php" method="post" enctype="multipart/form-data" onsubmit="return validateInitiateForm(this)">
 						<fieldset>
-							<legend>Initial Import</legend>
+							<legend><?= $LANG['INITIALIZE_IMPORT'] ?></legend>
 							<div class="formField-div">
 								<input name="importFile" type="file" size="50" onchange="verifyFileSize(this)" />
 							</div>
 							<div class="formField-div">
-								<label for="importType">Import Type: </label>
-								<select name="importType">
+								<label for="importType"><?= $LANG['IMPORT_TYPE'] ?>: </label>
+								<select name="importType" onchange="importTypeChanged(this)">
 									<option value="">-------------------</option>
-									<option value="1">Associations</option>
-									<option value="2">Determinations</option>
-									<option value="3">Image Field Map</option>
-									<option value="4">Material Sample</option>
+									<option value="1"><?= $LANG['ASSOCIATIONS'] ?></option>
+									<option value="2"><?= $LANG['DETERMINATIONS'] ?></option>
+									<option value="3"><?= $LANG['IMAGE_FIELD_MAP'] ?></option>
+									<option value="4"><?= $LANG['MATERIAL_SAMPLE'] ?></option>
+								</select>
+							</div>
+							<div id="associationType-div" class="formField-div" style="display:none">
+								<label for="associationType"><?= $LANG['ASSOCIATION_TYPE'] ?>: </label>
+								<select name="associationType">
+									<option value="">-------------------</option>
+									<?php
+									$assocTypeArr = $importManager->getControlledVocabulary('omoccurassociations', 'associationType');
+									foreach($assocTypeArr as $term => $display){
+										echo '<option value="'.$term.'">'.$display.'</option>';
+									}
+									?>
 								</select>
 							</div>
 							<div class="formField-div">

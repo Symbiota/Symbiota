@@ -1,33 +1,36 @@
 <?php
+include_once('Manager.php');
 include_once('UuidFactory.php');
 
-class OmOccurAssociations{
+class OmOccurAssociations extends Manager{
 
-	private $conn;
 	private $assocID = null;
 	private $occid = null;
 	private $schemaMap = array();
 	private $parameterArr = array();
 	private $typeStr = '';
-	private $errorMessage = '';
 
 	public function __construct($conn){
-		$this->conn = $conn;
-		$this->schemaMap = array('occidAssociate' => 'i', 'relationship' => 's', 'relationshipID' => 's', 'subType' => 's', 'identifier' => 's', 'basisOfRecord' => 's', 'resourceUrl' => 's',
+		parent::__construct(null, 'write', $conn);
+		$this->schemaMap = array('associationType' => 's', 'occidAssociate' => 'i', 'relationship' => 's', 'relationshipID' => 's', 'subType' => 's', 'identifier' => 's', 'basisOfRecord' => 's', 'resourceUrl' => 's',
 			'verbatimSciname' => 's', 'tid' => 'i', 'locationOnHost' => 's', 'conditionOfAssociate' => 's', 'establishedDate' => 's', 'imageMapJSON' => 's', 'dynamicProperties' => 's',
 			'notes' => 's', 'accordingTo' => 's', 'sourceIdentifier' => 's', 'recordID' => 's', 'createdUid' => 'i', 'modifiedTimestamp' => 's',
 			'modifiedUid' => 'i');
 	}
 
 	public function __destruct(){
+		parent::__destruct();
 	}
 
-	public function getAssociationArr(){
+	public function getAssociationArr($filterArr = null){
 		$retArr = array();
 		$uidArr = array();
 		$sql = 'SELECT assocID, occid, '.implode(', ', array_keys($this->schemaMap)).', initialTimestamp FROM omoccurassociations WHERE ';
 		if($this->assocID) $sql .= '(assocID = '.$this->assocID.') ';
 		elseif($this->occid) $sql .= '(occid = '.$this->occid.') ';
+		foreach($filterArr as $field => $cond){
+			$sql .= 'AND '.$field.' = "'.$this->cleanInStr($cond).'" ';
+		}
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_assoc()){
 				$retArr[$r['assocID']] = $r;
@@ -120,7 +123,7 @@ class OmOccurAssociations{
 				$value = trim($inputArr[$postField]);
 				if(!$value) $value = null;
 				$this->parameterArr[$field] = $value;
-				$this->typeStr .= ($this->typeStr ? ',' : '') . $type;
+				$this->typeStr .= $type;
 			}
 		}
 		if(isset($inputArr['occid']) && $inputArr['occid'] && !$this->occid) $this->occid = $inputArr['occid'];

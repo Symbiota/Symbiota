@@ -21,6 +21,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 
 	function __construct() {
 		parent::__construct(null, 'write');
+		$this->setVerboseMode(2);
 		set_time_limit(2000);
 		ini_set('auto_detect_line_endings', true);
 	}
@@ -32,54 +33,50 @@ class OccurrenceImport extends UtilitiesFileImport{
 	public function loadData($postArr){
 		if($this->fileName && isset($postArr['tf'])){
 			$this->fieldMap = array_flip($postArr['tf']);
-			$fullPath = $this->targetPath . $this->fileName;
-			if($fh = fopen($fullPath,'rb')){
-				$this->logOrEcho('Starting to process input file '.$this->fileName.' ('.date('Y-m-d H:i:s').')');
-				fgetcsv($fh);	//Advance one row to skipper header row
-				$cnt = 1;
-				while($recordArr = fgetcsv($fh)){
-					$identifierArr = array();
-					if(isset($this->fieldMap['occurrenceid'])){
-						if($recordArr[$this->fieldMap['occurrenceid']]) $identifierArr['occurrenceID'] = $recordArr[$this->fieldMap['occurrenceid']];
-						unset($this->fieldMap['occurrenceid']);
+			if($this->setTargetPath()){
+				if($this->getHeaderArr()){		// Advance past header row, set file handler, and define delimiter
+					$this->logOrEcho('Starting to process input file '.$this->fileName.' ('.date('Y-m-d H:i:s').')');
+					$cnt = 1;
+					while($recordArr = $this->getRecordArr()){
+						$identifierArr = array();
+						if(isset($this->fieldMap['occurrenceid'])){
+							if($recordArr[$this->fieldMap['occurrenceid']]) $identifierArr['occurrenceID'] = $recordArr[$this->fieldMap['occurrenceid']];
+						}
+						if(isset($this->fieldMap['catalognumber'])){
+							if($recordArr[$this->fieldMap['catalognumber']]) $identifierArr['catalogNumber'] = $recordArr[$this->fieldMap['catalognumber']];
+						}
+						if(isset($this->fieldMap['othercatalognumbers'])){
+							if(recordArr[$this->fieldMap['othercatalognumbers']]) $identifierArr['otherCatalogNumbers'] = $recordArr[$this->fieldMap['othercatalognumbers']];
+						}
+						$this->logOrEcho('#'.$cnt.': Processing Catalog Number: '.implode(', ', $identifierArr));
+						if($occidArr = $this->getOccurrencePK($identifierArr)){
+							$this->insertRecord($recordArr, $occidArr, $postArr);
+						}
+						$cnt++;
 					}
-					if(isset($this->fieldMap['catalognumber'])){
-						if($recordArr[$this->fieldMap['catalognumber']]) $identifierArr['catalogNumber'] = $recordArr[$this->fieldMap['catalognumber']];
-						unset($this->fieldMap['catalognumber']);
-					}
-					if(isset($this->fieldMap['othercatalognumbers'])){
-						if(recordArr[$this->fieldMap['othercatalognumbers']]) $identifierArr['otherCatalogNumbers'] = $recordArr[$this->fieldMap['othercatalognumbers']];
-						unset($this->fieldMap['othercatalognumbers']);
-					}
-					$this->logOrEcho('#'.$cnt.': Processing Catalog Number: '.implode(', ', $identifierArr));
-					if($occidArr = $this->getOccurrencePK($identifierArr)){
-						$this->insertRecord($recordArr, $occidArr);
-					}
-					$cnt++;
-				}
-				fclose($fh);
 
-				$occurMain = new OccurrenceMaintenance($this->conn);
-				$this->logOrEcho('Updating statistics...');
-				if(!$occurMain->updateCollectionStatsBasic($this->collid)){
-					$errorArr = $occurMain->getErrorArr();
-					foreach($errorArr as $errorStr){
-						$this->logOrEcho($errorStr,1);
+					$occurMain = new OccurrenceMaintenance($this->conn);
+					$this->logOrEcho('Updating statistics...');
+					if(!$occurMain->updateCollectionStatsBasic($this->collid)){
+						$errorArr = $occurMain->getErrorArr();
+						foreach($errorArr as $errorStr){
+							$this->logOrEcho($errorStr,1);
+						}
 					}
 				}
+				$this->deleteImportFile();
+				$this->logOrEcho('Done process image mapping ('.date('Y-m-d H:i:s').')');
 			}
-			unlink($fullPath);
-			$this->logOrEcho('Done process image mapping ('.date('Y-m-d H:i:s').')');
 		}
 	}
 
-	private function insertRecord($recordArr, $occidArr){
+	private function insertRecord($recordArr, $occidArr, $postArr){
 		if($this->importType == self::IMPORT_IMAGE_MAP){
 			$importManager = new ImageShared($this->conn);
 			if(!isset($this->fieldMap['originalurl']) || $recordArr[$this->fieldMap['originalurl']]) return false;
-			foreach($occidArr as $occid => $tid){
+			foreach($occidArr as $occid){
 				$importManager->setOccid($occid);
-				$importManager->setTid($tid);
+				//$importManager->setTid($tid);
 				$importManager->setImgLgUrl($recordArr[$this->fieldMap['originalurl']]);
 				if(!empty($recordArr[$this->fieldMap['url']])) $importManager->setImgWebUrl($recordArr[$this->fieldMap['url']]);
 				if(!empty($recordArr[$this->fieldMap['thumbnailurl']])) $importManager->setImgTnUrl($recordArr[$this->fieldMap['thumbnailurl']]);
@@ -101,34 +98,57 @@ class OccurrenceImport extends UtilitiesFileImport{
 			}
 		}
 		elseif($this->importType == self::IMPORT_DETERMINATIONS){
-			foreach($occidArr as $occid => $tid){
+			foreach($occidArr as $occid){
 
 			}
 		}
 		elseif($this->importType == self::IMPORT_ASSOCIATIONS){
-			$importManager = new OmOccurAssociations();
-			foreach($occidArr as $occid => $tid){
+			$importManager = new OmOccurAssociations($this->conn);
+			foreach($occidArr as $occid){
 				$importManager->setOccid($occid);
-				$fieldArr = array_keys($importManager->getFieldMap());
+				$fieldArr = array_keys($importManager->getSchemaMap());
 				$assocArr = array();
 				foreach($fieldArr as $field){
 					$fieldLower = strtolower($field);
-					if(!empty($recordArr[$this->fieldMap[$fieldLower]])) $assocArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
+					if(isset($this->fieldMap[$fieldLower]) && !empty($recordArr[$this->fieldMap[$fieldLower]])) $assocArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
 				}
-				if(!$importManager->insertAssociations($assocArr)){
-					$this->logOrEcho('ERROR loading Occurrence Association: '.$importManager->getErrorMessage(), 1);
+				if($assocArr){
+					if(!empty($postArr['associationType']) && !empty($postArr['relationship'])){
+						$assocArr['associationType'] = $postArr['associationType'];
+						$assocArr['relationship'] = $postArr['relationship'];
+						if(!empty($postArr['replace']) && !empty($assocArr['identifier'])){
+							if($existingAssociation = $importManager->getAssociationArr(array('identifier' => $assocArr['identifier']))){
+								if($assocID = key($existingAssociation)){
+									$importManager->setAssocID($assocID);
+									if($importManager->updateAssociation($assocArr)){
+										$this->logOrEcho('Association updated: <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>', 1);
+										continue;
+									}
+									else{
+										$this->logOrEcho('ERROR updating Occurrence Association: '.$importManager->getErrorMessage(), 1);
+									}
+								}
+							}
+						}
+						if($importManager->insertAssociation($assocArr)){
+							$this->logOrEcho('Association added: <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>', 1);
+						}
+						else{
+							$this->logOrEcho('ERROR loading Occurrence Association: '.$importManager->getErrorMessage(), 1);
+						}
+					}
 				}
 			}
 		}
 		elseif($this->importType == self::IMPORT_MATERIAL_SAMPLE){
 			$importManager = new OmMaterialSample($this->conn);
-			foreach($occidArr as $occid => $tid){
+			foreach($occidArr as $occid){
 				$importManager->setOccid($occid);
-				$fieldArr = array_keys($importManager->getFieldMap());
+				$fieldArr = array_keys($importManager->getSchemaMap());
 				$msArr = array();
 				foreach($fieldArr as $field){
 					$fieldLower = strtolower($field);
-					if(!empty($recordArr[$this->fieldMap[$fieldLower]])) $msArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
+					if(isset($this->fieldMap[$fieldLower]) && !empty($recordArr[$this->fieldMap[$fieldLower]])) $msArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
 				}
 				if(!$importManager->insertMaterialSample($msArr)){
 					$this->logOrEcho('ERROR loading Material Sample: '.$importManager->getErrorMessage(), 1);
@@ -234,6 +254,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 		foreach($fieldArr as $field){
 			$this->targetFieldMap[strtolower($field)] = $field;
 		}
+		ksort($this->targetFieldMap);
 	}
 
 	private function defineTranslationMap(){
@@ -264,6 +285,26 @@ class OccurrenceImport extends UtilitiesFileImport{
 			$this->collMetaArr['collName'] = $r->collectionName;
 		}
 		$rs->free();
+	}
+
+	public function getControlledVocabulary($tableName, $fieldName, $filterVariable = ''){
+		$retArr = array();
+		$sql = 'SELECT t.term, t.termDisplay
+			FROM ctcontrolvocab v INNER JOIN ctcontrolvocabterm t ON v.cvID = t.cvID
+			WHERE tableName = ? AND fieldName = ? AND filterVariable = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('sss', $tableName, $fieldName, $filterVariable);
+			$stmt->execute();
+			$term = ''; $termDisplay = '';
+			$stmt->bind_result($term, $termDisplay);
+			while ($stmt->fetch()) {
+				if(!$termDisplay) $termDisplay = $term;
+				$retArr[$term] = $termDisplay;
+			}
+			$stmt->close();
+		}
+		asort($retArr);
+		return $retArr;
 	}
 
 	//Basic setters and getters

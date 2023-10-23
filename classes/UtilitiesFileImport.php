@@ -5,11 +5,21 @@ class UtilitiesFileImport extends Manager {
 
 	protected $targetPath = false;
 	protected $fileName = false;
+	private $fileHandler = null;
 	protected $delimiter = ',';
 
 	protected $targetFieldMap;
 	protected $translationMap = null;
 	protected $fieldMap = array();		//array(sourceName => symbiotaIndex)
+
+	public function __construct(){
+		parent::__construct(null, 'write');
+	}
+
+	public function __destruct(){
+		if($this->fileHandler) fclose($this->fileHandler);
+		parent::__destruct();
+	}
 
 	//File import functions
 	public function importFile(){
@@ -95,8 +105,9 @@ class UtilitiesFileImport extends Manager {
 	}
 
 	public function cleanFileName($fileName){
+		$supportedExtensions = array('csv','txt','tab','zip');
 		$ext = strtolower(substr($fileName, -3));
-		if($ext != 'csv' && $ext != 'zip'){
+		if(!in_array($ext, $supportedExtensions)){
 			$this->errorMessage = 'Unsupported file type';
 			return false;
 		}
@@ -109,12 +120,15 @@ class UtilitiesFileImport extends Manager {
 		return $fileName;
 	}
 
+	protected function deleteImportFile(){
+		unlink($this->targetPath . $this->fileName);
+	}
+
 	//Field mapping functions
 	public function getFieldMappingTable(){
 		$tableHtml = '<table class="styledtable" style="width:600px;font-family:Arial;font-size:12px;">';
 		$tableHtml .= '<tr><th>Source Field</th><th>Target Field</th></tr>';
-		$targetFieldMap = $this->getTargetFieldArr();
-		$sourceFieldArr = $this->getSourceFieldArr();
+		$sourceFieldArr = $this->getHeaderArr();
 		foreach($sourceFieldArr as $i => $sourceField){
 			$tableHtml .= '<tr><td>';
 			$tableHtml .= $sourceField;
@@ -122,10 +136,10 @@ class UtilitiesFileImport extends Manager {
 			$tableHtml .= '<input type="hidden" name="sf['.$i.']" value="'.$sourceField.'" />';
 			$translatedSourceField = $this->getTranslation($sourceField);
 			$tableHtml .= '</td><td>';
-			$tableHtml .= '<select name="tf['.$i.']" style="background:'.(array_key_exists($translatedSourceField, $targetFieldMap)?'':'yellow').'">';
+			$tableHtml .= '<select name="tf['.$i.']" style="background:'.(array_key_exists($translatedSourceField, $this->targetFieldMap)?'':'yellow').'">';
 			$tableHtml .= '<option value="">Select Target Field</option>';
 			$tableHtml .= '<option value="">-------------------------</option>';
-			foreach($targetFieldMap as $k => $v){
+			foreach($this->targetFieldMap as $k => $v){
 				$tableHtml .= '<option value="' . $k . '" ' . ($k == $translatedSourceField ? 'SELECTED' : '') . '>' . $v . '</option>';
 			}
 			$tableHtml .= '</select>';
@@ -135,17 +149,49 @@ class UtilitiesFileImport extends Manager {
 		return $tableHtml;
 	}
 
-	public function getSourceFieldArr(){
+	protected function getHeaderArr(){
 		$sourceArr = array();
 		if($this->fileName){
-			$fh = fopen($this->targetPath . $this->fileName, 'rb') or die('unable to open file');
-			$headerArr = fgetcsv($fh);
+			$this->fileHandler = fopen($this->targetPath . $this->fileName, 'rb') or die('unable to open file');
+			$headerData = fgets($this->fileHandler);
+			//Check to see if we can figure out the delimiter, comma delimited it assumed to be the default
+			if(strpos($headerData, ',') === false){
+				if(strpos($headerData, "\t") !== false){
+					$this->delimiter = "\t";
+				}
+				elseif(strpos($headerData, '|') !== false){
+					$this->delimiter = '|';
+				}
+			}
+			//Grab header terms
+			$headerArr = Array();
+			if($this->delimiter == ','){
+				rewind($this->fileHandler);
+				$headerArr = fgetcsv($this->fileHandler, 0, $this->delimiter);
+			}
+			else{
+				$headerArr = explode($this->delimiter, $headerData);
+			}
 			foreach($headerArr as $k => $field){
-				$fieldStr = trim($field);
-				if($fieldStr) $sourceArr[$k] = $fieldStr;
+				$fieldStr = $this->encodeString(trim($field));
+				if($fieldStr){
+					$sourceArr[$k] = $fieldStr;
+				}
 			}
 		}
 		return $sourceArr;
+	}
+
+	protected function getRecordArr(){
+		$recordArr = Array();
+		if($this->delimiter == ','){
+			$recordArr = fgetcsv($this->fileHandler,0,$this->delimiter);
+		}
+		else{
+			$record = fgets($this->fileHandler);
+			if($record) $recordArr = explode($this->delimiter, $record);
+		}
+		return $recordArr;
 	}
 
 	public function getTranslation($sourceField){
