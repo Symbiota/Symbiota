@@ -128,7 +128,6 @@ foreach ($coordArr as $collName => $coll) {
 	<style type="text/css">
 		.panel-content a{ outline-color: transparent; font-size: 12px; font-weight: normal; }
 		.ui-front { z-index: 9999999 !important; }
-		#map { position: fixed !important; height: 100% !important; width: 100% !important; }
 	</style>
 	<script src="../../js/jquery-1.10.2.min.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
@@ -272,6 +271,10 @@ foreach ($coordArr as $collName => $coll) {
       let default_color = "E69E67";
       let puWin;
       let shape;
+      let mapGroups = [];
+
+      let taxaLegendMap = {}
+      let collLegendMap = {}
 
       const colorChange = new Event("colorchange",  {
          bubbles: true,
@@ -304,6 +307,7 @@ foreach ($coordArr as $collName => $coll) {
       }
 
       function legendRow(id, color, innerHTML) {
+
          return (
             `<div style="display:table-row;">
                <div style="display:table-cell;vertical-align:middle;padding-bottom:5px;" >
@@ -328,8 +332,21 @@ foreach ($coordArr as $collName => $coll) {
       }
 
       function buildTaxaLegend() {
+         taxaLegendMap = {}
          let taxaHtml = "";
-         let taxaArr = Object.values(taxaMap).sort((a, b) => a.family > b.family)
+
+         for(let i = 0; i < mapGroups.length; i++) {
+            for(taxon of Object.values(mapGroups[i].taxonMapGroup.group_map)) {
+               if(!taxaLegendMap[taxon.sn]) { 
+                  taxaLegendMap[taxon.sn] = taxon
+                  taxaLegendMap[taxon.sn].id_map = [{tid: taxon.tid, index: i}];
+               } else {
+                  taxaLegendMap[taxon.sn].id_map.push({tid: taxon.tid, index: i});
+               }
+            }
+         }
+         
+         let taxaArr = Object.values(taxaLegendMap).sort((a, b) => a.family > b.family)
          let prev_family;
 
          for (let taxa of taxaArr) {
@@ -340,7 +357,7 @@ foreach ($coordArr as $collName => $coll) {
               taxaHtml += "<div style='display:table;'>";
               prev_family = taxa.family;
             }
-            taxaHtml += legendRow(`taxa-${taxa.tid}`, taxa.color, taxa.sn);
+            taxaHtml += legendRow(`taxa-${taxa.id_map.map(id => `${id.index}*${id.tid}`).join(",")}`, taxa.color, taxa.sn);
          }
 
          taxaHtml += "</div>";
@@ -358,10 +375,23 @@ foreach ($coordArr as $collName => $coll) {
       }
       
       function buildCollectionLegend() {
+         collLegendMap = {}
+
+         for(let i = 0; i < mapGroups.length; i++) {
+            for(coll of Object.values(mapGroups[i].collectionMapGroup.group_map)) {
+               if(!collLegendMap[coll.name]) { 
+                  collLegendMap[coll.name] = coll
+                  collLegendMap[coll.name].id_map = [{collid: coll.collid, index: i}];
+               } else {
+                  collLegendMap[coll.name].id_map.push({collid: coll.collid, index: i});
+               }
+            }
+         }
+
          let html = "<div style='display:table;'>";
 
-         for (let coll of Object.values(collArr)) {
-            html += legendRow(`coll-${coll.collid}`, coll.color, coll.name);
+         for (let coll of Object.values(collLegendMap)) {
+            html += legendRow(`coll-${coll.id_map.map(v => `${v.index}*${v.collid}`).join(",")}`, coll.color, coll.name);
          }
 
 			document.getElementById("symbologykeysbox").innerHTML = html;
@@ -482,38 +512,138 @@ foreach ($coordArr as $collName => $coll) {
          let clusteroff = false;
          let cluster_type = "taxa";
 
-         let taxaClusters = {}
-         let taxaGroups = {};
-         let taxaMarkers = {};
-
          let markers = [];
-
-         let collClusters = {}
-         let collGroups = {};
-         let collMarkers = {};
 
          let heatmapLayer;
          let heatmap;
+
+         let groupClusters = [];
 
          let color = "B2BEB5";
 
          map.mapLayer.zoomControl.setPosition('topright');
 
-         function drawPoints() {
-            for(let record of recordArr) {
+         class LeafletMapGroup {
+            markers = {};
+            layer_groups = {};
+            group_name;
+            group_map;
+
+            constructor(group_name, group_map) {
+               this.group_name = group_name;
+               this.group_map = group_map;
+            }
+
+            addMarker(id, marker) {
+               if(!this.markers[id]) {
+                  this.markers[id] = [marker]
+               } else {
+                  this.markers[id].push(marker);
+               }
+            }
+
+            genLayer(id, cluster) {
+               this.group_map[id].cluster = cluster;
+               this.layer_groups[id] = L.layerGroup(this.markers[id]);
+               this.group_map[id].cluster.addLayer(this.layer_groups[id]);
+            }
+
+            drawGroup() {
+               for (let id of Object.keys(this.group_map)) {
+                  // TODO (Logan) clusteroff is global see if way to remove
+                  if(clusteroff) {
+                     this.layer_groups[id].addTo(map.mapLayer);
+                  } else if(!map.mapLayer.hasLayer(this.group_map[id].cluster)) {
+                     this.group_map[id].cluster.addTo(map.mapLayer)
+                  }
+               }
+            }
+
+            removeGroup() {
+               for (let id of Object.keys(this.group_map)) {
+                  if(clusteroff) {
+                     map.mapLayer.removeLayer(this.layer_groups[id])
+                  } else {
+                     this.group_map[id].cluster.removeLayer(this.layer_groups[id])
+                     map.mapLayer.removeLayer(this.group_map[id].cluster)
+                  }
+               }
+            }
+
+            resetGroup() {
+               for (let id of Object.keys(this.group_map)) {
+                  this.group_map[id].cluster.clearLayers();
+                  this.layer_groups[id].clearLayers();
+                  this.markers[id] = [];
+               }
+            }
+
+            removeLayer(id) {
+               this.group_map[id].cluster.clearLayers();
+               map.mapLayer.removeLayer(this.group_map[id].cluster);
+            }
+
+            addLayer(id) {
+               if(clusteroff) {
+                  this.layer_groups[id] = L.layerGroup(this.markers[id]);
+                  map.mapLayer.addLayer(this.layer_groups[id]);
+               } else {
+                  this.group_map[id].cluster.addLayer(this.layer_groups[id])
+
+                  if(!map.mapLayer.hasLayer(this.group_map[id].cluster)) {
+                     this.group_map[id].cluster.addTo(map.mapLayer);
+                  }
+               }
+            }
+
+            toggleClustering() {
+               for(let id of Object.keys(this.group_map)) {
+                  if(clusteroff) {
+                     if(map.mapLayer.hasLayer(this.group_map[id].cluster)) {
+                        map.mapLayer.removeLayer(this.group_map[id].cluster);
+                     }
+                     map.mapLayer.addLayer(this.layer_groups[id]);
+                  } else {
+                     map.mapLayer.removeLayer(this.layer_groups[id]);
+
+                     if(!map.mapLayer.hasLayer(this.group_map[id].cluster)) {
+                        this.group_map[id].cluster.addTo(map.mapLayer);
+                     }
+                  }
+               }
+            }
+
+            updateColor(id, color) {
+               this.group_map[id].color = color;
+
+               for (let marker of this.markers[id]) {
+                  if(marker.options.icon && marker.options.icon.options.observation) {
+                     marker.setIcon(getObservationSvg({color: `#${color}`, size:30 }))
+                  } else {
+                     marker.options.fillColor =`#${color}` 
+                  }
+               }
+            }
+         }
+
+         function genMapGroups(records, tMap, cMap) {
+            let taxon = new LeafletMapGroup("taxa", tMap);
+            let collections = new LeafletMapGroup("coll", cMap);
+
+            for(let record of records) {
                let marker = (record.type === "specimen"?
                   L.circleMarker([record.lat, record.lng], {
                      radius : 8,
                      color  : '#000000',
                      weight: 2,
-                     fillColor: `#${taxaMap[record['tid']].color}`,
+                     fillColor: `#${tMap[record['tid']].color}`,
                      opacity: 1.0,
                      fillOpacity: 1.0,
                      className: `coll-${record['collid']} taxa-${record['tid']}`
                   }):               
                   L.marker([record.lat, record.lng], {
                      icon: getObservationSvg({
-                        color: `#${taxaMap[record['tid']].color}`, 
+                        color: `#${tMap[record['tid']].color}`, 
                         className: `coll-${record['collid']} taxa-${record['tid']}`,
                         size: 30
                      })
@@ -521,23 +651,54 @@ foreach ($coordArr as $collName => $coll) {
                .on('click', function() { openIndPU(record.occid) })
                .bindTooltip(`<div>${record.id}</div>`)
 
+               //TODO (Logan) remove global
                markers.push(marker);
 
-               popluateGroup(taxaMarkers, record['tid'], marker);
-               popluateGroup(collMarkers, record['collid'], marker);
+               taxon.addMarker(record['tid'], marker);
+               collections.addMarker(record['collid'], marker);
             }
 
-            generateGroupLayers(taxaMap, "tid", "taxa", taxaMarkers, taxaClusters, taxaGroups);
-            generateGroupLayers(collArr, "collid", "coll", collMarkers, collClusters, collGroups);
+            return {taxonMapGroup: taxon, collectionMapGroup: collections};
+         }
 
-            if(heatmap) {
-               drawHeatMap();
-            } else {
-               drawGroup(taxaMap, "tid", taxaClusters, taxaGroups);
+         function genClusters(legendMap, type) {
+
+            for(let value of Object.values(legendMap)) {
+               const colorCluster = (cluster) => {
+                  let childCount = cluster.getChildCount();
+                  return new L.DivIcon.CustomColor({ 
+                     html: `<div style="background-color: #${value.color};"><span>` + childCount + '</span></div>', 
+                     className: `marker-cluster`, 
+                     iconSize: new L.Point(40, 40),
+                     color: `#${value.color}77`,
+                     mainColor: `#${value.color}`,
+                  });
+               }
+
+               let cluster = L.markerClusterGroup({
+                  iconCreateFunction: colorCluster 
+               });
+
+               value.id_map.forEach(g => {
+                  if(type === "taxa") { 
+                     mapGroups[g.index].taxonMapGroup.genLayer(g.tid, cluster);
+                  } else if(type === "coll") {
+                     mapGroups[g.index].collectionMapGroup.genLayer(g.collid, cluster);
+                  }
+               });
             }
          }
 
-         function drawHeatMap() {
+         function drawPoints() {
+            if(heatmap) {
+               drawHeatmap();
+            } else {
+               if(cluster_type === "taxa") mapGroups.forEach(group => group.taxonMapGroup.drawGroup())
+               else if(cluster_type === "coll") mapGroups.forEach(group => group.collectionMapGroup.drawGroup())
+            }
+         }
+
+         function drawHeatmap() {
             if(!heatmap) return;
 
             if(heatmapLayer) map.mapLayer.removeLayer(heatmapLayer);
@@ -564,68 +725,8 @@ foreach ($coordArr as $collName => $coll) {
             heatmapLayer.setData({
                max: heatMaxDensity || 3,
                min: heatMinDensity || 1,
-               data: recordArr 
+               data: recordArr
             });
-         }
-
-         function popluateGroup(markerGroup, id, marker) {
-            if(!markerGroup[id]) {
-               markerGroup[id] = [marker]
-            } else {
-               markerGroup[id].push(marker);
-            }
-         }
-
-         function generateGroupLayers(group_map, group_id, group_type, markerGroup, clusterGroup, layerGroup) {
-            for (let group of Object.values(group_map)) {
-               function colorCluster(cluster) {
-                  let childCount = cluster.getChildCount();
-                  return new L.DivIcon.CustomColor({ 
-                     html: `<div style="background-color: #${group_map[group[group_id]].color};"><span>` + childCount + '</span></div>', 
-                     className: `marker-cluster ${group_type}-${group[group_id]}`, 
-                     iconSize: new L.Point(40, 40),
-                     color: `#${group_map[group[group_id]].color}77`,
-                     mainColor: `#${group_map[group[group_id]].color}`,
-                  });
-               }
-
-               let cluster = L.markerClusterGroup({
-                  iconCreateFunction: colorCluster 
-               });
-
-               cluster.addLayers(markerGroup[group[group_id]])
-
-               clusterGroup[group[group_id]] = cluster;
-               layerGroup[group[group_id]] = L.layerGroup(markerGroup[group[group_id]]);
-            }
-         }
-
-         function drawGroup(group_map, group_id, clusterGroup, layerGroup) {
-            for (let group of Object.values(group_map)) {
-               if(clusteroff) {
-                  layerGroup[group[group_id]].addTo(map.mapLayer);
-               } else {
-                  clusterGroup[group[group_id]].addTo(map.mapLayer);
-               }
-            }
-         }
-
-         function removeGroup(group_map, group_id, clusterGroup, layerGroup) {
-            for (let group of Object.values(group_map)) {
-               if(clusteroff) {
-                  map.mapLayer.removeLayer(layerGroup[group[group_id]])
-               } else {
-                  map.mapLayer.removeLayer(clusterGroup[group[group_id]])
-               }
-            }
-         }
-
-         function resetGroup(group_map, markerGroup, clusterGroup, layerGroup) {
-            for (let id of Object.keys(group_map)) {
-               clusterGroup[id].removeLayers(markerGroup[id]);
-               layerGroup[id].clearLayers();
-               markerGroup[id] = [];
-            }
          }
 
          function fitMap() {
@@ -639,13 +740,17 @@ foreach ($coordArr as $collName => $coll) {
             }
          }
 
+
          document.getElementById("mapsearchform").addEventListener('submit', async e => {
             showWorking();
             e.preventDefault();
             let formData = new FormData(e.target);
 
-            resetGroup(taxaMap, taxaMarkers, taxaClusters, taxaGroups);
-            resetGroup(collArr, collMarkers, collClusters, collGroups);
+
+            mapGroups.forEach(group => {
+               group.taxonMapGroup.resetGroup();
+               group.collectionMapGroup.resetGroup();
+            })
 
             markers = []; 
 
@@ -653,92 +758,81 @@ foreach ($coordArr as $collName => $coll) {
                if (res) loadOccurenceRecords(res);
             });
 
-            const results = await searchCollections(formData);
+            //This is for handeling multiple portals
+            const searches = await Promise.all([
+               searchCollections(formData),
+               //searchCollections(formData, 'http://someOtherPortal')
+            ])
 
-            recordArr = results.recordArr? results.recordArr: [];
-            taxaMap = results.taxaArr? results.taxaArr: [];
-            collArr = results.collArr? results.collArr: [];
+            recordArr = [];
+            taxaMap = searches[0].taxaArr? searches[0].taxaArr: {};
+            collArr = searches[0].collArr? searches[0].collArr: {};
+
+            mapGroups = [];
+            for(let search of searches) {
+               if(search.recordArr) {
+                  recordArr = recordArr.concat(search.recordArr)
+                  mapGroups.push(genMapGroups(search.recordArr, search.taxaArr, search.collArr))
+               }
+            }
+ 
+            buildPanels();
+
+            genClusters(taxaLegendMap, "taxa");
+            genClusters(collLegendMap, "coll");
 
             drawPoints();
             fitMap();
-            buildPanels();
             hideWorking();
          });
 
-         function removeGroupLayer(id, markerGroup, clusterGroup, layerGroup) {
-            if(clusteroff) {
-               layerGroup[id].clearLayers()
-               if(map.mapLayer.hasLayer(layerGroup[id]))map.mapLayer.removeLayer(layerGroup[id]);
-            } else {
-               clusterGroup[id].clearLayers();
-               if(map.mapLayer.hasLayer(clusterGroup[id])) map.mapLayer.removeLayer(clusterGroup[id]);
+         async function updateColor(type, id_arr, color) {
+
+            for(let idParts of id_arr) {
+               let [index, id] = idParts;
+
+               if(type === "taxa") mapGroups[index].taxonMapGroup.removeLayer(id);
+               else if(type === "coll") mapGroups[index].collectionMapGroup.removeLayer(id);
             }
-         }
 
-         function addGroupLayer(id, markerGroup, clusterGroup, layerGroup) {
-            if(clusteroff) {
-               layerGroup[id] = L.layerGroup(markerGroup[id]);
-               map.mapLayer.addLayer(layerGroup[id]);
-            } else {
-               clusterGroup[id].addLayers(markerGroup[id])
-               map.mapLayer.addLayer(clusterGroup[id]);
+            for(let idParts of id_arr) {
+               let [index, id] = idParts;
+
+               if(type === "taxa") mapGroups[index].taxonMapGroup.updateColor(id, color);
+               else if(type === "coll") mapGroups[index].collectionMapGroup.updateColor(id, color);
             }
-         }
 
-         async function updateColor(type, id, color) {
-            if(type === "taxa") {
-               removeGroupLayer(id, taxaMarkers, taxaClusters, taxaGroups);
+            for(let idParts of id_arr) {
+               let [index, id] = idParts;
 
-               taxaMap[id].color = color;
-
-               const taxa = taxaMap[id]
-               for (marker of taxaMarkers[id]) {
-                  if(marker.options.icon && marker.options.icon.options.observation) {
-                     marker.setIcon(getObservationSvg({color: `#${color}`, size:30 }))
-                  } else {
-                     marker.options.fillColor =`#${color}` 
-                  }
-               }
-
-               addGroupLayer(id, taxaMarkers, taxaClusters, taxaGroups);
-
-            } else if (type === "coll") {
-               removeGroupLayer(id, collMarkers, collClusters, collGroups);
-
-               collArr[id].color = color;
-
-               for (marker of collMarkers[id]) {
-                  if(marker.options.icon && marker.options.icon.options.observation) {
-                     marker.setIcon(getObservationSvg({color: `#${color}`, size:30 }))
-                  } else {
-                     marker.options.fillColor =`#${color}` 
-                  }
-               }
-
-               addGroupLayer(id, collMarkers, collClusters, collGroups);
+               if(type === "taxa") mapGroups[index].taxonMapGroup.addLayer(id);
+               else if(type === "coll") mapGroups[index].collectionMapGroup.addLayer(id);
             }
          }
 
          document.addEventListener('colorchange', function(e) {
             const [type, id] = e.target.id.split("-");
+            const id_arr = id.split(",").map(part => part.split("*"));
             const color = e.target.value;
 
-            updateColor(type, id, color);
+            updateColor(type, id_arr, color);
          });
 
          document.addEventListener('autocolor', async function(e) {
             const {type, colorMap} = e.detail;
 
-            if(cluster_type === "coll" && type === "taxa") {
-               removeGroup(collArr, "collid", collClusters, collGroups);
-            } else if(cluster_type === "taxa" && type === "coll") {
-               removeGroup(taxaMap, "tid", taxaClusters, taxaGroups);
-            }
+            mapGroups.map(group => {
+               if(cluster_type === "coll" && type === "taxa") {
+                  group.collectionMapGroup.removeGroup();
+               } else if(cluster_type === "taxa" && type === "coll") {
+                  group.taxonMapGroup.removeGroup();
+               }
+            })
 
             cluster_type = type;
 
-            for (let {id, color} of Object.values(colorMap)) {
-               await updateColor(type, id, color);
+            for (let {id_arr, color} of Object.values(colorMap)) {
+               updateColor(type, id_arr, color);
             }
          });
 
@@ -759,61 +853,52 @@ foreach ($coordArr as $collName => $coll) {
             map.clearMap();
             shape = null;
          });
-
-         function toggleGroupClustering(clusterGroup, layerGroup) {
-
-            for(let id of Object.keys(clusterGroup)) {
-               if(clusteroff) {
-                  map.mapLayer.removeLayer(clusterGroup[id]);
-                  map.mapLayer.addLayer(layerGroup[id]);
-               } else {
-                  map.mapLayer.removeLayer(layerGroup[id]);
-                  clusterGroup[id].addTo(map.mapLayer);
-               }
-            }
-         }
-         
+       
          document.getElementById('clusteroff').addEventListener('change', e => {
             clusteroff = e.target.checked;
-
-            if(cluster_type === "taxa") toggleGroupClustering(taxaClusters, taxaGroups);
-            else if(cluster_type === "coll") toggleGroupClustering(collClusters, collGroups);
+            if(!heatmap) {
+               if(cluster_type === "taxa") mapGroups.forEach(group => group.taxonMapGroup.toggleClustering())
+               else if(cluster_type === "coll") mapGroups.forEach(group => group.collectionMapGroup.toggleClustering())
+            }
          });
 
          document.getElementById('heatmap_on').addEventListener('change', e => {
             heatmap = e.target.checked;
             if(e.target.checked) {
                //Clear points 
-               if(cluster_type == "taxa") {
-                  removeGroup(taxaMap, "tid", taxaClusters, taxaGroups);
-               } else if(cluster_type == "coll") {
-                  removeGroup(collArr, "collid", collClusters, collGroups);
-               }
-               drawHeatMap();
+               if(cluster_type == "taxa") mapGroups.forEach(group => group.taxonMapGroup.removeGroup())
+               else if(cluster_type == "coll") mapGroups.forEach(group => group.collectionMapGroup.removeGroup())
+
+               drawHeatmap();
             } else {
                map.mapLayer.removeLayer(heatmapLayer);
-               if(cluster_type == "taxa") {
-                  drawGroup(taxaMap, "tid", taxaClusters, taxaGroups);
-               } else if(cluster_type == "coll") {
-                  drawGroup(collArr, "collid", collClusters, collGroups);
-               }
+               if(cluster_type == "taxa") mapGroups.forEach(group => group.taxonMapGroup.drawGroup())
+               else if(cluster_type == "coll") mapGroups.forEach(group => group.collectionMapGroup.drawGroup())
             }
          });
 
-         document.getElementById('heat-min-density').addEventListener('change', e => drawHeatMap())
-         document.getElementById('heat-radius').addEventListener('change', e => drawHeatMap())
-         document.getElementById('heat-max-density').addEventListener('change', e => drawHeatMap() )
+         document.getElementById('heat-min-density').addEventListener('change', e => drawHeatmap())
+         document.getElementById('heat-radius').addEventListener('change', e => drawHeatmap())
+         document.getElementById('heat-max-density').addEventListener('change', e => drawHeatmap() )
 
          //Load Data if any with page Load
          if(recordArr.length > 0) {
             let formData = new FormData(document.getElementById("mapsearchform"));
-            drawPoints();
+
+            mapGroups = [genMapGroups(recordArr, taxaMap, collArr)];
+
             getOccurenceRecords(formData).then(res => {
                if(res) loadOccurenceRecords(res);
                buildPanels();
+
+               genClusters(taxaLegendMap, "taxa");
+               genClusters(collLegendMap, "coll");
+
+               drawPoints();
+
+               fitMap();
             });
          }
-
          fitMap();
       }
 
@@ -830,7 +915,6 @@ foreach ($coordArr as $collName => $coll) {
          let heatmapLayer;
 
          let bounds; 
-         let oms;
          let clusteroff = false;
 
          let cluster_type = "taxa";
@@ -846,34 +930,116 @@ foreach ($coordArr as $collName => $coll) {
             }
          }
 
-         function drawPoints() {
-            if(recordArr.length < 1) return;
+         class GoogleMapGroup {
+            markers = {};
+            group_name;
+            group_map;
+
+            constructor(group_name, group_map) {
+               this.group_name = group_name;
+               this.group_map = group_map;
+            }
+
+            addMarker(id, marker) {
+               if(!this.markers[id]) {
+                  this.markers[id] = [marker]
+               } else {
+                  this.markers[id].push(marker);
+               }
+            }
+
+            genLayer(id, cluster) {
+               cluster.addMarkers(this.markers[id]);
+               this.group_map[id].cluster = cluster;
+            }
+
+            drawGroup() {
+               for (let id of Object.keys(this.group_map)) {
+                  this.addLayer(id);
+               }
+            }
+
+            removeGroup() {
+               for (let id of Object.keys(this.group_map)) {
+                  this.removeLayer(id);
+               }
+            }
+
+            resetGroup() {
+               for (let id of Object.keys(this.group_map)) {
+                  this.removeLayer(id);
+               }
+            }
+
+            removeLayer(id) {
+               if(clusteroff) {
+                  for(let marker of Object.values(this.markers[id])) {
+                     marker.setMap(null)
+                  }
+               } else {
+                  this.group_map[id].cluster.clearMarkers();
+                  this.group_map[id].cluster.setMap(null);
+               }
+            }
+
+            addLayer(id) {
+               if(clusteroff) {
+                  for(let marker of Object.values(this.markers[id])) {
+                     marker.setMap(map.mapLayer)
+                  }
+               } else {
+                  this.group_map[id].cluster.addMarkers(this.markers[id])
+                  this.group_map[id].cluster.setMap(map.mapLayer);
+               }
+            }
+
+            toggleClustering() {
+               for(let id of Object.keys(this.group_map)) {
+                  if(clusteroff) this.group_map[id].cluster.setMap(null)
+                  else this.addLayer(id)
+               }
+            }
+
+            updateColor(id, color) {
+               this.group_map[id].color = color;
+
+               for (let marker of this.markers[id]) {
+                  marker.color = `#${color}`
+                  marker.icon.fillColor = `#${color}`
+               }
+            }
+         }
+
+         function genGroups(records, tMap, cMap) {
+            if(records.length < 1) return;
+
+            let taxon = new GoogleMapGroup("taxa", tMap);
+            let collections = new GoogleMapGroup("coll", cMap);
 
             bounds = new google.maps.LatLngBounds();
 
-            for(let record of recordArr) {
+            for(let record of records) {
                let marker = new google.maps.Marker({
                   position: new google.maps.LatLng(record['lat'], record['lng']),
                   text: "Test",
-                  //map: map.mapLayer,
                   icon: record['type'] === "specimen"? 
                      {
                         path: google.maps.SymbolPath.CIRCLE,
-                        fillColor: `#${taxaMap[record['tid']].color}`,
+                        fillColor: `#${tMap[record['tid']].color}`,
                         fillOpacity: 1,
                         scale: 7,
                         strokeColor: "#000000",
                         strokeWeight: 1
                      }: {
                         path: "m6.70496,0.23296l-6.70496,13.48356l13.88754,0.12255l-7.18258,-13.60611z",
-                        fillColor: `#${taxaMap[record['tid']].color}`,
+                        fillColor: `#${tMap[record['tid']].color}`,
                         fillOpacity: 1,
                         scale: 1,
                         strokeColor: "#000000",
                         strokeWeight: 1
                      },
                   selected: false,
-                  color: `#${taxaMap[record['tid']].color}`,
+                  color: `#${tMap[record['tid']].color}`,
                })
 
                bounds.extend(marker.getPosition());
@@ -890,88 +1056,49 @@ foreach ($coordArr as $collName => $coll) {
                
                google.maps.event.addListener(marker, 'click', function() { openIndPU(record.occid)})
 
-               if(!taxaMarkers[record['tid']]) {
-                  taxaMarkers[record['tid']] = [marker]
-               } else {
-                  taxaMarkers[record['tid']].push(marker);
-               }
-
-               if(!collMarkers[record['collid']]) {
-                  collMarkers[record['collid']] = [marker]
-               } else {
-                  collMarkers[record['collid']].push(marker);
-               }
-
                if(clusteroff && !heatmapon) {
                   marker.setMap(map.mapLayer)
                }
+
+               taxon.addMarker(record['tid'], marker)
+               collections.addMarker(record['collid'], marker)
             }
+
+            return { taxonMapGroup: taxon, collectionMapGroup: collections };
+         }
+
+         function drawPoints() {
 
             if(heatmapon) {
                if(!heatmapLayer) initHeatmap(); 
                else updateHeatmap(); 
-            }
-
-            for(let tid of Object.keys(taxaMarkers)) {
-               taxaClusters[tid] = new MarkerClusterer(heatmapon || clusteroff? null: map.mapLayer, taxaMarkers[tid],{
-                  styles: [{
-                     color: taxaMap[tid].color,
-                  }],
-                  maxZoom: 13,
-                  gridSize: 60,
-                  minimumClusterSize: 2
-               }
-               );
-            }
-
-            for(let collid of Object.keys(collMarkers)) {
-               collClusters[collid] = new MarkerClusterer(null, collMarkers[collid],{
-                  styles: [{
-                     color: collArr[collid].color,
-                  }],
-                  maxZoom: 13,
-                  gridSize: 60,
-                  minimumClusterSize: 2
-               }
-               );
+            } else {
+               mapGroups.forEach(g => {
+                  if(cluster_type === "taxa") g.taxonMapGroup.drawGroup();
+                  else if(cluster_type === "coll") g.collectionMapGroup.drawGroup();
+               })
             }
          }
 
-         function resetGroup(group_map, markerGroup, clusterGroup) {
-            for(let id of Object.keys(group_map)) {
-               removeGroupMember(id, markerGroup, clusterGroup);
-            }
-         }
+         function genClusters(legendMap, type) {
+            for(let val of Object.values(legendMap)) {
 
-         function removeGroupMember(id, markerGroup, clusterGroup) {
-            if(clusterGroup[id]) {
-               clusterGroup[id].clearMarkers();
-               clusterGroup[id].setMap(null);
-            }
-         }
-         
-         function addGroupMember(id, group_map, markerGroup, clusterGroup) {
-            if(clusterGroup[id]) {
-               clusterGroup[id] = new MarkerClusterer(clusteroff? null: map.mapLayer, markerGroup[id],{
+               const cluster = new MarkerClusterer(null, [], {
                   styles: [{
-                     color: group_map[id].color,
+                     color: val.color,
                   }],
-                  maxZoom: 13,
+                  maxZoom: 14,
                   gridSize: 60,
                   minimumClusterSize: 2
                })
 
-               if(clusteroff) {
-                  for(let marker of markerGroup[id]) {
-                     marker.setMap(map.mapLayer)
+               val.id_map.forEach(g=> {
+                  if(type === "taxa") {
+                     mapGroups[g.index].taxonMapGroup.genLayer(g.tid, cluster);
+                  } else if(type === "coll") {
+                     mapGroups[g.index].collectionMapGroup.genLayer(g.collid, cluster);
                   }
-               }
-            }
-         }
-
-         function drawGroup(group_map, markerGroup, clusterGroup) {
-            for(let id of Object.keys(group_map)) {
-               addGroupMember(id, group_map, markerGroup, clusterGroup);
+               });
             }
          }
 
@@ -1023,11 +1150,13 @@ foreach ($coordArr as $collName => $coll) {
             e.preventDefault();
             let formData = new FormData(e.target);
 
-            resetGroup(taxaMap, taxaMarkers, taxaClusters);
-            taxaMarkers = {}
+            mapGroups.map(g => {
+               g.taxonMapGroup.resetGroup();
+               g.collectionMapGroup.resetGroup();
+            });
 
-            resetGroup(collArr, collMarkers, collClusters);
-            collMarkers = {}
+            mapGroups = [];
+            recordArr = [];
 
             if(heatmapLayer) heatmapLayer.setData({data: []})
 
@@ -1035,15 +1164,25 @@ foreach ($coordArr as $collName => $coll) {
                if (res) loadOccurenceRecords(res);
             });
 
-            const results = await searchCollections(formData);
+            //This is for handeling multiple portals
+            const searches = await Promise.all([
+               searchCollections(formData),
+            ])
 
-            recordArr = results.recordArr? results.recordArr: [];
-            taxaMap = results.taxaArr? results.taxaArr: [];
-            collArr = results.collArr? results.collArr: [];
+            for(let search of searches) {
+               recordArr = recordArr.concat(search.recordArr);
+               mapGroups.push(genGroups(search.recordArr, search.taxaArr, search.collArr));
+            }
+
+            buildPanels();
+
+            //Must have build panels called b4 
+            genClusters(taxaLegendMap, "taxa");
+            genClusters(collLegendMap, "coll");
 
             drawPoints();
+
             fitMap()
-            buildPanels();
             hideWorking();
          });
 
@@ -1066,57 +1205,79 @@ foreach ($coordArr as $collName => $coll) {
             }
          });
 
-         async function updateColor(type, id, color) {
-            const updateTypeColor = (id, group_map, markerGroup, clusterGroup) => {
-               removeGroupMember(id, markerGroup, clusterGroup);
+         async function updateColor(type, id_arr, color) {
 
-               group_map[id].color = color;
+            const cluster = new MarkerClusterer(null, [], {
+               styles: [{
+                  color: color,
+               }],
+               maxZoom: 14,
+               gridSize: 60,
+               minimumClusterSize: 2
+            })
 
-               for (let marker of markerGroup[id]) {
-                  marker.color = `#${color}`
-                  marker.icon.fillColor = `#${color}`
+            const getIndex = v => v[0];
+            const getId = v => parseInt(v[1]);
+
+            id_arr.forEach(v => {
+               if(type === "taxa") {
+                  mapGroups[getIndex(v)].taxonMapGroup.removeLayer(getId(v));
+               } else if (type === "coll") {
+                  mapGroups[getIndex(v)].collectionMapGroup.removeLayer(getId(v));
                }
+            });
 
-               addGroupMember(id, group_map, markerGroup, clusterGroup);
-            }
-
-            if(type === "taxa") updateTypeColor(id, taxaMap, taxaMarkers, taxaClusters);
-            else if (type === "coll") updateTypeColor(id, collArr, collMarkers, collClusters);
+            id_arr.forEach(v => {
+               if(type === "taxa") {
+                  mapGroups[getIndex(v)].taxonMapGroup.group_map[getId(v)].cluster = cluster;
+                  mapGroups[getIndex(v)].taxonMapGroup.updateColor(getId(v), color);
+               } else if (type === "coll") {
+                  mapGroups[getIndex(v)].collectionMapGroup.group_map[getId(v)].cluster = cluster;
+                  mapGroups[getIndex(v)].collectionMapGroup.updateColor(getId(v), color);
+               }
+            })
+            
+            id_arr.forEach(v => {
+               if(type === "taxa") {
+                  mapGroups[getIndex(v)].taxonMapGroup.addLayer(getId(v));
+               } else if (type === "coll") {
+                  mapGroups[getIndex(v)].collectionMapGroup.addLayer(getId(v));
+               }
+            });
          }
 
          document.addEventListener('colorchange', function(e) {
             const [type, id] = e.target.id.split("-");
+            const id_arr = id.split(",").map(part => part.split("*"));
             const color = e.target.value;
-            updateColor(type, id, color);
+
+            updateColor(type, id_arr, color);
          });
 
          document.addEventListener('autocolor', async function(e) {
             const {type, colorMap} = e.detail;
 
-            if(cluster_type === "coll" && type === "taxa") {
-               resetGroup(collArr, collMarkers, collClusters);
-            } else if(cluster_type === "taxa" && type === "coll") {
-               resetGroup(taxaMap, taxaMarkers, taxaClusters);
-            }
+            mapGroups.map(group => {
+               if(cluster_type === "coll" && type === "taxa") {
+                  group.collectionMapGroup.removeGroup();
+               } else if(cluster_type === "taxa" && type === "coll") {
+                  group.taxonMapGroup.removeGroup();
+               }
+            })
 
             cluster_type = type;
 
-            for (let {id, color} of Object.values(colorMap)) {
-               await updateColor(type, id, color);
+            for (let {id_arr, color} of Object.values(colorMap)) {
+               await updateColor(type, id_arr, color);
             }
          });
 
          document.getElementById('clusteroff').addEventListener('change', e => {
             clusteroff = e.target.checked;
-            function toggleGroupClustering(clusterGroup) {
-               for(let cluster of Object.values(clusterGroup)) {
-                  if(clusteroff) cluster.setMap(null);
-                  else cluster.setMap(map.mapLayer)
-               }
+            if(!heatmapon) {
+               if(cluster_type === "taxa") mapGroups.map(g => g.taxonMapGroup.toggleClustering());
+               else if(cluster_type === "coll") mapGroups.map(g => g.collectionMapGroup.toggleClustering());
             }
-
-            if(cluster_type === "taxa") toggleGroupClustering(taxaClusters);
-            else if(cluster_type === "coll") toggleGroupClustering(collClusters);
          });
 
          document.getElementById('heatmap_on').addEventListener('change', e => {
@@ -1125,9 +1286,9 @@ foreach ($coordArr as $collName => $coll) {
             if(e.target.checked) {
                //Clear points 
                if(cluster_type == "taxa") {
-                  resetGroup(taxaMap, taxaMarkers, taxaClusters);
+                  mapGroups.forEach(g=>g.taxonMapGroup.resetGroup())
                } else if(cluster_type == "coll") {
-                  resetGroup(collArr, collMarkers, collClusters);
+                  mapGroups.forEach(g=>g.collectionMapGroup.resetGroup())
                }
                if(!heatmapLayer) initHeatmap();
                else updateHeatmap();
@@ -1137,9 +1298,9 @@ foreach ($coordArr as $collName => $coll) {
                };
 
                if(cluster_type == "taxa") {
-                  drawGroup(taxaMap, taxaMarkers, taxaClusters);
+                  mapGroups.forEach(g=>g.taxonMapGroup.drawGroup())
                } else if(cluster_type == "coll") {
-                  drawGroup(collArr, collMarkers, collClusters);
+                  mapGroups.forEach(g=>g.collectionMapGroup.drawGroup())
                }
             }
          });
@@ -1156,10 +1317,20 @@ foreach ($coordArr as $collName => $coll) {
          if(recordArr.length > 0) {
             if(shape) map.drawShape(shape);
             let formData = new FormData(document.getElementById("mapsearchform"));
-            drawPoints();
+            mapGroups = [
+               genGroups(recordArr, taxaMap, collArr)
+            ]
+
             getOccurenceRecords(formData).then(res => {
                if(res) loadOccurenceRecords(res);
                buildPanels();
+
+               genClusters(taxaLegendMap, "taxa");
+               genClusters(collLegendMap, "coll");
+
+               drawPoints();
+
+               fitMap();
             });
          }
 
@@ -1177,23 +1348,25 @@ foreach ($coordArr as $collName => $coll) {
          }
       }
 
-      async function searchCollections(body) {
+      async function searchCollections(body, host) {
+         const url = host? `${host}/collections/map/rpc/searchcollections.php`: 'rpc/searchcollections.php'
          let response = await fetch('rpc/searchcollections.php', {
             method: "POST",
             credentials: "same-origin",
             body: body 
-         })
+         });
          return response? await response.json(): { taxaArr: [], collArr: [], recordArr: [] };
       }
 
-      async function getOccurenceRecords(body) {
+      async function getOccurenceRecords(body, host) {
+         const url = host? `${host}/collections/map/searchcollections.php`: 'occurrencelist.php'
          let response = await fetch('occurrencelist.php', {
             method: "POST",
             credentials: "same-origin",
             body: body 
-         })
+         });
 
-         return response? await response.text(): 'Nada';
+         return response? await response.text(): '';
       }
 
       function loadOccurenceRecords(html) {
@@ -1210,13 +1383,17 @@ foreach ($coordArr as $collName => $coll) {
          });
       }
 
-		function resetSymbology(typeMap, type, getId = v => v.id, fullreset) {
+		function resetSymbology(keyMap, type, getId = v => v.id, fullreset) {
          let color_map = {};
 
-			for(var val of Object.values(typeMap) ) {
-            color_map[getId(val)] = ({color: default_color, id: getId(val)})
+			for(var key of Object.values(keyMap) ) {
+            let id_arr = key.id_map.map(v => [v.index, getId(v)])
+            let id = id_arr.map(parts => `${parts[0]}*${parts[1]}`).join(",")
 
-            const colorkey = document.getElementById(`${type}-${getId(val)}`)
+            color_map[id] = ({color: default_color, id_arr: id_arr })
+            
+            const colorkey = document.getElementById(`${type}-${id}`);
+
             if(colorkey) {
                colorkey.color.fromString(default_color);
             }
@@ -1233,59 +1410,47 @@ foreach ($coordArr as $collName => $coll) {
       }
 
       const resetCollSymbology = (reset = false) => {
-         resetSymbology(collArr, 'coll' ,v => v.collid, reset)
+         resetSymbology(collLegendMap, 'coll' ,v => v.collid, reset)
       };
 
       const resetTaxaSymbology = (reset = false) => {
-         resetSymbology(taxaMap, 'taxa', v => v.tid, reset);   
+         resetSymbology(taxaLegendMap, 'taxa', v => v.tid, reset);   
       }
 
-      function autoColor(type, id, usedColors = {}) {
-         var randColor = generateRandColor();
+      function autoColor(type, getId = v => v.id, keyMap) {
+			var usedColors = {};
+         for(let key of Object.values(keyMap)) {
+            let id_arr = key.id_map.map(v => [v.index, getId(v)])
+            var randColor = generateRandColor();
 
-         while (usedColors[randColor] !== undefined) {
-            randColor = generateRandColor();
-         }
+            while (usedColors[randColor] !== undefined) {
+               randColor = generateRandColor();
+            }
 
-         usedColors[randColor] = {color: randColor, id: id };
+            usedColors[randColor] = {color: randColor, id_arr: id_arr};
 
-         const colorkey = document.getElementById(`${type}-${id}`)
-         if(colorkey){
-            colorkey.color.fromString(randColor);
-         }
-      }
-
-		function autoColorTaxa(e){
-			resetCollSymbology();
-			var usedColors = [];
-
-			for(var taxa of Object.values(taxaMap) ) {
-            autoColor('taxa', taxa.tid, usedColors)
+            const colorkey = document.getElementById(`${type}-${id_arr.map(parts => `${parts[0]}*${parts[1]}`)}`)
+            if(colorkey){
+               colorkey.color.fromString(randColor);
+            }
          }
 
          document.dispatchEvent(new CustomEvent('autocolor', {
             detail: {
-               type: 'taxa',
+               type: type,
                colorMap: usedColors,
             }
          }));
       }
 
-		function autoColorColl(color){
+      const autoColorTaxa = () => {
+         resetCollSymbology();
+         autoColor("taxa", v => v.tid, taxaLegendMap);
+      }
+      const autoColorColl = () => {
          resetTaxaSymbology();
-			var usedColors = [];
-
-			for(var coll of Object.values(collArr) ) {
-            autoColor('coll', coll.collid, usedColors)
-         }
-
-         document.dispatchEvent(new CustomEvent('autocolor', {
-            detail: {
-               type: 'coll',
-               colorMap: usedColors,
-            }
-         }));
-      }
+         autoColor("coll", v => v.collid, collLegendMap)
+      };
 
       //This is used in occurrencelist.php which is submodule of this
       function emit_occurrence(occid) {
@@ -1715,7 +1880,7 @@ foreach ($coordArr as $collName => $coll) {
 			</div>
 		</div><!-- /content wrapper for padding -->
 	</div><!-- /defaultpanel -->
-<div id='map' style='width:100%;height:100%;'></div>
+<div id='map' style='width:100vw;height:100vh;z-index:1'></div>
 <div id="loadingOverlay" data-role="popup" style="width:100%;position:relative;">
 	<div id="loadingImage" style="width:100px;height:100px;position:absolute;top:50%;left:50%;margin-top:-50px;margin-left:-50px;">
 		<img style="border:0px;width:100px;height:100px;" src="../../images/ajax-loader.gif" />
