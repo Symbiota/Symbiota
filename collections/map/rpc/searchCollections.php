@@ -47,8 +47,6 @@ $recordArr = [];
 $collArr = [];
 $defaultColor = "#B2BEB5";
 
-$recordCnt = 0;
-
 foreach ($coordArr as $collName => $coll) {
    //Collect all the collections
    foreach ($coll as $recordId => $record) {
@@ -61,10 +59,7 @@ foreach ($coordArr as $collName => $coll) {
             'tid' => $record['tid'], 
             'family' => $record['fam'],
             'color' => $coll['c'],
-            'records' => [$recordCnt] 
          ];
-      } else {
-         array_push($taxaArr[$record['tid']]['records'], $recordCnt);
       }
 
       //Collect all Collections
@@ -73,11 +68,8 @@ foreach ($coordArr as $collName => $coll) {
             'name' => $collName,
             'collid' => $record['collid'],
             'color' => $coll['c'],
-            'records' => [$recordCnt] 
          ];
-      } else {
-         array_push($collArr[$record['collid']]['records'], $recordCnt);
-      }
+      } 
 
       $llstrArr = explode(',', $record['llStr']);
       if(count($llstrArr) != 2) continue;
@@ -94,8 +86,6 @@ foreach ($coordArr as $collName => $coll) {
          'lat' => floatval($llstrArr[0]),
          'lng' => floatval($llstrArr[1]),
       ]);
-
-      $recordCnt++;
    }
 }
 ob_get_clean();
