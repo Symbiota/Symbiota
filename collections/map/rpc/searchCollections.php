@@ -81,6 +81,7 @@ foreach ($coordArr as $collName => $coll) {
          'collid' => $record['collid'], 
          'family' => $record['fam'],
          'occid' => $recordId,
+         'host' => $SERVER_HOST . $CLIENT_ROOT,
          'collname' => $collName, 
          'type' => in_array($record['collid'], $obsIDs)? 'observation':'specimen', 
          'lat' => floatval($llstrArr[0]),

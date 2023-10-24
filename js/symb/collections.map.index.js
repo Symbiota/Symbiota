@@ -404,6 +404,13 @@ function openIndPopup(occid, clid) {
   openPopup("../individual/index.php?occid=" + occid + "&clid=" + clid);
 }
 
+function openRecord(record) {
+   let url = record.host? 
+      `http://${record.host}/collections/individual/index.php?occid=${record.occid}` :
+      "../individual/index.php?occid=" + record.occid 
+   openPopup(url);
+}
+
 function openPopup(urlStr) {
   var wWidth = 1000;
   try {

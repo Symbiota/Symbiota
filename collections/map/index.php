@@ -648,7 +648,7 @@ foreach ($coordArr as $collName => $coll) {
                         size: 30
                      })
                   }))
-               .on('click', function() { openIndPU(record.occid) })
+               .on('click', function() { openRecord(record) })
                .bindTooltip(`<div>${record.id}</div>`)
 
                //TODO (Logan) remove global
@@ -1054,14 +1054,16 @@ foreach ($coordArr as $collName => $coll) {
                   infoWin.close(); 
                })
                
-               google.maps.event.addListener(marker, 'click', function() { openIndPU(record.occid)})
+               google.maps.event.addListener(marker, 'click', function() { 
+                  openRecord(record);
+               })
 
                if(clusteroff && !heatmapon) {
-                  marker.setMap(map.mapLayer)
+                  marker.setMap(map.mapLayer);
                }
 
-               taxon.addMarker(record['tid'], marker)
-               collections.addMarker(record['collid'], marker)
+               taxon.addMarker(record['tid'], marker);
+               collections.addMarker(record['collid'], marker);
             }
 
             return { taxonMapGroup: taxon, collectionMapGroup: collections };
