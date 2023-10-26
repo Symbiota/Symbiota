@@ -941,6 +941,33 @@ class OccurrenceUtilities {
 		return $recMap;
 	}
 
+	public static function verifyUser($user, $conn){
+		//If input is numberic, verify against uid, or convert username or email to uid
+		$uid = null;
+		$paramArr = array();
+		$typeStr = '';
+		$sql = 'SELECT uid FROM users WHERE ';
+		if(is_numeric($user)){
+			$sql .= 'uid = ?';
+			$paramArr[] = $user;
+			$typeStr = 'i';
+		}
+		else{
+			$sql .= 'username = ? OR email = ?';
+			$paramArr[] = $user;
+			$paramArr[] = $user;
+			$typeStr = 'ss';
+		}
+		if($stmt = $conn->prepare($sql)){
+			$stmt->bind_param($typeStr, ...$paramArr);
+			$stmt->execute();
+			$stmt->bind_result($uid);
+			$stmt->fetch();
+			$stmt->close();
+		}
+		return $uid;
+	}
+
 	private static function dateCheck($inStr){
 		$retStr = $inStr;
 		if($inStr > 2100 && $inStr < 45000){

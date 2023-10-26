@@ -1,5 +1,6 @@
 <?php
 include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once('OccurrenceUtilities.php');
 
 class OmMaterialSample{
 
@@ -28,8 +29,7 @@ class OmMaterialSample{
 
 	public function getMaterialSampleArr(){
 		$retArr = array();
-		$sql = 'SELECT m.matSampleID, m.sampleType, m.catalogNumber, m.guid, m.sampleCondition, m.disposition, m.preservationType, m.preparationDetails, m.preparationDate,
-			m.preparedByUid, CONCAT_WS(", ",u.lastname,u.firstname) as preparedBy, m.individualCount, m.sampleSize, m.storageLocation, m.remarks, m.dynamicFields, m.recordID, m.initialTimestamp
+		$sql = 'SELECT m.matSampleID, m.'.implode(', m.', array_keys($this->schemaMap)).', CONCAT_WS(", ",u.lastname,u.firstname) as preparedBy, m.dynamicFields, m.recordID, m.initialTimestamp
 			FROM ommaterialsample m LEFT JOIN users u ON m.preparedByUid = u.uid WHERE m.occid = '.$this->occid;
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_assoc()){
@@ -118,6 +118,10 @@ class OmMaterialSample{
 			if($postField){
 				$value = trim($inputArr[$postField]);
 				if($value === '') $value = null;
+				elseif($value){
+					if(strtolower($postField) == 'preparationdate') $value = OccurrenceUtilities::formatDate($value);
+					if(strtolower($postField) == 'preparedbyuid') $value = OccurrenceUtilities::verifyUser($value, $this->conn);
+				}
 				$this->parameterArr[$field] = $value;
 				$this->typeStr .= $type;
 			}

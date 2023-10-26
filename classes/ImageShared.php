@@ -1,5 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/UuidFactory.php');
+include_once('OccurrenceUtilities.php');
+include_once('UuidFactory.php');
 
 class ImageShared{
 
@@ -36,6 +37,9 @@ class ImageShared{
 	private $photographer = null;
 	private $photographerUid = null;
 	private $format = null;
+	private $hashFunction = null;
+	private $hashValue = null;
+	private $mediaMD5 = null;
 	private $owner = null;
 	private $locality = null;
 	private $occid = null;
@@ -49,17 +53,22 @@ class ImageShared{
 	private $sortSeq = 50;
 	private $sortOccurrence = 5;
 
-	private $sourceUrl = null;
 	private $imgLgUrl = null;
 	private $imgWebUrl = null;
 	private $imgTnUrl = null;
+	private $archiveUrl = null;
+	private $sourceUrl = null;
+	private $referenceUrl = null;
 
 	private $activeImgId = 0;
 	private $errArr = array();
 	private $context = null;
 
 	public function __construct($conn = null){
-		if($conn) $this->conn = $conn;
+		if($conn){
+			$this->conn = $conn;
+			$this->connShared = true;
+		}
 		else $this->conn = MySQLiConnectionFactory::getCon('write');
 		$this->imageRootPath = $GLOBALS["imageRootPath"];
 		if(substr($this->imageRootPath,-1) != "/") $this->imageRootPath .= "/";
@@ -111,16 +120,21 @@ class ImageShared{
 		$this->sourceWidth = 0;
 		$this->sourceHeight = 0;
 
-		$this->sourceUrl = null;
 		$this->imgTnUrl = null;
 		$this->imgWebUrl = null;
 		$this->imgLgUrl = null;
+		$this->archiveUrl = null;
+		$this->sourceUrl = null;
+		$this->referenceUrl = null;
 
 		//Image metadata
 		$this->caption = null;
 		$this->photographer = null;
 		$this->photographerUid = null;
 		$this->format = null;
+		$this->hashFunction = null;
+		$this->hashValue = null;
+		$this->mediaMD5 = null;
 		$this->owner = null;
 		$this->locality = null;
 		$this->occid = null;
@@ -532,14 +546,15 @@ class ImageShared{
 
 			//Save currently loaded record
 			$guid = UuidFactory::getUuidV4();
-			$sql = 'INSERT INTO images (tid, url, thumbnailurl, originalurl, photographer, photographeruid, format, caption, owner, sourceurl,
-				copyright, locality, occid, anatomy, notes, username, sortsequence, sortoccurrence, sourceIdentifier, rights, accessrights, recordID)
-				VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+			$sql = 'INSERT INTO images (tid, url, thumbnailurl, originalurl, archiveUrl, sourceurl, referenceUrl, photographer, photographeruid, format, caption, owner,
+				locality, occid, anatomy, notes, username, sortsequence, sortoccurrence, sourceIdentifier, rights, accessrights, copyright, hashFunction, hashValue, mediaMD5, recordID)
+				VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 			if($stmt = $this->conn->prepare($sql)) {
 				$userName = $this->cleanInStr($GLOBALS['USERNAME']);
-				if($stmt->bind_param('issssissssssisssiissss', $this->tid, $this->imgWebUrl, $this->imgTnUrl, $this->imgLgUrl, $this->photographer, $this->photographerUid, $this->format,
-					$this->caption, $this->owner, $this->sourceUrl, $this->copyright, $this->locality, $this->occid, $this->anatomy, $this->notes, $userName, $this->sortSeq, $this->sortOccurrence,
-					$this->sourceIdentifier, $this->rights, $this->accessRights, $guid)){
+				if($stmt->bind_param('isssssssissssisssiissssssss', $this->tid, $this->imgWebUrl, $this->imgTnUrl, $this->imgLgUrl, $this->archiveUrl, $this->sourceUrl, $this->referenceUrl,
+					$this->photographer, $this->photographerUid, $this->format, $this->caption, $this->owner, $this->locality, $this->occid, $this->anatomy,
+					$this->notes, $userName, $this->sortSeq, $this->sortOccurrence, $this->sourceIdentifier, $this->rights, $this->accessRights, $this->copyright,
+					$this->hashFunction, $this->hashValue, $this->mediaMD5, $guid)){
 					$stmt->execute();
 					if($stmt->affected_rows == 1){
 						$status = true;
@@ -750,13 +765,8 @@ class ImageShared{
 	}
 
 	public function setPhotographerUid($v){
-		if(is_numeric($v)){
-			$this->photographerUid = $v;
-		}
-	}
-
-	public function setSourceUrl($v){
-		$this->sourceUrl = $this->cleanInStr($v);
+		$v = OccurrenceUtilities::verifyUser($v, $this->conn);
+		$this->photographerUid = $v;
 	}
 
 	public function setImgLgUrl($v){
@@ -771,6 +781,18 @@ class ImageShared{
 		$this->imgTnUrl = $this->cleanInStr($v);
 	}
 
+	public function setArchiveUrl($v){
+		$this->archiveUrl = $this->cleanInStr($v);
+	}
+
+	public function setSourceUrl($v){
+		$this->sourceUrl = $this->cleanInStr($v);
+	}
+
+	public function setReferenceUrl($v){
+		$this->referenceUrl = $this->cleanInStr($v);
+	}
+
 	public function getTargetPath(){
 		return $this->targetPath;
 	}
@@ -781,6 +803,18 @@ class ImageShared{
 
 	public function getFormat(){
 		return $this->format;
+	}
+
+	public function setHashFunction($v){
+		$this->hashFunction = $this->cleanInStr($v);
+	}
+
+	public function setHashValue($v){
+		$this->hashValue = $this->cleanInStr($v);
+	}
+
+	public function setMediaMD5($v){
+		$this->mediaMD5 = $this->cleanInStr($v);
 	}
 
 	public function setOwner($v){
@@ -1152,7 +1186,7 @@ class ImageShared{
 	private function cleanInStr($str){
 		$newStr = trim($str);
 		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
+		//$newStr = $this->conn->real_escape_string($newStr);
 		return $newStr;
 	}
 }

@@ -18,6 +18,8 @@ $LANG['SELECT_RELATIONSHIP'] = 'Select a Relationship (required)';
 $LANG['COLLECTION_MENU'] = 'Collection Management Menu';
 $LANG['DATA_IMPORTER'] = 'Extended Data Importer';
 $LANG['ACTION_PANEL'] = 'Action Panel';
+$LANG['STARTING_PROCESS'] = 'Starting to process input file';
+$LANG['DONE_PROCESSING'] = 'Done process input file';
 $LANG['FIELD_MAPPING'] = 'Field Mapping';
 $LANG['ASSOCIATION_TYPE'] = 'Association Type';
 $LANG['RELATIONSHIP'] = 'Relationship';
@@ -31,4 +33,12 @@ $LANG['ASSOCIATIONS'] = 'Associations';
 $LANG['DETERMINATIONS'] = 'Determinations';
 $LANG['IMAGE_FIELD_MAP'] = 'Image Field Map';
 $LANG['MATERIAL_SAMPLE'] = 'Material Sample';
+//Language fragments located within OccurrenceImport class file
+$LANG['PROCESSING_CATNUM'] = 'Processing Catalog Number';
+$LANG['UPDATING_STATS'] = 'Updating statistics';
+$LANG['IMAGE_LOADED'] = 'Image loaded successfully';
+$LANG['ASSOC_UPDATED'] = 'Association updated';
+$LANG['ASSOC_ADDED'] = 'Association added';
+$LANG['MAT_SAMPLE_ADDED'] = 'Material Sample added';
+$LANG['DETERMINATION_ADDED'] = 'Determination added';
 ?>

@@ -197,7 +197,7 @@ class UtilitiesFileImport extends Manager {
 	public function getTranslation($sourceField){
 		$retStr = strtolower($sourceField);
 		if($p =strpos($retStr, ':')) $retStr = substr($retStr,$p);
-		$retStr = preg_replace('/[^a-z]+/', '', $retStr);
+		$retStr = preg_replace('/[^a-z0-9_#-]+/', '', $retStr);
 		if(array_key_exists($retStr, $this->translationMap)) $retStr = $this->translationMap[$retStr];
 		return $retStr;
 	}

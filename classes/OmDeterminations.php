@@ -3,9 +3,9 @@ include_once('Manager.php');
 include_once('OccurrenceUtilities.php');
 include_once('UuidFactory.php');
 
-class OmOccurAssociations extends Manager{
+class OmDeterminations extends Manager{
 
-	private $assocID = null;
+	private $detID = null;
 	private $occid = null;
 	private $schemaMap = array();
 	private $parameterArr = array();
@@ -13,27 +13,28 @@ class OmOccurAssociations extends Manager{
 
 	public function __construct($conn){
 		parent::__construct(null, 'write', $conn);
-		$this->schemaMap = array('associationType' => 's', 'occidAssociate' => 'i', 'relationship' => 's', 'relationshipID' => 's', 'subType' => 's', 'identifier' => 's',
-			'basisOfRecord' => 's', 'resourceUrl' => 's', 'verbatimSciname' => 's', 'tid' => 'i', 'locationOnHost' => 's', 'conditionOfAssociate' => 's', 'establishedDate' => 's',
-			'imageMapJSON' => 's', 'dynamicProperties' => 's', 'notes' => 's', 'accordingTo' => 's', 'sourceIdentifier' => 's', 'recordID' => 's');
+		$this->schemaMap = array('identifiedBy' => 's', 'dateIdentified' => 's', 'higherClassification' => 's', 'family' => 's', 'sciname' => 's', 'verbatimIdentification' => 's',
+			'scientificNameAuthorship' => 's', 'identificationUncertain' => 'i', 'identificationQualifier' => 's', 'isCurrent' => 'i', 'printQueue' => 'i', 'appliedStatus' => 'i',
+			'securityStatus' => 'i', 'securityStatusReason' => 's', 'detType' => 's', 'identificationReferences' => 's', 'identificationRemarks' => 's', 'taxonRemarks' => 's',
+			'identificationVerificationStatus' => 's', 'taxonConceptID' => 's', 'sourceIdentifier' => 's', 'sortSequence' => 'i');
 	}
 
 	public function __destruct(){
 		parent::__destruct();
 	}
 
-	public function getAssociationArr($filterArr = null){
+	public function getDeterminationArr($filterArr = null){
 		$retArr = array();
 		$uidArr = array();
-		$sql = 'SELECT assocID, occid, '.implode(', ', array_keys($this->schemaMap)).', initialTimestamp FROM omoccurassociations WHERE ';
-		if($this->assocID) $sql .= '(assocID = '.$this->assocID.') ';
+		$sql = 'SELECT detID, occid, '.implode(', ', array_keys($this->schemaMap)).', initialTimestamp FROM omoccurdeterminations WHERE ';
+		if($this->detID) $sql .= '(detID = '.$this->detID.') ';
 		elseif($this->occid) $sql .= '(occid = '.$this->occid.') ';
 		foreach($filterArr as $field => $cond){
 			$sql .= 'AND '.$field.' = "'.$this->cleanInStr($cond).'" ';
 		}
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_assoc()){
-				$retArr[$r['assocID']] = $r;
+				$retArr[$r['detID']] = $r;
 				$uidArr[$r['createdUid']] = $r['createdUid'];
 				$uidArr[$r['modifiedUid']] = $r['modifiedUid'];
 			}
@@ -48,20 +49,20 @@ class OmOccurAssociations extends Manager{
 				}
 				$rs->free();
 			}
-			foreach($retArr as $assocID => $assocArr){
-				if($assocArr['createdUid'] && array_key_exists($assocArr['createdUid'], $uidArr)) $retArr[$assocID]['createdBy'] = $uidArr[$assocArr['createdUid']];
-				if($assocArr['modifiedUid'] && array_key_exists($assocArr['modifiedUid'], $uidArr)) $retArr[$assocID]['modifiedBy'] = $uidArr[$assocArr['modifiedUid']];
+			foreach($retArr as $detID => $detArr){
+				if($detArr['createdUid'] && array_key_exists($detArr['createdUid'], $uidArr)) $retArr[$detID]['createdBy'] = $uidArr[$detArr['createdUid']];
+				if($detArr['modifiedUid'] && array_key_exists($detArr['modifiedUid'], $uidArr)) $retArr[$detID]['modifiedBy'] = $uidArr[$detArr['modifiedUid']];
 			}
 		}
 		return $retArr;
 	}
 
-	public function insertAssociation($inputArr){
+	public function insertDetermination($inputArr){
 		$status = false;
 		if($this->occid){
 			if(!isset($inputArr['createdUid'])) $inputArr['createdUid'] = $GLOBALS['SYMB_UID'];
-			$sql = 'INSERT INTO omoccurassociations(occid, recordID';
-			$sqlValues = '?, ?, ?, ';
+			$sql = 'INSERT INTO omoccurdeterminations(occid, recordID';
+			$sqlValues = '?, ?, ';
 			$paramArr = array($this->occid);
 			$paramArr[] = UuidFactory::getUuidV4();
 			$this->typeStr = 'is';
@@ -76,22 +77,22 @@ class OmOccurAssociations extends Manager{
 				$stmt->bind_param($this->typeStr, ...$paramArr);
 				if($stmt->execute()){
 					if($stmt->affected_rows || !$stmt->error){
-						$this->assocID = $stmt->insert_id;
+						$this->detID = $stmt->insert_id;
 						$status = true;
 					}
-					else $this->errorMessage = 'ERROR inserting omoccurassociations record (2): '.$stmt->error;
+					else $this->errorMessage = 'ERROR inserting omoccurdeterminations record (2): '.$stmt->error;
 				}
-				else $this->errorMessage = 'ERROR inserting omoccurassociations record (1): '.$stmt->error;
+				else $this->errorMessage = 'ERROR inserting omoccurdeterminations record (1): '.$stmt->error;
 				$stmt->close();
 			}
-			else $this->errorMessage = 'ERROR preparing statement for omoccurassociations insert: '.$this->conn->error;
+			else $this->errorMessage = 'ERROR preparing statement for omoccurdeterminations insert: '.$this->conn->error;
 		}
 		return $status;
 	}
 
-	public function updateAssociation($inputArr){
+	public function updateDetermination($inputArr){
 		$status = false;
-		if($this->assocID && $this->conn){
+		if($this->detID && $this->conn){
 			$this->setParameterArr($inputArr);
 			$paramArr = array();
 			$sqlFrag = '';
@@ -99,17 +100,17 @@ class OmOccurAssociations extends Manager{
 				$sqlFrag .= $fieldName . ' = ?, ';
 				$paramArr[] = $value;
 			}
-			$paramArr[] = $this->assocID;
+			$paramArr[] = $this->detID;
 			$this->typeStr .= 'i';
-			$sql = 'UPDATE omoccurassociations SET '.trim($sqlFrag, ', ').' WHERE (assocID = ?)';
+			$sql = 'UPDATE omoccurdeterminations SET '.trim($sqlFrag, ', ').' WHERE (detID = ?)';
 			if($stmt = $this->conn->prepare($sql)) {
 				$stmt->bind_param($this->typeStr, ...$paramArr);
 				$stmt->execute();
 				if($stmt->affected_rows || !$stmt->error) $status = true;
-				else $this->errorMessage = 'ERROR updating omoccurassociations record: '.$stmt->error;
+				else $this->errorMessage = 'ERROR updating omoccurdeterminations record: '.$stmt->error;
 				$stmt->close();
 			}
-			else $this->errorMessage = 'ERROR preparing statement for updating omoccurassociations: '.$this->conn->error;
+			else $this->errorMessage = 'ERROR preparing statement for updating omoccurdeterminations: '.$this->conn->error;
 		}
 		return $status;
 	}
@@ -134,26 +135,26 @@ class OmOccurAssociations extends Manager{
 		if(isset($inputArr['occid']) && $inputArr['occid'] && !$this->occid) $this->occid = $inputArr['occid'];
 	}
 
-	public function deleteAssociation(){
-		if($this->assocID){
-			$sql = 'DELETE FROM omoccurassociations WHERE assocID = '.$this->assocID;
+	public function deleteDetermination(){
+		if($this->detID){
+			$sql = 'DELETE FROM omoccurdeterminations WHERE detID = '.$this->detID;
 			if($this->conn->query($sql)){
 				return true;
 			}
 			else{
-				$this->errorMessage = 'ERROR deleting omoccurassociations record: '.$this->conn->error;
+				$this->errorMessage = 'ERROR deleting omoccurdeterminations record: '.$this->conn->error;
 				return false;
 			}
 		}
 	}
 
 	//Setters and getters
-	public function setAssocID($id){
-		if(is_numeric($id)) $this->assocID = $id;
+	public function setDetID($id){
+		if(is_numeric($id)) $this->detID = $id;
 	}
 
-	public function getAssocID(){
-		return $this->assocID;
+	public function getDetID(){
+		return $this->detID;
 	}
 
 	public function setOccid($id){

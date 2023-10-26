@@ -122,6 +122,9 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 				if(selectElement.value == 1){
 					document.getElementById("associationType-div").style.display = "block";
 				}
+				else{
+					document.getElementById("associationType-div").style.display = "none";
+				}
 			}
 		</script>
 		<style>
@@ -165,93 +168,97 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 			<?php
 			if(!$isEditor){
 				echo '<h2>ERROR: not authorized to access this page</h2>';
-			} elseif(!$collid){
-				echo '<h2>ERROR: Collection identifier not set</h2>';
-			} else{
+			}
+			elseif(!$importManager->getCollMeta('collName')){
+				echo '<h2>ERROR: Collection identifier not valid</h2>';
+			}
+			else{
 				$actionStatus = false;
-				if($action){
+				if($action == 'importData'){
 					?>
 					<fieldset>
 						<legend><?= $LANG['ACTION_PANEL'] ?></legend>
 						<?php
-						if($action == 'importData'){
-							$importManager->setCreateNewRecord($createNew);
-							echo '<ul>';
-							$importManager->loadData($_POST);
-							echo '</ul>';
-						} elseif($action == 'initiateImport'){
-							if($actionStatus = $importManager->importFile()){
-								$importManager->setTargetFieldArr();
-								?>
-								<form name="mappingform" action="importextended.php" method="post" onsubmit="return validateMappingForm(this)">
-									<fieldset>
-										<legend><b><?= $LANG['FIELD_MAPPING'] ?></b></legend>
-										<?php
-										if($associationType){
-											?>
-											<div class="formField-div">
-												<label for="associationType"><?= $LANG['ASSOCIATION_TYPE'] ?>:</label> <?= $associationType ?>
-												<input name="associationType" type="hidden" value ="<?= $associationType ?>" >
-											</div>
-											<?php
-										}
-										if($importType == 1){
-											?>
-											<div class="formField-div">
-												<label><?= $LANG['RELATIONSHIP'] ?>:</label>
-												<select name="relationship">
-													<option value="">-------------------</option>
-													<?php
-													$filter = '';
-													if($associationType == 'resource') $filter = 'associationType:resource';
-													$relationshipArr = $importManager->getControlledVocabulary('omoccurassociations', 'relationship', $filter);
-													foreach($relationshipArr as $term => $display){
-														echo '<option value="'.$term.'">'.$display.'</option>';
-													}
-													?>
-												</select>
-											</div>
-											<?php
-										}
-										?>
-										<div class="formField-div">
-											<?php
-											echo $importManager->getFieldMappingTable();
-											?>
-										</div>
-										<?php
-										if($importType == 3){
-											?>
-											<div class="formField-div">
-												<input name="createNew" type="checkbox" value ="1" <?= ($createNew?'checked':'') ?>>
-												<label for="createNew"><?= $LANG['NEW_BLANK_RECORD'] ?></label>
-											</div>
-											<?php
-										}
-										elseif($importType == 1){
-											?>
-											<div class="formField-div">
-												<input name="replace" type="checkbox" value ="1">
-												<label for="replace"><?= $LANG['MATCHING_IDENTIFIERS'] ?></label>
-											</div>
-											<?php
-										}
-										?>
-										<div style="margin:15px;">
-											<input name="collid" type="hidden" value="<?= $collid; ?>">
-											<input name="importType" type="hidden" value="<?= $importType ?>">
-											<input name="fileName" type="hidden" value="<?= htmlspecialchars($importManager->getFileName(), HTML_SPECIAL_CHARS_FLAGS) ?>">
-											<button name="submitAction" type="submit" value="importData"><?= $LANG['IMPORT_DATA'] ?></button>
-										</div>
-									</fieldset>
-								</form>
-								<?php
-							}
-							else echo $LANG['ERR_SETTING_IMPORT'].': '.$importManager->getErrorMessage();
+						$importManager->setCreateNewRecord($createNew);
+						echo '<ul>';
+						echo '<li>'.$LANG['STARTING_PROCESS'].' '.$fileName.' ('.date('Y-m-d H:i:s').')</li>';
+						if($importManager->loadData($_POST)){
+							echo '<li>'.$LANG['DONE_PROCESSING'].' ('.date('Y-m-d H:i:s').')</li>';
 						}
+						echo '</ul>';
 						?>
 					</fieldset>
-				<?php
+					<?php
+				}
+				elseif($action == 'initiateImport'){
+					if($actionStatus = $importManager->importFile()){
+						$importManager->setTargetFieldArr();
+						?>
+						<form name="mappingform" action="importextended.php" method="post" onsubmit="return validateMappingForm(this)">
+							<fieldset>
+								<legend><b><?= $LANG['FIELD_MAPPING'] ?></b></legend>
+								<?php
+								if($associationType){
+									?>
+									<div class="formField-div">
+										<label for="associationType"><?= $LANG['ASSOCIATION_TYPE'] ?>:</label> <?= $associationType ?>
+										<input name="associationType" type="hidden" value ="<?= $associationType ?>" >
+									</div>
+									<?php
+								}
+								if($importType == 1){
+									?>
+									<div class="formField-div">
+										<label><?= $LANG['RELATIONSHIP'] ?>:</label>
+										<select name="relationship">
+											<option value="">-------------------</option>
+											<?php
+											$filter = '';
+											if($associationType == 'resource') $filter = 'associationType:resource';
+											$relationshipArr = $importManager->getControlledVocabulary('omoccurassociations', 'relationship', $filter);
+											foreach($relationshipArr as $term => $display){
+												echo '<option value="'.$term.'">'.$display.'</option>';
+											}
+											?>
+										</select>
+									</div>
+									<?php
+								}
+								?>
+								<div class="formField-div">
+									<?php
+									echo $importManager->getFieldMappingTable();
+									?>
+								</div>
+								<?php
+								if($importType == 3){
+									?>
+									<div class="formField-div">
+										<input name="createNew" type="checkbox" value ="1" <?= ($createNew?'checked':'') ?>>
+										<label for="createNew"><?= $LANG['NEW_BLANK_RECORD'] ?></label>
+									</div>
+									<?php
+								}
+								elseif($importType == 1){
+									?>
+									<div class="formField-div">
+										<input name="replace" type="checkbox" value ="1">
+										<label for="replace"><?= $LANG['MATCHING_IDENTIFIERS'] ?></label>
+									</div>
+									<?php
+								}
+								?>
+								<div style="margin:15px;">
+									<input name="collid" type="hidden" value="<?= $collid; ?>">
+									<input name="importType" type="hidden" value="<?= $importType ?>">
+									<input name="fileName" type="hidden" value="<?= htmlspecialchars($importManager->getFileName(), HTML_SPECIAL_CHARS_FLAGS) ?>">
+									<button name="submitAction" type="submit" value="importData"><?= $LANG['IMPORT_DATA'] ?></button>
+								</div>
+							</fieldset>
+						</form>
+						<?php
+					}
+					else echo $LANG['ERR_SETTING_IMPORT'].': '.$importManager->getErrorMessage();
 				}
 				if(!$actionStatus){
 					?>
@@ -268,7 +275,9 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 									<option value="1"><?= $LANG['ASSOCIATIONS'] ?></option>
 									<option value="2"><?= $LANG['DETERMINATIONS'] ?></option>
 									<option value="3"><?= $LANG['IMAGE_FIELD_MAP'] ?></option>
-									<option value="4"><?= $LANG['MATERIAL_SAMPLE'] ?></option>
+									<?php
+									if($importManager->getCollMeta('materialSample')) echo '<option value="4">'.$LANG['MATERIAL_SAMPLE'].'</option>';
+									?>
 								</select>
 							</div>
 							<div id="associationType-div" class="formField-div" style="display:none">
