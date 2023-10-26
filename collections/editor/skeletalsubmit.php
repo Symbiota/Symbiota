@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceSkeletal.php');
@@ -29,7 +31,7 @@ if($collid){
 	}
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['OCC_SKEL_SUBMIT']; ?></title>
@@ -41,7 +43,7 @@ if($collid){
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.skeletal.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/shared.js?ver=1" type="text/javascript"></script>
-	<style type="text/css">
+	<style>
 		label{  }
 		fieldset{ padding: 15px; }
 		legend{ font-weight: bold; }
@@ -67,12 +69,12 @@ if($collid){
 		}
 		if($isEditor){
 			?>
-			<fieldset>
-				<legend>
-					<b><?php echo $LANG['SKELETAL_DATA']; ?></b>
-					<a id="optionimgspan" href="#" onclick="showOptions()"><img src="../../images/list.png" style="width:12px;" title="<?php echo $LANG['DISPLAY_OPTIONS']; ?>" /></a>
-					<a href="#" onclick="toggle('descriptiondiv')"><img src="../../images/info.png" style="width:12px;" title="<?php echo $LANG['TOOL_DESCRIPTION']; ?>" /></a>
-				</legend>
+			<section class="fieldset-like">
+				<h1>
+					<span><b><?php echo $LANG['SKELETAL_DATA']; ?></b></span>
+					<span href="#" onclick="toggle('descriptiondiv')"><img src="../../images/info.png" style="width:12px;" title="<?php echo $LANG['TOOL_DESCRIPTION']; ?>" alt="<?php echo (isset($LANG['IMG_TOOL_DESCRIPTION'])?$LANG['IMG_TOOL_DESCRIPTION']:'Description of Tool Button'); ?>"/></span>
+					<span id="optionimgspan" href="#" onclick="showOptions()"><img src="../../images/list.png" style="width:12px;" title="<?php echo $LANG['DISPLAY_OPTIONS']; ?>" alt="<?php echo (isset($LANG['IMG_DISPLAY_OPTIONS'])?$LANG['IMG_DISPLAY_OPTIONS']:'Display Options Button'); ?>"/></span>
+				</h1>
 				<div id="descriptiondiv" style="display:none;margin:10px;width:80%">
 					<div style="margin-bottom:5px">
 						<?php echo $LANG['SKELETAL_DESCIPRTION_1']; //This page is typically used to enter skeletal records into the system during the imaging process...?>
@@ -117,7 +119,7 @@ if($collid){
 					<div>
 						<div style="">
 							<div id="scinamediv" style="float:left">
-								<label><?php echo $LANG['SCINAME']; ?>:</label>
+								<label for="fsciname"><?php echo $LANG['SCINAME']; ?>:</label>
 								<input id="fsciname" name="sciname" type="text" value="" style="width:300px"/>
 								<input id="ftidinterpreted" name="tidinterpreted" type="hidden" value="" />
 							</div>
@@ -234,11 +236,12 @@ if($collid){
 						</div>
 					</div>
 				</form>
-			</fieldset>
-			<fieldset style="padding:15px;">
-				<legend><b><?php echo $LANG['RECORDS']; ?></b></legend>
-				<div id="occurlistdiv"></div>
-			</fieldset>
+			</section>
+			<section class="fieldset-like">
+				<h1>
+					<span><b><?php echo $LANG['RECORDS']; ?></b></span>
+				</h1>
+			</section>
 			<?php
 		}
 		else{

@@ -11,7 +11,9 @@ $LANG['COL_MNGMT'] = 'Collection Management';
 $LANG['DISPLAY_INSTRUCTIONS'] = 'Display Instructions';
 $LANG['SKELETAL_DATA'] = 'Skeletal Data';
 $LANG['DISPLAY_OPTIONS'] = 'Display Options';
+$LANG['IMG_DISPLAY_OPTIONS'] = 'Display Options Button';
 $LANG['TOOL_DESCRIPTION'] = 'Description of Tool';
+$LANG['IMG_TOOL_DESCRIPTION'] = 'Description of Tool Button';
 $LANG['SKELETAL_DESCIPRTION_1'] = 'This page is typically used to enter skeletal records into the system during the imaging process. Since collections are
 						commonly organized by scientific name, country, and state, it takes little extra effort for imaging teams to
 						collect this information while they are imaging specimens. The imaging team enters the basic collection
