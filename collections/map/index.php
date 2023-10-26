@@ -55,7 +55,7 @@ if(!empty($MAPPING_BOUNDARIES)){
 		$longCen = ($boundLngMax + $boundLngMin)/2;
 	}
 }
-$bounds = [ [$boundLatMax, $boundLngMax], [$boundLatMin, $boundLngMin]];
+$bounds = [ [$boundLatMax, $boundLngMax], [$boundLatMin, $boundLngMin] ];
 
 //Gets Coordinates
 $coordArr = $mapManager->getCoordinateMap(0,$recLimit);
@@ -65,6 +65,44 @@ $collArr = [];
 $defaultColor = "#B2BEB5";
 
 $recordCnt = 0;
+
+if(empty($EXTERNAL_PORTAL_HOSTS)) {
+   $EXTERNAL_PORTAL_HOSTS = [];
+}
+
+/*
+function echo_another_card($title = "Default Title", $desc = "Default Description", $img = "/images/fallback.jpg") {
+   $html = <<<"HTML"
+   <div class="card">
+      <img src="$img" alt="">
+      <h2>$title</h2>
+      <p>$desc</p>
+   </div>
+   HTML;
+
+   return $html;
+}
+
+function echo_card($title = "Default Title", $desc = "Default Description", $img = "/images/fallback.jpg") {
+
+   $call = function($func) {
+      return "${!${''} = $func() }";
+   };
+
+   $html = <<<HTML
+   <div class="card">
+      <img src="$img" alt="">
+      <h2>$title</h2>
+      <p>$desc</p>
+   </div>
+   {$call(fn () => echo_another_card())}
+
+   ${!${''} = echo_another_card() }
+   ${!${''} = echo_another_card() }
+   HTML;
+
+   echo $html;
+}*/
 
 foreach ($coordArr as $collName => $coll) {
    //Collect all the collections
@@ -263,17 +301,26 @@ foreach ($coordArr as $collName => $coll) {
       }
 	</style>
 	<script type="text/javascript">
+      //Clid
       let recordArr = [];
       let taxaMap = [];
       let collArr = [];
       let searchVar = "";
-      let map_bounds= [ [90, 180], [-90, -180] ];
       let default_color = "E69E67";
-      let puWin;
+
+      //Map Globals
       let shape;
+      let map_bounds= [ [90, 180], [-90, -180] ];
+
+      //Array for holding all search results from current and outside portals
       let mapGroups = [];
 
+      //Array holding all external portals included in the map search
+      let externalPortalhosts = [];
+
+      //Object that maps taxa to matching mapGroup Index
       let taxaLegendMap = {}
+      //Object that maps collections to matching mapGroup Index
       let collLegendMap = {}
 
       const colorChange = new Event("colorchange",  {
@@ -366,14 +413,6 @@ foreach ($coordArr as $collName => $coll) {
          document.getElementById("taxaCountNum").innerHTML = taxaArr.length;
       }
 
-      function changeTaxaColor() {
-         for (let key of Object.keys(taxaMap)) {
-            const taxa = taxaMap[key];
-
-            document.getElementById(`taxa-${taxa.tid}`).style.backgroundColor = taxa.color;
-         }
-      }
-      
       function buildCollectionLegend() {
          collLegendMap = {}
 
@@ -758,17 +797,24 @@ foreach ($coordArr as $collName => $coll) {
                if (res) loadOccurenceRecords(res);
             });
 
-            //This is for handeling multiple portals
-            const searches = await Promise.all([
+            let searches = [
                searchCollections(formData),
-               //searchCollections(formData, 'http://someOtherPortal')
-            ])
+            ]
+
+            formData.set("taxa", "Pinus amabilis");
+
+             searches.push(searchCollections(formData),)
+
+            for(let host of externalPortalHosts) {
+               searches.push(searchCollections(formData, host))
+            }
+
+            //This is for handeling multiple portals
+            searches = await Promise.all(searches)
 
             recordArr = [];
-            taxaMap = searches[0].taxaArr? searches[0].taxaArr: {};
-            collArr = searches[0].collArr? searches[0].collArr: {};
-
             mapGroups = [];
+
             for(let search of searches) {
                if(search.recordArr) {
                   recordArr = recordArr.concat(search.recordArr)
@@ -1166,10 +1212,16 @@ foreach ($coordArr as $collName => $coll) {
                if (res) loadOccurenceRecords(res);
             });
 
-            //This is for handeling multiple portals
-            const searches = await Promise.all([
+            let searches = [
                searchCollections(formData),
-            ])
+            ]
+
+            for(let host of externalPortalHosts) {
+               searches.push(searchCollections(formData, host))
+            }
+
+            //This is for handeling multiple portals
+            searches = await Promise.all(searches)
 
             for(let search of searches) {
                recordArr = recordArr.concat(search.recordArr);
@@ -1351,17 +1403,26 @@ foreach ($coordArr as $collName => $coll) {
       }
 
       async function searchCollections(body, host) {
-         const url = host? `${host}/collections/map/rpc/searchcollections.php`: 'rpc/searchcollections.php'
-         let response = await fetch('rpc/searchcollections.php', {
-            method: "POST",
-            credentials: "same-origin",
-            body: body 
-         });
-         return response? await response.json(): { taxaArr: [], collArr: [], recordArr: [] };
+         try {
+            const url = host? `${host}/collections/map/rpc/searchcollections.php`: 'rpc/searchcollections.php'
+
+            let response = await fetch(url, {
+               method: "POST",
+               credentials: "omit",
+               mode: "cors",
+               body: body,
+               headers: {
+               "Access-Control-Allow-Origin": "*"
+               }
+            });
+            return response? await response.json(): { taxaArr: [], collArr: [], recordArr: [] };
+         } catch(e) {
+            return { taxaArr: [], collArr: [], recordArr: [] }
+         }
       }
 
       async function getOccurenceRecords(body, host) {
-         const url = host? `${host}/collections/map/searchcollections.php`: 'occurrencelist.php'
+         const url = host? `${host}/collections/map/occurrencelist.php`: 'occurrencelist.php'
          let response = await fetch('occurrencelist.php', {
             method: "POST",
             credentials: "same-origin",
@@ -1472,9 +1533,13 @@ foreach ($coordArr as $collName => $coll) {
          try {
             const data = document.getElementById('service-container');
             map_bounds = JSON.parse(data.getAttribute('data-map-bounds'));
+
+            //Loads Init Map Coordinate Data if Any
             taxaMap = JSON.parse(data.getAttribute('data-taxa-map'));
             collArr = JSON.parse(data.getAttribute('data-coll-map'));
             recordArr = JSON.parse(data.getAttribute('data-records'));
+
+            externalPortalHosts = JSON.parse(data.getAttribute('data-external-portal-hosts'));
 
             searchVar = data.getAttribute('data-search-var');
             if(searchVar) sessionStorage.querystr = searchVar;
@@ -1532,6 +1597,7 @@ foreach ($coordArr as $collName => $coll) {
    data-taxa-map="<?=htmlspecialchars(json_encode($taxaArr))?>"
    data-coll-map="<?=htmlspecialchars(json_encode($collArr))?>"
    data-records="<?=htmlspecialchars(json_encode($recordArr))?>"
+   data-external-portal-hosts="<?=htmlspecialchars(json_encode($EXTERNAL_PORTAL_HOSTS))?>"
    class="service-container" 
       />
       <div>
