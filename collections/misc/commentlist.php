@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceSupport.php');
@@ -80,7 +82,7 @@ if($isEditor){
 	$commentArr = $commentManager->getComments($start, $limit, $tsStart, $tsEnd, $uid, $rs, $showAllGeneralObservations);
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title><?php echo $DEFAULT_TITLE.' '.$LANG['COMMENTS_LISTING']; ?></title>
 		<?php
@@ -155,11 +157,14 @@ if($isEditor){
 				}
 				?>
 				<!-- Option box -->
-				<fieldset style="float:right;width:350px;margin:10px;">
-					<legend><b><?php echo $LANG['FILTER_OPT']; ?></b></legend>
+				<section class="fieldset-like" style="float:right;width:350px;margin:10px;">
+					<h1>
+						<span><?php echo $LANG['FILTER_OPT'];?></span>
+					</h1>
 					<form name="optionform" action="commentlist.php" method="post">
 						<div>
-							<select name="uid" onchange="this.form.submit()">
+							<label for="commenter"> <?php echo (isset($LANG['COMMENTER']) ? $LANG['COMMENTER'] : 'Commenter'); ?>:</label>
+							<select id="commenter" name="uid">
 								<option value="0"><?php echo $LANG['ALL_COMMENTERS']; ?></option>
 								<option value="0">------------------------</option>
 								<?php
@@ -176,24 +181,24 @@ if($isEditor){
 						}
 						?>
 						<div>
-							<?php echo $LANG['DATE']; ?>:
-							<input name="tsstart" type="date" value="<?php echo $tsStart; ?>" onchange="this.form.submit()" title="Start date" />
-							- <input name="tsend" type="date" value="<?php echo $tsEnd; ?>" onchange="this.form.submit()" title="End date" />
+							<label for="tsstart"><?php echo $LANG['DATE']; ?>: </label>
+							<input name="tsstart" type="date" value="<?php echo $tsStart; ?>" title="<?php echo (isset($LANG['START_DATE']) ? $LANG['START_DATE'] : 'Start Date'); ?>" />
+							- <input name="tsend" type="date" value="<?php echo $tsEnd; ?>" title="<?php echo (isset($LANG['END_DATE']) ? $LANG['END_DATE'] : 'End Date'); ?>" aria-label="<?php echo (isset($LANG['END_DATE']) ? $LANG['END_DATE'] : 'End Date'); ?>" />
 						</div>
 						<div style="float:right;margin-top:60px;">
 							<button type="submit" name="submitbutton" value="Refresh List"><?php echo $LANG['REFRESH_LIST']; ?></button>
 						</div>
 						<div>
-							<input name="rs" type="radio" value="1" <?php echo ($rs==1?'checked':''); ?> onchange="this.form.submit()" /> <?php echo $LANG['PUBLIC']; ?> <br/>
-							<input name="rs" type="radio" value="2" <?php echo ($rs==2?'checked':''); ?> onchange="this.form.submit()" /> <?php echo $LANG['NON-PUBLIC']; ?> <br/>
-							<input name="rs" type="radio" value="3" <?php echo ($rs==3?'checked':''); ?> onchange="this.form.submit()" /> <?php echo $LANG['REVIEWED']; ?> <br/>
-							<input name="rs" type="radio" value="0" <?php echo (!$rs?'checked':''); ?> onchange="this.form.submit()" /> <?php echo $LANG['ALL']; ?>
+							<input id="public" name="rs" type="radio" value="1" <?php echo ($rs==1?'checked':''); ?> /> <label for="public"> <?php echo $LANG['PUBLIC']; ?> <br/> </label>
+							<input id="nonpublic" name="rs" type="radio" value="2" <?php echo ($rs==2?'checked':''); ?> /> <label for="nonpublic"> <?php echo $LANG['NON-PUBLIC']; ?> <br/> </label>
+							<input id="reviewed" name="rs" type="radio" value="3" <?php echo ($rs==3?'checked':''); ?> /> <label for="reviewed"> <?php echo $LANG['REVIEWED']; ?> <br/> </label>
+							<input id="all" name="rs" type="radio" value="0" <?php echo (!$rs?'checked':''); ?> /> <label for="all"> <?php echo $LANG['ALL']; ?> </label>
 						</div>
 						<div>
 							<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 						</div>
 					</form>
-				</fieldset>
+				</section>
 				<?php
 				if($commentArr){
 					foreach($commentArr as $comid => $cArr){
