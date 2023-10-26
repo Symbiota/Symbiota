@@ -89,7 +89,7 @@ if($isEditor){
 							$tRankArr = $loaderObj->getRankArr();
 							foreach($tRankArr as $rankId => $nameArr){
 								foreach($nameArr as $rName){
-									echo '<option value="'.$rankId.'" '.($rankId==220?' SELECTED':'').'>'.$rName.'</option>';
+									echo '<option value="' . $rankId . '" ' . ($rankId == 220 ? ' SELECTED' : '') . '>' . $rName . '</option>';
 								}
 							}
 							?>
