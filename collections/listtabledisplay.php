@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/collections/listtabledisplay.'.$LANG_TAG.'.php');
@@ -20,11 +22,11 @@ $sortOrder = htmlspecialchars($sortOrder, HTML_SPECIAL_CHARS_FLAGS);
 $collManager = new OccurrenceListManager();
 $searchVar = $collManager->getQueryTermStr();
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['COL_RESULTS'])?$LANG['COL_RESULTS']:'Collections Search Results Table'); ?></title>
-	<style type="text/css">
+	<style>
 		table.styledtable td {
 			white-space: nowrap;
 		}
@@ -50,7 +52,7 @@ $searchVar = $collManager->getQueryTermStr();
 	<script src="../js/symb/collections.list.js?ver=9" type="text/javascript"></script>
 </head>
 <body style="margin-left: 0px; margin-right: 0px;background-color:white;">
-	<div id="">
+	<div>
 		<div style="width:850px;margin-bottom:5px;">
 			<div style="float:right;">
 				<!--
@@ -61,63 +63,67 @@ $searchVar = $collManager->getQueryTermStr();
 				</div>
 				-->
 				<form action="list.php" method="post" style="float:left">
-					<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;" title="<?php echo (isset($LANG['LIST_DISPLAY'])?$LANG['LIST_DISPLAY']:'List Display'); ?>">
-						<img src="../images/list.png" style="width:15px; height:15px" />
+					<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;" title="<?php echo (isset($LANG['LIST_DISPLAY'])?$LANG['LIST_DISPLAY']:'List Display'); ?>" >
+						<img src="../images/list.png" style="width:15px; height:15px" alt="<?php echo (isset($LANG['LIST_DISPLAY'])?$LANG['LIST_DISPLAY']:'List Display'); ?>"/>
 					</button>
 					<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 				</form>
 				<form action="download/index.php" method="post" style="float:left" onsubmit="targetPopup(this)">
 					<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;" title="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>">
-						<img src="../../images/dl2.png" srcset="../images/download.svg" class="svg-icon" style="width:15px; height:15px" />
+						<img src="../../images/dl2.png" srcset="../images/download.svg" class="svg-icon" style="width:15px; height:15px" alt="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>" />
 					</button>
 					<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 					<input name="dltype" type="hidden" value="specimen" />
 				</form>
 				<div style="float:left">
 					<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;" onclick="copyUrl()" title="<?php echo (isset($LANG['COPY_TO_CLIPBOARD'])?$LANG['COPY_TO_CLIPBOARD']:'Copy URL to Clipboard'); ?>">
-						<img src="../../images/dl2.png" srcset="../images/link.svg" class="svg-icon" style="width:15px; height:15px" />
+						<img src="../../images/dl2.png" srcset="../images/link.svg" class="svg-icon" style="width:15px; height:15px" alt="<?php echo (isset($LANG['COPY_TO_CLIPBOARD'])?$LANG['COPY_TO_CLIPBOARD']:'Copy URL to Clipboard'); ?>"/>
 					</button>
 				</div>
 			</div>
-			<fieldset style="padding:5px;width:650px;">
-				<legend><b><?php echo (isset($LANG['SORT'])?$LANG['SORT']:'Sort Results'); ?></b></legend>
-				<form name="sortform" action="listtabledisplay.php" method="post">
-					<div style="float:left;">
-						<label for="sortfield1"><?php echo (isset($LANG['SORT_BY'])?$LANG['SORT_BY']:'Sort By'); ?>:</label>
-						<select name="sortfield1" id="sortfield1">
-							<?php
-							$sortFields = array('c.collectionname' => (isset($LANG['COLLECTION'])?$LANG['COLLECTION']:'Collection'), 'o.catalogNumber' => (isset($LANG['CATALOGNUMBER'])?$LANG['CATALOGNUMBER']:'Catalog Number'), 'o.family' => (isset($LANG['FAMILY'])?$LANG['FAMILY']:'Family'), 'o.sciname' => (isset($LANG['SCINAME'])?$LANG['SCINAME']:'Scientific Name'), 'o.recordedBy' => (isset($LANG['COLLECTOR'])?$LANG['COLLECTOR']:'Collector'),
-								'o.recordNumber' => (isset($LANG['NUMBER'])?$LANG['NUMBER']:'Number'), 'o.eventDate' => (isset($LANG['EVENTDATE'])?$LANG['EVENTDATE']:'Date'), 'o.country' => (isset($LANG['COUNTRY'])?$LANG['COUNTRY']:'Country'), 'o.StateProvince' => (isset($LANG['STATE_PROVINCE'])?$LANG['STATE_PROVINCE']:'State/Province'), 'o.county' => (isset($LANG['COUNTY'])?$LANG['COUNTY']:'County'), 'o.minimumElevationInMeters' => (isset($LANG['ELEVATION'])?$LANG['ELEVATION']:'Elevation'));
-							foreach($sortFields as $k => $v){
-								echo '<option value="'.$k.'" '.($k==$sortField1?'SELECTED':'').'>'.$v.'</option>';
-							}
-							?>
-						</select>
-					</div>
-					<div style="float:left;margin-left:10px;">
-						<label for="sortfield2"><?php echo (isset($LANG['THEN_BY'])?$LANG['THEN_BY']:'Then Sort By'); ?>:</label>
-						<select name="sortfield2" id="sortfield2">
-							<option value=""><?php echo (isset($LANG['SEL_FIELD'])?$LANG['SEL_FIELD']:'Select Field Name'); ?></option>
-							<?php
-							foreach($sortFields as $k => $v){
-								echo '<option value="'.$k.'" '.($k==$sortField2?'SELECTED':'').'>'.$v.'</option>';
-							}
-							?>
-						</select>
-					</div>
-					<div style="float:left;margin-left:10px;">
-						<b><?php echo (isset($LANG['ORDER'])?$LANG['ORDER']:'Order'); ?>:</b>
-						<select name="sortorder">
-							<option value=""><?php echo (isset($LANG['ASCENDING'])?$LANG['ASCENDING']:'Ascending'); ?></option>
-							<option value="desc" <?php echo ($sortOrder=="desc"?'SELECTED':''); ?>><?php echo (isset($LANG['DESCENDING'])?$LANG['DESCENDING']:'Descending'); ?></option>
-						</select>
-					</div>
-					<div style="float:right;margin-right:10px;">
-						<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
-						<input name="formsubmit" type="submit" value="Sort" />
-					</div>
-				</form>
-			</fieldset>
+			<div style="padding:5px;width:650px;">
+				<section class="fieldset-like">
+				<h1>
+					<span><?php echo (isset($LANG['SORT'])?$LANG['SORT']:'Sort Results'); ?></span>
+				</h1>
+					<form name="sortform" action="listtabledisplay.php" method="post">
+						<div>
+							<label for="sortfield1"><?php echo (isset($LANG['SORT_BY'])?$LANG['SORT_BY']:'Sort By'); ?>:</label>
+							<select name="sortfield1" id="sortfield1">
+								<?php
+								$sortFields = array('c.collectionname' => (isset($LANG['COLLECTION'])?$LANG['COLLECTION']:'Collection'), 'o.catalogNumber' => (isset($LANG['CATALOGNUMBER'])?$LANG['CATALOGNUMBER']:'Catalog Number'), 'o.family' => (isset($LANG['FAMILY'])?$LANG['FAMILY']:'Family'), 'o.sciname' => (isset($LANG['SCINAME'])?$LANG['SCINAME']:'Scientific Name'), 'o.recordedBy' => (isset($LANG['COLLECTOR'])?$LANG['COLLECTOR']:'Collector'),
+									'o.recordNumber' => (isset($LANG['NUMBER'])?$LANG['NUMBER']:'Number'), 'o.eventDate' => (isset($LANG['EVENTDATE'])?$LANG['EVENTDATE']:'Date'), 'o.country' => (isset($LANG['COUNTRY'])?$LANG['COUNTRY']:'Country'), 'o.StateProvince' => (isset($LANG['STATE_PROVINCE'])?$LANG['STATE_PROVINCE']:'State/Province'), 'o.county' => (isset($LANG['COUNTY'])?$LANG['COUNTY']:'County'), 'o.minimumElevationInMeters' => (isset($LANG['ELEVATION'])?$LANG['ELEVATION']:'Elevation'));
+								foreach($sortFields as $k => $v){
+									echo '<option value="'.$k.'" '.($k==$sortField1?'SELECTED':'').'>'.$v.'</option>';
+								}
+								?>
+							</select>
+						</div>
+						<div>
+							<label for="sortfield2"><?php echo (isset($LANG['THEN_BY'])?$LANG['THEN_BY']:'Then Sort By'); ?>:</label>
+							<select name="sortfield2" id="sortfield2">
+								<option value=""><?php echo (isset($LANG['SEL_FIELD'])?$LANG['SEL_FIELD']:'Select Field Name'); ?></option>
+								<?php
+								foreach($sortFields as $k => $v){
+									echo '<option value="'.$k.'" '.($k==$sortField2?'SELECTED':'').'>'.$v.'</option>';
+								}
+								?>
+							</select>
+						</div>
+						<div>
+							<label for="sortorder"> <b><?php echo (isset($LANG['ORDER'])?$LANG['ORDER']:'Order'); ?>:</b> </label>
+							<select id="sortorder" name="sortorder">
+								<option value=""><?php echo (isset($LANG['ASCENDING'])?$LANG['ASCENDING']:'Ascending'); ?></option>
+								<option value="desc" <?php echo ($sortOrder=="desc"?'SELECTED':''); ?>><?php echo (isset($LANG['DESCENDING'])?$LANG['DESCENDING']:'Descending'); ?></option>
+							</select>
+						</div>
+						<div>
+							<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
+							<input name="formsubmit" type="submit" value="Sort" />
+						</div>
+					</form>
+				</section>
+			</div>
 		</div>
 		<?php
 		$searchVar .= '&sortfield1='.$sortField1.'&sortfield2='.$sortField2.'&sortorder='.$sortOrder;
