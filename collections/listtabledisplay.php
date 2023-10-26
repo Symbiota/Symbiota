@@ -119,7 +119,7 @@ $searchVar = $collManager->getQueryTermStr();
 						</div>
 						<div>
 							<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
-							<input name="formsubmit" type="submit" value="Sort" />
+							<input name="formsubmit" type="submit" value="<?php echo (isset($LANG['SORT'])?$LANG['SORT']:'Sort'); ?>" />
 						</div>
 					</form>
 				</section>

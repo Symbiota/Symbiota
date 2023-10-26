@@ -27,5 +27,5 @@ $LANG['EDIT_REC'] = 'Edit Record';
 $LANG['HAS_IMAGE'] = 'Has Image';
 $LANG['CLICK_SYMB'] = 'Click on the Symbiota identifier in the first column to see Full Record Details';
 $LANG['NONE_FOUND'] = 'No records found matching the query';
-
+$LANG['SORT'] = 'Sort';
 ?>
