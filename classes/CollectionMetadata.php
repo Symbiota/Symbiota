@@ -1,4 +1,6 @@
-<?php 
+<?php
+
+use function PHPUnit\Framework\isEmpty;
 
   include_once($SERVER_ROOT.'/classes/Manager.php');
 
@@ -44,7 +46,7 @@
 
     $dataArr = array();
 
-    $sql = 'SELECT col.collid,  cat.category, col.collectioncode, col.collectionname, neontheme, highertaxon, lowertaxon, sampletype, available FROM omcollections AS col LEFT JOIN omcollcatlink AS l ON col.CollID = l.collid LEFT JOIN omcollcategories AS cat ON l.ccpk = cat.ccpk';
+    $sql = 'SELECT col.collid,  cat.category, col.collectioncode, col.collectionname FROM omcollections AS col LEFT JOIN omcollcatlink AS l ON col.CollID = l.collid LEFT JOIN omcollcategories AS cat ON l.ccpk = cat.ccpk';
 
     $result = $this->conn->query($sql);
 
@@ -75,14 +77,17 @@
     // $sql = 'SELECT * FROM collmetadata WHERE collid = '.$collid.'';
     $dataArr = array();
 
-    $sql = 'SELECT col.collid,  col.collectioncode, col.institutioncode, col.collectionname, neontheme, highertaxon, lowertaxon, sampletype, available FROM omcollections AS col LEFT JOIN omcollcatlink AS l ON col.CollID = l.collid WHERE l.ccpk NOT IN (6,8) GROUP BY '.$filterName.' ORDER BY '.$filterName.';';
-
-    $result = $this->conn->query($sql);
-
+    $sql = 'SELECT col.collid,  col.collectioncode, col.institutioncode, col.collectionname FROM omcollections AS col LEFT JOIN omcollcatlink AS l ON col.CollID = l.collid WHERE l.ccpk NOT IN (6,8) GROUP BY '.$filterName.' ORDER BY '.$filterName.';';
+    try{
+      $result = $this->conn->query($sql);
       while($row = $result->fetch_array()){
         $dataArr[] = $row;
       }
       $result->free(); 
+    } catch (Exception $e){
+      echo 'Caught exception: ',  $e->getMessage(), "\n";
+
+    }
     return $dataArr;
   }
 
@@ -91,7 +96,7 @@
     // $sql = 'SELECT * FROM collmetadata WHERE collid = '.$collid.'';
     $dataArr = array();
 
-    $sql = 'SELECT DISTINCT col.collid,  col.collectioncode, col.institutioncode, col.collectionname, neontheme, highertaxon, lowertaxon, sampletype, available FROM omcollections AS col LEFT JOIN omcollcatlink AS l ON col.CollID = l.collid WHERE l.ccpk NOT IN (6,8) AND '.$filterName.'= "'.$filterVal.'" ORDER BY col.collectionname;';
+    $sql = 'SELECT DISTINCT col.collid,  col.collectioncode, col.institutioncode, col.collectionname FROM omcollections AS col LEFT JOIN omcollcatlink AS l ON col.CollID = l.collid WHERE l.ccpk NOT IN (6,8) AND '.$filterName.'= "'.$filterVal.'" ORDER BY col.collectionname;';
 
     $result = $this->conn->query($sql);
 
