@@ -270,12 +270,10 @@ if(!file_exists('./config/symbini.php')) {
       $insert_taxon_description->bind_param("iisssi", $tdProfileID, $tid, $caption, $statements['source'], $statements['sourceUrl'], $GLOBALS['SYMB_UID']);
       $insert_taxon_description->execute();
 
-      echo "Added Description Block for " . $tid . "\n";
 
       $tdbid = intval($conn->query("SELECT LAST_INSERT_ID() as id")->fetch_assoc()["id"]);
 
       foreach($statements['statements'] as $statement) {
-         echo "\tAdded Statement\n\t\theader: " . $statement['header'] . "\n\t\tbody: " . $statement['statement'] . "\n";
          $insert_taxon_statements = $conn->prepare("INSERT INTO taxadescrstmts (tdbid, heading, statement) VALUES (?, ?, ?)");
          $insert_taxon_statements->bind_param("iss", $tdbid, $statement['header'], $statement['statement']);
          $insert_taxon_statements->execute();
@@ -288,7 +286,7 @@ if(!file_exists('./config/symbini.php')) {
       return sprintf("%s%%[%s>%s]%s\r", $perc, str_repeat("=", $bar), str_repeat(" ", $width-$bar), $info);
    }
 
-   if(isset($GLOBALS['SYMB_UID']) && false) {
+   if(isset($GLOBALS['SYMB_UID'])) {
       $taxon_names  =get_taxon_names(); 
       $count = 0;
 
@@ -316,7 +314,7 @@ if(!file_exists('./config/symbini.php')) {
          echo progress_bar($count, $maxCount);
 
 
-         /* No Wikipedia statements for now
+      /* No Wikipedia statements for now
       //If no synonym hits check wikipedia for main name 
       if(!$statements) $statements = getWikipediaStatements($taxon['sciname']);
 
