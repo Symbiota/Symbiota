@@ -71,7 +71,7 @@ $LANG['BIOTA'] = 'Biota';
 $LANG['BIO_STRAT'] = 'Biostratigraphy';
 $LANG['GROUP'] = 'Group';
 $LANG['FORMATION'] = 'Formation';
-$LANG['TAXON_ENV'] = 'Taxon Environment';
+$LANG['TAXON_ENVIR'] = 'Taxon Environment';
 $LANG['MEMBER'] = 'Member';
 $LANG['BED'] = 'Bed';
 $LANG['LITHOLOGY'] = 'Lithology';
@@ -152,4 +152,5 @@ $LANG['CHECKING'] = 'Checking archive';
 $LANG['RESTORE_RECORD'] = 'Restore Record';
 $LANG['RECORD_DELETED'] = 'Record deleted';
 $LANG['VALUE'] = 'Value';
+$LANG['LAT_LNG'] = 'Latitude/Longitude';
 ?>

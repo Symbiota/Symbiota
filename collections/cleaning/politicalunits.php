@@ -136,11 +136,11 @@ if($action && $isEditor){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href="../../index.php"><?php echo $LANG['HOME']; ?></a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=off"><?php echo $LANG['COL_MAN']; ?></a> &gt;&gt;
-		<a href="index.php?collid=<?php echo $collid; ?>"><?php echo $LANG['CLEAN_TOOL_INDEX']; ?></a>
+		<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=off"><?php echo htmlspecialchars($LANG['COL_MAN'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+		<a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['CLEAN_TOOL_INDEX'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
 		<?php
-		if($mode) echo '&gt;&gt; <a href="politicalunits.php?collid='.$collid.'"><b>'.$LANG['POL_GEO_CLEAN_MENU'].'</b></a>';
+		if($mode) echo '&gt;&gt; <a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '"><b>' . htmlspecialchars($LANG['POL_GEO_CLEAN_MENU'], HTML_SPECIAL_CHARS_FLAGS) . '</b></a>';
 		?>
 	</div>
 
@@ -163,7 +163,7 @@ if($action && $isEditor){
 				<legend><b><?php echo $LANG['GEO_REPORT']; ?></b></legend>
 				<?php
 				if($target == 'geolocal'){
-					if($mode) echo '<div style="position:absolute;top:5px;right:0px;padding:10px;border:1px solid grey"><a href="politicalunits.php?collid='.$collid.'&mode=0">'.$LANG['MAIN_MENU'].'</a></div>';
+					if($mode) echo '<div style="position:absolute;top:5px;right:0px;padding:10px;border:1px solid grey"><a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&mode=0">' . htmlspecialchars($LANG['MAIN_MENU'], HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 					echo '<div style="width:85%;margin-bottom:15px;">'.$LANG['GEO_REPORT_EXPLAIN'].'</div>';
 					if($mode == 'badcountry'){
 						$badCountryArr = $cleanManager->getBadCountryArr();
@@ -181,7 +181,7 @@ if($action && $isEditor){
 										<form name="countrycleanform" method="post" action="politicalunits.php" onsubmit="return verifyCountryCleanForm(this)">
 											<b><?php echo $countryName; ?></b>
 											<?php echo ' <span title="'.$LANG['NUMBER_SPECIMENS'].'">('.$countryCnt.')</span>'; ?>
-											<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=country&q_customtype1=EQUALS&q_customvalue1=<?php echo urlencode($countryName).'&collid='.$collid; ?>" target="_blank"><img src="../../images/edit.png" style="width:13px" /></a>
+											<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=country&q_customtype1=EQUALS&q_customvalue1=<?php echo htmlspecialchars(urlencode($countryName), HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><img src="../../images/edit.png" style="width:13px" /></a>
 											<select name="newcountry" style="width:200px;">
 												<option value=""><?php echo $LANG['REPLACE_WITH']; ?>...</option>
 													<option value="">-------------------------</option>
@@ -221,7 +221,7 @@ if($action && $isEditor){
 										<form name="nullcountryform" method="post" action="politicalunits.php" onsubmit="return verifyNullCountryForm(this)">
 											<b><?php echo $stateName; ?></b>
 											<?php echo ' <span title="Number of Specimens">('.$stateCnt.')</span>'; ?>
-											<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=country&q_customtype1=NULL&q_customfield2=stateProvince&q_customtype2=EQUALS&q_customvalue2=<?php echo urlencode($stateName).'&collid='.$collid; ?>" target="_blank"><img src="../../images/edit.png" style="width:13px" /></a>
+											<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=country&q_customtype1=NULL&q_customfield2=stateProvince&q_customtype2=EQUALS&q_customvalue2=<?php echo htmlspecialchars(urlencode($stateName), HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><img src="../../images/edit.png" style="width:13px" /></a>
 											<select name="country" style="width:200px;">
 												<option value=""><?php echo $LANG['ASSIGN_COUNTRY']; ?>...</option>
 												<option value="">-------------------------</option>
@@ -263,7 +263,7 @@ if($action && $isEditor){
 											<form name="statecleanform" method="post" action="politicalunits.php" onsubmit="return verifyStateCleanForm(this)">
 												<b><?php echo $stateName; ?></b>
 												<?php echo ' <span title="Number of Specimens">('.$stateCnt.')</span>'; ?>
-												<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=stateProvince&q_customtype1=EQUALS&q_customvalue1=<?php echo urlencode($stateName).'&collid='.$collid; ?>" target="_blank"><img src="../../images/edit.png" style="width:13px" /></a>
+												<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=stateProvince&q_customtype1=EQUALS&q_customvalue1=<?php echo htmlspecialchars(urlencode($stateName), HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><img src="../../images/edit.png" style="width:13px" /></a>
 												<?php
 												if(array_key_exists($countryValue,$goodStateArr)){
 													?>
@@ -314,7 +314,7 @@ if($action && $isEditor){
 											<form name="nullstateform" method="post" action="politicalunits.php" onsubmit="return verifyNullStateForm(this)">
 												<b><?php echo $countyName; ?></b>
 												<?php echo ' <span title="Number of Specimens">('.$countyCnt.')</span>'; ?>
-												<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=stateProvince&q_customtype1=NULL&q_customfield2=county&q_customtype2=EQUALS&q_customvalue2=<?php echo urlencode($countyName).'&collid='.$collid; ?>" target="_blank"><img src="../../images/edit.png" style="width:13px" /></a>
+												<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=stateProvince&q_customtype1=NULL&q_customfield2=county&q_customtype2=EQUALS&q_customvalue2=<?php echo htmlspecialchars(urlencode($countyName), HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><img src="../../images/edit.png" style="width:13px" /></a>
 												<?php
 												if(array_key_exists($countryName,$goodStateArr)){
 													?>
@@ -370,7 +370,7 @@ if($action && $isEditor){
 												<form name="countycleanform" method="post" action="politicalunits.php" onsubmit="return verifyCountyCleanForm(this)">
 													<b><?php echo $countyName; ?></b>
 													<?php echo ' <span title="Number of Specimens">('.$countyCnt.')</span>'; ?>
-													<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=county&q_customtype1=EQUALS&q_customvalue1=<?php echo urlencode($countyName).'&collid='.$collid; ?>" target="_blank"><img src="../../images/edit.png" style="width:13px" /></a>
+													<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=county&q_customtype1=EQUALS&q_customvalue1=<?php echo htmlspecialchars(urlencode($countyName), HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><img src="../../images/edit.png" style="width:13px" /></a>
 													<?php
 													if(array_key_exists($stateTestStr,$goodCountyArr)){
 														?>
@@ -426,7 +426,7 @@ if($action && $isEditor){
 												<form name="nullstateform" method="post" action="politicalunits.php" onsubmit="return verifyNullCountyForm(this)">
 													<b><?php echo $localityName; ?></b>
 													<?php echo ' <span title="Number of Specimens">('.$localityCnt.')</span>'; ?>
-													<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=county&q_customtype1=NULL&q_customfield2=locality&q_customtype2=EQUALS&q_customvalue2=<?php echo urlencode($localityName).'&collid='.$collid; ?>" target="_blank"><img src="../../images/edit.png" style="width:13px" /></a>
+													<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=county&q_customtype1=NULL&q_customfield2=locality&q_customtype2=EQUALS&q_customvalue2=<?php echo htmlspecialchars(urlencode($localityName), HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><img src="../../images/edit.png" style="width:13px" /></a>
 													<?php
 													if(array_key_exists($stateTestStr,$goodCountyArr)){
 														?>
@@ -474,40 +474,40 @@ if($action && $isEditor){
 						echo '<div style="margin-bottom:2px"><b>'.$LANG['QUESTION_COUNTRIES'].':</b> ';
 						$badCountryCnt = $cleanManager->getBadCountryCount();
 						echo $badCountryCnt;
-						if($badCountryCnt) echo ' => <a href="politicalunits.php?collid='.$collid.'&target=geolocal&mode=badcountry">'.$LANG['LIST_COUNTRIES'].'...</a>';
+						if($badCountryCnt) echo ' => <a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&target=geolocal&mode=badcountry">' . htmlspecialchars($LANG['LIST_COUNTRIES'], HTML_SPECIAL_CHARS_FLAGS) . '...</a>';
 						echo '</div>';
 
 						//Get Null country and not null state
 						echo '<div style="margin-bottom:20px"><b>'.$LANG['NULL_COUNTRY_NOT_STATE'].':</b> ';
 						$nullCountryCnt = $cleanManager->getNullCountryNotStateCount();
 						echo $nullCountryCnt;
-						if($nullCountryCnt) echo ' => <a href="politicalunits.php?collid='.$collid.'&target=geolocal&mode=nullcountry">'.$LANG['LIST_RECORDS'].'...</a>';
+						if($nullCountryCnt) echo ' => <a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&target=geolocal&mode=nullcountry">' . htmlspecialchars($LANG['LIST_RECORDS'], HTML_SPECIAL_CHARS_FLAGS) . '...</a>';
 						echo '</div>';
 
 						echo '<div style="margin-bottom:2px"><b>'.$LANG['QUESTION_STATES'].':</b> ';
 						$badStateCnt = $cleanManager->getBadStateCount();
 						echo $badStateCnt;
-						if($badStateCnt) echo ' => <a href="politicalunits.php?collid='.$collid.'&target=geolocal&mode=badstate">'.$LANG['LIST_STATES'].'...</a>';
+						if($badStateCnt) echo ' => <a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&target=geolocal&mode=badstate">' . htmlspecialchars($LANG['LIST_STATES'], HTML_SPECIAL_CHARS_FLAGS) . '...</a>';
 						echo '</div>';
 
 						//Get Null state and not null county or municipality
 						echo '<div style="margin-bottom:20px"><b>'.$LANG['NULL_STATE_NOT_COUNTY'].':</b> ';
 						$nullStateCnt = $cleanManager->getNullStateNotCountyCount();
 						echo $nullStateCnt;
-						if($nullStateCnt) echo ' => <a href="politicalunits.php?collid='.$collid.'&target=geolocal&mode=nullstate">'.$LANG['LIST_RECORDS'].'...</a>';
+						if($nullStateCnt) echo ' => <a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&target=geolocal&mode=nullstate">' . htmlspecialchars($LANG['LIST_RECORDS'], HTML_SPECIAL_CHARS_FLAGS) . '...</a>';
 						echo '</div>';
 
 						echo '<div style="margin-bottom:2px"><b>'.$LANG['QUESTION_COUNTIES'].':</b> ';
 						$badCountiesCnt = $cleanManager->getBadCountyCount();
 						echo $badCountiesCnt;
-						if($badCountiesCnt) echo ' => <a href="politicalunits.php?collid='.$collid.'&target=geolocal&mode=badcounty">'.$LANG['LIST_COUNTIES'].'...</a>';
+						if($badCountiesCnt) echo ' => <a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&target=geolocal&mode=badcounty">' . htmlspecialchars($LANG['LIST_COUNTIES'], HTML_SPECIAL_CHARS_FLAGS) . '...</a>';
 						echo '</div>';
 
 						//Get Null county and not null locality
 						echo '<div style="margin-bottom:60px"><b>'.$LANG['NULL_COUNTY_NOT_LOCALITY'].':</b> ';
 						$nullCountyCnt = $cleanManager->getNullCountyNotLocalityCount();
 						echo $nullCountyCnt;
-						if($nullCountyCnt) echo ' => <a href="politicalunits.php?collid='.$collid.'&target=geolocal&mode=nullcounty">'.$LANG['LIST_RECORDS'].'...</a>';
+						if($nullCountyCnt) echo ' => <a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&target=geolocal&mode=nullcounty">' . htmlspecialchars($LANG['LIST_RECORDS'], HTML_SPECIAL_CHARS_FLAGS) . '...</a>';
 						echo '</div>';
 					}
 				}

@@ -165,13 +165,13 @@ if($action == 'populateGUIDs'){
 </head>
 <body>
 <?php
-$displayLeftMenu = 'false';
+$displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class='navpath'>
 	<a href="../../index.php">Home</a> &gt;&gt;
-	<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
-	<a href="igsnmanagement.php?collid=<?php echo $collid; ?>">IGSN GUID Management</a> &gt;&gt;
+	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">Collection Management</a> &gt;&gt;
+	<a href="igsnmanagement.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">IGSN GUID Management</a> &gt;&gt;
 	<b>IGSN Mapper</b>
 </div>
 <!-- This is inner text! -->

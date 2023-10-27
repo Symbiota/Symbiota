@@ -104,4 +104,13 @@ $LANG['TAXON_DIST'] = 'Taxon Distribution';
 $LANG['CLICK_ON_SPEC_FAM'] = 'Click on the specimen record counts within the parenthesis to return the records for that family';
 $LANG['GEOG_DIST_COUNTRIES'] = 'Geographic Distribution - Countries';
 $LANG['COLLECTION_PROJECTS'] = 'Natural History Collections and Observation Projects';
+$LANG['ADVANCED_SEARCH_THIS_COLLECTION'] = 'Advanced Search this Collection';
+$LANG['IMAGE_SEARCH_THIS_COLLECTION'] = 'Image Search this Collection';
+$LANG['SEARCH'] = 'Search';
+$LANG['IDENTIFIER_PLACEHOLDER_LIST'] = 'Search by Catalog Number, Occurrence ID, or Record ID.';
+$LANG['MORE_INFO'] = 'More Information';
+$LANG['MORE_INFO_ALT'] = 'More information about catalog number';
+$LANG['SEARCH_BY_TAXON'] = 'Search by Taxon';
+$LANG['OCCURENCE_IDENTIFIER'] = 'Catalog Number';
+$LANG['TAXON'] = 'Taxon';
 ?>

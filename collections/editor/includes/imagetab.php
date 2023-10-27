@@ -197,7 +197,7 @@ $photographerArr = $occManager->getPhotographerArr();
 									$tnUrl = $GLOBALS["imageDomain"].$tnUrl;
 								}
 							}
-							echo '<a href="'.$imgUrl.'" target="_blank">';
+							echo '<a href="' . htmlspecialchars($imgUrl, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 							if(array_key_exists('error', $imgArr)){
 								echo '<div style="font-weight:bold;font-size:140%">'.$imgArr['error'].'</div>';
 							}
@@ -205,8 +205,8 @@ $photographerArr = $occManager->getPhotographerArr();
 								echo '<img src="'.$imgUrl.'" style="width:250px;" title="'.$imgArr["caption"].'" />';
 							}
 							echo '</a>';
-							if($imgUrl != $origUrl) echo '<div><a href="'.$imgUrl.'" target="_blank">'.$LANG['OPEN_MED'].'</a></div>';
-							if($origUrl) echo '<div><a href="'.$origUrl.'" target="_blank">'.$LANG['OPEN_LARGE'].'</a></div>';
+							if($imgUrl != $origUrl) echo '<div><a href="' . htmlspecialchars($imgUrl, HTML_SPECIAL_CHARS_FLAGS) .'" target="_blank">' . htmlspecialchars($LANG['OPEN_MED'], HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
+							if($origUrl) echo '<div><a href="' . htmlspecialchars($origUrl, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($LANG['OPEN_LARGE'], HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 							?>
 						</td>
 						<td style="text-align:left;padding:10px;">
@@ -245,7 +245,7 @@ $photographerArr = $occManager->getPhotographerArr();
 								</div>
 								<div>
 									<b><?php echo $LANG['SOURCE_WEBPAGE']; ?>:</b>
-									<a href="<?php echo $imgArr['sourceurl']; ?>" target="_blank">
+									<a href="<?php echo htmlspecialchars($imgArr['sourceurl'], HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank">
 										<?php
 										$sourceUrlDisplay = $imgArr['sourceurl'];
 										if(strlen($sourceUrlDisplay) > 60) $sourceUrlDisplay = '...'.substr($sourceUrlDisplay,-60);
@@ -255,7 +255,7 @@ $photographerArr = $occManager->getPhotographerArr();
 								</div>
 								<div>
 									<b><?php echo $LANG['WEB_URL']; ?>: </b>
-									<a href="<?php echo $imgArr["url"]; ?>"  title="<?php echo $imgArr["url"]; ?>" target="_blank">
+									<a href="<?php echo htmlspecialchars($imgArr["url"], HTML_SPECIAL_CHARS_FLAGS); ?>"  title="<?php echo htmlspecialchars($imgArr["url"], HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank">
 										<?php
 										$urlDisplay = $imgArr["url"];
 										if(strlen($urlDisplay) > 60) $urlDisplay = '...'.substr($urlDisplay,-60);
@@ -265,7 +265,7 @@ $photographerArr = $occManager->getPhotographerArr();
 								</div>
 								<div>
 									<b><?php echo $LANG['LARGE_IMG_URL']; ?>: </b>
-									<a href="<?php echo $imgArr["origurl"]; ?>" title="<?php echo $imgArr["origurl"]; ?>" target="_blank">
+									<a href="<?php echo htmlspecialchars($imgArr["origurl"], HTML_SPECIAL_CHARS_FLAGS); ?>" title="<?php echo htmlspecialchars($imgArr["origurl"], HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank">
 										<?php
 										$origUrlDisplay = $imgArr["origurl"];
 										if(strlen($origUrlDisplay) > 60) $origUrlDisplay = '...'.substr($origUrlDisplay,-60);
@@ -275,7 +275,7 @@ $photographerArr = $occManager->getPhotographerArr();
 								</div>
 								<div>
 									<b><?php echo $LANG['THUMB_URL']; ?>: </b>
-									<a href="<?php echo $imgArr["tnurl"]; ?>" title="<?php echo $imgArr["tnurl"]; ?>" target="_blank">
+									<a href="<?php echo htmlspecialchars($imgArr["tnurl"], HTML_SPECIAL_CHARS_FLAGS); ?>" title="<?php echo htmlspecialchars($imgArr["tnurl"], HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank">
 										<?php
 										$tnUrlDisplay = $imgArr["tnurl"];
 										if(strlen($tnUrlDisplay) > 60) $tnUrlDisplay = '...'.substr($tnUrlDisplay,-60);

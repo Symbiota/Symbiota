@@ -15,6 +15,10 @@ $defaultArr = array();
 if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
 	$defaultArr = json_decode($clArray['defaultsettings'], true);
 }
+$dynamPropsArr = array();
+if(isset($clArray['dynamicProperties']) && $clArray['dynamicProperties']){
+	$dynamPropsArr = json_decode($clArray['dynamicProperties'], true);
+}
 ?>
 <script type="text/javascript" src="../js/tinymce/tinymce.min.js"></script>
 <script type="text/javascript">
@@ -66,10 +70,6 @@ if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
 				return false;
 			}
 		}
-		if(!isNumeric(f.pointradiusmeters.value)){
-			alert("<?php echo (isset($LANG['NUMERIC_RADIUS'])?$LANG['NUMERIC_RADIUS']:'Point radius must be a numeric value only'); ?>");
-			return false;
-		}
 		if(f.type){
 			if(f.type.value == "rarespp" && f.locality.value == ""){
 				alert("<?php echo (isset($LANG['NEED_STATE'])?$LANG['NEED_STATE']:'Rare species checklists must have a state value entered into the locality field'); ?>");
@@ -118,12 +118,25 @@ if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
 		mapWindow=open("<?php echo $CLIENT_ROOT; ?>/checklists/tools/mappolyaid.php?clid=<?php echo $clid; ?>&formname=editclmatadata&latname=latcentroid&longname=longcentroid&latdef="+latDec+"&lngdef="+lngDec,"mapaid","resizable=0,width=1000,height=800,left=20,top=20");
 	    if(mapWindow.opener == null) mapWindow.opener = self;
 	}
+
+	function enableDisableExtServiceFields() {
+		let xsrv = document.getElementById('externalservice');
+		let xsid = document.getElementById('externalserviceid');
+		let xstaxonfilter = document.getElementById('externalserviceiconictaxon');
+		if(xsrv.value == '') {
+			xsid.setAttribute("disabled","");
+			xstaxonfilter.setAttribute("disabled","");
+		} else {
+			xsid.removeAttribute("disabled");
+			xstaxonfilter.removeAttribute("disabled");
+		}
+	}
 </script>
 <?php
 if(!$clid){
 	?>
 	<div style="float:right;">
-		<a href="#" onclick="toggle('checklistDiv')" title="<?php echo (isset($LANG['CREATE_CHECKLIST'])?$LANG['CREATE_CHECKLIST']:'Create a New Checklist'); ?>"><img src="../images/add.png" /></a>
+		<a href="#" onclick="toggle('checklistDiv')" title="<?php echo htmlspecialchars((isset($LANG['CREATE_CHECKLIST'])?$LANG['CREATE_CHECKLIST']:'Create a New Checklist'), HTML_SPECIAL_CHARS_FLAGS); ?>"><img src="../images/add.png" /></a>
 	</div>
 	<?php
 }
@@ -174,7 +187,24 @@ if(!$clid){
 				}
 				?>
 			</div>
-			<div id="locDiv">
+			<div>
+				<b><?php echo (isset($LANG['EXTSERVICE'])?$LANG['EXTSERVICE']:'External Service (e.g., iNaturalist) to associate with this checklist [optional]');?></b><br/>
+				<select name="externalservice" id="externalservice" onchange="enableDisableExtServiceFields()">
+					<option value=""></option>
+					<option value="">-------------------------------</option>
+					<option value="inaturalist" <?php echo ((isset($dynamPropsArr['externalservice']) && $dynamPropsArr['externalservice']=='inaturalist')?'selected':''); ?>>iNaturalist</option>
+				</select>
+			</div>
+			<div style="width:100%;margin-top:5px">
+				<div style="float:left;width:25%">
+				<b><?php echo (isset($LANG['EXTSERVICEID'])?$LANG['EXTSERVICEID']:'Project ID from External Service');?></b><br/>
+				<input type="text" name="externalserviceid" id="externalserviceid" style="width:100%" value="<?php echo ($dynamPropsArr?$dynamPropsArr['externalserviceid']:''); ?>" />
+				</div><div style="float:left;margin-left:15px;">
+				<b><?php echo (isset($LANG['EXTSERVICETAXON'])?$LANG['EXTSERVICETAXON']:'External Service Taxon Filter [optional]');?></b><br/>
+				<input type="text" name="externalserviceiconictaxon" id="externalserviceiconictaxon" style="width:100%" value="<?php echo ($dynamPropsArr?$dynamPropsArr['externalserviceiconictaxon']:''); ?>" />
+				</div>
+			</div>
+			<div id="locDiv" style="clear:both;margin-top:5px;">
 				<b><?php echo (isset($LANG['LOC'])?$LANG['LOC']:'Locality');?></b><br/>
 				<input type="text" name="locality" style="width:95%" value="<?php echo ($clArray?$clArray["locality"]:''); ?>" />
 			</div>
@@ -217,7 +247,7 @@ if(!$clid){
 				</div>
 				<div style="float:left;margin-left:15px;">
 					<b><?php echo (isset($LANG['REFERENCE_CHECK'])?$LANG['POINTRAD']:'Point Radius (meters)');?></b><br/>
-					<input type="text" name="pointradiusmeters" style="width:110px;" value="<?php echo ($clArray?$clArray["pointradiusmeters"]:''); ?>" />
+					<input type="number" name="pointradiusmeters" style="width:110px;" value="<?php echo ($clArray?$clArray["pointradiusmeters"]:''); ?>" />
 				</div>
 			</div>
 			<div style="clear:both;margin-top:5px;">
@@ -290,7 +320,7 @@ if(!$clid){
 			</div>
 			<div id="sortSeqDiv" style="clear:both;margin-top:15px;">
 				<b><?php echo (isset($LANG['DEFAULT_SORT'])?$LANG['DEFAULT_SORT']:'Default Sorting Sequence'); ?>:</b>
-				<input name="sortsequence" type="text" value="<?php echo ($clArray?$clArray['sortsequence']:'50'); ?>" style="width:40px" />
+				<input name="sortsequence" type="number" value="<?php echo ($clArray?$clArray['sortsequence']:'50'); ?>" style="width:40px" />
 			</div>
 			<div id="accessDiv" style="clear:both;margin-top:15px;">
 				<b><?php echo (isset($LANG['ACCESS'])?$LANG['ACCESS']:'Access'); ?>:</b>
@@ -331,11 +361,11 @@ if(!$clid){
 			foreach($clArr as $kClid => $vName){
 				?>
 				<li>
-					<a href="../checklists/checklist.php?clid=<?php echo $kClid; ?>&emode=0">
-						<?php echo $vName; ?>
+					<a href="../checklists/checklist.php?clid=<?php echo htmlspecialchars($kClid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=0">
+						<?php echo htmlspecialchars($vName, HTML_SPECIAL_CHARS_FLAGS); ?>
 					</a>
-					<a href="../checklists/checklistadmin.php?clid=<?php echo $kClid; ?>&emode=1">
-						<img src="../images/edit.png" style="width:15px;border:0px;" title="<?php echo (isset($LANG['EDITCHECKLIST'])?$LANG['EDITCHECKLIST']:'Edit Checklist');?>" />
+					<a href="../checklists/checklistadmin.php?clid=<?php echo htmlspecialchars($kClid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">
+						<img src="../images/edit.png" style="width:15px;border:0px;" title="<?php echo htmlspecialchars((isset($LANG['EDITCHECKLIST'])?$LANG['EDITCHECKLIST']:'Edit Checklist'), HTML_SPECIAL_CHARS_FLAGS);?>" />
 					</a>
 				</li>
 				<?php
@@ -349,7 +379,7 @@ if(!$clid){
 			<div style="margin:10px;">
 				<div><?php echo (isset($LANG['NO_CHECKLISTS'])?$LANG['NO_CHECKLISTS']:'You have no personal checklists');?></div>
 				<div style="margin-top:5px">
-					<a href="#" onclick="toggle('checklistDiv')"><?php echo (isset($LANG['CLICK_TO_CREATE'])?$LANG['CLICK_TO_CREATE']:'Click here to create a new checklist');?></a>
+					<a href="#" onclick="toggle('checklistDiv')"><?php echo htmlspecialchars((isset($LANG['CLICK_TO_CREATE'])?$LANG['CLICK_TO_CREATE']:'Click here to create a new checklist'), HTML_SPECIAL_CHARS_FLAGS);?></a>
 				</div>
 			</div>
 			<?php
@@ -364,11 +394,11 @@ if(!$clid){
 			foreach($projArr as $pid => $projName){
 				?>
 				<li>
-					<a href="../projects/index.php?pid=<?php echo $pid; ?>&emode=0">
-						<?php echo $projName; ?>
+					<a href="../projects/index.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=0">
+						<?php echo htmlspecialchars($projName, HTML_SPECIAL_CHARS_FLAGS); ?>
 					</a>
-					<a href="../projects/index.php?pid=<?php echo $pid; ?>&emode=1">
-						<img src="../images/edit.png" style="width:15px;border:0px;" title="<?php echo (isset($LANG['EDIT_PROJECT'])?$LANG['EDIT_PROJECT']:'Edit Project');?>" />
+					<a href="../projects/index.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">
+						<img src="../images/edit.png" style="width:15px;border:0px;" title="<?php echo htmlspecialchars((isset($LANG['EDIT_PROJECT'])?$LANG['EDIT_PROJECT']:'Edit Project'), HTML_SPECIAL_CHARS_FLAGS);?>" />
 					</a>
 				</li>
 				<?php

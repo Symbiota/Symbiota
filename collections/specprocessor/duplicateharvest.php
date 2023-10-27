@@ -63,7 +63,7 @@ $collMetaArr = $dupeManager->getCollMetaArr();
 <body style="margin-left:0px;margin-right:0px">
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
-		<a href="../misc/collprofiles.php?emode=1&collid=<?php echo $collid; ?>">Collection Management</a> &gt;&gt;
+		<a href="../misc/collprofiles.php?emode=1&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">Collection Management</a> &gt;&gt;
 		<b>Batch harvesting from Duplicates</b>
 	</div>
 	<!-- inner text -->
@@ -143,7 +143,7 @@ $collMetaArr = $dupeManager->getCollMetaArr();
 									//Output subject array
 									echo '<tr class="source-row">';
 									echo '<td><input name="all" type="checkbox" /></td>';
-									echo '<td><a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a></td>';
+									echo '<td><a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '</a></td>';
 									echo '<td></td>';
 									echo '<td>'.$dupeArr[0]['catalogNumber']['v'].'</td>';
 									foreach($activeFieldArr as $fieldName => $code){
@@ -160,7 +160,7 @@ $collMetaArr = $dupeManager->getCollMetaArr();
 									for($i=1; $i < count($dupeArr); $i++){
 										echo '<tr>';
 										echo '<td></td>';
-										echo '<td><a href="../individual/index.php?occid='.$occid.'" target="_blank">'.$dupeArr[$i]['occid']['v'].'</a></td>';
+										echo '<td><a href="../individual/index.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($dupeArr[$i]['occid']['v'], HTML_SPECIAL_CHARS_FLAGS) . '</a></td>';
 										echo '<td>'.$collMetaArr[$dupeArr[$i]['collid']['v']]['collcode'].'</td>';
 										echo '<td>'.$dupeArr[$i]['catalogNumber']['v'].'</td>';
 										foreach($activeFieldArr as $fieldName => $code){

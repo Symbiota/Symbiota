@@ -46,7 +46,7 @@ if($collid && $isEditor){
 				if($resourceArr = json_decode($collMetaArr['resourcejson'],true)){
 					foreach($resourceArr as $key => $valueArr){
 						echo '<div class="link-div"><span class="label">Link:</span> ';
-						echo '<a href="'.$valueArr['url'].'" target="_blank">'.$valueArr['url'].'</a>';
+						echo '<a href="' . htmlspecialchars($valueArr['url'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($valueArr['url'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 						echo '<a href="#" onclick="editLink('.$key.');return false"><img src="../../images/edit.png" /></a>';
 						echo '<a href="#" onclick="deleteLink('.$key.');return false"><img src="../../images/del.png" /></a>';
 						foreach($valueArr['title'] as $langCode => $titleValue){
@@ -135,7 +135,7 @@ if($collid && $isEditor){
 						if(isset($valueArr['phone'])) echo '<div style="margin-left:15px"><span class="label">'.(isset($LANG['PHONE'])?$LANG['PHONE']:'phone').': </span>'.$valueArr['phone'].'</div>';
 						if(isset($valueArr['orcid'])){
 							echo '<div style="margin-left:15px">';
-							echo '<span class="label">ORCID #: </span><a href="https://orcid.org/'.$valueArr['orcid'].'" target="_blank">'.$valueArr['orcid'].'</a>';
+							echo '<span class="label">ORCID #: </span><a href="https://orcid.org/' . htmlspecialchars($valueArr['orcid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($valueArr['orcid'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 							echo '</div>';
 						}
 						echo '</div>';
@@ -198,10 +198,10 @@ if($collid && $isEditor){
 					echo '<div>';
 					echo $instArr['institutionname'].($instArr['institutioncode']?' ('.$instArr['institutioncode'].')':'');
 					?>
-					<a href="institutioneditor.php?emode=1&targetcollid=<?php echo $collid.'&iid='.$instArr['iid']; ?>" title="<?php echo (isset($LANG['EDIT_ADDRESS'])?$LANG['EDIT_ADDRESS']:'Edit institution address'); ?>">
+					<a href="institutioneditor.php?emode=1&targetcollid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&iid=' . htmlspecialchars($instArr['iid'], HTML_SPECIAL_CHARS_FLAGS); ?>" title="<?php echo htmlspecialchars((isset($LANG['EDIT_ADDRESS'])?$LANG['EDIT_ADDRESS']:'Edit institution address'), HTML_SPECIAL_CHARS_FLAGS); ?>">
 						<img src="../../images/edit.png" style="width:14px;" />
 					</a>
-					<a href="collmetadata.php?tabindex=1&collid=<?php echo $collid.'&removeiid='.$instArr['iid']; ?>" title="<?php echo (isset($LANG['UNLINK_ADDRESS'])?$LANG['UNLINK_ADDRESS']:'Unlink institution address'); ?>">
+					<a href="collmetadata.php?tabindex=1&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&removeiid=' . htmlspecialchars($instArr['iid'], HTML_SPECIAL_CHARS_FLAGS); ?>" title="<?php echo htmlspecialchars((isset($LANG['UNLINK_ADDRESS'])?$LANG['UNLINK_ADDRESS']:'Unlink institution address'), HTML_SPECIAL_CHARS_FLAGS); ?>">
 						<img src="../../images/drop.png" style="width:14px;" />
 					</a>
 					<?php
@@ -213,7 +213,7 @@ if($collid && $isEditor){
 					if($instArr['phone']) echo '<div>'.$instArr['phone'].'</div>';
 					if($instArr['contact']) echo '<div>'.$instArr['contact'].'</div>';
 					if($instArr['email']) echo '<div>'.$instArr['email'].'</div>';
-					if($instArr['url']) echo '<div><a href="'.$instArr['url'].'">'.$instArr['url'].'</a></div>';
+					if($instArr['url']) echo '<div><a href="' . htmlspecialchars($instArr['url'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($instArr['url'], HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 					if($instArr['notes']) echo '<div>'.$instArr['notes'].'</div>';
 					?>
 				</div>
@@ -239,7 +239,7 @@ if($collid && $isEditor){
 						<input name="action" type="submit" value="<?php echo (isset($LANG['LINK_ADDRESS'])?$LANG['LINK_ADDRESS']:'Link Address'); ?>" />
 					</form>
 					<div style="margin:15px;">
-						<a href="institutioneditor.php?emode=1&targetcollid=<?php echo $collid; ?>" title="<?php echo (isset($LANG['ADD_ADDRESS'])?$LANG['ADD_ADDRESS']:'Add a new address not on the list'); ?>">
+						<a href="institutioneditor.php?emode=1&targetcollid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>" title="<?php echo htmlspecialchars((isset($LANG['ADD_ADDRESS'])?$LANG['ADD_ADDRESS']:'Add a new address not on the list'), HTML_SPECIAL_CHARS_FLAGS); ?>">
 							<b><?php echo (isset($LANG['ADD_INST'])?$LANG['ADD_INST']:'Add an institution not on list'); ?></b>
 						</a>
 					</div>

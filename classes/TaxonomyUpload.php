@@ -25,7 +25,6 @@ class TaxonomyUpload{
  		$this->setUploadTargetPath();
  		set_time_limit(3000);
 		ini_set("max_input_time",120);
-  		ini_set('auto_detect_line_endings', true);
 	}
 
 	function __destruct(){
@@ -50,7 +49,7 @@ class TaxonomyUpload{
 			$this->uploadFileName = $_FILES['uploadfile']['name'];
 			move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->uploadFileName);
 		}
-		if(file_exists($this->uploadTargetPath.$this->uploadFileName) && substr($this->uploadFileName,-4) == ".zip"){
+		if(file_exists($this->uploadTargetPath.$this->uploadFileName) && substr($this->uploadFileName ?? '',-4) == ".zip"){
 			$zip = new ZipArchive;
 			$zip->open($this->uploadTargetPath.$this->uploadFileName);
 			$zipFile = $this->uploadTargetPath.$this->uploadFileName;

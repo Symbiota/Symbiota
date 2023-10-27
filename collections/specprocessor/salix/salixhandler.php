@@ -1,9 +1,12 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/SalixUtilities.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once($SERVER_ROOT . '/classes/SalixUtilities.php');
+include_once($SERVER_ROOT . '/content/lang/collections/specprocessor/salix/salixhandler.' . $LANG_TAG . '.php');
+header("Content-Type: text/html; charset=" . $CHARSET);
 if(!$SYMB_UID){
-	header('Location: ../../../profile/index.php?refurl=../collections/specprocessor/salix/salixhandler.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+	header('Location: ../../../profile/index.php?refurl=../collections/specprocessor/salix/salixhandler.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 }
 
 $action = (isset($_REQUEST['formsubmit'])?$_REQUEST['formsubmit']:'');
@@ -24,11 +27,11 @@ if($SYMB_UID){
 	}
 }
 ?>
-<!DOCTYPE html >
-<html>
+
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
-		<title>SALIX Wordstat Manager</title>
-		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+		<title><?php echo (isset($LANG['SALIX_WRDST_MNGR']) ? $LANG['SALIX_WRDST_MNGR'] : 'SALIX Wordstat Manager'); ?></title>
+		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -48,20 +51,20 @@ if($SYMB_UID){
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div class='navpath'>
-			<a href="../../../index.php">Home</a> &gt;&gt;
+			<a href="../../../index.php"> <?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?> </a> &gt;&gt;
 			<?php
 			if($collid){
 				?>
-				<a href="../../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
+				<a href="../../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"> <?php echo (isset($LANG['COLL_MGMT'])?$LANG['COLL_MGMT']:'Collection Management'); ?> </a> &gt;&gt;
 				<?php
 			}
 			else{
 				?>
-				<a href="../../../sitemap.php">Sitemap</a> &gt;&gt;
+				<a href="../../../sitemap.php"> <?php echo (isset($LANG['BREADCRUMB_SITEMAP'])?$LANG['BREADCRUMB_SITEMAP']:'Sitemap'); ?> </a> &gt;&gt;
 				<?php
 			}
-			echo '<a href="salixhandler.php?collid='.$collid.'&actiontype='.$actionType.'&limit='.$limit.'">';
-			echo '<b>SALIX Wordstat Manager</b>';
+			echo '<a href="salixhandler.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&actiontype=' . htmlspecialchars($actionType, HTML_SPECIAL_CHARS_FLAGS) . '&limit=' . htmlspecialchars($limit, HTML_SPECIAL_CHARS_FLAGS) . '">';
+			echo '<b>' . (isset($LANG['SALIX_WRDST_MNGR'])?$LANG['SALIX_WRDST_MNGR']:'SALIX Wordstat Manager') . '</b>';
 			echo '</a>';
 			?>
 		</div>
@@ -74,31 +77,36 @@ if($SYMB_UID){
 				$salixHanlder->setVerbose($verbose);
 				if($action == 'Build Wordstat Tables'){
 					$salixHanlder->buildWordStats($collid,$actionType,$limit);
-					echo '<div style="margin:15px;"><a href="salixhandler.php?collid='.$collid.'&actiontype='.$actionType.'&limit='.$limit.'">Return to Main Menu</a></div>';
+					echo '<div style="margin:15px;"><a href="salixhandler.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&actiontype=' . htmlspecialchars($actionType, HTML_SPECIAL_CHARS_FLAGS) . '&limit=' . htmlspecialchars($limit, HTML_SPECIAL_CHARS_FLAGS) . '">' . (isset($LANG['RETURN'])?$LANG['RETURN']:'Return to Main Menu') . '</a></div>';
 				}
 				else{
 					?>
-					<fieldset style="border:10px;">
-						<legend></legend>
+					<div style="border:10px;">
 						<form name="salixmanagerform" action="salixhandler.php" method="post" onsubmit="return verifySalixManagerForm(this)">
-							<div style="margin:15px;">
-								<b>Actions</b><br/>
-								<input name="actiontype" type="radio" value="1" /> Rebuild with randomly selected occurrences<br/>
-								<input name="actiontype" type="radio" value="2" /> Rebuild with most recently entered occurrences<br/>
-								<input name="actiontype" type="radio" value="3" checked />Append using occurrences entered since last build (<?php echo $salixHanlder->getLastBuildTimestamp(); ?>)<br/><br/>
-								Limit to <input name="limit" type="text" value="100000" /> unique values per column
-							</div>
-							<div style="margin:15px;">
-								<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-								<input name="formsubmit" type="submit" value="Build Wordstat Tables" />
-							</div>
+							<fieldset style="margin:15px;">
+							<legend><b> <?php echo (isset($LANG['SALIX_WRDST_MNGR'])?$LANG['SALIX_WRDST_MNGR']:'SALIX Wordstat Manager') ?> </b></legend>
+								<?php echo (isset($LANG['ACTIONS'])?$LANG['ACTIONS']:'Actions') ?> :<br/>
+								<input id="rndmSelect" name="actiontype" type="radio" value="1" /> <label for="rndmSelect"> <?php echo (isset($LANG['RNDM_SELECT'])?$LANG['RNDM_SELECT']:'Rebuild with randomly selected occurrences') ?> </label> <br/>
+								<input id="recentEnter" name="actiontype" type="radio" value="2" /> <label for="recentEnter"> <?php echo (isset($LANG['RECENTLY_ENTERED'])?$LANG['RECENTLY_ENTERED']:'Rebuild with most recently entered occurrences') ?> </label> <br/>
+								<input id="appendLast" name="actiontype" type="radio" value="3" checked /> <label for="appendLast"> <?php echo (isset($LANG['APPEND_LAST_BUILD'])?$LANG['APPEND_LAST_BUILD']:'Append using occurrences entered since last build') ?> (<?php echo $salixHanlder->getLastBuildTimestamp(); ?>) </label> <br/><br/>
+								<label for="limit"> <?php echo (isset($LANG['LIMIT_TO'])?$LANG['LIMIT_TO']:'Limit to') ?> 
+									<span class="skip-link"> <?php echo (isset($LANG['UNIQUE_VALS'])?$LANG['UNIQUE_VALS']:'unique values per column') ?> </span> 
+								</label> 
+								<input id="limit" name="limit" type="text" value="100000" /> 
+								<?php echo (isset($LANG['UNIQUE_VALS'])?$LANG['UNIQUE_VALS']:'unique values per column') ?>
+								<div style="margin:15px;">
+								
+									<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
+									<input name="formsubmit" type="submit" value="<?php echo (isset($LANG['BLD_TABLES'])?$LANG['BLD_TABLES']:'Build Wordstat Tables'); ?>" />
+								</div>
+							</fieldset>
 						</form>
-					</fieldset>
+					</div>
 					<?php
 				}
 			}
 			else{
-				echo '<div style="margin:25px;font-weight">You are not authorized to build Word Stats</div>';
+				echo '<div style="margin:25px;font-weight">' . (isset($LANG['NOT_AUTH'])?$LANG['NOT_AUTH']:'You are not authorized to build Word Stats') . '</div>';
 			}
 			?>
 		</div>

@@ -78,4 +78,27 @@ $LANG['COMMENTS'] = 'Comentarios';
 $LANG['PAGE'] = 'P&aacute;gina';
 $LANG['OF'] = 'de';
 $LANG['CHECKLIST'] = 'Listado de Comprobaci&oacute;n';
+$LANG['SEARCHSYNONYMS'] = "Buscar sinónimos";
+$LANG['TAXONFILTER'] = 'Filtro Taxonómico';
+$LANG['IMG_CHECKLIST_ADMIN'] = 'Botón de administración de la lista de verificación';
+$LANG['IMG_MANAGE_VOUCHERS'] = 'Botón Administrar vales vinculados';
+$LANG['IMG_EDIT_LIST'] = 'Botón Editar lista de especies';
+$LANG['IMG_OPEN_KEY'] = 'Abrir botón clave Symbiota';
+$LANG['GAMES'] = 'Mostrar juegos';
+$LANG['IMG_VOUCHERS_SIMPLE_MAP'] = 'Mostrar vales en mapa simple';
+$LANG['IMG_VOUCHERS_DYNAMIC_MAP'] = 'Mostrar vales en el mapa dinámico';
+$LANG['IMG_OCCUR_DYNAMIC_MAP'] = 'Mostrar todas las ocurrencias en el mapa dinámico';
+$LANG['EDIT_DETAILS'] = 'Botón Editar Detalles';
+$LANG['SEARCH_COMMON'] = 'Buscar nombres comunes';
+$LANG['IMG_DWNL_LIST'] = 'Descargar lista';
+$LANG['IMG_PRINT_LIST'] = 'Imprimir lista';
+$LANG['IMG_DOCX_EXPORT'] = 'Exportar a DOCX';
+$LANG['SKIP_LINK'] = 'Saltar a la lista de taxones';
+$LANG['IMAGE_SRC'] = 'Fuente de la imagen';
+$LANG['ALL_IMG'] = 'todas las imágenes';
+$LANG['LINKED_IMG'] = 'sólo imágenes de vales vinculadas';
+$LANG['IMAGE_SRC'] = 'Fuente de la imagen';
+$LANG['ALL_IMG'] = 'todas las imágenes';
+$LANG['LINKED_IMG'] = 'sólo imágenes de vales vinculadas';
+
 ?>

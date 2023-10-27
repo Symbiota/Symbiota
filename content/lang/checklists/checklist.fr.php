@@ -78,4 +78,24 @@ $LANG['COMMENTS'] = 'Commentaires';
 $LANG['PAGE'] = 'Page';
 $LANG['OF'] = 'des';
 $LANG['CHECKLIST'] = 'Liste';
+$LANG['SEARCHSYNONYMS'] = "Rechercher des synonymes";
+$LANG['TAXONFILTER'] = 'Filtre de Taxon';
+$LANG['IMG_CHECKLIST_ADMIN'] = 'Bouton d\'administration de la liste de contrôle';
+$LANG['IMG_MANAGE_VOUCHERS'] = 'Bouton Gérer les bons liés';
+$LANG['IMG_EDIT_LIST'] = 'Bouton Modifier la liste des espèces';
+$LANG['IMG_OPEN_KEY'] = 'Bouton d\'ouverture de la clé Symbiota';
+$LANG['GAMES'] = 'Afficher les jeux';
+$LANG['IMG_VOUCHERS_SIMPLE_MAP'] = 'Afficher les bons dans une carte simple';
+$LANG['IMG_VOUCHERS_DYNAMIC_MAP'] = 'Afficher les bons dans la carte dynamique';
+$LANG['IMG_OCCUR_DYNAMIC_MAP'] = 'Afficher toutes les occurrences dans la carte dynamique';
+$LANG['EDIT_DETAILS'] = 'Bouton Modifier les détails';
+$LANG['SEARCH_COMMON'] = 'Rechercher des noms communs';
+$LANG['IMG_DWNL_LIST'] = 'Télécharger la liste';
+$LANG['IMG_PRINT_LIST'] = 'Imprimer la liste';
+$LANG['IMG_DOCX_EXPORT'] = 'Exporter vers DOCX';
+$LANG['SKIP_LINK'] = 'Passer à la liste des taxons';
+$LANG['IMAGE_SRC'] = 'Source de l\'image';
+$LANG['ALL_IMG'] = 'toutes les images';
+$LANG['LINKED_IMG'] = 'images de bons liés uniquement';
+
 ?>

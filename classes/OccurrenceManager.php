@@ -495,26 +495,26 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	protected function getTableJoins($sqlWhere){
 		$sqlJoin = '';
 		if(array_key_exists('clid',$this->searchTermArr) && $this->searchTermArr['clid']){
-			if(strpos($sqlWhere,'ctl.clid')){
+			if(isset($sqlWhere) && strpos($sqlWhere,'ctl.clid')){
 				$sqlJoin .= 'INNER JOIN fmvouchers v ON o.occid = v.occid INNER JOIN fmchklsttaxalink ctl ON v.clTaxaID = ctl.clTaxaID ';
 			}
 			else{
 				$sqlJoin .= 'INNER JOIN fmchklsttaxalink cl ON o.tidinterpreted = cl.tid ';
 			}
 		}
-		if(strpos($sqlWhere,'MATCH(f.recordedby)') || strpos($sqlWhere,'MATCH(f.locality)')){
+		if(isset($sqlWhere) && (strpos($sqlWhere,'MATCH(f.recordedby)') || strpos($sqlWhere,'MATCH(f.locality)'))){
 			$sqlJoin .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 		}
-		if(strpos($sqlWhere,'e.taxauthid')){
+		if(isset($sqlWhere) && strpos($sqlWhere,'e.taxauthid')){
 			$sqlJoin .= 'INNER JOIN taxaenumtree e ON o.tidinterpreted = e.tid ';
 		}
-		if(strpos($sqlWhere,'ts.family')){
+		if(isset($sqlWhere) && strpos($sqlWhere,'ts.family')){
 			$sqlJoin .= 'LEFT JOIN taxstatus ts ON o.tidinterpreted = ts.tid ';
 		}
-		if(strpos($sqlWhere,'d.datasetid')){
+		if(isset($sqlWhere) && strpos($sqlWhere,'d.datasetid')){
 			$sqlJoin .= 'INNER JOIN omoccurdatasetlink d ON o.occid = d.occid ';
 		}
-		if(array_key_exists('polycoords',$this->searchTermArr) || strpos($sqlWhere,'p.point')){
+		if(isset($sqlWhere) && (array_key_exists('polycoords',$this->searchTermArr) || strpos($sqlWhere,'p.point'))){
 			$sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
 		}
 		/*
@@ -531,9 +531,9 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		return $this->searchSupportManager->getFullCollectionList($catId);
 	}
 
-	public function outputFullCollArr($collGrpArr, $targetCatID = 0, $displayIcons = true, $displaySearchButtons = true){
+	public function outputFullCollArr($collGrpArr, $targetCatID = 0, $displayIcons = true, $displaySearchButtons = true, $collTypeLabel = '', $uniqGrouping=''){
 		if(!$this->searchSupportManager) $this->searchSupportManager = new OccurrenceSearchSupport($this->conn);
-		$this->searchSupportManager->outputFullCollArr($collGrpArr, $targetCatID, $displayIcons, $displaySearchButtons);
+		$this->searchSupportManager->outputFullCollArr($collGrpArr, $targetCatID, $displayIcons, $displaySearchButtons, $collTypeLabel, $uniqGrouping);
 	}
 
 	public function getOccurVoucherProjects(){

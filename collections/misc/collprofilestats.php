@@ -27,10 +27,10 @@ if($statDisplay == 'geography'){
 					$stateTerm = ($countryDist?($stateDist?$stateDist:$term):'');
 					$countyTerm = ($countryDist && $stateDist?$term:'');
 					echo '<li>';
-					if(!$stateDist) echo '<a href="collprofiles.php?collid='.$collid.'&stat=geography&country='.$countryTerm.'&state='.$stateTerm.'#geographystats">';
+					if(!$stateDist) echo '<a href="collprofiles.php?collid=' .htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&stat=geography&country=' . htmlspecialchars($countryTerm, HTML_SPECIAL_CHARS_FLAGS) . '&state=' . htmlspecialchars($stateTerm, HTML_SPECIAL_CHARS_FLAGS) . '#geographystats">';
 					echo $term;
 					if(!$stateDist) echo '</a>';
-					echo ' (<a href="../list.php?db='.$collid.'&reset=1&country='.$countryTerm.'&state='.$stateTerm.'&county='.$countyTerm.'" target="_blank">'.$cnt.'</a>)';
+					echo ' (<a href="../list.php?db=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&reset=1&country=' . htmlspecialchars($countryTerm, HTML_SPECIAL_CHARS_FLAGS) . '&state=' . htmlspecialchars($stateTerm, HTML_SPECIAL_CHARS_FLAGS) . '&county=' . htmlspecialchars($countyTerm, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($cnt, HTML_SPECIAL_CHARS_FLAGS) . '</a>)';
 					echo '</li>';
 				}
 				?>
@@ -53,10 +53,10 @@ elseif($statDisplay == 'taxonomy'){
 				<?php
 				foreach($taxArr as $name => $cnt){
 					echo '<li>';
-					if(!$famDist) echo '<a href="collprofiles.php?collid='.$collid.'&stat=taxonomy&family='.$name.'#taxonomystats">';
+					if(!$famDist) echo '<a href="collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&stat=taxonomy&family=' . htmlspecialchars($name, HTML_SPECIAL_CHARS_FLAGS) . '#taxonomystats">';
 					echo $name;
 					if(!$famDist) echo '</a>';
-					echo ' (<a href="../list.php?db='.$collid.'&taxontype='.($famDist?2:3).'&reset=1&taxa='.$name.'" target="_blank">'.$cnt.'</a>)';
+					echo ' (<a href="../list.php?db=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&taxontype=' . htmlspecialchars(($famDist?2:3), HTML_SPECIAL_CHARS_FLAGS) . '&reset=1&taxa=' . htmlspecialchars($name, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($cnt, HTML_SPECIAL_CHARS_FLAGS) . '</a>)';
 					echo '</li>';
 				}
 				?>

@@ -158,7 +158,7 @@ $status = "";
 							echo '<ul>';
 							foreach($nameArr as $k => $sciName){
 								echo '<li>';
-								echo '<a href="spectaxcleaner.php?submitaction=analyzenames&analyzeindex='.$k.'">';
+								echo '<a href="spectaxcleaner.php?submitaction=analyzenames&analyzeindex=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '">';
 								echo '<b><i>'.$sciName.'</i></b>';
 								echo '</a>';
 								echo '</li>';
@@ -185,7 +185,7 @@ $status = "";
 										foreach($snArr['soundex'] as $t => $s){
 											echo '<div style="margin-left:15px;font-weight:bold;">';
 											echo $s;
-											echo ' <a href="" title="'.(isset($LANG['REMAP_TO_NAME'])?$LANG['REMAP_TO_NAME']:'Remap to this name').'...">==>></a>';
+											echo ' <a href="" title="' . htmlspecialchars((isset($LANG['REMAP_TO_NAME'])?$LANG['REMAP_TO_NAME']:'Remap to this name'), HTML_SPECIAL_CHARS_FLAGS) . '...">==>></a>';
 											echo '</div>';
 										}
 									}
@@ -255,7 +255,7 @@ $status = "";
 			else{
 				?>
 				<div style="font-weight:bold;">
-					<?php echo (isset($LANG['PLEASE'])?$LANG['PLEASE']:'Please')."<a href='../../profile/index.php?refurl=".$CLIENT_ROOT."/taxa/taxonomy/taxonomycleaner.php?collid=".$collId.">".(isset($LANG['LOGIN'])?$LANG['LOGIN']:'log in')."</a>!" ?>
+					<?php echo (isset($LANG['PLEASE'])?$LANG['PLEASE']:'Please')."<a href='../../profile/index.php?refurl=" . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . "/taxa/taxonomy/taxonomycleaner.php?collid=" . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . ">" . htmlspecialchars((isset($LANG['LOGIN'])?$LANG['LOGIN']:'log in'), HTML_SPECIAL_CHARS_FLAGS) . "</a>!" ?>
 				</div>
 				<?php
 			}

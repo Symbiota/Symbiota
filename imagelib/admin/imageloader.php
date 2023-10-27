@@ -52,7 +52,7 @@ include($SERVER_ROOT.'/includes/header.php');
 
 ?>
 <div class="navpath">
-	<b><a href="../../index.php"><?php echo $LANG['HOME']; ?></a></b> &gt;&gt;
+	<b><a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a></b> &gt;&gt;
 	<b><?php echo $LANG['IMG_IMPORTER']; ?></b>
 </div>
 

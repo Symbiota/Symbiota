@@ -86,7 +86,7 @@ if($traitID){
 <html>
 	<head>
 		<title>Occurrence Attribute batch Editor</title>
-		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -237,17 +237,17 @@ if($traitID){
 		if($isEditor == 2){
 			echo '<div style="float:right;margin:0px 3px;font-size:90%">';
 			if($mode == 1){
-				echo '<a href="occurattributes.php?collid='.$collid.'&mode=2&traitid='.$traitID.'"><img src="../../images/edit.png" style="" />review</a>';
+				echo '<a href="occurattributes.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&mode=2&traitid=' . htmlspecialchars($traitID, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="" />review</a>';
 			}
 			else{
-				echo '<a href="occurattributes.php?collid='.$collid.'&mode=1&traitid='.$traitID.'"><img src="../../images/edit.png" style="" />edit</a>';
+				echo '<a href="occurattributes.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&mode=1&traitid=' . htmlspecialchars($traitID, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="" />edit</a>';
 			}
 			echo '</div>';
 		}
 		?>
 		<div class="navpath">
 			<a href="../../index.php">Home</a> &gt;&gt;
-			<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
+			<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">Collection Management</a> &gt;&gt;
 			<?php
 			if($mode == 2){
 				echo '<b>Attribute Reviewer</b>';
@@ -519,7 +519,7 @@ if($traitID){
 						if($occid){
 							if(!$catNum) $catNum = 'Specimen Details';
 							echo '<span style="margin-left:50px;">';
-							echo '<a href="../individual/index.php?occid='.$occid.'" target="_blank" title="Specimen Details">'.$catNum.'</a>';
+							echo '<a href="../individual/index.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Specimen Details">' . htmlspecialchars($catNum, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 							echo '</span>';
 						}
 						$imgTotal = count($imgArr);

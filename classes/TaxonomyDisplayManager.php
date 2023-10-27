@@ -275,14 +275,14 @@ class TaxonomyDisplayManager extends Manager{
 				}
 				$indent = $taxonRankId;
 				if($indent > 230) $indent -= 10;
-				echo "<div>".str_repeat('&nbsp;',$indent/5);
-				if($taxonRankId > 139) echo '<a href="../index.php?taxon='.$key.'" target="_blank">'.$sciName.'</a>';
+				echo "<div>".str_repeat('&nbsp;',intval($indent/5));
+				if($taxonRankId > 139) echo '<a href="../index.php?taxon=' . htmlspecialchars($key, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($sciName, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 				else echo $sciName;
-				if($this->isEditor) echo ' <a href="taxoneditor.php?tid='.$key.'" target="_blank"><img src="../../images/edit.png" style="width:11px" /></a>';
+				if($this->isEditor) echo ' <a href="taxoneditor.php?tid=' . htmlspecialchars($key, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><img src="../../images/edit.png" style="width:11px" alt="Edit" /></a>';
 				if(!$this->displayFullTree){
 					if(($this->targetRankId < 140 && $taxonRankId == 140) || !$this->targetStr && $taxonRankId == 10){
-						echo ' <a href="taxonomydisplay.php?target='.$sciName.'">';
-						echo '<img src="../../images/tochild.png" style="width:9px;" />';
+						echo ' <a href="taxonomydisplay.php?target=' . htmlspecialchars($sciName, HTML_SPECIAL_CHARS_FLAGS) . '">';
+						echo '<img src="../../images/tochild.png" style="width:9px;" alt="Go to child" />';
 						echo '</a>';
 					}
 				}
@@ -294,10 +294,10 @@ class TaxonomyDisplayManager extends Manager{
 						$synName = str_replace($this->targetStr,"<b>".$this->targetStr."</b>",$synName);
 						echo '<div>'.str_repeat('&nbsp;',$indent/5).str_repeat('&nbsp;',7);
 						echo '[';
-						if($taxonRankId > 139) echo '<a href="../index.php?taxon='.$synTid.'" target="_blank">';
+						if($taxonRankId > 139) echo '<a href="../index.php?taxon=' . htmlspecialchars($synTid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 						echo $synName;
 						if($taxonRankId > 139) echo '</a>';
-						if($this->isEditor) echo ' <a href="taxoneditor.php?tid='.$synTid.'" target="_blank"><img src="../../images/edit.png" style="width:11px" /></a>';
+						if($this->isEditor) echo ' <a href="taxoneditor.php?tid=' . htmlspecialchars($synTid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><img src="../../images/edit.png" style="width:11px" /></a>';
 						echo ']';
 						echo '</div>';
 					}

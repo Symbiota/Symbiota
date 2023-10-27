@@ -212,13 +212,13 @@ if($collMap){
 					if((count($dupArr)+2)>$limit){
 						?>
 							<div>
-								<a href="index.php?collid=<?php echo $collid; ?>"><?php echo $LANG['RETURN_TO_FORM']; ?></a>
+								<a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['RETURN_TO_FORM'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
 							</div>
 							<?php
 						}
 					?>
 					<div>
-						<a href="index.php?collid=<?php echo $collid; ?>"><?php echo $LANG['RETURN_TO_MAIN']; ?></a>
+						<a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['RETURN_TO_MAIN'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
 					</div>
 				</div>
 				<?php

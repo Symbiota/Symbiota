@@ -54,14 +54,14 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 		<a href='../../index.php'>Home</a> &gt;&gt;
 		<?php
 		if($pid) echo '<a href="'.$CLIENT_ROOT.'/projects/index.php?pid='.$pid.'">';
-		echo '<a href="../checklist.php?clid='.$clid.'&pid='.$pid.'">Return to Checklist</a> &gt;&gt; ';
+		echo '<a href="../checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">Return to Checklist</a> &gt;&gt; ';
 		?>
-		<a href="checklistloader.php?clid=<?php echo $clid.'&pid='.$pid; ?>"><b>Checklists Loader</b></a>
+		<a href="checklistloader.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><b>Checklists Loader</b></a>
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
 		<h1>
-			<a href="<?php echo $CLIENT_ROOT."/checklists/checklist.php?clid=".$clid.'&pid='.$pid; ?>">
+			<a href="<?php echo $CLIENT_ROOT."/checklists/checklist.php?clid=" . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>">
 				<?php echo $clMeta['name']; ?>
 			</a>
 		</h1>
@@ -81,7 +81,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 							if(!$cnt && $statusStr){
 								echo '<div style="margin:20px;font-weight:bold;">';
 								echo '<div style="font-size:110%;color:red;">'.$statusStr.'</div>';
-								echo '<div><a href="checklistloader.php?clid='.$clid.'&pid='.$pid.'">Return to Loader</a> and make sure the input file matches requirements within instructions</div>';
+								echo '<div><a href="checklistloader.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">Return to Loader</a> and make sure the input file matches requirements within instructions</div>';
 								echo '</div>';
 								exit;
 							}
@@ -92,7 +92,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 							<li style="margin-left:10px;">Taxa successfully loaded: <?php echo $cnt; ?></li>
 							<li style="margin-left:10px;">Problematic Taxa: <?php echo $probCnt.($probCnt?' (see below)':''); ?></li>
 							<li style="margin-left:10px;">General errors: <?php echo count($errorArr); ?></li>
-							<li style="margin-left:10px;">Upload Complete! <a href="../checklist.php?clid=<?php echo $clid.'&pid='.$pid; ?>">Proceed to Checklists</a></li>
+							<li style="margin-left:10px;">Upload Complete! <a href="../checklist.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>">Proceed to Checklists</a></li>
 						</ul>
 						<?php
 						if($probCnt){
@@ -105,7 +105,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 							?>
 							<fieldset style="padding:20px;">
 								<legend><b>General Errors</b></legend>
-								<a href="#" onclick="displayErrors(this);return false;"><b>Display <?php echo count($errorArr); ?> general errors</b></a>
+								<a href="#" onclick="displayErrors(this);return false;"><b>Display <?php echo htmlspecialchars(count($errorArr), HTML_SPECIAL_CHARS_FLAGS); ?> general errors</b></a>
 								<div id="errordiv" style="display:none">
 									<ol style="margin-left:15px;">
 										<?php

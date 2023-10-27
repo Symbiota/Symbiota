@@ -1,8 +1,10 @@
+<!DOCTYPE html>
 <?php
 use PhpOffice\PhpSpreadsheet\Reader\Xml\Style\NumberFormat;
 
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceProtectedSpecies.php');
+include_once($SERVER_ROOT.'/content/lang/collections/misc/protectedspecies.' . $LANG_TAG . '.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $searchTaxon = array_key_exists('searchtaxon', $_REQUEST) ? $_REQUEST['searchtaxon'] : '';
@@ -26,11 +28,11 @@ if($isEditor){
 $rsManager->setTaxonFilter($searchTaxon);
 $rsArr = $rsManager->getProtectedSpeciesList();
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title>Rare, Threatened, Sensitive Species</title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -109,47 +111,47 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 	if($isEditor){
 		?>
 		<div style="float:right;cursor:pointer;" onclick="toggle('editobj');" title="Toggle Editing Functions">
-			<img style="border:0px;" src="../../images/edit.png" />
+			<?php echo $LANG['EDIT'] ?> <img style="border:0px;" src="../../images/edit.png" alt="pencil icon depicting edit capability" />
 		</div>
 		<?php
 	}
 	?>
 	<h1>Protected Species</h1>
 	<div style="float:right;">
-		<fieldset style="margin:0px 15px;padding:10px">
-			<legend><b>Filter</b></legend>
-			<form name="searchform" action="protectedspecies.php" method="post">
+		<form name="searchform" action="protectedspecies.php" method="post">
+			<fieldset style="margin:0px 15px;padding:10px">
+				<legend><b>Filter</b></legend>
 				<div style="margin:3px">
-					Taxon Search:
-					<input id="searchtaxon" name="searchtaxon" type="text" value="<?php echo htmlspecialchars($searchTaxon, HTML_SPECIAL_CHARS_FLAGS); ?>" />
+					<label for="searchtaxon"><?php echo $LANG['TAXON_SEARCH'] ?>:</label>
+					<input id="searchtaxon" name="searchtaxon" type="text" value="<?= htmlspecialchars($searchTaxon, HTML_SPECIAL_CHARS_FLAGS) ?>" />
 				</div>
 				<div style="margin:3px">
 					<input name="submitaction" type="submit" value="Search" />
 				</div>
-			</form>
-		</fieldset>
+			</fieldset>
+		</form>
 	</div>
-	<div style='margin:15px;'>
+	<div class="bottom-breathing-room">
 		Species in the list below have protective status with specific locality details below county withheld (e.g. decimal lat/long).
 		Rare, threatened, or sensitive status are the typical causes for protection though species that are cherished by collectors or wild harvesters may also appear on the list.
 	</div>
 	<div>
 		<?php
 		$occurCnt = $rsManager->getSpecimenCnt();
-		if($occurCnt) echo '<div style="margin:0px 40px 0px 20px;float:left">Occurrences protected: '.number_format($occurCnt).'</div>';
+		if($occurCnt) echo '<div class="bottom-breathing-room">Occurrences protected: '.number_format($occurCnt).'</div>';
 		if($isEditor){
 			if($action == 'checkstats'){
 				echo '<div>Number of specimens affected: '.$rsManager->protectGlobalSpecies().'</div>';
 			}
 			else{
-				echo '<div><a href="protectedspecies.php?submitaction=checkstats"><button style="font-size:70%">Verify protections</button></a></div>';
+				echo "<div><a href=\"protectedspecies.php?submitaction=checkstats\">" . $LANG['VERIFY_PROTECTIONS'] . "</a></div>";
 			}
 		}
 		?>
 	</div>
 	<div style="clear:both">
-		<fieldset style="padding:15px;margin:15px">
-			<legend><b>Global Protections</b></legend>
+		<section class="fieldset-like">
+			<h1><span>Global Protections</span></h1>
 			<?php
 			if($isEditor){
 				?>
@@ -178,11 +180,11 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 					<div style='margin-left:20px;'>
 						<?php
 						foreach($speciesArr as $tid => $nameArr){
-							echo '<div id="tid-'.$tid.'"><a href="../../taxa/index.php?taxon='.$tid.'" target="_blank"><i>'.$nameArr['sciname'].'</i> '.$nameArr['author'].'</a> ';
+							echo '<div id="tid-'.$tid.'"><a href="../../taxa/index.php?taxon=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><i>' . htmlspecialchars($nameArr['sciname'], HTML_SPECIAL_CHARS_FLAGS) . '</i> ' . htmlspecialchars($nameArr['author'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
 							if($isEditor){
 								?>
 								<span class="editobj" style="display:none;">
-									<a href="protectedspecies.php?submitaction=deletespecies&tidtodel=<?php echo $tid;?>">
+									<a href="protectedspecies.php?submitaction=deletespecies&tidtodel=<?php echo htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS);?>">
 										<img src="../../images/del.png" style="width:13px;border:0px;" title="remove species from list" />
 									</a>
 								</span>
@@ -203,16 +205,16 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 				<?php
 			}
 			?>
-		</fieldset>
-		<fieldset style="padding:15px;margin:15px">
-			<legend><b>State/Province Level Protections</b></legend>
+		</section>
+		<section class="fieldset-like">
+			<h1><span>State/Province Level Protections</span></h1>
 			<?php
 			$stateList = $rsManager->getStateList();
 			$emptyList = true;
 			foreach($stateList as $clid => $stateArr){
 				if($isEditor || $stateArr['access'] == 'public'){
 					echo '<div>';
-					echo '<a href="../../checklists/checklist.php?clid='.$clid.'">';
+					echo '<a href="../../checklists/checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '">';
 					echo $stateArr['locality'].': '.$stateArr['name'];
 					echo '</a>';
 					if($stateArr['access'] == 'private') echo ' (private)';
@@ -228,7 +230,7 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 				<?php
 			}
 			?>
-		</fieldset>
+		</section>
 	</div>
 </div>
 <?php

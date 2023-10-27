@@ -44,4 +44,24 @@ $LANG['H_MY_PROFILE'] = 'Mon Profill';
 $LANG['H_LOGOUT'] = 'Se Déconnecter';
 $LANG['H_LOGIN'] = 'Se connecter';
 $LANG['H_NEW_ACCOUNT'] = 'Nouveau Compte';
+$LANG['TOGGLE_508_OFF'] = "Mode condensé";
+$LANG['TOGGLE_508_ON'] = "Mode d'accessibilité";
+$LANG['SELECT_LANGUAGE'] = 'Sélectionnez une langue';
+$LANG['NAV_HOME'] = 'Maison';
+$LANG['NAV_IMG_LIB'] = 'Bibliothèque d\'Images';
+$LANG['NAV_IMG_CONTR'] = 'Contributeurs d\'Images';
+$LANG['NAV_IMG_SEARCH'] = 'Recherche d\'Image';
+$LANG['SKIP_NAV'] = 'Sauter la Navigation';
+$LANG['CONTACT_US'] = 'Contactez-Nous';
+$LANG['LOGIN'] = 'Se Connecter';
+$LANG['HOME'] = 'Accueil';
+$LANG['SEARCH_COLLECTIONS'] = 'Rechercher des Collections';
+$LANG['CHECKLISTS'] = 'Listes de Contrôle';
+$LANG['DATA_USE'] = 'Utilisation des Données';
+$LANG['ABOUT_SYMBIOTA'] = 'À Propos de Symbiote';
+$LANG['HELP'] = 'Aide';
+$LANG['SPECIMENS'] = 'Spécimens';
+$LANG['IMG_CONTR'] = 'Contributeurs d\'images';
+$LANG['OBS'] = 'Observations';
+
 ?>

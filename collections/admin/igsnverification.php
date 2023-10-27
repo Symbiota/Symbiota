@@ -65,14 +65,14 @@ $guidManager->setNamespace($namespace);
 </head>
 <body>
 <?php
-$displayLeftMenu = 'false';
+$displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class='navpath'>
 	<a href="../../index.php">Home</a> &gt;&gt;
-	<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
-	<a href="igsnmapper.php?collid=<?php echo $collid; ?>">IGSN GUID Generator</a> &gt;&gt;
-	<a href="igsnmanagement.php?collid=<?php echo $collid; ?>">IGSN GUID Management</a> &gt;&gt;
+	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">Collection Management</a> &gt;&gt;
+	<a href="igsnmapper.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">IGSN GUID Generator</a> &gt;&gt;
+	<a href="igsnmanagement.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">IGSN GUID Management</a> &gt;&gt;
 	<b>IGSN Verification</b>
 </div>
 <!-- This is inner text! -->
@@ -102,7 +102,7 @@ include($SERVER_ROOT.'/includes/header.php');
 			if(isset($sesarArr['collid'])){
 				echo '<li style="margin-left:25px">Registered IGSNs by Collection:</li>';
 				foreach($sesarArr['collid'] as $id => $collArr){
-					echo '<li style="margin-left:40px"><a href="../misc/collprofiles.php?collid='.$id.'" target="_blank">'.$collArr['name'].'</a>: '.$collArr['cnt'].' IGSNs</li>';
+					echo '<li style="margin-left:40px"><a href="../misc/collprofiles.php?collid=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($collArr['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a>: ' . htmlspecialchars($collArr['cnt'],) . ' IGSNs</li>';
 				}
 			}
 			$missingCnt = 0;
@@ -114,10 +114,10 @@ include($SERVER_ROOT.'/includes/header.php');
 			if($missingCnt){
 				echo '<div id="missingGuidList" style="margin-left:40px;display:none">';
 				foreach($sesarArr['missing'] as $igsn => $missingArr){
-					echo '<li><a href="https://app.geosamples.org/sample/igsn/'.$igsn.'" target="_blank" title="Open IGSN in SESAR Systems">'.$igsn.'</a> ';
+					echo '<li><a href="https://app.geosamples.org/sample/igsn/' . htmlspecialchars($igsn, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Open IGSN in SESAR Systems">' . htmlspecialchars($igsn, HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
 					if(isset($missingArr['occid'])){
-						echo '=> <a href="../individual/index.php?occid='.$missingArr['occid'].'" target="_blank" title="Open occurrence profile page">'.$missingArr['catNum'].'</a> ';
-						echo '<a href="#" onclick="syncIGSN('.$missingArr['occid'].',\''.$missingArr['catNum'].'\',\''.$igsn.'\');return false" title="Add IGSN to target occurrence"><img src="../../images/link.png" style="width:13px"/></a>';
+						echo '=> <a href="../individual/index.php?occid=' . htmlspecialchars($missingArr['occid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Open occurrence profile page">' . htmlspecialchars($missingArr['catNum'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
+						echo '<a href="#" onclick="syncIGSN(' . $missingArr['occid'] . ',\'' . $missingArr['catNum'] . '\',\'' . $igsn . '\');return false" title="Add IGSN to target occurrence"><img src="../../images/link.png" style="width:13px"/></a>';
 						echo '<span id="syncDiv-'.$missingArr['occid'].'" style="margin-left:15px;color:green;"></span>';
 					}
 					echo '</li>';
@@ -142,7 +142,7 @@ include($SERVER_ROOT.'/includes/header.php');
 				if($missingCnt){
 					echo '<div id="unmappedGuidList" style="margin-left:30px;display:none">';
 					foreach($localArr as $occid => $guid){
-						echo '<li><a href="../individual/index.php?occid='.$occid.'" target="_blank">'.$guid.'</a></li>';
+						echo '<li><a href="../individual/index.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($guid, HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
 					}
 					echo '</div>';
 				}
