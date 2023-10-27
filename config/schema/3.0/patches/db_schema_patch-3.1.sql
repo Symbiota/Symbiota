@@ -13,12 +13,19 @@ ALTER TABLE `omoccurassociations`
   ADD INDEX `IX_occurassoc_identifier` (`identifier` ASC),
   ADD INDEX `IX_occurassoc_recordID` (`recordID` ASC);
   
+
 ALTER TABLE `omoccurassociations` 
-  RENAME INDEX `omossococcur_occid_idx` TO `FK_ossococcur_occid_idx`;
+  DROP INDEX `omossococcur_occid_idx`,
+  ADD INDEX `FK_ossococcur_occid_idx` (`occid` ASC);
+
 ALTER TABLE `omoccurassociations` 
-  RENAME INDEX `omossococcur_occidassoc_idx` TO `FK_ossococcur_occidassoc_idx`;
+  DROP INDEX `omossococcur_occidassoc_idx`,
+  ADD INDEX `FK_ossococcur_occidassoc_idx` (`occidAssociate` ASC);
+
 ALTER TABLE `omoccurassociations` 
-  RENAME INDEX `INDEX_verbatimSciname` TO `IX_occurassoc_verbatimSciname`;
+  DROP INDEX `INDEX_verbatimSciname`,
+  ADD INDEX `IX_occurassoc_verbatimSciname` (`verbatimSciname` ASC);
+
 
 ALTER TABLE `omoccurassociations` 
   ADD UNIQUE INDEX `UQ_omoccurassoc_identifier` (`occid` ASC, `identifier` ASC);
