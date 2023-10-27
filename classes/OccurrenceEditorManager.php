@@ -1577,8 +1577,8 @@ class OccurrenceEditorManager {
 		//Remap identifiers
 		$sql = 'UPDATE omoccuridentifiers SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
 		if(!$this->conn->query($sql)){
-			$this->errorArr[] .= '; '.$LANG['ERROR_REMAPPING_OCCIDS'].': '.$this->conn->error;
-			$status = false;
+			//$this->errorArr[] .= '; '.$LANG['ERROR_REMAPPING_OCCIDS'].': '.$this->conn->error;
+			//$status = false;
 		}
 
 		//Remap exsiccati

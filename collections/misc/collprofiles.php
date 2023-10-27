@@ -5,17 +5,14 @@ include_once($SERVER_ROOT . '/classes/OccurrenceCollectionProfile.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 unset($_SESSION['editorquery']);
 
-$collid = isset($_REQUEST['collid']) ? $_REQUEST['collid'] : 0;
-$action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
-$eMode = array_key_exists('emode', $_REQUEST) ? $_REQUEST['emode'] : 0;
+$collManager = new OccurrenceCollectionProfile();
 
-//Sanitation
-if (!is_numeric($collid)) $collid = 0;
-if (!is_numeric($eMode)) $eMode = 0;
+$collid = isset($_REQUEST['collid']) ? $collManager->sanitizeInt($_REQUEST['collid']) : 0;
+$action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
+$eMode = array_key_exists('emode', $_REQUEST) ? $collManager->sanitizeInt($_REQUEST['emode']) : 0;
 
 if ($eMode && !$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/misc/collprofiles.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$collManager = new OccurrenceCollectionProfile();
 $collManager->setCollid($collid);
 
 $collData = $collManager->getCollectionMetadata();

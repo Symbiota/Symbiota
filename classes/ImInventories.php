@@ -59,7 +59,7 @@ class ImInventories extends Manager{
 						if($r = $rs->fetch_object()){
 							$retArr['clNameOverride'] = $this->cleanOutStr($r->clNameOverride);
 							$retArr['mapchecklist'] = $r->mapChecklist;
-							$retArr['sortsequence'] = $r->sortSequence;
+							$retArr['sortOverride'] = $r->sortSequence;
 						}
 						$rs->free();
 					}

@@ -23,60 +23,67 @@ class OccurrenceCleaner extends Manager{
 	}
 
 	//Search and resolve duplicate specimen records
-	public function getDuplicateCatalogNumber($type,$start,$limit = 500){
-		//Search is not available for personal specimen management
+	public function getDuplicateCatalogNumber($type, $start, $limit = 500){
 		$dupArr = array();
-		$catArr = array();
-		$cnt = 0;
 		if($type=='cat'){
-			$sql1 = 'SELECT catalognumber '.
-				'FROM omoccurrences '.
-				'WHERE catalognumber IS NOT NULL AND collid = '.$this->collid;
+			$sql = 'SELECT catalogNumber as catnum, count(occid) as cnt FROM omoccurrences WHERE catalognumber IS NOT NULL AND collid = '.$this->collid.' GROUP BY catalogNumber ';
 		}
 		else{
-			$sql1 = 'SELECT otherCatalogNumbers '.
-				'FROM omoccurrences '.
-				'WHERE otherCatalogNumbers IS NOT NULL AND collid = '.$this->collid;
+			$sql = 'SELECT o.otherCatalogNumbers as catnum, count(o.occid) as cnt
+				FROM omoccurrences o LEFT JOIN omoccuridentifiers i ON o.occid = i.occid
+				WHERE i.occid IS NULL AND o.otherCatalogNumbers IS NOT NULL AND o.collid = '.$this->collid.' GROUP BY o.otherCatalogNumbers ';
 		}
-		//echo $sql1;
-		$rs = $this->conn->query($sql1);
+		$sql .= 'HAVING cnt > 1 ';
+		$rs = $this->conn->query($sql);
+		$cnt = -1*$start;
 		while($r = $rs->fetch_object()){
-			$cn = ($type=='cat'?$r->catalognumber:$r->otherCatalogNumbers);
-			if(array_key_exists($cn,$catArr)){
-				//Dupe found
-				$cnt++;
-				if($start < $cnt && !array_key_exists($cn,$dupArr)){
-					//Add dupe to array
-					$dupArr[$this->cleanInStr($cn)] = '';
-					if(count($dupArr) > $limit) break;
-				}
-			}
-			else{
-				$catArr[$cn] = '';
-			}
+			$cnt++;
+			if($cnt > 0) $dupArr[] = $this->cleanInStr($r->catnum);
+			if(count($dupArr) > $limit) break;
 		}
 		$rs->free();
 
 		$retArr = array();
-		if($type=='cat'){
-			$sql = 'SELECT o.catalognumber AS dupid, o.occid, o.catalognumber, o.othercatalognumbers, o.family, o.sciname, '.
-				'o.recordedby, o.recordnumber, o.associatedcollectors, o.eventdate, o.verbatimeventdate, '.
-				'o.country, o.stateprovince, o.county, o.municipality, o.locality, o.datelastmodified '.
-				'FROM omoccurrences o '.
-				'WHERE o.collid = '.$this->collid.' AND o.catalognumber IN("'.implode('","',array_keys($dupArr)).'") '.
-				'ORDER BY o.catalognumber';
+		if($dupArr){
+			$sqlFrag = '';
+			if($type=='cat'){
+				$sqlFrag = 'occid, otherCatalogNumbers, catalognumber AS dupid FROM omoccurrences WHERE collid = '.$this->collid.' AND catalognumber IN("'.implode('","', $dupArr).'") ORDER BY catalognumber';
+			}
+			else{
+				$sqlFrag = 'occid, otherCatalogNumbers, otherCatalogNumbers AS dupid FROM omoccurrences WHERE collid = '.$this->collid.' AND otherCatalogNumbers IN("'.implode('","', $dupArr).'") ORDER BY otherCatalogNumbers';
+			}
+			$retArr = $this->getDuplicates($sqlFrag);
 		}
-		else{
-			$sql = 'SELECT o.otherCatalogNumbers AS dupid, o.occid, o.catalognumber, o.othercatalognumbers, o.family, o.sciname, '.
-				'o.recordedby, o.recordnumber, o.associatedcollectors, o.eventdate, o.verbatimeventdate, '.
-				'o.country, o.stateprovince, o.county, o.municipality, o.locality, o.datelastmodified '.
-				'FROM omoccurrences o '.
-				'WHERE o.collid = '.$this->collid.' AND o.otherCatalogNumbers IN("'.implode('","',array_keys($dupArr)).'") '.
-				'ORDER BY o.otherCatalogNumbers';
-		}
-		//echo $sql;
 
-		$retArr = $this->getDuplicates($sql);
+		if($type=='other' && count($dupArr) < $limit){
+			$retArr = array_merge($retArr, $this->setAdditionalIdentifiers($cnt, ($limit - count($dupArr))));
+		}
+
+		return $retArr;
+	}
+
+	private function setAdditionalIdentifiers($cnt, $limit){
+		$retArr = array();
+		$start = 0;
+		if($cnt < 0) $start = -1*$cnt;
+		$dupArr = array();
+		$sql = 'SELECT i.identifierName, i.identifierValue, COUNT(i.occid) as cnt
+			FROM omoccurrences o INNER JOIN omoccuridentifiers i ON o.occid = i.occid
+			WHERE o.collid = '.$this->collid.' GROUP BY i.identifiername, i.identifiervalue
+			HAVING cnt > 1 LIMIT '.$start.','.$limit;
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$dupArr[$r->identifierName][] = $this->cleanInStr($r->identifierValue);
+		}
+		$rs->free();
+
+		foreach($dupArr as $idName => $idValueArr){
+			$sqlFrag = 'o.occid, CONCAT(i.identifierName, IF(i.identifierName = "","",": "), i.identifierValue) as otherCatalogNumbers, CONCAT(i.identifierName, ": ", i.identifierValue) as dupid
+				FROM omoccurrences o INNER JOIN omoccuridentifiers i ON o.occid = i.occid
+				WHERE o.collid = '.$this->collid.' AND i.identifierName = "'.$this->cleanInStr($idName).'" AND i.identifierValue IN("'.implode('","', $idValueArr).'")
+				ORDER BY i.identifierName, i.identifierValue';
+			$retArr = array_merge($retArr, $this->getDuplicates($sqlFrag));
+		}
 		return $retArr;
 	}
 
@@ -116,7 +123,6 @@ class OccurrenceCleaner extends Manager{
 		$rs->free();
 
 		//Collection duplicate clusters
-		$occidArr = array();
 		$cnt = 0;
 		foreach($collArr as $ed => $arr1){
 			foreach($arr1 as $rn => $arr2){
@@ -124,12 +130,9 @@ class OccurrenceCleaner extends Manager{
 					if(count($dupArr) > 1){
 						//Skip records until start is reached
 						if($cnt >= $start){
-							$sql = 'SELECT '.$cnt.' AS dupid, o.occid, o.catalognumber, o.othercatalognumbers, o.othercatalognumbers, o.family, o.sciname, o.recordedby, o.recordnumber, '.
-								'o.associatedcollectors, o.eventdate, o.verbatimeventdate, o.country, o.stateprovince, o.county, o.municipality, o.locality, datelastmodified '.
-								'FROM omoccurrences o '.
-								'WHERE occid IN('.implode(',',$dupArr).') ';
+							$sqlFragment = $cnt.' AS dupid FROM omoccurrences WHERE occid IN('.implode(',',$dupArr).') ';
 							//echo $sql;
-							$retArr = array_merge($retArr,$this->getDuplicates($sql));
+							$retArr = array_merge($retArr,$this->getDuplicates($sqlFragment));
 						}
 						if($cnt > ($start+200)) break 3;
 						$cnt++;
@@ -140,15 +143,14 @@ class OccurrenceCleaner extends Manager{
 		return $retArr;
 	}
 
-	private function getDuplicates($sql){
+	private function getDuplicates($sqlFragment){
 		$retArr = array();
-		$cnt = 0;
-		$dupid = '';
+		$sql = 'SELECT catalognumber, family, sciname, recordedby, recordnumber, associatedcollectors,
+			eventdate, verbatimeventdate, country, stateprovince, county, municipality, locality, datelastmodified, '.
+			$sqlFragment;
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_assoc()){
-			if($dupid != $row['dupid']) $cnt++;
-			$retArr[$cnt][$row['occid']] = array_change_key_case($row);
-			$dupid = $row['dupid'];
+			$retArr[$row['dupid']][$row['occid']] = array_change_key_case($row);
 		}
 		$rs->free();
 		return $retArr;
