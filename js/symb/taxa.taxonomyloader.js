@@ -195,3 +195,32 @@ function acceptanceChanged(f){
 	if(accStatusObj[0].checked) document.getElementById("accdiv").style.display = "none";
 	else document.getElementById("accdiv").style.display = "block";
 }
+
+// listener for taxon rank
+
+document.getElementById('rankid').addEventListener('change', function () {
+	var selectedValue = this.value; // Get the chosen value
+	$rankId = selectedValue;
+
+	var div1 = document.getElementById('div1hide');
+	var div2 = document.getElementById('div2hide');
+	var label = document.getElementById('unitind1label');
+
+	if (selectedValue > 150) {
+		div1.style.display = 'block';
+		div2.style.display = 'block';
+	} else {
+		div1.style.display = 'none';
+		div2.style.display = 'none';
+	}
+	if (selectedValue <= 180) {
+		// Get the name of selected option
+		var selectedOption = this.options[this.selectedIndex];
+		var selectedOptionText = selectedOption.textContent.trim();
+
+		// Set the label for "UnitName1" based on the selected option text
+		label.textContent = selectedOptionText + ' Name';
+	} else {
+		label.textContent = 'Genus Name';
+	}
+});

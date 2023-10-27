@@ -94,11 +94,12 @@ if($isEditor){
 							}
 							?>
 						</select>
+						<script src="../../js/symb/taxa.taxonomyloader.js"> </script>
 					</div>
 					<div style="clear:both;">
 						<div class="left-column">
-							<label for="unitind1">
-								<?php echo (isset($LANG['UNITNAME1'])?$LANG['UNITNAME1']:'UnitName1'); ?>:
+							<label id="unitind1label" for="unitind1">
+								<?php echo (isset($LANG['UNITNAME1'])?$LANG['UNITNAME1']:'Specific Epithet'); ?>:
 							</label>
 						</div>
 						<select id="unitind1" name="unitind1" onchange="updateFullname(this.form)">
@@ -108,27 +109,33 @@ if($isEditor){
 						</select>
 						<input type='text' id='unitname1' name='unitname1' onchange="updateFullname(this.form)" class='search-bar' aria-label="Genus or Base Name" title="Genus or Base Name"/>
 					</div>
-					<div style="clear:both;">
-						<div class="left-column">
-							<label for="unitind2">
-								<?php echo (isset($LANG['UNITNAME2'])?$LANG['UNITNAME2']:'UnitName2'); ?>:
-							</label>
-						</div>
-						<select id="unitind2" name="unitind2" onchange="updateFullname(this.form)">
-							<option value=""></option>
-							<option value="&#215;">&#215;</option>
-						</select>
-						<input type='text' id='unitname2' name='unitname2' onchange="updateFullname(this.form)" class='search-bar' aria-label="epithet" title="epithet"/>
-					</div>
-					<div style="clear:both;">
-						<div class="left-column">
-							<label for="unitind3">
-								<?php echo (isset($LANG['UNITNAME3'])?$LANG['UNITNAME3']:'UnitName3'); ?>:
-							</label>
-						</div>
-						<input type='text' id='unitind3' name='unitind3' onchange="updateFullname(this.form)" class='search-bar-extraShort' title='Rank: e.g. subsp., var., f.'/>
-						<input type='text' id='unitname3' name='unitname3' onchange="updateFullname(this.form)" class='search-bar' aria-label="infrasp. epithet" title="infrasp. epithet" />
-					</div>
+					<?php
+					if ($rankId > 150){
+						?>
+							<div id="div1hide" style="clear:both;">
+								<div class="left-column">
+									<label for="unitind2">
+										<?php echo (isset($LANG['UNITNAME2'])?$LANG['UNITNAME2']:'Infraspecific Epithet'); ?>:
+									</label>
+								</div>
+								<select id="unitind2" name="unitind2" onchange="updateFullname(this.form)">
+									<option value=""></option>
+									<option value="&#215;">&#215;</option>
+								</select>
+								<input type='text' id='unitname2' name='unitname2' onchange="updateFullname(this.form)" class='search-bar' aria-label="epithet" title="epithet"/>
+							</div>
+							<div id="div2hide" style="clear:both;">
+								<div class="left-column">
+									<label for="unitind3">
+										<?php echo (isset($LANG['UNITNAME3'])?$LANG['UNITNAME3']:'UnitName3'); ?>:
+									</label>
+								</div>
+								<input type='text' id='unitind3' name='unitind3' onchange="updateFullname(this.form)" class='search-bar-extraShort' title='Rank: e.g. subsp., var., f.'/>
+								<input type='text' id='unitname3' name='unitname3' onchange="updateFullname(this.form)" class='search-bar' aria-label="infrasp. epithet" title="infrasp. epithet" />
+							</div>
+					<?php
+					}?>
+
 					<div style="clear:both;">
 						<div class="left-column">
 							<label for="parentname">
