@@ -282,14 +282,15 @@ class OccurrenceImport extends UtilitiesFileImport{
 		}
 		elseif($this->importType == self::IMPORT_ASSOCIATIONS){
 			$fieldArr = array('occidAssociate', 'relationship', 'relationshipID', 'subType', 'identifier', 'basisOfRecord', 'resourceUrl', 'verbatimSciname',
-				'establishedDate', 'notes', 'accordingTo', 'createdUid', 'modifiedUid');
+				'establishedDate', 'notes', 'accordingTo');
 		}
 		elseif($this->importType == self::IMPORT_DETERMINATIONS){
 			$detManager = new OmDeterminations($this->conn);
 			$fieldArr = array_keys($detManager->getSchemaMap());
 		}
 		elseif($this->importType == self::IMPORT_MATERIAL_SAMPLE){
-			$fieldArr = array('sampleType', 'ms_catalogNumber', 'guid', 'sampleCondition', 'disposition', 'preservationType', 'preparationDetails', 'preparationDate', 'preparedByUid', 'individualCount', 'sampleSize', 'storageLocation', 'remarks');
+			$fieldArr = array('sampleType', 'ms_catalogNumber', 'guid', 'sampleCondition', 'disposition', 'preservationType', 'preparationDetails', 'preparationDate',
+				'preparedByUid', 'individualCount', 'sampleSize', 'storageLocation', 'remarks');
 		}
 		$fieldArr[] = 'catalogNumber';
 		$fieldArr[] = 'otherCatalogNumbers';

@@ -150,20 +150,13 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 		<div id="innertext">
 			<h2><?= $importManager->getCollMeta('collName').' '.$LANG['DATA_IMPORTER']; ?></h2>
 			<div class="pageDescription-div">
-				<div>This tool is used to batch import CSV data files containing data associated with occurrence records. </div>
 				<div>Import files must contain one of the following occurrence identifiers, which is used to identify which occurrence record to link the data.</div>
 				<ol>
 					<li>Required for all imports: occurrenceIDs, catalog number, and/or other catalog number</li>
-					<li>Imports</li>
-					<li class="indent-li">originalUrl (large derivative) - required</li>
-					<li class="indent-li">webUrl (medium derivative)</li>
-					<li class="indent-li">thumbnailUrl (thumbnail derivative): If not provided, use Thumbnail Builder to generate a local cache of thumbnails</li>
-					<li>Occurrence Associations</li>
-					<li class="indent-li">relationship type - required: </li>
+					<li>Association requirements: association type (via pulldown), resourceUrl (for general and external), scientific name (for external and observational)</li>
+					<li>Determination requirements: sciname, identified by, determination date</li>
+					<li>Image requirements: originalUrl (large derivative) - required</li>
 				</ol>
-				<div>Import steps include: 1) Select import type. 2) Select import file. 3) Map data fields 4) Import data.</div>
-				<div>If this is the first time using this tool, I recommend uploading a small file of records and review imported data to ensure import works as expected.
-				Contact your portal administrator if you need additional input or assistance. </div>
 			</div>
 			<?php
 			if(!$isEditor){

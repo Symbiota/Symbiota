@@ -55,14 +55,9 @@ if ($SYMB_UID) {
 		}
 	</script>
 	<style type="text/css">
-		.field-div {
-			margin: 10px 0px;
-			clear: both
-		}
-
-		.label {
-			font-weight: bold;
-		}
+		.importItem { margin-left:10px; display:none; }
+		.field-div { margin: 10px 0px; clear: both; }
+		.label { font-weight: bold; }
 	</style>
 </head>
 <body>
@@ -259,39 +254,44 @@ if ($SYMB_UID) {
 										<?php echo (isset($LANG['IMPORT_SPECIMEN']) ? $LANG['IMPORT_SPECIMEN'] : 'Import/Update Specimen Records'); ?>
 									</a>
 								</li>
-								<li class="importItem" style="margin-left:10px;display:none;">
+								<li class="importItem">
 									<a href="../admin/specupload.php?uploadtype=7&collid=<?php echo $collid; ?>">
-										<?php echo (isset($LANG['SKELETAL_FILE_IMPORT']) ? $LANG['SKELETAL_FILE_IMPORT'] : 'Skeletal File Import'); ?>
+										<?= $LANG['SKELETAL_FILE_IMPORT'] ?>
 									</a>
 								</li>
-								<li class="importItem" style="margin-left:10px;display:none">
+								<li class="importItem">
 									<a href="../admin/specupload.php?uploadtype=3&collid=<?php echo $collid; ?>">
-										<?php echo (isset($LANG['TEXT_FILE_IMPORT']) ? $LANG['TEXT_FILE_IMPORT'] : 'Text File Import'); ?>
+										<?= $LANG['TEXT_FILE_IMPORT'] ?>
 									</a>
 								</li>
-								<li class="importItem" style="margin-left:10px;display:none;">
+								<li class="importItem">
 									<a href="../admin/specupload.php?uploadtype=6&collid=<?php echo $collid; ?>">
-										<?php echo (isset($LANG['DWCA_IMPORT']) ? $LANG['DWCA_IMPORT'] : 'DwC-Archive Import'); ?>
+										<?= $LANG['DWCA_IMPORT'] ?>
 									</a>
 								</li>
-								<li class="importItem" style="margin-left:10px;display:none;">
+								<li class="importItem">
 									<a href="../admin/specupload.php?uploadtype=8&collid=<?php echo $collid; ?>">
-										<?php echo (isset($LANG['IPT_IMPORT']) ? $LANG['IPT_IMPORT'] : 'IPT Import'); ?>
+										<?= $LANG['IPT_IMPORT'] ?>
 									</a>
 								</li>
-								<li class="importItem" style="margin-left:10px;display:none;">
+								<li class="importItem">
+									<a href="../admin/importextended.php?collid=<?php echo $collid; ?>">
+										<?= $LANG['EXTENDED_IMPORT'] ?>
+									</a>
+								</li>
+								<li class="importItem">
 									<a href="../admin/specupload.php?uploadtype=9&collid=<?php echo $collid; ?>">
-										<?php echo (isset($LANG['NFN_IMPORT']) ? $LANG['NFN_IMPORT'] : 'Notes from Nature Import'); ?>
+										<?= $LANG['NFN_IMPORT'] ?>
 									</a>
 								</li>
-								<li class="importItem" style="margin-left:10px;display:none;">
+								<li class="importItem">
 									<a href="../admin/specuploadmanagement.php?collid=<?php echo $collid; ?>">
-										<?php echo (isset($LANG['IMPORT_PROFILES']) ? $LANG['IMPORT_PROFILES'] : 'Saved Import Profiles'); ?>
+										<?= $LANG['IMPORT_PROFILES'] ?>
 									</a>
 								</li>
-								<li class="importItem" style="margin-left:10px;display:none;">
+								<li class="importItem">
 									<a href="../admin/specuploadmanagement.php?action=addprofile&collid=<?php echo $collid; ?>">
-										<?php echo (isset($LANG['CREATE_PROFILE']) ? $LANG['CREATE_PROFILE'] : 'Create a new Import Profile'); ?>
+										<?= $LANG['CREATE_PROFILE'] ?>
 									</a>
 								</li>
 								<?php
