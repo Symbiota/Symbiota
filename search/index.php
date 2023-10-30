@@ -22,6 +22,10 @@ $siteData = new DatasetsMetadata();
 		echo '<link href="' . $CLIENT_ROOT . '/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
 		echo '<link href="' . $CLIENT_ROOT . '/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
 		echo '<link href="' . $CLIENT_ROOT . '/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
+		echo '<link href="' . $CLIENT_ROOT . '/search/css/app.css" type="text/css" rel="stylesheet" />';
+		echo '<link href="' . $CLIENT_ROOT . '/search/css/app.min.css" type="text/css" rel="stylesheet" />';
+		echo '<link href="' . $CLIENT_ROOT . '/search/css/neonscience.css" type="text/css" rel="stylesheet" />';
+		echo '<link href="' . $CLIENT_ROOT . '/search/css/tables.css" type="text/css" rel="stylesheet" />';
 	}
 	?>
 	<script src="js/jquery-3.2.1.min.js" type="text/javascript"></script>
@@ -31,7 +35,6 @@ $siteData = new DatasetsMetadata();
 	<?php include_once($SERVER_ROOT . '/includes/googleanalytics.php'); ?>
 	<!-- Search-specific styles -->
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-	<link rel="stylesheet" href="../css/app.css?v=02">
 </head>
 
 <body>
