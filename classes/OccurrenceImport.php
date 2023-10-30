@@ -2,7 +2,7 @@
 include_once('UtilitiesFileImport.php');
 include_once('ImageShared.php');
 include_once('OmMaterialSample.php');
-include_once('OmOccurAssociations.php');
+include_once('OmAssociations.php');
 include_once('OmDeterminations.php');
 include_once('OccurrenceMaintenance.php');
 include_once('UuidFactory.php');
@@ -135,14 +135,16 @@ class OccurrenceImport extends UtilitiesFileImport{
 			}
 		}
 		elseif($this->importType == self::IMPORT_ASSOCIATIONS){
-			$importManager = new OmOccurAssociations($this->conn);
+			$importManager = new OmAssociations($this->conn);
 			foreach($occidArr as $occid){
 				$importManager->setOccid($occid);
 				$fieldArr = array_keys($importManager->getSchemaMap());
+				$fieldArr[] = 'object-occurrenceID';
+				$fieldArr[] = 'object-catalogNumber';
 				$assocArr = array();
 				foreach($fieldArr as $field){
 					$fieldLower = strtolower($field);
-					if(isset($this->fieldMap[$fieldLower]) && !empty($recordArr[$this->fieldMap[$fieldLower]])) $assocArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
+					if(isset($this->fieldMap[$fieldLower])) $assocArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
 				}
 				if($assocArr){
 					if(!empty($postArr['associationType']) && !empty($postArr['relationship'])){
@@ -155,11 +157,11 @@ class OccurrenceImport extends UtilitiesFileImport{
 									if($importManager->updateAssociation($assocArr)){
 										$this->logOrEcho($LANG['ASSOC_UPDATED'].': <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>', 1);
 										$status = true;
-										continue;
 									}
 									else{
 										$this->logOrEcho('ERROR updating Occurrence Association: '.$importManager->getErrorMessage(), 1);
 									}
+									continue;
 								}
 							}
 						}
@@ -281,8 +283,8 @@ class OccurrenceImport extends UtilitiesFileImport{
 				'imageType', 'format', 'sourceIdentifier', 'hashFunction', 'hashValue', 'mediaMD5', 'copyright', 'rights', 'accessRights', 'sortOccurrence');
 		}
 		elseif($this->importType == self::IMPORT_ASSOCIATIONS){
-			$fieldArr = array('occidAssociate', 'relationship', 'relationshipID', 'subType', 'identifier', 'basisOfRecord', 'resourceUrl', 'verbatimSciname',
-				'establishedDate', 'notes', 'accordingTo');
+			$fieldArr = array('occidAssociate', 'relationship', 'relationshipID', 'subType', 'identifier', 'basisOfRecord',
+				'resourceUrl', 'verbatimSciname', 'establishedDate', 'notes', 'accordingTo');
 		}
 		elseif($this->importType == self::IMPORT_DETERMINATIONS){
 			$detManager = new OmDeterminations($this->conn);
@@ -292,13 +294,19 @@ class OccurrenceImport extends UtilitiesFileImport{
 			$fieldArr = array('sampleType', 'ms_catalogNumber', 'guid', 'sampleCondition', 'disposition', 'preservationType', 'preparationDetails', 'preparationDate',
 				'preparedByUid', 'individualCount', 'sampleSize', 'storageLocation', 'remarks');
 		}
-		$fieldArr[] = 'catalogNumber';
-		$fieldArr[] = 'otherCatalogNumbers';
-		$fieldArr[] = 'occurrenceID';
+		sort($fieldArr);
+		$this->targetFieldMap['catalognumber'] = 'subject identifier: catalogNumber';
+		$this->targetFieldMap['othercatalognumbers'] = 'subject identifier: otherCatalogNumbers';
+		$this->targetFieldMap['occurrenceid'] = 'subject identifier: occurrenceID';
+		$this->targetFieldMap[''] = '------------------------------------';
 		foreach($fieldArr as $field){
-			$this->targetFieldMap[strtolower($field)] = $field;
+			if($field == 'occidAssociate'){
+				$this->targetFieldMap['object-catalognumber'] = 'object identifier: catalogNumber';
+				$this->targetFieldMap['object-occurrenceid'] = 'object identifier: occurrenceID';
+				$this->targetFieldMap['occidassociate'] = 'object identifier: occid';
+			}
+			else $this->targetFieldMap[strtolower($field)] = $field;
 		}
-		ksort($this->targetFieldMap);
 	}
 
 	private function defineTranslationMap(){

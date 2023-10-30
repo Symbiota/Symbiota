@@ -3,7 +3,7 @@ include_once('Manager.php');
 include_once('OccurrenceUtilities.php');
 include_once('UuidFactory.php');
 
-class OmOccurAssociations extends Manager{
+class OmAssociations extends Manager{
 
 	private $assocID = null;
 	private $occid = null;
@@ -25,7 +25,7 @@ class OmOccurAssociations extends Manager{
 	public function getAssociationArr($filterArr = null){
 		$retArr = array();
 		$uidArr = array();
-		$sql = 'SELECT assocID, occid, '.implode(', ', array_keys($this->schemaMap)).', initialTimestamp FROM omoccurassociations WHERE ';
+		$sql = 'SELECT assocID, occid, '.implode(', ', array_keys($this->schemaMap)).', modifiedUid, modifiedTimestamp, createdUid, initialTimestamp FROM omoccurassociations WHERE ';
 		if($this->assocID) $sql .= '(assocID = '.$this->assocID.') ';
 		elseif($this->occid) $sql .= '(occid = '.$this->occid.') ';
 		foreach($filterArr as $field => $cond){
@@ -34,8 +34,8 @@ class OmOccurAssociations extends Manager{
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_assoc()){
 				$retArr[$r['assocID']] = $r;
-				$uidArr[$r['createdUid']] = $r['createdUid'];
-				$uidArr[$r['modifiedUid']] = $r['modifiedUid'];
+				if(isset($r['createdUid'])) $uidArr[$r['createdUid']] = $r['createdUid'];
+				if(isset($r['modifiedUid'])) $uidArr[$r['modifiedUid']] = $r['modifiedUid'];
 			}
 			$rs->free();
 		}
@@ -59,9 +59,21 @@ class OmOccurAssociations extends Manager{
 	public function insertAssociation($inputArr){
 		$status = false;
 		if($this->occid){
+			$occidAssociate = false;
+			if(isset($inputArr['object-catalogNumber']) && $inputArr['object-catalogNumber']){
+				$occidAssociate = $this->getOccidAsscoiate($inputArr['object-catalogNumber'], 'catalogNumber');
+			}
+			elseif(isset($inputArr['object-occurrenceID']) && $inputArr['object-occurrenceID']){
+				$occidAssociate = $this->getOccidAsscoiate($inputArr['object-occurrenceID'], 'occurrenceID');
+			}
+			if($occidAssociate) $inputArr['occidAssociate'] = $occidAssociate;
+			elseif($occidAssociate !== false){
+				$this->errorMessage = 'Unable to locate internal association record';
+				return false;
+			}
 			if(!isset($inputArr['createdUid'])) $inputArr['createdUid'] = $GLOBALS['SYMB_UID'];
 			$sql = 'INSERT INTO omoccurassociations(occid, recordID';
-			$sqlValues = '?, ?, ?, ';
+			$sqlValues = '?, ?, ';
 			$paramArr = array($this->occid);
 			$paramArr[] = UuidFactory::getUuidV4();
 			$this->typeStr = 'is';
@@ -92,6 +104,18 @@ class OmOccurAssociations extends Manager{
 	public function updateAssociation($inputArr){
 		$status = false;
 		if($this->assocID && $this->conn){
+			$occidAssociate = false;
+			if(isset($inputArr['object-catalogNumber']) && $inputArr['object-catalogNumber']){
+				$occidAssociate = $this->getOccidAsscoiate($inputArr['object-catalogNumber'], 'catalogNumber');
+			}
+			elseif(isset($inputArr['object-occurrenceID']) && $inputArr['object-occurrenceID']){
+				$occidAssociate = $this->getOccidAsscoiate($inputArr['object-occurrenceID'], 'occurrenceID');
+			}
+			if($occidAssociate) $inputArr['occidAssociate'] = $occidAssociate;
+			elseif($occidAssociate !== false){
+				$this->errorMessage = 'Unable to locate internal association record';
+				return false;
+			}
 			$this->setParameterArr($inputArr);
 			$paramArr = array();
 			$sqlFrag = '';
@@ -145,6 +169,24 @@ class OmOccurAssociations extends Manager{
 				return false;
 			}
 		}
+	}
+
+	private function getOccidAsscoiate($identifier, $target){
+		$occid = 0;
+		$identifier = trim($identifier);
+		if($identifier){
+			$sql = 'SELECT occid FROM omoccurrences WHERE occurrenceID = ? OR recordID = ?';
+			if($target == 'catalogNumber') $sql = 'SELECT occid FROM omoccurrences WHERE catalogNumber = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				if($target == 'catalogNumber') $stmt->bind_param('s', $identifier);
+				else $stmt->bind_param('ss', $identifier, $identifier);
+				$stmt->execute();
+				$stmt->bind_result($occid);
+				$stmt->fetch();
+				$stmt->close();
+			}
+		}
+		return $occid;
 	}
 
 	//Setters and getters
