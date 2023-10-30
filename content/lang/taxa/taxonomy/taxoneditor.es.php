@@ -64,6 +64,6 @@ $LANG['SYNONYMS_TRANSFERRED'] = 'Sinónimos serán transferidos a Taxón Aceptad
 $LANG['QUERY_HIERARCHY'] = 'Búsqueda Rápida de Jerarquía Taxonómica';
 $LANG['EMPTY'] = 'Vacío';
 $LANG['NOT_AUTH'] = 'No está autorizado para acceder a esta página';
-
+$LANG['GENUS_NAME'] = 'Nombre del Género';
 
 ?>

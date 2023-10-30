@@ -99,7 +99,7 @@ if($isEditor){
 					<div style="clear:both;">
 						<div class="left-column">
 							<label id="unitind1label" for="unitind1">
-								<?php echo (isset($LANG['UNITNAME1'])?$LANG['UNITNAME1']:'Specific Epithet'); ?>:
+								<?php echo (isset($LANG['GENUS_NAME'])?$LANG['GENUS_NAME']:'Genus Name'); ?>:
 							</label>
 						</div>
 						<select id="unitind1" name="unitind1" onchange="updateFullname(this.form)">
