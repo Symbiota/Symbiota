@@ -70,40 +70,6 @@ if(empty($EXTERNAL_PORTAL_HOSTS)) {
    $EXTERNAL_PORTAL_HOSTS = [];
 }
 
-/*
-function echo_another_card($title = "Default Title", $desc = "Default Description", $img = "/images/fallback.jpg") {
-   $html = <<<"HTML"
-   <div class="card">
-      <img src="$img" alt="">
-      <h2>$title</h2>
-      <p>$desc</p>
-   </div>
-   HTML;
-
-   return $html;
-}
-
-function echo_card($title = "Default Title", $desc = "Default Description", $img = "/images/fallback.jpg") {
-
-   $call = function($func) {
-      return "${!${''} = $func() }";
-   };
-
-   $html = <<<HTML
-   <div class="card">
-      <img src="$img" alt="">
-      <h2>$title</h2>
-      <p>$desc</p>
-   </div>
-   {$call(fn () => echo_another_card())}
-
-   ${!${''} = echo_another_card() }
-   ${!${''} = echo_another_card() }
-   HTML;
-
-   echo $html;
-}*/
-
 foreach ($coordArr as $collName => $coll) {
    //Collect all the collections
    foreach ($coll as $recordId => $record) {
@@ -800,10 +766,6 @@ foreach ($coordArr as $collName => $coll) {
             let searches = [
                searchCollections(formData),
             ]
-
-            formData.set("taxa", "Pinus amabilis");
-
-             searches.push(searchCollections(formData),)
 
             for(let host of externalPortalHosts) {
                searches.push(searchCollections(formData, host))
@@ -1698,6 +1660,8 @@ foreach ($coordArr as $collName => $coll) {
 										<input data-role="none" id="taxa" name="taxa" type="text" style="width:275px;" value="<?php echo $mapManager->getTaxaSearchTerm(); ?>" title="<?php echo (isset($LANG['SEPARATE_MULTIPLE'])?$LANG['SEPARATE_MULTIPLE']:'Separate multiple taxa w/ commas'); ?>" />
 									</div>
 								</div>
+								<div style="margin:5 0 5 0;"><hr /></div>
+                           <?php include_once("./portalSelector.php")?>
 								<div style="margin:5 0 5 0;"><hr /></div>
 								<?php
 								if($mapManager->getSearchTerm('clid')){
