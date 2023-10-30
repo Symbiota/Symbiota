@@ -49,38 +49,38 @@
 
 /******* 1. GENERAL ********/
 
-html {
+.inner-search html {
   font-size: 1.2em;
   font-weight: 400;
   line-height: 1.5em;
 }
 
-body {
+.inner-search body {
   color: var(--black, black);
   margin-top: 0px;
 }
 
 /* Utilities */
 
-.visually-hidden {
+.inner-search .visually-hidden {
   display: none;
 }
 
-.ml-1 {
+.inner-search .ml-1 {
   margin-left: 0.5em;
 }
 
-.mr-1 {
+.inner-search .mr-1 {
   margin-right: 0.5em;
 }
 
-.mt-1 {
+.inner-search .mt-1 {
   margin-top: 0.5em;
 }
 
 /* Alerts */
 
-.alerts {
+.inner-search .alerts {
   position: fixed;
   left: 0;
   right: 0;
@@ -90,7 +90,7 @@ body {
   pointer-events: none;
 }
 
-.alerts .alert {
+.inner-search .alerts .alert {
   padding: 15px;
   border-radius: 4px;
   border: solid 1px var(--alertgreenborder);
@@ -105,7 +105,7 @@ body {
   animation: slide-in 1s ease-out forwards;
 }
 
-.alerts .alert > a {
+.inner-search .alerts .alert > a {
   color: #002c77;
 }
 
@@ -125,17 +125,17 @@ body {
 
 /******* 2. LAYOUT ********/
 
-#innertext img {
+.inner-search #innertext img {
   max-width: 100%;
 }
 
-#middlecenter {
+.inner-search #middlecenter {
   padding: 0px;
 }
 
 /*Central div in the middle center table div */
 
-.navpath {
+.inner-search .navpath {
   margin-left: 2rem;
 }
 /* div.navpath {
@@ -146,48 +146,48 @@ body {
   width: 90%;
 } */
 
-.disclaimer span {
+.inner-search .disclaimer span {
   font-weight: bold;
 }
 
 /* Manifest Viewer conteiner */
 
-#samplePanel {
+.inner-search #samplePanel {
   font-size: 12px !important;
 }
 
 /* Large screens */
 
 @media (min-width: 1024px) {
-  #innertext {
+  .inner-search #innertext {
     margin-left: auto;
     margin-right: auto;
     min-width: 1000px;
     max-width: 1150px;
     width: 90%;
   }
-  #popup-innertext {
+  .inner-search #popup-innertext {
     margin-left: auto;
     margin-right: auto;
     min-width: 1000px;
     max-width: 1150px;
     width: 90%;
   }
-  #home-left {
+  .inner-search #home-left {
     max-width: 70%;
     float: left;
   }
-  #home-right {
+  .inner-search #home-right {
     max-width: 30%;
     float: right;
   }
-  #cloptiondiv {
+  .inner-search #cloptiondiv {
     max-width: 20% !important;
   }
-  #img-container {
+  .inner-search #img-container {
     width: 80%;
   }
-  .hide-on-large {
+  .inner-search .hide-on-large {
     display: none;
   }
 }
@@ -195,30 +195,30 @@ body {
 /* Medium screens */
 
 @media (min-width: 426px) and (max-width: 1023px) {
-  #innertext {
+  .inner-search #innertext {
     max-width: 96%;
     margin: 0 auto;
   }
-  #popup-innertext {
+  .inner-search #popup-innertext {
     max-width: 96%;
     margin: 0 auto;
   }
-  #home-left {
+  .inner-search #home-left {
     max-width: 60%;
     float: left;
     padding-left: 1rem;
   }
-  #home-right {
+  .inner-search #home-right {
     max-width: 40%;
     float: right;
   }
-  #cloptiondiv {
+  .inner-search #cloptiondiv {
     max-width: 15% !important;
   }
-  #taxon-container {
+  .inner-search #taxon-container {
     max-width: 75%;
   }
-  .hide-on-large {
+  .inner-search .hide-on-large {
     display: none;
   }
 }
@@ -226,26 +226,26 @@ body {
 /* Smaller screens */
 
 @media (max-width: 425px) {
-  #innertext {
+  .inner-search #innertext {
     max-width: 95%;
   }
-  #popup-innertext {
+  .inner-search #popup-innertext {
     max-width: 95%;
   }
-  .hide-on-small {
+  .inner-search .hide-on-small {
     display: none;
   }
 }
 
 /******* 3. SPECIFIC SECTIONS ********/
 
-.home-page section {
+.inner-search .home-page section {
   margin: 3rem 0 1.5rem 0;
 }
 
 /*Main table framework*/
 
-#maintable {
+.inner-search #maintable {
   margin-left: auto;
   margin-right: auto;
   width: 100%;
@@ -253,7 +253,7 @@ body {
 
 /* SYMBIOTA MAIN HEADER */
 
-#biorepo-header {
+.inner-search #biorepo-header {
   position: relative;
   list-style: none;
   text-align: center;
@@ -263,7 +263,7 @@ body {
 }
 
 @media (max-width: 425px) {
-  ul#biorepo-header {
+  .inner-search ul#biorepo-header {
     position: relative;
     list-style: none;
     text-align: center;
@@ -273,8 +273,8 @@ body {
   }
 }
 
-#biorepo-header::before {
-  content: '';
+.inner-search #biorepo-header::before {
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -287,39 +287,39 @@ body {
   filter: opacity(40%);
 }
 
-li.header-title {
+.inner-search li.header-title {
   position: relative;
 }
 
-.header-title a:hover {
+.inner-search .header-title a:hover {
   text-decoration: none;
 }
 
-.header-title a {
+.inner-search .header-title a {
   text-decoration: none;
 }
 
-#biorepo-header > li {
+.inner-search #biorepo-header > li {
   display: inline-block;
   padding: 0 0.5rem;
   vertical-align: center;
   filter: opacity(100%);
 }
 
-#biorepo-header h1 {
+.inner-search #biorepo-header h1 {
   text-transform: uppercase;
   font-size: 1.5rem;
   color: white;
   font-weight: bold;
 }
 
-#header a {
+.inner-search #header a {
   color: white;
   text-transform: uppercase;
 }
 
 /* Checklists displayed with images */
-.tndiv {
+.inner-search .tndiv {
   font-size: 12px;
   line-height: 14px;
 }
@@ -329,19 +329,19 @@ li.header-title {
 /* Admin bar */
 
 @media (min-width: 1024px) {
-  #top_navbar {
+  .inner-search #top_navbar {
     margin-top: 10px;
   }
 }
 
-#top_navbar {
+.inner-search #top_navbar {
   clear: both;
   margin-left: auto;
   margin-right: 1rem;
   padding-right: 1rem;
 }
 
-#right_navbarlinks {
+.inner-search #right_navbarlinks {
   clear: both;
   font-size: 11px;
   float: right;
@@ -350,7 +350,7 @@ li.header-title {
 
 /* Main menu bar */
 
-#hor_dropdown {
+.inner-search #hor_dropdown {
   display: inline-block;
   list-style: none;
   position: relative;
@@ -359,14 +359,14 @@ li.header-title {
   margin: 0 auto;
 }
 
-#hor_dropdown li {
+.inner-search #hor_dropdown li {
   position: relative;
   display: inherit;
   padding: 0;
   margin: 0;
 }
 
-#hor_dropdown a {
+.inner-search #hor_dropdown a {
   display: block;
   text-decoration: none;
   padding: 0.4rem 0.8rem;
@@ -374,7 +374,7 @@ li.header-title {
   font-size: 14px;
 }
 
-#hor_dropdown a:hover {
+.inner-search #hor_dropdown a:hover {
   background-color: #1b67b3;
   color: #ffffff;
   text-decoration: none;
@@ -382,7 +382,7 @@ li.header-title {
 
 /* Submenu */
 
-#hor_dropdown ul {
+.inner-search #hor_dropdown ul {
   list-style: none;
   position: absolute;
   left: -9999px;
@@ -391,17 +391,17 @@ li.header-title {
   z-index: 1000;
 }
 
-#hor_dropdown ul li {
+.inner-search #hor_dropdown ul li {
   float: none;
 }
 
-#hor_dropdown ul a {
+.inner-search #hor_dropdown ul a {
   white-space: nowrap;
   text-decoration: none;
   color: #ffffff;
 }
 
-#hor_dropdown li:hover ul {
+.inner-search #hor_dropdown li:hover ul {
   left: 0;
   /* top: 3.5rem;
    */
@@ -411,7 +411,7 @@ li.header-title {
   z-index: 1000;
 }
 
-#hor_dropdown li:hover ul a {
+.inner-search #hor_dropdown li:hover ul a {
   padding: 5px;
   text-decoration: none;
   text-indent: 8px;
@@ -421,12 +421,12 @@ li.header-title {
   z-index: 1000;
 }
 
-#hor_dropdown li:hover ul li a:hover {
+.inner-search #hor_dropdown li:hover ul li a:hover {
   background: #1b67b3;
   text-decoration: underline;
 }
 
-.biorepo-home-icon {
+.inner-search .biorepo-home-icon {
   padding: 0 !important;
   /* display: inline-block; */
   background-image: url(../neon/images/home-white.png);
@@ -441,17 +441,17 @@ li.header-title {
 
 /* Forcing styles over jquery-ui (search forms) */
 
-.ui-widget input,
-.ui-widget select,
-.ui-widget textarea,
-.ui-widget button {
-  font-family: 'Inter', sans-serif !important;
+.inner-search .ui-widget input,
+.inner-search .ui-widget select,
+.inner-search .ui-widget textarea,
+.inner-search .ui-widget button {
+  font-family: "Inter", sans-serif !important;
 }
 
-button,
-button.ui-button.ui-widget.ui-corner-all,
-input[type='submit' i] {
-  font-family: 'Inter', sans-serif !important;
+.inner-search button,
+.inner-search button.ui-button.ui-widget.ui-corner-all,
+.inner-search input[type="submit" i] {
+  font-family: "Inter", sans-serif !important;
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.07em;
@@ -481,95 +481,95 @@ input[type='submit' i] {
   transition-delay: 0ms, 0ms, 0ms;
 }
 
-button:hover {
+.inner-search button:hover {
   background-color: #0092e2 !important;
   box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%),
     0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
 }
 
-input[type='text'],
-input[type='number'],
-textarea,
-select {
+.inner-search input[type="text"],
+.inner-search input[type="number"],
+.inner-search textarea,
+.inner-search select {
   border: 1px solid #d0d0d0 !important;
   border-radius: 0;
   color: #333333;
 }
 
-input[type='text']:focus,
-textarea:focus,
-select:focus {
+.inner-search input[type="text"]:focus,
+.inner-search textarea:focus,
+.inner-search select:focus {
   border-radius: 0 !important;
 }
 
-button.ui-button.ui-widget.ui-corner-all:hover {
+.inner-search button.ui-button.ui-widget.ui-corner-all:hover {
   background-color: #003d79;
   text-decoration: none;
 }
 
-button.ui-button:active {
+.inner-search button.ui-button:active {
   background: #000000;
 }
 
 /* Inverts color for svgs inside TinyMCE format buttons */
-.tox-editor-container svg {
+.inner-search .tox-editor-container svg {
   filter: invert(1);
 }
-span.tox-tbtn__select-label {
+.inner-search span.tox-tbtn__select-label {
   filter: invert(1);
 }
 
 /* Links inside buttons */
 
-button > a {
+.inner-search button > a {
   color: #ffffff !important;
 }
 
-button > a:hover {
+.inner-search button > a:hover {
   text-decoration: none !important;
 }
 
 /******* 5. TABLES ********/
 
-table,
-.ui-widget {
-  font-family: 'Inter', sans-serif !important;
+.inner-search table,
+.inner-search .ui-widget {
+  font-family: "Inter", sans-serif !important;
   font-size: 1em;
 }
 
-hr:first-of-type {
+.inner-search hr:first-of-type {
   margin-top: 1em;
 }
 
 /******* 6. ICONS ********/
 
-.svg-icon {
+.inner-search .svg-icon {
   filter: invert(1);
 }
 
-#speclist button.icon-button img {
+.inner-search #speclist button.icon-button img {
   filter: invert(1);
 }
 
-#omlisttable img {
+.inner-search #omlisttable img {
   border: none !important;
 }
 
 /******* 7. TABS ********/
 
-#tabs {
+.inner-search #tabs {
   height: auto;
 }
 
 /******* 8. QUICK SEARCH PLUGIN ********/
 
-#quicksearchdiv {
+.inner-search #quicksearchdiv {
   width: auto !important;
   padding: 0.75rem !important;
   margin: 1rem auto 4rem auto !important;
 }
 
-#quicksearchbutton {
+.inner-search #quicksearchbutton {
   margin-left: 1rem !important;
   margin-bottom: 1rem !important;
   padding-bottom: 10px !important;
@@ -577,26 +577,26 @@ hr:first-of-type {
 
 /******* 9. FOOTER ********/
 
-#footer {
+.inner-search #footer {
   /* padding: 3rem !important; */
   border-top: 2px solid #e7e7e7 !important;
 }
 
-footer {
+.inner-search footer {
   display: inline-flex !important;
   vertical-align: top;
 }
 
 @media (min-width: 1024px) {
-  #footer {
+  .inner-search #footer {
     padding: 3rem;
     margin: 3rem;
   }
-  #footer .footer-bottom .footer-bottom-left {
+  .inner-search #footer .footer-bottom .footer-bottom-left {
     width: 50%;
     padding-top: 1.2em;
   }
-  #footer .footer-bottom .footer-bottom-left {
+  .inner-search #footer .footer-bottom .footer-bottom-left {
     display: flex !important;
     flex-direction: row;
     align-items: flex-start;
@@ -604,12 +604,12 @@ footer {
     max-width: 100%;
     float: left;
   }
-  #footer .footer-bottom .footer-bottom-right {
+  .inner-search #footer .footer-bottom .footer-bottom-right {
     width: auto;
     float: right;
   }
 }
 
-footer .nsf-link {
+.inner-search footer .nsf-link {
   width: 200px;
 }

@@ -2,7 +2,7 @@
 Specific Styles for Sortable Tables
 `neon/js/sortables.js 
  */
-.helper {
+.inner-search .helper {
   font-size: 0.875rem;
   font-weight: 600;
   line-height: 1.57;
@@ -16,16 +16,16 @@ Specific Styles for Sortable Tables
   padding: 24px;
 }
 
-.jss173 {
+.inner-search .jss173 {
   color: #b39076;
   margin-right: 16px;
 }
 
-.MuiSvgIcon-fontSizeLarge {
+.inner-search .MuiSvgIcon-fontSizeLarge {
   font-size: 2.1875rem;
 }
 
-.MuiSvgIcon-root {
+.inner-search .MuiSvgIcon-root {
   fill: currentColor;
   width: 1em;
   height: 1em;
@@ -36,52 +36,52 @@ Specific Styles for Sortable Tables
   user-select: none;
 }
 
-table {
+.inner-search table {
   width: 100%;
 }
-table,
-ul {
+.inner-search table,
+.inner-search ul {
   font-size: small;
   text-align: left;
 }
 
-.table-sortable {
+.inner-search .table-sortable {
   margin: 20px 0;
 }
 
-.table-sortable th {
+.inner-search .table-sortable th {
   cursor: pointer;
   background-color: #002d74;
   color: white;
 }
 
-.table-sortable .th-sort-asc::after {
-  content: '\25b4';
+.inner-search .table-sortable .th-sort-asc::after {
+  content: "\25b4";
 }
 
-.table-sortable .th-sort-desc::after {
-  content: '\25be';
+.inner-search .table-sortable .th-sort-desc::after {
+  content: "\25be";
 }
 
-.table-sortable .th-sort-asc::after,
-.table-sortable .th-sort-desc::after {
+.inner-search .table-sortable .th-sort-asc::after,
+.inner-search .table-sortable .th-sort-desc::after {
   margin-left: 5px;
 }
 
-.table-sortable .th-sort-asc,
-.table-sortable .th-sort-desc {
+.inner-search .table-sortable .th-sort-asc,
+.inner-search .table-sortable .th-sort-desc {
   background: #00122d;
 }
 
-.table-sortable thead tr th {
+.inner-search .table-sortable thead tr th {
   padding: 10px;
 }
 
-.table-sortable .totals-row {
+.inner-search .table-sortable .totals-row {
   background-color: #f8f2ec;
 }
 
-td {
+.inner-search td {
   color: #444444;
   padding: 1em;
   vertical-align: top;
@@ -91,7 +91,7 @@ td {
   border-left: 0;
 }
 
-tbody tr {
+.inner-search tbody tr {
   max-width: 100%;
   width: 100%;
   border: none;
@@ -100,10 +100,10 @@ tbody tr {
   margin-bottom: 0.75em;
 }
 
-tbody th:first-child td {
+.inner-search tbody th:first-child td {
   border-top: 0;
 }
 
-tbody th {
+.inner-search tbody th {
   padding: 1em;
 }

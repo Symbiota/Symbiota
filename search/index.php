@@ -24,8 +24,7 @@ $siteData = new DatasetsMetadata();
 	}
 	echo '<link href="' . $CLIENT_ROOT . '/search/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
 	echo '<link href="' . $CLIENT_ROOT . '/search/css/app.css" type="text/css" rel="stylesheet" />';
-	echo '<link href="' . $CLIENT_ROOT . '/search/css/app.min.css" type="text/css" rel="stylesheet" />';
-	echo '<link href="' . $CLIENT_ROOT . '/search/css/neonscience.css" type="text/css" rel="stylesheet" />';
+	
 	echo '<link href="' . $CLIENT_ROOT . '/search/css/tables.css" type="text/css" rel="stylesheet" />';
 	?>
 	<script src="js/jquery-3.2.1.min.js" type="text/javascript"></script>
@@ -42,7 +41,7 @@ $siteData = new DatasetsMetadata();
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div id="innertext" class="inner-search">
 		<h1>Sample Search</h1>
 		<div id="error-msgs" class="errors"></div>
 		<form id="params-form">
