@@ -1661,8 +1661,6 @@ foreach ($coordArr as $collName => $coll) {
 									</div>
 								</div>
 								<div style="margin:5 0 5 0;"><hr /></div>
-                           <?php include_once("./portalSelector.php")?>
-								<div style="margin:5 0 5 0;"><hr /></div>
 								<?php
 								if($mapManager->getSearchTerm('clid')){
 									?>
