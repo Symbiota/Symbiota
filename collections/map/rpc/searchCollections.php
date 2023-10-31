@@ -50,46 +50,46 @@ $collArr = [];
 $defaultColor = "#B2BEB5";
 
 foreach ($coordArr as $collName => $coll) {
-   //Collect all the collections
-   foreach ($coll as $recordId => $record) {
-      if($recordId == 'c') continue;
+	//Collect all the collections
+	foreach ($coll as $recordId => $record) {
+		if($recordId == 'c') continue;
 
-      //Collect all taxon
-      if(!array_key_exists($record['tid'], $taxaArr)) {
-         $taxaArr[$record['tid']] = [
-            'sn' => $record['sn'], 
-            'tid' => $record['tid'], 
-            'family' => $record['fam'],
-            'color' => $coll['c'],
-         ];
-      }
+		//Collect all taxon
+		if(!array_key_exists($record['tid'], $taxaArr)) {
+			$taxaArr[$record['tid']] = [
+				'sn' => $record['sn'], 
+				'tid' => $record['tid'], 
+				'family' => $record['fam'],
+				'color' => $coll['c'],
+			];
+		}
 
-      //Collect all Collections
-      if(!array_key_exists($record['collid'], $collArr)) {
-         $collArr[$record['collid']] = [
-            'name' => $collName,
-            'collid' => $record['collid'],
-            'color' => $coll['c'],
-         ];
-      } 
+		//Collect all Collections
+		if(!array_key_exists($record['collid'], $collArr)) {
+			$collArr[$record['collid']] = [
+				'name' => $collName,
+				'collid' => $record['collid'],
+				'color' => $coll['c'],
+			];
+		} 
 
-      $llstrArr = explode(',', $record['llStr']);
-      if(count($llstrArr) != 2) continue;
+		$llstrArr = explode(',', $record['llStr']);
+		if(count($llstrArr) != 2) continue;
 
-      //Collect all records
-      array_push($recordArr, [
-         'id' => $record['id'], 
-         'tid' => $record['tid'], 
-         'collid' => $record['collid'], 
-         'family' => $record['fam'],
-         'occid' => $recordId,
-         'host' => $SERVER_HOST . $CLIENT_ROOT,
-         'collname' => $collName, 
-         'type' => in_array($record['collid'], $obsIDs)? 'observation':'specimen', 
-         'lat' => floatval($llstrArr[0]),
-         'lng' => floatval($llstrArr[1]),
-      ]);
-   }
+		//Collect all records
+		array_push($recordArr, [
+			'id' => $record['id'], 
+			'tid' => $record['tid'], 
+			'collid' => $record['collid'], 
+			'family' => $record['fam'],
+			'occid' => $recordId,
+			'host' => $SERVER_HOST . $CLIENT_ROOT,
+			'collname' => $collName, 
+			'type' => in_array($record['collid'], $obsIDs)? 'observation':'specimen', 
+			'lat' => floatval($llstrArr[0]),
+			'lng' => floatval($llstrArr[1]),
+		]);
+	}
 }
 ob_get_clean();
 
