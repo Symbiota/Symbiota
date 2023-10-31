@@ -46,6 +46,7 @@ $siteData = new DatasetsMetadata();
 		<div id="error-msgs" class="errors"></div>
 		<form id="params-form">
 			<!-- Criteria forms -->
+			
 			<div class="accordions">
 				<!-- Taxonomy -->
 				<section>
@@ -73,9 +74,13 @@ $siteData = new DatasetsMetadata();
 							</select>
 							<span class="assistive-text">Taxon type.</span>
 						</div>
-						<div><input type="checkbox" name="usethes" id="usethes" data-chip="Include Synonyms" value="1" checked><span class="ml-1">Include Synonyms</span></div>
+						<div>
+							<input type="checkbox" name="usethes" id="usethes" data-chip="Include Synonyms" value="1" checked>
+							<span class="ml-1">Include Synonyms</span>
+						</div>
 					</div>
 				</section>
+
 				<!-- Colections -->
 				<section>
 					<!-- Accordion selector -->
@@ -86,11 +91,18 @@ $siteData = new DatasetsMetadata();
 					<div class="content">
 						<div id="search-form-colls">
 							<!-- Open NEON Collections modal -->
-							<div><input id="all-neon-colls-quick" data-chip="All Biorepo Collections" class="all-selector" type="checkbox" checked="true" data-form-id="biorepo-collections-list"><span id="neon-modal-open" class="material-icons expansion-icon">add_box</span><span>All NEON Biorepository Collections</span></div>
+							<div>
+								<input id="all-neon-colls-quick" data-chip="All Biorepo Collections" class="all-selector" type="checkbox" checked="true" data-form-id="biorepo-collections-list">
+								<span id="neon-modal-open" class="material-icons expansion-icon">add_box</span>
+								<span>All NEON Biorepository Collections</span>
+							</div>
 							<!-- External Collections -->
 							<div>
 								<ul id="neonext-collections-list">
-									<li><input id="all-neon-ext" data-chip="All Add NEON Colls" type="checkbox" class="all-selector" data-form-id='neonext-collections-list'><span class="material-icons expansion-icon">add_box</span><span>All Additional NEON Collections</span>
+									<li>
+										<input id="all-neon-ext" data-chip="All Add NEON Colls" type="checkbox" class="all-selector" data-form-id='neonext-collections-list'>
+										<span class="material-icons expansion-icon">add_box</span>
+										<span>All Additional NEON Collections</span>
 										<?php if ($collsArr = $collData->getCollMetaByCat('Additional NEON Collections')) {
 											echo '<ul class="collapsed">';
 											foreach ($collsArr as $result) {
@@ -101,7 +113,10 @@ $siteData = new DatasetsMetadata();
 									</li>
 								</ul>
 								<ul id="ext-collections-list">
-									<li><input id="all-ext" data-chip="All Ext Colls" type="checkbox" class="all-selector" data-form-id='ext-collections-list'><span class="material-icons expansion-icon">add_box</span><span>All Other Collections from NEON sites</span>
+									<li>
+										<input id="all-ext" data-chip="All Ext Colls" type="checkbox" class="all-selector" data-form-id='ext-collections-list'>
+										<span class="material-icons expansion-icon">add_box</span>
+										<span>All Other Collections from NEON sites</span>
 										<?php if ($collsArr = $collData->getCollMetaByCat('Other Collections from NEON sites')) {
 											echo '<ul class="collapsed">';
 											foreach ($collsArr as $result) {
@@ -126,11 +141,11 @@ $siteData = new DatasetsMetadata();
 									<label class="tab"><input type="radio" name="collChoice" value="neon-theme"> NEON Theme</label>
 									<label class="tab"><input type="radio" name="collChoice" value="sample-type"> Sample Type</label>
 								</div>
-								
 							</div>
 						</div>
 					</div>
 				</section>
+				
 				<!-- Sample Properties -->
 				<section>
 					<!-- Accordion selector -->
@@ -148,7 +163,8 @@ $siteData = new DatasetsMetadata();
 								<div class="input-text-container">
 									<label for="" class="input-text--outlined">
 										<input type="text" name="catnum" data-chip="Catalog Number">
-										<span data-label="Catalog Number"></span></label>
+										<span data-label="Catalog Number"></span>
+									</label>
 									<span class="assistive-text">Separate multiple with commas.</span>
 								</div>
 							</div>
@@ -165,29 +181,41 @@ $siteData = new DatasetsMetadata();
 						</div>
 					</div>
 				</section>
+				
 				<!-- Locality -->
 				<section>
 					<!-- Accordion selector -->
-					<input type="checkbox" id="locality" class="accordion-selector" />
+					<input type="checkbox" id="locality" name="locality" class="accordion-selector" />
 					<!-- Accordion header -->
 					<label for="locality" class="accordion-header">Locality</label>
 					<!-- Accordion content -->
 					<div class="content">
 						<div id="search-form-locality">
-							<ul id="site-list"><input id="all-sites" data-chip="All Domains & Sites" type="checkbox" class="all-selector" checked="" data-form-id='search-form-locality'><span class="material-icons expansion-icon">indeterminate_check_box</span><span><a href="https://www.neonscience.org/field-sites/explore-field-sites" target="_blank" rel="noopener noreferrer">All NEON Domains and Sites</a></span>
+							<ul id="site-list">
+								<input id="all-sites" data-chip="All Domains & Sites" type="checkbox" class="all-selector" checked="" data-form-id='search-form-locality'>
+								<span class="material-icons expansion-icon">indeterminate_check_box</span>
+								<span>
+									<a href="https://www.neonscience.org/field-sites/explore-field-sites" target="_blank" rel="noopener noreferrer">All NEON Domains and Sites</a>
+								</span>
 								<?php if ($domainsArr = $siteData->getNeonDomains()) {
 									echo '<ul>';
 									foreach ($domainsArr as $domain) {
-										echo "<li><input type='checkbox' id='{$domain["domainnumber"]}' class='all-selector child' name='datasetid' value='{$domain["datasetid"]}' checked=''><span class='material-icons expansion-icon'>add_box</span><span>{$domain["domainnumber"]} - {$domain["domainname"]}</span>";
-										echo "<ul class='collapsed'>";
-										// ECHO SITES PER DOMAINS
-										$sitesArr = $siteData->getNeonSitesByDom($domain["domainnumber"]);
-										if ($sitesArr) {
-											foreach ($sitesArr as $site) {
-												echo "<li><input type='checkbox' id='${site["siteid"]}' name='datasetid' value={$site["datasetid"]} class='child' data-domain={$domain["domainnumber"]} checked=''><span class='ml-1'><a href='https://www.neonscience.org/field-sites/{$site["siteid"]}' target='_blank' rel='noopener noreferrer'>({$site["siteid"]}) {$site["sitename"]}</a></span></li>";
-											}
-										};
-										echo "</ul>";
+										echo "<li>";
+											echo "<input type='checkbox' id='{$domain["domainnumber"]}' class='all-selector child' name='datasetid' value='{$domain["datasetid"]}' checked=''>";
+											echo "<span class='material-icons expansion-icon'>add_box</span>";
+											echo "<span>{$domain["domainnumber"]} - {$domain["domainname"]}</span>";
+											echo "<ul class='collapsed'>";
+												// ECHO SITES PER DOMAINS
+												$sitesArr = $siteData->getNeonSitesByDom($domain["domainnumber"]);
+												if ($sitesArr) {
+													foreach ($sitesArr as $site) {
+														echo "<li>";
+															echo "<input type='checkbox' id='${site["siteid"]}' name='datasetid' value={$site["datasetid"]} class='child' data-domain={$domain["domainnumber"]} checked=''>";
+															echo "<span class='ml-1'><a href='https://www.neonscience.org/field-sites/{$site["siteid"]}' target='_blank' rel='noopener noreferrer'>({$site["siteid"]}) {$site["sitename"]}</a></span>";
+														echo "</li>";
+													}
+												};
+											echo "</ul>";
 										echo "</li>";
 									}
 									echo '</ul>';
@@ -198,19 +226,22 @@ $siteData = new DatasetsMetadata();
 									<div class="input-text-container">
 										<label for="state" class="input-text--outlined">
 											<input type="text" name="state" id="state" data-chip="State">
-											<span data-label="State"></span></label>
+											<span data-label="State"></span>
+										</label>
 										<span class="assistive-text">Separate multiple with commas.</span>
 									</div>
 									<div class="input-text-container">
 										<label for="county" class="input-text--outlined">
 											<input type="text" name="county" id="county" data-chip="County">
-											<span data-label="County"></span></label>
+											<span data-label="County"></span>
+										</label>
 										<span class="assistive-text">Separate multiple with commas.</span>
 									</div>
 									<div class="input-text-container">
 										<label for="local" class="input-text--outlined">
 											<input type="text" name="local" id="local" data-chip="Locality">
-											<span data-label="Locality"></span></label>
+											<span data-label="Locality"></span>
+										</label>
 										<span class="assistive-text" style="line-height:1.7em">Separate multiple with commas. Accepts NEON Domain and/or Site names and codes.</span>
 									</div>
 								</div>
@@ -218,13 +249,15 @@ $siteData = new DatasetsMetadata();
 									<div class="input-text-container">
 										<label for="elevlow" class="input-text--outlined">
 											<input type="number" step="any" name="elevlow" id="elevlow" data-chip="Min Elevation">
-											<span data-label="Minimum Elevation"></span></label>
+											<span data-label="Minimum Elevation"></span>
+										</label>
 										<span class="assistive-text">Only numbers.</span>
 									</div>
 									<div class="input-text-container">
 										<label for="elevhigh" class="input-text--outlined">
 											<input type="number" step="any" name="elevhigh" id="elevhigh" data-chip="Max Elevation">
-											<span data-label="Maximum Elevation"></span></label>
+											<span data-label="Maximum Elevation"></span>
+										</label>
 										<span class="assistive-text">Only numbers.</span>
 									</div>
 								</div>
@@ -232,6 +265,13 @@ $siteData = new DatasetsMetadata();
 						</div>
 					</div>
 				</section>
+
+				<div id="criteria-panel" style="position: sticky; top: 0; height: 100vh">
+					<button id="search-btn">Search</button>
+					<button id="reset-btn">Reset</button>
+					<h2>Criteria</h2>
+					<div id="chips"></div>
+				</div>
 				<!-- Latitude & Longitude -->
 				<section>
 					<!-- Accordion selector -->
@@ -252,7 +292,8 @@ $siteData = new DatasetsMetadata();
 											<option id="ulN" value="N">N</option>
 											<option id="ulS" value="S">S</option>
 										</select>
-										<span data-label="Northern Latitude"></span></label>
+										<span data-label="Northern Latitude"></span>
+									</label>
 									<span class="assistive-text">Values between -90 and 90.</span>
 								</div>
 								<div class="input-text-container">
@@ -263,7 +304,8 @@ $siteData = new DatasetsMetadata();
 											<option id="blN" value="N">N</option>
 											<option id="blS" value="S">S</option>
 										</select>
-										<span data-label="Southern Latitude"></span></label>
+										<span data-label="Southern Latitude"></span>
+									</label>
 									<span class="assistive-text">Values between -90 and 90.</span>
 								</div>
 								<div class="input-text-container">
@@ -274,7 +316,8 @@ $siteData = new DatasetsMetadata();
 											<option id="llW" value="W">W</option>
 											<option id="llE" value="E">E</option>
 										</select>
-										<span data-label="Western Longitude"></span></label>
+										<span data-label="Western Longitude"></span>
+									</label>
 									<span class="assistive-text">Values between -180 and 180.</span>
 								</div>
 								<div class="input-text-container">
@@ -285,7 +328,8 @@ $siteData = new DatasetsMetadata();
 											<option id="rlW" value="W">W</option>
 											<option id="rlE" value="E">E</option>
 										</select>
-										<span data-label="Eastern Longitude"></span></label>
+										<span data-label="Eastern Longitude"></span>
+									</label>
 									<span class="assistive-text">Values between -180 and 180.</span>
 								</div>
 							</div>
@@ -295,7 +339,8 @@ $siteData = new DatasetsMetadata();
 								<div class="text-area-container">
 									<label for="footprintwkt" class="text-area--outlined">
 										<textarea id="footprintwkt" name="footprintwkt" wrap="off" cols="30%" rows="5"></textarea>
-										<span data-label="Polygon"></span></label>
+										<span data-label="Polygon"></span>
+									</label>
 									<span class="assistive-text">Select in map with button or paste values.</span>
 								</div>
 							</div>
@@ -310,7 +355,8 @@ $siteData = new DatasetsMetadata();
 											<option id="N" value="N">N</option>
 											<option id="S" value="S">S</option>
 										</select>
-										<span data-label="Latitude"></span></label>
+										<span data-label="Latitude"></span>
+									</label>
 									<span class="assistive-text">Values between -90 and 90.</span>
 								</div>
 								<div class="input-text-container">
@@ -321,7 +367,8 @@ $siteData = new DatasetsMetadata();
 											<option id="W" value="W">W</option>
 											<option id="E" value="E">E</option>
 										</select>
-										<span data-label="Longitude"></span></label>
+										<span data-label="Longitude"></span>
+									</label>
 									<span class="assistive-text">Values between -180 and 180.</span>
 								</div>
 								<div class="input-text-container">
@@ -332,7 +379,8 @@ $siteData = new DatasetsMetadata();
 											<option value="km">Kilometers</option>
 											<option value="mi">Miles</option>
 										</select>
-										<span data-label="Radius"></span></label>
+										<span data-label="Radius"></span>
+									</label>
 									<span class="assistive-text">Any positive values.</span>
 								</div>
 							</div>
@@ -351,19 +399,22 @@ $siteData = new DatasetsMetadata();
 							<div class="input-text-container">
 								<label for="eventdate1" class="input-text--outlined">
 									<input type="text" name="eventdate1" data-chip="Event Date Start">
-									<span data-label="Collection Start Date"></span></label>
+									<span data-label="Collection Start Date"></span>
+								</label>
 								<span class="assistive-text">Single date or start date of range (ex: YYYY-MM-DD or similar format).</span>
 							</div>
 							<div class="input-text-container">
 								<label for="eventdate2" class="input-text--outlined">
 									<input type="text" name="eventdate2" data-chip="Event Date End">
-									<span data-label="Collection End Date"></span></label>
+									<span data-label="Collection End Date"></span>
+								</label>
 								<span class="assistive-text">Single date or end date of range (ex: YYYY-MM-DD or similar format).</span>
 							</div>
 						</div>
 					</div>
 				</section>
 			</div>
+			
 			<!-- Criteria panel -->
 			<div id="criteria-panel" style="position: sticky; top: 0; height: 100vh">
 				<button id="search-btn">Search</button>
@@ -372,7 +423,6 @@ $siteData = new DatasetsMetadata();
 				<div id="chips"></div>
 			</div>
 		</form>
-
 	</div>
 	<?php
 	include($SERVER_ROOT . '/includes/footer.php');
