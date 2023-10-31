@@ -191,36 +191,6 @@ $siteData = new DatasetsMetadata();
 					<!-- Accordion content -->
 					<div class="content">
 						<div id="search-form-locality">
-							<ul id="site-list">
-								<input id="all-sites" data-chip="All Domains & Sites" type="checkbox" class="all-selector" checked="" data-form-id='search-form-locality'>
-								<span class="material-icons expansion-icon">indeterminate_check_box</span>
-								<span>
-									<a href="https://www.neonscience.org/field-sites/explore-field-sites" target="_blank" rel="noopener noreferrer">All NEON Domains and Sites</a>
-								</span>
-								<?php if ($domainsArr = $siteData->getNeonDomains()) {
-									echo '<ul>';
-									foreach ($domainsArr as $domain) {
-										echo "<li>";
-											echo "<input type='checkbox' id='{$domain["domainnumber"]}' class='all-selector child' name='datasetid' value='{$domain["datasetid"]}' checked=''>";
-											echo "<span class='material-icons expansion-icon'>add_box</span>";
-											echo "<span>{$domain["domainnumber"]} - {$domain["domainname"]}</span>";
-											echo "<ul class='collapsed'>";
-												// ECHO SITES PER DOMAINS
-												$sitesArr = $siteData->getNeonSitesByDom($domain["domainnumber"]);
-												if ($sitesArr) {
-													foreach ($sitesArr as $site) {
-														echo "<li>";
-															echo "<input type='checkbox' id='${site["siteid"]}' name='datasetid' value={$site["datasetid"]} class='child' data-domain={$domain["domainnumber"]} checked=''>";
-															echo "<span class='ml-1'><a href='https://www.neonscience.org/field-sites/{$site["siteid"]}' target='_blank' rel='noopener noreferrer'>({$site["siteid"]}) {$site["sitename"]}</a></span>";
-														echo "</li>";
-													}
-												};
-											echo "</ul>";
-										echo "</li>";
-									}
-									echo '</ul>';
-								}; ?>
-							</ul>
 							<div>
 								<div>
 									<div class="input-text-container">
@@ -266,12 +236,6 @@ $siteData = new DatasetsMetadata();
 					</div>
 				</section>
 
-				<div id="criteria-panel" style="position: sticky; top: 0; height: 100vh">
-					<button id="search-btn">Search</button>
-					<button id="reset-btn">Reset</button>
-					<h2>Criteria</h2>
-					<div id="chips"></div>
-				</div>
 				<!-- Latitude & Longitude -->
 				<section>
 					<!-- Accordion selector -->
