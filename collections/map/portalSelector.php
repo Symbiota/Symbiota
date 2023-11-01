@@ -4,6 +4,7 @@ include_once('../../config/symbini.php');
 $conn = MySQLiConnectionFactory::getCon('readonly');
 
 //Using heredoc for Highlighting. Do not use it to query construction
+
 $portals = $conn->query(<<<sql
 SELECT portalName, urlRoot from portalindex p;
 sql)->fetch_all(MYSQLI_ASSOC);
@@ -44,8 +45,11 @@ sql)->fetch_all(MYSQLI_ASSOC);
 
       async searchTaxa() {
          if(this.input && this.input.length < 4) return;
+         //let url = `${this.portalUrl}/rpc/taxasuggest.php?term=${this.input}&t=${2}`;
+         //let url = `/rpc/taxasuggest.php?term=${this.input}&t=${2}`;
+         let url = `/Portal/rpc/crossPortalHeaders.php?term=${this.input}&t=${2}`;
 
-         let response = await fetch(`${this.portalUrl}/rpc/taxasuggest.php?term=${this.input}&t=${2}`, {
+         let response = await fetch(url, {
             method: "POST",
             credentials: "omit",
             mode: "cors",
@@ -59,7 +63,7 @@ sql)->fetch_all(MYSQLI_ASSOC);
 
 			//url: "../rpc/gettaxon.php",
          console.log('searching ' + this.input + ' for ' + this.portalUrl);
-      }
+      }false
    }
    customElements.define('taxa-selector', TaxaSelector);
    </script>
