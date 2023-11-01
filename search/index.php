@@ -221,14 +221,14 @@ $siteData = new DatasetsMetadata();
 											<input type="number" step="any" name="elevlow" id="elevlow" data-chip="Min Elevation">
 											<span data-label="Minimum Elevation"></span>
 										</label>
-										<span class="assistive-text">Only numbers.</span>
+										<span class="assistive-text">Number in meters.</span>
 									</div>
 									<div class="input-text-container">
 										<label for="elevhigh" class="input-text--outlined">
 											<input type="number" step="any" name="elevhigh" id="elevhigh" data-chip="Max Elevation">
 											<span data-label="Maximum Elevation"></span>
 										</label>
-										<span class="assistive-text">Only numbers.</span>
+										<span class="assistive-text">Number in meters.</span>
 									</div>
 								</div>
 							</div>
@@ -393,12 +393,12 @@ $siteData = new DatasetsMetadata();
 	?>
 </body>
 <script src="js/searchform.js" type="text/javascript"></script>
-<script src="<?php echo $CLIENT_ROOT . '/neon/js/alerts.js?v=202107'; ?>" type="text/javascript"></script>
+<script src="<?php echo $CLIENT_ROOT . '/search/js/alerts.js?v=202107'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/jquery-ui-1.12.1/jquery-ui.min.js'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/symb/api.taxonomy.taxasuggest.js'; ?>" type="text/javascript"></script>
 <script>
 	let alerts = [{
-		'alertMsg': 'Looking for the previous search form? You can still use it here: <a href="../../collections/index.php" alt="Traditional Sample Search Form">previous Sample Search Page</a>.'
+		'alertMsg': 'Looking for the previous search form? You can still use it here: <a href="<?php echo $CLIENT_ROOT ?>/collections/harvestparams.php" alt="Traditional Sample Search Form">previous Sample Search Page</a>.'
 	}];
 	handleAlerts(alerts, 3000);
 </script>
