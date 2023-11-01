@@ -5,10 +5,18 @@ include_once('../config/symbini.php');
 include_once('../content/lang/index.' . $LANG_TAG . '.php');
 include_once($SERVER_ROOT . '/classes/CollectionMetadata.php');
 include_once($SERVER_ROOT . '/classes/DatasetsMetadata.php');
+include_once($SERVER_ROOT.'/content/lang/collections/sharedterms.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
 header("Content-Type: text/html; charset=" . $CHARSET);
 
 $collData = new CollectionMetadata();
 $siteData = new DatasetsMetadata();
+
+$catId = array_key_exists("catid",$_REQUEST)?$_REQUEST["catid"]:'';
+$collManager = new OccurrenceManager();
+$collList = $collManager->getFullCollectionList($catId);
+$specArr = (isset($collList['spec'])?$collList['spec']:null);
+$obsArr = (isset($collList['obs'])?$collList['obs']:null);
 ?>
 <html>
 
@@ -90,7 +98,13 @@ $siteData = new DatasetsMetadata();
 					<!-- Accordion content -->
 					<div class="content">
 						<div id="search-form-colls">
-							<!-- Open NEON Collections modal -->
+							<!-- Open Collections modal -->
+							<div id="specobsdiv">
+								<?php 
+								include_once('./collectionContent.php');
+								?>
+							</div>
+							
 							<div>
 								<input id="all-neon-colls-quick" data-chip="All Biorepo Collections" class="all-selector" type="checkbox" checked="true" data-form-id="biorepo-collections-list">
 								<span id="neon-modal-open" class="material-icons expansion-icon">add_box</span>
@@ -396,6 +410,7 @@ $siteData = new DatasetsMetadata();
 <script src="<?php echo $CLIENT_ROOT . '/search/js/alerts.js?v=202107'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/jquery-ui-1.12.1/jquery-ui.min.js'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/symb/api.taxonomy.taxasuggest.js'; ?>" type="text/javascript"></script>
+<script src="<?php echo $CLIENT_ROOT . '/js/symb/collections.index.js?ver=20171215' ?>" type="text/javascript"></script>
 <script>
 	let alerts = [{
 		'alertMsg': 'Looking for the previous search form? You can still use it here: <a href="<?php echo $CLIENT_ROOT ?>/collections/harvestparams.php" alt="Traditional Sample Search Form">previous Sample Search Page</a>.'
