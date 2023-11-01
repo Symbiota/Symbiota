@@ -380,7 +380,7 @@ $_SESSION['citationvar'] = $searchVar;
 					<h2><?php echo $LANG['GOOGLE_MAP_HEADER']; ?></h2>
 				</div>
 				<div>
-					<?php if (!empty($LEAFLET)) { ?>
+					<?php if (empty($GOOGLE_MAP_KEY)) { ?>
 						<button onclick="openLeafletMapPU();">
 							<?php echo $LANG['GOOGLE_MAP_DISPLAY']; ?>
 						</button>

@@ -143,7 +143,7 @@ foreach ($coordArr as $collName => $coll) {
 		<script src="../../js/symb/collections.map.index.js?ver=2" type="text/javascript"></script>
 
 		<?php
-		if(!empty($LEAFLET)) {
+		if(empty($GOOGLE_MAP_KEY)) {
 		include_once($SERVER_ROOT.'/includes/leafletMap.php');
 		} else {
 		include_once($SERVER_ROOT.'/includes/googleMap.php');
@@ -1542,7 +1542,7 @@ value="${color}"
 				alert("Failed to initialize map coordinate data")
 			}
 
-			<?php if(!empty($LEAFLET)) { ?> 
+			<?php if(empty($GOOGLE_MAP_KEY)) { ?> 
 				leafletInit();
 			<?php } else { ?> 
 			googleInit();
