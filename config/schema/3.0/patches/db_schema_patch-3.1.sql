@@ -76,11 +76,11 @@ ALTER TABLE `ctcontrolvocab`
 INSERT INTO ctcontrolvocab(title, tableName, fieldName)
 VALUES("Occurrence Associations Type", "omoccurassociations", "associationType");
 INSERT INTO ctcontrolvocabterm(cvID, term, termDisplay)
-SELECT cvID, "internalOccurrence", "Occurrence - Internally Managed" FROM ctcontrolvocab WHERE tableName = "omoccurassociations" AND fieldName = "associationType";
+SELECT cvID, "internalOccurrence", "Occurrence - Internal (this portal)" FROM ctcontrolvocab WHERE tableName = "omoccurassociations" AND fieldName = "associationType";
 INSERT INTO ctcontrolvocabterm(cvID, term, termDisplay)
-SELECT cvID, "externalOccurrence", "Occurrence - Externally Managed" FROM ctcontrolvocab WHERE tableName = "omoccurassociations" AND fieldName = "associationType";
+SELECT cvID, "externalOccurrence", "Occurrence - External Link" FROM ctcontrolvocab WHERE tableName = "omoccurassociations" AND fieldName = "associationType";
 INSERT INTO ctcontrolvocabterm(cvID, term, termDisplay)
-SELECT cvID, "observational", "Simple Observation" FROM ctcontrolvocab WHERE tableName = "omoccurassociations" AND fieldName = "associationType";
+SELECT cvID, "observational", "Taxon Observation" FROM ctcontrolvocab WHERE tableName = "omoccurassociations" AND fieldName = "associationType";
 INSERT INTO ctcontrolvocabterm(cvID, term, termDisplay)
 SELECT cvID, "resource", "General Resource" FROM ctcontrolvocab WHERE tableName = "omoccurassociations" AND fieldName = "associationType";
 

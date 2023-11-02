@@ -123,9 +123,20 @@ class OmDeterminations extends Manager{
 			if($postField){
 				$value = trim($inputArr[$postField]);
 				if($value){
-					if(strtolower($postField) == 'establisheddate') $value = OccurrenceUtilities::formatDate($value);
-					if(strtolower($postField) == 'modifieduid') $value = OccurrenceUtilities::verifyUser($value, $this->conn);
-					if(strtolower($postField) == 'createduid') $value = OccurrenceUtilities::verifyUser($value, $this->conn);
+					$postField = strtolower($postField);
+					if($postField == 'establisheddate') $value = OccurrenceUtilities::formatDate($value);
+					if($postField == 'modifieduid') $value = OccurrenceUtilities::verifyUser($value, $this->conn);
+					if($postField == 'createduid') $value = OccurrenceUtilities::verifyUser($value, $this->conn);
+					if($postField == 'identificationuncertain' || $postField == 'iscurrent' || $postField == 'printqueue' || $postField == 'appliedstatus' || $postField == 'securitystatus'){
+						if(!is_numeric($value)){
+							$value = strtolower($value);
+							if($value == 'yes' || $value == 'true') $value = 1;
+							else $value = 0;
+						}
+					}
+					if($postField == 'sortsequence'){
+						if(!is_numeric($value)) $value = 10;
+					}
 				}
 				else $value = null;
 				$this->parameterArr[$field] = $value;

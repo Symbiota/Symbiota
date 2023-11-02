@@ -88,7 +88,6 @@ class OccurrenceImport extends UtilitiesFileImport{
 				if(isset($this->fieldMap['url']) && $recordArr[$this->fieldMap['url']]) $importManager->setImgWebUrl($recordArr[$this->fieldMap['url']]);
 				if(isset($this->fieldMap['thumbnailurl']) && $recordArr[$this->fieldMap['thumbnailurl']]) $importManager->setImgTnUrl($recordArr[$this->fieldMap['thumbnailurl']]);
 				if(isset($this->fieldMap['archiveurl']) && $recordArr[$this->fieldMap['archiveurl']]) $importManager->setArchiveUrl($recordArr[$this->fieldMap['archiveurl']]);
-				if(isset($this->fieldMap['sourceurl']) && $recordArr[$this->fieldMap['sourceurl']]) $importManager->setSourceUrl($recordArr[$this->fieldMap['sourceurl']]);
 				if(isset($this->fieldMap['referenceurl']) && $recordArr[$this->fieldMap['referenceurl']]) $importManager->setReferenceUrl($recordArr[$this->fieldMap['referenceurl']]);
 				if(isset($this->fieldMap['photographer']) && $recordArr[$this->fieldMap['photographer']]) $importManager->setPhotographer($recordArr[$this->fieldMap['photographer']]);
 				if(isset($this->fieldMap['photographeruid']) && $recordArr[$this->fieldMap['photographeruid']]) $importManager->setPhotographerUid($recordArr[$this->fieldMap['photographeruid']]);
@@ -279,16 +278,19 @@ class OccurrenceImport extends UtilitiesFileImport{
 	public function setTargetFieldArr(){
 		$fieldArr = array();
 		if($this->importType == self::IMPORT_IMAGE_MAP){
-			$fieldArr = array('url', 'originalUrl', 'thumbnailUrl', 'archiveUrl', 'sourceUrl', 'referenceUrl', 'photographer', 'photographerUid', 'caption', 'owner', 'anatomy', 'notes',
-				'imageType', 'format', 'sourceIdentifier', 'hashFunction', 'hashValue', 'mediaMD5', 'copyright', 'rights', 'accessRights', 'sortOccurrence');
+			$fieldArr = array('url', 'originalUrl', 'thumbnailUrl', 'archiveUrl', 'referenceUrl', 'photographer', 'photographerUid', 'caption', 'owner', 'anatomy', 'notes',
+				'format', 'sourceIdentifier', 'hashFunction', 'hashValue', 'mediaMD5', 'copyright', 'rights', 'accessRights', 'sortOccurrence');
 		}
 		elseif($this->importType == self::IMPORT_ASSOCIATIONS){
-			$fieldArr = array('occidAssociate', 'relationship', 'relationshipID', 'subType', 'identifier', 'basisOfRecord',
+			$fieldArr = array('occidAssociate', 'relationshipID', 'subType', 'identifier', 'basisOfRecord',
 				'resourceUrl', 'verbatimSciname', 'establishedDate', 'notes', 'accordingTo');
 		}
 		elseif($this->importType == self::IMPORT_DETERMINATIONS){
 			$detManager = new OmDeterminations($this->conn);
-			$fieldArr = array_keys($detManager->getSchemaMap());
+			$schemaMap = $detManager->getSchemaMap();
+			unset($schemaMap['appliedStatus']);
+			unset($schemaMap['detType']);
+			$fieldArr = array_keys($schemaMap);
 		}
 		elseif($this->importType == self::IMPORT_MATERIAL_SAMPLE){
 			$fieldArr = array('sampleType', 'ms_catalogNumber', 'guid', 'sampleCondition', 'disposition', 'preservationType', 'preparationDetails', 'preparationDate',
@@ -319,7 +321,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 				$this->translationMap = array();
 			}
 			elseif($this->importType == self::IMPORT_DETERMINATIONS){
-				$this->translationMap = array();
+				$this->translationMap = array('identificationid' => 'sourceIdentifier');
 			}
 			elseif($this->importType == self::IMPORT_MATERIAL_SAMPLE){
 				$this->translationMap = array();

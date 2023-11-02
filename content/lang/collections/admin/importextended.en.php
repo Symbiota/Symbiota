@@ -13,7 +13,7 @@ $LANG['SELECT_IMPORT_TYPE'] = 'Select an import type';
 $LANG['SELECT_ASSOC_TYPE'] = 'Select an Association type';
 $LANG['ERR_DUPLICATE_SOURCE'] = 'ERROR: Source field names must be unique (duplicate field:';
 $LANG['ERR_DUPLICATE_TARGET'] = "ERROR: Can't map to the same target field more than once (";
-$LANG['NEED_CAT'] = 'ERROR: catalogNumber or otherCatalogNumbers is required';
+$LANG['NEED_CAT'] = 'ERROR: subject catalogNumber, occurrenceID, or otherCatalogNumbers is required';
 $LANG['SELECT_RELATIONSHIP'] = 'Select a Relationship (required)';
 $LANG['COLLECTION_MENU'] = 'Collection Management Menu';
 $LANG['DATA_IMPORTER'] = 'Extended Data Importer';
@@ -34,7 +34,7 @@ $LANG['DETERMINATIONS'] = 'Determinations';
 $LANG['IMAGE_FIELD_MAP'] = 'Image Field Map';
 $LANG['MATERIAL_SAMPLE'] = 'Material Sample';
 //Language fragments located within OccurrenceImport class file
-$LANG['PROCESSING_CATNUM'] = 'Processing Catalog Number';
+$LANG['PROCESSING_CATNUM'] = 'Processing Identifier';
 $LANG['UPDATING_STATS'] = 'Updating statistics';
 $LANG['IMAGE_LOADED'] = 'Image loaded successfully';
 $LANG['ASSOC_UPDATED'] = 'Association updated';
