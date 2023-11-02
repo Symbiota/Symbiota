@@ -1,4 +1,4 @@
-function getObservationSvg(opts = {color: "#7A8BE7", size: 24}) {
+function getObservationSvg(opts = {color: "#7A8BE7", size: 24, className:""}) {
    const default_ops = {color: "#7A8BE7", size: 24};
    opts = {...default_ops, ...opts};
    const half = opts.size/2;
@@ -13,9 +13,10 @@ version="1.1"
 preserveAspectRatio="none"
 xmlns="http://www.w3.org/2000/svg"
 >
-<polygon points="${half},0 0,${opts.size} ${opts.size},${opts.size}" style="fill:${opts.color};stroke:black;stroke-width:3" />
+<polygon class="${opts.className}" points="${half},0 0,${opts.size} ${opts.size},${opts.size}" style="fill:${opts.color};stroke:black;stroke-width:3" />
 </svg>`,
       className: "",
+      observation: true,
       iconSize: [opts.size, opts.size],
       iconAnchor: [half, half],
    });
@@ -60,6 +61,7 @@ class LeafletMap {
    drawLayer;
 
    constructor(map_id, map_options=this.DEFAULT_MAP_OPTIONS) {
+
       this.mapLayer = L.map(map_id, map_options);
 
       const terrainLayer = L.tileLayer('https://{s}.google.com/vt?lyrs=p&x={x}&y={y}&z={z}', {
@@ -126,6 +128,7 @@ class LeafletMap {
 
       if(drawOptions.control || drawOptions.control === undefined) {
          var drawControl = new L.Control.Draw({
+            position: 'topright',
             draw: drawOptions,
             edit: {
                featureGroup: drawnItems,
@@ -208,7 +211,7 @@ class LeafletMap {
       this.activeShape.id = id;
       this.shapes.push(this.activeShape);
 
-      this.mapLayer.fitBounds(map.activeShape.layer.getBounds());
+      this.mapLayer.fitBounds(this.activeShape.layer.getBounds());
    }
 
 }

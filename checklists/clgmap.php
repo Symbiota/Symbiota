@@ -107,7 +107,7 @@ $clManager->setProj($pid);
                alert("Failed to load checklist data");
             }
 
-            <?php if(!empty($LEAFLET)) { ?>
+            <?php if(empty($GOOGLE_MAP_KEY)) { ?>
                leafletInit();
             <?php } else { ?>
                googleInit();

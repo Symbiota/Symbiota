@@ -39,7 +39,7 @@ if(!$IS_ADMIN){
 	<title><?php echo $DEFAULT_TITLE; ?> - Static distribution map generator</title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
-	include_once($SERVER_ROOT.'/includes/leafletmap.php');
+	include_once($SERVER_ROOT.'/includes/leafletMap.php');
       ?>
 <script 
    src="<?php echo $CLIENT_ROOT?>/js/dom-to-image/dist/dom-to-image.min.js"

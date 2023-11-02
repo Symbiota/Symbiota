@@ -149,15 +149,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 		<!-- This is inner text! -->
 		<div id="innertext">
 			<h2><?= $importManager->getCollMeta('collName').' '.$LANG['DATA_IMPORTER']; ?></h2>
-			<div class="pageDescription-div">
-				<div>Import files must contain one of the following occurrence identifiers, which is used to identify which occurrence record to link the data.</div>
-				<ol>
-					<li>Required for all imports: occurrenceIDs, catalog number, and/or other catalog number</li>
-					<li>Association requirements: association type (via pulldown), resourceUrl (for general and external), scientific name (for external and observational)</li>
-					<li>Determination requirements: sciname, identified by, determination date</li>
-					<li>Image requirements: originalUrl (large derivative) - required</li>
-				</ol>
-			</div>
+			<div class="pageDescription-div">For more information, see <a href="">import instructions</a></div>
 			<?php
 			if(!$isEditor){
 				echo '<h2>ERROR: not authorized to access this page</h2>';
@@ -266,7 +258,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 								<select name="importType" onchange="importTypeChanged(this)">
 									<option value="">-------------------</option>
 									<option value="1"><?= $LANG['ASSOCIATIONS'] ?></option>
-									<option value="2"><?= $LANG['DETERMINATIONS'] ?></option>
+									<?php if($IS_ADMIN) echo '<option value="2">'.$LANG['DETERMINATIONS'].'</option>'; ?>
 									<option value="3"><?= $LANG['IMAGE_FIELD_MAP'] ?></option>
 									<?php
 									if($importManager->getCollMeta('materialSample')) echo '<option value="4">'.$LANG['MATERIAL_SAMPLE'].'</option>';
