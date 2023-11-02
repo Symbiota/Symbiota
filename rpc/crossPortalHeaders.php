@@ -2,11 +2,9 @@
 include_once('../config/symbini.php');
 
 header('Content-Type: application/json; charset='.$CHARSET);
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Headers: *');
 
-
-if(!isset($EXTERNAL_PORTAL_HOSTS)) {
+//Adds Array of all valid portals urls and origins
+if(empty($EXTERNAL_PORTAL_HOSTS)) {
 	$EXTERNAL_PORTAL_HOSTS = [];
 
 	$conn = MySQLiConnectionFactory::getCon('readonly');
@@ -22,13 +20,9 @@ if(!isset($EXTERNAL_PORTAL_HOSTS)) {
 			array_push($EXTERNAL_PORTAL_HOSTS, $portal);
 		}
 	}
-
-	array_push($EXTERNAL_PORTAL_HOSTS, [
-		'origin' => 'moz-extension://262fea4d-6e09-4206-bb68-04f616ffac83'
-	]);
-	//echo json_encode(['origin' => $_SERVER['HTTP_ORIGIN']]);
 }
 
+//Adds Origin if it is a valid portal origin
 if (isset($_SERVER['HTTP_ORIGIN']) && array_search($_SERVER['HTTP_ORIGIN'], array_column($EXTERNAL_PORTAL_HOSTS, 'origin'))) {
 	$origin = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_ORIGIN'];
 
@@ -36,7 +30,8 @@ if (isset($_SERVER['HTTP_ORIGIN']) && array_search($_SERVER['HTTP_ORIGIN'], arra
 	header('Access-Control-Allow-Headers: ' . $origin);
 	json_encode(['msg' => 'has header']);
 } elseif(isset($_SERVER['HTTP_ORIGIN'])) {
-	echo json_encode($_SERVER);
+	//echo json_encode($_SERVER);
+	echo json_encode($EXTERNAL_PORTAL_HOSTS);
 } else {
   echo json_encode(['msg' => 'has header']);
 }

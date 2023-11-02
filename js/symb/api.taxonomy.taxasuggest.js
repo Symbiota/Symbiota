@@ -1,7 +1,8 @@
 var acUrlBase = "/rpc/taxasuggest.php";
 var acUrl = acUrlBase;
 
-$(document).ready(function() {
+function initTaxaSuggest() {
+
 	if(typeof clientRoot !== 'undefined') acUrl = clientRoot + acUrlBase;
 	else{
 		var dirArr = window.location.pathname.split('/');
@@ -23,6 +24,8 @@ $(document).ready(function() {
 	function extractLast( term ) {
 		return term.split( /,\s*/ ).pop();
 	}
+
+   console.log($('#taxa').length);
 
 	$( "#taxa" )
 		// don't navigate away from the field on tab when selecting an item
@@ -77,7 +80,9 @@ $(document).ready(function() {
 				return false;
 			}
 		},{});
-});
+}
+
+$(document).ready(initTaxaSuggest);
 
 function initiateTaxonSuggest(inputID, rLow, rHigh){
 	$( "#"+inputID )

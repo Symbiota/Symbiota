@@ -23,5 +23,13 @@ if($term){
 
 	$nameArr = $searchManager->getTaxaSuggest();
 }
-echo json_encode($nameArr);
+//echo json_encode($nameArr);
+foreach($nameArr as $taxa) {
+   $sciname = $taxa['value'];
+   $tid = $taxa['id'];
+
+   echo <<<html
+      <div data-value="$tid">$sciname</div>
+   html;
+}
 ?>
