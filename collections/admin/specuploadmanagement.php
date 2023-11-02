@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecUpload.php');
@@ -59,7 +61,7 @@ if($isEditor){
 $duManager->readUploadParameters();
 ?>
 
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['UP_PROF_MAN'])?$LANG['UP_PROF_MAN']:'Specimen Upload Profile Manager'); ?></title>
@@ -204,7 +206,7 @@ $duManager->readUploadParameters();
 						<legend style="font-weight:bold;font-size:120%;"><?php echo (isset($LANG['UP_OPT'])?$LANG['UP_OPT']:'Upload Options'); ?></legend>
 						<div style="float:right;">
 							<?php
-							echo '<a href="specuploadmanagement.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&action=addprofile"><img src="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/images/add.png" style="width:15px;border:0px;" title="' . htmlspecialchars((isset($LANG['ADD_PROF'])?$LANG['ADD_PROF']:'Add a New Upload Profile'), HTML_SPECIAL_CHARS_FLAGS) . '" /></a>';
+							echo '<a href="specuploadmanagement.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&action=addprofile"><img src="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/images/add.png" style="width:15px;border:0px;" title="' . htmlspecialchars((isset($LANG['ADD_PROF'])?$LANG['ADD_PROF']:'Add a New Upload Profile'), HTML_SPECIAL_CHARS_FLAGS) . '" aria-label="' . htmlspecialchars((isset($LANG['ADD_PROF'])?$LANG['ADD_PROF']:'Add a New Upload Profile'), HTML_SPECIAL_CHARS_FLAGS) . '" /></a>';
 							?>
 						</div>
 						<?php
@@ -212,9 +214,11 @@ $duManager->readUploadParameters();
 						 	foreach($profileList as $id => $v){
 						 		?>
 						 		<div style="margin:10px;">
-									<input type="radio" name="uspid" value="<?php echo $id.'-'.$v['uploadtype'];?>" />
-									<?php echo $v['title']; ?>
-									<a href="specuploadmanagement.php?action=editprofile&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&uspid=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS); ?>" title="<?php echo htmlspecialchars((isset($LANG['VIEW_PARS'])?$LANG['VIEW_PARS']:'View/Edit Parameters'), HTML_SPECIAL_CHARS_FLAGS); ?>"><img src="../../images/edit.png" /></a>
+									<input type="radio" id="uspid" name="uspid" value="<?php echo $id.'-'.$v['uploadtype'];?>" />
+									<label for="uspid"> <?php echo $v['title']; ?> </label>
+									<a href="specuploadmanagement.php?action=editprofile&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&uspid=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS); ?>" title="<?php echo htmlspecialchars((isset($LANG['VIEW_PARS'])?$LANG['VIEW_PARS']:'View/Edit Parameters'), HTML_SPECIAL_CHARS_FLAGS); ?>" aria-label="<?php echo htmlspecialchars((isset($LANG['VIEW_PARS'])?$LANG['VIEW_PARS']:'View/Edit Parameters'), HTML_SPECIAL_CHARS_FLAGS); ?>">
+										<img src="../../images/edit.png" alt="<?php echo htmlspecialchars((isset($LANG['IMG_EDIT'])?$LANG['IMG_EDIT']:'Edit Image'), HTML_SPECIAL_CHARS_FLAGS); ?>"/>
+									</a>
 									<input type="hidden" name="uploadtype" value="<?php echo $v['uploadtype']; ?>" />
 								</div>
 								<?php
