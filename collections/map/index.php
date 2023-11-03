@@ -765,7 +765,9 @@ value="${color}"
 
 				let searches = [
 					searchCollections(formData),
-				]
+            ]
+
+            console.log(formData)
 
 				for(let host of externalPortalHosts) {
 					searches.push(searchCollections(formData, host))

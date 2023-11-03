@@ -11,143 +11,153 @@ sql)->fetch_all(MYSQLI_ASSOC);
 
 ?>
 <div>
-   <script src="../../js/jquery-1.10.2.min.js" type="text/javascript"></script>
-   <script src="../../js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
    <script type="module">
    const template = document.createElement("template");
+   template.innerHTML = `<span style="display: inline-block; font-size 1em; position: relative; width:300px">
+      <input id="dropdown-input" style="width:inherit;"></input>
+      <div id="suggestions" style="font-size: 0.84rem; width: inherit; position: absolute; background-color:#fff;cursor:pointer !important; display: none; border: 1px solid gray; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);"></div>
+   </span>`
 
-   template.innerHTML = `<div>
-      <div>
-         <input data-role="none" type="checkbox" name="usethes" value="1" checked/>
-         <label for="usethes">
-            <?php echo (isset($LANG['INCLUDE_SYNONYMS'])?$LANG['INCLUDE_SYNONYMS']:'Include Synonyms'); ?>
-         </label>
-      </div>
-      <div>
-         <label for="taxa">
-            <?php echo (isset($LANG['TAXA'])?$LANG['TAXA']:'Taxa'); ?>:
-         </label>
-         <span style="display:block; width:275px">
-            <input data-role="none" id="taxa" name="taxa" type="text" style="width:275px;margin-bottom: 0.2rem"/>
-            <div id="suggestions" style="display: none; border: 1px solid gray; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); padding: 1rem">
-            </div>
-         </span>
-      </div>
-   </div>`;
-
-   class TaxaSelector extends HTMLElement {
+   class AutocompleteInput extends HTMLElement {
 
       constructor() {
          super();
-         this.portalUrl = this.getAttribute("portalUrl");
+         this.completeUrl= this.getAttribute("completeUrl");
          this.shadow = this.attachShadow({ mode: "open" });
          this.shadowRoot.appendChild(template.content.cloneNode(true));
-         this.selected_child = 0;
-         this.selected_option;
-
-         this.shadowRoot.querySelector("#taxa").addEventListener('input', e => {
-            this.input = e.target.value;
-            this.searchTaxa();
-         });
-
-         //Open menu on focus
-         this.shadowRoot.querySelector("#taxa").addEventListener('focus', e => {
-            this.shadowRoot.querySelector("#suggestions").style.display = 'block';
-         });
-/*
-         //Close menu on blur
-         this.shadowRoot.addEventListener('blur', e => {
-            this.shadowRoot.querySelector("#suggestions").style.display = 'none';
-         });*/
-
-         this.shadowRoot.querySelector("#suggestions").addEventListener('click', e => {
-            this.shadowRoot.querySelector("#taxa").value = this.selected_option.textContent;
-            this.shadowRoot.querySelector("#suggestions").style.display='none';
-         });
-
-         this.shadowRoot.querySelector("#taxa").addEventListener('keydown', e => {
-            if(e.key === "ArrowUp") {
-               if(0 >= this.selected_child) return;
-               let children = this.shadowRoot.querySelector("#suggestions").children;
-
-               children[this.selected_child].style['background-color'] = null;
-               this.selected_child -= 1;
-               children[this.selected_child].style['background-color'] = "#E9E9ED";
-
-               this.selected_option = children[this.selected_child];
-
-               console.log(this.selected_child);
-            }
-            else if(e.key === "ArrowDown") {
-               let children = this.shadowRoot.querySelector("#suggestions").children;
-
-               if(children.length <= this.selected_child) return;
-
-               children[this.selected_child].style['background-color'] = null;
-               this.selected_child += 1;
-               children[this.selected_child].style['background-color'] = "#E9E9ED";
-
-               this.selected_option = children[this.selected_child];
-
-               console.log(this.selected_child);
-            } 
-         });
+         this.selected_index = 0;
+         this.highlight_color = "#E9E9ED";
       }
 
-      async searchTaxa() {
-         if(this.input && this.input.length < 4) return;
-         //let url = `${this.portalUrl}/rpc/taxasuggest.php?term=${this.input}&t=${2}`;
-         let url = `/Portal/rpc/taxasuggest.php?term=${this.input}&t=${2}`;
-         //let url = `/Portal/rpc/crossPortalHeaders.php?term=${this.input}&t=${2}`;
-         this.selected_child = 0;
-         this.selected_option = null;
+      getInputElement() {
+         if(!this._inputEl) {
+            this._inputEl = this.shadowRoot.querySelector("#dropdown-input");
+         }
+
+         return this._inputEl;
+      }
+
+      _swapSuggestionList(newInnerHmtl) {
+         const suggestions = this.shadowRoot.querySelector("#suggestions");
+
+         if(suggestions) {
+            suggestions.style.display ='block';
+            suggestions.innerHTML = newInnerHmtl;
+            this._changeSelection(0);
+
+            for(let i = 0; i < suggestions.children.length; i++) {
+               suggestions.children[i].addEventListener('mouseover', () => {
+                  this._changeSelection(i);
+               });
+            }
+         }
+      }
+      getSelection() {
+         const suggestions = this.shadowRoot.querySelector("#suggestions");
+         if(!suggestions) return;
+
+         const options = suggestions.children;
+         if(options.length === 0) return;
+
+         return options[this.selected_index];
+      }
+
+      _changeSelection(new_index) {
+         const suggestions = this.shadowRoot.querySelector("#suggestions");
+         if(!suggestions) return;
+
+         const options = suggestions.children;
+         if(options.length === 0) {
+            suggestions.style.display = 'none';
+            return;
+         }
+
+         if(!this.selected_index) this.selected_index = 0;
+
+         options[this.selected_index].style['background-color'] = null;
+
+         if(options.length - 1 < new_index) new_index = 0;
+         if(new_index < 0) new_index = options.length - 1;
+         console.log(new_index)
+
+         this.selected_index = new_index;
+
+         options[this.selected_index].style['background-color'] = this.highlight_color;
+      }
+
+      toggleMenu(val) { 
+         this.menu.style.display = val && this.menu.children.length > 0? 
+            'block': 
+            'none';
+      }
+
+      connectedCallback() {
+         const el = this.getInputElement();
+         this.menu = this.shadowRoot.querySelector("#suggestions");
+
+
+         this.menu.addEventListener('mousedown', () => {
+            this._inputEl.value = this.getSelection().innerHTML;
+            this.onSearch(this._inputEl.value).then(res => this._swapSuggestionList(res));
+         });
+
+         el.addEventListener('input', e => {
+            this._inputEl = e.target;
+
+            const values = e.target.value.split(',');
+            let value = values.length > 1? values[values.length - 1]: values[0];
+
+            this.onSearch(value.trim()).then(res => {
+               this._swapSuggestionList(res);
+               this.toggleMenu(true);
+            });
+         });
+
+         //el.addEventListener('blur', e => this.toggleMenu(false));
+
+         el.addEventListener('keydown', e => {
+            switch(e.key) {
+               case "ArrowUp":
+                  this._changeSelection(this.selected_index - 1);
+                  break;
+               case "ArrowDown":
+                  this._changeSelection(this.selected_index + 1);
+                  break;
+               case "Enter":
+                  const selected_option = this.getSelection();
+                  if(selected_option) {
+
+                     let values = this._inputEl.value.split(',');
+                     if(values.length > 1) {
+                        values[values.length - 1] = selected_option.innerHTML
+                        this._inputEl.value = values.join(",");
+                     } else {
+                        this._inputEl.value = selected_option.innerHTML;
+                     }
+                  }
+                  this.toggleMenu(false);
+               break;
+            }
+         })
+      }
+
+      async onSearch(value) {
+         let url = `/Portal/rpc/taxasuggest.php?term=${value}&t=${2}`;
 
          let response = await fetch(url, {
             method: "POST",
             credentials: "omit",
             mode: "cors",
-            body: {term: this.input, t: 1},
+            body: {term: value, t: 2},
             headers: {
                "Access-Control-Allow-Origin": "*"
             }
          });
 
-         let taxons;
-
-         try {
-            taxons = await response.text();
-         } catch(e) {
-            taxons = 'No results';
-         }
-
-
-         let suggestions = this.shadowRoot.querySelector("#suggestions");
-
-         suggestions.innerHTML = taxons;
-         suggestions.children[this.selected_child].style['background-color'] = "#E9E9ED";
-
-         for(let i = 0; i < suggestions.children.length; i++) {
-            suggestions.children[i].addEventListener('mouseover', function() {
-               suggestions.children[this.selected_child].style['background-color'] = null;
-               this.selected_child = i;
-               this.selected_option = suggestions.children[this.selected_child];
-               suggestions.children[this.selected_child].style['background-color'] = "#E9E9ED";
-            }.bind(this));
-
-         }
-
-         console.log('searching ' + this.input + ' for ' + this.portalUrl);
+         try { return response.text() } catch(e) { return "Error" }
       }
    }
-   customElements.define('taxa-selector', TaxaSelector);
-   </script>
-
-   <script type="text/javascript">
-
-   function onPortalSelect(val) {
-
-   }
+   customElements.define('autocomplete-input', AutocompleteInput);
    </script>
    <input data_role="none" type="checkbox" id="cross_portal_switch" name="cross_portal_switch"/>
    <label for="cross_portal_switch">
@@ -160,4 +170,6 @@ sql)->fetch_all(MYSQLI_ASSOC);
    </select>
    <br/>
    <taxa-selector portalUrl="<?= $portals[0]['urlRoot']?>"></taxa-selector>
+   <label>Taxa:</label>
+   <autocomplete-input completeUrl="<?= $portals[0]['urlRoot']?>"></autocomplete-input>
 </div>
