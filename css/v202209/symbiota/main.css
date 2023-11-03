@@ -478,6 +478,7 @@ hr {
 .no-margin-left {
   margin-left: 0;
 }
+
 .taxon-search-bar {
   width: 25rem;
 }
@@ -881,4 +882,8 @@ hr {
   margin-top: 1em;
   font-size: 125%;
   font-weight: bold;
+}
+
+.tr-center {
+  text-align: center;
 }
