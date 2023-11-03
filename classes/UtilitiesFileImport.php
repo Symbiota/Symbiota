@@ -134,7 +134,7 @@ class UtilitiesFileImport extends Manager {
 			$tableHtml .= $sourceField;
 			$sourceField = strtolower($sourceField);
 			$tableHtml .= '<input type="hidden" name="sf['.$i.']" value="'.$sourceField.'" />';
-			$translatedSourceField = $this->getTranslation($sourceField);
+			$translatedSourceField = strtolower($this->getTranslation($sourceField));
 			$tableHtml .= '</td><td>';
 			$tableHtml .= '<select name="tf['.$i.']" style="background:'.(array_key_exists($translatedSourceField, $this->targetFieldMap)?'':'yellow').'">';
 			$tableHtml .= '<option value="">Select Target Field</option>';

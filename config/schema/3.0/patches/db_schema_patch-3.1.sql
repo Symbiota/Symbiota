@@ -73,17 +73,6 @@ ALTER TABLE `ctcontrolvocab`
   ADD UNIQUE INDEX `UQ_ctControlVocab` (`title` ASC, `tableName` ASC, `fieldName` ASC, `filterVariable` ASC);
 
 
-INSERT INTO ctcontrolvocab(title, tableName, fieldName)
-VALUES("Occurrence Associations Type", "omoccurassociations", "associationType");
-INSERT INTO ctcontrolvocabterm(cvID, term, termDisplay)
-SELECT cvID, "internalOccurrence", "Occurrence - Internally Managed" FROM ctcontrolvocab WHERE tableName = "omoccurassociations" AND fieldName = "associationType";
-INSERT INTO ctcontrolvocabterm(cvID, term, termDisplay)
-SELECT cvID, "externalOccurrence", "Occurrence - Externally Managed" FROM ctcontrolvocab WHERE tableName = "omoccurassociations" AND fieldName = "associationType";
-INSERT INTO ctcontrolvocabterm(cvID, term, termDisplay)
-SELECT cvID, "observational", "Simple Observation" FROM ctcontrolvocab WHERE tableName = "omoccurassociations" AND fieldName = "associationType";
-INSERT INTO ctcontrolvocabterm(cvID, term, termDisplay)
-SELECT cvID, "resource", "General Resource" FROM ctcontrolvocab WHERE tableName = "omoccurassociations" AND fieldName = "associationType";
-
 INSERT INTO ctcontrolvocab(title, tableName, fieldName, filterVariable)
 VALUES("Occurrence Associations Type", "omoccurassociations", "relationship", "associationType:resource");
 INSERT INTO ctcontrolvocabterm(cvID, term, termDisplay)

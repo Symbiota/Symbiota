@@ -137,7 +137,7 @@ class OccurrenceLabel{
 			if($sqlWhere) $sql .= 'WHERE '.substr($sqlWhere, 4);
 			if($sqlOrderBy) $sql .= ' ORDER BY '.substr($sqlOrderBy,1);
 			else $sql .= ' ORDER BY (o.recordnumber+1)';
-			$sql .= ' LIMIT 400';
+			$sql .= ' LIMIT 1000';
 			//echo '<div>'.$sql.'</div>';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){

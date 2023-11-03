@@ -150,13 +150,12 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 		<div id="innertext">
 			<h2><?= $importManager->getCollMeta('collName').' '.$LANG['DATA_IMPORTER']; ?></h2>
 			<div class="pageDescription-div">
-				<div>Import files must contain one of the following occurrence identifiers, which is used to identify which occurrence record to link the data.</div>
-				<ol>
-					<li>Required for all imports: occurrenceIDs, catalog number, and/or other catalog number</li>
-					<li>Association requirements: association type (via pulldown), resourceUrl (for general and external), scientific name (for external and observational)</li>
-					<li>Determination requirements: sciname, identified by, determination date</li>
-					<li>Image requirements: originalUrl (large derivative) - required</li>
-				</ol>
+				<?= $LANG['INSTRUCTIONS'] ?>:
+				<ul>
+					<li><a href="https://biokic.github.io/symbiota-docs/coll_manager/upload/links" target="_blank"><?= $LANG['ASSOCIATIONS'] ?></a></li>
+					<?php if($IS_ADMIN) echo '<li><a href="https://biokic.github.io/symbiota-docs/coll_manager/upload/determinations" target="_blank">'.$LANG['DETERMINATIONS'].'</a></li>'; ?>
+					<li><a href="https://biokic.github.io/symbiota-docs/coll_manager/images/url_upload" target="_blank"><?= $LANG['IMAGE_URLS'] ?></a></li>
+				</ul>
 			</div>
 			<?php
 			if(!$isEditor){
@@ -266,7 +265,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 								<select name="importType" onchange="importTypeChanged(this)">
 									<option value="">-------------------</option>
 									<option value="1"><?= $LANG['ASSOCIATIONS'] ?></option>
-									<option value="2"><?= $LANG['DETERMINATIONS'] ?></option>
+									<?php if($IS_ADMIN) echo '<option value="2">'.$LANG['DETERMINATIONS'].'</option>'; ?>
 									<option value="3"><?= $LANG['IMAGE_FIELD_MAP'] ?></option>
 									<?php
 									if($importManager->getCollMeta('materialSample')) echo '<option value="4">'.$LANG['MATERIAL_SAMPLE'].'</option>';
@@ -277,12 +276,10 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 								<label for="associationType"><?= $LANG['ASSOCIATION_TYPE'] ?>: </label>
 								<select name="associationType">
 									<option value="">-------------------</option>
-									<?php
-									$assocTypeArr = $importManager->getControlledVocabulary('omoccurassociations', 'associationType');
-									foreach($assocTypeArr as $term => $display){
-										echo '<option value="'.$term.'">'.$display.'</option>';
-									}
-									?>
+									<option value="resource"><?= $LANG['RESOURCE_LINK'] ?></option>
+									<option value="internalOccurrence"><?= $LANG['INTERNAL_OCCURRENCE'] ?></option>
+									<option value="externalOccurrence"><?= $LANG['EXTERNAL_OCCURRENCE'] ?></option>
+									<option value="observational"><?= $LANG['OBSERVATION'] ?></option>
 								</select>
 							</div>
 							<div class="formField-div">

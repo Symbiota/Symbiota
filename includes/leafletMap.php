@@ -54,7 +54,7 @@
 
 <!-- Importing Leaflet Related Functions--> 
 <script 
-   src=<?php echo $CLIENT_ROOT . "/js/symb/LeafletMap.js" ?>
+   src=<?php echo $CLIENT_ROOT . "/js/symb/leafletMap.js" ?>
    type="text/javascript">
 </script>
 
