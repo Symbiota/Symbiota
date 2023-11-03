@@ -276,12 +276,10 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 								<label for="associationType"><?= $LANG['ASSOCIATION_TYPE'] ?>: </label>
 								<select name="associationType">
 									<option value="">-------------------</option>
-									<?php
-									$assocTypeArr = $importManager->getControlledVocabulary('omoccurassociations', 'associationType');
-									foreach($assocTypeArr as $term => $display){
-										echo '<option value="'.$term.'">'.$display.'</option>';
-									}
-									?>
+									<option value="resource"><?= $LANG['RESOURCE_LINK'] ?></option>
+									<option value="internalOccurrence"><?= $LANG['INTERNAL_OCCURRENCE'] ?></option>
+									<option value="externalOccurrence"><?= $LANG['EXTERNAL_OCCURRENCE'] ?></option>
+									<option value="observational"><?= $LANG['OBSERVATION'] ?></option>
 								</select>
 							</div>
 							<div class="formField-div">
