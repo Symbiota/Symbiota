@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecUploadBase.php');
@@ -36,7 +38,7 @@ elseif($uploadType == $DIRECTUPLOAD || $uploadType == $STOREDPROCEDURE || $uploa
 	header('Location: specuploadprocessor.php?uploadtype='.$uploadType.'&uspid='.$uspid.'&collid='.$collid);
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['SPEC_UPLOAD'])?$LANG['SPEC_UPLOAD']:'Specimen Uploader - file selector'); ?></title>
@@ -128,7 +130,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							$pathLabel = (isset($LANG['RES_URL'])?$LANG['RES_URL']:'Resource Path or URL');
 							?>
 							<div>
-								<input name="uploadfile" type="file" size="50" onchange="verifyFileSize(this)" />
+								<input name="uploadfile" type="file" onchange="verifyFileSize(this)" aria-label="<?php echo (isset($LANG['UPLOAD']) ? $LANG['UPLOAD'] : 'Upload File') ?>" />
 							</div>
 							<?php
 						}
@@ -153,7 +155,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					<div style="margin:10px;">
 						<?php
 						if(!$uspid && $uploadType != $NFNUPLOAD)
-							echo '<input name="automap" type="checkbox" value="1" CHECKED /> <b>'.(isset($LANG['AUTOMAP'])?$LANG['AUTOMAP']:'Automap fields').'</b><br/>';
+							echo '<input id="automap" name="automap" type="checkbox" value="1" CHECKED /> <label for="automap"><b>'.(isset($LANG['AUTOMAP'])?$LANG['AUTOMAP']:'Automap fields').'</b></label><br/>';
 						?>
 					</div>
 					<div style="margin:10px;">
