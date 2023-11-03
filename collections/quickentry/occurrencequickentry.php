@@ -507,7 +507,7 @@ else{
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 		<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['OCCEDITOR'])?$LANG['OCCEDITOR']:'Occurrence Editor'); ?></title>
-		
+		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<script src="../../js/jquery.js?ver=140310" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js?ver=140310" type="text/javascript"></script>
 		<script type="text/javascript">
@@ -546,13 +546,13 @@ else{
 			}
 		</script>
 		<script src="../../js/symb/collections.coordinateValidation.js?ver=2" type="text/javascript"></script>
-		<script src="../../js/symb/wktpolygontools.js?ver=2" type="text/javascript"></script>
-		<script src="../../js/symb/collections.georef.js?ver=1" type="text/javascript"></script>
-		<script src="../../js/symb/collections.editor.main.js?ver=14" type="text/javascript"></script>
-		<script src="../../js/symb/collections.editor.tools.js?ver=4" type="text/javascript"></script>
-		<script src="../../js/symb/collections.editor.imgtools.js?ver=2" type="text/javascript"></script>
-		<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
-		<script src="../../js/symb/collections.editor.query.js?ver=5" type="text/javascript"></script>
+	<script src="../../js/symb/wktpolygontools.js?ver=2" type="text/javascript"></script>
+	<script src="../../js/symb/collections.georef.js?ver=2" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.main.js?ver=3" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.tools.js?ver=4" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.imgtools.js?ver=3" type="text/javascript"></script>
+	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.query.js?ver=6" type="text/javascript"></script>
 		<script>
 			function navigateToRecordNew(crowdSourceMode, gotomode, collId, batchId, imgId, imgIndex, barcode, occId, occIndex) {
 				if(barcode == null && occId == null) {
@@ -619,10 +619,10 @@ else{
 				padding:10px;
 			}
 			.left{
-				width: 55%;
+				width: 50%;
 			}
 			.right{
-				width: 45%;
+				width: 50%;
 			}
 			.info{
 				width: 100%;
@@ -1095,7 +1095,7 @@ else{
 						<div class="field-block title">
 							<h2>Image</h2>
 						</div>
-						<div class="login-info" style = "backgroufnd-color:#86C5D8; text-align: center;">
+						<div class="login-info" style = "backgroufnd-color:#86C5D8; text-align: center; height: 450px;">
 							<?php
 							if($occId && ($fragArr || $specImgArr )){
 								include_once('/home/herbaria/running-symbiota/collections/editor/includes/quickentryimgprocessor.php');
