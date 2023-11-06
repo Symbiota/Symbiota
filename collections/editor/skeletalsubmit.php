@@ -61,7 +61,6 @@ if($collid){
 	</div>
 	<!-- inner text -->
 	<div id="innertext">
-		<div style="float:right;"><a href="#" onclick="toggle('descriptiondiv')"><b><?php echo htmlspecialchars($LANG['DISPLAY_INSTRUCTIONS'], HTML_SPECIAL_CHARS_FLAGS); ?></b></a></div>
 		<h1><?php echo $collMap['collectionname']; ?></h1>
 		<?php
 		if($statusStr){
@@ -72,8 +71,8 @@ if($collid){
 			<section class="fieldset-like">
 				<h1>
 					<span><b><?php echo $LANG['SKELETAL_DATA']; ?></b></span>
-					<span href="#" onclick="toggle('descriptiondiv')"><img src="../../images/info.png" style="width:12px;" title="<?php echo $LANG['TOOL_DESCRIPTION']; ?>" alt="<?php echo (isset($LANG['IMG_TOOL_DESCRIPTION'])?$LANG['IMG_TOOL_DESCRIPTION']:'Description of Tool Button'); ?>"/></span>
-					<span id="optionimgspan" href="#" onclick="showOptions()"><img src="../../images/list.png" style="width:12px;" title="<?php echo $LANG['DISPLAY_OPTIONS']; ?>" alt="<?php echo (isset($LANG['IMG_DISPLAY_OPTIONS'])?$LANG['IMG_DISPLAY_OPTIONS']:'Display Options Button'); ?>"/></span>
+					<span href="#" onclick="toggle('descriptiondiv')" onkeypress="toggle('descriptiondiv')" tabindex="0"><img src="../../images/info.png" style="width:12px;" title="<?php echo $LANG['TOOL_DESCRIPTION']; ?>" alt="<?php echo (isset($LANG['IMG_TOOL_DESCRIPTION'])?$LANG['IMG_TOOL_DESCRIPTION']:'Description of Tool Button'); ?>"/></span>
+					<span id="optionimgspan" href="#" onclick="showOptions()" onkeypress="showOptions()" tabindex="0"><img src="../../images/list.png" style="width:12px;" title="<?php echo $LANG['DISPLAY_OPTIONS']; ?>" alt="<?php echo (isset($LANG['IMG_DISPLAY_OPTIONS'])?$LANG['IMG_DISPLAY_OPTIONS']:'Display Options Button'); ?>"/></span>
 				</h1>
 				<div id="descriptiondiv" style="display:none;margin:10px;width:80%">
 					<div style="margin-bottom:5px">
@@ -111,13 +110,13 @@ if($collid){
 							<input name="addaction" type="radio" value="2" /> <?php echo $LANG['APPEND_VALUES']; ?>
 						</fieldset>
 					</div>
-					<div style="position:absolute;background-color:white;top:10px;right:10px;">
+					<!-- <div style="position:absolute;background-color:white;top:10px;right:10px;">
 						<?php echo $LANG['SESSION']; ?>: <label id="minutes">00</label>:<label id="seconds">00</label><br/>
 						<?php echo $LANG['COUNT']; ?>: <label id="count">0</label><br/>
 						<?php echo $LANG['RATE']; ?>: <label id="rate">0</label> <?php echo $LANG['PER_HOUR']; ?>
-					</div>
-					<div>
-						<div style="">
+					</div> -->
+					<div >
+						<div class="flex-form">
 							<div id="scinamediv" style="float:left">
 								<label for="fsciname"><?php echo $LANG['SCINAME']; ?>:</label>
 								<input id="fsciname" name="sciname" type="text" value="" style="width:300px"/>
@@ -137,31 +136,32 @@ if($collid){
 								<?php
 							}
 							?>
-							<div style="clear:both;">
-								<div id="familydiv" style="float:left">
-									<label><?php echo $LANG['FAMILY']; ?>:</label> <input id="ffamily" name="family" type="text" tabindex="0" value="" />
-								</div>
-								<div id="localitysecuritydiv" style="float:left;margin:3px 5px">
-									<input id="flocalitysecurity" name="localitysecurity" type="checkbox" tabindex="0" value="1" />
-									<?php echo $LANG['PROTECT_LOCALITY']; ?>
-								</div>
+
+						</div>
+						<div class="flex-form">
+							<div id="familydiv">
+								<label for="ffamily"><?php echo $LANG['FAMILY']; ?>:</label> <input id="ffamily" name="family" type="text" tabindex="0" value="" />
+							</div>
+							<div id="localitysecuritydiv">
+								<input id="flocalitysecurity" name="localitysecurity" type="checkbox" tabindex="0" value="1" />
+								<?php echo $LANG['PROTECT_LOCALITY']; ?>
 							</div>
 						</div>
-						<div style="clear:both;padding-top:5px">
+						<div class="flex-form">
 							<div id="countrydiv" style="display:none;float:left;margin:3px;">
 								<label><?php echo $LANG['COUNTRY']; ?></label><br/>
 								<input id="fcountry" name="country" type="text" value="" autocomplete="off" />
 							</div>
-							<div id="statediv" style="float:left;margin:3px;">
-								<label><?php echo $LANG['STATE_PROVINCE']; ?></label><br/>
+							<div id="statediv">
+								<label for="fstateprovince"><?php echo $LANG['STATE_PROVINCE']; ?>:</label>
 								<input id="fstateprovince" name="stateprovince" type="text" value="" autocomplete="off" onchange="localitySecurityCheck(this.form)" />
 							</div>
-							<div id="countydiv" style="float:left;margin:3px;">
-								<label><?php echo $LANG['COUNTY_PARISH']; ?></label><br/>
+							<div id="countydiv">
+								<label><?php echo $LANG['COUNTY_PARISH']; ?>:</label>
 								<input id="fcounty" name="county" type="text" autocomplete="off" value="" />
 							</div>
 						</div>
-						<div style="clear:both;padding-top:5px">
+						<div >
 							<div id="recordedbydiv" style="display:none;float:left;margin:3px;">
 								<label><?php echo $LANG['COLLECTOR']; ?></label><br/>
 								<input id="frecordedby" name="recordedby" type="text" value="" />
@@ -217,23 +217,28 @@ if($collid){
 								</div>
 							</div>
 						</div>
-						<div style="clear:both;padding:15px;">
-							<div style="float:right;margin:16px 30px 0px 0px;">
-								<input name="clearform" type="reset" onclick="resetForm()" value="Clear Form" style="margin-right:40px" />
+						<div class="flex-form">
+							<div>
+								<input name="clearform" type="reset" onclick="resetForm()" value="Clear Form"/>
 							</div>
+						</div>
+
+						<div class="flex-form">
+
 							<div style="float:left;">
-								<label><?php echo $LANG['CATALOGNUMBER']; ?></label><br/>
+								<label><?php echo $LANG['CATALOGNUMBER']; ?>:</label>
 								<input id="fcatalognumber" name="catalognumber" type="text" style="border-color:green;" />
 							</div>
 							<div id="othercatalognumbersdiv" style="display:none;float:left;margin-left:3px;">
 								<label><?php echo $LANG['OTHER_CAT_NUMS']; ?></label><br/>
 								<input id="fothercatalognumbers" name="othercatalognumbers" type="text" value="" />
 							</div>
-							<div style="float:left;margin:16px 3px 3px 3px;">
+							<div>
 								<input id="fcollid" name="collid" type="hidden" value="<?php echo $collid; ?>" />
 								<button name="recordsubmit" type="submit" value="Add Record"><?php echo $LANG['ADD_RECORD']; ?></button>
 							</div>
 						</div>
+
 					</div>
 				</form>
 			</section>
