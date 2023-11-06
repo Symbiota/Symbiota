@@ -32,10 +32,27 @@
 				<?php
 				foreach($categoryArr as $catid => $catEl){
 					include_once('./singleCollectionDetails.php');
-			}
 				}
+				?>
+			</section>
+		<?php
+		}
 		$hrAndHeaderText = '<div class="specimen-header-margin"><hr/><h2>' . $LANG['OBSERVATION_COLLECTIONS'] . '</h2></div>';
 		if($specArr && $obsArr) echo $hrAndHeaderText;
-		$collManager->outputFullCollArr($obsArr, $catId, true, false, 'Observation', 'Observations');
+		if(isset($obsArr['cat'])){
+			$categoryArr = $obsArr['cat'];
+			$collTypeLabel = 'Observations';
+			$uniqGrouping = '';
+			?>
+			<section class="gridlike-form">
+				<?php
+				foreach($categoryArr as $catid => $catEl){
+					include('./singleCollectionDetails.php');
+				}
+				?>
+			</section>
+		<?php
+		}
+		// $collManager->outputFullCollArr($obsArr, $catId, true, false, 'Observation', 'Observations');
 	?>
 </form>
