@@ -673,7 +673,7 @@ class ProfileManager extends Manager{
 			echo '<ul style="margin:10px;">';
 			$sql = 'SELECT DISTINCT o.occid, o.catalognumber, o.stateprovince, '.
 				'CONCAT_WS("-",IFNULL(o.institutioncode,c.institutioncode),IFNULL(o.collectioncode,c.collectioncode)) AS collcode '.
-				'FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid ';
+				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
 			if($withImgOnly) $sql .= 'INNER JOIN images i ON o.occid = i.occid ';
 			$sql .= 'WHERE (o.sciname IS NULL) '.
 				'ORDER BY c.institutioncode, o.catalognumber LIMIT 2000';
