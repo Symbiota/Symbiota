@@ -37,19 +37,16 @@ $PORTAL_SELECTOR_ID = !isset($PORTAL_SELECTOR_ID) || !is_int($PORTAL_SELECTOR_ID
          <?php echo (isset($LANG['ENABLE_CROSS_PORTAL_SEARCH'])? $LANG['ENABLE_CROSS_PORTAL_SEARCH']: 'Enable Cross Portal Search')?>
       </label>
    </div>
-   <br/>
    <div id="portal-selector-<?php echo $PORTAL_SELECTOR_ID?>" style="display:none">
-      <div>   
-         <label>Portal:</label>
+      <div style="margin-top: 5px">   
          <select value="Choose a Portal to Search" onchange="onPortalSelect(this.value)">
             <?php foreach($portals as $portal): ?>
             <option value="<?= $portal['urlRoot']?>"><?=$portal['portalName']?></option>
             <?php endforeach; ?>
          </select>
       </div>
-      <br/>
-      <div>
-         <label>Taxa:</label>
+      <div style="margin-top: 5px">
+         <label for="portal-taxa-suggest-<?php echo $PORTAL_SELECTOR_ID?>">Taxa:</label>
          <autocomplete-input 
             id="portal-taxa-suggest-<?php echo $PORTAL_SELECTOR_ID?>"
             response_type="json"
