@@ -99,8 +99,18 @@ class AutocompleteInput extends HTMLElement {
 
 
       this.menu.addEventListener('mousedown', () => {
-         this._inputEl.value = this.getSelection().innerHTML;
-         this.onSearch(this._inputEl.value).then(res => this._swapSuggestionList(res));
+         const selected_option = this.getSelection();
+         if(selected_option) {
+            let values = this._inputEl.value.split(this.input_delimter);
+            if(values.length > 1) {
+               values[values.length - 1] = selected_option.innerHTML
+               this._inputEl.value = values.join(this.input_delimter);
+            } else {
+               this._inputEl.value = selected_option.innerHTML;
+            }
+         }
+
+         this.selected_index = 0;
       });
 
       el.addEventListener('input', e => {
@@ -115,7 +125,7 @@ class AutocompleteInput extends HTMLElement {
          });
       });
 
-      //el.addEventListener('blur', e => this.toggleMenu(false));
+      el.addEventListener('blur', () => this.toggleMenu(false));
 
       el.addEventListener('keydown', e => {
          switch(e.key) {
@@ -128,7 +138,6 @@ class AutocompleteInput extends HTMLElement {
             case "Enter":
                const selected_option = this.getSelection();
                if(selected_option) {
-
                   let values = this._inputEl.value.split(this.input_delimter);
                   if(values.length > 1) {
                      values[values.length - 1] = selected_option.innerHTML
@@ -163,6 +172,11 @@ class AutocompleteInput extends HTMLElement {
    }
 
    async onSearch(value) {
+      if(!this.completeUrl) {
+         console.warn("completeUrl attribute is not set for autocomplete-input of id: " + this.id)
+         return "";
+      }
+
       let response = await fetch(this.completeUrl.replace(this.url_delimter, value), {
          method: "POST",
          credentials: "omit",
