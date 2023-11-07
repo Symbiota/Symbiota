@@ -2,7 +2,7 @@
 const template = document.createElement("template");
 template.innerHTML = `<span style="display: inline-block; font-size 1em; position: relative; width:300px">
    <input id="dropdown-input" style="width:inherit;"></input>
-   <div id="suggestions" style="font-size: 0.84rem; width: inherit; position: absolute; background-color:#fff;cursor:pointer !important; display: none; border: 1px solid gray; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);"></div>
+   <div id="suggestions" style="max-height:20rem; overflow-y:scroll; width: inherit; position: absolute; background-color:#fff;cursor:pointer !important; display: none; border: 1px solid gray; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);"></div>
 </span>`
 
 class AutocompleteInput extends HTMLElement {
@@ -45,6 +45,7 @@ class AutocompleteInput extends HTMLElement {
 
       if(suggestions) {
          suggestions.style.display ='block';
+         suggestions.scrollTop = 0;
          suggestions.innerHTML = newInnerHmtl;
          this._changeSelection(0);
 
@@ -75,7 +76,7 @@ class AutocompleteInput extends HTMLElement {
          return;
       }
 
-      if(!this.selected_index) this.selected_index = 0;
+      if(!this.selected_index || this.selected_index >= options.length) this.selected_index = 0;
 
       options[this.selected_index].style['background-color'] = null;
 
