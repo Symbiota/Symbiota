@@ -102,7 +102,7 @@ include($SERVER_ROOT.'/includes/header.php');
 </div>
 <!-- This is inner text! -->
 <div id='innertext'>
-<div style="color:#990000;font-size:20px;font-weight:bold;margin:0px 10px 10px 0px;">
+<div class="voucher-admin-header">
 	<a href="checklist.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>">
 		<?php echo $clManager->getClName(); ?>
 	</a>

@@ -882,3 +882,9 @@ hr {
   font-size: 125%;
   font-weight: bold;
 }
+
+.voucher-admin-header {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0px 10px 10px 0px;
+}
