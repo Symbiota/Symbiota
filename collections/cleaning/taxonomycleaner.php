@@ -196,7 +196,7 @@ elseif($activeCollArr){
 									foreach($collMap as $id => $collArr){
 										if(in_array($id, $USER_RIGHTS["CollAdmin"])){
 											echo '<div>';
-											echo '<input id="collid[]" name="collid[]" type="checkbox" value="'.$id.'" ' . '<label for="collid[]"> ' . (in_array($id,$activeCollArr) ? 'CHECKED' : '').' </label> /> ';
+											echo '<input id="collid[]" name="collid[]" type="checkbox" value="" />' . '<label for="collid[]"> ' .$id.'" ' . (in_array($id,$activeCollArr) ? 'CHECKED' : '').' </label> ';
 											echo $collArr['collectionname'].' ('.$collArr['code'].')';
 											echo '</div>';
 										}
@@ -262,7 +262,7 @@ elseif($activeCollArr){
 												<?php
 												$taxResourceList = $cleanManager->getTaxonomicResourceList();
 												foreach($taxResourceList as $taKey => $taValue){
-													echo '<input name="taxresource[]" id="taxresource" type="checkbox" value="'.$taKey.'" '.(in_array($taKey,$taxResource)?'checked':'').' /> '.$taValue.'<br/>';
+													echo '<input name="taxresource[]" id="taxresource[]" type="checkbox" value="'.$taKey.'" '.(in_array($taKey,$taxResource)?'checked':'').' /> '.$taValue.'<br/>';
 												}
 												?>
 											</fieldset>
@@ -289,12 +289,12 @@ elseif($activeCollArr){
 											<label for="startindex"> <?php echo $LANG['START_INDEX']; ?>: </label>
 											<input id="startindex" name="startindex" type="text" value="<?php echo $startIndex; ?>" title="Enter a taxon name or letter of the alphabet to indicate where the processing should start" />
 										</div>
-										<div style="height:50px;">
-											<div style=""><?php echo $LANG['CLEAN_MAP_FUNCTION']; ?>:</div>
+										<fieldset class="bottom-breathing-room">
+											<legend><?php echo $LANG['CLEAN_MAP_FUNCTION']; ?></legend>
 											<div style="float:left;margin-left:15px;"><input name="autoclean" id="semi" type="radio" value="0" <?php echo (!$autoClean?'checked':''); ?> /> <label for="semi"> <?php echo $LANG['SEMI_MANUAL']; ?> </label> </div>
 											<div style="float:left;margin-left:10px;"><input name="autoclean" id="fully" type="radio" value="1" <?php echo ($autoClean==1?'checked':''); ?> /> <label for="fully"> <?php echo $LANG['FULLY_AUTO']; ?> </label> </div>
-										</div>
-										<div style="clear:both;">
+										</fieldset>
+										<div class="bottom-breathing-room">
 											<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 											<button name="submitaction" type="submit" value="AnalyzingNames" ><?php echo ($startIndex?$LANG['CONTINUE_ANALYZING']:$LANG['ANALYZE_NAMES']); ?></button>
 										</div>
