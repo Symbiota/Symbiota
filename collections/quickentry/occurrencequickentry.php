@@ -1246,7 +1246,7 @@ else{
 												<button 
 													type="submit" 
 													value="Previous" 
-													onclick="<?php if($occIndex>0) { ?>submitQueryForm('back');<?php } ?> return false;">
+													onclick="navigateToRecordNew(<?php echo $crowdSourceMode . ', ' . $goToMode . ', ' . $collId . ', ' . $batchId . ', ' . $prevImgid . ', ' . ($currentImgIndex-1) . ', ' . $prevBarcode . ', ' . $prevOccid . ', ' . ($currentImgIndex-1); ?>)">
 													Previous
 												</button>
 												<a href="../quickentry/transcribe.php?collid=<?php echo $collId; ?>" >
@@ -1255,7 +1255,7 @@ else{
 												<button 
 													type="submit" 
 													value="Next" 
-													onclick="<?php if($occIndex<$qryCnt-1) { ?>submitQueryForm('forward');<?php } ?> return false;">
+													onclick="navigateToRecordNew(<?php echo $crowdSourceMode . ', ' . $goToMode . ', ' . $collId . ', ' . $batchId . ', ' . $nextImgid . ', ' . ($currentImgIndex+1) . ', ' . $nextBarcode . ', ' . $nextOccid . ', ' . ($currentImgIndex+1); ?>)">
 													Next
 												</button>
 												<input type="hidden" name="occindex" value="<?php echo is_numeric($occIndex)?$occIndex:''; ?>" />
