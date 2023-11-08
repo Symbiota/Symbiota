@@ -303,7 +303,7 @@ if($isEditor){
 			<div>
 				<section class="fieldset-like">
 					<h1> <span> <?php echo $LANG['DEFINE_RECORDSET']; ?> </span> </h1>
-					<div style="margin:15px">
+					<div class="left-breathing-room-rel-lg">
 						<?php echo $LANG['RECORDSET_EXPLAIN']; ?>
 					</div>
 					<div style="margin:15px;width:700px;">
@@ -317,7 +317,7 @@ if($isEditor){
 									<input name="allcatnum" id="allcatnum" type="checkbox" checked /> <label for="allcatnum"><?php echo $LANG['TARGET_ALL']; ?></label>
 								</div>
 							</section>
-							<div>
+							<div class="left-breathing-room-rel">
 								<label for="nomsciname"><?php echo $LANG['TAXON']; ?>:</label>
 								<input type="text" id="nomsciname" name="sciname" style="width:260px;" onfocus="initScinameAutocomplete(this.form)" />
 							</div>
