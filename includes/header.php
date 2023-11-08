@@ -128,7 +128,7 @@ elseif (array_key_exists('CollAdmin', $USER_RIGHTS) || array_key_exists('CollEdi
 						<a href="https://biokic.asu.edu/collections" target="_blank" alt="ASU Biocollections">ASU Biocollections</a>
 					</li>
 					<li>
-						<a href="https://bdj.pensoft.net/articles.php?id=1114" target="_blank" alt="About Symbiota">About Symbiota</a>
+						<a href="https://symbiota.org" target="_blank" alt="About Symbiota">About Symbiota</a>
 					</li>
 				</ul>
 			</li>

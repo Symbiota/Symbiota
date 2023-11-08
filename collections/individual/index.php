@@ -3,8 +3,15 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceIndividual.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
 include_once($SERVER_ROOT.'/classes/RdfUtility.php');
-include_once($SERVER_ROOT.'/content/lang/collections/individual/index.'.$LANG_TAG.'.php');
-include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
+$langPath = $SERVER_ROOT.'/content/lang/collections/';
+if($LANG_TAG != 'en' && file_exists($langPath.'individual/index.'.$LANG_TAG.'.php')){
+	include_once($langPath.'individual/index.'.$LANG_TAG.'.php');
+	include_once($langPath.'fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
+}
+else{
+	include_once($langPath.'individual/index.en.php');
+	include_once($langPath.'fieldterms/materialSampleVars.en.php');
+}
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $occid = array_key_exists('occid', $_REQUEST) ? filter_var($_REQUEST['occid'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -25,7 +32,7 @@ elseif($collid && $pk){
 }
 
 $indManager->setDisplayFormat($format);
-$indManager->setOccurData();
+$observerUid = $indManager->getOccData('observeruid');
 if(!$occid) $occid = $indManager->getOccid();
 if(!$collid) $collid = $indManager->getCollid();
 
@@ -39,7 +46,7 @@ if($SYMB_UID){
 	elseif((array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollEditor']))){
 		$isEditor = true;
 	}
-	elseif(isset($occArr['observeruid']) && $occArr['observeruid'] == $SYMB_UID){
+	elseif($observerUid && $observerUid == $SYMB_UID){
 		$isEditor = true;
 	}
 	elseif($indManager->isTaxonomicEditor()){
@@ -59,7 +66,7 @@ if($SYMB_UID){
 		$isSecuredReader = true;
 	}
 }
-$indManager->applyProtections($isSecuredReader);
+if(!$isSecuredReader) $indManager->applyProtections();
 $occArr = $indManager->getOccData();
 $collMetadata = $indManager->getMetadata();
 $genticArr = $indManager->getGeneticArr();
@@ -430,9 +437,7 @@ $traitArr = $indManager->getTraitArr();
 								<?php
 								echo '<label>'.$LANG['TAXON'].':</label> ';
 								echo '<i>'.$occArr['sciname'].'</i> '.$occArr['scientificnameauthorship'];
-								if(isset($occArr['taxonsecure'])){
-									echo '<span class="notice-span"> '.$LANG['ID_PROTECTED'].'</span>';
-								}
+								if(isset($occArr['protectedTaxon'])) echo '<span class="notice-span" style="margin-left: 20px"> '.$LANG['ID_PROTECTED'].'</span>';
 								if($occArr['tidinterpreted']){
 									//echo ' <a href="../../taxa/index.php?taxon='.$occArr['tidinterpreted'].'" title="Open Species Profile Page"><img src="" /></a>';
 								}
@@ -483,60 +488,54 @@ $traitArr = $indManager->getTraitArr();
 							</div>
 							<?php
 						}
-						if(array_key_exists('dets',$occArr) && (count($occArr['dets']) > 1 || $occArr['dets'][key($occArr['dets'])]['iscurrent'] == 0)){
+						if(!empty($occArr['dets'])){
 							?>
-							<div id="determination-div">
-								<div class="det-toogle-div">
-									<a href="#" onclick="toggle('det-toogle-div');return false"><img src="../../images/plus_sm.png"></a>
-									<?php echo $LANG['SHOW_DET_HISTORY']; ?>
-								</div>
-								<div class="det-toogle-div" style="display:none;">
+							<div class="det-toogle-div">
+								<a href="#" onclick="toggle('det-toogle-div');return false"><img src="../../images/plus_sm.png"> <?php echo $LANG['SHOW_DET_HISTORY']; ?></a>
+							</div>
+							<div id="determination-div" class="det-toogle-div" style="display:none;">
+								<fieldset>
+									<legend><a href="#" onclick="toggle('det-toogle-div');return false"><?php echo $LANG['DET_HISTORY']; ?></a></legend>
 									<div>
-										<a href="#" onclick="toggle('det-toogle-div');return false"><img src="../../images/minus_sm.png"></a>
-										<?php echo $LANG['HIDE_DET_HISTORY']; ?>
-									</div>
-									<fieldset>
-										<legend><?php echo $LANG['DET_HISTORY']; ?></legend>
 										<?php
 										$firstIsOut = false;
-										$dArr = $occArr['dets'];
-										foreach($dArr as $detArr){
+										foreach($occArr['dets'] as $detArr){
 											if($firstIsOut) echo '<hr />';
 												$firstIsOut = true;
 											?>
 											<div style="margin:10px;">
 												<?php
-												if($detArr['qualifier']) echo $detArr['qualifier'];
-												echo ' <label><i>'.$detArr['sciname'].'</i></label> '.$detArr['author'];
+												if($detArr['identificationQualifier']) echo $detArr['identificationQualifier'];
+												echo ' <label><i>'.$detArr['sciname'].'</i></label> '.$detArr['scientificNameAuthorship'];
 												?>
 												<div class="identby-div">
 													<?php
-													echo '<label>'.(isset($LANG['DETERMINER'])?$LANG['DETERMINER']:'Determiner').': </label>';
-													echo $detArr['identifiedby'];
+													echo '<label>'.$LANG['DETERMINER'].': </label>';
+													echo $detArr['identifiedBy'];
 													?>
 												</div>
 												<div class="identdate-div">
 													<?php
 													echo '<label>'.$LANG['DATE'].': </label>';
-													echo $detArr['date'];
+													echo $detArr['dateIdentified'];
 													?>
 												</div>
 												<?php
-												if($detArr['ref']){ ?>
+												if($detArr['identificationReferences']){ ?>
 													<div class="identref-div">
 														<?php
 														echo '<label>'.$LANG['ID_REFERENCES'].': </label>';
-														echo $detArr['ref'];
+														echo $detArr['identificationReferences'];
 														?>
 													</div>
 													<?php
 												}
-												if($detArr['notes']){
+												if($detArr['identificationRemarks']){
 													?>
 													<div class="identremarks-div">
 														<?php
 														echo '<label>'.$LANG['ID_REMARKS'].': </label>';
-														echo $detArr['notes'];
+														echo $detArr['identificationRemarks'];
 														?>
 													</div>
 													<?php
@@ -546,8 +545,8 @@ $traitArr = $indManager->getTraitArr();
 											<?php
 										}
 										?>
-									</fieldset>
-								</div>
+									</div>
+								</fieldset>
 							</div>
 							<?php
 						}
@@ -1128,7 +1127,7 @@ $traitArr = $indManager->getTraitArr();
 						if($occArr['catalognumber']) echo '<div><label>'.$LANG['CATALOG_NUMBER'].':</label> '.$occArr['catalognumber'].'</div>';
 						if($occArr['occurrenceid']) echo '<div><label>'.$LANG['GUID'].':</label> '.$occArr['occurrenceid'].'</div>';
 						echo '<div><label>'.$LANG['LATEST_ID'].':</label> ';
-						if(!isset($occArr['taxonsecure'])) echo '<i>'.$occArr['sciname'].'</i> '.$occArr['scientificnameauthorship'];
+						if(!isset($occArr['protectedTaxon'])) echo '<i>'.$occArr['sciname'].'</i> '.$occArr['scientificnameauthorship'];
 						else echo $LANG['SPECIES_PROTECTED'];
 						echo '</div>';
 						if($occArr['identifiedby']) echo '<div><label>'.$LANG['IDENTIFIED_BY'].':</label> '.$occArr['identifiedby'].'<span stlye="margin-left:30px;">'.$occArr['dateidentified'].'</span></div>';
@@ -1146,13 +1145,13 @@ $traitArr = $indManager->getTraitArr();
 									if($dupArr['catalognumber']) echo '<div><label>'.$LANG['CATALOG_NUMBER'].':</label> '.$dupArr['catalognumber'].'</div>';
 									if($dupArr['occurrenceid']) echo '<div><label>'.$LANG['GUID'].':</label> '.$dupArr['occurrenceid'].'</div>';
 									echo '<div><label>'.$LANG['LATEST_ID'].':</label> ';
-									if(!isset($occArr['taxonsecure'])) echo '<i>'.$dupArr['sciname'].'</i> '.$dupArr['author'];
+									if(!isset($occArr['protectedTaxon'])) echo '<i>'.$dupArr['sciname'].'</i> '.$dupArr['author'];
 									else echo $LANG['SPECIES_PROTECTED'];
 									echo '</div>';
 									if($dupArr['identifiedby']) echo '<div><label>'.$LANG['IDENTIFIED_BY'].':</label> '.$dupArr['identifiedby'].'<span stlye="margin-left:30px;">'.$dupArr['dateidentified'].'</span></div>';
 									echo '<div><a href="#" onclick="openIndividual('.$dupOccid.');return false;">'.$LANG['SHOW_FULL_DETAILS'].'</a></div>';
 									echo '</div>';
-									if(!isset($occArr['taxonsecure']) && !isset($occArr['localsecure'])){
+									if(!isset($occArr['protectedTaxon']) && !isset($occArr['localsecure'])){
 										if($dupArr['url']){
 											$url = $dupArr['url'];
 											if($IMAGE_DOMAIN) if(substr($url,0,1) == '/') $url = $IMAGE_DOMAIN.$url;
