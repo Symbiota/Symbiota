@@ -211,11 +211,11 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 							<input id="country" name="country" type="text" value="<?php echo (isset($_POST['country'])?$_POST['country']:''); ?>" />
 						</div>
 						<div style="float:left;margin:3px;">
-						<label for="country"><b><?php echo (isset($LANG['STATE_PROVINCE'])?$LANG['STATE_PROVINCE']:'State/Province')?>:</b><br/> </label>
+						<label for="state"><b><?php echo (isset($LANG['STATE_PROVINCE'])?$LANG['STATE_PROVINCE']:'State/Province')?>:</b><br/> </label>
 							<input id="state" name="stateprovince" type="text" value="<?php echo (isset($_POST['stateprovince'])?$_POST['stateprovince']:''); ?>" />
 						</div>
 						<div style="float:left;margin:3px;">
-						<label for="country"><b><?php echo (isset($LANG['COUNTY'])?$LANG['COUNTY']:'County')?>:</b><br/> </label>
+						<label for="county"><b><?php echo (isset($LANG['COUNTY'])?$LANG['COUNTY']:'County')?>:</b><br/> </label>
 							<input id="county" name="county" type="text" value="<?php echo (isset($_POST['county'])?$_POST['county']:''); ?>" />
 						</div>
 					</div>
