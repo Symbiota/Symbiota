@@ -50,7 +50,7 @@ class AutocompleteInput extends HTMLElement {
          this._changeSelection(0);
 
          for(let i = 0; i < suggestions.children.length; i++) {
-            suggestions.children[i].addEventListener('mouseover', () => {
+            suggestions.children[i].addEventListener('mouseenter', () => {
                this._changeSelection(i);
             });
          }
@@ -69,6 +69,7 @@ class AutocompleteInput extends HTMLElement {
    _changeSelection(new_index) {
       const suggestions = this.shadowRoot.querySelector("#suggestions");
       if(!suggestions) return;
+      console.log(new_index)
 
       const options = suggestions.children;
       if(options.length === 0) {
@@ -97,7 +98,6 @@ class AutocompleteInput extends HTMLElement {
    connectedCallback() {
       const el = this.getInputElement();
       this.menu = this.shadowRoot.querySelector("#suggestions");
-
 
       this.menu.addEventListener('mousedown', () => {
          const selected_option = this.getSelection();
@@ -129,12 +129,26 @@ class AutocompleteInput extends HTMLElement {
       el.addEventListener('blur', () => this.toggleMenu(false));
 
       el.addEventListener('keydown', e => {
+         let scrollMenu= () => {
+            const item_height = this.getSelection().clientHeight
+            const selection_height = item_height * (this.selected_index + 1);
+            const bottom_of_menu = this.menu.scrollTop + this.menu.clientHeight;
+
+            if(selection_height > bottom_of_menu) { 
+               this.menu.scrollTop += selection_height - bottom_of_menu;
+            } else if(selection_height <= this.menu.scrollTop + item_height) {
+               this.menu.scrollTop = selection_height - item_height;
+            }
+         }
+
          switch(e.key) {
             case "ArrowUp":
                this._changeSelection(this.selected_index - 1);
+               scrollMenu();
                break;
             case "ArrowDown":
                this._changeSelection(this.selected_index + 1);
+               scrollMenu();
                break;
             case "Enter":
                const selected_option = this.getSelection();
