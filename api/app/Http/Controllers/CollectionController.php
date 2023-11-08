@@ -35,20 +35,6 @@ class CollectionController extends Controller{
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Parameter(
-	 *		 name="datasetID",
-	 *		 in="query",
-	 *		 description="associated NEON sampleClasses",
-	 *		 required=false,
-	 *		 @OA\Schema(type="string")
-	 *	 ),
-	 *	 @OA\Parameter(
-	 *		 name="productID",
-	 *		 in="query",
-	 *		 description="associated NEON product IDs",
-	 *		 required=false,
-	 *		 @OA\Schema(type="string")
-	 *	 ),
-	 *	 @OA\Parameter(
 	 *		 name="limit",
 	 *		 in="query",
 	 *		 description="Controls the number of results per page",
@@ -92,15 +78,6 @@ class CollectionController extends Controller{
 			elseif($request->collectionType == 'observations') $conditions[] = ['collType','Observations'];
 			elseif($request->collectionType == 'researchObservations') $conditions[] = ['collType','General Observations'];
 		}
-
-		//NEON specific code
-		if($request->has('productID')){
-			$conditions[] = ['productID', 'like', '%'.$request->productID.'%'];
-		}
-		if($request->has('datasetID')){
-			$conditions[] = ['datasetID', 'like', '%'.$request->datasetID.'%'];
-		}
-		//End of NEON specific code
 
 		$fullCnt = Collection::where($conditions)->count();
 		$result = Collection::where($conditions)->skip($offset)->take($limit)->get();

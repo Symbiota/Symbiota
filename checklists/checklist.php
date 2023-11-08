@@ -754,5 +754,4 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 	if(!$printMode) include($SERVER_ROOT.'/includes/footer.php');
 	?>
 </body>
-<script type="text/javascript" src="../neon/js/checklists.checklist.neon.taxa.js"></script>
 </html>

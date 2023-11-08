@@ -7,7 +7,7 @@
  * Requires modern browsers (HTML5)
  *
  *  Author: Laura Rocha Prado (lauraprado@asu.edu)
- *  Version: Jan 2021
+ *  Version: Fev 2021
  */
 
 let labelPage = document.querySelector('.body');
@@ -39,7 +39,6 @@ document.body.prepend(controls);
 
 function toggleEdits() {
   let isEditable = labelPage.contentEditable === 'true';
-  let btn = document.body.querySelector('#edit');
   if (isEditable) {
     console.log(isEditable);
     labelPage.contentEditable = 'false';

@@ -1,1 +1,0 @@
-<?php echo ($DEFAULT_TITLE) ? $DEFAULT_TITLE : "NEON Biorepository Data Portal"; ?>. <?php echo $dArr['name']; ?> (ID: <?php echo $datasetid; ?>) https://biorepo.neonscience.org/portal/collections/list.php?datasetid=<?php echo $datasetid; ?> accessed <?php echo date('Y-m-d'); ?>).

@@ -211,7 +211,7 @@ $searchVar = $collManager->getQueryTermStr();
 								<td><?php echo $collection; ?></td>
 								<td><?php echo $occArr['catnum']; ?></td>
 								<td><?php echo $occArr['family']; ?></td>
-								<td><?php echo $occArr['sciname'].($occArr['scientificNameAuthorship']?' '.$occArr['scientificNameAuthorship']:''); ?></td>
+								<td><?php echo $occArr['sciname'].($occArr['author']?' '.$occArr['author']:''); ?></td>
 								<td><?php echo $occArr['collector']; ?></td>
 								<td><?php echo (array_key_exists('collnum',$occArr)?$occArr['collnum']:''); ?></td>
 								<td><?php echo (array_key_exists('date',$occArr)?$occArr['date']:''); ?></td>

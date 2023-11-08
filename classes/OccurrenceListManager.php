@@ -1,7 +1,6 @@
 <?php
-include_once('OccurrenceManager.php');
-include_once('OccurrenceAccessStats.php');
-include_once('OmDeterminations.php');
+include_once("OccurrenceManager.php");
+include_once("OccurrenceAccessStats.php");
 
 class OccurrenceListManager extends OccurrenceManager{
 
@@ -16,7 +15,7 @@ class OccurrenceListManager extends OccurrenceManager{
  		parent::__destruct();
 	}
 
-	public function getSpecimenMap($pageRequest, $cntPerPage){
+	public function getSpecimenMap($pageRequest,$cntPerPage){
 		$retArr = Array();
 		$isSecuredReader = false;
 		if($GLOBALS['USER_RIGHTS']){
@@ -67,8 +66,17 @@ class OccurrenceListManager extends OccurrenceManager{
 				$retArr[$row->occid]['catnum'] = $this->cleanOutStr($row->catalognumber);
 				$retArr[$row->occid]['family'] = $this->cleanOutStr($row->family);
 				$retArr[$row->occid]['sciname'] = ($row->sciname?$this->cleanOutStr($row->sciname):'undetermined');
-				$retArr[$row->occid]['tidInterpreted'] = $row->tidinterpreted;
-				$retArr[$row->occid]['scientificNameAuthorship'] = $this->cleanOutStr($row->scientificnameauthorship);
+				$retArr[$row->occid]['tid'] = $row->tidinterpreted;
+				$retArr[$row->occid]['author'] = $this->cleanOutStr($row->scientificnameauthorship);
+				/*
+				if(isset($row->scinameprotected) && $row->scinameprotected && !$securityClearance){
+					$retArr[$row->occid]['taxonsecure'] = 1;
+					$retArr[$row->occid]['sciname'] = $this->cleanOutStr($row->scinameprotected);
+					$retArr[$row->occid]['author'] = '';
+					$retArr[$row->occid]['family'] = $row->familyprotected;
+					$retArr[$row->occid]['tid'] = $row->tidprotected;
+				}
+				*/
 				$retArr[$row->occid]['collector'] = $this->cleanOutStr($row->recordedby);
 				$retArr[$row->occid]['country'] = $this->cleanOutStr($row->country);
 				$retArr[$row->occid]['state'] = $this->cleanOutStr($row->stateprovince);
@@ -95,41 +103,11 @@ class OccurrenceListManager extends OccurrenceManager{
 			$result->free();
 		}
 		if($occArr){
-			$this->setCurrentDetermination($retArr, $securityClearance);
 			$this->setImages($occArr,$retArr);
 			$statsManager = new OccurrenceAccessStats();
 			$statsManager->recordAccessEventByArr($occArr,'list');
 		}
 		return $retArr;
-	}
-
-	private function setCurrentDetermination(&$occurArr, $securityClearance){
-		$status = false;
-		$detManager = new OmDeterminations($this->conn);
-		$conditionArr = array('isCurrent' => 1, 'appliedStatus' => 1);
-		$targetArr = array('sciname', 'family', 'tidInterpreted', 'scientificNameAuthorship');
-		if($setArr = $detManager->getDeterminationSetArr(array_keys($occurArr), $conditionArr)){
-			foreach($setArr as $occid => $dArr){
-				foreach($dArr as $recArr){
-					if($recArr['securityStatus'] == 1){
-						if($securityClearance){
-							foreach($targetArr as $targetField){
-								$occurArr[$occid][$targetField] = $recArr[$targetField];
-							}
-							break;
-						}
-						else $occurArr[$occid]['taxonProtected'] = 1;
-					}
-					else{
-						foreach($targetArr as $targetField){
-							$occurArr[$occid][$targetField] = $recArr[$targetField];
-						}
-					}
-					$status = true;
-				}
-			}
-		}
-		return $status;
 	}
 
 	private function setImages($occArr,&$retArr){

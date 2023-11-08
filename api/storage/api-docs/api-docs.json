@@ -40,24 +40,6 @@
                         }
                     },
                     {
-                        "name": "datasetID",
-                        "in": "query",
-                        "description": "associated NEON sampleClasses",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "productID",
-                        "in": "query",
-                        "description": "associated NEON product IDs",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
                         "name": "limit",
                         "in": "query",
                         "description": "Controls the number of results per page",
@@ -1145,6 +1127,47 @@
                     },
                     "400": {
                         "description": "Error: Bad request. "
+                    }
+                }
+            }
+        },
+        "/api/v2/taxonomy/{identifier}/description/{identifier}": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/taxonomy/identifier/description/identifier",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "PK, GUID, or recordID associated with target taxonomic unit",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "Identifier (PK, tdbid) associated with taxonomic description",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns metabase on inventory registered within system with matching ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. Inventory identifier is required."
                     }
                 }
             }

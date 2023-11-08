@@ -91,14 +91,30 @@ $_SESSION['citationvar'] = $searchVar;
 	</script>
 	<script src="../js/symb/collections.list.js?ver=10" type="text/javascript"></script>
 	<style type="text/css">
-		fieldset { padding: 15px; }
-		legend { font-weight: bold; }
-		.checkbox-elem { margin: 5px; padding: 5px; border: 1px dashed orange; }
-		.ui-tabs .ui-tabs-nav li { width: 32%; }
-		.ui-tabs .ui-tabs-nav li a { margin-left: 10px; }
-		.protected-span { color: red; }
+		fieldset {
+			padding: 15px;
+		}
+
+		legend {
+			font-weight: bold;
+		}
+
+		.checkbox-elem {
+			margin: 5px;
+			padding: 5px;
+			border: 1px dashed orange;
+		}
+
+		.ui-tabs .ui-tabs-nav li {
+			width: 32%;
+		}
+
+		.ui-tabs .ui-tabs-nav li a {
+			margin-left: 10px;
+		}
 	</style>
 </head>
+
 <body>
 	<?php
 	$displayLeftMenu = (isset($collections_listMenu) ? $collections_listMenu : false);
@@ -285,12 +301,11 @@ $_SESSION['citationvar'] = $searchVar;
 									echo '<div style="margin:4px;">';
 									if (isset($fieldArr['sciname'])) {
 										$sciStr = '<span style="font-style:italic;">' . $fieldArr['sciname'] . '</span>';
-										if(!empty($fieldArr['tidInterpreted'])) $sciStr = '<a target="_blank" href="../taxa/index.php?tid=' . $fieldArr['tidInterpreted'] . '">' . $sciStr . '</a>';
-										if(!empty($fieldArr['scientificNameAuthorship'])) $sciStr .= ' ' . $fieldArr['scientificNameAuthorship'];
+										if (isset($fieldArr['tid']) && $fieldArr['tid']) $sciStr = '<a target="_blank" href="../taxa/index.php?tid=' . $fieldArr['tid'] . '">' . $sciStr . '</a>';
+										if (isset($fieldArr['author']) && $fieldArr['author']) $sciStr .= ' ' . $fieldArr['author'];
 										echo $sciStr;
-									}
-									if(!empty($fieldArr['taxonProtected'])) {
-										echo '<span class="protected-span" style="margin-left: 20px">Identification Protected</span>';
+									} elseif ($fieldArr['localitysecurity'] > 1) {
+										echo 'Identification Protected';
 									}
 									echo '</div>';
 									echo '<div style="margin:4px">';
@@ -303,7 +318,7 @@ $_SESSION['citationvar'] = $searchVar;
 									if ($fieldArr["state"]) $localStr .= ', ' . $fieldArr["state"];
 									if ($fieldArr["county"]) $localStr .= ', ' . $fieldArr["county"];
 									if ($fieldArr['locality'] == 'PROTECTED') {
-										$localStr .= ', <span class="protected-span">' . $LANG['PROTECTED'] . '</span>';
+										$localStr .= ', <span style="color:red;">' . $LANG['PROTECTED'] . '</span>';
 									} else {
 										if ($fieldArr['locality']) $localStr .= ', ' . $fieldArr['locality'];
 										if ($fieldArr['declat']) $localStr .= ', ' . $fieldArr['declat'] . ' ' . $fieldArr['declong'];
