@@ -66,6 +66,9 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<div class="disclaimer">
+			<p><span>Please note:</span> this search is capable of integrating all NEON samples with voucher specimens from the same sites in other natural history collections, allowing for research on biodiversity at NEON sites over a broader taxonomic and temporal extent. However, not all of these samples are housed in the NEON Biorepository at Arizona State University. <span>Scroll towards the end of the page to activate or deactivate the search in the external collections</span>.</p>
+		</div>
         <div id="tabs" style="margin:0px;">
 			<ul>
 				<?php
@@ -182,4 +185,14 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 	include($SERVER_ROOT.'/includes/footer.php');
 	?>
 	</body>
+    <script>
+    // Forces external collections to be unchecked by default
+    function deselectColls(categoryId){
+      let category = document.getElementById(`cat-0-${categoryId}-Input`);
+      category.checked = false;
+      selectAllCat(this, `cat-0-${categoryId}`);
+    }
+    deselectColls(6);
+    deselectColls(8);
+  </script>
 </html>

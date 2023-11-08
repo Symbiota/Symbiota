@@ -1,0 +1,55 @@
+/***
+ * NEON Mammal (Wet) with Barcode Labels Custom Styles
+ * Author: Laura Rocha Prado
+ * Version: March 2023
+ ***/
+.label-bottom {
+  display: none;
+}
+
+.cn-barcode {
+  grid-area: bc;
+  transform: rotate(90deg);
+  width: 2cm;
+  position: relative;
+}
+
+.cn-barcode img {
+  position: absolute;
+  right: -47px;
+  bottom: 57px;
+  width: 4cm;
+}
+
+.rotateimg180 {
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+
+.label {
+  display: grid;
+  grid-template-areas:
+    'h1 h1 h1 h1 h1 bc'
+    'bl bl bl bl bl bc'
+    'bl bl bl bl bl bc'
+    'bt bt bt bt bt bt';
+  flex-grow: 1;
+  flex-shrink: 0;
+  max-width: 45%;
+}
+
+.label-header {
+  grid-area: h1;
+}
+
+.label-blocks {
+  grid-area: bl;
+}
+
+.other-catalog-numbers {
+  grid-area: bt;
+  font-size: 9pt;
+}

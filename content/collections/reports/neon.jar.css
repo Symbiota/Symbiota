@@ -1,0 +1,22 @@
+.bar::after {
+  margin-top: 1em;
+}
+
+.allcatalognumbers {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  /* align items in columns */
+}
+
+/* second item inside allcatalognumbers */
+.allcatalognumbers > *:nth-child(2) {
+  text-align: center;
+}
+
+.allcatalognumbers > :last-child {
+  text-align: right;
+}
+
+.individualcount {
+  display: block;
+}

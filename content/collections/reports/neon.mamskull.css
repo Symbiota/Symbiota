@@ -1,0 +1,60 @@
+body {
+  font-family: Arial, sans-serif;
+}
+.label {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  font-size: 6pt;
+  position: relative;
+  margin: 0.125in;
+  padding: 2pt;
+  width: 46.64mm;
+  height: 70.976mm;
+  border: solid 1px black;
+}
+.label:before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: -0.0625in;
+  left: -0.0625in;
+  right: -0.0625in;
+  bottom: -0.0625in;
+  border: 1px dashed black;
+}
+.local {
+  font-size: 7pt;
+}
+.taxonomy {
+  font-size: 8pt;
+}
+.catalognumber {
+  font-size: 7pt;
+}
+.othercatalognumbers {
+  display: none;
+}
+.preparations:before {
+  content: "Prep: ";
+}
+.cn-barcode {
+  text-align:center;
+  height: 1.2cm;
+  width: auto;
+}
+.cn-barcode img {
+  max-width: 100%;
+  max-height: 100%;
+  height: auto;
+}
+
+@media print {
+  @page {
+    size: letter;
+    margin-left: 0.4in;
+    margin-right: 0.4in;
+  }
+}

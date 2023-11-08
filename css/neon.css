@@ -1,0 +1,362 @@
+/******** NEON BASE STYLES *********/
+
+
+/* 
+Some styles copied from https://www.neonscience.org/
+
+Reorganized by Laura Rocha Prado
+Jan 2021
+*/
+
+
+/******* TOC ********/
+
+
+/*
+1. FONTS
+2. GENERAL
+3. TYPOGRAPHY
+4. HEADER
+5. FOOTER
+*/
+
+
+/******* 1. FONTS ********/
+
+@font-face {
+  font-family: 'Inter';
+  src: url(../neon/fonts/Inter-300.woff2) format('woff2'), url(../neon/fonts/Inter-300.woff) format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url(../neon/fonts/Inter-400.woff2) format('woff2'), url(../neon/fonts/Inter-400.woff) format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url(../neon/fonts/Inter-700.woff2) format('woff2'), url(../neon/fonts/Inter-700.woff) format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+/******* 2. GENERAL ********/
+
+html,
+input {
+  font-family: 'Inter', sans-serif;
+}
+
+
+/* * html {
+  font-size: 100%;
+} */
+
+footer,
+header,
+nav {
+  display: block;
+}
+
+
+/******* 3. TYPOGRAPHY ********/
+
+h1 {
+  font-size: 2.4rem;
+  line-height: 1.1;
+  margin: 0;
+  font-weight: 400;
+}
+
+#innertext h1 {
+  font-size: 1.8rem;
+  padding: 0.8rem 0;
+}
+
+h2 {
+  font-size: 1.5rem;
+  line-height: 1;
+  font-weight: normal;
+}
+
+h3 {
+  font-size: 1.2rem;
+  line-height: 1;
+  font-weight: normal;
+}
+
+p {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 1em 0;
+  color: #565a5c;
+}
+
+a {
+  color: #0073cf;
+  cursor: pointer;
+}
+
+p a {
+  text-decoration: underline;
+}
+
+
+/******* 4. HEADER ********/
+
+
+/* Old styles */
+
+
+/* Breakpoint at 1200 for menu */
+
+
+/* TOP BAR (GLOBAL MENU) */
+
+.region-utility {
+  display: block;
+  position: fixed;
+  z-index: 2920;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  height: 37px;
+}
+
+.region-utility .block-title {
+  display: none;
+}
+
+.region-utility .nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  list-style: none;
+  height: 33px;
+  background-color: #002d74;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.region-utility .nav .nav-item,
+.region-utility #styleguide-header ul .nav-item,
+#styleguide-header .region-utility ul .nav-item {
+  display: inline-block;
+  margin: 0;
+}
+
+
+/* .region-utility .nav .nav-item:first-child .nav-link,.region-utility #styleguide-header ul .nav-item:first-child .nav-link,#styleguide-header .region-utility ul .nav-item:first-child .nav-link {
+  background-color: white;
+  color: #002d74;
+} */
+
+.region-utility .nav .nav-link,
+.region-utility #styleguide-header ul .nav-link,
+#styleguide-header .region-utility ul .nav-link {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-transform: uppercase;
+  font-weight: 800;
+  padding: 6px 1.5rem;
+  font-size: 0.9em;
+  letter-spacing: 1px;
+}
+
+.region-utility .nav .nav-link.active,
+.region-utility #styleguide-header ul .nav-link.active,
+#styleguide-header .region-utility ul .nav-link.active {
+  background-color: white;
+  color: #002d74;
+}
+
+@media (min-width: 375px) and (max-width: 1024px) {
+  .region-utility {
+    height: 31px;
+  }
+  .region-utility .nav {
+    justify-content: flex-start;
+    height: 28px;
+  }
+  .region-utility .nav .nav-link,
+  .region-utility #styleguide-header ul .nav-link,
+  #styleguide-header .region-utility ul .nav-link {
+    padding: 3px 1rem;
+    font-size: 0.8em;
+    letter-spacing: 0.5px;
+  }
+}
+
+@media (max-width: 374px) {
+  .region-utility .nav .nav-link,
+  .region-utility #styleguide-header ul .nav-link,
+  #styleguide-header .region-utility ul .nav-link {
+    padding: 3px 5px;
+    font-size: 0.8em;
+    letter-spacing: 0.5px;
+  }
+}
+
+
+/* END OF TOP BAR (GLOBAL MENU) */
+
+#header {
+  /*position: fixed;*/
+  text-align: center !important;
+}
+
+
+/* Medium screens */
+
+@media (min-width: 426px) and (max-width: 1024px) {
+  #header #branding .branding-link {
+    display: block;
+    background-image: url(../neon/images/neon-white-logo.svg);
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+  }
+  #header #branding .branding-link>img {
+    display: none;
+  }
+}
+
+
+/* Large screens */
+
+@media (min-width: 1025px) {
+  #header {
+    background: linear-gradient(to bottom, #006bcd 0%, #014089 100%);
+    border-top: 1px solid #004e9f;
+    border-bottom: none !important;
+    padding: 0;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin: 0;
+  }
+  #header .l--constrained>.header--home .branding-link,
+  #header .view-field-sites .view-empty p>.header--home .branding-link,
+  .view-field-sites .view-empty #header p>.header--home .branding-link,
+  #header .l--constrained>#branding .branding-link,
+  #header .view-field-sites .view-empty p>#branding .branding-link,
+  .view-field-sites .view-empty #header p>#branding .branding-link {
+    display: block;
+    width: 100%;
+    height: 50px;
+    cursor: default;
+  }
+  #header .l--constrained>#main-menu .depth--1,
+  #header .view-field-sites .view-empty p>#main-menu .depth--1,
+  .view-field-sites .view-empty #header p>#main-menu .depth--1 {
+    height: 67px;
+  }
+  #header #branding .branding-link {
+    display: block;
+    background-image: url(../neon/images/neon-white-logo.svg);
+    /*background-image: url(/portal/images/layout/nsf-neon-logo.png);*/
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+  }
+  #header #branding .branding-link>img {
+    display: none;
+  }
+}
+
+@media (min-width: 1300px) {
+  #header .l--constrained>.header--home .branding-link,
+  #header .view-field-sites .view-empty p>.header--home .branding-link,
+  .view-field-sites .view-empty #header p>.header--home .branding-link,
+  #header .l--constrained>#branding .branding-link,
+  #header .view-field-sites .view-empty p>#branding .branding-link,
+  .view-field-sites .view-empty #header p>#branding .branding-link {
+    display: block;
+    width: 100%;
+    height: 70px;
+  }
+  #header .l--constrained>#main-menu .depth--1,
+  #header .view-field-sites .view-empty p>#main-menu .depth--1,
+  .view-field-sites .view-empty #header p>#main-menu .depth--1 {
+    height: 79px;
+  }
+}
+
+#header {
+  z-index: 2900;
+}
+
+
+/* Medium and Small screens */
+
+@media (max-width: 1024px) {
+  #header {
+    top: 0;
+    border-bottom: 1px solid rgba(208, 208, 208, 0.6);
+    box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.25);
+    background: linear-gradient(to bottom, #006bcd 0%, #014089 100%);
+  }
+  .front #header #branding .branding-link {
+    background-image: url(..neon/images/logo-mobile.svg);
+  }
+}
+
+@media (min-width: 426px) and (max-width: 1024px) {
+  #branding .branding-link {
+    display: block;
+    position: relative;
+    top: 1px;
+    width: 150px;
+    height: 50px;
+  }
+}
+
+
+/* Small screens */
+
+@media (max-width: 425px) {
+  #biorepo-header li {
+    display: block;
+  }
+  #branding .branding-link img {
+    display: block;
+    position: relative;
+    top: 1px;
+    width: 80%;
+    margin: 0 auto;
+  }
+}
+
+@media (min-width: 426px) {
+  /*  #header {
+    top: 30px;
+  }*/
+  #branding .branding-link {
+    width: 115px;
+    height: 40px;
+  }
+  ul#biorepo-header h1 {
+    font-size: 1.8rem;
+    margin: 0 auto;
+    /* padding: 10px; */
+  }
+}
+
+
+/******* END OF HEADER ********/
+
+
+/******* 5. FOOTER ********/

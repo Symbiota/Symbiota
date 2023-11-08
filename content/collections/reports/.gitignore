@@ -1,5 +1,3 @@
-# Ignore everything in this directory
-*
-# Except this file and labeljson_template.php
-!.gitignore
-!labeljson_template.php
+# Only ignore the labeljson file that is edited via the UI 
+labeljson.php
+

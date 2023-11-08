@@ -1,0 +1,105 @@
+/***  
+* NEON Herbarium Sheet Labels Custom Styles
+* Author: Laura Rocha Prado
+* Version: February 2022
+*
+***/
+
+.page {
+  width: 8.5in;
+  height: 11in;
+  page-break-after: always;
+}
+
+div.label:first-of-type {
+  margin-bottom: 4cm;
+}
+
+.label {
+  margin-top: 9mm;
+  margin-left: 2cm;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  font-size: 9pt;
+  width: 5in;
+  max-height: 3in;
+}
+
+.label-blocks {
+  flex-grow: 1;
+}
+
+.label-neon-header {
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  padding-top: 6pt;
+  padding-bottom: 6pt;
+}
+
+/* Actually used for family... I know */
+.label-header {
+  order: 1;
+  line-height: 26pt;
+  font-size: 10pt;
+}
+
+.family {
+  display: inline-block;
+  font-weight: bold;
+}
+
+.scientificname {
+  font-weight: bold;
+}
+
+.identifiedby {
+  padding-left: 20pt;
+}
+
+.associatedtaxaPrefix {
+  font-style: normal;
+}
+
+.othercatalognumbers > span {
+  display: inline-block;
+  width: 100%;
+}
+
+.other-catalog-numbers {
+  display: none;
+}
+
+.cn-barcode {
+  order: 2;
+  text-align: center;
+  /* margin-right: 5mm; */
+  padding-right: 5mm;
+  width: 4cm;
+}
+
+.cn-barcode img {
+  width: 90%;
+  height: auto;
+}
+
+.label-blocks {
+  order: 3;
+}
+
+.eventdate {
+  padding-left: 1.5rem;
+}
+
+/* Hides 'NEON barcode' cat number when .true is added via JS */
+.othercatalognumbers .true {
+  display: none;
+}
+
+.label-footer {
+  order: 4;
+  margin: 0 auto;
+  font-weight: normal;
+  font-size: 9pt;
+}

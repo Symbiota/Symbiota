@@ -104,6 +104,7 @@ class OccurrenceEditReview extends Manager{
 			$sql = 'SELECT occid, identifierValue, identifierName FROM omoccuridentifiers WHERE occid IN('.implode(',',array_keys($occArr)).') ORDER BY sortBy';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
+				if($r->identifierName == 'NEON sampleID Hash' || $r->identifierName == 'NEON sampleUUID') continue;
 				if(!$occArr[$r->occid]['catnum'] || strpos($occArr[$r->occid]['catnum'], $r->identifierValue) === false){
 					if($occArr[$r->occid]['catnum']) $occArr[$r->occid]['catnum'] .= '<br>';
 					$occArr[$r->occid]['catnum'] .= $r->identifierValue;
