@@ -745,7 +745,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 					echo '<div>ERROR: collection identifier not defined. Contact administrator</div>';
 				}
 				?>
-				<div style="margin:20px;">
+				<div id="tmp" class="top-breathing-room-rel">
 					<fieldset style="padding:15px;">
 						<legend><b>Log Files</b></legend>
 						<?php
