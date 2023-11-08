@@ -63,20 +63,20 @@ $searchVar = $collManager->getQueryTermStr();
 				</div>
 				-->
 				<form action="list.php" method="post" style="float:left">
-					<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;" title="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>" >
+					<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;" title="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>"  aria-label="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>">
 						<img src="../images/list.png" style="width:15px; height:15px" alt="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>"/>
 					</button>
 					<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 				</form>
 				<form action="download/index.php" method="post" style="float:left" onsubmit="targetPopup(this)">
-					<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;" title="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>">
+					<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;" title="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>" aria-label="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>">
 						<img src="../../images/dl2.png" srcset="../images/download.svg" class="svg-icon" style="width:15px; height:15px" alt="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>" />
 					</button>
 					<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 					<input name="dltype" type="hidden" value="specimen" />
 				</form>
 				<div style="float:left">
-					<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;" onclick="copyUrl()" title="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>">
+					<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;" onclick="copyUrl()" title="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>" aria-label="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>">
 						<img src="../../images/dl2.png" srcset="../images/link.svg" class="svg-icon" style="width:15px; height:15px" alt="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>"/>
 					</button>
 				</div>
