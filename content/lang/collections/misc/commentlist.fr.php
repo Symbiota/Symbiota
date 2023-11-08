@@ -36,5 +36,6 @@ $LANG['ONLY_PUBLIC_NONREVIEWED'] = 'Notez que seuls les commentaires publics non
 $LANG['COLLID_NULL'] = 'ERREUR: collid est nul';
 $LANG['START_DATE'] = 'Date de début';
 $LANG['END_DATE'] = 'Date de fin';
+$LANG['COMMENT_TYPE'] = 'Type de commentaire';
 
 ?>

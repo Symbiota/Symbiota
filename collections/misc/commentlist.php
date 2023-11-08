@@ -182,17 +182,18 @@ if($isEditor){
 						?>
 						<div>
 							<label for="tsstart"><?php echo $LANG['DATE']; ?>: </label>
-							<input name="tsstart" type="date" value="<?php echo $tsStart; ?>" title="<?php echo (isset($LANG['START_DATE']) ? $LANG['START_DATE'] : 'Start Date'); ?>" />
+							<input id="tsstart" name="tsstart" type="date" value="<?php echo $tsStart; ?>" title="<?php echo (isset($LANG['START_DATE']) ? $LANG['START_DATE'] : 'Start Date'); ?>" aria-label="<?php echo (isset($LANG['START_DATE']) ? $LANG['START_DATE'] : 'Start Date'); ?>"/>
 							- <input name="tsend" type="date" value="<?php echo $tsEnd; ?>" title="<?php echo (isset($LANG['END_DATE']) ? $LANG['END_DATE'] : 'End Date'); ?>" aria-label="<?php echo (isset($LANG['END_DATE']) ? $LANG['END_DATE'] : 'End Date'); ?>" />
 						</div>
-						<div style="float:right;margin-top:60px;">
-							<button type="submit" name="submitbutton" value="Refresh List"><?php echo $LANG['REFRESH_LIST']; ?></button>
-						</div>
-						<div>
+						<fieldset>
+							<legend> <?php echo (isset($LANG['COMMENT_TYPE']) ? $LANG['COMMENT_TYPE'] : 'Comment Type'); ?> </legend>
 							<input id="public" name="rs" type="radio" value="1" <?php echo ($rs==1?'checked':''); ?> /> <label for="public"> <?php echo $LANG['PUBLIC']; ?> <br/> </label>
 							<input id="nonpublic" name="rs" type="radio" value="2" <?php echo ($rs==2?'checked':''); ?> /> <label for="nonpublic"> <?php echo $LANG['NON-PUBLIC']; ?> <br/> </label>
 							<input id="reviewed" name="rs" type="radio" value="3" <?php echo ($rs==3?'checked':''); ?> /> <label for="reviewed"> <?php echo $LANG['REVIEWED']; ?> <br/> </label>
 							<input id="all" name="rs" type="radio" value="0" <?php echo (!$rs?'checked':''); ?> /> <label for="all"> <?php echo $LANG['ALL']; ?> </label>
+						</fieldset>
+						<div class="top-breathing-room-rel" >
+							<button type="submit" name="submitbutton" value="Refresh List"><?php echo $LANG['REFRESH_LIST']; ?></button>
 						</div>
 						<div>
 							<input name="collid" type="hidden" value="<?php echo $collid; ?>" />

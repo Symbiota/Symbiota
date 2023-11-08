@@ -37,5 +37,6 @@ $LANG['COLLID_NULL'] = 'ERROR: collid is null';
 $LANG['COMMENTER'] = 'Commenter';
 $LANG['START_DATE'] = 'Start date';
 $LANG['END_DATE'] = 'End date';
+$LANG['COMMENT_TYPE'] = 'Comment Type';
 
 ?>
