@@ -21,6 +21,10 @@ class AutocompleteInput extends HTMLElement {
          this.getAttribute("input_delimiter"):
          ',';
 
+      this.name = this.getAttribute("name")? 
+         this.getAttribute("name"):
+         "autocomplete-input";
+
       this.response_type = this.getAttribute("response_type")? this.getAttribute("response_type"):'html';
 
       this.json_label = this.getAttribute("json_label")? this.getAttribute("json_label"):'label';
@@ -69,7 +73,6 @@ class AutocompleteInput extends HTMLElement {
    _changeSelection(new_index) {
       const suggestions = this.shadowRoot.querySelector("#suggestions");
       if(!suggestions) return;
-      console.log(new_index)
 
       const options = suggestions.children;
       if(options.length === 0) {
@@ -95,6 +98,21 @@ class AutocompleteInput extends HTMLElement {
          'none';
    }
 
+   findContainingForm() {
+      // Can only be in a form in the same "scope", ShadowRoot or Document
+      const root = this.getRootNode();
+      const forms = Array.from(root.querySelectorAll('form'));
+      // We can only be in one <form>, so the first
+      // one to contain us is the correct one.
+      return forms.find((form) => form.contains(this)) || null;
+   }
+
+   _handleFormData({formData}) {
+      if(this._inputEl.disabled) return;
+
+      formData.append(this.name, this._inputEl.value);
+   }
+
    connectedCallback() {
       const el = this.getInputElement();
       this.menu = this.shadowRoot.querySelector("#suggestions");
@@ -113,6 +131,12 @@ class AutocompleteInput extends HTMLElement {
 
          this.selected_index = 0;
       });
+
+      //Setup to allow for parent form to access this input 
+      this._form = this.findContainingForm();
+      if (this._form) {
+         this._form.addEventListener('formdata', e => this._handleFormData(e));
+      }
 
       el.addEventListener('input', e => {
          this._inputEl = e.target;

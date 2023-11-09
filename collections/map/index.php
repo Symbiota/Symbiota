@@ -767,11 +767,8 @@ value="${color}"
 					searchCollections(formData),
             ]
 
-            console.log(formData)
-
-				for(let host of externalPortalHosts) {
-					searches.push(searchCollections(formData, host))
-				}
+            formData.set("taxa", formData.get('external-taxa-input')) 
+				searches.push(searchCollections(formData, formData.get('cross_portal')))
 
 				//This is for handeling multiple portals
 				searches = await Promise.all(searches)

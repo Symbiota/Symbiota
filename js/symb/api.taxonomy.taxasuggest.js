@@ -25,8 +25,6 @@ function initTaxaSuggest() {
 		return term.split( /,\s*/ ).pop();
 	}
 
-   console.log($('#taxa').length);
-
 	$( "#taxa" )
 		// don't navigate away from the field on tab when selecting an item
 		.bind( "keydown", function( event ) {

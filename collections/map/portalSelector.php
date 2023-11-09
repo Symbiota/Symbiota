@@ -13,6 +13,8 @@ sql)->fetch_all(MYSQLI_ASSOC);
 //included. 
 $PORTAL_SELECTOR_ID = !isset($PORTAL_SELECTOR_ID) || !is_int($PORTAL_SELECTOR_ID)? 0: $PORTAL_SELECTOR_ID + 1;
 
+$portals[0] = ['portalName' => 'local', 'urlRoot' => '/Portal'];
+
 ?>
 <div>
    <script src="<?php echo $CLIENT_ROOT?>/js/autocomplete-input.js" type="module"></script>
@@ -39,7 +41,7 @@ $PORTAL_SELECTOR_ID = !isset($PORTAL_SELECTOR_ID) || !is_int($PORTAL_SELECTOR_ID
    </div>
    <div id="portal-selector-<?php echo $PORTAL_SELECTOR_ID?>" style="display:none">
       <div style="margin-top: 5px">   
-         <select value="Choose a Portal to Search" onchange="onPortalSelect(this.value)">
+         <select name="cross_portal" onchange="onPortalSelect(this.value)">
             <?php foreach($portals as $portal): ?>
             <option value="<?= $portal['urlRoot']?>"><?=$portal['portalName']?></option>
             <?php endforeach; ?>
@@ -47,12 +49,14 @@ $PORTAL_SELECTOR_ID = !isset($PORTAL_SELECTOR_ID) || !is_int($PORTAL_SELECTOR_ID
       </div>
       <div style="margin-top: 5px">
          <label for="portal-taxa-suggest-<?php echo $PORTAL_SELECTOR_ID?>">Taxa:</label>
+         <input name="" type="hidden">
          <autocomplete-input 
             id="portal-taxa-suggest-<?php echo $PORTAL_SELECTOR_ID?>"
+            name="external-taxa-input"
             response_type="json"
             json_label="value"
             json_value="id"
-            completeUrl="<?= '/Portal/rpc/taxasuggest.php?term=??'?>">
+            completeUrl="<?= $portals[0]['urlRoot'] . '/rpc/taxasuggest.php?term=??'?>">
          </autocomplete-input>
       </div>
    </div>
