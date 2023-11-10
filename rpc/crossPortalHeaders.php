@@ -1,6 +1,5 @@
 <?php
-include_once('../config/symbini.php');
-
+//Needs symbini to run
 header('Content-Type: application/json; charset='.$CHARSET);
 
 //Adds Array of all valid portals urls and origins
@@ -28,12 +27,5 @@ if (isset($_SERVER['HTTP_ORIGIN']) && array_search($_SERVER['HTTP_ORIGIN'], arra
 
 	header('Access-Control-Allow-Origin: ' . $origin);
 	header('Access-Control-Allow-Headers: ' . $origin);
-	json_encode(['msg' => 'has header']);
-} elseif(isset($_SERVER['HTTP_ORIGIN'])) {
-	//echo json_encode($_SERVER);
-	echo json_encode($EXTERNAL_PORTAL_HOSTS);
-} else {
-  echo json_encode(['msg' => 'has header']);
 }
 ?>
-
