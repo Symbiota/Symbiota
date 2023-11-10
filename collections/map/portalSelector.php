@@ -6,17 +6,21 @@ $conn = MySQLiConnectionFactory::getCon('readonly');
 //Using heredoc for Highlighting. Do not use it to query construction
 
 $portals = $conn->query(<<<sql
-SELECT portalName, urlRoot from portalindex p;
+SELECT * from(
+   SELECT portalName, urlRoot,
+      SUBSTRING_INDEX(symbiotaVersion, '.', 1) as major,
+      SUBSTRING_INDEX(SUBSTRING_INDEX(symbiotaVersion, '.', 2), '.', -1) as minor,
+      SUBSTRING_INDEX(SUBSTRING_INDEX(symbiotaVersion, '.', 3), '.', -1) as patch
+   from portalindex p) version where major > 3 or major = 3 and minor > 1;
 sql)->fetch_all(MYSQLI_ASSOC);
 
 //Kinda a getto way of ensuring unique id's if multiple of this file is
 //included. 
 $PORTAL_SELECTOR_ID = !isset($PORTAL_SELECTOR_ID) || !is_int($PORTAL_SELECTOR_ID)? 0: $PORTAL_SELECTOR_ID + 1;
 
-$portals[0] = ['portalName' => 'local', 'urlRoot' => '/Portal'];
-
 ?>
 <div>
+   <?php if(count($portals) > 0):?>
    <script src="<?php echo $CLIENT_ROOT?>/js/autocomplete-input.js" type="module"></script>
    <script type="text/javascript">
    function onPortalSelect(v) {
@@ -28,7 +32,7 @@ $portals[0] = ['portalName' => 'local', 'urlRoot' => '/Portal'];
       let selector = document.getElementById("portal-selector-<?php echo $PORTAL_SELECTOR_ID?>")
       selector.style.display= on ?'block': 'none';
    }
-   </script>
+</script>
    <div>
       <input 
          onchange="onEnablePortalSelector(this.checked)"
@@ -60,4 +64,7 @@ $portals[0] = ['portalName' => 'local', 'urlRoot' => '/Portal'];
          </autocomplete-input>
       </div>
    </div>
+   <?php else: ?>
+   <?= (isset($LANG['NO_EXTERNAL_PORTALS_SEARCH_COMPATIBLE'])? $LANG['NO_EXTERNAL_PORTALS_SEARCH_COMPATIBLE']: 'No external portals are search compatible')?>
+   <?php endif; ?>
 </div>
