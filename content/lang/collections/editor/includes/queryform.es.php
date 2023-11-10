@@ -129,6 +129,11 @@ $LANG['SELECT_FIELD'] = 'Nombre del campo';
 $LANG['OPERATOR'] = 'Operador';
 $LANG['EXPRESSION'] = 'Expresión';
 $LANG['PARENTHESES'] = 'Paréntesis';
+$LANG['OPEN_PAREN_FIELD'] = 'Abrir campo entre paréntesis';
+$LANG['CRITERIA'] = 'Criterios';
+$LANG['CONDITION'] = 'Condición';
+$LANG['CUSTOM_VALUE'] = 'Valor personalizado';
+$LANG['CLOSE_PAREN_FIELD'] = 'Cerrar campo entre paréntesis';
 $LANG['NEW_CUSTOM_FIELD'] = 'Agregar otro campo personalizado';
 $LANG['ORDER_BY'] = 'Ordenar por';
 ?>

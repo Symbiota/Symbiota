@@ -14,6 +14,7 @@ $LANG['LAST'] = 'Last';
 $LANG['TABLE_VIEW'] = 'Occurrence Table View';
 $LANG['SEARCH_FILTER'] = 'Search / Filter';
 $LANG['BATCH_UPDATE'] = 'Batch Update';
+$LANG['BATCH_TOOL'] = 'Batch Update Tool';
 $LANG['FIELD_NAME'] = 'Field name';
 $LANG['SELECT_FIELD'] = 'Select Field Name';
 $LANG['CURRENT_VALUE'] = 'Current Value';
@@ -41,5 +42,8 @@ $LANG['NEW_WINDOW'] = 'open in new window';
 $LANG['CLICK_ID'] = 'Click on the Symbiota identifier in the first column to open the editor.';
 $LANG['NONE_FOUND'] = 'No records found matching the query';
 $LANG['NOT_AUTH'] = 'You are not authorized to access this page';
+$LANG['IMG_SEARCH'] = 'Search Button';
+$LANG['IMG_EDIT'] = 'Edit Button';
+$LANG['IMG_LINK'] = 'Link Button';
 
 ?>

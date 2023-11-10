@@ -147,8 +147,8 @@ else{
 				</div>
 				<div class="fieldGroupDiv">
 					<div class="fieldDiv">
-						<?php echo $LANG['PROC_STATUS']; ?>:
-						<select name="q_processingstatus" onchange="setOrderBy(this)">
+						<label for="q_processingstatus"> <?php echo $LANG['PROC_STATUS']; ?>: </label>
+						<select id="q_processingstatus" name="q_processingstatus" onchange="setOrderBy(this)">
 							<option value=''><?php echo $LANG['ALL_RECORDS']; ?></option>
 							<option>-------------------</option>
 							<?php
@@ -219,7 +219,7 @@ else{
 						<?php
 					}
 					?>
-					<select name="q_customopenparen<?php echo $x; ?>" onchange="customSelectChanged(<?php echo $x; ?>)">
+					<select name="q_customopenparen<?php echo $x; ?>" onchange="customSelectChanged(<?php echo $x; ?>)" aria-label="<?php echo $LANG['OPEN_PAREN_FIELD']; ?>">
 						<option value="">---</option>
 						<?php
 						echo '<option '.($cOpenParen == '(' ? 'SELECTED' : '').' value="(">(</option>';
@@ -227,7 +227,7 @@ else{
 						if($x < 8) echo '<option '.($cOpenParen == '(((' ? 'SELECTED' : '').' value="(((">(((</option>';
 						?>
 					</select>
-					<select name="q_customfield<?php echo $x; ?>" onchange="customSelectChanged(<?php echo $x; ?>)">
+					<select name="q_customfield<?php echo $x; ?>" onchange="customSelectChanged(<?php echo $x; ?>)" aria-label="<?php echo $LANG['CRITERIA']; ?>">
 						<option value=""><?php echo $LANG['SELECT_FIELD_NAME']; ?></option>
 						<option value="">---------------------------------</option>
 						<?php
@@ -236,15 +236,15 @@ else{
 						}
 						?>
 					</select>
-					<select name="q_customtype<?php echo $x; ?>">
+					<select name="q_customtype<?php echo $x; ?>" aria-label="<?php echo $LANG['CONDITION']; ?>">
 						<?php
 						foreach($customTermArr as $term){
-							echo '<option '.($cTerm == $term ? 'SELECTED' : '').' value="'.$term.'">'.$LANG[$term].'</option>';
+							echo '<option '.($cTerm == $term ? 'SELECTED' : '').' value="'.$term.'">'.$LANG[$term].'</option>' ;
 						}
 						?>
 					</select>
-					<input name="q_customvalue<?php echo $x; ?>" type="text" value="<?php echo $cValue; ?>" style="width:200px;" />
-					<select name="q_customcloseparen<?php echo $x; ?>" onchange="customSelectChanged(<?php echo $x; ?>)">
+					<input name="q_customvalue<?php echo $x; ?>" type="text" value="<?php echo $cValue; ?>" style="width:200px;" aria-label="<?php echo $LANG['CRITERIA']; ?>"/>
+					<select name="q_customcloseparen<?php echo $x; ?>" onchange="customSelectChanged(<?php echo $x; ?>)" aria-label="<?php echo $LANG['CLOSE_PAREN_FIELD']; ?>">
 						<option value="">---</option>
 						<?php
 						echo '<option '.($cCloseParen == ')' ? 'SELECTED' : '').' value=")">)</option>';
@@ -361,8 +361,8 @@ else{
 						</select> <?php //echo $LANG['RECORDS']; ?>
 				</section>
 				<div>
+					<input name="dynamictable" id="dynamictable-1" type="checkbox" value="1" <?php if(isset($dynamicTable) && $dynamicTable) echo 'checked'; ?> />
 					<label for="dynamictable-1"><?php echo $LANG['DYNAMIC_TABLE']; ?></label>
-					<input name="dynamictable" id="dynamictable-1" type="checkbox" value="1" <?php if(isset($dynamicTable) && $dynamicTable) echo 'checked'; ?> /> 
 				</div>
  			</div>
 		</fieldset>
