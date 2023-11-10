@@ -767,8 +767,11 @@ value="${color}"
 					searchCollections(formData),
             ]
 
-            formData.set("taxa", formData.get('external-taxa-input')) 
-				searches.push(searchCollections(formData, formData.get('cross_portal')))
+            //If Cross Portal Checkbox Enabled add cross portal search
+            if(formData.get('cross_portal_switch')) {
+               formData.set("taxa", formData.get('external-taxa-input')) 
+               searches.push(searchCollections(formData, formData.get('cross_portal')))
+            }
 
 				//This is for handeling multiple portals
 				searches = await Promise.all(searches)
@@ -1175,11 +1178,13 @@ value="${color}"
 
 				let searches = [
 					searchCollections(formData),
-				]
+            ]
 
-				for(let host of externalPortalHosts) {
-					searches.push(searchCollections(formData, host))
-				}
+            //If Cross Portal Checkbox Enabled add cross portal search
+            if(formData.get('cross_portal_switch')) {
+               formData.set("taxa", formData.get('external-taxa-input')) 
+               searches.push(searchCollections(formData, formData.get('cross_portal')))
+            }
 
 				//This is for handeling multiple portals
 				searches = await Promise.all(searches)
@@ -1369,12 +1374,8 @@ value="${color}"
 
 				let response = await fetch(url, {
 					method: "POST",
-					credentials: "omit",
 					mode: "cors",
 					body: body,
-					headers: {
-						"Access-Control-Allow-Origin": "*"
-					}
 				});
 				return response? await response.json(): { taxaArr: [], collArr: [], recordArr: [] };
 			} catch(e) {
@@ -1544,7 +1545,7 @@ value="${color}"
 			<?php if(!empty($LEAFLET)) { ?> 
 				leafletInit();
 			<?php } else { ?> 
-			googleInit();
+			   googleInit();
 		<?php } ?>
 	  }
 		</script>
