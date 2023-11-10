@@ -12,7 +12,7 @@ SELECT * from(
       SUBSTRING_INDEX(SUBSTRING_INDEX(symbiotaVersion, '.', 2), '.', -1) as minor,
       SUBSTRING_INDEX(SUBSTRING_INDEX(symbiotaVersion, '.', 3), '.', -1) as patch
    from portalindex p) version where major > 3 or major = 3 and minor > 1;
-sql)->fetch_all(MYSQLI_ASSOC);
+   sql)->fetch_all(MYSQLI_ASSOC);
 
 //Kinda a getto way of ensuring unique id's if multiple of this file is
 //included. 
@@ -32,7 +32,7 @@ $PORTAL_SELECTOR_ID = !isset($PORTAL_SELECTOR_ID) || !is_int($PORTAL_SELECTOR_ID
       let selector = document.getElementById("portal-selector-<?php echo $PORTAL_SELECTOR_ID?>")
       selector.style.display= on ?'block': 'none';
    }
-</script>
+   </script>
    <div>
       <input 
          onchange="onEnablePortalSelector(this.checked)"
