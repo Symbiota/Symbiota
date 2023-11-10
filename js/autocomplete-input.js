@@ -218,11 +218,7 @@ class AutocompleteInput extends HTMLElement {
 
       let response = await fetch(this.completeUrl.replace(this.url_delimter, value), {
          method: "POST",
-         credentials: "omit",
          mode: "cors",
-         headers: {
-            "Access-Control-Allow-Origin": "*"
-         }
       });
 
       switch (this.response_type) {
