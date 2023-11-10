@@ -3,8 +3,7 @@ include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMapManager.php');
 
 header('Content-Type: application/json;charset='.$CHARSET);
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Headers: *');
+include_once($SERVER_ROOT . '/rpc/crossPortalHeaders.php');
 
 /*
 $distFromMe = array_key_exists('distFromMe', $_REQUEST)?$_REQUEST['distFromMe']:'';
