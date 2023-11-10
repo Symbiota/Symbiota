@@ -11,6 +11,7 @@ $LANG['COL_MNGMT'] = 'Gestion des Collections';
 $LANG['DISPLAY_INSTRUCTIONS'] = 'Afficher Instructions';
 $LANG['SKELETAL_DATA'] = 'Données Squelettiques';
 $LANG['DISPLAY_OPTIONS'] = 'Option d\'Affichage';
+$LANG['IMG_DISPLAY_OPTIONS'] = 'Bouton Options d\'affichage';
 $LANG['TOOL_DESCRIPTION'] = 'Description de Outil';
 $LANG['SKELETAL_DESCIPRTION_1'] = "Cette page est généralement utilisée pour saisir les enregistrements squelettiques dans le système pendant le processus d'imagerie.
 						Étant donné que les collections sont généralement organisées par nom scientifique, pays et état, il faut peu d'efforts supplémentaires aux équipes d'imagerie pour collecter ces informations pendant qu'elles imagent des spécimens.
@@ -59,5 +60,6 @@ $LANG['RECORDS'] = 'Enregistrements';
 $LANG['NOT_AUTHORIZED'] = "Vous n'êtes pas autorisé à accéder à cette page.";
 $LANG['CONTACT_ADMIN'] = 'Contactez un administrateur pour obtenir autorisations nécessaires';
 $LANG['ERROR_NO_ID'] = 'ERREUR : identifiant de collection non défini';
+$LANG['CLEAR'] = 'Effacer le formulaire';
 
 ?>

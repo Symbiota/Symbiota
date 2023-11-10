@@ -11,6 +11,7 @@ $LANG['COL_MNGMT'] = 'Manejo de Colecciones';
 $LANG['DISPLAY_INSTRUCTIONS'] = 'Desplegar Instrucciones';
 $LANG['SKELETAL_DATA'] = 'Datos Esqueléticos';
 $LANG['DISPLAY_OPTIONS'] = 'Desplegar Opciones';
+$LANG['IMG_DISPLAY_OPTIONS'] = 'Botón de opciones de visualización';
 $LANG['TOOL_DESCRIPTION'] = 'Descripción de la Herramienta';
 $LANG['SKELETAL_DESCIPRTION_1'] = 'Esta página es típicamente utilizada para ingresar registros esqueléticos en el sistema durante el proceso de subir imágenes. Ya que las colecciones están
 						comúnmente organizadas por nombre científico, país, y estado, toma un poco de esfuerzo adicional para que los equipos de fotografía
@@ -63,5 +64,6 @@ $LANG['RECORDS'] = 'Registros';
 $LANG['NOT_AUTHORIZED'] = 'No está autorizado para acceder a esta página.';
 $LANG['CONTACT_ADMIN'] = 'Contactar a un administrador para obtener los permisos necesarios';
 $LANG['ERROR_NO_ID'] = 'ERROR: identificador de colección no establecido';
+$LANG['CLEAR'] = 'Borrar formulario';
 
 ?>

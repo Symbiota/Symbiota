@@ -115,8 +115,14 @@ if($collid){
 						<?php echo $LANG['COUNT']; ?>: <label id="count">0</label><br/>
 						<?php echo $LANG['RATE']; ?>: <label id="rate">0</label> <?php echo $LANG['PER_HOUR']; ?>
 					</div> -->
-					<div >
-						<div class="flex-form">
+
+					<div class="flex-form" style="float:right">
+							<div>
+								<input name="clearform" type="reset" onclick="resetForm()" value="<?php echo (isset($LANG['CLEAR']) ? $LANG['CLEAR'] : 'Clear Form') ?>"/>
+							</div>
+						</div>
+					<div class="flex-form">
+						<div style="margin-left: 20px;">
 							<div id="scinamediv" style="float:left">
 								<label for="fsciname"><?php echo $LANG['SCINAME']; ?>:</label>
 								<input id="fsciname" name="sciname" type="text" value="" style="width:300px"/>
@@ -136,15 +142,16 @@ if($collid){
 								<?php
 							}
 							?>
-
 						</div>
-						<div class="flex-form">
-							<div id="familydiv">
-								<label for="ffamily"><?php echo $LANG['FAMILY']; ?>:</label> <input id="ffamily" name="family" type="text" tabindex="0" value="" />
-							</div>
-							<div id="localitysecuritydiv">
-								<input id="flocalitysecurity" name="localitysecurity" type="checkbox" tabindex="0" value="1" />
-								<?php echo $LANG['PROTECT_LOCALITY']; ?>
+						<div>
+							<div class="flex-form">
+								<div id="familydiv">
+									<label for="ffamily"><?php echo $LANG['FAMILY']; ?>:</label> <input id="ffamily" name="family" type="text" tabindex="0" value="" />
+								</div>
+								<div id="localitysecuritydiv">
+									<input id="flocalitysecurity" name="localitysecurity" type="checkbox" tabindex="0" value="1" />
+									<?php echo $LANG['PROTECT_LOCALITY']; ?>
+								</div>
 							</div>
 						</div>
 						<div class="flex-form">
@@ -215,11 +222,6 @@ if($collid){
 									<label><?php echo (isset($LANG['EXSNUMBER'])?$LANG['EXSNUMBER']:'Number'); ?></label><br/>
 									<input id="fexsnumber" name="exsnumber" type="text" value="" />
 								</div>
-							</div>
-						</div>
-						<div class="flex-form">
-							<div>
-								<input name="clearform" type="reset" onclick="resetForm()" value="Clear Form"/>
 							</div>
 						</div>
 

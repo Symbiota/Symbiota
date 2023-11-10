@@ -65,5 +65,5 @@ $LANG['RECORDS'] = 'Records';
 $LANG['NOT_AUTHORIZED'] = 'You are not authorized to acces this page.';
 $LANG['CONTACT_ADMIN'] = 'Contact an administrator to obtain the necessary permissions';
 $LANG['ERROR_NO_ID'] = 'ERROR: collection identifier not set';
-
+$LANG['CLEAR'] = 'Clear Form';
 ?>
