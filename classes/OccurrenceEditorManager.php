@@ -51,7 +51,7 @@ class OccurrenceEditorManager {
 			// input of the new quick entry form
 			// The key update of the new quick entry form 
 			'accesNum' => 'n', 'filedUnder' => 's', 'currName' => 's', 'idQualifier' => 's','detText' => 's', 'provenance' => 's', 'container' => 's', 'collTrip' => 's', 'geoWithin' => 's',
-			'highGeo' => 's', 'frequency' => 's', 'prepMethod' => 's', 'format' => 's', 'verbLat' => 's', 'verbLong' => 's', 'method' => 's'	
+			'highGeo' => 's', 'frequency' => 's', 'prepMethod' => 's', 'format' => 's', 'verbLat' => 's', 'verbLong' => 's', 'method' => 's', 'modified' => 's', 'dateLastModified' => 's', 
 		);
 		$this->fieldArr['omoccurpaleo'] = array('eon','era','period','epoch','earlyinterval','lateinterval','absoluteage','storageage','stage','localstage','biota',
 			'biostratigraphy','lithogroup','formation','taxonenvironment','member','bed','lithology','stratremarks','element','slideproperties','geologicalcontextid');
@@ -1830,7 +1830,7 @@ class OccurrenceEditorManager {
 	}
 
 	public function carryOverValues($fArr){
-		$locArr = Array('recordedby','associatedcollectors','eventdate','eventdate2','verbatimeventdate','month','day','year',
+		$locArr = Array('modified','recordedby','associatedcollectors','eventdate','eventdate2','verbatimeventdate','month','day','year',
 			'startdayofyear','enddayofyear','country','stateprovince','county','municipality','locationid','locality','decimallatitude','decimallongitude',
 			'verbatimcoordinates','coordinateuncertaintyinmeters','footprintwkt','geodeticdatum','georeferencedby','georeferenceprotocol',
 			'georeferencesources','georeferenceverificationstatus','georeferenceremarks',

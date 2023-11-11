@@ -1107,7 +1107,7 @@ else{
 							<div class="field-block">
 								<span class="field-label"><?php echo (isset($LANG['RECCORECTED']) ? $LANG['RECCORECTED'] : 'Record Created'); ?>:</span>
 								<span class="field-elem">
-									<?php echo ($accesNum ? $occArr["recCreated"] : 'New Record'); ?>
+										<input readonly size = '25' type="text" name="modified" value="<?php echo $occArr["modified"]; ?>" />
 								</span>
 							</div>
 							<div class="field-block">
@@ -1303,7 +1303,7 @@ else{
 						?>
 					</div>
 					<div class="info">
-						<?php echo "info needed" ?>
+						Last Modified: <?php echo $occArr["dateLastModified"]; ?>
 					</div>
 				</section> 
 			</div>

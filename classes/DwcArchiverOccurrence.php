@@ -333,7 +333,10 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['verbLong'] = '';
 		$this->occurDefArr['terms']['method'] = '';
 		$this->occurDefArr['fields']['method'] = '';
-
+		$this->occurDefArr['terms']['modified'] = '';
+		$this->occurDefArr['fields']['modified'] = '';
+		$this->occurDefArr['terms']['dateLastModified'] = '';
+		$this->occurDefArr['fields']['dateLastModified'] = '';
 
 		if($this->schemaType == 'pensoft'){
 			$this->occurDefArr['fields']['occid'] = 'o.occid';

@@ -288,7 +288,7 @@ class OccurrenceLabel{
 				'barcode' => 'o.barcode', 'accesNum' => 'o.accesNum', 'fieldUnder' => 'o.fieldUnder', 'currName' => 'o.currName', 'idQualifier' => 'o.idQualifier',
 				'detText' => 'o.detText', 'provenance' => 'o.provenance', 'container' => 'container', 'collTrip' => 'o.collTrip', 'geoWithin' => 'o.geoWithin',
 				'highGeo' => 'o.highGeo', 'frequency' => 'o.frequency', 'prepMethod' => 'o.prepMethod', 'format' => 'format', 'verbLat' => 'o.verbLat',
-				'verbLong' => 'o.verbLong', 'method' => 'o.method'
+				'verbLong' => 'o.verbLong', 'method' => 'o.method', 'modified' => 'o.modified', 'dateLastModified' => 'o.dateLastModified', 
 			);
 		}
 	}

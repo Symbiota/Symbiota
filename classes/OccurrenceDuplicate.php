@@ -348,7 +348,7 @@ class OccurrenceDuplicate {
 				'habitat', 'substrate', 'occurrenceRemarks', 'associatedTaxa', 'dynamicProperties',
 				'verbatimAttributes','reproductiveCondition', 'cultivationStatus', 'establishmentMeans', 'typeStatus',
 				// input of the new quick entry form
-				'barcode', 'accesNum', 'fieldUnder', 'currName', 'idQualifier','detText', 'provenance', 'container', 'collTrip', 'geoWithin', 'highGeo', 'frequencey', 'prepMethod', 'format', 'verbLat', 'verbLong', 'method'
+				'barcode', 'accesNum', 'fieldUnder', 'currName', 'idQualifier','detText', 'provenance', 'container', 'collTrip', 'geoWithin', 'highGeo', 'frequencey', 'prepMethod', 'format', 'verbLat', 'verbLong', 'method', 'modified', 'dateLastModified'
 			);
 			$relArr = array();
 			$sql = 'SELECT c.collectionName, c.institutionCode, c.collectionCode, o.occid, o.collid, o.tidinterpreted, o.catalogNumber, o.otherCatalogNumbers, o.'.implode(',o.',$targetFields).

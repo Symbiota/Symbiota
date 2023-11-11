@@ -56,7 +56,7 @@ class ObservationSubmitManager {
 				-- input of the new quick entry form
 				-- need to double check what is this for
 				barcode, accesNum, fieldUnder, currName, idQualifier, detText, provenance, container, collTrip, geoWithin, highGeo, '.
-				'frequency, prepMethod, format, verbLat, verbLong, method'.
+				'frequency, prepMethod, format, verbLat, verbLong, method, modified, dateLastModified'.
 				'basisofrecord, family, sciname, scientificname, '.
 				'scientificNameAuthorship, tidinterpreted, taxonRemarks, identifiedBy, dateIdentified, '.
 				'identificationReferences, recordedBy, recordNumber, '.
