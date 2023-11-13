@@ -150,9 +150,6 @@ include($SERVER_ROOT.'/includes/header.php');
 				  			}
 					  		?>
 						</select>
-						<?php
-						count($selectList);
-						?>
 					</div>
 					<div style="margin: 10px 0px;">
 						<input type="checkbox" name="generaonly" value="1" <?php if($generaOnly) echo "checked"; ?> />
@@ -164,7 +161,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						echo "<div style='margin-top:1em;font-size:125%;font-weight:bold;'>$h</div>\n";
 						ksort($charData);
 						foreach($charData as $cidKey => $charValue){
-							echo '<div> <input name="cid" type="radio" value="'.$cidKey.'" onclick="this.form.submit()">'.$charValue.'</div>'."\n";
+							echo '<div> <input name="cid" type="radio" value="'.$cidKey.'" onclick="this.form.submit()"> '.$charValue.'</div>'."\n";
 						}
 					}
 			 		?>

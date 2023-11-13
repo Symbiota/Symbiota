@@ -668,7 +668,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			foreach($parsedArr as $k => $v){
 				$k = $this->cleanInputStr($k);
 				$v = $this->cleanInputStr($v);
-				if($k && $v) $this->searchTermArr[$k] = $v;
+				if($k) $this->searchTermArr[$k] = $v;
 			}
 		}
 		//Search will be confinded to a clid vouchers, collid, catid, or will remain open to all collection
