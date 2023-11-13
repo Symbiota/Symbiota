@@ -194,12 +194,19 @@ include($SERVER_ROOT.'/includes/header.php');
 			</fieldset>
 		</form>
 		<div style="width:300px;text-align:center;margin:20px;">
-			<div style="font-weight:bold;">
-				<?php echo (isset($LANG['NO_ACCOUNT'])?$LANG['NO_ACCOUNT']:"Don't have an Account?"); ?>
-			</div>
-			<div style="">
-				<a href="newprofile.php?refurl=<?php echo htmlspecialchars($refUrl, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars((isset($LANG['CREATE_ACCOUNT'])?$LANG['CREATE_ACCOUNT']:'Create an account'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
-			</div>
+			<?php 
+				$shouldBeAbleToCreatePublicUser = $SHOULD_BE_ABLE_TO_CREATE_PUBLIC_USER ?? true;
+				if($shouldBeAbleToCreatePublicUser){ 
+			?>
+				<div style="font-weight:bold;">
+					<?php echo (isset($LANG['NO_ACCOUNT'])?$LANG['NO_ACCOUNT']:"Don't have an Account?"); ?>
+				</div>
+				<div>
+					<a href="newprofile.php?refurl=<?php echo htmlspecialchars($refUrl, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars((isset($LANG['CREATE_ACCOUNT'])?$LANG['CREATE_ACCOUNT']:'Create an account'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
+				</div>
+			<?php
+		 		} 
+			?>
 			<div style="font-weight:bold;margin-top:5px">
 				<?php echo (isset($LANG['REMEMBER_PWD'])?$LANG['REMEMBER_PWD']:"Can't Remember your password?"); ?>
 			</div>

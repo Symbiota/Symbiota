@@ -58,8 +58,6 @@ $GOOGLE_MAP_KEY = '';				//Needed for Google Map; get from Google
 $MAPBOX_API_KEY = '';
 $MAP_THUMBNAILS = false;				//Display Static Map thumbnails within taxon profile, checklist, etc
 
-$LEAFLET = false;				//Will overwrite google maps if possible
-
 $STORE_STATISTICS = 0;
 $MAPPING_BOUNDARIES = '';			//Project bounding box; default map centering; (e.g. 42.3;-100.5;18.0;-127)
 $ACTIVATE_GEOLOCATION = false;		//Activates HTML5 geolocation services in Map Search
@@ -110,6 +108,10 @@ $RIGHTS_TERMS = array(
  );
  // json: {"editorProps":{"modules-panel":{"paleo":{"status":1}}}}
  */
+
+ // Should public users be able to create accounts?
+$SHOULD_BE_ABLE_TO_CREATE_PUBLIC_USER = true;
+// end Should public users be able to create accounts?
 
 $COOKIE_SECURE = false;
 if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) {

@@ -317,7 +317,7 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 					alert(`Error: Not Coordinates lat: ${lat}, lng: ${lng}`);
 				}
 			} 
-			<?php if(!empty($LEAFLET)) { ?> 
+			<?php if(empty($GOOGLE_MAP_KEY)) { ?> 
 				leafletInit();
 			<?php } else { ?> 
 			googleInit();

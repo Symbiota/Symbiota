@@ -917,7 +917,7 @@ class ChecklistManager extends Manager{
 	//Misc functions
 	public function cleanOutText($str){
 		//Need to clean for MS Word ouput: strip html tags, convert all html entities and then reset as html tags
-		$str = strip_tags($str);
+		$str = strip_tags($str ?? "");
 		$str = html_entity_decode($str);
 		$str = htmlspecialchars($str);
 		return $str;

@@ -8,3 +8,11 @@
    src="<?php echo $CLIENT_ROOT; ?>/js/symb/googleMap.js" 
    type="text/javascript">
 </script>
+
+<script src="<?php echo $CLIENT_ROOT; ?>/js/heatmap/heatmap.js" type="text/javascript"></script>
+<script src="<?php echo $CLIENT_ROOT; ?>/js/heatmap/google-heatmap.js" type="text/javascript"></script>
+
+<script src="../../js/symb/markerclusterer.js?ver=1" type="text/javascript"></script>
+<script src="../../js/symb/oms.min.js" type="text/javascript"></script>
+<script src="../../js/symb/keydragzoom.js" type="text/javascript"></script>
+<script src="../../js/symb/infobox.js" type="text/javascript"></script>
