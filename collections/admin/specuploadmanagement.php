@@ -214,8 +214,8 @@ $duManager->readUploadParameters();
 						 	foreach($profileList as $id => $v){
 						 		?>
 						 		<div style="margin:10px;">
-									<input type="radio" id="uspid" name="uspid" value="<?php echo $id.'-'.$v['uploadtype'];?>" />
-									<label for="uspid"> <?php echo $v['title']; ?> </label>
+									<input type="radio" id="uspid-<?php echo $id ?>" name="uspid-<?php echo $id ?>" value="<?php echo $id.'-'.$v['uploadtype'];?>" />
+									<label for="uspid-<?php echo $id ?>"> <?php echo $v['title']; ?> </label>
 									<a href="specuploadmanagement.php?action=editprofile&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&uspid=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS); ?>" title="<?php echo htmlspecialchars((isset($LANG['VIEW_PARS'])?$LANG['VIEW_PARS']:'View/Edit Parameters'), HTML_SPECIAL_CHARS_FLAGS); ?>" aria-label="<?php echo htmlspecialchars((isset($LANG['VIEW_PARS'])?$LANG['VIEW_PARS']:'View/Edit Parameters'), HTML_SPECIAL_CHARS_FLAGS); ?>">
 										<img src="../../images/edit.png" alt="<?php echo htmlspecialchars((isset($LANG['IMG_EDIT'])?$LANG['IMG_EDIT']:'Edit Image'), HTML_SPECIAL_CHARS_FLAGS); ?>"/>
 									</a>
