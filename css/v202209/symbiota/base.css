@@ -170,7 +170,6 @@ div.tnimg img {
 }
 
 /* styled table */
-
 table.styledtable {
   table-layout: auto;
   width: 100%;
@@ -198,7 +197,6 @@ table.styledtable tr.alt td {
 }
 
 /* misc */
-
 div.genericpopup {
   position: absolute;
   display: none;

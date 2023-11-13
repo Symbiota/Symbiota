@@ -321,7 +321,7 @@ class DwcArchiverOccurrence extends Manager{
 			elseif($this->schemaType == 'coge'){
 				$targetArr = array('id','basisOfRecord','institutionCode','collectionCode','catalogNumber','occurrenceID','family','scientificName','scientificNameAuthorship',
 					'kingdom','phylum','class','order','genus','specificEpithet','infraSpecificEpithet','recordedBy','recordNumber','eventDate','year','month','day','fieldNumber',
-					'locationID','continent','waterBody','islandGroup','island','country','stateProvince','county','municipality',
+					'eventID', 'locationID','continent','waterBody','islandGroup','island','country','stateProvince','county','municipality',
 					'locality','localitySecurity','geodeticDatum','decimalLatitude','decimalLongitude','verbatimCoordinates',
 					'minimumElevationInMeters','maximumElevationInMeters','verbatimElevation','maximumDepthInMeters','minimumDepthInMeters','establishmentMeans',
 					'occurrenceRemarks','dateEntered','dateLastModified','recordID','references','collID');

@@ -437,17 +437,16 @@ function verbatimElevationChanged(f){
 
 function parseVerbatimElevation(f){
 	if(f.verbatimelevation.value){
-		var min = "";
-		var max = "";
-		var verbElevStr = f.verbatimelevation.value;
+		let min = "";
+		let max = "";
+		let verbElevStr = f.verbatimelevation.value;
 		verbElevStr = verbElevStr.replace(/,/g ,"");
 		
-		var regEx1 = /(\d+)\s*-\s*(\d+)\s*[ft|feet|']/i; 
-		var regEx2 = /(\d+)\s*[ft|feet|']/i; 
-		var regEx3 = /(\d+)\s*-\s*(\d+)\s{0,1}m{1}/i; 
-		var regEx4 = /(\d+)\s{0,1}-\s{0,1}(\d+)\s{0,1}m{1}/i; 
-		var regEx5 = /(\d+)\s{0,1}m{1}/i; 
-		var extractStr = "";
+		let regEx1 = /([\d\.]+)\s*-\s*([\d\.]+)\s*[ft|feet|']/i; 
+		let regEx2 = /([\d\.]+)\s*[ft|feet|']/i; 
+		let regEx3 = /([\d\.]+)\s*-\s*([\d\.]+)\s{0,1}m{1}/i; 
+		let regEx4 = /([\d\.]+)\s{0,1}-\s{0,1}([\d\.]+)\s{0,1}m{1}/i; 
+		let regEx5 = /([\d\.]+)\s{0,1}m{1}/i; 
 		if(extractArr = regEx1.exec(verbElevStr)){
 			min = Math.round(extractArr[1]*.3048);
 			max = Math.round(extractArr[2]*.3048);

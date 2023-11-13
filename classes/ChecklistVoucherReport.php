@@ -68,14 +68,15 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 		if($this->clid){
 			if($sqlFrag = $this->getSqlFrag()){
 				if($includeAll == 1 || $includeAll == 2){
-					$sql = 'SELECT DISTINCT cl.clTaxaID, TRIM(CONCAT_WS(" ",t.sciname,cl.morphoSpecies)) AS clsciname, o.occid, c.institutioncode, c.collectioncode, o.catalognumber, '.
-						'o.tidinterpreted, o.sciname, o.recordedby, o.recordnumber, o.eventdate, CONCAT_WS("; ",o.country, o.stateprovince, o.county, o.locality) as locality '.
-						'FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid '.
-						'INNER JOIN taxstatus ts ON o.tidinterpreted = ts.tid '.
-						'INNER JOIN fmchklsttaxalink cl ON ts.tidaccepted = cl.tid '.
-						'INNER JOIN taxa t ON cl.tid = t.tid ';
+					$sql = 'SELECT DISTINCT cl.clTaxaID, TRIM(CONCAT_WS(" ",t.sciname,cl.morphoSpecies)) AS clsciname, o.occid, c.institutioncode, c.collectioncode, o.catalognumber,
+						o.tidinterpreted, o.sciname, o.recordedby, o.recordnumber, o.eventdate, CONCAT_WS("; ",o.country, o.stateprovince, o.county, o.locality) as locality
+						FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid
+						INNER JOIN taxstatus ts ON o.tidinterpreted = ts.tid
+						INNER JOIN taxstatus ts2 ON ts.tidaccepted = ts2.tidaccepted
+						INNER JOIN fmchklsttaxalink cl ON ts2.tid = cl.tid
+						INNER JOIN taxa t ON cl.tid = t.tid ';
 					$sql .= $this->getTableJoinFrag($sqlFrag);
-					$sql .= 'WHERE ('.$sqlFrag.') AND (cl.clid = '.$this->clid.') AND (ts.taxauthid = 1) ';
+					$sql .= 'WHERE ('.$sqlFrag.') AND (cl.clid = '.$this->clid.') AND (ts.taxauthid = 1) AND (ts2.taxauthid = 1) ';
 					if($includeAll == 1){
 						$idStr = $this->getVoucherTidStr('tid');
 						if($idStr) $sql .= 'AND cl.tid NOT IN('.$idStr.') ';
@@ -85,12 +86,11 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 						if($idStr) $sql .= 'AND o.occid NOT IN('.$idStr.') ';
 					}
 					$sql .= 'ORDER BY ts.family, o.sciname LIMIT '.$startLimit.', 1000';
-					//echo '<div>'.$sql.'</div>';
 					$rs = $this->conn->query($sql);
 					while($r = $rs->fetch_object()){
 						$retArr[$r->clTaxaID][$r->occid]['tid'] = $r->tidinterpreted;
 						$sciName = $r->clsciname;
-						if($r->clsciname <> $r->sciname) $sciName .= '<br/>specimen id: '.$r->sciname;
+						if($r->clsciname <> $r->sciname) $sciName .= '<br/>[specimen id: '.$r->sciname.']';
 						$retArr[$r->clTaxaID][$r->occid]['sciname'] = $sciName;
 						$collCode = '';
 						if(!$r->catalognumber || strpos($r->catalognumber, $r->institutioncode) === false){
