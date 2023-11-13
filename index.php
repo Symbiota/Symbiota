@@ -150,13 +150,6 @@ $taxaArr = $stats->getNeonTaxa();
 	</div>
 	<?php include($SERVER_ROOT . '/includes/footer.php'); ?>
 </body>
-<script type="text/javascript" src="<?php echo $CLIENT_ROOT; ?>/neon/js/alerts.js?ver=1"></script>
-<script type="text/javascript">
-	let alerts = [{
-		'alertMsg': 'Try our <a href="./neon/search/index.php">New Occurrence Search Form!</a>'
-	}];
-	handleAlerts(alerts);
-</script>
 <script>
 	const collsdb = <?php echo json_encode($sampleArr); ?>;
 	const collstx = <?php echo json_encode($taxaArr); ?>;
