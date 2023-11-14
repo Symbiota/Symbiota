@@ -1366,7 +1366,7 @@ value="${color}"
 
 		async function searchCollections(body, host) {
 			try {
-				const url = host? `${host}/collections/map/rpc/searchcollections.php`: 'rpc/searchcollections.php'
+				const url = host? `${host}/collections/map/rpc/searchCollections.php`: 'rpc/searchCollections.php'
 
 				let response = await fetch(url, {
 					method: "POST",
