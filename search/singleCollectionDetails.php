@@ -2,6 +2,9 @@
 $name = $catEl['name'] ?? '';
 if($catEl['acronym']) $name .= ' ('.$catEl['acronym'].')';
 $catIcon = $catEl['icon'];
+unset($catEl['name']);
+unset($catEl['acronym']);
+unset($catEl['icon']);
 // @TODO decide if the unsets are necessary
 $idStr = $catId; // deleteMe $this->collArrIndex.'-'.$catid;
 ?>
