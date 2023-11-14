@@ -123,8 +123,8 @@ include($SERVER_ROOT.'/includes/header.php');
 		<fieldset>
 			<legend>SESAR Synchronization</legend>
 			<div style="margin-bottom:10px;">
-				This tool will harvest all NEON IGSNs from the SASAR system, insert them into a local tables, and then run comparisons with the IGSNs stored within the Biorepo to
-				locate inconsistancies. In particular, it is looking for multiple ISGNs assigned to a single specimen, IGSNs within SESAR and not the Biorepo, and in Biorepo and not in SESAR.
+				This tool will harvest all NEON IGSNs from the SESAR system, insert them into a local tables, and then run comparisons with the IGSNs stored within the Biorepo to
+				locate inconsistencies. In particular, it is looking for multiple IGSNs assigned to a single specimen, IGSNs within SESAR and not the Biorepo, and in Biorepo and not in SESAR.
 			</div>
 			<form name="" method="post" action="../collections/admin/igsnverification.php">
 				<input name="namespace" type="hidden" value="NEO" />
@@ -136,7 +136,7 @@ include($SERVER_ROOT.'/includes/header.php');
 			<div style="margin-bottom:10px;">
 				Displays occurrence counts that have been synchronized with the central NEON System.
 				After IGSNs have been integrated into NEON system, run the synchronization tool to adjust the report.
-				Previous unsynchronized records are rechecked within an session. The session will have to be reset to preform additional rechecks.<br>
+				Previously unsynchronized records are rechecked within a session. The session will have to be reset to perform additional rechecks.<br>
 				Export function will produce a report containing unchecked or unsynchronized records limited by the transaction limit.
 				Ideally, reports submitted to NEON should not contain more than 5000 records.
 			</div>
@@ -182,7 +182,7 @@ include($SERVER_ROOT.'/includes/header.php');
 								<span style="margin-left:15px"><input name="markAsSubmitted" type="checkbox" value="1" onchange="checkMarkAsSubmitted(this)"> mark as submitted</span>
 							</div>
 							<div style="float:left;margin-left:20px">
-								<button name="action" type="submit" value="refresh" style="margin-bottom:0px">Rerfresh Statistics</button>
+								<button name="action" type="submit" value="refresh" style="margin-bottom:0px">Refresh Statistics</button>
 							</div>
 						</div>
 					</form>
