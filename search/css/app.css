@@ -177,8 +177,8 @@
 .inner-search #search-form-colls {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 1fr 2fr;
-  grid-template-columns: 1fr 2fr;
+  -ms-grid-columns: 12fr 0fr;
+  grid-template-columns: 12fr 0fr;
   grid-gap: 10px;
 }
 

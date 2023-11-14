@@ -101,48 +101,11 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 							<!-- Open Collections modal -->
 							<div id="specobsdiv">
 								<?php 
-								include_once('./collectionContent.php');
+								include_once('./collectionContent.php'); // @TODO add data-chip
 								?>
 							</div>
 							
-							<div>
-								<input id="all-neon-colls-quick" data-chip="All Biorepo Collections" class="all-selector" type="checkbox" checked="true" data-form-id="biorepo-collections-list">
-								<span id="neon-modal-open" class="material-icons expansion-icon">add_box</span>
-								<span>All NEON Biorepository Collections</span>
-							</div>
-							<!-- External Collections -->
-							<div>
-								<ul id="neonext-collections-list">
-									<li>
-										<input id="all-neon-ext" data-chip="All Add NEON Colls" type="checkbox" class="all-selector" data-form-id='neonext-collections-list'>
-										<span class="material-icons expansion-icon">add_box</span>
-										<span>All Additional NEON Collections</span>
-										<?php if ($collsArr = $collData->getCollMetaByCat('Additional NEON Collections')) {
-											echo '<ul class="collapsed">';
-											foreach ($collsArr as $result) {
-												echo "<li><input type='checkbox' name='db' value='{$result["collid"]}' class='child' data-ccode='{$result["institutioncode"]} {$result["collectioncode"]}'><span class='ml-1'><a href='../../collections/misc/collprofiles.php?collid={$result["collid"]}' target='_blank' rel='noopener noreferrer'>{$result["collectionname"]} ({$result["institutioncode"]}  {$result["collectioncode"]})</span></a></li>";
-											}
-											echo '</ul>';
-										}; ?>
-									</li>
-								</ul>
-								<ul id="ext-collections-list">
-									<li>
-										<input id="all-ext" data-chip="All Ext Colls" type="checkbox" class="all-selector" data-form-id='ext-collections-list'>
-										<span class="material-icons expansion-icon">add_box</span>
-										<span>All Other Collections from NEON sites</span>
-										<?php if ($collsArr = $collData->getCollMetaByCat('Other Collections from NEON sites')) {
-											echo '<ul class="collapsed">';
-											foreach ($collsArr as $result) {
-												echo "<li><input type='checkbox' name='db' value='{$result["collid"]}' class='child' data-ccode='{$result["institutioncode"]}'><span class='ml-1'><a href='../../collections/misc/collprofiles.php?collid={$result["collid"]}' target='_blank' rel='noopener noreferrer'>{$result["collectionname"]} ({$result["institutioncode"]})</span></a></li>";
-											}
-											echo '</ul>';
-										}; ?>
-									</li>
-								</ul>
-							</div>
 						</div>
-						<p>Visit the <a href="<?php echo $CLIENT_ROOT . '/collections/misc/collprofiles.php'; ?>" target="_blank" rel="noopener noreferrer">Collections Information Page</a> for a full list of collections hosted by this portal.</p>
 					</div>
 					<!-- NEON Biorepository Collections Modal -->
 					<div class="modal" id="biorepo-collections-list">
