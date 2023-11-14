@@ -1,10 +1,13 @@
 <?php
 include_once('../../config/symbini.php');
 
+if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/portalSelector.' . $LANG_TAG . '.php')) {
+   include_once($SERVER_ROOT . '/content/lang/collections/portalSelector.' . $LANG_TAG . '.php');
+}
+
 $conn = MySQLiConnectionFactory::getCon('readonly');
 
 //Using heredoc for Highlighting. Do not use it to query construction
-
 $portals = $conn->query(<<<sql
 SELECT * from(
    SELECT portalName, urlRoot,
