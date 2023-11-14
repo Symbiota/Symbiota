@@ -5,7 +5,7 @@ $catIcon = $catEl['icon'];
 unset($catEl['name']);
 unset($catEl['acronym']);
 unset($catEl['icon']);
-$idStr = $catId; // deleteMe $this->collArrIndex.'-'.$catid;
+$idStr = $collCnt . '-' . $catId;
 ?>
 <section class="gridlike-form-row bottom-breathing-room-relative">
     <?php

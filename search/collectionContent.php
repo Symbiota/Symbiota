@@ -30,11 +30,9 @@
 			?>
 			<section class="gridlike-form">
 				<?php
-				// var_dump($categoryArr); // @TODO deleteMe
 				foreach($categoryArr as $catid => $catEl){
-					// var_dump($catid);
-					// var_dump($catEl);
 					include('./singleCollectionGroupDetails.php');
+					$collCnt++;
 				}
 				?>
 			</section>
@@ -51,11 +49,11 @@
 				<?php
 				foreach($categoryArr as $catid => $catEl){
 					include('./singleCollectionGroupDetails.php');
+					$collCnt++;
 				}
 				?>
 			</section>
 		<?php
 		}
-		// $collManager->outputFullCollArr($obsArr, $catId, true, false, 'Observation', 'Observations');
 	?>
 </form>
