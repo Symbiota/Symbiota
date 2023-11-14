@@ -34,7 +34,7 @@
 				foreach($categoryArr as $catid => $catEl){
 					// var_dump($catid);
 					// var_dump($catEl);
-					include_once('./singleCollectionDetails.php');
+					include('./singleCollectionGroupDetails.php');
 				}
 				?>
 			</section>
@@ -50,7 +50,7 @@
 			<section class="gridlike-form">
 				<?php
 				foreach($categoryArr as $catid => $catEl){
-					include('./singleCollectionDetails.php');
+					include('./singleCollectionGroupDetails.php');
 				}
 				?>
 			</section>
