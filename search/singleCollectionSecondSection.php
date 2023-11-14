@@ -14,23 +14,23 @@
             </legend>
             <section class="gridlike-form">
                 <?php
-                foreach($catEl as $collid => $collName2){
+                foreach($catEl as $collid => $catEl){
                     ?>
                     <section class="gridlike-form-row bottom-breathing-room-relative">
                         <?php
                         if($displayIcons){
                             // var_dump($catEl);  // @TODO deleteMe
                             // var_dump($collid);  
-                            // var_dump($collName2);  
+                            // var_dump($catEl);  
                             ?>
                             <div class="cat-icon-div">
                                 <?php
                                 if(array_key_exists('icon', $catEl)){
-                                    // $cIcon = (substr($collName2["icon"],0,6)=='images' ? $CLIENT_ROOT : '') . $collName2["icon"];
+                                    // $cIcon = (substr($catEl["icon"],0,6)=='images' ? $CLIENT_ROOT : '') . $catEl["icon"];
                                     $cIcon = (substr($catEl["icon"],0,6)=='images' ? $CLIENT_ROOT : '') . $catEl["icon"];
                                     ?>
                                     <a href = '<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
-                                        <img src="<?php echo htmlspecialchars($cIcon, HTML_SPECIAL_CHARS_FLAGS); ?>" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection <?php echo isset($collName2["collname"]) ? substr($collName2["collname"],0, 20) : substr($idStr,0, 20) ?>' />
+                                        <img src="<?php echo htmlspecialchars($cIcon, HTML_SPECIAL_CHARS_FLAGS); ?>" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection <?php echo isset($catEl["collname"]) ? substr($catEl["collname"],0, 20) : substr($idStr,0, 20) ?>' />
                                     </a>
                                     <?php
                                 }
@@ -48,17 +48,14 @@
                             <div class="collectiontitle">
                                 <?php
                                 $codeStr = '(';
-                                if(array_key_exists('instcode', $collName2)){
-                                // if(array_key_exists('instcode', $catEl)){
-                                    $codeStr = ' (' . $collName2['instcode'];
+                                if(array_key_exists('instcode', $catEl)){
+                                    $codeStr = ' (' . $catEl['instcode'];
                                 }
-                                if(array_key_exists('collcode', $collName2)){
-                                // if(array_key_exists('collcode', $catEl)){
-                                    $codeStr .= '-'.$collName2['collcode'];
+                                if(array_key_exists('collcode', $catEl)){
+                                    $codeStr .= '-'.$catEl['collcode'];
                                 } 
                                 $codeStr .= ')';
-                                $colName = $collName2["collname"] ?? 'Unknown Name';
-                                // $colName = $catEl["collname"] ?? 'Unknown Name';
+                                $colName = $catEl["collname"] ?? 'Unknown Name';
                                 echo '<div class="collectionname">' . $colName . '</div><div class="collectioncode">' . $codeStr . '</div>';
                                 ?>
                                 <a href='<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' target="_blank">
