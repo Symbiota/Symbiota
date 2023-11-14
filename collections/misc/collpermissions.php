@@ -132,7 +132,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 							?>
 							<li>
 								<?php echo $uName; ?>
-								<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&deladmin=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="return confirm('<?php echo htmlspecialchars((isset($LANG['YES_REM_ADMIN'])?$LANG['YES_REM_ADMIN']:'Are you sure you want to remove administrative rights for this user?'); ?>');" title="<?php echo (isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), HTML_SPECIAL_CHARS_FLAGS); ?>">
+								<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&deladmin=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="return confirm('<?php echo htmlspecialchars(isset($LANG['YES_REM_ADMIN'])?$LANG['YES_REM_ADMIN']:'Are you sure you want to remove administrative rights for this user?', HTML_SPECIAL_CHARS_FLAGS); ?>');" title="<?php echo htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), HTML_SPECIAL_CHARS_FLAGS); ?>">
 									<img src="../../images/drop.png" style="width:12px;" />
 								</a>
 							</li>
