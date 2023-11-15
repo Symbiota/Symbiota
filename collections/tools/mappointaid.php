@@ -162,7 +162,6 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 							.addTo(map.mapLayer) 
 					})
 
-					map.mapLayer.fitBounds(drawnItems.getBounds());
 				} else {
 					marker.on('drag', e => {
 						const pos = e.target.getLatLng();
@@ -180,7 +179,7 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 					marker.addTo(drawnItems);
 
 					map.mapLayer.setView(latlng, map.mapLayer.getZoom());
-				}
+            }
          } 
 
 			onFormChange = (event) => { 
@@ -198,7 +197,12 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 					const lat = e.layer._latlng.lat;
 					const lng = e.layer._latlng.lng;
 					createMarker(lat, lng)
+
 				} 
+
+            if(markerControl) { 
+               setTimeout(() => markerControl.click(), 50);
+            }
 			})
 
 			//Draw marker if one exists
