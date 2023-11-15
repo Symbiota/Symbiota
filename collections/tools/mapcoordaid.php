@@ -201,7 +201,6 @@ else{
                let origFootprintWkt = getField("footprintwkt");
                try {
                   let polyPoints = parseWkt(origFootprintWkt);
-                  console.log(polyPoints)
                   if(polyPoints) {
                      return { type: "polygon", latlngs: polyPoints, wkt: getField("footprintwkt")};
                   }

@@ -17,15 +17,33 @@ if($taxonFilter) $clManager->setTaxonFilter($taxonFilter);
 
 $coordArr = $clManager->getVoucherCoordinates();
 $clMeta = $clManager->getClMetaData();
+$coordJson = json_encode($coordArr);
+
+$coords = [];
+
+foreach($coordArr as $tid => $taxaCoords) {
+   foreach($taxaCoords as $coord) {
+      $ll = explode(',',$coord['ll']);
+      if(count($ll) == 2) {
+         array_push($coords, ['lat' => $ll[0], 'lng' => $ll[1], 'occid' => $coord['occid'], 'notes' => $coord['notes']]);
+      }
+   }
+}
+$coordJson = json_encode($coords);
+$metaJson = json_encode($clMeta);
 ?>
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE.' - '.(isset($LANG['COORD_MAP'])?$LANG['COORD_MAP']:'Checklist Coordinate Map'); ?></title>
 	<?php
-	//include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
+	include_once($SERVER_ROOT.'/includes/leafletMap.php');
+	include_once($SERVER_ROOT.'/includes/googleMap.php');
+
+      /*<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'&key='.$GOOGLE_MAP_KEY:''); ?>&callback=Function.prototype"></script>*/
 
 	// If checklist is associated with an external service (i.e., iNaturalist), transfer some server-side data to client-side
+      /*
 	if($clMeta['dynamicProperties']){
 		$dynamPropsArr = json_decode($clMeta['dynamicProperties'], true);
 		if(isset($dynamPropsArr['externalservice']) && $dynamPropsArr['externalservice'] == 'inaturalist') {
@@ -42,20 +60,138 @@ $clMeta = $clManager->getClMetaData();
 			echo '</script>';
 		}
 
-	} 
+      } */
 	?>
-	<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'&key='.$GOOGLE_MAP_KEY:''); ?>&callback=Function.prototype"></script>
+   <script src="<?php echo $CLIENT_ROOT?>/js/symb/wktpolygontools.js" type="text/javascript"></script>
+   <script src="<?php echo $CLIENT_ROOT?>/js/symb/MapShapeHelper.js" type="text/javascript"></script>
 	<script type="text/javascript">
-		var map;
-		var puWin;
+      var map;
+      var puWin;
+      let occurCoords = [];
+      let clMeta;
+      let cl_footprint_shape;
 
-		function initialize(){
+      function leafletInit() {
+			var dmOptions = {
+				zoom: 3,
+				center: [41,-95],
+         };
+         map = new LeafletMap("map_canvas", dmOptions);
+         let markers = []
+         for(let coord of occurCoords) {
+            let marker = L.marker([coord.lat, coord.lng])
+               .on('click', () => openIndPU(coord.occid))
+               .bindTooltip(`<div style="font-size:1.2rem">${coord.notes}</div>`)
+            markers.push(marker);
+         }
+         let markerGroup = new L.FeatureGroup(markers);
+         markerGroup.addTo(map.mapLayer)
+
+         map.enableDrawing({...map.DEFAULT_DRAW_OPTIONS, control: false});
+
+         if(cl_footprint_shape) map.drawShape(cl_footprint_shape);
+         map.mapLayer.fitBounds(markerGroup.getBounds());
+
+         /*
+         getInatProjectOccurrences(150154).then(res => {
+            let inat_markers = [];
+            for(let occur of res.results) {
+               if(occur.geojson && occur.geojson.type === "Point") {
+                  let marker = L.circleMarker(occur.geojson.coordinates.reverse(), {
+                     radius : 8,
+                     color  : '#000000',
+                     fillColor: `#74AC00`,
+                     weight: 2,
+                     opacity: 1.0,
+                     fillOpacity: 1.0
+                  }).bindPopup(`<div style="font-size:1.2rem"><a target="_blank" href="${occur.uri}">INaturalist<a></div>`)
+
+                  inat_markers.push(marker);
+               }
+            }
+
+            let inat_markerGroup = new L.FeatureGroup(inat_markers);
+            inat_markerGroup.addTo(map.mapLayer)
+         });*/
+      }
+
+      function googleInit() {
+         var vIcon = new google.maps.MarkerImage("../images/google/smpin_red.png");
+         var pIcon = new google.maps.MarkerImage("../images/google/smpin_blue.png");
+         var inatIcon = new google.maps.MarkerImage("../images/google/smpin_green.png");
+
 			var dmOptions = {
 				zoom: 3,
 				center: new google.maps.LatLng(41,-95),
 				mapTypeId: google.maps.MapTypeId.TERRAIN,
 				scaleControl: true
-			};
+         };
+         map = new GoogleMap("map_canvas", dmOptions);
+
+			var bounds = new google.maps.LatLngBounds();
+
+         for(let coord of occurCoords) {
+            let marker = new google.maps.Marker({
+					position: new google.maps.LatLng(coord.lat, coord.lng),
+               title: coord.notes,
+               icon: coord.occid? vIcon: pIcon,
+               map: map.mapLayer,
+					zIndex: google.maps.Marker.MAX_ZINDEX
+               });
+            bounds.extend(marker.getPosition());
+
+            google.maps.event.addListener(marker, 'click', function() { 
+               openIndPU(coord.occid)
+            })
+         }
+
+         //TODO (Logan) Draw Inat Pins
+         map.mapLayer.fitBounds(bounds);
+
+         getInatProjectOccurrences(150154).then(res => {
+            
+         });
+      }
+
+      function parseNested(str) {
+          try {
+              return JSON.parse(str, (_, val) => {
+                  if (typeof val === 'string')
+                      return parseNested(val)
+                  return val
+              })
+          } catch (e) {
+              return str
+          }
+      }
+      async function getInatProjectOccurrences(inat_proj_id) {
+         let url = `https://api.inaturalist.org/v1/observations?project_id=${inat_proj_id}&geo=true&mappable=true`;
+         let response = await fetch(url, {
+            method: "GET",
+            headers: {
+               "Content-Type": "application/json",
+            }
+         })
+
+         return await response.json();
+      }
+
+		function initialize() {
+         try {
+            let data = document.getElementById('service-container')
+            occurCoords = JSON.parse(data.getAttribute('data-occur-coords'));
+            clMeta = parseNested(data.getAttribute('data-cl-meta'));
+         } catch (err) {
+            alert("Failed to load occurence data")
+         }
+
+         if(clMeta && clMeta.footprintwkt) {
+            cl_footprint_shape = loadMapShape("polygon", { polygonLoader: () => clMeta.footprintwkt });
+         }
+
+         googleInit();
+         //leafletInit();
+/*
 
 			var llBounds = new google.maps.LatLngBounds();
 			<?php
@@ -91,7 +227,7 @@ $clMeta = $clManager->getClMetaData();
 				?>
 				map.fitBounds(llBounds);
 				map.panToBounds(llBounds);
-
+*/
 
 				function ll2slippytile(lon, lat, zoom) {
 					// https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Lon..2Flat._to_tile_numbers_2
@@ -207,7 +343,6 @@ $clMeta = $clManager->getClMetaData();
 						map.panToBounds(llBounds);
 					})
 					.catch(error => {error.message;});
-
 				<?php
 
 				//Check for and add checklist polygon
@@ -244,7 +379,7 @@ $clMeta = $clManager->getClMetaData();
 				?>
 			<?php
 			}
-			?>
+         ?>
 		}
 
 		function openIndPU(occId){
@@ -253,8 +388,7 @@ $clMeta = $clManager->getClMetaData();
 			if(puWin.opener == null) puWin.opener = self;
 			setTimeout(function () { puWin.focus(); }, 0.5);
 			return false;
-		}
-
+      }
 	</script>
 	<style>
 		html, body, #map_canvas {
@@ -278,6 +412,10 @@ $clMeta = $clManager->getClMetaData();
 		<?php
 	}
 	?>
+   <div id="service-container"
+      data-occur-coords="<?= htmlspecialchars($coordJson) ?>"
+      data-cl-meta="<?= htmlspecialchars($metaJson)?>"
+   />
 	<div id='map_canvas'></div>
 </body>
 </html>
