@@ -12,15 +12,15 @@ $collManager = new OccurrenceCollectionProfile();
 $collid = isset($_REQUEST['collid']) ? $collManager->sanitizeInt($_REQUEST['collid']) : 0;
 $occIndex = array_key_exists('occindex',$_REQUEST)?$_REQUEST['occindex']:0;
 
-$occManager = new OccurrenceEditorManager();
-$collIdAsNum = (int)$collid;
-$occManager->setCollId($collIdAsNum);
-$occManager->setQueryVariables();
-$occIndex = 0;
-$recLimit = 1000;
-$recStart = floor($occIndex/$recLimit)*$recLimit;
-$recArr = $occManager->getOccurMap($recStart, $recLimit);
-$occid = array_keys($recArr)[0] ?? 0;
+// $occManager = new OccurrenceEditorManager();
+// $collIdAsNum = (int)$collid;
+// $occManager->setCollId($collIdAsNum);
+// $occManager->setQueryVariables();
+// $occIndex = 0;
+// $recLimit = 1000;
+// $recStart = floor($occIndex/$recLimit)*$recLimit;
+// $recArr = $occManager->getOccurMap($recStart, $recLimit);
+// $occid = array_keys($recArr)[0] ?? 0;
 
 $action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
 $eMode = array_key_exists('emode', $_REQUEST) ? $collManager->sanitizeInt($_REQUEST['emode']) : 0;
@@ -69,9 +69,6 @@ if ($SYMB_UID) {
 		}
 
 		function submitAndRedirectSearchForm(urlPtOne, urlPtTwo, urlPtTwoAlt, urlPtThree, urlPtThreeAlt, isEditorSearch=false, occId=0) {
-			const tmp = <?php echo "test"; ?>;
-			console.log('deleteMe tmp is: ');
-			console.log(tmp);
 			try{
 				const collId = document?.forms['quicksearch']['collid']?.value;
 				const hasIdentifier = Boolean(document?.forms['quicksearch']['catalog-number']?.value);
@@ -81,16 +78,28 @@ if ($SYMB_UID) {
 				}
 				else if(!isEditorSearch && !val){
 					alert("You must provide a search term.");
-				}else if(isEditorSearch && val){
+				}else if(isEditorSearch && val){ // @TODO clean this up. I don't think that this section is necessary anymore
 					const url = urlPtOne.replace('occurrencetabledisplay.php?displayquery=1&collid=', 'occurrenceeditor.php?csmode=0&occindex=0&occid=' + occId + '&collid=') + collId + (hasIdentifier? urlPtTwo: urlPtTwoAlt) + val + (hasIdentifier ? urlPtThree : urlPtThreeAlt); // hacktacular, but good enough for tomorrow's due date
 					// window.location.href = url;
 				}else{
 					const url = urlPtOne + collId + (hasIdentifier? urlPtTwo: urlPtTwoAlt) + val + (hasIdentifier ? urlPtThree : urlPtThreeAlt);
-					// window.location.href = url;
+					window.location.href = url;
 				}
 			}catch(err){
 				console.log(err);
 			}
+		}
+
+		function validateForm (){
+			const taxonSearchVal = document?.forms['quicksearch']['taxon-search']?.value;
+			const catalogNumberValue = document.forms['quicksearch']['catalog-number'].value;
+			if(taxonSearchVal && !catalogNumberValue){
+				 alert("You cannot search the occurrence editor by taxon.");
+				 return false;
+			}else{
+				return true;
+			}
+
 		}
 		
 	</script>
@@ -114,7 +123,7 @@ if ($SYMB_UID) {
 		<section id="tabs" class="fieldset-like no-left-margin" style="float: right;">
 			<h1><span><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></span></h1>
 			<div id="dialogContainer" style="position: relative;">
-				<form name="quicksearch" action="javascript:void(0);" onsubmit="submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includeothercatnum=1', '&usethes=1&taxontype=2 '); return false;">
+				<form name="quicksearch" action="processEditorSearch.php" method="POST" onsubmit="return validateForm()">
 					<label for="catalog-number"><?php echo (isset($LANG['OCCURENCE_IDENTIFIER']) ? $LANG['OCCURENCE_IDENTIFIER'] : 'Catalog Number'); ?></label>
 					<span class="skip-link">
 						<?php
@@ -137,21 +146,23 @@ if ($SYMB_UID) {
 					<label for="taxon-search"><?php echo (isset($LANG['TAXON']) ? $LANG['TAXON'] : 'Taxon'); ?></label>
 					<input name="taxon-search" id="taxon-search" type="text" />
 					<br>
+					<?php 
+						if($editCode == 1 || $editCode == 2 || $editCode == 3){
+					?>
+						<button type="submit" id="search-by-catalog-number-admin-btn"; ?>
+							<?php echo (isset($LANG['OCCURRENCE_EDITOR']) ? $LANG['OCCURRENCE_EDITOR'] : 'Edit'); ?>
+						</button>
+					<?php 
+						}
+					?>
+					
+				</form>
+				<!-- <form name="quicksearch-editor" action="javascript:void(0);" onsubmit="submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/editor/occurrencetabledisplay.php?displayquery=1&collid=','&q_catalognumber=', '', '', '', true, <?php echo $occid ?>); return false;"> -->
+				<form name="quicksearch" action="javascript:void(0);" onsubmit="submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includeothercatnum=1', '&usethes=1&taxontype=2 '); return false;">
 					<button type="submit" id="search-by-catalog-number-btn" title="<?php echo (isset($LANG['IIDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Occurrence ID and Record ID also accepted.'); ?>">
 						<?php echo (isset($LANG['SEARCH']) ? $LANG['SEARCH'] : 'Search'); ?>
 					</button>
 				</form>
-				<?php 
-					if($editCode == 1 || $editCode == 2 || $editCode == 3){
-				?>
-					<form name="quicksearch-editor" action="javascript:void(0);" onsubmit="submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/editor/occurrencetabledisplay.php?displayquery=1&collid=','&q_catalognumber=', '', '', '', true, <?php echo $occid ?>); return false;">
-						<button type="submit" id="search-by-catalog-number-admin-btn"; ?>
-							<?php echo (isset($LANG['OCCURRENCE_EDITOR']) ? $LANG['OCCURRENCE_EDITOR'] : 'Edit'); ?>
-						</button>
-					</form>
-				<?php 
-					}
-				?>
 			</div>
 		</section>
 		<?php
