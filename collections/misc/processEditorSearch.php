@@ -42,9 +42,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $shouldRedirect = true;
     }
 
-    // if no catalog number and no taxon, go to $CLIENT_ROOT . /collections/editor/occurrencetabledisplay.php?displayquery=1&collid= . $collid
-    // if no catalog number and taxon, should have prevent this in the first place
-    // if catalog number, take them to $CLIENT_ROOT . '/collections/editor/occurrenceeditor.php?csmode=0&occindex=0&occid=' . $occid . '&collid=' . $collid
     if($shouldRedirect){
         header("Location: $redirectURL");
         exit;

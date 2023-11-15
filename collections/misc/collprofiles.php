@@ -68,19 +68,13 @@ if ($SYMB_UID) {
 			return false;
 		}
 
-		function submitAndRedirectSearchForm(urlPtOne, urlPtTwo, urlPtTwoAlt, urlPtThree, urlPtThreeAlt, isEditorSearch=false, occId=0) {
+		function submitAndRedirectSearchForm(urlPtOne, urlPtTwo, urlPtTwoAlt, urlPtThree, urlPtThreeAlt) {
 			try{
 				const collId = document?.forms['quicksearch']['collid']?.value;
 				const hasIdentifier = Boolean(document?.forms['quicksearch']['catalog-number']?.value);
 				const val = hasIdentifier ? document?.forms['quicksearch']['catalog-number']?.value : document?.forms['quicksearch']['taxon-search']?.value;
-				if(isEditorSearch && val && !hasIdentifier){
-					alert("You cannot search the occurrence editor by taxon.");
-				}
-				else if(!isEditorSearch && !val){
+				if(!val){
 					alert("You must provide a search term.");
-				}else if(isEditorSearch && val){ // @TODO clean this up. I don't think that this section is necessary anymore
-					const url = urlPtOne.replace('occurrencetabledisplay.php?displayquery=1&collid=', 'occurrenceeditor.php?csmode=0&occindex=0&occid=' + occId + '&collid=') + collId + (hasIdentifier? urlPtTwo: urlPtTwoAlt) + val + (hasIdentifier ? urlPtThree : urlPtThreeAlt); // hacktacular, but good enough for tomorrow's due date
-					// window.location.href = url;
 				}else{
 					const url = urlPtOne + collId + (hasIdentifier? urlPtTwo: urlPtTwoAlt) + val + (hasIdentifier ? urlPtThree : urlPtThreeAlt);
 					window.location.href = url;
