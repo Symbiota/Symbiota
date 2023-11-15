@@ -3,12 +3,25 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCollectionProfile.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 unset($_SESSION['editorquery']);
 
 $collManager = new OccurrenceCollectionProfile();
 
 $collid = isset($_REQUEST['collid']) ? $collManager->sanitizeInt($_REQUEST['collid']) : 0;
+$occIndex = array_key_exists('occindex',$_REQUEST)?$_REQUEST['occindex']:0;
+
+$occManager = new OccurrenceEditorManager();
+$collIdAsNum = (int)$collid;
+$occManager->setCollId($collIdAsNum);
+$occManager->setQueryVariables();
+$occIndex = 0;
+$recLimit = 1000;
+$recStart = floor($occIndex/$recLimit)*$recLimit;
+$recArr = $occManager->getOccurMap($recStart, $recLimit);
+$occid = array_keys($recArr)[0] ?? 0;
+
 $action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
 $eMode = array_key_exists('emode', $_REQUEST) ? $collManager->sanitizeInt($_REQUEST['emode']) : 0;
 
@@ -55,7 +68,10 @@ if ($SYMB_UID) {
 			return false;
 		}
 
-		function submitAndRedirectSearchForm(urlPtOne, urlPtTwo, urlPtTwoAlt, urlPtThree, urlPtThreeAlt, isEditorSearch=false) {
+		function submitAndRedirectSearchForm(urlPtOne, urlPtTwo, urlPtTwoAlt, urlPtThree, urlPtThreeAlt, isEditorSearch=false, occId=0) {
+			const tmp = <?php echo "test"; ?>;
+			console.log('deleteMe tmp is: ');
+			console.log(tmp);
 			try{
 				const collId = document?.forms['quicksearch']['collid']?.value;
 				const hasIdentifier = Boolean(document?.forms['quicksearch']['catalog-number']?.value);
@@ -65,9 +81,12 @@ if ($SYMB_UID) {
 				}
 				else if(!isEditorSearch && !val){
 					alert("You must provide a search term.");
+				}else if(isEditorSearch && val){
+					const url = urlPtOne.replace('occurrencetabledisplay.php?displayquery=1&collid=', 'occurrenceeditor.php?csmode=0&occindex=0&occid=' + occId + '&collid=') + collId + (hasIdentifier? urlPtTwo: urlPtTwoAlt) + val + (hasIdentifier ? urlPtThree : urlPtThreeAlt); // hacktacular, but good enough for tomorrow's due date
+					// window.location.href = url;
 				}else{
 					const url = urlPtOne + collId + (hasIdentifier? urlPtTwo: urlPtTwoAlt) + val + (hasIdentifier ? urlPtThree : urlPtThreeAlt);
-					window.location.href = url;
+					// window.location.href = url;
 				}
 			}catch(err){
 				console.log(err);
@@ -125,7 +144,7 @@ if ($SYMB_UID) {
 				<?php 
 					if($editCode == 1 || $editCode == 2 || $editCode == 3){
 				?>
-					<form name="quicksearch-editor" action="javascript:void(0);" onsubmit="submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/editor/occurrencetabledisplay.php?displayquery=1&collid=','&q_catalognumber=', '', '', '', true); return false;">
+					<form name="quicksearch-editor" action="javascript:void(0);" onsubmit="submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/editor/occurrencetabledisplay.php?displayquery=1&collid=','&q_catalognumber=', '', '', '', true, <?php echo $occid ?>); return false;">
 						<button type="submit" id="search-by-catalog-number-admin-btn"; ?>
 							<?php echo (isset($LANG['OCCURRENCE_EDITOR']) ? $LANG['OCCURRENCE_EDITOR'] : 'Edit'); ?>
 						</button>
@@ -669,7 +688,6 @@ if ($SYMB_UID) {
 
 		showDialogLink.addEventListener('click', (e) => {
 			e.preventDefault();
-			console.log('deleteMe got here');
 			dialogEl.showModal();
 
 			dialogContainer.style.position = 'relative';
