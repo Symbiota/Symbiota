@@ -245,7 +245,11 @@ $traitArr = $indManager->getTraitArr();
 
 		<?php
 		if($displayMap){
-         echo 'const coordError = ' . $occArr["coordinateuncertaintyinmeters"] .';';
+         if(!empty($occArr["coordinateuncertaintyinmeters"])) {
+            echo 'const coordError = ' . $occArr["coordinateuncertaintyinmeters"] .';';
+         } else {
+            echo 'const coordError = 0;';
+         }
 			?>
 			function googleInit() {
 				var mLatLng = new google.maps.LatLng(<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>);
