@@ -215,8 +215,7 @@ $metaJson = json_encode($clMeta);
          }
 
          <?php if(empty($GOOGLE_MAP_KEY)):?>
-            //leafletInit();
-            googleInit();
+            leafletInit();
          <?php else:?>
             googleInit();
          <?php endif?>
