@@ -3,12 +3,25 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCollectionProfile.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 unset($_SESSION['editorquery']);
 
 $collManager = new OccurrenceCollectionProfile();
 
 $collid = isset($_REQUEST['collid']) ? $collManager->sanitizeInt($_REQUEST['collid']) : 0;
+$occIndex = array_key_exists('occindex',$_REQUEST)?$_REQUEST['occindex']:0;
+
+// $occManager = new OccurrenceEditorManager();
+// $collIdAsNum = (int)$collid;
+// $occManager->setCollId($collIdAsNum);
+// $occManager->setQueryVariables();
+// $occIndex = 0;
+// $recLimit = 1000;
+// $recStart = floor($occIndex/$recLimit)*$recLimit;
+// $recArr = $occManager->getOccurMap($recStart, $recLimit);
+// $occid = array_keys($recArr)[0] ?? 0;
+
 $action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
 $eMode = array_key_exists('emode', $_REQUEST) ? $collManager->sanitizeInt($_REQUEST['emode']) : 0;
 
@@ -70,6 +83,18 @@ if ($SYMB_UID) {
 				console.log(err);
 			}
 		}
+
+		function validateForm (){
+			const taxonSearchVal = document?.forms['quicksearch']['taxon-search']?.value;
+			const catalogNumberValue = document.forms['quicksearch']['catalog-number'].value;
+			if(taxonSearchVal && !catalogNumberValue){
+				 alert("You cannot search the occurrence editor by taxon.");
+				 return false;
+			}else{
+				return true;
+			}
+
+		}
 		
 	</script>
 	<style type="text/css">
@@ -91,8 +116,8 @@ if ($SYMB_UID) {
 	<div id="innertext">
 		<section id="tabs" class="fieldset-like no-left-margin" style="float: right;">
 			<h1><span><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></span></h1>
-			<form name="quicksearch" action="javascript:void(0);" onsubmit="submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includeothercatnum=1', '&usethes=1&taxontype=2 '); return false;">
-				<div id="dialogContainer" style="position: relative;">
+			<div id="dialogContainer" style="position: relative;">
+				<form name="quicksearch" action="processEditorSearch.php" method="POST" onsubmit="return validateForm()">
 					<label for="catalog-number"><?php echo (isset($LANG['OCCURENCE_IDENTIFIER']) ? $LANG['OCCURENCE_IDENTIFIER'] : 'Catalog Number'); ?></label>
 					<span class="skip-link">
 						<?php
@@ -115,11 +140,24 @@ if ($SYMB_UID) {
 					<label for="taxon-search"><?php echo (isset($LANG['TAXON']) ? $LANG['TAXON'] : 'Taxon'); ?></label>
 					<input name="taxon-search" id="taxon-search" type="text" />
 					<br>
+					<?php 
+						if($editCode == 1 || $editCode == 2 || $editCode == 3){
+					?>
+						<button type="submit" id="search-by-catalog-number-admin-btn"; ?>
+							<?php echo (isset($LANG['OCCURRENCE_EDITOR']) ? $LANG['OCCURRENCE_EDITOR'] : 'Edit'); ?>
+						</button>
+					<?php 
+						}
+					?>
+					
+				</form>
+				<!-- <form name="quicksearch-editor" action="javascript:void(0);" onsubmit="submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/editor/occurrencetabledisplay.php?displayquery=1&collid=','&q_catalognumber=', '', '', '', true, <?php echo $occid ?>); return false;"> -->
+				<form name="quicksearch" action="javascript:void(0);" onsubmit="submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includeothercatnum=1', '&usethes=1&taxontype=2 '); return false;">
 					<button type="submit" id="search-by-catalog-number-btn" title="<?php echo (isset($LANG['IIDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Occurrence ID and Record ID also accepted.'); ?>">
 						<?php echo (isset($LANG['SEARCH']) ? $LANG['SEARCH'] : 'Search'); ?>
 					</button>
-				</div>
-			</form>
+				</form>
+			</div>
 		</section>
 		<?php
 		if ($editCode > 1) {
@@ -655,7 +693,6 @@ if ($SYMB_UID) {
 
 		showDialogLink.addEventListener('click', (e) => {
 			e.preventDefault();
-			console.log('deleteMe got here');
 			dialogEl.showModal();
 
 			dialogContainer.style.position = 'relative';

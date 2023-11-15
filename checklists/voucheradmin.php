@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherReport.php');
@@ -62,7 +64,7 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USE
 $clManager->setCollectionVariables();
 $clMetaArr = $clManager->getClMetadata();
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['CHECKLIST_ADMIN'];?></title>
@@ -78,12 +80,12 @@ $clMetaArr = $clManager->getClMetadata();
 		var footprintwktExists = <?php echo ($clManager->getClFootprintWkt()?'true':'false') ?>;
 	</script>
 	<script type="text/javascript" src="../js/symb/checklists.voucheradmin.js?ver=2"></script>
-	<style type="text/css">
+	<style>
 		li{ margin:5px; }
 		.family-div{ font-weight: bold; }
-		.taxa-block{ margin: 10px; text-decoration: italic; }
+		.taxa-block{ margin: 10px; font-style: italic; }
 		.taxon-input{ width: 200px; }
-		.styledtable{ font-family:Arial; font-size:12px; }
+		.styledtable{ font-family:Arial; font-size: 1rem; }
 	</style>
 </head>
 <body>
@@ -100,7 +102,7 @@ include($SERVER_ROOT.'/includes/header.php');
 </div>
 <!-- This is inner text! -->
 <div id='innertext'>
-<div style="color:#990000;font-size:20px;font-weight:bold;margin:0px 10px 10px 0px;">
+<div class="voucher-admin-header">
 	<a href="checklist.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>">
 		<?php echo $clManager->getClName(); ?>
 	</a>
@@ -111,7 +113,7 @@ if($statusStr){
 	if(stripos($statusStr, 'ERROR') !== false) $textColor = 'red';
 	?>
 	<hr />
-	<div style="margin:20px; font-weight:bold; color: <?= $textColor ?>;">
+	<div style="margin:1.25rem; font-weight:bold; color: <?= $textColor ?>;">
 		<?= $statusStr; ?>
 	</div>
 	<hr />
@@ -126,7 +128,11 @@ if($clid && $isEditor){
 			<?php
 			echo $clManager->getQueryVariableStr();
 			?>
-			<span style="margin-left:10px;"><a href="#" onclick="toggle('sqlbuilderdiv');return false;" title="Edit Search Statement"><img src="../images/edit.png" style="width:15px;border:0px;"/></a></span>
+			<span style="margin-left:10px;">
+				<a href="#" onclick="toggle('sqlbuilderdiv');return false;" title="<?php echo (isset($LANG['EDITSEARCH'])?$LANG['EDITSEARCH']:'Edit Search Statement') ?>" aria-label="<?php echo (isset($LANG['EDITSEARCH'])?$LANG['EDITSEARCH']:'Edit Search Statement') ?>">
+					<img src="../images/edit.png" style="width:15px;border:0px;" alt="<?php echo (isset($LANG['IMG_EDIT'])?$LANG['IMG_EDIT']:'Edit Image') ?>"/>
+				</a>
+			</span>
 		</div>
 		<?php
 	}
@@ -285,7 +291,7 @@ if($clid && $isEditor){
 						<li><a href="voucherreporthandler.php?rtype=pensoftxlsx&clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars((isset($LANG['PENSOFT_XLSX_EXPORT'])?$LANG['PENSOFT_XLSX_EXPORT']:'Pensoft Excel Export'), HTML_SPECIAL_CHARS_FLAGS);?></a></li>
 						<li><?php echo $LANG['SPECMISSINGTITLE'];?></li>
 					</ul>
-					<ul style="margin:-10 0px 0px 25px;list-style-type:circle">
+					<ul style="list-style-type:circle">
 						<li><a href="voucherreporthandler.php?rtype=missingoccurcsv&clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['SPECMISSTAXA'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
 						<li><a href="voucherreporthandler.php?rtype=problemtaxacsv&clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['SPECMISSPELLED'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
 					</ul>
