@@ -180,6 +180,20 @@ class LeafletMap {
             if(onDrawChange) onDrawChange(this.activeShape);
          }.bind(this))
       }
+         switch(drawOptions.mode) {
+            case "polygon": 
+               document.querySelector(".leaflet-draw-draw-polygon").click();
+            break;
+            case "rectangle": 
+               document.querySelector(".leaflet-draw-draw-rectangle").click();
+            break;
+            case "marker": 
+               document.querySelector(".leaflet-draw-draw-marker").click();
+            break;
+            case "circle":
+               document.querySelector(".leaflet-draw-draw-circle").click();
+            break;
+         }
 
    }
 
