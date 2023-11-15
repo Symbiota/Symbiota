@@ -109,6 +109,8 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 			});
 
 			map.mapLayer.addControl(drawControl);
+         const markerControl = document.querySelector(".leaflet-draw-draw-marker");
+         if(markerControl) markerControl.click();
 
 			let marker;
 
@@ -179,7 +181,7 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 
 					map.mapLayer.setView(latlng, map.mapLayer.getZoom());
 				}
-			} 
+         } 
 
 			onFormChange = (event) => { 
 				errRadius = parseFloat(event.target.value);
@@ -308,6 +310,7 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 			radiusInput = document.getElementById("errRadius");
 			latInput = document.getElementById("latbox");
 			lngInput = document.getElementById("lngbox");
+         getErrorRadius();
 
 			if(lat && lng) {
 				if(checkCoord(lat, 90) && checkCoord(lng, 180)) {
