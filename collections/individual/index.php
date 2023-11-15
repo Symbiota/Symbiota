@@ -244,12 +244,12 @@ $traitArr = $indManager->getTraitArr();
 		}
 
 		<?php
-		if($displayMap){
-         if(!empty($occArr["coordinateuncertaintyinmeters"])) {
-            echo 'const coordError = ' . $occArr["coordinateuncertaintyinmeters"] .';';
-         } else {
-            echo 'const coordError = 0;';
-         }
+			if($displayMap){
+		 if(!empty($occArr["coordinateuncertaintyinmeters"])) {
+			echo 'const coordError = ' . $occArr["coordinateuncertaintyinmeters"] .';';
+		 } else {
+			echo 'const coordError = 0;';
+		 }
 			?>
 			function googleInit() {
 				var mLatLng = new google.maps.LatLng(<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>);
@@ -265,15 +265,15 @@ $traitArr = $indManager->getTraitArr();
 				var marker = new google.maps.Marker({
 					position: mLatLng,
 					map: map
-            });
+			});
 
-            if(coordError > 0) {
-               new google.maps.Circle({
-                  center: mLatLng,
-                  radius: coordError,
-                  map: map
-               })
-            }
+			if(coordError > 0) {
+			   new google.maps.Circle({
+				  center: mLatLng,
+				  radius: coordError,
+				  map: map
+			   })
+			}
 			}
 
 			function leafletInit() {
@@ -281,12 +281,12 @@ $traitArr = $indManager->getTraitArr();
 
 				map = new LeafletMap("map_canvas", {center: mLatLng, zoom: 8});
 
-            if(coordError > 0) {
-               map.enableDrawing({...map.DEFAULT_DRAW_OPTIONS, control: false})
-               map.drawShape({type: "circle", radius: coordError, latlng: mLatLng})
-            }
+			if(coordError > 0) {
+			   map.enableDrawing({...map.DEFAULT_DRAW_OPTIONS, control: false})
+			   map.drawShape({type: "circle", radius: coordError, latlng: mLatLng})
+			}
 				const marker = L.marker(mLatLng).addTo(map.mapLayer);
-            map.mapLayer.setZoom(8)
+			map.mapLayer.setZoom(8)
 			}
 
 			function initializeMap(){
@@ -296,7 +296,7 @@ $traitArr = $indManager->getTraitArr();
 					googleInit();
 				<?php endif?>
 			}
-			<?php
+		<?php
 		}
 		?>
 	</script>
