@@ -199,23 +199,23 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 					</div>
 					<div style="margin:3px;">
 						<label for="sciname"> <b><?php echo (isset($LANG['SCINAME'])?$LANG['SCINAME']:'Scientific Name');?>:</b> </label>
-						<input id="sciname" name="sciname" type="text" value="<?php echo (isset($_POST['sciname'])?$_POST['sciname']:''); ?>" style="width:300px"/>
-						<input name="scientificnameauthorship" type="text" value="<?php echo (isset($_POST['scientificnameauthorship'])?$_POST['scientificnameauthorship']:''); ?>" aria-label="<?php echo (isset($LANG['SCINAMEAUTH'])?$LANG['SCINAMEAUTH']:'Scientific Name Authorship');?>" /><br/>
-						<input type="hidden" id="tidinterpreted" name="tidinterpreted" value="<?php echo (isset($_POST['tidinterpreted'])?$_POST['tidinterpreted']:''); ?>" />
-						<label for="family"> <b><?php echo (isset($LANG['FAMILY'])?$LANG['FAMILY']:'Family')?>:</b> </label>
-						<input id="family" name="family" type="text" value="<?php echo (isset($_POST['family'])?$_POST['family']:''); ?>" />
+						<input id="sciname" name="sciname" type="text" value="<?php echo (isset($_POST['sciname']) ? $_POST['sciname'] : ''); ?>" style="width:300px"/>
+						<input name="scientificnameauthorship" type="text" value="<?php echo (isset($_POST['scientificnameauthorship']) ? $_POST['scientificnameauthorship'] : ''); ?>" aria-label="<?php echo (isset($LANG['SCINAMEAUTH'])?$LANG['SCINAMEAUTH']:'Scientific Name Authorship');?>" /><br/>
+						<input type="hidden" id="tidinterpreted" name="tidinterpreted" value="<?php echo (isset($_POST['tidinterpreted']) ? $_POST['tidinterpreted'] : ''); ?>" />
+						<label for="family"> <b><?php echo (isset($LANG['FAMILY']) ? $LANG['FAMILY'] : 'Family')?>:</b> </label>
+						<input id="family" name="family" type="text" value="<?php echo (isset($_POST['family']) ? $_POST['family'] : ''); ?>" />
 					</div>
 					<div>
 						<div style="float:left;margin:3px;">
-							<label for="country"><b><?php echo (isset($LANG['COUNTRY'])?$LANG['COUNTRY']:'Country')?>:</b><br/> </label>
+							<label for="country"><b><?php echo (isset($LANG['COUNTRY']) ? $LANG['COUNTRY'] : 'Country')?>:</b><br/> </label>
 							<input id="country" name="country" type="text" value="<?php echo (isset($_POST['country'])?$_POST['country']:''); ?>" />
 						</div>
 						<div style="float:left;margin:3px;">
-						<label for="state"><b><?php echo (isset($LANG['STATE_PROVINCE'])?$LANG['STATE_PROVINCE']:'State/Province')?>:</b><br/> </label>
+						<label for="state"><b><?php echo (isset($LANG['STATE_PROVINCE']) ? $LANG['STATE_PROVINCE'] : 'State/Province')?>:</b><br/> </label>
 							<input id="state" name="stateprovince" type="text" value="<?php echo (isset($_POST['stateprovince'])?$_POST['stateprovince']:''); ?>" />
 						</div>
 						<div style="float:left;margin:3px;">
-						<label for="county"><b><?php echo (isset($LANG['COUNTY'])?$LANG['COUNTY']:'County')?>:</b><br/> </label>
+						<label for="county"><b><?php echo (isset($LANG['COUNTY']) ? $LANG['COUNTY'] : 'County')?>:</b><br/> </label>
 							<input id="county" name="county" type="text" value="<?php echo (isset($_POST['county'])?$_POST['county']:''); ?>" />
 						</div>
 					</div>
