@@ -6,6 +6,7 @@ include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
 include_once($SERVER_ROOT.'/classes/RdfUtility.php');
 include_once($SERVER_ROOT.'/content/lang/collections/individual/index.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT.'/includes/head.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $occid = array_key_exists('occid', $_REQUEST) ? filter_var($_REQUEST['occid'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -288,6 +289,13 @@ $traitArr = $indManager->getTraitArr();
 	</script>
 </head>
 <body>
+	<header style="background-image: none;">
+		<a class="skip-link" href="#end-nav"><?php echo $LANG['SKIP_NAV'] ?></a>
+		<h1 class="smaller-header">
+			<?php echo (isset($LANG['FULL_RECORD_DETAILS']) ? $LANG['FULL_RECORD_DETAILS'] : 'Full Record Details'); ?>
+		</h1>
+		<div id="end-nav"></div>
+	</header>
 	<div id="fb-root"></div>
 	<script>
 		(function(d, s, id) {

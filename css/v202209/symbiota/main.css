@@ -886,3 +886,7 @@ hr {
 .left-breathing-room-rel-lg {
   margin-left: 2em;
 }
+
+.smaller-header {
+  font-size: 2rem;
+}
