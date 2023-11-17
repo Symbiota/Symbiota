@@ -57,6 +57,7 @@ $LANG['BASED_ON_PARAMETERS'] = 'Based on search parameters in Filter Pane to the
 $LANG['PRINT_FRIENDLY'] = 'Print Friendly Page';
 $LANG['SELECT_ALL'] = 'Select/Unselect All';
 $LANG['TABLE'] = 'Table of Records';
+$LANG['TABLE_DESC'] = 'The table contains Record Id, Catalog Number, Review Status, Applied Status, Editor Name, Timestamp, Field Name, Old Value, and New Value for each entry';
 $LANG['RECORD_NO'] = 'Record #';
 $LANG['CAT_NUM'] = 'Catalog Number';
 $LANG['TIMESTAMP'] = 'Timestamp';

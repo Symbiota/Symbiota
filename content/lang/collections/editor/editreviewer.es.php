@@ -57,6 +57,7 @@ $LANG['BASED_ON_PARAMETERS'] = 'Basado en parámetros de búsqueda en el Panel d
 $LANG['PRINT_FRIENDLY'] = 'Imprimir Página Amigable';
 $LANG['SELECT_ALL'] = 'Seleccionar/Anular selección de todo';
 $LANG['TABLE'] = 'Tabla de Registros';
+$LANG['TABLE_DESC'] = 'La tabla contiene ID de registro, número de catálogo, estado de revisión, estado aplicado, nombre del editor, marca de tiempo, nombre de campo, valor anterior y valor nuevo para cada entrada';
 $LANG['RECORD_NO'] = '# de Registro';
 $LANG['CAT_NUM'] = 'Número de Catálogo';
 $LANG['TIMESTAMP'] = 'Marca de Tiempo';
