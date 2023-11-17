@@ -199,12 +199,12 @@ function acceptanceChanged(f){
 // listener for taxon rank
 
 document.getElementById('rankid').addEventListener('change', function () {
-	var selectedValue = this.value; // Get the chosen value
+	let selectedValue = this.value; // Get the chosen value
 	$rankId = selectedValue;
 
-	var div1 = document.getElementById('div1hide');
-	var div2 = document.getElementById('div2hide');
-	var label = document.getElementById('unitind1label');
+	let div1 = document.getElementById('div1hide');
+	let div2 = document.getElementById('div2hide');
+	let label = document.getElementById('unitind1label');
 
 	if (selectedValue > 150) {
 		div1.style.display = 'block';
@@ -215,8 +215,8 @@ document.getElementById('rankid').addEventListener('change', function () {
 	}
 	if (selectedValue <= 180) {
 		// Get the name of selected option
-		var selectedOption = this.options[this.selectedIndex];
-		var selectedOptionText = selectedOption.textContent.trim();
+		let selectedOption = this.options[this.selectedIndex];
+		let selectedOptionText = selectedOption.textContent.trim();
 
 		// Set the label for "UnitName1" based on the selected option text
 		label.textContent = selectedOptionText + ' Name';
