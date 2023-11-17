@@ -196,7 +196,7 @@ elseif($activeCollArr){
 									foreach($collMap as $id => $collArr){
 										if(in_array($id, $USER_RIGHTS["CollAdmin"])){
 											echo '<div>';
-											echo '<input id="collid[]" name="collid[]" type="checkbox" value="" />' . '<label for="collid[]"> ' .$id.'" ' . (in_array($id,$activeCollArr) ? 'CHECKED' : '').' </label> ';
+											echo '<input id="collid[' . $id . ']" name="collid[' . $id . ']" type="checkbox" value="" />' . '<label for="collid[' . $id . ']"> ' .$id.'" ' . (in_array($id,$activeCollArr) ? 'CHECKED' : '').' </label> ';
 											echo $collArr['collectionname'].' ('.$collArr['code'].')';
 											echo '</div>';
 										}
@@ -258,11 +258,11 @@ elseif($activeCollArr){
 									<div style="margin:10px;">
 										<div style="margin-bottom:5px;">
 											<fieldset style="padding:15px;margin:10px 0px">
-												<legend> <b> <label for="taxresource"> <?php echo $LANG['TAX_RESOURCE']; ?> </label> </b> </legend>
+												<legend> <b> <?php echo $LANG['TAX_RESOURCE']; ?> </b> </legend>
 												<?php
 												$taxResourceList = $cleanManager->getTaxonomicResourceList();
 												foreach($taxResourceList as $taKey => $taValue){
-													echo '<input name="taxresource[]" id="taxresource[]" type="checkbox" value="'.$taKey.'" '.(in_array($taKey,$taxResource)?'checked':'').' /> '.$taValue.'<br/>';
+													echo '<input name="taxresource[' . $taKey . ']" id="taxresource[' . $taKey . ']" type="checkbox" value="'.$taKey.'" '.(in_array($taKey,$taxResource)?'checked':'').' /> '.$taValue.'<br/>';
 												}
 												?>
 											</fieldset>
