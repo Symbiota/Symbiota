@@ -793,7 +793,7 @@ include($SERVER_ROOT.'/includes/header.php');
 														<?php
 														if($receiptStatus){
 															echo '<div style="margin-left:15px">';
-															echo '<div>Preformed by: '.$submittedBy.'</div>';
+															echo '<div>Performed by: '.$submittedBy.'</div>';
 															echo '<div>Timestamp: '.$submittedTimestamp.'</div>';
 															echo '</div>';
 														}
