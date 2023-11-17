@@ -104,7 +104,6 @@ class LeafletMap {
       this.drawLayer = drawnItems;
       this.mapLayer.addLayer(drawnItems);
 
-
       //Jank workaround for leaflet-draw api
       const setDrawColor = (drawOption) => {
          if(drawOptions[drawOption] === false)
@@ -124,6 +123,12 @@ class LeafletMap {
          setDrawColor("polygon");
          setDrawColor("rectangle");
          setDrawColor("circle");
+      }
+      if(drawOptions.map_mode_strict) {
+         if(drawOptions.mode !== "polygon") drawOptions.polygon = false;
+         if(drawOptions.mode !== "circle") drawOptions.circle = false;
+         if(drawOptions.mode !== "rectangle") drawOptions.rectangle= false;
+         if(drawOptions.mode !== "polyline") drawOptions.polyline = false;
       }
 
       if(drawOptions.control || drawOptions.control === undefined) {

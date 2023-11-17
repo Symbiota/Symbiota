@@ -72,12 +72,18 @@ class GoogleMap {
       if(drawOptions.drawControl) {
          let shapeModes = []
 
+         if(drawOptions.map_mode_strict) {
+            if(drawOptions.mode !== "polygon") drawOptions.polygon = false;
+            if(drawOptions.mode !== "circle") drawOptions.circle = false;
+            if(drawOptions.mode !== "rectangle") drawOptions.rectangle= false;
+         }
+
          if(drawOptions.polygon) shapeModes.push(google.maps.drawing.OverlayType.POLYGON);
          if(drawOptions.rectangle) shapeModes.push(google.maps.drawing.OverlayType.RECTANGLE);
          if(drawOptions.circle) shapeModes.push(google.maps.drawing.OverlayType.CIRCLE);
 
          let drawingManager = new google.maps.drawing.DrawingManager({
-            drawingMode: getMapMode(drawOptions.mapMode),
+            drawingMode: getMapMode(drawOptions.mode),
             drawingControl: true,
             drawingControlOptions: {
                position: google.maps.ControlPosition.TOP_CENTER,
