@@ -6,16 +6,15 @@ include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
 include_once($SERVER_ROOT.'/classes/RdfUtility.php');
 include_once($SERVER_ROOT.'/content/lang/collections/individual/index.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
-include_once($SERVER_ROOT.'/includes/head.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $occid = array_key_exists('occid', $_REQUEST) ? filter_var($_REQUEST['occid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$pk = array_key_exists('pk', $_REQUEST) ? filter_var($_REQUEST['pk'], FILTER_SANITIZE_STRING):'';
-$guid = array_key_exists('guid', $_REQUEST) ? filter_var($_REQUEST['guid'], FILTER_SANITIZE_STRING) : '';
+$pk = array_key_exists('pk', $_REQUEST) ? htmlspecialchars($_REQUEST['pk'], HTML_SPECIAL_CHARS_FLAGS) :'';
+$guid = array_key_exists('guid', $_REQUEST) ? htmlspecialchars($_REQUEST['guid'], HTML_SPECIAL_CHARS_FLAGS) : '';
 $tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$format = isset($_GET['format']) ? filter_var($_GET['format'], FILTER_SANITIZE_STRING) : '';
+$format = isset($_GET['format']) ? htmlspecialchars($_REQUEST['format'], HTML_SPECIAL_CHARS_FLAGS) : '';
 $submit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $indManager = new OccurrenceIndividual($submit?'write':'readonly');
