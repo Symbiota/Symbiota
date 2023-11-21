@@ -26,8 +26,6 @@ class OccurrenceEditorManager {
 	protected $errorArr = array();
 	protected $isShareConn = false;
 
-	private $paleoActivated = false;
-
 	public function __construct($conn = null){
 		if($conn){
 			$this->conn = $conn;
@@ -85,26 +83,19 @@ class OccurrenceEditorManager {
 				$rs->free();
 			}
 			else return false;
-		}
-	}
-
-	public function getDynamicPropertiesArr(){
-		$retArr = array();
-		$propArr = array();
-		if(array_key_exists('dynamicproperties', $this->collMap)){
-			$propArr = json_decode($this->collMap['dynamicproperties'],true);
-			if(isset($propArr['editorProps'])){
-				$retArr = $propArr['editorProps'];
-				if(isset($retArr['modules-panel'])){
-					foreach($retArr['modules-panel'] as $module){
-						if(isset($module['paleo']['status']) && $module['paleo']['status']){
-							$this->paleoActivated = true;
+			if(!empty($this->collMap['dynamicproperties'])){
+				$propArr = json_decode($this->collMap['dynamicproperties'],true);
+				if(isset($propArr['editorProps'])){
+					$retArr = $propArr['editorProps'];
+					if(isset($retArr['modules-panel'])){
+						foreach($retArr['modules-panel'] as $module){
+							if(!empty($module['paleo']['status'])) $this->collMap['paleoActivated'] = 1;
+							if(!empty($module['matSample']['status'])) $this->collMap['matSampleActivated'] = 1;
 						}
 					}
 				}
 			}
 		}
-		return $retArr;
 	}
 
 	//Query functions
@@ -877,7 +868,7 @@ class OccurrenceEditorManager {
 				}
 				//Get current paleo values to be saved within versioning tables
 				$editFieldArr['omoccurpaleo'] = array_intersect($editArr, $this->fieldArr['omoccurpaleo']);
-				if($this->paleoActivated && $editFieldArr['omoccurpaleo']){
+				if(isset($this->collMap['paleoActivated']) && $editFieldArr['omoccurpaleo']){
 					$sql = 'SELECT '.implode(',',$editFieldArr['omoccurpaleo']).' FROM omoccurpaleo WHERE occid = '.$this->occid;
 					$rs = $this->conn->query($sql);
 					if($rs->num_rows) $oldValueArr['omoccurpaleo'] = $rs->fetch_assoc();
@@ -1028,7 +1019,7 @@ class OccurrenceEditorManager {
 						//Deal with additional identifiers
 						if(isset($postArr['idvalue'])) $this->updateIdentifiers($postArr, $identArr);
 						//Deal with paleo fields
-						if($this->paleoActivated && array_key_exists('eon',$postArr)){
+						if(isset($this->collMap['paleoActivated']) && array_key_exists('eon',$postArr)){
 							//Check to see if paleo record already exists
 							$paleoRecordExist = false;
 							$paleoSql = 'SELECT paleoid FROM omoccurpaleo WHERE occid = '.$this->occid;
@@ -1188,7 +1179,7 @@ class OccurrenceEditorManager {
 				//Deal with identifiers
 				if(isset($postArr['idvalue'])) $this->updateIdentifiers($postArr);
 				//Deal with paleo
-				if($this->paleoActivated && array_key_exists('eon',$postArr)){
+				if(isset($this->collMap['paleoActivated']) && array_key_exists('eon',$postArr)){
 					//Add new record
 					$paleoFrag1 = '';
 					$paleoFrag2 = '';
@@ -1350,7 +1341,7 @@ class OccurrenceEditorManager {
 				}
 
 				//Archive paleo
-				if($this->paleoActivated){
+				if(isset($this->collMap['paleoActivated'])){
 					$sql = 'SELECT * FROM omoccurpaleo WHERE occid = '.$delOccid;
 					if($rs = $this->conn->query($sql)){
 						if($r = $rs->fetch_assoc()){
@@ -1537,7 +1528,7 @@ class OccurrenceEditorManager {
 		}
 
 		//Remap paleo
-		if($this->paleoActivated){
+		if(isset($this->collMap['paleoActivated'])){
 			$sql = 'UPDATE omoccurpaleo SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
 			if(!$this->conn->query($sql)){
 				//$this->errorArr[] .= '; '.$LANG['ERROR_REMAPPING_PALEOS'].': '.$this->conn->error;
@@ -1581,8 +1572,8 @@ class OccurrenceEditorManager {
 		//Remap identifiers
 		$sql = 'UPDATE omoccuridentifiers SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
 		if(!$this->conn->query($sql)){
-			$this->errorArr[] .= '; '.$LANG['ERROR_REMAPPING_OCCIDS'].': '.$this->conn->error;
-			$status = false;
+			//$this->errorArr[] .= '; '.$LANG['ERROR_REMAPPING_OCCIDS'].': '.$this->conn->error;
+			//$status = false;
 		}
 
 		//Remap exsiccati
@@ -1671,7 +1662,7 @@ class OccurrenceEditorManager {
 	}
 
 	private function setPaleoData(){
-		if($this->paleoActivated){
+		if(isset($this->collMap['paleoActivated'])){
 			$sql = 'SELECT '.implode(',',$this->fieldArr['omoccurpaleo']).' FROM omoccurpaleo WHERE occid = '.$this->occid;
 			//echo $sql;
 			$rs = $this->conn->query($sql);
@@ -1769,7 +1760,7 @@ class OccurrenceEditorManager {
 					$statusStr = $LANG['ERROR_ADDING_UPDATE'].': '.$this->conn->error;
 				}
 				//Apply edits to core tables
-				if($this->paleoActivated && array_key_exists($fn, $this->fieldArr['omoccurpaleo'])){
+				if(isset($this->collMap['paleoActivated']) && array_key_exists($fn, $this->fieldArr['omoccurpaleo'])){
 					$sql = 'UPDATE omoccurpaleo SET '.$fn.' = '.$nvSqlFrag.' '.$sqlWhere;
 				}
 				else{
@@ -2328,7 +2319,7 @@ class OccurrenceEditorManager {
 
 	public function getPaleoGtsTerms(){
 		$retArr = array();
-		if($this->paleoActivated){
+		if(isset($this->collMap['paleoActivated'])){
 			$sql = 'SELECT gtsterm, rankid FROM omoccurpaleogts ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){

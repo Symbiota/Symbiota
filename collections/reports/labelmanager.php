@@ -281,7 +281,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 								<input type="submit" name="submitaction" value="Filter Specimen Records" />
 							</div>
 							<div style="margin-left:20px;float:left;">
-								* Specimen return is limited to 400 records
+								* Specimen return is limited to 1000 records
 							</div>
 						</div>
 					</fieldset>

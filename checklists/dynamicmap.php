@@ -202,7 +202,7 @@ if(!$zoomInt){
             alert("Failed to load map centering");
          }
 
-         <?php if(!empty($LEAFLET)) { ?>
+         <?php if(empty($GOOGLE_MAP_KEY)) { ?>
             leafletInit();
          <?php } else { ?>
          googleInit();

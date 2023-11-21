@@ -27,3 +27,5 @@ $LANG['EDIT_REC'] = 'Editar Registro';
 $LANG['HAS_IMAGE'] = 'Tiene Imagen';
 $LANG['CLICK_SYMB'] = 'Hacer click en el identificador de Symbiota en la primera columna para ver los Detalles Completos del Registro';
 $LANG['NONE_FOUND'] = 'No se encontraron registros que coincidan con la búsqueda';
+$LANG['SORT'] = 'Ordenar';
+?>

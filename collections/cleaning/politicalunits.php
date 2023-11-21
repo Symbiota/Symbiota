@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCleaner.php');
@@ -73,7 +75,7 @@ if($action && $isEditor){
 	}
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['POL_UNITS_STANDARD']; ?></title>
@@ -156,11 +158,11 @@ if($action && $isEditor){
 			<hr/>
 			<?php
 		}
-		echo '<h2>'.$collMap['collectionname'].' ('.$collMap['code'].')</h2>';
+		echo '<h2>' . $collMap['collectionname'] . ' (' . $collMap['code'] . ')</h2>';
 		if($isEditor){
 			?>
-			<fieldset style="padding:20px;position:relative">
-				<legend><b><?php echo $LANG['GEO_REPORT']; ?></b></legend>
+			<section class="fieldset-like">
+				<h1> <span> <?php echo (isset($LANG['GEO_REPORT']) ? $LANG['GEO_REPORT'] : 'Geographic Report'); ?> </span> </h1>
 				<?php
 				if($target == 'geolocal'){
 					if($mode) echo '<div style="position:absolute;top:5px;right:0px;padding:10px;border:1px solid grey"><a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&mode=0">' . htmlspecialchars($LANG['MAIN_MENU'], HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
@@ -474,45 +476,45 @@ if($action && $isEditor){
 						echo '<div style="margin-bottom:2px"><b>'.$LANG['QUESTION_COUNTRIES'].':</b> ';
 						$badCountryCnt = $cleanManager->getBadCountryCount();
 						echo $badCountryCnt;
-						if($badCountryCnt) echo ' => <a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&target=geolocal&mode=badcountry">' . htmlspecialchars($LANG['LIST_COUNTRIES'], HTML_SPECIAL_CHARS_FLAGS) . '...</a>';
+						if($badCountryCnt) echo ' =&gt <a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&target=geolocal&mode=badcountry">' . htmlspecialchars($LANG['LIST_COUNTRIES'], HTML_SPECIAL_CHARS_FLAGS) . '...</a>';
 						echo '</div>';
 
 						//Get Null country and not null state
 						echo '<div style="margin-bottom:20px"><b>'.$LANG['NULL_COUNTRY_NOT_STATE'].':</b> ';
 						$nullCountryCnt = $cleanManager->getNullCountryNotStateCount();
 						echo $nullCountryCnt;
-						if($nullCountryCnt) echo ' => <a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&target=geolocal&mode=nullcountry">' . htmlspecialchars($LANG['LIST_RECORDS'], HTML_SPECIAL_CHARS_FLAGS) . '...</a>';
+						if($nullCountryCnt) echo ' =&gt <a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&target=geolocal&mode=nullcountry">' . htmlspecialchars($LANG['LIST_RECORDS'], HTML_SPECIAL_CHARS_FLAGS) . '...</a>';
 						echo '</div>';
 
 						echo '<div style="margin-bottom:2px"><b>'.$LANG['QUESTION_STATES'].':</b> ';
 						$badStateCnt = $cleanManager->getBadStateCount();
 						echo $badStateCnt;
-						if($badStateCnt) echo ' => <a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&target=geolocal&mode=badstate">' . htmlspecialchars($LANG['LIST_STATES'], HTML_SPECIAL_CHARS_FLAGS) . '...</a>';
+						if($badStateCnt) echo ' =&gt <a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&target=geolocal&mode=badstate">' . htmlspecialchars($LANG['LIST_STATES'], HTML_SPECIAL_CHARS_FLAGS) . '...</a>';
 						echo '</div>';
 
 						//Get Null state and not null county or municipality
 						echo '<div style="margin-bottom:20px"><b>'.$LANG['NULL_STATE_NOT_COUNTY'].':</b> ';
 						$nullStateCnt = $cleanManager->getNullStateNotCountyCount();
 						echo $nullStateCnt;
-						if($nullStateCnt) echo ' => <a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&target=geolocal&mode=nullstate">' . htmlspecialchars($LANG['LIST_RECORDS'], HTML_SPECIAL_CHARS_FLAGS) . '...</a>';
+						if($nullStateCnt) echo ' =&gt <a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&target=geolocal&mode=nullstate">' . htmlspecialchars($LANG['LIST_RECORDS'], HTML_SPECIAL_CHARS_FLAGS) . '...</a>';
 						echo '</div>';
 
 						echo '<div style="margin-bottom:2px"><b>'.$LANG['QUESTION_COUNTIES'].':</b> ';
 						$badCountiesCnt = $cleanManager->getBadCountyCount();
 						echo $badCountiesCnt;
-						if($badCountiesCnt) echo ' => <a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&target=geolocal&mode=badcounty">' . htmlspecialchars($LANG['LIST_COUNTIES'], HTML_SPECIAL_CHARS_FLAGS) . '...</a>';
+						if($badCountiesCnt) echo ' =&gt <a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&target=geolocal&mode=badcounty">' . htmlspecialchars($LANG['LIST_COUNTIES'], HTML_SPECIAL_CHARS_FLAGS) . '...</a>';
 						echo '</div>';
 
 						//Get Null county and not null locality
 						echo '<div style="margin-bottom:60px"><b>'.$LANG['NULL_COUNTY_NOT_LOCALITY'].':</b> ';
 						$nullCountyCnt = $cleanManager->getNullCountyNotLocalityCount();
 						echo $nullCountyCnt;
-						if($nullCountyCnt) echo ' => <a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&target=geolocal&mode=nullcounty">' . htmlspecialchars($LANG['LIST_RECORDS'], HTML_SPECIAL_CHARS_FLAGS) . '...</a>';
+						if($nullCountyCnt) echo ' =&gt <a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&target=geolocal&mode=nullcounty">' . htmlspecialchars($LANG['LIST_RECORDS'], HTML_SPECIAL_CHARS_FLAGS) . '...</a>';
 						echo '</div>';
 					}
 				}
 				?>
-			</fieldset>
+			</section>
 			<!--
 			<fieldset style="padding:20px;">
 				<legend><b>All Fields</b></legend>

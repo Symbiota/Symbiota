@@ -370,13 +370,10 @@ class OccurrenceTaxaManager {
 		return '';
 	}
 
-	protected function cleanOutStr($str){
-		if(isset($str)){
-			if(strpos($str, '=') !== false) $str = '';
-			return htmlspecialchars($str);
-		} else{
-			return $str;
-		}
+	public function cleanOutStr($str){
+		if(!is_string($str) && !is_numeric($str) && !is_bool($str)) $str = '';
+		if(strpos($str, '=') !== false) $str = '';
+		return htmlspecialchars($str);
 	}
 
 	protected function cleanInputStr($str){

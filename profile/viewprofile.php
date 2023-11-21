@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
@@ -110,7 +112,7 @@ if($isEditor){
 	if(!$person) $person = $pHandler->getPerson();
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' - '. (isset($LANG['VIEW_PROFILE'])?$LANG['VIEW_PROFILE']:'View User Profile'); ?></title>
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
@@ -124,7 +126,7 @@ if($isEditor){
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
 	<script type="text/javascript" src="../js/symb/profile.viewprofile.js?ver=20170530"></script>
 	<script type="text/javascript" src="../js/symb/shared.js"></script>
-	<style type="text/css">
+	<style>
 		fieldset{ padding:15px;margin:15px; }
 		legend{ font-weight: bold; }
 		.tox-dialog { min-height: 400px }

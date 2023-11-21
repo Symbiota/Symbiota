@@ -3,7 +3,6 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.'.$LANG_TAG.'.php');
 
 header("Content-Type: text/html; charset=".$CHARSET);
-
 $occId = array_key_exists('occid', $_REQUEST) ? filter_var($_REQUEST['occid'], FILTER_SANITIZE_NUMBER_INT) : '';
 $collId = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : false;
 $tabTarget = array_key_exists('tabtarget', $_REQUEST) ? filter_var($_REQUEST['tabtarget'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -41,7 +40,6 @@ $imgArr = array();
 $specImgArr = array();
 $fragArr = array();
 $qryCnt = false;
-$moduleActivation = array();
 $statusStr = '';
 $navStr = '';
 
@@ -65,16 +63,6 @@ if($SYMB_UID){
 		}
 		elseif($collMap['colltype']=='Observations'){
 			$collType = 'obs';
-		}
-		$propArr = $occManager->getDynamicPropertiesArr();
-		if(isset($propArr['modules-panel'])){
-			foreach($propArr['modules-panel'] as $module){
-				if(isset($module['paleo']['status']) && $module['paleo']['status']) $moduleActivation[] = 'paleo';
-				elseif(isset($module['matSample']['status']) && $module['matSample']['status']){
-					$moduleActivation[] = 'matSample';
-					if($tabTarget > 3) $tabTarget++;
-				}
-			}
 		}
 	}
 
@@ -687,7 +675,7 @@ else{
 												<a href="includes/imagetab.php?<?php echo htmlspecialchars($anchorVars, HTML_SPECIAL_CHARS_FLAGS); ?>" style=""><?php echo htmlspecialchars((isset($LANG['IMAGES'])?$LANG['IMAGES']:'Images'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
 											</li>
 											<?php
-											if(in_array('matSample',$moduleActivation)){
+											if(isset($collMap['matSampleActivated'])){
 												?>
 												<li id="matSampleTab">
 													<a href="includes/materialsampleinclude.php?<?php echo htmlspecialchars($anchorVars, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['MATERIAL_SAMPLE'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
@@ -1239,7 +1227,7 @@ else{
 											</div>
 										</fieldset>
 										<?php
-										if(in_array('paleo',$moduleActivation)) include('includes/paleoinclude.php');
+										if(isset($collMap['paleoActivated'])) include('includes/paleoinclude.php');
 										?>
 										<fieldset>
 											<legend><?php echo $LANG['MISC']; ?></legend>

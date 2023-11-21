@@ -41,8 +41,10 @@ $LANG['TEXT_FILE_IMPORT'] = 'Carga R&aacute;pida de Archivos';
 $LANG['SKELETAL_FILE_IMPORT'] = 'Carga Archivo Estructural';
 $LANG['DWCA_IMPORT'] = 'DwC-Archive Importaci&oacute;n';
 $LANG['IPT_IMPORT'] = 'IPT Importaci&oacute;n';
+$LANG['EXTENDED_IMPORT'] = 'Datos Extendidos Importaci&oacute;n';
 $LANG['NFN_IMPORT'] = 'Notes from Nature Importaci&oacute;n';
 $LANG['IMPORT_PROFILES'] = 'Perfiles de Importaci&oacute;n Guardados';
+$LANG['CREATE_PROFILE'] = 'Crear un Nuevo Perfil de Importación';
 $LANG['PROCESSING_TOOLBOX'] = 'Caja de Herramientas de Procesamiento';
 $LANG['DARWIN_CORE_PUB'] = 'Publicaci&oacute;n de Archivo Darwin Core';
 $LANG['REVIEW_SPEC_EDITS'] = 'Revisar/Verificar Ediciones de Ocurrencias';
@@ -111,4 +113,5 @@ $LANG['MORE_INFO_ALT'] = 'Más información sobre el número de catálogo';
 $LANG['SEARCH_BY_TAXON'] = 'Buscar por taxón';
 $LANG['OCCURENCE_IDENTIFIER'] = 'Numero de Catalogo';
 $LANG['TAXON'] = 'Taxón';
+$LANG['OCCURRENCE_EDITOR'] = 'Editar';
 ?>
