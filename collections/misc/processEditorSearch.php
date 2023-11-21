@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $occManager->setCollId($collIdAsNum);
     $occManager->setQueryVariables();
     $occIndex = 0;
-    $recLimit = 100000; // @TODO this is likely not a sufficient long-term solution
+    $recLimit = 10000; // @TODO this is likely not a sufficient long-term solution
     $recStart = floor($occIndex/$recLimit)*$recLimit;
     $recArr = $occManager->getOccurMap($recStart, $recLimit);
     if($catalogNumber !== ''){
