@@ -53,8 +53,10 @@ $(document).on("pageloadfailed", function (event, data) {
 
 function setHeight() {
   var winHeight = window.innerHeight;
-  document.getElementById("mapinterface").style.height = winHeight + "px";
-  document.getElementById("loadingOverlay").style.height = winHeight + "px";
+  var mapInterface = document.getElementById("mapinterface");
+  var loadingOverlay = document.getElementById("loadingOverlay");
+  if(mapInterface) mapInterface.style.height = winHeight + "px";
+  if(loadingOverlay) loadingOverlay.style.height = winHeight + "px";
 }
 
 function checkRecordLimit(f) {

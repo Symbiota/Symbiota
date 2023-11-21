@@ -9,7 +9,7 @@ $conn = MySQLiConnectionFactory::getCon('readonly');
 
 //Using heredoc for Highlighting. Do not use it to query construction
 $portals = $conn->query(<<<sql
-SELECT * from(
+   SELECT * from(
    SELECT portalName, urlRoot,
       SUBSTRING_INDEX(symbiotaVersion, '.', 1) as major,
       SUBSTRING_INDEX(SUBSTRING_INDEX(symbiotaVersion, '.', 2), '.', -1) as minor,
