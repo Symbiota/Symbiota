@@ -560,6 +560,7 @@ value="${color}"
 							this.layer_groups[id].addTo(map.mapLayer);
 						} else if(!map.mapLayer.hasLayer(this.group_map[id].cluster)) {
 							this.group_map[id].cluster.addTo(map.mapLayer)
+							this.group_map[id].cluster.addLayer(this.layer_groups[id])
 						}
 					}
 				}
@@ -830,9 +831,9 @@ value="${color}"
 				const {type, colorMap} = e.detail;
 
 				mapGroups.map(group => {
-					if(cluster_type === "coll" && type === "taxa") {
+					if(cluster_type === "coll") {
 						group.collectionMapGroup.removeGroup();
-					} else if(cluster_type === "taxa" && type === "coll") {
+					} else if(cluster_type === "taxa") {
 						group.taxonMapGroup.removeGroup();
 					}
 				})
