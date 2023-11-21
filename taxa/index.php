@@ -196,7 +196,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							if(isset($MAP_THUMBNAILS) && $MAP_THUMBNAILS) $url = $taxonManager->getGoogleStaticMap();
 							else $url = $CLIENT_ROOT.'/images/mappoint.png';
 							if($occurrenceModIsActive && $taxonManager->getDisplayLocality()){
-								$gAnchor = "openMapPopup('".$taxonManager->getTid()."',".$clid.")";
+								$gAnchor = "openMapPopup('".$taxonManager->getTid()."',".$clid.','. (!empty($GOOGLE_MAP_KEY)? 'false': 'true') .")";
 							}
 							if($mapSrc = $taxonManager->getMapArr()){
 								$url = array_shift($mapSrc);
