@@ -1661,8 +1661,11 @@ Record Limit:
 										</div>
 									</div>
 									<div style="margin:5 0 5 0;"><hr /></div>
-                           <?php include('./portalSelector.php')?>
+
+									<?php if(!empty($ENABLE_CROSS_PORTAL)): ?>
+									<?php include('./portalSelector.php')?>
 									<div style="margin:5 0 5 0;"><hr /></div>
+									<?php endif ?>
 									<?php
 									if($mapManager->getSearchTerm('clid')){
 									?>

@@ -22,6 +22,7 @@ $portals = $conn->query(<<<sql
 $PORTAL_SELECTOR_ID = !isset($PORTAL_SELECTOR_ID) || !is_int($PORTAL_SELECTOR_ID)? 0: $PORTAL_SELECTOR_ID + 1;
 
 ?>
+
 <div>
    <?php if(count($portals) > 0):?>
    <script src="<?php echo $CLIENT_ROOT?>/js/autocomplete-input.js" type="module"></script>
