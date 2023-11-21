@@ -15,6 +15,7 @@ $occManager = new OccurrenceEditorDeterminations();
 $occManager->setCollId($collid);
 $collMap = $occManager->getCollMap();
 $collid = $_REQUEST['collid'];
+$qryCnt = $occManager->getQueryRecordCount();
 
 if($collMap){
 	if($collMap['colltype']=='General Observations'){
@@ -55,18 +56,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 		$imgIDs = $occManager->getAllImgIDs();		
 	}
 	$firstImgId = $imgIDs[0];
-	$firstBarcode = $occManager->getBarcode($firstImgId);
+	$firstBarcode = !empty($occManager->getBarcode($firstImgId)) ? ($occManager->getBarcode($firstImgId)) : 0;
 	$firstIndex = 0;
 	$lastImgId = end($imgIDs);
-	$lastBarcode = $occManager->getBarcode($lastImgId);
+	$lastBarcode = !empty($occManager->getBarcode($lastBarcode)) ? ($occManager->getBarcode($lastBarcode)) : 0;
 	$lastIndex = count($imgIDs) - 1;
 	$occData = array();
 	// occData is a hashtable, which has imgid as key, and occid as value
 	foreach ($imgIDs as $imgID) {
         $occData[$imgID] = $occManager->getOneOccID($imgID);
     }
-	$firstOccId = $occData[$firstImgId];
-	$lastOccId = $occData[$lastImgId];
+	$firstOccId = !empty($occData[$firstImgId]) ? ($occData[$firstImgId]) : 0;
+	$lastOccId = !empty($occData[$lastImgId]) ? ($occData[$lastImgId]) : 0;
 }
 
 ?>
@@ -93,8 +94,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 			// function 
 			// TODO: currently, we leave the occIndex, it is exactly the same value as imgIndex
 			function navigateToRecordNew(crowdSourceMode, gotomode, collId, batchId, imgId, imgIndex, barcode, occId, occIndex) {
-				if(barcode == null && occId == null) {
-					var url = 'occurrencequickentry.php?gotomode=' + gotomode + '&collid=' + collId + '&imgid=' + imgId + '&imgindex=' + imgIndex;
+				if(barcode == 0 && occId == 0) {
+					var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&collid=' + collId +'&batchid=' + batchId + '&imgid=' + imgId + '&imgindex=' + imgIndex + '&barcode=' + 0 + '&occid=' + 0;
+				} else if(barcode == 0) {
+					var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&collid=' + collId +'&batchid=' + batchId + '&imgid=' + imgId + '&imgindex=' + imgIndex + '&barcode=' + 0 + '&occid=' + occId + '&occindex=' + occIndex;
+				} else if(occId == 0) {
+					var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&collid=' + collId +'&batchid=' + batchId + '&imgid=' + imgId + '&imgindex=' + imgIndex + '&barcode=' + barcode + '&occid=' + 0;
 				} else {
 					var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&collid=' + collId +'&batchid=' + batchId + '&imgid=' + imgId + '&imgindex=' + imgIndex + '&barcode=' + barcode + '&occid=' + occId + '&occindex=' + occIndex;
 				}
@@ -134,17 +139,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         <!-- TODO: update the submit function of the form -->
 						<form name="batchform" method="post">
                             <div style="margin-bottom:15px;">
-							<!-- We have this div to testing. Currently, we don't need it any more. -->
-								<!-- <div>
-									<?php //$url = 'occurrencequickentry.php?csmode='.$crowdSourceMode.'&collid='.$collid.'&batchid=0&imgid=1&imgindex=0&occid='.$firstOccId.'&occindex=0'; ?>
-									<a href=<?php//echo($url) ?> >
-										<h3>Go to the quick entry form</h3>
-									</a>
-								</div> -->
 								<h4>Work On batch: <?php echo($selectedBatchID) ?></h4>
 								<button type="button" name="first" onclick="return navigateToRecordNew(<?php echo ($crowdSourceMode).', '.($goToMode).', '.($collid).', '.($selectedBatchID).', '.($firstImgId).', '.($firstIndex).', '.($firstBarcode).', '.($firstOccId).', '.($firstIndex) ; ?>)"><?php echo $LANG['START_FROM']; ?> first.</button>
                                 <button type="button" name="last"  onclick="return navigateToRecordNew(<?php echo ($crowdSourceMode).', '.($goToMode).', '.($collid).', '.($selectedBatchID).', '.($lastImgId).', '.($lastIndex).', '.($lastBarcode).', '.($lastOccId).', '.($lastIndex); ?>)"><?php echo $LANG['START_FROM']; ?> last.</button>
-								<button type="button" name="lastView"><?php echo $LANG['START_FROM']; ?> last view.</button>
+								<button type="button" name="lastView"><?php echo $LANG['START_FROM']; ?> last edit.</button>
                             </div>
 							<div>
 								<b><?php echo $LANG['WORK_ON_BATCH']; ?></b>
