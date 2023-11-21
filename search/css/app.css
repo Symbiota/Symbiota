@@ -10,7 +10,7 @@
 }
 
 .inner-search fieldset {
-  border: none;
+  /* border: none; */
 }
 
 .inner-search input {

@@ -1,15 +1,14 @@
 <section class="gridlike-form-row bottom-breathing-room-relative">
     <?php
     if($displayIcons){
-        // var_dump($nestedCatEl);  // @TODO deleteMe
-        // var_dump($collid);  
-        // var_dump($nestedCatEl);  
         ?>
         <div class="cat-icon-div">
             <?php
             if(array_key_exists('icon', $nestedCatEl)){
                 // $cIcon = (substr($nestedCatEl["icon"],0,6)=='images' ? $CLIENT_ROOT : '') . $nestedCatEl["icon"];
-                $cIcon = isset($nestedCatEl["icon"]) && (substr($nestedCatEl["icon"],0,6)=='images' ? $CLIENT_ROOT : '') . $nestedCatEl["icon"];
+                $isInLocalFileSys = isset($nestedCatEl["icon"]) && substr($nestedCatEl["icon"],0,6)=='images';
+                $prefix = $isInLocalFileSys ? $CLIENT_ROOT : '';
+                $cIcon = isset($nestedCatEl["icon"]) ? $prefix . $nestedCatEl["icon"]: '';
                 ?>
                 <a href = '<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
                     <img src="<?php echo htmlspecialchars($cIcon, HTML_SPECIAL_CHARS_FLAGS); ?>" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection <?php echo isset($nestedCatEl["collname"]) ? substr($nestedCatEl["collname"],0, 20) : substr($idStr,0, 20) ?>' />
