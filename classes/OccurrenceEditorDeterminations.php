@@ -13,6 +13,32 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
  		parent::__destruct();
 	}
 
+	public function getImgIndex($imgID) {
+		$imgIndex = false;
+		$query = "SELECT ordinal FROM batch_XREF WHERE imgid = '$imgID' LIMIT 1";
+		$result = $this->conn->query($query);
+
+		if ($result && $row = $result->fetch_assoc()) {
+			$imgIndex = $row['ordinal'];
+		}
+		$result->free();
+
+		return $imgIndex;
+	}
+
+	public function getlastEdit($batchID) {
+		$lastEditImgId = false;
+		$query = "SELECT last_edited FROM batch WHERE batchID = '$batchID' LIMIT 1";
+		$result = $this->conn->query($query);
+
+		if ($result && $row = $result->fetch_assoc()) {
+			$lastEditImgId = $row['last_edited'];
+		}
+		$result->free();
+
+		return $lastEditImgId;
+	}
+
 	public function getBatch() {
 		$batchValues = array();	
         $query = "SELECT batchID FROM batch";

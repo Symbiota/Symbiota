@@ -62,12 +62,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 	$lastBarcode = !empty($occManager->getBarcode($lastBarcode)) ? ($occManager->getBarcode($lastBarcode)) : 0;
 	$lastIndex = count($imgIDs) - 1;
 	$occData = array();
+	$lastEditImgId = $occManager->getlastEdit($selectedBatchID);
+	$lastEditBarcode = !empty($occManager->getBarcode($lastEditImgId)) ? ($occManager->getBarcode($lastEditImgId)) : 0;
+	$lastEditIndex = $occManager->getImgIndex($lastEditImgId) - 1;
 	// occData is a hashtable, which has imgid as key, and occid as value
 	foreach ($imgIDs as $imgID) {
         $occData[$imgID] = $occManager->getOneOccID($imgID);
     }
 	$firstOccId = !empty($occData[$firstImgId]) ? ($occData[$firstImgId]) : 0;
 	$lastOccId = !empty($occData[$lastImgId]) ? ($occData[$lastImgId]) : 0;
+	$lastEditOccId = !empty($occData[$lastEditImgId]) ? ($occData[$lastEditImgId]) : 0;
 }
 
 ?>
@@ -141,8 +145,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             <div style="margin-bottom:15px;">
 								<h4>Work On batch: <?php echo($selectedBatchID) ?></h4>
 								<button type="button" name="first" onclick="return navigateToRecordNew(<?php echo ($crowdSourceMode).', '.($goToMode).', '.($collid).', '.($selectedBatchID).', '.($firstImgId).', '.($firstIndex).', '.($firstBarcode).', '.($firstOccId).', '.($firstIndex) ; ?>)"><?php echo $LANG['START_FROM']; ?> first.</button>
-                                <button type="button" name="last"  onclick="return navigateToRecordNew(<?php echo ($crowdSourceMode).', '.($goToMode).', '.($collid).', '.($selectedBatchID).', '.($lastImgId).', '.($lastIndex).', '.($lastBarcode).', '.($lastOccId).', '.($lastIndex); ?>)"><?php echo $LANG['START_FROM']; ?> last.</button>
-								<button type="button" name="lastView"><?php echo $LANG['START_FROM']; ?> last edit.</button>
+                                <button type="button" name="last" onclick="return navigateToRecordNew(<?php echo ($crowdSourceMode).', '.($goToMode).', '.($collid).', '.($selectedBatchID).', '.($lastImgId).', '.($lastIndex).', '.($lastBarcode).', '.($lastOccId).', '.($lastIndex); ?>)"><?php echo $LANG['START_FROM']; ?> last.</button>
+								<button type="button" name="lastView" onclick="return navigateToRecordNew(<?php echo ($crowdSourceMode).', '.($goToMode).', '.($collid).', '.($selectedBatchID).', '.($lastEditImgId).', '.($lastEditIndex).', '.($lastEditBarcode).', '.($lastEditOccId).', '.($lastEditIndex); ?>)"><?php echo $LANG['START_FROM']; ?> last edit.</button>
                             </div>
 							<div>
 								<b><?php echo $LANG['WORK_ON_BATCH']; ?></b>
