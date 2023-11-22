@@ -40,7 +40,7 @@
             echo '<div class="collectionname">' . $colName . '</div><div class="collectioncode">' . $codeStr . '</div>';
             ?>
             <a href='<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>' target="_blank">
-                <?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info...'); ?>
+                <?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'more info...'); ?>
             </a>
         </div>
     </div>

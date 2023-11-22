@@ -1,7 +1,6 @@
 <div class="specimen-header-margin">
 	<h2><?php echo $LANG['SPECIMEN_COLLECTIONS'] ?></h2>
 </div>
-<form name="collform1" action="harvestparams.php" method="post" onsubmit="return verifyCollForm(this)">
 	<div class="select-deselect-input">
 		<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" checked />
 		<label for="dballcb">
@@ -56,4 +55,3 @@
 		<?php
 		}
 	?>
-</form>

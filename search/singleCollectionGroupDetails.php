@@ -18,7 +18,7 @@ $idStr = $collCnt . '-' . $catId;
             echo '<img src="'.$catIcon.'" style="border:0px;width:30px;height:30px;" />';
         }
         ?>
-    </div>
+        </div>
     <?php
     }
     ?>

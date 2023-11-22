@@ -1,0 +1,1801 @@
+
+<html>
+
+<head>
+	<title>Symbiota-dev Sample Search</title>
+	<!-- Responsive viewport -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Symbiota styles -->
+<link href="/Symbiota/css/v202209/symbiota/normalize.slim.css" type="text/css" rel="stylesheet">
+<link href="/Symbiota/css/v202209/symbiota/main.css" type="text/css" rel="stylesheet">
+<script src="/Symbiota/js/symb/lang.js" type="text/javascript"></script>
+<script src="/Symbiota/js/symb/accessibilityUtils.js" type="text/javascript"></script>
+            <link href="/Symbiota/css/v202209/symbiota/accessibility-compliant.css?ver=6.css" type="text/css" rel="stylesheet" data-accessibility-link="accessibility-css-link" disabled >
+            <link href="/Symbiota/css/v202209/symbiota/condensed.css?ver=6.css" type="text/css" rel="stylesheet" data-accessibility-link="accessibility-css-link" >
+            <link href="/Symbiota/search/css/main.css?ver=1" type="text/css" rel="stylesheet" /><link href="/Symbiota/search/css/app.css" type="text/css" rel="stylesheet" /><link href="/Symbiota/search/css/tables.css" type="text/css" rel="stylesheet" /><link href="/Symbiota/css/v202209/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />	<script src="js/jquery-3.2.1.min.js" type="text/javascript"></script>
+	<script>
+		const clientRoot = '/Symbiota';
+	</script>
+		<!-- Search-specific styles -->
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+	
+<div class="header-wrapper">
+	<header>
+		<div class="top-wrapper">
+			<a class="skip-link" href="#end-nav">Skip Navigation</a>
+			<nav class="top-login" aria-label="horizontal-nav">
+									<div class="welcome-text">
+						Welcome mfisher!
+					</div>
+					<span style="white-space: nowrap; padding: 0.8rem;" class="button button-tertiary">
+						<a class="accessibility-button" onclick="toggleAccessibilityStyles('/Symbiota/includes/', '/Symbiota/css/v202209', 'Condensed Mode', 'Accessibility Mode')" id="accessibility-button" data-accessibility="accessibility-button" >Accessibility Mode</a>
+					</span>
+					<span style="white-space: nowrap; padding: 0.8rem;" class="button button-tertiary">
+						<a style="font-size: 1.1em;" href="/Symbiota/profile/viewprofile.php">My Profile</a>
+					</span>
+					<span style="white-space: nowrap; padding: 0.8rem;" class="button button-secondary">
+						<a style="font-size: 1.1em;" href="/Symbiota/profile/index.php?submit=logout">Sign Out</a>
+					</span>
+								</nav>
+			<div class="top-brand">
+				<a href="https://symbiota.org">
+					<div class="image-container">
+						<img src="/Symbiota/images/layout/logo_symbiota.png" alt="Symbiota logo">
+					</div>
+				</a>
+				<div class="brand-name">
+					<h1>Symbiota Brand New Portal</h1>
+					<h2>Redesigned by the Symbiota Support Hub</h2>
+				</div>
+			</div>
+		</div>
+		<div class="menu-wrapper">
+			<!-- Hamburger icon -->
+			<input class="side-menu" type="checkbox" id="side-menu" name="side-menu" />
+			<label class="hamb hamb-line hamb-label" for="side-menu" tabindex="0">☰</label>
+			<!-- Menu -->
+			<nav class="top-menu" aria-label="hamburger-nav">
+				<ul class="menu">
+					<li>
+						<a href="/Symbiota/index.php">
+							Home						</a>
+					</li>
+					<li>
+						<a href="/Symbiota/collections/index.php">
+							Collections						</a>
+					</li>
+					<li>
+						<a href="/Symbiota/collections/map/index.php" target="_blank" rel="noopener noreferrer">
+							Map Search						</a>
+					</li>
+					<li>
+						<a href="/Symbiota/checklists/index.php">
+							Species Checklists						</a>
+					</li>
+					<li>
+						<a href="/Symbiota/imagelib/search.php">
+							Images						</a>
+					</li>
+					<li>
+						<a href="/Symbiota/includes/usagepolicy.php">
+							Data Use						</a>
+					</li>
+					<li>
+						<a href="https://symbiota.org/docs" target="_blank" rel="noopener noreferrer">
+							Symbiota Help						</a>
+					</li>
+					<li>
+						<a href='/Symbiota/sitemap.php'>
+							Sitemap						</a>
+					</li>
+					<li>
+						<label for="language-selection">Select Language: </label>
+						<select oninput="setLanguage(this)" id="language-selection" name="language-selection">
+							<option value="en">English</option>
+							<option value="es" >Espa&ntilde;ol</option>
+							<option value="fr" >Français</option>
+						</select>
+					</li>
+				</ul>
+			</nav>
+		</div>
+		<div id="end-nav"></div>
+	</header>
+</div>	<!-- This is inner text! -->
+	<div id="innertext" class="inner-search">
+		<h1>Sample Search</h1>
+		<div id="error-msgs" class="errors"></div>
+		<form id="params-form">
+			<!-- Criteria forms -->
+			
+			<div class="accordions">
+				<!-- Taxonomy -->
+				<section>
+					<!-- Accordion selector -->
+					<input type="checkbox" id="taxonomy" class="accordion-selector" checked=true />
+
+					<!-- Accordion header -->
+					<label for="taxonomy" class="accordion-header">Taxonomy</label>
+
+					<!-- Taxonomy -->
+					<div id="search-form-taxonomy" class="content">
+						<div id="taxa-text" class="input-text-container">
+							<label for="taxa" class="input-text--outlined">
+								<input type="text" name="taxa" id="taxa" data-chip="Taxa">
+								<span data-label="Taxon"></span></label>
+							<span class="assistive-text">Type at least 4 characters for quick suggestions. Separate multiple with commas.</span>
+						</div>
+						<div class="select-container">
+							<select name="taxontype">
+								<option value="1">Any name</option>
+								<option value="2">Scientific name</option>
+								<option value="3">Family</option>
+								<option value="4">Taxonomic group</option>
+								<option value="5">Common name</option>
+							</select>
+							<span class="assistive-text">Taxon type.</span>
+						</div>
+						<div>
+							<input type="checkbox" name="usethes" id="usethes" data-chip="Include Synonyms" value="1" checked>
+							<span class="ml-1">Include Synonyms</span>
+						</div>
+					</div>
+				</section>
+
+				<!-- Colections -->
+				<section>
+					<!-- Accordion selector -->
+					<input type="checkbox" id="collections" class="accordion-selector" checked=true />
+					<!-- Accordion header -->
+					<label for="collections" class="accordion-header">Collections</label>
+					<!-- Accordion content -->
+					<div class="content">
+						<div id="search-form-colls">
+							<!-- Open Collections modal -->
+							<div id="specobsdiv">
+								<div class="specimen-header-margin">
+	<h2>Specimen Collections</h2>
+</div>
+<form name="collform1" action="harvestparams.php" method="post" onsubmit="return verifyCollForm(this)">
+	<div class="select-deselect-input">
+		<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" checked />
+		<label for="dballcb">
+			Select/Deselect <a href="misc/collprofiles.php">All Collections</a>		</label>
+	</div>
+				<div>
+					<section class="gridlike-form">
+				<section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="">
+            </div>
+        <div>
+        <input aria-label="Algae(Specimens)-"   data-role="none" id="cat-0--Specimens--Input" name="cat[]" value="5" type="checkbox" onclick="selectAllCat(this,'cat-0-')" checked />Algae(Specimens)    </div>
+    <div>
+        <a href="#" class="condense-expand-flex" onclick="toggleCat('0-');return false;">
+        <div class="condense-expand-button-set">
+            <img id="plus-0-" src="/Symbiota/images/plus_sm.png" style="display:none;" alt="plus sign to expand menu" />
+            <img id="minus-0-" src="/Symbiota/images/minus_sm.png" alt="minus sign to condense menu" />
+            <p id="ptext-0-" style="">
+                Condense            </p>
+            <p id="mtext-0-" style="display:none;" >
+                Expand            </p>
+        </div>
+        </a>
+    </div>
+</section>
+<section id="cat-0-" class="gridlike-form-row bottom-breathing-room-relative">
+    <div>
+        <fieldset>
+            <legend>
+                Algae 
+                (Specimen)
+            </legend>
+            <section class="gridlike-form">
+                <section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=70'>
+                    <img src="https://cch2.org/portal/content/collicon/cata-algae.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection CATA - Catalina Isla' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 70" id="coll-70-0-" data-role="none" name="db[]" value="70" type="checkbox" class="cat-0-" onclick="unselectCat('cat-0--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">CATA - Catalina Island Conservancy Herbarium Algae</div><div class="collectioncode"> (CATA-Algae)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=70' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=99'>
+                    <img src="https://cch2.org/portal/content/collicon/cda.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection CDA - California Dep' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 99" id="coll-99-0-" data-role="none" name="db[]" value="99" type="checkbox" class="cat-0-" onclick="unselectCat('cat-0--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">CDA - California Department of Food and Agriculture - Algae</div><div class="collectioncode"> (CDA-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=99' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=85'>
+                    <img src="https://cch2.org/portal/content/collicon/sdsu.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection SDSU - Algae of the ' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 85" id="coll-85-0-" data-role="none" name="db[]" value="85" type="checkbox" class="cat-0-" onclick="unselectCat('cat-0--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">SDSU - Algae of the San Diego State University Herbarium</div><div class="collectioncode"> (SDSU-Algae)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=85' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=84'>
+                    <img src="https://www.cch2.org/portal/content/collicon/ucsb-algae.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection UCSB: Algae - Univer' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 84" id="coll-84-0-" data-role="none" name="db[]" value="84" type="checkbox" class="cat-0-" onclick="unselectCat('cat-0--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">UCSB: Algae - University of California Santa Barbara Algae Collection</div><div class="collectioncode"> (UCSB-Algae)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=84' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section>            </section>
+        </fieldset>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="">
+            </div>
+        <div>
+        <input aria-label="Bryophytes(Specimens)-"   data-role="none" id="cat-1--Specimens--Input" name="cat[]" value="4" type="checkbox" onclick="selectAllCat(this,'cat-1-')" checked />Bryophytes(Specimens)    </div>
+    <div>
+        <a href="#" class="condense-expand-flex" onclick="toggleCat('1-');return false;">
+        <div class="condense-expand-button-set">
+            <img id="plus-1-" src="/Symbiota/images/plus_sm.png" style="display:none;" alt="plus sign to expand menu" />
+            <img id="minus-1-" src="/Symbiota/images/minus_sm.png" alt="minus sign to condense menu" />
+            <p id="ptext-1-" style="">
+                Condense            </p>
+            <p id="mtext-1-" style="display:none;" >
+                Expand            </p>
+        </div>
+        </a>
+    </div>
+</section>
+<section id="cat-1-" class="gridlike-form-row bottom-breathing-room-relative">
+    <div>
+        <fieldset>
+            <legend>
+                Bryophytes 
+                (Specimen)
+            </legend>
+            <section class="gridlike-form">
+                <section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=67'>
+                    <img src="https://cch2.org/portal/content/collicon/cas-bot-bc.gif" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection CAS - California Aca' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 67" id="coll-67-1-" data-role="none" name="db[]" value="67" type="checkbox" class="cat-1-" onclick="unselectCat('cat-1--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">CAS - California Academy of Sciences Bryophytes</div><div class="collectioncode"> (CAS-Bryophytes)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=67' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=65'>
+                    <img src="https://cch2.org/portal/content/collicon/chsc.gif" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection CHSC - CSU Chico, Ch' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 65" id="coll-65-1-" data-role="none" name="db[]" value="65" type="checkbox" class="cat-1-" onclick="unselectCat('cat-1--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">CHSC - CSU Chico, Chico State Herbarium - Bryophytes</div><div class="collectioncode"> (CHSC-Bryophytes)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=65' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=68'>
+                    <img src="https://cch2.org/portal/content/collicon/rsa-bryophytes.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection RSA - California Bot' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 68" id="coll-68-1-" data-role="none" name="db[]" value="68" type="checkbox" class="cat-1-" onclick="unselectCat('cat-1--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">RSA - California Botanic Garden - Bryophytes</div><div class="collectioncode"> (RSA-Bryophytes)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=68' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=94'>
+                    <img src="" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection UC - University of C' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 94" id="coll-94-1-" data-role="none" name="db[]" value="94" type="checkbox" class="cat-1-" onclick="unselectCat('cat-1--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">UC - University of California, Berkeley - Bryophytes</div><div class="collectioncode"> (UC-Bryophytes)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=94' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section>            </section>
+        </fieldset>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="">
+            </div>
+        <div>
+        <input aria-label="Lichens(Specimens)-"   data-role="none" id="cat-2--Specimens--Input" name="cat[]" value="3" type="checkbox" onclick="selectAllCat(this,'cat-2-')" checked />Lichens(Specimens)    </div>
+    <div>
+        <a href="#" class="condense-expand-flex" onclick="toggleCat('2-');return false;">
+        <div class="condense-expand-button-set">
+            <img id="plus-2-" src="/Symbiota/images/plus_sm.png" style="display:none;" alt="plus sign to expand menu" />
+            <img id="minus-2-" src="/Symbiota/images/minus_sm.png" alt="minus sign to condense menu" />
+            <p id="ptext-2-" style="">
+                Condense            </p>
+            <p id="mtext-2-" style="display:none;" >
+                Expand            </p>
+        </div>
+        </a>
+    </div>
+</section>
+<section id="cat-2-" class="gridlike-form-row bottom-breathing-room-relative">
+    <div>
+        <fieldset>
+            <legend>
+                Lichens 
+                (Specimen)
+            </legend>
+            <section class="gridlike-form">
+                <section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=63'>
+                    <img src="https://cch2.org/portal/content/collicon/chsc.gif" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection CHSC - CSU Chico, Ch' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 63" id="coll-63-2-" data-role="none" name="db[]" value="63" type="checkbox" class="cat-2-" onclick="unselectCat('cat-2--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">CHSC - CSU Chico, Chico State Herbarium - Lichens</div><div class="collectioncode"> (CHSC-Lichens)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=63' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=62'>
+                    <img src="https://swbiodiversity.org/seinet/content/collicon/ucr.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection UCR - University of ' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 62" id="coll-62-2-" data-role="none" name="db[]" value="62" type="checkbox" class="cat-2-" onclick="unselectCat('cat-2--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">UCR - University of California, Riverside Herbarium - Lichens</div><div class="collectioncode"> (UCR-Lichens)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=62' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section>            </section>
+        </fieldset>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="">
+            </div>
+        <div>
+        <input aria-label="Vascular Plants(Specimens)-"   data-role="none" id="cat-3--Specimens--Input" name="cat[]" value="1" type="checkbox" onclick="selectAllCat(this,'cat-3-')" checked />Vascular Plants(Specimens)    </div>
+    <div>
+        <a href="#" class="condense-expand-flex" onclick="toggleCat('3-');return false;">
+        <div class="condense-expand-button-set">
+            <img id="plus-3-" src="/Symbiota/images/plus_sm.png" style="display:none;" alt="plus sign to expand menu" />
+            <img id="minus-3-" src="/Symbiota/images/minus_sm.png" alt="minus sign to condense menu" />
+            <p id="ptext-3-" style="">
+                Condense            </p>
+            <p id="mtext-3-" style="display:none;" >
+                Expand            </p>
+        </div>
+        </a>
+    </div>
+</section>
+<section id="cat-3-" class="gridlike-form-row bottom-breathing-room-relative">
+    <div>
+        <fieldset>
+            <legend>
+                Vascular Plants 
+                (Specimen)
+            </legend>
+            <section class="gridlike-form">
+                <section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=58'>
+                    <img src="" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection BFRS - Blodgett Fore' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 58" id="coll-58-3-" data-role="none" name="db[]" value="58" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">BFRS - Blodgett Forest Research Station</div><div class="collectioncode"> (BFRS-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=58' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=2'>
+                    <img src="https://cch2.org/portal/content/collicon/blmar.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection BLMAR - BLM Arcata F' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 2" id="coll-2-3-" data-role="none" name="db[]" value="2" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">BLMAR - BLM Arcata Field Office Herbarium</div><div class="collectioncode"> (BLMAR-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=2' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=14'>
+                    <img src="https://swbiodiversity.org/seinet/content/collicon/blm-slv.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection BLMRD - BLM Herbariu' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 14" id="coll-14-3-" data-role="none" name="db[]" value="14" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">BLMRD - BLM Herbarium - Redding FO</div><div class="collectioncode"> (BLMRD-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=14' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=98'>
+                    <img src="https://www.cch2.org/portal/content/collicon/borr.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection BORR - UC Berkeley, ' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 98" id="coll-98-3-" data-role="none" name="db[]" value="98" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">BORR - UC Berkeley, Blue Oak Ranch Reserve</div><div class="collectioncode"> (BORR-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=98' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=48'>
+                    <img src="https://cch2.org/portal/content/collicon/bsca.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection BSCA - Colorado Dese' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 48" id="coll-48-3-" data-role="none" name="db[]" value="48" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">BSCA - Colorado Desert District, California Department of Parks and Recreation</div><div class="collectioncode"> (BSCA-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=48' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=1'>
+                    <img src="https://cch2.org/portal/content/collicon/cas-bot-bc.gif" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection CAS - California Aca' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 1" id="coll-1-3-" data-role="none" name="db[]" value="1" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">CAS - California Academy of Sciences Vascular Plants</div><div class="collectioncode"> (CAS-BOT-BC)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=1' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=52'>
+                    <img src="https://cch2.org/portal/content/collicon/cata-vascular.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection CATA - Catalina Isla' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 52" id="coll-52-3-" data-role="none" name="db[]" value="52" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">CATA - Catalina Island Conservancy Herbarium Vascular Plants</div><div class="collectioncode"> (CATA-Vascular)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=52' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=50'>
+                    <img src="https://cch2.org/portal/content/collicon/cda.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection CDA - California Dep' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 50" id="coll-50-3-" data-role="none" name="db[]" value="50" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">CDA - California Department of Food and Agriculture</div><div class="collectioncode"> (CDA-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=50' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=44'>
+                    <img src="https://cch2.org/portal/content/collicon/chsc.gif" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection CHSC - CSU Chico, Ch' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 44" id="coll-44-3-" data-role="none" name="db[]" value="44" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">CHSC - CSU Chico, Chico State Herbarium - Vascular Plants</div><div class="collectioncode"> (CHSC-VascularPlants)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=44' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=61'>
+                    <img src="https://cch2.org/portal/content/collicon/clark.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection CLARK - Riverside Me' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 61" id="coll-61-3-" data-role="none" name="db[]" value="61" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">CLARK - Riverside Metropolitan Museum, Clark Herbarium</div><div class="collectioncode"> (CLARK-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=61' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=42'>
+                    <img src="https://cch2.org/portal/content/collicon/csla.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection CSLA - Cal State LA ' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 42" id="coll-42-3-" data-role="none" name="db[]" value="42" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">CSLA - Cal State LA Herbarium</div><div class="collectioncode"> (CSLA-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=42' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=47'>
+                    <img src="https://cch2.org/portal/content/collicon/csusb.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection CSUSB - California S' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 47" id="coll-47-3-" data-role="none" name="db[]" value="47" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">CSUSB - California State University San Bernardino</div><div class="collectioncode"> (CSUSB-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=47' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=39'>
+                    <img src="https://cch2.org/portal/content/collicon/dav.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection DAV - UC Davis Herba' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 39" id="coll-39-3-" data-role="none" name="db[]" value="39" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">DAV - UC Davis Herbarium</div><div class="collectioncode"> (DAV-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=39' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=77'>
+                    <img src="https://cch2.org/portal/content/collicon/elh.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection ELH - BLM, Eagle Lak' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 77" id="coll-77-3-" data-role="none" name="db[]" value="77" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">ELH - BLM, Eagle Lake Field Office Herbarium</div><div class="collectioncode"> (ELH-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=77' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=38'>
+                    <img src="https://cch2.org/portal/content/collicon/fsc.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection FSC - Fresno State H' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 38" id="coll-38-3-" data-role="none" name="db[]" value="38" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">FSC - Fresno State Herbarium</div><div class="collectioncode"> (FSC-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=38' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=73'>
+                    <img src="https://cch2.org/portal/content/collicon/gdrc.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection GDRC - Green Diamond' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 73" id="coll-73-3-" data-role="none" name="db[]" value="73" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">GDRC - Green Diamond Resource Co.</div><div class="collectioncode"> (GDRC-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=73' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=9'>
+                    <img src="https://swbiodiversity.org/seinet/content/collicon/gmdrc.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection GMDRC - Sweeney Gran' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 9" id="coll-9-3-" data-role="none" name="db[]" value="9" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">GMDRC - Sweeney Granite Mountains Desert Research Center</div><div class="collectioncode"> (GMDRC-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=9' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=95'>
+                    <img src="" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection Harvard University H' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 95" id="coll-95-3-" data-role="none" name="db[]" value="95" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">Harvard University Herbaria: Vascular Plants (California, Oregon, Nevada, Baja California)</div><div class="collectioncode"> (Harvard-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=95' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=5'>
+                    <img src="https://swbiodiversity.org/seinet/content/collicon/hnt.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection HNT - Huntington Bot' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 5" id="coll-5-3-" data-role="none" name="db[]" value="5" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">HNT - Huntington Botanical Gardens Herbarium</div><div class="collectioncode"> (HNT-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=5' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=59'>
+                    <img src="https://cch2.org/portal/content/collicon/hrec.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection HREC - Hopland Resea' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 59" id="coll-59-3-" data-role="none" name="db[]" value="59" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">HREC - Hopland Research and Extension Center</div><div class="collectioncode"> (HREC-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=59' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=45'>
+                    <img src="https://cch2.org/portal/content/collicon/hsc.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection HSC - Humboldt State' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 45" id="coll-45-3-" data-role="none" name="db[]" value="45" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">HSC - Humboldt State University Vascular Plant Herbarium</div><div class="collectioncode"> (HSC-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=45' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=55'>
+                    <img src="https://www.cch2.org/portal/content/collicon/inf.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection INF - Inyo National ' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 55" id="coll-55-3-" data-role="none" name="db[]" value="55" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">INF - Inyo National Forest Herbarium, Bishop</div><div class="collectioncode"> (INF-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=55' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=37'>
+                    <img src="https://cch2.org/portal/content/collicon/irvc.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection IRVC - University of' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 37" id="coll-37-3-" data-role="none" name="db[]" value="37" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">IRVC - University of California, Irvine Herbarium</div><div class="collectioncode"> (IRVC-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=37' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=54'>
+                    <img src="https://cch2.org/portal/content/collicon/jotr.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection JOTR - Joshua Tree N' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 54" id="coll-54-3-" data-role="none" name="db[]" value="54" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">JOTR - Joshua Tree National Park</div><div class="collectioncode"> (JOTR-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=54' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=53'>
+                    <img src="https://www.cch2.org/portal/content/collicon/jroh.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection JROH - Jasper Ridge ' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 53" id="coll-53-3-" data-role="none" name="db[]" value="53" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">JROH - Jasper Ridge Biological Preserve, Stanford University</div><div class="collectioncode"> (JROH-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=53' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=100'>
+                    <img src="https://swbiodiversity.org/seinet/content/collicon/knfy.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection KNFHC - Klamath Nati' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 100" id="coll-100-3-" data-role="none" name="db[]" value="100" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">KNFHC - Klamath National Forest Happy Camp/Oak Knoll Herbarium</div><div class="collectioncode"> (KNFHC-Happy Camp)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=100' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=101'>
+                    <img src="https://swbiodiversity.org/seinet/content/collicon/knfy.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection KNFSC - Klamath Nati' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 101" id="coll-101-3-" data-role="none" name="db[]" value="101" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">KNFSC - Klamath National Forest Scott-Salmon District</div><div class="collectioncode"> (KNFSC-Scott-Salmon)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=101' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=10'>
+                    <img src="https://swbiodiversity.org/seinet/content/collicon/knfy.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection KNFY - Klamath Natio' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 10" id="coll-10-3-" data-role="none" name="db[]" value="10" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">KNFY - Klamath National Forest Herbarium</div><div class="collectioncode"> (KNFY-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=10' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=34'>
+                    <img src="https://cch2.org/portal/content/collicon/la.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection LA - University of C' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 34" id="coll-34-3-" data-role="none" name="db[]" value="34" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">LA - University of California, Los Angeles Herbarium</div><div class="collectioncode"> (LA-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=34' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=97'>
+                    <img src="https://cch2.org/portal/content/collicon/lasca.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection LASCA - Los Angeles ' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 97" id="coll-97-3-" data-role="none" name="db[]" value="97" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">LASCA - Los Angeles County Arboretum & Botanic Garden Herbarium</div><div class="collectioncode"> (LASCA-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=97' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=19'>
+                    <img src="https://swbiodiversity.org/seinet/content/collicon/lob.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection LOB - California Sta' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 19" id="coll-19-3-" data-role="none" name="db[]" value="19" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">LOB - California State University, Long Beach Herbarium</div><div class="collectioncode"> (LOB-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=19' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=86'>
+                    <img src="" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection LVNP - Lassen Volcan' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 86" id="coll-86-3-" data-role="none" name="db[]" value="86" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">LVNP - Lassen Volcanic National Park, U.S. Department of the Interior, National Park Service</div><div class="collectioncode"> (LVNP-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=86' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=36'>
+                    <img src="https://cch2.org/portal/content/collicon/macf.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection MACF - MacFadden Her' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 36" id="coll-36-3-" data-role="none" name="db[]" value="36" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">MACF - MacFadden Herbarium, California State University Fullerton</div><div class="collectioncode"> (MACF-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=36' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=71'>
+                    <img src="https://cch2.org/portal/content/collicon/mccc.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection MCCC - Mendocino Col' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 71" id="coll-71-3-" data-role="none" name="db[]" value="71" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">MCCC - Mendocino College Coast Center Herbarium</div><div class="collectioncode"> (MCCC-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=71' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=96'>
+                    <img src="https://cch2.org/portal/content/collicon/min.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection MIN - Bell Museum He' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 96" id="coll-96-3-" data-role="none" name="db[]" value="96" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">MIN - Bell Museum Herbarium, University of Minnesota</div><div class="collectioncode"> (MIN-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=96' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=74'>
+                    <img src="https://cch2.org/portal/content/collicon/ncc.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection NCC - Sonoma State U' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 74" id="coll-74-3-" data-role="none" name="db[]" value="74" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">NCC - Sonoma State University Herbarium</div><div class="collectioncode"> (NCC-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=74' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=12'>
+                    <img src="https://cch2.org/portal/content/collicon/obi.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection OBI - Robert F. Hoov' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 12" id="coll-12-3-" data-role="none" name="db[]" value="12" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">OBI - Robert F. Hoover Herbarium, Cal Poly State University</div><div class="collectioncode"> (OBI-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=12' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=81'>
+                    <img src="" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection OSC - Oregon State U' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 81" id="coll-81-3-" data-role="none" name="db[]" value="81" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">OSC - Oregon State University Vascular Plant Collection</div><div class="collectioncode"> (OSC-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=81' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=49'>
+                    <img src="" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection PASA - Pasadena City' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 49" id="coll-49-3-" data-role="none" name="db[]" value="49" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">PASA - Pasadena City College Herbarium</div><div class="collectioncode"> (PASA-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=49' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=56'>
+                    <img src="https://cch2.org/portal/content/collicon/pgm.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection PGM - Pacific Grove ' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 56" id="coll-56-3-" data-role="none" name="db[]" value="56" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">PGM - Pacific Grove Museum of Natural History</div><div class="collectioncode"> (PGM-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=56' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=104'>
+                    <img src="https://cch2.org/portal/content/collicon/pinn.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection PINN - Pinnacles Nat' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 104" id="coll-104-3-" data-role="none" name="db[]" value="104" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">PINN - Pinnacles National Park</div><div class="collectioncode"> (PINN-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=104' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=76'>
+                    <img src="https://cch2.org/portal/content/collicon/ppwd.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection PPWD - Stephen J. Ba' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 76" id="coll-76-3-" data-role="none" name="db[]" value="76" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">PPWD - Stephen J. Barnhart Herbarium at Pepperwood Preserve</div><div class="collectioncode"> (PPWD-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=76' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=4'>
+                    <img src="https://swbiodiversity.org/seinet/content/collicon/pua.gif" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection PUA - Pacific Union ' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 4" id="coll-4-3-" data-role="none" name="db[]" value="4" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">PUA - Pacific Union College Herbarium</div><div class="collectioncode"> (PUA-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=4' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=89'>
+                    <img src="https://swbiodiversity.org/seinet/content/collicon/reno.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection RENO - University of' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 89" id="coll-89-3-" data-role="none" name="db[]" value="89" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">RENO - University of Nevada, Reno Herbarium</div><div class="collectioncode"> (RENO-V)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=89' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=17'>
+                    <img src="https://cch2.org/portal/content/collicon/rsa-vascularplants.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection RSA - California Bot' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 17" id="coll-17-3-" data-role="none" name="db[]" value="17" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">RSA - California Botanic Garden Herbarium</div><div class="collectioncode"> (RSA-VascularPlants)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=17' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=105'>
+                    <img src="https://cch2.org/portal/content/collicon/rsa-vascularplants.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection RSA - California Bot' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 105" id="coll-105-3-" data-role="none" name="db[]" value="105" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">RSA - California Botanic Garden Xylarium</div><div class="collectioncode"> (RSA-Wood)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=105' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=51'>
+                    <img src="https://cch2.org/portal/content/collicon/sact.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection SACT - California St' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 51" id="coll-51-3-" data-role="none" name="db[]" value="51" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">SACT - California State University, Sacramento</div><div class="collectioncode"> (SACT-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=51' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=16'>
+                    <img src="https://cch2.org/portal/content/collicon/sbbg.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection SBBG - Clifton Smith' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 16" id="coll-16-3-" data-role="none" name="db[]" value="16" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">SBBG - Clifton Smith Herbarium, Santa Barbara Botanic Garden</div><div class="collectioncode"> (SBBG-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=16' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=102'>
+                    <img src="" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection SCDA - Siskiyou Coun' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 102" id="coll-102-3-" data-role="none" name="db[]" value="102" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">SCDA - Siskiyou County Dept. of Agriculture Herbarium</div><div class="collectioncode"> (SCDA-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=102' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=7'>
+                    <img src="https://sernecportal.org/portal/content/collicon/scfs.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection SCFS - Sagehen Herba' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 7" id="coll-7-3-" data-role="none" name="db[]" value="7" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">SCFS - Sagehen Herbarium</div><div class="collectioncode"> (SCFS-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=7' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=43'>
+                    <img src="https://cch2.org/portal/content/collicon/sd.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection SD - SD Herbarium, S' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 43" id="coll-43-3-" data-role="none" name="db[]" value="43" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">SD - SD Herbarium, San Diego Natural History Museum</div><div class="collectioncode"> (SD-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=43' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=106'>
+                    <img src="https://cch2.org/portal/content/collicon/sdm.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection SDM - San Diego Mesa' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 106" id="coll-106-3-" data-role="none" name="db[]" value="106" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">SDM - San Diego Mesa College</div><div class="collectioncode"> (SDM-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=106' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=6'>
+                    <img src="https://cch2.org/portal/content/collicon/sdsu.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection SDSU - San Diego Sta' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 6" id="coll-6-3-" data-role="none" name="db[]" value="6" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">SDSU - San Diego State University Herbarium</div><div class="collectioncode"> (SDSU-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=6' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=40'>
+                    <img src="https://www.cch2.org/portal/content/collicon/sfsu.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection SFSU - Vascular Plan' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 40" id="coll-40-3-" data-role="none" name="db[]" value="40" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">SFSU - Vascular Plants of the Harry D. Thiers Herbarium at San Francisco State University</div><div class="collectioncode"> (SFSU-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=40' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=41'>
+                    <img src="https://cch2.org/portal/content/collicon/sfv.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection SFV - California Sta' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 41" id="coll-41-3-" data-role="none" name="db[]" value="41" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">SFV - California State University, Northridge</div><div class="collectioncode"> (SFV-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=41' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=69'>
+                    <img src="https://cch2.org/portal/content/collicon/shtc.png" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection SHTC - CSU Stanislau' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 69" id="coll-69-3-" data-role="none" name="db[]" value="69" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">SHTC - CSU Stanislaus Herbarium</div><div class="collectioncode"> (SHTC-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=69' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=18'>
+                    <img src="https://swbiodiversity.org/seinet/content/collicon/sjsu.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection SJSU - Carl W. Shars' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 18" id="coll-18-3-" data-role="none" name="db[]" value="18" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">SJSU - Carl W. Sharsmith Herbarium, San Jose State University</div><div class="collectioncode"> (SJSU-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=18' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=82'>
+                    <img src="" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection SOC - Southern Orego' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 82" id="coll-82-3-" data-role="none" name="db[]" value="82" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">SOC - Southern Oregon University Herbarium</div><div class="collectioncode"> (SOC-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=82' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=15'>
+                    <img src="https://nansh.org/portal/content/collicon/spif.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection SPIF - Sierra Pacifi' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 15" id="coll-15-3-" data-role="none" name="db[]" value="15" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">SPIF - Sierra Pacific Industries-Forestry</div><div class="collectioncode"> (SPIF-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=15' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=87'>
+                    <img src="" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection STNF - Shasta-Trinit' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 87" id="coll-87-3-" data-role="none" name="db[]" value="87" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">STNF - Shasta-Trinity National Forest Herbarium</div><div class="collectioncode"> (STNF-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=87' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=75'>
+                    <img src="" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection THRI - Herbarium of ' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 75" id="coll-75-3-" data-role="none" name="db[]" value="75" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">THRI - Herbarium of Sequoia and Kings Canyon National Parks</div><div class="collectioncode"> (THRI-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=75' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=46'>
+                    <img src="https://cch2.org/portal/content/collicon/ucjeps.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection UCJEPS - University ' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 46" id="coll-46-3-" data-role="none" name="db[]" value="46" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">UCJEPS - University and Jepson Herbaria, University of California, Berkeley</div><div class="collectioncode"> (UCJEPS-VASC)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=46' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=64'>
+                    <img src="" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection UCJEPS, LA in UC - U' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 64" id="coll-64-3-" data-role="none" name="db[]" value="64" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">UCJEPS, LA in UC - University Herbarium, Epling Collection, University of California, Berkeley</div><div class="collectioncode"> (UCJEPS-LA in UC)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=64' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=3'>
+                    <img src="https://swbiodiversity.org/seinet/content/collicon/ucr.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection UCR - University of ' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 3" id="coll-3-3-" data-role="none" name="db[]" value="3" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">UCR - University of California, Riverside Herbarium - Vascular Plants</div><div class="collectioncode"> (UCR-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=3' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=35'>
+                    <img src="https://cch2.org/portal/content/collicon/ucsb.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection UCSB - University of' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 35" id="coll-35-3-" data-role="none" name="db[]" value="35" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">UCSB - University of California Santa Barbara Herbarium</div><div class="collectioncode"> (UCSB-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=35' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=13'>
+                    <img src="https://nansh.org/portal/content/collicon/ucsc.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection UCSC Herbarium - Ken' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 13" id="coll-13-3-" data-role="none" name="db[]" value="13" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">UCSC Herbarium - Kenneth S. Norris Center for Natural History, University of California Santa Cruz</div><div class="collectioncode"> (UCSC-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=13' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=80'>
+                    <img src="" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection UNLV - University of' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 80" id="coll-80-3-" data-role="none" name="db[]" value="80" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">UNLV - University of Nevada, Las Vegas; Wesley E. Niles Herbarium</div><div class="collectioncode"> (UNLV-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=80' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=91'>
+                    <img src="" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection US - Smithsonian Ins' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 91" id="coll-91-3-" data-role="none" name="db[]" value="91" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">US - Smithsonian Institution, National Museum of Natural History</div><div class="collectioncode"> (US-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=91' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=57'>
+                    <img src="https://cch2.org/portal/content/collicon/vvc.gif" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection VVC - Victor Valley ' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 57" id="coll-57-3-" data-role="none" name="db[]" value="57" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">VVC - Victor Valley College</div><div class="collectioncode"> (VVC-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=57' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=103'>
+                    <img src="" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection WHIS - Whiskeytown N' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 103" id="coll-103-3-" data-role="none" name="db[]" value="103" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">WHIS - Whiskeytown National Recreation Area Herbarium</div><div class="collectioncode"> (WHIS-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=103' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=60'>
+                    <img src="https://cch2.org/portal/content/collicon/ym-yose.jpg" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection YM - Yosemite Nation' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 60" id="coll-60-3-" data-role="none" name="db[]" value="60" type="checkbox" class="cat-3-" onclick="unselectCat('cat-3--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">YM - Yosemite National Park</div><div class="collectioncode"> (YM-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=60' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section>            </section>
+        </fieldset>
+    </div>
+</section>			</section>
+		<div class="specimen-header-margin"><hr/><h2>Observation Collections</h2></div>			<section class="gridlike-form">
+				<section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="">
+            </div>
+        <div>
+        <input aria-label="Vascular Plants(Observations)-"   data-role="none" id="cat-4--Observations--Input" name="cat[]" value="1" type="checkbox" onclick="selectAllCat(this,'cat-4-')" checked />Vascular Plants(Observations)    </div>
+    <div>
+        <a href="#" class="condense-expand-flex" onclick="toggleCat('4-');return false;">
+        <div class="condense-expand-button-set">
+            <img id="plus-4-" src="/Symbiota/images/plus_sm.png" style="display:none;" alt="plus sign to expand menu" />
+            <img id="minus-4-" src="/Symbiota/images/minus_sm.png" alt="minus sign to condense menu" />
+            <p id="ptext-4-" style="">
+                Condense            </p>
+            <p id="mtext-4-" style="display:none;" >
+                Expand            </p>
+        </div>
+        </a>
+    </div>
+</section>
+<section id="cat-4-" class="gridlike-form-row bottom-breathing-room-relative">
+    <div>
+        <fieldset>
+            <legend>
+                Vascular Plants 
+                (Specimen)
+            </legend>
+            <section class="gridlike-form">
+                <section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=92'>
+                    <img src="" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection Dean William Taylor ' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 92" id="coll-92-4-" data-role="none" name="db[]" value="92" type="checkbox" class="cat-4-" onclick="unselectCat('cat-4--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">Dean William Taylor Collections</div><div class="collectioncode"> (DWT-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=92' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=72'>
+                    <img src="" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection Specimens Being Proc' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 72" id="coll-72-4-" data-role="none" name="db[]" value="72" type="checkbox" class="cat-4-" onclick="unselectCat('cat-4--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">Specimens Being Processed</div><div class="collectioncode"> (OBS-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=72' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section><section class="gridlike-form-row bottom-breathing-room-relative">
+            <div class="cat-icon-div">
+                            <a href = '/Symbiota/collections/misc/collprofiles.php?collid=79'>
+                    <img src="" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection Specimens Being Proc' />
+                </a>
+                        </div>
+            <div>
+        <input aria-label="select collection 79" id="coll-79-4-" data-role="none" name="db[]" value="79" type="checkbox" class="cat-4-" onclick="unselectCat('cat-4--Input')" checked />    </div>
+    <div>
+        <div class="collectiontitle">
+            <div class="collectionname">Specimens Being Processed-SDSU</div><div class="collectioncode"> (OBS-SDSU-)</div>            <a href='/Symbiota/collections/misc/collprofiles.php?collid=79' target="_blank">
+                More Info            </a>
+        </div>
+    </div>
+</section>            </section>
+        </fieldset>
+    </div>
+</section>			</section>
+		</form>							
+    </div>
+							
+						</div>
+					</div>
+					<!-- NEON Biorepository Collections Modal -->
+					<div class="modal" id="biorepo-collections-list">
+						<div class="modal-content">
+							<button id="neon-modal-close" class="btn" style="width:auto !important">Accept and close</button>
+							<div id="colls-modal">
+								<div>
+									<h3>Activate a single criterion to filter collections</h3>
+									<label class="tab tab-active"><input type="radio" name="collChoice" value="taxonomic-cat" checked="true"> Taxonomic Group</label>
+									<label class="tab"><input type="radio" name="collChoice" value="neon-theme"> NEON Theme</label>
+									<label class="tab"><input type="radio" name="collChoice" value="sample-type"> Sample Type</label>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				
+				<!-- Sample Properties -->
+				<section>
+					<!-- Accordion selector -->
+					<input type="checkbox" id="sample" class="accordion-selector" checked=true />
+					<!-- Accordion header -->
+					<label for="sample" class="accordion-header">Sample Properties</label>
+					<!-- Accordion content -->
+					<div class="content">
+						<div id="search-form-sample">
+							<div>
+								<div>
+									<input type="checkbox" name="includeothercatnum" id="includeothercatnum" value="1" data-chip="Include other IDs" checked>
+									<label for="includeothercatnum">Include other catalog numbers and GUIds</label>
+								</div>
+								<div class="input-text-container">
+									<label for="" class="input-text--outlined">
+										<input type="text" name="catnum" data-chip="Catalog Number">
+										<span data-label="Catalog Number"></span>
+									</label>
+									<span class="assistive-text">Separate multiple with commas.</span>
+								</div>
+							</div>
+							<div>
+								<div>
+									<input type="checkbox" name="hasimages" value=1 data-chip="Only with images">
+									<label for="hasimages">Limit to specimens with images</label>
+								</div>
+								<div>
+									<input type="checkbox" name="hasgenetic" value=1 data-chip="Only with genetic">
+									<label for="hasgenetic">Limit to specimens with genetic data</label>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				
+				<!-- Locality -->
+				<section>
+					<!-- Accordion selector -->
+					<input type="checkbox" id="locality" name="locality" class="accordion-selector" />
+					<!-- Accordion header -->
+					<label for="locality" class="accordion-header">Locality</label>
+					<!-- Accordion content -->
+					<div class="content">
+						<div id="search-form-locality">
+							<div>
+								<div>
+									<div class="input-text-container">
+										<label for="state" class="input-text--outlined">
+											<input type="text" name="state" id="state" data-chip="State">
+											<span data-label="State"></span>
+										</label>
+										<span class="assistive-text">Separate multiple with commas.</span>
+									</div>
+									<div class="input-text-container">
+										<label for="county" class="input-text--outlined">
+											<input type="text" name="county" id="county" data-chip="County">
+											<span data-label="County"></span>
+										</label>
+										<span class="assistive-text">Separate multiple with commas.</span>
+									</div>
+									<div class="input-text-container">
+										<label for="local" class="input-text--outlined">
+											<input type="text" name="local" id="local" data-chip="Locality">
+											<span data-label="Locality"></span>
+										</label>
+										<span class="assistive-text" style="line-height:1.7em">Separate multiple with commas. Accepts NEON Domain and/or Site names and codes.</span>
+									</div>
+								</div>
+								<div class="grid grid--half">
+									<div class="input-text-container">
+										<label for="elevlow" class="input-text--outlined">
+											<input type="number" step="any" name="elevlow" id="elevlow" data-chip="Min Elevation">
+											<span data-label="Minimum Elevation"></span>
+										</label>
+										<span class="assistive-text">Number in meters.</span>
+									</div>
+									<div class="input-text-container">
+										<label for="elevhigh" class="input-text--outlined">
+											<input type="number" step="any" name="elevhigh" id="elevhigh" data-chip="Max Elevation">
+											<span data-label="Maximum Elevation"></span>
+										</label>
+										<span class="assistive-text">Number in meters.</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- Latitude & Longitude -->
+				<section>
+					<!-- Accordion selector -->
+					<input type="checkbox" id="lat-long" class="accordion-selector" />
+					<!-- Accordion header -->
+					<label for="lat-long" class="accordion-header">Latitude & Longitude</label>
+					<!-- Accordion content -->
+					<div class="content">
+						<div id="search-form-latlong">
+							<div id="bounding-box-form">
+								<h3>Bounding Box</h3>
+								<button onclick="openCoordAid('rectangle');return false;">Select in map</button>
+								<div class="input-text-container">
+									<label for="upperlat" class="input-text--outlined">
+										<input type="number" step="any" min="-90" max="90" id="upperlat" name="upperlat" data-chip="Upper Lat">
+										<select class="mt-1" id="upperlat_NS" name="upperlat_NS">
+											<option value="">Select N/S</option>
+											<option id="ulN" value="N">N</option>
+											<option id="ulS" value="S">S</option>
+										</select>
+										<span data-label="Northern Latitude"></span>
+									</label>
+									<span class="assistive-text">Values between -90 and 90.</span>
+								</div>
+								<div class="input-text-container">
+									<label for="bottomlat" class="input-text--outlined">
+										<input type="number" step="any" min="-90" max="90" id="bottomlat" name="bottomlat" data-chip="Bottom Lat">
+										<select class="mt-1" id="bottomlat_NS" name="bottomlat_NS">
+											<option value="">Select N/S</option>
+											<option id="blN" value="N">N</option>
+											<option id="blS" value="S">S</option>
+										</select>
+										<span data-label="Southern Latitude"></span>
+									</label>
+									<span class="assistive-text">Values between -90 and 90.</span>
+								</div>
+								<div class="input-text-container">
+									<label for="leftlong" class="input-text--outlined">
+										<input type="number" step="any" min="-180" max="180" id="leftlong" name="leftlong" data-chip="Left Long">
+										<select class="mt-1" id="leftlong_EW" name="leftlong_EW">
+											<option value="">Select W/E</option>
+											<option id="llW" value="W">W</option>
+											<option id="llE" value="E">E</option>
+										</select>
+										<span data-label="Western Longitude"></span>
+									</label>
+									<span class="assistive-text">Values between -180 and 180.</span>
+								</div>
+								<div class="input-text-container">
+									<label for="rightlong" class="input-text--outlined">
+										<input type="number" step="any" min="-180" max="180" id="rightlong" name="rightlong" data-chip="Right Long">
+										<select class="mt-1" id="rightlong_EW" name="rightlong_EW">
+											<option value="">Select W/E</option>
+											<option id="rlW" value="W">W</option>
+											<option id="rlE" value="E">E</option>
+										</select>
+										<span data-label="Eastern Longitude"></span>
+									</label>
+									<span class="assistive-text">Values between -180 and 180.</span>
+								</div>
+							</div>
+							<div id="polygon-form">
+								<h3>Polygon (WKT footprint)</h3>
+								<button onclick="openCoordAid('polygon');return false;">Select in map</button>
+								<div class="text-area-container">
+									<label for="footprintwkt" class="text-area--outlined">
+										<textarea id="footprintwkt" name="footprintwkt" wrap="off" cols="30%" rows="5"></textarea>
+										<span data-label="Polygon"></span>
+									</label>
+									<span class="assistive-text">Select in map with button or paste values.</span>
+								</div>
+							</div>
+							<div id="point-radius-form">
+								<h3>Point-Radius</h3>
+								<button onclick="openCoordAid('circle');return false;">Select in map</button>
+								<div class="input-text-container">
+									<label for="pointlat" class="input-text--outlined">
+										<input type="number" step="any" min="-90" max="90" id="pointlat" name="pointlat" data-chip="Point Lat">
+										<select class="mt-1" id="pointlat_NS" name="pointlat_NS">
+											<option value="">Select N/S</option>
+											<option id="N" value="N">N</option>
+											<option id="S" value="S">S</option>
+										</select>
+										<span data-label="Latitude"></span>
+									</label>
+									<span class="assistive-text">Values between -90 and 90.</span>
+								</div>
+								<div class="input-text-container">
+									<label for="pointlong" class="input-text--outlined">
+										<input type="number" step="any" min="-180" max="180" id="pointlong" name="pointlong" data-chip="Point Long">
+										<select class="mt-1" id="pointlong_EW" name="pointlong_EW">
+											<option value="">Select W/E</option>
+											<option id="W" value="W">W</option>
+											<option id="E" value="E">E</option>
+										</select>
+										<span data-label="Longitude"></span>
+									</label>
+									<span class="assistive-text">Values between -180 and 180.</span>
+								</div>
+								<div class="input-text-container">
+									<label for="radius" class="input-text--outlined">
+										<input type="number" min="0" step="any" id="radius" name="radius" data-chip="Radius">
+										<select class="mt-1" id="radiusunits" name="radiusunits">
+											<option value="">Select Unit</option>
+											<option value="km">Kilometers</option>
+											<option value="mi">Miles</option>
+										</select>
+										<span data-label="Radius"></span>
+									</label>
+									<span class="assistive-text">Any positive values.</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				<!-- Collecting Event -->
+				<section>
+					<!-- Accordion selector -->
+					<input type="checkbox" id="coll-event" class="accordion-selector" />
+					<!-- Accordion header -->
+					<label for="coll-event" class="accordion-header">Collecting Event</label>
+					<!-- Accordion content -->
+					<div class="content">
+						<div id="search-form-coll-event">
+							<div class="input-text-container">
+								<label for="eventdate1" class="input-text--outlined">
+									<input type="text" name="eventdate1" data-chip="Event Date Start">
+									<span data-label="Collection Start Date"></span>
+								</label>
+								<span class="assistive-text">Single date or start date of range (ex: YYYY-MM-DD or similar format).</span>
+							</div>
+							<div class="input-text-container">
+								<label for="eventdate2" class="input-text--outlined">
+									<input type="text" name="eventdate2" data-chip="Event Date End">
+									<span data-label="Collection End Date"></span>
+								</label>
+								<span class="assistive-text">Single date or end date of range (ex: YYYY-MM-DD or similar format).</span>
+							</div>
+						</div>
+					</div>
+				</section>
+			</div>
+			
+			<!-- Criteria panel -->
+			<div id="criteria-panel" style="position: sticky; top: 0; height: 100vh">
+				<button id="search-btn">Search</button>
+				<button id="reset-btn">Reset</button>
+				<h2>Criteria</h2>
+				<div id="chips"></div>
+			</div>
+		</form>
+	</div>
+	<footer>
+	<div class="logo-gallery">
+		<a href="https://www.nsf.gov" target="_blank" aria-label="Visit National Science Foundation website">
+			<img src="/Symbiota/images/layout/logo_nsf.gif" alt="Logo for the National Science Foundation" />
+		</a>
+		<a href="http://idigbio.org" target="_blank" title="iDigBio" aria-label="Visit iDigBio website">
+			<img src="/Symbiota/images/layout/logo_idig.png" alt="Logo for iDigBio, or, Integrated Digitized Biocollections" />
+		</a>
+		<a href="https://biokic.asu.edu" target="_blank" title="Biodiversity Knowledge Integration Center" aria-label="Visit BioKIC website">
+			<img src="/Symbiota/images/layout/logo-asu-biokic.png"  alt="Logo for the Biodiversity Knowledge Integration Center" />
+		</a>
+	</div>
+	<p>
+		This project made possible by National Science Foundation Awards <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=" target="_blank">#------</a>
+		.
+	</p>
+	<p>
+		For more information about Symbiota, <a href="https://symbiota.org/docs" target="_blank" rel="noopener noreferrer">read the docs</a> or contact the <a href="https://symbiota.org/contact-the-support-hub/" target="_blank" rel="noopener noreferrer">Symbiota Support Hub</a>
+			.
+	</p>
+	<p>
+		Powered by <a href="https://symbiota.org/" target="_blank">Symbiota</a>
+		.
+	</p>
+	<script type="text/javascript">
+		document.addEventListener('DOMContentLoaded', ()=>{
+			document.getElementById('accessibility-button').disabled=false;
+			updateButtonTextBasedOnEnabledStylesheet('Condensed Mode', 'Accessibility Mode');
+		});
+	</script>
+</footer></body>
+<script src="js/searchform.js" type="text/javascript"></script>
+<script src="/Symbiota/search/js/alerts.js?v=202107" type="text/javascript"></script>
+<script src="/Symbiota/js/jquery-ui-1.12.1/jquery-ui.min.js" type="text/javascript"></script>
+<script src="/Symbiota/js/symb/api.taxonomy.taxasuggest.js" type="text/javascript"></script>
+<script src="/Symbiota/js/symb/collections.index.js?ver=20171215" type="text/javascript"></script>
+<script>
+	let alerts = [{
+		'alertMsg': 'Looking for the previous search form? You can still use it here: <a href="/Symbiota/collections/harvestparams.php" alt="Traditional Sample Search Form">previous Sample Search Page</a>.'
+	}];
+	handleAlerts(alerts, 3000);
+</script>
+
+</html>
