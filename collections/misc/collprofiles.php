@@ -84,6 +84,34 @@ if ($SYMB_UID) {
 				console.log(err);
 			}
 		}
+
+		function processEditQuickSearch(clientRoot, shouldIncludeCultivated){
+			// /collections/editor/occurrenceeditor.php?q_customfield1=catalogNumber&q_customtype1=EQUALS&q_customvalue1=707916&q_customandor2=OR&q_customfield2=otherCatalogNumbers&q_customtype2=EQUALS&q_customvalue2=707916&collid=1&occindex=0&q_catalognumber=&displayquery=1
+			const collId = document?.forms['quicksearch']['collid']?.value;
+			const catNum = document?.forms['quicksearch']['catalog-number']?.value;
+			const taxon = document?.forms['quicksearch']['taxon-search']?.value;
+			if(collId){
+				let redirectUrl = clientRoot + '/collections/editor/occurrencetabledisplay.php?displayquery=1&collid=' + collId;
+				if(catNum){
+					redirectUrl = clientRoot + '/collections/editor/occurrenceeditor.php?q_customfield1=catalogNumber&q_customtype1=EQUALS&q_customvalue1=' + catNum + '&q_customandor2=OR&q_customfield2=otherCatalogNumbers&q_customtype2=EQUALS&q_customvalue2=' + catNum + '&collid=' + collId + '&displayquery=1'; //&includecult=' + shouldIncludeCultivated;
+				}
+				window.location.href = redirectUrl;
+			}
+			// console.log('deleteMe clientRoot is: ');
+			// console.log(clientRoot);
+
+			// console.log('deleteMe shouldIncludeCultivated is: ');
+			// console.log(shouldIncludeCultivated);
+
+			// console.log('deleteMe collId is: ');
+			// console.log(collId);
+
+			// console.log('deleteMe catNum is: ');
+			// console.log(catNum);
+
+			// console.log('deleteMe taxon is: ');
+			// console.log(taxon);
+		}
 	</script>
 	<style type="text/css">
 		.importItem { margin-left:10px; display:none; }
@@ -105,7 +133,7 @@ if ($SYMB_UID) {
 		<section id="tabs" class="fieldset-like no-left-margin" style="float: right;">
 			<h1><span><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></span></h1>
 			<div id="dialogContainer" style="position: relative;">
-				<form name="quicksearch" action="processEditorSearch.php" method="POST">
+				<form name="quicksearch" action="javascript:void(0);" onsubmit="processEditQuickSearch('<?php echo $CLIENT_ROOT ?>', '<?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ?>')">
 					<label for="catalog-number"><?php echo (isset($LANG['OCCURENCE_IDENTIFIER']) ? $LANG['OCCURENCE_IDENTIFIER'] : 'Catalog Number'); ?></label>
 					<span class="skip-link">
 						<?php
