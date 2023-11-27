@@ -85,7 +85,7 @@ if ($SYMB_UID) {
 			}
 		}
 
-		function processEditQuickSearch(clientRoot, shouldIncludeCultivated){
+		function processEditQuickSearch(clientRoot){
 			const collId = document?.forms['quicksearch']['collid']?.value || null;
 			const catNum = document?.forms['quicksearch']['catalog-number']?.value || null;
 			const taxon = document?.forms['quicksearch']['taxon-search']?.value || null;
@@ -121,7 +121,7 @@ if ($SYMB_UID) {
 		<section id="tabs" class="fieldset-like no-left-margin" style="float: right;">
 			<h1><span><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></span></h1>
 			<div id="dialogContainer" style="position: relative;">
-				<form name="quicksearch" action="javascript:void(0);" onsubmit="processEditQuickSearch('<?php echo $CLIENT_ROOT ?>', '<?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ?>')">
+				<form name="quicksearch" action="javascript:void(0);" onsubmit="processEditQuickSearch('<?php echo $CLIENT_ROOT ?>')">
 					<label for="catalog-number"><?php echo (isset($LANG['OCCURENCE_IDENTIFIER']) ? $LANG['OCCURENCE_IDENTIFIER'] : 'Catalog Number'); ?></label>
 					<span class="skip-link">
 						<?php
