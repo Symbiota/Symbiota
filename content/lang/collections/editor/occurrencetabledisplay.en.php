@@ -45,5 +45,7 @@ $LANG['NOT_AUTH'] = 'You are not authorized to access this page';
 $LANG['IMG_SEARCH'] = 'Search Button';
 $LANG['IMG_EDIT'] = 'Edit Button';
 $LANG['IMG_LINK'] = 'Link Button';
+$LANG['SKIP_SEARCH'] = 'Skip to Table Content';
+$LANG['SAME_WINDOW'] = 'open in same window';
 
 ?>

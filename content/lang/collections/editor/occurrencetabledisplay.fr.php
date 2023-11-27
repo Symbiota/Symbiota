@@ -45,5 +45,7 @@ $LANG['NOT_AUTH'] = "Vous n'êtes pas autorisé à accéder à cette page";
 $LANG['IMG_SEARCH'] = 'Bouton Rechercher';
 $LANG['IMG_EDIT'] = 'Bouton Modifier';
 $LANG['IMG_LINK'] = 'Bouton Lier';
+$LANG['SKIP_SEARCH'] = 'Passer au contenu du tableau';
+$LANG['SAME_WINDOW'] = 'ouvrir dans la même fenêtre';
 
 ?>

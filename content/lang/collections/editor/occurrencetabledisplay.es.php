@@ -45,5 +45,7 @@ $LANG['NOT_AUTH'] = 'No está autorizado para accesar esta página';
 $LANG['IMG_SEARCH'] = 'Botón Buscar';
 $LANG['IMG_EDIT'] = 'Botón Editar';
 $LANG['IMG_LINK'] = 'Botón Vincular';
+$LANG['SKIP_SEARCH'] = 'Saltar al contenido de la tabla';
+$LANG['SAME_WINDOW'] = 'abrir en la misma ventana';
 
 ?>
