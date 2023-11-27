@@ -90,12 +90,12 @@ if ($SYMB_UID) {
 			const catNum = document?.forms['quicksearch']['catalog-number']?.value || null;
 			const taxon = document?.forms['quicksearch']['taxon-search']?.value || null;
 			if(collId){
-				let redirectUrl = clientRoot + '/collections/editor/occurrencetabledisplay.php?displayquery=1&collid=' + collId;
+				let redirectUrl = clientRoot + '/collections/editor/occurrencetabledisplay.php?displayquery=1&collid=' + encodeURIComponent(collId);
 				if(catNum){
-					redirectUrl = clientRoot + '/collections/editor/occurrenceeditor.php?q_customfield1=catalogNumber&q_customtype1=EQUALS&q_customvalue1=' + catNum + '&q_customandor2=OR&q_customfield2=otherCatalogNumbers&q_customtype2=EQUALS&q_customvalue2=' + catNum + '&collid=' + collId + '&displayquery=1&occindex=0&reset=1';
+					redirectUrl = clientRoot + '/collections/editor/occurrenceeditor.php?q_customfield1=catalogNumber&q_customtype1=EQUALS&q_customvalue1=' + encodeURIComponent(catNum) + '&q_customandor2=OR&q_customfield2=otherCatalogNumbers&q_customtype2=EQUALS&q_customvalue2=' + encodeURIComponent(catNum) + '&collid=' + encodeURIComponent(collId) + '&displayquery=1&occindex=0&reset=1';
 				}
 				if(taxon && !catNum){
-					redirectUrl = clientRoot + '/collections/editor/occurrenceeditor.php?q_customfield1=sciname&q_customtype1=STARTS&q_customvalue1=' + encodeURIComponent(taxon) + '&collid=' + collId + '&displayquery=1&occindex=0&reset=1';
+					redirectUrl = clientRoot + '/collections/editor/occurrenceeditor.php?q_customfield1=sciname&q_customtype1=STARTS&q_customvalue1=' + encodeURIComponent(taxon) + '&collid=' + encodeURIComponent(collId) + '&displayquery=1&occindex=0&reset=1';
 				}
 				window.location.href = redirectUrl;
 			}
