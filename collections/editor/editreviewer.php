@@ -356,7 +356,10 @@ $navStr .= '</div>';
 					<?php
 					echo '<div style="clear:both">'.$navStr.'</div>';
 					?>
-					<table class="styledtable" style="font-family:Arial;font-size:1.25rem;" aria-label="<?php echo (isset($LANG['TABLE']) ? $LANG['TABLE'] : 'Table of Records'); ?>" aria-describedby="<?php echo (isset($LANG['TABLE_DESC']) ? $LANG['TABLE_DESC'] : 'The table contains Record Id, Catalog Number, Review Status, Applied Status, Editor Name, Timestamp, Field Name, Old Value, and New Value for each entry'); ?>">
+					<table class="styledtable" style="font-family:Arial;font-size:1.25rem;" aria-label="<?php echo (isset($LANG['TABLE']) ? $LANG['TABLE'] : 'Table of Records'); ?>" aria-describedby="table-desc">
+						<p id="table-desc">
+							<?php echo (isset($LANG['TABLE_DESC']) ? $LANG['TABLE_DESC'] : 'The table contains Record Id, Catalog Number, Review Status, Applied Status, Editor Name, Timestamp, Field Name, Old Value, and New Value for each entry'); ?>
+						</p>
 						<tr>
 							<th> <input name='selectall' type="checkbox" onclick="selectAllId(this)" aria-label="<?php echo (isset($LANG['SELECT_ALL']) ? $LANG['SELECT_ALL'] : 'Select/Unselect All'); ?>" /></th>
 							<th><?php echo $LANG['RECORD_NO']; ?></th>
