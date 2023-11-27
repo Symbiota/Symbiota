@@ -1,8 +1,9 @@
 <div class="specimen-header-margin">
 	<h2><?php echo $LANG['SPECIMEN_COLLECTIONS'] ?></h2>
 </div>
+	<button id="collection-accept-button" class="btn" style="width:auto !important">Accept and close</button>
 	<div class="select-deselect-input">
-		<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" checked />
+		<input data-chip="All Collections" id="dballcb" name="db[]" class="specobs all-neon-colls" value='all' type="checkbox" onclick="selectAll(this);" checked />
 		<label for="dballcb">
 			<?php echo $LANG['SELECT_DESELECT'] . ' <a href="misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS_CAP'], HTML_SPECIAL_CHARS_FLAGS) . '</a>'; ?>
 		</label>

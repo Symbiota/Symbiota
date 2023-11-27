@@ -53,7 +53,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 	<div id="innertext" class="inner-search">
 		<h1>Sample Search</h1>
 		<div id="error-msgs" class="errors"></div>
-		<form id="params-form">
+		<form id="params-form" action="javascript:void(0);">
 			<!-- Criteria forms -->
 			
 			<div class="accordions">
@@ -106,20 +106,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								?>
 							</div>
 							
-						</div>
-					</div>
-					<!-- NEON Biorepository Collections Modal -->
-					<div class="modal" id="biorepo-collections-list">
-						<div class="modal-content">
-							<button id="neon-modal-close" class="btn" style="width:auto !important">Accept and close</button>
-							<div id="colls-modal">
-								<div>
-									<h3>Activate a single criterion to filter collections</h3>
-									<label class="tab tab-active"><input type="radio" name="collChoice" value="taxonomic-cat" checked="true"> Taxonomic Group</label>
-									<label class="tab"><input type="radio" name="collChoice" value="neon-theme"> NEON Theme</label>
-									<label class="tab"><input type="radio" name="collChoice" value="sample-type"> Sample Type</label>
-								</div>
-							</div>
 						</div>
 					</div>
 				</section>
@@ -359,7 +345,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 			
 			<!-- Criteria panel -->
 			<div id="criteria-panel" style="position: sticky; top: 0; height: 100vh">
-				<button id="search-btn">Search</button>
+				<button id="search-btn" action="" onclick="simpleSearch('<?php echo $CLIENT_ROOT ?>')">Search</button>
 				<button id="reset-btn">Reset</button>
 				<h2>Criteria</h2>
 				<div id="chips"></div>
@@ -380,6 +366,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 		'alertMsg': 'Looking for the previous search form? You can still use it here: <a href="<?php echo $CLIENT_ROOT ?>/collections/harvestparams.php" alt="Traditional Sample Search Form">previous Sample Search Page</a>.'
 	}];
 	handleAlerts(alerts, 3000);
+
 </script>
 
 </html>

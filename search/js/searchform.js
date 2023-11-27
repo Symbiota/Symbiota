@@ -2,12 +2,11 @@
  * GLOBAL VARIABLES
  */
 const criteriaPanel = document.getElementById("criteria-panel") || null;
-const allNeon = document.getElementById("all-neon-colls-quick") || null;
-const allSites = document.getElementById("all-sites") || null;
+const allCollections = document.getElementById("dballcb") || null;
 const form = document.getElementById("params-form") || null;
 const formColls = document.getElementById("search-form-colls") || null;
 const formSites = document.getElementById("site-list") || null;
-const collsModal = document.getElementById("colls-modal") || null;
+const searchFormColls = document.getElementById("search-form-colls") || null;
 // list of parameters to be passed to url, modified by getSearchUrl method
 let paramNames = [
   "db",
@@ -45,7 +44,6 @@ const pLngEw = document.getElementById("pointlong_EW") || null;
 const pRadius = document.getElementById("radius") || null;
 const pRadiusUn = document.getElementById("radiusunits") || null;
 
-let criterionSelected = getCriterionSelected();
 let paramsArr = [];
 //////////////////////////////////////////////////////////////////////////
 
@@ -169,6 +167,7 @@ function removeChip(chip) {
  * @param {Event} e
  */
 function updateChip(e) {
+  console.log("deleteMe updateChip entered");
   document.getElementById("chips").innerHTML = "";
   // first go through collections and sites
 
@@ -187,15 +186,11 @@ function updateChip(e) {
     addChip(getDomainsSitesChips());
   }
   // if any biorepo colls are selected (except for "all"), then add chip
-  let biorepoAllChecked = document.getElementById(
-    "all-neon-colls-quick"
-  ).checked;
-  let biorepoChecked = Array.from(
-    document.querySelectorAll(
-      `#${getCriterionSelected()} input[name="db"]:checked`
-    )
+  let allCollectionsChecked = document?.getElementById("dballcb")?.checked;
+  let individualCollectionsChecked = Array.from(
+    document.querySelectorAll(`#search-form-colls input[name="db"]:checked`)
   );
-  if (!biorepoAllChecked && biorepoChecked.length > 0) {
+  if (!allCollectionsChecked && individualCollectionsChecked.length > 0) {
     addChip(getCollsChips(getCriterionSelected(), "Some Biorepo Colls"));
   }
   // if any additional NEON colls are selected (except for "all"), then add chip
@@ -379,23 +374,23 @@ function uncheckAll(element) {
     });
   }
 }
-/////////
-function getCriterionSelected() {
-  return collsModal.querySelector(".tab.tab-active input[type=radio]:checked")
-    .value;
-}
 
 /**
  * Finds all collections selected
  * Uses active tab in modal
  */
 function getCollsSelected() {
-  let query = "#" + getCriterionSelected() + ' input[name="db"]:checked';
-  let selectedInModal = Array.from(document.querySelectorAll(query));
+  // console.log("deleteMe getCollsSelected entered");
+  let query = 'input[name="db"]:checked';
+  console.log("deleteMe query is: ");
+  console.log(query);
+  // let selectedInModal = Array.from(document.querySelectorAll(query));
   let selectedInForm = Array.from(
     document.querySelectorAll('#search-form-colls input[name="db"]:checked')
   );
-  let collsArr = selectedInForm.concat(selectedInModal);
+  let collsArr = selectedInForm; //.concat(selectedInModal);
+  console.log("deleteMe collsArr is: ");
+  console.log(collsArr);
   return collsArr;
 }
 
@@ -491,9 +486,11 @@ function getParam(paramName) {
  * Creates search URL with parameters
  * Define parameters to be looked for in `paramNames` array
  */
-function getSearchUrl() {
-  const harvestUrl = location.href.slice(0, location.href.indexOf("/neon"));
+function getSearchUrl(clientRoot) {
+  const harvestUrl = location.href.slice(0, location.href.indexOf(clientRoot));
   const baseUrl = new URL(harvestUrl + "/collections/list.php");
+  console.log("deleteMe baseUrl is: ");
+  console.log(baseUrl);
 
   // Clears array temporarily to avoid redundancy
   paramsArr = [];
@@ -638,14 +635,18 @@ function handleValErrors(errors) {
 /**
  * Calls methods to validate form and build URL that will redirect search
  */
-function simpleSearch() {
+function simpleSearch(clientRoot) {
+  console.log("deleteMe simpleSearch entered and clientRoot is: ");
+  console.log(clientRoot);
   let alerts = document.getElementById("alert-msgs");
   alerts != null ? (alerts.innerHTML = "") : "";
   let errors = [];
   errors = validateForm();
   let isValid = errors.length == 0;
   if (isValid) {
-    let searchUrl = getSearchUrl();
+    let searchUrl = getSearchUrl(clientRoot);
+    console.log("deleteMe searchUrl is: ");
+    console.log(searchUrl);
     window.location = searchUrl;
   } else {
     handleValErrors(errors);
@@ -661,8 +662,10 @@ function hideColCheckbox(collid) {
     `input[type='checkbox'][value='${collid}']`
   );
   colsToHide.forEach((col) => {
-    let li = col.closest("li");
-    li.style.display = "none";
+    let li = col?.closest("li");
+    if (li) {
+      li.style.display = "none";
+    }
   });
 }
 
@@ -673,25 +676,18 @@ function hideColCheckbox(collid) {
  */
 
 // Search button
-document
-  .getElementById("search-btn")
-  .addEventListener("click", function (event) {
-    event.preventDefault();
-    simpleSearch();
-  });
+// document
+//   .getElementById("search-btn")
+//   .addEventListener("click", function (event) {
+//     event.preventDefault();
+//     simpleSearch();
+//   });
 // Reset button
 document
   .getElementById("reset-btn")
   .addEventListener("click", function (event) {
     document.getElementById("params-form").reset();
     updateChip();
-  });
-// Listen for open modal click
-document
-  .getElementById("neon-modal-open")
-  .addEventListener("click", function (event) {
-    event.preventDefault();
-    openModal("#biorepo-collections-list");
   });
 // When checking "all neon collections" box, toggle checkboxes in modal
 $("#all-neon-colls-quick").click(function () {
@@ -704,19 +700,22 @@ $(".all-selector").click(toggleAllSelector);
 formColls.addEventListener("click", autoToggleSelector, false);
 formColls.addEventListener("change", autoToggleSelector, false);
 formSites?.addEventListener("click", autoToggleSelector, false);
-collsModal.addEventListener("click", autoToggleSelector, false);
-collsModal.addEventListener("change", autoToggleSelector, false);
+searchFormColls?.addEventListener("click", autoToggleSelector, false);
+searchFormColls?.addEventListener("change", autoToggleSelector, false);
 // Listen for close modal click and passes value of selected colls to main form
 document
-  .getElementById("neon-modal-close")
+  .getElementById("collection-accept-button")
   .addEventListener("click", function (event) {
-    removeChip(document.getElementById("chip-" + allNeon.id));
+    console.log("deleteMe got here a1");
+    removeChip(document.getElementById("chip-" + allCollections.id));
     event.preventDefault();
-    closeModal("#biorepo-collections-list");
-    let tabSelected = document.getElementById(getCriterionSelected());
+    // closeModal("#biorepo-collections-list");
+    // @TODO handle the closing of the collection accordion here
     let isAllSelected =
-      tabSelected.getElementsByClassName("all-neon-colls")[0].checked;
-    allNeon.checked = isAllSelected;
+      searchFormColls?.getElementsByClassName("all-neon-colls")[0].checked;
+    console.log("deleteMe isAllSelected is: ");
+    console.log(isAllSelected);
+    allCollections.checked = isAllSelected;
     updateChip();
   });
 //////// Binds Update chip on event change
