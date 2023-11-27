@@ -86,9 +86,9 @@ if ($SYMB_UID) {
 		}
 
 		function processEditQuickSearch(clientRoot, shouldIncludeCultivated){
-			const collId = document?.forms['quicksearch']['collid']?.value;
-			const catNum = document?.forms['quicksearch']['catalog-number']?.value;
-			const taxon = document?.forms['quicksearch']['taxon-search']?.value;
+			const collId = document?.forms['quicksearch']['collid']?.value || null;
+			const catNum = document?.forms['quicksearch']['catalog-number']?.value || null;
+			const taxon = document?.forms['quicksearch']['taxon-search']?.value || null;
 			if(collId){
 				let redirectUrl = clientRoot + '/collections/editor/occurrencetabledisplay.php?displayquery=1&collid=' + collId;
 				if(catNum){
