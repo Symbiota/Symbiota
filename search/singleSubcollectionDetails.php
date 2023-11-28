@@ -22,20 +22,20 @@
     ?>
     <div>
         <?php
-        echo '<input aria-label="select collection ' . $collid . '" id="coll-' . $collid . '-' . $idStr . '" data-role="none" name="db[]" value="'.$collid.'" type="checkbox" class="cat-'.$idStr.'" onclick="unselectCat(\'cat-'.$idStr.'-Input\')" '.($catSelected || !$collSelArr || in_array($collid, $collSelArr)?'checked':'').' />';
+        $codeStr = '(';
+        if(array_key_exists('instcode', $nestedCatEl)){
+            $codeStr = ' (' . $nestedCatEl['instcode'];
+        }
+        if(array_key_exists('collcode', $nestedCatEl)){
+            $codeStr .= '-' . $nestedCatEl['collcode'];
+        } 
+        $codeStr .= ')';
+        echo '<input  data-chip="Collection: ' . $codeStr . '" aria-label="select collection ' . $collid . '" id="coll-' . $collid . '-' . $idStr . '" data-role="none" name="db[]" value="'.$collid.'" type="checkbox" class="cat-'.$idStr.'" onclick="unselectCat(\'cat-' . $idStr . '-Input\')" '.($catSelected || !$collSelArr || in_array($collid, $collSelArr)?'checked':'').' />';
         ?>
     </div>
     <div>
         <div class="collectiontitle">
             <?php
-            $codeStr = '(';
-            if(array_key_exists('instcode', $nestedCatEl)){
-                $codeStr = ' (' . $nestedCatEl['instcode'];
-            }
-            if(array_key_exists('collcode', $nestedCatEl)){
-                $codeStr .= '-' . $nestedCatEl['collcode'];
-            } 
-            $codeStr .= ')';
             $colName = $nestedCatEl["collname"] ?? 'Unknown Name';
             echo '<div class="collectionname">' . $colName . '</div><div class="collectioncode">' . $codeStr . '</div>';
             ?>

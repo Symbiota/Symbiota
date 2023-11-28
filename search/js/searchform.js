@@ -187,6 +187,8 @@ function updateChip(e) {
   }
   // if any biorepo colls are selected (except for "all"), then add chip
   let allCollectionsChecked = document?.getElementById("dballcb")?.checked;
+  console.log("deleteMe allCollectionsChecked is: ");
+  console.log(allCollectionsChecked);
   let individualCollectionsChecked = Array.from(
     document.querySelectorAll(`#search-form-colls input[name="db"]:checked`)
   );
@@ -216,14 +218,24 @@ function updateChip(e) {
   // then go through remaining inputs (exclude db and datasetid)
   // go through entire form and find selected items
   formInputs.forEach((item) => {
+    console.log("deleteMe item is: ");
+    console.log(item);
     if ((item.name != "db") | (item.name != "datasetid")) {
       if (
         (item.type == "checkbox" && item.checked) |
         (item.type == "text" && item.value != "") |
         (item.type == "number" && item.value != "")
       ) {
-        // now add chips depending on type of item
-        item.hasAttribute("data-chip") ? addChip(item) : "";
+        if (
+          allCollectionsChecked &&
+          item.name === "db[]" &&
+          item.id !== "dballcb"
+        ) {
+          // don't add these chips;
+        } else {
+          // now add chips depending on type of item
+          item.hasAttribute("data-chip") ? addChip(item) : "";
+        }
       }
     }
     // print inputs checked or filled in
@@ -708,21 +720,18 @@ formSites?.addEventListener("click", autoToggleSelector, false);
 searchFormColls?.addEventListener("click", autoToggleSelector, false);
 searchFormColls?.addEventListener("change", autoToggleSelector, false);
 // Listen for close modal click and passes value of selected colls to main form
-document
-  .getElementById("collection-accept-button")
-  .addEventListener("click", function (event) {
-    console.log("deleteMe got here a1");
-    removeChip(document.getElementById("chip-" + allCollections.id));
-    event.preventDefault();
-    // closeModal("#biorepo-collections-list");
-    // @TODO handle the closing of the collection accordion here
-    let isAllSelected =
-      searchFormColls?.getElementsByClassName("all-neon-colls")[0].checked;
-    console.log("deleteMe isAllSelected is: ");
-    console.log(isAllSelected);
-    allCollections.checked = isAllSelected;
-    updateChip();
-  });
+// document
+//   .getElementById("collection-accept-button")
+//   .addEventListener("click", function (event) {
+//     removeChip(document.getElementById("chip-" + allCollections.id));
+//     event.preventDefault();
+//     let isAllSelected =
+//       searchFormColls?.getElementsByClassName("all-neon-colls")[0].checked;
+//     console.log("deleteMe isAllSelected is: ");
+//     console.log(isAllSelected);
+//     allCollections.checked = isAllSelected;
+//     updateChip();
+//   });
 //////// Binds Update chip on event change
 const formInputs = document.querySelectorAll(".content input");
 formInputs.forEach((formInput) => {
