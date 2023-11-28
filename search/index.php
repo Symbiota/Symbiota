@@ -351,6 +351,18 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								</label>
 								<span class="assistive-text">Single date or end date of range (ex: YYYY-MM-DD or similar format).</span>
 							</div>
+							<div class="input-text-container">
+								<label for="collector" class="input-text--outlined">
+									<input type="text" id="collector" size="32" name="collector" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" data-chip="Collector last" />
+									<span data-label="<?php echo $LANG['COLLECTOR_LASTNAME']; ?>:"></span>
+								</label>
+							</div>
+							<div class="input-text-container">
+								<label for="collnum" class="input-text--outlined">
+									<input type="text" id="collnum" size="31" name="collnum" value="" title="<?php echo $LANG['TITLE_TEXT_2']; ?>" data-chip="Collector num" />
+									<span data-label="<?php echo $LANG['COLLECTOR_NUMBER']; ?>:"></span>
+								</label>
+							</div>
 						</div>
 					</div>
 				</section>

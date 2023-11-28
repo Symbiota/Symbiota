@@ -31,6 +31,8 @@ let paramNames = [
   "taxa",
   "usethes",
   "taxontype",
+  "collnum",
+  "collector",
 ];
 const uLat = document.getElementById("upperlat") || null;
 const uLatNs = document.getElementById("upperlat_NS") || null;
