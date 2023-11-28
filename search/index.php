@@ -171,6 +171,13 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 							<div>
 								<div>
 									<div class="input-text-container">
+										<label for="country" class="input-text--outlined">
+											<input type="text" name="country" id="country" data-chip="Country">
+											<span data-label="Country"></span>
+										</label>
+										<span class="assistive-text">Separate multiple with commas.</span>
+									</div>
+									<div class="input-text-container">
 										<label for="state" class="input-text--outlined">
 											<input type="text" name="state" id="state" data-chip="State">
 											<span data-label="State"></span>

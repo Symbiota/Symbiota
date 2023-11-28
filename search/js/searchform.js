@@ -18,6 +18,7 @@ let paramNames = [
   "hasgenetic",
   "hascoords",
   "includecult",
+  "country",
   "state",
   "county",
   "local",
