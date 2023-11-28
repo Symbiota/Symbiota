@@ -367,6 +367,12 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 	}];
 	handleAlerts(alerts, 3000);
 
+	// resize the autocomplete window width to match the input width (from https://stackoverflow.com/questions/5643767/jquery-ui-autocomplete-width-not-set-correctly)
+	jQuery.ui.autocomplete.prototype._resizeMenu = function () {
+		var ul = this.menu.element;
+		ul.outerWidth(this.element.outerWidth());
+	}
+
 </script>
 
 </html>

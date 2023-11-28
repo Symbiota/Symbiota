@@ -892,3 +892,8 @@ hr {
 .left-breathing-room-rel-lg {
   margin-left: 2em;
 }
+
+.ui-autocomplete {
+  /* from https://stackoverflow.com/questions/32517694/jquery-autocomplete-dropdown-is-transparent */
+  background-color: inherit;
+}
