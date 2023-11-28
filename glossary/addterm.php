@@ -50,7 +50,7 @@ if($isEditor){
 			}
 		}
 		else{
-			$statusStr = $glosManager->getErrorStr();
+			$statusStr = $glosManager->getErrorMessage();
 		}
 	}
 }
