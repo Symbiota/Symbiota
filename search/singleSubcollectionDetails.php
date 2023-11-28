@@ -5,7 +5,6 @@
         <div class="cat-icon-div">
             <?php
             if(array_key_exists('icon', $nestedCatEl)){
-                // $cIcon = (substr($nestedCatEl["icon"],0,6)=='images' ? $CLIENT_ROOT : '') . $nestedCatEl["icon"];
                 $isInLocalFileSys = isset($nestedCatEl["icon"]) && substr($nestedCatEl["icon"],0,6)=='images';
                 $prefix = $isInLocalFileSys ? $CLIENT_ROOT : '';
                 $cIcon = isset($nestedCatEl["icon"]) ? $prefix . $nestedCatEl["icon"]: '';

@@ -173,11 +173,10 @@ function removeChip(chip) {
  * @param {Event} e
  */
 function updateChip(e) {
-  console.log("deleteMe updateChip entered");
   document.getElementById("chips").innerHTML = "";
   // first go through collections and sites
 
-  // No sites in Symbiota?
+  // No sites in Symbiota, so this stuff just gets ignored
   // if any domains (except for "all") is selected, then add chip
   let dSList = document.querySelectorAll("#site-list input[type=checkbox]");
   let dSChecked = document.querySelectorAll(
@@ -191,10 +190,8 @@ function updateChip(e) {
   ) {
     addChip(getDomainsSitesChips());
   }
-  // if any biorepo colls are selected (except for "all"), then add chip
+  // if any collections are selected (except for "all"), then add chip; this logic is alternatively handled in the formInputs for loop below
   let allCollectionsChecked = document?.getElementById("dballcb")?.checked;
-  console.log("deleteMe allCollectionsChecked is: ");
-  console.log(allCollectionsChecked);
   let individualCollectionsChecked = Array.from(
     document.querySelectorAll(`#search-form-colls input[name="db"]:checked`)
   );
@@ -224,8 +221,6 @@ function updateChip(e) {
   // then go through remaining inputs (exclude db and datasetid)
   // go through entire form and find selected items
   formInputs.forEach((item) => {
-    console.log("deleteMe item is: ");
-    console.log(item);
     if ((item.name != "db") | (item.name != "datasetid")) {
       if (
         (item.type == "checkbox" && item.checked) |
@@ -239,7 +234,7 @@ function updateChip(e) {
         ) {
           // don't add these chips;
         } else {
-          // now add chips depending on type of item
+          // add chips depending on type of item
           item.hasAttribute("data-chip") ? addChip(item) : "";
         }
       }
@@ -398,11 +393,7 @@ function uncheckAll(element) {
  * Uses active tab in modal
  */
 function getCollsSelected() {
-  // console.log("deleteMe getCollsSelected entered");
   let query = 'input[name="db"]:checked';
-  // console.log("deleteMe query is: ");
-  // console.log(query);
-  // let selectedInModal = Array.from(document.querySelectorAll(query));
   let selectedInForm = Array.from(
     document.querySelectorAll(
       '#search-form-colls input[name="db"]:checked, ' +
@@ -410,11 +401,7 @@ function getCollsSelected() {
         '#search-form-colls input[name="cat[]"]:checked'
     )
   );
-  console.log("deleteMe selectedInForm is: ");
-  console.log(selectedInForm);
-  let collsArr = selectedInForm; //.concat(selectedInModal);
-  console.log("deleteMe collsArr is: ");
-  console.log(collsArr);
+  let collsArr = selectedInForm;
   return collsArr;
 }
 
@@ -518,33 +505,11 @@ function getSearchUrl() {
   // Clears array temporarily to avoid redundancy
   paramsArr = [];
 
-  // Only adds 'datasetid' to list of params if there is at least one selected
-  // and if 'all' is not checked
-  // if (allSites.checked) {
-  //   paramNames = paramNames.filter((value, index, arr) => {
-  //     return value != "datasetid";
-  //   });
-  // } else {
-  // document.querySelectorAll("#site-list input[type=checkbox]:checked").length >
-  // 1
-  //   ? paramNames.push("datasetid")
-  //   : false;
-  // }
-
   // Grabs params from form for each param name
-  paramNames.forEach((param, i) => {
+  paramNames.forEach((_, i) => {
     return getParam(paramNames[i]);
   });
 
-  // Appends each key value for each param in search url
-  let queryString = Object.keys(paramsArr).map((key) => {
-    //   return encodeURIComponent(key) + '=' + encodeURIComponent(paramsArr[key])
-    // }).join('&');
-    // console.log(baseURL + queryString);
-    baseUrl.searchParams.append(key, paramsArr[key]);
-  });
-  console.log("deleteMe baseUrl after mods is: ");
-  console.log(baseUrl);
   return baseUrl.href;
 }
 
