@@ -345,7 +345,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 			
 			<!-- Criteria panel -->
 			<div id="criteria-panel" style="position: sticky; top: 0; height: 100vh">
-				<button id="search-btn" action="" onclick="simpleSearch('<?php echo $CLIENT_ROOT ?>')">Search</button>
+				<button id="search-btn" action="" onclick="simpleSearch()">Search</button>
 				<button id="reset-btn">Reset</button>
 				<h2>Criteria</h2>
 				<div id="chips"></div>

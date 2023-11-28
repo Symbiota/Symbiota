@@ -382,12 +382,18 @@ function uncheckAll(element) {
 function getCollsSelected() {
   // console.log("deleteMe getCollsSelected entered");
   let query = 'input[name="db"]:checked';
-  console.log("deleteMe query is: ");
-  console.log(query);
+  // console.log("deleteMe query is: ");
+  // console.log(query);
   // let selectedInModal = Array.from(document.querySelectorAll(query));
   let selectedInForm = Array.from(
-    document.querySelectorAll('#search-form-colls input[name="db"]:checked')
+    document.querySelectorAll(
+      '#search-form-colls input[name="db"]:checked, ' +
+        '#search-form-colls input[name="db[]"]:checked, ' +
+        '#search-form-colls input[name="cat[]"]:checked'
+    )
   );
+  console.log("deleteMe selectedInForm is: ");
+  console.log(selectedInForm);
   let collsArr = selectedInForm; //.concat(selectedInModal);
   console.log("deleteMe collsArr is: ");
   console.log(collsArr);
@@ -417,6 +423,7 @@ function getParam(paramName) {
     });
     elementValues = dbArr;
   } else if (paramName === "datasetid") {
+    // won't happen in vanilla symbiota
     let datasetArr = [];
     elements.forEach((el) => {
       if (el.checked) {
@@ -486,27 +493,25 @@ function getParam(paramName) {
  * Creates search URL with parameters
  * Define parameters to be looked for in `paramNames` array
  */
-function getSearchUrl(clientRoot) {
-  const harvestUrl = location.href.slice(0, location.href.indexOf(clientRoot));
+function getSearchUrl() {
+  const harvestUrl = location.href.slice(0, location.href.indexOf("search"));
   const baseUrl = new URL(harvestUrl + "/collections/list.php");
-  console.log("deleteMe baseUrl is: ");
-  console.log(baseUrl);
 
   // Clears array temporarily to avoid redundancy
   paramsArr = [];
 
   // Only adds 'datasetid' to list of params if there is at least one selected
   // and if 'all' is not checked
-  if (allSites.checked) {
-    paramNames = paramNames.filter((value, index, arr) => {
-      return value != "datasetid";
-    });
-  } else {
-    document.querySelectorAll("#site-list input[type=checkbox]:checked")
-      .length > 1
-      ? paramNames.push("datasetid")
-      : false;
-  }
+  // if (allSites.checked) {
+  //   paramNames = paramNames.filter((value, index, arr) => {
+  //     return value != "datasetid";
+  //   });
+  // } else {
+  // document.querySelectorAll("#site-list input[type=checkbox]:checked").length >
+  // 1
+  //   ? paramNames.push("datasetid")
+  //   : false;
+  // }
 
   // Grabs params from form for each param name
   paramNames.forEach((param, i) => {
@@ -520,6 +525,8 @@ function getSearchUrl(clientRoot) {
     // console.log(baseURL + queryString);
     baseUrl.searchParams.append(key, paramsArr[key]);
   });
+  console.log("deleteMe baseUrl after mods is: ");
+  console.log(baseUrl);
   return baseUrl.href;
 }
 
@@ -635,16 +642,14 @@ function handleValErrors(errors) {
 /**
  * Calls methods to validate form and build URL that will redirect search
  */
-function simpleSearch(clientRoot) {
-  console.log("deleteMe simpleSearch entered and clientRoot is: ");
-  console.log(clientRoot);
+function simpleSearch() {
   let alerts = document.getElementById("alert-msgs");
   alerts != null ? (alerts.innerHTML = "") : "";
   let errors = [];
   errors = validateForm();
   let isValid = errors.length == 0;
   if (isValid) {
-    let searchUrl = getSearchUrl(clientRoot);
+    let searchUrl = getSearchUrl();
     console.log("deleteMe searchUrl is: ");
     console.log(searchUrl);
     window.location = searchUrl;
