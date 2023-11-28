@@ -9,6 +9,7 @@ include_once($SERVER_ROOT.'/content/lang/collections/sharedterms.'.$LANG_TAG.'.p
 include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
 header("Content-Type: text/html; charset=" . $CHARSET);
 
+$SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ?? false;
 $collData = new CollectionMetadata();
 $siteData = new DatasetsMetadata();
 
@@ -134,12 +135,24 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 							</div>
 							<div>
 								<div>
+									<input type='checkbox' name='typestatus' id='typestatus' value='1' data-chip="Only type specimens" />
+									<label for="typestatus"><?php echo isset($LANG['TYPE'])?$LANG['TYPE']:'Limit to Type Specimens Only'; ?></label>
+								</div>
+								<div>
 									<input type="checkbox" name="hasimages" value=1 data-chip="Only with images">
 									<label for="hasimages">Limit to specimens with images</label>
 								</div>
 								<div>
 									<input type="checkbox" name="hasgenetic" value=1 data-chip="Only with genetic">
 									<label for="hasgenetic">Limit to specimens with genetic data</label>
+								</div>
+								<div>
+									<input type='checkbox' name='hascoords' id='hascoords' value='1' data-chip="Only with coordinates" />
+									<label for="hascoords"><?php echo isset($LANG['HAS_COORDS'])?$LANG['HAS_COORDS']:'Limit to Specimens with Geocoordinates Only'; ?></label>
+								</div>
+								<div>
+									<input type='checkbox' name='includecult' id='includecult' value='1' data-chip="Include cultivated" <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? 'checked' : '' ?> />
+									<label for="includecult"><?php echo isset($LANG['INCLUDE_CULTIVATED'])?$LANG['INCLUDE_CULTIVATED']:'Include cultivated/captive occurrences'; ?></label>
 								</div>
 							</div>
 						</div>
