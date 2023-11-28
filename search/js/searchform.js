@@ -692,13 +692,6 @@ function hideColCheckbox(collid) {
  * EVENT LISTENERS/INITIALIZERS
  */
 
-// Search button
-// document
-//   .getElementById("search-btn")
-//   .addEventListener("click", function (event) {
-//     event.preventDefault();
-//     simpleSearch();
-//   });
 // Reset button
 document
   .getElementById("reset-btn")
@@ -719,19 +712,6 @@ formColls.addEventListener("change", autoToggleSelector, false);
 formSites?.addEventListener("click", autoToggleSelector, false);
 searchFormColls?.addEventListener("click", autoToggleSelector, false);
 searchFormColls?.addEventListener("change", autoToggleSelector, false);
-// Listen for close modal click and passes value of selected colls to main form
-// document
-//   .getElementById("collection-accept-button")
-//   .addEventListener("click", function (event) {
-//     removeChip(document.getElementById("chip-" + allCollections.id));
-//     event.preventDefault();
-//     let isAllSelected =
-//       searchFormColls?.getElementsByClassName("all-neon-colls")[0].checked;
-//     console.log("deleteMe isAllSelected is: ");
-//     console.log(isAllSelected);
-//     allCollections.checked = isAllSelected;
-//     updateChip();
-//   });
 //////// Binds Update chip on event change
 const formInputs = document.querySelectorAll(".content input");
 formInputs.forEach((formInput) => {
