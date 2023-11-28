@@ -183,7 +183,7 @@ class ProfileManager extends Manager{
 			if($stmt = $this->conn->prepare($sql)) {
 				$stmt->bind_param('ssssssssssi', $firstName, $lastName, $email, $title, $institution, $city, $state, $zip, $country, $guid, $this->uid);
 				$stmt->execute();
-				if($stmt->affected_rows && !$stmt->error) $status = true;
+				if(!$stmt->error) $status = true;
 				else $this->errorMessage = 'ERROR updating user profile: '.$stmt->error;
 				$stmt->close();
 			}
@@ -283,7 +283,7 @@ class ProfileManager extends Manager{
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('si', $newPassword, $uid);
 			$stmt->execute();
-			if($stmt->affected_rows && !$stmt->error) $status = true;
+			if(!$stmt->error) $status = true;
 			else $this->errorMessage = $stmt->error;
 			$stmt->close();
 		}
@@ -426,7 +426,7 @@ class ProfileManager extends Manager{
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param('sis', $newLogin, $this->uid, $this->userName);
 				$stmt->execute();
-				if($stmt->affected_rows && !$stmt->error){
+				if(!$stmt->error){
 					if($isSelf){
 						$this->userName = $newLogin;
 						$this->authenticate();
