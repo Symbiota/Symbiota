@@ -1,12 +1,12 @@
 <section id="cat-<?php echo $idStr ?>" class="gridlike-form-row bottom-breathing-room-relative">
     <div>
-        <fieldset>
+        <fieldset name="boop">
             <legend>
                 <?php 
                 echo $name; 
                 $specimenLegendTxt = isset($LANG['SPECIMEN']) ? $LANG['SPECIMEN'] : "Specimen";
                 $observationLegendTxt = isset($LANG['OBSERVATION']) ? $LANG['OBSERVATION'] : "Observation";
-                $isObservation = $collTypeLabel === "Observation";
+                $isObservation = $collTypeLabel === "Observations";
                 $outputTxt = $specimenLegendTxt;
                 if($isObservation) $outputTxt = $observationLegendTxt;
                 ?> 
