@@ -363,7 +363,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 				$iconStr = $this->googleIconArr[$cnt%44];
 				echo "<Style id='sn_".$iconStr."'>\n";
 				echo "<IconStyle><scale>1.1</scale><Icon>";
-				echo "<href>http://maps.google.com/mapfiles/kml/".$iconStr.".png</href>";
+				echo "<href>http://maps.google.com/mapfiles/kml/" . htmlspecialchars($iconStr, HTML_SPECIAL_CHARS_FLAGS) . ".png</href>";
 				echo "</Icon><hotSpot x='20' y='2' xunits='pixels' yunits='pixels'/></IconStyle>\n</Style>\n";
 				echo "<Style id='sh_".$iconStr."'>\n";
 				echo "<IconStyle><scale>1.3</scale><Icon>";

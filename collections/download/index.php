@@ -15,7 +15,7 @@ $dwcManager = new DwcArchiverCore();
 <head>
 	<title>Collections Search Download</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
@@ -120,21 +120,21 @@ $dwcManager = new DwcArchiverCore();
 					if($downloadType == 'specimen'){
 						?>
 						<div class="sectionDiv">
-							<div class="labelDiv">Structure:</div>
+							<div class="labelDiv"><label for="schema">Structure:</label></div>
 							<div class="formElemDiv">
-								<input type="radio" name="schema" value="symbiota" onclick="georefRadioClicked(this)" CHECKED />
+								<input type="radio" name="schema" id="symbiota-native" value="symbiota" onclick="georefRadioClicked(this)" CHECKED />
 								Symbiota Native
 								<a id="schemanativeinfo" href="#" onclick="return false" title="More Information">
-									<img src="../../images/info.png" style="width:13px;" />
+									<img src="../../images/info.png" alt="info icon that clarifies that Symbiota native is similar to Darwin Core with the addition of some fields" style="width:13px;" />
 								</a><br/>
 								<div id="schemanativeinfodialog">
 									Symbiota native is very similar to Darwin Core except with the addtion of a few fields
 									such as substrate, associated collectors, verbatim description.
 								</div>
-								<input type="radio" name="schema" value="dwc" onclick="georefRadioClicked(this)" />
+								<input type="radio" name="schema" id="darwin-core" value="dwc" onclick="georefRadioClicked(this)" />
 								Darwin Core
 								<a id="schemadwcinfo" href="#" target="" title="More Information">
-									<img src="../../images/info.png" style="width:13px;" />
+									<img src="../../images/info.png" alt="info icon that clarifies that Darwin Core (DwC) is a TDWG endorsed exchange standard specifically for biodiversity datasets. A link to the DwC quick reference guide appears in the dialog." style="width:13px;" />
 								</a><br/>
 								<div id="schemadwcinfodialog">
 									Darwin Core (DwC) is a TDWG endorsed exchange standard specifically for biodiversity datasets.
@@ -147,11 +147,15 @@ $dwcManager = new DwcArchiverCore();
 						<div class="sectionDiv">
 							<div class="labelDiv">Data Extensions:</div>
 							<div class="formElemDiv">
-								<input type="checkbox" name="identifications" value="1" onchange="extensionSelected(this)" checked /> include Determination History<br/>
-								<input type="checkbox" name="images" value="1" onchange="extensionSelected(this)" checked /> include Image Records<br/>
+								<input type="checkbox" name="identifications" id="identifications" value="1" onchange="extensionSelected(this)" checked />
+								<label for="identifications">include Determination History</label>
+								<br/>
+								<input type="checkbox" name="images" id="images" value="1" onchange="extensionSelected(this)" checked />
+								<label for="images">include Image Records</label>
+								<br/>
 								<?php
-								if($dwcManager->hasAttributes()) echo '<input type="checkbox" name="attributes" value="1" onchange="extensionSelected(this)" checked /> include Occurrence Trait Attributes<br/>';
-								if($dwcManager->hasMaterialSamples()) echo '<input type="checkbox" name="materialsample" value="1" onchange="extensionSelected(this)" checked /> include Material Samples<br/>';
+								if($dwcManager->hasAttributes()) echo '<input type="checkbox" name="attributes" id="attributes" value="1" onchange="extensionSelected(this)" checked /> <label for="attributes">include Occurrence Trait Attributes</label><br/>';
+								if($dwcManager->hasMaterialSamples()) echo '<input type="checkbox" name="materialsample" id="materialsample" value="1" onchange="extensionSelected(this)" checked /><label for="materialsample">include Material Samples</label><br/>';
 								?>
 								*Output must be a compressed archive
 							</div>
@@ -160,27 +164,37 @@ $dwcManager = new DwcArchiverCore();
 					}
 					?>
 					<div class="sectionDiv">
-						<div class="labelDiv">File Format:</div>
+						<div class="labelDiv">
+							<label for="format">File Format:</label>
+						</div>
 						<div class="formElemDiv">
-							<input type="radio" name="format" value="csv" CHECKED /> Comma Delimited (CSV)<br/>
-							<input type="radio" name="format" value="tab" /> Tab Delimited<br/>
+							<input type="radio" name="format" id="csv-format" value="csv" CHECKED /><label for="csv-format">Comma Delimited (CSV)</label><br/>
+							<input type="radio" name="format" id="tab-delimited-format" value="tab" /><label for="tab-delimited-format">Tab Delimited</label><br/>
 						</div>
 					</div>
 					<div class="sectionDiv">
-						<div class="labelDiv">Character Set:</div>
+						<div class="labelDiv">
+							<label for="cset">Character Set:</label>
+						</div>
 						<div class="formElemDiv">
 							<?php
 							//$cSet = strtolower($CHARSET);
 							$cSet = 'iso-8859-1';
 							?>
-							<input type="radio" name="cset" value="iso-8859-1" <?php echo ($cSet=='iso-8859-1'?'checked':''); ?> /> ISO-8859-1 (western)<br/>
-							<input type="radio" name="cset" value="utf-8" <?php echo ($cSet=='utf-8'?'checked':''); ?> /> UTF-8 (unicode)
+							<input type="radio" name="cset" id="iso-8859" value="iso-8859-1" <?php echo ($cSet=='iso-8859-1'?'checked':''); ?> />
+							<label for="iso-8859">ISO-8859-1 (western)</label>
+							<br/>
+							<input type="radio" name="cset" id="utf-8" value="utf-8" <?php echo ($cSet=='utf-8'?'checked':''); ?> />
+							<label for="utf-8">UTF-8 (unicode)</label>
 						</div>
 					</div>
 					<div class="sectionDiv">
-						<div class="labelDiv">Compression:</div>
+						<div class="labelDiv">
+							<label for="zip">Compression:</label>
+						</div>
 						<div class="formElemDiv">
-							<input type="checkbox" name="zip" value="1" onchange="zipSelected(this)" checked />Compressed ZIP file<br/>
+							<input type="checkbox" name="zip" id="zip" value="1" onchange="zipSelected(this)" checked />
+							<label for="zip">Compressed ZIP file</label><br/>
 						</div>
 					</div>
 					<div class="sectionDiv">

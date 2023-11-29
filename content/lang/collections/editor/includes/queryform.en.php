@@ -125,4 +125,10 @@ $LANG['ELEV_MAX'] = 'Elevation Maximum';
 $LANG['ASCENDING'] = 'ascending';
 $LANG['DESCENDING'] = 'descending';
 $LANG['OUTPUT'] = 'Record output';
+$LANG['SELECT_FIELD'] = 'Field Name';
+$LANG['OPERATOR'] = 'Operator';
+$LANG['EXPRESSION'] = 'Expression';
+$LANG['PARENTHESES'] = 'Parentheses';
+$LANG['NEW_CUSTOM_FIELD'] = 'Add another custom field';
+$LANG['ORDER_BY'] = 'Order by';
 ?>

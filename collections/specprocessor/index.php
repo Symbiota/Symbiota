@@ -1,10 +1,12 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecProcessorManager.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCrowdSource.php');
 include_once($SERVER_ROOT.'/classes/SpecProcessorOcr.php');
 include_once($SERVER_ROOT.'/classes/ImageProcessor.php');
-
+include_once($SERVER_ROOT.'/content/lang/collections/specprocessor/index.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/specprocessor/index.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
@@ -78,7 +80,7 @@ if($isEditor){
 	}
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title>Specimen Processor Control Panel</title>
 		<?php
@@ -110,17 +112,17 @@ if($isEditor){
 		if(isset($collections_specprocessor_indexCrumbs)){
 			if($collections_specprocessor_indexCrumbs){
 				echo "<div class='navpath'>";
-				echo "<a href='../../index.php'>Home</a> &gt;&gt; ";
+				echo "<a href='../../index.php'>" . (isset($LANG['HOME']) ? $LANG['HOME'] : 'Home') . "</a> &gt;&gt; ";
 				echo $collections_specprocessor_indexCrumbs;
-				echo " <b>Specimen Processor Control Panel</b>";
+				echo " <b>" . (isset($LANG['SPEC_CONTROL_PANEL']) ? $LANG['SPEC_CONTROL_PANEL'] : 'Specimen Processor Control Panel') . "</b>";
 				echo "</div>";
 			}
 		}
 		else{
 			echo '<div class="navpath">';
-			echo '<a href="../../index.php">Home</a> &gt;&gt; ';
-			echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
-			echo '<b>Specimen Processor Control Panel</b>';
+			echo '<a href="../../index.php">' . (isset($LANG['HOME']) ? $LANG['HOME'] : 'Home') . '</a> &gt;&gt; ';
+			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . (isset($LANG['COLL_CONTROL_PANEL']) ? $LANG['COLL_CONTROL_PANEL'] : 'Collection Control Panel') . '</a> &gt;&gt; ';
+			echo '<b>' . (isset($LANG['SPEC_CONTROL_PANEL']) ? $LANG['SPEC_CONTROL_PANEL'] : 'Specimen Processor Control Panel') . '</b>';
 			echo '</div>';
 		}
 		?>
@@ -143,18 +145,18 @@ if($isEditor){
 				?>
 				<div id="tabs" class="taxondisplaydiv">
 				    <ul>
-				        <li><a href="imageprocessor.php?collid=<?php echo $collid.'&spprid='.$spprId.'&submitaction='.$action.'&filename='.$fileName; ?>">Image Loading</a></li>
-				        <li><a href="crowdsource/controlpanel.php?collid=<?php echo $collid; ?>">Crowdsourcing</a></li>
-				        <li><a href="ocrprocessor.php?collid=<?php echo $collid.'&procstatus='.$procStatus.'&spprid='.$spprId; ?>">OCR</a></li>
+				        <li><a href="imageprocessor.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&spprid=' . htmlspecialchars($spprId, HTML_SPECIAL_CHARS_FLAGS) . '&submitaction=' . htmlspecialchars($action, HTML_SPECIAL_CHARS_FLAGS) . '&filename=' . htmlspecialchars($fileName, HTML_SPECIAL_CHARS_FLAGS); ?>"> <?php echo (isset($LANG['IMG_LOAD']) ? $LANG['IMG_LOAD'] : 'Image Loading')?> </a></li>
+				        <li><a href="crowdsource/controlpanel.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"> <?php echo (isset($LANG['CROWDSRC']) ? $LANG['CROWDSRC'] : 'Crowdsourcing')?> </a></li>
+				        <li><a href="ocrprocessor.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&procstatus=' . htmlspecialchars($procStatus, HTML_SPECIAL_CHARS_FLAGS) . '&spprid=' . htmlspecialchars($spprId, HTML_SPECIAL_CHARS_FLAGS); ?>"> <?php echo (isset($LANG['OCR']) ? $LANG['OCR'] : 'OCR')?> </a></li>
 				        <!--
-				        <li><a href="nlpprocessor.php?collid=<?php echo $collid.'&spnlpid='.$spNlpId; ?>">NLP</a></li>
+				        <li><a href="nlpprocessor.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&spnlpid=' . htmlspecialchars($spNlpId, HTML_SPECIAL_CHARS_FLAGS); ?>">NLP</a></li>
 				         -->
-				        <li><a href="reports.php?<?php echo $_SERVER['QUERY_STRING']; ?>">Reports</a></li>
-				        <li><a href="exporter.php?collid=<?php echo $collid.'&displaymode='.$displayMode; ?>">Exporter</a></li>
+				        <li><a href="reports.php?<?php echo htmlspecialchars($_SERVER['QUERY_STRING'], HTML_SPECIAL_CHARS_FLAGS); ?>"> <?php echo (isset($LANG['REPORTS']) ? $LANG['REPORTS'] : 'Reports')?> </a></li>
+				        <li><a href="exporter.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&displaymode=' . htmlspecialchars($displayMode, HTML_SPECIAL_CHARS_FLAGS); ?>"> <?php echo (isset($LANG['EXPORTER']) ? $LANG['EXPORTER'] : 'Exporter')?> </a></li>
 				        <?php
 				        if($ACTIVATE_GEOLOCATE_TOOLKIT){
 					        ?>
-					        <li><a href="geolocate.php?collid=<?php echo $collid; ?>">GeoLocate CoGe</a></li>
+					        <li><a href="geolocate.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"> <?php echo (isset($LANG['GEOLOC_COGE']) ? $LANG['GEOLOC_COGE'] : 'GeoLocate CoGe')?> </a></li>
 					        <?php
 				        }
 				        ?>
@@ -165,7 +167,7 @@ if($isEditor){
 			else{
 				?>
 				<div style='font-weight:bold;'>
-					Collection project has not been identified
+					<?php echo (isset($LANG['NOT_IDENTIFIED']) ? $LANG['NOT_IDENTIFIED'] : 'Collection project has not been identified')?>
 				</div>
 				<?php
 			}

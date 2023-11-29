@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCleaner.php');
@@ -48,13 +50,13 @@ if($collMap){
 	}
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['OCC_CLEANER']; ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<style type="text/css">
+	<style>
 		table.styledtable td { white-space: nowrap; }
 	</style>
 	<script type="text/javascript">
@@ -212,13 +214,13 @@ if($collMap){
 					if((count($dupArr)+2)>$limit){
 						?>
 							<div>
-								<a href="index.php?collid=<?php echo $collid; ?>"><?php echo $LANG['RETURN_TO_FORM']; ?></a>
+								<a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['RETURN_TO_FORM'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
 							</div>
 							<?php
 						}
 					?>
 					<div>
-						<a href="index.php?collid=<?php echo $collid; ?>"><?php echo $LANG['RETURN_TO_MAIN']; ?></a>
+						<a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['RETURN_TO_MAIN'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
 					</div>
 				</div>
 				<?php

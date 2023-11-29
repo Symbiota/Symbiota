@@ -61,7 +61,9 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USE
 		$statusStr = $clManager->deleteProject($_POST['pid']);
 	}
 	elseif($action == 'addPoint'){
-		$statusStr = $clManager->addPoint($_POST['pointtid'],$_POST['pointlat'],$_POST['pointlng'],$_POST['notes']);
+		if(!$clManager->addPoint($_POST['pointtid'], $_POST['pointlat'], $_POST['pointlng'], $_POST['notes'])){
+			$statusStr = $clManager->getErrorMessage();
+		}
 	}
 	elseif($action && array_key_exists('clidadd',$_POST)){
 		if(!$clManager->addChildChecklist($_POST['clidadd'])){
@@ -83,12 +85,12 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USE
 			$statusStr = '<div>Checklist parsed successfully!</div>';
 			if(isset($resultArr['targetPid'])){
 				$targetPid = $resultArr['targetPid'];
-				$statusStr .= '<div style="margin-left:15px"><a href="../projects/index.php?pid='.$targetPid.'" target="_blank">Target project</a></div>';
+				$statusStr .= '<div style="margin-left:15px"><a href="../projects/index.php?pid=' . htmlspecialchars($targetPid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">Target project</a></div>';
 			}
-			if(isset($resultArr['targetClid'])) $statusStr .= '<div style="margin-left:15px"><a href="checklist.php?clid='.$resultArr['targetClid'].'&pid='.$targetPid.'" target="_blank">Target checklist</a></div>';
+			if(isset($resultArr['targetClid'])) $statusStr .= '<div style="margin-left:15px"><a href="checklist.php?clid=' . htmlspecialchars($resultArr['targetClid'], HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($targetPid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">Target checklist</a></div>';
 			if(isset($resultArr['parentClid'])){
 				$parentClid = $resultArr['parentClid'];
-				$statusStr .= '<div style="margin-left:15px"><a href="checklist.php?clid='.$resultArr['parentClid'].'&pid='.$targetPid.'" target="_blank">Parent checklist</a></div>';
+				$statusStr .= '<div style="margin-left:15px"><a href="checklist.php?clid=' . htmlspecialchars($resultArr['parentClid'], HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($targetPid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">Parent checklist</a></div>';
 			}
 		}
 	}
@@ -99,7 +101,7 @@ $clArray = $clManager->getMetaData();
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<title><?php echo $DEFAULT_TITLE.' - '.$LANG['CHECKLIST_ADMIN'];?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -155,12 +157,12 @@ include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath">
 	<a href="../index.php"><?php echo $LANG['NAV_HOME'];?></a> &gt;&gt;
-	<a href="checklist.php?clid=<?php echo $clid.'&pid='.$pid; ?>"><?php echo $LANG['RETURNCHECK'];?></a> &gt;&gt;
+	<a href="checklist.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['RETURNCHECK'], HTML_SPECIAL_CHARS_FLAGS);?></a> &gt;&gt;
 	<b><?php echo $LANG['CHECKLIST_ADMIN']; ?></b>
 </div>
 <div id='innertext'>
 	<div style="color:#990000;font-size:20px;font-weight:bold;margin:0px 10px 10px 0px;">
-		<a href="checklist.php?clid=<?php echo $clid.'&pid='.$pid; ?>">
+		<a href="checklist.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>">
 			<?php echo $clManager->getClName(); ?>
 		</a>
 	</div>
@@ -183,13 +185,13 @@ include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div id="tabs" style="margin:10px;">
 			<ul>
-				<li><a href="#admintab"><span><?php echo $LANG['ADMIN'];?></span></a></li>
-				<li><a href="checklistadminmeta.php?<?php echo $varBase; ?>"><span><?php echo $LANG['DESCRIPTION'];?></span></a></li>
+				<li><a href="#admintab"><span><?php echo htmlspecialchars($LANG['ADMIN'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
+				<li><a href="checklistadminmeta.php?<?php echo htmlspecialchars($varBase, HTML_SPECIAL_CHARS_FLAGS); ?>"><span><?php echo htmlspecialchars($LANG['DESCRIPTION'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
 				<!-- <li><a href="#pointtab"><span>Non-vouchered Points</span></a></li> -->
-				<li><a href="checklistadminchildren.php?<?php echo $varChildren; ?>"><span><?php echo $LANG['RELATEDCHECK'];?></span></a></li>
+				<li><a href="checklistadminchildren.php?<?php echo htmlspecialchars($varChildren, HTML_SPECIAL_CHARS_FLAGS); ?>"><span><?php echo htmlspecialchars($LANG['RELATEDCHECK'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
 
 				<?php
-				if($clManager->hasVoucherProjects()) echo '<li><a href="imgvouchertab.php?clid='.$clid.'">'.(isset($LANG['ADDIMGVOUCHER'])?$LANG['ADDIMGVOUCHER']:'Add Image Voucher').'</a></li>';
+				if($clManager->hasVoucherProjects()) echo '<li><a href="imgvouchertab.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars((isset($LANG['ADDIMGVOUCHER'])?$LANG['ADDIMGVOUCHER']:'Add Image Voucher'), HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
 				?>
 			</ul>
 			<div id="admintab">
@@ -254,7 +256,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							foreach($projArr as $pid => $pName){
 								?>
 								<li>
-									<a href="../projects/index.php?pid=<?php echo $pid; ?>"><?php echo $pName; ?></a>
+									<a href="../projects/index.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($pName, HTML_SPECIAL_CHARS_FLAGS); ?></a>
 									<?php
 									if(isset($USER_RIGHTS['ProjAdmin']) && in_array($pid, $USER_RIGHTS['ProjAdmin'])){
 										?>

@@ -31,12 +31,12 @@ if($SYMB_UID){
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div class="navpath">
-			<a href="<?php echo $CLIENT_ROOT; ?>/index.php">Home</a> &gt;&gt;
+			<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php">Home</a> &gt;&gt;
 			<b>Language Variable Management</b>
 		</div>
 		<!-- This is inner text! -->
 		<div id="innertext">
-			<div style="margin:20px"><b>Source path:</b> <?php echo '<a href="'.$refUrl.'">'.$refUrl; ?></a></div>
+			<div style="margin:20px"><b>Source path:</b> <?php echo '<a href="' . htmlspecialchars($refUrl, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($refUrl, HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
 			<div style="margin:20px">
 				<table class="styledtable">
 					<tr>

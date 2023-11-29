@@ -945,7 +945,7 @@ class ImageLocalProcessor {
 					'VALUES('.$this->activeCollid.',"'.$catalogNumber.'","unprocessed","'.date('Y-m-d H:i:s').'")';
 				if($this->conn->query($sql2)){
 					$occid = $this->conn->insert_id;
-					$this->logOrEcho('Specimen record does not exist; new empty specimen record created and assigned an "unprocessed" status (occid = <a href="../individual/index.php?occid='.$occid.'" target="_blank">'.$occid.'</a>) ',1);
+					$this->logOrEcho('Specimen record does not exist; new empty specimen record created and assigned an "unprocessed" status (occid = <a href="../individual/index.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '</a>) ',1);
 				}
 				else $this->logOrEcho("ERROR creating new occurrence record: ".$this->conn->error,1);
 			}
@@ -1034,7 +1034,7 @@ class ImageLocalProcessor {
 			$sql2 = '';
 			foreach($imgArr as $fieldName => $fieldValue){
 				if(array_key_exists($fieldName, $this->imageTableMap)){
-					$sql1 .= $fieldName.',';
+					$sql1 .= $fieldName . ',';
 					$sql2 .= '?, ';
 					$paramType .= $this->imageTableMap[$fieldName]['type'];
 					$paramArr[] = $fieldValue;
@@ -1651,7 +1651,7 @@ class ImageLocalProcessor {
 				'Content-Transfer-Encoding: 8bit'.$eol.
 				'Images in the attached file have been processed and are ready to be uploaded into your collection. '.
 				'This can be done using the image loading tools located in the Processing Tools (see link below).'.
-				'<a href="'.$url.'">'.$url.'</a>'.
+				'<a href="' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '</a>'.
 				'<br/>If you have problems with the new password, contact the System Administrator ';
 
 			//Add attachment

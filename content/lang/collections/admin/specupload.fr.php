@@ -128,5 +128,6 @@ $LANG['PAGE_ERROR'] = "ERREUR: Soit vous avez essayé d'accéder à cette page s
 	Vous voudrez peut-être diviser le fichier de téléchargement en fichiers plus petits ou compresser le fichier dans une archive zip (extension .zip). Vous pouvez contacter
 	l'administrateur du portail pour demander de l'aide pour télécharger le fichier (conseil à l'administrateur : augmenter les limites de téléchargement PHP peut aider, upload_max_filesize actuel";
 $LANG['USE_BACK'] = 'Utilisez les flèches de retour pour revenir à la page de téléchargement de fichier.';
+$LANG['UPLOAD'] = 'Télécharger le fichier';
 
 ?>

@@ -78,7 +78,7 @@ class ChecklistManager extends Manager{
 		if($this->clid){
 			$sql = 'SELECT c.clid, c.name, c.locality, c.publication, c.abstract, c.authors, c.parentclid, c.notes, '.
 				'c.latcentroid, c.longcentroid, c.pointradiusmeters, c.footprintwkt, c.access, c.defaultSettings, '.
-				'c.dynamicsql, c.datelastmodified, c.uid, c.type, c.initialtimestamp '.
+				'c.dynamicsql, c.datelastmodified, c.dynamicProperties, c.uid, c.type, c.initialtimestamp '.
 				'FROM fmchecklists c WHERE (c.clid = '.$this->clid.')';
 		 	$result = $this->conn->query($sql);
 			if($result){
@@ -100,6 +100,7 @@ class ChecklistManager extends Manager{
 					$this->clMetadata["defaultSettings"] = $row->defaultSettings;
 					$this->clMetadata["dynamicsql"] = $row->dynamicsql;
 					$this->clMetadata["datelastmodified"] = $row->datelastmodified;
+					$this->clMetadata['dynamicProperties'] = $row->dynamicProperties;
 				}
 				$result->free();
 			}
@@ -143,6 +144,17 @@ class ChecklistManager extends Manager{
 			else $this->setDynamicMetaData();
 		}
 		return $this->clMetadata;
+	}
+
+	public function getAssociatedExternalService(){
+		$resp = false;
+ 		if($this->clMetadata['dynamicProperties']){
+			$dynpropArr = json_decode($this->clMetadata['dynamicProperties'], true);
+			if(array_key_exists('externalservice', $dynpropArr)) {
+				$resp = $dynpropArr['externalservice'];
+			}
+		}
+		return $resp;
 	}
 
 	public function getParentChecklist(){
@@ -390,7 +402,6 @@ class ChecklistManager extends Manager{
 				'WHERE ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.tid IN('.implode(',',array_keys($this->taxaList)).')) ';
 			if($this->langId) $sql .= 'AND v.langid = '.$this->langId.' ';
 			$sql .= 'ORDER BY v.sortsequence DESC ';
-			//echo $sql; exit;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				if($r->vernacularname) $this->taxaList[$r->tid]['vern'] = $this->cleanOutStr($r->vernacularname);
@@ -408,7 +419,6 @@ class ChecklistManager extends Manager{
 				'WHERE (ts.taxauthid = '.($this->thesFilter?$this->thesFilter:'1').') AND (ts2.taxauthid = '.($this->thesFilter?$this->thesFilter:'1').') '.
 				'AND (ts.tid IN('.implode(',',array_keys($this->taxaList)).')) AND (ts.tid != ts2.tid) '.
 				'ORDER BY t.sciname';
-			//echo $sql;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$tempArr[$r->tid][] = '<i>'.$r->sciname.'</i>'.($this->showAuthors && $r->author?' '.$r->author:'');
@@ -418,6 +428,42 @@ class ChecklistManager extends Manager{
 				$this->taxaList[$k]['syn'] = implode(', ',$vArr);
 			}
 		}
+	}
+
+	public function getExternalVoucherArr(){
+		$externalVoucherArr = array();
+		if($this->taxaList){
+			$clidStr = $this->clid;
+			if($this->childClidArr){
+				$clidStr .= ','.implode(',',array_keys($this->childClidArr));
+			}
+			$sql = 'SELECT clCoordID, clid, tid, sourceIdentifier, referenceUrl, dynamicProperties
+				FROM fmchklstcoordinates
+				WHERE (clid IN ('.$clidStr.')) AND (tid IN('.implode(',',array_keys($this->taxaList)).')) AND sourceName = "EXTERNAL_VOUCHER"';
+			$rs = $this->conn->query($sql);
+			while ($r = $rs->fetch_object()){
+				$dynPropArr = json_decode($r->dynamicProperties);
+				foreach($dynPropArr as $vouch) {
+					$displayStr = '';
+					if(!empty($vouch->user)) $displayStr = $vouch->user;
+					if(strlen($displayStr) > 25){
+						//Collector string is too big, thus reduce
+						$strPos = strpos($displayStr,';');
+						if(!$strPos) $strPos = strpos($displayStr,',');
+						if(!$strPos) $strPos = strpos($displayStr,' ',10);
+						if($strPos) $displayStr = substr($displayStr,0,$strPos).'...';
+					}
+					if($vouch->date) $displayStr .= ' '.$vouch->date;
+					if(!trim($displayStr)) $displayStr = 'undefined voucher';
+					$displayStr .= ' ['.$vouch->repository.($vouch->id?'-'.$vouch->id:'').']';
+					$externalVoucherArr[$r->tid][$r->clCoordID]['display'] = trim($displayStr);
+					$url = 'https://www.inaturalist.org/observations/'.$r->sourceIdentifier;
+					$externalVoucherArr[$r->tid][$r->clCoordID]['url'] = $url;
+				}
+			}
+			$rs->free();
+		}
+		return $externalVoucherArr;
 	}
 
 	public function getVoucherCoordinates($limit=0){
@@ -434,7 +480,6 @@ class ChecklistManager extends Manager{
 				'FROM fmchklstcoordinates cc INNER JOIN ('.$this->basicSql.') t ON cc.tid = t.tid '.
 				'WHERE cc.clid IN ('.$clidStr.') AND cc.decimallatitude BETWEEN -90 AND 90 AND cc.decimallongitude  BETWEEN -180 AND 180 ';
 			if($limit) $sql1 .= 'ORDER BY RAND() LIMIT '.$limit;
-			//echo $sql1;
 			$rs1 = $this->conn->query($sql1);
 			if($rs1){
 				while($r1 = $rs1->fetch_object()){
@@ -459,7 +504,6 @@ class ChecklistManager extends Manager{
 					WHERE cl.clid IN ('.$clidStr.') AND o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL
 					AND (o.localitysecurity = 0 OR o.localitysecurity IS NULL) ';
 				if($limit) $sql2 .= 'ORDER BY RAND() LIMIT '.$limit;
-				//echo $sql2;
 				$rs2 = $this->conn->query($sql2);
 				if($rs2){
 					while($r2 = $rs2->fetch_object()){
@@ -493,7 +537,6 @@ class ChecklistManager extends Manager{
 					$sql .= 'WHERE ('.$voucherManager->getSqlFrag().') ';
 				}
 				$sql .= 'LIMIT 50';
-				//echo $sql; exit;
 				$rs = $this->conn->query($sql);
 				while($r = $rs->fetch_object()){
 					$retArr[] = $r->decimallatitude.','.$r->decimallongitude;
@@ -615,7 +658,6 @@ class ChecklistManager extends Manager{
 					'SET o.localitysecurity = 1 '.
 					'WHERE (o.localitysecurity IS NULL OR o.localitysecurity = 0) AND (o.localitySecurityReason IS NULL) '.
 					'AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1) AND (o.stateprovince = "'.$this->clMetadata['locality'].'") AND (ts2.tid = '.$postArr['tid'].')';
-				//echo $sqlRare; exit;
 				$conn->query($sqlRare);
 			}
 		}
@@ -633,7 +675,7 @@ class ChecklistManager extends Manager{
 		return $insertStatus;
 	}
 
-	//Checklist index page fucntions
+	//Checklist index page functions
 	public function getChecklists($limitToKey=false){
 		$retArr = Array();
 		$sql = 'SELECT p.pid, p.projname, p.ispublic, c.clid, c.name, c.access, c.defaultSettings, COUNT(l.tid) AS sppcnt
@@ -878,7 +920,7 @@ class ChecklistManager extends Manager{
 	//Misc functions
 	public function cleanOutText($str){
 		//Need to clean for MS Word ouput: strip html tags, convert all html entities and then reset as html tags
-		$str = strip_tags($str);
+		$str = strip_tags($str ?? "");
 		$str = html_entity_decode($str);
 		$str = htmlspecialchars($str);
 		return $str;

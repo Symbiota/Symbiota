@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
@@ -40,7 +42,7 @@ unset($languageArr['all']);
 $taxaArr = $glosManager->getTaxaGroupArr();
 $taxonName = ($tid?$taxaArr[$tid]:'');
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['GLOSSARY']; ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
@@ -158,7 +160,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 				if($isEditor){
 					?>
 					<div>
-						<a href="#" onclick="openNewTermPopup();">
+						<a onclick="openNewTermPopup();">
 							<?php echo $LANG['ADD_TERM']; ?>
 						</a>
 					</div>
@@ -171,7 +173,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 				}
 				?>
 				<div>
-					<a href="#" title="Show download options" onclick="toggle('downloadoptionsdiv');return false;">
+					<a title="Show download options" onclick="toggle('downloadoptionsdiv');return false;">
 						<?php echo (isset($LANG['DOWN_OP'])?$LANG['DOWN_OP']:'Download Options'); ?>
 					</a>
 				</div>
@@ -188,7 +190,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 							</div>
 							<div style="margin-bottom:8px;">
 								<div>
-									<input name="exporttype" type="radio" value="singlelanguage" checked /> <?php echo (isset($LANG['SING_LANG'])?$LANG['SING_LANG']:'Single Language'); ?>
+									<input name="exporttype" type="radio" value="singlelanguage" checked /> <?php echo (isset($LANG['SING_LANG'])?$LANG['SING_LANG']:'Single Language'); ?> 
 								</div>
 								<div style="margin-left:25px;">
 									<input name="images" type="checkbox" value="images" /> <?php echo (isset($LANG['INCL_IMG'])?$LANG['INCL_IMG']:'Include Images'); ?>
@@ -275,8 +277,8 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 					<input type="text" autocomplete="off" name="searchterm" size="25" value="<?php echo htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS); ?>" />
 				</div>
 				<div style="margin-left:40px">
-					<input name="deepsearch" type="checkbox" value="1" <?php echo $deepSearch?'checked':''; ?> />
-					<b><?php echo (isset($LANG['SEARCH_DEF'])?$LANG['SEARCH_DEF']:'Search within definitions'); ?></b>
+					<input id="deepsearch" name="deepsearch" type="checkbox" value="1" <?php echo $deepSearch?'checked':''; ?> />
+					<label for="deepsearch"> <?php echo (isset($LANG['SEARCH_DEF'])?$LANG['SEARCH_DEF']:'Search within definitions'); ?> </label>
 				</div>
 				<div style="margin:20px">
 					<button name="formsubmit" type="submit" value="Search Terms"><?php echo (isset($LANG['SEARCH_TERMS'])?$LANG['SEARCH_TERMS']:'Search/Browse Terms'); ?></button>
@@ -302,7 +304,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 							?>
 							<div style="float:left;margin-left:5px;">
 								<div style="" onclick="toggle('sourcesdiv');return false;">
-									(<a href="#"><?php echo (isset($LANG['DISP_SRC'])?$LANG['DISP_SRC']:'Display Sources'); ?></a>)
+									(<a><?php echo (isset($LANG['DISP_SRC'])?$LANG['DISP_SRC']:'Display Sources'); ?></a>)
 								</div>
 							</div>
 							<?php
@@ -311,7 +313,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 							if($isEditor){
 								?>
 								<div style="float:left;margin-left:5px;">
-									(<a href="sources.php?emode=1&tid=<?php echo $tid.'&searchterm='.htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS).'&language='.$language.'&taxa='.$tid; ?>"><?php echo (isset($LANG['ADD_SRC'])?$LANG['ADD_SRC']:'Add Sources'); ?></a>)
+									(<a href="sources.php?emode=1&tid=<?php echo $tid.'&searchterm='.$searchTerm.'&language='.$language.'&taxa='.$tid; ?>"><?php echo $LANG['ADD_SRC']; ?></a>)
 								</div>
 								<?php
 							}

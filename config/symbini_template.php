@@ -109,6 +109,12 @@ $RIGHTS_TERMS = array(
  // json: {"editorProps":{"modules-panel":{"paleo":{"status":1}}}}
  */
 
+ // Should public users be able to create accounts?
+$SHOULD_BE_ABLE_TO_CREATE_PUBLIC_USER = true;
+// end Should public users be able to create accounts?
+
+$SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT=false;
+
 $COOKIE_SECURE = false;
 if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) {
 	header("strict-transport-security: max-age=600");

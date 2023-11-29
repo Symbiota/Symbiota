@@ -109,9 +109,7 @@ class Manager  {
 	}
 
 	public function cleanOutStr($str){
-		//Sanitize output
-		if(!is_string($str)) $str = '';
-		$str = htmlspecialchars($str, HTML_SPECIAL_CHARS_FLAGS);
+		if(isset($str)) $str = htmlspecialchars($str);
 		return $str;
 	}
 

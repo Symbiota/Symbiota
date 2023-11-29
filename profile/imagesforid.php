@@ -11,7 +11,7 @@ $imgManager = new ImageLibraryManager();
 $imageExplorer = new ImageExplorer();
 
 ?>
-<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 <script type="text/javascript" src="../js/jquery.js"></script>
 <script type="text/javascript" src="../js/jquery-ui.js"></script>
 <script type="text/javascript" src="../js/underscore-1.4.3.js"></script>

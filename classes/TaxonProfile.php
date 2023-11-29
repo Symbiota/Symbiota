@@ -159,7 +159,7 @@ class TaxonProfile extends Manager {
 			}
 			if($imgObj['occid']) $imgAnchor = '../collections/individual/index.php?occid='.$imgObj['occid'];
 			if($useThumbnail) if($imgObj['thumbnailurl']) $imgUrl = $imgThumbnail;
-			echo '<div class="tptnimg"><a href="#" onclick="openPopup(\''.$imgAnchor.'\');return false;">';
+			echo '<div class="tptnimg"><a href="#" onclick="openPopup(\'' . htmlspecialchars($imgAnchor, HTML_SPECIAL_CHARS_FLAGS) . '\');return false;">';
 			$titleStr = $imgObj['caption'];
 			if($imgObj['sciname'] != $this->taxonName) $titleStr .= ' (linked from '.$imgObj['sciname'].')';
 			echo '<img src="'.$imgUrl.'" title="'.$titleStr.'" alt="'.$this->taxonName.' image" />';
@@ -419,9 +419,9 @@ class TaxonProfile extends Manager {
 			}
 		}
 		if((isset($CALENDAR_TRAIT_PLOTS) && $CALENDAR_TRAIT_PLOTS > 0) && $this->rankId > 180) {
-			$retStr .= '<li><a href="plottab.php?tid='.$this->tid.'">'.($LANG['CALENDAR_TRAIT_PLOT']?$LANG['CALENDAR_TRAIT_PLOT']:'Traits Plots').'</a></li>';
+			$retStr .= '<li><a href="plottab.php?tid=' . htmlspecialchars($this->tid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars(($LANG['CALENDAR_TRAIT_PLOT']?$LANG['CALENDAR_TRAIT_PLOT']:'Traits Plots'), HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
 		}
-		$retStr .= '<li><a href="resourcetab.php?tid='.$this->tid.'">'.($LANG['RESOURCES']?$LANG['RESOURCES']:'Resources').'</a></li>';
+		$retStr .= '<li><a href="resourcetab.php?tid=' . htmlspecialchars($this->tid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars(($LANG['RESOURCES']?$LANG['RESOURCES']:'Resources'), HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
 		$retStr .= '</ul>';
 		foreach($descArr as $dArr){
 			foreach($dArr as $id => $vArr){
@@ -728,7 +728,7 @@ class TaxonProfile extends Manager {
 		if ((1 <= $numOccs) && ($numOccs <= $limitOccs)) {
 			$occSrcUrl = '../collections/list.php?usethes=1&taxa='.$this->tid;
 			if($collidStr != 'all') $occSrcUrl .= '&db='.$collidStr;
-			$occMsg = '<a class="btn" href="'.$occSrcUrl.'" target="_blank">Explore '.number_format($numOccs).' occurrences</a>';
+			$occMsg = '<a class="btn" href="' . htmlspecialchars($occSrcUrl, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">Explore ' . htmlspecialchars(number_format($numOccs), HTML_SPECIAL_CHARS_FLAGS) . ' occurrences</a>';
 		} elseif ($numOccs > $limitOccs) {
 			$occMsg = number_format($numOccs).' occurrences';
 		} elseif ($numOccs == 0) {

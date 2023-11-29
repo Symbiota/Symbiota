@@ -31,6 +31,10 @@ $LANG['REMOVESEARCH'] = 'Supprimer Instruction de Recherche';
 $LANG['NON_VOUCHERED'] = 'Taxons sans Échantillons';
 $LANG['MISSINGTAXA'] = 'Taxons Manquants';
 $LANG['VOUCHCONF'] = 'Conflits Échantillons';
+$LANG['EXTERNALVOUCHERS'] = "Échantillons Externe (e.g. iNaturalist)";
+$LANG['LOOKUPEXT'] = 'Récupérer les informations des échantillons externes';
+$LANG['SAVEEXTVOUCH'] = 'Enregistrer les échantillons externes dans la liste';
+$LANG['EMPTY_LIST'] = 'La liste est vide';
 $LANG['REPORTS'] = 'Rapports';
 $LANG['NONVOUCHTAX'] = 'Liste des Taxons sans Échantillons';
 $LANG['OCCURNONVOUCH'] = 'Occurrences pour les Taxons sans Échantillons';
@@ -44,6 +48,7 @@ $LANG['NOVOUCHLOCA'] = 'Aucun échantillon localisé';
 $LANG['LISTEDBELOWARESPECINSTRUC'] = "Ci-dessous figurent les espèces de la liste qui n'ont pas d'échantillons liés..
 Cliquez sur le nom pour utiliser l'instruction de recherche ci-dessus pour interroger dynamiquement l'ensemble de données
 pour des échantillons possibles. Utilisez le menu déroulant à droite pour afficher les échantillons sous forme de tableau.";
+$LANG['LISTEDBELOWEXTERNAL'] = "Vous trouverez ci-dessous les espèces de la liste. À l'aide des fonctions de recherche du site Web externe, localisez une observation qui servira de référence possible pour chaque taxon. Copiez l'ID de l'observation (par exemple, à partir de la dernière partie de l'URL) et collez-le dans la zone de texte correspondante. Plusieurs bons peuvent être ajoutés pour chaque taxon. Utilisez des virgules pour séparer les numéros d'identification. Symbiota recherchera dans le service externe les correspondances possibles, celles-ci apparaîtront sous forme de zones de texte blanches et le nom de l'espèce sera lié au service externe. Cliquez sur 'Récupérer les informations des échantillons externes' pour charger les données du échantillon pour chaque espèce. Lorsque vous êtes prêt, cliquez sur 'Enregistrer les échantillons externes dans la liste' pour valider les informations du échantillon dans Symbiota.";
 $LANG['ALLTAXACONTAINVOUCH'] = 'Tous les taxons contiennent des échantillons';
 $LANG['ADDITIONAL'] = "Voir le panneau d'options sur la page centrale pour des options d'exportation et d'impression supplémentaires qui intègrent dynamiquement des sélections d'options";
 $LANG['FULLSPECLIST'] = 'Liste complète des espèces (CSV)';
@@ -62,4 +67,5 @@ $LANG['REFRESHLIST'] = 'Actualiser Liste';
 $LANG['PREVIOUS'] = 'Précédente';
 $LANG['RECORDS'] = 'Occurrences';
 $LANG['NEXT'] = 'Suivante';
+$LANG['IMG_EDIT'] = 'Modifier l\'image';
 ?>

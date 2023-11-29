@@ -48,19 +48,19 @@ if(is_array($collid)) $collid = implode(',',$collid);
 
 //Sanitation
 if(!preg_match('/^[,\d]+$/',$collid)) $collid = 0;
-$submitAction = filter_var($submitAction, FILTER_SANITIZE_STRING);
-$qCountry = filter_var($qCountry, FILTER_SANITIZE_STRING);
-$qState = filter_var($qState, FILTER_SANITIZE_STRING);
-$qCounty = filter_var($qCounty, FILTER_SANITIZE_STRING);
-$qMunicipality = filter_var($qMunicipality, FILTER_SANITIZE_STRING);
-$qLocality = filter_var($qLocality, FILTER_SANITIZE_STRING);
-$qDisplayAll = filter_var($qDisplayAll, FILTER_SANITIZE_STRING);
-$qVStatus = filter_var($qVStatus, FILTER_SANITIZE_STRING);
-$qSciname = filter_var($qSciname, FILTER_SANITIZE_STRING);
-$qProcessingStatus = filter_var($qProcessingStatus, FILTER_SANITIZE_STRING);
-$georeferenceSources = filter_var($georeferenceSources, FILTER_SANITIZE_STRING);
-$georeferenceProtocol = filter_var($georeferenceProtocol, FILTER_SANITIZE_STRING);
-$georeferenceVerificationStatus = filter_var($georeferenceVerificationStatus, FILTER_SANITIZE_STRING);
+$submitAction = htmlspecialchars($submitAction, HTML_SPECIAL_CHARS_FLAGS);
+$qCountry = htmlspecialchars($qCountry, HTML_SPECIAL_CHARS_FLAGS);
+$qState = htmlspecialchars($qState, HTML_SPECIAL_CHARS_FLAGS);
+$qCounty = htmlspecialchars($qCounty, HTML_SPECIAL_CHARS_FLAGS);
+$qMunicipality = htmlspecialchars($qMunicipality, HTML_SPECIAL_CHARS_FLAGS);
+$qLocality = htmlspecialchars($qLocality, HTML_SPECIAL_CHARS_FLAGS);
+$qDisplayAll = htmlspecialchars($qDisplayAll, HTML_SPECIAL_CHARS_FLAGS);
+$qVStatus = htmlspecialchars($qVStatus, HTML_SPECIAL_CHARS_FLAGS);
+$qSciname = htmlspecialchars($qSciname, HTML_SPECIAL_CHARS_FLAGS);
+$qProcessingStatus = htmlspecialchars($qProcessingStatus, HTML_SPECIAL_CHARS_FLAGS);
+$georeferenceSources = htmlspecialchars($georeferenceSources, HTML_SPECIAL_CHARS_FLAGS);
+$georeferenceProtocol = htmlspecialchars($georeferenceProtocol, HTML_SPECIAL_CHARS_FLAGS);
+$georeferenceVerificationStatus = htmlspecialchars($georeferenceVerificationStatus, HTML_SPECIAL_CHARS_FLAGS);
 
 if(!$georeferenceSources) $georeferenceSources = 'georef batch tool '.date('Y-m-d');
 //if(!$georeferenceVerificationStatus) $georeferenceVerificationStatus = 'reviewed - high confidence';
@@ -96,7 +96,7 @@ if($isEditor && $submitAction){
 <html>
 	<head>
 		<title><?php echo $DEFAULT_TITLE.' '.$LANG['GEOREF_TOOLS']; ?></title>
-		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -126,16 +126,16 @@ if($isEditor && $submitAction){
 					}
 					?>
 					<div class='navpath' style="margin:10px;clear:both;">
-						<a href='../../index.php'><?php echo $LANG['HOME']; ?></a> &gt;&gt;
+						<a href='../../index.php'><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 						<?php
 						if(is_numeric($collid)){
 							?>
-							<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1"><?php echo $LANG['COL_MAN_MENU']; ?></a> &gt;&gt;
+							<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars( $collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars($LANG['COL_MAN_MENU'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 							<?php
 						}
 						else{
 							?>
-							<a href="../../profile/viewprofile.php?tabindex=1"><?php echo $LANG['SPEC_MANAGEMENT']; ?></a> &gt;&gt;
+							<a href="../../profile/viewprofile.php?tabindex=1"><?php echo htmlspecialchars($LANG['SPEC_MANAGEMENT'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 							<?php
 						}
 						?>

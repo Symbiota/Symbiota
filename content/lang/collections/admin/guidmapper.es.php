@@ -13,4 +13,7 @@ $LANG['DETS'] = 'Determinaciones';
 $LANG['IMGS'] = 'Imágenes';
 $LANG['NOT_AUTH'] = 'No está autorizado para ingresar en esta página';
 
+$LANG['POP_COLL_GUID'] = 'Rellenar GUID de colección';
+$LANG['POP_GUID'] = 'Rellenar GUID';
+
 ?>

@@ -125,7 +125,7 @@ class SchemaManager extends Manager{
 					}
 					$this->logOrEcho('Finished: schema applied');
 					$logUrl = str_replace($GLOBALS['SERVER_ROOT'], $GLOBALS['CLIENT_ROOT'], $this->logPath);
-					$this->logOrEcho('Log file: <a href="' . $logUrl . '" target="_blank">' . $logUrl . '</a>');
+					$this->logOrEcho('Log file: <a href="' . htmlspecialchars($logUrl, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($logUrl, HTML_SPECIAL_CHARS_FLAGS) . '</a>');
 					$amendmentUrl = str_replace($GLOBALS['SERVER_ROOT'], $GLOBALS['CLIENT_ROOT'], $this->amendmentPath);
 					if($this->amendmentFH) $this->logOrEcho('Amendment (failed statements needing to be applied): ' . $amendmentUrl);
 				}

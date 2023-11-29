@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecUploadBase.php');
@@ -36,11 +38,11 @@ elseif($uploadType == $DIRECTUPLOAD || $uploadType == $STOREDPROCEDURE || $uploa
 	header('Location: specuploadprocessor.php?uploadtype='.$uploadType.'&uspid='.$uspid.'&collid='.$collid);
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['SPEC_UPLOAD'])?$LANG['SPEC_UPLOAD']:'Specimen Uploader - file selector'); ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -104,9 +106,9 @@ $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath">
-	<a href="../../index.php"><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
-	<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1"><?php echo (isset($LANG['COL_MGMNT'])?$LANG['COL_MGMNT']:'Collection Management Panel'); ?></a> &gt;&gt;
-	<a href="specuploadmanagement.php?collid=<?php echo $collid; ?>"><?php echo (isset($LANG['LIST_UPLOAD'])?$LANG['LIST_UPLOAD']:'List of Upload Profiles'); ?></a> &gt;&gt;
+	<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars((isset($LANG['COL_MGMNT'])?$LANG['COL_MGMNT']:'Collection Management Panel'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+	<a href="specuploadmanagement.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars((isset($LANG['LIST_UPLOAD'])?$LANG['LIST_UPLOAD']:'List of Upload Profiles'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 	<b><?php echo (isset($LANG['SPEC_UPLOAD'])?$LANG['SPEC_UPLOAD']:'Specimen Uploader'); ?></b>
 </div>
 <div id="innertext">
@@ -128,7 +130,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							$pathLabel = (isset($LANG['RES_URL'])?$LANG['RES_URL']:'Resource Path or URL');
 							?>
 							<div>
-								<input name="uploadfile" type="file" size="50" onchange="verifyFileSize(this)" />
+								<input name="uploadfile" type="file" onchange="verifyFileSize(this)" aria-label="<?php echo (isset($LANG['UPLOAD']) ? $LANG['UPLOAD'] : 'Upload File') ?>" />
 							</div>
 							<?php
 						}
@@ -144,7 +146,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						if($uploadType != $IPTUPLOAD){
 							?>
 							<div class="ulfnoptions">
-								<a href="#" onclick="toggle('ulfnoptions');return false;"><?php echo (isset($LANG['DISPLAY_OPS'])?$LANG['DISPLAY_OPS']:'Display Additional Options'); ?></a>
+								<a href="#" onclick="toggle('ulfnoptions');return false;"><?php echo htmlspecialchars((isset($LANG['DISPLAY_OPS'])?$LANG['DISPLAY_OPS']:'Display Additional Options'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
 							</div>
 							<?php
 						}
@@ -153,7 +155,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					<div style="margin:10px;">
 						<?php
 						if(!$uspid && $uploadType != $NFNUPLOAD)
-							echo '<input name="automap" type="checkbox" value="1" CHECKED /> <b>'.(isset($LANG['AUTOMAP'])?$LANG['AUTOMAP']:'Automap fields').'</b><br/>';
+							echo '<input id="automap" name="automap" type="checkbox" value="1" CHECKED /> <label for="automap"><b>'.(isset($LANG['AUTOMAP'])?$LANG['AUTOMAP']:'Automap fields').'</b></label><br/>';
 						?>
 					</div>
 					<div style="margin:10px;">

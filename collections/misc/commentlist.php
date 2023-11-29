@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceSupport.php');
@@ -80,7 +82,7 @@ if($isEditor){
 	$commentArr = $commentManager->getComments($start, $limit, $tsStart, $tsEnd, $uid, $rs, $showAllGeneralObservations);
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title><?php echo $DEFAULT_TITLE.' '.$LANG['COMMENTS_LISTING']; ?></title>
 		<?php
@@ -93,13 +95,13 @@ if($isEditor){
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div class="navpath">
-			<a href="<?php echo $CLIENT_ROOT; ?>/index.php"><?php echo $LANG['HOME']; ?></a> &gt;&gt;
+			<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 			<?php
 			if($collMeta['colltype'] == 'General Observations'){
-				echo '<a href="../../profile/viewprofile.php?tabindex=1">'.$LANG['COL_MANAGE'].'</a> &gt;&gt;';
+				echo '<a href="../../profile/viewprofile.php?tabindex=1">' . htmlspecialchars($LANG['COL_MANAGE'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt;';
 			}
 			else{
-				echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management</a> &gt;&gt;';
+				echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">Collection Management</a> &gt;&gt;';
 			}
 			?>
 			<b><?php echo $LANG['OCC_COMMENTS_LISTING']; ?></b>
@@ -128,13 +130,13 @@ if($isEditor){
 					$lastPage = ceil($recCnt / $limit);
 					$startPage = $currentPage > 4?$currentPage - 4:1;
 					$endPage = ($lastPage > $startPage + 9?$startPage + 9:$lastPage);
-					$hrefPrefix = 'commentlist.php?'.$urlVars."&start=";
+					$hrefPrefix = 'commentlist.php?' . $urlVars . "&start=";
 					$pageBar .= "<span style='margin:5px;'>\n";
 					if($endPage > 1){
-					    $pageBar .= "<span style='margin-right:5px;'><a href='".$hrefPrefix."0'>".$LANG['FIRST_PAGE']."</a> &lt;&lt;</span>";
+					    $pageBar .= "<span style='margin-right:5px;'><a href='" . htmlspecialchars($hrefPrefix, HTML_SPECIAL_CHARS_FLAGS) . "0'>" . htmlspecialchars($LANG['FIRST_PAGE'], HTML_SPECIAL_CHARS_FLAGS) . "</a> &lt;&lt;</span>";
 						for($x = $startPage; $x <= $endPage; $x++){
 						    if($currentPage != $x){
-						        $pageBar .= "<span style='margin-right:3px;margin-right:3px;'><a href='".$hrefPrefix.(($x-1)*$limit)."'>".$x."</a></span>";
+						        $pageBar .= "<span style='margin-right:3px;margin-right:3px;'><a href='" . htmlspecialchars($hrefPrefix, HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars((($x-1)*$limit), HTML_SPECIAL_CHARS_FLAGS) . "'>" . htmlspecialchars($x, HTML_SPECIAL_CHARS_FLAGS) . "</a></span>";
 						    }
 						    else{
 						        $pageBar .= "<span style='margin-right:3px;margin-right:3px;font-weight:bold;'>".$x."</span>";
@@ -142,7 +144,7 @@ if($isEditor){
 						}
 					}
 					if($lastPage > $endPage){
-					    $pageBar .= "<span style='margin-left:5px;'>&gt;&gt; <a href='".$hrefPrefix.(($lastPage-1)*$limit)."'>Last Page</a></span>";
+					    $pageBar .= "<span style='margin-left:5px;'>&gt;&gt; <a href='" . htmlspecialchars($hrefPrefix, HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars((($lastPage-1)*$limit), HTML_SPECIAL_CHARS_FLAGS) . "'>Last Page</a></span>";
 					}
 					$pageBar .= "</span>";
 					$endNum = $start + $limit;
@@ -155,11 +157,14 @@ if($isEditor){
 				}
 				?>
 				<!-- Option box -->
-				<fieldset style="float:right;width:350px;margin:10px;">
-					<legend><b><?php echo $LANG['FILTER_OPT']; ?></b></legend>
+				<section class="fieldset-like" style="float:right;width:350px;margin:10px;">
+					<h1>
+						<span><?php echo $LANG['FILTER_OPT'];?></span>
+					</h1>
 					<form name="optionform" action="commentlist.php" method="post">
 						<div>
-							<select name="uid" onchange="this.form.submit()">
+							<label for="commenter"> <?php echo (isset($LANG['COMMENTER']) ? $LANG['COMMENTER'] : 'Commenter'); ?>:</label>
+							<select id="commenter" name="uid">
 								<option value="0"><?php echo $LANG['ALL_COMMENTERS']; ?></option>
 								<option value="0">------------------------</option>
 								<?php
@@ -176,29 +181,30 @@ if($isEditor){
 						}
 						?>
 						<div>
-							<?php echo $LANG['DATE']; ?>:
-							<input name="tsstart" type="date" value="<?php echo $tsStart; ?>" onchange="this.form.submit()" title="Start date" />
-							- <input name="tsend" type="date" value="<?php echo $tsEnd; ?>" onchange="this.form.submit()" title="End date" />
+							<label for="tsstart"><?php echo $LANG['DATE']; ?>: </label>
+							<input id="tsstart" name="tsstart" type="date" value="<?php echo $tsStart; ?>" title="<?php echo (isset($LANG['START_DATE']) ? $LANG['START_DATE'] : 'Start Date'); ?>" aria-label="<?php echo (isset($LANG['START_DATE']) ? $LANG['START_DATE'] : 'Start Date'); ?>"/>
+							- <input name="tsend" type="date" value="<?php echo $tsEnd; ?>" title="<?php echo (isset($LANG['END_DATE']) ? $LANG['END_DATE'] : 'End Date'); ?>" aria-label="<?php echo (isset($LANG['END_DATE']) ? $LANG['END_DATE'] : 'End Date'); ?>" />
 						</div>
-						<div style="float:right;margin-top:60px;">
+						<fieldset>
+							<legend> <?php echo (isset($LANG['COMMENT_TYPE']) ? $LANG['COMMENT_TYPE'] : 'Comment Type'); ?> </legend>
+							<input id="public" name="rs" type="radio" value="1" <?php echo ($rs==1?'checked':''); ?> /> <label for="public"> <?php echo $LANG['PUBLIC']; ?> <br/> </label>
+							<input id="nonpublic" name="rs" type="radio" value="2" <?php echo ($rs==2?'checked':''); ?> /> <label for="nonpublic"> <?php echo $LANG['NON-PUBLIC']; ?> <br/> </label>
+							<input id="reviewed" name="rs" type="radio" value="3" <?php echo ($rs==3?'checked':''); ?> /> <label for="reviewed"> <?php echo $LANG['REVIEWED']; ?> <br/> </label>
+							<input id="all" name="rs" type="radio" value="0" <?php echo (!$rs?'checked':''); ?> /> <label for="all"> <?php echo $LANG['ALL']; ?> </label>
+						</fieldset>
+						<div class="top-breathing-room-rel" >
 							<button type="submit" name="submitbutton" value="Refresh List"><?php echo $LANG['REFRESH_LIST']; ?></button>
-						</div>
-						<div>
-							<input name="rs" type="radio" value="1" <?php echo ($rs==1?'checked':''); ?> onchange="this.form.submit()" /> <?php echo $LANG['PUBLIC']; ?> <br/>
-							<input name="rs" type="radio" value="2" <?php echo ($rs==2?'checked':''); ?> onchange="this.form.submit()" /> <?php echo $LANG['NON-PUBLIC']; ?> <br/>
-							<input name="rs" type="radio" value="3" <?php echo ($rs==3?'checked':''); ?> onchange="this.form.submit()" /> <?php echo $LANG['REVIEWED']; ?> <br/>
-							<input name="rs" type="radio" value="0" <?php echo (!$rs?'checked':''); ?> onchange="this.form.submit()" /> <?php echo $LANG['ALL']; ?>
 						</div>
 						<div>
 							<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 						</div>
 					</form>
-				</fieldset>
+				</section>
 				<?php
 				if($commentArr){
 					foreach($commentArr as $comid => $cArr){
 						echo '<div style="margin:15px;">';
-						echo '<div style="margin-bottom:10px;"><a href="../individual/index.php?occid='.$cArr['occid'].'" target="_blank">'.$cArr['occurstr'].'</a></div>';
+						echo '<div style="margin-bottom:10px;"><a href="../individual/index.php?occid=' . htmlspecialchars($cArr['occid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($cArr['occurstr'], HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 						echo '<div>';
 						echo '<b>'.$userArr[$cArr['uid']].'</b> <span style="color:gray;">'.$LANG['POSTED_ON'].' '.$cArr['ts'].'</span>';
 						if($cArr['rs'] == 2 || $cArr['rs'] === '0'){

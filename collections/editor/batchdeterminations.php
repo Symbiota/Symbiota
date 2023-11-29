@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorDeterminations.php');
@@ -41,11 +43,11 @@ if($isEditor){
 }
 ?>
 
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 	    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 		<title><?php echo $DEFAULT_TITLE.' '.$LANG['BATCH_DETERS']; ?></title>
-		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -288,8 +290,8 @@ if($isEditor){
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href='../../index.php'><?php echo $LANG['HOME']; ?></a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1"><?php echo $LANG['COLL_MANAGE']; ?></a> &gt;&gt;
+		<a href='../../index.php'><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars($LANG['COLL_MANAGE'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 		<b><?php echo $LANG['BATCH_DETERS']; ?></b>
 	</div>
 	<!-- This is inner text! -->
@@ -298,29 +300,37 @@ if($isEditor){
 		if($isEditor){
 			echo '<h2>'.$occManager->getCollName().'</h2>';
 			?>
-			<div style="margin:0px;">
-				<fieldset style="padding:10px;">
-					<legend><b><?php echo $LANG['DEFINE_RECORDSET']; ?></b></legend>
-					<div style="margin:15px">
+			<div>
+				<section class="fieldset-like">
+					<h1> <span> <?php echo $LANG['DEFINE_RECORDSET']; ?> </span> </h1>
+					<div class="left-breathing-room-rel-lg">
 						<?php echo $LANG['RECORDSET_EXPLAIN']; ?>
 					</div>
 					<div style="margin:15px;width:700px;">
 						<form name="accqueryform" action="batchdeterminations.php" method="post" onsubmit="return submitAccForm(this);">
-							<div>
-								<b><?php echo $LANG['CATNUM']; ?>:</b>
-								<input name="catalognumber" type="text" style="border-color:green;width:200px;" />
-								<span style="margin-left:20px"><input name="allcatnum" type="checkbox" checked /> <?php echo $LANG['TARGET_ALL']; ?></span>
-							</div>
-							<div>
-								<b><?php echo $LANG['TAXON']; ?>:</b>
+							<section class="flex-form">
+								<div class="bottom-breathing-room">
+									<label for="catalognumber"><?php echo $LANG['CATNUM']; ?>:</label>
+									<input name="catalognumber" id="catalognumber" type="text" style="border-color:green;width:200px;" />
+								</div>
+								<div class="bottom-breathing-room">
+									<input name="allcatnum" id="allcatnum" type="checkbox" checked /> <label for="allcatnum"><?php echo $LANG['TARGET_ALL']; ?></label>
+								</div>
+							</section>
+							<div class="left-breathing-room-rel">
+								<label for="nomsciname"><?php echo $LANG['TAXON']; ?>:</label>
 								<input type="text" id="nomsciname" name="sciname" style="width:260px;" onfocus="initScinameAutocomplete(this.form)" />
 							</div>
-							<div style="margin-top:5px;">
-								<button name="clearaccform" type="button" style="float:right" onclick='clearAccForm(this.form)'><?php echo $LANG['CLEAR_LIST']; ?></button>
-								<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-								<button name="addrecord" type="submit"><?php echo $LANG['ADD_RECORDS']; ?></button>
-								<img id="workingcircle" src="../../images/workingcircle.gif" style="display:none;" />
-							</div>
+							<section class="flex-form">
+								<div class="top-tiny-breathing-room">
+									<button name="addrecord" type="submit"><?php echo $LANG['ADD_RECORDS']; ?></button>
+									<img id="workingcircle" src="../../images/workingcircle.gif" style="display:none;" alt="progress is being made" />
+								</div>
+								<div class="top-tiny-breathing-room">
+									<button name="clearaccform" type="button" onclick='clearAccForm(this.form)'><?php echo $LANG['CLEAR_LIST']; ?></button>
+									<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
+								</div>
+							</section>
 						</form>
 					</div>
 					<div style="margin:15px">
@@ -330,18 +340,18 @@ if($isEditor){
 					if($statusStr){
 						echo '<div style="margin:30px 20px;">';
 						echo '<div style="color:orange;font-weight:bold;">'.$statusStr.'</div>';
-						echo '<div style="margin-top:10px;"><a href="../reports/annotationmanager.php?collid='.$collid.'" target="_blank">'.$LANG['DISPLAY_QUEUE'].'</a></div>';
+						echo '<div style="margin-top:10px;"><a href="../reports/annotationmanager.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($LANG['DISPLAY_QUEUE'], HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 						echo '</div>';
 					}
 					?>
-				</fieldset>
+				</section>
 				<div id="accrecordlistdviv" style="display:none;">
 					<form name="accselectform" id="accselectform" action="batchdeterminations.php" method="post" onsubmit="return validateSelectForm(this);">
 						<div style="margin-top: 15px; margin-left: 10px;">
 							<input name="accselectall" value="" type="checkbox" onclick="selectAll(this);" checked />
 							<?php echo $LANG['SELECT_DESELECT']; ?>
 						</div>
-						<table class="styledtable" style="font-family:Arial;font-size:12px;">
+						<table class="styledtable" style="font-family:Arial;font-size: 0.75rem;">
 							<thead>
 								<tr>
 									<th style="width:25px;text-align:center;">&nbsp;</th>
@@ -408,7 +418,7 @@ if($isEditor){
 								</div>
 								<div style='margin:3px;'>
 									<input type="checkbox" name="printqueue" value="1" checked /> <?php echo $LANG['ADD_PRINT_QUEUE']; ?>
-									<a href="../reports/annotationmanager.php?collid=<?php echo $collid; ?>" target="_blank"><img src="../../images/list.png" style="width:13px" title="<?php echo $LANG['DISPLAY_QUEUE']; ?>" /></a>
+									<a href="../reports/annotationmanager.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><img src="../../images/list.png" style="width:13px" title="<?php echo htmlspecialchars($LANG['DISPLAY_QUEUE'], HTML_SPECIAL_CHARS_FLAGS); ?>" /></a>
 								</div>
 								<div style='margin:15px;'>
 									<div style="float:left;">

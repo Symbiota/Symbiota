@@ -38,6 +38,7 @@ class SpecUploadBase extends SpecUpload{
 	private $imgFormatDefault = '';
 	private $sourceDatabaseType = '';
 	private $dbpkCnt = 0;
+	private $relationshipArr;
 
 	function __construct() {
 		parent::__construct();
@@ -196,6 +197,24 @@ class SpecUploadBase extends SpecUpload{
 		sort($this->symbFields);
 		if($this->paleoSupport) $this->symbFields = array_merge($this->symbFields,$this->getPaleoTerms());
 		if($this->materialSampleSupport) $this->symbFields = array_merge($this->symbFields,$this->getMaterialSampleTerms());
+
+		//Associated Occurrence fields
+		// All-purpose fields
+		$this->symbFields[] = 'associatedOccurrences';
+		$this->symbFields[] = 'associatedOccurrence:type';
+		$this->symbFields[] = 'associatedOccurrence:basisOfRecord';
+		$this->symbFields[] = 'associatedOccurrence:relationship';
+		$this->symbFields[] = 'associatedOccurrence:subType';
+		$this->symbFields[] = 'associatedOccurrence:locationOnHost';
+		$this->symbFields[] = 'associatedOccurrence:notes';
+		// internalOccurrence
+		$this->symbFields[] = 'associatedOccurrence:occidAssociate';
+		// externalOccurrence
+		$this->symbFields[] = 'associatedOccurrence:identifier';
+		$this->symbFields[] = 'associatedOccurrence:resourceUrl';
+		// genericObservation
+		$this->symbFields[] = 'associatedOccurrence:verbatimSciname';
+
 		//Specify fields
 		$this->symbFields[] = 'specify:subspecies';
 		$this->symbFields[] = 'specify:subspecies_author';
@@ -408,6 +427,10 @@ class SpecUploadBase extends SpecUpload{
 					}
 					elseif(in_array('specify:'.$fieldName,$symbFields)){
 						$tranlatedFieldName = strtolower('specify:'.$fieldName);
+						$isAutoMapped = true;
+					}
+					elseif(in_array('associatedOccurrence:'.$fieldName,$symbFields)){
+						$tranlatedFieldName = strtolower('associatedOccurrence:'.$fieldName);
 						$isAutoMapped = true;
 					}
 				}
@@ -818,6 +841,7 @@ class SpecUploadBase extends SpecUpload{
 		$this->transferIdentificationHistory();
 		$this->transferImages();
 		if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']) $this->transferHostAssociations();
+		$this->transferAssociatedOccurrences();
 		$this->finalCleanup();
 		$this->outputMsg('<li style="">Upload Procedure Complete ('.date('Y-m-d h:i:s A').')!</li>');
 		$this->outputMsg(' ');
@@ -1470,6 +1494,227 @@ class SpecUploadBase extends SpecUpload{
 		$rs->free();
 	}
 
+	// This function looks for records being imported with JSON in the associatedOccurrences field,
+	// parses it, and attempts to add or update any associated occurrences in the omoccurassociations table.
+	protected function transferAssociatedOccurrences() {
+
+		// Select records that appear to have symbiotaAssociations JSON:
+		$sql = 'SELECT occid, associatedOccurrences FROM `uploadspectemp` WHERE collid = ' . $this->collId .
+			' AND `associatedOccurrences` LIKE \'%{"type":"symbiotaAssociations"%\'';
+
+		// Run the query
+		$rs = $this->conn->query($sql);
+
+		// If any records appear to have associatedOccurrences JSON, transfer associated occurrences
+		if ($rs->num_rows) {
+
+			$this->outputMsg('<li>Transferring associated occurrences for ' . $rs->num_rows . ' records...</li>');
+
+			// Get current user ID
+			$symbUid = $GLOBALS['SYMB_UID'];
+
+			// Counter for the number of associations being imported
+			$assocCount = 0;
+
+			// Handle each record with associated occurrences JSON
+			while ($r = $rs->fetch_object()) {
+
+				// Check if the contents of the field is proper JSON
+				if ($assocOccArr = json_decode($r->associatedOccurrences, true)) {
+					// Proper JSON, parsed successfully
+
+					// Find the symbiotaAssociations and verbatimText arrays in the JSON and save them.
+					foreach ($assocOccArr as $index) {
+
+						// Check if there's an associations array present with all the keys. If so, save it
+						if (array_key_exists('type', $index) && $index['type'] == 'symbiotaAssociations' &&
+							array_key_exists('associations', $index) && array_key_exists('version', $index)) $assocOccur = $index;
+
+						// Check if verbatimText is present and save it.
+						// If so, we'll use it to replace the associatedOccurrences JSON, sanitizing it first for SQL
+						if (array_key_exists('type', $index) && $index['type'] == 'verbatimText' &&
+							array_key_exists('verbatimText', $index)) $verbatimText = $this->cleanInStr($index['verbatimText']);
+					}
+
+					// Check to make sure we found an associated occurrence array
+					if (isset($assocOccur)) {
+
+						// Check symbiotaAssociations version
+						if ($assocOccur['version'] != OccurrenceUtilities::$assocOccurVersion) {
+
+							// JSON symbiotaAssociations versions don't match
+							// TODO: What should we do here?
+						}
+
+					} else {
+
+						// No associated occurrence array found. It must be missing the associations key.
+						// Skip the record and output an error.
+						$this->outputMsg('<li>Transferring associations failed for occid: ' . $r->occid . '. ERROR: malformed associations JSON</li> ');
+						continue;
+					}
+
+					// If no verbatimText was found, just set it to an empty string.
+					if (!isset($verbatimText)) $verbatimText = '';
+
+				} else {
+					// JSON didn't parse, even though it appears to be there. Skip the record and output an error.
+					$this->outputMsg('<li>Transferring associations failed for occid: ' . $r->occid . '. ERROR: malformed JSON</li> ');
+					continue;
+				}
+
+				// Insert each associated occurrence contained in the associatedOccurrences JSON
+				foreach ($assocOccur['associations'] as $assoc) {
+
+					// Increment associations counter
+					$assocCount++;
+
+					// Sanitize the variables for SQL
+					$assoc = array_map(array($this, 'cleanInStr'), $assoc);
+
+					// Get the type, and remove it from the array
+					// TODO: Anything needed to be done with the type here?
+					$type = $assoc['type'];
+					unset($assoc['type']);
+
+					// Association is marked as an internal occurrence, but includes an identifier (guid), and resourceUrl
+					// Need to determine if it is still an internal occurrence, and if so, get its guid
+					// TODO: Should there be a check to make sure that this is an internal occurrence,
+					//   regardless of whether identifier/resourceURL are present?
+					if($type == 'internalOccurrence' && array_key_exists('identifier', $assoc) && array_key_exists('resourceUrl', $assoc)) {
+
+						// Construct and run query to get occid from guid
+						// Check for an occurrenceID first, then a guid.
+						// Finally, check for an occurrenceID or a dbpk that matches
+						$sql = "SELECT occid FROM omoccurrences WHERE occurrenceID = '" . $assoc['identifier'] .
+							"' UNION " .
+							"SELECT occid FROM guidoccurrences WHERE guid = '" . $assoc['identifier'] .
+							"' UNION " .
+							"SELECT occid FROM uploadspectemp WHERE (occurrenceID = '" . $assoc['identifier'] .
+							"' OR dbpk = '" . $assoc['identifier'] . "' OR dbpk = " . $assoc['occidAssociate'] . ")";
+
+						//echo $sql;
+						$rs1 = $this->conn->query($sql);
+
+						// Check to see if we got an occid back. If so, update to use that
+						if ($r1 = $rs1->fetch_object()) {
+
+							// Update the occidAssociate field to use the new occid
+							$assoc['occidAssociate'] = $r1->occid;
+
+							// Remove the externalOccurrence fields, no longer needed
+							unset($assoc['identifier'], $assoc['resourceUrl']);
+
+						} else {
+
+							// GUID record was not found, convert to external occurrence
+							$type = 'externalOccurrence';
+
+							// Remove the internalOccurrence fields
+							unset($assoc['occidAssociate']);
+						}
+					}
+
+					// First, try to update the association record if it already exists
+					// If if exists, it should have identical occid/occidAssociate, relationship, and one of:
+					//   occidAssociate/occid, verbatimSciname, identifier, or resourcUrl
+
+					// Set up a where clause to test whether or not the association already exists
+					// Check whether occidAssociate is set. If so, then the relationships apply to both specimens with one entry
+					if (array_key_exists('occidAssociate', $assoc)) {
+
+						// Check for an identical internal association, and also for its inverse relationship
+						$sqlWhere = " WHERE ((occid = " . $r->occid . " AND occidAssociate = " . $assoc['occidAssociate'] .
+							" AND relationship = '" . $assoc['relationship'] . "') OR (occid = " . $assoc['occidAssociate'] .
+							" AND occidAssociate = " . $r->occid . " AND relationship = '" .
+							$this->getInverseRelationship($assoc['relationship']) . "'))";
+					} else {
+
+						// Check for verbatimSciname if set, otherwise check for identifier if set, and finally for resourceUrl if set
+						$sqlWhere = " WHERE occid = " . $r->occid . " AND relationship = '" . $assoc['relationship'] . "'" .
+							(array_key_exists('verbatimSciname', $assoc) ? " AND verbatimSciname = '" . $assoc['verbatimSciname'] . "'" :
+							(array_key_exists('identifier', $assoc) ? " AND identifier = '" . $assoc['identifier'] . "'" :
+							(array_key_exists('resourceUrl', $assoc) ? " AND resourceUrl = '" . $assoc['resourceUrl'] . "'" : '')));
+					}
+
+					// Check for matching rows: the association already exists
+					$sql = 'SELECT subType, identifier, basisOfRecord, resourceUrl, verbatimSciname, locationOnHost, notes ' .
+						'FROM omoccurassociations' . $sqlWhere;
+					$rs1 = $this->conn->query($sql);
+
+					// If there are matching rows, see if data has changed and we need to update, rather than insert a new association
+					if ($existingAssoc = $rs1->fetch_assoc()) {
+
+						// Filter out any empty fields from the existing data
+						$existingAssoc = array_filter($existingAssoc);
+
+						// Make a new array for updating, and remove the occidAssociate key and relationship, which shouldn't need to change
+						$updateAssoc = $assoc;
+						unset($updateAssoc['occidAssociate'], $updateAssoc['relationship']);
+
+						// If there are keys or data that has changed from the existing data, then update
+						// If nothing has changed, just move on, nothing to insert or update in the omoccurassociations table
+						if (array_diff_assoc($updateAssoc, $existingAssoc)) {
+
+							// Construct update query
+							$sql = 'UPDATE omoccurassociations SET ';
+
+							// Add all the fields that are present in the JSON to the update query, except occidAssociate
+							$sql .= implode(', ', array_map(function($key, $value) {
+								return "{$key} = '{$value}'";
+							}, array_keys($updateAssoc), $updateAssoc));
+
+							// Add where clause to update query.
+							$sql .= $sqlWhere;
+
+							//echo $sql . '<br/>';
+
+							// Run update query, reporting any error
+							if (!$this->conn->query($sql)) {
+								$this->outputMsg('<li>Updating association failed for occid: ' . $r->occid .
+									'. ERROR: '.$this->conn->error.'</li> ');
+							}
+						}
+
+					} else {
+
+						// Build insert query to insert a new association
+						$sql = 'INSERT INTO omoccurassociations (occid, createdUid, '. implode(', ', array_keys($assoc)) . ') ' .
+							'VALUES('.$r->occid . ', ' . $symbUid . ", " .
+							implode(', ', array_map(function($value) {
+								return("'{$value}'");
+							}, $assoc)) . ');';
+
+						//echo $sql . '<br/>';
+
+						// Run insert query, reporting any error
+						if (!$this->conn->query($sql)) {
+							$this->outputMsg('<li>Transferring association failed for occid: ' . $r->occid . '. ERROR: '.$this->conn->error.'</li> ');
+						}
+					}
+				}
+
+				// Build query to update the associatedOccurrences field for the occurrence record
+				// If there was text there before the JSON, this is replaced, otherwise the field is set to NULL.
+				$sql = "UPDATE omoccurrences SET associatedOccurrences = '". ($verbatimText ? $verbatimText : 'NULL') .
+					"' WHERE occid = " . $r->occid;
+
+				// Run update query, reporting any error
+				if (!$this->conn->query($sql)) {
+					$this->outputMsg('<li>Restoring associatedOccurrences text failed for occid: ' . $r->occid . '. ERROR: '.$this->conn->error.'</li> ');
+				}
+
+				// Delete these variables if they exist, so we can check if they got set with the next ocurrence record
+				unset($assocOccur, $verbatimText);
+			}
+			$this->outputMsg('<li style="margin-left:10px;">' . $assocCount . ' associated occurrences transferred or updated</li> ');
+		}
+
+		// Free the database queries
+		$rs->free();
+		$rs1->free();
+	}
+
 	protected function finalCleanup(){
 		$this->outputMsg('<li>Record transfer complete!</li>');
 		$this->outputMsg('<li>Cleaning house...</li>');
@@ -1530,7 +1775,7 @@ class SpecUploadBase extends SpecUpload{
 		$uuidManager->populateGuids($this->collId);
 
 		if($this->imageTransferCount){
-			$this->outputMsg('<li style="margin-left:10px;color:orange">WARNING: Image thumbnails may need to be created using the <a href="../../imagelib/admin/thumbnailbuilder.php?collid='.$this->collId.'">Images Thumbnail Builder</a></li>');
+			$this->outputMsg('<li style="margin-left:10px;color:orange">WARNING: Image thumbnails may need to be created using the <a href="../../imagelib/admin/thumbnailbuilder.php?collid=' . htmlspecialchars($this->collId, HTML_SPECIAL_CHARS_FLAGS) . '">Images Thumbnail Builder</a></li>');
 		}
 	}
 
@@ -2145,6 +2390,25 @@ class SpecUploadBase extends SpecUpload{
 
 	public function getTargetFieldStr(){
 		return implode(',', $this->targetFieldArr);
+	}
+
+	private function getInverseRelationship($relationship){
+		if(!$this->relationshipArr) $this->setRelationshipArr();
+		if(array_key_exists($relationship, $this->relationshipArr)) return $this->relationshipArr[$relationship];
+		return $relationship;
+	}
+
+	private function setRelationshipArr(){
+		if(!$this->relationshipArr){
+			$sql = 'SELECT t.term, t.inverseRelationship FROM ctcontrolvocabterm t INNER JOIN ctcontrolvocab v  ON t.cvid = v.cvid WHERE v.tableName = "omoccurassociations" AND v.fieldName = "relationship"';
+			if($rs = $this->conn->query($sql)){
+				while($r = $rs->fetch_object()){
+					$this->relationshipArr[$r->term] = $r->inverseRelationship;
+					$this->relationshipArr[$r->inverseRelationship] = $r->term;
+				}
+				$rs->free();
+			}
+		}
 	}
 
 	//Misc support functions

@@ -79,7 +79,7 @@ $searchVarEncoded = urlencode($searchVar);
 			echo '<div style="margin-left:5;margin-top:5;">'.$family.'</div>';
 			foreach($sciNameArr as $sciName => $tid){
 				echo '<div style="margin-left:20;font-style:italic;">';
-				if($tid) echo '<a target="_blank" href="../taxa/index.php?tid='.$tid.'">';
+				if($tid) echo '<a target="_blank" href="../taxa/index.php?tid=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '">';
 				echo $sciName;
 				if($tid) echo '</a>';
 				echo '</div>';
@@ -89,7 +89,7 @@ $searchVarEncoded = urlencode($searchVar);
 			echo '<div style="margin-left:5;margin-top:5;">'.$LANG['FAMILY_NOT_DEFINED'].'</div>';
 			foreach($undFamilyArray as $sciName => $tid){
 				echo '<div style="margin-left:20;font-style:italic;">';
-				if($tid) echo '<a target="_blank" href="../taxa/index.php?tid='.$tid.'">';
+				if($tid) echo '<a target="_blank" href="../taxa/index.php?tid=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '">';
 				echo $sciName;
 				if($tid) echo '</a>';
 				echo '</div>';

@@ -1,8 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLoans.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
-if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../collections/loans/index.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+if(!$SYMB_UID) header('Location: ' . $CLIENT_ROOT.'/profile/index.php?refurl=../collections/loans/index.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $collid = $_REQUEST['collid'];
 $searchTerm = array_key_exists('searchterm',$_POST)?$_POST['searchterm']:'';
@@ -11,7 +13,7 @@ $tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 //Sanitation
-$searchTerm = filter_var($searchTerm, FILTER_SANITIZE_STRING);
+$searchTerm = htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS);
 if(!is_numeric($collid)) $collid = 0;
 if(!is_numeric($displayAll)) $displayAll = 0;
 if(!is_numeric($tabIndex)) $tabIndex = 0;
@@ -49,10 +51,10 @@ if($isEditor){
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-	<title><?php echo $DEFAULT_TITLE; ?> Loan Management</title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['LOAN_MANAGE']; ?></title>
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	include_once($SERVER_ROOT.'/includes/head.php');
+	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
@@ -65,7 +67,7 @@ if($isEditor){
 				return false;
 			}
 			if(f.loanidentifierborr.value == ""){
-				alert("Enter a loan identifier");
+				alert("<?php echo $LANG['ENTER_LOAN_ID']; ?>");
 				return false;
 			}
 			$.ajax({
@@ -75,7 +77,7 @@ if($isEditor){
 				url: "rpc/identifierCheck.php"
 			})
 			.done(function(retCode) {
-				if(retCode == 1) alert("There is already a transaction with that identifier, please enter a different one.");
+				if(retCode == 1) alert("<?php echo $LANG['ID_EXISTS']; ?>");
 				else f.submit();
 			});
 			return false;
@@ -83,11 +85,11 @@ if($isEditor){
 
 		function verfifyLoanOutAddForm(f){
 			if(f.reqinstitution.options[f.reqinstitution.selectedIndex].value == 0){
-				alert("Select an institution");
+				alert("<?php echo $LANG['SEL_INSTITUTION']; ?>");
 				return false;
 			}
 			if(f.loanidentifierown.value == ""){
-				alert("Enter a loan identifier");
+				alert("<?php echo $LANG['ENTER_LOAN_ID']; ?>");
 				return false;
 			}
 			$.ajax({
@@ -97,7 +99,7 @@ if($isEditor){
 				url: "rpc/identifierCheck.php"
 			})
 			.done(function(retCode) {
-				if(retCode == 1) alert("There is already a transaction with that identifier, please enter a different one.");
+				if(retCode == 1) alert("<?php echo $LANG['ID_EXISTS']; ?>");
 				else f.submit();
 			});
 			return false;
@@ -105,11 +107,11 @@ if($isEditor){
 
 		function verfifyExchangeAddForm(f){
 			if(f.iid.options[f.iid.selectedIndex].value == 0){
-				alert("Select an institution");
+				alert("<?php echo $LANG['SEL_INSTITUTION']; ?>");
 				return false;
 			}
 			if(f.identifier.value == ""){
-				alert("Enter an exchange identifier");
+				alert("<?php echo $LANG['ENTER_EX_ID']; ?>");
 				return false;
 			}
 			$.ajax({
@@ -119,7 +121,7 @@ if($isEditor){
 				url: "rpc/identifierCheck.php"
 			})
 			.done(function(retCode) {
-				if(retCode == 1) alert("There is already a transaction with that identifier, please enter a different one.");
+				if(retCode == 1) alert("<?php echo $LANG['ID_EXISTS']; ?>");
 				else f.submit();
 			});
 			return false;
@@ -180,12 +182,12 @@ if($isEditor){
 <body>
 	<?php
 	$displayLeftMenu = false;
-	include($SERVER_ROOT.'/includes/header.php');
+	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'>Home</a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management Menu</a> &gt;&gt;
-		<a href="index.php?collid=<?php echo $collid; ?>"><b>Loan Index</b></a>
+		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo $LANG['COL_MNG_MENU']; ?></a> &gt;&gt;
+		<a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><b><?php echo $LANG['LOAN_INDEX']; ?></b></a>
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
@@ -205,9 +207,9 @@ if($isEditor){
 			?>
 			<div id="tabs" style="margin:0px;">
 			    <ul>
-					<li><a href="#loanoutdiv"><span>Outgoing Loans</span></a></li>
-					<li><a href="#loanindiv"><span>Incoming Loans</span></a></li>
-					<li><a href="exchangetab.php?collid=<?php echo $collid; ?>"><span>Gifts/Exchanges</span></a></li>
+					<li><a href="#loanoutdiv"><span><?php echo $LANG['OUTGOING_LOANS']; ?></span></a></li>
+					<li><a href="#loanindiv"><span><?php echo $LANG['INCOMING_LOANS']; ?></span></a></li>
+					<li><a href="exchangetab.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><span><?php echo $LANG['GIFTS_EX']; ?></span></a></li>
 				</ul>
 				<div id="loanoutdiv" style="">
 					<div style="float:right;">
@@ -219,14 +221,14 @@ if($isEditor){
 									<input type="text" autocomplete="off" name="searchterm" value="<?php echo $searchTerm;?>" size="20" />
 								</div>
 								<div>
-									<input type="radio" name="displayall" value="0"<?php echo ($displayAll==0?'checked':'');?> /> Display outstanding loans only
+									<input type="radio" name="displayall" value="0"<?php echo ($displayAll==0?'checked':'');?> /> <?php echo $LANG['DISP_OUTSTANDING']; ?>
 								</div>
 								<div>
-									<input type="radio" name="displayall" value="1"<?php echo ($displayAll?'checked':'');?> /> Display all loans
+									<input type="radio" name="displayall" value="1"<?php echo ($displayAll?'checked':'');?> /> <?php echo $LANG['DISP_ALL']; ?>
 								</div>
 								<div style="float:right;">
 									<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
-									<input type="submit" name="formsubmit" value="Refresh List" />
+									<button type="submit" name="formsubmit" value="Refresh List"><?php echo $LANG['REFRESH_LIST']; ?></button>
 								</div>
 							</fieldset>
 						</form>
@@ -237,7 +239,7 @@ if($isEditor){
 						?>
 						<div id="loanoutToggle" style="float:right;margin:10px;">
 							<a href="#" onclick="displayNewLoanOut();">
-								<img src="../../images/add.png" alt="Create New Loan" />
+								<img src="../../images/add.png" alt="<?php echo $LANG['CREATE_NEW_LOAN']; ?>" />
 							</a>
 						</div>
 						<?php
@@ -246,10 +248,10 @@ if($isEditor){
 					<div id="newloanoutdiv" style="display:<?php echo ($loanOutList || $searchTerm?'none':'block'); ?>;">
 						<form name="newloanoutform" action="outgoing.php" method="post" onsubmit="return verfifyLoanOutAddForm(this);">
 							<fieldset>
-								<legend>New Outgoing Loan</legend>
+								<legend><?php echo $LANG['CREATE_OUTGOING']; ?></legend>
 								<div style="padding-top:4px;float:left;">
 									<span>
-										Entered By:
+										<?php echo $LANG['ENTERED_BY']; ?>:
 									</span><br />
 									<span>
 										<input type="text" autocomplete="off" name="createdbyown" maxlength="32" style="width:100px;" value="<?php echo $PARAMS_ARR['un']; ?>" />
@@ -257,27 +259,27 @@ if($isEditor){
 								</div>
 								<div style="padding-top:15px;float:right;">
 									<span>
-										<b>Loan Identifier: </b><input type="text" autocomplete="off" name="loanidentifierown" maxlength="255" style="width:120px;border:2px solid black;text-align:center;font-weight:bold;color:black;" value="" />
+										<b><?php echo $LANG['LOAN_ID']; ?>: </b><input type="text" autocomplete="off" name="loanidentifierown" maxlength="255" style="width:120px;border:2px solid black;text-align:center;font-weight:bold;color:black;" value="" />
 									</span>
 								</div>
 								<div style="clear:both;padding-top:6px;float:left;">
 									<span>
-										Send to Institution:
+										<?php echo $LANG['SEND_INSTITUTION']; ?>:
 									</span><br />
 									<span>
 										<select name="reqinstitution" style="width:400px;">
-											<option value="">Select Institution</option>
+											<option value=""><?php echo $LANG['SEL_INST']; ?></option>
 											<option value="">------------------------------------------</option>
 											<?php
 											$instArr = $loanManager->getInstitutionArr();
 											foreach($instArr as $k => $v){
-												echo '<option value="'.$k.'">'.$v.'</option>';
+												echo '<option value="' . $k . '">' . $v . '</option>';
 											}
 											?>
 										</select>
 									</span>
 									<span>
-										<a href="../misc/institutioneditor.php?emode=1" target="_blank" title="Add a New Institution">
+										<a href="../misc/institutioneditor.php?emode=1" target="_blank" title="<?php echo $LANG['ADD_NEW_INST']; ?>">
 											<img src="../../images/add.png" style="width:15px;" />
 										</a>
 									</span>
@@ -285,7 +287,7 @@ if($isEditor){
 								<div style="clear:both;padding-top:8px;float:right;">
 									<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 									<input name="formsubmit" type="hidden" value="createLoanOut" />
-									<button name="submitButton" type="submit">Create Loan</button>
+									<button name="submitButton" type="submit"><?php echo $LANG['CREATE_LOAN']; ?></button>
 								</div>
 							</fieldset>
 						</form>
@@ -308,14 +310,14 @@ if($isEditor){
 									$overdue = strtotime($loanArr['datedue']) - time() < 0;
 
 									// construct due date string
-									$due = ' (<span class="'.($overdue?'important':'').'">due: ' . $loanArr['datedue'] . '</span>)';
+									$due = ' (<span class="' . ($overdue?'important':'') . '">' . $LANG['DUE'] . ': ' . $loanArr['datedue'] . '</span>)';
 								}
 
 								echo '<li>';
-								echo '<a href="outgoing.php?collid='.$targetCollid.'&loanid='.$k.'">'.$loanArr['loanidentifierown'].' <img src="../../images/edit.png" style="width:12px" /></a> ';
-								if(isset($loanArr['isexternal'])) echo '<span style="color:orange">external collection</span>';
-								echo ': '.($loanArr['institutioncode'] ? $loanArr['institutioncode'] : ($loanArr['institutionname'] ? $loanArr['institutionname'] : '[no name]'));
-								echo ' ('.$loanArr['forwhom'].') - '.($loanArr['dateclosed']?'Closed: '.$loanArr['dateclosed']:'<b>OPEN</b>');
+								echo '<a href="outgoing.php?collid=' . htmlspecialchars($targetCollid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($loanArr['loanidentifierown'], HTML_SPECIAL_CHARS_FLAGS) . ' <img src="../../images/edit.png" style="width:12px" /></a> ';
+								if(isset($loanArr['isexternal'])) echo '<span style="color:orange">' . $LANG['EXTERNAL_COLL'] . '</span>';
+								echo ': ' . ($loanArr['institutioncode'] ? $loanArr['institutioncode'] : ($loanArr['institutionname'] ? $loanArr['institutionname'] : '[no name]'));
+								echo ' (' . $loanArr['forwhom'] . ') - ' . ($loanArr['dateclosed']? $LANG['CLOSED'] . ': ' . $loanArr['dateclosed']:'<b>' . $LANG['OPEN'] . '</b>');
 								echo ($loanArr['dateclosed'] ? '' : ($loanArr['datedue'] ? $due : ''));
 								echo '</li>';
 							}
@@ -323,8 +325,8 @@ if($isEditor){
 						}
 						else{
 							echo '<div style="font-size:120%;margin:20px;">';
-							if($searchTerm) echo 'There are no outgoing loans mathcing your search criteria';
-							else echo 'There are no outgoing loans registered for this collection';
+							if($searchTerm) echo $LANG['NO_OUTGOING_LOANS'];
+							else echo $LANG['NO_OUTGOING_LOANS_REG'];
 							echo '</div>';
 						}
 						?>
@@ -335,20 +337,20 @@ if($isEditor){
 					<div style="float:right;">
 						<form name='optionform' action='index.php' method='post'>
 							<fieldset>
-								<legend>Options</legend>
+								<legend><?php echo $LANG['OPTIONS']; ?></legend>
 								<div>
 									<b>Search: </b><input type="text" autocomplete="off" name="searchterm" value="<?php echo $searchTerm;?>" size="20" />
 								</div>
 								<div>
-									<input type="radio" name="displayall" value="0"<?php echo ($displayAll==0?'checked':'');?> /> Display outstanding loans only
+									<input type="radio" name="displayall" value="0"<?php echo ($displayAll==0 ? 'checked' : ''); ?> /> <?php echo $LANG['DISP_OUTSTANDING']; ?>
 								</div>
 								<div>
-									<input type="radio" name="displayall" value="1"<?php echo ($displayAll?'checked':'');?> /> Display all loans
-								</div>
+									<input type="radio" name="displayall" value="1"<?php echo ($displayAll ? 'checked' : ''); ?> /> <?php echo $LANG['DISP_ALL']; ?>
+
 								<div style="float:right;">
 									<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
 									<input type="hidden" name="tabindex" value="1" />
-									<input type="submit" name="formsubmit" value="Refresh List" />
+									<button type="submit" name="formsubmit" value="Refresh List"><?php echo $LANG['REFRESH_LIST']; ?></button>
 								</div>
 							</fieldset>
 						</form>
@@ -365,10 +367,10 @@ if($isEditor){
 					<div id="newloanindiv" style="display:<?php echo (($loanInList || $loansOnWay || $searchTerm)?'none':'block'); ?>;">
 						<form name="newloaninform" action="incoming.php" method="post" onsubmit="return verifyLoanInAddForm(this);">
 							<fieldset>
-								<legend>New Incoming Loan</legend>
+								<legend><?php echo $LANG['NEW_INCOMING_LOAN']; ?></legend>
 								<div style="padding-top:4px;float:left;">
 									<span>
-										Entered By:
+										<?php echo $LANG['ENTERED_BY']; ?>:
 									</span><br />
 									<span>
 										<input type="text" autocomplete="off" name="createdbyborr" maxlength="32" style="width:100px;" value="<?php echo $PARAMS_ARR['un']; ?>" />
@@ -376,28 +378,28 @@ if($isEditor){
 								</div>
 								<div style="padding-top:15px;float:right;">
 									<span>
-										<b>Loan Identifier: </b>
+										<b><?php echo $LANG['LOAN_ID']; ?>: </b>
 										<input type="text" autocomplete="off" id="loanidentifierborr" name="loanidentifierborr" maxlength="255" style="width:120px;border:2px solid black;text-align:center;font-weight:bold;color:black;" value="" />
 									</span>
 								</div>
 								<div style="clear:both;padding-top:6px;float:left;">
 									<span>
-										Sent From:
+										<?php echo $LANG['SENT_FROM']; ?>:
 									</span><br />
 									<span>
 										<select name="iidowner" style="width:400px;">
-											<option value="0">Select Institution</option>
+											<option value="0"><?php echo $LANG['SEL_INST']; ?></option>
 											<option value="0">------------------------------------------</option>
 											<?php
 											$instArr = $loanManager->getInstitutionArr();
 											foreach($instArr as $k => $v){
-												echo '<option value="'.$k.'">'.$v.'</option>';
+												echo '<option value="' . $k . '">' . $v . '</option>';
 											}
 											?>
 										</select>
 									</span>
 									<span>
-										<a href="../misc/institutioneditor.php?emode=1" target="_blank" title="Add a New Institution">
+										<a href="../misc/institutioneditor.php?emode=1" target="_blank" title="<?php echo $LANG['ADD_NEW_INST']; ?>">
 											<img src="../../images/add.png" style="width:15px;" />
 										</a>
 									</span>
@@ -406,7 +408,7 @@ if($isEditor){
 									<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 									<input type="hidden" name="tabindex" value="1" />
 									<input name="formsubmit" type="hidden" value="createLoanIn" />
-									<button name="submitbutton" type="submit" value="Create Loan In">Create Loan</button>
+									<button name="submitbutton" type="submit" value="Create Loan In"><?php echo $LANG['CREATE_LOAN']; ?></button>
 								</div>
 							</fieldset>
 						</form>
@@ -424,12 +426,12 @@ if($isEditor){
 									$overdue = strtotime($loanArr['datedue']) - time() < 0;
 
 									// construct due date string
-									$due = ' (<span class="'.($overdue?'important':'').'">due: ' . $loanArr['datedue'] . '</span>)';
+									$due = ' (<span class="' . ($overdue?'important':'') . '">' . $LANG['DUE'] . ': ' . $loanArr['datedue'] . '</span>)';
 								}
 								echo '<li>';
-								echo '<a href="incoming.php?collid='.$collid.'&loanid='.$k.'">'.$loanArr['loanidentifierborr'].' <img src="../../images/edit.png" style="width:12px" /></a>: ';
-								echo ($loanArr['institutioncode'] ? $loanArr['institutioncode'] : ($loanArr['institutionname'] ? $loanArr['institutionname'] : '[no name]'));
-								echo ' ('.$loanArr['forwhom'].') - '.($loanArr['dateclosed']?'Closed: '.$loanArr['dateclosed']:'<b>OPEN</b>');
+								echo '<a href="incoming.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($loanArr['loanidentifierborr'], HTML_SPECIAL_CHARS_FLAGS) . ' <img src="../../images/edit.png" style="width:12px" /></a>: ';
+								echo ($loanArr['institutioncode'] ? $loanArr['institutioncode'] : ($loanArr['institutionname'] ? $loanArr['institutionname'] : '[' . $LANG['NO_NAME'] . ']'));
+								echo ' (' . $loanArr['forwhom'] . ') - ' . ($loanArr['dateclosed'] ? $LANG['CLOSED'] . ': ' . $loanArr['dateclosed'] : '<b>' . $LANG['OPEN'] . '</b>');
 								echo ($loanArr['dateclosed'] ? '' : ($loanArr['datedue'] ? $due : ''));
 								echo '</li>';
 							}
@@ -437,8 +439,8 @@ if($isEditor){
 						}
 						else{
 							echo '<div style="font-size:120%;margin:20px;">';
-							if($searchTerm) echo 'There are no loans mathcing your search criteria';
-							else echo 'There are no loans received';
+							if($searchTerm) echo $LANG['NO_LOANS'];
+							else echo $LANG['NO_LOANS_RECD'];
 							echo '</div>';
 						}
 						?>
@@ -447,13 +449,13 @@ if($isEditor){
 					<div style="margin-top:50px">
 						<?php
 						if($loansOnWay){
-							echo '<h3>Loans to be Checked-in</h3>';
+							echo '<h3>' . $LANG['LOANS_TO_CHECK_IN'] . '</h3>';
 							echo '<ul>';
 							foreach($loansOnWay as $k => $loanArr){
 								echo '<li>';
-								echo '<a href="incoming.php?collid='.$collid.'&loanid='.$k.'">';
+								echo '<a href="incoming.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '">';
 								echo $loanArr['loanidentifierown'];
-								echo ' from '.$loanArr['collectionname'].'</a>';
+								echo ' from ' . $loanArr['collectionname'] . '</a>';
 								echo '</li>';
 							}
 							echo '</ul>';
@@ -466,13 +468,13 @@ if($isEditor){
 			<?php
 		}
 		else{
-			if(!$isEditor) echo '<h2>You are not authorized to manage loans for this collection</h2>';
-			else echo '<h2>ERROR: unknown error, please contact system administrator</h2>';
+			if(!$isEditor) echo '<h2>' . $LANG['NOT_AUTH_LOANS'] . '</h2>';
+			else echo '<h2>' . $LANG['UNKNOWN_ERROR'] . '</h2>';
 		}
 		?>
 	</div>
 	<?php
-	include($SERVER_ROOT.'/includes/footer.php');
+	include($SERVER_ROOT . '/includes/footer.php');
 	?>
 </body>
 </html>

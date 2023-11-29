@@ -54,20 +54,20 @@ if(!$recLimit || $recCnt < $recLimit){
 		$endPage = ($lastPage > $startPage + 10?$startPage + 10:$lastPage);
 		$pageBar = '';
 		if($startPage > 1){
-			$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="occurrencelist.php?'.$searchVar.'" >'.$LANG['PAGINATION_FIRST'].'</a></span>';
-			$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="occurrencelist.php?'.$searchVar.'&page='.(($pageNumber - 10) < 1?1:$pageNumber - 10).'">&lt;&lt;</a></span>';
+			$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="occurrencelist.php?' . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '" >' . htmlspecialchars($LANG['PAGINATION_FIRST'], HTML_SPECIAL_CHARS_FLAGS) . '</a></span>';
+			$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="occurrencelist.php?' . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '&page=' . htmlspecialchars((($pageNumber - 10) < 1?1:$pageNumber - 10), HTML_SPECIAL_CHARS_FLAGS) . '">&lt;&lt;</a></span>';
 		}
 		for($x = $startPage; $x <= $endPage; $x++){
 			if($pageNumber != $x){
-				$pageBar .= '<span class="pagination" style="margin-right:3px;margin-right:3px;"><a href="occurrencelist.php?'.$searchVar.'&page='.$x.'">'.$x.'</a></span>';
+				$pageBar .= '<span class="pagination" style="margin-right:3px;margin-right:3px;"><a href="occurrencelist.php?' . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '&page=' . htmlspecialchars($x, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($x, HTML_SPECIAL_CHARS_FLAGS) . '</a></span>';
 			}
 			else{
 				$pageBar .= '<span class="pagination" style="margin-right:3px;margin-right:3px;font-weight:bold;">'.$x.'</span>';
 			}
 		}
 		if(($lastPage - $startPage) >= 10){
-			$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="occurrencelist.php?'.$searchVar.'&page='.(($pageNumber + 10) > $lastPage?$lastPage:($pageNumber + 10)).'">&gt;&gt;</a></span>';
-			$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="occurrencelist.php?'.$searchVar.'&page='.$lastPage.'">Last</a></span>';
+			$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="occurrencelist.php?' . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '&page=' . htmlspecialchars((($pageNumber + 10) > $lastPage?$lastPage:($pageNumber + 10)), HTML_SPECIAL_CHARS_FLAGS) . '">&gt;&gt;</a></span>';
+			$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="occurrencelist.php?' . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '&page=' . htmlspecialchars($lastPage, HTML_SPECIAL_CHARS_FLAGS) . '">Last</a></span>';
 		}
 		$pageBar .= '</div><div style="margin:5px;">';
 		$beginNum = ($pageNumber - 1)*$cntPerPage + 1;
@@ -97,16 +97,16 @@ if(!$recLimit || $recCnt < $recLimit){
 					$trCnt = 0;
 					foreach($occArr as $occId => $recArr){
 						$trCnt++;
-						echo '<tr '.($trCnt%2?'class="alt"':'').' id="tr'.$occId.'" >';
+						echo '<tr '.($trCnt%2?'class="alt"':'').' id="tr'.$occId.'" onclick="emit_occurrence('.$occId.')">';
 						//echo '<td style="width:10px;">';
 						//echo '<input type="checkbox" class="occcheck" id="ch'.$occId.'" name="occid[]" value="'.$occId.'" onchange="findSelections(this);" '.(in_array($occId,$selections)?"checked":"").' />';
 						//echo '</td>';
-						echo '<td id="cat'.$occId.'" >'.wordwrap($recArr["cat"], 7, "<br />\n", true).'</td>';
+						echo '<td id="cat'.$occId.'" >'.$recArr["cat"].'</td>';
 						echo '<td id="label'.$occId.'" >';
-						echo '<a href="#" onmouseover="openOccidInfoBox(\''.$recArr["c"].'\','.$recArr["lat"].','.$recArr["lon"].');" onmouseout="closeOccidInfoBox();" onclick="openIndPopup('.$occId.'); return false;">'.($recArr["c"]?wordwrap($recArr["c"], 12, "<br />\n", true):"Not available").'</a>';
+						echo '<a href="#" onmouseover="openOccidInfoBox(\''.$recArr["c"].'\','.$recArr["lat"].','.$recArr["lon"].');" onmouseout="closeOccidInfoBox();" onclick="openIndPopup('.$occId.'); return false;">'.($recArr["c"]?$recArr["c"]:"Not available").'</a>';
 						echo '</td>';
-						echo '<td id="e'.$occId.'" >'.wordwrap($recArr["e"], 10, "<br />\n", true).'</td>';
-						echo '<td id="s'.$occId.'" >'.wordwrap($recArr["s"], 12, "<br />\n", true).'</td>';
+						echo '<td id="e'.$occId.'" >'.$recArr["e"].'</td>';
+						echo '<td id="s'.$occId.'" >'.$recArr["s"].'</td>';
 						echo '</tr>';
 					}
 					?>

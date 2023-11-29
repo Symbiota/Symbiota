@@ -353,6 +353,7 @@ class TaxonomyHarvester extends Manager{
 		if(isset($nodeArr['online_resource'])) $taxonArr['sourceURL'] = $nodeArr['online_resource'];
 		elseif(isset($nodeArr['link'])) $taxonArr['sourceURL'] = $nodeArr['link'];
 		if(isset($nodeArr['url'])) $taxonArr['resourceURL'] = $nodeArr['url'];
+
 		$rankID = $this->getRankIdByTaxonArr($taxonArr);
 		if($rankID){
 			$taxonArr['rankid'] = $rankID;
@@ -453,7 +454,7 @@ class TaxonomyHarvester extends Manager{
 			return false;
 		}
 		$url = 'https://api.catalogueoflife.org/nameusage/search?content=SCIENTIFIC_NAME&q='.str_replace(' ','%20',$nodeSciname).'&offset=0&limit=100&type=EXACT';
-		//echo '<div>API link: <a href="'.$url.'" target="_blank">'.$url.'</a></div>';
+		//echo '<div>API link: <a href="' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 		$contentArr = $this->getContentString($url);
 		$content = $contentArr['str'];
 		$resultArr = json_decode($content,true);
@@ -473,7 +474,7 @@ class TaxonomyHarvester extends Manager{
 				}
 				$taxonKingdom = $this->getColParent($tArr, 'Kingdom');
 				if($this->kingdomName && $this->kingdomName != $taxonKingdom){
-					$retArr[$colID]['error'] = '<a href="https://www.catalogueoflife.org/data/taxon/'.$colID.'" target="_blank">'.$name.'</a> skipped, wrong kingdom: '.$this->kingdomName.' (!= '.$taxonKingdom.')';
+					$retArr[$colID]['error'] = '<a href="https://www.catalogueoflife.org/data/taxon/' . htmlspecialchars($colID, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($name, HTML_SPECIAL_CHARS_FLAGS) . '</a> skipped, wrong kingdom: ' . htmlspecialchars($this->kingdomName, HTML_SPECIAL_CHARS_FLAGS) . ' (!= ' . htmlspecialchars($taxonKingdom, HTML_SPECIAL_CHARS_FLAGS) . ')';
 					continue;
 				}
 				$retArr[$colID]['label'] = $tArr['usage']['labelHtml'];
@@ -526,7 +527,7 @@ class TaxonomyHarvester extends Manager{
 
 	private function addColChildern($id, $datasetKey, $nodeSciname, $parentTid, $rankLimit){
 		$url = 'https://api.catalogueoflife.org/dataset/'.$datasetKey.'/taxon/'.$id.'/children?offset=0&limit=100';
-		//echo '<div>API link: <a href="'.$url.'" target="_blank">'.$url.'</a></div>';
+		//echo '<div>API link: <a href="' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 		$contentArr = $this->getContentString($url);
 		if(isset($contentArr['str'])){
 			$content = $contentArr['str'];
@@ -543,7 +544,7 @@ class TaxonomyHarvester extends Manager{
 						$taxonArr = $this->translateColNode($nodeArr);
 						$tid = $this->getTid($taxonArr);
 						if($tid){
-							$display = '<a href="'.$GLOBALS['CLIENT_ROOT'].'/taxa/taxonomy/taxoneditor.php?tid='.$tid.'" target="_blank">'.$nodeArr['labelHtml'].'</a>';
+							$display = '<a href="' . htmlspecialchars($GLOBALS['CLIENT_ROOT'], HTML_SPECIAL_CHARS_FLAGS) . '/taxa/taxonomy/taxoneditor.php?tid=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($nodeArr['labelHtml'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 							$this->logOrEcho($display.' already in thesaurus',2);
 						}
 						else{
@@ -608,8 +609,8 @@ class TaxonomyHarvester extends Manager{
 			$taxonKingdom = $taxonArr['kingdom'];
 			if($this->kingdomName && $this->kingdomName != $taxonKingdom){
 				//Skip if kingdom doesn't match target kingdom
-				$msg = 'Target taxon (<a href="https://marinespecies.org/aphia.php?p=taxdetails&id='.$id.'&marine_only=false" target="_blank">';
-				$msg .= $taxonArr['sciname'].'</a>) skipped due to not matching targeted kingdom: '.$this->kingdomName.' (!= '.$taxonKingdom.')';
+				$msg = 'Target taxon (<a href="https://marinespecies.org/aphia.php?p=taxdetails&id=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '&marine_only=false" target="_blank">';
+				$msg .= htmlspecialchars($taxonArr['sciname'], HTML_SPECIAL_CHARS_FLAGS) . '</a>) skipped due to not matching targeted kingdom: ' . htmlspecialchars($this->kingdomName, HTML_SPECIAL_CHARS_FLAGS) . ' (!= ' . htmlspecialchars($taxonKingdom, HTML_SPECIAL_CHARS_FLAGS) . ')';
 					$this->logOrEcho($msg,2);
 				return false;
 			}
@@ -760,7 +761,7 @@ class TaxonomyHarvester extends Manager{
 					$taxonArr = $this->getWormsNode($nodeArr);
 					$tid = $this->getTid($taxonArr);
 					if($tid){
-						$display = '<a href="'.$GLOBALS['CLIENT_ROOT'].'/taxa/taxonomy/taxoneditor.php?tid='.$tid.'" target="_blank">'.$nodeArr['scientificname'].'</a>';
+						$display = '<a href="' . htmlspecialchars($GLOBALS['CLIENT_ROOT'], HTML_SPECIAL_CHARS_FLAGS) . '/taxa/taxonomy/taxoneditor.php?tid=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . $nodeArr['scientificname'] . '</a>';
 						$this->logOrEcho($display.' already in thesaurus',2);
 					}
 					else{
@@ -1264,15 +1265,15 @@ class TaxonomyHarvester extends Manager{
 					//Display action message
 					$taxonDisplay = $taxonArr['sciname'];
 					if(isset($GLOBALS['USER_RIGHTS']['Taxonomy'])){
-						$taxonDisplay = '<a href="'.$GLOBALS['CLIENT_ROOT'].'/taxa/taxonomy/taxoneditor.php?tid='.$newTid.'" target="_blank">'.$taxonArr['sciname'].'</a>';
+						$taxonDisplay = '<a href="' . htmlspecialchars($GLOBALS['CLIENT_ROOT'], HTML_SPECIAL_CHARS_FLAGS) . '/taxa/taxonomy/taxoneditor.php?tid=' . htmlspecialchars($newTid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($taxonArr['sciname'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 					}
 					$accStr = 'accepted';
 					if($tidAccepted != $newTid){
 						if(isset($GLOBALS['USER_RIGHTS']['Taxonomy'])){
-							$accStr = 'synonym of taxon <a href="'.$GLOBALS['CLIENT_ROOT'].'/taxa/taxonomy/taxoneditor.php?tid='.$tidAccepted.'" target="_blank">#'.$tidAccepted.'</a>';
+							$accStr = 'synonym of taxon <a href="' . htmlspecialchars($GLOBALS['CLIENT_ROOT'], HTML_SPECIAL_CHARS_FLAGS) . '/taxa/taxonomy/taxoneditor.php?tid=' . htmlspecialchars($tidAccepted, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">#' . htmlspecialchars($tidAccepted, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 						}
 						else{
-							$accStr = 'synonym of taxon #'.$tidAccepted;
+							$accStr = 'synonym of taxon #' . $tidAccepted;
 						}
 					}
 					$this->logOrEcho('Taxon <b>'.$taxonDisplay.'</b> added to thesaurus as '.$accStr,2);

@@ -198,9 +198,9 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		return $this->searchSupportManager->getFullCollectionList($catId, true);
 	}
 
-	public function outputFullCollArr($occArr, $targetCatID = 0){
+	public function outputFullCollArr($occArr, $targetCatID = 0, $collTypeLabel='', $uniqGrouping=''){
 		if(!$this->searchSupportManager) $this->searchSupportManager = new OccurrenceSearchSupport($this->conn);
-		$this->searchSupportManager->outputFullCollArr($occArr, $targetCatID, false, false);
+		$this->searchSupportManager->outputFullCollArr($occArr, $targetCatID, false, false, $collTypeLabel, $uniqGrouping);
 	}
 
 	//Misc support functions
@@ -316,7 +316,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 
 	public function setTaxaStr($str){
 		if(strpos($str,'<') === false){
-			$this->taxaStr = filter_var(trim($str), FILTER_SANITIZE_STRING);
+			$this->taxaStr = htmlspecialchars(trim($str), HTML_SPECIAL_CHARS_FLAGS);
 			if($this->taxaStr){
 				if(is_numeric($this->taxaStr)) $this->resetTaxaStr();
 				$this->setTaxonRequestVariable(array('taxa'=>$this->taxaStr,'taxontype'=>$this->taxonType,'usethes'=>$this->useThes));
@@ -345,7 +345,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 	}
 
 	public function setTags($t){
-		if(strpos($t,'<') === false) $this->tags = filter_var($t, FILTER_SANITIZE_STRING);
+		if(strpos($t,'<') === false) $this->tags = htmlspecialchars($t, HTML_SPECIAL_CHARS_FLAGS);
 	}
 
 	public function getTags(){
@@ -353,7 +353,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 	}
 
 	public function setKeywords($k){
-		if(strpos($k,'<') === false) $this->keywords = filter_var($k, FILTER_SANITIZE_STRING);
+		if(strpos($k,'<') === false) $this->keywords = htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS);
 	}
 
 	public function getKeywords(){

@@ -100,7 +100,7 @@ class KeyDataManager extends Manager {
 						$charName = $row->CharName;
 						if($row->chardescr) $charName = '<span class="charHeading" title="'.$row->chardescr.'">'.$charName.'</span>';
 						if($row->helpurl) $charName .= ' <a class="infoAnchor" href="'.$row->helpurl.'" target="_blank" title="external resource"><img src="../images/info.png"></a>';
-						if($row->glossid) $charName .= ' <a class="infoAnchor" href="" onclick="openGlossaryPopup('.$row->glossid.');return false;" title="glossary term"><img src="../images/info.png"></a>';
+						if($row->glossid) $charName .= ' <a class="infoAnchor" href="" onclick="openGlossaryPopup(' . $row->glossid . ');return false;" title="glossary term"><img src="../images/info.png"></a>';
 						$diffRank = false;
 						if($row->DifficultyRank && $row->DifficultyRank > 1 && !array_key_exists($charCID,$this->charArr)) $diffRank = true;
 
@@ -218,8 +218,8 @@ class KeyDataManager extends Manager {
 						$headingID = $r->hid;
 						$charName = $r->CharName;
 						if($r->chardescr) $charName = '<span class="charHeading" title="'.$r->chardescr.'">'.$charName.'</span>';
-						if($r->helpurl) $charName .= ' <a class="infoAnchor" href="'.$r->helpurl.'" target="_blank" title="external resource"><img src="../images/info.png" /></a>';
-						if($r->charglossid) $charName .= ' <a class="infoAnchor" href="" onclick="openGlossaryPopup('.$r->charglossid.');return false;" title="glossary term"><img src="../images/info.png"></a>';
+						if($r->helpurl) $charName .= ' <a class="infoAnchor" href="' . htmlspecialchars($r->helpurl, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="external resource"><img src="../images/info.png" /></a>';
+						if($r->charglossid) $charName .= ' <a class="infoAnchor" href="" onclick="openGlossaryPopup(' . $r->charglossid . ');return false;" title="glossary term"><img src="../images/info.png"></a>';
 						$diffRank = false;
 						if($r->DifficultyRank && $r->DifficultyRank > 1 && !array_key_exists($charCID,$this->charArr)) $diffRank = true;
 
@@ -244,8 +244,8 @@ class KeyDataManager extends Manager {
 						}
 						$charStateName = $r->CharStateName;
 						if($r->csdescr) $charStateName = '<span class="characterStateName" title="'.$r->csdescr.'">'.$r->CharStateName.'</span>';
-						if($r->csglossid) $charStateName .= ' <a class="infoAnchor" href="" onclick="openGlossaryPopup('.$r->csglossid.');return false;" title="glossary term"><img src="../images/info.png"></a>';
-						if($r->csimgurl) $charStateName .= ' <a class="infoAnchor" href="'.$r->csimgurl.'" target="_blank" title="Character State Image"><img src="../images/image.png"></a>';
+						if($r->csglossid) $charStateName .= ' <a class="infoAnchor" href="" onclick="openGlossaryPopup(' . $r->csglossid . ');return false;" title="glossary term"><img src="../images/info.png"></a>';
+						if($r->csimgurl) $charStateName .= ' <a class="infoAnchor" href="' . htmlspecialchars($r->csimgurl, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Character State Image"><img src="../images/image.png"></a>';
 						$headingArray[$headingID][$charCID][$cs][$language] = $charStateName;
 					}
 				}
@@ -446,7 +446,7 @@ class KeyDataManager extends Manager {
 		$returnStr .= "This key is still in the developmental phase. The application, data model, and actual data will need tuning. ".
 			"The key has been developed to minimize the exclusion of species due to the ".
 			"lack of data. The consequences of this is that a 'shrubs' selection may show non-shrubs until that information is corrected. ".
-			"User input is necessary for the key to improve! Please email me with suggestions, comments, or problems: <a href='".$GLOBALS['ADMIN_EMAIL']."'>".$GLOBALS['ADMIN_EMAIL']."</a><br><br>";
+			"User input is necessary for the key to improve! Please email me with suggestions, comments, or problems: <a href='" . htmlspecialchars($GLOBALS['ADMIN_EMAIL'], HTML_SPECIAL_CHARS_FLAGS) . "'>" . htmlspecialchars($GLOBALS['ADMIN_EMAIL'], HTML_SPECIAL_CHARS_FLAGS) . "</a><br><br>";
 		$returnStr .= "<b>Note:</b> If few morphological characters are displayed for a particular checklist, it is likely due to not yet having enough ".
 		"morphological data compiled for that subset of species. If you would like to help, please email me at the above address. ";
 		return $returnStr;

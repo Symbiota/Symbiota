@@ -4,6 +4,7 @@ include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrencetabledisplay.'.$LANG_TAG.'.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 
+
 $collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:false;
 $recLimit = array_key_exists('reclimit',$_REQUEST)?$_REQUEST['reclimit']:1000;
 $occIndex = array_key_exists('occindex',$_REQUEST)?$_REQUEST['occindex']:0;
@@ -17,7 +18,7 @@ if(!is_numeric($recLimit)) $recLimit = 1000;
 if(!is_numeric($occIndex)) $occIndex = false;
 if(!is_numeric($crowdSourceMode)) $crowdSourceMode = 0;
 if(!is_numeric($dynamicTable)) $dynamicTable = 0;
-$action = filter_var($action,FILTER_SANITIZE_STRING);
+$action = htmlspecialchars($action, HTML_SPECIAL_CHARS_FLAGS);
 
 $occManager = new OccurrenceEditorManager();
 
@@ -124,11 +125,11 @@ else{
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['TABLE_VIEW'])?$LANG['TABLE_VIEW']:'Occurrence Table View'); ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<link href="<?php echo $CLIENT_ROOT; ?>/js/datatables/datatables.min.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/js/datatables/datatables.min.css" type="text/css" rel="stylesheet">
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 	<script src="../../js/datatables/datatables.min.js?ver=1" type="text/javascript"></script>
@@ -164,8 +165,8 @@ else{
 		if(($isEditor || $crowdSourceMode)){
 			?>
 			<div id="titleDiv">
-				<div style="float:right;margin:">
-					<a href="#" title="<?php echo $LANG['SEARCH_FILTER']; ?>" onclick="toggleQueryForm();"><img src="../../images/find.png" style="width:16px;" /></a>
+				<div style="float:right;">
+					<a href="#" title="<?php echo htmlspecialchars($LANG['SEARCH_FILTER'], HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="toggleQueryForm();"><img src="../../images/find.png" style="width:16px;" /></a>
 					<?php
 					if($isEditor == 1 || $isGenObs){
 						?>
@@ -284,22 +285,22 @@ else{
 			?>
 			<div style="width:850px;clear:both;">
 				<div class='navpath' style="float:left">
-					<a href="../../index.php"><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
+					<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 					<?php
 					if($crowdSourceMode){
 						?>
-						<a href="../specprocessor/crowdsource/index.php"><?php echo (isset($LANG['CENTRAL_CROWD'])?$LANG['CENTRAL_CROWD']:'Crowd Source Central'); ?></a> &gt;&gt;
+						<a href="../specprocessor/crowdsource/index.php"><?php echo htmlspecialchars((isset($LANG['CENTRAL_CROWD'])?$LANG['CENTRAL_CROWD']:'Crowd Source Central'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 						<?php
 					}
 					else{
 						if(!$isGenObs || $IS_ADMIN){
 							?>
-							<a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1"><?php echo (isset($LANG['COL_MANAGEMENT'])?$LANG['COL_MANAGEMENT']:'Collection Management'); ?></a> &gt;&gt;
+							<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars((isset($LANG['COL_MANAGEMENT'])?$LANG['COL_MANAGEMENT']:'Collection Management'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 							<?php
 						}
 						if($isGenObs){
 							?>
-							<a href="../../profile/viewprofile.php?tabindex=1"><?php echo (isset($LANG['PERS_MANAGEMENT'])?$LANG['PERS_MANAGEMENT']:'Personal Management'); ?></a> &gt;&gt;
+							<a href="../../profile/viewprofile.php?tabindex=1"><?php echo htmlspecialchars((isset($LANG['PERS_MANAGEMENT'])?$LANG['PERS_MANAGEMENT']:'Personal Management'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 							<?php
 						}
 					}
@@ -342,8 +343,8 @@ else{
 								echo "<tr ".($recCnt%2?'class="alt"':'').">\n";
 								echo '<td>';
 								$url = 'occurrenceeditor.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$recStart).'&occid='.$id.'&collid='.$collId;
-								echo '<a href="'.$url.'" title="open in same window">'.$id.'</a> ';
-								echo '<a href="'.$url.'" target="_blank" title="'.(isset($LANG['NEW_WINDOW'])?$LANG['NEW_WINDOW']:'open in new window').'">';
+								echo '<a href="' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '" title="open in same window">' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
+								echo '<a href="' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="' . htmlspecialchars((isset($LANG['NEW_WINDOW'])?$LANG['NEW_WINDOW']:'open in new window'), HTML_SPECIAL_CHARS_FLAGS) . '">';
 								echo '<img src="../../images/newwin.png" style="width:10px;" />';
 								echo '</a>';
 								echo '</td>'."\n";

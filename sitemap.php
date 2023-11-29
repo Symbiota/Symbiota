@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <?php
 include_once('config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SiteMapManager.php');
@@ -7,7 +8,7 @@ $submitAction = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitacti
 
 $smManager = new SiteMapManager();
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['SITEMAP'];?></title>
 	<?php
@@ -17,7 +18,7 @@ $smManager = new SiteMapManager();
 
 	//detect custom css file
 	if(file_exists($_SERVER['DOCUMENT_ROOT'].$CSS_BASE_PATH.'/symbiota/sitemap.css')){
-		echo '<link href="' . $CSS_BASE_PATH . '/symbiota/sitemap.css" type="text/css" rel="stylesheet">'."\r\n";
+		echo '<link href="' . htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS) . '/symbiota/sitemap.css" type="text/css" rel="stylesheet">'."\r\n";
 	}
 	?>
 	<script type="text/javascript">
@@ -45,46 +46,48 @@ $smManager = new SiteMapManager();
 		<div id="sitemap">
 			<h2><?php echo $LANG['COLLECTIONS']; ?></h2>
 			<ul>
-				<li><a href="collections/index.php"><?php echo $LANG['SEARCHENGINE'];?></a> - <?php echo $LANG['SEARCH_COLL'];?></li>
-				<li><a href="collections/misc/collprofiles.php"><?php echo $LANG['COLLECTIONS'];?></a> - <?php echo $LANG['LISTOFCOLL'];?></li>
-				<li><a href="collections/misc/collstats.php"><?php echo $LANG['COLLSTATS'];?></a></li>
+				<li><a href="collections/index.php"><?php echo htmlspecialchars($LANG['SEARCHENGINE'], HTML_SPECIAL_CHARS_FLAGS);?></a> - <?php echo htmlspecialchars($LANG['SEARCH_COLL'], HTML_SPECIAL_CHARS_FLAGS);?></li>
+				<li><a href="collections/misc/collprofiles.php"><?php echo htmlspecialchars($LANG['COLLECTIONS'], HTML_SPECIAL_CHARS_FLAGS);?></a> - <?php echo htmlspecialchars($LANG['LISTOFCOLL'], HTML_SPECIAL_CHARS_FLAGS);?></li>
+				<li><a href="collections/misc/collstats.php"><?php echo htmlspecialchars($LANG['COLLSTATS'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
 				<?php
 				if(isset($ACTIVATE_EXSICCATI) && $ACTIVATE_EXSICCATI){
-					echo '<li><a href="collections/exsiccati/index.php">'.$LANG['EXSICC'].'</a></li>';
+					echo '<li><a href="collections/exsiccati/index.php">' . htmlspecialchars($LANG['EXSICC'], HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
 				}
 				?>
 				<li><?php echo (isset($LANG['DATA_PUBLISHING'])?$LANG['DATA_PUBLISHING']:'Data Publishing');?></li>
-				<ul>
-					<li><a href="collections/datasets/rsshandler.php" target="_blank"><?php echo $LANG['COLLECTIONS_RSS'];?></a></li>
-					<li><a href="collections/datasets/datapublisher.php"><?php echo $LANG['DARWINCORE'];?></a> - <?php echo $LANG['PUBDATA'];?></li>
-				</ul>
+				<li class="nested-li"><a href="collections/datasets/rsshandler.php" target="_blank"><?php echo htmlspecialchars($LANG['COLLECTIONS_RSS'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
+				<li class="nested-li"><a href="collections/datasets/datapublisher.php"><?php echo htmlspecialchars($LANG['DARWINCORE'], HTML_SPECIAL_CHARS_FLAGS);?></a> - <?php echo htmlspecialchars($LANG['PUBDATA'], HTML_SPECIAL_CHARS_FLAGS);?></li>
 				<?php
 				$rssPath = 'content/dwca/rss.xml';
 				$deprecatedRssPath = 'webservices/dwc/rss.xml';
 				if(!file_exists($GLOBALS['SERVER_ROOT'].$rssPath) && file_exists($GLOBALS['SERVER_ROOT'].$deprecatedRssPath)) $rssPath = $deprecatedRssPath;
-				if(file_exists($GLOBALS['SERVER_ROOT'].$rssPath)) echo '<li style="margin-left:15px;"><a href="'.$GLOBALS['CLIENT_ROOT'].$rssPath.'" target="_blank">'.$LANG['RSS'].'</a></li>';
+				if(file_exists($GLOBALS['SERVER_ROOT'].$rssPath)) echo '<li style="margin-left:15px;"><a href="' . htmlspecialchars($GLOBALS['CLIENT_ROOT'], HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars($rssPath, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($LANG['RSS'], HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
 				?>
-				<li><a href="collections/misc/protectedspecies.php"><?php echo $LANG['PROTECTED_SPECIES'];?></a> - <?php echo $LANG['LISTOFTAXA'];?></li>
+				<li><a href="collections/misc/protectedspecies.php"><?php echo htmlspecialchars($LANG['PROTECTED_SPECIES'], HTML_SPECIAL_CHARS_FLAGS);?></a> - <?php echo htmlspecialchars($LANG['LISTOFTAXA'], HTML_SPECIAL_CHARS_FLAGS);?></li>
 			</ul>
-			<div id="imglib"><h2><?php echo $LANG['IMGLIB'];?></h2></div>
+			<div id="imglib">
+				<h2><?php echo $LANG['IMGLIB'];?></h2>
+			</div>
 			<ul>
-				<li><a href="imagelib/index.php"><?php echo $LANG['IMGLIB'];?></a></li>
-				<li><a href="imagelib/search.php"><?php echo ($LANG['IMAGE_SEARCH']?$LANG['IMAGE_SEARCH']:'Interactive Search Tool'); ?></a></li>
-				<li><a href="imagelib/contributors.php"><?php echo $LANG['CONTRIB'];?></a></li>
-				<li><a href="includes/usagepolicy.php"><?php echo $LANG['USAGEPOLICY'];?></a></li>
+				<li><a href="imagelib/index.php"><?php echo htmlspecialchars($LANG['IMGLIB'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
+				<li><a href="imagelib/search.php"><?php echo htmlspecialchars(($LANG['IMAGE_SEARCH']?$LANG['IMAGE_SEARCH']:'Interactive Search Tool'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
+				<li><a href="imagelib/contributors.php"><?php echo htmlspecialchars($LANG['CONTRIB'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
+				<li><a href="includes/usagepolicy.php"><?php echo htmlspecialchars($LANG['USAGEPOLICY'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
 			</ul>
 
-			<div id="resources"><h2><?php echo isset($LANG['ADDITIONAL_RESOURCES'])?$LANG['ADDITIONAL_RESOURCES']:'Additional Resources';?></h2></div>
+			<div id="resources">
+				<h2><?php echo isset($LANG['ADDITIONAL_RESOURCES'])?$LANG['ADDITIONAL_RESOURCES']:'Additional Resources';?></h2>
+			</div>
 			<ul>
 				<?php
 				if($smManager->hasGlossary()){
 					?>
-					<li><a href="glossary/index.php"><?php echo isset($LANG['GLOSSARY'])?$LANG['GLOSSARY']:'Glossary';?></a></li>
+					<li><a href="glossary/index.php"><?php echo htmlspecialchars(isset($LANG['GLOSSARY'])?$LANG['GLOSSARY']:'Glossary', HTML_SPECIAL_CHARS_FLAGS);?></a></li>
 					<?php
 				}
 				?>
-				<li><a href="taxa/taxonomy/taxonomydisplay.php"><?php echo $LANG['TAXTREE'];?></a></li>
-				<li><a href="taxa/taxonomy/taxonomydynamicdisplay.php"><?php echo $LANG['DYNTAXTREE'];?></a></li>
+				<li><a href="taxa/taxonomy/taxonomydisplay.php"><?php echo htmlspecialchars($LANG['TAXTREE'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
+				<li><a href="taxa/taxonomy/taxonomydynamicdisplay.php"><?php echo htmlspecialchars($LANG['DYNTAXTREE'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
 			</ul>
 
 			<?php
@@ -94,23 +97,27 @@ $smManager = new SiteMapManager();
 				$clAdmin = array_intersect_key($clList,array_flip($USER_RIGHTS['ClAdmin']));
 			}
 			?>
-			<div id="bioinventory"><h2><?php echo (isset($LANG['BIOTIC_INVENTORIES'])?$LANG['BIOTIC_INVENTORIES']:'Biotic Inventory Projects'); ?></h2></div>
+			<div id="bioinventory">
+				<h2><?php echo (isset($LANG['BIOTIC_INVENTORIES'])?$LANG['BIOTIC_INVENTORIES']:'Biotic Inventory Projects'); ?></h2>
+			</div>
 			<ul>
 				<?php
 				$projList = $smManager->getProjectList();
 				if($projList){
 					foreach($projList as $pid => $pArr){
-						echo "<li><a href='projects/index.php?pid=".$pid."'>".$pArr["name"]."</a></li>\n";
-						echo "<ul><li>Manager: ".$pArr["managers"]."</li></ul>\n";
+						echo "<li><a href='projects/index.php?pid=" . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . "'>" . $pArr["name"] . "</a></li>\n";
+						echo "<li class='nested-li'>Manager: " . $pArr["managers"] . "</li>\n";
 					}
 				}
 				?>
-				<li><a href="checklists/index.php"><?php echo (isset($LANG['ALL_CHECKLISTS'])?$LANG['ALL_CHECKLISTS']:'All Public Checklists'); ?></a></li>
+				<li><a href="checklists/index.php"><?php echo htmlspecialchars((isset($LANG['ALL_CHECKLISTS'])?$LANG['ALL_CHECKLISTS']:'All Public Checklists'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
 			</ul>
 
-			<h2><?php echo (isset($LANG['DATASETS'])?$LANG['DATASETS']:'Datasets') ;?></h2>
+			<div id="datasets">
+				<h2><?php echo (isset($LANG['DATASETS'])?$LANG['DATASETS']:'Datasets') ;?></h2>
+			</div>
 			<ul>
-				<li><a href="collections/datasets/publiclist.php"><?php echo (isset($LANG['ALLPUBDAT'])?$LANG['ALLPUBDAT']:'All Publicly Viewable Datasets') ;?></a></li>
+				<li><a href="collections/datasets/publiclist.php"><?php echo htmlspecialchars((isset($LANG['ALLPUBDAT'])?$LANG['ALLPUBDAT']:'All Publicly Viewable Datasets'), HTML_SPECIAL_CHARS_FLAGS) ;?></a></li>
 			</ul>
 			<div id="dynamiclists"><h2><?php echo $LANG['DYNAMIC'];?></h2></div>
 			<ul>
@@ -126,62 +133,66 @@ $smManager = new SiteMapManager();
 				</li>
 			</ul>
 
-			<fieldset id="admin">
-				<legend><b><?php echo $LANG['MANAGTOOL'];?></b></legend>
+			<section id="admin" class="fieldset-like">
+				<h1>
+					<span>
+						<?php echo $LANG['MANAGTOOL'];?>
+					</span>
+				</h1>
 				<?php
 				if($SYMB_UID){
 					if($IS_ADMIN){
 						?>
-						<h3><?php echo $LANG['ADMIN'];?></h3>
+						<h2><?php echo $LANG['ADMIN'];?></h2>
 						<ul>
 							<li>
-								<a href="profile/usermanagement.php"><?php echo $LANG['USERPERM'];?></a>
+								<a href="profile/usermanagement.php"><?php echo htmlspecialchars($LANG['USERPERM'], HTML_SPECIAL_CHARS_FLAGS);?></a>
 							</li>
 							<li>
-								<a href="profile/usertaxonomymanager.php"><?php echo $LANG['TAXINTER'];?></a>
+								<a href="profile/usertaxonomymanager.php"><?php echo htmlspecialchars($LANG['TAXINTER'], HTML_SPECIAL_CHARS_FLAGS);?></a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/collections/misc/collmetadata.php">
-									<?php echo $LANG['CREATENEWCOLL'];?>
+								<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/misc/collmetadata.php">
+									<?php echo htmlspecialchars($LANG['CREATENEWCOLL'], HTML_SPECIAL_CHARS_FLAGS);?>
 								</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/geothesaurus/index.php">
-									<?php echo isset($LANG['GEOTHESAURUS'])?$LANG['GEOTHESAURUS']:'Geographic Thesaurus'; ?>
+								<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/geothesaurus/index.php">
+									<?php echo htmlspecialchars(isset($LANG['GEOTHESAURUS'])?$LANG['GEOTHESAURUS']:'Geographic Thesaurus', HTML_SPECIAL_CHARS_FLAGS); ?>
 								</a>
 							</li>
 							<!--
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/collections/cleaning/coordinatevalidator.php">
-									<?php echo isset($LANG['COORDVALIDATOR'])?$LANG['COORDVALIDATOR']:'Verify coordinates against political boundaries';?>
+								<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/cleaning/coordinatevalidator.php">
+									<?php echo htmlspecialchars(isset($LANG['COORDVALIDATOR'])?$LANG['COORDVALIDATOR']:'Verify coordinates against political boundaries', HTML_SPECIAL_CHARS_FLAGS);?>
 								</a>
 							</li>
 							-->
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/imagelib/admin/thumbnailbuilder.php">
-									<?php echo $LANG['THUMBNAIL_BUILDER'];?>
+								<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/imagelib/admin/thumbnailbuilder.php">
+									<?php echo htmlspecialchars($LANG['THUMBNAIL_BUILDER'], HTML_SPECIAL_CHARS_FLAGS);?>
 								</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/collections/admin/guidmapper.php">
-									<?php echo $LANG['GUIDMAP'];?>
+								<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/admin/guidmapper.php">
+									<?php echo htmlspecialchars($LANG['GUIDMAP'], HTML_SPECIAL_CHARS_FLAGS);?>
 								</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/collections/specprocessor/salix/salixhandler.php">
-									<?php echo $LANG['SALIX'];?>
+								<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/specprocessor/salix/salixhandler.php">
+									<?php echo htmlspecialchars($LANG['SALIX'], HTML_SPECIAL_CHARS_FLAGS);?>
 								</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/glossary/index.php">
-									<?php echo $LANG['GLOSSARY'];?>
+								<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/glossary/index.php">
+									<?php echo htmlspecialchars($LANG['GLOSSARY'], HTML_SPECIAL_CHARS_FLAGS);?>
 								</a>
 							</li>
 						</ul>
 						<?php
 					}
 					if($KEY_MOD_IS_ACTIVE || array_key_exists("KeyAdmin",$USER_RIGHTS)){
-						echo '<h3>'.$LANG['IDKEYS'].'</h3>';
+						echo '<h2>'.$LANG['IDKEYS'].'</h2>';
 						if(!$KEY_MOD_IS_ACTIVE && array_key_exists("KeyAdmin",$USER_RIGHTS)){
 							?>
 							<div id="keymodule">
@@ -195,7 +206,7 @@ $smManager = new SiteMapManager();
 							if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 								?>
 								<li>
-									<?php echo $LANG['AUTHOKEY'];?> <a href="<?php echo $CLIENT_ROOT; ?>/ident/admin/index.php"><?php echo $LANG['CHARASTATES'];?></a>
+									<?php echo htmlspecialchars($LANG['AUTHOKEY'], HTML_SPECIAL_CHARS_FLAGS);?> <a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/ident/admin/index.php"><?php echo htmlspecialchars($LANG['CHARASTATES'], HTML_SPECIAL_CHARS_FLAGS);?></a>
 								</li>
 								<?php
 							}
@@ -210,7 +221,7 @@ $smManager = new SiteMapManager();
 									echo '<li>'.$LANG['CODINGCHARA'].'</li>';
 									echo '<ul>';
 									foreach($clAdmin as $vClid => $name){
-										echo "<li><a href='".$CLIENT_ROOT."/ident/tools/matrixeditor.php?clid=".$vClid."'>".$name."</a></li>";
+										echo "<li><a href='" . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . "/ident/tools/matrixeditor.php?clid=" . htmlspecialchars($vClid, HTML_SPECIAL_CHARS_FLAGS) . "'>" . htmlspecialchars($name, HTML_SPECIAL_CHARS_FLAGS) . "</a></li>";
 									}
 									echo '</ul>';
 								}
@@ -225,11 +236,11 @@ $smManager = new SiteMapManager();
 						<?php
 					}
 					?>
-					<h3><?php echo $LANG['IMAGES'];?></h3>
+					<h2><?php echo $LANG['IMAGES'];?></h2>
 					<div id="images">
 						<p class="description">
 							<?php echo $LANG['SEESYMBDOC'];?>
-							<a href="https://biokic.github.io/symbiota-docs/editor/images/"><?php echo $LANG['IMGSUB'];?></a>
+							<a href="https://biokic.github.io/symbiota-docs/editor/images/"><?php echo htmlspecialchars($LANG['IMGSUB'], HTML_SPECIAL_CHARS_FLAGS);?></a>
 							<?php echo $LANG['FORANOVERVIEW'];?>
 						</p>
 					</div>
@@ -256,18 +267,16 @@ $smManager = new SiteMapManager();
 						?>
 					</ul>
 
-					<h3><?php echo $LANG['BIOTIC_INVENTORIES'];?></h3>
+					<h2><?php echo $LANG['BIOTIC_INVENTORIES'];?></h2>
 					<ul>
 						<?php
 						if($IS_ADMIN){
-							echo '<li><a href="projects/index.php?newproj=1">'.$LANG['ADDNEWPROJ'].'</a></li>';
+							echo '<li><a href="projects/index.php?newproj=1">' . htmlspecialchars($LANG['ADDNEWPROJ'], HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
 							if($projList){
 								echo '<li><b>'.$LANG['LISTOFCURR'].'</b> '.$LANG['CLICKEDIT'].'</li>';
-								echo '<ul>';
 								foreach($projList as $pid => $pArr){
-									echo '<li><a href="'.$CLIENT_ROOT.'/projects/index.php?pid='.$pid.'&emode=1">'.$pArr['name'].'</a></li>';
+									echo '<li class="nested-li"><a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/projects/index.php?pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . htmlspecialchars($pArr['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
 								}
-								echo '</ul>';
 							}
 							else{
 								echo '<li>'.$LANG['NOPROJ'].'</li>';
@@ -279,11 +288,11 @@ $smManager = new SiteMapManager();
 						?>
 					</ul>
 
-					<h3><?php echo (isset($LANG['DATASETS'])?$LANG['DATASETS']:'Datasets') ;?></h3>
+					<h2><?php echo (isset($LANG['DATASETS'])?$LANG['DATASETS']:'Datasets') ;?></h2>
 					<ul>
-						<li><a href="collections/datasets/index.php"><?php echo (isset($LANG['DATMANPAG'])?$LANG['DATMANPAG']:'Dataset Management Page</a> - datasets you are authorized to edit') ;?></li>
+						<li><a href="collections/datasets/index.php"><?php echo htmlspecialchars((isset($LANG['DATMANPAG'])?$LANG['DATMANPAG']:'Dataset Management Page'), HTML_SPECIAL_CHARS_FLAGS) ;?></a> - <?php echo htmlspecialchars($LANG['DATA_AUTHORIZED_TO_EDIT'], HTML_SPECIAL_CHARS_FLAGS) ?></li>
 					</ul>
-					<h3><?php echo $LANG['TAXONPROF'];?></h3>
+					<h2><?php echo $LANG['TAXONPROF'];?></h2>
 					<?php
 					if($IS_ADMIN || array_key_exists("TaxonProfile",$USER_RIGHTS)){
 						?>
@@ -291,13 +300,11 @@ $smManager = new SiteMapManager();
 							<?php echo $LANG['THEFOLLOWINGSPEC'];?>
 					</p>
 						<ul>
-							<li><a href="taxa/profile/tpeditor.php?taxon="><?php echo $LANG['SYN_COM'];?></a></li>
-							<li><a href="taxa/profile/tpeditor.php?taxon=&tabindex=4"><?php echo $LANG['TEXTDESC'];?></a></li>
-							<li><a href="taxa/profile/tpeditor.php?taxon=&tabindex=1"><?php echo $LANG['EDITIMG'];?></a></li>
-							<ul>
-								<li><a href="taxa/profile/tpeditor.php?taxon=&category=imagequicksort&tabindex=2"><?php echo $LANG['IMGSORTORD'];?></a></li>
-								<li><a href="taxa/profile/tpeditor.php?taxon=&category=imageadd&tabindex=3"><?php echo $LANG['ADDNEWIMG'];?></a></li>
-							</ul>
+							<li><a href="taxa/profile/tpeditor.php?taxon="><?php echo htmlspecialchars($LANG['SYN_COM'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
+							<li><a href="taxa/profile/tpeditor.php?taxon=&tabindex=4"><?php echo htmlspecialchars($LANG['TEXTDESC'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
+							<li><a href="taxa/profile/tpeditor.php?taxon=&tabindex=1"><?php echo htmlspecialchars($LANG['EDITIMG'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
+							<li class="nested-li"><a href="taxa/profile/tpeditor.php?taxon=&category=imagequicksort&tabindex=2"><?php echo $LANG['IMGSORTORD'];?></a></li>
+							<li class="nested-li"><a href="taxa/profile/tpeditor.php?taxon=&category=imageadd&tabindex=3"><?php echo htmlspecialchars($LANG['ADDNEWIMG'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
 						</ul>
 						<?php
 					}
@@ -309,18 +316,18 @@ $smManager = new SiteMapManager();
 						<?php
 					}
 					?>
-					<h3><?php echo $LANG['TAXONOMY'];?></h3>
+					<h2><?php echo $LANG['TAXONOMY'];?></h2>
 					<ul>
 						<?php
 						if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
 							?>
-							<li><?php echo $LANG['EDITTAXPL'];?> <a href="taxa/taxonomy/taxonomydisplay.php"><?php echo $LANG['TAXTREEVIEW'];?></a></li>
-							<li><a href="taxa/taxonomy/taxonomyloader.php"><?php echo $LANG['ADDTAXANAME'];?></a></li>
-							<li><a href="taxa/taxonomy/batchloader.php"><?php echo $LANG['BATCHTAXA'];?></a></li>
+							<li><?php echo $LANG['EDITTAXPL'];?> <a href="taxa/taxonomy/taxonomydisplay.php"><?php echo htmlspecialchars($LANG['TAXTREEVIEW'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
+							<li><a href="taxa/taxonomy/taxonomyloader.php"><?php echo htmlspecialchars($LANG['ADDTAXANAME'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
+							<li><a href="taxa/taxonomy/batchloader.php"><?php echo htmlspecialchars($LANG['BATCHTAXA'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
 							<?php
 							if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
 								?>
-								<li><a href="taxa/profile/eolmapper.php"><?php echo $LANG['EOLLINK'];?></a></li>
+								<li><a href="taxa/profile/eolmapper.php"><?php echo htmlspecialchars($LANG['EOLLINK'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
 								<?php
 							}
 						}
@@ -330,7 +337,7 @@ $smManager = new SiteMapManager();
 						?>
 					</ul>
 
-					<h3><?php echo $LANG['CHECKLISTS'];?></h3>
+					<h2><?php echo $LANG['CHECKLISTS'];?></h2>
 					<p class="description">
 						<?php echo $LANG['TOOLSFORMANAGE'];?>.
 					</p>
@@ -338,7 +345,7 @@ $smManager = new SiteMapManager();
 						<?php
 						if($clAdmin){
 							foreach($clAdmin as $k => $v){
-								echo "<li><a href='".$CLIENT_ROOT."/checklists/checklist.php?clid=".$k."&emode=1'>$v</a></li>";
+								echo "<li><a href='" . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . "/checklists/checklist.php?clid=" . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . "&emode=1'>$v</a></li>";
 							}
 						}
 						else{
@@ -350,32 +357,32 @@ $smManager = new SiteMapManager();
 					<?php
 					if(isset($ACTIVATE_EXSICCATI) && $ACTIVATE_EXSICCATI){
 						?>
-						<h3><?php echo $LANG['EXSICCATII'];?></h3>
+						<h2><?php echo $LANG['EXSICCATII'];?></h2>
 						<p class="description">
 							<?php echo $LANG['ESCMOD'];?>.
 						</p>
 						<ul>
-							<li><a href="collections/exsiccati/index.php"><?php echo $LANG['EXSICC'];?></a></li>
+							<li><a href="collections/exsiccati/index.php"><?php echo htmlspecialchars($LANG['EXSICC'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
 						</ul>
 						<?php
 					}
 					?>
 
-					<h3><?php echo $LANG['COLLECTIONS'];?></h3>
+					<h2><?php echo $LANG['COLLECTIONS'];?></h2>
 					<p class="description">
 						<?php echo $LANG['PARA1'];?>
 					</p>
 					<div id="admincollection">
-						<h4>
+						<h3>
 							<?php echo $LANG['COLLLIST'];?>
-						</h4>
+						</h3>
 						<ul>
 						<?php
 						$smManager->setCollectionList();
 						if($collList = $smManager->getCollArr()){
 							foreach($collList as $k => $cArr){
 								echo '<li>';
-								echo '<a href="'.$CLIENT_ROOT.'/collections/misc/collprofiles.php?collid='.$k.'&emode=1">';
+								echo '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">';
 								echo $cArr['name'];
 								echo '</a>';
 								echo '</li>';
@@ -388,15 +395,15 @@ $smManager = new SiteMapManager();
 						</ul>
 					</div>
 
-					<h3><?php echo $LANG['OBSERV'];?></h3>
+					<h2><?php echo $LANG['OBSERV'];?></h2>
 					<p class="description">
 						<?php echo $LANG['PARA2'];?>
-						<a href="https://symbiota.org/specimen-data-management/" target="_blank"><?php echo $LANG['SYMBDOCU'];?></a> <?php echo $LANG['FORMOREINFO'];?>.
+						<a href="https://biokic.github.io/symbiota-docs/col_obs/" target="_blank"><?php echo htmlspecialchars($LANG['SYMBDOCU'], HTML_SPECIAL_CHARS_FLAGS);?></a> <?php echo htmlspecialchars($LANG['FORMOREINFO'], HTML_SPECIAL_CHARS_FLAGS);?>.
 					<p class="description">
 					<div id="adminobservation">
-						<h4>
+						<h3>
 							<?php echo $LANG['OIVS'];?>
-						</h4>
+						</h3>
 						<ul>
 							<?php
 							$obsList = $smManager->getObsArr();
@@ -407,22 +414,22 @@ $smManager = new SiteMapManager();
 								foreach($genObsList as $k => $oArr){
 									?>
 									<li>
-										<a href="collections/editor/observationsubmit.php?collid=<?php echo $k; ?>">
+										<a href="collections/editor/observationsubmit.php?collid=<?php echo htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS); ?>">
 											<?php echo $oArr['name']; ?>
 										</a>
 									</li>
 									<?php
-									if($oArr['isadmin']) $obsManagementStr .= '<li><a href="collections/misc/collprofiles.php?collid='.$k.'&emode=1">'.$oArr['name']."</a></li>\n";
+									if($oArr['isadmin']) $obsManagementStr .= '<li><a href="collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . htmlspecialchars($oArr['name'], HTML_SPECIAL_CHARS_FLAGS) . "</a></li>\n";
 								}
 								foreach($obsList as $k => $oArr){
 									?>
 									<li>
-										<a href="collections/editor/observationsubmit.php?collid=<?php echo $k; ?>">
+										<a href="collections/editor/observationsubmit.php?collid=<?php echo htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS); ?>">
 											<?php echo $oArr['name']; ?>
 										</a>
 									</li>
 									<?php
-									if($oArr['isadmin']) $obsManagementStr .= '<li><a href="collections/misc/collprofiles.php?collid='.$k.'&emode=1">'.$oArr['name']."</a></li>\n";
+									if($oArr['isadmin']) $obsManagementStr .= '<li><a href="collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . htmlspecialchars($oArr['name'], HTML_SPECIAL_CHARS_FLAGS) . "</a></li>\n";
 								}
 							}
 							else{
@@ -433,15 +440,15 @@ $smManager = new SiteMapManager();
 						<?php
 						if($genObsList){
 							?>
-							<h4>
+							<h3>
 								<?php echo $LANG['PERSONAL'];?>
-							</h4>
+							</h3>
 							<ul>
 								<?php
 								foreach($genObsList as $k => $oArr){
 									?>
 									<li>
-										<a href="collections/misc/collprofiles.php?collid=<?php echo $k; ?>&emode=1">
+										<a href="collections/misc/collprofiles.php?collid=<?php echo htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">
 											<?php echo $oArr['name']; ?>
 										</a>
 									</li>
@@ -453,9 +460,9 @@ $smManager = new SiteMapManager();
 						}
 						if($obsManagementStr){
 							?>
-							<h4>
+							<h3>
 								<?php echo $LANG['OPM'];?>
-							</h4>
+							</h3>
 							<ul>
 								<?php echo $obsManagementStr; ?>
 							</ul>
@@ -466,13 +473,13 @@ $smManager = new SiteMapManager();
 					<?php
 				}
 				else{
-					echo ''.$LANG['PLEASE'].' <a href="'.$CLIENT_ROOT.'/profile/index.php?refurl=../sitemap.php">'.$LANG['LOGIN'].'</a>'.$LANG['TOACCESS'].'<br/>'.$LANG['CONTACTPORTAL'].'.';
+					echo ''.$LANG['PLEASE'].' <a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/profile/index.php?refurl=../sitemap.php">' . htmlspecialchars($LANG['LOGIN'], HTML_SPECIAL_CHARS_FLAGS) . '</a>' . htmlspecialchars($LANG['TOACCESS'], HTML_SPECIAL_CHARS_FLAGS) . '<br/>' . htmlspecialchars($LANG['CONTACTPORTAL'], HTML_SPECIAL_CHARS_FLAGS) . '.';
 				}
 			?>
-			</fieldset>
+			</section>
 			<div id="symbiotaschema">
-				<img src="https://img.shields.io/badge/Symbiota-v<?php echo $CODE_VERSION; ?>-blue.svg" />
-				<img src="https://img.shields.io/badge/Schema-<?php echo 'v'.$smManager->getSchemaVersion(); ?>-blue.svg" />
+				<img src="https://img.shields.io/badge/Symbiota-v<?php echo $CODE_VERSION; ?>-blue.svg" alt="a blue badge depicting Symbiota software version" />
+				<img src="https://img.shields.io/badge/Schema-<?php echo 'v'.$smManager->getSchemaVersion(); ?>-blue.svg" alt="a blue badge depicting Symbiota database schema version" />
 			</div>
 		</div>
 	</div>

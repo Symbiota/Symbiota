@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../config/symbini.php');
 if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php');
@@ -17,9 +19,10 @@ $collManager = new OccurrenceListManager();
 $searchVar = $collManager->getQueryTermStr();
 if ($targetTid && array_key_exists('mode', $_REQUEST)) $searchVar .= '&mode=voucher&targettid=' . $targetTid;
 $occurArr = $collManager->getSpecimenMap($pageNumber, $cntPerPage);
+
 $_SESSION['citationvar'] = $searchVar;
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
@@ -28,7 +31,7 @@ $_SESSION['citationvar'] = $searchVar;
 	include_once($SERVER_ROOT . '/includes/head.php');
 	include_once($SERVER_ROOT . '/includes/googleanalytics.php');
 	?>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
 	<script src="../js/jquery-3.2.1.min.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
 	<link href="../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
@@ -90,7 +93,7 @@ $_SESSION['citationvar'] = $searchVar;
 		}
 	</script>
 	<script src="../js/symb/collections.list.js?ver=10" type="text/javascript"></script>
-	<style type="text/css">
+	<style>
 		fieldset {
 			padding: 15px;
 		}
@@ -122,7 +125,7 @@ $_SESSION['citationvar'] = $searchVar;
 	if (isset($collections_listCrumbs)) {
 		if ($collections_listCrumbs) {
 			echo '<div class="navpath">';
-			echo '<a href="../index.php">' . $LANG['NAV_HOME'] . '</a> &gt;&gt; ';
+			echo '<a href="../index.php">' . htmlspecialchars($LANG['NAV_HOME'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
 			echo $collections_listCrumbs . ' &gt;&gt; ';
 			echo '<b>' . $LANG['NAV_SPECIMEN_LIST'] . '</b>';
 			echo '</div>';
@@ -130,9 +133,9 @@ $_SESSION['citationvar'] = $searchVar;
 	}
 	else {
 		echo '<div class="navpath">';
-		echo '<a href="../index.php">' . $LANG['NAV_HOME'] . '</a> &gt;&gt; ';
-		echo '<a href="index.php">' . $LANG['NAV_COLLECTIONS'] . '</a> &gt;&gt; ';
-		echo '<a href="harvestparams.php">' . $LANG['NAV_SEARCH'] . '</a> &gt;&gt; ';
+		echo '<a href="../index.php">' . htmlspecialchars($LANG['NAV_HOME'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
+		echo '<a href="index.php">' . htmlspecialchars($LANG['NAV_COLLECTIONS'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
+		echo '<a href="harvestparams.php">' . htmlspecialchars($LANG['NAV_SEARCH'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
 		echo '<b>' . $LANG['NAV_SPECIMEN_LIST'] . '</b>';
 		echo '</div>';
 	}
@@ -142,7 +145,7 @@ $_SESSION['citationvar'] = $searchVar;
 		<div id="tabs" style="width:95%;">
 			<ul>
 				<li>
-					<a id="taxatablink" href='<?php echo 'checklist.php?' . $searchVar . '&taxonfilter=' . $taxonFilter; ?>'>
+					<a id="taxatablink" href='<?php echo 'checklist.php?' . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '&taxonfilter=' . htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS); ?>'>
 						<span><?php echo $LANG['TAB_CHECKLIST']; ?></span>
 					</a>
 				</li>
@@ -164,29 +167,29 @@ $_SESSION['citationvar'] = $searchVar;
 						if ($SYMB_UID) {
 						?>
 							<div style="float:left">
-								<button class="icon-button" onclick="displayDatasetTools()" title="Dataset Management">
-									<img src="../images/dataset.png" style="width:15px;" />
+								<button class="icon-button" onclick="displayDatasetTools()" aria-label="<?php echo (isset($LANG['DATASET_MANAGEMENT']) ? $LANG['DATASET_MANAGEMENT'] : 'Dataset Management'); ?>" title="<?php echo (isset($LANG['DATASET_MANAGEMENT']) ? $LANG['DATASET_MANAGEMENT'] : 'Dataset Management'); ?>">
+									<img src="../images/dataset.png" style="width:15px;" alt="<?php echo (isset($LANG['IMG_DATASET_MANAGEMENT']) ? $LANG['IMG_DATASET_MANAGEMENT'] : 'Open Dataset Management'); ?>"/>
 								</button>
 							</div>
 						<?php
 						}
 						?>
 						<form action="listtabledisplay.php" method="post" style="float:left">
-							<button class="icon-button" title="<?php echo (isset($LANG['TABLE_DISPLAY']) ? $LANG['TABLE_DISPLAY'] : 'Table Display'); ?>">
-								<img src="../images/table.png" style="width:15px; height:15px" />
+							<button class="icon-button" aria-label="<?php echo (isset($LANG['TABLE_DISPLAY']) ? $LANG['TABLE_DISPLAY'] : 'Table Display'); ?>" title="<?php echo (isset($LANG['TABLE_DISPLAY']) ? $LANG['TABLE_DISPLAY'] : 'Table Display'); ?>">
+								<img src="../images/table.png" style="width:15px; height:15px" alt="<?php echo (isset($LANG['IMG_TABLE_DISPLAY']) ? $LANG['IMG_TABLE_DISPLAY'] : 'Open Table Display'); ?>"/>
 							</button>
 							<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 						</form>
 						<form action="download/index.php" method="post" style="float:left" onsubmit="targetPopup(this)">
-							<button class="icon-button" title="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>">
-								<img src="../images/dl2.png" srcset="../images/download.svg" class="svg-icon" style="width:15px; height:15px" />
+							<button class="icon-button" aria-label="<?php echo (isset($LANG['DOWNLOAD_SPECIMEN_DATA']) ? $LANG['DOWNLOAD_SPECIMEN_DATA'] : "Download Specimen Data"); ?>" title="<?php echo (isset($LANG['DOWNLOAD_SPECIMEN_DATA']) ? $LANG['DOWNLOAD_SPECIMEN_DATA'] : "Download Specimen Data"); ?>">
+								<img src="../images/dl2.png" srcset="../images/download.svg" class="svg-icon" style="width:15px; height:15px" alt="<?php echo (isset($LANG['IMG_DWNL_DATA']) ? $LANG['IMG_DWNL_DATA'] : 'Download Button'); ?>" />
 							</button>
 							<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 							<input name="dltype" type="hidden" value="specimen" />
 						</form>
 						<div style="float:left">
-							<button class="icon-button" onclick="copyUrl()" title="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>">
-								<img src="../images/dl2.png" srcset="../images/link.svg" class="svg-icon" style="width:15px; height:15px" />
+							<button class="icon-button" onclick="copyUrl()" aria-label="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>" title="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>">
+								<img src="../images/dl2.png" srcset="../images/link.svg" class="svg-icon" style="width:15px; height:15px" alt="<?php echo (isset($LANG['IMG_COPY']) ? $LANG['IMG_COPY'] : 'Copy Button'); ?>"/>
 							</button>
 						</div>
 					</div>
@@ -200,7 +203,7 @@ $_SESSION['citationvar'] = $searchVar;
 							while ($collElem = array_shift($collSearchArr)) {
 								$collSearchStr .= $collElem . '; ';
 								if ($cnt == 10 && $collSearchArr) {
-									$collSearchStr = trim($collSearchStr, '; ') . '<span class="inst-span">... (<a href="#" onclick="$(\'.inst-span\').toggle();return false;">' . $LANG['SHOW_ALL'] . '</a>)</span><span class="inst-span" style="display:none">; ';
+									$collSearchStr = trim($collSearchStr, '; ') . '<span class="inst-span">... (<a href="#" onclick="$(\'.inst-span\').toggle();return false;">' . htmlspecialchars($LANG['SHOW_ALL'], HTML_SPECIAL_CHARS_FLAGS) . '</a>)</span><span class="inst-span" style="display:none">; ';
 								}
 								$cnt++;
 							}
@@ -208,7 +211,7 @@ $_SESSION['citationvar'] = $searchVar;
 						}
 						echo '<div><b>' . $LANG['DATASET'] . ':</b> ' . $collSearchStr . '</div>';
 						if ($taxaSearchStr = $collManager->getTaxaSearchStr()) {
-							if (strlen($taxaSearchStr) > 300) $taxaSearchStr = substr($taxaSearchStr, 0, 300) . '<span class="taxa-span">... (<a href="#" onclick="$(\'.taxa-span\').toggle();return false;">' . $LANG['SHOW_ALL'] . '</a>)</span><span class="taxa-span" style="display:none;">' . substr($taxaSearchStr, 300) . '</span>';
+							if (strlen($taxaSearchStr) > 300) $taxaSearchStr = substr($taxaSearchStr, 0, 300) . '<span class="taxa-span">... (<a href="#" onclick="$(\'.taxa-span\').toggle();return false;">' . htmlspecialchars($LANG['SHOW_ALL'], HTML_SPECIAL_CHARS_FLAGS) . '</a>)</span><span class="taxa-span" style="display:none;">' . substr($taxaSearchStr, 300) . '</span>';
 							echo '<div><b>' . $LANG['TAXA'] . ':</b> ' . $taxaSearchStr . '</div>';
 						}
 						if ($localSearchStr = $collManager->getLocalSearchStr()) {
@@ -225,19 +228,19 @@ $_SESSION['citationvar'] = $searchVar;
 					$endPage = ($lastPage > $startPage + 10 ? $startPage + 10 : $lastPage);
 					$pageBar = '';
 					if ($startPage > 1) {
-						$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="list.php?' . $searchVar . '" >' . $LANG['PAGINATION_FIRST'] . '</a></span>';
-						$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="list.php?' . $searchVar . '&page=' . (($pageNumber - 10) < 1 ? 1 : $pageNumber - 10) . '">&lt;&lt;</a></span>';
+						$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="list.php?' . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '" >' . htmlspecialchars($LANG['PAGINATION_FIRST'], HTML_SPECIAL_CHARS_FLAGS) . '</a></span>';
+						$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="list.php?' . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '&page=' . htmlspecialchars((($pageNumber - 10) < 1 ? 1 : $pageNumber - 10), HTML_SPECIAL_CHARS_FLAGS) . '">&lt;&lt;</a></span>';
 					}
 					for ($x = $startPage; $x <= $endPage; $x++) {
 						if ($pageNumber != $x) {
-							$pageBar .= '<span class="pagination" style="margin-right:3px;margin-right:3px;"><a href="list.php?' . $searchVar . '&page=' . $x . '">' . $x . '</a></span>';
+							$pageBar .= '<span class="pagination" style="margin-right:3px;margin-right:3px;"><a href="list.php?' . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '&page=' . htmlspecialchars($x, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($x, HTML_SPECIAL_CHARS_FLAGS) . '</a></span>';
 						} else {
 							$pageBar .= '<span class="pagination" style="margin-right:3px;margin-right:3px;font-weight:bold;">' . $x . '</span>';
 						}
 					}
 					if (($lastPage - $startPage) >= 10) {
-						$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="list.php?' . $searchVar . '&page=' . (($pageNumber + 10) > $lastPage ? $lastPage : ($pageNumber + 10)) . '">&gt;&gt;</a></span>';
-						$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="list.php?' . $searchVar . '&page=' . $lastPage . '">Last</a></span>';
+						$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="list.php?' . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '&page=' . htmlspecialchars((($pageNumber + 10) > $lastPage ? $lastPage : ($pageNumber + 10)), HTML_SPECIAL_CHARS_FLAGS) . '">&gt;&gt;</a></span>';
+						$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="list.php?' . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '&page=' . htmlspecialchars($lastPage, HTML_SPECIAL_CHARS_FLAGS) . '">Last</a></span>';
 					}
 					$pageBar .= '</div><div style="float:right;margin:5px;">';
 					$beginNum = ($pageNumber - 1) * $cntPerPage + 1;
@@ -265,11 +268,11 @@ $_SESSION['citationvar'] = $searchVar;
 											$isEditor = true;
 										}
 										echo '<tr><td colspan="2"><h2>';
-										echo '<a href="misc/collprofiles.php?collid=' . $collId . '">' . $fieldArr["collname"] . '</a>';
+										echo '<a href="misc/collprofiles.php?collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($fieldArr["collname"], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 										echo '</h2><hr /></td></tr>';
 									}
 									echo '<tr><td width="60" valign="top" align="center">';
-									echo '<a href="misc/collprofiles.php?collid=' . $collId . '&acronym=' . $fieldArr["instcode"] . '">';
+									echo '<a href="misc/collprofiles.php?collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&acronym=' . htmlspecialchars($fieldArr["instcode"], HTML_SPECIAL_CHARS_FLAGS) . '">';
 									if ($fieldArr["icon"]) {
 										$icon = (substr($fieldArr["icon"], 0, 6) == 'images' ? '../' : '') . $fieldArr["icon"];
 										echo '<img align="bottom" src="' . $icon . '" style="width:35px;border:0px;" />';
@@ -284,28 +287,28 @@ $_SESSION['citationvar'] = $searchVar;
 									echo '</td><td>';
 									if ($isEditor || ($SYMB_UID && $SYMB_UID == $fieldArr['obsuid'])) {
 										echo '<div style="float:right;" title="' . $LANG['OCCUR_EDIT_TITLE'] . '">';
-										echo '<a href="editor/occurrenceeditor.php?occid=' . $occid . '" target="_blank">';
-										echo '<img src="../images/edit.png" srcset="../images/edit.svg" style="width:15px;height:15px;" /></a></div>';
+										echo '<a href="editor/occurrenceeditor.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
+										echo '<img src="../images/edit.png" srcset="../images/edit.svg" style="width:15px;height:15px;" alt="' . (isset($LANG['IMG_EDIT_OCC']) ? $LANG['IMG_EDIT_OCC'] : 'Edit Occurence') . '" /></a></div>';
 									}
 									$targetClid = $collManager->getSearchTerm("targetclid");
 									if ($collManager->getClName() && $targetTid && array_key_exists('mode', $_REQUEST)) {
 										echo '<div style="float:right;" >';
 										echo '<a href="#" onclick="addVoucherToCl(' . $occid . ',' . $targetClid . ',' . $targetTid . ');return false" title="' . $LANG['VOUCHER_LINK_TITLE'] . ' ' . $collManager->getClName() . ';">';
-										echo '<img src="../images/voucheradd.png" style="border:solid 1px gray;height:13px;margin-right:5px;" /></a></div>';
+										echo '<img src="../images/voucheradd.png" style="border:solid 1px gray;height:13px;margin-right:5px;" alt="' . (isset($LANG['IMG_ADD_VOUCHER']) ? $LANG['IMG_ADD_VOUCHER'] : 'Add Voucher') . '"/></a></div>';
 									}
 									if (isset($fieldArr['img'])) {
 										echo '<div style="float:right;margin:5px 25px;">';
 										echo '<a href="#" onclick="return openIndPU(' . $occid . ',' . ($targetClid ? $targetClid : "0") . ');">';
-										echo '<img src="' . $fieldArr['img'] . '" style="height:70px" /></a></div>';
+										echo '<img src="' . $fieldArr['img'] . '" style="height:70px" alt="' . (isset($LANG['IMG_OCC']) ? $LANG['IMG_OCC'] : 'Image Associated With the Occurence') . '"/></a></div>';
 									}
 									echo '<div style="margin:4px;">';
 									if (isset($fieldArr['sciname'])) {
 										$sciStr = '<span style="font-style:italic;">' . $fieldArr['sciname'] . '</span>';
-										if (isset($fieldArr['tid']) && $fieldArr['tid']) $sciStr = '<a target="_blank" href="../taxa/index.php?tid=' . $fieldArr['tid'] . '">' . $sciStr . '</a>';
+										if (isset($fieldArr['tid']) && $fieldArr['tid']) $sciStr = '<i> <a target="_blank" href="../taxa/index.php?tid=' . strip_tags($fieldArr['tid']) . '">' . strip_tags($sciStr) . '</a> </i>' ;
 										if (isset($fieldArr['author']) && $fieldArr['author']) $sciStr .= ' ' . $fieldArr['author'];
 										echo $sciStr;
 									} elseif ($fieldArr['localitysecurity'] > 1) {
-										echo 'Identification Protected';
+										echo (isset($LANG['ID_PROTECTED']) ? $LANG['ID_PROTECTED'] : 'Identification Protected');;
 									}
 									echo '</div>';
 									echo '<div style="margin:4px">';
@@ -354,7 +357,7 @@ $_SESSION['citationvar'] = $searchVar;
 							echo $LANG['PERHAPS_LOOKING_FOR'] . ' ';
 							$outStr = '';
 							foreach ($closeArr as $v) {
-								$outStr .= '<a href="harvestparams.php?taxa=' . $v . '">' . $v . '</a>, ';
+								$outStr .= '<a href="harvestparams.php?taxa=' . htmlspecialchars($v, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($v, HTML_SPECIAL_CHARS_FLAGS) . '</a>, ';
 							}
 							echo trim($outStr, ' ,');
 							echo '</div>';
@@ -366,8 +369,8 @@ $_SESSION['citationvar'] = $searchVar;
 			</div>
 			<div id="maps" style="min-height:400px;margin-bottom:10px;">
 				<form action="download/index.php" method="post" style="float:right" onsubmit="targetPopup(this)">
-					<button class="icon-button" title="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>">
-						<img src="../../images/dl2.png" srcset="../images/download.svg" class="svg-icon" style="width:15px; height:15px" />
+					<button class="icon-button" aria-label="<?php echo isset($LANG['DOWNLOAD_SPECIMEN_DATA']) ? $LANG['DOWNLOAD_SPECIMEN_DATA'] : "Download Specimen Data"; ?>" title="<?php echo isset($LANG['DOWNLOAD_SPECIMEN_DATA']) ? $LANG['DOWNLOAD_SPECIMEN_DATA'] : "Download Specimen Data"; ?>">
+						<img src="../../images/dl2.png" srcset="../images/download.svg" class="svg-icon" style="width:15px; height:15px" alt="<?php echo (isset($LANG['IMG_DWNL_DATA']) ? $LANG['IMG_DWNL_DATA'] : 'Download Button'); ?>" />
 					</button>
 					<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 					<input name="dltype" type="hidden" value="georef" />
@@ -376,14 +379,18 @@ $_SESSION['citationvar'] = $searchVar;
 				<div style='margin-top:10px;'>
 					<h2><?php echo $LANG['GOOGLE_MAP_HEADER']; ?></h2>
 				</div>
-				<div style='margin:10 0 0 20;'>
-					<button>
-						<a href="#" onclick="openMapPU();">
+				<div>
+					<?php if (empty($GOOGLE_MAP_KEY)) { ?>
+						<button onclick="openLeafletMapPU();">
 							<?php echo $LANG['GOOGLE_MAP_DISPLAY']; ?>
-						</a>
-					</button>
+						</button>
+					<?php } else { ?>
+						<button onclick="openGoogleMapPU();">
+							<?php echo $LANG['GOOGLE_MAP_DISPLAY']; ?>
+						</button>
+					<?php } ?>
 				</div>
-				<div style='margin:10 0 0 20;'>
+				<div>
 					<?php echo $LANG['GOOGLE_MAP_DESCRIPTION']; ?>
 				</div>
 
@@ -391,14 +398,14 @@ $_SESSION['citationvar'] = $searchVar;
 					<h2><?php echo $LANG['GOOGLE_EARTH_HEADER']; ?></h2>
 				</div>
 				<form name="kmlform" action="map/kmlhandler.php" method="post">
-					<div style='margin:10 0 0 20;'>
+					<div>
 						<?php echo $LANG['GOOGLE_EARTH_DESCRIPTION']; ?>
 					</div>
 					<div style="margin:20px;">
 						<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 						<button name="formsubmit" type="submit" value="createKML"><?php echo $LANG['CREATE_KML']; ?></button>
 					</div>
-					<div style='margin:10 0 0 20;'>
+					<div>
 						<a href="#" onclick="toggleFieldBox('fieldBox');">
 							<?php echo $LANG['GOOGLE_EARTH_EXTRA']; ?>
 						</a>

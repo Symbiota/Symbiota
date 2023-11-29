@@ -44,7 +44,7 @@ if($glossId){
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE.(isset($LANG['GLOSS_TERM_INFO'])?$LANG['GLOSS_TERM_INFO']:'Glossary Term Information'); ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
@@ -118,9 +118,9 @@ if($glossId){
 										if($i) echo ', ';
 										echo '<a href="individual.php?glossid='.$synGlossId.'">'.$synArr['term'].'</a>';
 										$i++;
-									}
-									echo '</div>';
-								}
+								  }
+  								echo '</div>';
+                }
 								$translationArr = $glosManager->getTranslations();
 								if($translationArr){
 									echo '<div style="margin-top:8px;" ><b>'.(isset($LANG['TRANSS'])?$LANG['TRANSS']:'Translations').':</b> ';

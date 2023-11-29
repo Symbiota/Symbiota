@@ -45,4 +45,14 @@ $LANG['GOOGLE_EARTH_HEADER'] = 'Google Earth (KML)';
 $LANG['GOOGLE_EARTH_DESCRIPTION'] = 'Esto crea un archivo KML que puede abrirse en la aplicación de mapeo Google Earth. Note que se debe de tener instalado <a href="http://earth.google.com/" target="_blank"> Google Earth</a> en su computadora para hacer uso de esta opción.';
 $LANG['GOOGLE_EARTH_EXTRA'] = 'Adicionar Campos Extras';
 $LANG['CREATE_KML'] = 'Crear KML';
+$LANG['DATASET_MANAGEMENT'] = 'Gestión de conjuntos de datos';
+$LANG['IMG_DATASET_MANAGEMENT'] = 'Abrir gestión de conjuntos de datos';
+$LANG['IMG_TABLE_DISPLAY'] = 'Abrir visualización de tabla';
+$LANG['IMG_DWNL_DATA'] = 'Botón Descargar';
+$LANG['IMG_COPY'] = 'Botón Copiar';
+$LANG['ID_PROTECTED'] = 'Identificación protegida';
+$LANG['IMG_ADD_VOUCHER'] = 'Agregar cupón';
+$LANG['IMG_EDIT_OCC'] = 'Editar ocurrencia';
+$LANG['IMG_OCC'] = 'Imagen asociada con el suceso';
+
 ?>
