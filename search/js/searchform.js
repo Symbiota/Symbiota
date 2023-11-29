@@ -506,9 +506,19 @@ function getSearchUrl() {
   paramsArr = [];
 
   // Grabs params from form for each param name
-  paramNames.forEach((_, i) => {
+  paramNames.forEach((param, i) => {
     return getParam(paramNames[i]);
   });
+
+  // Appends each key value for each param in search url
+  let queryString = Object.keys(paramsArr).map((key) => {
+    //   return encodeURIComponent(key) + '=' + encodeURIComponent(paramsArr[key])
+    // }).join('&');
+    // console.log(baseURL + queryString);
+    baseUrl.searchParams.append(key, paramsArr[key]);
+  });
+  console.log("deleteMe baseUrl after mods is: ");
+  console.log(baseUrl);
 
   return baseUrl.href;
 }
