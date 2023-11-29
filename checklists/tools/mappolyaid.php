@@ -285,14 +285,27 @@ else{
 					<input name="zoom" type="hidden" value="<?php echo $zoom; ?>" />
 				</div>
 				<div style="">
-					<button name="formsubmit" type="submit" value="save" style="margin-right: 10px">Save Polygons</button>
-					<button name="deleteButton" type="button" onclick="deleteSelectedPolygon()">Delete Selected Shape</button>
+               <button name="formsubmit" type="submit" value="save" style="margin-right: 10px">
+                  <?php echo isset($LANG['SAVE_N_CLOSE'])? $LANG['SAVE_N_CLOSE'] :'Save and Close'?>
+               </button>
+               <?php if(!empty($GOOGLE_MAP_KEY)):?>
+               <button name="deleteButton" type="button" onclick="deleteSelectedPolygon()">
+                  <?php echo isset($LANG['DELETE_SELECTED'])? $LANG['DELETE_SELECTED'] :'Delete Selected Polygon'?>
+               </button>
 					<a href="#" onclick="toggle('helptext')"><img alt="Display Help Text" src="../../images/qmark_big.png" style="width:15px;" /></a>
+               <?php endif?>
 					<fieldset id="reformatFieldset" style="width:300px;">
-						<legend>Redraw / Reformat Polygons</legend>
-						<button id="redrawButton" name="redrawButton" type="button" onclick="reformatPolygons(this.form);" disabled>Redraw</button><br />
-						<input type="checkbox" name="trimCoord" value="1" onclick="polygonModified(this.form)" checked /> Trim to 6 significant digits<br />
-						<input type="checkbox" name="switchCoord" value="1" onclick="polygonModified(this.form)" /> Switch lat/long coordinates
+                  <legend>
+                     <?php echo isset($LANG['POLYGON_FORMATTING'])? $LANG['POLYGON_FORMATTING'] :'Polygon Formatting'?>
+                  </legend>
+                  <button id="redrawButton" name="redrawButton" type="button" onclick="reformatPolygons(this.form);" disabled>
+                     <?php echo isset($LANG['REDRAW'])? $LANG['REDRAW'] :'Redraw'?>
+                  </button><br />
+                  <input type="checkbox" name="trimCoord" value="1" onclick="polygonModified(this.form)" checked /> 
+                  <?php echo isset($LANG['TRIM_DIGITS'])? $LANG['TRIM_DIGITS'] :'Trim to 6 significant digits'?>
+                  <br />
+                  <input type="checkbox" name="switchCoord" value="1" onclick="polygonModified(this.form)"/>
+                  <?php echo isset($LANG['SWAP_COORDS'])? $LANG['SWAP_COORDS'] :'Switch lat/long coordinates'?>
 					</fieldset>
 				</div>
 			</form>

@@ -63,10 +63,12 @@ else{
   image-rendering: pixelated; ">
 
 		<div style="float:right;margin-top:5px;margin-right:15px;">
-			<button name="closebutton" type="button" onclick="self.close()">Save and Close</button>
+         <button name="closebutton" type="button" onclick="self.close()">
+            <?php echo isset($LANG['SAVE_N_CLOSE'])? $LANG['SAVE_N_CLOSE'] :'Save and Close'?>
+         </button>
+         <?php echo isset($LANG['COORD_AID_HELP_TEXT'])? $LANG['COORD_AID_HELP_TEXT'] :'Click the map to start drawing or select from the shape controls to draw bounds of that shape'?>
 		</div>
 		<div id="helptext">
-			Click on shape symbol to create a rectangle, circle, or polygon.<br/>Close mapping tool to transfer shape definition to search form.
 		</div>
       <div id="map"></div>
       <script>
