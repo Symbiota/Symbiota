@@ -2,7 +2,10 @@
 	<h2><?php echo $LANG['SPECIMEN_COLLECTIONS'] ?></h2>
 </div>
 	<div class="select-deselect-input">
-		<input data-chip="All Collections" id="dballcb" name="db[]" class="specobs all-neon-colls" value='all' type="checkbox" onclick="selectAll(this);" checked />
+		<?php 
+			$checkedStatus = $searchVar == '' ? 'checked' : '';
+		?>
+		<input data-chip="All Collections" id="dballcb" name="db[]" class="specobs all-neon-colls" value='all' type="checkbox" onclick="selectAll(this);" <?php echo $checkedStatus ?> />
 		<label for="dballcb">
 			<?php echo $LANG['SELECT_DESELECT'] . ' <a href="misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS_CAP'], HTML_SPECIAL_CHARS_FLAGS) . '</a>'; ?>
 		</label>

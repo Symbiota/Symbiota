@@ -9,6 +9,13 @@ include_once($SERVER_ROOT.'/content/lang/collections/sharedterms.'.$LANG_TAG.'.p
 include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
 header("Content-Type: text/html; charset=" . $CHARSET);
 
+$collManager = new OccurrenceManager();
+$searchVar = $collManager->getQueryTermStr();
+
+$collId = array_key_exists('db', $_REQUEST) ? htmlspecialchars($_REQUEST['db'], HTML_SPECIAL_CHARS_FLAGS) : null;
+var_dump($searchVar);
+var_dump($collId);
+
 $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ?? false;
 $collData = new CollectionMetadata();
 $siteData = new DatasetsMetadata();

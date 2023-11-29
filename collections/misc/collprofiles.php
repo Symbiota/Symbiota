@@ -12,6 +12,7 @@ $collManager = new OccurrenceCollectionProfile();
 $collid = isset($_REQUEST['collid']) ? $collManager->sanitizeInt($_REQUEST['collid']) : 0;
 $occIndex = array_key_exists('occindex',$_REQUEST)?$_REQUEST['occindex']:0;
 $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ?? false;
+$actionPage = $SHOULD_USE_HARVESTPARAMS ? "/collections/harvestparams.php" : "/search/index.php";
 
 // $occManager = new OccurrenceEditorManager();
 // $collIdAsNum = (int)$collid;
@@ -595,7 +596,7 @@ if ($SYMB_UID) {
 			?>
 			<div style="margin-bottom: 2rem;">
 				<span class="button button-primary">
-					<a id="advanced-search" href="<?php echo $CLIENT_ROOT?>/collections/harvestparams.php?db=<?php echo $collid ?>" ><?php echo (isset($LANG['ADVANCED_SEARCH_THIS_COLLECTION'])?$LANG['ADVANCED_SEARCH_THIS_COLLECTION']:'Advanced Search this Collection'); ?></a>
+					<a id="advanced-search" href="<?php echo $CLIENT_ROOT . $actionPage?>?db=<?php echo $collid ?>" ><?php echo (isset($LANG['ADVANCED_SEARCH_THIS_COLLECTION'])?$LANG['ADVANCED_SEARCH_THIS_COLLECTION']:'Advanced Search this Collection'); ?></a>
 				</span>
 			</div>
 			<div>
