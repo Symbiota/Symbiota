@@ -78,10 +78,12 @@ if(array_key_exists('dllist_x',$_POST)){
 elseif(array_key_exists('printlist_x',$_POST)){
 	$printMode = 1;
 }
-
-$isEditor = false;
+$isEditor = 0;
 if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USER_RIGHTS['ClAdmin']))){
-	$isEditor = true;
+	$isEditor = 1;
+}
+elseif($clArray['access'] == 'private-strict'){
+	$isEditor = false;
 }
 if($isEditor && array_key_exists('formsubmit',$_POST)){
 	if($_POST['formsubmit'] == 'AddSpecies'){
@@ -152,7 +154,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 	<!-- This is inner text! -->
 	<div id='innertext'>
 		<?php
-		if(($clid || $dynClid) && $clArray){
+		if(($clid || $dynClid) && $clArray && is_numeric($isEditor)){
 			if($clid && $isEditor){
 				?>
 				<div class="printoff" style="float:right;width:auto;">
@@ -742,11 +744,14 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 			<?php
 		}
 		else{
-			?>
-			<div style="color:red;">
-				<?php echo $LANG['CHECKNULL']; ?>!
-			</div>
-			<?php
+			echo '<div style="color:red;">';
+			if($clArray['access'] == 'private-strict'){
+				echo $LANG['IS_PRIVATE'];
+			}
+			else{
+				echo $LANG['CHECKNULL'];
+			}
+			echo '</div>';
 		}
 		?>
 	</div>

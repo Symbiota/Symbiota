@@ -70,6 +70,7 @@ $LANG['MORE'] = 'plus';
 $LANG['LESS'] = 'moins';
 $LANG['NOTAXA'] = 'Aucun Taxa Trouv&eacute;s';
 $LANG['CHECKNULL'] = 'ERREUR: identifiant de liste invalide';
+$LANG['IS_PRIVATE'] = 'La liste de contrôle est définie comme privée';
 $LANG['DISPLAYNEXT'] = 'Afficher Prochain';
 $LANG['TAXA'] = 'taxa';
 $LANG['LOCALITY'] = 'Localit&eacute;';
