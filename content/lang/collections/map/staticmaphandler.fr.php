@@ -1,10 +1,10 @@
 <?php
 /*
 ------------------
-Language: English
+Language: French 
 ------------------
 */
-include_once('mapshared.en.php');
+include_once('mapshared.fr.php');
 
 $LANG['BUILD_MAPS'] = 'Build Maps';
 $LANG['BOUNDS'] = 'Bounds';
