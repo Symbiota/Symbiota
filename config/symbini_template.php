@@ -114,6 +114,7 @@ $SHOULD_BE_ABLE_TO_CREATE_PUBLIC_USER = true;
 // end Should public users be able to create accounts?
 
 $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT=false;
+$SHOULD_USE_HARVESTPARAMS = true;
 
 $COOKIE_SECURE = false;
 if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) {

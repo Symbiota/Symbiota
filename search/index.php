@@ -10,11 +10,7 @@ include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
 header("Content-Type: text/html; charset=" . $CHARSET);
 
 $collManager = new OccurrenceManager();
-$searchVar = $collManager->getQueryTermStr();
-
-$collId = array_key_exists('db', $_REQUEST) ? htmlspecialchars($_REQUEST['db'], HTML_SPECIAL_CHARS_FLAGS) : null;
-var_dump($searchVar);
-var_dump($collId);
+$collectionSource = $collManager->getQueryTermStr();
 
 $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ?? false;
 $collData = new CollectionMetadata();
@@ -410,6 +406,29 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 	jQuery.ui.autocomplete.prototype._resizeMenu = function () {
 		var ul = this.menu.element;
 		ul.outerWidth(this.element.outerWidth());
+	}
+
+	const collectionSource = <?php echo $collectionSource ?>;
+
+	if(collectionSource){
+		// go through all collections and set them all to unchecked
+		const collectionCheckboxes = document.querySelectorAll('input[id^="coll-"]');
+		collectionCheckboxes.forEach(collection => {
+			collection.checked = false;
+		});
+
+		//go through all collections and set the parent collections to unchecked
+		const parentCollectionCheckboxes = document.querySelectorAll('input[id^="cat-"]');
+		parentCollectionCheckboxes.forEach(collection => {
+			collection.checked = false;
+		});
+
+		// set the one with collectionSource as checked
+		const targetCheckbox = document.querySelectorAll('input[id^="coll-' + collectionSource + '"]');
+		targetCheckbox.forEach(collection => {
+			collection.checked = true;
+		})
+		updateChip();
 	}
 
 </script>

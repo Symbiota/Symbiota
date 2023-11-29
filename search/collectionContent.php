@@ -3,7 +3,7 @@
 </div>
 	<div class="select-deselect-input">
 		<?php 
-			$checkedStatus = $searchVar == '' ? 'checked' : '';
+			$checkedStatus = $collectionSource == '' ? 'checked' : '';
 		?>
 		<input data-chip="All Collections" id="dballcb" name="db[]" class="specobs all-neon-colls" value='all' type="checkbox" onclick="selectAll(this);" <?php echo $checkedStatus ?> />
 		<label for="dballcb">
