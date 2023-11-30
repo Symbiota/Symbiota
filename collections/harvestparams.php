@@ -49,7 +49,7 @@ $searchVar = $collManager->getQueryTermStr();
 </head>
 <body>
 <?php
-	$displayLeftMenu = (isset($collections_harvestparamsMenu)?$collections_harvestparamsMenu:false);
+	$displayLeftMenu = (isset($collections_harvestparamsMenu) ? $collections_harvestparamsMenu : false);
 	include($SERVER_ROOT.'/includes/header.php');
 	if(isset($collections_harvestparamsCrumbs)){
 		if($collections_harvestparamsCrumbs){
@@ -72,9 +72,9 @@ $searchVar = $collManager->getQueryTermStr();
 	<div id="innertext" style='position: relative;'>
 		<form name="harvestparams" id="harvestparams" action="list.php" method="post" onsubmit="return checkHarvestParamsForm(this)">
 			<div style='float:right; position: sticky; top: 300px; width: 100px; '>
-				<div><button type="submit" style="width:100%"><?php echo isset($LANG['BUTTON_NEXT_LIST'])?$LANG['BUTTON_NEXT_LIST']:'List Display'; ?></button></div>
-				<div><button type="button" style="width:100%" onclick="displayTableView(this.form)"><?php echo isset($LANG['BUTTON_NEXT_TABLE'])?$LANG['BUTTON_NEXT_TABLE']:'Table Display'; ?></button></div>
-				<div><button type="reset" style="width:100%" onclick="resetHarvestParamsForm()"><?php echo isset($LANG['BUTTON_RESET'])?$LANG['BUTTON_RESET']:'Reset Form'; ?></button></div>
+				<div><button type="submit" style="width:100%"><?php echo isset($LANG['BUTTON_NEXT_LIST']) ? $LANG['BUTTON_NEXT_LIST'] : 'List Display'; ?></button></div>
+				<div><button type="button" style="width:100%" onclick="displayTableView(this.form)"><?php echo isset($LANG['BUTTON_NEXT_TABLE']) ? $LANG['BUTTON_NEXT_TABLE'] : 'Table Display'; ?></button></div>
+				<div><button type="reset" style="width:100%" onclick="resetHarvestParamsForm()"><?php echo isset($LANG['BUTTON_RESET']) ? $LANG['BUTTON_RESET'] : 'Reset Form'; ?></button></div>
 			</div>
 			<hr/>
 			<div style="width: 900px;">
@@ -155,7 +155,7 @@ $searchVar = $collManager->getQueryTermStr();
 							<?php echo $LANG['LL_BOUND_TEXT']; ?>
 						</div>
 						<div class="iconDiv">
-							<a href="#" onclick="openCoordAid('rectangle');return false;"><img src="../images/map.png" title="<?php echo htmlspecialchars((isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'), HTML_SPECIAL_CHARS_FLAGS); ?>" aria-label="<?php echo htmlspecialchars((isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'), HTML_SPECIAL_CHARS_FLAGS); ?>"/></a>
+							<a href="#" onclick="openCoordAid('rectangle');return false;"><img src="../images/map.png" title="<?php echo htmlspecialchars((isset($LANG['MAP_AID']) ? $LANG['MAP_AID'] : 'Mapping Aid'), HTML_SPECIAL_CHARS_FLAGS); ?>" aria-label="<?php echo htmlspecialchars((isset($LANG['MAP_AID']) ? $LANG['MAP_AID'] : 'Mapping Aid'), HTML_SPECIAL_CHARS_FLAGS); ?>"/></a>
 						</div>
 						<div class="elemDiv">
 							<div>
@@ -199,11 +199,11 @@ $searchVar = $collManager->getQueryTermStr();
 					<div class="coordBoxDiv">
 						<div class="labelDiv">
 							<label for="footprintwkt">
-								<?php echo isset($LANG['LL_POLYGON_TEXT'])?$LANG['LL_POLYGON_TEXT']:''; ?>
+								<?php echo isset($LANG['LL_POLYGON_TEXT']) ? $LANG['LL_POLYGON_TEXT'] : ''; ?>
 							</label>
 						</div>
 						<div class="iconDiv">
-							&nbsp;<a href="#" onclick="openCoordAid('polygon');return false;"><img src="../images/map.png" title="<?php echo htmlspecialchars((isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'), HTML_SPECIAL_CHARS_FLAGS); ?>" /></a>
+							&nbsp;<a href="#" onclick="openCoordAid('polygon');return false;"><img src="../images/map.png" title="<?php echo htmlspecialchars((isset($LANG['MAP_AID']) ? $LANG['MAP_AID'] : 'Mapping Aid'), HTML_SPECIAL_CHARS_FLAGS); ?>" /></a>
 						</div>
 						<div class="elemDiv">
 							<textarea id="footprintwkt" name="footprintwkt" onchange="this.value = validatePolygon(this.value)" style="width:100%;height:90px"></textarea>
@@ -214,7 +214,7 @@ $searchVar = $collManager->getQueryTermStr();
 							<?php echo $LANG['LL_P-RADIUS_TEXT']; ?>
 						</div>
 						<div class="iconDiv">
-							<a href="#" onclick="openCoordAid('circle');return false;"><img src="../images/map.png" title="<?php echo (isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'); ?>" aria-label="<?php echo htmlspecialchars((isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'), HTML_SPECIAL_CHARS_FLAGS); ?>" /></a>
+							<a href="#" onclick="openCoordAid('circle');return false;"><img src="../images/map.png" title="<?php echo (isset($LANG['MAP_AID']) ? $LANG['MAP_AID'] : 'Mapping Aid'); ?>" aria-label="<?php echo htmlspecialchars((isset($LANG['MAP_AID']) ? $LANG['MAP_AID'] : 'Mapping Aid'), HTML_SPECIAL_CHARS_FLAGS); ?>" /></a>
 						</div>
 						<div class="elemDiv">
 							<section class="flex-form">
@@ -271,7 +271,7 @@ $searchVar = $collManager->getQueryTermStr();
 					</div>
 					<div>
 						<label for="collnum"><?php echo $LANG['COLLECTOR_NUMBER']; ?>:</label>
-						<input type="text" id="collnum" size="31" name="collnum" value="" title="<?php echo htmlspecialchars((isset($LANG['TITLE_TEXT_2'])?$LANG['TITLE_TEXT_2']:'Separate multiple terms by commas and ranges by " - " (space before and after dash required), e.g.: 3542,3602,3700 - 3750'), HTML_SPECIAL_CHARS_FLAGS); ?>" />
+						<input type="text" id="collnum" size="31" name="collnum" value="" title="<?php echo htmlspecialchars((isset($LANG['TITLE_TEXT_2']) ? $LANG['TITLE_TEXT_2'] : 'Separate multiple terms by commas and ranges by " - " (space before and after dash required), e.g.: 3542,3602,3700 - 3750'), HTML_SPECIAL_CHARS_FLAGS); ?>" />
 					</div>
 				</div>
 				<section class="flex-form">
@@ -301,23 +301,23 @@ $searchVar = $collManager->getQueryTermStr();
 						</div>
 						<div>
 							<input type='checkbox' name='typestatus' id='typestatus' value='1' />
-							<label for="typestatus"><?php echo isset($LANG['TYPE'])?$LANG['TYPE']:'Limit to Type Specimens Only'; ?></label>
+							<label for="typestatus"><?php echo isset($LANG['TYPE']) ? $LANG['TYPE'] : 'Limit to Type Specimens Only'; ?></label>
 						</div>
 						<div>
 							<input type='checkbox' name='hasimages' id='hasimages' value='1' />
-							<label for="hasimages"><?php echo isset($LANG['HAS_IMAGE'])?$LANG['HAS_IMAGE']:'Limit to Specimens with Images Only'; ?></label>
+							<label for="hasimages"><?php echo isset($LANG['HAS_IMAGE']) ? $LANG['HAS_IMAGE'] : 'Limit to Specimens with Images Only'; ?></label>
 						</div>
 						<div>
 							<input type='checkbox' name='hasgenetic' id='hasgenetic' value='1' />
-							<label for="hasgenetic"><?php echo isset($LANG['HAS_GENETIC'])?$LANG['HAS_GENETIC']:'Limit to Specimens with Genetic Data Only'; ?></label>
+							<label for="hasgenetic"><?php echo isset($LANG['HAS_GENETIC']) ? $LANG['HAS_GENETIC'] : 'Limit to Specimens with Genetic Data Only'; ?></label>
 						</div>
 						<div>
 							<input type='checkbox' name='hascoords' id='hascoords' value='1' />
-							<label for="hascoords"><?php echo isset($LANG['HAS_COORDS'])?$LANG['HAS_COORDS']:'Limit to Specimens with Geocoordinates Only'; ?></label>
+							<label for="hascoords"><?php echo isset($LANG['HAS_COORDS']) ? $LANG['HAS_COORDS'] : 'Limit to Specimens with Geocoordinates Only'; ?></label>
 						</div>
 						<div>
 							<input type='checkbox' name='includecult' id='includecult' value='1' />
-							<label for="includecult"><?php echo isset($LANG['INCLUDE_CULTIVATED'])?$LANG['INCLUDE_CULTIVATED']:'Include cultivated/captive occurrences'; ?></label>
+							<label for="includecult"><?php echo isset($LANG['INCLUDE_CULTIVATED']) ? $LANG['INCLUDE_CULTIVATED'] : 'Include cultivated/captive occurrences'; ?></label>
 						</div>
 						<span class="skip-link">
 							<a href = "#harvestparams"><?php echo (isset($LANG['SKIP_LINK']) ? $LANG['SKIP_LINK'] : 'Skip to Display Options'); ?></a>
@@ -346,7 +346,7 @@ $searchVar = $collManager->getQueryTermStr();
 										<div style="float:right">
 											<div class="trianglediv" style="margin:4px 3px;float:right;cursor:pointer" onclick="setAttributeTree(this)" title="Toggle attribute tree open/close">
 												<img class="triangleright" src="../images/triangleright.png" style="display:none" />
-												<img class="triangledown" src="../images/triangledown.png" style="" />
+												<img class="triangledown" src="../images/triangledown.png"/>
 											</div>
 										</div>
 										<div class="traitDiv" style="margin-left:5px;float:left">
