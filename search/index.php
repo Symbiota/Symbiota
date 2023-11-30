@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <?php
 // error_reporting(E_ALL);
 // ini_set('display_errors', '1');
@@ -22,7 +23,7 @@ $collList = $collManager->getFullCollectionList($catId);
 $specArr = (isset($collList['spec'])?$collList['spec']:null);
 $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Sample Search</title>
@@ -64,7 +65,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 				<!-- Taxonomy -->
 				<section>
 					<!-- Accordion selector -->
-					<input type="checkbox" id="taxonomy" class="accordion-selector" checked=true />
+					<input type="checkbox" id="taxonomy" class="accordion-selector" checked />
 
 					<!-- Accordion header -->
 					<label for="taxonomy" class="accordion-header">Taxonomy</label>
@@ -73,23 +74,28 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 					<div id="search-form-taxonomy" class="content">
 						<div id="taxa-text" class="input-text-container">
 							<label for="taxa" class="input-text--outlined">
+								<span class="skip-link">Taxon</span>
 								<input type="text" name="taxa" id="taxa" data-chip="Taxa">
-								<span data-label="Taxon"></span></label>
+								<span data-label="Taxon"></span>
+							</label>
 							<span class="assistive-text">Type at least 4 characters for quick suggestions. Separate multiple with commas.</span>
 						</div>
 						<div class="select-container">
-							<select name="taxontype">
+							<label for="taxontype" class="skip-link">Taxon type</label>
+							<select name="taxontype" id="taxontype">
 								<option value="1">Any name</option>
 								<option value="2">Scientific name</option>
 								<option value="3">Family</option>
 								<option value="4">Taxonomic group</option>
 								<option value="5">Common name</option>
 							</select>
-							<span class="assistive-text">Taxon type.</span>
+							<span class="assistive-text">Taxon type</span>
 						</div>
 						<div>
 							<input type="checkbox" name="usethes" id="usethes" data-chip="Include Synonyms" value="1" checked>
-							<span class="ml-1">Include Synonyms</span>
+							<label for="usethes">
+								<span class="ml-1">Include Synonyms</span>
+							</label>
 						</div>
 					</div>
 				</section>
@@ -97,7 +103,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 				<!-- Colections -->
 				<section>
 					<!-- Accordion selector -->
-					<input type="checkbox" id="collections" class="accordion-selector" checked=true />
+					<input type="checkbox" id="collections" class="accordion-selector" checked />
 					<!-- Accordion header -->
 					<label for="collections" class="accordion-header">Collections</label>
 					<!-- Accordion content -->
@@ -117,7 +123,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 				<!-- Sample Properties -->
 				<section>
 					<!-- Accordion selector -->
-					<input type="checkbox" id="sample" class="accordion-selector" checked=true />
+					<input type="checkbox" id="sample" class="accordion-selector" checked />
 					<!-- Accordion header -->
 					<label for="sample" class="accordion-header">Sample Properties</label>
 					<!-- Accordion content -->
@@ -129,8 +135,9 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 									<label for="includeothercatnum">Include other catalog numbers and GUIds</label>
 								</div>
 								<div class="input-text-container">
-									<label for="" class="input-text--outlined">
-										<input type="text" name="catnum" data-chip="Catalog Number">
+									<label for="catnum" class="input-text--outlined">
+										<span class="skip-link">Catalog Number</span>
+										<input type="text" name="catnum" id="catnum" data-chip="Catalog Number">
 										<span data-label="Catalog Number"></span>
 									</label>
 									<span class="assistive-text">Separate multiple with commas.</span>
@@ -142,11 +149,11 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 									<label for="typestatus"><?php echo isset($LANG['TYPE'])?$LANG['TYPE']:'Limit to Type Specimens Only'; ?></label>
 								</div>
 								<div>
-									<input type="checkbox" name="hasimages" value=1 data-chip="Only with images">
+									<input type="checkbox" name="hasimages" id="hasimages" value=1 data-chip="Only with images">
 									<label for="hasimages">Limit to specimens with images</label>
 								</div>
 								<div>
-									<input type="checkbox" name="hasgenetic" value=1 data-chip="Only with genetic">
+									<input type="checkbox" name="hasgenetic" id="hasgenetic" value=1 data-chip="Only with genetic">
 									<label for="hasgenetic">Limit to specimens with genetic data</label>
 								</div>
 								<div>
@@ -175,6 +182,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								<div>
 									<div class="input-text-container">
 										<label for="country" class="input-text--outlined">
+											<span class="skip-link">Country</span>
 											<input type="text" name="country" id="country" data-chip="Country">
 											<span data-label="Country"></span>
 										</label>
@@ -182,6 +190,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 									</div>
 									<div class="input-text-container">
 										<label for="state" class="input-text--outlined">
+											<span class="skip-link">State</span>
 											<input type="text" name="state" id="state" data-chip="State">
 											<span data-label="State"></span>
 										</label>
@@ -189,6 +198,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 									</div>
 									<div class="input-text-container">
 										<label for="county" class="input-text--outlined">
+											<span class="skip-link">County</span>
 											<input type="text" name="county" id="county" data-chip="County">
 											<span data-label="County"></span>
 										</label>
@@ -196,15 +206,17 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 									</div>
 									<div class="input-text-container">
 										<label for="local" class="input-text--outlined">
+											<span class="skip-link">Locality/Localities</span>
 											<input type="text" name="local" id="local" data-chip="Locality">
-											<span data-label="Locality"></span>
+											<span data-label="Locality/Localities"></span>
 										</label>
-										<span class="assistive-text" style="line-height:1.7em">Separate multiple with commas. Accepts NEON Domain and/or Site names and codes.</span>
+										<span class="assistive-text" style="line-height:1.7em">Separate multiple with commas.</span>
 									</div>
 								</div>
 								<div class="grid grid--half">
 									<div class="input-text-container">
 										<label for="elevlow" class="input-text--outlined">
+											<span class="skip-link">Minimum Elevation</span>
 											<input type="number" step="any" name="elevlow" id="elevlow" data-chip="Min Elevation">
 											<span data-label="Minimum Elevation"></span>
 										</label>
@@ -212,6 +224,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 									</div>
 									<div class="input-text-container">
 										<label for="elevhigh" class="input-text--outlined">
+											<span class="skip-link">Maximum Elevation</span>
 											<input type="number" step="any" name="elevhigh" id="elevhigh" data-chip="Max Elevation">
 											<span data-label="Maximum Elevation"></span>
 										</label>
@@ -234,22 +247,30 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 						<div id="search-form-latlong">
 							<div id="bounding-box-form">
 								<h3>Bounding Box</h3>
-								<button onclick="openCoordAid('rectangle');return false;">Select in map</button>
+								<button onclick="openCoordAid('rectangle');return false;">Select in map (BB)</button>
 								<div class="input-text-container">
-									<label for="upperlat" class="input-text--outlined">
-										<input type="number" step="any" min="-90" max="90" id="upperlat" name="upperlat" data-chip="Upper Lat">
-										<select class="mt-1" id="upperlat_NS" name="upperlat_NS">
+										<label for="upperlat" class="input-text--outlined">
+											<span class="skip-link">Upper latitude</span>
+											<input type="number" step="any" min="-90" max="90" id="upperlat" name="upperlat" data-chip="Upper Lat">
+											<span data-label="_Northern Latitude"></span>
+											<span class="assistive-text">Values between -90 and 90.</span>
+										</label>
+
+										<!-- Latitude Direction Select -->
+										<label for="upperlat_NS" class="input-text--outlined">
+											<span class="skip-link">Select upper lat direction N/S</span>
+											<select class="mt-1" id="upperlat_NS" name="upperlat_NS">
 											<option value="">Select N/S</option>
 											<option id="ulN" value="N">N</option>
 											<option id="ulS" value="S">S</option>
-										</select>
-										<span data-label="Northern Latitude"></span>
-									</label>
-									<span class="assistive-text">Values between -90 and 90.</span>
+											</select>
+										</label>
 								</div>
 								<div class="input-text-container">
 									<label for="bottomlat" class="input-text--outlined">
+										<span class="skip-link">Bottom latitude</span>
 										<input type="number" step="any" min="-90" max="90" id="bottomlat" name="bottomlat" data-chip="Bottom Lat">
+										<label for="bottomlat_NS" class="skip-link">Select bottom lat direction N/S</label>
 										<select class="mt-1" id="bottomlat_NS" name="bottomlat_NS">
 											<option value="">Select N/S</option>
 											<option id="blN" value="N">N</option>
@@ -261,7 +282,9 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								</div>
 								<div class="input-text-container">
 									<label for="leftlong" class="input-text--outlined">
+										<span class="skip-link">Left longitude</span>
 										<input type="number" step="any" min="-180" max="180" id="leftlong" name="leftlong" data-chip="Left Long">
+										<label for="leftlong_EW" class="skip-link">Select left long direction W/E</label>
 										<select class="mt-1" id="leftlong_EW" name="leftlong_EW">
 											<option value="">Select W/E</option>
 											<option id="llW" value="W">W</option>
@@ -273,7 +296,9 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								</div>
 								<div class="input-text-container">
 									<label for="rightlong" class="input-text--outlined">
+										<span class="skip-link">Right longitude</span>
 										<input type="number" step="any" min="-180" max="180" id="rightlong" name="rightlong" data-chip="Right Long">
+										<label for="rightlong_EW" class="skip-link">Select right long direction W/E</label>
 										<select class="mt-1" id="rightlong_EW" name="rightlong_EW">
 											<option value="">Select W/E</option>
 											<option id="rlW" value="W">W</option>
@@ -286,10 +311,11 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 							</div>
 							<div id="polygon-form">
 								<h3>Polygon (WKT footprint)</h3>
-								<button onclick="openCoordAid('polygon');return false;">Select in map</button>
+								<button onclick="openCoordAid('polygon');return false;">Select in map (Polygon)</button>
 								<div class="text-area-container">
 									<label for="footprintwkt" class="text-area--outlined">
-										<textarea id="footprintwkt" name="footprintwkt" wrap="off" cols="30%" rows="5"></textarea>
+										<span class="skip-link">Polygon</span>
+										<textarea id="footprintwkt" name="footprintwkt" cols="30%" rows="5"></textarea>
 										<span data-label="Polygon"></span>
 									</label>
 									<span class="assistive-text">Select in map with button or paste values.</span>
@@ -297,10 +323,12 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 							</div>
 							<div id="point-radius-form">
 								<h3>Point-Radius</h3>
-								<button onclick="openCoordAid('circle');return false;">Select in map</button>
+								<button onclick="openCoordAid('circle');return false;">Select in map (PR)</button>
 								<div class="input-text-container">
 									<label for="pointlat" class="input-text--outlined">
+										<span class="skip-link">Point latitude</span>
 										<input type="number" step="any" min="-90" max="90" id="pointlat" name="pointlat" data-chip="Point Lat">
+										<label for="pointlat_NS" class="skip-link">Point latitude direction N/S</label>
 										<select class="mt-1" id="pointlat_NS" name="pointlat_NS">
 											<option value="">Select N/S</option>
 											<option id="N" value="N">N</option>
@@ -312,7 +340,9 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								</div>
 								<div class="input-text-container">
 									<label for="pointlong" class="input-text--outlined">
+										<span class="skip-link">Point longitude</span>
 										<input type="number" step="any" min="-180" max="180" id="pointlong" name="pointlong" data-chip="Point Long">
+										<label for="pointlong_EW" class="skip-link">Point longitude direction E/W</label>
 										<select class="mt-1" id="pointlong_EW" name="pointlong_EW">
 											<option value="">Select W/E</option>
 											<option id="W" value="W">W</option>
@@ -324,7 +354,9 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								</div>
 								<div class="input-text-container">
 									<label for="radius" class="input-text--outlined">
+										<span class="skip-link">Radius</span>
 										<input type="number" min="0" step="any" id="radius" name="radius" data-chip="Radius">
+										<label for="radiusunits" class="skip-link">Select radius units</label>
 										<select class="mt-1" id="radiusunits" name="radiusunits">
 											<option value="">Select Unit</option>
 											<option value="km">Kilometers</option>
@@ -349,27 +381,31 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 						<div id="search-form-coll-event">
 							<div class="input-text-container">
 								<label for="eventdate1" class="input-text--outlined">
-									<input type="text" name="eventdate1" data-chip="Event Date Start">
+									<span class="skip-link">Collection Start Date</span>
+									<input type="text" name="eventdate1" id="eventdate1" data-chip="Event Date Start">
 									<span data-label="Collection Start Date"></span>
 								</label>
 								<span class="assistive-text">Single date or start date of range (ex: YYYY-MM-DD or similar format).</span>
 							</div>
 							<div class="input-text-container">
 								<label for="eventdate2" class="input-text--outlined">
-									<input type="text" name="eventdate2" data-chip="Event Date End">
+									<span class="skip-link">Collection End Date</span>
+									<input type="text" name="eventdate2" id="eventdate2" data-chip="Event Date End">
 									<span data-label="Collection End Date"></span>
 								</label>
 								<span class="assistive-text">Single date or end date of range (ex: YYYY-MM-DD or similar format).</span>
 							</div>
 							<div class="input-text-container">
 								<label for="collector" class="input-text--outlined">
+									<span class="skip-link">Collector Last Name</span>
 									<input type="text" id="collector" size="32" name="collector" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" data-chip="Collector last" />
 									<span data-label="<?php echo $LANG['COLLECTOR_LASTNAME']; ?>:"></span>
 								</label>
 							</div>
 							<div class="input-text-container">
 								<label for="collnum" class="input-text--outlined">
-									<input type="text" id="collnum" size="31" name="collnum" value="" title="<?php echo $LANG['TITLE_TEXT_2']; ?>" data-chip="Collector num" />
+									<span class="skip-link">Collector Number</span>
+									<input type="text" id="collnum" size="31" name="collnum" value="" title="<?php echo htmlspecialchars($LANG['TITLE_TEXT_2'], HTML_SPECIAL_CHARS_FLAGS); ?>" data-chip="Collector num" />
 									<span data-label="<?php echo $LANG['COLLECTOR_NUMBER']; ?>:"></span>
 								</label>
 							</div>
@@ -380,7 +416,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 			
 			<!-- Criteria panel -->
 			<div id="criteria-panel" style="position: sticky; top: 0; height: 100vh">
-				<button id="search-btn" action="" onclick="simpleSearch()">Search</button>
+				<button id="search-btn" onclick="simpleSearch()">Search</button>
 				<button id="reset-btn">Reset</button>
 				<h2>Criteria</h2>
 				<div id="chips"></div>
