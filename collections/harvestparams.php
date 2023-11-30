@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/collections/harvestparams.'.$LANG_TAG.'.php');
@@ -8,7 +10,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 $collManager = new OccurrenceManager();
 $searchVar = $collManager->getQueryTermStr();
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['PAGE_TITLE']; ?></title>
 	<?php
@@ -35,9 +37,9 @@ $searchVar = $collManager->getQueryTermStr();
 		});
 	</script>
 	<script src="../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
-	<style type="text/css">
+	<style>
 		hr{ clear:both; margin: 10px 0px }
-		.catHeaderDiv { font-weight:bold; font-size: 18px }
+		.catHeaderDiv { font-weight:bold; font-size: 1.8rem }
 		.coordBoxDiv { float:left; border:2px solid brown; padding:10px; margin:5px; white-space: nowrap; }
 		.coordBoxDiv .labelDiv { font-weight:bold;float:left }
 		.coordBoxDiv .iconDiv { float:right;margin-left:5px; }
@@ -67,285 +69,305 @@ $searchVar = $collManager->getQueryTermStr();
 		<?php
 	}
 	?>
-	<div id="innertext">
+	<div id="innertext" style='position: relative;'>
 		<form name="harvestparams" id="harvestparams" action="list.php" method="post" onsubmit="return checkHarvestParamsForm(this)">
-			<hr/>
-			<div>
-				<div style="float:left">
-					<div>
-						<div class="catHeaderDiv"><?php echo $LANG['TAXON_HEADER']; ?></div>
-						<div style="margin:10px 0px 0px 5px;"><input type='checkbox' name='usethes' id='usethes' value='1' CHECKED />
-						<label for="usethes"><?php echo $LANG['INCLUDE_SYNONYMS']; ?></div></label>
-					</div>
-					<section class="flex-form">
-						<div>
-							<label for="taxontype"><?php echo $LANG['SELECT_TAXON_TYPE'] ?>:</label>
-							<select id="taxontype" name="taxontype">
-								<?php
-								$taxonType = 1;
-								if(isset($DEFAULT_TAXON_SEARCH) && $DEFAULT_TAXON_SEARCH) $taxonType = $DEFAULT_TAXON_SEARCH;
-								$taxonTypeRange = 6;
-								if(isset($DISPLAY_COMMON_NAMES) && !$DISPLAY_COMMON_NAMES) $taxonTypeRange = 5;
-								for($h=1;$h<$taxonTypeRange;$h++){
-									echo '<option value="'.$h.'" '.($taxonType==$h?'SELECTED':'').'>'.$LANG['SELECT_1-'.$h].'</option>';
-								}
-								?>
-							</select>
-						</div>
-						<div>
-							<label for="taxa"><?php echo $LANG['TYPE_TAXON'] ?>:</label>
-							<input id="taxa" type="text" size="60" name="taxa" id="taxa" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
-						</div>
-					</section>
-				</div>
-				<div style='float:right;margin:0px 10px;'>
-					<div><button type="submit" style="width:100%"><?php echo isset($LANG['BUTTON_NEXT_LIST'])?$LANG['BUTTON_NEXT_LIST']:'List Display'; ?></button></div>
-					<div><button type="button" style="width:100%" onclick="displayTableView(this.form)"><?php echo isset($LANG['BUTTON_NEXT_TABLE'])?$LANG['BUTTON_NEXT_TABLE']:'Table Display'; ?></button></div>
-					<div><button type="reset" style="width:100%" onclick="resetHarvestParamsForm()"><?php echo isset($LANG['BUTTON_RESET'])?$LANG['BUTTON_RESET']:'Reset Form'; ?></button></div>
-				</div>
-			</div>
-			<hr/>
-			<div>
-				<div class="catHeaderDiv"><?php echo $LANG['LOCALITY_CRITERIA']; ?></div>
-			</div>
-			<div>
-				<label for="country"><?php echo $LANG['COUNTRY']; ?>:</label>
-				<input type="text" id="country" size="43" name="country" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
-			</div>
-			<div>
-				<label for="state"><?php echo $LANG['STATE']; ?>:</label>
-				<input type="text" id="state" size="37" name="state" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
-			</div>
-			<div>
-				<label for="county"><?php echo $LANG['COUNTY']; ?>:</label>
-				<input type="text" id="county" size="37"  name="county" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
-			</div>
-			<div>
-				<label for="locality"><?php echo $LANG['LOCALITY']; ?>:</label>
-				<input type="text" id="locality" size="43" name="local" value="" />
-			</div>
-			<section class="flex-form">
-				<div>
-					<label for="elevlow"><?php echo $LANG['ELEV_INPUT_1']; ?>:</label>
-					<input type="text" id="elevlow" size="10" name="elevlow" value="" onchange="cleanNumericInput(this);" />
-				</div>
-				<div>
-					<label for="elevhigh"><?php echo $LANG['ELEV_INPUT_2']; ?>:</label>
-					<input type="text" id="elevhigh" size="10" name="elevhigh" value="" onchange="cleanNumericInput(this);" />
-				</div>
-			</section>
-			<hr>
-			<div class="catHeaderDiv"><?php echo $LANG['LAT_LNG_HEADER']; ?></div>
-			<div>
-				<div class="coordBoxDiv">
-					<div class="labelDiv">
-						<?php echo $LANG['LL_BOUND_TEXT']; ?>
-					</div>
-					<div class="iconDiv">
-						<a href="#" onclick="openCoordAid('rectangle');return false;"><img src="../images/map.png" title="<?php echo htmlspecialchars((isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'), HTML_SPECIAL_CHARS_FLAGS); ?>" /></a>
-					</div>
-					<div class="elemDiv">
-						<div>
-							<label for="upperlat"><?php echo $LANG['LL_BOUND_NLAT']; ?>:</label>
-							<input type="text" id="upperlat" name="upperlat" size="7" value="" onchange="cleanNumericInput(this);">
-							<label for="upperlat_NS"><?php echo $LANG['DIRECTION'] ?>:</label>
-							<select id="upperlat_NS" name="upperlat_NS">
-								<option id="ulN" value="N"><?php echo $LANG['LL_N_SYMB']; ?></option>
-								<option id="ulS" value="S"><?php echo $LANG['LL_S_SYMB']; ?></option>
-							</select>
-						</div>
-						<div>
-							<label for="bottomlat"><?php echo $LANG['LL_BOUND_SLAT']; ?>:</label>
-							<input type="text" id="bottomlat" name="bottomlat" size="7" value="" onchange="cleanNumericInput(this);">
-							<label for="bottomlat_NS"><?php echo $LANG['DIRECTION'] ?>:</label>
-							<select id="bottomlat_NS" name="bottomlat_NS">
-								<option id="blN" value="N"><?php echo $LANG['LL_N_SYMB']; ?></option>
-								<option id="blS" value="S"><?php echo $LANG['LL_S_SYMB']; ?></option>
-							</select>
-						</div>
-						<div>
-							<label for="leftlong"><?php echo $LANG['LL_BOUND_WLNG']; ?>:</label>
-							<input type="text" id="leftlong" name="leftlong" size="7" value="" onchange="cleanNumericInput(this);">
-							<label for="leftlong_EW"><?php echo $LANG['DIRECTION'] ?>:</label>
-							<select id="leftlong_EW" name="leftlong_EW">
-								<option id="llW" value="W"><?php echo $LANG['LL_W_SYMB']; ?></option>
-								<option id="llE" value="E"><?php echo $LANG['LL_E_SYMB']; ?></option>
-							</select>
-						</div>
-						<div>
-							<label for="rightlong"><?php echo $LANG['LL_BOUND_ELNG']; ?>:</label>
-							<input type="text" id="rightlong" name="rightlong" size="7" value="" onchange="cleanNumericInput(this);" style="margin-left:3px;">
-							<label for="rightlong_EW"><?php echo $LANG['DIRECTION'] ?>:</label>
-							<select id="rightlong_EW" name="rightlong_EW">
-								<option id="rlW" value="W"><?php echo $LANG['LL_W_SYMB']; ?></option>
-								<option id="rlE" value="E"><?php echo $LANG['LL_E_SYMB']; ?></option>
-							</select>
-						</div>
-					</div>
-				</div>
-				<div class="coordBoxDiv">
-					<div class="labelDiv">
-						<label for="footprintwkt">
-							<?php echo isset($LANG['LL_POLYGON_TEXT'])?$LANG['LL_POLYGON_TEXT']:''; ?>
-						</label>
-					</div>
-					<div class="iconDiv">
-						&nbsp;<a href="#" onclick="openCoordAid('polygon');return false;"><img src="../images/map.png" title="<?php echo htmlspecialchars((isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'), HTML_SPECIAL_CHARS_FLAGS); ?>" /></a>
-					</div>
-					<div class="elemDiv">
-						<textarea id="footprintwkt" name="footprintwkt" onchange="this.value = validatePolygon(this.value)" style="zIndex:999;width:100%;height:90px"></textarea>
-					</div>
-				</div>
-				<div class="coordBoxDiv">
-					<div class="labelDiv">
-						<?php echo $LANG['LL_P-RADIUS_TEXT']; ?>
-					</div>
-					<div class="iconDiv">
-						<a href="#" onclick="openCoordAid('circle');return false;"><img src="../images/map.png" title="<?php echo (isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'); ?>" /></a>
-					</div>
-					<div class="elemDiv">
-						<section class="flex-form">
-							<div>
-								<label for="pointlat"><?php echo $LANG['LL_P-RADIUS_LAT']; ?>:</label>
-								<input type="text" id="pointlat" name="pointlat" size="7" value="" onchange="cleanNumericInput(this);">
-							</div>
-							<div>
-								<label for="pointlat_NS"><?php echo $LANG['DIRECTION'] ?>:</label>
-								<select id="pointlat_NS" name="pointlat_NS">
-									<option id="N" value="N"><?php echo $LANG['LL_N_SYMB']; ?></option>
-									<option id="S" value="S"><?php echo $LANG['LL_S_SYMB']; ?></option>
-								</select>
-							</div>
-						</section>
-						<section class="flex-form">
-							<div>
-								<label for="pointlong"><?php echo $LANG['LL_P-RADIUS_LNG']; ?>:</label>
-								<input type="text" id="pointlong" name="pointlong" size="7" value="" onchange="cleanNumericInput(this);">
-							</div>
-							<div>
-								<label for="pointlong_EW"><?php echo $LANG['DIRECTION'] ?>:</label>
-								<select id="pointlong_EW" name="pointlong_EW">
-									<option id="W" value="W"><?php echo $LANG['LL_W_SYMB']; ?></option>
-									<option id="E" value="E"><?php echo $LANG['LL_E_SYMB']; ?></option>
-								</select>
-							</div>
-						</section>
-						<section class="flex-form">
-							<div>
-								<label for="radius"><?php echo $LANG['LL_P-RADIUS_RADIUS']; ?>:</label>
-								<input type="text" id="radius" name="radius" size="5" value="" onchange="cleanNumericInput(this);">
-							</div>
-							<div>
-								<label for="radiusunits"><?php echo $LANG['DISTANCE_UNIT'] ?>:</label>
-								<select id="radiusunits" name="radiusunits">
-									<option value="km"><?php echo $LANG['LL_P-RADIUS_KM']; ?></option>
-									<option value="mi"><?php echo $LANG['LL_P-RADIUS_MI']; ?></option>
-								</select>
-							</div>
-						</section>
-					</div>
-				</div>
-			</div>
-			<hr/>
-			<div class="catHeaderDiv"><?php echo $LANG['COLLECTOR_HEADER']; ?></div>
-			<div>
-				<label for="collector"><?php echo $LANG['COLLECTOR_LASTNAME']; ?>:</label>
-				<input type="text" id="collector" size="32" name="collector" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
-			</div>
-			<div>
-				<label for="collnum"><?php echo $LANG['COLLECTOR_NUMBER']; ?>:</label>
-				<input type="text" id="collnum" size="31" name="collnum" value="" title="<?php echo $LANG['TITLE_TEXT_2']; ?>" />
-			</div>
-			<section class="flex-form">
-				<div>
-					<label for="eventdate1"><?php echo $LANG['COLLECTOR_DATE']; ?>:</label>
-					<input type="text" id="eventdate1" size="32" name="eventdate1" style="width:100px;" value="" title="<?php echo $LANG['TITLE_TEXT_3']; ?>" /> -
-				</div>
-				<div>
-					<label for="eventdate2"><?php echo $LANG['COLLECTOR_DATE_END']; ?>:</label>
-					<input type="text" id="eventdate2" size="32" name="eventdate2" style="width:100px;" value="" title="<?php echo $LANG['TITLE_TEXT_4']; ?>" />
-				</div>
-			</section>
-			<hr/>
-			<div style="float:left">
-				<div>
-					<div class="catHeaderDiv"><?php echo $LANG['SPECIMEN_HEADER']; ?></div>
-				</div>
-				<div>
-					<label for="catnum"><?php echo $LANG['CATALOG_NUMBER']; ?>:</label>
-					<input type="text" id="catnum" size="32" name="catnum" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
-					<input name="includeothercatnum" id="includeothercatnum" type="checkbox" value="1" checked />
-					<label for="includeothercatnum"><?php echo $LANG['INCLUDE_OTHER_CATNUM']?></label>
-				</div>
-				<div>
-					<input type='checkbox' name='typestatus' id='typestatus' value='1' />
-					<label for="typestatus"><?php echo isset($LANG['TYPE'])?$LANG['TYPE']:'Limit to Type Specimens Only'; ?></label>
-				</div>
-				<div>
-					<input type='checkbox' name='hasimages' id='hasimages' value='1' />
-					<label for="hasimages"><?php echo isset($LANG['HAS_IMAGE'])?$LANG['HAS_IMAGE']:'Limit to Specimens with Images Only'; ?></label>
-				</div>
-				<div>
-					<input type='checkbox' name='hasgenetic' id='hasgenetic' value='1' />
-					<label for="hasgenetic"><?php echo isset($LANG['HAS_GENETIC'])?$LANG['HAS_GENETIC']:'Limit to Specimens with Genetic Data Only'; ?></label>
-				</div>
-				<div>
-					<input type='checkbox' name='hascoords' id='hascoords' value='1' />
-					<label for="hascoords"><?php echo isset($LANG['HAS_COORDS'])?$LANG['HAS_COORDS']:'Limit to Specimens with Geocoordinates Only'; ?></label>
-				</div>
-				<div>
-					<input type='checkbox' name='includecult' id='includecult' value='1' />
-					<label for="includecult"><?php echo isset($LANG['INCLUDE_CULTIVATED'])?$LANG['INCLUDE_CULTIVATED']:'Include cultivated/captive occurrences'; ?></label>
-				</div>
-			</div>
-			<?php
-			if(!empty($SEARCH_BY_TRAITS)) {
-				$attribSearch = new OccurrenceAttributeSearch();
-				$traitArr = $attribSearch->getTraitSearchArr($SEARCH_BY_TRAITS);
-				if($traitArr){
-					?>
-					<hr/>
-					<div style="float:left">
-						<div>
-							<div class="catHeaderDiv"><?php echo $LANG['TRAIT_HEADER']; ?></div>
-							<div><?php echo $LANG['TRAIT_DESCRIPTION']; ?></div>
-							<input type="hidden" id="SearchByTraits" value="true">
-						</div>
-						<?php
-						foreach($traitArr as $traitID => $traitData){
-							if(!isset($traitData['dependentTrait'])) {
-								?>
-								<fieldset style="margin-top:10px;display:inline;min-width:500px">
-									<legend><b>Trait: <?php echo $traitData['name']; ?></b></legend>
-									<div style="float:right">
-										<div class="trianglediv" style="margin:4px 3px;float:right;cursor:pointer" onclick="setAttributeTree(this)" title="Toggle attribute tree open/close">
-											<img class="triangleright" src="../images/triangleright.png" style="display:none" />
-											<img class="triangledown" src="../images/triangledown.png" style="" />
-										</div>
-									</div>
-									<div class="traitDiv" style="margin-left:5px;float:left">
-										<?php $attribSearch->echoTraitSearchForm($traitID); ?>
-									</div>
-								</fieldset>
-								<?php
-							}
-						}
-						?>
-					</div>
-					<?php
-				}
-			}
-			?>
-			<div style="float:right;">
+			<div style='float:right; position: sticky; top: 300px; width: 100px; '>
 				<div><button type="submit" style="width:100%"><?php echo isset($LANG['BUTTON_NEXT_LIST'])?$LANG['BUTTON_NEXT_LIST']:'List Display'; ?></button></div>
 				<div><button type="button" style="width:100%" onclick="displayTableView(this.form)"><?php echo isset($LANG['BUTTON_NEXT_TABLE'])?$LANG['BUTTON_NEXT_TABLE']:'Table Display'; ?></button></div>
 				<div><button type="reset" style="width:100%" onclick="resetHarvestParamsForm()"><?php echo isset($LANG['BUTTON_RESET'])?$LANG['BUTTON_RESET']:'Reset Form'; ?></button></div>
 			</div>
-			<div>
-				<input type="hidden" name="reset" value="1" />
-				<input type="hidden" name="db" value="<?php echo $collManager->getSearchTerm('db'); ?>" />
-			</div>
 			<hr/>
+			<div style="width: 900px;">
+				<div>
+					<div style="float:left">
+						<div>
+							<div class="catHeaderDiv"><?php echo $LANG['TAXON_HEADER']; ?></div>
+							<div style="margin:10px 0px 0px 5px;">
+							<input type='checkbox' name='usethes' id='usethes' value='1' CHECKED />
+							<label for="usethes"><?php echo $LANG['INCLUDE_SYNONYMS']; ?></label>
+							</div>
+						</div>
+						<section class="flex-form">
+							<div>
+								<label for="taxontype"><?php echo $LANG['SELECT_TAXON_TYPE'] ?>:</label>
+								<select id="taxontype" name="taxontype">
+									<?php
+									$taxonType = 1;
+									if(isset($DEFAULT_TAXON_SEARCH) && $DEFAULT_TAXON_SEARCH) $taxonType = $DEFAULT_TAXON_SEARCH;
+									$taxonTypeRange = 6;
+									if(isset($DISPLAY_COMMON_NAMES) && !$DISPLAY_COMMON_NAMES) $taxonTypeRange = 5;
+									for($h=1;$h<$taxonTypeRange;$h++){
+										echo '<option value="'.$h.'" '.($taxonType==$h?'SELECTED':'').'>'.$LANG['SELECT_1-'.$h].'</option>';
+									}
+									?>
+								</select>
+							</div>
+							<div>
+								<label for="taxa"><?php echo $LANG['TYPE_TAXON'] ?>:</label>
+								<input id="taxa" type="text" size="60" name="taxa" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
+							</div>
+						</section>
+						<span class="skip-link">
+							<a href = "#harvestparams"><?php echo (isset($LANG['SKIP_LINK']) ? $LANG['SKIP_LINK'] : 'Skip to Display Options'); ?></a>
+						</span>
+					</div>
+				</div>
+				<hr/>
+				<div>
+					<div class="catHeaderDiv"><?php echo $LANG['LOCALITY_CRITERIA']; ?></div>
+				</div>
+				<div class="flex-form">
+					<div >
+						<label for="country"><?php echo $LANG['COUNTRY']; ?>:</label>
+						<input type="text" id="country" size="43" name="country" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
+					</div>
+					<div>
+						<label for="state"><?php echo $LANG['STATE']; ?>:</label>
+						<input type="text" id="state" size="37" name="state" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
+					</div>
+					<div>
+						<label for="county"><?php echo $LANG['COUNTY']; ?>:</label>
+						<input type="text" id="county" size="37"  name="county" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
+					</div>
+					<div>
+						<label for="locality"><?php echo $LANG['LOCALITY']; ?>:</label>
+						<input type="text" id="locality" size="43" name="local" value="" />
+					</div>
+				</div>
+				<section class="flex-form">
+					<div>
+						<label for="elevlow"><?php echo $LANG['ELEV_INPUT_1']; ?>:</label>
+						<input type="text" id="elevlow" size="10" name="elevlow" value="" onchange="cleanNumericInput(this);" />
+					</div>
+					<div>
+						<label for="elevhigh"><?php echo $LANG['ELEV_INPUT_2']; ?>:</label>
+						<input type="text" id="elevhigh" size="10" name="elevhigh" value="" onchange="cleanNumericInput(this);" />
+					</div>
+				</section>
+				<span class="skip-link">
+					<a href = "#harvestparams"><?php echo (isset($LANG['SKIP_LINK']) ? $LANG['SKIP_LINK'] : 'Skip to Display Options'); ?></a>
+				</span>
+				<hr>
+				<div class="catHeaderDiv"><?php echo $LANG['LAT_LNG_HEADER']; ?></div>
+				<div>
+					<div class="coordBoxDiv">
+						<div class="labelDiv">
+							<?php echo $LANG['LL_BOUND_TEXT']; ?>
+						</div>
+						<div class="iconDiv">
+							<a href="#" onclick="openCoordAid('rectangle');return false;"><img src="../images/map.png" title="<?php echo htmlspecialchars((isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'), HTML_SPECIAL_CHARS_FLAGS); ?>" aria-label="<?php echo htmlspecialchars((isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'), HTML_SPECIAL_CHARS_FLAGS); ?>"/></a>
+						</div>
+						<div class="elemDiv">
+							<div>
+								<label for="upperlat"><?php echo $LANG['LL_BOUND_NLAT']; ?>:</label>
+								<input type="text" id="upperlat" name="upperlat" size="7" value="" onchange="cleanNumericInput(this);">
+								<label for="upperlat_NS"><?php echo $LANG['N_DIRECTION'] ?>:</label>
+								<select id="upperlat_NS" name="upperlat_NS">
+									<option id="ulN" value="N"><?php echo $LANG['LL_N_SYMB']; ?></option>
+									<option id="ulS" value="S"><?php echo $LANG['LL_S_SYMB']; ?></option>
+								</select>
+							</div>
+							<div>
+								<label for="bottomlat"><?php echo $LANG['LL_BOUND_SLAT']; ?>:</label>
+								<input type="text" id="bottomlat" name="bottomlat" size="7" value="" onchange="cleanNumericInput(this);">
+								<label for="bottomlat_NS"><?php echo $LANG['S_DIRECTION'] ?>:</label>
+								<select id="bottomlat_NS" name="bottomlat_NS">
+									<option id="blN" value="N"><?php echo $LANG['LL_N_SYMB']; ?></option>
+									<option id="blS" value="S"><?php echo $LANG['LL_S_SYMB']; ?></option>
+								</select>
+							</div>
+							<div>
+								<label for="leftlong"><?php echo $LANG['LL_BOUND_WLNG']; ?>:</label>
+								<input type="text" id="leftlong" name="leftlong" size="7" value="" onchange="cleanNumericInput(this);">
+								<label for="leftlong_EW"><?php echo $LANG['W_DIRECTION'] ?>:</label>
+								<select id="leftlong_EW" name="leftlong_EW">
+									<option id="llW" value="W"><?php echo $LANG['LL_W_SYMB']; ?></option>
+									<option id="llE" value="E"><?php echo $LANG['LL_E_SYMB']; ?></option>
+								</select>
+							</div>
+							<div>
+								<label for="rightlong"><?php echo $LANG['LL_BOUND_ELNG']; ?>:</label>
+								<input type="text" id="rightlong" name="rightlong" size="7" value="" onchange="cleanNumericInput(this);" style="margin-left:3px;">
+								<label for="rightlong_EW"><?php echo $LANG['E_DIRECTION'] ?>:</label>
+								<select id="rightlong_EW" name="rightlong_EW">
+									<option id="rlW" value="W"><?php echo $LANG['LL_W_SYMB']; ?></option>
+									<option id="rlE" value="E"><?php echo $LANG['LL_E_SYMB']; ?></option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="coordBoxDiv">
+						<div class="labelDiv">
+							<label for="footprintwkt">
+								<?php echo isset($LANG['LL_POLYGON_TEXT'])?$LANG['LL_POLYGON_TEXT']:''; ?>
+							</label>
+						</div>
+						<div class="iconDiv">
+							&nbsp;<a href="#" onclick="openCoordAid('polygon');return false;"><img src="../images/map.png" title="<?php echo htmlspecialchars((isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'), HTML_SPECIAL_CHARS_FLAGS); ?>" /></a>
+						</div>
+						<div class="elemDiv">
+							<textarea id="footprintwkt" name="footprintwkt" onchange="this.value = validatePolygon(this.value)" style="width:100%;height:90px"></textarea>
+						</div>
+					</div>
+					<div class="coordBoxDiv">
+						<div class="labelDiv">
+							<?php echo $LANG['LL_P-RADIUS_TEXT']; ?>
+						</div>
+						<div class="iconDiv">
+							<a href="#" onclick="openCoordAid('circle');return false;"><img src="../images/map.png" title="<?php echo (isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'); ?>" aria-label="<?php echo htmlspecialchars((isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'), HTML_SPECIAL_CHARS_FLAGS); ?>" /></a>
+						</div>
+						<div class="elemDiv">
+							<section class="flex-form">
+								<div>
+									<label for="pointlat"><?php echo $LANG['LL_P-RADIUS_LAT']; ?>:</label>
+									<input type="text" id="pointlat" name="pointlat" size="7" value="" onchange="cleanNumericInput(this);">
+								</div>
+								<div>
+									<label for="pointlat_NS"><?php echo $LANG['LAT_DIRECTION'] ?>:</label>
+									<select id="pointlat_NS" name="pointlat_NS">
+										<option id="N" value="N"><?php echo $LANG['LL_N_SYMB']; ?></option>
+										<option id="S" value="S"><?php echo $LANG['LL_S_SYMB']; ?></option>
+									</select>
+								</div>
+							</section>
+							<section class="flex-form">
+								<div>
+									<label for="pointlong"><?php echo $LANG['LL_P-RADIUS_LNG']; ?>:</label>
+									<input type="text" id="pointlong" name="pointlong" size="7" value="" onchange="cleanNumericInput(this);">
+								</div>
+								<div>
+									<label for="pointlong_EW"><?php echo $LANG['LONG_DIRECTION'] ?>:</label>
+									<select id="pointlong_EW" name="pointlong_EW">
+										<option id="W" value="W"><?php echo $LANG['LL_W_SYMB']; ?></option>
+										<option id="E" value="E"><?php echo $LANG['LL_E_SYMB']; ?></option>
+									</select>
+								</div>
+							</section>
+							<section class="flex-form">
+								<div>
+									<label for="radius"><?php echo $LANG['LL_P-RADIUS_RADIUS']; ?>:</label>
+									<input type="text" id="radius" name="radius" size="5" value="" onchange="cleanNumericInput(this);">
+								</div>
+								<div>
+									<label for="radiusunits"><?php echo $LANG['DISTANCE_UNIT'] ?>:</label>
+									<select id="radiusunits" name="radiusunits">
+										<option value="km"><?php echo $LANG['LL_P-RADIUS_KM']; ?></option>
+										<option value="mi"><?php echo $LANG['LL_P-RADIUS_MI']; ?></option>
+									</select>
+								</div>
+							</section>
+							<span class="skip-link">
+								<a href = "#harvestparams"><?php echo (isset($LANG['SKIP_LINK']) ? $LANG['SKIP_LINK'] : 'Skip to Display Options'); ?></a>
+							</span>
+						</div>
+					</div>
+				</div>
+				<hr/>
+				<div class="catHeaderDiv"><?php echo $LANG['COLLECTOR_HEADER']; ?></div>
+				<div class="flex-form">
+					<div>
+						<label for="collector"><?php echo $LANG['COLLECTOR_LASTNAME']; ?>:</label>
+						<input type="text" id="collector" size="32" name="collector" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
+					</div>
+					<div>
+						<label for="collnum"><?php echo $LANG['COLLECTOR_NUMBER']; ?>:</label>
+						<input type="text" id="collnum" size="31" name="collnum" value="" title="<?php echo htmlspecialchars((isset($LANG['TITLE_TEXT_2'])?$LANG['TITLE_TEXT_2']:'Separate multiple terms by commas and ranges by " - " (space before and after dash required), e.g.: 3542,3602,3700 - 3750'), HTML_SPECIAL_CHARS_FLAGS); ?>" />
+					</div>
+				</div>
+				<section class="flex-form">
+					<div>
+						<label for="eventdate1"><?php echo $LANG['COLLECTOR_DATE']; ?>:</label>
+						<input type="text" id="eventdate1" size="32" name="eventdate1" style="width:100px;" value="" title="<?php echo $LANG['TITLE_TEXT_3']; ?>" /> -
+					</div>
+					<div>
+						<label for="eventdate2"><?php echo $LANG['COLLECTOR_DATE_END']; ?>:</label>
+						<input type="text" id="eventdate2" size="32" name="eventdate2" style="width:100px;" value="" title="<?php echo $LANG['TITLE_TEXT_4']; ?>" />
+					</div>
+				</section>
+				<span class="skip-link">
+					<a href = "#harvestparams"><?php echo (isset($LANG['SKIP_LINK']) ? $LANG['SKIP_LINK'] : 'Skip to Display Options'); ?></a>
+				</span>
+				<hr/>
+				<div style="float:left">
+					<div>
+						<div class="catHeaderDiv"><?php echo $LANG['SPECIMEN_HEADER']; ?></div>
+					</div>
+					<div class="flex-form top-tiny-breathing-room">
+						<div>
+							<label for="catnum"><?php echo $LANG['CATALOG_NUMBER']; ?>:</label>
+							<input type="text" id="catnum" size="32" name="catnum" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
+							<input name="includeothercatnum" id="includeothercatnum" type="checkbox" value="1" checked />
+							<label for="includeothercatnum"><?php echo $LANG['INCLUDE_OTHER_CATNUM']?></label>
+						</div>
+						<div>
+							<input type='checkbox' name='typestatus' id='typestatus' value='1' />
+							<label for="typestatus"><?php echo isset($LANG['TYPE'])?$LANG['TYPE']:'Limit to Type Specimens Only'; ?></label>
+						</div>
+						<div>
+							<input type='checkbox' name='hasimages' id='hasimages' value='1' />
+							<label for="hasimages"><?php echo isset($LANG['HAS_IMAGE'])?$LANG['HAS_IMAGE']:'Limit to Specimens with Images Only'; ?></label>
+						</div>
+						<div>
+							<input type='checkbox' name='hasgenetic' id='hasgenetic' value='1' />
+							<label for="hasgenetic"><?php echo isset($LANG['HAS_GENETIC'])?$LANG['HAS_GENETIC']:'Limit to Specimens with Genetic Data Only'; ?></label>
+						</div>
+						<div>
+							<input type='checkbox' name='hascoords' id='hascoords' value='1' />
+							<label for="hascoords"><?php echo isset($LANG['HAS_COORDS'])?$LANG['HAS_COORDS']:'Limit to Specimens with Geocoordinates Only'; ?></label>
+						</div>
+						<div>
+							<input type='checkbox' name='includecult' id='includecult' value='1' />
+							<label for="includecult"><?php echo isset($LANG['INCLUDE_CULTIVATED'])?$LANG['INCLUDE_CULTIVATED']:'Include cultivated/captive occurrences'; ?></label>
+						</div>
+						<span class="skip-link">
+							<a href = "#harvestparams"><?php echo (isset($LANG['SKIP_LINK']) ? $LANG['SKIP_LINK'] : 'Skip to Display Options'); ?></a>
+						</span>
+					</div>
+				</div>
+				<?php
+				if(!empty($SEARCH_BY_TRAITS)) {
+					$attribSearch = new OccurrenceAttributeSearch();
+					$traitArr = $attribSearch->getTraitSearchArr($SEARCH_BY_TRAITS);
+					if($traitArr){
+						?>
+						<hr/>
+						<div style="float:left">
+							<div>
+								<div class="catHeaderDiv"><?php echo $LANG['TRAIT_HEADER']; ?></div>
+								<div><?php echo $LANG['TRAIT_DESCRIPTION']; ?></div>
+								<input type="hidden" id="SearchByTraits" value="true">
+							</div>
+							<?php
+							foreach($traitArr as $traitID => $traitData){
+								if(!isset($traitData['dependentTrait'])) {
+									?>
+									<fieldset style="margin-top:10px;display:inline;min-width:500px">
+										<legend><b>Trait: <?php echo $traitData['name']; ?></b></legend>
+										<div style="float:right">
+											<div class="trianglediv" style="margin:4px 3px;float:right;cursor:pointer" onclick="setAttributeTree(this)" title="Toggle attribute tree open/close">
+												<img class="triangleright" src="../images/triangleright.png" style="display:none" />
+												<img class="triangledown" src="../images/triangledown.png" style="" />
+											</div>
+										</div>
+										<div class="traitDiv" style="margin-left:5px;float:left">
+											<?php $attribSearch->echoTraitSearchForm($traitID); ?>
+										</div>
+									</fieldset>
+									<?php
+								}
+							}
+							?>
+						</div>
+						<?php
+					}
+				}
+				?>
+				<div>
+					<input type="hidden" name="reset" value="1" />
+					<input type="hidden" name="db" value="<?php echo $collManager->getSearchTerm('db'); ?>" />
+				</div>
+				<hr/>
+			</div>
 		</form>
 	</div>
 	<?php

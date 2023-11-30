@@ -64,5 +64,12 @@ $LANG['TRAIT_DESCRIPTION'] = 'La sélection de plusieurs traits renverra tous le
 $LANG['TYPE_TAXON'] = 'Tapez le taxon';
 $LANG['SELECT_TAXON_TYPE'] = 'Sélectionnez le type de taxon';
 $LANG['DIRECTION'] = 'Direction';
+$LANG['N_DIRECTION'] = 'Direction N';
+$LANG['S_DIRECTION'] = 'Direction S';
+$LANG['E_DIRECTION'] = 'Direction E';
+$LANG['W_DIRECTION'] = 'Direction W';
+$LANG['LAT_DIRECTION'] = 'Direction de la latitude';
+$LANG['LONG_DIRECTION'] = 'Direction longue';
 $LANG['DISTANCE_UNIT'] = 'Unité de distance';
+$LANG['SKIP_LINK'] = 'Passer aux options d\'affichage';
 ?>
