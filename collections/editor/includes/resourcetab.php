@@ -232,7 +232,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 						</select>
 					</div>
 					<div class="field-div">
-						<label><?php echo $LANG['RELATIONSHIP']; ?>: </label>
+						<label for="relationship"><?php echo $LANG['RELATIONSHIP']; ?>: </label>
 						<select id="relationship-select" name="relationship" required>
 							<option value="">--------------------</option>
 							<?php
@@ -243,7 +243,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 						</select>
 					</div>
 					<div id="subType-div" class="field-div">
-						<label><?php echo $LANG['REL_SUBTYPE']; ?>: </label>
+						<label for="subtype"><?php echo $LANG['REL_SUBTYPE']; ?>: </label>
 						<select name="subtype">
 							<option value="">--------------------</option>
 							<?php
@@ -256,7 +256,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 						</select>
 					</div>
 					<div id="basisOfRecord-div" class="field-div">
-						<label><?php echo $LANG['BASIS_OF_RECORD']; ?>: </label>
+						<label for="basisofrecord"><?php echo $LANG['BASIS_OF_RECORD']; ?>: </label>
 						<select name="basisofrecord">
 							<option value="">--------------------</option>
 							<option value="HumanObservation"><?php echo $LANG['HUMAN_OBS']; ?></option>
@@ -268,13 +268,13 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 						</select>
 					</div>
 					<div id="locationOnHost-div" class="field-div">
-						<label><?php echo $LANG['LOC_ON_HOST']; ?>: </label>
+						<label for="locationonhost"><?php echo $LANG['LOC_ON_HOST']; ?>: </label>
 						<input name="locationonhost" type="text" value="" style="" />
 					</div>
 				</div>
 				<div class="formRow-div" style="margin:10px">
 					<div class="field-div" style="width:100%">
-						<label><?php echo $LANG['NOTES']; ?>: </label>
+						<label for="notes"><?php echo $LANG['NOTES']; ?>: </label>
 						<input name="notes" type="text" value="" style="width:100%" />
 					</div>
 				</div>
@@ -282,7 +282,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 					<legend><?php echo $LANG['TAXONOMY']; ?></legend>
 					<div class="formRow-div">
 						<div class="field-div">
-							<label><?php echo $LANG['VERBAT_SCINAME']; ?>: </label>
+							<label for="verbatimsciname"><?php echo $LANG['VERBAT_SCINAME']; ?>: </label>
 							<input id="verbatimsciname" name="verbatimsciname" type="text" value="" style="width: 250px">
 						</div>
 					</div>
@@ -291,11 +291,11 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 					<legend><?php echo $LANG['INTERNAL_RESOURCE']; ?></legend>
 					<div class="formRow-div">
 						<div class="field-div">
-							<label><?php echo $LANG['IDENTIFIER']; ?>: </label>
+							<label for="internalidentifier"><?php echo $LANG['IDENTIFIER']; ?>: </label>
 							<input name="internalidentifier" type="text" value="" style="width:300px" />
 						</div>
 						<div class="field-div">
-							<label><?php echo $LANG['SEARCH_TARGET']; ?>: </label>
+							<label for="target"><?php echo $LANG['SEARCH_TARGET']; ?>: </label>
 							<select name="target">
 								<option value="catnum"><?php echo $LANG['CAT_NUMS']; ?></option>
 								<option value="occid"><?php echo $LANG['OCC_PK']; ?></option>
@@ -305,7 +305,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 					</div>
 					<div class="formRow-div">
 						<div class="field-div">
-							<label><?php echo $LANG['SEARCH_COLS']; ?>: </label>
+							<label for="collidtarget"><?php echo $LANG['SEARCH_COLS']; ?>: </label>
 							<select name="collidtarget" style="width:90%">
 								<option value=""><?php echo $LANG['ALL_COLS']; ?></option>
 								<option value="">-------------------------</option>
@@ -332,11 +332,11 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 					<legend><?php echo $LANG['EXTERNAL_RESOURCE']; ?></legend>
 					<div class="formRow-div">
 						<div class="field-div">
-							<label><?php echo $LANG['EXT_ID']; ?>: </label>
+							<label for="identifier"><?php echo $LANG['EXT_ID']; ?>: </label>
 							<input name="identifier" type="text" value="" />
 						</div>
 						<div class="field-div">
-							<label><?php echo $LANG['RES_URL']; ?>: </label>
+							<label for="resourceurl"><?php echo $LANG['RES_URL']; ?>: </label>
 							<input name="resourceurl" type="text" value="" style="width:400px" />
 						</div>
 					</div>
@@ -357,7 +357,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 				foreach($assocArr as $assocID => $assocUnit){
 					?>
 					<div class="assoc-div">
-						<div><label>Association Type:</label>
+						<div><label><?= $LANG['ASSOCIATION_TYPE'] ?>:</label>
 							<?= $assocUnit['associationType'] ?>
 							<form action="resourcehandler.php" method="post" style="display:inline">
 								<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
@@ -370,26 +370,26 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 						<?php
 						$relationship = $assocUnit['relationship'];
 						if($assocUnit['subType']) $relationship .= ' ('.$assocUnit['subType'].')';
-						echo '<div><label>Relationship:</label> '.$relationship.'</div>';
-						if($assocUnit['basisOfRecord']) echo '<div><label>Basis of Record:</label> '.$assocUnit['basisOfRecord'].'</div>';
-						if($assocUnit['accordingTo']) echo '<div><label>According to:</label> '.$assocUnit['accordingTo'].'</div>';
-						if($assocUnit['identifier']) echo '<div><label>Identifier:</label> '.$assocUnit['identifier'].'</div>';
+						echo '<div><label>'.$LANG['RELATIONSHIP'].':</label> '.$relationship.'</div>';
+						if($assocUnit['basisOfRecord']) echo '<div><label>'.$LANG['BASIS_OF_RECORD'].':</label> '.$assocUnit['basisOfRecord'].'</div>';
+						if($assocUnit['accordingTo']) echo '<div><label>'.$LANG['ACCORDING_TO'].':</label> '.$assocUnit['accordingTo'].'</div>';
+						if($assocUnit['identifier']) echo '<div><label>'.$LANG['IDENTIFIER'].':</label> '.$assocUnit['identifier'].'</div>';
 						if($assocUnit['occidAssociate']){
-							echo '<div><label>Local occurrence:</label> <a href="#" onclick="openIndividual('.$assocUnit['occidAssociate'].')">'.$assocUnit['occidAssociate'].'</a></div>';
+							echo '<div><label>'.$LANG['INTERNAL_RESOURCE'].':</label> <a href="#" onclick="openIndividual('.$assocUnit['occidAssociate'].')">'.$assocUnit['occidAssociate'].'</a></div>';
 						}
 						elseif($assocUnit['resourceUrl']){
-							echo '<div><label>Resource:</label> <a href="'.$assocUnit['resourceUrl'].'" target="_blank">'.$assocUnit['resourceUrl'].'</a></div>';
+							echo '<div><label>'.$LANG['EXTERNAL_RESOURCE'].':</label> <a href="'.$assocUnit['resourceUrl'].'" target="_blank">'.$assocUnit['resourceUrl'].'</a></div>';
 						}
 						if($assocUnit['verbatimSciname']){
 							$sciname = $assocUnit['verbatimSciname'];
 							if($assocUnit['tid']) $sciname = '<a href="'.$SERVER_ROOT.'/taxa/index.php?tid='.$assocUnit['tid'].'" target="_blank">'.$sciname.'</a>';
-							echo '<div><label>Scientific name:</label> '.$sciname.'</div>';
+							echo '<div><label>'.$LANG['VERBAT_SCINAME'].':</label> '.$sciname.'</div>';
 						}
-						if($assocUnit['locationOnHost']) echo '<div><label>Location on host:</label> '.$assocUnit['locationOnHost'].'</div>';
-						if($assocUnit['notes']) echo '<div><label>Notes:</label> '.$assocUnit['notes'].'</div>';
-						if($assocUnit['establishedDate']) echo '<div><label>Established Date:</label> '.$assocUnit['establishedDate'].'</div>';
-						echo '<div><label>Record ID:</label> '.$assocUnit['recordID'].'</div>';
-						echo '<div><label>Entered by:</label> '.(empty($assocUnit['definedBy'])?'unknown':$assocUnit['definedBy']).' ('.$assocUnit['initialTimestamp'].')'.'</div>';
+						if($assocUnit['locationOnHost']) echo '<div><label>'.$LANG['LOC_ON_HOST'].':</label> '.$assocUnit['locationOnHost'].'</div>';
+						if($assocUnit['notes']) echo '<div><label>'.$LANG['NOTES'].':</label> '.$assocUnit['notes'].'</div>';
+						if($assocUnit['establishedDate']) echo '<div><label>'.$LANG['ESTABLISHED_DATE'].':</label> '.$assocUnit['establishedDate'].'</div>';
+						echo '<div><label>'.$LANG['RECORD_ID'].':</label> '.$assocUnit['recordID'].'</div>';
+						echo '<div><label>'.$LANG['ENTERED_BY'].':</label> '.(empty($assocUnit['definedBy'])?'unknown':$assocUnit['definedBy']).' ('.$assocUnit['initialTimestamp'].')'.'</div>';
 						?>
 					</div>
 					<?php
@@ -539,23 +539,23 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 				<legend><b><?php echo $LANG['ADD_NEW_RES']; ?></b></legend>
 				<form name="addgeneticform" method="post" action="occurrenceeditor.php">
 					<div style="margin:2px;">
-						<b><?php echo $LANG['NAME']; ?>:</b><br/>
+						<label for="resourcename"><?php echo $LANG['NAME']; ?>:</label><br/>
 						<input name="resourcename" type="text" value="" style="width:50%" />
 					</div>
 					<div style="margin:2px;">
-						<b><?php echo $LANG['IDENTIFIER']; ?>:</b><br/>
+						<label for="identifier"><?php echo $LANG['IDENTIFIER']; ?>:</label><br/>
 						<input name="identifier" type="text" value="" style="width:50%" />
 					</div>
 					<div style="margin:2px;">
-						<b><?php echo $LANG['LOCUS']; ?>:</b><br/>
+						<label for="locus"><?php echo $LANG['LOCUS']; ?>:</label><br/>
 						<input name="locus" type="text" value="" style="width:95%" />
 					</div>
 					<div style="margin:2px;">
-						<b><?php echo $LANG['URL']; ?>:</b><br/>
+						<label for="resourceurl"><?php echo $LANG['URL']; ?>:</label><br/>
 						<input name="resourceurl" type="text" value="" style="width:95%" />
 					</div>
 					<div style="margin:2px;">
-						<b><?php echo $LANG['NOTES']; ?>:</b><br/>
+						<label for="notes"><?php echo $LANG['NOTES']; ?>:</label><br/>
 						<input name="notes" type="text" value="" style="width:95%" />
 					</div>
 					<div style="margin:2px;">
@@ -589,23 +589,23 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 						<legend><?php echo $LANG['GEN_RES_EDITOR']; ?></legend>
 						<form name="editgeneticform" method="post" action="occurrenceeditor.php">
 							<div style="margin:2px;">
-								<b><?php echo $LANG['NAME']; ?>:</b><br/>
+								<label for="resourcename"><?php echo $LANG['NAME']; ?>:</label><br/>
 								<input name="resourcename" type="text" value="<?php echo $gArr['name']; ?>" style="width:50%" />
 							</div>
 							<div style="margin:2px;">
-								<b><?php echo $LANG['IDENTIFIER']; ?>:</b><br/>
+								<label for="identifier"><?php echo $LANG['IDENTIFIER']; ?>:</label><br/>
 								<input name="identifier" type="text" value="<?php echo $gArr['id']; ?>" style="width:50%" />
 							</div>
 							<div style="margin:2px;">
-								<b><?php echo $LANG['LOCUS']; ?>:</b><br/>
+								<label for="locus"><?php echo $LANG['LOCUS']; ?>:</label><br/>
 								<input name="locus" type="text" value="<?php echo $gArr['locus']; ?>" style="width:95%" />
 							</div>
 							<div style="margin:2px;">
-								<b><?php echo $LANG['URL']; ?>:</b><br/>
+								<label for="resourceurl"><?php echo $LANG['URL']; ?>:</label><br/>
 								<input name="resourceurl" type="text" value="<?php echo $gArr['resourceurl']; ?>" style="width:95%" />
 							</div>
 							<div style="margin:2px;">
-								<b><?php echo $LANG['NOTES']; ?>:</b><br/>
+								<label for="notes"><?php echo $LANG['NOTES']; ?>:</label><br/>
 								<input name="notes" type="text" value="<?php echo $gArr['notes']; ?>" style="width:95%" />
 							</div>
 							<div style="margin:2px;">
