@@ -18,10 +18,13 @@ $LANG['MBB_WESTERN'] = 'Western Long';
 
 //Following used in mappointaid.php
 $LANG['MPR_TITLE'] = 'Mappeur de coordonnées';
-$LANG['MPR_INSTRUCTIONS'] = 'Cliquez une fois pour capturer les coordonnées. Cliquez sur le bouton Soumettre les coordonnées pour transférer les coordonnées.';
+$LANG['MPR_INSTRUCTIONS'] = 'Cliquez une fois pour capturer les coordonnées. Cliquez sur le bouton Soumettre pour transférer les coordonnées.';
+$LANG['MPR_UNCERTAINTY_INSTRUCTIONS'] = "Entrez l'incertitude pour créer un cercle de rayon d'erreur autour du marqueur.";
+$LANG['MPR_LAT'] = 'Latitude';
 $LANG['MPR_LAT'] = 'Latitude';
 $LANG['MPR_LNG'] = 'Longitude';
 $LANG['SUBMIT'] = 'Soumettre';
+$LANG['UNCERTAINTY_METERS'] = 'Incertitude en Mètres';
 
 //Following used in mappolyaid.php
 $LANG['POLYGON_FORMATTING'] = 'Formatage des polygones';

@@ -155,7 +155,7 @@ else{
 	<body style="background-color:#ffffff;" onload="initialize()">
 		<div style="">
 			<div>
-            <?php echo isset($LANG['MPR_INSTRUCTIONS']) ?$LANG['MPR_INSTRUCTIONS']: 'Click once to capture coordinates. Click on the submit coordinate button to transfer coordinates.' ?>
+            <?php echo isset($LANG['MPR_INSTRUCTIONS']) ?$LANG['MPR_INSTRUCTIONS']: 'Click once to capture coordinates. Click on the submit button to transfer coordinates.' ?>
 			</div>
 			<div style="margin-right:30px;">
             <b>

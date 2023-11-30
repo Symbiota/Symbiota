@@ -17,10 +17,12 @@ $LANG['MBB_WESTERN'] = 'Western Long';
 
 //Following used in mappointaid.php
 $LANG['MPR_TITLE'] = 'Coordinate Mapper';
-$LANG['MPR_INSTRUCTIONS'] = 'Click once to capture coordinates. Click on the Submit Coordinate button to transfer Coordinates.';
+$LANG['MPR_INSTRUCTIONS'] = 'Click once to capture coordinates. Click on the Submit button to transfer Coordinates.';
+$LANG['MPR_UNCERTAINTY_INSTRUCTIONS'] = 'Enter uncertainty to create an error radius circle around the marker. ';
 $LANG['MPR_LAT'] = 'Latitude';
 $LANG['MPR_LNG'] = 'Longitude';
 $LANG['SUBMIT'] = 'Submit';
+$LANG['UNCERTAINTY_METERS'] = 'Uncertainty in Meters';
 
 //Following used in mappolyaid.php
 $LANG['POLYGON_FORMATTING'] = 'Polygon Formatting';
