@@ -352,7 +352,7 @@ class DwcArchiverOccurrence extends Manager{
 			$sqlFrag .= ', t.rankid';
 			$sql = 'SELECT DISTINCT '.trim($sqlFrag,', ');
 		}
-		$sql .= ' FROM omoccurrences o INNER OIN omcollections c ON o.collid = c.collid '.
+		$sql .= ' FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid '.
 			'LEFT JOIN taxa t ON o.tidinterpreted = t.TID ';
 		if($this->includePaleo) $sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
 		//if($fullSql) $sql .= ' ORDER BY c.collid ';
