@@ -15,36 +15,7 @@ $LANG['SURE_UNLINK'] = 'Are you sure you want to unlink the record as a duplicat
 $LANG['ERROR_DELETING'] = 'ERROR deleting duplicate';
 $LANG['GEN_RES_NOT_BLANK'] = 'Genetic resource name must not be blank';
 $LANG['PERM_REMOVE_RES'] = 'Are you sure you want to permanently remove this resource?';
-$LANG['ASSOC_OCC'] = 'Associated Occurrences';
-$LANG['CREATE_NEW_ASSOC'] = 'Create New Association';
-$LANG['ASSOCIATION_TYPE'] = 'Association Type';
-$LANG['RELATIONSHIP'] = 'Relationship';
-$LANG['REL_SUBTYPE'] = 'Relationship subtype';
-$LANG['BASIS_OF_RECORD'] = 'Basis of Record';
-$LANG['HUMAN_OBS'] = 'Human Observation';
-$LANG['LIVING_SPEC'] = 'Living Specimen';
-$LANG['MACHINE_OBS'] = 'Machine Observation';
-$LANG['MAT_SAMPLE'] = 'Material Sample';
-$LANG['PRES_SAMPLE'] = 'Preserved Specimen';
-$LANG['REF_CITATION'] = 'Reference Citation';
-$LANG['LOC_ON_HOST'] = 'Location on host';
-$LANG['NOTES'] = 'Notes';
-$LANG['TAXONOMY'] = 'Taxonomy';
-$LANG['INTERNAL_RESOURCE'] = 'Internal Resource';
-$LANG['IDENTIFIER'] = 'Identifier';
-$LANG['SEARCH_TARGET'] = 'Search Target';
-$LANG['CAT_NUMS'] = 'Catalog Numbers';
-$LANG['OCC_PK'] = 'Occurrence PK (occid)';
-$LANG['SEARCH_COLS'] = 'Search Collections';
-$LANG['ALL_COLS'] = 'All Collections';
-$LANG['SEARCH'] = 'Search';
-$LANG['OCC_MATCHES_AVAIL'] = 'Occurrence Matches Available to Link';
-$LANG['EXTERNAL_RESOURCE'] = 'External Resource';
-$LANG['EXT_ID'] = 'External Identifier';
-$LANG['RES_URL'] = 'Resource URL';
-$LANG['VERBAT_SCINAME'] = 'Verbatim Scientific Name';
-$LANG['CREATE_ASSOC'] = 'Create Association';
-$LANG['NO_ASSOCS'] = 'No associations have been established';
+
 $LANG['CHECKLIST_LINKS'] = 'Checklist Voucher Linkages';
 $LANG['LINK_TO_CHECKLIST'] = 'Link Specimen to Checklist as Voucher';
 $LANG['SEL_CHECKLIST'] = 'Select a Checklist';
@@ -76,4 +47,5 @@ $LANG['SAVE_EDITS'] = 'Save Edits';
 $LANG['DEL_GEN_RES'] = 'Delete Genetic Resource';
 $LANG['DEL_RES'] = 'Delete Resource';
 
+include_once($SERVER_ROOT.'/content/lang/collections/associations.en.php');
 ?>

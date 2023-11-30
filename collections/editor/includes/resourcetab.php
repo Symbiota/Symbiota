@@ -225,13 +225,10 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 						<label for="associationType"><?= $LANG['ASSOCIATION_TYPE'] ?>: </label>
 						<select name="associationType" onclick="associationTypeChanged(this)" required>
 							<option value="">-------------------</option>
-							<?php
-							$assocTypeArr = $occManager->getAssociationTypeArr();
-							foreach($assocTypeArr as $term => $display){
-								if(!$display) $display = $term;
-								echo '<option value="'.$term.'">'.$display.'</option>';
-							}
-							?>
+							<option value="resource"><?= $LANG['RESOURCE_LINK'] ?></option>
+							<option value="internalOccurrence"><?= $LANG['INTERNAL_OCCURRENCE'] ?></option>
+							<option value="externalOccurrence"><?= $LANG['EXTERNAL_OCCURRENCE'] ?></option>
+							<option value="observational"><?= $LANG['OBSERVATION'] ?></option>
 						</select>
 					</div>
 					<div class="field-div">
