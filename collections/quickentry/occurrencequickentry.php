@@ -177,6 +177,7 @@ if($SYMB_UID){
 	include_once 'editProcessor.php';
 	if($action == 'saveOccurEdits'){
 		$statusStr = $occManager->editOccurrence($_POST,$isEditor);
+		$updateSuccess = $occManager->updateLastEdited($batchId, $currentImgId);
 	}
 	if($isEditor && $isEditor != 3){
 		if($action == 'Save OCR'){

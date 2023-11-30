@@ -1153,6 +1153,13 @@ class OccurrenceEditorManager {
 		return $status;
 	}
 
+	public function updateLastEdited($batchID, $currentImgId){
+		$query = "UPDATE batch SET last_edited = '$currentImgId' WHERE batchID = '$batchID'";
+		$success = $this->conn->query($query);
+
+		return $success;
+	}
+
 	private function getIdentifiers($occidStr){
 		$retArr = array();
 		if($occidStr){
