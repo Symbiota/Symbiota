@@ -590,9 +590,6 @@ if ($SYMB_UID) {
 				<button type="submit" class="button button-primary">
 					<?php echo (isset($LANG['ADVANCED_SEARCH_THIS_COLLECTION'])?$LANG['ADVANCED_SEARCH_THIS_COLLECTION']:'Advanced Search this Collection'); ?>
 				</button>
-				<!-- <span class="button button-primary">
-					<a id="advanced-search" href="<?php echo $CLIENT_ROOT . $actionPage?>?db=<?php echo $collid ?>" ></a>
-				</span> -->
 			</form>
 			</div>
 			<div>
