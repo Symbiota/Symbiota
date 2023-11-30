@@ -256,13 +256,12 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 											<span class="assistive-text">Values between -90 and 90.</span>
 										</label>
 
-										<!-- Latitude Direction Select -->
 										<label for="upperlat_NS" class="input-text--outlined">
 											<span class="skip-link">Select upper lat direction N/S</span>
 											<select class="mt-1" id="upperlat_NS" name="upperlat_NS">
-											<option value="">Select N/S</option>
-											<option id="ulN" value="N">N</option>
-											<option id="ulS" value="S">S</option>
+												<option value="">Select N/S</option>
+												<option id="ulN" value="N">N</option>
+												<option id="ulS" value="S">S</option>
 											</select>
 										</label>
 								</div>
@@ -270,43 +269,49 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 									<label for="bottomlat" class="input-text--outlined">
 										<span class="skip-link">Bottom latitude</span>
 										<input type="number" step="any" min="-90" max="90" id="bottomlat" name="bottomlat" data-chip="Bottom Lat">
-										<label for="bottomlat_NS" class="skip-link">Select bottom lat direction N/S</label>
+										<span data-label="_Southern Latitude"></span>
+										<span class="assistive-text">Values between -90 and 90.</span>
+									</label>
+									<label for="bottomlat_NS">
+										<span class="skip-link">Select bottom lat direction N/S</span>
 										<select class="mt-1" id="bottomlat_NS" name="bottomlat_NS">
 											<option value="">Select N/S</option>
 											<option id="blN" value="N">N</option>
 											<option id="blS" value="S">S</option>
 										</select>
-										<span data-label="Southern Latitude"></span>
 									</label>
-									<span class="assistive-text">Values between -90 and 90.</span>
 								</div>
 								<div class="input-text-container">
 									<label for="leftlong" class="input-text--outlined">
 										<span class="skip-link">Left longitude</span>
 										<input type="number" step="any" min="-180" max="180" id="leftlong" name="leftlong" data-chip="Left Long">
-										<label for="leftlong_EW" class="skip-link">Select left long direction W/E</label>
+										<span data-label="_Western Longitude"></span>
+										<span class="assistive-text">Values between -180 and 180.</span>
+									</label>
+									<label for="leftlong_EW" class="input-text--outlined">
+										<span class="skip-link">Select left long direction W/E</span>
 										<select class="mt-1" id="leftlong_EW" name="leftlong_EW">
 											<option value="">Select W/E</option>
 											<option id="llW" value="W">W</option>
 											<option id="llE" value="E">E</option>
 										</select>
-										<span data-label="Western Longitude"></span>
 									</label>
-									<span class="assistive-text">Values between -180 and 180.</span>
 								</div>
 								<div class="input-text-container">
 									<label for="rightlong" class="input-text--outlined">
 										<span class="skip-link">Right longitude</span>
 										<input type="number" step="any" min="-180" max="180" id="rightlong" name="rightlong" data-chip="Right Long">
-										<label for="rightlong_EW" class="skip-link">Select right long direction W/E</label>
-										<select class="mt-1" id="rightlong_EW" name="rightlong_EW">
-											<option value="">Select W/E</option>
-											<option id="rlW" value="W">W</option>
-											<option id="rlE" value="E">E</option>
-										</select>
-										<span data-label="Eastern Longitude"></span>
+										<span data-label="_Eastern Longitude"></span>
+										<span class="assistive-text">Values between -180 and 180.</span>
 									</label>
-									<span class="assistive-text">Values between -180 and 180.</span>
+										<label for="rightlong_EW" class="input-text--outlined">
+											<span class="skip-link">Select right long direction W/E</span>
+											<select class="mt-1" id="rightlong_EW" name="rightlong_EW">
+												<option value="">Select W/E</option>
+												<option id="rlW" value="W">W</option>
+												<option id="rlE" value="E">E</option>
+											</select>
+										</label>
 								</div>
 							</div>
 							<div id="polygon-form">
@@ -315,7 +320,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								<div class="text-area-container">
 									<label for="footprintwkt" class="text-area--outlined">
 										<span class="skip-link">Polygon</span>
-										<textarea id="footprintwkt" name="footprintwkt" cols="30%" rows="5"></textarea>
+										<textarea id="footprintwkt" name="footprintwkt" class="full-width-pcnt" rows="5"></textarea>
 										<span data-label="Polygon"></span>
 									</label>
 									<span class="assistive-text">Select in map with button or paste values.</span>
@@ -328,43 +333,49 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 									<label for="pointlat" class="input-text--outlined">
 										<span class="skip-link">Point latitude</span>
 										<input type="number" step="any" min="-90" max="90" id="pointlat" name="pointlat" data-chip="Point Lat">
-										<label for="pointlat_NS" class="skip-link">Point latitude direction N/S</label>
+										<span data-label="_Latitude"></span>
+										<span class="assistive-text">Values between -90 and 90.</span>
+									</label>
+									<label for="pointlat_NS" class="input-text--outlined">
+										<span class="skip-link">Point latitude direction N/S</span>
 										<select class="mt-1" id="pointlat_NS" name="pointlat_NS">
 											<option value="">Select N/S</option>
 											<option id="N" value="N">N</option>
 											<option id="S" value="S">S</option>
 										</select>
-										<span data-label="Latitude"></span>
 									</label>
-									<span class="assistive-text">Values between -90 and 90.</span>
 								</div>
 								<div class="input-text-container">
 									<label for="pointlong" class="input-text--outlined">
 										<span class="skip-link">Point longitude</span>
 										<input type="number" step="any" min="-180" max="180" id="pointlong" name="pointlong" data-chip="Point Long">
-										<label for="pointlong_EW" class="skip-link">Point longitude direction E/W</label>
+										<span data-label="_Longitude"></span>
+										<span class="assistive-text">Values between -180 and 180.</span>
+									</label>
+									<label for="pointlong_EW" class="input-text--outlined">
+										<span class="skip-link">Point longitude direction E/W</span>
 										<select class="mt-1" id="pointlong_EW" name="pointlong_EW">
 											<option value="">Select W/E</option>
 											<option id="W" value="W">W</option>
 											<option id="E" value="E">E</option>
 										</select>
-										<span data-label="Longitude"></span>
 									</label>
-									<span class="assistive-text">Values between -180 and 180.</span>
 								</div>
 								<div class="input-text-container">
 									<label for="radius" class="input-text--outlined">
 										<span class="skip-link">Radius</span>
 										<input type="number" min="0" step="any" id="radius" name="radius" data-chip="Radius">
-										<label for="radiusunits" class="skip-link">Select radius units</label>
+										<span data-label="_Radius"></span>
+										<span class="assistive-text">Any positive values.</span>
+									</label>
+									<label for="radiusunits" class="input-text--outlined">
+										<span class="skip-link">Select radius units</span>
 										<select class="mt-1" id="radiusunits" name="radiusunits">
 											<option value="">Select Unit</option>
 											<option value="km">Kilometers</option>
 											<option value="mi">Miles</option>
 										</select>
-										<span data-label="Radius"></span>
 									</label>
-									<span class="assistive-text">Any positive values.</span>
 								</div>
 							</div>
 						</div>

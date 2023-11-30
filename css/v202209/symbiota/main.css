@@ -897,3 +897,7 @@ hr {
   /* from https://stackoverflow.com/questions/32517694/jquery-autocomplete-dropdown-is-transparent */
   background-color: inherit;
 }
+
+.full-width-pcnt {
+  width: 100%;
+}
