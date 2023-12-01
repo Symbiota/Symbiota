@@ -137,7 +137,7 @@ $isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
         <img src="<?php echo $CLIENT_ROOT ?>/assets/uswds/img/close.svg" alt="close" />
       </button>
       
-      <ul class="usa-nav-primary usa-accordion" style="margin-left:17rem;">
+      <ul class="usa-nav-primary usa-accordion">
         <li>
           <button
             id="btnMenu-0"

@@ -5070,7 +5070,7 @@ object-assign
         const NAV_LINKS = `${NAV} a`;
         const NON_NAV_HIDDEN_ATTRIBUTE = `data-nav-hidden`;
         const OPENERS = `.${PREFIX}-menu-btn`;
-        const CLOSE_BUTTON = `.${PREFIX}-nav__close`;
+        const CLOSE_BUTTON = `.${PREFIX}-nav-close`;
         const OVERLAY = `.${PREFIX}-overlay`;
         const CLOSERS = `${CLOSE_BUTTON}, .${PREFIX}-overlay`;
         const TOGGLES = [NAV, OVERLAY].join(", ");
