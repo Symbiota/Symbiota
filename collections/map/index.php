@@ -505,13 +505,14 @@ value="${color}"
 				}
 			})
 
-			let map = new LeafletMap('map')
+         let map = new LeafletMap('map', {
+            lang: "<?php echo $LANG_TAG; ?>"
+         })
 			map.enableDrawing({
 				polyline: false,
 				circlemarker: false,
 				marker: false,
 				drawColor: {opacity: 0.85, fillOpacity: 0.55, color: '#000' },
-            lang: "<?php echo $LANG_TAG; ?>"
 			}, setQueryShape);
 
 			let cluster = L.markerClusterGroup();
