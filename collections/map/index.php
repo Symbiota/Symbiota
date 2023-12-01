@@ -510,7 +510,8 @@ value="${color}"
 				polyline: false,
 				circlemarker: false,
 				marker: false,
-				drawColor: {opacity: 0.85, fillOpacity: 0.55, color: '#000' }
+				drawColor: {opacity: 0.85, fillOpacity: 0.55, color: '#000' },
+            lang: "<?php echo $LANG_TAG; ?>"
 			}, setQueryShape);
 
 			let cluster = L.markerClusterGroup();

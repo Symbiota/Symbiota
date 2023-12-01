@@ -89,7 +89,8 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 			//Setup Map Canvas
 			map = new LeafletMap('map_canvas', {
 				center: [latCenter, lngCenter], 
-				zoom: 7
+				zoom: 7,
+            lang: "<?php echo $LANG_TAG; ?>"
 			});
 
 			var drawnItems = new L.FeatureGroup();

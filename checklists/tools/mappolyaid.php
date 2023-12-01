@@ -141,7 +141,8 @@ else{
          function leafletInit() {
             const mapOptions = {
                zoom: <?php echo $zoom; ?>,
-               center: [<?php echo $latCenter?>, <?php echo $lngCenter?>]
+               center: [<?php echo $latCenter?>, <?php echo $lngCenter?>],
+               lang: "<?php echo $LANG_TAG; ?>"
             }
 
             map = new LeafletMap('map_canvas', mapOptions);

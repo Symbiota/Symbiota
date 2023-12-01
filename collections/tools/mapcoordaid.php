@@ -257,7 +257,8 @@ else{
       function leafletInit() {
          const MapOptions = {
             center: [<?php echo $latCenter?>, <?php echo $lngCenter?>],
-            zoom: <?php echo $zoom?>
+            zoom: <?php echo $zoom?>,
+				lang: "<?php echo $LANG_TAG; ?>"
          };
 
          let map = new LeafletMap('map', MapOptions );

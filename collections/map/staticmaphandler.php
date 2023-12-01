@@ -287,6 +287,7 @@ if(!$IS_ADMIN){
                center: state.latlng, 
                zoom: 6, 
                scale: false, 
+               lang: "<?php echo $LANG_TAG; ?>"
             });
 
             let drawControl = new L.Control.Draw({
