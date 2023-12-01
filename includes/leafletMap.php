@@ -29,7 +29,7 @@
 
 <!-- Importing Cluster Plugin --> 
 <script 
-   src= <?php echo $CLIENT_ROOT . "/js/Leaflet.markercluster-1.4.1/dist/Leaflet.markercluster.js" ?>
+   src= <?php echo $CLIENT_ROOT . "/js/Leaflet.markercluster-1.4.1/dist/leaflet.markercluster.js" ?>
    type="text/javascript">
 </script>
 
@@ -54,7 +54,7 @@
 
 <!-- Importing Leaflet Related Functions--> 
 <script 
-   src=<?php echo $CLIENT_ROOT . "/js/symb/LeafletMap.js" ?>
+   src=<?php echo $CLIENT_ROOT . "/js/symb/leafletMap.js" ?>
    type="text/javascript">
 </script>
 

@@ -70,6 +70,7 @@ $LANG['MORE'] = 'm&aacute;s';
 $LANG['LESS'] = 'menos';
 $LANG['NOTAXA'] = 'No se han encontrado Taxa';
 $LANG['CHECKNULL'] = 'ERROR: identificador de lista de Comprobación no válido';
+$LANG['IS_PRIVATE'] = 'Lista de verificación se define como privada';
 $LANG['DISPLAYNEXT'] = 'Mostrar Siguiente';
 $LANG['TAXA'] = 'taxa';
 $LANG['LOCALITY'] = 'Localidad';

@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorDeterminations.php');
@@ -41,7 +43,7 @@ if($isEditor){
 }
 ?>
 
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 	    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 		<title><?php echo $DEFAULT_TITLE.' '.$LANG['BATCH_DETERS']; ?></title>
@@ -298,10 +300,10 @@ if($isEditor){
 		if($isEditor){
 			echo '<h2>'.$occManager->getCollName().'</h2>';
 			?>
-			<div style="margin:0px;">
-				<fieldset style="padding:10px;">
-					<legend><b><?php echo $LANG['DEFINE_RECORDSET']; ?></b></legend>
-					<div style="margin:15px">
+			<div>
+				<section class="fieldset-like">
+					<h1> <span> <?php echo $LANG['DEFINE_RECORDSET']; ?> </span> </h1>
+					<div class="left-breathing-room-rel-lg">
 						<?php echo $LANG['RECORDSET_EXPLAIN']; ?>
 					</div>
 					<div style="margin:15px;width:700px;">
@@ -315,7 +317,7 @@ if($isEditor){
 									<input name="allcatnum" id="allcatnum" type="checkbox" checked /> <label for="allcatnum"><?php echo $LANG['TARGET_ALL']; ?></label>
 								</div>
 							</section>
-							<div>
+							<div class="left-breathing-room-rel">
 								<label for="nomsciname"><?php echo $LANG['TAXON']; ?>:</label>
 								<input type="text" id="nomsciname" name="sciname" style="width:260px;" onfocus="initScinameAutocomplete(this.form)" />
 							</div>
@@ -342,14 +344,14 @@ if($isEditor){
 						echo '</div>';
 					}
 					?>
-				</fieldset>
+				</section>
 				<div id="accrecordlistdviv" style="display:none;">
 					<form name="accselectform" id="accselectform" action="batchdeterminations.php" method="post" onsubmit="return validateSelectForm(this);">
 						<div style="margin-top: 15px; margin-left: 10px;">
 							<input name="accselectall" value="" type="checkbox" onclick="selectAll(this);" checked />
 							<?php echo $LANG['SELECT_DESELECT']; ?>
 						</div>
-						<table class="styledtable" style="font-family:Arial;font-size:12px;">
+						<table class="styledtable" style="font-family:Arial;font-size: 0.75rem;">
 							<thead>
 								<tr>
 									<th style="width:25px;text-align:center;">&nbsp;</th>

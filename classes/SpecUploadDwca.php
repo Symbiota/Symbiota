@@ -102,7 +102,7 @@ class SpecUploadDwca extends SpecUploadBase{
 
 	private function deleteTempFiles($pathFragment = '', $filetimeLimit = '-2 days'){
 		$dirPath = $this->uploadTargetPath.$pathFragment;
-		$allowedToBeDeleted = array('csv','txt','xml','zip');
+		$allowedToBeDeleted = array('csv','dat','tab','txt','xml','zip');
 		if($handle = opendir($dirPath)) {
 			$loopCnt = 0;
 			while(false !== ($item = readdir($handle))) {
@@ -923,6 +923,7 @@ class SpecUploadDwca extends SpecUploadBase{
 			}
 			else $this->outputMsg('<li>ERROR cross-mapping occurrences: '.$portalManager->getErrorMessage().'</li> ');
 		}
+		$this->transferAssociatedOccurrences();
 		$this->finalCleanup();
 		$this->outputMsg('<li style="">Upload Procedure Complete ('.date('Y-m-d h:i:s A').')!</li>');
 		$this->outputMsg(' ');

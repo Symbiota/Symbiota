@@ -128,4 +128,6 @@ $LANG['PAGE_ERROR'] = 'ERROR: O intentó llegar a esta página sin pasar por el 
 	Tal vez quiera dividir el archivo en archivos más pequeños, o comprimirlo en un archivo zip  (extensión .zip).
 	Puede contactar al administrador del portal para solicitar asistencia para cargar el archivo (pista para el admin: incrementar el límite de carga PHP puede ayudar, current upload_max_filesize';
 $LANG['USE_BACK'] = 'Use las flechas para regresar a la página de carga de archivos.';
+$LANG['UPLOAD'] = 'Subir archivo';
+
 ?>

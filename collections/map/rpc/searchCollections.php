@@ -47,6 +47,7 @@ $taxaArr = [];
 $recordArr = [];
 $collArr = [];
 $defaultColor = "#B2BEB5";
+$host = $SERVER_HOST . $CLIENT_ROOT;
 
 foreach ($coordArr as $collName => $coll) {
 	//Collect all the collections
@@ -82,7 +83,7 @@ foreach ($coordArr as $collName => $coll) {
 			'collid' => $record['collid'], 
 			'family' => $record['fam'],
 			'occid' => $recordId,
-			'host' => $SERVER_HOST . $CLIENT_ROOT,
+			'host' => $host,
 			'collname' => $collName, 
 			'type' => in_array($record['collid'], $obsIDs)? 'observation':'specimen', 
 			'lat' => floatval($llstrArr[0]),

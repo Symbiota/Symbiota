@@ -67,4 +67,6 @@ $LANG['REFRESHLIST'] = 'Actualizar Listado';
 $LANG['PREVIOUS'] = 'Anterior';
 $LANG['RECORDS'] = ' Registros';
 $LANG['NEXT'] = 'Siguiente';
+$LANG['IMG_EDIT'] = 'Editar imagen';
+
 ?>

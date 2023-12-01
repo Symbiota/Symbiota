@@ -326,7 +326,8 @@ if(!$clid){
 				<b><?php echo (isset($LANG['ACCESS'])?$LANG['ACCESS']:'Access'); ?>:</b>
 				<select name="access">
 					<option value="private"><?php echo (isset($LANG['PRIVATE'])?$LANG['PRIVATE']:'Private');?></option>
-					<option value="public" <?php echo ($clArray && $clArray["access"]=="public"?"selected":""); ?>><?php echo (isset($LANG['PUBLIC'])?$LANG['PUBLIC']:'Public');?></option>
+					<option value="private-strict" <?php echo ($clArray && $clArray['access']=='private-strict'?'selected':''); ?>><?php echo $LANG['PRIVATE_STRICT'];?></option>
+					<option value="public" <?php echo ($clArray && $clArray['access']=='public'?'selected':''); ?>><?php echo (isset($LANG['PUBLIC'])?$LANG['PUBLIC']:'Public');?></option>
 				</select>
 			</div>
 			<div style="clear:both;float:left;margin-top:15px;">

@@ -7,19 +7,12 @@ if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/glossary/index.
 else include_once($SERVER_ROOT.'/content/lang/glossary/index.'.$LANG_TAG.'.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
-$glossId = array_key_exists('glossid',$_REQUEST)?$_REQUEST['glossid']:0;
-$language = array_key_exists('searchlanguage',$_REQUEST)?$_REQUEST['searchlanguage']:'';
-$tid = array_key_exists('searchtaxa',$_REQUEST)?$_REQUEST['searchtaxa']:'';
-$searchTerm = array_key_exists('searchterm',$_REQUEST)?$_REQUEST['searchterm']:'';
-$deepSearch = array_key_exists('deepsearch',$_POST)?$_POST['deepsearch']:0;
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
-
-//Sanitation
-if(!is_numeric($glossId)) $glossId = 0;
-if(!is_numeric($tid)) $tid = 0;
-$language = htmlspecialchars($language, HTML_SPECIAL_CHARS_FLAGS);
-$searchTerm = htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS);
-if(!is_numeric($deepSearch)) $relatedLanguage = 0;
+$glossId = array_key_exists('glossid', $_REQUEST) ? filter_var($_REQUEST['glossid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$language = array_key_exists('searchlanguage', $_REQUEST) ? htmlspecialchars($_REQUEST['searchlanguage'], HTML_SPECIAL_CHARS_FLAGS) : '';
+$tid = array_key_exists('searchtaxa', $_REQUEST) ? filter_var($_REQUEST['searchtaxa'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$searchTerm = array_key_exists('searchterm', $_REQUEST) ? $_REQUEST['searchterm'] : '';
+$deepSearch = array_key_exists('deepsearch', $_POST) ? filter_var($_POST['deepsearch'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$formSubmit = array_key_exists('formsubmit', $_POST) ? $_POST['formsubmit'] : '';
 
 if(!$language) $language = $DEFAULT_LANG;
 if($language == 'en') $language = 'English';
@@ -33,13 +26,13 @@ $glosManager = new GlossaryManager();
 $statusStr = '';
 if($formSubmit){
 	if($formSubmit == 'Add Source'){
-		if(!$glosManager->addSource($_POST)) $statusStr = $glosManager->getErrorStr();
+		if(!$glosManager->addSource($_POST)) $statusStr = $glosManager->getErrorMessage();
 	}
 	elseif($formSubmit == 'Edit Source'){
-		if(!$glosManager->editSource($_POST)) $statusStr = $glosManager->getErrorStr();
+		if(!$glosManager->editSource($_POST)) $statusStr = $glosManager->getErrorMessage();
 	}
 	elseif($formSubmit == 'Delete Source'){
-		if(!$glosManager->deleteSource($_POST['tid'])) $statusStr = $glosManager->getErrorStr();
+		if(!$glosManager->deleteSource($_POST['tid'])) $statusStr = $glosManager->getErrorMessage();
 	}
 }
 $languageArr = $glosManager->getLanguageArr();
@@ -123,13 +116,13 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 
 		function openTermPopup(glossid){
 			var urlStr = 'individual.php?glossid='+glossid;
-			newWindow = window.open(urlStr,'popup','toolbar=0,status=1,scrollbars=1,width=900,height=450,left=20,top=20');
+			newWindow = window.open(urlStr,'popup','toolbar=0,status=1,scrollbars=1,width=1100,height=550,left=20,top=20');
 			if (newWindow.opener == null) newWindow.opener = self;
 			return false;
 		}
 
 	</script>
-	<script src="../js/symb/glossary.index.js?ver=20160720" type="text/javascript"></script>
+	<script src="../js/symb/glossary.index.js?ver=2" type="text/javascript"></script>
 </head>
 <body>
 	<?php
@@ -235,7 +228,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 						<div style="clear:both;padding:15px">
 							<input name="searchlanguage" type="hidden" value="<?php echo $language; ?>" />
 							<input name="searchtaxa" type="hidden" value="<?php echo $tid; ?>" />
-							<input name="searchterm" type="hidden" value="<?php echo $searchTerm; ?>" />
+							<input name="searchterm" type="hidden" value="<?php echo htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS); ?>" />
 							<input name="deepsearch" type="hidden" value="<?php echo $deepSearch; ?>" />
 							<button name="formsubmit" type="submit" value="Download"><?php echo (isset($LANG['DOWNLOAD'])?$LANG['DOWNLOAD']:'Download'); ?></button>
 						</div>
@@ -280,8 +273,8 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 					?>
 				</div>
 				<div style="clear:both;">
-					<label for="searchterm"><?php echo (isset($LANG['SEARCH_TERM'])?$LANG['SEARCH_TERM']:'Search Term'); ?>:</label>
-					<input id="searchterm" type="text" autocomplete="off" name="searchterm" size="25" value="<?php echo $searchTerm; ?>" />
+					<b><?php echo (isset($LANG['SEARCH_TERM'])?$LANG['SEARCH_TERM']:'Search Term'); ?>:</b>
+					<input type="text" autocomplete="off" name="searchterm" size="25" value="<?php echo htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS); ?>" />
 				</div>
 				<div style="margin-left:40px">
 					<input id="deepsearch" name="deepsearch" type="checkbox" value="1" <?php echo $deepSearch?'checked':''; ?> />
@@ -303,7 +296,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 						$title = $LANG['TERMS'];
 						if($taxonName) $title .= ' '.$LANG['FOR'].' '.$taxonName;
 						if($language) $title .= ' '.$LANG['IN'].' '.$language;
-						if($searchTerm) $title .= ' '.$LANG['KEYWORD'].' &quot;'.$searchTerm.'&quot;';
+						if($searchTerm) $title .= ' '.$LANG['KEYWORD'].' &quot;'.htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS).'&quot;';
 						echo '<div style="float:left;font-weight:bold;font-size:120%;">'.$title.'</div>';
 						$sourceArrFull = $glosManager->getTaxonSources($tid);
 						$sourceArr = current($sourceArrFull);
@@ -337,7 +330,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 								if($isEditor){
 									?>
 									<div style="float:right;">
-										<a href="sources.php?emode=1&tid=<?php echo htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&searchterm=' . htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS) . '&language=' . htmlspecialchars($language, HTML_SPECIAL_CHARS_FLAGS) . '&taxa=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS); ?>"><img src="../images/edit.png" style="width:13px" /></a>
+										<a href="sources.php?emode=1&tid=<?php echo $tid.'&searchterm='.htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS).'&language='.$language.'&taxa='.$tid; ?>"><img src="../images/edit.png" style="width:13px" /></a>
 									</div>
 									<?php
 								}
@@ -375,10 +368,17 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 						<?php
 					}
 					echo '<div style="padding:10px;"><ul>';
-					foreach($termList as $glossId => $termName){
-						echo '<li>';
-						echo '<a onclick="openTermPopup(' . htmlspecialchars($glossId, HTML_SPECIAL_CHARS_FLAGS) . '); return false;"><b>' . htmlspecialchars($termName, HTML_SPECIAL_CHARS_FLAGS) . '</b></a>';
-						echo '</li>';
+					foreach($termList as $termArr){
+						foreach($termArr as $glossId => $termObj){
+							$termDisplay = '<a href="#" onclick="openTermPopup('.$glossId.'); return false;">'.$termObj['d'].'</a>';
+							if(isset($termObj['goto'])){
+								$gotoArr = $termObj['goto'];
+								$termDisplay = $termObj['d'].' &equals;&gt; <a href="#" onclick="openTermPopup('.key($gotoArr).'); return false;">'.current($gotoArr).'</a>';
+							}
+							echo '<li>';
+							echo $termDisplay;
+							echo '</li>';
+						}
 					}
 					echo '</ul></div>';
 				}

@@ -28,5 +28,5 @@ $LANG['EDIT_REC'] = 'Modifier';
 $LANG['HAS_IMAGE'] = 'A Image';
 $LANG['CLICK_SYMB'] = "Cliquez sur l'Identifiant Symbiota dans la première colonne pour voir les détails complets de l'enregistrement";
 $LANG['NONE_FOUND'] = 'Aucun enregistrement trouvé correspondant à la requête';
-
+$LANG['SORT'] = 'Trier';
 ?>

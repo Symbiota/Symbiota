@@ -134,13 +134,11 @@ if($coorArr && count($coorArr) == 4){
 				alert("Couldn't load server map data")
 			}
 
-			console.log(clones)
-
-				<?php if(!empty($LEAFLET)) { ?>
+			<?php if(empty($GOOGLE_MAP_KEY)) { ?>
 				leafletInit();
 			<?php } else { ?>
-			googleInit();
-		<?php } ?>
+				googleInit();
+			<?php } ?>
 	  }
 
 		function cloneCoord(lat,lng,err){

@@ -511,13 +511,13 @@ class KeyDataManager extends Manager {
 				$this->clid = $clid;
 				$this->setMetaData();
 				//Get children checklists
-				$sqlBase = 'SELECT ch.clidchild, cl2.name '.
-					'FROM fmchecklists cl INNER JOIN fmchklstchildren ch ON cl.clid = ch.clid '.
-					'INNER JOIN fmchecklists cl2 ON ch.clidchild = cl2.clid '.
-					'WHERE (cl2.type != "excludespp") AND cl.clid IN(';
+				$sqlBase = 'SELECT ch.clidchild, cl2.name
+					FROM fmchecklists cl INNER JOIN fmchklstchildren ch ON cl.clid = ch.clid
+					INNER JOIN fmchecklists cl2 ON ch.clidchild = cl2.clid
+					WHERE (cl2.type != "excludespp") AND (ch.clid != ch.clidchild) AND cl.clid IN(';
 				$sql = $sqlBase.$this->clid.')';
 				do{
-					$childStr = "";
+					$childStr = '';
 					$rsChild = $this->conn->query($sql);
 					while($r = $rsChild->fetch_object()){
 						$this->childClidArr[$r->clidchild] = $r->name;
