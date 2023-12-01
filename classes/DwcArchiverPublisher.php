@@ -3,8 +3,6 @@ include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
 
 class DwcArchiverPublisher extends DwcArchiverCore{
 
-	private $materialSampleIsActive = false;
-
 	public function __construct(){
 		parent::__construct('write');
 	}
@@ -51,8 +49,18 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		$this->logOrEcho("\n-----------------------------------------------------\n\n");
 
 		$successArr = array();
+		$includeAttributes = $this->includeAttributes;
+		$includeMatSample = $this->includeMaterialSample;
 		foreach($collIdArr as $id){
 			//Create a separate DWCA object for each collection
+			if($includeAttributes){
+				if($this->hasAttributes($id)) $this->includeAttributes = true;
+				else $this->includeAttributes = false;
+			}
+			if($includeMatSample){
+				if($this->hasMaterialSamples($id)) $this->includeMaterialSample = true;
+				else $this->includeMaterialSample = false;
+			}
 			$this->resetCollArr($id);
 			$this->conditionArr['collid'] = $id;
 			$this->conditionSql = '';
@@ -61,6 +69,8 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 				$status = true;
 			}
 		}
+		$this->includeAttributes = $includeAttributes;
+		$this->includeMaterialSample = $includeMatSample;
 		//Reset $this->collArr with all the collections ran successfully and then rebuild the RSS feed
 		$this->resetCollArr(implode(',',$successArr));
 		$this->writeRssFile();
@@ -256,7 +266,6 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 			$retArr[$r->collid]['url'] = $url;
 			if(!$r->guidtarget) $retArr[$r->collid]['err'] = 'MISSING_GUID';
 			elseif($r->dwcaurl && !strpos($serverName, 'localhost') && strpos($r->dwcaurl, str_replace('www.', '', $serverName)) === false) $retArr[$r->collid]['err'] = 'ALREADY_PUB_DOMAIN';
-			if($r->dynamicProperties && strpos($r->dynamicProperties,'matSample":{"status":1')) $this->materialSampleIsActive = true;
 		}
 		$rs->free();
 		return $retArr;
@@ -286,10 +295,6 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 			$rs->free();
 		}
 		return $retArr;
-	}
-
-	public function materialSampleIsActive(){
-		return $this->materialSampleIsActive;
 	}
 
 	//Mics functions
