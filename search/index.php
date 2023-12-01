@@ -112,7 +112,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 							<!-- Open Collections modal -->
 							<div id="specobsdiv">
 								<?php 
-								include_once('./collectionContent.php'); // @TODO add data-chip
+								include_once('./collectionContent.php');
 								?>
 							</div>
 							
