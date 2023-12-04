@@ -5,6 +5,8 @@ include_once($SERVER_ROOT.'/classes/ProfileManager.php');
 include_once($SERVER_ROOT.'/content/lang/profile/index.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
+$SYMBIOTA_LOGIN_ENABLED = $SYMBIOTA_LOGIN_ENABLED ?? true;
+
 $login = array_key_exists('login',$_REQUEST)?$_REQUEST['login']:'';
 $remMe = array_key_exists("remember",$_POST)?$_POST["remember"]:'';
 $emailAddr = array_key_exists('email',$_POST)?$_POST['email']:'';
@@ -170,28 +172,30 @@ include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div style="width:300px;margin-right:auto;margin-left:auto;">
 		<form id="loginform" name="loginform" action="index.php" onsubmit="return checkCreds();" method="post">
-			<fieldset  class="profile-fieldset profile-login">
-				<legend class="profile-legend"><?php echo (isset($LANG['PORTAL_LOGIN'])?$LANG['PORTAL_LOGIN']:'Portal Login'); ?></legend>
-				<div style="margin: 10px;">
-					<label for="login"><?php echo (isset($LANG['LOGIN_NAME'])?$LANG['LOGIN_NAME']:'Login'); ?>:</label> 
-					<input id="login" name="login" value="<?php echo $login; ?>" style="border-style:inset;" />
-				</div>
-				<div style="margin:10px;">
-					<label for="password"><?php echo (isset($LANG['PASSWORD'])?$LANG['PASSWORD']:"Password"); ?>:</label>
-					<input type="password" id="password" name="password"  style="border-style:inset;" autocomplete="off" />
-				</div>
-				<div style="margin:10px">
-					<input type="checkbox" value='1' name="remember" id="remember" checked >
-					<label for="remember">
-						<?php echo (isset($LANG['REMEMBER'])?$LANG['REMEMBER']:'Remember me on this computer'); ?>
-					</label>
-				</div>
-				<div style="margin:15px;">
-					<input type="hidden" name="refurl" value="<?php echo $refUrl; ?>" />
-					<input type="hidden" id="resetpwd" name="resetpwd" value="">
-					<button name="action" type="submit" value="login"><?php echo (isset($LANG['SIGNIN'])?$LANG['SIGNIN']:'Sign In'); ?></button>
-				</div>
-			</fieldset>
+			<?php if($SYMBIOTA_LOGIN_ENABLED){ ?>
+				<fieldset  class="profile-fieldset profile-login">
+					<legend class="profile-legend"><?php echo (isset($LANG['PORTAL_LOGIN'])?$LANG['PORTAL_LOGIN']:'Portal Login'); ?></legend>
+					<div style="margin: 10px;">
+						<label for="login"><?php echo (isset($LANG['LOGIN_NAME'])?$LANG['LOGIN_NAME']:'Login'); ?>:</label> 
+						<input id="login" name="login" value="<?php echo $login; ?>" style="border-style:inset;" />
+					</div>
+					<div style="margin:10px;">
+						<label for="password"><?php echo (isset($LANG['PASSWORD'])?$LANG['PASSWORD']:"Password"); ?>:</label>
+						<input type="password" id="password" name="password"  style="border-style:inset;" autocomplete="off" />
+					</div>
+					<div style="margin:10px">
+						<input type="checkbox" value='1' name="remember" id="remember" checked >
+						<label for="remember">
+							<?php echo (isset($LANG['REMEMBER'])?$LANG['REMEMBER']:'Remember me on this computer'); ?>
+						</label>
+					</div>
+					<div style="margin:15px;">
+						<input type="hidden" name="refurl" value="<?php echo $refUrl; ?>" />
+						<input type="hidden" id="resetpwd" name="resetpwd" value="">
+						<button name="action" type="submit" value="login"><?php echo (isset($LANG['SIGNIN'])?$LANG['SIGNIN']:'Sign In'); ?></button>
+					</div>
+				</fieldset>
+			<?php }?>
 		</form>
 		<div style="width:300px;text-align:center;margin:20px;">
 			<?php 
@@ -207,24 +211,26 @@ include($SERVER_ROOT.'/includes/header.php');
 			<?php
 		 		} 
 			?>
-			<div style="font-weight:bold;margin-top:5px">
-				<?php echo (isset($LANG['REMEMBER_PWD'])?$LANG['REMEMBER_PWD']:"Can't Remember your password?"); ?>
-			</div>
-			<a href="#" style="color:blue;cursor:pointer;" onclick="resetPassword();"><?php echo (isset($LANG['REST_PWD'])?$LANG['REST_PWD']:'Reset Password'); ?></a>
-			<div style="font-weight:bold;margin-top:5px">
-				<?php echo (isset($LANG['REMEMBER_LOGIN'])?$LANG['REMEMBER_LOGIN']:"Can't Remember Login Name?"); ?>
-			</div>
-			<div>
-				<div><a href="#" onclick="toggle('emaildiv');"><?php echo htmlspecialchars((isset($LANG['RETRIEVE'])?$LANG['RETRIEVE']:'Retrieve Login'), HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
-				<div id="emaildiv" style="display:none;margin:10px 0px 10px 40px;">
-					<fieldset class="profile-fieldset">
-						<form id="retrieveloginform" name="retrieveloginform" action="index.php" method="post">
-							<div><?php echo (isset($LANG['YOUR_EMAIL'])?$LANG['YOUR_EMAIL']:'Your Email'); ?>: <input type="text" name="email" /></div>
-							<div><button name="action" type="submit" value="Retrieve Login"><?php echo (isset($LANG['RETRIEVE'])?$LANG['RETRIEVE']:'Retrieve Login'); ?></button></div>
-						</form>
-					</fieldset>
+			<?php if($SYMBIOTA_LOGIN_ENABLED){ ?>
+				<div style="font-weight:bold;margin-top:5px">
+					<?php echo (isset($LANG['REMEMBER_PWD'])?$LANG['REMEMBER_PWD']:"Can't Remember your password?"); ?>
 				</div>
-			</div>
+				<a href="#" style="color:blue;cursor:pointer;" onclick="resetPassword();"><?php echo (isset($LANG['REST_PWD'])?$LANG['REST_PWD']:'Reset Password'); ?></a>
+				<div style="font-weight:bold;margin-top:5px">
+					<?php echo (isset($LANG['REMEMBER_LOGIN'])?$LANG['REMEMBER_LOGIN']:"Can't Remember Login Name?"); ?>
+				</div>
+				<div>
+					<div><a href="#" onclick="toggle('emaildiv');"><?php echo htmlspecialchars((isset($LANG['RETRIEVE'])?$LANG['RETRIEVE']:'Retrieve Login'), HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
+					<div id="emaildiv" style="display:none;margin:10px 0px 10px 40px;">
+						<fieldset class="profile-fieldset">
+							<form id="retrieveloginform" name="retrieveloginform" action="index.php" method="post">
+								<div><?php echo (isset($LANG['YOUR_EMAIL'])?$LANG['YOUR_EMAIL']:'Your Email'); ?>: <input type="text" name="email" /></div>
+								<div><button name="action" type="submit" value="Retrieve Login"><?php echo (isset($LANG['RETRIEVE'])?$LANG['RETRIEVE']:'Retrieve Login'); ?></button></div>
+							</form>
+						</fieldset>
+					</div>
+				</div>
+			<?php } ?>
 		</div>
 	</div>
 </div>
