@@ -498,6 +498,7 @@ class KeyCharAdmin{
 		$sql = 'SELECT glossid, term, language FROM glossary';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
+			//$k variable is needed to so that list can be alphabetical even when html tags (e.g. italics) are embedded into the terms
 			$k = strip_tags(strtolower($r->term));
 			$retArr[$k][$r->glossid]['term'] = $r->term;
 			$retArr[$k][$r->glossid]['lang'] = $r->language;
