@@ -326,16 +326,18 @@ if(!$cid) header('Location: index.php');
 								?>
 							</div>
 							<?php
-							$glossArr = $keyManager->getGlossaryList();
-							if($glossArr){
+							$glossaryArr = $keyManager->getGlossaryList();
+							if($glossaryArr){
 								?>
 								<div style="padding-top:8px;clear:both;">
 									<b>Glossary link</b><br />
 									<select name="glossid">
 										<option value="">------------------------</option>
 										<?php
-										foreach($glossArr as $glossID => $gArr){
-											echo '<option value="'.$glossID.'" '.($charArr['glossid']==$glossID?'selected':'').'>'.$gArr['term'].' ('.$gArr['lang'].')</option>';
+										foreach($glossaryArr as $glossArr){
+											foreach($glossArr as $glossID => $gArr){
+												echo '<option value="'.$glossID.'" '.($charArr['glossid']==$glossID?'selected':'').'>'.$gArr['term'].' ('.$gArr['lang'].')</option>';
+											}
 										}
 										?>
 									</select>
@@ -390,15 +392,17 @@ if(!$cid) header('Location: index.php');
 									<input type="text" name="description" maxlength="255" style="width:80%;" />
 								</div>
 								<?php
-								if($glossArr){
+								if($glossaryArr){
 									?>
 									<div style="padding-top:8px;clear:both;">
 										<b>Glossary link</b><br />
 										<select name="glossid">
 											<option value="">------------------------</option>
 											<?php
-											foreach($glossArr as $glossID => $gArr){
-												echo '<option value="'.$glossID.'">'.$gArr['term'].' ('.$gArr['lang'].')</option>';
+											foreach($glossaryArr as $glossArr){
+												foreach($glossArr as $glossID => $gArr){
+													echo '<option value="'.$glossID.'">'.$gArr['term'].' ('.$gArr['lang'].')</option>';
+												}
 											}
 											?>
 										</select>
@@ -452,15 +456,17 @@ if(!$cid) header('Location: index.php');
 												<input type="text" name="description" maxlength="255" style="width:80%;" value="<?php echo $stateArr['description']; ?>"/>
 											</div>
 											<?php
-											if($glossArr){
+											if($glossaryArr){
 												?>
 												<div style="padding-top:8px;clear:both;">
 													<b>Glossary link</b><br />
 													<select name="glossid">
 														<option value="">------------------------</option>
 														<?php
-														foreach($glossArr as $glossID => $gArr){
-															echo '<option value="'.$glossID.'" '.($stateArr['glossid']==$glossID?'selected':'').'>'.$gArr['term'].' ('.$gArr['lang'].')</option>';
+														foreach($glossaryArr as $glossArr){
+															foreach($glossArr as $glossID => $gArr){
+																echo '<option value="'.$glossID.'" '.($stateArr['glossid']==$glossID?'selected':'').'>'.$gArr['term'].' ('.$gArr['lang'].')</option>';
+															}
 														}
 														?>
 													</select>

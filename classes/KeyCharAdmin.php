@@ -498,10 +498,12 @@ class KeyCharAdmin{
 		$sql = 'SELECT glossid, term, language FROM glossary';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->glossid]['term'] = $r->term;
-			$retArr[$r->glossid]['lang'] = $r->language;
+			$k = strip_tags(strtolower($r->term));
+			$retArr[$k][$r->glossid]['term'] = $r->term;
+			$retArr[$k][$r->glossid]['lang'] = $r->language;
 		}
 		$rs->free();
+		ksort($retArr);
 		return $retArr;
 	}
 
