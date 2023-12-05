@@ -313,7 +313,7 @@ if ($isEditor) {
 					if (isset($recFlagArr['nullGUIDs']) && $recFlagArr['nullGUIDs']) {
 						echo '<div style="margin:10px;">';
 						if ($collArr['guidtarget'] == 'occurrenceId') {
-							echo '<b>' . $LANG['RECORDS_MISSING'] . ' <a href="" target="_blank">' . htmlspecialchars($LANG['OCCID_GUIDS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>:</b> ' . htmlspecialchars($recFlagArr['nullGUIDs'], HTML_SPECIAL_CHARS_FLAGS);
+							echo '<b>' . $LANG['RECORDS_MISSING'] . ' <a href="https://dwc.tdwg.org/terms/#dwc:occurrenceID" target="_blank">' . htmlspecialchars($LANG['OCCID_GUIDS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>:</b> ' . htmlspecialchars($recFlagArr['nullGUIDs'], HTML_SPECIAL_CHARS_FLAGS);
 							echo ' <span style="color:red;margin-left:15px;">' . $LANG['RECS_TO_NOT_PUBLISH'] . '</span> ';
 						} elseif ($collArr['guidtarget'] == 'catalogNumber') {
 							echo '<b>' . $LANG['RECS_WO_CATNUMS'] . ':</b> ' . $recFlagArr['nullGUIDs'];
