@@ -416,13 +416,13 @@ $smManager = new SiteMapManager();
 					<p class="description">
 						<?php echo $LANG['PARA1'];?>
 					</p>
-					<div id="admincollection">
 					</br>
-						<h3>
-							<span>
-								<?php echo $LANG['COLLLIST'];?>
-							</span>
-						</h3>
+					<h3>
+						<span>
+							<?php echo $LANG['COLLLIST'];?>
+						</span>
+					</h3>
+					<div>
 						<ul>
 						<?php
 						$smManager->setCollectionList();
@@ -452,13 +452,13 @@ $smManager = new SiteMapManager();
 						<?php echo $LANG['PARA2'];?>
 						<a href="https://biokic.github.io/symbiota-docs/col_obs/" target="_blank"><?php echo htmlspecialchars($LANG['SYMBDOCU'], HTML_SPECIAL_CHARS_FLAGS);?></a> <?php echo htmlspecialchars($LANG['FORMOREINFO'], HTML_SPECIAL_CHARS_FLAGS);?>.
 					<p class="description">
-					<div id="adminobservation">
-						</br>
-						<h3>
-							<span>
-								<?php echo $LANG['OIVS'];?>
-							</span>
-						</h3>
+					</br>
+					<h3>
+						<span>
+							<?php echo $LANG['OIVS'];?>
+						</span>
+					</h3>
+					<div>
 						<ul>
 							<?php
 							$obsList = $smManager->getObsArr();
