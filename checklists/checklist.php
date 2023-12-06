@@ -20,6 +20,7 @@ $showImages = array_key_exists('showimages', $_REQUEST) ? filter_var($_REQUEST['
 $limitImagesToVouchers = array_key_exists('voucherimages', $_REQUEST) ? filter_var($_REQUEST['voucherimages'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $showVouchers = array_key_exists('showvouchers', $_REQUEST) ? filter_var($_REQUEST['showvouchers'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $showAlphaTaxa = array_key_exists('showalphataxa', $_REQUEST) ? filter_var($_REQUEST['showalphataxa'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$showSubgenera = array_key_exists('showsubgenera', $_REQUEST) ? filter_var($_REQUEST['showsubgenera'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $searchCommon = array_key_exists('searchcommon', $_REQUEST) ? filter_var($_REQUEST['searchcommon'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $searchSynonyms = array_key_exists('searchsynonyms', $_REQUEST) ? filter_var($_REQUEST['searchsynonyms'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $defaultOverride = array_key_exists('defaultoverride', $_REQUEST) ? filter_var($_REQUEST['defaultoverride'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -68,6 +69,7 @@ if($showImages) $clManager->setShowImages(true);
 if($limitImagesToVouchers) $clManager->setLimitImagesToVouchers(true);
 if($showVouchers) $clManager->setShowVouchers(true);
 if($showAlphaTaxa) $clManager->setShowAlphaTaxa(true);
+if($showSubgenera) $clManager->setShowSubgenera(true);
 $clid = $clManager->getClid();
 $pid = $clManager->getPid();
 
