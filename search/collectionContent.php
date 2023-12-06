@@ -70,4 +70,17 @@
 			</section>
 		<?php
 		}
+		if(isset($obsArr['coll'])){
+			$collArr = $obsArr['coll'];
+			?>
+			<table style="float:left;width:80%;">
+				<?php
+				foreach($collArr as $collid => $cArr){
+					include('./singleCollectionWithoutCategoryDetails.php');
+					$collCnt++;
+				}
+				?>
+			</table>
+			<?php
+		}
 	?>
