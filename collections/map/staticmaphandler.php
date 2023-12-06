@@ -118,8 +118,6 @@ if(!$IS_ADMIN){
                   let coords = await getTaxaCoordinates(taxa.tid, basebounds);
                   count++;
 
-                  let status = "No Coordinates to Map"
-
                   if(coords && coords.length > 0) { 
                      //Fits bounds within our search bounds for a better image
                      map.mapLayer.fitBounds(coords.map(c => [c.lat, c.lng]));
@@ -143,7 +141,13 @@ if(!$IS_ADMIN){
                            title: taxa.sciname, 
                            map_blob,
                            maptype, 
-                        }).then(res => addResultTableEntry({tid: taxa.tid, taxon: taxa.sciname, status: res.status === 200? "Success": "Failure"}))
+                        }).then(res => addResultTableEntry({
+                              tid: taxa.tid, 
+                              taxon: taxa.sciname, 
+                              status: res.status === 200?
+                                 `<?php echo isset($LANG['SUCCESS'])? $LANG['SUCCESS']: 'Success'?>`:
+                                 `<?php echo isset($LANG['FAILURE'])? $LANG['Failure']: 'Failure'?>`
+                           }))
                      } 
                   } else if (preview && count >= taxon_group.taxa_list.length) {
                      alert(`There are no records of ${taxa.scimane} within your bounds!`)
@@ -152,7 +156,7 @@ if(!$IS_ADMIN){
                   if(!preview) {
                      incrementLoadingBar(maxCount);
                      if(coords.length <= 0) {
-                        addResultTableEntry({tid: taxa.tid, taxon: taxa.sciname, status: "No Coordinates to Map"});
+                        addResultTableEntry({tid: taxa.tid, taxon: taxa.sciname, status: "<?php echo isset($LANG['NO_COORDINATES'])? $LANG['NO_COORDINATES']: 'No coordinates to map'?>"});
                      }
                   }
                }
@@ -482,12 +486,12 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
          </form>
          <br/>
          <fieldset id="thumbnail-results" style="display: none">
-            <legend><?php echo isset($LANG['RESULTS'])? $LANG['RESULTS']: 'Thumbnail Results'?></legend>
+            <legend><?php echo isset($LANG['RESULTS'])? $LANG['RESULTS']: 'Results'?></legend>
             <table style="width: 100%">
                <thead>
-                  <th>Tid</th>
-                  <th>Taxon</th>
-                  <th>Status</th>
+                  <th><?php echo isset($LANG['TID'])? $LANG['TID']: 'Tid'?></th>
+                  <th><?php echo isset($LANG['TAXON'])? $LANG['TAXON']: 'Taxon'?></th>
+                  <th><?php echo isset($LANG['STATUS'])? $LANG['STATUS']: 'Status'?></th>
                </thead>
                <tbody id="thumbnail-results-body">
                </tbody>
