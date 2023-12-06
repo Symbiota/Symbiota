@@ -381,14 +381,14 @@ if(isset($MAPPING_BOUNDARIES)){
 					<div>
                      <div style="float:left;margin-right:5px">
                         <?php echo (isset($LANG['LATITUDE']) ? $LANG['LATITUDE']: 'Longitude') ?>
-                        (<?php echo (isset($LANG['DECIMAL']) ? $LANG['DECIMAL']: 'Longitude') ?>):
+                        (<?php echo (isset($LANG['DECIMAL']) ? $LANG['DECIMAL']: 'Decimal') ?>):
                         <input name='lat' id='lat' size='10' type='text' /> </div>
 						<div style="float:left;">eg: 34.57</div>
 					</div>
 					<div style="margin-top:5px;clear:both">
                      <div style="float:left;margin-right:5px">
                         <?php echo (isset($LANG['LONGITUDE']) ? $LANG['LONGITUDE']: 'Longitude') ?>
-                        (<?php echo (isset($LANG['DECIMAL']) ? $LANG['DECIMAL']: 'Longitude') ?>):
+                        (<?php echo (isset($LANG['DECIMAL']) ? $LANG['DECIMAL']: 'Decimal') ?>):
                         <input name='lng' id='lng' size='10' type='text' /> </div>
 						<div style="float:left;">eg: -112.38</div>
 					</div>

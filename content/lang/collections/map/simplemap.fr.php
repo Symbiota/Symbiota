@@ -9,7 +9,7 @@ include_once('mapshared.fr.php');
 
 $LANG['MARKER_NAME'] = 'Nom de Marqueur';
 $LANG['ADD_MARKER'] = 'Ajouter un Marqueur';
-$LANG['LEGEND'] = 'légende';
+$LANG['LEGEND'] = 'Légende';
 
 $LANG['ADD_REFERENCE_POINT'] = 'Ajouter un Point de Référence';
 
