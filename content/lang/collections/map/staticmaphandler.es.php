@@ -26,5 +26,13 @@ $LANG['GLOBAL_BOUNDS'] = 'Establecer límites globales';
 $LANG['PREVIEW_MAP'] = 'Vista previa del mapa';
 $LANG['TYPE_TAXON'] = 'Escriba el taxón';
 $LANG['SEPARATE_MULTIPLE'] = 'Separar m&uacute;ltiples con comas';
+
+$LANG['TID'] = 'Tid';
+$LANG['TAXON'] = 'Taxón';
+$LANG['STATUS'] = 'Estado';
+$LANG['SUCCESS'] = 'Éxito';
+$LANG['FAILURE'] = 'Falla';
+$LANG['NO_COORDINATES'] = 'No hay coordenadas para mapear';
+$LANG['RESULTS'] = 'Resultados';
 ?>
 
