@@ -6,7 +6,7 @@ Language: Français
 */
 
 $LANG['CROWDSOURCE_SCORE_BOARD'] = 'Tableau de Score Crowdsourcing';
-$LANG['TOP_SCORES'] = 'Meilleurs Ccores';
+$LANG['TOP_SCORES'] = 'Meilleurs Scores';
 $LANG['USER'] = 'Utilisateur';
 $LANG['APPROVED_SCORE'] = 'Score approuvé';
 $LANG['PENDING_SCORE'] = 'Score en attente';
