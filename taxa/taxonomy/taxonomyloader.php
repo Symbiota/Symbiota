@@ -130,7 +130,7 @@ if($isEditor){
 										<?php echo (isset($LANG['UNITNAME3']) ? $LANG['UNITNAME3'] : 'Infraspecific Epithet'); ?>:
 									</label>
 								</div>
-								<input type='text' id='unitind3' name='unitind3' onchange="updateFullname(this.form)" class='search-bar-extraShort' aria-label='<?php echo (isset($LANG['RANK_FIELD']) ? $LANG['RANK_FIELD'] : 'Rank Field'); ?>' title='<?php echo (isset($LANG['RANK_FIELD']) ? $LANG['RANK_FIELD'] : 'Rank Field'); ?>'/>
+								<input type='text' id='unitind3' name='unitind3' onchange="updateFullname(this.form)" class='search-bar-extraShort' aria-label='<?php echo (isset($LANG['UNITNAME3']) ? $LANG['UNITNAME3'] : 'Infraspecific Epithet'); ?>:' title='<?php echo (isset($LANG['RANK_FIELD']) ? $LANG['RANK_FIELD'] : 'Rank Field'); ?>'/>
 								<input type='text' id='unitname3' name='unitname3' onchange="updateFullname(this.form)" class='search-bar' aria-label="<?php echo (isset($LANG['INFRA_EPITHET_FIELD']) ? $LANG['INFRA_EPITHET_FIELD'] : 'Infraspecific Epithet Field'); ?>" title="<?php echo (isset($LANG['INFRA_EPITHET_FIELD']) ? $LANG['INFRA_EPITHET_FIELD'] : 'Infraspecific Epithet Field'); ?>" />
 							</div>
 					<?php
@@ -201,7 +201,7 @@ if($isEditor){
 							</div>
 						</fieldset>
 					</div>
-					<div style="clear:both;">
+					<div class="top-breathing-room-rel">
 						<button type="submit" name="submitaction" value="submitNewName" ><?php echo (isset($LANG['SUBMIT_NEW_NAME']) ? $LANG['SUBMIT_NEW_NAME'] : 'Submit New Name'); ?></button>
 					</div>
 				</fieldset>
