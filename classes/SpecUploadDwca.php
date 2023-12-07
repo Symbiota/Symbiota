@@ -94,6 +94,7 @@ class SpecUploadDwca extends SpecUploadBase{
 		if(file_exists($this->uploadTargetPath.$localFolder)){
 			//Reset upload directory
 			$this->deleteTempFiles($localFolder, false);
+			$this->uploadTargetPath .= $localFolder;
 		}
 		else{
 			if(mkdir($this->uploadTargetPath.$localFolder)) $this->uploadTargetPath .= $localFolder;
@@ -102,7 +103,7 @@ class SpecUploadDwca extends SpecUploadBase{
 
 	private function deleteTempFiles($pathFragment = '', $filetimeLimit = '-2 days'){
 		$dirPath = $this->uploadTargetPath.$pathFragment;
-		$allowedToBeDeleted = array('csv','txt','xml','zip');
+		$allowedToBeDeleted = array('csv','dat','tab','txt','xml','zip');
 		if($handle = opendir($dirPath)) {
 			$loopCnt = 0;
 			while(false !== ($item = readdir($handle))) {
@@ -775,9 +776,11 @@ class SpecUploadDwca extends SpecUploadBase{
 			closedir($handle);
 		}
 		//Delete directory
-		if(stripos($dirPath, $this->uploadTargetPath) === 0){
+		/*
+		if(stripos($dirPath, $this->uploadTargetPath) === 0 && !preg_match('#/temp/data/$#', $dirPath)){
 			rmdir($dirPath);
 		}
+		*/
 	}
 
 	private function uploadExtension($targetStr, $fieldMap, $sourceArr){

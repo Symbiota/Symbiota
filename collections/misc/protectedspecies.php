@@ -215,7 +215,7 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 					echo '<a href="../../checklists/checklist.php?clid='.$clid.'">';
 					echo $stateArr['locality'].': '.$stateArr['name'];
 					echo '</a>';
-					if($stateArr['access'] == 'private') echo ' (private)';
+					if(strpos($stateArr['access'], 'private') !== false) echo ' (private)';
 					echo '</div>';
 					$emptyList = false;
 				}

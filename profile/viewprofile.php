@@ -54,7 +54,7 @@ if($isEditor){
 			$statusStr = '<span style="color:green">'.(isset($LANG['PWORD_SUCCESS'])?$LANG['PWORD_SUCCESS']:'Password update successful').'!</span>';
 		}
 		else{
-			$statusStr = '<span style="color:red">'.(isset($LANG['PWORD_FAILED'])?$LANG['PWORD_FAILED']:'Password update failed! Are you sure you typed the old password correctly?').'</span>';
+			$statusStr = '<span style="color:red">'.$LANG['PWD_UPDATE_FAILED'].'</span>';
 		}
 		$person = $pHandler->getPerson();
 		$tabIndex = 2;
