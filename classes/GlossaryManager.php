@@ -30,8 +30,6 @@ class GlossaryManager extends Manager {
 	private $targetUrl;
 	private $fileName;
 
-	private $errorStr;
-
  	public function __construct(){
  		parent::__construct(null, 'write');
 		$this->imageRootPath = $GLOBALS["imageRootPath"];
@@ -65,17 +63,21 @@ class GlossaryManager extends Manager {
 		}
 		if($language) $sqlWhere .= 'AND (g.language = "'.$this->cleanInStr($language).'") ';
 		if($tid) $sqlWhere .= 'AND (t.tid = '.$tid.' OR t2.tid = '.$tid.') ';
-		$sql = 'SELECT DISTINCT g.glossid, g.term FROM glossary g INNER JOIN glossarytermlink tl ON g.glossid = tl.glossid ';
-		if($tid) $sql .= 'INNER JOIN glossarytaxalink t ON tl.glossgrpid = t.glossid INNER JOIN glossarytaxalink t2 ON g.glossid = t2.glossid ';
+		$sql = 'SELECT DISTINCT g.glossid, g.term, g.definition, tl.relationshipType, g2.glossid as glossid2, g2.term AS term2, g2.definition AS def2
+			FROM glossary g LEFT JOIN glossarytermlink tl ON g.glossid = tl.glossgrpid
+			LEFT JOIN glossary g2 ON tl.glossid = g2.glossid ';
+		if($tid) $sql .= 'INNER JOIN glossarytermlink tl ON g.glossid = tl.glossid INNER JOIN glossarytaxalink t ON tl.glossgrpid = t.glossid INNER JOIN glossarytaxalink t2 ON g.glossid = t2.glossid ';
 		if($sqlWhere) $sql .= 'WHERE '.substr($sqlWhere, 3);
-		$sql .= 'ORDER BY g.term ';
-		//echo '<div>'.$sql.'</div>';
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
-				$retArr[$r->glossid] = $r->term;
+				$retArr[strip_tags(strtolower($r->term))][$r->glossid]['d'] = $r->term;
+				if(!$r->definition && $r->relationshipType == 'synonym' && $r->def2){
+					$retArr[strip_tags(strtolower($r->term))][$r->glossid]['goto'][$r->glossid2] = $r->term2;
+				}
 			}
 			$rs->free();
 		}
+		ksort($retArr);
 		return $retArr;
 	}
 
@@ -202,8 +204,8 @@ class GlossaryManager extends Manager {
 		$retArr = array();
 		if($this->glossGroupId){
 			$sql = 'SELECT g.glossid, g.term, g.definition, g.`language`, g.source, g.notes, l.gltlinkid '.
-				'FROM glossary g INNER JOIN glossarytermlink l ON g.glossid = l.glossid '.
-				'WHERE (l.glossgrpid IN('.implode(',',$this->synonymGroup).')) AND (g.language = "'.$this->lang.'") '.
+				'FROM glossary g INNER JOIN glossarytermlink l ON g.glossid = l.glossgrpid '.
+				'WHERE (l.glossid IN('.implode(',',$this->synonymGroup).')) AND (g.language = "'.$this->lang.'") '.
 				'AND (l.relationshiptype NOT IN("partOf","subClassOf"))';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
@@ -216,14 +218,13 @@ class GlossaryManager extends Manager {
 				$retArr[$r->glossid]['notes'] = $r->notes;
 			}
 			$rs->free();
-			//Get core term (e.g. translationGroup term)
-			$sql2 = 'SELECT glossid, term, definition, `language`, source, notes '.
-				'FROM glossary '.
-				'WHERE (glossid IN('.implode(',',$this->synonymGroup).'))';
-			//echo $sql; exit;
+			$sql2 = 'SELECT g.glossid, g.term, g.definition, g.`language`, g.source, g.notes, l.gltlinkid '.
+				'FROM glossary g INNER JOIN glossarytermlink l ON g.glossid = l.glossid '.
+				'WHERE (l.glossgrpid IN('.implode(',',$this->synonymGroup).')) AND (g.language = "'.$this->lang.'") '.
+				'AND (l.relationshiptype NOT IN("partOf","subClassOf"))';
 			$rs2 = $this->conn->query($sql2);
 			while($r2 = $rs2->fetch_object()){
-				$retArr[$r2->glossid]['gltlinkid'] = 0;
+				$retArr[$r2->glossid]['gltlinkid'] = $r2->gltlinkid;
 				$retArr[$r2->glossid]['term'] = $r2->term;
 				$retArr[$r2->glossid]['definition'] = $r2->definition;
 				$retArr[$r2->glossid]['language'] = $r2->language;
@@ -244,7 +245,6 @@ class GlossaryManager extends Manager {
 			$sql = 'SELECT g.glossid, g.term, g.definition, g.`language`, g.source, g.notes, l.relationshiptype, l.gltlinkid '.
 				'FROM glossary g INNER JOIN glossarytermlink l ON g.glossid = l.glossgrpid '.
 				'WHERE (l.glossid = '.$this->glossId.') AND (l.relationshiptype IN("partOf","subClassOf"))';
-			//echo $sql; exit;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retArr[$r->relationshiptype][$r->glossid]['gltlinkid'] = $r->gltlinkid;
@@ -311,7 +311,7 @@ class GlossaryManager extends Manager {
 						'VALUES('.$glossGrpId.','.$this->glossId.',"'.$pArr['relation'].'") ';
 					//echo $sql1; exit;
 					if(!$this->conn->query($sql1)){
-						$this->errorStr = 'ERROR creating new term group link: '.$this->conn->error;
+						$this->errorMessage = 'ERROR creating new term group link: '.$this->conn->error;
 					}
 				}
 			}
@@ -331,16 +331,14 @@ class GlossaryManager extends Manager {
 					$rs->free();
 				}
 				if($tid){
-					$sql2 = 'INSERT INTO glossarytaxalink(glossid,tid) '.
-						'VALUES('.$glossGrpId.','.$tid.') ';
-					if(!$this->conn->query($sql2)){
-						$this->errorStr = 'ERROR creating new term taxa link: '.$this->conn->error;
+					if(!$this->insertGlossaryTaxaLink($glossGrpId, $tid)){
+						$this->errorMessage = 'ERROR creating new term taxa link: '.$this->conn->error;
 					}
 				}
 			}
 		}
 		else{
-			$this->errorStr = 'ERROR creating new term: '.$this->conn->error;
+			$this->errorMessage = 'ERROR creating new term: '.$this->conn->error;
 			$status = false;
 		}
 		return $status;
@@ -370,7 +368,7 @@ class GlossaryManager extends Manager {
 			' WHERE (glossid = '.$pArr['glossid'].')';
 		//echo $sql; exit;
 		if(!$this->conn->query($sql)){
-			$this->errorStr = 'ERROR editing term: '.$this->conn->error;
+			$this->errorMessage = 'ERROR editing term: '.$this->conn->error;
 			$status = false;
 		}
 		return $status;
@@ -379,9 +377,8 @@ class GlossaryManager extends Manager {
 	//Taxa links
 	public function addGroupTaxaLink($tid){
 		if(is_numeric($tid)){
-			$sql = 'INSERT INTO glossarytaxalink(glossid,tid) VALUES('.$this->glossGroupId.','.$tid.') ';
-			if(!$this->conn->query($sql)){
-				$this->errorStr = 'ERROR inserting glossaryTaxaLink: '.$this->conn->error;
+			if(!$this->insertGlossaryTaxaLink($this->glossGroupId, $tid)){
+				$this->errorMessage = 'ERROR inserting glossaryTaxaLink: '.$this->conn->error;
 				return false;
 			}
 			return true;
@@ -392,7 +389,7 @@ class GlossaryManager extends Manager {
 	public function deleteGroupTaxaLink($tidStr){
 		$sql = 'DELETE FROM glossarytaxalink WHERE glossid IN('.$this->glossId.','.$this->glossGroupId.') AND tid IN('.$tidStr.') ';
 		if(!$this->conn->query($sql)){
-			$this->errorStr = 'ERROR deleting glossarytaxalink record: '.$this->conn;
+			$this->errorMessage = 'ERROR deleting glossarytaxalink record: '.$this->conn;
 			return false;
 		}
 		return true;
@@ -487,25 +484,29 @@ class GlossaryManager extends Manager {
 	}
 
 	public function removeRelation($gltLinkId, $relGlossId = ''){
+		$status = false;
 		if(is_numeric($gltLinkId)){
-			$status = true;
 			//Remove terms relationship
-			$sql1 = 'DELETE FROM glossarytermlink WHERE gltlinkid = '.$gltLinkId;
-			//echo $sql1.'<br/>';
-			if(!$this->conn->query($sql1)){
-				$this->errorStr = 'ERROR removing term relationship: '.$this->conn->error;
-				$status = false;
+			$sql = 'DELETE FROM glossarytermlink WHERE gltlinkid = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $gltLinkId);
+				if($stmt->execute()){
+					if($stmt->affected_rows && !$stmt->error){
+						$status = true;
+					}
+					else $this->errorMessage = 'ERROR deleting glossarytermlink (2): '.$stmt->error;
+				}
+				else $this->errorMessage = 'ERROR deleting glossarytermlink (1): '.$stmt->error;
+				$stmt->close();
 			}
-			if($status && $relGlossId && is_numeric($relGlossId)){
+			if($status && is_numeric($relGlossId)){
 				//Add "self" link to unlinked term
 				//$sql2 = 'INSERT IGNORE INTO glossarytermlink(glossid,glossgrpid,relationshiptype) VALLUES('.$relGlossId.','.$relGlossId.',"self")';
 				//$this->conn->query($sql2);
 				//Link term to same taxonomic groups as subject
 				$tidArr = $this->getTaxaArr();
 				foreach($tidArr as $taxId => $sciname){
-					$sql3 = 'INSERT INTO glossarytaxalink(glossid,tid) VALUES('.$relGlossId.','.$taxId.') ';
-					//echo $sql3.'<br/>';
-					$this->conn->query($sql3);
+					$this->insertGlossaryTaxaLink($relGlossId, $taxId);
 				}
 			}
 			return $status;
@@ -513,12 +514,29 @@ class GlossaryManager extends Manager {
 		return false;
 	}
 
+	private function insertGlossaryTaxaLink($glossID, $tid){
+		$status = false;
+		$sql = 'INSERT INTO glossarytaxalink(glossid,tid) VALUES(?, ?) ';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('ii', $glossID, $tid);
+			if($stmt->execute()){
+				if($stmt->affected_rows && !$stmt->error){
+					$status = true;
+				}
+				else $this->errorMessage = 'ERROR inserting glossarytaxalink (2): '.$stmt->error;
+			}
+			else $this->errorMessage = 'ERROR inserting glossarytaxalink (1): '.$stmt->error;
+			$stmt->close();
+		}
+		return $status;
+	}
+
 	public function deleteTerm($pArr){
 		$status = true;
 		$sql = 'DELETE FROM glossary WHERE (glossid = '.$this->glossId.')';
 		//echo $sql;
 		if(!$this->conn->query($sql)){
-			$this->errorStr = 'ERROR deleting term: '.$this->conn->error;
+			$this->errorMessage = 'ERROR deleting term: '.$this->conn->error;
 			$status = false;
 		}
 		return $status;
@@ -566,7 +584,7 @@ class GlossaryManager extends Manager {
 				($translator?'"'.$translator.'"':'NULL').','.($sources?'"'.$sources.'"':'NULL').')';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$this->errorStr = 'ERROR adding source: '.$this->conn->error;
+				$this->errorMessage = 'ERROR adding source: '.$this->conn->error;
 				$status = false;
 			}
 		}
@@ -586,7 +604,7 @@ class GlossaryManager extends Manager {
 				'WHERE (tid = '.$pArr['tid'].')';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$this->errorStr = 'ERROR editing source: '.$this->conn->error;
+				$this->errorMessage = 'ERROR editing source: '.$this->conn->error;
 				$status = false;
 			}
 		}
@@ -599,7 +617,7 @@ class GlossaryManager extends Manager {
 			$sql = 'DELETE FROM glossarysources WHERE (tid = '.$tid.')';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$this->errorStr = 'ERROR deleting source: '.$this->conn->error;
+				$this->errorMessage = 'ERROR deleting source: '.$this->conn->error;
 				$status = false;
 			}
 		}
@@ -1446,6 +1464,25 @@ class GlossaryManager extends Manager {
 		//echo 'translation group id: '.implode(',',$this->translationGroup).'<br/>';
 	}
 
+	public function getGlossId(){
+		return $this->glossId;
+	}
+
+	public function getGlossIdByTerm($term){
+		$glossId = 0;
+		if($term){
+			$termSearch = str_replace(array(' ','-'), array('% %','%-%'), $this->cleanInStr($term));
+			$sql = 'SELECT glossID, term FROM glossary WHERE (term LIKE "%'.$termSearch.'%")';
+			if($rs = $this->conn->query($sql)){
+				while($r = $rs->fetch_object()){
+					if(strtolower(strip_tags($r->term)) == strtolower($term)) $glossId = $r->glossID;
+				}
+				$rs->free();
+			}
+		}
+		return $glossId;
+	}
+
 	private function getTranslationGroup($id){
 		$retArr = array($id);
 		if($id){
@@ -1478,10 +1515,6 @@ class GlossaryManager extends Manager {
 		return $retArr;
 	}
 
-	public function getGlossId(){
-		return $this->glossId;
-	}
-
 	public function getTermLanguage(){
 		return $this->lang;
 	}
@@ -1494,10 +1527,6 @@ class GlossaryManager extends Manager {
 
 	public function getGlossGroupId(){
 		return $this->glossGroupId;
-	}
-
-	public function getErrorStr(){
-		return $this->errorStr;
 	}
 }
 ?>

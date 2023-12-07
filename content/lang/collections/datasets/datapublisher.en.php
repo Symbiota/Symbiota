@@ -82,6 +82,7 @@ $LANG['IDIGBIO_DATASET'] = 'iDigBio Dataset page';
 $LANG['PUBLISH_REFRESH'] = 'Publish/Refresh DwC-A Data';
 $LANG['INCLUDE_DETS'] = 'Include Determination History';
 $LANG['INCLUDE_IMGS'] = 'Include Image URLs';
+$LANG['INCLUDE_ATTRIBUTES'] = 'Include Occurrence Trait Attributes';
 $LANG['INCLUDE_MATSAMPLE'] = 'Include Material Sample';
 $LANG['REDACT_LOC'] = 'Redact Sensitive Localities';
 $LANG['CREATE_REFRESH'] = 'Create/Refresh Darwin Core Archive';

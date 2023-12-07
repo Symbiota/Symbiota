@@ -183,7 +183,7 @@ class ProfileManager extends Manager{
 			if($stmt = $this->conn->prepare($sql)) {
 				$stmt->bind_param('ssssssssssi', $firstName, $lastName, $email, $title, $institution, $city, $state, $zip, $country, $guid, $this->uid);
 				$stmt->execute();
-				if($stmt->affected_rows && !$stmt->error) $status = true;
+				if(!$stmt->error) $status = true;
 				else $this->errorMessage = 'ERROR updating user profile: '.$stmt->error;
 				$stmt->close();
 			}
@@ -283,7 +283,7 @@ class ProfileManager extends Manager{
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('si', $newPassword, $uid);
 			$stmt->execute();
-			if($stmt->affected_rows && !$stmt->error) $status = true;
+			if(!$stmt->error) $status = true;
 			else $this->errorMessage = $stmt->error;
 			$stmt->close();
 		}
@@ -426,7 +426,7 @@ class ProfileManager extends Manager{
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param('sis', $newLogin, $this->uid, $this->userName);
 				$stmt->execute();
-				if($stmt->affected_rows && !$stmt->error){
+				if(!$stmt->error){
 					if($isSelf){
 						$this->userName = $newLogin;
 						$this->authenticate();
@@ -673,7 +673,7 @@ class ProfileManager extends Manager{
 			echo '<ul style="margin:10px;">';
 			$sql = 'SELECT DISTINCT o.occid, o.catalognumber, o.stateprovince, '.
 				'CONCAT_WS("-",IFNULL(o.institutioncode,c.institutioncode),IFNULL(o.collectioncode,c.collectioncode)) AS collcode '.
-				'FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid ';
+				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
 			if($withImgOnly) $sql .= 'INNER JOIN images i ON o.occid = i.occid ';
 			$sql .= 'WHERE (o.sciname IS NULL) '.
 				'ORDER BY c.institutioncode, o.catalognumber LIMIT 2000';
