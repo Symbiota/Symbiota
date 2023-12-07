@@ -18,7 +18,7 @@ $clManager->setPid($pid);
 ?>
 <html>
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?><?php echo $LANG['IDKEY'];?></title>
+	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['IDKEY'];?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
