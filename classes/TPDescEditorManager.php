@@ -130,7 +130,7 @@ class TPDescEditorManager extends TPEditorManager{
 					elseif($stmt->error) $this->errorMessage = $stmt->error;
 					$stmt->close();
 				}
-				echo $this->conn->error;
+				$this->errorMessage = $this->conn->error;
 			}
 		}
 		return $status;
@@ -194,14 +194,16 @@ class TPDescEditorManager extends TPEditorManager{
 				$sql = 'UPDATE taxadescrblock SET ' . trim($sqlFrag, ', ') . ' WHERE (tdbid = ?)';
 				if($stmt = $this->conn->prepare($sql)){
 					if($stmt->bind_param($paramType, ...$paramArr)){
-						$stmt->execute();
-						if($stmt->affected_rows) $status = true;
-						elseif($stmt->error) $this->errorMessage = $stmt->error;
-						$stmt->close();
+						if($stmt->execute()){
+							if($stmt->affected_rows) $status = true;
+							elseif($stmt->error) $this->errorMessage = $stmt->error;
+							$stmt->close();
+						}
+						else  $this->errorMessage = $stmt->error;
 					}
-					else echo 'error binding: '.$stmt->error.'<br>';
+					else  $this->errorMessage = $stmt->error;
 				}
-				else echo 'error preparing statement: '.$this->conn->error.'<br>';
+				else  $this->errorMessage = $this->conn->error;
 			}
 			// Temp code until total refactor: transfer selected fields to decription profile
 			if(isset($postArr['source'])){
@@ -213,7 +215,9 @@ class TPDescEditorManager extends TPEditorManager{
 			if(isset($postArr['sourceurl'])){
 				$postArr['urlTemplate'] = $postArr['sourceurl'];
 			}
-			if($this->updateDescriptionProfile($postArr)) $status = true;
+			if($status){
+				if($this->updateDescriptionProfile($postArr)) $status = true;
+			}
 		}
 		return $status;
 	}
