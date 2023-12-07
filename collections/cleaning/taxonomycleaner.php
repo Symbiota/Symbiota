@@ -262,7 +262,8 @@ elseif($activeCollArr){
 												<?php
 												$taxResourceList = $cleanManager->getTaxonomicResourceList();
 												foreach($taxResourceList as $taKey => $taValue){
-													echo '<input name="taxresource[' . $taKey . ']" id="taxresource[' . $taKey . ']" type="checkbox" value="'.$taKey.'" '.(in_array($taKey,$taxResource)?'checked':'').' /> '.$taValue.'<br/>';
+													echo '<input name="taxresource[' . $taKey . ']" id="taxresource[' . $taKey . ']" type="checkbox" value="'.$taKey.'" '.(in_array($taKey,$taxResource)?'checked':'').' /> ';
+													echo '<label for="taxresource[' . $taKey . ']">' . $taValue . ' </label><br/>';
 												}
 												?>
 											</fieldset>
