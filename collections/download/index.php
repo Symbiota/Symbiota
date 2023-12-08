@@ -168,7 +168,7 @@ $dwcManager = new DwcArchiverCore();
 					}
 					?>
 					<fieldset class="sectionDiv">
-					<legend> <?php echo (isset($LANG['FILE_FORMAT']) ? $LANG['FILE_FORMAT'] : 'File Format'); ?>:</legend>
+						<legend> <?php echo (isset($LANG['FILE_FORMAT']) ? $LANG['FILE_FORMAT'] : 'File Format'); ?>:</legend>
 						<div class="formElemDiv">
 							<input type="radio" name="format" id="csv-format" value="csv" CHECKED /><label for="csv-format">  <?php echo (isset($LANG['COMMA_DELIM']) ? $LANG['COMMA_DELIM'] : 'Comma Delimited (CSV)'); ?> </label><br/>
 							<input type="radio" name="format" id="tab-delimited-format" value="tab" /><label for="tab-delimited-format">  <?php echo (isset($LANG['TAB_DELIM']) ? $LANG['TAB_DELIM'] : 'Tab Delimited'); ?> </label><br/>
@@ -187,14 +187,14 @@ $dwcManager = new DwcArchiverCore();
 							<input type="radio" name="cset" id="utf-8" value="utf-8" <?php echo ($cSet=='utf-8' ? 'checked' : ''); ?> />
 							<label for="utf-8"> <?php echo (isset($LANG['UTF_8']) ? $LANG['UTF_8'] : 'UTF-8 (unicode)'); ?> </label>
 						</div>
-				</fieldset>
-				<fieldset class="sectionDiv">
-					<legend>  <?php echo (isset($LANG['HCOMPRESSIONOME']) ? $LANG['COMPRESSION'] : 'Compression'); ?>: </legend>
-					<div class="formElemDiv">
-						<input type="checkbox" name="zip" id="zip" value="1" onchange="zipSelected(this)" checked />
-						<label for="zip"> <?php echo (isset($LANG['COMPRESSED_ZIP']) ? $LANG['COMPRESSED_ZIP'] : 'Compressed ZIP file'); ?> </label><br/>
-					</div>
-				</fieldset>
+					</fieldset>
+					<fieldset class="sectionDiv">
+						<legend>  <?php echo (isset($LANG['HCOMPRESSIONOME']) ? $LANG['COMPRESSION'] : 'Compression'); ?>: </legend>
+						<div class="formElemDiv">
+							<input type="checkbox" name="zip" id="zip" value="1" onchange="zipSelected(this)" checked />
+							<label for="zip"> <?php echo (isset($LANG['COMPRESSED_ZIP']) ? $LANG['COMPRESSED_ZIP'] : 'Compressed ZIP file'); ?> </label><br/>
+						</div>
+					</fieldset>
 					<div class="sectionDiv">
 						<?php
 						if($downloadType == 'checklist') echo '<input name="schema" type="hidden" value="checklist" />';
@@ -210,7 +210,7 @@ $dwcManager = new DwcArchiverCore();
 					<div class="sectionDiv">
 						*  <?php echo (isset($LANG['LIMIT_NOTE']) ? $LANG['LIMIT_NOTE'] : 'There is a 1,000,000 record limit to occurrence downloads'); ?>
 					</div>
-				</div>
+				</fieldset>
 			</form>
 		</div>
 	</div>
