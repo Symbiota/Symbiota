@@ -118,9 +118,9 @@ if($glossId){
 										if($i) echo ', ';
 										echo '<a href="individual.php?glossid='.$synGlossId.'">'.$synArr['term'].'</a>';
 										$i++;
-								  }
-  								echo '</div>';
-                }
+									}
+									echo '</div>';
+								}
 								$translationArr = $glosManager->getTranslations();
 								if($translationArr){
 									echo '<div style="margin-top:8px;" ><b>'.(isset($LANG['TRANSS'])?$LANG['TRANSS']:'Translations').':</b> ';

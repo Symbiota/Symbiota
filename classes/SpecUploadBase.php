@@ -1824,9 +1824,20 @@ class SpecUploadBase extends SpecUpload{
 			if($this->sourceDatabaseType == 'specify' && (!isset($recMap['occurrenceid']) || !$recMap['occurrenceid'])){
 				if(strlen($recMap['dbpk']) == 36) $recMap['occurrenceid'] = $recMap['dbpk'];
 			}
+			try {
+				$this->buildPaleoJSON($recMap);
+			} catch (Exception $e){
+				$this->outputMsg('<li>Error JSON encoding paleo data for record #'.$this->transferCount.'</li>');
+				$this->outputMsg('<li style="margin-left:10px;">Error: '.$e->getMessage().'</li>');
+			}
+			try {
+				$this->buildMaterialSampleJSON($recMap);
+			} catch (Exception $e){
+				$this->outputMsg('<li>Error JSON encoding material sample data for record #'.$this->transferCount.'</li>');
+				$this->outputMsg('<li style="margin-left:10px;">Error: '.$e->getMessage().'</li>');
+			}
+			
 
-			$this->buildPaleoJSON($recMap);
-			$this->buildMaterialSampleJSON($recMap);
 			$sqlFragments = $this->getSqlFragments($recMap,$this->occurFieldMap);
 			if($sqlFragments){
 				$sql = 'INSERT INTO uploadspectemp(collid'.$sqlFragments['fieldstr'].') VALUES('.$this->collId.$sqlFragments['valuestr'].')';
@@ -1860,7 +1871,12 @@ class SpecUploadBase extends SpecUpload{
 					unset($recMap[$k]);
 				}
 			}
-			if($paleoArr) $recMap['paleoJSON'] = json_encode($paleoArr);
+			if($paleoArr){
+				$recMap['paleoJSON'] = json_encode($paleoArr);
+				if(json_last_error() !== JSON_ERROR_NONE){
+					throw new Exception("JSON encoding error: ".json_last_error_msg());
+				}
+			}
 		}
 	}
 
@@ -1874,7 +1890,12 @@ class SpecUploadBase extends SpecUpload{
 					unset($recMap[$fieldName]);
 				}
 			}
-			if($msArr) $recMap['materialSampleJSON'] = json_encode($msArr);
+			if($msArr){
+				$recMap['materialSampleJSON'] = json_encode($msArr);
+				if(json_last_error() !== JSON_ERROR_NONE){
+					throw new Exception("JSON encoding error: ".json_last_error_msg());
+				}
+			}
 		}
 	}
 

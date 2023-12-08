@@ -258,7 +258,7 @@ if($isEditor){
 							<div class="editfield">
 								<?php
 								$source = $taxonEditorObj->getSource();
-								if(!stripos($source, '<a ')){
+								if(stripos($source, '<a ') === false){
 									$source = htmlspecialchars($source);
 								}
 								echo $source;

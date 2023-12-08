@@ -94,6 +94,7 @@ class SpecUploadDwca extends SpecUploadBase{
 		if(file_exists($this->uploadTargetPath.$localFolder)){
 			//Reset upload directory
 			$this->deleteTempFiles($localFolder, false);
+			$this->uploadTargetPath .= $localFolder;
 		}
 		else{
 			if(mkdir($this->uploadTargetPath.$localFolder)) $this->uploadTargetPath .= $localFolder;
@@ -775,9 +776,11 @@ class SpecUploadDwca extends SpecUploadBase{
 			closedir($handle);
 		}
 		//Delete directory
-		if(stripos($dirPath, $this->uploadTargetPath) === 0){
+		/*
+		if(stripos($dirPath, $this->uploadTargetPath) === 0 && !preg_match('#/temp/data/$#', $dirPath)){
 			rmdir($dirPath);
 		}
+		*/
 	}
 
 	private function uploadExtension($targetStr, $fieldMap, $sourceArr){

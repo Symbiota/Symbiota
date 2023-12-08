@@ -2,6 +2,8 @@
 /*
 ------------------
 Language: Español (Spanish)
+Translated by: Samanta Orellana
+Date Translated: 2021-08-05
 ------------------
 */
 

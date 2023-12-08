@@ -23,12 +23,7 @@ $LANG['ACTION_PANEL'] = 'Action Panel';
 $LANG['STARTING_PROCESS'] = 'Starting to process input file';
 $LANG['DONE_PROCESSING'] = 'Done process input file';
 $LANG['FIELD_MAPPING'] = 'Field Mapping';
-$LANG['ASSOCIATION_TYPE'] = 'Association Type';
-$LANG['RESOURCE_LINK'] = 'Non-occurrence Resource Link';
-$LANG['INTERNAL_OCCURRENCE'] = 'Occurrence - Internal (this portal)';
-$LANG['EXTERNAL_OCCURRENCE'] = 'Occurrence - External Link';
-$LANG['OBSERVATION'] = 'Taxon Observation';
-$LANG['RELATIONSHIP'] = 'Relationship';
+
 $LANG['NEW_BLANK_RECORD'] = 'Link image to new blank record if catalog number does not exist';
 $LANG['MATCHING_IDENTIFIERS'] = 'Update records with matching &quot;identifiers&quot';
 $LANG['IMPORT_DATA'] = 'Import Data';
@@ -47,4 +42,6 @@ $LANG['ASSOC_UPDATED'] = 'Association updated';
 $LANG['ASSOC_ADDED'] = 'Association added';
 $LANG['MAT_SAMPLE_ADDED'] = 'Material Sample added';
 $LANG['DETERMINATION_ADDED'] = 'Determination added';
+
+inlcude_once('../associations.en.php');
 ?>
