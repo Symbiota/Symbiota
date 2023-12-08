@@ -165,7 +165,7 @@ foreach ($coordArr as $collName => $coll) {
 			resize: horizontal;
 			border-left: 2px, solid, black;
 			height: 100%;
-			width: 380;
+			width: 390px;
 			position: fixed;
 			z-index: 20;
 			top: 0;
@@ -309,7 +309,15 @@ foreach ($coordArr as $collName => $coll) {
 			setTimeout(function () { newWindow.focus(); }, 0.5);
 		}
 
-		function buildPanels() {
+		function buildPanels(cross_portal_enabled) {
+         const cross_portal_results = document.getElementById("cross_portal_results");
+         if(cross_portal_results) {
+            if(cross_portal_enabled) {
+               cross_portal_results.style.display = "block";
+            } else {
+               cross_portal_results.style.display = "none";
+            }
+         }
 			setPanels(true);
 			$("#accordion").accordion("option",{active: 1});
 			buildTaxaLegend();
@@ -753,7 +761,6 @@ value="${color}"
 				e.preventDefault();
 				let formData = new FormData(e.target);
 
-
 				mapGroups.forEach(group => {
 					group.taxonMapGroup.resetGroup();
 					group.collectionMapGroup.resetGroup();
@@ -773,6 +780,10 @@ value="${color}"
             if(formData.get('cross_portal_switch')) {
                formData.set("taxa", formData.get('external-taxa-input')) 
                searches.push(searchCollections(formData, formData.get('cross_portal')))
+
+               getOccurenceRecords(formData).then(res => {
+                  if (res) loadOccurenceRecords(res, "external_occurrencelist");
+               });
             }
 
 				//This is for handeling multiple portals
@@ -786,9 +797,9 @@ value="${color}"
 						recordArr = recordArr.concat(search.recordArr)
 						mapGroups.push(genMapGroups(search.recordArr, search.taxaArr, search.collArr))
 					}
-				}
+            }
 
-				buildPanels();
+				buildPanels(formData.get('cross_portal_switch'));
 
 				genClusters(taxaLegendMap, "taxa");
 				genClusters(collLegendMap, "coll");
@@ -901,7 +912,7 @@ value="${color}"
 
 				getOccurenceRecords(formData).then(res => {
 					if(res) loadOccurenceRecords(res);
-					buildPanels();
+					buildPanels(formData.get('cross_portal_switch'));
 
 					genClusters(taxaLegendMap, "taxa");
 					genClusters(collLegendMap, "coll");
@@ -1198,7 +1209,7 @@ value="${color}"
 					mapGroups.push(genGroups(search.recordArr, search.taxaArr, search.collArr));
 				}
 
-				buildPanels();
+				buildPanels(formData.get('cross_portal_switch'));
 
 				//Must have build panels called b4 
 				genClusters(taxaLegendMap, "taxa");
@@ -1347,7 +1358,7 @@ value="${color}"
 
 				getOccurenceRecords(formData).then(res => {
 					if(res) loadOccurenceRecords(res);
-					buildPanels();
+					buildPanels(formData.get('cross_portal_switch'));
 
 					genClusters(taxaLegendMap, "taxa");
 					genClusters(collLegendMap, "coll");
@@ -1398,8 +1409,8 @@ value="${color}"
 			return response? await response.text(): '';
 		}
 
-		function loadOccurenceRecords(html) {
-			document.getElementById("occurrencelist").innerHTML = html;
+		function loadOccurenceRecords(html, id="occurrencelist") {
+			document.getElementById(id).innerHTML = html;
 
 			$('.pagination a').click(async function(e){
 				e.preventDefault();
@@ -1569,7 +1580,7 @@ value="${color}"
 		<div>
 			<button onclick="document.getElementById('defaultpanel').style.width='380px';  " style="position:absolute;top:0;left:0;margin:0px;z-index:10;font-size: 14px;">&#9776; <b>Open Search Panel</b></button>
 		</div>
-		<div id="defaultpanel" class="sidepanel" style="width:380px">
+		<div id="defaultpanel" class="sidepanel" style="width:390px">
 			<div class="panel-content">
 				<span style="position:absolute; top:0.7rem; right:0.7rem; z-index:1">
 					<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php">
@@ -1829,10 +1840,14 @@ Record Limit:
 						<div id="tabs2" style="display:none;padding:0px;">
 							<ul>
 								<li><a href='#occurrencelist'><span><?php echo htmlspecialchars((isset($LANG['RECORDS'])?$LANG['RECORDS']:'Records'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
+								<li id="cross_portal_results"><a href='#external_occurrencelist'><span><?php echo htmlspecialchars((isset($LANG['EXTERNAL_RECORDS'])?$LANG['EXTERNAL_RECORDS']:'External Records'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
 							<li><a href='#symbology'><span><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
 								<li><a href='#maptaxalist'><span><?php echo htmlspecialchars((isset($LANG['TAXA_LIST'])?$LANG['TAXA_LIST']:'Taxa List'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
 							</ul>
 							<div id="occurrencelist" style="">
+								loading...
+							</div>
+							<div id="external_occurrencelist" style="">
 								loading...
 							</div>
 							<div id="symbology" style="">

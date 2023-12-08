@@ -45,7 +45,8 @@ array_push($portals, ["urlRoot" => 'http://localhost/Portal', "portalName"=>"loc
          onchange="onEnablePortalSelector(this.checked)"
          data_role="none" 
          type="checkbox" 
-         name="cross_portal_switch"/>
+         name="cross_portal_switch"
+      />
       <label for="cross_portal_switch">
          <?php echo (isset($LANG['ENABLE_CROSS_PORTAL_SEARCH'])? $LANG['ENABLE_CROSS_PORTAL_SEARCH']: 'Enable Cross Portal Search')?>
       </label>
