@@ -326,6 +326,8 @@ class ChecklistManager extends Manager{
 				$rs->free();
 			}
 			if($this->showSubgenera) $this->setSubgenera();
+			$sciname = array_column($this->taxaList, 'sciname');
+			array_multisort($sciname, $this->taxaList);
 		}
 		return $this->taxaList;
 	}
@@ -423,7 +425,7 @@ class ChecklistManager extends Manager{
 	}
 
 	private function setSubgenera(){
-		$sql = 'SELECT l.tid, t.sciname, p.sciname as parent
+		$sql = 'SELECT DISTINT l.tid, t.sciname, p.sciname as parent
 			FROM fmchklsttaxalink l INNER JOIN taxaenumtree e ON l.tid = e.tid
 			INNER JOIN taxa t ON l.tid = t.tid
 			INNER JOIN taxa p ON e.parenttid = p.tid
