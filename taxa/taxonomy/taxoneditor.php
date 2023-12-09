@@ -341,7 +341,7 @@ if($isEditor){
 								?>
 							</span>
 						</div>
-						<div style="clear:both;margin:10px;overflow:auto">
+						<div style="clear:both;margin:10px;">
 							<div style="float:right;">
 								<a href="#" onclick="toggle('tsedit');return false;"><img style='border:0px;' src='../../images/edit.png'/></a>
 							</div>

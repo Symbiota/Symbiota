@@ -1073,7 +1073,7 @@ class TaxonomyUpload{
 			$sql = 'UPDATE IGNORE taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid
 				INNER JOIN taxa k ON e.parenttid = k.tid
 				SET t.kingdomname = k.sciname
-				WHERE t.kingdomname IS NULL AND k.rankid = 10;';
+				WHERE t.kingdomname = "" AND k.rankid = 10;';
 			if(!$this->conn->query($sql)){
 				$this->outputMsg('ERROR updating kingdomName within taxa table: '.$this->conn->error,1);
 			}
