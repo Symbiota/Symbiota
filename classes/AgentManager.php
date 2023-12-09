@@ -648,9 +648,9 @@ class AgentManager{
     public function saveAgent($toSave) {
        global $CLIENT_ROOT;
        $result = "";
-       if ($toSave->save()) { 
-          $result .= "Saved. <a href='$CLIENT_ROOT/agents/agent.php?agentid=" . htmlspecialchars($toSave->getagentid(), HTML_SPECIAL_CHARS_FLAGS) . "'>View [" . htmlspecialchars($toSave->getagentid(), HTML_SPECIAL_CHARS_FLAGS) ."]</a>";
-       } else { 
+       if ($toSave->save()) {
+          $result .= "Saved. <a href='$CLIENT_ROOT/agents/agent.php?agentid=".$toSave->getagentid()."'>View [". $toSave->getagentid() ."]</a>";
+       } else {
           $result .=  "Error in saving agent record [".$toSave->getagentid()."]: " . $toSave->errorMessage();
        }
        return $result;
@@ -774,9 +774,9 @@ class AgentManager{
                  break;
                 default :
                   throw new Exception("Error: Unable to create name for agent without a recognized type.");
-              } 
-              $result .= "Saved. <a href='$CLIENT_ROOT/agents/agent.php?agentid=" . htmlspecialchars($toSave->getagentid(), HTML_SPECIAL_CHARS_FLAGS) . "'>View [". htmlspecialchars($toSave->getagentid(), HTML_SPECIAL_CHARS_FLAGS) ."]</a>";
-       } else { 
+              }
+              $result .= "Saved. <a href='$CLIENT_ROOT/agents/agent.php?agentid=".$toSave->getagentid()."'>View [". $toSave->getagentid() ."]</a>";
+       } else {
             $result .=  "Error in saving agent record [".$toSave->getagentid()."]: " . $toSave->errorMessage();
        }
        return $result;

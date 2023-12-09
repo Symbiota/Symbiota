@@ -136,7 +136,8 @@ class OmCollections extends Manager{
 		}
 		if(isset($postArr['ccpk']) && is_numeric($postArr['ccpk'])) $retArr['ccpk'] = $postArr['ccpk'];
 		$retArr['securityKey'] = (isset($postArr['securityKey'])?$postArr['securityKey']:NULL);
-		$retArr['recordID'] = (isset($postArr['recordID'])?$postArr['recordID']:NULL);
+		$retArr['collectionGuid'] = (isset($postArr['collectionGuid'])?$postArr['collectionGuid']:NULL);
+		if(!$postArr['recordID'] && isset($postArr['recordID'])) $retArr['collectionGuid'] = $postArr['recordID'];
 		return $retArr;
 	}
 
