@@ -113,9 +113,11 @@ function parseName(f){
 		activeIndex = activeIndex + 1;
 	}
 	if(sciNameArr.length > activeIndex){
-		if(sciNameArr[activeIndex].substring(sciNameArr[activeIndex].length-1) == "."){
-			f.unitind3.value = sciNameArr[activeIndex];
-			if(f.unitind3.value == 'ssp.') f.unitind3.value = 'subsp.';
+		let subjectUnit = sciNameArr[activeIndex];
+		if(subjectUnit == 'ssp.') subjectUnit = 'subsp.';
+		if(subjectUnit == 'fo.') subjectUnit = 'f.';
+		if(subjectUnit == "subsp." || subjectUnit == "var." || subjectUnit == "f."){
+			f.unitind3.value = subjectUnit;
 			f.unitname3.value = sciNameArr[activeIndex + 1];
 			activeIndex = activeIndex + 2;
 		}
@@ -123,13 +125,13 @@ function parseName(f){
 			f.unitind3.value = sciNameArr[activeIndex];
 			activeIndex = activeIndex + 1;
 			while(sciNameArr.length > activeIndex){
-				f.unitname3.value = f.unitname3.value + " " + sciNameArr[activeIndex];
+				f.unitname3.value = (f.unitname3.value + " " + sciNameArr[activeIndex]).trim();
 				activeIndex = activeIndex + 1;
 			}			
 		}
 		else{
 			let firstChar = sciNameArr[activeIndex].substring(0, 1);
-			if(firstChar == firstChar.toLowerCase()){
+			if(firstChar != firstChar.toUpperCase()){
 				f.unitname3.value = sciNameArr[activeIndex];
 				activeIndex = activeIndex + 1;
 			}
