@@ -283,7 +283,7 @@ class TaxonomyCleaner extends Manager{
 		$sql = 'UPDATE taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
 			'INNER JOIN taxa t2 ON e.parenttid = t2.tid '.
 			'SET t.kingdomname = t2.sciname '.
-			'WHERE (e.taxauthid = '.$this->taxAuthId.') AND (t2.rankid = 10) AND (t.kingdomName IS NULL)';
+			'WHERE (e.taxauthid = '.$this->taxAuthId.') AND (t2.rankid = 10) AND (t.kingdomName = "")';
 		if($this->conn->query($sql)){
 			$this->logOrEcho('Populating null kingdom name tags... '.$this->conn->affected_rows.' taxon records updated', 1);
 		}
@@ -721,7 +721,7 @@ class TaxonomyCleaner extends Manager{
 					}
 				}
 			}
-			if($this->targetKingdomName) $sql .= 'AND (kingdomname IS NULL OR kingdomname = "'.targetKingdomName.'") ';
+			if($this->targetKingdomName) $sql .= 'AND (kingdomname = "" OR kingdomname = "'.targetKingdomName.'") ';
 			$sql .= 'LIMIT 30';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
