@@ -260,6 +260,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 											<input name="customtype2" type="radio" value="NULL" checked /> <?php echo $LANG['ARE_EMPTY']; ?><br/>
 											<input name="customtype2" type="radio" value="NOTNULL" /> <?php echo $LANG['HAVE_VALUES']; ?>
 											<input name="customfield2" type="hidden" value="decimallatitude" />
+											<input name="customvalue2" type="hidden" value="" />
 										</div>
 									</td>
 								</tr>
@@ -296,6 +297,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 										<div style="margin:10px;">
 											<input name="customfield3" type="hidden" value="locality" />
 											<input name="customtype3" type="hidden" value="NOTNULL" />
+											<input name="customvalue3" type="hidden" value="" />
 											<input name="format" type="hidden" value="csv" />
 											<input name="cset" type="hidden" value="utf-8" />
 											<input name="zip" type="hidden" value="1" />
