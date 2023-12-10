@@ -351,7 +351,7 @@ class TaxonomyHarvester extends Manager{
 		elseif(isset($nodeArr['name']['uninomial'])) $taxonArr['unitname1'] = $nodeArr['name']['uninomial'];
 		elseif(!strpos($taxonArr['sciname'], ' ')) $taxonArr['unitname1'] = $taxonArr['sciname'];
 		if(isset($nodeArr['name']['specificEpithet'])) $taxonArr['unitname2'] = $nodeArr['name']['specificEpithet'];
-		if(isset($nodeArr['name']['infraSpecificEpithet'])) $taxonArr['unitname3'] = $nodeArr['name']['infraSpecificEpithet'];
+		if(isset($nodeArr['name']['infraspecificEpithet'])) $taxonArr['unitname3'] = $nodeArr['name']['infraspecificEpithet'];
 		if(isset($nodeArr['name']['authorship'])) $taxonArr['author'] = $nodeArr['name']['authorship'];
 		if(isset($nodeArr['link'])) $taxonArr['sourceURL'] = $nodeArr['link'];
 		$rankID = $this->getRankIdByTaxonArr($taxonArr);
