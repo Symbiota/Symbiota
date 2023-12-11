@@ -560,6 +560,7 @@ value="${color}"
 							this.layer_groups[id].addTo(map.mapLayer);
 						} else if(!map.mapLayer.hasLayer(this.group_map[id].cluster)) {
 							this.group_map[id].cluster.addTo(map.mapLayer)
+							this.group_map[id].cluster.addLayer(this.layer_groups[id])
 						}
 					}
 				}
@@ -747,6 +748,7 @@ value="${color}"
 
 
 			document.getElementById("mapsearchform").addEventListener('submit', async e => {
+				if(!verifyCollForm(e.target)) return;
 				showWorking();
 				e.preventDefault();
 				let formData = new FormData(e.target);
@@ -830,9 +832,9 @@ value="${color}"
 				const {type, colorMap} = e.detail;
 
 				mapGroups.map(group => {
-					if(cluster_type === "coll" && type === "taxa") {
+					if(cluster_type === "coll") {
 						group.collectionMapGroup.removeGroup();
-					} else if(cluster_type === "taxa" && type === "coll") {
+					} else if(cluster_type === "taxa") {
 						group.taxonMapGroup.removeGroup();
 					}
 				})
@@ -1156,6 +1158,8 @@ value="${color}"
 			}
 
 			document.getElementById("mapsearchform").addEventListener('submit', async e => {
+				if(!verifyCollForm(e.target)) return;
+
 				showWorking();
 				e.preventDefault();
 				let formData = new FormData(e.target);
@@ -1366,7 +1370,7 @@ value="${color}"
 
 		async function searchCollections(body, host) {
 			try {
-				const url = host? `${host}/collections/map/rpc/searchcollections.php`: 'rpc/searchcollections.php'
+				const url = host? `${host}/collections/map/rpc/searchCollections.php`: 'rpc/searchCollections.php'
 
 				let response = await fetch(url, {
 					method: "POST",
@@ -1542,11 +1546,11 @@ value="${color}"
 				alert("Failed to initialize map coordinate data")
 			}
 
-			<?php if(empty($GOOGLE_MAP_KEY)) { ?> 
+			<?php if(empty($GOOGLE_MAP_KEY)): ?> 
 				leafletInit();
-			<?php } else { ?> 
-			googleInit();
-		<?php } ?>
+			<?php else: ?> 
+				googleInit();
+			<?php endif?>
 	  }
 		</script>
 		<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
@@ -1577,7 +1581,7 @@ value="${color}"
 					<div id="accordion">
 						<h3 style="padding-left:30px;"><?php echo (isset($LANG['SEARCH_CRITERIA'])?$LANG['SEARCH_CRITERIA']:'Search Criteria and Options'); ?></h3>
 						<div id="tabs1" style="width:379px;padding:0px;height:100%">
-							<form name="mapsearchform" id="mapsearchform" data-ajax="false" action="search.php" method="post" onsubmit="return verifyCollForm(this);">
+							<form name="mapsearchform" id="mapsearchform" data-ajax="false">
 								<ul>
 									<li><a href="#searchcollections"><span><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
 									<li><a href="#searchcriteria"><span><?php echo htmlspecialchars((isset($LANG['CRITERIA'])?$LANG['CRITERIA']:'Criteria'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>

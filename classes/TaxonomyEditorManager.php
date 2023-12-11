@@ -641,7 +641,7 @@ class TaxonomyEditorManager extends Manager{
 			$sql4 = 'UPDATE IGNORE taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid
 				INNER JOIN taxa p ON e.parenttid = p.tid
 				SET t.kingdomname = p.sciname
-				WHERE p.rankid = 10 AND (t.kingdomname IS NULL or t.kingdomname = "")';
+				WHERE p.rankid = 10 AND t.kingdomname = ""';
 			$this->conn->query($sql4);
 		}
 		else{

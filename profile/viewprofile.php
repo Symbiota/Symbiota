@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
@@ -54,7 +56,7 @@ if($isEditor){
 			$statusStr = '<span style="color:green">'.(isset($LANG['PWORD_SUCCESS'])?$LANG['PWORD_SUCCESS']:'Password update successful').'!</span>';
 		}
 		else{
-			$statusStr = '<span style="color:red">'.(isset($LANG['PWORD_FAILED'])?$LANG['PWORD_FAILED']:'Password update failed! Are you sure you typed the old password correctly?').'</span>';
+			$statusStr = '<span style="color:red">'.$LANG['PWD_UPDATE_FAILED'].'</span>';
 		}
 		$person = $pHandler->getPerson();
 		$tabIndex = 2;
@@ -110,7 +112,7 @@ if($isEditor){
 	if(!$person) $person = $pHandler->getPerson();
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' - '. (isset($LANG['VIEW_PROFILE'])?$LANG['VIEW_PROFILE']:'View User Profile'); ?></title>
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
@@ -124,7 +126,7 @@ if($isEditor){
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
 	<script type="text/javascript" src="../js/symb/profile.viewprofile.js?ver=20170530"></script>
 	<script type="text/javascript" src="../js/symb/shared.js"></script>
-	<style type="text/css">
+	<style>
 		fieldset{ padding:15px;margin:15px; }
 		legend{ font-weight: bold; }
 		.tox-dialog { min-height: 400px }

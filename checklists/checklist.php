@@ -21,6 +21,7 @@ $showImages = array_key_exists('showimages', $_REQUEST) ? filter_var($_REQUEST['
 $limitImagesToVouchers = array_key_exists('voucherimages', $_REQUEST) ? filter_var($_REQUEST['voucherimages'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $showVouchers = array_key_exists('showvouchers', $_REQUEST) ? filter_var($_REQUEST['showvouchers'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $showAlphaTaxa = array_key_exists('showalphataxa', $_REQUEST) ? filter_var($_REQUEST['showalphataxa'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$showSubgenera = array_key_exists('showsubgenera', $_REQUEST) ? filter_var($_REQUEST['showsubgenera'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $searchCommon = array_key_exists('searchcommon', $_REQUEST) ? filter_var($_REQUEST['searchcommon'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $searchSynonyms = array_key_exists('searchsynonyms', $_REQUEST) ? filter_var($_REQUEST['searchsynonyms'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $defaultOverride = array_key_exists('defaultoverride', $_REQUEST) ? filter_var($_REQUEST['defaultoverride'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -69,6 +70,7 @@ if($showImages) $clManager->setShowImages(true);
 if($limitImagesToVouchers) $clManager->setLimitImagesToVouchers(true);
 if($showVouchers) $clManager->setShowVouchers(true);
 if($showAlphaTaxa) $clManager->setShowAlphaTaxa(true);
+if($showSubgenera) $clManager->setShowSubgenera(true);
 $clid = $clManager->getClid();
 $pid = $clManager->getPid();
 
@@ -79,10 +81,12 @@ if(array_key_exists('dllist_x',$_POST)){
 elseif(array_key_exists('printlist_x',$_POST)){
 	$printMode = 1;
 }
-
-$isEditor = false;
+$isEditor = 0;
 if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USER_RIGHTS['ClAdmin']))){
-	$isEditor = true;
+	$isEditor = 1;
+}
+elseif($clArray['access'] == 'private-strict'){
+	$isEditor = false;
 }
 if($isEditor && array_key_exists('formsubmit',$_POST)){
 	if($_POST['formsubmit'] == 'AddSpecies'){
@@ -155,7 +159,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 	<!-- This is inner text! -->
 	<div id='innertext'>
 		<?php
-		if(($clid || $dynClid) && $clArray){
+		if(($clid || $dynClid) && $clArray && is_numeric($isEditor)){
 			if($clid && $isEditor){
 				?>
 				<div class="printoff" style="float:right;width:auto;">
@@ -820,11 +824,14 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 			<?php
 		}
 		else{
-			?>
-			<div style="color:red;">
-				<?php echo $LANG['CHECKNULL']; ?>!
-			</div>
-			<?php
+			echo '<div style="color:red;">';
+			if($clArray['access'] == 'private-strict'){
+				echo $LANG['IS_PRIVATE'];
+			}
+			else{
+				echo $LANG['CHECKNULL'];
+			}
+			echo '</div>';
 		}
 		?>
 	</div>

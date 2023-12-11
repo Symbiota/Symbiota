@@ -57,7 +57,7 @@ $statusStr = '';
 		<div style="margin:20px;">
 			<h2><?php echo $LANG['TOP_SCORES']; ?></h2>
 			<table class="styledtable" style="font-family:Arial;font-size:12px;width:300px;">
-				<tr><th style="min-width: 150px"><b>User</b></th><th style="text-align:center"><b><?php echo $LANG['APPROVED_SCORE']; ?></b></th><th style="text-align:center"><b><?php echo $LANG['PENDING_SCORE']; ?></b></th></tr>
+				<tr><th style="min-width: 150px"><b><?php echo $LANG['USER']; ?></b></th><th style="text-align:center"><b><?php echo $LANG['APPROVED_SCORE']; ?></b></th><th style="text-align:center"><b><?php echo $LANG['PENDING_SCORE']; ?></b></th></tr>
 				<?php
 				$topScoreArr = $csManager->getTopScores($catid);
 				if($topScoreArr){
@@ -84,16 +84,16 @@ $statusStr = '';
 				<legend><b><?php echo $LANG['YOUR_STANDING']; ?></b></legend>
 				<?php
 				if($SYMB_UID){
-					echo '<div style="margin-top:5px">Specimens processed as volunteer: '.number_format($userStats['totalcnt']);
-					if($userStats['nonvolcnt']) echo '<span style="margin-left:25px">(Additional as non-volunteer: '.number_format($userStats['nonvolcnt']).'*)</span>';
+					echo '<div style="margin-top:5px">' . $LANG['SPEC_PROC_AS_VOL'] . ': ' . number_format($userStats['totalcnt']);
+					if($userStats['nonvolcnt']) echo '<span style="margin-left:25px">(Additional as non-volunteer: '.number_format($userStats['nonvolcnt']) . '*)</span>';
 					echo '</div>';
-					echo '<div style="margin-top:5px">Pending points: '.number_format($userStats['ppoints']);
+					echo '<div style="margin-top:5px">' . $LANG['PEND_POINTS'] . ': '. number_format($userStats['ppoints']);
 					if($userStats['ppoints']) echo ' (<a href="review.php?rstatus=5&uid=' . htmlspecialchars($SYMB_UID, HTML_SPECIAL_CHARS_FLAGS) .  '">' . htmlspecialchars($LANG['VIEW_RECORDS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>)';
 					echo '</div>';
-					echo '<div style="margin-top:5px">Approved points: '.number_format($userStats['apoints']);
+					echo '<div style="margin-top:5px">' . $LANG['APP_POINTS'] . ': ' . number_format($userStats['apoints']);
 					if($userStats['apoints']) echo ' (<a href="review.php?rstatus=10&uid=' . htmlspecialchars($SYMB_UID, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($LANG['VIEW_RECORDS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>)';
 					echo '</div>';
-					echo '<div style="margin-top:5px">Total possible score: '.number_format($userStats['ppoints']+$userStats['apoints']).'</div>';
+					echo '<div style="margin-top:5px">' . $LANG['TOT_POSS_SCORE'] . ': ' . number_format($userStats['ppoints']+$userStats['apoints']) . '</div>';
 					if($userStats['nonvolcnt']) echo '<div style="margin-top:10px">* ' . $LANG['ONLY_PROCESSED_SPECIMENS_ELIGIBLE'] . '</div>';
 				}
 				else{

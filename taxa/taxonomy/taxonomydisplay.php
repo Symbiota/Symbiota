@@ -110,7 +110,7 @@ if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
 					<legend><b><?php echo (isset($LANG['TAX_SEARCH'])?$LANG['TAX_SEARCH']:'Taxon Search'); ?></b></legend>
 					<div>
 						<label for="taxontarget"> <?php echo htmlspecialchars($LANG['TAXON'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
-						<input id="taxontarget" class="taxon-search-bar" name="target" type="text" value="<?php echo $taxonDisplayObj->getTargetStr(); ?>" />
+						<input id="taxontarget" class="search-bar" name="target" type="text" value="<?php echo $taxonDisplayObj->getTargetStr(); ?>" />
 
 						<div>
 							<input id="displayauthor" name="displayauthor" type="checkbox" value="1" <?php echo ($displayAuthor?'checked':''); ?> />

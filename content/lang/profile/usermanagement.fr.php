@@ -59,5 +59,8 @@ $LANG['INV_MGMNT'] = 'Gestion de Projet d\'Inventaire';
 $LANG['CHECKLIST_MGMNT'] = 'Gestion de Liste';
 $LANG['MUST_LOGIN'] = "Vous devez vous connecter et disposer des autorisations d'administrateur pour gérer les utilisateurs";
 $LANG['SKIP_LINK'] = 'Passer à la liste des utilisateurs';
+$LANG['CREATE_NEW_USER'] = 'Créer un nouvel utilisateur';
+$LANG['USER_CREATED_SUCCESSFULLY'] = 'Utilisateur créé avec succès :';
+$LANG['USERS'] = 'Utilisateurs';
 
 ?>

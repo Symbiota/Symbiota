@@ -70,6 +70,7 @@ $LANG['MORE'] = 'more';
 $LANG['LESS'] = 'less';
 $LANG['NOTAXA'] = 'No Taxa Found';
 $LANG['CHECKNULL'] = 'ERROR: invalid checklist identififier';
+$LANG['IS_PRIVATE'] = 'Checklist is defined as private';
 $LANG['DISPLAYNEXT'] = 'Display next';
 $LANG['TAXA'] = 'taxa';
 $LANG['LOCALITY'] = 'Locality';

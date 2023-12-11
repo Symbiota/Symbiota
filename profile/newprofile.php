@@ -11,6 +11,7 @@ header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 $login = array_key_exists('login', $_POST) ? htmlspecialchars($_POST['login'], HTML_SPECIAL_CHARS_FLAGS) : '';
 $emailAddr = array_key_exists('email',$_POST) ? htmlspecialchars($_POST['email'], HTML_SPECIAL_CHARS_FLAGS) : '';
 $action = array_key_exists('submit', $_POST) ? $_POST['submit'] : '';
+$adminRegister = array_key_exists('adminRegister', $_POST) ? true : false;
 
 $pHandler = new ProfileManager();
 $displayStr = '';
@@ -58,8 +59,13 @@ if($action == 'Create Login'){
 				$displayStr = $pHandler->getErrorMessage();
 			}
 			else{
-				if($pHandler->register($_POST)){
-					header("Location: ../index.php");
+				if($pHandler->register($_POST, $adminRegister)){
+					if(!$adminRegister){
+						header("Location: ../index.php");
+					} else{
+						$_SESSION['adminRegisterSuccessfulUsername'] = $login;
+						header("Location: ./usermanagement.php");
+					}
 				}
 				else{
 					$displayStr = (isset($LANG['FAILED_1'])?$LANG['FAILED_1']:'FAILED: Unable to create user').'.<div style="margin-left:55px;">'.(isset($LANG['FAILED_2'])?$LANG['FAILED_2']:'Please contact system administrator for assistance').'.</div>';
@@ -131,7 +137,7 @@ if($action == 'Create Login'){
 		echo '<b>'.(isset($LANG['CREATE_NEW'])?$LANG['CREATE_NEW']:'Create New Profile').'</b>';
 		echo "</div>";
 	}
-	$shouldBeAbleToCreatePublicUser = $SHOULD_BE_ABLE_TO_CREATE_PUBLIC_USER ?? true;
+	$shouldBeAbleToCreatePublicUser = ($SHOULD_BE_ABLE_TO_CREATE_PUBLIC_USER || $adminRegister) ?? true;
 	if($shouldBeAbleToCreatePublicUser){
 	?>
 		<div id="innertext">
@@ -249,6 +255,9 @@ if($action == 'Create Login'){
 								if($useRecaptcha) echo '<div class="g-recaptcha" data-sitekey="'.$RECAPTCHA_PUBLIC_KEY.'"></div>';
 								?>
 							</div>
+							<?php if($adminRegister){ ?>
+								<input type="hidden" id="adminRegister" name="adminRegister" value="1"></input>
+							<?php } ?>
 							<button id="submit" name="submit" type="submit" value="Create Login"><?php echo (isset($LANG['CREATE_LOGIN'])?$LANG['CREATE_LOGIN']:'Create Login'); ?></button>
 					</section>
 				</div>

@@ -10,6 +10,7 @@ $latDef = array_key_exists("latdef",$_REQUEST)?$_REQUEST["latdef"]:'';
 $lngDef = array_key_exists("lngdef",$_REQUEST)?$_REQUEST["lngdef"]:'';
 $zoom = array_key_exists("zoom",$_REQUEST)&&$_REQUEST["zoom"]?$_REQUEST["zoom"]:5;
 $mapMode = array_key_exists("mapmode",$_REQUEST)?$_REQUEST["mapmode"]:'';
+$mapModeStrict = array_key_exists("map_mode_strict",$_REQUEST)?$_REQUEST["map_mode_strict"]:false;
 
 $clManager = new ChecklistAdmin();
 $clManager->setClid($clid);
@@ -201,7 +202,6 @@ else{
                let origFootprintWkt = getField("footprintwkt");
                try {
                   let polyPoints = parseWkt(origFootprintWkt);
-                  console.log(polyPoints)
                   if(polyPoints) {
                      return { type: "polygon", latlngs: polyPoints, wkt: getField("footprintwkt")};
                   }
@@ -251,6 +251,7 @@ else{
          } 
       }
       let formShape = loadShape("<?php echo $mapMode?>");
+      let mapModeStrict = <?php echo $mapModeStrict? "true": "false"?>;
       function leafletInit() {
          const MapOptions = {
             center: [<?php echo $latCenter?>, <?php echo $lngCenter?>],
@@ -258,9 +259,12 @@ else{
          };
 
          let map = new LeafletMap('map', MapOptions );
+         let mode = "<?php echo $mapMode?>";
 
          map.enableDrawing({
             polyline: false,
+            mode: "<?php echo $mapMode?>",
+            map_mode_strict: mapModeStrict,
             circlemarker: false,
             marker: false,
             drawColor: {opacity: 0.85, fillOpacity: 0.55, color: '#000' }
@@ -280,7 +284,10 @@ else{
 			};
 
          let map = new GoogleMap('map', MapOptions)
-         map.enableDrawing({mapMode: "<?php echo $mapMode?>"}, setShapeToSearchForm);
+         map.enableDrawing({
+            mode: "<?php echo $mapMode?>",
+            map_mode_strict: mapModeStrict
+         }, setShapeToSearchForm);
 
          if(formShape) 
             map.drawShape(formShape, setShapeToSearchForm)
