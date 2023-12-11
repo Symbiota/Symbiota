@@ -1326,8 +1326,9 @@ $traitArr = $indManager->getTraitArr();
 							if($editArr || $externalEdits){
 								if($editArr){
 									?>
-									<fieldset style="padding:15px;margin:10px 0px;">
-										<legend><?php echo $LANG['INTERNAL_EDITS']; ?></legend>
+									<section class="fieldset-like">
+									<!-- <fieldset style="padding:15px;margin:10px 0px;"> -->
+										<h1><span><?php echo $LANG['INTERNAL_EDITS']; ?></span></h1>
 										<?php
 										foreach($editArr as $ts => $tsArr){
 											?>
@@ -1354,7 +1355,7 @@ $traitArr = $indManager->getTraitArr();
 											echo '<div style=""><hr></div>';
 										}
 										?>
-									</fieldset>
+									</section>
 									<?php
 								}
 								if($externalEdits){
