@@ -459,7 +459,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 
 	if(collectionSource){
 		// go through all collections and set them all to unchecked
-		const collectionCheckboxes = document.querySelectorAll('input[id^="coll-"]');
+		const collectionCheckboxes = document.querySelectorAll('input[id^="coll"]');
 		collectionCheckboxes.forEach(collection => {
 			collection.checked = false;
 		});
@@ -474,7 +474,12 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 		const targetCheckbox = document.querySelectorAll('input[id^="coll-' + collectionSource + '"]');
 		targetCheckbox.forEach(collection => {
 			collection.checked = true;
-		})
+		});
+		//do the same for collections with slightly different format
+		const targetCheckboxAlt = document.querySelectorAll('input[id^="collection-' + collectionSource + '"]');
+		targetCheckboxAlt.forEach(collection => {
+			collection.checked = true;
+		});
 		updateChip();
 	}
 
