@@ -161,7 +161,7 @@ $sciArr = array();
 			<div style="width:420px;height:420px;text-align:center;">
 				<div>
 					<a id="imageanchor" href="" target="_blank">
-						<img id="activeimage" style="height:97%;max-width:450px" alt="Image to guess"/>
+						<img src="#" id="activeimage" style="height:97%;max-width:450px" alt="Image to guess"/>
 					</a>
 				</div>
 			</div>
