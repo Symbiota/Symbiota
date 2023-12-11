@@ -30,7 +30,7 @@
 			$collTypeLabel = 'Specimens';
 			$uniqGrouping = '';
 			?>
-			<section id="deleteMe" class="gridlike-form">
+			<section class="gridlike-form">
 				<?php
 				foreach($categoryArr as $catid => $catEl){
 					include('./singleCollectionGroupDetails.php');
