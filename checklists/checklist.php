@@ -48,6 +48,7 @@ if(isset($clArray['defaultSettings'])){
 		if(array_key_exists('dvoucherimages',$defaultArr)) $limitImagesToVouchers = $defaultArr['dvoucherimages'];
 		if(array_key_exists('dvouchers',$defaultArr)) $showVouchers = $defaultArr['dvouchers'];
 		if(array_key_exists('dauthors',$defaultArr)) $showAuthors = $defaultArr['dauthors'];
+		if(array_key_exists('dsubgenera',$defaultArr)) $showSubgenera = $defaultArr['dsubgenera'];
 		if(array_key_exists('dalpha',$defaultArr)) $showAlphaTaxa = $defaultArr['dalpha'];
 	}
 	if(isset($defaultArr['activatekey'])) $activateKey = $defaultArr['activatekey'];
@@ -210,12 +211,11 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 				<?php
 			}
 			echo '<div style="clear:both;"></div>';
-			$argStr = '&clid='.$clid.'&dynclid='.$dynClid.($showCommon?'&showcommon='.$showCommon:'').($showSynonyms?'&showsynonyms='.$showSynonyms:'').($showVouchers?'&showvouchers='.$showVouchers:'');
-			$argStr .= ($showAuthors?'&showauthors='.$showAuthors:'').($clManager->getThesFilter()?'&thesfilter='.$clManager->getThesFilter():'');
+			$argStr = '&clid='.$clid.'&dynclid='.$dynClid.($showCommon?'&showcommon=1':'').($showSynonyms?'&showsynonyms=1':'').($showVouchers?'&showvouchers=1':'');
+			$argStr .= ($showAuthors?'&showauthors=1':'').($clManager->getThesFilter()?'&thesfilter='.$clManager->getThesFilter():'');
 			$argStr .= ($pid?'&pid='.$pid:'').($showImages?'&showimages=1':'').($taxonFilter?'&taxonfilter='.$taxonFilter:'').($limitImagesToVouchers?'&voucherimages=1':'');
-			$argStr .= ($searchCommon?'&searchcommon='.$searchCommon:'').($searchSynonyms?'&searchsynonyms='.$searchSynonyms:'');
-			$argStr .= ($showAlphaTaxa?'&showalphataxa='.$showAlphaTaxa:'');
-			$argStr .= ($defaultOverride?'&defaultoverride='.$defaultOverride:'');
+			$argStr .= ($searchCommon?'&searchcommon=1':'').($searchSynonyms?'&searchsynonyms=1':'').($showAlphaTaxa?'&showalphataxa=1':'').($showSubgenera?'&showsubgenera=1':'');
+			$argStr .= ($defaultOverride?'&defaultoverride=1':'');
 			//Do not show certain fields if Dynamic Checklist ($dynClid)
 			if($clid){
 				if($clArray['type'] == 'rarespp'){
@@ -390,7 +390,8 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 										<input type="hidden" name="dynclid" value="<?php echo $dynClid; ?>" />
 										<input type="hidden" name="pid" value="<?php echo $pid; ?>" />
 										<input type="hidden" name="defaultoverride" value="1" />
-										<input type="hidden" name="voucherimages" value="<?php echo $limitImagesToVouchers; ?>" />
+										<input type="hidden" name="voucherimages" value="<?= $limitImagesToVouchers; ?>" >
+										<input type="hidden" name="showsubgenera" value="<?= ($showSubgenera?1:0) ?>" >
 										<?php if(!$taxonFilter) echo '<input type="hidden" name="pagenumber" value="'.$pageNumber.'" />'; ?>
 										<button name="submitaction" type="submit" value="Rebuild List" onclick="changeOptionFormAction('checklist.php?clid=<?php echo $clid."&pid=".$pid."&dynclid=".$dynClid; ?>','_self');"><?php echo (isset($LANG['BUILD_LIST'])?$LANG['BUILD_LIST']:'Build List'); ?></button>
 									</div>
@@ -463,6 +464,8 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 										<input type="hidden" name="thesfilter" value="<?php echo $clManager->getThesFilter(); ?>" />
 										<input type="hidden" name="taxonfilter" value="<?php echo $taxonFilter; ?>" />
 										<input type="hidden" name="searchcommon" value="<?php echo $searchCommon; ?>" />
+										<input type="hidden" name="showalphataxa" value="<?= ($showAlphaTaxa ? 1 : 0) ?>" >
+										<input type="hidden" name="showsubgenera" value="<?= ($showSubgenera ? 1 : 0) ?>" >
 										<input type="hidden" name="formsubmit" value="AddSpecies" />
 										<button name="submitbtn" type="submit"><?php echo (isset($LANG['ADD_SPECIES'])?$LANG['ADD_SPECIES']:'Add Species to List'); ?></button>
 										<hr />
@@ -747,7 +750,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 		}
 		else{
 			echo '<div style="color:red;">';
-			if($clArray['access'] == 'private-strict'){
+			if(isset($clArray['access']) && $clArray['access'] == 'private-strict'){
 				echo $LANG['IS_PRIVATE'];
 			}
 			else{

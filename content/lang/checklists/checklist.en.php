@@ -33,6 +33,7 @@ $LANG['OGCHECK'] = 'Original Checklist';
 $LANG['NOTESVOUC'] = 'Notes &amp; Vouchers';
 $LANG['TAXONAUTHOR'] = 'Taxon Authors';
 $LANG['TAXONABC'] = 'Show Taxa Alphabetically';
+$LANG['SHOWSUBGENERA'] = 'Show subgeneric ranking within scientific name';
 $LANG['BUILD_LIST'] = 'Build List';
 $LANG['DOWNLOAD_CHECKLIST'] = 'Download Checklist';
 $LANG['PRINT_BROWSER'] = 'Print in Browser';
