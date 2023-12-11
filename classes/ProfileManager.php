@@ -1100,7 +1100,7 @@ class ProfileManager extends Manager{
 			$dynPropStr = $fetchedObj->dynamicProperties;
 		}
 		$respns->free();
-		if($dynPropStr){
+		if(isset($dynPropStr)){
 			if($dynPropArr = json_decode($dynPropStr, true)){
 				$returnVal = $dynPropArr;
 			}
