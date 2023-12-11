@@ -110,7 +110,7 @@ class Manager  {
 
 	public function cleanOutStr($str){
 		//Sanitize output
-		if(!is_string($str)) $str = '';
+		if(!is_string($str) && !is_numeric($str) && !is_bool($str)) $str = '';
 		$str = htmlspecialchars($str, HTML_SPECIAL_CHARS_FLAGS);
 		return $str;
 	}

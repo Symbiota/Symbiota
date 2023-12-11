@@ -97,6 +97,7 @@ class OccurrenceTaxaManager {
 				$this->setSciNamesByVerns($searchTerm);
 				$sql = 'SELECT t.sciname, t.tid, t.rankid FROM taxa t ';
 				if(is_numeric($searchTerm)){
+					$searchTerm = filter_var($searchTerm, FILTER_SANITIZE_NUMBER_INT);
 					if($this->taxaArr['usethes']){
 						$sql .= 'INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted WHERE (ts.taxauthid = '.$this->taxAuthId.') AND (ts.tid = '.$searchTerm.')';
 					}
@@ -114,26 +115,27 @@ class OccurrenceTaxaManager {
 						$sql .= 'WHERE t.sciname IN("'.$this->cleanInStr($searchTerm).'")';
 					}
 				}
-				$rs = $this->conn->query($sql);
-				if($rs->num_rows){
-					while($r = $rs->fetch_object()){
-						$this->taxaArr['taxa'][$r->sciname]['tid'][$r->tid] = $r->rankid;
-						if($r->rankid == 140){
-							$taxaType = TaxaSearchType::FAMILY_ONLY;
+				if($rs = $this->conn->query($sql)){
+					if($rs->num_rows){
+						while($r = $rs->fetch_object()){
+							$this->taxaArr['taxa'][$r->sciname]['tid'][$r->tid] = $r->rankid;
+							if($r->rankid == 140){
+								$taxaType = TaxaSearchType::FAMILY_ONLY;
+							}
+							elseif($r->rankid < 180){
+								$taxaType = TaxaSearchType::TAXONOMIC_GROUP;
+							}
+							else{
+								$taxaType = TaxaSearchType::SCIENTIFIC_NAME;
+							}
+							$this->taxaArr['taxa'][$r->sciname]['taxontype'] = $taxaType;
 						}
-						elseif($r->rankid < 180){
-							$taxaType = TaxaSearchType::TAXONOMIC_GROUP;
-						}
-						else{
-							$taxaType = TaxaSearchType::SCIENTIFIC_NAME;
-						}
-						$this->taxaArr['taxa'][$r->sciname]['taxontype'] = $taxaType;
 					}
+					else{
+						$this->taxaArr['taxa'][$searchTerm]['taxontype'] = $taxaType;
+					}
+					$rs->free();
 				}
-				else{
-					$this->taxaArr['taxa'][$searchTerm]['taxontype'] = $taxaType;
-				}
-				$rs->free();
 			}
 			if($this->taxaArr['usethes']){
 				$this->setSynonyms();
@@ -377,6 +379,7 @@ class OccurrenceTaxaManager {
 	}
 
 	protected function cleanInputStr($str){
+		if(!is_string($str) && !is_numeric($str) && !is_bool($str)) return '';
 		if(stripos($str, 'sleep(') !== false) return '';
 		if(strpos($str, '=') !== false) return '';
 		$str = preg_replace('/%%+/', '%',$str);
