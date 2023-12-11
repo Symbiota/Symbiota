@@ -128,8 +128,8 @@ $dwcManager = new DwcArchiverCore();
 							<div class="formElemDiv">
 								<input type="radio" name="schema" id="symbiota-native" value="symbiota" onclick="georefRadioClicked(this)" CHECKED />
 								<label for="symbiota-native">  <?php echo (isset($LANG['SYMB_NATIVE']) ? $LANG['SYMB_NATIVE'] : 'Symbiota Native'); ?>  </label>
-								<a id="schemanativeinfo" href="#" onclick="return false" title="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'More Information'); ?>">
-									<img src="../../images/info.png" alt=" <?php echo (isset($LANG['IMG_NATIVE_INFO']) ? $LANG['IMG_NATIVE_INFO'] : 'info icon that clarifies that Symbiota native is similar to Darwin Core with the addition of some fields'); ?> " style="width:13px;" />
+								<a id="schemanativeinfo" aria-label="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'More Information'); ?>" href="#" onclick="return false" title="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'More Information'); ?>">
+									<img src="../../images/info.png" alt=" <?php echo (isset($LANG['IMG_NATIVE_INFO']) ? $LANG['IMG_NATIVE_INFO'] : 'Info icon clarifying that Symbiota native is similar to Darwin Core plus some fields'); ?> " style="width:13px;" />
 								</a><br/>
 								<div id="schemanativeinfodialog">
 									<?php echo (isset($LANG['SYMB_NATIVE_INFO']) ? $LANG['SYMB_NATIVE_INFO'] : 'Symbiota native is very similar to Darwin Core except with the addtion of a few fields
@@ -137,8 +137,8 @@ $dwcManager = new DwcArchiverCore();
 								</div>
 								<input type="radio" name="schema" id="darwin-core" value="dwc" onclick="georefRadioClicked(this)" />
 								<label for="darwin-core">  <?php echo (isset($LANG['DARWIN_CORE']) ? $LANG['DARWIN_CORE'] : 'Darwin Core'); ?> </label>
-								<a id="schemadwcinfo" href="#" target="" title=" <?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'More Information'); ?>">
-									<img src="../../images/info.png" alt=" <?php echo (isset($LANG['IMG_DARWIN_INFO']) ? $LANG['IMG_DARWIN_INFO'] : 'info icon that clarifies that Darwin Core (DwC) is a TDWG endorsed exchange standard specifically for biodiversity datasets. A link to the DwC quick reference guide appears in the dialog.'); ?>" style="width:13px;" />
+								<a id="schemadwcinfo" href="#" title="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'More Information'); ?>" aria-label="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'More Information'); ?>">
+									<img src="../../images/info.png" alt=" <?php echo (isset($LANG['IMG_DARWIN_INFO']) ? $LANG['IMG_DARWIN_INFO'] : 'Info icon: DwC is a TDWG endorsed standard for biodata. Link to DwC quick ref guide in the dialog.'); ?>" style="width:13px;" />
 								</a><br/>
 								<div id="schemadwcinfodialog">
 									<?php echo (isset($LANG['DARWIN_GUIDE']) ? $LANG['DARWIN_GUIDE'] : 'Darwin Core (DwC) is a TDWG endorsed exchange standard specifically for biodiversity datasets.

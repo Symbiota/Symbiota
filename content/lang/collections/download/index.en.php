@@ -20,11 +20,11 @@ $LANG['DOWNLOAD_SPEC_REC'] = 'Download Specimen Records';
 $LANG['STRUCTURE'] = 'Structure';
 $LANG['SYMB_NATIVE'] = 'Symbiota Native';
 $LANG['MORE_INFO'] = 'More Information';
-$LANG['IMG_NATIVE_INFO'] = 'Info icon that clarifies that Symbiota native is similar to Darwin Core with the addition of some fields';
+$LANG['IMG_NATIVE_INFO'] = 'Info icon clarifying that Symbiota native is similar to Darwin Core plus some fields';
 $LANG['SYMB_NATIVE_INFO'] = 'Symbiota native is very similar to Darwin Core except with the addtion of a few fields
                         such as substrate, associated collectors, verbatim description.';
 $LANG['DARWIN_CORE'] = 'Darwin Core';
-$LANG['IMG_DARWIN_INFO'] = 'info icon that clarifies that Darwin Core (DwC) is a TDWG endorsed exchange standard specifically for biodiversity datasets. A link to the DwC quick reference guide appears in the dialog.';
+$LANG['IMG_DARWIN_INFO'] = 'Info icon: DwC is a TDWG endorsed standard for biodata. Link to DwC quick ref guide in the dialog.';
 $LANG['DARWIN_GUIDE'] = 'Darwin Core (DwC) is a TDWG endorsed exchange standard specifically for biodiversity datasets.
                         For more information on what data fields are included in DwC, visit the';
 $LANG['DARWIN_GUIDE_LINK'] = 'DwC Quick Reference Guide';
