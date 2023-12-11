@@ -809,30 +809,27 @@ class OccurrenceIndividual extends Manager{
 	public function getVoucherChecklists(){
 		global $USER_RIGHTS;
 		$returnArr = Array();
-		$sql = 'SELECT c.clid, c.name, c.access, v.voucherID
-			FROM fmchecklists c INNER JOIN fmchklsttaxalink cl ON c.clid = cl.clid
-			INNER JOIN fmvouchers v ON cl.clTaxaID = v.clTaxaID
-			WHERE v.occid = '.$this->occid.' ';
-		if(array_key_exists("ClAdmin",$USER_RIGHTS)){
-			$sql .= 'AND (c.access = "public" OR c.clid IN('.implode(',',$USER_RIGHTS['ClAdmin']).')) ';
-		}
-		else{
-			$sql .= 'AND (c.access = "public") ';
-		}
-		$sql .= 'ORDER BY c.name';
-		//echo $sql;
-		$rs = $this->conn->query($sql);
-		if($rs){
-			while($r = $rs->fetch_object()){
-				$nameStr = $r->name;
-				if($r->access == 'private') $nameStr .= ' (private status)';
-				$returnArr[$r->clid]['name'] = $nameStr;
-				$returnArr[$r->clid]['voucherID'] = $r->voucherID;
+		if($this->occid){
+			$sql = 'SELECT c.clid, c.name, c.access, v.voucherID
+				FROM fmchecklists c INNER JOIN fmchklsttaxalink cl ON c.clid = cl.clid
+				INNER JOIN fmvouchers v ON cl.clTaxaID = v.clTaxaID
+				WHERE v.occid = '.$this->occid.' ';
+			if(array_key_exists("ClAdmin",$USER_RIGHTS)){
+				$sql .= 'AND (c.access = "public" OR c.clid IN('.implode(',',$USER_RIGHTS['ClAdmin']).')) ';
 			}
-			$rs->free();
-		}
-		else{
-			trigger_error('Unable to get checklist data; '.$this->conn->error,E_USER_WARNING);
+			else{
+				$sql .= 'AND (c.access = "public") ';
+			}
+			$sql .= 'ORDER BY c.name';
+			if($rs = $this->conn->query($sql)){
+				while($r = $rs->fetch_object()){
+					$nameStr = $r->name;
+					if($r->access == 'private') $nameStr .= ' (private status)';
+					$returnArr[$r->clid]['name'] = $nameStr;
+					$returnArr[$r->clid]['voucherID'] = $r->voucherID;
+				}
+				$rs->free();
+			}
 		}
 		return $returnArr;
 	}

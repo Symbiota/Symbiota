@@ -33,6 +33,7 @@ $LANG['OGCHECK'] = 'Listado de Comprobaci&oacute;n Original';
 $LANG['NOTESVOUC'] = 'Notas &amp; Vouchers';
 $LANG['TAXONAUTHOR'] = 'Autores del Tax&oacute;n';
 $LANG['TAXONABC'] = 'Mostrar Taxa Alfab&eacute;ticamente';
+$LANG['SHOWSUBGENERA'] = 'Mostrar clasificación subgenérica dentro del nombre científico';
 $LANG['BUILD_LIST'] = 'Mostrar Lista';
 $LANG['DOWNLOAD_CHECKLIST'] = 'Descargar Lista';
 $LANG['PRINT_BROWSER'] = 'Imprimir';

@@ -325,9 +325,12 @@ class ChecklistManager extends Manager{
 				}
 				$rs->free();
 			}
-			if($this->showSubgenera) $this->setSubgenera();
-			$sciname = array_column($this->taxaList, 'sciname');
-			array_multisort($sciname, $this->taxaList);
+			if($this->showSubgenera){
+				$this->setSubgenera();
+				$sciname = array_column($this->taxaList, 'sciname');
+				$group = array_column($this->taxaList, 'taxongroup');
+				array_multisort($group, $sciname, $this->taxaList);
+			}
 		}
 		return $this->taxaList;
 	}
@@ -425,16 +428,17 @@ class ChecklistManager extends Manager{
 	}
 
 	private function setSubgenera(){
-		$sql = 'SELECT DISTINT l.tid, t.sciname, p.sciname as parent
+		$sql = 'SELECT DISTINCT l.tid, t.sciname, p.sciname as parent
 			FROM fmchklsttaxalink l INNER JOIN taxaenumtree e ON l.tid = e.tid
 			INNER JOIN taxa t ON l.tid = t.tid
 			INNER JOIN taxa p ON e.parenttid = p.tid
 			WHERE e.taxauthid = 1 AND p.rankid = 190 AND l.tid IN('.implode(',',array_keys($this->taxaList)).')';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			if(!strpos($r->sciname, '(')) $this->taxaList[$r->tid]['sciname'] = $r->parent . substr($this->taxaList[$r->tid]['sciname'], strpos($this->taxaList[$r->tid]['sciname'], ' '));
+		if($rs = $this->conn->query($sql)){
+			while($r = $rs->fetch_object()){
+				if(!strpos($r->sciname, '(')) $this->taxaList[$r->tid]['sciname'] = $r->parent . substr($this->taxaList[$r->tid]['sciname'], strpos($this->taxaList[$r->tid]['sciname'], ' '));
+			}
+			$rs->free();
 		}
-		$rs->free();
 	}
 
 	public function getVoucherCoordinates($limit=0){

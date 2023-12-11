@@ -3,10 +3,7 @@ include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/collections/checklist.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceChecklistManager.php');
 
-$taxonFilter = array_key_exists("taxonfilter",$_REQUEST)?$_REQUEST["taxonfilter"]:'';
-
-//Sanitation
-if(!is_numeric($taxonFilter)) $taxonFilter = 1;
+$taxonFilter = array_key_exists('taxonfilter',$_REQUEST) ? filter_var($_REQUEST['taxonfilter'], FILTER_SANITIZE_NUMBER_INT) : '';
 
 $checklistManager = new OccurrenceChecklistManager();
 $searchVar = $checklistManager->getQueryTermStr();

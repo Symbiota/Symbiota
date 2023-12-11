@@ -274,8 +274,13 @@ if(!$clid){
 					</div>
 					<div>
 						<!-- Display Taxa Alphabetically: 0 = false, 1 = true  -->
-						<input name='dalpha' id='dalpha' type='checkbox' value='1' <?php echo ($defaultArr&&$defaultArr["dalpha"]?"checked":""); ?> />
+						<input name='dalpha' id='dalpha' type='checkbox' value='1' <?php echo (!empty($defaultArr['dalpha'])?'checked':''); ?> />
 						<?php echo $LANG['TAXONABC'];?>
+					</div>
+					<div>
+						<!-- Display Taxa Alphabetically: 0 = false, 1 = true  -->
+						<input name='dsubgenera' id='dsubgenera' type='checkbox' value='1' <?php echo (!empty($defaultArr['dsubgenera'])?'checked':''); ?> >
+						<?php echo $LANG['SHOWSUBGENERA'];?>
 					</div>
 					<div>
 						<?php
