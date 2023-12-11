@@ -123,14 +123,20 @@ if($collid){
 						</div>
 					<div class="flex-form">
 						<div style="margin-left: 20px;">
-							<div id="scinamediv" style="float:left">
-								<label for="fsciname"><?php echo $LANG['SCINAME']; ?>:</label>
-								<input id="fsciname" name="sciname" type="text" value="" style="width:300px"/>
-								<input id="ftidinterpreted" name="tidinterpreted" type="hidden" value="" />
-							</div>
-							<div id="authordiv" style="float:left">
-								<input id="fscientificnameauthorship" name="scientificnameauthorship" type="text" value="" />
-							</div>
+							<!-- <fieldset> -->
+								<!-- <legend><?php echo (isset($LANG['SCINAME_AND_AUTHORSHIP']) ? $LANG['SCINAME_AND_AUTHORSHIP'] : 'Scientific Name and Authorship'); ?></legend> -->
+								<div id="scinamediv" style="float:left">
+									<label for="fsciname"><?php echo $LANG['SCINAME']; ?>:</label>
+									<input id="fsciname" name="sciname" type="text" value="" style="width:300px"/>
+									<input id="ftidinterpreted" name="tidinterpreted" type="hidden" value="" />
+								</div>
+								<div id="authordiv" style="float:left" class="left-breathing-room-rel">
+									<label for="fscientificnameauthorship">
+										<?php echo (isset($LANG['AUTHORSHIP']) ? $LANG['AUTHORSHIP'] : 'Authorship'); ?>
+									</label>
+									<input id="fscientificnameauthorship" name="scientificnameauthorship" type="text" value="" />
+								</div>
+							<!-- </fieldset> -->
 							<?php
 							if($IS_ADMIN || isset($USER_RIGHTS['Taxonomy'])){
 								?>
