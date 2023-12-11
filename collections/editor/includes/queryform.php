@@ -273,7 +273,7 @@ else{
 			<div class="fieldGroupDiv">
 				<div>
 					<button type="button" class="icon-button" onclick="copyQueryLink(event)" title="<?php echo (isset($LANG['COPY_SEARCH'])?$LANG['COPY_SEARCH']:'Copy Search As Link'); ?>">
-						<img src="../../images/dl2.png" srcset="../../images/link-white.svg" class="svg-icon" style="width:15px; height:15px; fill: white;" alt="Link icon. Copies the search terms as a link." />
+						<img src="../../images/dl2.png" srcset="../../images/link-white.svg" class="svg-icon" style="width:15px; height:15px;" alt="Link icon. Copies the search terms as a link." />
 					</button>
 					<?php
 					if(!$crowdSourceMode){
