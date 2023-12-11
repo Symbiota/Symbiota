@@ -1,7 +1,9 @@
 <?php
 /*
  ------------------
- Language: Español (Spanish)
+Language: Español (Spanish)
+Translated by: Samanta Orellana
+Date Translated: 2021-06-23
  ------------------
  */
 $LANG['DETAILS'] = 'Detalles';

@@ -1,7 +1,8 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistManager.php');
-@include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/checklists/clgmap.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/checklists/clgmap.en.php');
+else include_once($SERVER_ROOT.'/content/lang/checklists/clgmap.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $pid = $_REQUEST['pid'];
@@ -43,7 +44,7 @@ $clManager->setProj($pid);
                markers.push(L.marker(latlng)
                   .bindTooltip(checklist.name)
                   .bindPopup(`<div style=\'width:300px;\'>
-                     <b>${checklist.name}</b><br/>Double Click to open
+                     <b>${checklist.name}</b><br/><?php echo (isset($LANG['DOUBLE_CLICK'])?$LANG['DOUBLE_CLICK']:'Double Click to open'); ?>
                      </div>`)
                   .on('dblclick', () => navigateToCheckList(checklistId, pid)));
             }
@@ -76,7 +77,7 @@ $clManager->setProj($pid);
                })
                const infoWin = new google.maps.InfoWindow({
                   content: `<div style=\'width:300px;\'>
-                     <b>${checklist.name}</b><br/>Double Click to open
+                     <b>${checklist.name}</b><br/><?php echo (isset($LANG['DOUBLE_CLICK'])?$LANG['DOUBLE_CLICK']:'Double Click to open'); ?>
                   </div>` 
                });
 
@@ -104,10 +105,10 @@ $clManager->setProj($pid);
                pid = data.getAttribute('data-pid');
                checklists = JSON.parse(data.getAttribute('data-checklists'));
             } catch (err) {
-               alert("Failed to load checklist data");
+               alert("<?php echo (isset($LANG['FAILED_TO_LOAD'])?$LANG['FAILED_TO_LOAD']:'Failed to load checklist data'); ?>");
             }
 
-            <?php if(!empty($LEAFLET)) { ?>
+            <?php if(empty($GOOGLE_MAP_KEY)) { ?>
                leafletInit();
             <?php } else { ?>
                googleInit();

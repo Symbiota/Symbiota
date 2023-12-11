@@ -15,35 +15,7 @@ $LANG['SURE_UNLINK'] = 'Voulez-vous vraiment dissocier enregistrement en tant qu
 $LANG['ERROR_DELETING'] = 'ERREUR lors de suppression du doublon';
 $LANG['GEN_RES_NOT_BLANK'] = 'Le nom de la ressource génétique ne doit pas être vide';
 $LANG['PERM_REMOVE_RES'] = 'Voulez-vous vraiment supprimer définitivement cette ressource?';
-$LANG['ASSOC_OCC'] = 'Occurrences Associées';
-$LANG['CREATE_NEW_ASSOC'] = 'Créer Nouvelle Association';
-$LANG['OCC_WI_SYSTEM'] = 'Occurrence dans Système';
-$LANG['IDENTIFIER'] = 'Identifiant';
-$LANG['SEARCH_TARGET'] = 'Cible de Recherche';
-$LANG['CAT_NUMS'] = 'Numéros de Catalogue';
-$LANG['OCC_PK'] = 'Occurrence PK (occid)';
-$LANG['SEARCH_COLS'] = 'Rechercher des Collections';
-$LANG['ALL_COLS'] = 'Toutes Collections';
-$LANG['SEARCH'] = 'Chercher';
-$LANG['OCC_MATCHES_AVAIL'] = "Correspondances d'Occurrences Disponibles à Lier";
-$LANG['EXT_OCC'] = 'Occurrence Externe';
-$LANG['EXT_ID'] = 'Identifiant Externe';
-$LANG['RES_URL'] = 'URL de Ressource';
-$LANG['OBS_REF'] = "Référence d'Observation";
-$LANG['VERBAT_SCINAME'] = 'Nom Scientifique Verbatim';
-$LANG['REL'] = 'Relations';
-$LANG['REL_SUBTYPE'] = 'Sous-type de relation';
-$LANG['BASIS_OF_RECORD'] = "Base d'Enregistrement";
-$LANG['HUMAN_OBS'] = 'Observation Jumaine';
-$LANG['LIVING_SPEC'] = 'Spécimen Vivant';
-$LANG['MACHINE_OBS'] = 'Observation des Machines';
-$LANG['MAT_SAMPLE'] = 'Échantillon de Matériau';
-$LANG['PRES_SAMPLE'] = 'Spécimen Conservé';
-$LANG['REF_CITATION'] = 'Citation de Référence';
-$LANG['LOC_ON_HOST'] = 'Emplacement sur hôte';
-$LANG['NOTES'] = 'Remarques';
-$LANG['CREATE_ASSOC'] = 'Créer Association';
-$LANG['NO_ASSOCS'] = "Aucune association n'a été créée";
+
 $LANG['CHECKLIST_LINKS'] = "Liens avec échantillons de liste";
 $LANG['LINK_TO_CHECKLIST'] = "Lier l'Échantillon à Liste";
 $LANG['SEL_CHECKLIST'] = 'Sélectionnez Liste';
@@ -75,4 +47,5 @@ $LANG['SAVE_EDITS'] = 'Enregistrer Modifications';
 $LANG['DEL_GEN_RES'] = 'Supprimer Ressource Génétique';
 $LANG['DEL_RES'] = 'Supprimer Ressource';
 
+include_once($SERVER_ROOT.'/content/lang/collections/associations.fr.php');
 ?>

@@ -1,4 +1,4 @@
-function getObservationSvg(opts = {color: "#7A8BE7", size: 24}) {
+function getObservationSvg(opts = {color: "#7A8BE7", size: 24, className:""}) {
    const default_ops = {color: "#7A8BE7", size: 24};
    opts = {...default_ops, ...opts};
    const half = opts.size/2;
@@ -13,9 +13,10 @@ version="1.1"
 preserveAspectRatio="none"
 xmlns="http://www.w3.org/2000/svg"
 >
-<polygon points="${half},0 0,${opts.size} ${opts.size},${opts.size}" style="fill:${opts.color};stroke:black;stroke-width:3" />
+<polygon class="${opts.className}" points="${half},0 0,${opts.size} ${opts.size},${opts.size}" style="fill:${opts.color};stroke:black;stroke-width:3" />
 </svg>`,
       className: "",
+      observation: true,
       iconSize: [opts.size, opts.size],
       iconAnchor: [half, half],
    });
@@ -60,6 +61,7 @@ class LeafletMap {
    drawLayer;
 
    constructor(map_id, map_options=this.DEFAULT_MAP_OPTIONS) {
+
       this.mapLayer = L.map(map_id, map_options);
 
       const terrainLayer = L.tileLayer('https://{s}.google.com/vt?lyrs=p&x={x}&y={y}&z={z}', {
@@ -102,7 +104,6 @@ class LeafletMap {
       this.drawLayer = drawnItems;
       this.mapLayer.addLayer(drawnItems);
 
-
       //Jank workaround for leaflet-draw api
       const setDrawColor = (drawOption) => {
          if(drawOptions[drawOption] === false)
@@ -123,9 +124,16 @@ class LeafletMap {
          setDrawColor("rectangle");
          setDrawColor("circle");
       }
+      if(drawOptions.map_mode_strict) {
+         if(drawOptions.mode !== "polygon") drawOptions.polygon = false;
+         if(drawOptions.mode !== "circle") drawOptions.circle = false;
+         if(drawOptions.mode !== "rectangle") drawOptions.rectangle= false;
+         if(drawOptions.mode !== "polyline") drawOptions.polyline = false;
+      }
 
       if(drawOptions.control || drawOptions.control === undefined) {
          var drawControl = new L.Control.Draw({
+            position: 'topright',
             draw: drawOptions,
             edit: {
                featureGroup: drawnItems,
@@ -177,6 +185,20 @@ class LeafletMap {
             if(onDrawChange) onDrawChange(this.activeShape);
          }.bind(this))
       }
+         switch(drawOptions.mode) {
+            case "polygon": 
+               document.querySelector(".leaflet-draw-draw-polygon").click();
+            break;
+            case "rectangle": 
+               document.querySelector(".leaflet-draw-draw-rectangle").click();
+            break;
+            case "marker": 
+               document.querySelector(".leaflet-draw-draw-marker").click();
+            break;
+            case "circle":
+               document.querySelector(".leaflet-draw-draw-circle").click();
+            break;
+         }
 
    }
 
@@ -208,7 +230,7 @@ class LeafletMap {
       this.activeShape.id = id;
       this.shapes.push(this.activeShape);
 
-      this.mapLayer.fitBounds(map.activeShape.layer.getBounds());
+      this.mapLayer.fitBounds(this.activeShape.layer.getBounds());
    }
 
 }

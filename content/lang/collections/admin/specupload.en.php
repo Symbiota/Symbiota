@@ -128,4 +128,6 @@ $LANG['PAGE_ERROR'] = 'ERROR: Either you have tried to reach this page without g
 	You may want to breaking the upload file into smaller files or compressing the file into a zip archive (.zip extension).
 	You may want to contact portal administrator to request assistance in uploading the file (hint to admin: increasing PHP upload limits may help, current upload_max_filesize';
 $LANG['USE_BACK'] = 'Use the back arrows to get back to the file upload page.';
+$LANG['UPLOAD'] = 'Upload File';
+
 ?>

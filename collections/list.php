@@ -19,6 +19,8 @@ $collManager = new OccurrenceListManager();
 $searchVar = $collManager->getQueryTermStr();
 if ($targetTid && array_key_exists('mode', $_REQUEST)) $searchVar .= '&mode=voucher&targettid=' . $targetTid;
 $occurArr = $collManager->getSpecimenMap($pageNumber, $cntPerPage);
+$SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ?? false;
+$actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.php";
 
 $_SESSION['citationvar'] = $searchVar;
 ?>
@@ -135,7 +137,7 @@ $_SESSION['citationvar'] = $searchVar;
 		echo '<div class="navpath">';
 		echo '<a href="../index.php">' . htmlspecialchars($LANG['NAV_HOME'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
 		echo '<a href="index.php">' . htmlspecialchars($LANG['NAV_COLLECTIONS'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
-		echo '<a href="harvestparams.php">' . htmlspecialchars($LANG['NAV_SEARCH'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
+		echo '<a href="' . $actionPage . '">' . htmlspecialchars($LANG['NAV_SEARCH'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
 		echo '<b>' . $LANG['NAV_SPECIMEN_LIST'] . '</b>';
 		echo '</div>';
 	}
@@ -380,7 +382,7 @@ $_SESSION['citationvar'] = $searchVar;
 					<h2><?php echo $LANG['GOOGLE_MAP_HEADER']; ?></h2>
 				</div>
 				<div>
-					<?php if (!empty($LEAFLET)) { ?>
+					<?php if (empty($GOOGLE_MAP_KEY)) { ?>
 						<button onclick="openLeafletMapPU();">
 							<?php echo $LANG['GOOGLE_MAP_DISPLAY']; ?>
 						</button>

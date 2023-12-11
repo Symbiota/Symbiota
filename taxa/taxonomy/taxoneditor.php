@@ -258,7 +258,7 @@ if($isEditor){
 							<div class="editfield">
 								<?php
 								$source = $taxonEditorObj->getSource();
-								if(!stripos($source, '<a ')){
+								if(stripos($source, '<a ') === false){
 									$source = htmlspecialchars($source);
 								}
 								echo $source;
@@ -341,7 +341,7 @@ if($isEditor){
 								?>
 							</span>
 						</div>
-						<div style="clear:both;margin:10px;overflow:auto">
+						<div style="clear:both;margin:10px;">
 							<div style="float:right;">
 								<a href="#" onclick="toggle('tsedit');return false;"><img style='border:0px;' src='../../images/edit.png'/></a>
 							</div>

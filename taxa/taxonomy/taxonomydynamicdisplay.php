@@ -133,7 +133,7 @@ reset($treePath);
 					<legend><b><?php echo (isset($LANG['TAX_SEARCH'])?$LANG['TAX_SEARCH']:'Taxon Search'); ?></b></legend>
                     <div>
 						<label for="taxontarget"> <?php echo htmlspecialchars($LANG['TAXON'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
-						<input id="taxontarget" name="target" type="text" class="taxon-search-bar" value="<?php echo $taxonDisplayObj->getTargetStr(); ?>" />
+						<input id="taxontarget" name="target" type="text" class="search-bar" value="<?php echo $taxonDisplayObj->getTargetStr(); ?>" />
 					</div>
 					<div style="float:right;margin:15px 80px 15px 15px;">
 						<button name="tdsubmit" type="submit" value="displayTaxonTree"><?php echo (isset($LANG['DISP_TAX_TREE'])?$LANG['DISP_TAX_TREE']:'Display Taxon Tree'); ?></button>

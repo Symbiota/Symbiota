@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyCleaner.php');
@@ -32,7 +34,7 @@ elseif($activeCollArr){
 	$isEditor = true;
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title><?php echo $DEFAULT_TITLE.' '.$LANG['OCC_TAX_CLEAN']; ?></title>
 		<?php
@@ -184,17 +186,17 @@ elseif($activeCollArr){
 					<?php
 					if(count($collMap) > 1 && $activeCollArr){
 						?>
-						<div style="float:left;margin-left:5px;"><a href="#" onclick="toggle('mult_coll_fs')"><img src="../../images/add.png" style="width:12px" /></a></div>
+						<div style="float:left;margin-left:5px;"><a href="#" onclick="toggle('mult_coll_fs')"><img src="../../images/add.png" style="width:12px" alt="<?php echo (isset($LANG['ADD_BUTTON']) ? $LANG['ADD_BUTTON'] : 'Add Button') ?>" /></a></div>
 						<div style="clear:both">
 							<fieldset id="mult_coll_fs" style="display:none;padding: 15px;margin:20px;">
 								<legend><b><?php echo $LANG['MULT_COL_SEL']; ?></b></legend>
 								<form name="selectcollidform" action="taxonomycleaner.php" method="post" onsubmit="return checkSelectCollidForm(this)">
-									<div><input name="selectall" type="checkbox" onclick="selectAllCollections(this);" /> <?php echo $LANG['SEL_UNSEL_ALL']; ?></div>
+									<div> <input id="selectall" name="selectall" type="checkbox" onclick="selectAllCollections(this);" /> <label for="selectall"> <?php echo $LANG['SEL_UNSEL_ALL']; ?> </label> </div>
 									<?php
 									foreach($collMap as $id => $collArr){
 										if(in_array($id, $USER_RIGHTS["CollAdmin"])){
 											echo '<div>';
-											echo '<input name="collid[]" type="checkbox" value="'.$id.'" '.(in_array($id,$activeCollArr)?'CHECKED':'').' /> ';
+											echo '<input id="collid[' . $id . ']" name="collid[' . $id . ']" type="checkbox" value="" />' . '<label for="collid[' . $id . ']"> ' .$id.'" ' . (in_array($id,$activeCollArr) ? 'CHECKED' : '').' </label> ';
 											echo $collArr['collectionname'].' ('.$collArr['code'].')';
 											echo '</div>';
 										}
@@ -237,15 +239,15 @@ elseif($activeCollArr){
 						$badSpecimenCount = $cleanManager->getBadSpecimenCount();
 						?>
 					</div>
-					<div style="margin:20px;">
-						<fieldset style="padding:20px;">
-							<legend><b><?php echo $LANG['ACTION_MENU']; ?></b></legend>
+					<div class="top-small-breathing-room-rel">
+						<section class="fieldset-like">
+							<h1> <span> <?php echo (isset($LANG['ACTION_MENU']) ? $LANG['ACTION_MENU'] : 'Action Menu'); ?> </span> </h1>
 							<form name="maincleanform" action="taxonomycleaner.php" method="post" onsubmit="return verifyCleanerForm(this)">
 								<div style="margin-bottom:15px;">
 									<b><?php echo $LANG['SPECS_NOT_INDEXED']; ?></b>
 									<div style="margin-left:10px;">
-										<?php echo '<u>'.$LANG['SPECS'].'</u>: '.$badSpecimenCount.'<br/>'; ?>
-										<?php echo '<u>'.$LANG['SCINAMES'].'</u>: '.$badTaxaCount.'<br/>'; ?>
+										<?php echo '<span class="underlined-text">'.$LANG['SPECS'].'</span>: '.$badSpecimenCount.'<br/>'; ?>
+										<?php echo '<span class="underlined-text">'.$LANG['SCINAMES'].'</span>: '.$badTaxaCount.'<br/>'; ?>
 									</div>
 								</div>
 								<hr/>
@@ -256,18 +258,19 @@ elseif($activeCollArr){
 									<div style="margin:10px;">
 										<div style="margin-bottom:5px;">
 											<fieldset style="padding:15px;margin:10px 0px">
-												<legend><b><?php echo $LANG['TAX_RESOURCE']; ?></b></legend>
+												<legend> <b> <?php echo $LANG['TAX_RESOURCE']; ?> </b> </legend>
 												<?php
 												$taxResourceList = $cleanManager->getTaxonomicResourceList();
 												foreach($taxResourceList as $taKey => $taValue){
-													echo '<input name="taxresource[]" type="checkbox" value="'.$taKey.'" '.(in_array($taKey,$taxResource)?'checked':'').' /> '.$taValue.'<br/>';
+													echo '<input name="taxresource[' . $taKey . ']" id="taxresource[' . $taKey . ']" type="checkbox" value="'.$taKey.'" '.(in_array($taKey,$taxResource)?'checked':'').' /> ';
+													echo '<label for="taxresource[' . $taKey . ']">' . $taValue . ' </label><br/>';
 												}
 												?>
 											</fieldset>
 										</div>
 										<div style="margin-bottom:5px;">
-											<?php echo $LANG['TARGET_KINGDOM']; ?>:
-											<select name="targetkingdom">
+											<label for="targetkingdom"> <?php echo $LANG['TARGET_KINGDOM']; ?>: </label>
+											<select id="targetkingdom" name="targetkingdom">
 												<option value=""><?php echo $LANG['SELECT_TARGET_KING']; ?></option>
 												<option value="">--------------------------</option>
 												<?php
@@ -280,17 +283,19 @@ elseif($activeCollArr){
 											</select>
 										</div>
 										<div style="margin-bottom:5px;">
-											<?php echo $LANG['PROC_PER_RUN']; ?>: <input name="limit" type="text" value="<?php echo $limit; ?>" style="width:40px" />
+											<label for="limit"> <?php echo $LANG['PROC_PER_RUN']; ?>: </label>
+											<input name="limit" id="limit" type="text" value="<?php echo $limit; ?>" style="width:40px" />
 										</div>
 										<div style="margin-bottom:5px;">
-											<?php echo $LANG['START_INDEX']; ?>: <input name="startindex" type="text" value="<?php echo $startIndex; ?>" title="Enter a taxon name or letter of the alphabet to indicate where the processing should start" />
+											<label for="startindex"> <?php echo $LANG['START_INDEX']; ?>: </label>
+											<input id="startindex" name="startindex" type="text" value="<?php echo $startIndex; ?>" title="Enter a taxon name or letter of the alphabet to indicate where the processing should start" />
 										</div>
-										<div style="height:50px;">
-											<div style=""><?php echo $LANG['CLEAN_MAP_FUNCTION']; ?>:</div>
-											<div style="float:left;margin-left:15px;"><input name="autoclean" type="radio" value="0" <?php echo (!$autoClean?'checked':''); ?> /> <?php echo $LANG['SEMI_MANUAL']; ?></div>
-											<div style="float:left;margin-left:10px;"><input name="autoclean" type="radio" value="1" <?php echo ($autoClean==1?'checked':''); ?> /> <?php echo $LANG['FULLY_AUTO']; ?></div>
-										</div>
-										<div style="clear:both;">
+										<fieldset class="bottom-breathing-room">
+											<legend><?php echo $LANG['CLEAN_MAP_FUNCTION']; ?></legend>
+											<div style="float:left;margin-left:15px;"><input name="autoclean" id="semi" type="radio" value="0" <?php echo (!$autoClean?'checked':''); ?> /> <label for="semi"> <?php echo $LANG['SEMI_MANUAL']; ?> </label> </div>
+											<div style="float:left;margin-left:10px;"><input name="autoclean" id="fully" type="radio" value="1" <?php echo ($autoClean==1?'checked':''); ?> /> <label for="fully"> <?php echo $LANG['FULLY_AUTO']; ?> </label> </div>
+										</fieldset>
+										<div class="bottom-breathing-room">
 											<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 											<button name="submitaction" type="submit" value="AnalyzingNames" ><?php echo ($startIndex?$LANG['CONTINUE_ANALYZING']:$LANG['ANALYZE_NAMES']); ?></button>
 										</div>
@@ -311,7 +316,7 @@ elseif($activeCollArr){
 								</div>
 							</form>
 							 -->
-						</fieldset>
+						</section>
 					</div>
 					<?php
 				}
@@ -321,9 +326,9 @@ elseif($activeCollArr){
 			}
 			elseif($collMap){
 				?>
-				<div style="margin:0px 0px 20px 20xp;font-weight:bold;font-size:120%;"><?php echo $LANG['BATCH_TAXON_CLEAN']; ?></div>
-				<fieldset style="padding: 15px;margin:20px;">
-					<legend><b><?php echo $LANG['COL_SELECTOR']; ?></b></legend>
+				<div style="margin:0px 0px 20px 20px;font-weight:bold;font-size:120%;"><?php echo $LANG['BATCH_TAXON_CLEAN']; ?></div>
+				<section class="fieldset-like">
+					<h1> <span> <?php echo $LANG['COL_SELECTOR']; ?> </span> </h1>
 					<form name="selectcollidform" action="taxonomycleaner.php" method="post" onsubmit="return checkSelectCollidForm(this)">
 						<div><input name="selectall" type="checkbox" onclick="selectAllCollections(this);" /> <?php echo $LANG['SEL_UNSEL_ALL']; ?></div>
 						<?php
@@ -339,7 +344,7 @@ elseif($activeCollArr){
 						</div>
 					</form>
 					<div>* <?php echo $LANG['ONLY_ADMIN_COLS']; ?></div>
-				</fieldset>
+				</section>
 				<?php
 			}
 			else{

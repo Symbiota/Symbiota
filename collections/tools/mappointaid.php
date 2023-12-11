@@ -16,12 +16,12 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 ?>
 <html>
 	<head>
-		<title><?php echo $DEFAULT_TITLE; ?> - Point-Radius Aid</title>
+	<title><?php echo $DEFAULT_TITLE; ?> - Point-Radius Aid</title>
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 
 		<?php
-			include_once($SERVER_ROOT.'/includes/leafletMap.php');
-			include_once($SERVER_ROOT.'/includes/googleMap.php');
+		include_once($SERVER_ROOT.'/includes/leafletMap.php');
+		include_once($SERVER_ROOT.'/includes/googleMap.php');
 		?>
 
 		<script type="text/javascript">
@@ -109,6 +109,8 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 			});
 
 			map.mapLayer.addControl(drawControl);
+			const markerControl = document.querySelector(".leaflet-draw-draw-marker");
+			if(markerControl) markerControl.click();
 
 			let marker;
 
@@ -131,10 +133,10 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 
 							map.mapLayer.removeLayer(marker)
 							marker = L.marker([pos.lat, pos.lng])
-								.addTo(map.mapLayer) 
+							.addTo(map.mapLayer) 
 						})
 						.setStyle(map.DEFAULT_SHAPE_OPTIONS)
-						.addTo(drawnItems);
+					.addTo(drawnItems);
 
 					map.mapLayer.on('draw:deleted', e => {
 						map.mapLayer.removeLayer(marker);
@@ -157,10 +159,9 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 					map.mapLayer.on('draw:editstop', e => {
 						map.mapLayer.removeLayer(marker);
 						marker = L.marker([latlng[0], latlng[1]])
-							.addTo(map.mapLayer) 
+						.addTo(map.mapLayer) 
 					})
 
-					map.mapLayer.fitBounds(drawnItems.getBounds());
 				} else {
 					marker.on('drag', e => {
 						const pos = e.target.getLatLng();
@@ -196,11 +197,16 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 					const lat = e.layer._latlng.lat;
 					const lng = e.layer._latlng.lng;
 					createMarker(lat, lng)
+
 				} 
+
+				if(markerControl) { 
+					setTimeout(() => markerControl.click(), 50);
+				}
 			})
 
 			//Draw marker if one exists
-			if(latlng) {
+		if(latlng) {
 				createMarker(latlng[0], latlng[1]);
 			}
 		}
@@ -252,7 +258,7 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 
 			function drawError() {
 				if(!marker || isNaN(errRadius) || errRadius <= 0) return;
-				if(errCircle) errCircle.setMap();
+			if(errCircle) errCircle.setMap();
 
 				errCircle = new google.maps.Circle({
 					center: new google.maps.LatLng(latlng[0], latlng[1]),
@@ -283,7 +289,7 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 			lngInput.addEventListener("change", onFormChange);
 
 			//Draw marker if one exists
-			if(latlng) {
+		if(latlng) {
 				createMarker(latlng[0], latlng[1]);
 				map.mapLayer.setCenter(marker.getPosition());
 			}
@@ -291,7 +297,7 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 			google.maps.event.addListener(map.mapLayer, 'click', function(e) {
 
 				createMarker(e.latLng.lat(), e.latLng.lng());
-				if(errRadius) {
+			if(errRadius) {
 					drawError();
 				}
 			}) 
@@ -308,6 +314,7 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 			radiusInput = document.getElementById("errRadius");
 			latInput = document.getElementById("latbox");
 			lngInput = document.getElementById("lngbox");
+			getErrorRadius();
 
 			if(lat && lng) {
 				if(checkCoord(lat, 90) && checkCoord(lng, 180)) {
@@ -317,12 +324,12 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 					alert(`Error: Not Coordinates lat: ${lat}, lng: ${lng}`);
 				}
 			} 
-			<?php if(!empty($LEAFLET)) { ?> 
-				leafletInit();
-			<?php } else { ?> 
+			<?php if(empty($GOOGLE_MAP_KEY)) { ?> 
+			leafletInit();
+		<?php } else { ?> 
 			googleInit();
-		<?php } ?>
-		 }
+	<?php } ?>
+		}
 
 		function updateParentForm(f) {
 			opener.document.getElementById("decimallatitude").value = f.latbox.value;
@@ -356,30 +363,30 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 			class="service-container" 
 			data-lat="<?= htmlspecialchars($latCenter)?>"
 			data-lng="<?= htmlspecialchars($lngCenter)?>"
-		>
-		<div style="">
-			<form name="coordform" action="" method="post" onsubmit="return false">
-				<div style="float:right;margin:5px 20px">
-					<button name="addcoords" type="button" onclick="updateParentForm(this.form);">Submit Coordinates</button><br/>
-				</div>
-				<div style="margin:3px 20px 3px 0px;">
-					Click on the map to capture coordinates, or drag marker.
-					<?php if($errMode) echo 'Enter uncertainty to create an error radius circle around the marker. '; ?>
-					The Submit Coordinates button will transfer the information to form.
-				</div>
-				<div style="margin-right:10px;">
+			>
+			<div style="">
+				<form name="coordform" action="" method="post" onsubmit="return false">
+					<div style="float:right;margin:5px 20px">
+						<button name="addcoords" type="button" onclick="updateParentForm(this.form);">Submit Coordinates</button><br/>
+					</div>
+					<div style="margin:3px 20px 3px 0px;">
+						Click on the map to capture coordinates, or drag marker.
+						<?php if($errMode) echo 'Enter uncertainty to create an error radius circle around the marker. '; ?>
+						The Submit Coordinates button will transfer the information to form.
+					</div>
+					<div style="margin-right:10px;">
 					<b>Latitude:</b> <input type="text" id="latbox" name="lat" style="width:100px" />
 					<b>Longitude:</b> <input type="text" id="lngbox" name="lon" style="width:100px" />
-				<?php
-				if($errMode){
-					?>
-					<b>Uncertainty in Meters:</b> <input type="text" id="errRadius" name="errRadius" size="13" />
-					<?php
-				}
-				?>
-				</div>
-			</form>
-			<div id='map_canvas' style='width:100%; height:88%; clear:both;'></div>
-		</div>
+						<?php
+						if($errMode){
+						?>
+						<b>Uncertainty in Meters:</b> <input type="text" id="errRadius" name="errRadius" size="13" />
+						<?php
+						}
+						?>
+					</div>
+				</form>
+				<div id='map_canvas' style='width:100%; height:88%; clear:both;'></div>
+			</div>
 	</body>
 </html>

@@ -17,7 +17,7 @@ $(document).ready(function() {
 				acUrl = newUrl + acUrlBase;
 				loopCnt = loopCnt + 1;
 			}
-			}
+		}
 	}
 	
 	function extractLast( term ) {
@@ -91,7 +91,7 @@ function initiateTaxonSuggest(inputID, rLow, rHigh){
 
 function urlExists(url){
     var http = new XMLHttpRequest();
-    http.open('HEAD', url);
+    http.open('HEAD', url, false);
     http.send();
     return http.status!=404;
 }

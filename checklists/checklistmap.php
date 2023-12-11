@@ -17,235 +17,209 @@ if($taxonFilter) $clManager->setTaxonFilter($taxonFilter);
 
 $coordArr = $clManager->getVoucherCoordinates();
 $clMeta = $clManager->getClMetaData();
+$coordJson = json_encode($coordArr);
+
+$coords = [];
+
+foreach($coordArr as $tid => $taxaCoords) {
+   foreach($taxaCoords as $coord) {
+      $ll = explode(',',$coord['ll']);
+      if(count($ll) == 2 && trim($ll[0]) != 0 && trim($ll[1]) != 0) {
+         array_push($coords, ['lat' => $ll[0], 'lng' => $ll[1], 'occid' => $coord['occid'], 'notes' => $coord['notes']]);
+      }
+   }
+}
+$coordJson = json_encode($coords);
+$metaJson = json_encode($clMeta);
+
 ?>
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE.' - '.(isset($LANG['COORD_MAP'])?$LANG['COORD_MAP']:'Checklist Coordinate Map'); ?></title>
 	<?php
-	//include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
-
-	// If checklist is associated with an external service (i.e., iNaturalist), transfer some server-side data to client-side
-	if($clMeta['dynamicProperties']){
-		$dynamPropsArr = json_decode($clMeta['dynamicProperties'], true);
-		if(isset($dynamPropsArr['externalservice']) && $dynamPropsArr['externalservice'] == 'inaturalist') {
-			echo '<script src="../js/symb/checklists.externalserviceapi.js"></script>';
-			echo '<script>';
-			echo 'const urltail = ".grid.json?mappable=true&project_id='. ($dynamPropsArr['externalserviceid']?$dynamPropsArr['externalserviceid']:'').'&rank='. ($dynamPropsArr['externalservicerank']?$dynamPropsArr['externalservicerank']:'species').'&iconic_taxa='. ($dynamPropsArr['externalserviceiconictaxon']?$dynamPropsArr['externalserviceiconictaxon']:'').'&quality_grade='. ($dynamPropsArr['externalservicegrade']?$dynamPropsArr['externalservicegrade']:'research').'&order=asc&order_by=updated_at";';
-			echo 'const inatprojid = "'. ($dynamPropsArr['externalserviceid']?$dynamPropsArr['externalserviceid']:'') .'";';
-			echo 'const inaticonic = "'. ($dynamPropsArr['externalserviceiconictaxon']?$dynamPropsArr['externalserviceiconictaxon']:'') .'";';
-			echo 'const inatNE = "'.($dynamPropsArr['externalservicene']?$dynamPropsArr['externalservicene']:'') .'";';
-			echo 'const inatSW = "'.($dynamPropsArr['externalservicesw']?$dynamPropsArr['externalservicesw']:'') .'";';
-			echo 'const latcentroid = '.($clMeta['latcentroid']?$clMeta['latcentroid']:0) .';';
-			echo 'const longcentroid = '.($clMeta['longcentroid']?$clMeta['longcentroid']:0) .';';
-			echo 'const pointradiusmeters = '.($clMeta['pointradiusmeters']?$clMeta['pointradiusmeters']:0) .';';
-			echo '</script>';
-		}
-
-	} 
+	include_once($SERVER_ROOT.'/includes/leafletMap.php');
+	include_once($SERVER_ROOT.'/includes/googleMap.php');
 	?>
-	<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'&key='.$GOOGLE_MAP_KEY:''); ?>&callback=Function.prototype"></script>
-	<script type="text/javascript">
-		var map;
-		var puWin;
 
-		function initialize(){
+   <script src="<?php echo $CLIENT_ROOT?>/js/symb/wktpolygontools.js" type="text/javascript"></script>
+   <script src="<?php echo $CLIENT_ROOT?>/js/symb/MapShapeHelper.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+      var map;
+      var puWin;
+      let occurCoords = [];
+      let clMeta;
+      let cl_footprint_shape;
+
+      function leafletInit() {
+			var dmOptions = {
+				zoom: 3,
+				center: [41,-95],
+         };
+         map = new LeafletMap("map_canvas", dmOptions);
+         const leafletSmallPin = img => L.icon({
+            iconUrl: img,
+            iconSize:     [12, 20], 
+            iconAnchor:   [6, 20], 
+            popupAnchor:  [0, -12], 
+            tooltipAnchor:  [0, -12]
+         });
+
+         var symb_occur = leafletSmallPin('../images/google/smpin_red.png')
+         var symb = leafletSmallPin('../images/google/smpin_blue.png')
+         var inat_icon = leafletSmallPin('../images/google/smpin_green.png')
+
+         let markers = []
+         for(let coord of occurCoords) {
+            let marker = L.marker([coord.lat, coord.lng], {
+               icon: coord.occid? symb_occur: symb,
+            })
+            .bindTooltip(`<div style="font-size:1.2rem">${coord.notes}</div>`)
+            .on('click', () => openIndPU(coord.occid));
+            markers.push(marker);
+         }
+         let markerGroup = new L.FeatureGroup(markers);
+
+         map.enableDrawing({...map.DEFAULT_DRAW_OPTIONS, control: false});
+         if(cl_footprint_shape) map.drawShape(cl_footprint_shape);
+
+         markerGroup.addTo(map.mapLayer)
+
+         map.mapLayer.fitBounds(markerGroup.getBounds());
+
+         //Only for inaturalist for now
+         if(clMeta.dynamicProperties && clMeta.dynamicProperties.externalserviceid) {
+            //TODO (Logan) Only grabs 200 records for now setup multi request
+            //fill in. Note this must be throttled to be less than 100 requests
+            //per minute for iNaturalist guidelines
+            getInatProjectOccurrences(clMeta.dynamicProperties.externalserviceid).then(res => {
+               let inat_markers = [];
+               for(let occur of res.results) {
+                  if(occur.geojson && occur.geojson.type === "Point") {
+                     let marker = L.marker(occur.geojson.coordinates.reverse(), {
+                        icon: inat_icon,
+                     })
+                     .bindTooltip(`<div style="font-size:1.2rem">iNaturalist-${occur.id}</div>`)
+                     .on('click', () => window.open(occur.uri, '_blank'));
+
+                     inat_markers.push(marker);
+                  }
+               }
+
+               let inat_markerGroup = new L.FeatureGroup(inat_markers);
+               inat_markerGroup.addTo(map.mapLayer)
+            });
+         }
+
+      }
+
+      function googleInit() {
+         var vIcon = new google.maps.MarkerImage("../images/google/smpin_red.png");
+         var pIcon = new google.maps.MarkerImage("../images/google/smpin_blue.png");
+         var inatIcon = new google.maps.MarkerImage("../images/google/smpin_green.png");
+
 			var dmOptions = {
 				zoom: 3,
 				center: new google.maps.LatLng(41,-95),
 				mapTypeId: google.maps.MapTypeId.TERRAIN,
 				scaleControl: true
-			};
+         };
+         map = new GoogleMap("map_canvas", dmOptions);
 
-			var llBounds = new google.maps.LatLngBounds();
-			<?php
-			if($coordArr){
-				?>
-				map = new google.maps.Map(document.getElementById("map_canvas"), dmOptions);
-				var vIcon = new google.maps.MarkerImage("../images/google/smpin_red.png");
-				var pIcon = new google.maps.MarkerImage("../images/google/smpin_blue.png");
-				var inatIcon = new google.maps.MarkerImage("../images/google/smpin_green.png");
-				<?php
-				$mCnt = 0;
-				foreach($coordArr as $tid => $cArr){
-					foreach($cArr as $pArr){
-						$llArr = explode(',', $pArr['ll']);
-						if(trim($llArr[0]) != 0 && trim($llArr[1]) != 0) {
-							// This is a preventative measure to reduce the chance of points in table fmchklstcoordinates 
-							// without legitimate coordinates (i.e., 0, 0) from adversely affecting map center and extent.
-							echo "var pt = new google.maps.LatLng(".$pArr['ll'].");";
-							echo "llBounds.extend(pt);";
-							if(array_key_exists('occid',$pArr)){
-								echo 'var m'.$mCnt.' = new google.maps.Marker({position: pt, map:map, title:"'. $pArr['notes'].'", icon:vIcon});';
-								echo 'google.maps.event.addListener(m'.$mCnt.', "click", function(){ openIndPU('.$pArr['occid'].'); });';
-							}
-							else{
-								echo 'var m'.$mCnt.' = new google.maps.Marker({position: pt, map:map, title:"'.$pArr['sciname'].'", icon:pIcon});';
-							}
-							$mCnt++;
-						}
-					}
-				}
-			
-				$clMeta = $clManager->getClMetaData();
-				?>
-				map.fitBounds(llBounds);
-				map.panToBounds(llBounds);
+			var bounds = new google.maps.LatLngBounds();
 
+         for(let coord of occurCoords) {
+            let marker = new google.maps.Marker({
+					position: new google.maps.LatLng(coord.lat, coord.lng),
+               title: coord.notes,
+               icon: coord.occid? vIcon: pIcon,
+               map: map.mapLayer,
+					zIndex: google.maps.Marker.MAX_ZINDEX
+               });
+            bounds.extend(marker.getPosition());
 
-				function ll2slippytile(lon, lat, zoom) {
-					// https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Lon..2Flat._to_tile_numbers_2
-					let n = Math.pow(2, zoom);
-					xtile = Math.floor( n * ((lon + 180) / 360) );
-					ytile = Math.floor( n * (1 - (Math.log(Math.tan((lat * Math.PI/180)) + (1 / Math.cos((lat * Math.PI/180)))) / Math.PI)) / 2 );
-					return {x:xtile, y:ytile};
-				}
+            google.maps.event.addListener(marker, 'click', function() { 
+               openIndPU(coord.occid)
+            })
+         }
 
-				async function requestTileCoords(tileurls) {
-					const resps = await Promise.all(tileurls.map(async (url) => {
-						const resp = await fetch(url);
-						// Throttle to < 100 requests per minute as per iNaturalist API guidelines 
-						await new Promise(governor => setTimeout(governor, 600));
-						return resp;
-					}));
-					const resppromises = resps.map(result => result.json());
-					const inatprojectpoints = await Promise.all(resppromises);
-					let returnarr = []; // flatten all promise responses into single object
-					for(const i in inatprojectpoints) { returnarr = Object.assign(returnarr, inatprojectpoints[i].data) }
-					return returnarr;
-				}
+         map.mapLayer.fitBounds(bounds);
 
+         map.enableDrawing({...map.DEFAULT_DRAW_OPTIONS, polygon: false, rectangle: false, circle: false});
+         if(cl_footprint_shape) map.drawShape(cl_footprint_shape);
 
-				let north = 90;
-				let south = -90;
-				let east = 180;
-				let west = -180;
-				if(pointradiusmeters != 0) {  // Try Symbiota bounds
-					console.log("Using Symbiota bounds");
-					const coordoffset = pointradiusmeters/111319.9;  // based on approximate length of a decimal degree at the equator, if change in distance with latitude is really critical, someone can get fancy with the math in the future
-					north = latcentroid + coordoffset;
-					south = latcentroid - coordoffset;
-					east = longcentroid + coordoffset;
-					west = longcentroid - coordoffset;
-				} else if( (inatNE != '' || inatSW != '') && (inatNE != 0 && inatSW != 0) ) {  // Try iNat bounds
-					console.log("Using iNaturalist bounds");
-					let neArr = inatNE.split('|');
-					let swArr = inatSW.split('|');
-					north = parseFloat(neArr[0]);
-					south = parseFloat(swArr[0]);
-					east = parseFloat(neArr[1]);
-					west = parseFloat(swArr[1]);
-			
-				} else {  // Use map extent
-					console.log("Using current map bounds");
-					const ne = llBounds.getNorthEast();
-					const sw = llBounds.getSouthWest();
-					north = ne.lat();
-					south = sw.lat();
-					east = ne.lng();
-					west = sw.lng();
-				}
-				
-				// Guesstimate approximate tile centers by taking the 25% and 75% positions in x and y
-				const xdiff = Math.abs(east - west); 
-				const ydiff = Math.abs(north - south);
-				const diff = (xdiff + ydiff) / 2;
-				let zoom = Math.round(Math.log2( 180/diff ));
-				const x25 = west + (0.25 * xdiff);
-				const x75 = east - (0.25 * xdiff);
-				const y25 = south + (0.25 * ydiff);
-				const y75 = north - (0.25 * ydiff);
-				let nwtile = ll2slippytile(x25,y25,zoom);
-				let setile = ll2slippytile(x75,y75,zoom);
-				let netile = ll2slippytile(x75,y25,zoom);
-				let swtile = ll2slippytile(x25,y75,zoom);
+         //Only for inaturalist for now
+         if(clMeta.dynamicProperties && clMeta.dynamicProperties.externalserviceid) {
+            //TODO (Logan) Only grabs 200 records for now setup multi request
+            //fill in. Note this must be throttled to be less than 100 requests
+            //per minute for iNaturalist guidelines
+            getInatProjectOccurrences(clMeta.dynamicProperties.externalserviceid).then(res => {
+               for(let occur of res.results) {
+                  if(occur.geojson && occur.geojson.type === "Point") {
+                     let marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(occur.geojson.coordinates[1], occur.geojson.coordinates[0]),
+                        title: occur.uri,
+                        title: "iNaturalist-" + occur.id, 
+                        icon: inatIcon,
+                        map: map.mapLayer,
+                        zIndex: google.maps.Marker.MAX_ZINDEX
+                     });
 
+                     google.maps.event.addListener(marker, 'click', () => {
+                        window.open(occur.uri, '_blank');
+                     });
+                  }
+               }
+            });
+         }
+      }
 
-				// Optimize request based on a zoom level that will return 4 tiles within current bounds
+      function parseNested(str) {
+          try {
+              return JSON.parse(str, (_, val) => {
+                  if (typeof val === 'string')
+                      return parseNested(val)
+                  return val
+              })
+          } catch (e) {
+              return str
+          }
+      }
 
-				// Start with NW tile
-				let alltileurls = [`https://api.inaturalist.org/v1/points/${zoom}/${nwtile['x']}/${nwtile['y']}${urltail}`];
+		// Note Need to Throttle to < 100 requests per minute as per iNaturalist API guidelines 
+      async function getInatProjectOccurrences(inat_proj_id) {
 
-				// Check rectangularity condition of llbounds converted to tiles (2x2, 2x1, 1x2)
-				if(setile != nwtile) {
-					// 1x1 check; theoretically, a 1x1 should just be a 2x2 at a lower zoom level
-					alltileurls.push(`https://api.inaturalist.org/v1/points/${zoom}/${setile['x']}/${setile['y']}${urltail}`);
-					if(netile != setile || nwtile != swtile) {
-						// 1x2 check, if succeeds, then 2x2
-						alltileurls.push(`https://api.inaturalist.org/v1/points/${zoom}/${netile['x']}/${netile['y']}${urltail}`);
-						alltileurls.push(`https://api.inaturalist.org/v1/points/${zoom}/${swtile['x']}/${swtile['y']}${urltail}`);
-					} else if(setile != swtile || netile != nwtile) {
-						// 2x1 check, if succeeds, then 2x2
-						alltileurls.push(`https://api.inaturalist.org/v1/points/${zoom}/${netile['x']}/${netile['y']}${urltail}`);
-						alltileurls.push(`https://api.inaturalist.org/v1/points/${zoom}/${swtile['x']}/${swtile['y']}${urltail}`);
-					} 
-					// if either of above fail, then it's a 1x2 or 2x1. Using the nw + se tiles 
-					// (requests already in place because the 1x1 check passed) will cover both cases.
-				}
+         let url = `https://api.inaturalist.org/v1/observations?project_id=${inat_proj_id}&geo=true&mappable=true&per_page=200`;
+         let response = await fetch(url, {
+            method: "GET",
+            headers: {
+               "Content-Type": "application/json",
+            }
+         })
 
-				requestTileCoords(alltileurls)
-					.then(result => {
-						var inatmarker;
-						for( const inatid in result ) {
-							let lat = result[inatid].latitude;
-							let lon = result[inatid].longitude;
-							let pt = new google.maps.LatLng(lat,lon);
-							llBounds.extend(pt);
-							inatmarker = new google.maps.Marker({
-								position: pt,
-								map: map, 
-								title: "iNaturalist-" + inatid, 
-								icon: inatIcon
-							});
-							google.maps.event.addListener(inatmarker, 'click', (function(inatmarker, inatid) {
-								return function() {
-									window.open(`https://www.inaturalist.org/observations/${inatid}`, '_blank')
-								}
-							})(inatmarker, inatid));
-						}
-						map.fitBounds(llBounds);
-						map.panToBounds(llBounds);
-					})
-					.catch(error => {error.message;});
+         return await response.json();
+      }
 
-				<?php
+		function initialize() {
+         try {
+            let data = document.getElementById('service-container')
+            occurCoords = JSON.parse(data.getAttribute('data-occur-coords'));
+            clMeta = parseNested(data.getAttribute('data-cl-meta'));
+         } catch (err) {
+            alert("Failed to load occurence data")
+         }
 
-				//Check for and add checklist polygon
+         if(clMeta && clMeta.footprintwkt) {
+            cl_footprint_shape = loadMapShape("polygon", { polygonLoader: () => clMeta.footprintwkt });
+         }
 
-				if($clMeta['footprintwkt']){
-					//Add checklist polygon
-					$wkt = $clMeta['footprintwkt'];
-					if(substr($wkt,0,7) == 'POLYGON') $wkt = substr($wkt,7);
-					else if(substr($wkt,0,12) == 'MULTIPOLYGON') $wkt = substr($wkt,12);
-					$coordArr = explode('),(', $wkt);
-					foreach($coordArr as $k => $polyFrag){
-						if($pointArr = explode(',', trim($polyFrag,' (),'))){
-							echo 'var polyPointArr'.$k.' = [];';
-							foreach($pointArr as $pointStr){
-								$llArr = explode(' ', trim($pointStr));
-								if($llArr[0] > 90 || $llArr[0] < -90) break;
-								?>
-								var polyPt = new google.maps.LatLng(<?php echo $llArr[0].','.$llArr[1]; ?>);
-								polyPointArr<?php echo $k; ?>.push(polyPt);
-								llBounds.extend(polyPt);
-								<?php
-							}
-							?>
-							var footPoly<?php echo $k; ?> = new google.maps.Polygon({
-								paths: polyPointArr<?php echo $k; ?>,
-								strokeWeight: 2,
-								fillOpacity: 0.4,
-								map: map
-							});
-							<?php
-						}
-					}
-				}
-				?>
-			<?php
-			}
-			?>
-		}
+         <?php if(empty($GOOGLE_MAP_KEY)):?>
+            leafletInit();
+         <?php else:?>
+            googleInit();
+         <?php endif?>
+      }
 
 		function openIndPU(occId){
 			if(puWin != null) puWin.close();
@@ -253,8 +227,7 @@ $clMeta = $clManager->getClMetaData();
 			if(puWin.opener == null) puWin.opener = self;
 			setTimeout(function () { puWin.focus(); }, 0.5);
 			return false;
-		}
-
+      }
 	</script>
 	<style>
 		html, body, #map_canvas {
@@ -278,6 +251,10 @@ $clMeta = $clManager->getClMetaData();
 		<?php
 	}
 	?>
+   <div id="service-container"
+      data-occur-coords="<?= htmlspecialchars($coordJson) ?>"
+      data-cl-meta="<?= htmlspecialchars($metaJson)?>"
+   />
 	<div id='map_canvas'></div>
 </body>
 </html>

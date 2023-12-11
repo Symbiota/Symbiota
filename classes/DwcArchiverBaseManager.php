@@ -44,7 +44,7 @@ class DwcArchiverBaseManager extends Manager{
 				$rs->free();
 			}
 			else{
-				$this->logOrEcho("ERROR creating attribute (MeasurementOrFact file: ".$this->conn->error."\n");
+				$this->logOrEcho('ERROR writing out to extension file: '.$this->conn->error."\n");
 				$this->logOrEcho("\tSQL: ".$sql."\n");
 			}
 		}
