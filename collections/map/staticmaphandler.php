@@ -28,7 +28,7 @@ if(!empty($MAPPING_BOUNDARIES)){
 $bounds = [$boundLatMax, $boundLngMax, $boundLatMin, $boundLngMin];
 
 //Redirects User if not an Admin
-if(!$IS_ADMIN){
+if(!isset($IS_ADMIN) || !$IS_ADMIN || !isset($SYMB_UID) || !$SYMB_UID) {
    header("Location: ". $CLIENT_ROOT . '/index.php');
 }
 
