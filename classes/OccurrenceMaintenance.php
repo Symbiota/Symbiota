@@ -175,6 +175,24 @@ class OccurrenceMaintenance {
 		}
 		$rs->free();
 		$this->batchUpdateTidInterpreted($occidArr);
+
+		//Match hybrids
+		/* Not activating due to taking too long to run on big datasets
+		$activeTid = 0;
+		$sql = 'SELECT t.tid, o.occid
+			FROM taxa t INNER JOIN omoccurrences o ON t.sciname LIKE REPLACE(o.sciname, "× ", "%×%")
+			WHERE o.tidinterpreted IS NULL AND o.sciname LIKE "%× %" ';
+		if($this->collidStr) $sql .= 'AND o.collid IN('.$this->collidStr.') ';
+		$sql .= 'ORDER BY t.tid';
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			if($occidArr && $r->tid != $activeTid) $this->batchUpdateTidInterpreted($occidArr);
+			$activeTid = $r->tid;
+			$occidArr[$r->tid][] = $r->occid;
+		}
+		$rs->free();
+		$this->batchUpdateTidInterpreted($occidArr);
+		*/
 	}
 
 	private function batchUpdateTidInterpreted(&$occidArr){
