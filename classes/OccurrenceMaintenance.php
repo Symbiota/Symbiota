@@ -108,7 +108,7 @@ class OccurrenceMaintenance {
 	}
 
 	public function indexOccurrencesToTaxa(){
-		$this->outputMsg('Indexing validated scientific names (e.g. populating tidInterpreted)... ', 1);
+		$this->outputMsg('Indexing scientific names (e.g. populating tidInterpreted)... ', 1);
 
 		//Avoid using straight UPDATE SQL since they will often lock omoccurrences table for a significant amount of time when database is large
 		$occidArr = array();

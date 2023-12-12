@@ -1,5 +1,4 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
 include_once($SERVER_ROOT.'/classes/Manager.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyHarvester.php');
@@ -308,7 +307,7 @@ class TaxonomyCleaner extends Manager{
 		ob_flush();
 
 		$occurMaintenance = new OccurrenceMaintenance($this->conn);
-		$occurMaintenance->setCollidStr($this->collid);
+		//$occurMaintenance->setCollidStr($this->collid);
 		$occurMaintenance->setVerbose(true);
 		$occurMaintenance->generalOccurrenceCleaning();
 	}
