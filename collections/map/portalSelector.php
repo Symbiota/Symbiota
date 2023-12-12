@@ -21,9 +21,6 @@ $portals = $conn->query(<<<sql
 //included. 
 $PORTAL_SELECTOR_ID = !isset($PORTAL_SELECTOR_ID) || !is_int($PORTAL_SELECTOR_ID)? 0: $PORTAL_SELECTOR_ID + 1;
 
-
-array_push($portals, ["urlRoot" => 'http://localhost/Portal', "portalName"=>"local"]);
-
 ?>
 
 <div>
