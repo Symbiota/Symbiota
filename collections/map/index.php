@@ -1854,7 +1854,7 @@ Record Limit:
 							<div id="symbology" style="">
 								<div style="height:40px;margin-bottom:15px;">
 									<?php
-									if($obsIDs){
+									//if($obsIDs){
 									?>
 								<div style="float:left;">
 										<div>
@@ -1893,7 +1893,7 @@ Record Limit:
 							<div id="maptaxalist" >
 								<div style="height:40px;margin-bottom:15px;">
 									<?php
-									if($obsIDs){
+									//if($obsIDs){
 									?>
 								<div style="float:left;">
 										<div>
@@ -1912,7 +1912,7 @@ Record Limit:
 										</div>
 									</div>
 									<?php
-									}
+									//}
 									?>
 									<div id="symbolizeResetButt" style='float:right;margin-bottom:5px;' >
 										<div>
@@ -1929,7 +1929,7 @@ Record Limit:
 							</div>
 						</div>
 						<?php
-						}
+						//}
 						?>
 					</div>
 				</div>
