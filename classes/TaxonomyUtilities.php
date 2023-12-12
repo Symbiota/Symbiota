@@ -158,6 +158,13 @@ class TaxonomyUtilities {
 						}
 					}
 				}
+				if(isset($retArr['author']) && mb_strpos($retArr['author'], '×') !== false){
+					if((!isset($retArr['unitind3']) || !$retArr['unitind3']) && (!isset($retArr['unitname3']) || !$retArr['unitname3'])){
+						$retArr['unitind3'] = '×';
+						$retArr['unitname3'] = substr($retArr['author'], trim(strpos($retArr['author'], '×') + 2));
+						if(!isset($retArr['rankid']) || !$retArr['rankid']) $retArr['rankid'] = 220;
+					}
+				}
 			}
 			if($conn !== null && $okToCloseConn) $conn->close();
 			//Set taxon rankid
@@ -192,8 +199,17 @@ class TaxonomyUtilities {
 				}
 			}
 			//Build sciname, without author
-			$sciname = (isset($retArr['unitind1'])?$retArr['unitind1'].' ':'').$retArr['unitname1'].' ';
-			$sciname .= (isset($retArr['unitind2'])?$retArr['unitind2'].' ':'').$retArr['unitname2'].' ';
+			$sciname = '';
+			if(!empty($retArr['unitind1'])){
+				$sciname = $retArr['unitind1'];
+				if($retArr['unitind1'] != '×' || $retArr['unitind1'] != '†') $sciname .= ' ';
+			}
+			$sciname .= $retArr['unitname1'].' ';
+			if(!empty($retArr['unitind2'])){
+				$sciname .= $retArr['unitind2'];
+				if($retArr['unitind2'] != '×') $sciname .= ' ';
+			}
+			$sciname .= $retArr['unitname2'].' ';
 			$sciname .= trim($retArr['unitind3'].' '.$retArr['unitname3']);
 			$retArr['sciname'] = trim($sciname);
 		}
