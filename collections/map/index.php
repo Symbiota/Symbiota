@@ -1580,6 +1580,7 @@ value="${color}"
 		<div>
 			<button onclick="document.getElementById('defaultpanel').style.width='380px';  " style="position:absolute;top:0;left:0;margin:0px;z-index:10;font-size: 14px;">&#9776; <b>Open Search Panel</b></button>
 		</div>
+		<div id='map' style='width:100vw;height:100vh;z-index:1'></div>
 		<div id="defaultpanel" class="sidepanel" style="width:390px">
 			<div class="panel-content">
 				<span style="position:absolute; top:0.7rem; right:0.7rem; z-index:1">
@@ -1934,7 +1935,6 @@ Record Limit:
 				</div>
 			</div><!-- /content wrapper for padding -->
 		</div><!-- /defaultpanel -->
-		<div id='map' style='width:100vw;height:100vh;z-index:1'></div>
 		<div id="loadingOverlay" data-role="popup" style="width:100%;position:relative;">
 			<div id="loadingImage" style="width:100px;height:100px;position:absolute;top:50%;left:50%;margin-top:-50px;margin-left:-50px;">
 				<img style="border:0px;width:100px;height:100px;" src="../../images/ajax-loader.gif" />
