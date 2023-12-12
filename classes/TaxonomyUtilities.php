@@ -212,7 +212,6 @@ class TaxonomyUtilities {
 			$sciname .= $retArr['unitname2'].' ';
 			$sciname .= trim($retArr['unitind3'].' '.$retArr['unitname3']);
 			$retArr['sciname'] = trim($sciname);
-			print_r($retArr);
 		}
 		return $retArr;
 	}
