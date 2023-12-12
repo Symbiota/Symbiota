@@ -213,6 +213,7 @@ class TaxonomyEditorManager extends Manager{
 	//Edit Functions
 	public function submitTaxonEdits($postArr){
 		$statusStr = '';
+		$sciname = trim($postArr['unitind1'].$postArr['unitname1'].' '.$postArr['unitind2'].$postArr['unitname2'].' '.trim($postArr['unitind3'].' '.$postArr['unitname3']));
 		$sql = 'UPDATE taxa SET '.
 			'unitind1 = '.($postArr['unitind1']?'"'.$this->cleanInStr($postArr['unitind1']).'"':'NULL').', '.
 			'unitname1 = "'.$this->cleanInStr($postArr['unitname1']).'",'.
@@ -227,11 +228,7 @@ class TaxonomyEditorManager extends Manager{
 			'securitystatus = '.(is_numeric($postArr['securitystatus'])?$postArr['securitystatus']:'0').', '.
 			'modifiedUid = '.$GLOBALS['SYMB_UID'].', '.
 			'modifiedTimeStamp = "'.date('Y-m-d H:i:s').'",'.
-			'sciname = "'.$this->cleanInStr(($postArr["unitind1"]?$postArr["unitind1"]." ":"").
-			$postArr["unitname1"].($postArr["unitind2"]?" ".$postArr["unitind2"]:"").
-			($postArr["unitname2"]?" ".$postArr["unitname2"]:"").
-			($postArr["unitind3"]?" ".$postArr["unitind3"]:"").
-			($postArr["unitname3"]?" ".$postArr["unitname3"]:"")).'" '.
+			'sciname = "'.$this->cleanInStr($sciname).'" '.
 			'WHERE (tid = '.$this->tid.')';
 		//echo $sql;
 		if(!$this->conn->query($sql)){

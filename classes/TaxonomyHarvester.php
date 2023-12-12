@@ -153,7 +153,8 @@ class TaxonomyHarvester extends Manager{
 				if($resultArr['total']){
 					//Evaluate and rank each result to determine which is the best suited target
 					$adjustedName = $sciName;
-					if(isset($taxonArr['rankid']) && $taxonArr['rankid'] > 220) $adjustedName = trim($taxonArr['unitname1'].' '.$taxonArr['unitname2'].' '.$taxonArr['unitname3']);
+					if(mb_strpos($adjustedName, '×') !== false) $adjustedName = str_replace('×', '× ', $adjustedName);
+					else if(isset($taxonArr['rankid']) && $taxonArr['rankid'] > 220) $adjustedName = trim($taxonArr['unitname1'].' '.$taxonArr['unitname2'].' '.$taxonArr['unitname3']);
 					$targetKey = 0;
 					$approvedNameUsageArr = array();
 					$rankingArr = array();
@@ -368,7 +369,10 @@ class TaxonomyHarvester extends Manager{
 					$taxonArr['sciname'] = $m[1].' '.$m[2];
 				}
 			}
-			if(!isset($taxonArr['unitname1'])) $taxonArr = array_merge(TaxonomyUtilities::parseScientificName($taxonArr['sciname'],$this->conn,$taxonArr['rankid'],$this->kingdomName),$taxonArr);
+			$translatedTaxonArr = TaxonomyUtilities::parseScientificName($taxonArr['sciname'], $this->conn, $taxonArr['rankid'], $this->kingdomName);
+			if(!isset($taxonArr['unitname1'])) $taxonArr = array_merge($translatedTaxonArr, $taxonArr);
+			if(isset($translatedTaxonArr['unitind1']) && $translatedTaxonArr['unitind1']) $taxonArr['unitind1'] = $translatedTaxonArr['unitind1'];
+			if(isset($translatedTaxonArr['unitind2']) && $translatedTaxonArr['unitind2']) $taxonArr['unitind2'] = $translatedTaxonArr['unitind2'];
 		}
 		//$this->buildTaxonArr($taxonArr);
 		return $taxonArr;
@@ -1178,6 +1182,17 @@ class TaxonomyHarvester extends Manager{
 			$this->buildTaxonArr($taxonArr);
 		}
 		if(!$this->validateTaxonArr($taxonArr)) return false;
+		if(mb_strpos($taxonArr['sciname'], '×') !== false || mb_strpos($taxonArr['sciname'], '†') !== false){
+			if(mb_strpos($taxonArr['sciname'], '× ') !== false) $taxonArr['sciname'] = str_replace('× ', '×', $taxonArr['sciname']);
+			if(mb_strpos($taxonArr['sciname'], '† ') !== false) $taxonArr['sciname'] = str_replace('† ', '†', $taxonArr['sciname']);
+			if(empty($taxonArr['unitind1'])){
+				if(mb_strpos($taxonArr['sciname'], '×') === 0) $taxonArr['unitind1'] = '×';
+				if(mb_strpos($taxonArr['sciname'], '†') === 0) $taxonArr['unitind1'] = '†';
+			}
+			if(empty($taxonArr['unitind2']) && empty($taxonArr['unitind1'])){
+				if(mb_strpos($taxonArr['sciname'], '×') !== false) $taxonArr['unitind2'] = '×';
+			}
+		}
 		//Check to see sciname is in taxon table, but perhaps not linked to current thesaurus
 		$sql = 'SELECT tid FROM taxa WHERE (sciname = "'.$this->cleanInStr($taxonArr['sciname']).'") ';
 		if($this->kingdomName) $sql .= 'AND (kingdomname = "'.$this->kingdomName.'" OR kingdomname = "") ';
