@@ -67,5 +67,4 @@ $LANG['CONTACT_ADMIN'] = 'Contact an administrator to obtain the necessary permi
 $LANG['ERROR_NO_ID'] = 'ERROR: collection identifier not set';
 $LANG['CLEAR'] = 'Clear Form';
 $LANG['AUTHORSHIP'] = 'Authorship';
-$LANG['SCINAME_AND_AUTHORSHIP'] = 'Scientific Name and Authorship';
 ?>
