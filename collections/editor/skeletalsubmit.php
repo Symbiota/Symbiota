@@ -71,8 +71,8 @@ if($collid){
 			<section class="fieldset-like">
 				<h1>
 					<span><b><?php echo $LANG['SKELETAL_DATA']; ?></b></span>
-					<span href="#" onclick="toggle('descriptiondiv')" onkeypress="toggle('descriptiondiv')" tabindex="0"><img src="../../images/info.png" style="width:12px;" title="<?php echo $LANG['TOOL_DESCRIPTION']; ?>" alt="<?php echo (isset($LANG['IMG_TOOL_DESCRIPTION'])?$LANG['IMG_TOOL_DESCRIPTION']:'Description of Tool Button'); ?>"/></span>
-					<span id="optionimgspan" href="#" onclick="showOptions()" onkeypress="showOptions()" tabindex="0"><img src="../../images/list.png" style="width:12px;" title="<?php echo $LANG['DISPLAY_OPTIONS']; ?>" alt="<?php echo (isset($LANG['IMG_DISPLAY_OPTIONS'])?$LANG['IMG_DISPLAY_OPTIONS']:'Display Options Button'); ?>"/></span>
+					<span onclick="toggle('descriptiondiv')" onkeypress="toggle('descriptiondiv')" tabindex="0"><img src="../../images/info.png" style="width:12px;" title="<?php echo $LANG['TOOL_DESCRIPTION']; ?>" aria-label="<?php echo (isset($LANG['IMG_TOOL_DESCRIPTION'])?$LANG['IMG_TOOL_DESCRIPTION']:'Description of Tool Button'); ?>"/></span>
+					<span id="optionimgspan" onclick="showOptions()" onkeypress="showOptions()" tabindex="0"><img src="../../images/list.png" style="width:12px;" title="<?php echo $LANG['DISPLAY_OPTIONS']; ?>" aria-label="<?php echo (isset($LANG['IMG_DISPLAY_OPTIONS'])?$LANG['IMG_DISPLAY_OPTIONS']:'Display Options Button'); ?>"/></span>
 				</h1>
 				<div id="descriptiondiv" style="display:none;margin:10px;width:80%">
 					<div style="margin-bottom:5px">
@@ -110,11 +110,9 @@ if($collid){
 							<input name="addaction" type="radio" value="2" /> <?php echo $LANG['APPEND_VALUES']; ?>
 						</fieldset>
 					</div>
-					<!-- <div style="position:absolute;background-color:white;top:10px;right:10px;">
-						<?php echo $LANG['SESSION']; ?>: <label id="minutes">00</label>:<label id="seconds">00</label><br/>
-						<?php echo $LANG['COUNT']; ?>: <label id="count">0</label><br/>
-						<?php echo $LANG['RATE']; ?>: <label id="rate">0</label> <?php echo $LANG['PER_HOUR']; ?>
-					</div> -->
+					<?php echo $LANG['SESSION']; ?>: <span id="minutes">00</span>:<span id="seconds">00</span><br/>
+					<?php echo $LANG['COUNT']; ?>: <span id="count">0</span><br/>
+					<?php echo $LANG['RATE']; ?>: <span id="rate">0</span> <?php echo $LANG['PER_HOUR']; ?>
 
 					<div class="flex-form" style="float:right">
 							<div>
@@ -122,47 +120,46 @@ if($collid){
 							</div>
 						</div>
 					<div class="flex-form">
-						<div style="margin-left: 20px;">
-							<!-- <fieldset> -->
-								<!-- <legend><?php echo (isset($LANG['SCINAME_AND_AUTHORSHIP']) ? $LANG['SCINAME_AND_AUTHORSHIP'] : 'Scientific Name and Authorship'); ?></legend> -->
-								<div id="scinamediv" style="float:left">
+						<div class="flex-form">
+							<div id="scinamediv">
 									<label for="fsciname"><?php echo $LANG['SCINAME']; ?>:</label>
-									<input id="fsciname" name="sciname" type="text" value="" style="width:300px"/>
+									<input id="fsciname" name="sciname" type="text" value=""/>
 									<input id="ftidinterpreted" name="tidinterpreted" type="hidden" value="" />
-								</div>
-								<div id="authordiv" style="float:left" class="left-breathing-room-rel">
-									<label for="fscientificnameauthorship">
-										<?php echo (isset($LANG['AUTHORSHIP']) ? $LANG['AUTHORSHIP'] : 'Authorship'); ?>
-									</label>
-									<input id="fscientificnameauthorship" name="scientificnameauthorship" type="text" value="" />
-								</div>
-							<!-- </fieldset> -->
-							<?php
-							if($IS_ADMIN || isset($USER_RIGHTS['Taxonomy'])){
-								?>
-								<div style="float:left;padding:2px 3px;">
-									<a href="../../taxa/taxonomy/taxonomyloader.php" target="_blank">
-										<img src="../../images/add.png" style="width:14px;" title="<?php echo $LANG['ADD_NAME_THESAURUS']; ?>" />
-									</a>
-								</div>
-								<?php
-							}
-							?>
+							</div>
 						</div>
-						<div>
-							<div class="flex-form">
-								<div id="familydiv">
-									<label for="ffamily"><?php echo $LANG['FAMILY']; ?>:</label> <input id="ffamily" name="family" type="text" tabindex="0" value="" />
-								</div>
-								<div id="localitysecuritydiv">
-									<input id="flocalitysecurity" name="localitysecurity" type="checkbox" tabindex="0" value="1" />
+						<div class="flex-form">
+							<div id="authordiv" class="left-breathing-room-rel">
+								<label for="fscientificnameauthorship">
+									<?php echo (isset($LANG['AUTHORSHIP']) ? $LANG['AUTHORSHIP'] : 'Authorship'). ':'; ?>
+								</label>
+								<input id="fscientificnameauthorship" name="scientificnameauthorship" type="text" value="" />
+							</div>
+						</div>
+						<?php
+						if($IS_ADMIN || isset($USER_RIGHTS['Taxonomy'])){
+							?>
+							<div style="float:left;padding:2px 3px;">
+								<a href="../../taxa/taxonomy/taxonomyloader.php" target="_blank">
+									<img src="../../images/add.png" style="width:14px;" title="<?php echo $LANG['ADD_NAME_THESAURUS']; ?>" aria-label="<?php echo $LANG['ADD_NAME_THESAURUS']; ?>" />
+								</a>
+							</div>
+							<?php
+						}
+						?>
+						<div class="flex-form">
+							<div id="familydiv">
+								<label for="ffamily"><?php echo $LANG['FAMILY']; ?>:</label> <input id="ffamily" name="family" type="text" tabindex="0" value="" />
+							</div>
+							<div id="localitysecuritydiv">
+								<input id="flocalitysecurity" name="localitysecurity" type="checkbox" tabindex="0" value="1" />
+								<label for="flocalitysecurity">
 									<?php echo $LANG['PROTECT_LOCALITY']; ?>
-								</div>
+								</label>
 							</div>
 						</div>
 						<div class="flex-form">
 							<div id="countrydiv" style="display:none;float:left;margin:3px;">
-								<label><?php echo $LANG['COUNTRY']; ?></label><br/>
+								<label for="fcountry"><?php echo $LANG['COUNTRY']; ?></label><br/>
 								<input id="fcountry" name="country" type="text" value="" autocomplete="off" />
 							</div>
 							<div id="statediv">
@@ -170,17 +167,17 @@ if($collid){
 								<input id="fstateprovince" name="stateprovince" type="text" value="" autocomplete="off" onchange="localitySecurityCheck(this.form)" />
 							</div>
 							<div id="countydiv">
-								<label><?php echo $LANG['COUNTY_PARISH']; ?>:</label>
+								<label for="fcounty"><?php echo $LANG['COUNTY_PARISH']; ?>:</label>
 								<input id="fcounty" name="county" type="text" autocomplete="off" value="" />
 							</div>
 						</div>
 						<div >
 							<div id="recordedbydiv" style="display:none;float:left;margin:3px;">
-								<label><?php echo $LANG['COLLECTOR']; ?></label><br/>
+								<label for="frecordedby"><?php echo $LANG['COLLECTOR']; ?></label><br/>
 								<input id="frecordedby" name="recordedby" type="text" value="" />
 							</div>
 							<div id="recordnumberdiv" style="display:none;float:left;margin:3px;">
-								<label><?php echo $LANG['COLLECTOR_NO']; ?></label><br/>
+								<label for="frecordnumber"><?php echo $LANG['COLLECTOR_NO']; ?></label><br/>
 								<input id="frecordnumber" name="recordnumber" type="text" value="" />
 							</div>
 							<div id="eventdatediv" style="display:none;float:left;margin:3px;">
@@ -234,7 +231,9 @@ if($collid){
 						<div class="flex-form">
 
 							<div style="float:left;">
-								<label><?php echo $LANG['CATALOGNUMBER']; ?>:</label>
+								<label for="fcatalognumber">
+									<?php echo $LANG['CATALOGNUMBER']; ?>:
+								</label>
 								<input id="fcatalognumber" name="catalognumber" type="text" style="border-color:green;" />
 							</div>
 							<div id="othercatalognumbersdiv" style="display:none;float:left;margin-left:3px;">
