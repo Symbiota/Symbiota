@@ -259,11 +259,11 @@ class TaxonomyDisplayManager extends Manager{
 				$sciName = "";
 				$taxonRankId = 0;
 				if(array_key_exists($key,$this->taxaArr)){
-					$sciName = $this->taxaArr[$key]["sciname"];
+					$sciName = htmlspecialchars($this->taxaArr[$key]["sciname"], HTML_SPECIAL_CHARS_FLAGS);
 					$sciName = str_replace($this->targetStr,"<b>".$this->targetStr."</b>",$sciName);
 					$taxonRankId = $this->taxaArr[$key]["rankid"];
 					if($this->taxaArr[$key]["rankid"] >= 180){
-						$sciName = " <i>".$sciName."</i> ";
+						$sciName = " <i>". $sciName ."</i> ";
 					}
 					if($this->displayAuthor) $sciName .= ' '.$this->taxaArr[$key]["author"];
 				}
@@ -276,7 +276,7 @@ class TaxonomyDisplayManager extends Manager{
 				$indent = $taxonRankId;
 				if($indent > 230) $indent -= 10;
 				echo "<div>".str_repeat('&nbsp;',intval($indent/5));
-				if($taxonRankId > 139) echo '<a href="../index.php?taxon=' . htmlspecialchars($key, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($sciName, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+				if($taxonRankId > 139) echo '<a href="../index.php?taxon=' . htmlspecialchars($key, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . $sciName. '</a>';
 				else echo $sciName;
 				if($this->isEditor) echo ' <a href="taxoneditor.php?tid=' . htmlspecialchars($key, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><img src="../../images/edit.png" style="width:11px" alt="Edit" /></a>';
 				if(!$this->displayFullTree){
