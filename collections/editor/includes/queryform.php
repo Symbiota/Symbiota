@@ -272,7 +272,7 @@ else{
 			</div>
 			<div class="fieldGroupDiv">
 				<div class="bottom-breathing-room-relative">
-					<button type="button" class="icon-button" onclick="copyQueryLink(event)" title="<?php echo (isset($LANG['COPY_SEARCH'])?$LANG['COPY_SEARCH']:'Copy Search As Link'); ?>">
+					<button type="button" class="icon-button no-margin-left" onclick="copyQueryLink(event)" title="<?php echo (isset($LANG['COPY_SEARCH'])?$LANG['COPY_SEARCH']:'Copy Search As Link'); ?>">
 						<img src="../../images/dl2.png" srcset="../../images/link.svg" class="svg-icon" style="width:15px; height:15px" alt="Link icon. Copies the search terms as a link." />
 					</button>
 					<?php
@@ -305,13 +305,13 @@ else{
 				<input type="hidden" name="occidlist" value="<?php echo $occManager->getOccidIndexStr(); ?>" />
 				<input type="hidden" name="direction" value="" />
 				<section class="flex-form">
-					<div>
+					<div class="no-margin-left">
 						<button name="submitaction" type="submit" onclick="submitQueryEditor(this.form)" ><?php echo $LANG['DISPLAY_EDITOR']; ?></button>
 					</div>
-					<div>
+					<div class="no-margin-left">
 						<button name="submitaction" type="submit" onclick="submitQueryTable(this.form)" ><?php echo $LANG['DISPLAY_TABLE']; ?></button>
 					</div>
-					<div>
+					<div class="no-margin-left">
 						<button type="button" name="reset" value="Reset Form" onclick="resetQueryForm(this.form)">Reset Form</button>
 					</div>
 					<div>
