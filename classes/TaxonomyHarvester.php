@@ -152,16 +152,25 @@ class TaxonomyHarvester extends Manager{
 				$resultArr = json_decode($retArr['str'], true);
 				if($resultArr['total']){
 					//Evaluate and rank each result to determine which is the best suited target
-					$adjustedName = $sciName;
-					if(mb_strpos($adjustedName, '×') !== false) $adjustedName = str_replace('×', '× ', $adjustedName);
-					else if(isset($taxonArr['rankid']) && $taxonArr['rankid'] > 220) $adjustedName = trim($taxonArr['unitname1'].' '.$taxonArr['unitname2'].' '.$taxonArr['unitname3']);
+					$inputTestArr = array($sciName);
+					if(mb_strpos($sciName, '×') !== false) $inputTestArr[] = trim(str_replace(array('× ','×'), '', $sciName));
+					if(mb_strpos($sciName, '†') !== false) $inputTestArr[] = trim(str_replace(array('† ','†'), '', $sciName));
+					if(isset($taxonArr['rankid']) && $taxonArr['rankid'] > 220) $inputTestArr[] = trim($taxonArr['unitname1'].' '.$taxonArr['unitname2'].' '.$taxonArr['unitname3']);
 					$targetKey = 0;
 					$approvedNameUsageArr = array();
 					$rankingArr = array();
 					foreach($resultArr['result'] as $k => $result){
 						$cbNameUsage = $result['usage'];
 						$rankingArr[$k] = 0;
-						if($sciName != $cbNameUsage['name']['scientificName'] && $adjustedName != $cbNameUsage['name']['scientificName']){
+						$isNotSimilar = true;
+						if(in_array($cbNameUsage['name']['scientificName'], $inputTestArr)) $isNotSimilar = false;
+						if(mb_strpos($cbNameUsage['name']['scientificName'], '×') !== false){
+							if(in_array(trim(str_replace(array('× ','×'), '', $cbNameUsage['name']['scientificName'])), $inputTestArr)) $isNotSimilar = false;
+						}
+						if(mb_strpos($cbNameUsage['name']['scientificName'], '†') !== false){
+							if(in_array(trim(str_replace(array('† ','†'), '', $cbNameUsage['name']['scientificName'])), $inputTestArr)) $isNotSimilar = false;
+						}
+						if($isNotSimilar){
 							unset($rankingArr[$k]);
 							continue;
 						}
@@ -175,6 +184,7 @@ class TaxonomyHarvester extends Manager{
 							$this->logOrEcho($msg, 2);
 							continue;
 						}
+						if($cbNameUsage['name']['scientificName'] == $sciName) $rankingArr[$k] += 3;
 						if(isset($taxonArr['taxonRank']) && isset($cbNameUsage['name']['rank']) && $taxonArr['taxonRank'] == $cbNameUsage['name']['rank']) $rankingArr[$k] += 2;
 						if($this->defaultFamily && $this->defaultFamily == $this->getChecklistBankParent($cbNameUsage, 'Family')) $rankingArr[$k] += 2;
 						if($cbNameUsage['status'] == 'accepted')  $rankingArr[$k] += 3;
