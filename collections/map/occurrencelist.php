@@ -18,6 +18,8 @@ $mapManager = new OccurrenceMapManager();
 $searchVar = $mapManager->getQueryTermStr();
 $recCnt = $mapManager->getRecordCnt();
 $occArr = array();
+$host = $SERVER_HOST . $CLIENT_ROOT;
+
 if(!$recLimit || $recCnt < $recLimit){
 	$occArr = $mapManager->getOccurrenceArr($pageNumber,$cntPerPage);
 }
@@ -105,7 +107,7 @@ if(!$recLimit || $recCnt < $recLimit){
 						//echo '</td>';
 						echo '<td id="cat'.$occId.'" >'.$recArr["cat"].'</td>';
 						echo '<td id="label'.$occId.'" >';
-						echo '<a href="#" onmouseover="openOccidInfoBox(\''.$recArr["c"].'\','.$recArr["lat"].','.$recArr["lon"].');" onmouseout="closeOccidInfoBox();" onclick="openIndPopup('.$occId.'); return false;">'.($recArr["c"]?$recArr["c"]:"Not available").'</a>';
+						echo '<a href="#" onmouseover="openOccidInfoBox(\''.$recArr["c"].'\','.$recArr["lat"].','.$recArr["lon"].');" onmouseout="closeOccidInfoBox();" onclick="openRecord({occid:'.$occId.', host:\'' . $host . '\'}); return false;">'.($recArr["c"]?$recArr["c"]:"Not available").'</a>';
 						echo '</td>';
 						echo '<td id="e'.$occId.'" >'.$recArr["e"].'</td>';
 						echo '<td id="s'.$occId.'" >'.$recArr["s"].'</td>';
