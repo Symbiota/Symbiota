@@ -777,13 +777,14 @@ value="${color}"
             ]
 
             //If Cross Portal Checkbox Enabled add cross portal search
-            if(formData.get('cross_portal_switch')) {
+            if(formData.get('cross_portal_switch') && formData.get('cross_portal')) {
                formData.set("taxa", formData.get('external-taxa-input')) 
                searches.push(searchCollections(formData, formData.get('cross_portal')))
 
-               getOccurenceRecords(formData).then(res => {
+               getOccurenceRecords(formData, formData.get('cross_portal')).then(res => {
                   if (res) loadOccurenceRecords(res, "external_occurrencelist");
                });
+               
             }
 
 				//This is for handeling multiple portals
@@ -1196,9 +1197,13 @@ value="${color}"
             ]
 
             //If Cross Portal Checkbox Enabled add cross portal search
-            if(formData.get('cross_portal_switch')) {
+            if(formData.get('cross_portal_switch') && formData.get('cross_portal')) {
                formData.set("taxa", formData.get('external-taxa-input')) 
                searches.push(searchCollections(formData, formData.get('cross_portal')))
+
+               getOccurenceRecords(formData, formData.get('cross_portal')).then(res => {
+                  if (res) loadOccurenceRecords(res, "external_occurrencelist");
+               });
             }
 
 				//This is for handeling multiple portals
@@ -1400,7 +1405,7 @@ value="${color}"
 
 		async function getOccurenceRecords(body, host) {
 			const url = host? `${host}/collections/map/occurrencelist.php`: 'occurrencelist.php'
-			let response = await fetch('occurrencelist.php', {
+			let response = await fetch(url, {
 				method: "POST",
 				credentials: "same-origin",
 				body: body 
@@ -1411,14 +1416,13 @@ value="${color}"
 
 		function loadOccurenceRecords(html, id="occurrencelist") {
 			document.getElementById(id).innerHTML = html;
-
 			$('.pagination a').click(async function(e){
 				e.preventDefault();
 				let response = await fetch(e.target.href, {
 					method: "GET",
 					credentials: "same-origin",
 				})
-				loadOccurenceRecords(await response.text())
+				loadOccurenceRecords(await response.text(), id)
 				return false;
 			});
 		}
