@@ -21,7 +21,7 @@ if(empty($EXTERNAL_PORTAL_HOSTS)) {
 }
 
 //Adds Origin if it is a valid portal origin
-if (isset($_SERVER['HTTP_ORIGIN']) && ($idx = array_search($_SERVER['HTTP_ORIGIN'], array_column($EXTERNAL_PORTAL_HOSTS, 'origin'))) != false) {
+if (isset($_SERVER['HTTP_ORIGIN']) && ($idx = array_search($_SERVER['HTTP_ORIGIN'], array_column($EXTERNAL_PORTAL_HOSTS, 'origin'))) !== false) {
 
 	$origin = $EXTERNAL_PORTAL_HOSTS[$idx]['origin'];
 
