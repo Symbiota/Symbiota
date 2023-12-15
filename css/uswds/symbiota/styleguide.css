@@ -879,7 +879,7 @@
   [type="submit"],
   [type="reset"],
   [type="image"] {
-    width: auto;
+    width: 100%;
   }
 }
 .footer-header-wrapper .usa-button:hover,
@@ -1723,7 +1723,7 @@
   margin-bottom: 0.5em;
 }
 .footer-header-wrapper li:last-child {
-  margin-bottom: 0;
+  margin-bottom: 0.5em;
 }
 
 .footer-header-wrapper h1 + ul,
