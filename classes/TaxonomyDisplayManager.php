@@ -276,7 +276,7 @@ class TaxonomyDisplayManager extends Manager{
 				$indent = $taxonRankId;
 				if($indent > 230) $indent -= 10;
 				echo "<div>".str_repeat('&nbsp;',intval($indent/5));
-				if($taxonRankId > 139) echo '<a href="../index.php?taxon=' . htmlspecialchars($key, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . $sciName. '</a>';
+				if($taxonRankId > 139) echo '<a href="../index.php?taxon=' . $key . '" target="_blank">' . $sciName. '</a>';
 				else echo $sciName;
 				if($this->isEditor) echo ' <a href="taxoneditor.php?tid=' . htmlspecialchars($key, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><img src="../../images/edit.png" style="width:11px" alt="Edit" /></a>';
 				if(!$this->displayFullTree){
