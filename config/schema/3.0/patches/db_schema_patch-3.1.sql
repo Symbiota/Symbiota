@@ -113,6 +113,12 @@ ALTER TABLE `omoccurrences`
 ALTER TABLE `omoccurresource` 
   RENAME TO  `deprecated_omoccurresource` ;
 
+# Ignore if following statement fails
+ALTER TABLE `uploadspectemp` 
+  DROP INDEX `Index_uploadspec_occurid` ;
+
+ALTER TABLE `uploadspectemp` 
+  ADD INDEX `IX_uploadspectemp_occurrenceID` (`occurrenceID` ASC);
 
 
 ALTER TABLE `ctcontrolvocab` 
