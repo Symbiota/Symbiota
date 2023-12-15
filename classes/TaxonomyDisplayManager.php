@@ -259,7 +259,7 @@ class TaxonomyDisplayManager extends Manager{
 				$sciName = "";
 				$taxonRankId = 0;
 				if(array_key_exists($key,$this->taxaArr)){
-					$sciName = htmlspecialchars($this->taxaArr[$key]["sciname"], HTML_SPECIAL_CHARS_FLAGS);
+					$sciName = $this->taxaArr[$key]["sciname"];
 					$sciName = str_replace($this->targetStr,"<b>".$this->targetStr."</b>",$sciName);
 					$taxonRankId = $this->taxaArr[$key]["rankid"];
 					if($this->taxaArr[$key]["rankid"] >= 180){
