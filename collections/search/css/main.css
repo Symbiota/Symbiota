@@ -47,6 +47,8 @@
   --alertredborder: #cc0000;
 }
 
+@import "../../../css/v202209/symbiota/variables.css";
+
 /******* 1. GENERAL ********/
 
 .inner-search html {
@@ -458,12 +460,12 @@
   text-transform: uppercase;
   color: white;
   border-style: none;
-  border-color: #0073cf;
+  border-color: var(--link-color);
   border-bottom-left-radius: 2px;
   border-bottom-right-radius: 2px;
   border-bottom-width: 0px;
   border-right-width: 0px;
-  background-color: #005dab !important;
+  background-color: var(--darkest-color) !important;
   width: 100%;
   box-sizing: border-box;
   box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%),
@@ -482,7 +484,7 @@
 }
 
 .inner-search button:hover {
-  background-color: #0092e2 !important;
+  background-color: var(--bright-color) !important;
   box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%),
     0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
 }
@@ -503,7 +505,7 @@
 }
 
 .inner-search button.ui-button.ui-widget.ui-corner-all:hover {
-  background-color: #003d79;
+  background-color: var(--link-color);
   text-decoration: none;
 }
 
