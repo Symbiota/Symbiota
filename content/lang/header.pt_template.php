@@ -8,7 +8,7 @@ Language: Português do Brasil (Brazilian Portuguese)
 $LANG['H_HOME'] = 'Início';
 
 $LANG['H_SEARCH'] = 'Pesquisar';
-$LANG['H_COLLECTIONS'] = 'Coleções';
+$LANG['H_COLLECTIONS'] = 'Pesquisar Coleções';
 $LANG['H_MAP'] = 'Mapa';
 $LANG['H_DYN_LISTS'] = 'Listas Taxonômicas Dinâmicas';
 $LANG['H_TAXONOMIC_EXPLORER'] = 'Explorar Taxonomia';

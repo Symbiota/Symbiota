@@ -8,7 +8,7 @@ Language: English
 $LANG['H_HOME'] = 'Home';
 
 $LANG['H_SEARCH'] = 'Search';
-$LANG['H_COLLECTIONS'] = 'Collections';
+$LANG['H_COLLECTIONS'] = 'Search Collections';
 $LANG['H_MAP'] = 'Map';
 $LANG['H_MAP_SEARCH'] = 'Map Search';
 $LANG['H_TAXONOMIC_EXPLORER'] = 'Taxonomic Explorer';
