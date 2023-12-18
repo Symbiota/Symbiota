@@ -12,6 +12,7 @@ $collManager = new OccurrenceCollectionProfile();
 $collid = isset($_REQUEST['collid']) ? $collManager->sanitizeInt($_REQUEST['collid']) : 0;
 $occIndex = array_key_exists('occindex',$_REQUEST)?$_REQUEST['occindex']:0;
 $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ?? false;
+$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
 $actionPage = $SHOULD_USE_HARVESTPARAMS ? ($CLIENT_ROOT . "/collections/harvestparams.php") : ($CLIENT_ROOT . "/collections/search/index.php");
 
 $action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
