@@ -100,4 +100,7 @@ $LANG['IMAGE_SRC'] = 'Image source';
 $LANG['ALL_IMG'] = 'all images';
 $LANG['LINKED_IMG'] = 'linked voucher images only';
 
+//from dynamicchecklist.php
+$LANG['ERROR_GEN_CHECK'] = 'ERROR generating checklist';
+
 ?>
