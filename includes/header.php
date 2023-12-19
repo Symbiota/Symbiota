@@ -8,7 +8,6 @@ $isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
 $SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? true;
 $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.php";
 ?>
-<script src="<?php echo $CLIENT_ROOT ?>/css/uswds/symbiota/nal.js"></script>
 <div class="footer-wrapper dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
   <div class="official-website-banner">
     <div class="container">    
@@ -366,3 +365,4 @@ $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.
     </div>
   </div>
 </div>
+<script src="<?php echo $CLIENT_ROOT ?>/css/uswds/symbiota/nal.js"></script>
