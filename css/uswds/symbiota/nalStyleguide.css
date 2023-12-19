@@ -12824,13 +12824,13 @@
 }
 
 .footer-wrapper .official-website-banner__trigger.content-collapsed {
-  background: url(/themes/custom/drupal-base-theme/images/bluedownv.png) right
-    6px center no-repeat;
+  background: url(../img/usa-icons/angle-arrow-down-hover.svg) right 6px center
+    /* TOOD fix this */ no-repeat;
 }
 
 .footer-wrapper .official-website-banner__trigger.content-expanded {
-  background: url(/themes/custom/drupal-base-theme/images/blueupv.png) right 6px
-    center no-repeat;
+  background: url(../img/usa-icons/angle-arrow-up-primary-hover.svg) right 6px center
+    no-repeat;
 }
 
 .footer-wrapper .official-website-banner__content {
