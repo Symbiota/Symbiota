@@ -3,7 +3,7 @@
    BASE STYLES
    @mixin ============================= */
 
-@import "../../../css/v202209/symbiota/variables.css";
+@import "../../../css/uswds/symbiota/variables.css";
 /* BASE STYLES ******************************************/
 /* Typography */
 .inner-search body {
