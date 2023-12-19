@@ -5185,7 +5185,7 @@
 .footer-wrapper .nav > li > a {
   position: relative;
   display: block;
-  padding: 10px 15px;
+  /* padding: 10px 15px; */
 }
 
 .footer-wrapper .nav > li > a:hover,
@@ -12151,13 +12151,13 @@
 
 .footer-wrapper .region-header nav ul.menu li {
   display: inline;
-  padding-left: 0.25rem;
+  /* padding-left: 0.25rem; */
 }
 
 .footer-wrapper .region-header nav ul.menu li + li::before {
   color: #565c65;
   content: "|";
-  padding-right: 0.25rem;
+  /* padding-right: 0.25rem; */
 }
 
 .footer-wrapper .region-header nav ul.menu a {
@@ -12829,8 +12829,8 @@
 }
 
 .footer-wrapper .official-website-banner__trigger.content-expanded {
-  background: url(../img/usa-icons/angle-arrow-up-primary-hover.svg) right 6px center
-    no-repeat;
+  background: url(../img/usa-icons/angle-arrow-up-primary-hover.svg) right 6px
+    center no-repeat;
 }
 
 .footer-wrapper .official-website-banner__content {
