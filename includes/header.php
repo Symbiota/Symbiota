@@ -1,9 +1,19 @@
+<?php
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/header.en.php');
+else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT.'/classes/ProfileManager.php');
+$pHandler = new ProfileManager();
+$isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
+
+$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? true;
+$actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.php";
+?>
 <script src="<?php echo $CLIENT_ROOT ?>/css/uswds/symbiota/nal.js"></script>
 <div class="footer-wrapper dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
   <div class="official-website-banner">
     <div class="container">    
       <div class="official-website-banner__message">
-        <img src="/themes/custom/drupal-base-theme/images/amflag.jpg" alt="" aria-hidden="true">An official website of the United States government.
+        <img src="<?php echo $CLIENT_ROOT ?>/assets/uswds/img/us_flag_small.png" alt="" aria-hidden="true">An official website of the United States government.
         <button class="official-website-banner__trigger">Here&apos;s how you know.</button>
       </div>
       <div class="official-website-banner__content">
