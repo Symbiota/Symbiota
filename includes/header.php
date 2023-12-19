@@ -101,15 +101,53 @@ $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.
                 <nav aria-labelledby="block-secondarylinks-menu" id="block-secondarylinks">
                   <h2 class="visually-hidden" id="block-secondarylinks-menu">Secondary Links</h2>
                   <ul class="menu menu--secondary-links nav">
+                    <?php
+                      if($USER_DISPLAY_NAME){
+                    ?>
+                    <li style="font-size: 1.1rem; color: rgb(91, 97, 107)">
+                      <b>
+                        <?php echo (isset($LANG['H_WELCOME'])?$LANG['H_WELCOME']:'Welcome').' '.$USER_DISPLAY_NAME; ?>
+                      </b>
+                    </li>
+                    <?php
+                      }
+                    ?>
                     <li class="first">
-                      <a href="/ask-question" data-drupal-link-system-path="node/14">Ask A Question</a>
+                      <a title="My Profile" href="<?php echo $CLIENT_ROOT ?>/profile/viewprofile.php"><b>My Profile</b></a>
                     </li>
                     <li>
-                      <a href="/contact-us" data-drupal-link-system-path="node/10">Contact Us</a>
+                      <a title="ARS Home" href="https://www.ars.usda.gov/"><b>ARS Home</b></a>
                     </li>
-                    <li class="last">
-                      <a href="https://digitop.nal.usda.gov/">DigiTop</a>
-                    </li>    
+                    <li>
+                      <a class="accessibility-button" onclick="toggleAccessibilityStyles('<?php echo $CLIENT_ROOT . '/includes' . '/' ?>', '<?php echo $CSS_BASE_PATH ?>', '<?php echo $LANG['TOGGLE_508_OFF'] ?>', '<?php echo $LANG['TOGGLE_508_ON'] ?>')" id="accessibility-button" data-accessibility="accessibility-button" >
+                        <b>
+                          <?php echo (isset($LANG['TOGGLE_508_ON'])?$LANG['TOGGLE_508_ON']:'Accessibility Mode'); ?>
+                        </b>
+                      </a>
+                    </li>
+                    <?php
+                      if($USER_DISPLAY_NAME){
+                    ?>
+                    <li>
+                      <a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/profile/index.php?submit=logout">
+                        <b>
+                          <?php echo htmlspecialchars((isset($LANG['H_LOGOUT'])?$LANG['H_LOGOUT']:'Sign Out'), HTML_SPECIAL_CHARS_FLAGS)?>
+                        </b>
+                      </a>
+                    </li>
+                    <?php
+                      } else{
+                    ?>
+                    <li>
+                      <a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . "/profile/index.php?refurl=" . htmlspecialchars($_SERVER['SCRIPT_NAME'], HTML_SPECIAL_CHARS_FLAGS) . "?" . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES); ?>">
+                        <b>
+                          <?php echo (isset($LANG['H_LOGIN'])?$LANG['H_LOGIN']:'Login')?>
+                        </b>
+                      </a>
+                    </li>
+                    <?php
+                      }
+                    ?>
                   </ul>
                 </nav>
               </div>
@@ -129,216 +167,81 @@ $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.
                   <h2 class="sr-only" id="block-bootstrap-core-main-menu-menu">Main menu</h2>
                   <ul class="menu menu--main nav navbar-nav">
                     <li class="first">
-                      <a href="/" data-drupal-link-system-path="&lt;front&gt;" class="is-active">Home</a>
+                      <button id="btnMenu-0" onclick="navigateHome();">
+                        <span>
+                          Home
+                        </span>
+                      </button>
                     </li>
                     <li class="expanded dropdown">
                       <button class="navbar-text dropdown-toggle" data-toggle="dropdown">
-                        Topics <span class="caret"></span>
+                        Search Collections <span class="caret"></span>
                       </button>
                       <ul class="dropdown-menu">
                         <li class="first">
-                          <a href="/animal-health-and-welfare" data-drupal-link-system-path="node/126">
-                            Animal Health and Welfare
-                          </a>
+                          <a href="<?php echo $CLIENT_ROOT?>/collections/<?php echo $actionPage ?>">Search All Collections</a>
                         </li>
                         <li>
-                          <a href="/economics-business-and-trade" data-drupal-link-system-path="node/136">
-                            Economics, Business, and Trade
-                          </a>
+                          <a href="<?php echo $CLIENT_ROOT?>/collections/<?php echo $actionPage ?>?db=<?php echo  $NA_COLLID?>">Search National Arboretum Herbarium</a>
                         </li>
                         <li>
-                          <a href="/farms-and-agricultural-production-systems" data-drupal-link-system-path="node/134">
-                            Farms and Agricultural Production Systems
-                          </a>
+                          <a href="<?php echo $CLIENT_ROOT?>/collections/<?php echo $actionPage ?>?db=<?php echo  $BARC_COLLID?>">Search National Seed Herbarium</a>
                         </li>
                         <li>
-                          <a href="/human-nutrition-and-food-safety" data-drupal-link-system-path="node/141">
-                            Human Nutrition and Food Safety
-                          </a>
-                        </li>
-                        <li>
-                          <a href="/natural-resources-conservation-environment" data-drupal-link-system-path="node/132">
-                            Natural Resources, Conservation, and Environment
-                          </a>
-                        </li>
-                        <li>
-                          <a href="/plant-production-gardening" data-drupal-link-system-path="node/135">
-                            Plant Production and Gardening
-                          </a>
-                        </li>
-                        <li>
-                          <a href="/rural-development-communities" data-drupal-link-system-path="node/125">
-                            Rural Development and Communities
-                          </a>
-                        </li>
-                        <li class="last">
-                          <a href="/topics" data-drupal-link-system-path="node/479">
-                            All Topics
-                          </a>
+                          <a href="<?php echo $CLIENT_ROOT?>/collections/<?php echo $actionPage ?>?db=<?php echo  $BPI_SNAPSHOT_COLLID?>">Search National Fungus Collections</a>
                         </li>
                       </ul>
                     </li>
                     <li class="expanded dropdown">
-                      <button title="Research Tools" class="navbar-text dropdown-toggle" data-toggle="dropdown">
-                        Research Tools
+                      <button title="Map Search" class="navbar-text dropdown-toggle" data-toggle="dropdown">
+                        Map Search
                         <span class="caret"></span>
                       </button>
                       <ul class="dropdown-menu">
                         <li class="first">
-                          <a href="https://www.nal.usda.gov/agricola">
-                            NAL Catalog (AGRICOLA)
-                          </a>
+                          <a href="<?php echo $CLIENT_ROOT ?>/collections/map/index.php">Map Search All Collections</a>
                         </li>
                         <li>
-                          <a href="https://pubag.nal.usda.gov/">
-                            PubAg
-                          </a>
+                          <a href="<?php echo $CLIENT_ROOT?>/collections/map/index.php?db=<?php echo  $NA_COLLID?>">Map Search National Arboretum Herbarium</a>
                         </li>
                         <li>
-                          <a href="https://data.nal.usda.gov/">
-                            Ag Data Commons
-                          </a>
+                          <a href="<?php echo $CLIENT_ROOT?>/collections/map/index.php?db=<?php echo  $BARC_COLLID?>">Map Search National Seed Herbarium</a>
                         </li>
                         <li>
-                          <a href="https://agclass.nal.usda.gov/">
-                            NAL Thesaurus 
-                          </a>
-                        </li>
-                        <li>
-                          <a href="https://fdc.nal.usda.gov/">
-                            Food Data Central
-                          </a>
-                        </li>
-                        <li>
-                          <a href="/research-tools/food-safety-research-projects" data-drupal-link-system-path="node/215">
-                            Food Safety Research Projects Database
-                          </a>
-                        </li>
-                        <li>
-                          <a href="/research-tools/manuscript-search" data-drupal-link-system-path="research-tools/manuscript-search">
-                            Manuscript Collections Search
-                          </a>
-                        </li>
-                        <li class="last">
-                          <a href="/research-tools/research-tools" data-drupal-link-system-path="node/163">
-                            All Research Tools
-                          </a>
+                          <a href="<?php echo $CLIENT_ROOT?>/collections/map/index.php?db=<?php echo  $BPI_SNAPSHOT_COLLID?>">Map Search National Fungus Collections</a>
                         </li>
                       </ul>
                     </li>
                     <li class="expanded dropdown">
                       <button class="navbar-text dropdown-toggle" data-toggle="dropdown">
-                        Collections <span class="caret"></span>
+                        About Collections <span class="caret"></span>
                       </button>
                       <ul class="dropdown-menu">
                         <li class="first">
-                          <a href="https://naldc.nal.usda.gov" title="Link to the National Agricultural Library Digital Collections">
-                            Digital Collections
-                          </a>
+                          <a href="<?php echo $CLIENT_ROOT?>/collections/misc/collprofiles.php?collid=<?php echo  $NA_COLLID?>">About National Arboretum Herbarium</a>
                         </li>
                         <li>
-                          <a href="/collections/exhibits" data-drupal-link-system-path="node/658">
-                            Exhibits
-                          </a>
+                          <a href="<?php echo $CLIENT_ROOT?>/collections/misc/collprofiles.php?collid=<?php echo  $BARC_COLLID?>">About National Seed Herbarium</a>
                         </li>
                         <li>
-                          <a href="https://www.nal.usda.gov/collections/special-collections">Special Collections</a>
-                        </li>
-                        <li>
-                          <a href="/collections/stories" data-drupal-link-system-path="node/137">Stories From the Collection</a>
-                        </li>
-                        <li>
-                          <a href="/collections/government-documents" data-drupal-link-system-path="node/758">Government Documents</a>
-                        </li>
-                        <li class="last">
-                          <a href="/all-collections" data-drupal-link-system-path="node/484">
-                            All Collections
-                          </a>
+                          <a href="<?php echo $CLIENT_ROOT?>/collections/misc/collprofiles.php?collid=<?php echo  $BPI_SNAPSHOT_COLLID?>">About National Fungus Collections</a>
                         </li>
                       </ul>
                     </li>
                     <li class="expanded dropdown">
-                      <button class="navbar-text dropdown-toggle" data-toggle="dropdown">
-                        Data <span class="caret"></span>
+                      <button class="navbar-text" onclick="navigateToDataUse();">
+                        Data Use
                       </button>
-                      <ul class="dropdown-menu">
-                        <li class="first">
-                          <a href="/data" data-drupal-link-system-path="node/791">Scientific Data Services</a>
-                        </li>
-                        <li>
-                          <a href="/data/data-management-planning" data-drupal-link-system-path="node/17">Data Management Planning Services</a>
-                        </li>
-                        <li>
-                          <a href="/data/data-management-plan-guidance" data-drupal-link-system-path="node/18">Create a DMP</a>
-                        </li>
-                        <li>
-                          <a href="/data/dmp-feedback-and-review" data-drupal-link-system-path="node/124">DMP Feedback and Review</a>
-                        </li>
-                        <li>
-                          <a href="/data/find-data-repository" title="Resources for finding a suitable data repository" data-drupal-link-system-path="node/122">
-                            Find a Data Repository
-                          </a>
-                        </li>
-                        <li>
-                          <a href="/data/data-management-glossary" title="Helpful definitions of Data Management terminology" data-drupal-link-system-path="node/19">
-                            Data Management Glossary
-                          </a>
-                        </li>
-                        <li class="last">
-                          <a href="/data/data-management-videos" data-drupal-link-system-path="node/123">
-                            Data Management Videos
-                          </a>
-                        </li>
-                      </ul>
                     </li>
                     <li class="expanded dropdown">
-                      <button class="navbar-text dropdown-toggle" data-toggle="dropdown">
-                        Services <span class="caret"></span>
+                      <button class="navbar-text" onclick="navigateToHelp();">
+                        Help
                       </button>
-                      <ul class="dropdown-menu">
-                        <li class="first">
-                          <a href="/services/public-access" data-drupal-link-system-path="node/175">Public Access and Open Science at USDA</a>
-                        </li>
-                        <li>
-                          <a href="/data/data-management-planning" data-drupal-link-system-path="node/17">Data Management Planning</a>
-                        </li>
-                        <li>
-                          <a href="https://digitop.nal.usda.gov/">DigiTop</a>
-                        </li>
-                        <li>
-                          <a href="/borrow-materials" data-drupal-link-system-path="node/11">Borrow Materials</a>
-                        </li>
-                        <li>
-                          <a href="/ask-question" data-drupal-link-system-path="node/14">Reference and Research</a>
-                        </li>
-                        <li class="last">
-                          <a href="/services" data-drupal-link-system-path="node/165">All Services</a>
-                        </li>
-                      </ul>
                     </li>
                     <li class="expanded dropdown last">
-                      <button class="navbar-text dropdown-toggle" data-toggle="dropdown">About Us <span class="caret"></span>
+                      <button class="navbar-text" onclick="navigateToSiteMap();">
+                        Site Map
                       </button>
-                      <ul class="dropdown-menu">
-                        <li class="first">
-                          <a href="/about-the-library" data-drupal-link-system-path="node/3">About the Library</a>
-                        </li>
-                        <li>
-                          <a href="/about-us/events" data-drupal-link-system-path="node/171">Events</a>
-                        </li>
-                        <li>
-                          <a href="/organization-chart" data-drupal-link-system-path="node/111">Organization Chart</a>
-                        </li>
-                        <li>
-                          <a href="/about-us/internships" data-drupal-link-system-path="node/13">Internships</a>
-                        </li>
-                        <li>
-                          <a href="/programs" data-drupal-link-system-path="node/100">Program Areas</a>
-                        </li>
-                        <li class="last">
-                          <a href="/contact-us" data-drupal-link-system-path="node/10">Contact Us</a>
-                        </li>
-                      </ul>
                     </li>
                   </ul>
                 </nav>
@@ -366,3 +269,17 @@ $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.
   </div>
 </div>
 <script src="<?php echo $CLIENT_ROOT ?>/css/uswds/symbiota/nal.js"></script>
+<script type="text/javascript">
+  const navigateHome = () => {
+    window.location.href = '<?php echo $CLIENT_ROOT; ?>';
+  };
+  const navigateToDataUse = () => {
+    window.location.href = '<?php echo $CLIENT_ROOT; ?>/includes/usagepolicy.php';
+  };
+  const navigateToHelp = () => {
+    window.location.href = 'https://symbiota.org/docs';
+  };
+  const navigateToSiteMap = () => {
+    window.location.href = '<?php echo $CLIENT_ROOT; ?>/sitemap.php';
+  };
+</script>
