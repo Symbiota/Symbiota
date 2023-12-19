@@ -9965,36 +9965,36 @@ var Drupal = Drupal || {};
   };
   const initAlerts = () => {
     const roots = document.querySelectorAll(sitewideAlertsSelector);
-    fetchAlerts().then((alerts) => {
-      removeStaleAlerts(alerts);
-      alerts.forEach((alert) => {
-        const dismissed = alertWasDismissed(alert);
-        const showOnThisPage = shouldShowOnThisPage(
-          alert.showOnPages,
-          alert.negateShowOnPages
-        );
-        roots.forEach((root) => {
-          const existingAlertElement = root.querySelector(
-            `[data-uuid="${alert.uuid}"]`
-          );
-          if (showOnThisPage && !dismissed) {
-            const renderableAlertElement = buildAlertElement(alert);
-            existingAlertElement
-              ? root.replaceChild(renderableAlertElement, existingAlertElement)
-              : root.appendChild(renderableAlertElement);
-            renderableAlertElement.dispatchEvent(
-              new CustomEvent("sitewide-alert-rendered", {
-                bubbles: true,
-                composed: true,
-              })
-            );
-            return;
-          }
-          if ((dismissed || !showOnThisPage) && existingAlertElement)
-            removeAlert(existingAlertElement);
-        });
-      });
-    });
+    // fetchAlerts().then((alerts) => {
+    //   removeStaleAlerts(alerts);
+    //   alerts.forEach((alert) => {
+    //     const dismissed = alertWasDismissed(alert);
+    //     const showOnThisPage = shouldShowOnThisPage(
+    //       alert.showOnPages,
+    //       alert.negateShowOnPages
+    //     );
+    //     roots.forEach((root) => {
+    //       const existingAlertElement = root.querySelector(
+    //         `[data-uuid="${alert.uuid}"]`
+    //       );
+    //       if (showOnThisPage && !dismissed) {
+    //         const renderableAlertElement = buildAlertElement(alert);
+    //         existingAlertElement
+    //           ? root.replaceChild(renderableAlertElement, existingAlertElement)
+    //           : root.appendChild(renderableAlertElement);
+    //         renderableAlertElement.dispatchEvent(
+    //           new CustomEvent("sitewide-alert-rendered", {
+    //             bubbles: true,
+    //             composed: true,
+    //           })
+    //         );
+    //         return;
+    //       }
+    //       if ((dismissed || !showOnThisPage) && existingAlertElement)
+    //         removeAlert(existingAlertElement);
+    //     });
+    //   });
+    // });
   };
   const supportsHistoryPushState = () => {
     return (
@@ -10039,14 +10039,14 @@ var Drupal = Drupal || {};
         initAlerts();
         proxyPushState();
         historyListener();
-        if (drupalSettings.sitewideAlert.automaticRefresh === true) {
+        if (drupalSettings?.sitewideAlert?.automaticRefresh === true) {
           const interval = setInterval(
             () => initAlerts(),
             drupalSettings.sitewideAlert.refreshInterval < 1000
               ? 1000
               : drupalSettings.sitewideAlert.refreshInterval
           );
-          if (!drupalSettings.sitewideAlert.automaticRefresh)
+          if (!drupalSettings?.sitewideAlert?.automaticRefresh)
             clearInterval(interval);
         }
       });
@@ -10257,8 +10257,8 @@ Drupal.debounce = function (func, wait, immediate) {
           backButton = true;
       }
     }
-    if (backButton) {
-      var attachBehaviors = Drupal.attachBehaviors;
+    if (backButton && Drupal) {
+      var attachBehaviors = Drupal?.attachBehaviors;
       Drupal.attachBehaviors = function (context, settings) {
         setTimeout(function (context, settings) {
           attachBehaviors(context, settings);
@@ -10603,11 +10603,11 @@ Drupal.debounce = function (func, wait, immediate) {
 })(jQuery);
 (function ($, Drupal, once) {
   "use strict";
-  Drupal.webform = Drupal.webform || {};
-  Drupal.webform.states = Drupal.webform.states || {};
-  Drupal.webform.states.slideDown = Drupal.webform.states.slideDown || {};
+  Drupal.webform = Drupal?.webform || {};
+  Drupal.webform.states = Drupal?.webform.states || {};
+  Drupal.webform.states.slideDown = Drupal?.webform.states.slideDown || {};
   Drupal.webform.states.slideDown.duration = "slow";
-  Drupal.webform.states.slideUp = Drupal.webform.states.slideUp || {};
+  Drupal.webform.states.slideUp = Drupal?.webform.states.slideUp || {};
   Drupal.webform.states.slideUp.duration = "fast";
   $.fn.hasData = function (data) {
     return typeof this.data(data) !== "undefined";
@@ -10806,7 +10806,7 @@ Drupal.debounce = function (func, wait, immediate) {
   $document.on("state:visible-slide", function (e) {
     if (e.trigger && $(e.target).isWebformElement()) {
       var effect = e.value ? "slideDown" : "slideUp";
-      var duration = Drupal.webform.states[effect].duration;
+      var duration = Drupal?.websform?.states[effect].duration;
       $(e.target)
         .closest(".js-form-item, .js-form-submit, .js-form-wrapper")
         [effect](duration);
