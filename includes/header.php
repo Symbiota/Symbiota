@@ -1,4 +1,5 @@
-<div class="dialog-off-canvas-main-canvas footer-wrapper" data-off-canvas-main-canvas>
+<script src="<?php echo $CLIENT_ROOT ?>/css/uswds/symbiota/nal.js"></script>
+<div class="footer-wrapper dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
   <div class="official-website-banner">
     <div class="container">    
       <div class="official-website-banner__message">
@@ -8,7 +9,7 @@
       <div class="official-website-banner__content">
         <div class="content-region content-region__first col-sm-6">
           <svg class="banner-svg" id="dot_gov_icon" data-name="dot gov icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 54 54">
-            <defs>
+            <defs>  
               <style>
                   .icon-dot-gov-1 {
                       fill: #007faa;
@@ -82,7 +83,7 @@
             </g>
           </svg>
           <div class="site-branding__text">
-            <div class="site-branding__site-name"><a href="/" title="Home" rel="home">National Agricultural Library</a></div>
+            <div class="site-branding__site-name"><a href="/" title="Home" rel="home">Agricultural Research Service</a></div>
               <div class="site-branding__usda"><a href="https://www.usda.gov">U.S. Department of Agriculture</a></div>
               </div>
             </div>
@@ -102,21 +103,6 @@
                     </li>    
                   </ul>
                 </nav>
-                <section id="block-webform-usasearch" class="block block-webform block-webform-block clearfix">
-                  <form class="webform-submission-form webform-submission-add-form webform-submission-usasearch-form webform-submission-usasearch-add-form webform-submission-usasearch-node-1-form webform-submission-usasearch-node-1-add-form nal-search-form js-webform-details-toggle webform-details-toggle" data-drupal-selector="webform-submission-usasearch-node-1-add-form" action="https://usdasearch.usda.gov/search" method="get" id="webform-submission-usasearch-node-1-add-form" accept-charset="UTF-8">
-                    <div class="form-item js-form-item form-type-textfield js-form-type-textfield form-item-query js-form-item-query form-no-label form-group">
-                      <label for="edit-query" class="control-label sr-only">Site Search</label>
-                      <input class="usagov-search-autocomplete form-text form-control" data-drupal-selector="edit-query" type="text" id="edit-query" name="query" size="40" maxlength="255" placeholder="What would you like to find?" />
-                    </div>
-                    <input data-drupal-selector="edit-affiliate" type="hidden" name="affiliate" value="www.nal.usda.gov" />
-                    <div data-drupal-selector="edit-actions" class="form-actions webform-actions form-group js-form-wrapper form-wrapper" id="edit-actions--vOBrfcCDtbw">
-                      <button class="webform-button--submit button button--primary js-form-submit form-submit btn-primary btn icon-before" data-drupal-selector="edit-actions-submit" type="submit" id="edit-actions-submit" name="op" value="Submit Search">
-                        <span class="icon glyphicon glyphicon-search" aria-hidden="true"></span>
-                        <span class="button-text">Submit Search</span>
-                      </button>
-                    </div>
-                  </form>
-                </section>
               </div>
             </div>
           </div>
