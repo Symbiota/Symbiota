@@ -107,7 +107,7 @@ hr {
 }
 
 #innertext {
-  margin: 0 auto;
+  margin: auto;
   padding: 3rem 0;
   background-color: var(--body-bg-color);
   width: 90%;
@@ -124,6 +124,7 @@ hr {
 
 .navpath {
   margin: 10px auto;
+  margin-left: 5%;
   width: 100%;
   max-width: var(--max-innertext-width);
 }
