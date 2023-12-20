@@ -12151,13 +12151,11 @@
 
 .footer-wrapper .region-header nav ul.menu li {
   display: inline;
-  /* padding-left: 0.25rem; */
 }
 
 .footer-wrapper .region-header nav ul.menu li + li::before {
   color: #565c65;
   content: "|";
-  /* padding-right: 0.25rem; */
 }
 
 .footer-wrapper .region-header nav ul.menu a {
@@ -12824,8 +12822,7 @@
 }
 
 .footer-wrapper .official-website-banner__trigger.content-collapsed {
-  background: url(../img/usa-icons/bluedownv.png) right 6px center
-    /* TOOD fix this */ no-repeat;
+  background: url(../img/usa-icons/bluedownv.png) right 6px center no-repeat;
 }
 
 .footer-wrapper .official-website-banner__trigger.content-expanded {
