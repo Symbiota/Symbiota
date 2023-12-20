@@ -320,6 +320,7 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
                center: state.latlng, 
                zoom: 6, 
                scale: false, 
+               lang: "<?php echo $LANG_TAG; ?>"
             });
 
             let drawControl = new L.Control.Draw({

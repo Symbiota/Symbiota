@@ -8,8 +8,8 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/imageoccursubmi
 header("Content-Type: text/html; charset=".$CHARSET);
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/imageoccursubmit.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$collid  = $_REQUEST["collid"];
-$action = array_key_exists("action",$_POST) ? $_POST["action"] : "";
+$collid  = $_REQUEST['collid'];
+$action = array_key_exists('action',$_POST)?$_POST['action']:'';
 
 $occurManager = new OccurrenceEditorImages();
 $occurManager->setCollid($collid);
@@ -21,10 +21,10 @@ if($collid){
 	if($IS_ADMIN){
 		$isEditor = 1;
 	}
-	elseif(array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin'])){
+	elseif(array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'])){
 		$isEditor = 1;
 	}
-	elseif(array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollEditor'])){
+	elseif(array_key_exists('CollEditor', $USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'])){
 		$isEditor = 1;
 	}
 }
@@ -112,7 +112,6 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars($LANG['COL_MNT'], HTML_SPECIAL_CHARS_FLAGS)?></a> &gt;&gt;
 		<b><?php echo $LANG['OCC_IMAGE_SUBMIT']?></b>
 	</div>
-	<!-- inner text -->
 	<div id="innertext">
 		<h1><?php echo $collMap['collectionname']; ?></h1>
 		<?php
@@ -252,8 +251,8 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 		}
 		?>
 	</div>
-<?php
-include($SERVER_ROOT.'/includes/footer.php');
-?>
+	<?php
+	include($SERVER_ROOT.'/includes/footer.php');
+	?>
 </body>
 </html>

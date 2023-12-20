@@ -2,6 +2,8 @@
 /* ==============================
    BASE STYLES
    @mixin ============================= */
+
+@import "../../../css/v202209/symbiota/variables.css";
 /* BASE STYLES ******************************************/
 /* Typography */
 .inner-search body {
@@ -74,7 +76,7 @@
 
 /* INPUTS */
 .inner-search .assistive-text {
-  color: #939292;
+  color: var(--medium-color);
   font-size: 0.8em;
 }
 
@@ -136,7 +138,7 @@
 .inner-search .box {
   padding: 20px;
   display: none;
-  background-color: #f5f6f7;
+  background-color: var(--body-bg-color);
 }
 
 .inner-search .tab {
@@ -145,7 +147,7 @@
 }
 
 .inner-search .tab-active {
-  background-color: #f5f6f7;
+  background-color: var(--body-bg-color);
   font-weight: 600;
 }
 
@@ -159,7 +161,7 @@
 
 .inner-search #criteria-panel {
   display: block;
-  background-color: #f5f6f7;
+  background-color: var(--body-bg-color);
   padding: 0.5rem 1rem;
 }
 
@@ -238,7 +240,7 @@
   padding: 15px;
   border-radius: 4px;
   background-color: rgba(230, 20, 20, 0.8);
-  color: #fff;
+  color: var(--body-bg-color);
   font-size: 14px;
   -webkit-transform: translateY(300px);
   transform: translateY(300px);
@@ -273,8 +275,8 @@
 }
 
 .inner-search span.text-color-lighter {
-  color: #939292;
-  background-color: #939292;
+  color: var(--menu-top-bg-color);
+  background-color: var(--medium-color);
   line-height: 0.5em;
 }
 
@@ -285,20 +287,20 @@
 }
 
 .inner-search span.link-color {
-  color: #005dab;
-  background-color: #005dab;
+  color: var(--link-color);
+  background-color: var(--link-color);
   line-height: 0.5em;
 }
 
 .inner-search span.accent-color {
-  color: #005dab;
-  background-color: #005dab;
+  color: var(--medium-color);
+  background-color: var(--medium-color);
   line-height: 0.5em;
 }
 
 .inner-search span.accent-color-darker {
-  color: #002d74;
-  background-color: #002d74;
+  color: var(--darkest-color);
+  background-color: var(--darkest-color);
   line-height: 0.5em;
 }
 
@@ -427,8 +429,8 @@
   cursor: pointer;
   background-color: #ffffff;
   border-radius: 2px;
-  border: 1px solid #0073cf;
-  color: #0073cf;
+  border: 1px solid var(--darkest-color);
+  color: var(--darkest-color);
   -webkit-transition: ease 0.5s;
   transition: ease 0.5s;
   position: relative;
@@ -518,7 +520,7 @@
 .input-text-container label input:valid ~ span::before,
 .input-text-container label input:invalid ~ span::before {
   font-size: 0.8em;
-  color: #005dab;
+  color: var(--medium-color);
 }
 
 .inner-search .input-text-container input {

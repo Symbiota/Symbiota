@@ -659,31 +659,31 @@ class SpecUploadBase extends SpecUpload{
 
 		$this->outputMsg('<li style="margin-left:10px;">Cleaning country and state/province ...</li>');
 		//Convert country abbreviations to full spellings
-		$sql = 'UPDATE uploadspectemp u INNER JOIN lkupcountry c ON u.country = c.iso3 '.
-			'SET u.country = c.countryName '.
-			'WHERE (u.collid IN('.$this->collId.'))';
+		$sql = 'UPDATE uploadspectemp u INNER JOIN geographicthesaurus c ON u.country = c.iso3
+			SET u.country = c.geoTerm
+			WHERE c.geolevel = 50 AND (u.collid IN('.$this->collId.'))';
 		$this->conn->query($sql);
-		$sql = 'UPDATE uploadspectemp u INNER JOIN lkupcountry c ON u.country = c.iso '.
-			'SET u.country = c.countryName '.
-			'WHERE u.collid IN('.$this->collId.')';
+		$sql = 'UPDATE uploadspectemp u INNER JOIN geographicthesaurus c ON u.country = c.iso2
+			SET u.country = c.geoTerm
+			WHERE c.geolevel = 50 AND (u.collid IN('.$this->collId.'))';
 		$this->conn->query($sql);
 
 		//Convert state abbreviations to full spellings
-		$sql = 'UPDATE uploadspectemp u INNER JOIN lkupstateprovince s ON u.stateProvince = s.abbrev '.
-			'SET u.stateProvince = s.stateName '.
-			'WHERE u.collid IN('.$this->collId.')';
+		$sql = 'UPDATE uploadspectemp u INNER JOIN geographicthesaurus s ON u.stateProvince = s.abbreviation
+			SET u.stateProvince = s.geoTerm
+			WHERE s.geoLevel = 60 AND u.collid IN('.$this->collId.')';
 		$this->conn->query($sql);
 
 		//Fill null country with state matches
-		$sql = 'UPDATE uploadspectemp u INNER JOIN lkupstateprovince s ON u.stateprovince = s.statename '.
-			'INNER JOIN lkupcountry c ON s.countryid = c.countryid '.
-			'SET u.country = c.countryName '.
-			'WHERE u.country IS NULL AND c.countryname = "United States" AND u.collid IN('.$this->collId.')';
+		$sql = 'UPDATE uploadspectemp u INNER JOIN geographicthesaurus s ON u.stateprovince = s.geoTerm '.
+			'INNER JOIN geographicthesaurus c ON s.parentID = c.geoThesID '.
+			'SET u.country = "United States" '.
+			'WHERE s.geoLevel = 60 AND c.geoLevel = 50 AND u.country IS NULL AND c.geoTerm = "United States" AND u.collid IN('.$this->collId.')';
 		$this->conn->query($sql);
-		$sql = 'UPDATE uploadspectemp u INNER JOIN lkupstateprovince s ON u.stateprovince = s.statename '.
-			'INNER JOIN lkupcountry c ON s.countryid = c.countryid '.
-			'SET u.country = c.countryName '.
-			'WHERE u.country IS NULL AND u.collid IN('.$this->collId.')';
+		$sql = 'UPDATE uploadspectemp u INNER JOIN geographicthesaurus s ON u.stateprovince = s.geoterm '.
+			'INNER JOIN geographicthesaurus c ON s.parentID = c.geoThesID '.
+			'SET u.country = c.geoterm '.
+			'WHERE s.geoLevel = 60 AND c.geoLevel = 50 AND u.country IS NULL AND u.collid IN('.$this->collId.')';
 		$this->conn->query($sql);
 
 		$this->outputMsg('<li style="margin-left:10px;">Cleaning coordinates...</li>');

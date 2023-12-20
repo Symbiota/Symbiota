@@ -279,7 +279,10 @@ $traitArr = $indManager->getTraitArr();
 			function leafletInit() {
 				let mLatLng = [<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>];
 
-				map = new LeafletMap("map_canvas", {center: mLatLng, zoom: 8});
+            map = new LeafletMap("map_canvas", {
+               center: mLatLng, 
+               zoom: 8, 
+            });
 
 			if(coordError > 0) {
 			   map.enableDrawing({...map.DEFAULT_DRAW_OPTIONS, control: false})
