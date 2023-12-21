@@ -13,6 +13,7 @@ $LANG['SHOW_BASE_LIST'] = 'Mostrar nodo raíz';
 $LANG['SHOW_PARENT_NODE'] = 'Mostrar nodo de padre';
 $LANG['SHOW_PARENT'] = 'Mostrar lista de padre';
 $LANG['SHOW_CHILDREN'] = 'Mostrar niños';
+$LANG['GOTO_HARVESTER'] = 'Ir a Cosechadora Geográfica';
 $LANG['EDIT'] = 'Editar Geográfico';
 $LANG['GEO_UNIT'] = 'Geográfico';
 $LANG['GEO_UNIT_NAME'] = 'Nombre de la GeoUnidad';

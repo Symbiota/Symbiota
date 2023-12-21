@@ -13,6 +13,7 @@ $LANG['SHOW_BASE_LIST'] = 'Show Root Node';
 $LANG['SHOW_PARENT_NODE'] = 'Show Parent Node';
 $LANG['SHOW_PARENT'] = 'Show Parent';
 $LANG['SHOW_CHILDREN'] = 'Show children';
+$LANG['GOTO_HARVESTER'] = 'Go to Geographic Harvester';
 $LANG['EDIT'] = 'Edit';
 $LANG['GEO_UNIT'] = 'Geographic Unit';
 $LANG['GEO_UNIT_NAME'] = 'GeoUnit Name';

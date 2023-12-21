@@ -13,6 +13,7 @@ $LANG['SHOW_BASE_LIST'] = 'Afficher le nœud racine';
 $LANG['SHOW_PARENT_NODE'] = 'Afficher le nœud de padre';
 $LANG['SHOW_PARENT'] = 'Mostrar lista de padre';
 $LANG['SHOW_CHILDREN'] = 'Afficher les enfants';
+$LANG['GOTO_HARVESTER'] = 'Aller à la moissonneuse géographique';
 $LANG['EDIT'] = 'Modifier';
 $LANG['GEO_UNIT'] = 'géographique';
 $LANG['GEO_UNIT_NAME'] = 'Nom de la géounité';

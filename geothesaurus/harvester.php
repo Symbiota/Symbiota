@@ -95,86 +95,84 @@ if($isEditor && $submitAction) {
 			?>
 			<fieldset>
 				<legend>geoBoundaries Harvesting Tools</legend>
-				<ul>
-					<li><a href="harvester.php?gbAction=gbListCountries">List All Countries</a></li>
-				</ul>
 				<?php
-				if($gbAction){
-					if($gbAction == 'gbListCountries'){
+				if(!$gbAction){
+					?>
+					<div>
+						<div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nopoly').hide();" /> Show no polygon only</div>
+						<div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nodb').hide();" /> Show not in database only</div>
+						<div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nopoly').show();$('.nodb').show();" /> Show all</div>
+					</div>
+					<table class="styledtable">
+						<tr>
+							<th>Name</th><th>ISO</th><th>In Database</th><th>Has Polygon</th><th>ID</th><th>Canonical</th><th>License</th><th>Region</th><th>Preview Image</th>
+						</tr>
+						<?php
+						$countryList = $geoManager->getGBCountryList();
+						foreach($countryList as $cArr){
+							echo '<tr class="'.(isset($cArr['geoThesID'])?'nodb':'').(isset($cArr['polygon'])?' nopoly':'').'">';
+							echo '<td><a href="harvester.php?gbAction=' . $cArr['iso'] . '">' . htmlspecialchars($cArr['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a></td>';
+							echo '<td>'.$cArr['iso'].'</td>';
+							echo '<td>'.(isset($cArr['geoThesID'])?'Yes':'No').'</td>';
+							echo '<td>'.(isset($cArr['polygon'])?'Yes':'No').'</td>';
+							echo '<td>'.$cArr['id'].'</td>';
+							echo '<td>'.$cArr['canonical'].'</td>';
+							echo '<td>'.$cArr['license'].'</td>';
+							echo '<td>'.$cArr['region'].'</td>';
+							//echo '<td><a href="' . $cArr['link'] . '" target="_blank">link</a></td>';
+							echo '<td><a href="' . $cArr['img'] . '" target="_blank">IMG</a></td>';
+							echo '</tr>';
+						}
 						?>
-						<div>
-							<div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nopoly').hide();" /> Show no polygon only</div>
-							<div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nodb').hide();" /> Show not in database only</div>
-							<div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nopoly').show();$('.nodb').show();" /> Show all</div>
-						</div>
+					</table>
+					<?php
+				}
+				else{
+					?>
+					<ul>
+						<li><a href="harvester.php">Return to Country List</a></li>
+					</ul>
+					<form name="" method="post" action="harvester.php">
 						<table class="styledtable">
 							<tr>
-								<th>Name</th><th>ISO</th><th>In Database</th><th>Has Polygon</th><th>ID</th><th>Canonical</th><th>License</th><th>Region</th><th>Preview Image</th>
+								<th></th><th>Type</th><th>ID</th><th>Database Count</th><th>Geoboundaries Count</th><th>Has Polygon</th><th>Canonical</th><th>Region</th><th>License</th><th>Full Link</th><th>Preview Image</th>
 							</tr>
 							<?php
-							$countryList = $geoManager->getGBCountryList();
-							foreach($countryList as $iso => $cArr){
-								echo '<tr class="'.(isset($cArr['geoThesID'])?'nodb':'').(isset($cArr['polygon'])?' nopoly':'').'">';
-								echo '<td><a href="harvester.php?gbAction=' . $iso . '">' . htmlspecialchars($cArr['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a></td>';
-								echo '<td>'.$iso.'</td>';
-								echo '<td>'.(isset($cArr['geoThesID'])?'Yes':'No').'</td>';
-								echo '<td>'.(isset($cArr['polygon'])?'Yes':'No').'</td>';
-								echo '<td>'.$cArr['id'].'</td>';
-								echo '<td>'.$cArr['canonical'].'</td>';
-								echo '<td>'.$cArr['license'].'</td>';
-								echo '<td>'.$cArr['region'].'</td>';
-								//echo '<td><a href="' . $cArr['link'] . '" target="_blank">link</a></td>';
-								echo '<td><a href="' . $cArr['img'] . '" target="_blank">IMG</a></td>';
+							$geoList = $geoManager->getGBGeoList($gbAction);
+							$prevGeoThesID = 0;
+							foreach($geoList as $type => $gArr){
+								echo '<tr class="'.(isset($gArr['geoThesID'])?'nodb':'').(isset($gArr['polygon'])?' nopoly':'').'">';
+								echo '<td><input name="geoid[]" type="checkbox" value="'.$gArr['id'].'" '.(isset($gArr['polygon'])?'DISABLED':'').' /></td>';
+								echo '<td>'.$type.'</td>';
+								echo '<td>'.$gArr['id'].'</td>';
+								$isInDbStr = 'No';
+								if(isset($gArr['geoThesID'])){
+									$isInDbStr = 1;
+									if(is_numeric($gArr['geoThesID'])){
+										$isInDbStr = '<a href="index.php?geoThesID='.$gArr['geoThesID'].'" target="_blank">1</a>';
+										$prevGeoThesID = $gArr['geoThesID'];
+									}
+									else{
+										$isInDbStr = substr($gArr['geoThesID'], 4);
+										if($prevGeoThesID) $isInDbStr = '<a href="index.php?parentID='.$prevGeoThesID.'" target="_blank">'.$isInDbStr.'</a>';
+									}
+								}
+								echo '<td>'.$gArr['gbCount'].'</td>';
+								echo '<td>'.$isInDbStr.'</td>';
+								echo '<td>'.(isset($gArr['polygon'])?'Yes':'No').'</td>';
+								echo '<td>'.$gArr['canonical'].'</td>';
+								echo '<td>'.$gArr['region'].'</td>';
+								echo '<td>'.$gArr['license'].'</td>';
+								echo '<td><a href="' . $gArr['link'] . '" target="_blank">link</a></td>';
+								echo '<td><a href="' . $gArr['img'] . '" target="_blank">IMG</a></td>';
 								echo '</tr>';
 							}
 							?>
 						</table>
-						<?php
-					}
-					else{
-						?>
-						<form name="" method="post" action="harvester.php">
-							<table class="styledtable">
-								<tr>
-									<th></th><th>Type</th><th>ID</th><th>Database Count</th><th>Geoboundaries Count</th><th>Has Polygon</th><th>Canonical</th><th>Region</th><th>License</th><th>Full Link</th><th>Preview Image</th>
-								</tr>
-								<?php
-								$geoList = $geoManager->getGBGeoList($gbAction);
-								$prevGeoThesID = 0;
-								foreach($geoList as $type => $gArr){
-									echo '<tr class="'.(isset($gArr['geoThesID'])?'nodb':'').(isset($gArr['polygon'])?' nopoly':'').'">';
-									echo '<td><input name="geoid[]" type="checkbox" value="'.$gArr['id'].'" '.(isset($gArr['polygon'])?'DISABLED':'').' /></td>';
-									echo '<td>'.$type.'</td>';
-									echo '<td>'.$gArr['id'].'</td>';
-									$isInDbStr = 'No';
-									if(isset($gArr['geoThesID'])){
-										$isInDbStr = 1;
-										if(is_numeric($gArr['geoThesID'])){
-											$isInDbStr = '<a href="index.php?geoThesID='.$gArr['geoThesID'].'" target="_blank">1</a>';
-											$prevGeoThesID = $gArr['geoThesID'];
-										}
-										else{
-											$isInDbStr = substr($gArr['geoThesID'], 4);
-											if($prevGeoThesID) $isInDbStr = '<a href="index.php?parentID='.$prevGeoThesID.'" target="_blank">'.$isInDbStr.'</a>';
-										}
-									}
-									echo '<td>'.$gArr['gbCount'].'</td>';
-									echo '<td>'.$isInDbStr.'</td>';
-									echo '<td>'.(isset($gArr['polygon'])?'Yes':'No').'</td>';
-									echo '<td>'.$gArr['canonical'].'</td>';
-									echo '<td>'.$gArr['region'].'</td>';
-									echo '<td>'.$gArr['license'].'</td>';
-									echo '<td><a href="' . $gArr['link'] . '" target="_blank">link</a></td>';
-									echo '<td><a href="' . $gArr['img'] . '" target="_blank">IMG</a></td>';
-									echo '</tr>';
-								}
-								?>
-							</table>
-							<input name="gbAction" type="hidden" value="<?php echo $gbAction; ?>" />
-							<button name="submitaction" type="submit" value="submitCountryForm">Add Boundaries</button>
-						</form>
-						<?php
-					}
+						<input name="gbAction" type="hidden" value="<?php echo $gbAction; ?>" />
+						<button name="submitaction" type="submit" value="submitCountryForm">Add Boundaries</button>
+					</form>
+					<?php
 				}
 			?>
 			</fieldset>

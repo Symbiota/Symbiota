@@ -6,13 +6,12 @@ header("Content-Type: text/html; charset=".$CHARSET);
 
 $geoThesID = array_key_exists('geoThesID', $_REQUEST) ? filter_var($_REQUEST['geoThesID'], FILTER_SANITIZE_NUMBER_INT) : '';
 $parentID = array_key_exists('parentID', $_REQUEST) ? filter_var($_REQUEST['parentID'], FILTER_SANITIZE_NUMBER_INT) : '';
-$geoLevel = array_key_exists('geoLevel', $_POST) ? filter_var($_POST['geoLevel'], FILTER_SANITIZE_NUMBER_INT) : '';
 $submitAction = array_key_exists('submitaction', $_POST) ? $_POST['submitaction'] : '';
 
 $geoManager = new GeographicThesaurus();
 
 $isEditor = false;
-if($IS_ADMIN || array_key_exists('CollAdmin',$USER_RIGHTS)) $isEditor = true;
+if($IS_ADMIN) $isEditor = true;
 
 $statusStr = '';
 if($isEditor && $submitAction) {
@@ -62,7 +61,7 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 		}
 	</script>
 	<style>
-		fieldset{ margin: 10px; padding: 15px; width: 800px }
+		fieldset{ margin: 10px; padding: 15px; width: 600px }
 		legend{ font-weight: bold; }
 		.fieldset-like span{ font-weight: bold; }
 		#innertext{ min-height: 500px; }
@@ -110,11 +109,12 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 				}
 				$parID = false;
 				if(!empty($geoUnit['parentID'])) $parID = $geoUnit['parentID'];
-				elseif($parentID) $parID = $parentArr['parentID'];
+				elseif($parentID && isset($parentArr['parentID'])) $parID = $parentArr['parentID'];
 				if($parID !== false){
 					echo '<li><a href="index.php?parentID=' . $parID . '">' . $LANG['SHOW_PARENT_NODE'] . '</a></li>';
 				}
 				if(isset($geoUnit['childCnt'])) echo '<li><a href="index.php?parentID=' . $geoThesID . '">' . $LANG['SHOW_CHILDREN'] . '</a></li>';
+				echo '<li style="margin-top:10px"><a href="harvester.php">'.$LANG['GOTO_HARVESTER'].'</a></li>';
 				?>
 			</ul>
 		</section>
@@ -206,7 +206,7 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 			</form>
 		</div>
 		<?php
-		if($geoThesID){
+		if($geoThesID && $geoUnit){
 			?>
 			<div id="updateGeoUnit-div" style="margin-bottom:10px;">
 				<form name="unitEditForm" action="index.php" method="post">
@@ -332,7 +332,6 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 			if($geoArr){
 				$titleStr = '';
 				if($parentID){
-					$rankArr = $geoManager->getGeoRankArr();
 					$titleStr = '<b>'. $rankArr[$geoArr[key($geoArr)]['geoLevel']] . '</b> ' . $LANG['TERMS_WITHIN'] . ' <b>' . $parentArr['geoTerm'] . '</b>';
 				}
 				else{
@@ -363,7 +362,12 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 				}
 				echo '</ul>';
 			}
-			else echo '<div>' . $LANG['NO_RECORDS'] . '</div>';
+			else{
+				echo '<div>';
+				if($parentID || !$isEditor) echo $LANG['NO_RECORDS'];
+				else echo '<a href="harvester.php">'.$LANG['GOTO_HARVESTER'].'</a>';
+				echo '</div>';
+			}
 		}
 		?>
 	</div>

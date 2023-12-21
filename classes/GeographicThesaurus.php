@@ -319,17 +319,18 @@ class GeographicThesaurus extends Manager{
 		$obj = json_decode($json);
 		if($obj){
 			foreach($obj as $countryObj){
-				$key = $countryObj->boundaryISO;
+				$key = $countryObj->boundaryName;
 				$retArr[$key]['id'] = $countryObj->boundaryID;
 				$retArr[$key]['name'] = $countryObj->boundaryName;
 				$retArr[$key]['canonical'] = $countryObj->boundaryCanonical;
+				$retArr[$key]['iso'] = $countryObj->boundaryISO;
 				$retArr[$key]['license'] = $this->licenseTranslate($countryObj->boundaryLicense);
 				$region = '';
 				if(in_array($countryObj->Continent,$contArr)) $region = $countryObj->Continent;
 				elseif(in_array($countryObj->{'UNSDG-subregion'},$contArr)) $region = $countryObj->{'UNSDG-subregion'};
 				else $region = $countryObj->Continent.'/'.$countryObj->{'UNSDG-subregion'};
 				if($region == 'Northern America') $region == 'North America';
-				if($key == 'ATA') $region = 'Antartica';
+				if($countryObj->boundaryISO == 'ATA') $region = 'Antartica';
 				$retArr[$key]['region'] = $region;
 				//$retArr[$key]['geoJSON'] = $countryObj->gjDownloadURL;
 				//$retArr[$key]['simplifiedGeoJSON'] = $countryObj->simplifiedGeometryGeoJSON;
