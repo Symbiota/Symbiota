@@ -665,7 +665,7 @@ value="${color}"
 							})
 						}))
 					.on('click', function() { openRecord(record) })
-					.bindTooltip(`<div>${record.id}</div>`)
+					.bindTooltip(`<div style="font-size:1rem">${record.id}</div>`)
 
 					//TODO (Logan) remove global
 					markers.push(marker);
