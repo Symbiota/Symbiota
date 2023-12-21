@@ -5,7 +5,8 @@ include_once($SERVER_ROOT.'/classes/SiteMapManager.php');
 include_once($SERVER_ROOT.'/content/lang/sitemap.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 $submitAction = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
-
+$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
+$actionPage = $SHOULD_USE_HARVESTPARAMS ? "collections/index.php" : "collections/search/index.php";
 $smManager = new SiteMapManager();
 ?>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -46,7 +47,7 @@ $smManager = new SiteMapManager();
 		<div id="sitemap">
 			<h2><?php echo $LANG['COLLECTIONS']; ?></h2>
 			<ul>
-				<li><a href="collections/index.php"><?php echo htmlspecialchars($LANG['SEARCHENGINE'], HTML_SPECIAL_CHARS_FLAGS);?></a> - <?php echo htmlspecialchars($LANG['SEARCH_COLL'], HTML_SPECIAL_CHARS_FLAGS);?></li>
+				<li><a href="<?php echo $actionPage ?>"><?php echo htmlspecialchars($LANG['SEARCHENGINE'], HTML_SPECIAL_CHARS_FLAGS);?></a> - <?php echo htmlspecialchars($LANG['SEARCH_COLL'], HTML_SPECIAL_CHARS_FLAGS);?></li>
 				<li><a href="collections/misc/collprofiles.php"><?php echo htmlspecialchars($LANG['COLLECTIONS'], HTML_SPECIAL_CHARS_FLAGS);?></a> - <?php echo htmlspecialchars($LANG['LISTOFCOLL'], HTML_SPECIAL_CHARS_FLAGS);?></li>
 				<li><a href="collections/misc/collstats.php"><?php echo htmlspecialchars($LANG['COLLSTATS'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
 				<?php
