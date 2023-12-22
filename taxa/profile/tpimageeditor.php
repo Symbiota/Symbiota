@@ -160,7 +160,7 @@ if($tid){
 								<?php $imageEditor->echoPhotographerSelect($PARAMS_ARR["uid"]); ?>
 							</select>
 							<a href="#" onclick="toggle('photooveridediv');return false;" title="<?php echo $LANG['DISP_PHOTOGRAPHER_OVERRIDE']; ?>">
-								<img src="../../images/editplus.png" style="border:0px;width:12px;" />
+								<img src="../../images/editplus.png" style="border:0px;width:1.5em;" />
 							</a>
 						</div>
 						<div id="photooveridediv" style='margin:2px 0px 5px 10px;display:none;'>
