@@ -253,7 +253,7 @@ else{
 						?>
 					</select>
 					<a href="#" onclick="toggleCustomDiv(<?php echo ($x+1); ?>);return false;">
-						<img class="editimg" src="../../images/editplus.png" />
+						<img class="editimg" src="../../images/add.png" style="width:1em;" />
 					</a>
 				</div>
 				<?php
