@@ -315,14 +315,14 @@ if(!$cid) header('Location: index.php');
 										}
 										?>
 									</select>
-									<a href="#" onclick="openHeadingAdmin(); return false;"><img src="../../images/edit.png" /></a>
+									<a href="#" title="Edit Groupings" onclick="openHeadingAdmin(); return false;"><img src="../../images/edit.png" style="width:1em;" alt="Edit Icon" /></a>
 								</div>
 							</div>
 							<div style="padding-top:8px;clear:both;">
 								<b>Help URL</b><br />
 								<input type="text" name="helpurl" maxlength="500" style="width:80%;" value="<?php echo $charArr['helpurl']; ?>" />
 								<?php
-								if($charArr['helpurl'] && substr($charArr['helpurl'],0,4) == 'http') echo '<a href="' . htmlspecialchars($charArr['helpurl'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><img src="../../images/link2.png" style="width:15px" /></a>';
+								if($charArr['helpurl'] && substr($charArr['helpurl'],0,4) == 'http') echo '<a href="' . htmlspecialchars($charArr['helpurl'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><img src="../../images/link2.png" style="width:1em;" /></a>';
 								?>
 							</div>
 							<?php
@@ -340,7 +340,7 @@ if(!$cid) header('Location: index.php');
 										?>
 									</select>
 									<?php
-									if($charArr['glossid']) echo '<a href="#" onclick="openGlossaryPopup('.$charArr['glossid'].');return false;"><img src="../../images/link2.png" style="width:15px" /></a>';
+									if($charArr['glossid']) echo '<a href="#" onclick="openGlossaryPopup('.$charArr['glossid'].');return false;"><img src="../../images/link2.png" style="width:1em;" /></a>';
 									?>
 								</div>
 								<?php
@@ -373,8 +373,8 @@ if(!$cid) header('Location: index.php');
 				</div>
 				<div id="charstatediv">
 					<div style="float:right;margin:10px;">
-						<a href="#" onclick="toggle('newstatediv');">
-							<img src="../../images/add.png" alt="Create New Character State" />
+						<a href="#" title="Create New Character State" onclick="toggle('newstatediv');">
+							<img src="../../images/add.png" style="width:1.5em;" alt="Create New Character State" />
 						</a>
 					</div>
 					<div id="newstatediv" style="display:<?php echo ($charStateArr?'none':'block');?>;">
@@ -429,14 +429,14 @@ if(!$cid) header('Location: index.php');
 							<div>
 								<div id="csplus-<?php echo $cs; ?>" style="margin:5px;">
 									<a href="#" onclick="toggleCharState(<?php echo $cs; ?>);return false;">
-										<img src="../../images/plus.png" style="width:10px;" />
+										<img src="../../images/plus.png" style="width:1em;" />
 										<?php echo $stateArr['charstatename']; ?>
 									</a>
 								</div>
 								<div id="<?php echo 'cs-'.$cs.'Div'; ?>" style="display:none;">
 									<div style="margin:5px;">
 										<a href="#" onclick="toggleCharState(<?php echo $cs; ?>);return false;">
-											<img src="../../images/minus.png" style="width:10px;" />
+											<img src="../../images/minus.png" style="width:1em;" />
 											<?php echo $stateArr['charstatename']; ?>
 										</a>
 									</div>
@@ -465,7 +465,7 @@ if(!$cid) header('Location: index.php');
 														?>
 													</select>
 													<?php
-													if($stateArr['glossid']) echo '<a href="#" onclick="openGlossaryPopup('.$stateArr['glossid'].');return false;"><img src="../../images/link2.png" style="width:15px" /></a>';
+													if($stateArr['glossid']) echo '<a href="#" onclick="openGlossaryPopup('.$stateArr['glossid'].');return false;"><img src="../../images/link2.png" style="width:1em" /></a>';
 													?>
 												</div>
 												<?php

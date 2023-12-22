@@ -121,7 +121,7 @@ if($SYMB_UID){
 								<input type="text" name="verbatimeventdate" tabindex="19" maxlength="255" value="<?php echo array_key_exists('verbatimeventdate',$occArr)?$occArr['verbatimeventdate']:''; ?>" onchange="verbatimEventDateChanged(this)" />
 							</div>
 							<div id="dateToggleDiv">
-								<a href="#" onclick="toggle('dateextradiv');return false;"><img src="../../images/editplus.png" style="width:15px;" /></a>
+								<a href="#" onclick="toggle('dateextradiv');return false;"><img src="../../images/editplus.png" style="width:1.5em;" /></a>
 							</div>
 							<div id="dateextradiv">
 								<div id="ymdDiv">

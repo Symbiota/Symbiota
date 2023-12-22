@@ -174,8 +174,8 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 									<div>
 										<a href="#" onclick="togglePid('<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>');return false;">
 											<div class="condense-expand-button-set">
-												<img id="plus-<?php echo $pid; ?>" alt="plus sign to expand menu" src="../../images/plus_sm.png" style="display: none;" />
-												<img id="minus-<?php echo $pid; ?>" alt="minus sign to condense menu" src="../../images/minus_sm.png" />
+												<img id="plus-<?php echo $pid; ?>" alt="plus sign to expand menu" src="../../images/plus.png" style="display: none;" />
+												<img id="minus-<?php echo $pid; ?>" alt="minus sign to condense menu" src="../../images/minus.png" />
 												<p id="pid-ptext-<?php echo $pid; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid) ? '' : 'display:none;') ?>">
 													<?php echo $LANG['EXPAND'] ?>
 												</p>

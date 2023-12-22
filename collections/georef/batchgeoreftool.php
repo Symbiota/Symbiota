@@ -437,7 +437,7 @@ if($isEditor && $submitAction){
 											<span style="margin-left:20px;font-weight:bold;"><?php echo $LANG['DATUM']; ?>:</span>
 											<input id="geodeticdatum" name="geodeticdatum" type="text" value="" style="width:75px;" />
 											<span style="cursor:pointer;margin-left:3px;" onclick="toggle('utmdiv');">
-												<img src="../../images/editplus.png" style="border:0px;width:14px;" />
+												<img src="../../images/editplus.png" style="border:0px;width:1.5em;" />
 											</span>
 										</td>
 									</tr>
