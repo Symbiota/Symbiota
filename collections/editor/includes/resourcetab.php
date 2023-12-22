@@ -215,7 +215,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 	<fieldset>
 		<legend><?php echo $LANG['ASSOC_OCC']; ?></legend>
 		<div style="float:right;margin-right:10px;">
-			<a href="#" onclick="toggle('new-association');return false;" title="<?php echo $LANG['CREATE_NEW_ASSOC']; ?>" ><img src="../../images/add.png" /></a>
+			<a href="#" onclick="toggle('new-association');return false;" title="<?php echo $LANG['CREATE_NEW_ASSOC']; ?>" ><img src="../../images/add.png" style="width:1.5em;" /></a>
 		</div>
 		<fieldset id="new-association" style="display:none">
 			<legend><?php echo $LANG['CREATE_NEW_ASSOC']; ?></legend>
@@ -364,7 +364,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 								<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 								<input name="occindex" type="hidden" value="<?php echo $occIndex; ?>" />
 								<input name="delassocid" type="hidden" value="<?php echo $assocID; ?>" />
-								<input type="image" src="../../images/del.png" style="width:13px" />
+								<input type="image" src="../../images/del.png" style="width:1em" />
 							</form>
 						</div>
 						<?php
@@ -409,7 +409,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 		if($userChecklists){
 			?>
 			<div style="float:right;margin-right:15px;">
-				<a href="#" onclick="toggle('voucheradddiv');return false;" title="<?php echo $LANG['LINK_TO_CHECKLIST']; ?>" ><img src="../../images/add.png" /></a>
+				<a href="#" onclick="toggle('voucheradddiv');return false;" title="<?php echo $LANG['LINK_TO_CHECKLIST']; ?>" ><img src="../../images/add.png" style="width:1.5em;"/></a>
 			</div>
 			<div id="voucheradddiv" style="display:<?php echo ($checklistArr?'none':'block'); ?>;">
 				<form name="voucherAddForm" method="post" target="occurrenceeditor.php" onsubmit="return validateVoucherAddForm(this)">
@@ -439,7 +439,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 				if(array_key_exists($vClid, $userChecklists)){
 					$href = 'occurrenceeditor.php?submitaction=deletevoucher&delclid='.$vClid.'&occid='.$occid.'&tabtarget=3';
 					echo '<a href="' . htmlspecialchars($href, HTML_SPECIAL_CHARS_FLAGS) .'" title="' . htmlspecialchars($LANG['DELETE_VOUCHER_LINK'], HTML_SPECIAL_CHARS_FLAGS) . '" onclick="return confirm(\'' . htmlspecialchars($LANG['SURE_REMOVE_VOUCHER'], HTML_SPECIAL_CHARS_FLAGS) . '\'">';
-					echo '<img src="../../images/drop.png" style="width:12px;" />';
+					echo '<img src="../../images/drop.png" style="width:1em;" />';
 					echo '</a>';
 				}
 				echo '</div>';
@@ -532,7 +532,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 	<fieldset>
 		<legend><?php echo $LANG['GEN_RES']; ?></legend>
 		<div style="float:right;">
-			<a href="#" onclick="toggle('genadddiv');return false;" title="<?php echo $LANG['ADD_NEW_GEN']; ?>" ><img src="../../images/add.png" /></a>
+			<a href="#" onclick="toggle('genadddiv');return false;" title="<?php echo $LANG['ADD_NEW_GEN']; ?>" ><img src="../../images/add.png" style="width:1.5em;" /></a>
 		</div>
 		<div id="genadddiv" style="display:<?php echo ($genticArr?'none':'block'); ?>;">
 			<fieldset>
@@ -572,11 +572,8 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 			<?php
 			foreach($genticArr as $genId => $gArr){
 				?>
-				<div style="float:right;">
-					<a href="#" onclick="toggle('genedit-<?php echo $genId; ?>');return false;"><img src="../../images/edit.png" /></a>
-				</div>
 				<div style="margin:15px;">
-					<div style="font-weight:bold;margin-bottom:5px;"><?php echo $gArr['name']; ?></div>
+					<div style="font-weight:bold;margin-bottom:5px;"><?php echo $gArr['name']; ?><a href="#" onclick="toggle('genedit-<?php echo $genId; ?>');return false;"><img src="../../images/edit.png" style="width:1.2em;" /></a></div>
 					<div style="margin-left:15px;"><b><?php echo $LANG['IDENTIFIER']; ?>:</b> <?php echo $gArr['id']; ?></div>
 					<div style="margin-left:15px;"><b><?php echo $LANG['LOCUS']; ?>:</b> <?php echo $gArr['locus']; ?></div>
 					<div style="margin-left:15px;">

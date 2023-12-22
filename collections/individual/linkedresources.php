@@ -20,7 +20,7 @@ $indManager->setOccid($occid);
 		<?php
 		$vClArr = $indManager->getVoucherChecklists();
 		$clArr = $indManager->getChecklists(array_keys($vClArr));
-		if($IS_ADMIN || $clArr) echo '<div style="float:right"><a href="#" onclick="toggle(\'voucher-block\');return false"><img src="../../images/add.png" /></a></div>';
+		if($IS_ADMIN || $clArr) echo '<div style="float:right"><a href="#" onclick="toggle(\'voucher-block\');return false"><img src="../../images/add.png" style="width:1.5em;" /></a></div>';
 		if($vClArr){
 			echo '<div class="section-title">'.(isset($LANG['VOUCHEROFFOLLOWING'])?$LANG['VOUCHEROFFOLLOWING']:'Specimen voucher of the following checklists').'</div>';
 			echo '<ul style="margin:15px 0px 25px 0px;">';
@@ -30,7 +30,7 @@ $indManager->setOccid($occid);
 				if(isset($USER_RIGHTS['ClAdmin']) && in_array($vClid, $USER_RIGHTS['ClAdmin'])){
 					$delStr = (isset($LANG['DELVOUCHER'])?$LANG['DELVOUCHER']:'Delete voucher link');
 					$confirmStr = (isset($LANG['CONFIRMVOUCHER'])?$LANG['CONFIRMVOUCHER']:'Are you sure you want to remove this voucher link?');
-					echo '<a href="index.php?delvouch=' . htmlspecialchars($vClArr['voucherID'], HTML_SPECIAL_CHARS_FLAGS) . '&occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" title=' . htmlspecialchars($delStr, HTML_SPECIAL_CHARS_FLAGS) . ' onclick="return confirm(\"' . htmlspecialchars($confirmStr, HTML_SPECIAL_CHARS_FLAGS) . '\")"><img src="../../images/drop.png" style="width:12px;" /></a>';
+					echo '<a href="index.php?delvouch=' . htmlspecialchars($vClArr['voucherID'], HTML_SPECIAL_CHARS_FLAGS) . '&occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" title=' . htmlspecialchars($delStr, HTML_SPECIAL_CHARS_FLAGS) . ' onclick="return confirm(\"' . htmlspecialchars($confirmStr, HTML_SPECIAL_CHARS_FLAGS) . '\")"><img src="../../images/drop.png" style="width:1em;" /></a>';
 				}
 				echo '</li>';
 			}
@@ -99,7 +99,7 @@ $indManager->setOccid($occid);
 	if($datasetArr){
 		echo '<fieldset>';
 		echo '<legend>'.(isset($LANG['DATASETLINKAGES'])?$LANG['DATASETLINKAGES']:'Dataset Linkages').'</legend>';
-		if($SYMB_UID) echo '<div style="float:right"><a href="#" onclick="toggle(\'dataset-block\');return false"><img src="../../images/add.png" /></a></div>';
+		if($SYMB_UID) echo '<div style="float:right"><a href="#" onclick="toggle(\'dataset-block\');return false"><img src="../../images/add.png" style="width:1.5em;" /></a></div>';
 		$dsDisplayStr = '';
 		foreach($datasetArr as $dsid => $dsArr){
 			if(isset($dsArr['linked']) && $dsArr['linked']){

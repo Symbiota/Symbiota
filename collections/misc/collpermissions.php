@@ -133,7 +133,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 							<li>
 								<?php echo $uName; ?>
 								<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&deladmin=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="return confirm('<?php echo htmlspecialchars(isset($LANG['YES_REM_ADMIN'])?$LANG['YES_REM_ADMIN']:'Are you sure you want to remove administrative rights for this user?', HTML_SPECIAL_CHARS_FLAGS); ?>');" title="<?php echo htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), HTML_SPECIAL_CHARS_FLAGS); ?>">
-									<img src="../../images/drop.png" style="width:12px;" />
+									<img src="../../images/drop.png" style="width:1em;" />
 								</a>
 							</li>
 							<?php
@@ -165,7 +165,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 						<li>
 							<?php echo $uName; ?>
 							<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&deleditor=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="return confirm('<?php echo htmlspecialchars((isset($LANG['YES_REM_EDIT'])?$LANG['YES_REM_EDIT']:'Are you sure you want to remove editor rights for this user?'), HTML_SPECIAL_CHARS_FLAGS); ?>');" title="<?php echo htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), HTML_SPECIAL_CHARS_FLAGS); ?>">
-								<img src="../../images/drop.png" style="width:12px;" />
+								<img src="../../images/drop.png" style="width:1em;" />
 							</a>
 						</li>
 						<?php
@@ -200,7 +200,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 							<li>
 								<?php echo $uName; ?>
 								<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&delrare=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="return confirm('<?php echo htmlspecialchars((isset($LANG['YES_REM_RARE'])?$LANG['YES_REM_RARE']:'Are you sure you want to remove user rights to view locality details for rare species?'), HTML_SPECIAL_CHARS_FLAGS); ?>');" title="<?php echo htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), HTML_SPECIAL_CHARS_FLAGS); ?>">
-									<img src="../../images/drop.png" style="width:12px;" />
+									<img src="../../images/drop.png" style="width:1em;" />
 								</a>
 							</li>
 							<?php
@@ -285,7 +285,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 								echo '<span title="'.$titleStr.'">'.$pmArr['name'].'</span> ';
 								if($SYMB_UID == $pmArr['uidab']){
 									echo '<a href="collpermissions.php?collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&delpersobs=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS) . '&persobscollid=' . htmlspecialchars($pmArr['persobscollid'], HTML_SPECIAL_CHARS_FLAGS) . '" onclick="return confirm(\'' . htmlspecialchars((isset($LANG['SURE_DELETE'])?$LANG['SURE_DELETE']:'Are you sure you want to delete these permissions?'), HTML_SPECIAL_CHARS_FLAGS) . '\');" title="' . htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), HTML_SPECIAL_CHARS_FLAGS) . '">';
-									echo '<img src="../../images/drop.png" style="width:12px;" />';
+									echo '<img src="../../images/drop.png" style="width:1em;" />';
 									echo '</a>';
 								}
 								echo '</li>';
@@ -389,7 +389,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 					<legend><b><?php echo (isset($LANG['ID_EDITS'])?$LANG['ID_EDITS']:'Identification Editors'); ?></b></legend>
 					<div style="float:right;" title="Add a new user">
 						<a href="#" onclick="toggle('addUserDiv');return false;">
-							<img style='border:0px;width:15px;' src='../../images/add.png'/>
+							<img style='border:0px;width:1.5em;' src='../../images/add.png'/>
 						</a>
 					</div>
 					<div id="addUserDiv" style="display:none;">
@@ -453,7 +453,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 								<li>
 									<?php echo $username.' ('.(isset($LANG['ALL_RANGES'])?$LANG['ALL_RANGES']:'All approved taxonomic ranges listed below').')'; ?>
 									<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&delidenteditor=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS) . '&utid=all'; ?>" onclick="return confirm('<?php echo htmlspecialchars((isset($LANG['SURE_REM_ID'])?$LANG['SURE_REM_ID']:'Are you sure you want to remove identification editing rights for this user?'), HTML_SPECIAL_CHARS_FLAGS); ?>');" title="<?php echo htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="../../images/drop.png" style="width:12px;" />
+										<img src="../../images/drop.png" style="width:1em;" />
 									</a>
 								</li>
 								<?php
@@ -466,7 +466,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 									if(!$hasAll){
 										?>
 										<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&delidenteditor=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS) . '&utid=' . htmlspecialchars($utid, HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="return confirm('<?php echo htmlspecialchars((isset($LANG['SURE_REM_ID'])?$LANG['SURE_REM_ID']:'Are you sure you want to remove identification editing rights for this user?'), HTML_SPECIAL_CHARS_FLAGS); ?>');" title="<?php echo htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), HTML_SPECIAL_CHARS_FLAGS); ?>">
-											<img src="../../images/drop.png" style="width:12px;" />
+											<img src="../../images/drop.png" style="width:1em;" />
 										</a>
 										<?php
 									}
