@@ -3,15 +3,13 @@
  * Instead, modify styles within the symb/main.css file to override the default styles declared within this file 
 */
 
-
-
 /* Spans that use javascript to add clickable link behaviors */
-span[class='link'] {
+span[class="link"] {
   color: #2c405e;
   text-decoration: none;
 }
 
-span[class='link']:hover {
+span[class="link"]:hover {
   color: black;
   text-decoration: underline;
 }
@@ -19,7 +17,7 @@ span[class='link']:hover {
 /*  navpath styles */
 .navpath {
   color: #000000;
-  font-size: 12px;
+  font-size: 16px;
 }
 
 .navpath a {
@@ -68,7 +66,6 @@ span[class='link']:hover {
   float: left;
   margin-left: 3px;
 }
-
 
 /* Species list component */
 
