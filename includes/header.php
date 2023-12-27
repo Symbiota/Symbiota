@@ -36,12 +36,10 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 				?>
 			</nav>
 			<div class="top-brand">
-				<a href="https://symbiota.org">
-					<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/logo_symbiota.png" alt="Symbiota logo" width="100%">
-				</a>
+				<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/AfricaTCN.png" alt="Tropical Africa TCN">
 				<div class="brand-name">
-					<h1>Symbiota Brand New Portal</h1>
-					<h2>Redesigned by the Symbiota Support Hub</h2>
+					<h1>Africa plantae</h1>
+					<h2>Herbaria of Africa</h2>
 				</div>
 			</div>
 		</div>

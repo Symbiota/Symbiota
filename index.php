@@ -21,6 +21,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 		<div class="lang en">
 			<h1>African Herbaria</h1>
 			<h2>Collaborative Biodiversity Portal</h2>
+			<p>This portal provides access to digitized herbarium specimen data of African plants mobilized by the <a href="https://www.idigbio.org/wiki/index.php/TCN:_Collaborative_Research:_Digitization_and_Enrichment_of_U.S._Herbarium_Data_from_Tropical_Africa_to_Enable_Urgent_Quantitative_Conservation_Assessments">Tropical Africa TCN</a> and other digitization efforts.</p>
 		</div>
 	</div>
 	<?php

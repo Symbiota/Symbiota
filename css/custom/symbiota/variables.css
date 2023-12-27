@@ -10,12 +10,12 @@
 /* Variables
    ========================================================================== */
 :root {
-  --header-bg-image: url('../../../images/layout/baobob_header.png');
+  --header-bg-image: url('../../../images/layout/baobob_header.jpg');
   --header-bg-color: #496ee772; /** Transparent color if adding header bg-image **/
   --header-font-color: #fff;
   --brand-font-size: 2rem;
   --title-font-family: 'Averia Serif Libre', serif;
-  --logo-width: 320px;
+  --logo-width: 160px;
   --menu-top-bg-color: #1b3d2f;
   --body-bg-color: #fafafa;
   --body-text-color: #000000;
