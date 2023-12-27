@@ -12,6 +12,9 @@ $projManager = new ImInventories();
 $projManager->setPid($pid);
 $clAddArr = $projManager->getChecklistArr();
 $clRemoveArr = $projManager->getChecklistArr($pid);
+foreach($clRemoveArr as $id => $removeArr){
+	if($removeArr['access'] == 'private-strict' && (!isset($USER_RIGHTS['ClAdmin']) || !in_array($id, $USER_RIGHTS['ClAdmin']))) unset($clRemoveArr[$id]);
+}
 ?>
 <div id="cltab">
 	<div style="margin:10px;">
@@ -23,9 +26,9 @@ $clRemoveArr = $projManager->getChecklistArr($pid);
 					<option value="">-----------------------------------------</option>
 					<?php
 					foreach($clAddArr as $clid => $clArr){
-						if(in_array($clid, $USER_RIGHTS['ClAdmin']) || $clArr['access'] == 'public'){
+						if((isset($USER_RIGHTS['ClAdmin']) && in_array($clid, $USER_RIGHTS['ClAdmin'])) || $clArr['access'] == 'public'){
 							if(!array_key_exists($clid, $clRemoveArr)){
-								echo '<option value="'.$clid.'">'.$clArr['name'].($clArr['access'] == 'private'?' (private)':'').'</option>';
+								echo '<option value="'.$clid.'">'.$clArr['name'].(strpos($clArr['access'], 'private') !== false?' (private)':'').'</option>';
 							}
 						}
 					}

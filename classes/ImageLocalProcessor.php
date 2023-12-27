@@ -114,8 +114,8 @@ class ImageLocalProcessor {
 				$this->conn = ImageBatchConnectionFactory::getCon('write');
 			}
 			if(!$this->conn){
-				$this->logOrEcho("Image upload aborted: Unable to establish connection to ".$collName." database");
-				exit("ABORT: Image upload aborted: Unable to establish connection to ".$collName." database");
+				$this->logOrEcho('Image upload aborted: Unable to establish connection to database');
+				exit('ABORT: Image upload aborted: Unable to establish connection to database');
 			}
 		}
 	}
@@ -126,8 +126,8 @@ class ImageLocalProcessor {
 		foreach($this->collArr as $collid => $cArr){
 			$this->activeCollid = $collid;
 			if(substr($this->collArr[$this->activeCollid]['pmterm'],-4) == '.csv'){
-				if(!file_exists($this->sourcePathBase.'/'.$this->collArr[$this->activeCollid]['pmterm'])){
-					$this->logOrEcho('ERROR accessing image mapping file: '.$this->sourcePathBase.'/'.$this->collArr[$this->activeCollid]['pmterm']);
+				if(!file_exists($this->sourcePathBase.$this->collArr[$this->activeCollid]['pmterm'])){
+					$this->logOrEcho('ERROR accessing image mapping file: '.$this->sourcePathBase.$this->collArr[$this->activeCollid]['pmterm']);
 					continue;
 				}
 			}
@@ -453,11 +453,11 @@ class ImageLocalProcessor {
 			if(!isset($sourceArr['originalurl'])) continue;
 			$this->logOrEcho('Processing File ('.date('Y-m-d h:i:s A').'): '.$sourceArr['originalurl']);
 			//Verify that image include file extension and are accessible, or file name can can be fixed
-			if(!file_exists($this->sourcePathBase.'/'.$sourceArr['originalurl'])){
+			if(!file_exists($this->sourcePathBase.$sourceArr['originalurl'])){
 				$extArr = array('jpg','JPG','jpeg','JPEG');
 				$verified = false;
 				foreach($extArr as $e){
-					if(file_exists($this->sourcePathBase.'/'.$sourceArr['originalurl'].'.'.$e)){
+					if(file_exists($this->sourcePathBase.$sourceArr['originalurl'].'.'.$e)){
 						$sourceArr['originalurl'] .= '.'.$e;
 						if(isset($sourceArr['url'])) $sourceArr['url'] .= '.'.$e;
 						if(isset($sourceArr['thumbnailurl'])) $sourceArr['thumbnailurl'] .= '.'.$e;

@@ -69,7 +69,7 @@ if($isEditor && $projSubmit){
 $projArr = $projManager->getProjectMetadata();
 $researchList = $projManager->getChecklistArr($pid);
 foreach($researchList as $clid => $clArr){
-	if($clArr['access'] == 'private' && (!isset($USER_RIGHTS['ClAdmin']) || !in_array($clid, $USER_RIGHTS['ClAdmin']))) unset($clArr[$clid]);
+	if(strpos($clArr['access'], 'private') !== false && (!isset($USER_RIGHTS['ClAdmin']) || !in_array($clid, $USER_RIGHTS['ClAdmin']))) unset($researchList[$clid]);
 }
 
 $managerArr = $projManager->getManagers('ProjAdmin', 'fmprojects', 'fmprojects', $pid);
@@ -412,8 +412,8 @@ if(!$researchList && !$editMode){
 								foreach($researchList as $key => $listArr){
 									?>
 									<li>
-										<a href='../checklists/checklist.php?clid=<?php echo htmlspecialchars($key, HTML_SPECIAL_CHARS_FLAGS) . "&pid=" . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
-											<?php echo $listArr['name'].($listArr['access']=='private'?' <span title="Viewable only to editors">(private)</span>':''); ?>
+										<a href='../checklists/checklist.php?clid=<?php echo $key."&pid=".$pid; ?>'>
+											<?php echo $listArr['name'].(strpos($listArr['access'], 'private') !== false?' <span title="Viewable only to editors">(private)</span>':''); ?>
 										</a>
 										<?php
 										if($KEY_MOD_IS_ACTIVE){

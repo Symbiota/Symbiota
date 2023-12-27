@@ -10,11 +10,11 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 
 $occid = array_key_exists('occid', $_REQUEST) ? filter_var($_REQUEST['occid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$pk = array_key_exists('pk', $_REQUEST) ? filter_var($_REQUEST['pk'], FILTER_SANITIZE_STRING):'';
-$guid = array_key_exists('guid', $_REQUEST) ? filter_var($_REQUEST['guid'], FILTER_SANITIZE_STRING) : '';
+$pk = array_key_exists('pk', $_REQUEST) ? htmlspecialchars($_REQUEST['pk'], HTML_SPECIAL_CHARS_FLAGS) :'';
+$guid = array_key_exists('guid', $_REQUEST) ? htmlspecialchars($_REQUEST['guid'], HTML_SPECIAL_CHARS_FLAGS) : '';
 $tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$format = isset($_GET['format']) ? filter_var($_GET['format'], FILTER_SANITIZE_STRING) : '';
+$format = isset($_GET['format']) ? htmlspecialchars($_REQUEST['format'], HTML_SPECIAL_CHARS_FLAGS) : '';
 $submit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $indManager = new OccurrenceIndividual($submit?'write':'readonly');
@@ -279,7 +279,10 @@ $traitArr = $indManager->getTraitArr();
 			function leafletInit() {
 				let mLatLng = [<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>];
 
-				map = new LeafletMap("map_canvas", {center: mLatLng, zoom: 8});
+            map = new LeafletMap("map_canvas", {
+               center: mLatLng, 
+               zoom: 8, 
+            });
 
 			if(coordError > 0) {
 			   map.enableDrawing({...map.DEFAULT_DRAW_OPTIONS, control: false})
@@ -303,6 +306,13 @@ $traitArr = $indManager->getTraitArr();
 </head>
 <body>
 	<script src="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/individual/domManipulationUtils.js" type="text/javascript"></script>
+	<header style="background-image: none;">
+		<a class="skip-link" href="#end-nav"><?php echo $LANG['SKIP_NAV'] ?></a>
+		<h1 class="smaller-header">
+			<?php echo (isset($LANG['FULL_RECORD_DETAILS']) ? $LANG['FULL_RECORD_DETAILS'] : 'Full Record Details'); ?>
+		</h1>
+		<div id="end-nav"></div>
+	</header>
 	<div id="fb-root"></div>
 	<script>
 		(function(d, s, id) {
@@ -1334,8 +1344,8 @@ $traitArr = $indManager->getTraitArr();
 							if($editArr || $externalEdits){
 								if($editArr){
 									?>
-									<fieldset style="padding:15px;margin:10px 0px;">
-										<legend><?php echo $LANG['INTERNAL_EDITS']; ?></legend>
+									<section class="fieldset-like">
+										<h1><span><?php echo $LANG['INTERNAL_EDITS']; ?></span></h1>
 										<?php
 										foreach($editArr as $ts => $tsArr){
 											?>
@@ -1362,7 +1372,7 @@ $traitArr = $indManager->getTraitArr();
 											echo '<div style=""><hr></div>';
 										}
 										?>
-									</fieldset>
+									</section>
 									<?php
 								}
 								if($externalEdits){

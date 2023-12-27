@@ -22,8 +22,9 @@ class PageSetup
 
     public function printInformation(SimpleXMLElement $sheet): self
     {
-        if (isset($sheet->PrintInformation)) {
+        if (isset($sheet->PrintInformation, $sheet->PrintInformation[0])) {
             $printInformation = $sheet->PrintInformation[0];
+
             $scale = (string) $printInformation->Scale->attributes()['percentage'];
             $pageOrder = (string) $printInformation->order;
             $orientation = (string) $printInformation->orientation;

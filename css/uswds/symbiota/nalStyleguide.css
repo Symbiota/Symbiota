@@ -5185,7 +5185,7 @@
 .footer-wrapper .nav > li > a {
   position: relative;
   display: block;
-  padding: 10px 15px;
+  /* padding: 10px 15px; */
 }
 
 .footer-wrapper .nav > li > a:hover,
@@ -9913,7 +9913,7 @@
 
 @font-face {
   font-family: "Source Sans Pro";
-  src: url(/themes/custom/drupal-base-theme/fonts/source-sans-pro/sourcesanspro-bold-webfont.woff2)
+  src: url(../fonts/source-sans-pro/sourcesanspro-bold-webfont.woff2)
     format("woff2");
   font-style: normal;
   font-weight: 700;
@@ -9937,7 +9937,7 @@
 
 @font-face {
   font-family: "Merriweather";
-  src: url(/themes/custom/drupal-base-theme/fonts/merriweather/Latin-Merriweather-Italic.woff2)
+  src: url(../fonts/merriweather/Latin-Merriweather-Italic.woff2)
     format("woff2");
   font-style: italic;
   font-weight: 400;
@@ -9945,8 +9945,7 @@
 
 @font-face {
   font-family: "Merriweather";
-  src: url(/themes/custom/drupal-base-theme/fonts/merriweather/Latin-Merriweather-Bold.woff2)
-    format("woff2");
+  src: url(../fonts/merriweather/Latin-Merriweather-Bold.woff2) format("woff2");
   font-style: normal;
   font-weight: 700;
 }
@@ -12152,13 +12151,11 @@
 
 .footer-wrapper .region-header nav ul.menu li {
   display: inline;
-  padding-left: 0.25rem;
 }
 
 .footer-wrapper .region-header nav ul.menu li + li::before {
   color: #565c65;
   content: "|";
-  padding-right: 0.25rem;
 }
 
 .footer-wrapper .region-header nav ul.menu a {
@@ -12825,13 +12822,11 @@
 }
 
 .footer-wrapper .official-website-banner__trigger.content-collapsed {
-  background: url(/themes/custom/drupal-base-theme/images/bluedownv.png) right
-    6px center no-repeat;
+  background: url(../img/usa-icons/bluedownv.png) right 6px center no-repeat;
 }
 
 .footer-wrapper .official-website-banner__trigger.content-expanded {
-  background: url(/themes/custom/drupal-base-theme/images/blueupv.png) right 6px
-    center no-repeat;
+  background: url(../img/usa-icons/blueupv.png) right 6px center no-repeat;
 }
 
 .footer-wrapper .official-website-banner__content {
@@ -13157,7 +13152,7 @@
 }
 
 .footer-wrapper .social-link--facebook {
-  background-image: url(/themes/custom/drupal-base-theme/images/social-icons/social-icon-facebook.svg);
+  background-image: url(../../../assets/uswds/img/social-icon-facebook.svg);
 }
 
 .footer-wrapper .social-link--flickr {
@@ -13169,11 +13164,11 @@
 }
 
 .footer-wrapper .social-link--twitter {
-  background-image: url(/themes/custom/drupal-base-theme/images/social-icons/social-icon-x.svg);
+  background-image: url(../../../assets/uswds/img/social-icon-x.svg);
 }
 
 .footer-wrapper .social-link--youtube {
-  background-image: url(/themes/custom/drupal-base-theme/images/social-icons/social-icon-youtube.svg);
+  background-image: url(../../../assets/uswds/img/social-icon-youtube.svg);
 }
 
 .footer-wrapper .social-link--rss {

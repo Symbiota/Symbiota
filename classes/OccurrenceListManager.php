@@ -30,7 +30,7 @@ class OccurrenceListManager extends OccurrenceManager{
 			'o.catalognumber, o.family, o.sciname, o.scientificnameauthorship, o.tidinterpreted, o.recordedby, o.recordnumber, o.eventdate, o.year, o.startdayofyear, o.enddayofyear, '.
 			'o.country, o.stateprovince, o.county, o.locality, o.decimallatitude, o.decimallongitude, o.localitysecurity, o.localitysecurityreason, '.
 			'o.habitat, o.substrate, o.minimumelevationinmeters, o.maximumelevationinmeters, o.observeruid, c.sortseq '.
-			'FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid ';
+			'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
 		$sql .= $this->getTableJoins($sqlWhere).$sqlWhere;
 		//Don't allow someone to query all occurrences if there are no conditions
 		if(!$sqlWhere) $sql .= 'WHERE o.occid IS NULL ';
@@ -84,7 +84,9 @@ class OccurrenceListManager extends OccurrenceManager{
 				$retArr[$row->occid]['obsuid'] = $row->observeruid;
 				$retArr[$row->occid]['localitysecurity'] = $row->localitysecurity;
 				if($securityClearance || $row->localitysecurity != 1){
-					$retArr[$row->occid]['locality'] = str_replace('.,',',',$this->cleanOutStr(trim($row->locality,' ,;')));
+					$locality = ($row->locality !== null) ? $row->locality : '';
+					$cleanedLocality = $this->cleanOutStr(trim($locality, ' ,;'));
+					$retArr[$row->occid]['locality'] = str_replace('.,',',',$cleanedLocality);
 					$retArr[$row->occid]['declat'] = $row->decimallatitude;
 					$retArr[$row->occid]['declong'] = $row->decimallongitude;
 					$retArr[$row->occid]['collnum'] = $this->cleanOutStr($row->recordnumber);

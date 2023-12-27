@@ -6,6 +6,10 @@ include_once($SERVER_ROOT.'/content/lang/collections/listtabledisplay.'.$LANG_TA
 include_once($SERVER_ROOT.'/classes/OccurrenceListManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
+$SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ?? false;
+$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
+$actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.php";
+
 $page = array_key_exists('page',$_REQUEST) ? $_REQUEST['page'] : 1;
 $tableCount= array_key_exists('tablecount',$_REQUEST) ? $_REQUEST['tablecount'] : 1000;
 $sortField1 = array_key_exists('sortfield1',$_REQUEST) ? $_REQUEST['sortfield1'] : 'collectionname';
@@ -155,7 +159,7 @@ $searchVar = $collManager->getQueryTermStr();
 			<div class="navpath">
 				<a href="../index.php"><?php echo htmlspecialchars((isset($LANG['NAV_HOME']) ? $LANG['NAV_HOME'] : 'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 				<a href="index.php"><?php echo htmlspecialchars((isset($LANG['NAV_COLLECTIONS']) ? $LANG['NAV_COLLECTIONS'] : 'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
-				<a href="harvestparams.php"><?php echo htmlspecialchars((isset($LANG['NAV_SEARCH']) ? $LANG['NAV_SEARCH'] : 'Search Criteria'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+				<a href="<?php echo $actionPage ?>"><?php echo htmlspecialchars((isset($LANG['NAV_SEARCH']) ? $LANG['NAV_SEARCH'] : 'Search Criteria'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 				<b><?php echo (isset($LANG['SPEC_REC_TAB']) ? $LANG['SPEC_REC_TAB'] : 'Specimen Records Table'); ?></b>
 			</div>
 		</div>

@@ -696,11 +696,32 @@ if($IS_ADMIN){
 				<?php
 			}
 			else{
+				if($IS_ADMIN){
+					if(array_key_exists('adminRegisterSuccessfulUsername', $_SESSION)){
+						?>
+							<div class="alert">
+								<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+								<?php echo (isset($LANG['USER_CREATED_SUCCESSFULLY']) ? $LANG['USER_CREATED_SUCCESSFULLY'] : 'Successfully created user: ') . $_SESSION['adminRegisterSuccessfulUsername'] ?>
+							</div>
+							<div class="bottom-breathing-room-relative">
+								<span class="success-alert"></span>
+							</div>
+						<?php
+						unset($_SESSION['adminRegisterSuccessfulUsername']);
+					}
+					?>
+					<form method="POST" action="<?php echo $CLIENT_ROOT ?>/profile/newprofile.php">
+						<button id="adminRegister" name="adminRegister" class="button button-tertiary" type="submit" value="1">
+							<?php echo isset($LANG['CREATE_NEW_USER']) ? $LANG['CREATE_NEW_USER'] : 'Create New User'; ?>
+						</button>
+					</form>
+					<?php
+				}
 				?>
 				<a id="userlist"></a>
 				<?php
 				$users = $userManager->getUsers($searchTerm);
-				echo '<h1>Users</h1>';
+				echo '<h1>' . (isset($LANG['USERS']) ? $LANG['USERS'] : 'Users') . '</h1>';
 				foreach($users as $id => $name){
 					echo '<div><a href="usermanagement.php?userid=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($name, HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 				}

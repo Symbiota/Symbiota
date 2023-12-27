@@ -3722,6 +3722,7 @@
 @media screen and (min-width: 1250px) {
   .footer-header-wrapper .usa-nav-primary {
     display: inline;
+    margin-left:17rem;
   }
 }
 @media screen and (min-width: 1250px) {

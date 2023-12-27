@@ -59,5 +59,8 @@ $LANG['INV_MGMNT'] = 'Inventory Project Management';
 $LANG['CHECKLIST_MGMNT'] = 'Checklist Management';
 $LANG['MUST_LOGIN'] = 'You must log in and have administrator permissions to manage users';
 $LANG['SKIP_LINK'] = 'Skip to list of users';
+$LANG['CREATE_NEW_USER'] = 'Create new user';
+$LANG['USER_CREATED_SUCCESSFULLY'] = 'Successfully created user: ';
+$LANG['USERS'] = 'Users';
 
 ?>

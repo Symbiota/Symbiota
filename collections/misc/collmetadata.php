@@ -286,7 +286,7 @@ $collManager->cleanOutArr($collData);
 											echo (isset($LANG['NAME_ONE']) ? $LANG['NAME_ONE'] : '') . ' ';
 										?>
 									</span>
-									<input id="institutionCode" type="text" name="institutionCode" value="<?php echo ($collid ? $collData['institution'] : ''); ?>" required />
+									<input id="institutionCode" type="text" name="institutionCode" value="<?php echo ($collid ? $collData['institutioncode'] : ''); ?>" required />
 									<a id="instcodeinfo" href="#" onclick="return false" tabindex="0"	>
 										<img src="../../images/info.png" style="width:15px;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_INST_CODE']) ? $LANG['MORE_INST_CODE'] : 'More information about Institution Code'); ?>"/>
 									</a>

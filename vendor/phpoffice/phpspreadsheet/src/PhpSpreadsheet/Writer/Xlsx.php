@@ -25,6 +25,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx\RelsRibbon;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx\RelsVBA;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx\StringTable;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx\Style;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx\Table;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx\Theme;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx\Workbook;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx\Worksheet;
@@ -168,6 +169,11 @@ class Xlsx extends BaseWriter
     private $writerPartTheme;
 
     /**
+     * @var Table
+     */
+    private $writerPartTable;
+
+    /**
      * @var Workbook
      */
     private $writerPartWorkbook;
@@ -196,6 +202,7 @@ class Xlsx extends BaseWriter
         $this->writerPartStringTable = new StringTable($this);
         $this->writerPartStyle = new Style($this);
         $this->writerPartTheme = new Theme($this);
+        $this->writerPartTable = new Table($this);
         $this->writerPartWorkbook = new Workbook($this);
         $this->writerPartWorksheet = new Worksheet($this);
 
@@ -271,6 +278,11 @@ class Xlsx extends BaseWriter
         return $this->writerPartTheme;
     }
 
+    public function getWriterPartTable(): Table
+    {
+        return $this->writerPartTable;
+    }
+
     public function getWriterPartWorkbook(): Workbook
     {
         return $this->writerPartWorkbook;
@@ -284,10 +296,12 @@ class Xlsx extends BaseWriter
     /**
      * Save PhpSpreadsheet to file.
      *
-     * @param resource|string $pFilename
+     * @param resource|string $filename
      */
-    public function save($pFilename): void
+    public function save($filename, int $flags = 0): void
     {
+        $this->processFlags($flags);
+
         // garbage collect
         $this->pathNames = [];
         $this->spreadSheet->garbageCollect();
@@ -335,12 +349,15 @@ class Xlsx extends BaseWriter
         //a custom UI in this workbook ? add it ("base" xml and additional objects (pictures) and rels)
         if ($this->spreadSheet->hasRibbon()) {
             $tmpRibbonTarget = $this->spreadSheet->getRibbonXMLData('target');
+            $tmpRibbonTarget = is_string($tmpRibbonTarget) ? $tmpRibbonTarget : '';
             $zipContent[$tmpRibbonTarget] = $this->spreadSheet->getRibbonXMLData('data');
             if ($this->spreadSheet->hasRibbonBinObjects()) {
                 $tmpRootPath = dirname($tmpRibbonTarget) . '/';
                 $ribbonBinObjects = $this->spreadSheet->getRibbonBinObjects('data'); //the files to write
-                foreach ($ribbonBinObjects as $aPath => $aContent) {
-                    $zipContent[$tmpRootPath . $aPath] = $aContent;
+                if (is_array($ribbonBinObjects)) {
+                    foreach ($ribbonBinObjects as $aPath => $aContent) {
+                        $zipContent[$tmpRootPath . $aPath] = $aContent;
+                    }
                 }
                 //the rels for files
                 $zipContent[$tmpRootPath . '_rels/' . basename($tmpRibbonTarget) . '.rels'] = $this->getWriterPartRelsRibbon()->writeRibbonRelationships($this->spreadSheet);
@@ -387,10 +404,11 @@ class Xlsx extends BaseWriter
         }
 
         $chartRef1 = 0;
+        $tableRef1 = 1;
         // Add worksheet relationships (drawings, ...)
         for ($i = 0; $i < $this->spreadSheet->getSheetCount(); ++$i) {
             // Add relationships
-            $zipContent['xl/worksheets/_rels/sheet' . ($i + 1) . '.xml.rels'] = $this->getWriterPartRels()->writeWorksheetRelationships($this->spreadSheet->getSheet($i), ($i + 1), $this->includeCharts);
+            $zipContent['xl/worksheets/_rels/sheet' . ($i + 1) . '.xml.rels'] = $this->getWriterPartRels()->writeWorksheetRelationships($this->spreadSheet->getSheet($i), ($i + 1), $this->includeCharts, $tableRef1);
 
             // Add unparsedLoadedData
             $sheetCodeName = $this->spreadSheet->getSheet($i)->getCodeName();
@@ -429,19 +447,31 @@ class Xlsx extends BaseWriter
                 foreach ($unparsedLoadedData['sheets'][$sheetCodeName]['Drawings'] as $relId => $drawingXml) {
                     $drawingFile = array_search($relId, $unparsedLoadedData['sheets'][$sheetCodeName]['drawingOriginalIds']);
                     if ($drawingFile !== false) {
-                        $drawingFile = ltrim($drawingFile, '.');
-                        $zipContent['xl' . $drawingFile] = $drawingXml;
+                        //$drawingFile = ltrim($drawingFile, '.');
+                        //$zipContent['xl' . $drawingFile] = $drawingXml;
+                        $zipContent['xl/drawings/drawing' . ($i + 1) . '.xml'] = $drawingXml;
                     }
                 }
             }
 
             // Add comment relationship parts
             if (count($this->spreadSheet->getSheet($i)->getComments()) > 0) {
+                // VML Comments relationships
+                $zipContent['xl/drawings/_rels/vmlDrawing' . ($i + 1) . '.vml.rels'] = $this->getWriterPartRels()->writeVMLDrawingRelationships($this->spreadSheet->getSheet($i));
+
                 // VML Comments
                 $zipContent['xl/drawings/vmlDrawing' . ($i + 1) . '.vml'] = $this->getWriterPartComments()->writeVMLComments($this->spreadSheet->getSheet($i));
 
                 // Comments
                 $zipContent['xl/comments' . ($i + 1) . '.xml'] = $this->getWriterPartComments()->writeComments($this->spreadSheet->getSheet($i));
+
+                // Media
+                foreach ($this->spreadSheet->getSheet($i)->getComments() as $comment) {
+                    if ($comment->hasBackgroundImage()) {
+                        $image = $comment->getBackgroundImage();
+                        $zipContent['xl/media/' . $image->getMediaFilename()] = $this->processDrawing($image);
+                    }
+                }
             }
 
             // Add unparsed relationship parts
@@ -464,6 +494,12 @@ class Xlsx extends BaseWriter
                     $zipContent['xl/media/' . $image->getIndexedFilename()] = file_get_contents($image->getPath());
                 }
             }
+
+            // Add Table parts
+            $tables = $this->spreadSheet->getSheet($i)->getTableCollection();
+            foreach ($tables as $table) {
+                $zipContent['xl/tables/table' . $tableRef1 . '.xml'] = $this->getWriterPartTable()->writeTable($table, $tableRef1++);
+            }
         }
 
         // Add media
@@ -484,24 +520,26 @@ class Xlsx extends BaseWriter
                     $imageContents = file_get_contents($imagePath);
                 }
 
-                $zipContent['xl/media/' . str_replace(' ', '_', $this->getDrawingHashTable()->getByIndex($i)->getIndexedFilename())] = $imageContents;
+                $zipContent['xl/media/' . $this->getDrawingHashTable()->getByIndex($i)->getIndexedFilename()] = $imageContents;
             } elseif ($this->getDrawingHashTable()->getByIndex($i) instanceof MemoryDrawing) {
                 ob_start();
+                /** @var callable */
+                $callable = $this->getDrawingHashTable()->getByIndex($i)->getRenderingFunction();
                 call_user_func(
-                    $this->getDrawingHashTable()->getByIndex($i)->getRenderingFunction(),
+                    $callable,
                     $this->getDrawingHashTable()->getByIndex($i)->getImageResource()
                 );
                 $imageContents = ob_get_contents();
                 ob_end_clean();
 
-                $zipContent['xl/media/' . str_replace(' ', '_', $this->getDrawingHashTable()->getByIndex($i)->getIndexedFilename())] = $imageContents;
+                $zipContent['xl/media/' . $this->getDrawingHashTable()->getByIndex($i)->getIndexedFilename()] = $imageContents;
             }
         }
 
         Functions::setReturnDateType($saveDateReturnType);
         Calculation::getInstance($this->spreadSheet)->getDebugLog()->setWriteDebugLog($saveDebugLog);
 
-        $this->openFileHandle($pFilename);
+        $this->openFileHandle($filename);
 
         $options = new Archive();
         $options->setEnableZip64(false);
@@ -638,17 +676,18 @@ class Xlsx extends BaseWriter
     /**
      * Set Office2003 compatibility.
      *
-     * @param bool $pValue Office2003 compatibility?
+     * @param bool $office2003compatibility Office2003 compatibility?
      *
      * @return $this
      */
-    public function setOffice2003Compatibility($pValue)
+    public function setOffice2003Compatibility($office2003compatibility)
     {
-        $this->office2003compatibility = $pValue;
+        $this->office2003compatibility = $office2003compatibility;
 
         return $this;
     }
 
+    /** @var array */
     private $pathNames = [];
 
     private function addZipFile(string $path, string $content): void
@@ -664,5 +703,53 @@ class Xlsx extends BaseWriter
         foreach ($zipContent as $path => $content) {
             $this->addZipFile($path, $content);
         }
+    }
+
+    /**
+     * @return mixed
+     */
+    private function processDrawing(WorksheetDrawing $drawing)
+    {
+        $data = null;
+        $filename = $drawing->getPath();
+        $imageData = getimagesize($filename);
+
+        if (is_array($imageData)) {
+            switch ($imageData[2]) {
+                case 1: // GIF, not supported by BIFF8, we convert to PNG
+                    $image = imagecreatefromgif($filename);
+                    if ($image !== false) {
+                        ob_start();
+                        imagepng($image);
+                        $data = ob_get_contents();
+                        ob_end_clean();
+                    }
+
+                    break;
+
+                case 2: // JPEG
+                    $data = file_get_contents($filename);
+
+                    break;
+
+                case 3: // PNG
+                    $data = file_get_contents($filename);
+
+                    break;
+
+                case 6: // Windows DIB (BMP), we convert to PNG
+                    $image = imagecreatefrombmp($filename);
+                    if ($image !== false) {
+                        ob_start();
+                        imagepng($image);
+                        $data = ob_get_contents();
+                        ob_end_clean();
+                    }
+
+                    break;
+            }
+        }
+
+        return $data;
     }
 }

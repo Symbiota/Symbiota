@@ -3,7 +3,6 @@
 namespace PhpOffice\PhpSpreadsheet\Reader\Security;
 
 use PhpOffice\PhpSpreadsheet\Reader;
-use PhpOffice\PhpSpreadsheet\Settings;
 
 class XmlScanner
 {
@@ -53,7 +52,7 @@ class XmlScanner
 
     public static function threadSafeLibxmlDisableEntityLoaderAvailability()
     {
-        if (PHP_MAJOR_VERSION == 7) {
+        if (PHP_MAJOR_VERSION === 7) {
             switch (PHP_MINOR_VERSION) {
                 case 2:
                     return PHP_RELEASE_VERSION >= 1;
@@ -71,7 +70,7 @@ class XmlScanner
 
     private function disableEntityLoaderCheck(): void
     {
-        if (Settings::getLibXmlDisableEntityLoader() && \PHP_VERSION_ID < 80000) {
+        if (\PHP_VERSION_ID < 80000) {
             $libxmlDisableEntityLoaderValue = libxml_disable_entity_loader(true);
 
             if (self::$libxmlDisableEntityLoaderValue === null) {

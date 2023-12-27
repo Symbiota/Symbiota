@@ -91,6 +91,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			($detArr['identificationreferences']?'"'.$this->cleanInStr($detArr['identificationreferences']).'"':'NULL').','.
 			($notes?'"'.$notes.'"':'NULL').',"'.$guid.'",'.$sortSeq.')';
 		if($this->conn->query($sql)){
+			$detId = $this->conn->insert_id;
 			//If is current, move old determination from omoccurrences to omoccurdeterminations and then load new record into omoccurrences
 			if($isCurrent){
 				//If determination is already in omoccurdeterminations, INSERT will fail move omoccurrences determination to  table
@@ -103,56 +104,12 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 				$this->conn->query($sqlInsert);
 				$tidToAdd = $detArr['tidtoadd'];
 				if($tidToAdd && !is_numeric($tidToAdd)) $tidToAdd = 0;
+				$this->updateBaseOccurrence($detId);
 
-				//Check to see if taxon has a locality security protection (rare, threatened, or sensitive species)
-				$sStatus = 0;
-				if($tidToAdd){
-					$sqlSs = 'SELECT securitystatus FROM taxa WHERE (tid = '.$tidToAdd.')';
-					$rsSs = $this->conn->query($sqlSs);
-					if($rSs = $rsSs->fetch_object()){
-						if($rSs->securitystatus == 1) $sStatus = 1;
-					}
-					$rsSs->free();
-					if(!$sStatus){
-						$sql2 = 'SELECT c.clid '.
-							'FROM fmchecklists c INNER JOIN fmchklsttaxalink cl ON c.clid = cl.clid '.
-							'INNER JOIN taxstatus ts1 ON cl.tid = ts1.tid '.
-							'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-							'INNER JOIN omoccurrences o ON c.locality = o.stateprovince '.
-							'WHERE c.type = "rarespp" AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 '.
-							'AND (ts2.tid = '.$tidToAdd.') AND (o.occid = '.$this->occid.')';
-						$rsSs2 = $this->conn->query($sql2);
-						if($rsSs2->num_rows){
-							$sStatus = 1;
-						}
-						$rsSs2->free();
-					}
-				}
-
-				//Load new determination into omoccurrences table
-				$sqlNewDet = 'UPDATE omoccurrences '.
-					'SET family = '.($detArr['family']?'"'.$this->cleanInStr($detArr['family']).'"':'NULL').','.
-					'sciname = "'.$sciname.'",genus = NULL, specificEpithet = NULL, taxonRank = NULL, infraspecificepithet = NULL,'.
-					'scientificNameAuthorship = '.($detArr['scientificnameauthorship']?'"'.$this->cleanInStr($detArr['scientificnameauthorship']).'"':'NULL').','.
-					'tidinterpreted = '.($tidToAdd?$tidToAdd:'NULL').', localitysecurity = '.$sStatus;
-				if($detArr['identifiedby'] != 'Nomenclatural Adjustment'){
-					$sqlNewDet .= ',identifiedBy = "'.$this->cleanInStr($detArr['identifiedby']).'", dateIdentified = "'.$this->cleanInStr($detArr['dateidentified']).'",'.
-						'identificationQualifier = '.($detArr['identificationqualifier']?'"'.$this->cleanInStr($detArr['identificationqualifier']).'"':'NULL').','.
-						'identificationReferences = '.($detArr['identificationreferences']?'"'.$this->cleanInStr($detArr['identificationreferences']).'"':'NULL').','.
-						'identificationRemarks = '.($detArr['identificationremarks']?'"'.$this->cleanInStr($detArr['identificationremarks']).'"':'NULL');
-				}
-				$sqlNewDet .= ' WHERE (occid = '.$this->occid.')';
-				$this->conn->query($sqlNewDet);
 				//Add identification confidence
 				if(isset($detArr['confidenceranking'])){
 					$idStatus = $this->editIdentificationRanking($detArr['confidenceranking'],'');
 					if($idStatus) $status .= '; '.$idStatus;
-				}
-				//Remap images
-				$sql = 'UPDATE images SET tid = '.($tidToAdd?$tidToAdd:'NULL').' WHERE (occid = '.$this->occid.')';
-				if(!$this->conn->query($sql)){
-					$status = $LANG['ERROR_ADDED_FAILED_IMAGES'];
-					$status .= ': '.$this->conn->error;
 				}
 			}
 		}
@@ -164,22 +121,27 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 
 	public function editDetermination($detArr){
 		global $LANG;
-		if(!array_key_exists('printqueue',$detArr)) $detArr['printqueue'] = 0;
-		$status = "Determination editted successfully!";
-		//Update determination table
-		$sql = 'UPDATE omoccurdeterminations '.
-			'SET identifiedBy = "'.$this->cleanInStr($detArr['identifiedby']).'", '.
-			'dateIdentified = "'.$this->cleanInStr($detArr['dateidentified']).'", '.
-			'sciname = "'.$this->cleanInStr($detArr['sciname']).'", '.
-			'scientificNameAuthorship = '.($detArr['scientificnameauthorship']?'"'.$this->cleanInStr($detArr['scientificnameauthorship']).'"':'NULL').','.
-			'identificationQualifier = '.($detArr['identificationqualifier']?'"'.$this->cleanInStr($detArr['identificationqualifier']).'"':'NULL').','.
-			'identificationReferences = '.($detArr['identificationreferences']?'"'.$this->cleanInStr($detArr['identificationreferences']).'"':'NULL').','.
-			'identificationRemarks = '.($detArr['identificationremarks']?'"'.$this->cleanInStr($detArr['identificationremarks']).'"':'NULL').','.
-			'sortsequence = '.($detArr['sortsequence']?$detArr['sortsequence']:'10').','.
-			'printqueue = '.($detArr['printqueue']?$detArr['printqueue']:'NULL').' '.
-			'WHERE (detid = '.$detArr['detid'].')';
-		if(!$this->conn->query($sql)){
-			$status = $LANG['ERROR_FAILED_EDIT'].': '.$this->conn->error;
+		if(isset($detArr['detid']) && $detArr['detid']){
+			if(!array_key_exists('printqueue',$detArr)) $detArr['printqueue'] = 0;
+			$status = 'Determination editted successfully!';
+			//Update determination table
+			$sql = 'UPDATE omoccurdeterminations '.
+				'SET identifiedBy = "'.$this->cleanInStr($detArr['identifiedby']).'", '.
+				'dateIdentified = "'.$this->cleanInStr($detArr['dateidentified']).'", '.
+				'sciname = "'.$this->cleanInStr($detArr['sciname']).'", '.
+				'scientificNameAuthorship = '.($detArr['scientificnameauthorship']?'"'.$this->cleanInStr($detArr['scientificnameauthorship']).'"':'NULL').','.
+				'identificationQualifier = '.($detArr['identificationqualifier']?'"'.$this->cleanInStr($detArr['identificationqualifier']).'"':'NULL').','.
+				'identificationReferences = '.($detArr['identificationreferences']?'"'.$this->cleanInStr($detArr['identificationreferences']).'"':'NULL').','.
+				'identificationRemarks = '.($detArr['identificationremarks']?'"'.$this->cleanInStr($detArr['identificationremarks']).'"':'NULL').','.
+				'sortsequence = '.($detArr['sortsequence']?$detArr['sortsequence']:'10').','.
+				'printqueue = '.($detArr['printqueue']?$detArr['printqueue']:'NULL').' '.
+				'WHERE (detid = '.$detArr['detid'].')';
+			if($this->conn->query($sql)){
+				$this->updateBaseOccurrence($detArr['detid']);
+			}
+			else{
+				$status = $LANG['ERROR_FAILED_EDIT'].': '.$this->conn->error;
+			}
 		}
 		return $status;
 	}
@@ -235,9 +197,9 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		$rscr->free();
 
 		//Update applied status of det
-		$sql = 'UPDATE omoccurdeterminations '.
-			'SET appliedstatus = 1, iscurrent = '.$makeCurrent.', '.
-			'identificationremarks = '.($iqStr?'"'.$this->cleanInStr($iqStr).'"':'NULL').' WHERE detid = '.$detId;
+		$sql = 'UPDATE omoccurdeterminations
+			SET appliedstatus = 1, iscurrent = '.$makeCurrent.', identificationremarks = '.($iqStr?'"'.$this->cleanInStr($iqStr).'"':'NULL').
+			' WHERE detid = '.$detId;
 		if(!$this->conn->query($sql)){
 			$statusStr = $LANG['ERROR_ATTEMPT_DET'].': '.$this->conn->error;
 		}
@@ -258,46 +220,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			'identificationqualifier, identificationreferences, identificationremarks, "'.$guid.'", 10 AS sortseq '.
 			'FROM omoccurrences WHERE (occid = '.$this->occid.') AND (identifiedBy IS NOT NULL OR dateIdentified IS NOT NULL OR sciname IS NOT NULL)';
 		$this->conn->query($sqlInsert);
-		//Update omoccurrences to reflect this determination
-		$tid = 0;
-		$sStatus = 0;
-		$family = '';
-		$sqlTid = 'SELECT t.tid, t.securitystatus, ts.family '.
-			'FROM omoccurdeterminations d INNER JOIN taxa t ON d.sciname = t.sciname '.
-			'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-			'WHERE (d.detid = '.$detId.') AND (taxauthid = 1)';
-		$rs = $this->conn->query($sqlTid);
-		if($r = $rs->fetch_object()){
-			$tid = $r->tid;
-			$family = $r->family;
-			if($r->securitystatus == 1) $sStatus = 1;
-		}
-		$rs->free();
-		if(!$sStatus && $tid){
-			$sql2 = 'SELECT c.clid '.
-				'FROM fmchecklists c INNER JOIN fmchklsttaxalink cl ON c.clid = cl.clid '.
-				'INNER JOIN taxstatus ts1 ON cl.tid = ts1.tid '.
-				'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-				'INNER JOIN omoccurrences o ON c.locality = o.stateprovince '.
-				'WHERE c.type = "rarespp" AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 '.
-				'AND (ts2.tid = '.$tid.') AND (o.occid = '.$this->occid.')';
-			//echo $sql; exit;
-			$rsSs2 = $this->conn->query($sql2);
-			if($rsSs2->num_rows){
-				$sStatus = 1;
-			}
-			$rsSs2->free();
-		}
 
-		$sqlNewDet = 'UPDATE omoccurrences o INNER JOIN omoccurdeterminations d ON o.occid = d.occid '.
-			'SET o.identifiedBy = d.identifiedBy, o.dateIdentified = d.dateIdentified,o.family = '.($family?'"'.$family.'"':'NULL').','.
-			'o.sciname = d.sciname,o.genus = NULL,o.specificEpithet = NULL,o.taxonRank = NULL,o.infraspecificepithet = NULL,o.scientificname = NULL,'.
-			'o.scientificNameAuthorship = d.scientificnameauthorship,o.identificationQualifier = d.identificationqualifier,'.
-			'o.identificationReferences = d.identificationreferences,o.identificationRemarks = d.identificationremarks,'.
-			'o.tidinterpreted = '.($tid?$tid:'NULL').', o.localitysecurity = '.$sStatus.
-			' WHERE (detid = '.$detId.')';
-		//echo "<div>".$sqlNewDet."</div>";
-		$this->conn->query($sqlNewDet);
 		//Set all dets for this specimen to not current
 		$sqlSetCur1 = 'UPDATE omoccurdeterminations SET iscurrent = 0 WHERE occid = '.$this->occid;
 		if(!$this->conn->query($sqlSetCur1)){
@@ -311,14 +234,54 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			//$status .= '; '.$sqlSetCur2;
 		}
 
-		if($tid){
-			$sql = 'UPDATE images SET tid = '.$tid.' WHERE (occid = '.$this->occid.')';
-			//echo $sql;
+		//Update omoccurrences to reflect this determination
+		$this->updateBaseOccurrence($detId);
+		return $status;
+	}
+
+	private function updateBaseOccurrence($detId){
+		if(is_numeric($detId)){
+			$taxonArr = $this->getTaxonVariables($detId);
+			$sql = 'UPDATE omoccurrences o INNER JOIN omoccurdeterminations d ON o.occid = d.occid
+				SET o.identifiedBy = d.identifiedBy, o.dateIdentified = d.dateIdentified, o.sciname = d.sciname, o.scientificNameAuthorship = d.scientificnameauthorship,
+				o.identificationQualifier = d.identificationqualifier, o.identificationReferences = d.identificationReferences, o.identificationRemarks = d.identificationRemarks,
+				o.taxonRemarks = d.taxonRemarks, o.genus = NULL, o.specificEpithet = NULL, o.taxonRank = NULL, o.infraspecificepithet = NULL, o.scientificname = NULL ';
+			if(isset($taxonArr['family']) && $taxonArr['family']) $sql .= ', o.family = "'.$this->cleanInStr($taxonArr['family']).'"';
+			if(isset($taxonArr['tid']) && $taxonArr['tid']) $sql .= ', o.tidinterpreted = '.$taxonArr['tid'];
+			if(isset($taxonArr['security']) && $taxonArr['security']) $sql .= ', o.localitysecurity = '.$taxonArr['security'].', o.localitysecurityreason = "<Security Setting Locked>"';
+			$sql .= ' WHERE (d.iscurrent = 1) AND (d.detid = '.$detId.')';
 			$this->conn->query($sql);
 		}
-		else{
-			$status = $LANG['ERROR_TAX_THESAURUS'];
+	}
+
+	private function getTaxonVariables($detId){
+		$retArr = array();
+		$sqlTid = 'SELECT t.tid, t.securitystatus, ts.family
+			FROM omoccurdeterminations d INNER JOIN taxa t ON d.sciname = t.sciname
+			INNER JOIN taxstatus ts ON t.tid = ts.tid
+			WHERE (d.detid = '.$detId.') AND (taxauthid = 1)';
+		$rs = $this->conn->query($sqlTid);
+		if($r = $rs->fetch_object()){
+			$retArr['tid'] = $r->tid;
+			$retArr['family'] = $r->family;
+			$retArr['security'] = ($r->securitystatus == 1 ? 1 : 0);
 		}
+		$rs->free();
+		if($retArr && !$retArr['security'] && $retArr['tid']){
+			$sql2 = 'SELECT c.clid
+				FROM fmchecklists c INNER JOIN fmchklsttaxalink cl ON c.clid = cl.clid
+				INNER JOIN taxstatus ts1 ON cl.tid = ts1.tid
+				INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted
+				INNER JOIN omoccurrences o ON c.locality = o.stateprovince
+				WHERE c.type = "rarespp" AND ts1.taxauthid = 1 AND ts2.taxauthid = 1
+				AND (ts2.tid = '.$retArr['tid'].') AND (o.occid = '.$this->occid.')';
+			$rs2 = $this->conn->query($sql2);
+			if($rs2->num_rows){
+				$retArr['security'] = 1;
+			}
+			$rs2->free();
+		}
+		return $retArr;
 	}
 
 	public function addNomAdjustment($detArr,$isEditor){

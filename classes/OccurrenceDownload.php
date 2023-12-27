@@ -298,7 +298,7 @@ class OccurrenceDownload{
 			'o.occurrenceid, o.catalognumber, o.sciname, o.recordedby, o.recordnumber, IFNULL(CAST(o.eventdate AS CHAR),o.verbatimeventdate) as eventdate, '.
 			'o.decimallatitude, o.decimallongitude, o.datelastmodified, o.recordenteredby, o.genericcolumn2, '.
 			'IFNULL(i.thumbnailurl,i.url) AS thumbnailurl, o.processingstatus '.
-			'FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid '.
+			'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid '.
 			'INNER JOIN images i ON o.occid = i.occid '.
 			'WHERE c.colltype = "Preserved Specimens" '.
 			'AND o.processingstatus IN("pending review","reviewed", "closed") AND (o.localitysecurity IS NULL OR o.localitysecurity = 0) ';

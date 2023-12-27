@@ -139,11 +139,16 @@ $smManager = new SiteMapManager();
 						<?php echo $LANG['MANAGTOOL'];?>
 					</span>
 				</h1>
+			</br>
 				<?php
 				if($SYMB_UID){
 					if($IS_ADMIN){
 						?>
-						<h2><?php echo $LANG['ADMIN'];?></h2>
+						<h2>
+							<span>
+								<?php echo $LANG['ADMIN'];?>
+							</span>
+						</h2>
 						<ul>
 							<li>
 								<a href="profile/usermanagement.php"><?php echo htmlspecialchars($LANG['USERPERM'], HTML_SPECIAL_CHARS_FLAGS);?></a>
@@ -188,11 +193,14 @@ $smManager = new SiteMapManager();
 									<?php echo htmlspecialchars($LANG['GLOSSARY'], HTML_SPECIAL_CHARS_FLAGS);?>
 								</a>
 							</li>
+							<li>
+								<a href="collections/map/staticmaphandler.php"><?php echo htmlspecialchars($LANG['MANAGE_TAXON_THUMBNAILS'], HTML_SPECIAL_CHARS_FLAGS);?></a>
+							</li>
 						</ul>
 						<?php
 					}
 					if($KEY_MOD_IS_ACTIVE || array_key_exists("KeyAdmin",$USER_RIGHTS)){
-						echo '<h2>'.$LANG['IDKEYS'].'</h2>';
+						echo '</br><h2><span>'.$LANG['IDKEYS'].'<span></h2>';
 						if(!$KEY_MOD_IS_ACTIVE && array_key_exists("KeyAdmin",$USER_RIGHTS)){
 							?>
 							<div id="keymodule">
@@ -236,7 +244,12 @@ $smManager = new SiteMapManager();
 						<?php
 					}
 					?>
-					<h2><?php echo $LANG['IMAGES'];?></h2>
+					</br>
+					<h2>
+						<span>
+							<?php echo $LANG['IMAGES'];?>
+						</span>
+					</h2>
 					<div id="images">
 						<p class="description">
 							<?php echo $LANG['SEESYMBDOC'];?>
@@ -266,8 +279,12 @@ $smManager = new SiteMapManager();
 						}
 						?>
 					</ul>
-
-					<h2><?php echo $LANG['BIOTIC_INVENTORIES'];?></h2>
+					</br>
+					<h2>
+						<span>
+							<?php echo $LANG['BIOTIC_INVENTORIES'];?>
+						</span>
+					</h2>
 					<ul>
 						<?php
 						if($IS_ADMIN){
@@ -288,11 +305,21 @@ $smManager = new SiteMapManager();
 						?>
 					</ul>
 
-					<h2><?php echo (isset($LANG['DATASETS'])?$LANG['DATASETS']:'Datasets') ;?></h2>
+					</br>
+					<h2>
+						<span>
+							<?php echo (isset($LANG['DATASETS'])?$LANG['DATASETS']:'Datasets') ;?>
+						</span>
+					</h2>
 					<ul>
 						<li><a href="collections/datasets/index.php"><?php echo htmlspecialchars((isset($LANG['DATMANPAG'])?$LANG['DATMANPAG']:'Dataset Management Page'), HTML_SPECIAL_CHARS_FLAGS) ;?></a> - <?php echo htmlspecialchars($LANG['DATA_AUTHORIZED_TO_EDIT'], HTML_SPECIAL_CHARS_FLAGS) ?></li>
 					</ul>
-					<h2><?php echo $LANG['TAXONPROF'];?></h2>
+					</br>
+					<h2>
+						<span>
+							<?php echo $LANG['TAXONPROF'];?>
+						</span>
+					</h2>
 					<?php
 					if($IS_ADMIN || array_key_exists("TaxonProfile",$USER_RIGHTS)){
 						?>
@@ -316,7 +343,12 @@ $smManager = new SiteMapManager();
 						<?php
 					}
 					?>
-					<h2><?php echo $LANG['TAXONOMY'];?></h2>
+					</br>
+					<h2>
+						<span>
+							<?php echo $LANG['TAXONOMY'];?>
+						</span>
+					</h2>
 					<ul>
 						<?php
 						if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
@@ -337,7 +369,12 @@ $smManager = new SiteMapManager();
 						?>
 					</ul>
 
-					<h2><?php echo $LANG['CHECKLISTS'];?></h2>
+					</br>
+					<h2>
+						<span>
+							<?php echo $LANG['CHECKLISTS'];?>
+						</span>
+					</h2>
 					<p class="description">
 						<?php echo $LANG['TOOLSFORMANAGE'];?>.
 					</p>
@@ -357,7 +394,12 @@ $smManager = new SiteMapManager();
 					<?php
 					if(isset($ACTIVATE_EXSICCATI) && $ACTIVATE_EXSICCATI){
 						?>
-						<h2><?php echo $LANG['EXSICCATII'];?></h2>
+						</br>
+						<h2>
+							<span>
+								<?php echo $LANG['EXSICCATII'];?>
+							</span>
+						</h2>
 						<p class="description">
 							<?php echo $LANG['ESCMOD'];?>.
 						</p>
@@ -368,14 +410,22 @@ $smManager = new SiteMapManager();
 					}
 					?>
 
-					<h2><?php echo $LANG['COLLECTIONS'];?></h2>
+					</br>
+					<h2>
+						<span>
+							<?php echo $LANG['COLLECTIONS'];?>
+						</span>
+					</h2>
 					<p class="description">
 						<?php echo $LANG['PARA1'];?>
 					</p>
-					<div id="admincollection">
-						<h3>
+					</br>
+					<h3>
+						<span>
 							<?php echo $LANG['COLLLIST'];?>
-						</h3>
+						</span>
+					</h3>
+					<div>
 						<ul>
 						<?php
 						$smManager->setCollectionList();
@@ -395,15 +445,23 @@ $smManager = new SiteMapManager();
 						</ul>
 					</div>
 
-					<h2><?php echo $LANG['OBSERV'];?></h2>
+					</br>
+					<h2>
+						<span>
+							<?php echo $LANG['OBSERV'];?>
+						</span>
+					</h2>
 					<p class="description">
 						<?php echo $LANG['PARA2'];?>
 						<a href="https://biokic.github.io/symbiota-docs/col_obs/" target="_blank"><?php echo htmlspecialchars($LANG['SYMBDOCU'], HTML_SPECIAL_CHARS_FLAGS);?></a> <?php echo htmlspecialchars($LANG['FORMOREINFO'], HTML_SPECIAL_CHARS_FLAGS);?>.
 					<p class="description">
-					<div id="adminobservation">
-						<h3>
+					</br>
+					<h3>
+						<span>
 							<?php echo $LANG['OIVS'];?>
-						</h3>
+						</span>
+					</h3>
+					<div>
 						<ul>
 							<?php
 							$obsList = $smManager->getObsArr();
@@ -440,8 +498,10 @@ $smManager = new SiteMapManager();
 						<?php
 						if($genObsList){
 							?>
-							<h3>
-								<?php echo $LANG['PERSONAL'];?>
+							</br>
+							<h3><span>
+									<?php echo $LANG['PERSONAL'];?>
+								</span>
 							</h3>
 							<ul>
 								<?php
@@ -460,8 +520,11 @@ $smManager = new SiteMapManager();
 						}
 						if($obsManagementStr){
 							?>
+							</br>
 							<h3>
-								<?php echo $LANG['OPM'];?>
+								<span>
+									<?php echo $LANG['OPM'];?>
+								</span>
 							</h3>
 							<ul>
 								<?php echo $obsManagementStr; ?>

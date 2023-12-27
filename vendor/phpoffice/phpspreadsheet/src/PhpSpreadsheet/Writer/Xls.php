@@ -4,6 +4,7 @@ namespace PhpOffice\PhpSpreadsheet\Writer;
 
 use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
+use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\RichText\Run;
@@ -117,10 +118,12 @@ class Xls extends BaseWriter
     /**
      * Save Spreadsheet to file.
      *
-     * @param resource|string $pFilename
+     * @param resource|string $filename
      */
-    public function save($pFilename): void
+    public function save($filename, int $flags = 0): void
     {
+        $this->processFlags($flags);
+
         // garbage collect
         $this->spreadsheet->garbageCollect();
 
@@ -159,8 +162,9 @@ class Xls extends BaseWriter
 
         // add fonts from rich text eleemnts
         for ($i = 0; $i < $countSheets; ++$i) {
-            foreach ($this->writerWorksheets[$i]->phpSheet->getCoordinates() as $coordinate) {
-                $cell = $this->writerWorksheets[$i]->phpSheet->getCell($coordinate);
+            foreach ($this->writerWorksheets[$i]->phpSheet->getCellCollection()->getCoordinates() as $coordinate) {
+                /** @var Cell $cell */
+                $cell = $this->writerWorksheets[$i]->phpSheet->getCellCollection()->get($coordinate);
                 $cVal = $cell->getValue();
                 if ($cVal instanceof RichText) {
                     $elements = $cVal->getRichTextElements();
@@ -222,7 +226,7 @@ class Xls extends BaseWriter
         $time = $this->spreadsheet->getProperties()->getModified();
         $root = new Root($time, $time, $arrRootData);
         // save the OLE file
-        $this->openFileHandle($pFilename);
+        $this->openFileHandle($filename);
         $root->save($this->fileHandle);
         $this->maybeCloseFileHandle();
 
@@ -243,8 +247,6 @@ class Xls extends BaseWriter
         foreach ($this->spreadsheet->getAllsheets() as $sheet) {
             // sheet index
             $sheetIndex = $sheet->getParent()->getIndex($sheet);
-
-            $escher = null;
 
             // check if there are any shapes for this sheet
             $filterRange = $sheet->getAutoFilter()->getRange();
@@ -434,6 +436,7 @@ class Xls extends BaseWriter
             case 1: // GIF, not supported by BIFF8, we convert to PNG
                 $blipType = BSE::BLIPTYPE_PNG;
                 ob_start();
+                // @phpstan-ignore-next-line
                 imagepng(imagecreatefromgif($filename));
                 $blipData = ob_get_contents();
                 ob_end_clean();
@@ -452,6 +455,7 @@ class Xls extends BaseWriter
             case 6: // Windows DIB (BMP), we convert to PNG
                 $blipType = BSE::BLIPTYPE_PNG;
                 ob_start();
+                // @phpstan-ignore-next-line
                 imagepng(SharedDrawing::imagecreatefrombmp($filename));
                 $blipData = ob_get_contents();
                 ob_end_clean();
@@ -728,7 +732,6 @@ class Xls extends BaseWriter
             } elseif ($dataProp['type']['data'] == 0x1E) { // null-terminated string prepended by dword string length
                 // Null-terminated string
                 $dataProp['data']['data'] .= chr(0);
-                // @phpstan-ignore-next-line
                 ++$dataProp['data']['length'];
                 // Complete the string with null string for being a %4
                 $dataProp['data']['length'] = $dataProp['data']['length'] + ((4 - $dataProp['data']['length'] % 4) == 4 ? 0 : (4 - $dataProp['data']['length'] % 4));
@@ -746,7 +749,6 @@ class Xls extends BaseWriter
             } else {
                 $dataSection_Content .= $dataProp['data']['data'];
 
-                // @phpstan-ignore-next-line
                 $dataSection_Content_Offset += 4 + $dataProp['data']['length'];
             }
         }

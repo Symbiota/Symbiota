@@ -53,8 +53,10 @@ $(document).on("pageloadfailed", function (event, data) {
 
 function setHeight() {
   var winHeight = window.innerHeight;
-  document.getElementById("mapinterface").style.height = winHeight + "px";
-  document.getElementById("loadingOverlay").style.height = winHeight + "px";
+  var mapInterface = document.getElementById("mapinterface");
+  var loadingOverlay = document.getElementById("loadingOverlay");
+  if (mapInterface) mapInterface.style.height = winHeight + "px";
+  if (loadingOverlay) loadingOverlay.style.height = winHeight + "px";
 }
 
 function checkRecordLimit(f) {
@@ -406,7 +408,7 @@ function openIndPopup(occid, clid) {
 
 function openRecord(record) {
   let url = record.host
-    ? `http://${record.host}/collections/individual/index.php?occid=${record.occid}`
+    ? `https://${record.host}/collections/individual/index.php?occid=${record.occid}`
     : "../individual/index.php?occid=" + record.occid;
   openPopup(url);
 }

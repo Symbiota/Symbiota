@@ -107,7 +107,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		if(isset($this->taxaArr['taxa'])){
 			$sqlWhereTaxa = $this->getTaxonWhereFrag();
 			if(!$this->imageType || $this->imageType == 3){
-				if(strpos($sqlWhereTaxa, 'o.tidinterpreted')) $sqlWhereTaxa = str_replace('o.tidinterpreted', 'i.tid', $sqlWhereTaxa);
+				if(strpos($sqlWhereTaxa, 'o.tidinterpreted')) $sqlWhereTaxa = str_replace('o.tidinterpreted', 't.tid', $sqlWhereTaxa);
 				if(strpos($sqlWhereTaxa, 'o.sciname')) $sqlWhereTaxa = str_replace('o.sciname', 't.sciname', $sqlWhereTaxa);
 				if(strpos($sqlWhereTaxa, 'o.family')) $sqlWhereTaxa = str_replace('o.family', 'ts.family', $sqlWhereTaxa);
 			}
@@ -144,7 +144,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 				$sqlWhere .= 'AND (i.occid IS NULL) ';
 			}
 		}
-		if(strpos($sqlWhere,'ts.taxauthid')) $sqlWhere = str_replace('i.tid', 'ts.tid', $sqlWhere);
+		if(strpos($sqlWhere,'ts.taxauthid')) $sqlWhere = str_replace('t.tid', 'ts.tid', $sqlWhere);
 		if($sqlWhere) $this->sqlWhere = 'WHERE '.substr($sqlWhere,4);
 	}
 

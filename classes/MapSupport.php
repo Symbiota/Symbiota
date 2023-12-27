@@ -15,19 +15,20 @@ class MapSupport extends Manager{
 	}
 
 	//Static Map functions
-	public function getTaxaList($tidFilter=false){
+	public function getTaxaList($tidFilter = false, $onlyTaxaWithoutMaps = false){
 		$retArr = array();
 		//Following SQL grabs all accepted taxa at species / infraspecific rank that don't yet have a distribution map
 		//Eventually well probably add ability to refresh all maps older than a certain date, and/or by other criteria
 		//Return limit is currently set at 1000 records, which maybe should be variable that is set by user?
 		$sql = 'SELECT DISTINCT t.tid, t.sciname
 			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted
-			INNER JOIN omoccurrences o ON ts.tid = o.tidinterpreted
-			LEFT JOIN taxamaps m ON t.tid = m.tid ';
+			INNER JOIN omoccurrences o ON ts.tid = o.tidinterpreted ';
 		if($tidFilter) $sql .= 'INNER JOIN taxaenumtree e ON t.tid = e.tid ';
-		$sql .= 'WHERE t.rankid > 219 AND m.tid IS NULL ';
-		if($tidFilter) $sql .= 'AND (e.parentTid = ? OR ts.tid = ?) ';
-		$sql .= ' ORDER BY t.sciname LIMIT 1000';
+		if($onlyTaxaWithoutMaps) $sql .= 'LEFT JOIN taxamaps m ON t.tid = m.tid ';
+		$sql .= 'WHERE t.rankid > 219 AND ts.taxauthid = 1 ';
+		if($tidFilter) $sql .= 'AND e.taxauthid = 1 AND (e.parentTid = ? OR ts.tid = ?) ';
+		if($onlyTaxaWithoutMaps) $sql .= 'AND m.tid IS NULL ';
+		$sql .= ' ORDER BY t.sciname';
 		if($stmt = $this->conn->prepare($sql)){
 			if($tidFilter) $stmt->bind_param('ii', $tidFilter, $tidFilter);
 			$stmt->execute();
@@ -119,8 +120,12 @@ class MapSupport extends Manager{
 			$ext = substr($_FILES['mapupload']['name'], strrpos($_FILES['mapupload']['name'], '.'));
 			$fileName = $tid.'_'.$mapType.'_'.time() . $ext;
 
+         //Clear Out Old Thumbnails
+         $this->deleteAllTaxonMaps($tid);
+
 			$this->setTargetPaths();
 			if(move_uploaded_file($_FILES['mapupload']['tmp_name'], $this->targetPath.$fileName)){
+		      $this->targetPath;
 				$status = $this->insertImage($tid, $title, $this->targetUrl.$fileName);
 			}
 			else{
@@ -128,7 +133,7 @@ class MapSupport extends Manager{
 				return false;
 			}
 		}
-	}
+   }
 
 	private function insertImage($tid, $title, $url){
 		$status = false;
@@ -143,8 +148,37 @@ class MapSupport extends Manager{
 		return $status;
 	}
 
-	private function deleteAllTaxonMaps($tid){
+	public function deleteAllTaxonMaps($tid){
 		$status = false;
+
+      $sql = <<<sql
+         SELECT mid, url from taxamaps where tid = ?;
+         sql;
+
+      $taxon_maps = [];
+      //Removes Thumbnails images
+      if($stmt = $this->conn->prepare($sql)){
+
+			$stmt->bind_param('i', $tid);
+
+			$stmt->execute();
+         $result = $stmt->get_result();
+         $cnt = 0;
+
+         while ($myrow = $result->fetch_assoc()) {
+            $cnt++;
+            $image_loc = str_replace($GLOBALS['IMAGE_ROOT_URL'], $GLOBALS['IMAGE_ROOT_PATH'], $myrow['url']);
+            if(file_exists($image_loc)) {
+               unlink($image_loc);
+            }
+         }
+			$stmt->close();
+
+         //Bails if there isn't anything to delete
+         if($cnt === 0) return true;
+      }
+
+      //Remove Thumbnail data
 		$sql = 'DELETE FROM taxamaps WHERE tid = ?';
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('i', $tid);
@@ -152,7 +186,8 @@ class MapSupport extends Manager{
 			if($stmt->affected_rows) $status = true;
 			elseif($stmt->error) $this->errorMessage = 'ERROR deleting all taxon maps: '.$stmt->error;
 			$stmt->close();
-		}
+      }
+
 		return $status;
 	}
 

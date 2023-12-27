@@ -41,9 +41,9 @@ class LookupRef
      * @param bool $referenceStyle A logical value that specifies the A1 or R1C1 reference style.
      *                                TRUE or omitted      CELL_ADDRESS returns an A1-style reference
      *                                FALSE                CELL_ADDRESS returns an R1C1-style reference
-     * @param string $sheetText Optional Name of worksheet to use
+     * @param array|string $sheetText Optional Name of worksheet to use
      *
-     * @return string
+     * @return array|string
      */
     public static function cellAddress($row, $column, $relativity = 1, $referenceStyle = true, $sheetText = '')
     {
@@ -158,18 +158,18 @@ class LookupRef
      *
      * @Deprecated 1.18.0
      *
-     * @see LookupRef\Hyperlink::set()
-     *      Use the set() method in the LookupRef\Hyperlink class instead
-     *
      * @param mixed $linkURL Expect string. Value to check, is also the value returned when no error
      * @param mixed $displayName Expect string. Value to return when testValue is an error condition
-     * @param Cell $pCell The cell to set the hyperlink in
+     * @param Cell $cell The cell to set the hyperlink in
      *
      * @return string The value of $displayName (or $linkURL if $displayName was blank)
+     *
+     *@see LookupRef\Hyperlink::set()
+     *      Use the set() method in the LookupRef\Hyperlink class instead
      */
-    public static function HYPERLINK($linkURL = '', $displayName = null, ?Cell $pCell = null)
+    public static function HYPERLINK($linkURL = '', $displayName = null, ?Cell $cell = null)
     {
-        return LookupRef\Hyperlink::set($linkURL, $displayName, $pCell);
+        return LookupRef\Hyperlink::set($linkURL, $displayName, $cell);
     }
 
     /**
@@ -183,19 +183,19 @@ class LookupRef
      *
      * @Deprecated 1.18.0
      *
-     * @see LookupRef\Indirect::INDIRECT()
+     * @param array|string $cellAddress $cellAddress The cell address of the current cell (containing this formula)
+     * @param Cell $cell The current cell (containing this formula)
+     *
+     * @return array|string An array containing a cell or range of cells, or a string on error
+     *
+     *@see LookupRef\Indirect::INDIRECT()
      *      Use the INDIRECT() method in the LookupRef\Indirect class instead
      *
      * NOTE - INDIRECT() does not yet support the optional a1 parameter introduced in Excel 2010
-     *
-     * @param array|string $cellAddress $cellAddress The cell address of the current cell (containing this formula)
-     * @param Cell $pCell The current cell (containing this formula)
-     *
-     * @return array|string An array containing a cell or range of cells, or a string on error
      */
-    public static function INDIRECT($cellAddress, Cell $pCell)
+    public static function INDIRECT($cellAddress, Cell $cell)
     {
-        return Indirect::INDIRECT($cellAddress, true, $pCell);
+        return Indirect::INDIRECT($cellAddress, true, $cell);
     }
 
     /**
@@ -233,9 +233,9 @@ class LookupRef
      *
      * @return array|string An array containing a cell or range of cells, or a string on error
      */
-    public static function OFFSET($cellAddress = null, $rows = 0, $columns = 0, $height = null, $width = null, ?Cell $pCell = null)
+    public static function OFFSET($cellAddress = null, $rows = 0, $columns = 0, $height = null, $width = null, ?Cell $cell = null)
     {
-        return Offset::OFFSET($cellAddress, $rows, $columns, $height, $width, $pCell);
+        return Offset::OFFSET($cellAddress, $rows, $columns, $height, $width, $cell);
     }
 
     /**
@@ -277,7 +277,7 @@ class LookupRef
      * @param mixed $matchType The number -1, 0, or 1. -1 means above, 0 means exact match, 1 means below.
      *                         If match_type is 1 or -1, the list has to be ordered.
      *
-     * @return int|string The relative position of the found item
+     * @return array|int|string The relative position of the found item
      */
     public static function MATCH($lookupValue, $lookupArray, $matchType = 1)
     {
@@ -401,16 +401,16 @@ class LookupRef
      *
      * @Deprecated 1.18.0
      *
-     * @see LookupRef\Formula::text()
-     *      Use the text() method in the LookupRef\Formula class instead
-     *
      * @param mixed $cellReference The cell to check
-     * @param Cell $pCell The current cell (containing this formula)
+     * @param Cell $cell The current cell (containing this formula)
      *
      * @return string
+     *
+     *@see LookupRef\Formula::text()
+     *      Use the text() method in the LookupRef\Formula class instead
      */
-    public static function FORMULATEXT($cellReference = '', ?Cell $pCell = null)
+    public static function FORMULATEXT($cellReference = '', ?Cell $cell = null)
     {
-        return LookupRef\Formula::text($cellReference, $pCell);
+        return LookupRef\Formula::text($cellReference, $cell);
     }
 }

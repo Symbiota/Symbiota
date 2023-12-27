@@ -20,9 +20,9 @@ $LANG['TAX_STATUS'] = 'Taxonomic Status';
 $LANG['HIERARCHY'] = 'Hierarchy';
 $LANG['CHILDREN_TAXA'] = 'Children Taxa';
 $LANG['DELETE'] = 'Delete';
-$LANG['UNITNAME1'] = 'UnitName1';
-$LANG['UNITNAME2'] = 'UnitName2';
-$LANG['UNITNAME3'] = 'UnitName3';
+$LANG['UNITNAME1'] = 'UnitName';
+$LANG['UNITNAME2'] = 'Specific Epithet';
+$LANG['UNITNAME3'] = 'Infraspecific Epithet';
 $LANG['AUTHOR'] = 'Author';
 $LANG['KINGDOM'] = 'Kingdom';
 $LANG['RANK_NAME'] = 'Rank Name';
@@ -64,6 +64,6 @@ $LANG['SYNONYMS_TRANSFERRED'] = 'Synonyms will be transferred to Accepted Taxon'
 $LANG['QUERY_HIERARCHY'] = 'Quick Query Taxonomic Hierarchy';
 $LANG['EMPTY'] = 'Empty';
 $LANG['NOT_AUTH'] = 'You are not authorized to access this page';
-
+$LANG['GENUS_NAME'] = 'Genus Name';
 
 ?>

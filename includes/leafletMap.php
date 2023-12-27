@@ -23,7 +23,7 @@
 
 <!-- Importing Leaflet Draw Drag --> 
 <script 
-   src= <?php echo $CLIENT_ROOT . "/js/leaflet-draw-drag/dist/Leaflet.draw.drag.js" ?>
+   src= "<?php echo $CLIENT_ROOT?>/js/leaflet-draw-drag/dist/Leaflet.draw.drag.js" 
    type="text/javascript">
 </script>
 
@@ -54,7 +54,7 @@
 
 <!-- Importing Leaflet Related Functions--> 
 <script 
-   src=<?php echo $CLIENT_ROOT . "/js/symb/leafletMap.js" ?>
+   src= "<?php echo $CLIENT_ROOT?>/js/symb/leafletMap.js"
    type="text/javascript">
 </script>
 

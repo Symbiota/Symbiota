@@ -34,21 +34,21 @@
           <ul class="social-links links">
             <li class="facebook">
               <a
-                href="https://www.facebook.com/USDA"
+                href="https://www.facebook.com/AgriculturalResearchService"
                 class="social-link social-link--facebook"
                 ><span class="social-link__text">Facebook</span></a
               >
             </li>
             <li class="twitter">
               <a
-                href="https://twitter.com/National_Ag_Lib"
+                href="https://twitter.com/usda_ars"
                 class="social-link social-link--twitter"
                 ><span class="social-link__text">Twitter</span></a
               >
             </li>
             <li class="youtube">
               <a
-                href="https://www.youtube.com/user/NationalAgLibrary"
+                href="https://www.youtube.com/channel/UCbY4NfKJTwEO1rxTdNGjYbA"
                 class="social-link social-link--youtube"
                 ><span class="social-link__text">YouTube</span></a
               >
@@ -139,5 +139,4 @@
   </div>
 </footer>
 
-<script src="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/assets/uswds/js/ARSbranding.js" type="text/javascript"></script>
 <script src="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/assets/uswds/js/uswds.js" type="text/javascript"></script>

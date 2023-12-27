@@ -70,7 +70,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 				if($includeAll == 1 || $includeAll == 2){
 					$sql = 'SELECT DISTINCT cl.clTaxaID, TRIM(CONCAT_WS(" ",t.sciname,cl.morphoSpecies)) AS clsciname, o.occid, c.institutioncode, c.collectioncode, o.catalognumber,
 						o.tidinterpreted, o.sciname, o.recordedby, o.recordnumber, o.eventdate, CONCAT_WS("; ",o.country, o.stateprovince, o.county, o.locality) as locality
-						FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid
+						FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid
 						INNER JOIN taxstatus ts ON o.tidinterpreted = ts.tid
 						INNER JOIN taxstatus ts2 ON ts.tidaccepted = ts2.tidaccepted
 						INNER JOIN fmchklsttaxalink cl ON ts2.tid = cl.tid
@@ -256,7 +256,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 	private function getMissingTaxaBaseSql($sqlFrag){
 		$clidStr = $this->getClidFullStr();
 		if($clidStr){
-			$retSql = 'FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid '.
+			$retSql = 'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid '.
 				'INNER JOIN taxstatus ts ON o.tidinterpreted = ts.tid '.
 				'INNER JOIN taxa t ON ts.tidaccepted = t.tid ';
 			$retSql .= $this->getTableJoinFrag($sqlFrag);
@@ -309,7 +309,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 
 	private function getProblemTaxaSql($sqlFrag){
 		//$clidStr = $this->getClidFullStr();
-		$retSql = 'FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.CollID '.
+		$retSql = 'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.CollID '.
 			$this->getTableJoinFrag($sqlFrag).
 			'WHERE ('.$sqlFrag.') AND (o.tidinterpreted IS NULL) AND (o.sciname IS NOT NULL) ';
 		$idStr = $this->getVoucherOccidStr();

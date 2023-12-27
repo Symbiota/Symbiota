@@ -3,6 +3,10 @@ include_once('config/symbini.php');
 if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/index.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/index.en.php');
 else include_once($SERVER_ROOT.'/content/lang/index.'.$LANG_TAG.'.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
+
+$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? true;
+$actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.php";
+
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -61,7 +65,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 							</div>
 							<div class="usa-card__footer">
 								<a href="<?php echo $CLIENT_ROOT?>/collections/misc/collprofiles.php?collid=<?php echo  $NA_COLLID?>" class="usa-button card-button" style="margin-bottom: 1rem;">About Collection</a>
-								<a href="<?php echo $CLIENT_ROOT?>/collections/harvestparams.php?db=<?php echo  $NA_COLLID?>" class="usa-button card-button">Search Collection</a>
+								<a href="<?php echo $CLIENT_ROOT?>/collections/<?php echo $actionPage ?>?db=<?php echo  $NA_COLLID?>" class="usa-button card-button">Search Collection</a>
 							</div>
 						</div>
 					</li>
@@ -85,7 +89,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 							</div>
 							<div class="usa-card__footer">
 								<a href="<?php echo $CLIENT_ROOT?>/collections/misc/collprofiles.php?collid=<?php echo  $BARC_COLLID?>" class="usa-button card-button" style="margin-bottom: 1rem;">About Collection</a>
-								<a href="<?php echo $CLIENT_ROOT?>/collections/harvestparams.php?db=<?php echo  $BARC_COLLID?>" class="usa-button card-button">Search Collection</a>
+								<a href="<?php echo $CLIENT_ROOT?>/collections/<?php echo $actionPage ?>?db=<?php echo  $BARC_COLLID?>" class="usa-button card-button">Search Collection</a>
 							</div>
 						</div>
 					</li>
@@ -109,7 +113,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 							</div>
 							<div class="usa-card__footer">
 								<a href="<?php echo $CLIENT_ROOT?>/collections/misc/collprofiles.php?collid=<?php echo  $BPI_SNAPSHOT_COLLID?>" class="usa-button card-button" style="margin-bottom: 1rem;">About Collection</a>
-								<a href="<?php echo $CLIENT_ROOT?>/collections/harvestparams.php?db=<?php echo  $BPI_SNAPSHOT_COLLID?>" class="usa-button card-button">Search Collection</a>
+								<a href="<?php echo $CLIENT_ROOT?>/collections/<?php echo $actionPage ?>?db=<?php echo  $BPI_SNAPSHOT_COLLID?>" class="usa-button card-button">Search Collection</a>
 							</div>
 						</div>
 					</li>

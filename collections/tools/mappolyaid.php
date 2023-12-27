@@ -230,13 +230,18 @@ else{
 	</head>
 	<body style="background-color:#ffffff;" onload="initialize()">
 		<div style="float:right" style="margin-left:20px;">
-			<button type="submit" name="addcoords" onclick="updateParentForm()">Submit Polygon</button>
+         <button type="submit" name="addcoords" onclick="updateParentForm()">
+            <?php echo isset($LANG['SAVE_N_CLOSE'])? $LANG['SAVE_N_CLOSE'] :'Save and Close'?>
+         </button>
 		</div>
 		<div style="float:right" style="margin-left:20px;">
-			<button id="delete-button" onclick="deleteSelectedShape();return false">Delete Selected Shape</button>
+         <button id="delete-button" onclick="deleteSelectedShape();return false">
+            <?php echo isset($LANG['DELETE_SELECTED'])? $LANG['DELETE_SELECTED'] :'Delete Selected Polygon'?>
+         </button>
 		</div>
 		<div id="helptext" style="">
-			Click on polygon symbol to activate polygon tool. Click submit button transfer polygon to editor.<br/>
+         <?php echo isset($LANG['MPA_INSTRUCTIONS'])? $LANG['MPA_INSTRUCTIONS'] :'Click on polygon symbol to activate polygon tool. Click submit button transfer polygon to editor.'?>
+			<br/>
 		</div>
 		<div id='map_canvas' style='width:100%;height:700px;'></div>
 	</body>

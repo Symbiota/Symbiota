@@ -83,6 +83,7 @@ class ChecklistAdmin extends Manager{
 		$defaultArr['dvoucherimages'] = array_key_exists('dvoucherimages',$postArr)?1:0;
 		$defaultArr['dvouchers'] = array_key_exists('dvouchers',$postArr)?1:0;
 		$defaultArr['dauthors'] = array_key_exists('dauthors',$postArr)?1:0;
+		$defaultArr['dsubgenera'] = array_key_exists('dsubgenera',$postArr)?1:0;
 		$defaultArr['dalpha'] = array_key_exists('dalpha',$postArr)?1:0;
 		$defaultArr['activatekey'] = array_key_exists('activatekey',$postArr)?1:0;
 		return json_encode($defaultArr);

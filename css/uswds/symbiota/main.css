@@ -30,7 +30,7 @@
 /* Global styles
    ========================================================================== */
 html {
-  font-size: 10px; /* 1rem = 10px */
+  font-size: 14px; /*0.7rem; /* 1rem = 10px */
 }
 
 body {
@@ -107,7 +107,7 @@ hr {
 }
 
 #innertext {
-  margin: 0 auto;
+  margin: auto;
   padding: 3rem 0;
   background-color: var(--body-bg-color);
   width: 90%;
@@ -116,6 +116,10 @@ hr {
 #innertext p {
   color: var(--body-text-color);
   line-height: 1.5;
+}
+
+#popup-innertext {
+  font-size: 1.2rem;
 }
 
 .navpath {
@@ -344,6 +348,10 @@ table.styledtable tr.alt td {
   margin-top: 1rem;
 }
 
+.top-small-breathing-room-rel {
+  margin-top: 3rem;
+}
+
 .left-breathing-room-rel {
   margin-left: 1rem;
 }
@@ -360,16 +368,22 @@ table.styledtable tr.alt td {
   padding: 0.8rem;
 }
 
-.fieldset-like h1 {
+.fieldset-like h1,
+.fieldset-like h2,
+.fieldset-like h3 {
   font: 1.5rem normal;
   margin: -1.6rem -0.8rem 0rem;
 }
 
-.fieldset-like h1 span {
+.fieldset-like h1 span,
+.fieldset-like h2 span,
+.fieldset-like h3 span {
   float: left;
 }
 
-.fieldset-like h1:before {
+.fieldset-like h1:before,
+.fieldset-like h2:before,
+.fieldset-like h3:before {
   border-top: 0.15em solid;
   content: " ";
   float: left;
@@ -377,7 +391,9 @@ table.styledtable tr.alt td {
   width: 1.2rem;
 }
 
-.fieldset-like h1:after {
+.fieldset-like h1:after,
+.fieldset-like h2:after,
+.fieldset-like h3:after {
   border-top: 0.15em solid;
   content: " ";
   display: block;
@@ -400,9 +416,8 @@ table.styledtable tr.alt td {
   border: 2px outset #808080;
 }
 
-.profile-login {
-  margin: 20px;
-  width: 350px;
+.profile-legend {
+  font-weight: bold;
 }
 
 .profile-legend {
@@ -420,6 +435,11 @@ table.styledtable tr.alt td {
 
 .gridlike-form {
   margin: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.gridlike-form-no-margin {
   display: flex;
   flex-direction: column;
 }
@@ -482,7 +502,25 @@ table.styledtable tr.alt td {
   margin-bottom: 0.5rem;
 }
 
-.taxon-search-bar {
+.cat-icon-div {
+  width: 4rem;
+  height: 3rem;
+}
+
+.collection-checkbox {
+  width: 25px;
+  padding-top: 8px;
+}
+
+.no-margin {
+  margin: 0;
+}
+
+.no-margin-left {
+  margin-left: 0;
+}
+
+.search-bar {
   width: 25rem;
 }
 
@@ -523,13 +561,30 @@ table.styledtable tr.alt td {
   clear: both;
 }
 
-.taxon-search-bar {
-  width: 25rem;
+.search-bar-long {
+  width: 35rem;
+}
+
+.search-bar-short {
+  width: 15rem;
+}
+
+.search-bar-extraShort {
+  width: 5rem;
 }
 
 .fieldset-size {
   padding: 10px;
   max-width: 500px;
+}
+
+.max-width-fit-75 {
+  max-width: 100%;
+  width: 75rem;
+}
+
+.underlined-text {
+  text-decoration: underline;
 }
 
 /* Accordion styling from NEON
@@ -874,10 +929,23 @@ table.styledtable tr.alt td {
   margin-left: 3rem;
 }
 
+.left-column {
+  float: left;
+  width: 170px;
+}
+
 .nativity-div {
   margin-top: 1em;
   font-size: 125%;
   font-weight: bold;
+}
+
+.float-right {
+  float: right;
+}
+
+.margin-left-20 {
+  margin-left: 20px;
 }
 
 .voucher-admin-header {
@@ -888,6 +956,64 @@ table.styledtable tr.alt td {
 
 .left-breathing-room-rel-lg {
   margin-left: 2em;
+}
+
+.smaller-header {
+  font-size: 2rem;
+}
+
+.ui-autocomplete {
+  /* from https://stackoverflow.com/questions/32517694/jquery-autocomplete-dropdown-is-transparent */
+  background-color: inherit;
+}
+
+.full-width-pcnt {
+  width: 100%;
+}
+
+/* alert box from https://www.w3schools.com/howto/howto_js_alert.asp */
+/* The alert message box */
+.alert {
+  max-width: 30%;
+  padding: 20px;
+  background-color: green; /* Red */
+  color: white;
+  margin-bottom: 15px;
+}
+
+/* The close button */
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* When moving the mouse over the close button */
+.closebtn:hover {
+  color: black;
+}
+
+.justify-center-full-screen {
+  display: flex;
+  justify-content: center;
+  width: 100vw;
+}
+
+.flex-item-login {
+  width: 100%;
+  max-width: 350px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+button.no-margin-left,
+div.no-margin-left {
+  margin-left: 0;
 }
 
 /* USDA ********************************************************************************/
