@@ -110,7 +110,7 @@ if ($SYMB_UID) {
 		<b><?php echo (isset($LANG['COLL_PROFILE']) ? $LANG['COLL_PROFILE'] : 'Collection Profile'); ?></b>
 	</div>
 	<div id="innertext">
-		<section id="tabs" class="fieldset-like no-left-margin" style="float: right;">
+		<section id="quicksearch-box" class="fieldset-like no-left-margin float-rt-no-overlap">
 			<h1><span><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></span></h1>
 			<div id="dialogContainer" style="position: relative;">
 				<form name="quicksearch" action="javascript:void(0);" onsubmit="processEditQuickSearch('<?php echo $CLIENT_ROOT ?>')">
