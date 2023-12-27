@@ -5,7 +5,7 @@ include_once($SERVER_ROOT.'/classes/OccurrenceIndividual.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $occid = isset($_GET['occid']) ? filter_var($_GET['occid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$tid = array_key_exists('tid', $_REQUEST) ? filter_var($_GET['tid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$tid = array_key_exists('tid', $_REQUEST) ? filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 
 $indManager = new OccurrenceIndividual();

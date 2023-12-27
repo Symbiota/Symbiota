@@ -38,7 +38,7 @@ if($isEditor){
 	?>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-	<script src="../../js/symb/taxa.taxonomyloader.js?ver=3"></script>
+	<script src="../../js/symb/taxa.taxonomyloader.js?ver=4"></script>
 </head>
 <body>
 <?php
