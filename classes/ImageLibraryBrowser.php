@@ -30,10 +30,10 @@ class ImageLibraryBrowser extends OccurrenceTaxaManager{
 		return $returnArray;
 	}
 
-	public function getGenusList($taxon = ''){
+	public function getGenusList(){
 		$retArr = array();
 		$sql = 'SELECT DISTINCT t.UnitName1 '.$this->getListSql().' ';
-		if($taxon) $sql .= 'AND (ts.Family = "'.$this->cleanInputStr($taxon).'") ';
+		if($this->searchTerm) $sql .= 'AND (ts.Family = "'.$this->cleanInputStr($this->searchTerm).'") ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr[] = $r->UnitName1;
@@ -43,10 +43,10 @@ class ImageLibraryBrowser extends OccurrenceTaxaManager{
 		return $retArr;
 	}
 
-	public function getSpeciesList($taxon = ''){
+	public function getSpeciesList(){
 		$retArr = Array();
 		$tidArr = Array();
-		$taxon = $this->cleanInputStr($taxon);
+		$taxon = $this->cleanInputStr($this->searchTerm);
 		$taxon = trim($taxon,' %');
 		if($taxon){
 			$this->setTaxonRequestVariable(array('taxa'=>$taxon,'usethes'=>1,'taxontype'=>2));
@@ -148,7 +148,7 @@ class ImageLibraryBrowser extends OccurrenceTaxaManager{
 
 	//Setters and getters
 	public function setSearchTerm($t){
-		$this->searchTerm = filter_var($t, FILTER_SANITIZE_STRING);
+		$this->searchTerm = htmlspecialchars($t);
 	}
 }
 ?>
