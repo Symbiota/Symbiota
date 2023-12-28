@@ -22,7 +22,7 @@ $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class="navpath"></div>
-	<div id="innertext" class="footer-wrapper" style="max-width: 80%;">
+	<div id="innertext" class="footer-wrapper" style="max-width: 80%; padding: 0;">
 		<?php
 		if($LANG_TAG == 'es'){
 			?>
@@ -44,89 +44,91 @@ $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.
 			//Default Language
 			?>
 			<div class="content">
-				<div class="layout--bg layout layout--33-34-33">
-					<!-- <div class="layout__header">
-						<h2 id="section--staff-picks" class="layout__header__title">Collections</h2>
-					</div> -->
-					<div class="layout__container">
-						<div  class="layout__region layout__region--first">
-							<div class="block block-layout-builder block-inline-blockcard usa-card clearfix">
-								<div class="usa-card__container">
-									<header class="usa-card__header">
-										<h3 class="usa-card__heading">U.S. National Arboretum Herbarium (NA)</h3>
-									</header>
-									<div class="usa-card__media">
-										<div class="usa-card__img">
-											<img loading="lazy" src="<?php echo $CLIENT_ROOT ?>/assets/uswds/img/NA_tile.png" width="330" height="220" alt="An image of a flower" class="img-responsive" />
+				<div class="layout layout--100">
+					<div class="layout--bg layout layout--33-34-33">
+						<!-- <div class="layout__header">
+							<h2 id="section--staff-picks" class="layout__header__title">Collections</h2>
+						</div> -->
+						<div class="layout__container">
+							<div  class="layout__region layout__region--first">
+								<div class="block block-layout-builder block-inline-blockcard usa-card clearfix">
+									<div class="usa-card__container">
+										<header class="usa-card__header">
+											<h3 class="usa-card__heading">U.S. National Arboretum Herbarium (NA)</h3>
+										</header>
+										<div class="usa-card__media">
+											<div class="usa-card__img">
+												<img style="height:235px;" loading="lazy" src="<?php echo $CLIENT_ROOT ?>/assets/uswds/img/NA_tile.png" width="330" height="220" alt="An image of a flower" class="img-responsive" />
+											</div>
 										</div>
-									</div>
-									<div class="usa-card__body">
-										<div class="field field--name-card-body field--type-text-long field--label-hidden field--item">
-											<p>700,000 pressed, preserved plant specimens representing USDA research and botanical exploration.</p>
+										<div class="usa-card__body">
+											<div class="field field--name-card-body field--type-text-long field--label-hidden field--item">
+												<p>700,000 pressed, preserved plant specimens representing USDA research and botanical exploration.</p>
+											</div>
 										</div>
-									</div>
-									<div class="usa-card__footer">
-										<div class="field field--name-card-link field--type-link field--label-hidden field--item">
-											<a href="<?php echo $CLIENT_ROOT?>/collections/misc/collprofiles.php?collid=<?php echo  $NA_COLLID?>" class="usa-button card-button" style="margin-bottom: 1rem;">About Collection</a>
-										</div>
-										<div class="field field--name-card-link field--type-link field--label-hidden field--item">
-											<a href="<?php echo $CLIENT_ROOT?>/collections/<?php echo $actionPage ?>?db=<?php echo  $NA_COLLID?>" class="usa-button card-button">Search Collection</a>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						 <div  class="layout__region layout__region--second">
-							<div class="block block-layout-builder block-inline-blockcard usa-card clearfix">
-								<div class="usa-card__container">
-									<header class="usa-card__header">
-										<h3 class="usa-card__heading">U.S. National Seed Herbarium (BARC)</h3>
-									</header>
-									<div class="usa-card__media">
-										<div class="usa-card__img">
-											<img loading="lazy" src="<?php echo $CLIENT_ROOT ?>/assets/uswds/img/BARC_tile.png" width="330" height="220" alt="An image of a seed" class="img-responsive" />
-										</div>
-									</div>
-									<div class="usa-card__body">
-										<div class="field field--name-card-body field--type-text-long field--label-hidden field--item">
-											<p>Over 150,000 preserved seed and fruit samples, primarily of non-native plant species.</p>
-										</div>
-									</div>
-									<div class="usa-card__footer">
-										<div class="field field--name-card-link field--type-link field--label-hidden field--item">
-											<a href="<?php echo $CLIENT_ROOT?>/collections/misc/collprofiles.php?collid=<?php echo  $BARC_COLLID?>" class="usa-button card-button" style="margin-bottom: 1rem;">About Collection</a>
-										</div>
-										<div class="field field--name-card-link field--type-link field--label-hidden field--item">
-											<a href="<?php echo $CLIENT_ROOT?>/collections/<?php echo $actionPage ?>?db=<?php echo  $BARC_COLLID?>" class="usa-button card-button">Search Collection</a>
+										<div class="usa-card__footer">
+											<div class="field field--name-card-link field--type-link field--label-hidden field--item">
+												<a href="<?php echo $CLIENT_ROOT?>/collections/misc/collprofiles.php?collid=<?php echo  $NA_COLLID?>" class="usa-button card-button" style="margin-bottom: 1rem;">About Collection</a>
+											</div>
+											<div class="field field--name-card-link field--type-link field--label-hidden field--item">
+												<a href="<?php echo $CLIENT_ROOT?>/collections/<?php echo $actionPage ?>?db=<?php echo  $NA_COLLID?>" class="usa-button card-button">Search Collection</a>
+											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-			
-						 <div  class="layout__region layout__region--third">
-							<div class="block block-layout-builder block-inline-blockcard usa-card clearfix">
-								<div class="usa-card__container">
-									<header class="usa-card__header">
-										<h3 class="usa-card__heading">U.S. National Fungus Collections (BPI)</h3>
-									</header>
-									<div class="usa-card__media">
-										<div class="usa-card__img">
-											<img loading="lazy" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJkAYHVampT3wmtnFbdohmwyCsiIpfFVDuJQ&usqp=CAU" width="330" height="220" alt="An image of a mushroom" class="img-responsive" />
+	
+							 <div  class="layout__region layout__region--second">
+								<div class="block block-layout-builder block-inline-blockcard usa-card clearfix">
+									<div class="usa-card__container">
+										<header class="usa-card__header">
+											<h3 class="usa-card__heading">U.S. National Seed Herbarium (BARC)</h3>
+										</header>
+										<div class="usa-card__media">
+											<div class="usa-card__img">
+												<img style="height:235px;" loading="lazy" src="<?php echo $CLIENT_ROOT ?>/assets/uswds/img/BARC_tile.png" width="330" height="220" alt="An image of a seed" class="img-responsive" />
+											</div>
+										</div>
+										<div class="usa-card__body">
+											<div class="field field--name-card-body field--type-text-long field--label-hidden field--item">
+												<p>Over 150,000 preserved seed and fruit samples, primarily of non-native plant species.</p>
+											</div>
+										</div>
+										<div class="usa-card__footer">
+											<div class="field field--name-card-link field--type-link field--label-hidden field--item">
+												<a href="<?php echo $CLIENT_ROOT?>/collections/misc/collprofiles.php?collid=<?php echo  $BARC_COLLID?>" class="usa-button card-button" style="margin-bottom: 1rem;">About Collection</a>
+											</div>
+											<div class="field field--name-card-link field--type-link field--label-hidden field--item">
+												<a href="<?php echo $CLIENT_ROOT?>/collections/<?php echo $actionPage ?>?db=<?php echo  $BARC_COLLID?>" class="usa-button card-button">Search Collection</a>
+											</div>
 										</div>
 									</div>
-									<div class="usa-card__body">
-										<div class="field field--name-card-body field--type-text-long field--label-hidden field--item">
-											<p>The Western Hemisphere’s largest fungal herbarium, including the John A. Stevenson Mycological Library.</p>
+								</div>
+							</div>
+				
+							 <div  class="layout__region layout__region--third">
+								<div class="block block-layout-builder block-inline-blockcard usa-card clearfix">
+									<div class="usa-card__container">
+										<header class="usa-card__header">
+											<h3 class="usa-card__heading">U.S. National Fungus Collections (BPI)</h3>
+										</header>
+										<div class="usa-card__media">
+											<div class="usa-card__img">
+												<img style="height:235px;" loading="lazy" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJkAYHVampT3wmtnFbdohmwyCsiIpfFVDuJQ&usqp=CAU" width="330" height="220" alt="An image of a mushroom" class="img-responsive" />
+											</div>
 										</div>
-									</div>
-									<div class="usa-card__footer">
-										<div class="field field--name-card-link field--type-link field--label-hidden field--item">
-											<a href="<?php echo $CLIENT_ROOT?>/collections/misc/collprofiles.php?collid=<?php echo  $BPI_SNAPSHOT_COLLID?>" class="usa-button card-button" style="margin-bottom: 1rem;">About Collection</a>
+										<div class="usa-card__body">
+											<div class="field field--name-card-body field--type-text-long field--label-hidden field--item">
+												<p>The Western Hemisphere’s largest fungal herbarium, including the John A. Stevenson Mycological Library.</p>
+											</div>
 										</div>
-										<div class="field field--name-card-link field--type-link field--label-hidden field--item">
-											<a href="<?php echo $CLIENT_ROOT?>/collections/<?php echo $actionPage ?>?db=<?php echo  $BPI_SNAPSHOT_COLLID?>" class="usa-button card-button">Search Collection</a>
+										<div class="usa-card__footer">
+											<div class="field field--name-card-link field--type-link field--label-hidden field--item">
+												<a href="<?php echo $CLIENT_ROOT?>/collections/misc/collprofiles.php?collid=<?php echo  $BPI_SNAPSHOT_COLLID?>" class="usa-button card-button" style="margin-bottom: 1rem;">About Collection</a>
+											</div>
+											<div class="field field--name-card-link field--type-link field--label-hidden field--item">
+												<a href="<?php echo $CLIENT_ROOT?>/collections/<?php echo $actionPage ?>?db=<?php echo  $BPI_SNAPSHOT_COLLID?>" class="usa-button card-button">Search Collection</a>
+											</div>
 										</div>
 									</div>
 								</div>
