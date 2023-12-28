@@ -13,7 +13,7 @@ $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.
     <div class="container">    
       <div class="official-website-banner__message">
         <img src="<?php echo $CLIENT_ROOT ?>/assets/uswds/img/us_flag_small.png" alt="" aria-hidden="true">An official website of the United States government.
-        <button class="official-website-banner__trigger">Here&apos;s how you know.</button>
+        <button class="official-website-banner__trigger content-collapsed" style="max-width: 155px;">Here&apos;s how you know.</button>
       </div>
       <div class="official-website-banner__content">
         <div class="content-region content-region__first col-sm-6">
