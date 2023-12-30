@@ -928,7 +928,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	}
 
 	private function setChecklistVariables($clid){
-		$this->voucherManager = new ChecklistVoucherAdmin($this->conn);
+		$this->voucherManager = new ChecklistVoucherAdmin();
 		$this->voucherManager->setClid($clid);
 		$this->voucherManager->setCollectionVariables();
 	}
