@@ -178,20 +178,20 @@ $_SESSION['citationvar'] = $searchVar;
 						}
 						?>
 						<form action="listtabledisplay.php" method="post" style="float:left">
-							<button class="icon-button" aria-label="<?php echo (isset($LANG['TABLE_DISPLAY']) ? $LANG['TABLE_DISPLAY'] : 'Table Display'); ?>" title="<?php echo (isset($LANG['TABLE_DISPLAY']) ? $LANG['TABLE_DISPLAY'] : 'Table Display'); ?>">
+							<button class="icon-button left-breathing-room-rel" aria-label="<?php echo (isset($LANG['TABLE_DISPLAY']) ? $LANG['TABLE_DISPLAY'] : 'Table Display'); ?>" title="<?php echo (isset($LANG['TABLE_DISPLAY']) ? $LANG['TABLE_DISPLAY'] : 'Table Display'); ?>">
 								<img src="../images/table.png" style="width:15px; height:15px" alt="<?php echo (isset($LANG['IMG_TABLE_DISPLAY']) ? $LANG['IMG_TABLE_DISPLAY'] : 'Open Table Display'); ?>"/>
 							</button>
 							<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 						</form>
 						<form action="download/index.php" method="post" style="float:left" onsubmit="targetPopup(this)">
-							<button class="icon-button" aria-label="<?php echo (isset($LANG['DOWNLOAD_SPECIMEN_DATA']) ? $LANG['DOWNLOAD_SPECIMEN_DATA'] : "Download Specimen Data"); ?>" title="<?php echo (isset($LANG['DOWNLOAD_SPECIMEN_DATA']) ? $LANG['DOWNLOAD_SPECIMEN_DATA'] : "Download Specimen Data"); ?>">
+							<button class="icon-button left-breathing-room-rel" aria-label="<?php echo (isset($LANG['DOWNLOAD_SPECIMEN_DATA']) ? $LANG['DOWNLOAD_SPECIMEN_DATA'] : "Download Specimen Data"); ?>" title="<?php echo (isset($LANG['DOWNLOAD_SPECIMEN_DATA']) ? $LANG['DOWNLOAD_SPECIMEN_DATA'] : "Download Specimen Data"); ?>">
 								<img src="../images/dl2.png" srcset="../images/download.svg" class="svg-icon" style="width:15px; height:15px" alt="<?php echo (isset($LANG['IMG_DWNL_DATA']) ? $LANG['IMG_DWNL_DATA'] : 'Download Button'); ?>" />
 							</button>
 							<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 							<input name="dltype" type="hidden" value="specimen" />
 						</form>
 						<div style="float:left">
-							<button class="icon-button" onclick="copyUrl()" aria-label="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>" title="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>">
+							<button class="icon-button left-breathing-room-rel" onclick="copyUrl()" aria-label="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>" title="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>">
 								<img src="../images/dl2.png" srcset="../images/link.svg" class="svg-icon" style="width:15px; height:15px" alt="<?php echo (isset($LANG['IMG_COPY']) ? $LANG['IMG_COPY'] : 'Copy Button'); ?>"/>
 							</button>
 						</div>
