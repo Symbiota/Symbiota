@@ -42,5 +42,7 @@ $LANG['ROOT_TERMS'] = 'Root Terms (terms without parents)';
 $LANG['CHILDREN'] = 'children';
 $LANG['NO_RECORDS'] = 'No records returned';
 $LANG['POLYGON'] = 'Polygon';
+$LANG['NO_POLYGON'] = 'No';
+$LANG['YES_POLYGON'] = 'Yes';
 $LANG['EDIT_POLYGON'] = 'Edit Polygon';
 ?>

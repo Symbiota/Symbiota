@@ -40,6 +40,8 @@ $LANG['TERMS_WITHIN'] = 'términos geográficos dentro';
 $LANG['ROOT_TERMS'] = 'Términos raíz (términos sin padres)';
 $LANG['CHILDREN'] = 'niños';
 $LANG['NO_RECORDS'] = 'No se devolvieron registros';
+$LANG['NO_POLYGON'] = 'No';
+$LANG['YES_POLYGON'] = 'Sí';
 $LANG['POLYGON'] = 'Polígono';
 $LANG['EDIT_POLYGON'] = 'Editar Polígono';
 ?>
