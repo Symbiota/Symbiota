@@ -46,10 +46,12 @@ class GeographicThesaurus extends Manager{
 		$retArr = array();
 		if(is_numeric($geoThesID)){
 			$sql = 'SELECT t.geoThesID, t.geoTerm, t.abbreviation, t.iso2, t.iso3, t.numCode, t.category, t.geoLevel, t.parentID, p.geoTerm as parentTerm, t.notes, t.termStatus,
-				t.acceptedID, a.geoterm as acceptedTerm
+				t.acceptedID, a.geoterm as acceptedTerm, gp.footprintWKT as wkt
 				FROM geographicthesaurus t LEFT JOIN geographicthesaurus a ON t.acceptedID = a.geoThesID
 				LEFT JOIN geographicthesaurus p ON t.parentID = p.geoThesID
+				LEFT JOIN geographicpolygon gp ON t.geoThesID = gp.geoThesID
 				WHERE t.geoThesID = '.$geoThesID;
+
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retArr['geoThesID'] = $r->geoThesID;
@@ -66,6 +68,7 @@ class GeographicThesaurus extends Manager{
 				$retArr['parentTerm'] = $r->parentTerm;
 				$retArr['notes'] = $r->notes;
 				$retArr['termStatus'] = $r->termStatus;
+				$retArr['wkt'] = $r->wkt;
 			}
 			$rs->free();
 			if($retArr){
@@ -99,7 +102,19 @@ class GeographicThesaurus extends Manager{
 				$this->errorMessage = 'ERROR saving edits: '.$this->conn->error;
 				return false;
 			}
-		}
+
+         if(!empty($postArr['polygon'])) {
+            $poly = $this->cleanInStr($postArr['polygon']);
+            $sql = 'UPDATE geographicpolygon ' .
+               'SET footprintWKT = "'. $poly .'", ' .
+               'footprintPolygon = ST_GeomFromText("'. $poly .'")' .
+               'WHERE (geoThesID = ' . $postArr['geoThesID'] . ')';
+            if(!$this->conn->query($sql)){
+               $this->errorMessage = 'ERROR saving edits: '.$this->conn->error;
+               return false;
+            }
+         }
+      }
 		return true;
 	}
 
