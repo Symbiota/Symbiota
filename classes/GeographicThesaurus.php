@@ -81,68 +81,87 @@ class GeographicThesaurus extends Manager{
 		return $retArr;
 	}
 
-	public function editGeoUnit($postArr){
-		if(is_numeric($postArr['geoThesID'])){
-			if(!$postArr['geoTerm']){
-				$this->errorMessage = 'ERROR editing geoUnit: geographic term must have a value';
-				return false;
-			}
-			$sql = 'UPDATE geographicthesaurus '.
-				'SET geoterm = "'.$this->cleanInStr($postArr['geoTerm']).'", '.
-				'abbreviation = '.($postArr['abbreviation']?'"'.$this->cleanInStr($postArr['abbreviation']).'"':'NULL').', '.
-				'iso2 = '.($postArr['iso2']?'"'.$this->cleanInStr($postArr['iso2']).'"':'NULL').', '.
-				'iso3 = '.($postArr['iso3']?'"'.$this->cleanInStr($postArr['iso3']).'"':'NULL').', '.
-				'numcode = '.(is_numeric($postArr['numCode'])?'"'.$this->cleanInStr($postArr['numCode']).'"':'NULL').', '.
-				'geoLevel = '.(is_numeric($postArr['geoLevel'])?$this->cleanInStr($postArr['geoLevel']):'NULL').', '.
-				'acceptedID = '.(is_numeric($postArr['acceptedID'])?'"'.$this->cleanInStr($postArr['acceptedID']).'"':'NULL').', '.
-				'parentID = '.(is_numeric($postArr['parentID'])?'"'.$this->cleanInStr($postArr['parentID']).'"':'NULL').', '.
-				'notes = '.($postArr['notes']?'"'.$this->cleanInStr($postArr['notes']).'"':'NULL').' '.
-				'WHERE (geoThesID = '.$postArr['geoThesID'].')';
-			if(!$this->conn->query($sql)){
-				$this->errorMessage = 'ERROR saving edits: '.$this->conn->error;
-				return false;
-			}
+   public function editGeoUnit($postArr){
 
-         if(!empty($postArr['polygon'])) {
-            $poly = $this->cleanInStr($postArr['polygon']);
+      if(!is_numeric($postArr['geoThesID'])) return false;
 
-            $sql = 'SELECT * from geographicpolygon WHERE(geoThesID=' . $postArr['geoThesID']. ')';
-            $polygon_exists = $this->conn->query($sql);
-
-            if(!$polygon_exists) {
-               $this->errorMessage = 'ERROR saving polygon edits: '.$this->conn->error;
-               return false;
-            }
-
-            if($polygon_exists->num_rows <= 0) {
-               $sql = 'INSERT INTO geographicpolygon 
-                  (geoThesID, footprintPolygon ,footprintWKT) 
-                  VALUES ('. $postArr['geoThesID'].', ST_GeomFromText("'.$poly.'"), "' . $poly . '")';
-               if(!$this->conn->query($sql)){
-                  $this->errorMessage = 'ERROR saving new polygon: '.$this->conn->error;
-                  return false;
-               }
-
-            } else {
-               $sql = 'UPDATE geographicpolygon ' .
-                  'SET footprintWKT = "'. $poly .'", ' .
-                  'footprintPolygon = ST_GeomFromText("'. $poly .'")' .
-                  'WHERE (geoThesID = ' . $postArr['geoThesID'] . ')';
-               if(!$this->conn->query($sql)){
-                  $this->errorMessage = 'ERROR saving polygon edits: '.$this->conn->error;
-                  return false;
-               }
-            }
-         } else {
-            $sql = 'DELETE FROM geographicpolygon WHERE(geoThesID =' . $postArr['geoThesID'] . ')';
-            if(!$this->conn->query($sql)){
-               $this->errorMessage = 'ERROR removing polygon: '.$this->conn->error;
-               return false;
-            }
-         }
+      if(!$postArr['geoTerm']){
+         $this->errorMessage = 'ERROR editing geoUnit: geographic term must have a value';
+         return false;
       }
-		return true;
-	}
+      $sql = 'UPDATE geographicthesaurus '.
+         'SET geoterm = "'.$this->cleanInStr($postArr['geoTerm']).'", '.
+         'abbreviation = '.($postArr['abbreviation']?'"'.$this->cleanInStr($postArr['abbreviation']).'"':'NULL').', '.
+         'iso2 = '.($postArr['iso2']?'"'.$this->cleanInStr($postArr['iso2']).'"':'NULL').', '.
+         'iso3 = '.($postArr['iso3']?'"'.$this->cleanInStr($postArr['iso3']).'"':'NULL').', '.
+         'numcode = '.(is_numeric($postArr['numCode'])?'"'.$this->cleanInStr($postArr['numCode']).'"':'NULL').', '.
+         'geoLevel = '.(is_numeric($postArr['geoLevel'])?$this->cleanInStr($postArr['geoLevel']):'NULL').', '.
+         'acceptedID = '.(is_numeric($postArr['acceptedID'])?'"'.$this->cleanInStr($postArr['acceptedID']).'"':'NULL').', '.
+         'parentID = '.(is_numeric($postArr['parentID'])?'"'.$this->cleanInStr($postArr['parentID']).'"':'NULL').', '.
+         'notes = '.($postArr['notes']?'"'.$this->cleanInStr($postArr['notes']).'"':'NULL').' '.
+         'WHERE (geoThesID = '.$postArr['geoThesID'].')';
+      if(!$this->conn->query($sql)){
+         $this->errorMessage = 'ERROR saving edits: '.$this->conn->error;
+         return false;
+      }
+
+      if(!empty($postArr['polygon'])) {
+         $poly = $this->cleanInStr($postArr['polygon']);
+
+         $sql = 'SELECT * from geographicpolygon WHERE(geoThesID=' . $postArr['geoThesID']. ')';
+         $polygon_exists = $this->conn->query($sql);
+
+         if(!$polygon_exists) {
+            $this->errorMessage = 'ERROR saving polygon edits: '.$this->conn->error;
+            return false;
+         }
+
+         if($polygon_exists->num_rows <= 0) {
+            $this->addPolygon($postArr['geoThesID'], $poly);
+         } else {
+            $this->updatePolygon($postArr['geoThesID'], $poly);
+         }
+      } else {
+         $this->deletePolygon($postArr['geoThesID']);
+      }
+
+      return true;
+   }
+
+   private function addPolygon($geoThesID, $polygon) {
+      $sql = 'INSERT INTO geographicpolygon 
+         (geoThesID, footprintPolygon ,footprintWKT) 
+         VALUES ('. $geoThesID .', ST_GeomFromText("' . $polygon . '"), "' . $polygon . '")';
+      if(!$this->conn->query($sql)){
+         $this->errorMessage = 'ERROR saving new polygon: '.$this->conn->error;
+         return false;
+      }
+
+      return true;
+   }
+
+   private function updatePolygon($geoThesID, $polygon) {
+      $sql = 'UPDATE geographicpolygon ' .
+         'SET footprintWKT = "'. $polygon .'", ' .
+         'footprintPolygon = ST_GeomFromText("'. $polygon .'")' .
+         'WHERE (geoThesID = ' . $geoThesID . ')';
+      if(!$this->conn->query($sql)){
+         $this->errorMessage = 'ERROR saving polygon edits: '.$this->conn->error;
+         return false;
+      }
+
+      return true;
+   }
+
+   private function deletePolygon($geoThesID) {
+      $sql = 'DELETE FROM geographicpolygon WHERE(geoThesID =' . $geoThesID . ')';
+      if(!$this->conn->query($sql)){
+         $this->errorMessage = 'ERROR removing polygon: '.$this->conn->error;
+         return false;
+      }
+
+      return true;
+   }
 
 	public function addGeoUnit($postArr){
 		if(!$postArr['geoTerm']){
