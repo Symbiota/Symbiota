@@ -105,12 +105,38 @@ class GeographicThesaurus extends Manager{
 
          if(!empty($postArr['polygon'])) {
             $poly = $this->cleanInStr($postArr['polygon']);
-            $sql = 'UPDATE geographicpolygon ' .
-               'SET footprintWKT = "'. $poly .'", ' .
-               'footprintPolygon = ST_GeomFromText("'. $poly .'")' .
-               'WHERE (geoThesID = ' . $postArr['geoThesID'] . ')';
+
+            $sql = 'SELECT * from geographicpolygon WHERE(geoThesID=' . $postArr['geoThesID']. ')';
+            $polygon_exists = $this->conn->query($sql);
+
+            if(!$polygon_exists) {
+               $this->errorMessage = 'ERROR saving polygon edits: '.$this->conn->error;
+               return false;
+            }
+
+            if($polygon_exists->num_rows <= 0) {
+               $sql = 'INSERT INTO geographicpolygon 
+                  (geoThesID, footprintPolygon ,footprintWKT) 
+                  VALUES ('. $postArr['geoThesID'].', ST_GeomFromText("'.$poly.'"), "' . $poly . '")';
+               if(!$this->conn->query($sql)){
+                  $this->errorMessage = 'ERROR saving new polygon: '.$this->conn->error;
+                  return false;
+               }
+
+            } else {
+               $sql = 'UPDATE geographicpolygon ' .
+                  'SET footprintWKT = "'. $poly .'", ' .
+                  'footprintPolygon = ST_GeomFromText("'. $poly .'")' .
+                  'WHERE (geoThesID = ' . $postArr['geoThesID'] . ')';
+               if(!$this->conn->query($sql)){
+                  $this->errorMessage = 'ERROR saving polygon edits: '.$this->conn->error;
+                  return false;
+               }
+            }
+         } else {
+            $sql = 'DELETE FROM geographicpolygon WHERE(geoThesID =' . $postArr['geoThesID'] . ')';
             if(!$this->conn->query($sql)){
-               $this->errorMessage = 'ERROR saving edits: '.$this->conn->error;
+               $this->errorMessage = 'ERROR removing polygon: '.$this->conn->error;
                return false;
             }
          }

@@ -82,9 +82,17 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 		}
 		function leafletInit() {
 			const wkt_form = document.getElementById('footprintwkt');
-			if(!wkt_form || !wkt_form.value) return;
+			const map_container = document.getElementById('map_canvas');
 
-			let map = new LeafletMap('map_canvas');
+			if(!wkt_form || !wkt_form.value || !map_container) {
+				if(map_container) map_container.style.display = "none";
+				return;
+			}
+			else { 
+				map_container.style.display = "block";
+			}
+
+			let map = new LeafletMap('map_canvas', {center: [0,0], zoom: 1});
 
 			map.enableDrawing({
 				polyline: false,
@@ -319,7 +327,7 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 							<img src='../images/world.png' style='width:10px;border:0' alt='Image of the globe' /> <?= $LANG['EDIT_POLYGON']?> 
 						</a>
 						<span class="editFormElem">
-							<textarea id="footprintwkt" name="polygon" style="width:98%;height:90px;"><?= trim($geoUnit['wkt']) ?></textarea>
+							<textarea id="footprintwkt" name="polygon" style="width:98%;height:90px;"><?= isset($geoUnit['wkt'])?trim($geoUnit['wkt']): null ?></textarea>
 						</span>
 					</div>
 						<?php
