@@ -5,6 +5,7 @@ include_once($SERVER_ROOT.'/content/lang/collections/map/index.'.$LANG_TAG.'.php
 include_once($SERVER_ROOT.'/classes/OccurrenceMapManager.php');
 
 header('Content-Type: text/html; charset='.$CHARSET);
+header("Accept-Encoding: gzip, deflate, br");
 ob_start('ob_gzhandler');
 ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 

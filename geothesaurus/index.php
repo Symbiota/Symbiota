@@ -80,6 +80,7 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 			targetList[i].style.display = (targetDisplay == 'none') ? defaultDisplay : 'none';
 			}
 		}
+
 		function leafletInit() {
 			const wkt_form = document.getElementById('footprintwkt');
 			const map_container = document.getElementById('map_canvas');
@@ -106,11 +107,11 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 			map.drawShape({type: "polygon", latlngs: geoJson.coordinates[0], wkt: wkt_form.value})
 		}
 
-		function openCoordAid() {
+		function openCoordAid(id="footprintwkt") {
 			mapWindow = open(
-				"../collections/tools/mapcoordaid.php?mapmode=polygon&map_mode_strict=true",
+				`../collections/tools/mapcoordaid.php?mapmode=polygon&map_mode_strict=true&wkt_input_id=${id}`,
 				"polygon",
-				"resizable=0,width=900,height=630,left=20,top=20"
+				"resizable=0,width=900,height=630,left=20,top=20",
 			);
 			if (mapWindow.opener == null) mapWindow.opener = self;
 			mapWindow.focus();
@@ -221,10 +222,10 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 						</div>
 						<div class="field-div">
 							<label><?=$LANG['POLYGON']?></label>:
-							<a onclick="openCoordAid()">
+							<a onclick="openCoordAid('addfootprintwkt')">
 								<img src='../images/world.png' style='width:10px;border:0' alt='Image of the globe' /> <?= $LANG['EDIT_POLYGON']?> 
 							</a>
-							<span><textarea id="footprintwkt" name="polygon" style="width:98%;height:90px;"></textarea></span>
+							<span><textarea id="addfootprintwkt" name="polygon" style="width:98%;height:90px;"></textarea></span>
 						</div>
 						<div class="field-div">
 							<label> <?= $LANG['PARENT_TERM'] ?> </label>:
