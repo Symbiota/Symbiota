@@ -182,7 +182,13 @@ class GeographicThesaurus extends Manager{
 			if(!$this->conn->query($sql)){
 				$this->errorMessage = 'ERROR adding unit: '.$this->conn->error;
 				return false;
-			}
+         }
+
+         $geoThesID = $this->conn->insert_id;
+
+         if(!empty($postArr['polygon']) && $geoThesID) {
+            $this->addPolygon($geoThesID, $postArr['polygon']);
+         }
 		}
 		return true;
 	}

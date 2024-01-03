@@ -221,7 +221,10 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 						</div>
 						<div class="field-div">
 							<label><?=$LANG['POLYGON']?></label>:
-							<span><textarea name="polygon" style="width:98%;height:90px;"></textarea></span>
+							<a onclick="openCoordAid()">
+								<img src='../images/world.png' style='width:10px;border:0' alt='Image of the globe' /> <?= $LANG['EDIT_POLYGON']?> 
+							</a>
+							<span><textarea id="footprintwkt" name="polygon" style="width:98%;height:90px;"></textarea></span>
 						</div>
 						<div class="field-div">
 							<label> <?= $LANG['PARENT_TERM'] ?> </label>:
@@ -323,7 +326,7 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 							<?= $geoUnit['wkt'] !== null? $LANG['YES_POLYGON']: $LANG['NO_POLYGON'] ?>
 						</span>
 						<div class="editTerm" id="map_canvas" style="margin: 1rem 0; width:100%; height:20rem"></div>
-						<a class="editFormElem" class="button button-tertiary btn-medium-font" onclick="openCoordAid()">
+						<a class="editFormElem" onclick="openCoordAid()">
 							<img src='../images/world.png' style='width:10px;border:0' alt='Image of the globe' /> <?= $LANG['EDIT_POLYGON']?> 
 						</a>
 						<span class="editFormElem">
