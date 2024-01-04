@@ -572,7 +572,7 @@ $imgloc = "../images/games/namegame/";
 			<div id="imageset" style="cursor:pointer;">
 				<img onclick="mClick(this.parentNode.id,this.id,'6','<?php echo $imgloc; ?>plant_on.gif','<?php echo $imgloc; ?>plant_off.gif')" onmouseover="mOver(this.parentNode.id,this.id,'<?php echo $imgloc; ?>plant_on.gif')" onmouseout="mOut(this.parentNode.id,this.id,'<?php echo $imgloc; ?>plant_off.gif')" src="<?php echo $imgloc; ?>plant_off.gif" id="img7" alt="Image of a plant">
 				<img onclick="mClick(this.parentNode.id,this.id,'5','<?php echo $imgloc; ?>flower_on.gif','<?php echo $imgloc; ?>flower_off.gif')" onmouseover="mOver(this.parentNode.id,this.id,'<?php echo $imgloc; ?>flower_on.gif')" onmouseout="mOut(this.parentNode.id,this.id,'<?php echo $imgloc; ?>flower_off.gif')" src="<?php echo $imgloc; ?>flower_off.gif" id="img6" alt="Image of a flower">
-				<img onclick="mClick(this.parentNode.id,this.id,'8','<?php echo $imgloc; ?>apple_on.gif','<?php echo $imgloc; ?>apple_off.gif')" onmouseover="mOver(this.parentNode.id,this.id,'<?php echo $imgloc; ?>apple_on.gif')" onmouseout="mOut(this.parentNode.id,this.id,'<?php echo $imgloc; ?>apple_off.gif')" src="<?php echo $imgloc; ?>apple_off.gif" id="img8" alt="Image of a flower">
+				<img onclick="mClick(this.parentNode.id,this.id,'8','<?php echo $imgloc; ?>apple_on.gif','<?php echo $imgloc; ?>apple_off.gif')" onmouseover="mOver(this.parentNode.id,this.id,'<?php echo $imgloc; ?>apple_on.gif')" onmouseout="mOut(this.parentNode.id,this.id,'<?php echo $imgloc; ?>apple_off.gif')" src="<?php echo $imgloc; ?>apple_off.gif" id="img8" alt="Image of an apple">
 				<!--<img onclick="mClick(this.parentNode.id,this.id,'0','<?php echo $imgloc; ?>man1_head_on.gif','<?php echo $imgloc; ?>man1_head_off.gif')" onmouseover="mOver(this.parentNode.id,this.id,'<?php echo $imgloc; ?>man1_head_on.gif')" onmouseout="mOut(this.parentNode.id,this.id,'<?php echo $imgloc; ?>man1_head_off.gif')" src="<?php echo $imgloc; ?>man1_head_off.gif" id="img1">-->
 				<!--<img onclick="mClick(this.parentNode.id,this.id,'1','<?php echo $imgloc; ?>woman1_head_on.gif','<?php echo $imgloc; ?>woman1_head_off.gif')" onmouseover="mOver(this.parentNode.id,this.id,'<?php echo $imgloc; ?>woman1_head_on.gif')" onmouseout="mOut(this.parentNode.id,this.id,'<?php echo $imgloc; ?>woman1_head_off.gif')" src="<?php echo $imgloc; ?>woman1_head_off.gif" id="img2">-->
 				<!--<img onclick="mClick(this.parentNode.id,this.id,'2','<?php echo $imgloc; ?>man2_head_on.gif','<?php echo $imgloc; ?>man2_head_off.gif')" onmouseover="mOver(this.parentNode.id,this.id,'<?php echo $imgloc; ?>man2_head_on.gif')" onmouseout="mOut(this.parentNode.id,this.id,'<?php echo $imgloc; ?>man2_head_off.gif')" src="<?php echo $imgloc; ?>man2_head_off.gif" id="img3">-->
@@ -614,14 +614,14 @@ $imgloc = "../images/games/namegame/";
 			<div id="hintdisplay" style="font-size:2rem;"></div>
 		</div>
 		<div style="clear:both;width:100%;text-align:center;padding-top:2rem;">
-			<div id="attempt" style="letter-spacing:0.75rem;font-weight:bold;font-size:20px"></div>
+			<div id="attempt" style="letter-spacing:0.75rem;font-weight:bold;font-size:2rem"></div>
 		</div>
 		<div style="clear:both;width:100%;text-align:center;padding-top:2rem;">
 			<div id="splash" style="color:#336699"></div>
 		</div>
 		<div style="clear:both;width:450px;margin-left:auto;margin-right:auto;margin-top:10px;">
-			<table id="charactertable" class="lettertable" width="450">
-				<tr class="tr-center" height = '40'>
+			<table id="charactertable" class="lettertable">
+				<tr class="tr-center">
 					<td><span id="a" style="display:block">A</span></td>
 					<td><span id="b" style="display:block">B</span></td>
 					<td><span id="c" style="display:block">C</span></td>
@@ -632,7 +632,7 @@ $imgloc = "../images/games/namegame/";
 					<td><span id="h" style="display:block">H</span></td>
 					<td><span id="i" style="display:block">I</span></td>
 				</tr>
-				<tr class="tr-center" height = '40'>
+				<tr class="tr-center">
 					<td><span id="j" style="display:block">J</span></td>
 					<td><span id="k" style="display:block">K</span></td>
 					<td><span id="l" style="display:block">L</span></td>
@@ -643,7 +643,7 @@ $imgloc = "../images/games/namegame/";
 					<td><span id="q" style="display:block">Q</span></td>
 					<td><span id="r" style="display:block">R</span></td>
 				</tr>
-				<tr class="tr-center" height = '40'>
+				<tr class="tr-center">
 					<td><span id="s" style="display:block">S</span></td>
 					<td><span id="t" style="display:block">T</span></td>
 					<td><span id="u" style="display:block">U</span></td>
