@@ -48,7 +48,7 @@ if($isEditor){
 					}
 					?>
 					<span>
-						<a href="voucheradmin.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><img src="../images/refresh.png" style="width:14px;vertical-align: middle;" title="<?php echo htmlspecialchars($LANG['REFRESHLIST'], HTML_SPECIAL_CHARS_FLAGS);?>" /></a>
+						<a href="voucheradmin.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><img src="../images/refresh.png" style="width:1.2em;vertical-align: middle;" title="<?php echo htmlspecialchars($LANG['REFRESHLIST'], HTML_SPECIAL_CHARS_FLAGS);?>" /></a>
 					</span>
 				</div>
 				<?php
@@ -130,7 +130,7 @@ if($isEditor){
 									<div>
 										<a href="#" onclick="openPopup('../taxa/index.php?taxauthid=1&taxon=<?php echo htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>','taxawindow');return false;"><?php echo $sciname; ?></a>
 										<a href="#" onclick="openPopup('../collections/list.php?db=all&usethes=1&reset=1&mode=voucher&taxa=<?php echo htmlspecialchars($sciname, HTML_SPECIAL_CHARS_FLAGS) . '&targetclid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&targettid=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS);?>','editorwindow');return false;">
-											<img src="../images/link.png" style="width:13px;" title="<?php echo $LANG['LINKVOUCHSPECIMEN'];?>" />
+											<img src="../images/link.png" style="width:1.2em;" title="<?php echo $LANG['LINKVOUCHSPECIMEN'];?>" />
 										</a>
 									</div>
 								<?php

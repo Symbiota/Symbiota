@@ -87,7 +87,7 @@ class TaxonomyCleaner extends Manager{
 			while($r = $rs->fetch_object()){
 				$editLink = '[<a href="#" onclick="openPopup(\'' . htmlspecialchars($GLOBALS['CLIENT_ROOT'], HTML_SPECIAL_CHARS_FLAGS) .
 					'/collections/editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=sciname&q_customtype1=EQUALS&q_customvalue1=' . urlencode($r->sciname) . '&collid=' . 
-					htmlspecialchars($this->collid, HTML_SPECIAL_CHARS_FLAGS) . '\'); return false;">' . htmlspecialchars($r->cnt, HTML_SPECIAL_CHARS_FLAGS) . ' specimens <img src="../../images/edit.png" style="width:12px;" /></a>]';
+					htmlspecialchars($this->collid, HTML_SPECIAL_CHARS_FLAGS) . '\'); return false;">' . htmlspecialchars($r->cnt, HTML_SPECIAL_CHARS_FLAGS) . ' specimens <img src="../../images/edit.png" style="width:1.2em;" /></a>]';
 				$this->logOrEcho('<div style="margin-top:5px">Resolving #'.$taxaCnt.': <b><i>'.$r->sciname.'</i></b>'.($r->family?' ('.$r->family.')':'').'</b> '.$editLink.'</div>');
 				if($r->family) $taxonHarvester->setDefaultFamily($r->family);
 				if($r->scientificnameauthorship) $taxonHarvester->setDefaultAuthor($r->scientificnameauthorship);
@@ -121,7 +121,7 @@ class TaxonomyCleaner extends Manager{
 				if($manualCheck){
 					$thesLink = '';
 					if($isTaxonomyEditor){
-						$thesLink = ' <a href="#" onclick="openPopup(\'../../taxa/taxonomy/taxonomyloader.php\'); return false;" title="Open Thesaurus New Record Form"><img src="../../images/edit.png" style="width:12px" /><b style="font-size:70%;">T</b></a>';
+						$thesLink = ' <a href="#" onclick="openPopup(\'../../taxa/taxonomy/taxonomyloader.php\'); return false;" title="Open Thesaurus New Record Form"><img src="../../images/edit.png" style="width:1.2em" /><b style="font-size:70%;">T</b></a>';
 					}
 					$this->logOrEcho('Checking close matches in thesaurus'.$thesLink.'...',1);
 					if($matchArr = $taxonHarvester->getCloseMatch($sciname)){

@@ -130,7 +130,7 @@ if($clid && $isEditor){
 			?>
 			<span style="margin-left:10px;">
 				<a href="#" onclick="toggle('sqlbuilderdiv');return false;" title="<?php echo (isset($LANG['EDITSEARCH'])?$LANG['EDITSEARCH']:'Edit Search Statement') ?>" aria-label="<?php echo (isset($LANG['EDITSEARCH'])?$LANG['EDITSEARCH']:'Edit Search Statement') ?>">
-					<img src="../images/edit.png" style="width:15px;border:0px;" alt="<?php echo (isset($LANG['IMG_EDIT'])?$LANG['IMG_EDIT']:'Edit Image') ?>"/>
+					<img src="../images/edit.png" style="width:1.2em;border:0px;" alt="<?php echo (isset($LANG['IMG_EDIT'])?$LANG['IMG_EDIT']:'Edit Image') ?>"/>
 				</a>
 			</span>
 		</div>
@@ -193,7 +193,7 @@ if($clid && $isEditor){
 									<?php
 									$coordAidUrl = '../collections/tools/mapcoordaid.php?mapmode=rectangle&latdef='.$clMetaArr['latcentroid'].'&lngdef='.$clMetaArr['longcentroid'];
 									?>
-									<a href="#" onclick="openPopup('<?php echo htmlspecialchars($coordAidUrl, HTML_SPECIAL_CHARS_FLAGS); ?>','boundingbox')"><img src="../images/world.png" style="width:12px" title="Find Coordinate" /></a>
+									<a href="#" onclick="openPopup('<?php echo htmlspecialchars($coordAidUrl, HTML_SPECIAL_CHARS_FLAGS); ?>','boundingbox')"><img src="../images/world.png" style="width:1.2em" title="Find Coordinate" /></a>
 								</div>
 								<div>
 									<b><?php echo $LANG['LATS'];?>:</b>
@@ -214,7 +214,7 @@ if($clid && $isEditor){
 								<div>
 									<input name="includewkt" value="1" type="checkbox" <?php if(isset($termArr['includewkt'])) echo 'CHECKED'; ?> onclick="coordInputSelected(this)" />
 									<?php echo (isset($LANG['POLYGON_SEARCH'])?$LANG['POLYGON_SEARCH']:'Search based on polygon defining checklist research boundaries'); ?>
-									<a href="#"  onclick="openPopup('tools/mappolyaid.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>','mappopup');return false;" title="Edit Metadata and polygon"><img src="../images/edit.png" style="width:12px" /></a>
+									<a href="#"  onclick="openPopup('tools/mappolyaid.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>','mappopup');return false;" title="Edit Metadata and polygon"><img src="../images/edit.png" style="width:1.2em" /></a>
 								</div>
 								<div>
 									<input name="excludecult" value="1" type="checkbox" <?php if(isset($termArr['excludecult'])) echo 'CHECKED'; ?> />
