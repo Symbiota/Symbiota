@@ -418,7 +418,7 @@ if($isEditor){
 								</div>
 								<div style='margin:3px;'>
 									<input type="checkbox" name="printqueue" value="1" checked /> <?php echo $LANG['ADD_PRINT_QUEUE']; ?>
-									<a href="../reports/annotationmanager.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><img src="../../images/list.png" style="width:13px" title="<?php echo htmlspecialchars($LANG['DISPLAY_QUEUE'], HTML_SPECIAL_CHARS_FLAGS); ?>" /></a>
+									<a href="../reports/annotationmanager.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><img src="../../images/list.png" style="width:1.2em" title="<?php echo htmlspecialchars($LANG['DISPLAY_QUEUE'], HTML_SPECIAL_CHARS_FLAGS); ?>" /></a>
 								</div>
 								<div style='margin:15px;'>
 									<div style="float:left;">
