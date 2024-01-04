@@ -636,7 +636,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 											foreach($clidArr as $id){
 												?>
 												<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo $tid."&clid=".$id; ?>','editorwindow');">
-													<img src='../images/edit.png' style='width:13px;' alt="<?php echo (isset($LANG['IMG_EDIT_DETAILS']) ? $LANG['IMG_EDIT_DETAILS'] : 'Edit Details Button'); ?>" title='<?php echo (isset($LANG['EDIT_DETAILS']) ? $LANG['EDIT_DETAILS'] : 'edit details'); ?>' />
+													<img src='../images/edit.png' style='width:1.3em;' alt="<?php echo (isset($LANG['IMG_EDIT_DETAILS']) ? $LANG['IMG_EDIT_DETAILS'] : 'Edit Details Button'); ?>" title='<?php echo (isset($LANG['EDIT_DETAILS']) ? $LANG['EDIT_DETAILS'] : 'edit details'); ?>' />
 												</a>
 												<?php
 											}
@@ -704,14 +704,14 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 								?>
 								<span class="view-specimen-span printoff">
 									<a href="../collections/list.php?usethes=1&taxontype=2&taxa=<?php echo $tid . "&targetclid=" . $clid . "&targettid=" . $tid;?>" target="_blank" style="text-decoration:none;">
-										<img src="../images/list.png" style="width:12px;" title="<?php echo (isset($LANG['VIEW_RELATED']) ? $LANG['VIEW_RELATED'] : 'View Related Specimens'); ?>" />
+										<img src="../images/list.png" style="width:1.2em;" title="<?php echo (isset($LANG['VIEW_RELATED']) ? $LANG['VIEW_RELATED'] : 'View Related Specimens'); ?>" />
 									</a>
 									<?php
 									if(isset($dynamPropsArr)){
 										$scinameasid = str_replace(" ", "-", $sppArr['sciname']);
 										$arrForExternalServiceApi .= ($arrForExternalServiceApi?',' : '')."'" . $scinameasid . "'";
 										echo '<a href="#" target="_blank" id="a-'.$scinameasid.'">';
-										echo '<img src="../images/icons/inaturalist.png" style="width:12px;display:none;" title="'. (isset($LANG['LINKTOINAT']) ? $LANG['LINKTOINAT'] : 'See records in iNaturalist').'" id="i-'.$scinameasid.'" />';
+										echo '<img src="../images/icons/inaturalist.png" style="width:1.2em;display:none;" title="'. (isset($LANG['LINKTOINAT']) ? $LANG['LINKTOINAT'] : 'See records in iNaturalist').'" id="i-'.$scinameasid.'" />';
 										echo '</a>';
 									}
 									?>
@@ -725,7 +725,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 									foreach($clidArr as $id){
 										?>
 										<span class="editspp" style="display:none;">
-											<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo $tid . "&clid=" . $id; ?>','editorwindow');"><img src="../images/edit.png" style="width:13px;" title="<?php echo (isset($LANG['EDIT_DETAILS']) ? $LANG['EDIT_DETAILS'] : 'edit details'); ?> (clid = <?php echo $id; ?>)" /></a>
+											<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo $tid . "&clid=" . $id; ?>','editorwindow');"><img src="../images/edit.png" style="width:1.2em;" title="<?php echo (isset($LANG['EDIT_DETAILS']) ? $LANG['EDIT_DETAILS'] : 'edit details'); ?> (clid = <?php echo $id; ?>)" /></a>
 										</span>
 										<?php
 									}
@@ -733,7 +733,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 										?>
 										<span class="editspp" style="margin-left:5px;display:none">
 											<a href="../collections/list.php?usethes=1&taxontype=2&taxa=<?php echo $tid . "&targetclid=" . $clid . "&targettid=" . $tid . '&mode=voucher'; ?>" target="_blank">
-												<img src="../images/link.png" style="width:12px;" title="<?php echo (isset($LANG['VIEW_RELATED']) ? $LANG['VIEW_RELATED'] : 'Link Specimen Vouchers'); ?>" /><span style="font-size:70%">V</span>
+												<img src="../images/link.png" style="width:1.2em;" title="<?php echo (isset($LANG['VIEW_RELATED']) ? $LANG['VIEW_RELATED'] : 'Link Specimen Vouchers'); ?>" /><span style="font-size:70%">V</span>
 											</a>
 										</span>
 										<?php
