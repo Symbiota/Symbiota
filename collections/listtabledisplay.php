@@ -67,20 +67,20 @@ $searchVar = $collManager->getQueryTermStr();
 				-->
 				<form action="list.php" method="post" style="float:left">
 					<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;" title="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>"  aria-label="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>">
-						<img src="../images/list.png" style="width:15px; height:15px" alt="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>"/>
+						<img src="../images/list.png" style="width:1.3em" alt="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>"/>
 					</button>
 					<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 				</form>
 				<form action="download/index.php" method="post" style="float:left" onsubmit="targetPopup(this)">
 					<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;" title="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>" aria-label="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>">
-						<img src="../../images/dl2.png" srcset="../images/download.svg" class="svg-icon" style="width:15px; height:15px" alt="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>" />
+						<img src="../../images/dl2.png" style="width:1.3em" alt="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>" />
 					</button>
 					<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 					<input name="dltype" type="hidden" value="specimen" />
 				</form>
 				<div style="float:left">
 					<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;" onclick="copyUrl()" title="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>" aria-label="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>">
-						<img src="../../images/dl2.png" srcset="../images/link.svg" class="svg-icon" style="width:15px; height:15px" alt="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>"/>
+						<img src="../../images/dl2.png" style="width:1.3em" alt="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>"/>
 					</button>
 				</div>
 			</div>
@@ -209,11 +209,11 @@ $searchVar = $collManager->getQueryTermStr();
 									echo '<a href="#" onclick="return openIndPU('.$occid.",".($targetClid ? $targetClid : "0").');">'.$occid.'</a> ';
 									if($isEditor || ($SYMB_UID && $SYMB_UID == $occArr['obsuid'])){
 										echo '<a href="editor/occurrenceeditor.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
-										echo '<img src="../images/edit.png" style="height:13px;" title="'.(isset($LANG['EDIT_REC']) ? $LANG['EDIT_REC'] : 'Edit Record').'" />';
+										echo '<img src="../images/edit.png" style="height:1.3em;" title="'.(isset($LANG['EDIT_REC']) ? $LANG['EDIT_REC'] : 'Edit Record').'" />';
 										echo '</a>';
 									}
 									if(isset($occArr['img'])){
-										echo '<img src="../images/image.png" style="height:13px;margin-left:5px;" title="'.(isset($LANG['HAS_IMAGE']) ? $LANG['HAS_IMAGE'] : 'Has Image').'" />';
+										echo '<img src="../images/image.png" style="height:1.3em;margin-left:5px;" title="'.(isset($LANG['HAS_IMAGE']) ? $LANG['HAS_IMAGE'] : 'Has Image').'" />';
 									}
 									?>
 								</td>
