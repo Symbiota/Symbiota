@@ -48,7 +48,7 @@ $clManager->setProj($pid);
 						echo $projName;
 						?>
 						<a class="button button-tertiary btn-medium-font" href="<?php echo "clgmap.php?pid=" . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>" title='<?php echo htmlspecialchars((isset($LANG['SHOW_MAP'])?$LANG['SHOW_MAP']:'Show inventories on map'), HTML_SPECIAL_CHARS_FLAGS); ?>'>
-							Map <img src='../images/world.png' style='width:10px;border:0' alt='Image of the globe' />
+							<?php echo (isset($LANG['MAP'])?$LANG['MAP']:'Map'); ?> <img src='../images/world.png' style='width:1em;border:0' alt='Image of the globe' />
 						</a>
 					</h2>
 					<ul>
