@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecUploadDirect.php');
@@ -101,7 +102,7 @@ if($isEditor && $collid){
 	$duManager->loadFieldMap();
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['SPEC_UPLOAD']) ? $LANG['SPEC_UPLOAD'] : 'Specimen Uploader'); ?></title>
@@ -247,7 +248,7 @@ if($isEditor && $collid){
 			}
 		}
 	</script>
-	<style type="text/css">
+	<style>
 		.unmapped{ background: yellow; }
 		fieldset{  padding: 15px; }
 		legend{ font-weight: bold; }
