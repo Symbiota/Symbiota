@@ -775,7 +775,8 @@ class OccurrenceEditorManager {
 			//Iterate through occurrences and merge addtional identifiers and otherCatalogNumbers field values
 			foreach($occurrenceArr as $occid => $occurArr){
 				$otherCatNumArr = array();
-				if($ocnStr = trim($occurArr['othercatalognumbers'],',;| ')){
+				if($occurArr['othercatalognumbers']){
+					$ocnStr = trim($occurArr['othercatalognumbers'],',;| ');
 					$ocnStr = str_replace(array(',',';'),'|',$ocnStr);
 					$ocnArr = explode('|',$ocnStr);
 					foreach($ocnArr as $identUnit){
@@ -2532,22 +2533,31 @@ class OccurrenceEditorManager {
 	}
 
 	protected function cleanOutStr($str){
-		$newStr = str_replace('"',"&quot;",$str);
-		$newStr = str_replace("'","&apos;",$newStr);
+		$newStr = $str;
+		if($newStr){
+			$newStr = str_replace('"',"&quot;",$str);
+			$newStr = str_replace("'","&apos;",$newStr);
+		}
 		return $newStr;
 	}
 
 	protected function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
+		$newStr = $str;
+		if($newStr){
+			$newStr = trim($str);
+			$newStr = preg_replace('/\s\s+/', ' ',$newStr);
+			$newStr = $this->conn->real_escape_string($newStr);
+		}
 		return $newStr;
 	}
 
 	protected function cleanRawFragment($str){
-		$newStr = trim($str);
-		$newStr = $this->encodeStr($newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
+		$newStr = $str;
+		if($newStr){
+			$newStr = trim($str);
+			$newStr = $this->encodeStr($newStr);
+			$newStr = $this->conn->real_escape_string($newStr);
+		}
 		return $newStr;
 	}
 }

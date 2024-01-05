@@ -471,8 +471,8 @@ class OccurrenceMaintenance {
 						WHERE o.collid = '.$collid.' GROUP BY o.family ';
 					$rs = $this->conn->query($sql);
 					while($r = $rs->fetch_object()){
-						$family = str_replace(array('"',"'"),"",$r->family);
-						if($family){
+						if($r->family){
+							$family = str_replace(array('"', "'"), '', $r->family);
 							$statsArr['families'][$family]['SpecimensPerFamily'] = $r->SpecimensPerFamily;
 							$statsArr['families'][$family]['GeorefSpecimensPerFamily'] = $r->GeorefSpecimensPerFamily;
 							$statsArr['families'][$family]['IDSpecimensPerFamily'] = $r->IDSpecimensPerFamily;
@@ -489,8 +489,8 @@ class OccurrenceMaintenance {
 						WHERE o.collid = '.$collid.' GROUP BY o.country ';
 					$rs = $this->conn->query($sql);
 					while($r = $rs->fetch_object()){
-						$country = str_replace(array('"',"'"),"",$r->country);
-						if($country){
+						if($r->country){
+							$country = str_replace(array('"', "'"), "", $r->country);
 							$statsArr['countries'][$country]['CountryCount'] = $r->CountryCount;
 							$statsArr['countries'][$country]['GeorefSpecimensPerCountry'] = $r->GeorefSpecimensPerCountry;
 							$statsArr['countries'][$country]['IDSpecimensPerCountry'] = $r->IDSpecimensPerCountry;

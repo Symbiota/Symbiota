@@ -90,18 +90,29 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			$detArr['makecurrent'].','.$detArr['printqueue'].','.($isEditor==3?0:1).','.
 			($detArr['identificationreferences']?'"'.$this->cleanInStr($detArr['identificationreferences']).'"':'NULL').','.
 			($notes?'"'.$notes.'"':'NULL').',"'.$guid.'",'.$sortSeq.')';
-		if($this->conn->query($sql)){
+		$detId = 0;
+		try {
+			$this->conn->query($sql);
 			$detId = $this->conn->insert_id;
+		} catch (mysqli_sql_exception $e) {
+			$status = $LANG['ERROR_FAILED_ADD'].': '.$this->conn->error;
+		}
+		if($detId){
 			//If is current, move old determination from omoccurrences to omoccurdeterminations and then load new record into omoccurrences
 			if($isCurrent){
-				//If determination is already in omoccurdeterminations, INSERT will fail move omoccurrences determination to  table
+				//If determination is already in omoccurdeterminations, INSERT will fail
 				$guid = UuidFactory::getUuidV4();
-				$sqlInsert = 'INSERT INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
+				$sqlInsert = 'INSERT IGNORE INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
 					'identificationQualifier, identificationReferences, identificationRemarks, recordID, sortsequence) '.
 					'SELECT occid, IFNULL(identifiedby,"unknown") AS idby, IFNULL(dateidentified,"s.d.") AS di, '.
 					'sciname, scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, "'.$guid.'", 10 AS sortseq '.
 					'FROM omoccurrences WHERE (occid = '.$this->occid.') AND (identifiedBy IS NOT NULL OR dateIdentified IS NOT NULL OR sciname IS NOT NULL)';
 				$this->conn->query($sqlInsert);
+				try {
+					//$this->conn->query($sqlInsert);
+				} catch (mysqli_sql_exception $e) {
+					echo 'Duplicate: '.$this->conn->error;
+				}
 				$tidToAdd = $detArr['tidtoadd'];
 				if($tidToAdd && !is_numeric($tidToAdd)) $tidToAdd = 0;
 				$this->updateBaseOccurrence($detId);
@@ -112,9 +123,6 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 					if($idStatus) $status .= '; '.$idStatus;
 				}
 			}
-		}
-		else{
-			$status = $LANG['ERROR_FAILED_ADD'].': '.$this->conn->error;
 		}
 		return $status;
 	}
@@ -214,7 +222,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		$status = $LANG['DET_NOW_CURRENT'];
 		//Make sure determination data within omoccurrences is in omoccurdeterminations. If already there, INSERT will fail and nothing lost
 		$guid = UuidFactory::getUuidV4();
-		$sqlInsert = 'INSERT INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
+		$sqlInsert = 'INSERT IGNORE INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
 			'identificationQualifier, identificationReferences, identificationRemarks, recordID, sortsequence) '.
 			'SELECT occid, IFNULL(identifiedby,"unknown") AS idby, IFNULL(dateidentified,"s.d.") AS iddate, sciname, scientificnameauthorship, '.
 			'identificationqualifier, identificationreferences, identificationremarks, "'.$guid.'", 10 AS sortseq '.
@@ -349,7 +357,9 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 	}
 
 	public function getCollName(){
-		return $this->collMap['collectionname'].' ('.$this->collMap['institutioncode'].($this->collMap['collectioncode']?':'.$this->collMap['collectioncode']:'').')';
+		$retStr = '';
+		if($this->collMap) $retStr = $this->collMap['collectionname'].' ('.$this->collMap['institutioncode'].($this->collMap['collectioncode']?':'.$this->collMap['collectioncode']:'').')';
+		return $retStr;
 	}
 }
 ?>
