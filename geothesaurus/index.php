@@ -97,7 +97,7 @@ $geoArr = $geoManager->getGeograpicList($parentID);
 				<fieldset id="edit-fieldset">
 					<legend> <?php echo (isset($LANG['EDIT_GEO']) ? $LANG['EDIT_GEO'] : 'Edit Geographic') ?> <span id="edit-legend"> <?php echo (isset($LANG['UNIT']) ? $LANG['UNIT'] : 'Unit') ?> </span></legend>
 					<div style="float:right">
-						<span class="editIcon"><a href="#" onclick="toggleEditor()"><img class="editimg" src="../images/edit.png" alt="<?php echo (isset($LANG['EDIT']) ? $LANG['EDIT'] : 'Edit'); ?>"/></a></span>
+						<span class="editIcon"><a href="#" onclick="toggleEditor()"><img class="editimg" src="../images/edit.png" style="width:1.3em" alt="<?php echo (isset($LANG['EDIT']) ? $LANG['EDIT'] : 'Edit'); ?>"/></a></span>
 
 					</div>
 					<form name="unitEditForm" action="index.php" method="post">
@@ -222,7 +222,7 @@ $geoArr = $geoManager->getGeograpicList($parentID);
 		else{
 			?>
 			<div style="float:right">
-				<span class="editIcon"><a href="#" onclick="$('#addGeoUnit-div').toggle();"><img class="editimg" src="../images/add.png" alt="<?php echo (isset($LANG['EDIT']) ? $LANG['EDIT'] : 'Edit'); ?>" /></a></span>
+				<span class="editIcon"><a href="#" onclick="$('#addGeoUnit-div').toggle();"><img class="editimg" src="../images/edit.png" alt="<?php echo (isset($LANG['EDIT']) ? $LANG['EDIT'] : 'Edit'); ?>" /></a></span>
 			</div>
 			<div id="addGeoUnit-div" style="clear:both;margin-bottom:10px;display:none">
 				<!--This should also be visible when !$geoThesID -->

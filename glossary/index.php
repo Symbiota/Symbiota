@@ -330,7 +330,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 								if($isEditor){
 									?>
 									<div style="float:right;">
-										<a href="sources.php?emode=1&tid=<?php echo $tid.'&searchterm='.htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS).'&language='.$language.'&taxa='.$tid; ?>"><img src="../images/edit.png" style="width:13px" /></a>
+										<a href="sources.php?emode=1&tid=<?php echo $tid.'&searchterm='.htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS).'&language='.$language.'&taxa='.$tid; ?>"><img src="../images/edit.png" style="width:1.3em" /></a>
 									</div>
 									<?php
 								}
