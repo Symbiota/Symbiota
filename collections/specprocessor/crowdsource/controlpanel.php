@@ -39,7 +39,7 @@ $projArr = $csManager->getProjectDetails();
 	}
 	if($isEditor && $collid && $omcsid){
 		?>
-		<div style="float:right;"><a href="#" onclick="toggle('projFormDiv')"><img src="../../images/edit.png" /></a></div>
+		<div style="float:right;"><a href="#" onclick="toggle('projFormDiv')"><img src="../../images/edit.png" style="width:1.5em" /></a></div>
 		<div style="font-weight:bold;font-size:130%;"><?php echo (($omcsid && $projArr)?$projArr['name']:''); ?></div>
 		<div>
 			<?php echo $LANG['CROWDSOURCE_EXPLAIN']; ?>
@@ -85,7 +85,7 @@ $projArr = $csManager->getProjectDetails();
 							echo $unprocessedCnt;
 							echo '</a> ';
 							echo '<a href="index.php?submitaction=delqueue&tabindex=1&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&omcsid='.$omcsid.'">';
-							echo '<img src="../../images/drop.png" style="width:12px;" title="'.$LANG['DEL_UNPROCESSED'].'" />';
+							echo '<img src="../../images/drop.png" style="width:1.2em;" title="'.$LANG['DEL_UNPROCESSED'].'" />';
 							echo '</a>';
 						}
 						else{

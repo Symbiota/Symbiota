@@ -50,9 +50,9 @@ if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,
 						<?php
 						echo $statsArr['total'];
 						if($statsArr['total']){
-							echo '<span style="margin-left:10px;"><a href="' . htmlspecialchars($eUrl, HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars($urlBase, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Edit Records"><img src="../../images/edit.png" style="width:12px;" /></a></span>';
-							echo '<span style="margin-left:10px;"><a href="' . htmlspecialchars($beUrl, HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars($urlBase, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Editor in Table View"><img src="../../images/list.png" style="width:12px;" /></a></span>';
-							echo '<span style="margin-left:10px;"><a href="../misc/collbackup.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Download Full Data"><img src="../../images/dl.png" style="width:13px;" /></a></span>';
+							echo '<span style="margin-left:10px;"><a href="' . htmlspecialchars($eUrl, HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars($urlBase, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Edit Records"><img src="../../images/edit.png" style="width:1.2em;" /></a></span>';
+							echo '<span style="margin-left:10px;"><a href="' . htmlspecialchars($beUrl, HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars($urlBase, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Editor in Table View"><img src="../../images/list.png" style="width:1.2em;" /></a></span>';
+							echo '<span style="margin-left:10px;"><a href="../misc/collbackup.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Download Full Data"><img src="../../images/dl.png" style="width:1.3em;" /></a></span>';
 						}
 						?>
 					</div>
@@ -63,9 +63,9 @@ if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,
 						if($statsArr['noimg']){
 							$eUrl1 = $eUrl.$urlBase.'&q_withoutimg=1';
 							$beUrl1 = $beUrl.$urlBase.'&q_withoutimg=1';
-							echo '<span style="margin-left:10px;"><a href="' . htmlspecialchars($eUrl1, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Edit Records"><img src="../../images/edit.png" style="width:12px;" /></a></span>';
-							echo '<span style="margin-left:10px;"><a href="' . htmlspecialchars($beUrl1, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Batch Edit Records"><img src="../../images/list.png" style="width:12px;" /></a></span>';
-							echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=dlnoimg&tabindex=' . htmlspecialchars($tabIndex, HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Download Report File"><img src="../../images/dl.png" style="width:13px;" /></a></span>';
+							echo '<span style="margin-left:10px;"><a href="' . htmlspecialchars($eUrl1, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Edit Records"><img src="../../images/edit.png" style="width:1.2em;" /></a></span>';
+							echo '<span style="margin-left:10px;"><a href="' . htmlspecialchars($beUrl1, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Batch Edit Records"><img src="../../images/list.png" style="width:1.2em;" /></a></span>';
+							echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=dlnoimg&tabindex=' . htmlspecialchars($tabIndex, HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Download Report File"><img src="../../images/dl.png" style="width:1.3em;" /></a></span>';
 						}
 						?>
 					</div>
@@ -79,9 +79,9 @@ if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,
 							if($statsArr['noskel']){
 								$eUrl3 = $eUrl.$urlBase.'&q_processingstatus=unprocessed&q_customfield1=stateProvince&q_customtype1=NULL&q_customfield2=sciname&q_customtype2=NULL';
 								$beUrl3 = $beUrl.$urlBase.'&q_processingstatus=unprocessed&q_customfield1=stateProvince&q_customtype1=NULL&q_customfield2=sciname&q_customtype2=NULL';
-								echo '<span style="margin-left:10px;"><a href="' . htmlspecialchars($eUrl3, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Edit Records"><img src="../../images/edit.png" style="width:12px;" /></a></span>';
-								echo '<span style="margin-left:10px;"><a href="' . htmlspecialchars($beUrl3, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Batch Edit Records"><img src="../../images/list.png" style="width:12px;" /></a></span>';
-								echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=noskel&tabindex=' . htmlspecialchars($tabIndex, HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Download Report File"><img src="../../images/dl.png" style="width:14px;" /></a></span>';
+								echo '<span style="margin-left:10px;"><a href="' . htmlspecialchars($eUrl3, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Edit Records"><img src="../../images/edit.png" style="width:1.2em;" /></a></span>';
+								echo '<span style="margin-left:10px;"><a href="' . htmlspecialchars($beUrl3, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Batch Edit Records"><img src="../../images/list.png" style="width:1.2em;" /></a></span>';
+								echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=noskel&tabindex=' . htmlspecialchars($tabIndex, HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Download Report File"><img src="../../images/dl.png" style="width:1.3em;" /></a></span>';
 							}
 							?>
 						</div>
@@ -96,9 +96,9 @@ if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,
 							if($statsArr['unprocnoimg']){
 								$eUrl2 = $eUrl.$urlBase.'&q_processingstatus=unprocessed&q_withoutimg=1';
 								$beUrl2 = $beUrl.$urlBase.'&q_processingstatus=unprocessed&q_withoutimg=1';
-								echo '<span style="margin-left:10px;"><a href="' . htmlspecialchars($eUrl2, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Edit Records"><img src="../../images/edit.png" style="width:12px;" /></a></span>';
-								echo '<span style="margin-left:10px;"><a href="' . htmlspecialchars($beUrl2, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Batch Edit Records"><img src="../../images/list.png" style="width:12px;" /></a></span>';
-								echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=unprocnoimg&tabindex=' . htmlspecialchars($tabIndex, HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Download Report File"><img src="../../images/dl.png" style="width:13px;" /></a></span>';
+								echo '<span style="margin-left:10px;"><a href="' . htmlspecialchars($eUrl2, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Edit Records"><img src="../../images/edit.png" style="width:1.2em;" /></a></span>';
+								echo '<span style="margin-left:10px;"><a href="' . htmlspecialchars($beUrl2, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Batch Edit Records"><img src="../../images/list.png" style="width:1.2em;" /></a></span>';
+								echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=unprocnoimg&tabindex=' . htmlspecialchars($tabIndex, HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Download Report File"><img src="../../images/dl.png" style="width:1.3em;" /></a></span>';
 							}
 							?>
 						</div>
@@ -113,9 +113,9 @@ if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,
 							if($statsArr['unprocwithdata']){
 								$eUrl3b = $eUrl.$urlBase.'&q_processingstatus=unprocessed&q_customfield1=locality&q_customtype1=NOTNULL&q_customfield2=stateProvince&q_customtype2=NOTNULL';
 								$beUrl3b = $beUrl.$urlBase.'&q_processingstatus=unprocessed&q_customfield1=locality&q_customtype1=NOTNULL&q_customfield2=stateProvince&q_customtype2=NOTNULL';
-								echo '<span style="margin-left:10px;"><a href="' . htmlspecialchars($eUrl3b, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Edit Records"><img src="../../images/edit.png" style="width:12px;" /></a></span>';
-								echo '<span style="margin-left:10px;"><a href="' . htmlspecialchars($beUrl3b , HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Batch Edit Records"><img src="../../images/list.png" style="width:12px;" /></a></span>';
-								echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=unprocwithdata&tabindex=' . htmlspecialchars($tabIndex, HTML_SPECIAL_CHARS_FLAGS) .'&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Download Report File"><img src="../../images/dl.png" style="width:14px;" /></a></span>';
+								echo '<span style="margin-left:10px;"><a href="' . htmlspecialchars($eUrl3b, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Edit Records"><img src="../../images/edit.png" style="width:1.2em;" /></a></span>';
+								echo '<span style="margin-left:10px;"><a href="' . htmlspecialchars($beUrl3b , HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Batch Edit Records"><img src="../../images/list.png" style="width:1.2em;" /></a></span>';
+								echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=unprocwithdata&tabindex=' . htmlspecialchars($tabIndex, HTML_SPECIAL_CHARS_FLAGS) .'&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Download Report File"><img src="../../images/dl.png" style="width:1.3em;" /></a></span>';
 							}
 							?>
 						</div>
