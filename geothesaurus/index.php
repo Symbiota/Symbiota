@@ -221,13 +221,6 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 							<span><input type="text" name="notes" maxlength="250" style="width:200px;" /></span>
 						</div>
 						<div class="field-div">
-							<label><?=$LANG['POLYGON']?></label>:
-							<a onclick="openCoordAid('addfootprintwkt')">
-								<img src='../images/world.png' style='width:10px;border:0' alt='Image of the globe' /> <?= $LANG['EDIT_POLYGON']?> 
-							</a>
-							<span><textarea id="addfootprintwkt" name="polygon" style="width:98%;height:90px;"></textarea></span>
-						</div>
-						<div class="field-div">
 							<label> <?= $LANG['PARENT_TERM'] ?> </label>:
 							<span>
 								<select name="parentID">
@@ -258,6 +251,13 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 									?>
 								</select>
 							</span>
+						</div>
+						<div class="field-div">
+							<label><?=$LANG['POLYGON']?></label>:
+							<a onclick="openCoordAid('addfootprintwkt')">
+								<img src='../images/world.png' style='width:10px;border:0' alt='Image of the globe' /> <?= $LANG['EDIT_POLYGON']?> 
+							</a>
+							<span><textarea id="addfootprintwkt" name="polygon" style="margin-top: 0.5rem; width:98%;height:90px;"></textarea></span>
 						</div>
 						<div id="addButton-div" class="button-div">
 							<button type="submit" name="submitaction" value="addGeoUnit"> <?= $LANG['ADD_UNIT'] ?> </button>
@@ -321,19 +321,6 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 							<span class="editTerm"><?= $geoUnit['notes']; ?></span>
 							<span class="editFormElem"><input type="text" name="notes" value="<?= $geoUnit['notes'] ?>" maxlength="250" style="width:650px;" /></span>
 						</div>
-						<div class="field-div">
-						<label><?= $LANG['POLYGON']?></label>:
-						<span class="editTerm">
-							<?= $geoUnit['wkt'] !== null? $LANG['YES_POLYGON']: $LANG['NO_POLYGON'] ?>
-						</span>
-						<div class="editTerm" id="map_canvas" style="margin: 1rem 0; width:100%; height:20rem"></div>
-						<a class="editFormElem" onclick="openCoordAid()">
-							<img src='../images/world.png' style='width:10px;border:0' alt='Image of the globe' /> <?= $LANG['EDIT_POLYGON']?> 
-						</a>
-						<span class="editFormElem">
-							<textarea id="footprintwkt" name="polygon" style="width:98%;height:90px;"><?= isset($geoUnit['wkt'])?trim($geoUnit['wkt']): null ?></textarea>
-						</span>
-					</div>
 						<?php
 						if($geoUnit['geoLevel']){
 						if($parentList = $geoManager->getParentGeoTermArr($geoUnit['geoLevel'])){
@@ -376,6 +363,19 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 								</select>
 							</span>
 						</div>
+						<div class="field-div">
+						<label><?= $LANG['POLYGON']?></label>:
+						<span class="editTerm">
+							<?= $geoUnit['wkt'] !== null? $LANG['YES_POLYGON']: $LANG['NO_POLYGON'] ?>
+						</span>
+						<div class="editTerm" id="map_canvas" style="margin: 1rem 0; width:100%; height:20rem"></div>
+						<a class="editFormElem" onclick="openCoordAid()">
+							<img src='../images/world.png' style='width:10px;border:0' alt='Image of the globe' /> <?= $LANG['EDIT_POLYGON']?> 
+						</a>
+						<span class="editFormElem" style="margin-top: 0.5rem">
+							<textarea id="footprintwkt" name="polygon" style="margin-top: 0.5rem; width:98%;height:90px;"><?= isset($geoUnit['wkt'])?trim($geoUnit['wkt']): null ?></textarea>
+						</span>
+					</div>
 						<div id="editButton-div" class="button-div">
 							<input name="geoThesID" type="hidden" value="<?= $geoThesID; ?>" />
 							<button type="submit" name="submitaction" value="submitGeoEdits"> <?= $LANG['SAVE_EDITS'] ?> </button>
