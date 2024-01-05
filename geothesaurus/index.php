@@ -198,7 +198,7 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 						<div class="field-div">
 							<label> <?= $LANG['GEO_RANK'] ?> </label>:
 							<span>
-								<select name="geoLevel">
+								<select name="geoLevel" required>
 									<option value=""> <?= $LANG['SELECT_RANK'] ?> </option>
 									<option value="">----------------------</option>
 									<?php
@@ -305,7 +305,7 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 							<label> <?= $LANG['GEO_RANK'] ?> </label>:
 							<span class="editTerm"><?= ($geoUnit['geoLevel']?$rankArr[$geoUnit['geoLevel']].' ('.$geoUnit['geoLevel'].')':''); ?></span>
 							<span class="editFormElem">
-								<select name="geoLevel">
+								<select name="geoLevel" required>
 									<option value=""> <?= $LANG['SELECT_RANK'] ?> </option>
 									<option value="">----------------------</option>
 									<?php
