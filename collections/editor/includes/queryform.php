@@ -253,7 +253,7 @@ else{
 						?>
 					</select>
 					<a href="#" onclick="toggleCustomDiv(<?php echo ($x+1); ?>);return false;">
-						<img class="editimg" src="../../images/add.png" style="width:1em;" />
+						<img class="editimg" src="../../images/add.png" style="width:1.2em;" />
 					</a>
 				</div>
 				<?php
@@ -273,7 +273,7 @@ else{
 			<div class="fieldGroupDiv">
 				<div class="bottom-breathing-room-relative">
 					<button type="button" class="icon-button no-margin-left" onclick="copyQueryLink(event)" title="<?php echo (isset($LANG['COPY_SEARCH'])?$LANG['COPY_SEARCH']:'Copy Search As Link'); ?>">
-						<img src="../../images/link.png" style="width:1.2em;margin-right:5px;" alt="Link icon. Copies the search terms as a link." /><?php echo (isset($LANG['COPY_LINK'])?$LANG['COPY_Link']:'Copy Link'); ?>
+						<img src="../../images/link.png" style="width:1.2em;margin-right:5px;" alt="Link icon. Copies the search terms as a link." /><?php echo (isset($LANG['COPY_LINK'])?$LANG['COPY_LINK']:'Copy Link'); ?>
 					</button>
 					<?php
 					if(!$crowdSourceMode){

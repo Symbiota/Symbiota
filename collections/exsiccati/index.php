@@ -426,10 +426,10 @@ if($ometid) unset($selectLookupArr[$ometid]);
 						?>
 						<div style="float:right;">
 							<span style="cursor:pointer;" onclick="toggleExsEditDiv('exseditdiv');" title="Edit Exsiccata">
-								<img style="border:0px;" src="../../images/edit.png" />
+								<img style="width:1.5em;border:0px;" src="../../images/edit.png" />
 							</span>
 							<span style="cursor:pointer;" onclick="toggleNumAddDiv('numadddiv');" title="Add Exsiccata Number">
-								<img style="border:0px;" src="../../images/add.png" />
+								<img style="width:1.5em;border:0px;" src="../../images/add.png" />
 							</span>
 						</div>
 						<?php
@@ -570,10 +570,10 @@ if($ometid) unset($selectLookupArr[$ometid]);
 					?>
 					<div style="float:right;">
 						<span style="cursor:pointer;" onclick="toggleNumEditDiv('numeditdiv');" title="Edit Exsiccata Number">
-							<img style="border:0px;" src="../../images/edit.png"/>
+							<img style="width:1.5em;border:0px;" src="../../images/edit.png"/>
 						</span>
 						<span style="cursor:pointer;" onclick="toggleOccAddDiv('occadddiv');" title="Add Occurrence to Exsiccata Number">
-							<img style="border:0px;" src="../../images/add.png" />
+							<img style="width:1.5em;border:0px;" src="../../images/add.png" />
 						</span>
 					</div>
 					<?php
