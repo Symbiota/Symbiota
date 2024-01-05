@@ -110,6 +110,7 @@ $LANG['NULL'] = 'IS NULL';
 $LANG['NOTNULL'] = 'IS NOT NULL';
 $LANG['SHOW_RECS_ALL'] = 'Show records for all users (admin control)';
 $LANG['COPY_SEARCH'] = 'Copy Search As Link';
+$LANG['COPY_LINK'] = 'Copy Link';
 $LANG['GO_LABEL_PRINT'] = 'Go to Label Printing Module';
 $LANG['DISPLAY_EDITOR'] = 'Display Editor';
 $LANG['DISPLAY_TABLE'] = 'Display Table';

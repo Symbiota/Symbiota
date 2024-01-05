@@ -281,7 +281,7 @@ $clArr = $obsManager->getChecklists();
 							</div>
 							<div style="margin-top:10px; margin-left:3px; margin-bottom:10px" >
 								<a onclick="openMappingAid('obsform','decimallatitude','decimallongitude');return false;">
-									<img src="../../images/world.png" style="width:15px;" title="Coordinate Map Aid" alt="<?php echo (isset($LANG['IMG_GLOBE']) ? $LANG['IMG_GLOBE'] : 'A small image of the globe'); ?>" />
+									<img src="../../images/world.png" style="width:1.3em;" title="Coordinate Map Aid" alt="<?php echo (isset($LANG['IMG_GLOBE']) ? $LANG['IMG_GLOBE'] : 'A small image of the globe'); ?>" />
 								</a>
 								<button id="dmsButton" type="button" onclick="toggle('dmsdiv');"><?php echo $LANG['DMS']; ?></button>
 							</div>
