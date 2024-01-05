@@ -117,7 +117,7 @@ else{
 					List View = viewing basic field data through a list view (e.g. default occurrence listing tab within the general search interface),
 					Map View = occurrence represented as a dot within any of the map-based search interfaces
 				</div>
-				<div id="desc_info" style="float:left;margin-left:5px;"><a href="#" onclick="toggle('desc_details');toggle('desc_info');"><img src="../../images/info.png" style="width:12px" /></a></div>
+				<div id="desc_info" style="float:left;margin-left:5px;"><a href="#" onclick="toggle('desc_details');toggle('desc_info');"><img src="../../images/info.png" style="width:1.2em" /></a></div>
 			</div>
 			<?php
 			if($isEditor){
@@ -192,7 +192,7 @@ else{
 				</div>
 				<div style="font-weight:bold;font-size:130%;">
 					<?php echo $collName; ?>
-					<a href="<?php echo htmlspecialchars($navPageBase, HTML_SPECIAL_CHARS_FLAGS) . '&action=export'; ?>" title="Download Results"><img src="../../images/dl.png" style="margin-left:10px;width:14px;" /></a>
+					<a href="<?php echo htmlspecialchars($navPageBase, HTML_SPECIAL_CHARS_FLAGS) . '&action=export'; ?>" title="Download Results"><img src="../../images/dl.png" style="margin-left:10px;width:1.3em;" /></a>
 				</div>
 				<div style="width:400px">
 					<div style="clear:both"><?php echo $navStr; ?></div>

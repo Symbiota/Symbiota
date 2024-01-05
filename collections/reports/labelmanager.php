@@ -321,7 +321,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 													if(!$isGeneralObservation || $recArr['uid'] == $SYMB_UID){
 														?>
 														<a href="#" onclick="openEditorPopup(<?php echo $occId; ?>); return false;">
-															<img src="../../images/edit.png" />
+															<img src="../../images/edit.png" style="width:1.3em" />
 														</a>
 														<?php
 													}
@@ -344,7 +344,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 										<div class="fieldDiv">
 											<div class="fieldLabel">Label Profiles:
 												<?php
-												echo '<span title="Open label profile manager"><a href="labelprofile.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:13px" /></a></span>';
+												echo '<span title="Open label profile manager"><a href="labelprofile.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:1.2em" /></a></span>';
 												?>
 											</div>
 											<div class="fieldElement">

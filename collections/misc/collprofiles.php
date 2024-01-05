@@ -121,7 +121,7 @@ if ($SYMB_UID) {
 					</span>
 					<input name="catalog-number" id="catalog-number" type="text" />
 					<a href="#" id="q_catalognumberinfo" style="text-decoration:none;">
-						<img src="../../images/info.png" style="width:15px;" alt="<?php echo (isset($LANG['MORE_INFO_ALT']) ? $LANG['MORE_INFO_ALT'] : 'More information about catalog number'); ?>" title="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'More information.'); ?>"/>
+						<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO_ALT']) ? $LANG['MORE_INFO_ALT'] : 'More information about catalog number'); ?>" title="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'More information.'); ?>"/>
 					</a>
 					<dialog id="dialogEl" aria-live="polite" aria-label="Catalog number search dialog">
 						<?php
@@ -164,7 +164,7 @@ if ($SYMB_UID) {
 		if ($editCode && $collid) {
 			?>
 			<div style="float:right;margin:3px;cursor:pointer;" onclick="toggleById('controlpanel');" title="<?php echo (isset($LANG['TOGGLE_MAN']) ? $LANG['TOGGLE_MAN'] : 'Toggle Manager\'s Control Panel'); ?>">
-				<img style='border:0px;' src='../../images/edit.png' alt="edit icon" />
+				<img style='width:1.7em;border:0px;' src='../../images/tochild.png' alt="edit icon" />
 			</div>
 			<?php
 		}
@@ -520,7 +520,7 @@ if ($SYMB_UID) {
 						<div class="bigger-left-margin-rel">
 							<?php
 							echo "<div>" . $addrArr["institutionname"];
-							if ($editCode > 1) echo ' <a href="institutioneditor.php?emode=1&targetcollid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&iid=' . htmlspecialchars($addrArr['iid'], HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars((isset($LANG['EDIT_INST']) ? $LANG['EDIT_INST'] : 'Edit institution information'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:13px;" alt="edit icon" /></a>';
+							if ($editCode > 1) echo ' <a href="institutioneditor.php?emode=1&targetcollid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&iid=' . htmlspecialchars($addrArr['iid'], HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars((isset($LANG['EDIT_INST']) ? $LANG['EDIT_INST'] : 'Edit institution information'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:1.3em;" alt="edit icon" /></a>';
 							echo '</div>';
 							if ($addrArr["institutionname2"]) echo "<div>" . $addrArr["institutionname2"] . "</div>";
 							if ($addrArr["address1"]) echo "<div>" . $addrArr["address1"] . "</div>";
