@@ -68,7 +68,6 @@ class ImageLocalProcessor {
 
 	function __construct(){
 		ini_set('memory_limit','1024M');
-		ini_set('auto_detect_line_endings', true);
 		//Use deaults located within symbini, if they are available
 		//Will be replaced by values within configuration file, if they are set
 		if(isset($GLOBALS['imgWebWidth']) && $GLOBALS['imgWebWidth']) $this->webPixWidth = $GLOBALS['imgWebWidth'];

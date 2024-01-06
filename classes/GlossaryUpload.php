@@ -16,8 +16,7 @@ class GlossaryUpload{
 		$this->conn = MySQLiConnectionFactory::getCon("write");
  		$this->setUploadTargetPath();
  		set_time_limit(3000);
-		ini_set("max_input_time",120);
-  		ini_set('auto_detect_line_endings', true);
+		ini_set('max_input_time', 120);
 	}
 
 	function __destruct(){
