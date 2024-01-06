@@ -50,11 +50,12 @@ body {
   }
   
   #innertext a {
-    color: #215078;
+    color: #337ab7;
   }
   
   #innertext a:hover {
-    color: #337ab7;
+    color: #309bba;
+    text-decoration: underline
   }
   
   form input {

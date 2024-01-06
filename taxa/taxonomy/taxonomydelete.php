@@ -4,16 +4,15 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyEditorManager.php');
 include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydelete.'.$LANG_TAG.'.php');
 
-$tid = $_REQUEST["tid"];
-$genusStr = array_key_exists('genusstr',$_REQUEST)?$_REQUEST["genusstr"]:'';
-
-//Sanitation
-if(!is_numeric($tid)) $tid = 0;
-$genusStr = filter_var($genusStr, FILTER_SANITIZE_STRING);
+$tid = filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT) ?? '';
+$genusStr = $_REQUEST['genusstr'] ?? '';
 
 $taxonEditorObj = new TaxonomyEditorManager();
 $taxonEditorObj->setTid($tid);
 $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
+
+//Sanitation
+$genusStr = $taxonEditorObj->cleanOutStr($genusStr);
 ?>
 <script>
 	$(document).ready(function() {

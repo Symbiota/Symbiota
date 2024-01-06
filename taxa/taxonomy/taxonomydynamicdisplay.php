@@ -10,14 +10,12 @@ $target = array_key_exists('target',$_REQUEST)?$_REQUEST['target']:'';
 $displayAuthor = array_key_exists('displayauthor',$_REQUEST)?$_REQUEST['displayauthor']:0;
 $taxAuthId = array_key_exists('taxauthid',$_REQUEST)?$_REQUEST['taxauthid']:1;
 $editorMode = array_key_exists('emode',$_POST)?$_POST['emode']:0;
-$statusStr = array_key_exists('statusstr',$_REQUEST)?$_REQUEST['statusstr']:'';
+$statusStr = $_REQUEST['statusstr'] ?? '';
 
 //Sanitation
-$target = filter_var($target, FILTER_SANITIZE_STRING);
 $displayAuthor = (is_numeric($displayAuthor)?$displayAuthor:0);
 $taxAuthId = (is_numeric($taxAuthId)?$taxAuthId:0);
 $editorMode = (is_numeric($editorMode)?$editorMode:0);
-$statusStr = filter_var($statusStr, FILTER_SANITIZE_STRING);
 
 $taxonDisplayObj = new TaxonomyDisplayManager();
 $taxonDisplayObj->setTargetStr($target);
@@ -92,7 +90,7 @@ reset($treePath);
 			?>
 			<hr/>
 			<div style="color:<?php echo (strpos($statusStr,'SUCCESS') !== false?'green':'red'); ?>;margin:15px;">
-				<?php echo $statusStr; ?>
+				<?= $taxonDisplayObj->cleanOutStr($statusStr); ?>
 			</div>
 			<hr/>
 			<?php

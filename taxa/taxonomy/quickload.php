@@ -5,17 +5,12 @@ header("Content-Type: text/html; charset=".$CHARSET);
 
 if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../taxa/taxonomy/quickload.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$sciname = array_key_exists('sciname',$_REQUEST)?$_REQUEST['sciname']:'';
-$author = array_key_exists('author',$_REQUEST)?$_REQUEST['author']:'';
-$kingdom = array_key_exists('kingdom',$_REQUEST)?$_REQUEST['kingdom']:'';
-$submitAction = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
-
-//Sanitation
-$sciname = filter_var($sciname,FILTER_SANITIZE_STRING);
-$author = filter_var($author,FILTER_SANITIZE_STRING);
-$kingdom = filter_var($kingdom,FILTER_SANITIZE_STRING);
-
 $loadManager = new TaxonomyHarvester();
+
+$sciname = $_REQUEST['sciname'] ?? '';
+$author = $_REQUEST['author'] ?? '';
+$kingdom = $loadManager->cleanOutStr($_REQUEST['kingdom']) ?? '';
+$submitAction = $_POST['submitaction'] ?? '';
 
 $isEditor = false;
 if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
@@ -82,11 +77,11 @@ $status = '';
 					<legend><b>Add New Taxon</b></legend>
 					<div>
 						<div style="float:left;width:170px;">Taxon Name:</div>
-						<input type="text" id="sciname" name="sciname" style="width:300px;border:inset;" value="<?php echo $sciname; ?>" />
+						<input type="text" id="sciname" name="sciname" style="width:300px;border:inset;" value="<?php echo $loadManager->cleanOutStr($sciname); ?>" />
 					</div>
 					<div>
 						<div style="float:left;width:170px;">Author:</div>
-						<input type='text' id='author' name='author' style='width:300px;border:inset;' value="<?php echo $author; ?>" />
+						<input type='text' id='author' name='author' style='width:300px;border:inset;' value="<?php echo $loadManager->cleanOutStr($author); ?>" />
 					</div>
 					<div style="clear:both;">
 						<div style="float:left;width:170px;">Kingdom:</div>

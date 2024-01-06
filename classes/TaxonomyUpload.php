@@ -7,10 +7,10 @@ include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
 class TaxonomyUpload{
 
 	private $conn;
-	private $uploadFileName;
-	private $uploadTargetPath;
+	private $uploadFileName = '';
+	private $uploadTargetPath = '';
 	private $taxAuthId = 1;
-	private $kingdomName;
+	private $kingdomName = '';
 	private $kingdomTid;
 	private $taxonUnitArr = array();
 	private $statArr = array();
@@ -24,8 +24,7 @@ class TaxonomyUpload{
 		$this->conn = MySQLiConnectionFactory::getCon("write");
  		$this->setUploadTargetPath();
  		set_time_limit(3000);
-		ini_set("max_input_time",120);
-  		ini_set('auto_detect_line_endings', true);
+		ini_set('max_input_time', 120);
 	}
 
 	function __destruct(){

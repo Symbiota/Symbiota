@@ -260,7 +260,7 @@ class TaxonomyDisplayManager extends Manager{
 				$taxonRankId = 0;
 				if(array_key_exists($key,$this->taxaArr)){
 					$sciName = $this->taxaArr[$key]["sciname"];
-					$sciName = str_replace($this->targetStr,"<b>".$this->targetStr."</b>",$sciName);
+					$sciName = str_replace($this->targetStr, '<b>'.htmlspecialchars($this->targetStr).'</b>', $sciName);
 					$taxonRankId = $this->taxaArr[$key]["rankid"];
 					if($this->taxaArr[$key]["rankid"] >= 180){
 						$sciName = " <i>".$sciName."</i> ";
@@ -291,7 +291,7 @@ class TaxonomyDisplayManager extends Manager{
 					$synNameArr = $this->taxaArr[$key]["synonyms"];
 					asort($synNameArr);
 					foreach($synNameArr as $synTid => $synName){
-						$synName = str_replace($this->targetStr,"<b>".$this->targetStr."</b>",$synName);
+						$synName = str_replace($this->targetStr, '<b>'.htmlspecialchars($this->targetStr).'</b>', $synName);
 						echo '<div>'.str_repeat('&nbsp;',$indent/5).str_repeat('&nbsp;',7);
 						echo '[';
 						if($taxonRankId > 139) echo '<a href="../index.php?taxon='.$synTid.'" target="_blank">';
@@ -397,15 +397,15 @@ class TaxonomyDisplayManager extends Manager{
 	//Setters and getters
 	public function setTargetStr($target){
 		if(is_numeric($target)){
-			$this->targetTid = $target;
-			$sql = 'SELECT sciname FROM taxa WHERE tid = '.$target;
+			$this->targetTid = filter_var($target, FILTER_SANITIZE_NUMBER_INT);
+			$sql = 'SELECT sciname FROM taxa WHERE tid = '.$this->targetTid;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$this->targetStr = $r->sciname;
 			}
 			$rs->free();
 		}
-		else $this->targetStr = ucfirst(trim($target));
+		elseif($target) $this->targetStr = ucfirst(trim($target));
 	}
 
 	public function setTaxAuthId($id){
@@ -454,7 +454,7 @@ class TaxonomyDisplayManager extends Manager{
 	}
 
 	public function getTargetStr(){
-		return $this->targetStr;
+		return $this->cleanOutStr($this->targetStr);
 	}
 
 	public function getTaxonomyMeta(){
