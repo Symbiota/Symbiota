@@ -673,7 +673,7 @@ else{
 											'&annotatorname='.urlencode($USER_DISPLAY_NAME).'&annotatoremail='.urlencode($userEmail).
 											(isset($collMap['collectioncode'])?'&collectioncode='.urlencode($collMap['collectioncode']):'').
 											(isset($collMap['institutioncode'])?'&institutioncode='.urlencode($collMap['institutioncode']):'').
-											'&catalognumber='.urlencode($occArr['catalognumber']);
+											'&catalognumber='.urlencode($occArr['catalognumber']??'');
 										if($isEditor < 4){
 											?>
 											<li id="detTab">

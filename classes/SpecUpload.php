@@ -10,20 +10,20 @@ class SpecUpload{
 	protected $skipOccurFieldArr = array();
 
 	protected $title = '';
-	protected $platform;
-	protected $server;
-	protected $port;
-	protected $username;
-	protected $password;
-	protected $code;
-	protected $path;
-	protected $pKField;
-	protected $schemaName;
-	protected $queryStr;
-	protected $storedProcedure;
+	protected $platform = '';
+	protected $server = '';
+	protected $port = 0;
+	protected $username = '';
+	protected $password = '';
+	protected $code = '';
+	protected $path = '';
+	protected $pKField = '';
+	protected $schemaName = '';
+	protected $queryStr = '';
+	protected $storedProcedure = '';
 	protected $lastUploadDate;
-	protected $uploadType;
-	private $securityKey;
+	protected $uploadType = '';
+	private $securityKey = '';
 	protected $paleoSupport = false;
 	protected $materialSampleSupport = false;
 

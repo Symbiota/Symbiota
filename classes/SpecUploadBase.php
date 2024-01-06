@@ -629,9 +629,9 @@ class SpecUploadBase extends SpecUpload{
 			'WHERE u.collid IN('.$this->collId.') AND u.endDayOfYear IS NULL AND u.eventDate2 IS NOT NULL';
 		$this->conn->query($sql);
 
-		$sql = 'UPDATE IGNORE uploadspectemp u '.
-			'SET u.eventDate = CONCAT_WS("-",LPAD(u.year,4,"19"),IFNULL(LPAD(u.month,2,"0"),"00"),IFNULL(LPAD(u.day,2,"0"),"00")) '.
-			'WHERE (u.eventDate IS NULL) AND (u.year > 1300) AND (u.year <= '.date('Y').') AND (collid = IN('.$this->collId.'))';
+		$sql = 'UPDATE IGNORE uploadspectemp u
+			SET u.eventDate = CONCAT_WS("-",LPAD(u.year,4,"19"),IFNULL(LPAD(u.month,2,"0"),"00"),IFNULL(LPAD(u.day,2,"0"),"00"))
+			WHERE (u.eventDate IS NULL) AND (u.year > 1300) AND (u.year <= '.date('Y').') AND (collid IN('.$this->collId.'))';
 		$this->conn->query($sql);
 
 		$this->outputMsg('<li style="margin-left:10px;">Cleaning country and state/province ...</li>');
@@ -1591,7 +1591,7 @@ class SpecUploadBase extends SpecUpload{
 				$this->outputMsg('<li>Error JSON encoding material sample data for record #'.$this->transferCount.'</li>');
 				$this->outputMsg('<li style="margin-left:10px;">Error: '.$e->getMessage().'</li>');
 			}
-			
+
 
 			$sqlFragments = $this->getSqlFragments($recMap,$this->occurFieldMap);
 			if($sqlFragments){
