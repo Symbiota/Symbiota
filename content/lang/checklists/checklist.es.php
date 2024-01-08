@@ -33,6 +33,7 @@ $LANG['OGCHECK'] = 'Listado de Comprobaci&oacute;n Original';
 $LANG['NOTESVOUC'] = 'Notas &amp; Vouchers';
 $LANG['TAXONAUTHOR'] = 'Autores del Tax&oacute;n';
 $LANG['TAXONABC'] = 'Mostrar Taxa Alfab&eacute;ticamente';
+$LANG['SHOWSUBGENERA'] = 'Mostrar clasificación subgenérica dentro del nombre científico';
 $LANG['BUILD_LIST'] = 'Mostrar Lista';
 $LANG['DOWNLOAD_CHECKLIST'] = 'Descargar Lista';
 $LANG['PRINT_BROWSER'] = 'Imprimir';
@@ -70,6 +71,7 @@ $LANG['MORE'] = 'm&aacute;s';
 $LANG['LESS'] = 'menos';
 $LANG['NOTAXA'] = 'No se han encontrado Taxa';
 $LANG['CHECKNULL'] = 'ERROR: identificador de lista de Comprobación no válido';
+$LANG['IS_PRIVATE'] = 'Lista de verificación se define como privada';
 $LANG['DISPLAYNEXT'] = 'Mostrar Siguiente';
 $LANG['TAXA'] = 'taxa';
 $LANG['LOCALITY'] = 'Localidad';
@@ -100,5 +102,8 @@ $LANG['LINKED_IMG'] = 'sólo imágenes de vales vinculadas';
 $LANG['IMAGE_SRC'] = 'Fuente de la imagen';
 $LANG['ALL_IMG'] = 'todas las imágenes';
 $LANG['LINKED_IMG'] = 'sólo imágenes de vales vinculadas';
+
+//from dynamicchecklist.php
+$LANG['ERROR_GEN_CHECK'] = 'ERROR al generar lista';
 
 ?>

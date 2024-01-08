@@ -180,50 +180,6 @@ $(document).ready(function() {
 	});
 
 	//Misc fields with lookups
-	$("#ffcountry").autocomplete({
-		source: function( request, response ) {
-			$.getJSON( "rpc/lookupCountry.php", { term: request.term }, response );
-		},
-		minLength: 2,
-		autoFocus: true,
-		change: function(event, ui){
-			fieldChanged("country");
-		}
-	});
-
-	$("#ffstate").autocomplete({
-		source: function( request, response ) {
-			$.getJSON( "rpc/lookupState.php", { term: request.term, "country": editForm.country.value }, response );
-		},
-		minLength: 2,
-		autoFocus: true,
-		change: function(event, ui){
-			fieldChanged("stateprovince");
-		}
-	});
-
-	$("#ffcounty").autocomplete({ 
-		source: function( request, response ) {
-			$.getJSON( "rpc/lookupCounty.php", { term: request.term, "state": editForm.stateprovince.value }, response );
-		},
-		minLength: 2,
-		autoFocus: true,
-		change: function(event, ui){
-			fieldChanged("county");
-		}
-	});
-
-	$("#ffmunicipality").autocomplete({ 
-		source: function( request, response ) {
-			$.getJSON( "rpc/lookupMunicipality.php", { term: request.term, "state": editForm.stateprovince.value }, response );
-		},
-		minLength: 2,
-		autoFocus: true,
-		change: function(event, ui){
-			fieldChanged("municipality");
-		}
-	});
-	
 	$("textarea[name=associatedtaxa]").autocomplete({
 		source: function( request, response ) {
 			$.getJSON( "rpc/getspeciessuggest.php", { term: extractLast( request.term ) }, response );

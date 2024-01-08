@@ -244,7 +244,7 @@ class TaxonProfile extends Manager {
 		if($tidStr){
 			$sql = 'SELECT tm.url, t.sciname '.
 					'FROM taxamaps tm INNER JOIN taxa t ON tm.tid = t.tid '.
-					'WHERE (t.tid IN('.$tidStr.'))';
+					'WHERE (t.tid IN('.$tidStr.')) ORDER BY tm.initialtimestamp DESC';
 			//echo $sql;
 			$result = $this->conn->query($sql);
 			if($row = $result->fetch_object()){

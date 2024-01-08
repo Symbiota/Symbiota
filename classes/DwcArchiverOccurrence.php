@@ -1,4 +1,6 @@
 <?php
+// Only needed for symbiotaAssociations version number.
+include_once($SERVER_ROOT . '/classes/OccurrenceUtilities.php'); 
 class DwcArchiverOccurrence extends Manager{
 
 	private $occurDefArr = array();
@@ -352,7 +354,7 @@ class DwcArchiverOccurrence extends Manager{
 			$sqlFrag .= ', t.rankid';
 			$sql = 'SELECT DISTINCT '.trim($sqlFrag,', ');
 		}
-		$sql .= ' FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid '.
+		$sql .= ' FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid '.
 			'LEFT JOIN taxa t ON o.tidinterpreted = t.TID ';
 		if($this->includePaleo) $sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
 		//if($fullSql) $sql .= ' ORDER BY c.collid ';
@@ -413,6 +415,12 @@ class DwcArchiverOccurrence extends Manager{
 	}
 
 	public function getAssociationStr($occid){
+
+		// Return symbiotaAssociations JSON for the associatedOccurrences field instead of the text string generated below
+		// TODO: There is room for fine-tuning what conditions will return the JSON
+		// Seems like it should be turned on for schemaType == 'backup', but re-importing that backup currently fails
+		if ($this->schemaType == 'symbiota') return $this->getAssociationJSON($occid);
+
 		if(is_numeric($occid)){
 			$relOccidArr = array();
 			$assocArr = array();
@@ -488,6 +496,141 @@ class DwcArchiverOccurrence extends Manager{
 			}
 		}
 		return trim($retStr,' |');
+	}
+
+	// Function to return any associations as JSON for the associatedOccurrences field
+	public function getAssociationJSON($occid) {
+
+		if (is_numeric($occid)) {
+
+			// Build SQL to find any associations for the occurrence record passed with occid
+			$sql = 'SELECT occid, occidAssociate, relationship, subType, identifier,' .
+				'basisOfRecord, resourceUrl, verbatimSciname, locationOnHost ' .
+				'FROM omoccurassociations ' .
+				'WHERE (occid = '.$occid.' OR occidAssociate = '.$occid.') ';
+
+			if ($rs = $this->conn->query($sql)) {
+
+				// No associations, so just return an empty string, and quit the function
+				if (!$rs->num_rows) return '';
+
+				// Build verbatimText array
+				$verbatimText = array();
+				$verbatimText['type'] = 'verbatimText';
+				$verbatimText['verbatimText'] = '';
+
+				// Get any pre-existing contents of the associatedOccurrences field in omoccurrences
+				$sql = 'SELECT associatedOccurrences FROM omoccurrences WHERE occid = ' . $occid;
+				$rs1 = $this->conn->query($sql);
+				$r = $rs1->fetch_object();
+
+				// Check if the contents of the field already is JSON
+				if ($assocOccArr = json_decode($r->associatedOccurrences, true)) {
+
+					// There's already JSON here
+					// TODO: What should we do? Perform some checks?
+				} else {
+
+					// no JSON content, store what is already in associatedOccurrences in verbatimText array
+					$verbatimText['verbatimText'] = $r->associatedOccurrences != 'NULL' ? $r->associatedOccurrences : '';
+				}
+
+				$rs1->free();
+
+				// No associatedOccurrences array exists, so build one
+				if (!isset($assocOccArr)) {
+
+					// Build JSON array
+					$assocOccArr = array();
+
+					// Build symbiotaAssociations array
+					$symbiotaAssociations = array();
+					$symbiotaAssociations['type'] = 'symbiotaAssociations';
+					$symbiotaAssociations['version'] = OccurrenceUtilities::$assocOccurVersion;
+					$symbiotaAssociations['associations'] = array();
+
+					// Add the symbiotaAssociations array
+					array_push($assocOccArr, $symbiotaAssociations);
+
+					// Add the verbatimText array
+					array_push($assocOccArr, $verbatimText);
+				}
+
+				// Make an array to hold occurrence IDs that need an additional guid (internalOccurrences)
+				$relOccidArr = array();
+
+				// Get each associated occurrence
+				while ($assocArr = $rs->fetch_assoc()) {
+
+					// Filter out any empty fields
+					$assocArr = array_filter($assocArr);
+
+					// Set the association type field
+					if (array_key_exists('occidAssociate', $assocArr)) {
+						$assocArr['type'] = 'internalOccurrence';
+					} else if (array_key_exists('identifier', $assocArr) || array_key_exists('resourceUrl', $assocArr)) {
+						$assocArr['type'] = 'externalOccurrence';
+					} else if (array_key_exists('verbatimSciname', $assocArr)) {
+						$assocArr['type'] = 'genericObservation';
+					} else {
+						// Should not happen, but if so, this seems to be the best fit
+						$assocArr['type'] = 'genericObservation';
+					}
+
+					// Check for cases where the occidAssociate is this occid.
+					// In those cases, we need to switch the occid and occidAssociate and get the inverse relationship
+					if (array_key_exists('occidAssociate', $assocArr) && $assocArr['occidAssociate'] == $occid) {
+						$assocArr['occidAssociate'] = $assocArr['occid'];
+						$assocArr['relationship'] = $this->getInverseRelationship($assocArr['relationship']);
+					}
+
+					// remove occid key, no longer needed
+					unset($assocArr['occid']);
+
+					// Check if the associated occurrence is an internal occurrence
+					// If so, we need to flag this to add the GUID identifier & resource url, in case it gets imported in another portal
+					if (array_key_exists('occidAssociate', $assocArr)) {
+						array_push($relOccidArr, $assocArr['occidAssociate']);
+					}
+
+					// Add associated occurrence array to the full associatedOccurrences array
+					array_push($assocOccArr[0]['associations'], $assocArr);
+
+				}
+
+				// There are some associated occurrences with an internal occidAssociate
+				// For these, we need to get their guids and construct reference URLs, in case they become external references
+				if ($relOccidArr) {
+
+					// Get the server domain
+					$this->setServerDomain();
+
+					// Construct and run query to get guids from an array of occids
+					$sql = 'SELECT occid, guid as guid FROM guidoccurrences g WHERE occid IN(' . implode(',', $relOccidArr) . ')';
+					$rs = $this->conn->query($sql);
+
+					// Loop through each guid, and find the association with the matching occidAssociate
+					while ($r = $rs->fetch_object()) {
+						foreach ($assocOccArr[0]['associations'] as $index => $assocArr) {
+							if (array_key_exists('occidAssociate', $assocArr) && 
+								$assocOccArr[0]['associations'][$index]['occidAssociate'] == $r->occid) {
+
+								// Add the GUID as the identifier, and the resource URL in case this ends up being treated as an external resource
+								$assocOccArr[0]['associations'][$index]['identifier'] = $r->guid;
+								$assocOccArr[0]['associations'][$index]['resourceUrl'] = $this->serverDomain . $GLOBALS['CLIENT_ROOT'] . 
+									'/collections/individual/index.php?guid=' . $r->guid;
+							}
+						}
+					}
+				}
+
+				$rs->free();
+
+				// Return the full symbiotaAssociations array as JSON
+				// TODO: this is returning "null" for fields that are empty, like verbatimText.
+				return json_encode( $assocOccArr, JSON_UNESCAPED_SLASHES);
+			}
+		}
 	}
 
 	public function setIncludeAssociatedSequences(){

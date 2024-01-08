@@ -5,6 +5,8 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
 $pHandler = new ProfileManager();
 $isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
+$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
+$collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '/collections/search/index.php';
 ?>
 <div class="header-wrapper">
 	<header>
@@ -71,7 +73,7 @@ $isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
 						</a>
 					</li>
 					<li>
-						<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/index.php">
+						<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . $collectionSearchPage; ?>">
 							<?php echo (isset($LANG['H_COLLECTIONS'])?$LANG['H_COLLECTIONS']:'Collections'); ?>
 						</a>
 					</li>

@@ -302,7 +302,7 @@ if(!$zoomInt){
 					</div>
 				</form>
 			</div>
-			<div id='map_canvas' style='width:95%; height:650px; clear:both;'></div>
+			<div id='map_canvas' style='width:100%; height:650px; clear:both;'></div>
 		</div>
 	<?php
 	include_once($SERVER_ROOT.'/includes/footer.php');

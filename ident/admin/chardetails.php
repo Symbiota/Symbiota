@@ -5,10 +5,10 @@ header("Content-Type: text/html; charset=".$CHARSET);
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../ident/admin/index.php');
 
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
-$cid = array_key_exists('cid',$_REQUEST)?$_REQUEST['cid']:0;
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
-$langId = array_key_exists('langid',$_REQUEST)?$_REQUEST['langid']:'';
+$formSubmit = array_key_exists('formsubmit', $_POST) ? $_POST['formsubmit'] : '';
+$cid = array_key_exists('cid', $_REQUEST) ? filter_var($_REQUEST['cid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$langId = array_key_exists('langid', $_REQUEST) ? $_REQUEST['langid'] : '';
 
 $isEditor = false;
 if($IS_ADMIN || array_key_exists('KeyAdmin',$USER_RIGHTS)) $isEditor = true;
@@ -71,7 +71,7 @@ if(!$cid) header('Location: index.php');
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 	<title>Character Admin</title>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -269,7 +269,7 @@ if(!$cid) header('Location: index.php');
 			    <ul>
 					<li><a href="#chardetaildiv"><span>Details</span></a></li>
 					<li><a href="#charstatediv"><span>Character States</span></a></li>
-					<li><a href="taxonomylinkage.php?cid=<?php echo htmlspecialchars($cid, HTML_SPECIAL_CHARS_FLAGS); ?>"><span>Taxonomic Linkages</span></a></li>
+					<li><a href="taxonomylinkage.php?cid=<?php echo $cid; ?>"><span>Taxonomic Linkages</span></a></li>
 					<li><a href="#chardeldiv"><span>Admin</span></a></li>
 				</ul>
 				<div id="chardetaildiv">
@@ -322,20 +322,22 @@ if(!$cid) header('Location: index.php');
 								<b>Help URL</b><br />
 								<input type="text" name="helpurl" maxlength="500" style="width:80%;" value="<?php echo $charArr['helpurl']; ?>" />
 								<?php
-								if($charArr['helpurl'] && substr($charArr['helpurl'],0,4) == 'http') echo '<a href="' . htmlspecialchars($charArr['helpurl'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><img src="../../images/link2.png" style="width:15px" /></a>';
+								if($charArr['helpurl'] && substr($charArr['helpurl'],0,4) == 'http') echo '<a href="' . $charArr['helpurl'] . '" target="_blank"><img src="../../images/link2.png" style="width:15px" /></a>';
 								?>
 							</div>
 							<?php
-							$glossArr = $keyManager->getGlossaryList();
-							if($glossArr){
+							$glossaryArr = $keyManager->getGlossaryList();
+							if($glossaryArr){
 								?>
 								<div style="padding-top:8px;clear:both;">
 									<b>Glossary link</b><br />
 									<select name="glossid">
 										<option value="">------------------------</option>
 										<?php
-										foreach($glossArr as $glossID => $gArr){
-											echo '<option value="'.$glossID.'" '.($charArr['glossid']==$glossID?'selected':'').'>'.$gArr['term'].' ('.$gArr['lang'].')</option>';
+										foreach($glossaryArr as $glossArr){
+											foreach($glossArr as $glossID => $gArr){
+												echo '<option value="'.$glossID.'" '.($charArr['glossid']==$glossID?'selected':'').'>'.$gArr['term'].' ('.$gArr['lang'].')</option>';
+											}
 										}
 										?>
 									</select>
@@ -390,15 +392,17 @@ if(!$cid) header('Location: index.php');
 									<input type="text" name="description" maxlength="255" style="width:80%;" />
 								</div>
 								<?php
-								if($glossArr){
+								if($glossaryArr){
 									?>
 									<div style="padding-top:8px;clear:both;">
 										<b>Glossary link</b><br />
 										<select name="glossid">
 											<option value="">------------------------</option>
 											<?php
-											foreach($glossArr as $glossID => $gArr){
-												echo '<option value="'.$glossID.'">'.$gArr['term'].' ('.$gArr['lang'].')</option>';
+											foreach($glossaryArr as $glossArr){
+												foreach($glossArr as $glossID => $gArr){
+													echo '<option value="'.$glossID.'">'.$gArr['term'].' ('.$gArr['lang'].')</option>';
+												}
 											}
 											?>
 										</select>
@@ -452,15 +456,17 @@ if(!$cid) header('Location: index.php');
 												<input type="text" name="description" maxlength="255" style="width:80%;" value="<?php echo $stateArr['description']; ?>"/>
 											</div>
 											<?php
-											if($glossArr){
+											if($glossaryArr){
 												?>
 												<div style="padding-top:8px;clear:both;">
 													<b>Glossary link</b><br />
 													<select name="glossid">
 														<option value="">------------------------</option>
 														<?php
-														foreach($glossArr as $glossID => $gArr){
-															echo '<option value="'.$glossID.'" '.($stateArr['glossid']==$glossID?'selected':'').'>'.$gArr['term'].' ('.$gArr['lang'].')</option>';
+														foreach($glossaryArr as $glossArr){
+															foreach($glossArr as $glossID => $gArr){
+																echo '<option value="'.$glossID.'" '.($stateArr['glossid']==$glossID?'selected':'').'>'.$gArr['term'].' ('.$gArr['lang'].')</option>';
+															}
 														}
 														?>
 													</select>
@@ -498,7 +504,7 @@ if(!$cid) header('Location: index.php');
 										if(isset($stateArr['csimgid'])){
 											?>
 											<div style="padding-top:2px;">
-												<a href="<?php echo htmlspecialchars($stateArr['url'], HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><img src="<?php echo htmlspecialchars($stateArr['url'], HTML_SPECIAL_CHARS_FLAGS); ?>" style="width:200px;" /></a>
+												<a href="<?php echo $stateArr['url']; ?>" target="_blank"><img src="<?php echo $stateArr['url']; ?>" style="width:200px;" /></a>
 											</div>
 											<form name="stateillustdelform-<?php echo $stateArr['csimgid']; ?>" action="chardetails.php" method="post" onsubmit="return verifyStateIllustDelForm(this)" >
 												<div style="margin:10px;">

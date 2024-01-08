@@ -6,6 +6,7 @@ include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrencetabledisplay.'.$LANG_TAG.'.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 
+
 $collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:false;
 $recLimit = array_key_exists('reclimit',$_REQUEST)?$_REQUEST['reclimit']:1000;
 $occIndex = array_key_exists('occindex',$_REQUEST)?$_REQUEST['occindex']:0;

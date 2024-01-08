@@ -149,7 +149,14 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 		<!-- This is inner text! -->
 		<div id="innertext">
 			<h2><?= $importManager->getCollMeta('collName').' '.$LANG['DATA_IMPORTER']; ?></h2>
-			<div class="pageDescription-div">For more information, see <a href="">import instructions</a></div>
+			<div class="pageDescription-div">
+				<?= $LANG['INSTRUCTIONS'] ?>:
+				<ul>
+					<li><a href="https://biokic.github.io/symbiota-docs/coll_manager/upload/links" target="_blank"><?= $LANG['ASSOCIATIONS'] ?></a></li>
+					<?php if($IS_ADMIN) echo '<li><a href="https://biokic.github.io/symbiota-docs/coll_manager/upload/determinations" target="_blank">'.$LANG['DETERMINATIONS'].'</a></li>'; ?>
+					<li><a href="https://biokic.github.io/symbiota-docs/coll_manager/images/url_upload" target="_blank"><?= $LANG['IMAGE_URLS'] ?></a></li>
+				</ul>
+			</div>
 			<?php
 			if(!$isEditor){
 				echo '<h2>ERROR: not authorized to access this page</h2>';
@@ -269,12 +276,10 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 								<label for="associationType"><?= $LANG['ASSOCIATION_TYPE'] ?>: </label>
 								<select name="associationType">
 									<option value="">-------------------</option>
-									<?php
-									$assocTypeArr = $importManager->getControlledVocabulary('omoccurassociations', 'associationType');
-									foreach($assocTypeArr as $term => $display){
-										echo '<option value="'.$term.'">'.$display.'</option>';
-									}
-									?>
+									<option value="resource"><?= $LANG['RESOURCE_LINK'] ?></option>
+									<option value="internalOccurrence"><?= $LANG['INTERNAL_OCCURRENCE'] ?></option>
+									<option value="externalOccurrence"><?= $LANG['EXTERNAL_OCCURRENCE'] ?></option>
+									<option value="observational"><?= $LANG['OBSERVATION'] ?></option>
 								</select>
 							</div>
 							<div class="formField-div">

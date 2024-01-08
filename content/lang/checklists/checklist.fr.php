@@ -33,6 +33,7 @@ $LANG['OGCHECK'] = 'Liste Originale';
 $LANG['NOTESVOUC'] = 'Notes &amp; &Eacute;chantillons';
 $LANG['TAXONAUTHOR'] = 'Auteurs de Taxon';
 $LANG['TAXONABC'] = 'Afficher Taxons par ordre Alphab&eacute;tique';
+$LANG['SHOWSUBGENERA'] = 'Afficher le classement sous-générique dans le nom scientifique';
 $LANG['BUILD_LIST'] = 'Construire Liste';
 $LANG['DOWNLOAD_CHECKLIST'] = 'T&eacute;l&eacute;charger Liste';
 $LANG['PRINT_BROWSER'] = 'Imprimer dans Navigateur';
@@ -70,6 +71,7 @@ $LANG['MORE'] = 'plus';
 $LANG['LESS'] = 'moins';
 $LANG['NOTAXA'] = 'Aucun Taxa Trouv&eacute;s';
 $LANG['CHECKNULL'] = 'ERREUR: identifiant de liste invalide';
+$LANG['IS_PRIVATE'] = 'La liste de contrôle est définie comme privée';
 $LANG['DISPLAYNEXT'] = 'Afficher Prochain';
 $LANG['TAXA'] = 'taxa';
 $LANG['LOCALITY'] = 'Localit&eacute;';
@@ -97,5 +99,8 @@ $LANG['SKIP_LINK'] = 'Passer à la liste des taxons';
 $LANG['IMAGE_SRC'] = 'Source de l\'image';
 $LANG['ALL_IMG'] = 'toutes les images';
 $LANG['LINKED_IMG'] = 'images de bons liés uniquement';
+
+//from dynamicchecklist.php
+$LANG['ERROR_GEN_CHECK'] = 'ERREUR lors de la génération de la liste';
 
 ?>

@@ -10,6 +10,8 @@ $latDef = array_key_exists("latdef",$_REQUEST)?$_REQUEST["latdef"]:'';
 $lngDef = array_key_exists("lngdef",$_REQUEST)?$_REQUEST["lngdef"]:'';
 $zoom = array_key_exists("zoom",$_REQUEST)&&$_REQUEST["zoom"]?$_REQUEST["zoom"]:5;
 $mapMode = array_key_exists("mapmode",$_REQUEST)?$_REQUEST["mapmode"]:'';
+$mapModeStrict = array_key_exists("map_mode_strict",$_REQUEST)?$_REQUEST["map_mode_strict"]:false;
+$wktInputId = array_key_exists("wkt_input_id", $_REQUEST)?$_REQUEST["wkt_input_id"]:"footprintwkt";
 
 $clManager = new ChecklistAdmin();
 $clManager->setClid($clid);
@@ -62,10 +64,12 @@ else{
   image-rendering: pixelated; ">
 
 		<div style="float:right;margin-top:5px;margin-right:15px;">
-			<button name="closebutton" type="button" onclick="self.close()">Save and Close</button>
+         <button name="closebutton" type="button" onclick="self.close()">
+            <?php echo isset($LANG['SAVE_N_CLOSE'])? $LANG['SAVE_N_CLOSE'] :'Save and Close'?>
+         </button>
+         <?php echo isset($LANG['COORD_AID_HELP_TEXT'])? $LANG['COORD_AID_HELP_TEXT'] :'Click the map to start drawing or select from the shape controls to draw bounds of that shape'?>
 		</div>
 		<div id="helptext">
-			Click on shape symbol to create a rectangle, circle, or polygon.<br/>Close mapping tool to transfer shape definition to search form.
 		</div>
       <div id="map"></div>
       <script>
@@ -103,6 +107,7 @@ else{
       const MILEStoKM = 1.60934;
       const KMtoM = 1000; 
       const SIG_FIGS = 6;
+      const wktInputId = "<?= $wktInputId?>";
 
       const setField = (id, v) => {
          var elem = opener.document.getElementById(id);
@@ -146,7 +151,7 @@ else{
       }
 
       function setPolygon(wkt) {
-         setField("footprintwkt", wkt);
+         setField(wktInputId, wkt);
       }
 
       /* setShapeToSearchForm: 
@@ -163,7 +168,7 @@ else{
          setField("radius", "");
          setField("radiusunits", "");
 
-         setField("footprintwkt", "");
+         setField(wktInputId, "");
 
          setField("upperlat", "");
          setField("bottomlat", "");
@@ -198,16 +203,15 @@ else{
       function loadShape(mapMode) {
          switch(mapMode) {
             case "polygon":
-               let origFootprintWkt = getField("footprintwkt");
+               let origFootprintWkt = getField(wktInputId);
                try {
                   let polyPoints = parseWkt(origFootprintWkt);
-                  console.log(polyPoints)
                   if(polyPoints) {
-                     return { type: "polygon", latlngs: polyPoints, wkt: getField("footprintwkt")};
+                     return { type: "polygon", latlngs: polyPoints, wkt: getField(wktInputId)};
                   }
                } catch(e) {
                   alert(e.message);
-						opener.document.getElementById("footprintwkt").value = origFootprintWkt;
+						opener.document.getElementById(wktInputId).value = origFootprintWkt;
                }
             break;
             case "rectangle":
@@ -251,16 +255,21 @@ else{
          } 
       }
       let formShape = loadShape("<?php echo $mapMode?>");
+      let mapModeStrict = <?php echo $mapModeStrict? "true": "false"?>;
       function leafletInit() {
          const MapOptions = {
             center: [<?php echo $latCenter?>, <?php echo $lngCenter?>],
-            zoom: <?php echo $zoom?>
+            zoom: <?php echo $zoom?>,
+				lang: "<?php echo $LANG_TAG; ?>"
          };
 
          let map = new LeafletMap('map', MapOptions );
+         let mode = "<?php echo $mapMode?>";
 
          map.enableDrawing({
             polyline: false,
+            mode: "<?php echo $mapMode?>",
+            map_mode_strict: mapModeStrict,
             circlemarker: false,
             marker: false,
             drawColor: {opacity: 0.85, fillOpacity: 0.55, color: '#000' }
@@ -280,7 +289,10 @@ else{
 			};
 
          let map = new GoogleMap('map', MapOptions)
-         map.enableDrawing({mapMode: "<?php echo $mapMode?>"}, setShapeToSearchForm);
+         map.enableDrawing({
+            mode: "<?php echo $mapMode?>",
+            map_mode_strict: mapModeStrict
+         }, setShapeToSearchForm);
 
          if(formShape) 
             map.drawShape(formShape, setShapeToSearchForm)

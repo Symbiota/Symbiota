@@ -33,7 +33,7 @@ class ImageLibraryBrowser extends OccurrenceTaxaManager{
 	public function getGenusList($taxon = ''){
 		$retArr = array();
 		$sql = 'SELECT DISTINCT t.UnitName1 '.$this->getListSql().' ';
-		if($taxon) $sql .= 'AND (ts.Family = "'.$this->cleanInStr($taxon).'") ';
+		if($taxon) $sql .= 'AND (ts.Family = "'.$this->cleanInputStr($taxon).'") ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr[] = $r->UnitName1;
@@ -46,7 +46,8 @@ class ImageLibraryBrowser extends OccurrenceTaxaManager{
 	public function getSpeciesList($taxon = ''){
 		$retArr = Array();
 		$tidArr = Array();
-		$taxon = $this->cleanInStr(trim($taxon,' %'));
+		$taxon = $this->cleanInputStr($taxon);
+		$taxon = trim($taxon,' %');
 		if($taxon){
 			$this->setTaxonRequestVariable(array('taxa'=>$taxon,'usethes'=>1,'taxontype'=>2));
 			foreach($this->taxaArr['taxa'] as $taxName => $taxArr){

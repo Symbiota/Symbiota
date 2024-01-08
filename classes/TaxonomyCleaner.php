@@ -1,5 +1,4 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
 include_once($SERVER_ROOT.'/classes/Manager.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyHarvester.php');
@@ -283,7 +282,7 @@ class TaxonomyCleaner extends Manager{
 		$sql = 'UPDATE taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
 			'INNER JOIN taxa t2 ON e.parenttid = t2.tid '.
 			'SET t.kingdomname = t2.sciname '.
-			'WHERE (e.taxauthid = '.$this->taxAuthId.') AND (t2.rankid = 10) AND (t.kingdomName IS NULL)';
+			'WHERE (e.taxauthid = '.$this->taxAuthId.') AND (t2.rankid = 10) AND (t.kingdomName = "")';
 		if($this->conn->query($sql)){
 			$this->logOrEcho('Populating null kingdom name tags... '.$this->conn->affected_rows.' taxon records updated', 1);
 		}
@@ -308,7 +307,7 @@ class TaxonomyCleaner extends Manager{
 		ob_flush();
 
 		$occurMaintenance = new OccurrenceMaintenance($this->conn);
-		$occurMaintenance->setCollidStr($this->collid);
+		//$occurMaintenance->setCollidStr($this->collid);
 		$occurMaintenance->setVerbose(true);
 		$occurMaintenance->generalOccurrenceCleaning();
 	}
@@ -721,7 +720,7 @@ class TaxonomyCleaner extends Manager{
 					}
 				}
 			}
-			if($this->targetKingdomName) $sql .= 'AND (kingdomname IS NULL OR kingdomname = "'.targetKingdomName.'") ';
+			if($this->targetKingdomName) $sql .= 'AND (kingdomname = "" OR kingdomname = "'.targetKingdomName.'") ';
 			$sql .= 'LIMIT 30';
 			//echo $sql;
 			$rs = $this->conn->query($sql);

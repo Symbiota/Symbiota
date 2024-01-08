@@ -17,12 +17,13 @@ $LANG['NEED_CAT'] = 'ERROR: subject catalogNumber, occurrenceID, or otherCatalog
 $LANG['SELECT_RELATIONSHIP'] = 'Select a Relationship (required)';
 $LANG['COLLECTION_MENU'] = 'Collection Management Menu';
 $LANG['DATA_IMPORTER'] = 'Extended Data Importer';
+$LANG['INSTRUCTIONS'] = 'Batch upload instructions and mapping details';
+$LANG['IMAGE_URLS'] = 'Image URLs';
 $LANG['ACTION_PANEL'] = 'Action Panel';
 $LANG['STARTING_PROCESS'] = 'Starting to process input file';
 $LANG['DONE_PROCESSING'] = 'Done process input file';
 $LANG['FIELD_MAPPING'] = 'Field Mapping';
-$LANG['ASSOCIATION_TYPE'] = 'Association Type';
-$LANG['RELATIONSHIP'] = 'Relationship';
+
 $LANG['NEW_BLANK_RECORD'] = 'Link image to new blank record if catalog number does not exist';
 $LANG['MATCHING_IDENTIFIERS'] = 'Update records with matching &quot;identifiers&quot';
 $LANG['IMPORT_DATA'] = 'Import Data';
@@ -41,4 +42,6 @@ $LANG['ASSOC_UPDATED'] = 'Association updated';
 $LANG['ASSOC_ADDED'] = 'Association added';
 $LANG['MAT_SAMPLE_ADDED'] = 'Material Sample added';
 $LANG['DETERMINATION_ADDED'] = 'Determination added';
+
+inlcude_once('../associations.en.php');
 ?>

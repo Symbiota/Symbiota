@@ -3,12 +3,18 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCollectionProfile.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 unset($_SESSION['editorquery']);
 
 $collManager = new OccurrenceCollectionProfile();
 
 $collid = isset($_REQUEST['collid']) ? $collManager->sanitizeInt($_REQUEST['collid']) : 0;
+$occIndex = array_key_exists('occindex',$_REQUEST)?$_REQUEST['occindex']:0;
+$SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ?? false;
+$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
+$actionPage = $SHOULD_USE_HARVESTPARAMS ? ($CLIENT_ROOT . "/collections/harvestparams.php") : ($CLIENT_ROOT . "/collections/search/index.php");
+
 $action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
 $eMode = array_key_exists('emode', $_REQUEST) ? $collManager->sanitizeInt($_REQUEST['emode']) : 0;
 
@@ -70,7 +76,22 @@ if ($SYMB_UID) {
 				console.log(err);
 			}
 		}
-		
+
+		function processEditQuickSearch(clientRoot){
+			const collId = document?.forms['quicksearch']['collid']?.value || null;
+			const catNum = document?.forms['quicksearch']['catalog-number']?.value || null;
+			const taxon = document?.forms['quicksearch']['taxon-search']?.value || null;
+			if(collId){
+				let redirectUrl = clientRoot + '/collections/editor/occurrencetabledisplay.php?displayquery=1&collid=' + encodeURIComponent(collId);
+				if(catNum){
+					redirectUrl = clientRoot + '/collections/editor/occurrenceeditor.php?q_customfield1=catalogNumber&q_customtype1=EQUALS&q_customvalue1=' + encodeURIComponent(catNum) + '&q_customandor2=OR&q_customfield2=otherCatalogNumbers&q_customtype2=EQUALS&q_customvalue2=' + encodeURIComponent(catNum) + '&collid=' + encodeURIComponent(collId) + '&displayquery=1&occindex=0&reset=1';
+				}
+				if(taxon && !catNum){
+					redirectUrl = clientRoot + '/collections/editor/occurrenceeditor.php?q_customfield1=sciname&q_customtype1=STARTS&q_customvalue1=' + encodeURIComponent(taxon) + '&collid=' + encodeURIComponent(collId) + '&displayquery=1&occindex=0&reset=1';
+				}
+				window.location.href = redirectUrl;
+			}
+		}
 	</script>
 	<style type="text/css">
 		.importItem { margin-left:10px; display:none; }
@@ -91,8 +112,8 @@ if ($SYMB_UID) {
 	<div id="innertext">
 		<section id="tabs" class="fieldset-like no-left-margin" style="float: right;">
 			<h1><span><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></span></h1>
-			<form name="quicksearch" action="javascript:void(0);" onsubmit="submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includeothercatnum=1', '&usethes=1&taxontype=2 '); return false;">
-				<div id="dialogContainer" style="position: relative;">
+			<div id="dialogContainer" style="position: relative;">
+				<form name="quicksearch" action="javascript:void(0);" onsubmit="processEditQuickSearch('<?php echo $CLIENT_ROOT ?>')">
 					<label for="catalog-number"><?php echo (isset($LANG['OCCURENCE_IDENTIFIER']) ? $LANG['OCCURENCE_IDENTIFIER'] : 'Catalog Number'); ?></label>
 					<span class="skip-link">
 						<?php
@@ -115,11 +136,23 @@ if ($SYMB_UID) {
 					<label for="taxon-search"><?php echo (isset($LANG['TAXON']) ? $LANG['TAXON'] : 'Taxon'); ?></label>
 					<input name="taxon-search" id="taxon-search" type="text" />
 					<br>
-					<button type="submit" id="search-by-catalog-number-btn" title="<?php echo (isset($LANG['IIDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Occurrence ID and Record ID also accepted.'); ?>">
+					<?php 
+						if($editCode == 1 || $editCode == 2 || $editCode == 3){
+					?>
+						<button type="submit" id="search-by-catalog-number-admin-btn"; ?>
+							<?php echo (isset($LANG['OCCURRENCE_EDITOR']) ? $LANG['OCCURRENCE_EDITOR'] : 'Edit'); ?>
+						</button>
+					<?php 
+						}
+					?>
+					
+				</form>
+				<form name="quicksearch" action="javascript:void(0);" onsubmit="submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&includeothercatnum=1', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&usethes=1&taxontype=2 '); return false;">
+					<button class="top-breathing-room-rel" type="submit" id="search-by-catalog-number-btn" title="<?php echo (isset($LANG['IDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Occurrence ID and Record ID also accepted.'); ?>">
 						<?php echo (isset($LANG['SEARCH']) ? $LANG['SEARCH'] : 'Search'); ?>
 					</button>
-				</div>
-			</form>
+				</form>
+			</div>
 		</section>
 		<?php
 		if ($editCode > 1) {
@@ -569,9 +602,12 @@ if ($SYMB_UID) {
 			include('collprofilestats.php');
 			?>
 			<div style="margin-bottom: 2rem;">
-				<span class="button button-primary">
-					<a id="advanced-search" href="<?php echo $CLIENT_ROOT?>/collections/harvestparams.php?db=<?php echo $collid ?>" ><?php echo (isset($LANG['ADVANCED_SEARCH_THIS_COLLECTION'])?$LANG['ADVANCED_SEARCH_THIS_COLLECTION']:'Advanced Search this Collection'); ?></a>
-				</span>
+			<form action="<?php echo $actionPage ?>">
+				<input hidden id="'<?php 'coll-' . $collid . '-' ?>'" name="db[]" class="specobs" value='<?php echo $collid ?>' type="checkbox" onclick="selectAll(this);" checked />
+				<button type="submit" class="button button-primary">
+					<?php echo (isset($LANG['ADVANCED_SEARCH_THIS_COLLECTION'])?$LANG['ADVANCED_SEARCH_THIS_COLLECTION']:'Advanced Search this Collection'); ?>
+				</button>
+			</form>
 			</div>
 			<div>
 				<span class="button button-primary">
@@ -655,7 +691,6 @@ if ($SYMB_UID) {
 
 		showDialogLink.addEventListener('click', (e) => {
 			e.preventDefault();
-			console.log('deleteMe got here');
 			dialogEl.showModal();
 
 			dialogContainer.style.position = 'relative';

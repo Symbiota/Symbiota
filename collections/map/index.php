@@ -5,6 +5,7 @@ include_once($SERVER_ROOT.'/content/lang/collections/map/index.'.$LANG_TAG.'.php
 include_once($SERVER_ROOT.'/classes/OccurrenceMapManager.php');
 
 header('Content-Type: text/html; charset='.$CHARSET);
+header("Accept-Encoding: gzip, deflate, br");
 ob_start('ob_gzhandler');
 ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 
@@ -165,7 +166,7 @@ foreach ($coordArr as $collName => $coll) {
 			resize: horizontal;
 			border-left: 2px, solid, black;
 			height: 100%;
-			width: 380;
+			width: 390px;
 			position: fixed;
 			z-index: 20;
 			top: 0;
@@ -309,7 +310,15 @@ foreach ($coordArr as $collName => $coll) {
 			setTimeout(function () { newWindow.focus(); }, 0.5);
 		}
 
-		function buildPanels() {
+		function buildPanels(cross_portal_enabled) {
+         const cross_portal_results = document.getElementById("cross_portal_results");
+         if(cross_portal_results) {
+            if(cross_portal_enabled) {
+               cross_portal_results.style.display = "block";
+            } else {
+               cross_portal_results.style.display = "none";
+            }
+         }
 			setPanels(true);
 			$("#accordion").accordion("option",{active: 1});
 			buildTaxaLegend();
@@ -505,12 +514,14 @@ value="${color}"
 				}
 			})
 
-			let map = new LeafletMap('map')
+         let map = new LeafletMap('map', {
+            lang: "<?php echo $LANG_TAG; ?>"
+         })
 			map.enableDrawing({
 				polyline: false,
 				circlemarker: false,
 				marker: false,
-				drawColor: {opacity: 0.85, fillOpacity: 0.55, color: '#000' }
+				drawColor: {opacity: 0.85, fillOpacity: 0.55, color: '#000' },
 			}, setQueryShape);
 
 			let cluster = L.markerClusterGroup();
@@ -560,6 +571,7 @@ value="${color}"
 							this.layer_groups[id].addTo(map.mapLayer);
 						} else if(!map.mapLayer.hasLayer(this.group_map[id].cluster)) {
 							this.group_map[id].cluster.addTo(map.mapLayer)
+							this.group_map[id].cluster.addLayer(this.layer_groups[id])
 						}
 					}
 				}
@@ -747,10 +759,10 @@ value="${color}"
 
 
 			document.getElementById("mapsearchform").addEventListener('submit', async e => {
+				if(!verifyCollForm(e.target)) return;
 				showWorking();
 				e.preventDefault();
 				let formData = new FormData(e.target);
-
 
 				mapGroups.forEach(group => {
 					group.taxonMapGroup.resetGroup();
@@ -765,11 +777,18 @@ value="${color}"
 
 				let searches = [
 					searchCollections(formData),
-				]
+            ]
 
-				for(let host of externalPortalHosts) {
-					searches.push(searchCollections(formData, host))
-				}
+            //If Cross Portal Checkbox Enabled add cross portal search
+            if(formData.get('cross_portal_switch') && formData.get('cross_portal')) {
+               formData.set("taxa", formData.get('external-taxa-input')) 
+               searches.push(searchCollections(formData, formData.get('cross_portal')))
+
+               getOccurenceRecords(formData, formData.get('cross_portal')).then(res => {
+                  if (res) loadOccurenceRecords(res, "external_occurrencelist");
+               });
+               
+            }
 
 				//This is for handeling multiple portals
 				searches = await Promise.all(searches)
@@ -782,9 +801,9 @@ value="${color}"
 						recordArr = recordArr.concat(search.recordArr)
 						mapGroups.push(genMapGroups(search.recordArr, search.taxaArr, search.collArr))
 					}
-				}
+            }
 
-				buildPanels();
+				buildPanels(formData.get('cross_portal_switch'));
 
 				genClusters(taxaLegendMap, "taxa");
 				genClusters(collLegendMap, "coll");
@@ -830,9 +849,9 @@ value="${color}"
 				const {type, colorMap} = e.detail;
 
 				mapGroups.map(group => {
-					if(cluster_type === "coll" && type === "taxa") {
+					if(cluster_type === "coll") {
 						group.collectionMapGroup.removeGroup();
-					} else if(cluster_type === "taxa" && type === "coll") {
+					} else if(cluster_type === "taxa") {
 						group.taxonMapGroup.removeGroup();
 					}
 				})
@@ -897,7 +916,7 @@ value="${color}"
 
 				getOccurenceRecords(formData).then(res => {
 					if(res) loadOccurenceRecords(res);
-					buildPanels();
+					buildPanels(formData.get('cross_portal_switch'));
 
 					genClusters(taxaLegendMap, "taxa");
 					genClusters(collLegendMap, "coll");
@@ -1156,6 +1175,8 @@ value="${color}"
 			}
 
 			document.getElementById("mapsearchform").addEventListener('submit', async e => {
+				if(!verifyCollForm(e.target)) return;
+
 				showWorking();
 				e.preventDefault();
 				let formData = new FormData(e.target);
@@ -1176,11 +1197,17 @@ value="${color}"
 
 				let searches = [
 					searchCollections(formData),
-				]
+            ]
 
-				for(let host of externalPortalHosts) {
-					searches.push(searchCollections(formData, host))
-				}
+            //If Cross Portal Checkbox Enabled add cross portal search
+            if(formData.get('cross_portal_switch') && formData.get('cross_portal')) {
+               formData.set("taxa", formData.get('external-taxa-input')) 
+               searches.push(searchCollections(formData, formData.get('cross_portal')))
+
+               getOccurenceRecords(formData, formData.get('cross_portal')).then(res => {
+                  if (res) loadOccurenceRecords(res, "external_occurrencelist");
+               });
+            }
 
 				//This is for handeling multiple portals
 				searches = await Promise.all(searches)
@@ -1190,7 +1217,7 @@ value="${color}"
 					mapGroups.push(genGroups(search.recordArr, search.taxaArr, search.collArr));
 				}
 
-				buildPanels();
+				buildPanels(formData.get('cross_portal_switch'));
 
 				//Must have build panels called b4 
 				genClusters(taxaLegendMap, "taxa");
@@ -1339,7 +1366,7 @@ value="${color}"
 
 				getOccurenceRecords(formData).then(res => {
 					if(res) loadOccurenceRecords(res);
-					buildPanels();
+					buildPanels(formData.get('cross_portal_switch'));
 
 					genClusters(taxaLegendMap, "taxa");
 					genClusters(collLegendMap, "coll");
@@ -1366,16 +1393,12 @@ value="${color}"
 
 		async function searchCollections(body, host) {
 			try {
-				const url = host? `${host}/collections/map/rpc/searchcollections.php`: 'rpc/searchcollections.php'
+				const url = host? `${host}/collections/map/rpc/searchCollections.php`: 'rpc/searchCollections.php'
 
 				let response = await fetch(url, {
 					method: "POST",
-					credentials: "omit",
 					mode: "cors",
 					body: body,
-					headers: {
-						"Access-Control-Allow-Origin": "*"
-					}
 				});
 				return response? await response.json(): { taxaArr: [], collArr: [], recordArr: [] };
 			} catch(e) {
@@ -1385,7 +1408,7 @@ value="${color}"
 
 		async function getOccurenceRecords(body, host) {
 			const url = host? `${host}/collections/map/occurrencelist.php`: 'occurrencelist.php'
-			let response = await fetch('occurrencelist.php', {
+			let response = await fetch(url, {
 				method: "POST",
 				credentials: "same-origin",
 				body: body 
@@ -1394,16 +1417,15 @@ value="${color}"
 			return response? await response.text(): '';
 		}
 
-		function loadOccurenceRecords(html) {
-			document.getElementById("occurrencelist").innerHTML = html;
-
+		function loadOccurenceRecords(html, id="occurrencelist") {
+			document.getElementById(id).innerHTML = html;
 			$('.pagination a').click(async function(e){
 				e.preventDefault();
 				let response = await fetch(e.target.href, {
 					method: "GET",
 					credentials: "same-origin",
 				})
-				loadOccurenceRecords(await response.text())
+				loadOccurenceRecords(await response.text(), id)
 				return false;
 			});
 		}
@@ -1542,11 +1564,11 @@ value="${color}"
 				alert("Failed to initialize map coordinate data")
 			}
 
-			<?php if(empty($GOOGLE_MAP_KEY)) { ?> 
+			<?php if(empty($GOOGLE_MAP_KEY)): ?> 
 				leafletInit();
-			<?php } else { ?> 
-			googleInit();
-		<?php } ?>
+			<?php else: ?> 
+				googleInit();
+			<?php endif?>
 	  }
 		</script>
 		<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
@@ -1565,7 +1587,8 @@ value="${color}"
 		<div>
 			<button onclick="document.getElementById('defaultpanel').style.width='380px';  " style="position:absolute;top:0;left:0;margin:0px;z-index:10;font-size: 14px;">&#9776; <b>Open Search Panel</b></button>
 		</div>
-		<div id="defaultpanel" class="sidepanel" style="width:380px">
+		<div id='map' style='width:100vw;height:100vh;z-index:1'></div>
+		<div id="defaultpanel" class="sidepanel" style="width:390px">
 			<div class="panel-content">
 				<span style="position:absolute; top:0.7rem; right:0.7rem; z-index:1">
 					<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php">
@@ -1576,8 +1599,8 @@ value="${color}"
 				<div id="mapinterface">
 					<div id="accordion">
 						<h3 style="padding-left:30px;"><?php echo (isset($LANG['SEARCH_CRITERIA'])?$LANG['SEARCH_CRITERIA']:'Search Criteria and Options'); ?></h3>
-						<div id="tabs1" style="width:379px;padding:0px;height:100%">
-							<form name="mapsearchform" id="mapsearchform" data-ajax="false" action="search.php" method="post" onsubmit="return verifyCollForm(this);">
+						<div id="tabs1" style="padding:0px;height:100%">
+							<form name="mapsearchform" id="mapsearchform" data-ajax="false">
 								<ul>
 									<li><a href="#searchcollections"><span><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
 									<li><a href="#searchcriteria"><span><?php echo htmlspecialchars((isset($LANG['CRITERIA'])?$LANG['CRITERIA']:'Criteria'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
@@ -1661,6 +1684,11 @@ Record Limit:
 										</div>
 									</div>
 									<div style="margin:5 0 5 0;"><hr /></div>
+
+									<?php if(!empty($ENABLE_CROSS_PORTAL)): ?>
+									<?php include('./portalSelector.php')?>
+									<div style="margin:5 0 5 0;"><hr /></div>
+									<?php endif ?>
 									<?php
 									if($mapManager->getSearchTerm('clid')){
 									?>
@@ -1817,19 +1845,22 @@ Record Limit:
 							</form>
 						</div>
 						<h3 id="recordstaxaheader" style="display:none;padding-left:30px;"><?php echo (isset($LANG['RECORDS_TAXA'])?$LANG['RECORDS_TAXA']:'Records and Taxa'); ?></h3>
-						<div id="tabs2" style="display:none;width:379px;padding:0px;">
+						<div id="tabs2" style="display:none;padding:0px;">
 							<ul>
 								<li><a href='#occurrencelist'><span><?php echo htmlspecialchars((isset($LANG['RECORDS'])?$LANG['RECORDS']:'Records'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
+								<li id="cross_portal_results"><a href='#external_occurrencelist'><span><?php echo htmlspecialchars((isset($LANG['EXTERNAL_RECORDS'])?$LANG['EXTERNAL_RECORDS']:'External Records'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
 							<li><a href='#symbology'><span><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
 								<li><a href='#maptaxalist'><span><?php echo htmlspecialchars((isset($LANG['TAXA_LIST'])?$LANG['TAXA_LIST']:'Taxa List'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
 							</ul>
 							<div id="occurrencelist" style="">
 								loading...
 							</div>
+							<div id="external_occurrencelist" style="">
+								loading...
+							</div>
 							<div id="symbology" style="">
 								<div style="height:40px;margin-bottom:15px;">
 									<?php
-									if($obsIDs){
 									?>
 								<div style="float:left;">
 										<div>
@@ -1868,7 +1899,6 @@ Record Limit:
 							<div id="maptaxalist" >
 								<div style="height:40px;margin-bottom:15px;">
 									<?php
-									if($obsIDs){
 									?>
 								<div style="float:left;">
 										<div>
@@ -1887,7 +1917,6 @@ Record Limit:
 										</div>
 									</div>
 									<?php
-									}
 									?>
 									<div id="symbolizeResetButt" style='float:right;margin-bottom:5px;' >
 										<div>
@@ -1904,13 +1933,11 @@ Record Limit:
 							</div>
 						</div>
 						<?php
-						}
 						?>
 					</div>
 				</div>
 			</div><!-- /content wrapper for padding -->
 		</div><!-- /defaultpanel -->
-		<div id='map' style='width:100vw;height:100vh;z-index:1'></div>
 		<div id="loadingOverlay" data-role="popup" style="width:100%;position:relative;">
 			<div id="loadingImage" style="width:100px;height:100px;position:absolute;top:50%;left:50%;margin-top:-50px;margin-left:-50px;">
 				<img style="border:0px;width:100px;height:100px;" src="../../images/ajax-loader.gif" />

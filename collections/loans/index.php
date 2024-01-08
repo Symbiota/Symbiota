@@ -13,7 +13,7 @@ $tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 //Sanitation
-$searchTerm = filter_var($searchTerm, FILTER_SANITIZE_STRING);
+$searchTerm = htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS);
 if(!is_numeric($collid)) $collid = 0;
 if(!is_numeric($displayAll)) $displayAll = 0;
 if(!is_numeric($tabIndex)) $tabIndex = 0;

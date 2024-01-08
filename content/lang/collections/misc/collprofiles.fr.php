@@ -113,4 +113,5 @@ $LANG['MORE_INFO_ALT'] = 'Plus d\'informations sur le numéro de catalogue';
 $LANG['SEARCH_BY_TAXON'] = 'Recherche par taxon';
 $LANG['OCCURENCE_IDENTIFIER'] = 'Numéro de Catalogue';
 $LANG['TAXON'] = 'Taxon';
+$LANG['OCCURRENCE_EDITOR'] = 'Modifier';
 ?>

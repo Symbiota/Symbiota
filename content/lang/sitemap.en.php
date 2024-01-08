@@ -128,4 +128,5 @@ $LANG['DATASETS'] = 'Datasets';
 $LANG['ALLPUBDAT'] = 'All Publicly Viewable Datasets';
 $LANG['DATMANPAG'] = 'Dataset Management Page';
 $LANG['DATA_AUTHORIZED_TO_EDIT'] = 'datasets you are authorized to edit';
+$LANG['MANAGE_TAXON_THUMBNAILS'] = 'Manage Taxon Profile Map Thumbnails';
 ?>
