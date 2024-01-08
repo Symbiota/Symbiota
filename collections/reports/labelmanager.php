@@ -227,14 +227,15 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 						<div style="margin:3px;clear:both;">
 							<div style="float:left;">
 								<label for="recordenteredby"> <?php echo (isset($LANG['ENTER_BY']) ? $LANG['ENTER_BY'] : 'Entered by:') ?> </label>
-								<input type="text" name="recordenteredby" id="recordenteredby" value="<?php echo (array_key_exists('recordenteredby',$_REQUEST)?$_REQUEST['recordenteredby']:''); ?>" style="width:100px;" title="<?php echo (isset($LANG['LOG_NAME']) ? $LANG['LOG_NAME'] : 'login name of data entry person') ?> " aria-label="<?php echo (isset($LANG['LOG_NAME']) ? $LANG['LOG_NAME'] : 'login name of data entry person') ?>" />
+								<input type="text" name="recordenteredby" id="recordenteredby" value="<?php echo (array_key_exists('recordenteredby',$_REQUEST)?$_REQUEST['recordenteredby']:''); ?>" style="width:100px;" title="<?php echo (isset($LANG['LOG_NAME']) ? $LANG['LOG_NAME'] : 'login name of data entry person') ?> " aria-label="<?php echo (isset($LANG['ENTER_BY']) ? $LANG['ENTER_BY'] : 'Entered by:') ?>" />
 							</div>
 							<div style="margin-left:20px;float:left;">
 								<label for="date1"><?php echo (isset($LANG['DATE_RANGE']) ? $LANG['DATE_RANGE'] : 'Date range:') ?></label>
-								<input type="text" name="date1" style="width:100px;" value="<?php echo (array_key_exists('date1',$_REQUEST)?$_REQUEST['date1']:''); ?>" onchange="validateDateFields(this.form)" /> 
+								<input type="text" name="date1" id="date1" style="width:100px;" value="<?php echo (array_key_exists('date1',$_REQUEST)?$_REQUEST['date1']:''); ?>" onchange="validateDateFields(this.form)" /> 
 								<label for="date2"> <?php echo (isset($LANG['TO']) ? $LANG['TO'] : 'to') ?> </label>
-								<input type="text" name="date2" style="width:100px;" value="<?php echo (array_key_exists('date2',$_REQUEST)?$_REQUEST['date2']:''); ?>" onchange="validateDateFields(this.form)" />
-								<select name="datetarget">
+								<input type="text" name="date2" id="date2" style="width:100px;" value="<?php echo (array_key_exists('date2',$_REQUEST)?$_REQUEST['date2']:''); ?>" onchange="validateDateFields(this.form)" />
+								<label for="datetarget"><?php echo (isset($LANG['ITYPE_OF_DATE']) ? $LANG['TYPE_OF_DATE'] : 'Type of date'); ?>:</label>
+								<select name="datetarget" id="datetarget">
 									<option value="dateentered"><?php echo (isset($LANG['DATE_ENTERED']) ? $LANG['DATE_ENTERED'] : 'Date Entered') ?></option>
 									<option value="datelastmodified" <?php echo (isset($_POST['datetarget']) && $_POST['datetarget'] == 'datelastmodified'?'SELECTED':''); ?>><?php echo (isset($LANG['DATE_MOD']) ? $LANG['DATE_MOD'] : 'Date Modified') ?></option>
 									<option value="eventdate"<?php echo (isset($_POST['datetarget']) && $_POST['datetarget'] == 'eventdate'?'SELECTED':''); ?>><?php echo (isset($LANG['DATE_COLL']) ? $LANG['DATE_COLL'] : 'Date Collected') ?></option>
@@ -243,7 +244,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 						</div>
 						<div style="margin:3px;clear:both;">
 							<label for="labelproject"> <?php echo (isset($LANG['LABEL_PROJ']) ? $LANG['LABEL_PROJ'] : 'Label Projects:') ?></label>
-							<select name="labelproject">
+							<select name="labelproject" id="labelproject">
 								<option value=""> <?php echo (isset($LANG['ALL_PROJ']) ? $LANG['ALL_PROJ'] : 'All Projects') ?> </option>
 								<option value="">-------------------------</option>
 								<?php
@@ -283,7 +284,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 							</label>
 						</div>
 						<div style="clear:both;">
-							<div style="margin-left:20px;float:left;">
+							<div style="float:left;">
 								<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
 								<input type="submit" name="submitaction" value="<?php echo (isset($LANG['FILT_SPEC_REC']) ? $LANG['FILT_SPEC_REC'] : 'Filter Specimen Records') ?>" />
 							</div>

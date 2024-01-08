@@ -68,5 +68,6 @@ $LANG['ALERT_DATE'] = 'La fecha ingresada debe seguir el formato AAAA-MM-DD';
 $LANG['ALERT_SPEC'] = 'Se debe seleccionar al menos una casilla de verificación de muestra con una cantidad de etiqueta mayor que 0';
 $LANG['ALERT_LABEL'] = 'Por favor seleccione un perfil de formato de etiqueta';
 $LANG['ALERT_PACKET_LABEL'] = 'Las etiquetas de los paquetes aún no están disponibles como documento de Word';
+$LANG['TYPE_OF_DATE'] = 'Tipo de fecha';
 
 ?>

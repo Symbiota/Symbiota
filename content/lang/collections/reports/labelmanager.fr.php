@@ -68,5 +68,6 @@ $LANG['ALERT_DATE'] = 'La date saisie doit suivre le format AAAA-MM-JJ';
 $LANG['ALERT_SPEC'] = 'Au moins une case à cocher d\'échantillon doit être cochée avec une quantité d\'étiquette supérieure à 0';
 $LANG['ALERT_LABEL'] = 'Veuillez sélectionner un profil de format d\'étiquette';
 $LANG['ALERT_PACKET_LABEL'] = 'Les étiquettes des paquets ne sont pas encore disponibles sous forme de document Word';
+$LANG['TYPE_OF_DATE'] = 'Genre de date';
 
 ?>

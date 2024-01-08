@@ -68,5 +68,6 @@ $LANG['ALERT_DATE'] = 'Date entered must follow the format YYYY-MM-DD';
 $LANG['ALERT_SPEC'] = 'At least one specimen checkbox needs to be selected with a label quantity greater than 0';
 $LANG['ALERT_LABEL'] = 'Please select a Label Format Profile';
 $LANG['ALERT_PACKET_LABEL'] = 'Packet labels are not yet available as a Word document';
+$LANG['TYPE_OF_DATE'] = 'Type of date';
 
 ?>
