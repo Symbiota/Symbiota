@@ -254,7 +254,7 @@ if($isEditor){
 			<div>
 				<b><u><?php echo (isset($LANG['TAXON_RELS'])?$LANG['TAXON_RELS']:'Taxonomic Relationships'); ?></u></b>
 				<a href="#" onclick="toggle('addtaxonrelationdiv')" title="<?php echo (isset($LANG['ADD_TAXON_REL'])?$LANG['ADD_TAXON_REL']:'Add a New Taxonomic Relationship'); ?>">
-					<img style='border:0px;width:15px;' src='../images/add.png'/>
+					<img style='border:0px;width:1.3em;' src='../images/add.png'/>
 				</a>
 			</div>
 			<div id="addtaxonrelationdiv" style="display:none;">
@@ -305,7 +305,7 @@ if($isEditor){
 						echo $utArr['sciname'];
 						if($utArr['geographicScope']) echo ' - '.$utArr['geographicScope'].' ';
 						if($utArr['notes']) echo ', '.$utArr['notes'];
-						echo ' <a href="viewprofile.php?action=delusertaxonomy&utid=' . htmlspecialchars($utid, HTML_SPECIAL_CHARS_FLAGS) . '&userid=' . htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../images/drop.png" style="width:14px;" /></a>';
+						echo ' <a href="viewprofile.php?action=delusertaxonomy&utid=' . htmlspecialchars($utid, HTML_SPECIAL_CHARS_FLAGS) . '&userid=' . htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../images/drop.png" style="width:1.2em;" /></a>';
 						echo '</li>';
 					}
 					echo '</ul>';

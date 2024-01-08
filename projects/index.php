@@ -368,7 +368,7 @@ if(!$researchList && !$editMode){
 							</a>
 						</div>
 						<div id="researchlistpopup" class="genericpopup" style="display:none;">
-							<img src="../images/qmark.png" alt="<?php echo $LANG['QUESTION_ALT'] ?>" />
+							<img src="../images/qmark.png" style="width:1.3em;" alt="<?php echo $LANG['QUESTION_ALT'] ?>" />
 							<?php echo $LANG['RESCHECKQUES'];?>
 						</div>
 						<?php
