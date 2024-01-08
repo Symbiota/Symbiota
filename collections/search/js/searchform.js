@@ -152,6 +152,25 @@ function addChip(element) {
       element.type === "checkbox"
         ? (element.checked = false)
         : (element.value = element.defaultValue);
+      if (element.getAttribute("id") === "dballcb") {
+        const targetCategoryCheckboxes =
+          document.querySelectorAll('input[id^="cat-"]');
+        targetCategoryCheckboxes.forEach((collection) => {
+          collection.checked = false;
+        });
+        const targetCheckboxes =
+          document.querySelectorAll('input[id^="coll-"]');
+        targetCheckboxes.forEach((collection) => {
+          collection.checked = false;
+        });
+        //do the same for collections with slightly different format
+        const targetCheckboxAlts = document.querySelectorAll(
+          'input[id^="collection-"]'
+        );
+        targetCheckboxAlts.forEach((collection) => {
+          collection.checked = false;
+        });
+      }
       element.dataset.formId ? uncheckAll(element) : "";
       removeChip(inputChip);
     };

@@ -455,7 +455,13 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 		ul.outerWidth(this.element.outerWidth());
 	}
 
-	const collectionSource = <?php echo $collectionSource ?>;
+	<?php
+		if (isset($collectionSource)) {
+			echo "let collectionSource = $collectionSource;";
+		} else {
+			echo "let collectionSource = null;";
+		}
+	?>
 
 	if(collectionSource){
 		// go through all collections and set them all to unchecked
