@@ -30,4 +30,10 @@ $LANG['IMG_NOT_AVAILABLE'] = 'Imagen<br/>no<br/>disponible';
 $LANG['EDITMORP'] = 'Editar la morfolog&iacute;a';
 $LANG['ERROR_CLID_NULL'] = 'Error: el identificador de la lista es NULL';
 
+// key-v1.php
+$LANG['TAXON'] = 'Taxón';
+$LANG['DISPRESSPEC'] = 'Cargar Lista';
+$LANG['DISPLAY'] = 'Mostrar';
+$LANG['SCINAME'] = 'Nombre Científico';
+$LANG['COMMON'] = 'Nombre Común';
 ?>
