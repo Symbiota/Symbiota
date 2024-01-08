@@ -149,7 +149,7 @@ if($imgArr){
 					?>
 					<div style="float:right;margin-right:15px;" title="Go to Taxon Profile editing page">
 						<a href="../taxa/profile/tpeditor.php?tid=<?php echo htmlspecialchars($imgArr['tid'], HTML_SPECIAL_CHARS_FLAGS); ?>&tabindex=1" target="_blank">
-							<img src="../images/edit.png" style="border:0px;" /><span style="font-size:70%">TP</span>
+							<img src="../images/edit.png" style="width:1.3em;border:0px;" /><span style="font-size:70%">TP</span>
 						</a>
 					</div>
 					<?php
@@ -158,7 +158,7 @@ if($imgArr){
 					?>
 					<div style="float:right;margin-right:15px;" title="Must have editing privileges for this collection managing image">
 						<a href="../collections/editor/occurrenceeditor.php?occid=<?php echo htmlspecialchars($imgArr['occid'], HTML_SPECIAL_CHARS_FLAGS); ?>&tabtarget=2" target="_blank">
-							<img src="../images/edit.png" style="border:0px;" /><span style="font-size:70%">SPEC</span>
+							<img src="../images/edit.png" style="width:1.3em;border:0px;" /><span style="font-size:70%">SPEC</span>
 						</a>
 					</div>
 					<?php
@@ -168,7 +168,7 @@ if($imgArr){
 						?>
 						<div style="float:right;margin-right:15px;">
 							<a href="#" onclick="toggle('imageedit');return false" title="Edit Image">
-								<img src="../images/edit.png" style="border:0px;" /><span style="font-size:70%">IMG</span>
+								<img src="../images/edit.png" style="width:1.3em;border:0px;" /><span style="font-size:70%">IMG</span>
 							</a>
 						</div>
 						<?php

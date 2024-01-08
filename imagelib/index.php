@@ -96,7 +96,7 @@ $imgManager->setSearchTerm($taxon);
 					foreach($taxaList as $key => $value){
 						echo '<div style="margin-left:30px;font-style:italic;">';
 						echo '<a href="#" onclick="openTaxonPopup(' . htmlspecialchars($key, HTML_SPECIAL_CHARS_FLAGS) . ');return false;">' . htmlspecialchars($value, HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
-						echo '<a href="search.php?taxa=' . htmlspecialchars($key, HTML_SPECIAL_CHARS_FLAGS) . '&usethes=1&taxontype=2&submitaction=search" target="_blank"> <img src="../images/image.png" style="width:10px;" /></a> ';
+						echo '<a href="search.php?taxa=' . htmlspecialchars($key, HTML_SPECIAL_CHARS_FLAGS) . '&usethes=1&taxontype=2&submitaction=search" target="_blank"> <img src="../images/image.png" style="width:1.5em;" /></a> ';
 						echo '</div>';
 					}
 				}
