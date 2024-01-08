@@ -368,7 +368,7 @@ else{
 						</tbody>
 					</table>
 					<p id="table-desc">
-							<?php echo htmlspecialchars((isset($LANG['TABLE_VIEW_DESC']) ? $LANG['TABLE_VIEW_DESC'] : 'Table displays occurances information with columns showing Symbiota ID, Family, Event Date, Author, Location, and other details'), HTML_SPECIAL_CHARS_FLAGS); ?>
+							<?php echo htmlspecialchars((isset($LANG['TABLE_VIEW_DESC']) ? $LANG['TABLE_VIEW_DESC'] : 'Table displays occurrence information with columns showing Symbiota ID, Family, Event Date, Author, Location, and other details'), HTML_SPECIAL_CHARS_FLAGS); ?>
 					</p>
 				</div>
 				<div style="width:790px;">
