@@ -172,7 +172,9 @@ else{
 					<?php
 					if($isEditor == 1 || $isGenObs){
 						?>
-						<a href="#" title="<?php echo htmlspecialchars($LANG['BATCH_TOOL'], HTML_SPECIAL_CHARS_FLAGS); ?>" aria-label="<?php echo htmlspecialchars($LANG['BATCH_TOOL'], HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="toggleBatchUpdate();return false;"><img class="editimg" src="../../images/editplus.png" alt="<?php echo htmlspecialchars($LANG['IMG_EDIT'], HTML_SPECIAL_CHARS_FLAGS); ?>" /></a>
+						<a href="#" title="<?php echo htmlspecialchars($LANG['BATCH_TOOL'], HTML_SPECIAL_CHARS_FLAGS); ?>" aria-label="<?php echo htmlspecialchars($LANG['BATCH_TOOL'], HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="toggleBatchUpdate();return false;">
+							<img class="editimg" src="../../images/editplus.png" alt="<?php echo htmlspecialchars($LANG['IMG_EDIT'], HTML_SPECIAL_CHARS_FLAGS); ?>" />
+						</a>
 						<?php
 					}
 					?>

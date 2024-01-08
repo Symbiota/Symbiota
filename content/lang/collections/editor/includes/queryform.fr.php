@@ -136,4 +136,5 @@ $LANG['CUSTOM_VALUE'] = 'Valeur personnalisée';
 $LANG['CLOSE_PAREN_FIELD'] = 'Fermer le champ des parenthèses';
 $LANG['NEW_CUSTOM_FIELD'] = 'Ajouter un autre champ personnalisé';
 $LANG['ORDER_BY'] = 'Trier par';
+$LANG['IMG_EDIT'] = 'Bouton Modifier';
 ?>

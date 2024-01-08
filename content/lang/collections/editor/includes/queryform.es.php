@@ -136,4 +136,5 @@ $LANG['CUSTOM_VALUE'] = 'Valor personalizado';
 $LANG['CLOSE_PAREN_FIELD'] = 'Cerrar campo entre paréntesis';
 $LANG['NEW_CUSTOM_FIELD'] = 'Agregar otro campo personalizado';
 $LANG['ORDER_BY'] = 'Ordenar por';
+$LANG['IMG_EDIT'] = 'Botón Editar';
 ?>
