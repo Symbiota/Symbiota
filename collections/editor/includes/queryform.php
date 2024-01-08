@@ -147,8 +147,8 @@ else{
 				</div>
 				<div class="fieldGroupDiv">
 					<div class="fieldDiv">
-						<?php echo $LANG['PROC_STATUS']; ?>:
-						<select name="q_processingstatus" onchange="setOrderBy(this)">
+						<label for="q_processingstatus"> <?php echo $LANG['PROC_STATUS']; ?>: </label>
+						<select id="q_processingstatus" name="q_processingstatus" onchange="setOrderBy(this)">
 							<option value=''><?php echo $LANG['ALL_RECORDS']; ?></option>
 							<option>-------------------</option>
 							<?php
@@ -219,7 +219,7 @@ else{
 						<?php
 					}
 					?>
-					<select name="q_customopenparen<?php echo $x; ?>" onchange="customSelectChanged(<?php echo $x; ?>)">
+					<select name="q_customopenparen<?php echo $x; ?>" onchange="customSelectChanged(<?php echo $x; ?>)" aria-label="<?php echo $LANG['OPEN_PAREN_FIELD']; ?>">
 						<option value="">---</option>
 						<?php
 						echo '<option '.($cOpenParen == '(' ? 'SELECTED' : '').' value="(">(</option>';
@@ -227,7 +227,7 @@ else{
 						if($x < 8) echo '<option '.($cOpenParen == '(((' ? 'SELECTED' : '').' value="(((">(((</option>';
 						?>
 					</select>
-					<select name="q_customfield<?php echo $x; ?>" onchange="customSelectChanged(<?php echo $x; ?>)">
+					<select name="q_customfield<?php echo $x; ?>" onchange="customSelectChanged(<?php echo $x; ?>)" aria-label="<?php echo $LANG['CRITERIA']; ?>">
 						<option value=""><?php echo $LANG['SELECT_FIELD_NAME']; ?></option>
 						<option value="">---------------------------------</option>
 						<?php
@@ -236,15 +236,15 @@ else{
 						}
 						?>
 					</select>
-					<select name="q_customtype<?php echo $x; ?>">
+					<select name="q_customtype<?php echo $x; ?>" aria-label="<?php echo $LANG['CONDITION']; ?>">
 						<?php
 						foreach($customTermArr as $term){
-							echo '<option '.($cTerm == $term ? 'SELECTED' : '').' value="'.$term.'">'.$LANG[$term].'</option>';
+							echo '<option '.($cTerm == $term ? 'SELECTED' : '').' value="'.$term.'">'.$LANG[$term].'</option>' ;
 						}
 						?>
 					</select>
-					<input name="q_customvalue<?php echo $x; ?>" type="text" value="<?php echo $cValue; ?>" style="width:200px;" />
-					<select name="q_customcloseparen<?php echo $x; ?>" onchange="customSelectChanged(<?php echo $x; ?>)">
+					<input name="q_customvalue<?php echo $x; ?>" type="text" value="<?php echo $cValue; ?>" style="width:200px;" aria-label="<?php echo $LANG['CRITERIA']; ?>"/>
+					<select name="q_customcloseparen<?php echo $x; ?>" onchange="customSelectChanged(<?php echo $x; ?>)" aria-label="<?php echo $LANG['CLOSE_PAREN_FIELD']; ?>">
 						<option value="">---</option>
 						<?php
 						echo '<option '.($cCloseParen == ')' ? 'SELECTED' : '').' value=")">)</option>';
@@ -253,7 +253,7 @@ else{
 						?>
 					</select>
 					<a href="#" onclick="toggleCustomDiv(<?php echo ($x+1); ?>);return false;">
-						<img class="editimg" src="../../images/editplus.png" />
+						<img class="editimg" src="../../images/editplus.png" alt="<?php echo htmlspecialchars($LANG['IMG_EDIT'], HTML_SPECIAL_CHARS_FLAGS); ?>" />
 					</a>
 				</div>
 				<?php
@@ -271,8 +271,8 @@ else{
 				?>
 			</div>
 			<div class="fieldGroupDiv">
-				<div>
-					<button type="button" class="icon-button" onclick="copyQueryLink(event)" title="<?php echo (isset($LANG['COPY_SEARCH'])?$LANG['COPY_SEARCH']:'Copy Search As Link'); ?>">
+				<div class="bottom-breathing-room-relative">
+					<button type="button" class="icon-button no-margin-left" onclick="copyQueryLink(event)" title="<?php echo (isset($LANG['COPY_SEARCH'])?$LANG['COPY_SEARCH']:'Copy Search As Link'); ?>" aria-label="<?php echo (isset($LANG['COPY_SEARCH'])?$LANG['COPY_SEARCH']:'Copy Search As Link'); ?>">
 						<img src="../../images/dl2.png" srcset="../../images/link.svg" class="svg-icon" style="width:15px; height:15px" alt="Link icon. Copies the search terms as a link." />
 					</button>
 					<?php
@@ -305,13 +305,13 @@ else{
 				<input type="hidden" name="occidlist" value="<?php echo $occManager->getOccidIndexStr(); ?>" />
 				<input type="hidden" name="direction" value="" />
 				<section class="flex-form">
-					<div>
+					<div class="no-margin-left">
 						<button name="submitaction" type="submit" onclick="submitQueryEditor(this.form)" ><?php echo $LANG['DISPLAY_EDITOR']; ?></button>
 					</div>
-					<div>
+					<div class="no-margin-left">
 						<button name="submitaction" type="submit" onclick="submitQueryTable(this.form)" ><?php echo $LANG['DISPLAY_TABLE']; ?></button>
 					</div>
-					<div>
+					<div class="no-margin-left">
 						<button type="button" name="reset" value="Reset Form" onclick="resetQueryForm(this.form)">Reset Form</button>
 					</div>
 					<div>
@@ -361,8 +361,8 @@ else{
 						</select> <?php //echo $LANG['RECORDS']; ?>
 				</section>
 				<div>
+					<input name="dynamictable" id="dynamictable-1" type="checkbox" value="1" <?php if(isset($dynamicTable) && $dynamicTable) echo 'checked'; ?> />
 					<label for="dynamictable-1"><?php echo $LANG['DYNAMIC_TABLE']; ?></label>
-					<input name="dynamictable" id="dynamictable-1" type="checkbox" value="1" <?php if(isset($dynamicTable) && $dynamicTable) echo 'checked'; ?> /> 
 				</div>
  			</div>
 		</fieldset>

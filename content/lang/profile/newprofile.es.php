@@ -54,4 +54,5 @@ $LANG['PUBLIC_PROF'] = 'El público puede ver el correo electrónico y la biogra
 $LANG['CREATE_LOGIN'] = 'Crear Usuario';
 $LANG['ACCESSIBILITY_PREF'] = 'Preferencias de accesibilidad';
 $LANG['ACCESSIBILITY_PREF_DESC'] = 'Marque para indicar una preferencia por estilos optimizados para accesibilidad';
+$LANG['PROFILE_CREATION_DISABLED'] = 'Se ha deshabilitado la creación de usuarios públicos en este portal.';
 ?>

@@ -8,7 +8,7 @@ Language: Español (Spanish)
 $LANG['H_HOME'] = 'Inicio';
 
 $LANG['H_SEARCH'] = 'Buscar';
-$LANG['H_COLLECTIONS'] = 'Colecciones';
+$LANG['H_COLLECTIONS'] = 'Buscar Colecciones';
 $LANG['H_MAP'] = 'Mapa';
 $LANG['H_MAP_SEARCH'] = 'Buscar Mapa';
 $LANG['H_TAXONOMIC_EXPLORER'] = 'Explorador Taxon&oacute;mico';

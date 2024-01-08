@@ -1,6 +1,7 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceGeorefTools.php');
+include_once($SERVER_ROOT.'/content/lang/collections/georef/georefclone.' . $LANG_TAG . '.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $country = array_key_exists('country',$_REQUEST)?$_REQUEST['country']:'';
@@ -134,13 +135,11 @@ if($coorArr && count($coorArr) == 4){
 				alert("Couldn't load server map data")
 			}
 
-			console.log(clones)
-
-				<?php if(!empty($LEAFLET)) { ?>
+			<?php if(empty($GOOGLE_MAP_KEY)) { ?>
 				leafletInit();
 			<?php } else { ?>
-			googleInit();
-		<?php } ?>
+				googleInit();
+			<?php } ?>
 	  }
 
 		function cloneCoord(lat,lng,err){
@@ -163,13 +162,13 @@ if($coorArr && count($coorArr) == 4){
 
 		function verifyCloneForm(f){
 			if(f.locality.value == ""){
-				alert("Locality field must have a value");
+				alert(" <?php echo isset($LANG['LOCALITY_MISSING_ERROR'])? $LANG['LOCALITY_MISSING_ERROR']: 'Locality field must have a value' ?>");
 				return false
 			}
 			if(document.getElementById("deepsearch").checked == true){
 				var locArr = f.locality.value.split(" ");
 				if(locArr.length > 4){
-					alert("Locality field cannot contain more than 4 words while doing a Deep Search. Just enter a few keywords.");
+alert("<?php echo isset($LANG['LOCALITY_INVALID_ERROR'])? $LANG['LOCALITY_INVALID_ERROR']: 'Locality field cannot contain more than 4 words while doing a Deep Search. Just enter a few keywords.' ?>");
 					return false
 				}
 			}
@@ -188,27 +187,32 @@ if($coorArr && count($coorArr) == 4){
 		<!-- This is inner text! -->
 		<div id="innertext">
 			<fieldset style="padding:10px;">
-				<legend><b>Search Form</b></legend>
+            <legend><b>
+               <?php echo isset($LANG['SEARCH_FORM'])? $LANG['SEARCH_FORM']:'Search Form' ?>
+            </b></legend>
 				<form name="cloneform" action="georefclone.php" method="post" onsubmit="return verifyCloneForm(this)">
 					<div>
-						Locality:
+                  <?php echo isset($LANG['LOCALITY'])? $LANG['LOCALITY']:'Locality' ?>:
 						<input name="locality" type="text" value="<?php echo $locality; ?>" style="width:600px" />
 					</div>
 					<div>
-						<input id="exactinput" name="searchtype" type="radio" value="1" <?php echo ($searchType=='1'?'checked':''); ?> /> Exact Match
-						<input id="wildsearch" name="searchtype" type="radio" value="2" <?php echo ($searchType=='2'?'checked':''); ?> /> Contains
-						<input id="deepsearch" name="searchtype" type="radio" value="3" <?php echo ($searchType=='3'?'checked':''); ?> /> Deep Search
+                  <input id="exactinput" name="searchtype" type="radio" value="1" <?php echo ($searchType=='1'?'checked':''); ?> /> 
+                  <?php echo isset($LANG['EXACT_MATCH'])? $LANG['EXACT_MATCH']:'Exact Match' ?>
+                  <input id="wildsearch" name="searchtype" type="radio" value="2" <?php echo ($searchType=='2'?'checked':''); ?> /> 
+                  <?php echo isset($LANG['CONTAINS'])? $LANG['CONTAINS']:'Contains' ?>
+                  <input id="deepsearch" name="searchtype" type="radio" value="3" <?php echo ($searchType=='3'?'checked':''); ?> /> 
+                  <?php echo isset($LANG['DEEP_SEARCH'])? $LANG['DEEP_SEARCH']:'Deep Search' ?>
 					</div>
-					<?php
-					if($collid){
-						?>
+					<?php if($collid):?>
 						<div>
-							<input name="colltype" type="radio" value="0" <?php echo ($collType?'':'checked'); ?> /> Search all collections
-							<input name="colltype" type="radio" value="1" <?php echo ($collType?'checked':''); ?> /> Target collection only
+                  <input name="colltype" type="radio" value="0" <?php echo ($collType?'':'checked'); ?> /> 
+
+                  <?php echo isset($LANG['SEARCH_ALL_COLS'])? $LANG['SEARCH_ALL_COLS']:'Search all collections' ?>
+                  <input name="colltype" type="radio" value="1" <?php echo ($collType?'checked':''); ?> /> 
+
+                  <?php echo isset($LANG['TARGET_COL_ONLY'])? $LANG['TARGET_COL_ONLY']:'Target collection only' ?>
 						</div>
-						<?php
-					}
-					?>
+					<?php endif?>
 					<div style="float:left;margin:5px 20px;">
 						<input name="country" type="hidden" value="<?php echo $country; ?>" />
 						<input name="state" type="hidden" value="<?php echo $state; ?>" />
@@ -218,21 +222,18 @@ if($coorArr && count($coorArr) == 4){
 					</div>
 				</form>
 			</fieldset>
-			<?php
-			if($clones){
-				?>
-				<div style="margin:3px;font-weight:bold;">
-					Click on markers to view and clone coordinates
-				</div>
-				<div id='map_canvas' style='width:750px; height:600px; clear:both;'></div>
-				<?php
-			}
-			else{
-				?>
-				<div style="margin:30px"><h2>Search failed to return specimen matches</h2></div>
-				<?php
-			}
-			?>
-		</div>
-	</body>
+         <?php if($clones):?>
+         <div style="margin:3px;font-weight:bold;">
+            <?php echo isset($LANG['GEO_CLONE_INSTRUCTIONS'])? $LANG['GEO_CLONE_INSTRUCTIONS']:'Click on markers to view and clone coordinates' ?>
+         </div>
+         <div id='map_canvas' style='width:100%; height:600px; clear:both;'></div>
+         <?php else: ?>
+         <div style="margin:30px">
+            <h2>
+               <?php echo isset($LANG['FAILED_GEO_REF'])? $LANG['FAILED_GEO_REF']:'Search failed to return specimen matches' ?>
+            </h2>
+         </div>
+         <?php endif ?>
+      </div>
+   </body>
 </html>

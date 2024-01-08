@@ -9,11 +9,11 @@ include_once('Encryption.php');
 
 class ProfileManager extends Manager{
 
-	private $rememberMe = false;
-	private $uid;
-	private $userName;
-	private $displayName;
-	private $token;
+	protected $rememberMe = false;
+	protected $uid;
+	protected $userName;
+	protected $displayName;
+	protected $token;
 
 	public function __construct($connType = 'readonly'){
 		parent::__construct(null, $connType);
@@ -23,7 +23,7 @@ class ProfileManager extends Manager{
  		parent::__destruct();
 	}
 
-	private function resetConnection(){
+	protected function resetConnection(){
 		$this->conn = MySQLiConnectionFactory::getCon('write');
 	}
 
@@ -91,7 +91,7 @@ class ProfileManager extends Manager{
 	private function authenticateUsingPassword($pwdStr){
 		$status = false;
 		if($pwdStr){
-			$sql = 'SELECT uid, firstname, username FROM users WHERE (password = PASSWORD(?)) AND (username = ? OR email = ?) ';
+			$sql = 'SELECT uid, firstname, username FROM users WHERE (password = CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?)))))) AND (username = ? OR email = ?) ';
 			if($stmt = $this->conn->prepare($sql)){
 				if($stmt->bind_param('sss', $pwdStr, $this->userName, $this->userName)){
 					$stmt->execute();
@@ -124,7 +124,7 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	private function setTokenCookie(){
+	protected function setTokenCookie(){
 		$tokenArr = Array();
 		if(!$this->token){
 			$this->createToken();
@@ -190,7 +190,7 @@ class ProfileManager extends Manager{
 			if($stmt = $this->conn->prepare($sql)) {
 				$stmt->bind_param('ssssssssssi', $firstName, $lastName, $email, $title, $institution, $city, $state, $zip, $country, $guid, $this->uid);
 				$stmt->execute();
-				if($accessibilityStatus && $stmt->affected_rows && !$stmt->error) $status = true;
+				if($accessibilityStatus && !$stmt->error) $status = true;
 				else $this->errorMessage = 'ERROR updating user profile: '.$stmt->error;
 				$stmt->close();
 			}
@@ -223,7 +223,7 @@ class ProfileManager extends Manager{
 			$this->resetConnection();
 			if($isSelf){
 				$testStatus = true;
-				$sql = 'SELECT uid FROM users WHERE (uid = ?) AND (password = PASSWORD(?))';
+				$sql = 'SELECT uid FROM users WHERE (uid = ?) AND (password = CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?))))))';
 				if($stmt = $this->conn->prepare($sql)){
 					$stmt->bind_param('is', $this->uid, $oldPwd);
 					$stmt->execute();
@@ -287,11 +287,11 @@ class ProfileManager extends Manager{
 
 	private function updatePassword($uid, $newPassword){
 		$status = false;
-		$sql = 'UPDATE users SET password = PASSWORD(?) WHERE (uid = ?)';
+		$sql = 'UPDATE users SET password = CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?))))) WHERE (uid = ?)';
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('si', $newPassword, $uid);
 			$stmt->execute();
-			if($stmt->affected_rows && !$stmt->error) $status = true;
+			if(!$stmt->error) $status = true;
 			else $this->errorMessage = $stmt->error;
 			$stmt->close();
 		}
@@ -308,7 +308,7 @@ class ProfileManager extends Manager{
 		return $newPassword;
 	}
 
-	public function register($postArr){
+	public function register($postArr, $adminRegister = false){
 		$status = false;
 
 		$firstName = strip_tags($postArr['firstname']);
@@ -328,7 +328,7 @@ class ProfileManager extends Manager{
 		$initialDynamicProperties['accessibilityPref'] = $isAccessiblePreferred === "1" ? true : false;
 		$jsonDynProps = json_encode($initialDynamicProperties);
 
-		$sql = 'INSERT INTO users(username, password, email, firstName, lastName, title, institution, country, city, state, zip, guid, dynamicProperties) VALUES(?,PASSWORD(?),?,?,?,?,?,?,?,?,?,?,?)';
+		$sql = 'INSERT INTO users(username, password, email, firstName, lastName, title, institution, country, city, state, zip, guid, dynamicProperties) VALUES(?,CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?))))),?,?,?,?,?,?,?,?,?,?,?)';
 		$this->resetConnection();
 		if($stmt = $this->conn->prepare($sql)) {
 			$stmt->bind_param('sssssssssssss', $this->userName, $pwd, $email, $firstName, $lastName, $title, $institution, $country, $city, $state, $zip, $guid, $jsonDynProps);
@@ -336,8 +336,10 @@ class ProfileManager extends Manager{
 			if($stmt->affected_rows){
 				$this->uid = $stmt->insert_id;
 				$this->displayName = $firstName;
-				$this->reset();
-				$this->authenticate($pwd);
+				if(!$adminRegister){
+					$this->reset();
+					$this->authenticate($pwd);
+				}
 				$status = true;
 			}
 			elseif($stmt->error) $this->errorMessage = 'ERROR inserting new user: '.$stmt->error;
@@ -439,7 +441,7 @@ class ProfileManager extends Manager{
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param('sis', $newLogin, $this->uid, $this->userName);
 				$stmt->execute();
-				if($stmt->affected_rows && !$stmt->error){
+				if(!$stmt->error){
 					if($isSelf){
 						$this->userName = $newLogin;
 						$this->authenticate();
@@ -476,7 +478,7 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	private function setUserRights(){
+	protected function setUserRights(){
 		if($this->uid){
 			$userRights = array();
 			$sql = 'SELECT role, tablepk FROM userroles WHERE (uid = ?) ';
@@ -496,7 +498,7 @@ class ProfileManager extends Manager{
 		}
 	}
 
-	private function setUserParams(){
+	protected function setUserParams(){
 		global $PARAMS_ARR;
 		$_SESSION['userparams']['un'] = $this->userName;
 		$_SESSION['userparams']['dn'] = $this->displayName;
@@ -686,7 +688,7 @@ class ProfileManager extends Manager{
 			echo '<ul style="margin:10px;">';
 			$sql = 'SELECT DISTINCT o.occid, o.catalognumber, o.stateprovince, '.
 				'CONCAT_WS("-",IFNULL(o.institutioncode,c.institutioncode),IFNULL(o.collectioncode,c.collectioncode)) AS collcode '.
-				'FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid ';
+				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
 			if($withImgOnly) $sql .= 'INNER JOIN images i ON o.occid = i.occid ';
 			$sql .= 'WHERE (o.sciname IS NULL) '.
 				'ORDER BY c.institutioncode, o.catalognumber LIMIT 2000';
@@ -1100,7 +1102,7 @@ class ProfileManager extends Manager{
 			$dynPropStr = $fetchedObj->dynamicProperties;
 		}
 		$respns->free();
-		if($dynPropStr){
+		if(isset($dynPropStr)){
 			if($dynPropArr = json_decode($dynPropStr, true)){
 				$returnVal = $dynPropArr;
 			}

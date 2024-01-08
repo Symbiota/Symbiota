@@ -182,8 +182,8 @@ if($tid){
 						</div>
 						<div style='margin-top:2px;'>
 							<b><?php echo $LANG['OCC_REC_NUM']; ?>:</b>
-							<input id="occidadd" name="occid" type="text" value=""/>
-							<span style="cursor:pointer;color:blue;"  onclick="openOccurrenceSearch('occidadd')"><?php echo $LANG['LINK_TO_OCC']; ?></span>
+							<input id="imgoccid-0" name="occid" type="text" value=""/>
+							<a href="#" onclick="openOccurrenceSearch('0')"><?php echo $LANG['LINK_TO_OCC']; ?></a>
 						</div>
 						<div style='margin-top:2px;'>
 							<b><?php echo $LANG['LOCALITY']; ?>:</b>

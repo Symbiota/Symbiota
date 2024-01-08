@@ -32,6 +32,7 @@ $_SESSION['colldata'] = $collArr;
 
 $includeDets = 1;
 $includeImgs = 1;
+$includeAttributes = 1;
 $includeMatSample = 1;
 $redactLocalities = 1;
 if ($action == 'savekey' || (isset($_REQUEST['datasetKey']) && $_REQUEST['datasetKey'])) {
@@ -43,6 +44,8 @@ elseif ($action) {
 	$dwcaManager->setIncludeDets($includeDets);
 	if (!array_key_exists('imgs', $_POST)) $includeImgs = 0;
 	$dwcaManager->setIncludeImgs($includeImgs);
+	if (!array_key_exists('attributes', $_POST)) $includeAttributes = 0;
+	$dwcaManager->setIncludeAttributes($includeAttributes);
 	if (!array_key_exists('matsample', $_POST)) $includeMatSample = 0;
 	$dwcaManager->setIncludeMaterialSample($includeMatSample);
 	if (!array_key_exists('redact', $_POST)) $redactLocalities = 0;
@@ -313,7 +316,7 @@ if ($isEditor) {
 					if (isset($recFlagArr['nullGUIDs']) && $recFlagArr['nullGUIDs']) {
 						echo '<div style="margin:10px;">';
 						if ($collArr['guidtarget'] == 'occurrenceId') {
-							echo '<b>' . $LANG['RECORDS_MISSING'] . ' <a href="" target="_blank">' . htmlspecialchars($LANG['OCCID_GUIDS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>:</b> ' . htmlspecialchars($recFlagArr['nullGUIDs'], HTML_SPECIAL_CHARS_FLAGS);
+							echo '<b>' . $LANG['RECORDS_MISSING'] . ' <a href="https://dwc.tdwg.org/terms/#dwc:occurrenceID" target="_blank">' . htmlspecialchars($LANG['OCCID_GUIDS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>:</b> ' . htmlspecialchars($recFlagArr['nullGUIDs'], HTML_SPECIAL_CHARS_FLAGS);
 							echo ' <span style="color:red;margin-left:15px;">' . $LANG['RECS_TO_NOT_PUBLISH'] . '</span> ';
 						} elseif ($collArr['guidtarget'] == 'catalogNumber') {
 							echo '<b>' . $LANG['RECS_WO_CATNUMS'] . ':</b> ' . $recFlagArr['nullGUIDs'];
@@ -417,11 +420,14 @@ if ($isEditor) {
 						<input type="checkbox" name="dets" value="1" <?php echo ($includeDets ? 'CHECKED' : ''); ?> /> <?php echo $LANG['INCLUDE_DETS']; ?><br />
 						<input type="checkbox" name="imgs" value="1" <?php echo ($includeImgs ? 'CHECKED' : ''); ?> /> <?php echo $LANG['INCLUDE_IMGS']; ?><br />
 						<?php
-						if ($collManager->materialSampleIsActive()) echo '<input type="checkbox" name="matsample" value="1" ' . ($includeMatSample ? 'CHECKED' : '') . ' /> ' . $LANG['INCLUDE_MATSAMPLE'] . '<br/>';
+						if($dwcaManager->hasAttributes($collid)) echo '<input type="checkbox" name="attributes" value="1" '.($includeAttributes ? 'CHECKED' : '').'> '.$LANG['INCLUDE_ATTRIBUTES'].'<br/>';
+						if($dwcaManager->hasMaterialSamples($collid)) echo '<input type="checkbox" name="matsample" value="1" '.($includeMatSample ? 'CHECKED' : '').'> '.$LANG['INCLUDE_MATSAMPLE'].'<br/>';
 						?>
+					</div>
+					<div style="margin-top:5px;">
 						<input type="checkbox" name="redact" value="1" <?php echo ($redactLocalities ? 'CHECKED' : ''); ?> /> <?php echo $LANG['REDACT_LOC']; ?><br />
 					</div>
-					<div style="clear:both;margin:10px;">
+					<div style="margin:10px;">
 						<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
 						<?php
 						echo '<button type="submit" name="formsubmit" value="buildDwca" ' . ($blockSubmitMsg ? 'disabled' : '') . '>' . $LANG['CREATE_REFRESH'] . '</button>';
@@ -483,12 +489,17 @@ if ($isEditor) {
 							</div>
 							<fieldset style="margin:10px;padding:15px;">
 								<legend><b><?php echo $LANG['OPTIONS']; ?></b></legend>
-								<input type="checkbox" name="dets" value="1" <?php echo ($includeDets ? 'CHECKED' : ''); ?> /> <?php echo $LANG['INCLUDE_DETS']; ?><br />
-								<input type="checkbox" name="imgs" value="1" <?php echo ($includeImgs ? 'CHECKED' : ''); ?> /> <?php echo $LANG['INCLUDE_IMGS']; ?><br />
-								<?php
-								if ($dwcaManager->materialSampleIsActive()) echo '<input type="checkbox" name="matsample" value="1" ' . ($includeMatSample ? 'CHECKED' : '') . ' /> ' . $LANG['INCLUDE_MATSAMPLE'] . '<br/>';
-								?>
-								<input type="checkbox" name="redact" value="1" <?php echo ($redactLocalities ? 'CHECKED' : ''); ?> /> <?php echo $LANG['REDACT_LOC']; ?><br />
+								<div>
+									<input type="checkbox" name="dets" value="1" <?php echo ($includeDets ? 'CHECKED' : ''); ?> /> <?php echo $LANG['INCLUDE_DETS']; ?><br />
+									<input type="checkbox" name="imgs" value="1" <?php echo ($includeImgs ? 'CHECKED' : ''); ?> /> <?php echo $LANG['INCLUDE_IMGS']; ?><br />
+									<?php
+									if($dwcaManager->hasAttributes()) echo '<input type="checkbox" name="attributes" value="1" '.($includeAttributes ? 'CHECKED' : '').'> '.$LANG['INCLUDE_ATTRIBUTES'].'<br/>';
+									if($dwcaManager->hasMaterialSamples()) echo '<input type="checkbox" name="matsample" value="1" '.($includeMatSample ? 'CHECKED' : '').'> '.$LANG['INCLUDE_MATSAMPLE'].'<br/>';
+									?>
+								</div>
+								<div style="margin-top:5px;">
+									<input type="checkbox" name="redact" value="1" <?php echo ($redactLocalities ? 'CHECKED' : ''); ?> /> <?php echo $LANG['REDACT_LOC']; ?><br />
+								</div>
 							</fieldset>
 							<div style="clear:both;margin:20px;">
 								<input type="hidden" name="collid" value="<?php echo $collid; ?>" />

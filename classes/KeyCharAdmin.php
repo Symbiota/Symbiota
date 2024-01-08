@@ -498,10 +498,13 @@ class KeyCharAdmin{
 		$sql = 'SELECT glossid, term, language FROM glossary';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->glossid]['term'] = $r->term;
-			$retArr[$r->glossid]['lang'] = $r->language;
+			//$k variable is needed to so that list can be alphabetical even when html tags (e.g. italics) are embedded into the terms
+			$k = strip_tags(strtolower($r->term));
+			$retArr[$k][$r->glossid]['term'] = $r->term;
+			$retArr[$k][$r->glossid]['lang'] = $r->language;
 		}
 		$rs->free();
+		ksort($retArr);
 		return $retArr;
 	}
 
@@ -536,7 +539,7 @@ class KeyCharAdmin{
 		}
 		if(is_numeric($lang)) $this->langId = $lang;
 		else{
-			$sql = 'SELECT langid FROM adminlanguages WHERE langname = "'.$lang.'" OR iso639_1 = "'.$lang.'" OR iso639_2 = "'.$lang.'" ';
+			$sql = 'SELECT langid FROM adminlanguages WHERE langname = "'.$this->cleanInStr($lang).'" OR iso639_1 = "'.$this->cleanInStr($lang).'" OR iso639_2 = "'.$this->cleanInStr($lang).'" ';
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
 				$this->langId = $r->langid;

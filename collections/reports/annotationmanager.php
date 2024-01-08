@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/reports/annotationmanager.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/reports/annotationmanager.'.$LANG_TAG.'.php');
@@ -25,7 +27,7 @@ if($isEditor){
 	$annoArr = $datasetManager->getAnnoQueue();
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 		<title><?php echo $DEFAULT_TITLE.' '.$LANG['ANN_LAB_MAN']; ?></title>
@@ -227,8 +229,8 @@ if($isEditor){
 				}
 				else{
 					?>
-					<div style="font-weight:bold;margin:20px;font-weight:150%;">
-						<?php echo $LANG['NO_ANNO']; ?>
+					<div>
+						<b> <?php echo $LANG['NO_ANNO']; ?> </b>
 					</div>
 					<?php
 				}
@@ -238,8 +240,8 @@ if($isEditor){
 		}
 		else{
 			?>
-			<div style="font-weight:bold;margin:20px;font-weight:150%;">
-				<?php echo $LANG['NO_ANNO_PERMISSIONS']; ?>
+			<div>
+				<b> <?php echo $LANG['NO_ANNO_PERMISSIONS']; ?> </b>
 			</div>
 			<?php
 		}

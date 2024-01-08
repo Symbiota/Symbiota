@@ -28,7 +28,7 @@ if(!empty($MAPPING_BOUNDARIES)){
 $bounds = [$boundLatMax, $boundLngMax, $boundLatMin, $boundLngMin];
 
 //Redirects User if not an Admin
-if(!$IS_ADMIN){
+if(!isset($IS_ADMIN) || !$IS_ADMIN || !isset($SYMB_UID) || !$SYMB_UID) {
    header("Location: ". $CLIENT_ROOT . '/index.php');
 }
 
@@ -39,7 +39,7 @@ if(!$IS_ADMIN){
 	<title><?php echo $DEFAULT_TITLE; ?> - Static distribution map generator</title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
-	include_once($SERVER_ROOT.'/includes/leafletmap.php');
+	include_once($SERVER_ROOT.'/includes/leafletMap.php');
       ?>
 <script 
    src="<?php echo $CLIENT_ROOT?>/js/dom-to-image/dist/dom-to-image.min.js"
@@ -60,32 +60,39 @@ if(!$IS_ADMIN){
             return await response.json();
          }
 
-         async function getTaxaList(name) {
-            const response = await fetch(`<?php echo $CLIENT_ROOT?>/rpc/gettaxon.php?sciname=${name}`, {
+         async function getTaxaList(scinames) {
+            const response = await fetch(`rpc/getTaxa.php?scinames=${scinames}`, {
                method: "GET",
                credentials: "same-origin",
                headers: {"Content-Type": "application/json"},
             });
-            let res = await response.json();
+            return await response.json();
 
-            return Object.entries(res).map( ([k, v]) => ({tid: k, sciname: v.sciname}));
+            //return Object.entries(res).map( ([k, v]) => ({tid: k, sciname: v.sciname}));
          }
 
          async function buildMaps(preview = true) {
             //Clear Old Layer if It Exists
             if(coordLayer) map.mapLayer.removeLayer(coordLayer);
 
-            let mapProgress = document.getElementById("map-generation-progress")
+            let mapProgress = document.getElementById("map-generation-progress");
+
+            let thumbnailResults = document.getElementById("thumbnail-results");
+            if(thumbnailResults) thumbnailResults.style.display = preview? "none":"block";
+
+            let resultsTBody = document.getElementById("thumbnail-results-body");
+            if(resultsTBody) resultsTBody.innerHTML = "";
 
             const data = document.getElementById('service-container');
-            let taxaList = JSON.parse(data.getAttribute('data-taxa-list'))
+            //let taxaList = JSON.parse(data.getAttribute('data-taxa-list'))
+            let taxon_groups = []; 
 
             const leafletControls = document.querySelector('.leaflet-control-container')
             leafletControls.style.display = "none";
 
             const taxa = document.getElementById('taxa').value;
 
-            if(taxa) taxaList = await getTaxaList(taxa);
+            if(taxa) taxon_groups = await getTaxaList(taxa);
 
             if(!preview) mapProgress.style.display = "block";
 
@@ -97,45 +104,62 @@ if(!$IS_ADMIN){
                }
             }
 
+            let maxCount = taxon_groups.reduce((max, tg) => max + tg.taxa_list.length, 0);
+
+            document.getElementById('loading-bar-max').innerHTML = `/ ${maxCount}`; 
+
             let basebounds = getMapBounds()
             let userZoom = map.mapLayer.getZoom();
             let baseZoom = userZoom >= 7 ? userZoom: 7;
             let count = 0;
 
-            for (let taxa of taxaList) {
-               let coords = await getTaxaCoordinates(taxa.tid, basebounds);
-               count++;
+            for (let taxon_group of taxon_groups) {
+               for (let taxa of taxon_group.taxa_list) {
+                  let coords = await getTaxaCoordinates(taxa.tid, basebounds);
+                  count++;
 
-               if(coords && coords.length > 0) { 
-                  //Fits bounds within our search bounds for a better image
-                  map.mapLayer.fitBounds(coords.map(c => [c.lat, c.lng]));
+                  if(coords && coords.length > 0) { 
+                     //Fits bounds within our search bounds for a better image
+                     map.mapLayer.fitBounds(coords.map(c => [c.lat, c.lng]));
 
-                  //Scale Back the zoom value if zoomed in too much
-                  let newZoom = map.mapLayer.getZoom()
-                  map.mapLayer.setZoom(newZoom <= baseZoom? newZoom: baseZoom);
+                     //Scale Back the zoom value if zoomed in too much
+                     let newZoom = map.mapLayer.getZoom()
+                     map.mapLayer.setZoom(newZoom <= baseZoom? newZoom: baseZoom);
 
-                  coordLayer = generateMap({maptype, coordinates: coords});
+                     coordLayer = generateMap({maptype, coordinates: coords});
 
-                  if(preview) break;
+                     if(preview) break;
+
+                     if(!preview) {
+                        //Wait for Map to Render and Pan to Points
+                        await new Promise(r => setTimeout(r, 1000));
+
+                        let map_blob = await getMapImage(); 
+                        map.mapLayer.removeLayer(coordLayer);
+                        postImage({
+                           tid: taxa.tid, 
+                           title: taxa.sciname, 
+                           map_blob,
+                           maptype, 
+                        }).then(res => addResultTableEntry({
+                              tid: taxa.tid, 
+                              taxon: taxa.sciname, 
+                              status: res.status === 200?
+                                 `<?php echo isset($LANG['SUCCESS'])? $LANG['SUCCESS']: 'Success'?>`:
+                                 `<?php echo isset($LANG['FAILURE'])? $LANG['Failure']: 'Failure'?>`
+                           }))
+                     } 
+                  } else if (preview && count >= taxon_group.taxa_list.length) {
+                     alert(`There are no records of ${taxa.scimane} within your bounds!`)
+                  } 
 
                   if(!preview) {
-                     //Wait for Map to Render and Pan to Points
-                     await new Promise(r => setTimeout(r, 1000));
-
-                     let map_blob = await getMapImage(); 
-                     map.mapLayer.removeLayer(coordLayer);
-                     postImage({
-                        tid: taxa.tid, 
-                        title: taxa.sciname, 
-                        map_blob,
-                        maptype, 
-                     })
-                  } 
-               } else if (preview && count >= taxaList.length) {
-                  alert(`There are no records of ${taxa.scimane} within your bounds!`)
+                     incrementLoadingBar(maxCount);
+                     if(coords.length <= 0) {
+                        addResultTableEntry({tid: taxa.tid, taxon: taxa.sciname, status: "<?php echo isset($LANG['NO_COORDINATES'])? $LANG['NO_COORDINATES']: 'No coordinates to map'?>"});
+                     }
+                  }
                }
-
-               if(!preview) incrementLoadingBar(taxaList.length);
             }
 
             map.mapLayer.fitBounds(basebounds);
@@ -159,7 +183,7 @@ if(!$IS_ADMIN){
             formData.append('title', title)
             formData.append('maptype', maptype)
             //tid, title, maptype
-            let response = fetch('rpc/postMap.php', {
+            return fetch('rpc/postMap.php', {
                method: "POST",
                credentials: "same-origin",
                body: formData
@@ -170,6 +194,16 @@ if(!$IS_ADMIN){
             return maptype === "dotmap"?
                buildDotMap(coordinates):
                buildHeatMap(coordinates);
+         }
+
+         function addResultTableEntry(row) {
+            let resultsTBody = document.getElementById("thumbnail-results-body");
+
+            if(!resultsTBody) return;
+            const rowTemplate = document.createElement("template");
+rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_ROOT ?>/taxa/index.php?tid=${row.tid}\">${row.tid}<a></td><td>${row.taxon}</td><td>${row.status}</td></tr>`
+
+            resultsTBody.appendChild(rowTemplate.content.cloneNode(true));
          }
 
          function buildHeatMap(coordinates) {
@@ -220,7 +254,6 @@ if(!$IS_ADMIN){
          async function incrementLoadingBar(maxCount) {
             let count = parseInt(document.getElementById('loading-bar-count').innerHTML) + 1;
             document.getElementById('loading-bar-count').innerHTML = count; 
-
 
             let new_percent = (count / maxCount) * 100;
             document.getElementById('loading-bar').style.width = `${new_percent}%`;
@@ -287,6 +320,7 @@ if(!$IS_ADMIN){
                center: state.latlng, 
                zoom: 6, 
                scale: false, 
+               lang: "<?php echo $LANG_TAG; ?>"
             });
 
             let drawControl = new L.Control.Draw({
@@ -360,6 +394,11 @@ if(!$IS_ADMIN){
 	<link href="../../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
 	<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
 	<script src="../../js/jscolor/jscolor.js?ver=1" type="text/javascript"></script>
+   <style>
+      #thumbnail-results th {
+         text-align: left;
+      }
+   </style>
 </head>
    <body onload="initialize()">
       <?php include($SERVER_ROOT . '/includes/header.php');?>
@@ -381,7 +420,7 @@ if(!$IS_ADMIN){
             <div style="text-align: center; padding-top:0.5rem">
                Maps Generated
                <span id="loading-bar-count">0</span>
-               <span>/ <?php echo count($taxaList)?></span>
+               <span id="loading-bar-max">/ <?php echo count($taxaList)?></span>
             </div>
          </div>
          <form id="thumbnailBuilder" name="thumbnailBuilder" method="post" action="">
@@ -413,7 +452,6 @@ if(!$IS_ADMIN){
                   </div>
                </label><br/>
             </fieldset><br/>
-
             <fieldset>
                <legend><?php echo $LANG['BOUNDS'] ?></legend>
                <?php echo $LANG['UPPER_BOUND'] ?><br/>
@@ -447,6 +485,19 @@ if(!$IS_ADMIN){
             <button type="button" onclick="buildMaps(false)"><?= $LANG['BUILD_MAPS'] ?></button>
             <button type="button" onclick="buildMaps(true)"><?= $LANG['PREVIEW_MAP'] ?></button>
          </form>
+         <br/>
+         <fieldset id="thumbnail-results" style="display: none">
+            <legend><?php echo isset($LANG['RESULTS'])? $LANG['RESULTS']: 'Results'?></legend>
+            <table style="width: 100%">
+               <thead>
+                  <th><?php echo isset($LANG['TID'])? $LANG['TID']: 'Tid'?></th>
+                  <th><?php echo isset($LANG['TAXON'])? $LANG['TAXON']: 'Taxon'?></th>
+                  <th><?php echo isset($LANG['STATUS'])? $LANG['STATUS']: 'Status'?></th>
+               </thead>
+               <tbody id="thumbnail-results-body">
+               </tbody>
+            </table>
+         </fieldset>
       </div>
       <?php include($SERVER_ROOT . '/includes/footer.php');?>
    </body>

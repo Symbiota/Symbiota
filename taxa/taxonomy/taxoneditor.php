@@ -247,25 +247,28 @@ if($isEditor){
 						<div class="editDiv">
 							<div class="editLabel"><?php echo (isset($LANG['NOTES'])?$LANG['NOTES']:'Notes'); ?>: </div>
 							<div class="editfield">
-								<?php echo htmlspecialchars($taxonEditorObj->getNotes());?>
+								<?php
+									$safeTaxonEditorNotes =  $taxonEditorObj->getNotes() ?? '';
+									echo htmlspecialchars($safeTaxonEditorNotes);
+								?>
 							</div>
 							<div class="editfield" style="display:none;width:90%;">
-								<input type="text" id="notes" name="notes" style="width:100%;" value="<?php echo htmlspecialchars($taxonEditorObj->getNotes()); ?>" />
+								<input type="text" id="notes" name="notes" style="width:100%;" value="<?php echo htmlspecialchars($safeTaxonEditorNotes); ?>" />
 							</div>
 						</div>
 						<div class="editDiv">
 							<div class="editLabel"><?php echo (isset($LANG['SOURCE'])?$LANG['SOURCE']:'Source'); ?>: </div>
 							<div class="editfield">
 								<?php
-								$source = $taxonEditorObj->getSource();
-								if(!stripos($source, '<a ')){
-									$source = htmlspecialchars($source);
+								$safeSource = $taxonEditorObj->getSource() ?? '';
+								if(stripos($safeSource, '<a ') === false){
+									$safeSource = htmlspecialchars($safeSource);
 								}
-								echo $source;
+								echo $safeSource;
 								?>
 							</div>
 							<div class="editfield" style="display:none;width:90%;">
-								<input type="text" id="source" name="source" style="width:100%;" value="<?php echo htmlspecialchars($taxonEditorObj->getSource()); ?>" />
+								<input type="text" id="source" name="source" style="width:100%;" value="<?php echo htmlspecialchars($safeSource); ?>" />
 							</div>
 						</div>
 						<div class="editDiv">
@@ -341,7 +344,7 @@ if($isEditor){
 								?>
 							</span>
 						</div>
-						<div style="clear:both;margin:10px;overflow:auto">
+						<div style="clear:both;margin:10px;">
 							<div style="float:right;">
 								<a href="#" onclick="toggle('tsedit');return false;"><img style='border:0px;' src='../../images/edit.png'/></a>
 							</div>

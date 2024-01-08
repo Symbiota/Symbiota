@@ -304,8 +304,13 @@ if(!$clid){
 					</div>
 					<div>
 						<!-- Display Taxa Alphabetically: 0 = false, 1 = true  -->
-						<input name='dalpha' id='dalpha' type='checkbox' value='1' <?php echo ($defaultArr&&$defaultArr["dalpha"]?"checked":""); ?> />
+						<input name='dalpha' id='dalpha' type='checkbox' value='1' <?php echo (!empty($defaultArr['dalpha'])?'checked':''); ?> />
 						<?php echo $LANG['TAXONABC'];?>
+					</div>
+					<div>
+						<!-- Display Taxa Alphabetically: 0 = false, 1 = true  -->
+						<input name='dsubgenera' id='dsubgenera' type='checkbox' value='1' <?php echo (!empty($defaultArr['dsubgenera'])?'checked':''); ?> >
+						<?php echo $LANG['SHOWSUBGENERA'];?>
 					</div>
 					<div>
 						<?php
@@ -326,7 +331,8 @@ if(!$clid){
 				<b><?php echo (isset($LANG['ACCESS'])?$LANG['ACCESS']:'Access'); ?>:</b>
 				<select name="access">
 					<option value="private"><?php echo (isset($LANG['PRIVATE'])?$LANG['PRIVATE']:'Private');?></option>
-					<option value="public" <?php echo ($clArray && $clArray["access"]=="public"?"selected":""); ?>><?php echo (isset($LANG['PUBLIC'])?$LANG['PUBLIC']:'Public');?></option>
+					<option value="private-strict" <?php echo ($clArray && $clArray['access']=='private-strict'?'selected':''); ?>><?php echo $LANG['PRIVATE_STRICT'];?></option>
+					<option value="public" <?php echo ($clArray && $clArray['access']=='public'?'selected':''); ?>><?php echo (isset($LANG['PUBLIC'])?$LANG['PUBLIC']:'Public');?></option>
 				</select>
 			</div>
 			<div style="clear:both;float:left;margin-top:15px;">

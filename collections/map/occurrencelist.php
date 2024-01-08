@@ -2,6 +2,8 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/collections/list.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMapManager.php');
+include_once($SERVER_ROOT . '/rpc/crossPortalHeaders.php');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $cntPerPage = array_key_exists("cntperpage",$_REQUEST)?$_REQUEST["cntperpage"]:100;
@@ -16,6 +18,9 @@ $mapManager = new OccurrenceMapManager();
 $searchVar = $mapManager->getQueryTermStr();
 $recCnt = $mapManager->getRecordCnt();
 $occArr = array();
+
+$host = ($SERVER_HOST === '127.0.0.1' || $SERVER_HOST === 'localhost'? false: $SERVER_HOST . $CLIENT_ROOT);
+
 if(!$recLimit || $recCnt < $recLimit){
 	$occArr = $mapManager->getOccurrenceArr($pageNumber,$cntPerPage);
 }
@@ -97,16 +102,16 @@ if(!$recLimit || $recCnt < $recLimit){
 					$trCnt = 0;
 					foreach($occArr as $occId => $recArr){
 						$trCnt++;
-						echo '<tr '.($trCnt%2?'class="alt"':'').' id="tr'.$occId.'" >';
+						echo '<tr '.($trCnt%2?'class="alt"':'').' id="tr'.$occId.'" onclick="emit_occurrence('.$occId.')">';
 						//echo '<td style="width:10px;">';
 						//echo '<input type="checkbox" class="occcheck" id="ch'.$occId.'" name="occid[]" value="'.$occId.'" onchange="findSelections(this);" '.(in_array($occId,$selections)?"checked":"").' />';
 						//echo '</td>';
-						echo '<td id="cat'.$occId.'" >'.wordwrap($recArr["cat"], 7, "<br />\n", true).'</td>';
+						echo '<td id="cat'.$occId.'" >'.$recArr["cat"].'</td>';
 						echo '<td id="label'.$occId.'" >';
-						echo '<a href="#" onmouseover="openOccidInfoBox(\''.$recArr["c"].'\','.$recArr["lat"].','.$recArr["lon"].');" onmouseout="closeOccidInfoBox();" onclick="openIndPopup('.$occId.'); return false;">'.($recArr["c"]?wordwrap($recArr["c"], 12, "<br />\n", true):"Not available").'</a>';
+						echo '<a href="#" onmouseover="openOccidInfoBox(\''.$recArr["c"].'\','.$recArr["lat"].','.$recArr["lon"].');" onmouseout="closeOccidInfoBox();" onclick="openRecord({occid:' . $occId . ($host?', host:\'' . $host. '\'' : '' ). '}); return false;">'.($recArr["c"]?$recArr["c"]:"Not available").'</a>';
 						echo '</td>';
-						echo '<td id="e'.$occId.'" >'.wordwrap($recArr["e"], 10, "<br />\n", true).'</td>';
-						echo '<td id="s'.$occId.'" >'.wordwrap($recArr["s"], 12, "<br />\n", true).'</td>';
+						echo '<td id="e'.$occId.'" >'.$recArr["e"].'</td>';
+						echo '<td id="s'.$occId.'" >'.$recArr["s"].'</td>';
 						echo '</tr>';
 					}
 					?>

@@ -126,4 +126,5 @@ $LANG['ADDNEWIMG'] = 'Ajouter une nouvelle image';
 $LANG['ALLPUBDAT'] = 'Tous les Ensembles de Données Consultables Publiquement';
 $LANG['DATMANPAG'] = 'Page de Gestion des Ensembles de Données';
 $LANG['DATA_AUTHORIZED_TO_EDIT'] = 'ensembles de données que vous êtes autorisé à modifier';
+$LANG['MANAGE_TAXON_THUMBNAILS'] = 'Gérer les miniatures de la carte du profil de taxonomie';
 ?>

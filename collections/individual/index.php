@@ -10,11 +10,11 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 
 $occid = array_key_exists('occid', $_REQUEST) ? filter_var($_REQUEST['occid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$pk = array_key_exists('pk', $_REQUEST) ? filter_var($_REQUEST['pk'], FILTER_SANITIZE_STRING):'';
-$guid = array_key_exists('guid', $_REQUEST) ? filter_var($_REQUEST['guid'], FILTER_SANITIZE_STRING) : '';
+$pk = array_key_exists('pk', $_REQUEST) ? htmlspecialchars($_REQUEST['pk'], HTML_SPECIAL_CHARS_FLAGS) :'';
+$guid = array_key_exists('guid', $_REQUEST) ? htmlspecialchars($_REQUEST['guid'], HTML_SPECIAL_CHARS_FLAGS) : '';
 $tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$format = isset($_GET['format']) ? filter_var($_GET['format'], FILTER_SANITIZE_STRING) : '';
+$format = isset($_GET['format']) ? htmlspecialchars($_REQUEST['format'], HTML_SPECIAL_CHARS_FLAGS) : '';
 $submit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $indManager = new OccurrenceIndividual($submit?'write':'readonly');
@@ -152,19 +152,19 @@ $traitArr = $indManager->getTraitArr();
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<meta name="description" content="<?php echo 'Occurrence author: '.($occArr?$occArr['recordedby'].','.$occArr['recordnumber']:''); ?>" />
 	<meta name="keywords" content="<?php echo (!empty($occArr['occurrenceid'])?$occArr['occurrenceid']:'').', '.(!empty($occArr['recordid'])?$occArr['recordid']:''); ?>" />
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/leafletMap.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	include_once($SERVER_ROOT.'/includes/googleMap.php');
 	?>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/individual/index.css?ver=1" type="text/css" rel="stylesheet" >
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/individual/popup.css" type="text/css" rel="stylesheet" >
+	<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/individual/index.css?ver=1" type="text/css" rel="stylesheet" >
+	<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/individual/popup.css" type="text/css" rel="stylesheet" >
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 	<script type="text/javascript">
-		var tabIndex = <?php echo $tabIndex; ?>;
+		var tabIndex = <?= $tabIndex; ?>;
 		var map;
 		var mapInit = false;
 
@@ -184,7 +184,7 @@ $traitArr = $indManager->getTraitArr();
 		function refreshRecord(occid){
 			$.ajax({
 				method: "GET",
-				url: "<?php echo $CLIENT_ROOT; ?>/api/v2/occurrence/"+occid+"/reharvest"
+				url: "<?= $CLIENT_ROOT; ?>/api/v2/occurrence/"+occid+"/reharvest"
 			})
 			.done(function( response ) {
 				if(response.status == 200){
@@ -243,42 +243,75 @@ $traitArr = $indManager->getTraitArr();
 			if (occWindow.opener == null) occWindow.opener = self;
 		}
 
-      <?php if($displayMap){ ?>
+		<?php
+			if($displayMap){
+		 if(!empty($occArr["coordinateuncertaintyinmeters"])) {
+			echo 'const coordError = ' . $occArr["coordinateuncertaintyinmeters"] .';';
+		 } else {
+			echo 'const coordError = 0;';
+		 }
+			?>
+			function googleInit() {
+				var mLatLng = new google.maps.LatLng(<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>);
+				var dmOptions = {
+					zoom: 8,
+					center: mLatLng,
+					marker: mLatLng,
+					mapTypeId: google.maps.MapTypeId.TERRAIN,
+					scaleControl: true
+				};
+				map = new google.maps.Map(document.getElementById("map_canvas"), dmOptions);
+				//Add marker
+				var marker = new google.maps.Marker({
+					position: mLatLng,
+					map: map
+			});
 
-         function googleInit() {
-            var mLatLng = new google.maps.LatLng(<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>);
-            var dmOptions = {
-               zoom: 8,
-               center: mLatLng,
-               marker: mLatLng,
-               mapTypeId: google.maps.MapTypeId.TERRAIN,
-               scaleControl: true
-            };
-            map = new google.maps.Map(document.getElementById("map_canvas"), dmOptions);
-            //Add marker
-            var marker = new google.maps.Marker({
-            position: mLatLng,
-               map: map
+			if(coordError > 0) {
+			   new google.maps.Circle({
+				  center: mLatLng,
+				  radius: coordError,
+				  map: map
+			   })
+			}
+			}
+
+			function leafletInit() {
+				let mLatLng = [<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>];
+
+            map = new LeafletMap("map_canvas", {
+               center: mLatLng, 
+               zoom: 8, 
             });
-         }
-         function leafletInit() {
-            let mLatLng = [<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>];
-            map = new LeafletMap("map_canvas", {center: mLatLng, zoom: 8});
-            const marker = L.marker(mLatLng).addTo(map.mapLayer);
-         }
 
-         function initializeMap(){
-            <?php if(!empty($LEAFLET)) { ?>
-               leafletInit();
-            <?php } else { ?>
-               googleInit();
-            <?php } ?>
-         }
+			if(coordError > 0) {
+			   map.enableDrawing({...map.DEFAULT_DRAW_OPTIONS, control: false})
+			   map.drawShape({type: "circle", radius: coordError, latlng: mLatLng})
+			}
+				const marker = L.marker(mLatLng).addTo(map.mapLayer);
+			map.mapLayer.setZoom(8)
+			}
 
-      <?php } ?>
+			function initializeMap(){
+				<?php if(empty($GOOGLE_MAP_KEY)): ?>
+					leafletInit();
+				<?php else: ?>
+					googleInit();
+				<?php endif?>
+			}
+		<?php
+		}
+		?>
 	</script>
 </head>
 <body>
+	<header style="background-image: none;">
+		<a class="skip-link" href="#end-nav"><?php echo $LANG['SKIP_NAV'] ?></a>
+		<h1 class="smaller-header">
+			<?php echo (isset($LANG['FULL_RECORD_DETAILS']) ? $LANG['FULL_RECORD_DETAILS'] : 'Full Record Details'); ?>
+		</h1>
+		<div id="end-nav"></div>
+	</header>
 	<div id="fb-root"></div>
 	<script>
 		(function(d, s, id) {
@@ -660,7 +693,7 @@ $traitArr = $indManager->getTraitArr();
 						if($occArr['decimallatitude']){
 							?>
 							<div id="latlng-div" class="bottom-breathing-room-sm-rel">
-								<?php echo $LANG['LAT_LNG'] ?>: 
+								<?php echo $LANG['LAT_LNG'] ?>:
 								<?php
 								echo $occArr['decimallatitude'].'&nbsp;&nbsp;'.$occArr['decimallongitude'];
 								if($occArr['coordinateuncertaintyinmeters']) echo ' +-'.$occArr['coordinateuncertaintyinmeters'].'m.';
@@ -1210,13 +1243,13 @@ $traitArr = $indManager->getTraitArr();
 								echo '<div style="margin:10px;">'.$comArr['comment'].'</div>';
 								if($comArr['reviewstatus']){
 									if($SYMB_UID){
-									    echo '<div><a href="index.php?repcomid=' . htmlspecialchars($comId, HTML_SPECIAL_CHARS_FLAGS) . '&occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '&tabindex=' . htmlspecialchars($commentTabIndex, HTML_SPECIAL_CHARS_FLAGS) . '">';
+										echo '<div><a href="index.php?repcomid=' . htmlspecialchars($comId, HTML_SPECIAL_CHARS_FLAGS) . '&occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '&tabindex=' . htmlspecialchars($commentTabIndex, HTML_SPECIAL_CHARS_FLAGS) . '">';
 										echo $LANG['REPORT'];
 										echo '</a></div>';
 									}
 								}
 								else{
-								    echo '<div><a href="index.php?publiccomid=' . htmlspecialchars($comId, HTML_SPECIAL_CHARS_FLAGS) . '&occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '&tabindex=' . htmlspecialchars($commentTabIndex, HTML_SPECIAL_CHARS_FLAGS) . '">';
+									echo '<div><a href="index.php?publiccomid=' . htmlspecialchars($comId, HTML_SPECIAL_CHARS_FLAGS) . '&occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '&tabindex=' . htmlspecialchars($commentTabIndex, HTML_SPECIAL_CHARS_FLAGS) . '">';
 									echo $LANG['MAKE_COMMENT_PUBLIC'];
 									echo '</a></div>';
 								}
@@ -1269,7 +1302,7 @@ $traitArr = $indManager->getTraitArr();
 				</div>
 				<?php
 				if($traitArr){
-				    ?>
+					?>
 					<div id="traittab">
 						<?php
 						foreach($traitArr as $traitID => $tArr){
@@ -1310,8 +1343,8 @@ $traitArr = $indManager->getTraitArr();
 							if($editArr || $externalEdits){
 								if($editArr){
 									?>
-									<fieldset style="padding:15px;margin:10px 0px;">
-										<legend><?php echo $LANG['INTERNAL_EDITS']; ?></legend>
+									<section class="fieldset-like">
+										<h1><span><?php echo $LANG['INTERNAL_EDITS']; ?></span></h1>
 										<?php
 										foreach($editArr as $ts => $tsArr){
 											?>
@@ -1338,7 +1371,7 @@ $traitArr = $indManager->getTraitArr();
 											echo '<div style=""><hr></div>';
 										}
 										?>
-									</fieldset>
+									</section>
 									<?php
 								}
 								if($externalEdits){

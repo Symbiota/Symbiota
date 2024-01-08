@@ -1,5 +1,6 @@
 <?php
 include_once('../../config/symbini.php');
+include_once($SERVER_ROOT.'/content/lang/collections/tools/mapaids.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $formName = array_key_exists("formname",$_REQUEST)?$_REQUEST["formname"]:"";
@@ -54,7 +55,8 @@ else{
 
 				const MapOptions = {
 				center: [latCenter, lngCenter],
-				zoom: <?php echo $zoom?>
+				zoom: <?php echo $zoom?>,
+            lang: "<?php echo $LANG_TAG; ?>"
 				};
 
 				map = new LeafletMap('map_canvas', MapOptions);
@@ -110,7 +112,7 @@ else{
 			});
 		}
 		function initialize() {
-			<?php if(!empty($LEAFLET)) {?>
+			<?php if(empty($GOOGLE_MAP_KEY)) {?>
 				leafletInit();
 			<?php } else { ?>
 				googleInit();
@@ -154,13 +156,16 @@ else{
 	<body style="background-color:#ffffff;" onload="initialize()">
 		<div style="">
 			<div>
-				Click once to capture coordinates.
-				Submit Coordinate button will transfer to form.
+            <?php echo isset($LANG['MPR_INSTRUCTIONS']) ?$LANG['MPR_INSTRUCTIONS']: 'Click once to capture coordinates. Click on the submit button to transfer coordinates.' ?>
 			</div>
 			<div style="margin-right:30px;">
-				<b>Latitude:</b>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="latbox" size="13" name="lat" value="<?php echo $latDef; ?>" />&nbsp;&nbsp;&nbsp;
-				<b>Longitude:</b> <input type="text" id="lngbox" size="13" name="lon" value="<?php echo $lngDef; ?>" />
-				<input type="submit" name="addcoords" value="Submit Coordinates" onclick="updateParentForm();" />&nbsp;&nbsp;&nbsp;
+            <b>
+            <?php echo isset($LANG['MPR_LAT'])? $LANG['MPR_LAT']: 'Latitude' ?>:
+            </b>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="latbox" size="13" name="lat" value="<?php echo $latDef; ?>" />&nbsp;&nbsp;&nbsp;
+            <b>
+               <?php echo isset($LANG['MPR_LNG'])? $LANG['MPR_LNG']: 'Longitude' ?>:
+            </b> <input type="text" id="lngbox" size="13" name="lon" value="<?php echo $lngDef; ?>" />
+   <input type="submit" name="addcoords" value="<?php echo isset($LANG['SUBMIT'])? $LANG['SUBMIT']: 'Submit'?>" onclick="updateParentForm();" />&nbsp;&nbsp;&nbsp;
 			</div>
 			<div id='map_canvas' style='width:95%; height:90%; clear:both;'></div>
 		</div>

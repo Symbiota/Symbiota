@@ -46,6 +46,7 @@ class KeyDataManager extends Manager {
 	}
 
 	private function getCharList(){
+		//Used in first key, can probably delete once first key is deprecated
 		$returnArray = Array();
 		//Rate char list: Get list of char that are coded for a percentage of taxa list that is greater than
 		if($this->sql){
@@ -102,7 +103,7 @@ class KeyDataManager extends Manager {
 						if($row->helpurl) $charName .= ' <a class="infoAnchor" href="'.$row->helpurl.'" target="_blank" title="external resource"><img src="../images/info.png"></a>';
 						if($row->glossid) $charName .= ' <a class="infoAnchor" href="" onclick="openGlossaryPopup(' . $row->glossid . ');return false;" title="glossary term"><img src="../images/info.png"></a>';
 						$diffRank = false;
-						if($row->DifficultyRank && $row->DifficultyRank > 1 && !array_key_exists($charCID,$this->charArr)) $diffRank = true;
+						//if($row->DifficultyRank && $row->DifficultyRank > 1 && !array_key_exists($charCID,$this->charArr)) $diffRank = true;
 
 						//Set HeadingName within the $charArray, if not yet set
 						$headingArray[$headingID]['HeadingNames'][$language] = $row->headingname;
@@ -221,7 +222,7 @@ class KeyDataManager extends Manager {
 						if($r->helpurl) $charName .= ' <a class="infoAnchor" href="' . htmlspecialchars($r->helpurl, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="external resource"><img src="../images/info.png" /></a>';
 						if($r->charglossid) $charName .= ' <a class="infoAnchor" href="" onclick="openGlossaryPopup(' . $r->charglossid . ');return false;" title="glossary term"><img src="../images/info.png"></a>';
 						$diffRank = false;
-						if($r->DifficultyRank && $r->DifficultyRank > 1 && !array_key_exists($charCID,$this->charArr)) $diffRank = true;
+						//if($r->DifficultyRank && $r->DifficultyRank > 1 && !array_key_exists($charCID,$this->charArr)) $diffRank = true;
 
 						//Set HeadingName within the $charArray, if not yet set
 						$language = 'English';
@@ -454,7 +455,7 @@ class KeyDataManager extends Manager {
 
 	public function setProject($projValue){
 		if(is_numeric($projValue)){
-			$this->pid = $projValue;
+			$this->pid = filter_var($projValue, FILTER_SANITIZE_NUMBER_INT);
 		}
 	}
 
@@ -496,7 +497,8 @@ class KeyDataManager extends Manager {
 	}
 
 	public function setClValue($clid){
-		$sql = "";
+		$clid = filter_var($clid, FILTER_SANITIZE_NUMBER_INT);
+		$sql = '';
 		if($this->dynClid){
 			$sql = 'SELECT d.name, d.details, d.type FROM fmdynamicchecklists d WHERE (dynclid = '.$this->dynClid.')';
 			$result = $this->conn->query($sql);
@@ -511,13 +513,13 @@ class KeyDataManager extends Manager {
 				$this->clid = $clid;
 				$this->setMetaData();
 				//Get children checklists
-				$sqlBase = 'SELECT ch.clidchild, cl2.name '.
-					'FROM fmchecklists cl INNER JOIN fmchklstchildren ch ON cl.clid = ch.clid '.
-					'INNER JOIN fmchecklists cl2 ON ch.clidchild = cl2.clid '.
-					'WHERE (cl2.type != "excludespp") AND cl.clid IN(';
+				$sqlBase = 'SELECT ch.clidchild, cl2.name
+					FROM fmchecklists cl INNER JOIN fmchklstchildren ch ON cl.clid = ch.clid
+					INNER JOIN fmchecklists cl2 ON ch.clidchild = cl2.clid
+					WHERE (cl2.type != "excludespp") AND (ch.clid != ch.clidchild) AND cl.clid IN(';
 				$sql = $sqlBase.$this->clid.')';
 				do{
-					$childStr = "";
+					$childStr = '';
 					$rsChild = $this->conn->query($sql);
 					while($r = $rsChild->fetch_object()){
 						$this->childClidArr[$r->clidchild] = $r->name;
@@ -587,7 +589,7 @@ class KeyDataManager extends Manager {
 
 	public function setDynClid($id){
 		if(is_numeric($id)){
-			$this->dynClid = $id;
+			$this->dynClid = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
 		}
 	}
 
@@ -609,7 +611,7 @@ class KeyDataManager extends Manager {
 
 	public function setRelevanceValue($rel){
 		if(is_numeric($rel)){
-			$this->relevanceValue = $rel;
+			$this->relevanceValue = filter_var($rel, FILTER_SANITIZE_NUMBER_INT);
 		}
 	}
 

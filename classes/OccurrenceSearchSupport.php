@@ -140,7 +140,7 @@ class OccurrenceSearchSupport {
 								if(!$catSelArr && !$collSelArr) $catSelected = true;
 								elseif(in_array($catid, $catSelArr)) $catSelected = true;
 								$ariaLabel = $name . '(' . $collTypeLabel . ')' . '-' . $uniqGrouping;
-								echo '<input aria-label="' . $ariaLabel . '"   data-role="none" id="cat-' . $idStr . '-' . $collTypeLabel . '-' . $uniqGrouping . '-Input" name="cat[]" value="' . $catid.'" type="checkbox" onclick="selectAllCat(this,\'cat-' . $idStr . '\')" ' . ($catSelected?'checked':'') . ' />';
+								echo '<input aria-label="' . $ariaLabel . '"   data-role="none" id="cat-' . $idStr . (empty($collTypeLabel) ? '' : '-' . $collTypeLabel) . (empty($uniqGrouping)? '': '-' . $uniqGrouping) . '-Input" name="cat[]" value="' . $catid.'" type="checkbox" onclick="selectAllCat(this,\'cat-' . $idStr . '\')" ' . ($catSelected?'checked':'') . ' />';
 								echo $name . "(" . $collTypeLabel . ")";
 								?>
 							</div>

@@ -57,7 +57,7 @@ if($chars){
 
 <html>
 <head>
-	<title><?php echo $DEFAULT_TITLE.$LANG['WEBKEY'].preg_replace('/\<[^\>]+\>/','',$dataManager->getClName()); ?></title>
+	<title><?php echo $DEFAULT_TITLE.$LANG['WEBKEY'] . ' ' . preg_replace('/\<[^\>]+\>/','',$dataManager->getClName()); ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');

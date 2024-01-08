@@ -33,7 +33,6 @@ class DwcArchiverCore extends Manager{
 	private $occurrenceFieldArr = array();
 	private $determinationFieldArr = array();
 	private $imageFieldArr = array();
-	private $attributeFieldArr = array();
 	private $fieldArrMap = array();
 	private $isPublicDownload = false;
 	private $publicationGuid;
@@ -42,13 +41,16 @@ class DwcArchiverCore extends Manager{
 	private $securityArr = array();
 	private $includeDets = 1;
 	private $includeImgs = 1;
-	private $includeAttributes = 0;
-	private $includeMaterialSample = 0;
+	protected $includeAttributes = 0;
+	protected $includeMaterialSample = 0;
 	private $hasPaleo = false;
 	private $redactLocalities = 1;
 	private $rareReaderArr = array();
 	private $charSetSource = '';
 	protected $charSetOut = '';
+
+	private $attributeHandler = null;
+	private $materialSampleHandler = null;
 
 	private $geolocateVariables = array();
 
@@ -279,7 +281,7 @@ class DwcArchiverCore extends Manager{
 			$this->conditionSql .= 'AND (o.collid NOT IN(' . $_REQUEST['exclude'] . ')) ';
 		}
 		if (array_key_exists('datasetid', $_REQUEST) && is_numeric($_REQUEST['datasetid'])) {
-			$this->conditionSql .= 'AND (d.datasetid IN(' . $_REQUEST['datasetid'] . ')) ';
+			$this->conditionSql .= 'AND (ds.datasetid IN(' . $_REQUEST['datasetid'] . ')) ';
 		}
 		$sqlFrag = '';
 		if ($this->conditionArr) {
@@ -377,8 +379,8 @@ class DwcArchiverCore extends Manager{
 				//Search criteria came from custom search page
 				$sql .= 'LEFT JOIN fmvouchers v ON o.occid = v.occid LEFT JOIN fmchklsttaxalink ctl ON v.clTaxaID = ctl.clTaxaID ';
 			}
-			if (stripos($this->conditionSql, 'd.datasetid')) {
-				$sql .= 'INNER JOIN omoccurdatasetlink d ON o.occid = d.occid ';
+			if (stripos($this->conditionSql, 'ds.datasetid')) {
+				$sql .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
 			}
 			if (stripos($this->conditionSql, 'p.point')) {
 				//Search criteria came from map search page
@@ -860,8 +862,7 @@ class DwcArchiverCore extends Manager{
 				$zipArchive->addFile($this->targetPath . $this->ts . '-multimedia' . $this->fileExt);
 				$zipArchive->renameName($this->targetPath . $this->ts . '-multimedia' . $this->fileExt, 'multimedia' . $this->fileExt);
 			}
-			if ($this->includeAttributes) {
-				$this->writeAttributeFile();
+			if ($this->includeAttributes && file_exists($this->targetPath . $this->ts . '-attr' . $this->fileExt)) {
 				$zipArchive->addFile($this->targetPath . $this->ts . '-attr' . $this->fileExt);
 				$zipArchive->renameName($this->targetPath . $this->ts . '-attr' . $this->fileExt, 'measurementOrFact' . $this->fileExt);
 			}
@@ -886,7 +887,7 @@ class DwcArchiverCore extends Manager{
 			unlink($this->targetPath . $this->ts . '-occur' . $this->fileExt);
 			if ($this->includeDets) unlink($this->targetPath . $this->ts . '-det' . $this->fileExt);
 			if ($this->includeImgs) unlink($this->targetPath . $this->ts . '-multimedia' . $this->fileExt);
-			if ($this->includeAttributes) unlink($this->targetPath . $this->ts . '-attr' . $this->fileExt);
+			if ($this->includeAttributes && file_exists($this->targetPath . $this->ts . '-attr' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-attr' . $this->fileExt);
 			if ($this->includeMaterialSample && file_exists($this->targetPath . $this->ts . '-matSample' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
 			unlink($this->targetPath . $this->ts . '-meta.xml');
 			if ($this->schemaType == 'dwc') rename($this->targetPath . $this->ts . '-eml.xml', $this->targetPath . str_replace('.zip', '.eml', $fileName));
@@ -1024,7 +1025,7 @@ class DwcArchiverCore extends Manager{
 		}
 
 		//MeasurementOrFact extension
-		if ($this->includeAttributes) {
+		if ($this->includeAttributes && isset($this->fieldArrMap['attribute'])) {
 			$extElem3 = $newDoc->createElement('extension');
 			$extElem3->setAttribute('encoding', $this->charSetOut);
 			$extElem3->setAttribute('fieldsTerminatedBy', $this->delimiter);
@@ -1042,11 +1043,10 @@ class DwcArchiverCore extends Manager{
 			$extElem3->appendChild($coreIdElem3);
 
 			$mofCnt = 1;
-			$termArr = $this->attributeFieldArr['terms'];
-			foreach ($termArr as $v) {
+			foreach ($this->fieldArrMap['attribute'] as $term) {
 				$fieldElem = $newDoc->createElement('field');
 				$fieldElem->setAttribute('index', $mofCnt);
-				$fieldElem->setAttribute('term', $v);
+				$fieldElem->setAttribute('term', $term);
 				$extElem3->appendChild($fieldElem);
 				$mofCnt++;
 			}
@@ -1083,7 +1083,7 @@ class DwcArchiverCore extends Manager{
 		}
 		$newDoc->save($this->targetPath . $this->ts . '-meta.xml');
 
-		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n");
+		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
 	}
 
 	private function getEmlArr(){
@@ -1205,7 +1205,7 @@ class DwcArchiverCore extends Manager{
 
 		$emlDoc->save($this->targetPath . $this->ts . '-eml.xml');
 
-		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n");
+		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
 	}
 
 	/*
@@ -1630,7 +1630,6 @@ class DwcArchiverCore extends Manager{
 		if ($this->schemaType == 'dwc') unset($fieldOutArr[array_search('eventDate2', $fieldOutArr)]);
 		$this->writeOutRecord($fh, $fieldOutArr);
 
-		$materialSampleHandler = null;
 		if ($this->schemaType != 'coge') {
 			//$dwcOccurManager->setUpperTaxonomy();
 			$dwcOccurManager->setTaxonRank();
@@ -1763,8 +1762,9 @@ class DwcArchiverCore extends Manager{
 				$this->writeOutRecord($fh, $r);
 
 				$batchOccidArr[] = $r['occid'];
-				if (count($batchOccidArr) > 1000) {
-					if ($this->includeMaterialSample) $this->writeMaterialSampleData($materialSampleHandler, $batchOccidArr);
+				if (count($batchOccidArr) > 10000) {
+					if ($this->includeAttributes) $this->writeAttributeData($batchOccidArr);
+					if ($this->includeMaterialSample) $this->writeMaterialSampleData($batchOccidArr);
 					if ($pubID && $portalManager) $portalManager->insertPortalOccurrences($pubID, $batchOccidArr);
 					unset($batchOccidArr);
 					$batchOccidArr = array();
@@ -1781,9 +1781,13 @@ class DwcArchiverCore extends Manager{
 			if ($batchOccidArr) {
 				if ($pubID && $portalManager) $portalManager->insertPortalOccurrences($pubID, $batchOccidArr);
 			}
+			if ($this->includeAttributes){
+				$this->writeAttributeData($batchOccidArr);
+				if($this->attributeHandler !== null) $this->attributeHandler->__destruct();
+			}
 			if ($this->includeMaterialSample){
-				$this->writeMaterialSampleData($materialSampleHandler, $batchOccidArr);
-				$materialSampleHandler->__destruct();
+				$this->writeMaterialSampleData($batchOccidArr);
+				if($this->materialSampleHandler !== null) $this->materialSampleHandler->__destruct();
 			}
 		}
 		else {
@@ -1799,8 +1803,9 @@ class DwcArchiverCore extends Manager{
 			$this->errorMessage = 'No records returned. Modify query variables to be more inclusive.';
 			$this->logOrEcho($this->errorMessage);
 		}
-		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n");
-		if ($this->includeMaterialSample) $this->logOrEcho('Material Sample extension file created (' . date('h:i:s A') . ')... ');
+		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
+		if ($this->includeAttributes) $this->logOrEcho('Occurrence Attributes exported as a MeasurementsOrFact extension file... ');
+		if ($this->includeMaterialSample) $this->logOrEcho('Material Samples exported within a MaterialSample extension file... ');
 		return $filePath;
 	}
 
@@ -1850,7 +1855,7 @@ class DwcArchiverCore extends Manager{
 		}
 
 		fclose($fh);
-		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n");
+		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
 	}
 
 	private function writeImageFile(){
@@ -1954,50 +1959,27 @@ class DwcArchiverCore extends Manager{
 
 		fclose($fh);
 
-		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n");
+		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
 	}
 
-	private function writeAttributeFile(){
-		$this->logOrEcho("Creating occurrence Attributes file as MeasurementsOrFact extension (" . date('h:i:s A') . ")... ");
-		$filePath = $this->targetPath . $this->ts . '-attr' . $this->fileExt;
-		$fh = fopen($filePath, 'w');
-		if (!$fh) {
-			$this->logOrEcho('ERROR establishing output file (' . $filePath . '), perhaps target folder is not readable by web server.');
-			return false;
+	private function writeAttributeData($batchOccidArr){
+		if(!$this->attributeHandler){
+			$this->attributeHandler = new DwcArchiverAttribute($this->conn);
+			$this->attributeHandler->initiateProcess($this->targetPath . $this->ts . '-attr' . $this->fileExt);
+			$this->attributeHandler->setSchemaType($this->schemaType);
+			$this->fieldArrMap['attribute'] = $this->attributeHandler->getFieldArrTerms();
 		}
-
-		if (!$this->attributeFieldArr) $this->attributeFieldArr = DwcArchiverAttribute::getFieldArr();
-
-		//Output header
-		$this->writeOutRecord($fh, array_keys($this->attributeFieldArr['fields']));
-
-		//Output records
-		$sql = DwcArchiverAttribute::getSql($this->attributeFieldArr['fields'], $this->conditionSql);
-		//echo $sql; exit;
-		if ($rs = $this->dataConn->query($sql, MYSQLI_USE_RESULT)) {
-			while ($r = $rs->fetch_assoc()) {
-				$this->encodeArr($r);
-				$this->addcslashesArr($r);
-				$this->writeOutRecord($fh, $r);
-			}
-			$rs->free();
-		} else {
-			$this->logOrEcho("ERROR creating attribute (MeasurementOrFact) extension file: " . $this->dataConn->error . "\n");
-			$this->logOrEcho("\tSQL: " . $sql . "\n");
-		}
-
-		fclose($fh);
-		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n");
+		if($this->attributeHandler) $this->attributeHandler->writeOutRecordBlock($batchOccidArr);
 	}
 
-	private function writeMaterialSampleData(&$materialSampleHandler, $batchOccidArr){
-		if(!$materialSampleHandler){
-			$materialSampleHandler = new DwcArchiverMaterialSample($this->conn);
-			$materialSampleHandler->initiateProcess($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
-			$materialSampleHandler->setSchemaType($this->schemaType);
-			$this->fieldArrMap['materialSample'] = $materialSampleHandler->getFieldArrTerms();
+	private function writeMaterialSampleData($batchOccidArr){
+		if(!$this->materialSampleHandler){
+			$this->materialSampleHandler = new DwcArchiverMaterialSample($this->conn);
+			$this->materialSampleHandler->initiateProcess($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
+			$this->materialSampleHandler->setSchemaType($this->schemaType);
+			$this->fieldArrMap['materialSample'] = $this->materialSampleHandler->getFieldArrTerms();
 		}
-		if ($materialSampleHandler) $materialSampleHandler->writeOutRecordBlock($batchOccidArr);
+		if($this->materialSampleHandler) $this->materialSampleHandler->writeOutRecordBlock($batchOccidArr);
 	}
 
 	private function writeCitationFile(){
@@ -2073,7 +2055,7 @@ class DwcArchiverCore extends Manager{
 
 		fclose($fh);
 
-		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n");
+		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
 	}
 
 	private function writeOutRecord($fh, $outputArr){
@@ -2175,18 +2157,24 @@ class DwcArchiverCore extends Manager{
 		if($include) $this->includeMaterialSample = true;
 	}
 
-	public function hasAttributes(){
+	public function hasAttributes($collid = false){
 		$bool = false;
 		$sql = 'SELECT occid FROM tmattributes LIMIT 1';
+		if(is_numeric($collid)){
+			$sql = 'SELECT a.occid FROM omoccurrences o INNER JOIN tmattributes a ON o.occid = a.occid WHERE o.collid = '.$collid.' LIMIT 1';
+		}
 		$rs = $this->conn->query($sql);
 		if ($rs->num_rows) $bool = true;
 		$rs->free();
 		return $bool;
 	}
 
-	public function hasMaterialSamples(){
+	public function hasMaterialSamples($collid = false){
 		$bool = false;
 		$sql = 'SELECT occid FROM ommaterialsample LIMIT 1';
+		if(is_numeric($collid)){
+			$sql = 'SELECT m.occid FROM omoccurrences o INNER JOIN ommaterialsample m ON o.occid = m.occid WHERE o.collid = '.$collid.' LIMIT 1';
+		}
 		if ($rs = $this->conn->query($sql)) {
 			if ($rs->num_rows) $bool = true;
 			$rs->free();

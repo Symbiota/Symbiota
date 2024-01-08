@@ -41,8 +41,10 @@ $LANG['SKELETAL_FILE_IMPORT'] = 'Skeletal Text File Import';
 $LANG['TEXT_FILE_IMPORT'] = 'Full Text File Import';
 $LANG['DWCA_IMPORT'] = 'DwC-Archive Import';
 $LANG['IPT_IMPORT'] = 'IPT Import';
+$LANG['EXTENDED_IMPORT'] = 'Extended Data Import';
 $LANG['NFN_IMPORT'] = 'Notes from Nature Import';
 $LANG['IMPORT_PROFILES'] = 'Saved Import Profiles';
+$LANG['CREATE_PROFILE'] = 'Create a new Import Profile';
 $LANG['PROCESSING_TOOLBOX'] = 'Processing Toolbox';
 $LANG['DARWIN_CORE_PUB'] = 'Darwin Core Archive Publishing';
 $LANG['REVIEW_SPEC_EDITS'] = 'Review/Verify Occurrence Edits';
@@ -111,4 +113,5 @@ $LANG['MORE_INFO_ALT'] = 'More information about catalog number';
 $LANG['SEARCH_BY_TAXON'] = 'Search by Taxon';
 $LANG['OCCURENCE_IDENTIFIER'] = 'Catalog Number';
 $LANG['TAXON'] = 'Taxon';
+$LANG['OCCURRENCE_EDITOR'] = 'Edit';
 ?>

@@ -6,19 +6,13 @@ header("Content-Type: text/html; charset=".$CHARSET);
 
 if(!$SYMB_UID) header('Location: ../profile/index.php?refurl='.$CLIENT_ROOT.'/glossary/termdetails.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$glossId = array_key_exists('glossid',$_REQUEST)?$_REQUEST['glossid']:0;
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
+$glossId = array_key_exists('glossid', $_REQUEST) ? filter_var($_REQUEST['glossid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$formSubmit = array_key_exists('formsubmit', $_POST) ? htmlspecialchars($_POST['formsubmit']) : '';
 $statusStr = array_key_exists('statusstr',$_REQUEST)?$_REQUEST['statusstr']:'';
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
-
-//Sanitation
-if(!is_numeric($glossId)) $glossId = 0;
-if(!is_numeric($tabIndex)) $tabIndex = 0;
-$statusStr = filter_var($statusStr,FILTER_SANITIZE_STRING);
-$formSubmit = filter_var($formSubmit,FILTER_SANITIZE_STRING);
+$tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
 
 $isEditor = false;
-if($IS_ADMIN || array_key_exists('GlossaryEditor',$USER_RIGHTS)) $isEditor = true;
+if($IS_ADMIN || array_key_exists('GlossaryEditor', $USER_RIGHTS)) $isEditor = true;
 
 $glosManager = new GlossaryManager();
 $glosManager->setGlossId($glossId);
@@ -28,7 +22,7 @@ $closeWindow = false;
 if($formSubmit){
 	if($formSubmit == 'Edit Term'){
 		if(!$glosManager->editTerm($_POST)){
-			$statusStr = $glosManager->getErrorStr();
+			$statusStr = $glosManager->getErrorMessage();
 		}
 	}
 	elseif($formSubmit == 'Submit New Image'){
@@ -42,41 +36,41 @@ if($formSubmit){
 	}
 	elseif($formSubmit == 'Link Translation'){
 		if(!$glosManager->linkTranslation($_POST['relglossid'])){
-			$statusStr = $glosManager->getErrorStr();
+			$statusStr = $glosManager->getErrorMessage();
 		}
 		$glosManager->setGlossId($glossId);
 	}
 	elseif($formSubmit == 'Link Related Term'){
 		if(!$glosManager->linkRelation($_POST['relglossid'],$_POST['relationship'])){
-			$statusStr = $glosManager->getErrorStr();
+			$statusStr = $glosManager->getErrorMessage();
 		}
 		$glosManager->setGlossId($glossId);
 	}
 	elseif($formSubmit == 'Remove Translation'){
 		if(!$glosManager->removeRelation($_POST['gltlinkid'],$_POST['relglossid'])){
-			$statusStr = $glosManager->getErrorStr();
+			$statusStr = $glosManager->getErrorMessage();
 		}
 		$glosManager->setGlossId($glossId);
 	}
-	elseif($formSubmit == 'Remove Synonym'){
-		if(!$glosManager->removeRelation($_POST['gltlinkid'],$_POST['relglossid'])){
-			$statusStr = $glosManager->getErrorStr();
+	elseif($formSubmit == 'removeSynonym'){
+		if(!$glosManager->removeRelation($_POST['gltlinkid'], $_POST['relglossid'])){
+			$statusStr = $glosManager->getErrorMessage();
 		}
 		$glosManager->setGlossId($glossId);
 	}
 	elseif($formSubmit == 'Unlink Related Term'){
 		if(!$glosManager->removeRelation($_POST['gltlinkid'])){
-			$statusStr = $glosManager->getErrorStr();
+			$statusStr = $glosManager->getErrorMessage();
 		}
 	}
 	elseif($formSubmit == 'Add Taxa Group'){
 		if(!$glosManager->addGroupTaxaLink($_POST['tid'])){
-			$statusStr = $glosManager->getErrorStr();
+			$statusStr = $glosManager->getErrorMessage();
 		}
 	}
 	elseif($formSubmit == 'Delete Taxa Group'){
 		if(!$glosManager->deleteGroupTaxaLink($_POST['tid'])){
-			$statusStr = $glosManager->getErrorStr();
+			$statusStr = $glosManager->getErrorMessage();
 		}
 	}
 	elseif($formSubmit == 'Delete Term'){
@@ -85,7 +79,7 @@ if($formSubmit){
 			$closeWindow = true;
 		}
 		else{
-			$statusStr = $glosManager->getErrorStr();
+			$statusStr = $glosManager->getErrorMessage();
 		}
 	}
 }
@@ -197,7 +191,7 @@ if($glossId){
 			if($statusStr){
 				?>
 				<div style="margin:15px;color:<?php echo (stripos($statusStr, 'SUCCESS') !== false?'green':'red'); ?>;">
-					<?php echo $statusStr; ?>
+					<?php echo htmlspecialchars($statusStr, HTML_SPECIAL_CHARS_FLAGS); ?>
 				</div>
 				<?php
 			}
@@ -399,7 +393,8 @@ if($glossId){
 											<input name="glossid" type="hidden" value="<?php echo $glossId; ?>" />
 											<input name="gltlinkid" type="hidden" value="<?php echo $synArr['gltlinkid']; ?>" />
 											<input name="relglossid" type="hidden" value="<?php echo $synGlossId; ?>" />
-											<input type="image" name="formsubmit" src='../images/del.png' value="Remove Synonym" style="width:12px" <?php if($disableRemoveSyn) echo 'disabled'; ?>>
+											<input name="formsubmit" type="hidden" value="removeSynonym" >
+											<input type="image" name="delimage" src='../images/del.png' style="width:12px" <?php if($disableRemoveSyn) echo 'disabled'; ?>>
 										</form>
 									</div>
 									<div style="float:right;margin:5px;cursor:pointer;" title="Edit Term">

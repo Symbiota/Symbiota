@@ -1,4 +1,4 @@
-function getObservationSvg(opts = {color: "#7A8BE7", size: 24}) {
+function getObservationSvg(opts = {color: "#7A8BE7", size: 24, className:""}) {
    const default_ops = {color: "#7A8BE7", size: 24};
    opts = {...default_ops, ...opts};
    const half = opts.size/2;
@@ -13,9 +13,10 @@ version="1.1"
 preserveAspectRatio="none"
 xmlns="http://www.w3.org/2000/svg"
 >
-<polygon points="${half},0 0,${opts.size} ${opts.size},${opts.size}" style="fill:${opts.color};stroke:black;stroke-width:3" />
+<polygon class="${opts.className}" points="${half},0 0,${opts.size} ${opts.size},${opts.size}" style="fill:${opts.color};stroke:black;stroke-width:3" />
 </svg>`,
       className: "",
+      observation: true,
       iconSize: [opts.size, opts.size],
       iconAnchor: [half, half],
    });
@@ -40,7 +41,8 @@ class LeafletMap {
       circlemarker: false,
       marker: false,
       multiDraw: false,
-      drawColor: this.DEFAULT_SHAPE_OPTIONS 
+      drawColor: this.DEFAULT_SHAPE_OPTIONS,
+      lang: "en",
    };
    
    /* To Hold Reference to Leaflet Map */
@@ -60,6 +62,7 @@ class LeafletMap {
    drawLayer;
 
    constructor(map_id, map_options=this.DEFAULT_MAP_OPTIONS) {
+
       this.mapLayer = L.map(map_id, map_options);
 
       const terrainLayer = L.tileLayer('https://{s}.google.com/vt?lyrs=p&x={x}&y={y}&z={z}', {
@@ -87,6 +90,8 @@ class LeafletMap {
          L.control.scale().addTo(this.mapLayer);
       }
 
+      this.setLang(map_options.lang);
+
       this.mapLayer._onResize();
    }
 
@@ -96,12 +101,339 @@ class LeafletMap {
       this.shapes = [];
    }
 
-   enableDrawing(drawOptions = this.DEFAULT_DRAW_OPTIONS, onDrawChange) {
+   setLang(lang) {
+      switch(lang) {
+         case "en":
+            L.drawLocal = {
+               draw: {
+                  toolbar: {
+                     actions: {
+                        title: 'Cancel drawing',
+                        text: 'Cancel'
+                     },
+                     finish: {
+                        title: 'Finish drawing',
+                        text: 'Finish'
+                     },
+                     undo: {
+                        title: 'Delete last point drawn',
+                        text: 'Delete last point'
+                     },
+                     buttons: {
+                        polyline: 'Draw a polyline',
+                        polygon: 'Draw a polygon',
+                        rectangle: 'Draw a rectangle',
+                        circle: 'Draw a circle',
+                        marker: 'Draw a marker',
+                        circlemarker: 'Draw a circlemarker'
+                     }
+                  },
+                  handlers: {
+                     circle: {
+                        tooltip: {
+                           start: 'Click and drag to draw circle.'
+                        },
+                        radius: 'Radius'
+                     },
+                     circlemarker: {
+                        tooltip: {
+                           start: 'Click map to place circle marker.'
+                        }
+                     },
+                     marker: {
+                        tooltip: {
+                           start: 'Click map to place marker.'
+                        }
+                     },
+                     polygon: {
+                        tooltip: {
+                           start: 'Click to start drawing shape.',
+                           cont: 'Click to continue drawing shape.',
+                           end: 'Click first point to close this shape.'
+                        }
+                     },
+                     polyline: {
+                        error: '<strong>Error:</strong> shape edges cannot cross!',
+                        tooltip: {
+                           start: 'Click to start drawing line.',
+                           cont: 'Click to continue drawing line.',
+                           end: 'Click last point to finish line.'
+                        }
+                     },
+                     rectangle: {
+                        tooltip: {
+                           start: 'Click and drag to draw rectangle.'
+                        }
+                     },
+                     simpleshape: {
+                        tooltip: {
+                           end: 'Release mouse to finish drawing.'
+                        }
+                     }
+                  }
+               },
+               edit: {
+                  toolbar: {
+                     actions: {
+                        save: {
+                           title: 'Save changes',
+                           text: 'Save'
+                        },
+                        cancel: {
+                           title: 'Cancel editing, discards all changes',
+                           text: 'Cancel'
+                        },
+                        clearAll: {
+                           title: 'Clear all layers',
+                           text: 'Clear All'
+                        }
+                     },
+                     buttons: {
+                        edit: 'Edit layers',
+                        editDisabled: 'No layers to edit',
+                        remove: 'Delete layers',
+                        removeDisabled: 'No layers to delete'
+                     }
+                  },
+                  handlers: {
+                     edit: {
+                        tooltip: {
+                           text: 'Drag handles or markers to edit features.',
+                           subtext: 'Click cancel to undo changes.'
+                        }
+                     },
+                     remove: {
+                        tooltip: {
+                           text: 'Click on a feature to remove.'
+                        }
+                     }
+                  }
+               }
+            };
+            break;
+         case "es":
+            L.drawLocal = {
+               draw: {
+                  toolbar: {
+                     actions: {
+                        title: 'Cancelar dibujo',
+                        text: 'Cancelar'
+                     },
+                     finish: {
+                        title: 'Terminar de dibujar',
+                        text: 'Finalizar'
+                     },
+                     undo: {
+                        title: 'Eliminar el último punto dibujado',
+                        text: 'Eliminar el último punto'
+                     },
+                     buttons: {
+                        polyline: 'Dibujar una polilínea',
+                        polygon: 'Dibujar un polígono',
+                        rectangle: 'Dibujar un rectángulo',
+                        circle: 'Dibuja un circulo',
+                        marker: 'Dibujar un marcador',
+                        circlemarker: 'Dibuja un marcador circular'
+                     }
+                  },
+                  handlers: {
+                     circle: {
+                        tooltip: {
+                           start: 'Haga clic y arrastre para dibujar un círculo.'
+                        },
+                        radius: 'Radio'
+                     },
+                     circlemarker: {
+                        tooltip: {
+                           start: 'Haga clic en el mapa para colocar un marcador circular.'
+                        }
+                     },
+                     marker: {
+                        tooltip: {
+                           start: 'Haga clic en el mapa para colocar el marcador.'
+                        }
+                     },
+                     polygon: {
+                        tooltip: {
+                           start: 'Haga clic para comenzar a dibujar la forma.',
+                           cont: 'Haga clic para continuar dibujando la forma.',
+                           end: 'Haga clic en el primer punto para cerrar esta forma.'
+                        }
+                     },
+                     polyline: {
+                        error: '<strong>Error:</strong> ¡Los bordes de las formas no pueden cruzarse!',
+                        tooltip: {
+                           start: 'Haga clic para comenzar a dibujar la línea.',
+                           cont: 'Haga clic para continuar dibujando la línea.',
+                           end: 'Haga clic en el último punto para finalizar la línea.'
+                        }
+                     },
+                     rectangle: {
+                        tooltip: {
+                           start: 'Haga clic y arrastre para dibujar un rectángulo.'
+                        }
+                     },
+                     simpleshape: {
+                        tooltip: {
+                           end: 'Suelte el mouse para terminar de dibujar.'
+                        }
+                     }
+                  }
+               },
+               edit: {
+                  toolbar: {
+                     actions: {
+                        save: {
+                           title: 'Guardar cambios',
+                           text: 'Guardar'
+                        },
+                        cancel: {
+                           title: 'Cancelar la edición, descarta todos los cambios.',
+                           text: 'Cancelar'
+                        },
+                        clearAll: {
+                           title: 'Limpiar todas las capas',
+                           text: 'Limpiar todo'
+                        }
+                     },
+                     buttons: {
+                        edit: 'Editar capas',
+                        editDisabled: 'No hay capas para editar',
+                        remove: 'Eliminar capas',
+                        removeDisabled: 'No hay capas para eliminar'
+                     }
+                  },
+                  handlers: {
+                     edit: {
+                        tooltip: {
+                           text: 'Arrastre controladores o marcadores para editar funciones.',
+                           subtext: 'Haga clic en cancelar para deshacer los cambios.'
+                        }
+                     },
+                     remove: {
+                        tooltip: {
+                           text: 'Haga clic en una función para eliminarla.'
+                        }
+                     }
+                  }
+               }
+            };
+            break;
+         case "fr":
+            L.drawLocal = {
+               draw: {
+                  toolbar: {
+                     actions: {
+                        title: 'Annuler le dessin',
+                        text: 'Annuler'
+                     },
+                     finish: {
+                        title: 'Terminer le dessin',
+                        text: 'Finition'
+                     },
+                     undo: {
+                        title: 'Supprimer le dernier point dessiné',
+                        text: 'Supprimer le dernier point'
+                     },
+                     buttons: {
+                        polyline: 'Dessiner une polyligne',
+                        polygon: 'Dessiner un polygone',
+                        rectangle: 'Dessiner un rectangle',
+                        circle: 'Dessine un cercle',
+                        marker: 'Dessiner un marqueur',
+                        circlemarker: 'Dessinez un marqueur de cercle'
+                     }
+                  },
+                  handlers: {
+                     circle: {
+                        tooltip: {
+                           start: 'Cliquez et faites glisser pour dessiner un cercle.'
+                        },
+                        radius: 'Rayon'
+                     },
+                     circlemarker: {
+                        tooltip: {
+                           start: 'Cliquez sur la carte pour placer un marqueur de cercle.'
+                        }
+                     },
+                     marker: {
+                        tooltip: {
+                           start: 'Cliquez sur la carte pour placer le marqueur.'
+                        }
+                     },
+                     polygon: {
+                        tooltip: {
+                           start: 'Cliquez pour commencer à dessiner la forme.',
+                           cont: 'Cliquez pour continuer à dessiner la forme.',
+                           end: 'Cliquez sur le premier point pour fermer cette forme.'
+                        }
+                     },
+                     polyline: {
+                        error: '<strong>Erreur:</strong> les bords de la forme ne peuvent pas se croiser !',
+                        tooltip: {
+                           start: 'Cliquez pour commencer à tracer une ligne.',
+                           cont: 'Cliquez pour continuer à tracer la ligne.',
+                           end: 'Cliquez sur le dernier point pour terminer la ligne.'
+                        }
+                     },
+                     rectangle: {
+                        tooltip: {
+                           start: 'Cliquez et faites glisser pour dessiner un rectangle.'
+                        }
+                     },
+                     simpleshape: {
+                        tooltip: {
+                           end: 'Relâchez la souris pour terminer le dessin.'
+                        }
+                     }
+                  }
+               },
+               edit: {
+                  toolbar: {
+                     actions: {
+                        save: {
+                           title: 'Sauvegarder les modifications',
+                           text: 'Sauver'
+                        },
+                        cancel: {
+                           title: 'Annuler la modification, annule toutes les modifications',
+                           text: 'Annuler'
+                        },
+                        clearAll: {
+                           title: 'Effacer tous les calques',
+                           text: 'Tout effacer'
+                        }
+                     },
+                     buttons: {
+                        edit: 'Modifier les calques',
+                        editDisabled: 'Aucun calque à modifier',
+                        remove: 'Supprimer des calques',
+                        removeDisabled: 'Aucun calque à supprimer'
+                     }
+                  },
+                  handlers: {
+                     edit: {
+                        tooltip: {
+                           text: 'Faites glisser les poignées ou les marqueurs pour modifier les entités.',
+                           subtext: 'Cliquez sur Annuler pour annuler les modifications.'
+                        }
+                     },
+                     remove: {
+                        tooltip: {
+                           text: 'Cliquez sur une fonctionnalité à supprimer.'
+                        }
+                     }
+                  }
+               }
+            };
+            break;
+      }
+   }
 
+   enableDrawing(drawOptions = this.DEFAULT_DRAW_OPTIONS, onDrawChange) {
       var drawnItems = new L.FeatureGroup();
       this.drawLayer = drawnItems;
       this.mapLayer.addLayer(drawnItems);
-
 
       //Jank workaround for leaflet-draw api
       const setDrawColor = (drawOption) => {
@@ -123,9 +455,16 @@ class LeafletMap {
          setDrawColor("rectangle");
          setDrawColor("circle");
       }
+      if(drawOptions.map_mode_strict) {
+         if(drawOptions.mode !== "polygon") drawOptions.polygon = false;
+         if(drawOptions.mode !== "circle") drawOptions.circle = false;
+         if(drawOptions.mode !== "rectangle") drawOptions.rectangle= false;
+         if(drawOptions.mode !== "polyline") drawOptions.polyline = false;
+      }
 
       if(drawOptions.control || drawOptions.control === undefined) {
          var drawControl = new L.Control.Draw({
+            position: 'topright',
             draw: drawOptions,
             edit: {
                featureGroup: drawnItems,
@@ -177,6 +516,20 @@ class LeafletMap {
             if(onDrawChange) onDrawChange(this.activeShape);
          }.bind(this))
       }
+         switch(drawOptions.mode) {
+            case "polygon": 
+               document.querySelector(".leaflet-draw-draw-polygon").click();
+            break;
+            case "rectangle": 
+               document.querySelector(".leaflet-draw-draw-rectangle").click();
+            break;
+            case "marker": 
+               document.querySelector(".leaflet-draw-draw-marker").click();
+            break;
+            case "circle":
+               document.querySelector(".leaflet-draw-draw-circle").click();
+            break;
+         }
 
    }
 
@@ -208,7 +561,7 @@ class LeafletMap {
       this.activeShape.id = id;
       this.shapes.push(this.activeShape);
 
-      this.mapLayer.fitBounds(map.activeShape.layer.getBounds());
+      this.mapLayer.fitBounds(this.activeShape.layer.getBounds());
    }
 
 }
