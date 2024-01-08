@@ -245,7 +245,7 @@ if($tid){
 									?>
 									<div style="float:right;margin-right:10px;" title="<?php echo $LANG['MUST_HAVE_EDIT_PERM']; ?>">
 										<a href="../../collections/editor/occurrenceeditor.php?occid=<?php echo htmlspecialchars($imgArr['occid'], HTML_SPECIAL_CHARS_FLAGS); ?>&tabtarget=2" target="_blank">
-											<img src="../../images/edit.png" style="border:0px;"/>
+											<img src="../../images/edit.png" style="width:1.3em;border:0px;"/>
 										</a>
 									</div>
 									<?php
@@ -254,7 +254,7 @@ if($tid){
 									?>
 									<div style='float:right;margin-right:10px;'>
 										<a href="../../imagelib/imgdetails.php?imgid=<?php echo htmlspecialchars($imgArr["imgid"], HTML_SPECIAL_CHARS_FLAGS);?>&emode=1">
-											<img src="../../images/edit.png" style="border:0px;" />
+											<img src="../../images/edit.png" style="width:1.3em;border:0px;" />
 										</a>
 									</div>
 									<?php

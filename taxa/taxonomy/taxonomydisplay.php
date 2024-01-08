@@ -81,7 +81,7 @@ if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
 			?>
 			<div style="float:right;" title="<?php echo (isset($LANG['ADD_NEW_TAXON'])?$LANG['ADD_NEW_TAXON']:'Add a New Taxon'); ?>">
 				<a href="taxonomyloader.php">
-					<img style='border:0px;width:15px;' src='../../images/add.png' alt="Plus sign">
+					<img style='border:0px;width:1.5em;' src='../../images/add.png' alt="Plus sign">
 				</a>
 			</div>
 			<?php
