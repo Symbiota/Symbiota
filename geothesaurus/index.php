@@ -104,7 +104,8 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 			});
 
 			const geoJson = Terraformer.WKT.parse(wkt_form.value);
-			map.drawShape({type: "polygon", latlngs: geoJson.coordinates[0], wkt: wkt_form.value})
+			//map.drawShape({type: "polygon", latlngs: geoJson.coordinates[0], geoJSON:geoJson, wkt: wkt_form.value})
+			map.drawShape({type: "geoJSON", geoJSON: geoJson })
 		}
 
 		function openCoordAid(id="footprintwkt") {
@@ -122,6 +123,7 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 				leafletInit();
 			} catch(e) {
 				console.log("Leaflet Map failed to load")
+            console.log(e)
 			}
 		}
 	</script>
@@ -198,7 +200,7 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 						<div class="field-div">
 							<label> <?= $LANG['GEO_RANK'] ?> </label>:
 							<span>
-								<select name="geoLevel" required>
+								<select name="geoLevel">
 									<option value=""> <?= $LANG['SELECT_RANK'] ?> </option>
 									<option value="">----------------------</option>
 									<?php
@@ -257,7 +259,7 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 							<a onclick="openCoordAid('addfootprintwkt')">
 								<img src='../images/world.png' style='width:10px;border:0' alt='Image of the globe' /> <?= $LANG['EDIT_POLYGON']?> 
 							</a>
-							<span><textarea id="addfootprintwkt" name="polygon" style="margin-top: 0.5rem; width:98%;height:90px;"></textarea></span>
+							<span><textarea id="addfootprintwkt" name="polygon" style=" margin-top: 0.5rem; width:98%;height:90px;"></textarea></span>
 						</div>
 						<div id="addButton-div" class="button-div">
 							<button type="submit" name="submitaction" value="addGeoUnit"> <?= $LANG['ADD_UNIT'] ?> </button>
@@ -305,7 +307,7 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 							<label> <?= $LANG['GEO_RANK'] ?> </label>:
 							<span class="editTerm"><?= ($geoUnit['geoLevel']?$rankArr[$geoUnit['geoLevel']].' ('.$geoUnit['geoLevel'].')':''); ?></span>
 							<span class="editFormElem">
-								<select name="geoLevel" required>
+								<select name="geoLevel">
 									<option value=""> <?= $LANG['SELECT_RANK'] ?> </option>
 									<option value="">----------------------</option>
 									<?php
@@ -373,7 +375,7 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 							<img src='../images/world.png' style='width:10px;border:0' alt='Image of the globe' /> <?= $LANG['EDIT_POLYGON']?> 
 						</a>
 						<span class="editFormElem" style="margin-top: 0.5rem">
-							<textarea id="footprintwkt" name="polygon" style="margin-top: 0.5rem; width:98%;height:90px;"><?= isset($geoUnit['wkt'])?trim($geoUnit['wkt']): null ?></textarea>
+							<textarea id="footprintwkt" name="polygon" style="width:98%;height:90px;"><?= isset($geoUnit['wkt'])?trim($geoUnit['wkt']): null ?></textarea>
 						</span>
 					</div>
 						<div id="editButton-div" class="button-div">

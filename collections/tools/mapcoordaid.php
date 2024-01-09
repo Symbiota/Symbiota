@@ -276,8 +276,9 @@ else{
          }, setShapeToSearchForm);
 
          if(formShape) {
-            map.drawShape(formShape);
-            map.mapLayer.fitBounds(map.activeShape.layer.getBounds());
+            //map.drawShape(formShape);
+			   map.drawShape({type: "geoJSON", geoJSON: {}})
+            //map.mapLayer.fitBounds(map.activeShape.layer.getBounds());
          }
       }
       function googleInit() {
