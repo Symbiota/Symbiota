@@ -30,7 +30,7 @@
 /* Global styles
    ========================================================================== */
 html {
-  font-size: 10px; /* 1rem = 10px */
+  font-size: 14px; /* 1rem = 10px */
 }
 
 body {
@@ -903,7 +903,6 @@ hr {
   font-weight: bold;
 }
 
-
 .tr-center {
   text-align: center;
 }
@@ -982,4 +981,8 @@ hr {
 button.no-margin-left,
 div.no-margin-left {
   margin-left: 0;
+}
+
+.rt-breathing-room-rel {
+  margin-right: 1rem;
 }
