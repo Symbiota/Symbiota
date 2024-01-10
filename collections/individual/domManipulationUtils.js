@@ -19,7 +19,7 @@ const reorderElements = (parentDivId, desiredDivIds, removeDivIds) => {
   });
 };
 
-// In order to implement, add the following code the end of collections/individual/index.php
+// Example implementation below. Add the following code (or something like it with the desired order of divs) the end of collections/individual/index.php
 
 {
   /* <script type="text/javascript">
