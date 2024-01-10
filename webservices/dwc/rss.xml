@@ -1,2 +1,2 @@
-<?xml version="1.0"?>
-<redirect><newLocation>http://localhost/BioKIC/Symbiota/content/dwca/rss.xml</newLocation></redirect>
+<?xml version="1.0" encoding="UTF-8"?>
+<redirect><newLocation>../../content/dwca/rss.xml</newLocation></redirect>
