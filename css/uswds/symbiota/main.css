@@ -986,4 +986,71 @@ div.no-margin-left {
   max-width: 37rem;
 }
 
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(0, 0, 0, 0.9);
+  color: #fff;
+  display: grid;
+  align-content: center;
+  text-align: center;
+  justify-content: center;
+  _opacity: 0;
+}
+
+.hide {
+  animation: fadeout1 0.5s;
+  opacity: 0;
+}
+
+.show {
+  animation: fadein1 0.5s;
+}
+
+@keyframes fadein1 {
+  0% {
+    opacity: 0;
+  }
+  ,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeout1 {
+  0% {
+    opacity: 1;
+  }
+  ,
+  100% {
+    opacity: 0;
+  }
+}
+
+.none {
+  display: none;
+}
+
+.spinner1 {
+  height: 5rem;
+  width: 5rem;
+  font-size: 35px;
+  color: yellow;
+  /* enable text-primary on item */
+  cursor: pointer;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 /* End USDA ********************************************************************************/
