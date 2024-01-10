@@ -109,6 +109,7 @@ else{
       const KMtoM = 1000; 
       const SIG_FIGS = 6;
       const wktInputId = "<?= $wktInputId?>";
+      const polyOutputType = "<?= $outputType ?>";
 
       const setField = (id, v) => {
          var elem = opener.document.getElementById(id);
@@ -180,11 +181,9 @@ else{
          if(!activeShape)
             return;
 
-         const outputType = "<?= $outputType ?>";
-
          switch(activeShape.type) {
             case "polygon":
-               if(outputType === "geoJson") {
+               if(polyOutputType === "geoJson") {
                   setPolygon( JSON.stringify({
                      "type": "Feature",
                      "properties": {},
@@ -217,15 +216,28 @@ else{
       function loadShape(mapMode) {
          switch(mapMode) {
             case "polygon":
-               let origFootprintWkt = getField(wktInputId);
-               try {
-                  let polyPoints = parseWkt(origFootprintWkt);
-                  if(polyPoints) {
-                     return { type: "polygon", latlngs: polyPoints, wkt: getField(wktInputId)};
+               if(polyOutputType === "geoJson") {
+                  let geoJsonStr = getField(wktInputId);
+                  try {
+                     let geoJson = JSON.parse(geoJsonStr);
+                        return { 
+                           type: "geoJSON", 
+                           geoJSON: geoJson
+                        };
+                  } catch(e) {
+                     alert(e.message);
                   }
-               } catch(e) {
-                  alert(e.message);
-						opener.document.getElementById(wktInputId).value = origFootprintWkt;
+               } else {
+                  let origFootprintWkt = getField(wktInputId);
+                  try {
+                     let polyPoints = parseWkt(origFootprintWkt);
+                     if(polyPoints) {
+                        return { type: "polygon", latlngs: polyPoints, wkt: getField(wktInputId)};
+                     }
+                  } catch(e) {
+                     alert(e.message);
+                     opener.document.getElementById(wktInputId).value = origFootprintWkt;
+                  }
                }
             break;
             case "rectangle":
@@ -290,8 +302,8 @@ else{
          }, setShapeToSearchForm);
 
          if(formShape) {
-            //map.drawShape(formShape);
-			   map.drawShape({type: "geoJSON", geoJSON: {}})
+            map.drawShape(formShape);
+			   //map.drawShape({type: "geoJSON", geoJSON: {}})
             //map.mapLayer.fitBounds(map.activeShape.layer.getBounds());
          }
       }

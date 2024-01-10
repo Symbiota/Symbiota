@@ -537,41 +537,13 @@ class LeafletMap {
       const id = this.shapes.length;
       switch(shape.type) {
          case "geoJSON":
-            var states = {
-               "type": "Feature",
-               "properties": {"party": "Republican"},
-               "geometry": {
-                  "type": "Polygon",
-                  "coordinates": [[
-                     [-104.05, 48.99],
-                     [-97.22,  48.98],
-                     [-96.58,  45.94],
-                     [-104.03, 45.94],
-                     [-104.05, 48.99]
-                  ]]
-               }
-            };
-
-            const geoJSON = L.geoJSON(states, {
-               style: function(feature) {
-                  switch (feature.properties.party) {
-                     case 'Republican': return {color: "#ff0000"};
-                     case 'Democrat':   return {color: "#0000ff"};
-                  }
-               }
-            });
-
-
-            //this.activeShape = getShapeCoords(shape.type, geoJSON);
+            const geoJSON = L.geoJSON(shape.geoJSON);
 
             for(let layer_id of Object.keys(geoJSON._layers)) {
-               console.log(geoJSON._layers[layer_id])
                this.drawShape({type:"polygon", latlngs: geoJSON._layers[layer_id]._latlngs})
             }
 
             this.mapLayer.fitBounds(geoJSON.getBounds());
-
-            //geoJSON.addTo(this.drawLayer);
             return;
          case "polygon":
             const poly = L.polygon(shape.latlngs);

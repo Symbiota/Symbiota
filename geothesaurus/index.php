@@ -62,8 +62,6 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 		.button-div{ margin: 15px }
 		#status-div{ margin:15px; padding: 15px; color: red; }
 	</style>
-	<script src="https://unpkg.com/terraformer@1.0.8"></script>
-	<script src="https://unpkg.com/terraformer-wkt-parser@1.1.2"></script>
 	<script type="text/javascript">
 		function toggleEditor(){
 			toggle(".editTerm");
@@ -103,14 +101,12 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 				drawColor: {opacity: 0.85, fillOpacity: 0.55, color: '#000' }
 			});
 
-			const geoJson = Terraformer.WKT.parse(wkt_form.value);
-			//map.drawShape({type: "polygon", latlngs: geoJson.coordinates[0], geoJSON:geoJson, wkt: wkt_form.value})
-			map.drawShape({type: "geoJSON", geoJSON: geoJson })
+			map.drawShape({type: "geoJSON", geoJSON: JSON.parse(wkt_form.value)})
 		}
 
 		function openCoordAid(id="footprintwkt") {
 			mapWindow = open(
-				`../collections/tools/mapcoordaid.php?mapmode=polygon&map_mode_strict=true&wkt_input_id=${id}`,
+				`../collections/tools/mapcoordaid.php?mapmode=polygon&map_mode_strict=true&geoJson&wkt_input_id=${id}`,
 				"polygon",
 				"resizable=0,width=900,height=630,left=20,top=20",
 			);
@@ -375,7 +371,7 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 							<img src='../images/world.png' style='width:10px;border:0' alt='Image of the globe' /> <?= $LANG['EDIT_POLYGON']?> 
 						</a>
 						<span class="editFormElem" style="margin-top: 0.5rem">
-							<textarea id="footprintwkt" name="polygon" style="width:98%;height:90px;"><?= isset($geoUnit['wkt'])?trim($geoUnit['wkt']): null ?></textarea>
+							<textarea id="footprintwkt" name="polygon" style="width:98%;height:90px;"><?= isset($geoUnit['geoJSON'])?trim($geoUnit['geoJSON']): null ?></textarea>
 						</span>
 					</div>
 						<div id="editButton-div" class="button-div">

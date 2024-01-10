@@ -46,7 +46,7 @@ class GeographicThesaurus extends Manager{
 		$retArr = array();
 		if(is_numeric($geoThesID)){
 			$sql = 'SELECT t.geoThesID, t.geoTerm, t.abbreviation, t.iso2, t.iso3, t.numCode, t.category, t.geoLevel, t.parentID, p.geoTerm as parentTerm, t.notes, t.termStatus,
-				t.acceptedID, a.geoterm as acceptedTerm, gp.footprintWKT as wkt
+				t.acceptedID, a.geoterm as acceptedTerm, gp.footprintWKT as wkt, gp.geoJSON
 				FROM geographicthesaurus t LEFT JOIN geographicthesaurus a ON t.acceptedID = a.geoThesID
 				LEFT JOIN geographicthesaurus p ON t.parentID = p.geoThesID
 				LEFT JOIN geographicpolygon gp ON t.geoThesID = gp.geoThesID
@@ -69,6 +69,7 @@ class GeographicThesaurus extends Manager{
 				$retArr['notes'] = $r->notes;
 				$retArr['termStatus'] = $r->termStatus;
 				$retArr['wkt'] = $r->wkt;
+				$retArr['geoJSON'] = $r->geoJSON;
 			}
 			$rs->free();
 			if($retArr){
@@ -130,7 +131,7 @@ class GeographicThesaurus extends Manager{
 
    private function addPolygon($geoThesID, $polygon) {
       $sql = 'INSERT INTO geographicpolygon 
-         (geoThesID, footprintPolygon ,footprintWKT) 
+         (geoThesID, footprintPolygon, geoJSON) 
          VALUES ('. $geoThesID .', ST_GeomFromText("' . $polygon . '"), "' . $polygon . '")';
       if(!$this->conn->query($sql)){
          $this->errorMessage = 'ERROR saving new polygon: '.$this->conn->error;
@@ -142,8 +143,8 @@ class GeographicThesaurus extends Manager{
 
    private function updatePolygon($geoThesID, $polygon) {
       $sql = 'UPDATE geographicpolygon ' .
-         'SET footprintWKT = "'. $polygon .'", ' .
-         'footprintPolygon = ST_GeomFromText("'. $polygon .'")' .
+         'SET geoJSON = "'. $polygon .'", ' .
+         'footprintPolygon = ST_GeomFromGeoJSON("'. $polygon .'")' .
          'WHERE (geoThesID = ' . $geoThesID . ')';
       if(!$this->conn->query($sql)){
          $this->errorMessage = 'ERROR saving polygon edits: '.$this->conn->error;
