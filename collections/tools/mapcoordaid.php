@@ -12,6 +12,7 @@ $zoom = array_key_exists("zoom",$_REQUEST)&&$_REQUEST["zoom"]?$_REQUEST["zoom"]:
 $mapMode = array_key_exists("mapmode",$_REQUEST)?$_REQUEST["mapmode"]:'';
 $mapModeStrict = array_key_exists("map_mode_strict",$_REQUEST)?$_REQUEST["map_mode_strict"]:false;
 $wktInputId = array_key_exists("wkt_input_id", $_REQUEST)?$_REQUEST["wkt_input_id"]:"footprintwkt";
+$outputType= array_key_exists("geoJson", $_REQUEST)?"geoJson":"wkt";
 
 $clManager = new ChecklistAdmin();
 $clManager->setClid($clid);
@@ -150,8 +151,8 @@ else{
          setField("pointlong", Math.abs(center_lng).toFixed(SIG_FIGS));
       }
 
-      function setPolygon(wkt) {
-         setField(wktInputId, wkt);
+      function setPolygon(poly_output) {
+         setField(wktInputId, poly_output);
       }
 
       /* setShapeToSearchForm: 
@@ -179,9 +180,22 @@ else{
          if(!activeShape)
             return;
 
+         const outputType = "<?= $outputType ?>";
+
          switch(activeShape.type) {
             case "polygon":
-               setPolygon(activeShape.wkt);
+               if(outputType === "geoJson") {
+                  setPolygon( JSON.stringify({
+                     "type": "Feature",
+                     "properties": {},
+                     "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [activeShape.latlngs.map(([lat, lng]) => [lng, lat])]
+                     },
+                  }));
+               } else {
+                  setPolygon(activeShape.wkt);
+               }
                break;
             case "rectangle":
                const rec = activeShape;
