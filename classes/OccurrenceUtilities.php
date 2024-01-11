@@ -721,26 +721,34 @@ class OccurrenceUtilities {
 				//Clean and parse scientific name
 				$parsedArr = TaxonomyUtilities::parseScientificName($recMap['scientificname']);
 				$scinameStr = '';
+				if(array_key_exists('unitind1', $parsedArr)){
+					$scinameStr .= $parsedArr['unitind1'];
+					if($parsedArr['unitind1'] != '×' || $parsedArr['unitind1'] != '†') $scinameStr .= ' ';
+				}
 				if(array_key_exists('unitname1',$parsedArr)){
-					$scinameStr = $parsedArr['unitname1'];
+					$scinameStr = $parsedArr['unitname1'].' ';
 					if(!array_key_exists('genus',$recMap) || $recMap['genus']){
 						$recMap['genus'] = $parsedArr['unitname1'];
 					}
 				}
+				if(array_key_exists('unitind2', $parsedArr)){
+					$scinameStr .= $parsedArr['unitind2'];
+					if($parsedArr['unitind2'] != '×') $scinameStr .= ' ';
+				}
 				if(array_key_exists('unitname2',$parsedArr)){
-					$scinameStr .= ' '.$parsedArr['unitname2'];
+					$scinameStr .= $parsedArr['unitname2'].' ';
 					if(!array_key_exists('specificepithet',$recMap) || !$recMap['specificepithet']){
 						$recMap['specificepithet'] = $parsedArr['unitname2'];
 					}
 				}
 				if(array_key_exists('unitind3',$parsedArr)){
-					$scinameStr .= ' '.$parsedArr['unitind3'];
+					$scinameStr .= $parsedArr['unitind3'].' ';
 					if((!array_key_exists('taxonrank',$recMap) || !$recMap['taxonrank'])){
 						$recMap['taxonrank'] = $parsedArr['unitind3'];
 					}
 				}
 				if(array_key_exists('unitname3',$parsedArr)){
-					$scinameStr .= ' '.$parsedArr['unitname3'];
+					$scinameStr .= $parsedArr['unitname3'];
 					if(!array_key_exists('infraspecificepithet',$recMap) || !$recMap['infraspecificepithet']){
 						$recMap['infraspecificepithet'] = $parsedArr['unitname3'];
 					}

@@ -253,16 +253,13 @@ function setParent(parentName, unitind1) {
   });
 }
 
-function updateFullname(f) {
-  let sciname = "";
-  if (f.unitind1.value) sciname = f.unitind1.value + " ";
-  sciname = sciname + f.unitname1.value + " ";
-  if (f.unitind2.value) sciname = sciname + f.unitind2.value + " ";
-  if (f.unitname2.value) sciname = sciname + f.unitname2.value + " ";
-  if (f.unitind3.value) sciname = sciname + f.unitind3.value + " ";
-  if (f.unitname3.value) sciname = sciname + f.unitname3.value;
-  f.sciname.value = sciname.trim();
-  checkNameExistence(f);
+function updateFullname(f){
+	let sciname = f.unitind1.value + f.unitname1.value + " " + f.unitind2.value + f.unitname2.value + " ";
+	if(f.unitname3.value){
+		sciname = sciname + (f.unitind3.value + " " + f.unitname3.value).trim();
+	}
+	f.sciname.value = sciname.trim();
+	checkNameExistence(f);
 }
 
 function checkNameExistence(f) {

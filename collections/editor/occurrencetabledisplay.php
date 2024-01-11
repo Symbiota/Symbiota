@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
@@ -121,7 +123,7 @@ else{
 	header('Location: ../../profile/index.php?refurl=../collections/editor/occurrencetabledisplay.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['TABLE_VIEW'])?$LANG['TABLE_VIEW']:'Occurrence Table View'); ?></title>
@@ -148,8 +150,8 @@ else{
 	</script>
 	<script src="../../js/symb/collections.editor.table.js?ver=2" type="text/javascript" ></script>
 	<script src="../../js/symb/collections.editor.query.js?ver=6" type="text/javascript" ></script>
-	<style type="text/css">
-		#titleDiv { font-weight: bold; font-size: 14px; width:790px; margin-bottom: 5px; }
+	<style>
+		#titleDiv { font-weight: bold; font-size: 1.5rem; width:790px; margin-bottom: 5px; }
 		table.styledtable td { white-space: nowrap; }
 		fieldset{ padding:15px }
 		fieldset > legend{ font-weight:bold }
@@ -160,17 +162,18 @@ else{
 	</style>
 </head>
 <body style="margin-left: 0px; margin-right: 0px;background-color:white;">
+	<a class="skip-link" href="#skip-search"><?php echo $LANG['SKIP_SEARCH'] ?></a>
 	<div id="innertext">
 		<?php
 		if(($isEditor || $crowdSourceMode)){
 			?>
 			<div id="titleDiv">
 				<div style="float:right;">
-					<a href="#" title="<?php echo htmlspecialchars($LANG['SEARCH_FILTER'], HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="toggleQueryForm();"><img src="../../images/find.png" style="width:1.3em;" /></a>
+					<a href="#" title="<?= $LANG['SEARCH_FILTER'] ?>" aria-label="<?= $LANG['SEARCH_FILTER'] ?>" onclick="toggleQueryForm();"><img src="../../images/find.png" style="width:1.3em;" alt="<?= $LANG['IMG_SEARCH'] ?>" /></a>
 					<?php
 					if($isEditor == 1 || $isGenObs){
 						?>
-						<a href="#" title="Batch Update Tool" onclick="toggleBatchUpdate();return false;"><img class="editimg" src="../../images/editplus.png" style="width:1.3em;"/></a>
+						<a href="#" title="<?= $LANG['BATCH_TOOL'] ?>" aria-label="<?= $LANG['BATCH_TOOL'] ?>" onclick="toggleBatchUpdate();return false;" style="width:1.3em;"><img class="editimg" src="../../images/editplus.png" alt="<?= $LANG['IMG_EDIT'] ?>" style="width:1.3em;"></a>
 						<?php
 					}
 					?>
@@ -313,7 +316,7 @@ else{
 			<?php
 			if($recArr){
 				?>
-				<div style="clear: both; padding-top:10px">
+				<div style="clear: both; padding-top:10px" id="skip-search">
 					<?php
 					$tableId = 'defaulttable';
 					$tableClass = 'styledtable';
@@ -322,7 +325,7 @@ else{
 						$tableClass = 'stripe hover order-column compact nowrap cell-border';
 					}
 					?>
-					<table id="<?php echo $tableId; ?>" class="<?php echo $tableClass; ?>" style="font-family:Arial;font-size:12px;">
+					<table id="<?php echo $tableId; ?>" class="<?php echo $tableClass; ?> accessible-font" title="<?php echo htmlspecialchars((isset($LANG['TABLE_VIEW']) ? $LANG['TABLE_VIEW'] : 'Occurrence Table View'), HTML_SPECIAL_CHARS_FLAGS); ?>" aria-describedby="table-desc">
 						<thead>
 							<tr>
 								<th><?php echo (isset($LANG['SYMB_ID'])?$LANG['SYMB_ID']:'Symbiota ID'); ?></th>
@@ -343,9 +346,9 @@ else{
 								echo "<tr ".($recCnt%2?'class="alt"':'').">\n";
 								echo '<td>';
 								$url = 'occurrenceeditor.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$recStart).'&occid='.$id.'&collid='.$collId;
-								echo '<a href="' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '" title="open in same window">' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
-								echo '<a href="' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="' . htmlspecialchars((isset($LANG['NEW_WINDOW'])?$LANG['NEW_WINDOW']:'open in new window'), HTML_SPECIAL_CHARS_FLAGS) . '">';
-								echo '<img src="../../images/newwin.png" style="width:1.1em;" />';
+								echo '<a href="' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars((isset($LANG['SAME_WINDOW'])?$LANG['SAME_WINDOW']:'open in same window'), HTML_SPECIAL_CHARS_FLAGS) . '" aria-label="' .  htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
+								echo '<a href="' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="' . (isset($LANG['NEW_WINDOW'])?$LANG['NEW_WINDOW']:'open in new window') . '" aria-label="' . (isset($LANG['NEW_WINDOW'])?$LANG['NEW_WINDOW']:'open in new window') . '">';
+								echo '<img src="../../images/newwin.png" style="width:1.1em;" alt="' . $LANG['IMG_LINK'] . '" />';
 								echo '</a>';
 								echo '</td>'."\n";
 								foreach($headerMap as $k => $v){
@@ -362,6 +365,9 @@ else{
 							?>
 						</tbody>
 					</table>
+					<p id="table-desc">
+							<?php echo htmlspecialchars((isset($LANG['TABLE_VIEW_DESC']) ? $LANG['TABLE_VIEW_DESC'] : 'Table displays occurrence information with columns showing Symbiota ID, Family, Event Date, Author, Location, and other details'), HTML_SPECIAL_CHARS_FLAGS); ?>
+					</p>
 				</div>
 				<div style="width:790px;">
 					<?php echo $navStr; ?>

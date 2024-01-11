@@ -462,15 +462,6 @@ class LeafletMap {
          if(drawOptions.mode !== "polyline") drawOptions.polyline = false;
       }
 
-      if(false) {
-         // Set the button title text for the polygon button
-         L.drawLocal.draw.toolbar.buttons.polygon = 'Draw a sexy polygon!';
-    
-         // Set the tooltip start text for the rectangle
-         L.drawLocal.draw.handlers.rectangle.tooltip.start = 'Not telling...';
-         L.drawLocal.draw.handlers.circle.tooltip.start = 'Not telling...';
-      }
-
       if(drawOptions.control || drawOptions.control === undefined) {
          var drawControl = new L.Control.Draw({
             position: 'topright',

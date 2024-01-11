@@ -103,4 +103,7 @@ $LANG['IMAGE_SRC'] = 'Fuente de la imagen';
 $LANG['ALL_IMG'] = 'todas las imágenes';
 $LANG['LINKED_IMG'] = 'sólo imágenes de vales vinculadas';
 
+//from dynamicchecklist.php
+$LANG['ERROR_GEN_CHECK'] = 'ERROR al generar lista';
+
 ?>

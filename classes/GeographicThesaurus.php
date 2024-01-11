@@ -46,10 +46,12 @@ class GeographicThesaurus extends Manager{
 		$retArr = array();
 		if(is_numeric($geoThesID)){
 			$sql = 'SELECT t.geoThesID, t.geoTerm, t.abbreviation, t.iso2, t.iso3, t.numCode, t.category, t.geoLevel, t.parentID, p.geoTerm as parentTerm, t.notes, t.termStatus,
-				t.acceptedID, a.geoterm as acceptedTerm
+				t.acceptedID, a.geoterm as acceptedTerm, gp.footprintWKT as wkt
 				FROM geographicthesaurus t LEFT JOIN geographicthesaurus a ON t.acceptedID = a.geoThesID
 				LEFT JOIN geographicthesaurus p ON t.parentID = p.geoThesID
+				LEFT JOIN geographicpolygon gp ON t.geoThesID = gp.geoThesID
 				WHERE t.geoThesID = '.$geoThesID;
+
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retArr['geoThesID'] = $r->geoThesID;
@@ -66,6 +68,7 @@ class GeographicThesaurus extends Manager{
 				$retArr['parentTerm'] = $r->parentTerm;
 				$retArr['notes'] = $r->notes;
 				$retArr['termStatus'] = $r->termStatus;
+				$retArr['wkt'] = $r->wkt;
 			}
 			$rs->free();
 			if($retArr){
@@ -78,30 +81,87 @@ class GeographicThesaurus extends Manager{
 		return $retArr;
 	}
 
-	public function editGeoUnit($postArr){
-		if(is_numeric($postArr['geoThesID'])){
-			if(!$postArr['geoTerm']){
-				$this->errorMessage = 'ERROR editing geoUnit: geographic term must have a value';
-				return false;
-			}
-			$sql = 'UPDATE geographicthesaurus '.
-				'SET geoterm = "'.$this->cleanInStr($postArr['geoTerm']).'", '.
-				'abbreviation = '.($postArr['abbreviation']?'"'.$this->cleanInStr($postArr['abbreviation']).'"':'NULL').', '.
-				'iso2 = '.($postArr['iso2']?'"'.$this->cleanInStr($postArr['iso2']).'"':'NULL').', '.
-				'iso3 = '.($postArr['iso3']?'"'.$this->cleanInStr($postArr['iso3']).'"':'NULL').', '.
-				'numcode = '.(is_numeric($postArr['numCode'])?'"'.$this->cleanInStr($postArr['numCode']).'"':'NULL').', '.
-				'geoLevel = '.(is_numeric($postArr['geoLevel'])?$this->cleanInStr($postArr['geoLevel']):'NULL').', '.
-				'acceptedID = '.(is_numeric($postArr['acceptedID'])?'"'.$this->cleanInStr($postArr['acceptedID']).'"':'NULL').', '.
-				'parentID = '.(is_numeric($postArr['parentID'])?'"'.$this->cleanInStr($postArr['parentID']).'"':'NULL').', '.
-				'notes = '.($postArr['notes']?'"'.$this->cleanInStr($postArr['notes']).'"':'NULL').' '.
-				'WHERE (geoThesID = '.$postArr['geoThesID'].')';
-			if(!$this->conn->query($sql)){
-				$this->errorMessage = 'ERROR saving edits: '.$this->conn->error;
-				return false;
-			}
-		}
-		return true;
-	}
+   public function editGeoUnit($postArr){
+
+      if(!is_numeric($postArr['geoThesID'])) return false;
+
+      if(!$postArr['geoTerm']){
+         $this->errorMessage = 'ERROR editing geoUnit: geographic term must have a value';
+         return false;
+      }
+      $sql = 'UPDATE geographicthesaurus '.
+         'SET geoterm = "'.$this->cleanInStr($postArr['geoTerm']).'", '.
+         'abbreviation = '.($postArr['abbreviation']?'"'.$this->cleanInStr($postArr['abbreviation']).'"':'NULL').', '.
+         'iso2 = '.($postArr['iso2']?'"'.$this->cleanInStr($postArr['iso2']).'"':'NULL').', '.
+         'iso3 = '.($postArr['iso3']?'"'.$this->cleanInStr($postArr['iso3']).'"':'NULL').', '.
+         'numcode = '.(is_numeric($postArr['numCode'])?'"'.$this->cleanInStr($postArr['numCode']).'"':'NULL').', '.
+         'geoLevel = '.(is_numeric($postArr['geoLevel'])?$this->cleanInStr($postArr['geoLevel']):'NULL').', '.
+         'acceptedID = '.(is_numeric($postArr['acceptedID'])?'"'.$this->cleanInStr($postArr['acceptedID']).'"':'NULL').', '.
+         'parentID = '.(is_numeric($postArr['parentID'])?'"'.$this->cleanInStr($postArr['parentID']).'"':'NULL').', '.
+         'notes = '.($postArr['notes']?'"'.$this->cleanInStr($postArr['notes']).'"':'NULL').' '.
+         'WHERE (geoThesID = '.$postArr['geoThesID'].')';
+      if(!$this->conn->query($sql)){
+         $this->errorMessage = 'ERROR saving edits: '.$this->conn->error;
+         return false;
+      }
+
+      if(!empty($postArr['polygon'])) {
+         $poly = $this->cleanInStr($postArr['polygon']);
+
+         $sql = 'SELECT * from geographicpolygon WHERE(geoThesID=' . $postArr['geoThesID']. ')';
+         $polygon_exists = $this->conn->query($sql);
+
+         if(!$polygon_exists) {
+            $this->errorMessage = 'ERROR saving polygon edits: '.$this->conn->error;
+            return false;
+         }
+
+         if($polygon_exists->num_rows <= 0) {
+            $this->addPolygon($postArr['geoThesID'], $poly);
+         } else {
+            $this->updatePolygon($postArr['geoThesID'], $poly);
+         }
+      } else {
+         $this->deletePolygon($postArr['geoThesID']);
+      }
+
+      return true;
+   }
+
+   private function addPolygon($geoThesID, $polygon) {
+      $sql = 'INSERT INTO geographicpolygon 
+         (geoThesID, footprintPolygon ,footprintWKT) 
+         VALUES ('. $geoThesID .', ST_GeomFromText("' . $polygon . '"), "' . $polygon . '")';
+      if(!$this->conn->query($sql)){
+         $this->errorMessage = 'ERROR saving new polygon: '.$this->conn->error;
+         return false;
+      }
+
+      return true;
+   }
+
+   private function updatePolygon($geoThesID, $polygon) {
+      $sql = 'UPDATE geographicpolygon ' .
+         'SET footprintWKT = "'. $polygon .'", ' .
+         'footprintPolygon = ST_GeomFromText("'. $polygon .'")' .
+         'WHERE (geoThesID = ' . $geoThesID . ')';
+      if(!$this->conn->query($sql)){
+         $this->errorMessage = 'ERROR saving polygon edits: '.$this->conn->error;
+         return false;
+      }
+
+      return true;
+   }
+
+   private function deletePolygon($geoThesID) {
+      $sql = 'DELETE FROM geographicpolygon WHERE(geoThesID =' . $geoThesID . ')';
+      if(!$this->conn->query($sql)){
+         $this->errorMessage = 'ERROR removing polygon: '.$this->conn->error;
+         return false;
+      }
+
+      return true;
+   }
 
 	public function addGeoUnit($postArr){
 		if(!$postArr['geoTerm']){
@@ -119,11 +179,16 @@ class GeographicThesaurus extends Manager{
 				(is_numeric($postArr['acceptedID'])?'"'.$this->cleanInStr($postArr['acceptedID']).'"':'NULL').', '.
 				(is_numeric($postArr['parentID'])?'"'.$this->cleanInStr($postArr['parentID']).'"':'NULL').', '.
 				($postArr['notes']?'"'.$this->cleanInStr($postArr['notes']).'"':'NULL').')';
-			echo $sql;
 			if(!$this->conn->query($sql)){
 				$this->errorMessage = 'ERROR adding unit: '.$this->conn->error;
 				return false;
-			}
+         }
+
+         $geoThesID = $this->conn->insert_id;
+
+         if(!empty($postArr['polygon']) && $geoThesID) {
+            $this->addPolygon($geoThesID, $postArr['polygon']);
+         }
 		}
 		return true;
 	}
@@ -208,10 +273,15 @@ class GeographicThesaurus extends Manager{
 		return $retArr;
 	}
 
-	public function getAcceptedGeoTermArr($geoLevelMax = 0){
+	public function getAcceptedGeoTermArr($geoLevelMax = 0, $parentID = 0){
 		$retArr = array();
 		$sql = 'SELECT geoThesID, geoTerm FROM geographicthesaurus ';
-		if($geoLevelMax) $sql .= 'WHERE (geoLevel = '.$geoLevelMax.') ';
+		$conditionArr = array();
+		if($geoLevelMax) $conditionArr[] = '(geoLevel = '.$geoLevelMax.')';
+		if($parentID) $conditionArr[] = '(parentID = '.$parentID.')';
+		if($conditionArr){
+			$sql .= 'WHERE ' . implode(' AND ', $conditionArr);
+		}
 		$sql .= 'ORDER BY geoTerm';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -227,7 +297,7 @@ class GeographicThesaurus extends Manager{
 			$rankArr = $GLOBALS['GEO_THESAURUS_RANKING'];
 		}
 		else{
-			$rankArr = array(10 => 'Oceans', 20 => 'Island Group', 30 => 'Island', 40 => 'Continent/Region', 50 => 'Country', 60 => 'ADM1', 70 => 'ADM2', 80 => 'ADM3',
+			$rankArr = array(10 => 'Oceans', 20 => 'Island Group', 30 => 'Island', 40 => 'Continent/Region', 50 => 'Country', 60 => 'State/Province', 70 => 'County', 80 => 'Municipality',
 				100 => 'City/Town', 110 => 'Place Name', 150 => 'Lake/Pond', 160 => 'River/Creek');
 		}
 		return $rankArr;
@@ -315,21 +385,22 @@ class GeographicThesaurus extends Manager{
 		$obj = json_decode($json);
 		if($obj){
 			foreach($obj as $countryObj){
-				$key = $countryObj->boundaryISO;
+				$key = $countryObj->boundaryName;
 				$retArr[$key]['id'] = $countryObj->boundaryID;
 				$retArr[$key]['name'] = $countryObj->boundaryName;
 				$retArr[$key]['canonical'] = $countryObj->boundaryCanonical;
+				$retArr[$key]['iso'] = $countryObj->boundaryISO;
 				$retArr[$key]['license'] = $this->licenseTranslate($countryObj->boundaryLicense);
 				$region = '';
 				if(in_array($countryObj->Continent,$contArr)) $region = $countryObj->Continent;
 				elseif(in_array($countryObj->{'UNSDG-subregion'},$contArr)) $region = $countryObj->{'UNSDG-subregion'};
 				else $region = $countryObj->Continent.'/'.$countryObj->{'UNSDG-subregion'};
 				if($region == 'Northern America') $region == 'North America';
-				if($key == 'ATA') $region = 'Antartica';
+				if($countryObj->boundaryISO == 'ATA') $region = 'Antartica';
 				$retArr[$key]['region'] = $region;
 				//$retArr[$key]['geoJSON'] = $countryObj->gjDownloadURL;
 				//$retArr[$key]['simplifiedGeoJSON'] = $countryObj->simplifiedGeometryGeoJSON;
-				$retArr[$key]['link'] = $countryObj->apiURL;
+				//$retArr[$key]['link'] = $countryObj->apiURL;
 				$retArr[$key]['img'] = $countryObj->imagePreview;
 			}
 			ksort($retArr);
@@ -350,7 +421,8 @@ class GeographicThesaurus extends Manager{
 	public function getGBGeoList($countryCode){
 		$retArr = array();
 		$contArr = $this->getContinentArr();
-		$url = 'https://www.geoboundaries.org/api/current/gbOpen/'.$countryCode.'/ALL/';
+		$urlBase = 'https://www.geoboundaries.org/api/current/gbOpen/';
+		$url = $urlBase . $countryCode.'/ALL/';
 		$json = $this->getGeoboundariesJSON($url);
 		$obj = json_decode($json);
 		if($obj){
@@ -370,9 +442,10 @@ class GeographicThesaurus extends Manager{
 					if($region == 'Northern America') $region == 'North America';
 					if($countryCode == 'ATA') $region = 'Antartica';
 					$retArr[$type]['region'] = $region;
+					$retArr[$type]['gbCount'] = $boundaryObj->admUnitCount;
 					$retArr[$type]['geoJson'] = $boundaryObj->gjDownloadURL;
 					$retArr[$type]['simpleGeoJson'] = $boundaryObj->simplifiedGeometryGeoJSON;
-					$retArr[$type]['link'] = $boundaryObj->apiURL;
+					$retArr[$type]['link'] = $urlBase.$countryCode.'/'.$type.'/';
 					$retArr[$type]['img'] = $boundaryObj->imagePreview;
 				}
 			}
@@ -382,12 +455,14 @@ class GeographicThesaurus extends Manager{
 				FROM geographicthesaurus g LEFT JOIN geographicpolygon p ON g.geoThesID = p.geoThesID
 				WHERE g.geoLevel = 50 AND g.acceptedID IS NULL AND g.iso3 IN("'.$countryCode.'")';
 			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$retArr['ADM0']['geoThesID'] = $r->geoThesID;
-				if($r->polygonID) $retArr['ADM0']['polygon'] = 1;
+			if($r = $rs->fetch_object()){
+				if(isset($retArr['ADM0'])){
+					$retArr['ADM0']['geoThesID'] = $r->geoThesID;
+					if($r->polygonID) $retArr['ADM0']['polygon'] = 1;
+					$this->checkLowerDivision($retArr, array($r->geoThesID));
+				}
 			}
 			$rs->free();
-			$this->checkLowerDivision($retArr);
 		}
 		return $retArr;
 	}
@@ -410,26 +485,31 @@ class GeographicThesaurus extends Manager{
 		return $retStr;
 	}
 
-	private function checkLowerDivision(&$retArr, $type = 'ADM1'){
-		$admLevel = substr($type,-1);
+	private function checkLowerDivision(&$retArr, $parentIdArr, $admLevel = 1){
 		$geoLevel = 0;
 		if($admLevel == 1) $geoLevel = 60;
 		elseif($admLevel == 2) $geoLevel = 70;
 		elseif($admLevel == 3) $geoLevel = 80;
 		elseif($admLevel > 3) return false;
 		if($geoLevel){
-			$admNext = 'ADM'.($admLevel+1);
-			if(isset($retArr[$type]['geoThesID']) && isset($retArr[$admNext])){
-				$sql = 'SELECT g.geoThesID, g.iso3, p.geoThesID AS polygonID
+			if($parentIdArr && isset($retArr['ADM'.$admLevel])){
+				$idArr = array();
+				$hasPolygons = false;
+				$sql = 'SELECT g.geoThesID, COUNT(p.geoThesID) AS polygon_cnt
 					FROM geographicthesaurus g LEFT JOIN geographicpolygon p ON g.geoThesID = p.geoThesID
-					WHERE g.geoLevel = '.$geoLevel.' AND g.acceptedID IS NULL AND g.parentID = '.$retArr[$type]['geoThesID'];
+					WHERE g.geoLevel = '.$geoLevel.' AND g.acceptedID IS NULL AND g.parentID IN('.implode(',', $parentIdArr).')
+					GROUP BY g.geoThesID';
 				$rs = $this->conn->query($sql);
 				while($r = $rs->fetch_object()){
-					$retArr[$admNext]['geoThesID'] = $r->geoThesID;
-					if($r->polygonID) $retArr[$admNext]['polygon'] = 1;
-					$this->checkLowerDivision($retArr, $admNext);
+					$idArr[] = $r->geoThesID;
+					if($r->polygon_cnt) $hasPolygons = true;
 				}
 				$rs->free();
+				if($idArr){
+					$retArr['ADM'.$admLevel]['geoThesID'] = 'cnt_'.count($idArr);
+					if($hasPolygons) $retArr['ADM'.$admLevel]['polygon'] = 1;
+					$this->checkLowerDivision($retArr, $idArr, ++$admLevel);
+				}
 			}
 		}
 	}

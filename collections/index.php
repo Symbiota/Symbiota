@@ -12,7 +12,7 @@ if(!preg_match('/^[,\d]+$/',$catId)) $catId = '';
 if($catId == '' && isset($DEFAULTCATID)) $catId = $DEFAULTCATID;
 
 $collManager = new OccurrenceManager();
-$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? true;
+$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
 //$collManager->reset();
 
 $collList = $collManager->getFullCollectionList($catId);

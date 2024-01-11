@@ -281,7 +281,7 @@ class DwcArchiverCore extends Manager{
 			$this->conditionSql .= 'AND (o.collid NOT IN(' . $_REQUEST['exclude'] . ')) ';
 		}
 		if (array_key_exists('datasetid', $_REQUEST) && is_numeric($_REQUEST['datasetid'])) {
-			$this->conditionSql .= 'AND (d.datasetid IN(' . $_REQUEST['datasetid'] . ')) ';
+			$this->conditionSql .= 'AND (ds.datasetid IN(' . $_REQUEST['datasetid'] . ')) ';
 		}
 		$sqlFrag = '';
 		if ($this->conditionArr) {
@@ -379,8 +379,8 @@ class DwcArchiverCore extends Manager{
 				//Search criteria came from custom search page
 				$sql .= 'LEFT JOIN fmvouchers v ON o.occid = v.occid LEFT JOIN fmchklsttaxalink ctl ON v.clTaxaID = ctl.clTaxaID ';
 			}
-			if (stripos($this->conditionSql, 'd.datasetid')) {
-				$sql .= 'INNER JOIN omoccurdatasetlink d ON o.occid = d.occid ';
+			if (stripos($this->conditionSql, 'ds.datasetid')) {
+				$sql .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
 			}
 			if (stripos($this->conditionSql, 'p.point')) {
 				//Search criteria came from map search page

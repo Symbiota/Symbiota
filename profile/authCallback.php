@@ -7,7 +7,9 @@ use Jumbojett\OpenIDConnectClient;
 
 $profManager = new OpenIdProfileManager();
 
-$oidc = new OpenIDConnectClient($providerUrls['oid'], $clientIds['oid'], $clientSecrets['oid'], $providerUrls['oid']); // assumes that the issuer is identical to the providerUrl, as seems to be the case for microsoft
+$AUTH_PROVIDER = $AUTH_PROVIDER ?? 'oid';
+
+$oidc = new OpenIDConnectClient($providerUrls[$AUTH_PROVIDER], $clientIds[$AUTH_PROVIDER], $clientSecrets[$AUTH_PROVIDER], $providerUrls[$AUTH_PROVIDER]); // assumes that the issuer is identical to the providerUrl, as seems to be the case for microsoft
 
 if(isset($shouldUpgradeInsecureRequests)){
   $oidc->setHttpUpgradeInsecureRequests($shouldUpgradeInsecureRequests);

@@ -9,7 +9,7 @@ $genusStr = array_key_exists('genusstr',$_REQUEST)?$_REQUEST["genusstr"]:'';
 
 //Sanitation
 if(!is_numeric($tid)) $tid = 0;
-$genusStr = filter_var($genusStr, FILTER_SANITIZE_STRING);
+$genusStr = htmlspecialchars($genusStr, HTML_SPECIAL_CHARS_FLAGS);
 
 $taxonEditorObj = new TaxonomyEditorManager();
 $taxonEditorObj->setTid($tid);

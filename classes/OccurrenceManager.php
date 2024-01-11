@@ -101,7 +101,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$sqlWhere .= OccurrenceSearchSupport::getDbWhereFrag($this->cleanInStr($this->searchTermArr['db']));
 		}
 		if(array_key_exists('datasetid',$this->searchTermArr)){
-			$sqlWhere .= 'AND (d.datasetid IN('.$this->searchTermArr['datasetid'].')) ';
+			$sqlWhere .= 'AND (ds.datasetid IN('.$this->searchTermArr['datasetid'].')) ';
 			$this->displaySearchArr[] = 'Dataset(s): '.$this->getDatasetTitle($this->searchTermArr['datasetid']);
 		}
 		$sqlWhere .= $this->getTaxonWhereFrag();
@@ -511,8 +511,8 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		if(isset($sqlWhere) && strpos($sqlWhere,'ts.family')){
 			$sqlJoin .= 'LEFT JOIN taxstatus ts ON o.tidinterpreted = ts.tid ';
 		}
-		if(isset($sqlWhere) && strpos($sqlWhere,'d.datasetid')){
-			$sqlJoin .= 'INNER JOIN omoccurdatasetlink d ON o.occid = d.occid ';
+		if(isset($sqlWhere) && strpos($sqlWhere,'ds.datasetid')){
+			$sqlJoin .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
 		}
 		if(isset($sqlWhere) && (array_key_exists('polycoords',$this->searchTermArr) || strpos($sqlWhere,'p.point'))){
 			$sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';

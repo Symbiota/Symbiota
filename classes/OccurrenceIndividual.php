@@ -1223,7 +1223,7 @@ class OccurrenceIndividual extends Manager{
 	public function activateOrcidID($inStr){
 		$retStr = $inStr;
 		$m = array();
-		if(preg_match('#ORCID[\s:]+((https://orcid.org/)?\d{4}-\d{4}-\d{4}-\d{3}[0-9X])#', $inStr,$m)){
+		if(preg_match('#((https://orcid.org/)?\d{4}-\d{4}-\d{4}-\d{3}[0-9X])#', $inStr, $m)){
 			$orcidAnchor = $m[1];
 			if(substr($orcidAnchor,5) != 'https') $orcidAnchor = 'https://orcid.org/'.$orcidAnchor;
 			$orcidAnchor = '<a href="' . htmlspecialchars($orcidAnchor, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($m[1], HTML_SPECIAL_CHARS_FLAGS) . '</a>';

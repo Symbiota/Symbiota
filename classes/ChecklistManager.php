@@ -339,9 +339,9 @@ class ChecklistManager extends Manager{
 			}
 			if($this->showSubgenera){
 				$this->setSubgenera();
-				$sciname = array_column($this->taxaList, 'sciname');
-				$group = array_column($this->taxaList, 'taxongroup');
-				array_multisort($group, $sciname, $this->taxaList);
+				uasort($this->taxaList, function($a, $b) {
+					return $a['sciname'] <=> $b['sciname'];
+				});
 			}
 		}
 		return $this->taxaList;

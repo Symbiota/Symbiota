@@ -46,7 +46,7 @@ reset($treePath);
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.14.1/dijit/themes/claro/claro.css" media="screen">
+	<link rel="stylesheet" href="../../js/dojo-1.17.3/dijit/themes/claro/claro.css" media="screen">
 	<style>
 		.dijitLeaf,
 		.dijitIconLeaf,
@@ -61,7 +61,7 @@ reset($treePath);
 	</style>
 	<script src="../../js/jquery.js" type="text/javascript" ></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript" ></script>
-	<script src="//ajax.googleapis.com/ajax/libs/dojo/1.14.1/dojo/dojo.js"></script>
+	<script src="../../js/dojo-1.17.3/dojo/dojo.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$("#taxontarget").autocomplete({

@@ -30,4 +30,10 @@ $LANG['IMG_NOT_AVAILABLE'] = 'Image<br/>Not<br/>Available';
 $LANG['EDITMORP'] = 'Edit morphology';
 $LANG['ERROR_CLID_NULL'] = 'Error: checklist identifier is NULL';
 
+// key-v1.php
+$LANG['TAXON'] = 'Taxon';
+$LANG['DISPRESSPEC'] = 'Load Species List';
+$LANG['DISPLAY'] = 'Display';
+$LANG['SCINAME'] = 'Scientific Name';
+$LANG['COMMON'] = 'Common Name';
 ?>

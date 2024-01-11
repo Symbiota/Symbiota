@@ -91,7 +91,7 @@ class ProfileManager extends Manager{
 	private function authenticateUsingPassword($pwdStr){
 		$status = false;
 		if($pwdStr){
-			$sql = 'SELECT uid, firstname, username FROM users WHERE (password = PASSWORD(?)) AND (username = ? OR email = ?) ';
+			$sql = 'SELECT uid, firstname, username FROM users WHERE (password = CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?)))))) AND (username = ? OR email = ?) ';
 			if($stmt = $this->conn->prepare($sql)){
 				if($stmt->bind_param('sss', $pwdStr, $this->userName, $this->userName)){
 					$stmt->execute();
@@ -223,7 +223,7 @@ class ProfileManager extends Manager{
 			$this->resetConnection();
 			if($isSelf){
 				$testStatus = true;
-				$sql = 'SELECT uid FROM users WHERE (uid = ?) AND (password = PASSWORD(?))';
+				$sql = 'SELECT uid FROM users WHERE (uid = ?) AND (password = CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?))))))';
 				if($stmt = $this->conn->prepare($sql)){
 					$stmt->bind_param('is', $this->uid, $oldPwd);
 					$stmt->execute();
@@ -287,7 +287,7 @@ class ProfileManager extends Manager{
 
 	private function updatePassword($uid, $newPassword){
 		$status = false;
-		$sql = 'UPDATE users SET password = PASSWORD(?) WHERE (uid = ?)';
+		$sql = 'UPDATE users SET password = CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?))))) WHERE (uid = ?)';
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('si', $newPassword, $uid);
 			$stmt->execute();
@@ -328,7 +328,7 @@ class ProfileManager extends Manager{
 		$initialDynamicProperties['accessibilityPref'] = $isAccessiblePreferred === "1" ? true : false;
 		$jsonDynProps = json_encode($initialDynamicProperties);
 
-		$sql = 'INSERT INTO users(username, password, email, firstName, lastName, title, institution, country, city, state, zip, guid, dynamicProperties) VALUES(?,PASSWORD(?),?,?,?,?,?,?,?,?,?,?,?)';
+		$sql = 'INSERT INTO users(username, password, email, firstName, lastName, title, institution, country, city, state, zip, guid, dynamicProperties) VALUES(?,CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?))))),?,?,?,?,?,?,?,?,?,?,?)';
 		$this->resetConnection();
 		if($stmt = $this->conn->prepare($sql)) {
 			$stmt->bind_param('sssssssssssss', $this->userName, $pwd, $email, $firstName, $lastName, $title, $institution, $country, $city, $state, $zip, $guid, $jsonDynProps);
