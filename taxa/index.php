@@ -54,15 +54,15 @@ if($SYMB_UID){
 <head>
 	<title><?php echo $DEFAULT_TITLE." - ".$taxonManager->getTaxonName(); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/taxa/index.css" type="text/css" rel="stylesheet" />
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/taxa/traitplot.css" type="text/css" rel="stylesheet" >
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<script src="../js/jquery.js" type="text/javascript"></script>
-	<script src="../js/jquery-ui.js" type="text/javascript"></script>
+	<script src="../js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="../js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="../js/symb/taxa.index.js?ver=202101" type="text/javascript"></script>
 	<script src="../js/symb/taxa.editor.js?ver=202101" type="text/javascript"></script>
 	<style type="text/css">

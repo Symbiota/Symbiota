@@ -438,7 +438,7 @@ else{
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['OCCEDITOR'])?$LANG['OCCEDITOR']:'Occurrence Editor'); ?></title>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
     <?php
     if($crowdSourceMode == 1){
 		?>
@@ -462,8 +462,8 @@ else{
 	}
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<script src="../../js/jquery.js?ver=140310" type="text/javascript"></script>
-	<script src="../../js/jquery-ui.js?ver=140310" type="text/javascript"></script>
+	<script src="../../js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="../../js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		var collId = "<?php echo (isset($collMap['collid'])?$collMap['collid']:(is_numeric($collId)?$collId:0)); ?>";
 		var csMode = "<?php echo $crowdSourceMode; ?>";
@@ -505,7 +505,6 @@ else{
 	<script src="../../js/symb/collections.georef.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.main.js?ver=5" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.tools.js?ver=4" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.autocomplete.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.imgtools.js?ver=3" type="text/javascript"></script>
 	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.query.js?ver=6" type="text/javascript"></script>

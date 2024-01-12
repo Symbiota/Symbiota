@@ -18,13 +18,13 @@ $imgloc = "../images/games/namegame/";
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Name Game</title>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
     ?>
-	<script src="../js/jquery.js" type="text/javascript"></script>
-	<script src="../js/jquery-ui.js" type="text/javascript"></script>
+	<script src="../js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="../js/jquery-ui.min.js" type="text/javascript"></script>
 	<style>
 		.lettertable{border:1px solid #000000;border-spacing:3px;}
 		.tableplain{border:1px}
