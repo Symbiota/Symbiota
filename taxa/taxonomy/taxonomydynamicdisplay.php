@@ -41,7 +41,7 @@ reset($treePath);
 <head>
 	<title><?php echo $DEFAULT_TITLE.' Taxonomy Explorer: '.$taxonDisplayObj->getTargetStr(); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
@@ -59,8 +59,8 @@ reset($treePath);
 			height: 0px;
 		}
 	</style>
-	<script src="../../js/jquery.js" type="text/javascript" ></script>
-	<script src="../../js/jquery-ui.js" type="text/javascript" ></script>
+	<script src="../../js/jquery-3.7.1.min.js" type="text/javascript" ></script>
+	<script src="../../js/jquery-ui.min.js" type="text/javascript" ></script>
 	<script src="../../js/dojo-1.17.3/dojo/dojo.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {

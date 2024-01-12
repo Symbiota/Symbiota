@@ -30,7 +30,7 @@ if($isEditor && $submitAction) {
 	<?php
 	include_once ($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<style type="text/css">
 		fieldset{ margin: 10px; padding: 15px; }
 		legend{ font-weight: bold; }

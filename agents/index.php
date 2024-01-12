@@ -98,8 +98,8 @@ echo '<!DOCTYPE HTML>
 	<meta name="keywords" content='. $spDisplay .' />
 	<link href="../css/base.css" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css" type="text/css" rel="stylesheet" />
-	<script type="text/javascript" src="../js/jquery.js"></script>
-	<script type="text/javascript" src="../js/jquery-ui.js"></script>';
+	<script type="text/javascript" src="../js/jquery-3.7.1.min.js"></script>
+	<script type="text/javascript" src="../js/jquery-ui.min.js"></script>';
     // include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 echo '<script type="text/javascript">
 		var currentLevel = ' . ($descrDisplayLevel?$descrDisplayLevel:"1"). ';

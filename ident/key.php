@@ -64,14 +64,14 @@ if($chars){
 <html>
 <head>
 	<title><?php echo htmlspecialchars($DEFAULT_TITLE . ' ' . $LANG['WEBKEY'], HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars(preg_replace('/\<[^\>]+\>/','',$dataManager->getClName()), HTML_SPECIAL_CHARS_FLAGS); ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
 	<link href="../css/alerts.css" type="text/css" rel="stylesheet" />
-	<script src="../js/jquery.js" type="text/javascript"></script>
-	<script src="../js/jquery-ui.js" type="text/javascript"></script>
+	<script src="../js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="../js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="../js/symb/ident.key.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		$( function() {

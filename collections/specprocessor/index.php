@@ -86,9 +86,9 @@ if($isEditor){
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
-		<script src="../../js/jquery-3.2.1.min.js" type="text/javascript"></script>
-		<script src="../../js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
-		<link href="../../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
+		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
+		<script src="../../js/jquery-3.7.1.min.js" type="text/javascript"></script>
+		<script src="../../js/jquery-ui.min.js" type="text/javascript"></script>
 		<script src="../../js/symb/shared.js?ver=131106" type="text/javascript"></script>
 		<script>
 			$(document).ready(function() {

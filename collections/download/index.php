@@ -25,7 +25,7 @@ $dwcManager = new DwcArchiverCore();
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
 	<script src="../../js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
+	<script src="../../js/jquery-ui.min.js" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
 			var dialogArr = new Array("schemanative","schemadwc");

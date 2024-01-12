@@ -130,13 +130,13 @@ foreach ($coordArr as $collName => $coll) {
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
 		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
+		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
 		<style type="text/css">
 		.panel-content a{ outline-color: transparent; font-size: 12px; font-weight: normal; }
 		.ui-front { z-index: 9999999 !important; }
 		</style>
-		<script src="../../js/jquery-1.10.2.min.js" type="text/javascript"></script>
-		<script src="../../js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
-		<link href="../../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
+		<script src="../../js/jquery-3.7.1.min.js" type="text/javascript"></script>
+		<script src="../../js/jquery-ui.min.js" type="text/javascript"></script>
 		<link href="../../css/jquery.symbiota.css" type="text/css" rel="stylesheet" />
 		<script src="../../js/jquery.popupoverlay.js" type="text/javascript"></script>
 		<script src="../../js/jscolor/jscolor.js?ver=1" type="text/javascript"></script>
