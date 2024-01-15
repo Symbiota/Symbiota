@@ -91,8 +91,8 @@ class OccurrenceEditorManager {
 	public function getDynamicPropertiesArr(){
 		$retArr = array();
 		$propArr = array();
-		if(array_key_exists('dynamicproperties', $this->collMap)){
-			$propArr = json_decode($this->collMap['dynamicproperties'],true);
+		if(!empty($this->collMap['dynamicproperties'])){
+			$propArr = json_decode($this->collMap['dynamicproperties'], true);
 			if(isset($propArr['editorProps'])){
 				$retArr = $propArr['editorProps'];
 				if(isset($retArr['modules-panel'])){

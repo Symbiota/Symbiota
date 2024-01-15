@@ -3,11 +3,11 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$sourcePage = array_key_exists('sourcepage', $_REQUEST) ? filter_var($_REQUEST['sourcepage'], FILTER_SANITIZE_STRING) : 'specimen';
-$downloadType = array_key_exists('dltype', $_REQUEST) ? filter_var($_REQUEST['dltype'], FILTER_SANITIZE_STRING) : 'specimen';
+$sourcePage = array_key_exists('sourcepage', $_REQUEST) ? $_REQUEST['sourcepage'] : 'specimen';
+$downloadType = array_key_exists('dltype', $_REQUEST) ? $_REQUEST['dltype'] : 'specimen';
 $taxonFilterCode = array_key_exists('taxonFilterCode', $_REQUEST) ? filter_var($_REQUEST['taxonFilterCode'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $displayHeader = array_key_exists('displayheader', $_REQUEST) ? filter_var($_REQUEST['displayheader'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$searchVar = array_key_exists('searchvar', $_REQUEST) ? filter_var($_REQUEST['searchvar'], FILTER_SANITIZE_STRING) : '';
+$searchVar = array_key_exists('searchvar', $_REQUEST) ? $_REQUEST['searchvar'] : '';
 
 $dwcManager = new DwcArchiverCore();
 ?>
@@ -190,8 +190,8 @@ $dwcManager = new DwcArchiverCore();
 						?>
 						<input name="publicsearch" type="hidden" value="1" />
 						<input name="taxonFilterCode" type="hidden" value="<?php echo $taxonFilterCode; ?>" />
-						<input name="sourcepage" type="hidden" value="<?php echo $sourcePage; ?>" />
-						<input name="searchvar" type="hidden" value="<?php echo str_replace('"','&quot;',$searchVar); ?>" />
+						<input name="sourcepage" type="hidden" value="<?php echo htmlspecialchars($sourcePage); ?>" />
+						<input name="searchvar" type="hidden" value="<?php echo htmlspecialchars($searchVar); ?>" />
 						<button type="submit" name="submitaction">Download Data</button>
 						<img id="workingcircle" src="../../images/ajax-loader_sm.gif" style="margin-bottom:-4px;width:20px;display:none;" />
 					</div>

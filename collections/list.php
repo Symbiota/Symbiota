@@ -89,7 +89,7 @@ $_SESSION['citationvar'] = $searchVar;
 			});
 		}
 	</script>
-	<script src="../js/symb/collections.list.js?ver=10" type="text/javascript"></script>
+	<script src="../js/symb/collections.list.js?ver=2" type="text/javascript"></script>
 	<style type="text/css">
 		fieldset {
 			padding: 15px;

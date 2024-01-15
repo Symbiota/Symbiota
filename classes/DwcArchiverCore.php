@@ -2065,7 +2065,7 @@ class DwcArchiverCore extends Manager{
 			fputcsv($fh, $outputArr);
 		} else {
 			foreach ($outputArr as $k => $v) {
-				$outputArr[$k] = str_replace($this->delimiter, '', $v);
+				$outputArr[$k] = str_replace($this->delimiter, '', ($v ?? ''));
 			}
 			fwrite($fh, implode($this->delimiter, $outputArr) . "\n");
 		}
@@ -2137,7 +2137,7 @@ class DwcArchiverCore extends Manager{
 		} elseif ($d == 'csv' || $d == 'comma' || $d == ',') {
 			$this->delimiter = ",";
 			$this->fileExt = '.csv';
-		} else {
+		} elseif ($d) {
 			$this->delimiter = $d;
 			$this->fileExt = '.txt';
 		}

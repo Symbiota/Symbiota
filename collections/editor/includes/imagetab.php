@@ -248,7 +248,7 @@ $photographerArr = $occManager->getPhotographerArr();
 									<a href="<?php echo $imgArr['sourceurl']; ?>" target="_blank">
 										<?php
 										$sourceUrlDisplay = $imgArr['sourceurl'];
-										if(strlen($sourceUrlDisplay) > 60) $sourceUrlDisplay = '...'.substr($sourceUrlDisplay,-60);
+										if($sourceUrlDisplay && strlen($sourceUrlDisplay) > 60) $sourceUrlDisplay = '...'.substr($sourceUrlDisplay,-60);
 										echo $sourceUrlDisplay;
 										?>
 									</a>

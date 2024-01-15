@@ -4,20 +4,12 @@ include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrencetabledisplay.'.$LANG_TAG.'.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:false;
-$recLimit = array_key_exists('reclimit',$_REQUEST)?$_REQUEST['reclimit']:1000;
-$occIndex = array_key_exists('occindex',$_REQUEST)?$_REQUEST['occindex']:0;
-$crowdSourceMode = array_key_exists('csmode',$_REQUEST)?$_REQUEST['csmode']:0;
-$dynamicTable = array_key_exists('dynamictable',$_REQUEST)?$_REQUEST['dynamictable']:0;
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
-
-//Sanitation
-if(!is_numeric($collId)) $collId = false;
-if(!is_numeric($recLimit)) $recLimit = 1000;
-if(!is_numeric($occIndex)) $occIndex = false;
-if(!is_numeric($crowdSourceMode)) $crowdSourceMode = 0;
-if(!is_numeric($dynamicTable)) $dynamicTable = 0;
-$action = filter_var($action,FILTER_SANITIZE_STRING);
+$collId = array_key_exists('collid',$_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : false;
+$recLimit = array_key_exists('reclimit', $_REQUEST) ? filter_var($_REQUEST['reclimit'], FILTER_SANITIZE_NUMBER_INT) : 1000;
+$occIndex = array_key_exists('occindex', $_REQUEST) ? filter_var($_REQUEST['occindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$crowdSourceMode = array_key_exists('csmode', $_REQUEST) ? filter_var($_REQUEST['csmode'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$dynamicTable = array_key_exists('dynamictable', $_REQUEST) ? filter_var($_REQUEST['dynamictable'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
 
 $occManager = new OccurrenceEditorManager();
 
@@ -187,7 +179,7 @@ else{
 				foreach($recArr as $id => $occArr){
 					foreach($occArr as $k => $v){
 						if(!is_array($v)){
-							if(trim($v) && !array_key_exists($k,$headerArr)){
+							if($v && trim($v) && !array_key_exists($k,$headerArr)){
 								$headerArr[$k] = $k;
 							}
 						}
@@ -349,10 +341,12 @@ else{
 								echo '</td>'."\n";
 								foreach($headerMap as $k => $v){
 									$displayStr = $occArr[$k];
-									if(strlen($displayStr) > 60){
-										$displayStr = substr($displayStr,0,60).'...';
+									if($displayStr){
+										if(strlen($displayStr) > 60){
+											$displayStr = substr($displayStr,0,60).'...';
+										}
 									}
-									if(!$displayStr) $displayStr = '&nbsp;';
+									else $displayStr = '&nbsp;';
 									echo '<td>'.$displayStr.'</td>'."\n";
 								}
 								echo "</tr>\n";
