@@ -731,18 +731,9 @@ class OccurrenceDownload{
 
 	private function encodeStr($inStr){
 		$retStr = $inStr;
-		if($this->charSetSource){
-			if($this->charSetOut == 'UTF-8' && $this->charSetSource == 'ISO-8859-1'){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) == "ISO-8859-1"){
-					$retStr = utf8_encode($inStr);
-					//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
-				}
-			}
-			elseif($this->charSetOut == "ISO-8859-1" && $this->charSetSource == 'UTF-8'){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') == "UTF-8"){
-					$retStr = utf8_decode($inStr);
-					//$retStr = iconv("UTF-8","ISO-8859-1//TRANSLIT",$inStr);
-				}
+		if($retStr){
+			if($this->charSetOut && $this->charSetOut != $this->charSetSource){
+				$retStr = mb_convert_encoding($retStr, $this->charSetOut, mb_detect_encoding($retStr));
 			}
 		}
 		return $retStr;

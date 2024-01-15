@@ -1314,7 +1314,7 @@ class SpecUploadBase extends SpecUpload{
 					'WHERE u.occid IS NOT NULL AND (u.collid IN('.$this->collId.'))';
 				if($this->conn->query($sql)){
 					//Delete all determinations
-					$sqlDel = 'DELETE * FROM uploaddetermtemp WHERE (collid IN('.$this->collId.'))';
+					$sqlDel = 'DELETE FROM uploaddetermtemp WHERE (collid IN('.$this->collId.'))';
 					$this->conn->query($sqlDel);
 				}
 				else{

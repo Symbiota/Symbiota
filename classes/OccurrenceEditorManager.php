@@ -2488,39 +2488,17 @@ class OccurrenceEditorManager {
 	}
 
 	//Misc functions
-	private function encodeStrTargeted($inStr,$inCharset,$outCharset){
+	private function encodeStrTargeted($inStr, $inCharset, $outCharset){
 		if($inCharset == $outCharset) return $inStr;
 		$retStr = $inStr;
-		if($inCharset == "latin" && $outCharset == 'utf8'){
-			if(mb_detect_encoding($retStr,'UTF-8,ISO-8859-1',true) == "ISO-8859-1"){
-				$retStr = utf8_encode($retStr);
-			}
-		}
-		elseif($inCharset == "utf8" && $outCharset == 'latin'){
-			if(mb_detect_encoding($retStr,'UTF-8,ISO-8859-1') == "UTF-8"){
-				$retStr = utf8_decode($retStr);
-			}
-		}
+		$retStr = mb_convert_encoding($retStr, $outCharset, mb_detect_encoding($retStr));
 		return $retStr;
 	}
 
 	protected function encodeStr($inStr){
-		global $CHARSET;
 		$retStr = $inStr;
-
 		if($inStr){
-			if(strtolower($CHARSET) == "utf-8" || strtolower($CHARSET) == "utf8"){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) == "ISO-8859-1"){
-					$retStr = utf8_encode($inStr);
-					//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
-				}
-			}
-			elseif(strtolower($CHARSET) == "iso-8859-1"){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') == "UTF-8"){
-					$retStr = utf8_decode($inStr);
-					//$retStr = iconv("UTF-8","ISO-8859-1//TRANSLIT",$inStr);
-				}
-			}
+			$retStr = mb_convert_encoding($retStr, $GLOBALS['CHARSET'], mb_detect_encoding($retStr));
  		}
 		return $retStr;
 	}

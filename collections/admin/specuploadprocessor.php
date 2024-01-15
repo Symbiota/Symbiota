@@ -250,7 +250,7 @@ include($SERVER_ROOT.'/includes/header.php');
 		}
 		elseif($action == 'activateOccurrences' || $finalTransfer){
 			echo '<ul>';
-			$duManager->setTargetFieldArr(filter_var($_POST['fieldlist'], FILTER_SANITIZE_STRING));
+			$duManager->setTargetFieldArr($_POST['fieldlist']);
 			$duManager->finalTransfer();
 			echo '</ul>';
 		}

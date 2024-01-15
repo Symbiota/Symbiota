@@ -576,7 +576,7 @@ class DwcArchiverOccurrence extends Manager{
 
 	public function appendUpperTaxonomy2(&$r){
 		$target = (isset($r['taxonID'])?$r['taxonID']:false);
-		if(!$target) $target = ucfirst($r['family']);
+		if(!$target && !empty($r['family'])) $target = ucfirst($r['family']);
 		if($target){
 			if(array_key_exists($target, $this->upperTaxonomy)){
 				if(isset($this->upperTaxonomy[$target]['k'])) $r['t_kingdom'] = $this->upperTaxonomy[$target]['k'];

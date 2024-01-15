@@ -246,7 +246,8 @@ class OccurrenceExsiccatae {
 			fputcsv($out, array_keys($fieldArr));
 			while($r = $rs->fetch_assoc()){
 				foreach($r as $k => $v){
-					$r[$k] = utf8_decode($v);
+					if($v) $v = mb_convert_encoding($v, 'ISO-8859-1', $GLOBALS['CHARSET']);
+					$r[$k] = $v;
 				}
 				fputcsv($out, $r);
 			}
