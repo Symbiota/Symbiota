@@ -20,7 +20,6 @@ if($isEditor && $submitAction) {
 	}
 	elseif($submitAction == 'submitCountryForm'){
 	   $geoManager->addGeoBoundary($_POST['geoJson'][0]);
-      //var_dump($_POST);
 	}
 }
 //https://gadm.org/download_country.html
@@ -130,7 +129,6 @@ if($isEditor && $submitAction) {
 				}
 				else{
                $geoList = $geoManager->getGBGeoList($gbAction);
-               var_dump($geoList);
 					?>
 					<ul>
 						<li><a href="harvester.php">Return to Country List</a></li>

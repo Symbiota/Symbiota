@@ -129,13 +129,7 @@ class GeographicThesaurus extends Manager{
       return true;
    }
 
-   private function addPolygon($geoThesID, $polygon) {
-      /*
-      $sql = 'INSERT INTO geographicpolygon 
-         (geoThesID, footprintPolygon, geoJSON) 
-         VALUES ('. $geoThesID .', ST_GeomFromGeoJSON(\'' . $polygon . '\'), \'' . $polygon . '\')';
-      */
-
+   private function addPolygon($geoThesID, $polygon): bool {
       $stmt = $this->conn->prepare(<<<'SQL'
          INSERT INTO geographicpolygon (geoThesID, footprintPolygon, geoJSON) 
          VALUES (?, ST_GeomFromGeoJSON(?), ?)
@@ -535,7 +529,7 @@ class GeographicThesaurus extends Manager{
       unset($json);
 
       if(count($obj->features)) {
-	      echo $this->getGeoThesID($obj->features[0]->properties->shapeGroup, 'ADM0');
+	      //echo $this->getGeoThesID($obj->features[0]->properties->shapeGroup, 'ADM0');
       }
       foreach ($obj->features as $feature) {
          $properties = $feature->properties;
@@ -543,15 +537,32 @@ class GeographicThesaurus extends Manager{
          if($geoThesID) {
             $this->addPolygon($geoThesID, json_encode($feature));
          }
-
-         //echo json_encode($feature);
       }
 
 		return $status;
 	}
+   private function getGeoLevel($type): int {
+      switch ($type) {
+         case 'ADM1':
+            return 60;
+         case 'ADM2':
+            return 70;
+         case 'ADM3':
+            return 80;
+         default:
+            return 50;
+      }
+   }
 
-   private function getGeoThesIDV2($geoTerm, $type){
-		$sql = 'SELECT geoThesID FROM geographicthesaurus WHERE geoTerm = "' . $geoTerm . '" and acceptedID is null';
+   public function getGeoThesIDV2($geoTerm, $type, $parentID = null) {
+      $geoLevel = $this->getGeoLevel($type);
+
+		$sql = 'SELECT geoThesID FROM geographicthesaurus WHERE geoTerm = "' . $geoTerm . '"and geoLevel=' . $geoLevel . ' and acceptedID is null';
+
+      if($parentID !== null && is_numeric($parentID)) {
+         $sql .= ' and parentID = ' . $parentID;
+      }
+
 		$rs = $this->conn->query($sql);
       $r = $rs->fetch_object();
 
