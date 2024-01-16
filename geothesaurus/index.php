@@ -364,7 +364,7 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 						<div class="field-div">
 						<label><?= $LANG['POLYGON']?></label>:
 						<span class="editTerm">
-							<?= $geoUnit['wkt'] !== null? $LANG['YES_POLYGON']: $LANG['NO_POLYGON'] ?>
+							<?= $geoUnit['geoJSON'] !== null? $LANG['YES_POLYGON']: $LANG['NO_POLYGON'] ?>
 						</span>
 						<div class="editTerm" id="map_canvas" style="margin: 1rem 0; width:100%; height:20rem"></div>
 						<a class="editFormElem" onclick="openCoordAid()">

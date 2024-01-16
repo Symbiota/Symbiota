@@ -130,10 +130,21 @@ class GeographicThesaurus extends Manager{
    }
 
    private function addPolygon($geoThesID, $polygon) {
+      /*
       $sql = 'INSERT INTO geographicpolygon 
          (geoThesID, footprintPolygon, geoJSON) 
-         VALUES ('. $geoThesID .', ST_GeomFromText("' . $polygon . '"), "' . $polygon . '")';
-      if(!$this->conn->query($sql)){
+         VALUES ('. $geoThesID .', ST_GeomFromGeoJSON(\'' . $polygon . '\'), \'' . $polygon . '\')';
+      */
+
+      $stmt = $this->conn->prepare(<<<'SQL'
+         INSERT INTO geographicpolygon (geoThesID, footprintPolygon, geoJSON) 
+         VALUES (?, ST_GeomFromGeoJSON(?), ?)
+         SQL
+      );
+
+      $stmt->bind_param("iss", $geoThesID, $polygon, $polygon);
+
+      if(!$stmt->execute()){
          $this->errorMessage = 'ERROR saving new polygon: '.$this->conn->error;
          return false;
       }
@@ -399,8 +410,8 @@ class GeographicThesaurus extends Manager{
 				if($region == 'Northern America') $region == 'North America';
 				if($countryObj->boundaryISO == 'ATA') $region = 'Antartica';
 				$retArr[$key]['region'] = $region;
-				//$retArr[$key]['geoJSON'] = $countryObj->gjDownloadURL;
-				//$retArr[$key]['simplifiedGeoJSON'] = $countryObj->simplifiedGeometryGeoJSON;
+				//$retArr[$key]['geoJson'] = $countryObj->gjDownloadURL;
+				$retArr[$key]['geoJson'] = $countryObj->simplifiedGeometryGeoJSON;
 				//$retArr[$key]['link'] = $countryObj->apiURL;
 				$retArr[$key]['img'] = $countryObj->imagePreview;
 			}
@@ -415,7 +426,8 @@ class GeographicThesaurus extends Manager{
 				if($r->polygonID) $retArr[$r->iso3]['polygon'] = 1;
 			}
 			$rs->free();
-		}
+      }
+
 		return $retArr;
 	}
 
@@ -444,8 +456,8 @@ class GeographicThesaurus extends Manager{
 					if($countryCode == 'ATA') $region = 'Antartica';
 					$retArr[$type]['region'] = $region;
 					$retArr[$type]['gbCount'] = $boundaryObj->admUnitCount;
-					$retArr[$type]['geoJson'] = $boundaryObj->gjDownloadURL;
-					$retArr[$type]['simpleGeoJson'] = $boundaryObj->simplifiedGeometryGeoJSON;
+					//$retArr[$type]['geoJson'] = $boundaryObj->gjDownloadURL;
+					$retArr[$type]['geoJson'] = $boundaryObj->simplifiedGeometryGeoJSON;
 					$retArr[$type]['link'] = $urlBase.$countryCode.'/'.$type.'/';
 					$retArr[$type]['img'] = $boundaryObj->imagePreview;
 				}
@@ -466,7 +478,7 @@ class GeographicThesaurus extends Manager{
 			$rs->free();
 		}
 		return $retArr;
-	}
+   }
 
 	private function licenseTranslate($licenseStr){
 		$retStr = $licenseStr;
@@ -515,20 +527,40 @@ class GeographicThesaurus extends Manager{
 		}
 	}
 
-	public function addGeoBoundary($gbID){
+	public function addGeoBoundary($url){
 		$status = false;
-		$url = 'https://www.geoboundaries.org/api/gbID/'.$gbID.'/';
-		$json = $this->getGeoboundariesJSON($url);
+      $json = $this->getGeoboundariesJSON($url);
+      //$json = file_get_contents($url);
 		$obj = json_decode($json);
+      unset($json);
 
+      if(count($obj->features)) {
+	      echo $this->getGeoThesID($obj->features[0]->properties->shapeGroup, 'ADM0');
+      }
+      foreach ($obj->features as $feature) {
+         $properties = $feature->properties;
+         $geoThesID = $this->getGeoThesIDV2($properties->shapeName, $properties->shapeType);
+         if($geoThesID) {
+            $this->addPolygon($geoThesID, json_encode($feature));
+         }
 
+         //echo json_encode($feature);
+      }
 
 		return $status;
 	}
 
+   private function getGeoThesIDV2($geoTerm, $type){
+		$sql = 'SELECT geoThesID FROM geographicthesaurus WHERE geoTerm = "' . $geoTerm . '" and acceptedID is null';
+		$rs = $this->conn->query($sql);
+      $r = $rs->fetch_object();
+
+      return $r->geoThesID?? false;
+   }
+
 	private function getGeoThesID($iso3, $type){
 		$countryGeoThesID = 0;
-		$sql = 'SELECT geoThesID FROM geographicthesaurus WHERE iso3 = "'.$iso3.'"';
+		$sql = 'SELECT geoThesID FROM geographicthesaurus WHERE iso3 = "'.$iso3.'" and acceptedID is null';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$countryGeoThesID = $r->geoThesID;

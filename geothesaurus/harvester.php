@@ -19,7 +19,8 @@ if($isEditor && $submitAction) {
 		else $statusStr = '<span style="color:green;">'.implode('<br/>',$geoManager->getWarningArr()).'<span style="color:green;">';
 	}
 	elseif($submitAction == 'submitCountryForm'){
-		$geoManager->addGeoBoundary($_POST['geoid'][0]);
+	   $geoManager->addGeoBoundary($_POST['geoJson'][0]);
+      //var_dump($_POST);
 	}
 }
 //https://gadm.org/download_country.html
@@ -128,6 +129,8 @@ if($isEditor && $submitAction) {
 					<?php
 				}
 				else{
+               $geoList = $geoManager->getGBGeoList($gbAction);
+               var_dump($geoList);
 					?>
 					<ul>
 						<li><a href="harvester.php">Return to Country List</a></li>
@@ -138,11 +141,10 @@ if($isEditor && $submitAction) {
 								<th></th><th>Type</th><th>ID</th><th>Database Count</th><th>Geoboundaries Count</th><th>Has Polygon</th><th>Canonical</th><th>Region</th><th>License</th><th>Full Link</th><th>Preview Image</th>
 							</tr>
 							<?php
-							$geoList = $geoManager->getGBGeoList($gbAction);
 							$prevGeoThesID = 0;
 							foreach($geoList as $type => $gArr){
 								echo '<tr class="'.(isset($gArr['geoThesID'])?'nodb':'').(isset($gArr['polygon'])?' nopoly':'').'">';
-								echo '<td><input name="geoid[]" type="checkbox" value="'.$gArr['id'].'" '.(isset($gArr['polygon'])?'DISABLED':'').' /></td>';
+								echo '<td><input name="geoJson[]" type="checkbox" value="'.$gArr['geoJson'].'" '.(isset($gArr['polygon'])?'DISABLED':'').' /></td>';
 								echo '<td>'.$type.'</td>';
 								echo '<td>'.$gArr['id'].'</td>';
 								$isInDbStr = 'No';
@@ -156,6 +158,8 @@ if($isEditor && $submitAction) {
 										$isInDbStr = substr($gArr['geoThesID'], 4);
 										if($prevGeoThesID) $isInDbStr = '<a href="index.php?parentID='.$prevGeoThesID.'" target="_blank">'.$isInDbStr.'</a>';
 									}
+
+                        //echo '<input name="parentID" style="display:none" value="'. $gArr['geoThesID'] .'"/>';
 								}
 								echo '<td>'.$gArr['gbCount'].'</td>';
 								echo '<td>'.$isInDbStr.'</td>';
