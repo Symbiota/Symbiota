@@ -303,8 +303,6 @@ else{
 
          if(formShape) {
             map.drawShape(formShape);
-			   //map.drawShape({type: "geoJSON", geoJSON: {}})
-            //map.mapLayer.fitBounds(map.activeShape.layer.getBounds());
          }
       }
       function googleInit() {
