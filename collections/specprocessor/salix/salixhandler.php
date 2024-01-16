@@ -31,7 +31,7 @@ if($SYMB_UID){
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title><?php echo (isset($LANG['SALIX_WRDST_MNGR']) ? $LANG['SALIX_WRDST_MNGR'] : 'SALIX Wordstat Manager'); ?></title>
-		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
+		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>

@@ -35,7 +35,7 @@ if($IS_ADMIN) $isEditor = 1;
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
 	<script src="../../js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.min.js" type="text/javascript"></script>
 	<script>

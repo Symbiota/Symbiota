@@ -42,7 +42,7 @@ if($SYMB_UID){
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Editor</title>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
 	<link href="../../css/occureditor.css?<?php echo htmlspecialchars($CSS_VERSION, HTML_SPECIAL_CHARS_FLAGS); ?>" type="text/css" rel="stylesheet" id="editorCssLink" />
 	<script src="../../js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.min.js" type="text/javascript"></script>
