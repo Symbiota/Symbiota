@@ -19,6 +19,9 @@ if($isEditor && $submitAction) {
 		else $statusStr = '<span style="color:green;">'.implode('<br/>',$geoManager->getWarningArr()).'<span style="color:green;">';
 	}
 	elseif($submitAction == 'submitCountryForm'){
+      //This Call can Take a very long time depending on the size of the
+      //geoJson and how many children are within the feature collection past
+      set_time_limit(300);
 	   $geoManager->addGeoBoundary($_POST['geoJson'][0]);
 	}
 }
