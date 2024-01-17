@@ -26,7 +26,7 @@ $clManager->setClid($clid);
 $clArr = $clManager->getUserChecklistArr();
 $childArr = $clManager->getChildrenChecklist()
 ?>
-<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
+<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 <script src="../js/jquery-3.7.1.min.js" type="text/javascript"></script>
 <script src="../js/jquery-ui.min.js" type="text/javascript"></script>
 

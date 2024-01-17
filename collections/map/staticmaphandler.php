@@ -389,7 +389,7 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
             })
          }
 	</script>
-   <link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
+   <link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<script src="../../js/jquery-3.7.1.min.js?" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.min.js?ver=3" type="text/javascript"></script>
 	<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>

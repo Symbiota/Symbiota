@@ -93,7 +93,7 @@ if($ometid) unset($selectLookupArr[$ometid]);
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<script src="../../js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="../../js/symb/shared.js?ver=130926" type="text/javascript"></script>

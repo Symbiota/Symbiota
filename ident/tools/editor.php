@@ -36,7 +36,7 @@ if($isEditor && $action){
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Identification Character Editor</title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>

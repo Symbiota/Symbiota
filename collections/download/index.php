@@ -19,7 +19,7 @@ $dwcManager = new DwcArchiverCore();
 <head>
 	<title> <?php echo (isset($LANG['COLL_SEARCH_DWNL']) ? $LANG['COLL_SEARCH_DWNL'] : 'Collections Search Download'); ?> </title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');

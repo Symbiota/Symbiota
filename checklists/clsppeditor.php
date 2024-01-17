@@ -65,7 +65,7 @@ $clArray = $vManager->getChecklistData();
 <html>
 	<head>
 		<title><?php echo (isset($LANG['SPEC_DETAILS'])?$LANG['SPEC_DETAILS']:'Species Details'); ?>: <?php echo $vManager->getTaxonName()." of ".$vManager->getClName(); ?></title>
-		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
+		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
