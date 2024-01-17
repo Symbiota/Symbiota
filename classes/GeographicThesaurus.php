@@ -138,7 +138,9 @@ class GeographicThesaurus extends Manager{
 
       $stmt->bind_param("iss", $geoThesID, $polygon, $polygon);
 
-      if(!$stmt->execute()){
+      try {
+         !$stmt->execute();
+      } catch (Exception $e) {
          $this->errorMessage = 'ERROR saving new polygon: '.$this->conn->error;
          return false;
       }
@@ -519,29 +521,49 @@ class GeographicThesaurus extends Manager{
 				}
 			}
 		}
-	}
+   }
+
+   private function getTestCoord($coordinates) {
+      if(is_array($coordinates) && count($coordinates) > 0 && is_array($coordinates[0])) {
+        return $this->getTestCoord($coordinates[0]);
+      } else {
+        return $coordinates;
+      }
+   }
 
 	public function addGeoBoundary($url){
 		$status = false;
       $json = $this->getGeoboundariesJSON($url);
-      //$json = file_get_contents($url);
 		$obj = json_decode($json);
       unset($json);
 
-      if(count($obj->features)) {
-	      //echo $this->getGeoThesID($obj->features[0]->properties->shapeGroup, 'ADM0');
-      }
       foreach ($obj->features as $feature) {
          $properties = $feature->properties;
-         $geoThesID = $this->getGeoThesIDV2($properties->shapeName, $properties->shapeType);
-         if($geoThesID) {
-            $this->addPolygon($geoThesID, json_encode($feature));
+         $geoLevel = $this->getGeoLevel($properties->shapeType);
+
+         $geoThesIDs = $this->getGeoThesIDV2($properties->shapeName, $geoLevel);
+
+         if(is_array($geoThesIDs) && count($geoThesIDs) != 1) {
+            $test_coord = $this->getTestCoord($feature->geometry->coordinates);
+            $parentID = $this->findParentGeometry(
+               $test_coord[1], 
+               $test_coord[0], 
+               $geoLevel - 10, 
+               array_map( fn($val) => $val[1], $geoThesIDs)
+            );
+
+            $geoThesIDs = $this->getGeoThesIDV2($properties->shapeName, $geoLevel, $parentID);
+         } 
+
+         if(is_array($geoThesIDs) && count($geoThesIDs) === 1) {
+            $this->addPolygon($geoThesIDs[0][0], json_encode($feature));
          }
       }
 
 		return $status;
-	}
-   private function getGeoLevel($type): int {
+   }
+
+   private function getGeoLevel(string $type): int {
       switch ($type) {
          case 'ADM1':
             return 60;
@@ -553,20 +575,46 @@ class GeographicThesaurus extends Manager{
             return 50;
       }
    }
+   public function findParentGeometry($lat, $long, $parentGeoLevel = 50, $potentialParents = []) {
+      $sql = <<<'SQL'
+         SELECT g.geoThesID from geographicthesaurus g 
+         join geographicpolygon gp on g.geoThesID = gp.geoThesID
+         WHERE ST_CONTAINS(gp.footprintPolygon, ST_GEOMFROMTEXT(?)) = 1 and
+         g.geoLevel = ?
+         SQL;
 
-   public function getGeoThesIDV2($geoTerm, $type, $parentID = null) {
-      $geoLevel = $this->getGeoLevel($type);
+      $geom = 'POINT (' . $long . ' '. $lat . ')';
 
-		$sql = 'SELECT geoThesID FROM geographicthesaurus WHERE geoTerm = "' . $geoTerm . '"and geoLevel=' . $geoLevel . ' and acceptedID is null';
+      if(!empty($potentialParents)) {
+         $sql.=' and g.geoThesID in ('. implode(',', $potentialParents) .')';
+      } 
+
+      $stmt = $this->conn->prepare($sql);
+      $stmt->bind_param("si", $geom, $parentGeoLevel);
+
+      if(!$stmt->execute()){
+         $this->errorMessage = 'ERROR while finding parent polgon: '.$this->conn->error;
+         var_dump($this->conn->error);
+         return -1;
+      }
+
+      /* bind result variables */
+      $stmt->bind_result($result);
+      $stmt->fetch();
+
+      return $result;
+      
+   }
+
+   public function getGeoThesIDV2($geoTerm, $geoLevel, $parentID = null) {
+		$sql = 'SELECT geoThesID, parentID FROM geographicthesaurus WHERE geoTerm = "' . $geoTerm . '"and geoLevel=' . $geoLevel . ' and acceptedID is null';
 
       if($parentID !== null && is_numeric($parentID)) {
          $sql .= ' and parentID = ' . $parentID;
       }
 
 		$rs = $this->conn->query($sql);
-      $r = $rs->fetch_object();
-
-      return $r->geoThesID?? false;
+      return $rs->fetch_all();
    }
 
 	private function getGeoThesID($iso3, $type){
