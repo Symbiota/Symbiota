@@ -7,7 +7,7 @@ Language: Français (French)
 
 $LANG['GEOTHES_TITLE'] = 'Gestionnaire de thésaurus géographique';
 $LANG['NAV_HOME'] = 'Accueil';
-$LANG['NAV_GEOTHES'] = 'Liste de base du thésaurus géographique';
+$LANG['NAV_GEOTHES'] = 'Termes racines du thésaurus géographique';
 $LANG['NAVIGATION_PANEL'] = 'Panneau de navigation';
 $LANG['SHOW_BASE_LIST'] = 'Afficher le nœud racine';
 $LANG['SHOW_PARENT_NODE'] = 'Afficher le nœud de padre';

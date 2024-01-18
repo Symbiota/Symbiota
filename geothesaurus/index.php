@@ -29,12 +29,56 @@ if($isEditor && $submitAction) {
 	}
 }
 
-$geoArr = array();
-if(!$geoThesID) $geoArr = $geoManager->getGeograpicList($parentID);
+$geoArr = $geoManager->getGeograpicList($geoThesID);
 $geoUnit = $geoManager->getGeograpicUnit($geoThesID);
 $rankArr = $geoManager->getGeoRankArr();
-$parentArr = array();
-if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
+$childrenTitleStr = '';
+
+if($geoThesID && $geoUnit) {
+   $childLevel = intval($geoUnit['geoLevel']) + 10;               
+   $childrenTitleStr = '<b>'. $rankArr[$childLevel] . '</b> ' . $LANG['TERMS_WITHIN'] . ' <b>' . $geoUnit['geoTerm'] . '</b>';
+} else {
+   $childrenTitleStr = '<b>' . $LANG['ROOT_TERMS'] . '</b>';
+}
+
+function listGeoUnits($arr) {
+   global $LANG;
+	echo '<ul>';
+   foreach($arr as $geoID => $unitArr){
+      $geoTerm = $unitArr['geoTerm'];
+
+		$codeStr = '';
+      if($unitArr['abbreviation']) {
+         $codeStr .= ' ('.$unitArr['abbreviation'].') ';
+      } else {
+			if($unitArr['iso2']) $codeStr = $unitArr['iso2'].', ';
+			if($unitArr['iso3']) $codeStr .= $unitArr['iso3'].', ';
+			if($unitArr['numCode']) $codeStr .= $unitArr['numCode'].', ';
+			if($codeStr) $codeStr = ' ('.trim($codeStr,', ').') ';
+      }
+
+      $referenceHref = '';
+      $referenceText = '';
+
+      if($unitArr['acceptedTerm']) {
+         $referenceText = '<a href="index.php?geoThesID=' . htmlspecialchars($unitArr['acceptedID']) . '">' . htmlspecialchars($unitArr['acceptedTerm'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+      } elseif(isset($unitArr['childCnt'])) {
+         $referenceText = '- '. htmlspecialchars($unitArr['childCnt'], HTML_SPECIAL_CHARS_FLAGS) . ' ' . $LANG['CHILDREN'];
+      }
+
+      $geoTerm = htmlspecialchars($geoTerm, HTML_SPECIAL_CHARS_FLAGS);
+		$codeStr = htmlspecialchars($codeStr, HTML_SPECIAL_CHARS_FLAGS);
+
+      echo <<<HTML
+      <li>
+         <a href='index.php?geoThesID=$geoID'>$geoTerm</a>
+         $codeStr
+         $referenceText
+      </li>
+      HTML;
+   }
+	echo '</ul>';
+}
 
 ?>
 <!DOCTYPE html>
@@ -136,46 +180,25 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 			<a href="../index.php">
 				<?= $LANG['NAV_HOME'] ?> </a> &gt;&gt;
          <?php if($geoThesID): ?>
-			   <a href="/index.php"><b> <?= $LANG['NAV_GEOTHES'] ?> </b></a>&gt;&gt;
+			   <a href="index.php"><b> <?= $LANG['NAV_GEOTHES'] ?> </b></a>&gt;&gt;
 			   <b> <?= $geoUnit["geoTerm"]?> </b>
          <?php else: ?>
 			   <b> <?= $LANG['NAV_GEOTHES'] ?> </b>
          <?php endif ?>
 		</div>
 		<div id='innertext'>
+         <div>
+            <a href="harvester.php"><?= $LANG['GOTO_HARVESTER']?></a>
+         </div>
 			<?php
 			if($statusStr){
 			echo '<div id="status-div">'.$statusStr.'</div>';
 			}
 			?>
-			<section class="fieldset-like" style="float:right; min-width: 175px">
-				<h3>
-					<span>
-						<?= $LANG['NAVIGATION_PANEL'] ?>
-					</span>
-				</h3>
-				<ul>
-					<?php
-					echo '<li><a href="index.php">'.$LANG['SHOW_BASE_LIST'].'</a></li>';
-					if($geoThesID && !empty($geoUnit['parentID'])){
-					echo '<li><a href="index.php?geoThesID=' . $geoUnit['parentID'] . '">' . $LANG['SHOW_PARENT'] . '</a></li>';
 
-					}elseif($parentID){
-					echo '<li><a href="index.php?geoThesID=' . $parentID . '">' . $LANG['SHOW_PARENT'] . '</a></li>';
-					}
-					$parID = false;
-					if(!empty($geoUnit['parentID'])) $parID = $geoUnit['parentID'];
-					elseif($parentID && isset($parentArr['parentID'])) $parID = $parentArr['parentID'];
-					if($parID !== false){
-					echo '<li><a href="index.php?parentID=' . $parID . '">' . $LANG['SHOW_PARENT_NODE'] . '</a></li>';
-					}
-					if(isset($geoUnit['childCnt'])) echo '<li><a href="index.php?parentID=' . $geoThesID . '">' . $LANG['SHOW_CHILDREN'] . '</a></li>';
-					echo '<li style="margin-top:10px"><a href="harvester.php">'.$LANG['GOTO_HARVESTER'].'</a></li>';
-					?>
-				</ul>
-			</section>
+         <!-- Add Form  -->
 			<div id="addGeoUnit-div" style="clear:both;margin-bottom:10px;display:none">
-				<form name="unitAddForm" action="index.php" method="post">
+            <form name="unitAddForm" action="<?= $geoThesID? '' : 'index.php' ?>" method="post">
 					<fieldset id="new-fieldset">
 						<legend> <?= $LANG['ADD_GEO_UNIT'] ?> </legend>
 						<div class="field-div">
@@ -268,16 +291,18 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 					</fieldset>
 				</form>
 			</div>
+
+         <!-- Geo Unit Info and Edit Form -->
 			<?php
-			if($geoThesID && $geoUnit){
+			if($geoThesID && $geoUnit) {
 			?>
 			<div id="updateGeoUnit-div" style="margin-bottom:10px;">
-				<form name="unitEditForm" action="index.php" method="post">
+            <form name="unitEditForm" action="index.php<?= $geoThesID? '?geoThesID=' . $geoThesID: '' ?>" method="post">
 					<fieldset id="edit-fieldset">
 						<legend><span id="edit-legend"><?= $LANG['EDIT'] ?></span> <?= $LANG['GEO_UNIT'] ?> </legend>
 						<div style="float:right">
-							<span class="editIcon" title="Add child term"><a href="#" onclick="toggle('#addGeoUnit-div');"><img class="editimg" src="../images/add.png" alt="<?= $LANG['EDIT'] ?>" /></a></span>
 							<span class="editIcon" title="Edit term"><a href="#" onclick="toggleEditor()"><img class="editimg" src="../images/edit.png" alt="<?= $LANG['EDIT']; ?>"></a></span>
+							<!-- <span class="editIcon" title="Add child term"><a href="#" onclick="toggle('#addGeoUnit-div');"><img class="editimg" src="../images/add.png" alt="<?= $LANG['EDIT'] ?>" /></a></span> -->
 						</div>
 						<div class="field-div">
 							<label> <?= $LANG['GEO_UNIT_NAME'] ?> </label>:
@@ -387,7 +412,7 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 				</form>
 			</div>
 			<div id="unitDel-div">
-				<form name="unitDeleteForm" action="index.php" method="post">
+            <form name="unitDeleteForm" action="<?= $geoUnit && $geoUnit['parentID']? 'index.php?geoThesID=' . $geoUnit['parentID']: 'index.php' ?>" method="post">
 					<fieldset>
 						<legend> <?= $LANG['DEL_GEO_UNIT'] ?> </legend>
 						<div class="button-div">
@@ -402,51 +427,20 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 					</fieldset>
 				</form>
 			</div>
-			<?php
-			}
-			else{
-			if($geoArr){
-			$titleStr = '';
-			if($parentID){
-			$titleStr = '<b>'. $rankArr[$geoArr[key($geoArr)]['geoLevel']] . '</b> ' . $LANG['TERMS_WITHIN'] . ' <b>' . $parentArr['geoTerm'] . '</b>';
-			}
-			else{
-			$titleStr = '<b>' . $LANG['ROOT_TERMS'] . '</b>';
-			}
-			?>
+
+         <?php }?>
+
 			<div style="font-size:1.3em;margin: 10px 0px">
-				<?= $titleStr ?>
+				<?= $childrenTitleStr ?>
 				<span class="editIcon" title="Add term to list">
 					<a href="#" onclick="toggle('#addGeoUnit-div');"><img class="editimg" src="../images/add.png" alt="<?= $LANG['EDIT'] ?>" /></a>
 				</span>
-			</div>
-			<?php
-			echo '<ul>';
-			foreach($geoArr as $geoID => $unitArr){
-			$termDisplay = '<a href="index.php?geoThesID=' . $geoID . '">' . htmlspecialchars($unitArr['geoTerm'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
-			if($unitArr['abbreviation']) $termDisplay .= ' ('.$unitArr['abbreviation'].') ';
-			else{
-			$codeStr = '';
-			if($unitArr['iso2']) $codeStr = $unitArr['iso2'].', ';
-			if($unitArr['iso3']) $codeStr .= $unitArr['iso3'].', ';
-			if($unitArr['numCode']) $codeStr .= $unitArr['numCode'].', ';
-			if($codeStr) $termDisplay .= ' ('.trim($codeStr,', ').') ';
-			}
-			if($unitArr['acceptedTerm']) $termDisplay .= ' => <a href="index.php?geoThesID=' . $unitArr['acceptedID'] . '">' . htmlspecialchars($unitArr['acceptedTerm'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
-			elseif(isset($unitArr['childCnt']) && $unitArr['childCnt']) $termDisplay .= ' - <a href="index.php?parentID=' . $geoID . '">' . $unitArr['childCnt'] . ' ' . $LANG['CHILDREN'] . '</a>';
-			echo '<li>'.$termDisplay.'</li>';
-			}
-			echo '</ul>';
-			}
-			else{
-			echo '<div>';
-			if($parentID || !$isEditor) echo $LANG['NO_RECORDS'];
-			else echo '<a href="harvester.php">'.$LANG['GOTO_HARVESTER'].'</a>';
-			echo '</div>';
-			}
-			}
-			?>
-		</div>
+			</div >
+         <div style="margin: 10px">
+            <?php listGeoUnits($geoArr)?>
+         </div>
+         </div>
+
 		<?php
 		include($SERVER_ROOT.'/includes/footer.php');
 		?>

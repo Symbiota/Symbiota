@@ -7,7 +7,7 @@ Language: English
 
 $LANG['GEOTHES_TITLE'] = 'Geographic Thesaurus Manager';
 $LANG['NAV_HOME'] = 'Home';
-$LANG['NAV_GEOTHES'] = 'Geographic Thesaurus Base List';
+$LANG['NAV_GEOTHES'] = 'Geographic Thesaurus Root Terms';
 $LANG['NAVIGATION_PANEL'] = 'Navigation Panel';
 $LANG['SHOW_BASE_LIST'] = 'Show Root Node';
 $LANG['SHOW_PARENT_NODE'] = 'Show Parent Node';

@@ -7,7 +7,7 @@ Language: Español (Spanish)
 
 $LANG['GEOTHES_TITLE'] = 'Administrador de tesauro geográfico';
 $LANG['NAV_HOME'] = 'Inicio';
-$LANG['NAV_GEOTHES'] = 'Lista base de tesauros geográficos';
+$LANG['NAV_GEOTHES'] = 'Términos raíz del tesauro geográfico';
 $LANG['NAVIGATION_PANEL'] = 'Panel de navegación';
 $LANG['SHOW_BASE_LIST'] = 'Mostrar nodo raíz';
 $LANG['SHOW_PARENT_NODE'] = 'Mostrar nodo de padre';
