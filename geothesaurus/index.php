@@ -135,7 +135,12 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 		<div class="navpath">
 			<a href="../index.php">
 				<?= $LANG['NAV_HOME'] ?> </a> &gt;&gt;
-			<b> <?= $LANG['NAV_GEOTHES'] ?> </b>
+         <?php if($geoThesID): ?>
+			   <a href="/index.php"><b> <?= $LANG['NAV_GEOTHES'] ?> </b></a>&gt;&gt;
+			   <b> <?= $geoUnit["geoTerm"]?> </b>
+         <?php else: ?>
+			   <b> <?= $LANG['NAV_GEOTHES'] ?> </b>
+         <?php endif ?>
 		</div>
 		<div id='innertext'>
 			<?php
