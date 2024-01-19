@@ -208,10 +208,6 @@ $traitArr = $indManager->getTraitArr();
 		function toggle(target){
 			var objDiv = document.getElementById(target);
 			if(objDiv){
-				if(objDiv.style.display=="none") objDiv.style.display = "block";
-				else objDiv.style.display = "none";
-			}
-			else{
 				var divObjs = document.getElementsByTagName("div");
 				for (i = 0; i < divObjs.length; i++) {
 					var obj = divObjs[i];
