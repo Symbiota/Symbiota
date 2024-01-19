@@ -244,7 +244,9 @@ function listGeoUnits($arr) {
 						</div>
 						<div class="field-div">
 							<label> <?= $LANG['NOTES'] ?> </label>:
-							<span><input type="text" name="notes" maxlength="250" style="width:200px;" /></span>
+                     <span>
+                        <textarea  type="text" maxlength="250" name="notes" style="margin-top: 0.5rem; width:98%;height:45px;"></textarea>
+                     </span>
 						</div>
 						<div class="field-div">
 							<label> <?= $LANG['PARENT_TERM'] ?> </label>:
@@ -347,7 +349,9 @@ function listGeoUnits($arr) {
 						<div class="field-div">
 							<label> <?= $LANG['NOTES'] ?> </label>:
 							<span class="editTerm"><?= $geoUnit['notes']; ?></span>
-							<span class="editFormElem"><input type="text" name="notes" value="<?= $geoUnit['notes'] ?>" maxlength="250" style="width:650px;" /></span>
+                     <span class="editFormElem">
+                        <textarea  type="text" maxlength="250" name="notes" style="margin-top: 0.5rem; width:98%;height:45px;"><?= $geoUnit['notes']?></textarea>
+                     </span>
 						</div>
 						<?php
 						if($geoUnit['geoLevel']){
