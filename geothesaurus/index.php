@@ -285,7 +285,7 @@ function listGeoUnits($arr) {
 							<a onclick="openCoordAid('addfootprintwkt')">
 								<img src='../images/world.png' style='width:10px;border:0' alt='Image of the globe' /> <?= $LANG['EDIT_POLYGON']?> 
 							</a>
-							<span><textarea id="addfootprintwkt" name="polygon" style=" margin-top: 0.5rem; width:98%;height:90px;"></textarea></span>
+							<span><textarea id="addfootprintwkt" name="polygon" style="margin-top: 0.5rem; width:98%;height:90px;"></textarea></span>
 						</div>
 						<div id="addButton-div" class="button-div">
 							<button type="submit" name="submitaction" value="addGeoUnit"> <?= $LANG['ADD_UNIT'] ?> </button>
@@ -377,8 +377,10 @@ function listGeoUnits($arr) {
 						}
 						}
 						$acceptedStr = '';
-						if($geoUnit['acceptedTerm']) $acceptedStr = '<a href="index.php?geoThesID=' . $geoUnit['acceptedID'] . '">' . htmlspecialchars($geoUnit['acceptedTerm'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
-						?>
+                  if($geoUnit['acceptedTerm']) {
+                     $acceptedStr = '<a href="index.php?geoThesID=' . $geoUnit['acceptedID'] . '">' . htmlspecialchars($geoUnit['acceptedTerm'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+                  }
+                  ?>
 						<div class="field-div">
 							<label> <?= $LANG['ACCEPTED_TERM'] ?> </label>:
 							<span class="editTerm"><?php echo $acceptedStr; ?></span>
@@ -405,7 +407,7 @@ function listGeoUnits($arr) {
 							<img src='../images/world.png' style='width:10px;border:0' alt='Image of the globe' /> <?= $LANG['EDIT_POLYGON']?> 
 						</a>
 						<span class="editFormElem" style="margin-top: 0.5rem">
-							<textarea id="footprintwkt" name="polygon" style="width:98%;height:90px;"><?= isset($geoUnit['geoJSON'])?trim($geoUnit['geoJSON']): null ?></textarea>
+							<textarea id="footprintwkt" name="polygon" style="margin-top: 0.5rem; width:98%;height:90px;"><?= isset($geoUnit['geoJSON'])?trim($geoUnit['geoJSON']): null ?></textarea>
 						</span>
 					</div>
 						<div id="editButton-div" class="button-div">
