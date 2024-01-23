@@ -29,6 +29,8 @@ First, resolve any potential merge conflicts with master on the `Development` br
 
 Coordinate the production of any necessary documentation with the team (this includes the `docs/CHANGELOG.md`).
 
+Be sure to include notes made in [this document](https://docs.google.com/document/d/1T7xbXEf2bjjm-PMrlXpUBa69aTMAIROPXVqJqa2ow_I/edit?usp=sharing) in the release notes.
+
 After completion of the previous steps, draft a new release of the master branch on GitHub:
 
 1. Navigate to [https://github.com/BioKIC/Symbiota/releases/new](https://github.com/BioKIC/Symbiota/releases/new).
