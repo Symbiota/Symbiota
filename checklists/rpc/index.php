@@ -1,5 +1,9 @@
 <?php
 include_once('../../config/symbini.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists//alerts.'.$LANG_TAG.'.php'))
+	include_once($SERVER_ROOT.'/content/lang/checklists//alerts.'.$LANG_TAG.'.php');
+else
+	include_once($SERVER_ROOT.'/content/lang/checklists//alerts.en.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 header('Location: '.$CLIENT_ROOT.'/index.php');
 ?>
@@ -17,12 +21,12 @@ header('Location: '.$CLIENT_ROOT.'/index.php');
 		?>
 		<!-- This is inner text! -->
 		<div id="innertext">
-			<h1>Forbidden</h1>
+			<h1> <?php echo $LANG['FORBIDDEN']; ?> </h1>
 			<div style="font-weight:bold;">
-				You don't have permission to access this page.
+				<?php echo $LANG['NO_PERMISSION']; ?>
 			</div>
 			<div style="font-weight:bold;margin:10px;">
-				<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php">Return to index page</a>
+				<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php"> <?php echo $LANG['RETURN_TO_INDEX']; ?> </a>
 			</div>
 		</div>
 		<?php
