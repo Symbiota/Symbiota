@@ -1,6 +1,11 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherPensoft.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists//alerts.'.$LANG_TAG.'.php'))
+	include_once($SERVER_ROOT.'/content/lang/checklists//alerts.'.$LANG_TAG.'.php');
+else
+	include_once($SERVER_ROOT.'/content/lang/checklists//alerts.en.php');
+
 
 $clid = $_REQUEST['clid'];
 $rType = $_REQUEST['rtype'];
@@ -8,7 +13,7 @@ $rType = $_REQUEST['rtype'];
 if($rType == 'pensoftxlsx'){
 	$vManager = null;
 	if(version_compare(phpversion(), '5.6', '<')) {
-		echo 'ERROR: Excel export feature requires PHP version 5.6 or greater';
+		echo $LANG['ERROR_EXCEL'];
 		exit;
 	}
 	$vManager = new ChecklistVoucherPensoft();
