@@ -38,7 +38,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 			}
 			testStr = testStr.toLowerCase();
 			if(testStr.indexOf(".csv") == -1 && testStr.indexOf(".CSV") == -1){
-				alert("<?php echo $LANG['DOCUMNET']; ?>"+document.getElementById("uploadfile").value+" "+"<?php echo $LANG['MUST_BE_CSV']; ?>");
+				alert("<?php echo $LANG['DOCUMENT']; ?>"+document.getElementById("uploadfile").value+" "+"<?php echo $LANG['MUST_BE_CSV']; ?>");
 				return false;
 			}
 			return true;
