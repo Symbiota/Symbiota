@@ -1,6 +1,11 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistLoaderManager.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/checklistloader.'.$LANG_TAG.'.php'))
+	include_once($SERVER_ROOT.'/content/lang/checklists/checklistloader.'.$LANG_TAG.'.php');
+else
+	include_once($SERVER_ROOT.'/content/lang/checklists/checklistloader.en.php');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../checklists/tools/checklistloader.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
@@ -18,7 +23,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 	$isEditor = true;
 }
 ?>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Species Checklist Loader</title>
 	<?php
@@ -28,12 +33,12 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 		function validateUploadForm(thisForm){
 			var testStr = document.getElementById("uploadfile").value;
 			if(testStr == ""){
-				alert("Please select a file to upload");
+				alert("<?php echo $LANG['SELECT_FILE']; ?>");
 				return false;
 			}
 			testStr = testStr.toLowerCase();
 			if(testStr.indexOf(".csv") == -1 && testStr.indexOf(".CSV") == -1){
-				alert("Document "+document.getElementById("uploadfile").value+" must be a CSV file (with a .csv extension)");
+				alert("<?php echo $LANG['DOCUMNET']; ?>"+document.getElementById("uploadfile").value+" "+"<?php echo $LANG['MUST_BE_CSV']; ?>");
 				return false;
 			}
 			return true;
@@ -54,9 +59,9 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 		<a href='../../index.php'>Home</a> &gt;&gt;
 		<?php
 		if($pid) echo '<a href="'.$CLIENT_ROOT.'/projects/index.php?pid='.$pid.'">';
-		echo '<a href="../checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">Return to Checklist</a> &gt;&gt; ';
+		echo '<a href="../checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">' . $LANG["RETURN_CHECKLIST"] . '</a> &gt;&gt; ';
 		?>
-		<a href="checklistloader.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><b>Checklists Loader</b></a>
+		<a href="checklistloader.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><b><?php echo $LANG['CHECK_LOADER']; ?></b></a>
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
@@ -81,23 +86,23 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 							if(!$cnt && $statusStr){
 								echo '<div style="margin:20px;font-weight:bold;">';
 								echo '<div style="font-size:110%;color:red;">'.$statusStr.'</div>';
-								echo '<div><a href="checklistloader.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">Return to Loader</a> and make sure the input file matches requirements within instructions</div>';
+								echo '<div><a href="checklistloader.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">' . $LANG['RETURN_LOADER'] . '</a>' . $LANG['INPUT_MATCH'] . '</div>';
 								echo '</div>';
 								exit;
 							}
 							$probCnt = count($clLoaderManager->getProblemTaxa());
 							$errorArr = $clLoaderManager->getWarningArr();
 							?>
-							<li>Upload status...</li>
-							<li style="margin-left:10px;">Taxa successfully loaded: <?php echo $cnt; ?></li>
-							<li style="margin-left:10px;">Problematic Taxa: <?php echo $probCnt.($probCnt?' (see below)':''); ?></li>
-							<li style="margin-left:10px;">General errors: <?php echo count($errorArr); ?></li>
-							<li style="margin-left:10px;">Upload Complete! <a href="../checklist.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>">Proceed to Checklists</a></li>
+							<li> <?php echo $LANG['UPLOAD_STATUS']; ?></li>
+							<li style="margin-left:10px;"><?php echo $LANG['TAXA_LOADED']; ?> <?php echo $cnt; ?></li>
+							<li style="margin-left:10px;"><?php echo $LANG['PROBLEM_TAXA']; ?> <?php echo $probCnt.($probCnt?' (see below)':''); ?></li>
+							<li style="margin-left:10px;"><?php echo $LANG['GENERAL_ERRORS']; ?> <?php echo count($errorArr); ?></li>
+							<li style="margin-left:10px;"><?php echo $LANG['UPLOAD_COMPLETE']; ?> <a href="../checklist.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>">Proceed to Checklists</a></li>
 						</ul>
 						<?php
 						if($probCnt){
 							echo '<fieldset>';
-							echo '<legend><b>Problematic Taxa Resolution</b></legend>';
+							echo '<legend><b>' . $LANG['TAXA_RESOLUTION'] . '</b></legend>';
 							$clLoaderManager->resolveProblemTaxa();
 							echo '</fieldset>';
 						}
@@ -105,7 +110,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 							?>
 							<fieldset style="padding:20px;">
 								<legend><b>General Errors</b></legend>
-								<a href="#" onclick="displayErrors(this);return false;"><b>Display <?php echo htmlspecialchars(count($errorArr), HTML_SPECIAL_CHARS_FLAGS); ?> general errors</b></a>
+								<a href="#" onclick="displayErrors(this);return false;"><b>Display <?php echo htmlspecialchars(count($errorArr), HTML_SPECIAL_CHARS_FLAGS); ?> <?php echo $LANG['GENERAL_ERRORS']; ?> </b></a>
 								<div id="errordiv" style="display:none">
 									<ol style="margin-left:15px;">
 										<?php
@@ -126,16 +131,16 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 					?>
 					<form enctype="multipart/form-data" action="checklistloader.php" method="post" onsubmit="return validateUploadForm(this);">
 						<fieldset style="padding:15px;width:800px;">
-							<legend><b>Checklist Upload Form</b></legend>
+							<legend><b> <?php echo $LANG['UPLOAD_FORM']; ?></b></legend>
 							<input type="hidden" name="MAX_FILE_SIZE" value="5000000" />
 							<div style="font-weight:bold;">
-								Checklist File:
+								<?php echo $LANG['CHECKLIST_FILE']; ?>
 								<input id="uploadfile" name="uploadfile" type="file" size="45" />
 							</div>
 							<div style="margin-top:10px;">
-								Taxonomic Resolution:
+								<?php echo $LANG['TAXA_RESOLUTION']; ?>
 								<select name="thes">
-									<option value="">Leave Taxonomy As Is</option>
+									<option value=""><?php echo $LANG['LEAVE_TAXA']; ?></option>
 									<?php
 									$thesArr = $clLoaderManager->getThesauri();
 									foreach($thesArr as $k => $v){
@@ -146,17 +151,15 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 
 							</div>
 							<div style="margin-top:10px;">
-								<div>Input file must be a CSV text file containing the following columns.
-								Column order does not matter, though the first row should contain columns names in accordance with the names in bold listed below.
-								Note that Excel spreadsheets (xlsx) can be saved as a CSV file via the "Save as..." option.</div>
+								<div> <?php echo $LANG['FILE_DESCR']; ?></div>
 								<ul>
-									<li><b>sciname</b> (required)</li>
-									<li><b>family</b> (optional)</li>
-									<li><b>habitat</b> (optional)</li>
-									<li><b>abundance</b> (optional)</li>
-									<li><b>notes</b> (optional)</li>
-									<li><b>internalnotes</b> (optional) - displayed only to editors</li>
-									<li><b>source</b> (optional)</li>
+									<li><b><?php echo $LANG['SCINAME']; ?></b> <?php echo $LANG['REQUIRED']; ?></li>
+									<li><b><?php echo $LANG['FAMILY']; ?></b> <?php echo $LANG['OPTIONAL']; ?></li>
+									<li><b><?php echo $LANG['HABITAT']; ?></b> <?php echo $LANG['OPTIONAL']; ?></li>
+									<li><b><?php echo $LANG['ABUNDANCE']; ?></b> <?php echo $LANG['OPTIONAL']; ?></li>
+									<li><b><?php echo $LANG['NOTES']; ?></b> <?php echo $LANG['OPTIONAL']; ?></li>
+									<li><b><?php echo $LANG['INTERNALNOTES']; ?></b> <?php echo $LANG['OPTIONAL_DISP']; ?></li>
+									<li><b><?php echo $LANG['SOURCE']; ?></b> <?php echo $LANG['OPTIONAL']; ?></li>
 								</ul>
 							</div>
 							<div style="margin:25px;">
@@ -169,7 +172,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 				}
 			}
 			else{
-				echo "<h2>You appear not to have rights to edit this checklist. If you think this is in error, contact an administrator</h2>";
+				echo "<h2>" . $LANG['NO_RIGHTS'] . "</h2>";
 			}
 		?>
 	</div>
