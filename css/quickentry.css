@@ -1,0 +1,97 @@
+*{
+    box-sizing: border-box;
+    font-family: sans-serif;
+    font-size: 12px;
+}
+h2{
+    background: linear-gradient(1000deg, rgb(218, 200, 255), #34ace0);;
+    color: white;
+    margin-top: -5px;
+    font-size: 20px;
+}
+#titleDiv {
+    font-size: 20px;
+    margin: 10px;
+    font-weight: 700;
+}
+#top {
+    margin-bottom: 10px;
+    margin-right: 17%;
+    margin-left: 17%;
+}
+.column{
+    float: left;
+    padding:10px;
+}
+.left{
+    width: 50%;
+}
+.right{
+    width: 50%;
+}
+.info{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 8px;
+}
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+.nav-bar a{
+    background-color: #00FFFF;
+    color: black;
+    border-style: solid;
+    border-color: black;
+    margin: 0;
+}
+.nav-bar label{
+    background-color: #00FFFF;
+    color: black;
+    border-style: solid;
+    border-color: black;
+}
+.function-bar{
+    border:1px solid black; 
+    display: flex;
+    align-items: center;
+}
+button{
+    color:black;
+    background-color: #34ace0;
+}
+.btn label{
+    color:black;
+    background-color: #34ace0;
+    border-style: solid;
+    border-color: black;
+}
+.data{
+    border-style: solid;
+    border-color: black;
+}
+.login-info{
+    border-style: solid;
+    border-color: black;
+}
+#editdiv {
+    margin-left:auto;
+    margin-right:auto;
+    width:960px;
+}
+.field-block {
+    margin: 5px 0px;
+    display: flex;
+}
+.field-label {
+    text-align: left;
+    margin-left: 5px;
+    width: 120px;
+}
+.title{
+    backgroufnd-color:#86C5D8; 
+    display: block;
+    width: 100%;
+}

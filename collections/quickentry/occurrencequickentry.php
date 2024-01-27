@@ -516,6 +516,7 @@ else{
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 		<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['OCCEDITOR'])?$LANG['OCCEDITOR']:'Occurrence Editor'); ?></title>
 		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+		<link rel="stylesheet" href="../../css/quickentry.css" type="text/css">
 		<script src="../../js/jquery.js?ver=140310" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js?ver=140310" type="text/javascript"></script>
 		<script type="text/javascript">
@@ -554,13 +555,13 @@ else{
 			}
 		</script>
 		<script src="../../js/symb/collections.coordinateValidation.js?ver=2" type="text/javascript"></script>
-	<script src="../../js/symb/wktpolygontools.js?ver=2" type="text/javascript"></script>
-	<script src="../../js/symb/collections.georef.js?ver=2" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.main.js?ver=3" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.tools.js?ver=4" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.imgtools.js?ver=3" type="text/javascript"></script>
-	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.query.js?ver=6" type="text/javascript"></script>
+		<script src="../../js/symb/wktpolygontools.js?ver=2" type="text/javascript"></script>
+		<script src="../../js/symb/collections.georef.js?ver=2" type="text/javascript"></script>
+		<script src="../../js/symb/collections.editor.main.js?ver=3" type="text/javascript"></script>
+		<script src="../../js/symb/collections.editor.tools.js?ver=4" type="text/javascript"></script>
+		<script src="../../js/symb/collections.editor.imgtools.js?ver=3" type="text/javascript"></script>
+		<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
+		<script src="../../js/symb/collections.editor.query.js?ver=6" type="text/javascript"></script>
 		<script>
 			var record_created_utc = '<?php echo $occArr['modified']; ?>';
 			var last_modified_utc = '<?php echo $occArr['dateLastModified']; ?>';
@@ -623,105 +624,6 @@ else{
 				}
 			}
 		</script>
-		<style type="text/css">
-			*{
-				box-sizing: border-box;
-				font-family: sans-serif;
-				font-size: 12px;
-			}
-			h2{
-				background: linear-gradient(1000deg, rgb(218, 200, 255), #34ace0);;
-				color: white;
-				margin-top: -5px;
-				font-size: 20px;
-			}
-			#titleDiv {
-				font-size: 20px;
-				margin: 10px;
-				font-weight: 700;
-			}
-			#top {
-				margin-bottom: 10px;
-				margin-right: 17%;
-				margin-left: 17%;
-			}
-			.column{
-				float: left;
-				padding:10px;
-			}
-			.left{
-				width: 50%;
-			}
-			.right{
-				width: 50%;
-			}
-			.info{
-				width: 100%;
-				display: flex;
-				align-items: center;
-				padding: 8px;
-			}
-			.row:after {
-				content: "";
-				display: table;
-				clear: both;
-			}
-			.nav-bar a{
-				background-color: #00FFFF;
-				color: black;
-				border-style: solid;
-				border-color: black;
-				margin: 0;
-			}
-			.nav-bar label{
-				background-color: #00FFFF;
-				color: black;
-				border-style: solid;
-				border-color: black;
-			}
-			.function-bar{
-				border:1px solid black; 
-				display: flex;
-				align-items: center;
-			}
-			button{
-				color:black;
-				background-color: #34ace0;
-			}
-			.btn label{
-				color:black;
-				background-color: #34ace0;
-				border-style: solid;
-				border-color: black;
-			}
-			.data{
-				border-style: solid;
-				border-color: black;
-			}
-			.login-info{
-				border-style: solid;
-				border-color: black;
-			}
-			#editdiv {
-				margin-left:auto;
-				margin-right:auto;
-				width:960px;
-			}
-			.field-block {
-				margin: 5px 0px;
-				display: flex;
-			}
-			.field-label {
-				text-align: left;
-				margin-left: 5px;
-				width: 120px;
-			}
-			.title{
-				backgroufnd-color:#86C5D8; 
-				display: block;
-				width: 100%;
-			}
-		</style>
 	</head>
 <body>
 	<div><?php // print_r($imgArr) ?></div>
