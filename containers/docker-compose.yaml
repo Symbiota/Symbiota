@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  symbiota:
+    build:
+      context: ./ubuntuContainer
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - C:\\Users\\Computer\\Documents\\symbiota:/var/www/html
+    depends_on:
+      - symbiota-db
+  symbiota-db:
+    build:
+      context: ./mysqlContainer
+      dockerfile: Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: symbiota
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"

@@ -1,0 +1,24 @@
+To build ubuntu container, navigate to the "ubuntuContainer" directory and run `docker build . -t symbiota`
+To run container, do `docker run -p 8080:80 -v C:\\Users\\Computer\\Documents\\symbiota:/var/www/html symbiota`
+
+To build mysql container, navigate to the "mysqlContainer" directory and run `docker build . -t symbiota-db`
+To run container, do `docker run -it -p 3306:3306 symbiota-db`
+
+To stop all running containers, do `docker stop $(docker ps -q)`
+
+IMPORTANT NOTE:
+Create users for the mysql server:
+1. Run `docker exec -it <name_of_container> mysql -u root -p`
+
+2. Run the following mysql commands:
+CREATE USER 'symbiota-r'@'%' IDENTIFIED BY 'symbiota-r-pass';
+GRANT SELECT ON symbiota.* TO 'symbiota-r'@'%';
+
+CREATE USER 'symbiota-rw'@'%' IDENTIFIED BY 'symbiota-rw-pass';
+GRANT SELECT, INSERT, UPDATE, DELETE ON symbiota.* TO 'symbiota-rw'@'%';
+
+FLUSH PRIVILEGES;
+
+
+To run docker-compose, navigate to the parent directory of the both containers (where the compose.yaml file is)
+and run `docker-compose up -d`
