@@ -46,7 +46,6 @@ if (isset($_REQUEST['batchid'])) {
 	$currentImgId = $_REQUEST['imgid'];
 	$currentImgIndex = $_REQUEST['imgindex'];
 	$occData = array();
-	$imgUrl = $occManager->getImgUrl($currentImgId);
 	// occData is a hashtable, which has imgid as key, and occid as value
 	foreach ($imgIDs as $imgID) {
         $occData[$imgID] = $occManager->getOneOccID($imgID);
@@ -81,7 +80,6 @@ $isEditor = 0;
 
 // Dropdown arrays
 $filedUnderDrop = $occManager->getValues('dd_filedUnderID', 'dropdown_filedUnder_values');
-$specImgArr = $occManager->getImageMap();
 
 if($SYMB_UID){
 	//Set variables
@@ -499,6 +497,15 @@ if($SYMB_UID){
 	$isLocked = false;
 	if($occId) $isLocked = $occManager->getLock();
 
+	// collect image arrays
+	$imgidCollection = []; 
+	foreach ($imgArr as $item) {
+		$imgidCollection[] = $item['imgid'];
+	}
+	$currentImage = 0;
+	$totalImage = count($imgidCollection);
+	$imgUrl = $occManager->getImgUrl($imgidCollection[$currentImage]);
+
 }
 else{
 	header('Location: ../../profile/index.php?refurl=../collections/editor/occurrenceeditor.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
@@ -561,6 +568,9 @@ else{
 
 			// Function to convert UTC time to user's timezone
 			function convertTimeToUserTimezone(utcTimestamp) {
+				if (!utcTimestamp) {
+					return "No timestamp provided";
+				}
 				var date = new Date(utcTimestamp);
 				var offset = date.getTimezoneOffset() * 60000; // Offset in milliseconds
 				var userLocalTime = new Date(date.getTime() - offset);
@@ -569,8 +579,11 @@ else{
 			}
 
 			// Convert and set the adjusted timestamp in the input field
-			document.getElementById('modifiedInput').value = convertTimeToUserTimezone(record_created_utc);
-			lastModifiedElement.textContent = convertTimeToUserTimezone(last_modified_utc);
+			document.addEventListener('DOMContentLoaded', function() {
+				document.getElementById('modifiedInput').value = convertTimeToUserTimezone(record_created_utc);
+				var lastModifiedElement = document.getElementById('lastModified');
+				lastModifiedElement.textContent = 'Last Modified: ' + convertTimeToUserTimezone(last_modified_utc);
+			});
 
 			function navigateToRecordNew(crowdSourceMode, gotomode, collId, batchId, imgId, imgIndex, barcode, occId, occIndex) {
 				if(barcode == null && occId == null) {
@@ -711,6 +724,12 @@ else{
 		</style>
 	</head>
 <body>
+	<div><?php // print_r($imgArr) ?></div>
+	<div><?php // print_r($specImgArr) ?></div>
+	<div><?php // print_r($imgidCollection) ?></div>
+	<div><?php // echo($currentImgId) ?></div>
+	<div><?php // echo($imgidCollection[$currentImage]) ?></div>
+	<div><?php // echo($imgUrl) ?></div>
 	<div id="innertext">
 		<div id="top">
 			<div id="titleDiv">

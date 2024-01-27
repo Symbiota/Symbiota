@@ -5,6 +5,20 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgpro
 	
 <script src="../../js/symb/collections.editor.imgtools.js?ver=3" type="text/javascript"></script>
 <script>
+	function nextProcessingImage(){
+		document.getElementById("labeldiv-"+(imgCnt+1)).style.display = "none";
+		var imgObj = document.getElementById("labeldiv-"+imgCnt+1);
+		if(imgCnt > imgLen){
+			imgObj = document.getElementById("labeldiv-1");
+			imgCnt = "1";
+		}
+		imgObj.style.display = "block";
+		
+		initImageTool("activeimg-"+imgCnt);
+		activeImgIndex = imgCnt;
+		
+		return false;
+	}
 	$(function() {
 		$( "#zoomInfoDialog" ).dialog({
 			autoOpen: false,
@@ -84,15 +98,16 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgpro
 			<div style="float:left;;padding-right:10px;margin:2px 20px 0px 0px;"><?php echo $LANG['ROTATE']; ?>: <a href="#" onclick="rotateImage(-90)">&nbsp;L&nbsp;</a> &lt;&gt; <a href="#" onclick="rotateImage(90)">&nbsp;R&nbsp;</a></div>
 		</div>
 		<div id="labelprocessingdiv" style="clear:both;">
+			<!-- <div><?php // echo($imgUrl) ?></div> -->
 				<div id="labeldiv-<?php echo $imgCnt; ?>" style="display:'block'; ?>;">
 					<div>
 						<img id="activeimg-<?php echo ($imgCnt); ?>" src="<?php echo($imgUrl) ?>" style="height:400px;" onload="initImageTool('activeimg-<?php echo ($imgCnt); ?>')" />
 					<div style="width:100%;clear:both;">
 						<div style="float:right;margin-right:20px;font-weight:bold;">
-							<?php echo $LANG['IMAGE'].' '.$imgCnt.' '.$LANG['OF'].' ';
+							<?php echo $LANG['IMAGE'].' '.($imgCnt-1).' '.$LANG['OF'].' ';
 							echo count($imgArr);
 							if(count($imgArr)>1){
-								echo '<a href="#" onclick="return nextLabelProcessingImage('.($imgCnt+1).');">=&gt;&gt;</a>';
+								echo '<a href="#" onclick="return nextProcessingImage();">=&gt;&gt;</a>';
 							}
 							?>
 						</div>
