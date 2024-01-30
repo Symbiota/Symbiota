@@ -539,7 +539,7 @@ if($action != "Update Statistics"){
 												<div class="gridlike-form-row bottom-breathing-room-relative">
 													<div>
 														<input id="current-collid" name="current-collid" value="<?php echo $collid; ?>" type="checkbox" onclick="uncheckAll();" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
-														<label for="current-collid">Collection ID TODO</label>
+														<label for="current-collid">Collection ID: <?php echo $collid; ?></label>
 													</div>
 													<div>
 														<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
