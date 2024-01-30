@@ -47,8 +47,8 @@ if($collid && $isEditor){
 					foreach($resourceArr as $key => $valueArr){
 						echo '<div class="link-div"><span class="label">Link:</span> ';
 						echo '<a href="' . htmlspecialchars($valueArr['url'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($valueArr['url'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
-						echo '<a href="#" onclick="editLink('.$key.');return false"><img src="../../images/edit.png" /></a>';
-						echo '<a href="#" onclick="deleteLink('.$key.');return false"><img src="../../images/del.png" /></a>';
+						echo '<a href="#" onclick="editLink('.$key.');return false"><img src="../../images/edit.png" style="width:1.2em" /></a>';
+						echo '<a href="#" onclick="deleteLink('.$key.');return false"><img src="../../images/del.png" style="width:1.2em" /></a>';
 						foreach($valueArr['title'] as $langCode => $titleValue){
 							$langStr = $langCode;
 							if($langCode == 'en') $langStr = (isset($LANG['ENGLISH'])?$LANG['ENGLISH']:'English');
@@ -115,13 +115,13 @@ if($collid && $isEditor){
 					foreach($contactArr as $key => $valueArr){
 						echo '<div class="contact-div">';
 						echo '<div>'.$valueArr['firstName'].' '.$valueArr['lastName'];
-						echo '<a href="#" onclick="editContact('.$key.');return false"><img src="../../images/edit.png" /></a>';
+						echo '<a href="#" onclick="editContact('.$key.');return false"><img src="../../images/edit.png" style="width:1.2em" /></a>';
 						?>
 						<form name="contactDelForm" action="collmetadata.php" method="post" style="display:inline">
 							<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 							<input name="contactIndex" type="hidden" value="<?php echo $key; ?>" />
 							<input name="action" type="hidden" value="deleteContact" />
-							<input type="image" src="../../images/del.png" style="width:13px" />
+							<input type="image" src="../../images/del.png" style="width:1.2em" />
 						</form>
 						<?php
 						echo '</div>';
@@ -199,10 +199,10 @@ if($collid && $isEditor){
 					echo $instArr['institutionname'].($instArr['institutioncode']?' ('.$instArr['institutioncode'].')':'');
 					?>
 					<a href="institutioneditor.php?emode=1&targetcollid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&iid=' . htmlspecialchars($instArr['iid'], HTML_SPECIAL_CHARS_FLAGS); ?>" title="<?php echo htmlspecialchars((isset($LANG['EDIT_ADDRESS'])?$LANG['EDIT_ADDRESS']:'Edit institution address'), HTML_SPECIAL_CHARS_FLAGS); ?>">
-						<img src="../../images/edit.png" style="width:14px;" />
+						<img src="../../images/edit.png" style="width:1.2em;" />
 					</a>
 					<a href="collmetadata.php?tabindex=1&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&removeiid=' . htmlspecialchars($instArr['iid'], HTML_SPECIAL_CHARS_FLAGS); ?>" title="<?php echo htmlspecialchars((isset($LANG['UNLINK_ADDRESS'])?$LANG['UNLINK_ADDRESS']:'Unlink institution address'), HTML_SPECIAL_CHARS_FLAGS); ?>">
-						<img src="../../images/drop.png" style="width:14px;" />
+						<img src="../../images/drop.png" style="width:1.2em;" />
 					</a>
 					<?php
 					echo '</div>';

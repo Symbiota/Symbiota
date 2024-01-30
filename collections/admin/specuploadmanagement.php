@@ -206,7 +206,7 @@ $duManager->readUploadParameters();
 						<legend style="font-weight:bold;font-size:120%;"><?php echo (isset($LANG['UP_OPT']) ? $LANG['UP_OPT'] : 'Upload Options'); ?></legend>
 						<div style="float:right;">
 							<?php
-							echo '<a href="specuploadmanagement.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&action=addprofile"><img src="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/images/add.png" style="width:15px;border:0px;" title="' . htmlspecialchars((isset($LANG['ADD_PROF']) ? $LANG['ADD_PROF'] : 'Add a New Upload Profile'), HTML_SPECIAL_CHARS_FLAGS) . '" aria-label="' . htmlspecialchars((isset($LANG['ADD_PROF']) ? $LANG['ADD_PROF'] : 'Add a New Upload Profile'), HTML_SPECIAL_CHARS_FLAGS) . '" /></a>';
+							echo '<a href="specuploadmanagement.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&action=addprofile"><img src="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/images/add.png" style="width:1.5em;border:0px;" title="' . htmlspecialchars((isset($LANG['ADD_PROF']) ? $LANG['ADD_PROF'] : 'Add a New Upload Profile'), HTML_SPECIAL_CHARS_FLAGS) . '" aria-label="' . htmlspecialchars((isset($LANG['ADD_PROF']) ? $LANG['ADD_PROF'] : 'Add a New Upload Profile'), HTML_SPECIAL_CHARS_FLAGS) . '" /></a>';
 							?>
 						</div>
 						<?php
@@ -217,7 +217,7 @@ $duManager->readUploadParameters();
 									<input type="radio" id="uspid-<?php echo $id ?>" name="uspid-<?php echo $id ?>" value="<?php echo $id.'-'.$v['uploadtype'];?>" />
 									<label for="uspid-<?php echo $id ?>"> <?php echo $v['title']; ?> </label>
 									<a href="specuploadmanagement.php?action=editprofile&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&uspid=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS); ?>" title="<?php echo htmlspecialchars((isset($LANG['VIEW_PARS']) ? $LANG['VIEW_PARS'] : 'View/Edit Parameters'), HTML_SPECIAL_CHARS_FLAGS); ?>" aria-label="<?php echo htmlspecialchars((isset($LANG['VIEW_PARS']) ? $LANG['VIEW_PARS'] : 'View/Edit Parameters'), HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="../../images/edit.png" alt="<?php echo htmlspecialchars((isset($LANG['IMG_EDIT']) ? $LANG['IMG_EDIT'] : 'Edit Image'), HTML_SPECIAL_CHARS_FLAGS); ?>"/>
+										<img src="../../images/edit.png" style="width:1.2em;" alt="<?php echo htmlspecialchars((isset($LANG['IMG_EDIT']) ? $LANG['IMG_EDIT'] : 'Edit Image'), HTML_SPECIAL_CHARS_FLAGS); ?>"/>
 									</a>
 									<input type="hidden" name="uploadtype" value="<?php echo $v['uploadtype']; ?>" />
 								</div>

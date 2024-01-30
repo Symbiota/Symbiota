@@ -64,7 +64,8 @@ $LANG['REMOVEEDITPRIVCONFIRM'] = '¿Est&aacute; seguro de que desea eliminar los
 $LANG['MASSUPDATEED'] = 'Editar Detalles del Listado de Comprobaci&oacute;n';
 $LANG['ADDEDITOR'] = 'Agregar Editor';
 $LANG['DELETECHECK'] = 'Borrar Listado de Comprobaci&oacute;n';
-$LANG['EDITCHECKLIST'] = 'Someter Cambios';
+$LANG['EDITCHECKLIST'] = 'Editar Lista';
+$LANG['SAVE_EDITS'] = 'Someter Cambios';
 $LANG['ADDCHECKLIST'] = 'Crear Lista Nueva';
 $LANG['DELETETHISU'] = 'Borrar este usuario';
 ?>

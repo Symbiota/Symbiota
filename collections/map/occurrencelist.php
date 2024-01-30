@@ -31,7 +31,7 @@ if(!$recLimit || $recCnt < $recLimit){
 			<div style="float:left;">
 				<form name="downloadForm" action="../download/index.php" method="post" onsubmit="targetPopup(this)" style="float:left">
 					<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;cursor: pointer" title="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>">
-						<img src="../../images/dl2.png" srcset="../../images/download.svg" class="svg-icon" style="width:15px" />
+						<img src="../../images/dl2.png" style="width:1.3em" />
 					</button>
 					<input name="reclimit" type="hidden" value="<?php echo $recLimit; ?>" />
 					<input name="sourcepage" type="hidden" value="map" />
@@ -43,11 +43,11 @@ if(!$recLimit || $recCnt < $recLimit){
 					<input name="sourcepage" type="hidden" value="map" />
 					<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 					<button name="submitaction" type="submit" class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;cursor: pointer" title="Download KML file">
-						<img src="../../images/dl2.png" srcset="../../images/download.svg" class="svg-icon" style="width:15px; padding-right: 5px; vertical-align:top" />KML
+						<img src="../../images/dl2.png" style="width:1.3em; vertical-align:top" />KML
 					</button>
 				</form>
 				<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;cursor: pointer;" onclick="copyUrl()" title="<?php echo (isset($LANG['COPY_TO_CLIPBOARD'])?$LANG['COPY_TO_CLIPBOARD']:'Copy URL to Clipboard'); ?>">
-					<img src="../../images/dl2.png" srcset="../../images/link.svg" class="svg-icon" style="width:15px" /></button>
+					<img src="../../images/link.png" style="width:1.3em" /></button>
 			</div>
 		</div>
 	</div>

@@ -90,7 +90,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							<div id="editorDiv">
 								<?php
 								echo '<a href="profile/tpeditor.php?tid=' . htmlspecialchars($taxonManager->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars((isset($LANG['EDIT_TAXON_DATA'])?$LANG['EDIT_TAXON_DATA']:'Edit Taxon Data'), HTML_SPECIAL_CHARS_FLAGS) . '">';
-								echo '<img class="navIcon" src="../images/edit.png" />';
+								echo '<img class="navIcon" src="../images/edit.png" style="width:1.3em" />';
 								echo '</a>';
 								?>
 							</div>
@@ -102,7 +102,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							<span id="author"><?php echo $taxonManager->getTaxonAuthor(); ?></span>
 							<?php
 							$parentLink = 'index.php?tid='.$taxonManager->getParentTid().'&clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&taxauthid='.$taxAuthId;
-							echo '&nbsp;<a href="' . htmlspecialchars($parentLink, HTML_SPECIAL_CHARS_FLAGS) . '"><img class="navIcon" src="../images/toparent.png" title="Go to Parent" /></a>';
+							echo '&nbsp;<a href="' . htmlspecialchars($parentLink, HTML_SPECIAL_CHARS_FLAGS) . '"><img class="navIcon" src="../images/toparent.png" style="width:1.3em" title="Go to Parent" /></a>';
 							if($taxonManager->isForwarded()){
 						 		echo '<span id="redirectedfrom"> ('.(isset($LANG['REDIRECT'])?$LANG['REDIRECT']:'redirected from').': <i>'.$taxonManager->getSubmittedValue('sciname').'</i> '.$taxonManager->getSubmittedValue('author').')</span>';
 						 	}
@@ -248,7 +248,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							?>
 							<div id="editorDiv">
 								<a href="profile/tpeditor.php?tid=<?php echo htmlspecialchars($taxonManager->getTid(), HTML_SPECIAL_CHARS_FLAGS); ?>" title="<?php echo htmlspecialchars((isset($LANG['EDIT_TAXON_DATA'])?$LANG['EDIT_TAXON_DATA']:'Edit Taxon Data'), HTML_SPECIAL_CHARS_FLAGS); ?>">
-									<img class="navIcon" src='../images/edit.png'/>
+									<img class="navIcon" src='../images/edit.png' style='width:1.3em' />
 								</a>
 							</div>
 							<?php
@@ -260,7 +260,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							if($taxonRank > 140){
 								$parentLink = "index.php?tid=".$taxonManager->getParentTid()."&clid=" . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . "&pid=".$pid."&taxauthid=".$taxAuthId;
 								$displayName .= ' <a href="' . htmlspecialchars($parentLink, HTML_SPECIAL_CHARS_FLAGS) . '">';
-								$displayName .= '<img class="navIcon" src="../images/toparent.png" title="'.(isset($LANG['GO_TO_PARENT'])?$LANG['GO_TO_PARENT']:'Go to Parent Taxon').'" />';
+								$displayName .= '<img class="navIcon" src="../images/toparent.png" style="width:1.3em" title="'.(isset($LANG['GO_TO_PARENT'])?$LANG['GO_TO_PARENT']:'Go to Parent Taxon').'" />';
 								$displayName .= '</a>';
 							}
 							echo '<div id="taxon">'.$displayName.'</div>';
@@ -305,7 +305,7 @@ include($SERVER_ROOT.'/includes/header.php');
 									if($parentChecklistArr = $taxonManager->getParentChecklist($clid)){
 										$titleStr = (isset($LANG['GO_TO_PARENT_CHECKLIST'])?$LANG['GO_TO_PARENT_CHECKLIST']:'Include species within checklist').': '.current($parentChecklistArr);
 										$legendStr .= ' <a href="index.php?tid=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&clid='. htmlspecialchars(key($parentChecklistArr), HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&taxauthid=' . htmlspecialchars($taxAuthId, HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars($titleStr, HTML_SPECIAL_CHARS_FLAGS) . '">';
-										$legendStr .= '<img style="border:0px;width:10px;" src="../images/toparent.png"/>';
+										$legendStr .= '<img style="border:0px;width:1.3em;" src="../images/toparent.png"/>';
 										$legendStr .= '</a>';
 									}
 									elseif($pid){
@@ -313,7 +313,7 @@ include($SERVER_ROOT.'/includes/header.php');
 										if($projName) $titleStr = (isset($LANG['WITHIN_INVENTORY'])?$LANG['WITHIN_INVENTORY']:'Species within inventory project').': '.$projName;
 										else $titleStr = (isset($LANG['SHOW_ALL_TAXA'])?$LANG['SHOW_ALL_TAXA']:'Show all taxa');
 										$legendStr .= ' <a href="index.php?tid=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&clid=0&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&taxauthid=' . htmlspecialchars($taxAuthId, HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars($titleStr, HTML_SPECIAL_CHARS_FLAGS) . '">';
-										$legendStr .= '<img style="border:0px;width:10px;" src="../images/toparent.png"/>';
+										$legendStr .= '<img style="border:0px;width:1.3em;" src="../images/toparent.png"/>';
 										$legendStr .= '</a>';
 									}
 								}
@@ -323,7 +323,7 @@ include($SERVER_ROOT.'/includes/header.php');
 									else $legendStr = (isset($LANG['SHOW_ALL_TAXA'])?$LANG['SHOW_ALL_TAXA']:'Show all taxa');
 									$titleStr = (isset($LANG['SHOW_ALL_TAXA'])?$LANG['SHOW_ALL_TAXA']:'Show all taxa');
 									$legendStr .= ' <a href="index.php?tid=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&clid=0&pid=0&taxauthid=' . htmlspecialchars($taxAuthId, HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars($titleStr, HTML_SPECIAL_CHARS_FLAGS) . '">';
-									$legendStr .= '<img style="border:0px;width:10px;" src="../images/toparent.png"/>';
+									$legendStr .= '<img style="border:0px;width:1.3em;" src="../images/toparent.png"/>';
 									$legendStr .= '</a>';
 								}
 								if($legendStr){
@@ -425,7 +425,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					<div id="editorDiv">
 						<?php
 						echo '<a href="profile/tpeditor.php?tid=' . htmlspecialchars($taxonManager->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars((isset($LANG['EDIT_TAXON_DATA'])?$LANG['EDIT_TAXON_DATA']:'Edit Taxon Data'), HTML_SPECIAL_CHARS_FLAGS) . '">';
-						echo '<img class="navIcon" src="../images/edit.png" />';
+						echo '<img class="navIcon" src="../images/edit.png" style="width:1.3em" />';
 						echo '</a>';
 						?>
 					</div>

@@ -194,7 +194,7 @@ if($isEditor && $action){
 			if($isEditor){
 				if($tEditor->isForwarded()) echo '<div id="redirectedfrom">'.$LANG['REDIRECTED_FROM'].': <i>'.$tEditor->getSubmittedValue('sciname').'</i></div>';
 				echo '<div id="taxonDiv"><a href="../index.php?taxon=' . htmlspecialchars($tEditor->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($tEditor->getSciName(), HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($tEditor->getAuthor(), HTML_SPECIAL_CHARS_FLAGS);
-				if($tEditor->getRankId() > 140) echo "&nbsp;<a href='tpeditor.php?tid=" . htmlspecialchars($tEditor->getParentTid(), HTML_SPECIAL_CHARS_FLAGS) . "'><img src='../../images/toparent.png' title='" . htmlspecialchars($LANG['GO_TO_PARENT'], HTML_SPECIAL_CHARS_FLAGS) . "' /></a>";
+				if($tEditor->getRankId() > 140) echo "&nbsp;<a href='tpeditor.php?tid=" . htmlspecialchars($tEditor->getParentTid(), HTML_SPECIAL_CHARS_FLAGS) . "'><img src='../../images/toparent.png' style='width:1.3em' title='" . htmlspecialchars($LANG['GO_TO_PARENT'], HTML_SPECIAL_CHARS_FLAGS) . "' /></a>";
 				echo "</div>\n";
 				if($tEditor->getFamily()) echo '<div id="familyDiv"><b>'.$LANG['FAMILY'].':</b> '.$tEditor->getFamily().'</div>'."\n";
 				if($statusStr) echo '<div style="margin:15px;font-weight:bold;font-size:120%;color:'.(stripos($statusStr,'error') !== false?'red':'green') .';">'.$statusStr.'</div>';
@@ -217,7 +217,7 @@ if($isEditor && $action){
 							<div style="margin:10px 0px" title="<?php echo $LANG['ADD_COMMON_NAME']; ?>">
 								<b><?php echo ($vernacularList?$LANG['COMMON_NAMES']:$LANG['NO_COMMON_NAMES']); ?></b>
 								<a href="#" onclick="toggle('addvern');return false;">
-									<img style="border:0px;width:15px;" src="../../images/add.png"/>
+									<img style="border:0px;width:1.3em;" src="../../images/add.png"/>
 								</a>
 							</div>
 							<div id="addvern" class="addvern" style="display:<?php echo ($vernacularList?'none':'block'); ?>;">
@@ -270,7 +270,7 @@ if($isEditor && $action){
 											<div style="margin-left:10px;" title="<?php echo $LANG['EDIT_COMMON_NAME']; ?>">
 												<b><?php echo $vernArr['vernname']; ?></b>
 												<a href="#" onclick="toggle('vid-<?php echo $vid; ?>');return false;">
-													<img style="border:0px;width:12px;" src="../../images/edit.png" />
+													<img style="border:0px;width:1.2em;" src="../../images/edit.png" />
 												</a>
 											</div>
 											<form name="updatevern" action="tpeditor.php" method="post" style="margin:15px;clear:both">
@@ -347,7 +347,7 @@ if($isEditor && $action){
 							if($synonymArr = $tEditor->getSynonym()){
 								?>
 								<div style="float:right;" title="<?php echo $LANG['EDIT_SYN_ORDER']; ?>">
-									<a href="#"  onclick="toggle('synsort');return false;"><img style="border:0px;width:12px;" src="../../images/edit.png"/></a>
+									<a href="#"  onclick="toggle('synsort');return false;"><img style="border:0px;width:1.2em;" src="../../images/edit.png"/></a>
 								</div>
 								<div style="font-weight:bold;margin-left:15px;">
 									<ul>

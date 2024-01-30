@@ -94,7 +94,7 @@ if(!$addAuth){
 					?>
 					<div style="float:right;margin:10px;">
 						<a href="#" onclick="toggle('newauthordiv');">
-							<img src="../images/add.png" alt="Create New Author" />
+							<img src="../images/add.png" style="width:1.3em" alt="Create New Author" />
 						</a>
 					</div>
 					<?php

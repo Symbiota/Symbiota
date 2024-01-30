@@ -253,7 +253,7 @@ else{
 						?>
 					</select>
 					<a href="#" onclick="toggleCustomDiv(<?php echo ($x+1); ?>);return false;">
-						<img class="editimg" src="../../images/editplus.png" alt="<?php echo htmlspecialchars($LANG['IMG_EDIT'], HTML_SPECIAL_CHARS_FLAGS); ?>" />
+						<img class="editimg" src="../../images/editplus.png" style="width:1.2em;" alt="<?php echo htmlspecialchars($LANG['IMG_EDIT'], HTML_SPECIAL_CHARS_FLAGS); ?>" />
 					</a>
 				</div>
 				<?php
@@ -273,7 +273,7 @@ else{
 			<div class="fieldGroupDiv">
 				<div class="bottom-breathing-room-relative">
 					<button type="button" class="icon-button no-margin-left" onclick="copyQueryLink(event)" title="<?php echo (isset($LANG['COPY_SEARCH'])?$LANG['COPY_SEARCH']:'Copy Search As Link'); ?>" aria-label="<?php echo (isset($LANG['COPY_SEARCH'])?$LANG['COPY_SEARCH']:'Copy Search As Link'); ?>">
-						<img src="../../images/dl2.png" srcset="../../images/link.svg" class="svg-icon" style="width:15px; height:15px" alt="Link icon. Copies the search terms as a link." />
+						<img src="../../images/link.png" style="width:1.2em;margin-right:5px;" alt="Link icon. Copies the search terms as a link." /><?php echo (isset($LANG['COPY_LINK'])?$LANG['COPY_LINK']:'Copy Link'); ?>
 					</button>
 					<?php
 					if(!$crowdSourceMode){
@@ -290,7 +290,7 @@ else{
 							?>
 							<a href="../reports/labelmanager.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars($qryStr, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank">
 								<button type="button" class="icon-button" title="<?php echo $LANG['GO_LABEL_PRINT']; ?>">
-									<img src="../../images/list.png" style="width:15px; height:15px" />
+									<img src="../../images/list.png" style="width:1.3em" />
 								</button>
 							</a>
 							<?php

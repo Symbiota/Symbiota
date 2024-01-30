@@ -97,7 +97,7 @@ if($isEditor){
 				if(!$spNlpId){
 					?>
 					<div style="float:right;margin:10px;" onclick="toggle('addprofilediv');">
-						<img src="../../images/add.png" style="border:0px" />
+						<img src="../../images/add.png" style="width:1.5em;border:0px" />
 					</div>
 					<div id="addprofilediv" style="display:none;">
 						<form name="addprofileform" action="nlpprofiles.php" method="post">
@@ -156,7 +156,7 @@ if($isEditor){
 					$pArr = array_shift($profileArr);
 					?>
 					<div style="float:right;margin:10px;" onclick="toggle('editdiv');">
-						<img src="../../images/edit.png" style="border:0px" />
+						<img src="../../images/edit.png" style="width:1.3em;border:0px" />
 					</div>
 					<fieldset>
 						<legend><b><?php echo $pArr['title']; ?></b></legend>
@@ -239,7 +239,7 @@ if($isEditor){
 									?>
 									<li>
 										<?php echo '<b>'.$vArr['fieldname'].':</b> '.$vArr['patternmatch']; ?>
-										<img src="../../images/edit.png" onclick="toggle('frageditdiv-<?php echo $k; ?>')" />
+										<img src="../../images/edit.png" style="width:1.2em" onclick="toggle('frageditdiv-<?php echo $k; ?>')" />
 										<div style="margin-left:25px;">
 											<?php echo $vArr['notes']; ?>
 											<div id="frageditdiv-<?php echo $k; ?>" style="display:none;">

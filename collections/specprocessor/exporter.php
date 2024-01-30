@@ -353,7 +353,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 											<div style="margin:10px 0px;">
 												<input type="checkbox" name="newrecs" value="1" /> <?php echo $LANG['EG_IN_PORTAL']; ?>
 												<a id="newrecsinfo" href="#" onclick="return false" title="<?php echo $LANG['MORE_INFO']; ?>">
-													<img src="../../images/info.png" style="width:13px;" />
+													<img src="../../images/info.png" style="width:1.2em;" />
 												</a>
 												<div id="newrecsinfodialog">
 													<?php echo $LANG['MORE_INFO_TEXT']; ?>
@@ -452,7 +452,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 											<input type="radio" name="schema" value="symbiota" CHECKED />
 											<?php echo $LANG['SYMB_NATIVE']; ?>
 											<a id="schemanativeinfo" href="#" onclick="return false" title="<?php echo $LANG['MORE_INFO']; ?>">
-												<img src="../../images/info.png" style="width:13px;" />
+												<img src="../../images/info.png" style="width:1.2em;" />
 											</a><br/>
 											<div id="schemanativeinfodialog">
 												<?php echo $LANG['SYMB_NATIVE_EXPLAIN']; ?>
@@ -460,7 +460,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 											<input type="radio" name="schema" value="dwc" />
 											Darwin Core
 											<a id="schemadwcinfo" href="#" onclick="return false" title="<?php echo $LANG['MORE_INFO']; ?>">
-												<img src="../../images/info.png" style="width:13px;" />
+												<img src="../../images/info.png" style="width:1.2em;" />
 											</a><br/>
 											<div id="schemadwcinfodialog">
 												<?php echo $LANG['DWC_EXPLAIN']; ?>

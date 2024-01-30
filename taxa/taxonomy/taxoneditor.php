@@ -136,12 +136,12 @@ if($isEditor){
 			?>
 			<div style="float:right;" title="<?php echo (isset($LANG['GO_TAX_DISPLAY'])?$LANG['GO_TAX_DISPLAY']:'Go to taxonomy display'); ?>">
 				<a href="taxonomydisplay.php?target=<?php echo htmlspecialchars($taxonEditorObj->getUnitName1(), HTML_SPECIAL_CHARS_FLAGS);?>&showsynonyms=1">
-					<img style='border:0px;width:15px;' src='../../images/toparent.png'/>
+					<img style='border:0px;width:1.3em;' src='../../images/toparent.png'/>
 				</a>
 			</div>
 			<div style="float:right;" title="<?php echo (isset($LANG['ADD_NEW_TAXON'])?$LANG['ADD_NEW_TAXON']:'Add a New Taxon'); ?>">
 				<a href="taxonomyloader.php">
-					<img style='border:0px;width:15px;' src='../../images/add.png'/>
+					<img style='border:0px;width:1.3em;' src='../../images/add.png'/>
 				</a>
 			</div>
 			<h1>
@@ -161,7 +161,7 @@ if($isEditor){
 				</ul>
 				<div id="editorDiv" style="height:400px;">
 					<div style="float:right;cursor:pointer;" onclick="toggleEditFields()" title="Toggle Taxon Editing Functions">
-						<img style='border:0px;' src='../../images/edit.png'/>
+						<img style='width:1.3em;border:0px;' src='../../images/edit.png'/>
 					</div>
 					<form id="taxoneditform" name="taxoneditform" action="taxoneditor.php" method="post" onsubmit="return validateTaxonEditForm(this)">
 						<div class="editDiv">
@@ -343,7 +343,7 @@ if($isEditor){
 						</div>
 						<div style="clear:both;margin:10px;">
 							<div style="float:right;">
-								<a href="#" onclick="toggle('tsedit');return false;"><img style='border:0px;' src='../../images/edit.png'/></a>
+								<a href="#" onclick="toggle('tsedit');return false;"><img style='width:1.3em;border:0px;' src='../../images/edit.png'/></a>
 							</div>
 							<div style="float:left">
 								<form name="taxstatusform" action="taxoneditor.php" method="post">
@@ -391,7 +391,7 @@ if($isEditor){
 								?>
 								<div class="headingDiv"><?php echo (isset($LANG['ACCEPTED_TAXON'])?$LANG['ACCEPTED_TAXON']:'Accepted Taxon'); ?></div>
 								<div style="float:right;">
-									<a href="#" onclick="toggle('acceptedits');return false;"><img style="border:0px;width:15px;" src="../../images/edit.png" /></a>
+									<a href="#" onclick="toggle('acceptedits');return false;"><img style="border:0px;width:1.3em;" src="../../images/edit.png" /></a>
 								</div>
 								<?php
 								if($acceptedArr){
@@ -401,7 +401,7 @@ if($isEditor){
 										echo "<a href='taxoneditor.php?tid=" . htmlspecialchars($tidAccepted, HTML_SPECIAL_CHARS_FLAGS) . "&taxauthid=" . htmlspecialchars($taxAuthId, HTML_SPECIAL_CHARS_FLAGS) . "'><i>" . htmlspecialchars($linkedTaxonArr["sciname"], HTML_SPECIAL_CHARS_FLAGS) . "</i></a> " . htmlspecialchars($linkedTaxonArr["author"], HTML_SPECIAL_CHARS_FLAGS) . "\n";
 										if(count($acceptedArr)>1){
 											echo '<span class="acceptedits" style="display:none;"><a href="taxoneditor.php?tabindex=1&tid=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&deltidaccepted=' . htmlspecialchars($tidAccepted, HTML_SPECIAL_CHARS_FLAGS) . '&taxauthid=' . htmlspecialchars($taxAuthId, HTML_SPECIAL_CHARS_FLAGS) . '">';
-											echo '<img style="border:0px;width:12px;" src="../../images/del.png" />';
+											echo '<img style="border:0px;width:1.3em;" src="../../images/del.png" />';
 											echo '</a></span>';
 										}
 										if($linkedTaxonArr["usagenotes"]){
@@ -473,7 +473,7 @@ if($isEditor){
 								?>
 								<div class="headingDiv"><?php echo (isset($LANG['SYNONYMS'])?$LANG['SYNONYMS']:'Synonyms'); ?></div>
 								<div style="float:right;">
-									<a href="#"  onclick="toggle('tonotaccepted');return false;"><img style='border:0px;width:15px;' src='../../images/edit.png'/></a>
+									<a href="#"  onclick="toggle('tonotaccepted');return false;"><img style='border:0px;width:1.3em;' src='../../images/edit.png'/></a>
 								</div>
 								<ul>
 								<?php
@@ -483,7 +483,7 @@ if($isEditor){
 										echo '<li> ';
 										echo '<a href="taxoneditor.php?tid=' . htmlspecialchars($tidSyn, HTML_SPECIAL_CHARS_FLAGS) . '&taxauthid=' . htmlspecialchars($taxAuthId, HTML_SPECIAL_CHARS_FLAGS) . '"><i>' . htmlspecialchars($synArr['sciname'], HTML_SPECIAL_CHARS_FLAGS) . '</i></a> ' . htmlspecialchars($synArr['author'], HTML_SPECIAL_CHARS_FLAGS) . ' ';
 										echo '<a href="#" onclick="toggle(\'syn-'.$tidSyn.'\');">';
-										echo '<img style="border:0px;width:10px;" src="../../images/edit.png" />';
+										echo '<img style="border:0px;width:1.3em;" src="../../images/edit.png" />';
 										echo '</a>';
 										if($synArr["notes"] || $synArr["unacceptabilityreason"]){
 											if($synArr["unacceptabilityreason"]){

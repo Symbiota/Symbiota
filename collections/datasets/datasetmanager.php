@@ -447,7 +447,7 @@ if($isEditor){
 															<input name="uid" type="hidden" value="<?php echo $uid; ?>" />
 															<input name="datasetid" type="hidden" value="<?php echo $datasetId; ?>" />
 															<input name="tabindex" type="hidden" value="2" />
-															<input name="submitimage" type="image" src="../../images/drop.png" />
+															<input name="submitimage" type="image" src="../../images/drop.png" style="width:1.2em" />
 														</form>
 													</li>
 													<?php

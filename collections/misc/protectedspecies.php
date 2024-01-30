@@ -111,7 +111,7 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 	if($isEditor){
 		?>
 		<div style="float:right;cursor:pointer;" onclick="toggle('editobj');" title="Toggle Editing Functions">
-			<?php echo $LANG['EDIT'] ?> <img style="border:0px;" src="../../images/edit.png" alt="pencil icon depicting edit capability" />
+			<?php echo $LANG['EDIT'] ?> <img style="width:1.5em;border:0px;" src="../../images/edit.png" alt="pencil icon depicting edit capability" />
 		</div>
 		<?php
 	}
@@ -155,10 +155,10 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 			<?php
 			if($isEditor){
 				?>
-				<div class="editobj" style="display:none;width:400px;">
-					<form name="addspeciesform" action='protectedspecies.php' method='post'>
-						<fieldset style='margin:5px;background-color:#FFFFCC;'>
-							<legend><b>Add Species to List</b></legend>
+				<div class="editobj" style="display:none;width:400px;margin-bottom:20px">
+					<form name="addspeciesform" action='protectedspecies.php' method='post' >
+						<fieldset style='margin:5px'>
+							<legend><b>Add Taxon to List</b></legend>
 							<div style="margin:3px;">
 								Scientific Name:
 								<input type="text" id="speciestoadd" name="speciestoadd" style="width:300px" />
@@ -166,7 +166,7 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 							</div>
 							<div style="margin:3px;">
 								<input type="hidden" name="submitaction" value="addspecies" />
-								<input type="button" value="Add Species" onclick="submitAddSpecies(this.form)" />
+								<button value="Add Species" onclick="submitAddSpecies(this.form)" >Add Species</button>
 							</div>
 						</fieldset>
 					</form>

@@ -149,7 +149,7 @@ if($isEditor){
 											<?php echo $recArr['collector']; ?>
 										</a>
 										<a href="#" onclick="openEditorPopup(<?php echo $recArr['occid']; ?>); return false;">
-											<img src="../../images/edit.png" />
+											<img src="../../images/edit.png" style="width:1.3em" />
 										</a>
 									</td>
 									<td>

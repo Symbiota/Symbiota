@@ -212,7 +212,7 @@ include($SERVER_ROOT.'/includes/header.php');
 										<input name="pid" type="hidden" value="<?php echo $pid; ?>" />
 										<input name="deleteuid" type="hidden" value="<?php echo $uid; ?>" />
 										<input name="submitaction" type="hidden" value="DeleteEditor" />
-										<input name="submit" type="image" src="../images/drop.png" style="width:12px;" />
+										<input name="submit" type="image" src="../images/drop.png" style="width:1em;" />
 									</form>
 								</li>
 								<?php
@@ -264,7 +264,7 @@ include($SERVER_ROOT.'/includes/header.php');
 											<input name="clid" type="hidden" value="<?php echo $clid; ?>" />
 											<input name="pid" type="hidden" value="<?php echo $pid; ?>" />
 											<input name="submitaction" type="hidden" value="deleteProject" />
-											<input name="submit" type="image" src="../images/drop.png" style="width:12px;" />
+											<input name="submit" type="image" src="../images/drop.png" style="width:1em;" />
 										</form>
 										<?php
 									}
@@ -345,7 +345,7 @@ include($SERVER_ROOT.'/includes/header.php');
 								<input id="lngdec" type="text" name="pointlng" style="width:110px;" value="" />
 							</div>
 							<div style="float:left;margin:15px 0px 0px 10px;cursor:pointer;" onclick="openPointAid(<?php echo $clArray["latcentroid"].','.$clArray["longcentroid"]?>);">
-								<img src="../images/world.png" style="width:12px;" />
+								<img src="../images/world.png" style="width:1.2em;" />
 							</div>
 							<div style="clear:both;">
 								Notes:<br/>

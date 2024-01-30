@@ -289,8 +289,8 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 								</div>
 								<div class="trianglediv" style="float:left;margin-left:20px">
 									<div style="margin:4px 3px;float:right;cursor:pointer" onclick="setAttributeTree(this)" title="Toggle attribute tree open/close">
-										<img class="triangleright" src="../../images/triangleright.png" style="" />
-										<img class="triangledown" src="../../images/triangledown.png" style="display:none" />
+										<img class="triangleright" src="../../images/triangleright.png" style="width:1.3em" />
+										<img class="triangledown" src="../../images/triangledown.png" style="display:none;width:1.3em" />
 									</div>
 								</div>
 								<div style="margin:10px 5px;clear:both">
