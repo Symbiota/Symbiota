@@ -552,7 +552,7 @@ class ChecklistManager extends Manager{
 					$sql .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid WHERE (ST_Within(p.point,GeomFromText("'.$this->clMetadata['footprintwkt'].'"))) ';
 				}
 				else{
-					$voucherManager = new ChecklistVoucherAdmin($this->conn);
+					$voucherManager = new ChecklistVoucherAdmin();
 					$voucherManager->setClid($this->clid);
 					$voucherManager->setCollectionVariables();
 					$sql .= 'WHERE ('.$voucherManager->getSqlFrag().') ';

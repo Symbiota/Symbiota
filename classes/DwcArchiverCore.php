@@ -162,30 +162,30 @@ class DwcArchiverCore extends Manager{
 			if ($rs = $this->conn->query($sql)) {
 				while ($r = $rs->fetch_object()) {
 					$this->collArr[$r->collid]['instcode'] = $r->institutioncode;
-					$this->collArr[$r->collid]['collcode'] = $r->collectioncode;
+					$this->collArr[$r->collid]['collcode'] = $r->collectioncode ?? '';
 					$this->collArr[$r->collid]['collname'] = $r->collectionname;
-					$this->collArr[$r->collid]['description'] = $r->fulldescription;
-					$this->collArr[$r->collid]['collectionguid'] = $r->collectionguid;
-					$this->collArr[$r->collid]['url'] = $r->url;
-					$this->collArr[$r->collid]['contact'][0]['individualName']['surName'] = $r->contact;
-					$this->collArr[$r->collid]['contact'][0]['electronicMailAddress'] = $r->email;
-					$this->collArr[$r->collid]['guidtarget'] = $r->guidtarget;
-					$this->collArr[$r->collid]['dwcaurl'] = $r->dwcaurl;
-					$this->collArr[$r->collid]['lat'] = $r->latitudedecimal;
-					$this->collArr[$r->collid]['lng'] = $r->longitudedecimal;
-					$this->collArr[$r->collid]['icon'] = $r->icon;
+					$this->collArr[$r->collid]['description'] = $r->fulldescription ?? '';
+					$this->collArr[$r->collid]['collectionguid'] = $r->collectionguid ?? '';
+					$this->collArr[$r->collid]['url'] = $r->url ?? '';
+					$this->collArr[$r->collid]['contact'][0]['individualName']['surName'] = $r->contact ?? '';
+					$this->collArr[$r->collid]['contact'][0]['electronicMailAddress'] = $r->email ?? '';
+					$this->collArr[$r->collid]['guidtarget'] = $r->guidtarget ?? '';
+					$this->collArr[$r->collid]['dwcaurl'] = $r->dwcaurl ?? '';
+					$this->collArr[$r->collid]['lat'] = $r->latitudedecimal ?? '';
+					$this->collArr[$r->collid]['lng'] = $r->longitudedecimal ?? '';
+					$this->collArr[$r->collid]['icon'] = $r->icon ?? '';
 					$this->collArr[$r->collid]['colltype'] = $r->colltype;
 					$this->collArr[$r->collid]['managementtype'] = $r->managementtype;
-					$this->collArr[$r->collid]['rights'] = $r->rights;
-					$this->collArr[$r->collid]['rightsholder'] = $r->rightsholder;
-					$this->collArr[$r->collid]['usageterm'] = $r->usageterm;
-					$this->collArr[$r->collid]['address1'] = $r->address1;
-					$this->collArr[$r->collid]['address2'] = $r->address2;
-					$this->collArr[$r->collid]['city'] = $r->city;
-					$this->collArr[$r->collid]['state'] = $r->stateprovince;
-					$this->collArr[$r->collid]['postalcode'] = $r->postalcode;
-					$this->collArr[$r->collid]['country'] = $r->country;
-					$this->collArr[$r->collid]['phone'] = $r->phone;
+					$this->collArr[$r->collid]['rights'] = $r->rights ?? '';
+					$this->collArr[$r->collid]['rightsholder'] = $r->rightsholder ?? '';
+					$this->collArr[$r->collid]['usageterm'] = $r->usageterm ?? '';
+					$this->collArr[$r->collid]['address1'] = $r->address1 ?? '';
+					$this->collArr[$r->collid]['address2'] = $r->address2 ?? '';
+					$this->collArr[$r->collid]['city'] = $r->city ?? '';
+					$this->collArr[$r->collid]['state'] = $r->stateprovince ?? '';
+					$this->collArr[$r->collid]['postalcode'] = $r->postalcode ?? '';
+					$this->collArr[$r->collid]['country'] = $r->country ?? '';
+					$this->collArr[$r->collid]['phone'] = $r->phone ?? '';
 					if ($r->dynamicproperties) {
 						if ($propArr = json_decode($r->dynamicproperties, true)) {
 							if (isset($propArr['editorProps']['modules-panel'])) {
@@ -1696,8 +1696,10 @@ class DwcArchiverCore extends Manager{
 					unset($r['localitySecurity']);
 					unset($r['collID']);
 					//Format dates
-					if($r['eventDate'] == '0000-00-00') $r['eventDate'] = '';
-					$r['eventDate'] = str_replace('-00', '', $r['eventDate']);
+					if($r['eventDate']){
+						if($r['eventDate'] == '0000-00-00') $r['eventDate'] = '';
+						$r['eventDate'] = str_replace('-00', '', $r['eventDate']);
+					}
 					if($r['eventDate2']){
 						if($r['eventDate2'] == '0000-00-00') $r['eventDate2'] = '';
 						$r['eventDate2'] = str_replace('-00', '', $r['eventDate2']);
@@ -1751,7 +1753,7 @@ class DwcArchiverCore extends Manager{
 					}
 					if ($assocOccurStr = $dwcOccurManager->getAssociationStr($r['occid'])) $r['t_associatedOccurrences'] = $assocOccurStr;
 					if ($assocSeqStr = $dwcOccurManager->getAssociatedSequencesStr($r['occid'])) $r['t_associatedSequences'] = $assocSeqStr;
-					if ($assocTaxa = $dwcOccurManager->getAssocTaxa($r['occid'])) $r['associatedTaxa'] = $assocTaxa;
+					if ($assocTaxa = $dwcOccurManager->getAssociationStr($r['occid'], 'observational')) $r['associatedTaxa'] = $assocTaxa;
 				}
 				//$dwcOccurManager->appendUpperTaxonomy($r);
 				$dwcOccurManager->appendUpperTaxonomy2($r);
@@ -2063,7 +2065,7 @@ class DwcArchiverCore extends Manager{
 			fputcsv($fh, $outputArr);
 		} else {
 			foreach ($outputArr as $k => $v) {
-				$outputArr[$k] = str_replace($this->delimiter, '', $v);
+				$outputArr[$k] = str_replace($this->delimiter, '', ($v ?? ''));
 			}
 			fwrite($fh, implode($this->delimiter, $outputArr) . "\n");
 		}
@@ -2135,7 +2137,7 @@ class DwcArchiverCore extends Manager{
 		} elseif ($d == 'csv' || $d == 'comma' || $d == ',') {
 			$this->delimiter = ",";
 			$this->fileExt = '.csv';
-		} else {
+		} elseif ($d) {
 			$this->delimiter = $d;
 			$this->fileExt = '.txt';
 		}
@@ -2261,15 +2263,16 @@ class DwcArchiverCore extends Manager{
 		$retStr = $inStr;
 		if ($inStr && $this->charSetSource) {
 			if ($this->charSetOut == 'UTF-8' && $this->charSetSource == 'ISO-8859-1') {
-				if (mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1', true) == "ISO-8859-1") {
-					$retStr = utf8_encode($inStr);
-					//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
+				if (mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1', true) == 'ISO-8859-1') {
+					$retStr = mb_convert_encoding($inStr, 'UTF-8', 'ISO-8859-1');
 				}
-			} elseif ($this->charSetOut == "ISO-8859-1" && $this->charSetSource == 'UTF-8') {
-				if (mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1') == "UTF-8") {
-					$retStr = utf8_decode($inStr);
-					//$retStr = iconv("UTF-8","ISO-8859-1//TRANSLIT",$inStr);
+			} elseif ($this->charSetOut == 'ISO-8859-1' && $this->charSetSource == 'UTF-8') {
+				if (mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1') == 'UTF-8') {
+					$retStr = mb_convert_encoding($inStr, 'ISO-8859-1', 'UTF-8');
 				}
+			}
+			else{
+				$retStr = mb_convert_encoding($inStr, $this->charSetOut, mb_detect_encoding($inStr));
 			}
 		}
 		return $retStr;

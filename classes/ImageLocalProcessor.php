@@ -68,7 +68,6 @@ class ImageLocalProcessor {
 
 	function __construct(){
 		ini_set('memory_limit','1024M');
-		ini_set('auto_detect_line_endings', true);
 		//Use deaults located within symbini, if they are available
 		//Will be replaced by values within configuration file, if they are set
 		if(isset($GLOBALS['imgWebWidth']) && $GLOBALS['imgWebWidth']) $this->webPixWidth = $GLOBALS['imgWebWidth'];
@@ -2104,22 +2103,9 @@ class ImageLocalProcessor {
 	}
 
 	private function encodeString($inStr){
-		global $CHARSET;
 		$retStr = trim($inStr);
-
 		if($inStr){
-			if(strtolower($CHARSET) == "utf-8" || strtolower($CHARSET) == "utf8"){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) == "ISO-8859-1"){
-					$retStr = utf8_encode($inStr);
-					//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
-				}
-			}
-			elseif(strtolower($CHARSET) == "iso-8859-1"){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') == "UTF-8"){
-					$retStr = utf8_decode($inStr);
-					//$retStr = iconv("UTF-8","ISO-8859-1//TRANSLIT",$inStr);
-				}
-			}
+			$retStr = mb_convert_encoding($inStr, $GLOBALS['CHARSET'], mb_detect_encoding($inStr));
 		}
 		return $retStr;
 	}

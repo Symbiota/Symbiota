@@ -86,7 +86,7 @@ $isEditor = 0;
 if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USER_RIGHTS['ClAdmin']))){
 	$isEditor = 1;
 }
-elseif($clArray['access'] == 'private-strict'){
+elseif(isset($clArray['access']) && $clArray['access'] == 'private-strict'){
 	$isEditor = false;
 }
 if($isEditor && array_key_exists('formsubmit',$_POST)){

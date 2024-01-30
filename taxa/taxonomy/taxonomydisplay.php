@@ -6,13 +6,13 @@ include_once($SERVER_ROOT.'/classes/TaxonomyDisplayManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.'.$LANG_TAG.'.php');
 
-$target = array_key_exists('target', $_REQUEST) ? htmlspecialchars($_REQUEST['target'], HTML_SPECIAL_CHARS_FLAGS) : '';
+$target = $_REQUEST['target'] ?? '';
 $displayAuthor = array_key_exists('displayauthor', $_REQUEST) ? filter_var($_REQUEST['displayauthor'], FILTER_SANITIZE_NUMBER_INT): 0;
 $matchOnWords = array_key_exists('matchonwords', $_POST) ? filter_var($_POST['matchonwords'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $displayFullTree = array_key_exists('displayfulltree', $_REQUEST) ? filter_var($_REQUEST['displayfulltree'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $displaySubGenera = array_key_exists('displaysubgenera', $_REQUEST) ? filter_var($_REQUEST['displaysubgenera'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $taxAuthId = array_key_exists('taxauthid', $_REQUEST) ? filter_var($_REQUEST['taxauthid'], FILTER_SANITIZE_NUMBER_INT) : 1;
-$statusStr = array_key_exists('statusstr', $_REQUEST) ? htmlspecialchars($_REQUEST['statusstr'], HTML_SPECIAL_CHARS_FLAGS) : '';
+$statusStr = array_key_exists('statusstr', $_REQUEST) ? $_REQUEST['statusstr'] : '';
 
 if(!$target) $matchOnWords = 1;
 $taxonDisplayObj = new TaxonomyDisplayManager();
@@ -68,7 +68,7 @@ if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
 	<div id="innertext">
 		<?php
 		if($statusStr){
-			$statusStr = str_replace(';', '<br/>', $statusStr);
+			$statusStr = str_replace(';', '<br/>', htmlspecialchars($statusStr, HTML_SPECIAL_CHARS_FLAGS));
 			?>
 			<hr/>
 			<div style="color:<?php echo (stripos($statusStr,'SUCCESS') !== false?'green':'red'); ?>;margin:15px;">

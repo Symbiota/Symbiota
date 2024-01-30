@@ -144,7 +144,7 @@ if ($schema == 'backup') {
 				$dwcaHandler->setCustomWhereSql($occurManager->getSqlWhere());
 			} else {
 				//Request is coming from exporter.php for collection manager tools
-				$dwcaHandler->setCollArr($_POST['targetcollid']);
+				if(isset($_POST['targetcollid'])) $dwcaHandler->setCollArr($_POST['targetcollid']);
 				if (array_key_exists('processingstatus', $_POST) && $_POST['processingstatus']) {
 					$dwcaHandler->addCondition('processingstatus', 'EQUALS', $_POST['processingstatus']);
 				}

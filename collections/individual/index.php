@@ -208,10 +208,6 @@ $traitArr = $indManager->getTraitArr();
 		function toggle(target){
 			var objDiv = document.getElementById(target);
 			if(objDiv){
-				if(objDiv.style.display=="none") objDiv.style.display = "block";
-				else objDiv.style.display = "none";
-			}
-			else{
 				var divObjs = document.getElementsByTagName("div");
 				for (i = 0; i < divObjs.length; i++) {
 					var obj = divObjs[i];
@@ -376,10 +372,8 @@ $traitArr = $indManager->getTraitArr();
 						</div>
 					</div>
 					<?php
-					$iconUrl=null;
-					if(isset($collMetadata["icon"])){
-						$iconUrl = (substr($collMetadata["icon"],0,6)=='images'?'../../':'').$collMetadata['icon'];
-					}
+					$iconUrl = '';
+					if($collMetadata['icon']) $iconUrl = (substr($collMetadata['icon'], 0, 6) == 'images' ? '../../' : '') . $collMetadata['icon'];
 					if($iconUrl){
 						?>
 						<div id="collicon-div">

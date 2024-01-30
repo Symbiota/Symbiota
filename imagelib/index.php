@@ -78,7 +78,7 @@ $imgManager->setSearchTerm($taxon);
 		<?php
 			$taxaList = Array();
 			if($target == 'genus'){
-				$taxaList = $imgManager->getGenusList($taxon);
+				$taxaList = $imgManager->getGenusList();
 				if($taxaList){
 					echo '<h2>'.$LANG['SELECT_GENUS'].'</h2>';
 					foreach($taxaList as $value){
@@ -90,7 +90,7 @@ $imgManager->setSearchTerm($taxon);
 				}
 			}
 			elseif($target == 'species' || $taxon){
-				$taxaList = $imgManager->getSpeciesList($taxon);
+				$taxaList = $imgManager->getSpeciesList();
 				if($taxaList){
 					echo '<h2>'.$LANG['SELECT_SPECIES'].'</h2>';
 					foreach($taxaList as $key => $value){

@@ -212,12 +212,13 @@ class SpecProcessorManager {
 			$rs->free();
 
 			//Temporary code until customStoredProcedure field is offically integrated into specprocessorprojects table
-			$sql = 'SELECT customStoredProcedure FROM specprocessorprojects '.$sqlWhere;
-			if($rs = $this->conn->query($sql)){
-				if($r = $rs->fetch_object()) $this->customStoredProcedure = $r->customStoredProcedure;
-				$rs->free();
-			}
-
+			try{
+				$sql = 'SELECT customStoredProcedure FROM specprocessorprojects '.$sqlWhere;
+				if($rs = $this->conn->query($sql)){
+					if($r = $rs->fetch_object()) $this->customStoredProcedure = $r->customStoredProcedure;
+					$rs->free();
+				}
+			} catch (Exception $e) {}
 			//if(!$this->targetPath) $this->targetPath = $GLOBALS['imageRootPath'];
 			//if(!$this->imgUrlBase) $this->imgUrlBase = $GLOBALS['imageRootUrl'];
 			if($this->sourcePath && substr($this->sourcePath,-1) != '/' && substr($this->sourcePath,-1) != '\\') $this->sourcePath .= '/';

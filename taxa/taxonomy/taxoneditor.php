@@ -6,7 +6,7 @@ include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxoneditor.'.$LANG_TAG.'
 
 if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../taxa/taxonomy/taxoneditor.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$tid = $_REQUEST["tid"];
+$tid = $_REQUEST['tid'] ?? 0;
 $taxAuthId = array_key_exists('taxauthid', $_REQUEST)?$_REQUEST['taxauthid']:1;
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
 $submitAction = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
@@ -94,7 +94,7 @@ if($isEditor){
 		.editLabel{ float:left; font-weight:bold; }
 		.editfield{ float:left; margin-left:5px; }
 		.tsedit{ float:left; margin-left:5px; }
-		.headingDiv{ font-size:110%;font-weight:bold;font-style:italic }
+		.headingDiv{ font-size:110%; font-weight:bold; padding-top:10px; }
 	</style>
 </head>
 <body>
@@ -210,10 +210,10 @@ if($isEditor){
 						<div class="editDiv">
 							<div class="editLabel"><?php echo (isset($LANG['AUTHOR'])?$LANG['AUTHOR']:'Author'); ?>: </div>
 							<div class="editfield">
-								<?php echo htmlspecialchars($taxonEditorObj->getAuthor());?>
+								<?php echo $taxonEditorObj->getAuthor();?>
 							</div>
 							<div class="editfield" style="display:none;">
-								<input type="text" id="author" name="author" style="width:400px;border-style:inset;" value="<?php echo htmlspecialchars($taxonEditorObj->getAuthor()); ?>" />
+								<input type="text" id="author" name="author" style="width:400px;border-style:inset;" value="<?php echo $taxonEditorObj->getAuthor(); ?>" />
 							</div>
 						</div>
 						<div id="kingdomdiv" class="editDiv">
@@ -247,13 +247,10 @@ if($isEditor){
 						<div class="editDiv">
 							<div class="editLabel"><?php echo (isset($LANG['NOTES'])?$LANG['NOTES']:'Notes'); ?>: </div>
 							<div class="editfield">
-								<?php
-									$safeTaxonEditorNotes =  $taxonEditorObj->getNotes() ?? '';
-									echo htmlspecialchars($safeTaxonEditorNotes);
-								?>
+								<?php echo $taxonEditorObj->getNotes();?>
 							</div>
 							<div class="editfield" style="display:none;width:90%;">
-								<input type="text" id="notes" name="notes" style="width:100%;" value="<?php echo htmlspecialchars($safeTaxonEditorNotes); ?>" />
+								<input type="text" id="notes" name="notes" style="width:100%;" value="<?php echo $taxonEditorObj->getNotes(); ?>" />
 							</div>
 						</div>
 						<div class="editDiv">
@@ -382,7 +379,7 @@ if($isEditor){
 										<input type="hidden" name="tidaccepted" value="<?php echo ($taxonEditorObj->getIsAccepted()==1?$taxonEditorObj->getTid():$aStr); ?>" />
 										<input type="hidden" name="tabindex" value="1" />
 										<input type="hidden" name="submitaction" value="updatetaxstatus" />
-										<input type='button' name='taxstatuseditsubmit' value='<?php echo (isset($LANG['SUBMIT_UPPER_EDITS'])?$LANG['SUBMIT_UPPER_EDITS']:'Submit Upper Taxonomy Edits'); ?>' onclick="submitTaxStatusForm(this.form)" />
+										<button type="button" name="taxstatuseditsubmit" onclick="submitTaxStatusForm(this.form)"><?= $LANG['SUBMIT_UPPER_EDITS'] ?></button>
 									</div>
 								</form>
 							</div>
@@ -507,15 +504,15 @@ if($isEditor){
 											<form id="synform-<?php echo $tidSyn;?>" name="synform-<?php echo $tidSyn;?>" action="taxoneditor.php" method="post">
 												<div style="clear:both;">
 													<?php echo (isset($LANG['UNACCEPT_REASON'])?$LANG['UNACCEPT_REASON']:'Unacceptability Reason'); ?>:
-													<input id='unacceptabilityreason' name='unacceptabilityreason' type='text' style="width:400px;" value='<?php echo htmlspecialchars($synArr["unacceptabilityreason"]); ?>' />
+													<input id='unacceptabilityreason' name='unacceptabilityreason' type='text' style="width:400px;" value='<?php echo htmlspecialchars($synArr['unacceptabilityreason'] ?? ''); ?>' />
 												</div>
 												<div>
 													<?php echo (isset($LANG['NOTES'])?$LANG['NOTES']:'Notes'); ?>:
-													<input id='notes' name='notes' type='text' style="width:400px;" value='<?php echo htmlspecialchars($synArr["notes"]); ?>' />
+													<input id='notes' name='notes' type='text' style="width:400px;" value='<?php echo htmlspecialchars($synArr['notes'] ?? ''); ?>' />
 												</div>
 												<div>
 													<?php echo (isset($LANG['SORT_SEQ'])?$LANG['SORT_SEQ']:'Sort Sequence'); ?>:
-													<input id='sortsequence' name='sortsequence' type='text' style="width:60px;" value='<?php echo $synArr["sortsequence"]; ?>' />
+													<input id='sortsequence' name='sortsequence' type='text' style="width:60px;" value='<?php echo $synArr['sortsequence']; ?>' />
 												</div>
 												<div>
 													<input type="hidden" name="tid" value="<?php echo $taxonEditorObj->getTid(); ?>" />

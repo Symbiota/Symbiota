@@ -335,10 +335,7 @@ if($isEditor){
 												<input type="checkbox" name="occid[]" value="<?php echo $occid; ?>" />
 											</td>
 											<td>
-												<?php echo $recArr['catnum']; ?>
-												<a href="#" onclick="openIndPopup(<?php echo $occid; ?>); return false;">
-													<img src="../../images/info.png" style="width:1.2em;" />
-												</a>
+												<?php echo '<a href="#" onclick="openIndPopup(' . $occid . '); return false;">' . $recArr['catnum'] . '</a>'; ?>
 											</td>
 											<td>
 												<?php echo $recArr['coll']; ?>
