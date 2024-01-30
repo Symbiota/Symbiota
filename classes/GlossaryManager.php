@@ -103,6 +103,15 @@ class GlossaryManager extends Manager {
 		return $retArr;
 	}
 
+	public function remapDescriptionCrossLinks(&$termArr){
+		if(!empty($termArr['definition'])){
+			$subjectStr = $termArr['definition'];
+			$pattern = '/href=["\']*([A-Za-z -]+)["\']*/i';
+			$replacement = 'href="' . $GLOBALS['CLIENT_ROOT'] . '/glossary/individual.php?term=${1}"';
+			$termArr['definition'] = preg_replace($pattern, $replacement, $subjectStr);
+		}
+	}
+
 	public function getTermTaxaArr(){
 		if(!$this->tidArr) $this->tidArr = $this->getTaxaArr();
 		return $this->tidArr;
