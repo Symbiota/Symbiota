@@ -60,14 +60,19 @@ if($glossId){
 				}
 			});
 		});
-
 	</script>
+	<style>
+		body{ margin-left: auto; margin-right: auto; }
+	</style>
 </head>
 
 <body style="overflow-x:hidden;overflow-y:auto;width:800px;min-width:800px">
 	<?php
 	if($termArr){
 		$glosManager->remapDescriptionCrossLinks($termArr);
+		if(strpos($_SERVER['HTTP_REFERER'], 'individual.php')){
+			echo '<div class="navpath"><a href="#" onclick="history.back();">&lt;&lt; ' . $LANG['RETURN_TO_PREVIOUS'] . '</a></div>';
+		}
 		?>
 		<!-- This is inner text! -->
 		<div style="width:100%;margin-left:auto;margin-right:auto">

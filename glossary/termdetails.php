@@ -184,7 +184,9 @@ if($glossId){
 	</style>
 </head>
 <body>
-	<!-- This is inner text! -->
+	<div class='navpath'>
+		&lt; &lt; <a href='individual.php?glossid=<?= $glossId ?>'><?= $LANG['GOTO_PUBLIC_DISPLAY'] ?></a>
+	</div>
 	<div id="innertext">
 		<?php
 		if($glossId && $isEditor){
