@@ -454,7 +454,7 @@
 .inner-search button.ui-button.ui-widget.ui-corner-all,
 .inner-search input[type="submit" i] {
   font-family: "Inter", sans-serif !important;
-  font-size: 0.7rem;
+  font-size: 0.9rem;
   font-weight: 600;
   letter-spacing: 0.07em;
   text-transform: uppercase;
