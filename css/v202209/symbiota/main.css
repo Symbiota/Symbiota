@@ -366,8 +366,8 @@ hr {
 }
 
 .gridlike-form-row {
-  flex: 1;
   display: flex;
+  flex: 1;
   align-items: center;
   gap: 10px;
 }
