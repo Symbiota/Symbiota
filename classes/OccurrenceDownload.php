@@ -109,6 +109,8 @@ class OccurrenceDownload{
 			fclose($fh);
 		}
 		//Send data file out
+		ob_clean();
+		ob_end_flush();
 		header('Content-Description: '.$contentDesc);
 		header('Content-Type: '.$this->getContentType());
 		header('Content-Disposition: attachment; filename='.$fileName);

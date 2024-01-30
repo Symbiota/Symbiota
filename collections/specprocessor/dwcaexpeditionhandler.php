@@ -11,7 +11,7 @@ $cond = 'stateprovince:Arizona;ocr:exsic';
 
 if($collid){
 	$dwcaHandler = new DwcArchiverExpedition();
-	
+
 	$dwcaHandler->setSilent(1);
 	$dwcaHandler->setFileName('webreq');
 	$dwcaHandler->setCollArr($collid);
@@ -20,7 +20,8 @@ if($collid){
 	$archiveFile = $dwcaHandler->createDwcArchive();
 
 	if($archiveFile){
-		//ob_start();
+		ob_clean();
+		ob_end_flush();
 		header('Content-Description: DwC-A File Transfer');
 		header('Content-Type: application/zip');
 		header('Content-Disposition: attachment; filename='.basename($archiveFile));
