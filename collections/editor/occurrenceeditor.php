@@ -656,12 +656,12 @@ else{
 										$userEmail = ($person?$person->getEmail():'');
 
 										$anchorVars = 'occid='.$occManager->getOccId().'&occindex='.$occIndex.'&csmode='.$crowdSourceMode.'&collid='.$collId;
-										$detVars = 'identby='.urlencode($occArr['identifiedby']).'&dateident='.urlencode($occArr['dateidentified']).
-											'&sciname='.urlencode($occArr['sciname']).'&em='.$isEditor.
-											'&annotatorname='.urlencode($USER_DISPLAY_NAME).'&annotatoremail='.urlencode($userEmail).
-											(isset($collMap['collectioncode'])?'&collectioncode='.urlencode($collMap['collectioncode']):'').
-											(isset($collMap['institutioncode'])?'&institutioncode='.urlencode($collMap['institutioncode']):'').
-											'&catalognumber='.urlencode($occArr['catalognumber']??'');
+										$detVars = 'identby=' . urlencode($occArr['identifiedby'] ?? '') . '&dateident=' . urlencode($occArr['dateidentified'] ?? '') .
+											'&sciname=' . urlencode($occArr['sciname'] ?? '') . '&em=' . $isEditor . 
+											'&annotatorname=' . urlencode($USER_DISPLAY_NAME ?? '') . '&annotatoremail=' . urlencode($userEmail ?? '') . 
+											(isset($collMap['collectioncode']) ? '&collectioncode=' . urlencode($collMap['collectioncode']) : '') . 
+											(isset($collMap['institutioncode']) ? '&institutioncode=' . urlencode($collMap['institutioncode']) : '') . 
+											'&catalognumber=' . urlencode($occArr['catalognumber'] ?? '');
 										if($isEditor < 4){
 											?>
 											<li id="detTab">
