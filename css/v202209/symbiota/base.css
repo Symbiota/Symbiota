@@ -374,3 +374,7 @@ ol.mp_list li.mp_highlighted {
 .top-light-margin {
   margin: 2px 10px 10px 10px;
 }
+
+.icon-mrgn-rel {
+  margin-bottom: 0.6rem;
+}

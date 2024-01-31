@@ -777,59 +777,67 @@ if($action != "Update Statistics"){
 											?>
 										</ul>
 										<form name="statscsv" id="statscsv" action="collstatscsv.php" method="post" onsubmit="">
-											<div class="stat-csv-margin">
-												<div id="showstatspercoll" class="float-and-block" >
-													<a href="#" onclick="return toggleStatsPerColl()"><?php echo (isset($LANG['SHOW_PER_COL'])?$LANG['SHOW_PER_COL']:'Show Statistics per Collection'); ?></a>
-												</div>
-												<div id="hidestatspercoll" class="float-and-no-display" >
-													<a href="#" onclick="return toggleStatsPerColl()"><?php echo (isset($LANG['HIDE_STATS'])?$LANG['HIDE_STATS']:'Hide Statistics per Collection'); ?></a>
-												</div>
-												<div class="stat-csv-float-margins" title="<?php echo (isset($LANG['SAVE_CSV'])?$LANG['SAVE_CSV']:'Save CSV'); ?>">
-													<input type="hidden" name="collids" id="collids" value='<?php echo $collId; ?>' />
-                                                    <input type="hidden" name="taxon" value='<?php echo $cPartentTaxon; ?>' />
-                                                    <input type="hidden" name="country" value='<?php echo $cCountry; ?>' />
-													<input type="hidden" name="action" id="action" value='<?php echo (isset($LANG['DOWNLOAD_STATS'])?$LANG['DOWNLOAD_STATS']:'Download Stats per Coll'); ?>' />
-													<input type="image" name="action" src="../../images/dl.png" style="width:1.3em" onclick="" />
-													<!--input type="submit" name="action" value="Download Stats per Coll" src="../../images/dl.png" / -->
+											<div class="stat-csv-margin gridlike-form-no-margin">
+												<div class="gridlike-form-row">
+													<div id="showstatspercoll" class="float-and-block" >
+														<a href="#" onclick="return toggleStatsPerColl()"><?php echo (isset($LANG['SHOW_PER_COL'])?$LANG['SHOW_PER_COL']:'Show Statistics per Collection'); ?></a>
+													</div>
+													<div id="hidestatspercoll" class="float-and-no-display" >
+														<a href="#" onclick="return toggleStatsPerColl()"><?php echo (isset($LANG['HIDE_STATS'])?$LANG['HIDE_STATS']:'Hide Statistics per Collection'); ?></a>
+													</div>
+													<div class="stat-csv-float-margins icon-mrgn-rel" title="<?php echo (isset($LANG['SAVE_CSV'])?$LANG['SAVE_CSV']:'Save CSV'); ?>">
+														<input type="hidden" name="collids" id="collids" value='<?php echo $collId; ?>' />
+														<input type="hidden" name="taxon" value='<?php echo $cPartentTaxon; ?>' />
+														<input type="hidden" name="country" value='<?php echo $cCountry; ?>' />
+														<input type="hidden" name="action" id="action" value='<?php echo (isset($LANG['DOWNLOAD_STATS'])?$LANG['DOWNLOAD_STATS']:'Download Stats per Coll'); ?>' />
+														<input type="image" name="action" src="../../images/dl.png" style="width:1.3em" onclick="" />
+														<!--input type="submit" name="action" value="Download Stats per Coll" src="../../images/dl.png" / -->
+													</div>
 												</div>
 											</div>
 										</form>
 									</fieldset>
 									<div>
-										<fieldset class="special-indent extra-stats">
+										<fieldset class="extra-stats bottom-breathing-room-relative">
 											<form name="famstatscsv" id="famstatscsv" action="collstatscsv.php" method="post" onsubmit="">
-												<div class='legend'><b><?php echo (isset($LANG['EXTRA_STATS'])?$LANG['EXTRA_STATS']:'Extra Statistics'); ?></b></div>
-												<div class="stat-csv-margin">
-													<div id="showfamdist" class="float-and-block" >
-														<a href="#" onclick="return toggleFamilyDist()"><?php echo (isset($LANG['SHOW_FAMILY'])?$LANG['SHOW_FAMILY']:'Show Family Distribution'); ?></a>
-													</div>
-													<div id="hidefamdist" class="float-and-no-display" >
-														<a href="#" onclick="return toggleFamilyDist()"><?php echo (isset($LANG['HIDE_FAMILY'])?$LANG['HIDE_FAMILY']:'Hide Family Distribution'); ?></a>
-													</div>
-													<div class="stat-csv-float-margins" title="<?php echo (isset($LANG['SAVE_CSV'])?$LANG['SAVE_CSV']:'Save CSV'); ?>">
-														<input type="hidden" name="action" value='Download Family Dist'/>
-														<input type="image" name="action" src="../../images/dl.png" style="width:1.3em" onclick="" />
+												<div class='legend'>
+													<b><?php echo (isset($LANG['EXTRA_STATS'])?$LANG['EXTRA_STATS']:'Extra Statistics'); ?></b>
+												</div>
+												<div class="gridlike-form-no-margin">
+													<div class="stat-csv-margin gridlike-form-row">
+														<div id="showfamdist" class="float-and-block" >
+															<a href="#" onclick="return toggleFamilyDist()"><?php echo (isset($LANG['SHOW_FAMILY'])?$LANG['SHOW_FAMILY']:'Show Family Distribution'); ?></a>
+														</div>
+														<div id="hidefamdist" class="float-and-no-display" >
+															<a href="#" onclick="return toggleFamilyDist()"><?php echo (isset($LANG['HIDE_FAMILY'])?$LANG['HIDE_FAMILY']:'Hide Family Distribution'); ?></a>
+														</div>
+														<div class="stat-csv-float-margins icon-mrgn-rel" title="<?php echo (isset($LANG['SAVE_CSV'])?$LANG['SAVE_CSV']:'Save CSV'); ?>">
+															<input type="hidden" name="action" value='Download Family Dist'/>
+															<input type="image" name="action" src="../../images/dl.png" style="width:1.3em" onclick="" />
+														</div>
 													</div>
 												</div>
 											</form>
 											<form name="geostatscsv" id="geostatscsv" action="collstatscsv.php" method="post" onsubmit="">
-												<div class="clr">
-													<div id="showgeodist" class="float-and-block" >
-														<a href="#" onclick="return toggleGeoDist()"><?php echo (isset($LANG['SHOW_GEO'])?$LANG['SHOW_GEO']:'Show Geographic Distribution'); ?></a>
-													</div>
-													<div id="hidegeodist" class="float-and-no-display">
-														<a href="#" onclick="return toggleGeoDist();"><?php echo (isset($LANG['HIDE_GEO'])?$LANG['HIDE_GEO']:'Hide Geographic Distribution'); ?></a>
-													</div>
-													<div class="stat-csv-float-margins" title="<?php echo (isset($LANG['SAVE_CSV'])?$LANG['SAVE_CSV']:'Save CSV'); ?>">
-														<input type="hidden" name="action" value='Download Geo Dist' />
-														<input type="image" name="action" src="../../images/dl.png" style="width:1.3em" onclick="" />
+												<div class="clr gridlike-form-no-margin">
+													<div class="gridlike-form-row">
+														<div id="showgeodist" class="float-and-block" >
+															<a href="#" onclick="return toggleGeoDist()"><?php echo (isset($LANG['SHOW_GEO'])?$LANG['SHOW_GEO']:'Show Geographic Distribution'); ?></a>
+														</div>
+														<div id="hidegeodist" class="float-and-no-display">
+															<a href="#" onclick="return toggleGeoDist();"><?php echo (isset($LANG['HIDE_GEO'])?$LANG['HIDE_GEO']:'Hide Geographic Distribution'); ?></a>
+														</div>
+														<div class="stat-csv-float-margins icon-mrgn-rel" title="<?php echo (isset($LANG['SAVE_CSV'])?$LANG['SAVE_CSV']:'Save CSV'); ?>">
+															<input type="hidden" name="action" value='Download Geo Dist' />
+															<input type="image" name="action" src="../../images/dl.png" style="width:1.3em" onclick="" />
+														</div>
 													</div>
 												</div>
 											</form>
                                             <?php
                                             if(!$cPartentTaxon && !$cCountry){
                                                 ?>
-                                                <div class="mrgn-tp">
+                                                <div class="top-breathing-room-rel">
                                                     <form name="orderstats" class="no-btm-mrgn" action="collorderstats.php" method="post" target="_blank">
                                                         <input type="hidden" name="collid" id="collid" value='<?php echo $collId; ?>'/>
                                                         <input type="hidden" name="totalcnt" id="totalcnt" value='<?php echo $results['SpecimenCount']; ?>'/>
