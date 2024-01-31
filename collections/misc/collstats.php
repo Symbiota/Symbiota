@@ -300,7 +300,7 @@ if($action != "Update Statistics"){
 				}
 
 				function toggleFamilyDist(){
-					toggleById("famdistbox");
+					// toggleById("famdistbox");
 					toggleById("showfamdist");
 					toggleById("hidefamdist");
 
@@ -328,12 +328,18 @@ if($action != "Update Statistics"){
 				}
 
 				function toggleById(target){
+					console.log('deleteMe got here a1 and target is: ');
+					console.log(target);
 					if(target != null){
 						var obj = document.getElementById(target);
+						console.log('deleteMe got here a2 and obj is: ');
+						console.log(obj);
 						if(obj.style.display=="none" || obj.style.display==""){
+							console.log('deleteMe got here a3 and target was missing or displaying as none');
 							obj.style.display="block";
 						}
 						else {
+							console.log('deleteMe got here a4 and target was displaying. About to make it not display');
 							obj.style.display="none";
 						}
 					}
@@ -806,10 +812,10 @@ if($action != "Update Statistics"){
 												<div class="gridlike-form-no-margin">
 													<div class="stat-csv-margin gridlike-form-row">
 														<div id="showfamdist" class="float-and-block" >
-															<a href="#" onclick="return toggleFamilyDist()"><?php echo (isset($LANG['SHOW_FAMILY'])?$LANG['SHOW_FAMILY']:'Show Family Distribution'); ?></a>
+															<a href="#" onclick="return toggleFamilyDist()"><?php echo $LANG['SHOW_FAMILY']; ?></a>
 														</div>
 														<div id="hidefamdist" class="float-and-no-display" >
-															<a href="#" onclick="return toggleFamilyDist()"><?php echo (isset($LANG['HIDE_FAMILY'])?$LANG['HIDE_FAMILY']:'Hide Family Distribution'); ?></a>
+															<a href="#" onclick="return toggleFamilyDist()"><?php echo $LANG['HIDE_FAMILY']; ?></a>
 														</div>
 														<div class="stat-csv-float-margins icon-mrgn-rel" title="<?php echo (isset($LANG['SAVE_CSV'])?$LANG['SAVE_CSV']:'Save CSV'); ?>">
 															<input type="hidden" name="action" value='Download Family Dist'/>
