@@ -22,7 +22,9 @@ if($isEditor && $submitAction) {
       //This Call can Take a very long time depending on the size of the
       //geoJson and how many children are within the feature collection past
       set_time_limit(300);
-	   $geoManager->addGeoBoundary($_POST['geoJson'][0]);
+      foreach($_POST['geoJson'] as $geojson) {
+	      $geoManager->addGeoBoundary($geojson);
+      }
 	}
 }
 //https://gadm.org/download_country.html
