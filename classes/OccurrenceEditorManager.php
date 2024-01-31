@@ -527,21 +527,21 @@ class OccurrenceEditorManager {
 
 	private function setCustomSqlFragment($customField, $customTerm, $customValue, $cao, $cop, $ccp){
 		$sqlFrag = '';
-		if($customTerm == 'NULL'){
+		if($customTerm == 'IS_NULL'){
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' IS NULL) '.($ccp?$ccp.' ':'');
 		}
-		elseif($customTerm == 'NOTNULL'){
+		elseif($customTerm == 'NOT_NULL'){
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' IS NOT NULL) '.($ccp?$ccp.' ':'');
 		}
 		elseif($customTerm == 'NOT_EQUALS'){
 			if(!is_numeric($customValue)) $customValue = '"'.$customValue.'"';
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' (('.$customField.' != '.$customValue.') OR ('.$customField.' IS NULL)) '.($ccp?$ccp.' ':'');
 		}
-		elseif($customTerm == 'GREATER'){
+		elseif($customTerm == 'GREATER_THAN'){
 			if(!is_numeric($customValue)) $customValue = '"'.$customValue.'"';
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' > '.$customValue.') '.($ccp?$ccp.' ':'');
 		}
-		elseif($customTerm == 'LESS'){
+		elseif($customTerm == 'LESS_THAN'){
 			if(!is_numeric($customValue)) $customValue = '"'.$customValue.'"';
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' < '.$customValue.') '.($ccp?$ccp.' ':'');
 		}
@@ -551,7 +551,7 @@ class OccurrenceEditorManager {
 		elseif($customTerm == 'NOT_LIKE' && $customValue){
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' (('.$customField.' NOT LIKE "%'.trim($customValue,'%').'%") OR ('.$customField.' IS NULL)) '.($ccp?$ccp.' ':'');
 		}
-		elseif($customTerm == 'STARTS' && $customValue){
+		elseif($customTerm == 'STARTS_WITH' && $customValue){
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' LIKE "'.trim($customValue,'%').'%") '.($ccp?$ccp.' ':'');
 		}
 		elseif($customValue){

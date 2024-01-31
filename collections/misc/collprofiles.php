@@ -87,7 +87,7 @@ if ($SYMB_UID) {
 					redirectUrl = clientRoot + '/collections/editor/occurrenceeditor.php?q_customfield1=catalogNumber&q_customtype1=EQUALS&q_customvalue1=' + encodeURIComponent(catNum) + '&q_customandor2=OR&q_customfield2=otherCatalogNumbers&q_customtype2=EQUALS&q_customvalue2=' + encodeURIComponent(catNum) + '&collid=' + encodeURIComponent(collId) + '&displayquery=1&occindex=0&reset=1';
 				}
 				if(taxon && !catNum){
-					redirectUrl = clientRoot + '/collections/editor/occurrenceeditor.php?q_customfield1=sciname&q_customtype1=STARTS&q_customvalue1=' + encodeURIComponent(taxon) + '&collid=' + encodeURIComponent(collId) + '&displayquery=1&occindex=0&reset=1';
+					redirectUrl = clientRoot + '/collections/editor/occurrenceeditor.php?q_customfield1=sciname&q_customtype1=STARTS_WITH&q_customvalue1=' + encodeURIComponent(taxon) + '&collid=' + encodeURIComponent(collId) + '&displayquery=1&occindex=0&reset=1';
 				}
 				window.location.href = redirectUrl;
 			}
@@ -136,16 +136,16 @@ if ($SYMB_UID) {
 					<label for="taxon-search"><?php echo (isset($LANG['TAXON']) ? $LANG['TAXON'] : 'Taxon'); ?></label>
 					<input name="taxon-search" id="taxon-search" type="text" />
 					<br>
-					<?php 
+					<?php
 						if($editCode == 1 || $editCode == 2 || $editCode == 3){
 					?>
 						<button type="submit" id="search-by-catalog-number-admin-btn"; ?>
 							<?php echo (isset($LANG['OCCURRENCE_EDITOR']) ? $LANG['OCCURRENCE_EDITOR'] : 'Edit'); ?>
 						</button>
-					<?php 
+					<?php
 						}
 					?>
-					
+
 				</form>
 				<form name="quicksearch" action="javascript:void(0);" onsubmit="submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&includeothercatnum=1', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&usethes=1&taxontype=2 '); return false;">
 					<button class="top-breathing-room-rel" type="submit" id="search-by-catalog-number-btn" title="<?php echo (isset($LANG['IDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Occurrence ID and Record ID also accepted.'); ?>">
@@ -189,7 +189,7 @@ if ($SYMB_UID) {
 				$responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 				curl_close($ch);
 				// Check the response code - display image if exists
-				if ($responseCode === 200) {			
+				if ($responseCode === 200) {
     				echo '<a href="https://bionomia.net/dataset/' . $datasetKey . '"><img src="' . $bionomiaUrl . '" alt="Bionomia dataset badge" style="width:262px; height:24px; padding-left:10px;"></a>';
 				}
 				echo '</div>';

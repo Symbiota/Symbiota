@@ -382,7 +382,7 @@ class OccurrenceDownload{
 	public function addCondition($field, $cond, $value = ''){
 		if($field){
 			if(!trim($cond)) $cond = 'EQUALS';
-			if($value || ($cond == 'NULL' || $cond == 'NOTNULL')){
+			if($value || ($cond == 'IS_NULL' || $cond == 'NOT_NULL')){
 				$this->conditionArr[$field][$cond][] = $this->cleanInStr($value);
 			}
 		}
@@ -414,33 +414,33 @@ class OccurrenceDownload{
 
 	private function getSqlFragment($field, $cond, $valueArr){
 		$sqlFrag = '';
-		if($cond == 'NULL'){
+		if($cond == 'IS_NULL'){
 			$sqlFrag .= 'OR o.'.$field.' IS NULL ';
 		}
-		elseif($cond == 'NOTNULL'){
+		elseif($cond == 'NOT_NULL'){
 			$sqlFrag .= 'OR o.'.$field.' IS NOT NULL ';
 		}
 		elseif($cond == 'EQUALS'){
 			$sqlFrag .= 'OR o.'.$field.' IN("'.implode('","',$valueArr).'") ';
 		}
-		elseif($cond == 'NOTEQUALS'){
+		elseif($cond == 'NOT_EQUALS'){
 			$sqlFrag .= 'OR o.'.$field.' NOT IN("'.implode('","',$valueArr).'") OR o.'.$field.' IS NULL ';
 		}
 		else{
 			foreach($valueArr as $value){
-				if($cond == 'STARTS'){
+				if($cond == 'STARTS_WITH'){
 					$sqlFrag .= 'OR o.'.$field.' LIKE "'.$value.'%" ';
 				}
 				elseif($cond == 'LIKE'){
 					$sqlFrag .= 'OR o.'.$field.' LIKE "%'.$value.'%" ';
 				}
-				elseif($cond == 'NOTLIKE'){
+				elseif($cond == 'NOT_LIKE'){
 					$sqlFrag .= 'OR o.'.$field.' NOT LIKE "%'.$value.'%" OR o.'.$field.' IS NULL ';
 				}
-				elseif($cond == 'LESSTHAN'){
+				elseif($cond == 'LESS_THAN'){
 					$sqlFrag .= 'OR o.'.$field.' < "'.$value.'" ';
 				}
-				elseif($cond == 'GREATERTHAN'){
+				elseif($cond == 'GREATER_THAN'){
 					$sqlFrag .= 'OR o.'.$field.' > "'.$value.'" ';
 				}
 			}

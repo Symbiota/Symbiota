@@ -4,6 +4,7 @@
 Language: English
 ------------------
 */
+include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.en.php');
 
 $LANG['SPEC_UPLOAD'] = 'Specimen Uploader';
 $LANG['PATH_EMPTY'] = 'File path is empty. Please select the file that is to be loaded.';
@@ -83,13 +84,6 @@ $LANG['CUSTOM_FILT'] = 'Custom Occurrence Record Import Filters';
 $LANG['FIELD'] = 'Field';
 $LANG['SEL_FIELD'] = 'Select Field Name';
 $LANG['COND'] = 'Condition';
-$LANG['EQUALS'] = 'EQUALS';
-$LANG['STARTS_WITH'] = 'STARTS WITH';
-$LANG['CONTAINS'] = 'CONTAINS';
-$LANG['LESS_THAN'] = 'LESS THAN';
-$LANG['GREATER_THAN'] = 'GREATER THAN';
-$LANG['IS_NULL'] = 'IS NULL';
-$LANG['NOT_NULL'] = 'IS NOT NULL';
 $LANG['VALUE'] = 'Value';
 $LANG['MULT_TERMS'] = 'Adding multiple terms separated by semi-colon will filter as an OR condition';
 $LANG['IMPORT_ID'] = 'Import Identification History';

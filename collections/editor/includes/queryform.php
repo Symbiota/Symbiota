@@ -56,7 +56,7 @@ else{
 			'substrate'=>$LANG['SUBSTRATE'],'taxonRemarks'=>$LANG['TAXON_REMARKS'],'typeStatus'=>$LANG['TYPE_STATUS'],'verbatimCoordinates'=>$LANG['VERBAT_COORDS'],
 			'verbatimEventDate'=>$LANG['VERBATIM_DATE'],'verbatimDepth'=>$LANG['VERBATIM_DEPTH'],'verbatimElevation'=>$LANG['VERBATIM_ELE']);
 }
-$customTermArr = array('EQUALS', 'NOT_EQUALS', 'STARTS', 'LIKE', 'NOT_LIKE', 'GREATER', 'LESS', 'NULL', 'NOTNULL');
+$customTermArr = array('EQUALS', 'NOT_EQUALS', 'STARTS_WITH', 'LIKE', 'NOT_LIKE', 'GREATER_THAN', 'LESS_THAN', 'IS_NULL', 'NOT_NULL');
 $customArr = array();
 for($x=1; $x<9; $x++){
 	if(array_key_exists('cao'.$x, $qryArr) && ($qryArr['cao'.$x] == 'AND' || $qryArr['cao'.$x] == 'OR')) $customArr[$x]['andor'] = $qryArr['cao'.$x];
@@ -205,7 +205,7 @@ else{
 				if(isset($customArr[$x]['value'])) $cValue = $customArr[$x]['value'];
 
 				$divDisplay = 'none';
-				if($x == 1 || $cValue != '' || $cTerm == 'NULL' || $cTerm == 'NOTNULL') $divDisplay = 'block';
+				if($x == 1 || $cValue != '' || $cTerm == 'IS_NULL' || $cTerm == 'NOT_NULL') $divDisplay = 'block';
 				?>
 				<div id="customdiv<?php echo $x; ?>" class="fieldGroupDiv" style="display:<?php echo $divDisplay; ?>;">
 					<?php echo $LANG['CUSTOM_FIELD'].' '.$x; ?>:

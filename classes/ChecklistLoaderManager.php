@@ -20,7 +20,7 @@ class ChecklistLoaderManager extends Manager {
 
 	public function uploadCsvList($thesId){
 		set_time_limit(300);
-		ini_set("max_input_time",300);
+		ini_set('max_input_time',300);
 		$successCnt = 0;
 
 		$fh = fopen($_FILES['uploadfile']['tmp_name'],'r') or die("Can't open file. File may be too large. Try uploading file in sections.");

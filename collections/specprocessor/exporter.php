@@ -126,7 +126,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 			<?php
 			if($collid && $isEditor){
 				echo '<div style="clear:both;">';
-				$filterOptions = array('EQUALS'=>'EQUALS','NOTEQUALS'=>'NOT EQUALS','STARTS'=>'STARTS WITH','LESSTHAN'=>'LESS THAN','GREATERTHAN'=>'GREATER THAN','LIKE'=>'CONTAINS','NOTLIKE'=>'NOT CONTAINS','NULL'=>'IS NULL','NOTNULL'=>'IS NOT NULL');
+				$filterOptions = array('EQUALS', 'NOT_EQUALS', 'STARTS_WITH', 'LESS_THAN', 'GREATER_THAN', 'LIKE', 'NOT_LIKE', 'IS_NULL', 'NOT_NULL');
 				if($displayMode == 1){
 					if($collMeta['manatype'] == 'Snapshot'){
 						?>
@@ -205,7 +205,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 										<td colspan="2">
 											<div style="margin:10px;">
 												<input name="customfield1" type="hidden" value="georeferenceSources" />
-												<input name="customtype1" type="hidden" value="STARTS" />
+												<input name="customtype1" type="hidden" value="STARTS_WITH" />
 												<input name="customvalue1" type="hidden" value="georef batch tool" />
 												<input name="targetcollid" type="hidden" value="<?php echo $collid; ?>" />
 												<input name="schema" type="hidden" value="georef" />
@@ -257,8 +257,8 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 									</td>
 									<td>
 										<div style="margin:10px 0px;">
-											<input name="customtype2" type="radio" value="NULL" checked /> <?php echo $LANG['ARE_EMPTY']; ?><br/>
-											<input name="customtype2" type="radio" value="NOTNULL" /> <?php echo $LANG['HAVE_VALUES']; ?>
+											<input name="customtype2" type="radio" value="IS_NULL" checked /> <?php echo $LANG['ARE_EMPTY']; ?><br/>
+											<input name="customtype2" type="radio" value="NOT_NULL" /> <?php echo $LANG['HAVE_VALUES']; ?>
 											<input name="customfield2" type="hidden" value="decimallatitude" />
 											<input name="customvalue2" type="hidden" value="" />
 										</div>
@@ -283,8 +283,8 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 											</select>
 											<select name="customtype1">
 												<?php
-												foreach($filterOptions as $filterValue => $filterDisplay){
-													echo '<option '.($customType[1]=='.$filterValue.'?'SELECTED':'').' value="'.$filterValue.'">'.$filterDisplay.'</option>';
+												foreach($filterOptions as $filterCode){
+													echo '<option ' . ($customType[1] == $filterCode ? 'SELECTED' : '') . ' value="'.$filterCode.'">'.$LANG[$filterCode].'</option>';
 												}
 												?>
 											</select>
@@ -296,7 +296,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 									<td colspan="2">
 										<div style="margin:10px;">
 											<input name="customfield3" type="hidden" value="locality" />
-											<input name="customtype3" type="hidden" value="NOTNULL" />
+											<input name="customtype3" type="hidden" value="NOT_NULL" />
 											<input name="customvalue3" type="hidden" value="" />
 											<input name="format" type="hidden" value="csv" />
 											<input name="cset" type="hidden" value="utf-8" />
@@ -386,12 +386,12 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 												</select>
 												<select name="customtype<?php echo $i; ?>">
 													<?php
-													foreach($filterOptions as $filterValue => $filterDisplay){
-														echo '<option '.($customType[1]=='.$filterValue.'?'SELECTED':'').' value="'.$filterValue.'">'.$filterDisplay.'</option>';
+													foreach($filterOptions as $filterCode){
+														echo '<option ' . ($customType[$i] == $filterCode ? 'SELECTED' : '') . ' value="'.$filterCode.'">'.$LANG[$filterCode].'</option>';
 													}
 													?>
 												</select>
-												<input name="customvalue<?php echo $i; ?>" type="text" value="<?php echo $customValue[1]; ?>" style="width:200px;" />
+												<input name="customvalue<?= $i; ?>" type="text" value="<?php echo $customValue[1]; ?>" style="width:200px;" />
 											</div>
 											<?php
 										}

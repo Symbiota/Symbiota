@@ -258,7 +258,7 @@ class DwcArchiverCore extends Manager{
 		if ($field) {
 			if ($this->overrideConditionLimit || in_array(strtolower($field), $this->condAllowArr)) {
 				if (!$cond) $cond = 'EQUALS';
-				if ($value != '' || ($cond == 'NULL' || $cond == 'NOTNULL')) {
+				if ($value != '' || ($cond == 'IS_NULL' || $cond == 'NOT_NULL')) {
 					if (is_array($value)) $this->conditionArr[$field][$cond] = $this->cleanInArray($value);
 					else $this->conditionArr[$field][$cond][] = $this->cleanInStr($value);
 				}
@@ -309,10 +309,10 @@ class DwcArchiverCore extends Manager{
 					foreach ($condArr as $cond => $valueArr) {
 						if ($field == 'o.otherCatalogNumbers') {
 							$conj = 'OR';
-							if ($cond == 'NOTEQUALS' || $cond == 'NOTLIKE' || $cond == 'NULL') $conj = 'AND';
+							if ($cond == 'NOT_EQUALS' || $cond == 'NOT_LIKE' || $cond == 'IS_NULL') $conj = 'AND';
 							$sqlFrag2 .= 'AND (' . substr($this->getSqlFragment($field, $cond, $valueArr), 3) . ' ';
 							$sqlFrag2 .= $conj . ' (' . substr($this->getSqlFragment('id.identifierValue', $cond, $valueArr), 3);
-							if ($cond == 'NOTEQUALS' || $cond == 'NOTLIKE') $sqlFrag2 .= ' OR id.identifierValue IS NULL';
+							if ($cond == 'NOT_EQUALS' || $cond == 'NOT_LIKE') $sqlFrag2 .= ' OR id.identifierValue IS NULL';
 							$sqlFrag2 .= ')) ';
 						} else {
 							$sqlFrag2 .= $this->getSqlFragment($field, $cond, $valueArr);
@@ -338,26 +338,26 @@ class DwcArchiverCore extends Manager{
 
 	private function getSqlFragment($field, $cond, $valueArr){
 		$sql = '';
-		if ($cond == 'NULL') {
+		if ($cond == 'IS_NULL') {
 			$sql .= 'AND (' . $field . ' IS NULL) ';
-		} elseif ($cond == 'NOTNULL') {
+		} elseif ($cond == 'NOT_NULL') {
 			$sql .= 'AND (' . $field . ' IS NOT NULL) ';
 		} elseif ($cond == 'EQUALS') {
 			$sql .= 'AND (' . $field . ' IN("' . implode('","', $valueArr) . '")) ';
-		} elseif ($cond == 'NOTEQUALS') {
+		} elseif ($cond == 'NOT_EQUALS') {
 			$sql .= 'AND (' . $field . ' NOT IN("' . implode('","', $valueArr) . '") OR ' . $field . ' IS NULL) ';
 		} else {
 			$sqlFrag = '';
 			foreach ($valueArr as $value) {
-				if ($cond == 'STARTS') {
+				if ($cond == 'STARTS_WITH') {
 					$sqlFrag .= 'OR (' . $field . ' LIKE "' . $value . '%") ';
 				} elseif ($cond == 'LIKE') {
 					$sqlFrag .= 'OR (' . $field . ' LIKE "%' . $value . '%") ';
-				} elseif ($cond == 'NOTLIKE') {
+				} elseif ($cond == 'NOT_LIKE') {
 					$sqlFrag .= 'OR (' . $field . ' NOT LIKE "%' . $value . '%" OR ' . $field . ' IS NULL) ';
-				} elseif ($cond == 'LESSTHAN') {
+				} elseif ($cond == 'LESS_THAN') {
 					$sqlFrag .= 'OR (' . $field . ' < "' . $value . '") ';
-				} elseif ($cond == 'GREATERTHAN') {
+				} elseif ($cond == 'GREATER_THAN') {
 					$sqlFrag .= 'OR (' . $field . ' > "' . $value . '") ';
 				}
 			}

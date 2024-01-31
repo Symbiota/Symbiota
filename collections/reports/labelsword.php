@@ -16,9 +16,9 @@ elseif(class_exists('Image_Barcode')) $bcObj = new Image_Barcode;
 
 $labelManager = new OccurrenceLabel();
 
-$collid = $_POST["collid"];
+$collid = filter_var($_POST['collid'], FILTER_SANITIZE_NUMBER_INT);
 $hPrefix = $_POST['hprefix'];
-$hMid = $_POST['hmid'];
+$hMid = filter_var($_POST['hmid'], FILTER_SANITIZE_NUMBER_INT);
 $hSuffix = $_POST['hsuffix'];
 $lFooter = $_POST['lfooter'];
 $columnCount = $_POST['labeltype'];
@@ -30,10 +30,6 @@ $barcodeOnly = array_key_exists('bconly',$_POST)?$_POST['bconly']:0;
 $action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
 
 //Sanitation
-$hPrefix = filter_var($hPrefix, FILTER_SANITIZE_STRING);
-$hMid = filter_var($hMid, FILTER_SANITIZE_STRING);
-$hSuffix = filter_var($hSuffix, FILTER_SANITIZE_STRING);
-$lFooter = filter_var($lFooter, FILTER_SANITIZE_STRING);
 if(!is_numeric($columnCount) && $columnCount != 'packet') $columnCount = 2;
 if(!is_numeric($includeSpeciesAuthor)) $includeSpeciesAuthor = 0;
 if(!is_numeric($showcatalognumbers)) $showcatalognumbers = 0;

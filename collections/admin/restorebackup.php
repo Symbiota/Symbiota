@@ -271,8 +271,8 @@ include($SERVER_ROOT.'/includes/header.php');
 								echo '<div>Records to be updated: ';
 								echo $reportArr['update'];
 								if($reportArr['update']){
-									echo ' <a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&searchvar=occid:ISNOTNULL" target="_blank" title="' . htmlspecialchars((isset($LANG['PREVIEW'])?$LANG['PREVIEW']:'Preview 1st 1000 Records'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/list.png" style="width:1.2em;" /></a>';
-									echo ' <a href="uploadreviewer.php?action=export&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&searchvar=occid:ISNOTNULL" target="_self" title="' . htmlspecialchars((isset($LANG['DOWNLOAD_RECS'])?$LANG['DOWNLOAD_RECS']:'Download Records'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/dl.png" style="width:1.2em;" /></a>';
+									echo ' <a href="uploadreviewer.php?collid=' . $collid . '&searchvar=occid:NOT_NULL" target="_blank" title="' . (isset($LANG['PREVIEW'])?$LANG['PREVIEW']:'Preview 1st 1000 Records') . '"><img src="../../images/list.png" style="width:12px;" /></a>';
+									echo ' <a href="uploadreviewer.php?action=export&collid=' . $collid . '&searchvar=occid:NOT_NULL" target="_self" title="' . (isset($LANG['DOWNLOAD_RECS'])?$LANG['DOWNLOAD_RECS']:'Download Records') . '"><img src="../../images/dl.png" style="width:12px;" /></a>';
 								}
 								echo '</div>';
 								if($reportArr['new']){

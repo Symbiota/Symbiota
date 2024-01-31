@@ -3,13 +3,13 @@ include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SchemaManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$username = isset($_POST['username']) ? filter_var($_POST['username'], FILTER_SANITIZE_STRING) : '';
-$schemaCode = isset($_POST['schemaCode']) ? filter_var($_POST['schemaCode'], FILTER_SANITIZE_STRING) : '';
+$username = isset($_POST['username']) ? $_POST['username'] : '';
+$schemaCode = isset($_POST['schemaCode']) ? $_POST['schemaCode'] : '';
 $action = isset($_POST['action']) ? $_POST['action'] : '';
 
-$host = filter_var(MySQLiConnectionFactory::$SERVERS[0]['host'], FILTER_SANITIZE_STRING);
-$database = filter_var(MySQLiConnectionFactory::$SERVERS[0]['database'], FILTER_SANITIZE_STRING);
-$port = filter_var(MySQLiConnectionFactory::$SERVERS[0]['port'], FILTER_SANITIZE_NUMBER_INT);
+$host = MySQLiConnectionFactory::$SERVERS[0]['host'];
+$database = MySQLiConnectionFactory::$SERVERS[0]['database'];
+$port = MySQLiConnectionFactory::$SERVERS[0]['port'];
 
 $schemaManager = new SchemaManager();
 $verHistory = $schemaManager->getVersionHistory();
@@ -98,7 +98,7 @@ $IS_ADMIN = true;
 						</div>
 						<div class="form-section">
 							<label for="username">Username: </label>
-							<input id="username" name="username" type="text" value="<?php echo $username; ?>" required autocomplete="off">
+							<input id="username" name="username" type="text" value="<?= htmlspecialchars($username, HTML_SPECIAL_CHARS_FLAGS) ?>" required autocomplete="off">
 						</div>
 						<div class="form-section">
 							<label for="password">Password: </label>

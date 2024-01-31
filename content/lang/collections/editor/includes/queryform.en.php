@@ -5,6 +5,10 @@ Language: English
 ------------------
 */
 
+
+
+include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.en.php');
+
 $LANG['RECORD_SEARCH_FORM'] = 'Record Search Form';
 $LANG['WILD_EXPLAIN'] = 'Full name of collector as entered in database. To search just on last name, place the wildcard character (%) before name (%Gentry).';
 $LANG['COLLECTOR'] = 'Collector';
@@ -97,17 +101,6 @@ $LANG['VERBATIM_DEPTH'] = 'Verbatim Depth';
 $LANG['VERBATIM_ELE'] = 'Verbatim Elevation';
 $LANG['CUSTOM_FIELD'] = 'Custom Field';
 $LANG['SELECT_FIELD_NAME'] = 'Select Field Name';
-$LANG['AND'] = 'AND';
-$LANG['OR'] = 'OR';
-$LANG['EQUALS'] = 'EQUALS';
-$LANG['NOT_EQUALS'] = 'NOT EQUALS';
-$LANG['STARTS'] = 'STARTS WITH';
-$LANG['LIKE'] = 'CONTAINS';
-$LANG['NOT_LIKE'] = 'DOES NOT CONTAIN';
-$LANG['GREATER'] = 'GREATER THAN';
-$LANG['LESS'] = 'LESS THAN';
-$LANG['NULL'] = 'IS NULL';
-$LANG['NOTNULL'] = 'IS NOT NULL';
 $LANG['SHOW_RECS_ALL'] = 'Show records for all users (admin control)';
 $LANG['COPY_SEARCH'] = 'Copy Search As Link';
 $LANG['COPY_LINK'] = 'Copy Link';

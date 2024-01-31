@@ -20,7 +20,6 @@ if(!in_array($matchMethod,array('dupe','exsiccati'))) $matchMethod = '';
 if(!preg_match('/^\d{4}\/\d{2}\/\d{2}$/',$evaluationDate)) $evaluationDate = '';
 if(!in_array($processingStatus,array('stage1','stage2','stage3','unprocessed'))) $processingStatus = '';
 if(!is_numeric($limit)) $limit = 100;
-$action = filter_var($action,FILTER_SANITIZE_STRING);
 
 $dupeManager = new SpecProcDuplicates();
 if($collid) $dupeManager->setCollID($collid);

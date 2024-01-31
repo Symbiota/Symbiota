@@ -83,8 +83,8 @@ if ($schema == 'backup') {
 		$dlManager->setCharSetOut($cSet);
 		$dlManager->setDelimiter($format);
 		$dlManager->setZipFile($zip);
-		$dlManager->addCondition('decimalLatitude', 'NOTNULL', '');
-		$dlManager->addCondition('decimalLongitude', 'NOTNULL', '');
+		$dlManager->addCondition('decimalLatitude', 'NOT_NULL', '');
+		$dlManager->addCondition('decimalLongitude', 'NOT_NULL', '');
 		if (array_key_exists('targetcollid', $_POST) && $_POST['targetcollid']) {
 			$dlManager->addCondition('collid', 'EQUALS', $_POST['targetcollid']);
 		}
@@ -120,8 +120,8 @@ if ($schema == 'backup') {
 			$dwcaHandler->setIncludeImgs(0);
 			$dwcaHandler->setIncludeAttributes(0);
 			$dwcaHandler->setOverrideConditionLimit(true);
-			$dwcaHandler->addCondition('catalognumber', 'NOTNULL');
-			$dwcaHandler->addCondition('locality', 'NOTNULL');
+			$dwcaHandler->addCondition('catalognumber', 'NOT_NULL');
+			$dwcaHandler->addCondition('locality', 'NOT_NULL');
 			if (array_key_exists('processingstatus', $_POST) && $_POST['processingstatus']) {
 				$dwcaHandler->addCondition('processingstatus', 'EQUALS', $_POST['processingstatus']);
 			}
@@ -164,8 +164,8 @@ if ($schema == 'backup') {
 					$dwcaHandler->addCondition('traitid', 'EQUALS', $_POST['traitid']);
 				}
 				if (array_key_exists('newrecs', $_POST) && $_POST['newrecs'] == 1) {
-					$dwcaHandler->addCondition('dbpk', 'NULL');
-					$dwcaHandler->addCondition('catalognumber', 'NOTNULL');
+					$dwcaHandler->addCondition('dbpk', 'IS_NULL');
+					$dwcaHandler->addCondition('catalognumber', 'NOT_NULL');
 				}
 			}
 		}
