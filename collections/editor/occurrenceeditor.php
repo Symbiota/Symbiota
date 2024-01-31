@@ -840,7 +840,7 @@ else{
 													<input type="text" name="verbatimeventdate" maxlength="255" value="<?php echo array_key_exists('verbatimeventdate',$occArr)?$occArr['verbatimeventdate']:''; ?>" onchange="verbatimEventDateChanged(this)" />
 												</div>
 												<div id="dateToggleDiv">
-													<a href="#" onclick="toggle('dateextradiv');return false;" tabindex="-1"><img class="editimg" src="../../images/editplus.png" style="width:1.5em"/></a>
+													<a href="#" onclick="toggle('dateextradiv');return false;" tabindex="-1"><img class="editimg" src="../../images/tochild.png" style="width:1.3em"/></a>
 												</div>
 												<?php
 												if($loanArr = $occManager->getLoanData()){
@@ -957,7 +957,7 @@ else{
 													<input type="text" name="dateidentified" maxlength="45" value="<?php echo array_key_exists('dateidentified',$occArr)?$occArr['dateidentified']:''; ?>" onchange="fieldChanged('dateidentified');" />
 												</div>
 												<div id="idrefToggleDiv" onclick="toggle('idrefdiv');">
-													<img class="editimg" src="../../images/editplus.png" style="width:1.5em;" />
+													<img class="editimg" src="../../images/tochild.png" style="width:1.3em;" />
 												</div>
 											</div>
 											<div  id="idrefdiv">
@@ -1018,7 +1018,7 @@ else{
 												<br />
 												<textarea id="fflocality" name="locality" onchange="fieldChanged('locality');"><?php echo array_key_exists('locality',$occArr)?$occArr['locality']:''; ?></textarea>
 												<a id="localityExtraToggle" onclick="toggle('localityExtraDiv');">
-													<img class="editimg" src="../../images/editplus.png" style="width:1.5em;"/>
+													<img class="editimg" src="../../images/tochild.png" style="width:1.3em;"/>
 												</a>
 											</div>
 											<?php
@@ -1158,7 +1158,7 @@ else{
 													</div>
 												</div>
 												<div id="georefExtraToggleDiv" onclick="toggle('georefExtraDiv');">
-													<img class="editimg" src="../../images/editplus.png" style="width:1.5em;" tabindex="-1" />
+													<img class="editimg" src="../../images/tochild.png" style="width:1.3em;" tabindex="-1" />
 												</div>
 											</div>
 											<?php
@@ -1278,7 +1278,7 @@ else{
 												<br/>
 												<input type="text" name="occurrenceremarks" value="<?php echo array_key_exists('occurrenceremarks',$occArr)?$occArr['occurrenceremarks']:''; ?>" onchange="fieldChanged('occurrenceremarks');" title="<?php echo $LANG['OCC_REMARKS']; ?>" />
 												<span id="dynPropToggleSpan" onclick="toggle('dynamicPropertiesDiv');">
-													<img class="editimg" src="../../images/editplus.png" />
+													<img class="editimg" src="../../images/tochild.png" style="width:1.3em" />
 												</span>
 											</div>
 											<div id="dynamicPropertiesDiv" style="display:<?php echo array_key_exists('dynamicproperties',$occArr)&&$occArr['dynamicproperties']?'':'none'; ?>">
