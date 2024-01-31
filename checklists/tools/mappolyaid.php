@@ -293,7 +293,7 @@ else{
                <button name="deleteButton" type="button" onclick="deleteSelectedPolygon()">
                   <?php echo isset($LANG['DELETE_SELECTED'])? $LANG['DELETE_SELECTED'] :'Delete Selected Polygon'?>
                </button>
-					<a href="#" onclick="toggle('helptext')"><img alt="Display Help Text" src="../../images/qmark_big.png" style="width:15px;" /></a>
+					<a href="#" onclick="toggle('helptext')"><img alt="Display Help Text" src="../../images/qmark.png" style="width:1.3em;" /></a>
                <?php endif?>
 					<fieldset id="reformatFieldset" style="width:300px;">
                   <legend>

@@ -37,17 +37,10 @@ if(!is_numeric($archiveImages)) $archiveImages = 0;
 if(!is_numeric($delThumb)) $delThumb = 0;
 if(!is_numeric($delWeb)) $delWeb = 0;
 if(!is_numeric($delLarge)) $delLarge = 0;
-$imgidStr = filter_var($imgidStr,FILTER_SANITIZE_STRING);
 if(!is_numeric($transferThumbnail)) $transferThumbnail = 0;
 if(!is_numeric($transferWeb)) $transferWeb = 0;
 if(!is_numeric($transferLarge)) $transferLarge = 0;
-$matchTermThumbnail = filter_var($matchTermThumbnail,FILTER_SANITIZE_STRING);
-$matchTermWeb = filter_var($matchTermWeb,FILTER_SANITIZE_STRING);
-$matchTermLarge = filter_var($matchTermLarge,FILTER_SANITIZE_STRING);
 if(!is_numeric($deleteSource)) $deleteSource = 0;
-$imgRootUrl = filter_var($imgRootUrl,FILTER_SANITIZE_STRING);
-$imgRootPath = filter_var($imgRootPath,FILTER_SANITIZE_STRING);
-$imgSubPath = filter_var($imgSubPath,FILTER_SANITIZE_STRING);
 
 $toolManager = new MediaResolutionTools();
 $toolManager->setCollid($collid);
@@ -252,19 +245,19 @@ if($IS_ADMIN) $isEditor = true;
 							<div class="fieldRowDiv">
 								<div class="fieldDiv">
 									<span class="fieldLabel">Thumbnail Matching Term (thumbnailUrl):</span>
-									<input name="matchTermThumbnail" type="text" value="<?php echo $matchTermThumbnail; ?>" style="width:300px" />
+									<input name="matchTermThumbnail" type="text" value="<?php echo htmlspecialchars($matchTermThumbnail); ?>" style="width:300px" />
 								</div>
 							</div>
 							<div class="fieldRowDiv">
 								<div class="fieldDiv">
 									<span class="fieldLabel">Web Image (medium) Matching Term (url):</span>
-									<input name="matchTermWeb" type="text" value="<?php echo $matchTermWeb; ?>" style="width:300px" />
+									<input name="matchTermWeb" type="text" value="<?php echo htmlspecialchars($matchTermWeb); ?>" style="width:300px" />
 								</div>
 							</div>
 							<div class="fieldRowDiv">
 								<div class="fieldDiv">
 									<span class="fieldLabel">Large Image Matching Term (originalurl):</span>
-									<input name="matchTermLarge" type="text" value="<?php echo $matchTermLarge; ?>" style="width:300px" />
+									<input name="matchTermLarge" type="text" value="<?php echo htmlspecialchars($matchTermLarge); ?>" style="width:300px" />
 								</div>
 							</div>
 						</fieldset>
@@ -275,19 +268,19 @@ if($IS_ADMIN) $isEditor = true;
 							<div class="fieldRowDiv">
 								<div class="fieldDiv">
 									<span class="fieldLabel">Image Root URL (imgRootUrl):</span>
-									<input name="imgRootUrl" type="text" value="<?php echo ($imgRootUrl?$imgRootUrl:$IMAGE_ROOT_URL); ?>" style="width:400px" />
+									<input name="imgRootUrl" type="text" value="<?php echo ($imgRootUrl ? htmlspecialchars($imgRootUrl) : $IMAGE_ROOT_URL); ?>" style="width:400px" />
 								</div>
 							</div>
 							<div class="fieldRowDiv">
 								<div class="fieldDiv">
 									<span class="fieldLabel">Image Root Path (imgRootPath):</span>
-									<input name="imgRootPath" type="text" value="<?php echo ($imgRootPath?$imgRootPath:$IMAGE_ROOT_PATH); ?>" style="width:400px" />
+									<input name="imgRootPath" type="text" value="<?php echo ($imgRootPath ? htmlspecialchars($imgRootPath) : $IMAGE_ROOT_PATH); ?>" style="width:400px" />
 								</div>
 							</div>
 							<div class="fieldRowDiv">
 								<div class="fieldDiv">
 									<span class="fieldLabel">Target Sub-Path:</span>
-									<input name="imgSubPath" type="text" value="<?php echo $imgSubPath; ?>" style="width:400px" />
+									<input name="imgSubPath" type="text" value="<?= htmlspecialchars($imgSubPath) ?>" style="width:400px" />
 								</div>
 							</div>
 						</fieldset>

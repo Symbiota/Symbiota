@@ -474,8 +474,8 @@ if($action != "Update Statistics"){
 														<div>
 															<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;" class="condense-expand-flex" >
 																<div class="condense-expand-button-set">
-																	<img id="plus-<?php echo $idStr; ?>" src="../../images/plus_sm.png" alt="plus sign to expand menu" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?> width: 0.9rem; height: 0.9rem;" />
-																	<img id="minus-<?php echo $idStr; ?>" src="../../images/minus_sm.png" alt="minus sign to condense menu" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?> width: 0.9rem; height: 0.9rem;" />
+																	<img id="plus-<?php echo $idStr; ?>" src="../../images/plus.png" alt="plus sign to expand menu" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?> width:1em;" />
+																	<img id="minus-<?php echo $idStr; ?>" src="../../images/minus.png" alt="minus sign to condense menu" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?> width:1em;" />
 																	<p id="ptext-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>">
 																		<?php echo $LANG['EXPAND'] ?>
 																	</p>
@@ -606,8 +606,8 @@ if($action != "Update Statistics"){
 														<div>
 															<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;" class="condense-expand-flex">
 																<div class="condense-expand-button-set">
-																	<img id="plus-<?php echo $idStr; ?>" alt="plus sign to expand menu" src="../../images/plus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>" />
-																	<img id="minus-<?php echo $idStr; ?>" alt="minus sign to condense menu" src="../../images/minus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" />
+																	<img id="plus-<?php echo $idStr; ?>" alt="plus sign to expand menu" src="../../images/plus.png" style="<?php echo ('width:1em;' . ($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>" />
+																	<img id="minus-<?php echo $idStr; ?>" alt="minus sign to condense menu" src="../../images/minus.png" style="<?php echo 'width:1em;' . (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" />
 																	<p id="ptext-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>">
 																		<?php echo $LANG['EXPAND'] ?>
 																	</p>
@@ -793,7 +793,7 @@ if($action != "Update Statistics"){
                                                     <input type="hidden" name="taxon" value='<?php echo $cPartentTaxon; ?>' />
                                                     <input type="hidden" name="country" value='<?php echo $cCountry; ?>' />
 													<input type="hidden" name="action" id="action" value='<?php echo (isset($LANG['DOWNLOAD_STATS'])?$LANG['DOWNLOAD_STATS']:'Download Stats per Coll'); ?>' />
-													<input type="image" name="action" src="../../images/dl.png" onclick="" />
+													<input type="image" name="action" src="../../images/dl.png" style="width:1.3em" onclick="" />
 													<!--input type="submit" name="action" value="Download Stats per Coll" src="../../images/dl.png" / -->
 												</div>
 											</div>
@@ -812,7 +812,7 @@ if($action != "Update Statistics"){
 													</div>
 													<div class="stat-csv-float-margins" title="<?php echo (isset($LANG['SAVE_CSV'])?$LANG['SAVE_CSV']:'Save CSV'); ?>">
 														<input type="hidden" name="action" value='Download Family Dist'/>
-														<input type="image" name="action" src="../../images/dl.png" onclick="" />
+														<input type="image" name="action" src="../../images/dl.png" style="width:1.3em" onclick="" />
 													</div>
 												</div>
 											</form>
@@ -826,7 +826,7 @@ if($action != "Update Statistics"){
 													</div>
 													<div class="stat-csv-float-margins" title="<?php echo (isset($LANG['SAVE_CSV'])?$LANG['SAVE_CSV']:'Save CSV'); ?>">
 														<input type="hidden" name="action" value='Download Geo Dist' />
-														<input type="image" name="action" src="../../images/dl.png" onclick="" />
+														<input type="image" name="action" src="../../images/dl.png" style="width:1.3em" onclick="" />
 													</div>
 												</div>
 											</form>

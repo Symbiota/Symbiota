@@ -212,7 +212,7 @@ class ChecklistManager extends Manager{
 		if(!$this->basicSql) $this->setClSql();
 		$result = $this->conn->query($this->basicSql);
 		while($row = $result->fetch_object()){
-			$family = strtoupper($row->family);
+			$family = strtoupper($row->family ?? '');
 			if($row->rankid > 140 && !$family) $family = 'Incertae Sedis';
 			$this->filterArr[$family] = '';
 			$taxonGroup = $family;

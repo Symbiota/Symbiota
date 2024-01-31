@@ -70,7 +70,7 @@ span[class="link"]:hover {
 button.icon-button {
   margin: 2px 5px;
   padding: 6px;
-  background-color: #f2f0e9;
+  background-color: buttoncolor;
   border-width: 1px;
   border-style: outset;
   border-color: buttonborder;

@@ -61,7 +61,7 @@ $controlTermArr = $materialSampleManager->getMSTypeControlValues();
 </style>
 <div style="width:795px;">
 	<div class="edit-control">
-		<span><a href="#" onclick="$('#formDiv-0').toggle()"><img src="../../images/add.png" /></a></span>
+		<span><a href="#" onclick="$('#formDiv-0').toggle()"><img src="../../images/add.png" style="width:1.5em;" /></a></span>
 	</div>
 	<!--
 	<div style="margin: 20px;">
@@ -79,7 +79,7 @@ $controlTermArr = $materialSampleManager->getMSTypeControlValues();
 				echo '<fieldset><legend>' . $LANG['MAT_SAMP'] . '</legend>';
 				?>
 				<div class="edit-control">
-					<span><a href="#" onclick="$('#formDiv-<?php echo $matSampleID; ?>').toggle()"><img src="../../images/edit.png" /></a></span>
+					<span><a href="#" onclick="$('#formDiv-<?php echo $matSampleID; ?>').toggle()"><img src="../../images/edit.png" style="width:1.2em;" /></a></span>
 				</div>
 				<?php
 			}

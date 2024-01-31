@@ -176,7 +176,7 @@ $procManager->setProjVariables('OCR Harvest');
 						<td>
 							<input name="speckeypattern" type="text" style="width:300px;" value="<?php echo $procManager->getSpecKeyPattern(); ?>" />
 							<a id="speckeypatterninfo" href="#" onclick="return false" title="More Information">
-								<img src="../../images/info.png" style="width:15px;" />
+								<img src="../../images/info.png" style="width:1.3em;" />
 							</a>
 							<div id="speckeypatterninfodialog">
 								Regular expression needed to extract the unique identifier from source text.
@@ -197,7 +197,7 @@ $procManager->setProjVariables('OCR Harvest');
 								<input name="ocrfile" type="file" size="50" onchange="this.form.sourcepath.value = ''" />
 								<input name="MAX_FILE_SIZE" type="hidden" value="10000000" />
 								<a id="ocrfileinfo" href="#" onclick="return false" title="More Information">
-									<img src="../../images/info.png" style="width:15px;" />
+									<img src="../../images/info.png" style="width:1.3em;" />
 								</a>
 								<div id="ocrfileinfodialog">
 									Browse and select zip file that contains the multiple OCR text files.
@@ -206,7 +206,7 @@ $procManager->setProjVariables('OCR Harvest');
 							<div class="pathElem" style="display:none;">
 								<input name="sourcepath" type="text" style="width:350px;" value="<?php echo $procManager->getSourcePath(); ?>" />
 								<a id="sourcepathinfo" href="#" onclick="return false" title="More Information">
-									<img src="../../images/info.png" style="width:15px;" />
+									<img src="../../images/info.png" style="width:1.3em;" />
 								</a>
 								<div id="sourcepathinfodialog">
 									File path or URL to folder containing the OCR text files.
@@ -224,7 +224,7 @@ $procManager->setProjVariables('OCR Harvest');
 						<td>
 							<input name="ocrsource" type="text" value="" />
 							<a id="ocrsourceinfo" href="#" onclick="return false" title="More Information">
-								<img src="../../images/info.png" style="width:15px;" />
+								<img src="../../images/info.png" style="width:1.3em;" />
 							</a>
 							<div id="ocrsourceinfodialog">
 								Short string describing OCR Source (e.g. ABBYY, Tesseract, etc). This value is placed in source field with current date appended.

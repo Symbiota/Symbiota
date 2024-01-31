@@ -70,7 +70,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 			<div id="addeditchar">
 				<div>
 					<a href="#" onclick="toggle('addchardiv');">
-						<img src="../../images/add.png" alt="<?php echo (isset($LANG['ADD_BTN']) ? $LANG['ADD_BTN'] : 'Create new character'); ?>" />
+						<img src="../../images/add.png" style='width:1.5em;' alt="<?php echo (isset($LANG['ADD_BTN']) ? $LANG['ADD_BTN'] : 'Create new character'); ?>" />
 					</a>
 				</div>
 				<div id="addchardiv" style="display:none;margin-bottom:8px;">
@@ -111,7 +111,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 										}
 										?>
 									</select>
-									<a href="#" onclick="openHeadingAdmin(); return false;"> <img src="../../images/edit.png" alt="<?php echo (isset($LANG['EDIT_BTN']) ? $LANG['EDIT_BTN'] : 'Create new group'); ?>" /></a>
+									<a href="#" onclick="openHeadingAdmin(); return false;"> <img src="../../images/edit.png" style='width:1.3em;' alt="<?php echo (isset($LANG['EDIT_BTN']) ? $LANG['EDIT_BTN'] : 'Create new group'); ?>" /></a>
 								</div>
 							</div>
 							<div class="flex-form">

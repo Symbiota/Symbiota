@@ -24,7 +24,7 @@ $searchVarEncoded = urlencode($searchVar);
 		?>
 		<form action="checklistsymbiota.php" method="post" style="float:right">
 			<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;cursor: pointer" title="<?php echo $LANG['OPEN_KEY']; ?>">
-				<img src="../images/key.png" style="width:15px" />
+				<img src="../images/key.png" style="width:1.3em" />
 			</button>
 			<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 			<input name="taxonfilter" type="hidden" value="<?php echo $taxonFilter; ?>" />
@@ -36,7 +36,7 @@ $searchVarEncoded = urlencode($searchVar);
 		?>
 		<form action="checklistsymbiota.php" method="post" style="float:right">
 			<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;cursor: pointer" title="<?php echo $LANG['OPEN_CHECKLIST_EXPLORER']; ?>">
-				<img src="../images/list.png" style="width:15px" />
+				<img src="../images/list.png" style="width:1.3em" />
 			</button>
 			<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 			<input name="taxonfilter" type="hidden" value="<?php echo $taxonFilter; ?>" />

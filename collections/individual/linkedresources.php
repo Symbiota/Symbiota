@@ -16,20 +16,20 @@ $indManager->setOccid($occid);
 </style>
 <div id='innertext' style='width:95%;min-height:400px;clear:both;background-color:white;'>
 	<fieldset>
-		<legend><?php echo (isset($LANG['SPCHECKREL'])?$LANG['SPCHECKREL']:'Species Checklist Relationships'); ?></legend>
+		<legend><?php echo ($LANG['SPCHECKREL']); ?></legend>
 		<?php
 		$vClArr = $indManager->getVoucherChecklists();
 		$clArr = $indManager->getChecklists(array_keys($vClArr));
-		if($IS_ADMIN || $clArr) echo '<div style="float:right"><a href="#" onclick="toggle(\'voucher-block\');return false"><img src="../../images/add.png" /></a></div>';
+		if($IS_ADMIN || $clArr) echo '<div style="float:right"><a href="#" onclick="toggle(\'voucher-block\');return false"><img src="../../images/add.png" style="width:1.5em;" /></a></div>';
 		if($vClArr){
-			echo '<div class="section-title">'.(isset($LANG['VOUCHEROFFOLLOWING'])?$LANG['VOUCHEROFFOLLOWING']:'Specimen voucher of the following checklists').'</div>';
+			echo '<div class="section-title">' . ($LANG['VOUCHEROFFOLLOWING']) . '</div>';
 			echo '<ul style="margin:15px 0px 25px 0px;">';
 			foreach($vClArr as $vClid => $vClArr){
 				echo '<li>';
 				echo '<a href="../../checklists/checklist.php?showvouchers=1&clid=' . htmlspecialchars($vClid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($vClArr['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a>&nbsp;&nbsp;';
 				if(isset($USER_RIGHTS['ClAdmin']) && in_array($vClid, $USER_RIGHTS['ClAdmin'])){
-					$delStr = (isset($LANG['DELVOUCHER'])?$LANG['DELVOUCHER']:'Delete voucher link');
-					$confirmStr = (isset($LANG['CONFIRMVOUCHER'])?$LANG['CONFIRMVOUCHER']:'Are you sure you want to remove this voucher link?');
+					$delStr = ($LANG['DELVOUCHER']);
+					$confirmStr = ($LANG['CONFIRMVOUCHER']);
 					echo '<a href="index.php?delvouch=' . htmlspecialchars($vClArr['voucherID'], HTML_SPECIAL_CHARS_FLAGS) . '&occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" title=' . htmlspecialchars($delStr, HTML_SPECIAL_CHARS_FLAGS) . ' onclick="return confirm(\"' . htmlspecialchars($confirmStr, HTML_SPECIAL_CHARS_FLAGS) . '\")"><img src="../../images/drop.png" style="width:12px;" /></a>';
 				}
 				echo '</li>';
@@ -41,9 +41,9 @@ $indManager->setOccid($occid);
 		}
 		if($IS_ADMIN || $clArr){
 			?>
-			<div style='margin-top:15px;'>
-				<fieldset id="voucher-block" style="display:none">
-					<legend><?php echo (isset($LANG['NEWVOUCHER'])?$LANG['NEWVOUCHER']:'New Voucher Assignment'); ?></legend>
+			<div style='margin-top:15px; display: none;'  id="voucher-block" class="voucher-block">
+				<fieldset>
+					<legend><?php echo ($LANG['NEWVOUCHER']); ?></legend>
 					<?php
 					if($tid){
 						?>
@@ -98,7 +98,7 @@ $indManager->setOccid($occid);
 	$datasetArr = $indManager->getDatasetArr();
 	if($datasetArr){
 		echo '<fieldset>';
-		echo '<legend>'.(isset($LANG['DATASETLINKAGES'])?$LANG['DATASETLINKAGES']:'Dataset Linkages').'</legend>';
+		echo '<legend>' . ($LANG['DATASETLINKAGES']) . '</legend>';
 		if($SYMB_UID) echo '<div style="float:right"><a href="#" onclick="toggle(\'dataset-block\');return false"><img src="../../images/add.png" /></a></div>';
 		$dsDisplayStr = '';
 		foreach($datasetArr as $dsid => $dsArr){
@@ -117,34 +117,36 @@ $indManager->setOccid($occid);
 		else echo '<div style="margin:15px 0px">'.(isset($LANG['OCCURRENCENOTLINKED'])?$LANG['OCCURRENCENOTLINKED']:'Occurrence is not linked to any datasets').'</div>';
 		if($SYMB_UID){
 			?>
-			<fieldset id="dataset-block" style="display:none">
-				<legend><?php echo (isset($LANG['CREATENEWREL'])?$LANG['CREATENEWREL']:'Create New Dataset Relationship'); ?></legend>
-				<form action="../datasets/datasetHandler.php" method="post" onsubmit="return verifyDatasetForm(this);">
-					<div style="margin:3px">
-						<select name="targetdatasetid">
-							<option value=""><?php echo (isset($LANG['SELECTEXISTING'])?$LANG['SELECTEXISTING']:'Select an Existing Dataset'); ?></option>
-							<option value="">----------------------------------</option>
-							<?php
-							foreach($datasetArr as $dsid => $dsArr){
-								if(!array_key_exists('linked',$dsArr)){
-									echo '<option value="'.$dsid.'">'.$dsArr['name'].'</option>';
+			<div class="dataset-block" id="dataset-block" style="display: none;">
+				<fieldset>
+					<legend><?php echo (isset($LANG['CREATENEWREL'])?$LANG['CREATENEWREL']:'Create New Dataset Relationship'); ?></legend>
+					<form action="../datasets/datasetHandler.php" method="post" onsubmit="return verifyDatasetForm(this);">
+						<div style="margin:3px">
+							<select name="targetdatasetid">
+								<option value=""><?php echo (isset($LANG['SELECTEXISTING'])?$LANG['SELECTEXISTING']:'Select an Existing Dataset'); ?></option>
+								<option value="">----------------------------------</option>
+								<?php
+								foreach($datasetArr as $dsid => $dsArr){
+									if(!array_key_exists('linked',$dsArr)){
+										echo '<option value="'.$dsid.'">'.$dsArr['name'].'</option>';
+									}
 								}
-							}
-							?>
-							<option value="--newDataset"><?php echo (isset($LANG['CREATENEWDATASET'])?$LANG['CREATENEWDATASET']:'Create New Dataset'); ?></option>
-						</select>
-					</div>
-					<div style="margin:5px">
-						<b><?php echo (isset($LANG['NOTES'])?$LANG['NOTES']:'Notes'); ?>:<br/>
-						<input name="notes" type="text" value="" maxlength="250" style="width:90%;" />
-					</div>
-					<div style="margin:15px">
-						<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
-						<input name="sourcepage" type="hidden" value="individual" />
-						<button name="action" type="submit" value="addSelectedToDataset" ><?php echo (isset($LANG['LINKTO'])?$LANG['LINKTO']:'Link to Dataset'); ?></button>
-					</div>
-				</form>
-			</fieldset>
+								?>
+								<option value="--newDataset"><?php echo (isset($LANG['CREATENEWDATASET'])?$LANG['CREATENEWDATASET']:'Create New Dataset'); ?></option>
+							</select>
+						</div>
+						<div style="margin:5px">
+							<b><?php echo (isset($LANG['NOTES'])?$LANG['NOTES']:'Notes'); ?>:<br/>
+							<input name="notes" type="text" value="" maxlength="250" style="width:90%;" />
+						</div>
+						<div style="margin:15px">
+							<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
+							<input name="sourcepage" type="hidden" value="individual" />
+							<button name="action" type="submit" value="addSelectedToDataset" ><?php echo (isset($LANG['LINKTO'])?$LANG['LINKTO']:'Link to Dataset'); ?></button>
+						</div>
+					</form>
+				</fieldset>
+			</div>
 			<?php
 		}
 		echo '</fieldset>';

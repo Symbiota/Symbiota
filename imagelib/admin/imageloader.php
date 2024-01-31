@@ -6,7 +6,7 @@ if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/imagelib/admin/i
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $action = array_key_exists('action', $_POST) ? $_POST['action'] : '';
-$ulFileName = array_key_exists('ulfilename', $_POST) ? filter_var($_POST['ulfilename'], FILTER_SANITIZE_STRING) : '';
+$ulFileName = array_key_exists('ulfilename', $_POST) ? $_POST['ulfilename'] : '';
 
 $isEditor = false;
 if($IS_ADMIN) $isEditor = true;
@@ -24,8 +24,8 @@ if($isEditor){
 		$targetFields = $_POST['tf'];
 		for($x = 0; $x < count($targetFields); $x++){
 			if($sourceFields[$x] && $targetFields[$x] !== ''){
-				$sourceField = filter_var($sourceFields[$x], FILTER_SANITIZE_STRING);
-				$targetField = filter_var($targetFields[$x], FILTER_SANITIZE_STRING);
+				$sourceField = htmlspecialchars($sourceFields[$x], HTML_SPECIAL_CHARS_FLAGS);
+				$targetField = htmlspecialchars($targetFields[$x], HTML_SPECIAL_CHARS_FLAGS);
 				$fieldMap[$sourceField] = $targetField;
 			}
 		}

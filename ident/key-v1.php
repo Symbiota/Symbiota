@@ -121,7 +121,7 @@ if($chars){
 	if($isEditor){
 		?>
 		<div style="float:right;margin:15px;" title="Edit Character Matrix">
-			<a href="tools/matrixeditor.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>"><img src="../images/edit.png" /><span style="font-size:70%;">CM</span></a>
+			<a href="tools/matrixeditor.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>"><img src="../images/edit.png" style="width:1.2em" /><span style="font-size:70%;">CM</span></a>
 		</div>
 		<?php
 	}
@@ -215,7 +215,7 @@ if($chars){
 									echo "<tr><td><div style='margin:0px 5px 0px 10px;'><a href='" . htmlspecialchars($newSpLink, HTML_SPECIAL_CHARS_FLAGS) . "' target='_blank'><i>$disName</i></a></div></td>\n";
 									echo "<td align='right'>\n";
 									if($isEditor){
-										echo "<a href='tools/editor.php?tid=$tid&lang=" . htmlspecialchars($DEFAULT_LANG, HTML_SPECIAL_CHARS_FLAGS) . "' target='_blank'><img src='../images/edit.png' width='15px' border='0' title='" . htmlspecialchars($LANG['EDITMORP'], HTML_SPECIAL_CHARS_FLAGS) . "' /></a>\n";
+										echo "<a href='tools/editor.php?tid=$tid&lang=" . htmlspecialchars($DEFAULT_LANG, HTML_SPECIAL_CHARS_FLAGS) . "' target='_blank'><img src='../images/edit.png' width='1.2em' border='0' title='" . htmlspecialchars($LANG['EDITMORP'], HTML_SPECIAL_CHARS_FLAGS) . "' /></a>\n";
 									}
 									echo "</td></tr>\n";
 								}

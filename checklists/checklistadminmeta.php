@@ -136,7 +136,7 @@ if(isset($clArray['dynamicProperties']) && $clArray['dynamicProperties']){
 if(!$clid){
 	?>
 	<div style="float:right;">
-		<a href="#" onclick="toggle('checklistDiv')" title="<?php echo htmlspecialchars((isset($LANG['CREATE_CHECKLIST'])?$LANG['CREATE_CHECKLIST']:'Create a New Checklist'), HTML_SPECIAL_CHARS_FLAGS); ?>"><img src="../images/add.png" /></a>
+		<a href="#" onclick="toggle('checklistDiv')" title="<?php echo htmlspecialchars((isset($LANG['CREATE_CHECKLIST'])?$LANG['CREATE_CHECKLIST']:'Create a New Checklist'), HTML_SPECIAL_CHARS_FLAGS); ?>"><img src="../images/add.png" style="width:1.5em;" /></a>
 	</div>
 	<?php
 }
@@ -243,7 +243,7 @@ if(!$clid){
 					<input id="lngdec" type="text" name="longcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray["longcentroid"]:''); ?>" />
 				</div>
 				<div style="float:left;margin:25px 3px;">
-					<a href="#" onclick="openMappingAid();return false;"><img src="../images/world.png" style="width:12px;" /></a>
+					<a href="#" onclick="openMappingAid();return false;"><img src="../images/world.png" style="width:1em;" /></a>
 				</div>
 				<div style="float:left;margin-left:15px;">
 					<b><?php echo (isset($LANG['REFERENCE_CHECK'])?$LANG['POINTRAD']:'Point Radius (meters)');?></b><br/>
@@ -259,7 +259,7 @@ if(!$clid){
 					<span id="polyNotDefDiv" style="display:<?php echo ($clArray && $clArray["hasfootprintwkt"]?'none':'inline'); ?>;">
 						<?php echo (isset($LANG['POLYGON_NOT_DEFINED'])?$LANG['POLYGON_NOT_DEFINED']:'Polygon footprint not defined<br/>Click globe to create polygon');?>
 					</span>
-					<span style="margin:10px;"><a href="#" onclick="openMappingPolyAid();return false;" title="Create/Edit Polygon"><img src="../images/world.png" style="width:14px;" /></a></span>
+					<span style="margin:10px;"><a href="#" onclick="openMappingPolyAid();return false;" title="Create/Edit Polygon"><img src="../images/world.png" style="width:1em;" /></a></span>
 					<input type="hidden" id="footprintwkt" name="footprintwkt" value="" />
 				</fieldset>
 			</div>
@@ -338,7 +338,7 @@ if(!$clid){
 			<div style="clear:both;float:left;margin-top:15px;">
 				<?php
 				if($clid){
-					echo '<button type="submit" name="submitaction" value="submitEdit">'.(isset($LANG['EDITCHECKLIST'])?$LANG['EDITCHECKLIST']:'Edit Checklist').'</button>';
+					echo '<button type="submit" name="submitaction" value="submitEdit">'.(isset($LANG['SAVE_EDITS'])?$LANG['SAVE_EDITS']:'Save Edits').'</button>';
 				}
 				else{
 					echo '<button type="submit" name="submitaction" value="submitAdd">'.(isset($LANG['ADDCHECKLIST'])?$LANG['ADDCHECKLIST']:'Add Checklist').'</button>';
@@ -371,7 +371,7 @@ if(!$clid){
 						<?php echo htmlspecialchars($vName, HTML_SPECIAL_CHARS_FLAGS); ?>
 					</a>
 					<a href="../checklists/checklistadmin.php?clid=<?php echo htmlspecialchars($kClid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">
-						<img src="../images/edit.png" style="width:15px;border:0px;" title="<?php echo htmlspecialchars((isset($LANG['EDITCHECKLIST'])?$LANG['EDITCHECKLIST']:'Edit Checklist'), HTML_SPECIAL_CHARS_FLAGS);?>" />
+						<img src="../images/edit.png" style="width:1em;border:0px;" title="<?php echo htmlspecialchars((isset($LANG['EDITCHECKLIST'])?$LANG['EDITCHECKLIST']:'Edit Checklist'), HTML_SPECIAL_CHARS_FLAGS);?>" />
 					</a>
 				</li>
 				<?php
@@ -404,7 +404,7 @@ if(!$clid){
 						<?php echo htmlspecialchars($projName, HTML_SPECIAL_CHARS_FLAGS); ?>
 					</a>
 					<a href="../projects/index.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">
-						<img src="../images/edit.png" style="width:15px;border:0px;" title="<?php echo htmlspecialchars((isset($LANG['EDIT_PROJECT'])?$LANG['EDIT_PROJECT']:'Edit Project'), HTML_SPECIAL_CHARS_FLAGS);?>" />
+						<img src="../images/edit.png" style="width:1em;border:0px;" title="<?php echo htmlspecialchars((isset($LANG['EDIT_PROJECT'])?$LANG['EDIT_PROJECT']:'Edit Project'), HTML_SPECIAL_CHARS_FLAGS);?>" />
 					</a>
 				</li>
 				<?php

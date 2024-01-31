@@ -218,7 +218,7 @@ if($isEditor && $formSubmit){
 								<div style="clear:both;margin:10px 0px;">
 									<div style="font-weight:bold;font-size:120%;">
 										<?php echo $dupArr['title']; ?>
-										<span onclick="toggle('editdiv-<?php echo $dupId; ?>')" title="<?php echo $LANG['DISP_EDIT_CONTROLS']; ?>"><img src="../../images/edit.png" style="width:13px;" /></span>
+										<span onclick="toggle('editdiv-<?php echo $dupId; ?>')" title="<?php echo $LANG['DISP_EDIT_CONTROLS']; ?>"><img src="../../images/edit.png" style="width:12em;" /></span>
 									</div>
 									<?php
 									if(isset($dupArr['desc'])) echo '<div style="margin-left:10px;">'.$dupArr['desc'].'</div>';
@@ -271,7 +271,7 @@ if($isEditor && $formSubmit){
 														<input name="limit" type="hidden" value="<?php echo $limit; ?>" />
 														<input name="action" type="hidden" value="<?php echo $action; ?>" />
 														<input name="formsubmit" type="hidden" value="occdelete" />
-														<input name="submit" type="image" src="../../images/del.png" style="width:15px;" />
+														<input name="submit" type="image" src="../../images/del.png" style="width:1.2em;" />
 													</form>
 												</div>
 												<div style="margin-left:15px;clear:both;">

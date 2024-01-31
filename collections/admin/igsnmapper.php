@@ -233,7 +233,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							<p>
 								<span class="form-label">IGSN seed:</span>
 								<input name="igsnSeed" type="text" value="<?php echo $igsnSeed; ?>" />
-								<span style=""><a href="#" onclick="generateIgsnSeed();return false;"><img src="../../images/refresh.png" style="width:14px;vertical-align: middle;" /></a></span>
+								<span style=""><a href="#" onclick="generateIgsnSeed();return false;"><img src="../../images/refresh.png" style="width:1.4em;vertical-align: middle;" /></a></span>
 							</p>
 						</div>
 						<p>

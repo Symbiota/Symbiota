@@ -7,6 +7,8 @@ Date Translated: 2021-10-29
 ------------------
 */
 
+include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.es.php');
+
 $LANG['RECORD_SEARCH_FORM'] = 'Formulario de Búsqueda de Registros';
 $LANG['WILD_EXPLAIN'] = 'Nombre completo del colector como fue entrado en la base de datos. Para buscar únicamente el apellido, añada el caracter (%) antes del apellido (%Gentry).';
 $LANG['COLLECTOR'] = 'Colector';
@@ -99,19 +101,9 @@ $LANG['VERBATIM_DEPTH'] = 'Profundidad Literal';
 $LANG['VERBATIM_ELE'] = 'Elevación Literal';
 $LANG['CUSTOM_FIELD'] = 'Campo Personalizado';
 $LANG['SELECT_FIELD_NAME'] = 'Seleccione Nombre del Campo';
-$LANG['AND'] = 'Y';
-$LANG['OR'] = 'O';
-$LANG['EQUALS'] = 'ES IGUAL';
-$LANG['NOT_EQUALS'] = 'NO ES IGUAL';
-$LANG['STARTS'] = 'EMPIEZA CON';
-$LANG['LIKE'] = "CONTIENE";
-$LANG['NOT_LIKE'] = "NO CONTIENE";
-$LANG['GREATER'] = 'MAYOR QUE';
-$LANG['LESS'] = 'MENOR QUE';
-$LANG['NULL'] = 'ES NULO';
-$LANG['NOTNULL'] = 'NO ES NULO';
 $LANG['SHOW_RECS_ALL'] = 'Mostar registros para todos los usuarios (control administrativo)';
 $LANG['COPY_SEARCH'] = 'Copiar búsqueda como enlace';
+$LANG['COPY_LINK'] = 'Copiar Enlace';
 $LANG['GO_LABEL_PRINT'] = 'Ir a Módulo de Impresión de Etiquetas';
 $LANG['DISPLAY_EDITOR'] = 'Desplegar Editor';
 $LANG['DISPLAY_TABLE'] = 'Desplegar Tabla';

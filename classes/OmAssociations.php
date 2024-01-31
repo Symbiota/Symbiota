@@ -121,14 +121,19 @@ class OmAssociations extends Manager{
 			$sql .= ') VALUES('.trim($sqlValues, ', ').') ';
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param($this->typeStr, ...$paramArr);
-				if($stmt->execute()){
-					if($stmt->affected_rows || !$stmt->error){
-						$this->assocID = $stmt->insert_id;
-						$status = true;
+				try{
+					if($stmt->execute()){
+						if($stmt->affected_rows || !$stmt->error){
+							$this->assocID = $stmt->insert_id;
+							$status = true;
+						}
+						else $this->errorMessage = $stmt->error;
 					}
-					else $this->errorMessage = 'ERROR inserting omoccurassociations record (2): '.$stmt->error;
+				} catch (mysqli_sql_exception $e){
+					$this->errorMessage = $stmt->error;
+				} catch (Exception $e){
+					$this->errorMessage = 'unknown error';
 				}
-				else $this->errorMessage = 'ERROR inserting omoccurassociations record (1): '.$stmt->error;
 				$stmt->close();
 			}
 			else $this->errorMessage = 'ERROR preparing statement for omoccurassociations insert: '.$this->conn->error;

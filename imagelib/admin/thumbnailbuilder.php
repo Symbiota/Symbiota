@@ -176,7 +176,7 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 			<?php
 			if($collid){
 				if($remoteImgCnt = $imgManager->getRemoteImageCnt()){
-					?>		
+					?>
 					<fieldset style="margin:30px 10px;padding:15px">
 						<legend><b><?php echo $LANG['THUMB_REMAPPER']; ?></b></legend>
 						<form name="tnrebuildform" action="thumbnailbuilder.php" method="post">
@@ -187,12 +187,12 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 								<?php echo $LANG['IMAGES_AVAIL_REFRESH'].': '.$remoteImgCnt; ?>
 							</div>
 							<div style="margin-bottom:10px;">
-								<?php echo $LANG['CATNUM_RANGE']; ?>: <input name="catNumLow" type="text" value="<?php echo (isset($_POST['catNumLow']) ? filter_var($_POST['catNumLow'], FILTER_SANITIZE_STRING) : ''); ?>" /> -
-								<input name="catNumHigh" type="text" value="<?php echo (isset($_POST['catNumHigh']) ? filter_var($_POST['catNumHigh'], FILTER_SANITIZE_STRING) : ''); ?>" />
+								<?php echo $LANG['CATNUM_RANGE']; ?>: <input name="catNumLow" type="text" value="<?php echo (isset($_POST['catNumLow']) ? htmlspecialchars($_POST['catNumLow'], HTML_SPECIAL_CHARS_FLAGS) : ''); ?>" /> -
+								<input name="catNumHigh" type="text" value="<?php echo (isset($_POST['catNumHigh']) ? htmlspecialchars($_POST['catNumHigh'], HTML_SPECIAL_CHARS_FLAGS) : ''); ?>" />
 							</div>
 							<div style="margin-bottom:10px;vertical-align:top;height:90px">
 								<div style="float:left"><?php echo $LANG['CATNUM_LIST']; ?>: </div>
-								<div style="margin-left:5px;float:left"><textarea name="catNumList" rows="5" cols="50"><?php echo (isset($_POST['catNumList']) ? filter_var($_POST['catNumList'], FILTER_SANITIZE_STRING) : ''); ?></textarea></div>
+								<div style="margin-left:5px;float:left"><textarea name="catNumList" rows="5" cols="50"><?php echo (isset($_POST['catNumList']) ? htmlspecialchars($_POST['catNumList'], HTML_SPECIAL_CHARS_FLAGS) : ''); ?></textarea></div>
 							</div>
 							<div style="margin-bottom:10px;">
 								<input name="evaluate_ts" type="radio" value="1" checked /> <?php echo $LANG['ONLY_PROCESS_RECENT']; ?><br/>
@@ -204,7 +204,7 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 							</div>
 							<div style="margin-bottom:10px;">
 								<input id="evalorientation" name="evalorientation" type="checkbox" value="1" <?php echo ($evaluateOrientation?'checked':''); ?> /> <?php echo $LANG['ROTATE_IMGS']; ?>
-								
+
 							</div>
 							<div style="margin:20px;clear:both">
 								<input name="collid" type="hidden" value="<?php echo $collid; ?>" />

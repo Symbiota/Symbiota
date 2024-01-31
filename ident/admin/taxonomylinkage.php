@@ -95,7 +95,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 									<input name="cid" type="hidden" value="<?php echo $cid; ?>" />
 									<input name="tid" type="hidden" value="<?php echo $tid; ?>" />
 									<input name="formsubmit" type="hidden" value="deltaxon" />
-									<input type="image" src="../../images/del.png" style="width:15px;" />
+									<input type="image" src="../../images/del.png" style="width:1.3em;" />
 								</form>
 							</div>
 							<?php
@@ -119,7 +119,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 									<input name="cid" type="hidden" value="<?php echo $cid; ?>" />
 									<input name="tid" type="hidden" value="<?php echo $tid; ?>" />
 									<input name="formsubmit" type="hidden" value="deltaxon" />
-									<input type="image" src="../../images/del.png" style="width:15px;" />
+									<input type="image" src="../../images/del.png" style="width:1.3em;" />
 								</form>
 							</div>
 							<?php

@@ -138,7 +138,7 @@ if($collMap['colltype'] == 'General Observations'){
 							<?php
 							if($statsArr['coord']){
 								?>
-								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NOTNULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+								<a href="../editor/occurrencetabledisplay.php?collid=<?= $collid ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NOT_NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
 									<img src="../../images/edit.png" style="width:10px" />
 								</a>
 								<?php
@@ -149,7 +149,7 @@ if($collMap['colltype'] == 'General Observations'){
 							<?php
 							if($statsArr['noCoord']){
 								?>
-								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=IS_NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
 									<img src="../../images/edit.png" style="width:10px" />
 								</a>
 								<a href="../georef/batchgeoreftool.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>" style="margin-left:5px;" title="Open Batch Georeference Tool" target="_blank">
@@ -163,7 +163,7 @@ if($collMap['colltype'] == 'General Observations'){
 							<?php
 							if($statsArr['noCoord_verbatim']){
 								?>
-								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL&q_customfield2=verbatimcoordinates&q_customtype2=NOTNULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=IS_NULL&q_customfield2=verbatimcoordinates&q_customtype2=NOT_NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
 									<img src="../../images/edit.png" style="width:10px" />
 								</a>
 								<?php

@@ -129,8 +129,8 @@ class ChecklistVoucherAdmin extends Manager {
 			if($row = $result->fetch_object()){
 				$this->clName = $this->cleanOutStr($row->name);
 				$this->footprintWkt = $row->footprintwkt;
-				$sqlFrag = $row->dynamicsql;
-				$varArr = json_decode($sqlFrag,true);
+				$sqlFrag = $row->dynamicsql ?? '';
+				$varArr = json_decode($sqlFrag, true);
 				if(json_last_error() != JSON_ERROR_NONE){
 					$varArr = $this->parseSqlFrag($sqlFrag);
 					$this->saveQueryVariables($varArr);

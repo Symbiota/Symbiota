@@ -254,10 +254,10 @@ $collManager->cleanOutArr($collData);
 							echo $instArr['institutionname'].($instArr['institutioncode']?' ('.$instArr['institutioncode'].')':'');
 							?>
 							<a href="institutioneditor.php?emode=1&targetcollid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&iid=' . htmlspecialchars($instArr['iid'], HTML_SPECIAL_CHARS_FLAGS); ?>" title="<?php echo htmlspecialchars((isset($LANG['EDIT_ADD'])?$LANG['EDIT_ADD']:'Edit Institution Address'), HTML_SPECIAL_CHARS_FLAGS); ?>">
-								<img src="../../images/edit.png" style="width:14px;" />
+								<img src="../../images/edit.png" style="width:1.3em" />
 							</a>
 							<a href="collmetadata.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&removeiid=' . htmlspecialchars($instArr['iid'], HTML_SPECIAL_CHARS_FLAGS); ?>" title="<?php echo htmlspecialchars((isset($LANG['UNLINK_ADD'])?$LANG['UNLINK_ADD']:'Unlink institution address'), HTML_SPECIAL_CHARS_FLAGS); ?>">
-								<img src="../../images/drop.png" style="width:14px;" />
+								<img src="../../images/drop.png" style="width:1.3em" />
 							</a>
 							<?php
 							echo '</div>';

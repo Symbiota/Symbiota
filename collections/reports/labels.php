@@ -3,29 +3,20 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLabel.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$collid = $_POST['collid'];
+$collid = filter_var($_POST['collid'], FILTER_SANITIZE_NUMBER_INT);
 $hPrefix = $_POST['lhprefix'];
-$hMid = $_POST['lhmid'];
+$hMid = filter_var($_POST['lhmid'], FILTER_SANITIZE_NUMBER_INT);
 $hSuffix = $_POST['lhsuffix'];
 $lFooter = $_POST['lfooter'];
 $columnCount = $_POST['columncount'];
-$includeSpeciesAuthor = ((array_key_exists('speciesauthors',$_POST) && $_POST['speciesauthors'])?1:0);
-$showcatalognumbers = ((array_key_exists('catalognumbers',$_POST) && $_POST['catalognumbers'])?1:0);
-$useBarcode = array_key_exists('bc',$_POST)?$_POST['bc']:0;
-$useSymbBarcode = array_key_exists('symbbc',$_POST)?$_POST['symbbc']:0;
+$includeSpeciesAuthor = ((array_key_exists('speciesauthors', $_POST) && $_POST['speciesauthors']) ? 1 : 0);
+$showCatalogNumbers = ((array_key_exists('catalognumbers', $_POST) && $_POST['catalognumbers']) ? 1 : 0);
+$useBarcode = array_key_exists('bc', $_POST) ? filter_var($_POST['bc'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$useSymbBarcode = array_key_exists('symbbc',$_POST) ? filter_var($_POST['symbbc'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
 
 //Sanitation
-$hPrefix = filter_var($hPrefix, FILTER_SANITIZE_STRING);
-$hMid = filter_var($hMid, FILTER_SANITIZE_STRING);
-$hSuffix = filter_var($hSuffix, FILTER_SANITIZE_STRING);
-$lFooter = filter_var($lFooter, FILTER_SANITIZE_STRING);
 if(!is_numeric($columnCount) && $columnCount != 'packet') $columnCount = 2;
-if(!is_numeric($includeSpeciesAuthor)) $includeSpeciesAuthor = 0;
-if(!is_numeric($showcatalognumbers)) $showcatalognumbers = 0;
-if(!is_numeric($useBarcode)) $useBarcode = 0;
-if(!is_numeric($useSymbBarcode)) $useSymbBarcode = 0;
-$action = filter_var($action, FILTER_SANITIZE_STRING);
 
 $labelManager = new OccurrenceLabel();
 $labelManager->setCollid($collid);
@@ -138,7 +129,7 @@ else{
 								if($headerStr){
 									?>
 									<div class="lheader">
-										<?php echo $headerStr; ?>
+										<?= htmlspecialchars($headerStr, HTML_SPECIAL_CHARS_FLAGS) ?>
 									</div>
 									<?php
 								}
@@ -333,7 +324,7 @@ else{
 										<?php
 									}
 								}
-								elseif($showcatalognumbers){
+								elseif($showCatalogNumbers){
 									if($occArr['catalognumber']){
 										?>
 										<div class="catalognumber" style="clear:both;text-align:center;">
@@ -350,7 +341,7 @@ else{
 									}
 								}
 								?>
-								<div class="lfooter"><?php echo $lFooter; ?></div>
+								<div class="lfooter"><?= htmlspecialchars($lFooter, HTML_SPECIAL_CHARS_FLAGS) ?></div>
 								<?php
 								if($useSymbBarcode){
 									?>
