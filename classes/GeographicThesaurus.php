@@ -523,12 +523,35 @@ class GeographicThesaurus extends Manager{
 		}
    }
 
-   private function getTestCoord($coordinates) {
-      if(is_array($coordinates) && count($coordinates) > 0 && is_array($coordinates[0])) {
-        return $this->getTestCoord($coordinates[0]);
-      } else {
-        return $coordinates;
+   private function getPolygonMeanCenter($coordinates) {
+      $mean = $this->getPolygonMeanParts($coordinates);
+
+      $mean["long"] = $mean["long"] / $mean["count"];
+      $mean["lat"] = $mean["lat"] / $mean["count"];
+
+      return $mean;
+   }
+
+   //Only use this function from getPolygonMeanCenter
+   private function getPolygonMeanParts($coordinates) {
+      if(!is_array($coordinates) || count($coordinates) === 0) { 
+         return ["count" => 0, "long" => 0, "lat" => 0];
+
+      } else if(count($coordinates) === 2 && !is_array($coordinates[0]) && !is_array($coordinates[1])) {
+         return ["count" => 1, "long" => $coordinates[0], "lat" => $coordinates[1]];
       }
+
+      $mean = ["count"=> 0, "lat" => 0, "long" => 0];
+
+      foreach($coordinates as $nestedArr) {
+         $subMean = $this->getPolygonMeanParts($nestedArr);
+
+         $mean["count"] += $subMean["count"];
+         $mean["long"] += $subMean["long"];
+         $mean["lat"] += $subMean["lat"];
+      }
+
+      return $mean;
    }
 
 	public function addGeoBoundary($url){
@@ -544,10 +567,10 @@ class GeographicThesaurus extends Manager{
          $geoThesIDs = $this->getGeoThesIDV2($properties->shapeName, $geoLevel);
 
          if(is_array($geoThesIDs) && count($geoThesIDs) != 1) {
-            $test_coord = $this->getTestCoord($feature->geometry->coordinates);
+            $meanCenter = $this->getPolygonMeanCenter($feature->geometry->coordinates);
             $parentID = $this->findParentGeometry(
-               $test_coord[1], 
-               $test_coord[0], 
+               $meanCenter["lat"], 
+               $meanCenter["long"], 
                $geoLevel - 10, 
                array_map( fn($val) => $val[1], $geoThesIDs)
             );
@@ -575,6 +598,7 @@ class GeographicThesaurus extends Manager{
             return 50;
       }
    }
+
    public function findParentGeometry($lat, $long, $parentGeoLevel = 50, $potentialParents = []) {
       $sql = <<<'SQL'
          SELECT g.geoThesID from geographicthesaurus g 
