@@ -152,6 +152,7 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 	<div style="clear:both">
 		<section class="fieldset-like">
 			<h1><span>Global Protections</span></h1>
+			<br/>
 			<?php
 			if($isEditor){
 				?>
@@ -176,11 +177,18 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 			if($rsArr){
 				foreach($rsArr as $family => $speciesArr){
 					?>
-					<h3><?php echo $family; ?></h3>
-					<div style='margin-left:20px;'>
+					<h3>
+						<span>
+							<?php echo $family; ?>
+						</span>
+					</h3>
+					<div style='margin-left:20px; margin-bottom:20px;'>
 						<?php
 						foreach($speciesArr as $tid => $nameArr){
-							echo '<div id="tid-'.$tid.'"><a href="../../taxa/index.php?taxon=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><i>' . htmlspecialchars($nameArr['sciname'], HTML_SPECIAL_CHARS_FLAGS) . '</i> ' . htmlspecialchars($nameArr['author'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
+							echo '<div id="tid-'.$tid.'">';
+							echo '<a href="../../taxa/index.php?taxon=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
+							echo '<i>' . htmlspecialchars($nameArr['sciname'], HTML_SPECIAL_CHARS_FLAGS) . '</i> ';
+							echo htmlspecialchars($nameArr['author'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
 							if($isEditor){
 								?>
 								<span class="editobj" style="display:none;">
@@ -217,7 +225,7 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 					echo '<a href="../../checklists/checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '">';
 					echo $stateArr['locality'].': '.$stateArr['name'];
 					echo '</a>';
-					if(strpos($stateArr['access'], 'private') !== false) echo ' (private)';
+					if(strpos($stateArr['access'] ?? '', 'private') !== false) echo ' (private)';
 					echo '</div>';
 					$emptyList = false;
 				}
