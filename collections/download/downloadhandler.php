@@ -27,6 +27,7 @@ if ($schema == 'backup') {
 			$archiveFile = $dwcaHandler->createDwcArchive();
 
 			if ($archiveFile) {
+				ob_start();
 				ob_clean();
 				ob_end_flush();
 				header('Content-Description: Symbiota Occurrence Backup File (DwC-Archive data package)');
@@ -199,6 +200,9 @@ if ($schema == 'backup') {
 				$contentDesc .= 'Archive ';
 			}
 			$contentDesc .= 'File';
+			ob_start();
+			ob_clean();
+			ob_end_flush();
 			header('Content-Description: ' . $contentDesc);
 
 			if ($zip) {

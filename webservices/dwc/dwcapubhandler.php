@@ -104,10 +104,10 @@ $dwcaHandler->setPublicationGuid($pubGuid);
 $dwcaHandler->setRequestPortalGuid($requestPortalGuid);
 
 $archiveFile = $dwcaHandler->createDwcArchive();
+ob_start();
+ob_clean();
+ob_end_flush();
 if ($archiveFile) {
-	ob_start();
-	ob_clean();
-	ob_end_flush();
 	header('Content-Description: DwC-A File Transfer');
 	header('Content-Type: application/zip');
 	header('Content-Disposition: attachment; filename=' . basename($archiveFile));

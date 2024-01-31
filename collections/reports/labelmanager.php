@@ -18,6 +18,10 @@ if(!is_numeric($collid)) $collid = 0;
 $labelManager = new OccurrenceLabel();
 $labelManager->setCollid($collid);
 
+$limit = (ini_get('max_input_vars')/2) - 100;
+if(!$limit) $limit = 400;
+elseif($limit > 1000) $limit = 1000;
+
 $isEditor = 0;
 $occArr = array();
 if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
@@ -28,7 +32,7 @@ elseif(array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collid,$USER_RIG
 }
 if($isEditor){
 	if($action == (isset($LANG['FILT_SPEC_REC']) ? $LANG['FILT_SPEC_REC'] : 'Filter Specimen Records')){
-		$occArr = $labelManager->queryOccurrences($_POST);
+		$occArr = $labelManager->queryOccurrences($_POST, $limit);
 	}
 }
 $labelFormatArr = $labelManager->getLabelFormatArr(true);
@@ -231,7 +235,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 							</div>
 							<div style="margin-left:20px;float:left;">
 								<label for="date1"><?php echo (isset($LANG['DATE_RANGE']) ? $LANG['DATE_RANGE'] : 'Date range:') ?></label>
-								<input type="text" name="date1" id="date1" style="width:100px;" value="<?php echo (array_key_exists('date1',$_REQUEST)?$_REQUEST['date1']:''); ?>" onchange="validateDateFields(this.form)" /> 
+								<input type="text" name="date1" id="date1" style="width:100px;" value="<?php echo (array_key_exists('date1',$_REQUEST)?$_REQUEST['date1']:''); ?>" onchange="validateDateFields(this.form)" />
 								<label for="date2"> <?php echo (isset($LANG['TO']) ? $LANG['TO'] : 'to') ?> </label>
 								<input type="text" name="date2" id="date2" style="width:100px;" value="<?php echo (array_key_exists('date2',$_REQUEST)?$_REQUEST['date2']:''); ?>" onchange="validateDateFields(this.form)" />
 								<label for="datetarget"><?php echo (isset($LANG['ITYPE_OF_DATE']) ? $LANG['TYPE_OF_DATE'] : 'Type of date'); ?>:</label>
@@ -289,7 +293,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 								<input type="submit" name="submitaction" value="<?php echo (isset($LANG['FILT_SPEC_REC']) ? $LANG['FILT_SPEC_REC'] : 'Filter Specimen Records') ?>" />
 							</div>
 							<div style="margin-left:20px;float:left;">
-								<?php echo (isset($LANG['SPEC_LIM']) ? $LANG['SPEC_LIM'] : '* Specimen return is limited to 1000 records') ?>
+								* <?= (isset($LANG['SPEC_LIM']) ? $LANG['SPEC_LIM'] : 'Specimen return is limited to') ?>: <?= $limit ?>
 							</div>
 						</div>
 					</fieldset>

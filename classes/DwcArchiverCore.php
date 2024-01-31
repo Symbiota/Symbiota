@@ -1531,13 +1531,15 @@ class DwcArchiverCore extends Manager{
 			$itemElem->appendChild($itemTitleElem);
 			//Icon
 			$imgLink = '';
-			if (substr($cArr['icon'], 0, 17) == 'images/collicons/') {
-				//Link is a
-				$imgLink = $urlPathPrefix . $cArr['icon'];
-			} elseif (substr($cArr['icon'], 0, 1) == '/') {
-				$imgLink = $localDomain . $cArr['icon'];
-			} else {
-				$imgLink = $cArr['icon'];
+			if($cArr['icon']){
+				if (substr($cArr['icon'], 0, 17) == 'images/collicons/') {
+					//Link is a
+					$imgLink = $urlPathPrefix . $cArr['icon'];
+				} elseif (substr($cArr['icon'], 0, 1) == '/') {
+					$imgLink = $localDomain . $cArr['icon'];
+				} else {
+					$imgLink = $cArr['icon'];
+				}
 			}
 			$iconElem = $newDoc->createElement('image');
 			$iconElem->appendChild($newDoc->createTextNode($imgLink));
@@ -1894,18 +1896,18 @@ class DwcArchiverCore extends Manager{
 				if ($previousImgID == $r['imgID']) continue;
 				$previousImgID = $r['imgID'];
 				unset($r['imgID']);
-				if (substr($r['identifier'], 0, 1) == '/') $r['identifier'] = $localDomain . $r['identifier'];
-				if (substr($r['accessURI'], 0, 1) == '/') $r['accessURI'] = $localDomain . $r['accessURI'];
-				if (substr($r['thumbnailAccessURI'], 0, 1) == '/') $r['thumbnailAccessURI'] = $localDomain . $r['thumbnailAccessURI'];
-				if (substr($r['goodQualityAccessURI'], 0, 1) == '/') $r['goodQualityAccessURI'] = $localDomain . $r['goodQualityAccessURI'];
+				if ($r['identifier'] && substr($r['identifier'], 0, 1) == '/') $r['identifier'] = $localDomain . $r['identifier'];
+				if ($r['accessURI'] && substr($r['accessURI'], 0, 1) == '/') $r['accessURI'] = $localDomain . $r['accessURI'];
+				if ($r['thumbnailAccessURI'] && substr($r['thumbnailAccessURI'], 0, 1) == '/') $r['thumbnailAccessURI'] = $localDomain . $r['thumbnailAccessURI'];
+				if ($r['goodQualityAccessURI'] && substr($r['goodQualityAccessURI'], 0, 1) == '/') $r['goodQualityAccessURI'] = $localDomain . $r['goodQualityAccessURI'];
 
-				if ($r['goodQualityAccessURI'] == 'empty' || substr($r['goodQualityAccessURI'], 0, 10) == 'processing') $r['goodQualityAccessURI'] = '';
-				if (substr($r['thumbnailAccessURI'], 0, 10) == 'processing') $r['thumbnailAccessURI'] = '';
+				if ($r['goodQualityAccessURI'] && ($r['goodQualityAccessURI'] == 'empty' || substr($r['goodQualityAccessURI'], 0, 10) == 'processing')) $r['goodQualityAccessURI'] = '';
+				if ($r['thumbnailAccessURI'] && substr($r['thumbnailAccessURI'], 0, 10) == 'processing') $r['thumbnailAccessURI'] = '';
 				if ($this->schemaType != 'backup') {
-					if (stripos($r['rights'], 'creativecommons.org') === 0) {
+					if ($r['rights'] && stripos($r['rights'], 'creativecommons.org') === 0) {
 						$r['webstatement'] = $r['rights'];
 						$r['rights'] = '';
-						if (!$r['usageterms']) {
+						if (!$r['usageterms'] && $r['webstatement']) {
 							if (strpos($r['webstatement'], '/zero/1.0/')) {
 								$r['usageterms'] = 'CC0 1.0 (Public-domain)';
 							}
@@ -1929,22 +1931,24 @@ class DwcArchiverCore extends Manager{
 				$r['associatedSpecimenReference'] = $urlPathPrefix . 'collections/individual/index.php?occid=' . $r['occid'];
 				$r['type'] = 'StillImage';
 				$r['subtype'] = 'Photograph';
-				$extStr = strtolower(substr($r['accessURI'], strrpos($r['accessURI'], '.') + 1));
-				if ($r['format'] == '') {
-					if ($extStr == 'jpg' || $extStr == 'jpeg') {
-						$r['format'] = 'image/jpeg';
-					}
-					elseif ($extStr == 'gif') {
-						$r['format'] = 'image/gif';
-					}
-					elseif ($extStr == 'png') {
-						$r['format'] = 'image/png';
-					}
-					elseif ($extStr == 'tiff' || $extStr == 'tif') {
-						$r['format'] = 'image/tiff';
-					}
-					else {
-						$r['format'] = '';
+				if($r['accessURI']){
+					$extStr = strtolower(substr($r['accessURI'], strrpos($r['accessURI'], '.') + 1));
+					if ($r['format'] == '') {
+						if ($extStr == 'jpg' || $extStr == 'jpeg') {
+							$r['format'] = 'image/jpeg';
+						}
+						elseif ($extStr == 'gif') {
+							$r['format'] = 'image/gif';
+						}
+						elseif ($extStr == 'png') {
+							$r['format'] = 'image/png';
+						}
+						elseif ($extStr == 'tiff' || $extStr == 'tif') {
+							$r['format'] = 'image/tiff';
+						}
+						else {
+							$r['format'] = '';
+						}
 					}
 				}
 				$r['metadataLanguage'] = 'en';

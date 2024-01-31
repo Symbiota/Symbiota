@@ -134,7 +134,7 @@ if($isEditor && $action){
 			if($hPrefix || $midStr || $hSuffix){
 				$headerStrArr = array();
 				$headerStrArr[] = trim($hPrefix);
-				$headerStrArr[] = trim($midStr);
+				$headerStrArr[] = trim($midStr ?? '');
 				$headerStrArr[] = trim($hSuffix);
 				$headerStr = implode(" ",$headerStrArr);
 			}
@@ -225,17 +225,17 @@ if($isEditor && $action){
 				if($occArr['identifiedby']){
 					$textrun = $section->addTextRun('identified');
 					$textrun->addText('Det by: '.htmlspecialchars($occArr['identifiedby']).' ','identifiedFont');
-					$textrun->addText(htmlspecialchars($occArr['dateidentified']),'identifiedFont');
+					$textrun->addText(htmlspecialchars($occArr['dateidentified'] ?? ''),'identifiedFont');
 					if($occArr['identificationreferences'] || $occArr['identificationremarks'] || $occArr['taxonremarks']){
-						$section->addText(htmlspecialchars($occArr['identificationreferences']),'identifiedFont','identified');
-						$section->addText(htmlspecialchars($occArr['identificationremarks']),'identifiedFont','identified');
-						$section->addText(htmlspecialchars($occArr['taxonremarks']),'identifiedFont','identified');
+						$section->addText(htmlspecialchars($occArr['identificationreferences'] ?? ''),'identifiedFont','identified');
+						$section->addText(htmlspecialchars($occArr['identificationremarks'] ?? ''),'identifiedFont','identified');
+						$section->addText(htmlspecialchars($occArr['taxonremarks'] ?? ''),'identifiedFont','identified');
 					}
 				}
 				$textrun = $section->addTextRun('loc1');
 				$textrun->addText(htmlspecialchars($occArr['country'].($occArr['country']?', ':'')),'countrystateFont');
 				$textrun->addText(htmlspecialchars($occArr['stateprovince'].($occArr['stateprovince']?', ':'')),'countrystateFont');
-				$countyStr = trim($occArr['county']);
+				$countyStr = trim($occArr['county'] ?? '');
 				if($countyStr){
 					if(!stripos($occArr['county'],' County') && !stripos($occArr['county'],' Parish')) $countyStr .= ' County';
 					$countyStr .= ', ';
@@ -346,7 +346,9 @@ if($isEditor && $action){
 
 $targetFile = $SERVER_ROOT.'/temp/report/'.$PARAMS_ARR['un'].'_'.date('Ymd').'_labels_'.$ses_id.'.docx';
 $phpWord->save($targetFile, 'Word2007');
-
+ob_start();
+ob_clean();
+ob_end_flush();
 header('Content-Description: File Transfer');
 header('Content-type: application/force-download');
 header('Content-Disposition: attachment; filename='.basename($targetFile));
