@@ -136,6 +136,21 @@ if($isEditor && $submitAction) {
 					<ul>
 						<li><a href="harvester.php">Return to Country List</a></li>
 					</ul>
+            <script type="text/javascript">
+               function checkHierarchy(e) {
+                  let ranked_inputs = document.getElementsByName("geoJson[]")
+                  let shouldCheck = true;
+
+                  for(let i = 0; i < ranked_inputs.length; i++) {
+                     if(e.value === ranked_inputs[i].value) {
+                        shouldCheck = false;
+                     } else {
+                        ranked_inputs[i].checked = shouldCheck;
+                     }
+                  }
+               }
+
+            </script>
 					<form name="" method="post" action="harvester.php">
 						<table class="styledtable">
 							<tr>
@@ -145,7 +160,7 @@ if($isEditor && $submitAction) {
 							$prevGeoThesID = 0;
 							foreach($geoList as $type => $gArr){
 								echo '<tr class="'.(isset($gArr['geoThesID'])?'nodb':'').(isset($gArr['polygon'])?' nopoly':'').'">';
-								echo '<td><input name="geoJson[]" type="checkbox" value="'.$gArr['geoJson'].'" '.(isset($gArr['polygon'])?'DISABLED':'').' /></td>';
+								echo '<td><input name="geoJson[]" onchange="checkHierarchy(this)" type="checkbox" value="'.$gArr['geoJson'].'" '.(isset($gArr['polygon'])?'DISABLED':'').' /></td>';
 								echo '<td>'.$type.'</td>';
 								echo '<td>'.$gArr['id'].'</td>';
 								$isInDbStr = 'No';
