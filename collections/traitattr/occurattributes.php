@@ -194,11 +194,11 @@ if ($traitID) {
 		function verifyFilterForm(f) {
 			if (f.taxonfilter.value == "All Taxa") f.taxonfilter.value = '';
 			if (f.traitid.value == "") {
-				alert("An occurrence trait must be selected");
+				alert(" <?php echo $LANG['OCC_TRAIT_MUST_SELECTED'] ?> ");
 				return false;
 			}
 			if (f.taxonfilter.value != "" && f.tidfilter.value == "") {
-				alert("Taxon filter not syncronized with thesaurus");
+				alert("<?php echo $LANG['TAXON_FILTER_NOT_SYNC_THES'] ?> ");
 				return false;
 			}
 			return true;
@@ -239,21 +239,21 @@ if ($traitID) {
 	if ($isEditor == 2) {
 		echo '<div style="float:right;margin:0px 3px;font-size:90%">';
 		if ($mode == 1) {
-			echo '<a href="occurattributes.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&mode=2&traitid=' . htmlspecialchars($traitID, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:1.3em" />review</a>';
+			echo '<a href="occurattributes.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&mode=2&traitid=' . htmlspecialchars($traitID, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:1.3em" />' . $LANG['REVIEW'] . '</a>';
 		} else {
-			echo '<a href="occurattributes.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&mode=1&traitid=' . htmlspecialchars($traitID, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:1.3em" />edit</a>';
+			echo '<a href="occurattributes.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&mode=1&traitid=' . htmlspecialchars($traitID, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:1.3em" />' . $LANG['EDIT'] . '</a>';
 		}
 		echo '</div>';
 	}
 	?>
 	<div class="navpath">
-		<a href="../../index.php"><?php echo $LANG['Home'] ?> </a> &gt;&gt;
+		<a href="../../index.php"><?php echo $LANG['HOME'] ?> </a> &gt;&gt;
 		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"> <?php echo $LANG['COLLECTION_MANAGEMENT'] ?> </a> &gt;&gt;
 		<?php
 		if ($mode == 2) {
-			echo '<b>Attribute Reviewer</b>';
+			echo '<b>' . $LANG['ATTRIBUTE_REVIEWER'] . '</b>';
 		} else {
-			echo '<b>Attribute Editor</b>';
+			echo '<b>' . $LANG['ATTRIBUTE_EDITOR'] . '</b>';
 		}
 		?>
 	</div>
@@ -275,7 +275,7 @@ if ($traitID) {
 				if ($mode == 1) {
 				?>
 					<fieldset style="margin-top:25px">
-						<legend><b> <?php echo $LANG['Filter'] ?> </b></legend>
+						<legend><b> <?php echo $LANG['FILTER'] ?> </b></legend>
 						<form id="filterform" name="filterform" method="post" action="occurattributes.php" onsubmit="return verifyFilterForm(this)">
 							<div>
 								<select name="traitid">
@@ -287,14 +287,14 @@ if ($traitID) {
 											echo '<option value="' . $ID . '" ' . ($traitID == $ID ? 'SELECTED' : '') . '>' . $aName . '</option>';
 										}
 									} else {
-										echo '<option value="0">No attributes are available</option>';
+										echo '<option value="0">' . $LANG['NO_ATTRI_AVAILABLE'] . '</option>';
 									}
 									?>
 								</select>
 							</div>
 							<div>
 								<select name="localfilter" style="width:250px">
-									<option value=""> <?php echo $LANG['ALL_COUNTRIES_&_STATES'] ?> </option>
+									<option value=""> <?php echo $LANG['ALL_COUNTRIES_STATES'] ?> </option>
 									<option value="">-----------------------------</option>
 									<?php
 									$localArr = $attrManager->getLocalFilterOptions();
@@ -313,12 +313,13 @@ if ($traitID) {
 								<input id="panex1" name="panex" type="hidden" value="<?php echo $paneX; ?>" />
 								<input id="paney1" name="paney" type="hidden" value="<?php echo $paneY; ?>" />
 								<input id="imgres1" name="imgres" type="hidden" value="<?php echo $imgRes; ?>" />
-								<input id="filtersubmit" name="submitform" type="submit" value="Load Images" />
+								<button id="filtersubmit" name="submitform" type="submit" value="Load Images"> <?php echo $LANG['LOAD_IMAGES'] ?></button>
+
 								<span id="verify-span" style="display:none;font-weight:bold;color:green;"><?php echo $LANG['VERIFY_TAXONOMY'] ?> </span>
 								<span id="notvalid-span" style="display:none;font-weight:bold;color:red;"><?php echo $LANG['TAXON_NOT_VALID'] ?> </span>
 							</div>
 							<div style="margin:10px">
-								<?php if ($traitID) echo '<b>Target Specimens:</b> ' . $attrManager->getSpecimenCount(); ?>
+								<?php if ($traitID) echo '<b> ' . $LANG['TARGET_SPECIMEN'] . '</b> ' . $attrManager->getSpecimenCount(); ?>
 							</div>
 						</form>
 					</fieldset>
@@ -326,7 +327,7 @@ if ($traitID) {
 				} elseif ($mode == 2) {
 				?>
 					<fieldset style="margin-top:25px">
-						<legend><b><?php echo $LANG['Reviewer'] ?> </b></legend>
+						<legend><b><?php echo $LANG['REVIEWER'] ?> </b></legend>
 						<form id="reviewform" name="reviewform" method="post" action="occurattributes.php" onsubmit="return verifyFilterForm(this)">
 							<div>
 								<select name="traitid">
@@ -338,7 +339,7 @@ if ($traitID) {
 											echo '<option value="' . $ID . '" ' . ($traitID == $ID ? 'SELECTED' : '') . '>' . $aName . '</option>';
 										}
 									} else {
-										echo '<option value="0">No attributes are available</option>';
+										echo '<option value="0">' . $LANG['NO_ATTRI_AVAILABLE'] . '</option>';
 									}
 									?>
 								</select>
@@ -371,7 +372,7 @@ if ($traitID) {
 								<select name="reviewstatus">
 									<option value="0"> <?php echo $LANG['NOT_REVIEWED'] ?> </option>
 									<option value="5" <?php echo ($reviewStatus == 5 ? 'SELECTED' : ''); ?>> <?php echo $LANG['EXPERT_NEEDED'] ?> </option>
-									<option value="10" <?php echo ($reviewStatus == 10 ? 'SELECTED' : ''); ?>><?php echo $LANG['Reviewed'] ?> </option>
+									<option value="10" <?php echo ($reviewStatus == 10 ? 'SELECTED' : ''); ?>> <?php echo $LANG['REVIEWED'] ?> </option>
 								</select>
 							</div>
 							<div>
@@ -388,7 +389,7 @@ if ($traitID) {
 							</div>
 							<div>
 								<select name="localfilter" style="width:250px;">
-									<option value=""> <?php echo $LANG['ALL_COUNTRIES_&_STATES'] ?> </option>
+									<option value=""> <?php echo $LANG['ALL_COUNTRIES_STATES'] ?> </option>
 									<option value="">-----------------------------</option>
 									<?php
 									$localArr = $attrManager->getLocalFilterOptions();
@@ -464,7 +465,7 @@ if ($traitID) {
 										?>
 											<option value="0"> <?php echo $LANG['NOT_REVIEWED'] ?> </option>
 											<option value="5"> <?php echo $LANG['EXPERT_NEEDED'] ?> </option>
-											<option value="10" selected> <?php echo $LANG['Reviewed'] ?> </option>
+											<option value="10" selected> <?php echo $LANG['REVIEWED'] ?> </option>
 										<?php
 										} else {
 										?>
@@ -514,7 +515,7 @@ if ($traitID) {
 						if ($occid) {
 							if (!$catNum) $catNum = 'Specimen Details';
 							echo '<span style="margin-left:50px;">';
-							echo '<a href="../individual/index.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Specimen Details">' . htmlspecialchars($catNum, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+							echo '<a href="../individual/index.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title= " ' . $LANG['SPECIMEN_DETAILS'] . ' ">' . htmlspecialchars($catNum, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 							echo '</span>';
 						}
 						$imgTotal = count($imgArr);
@@ -533,12 +534,12 @@ if ($traitID) {
 				} else {
 					if ($submitForm) {
 					?>
-						<div style="margin:50px;font-size:120%;font-weight: bold"> <?php echo $LANG['No_Images_Matching_Criteria'] ?> </div>
+						<div style="margin:50px;font-size:120%;font-weight: bold"> <?php echo $LANG['NO_IMAGES_MATCHING_CRITERIA'] ?> </div>
 					<?php
 					} else {
 					?>
 						<div style="margin-top:50px;font-size:120%;font-weight: bold">
-							<?php echo $LANG['Select_Unscored_Image_Trait'] ?>
+							<?php echo $LANG['SELECT_UNSCORED_IMAGE_TRAIT'] ?>
 						</div>
 						<div style="margin-top:15px;">
 							<?php echo $LANG['TRAIT_TOOL_EXPLAIN'] ?>
@@ -551,7 +552,7 @@ if ($traitID) {
 			</div>
 		<?php
 		} else {
-			echo '<div><b>ERROR: collection identifier is not set</b></div>';
+			echo '<div><b>' . $LANG['ERROR_CONNECTION_IDENTIFIER'] . '</b></div>';
 		}
 		?>
 	</div>

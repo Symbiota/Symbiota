@@ -6,21 +6,31 @@ Translated by: Google Translation
 Date Translated: 01/31/2024
 ------------------
 */
-
-$LANG['OCC_ATTRIBUTE_BATCH_EDIT'] =  'Editor por lotes de atributos de ocurrencia';
-$LANG['Home'] = 'Inicio';
+$LANG['OCC_ATTRIBUTE_BATCH_EDIT'] = 'Editor por lotes de atributos de ocurrencia';
+$LANG['HOME'] = 'Inicio';
 $LANG['COLLECTION_MANAGEMENT'] = 'Gestión de colecciones';
-$LANG['Filter'] = 'Filtro';
+$LANG['FILTER'] = 'Filtro';
 $LANG['SELECT_TRAIT_REQ'] = 'Seleccionar rasgo (obligatorio)';
-$LANG['ALL_COUNTRIES_&_STATES'] = 'Todos los condados y todos los estados';
+$LANG['ALL_COUNTRIES_STATES'] = 'Todos los condados y todos los estados';
 $LANG['VERIFY_TAXONOMY'] = 'verificando taxonomía...';
 $LANG['TAXON_NOT_VALID'] = 'taxón no válido...';
-$LANG['Reviewer'] = 'Revisor';
+
+$LANG['REVIEW'] = 'revisión';
+
+$LANG['REVIEWER'] = 'Revisor';
+$LANG['ATTRIBUTE_REVIEWER'] = 'Revisor de atributos';
+
+$LANG['EDIT'] = 'editar';
+
+$LANG['ATTRIBUTE_EDITOR'] = 'Editor de atributos';
 $LANG['ALL_EDITORS'] = 'Todos los editores';
 $LANG['ALL_DATES'] = 'Todas las fechas';
+$LANG['NO_ATTRI_AVAILABLE'] = 'No hay atributos disponibles';
+
+$LANG['LOAD_IMAGES'] = 'Cargar imágenes';
 
 $LANG['EXPERT_NEEDED'] = 'Se necesita experto';
-$LANG['Reviewed'] = 'Revisado';
+$LANG['REVIEWED'] = 'Revisado';
 $LANG['ALL_SOURCE_TYPE'] = 'Todos los tipos de fuentes';
 $LANG['GET_IMAGES'] = 'Obtener imágenes';
 $LANG['NOTES'] = 'Notas:';
@@ -31,9 +41,9 @@ $LANG['SET_STATUS_SAVE'] = 'Establecer estado y guardar';
 $LANG['SAVE_NEXT'] = 'Guardar y Siguiente';
 $LANG['MED_RES'] = 'Res. Médica';
 $LANG['HIGH_RES'] = 'Alta resolución';
-$LANG['No_Images_Matching_Criteria'] = 'No hay imágenes disponibles que coincidan con los criterios de búsqueda';
+$LANG['NO_IMAGES_MATCHING_CRITERIA'] = 'No hay imágenes disponibles que coincidan con los criterios de búsqueda';
 
-$LANG['Select_Unscored_Image_Trait'] = 'Seleccione un rasgo para mostrar imágenes que aún no han sido calificadas';
+$LANG['SELECT_UNSCORED_IMAGE_TRAIT'] = 'Seleccione un rasgo para mostrar imágenes que aún no han sido calificadas';
 
 $LANG['TRAIT_TOOL_EXPLAIN'] = 'Este módulo permite codificar rasgos de ocurrencia a partir de la visualización de imágenes del espécimen o de la observación.
 Al enviar el filtro a la derecha, las imágenes se mostrarán aleatoriamente para las ocurrencias que aún no han sido codificadas para el rasgo seleccionado.
@@ -42,5 +52,13 @@ Los rasgos están incluidos dentro de a';
 
 $LANG['SKIP_SPECIMEN'] = 'Omitir muestra';
 
+$LANG['SPECIMEN_DETAILS'] = 'Detalles de la muestra';
+
 $LANG['MEASUREMENT_OR_FACT'] = 'Medición o hecho';
 $LANG['DWC_EXTEN_FILE'] = 'Archivo de extensión DwC.';
+
+$LANG['OCC_TRAIT_MUST_SELECTED'] = 'Se debe seleccionar un rasgo de ocurrencia';
+$LANG['TAXON_FILTER_NOT_SYNC_THES'] = 'Filtro de taxón no sincronizado con el diccionario de sinónimos';
+$LANG['ERROR_CONNECTION_IDENTIFIER'] = 'ERROR: el identificador de colección no está establecido';
+
+$LANG['TARGET_SPECIMEN'] = 'Especímenes objetivo:';
