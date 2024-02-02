@@ -300,7 +300,7 @@ if($action != "Update Statistics"){
 				}
 
 				function toggleFamilyDist(){
-					// toggleById("famdistbox");
+					toggleById("famdistbox");
 					toggleById("showfamdist");
 					toggleById("hidefamdist");
 
@@ -328,18 +328,14 @@ if($action != "Update Statistics"){
 				}
 
 				function toggleById(target){
-					console.log('deleteMe got here a1 and target is: ');
-					console.log(target);
 					if(target != null){
 						var obj = document.getElementById(target);
-						console.log('deleteMe got here a2 and obj is: ');
-						console.log(obj);
-						if(obj.style.display=="none" || obj.style.display==""){
-							console.log('deleteMe got here a3 and target was missing or displaying as none');
+						var style = window.getComputedStyle(obj);
+						
+						if(style.display=="none" || style.display==""){
 							obj.style.display="block";
 						}
 						else {
-							console.log('deleteMe got here a4 and target was displaying. About to make it not display');
 							obj.style.display="none";
 						}
 					}
@@ -916,20 +912,20 @@ if($action != "Update Statistics"){
 								<fieldset id="famdistbox" class="famdistbox">
 									<legend><b><?php echo (isset($LANG['FAM_DIST'])?$LANG['FAM_DIST']:'Family Distribution'); ?></b></legend>
 									<section class="gridlike-form">
-										<section class="gridlike-form-row">
-											<div class="cntr-text">
+										<section class="gridlike-form-row bottom-breathing-room-relative">
+											<div class="cntr-text gridlike-form-row-allign">
 											<?php echo (isset($LANG['FAMILY'])?$LANG['FAMILY']:'Family'); ?>
 										</div>
-											<div class="cntr-text">
+											<div class="cntr-text gridlike-form-row-allign">
 											<?php echo (isset($LANG['SPECIMENS'])?$LANG['SPECIMENS']:'Specimens'); ?>
 										</div>
-											<div class="cntr-text">
+											<div class="cntr-text gridlike-form-row-allign">
 											<?php echo (isset($LANG['G_GEOREFERENCED'])?$LANG['G_GEOREFERENCED']:'Georeferenced'); ?>
 										</div>
-											<div class="cntr-text">
+											<div class="cntr-text gridlike-form-row-allign">
 											<?php echo (isset($LANG['SPECIES_ID'])?$LANG['SPECIES_ID']:'Species ID'); ?>
 										</div>
-											<div class="cntr-text">
+											<div class="cntr-text gridlike-form-row-allign">
 												<?php echo (isset($LANG['G_GEOREFERENCED'])?$LANG['G_GEOREFERENCED']:'Georeferenced'); ?>
 												<br />
 												<?php echo (isset($LANG['AND'])?$LANG['AND']:'and'); ?>
@@ -941,8 +937,8 @@ if($action != "Update Statistics"){
 										$total = 0;
 										foreach($familyArr as $name => $data){
 											echo '<section class="gridlike-form-row">';
-											echo '<div>'.wordwrap($name,52,"<br />\n",true).'</div>';
-											echo '<div>';
+											echo '<div class="gridlike-form-row-allign">'.wordwrap($name,52,"<br />\n",true).'</div>';
+											echo '<div class="gridlike-form-row-allign">';
 											if(count($resultsTemp) == 1){
 												echo '<a href="../list.php?db[]=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&reset=1&taxa=' . htmlspecialchars($name, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 											}
@@ -951,9 +947,9 @@ if($action != "Update Statistics"){
 												echo '</a>';
 											}
 											echo '</div>';
-											echo '<div>'.($data['GeorefSpecimensPerFamily']?round(100*($data['GeorefSpecimensPerFamily']/$data['SpecimensPerFamily'])):0).'%</div>';
-											echo '<div>'.($data['IDSpecimensPerFamily']?round(100*($data['IDSpecimensPerFamily']/$data['SpecimensPerFamily'])):0).'%</div>';
-											echo '<div>'.($data['IDGeorefSpecimensPerFamily']?round(100*($data['IDGeorefSpecimensPerFamily']/$data['SpecimensPerFamily'])):0).'%</div>';
+											echo '<div class="gridlike-form-row-allign">'.($data['GeorefSpecimensPerFamily']?round(100*($data['GeorefSpecimensPerFamily']/$data['SpecimensPerFamily'])):0).'%</div>';
+											echo '<div class="gridlike-form-row-allign">'.($data['IDSpecimensPerFamily']?round(100*($data['IDSpecimensPerFamily']/$data['SpecimensPerFamily'])):0).'%</div>';
+											echo '<div class="gridlike-form-row-allign">'.($data['IDGeorefSpecimensPerFamily']?round(100*($data['IDGeorefSpecimensPerFamily']/$data['SpecimensPerFamily'])):0).'%</div>';
 											echo '</section>';
 											$total = $total + $data['SpecimensPerFamily'];
 										}
@@ -967,19 +963,33 @@ if($action != "Update Statistics"){
 								<fieldset id="geodistbox" class="geodistbox">
 									<legend><b><?php echo (isset($LANG['GEO_DIST'])?$LANG['GEO_DIST']:'Geographic Distribution'); ?></b></legend>
 									<section class="gridlike-form">
-										<section class="gridlike-form-row">
-											<th class="cntr-text"><?php echo (isset($LANG['COUNTRY'])?$LANG['COUNTRY']:'Country'); ?></th>
-											<th class="cntr-text"><?php echo (isset($LANG['SPECIMENS'])?$LANG['SPECIMENS']:'Specimens'); ?></th>
-											<th class="cntr-text"><?php echo (isset($LANG['G_GEOREFERENCED'])?$LANG['G_GEOREFERENCED']:'Georeferenced'); ?></th>
-											<th class="cntr-text"><?php echo (isset($LANG['SPECIES_ID'])?$LANG['SPECIES_ID']:'Species ID'); ?></th>
-											<th class="cntr-text"><?php echo (isset($LANG['G_GEOREFERENCED'])?$LANG['G_GEOREFERENCED']:'Georeferenced'); ?><br /><?php echo (isset($LANG['AND'])?$LANG['AND']:'and'); ?><br /><?php echo (isset($LANG['SPECIES_ID'])?$LANG['SPECIES_ID']:'Species ID'); ?></th>
+										<section class="gridlike-form-row bottom-breathing-room-relative">
+											<div class="cntr-text gridlike-form-row-allign">
+											<?php echo (isset($LANG['FAMILY'])?$LANG['FAMILY']:'Family'); ?>
+										</div>
+											<div class="cntr-text gridlike-form-row-allign">
+											<?php echo (isset($LANG['SPECIMENS'])?$LANG['SPECIMENS']:'Specimens'); ?>
+										</div>
+											<div class="cntr-text gridlike-form-row-allign">
+											<?php echo (isset($LANG['G_GEOREFERENCED'])?$LANG['G_GEOREFERENCED']:'Georeferenced'); ?>
+										</div>
+											<div class="cntr-text gridlike-form-row-allign">
+											<?php echo (isset($LANG['SPECIES_ID'])?$LANG['SPECIES_ID']:'Species ID'); ?>
+										</div>
+											<div class="cntr-text gridlike-form-row-allign">
+												<?php echo (isset($LANG['G_GEOREFERENCED'])?$LANG['G_GEOREFERENCED']:'Georeferenced'); ?>
+												<br />
+												<?php echo (isset($LANG['AND'])?$LANG['AND']:'and'); ?>
+												<br />
+												<?php echo (isset($LANG['SPECIES_ID'])?$LANG['SPECIES_ID']:'Species ID'); ?>
+											</div>
 										</section>
 										<?php
 										$total = 0;
 										foreach($countryArr as $name => $data){
 											echo '<section class="gridlike-form-row">';
-											echo '<div>'.wordwrap($name,52,"<br />\n",true).'</div>';
-											echo '<div>';
+											echo '<div class="gridlike-form-row-allign">'.wordwrap($name,52,"<br />\n",true).'</div>';
+											echo '<div class="gridlike-form-row-allign">';
 											if(count($resultsTemp) == 1){
 												echo '<a href="../list.php?db[]=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&reset=1&country=' . htmlspecialchars($name, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 											}
@@ -988,9 +998,9 @@ if($action != "Update Statistics"){
 												echo '</a>';
 											}
 											echo '</div>';
-											echo '<div>'.($data['GeorefSpecimensPerCountry']?round(100*($data['GeorefSpecimensPerCountry']/$data['CountryCount'])):0).'%</div>';
-											echo '<div>'.($data['IDSpecimensPerCountry']?round(100*($data['IDSpecimensPerCountry']/$data['CountryCount'])):0).'%</div>';
-											echo '<div>'.($data['IDGeorefSpecimensPerCountry']?round(100*($data['IDGeorefSpecimensPerCountry']/$data['CountryCount'])):0).'%</div>';
+											echo '<div class="gridlike-form-row-allign">'.($data['GeorefSpecimensPerCountry']?round(100*($data['GeorefSpecimensPerCountry']/$data['CountryCount'])):0).'%</div>';
+											echo '<div class="gridlike-form-row-allign">'.($data['IDSpecimensPerCountry']?round(100*($data['IDSpecimensPerCountry']/$data['CountryCount'])):0).'%</div>';
+											echo '<div class="gridlike-form-row-allign">'.($data['IDGeorefSpecimensPerCountry']?round(100*($data['IDGeorefSpecimensPerCountry']/$data['CountryCount'])):0).'%</div>';
 											echo '</section>';
 											$total = $total + $data['CountryCount'];
 										}

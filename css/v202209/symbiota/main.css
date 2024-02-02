@@ -372,6 +372,11 @@ hr {
   gap: 10px;
 }
 
+.gridlike-form-row-allign{
+  flex: 1;
+  text-align: center;
+}
+
 .gridlike-form-row-label {
   width: 100px;
 }
