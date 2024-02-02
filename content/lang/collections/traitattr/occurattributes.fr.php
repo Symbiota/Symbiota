@@ -1,9 +1,9 @@
 <?php
 /*
 ------------------
-Language: French
-Translated by: Google Translation
-Date Translated: 01/31/2024
+Language: Français (French)
+Translated by: Google Translate
+Date Translated: 2024/01/31
 ------------------
 */
 $LANG['OCC_ATTRIBUTE_BATCH_EDIT'] = 'Éditeur de lots d\'attributs d\'occurrence';
@@ -36,7 +36,7 @@ $LANG['NOT_REVIEWED'] = 'Non révisé';
 $LANG['SET_STATUS_SAVE'] = 'Définir le statut et enregistrer';
 $LANG['SAVE_NEXT'] = 'Enregistrer et suivant';
 $LANG['MED_RES'] = 'Rés. Med.';
-$LANG['HIGH_RES'] = 'Haute résolution';
+$LANG['HIGH_RES'] = 'Haute Rés.';
 $LANG['NO_IMAGES_MATCHING_CRITERIA'] = 'Aucune image disponible correspondant aux critères de recherche';
 
 $LANG['SELECT_UNSCORED_IMAGE_TRAIT'] = 'Sélectionnez un trait pour afficher les images qui n\'ont pas encore été notées';
@@ -58,3 +58,6 @@ $LANG['TAXON_FILTER_NOT_SYNC_THES'] = 'Filtre taxon non synchronisé avec le th�
 $LANG['ERROR_CONNECTION_IDENTIFIER'] = 'ERREUR : l\'identifiant de collection n\'est pas défini';
 
 $LANG['TARGET_SPECIMEN'] = 'Spécimens cibles:';
+
+$LANG['MED_RESOLUTION_IMAGE_NOT_AVAI'] = 'Image moyenne résolution non disponible';
+$LANG['LARGE_RESOLUTION_IMAGE_NOT_AVAI'] = 'Image en grande résolution non disponible';

@@ -57,3 +57,6 @@ $LANG['TAXON_FILTER_NOT_SYNC_THES'] = 'Taxon filter not syncronized with thesaur
 $LANG['ERROR_CONNECTION_IDENTIFIER'] = 'ERROR: collection identifier is not set';
 
 $LANG['TARGET_SPECIMEN'] = 'Target Specimens:';
+
+$LANG['MED_RESOLUTION_IMAGE_NOT_AVAI'] = 'Medium resolution image not available';
+$LANG['LARGE_RESOLUTION_IMAGE_NOT_AVAI'] = 'Large resolution image not available';

@@ -2,8 +2,8 @@
 /*
 ------------------
 Language: Espanol
-Translated by: Google Translation
-Date Translated: 01/31/2024
+Translated by: Google Translate
+Date Translated: 2024/01/31
 ------------------
 */
 $LANG['OCC_ATTRIBUTE_BATCH_EDIT'] = 'Editor por lotes de atributos de ocurrencia';
@@ -40,7 +40,7 @@ $LANG['NOT_REVIEWED'] = 'No revisado';
 $LANG['SET_STATUS_SAVE'] = 'Establecer estado y guardar';
 $LANG['SAVE_NEXT'] = 'Guardar y Siguiente';
 $LANG['MED_RES'] = 'Res. Médica';
-$LANG['HIGH_RES'] = 'Alta resolución';
+$LANG['HIGH_RES'] = 'Alta Res.';
 $LANG['NO_IMAGES_MATCHING_CRITERIA'] = 'No hay imágenes disponibles que coincidan con los criterios de búsqueda';
 
 $LANG['SELECT_UNSCORED_IMAGE_TRAIT'] = 'Seleccione un rasgo para mostrar imágenes que aún no han sido calificadas';
@@ -62,3 +62,6 @@ $LANG['TAXON_FILTER_NOT_SYNC_THES'] = 'Filtro de taxón no sincronizado con el d
 $LANG['ERROR_CONNECTION_IDENTIFIER'] = 'ERROR: el identificador de colección no está establecido';
 
 $LANG['TARGET_SPECIMEN'] = 'Especímenes objetivo:';
+
+$LANG['MED_RESOLUTION_IMAGE_NOT_AVAI'] = 'Imagen de resolución media no disponible';
+$LANG['LARGE_RESOLUTION_IMAGE_NOT_AVAI'] = 'Imagen de gran resolución no disponible';

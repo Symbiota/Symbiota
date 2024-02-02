@@ -132,7 +132,7 @@ if ($traitID) {
 					document.getElementById("imgresmed").checked = true;
 					var imgResLgRadio = document.getElementById("imgreslg");
 					imgResLgRadio.disabled = true;
-					imgResLgRadio.title = "Large resolution image not available";
+					imgResLgRadio.title = " <?php echo $LANG['LARGE_RESOLUTION_IMAGE_NOT_AVAI'] ?> ";
 				}
 			}
 			if (imgArr[activeImgIndex] != null) {
@@ -143,7 +143,7 @@ if ($traitID) {
 					document.getElementById("imgreslg").checked = true;
 					var imgResMedRadio = document.getElementById("imgresmed");
 					imgResMedRadio.disabled = true;
-					imgResMedRadio.title = "Medium resolution image not available";
+					imgResMedRadio.title = "<?php echo $LANG['MED_RESOLUTION_IMAGE_NOT_AVAI'] ?>";
 				}
 			}
 		}
