@@ -25,7 +25,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 ?>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Species Checklist Loader</title>
+	<title><?php echo $DEFAULT_TITLE . " " . $LANG['SPEC_CHECKLOAD']?> </title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -38,7 +38,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 			}
 			testStr = testStr.toLowerCase();
 			if(testStr.indexOf(".csv") == -1 && testStr.indexOf(".CSV") == -1){
-				alert("<?php echo $LANG['DOCUMENT']; ?>"+document.getElementById("uploadfile").value+" "+"<?php echo $LANG['MUST_BE_CSV']; ?>");
+				alert("<?php echo $LANG['DOCUMENT'] . " "; ?>" + document.getElementById("uploadfile").value + "<?php echo " " . $LANG['MUST_BE_CSV']; ?>");
 				return false;
 			}
 			return true;
@@ -56,10 +56,10 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href='../../index.php'>Home</a> &gt;&gt;
+		<a href='../../index.php'> <?php echo $LANG['HOME']; ?> </a> &gt;&gt;
 		<?php
 		if($pid) echo '<a href="'.$CLIENT_ROOT.'/projects/index.php?pid='.$pid.'">';
-		echo '<a href="../checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">' . $LANG["RETURN_CHECKLIST"] . '</a> &gt;&gt; ';
+		echo '<a href="../checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">' . $LANG['RETURN_CHECKLIST'] . '</a> &gt;&gt; ';
 		?>
 		<a href="checklistloader.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><b><?php echo $LANG['CHECK_LOADER']; ?></b></a>
 	</div>
@@ -79,7 +79,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 					?>
 					<div style='margin:10px;'>
 						<ul>
-							<li>Loading checklist...</li>
+							<li><?php $LANG['LOAD_CHECKL'] ?></li>
 							<?php
 							$cnt = $clLoaderManager->uploadCsvList($thesId);
 							$statusStr = $clLoaderManager->getErrorMessage();
@@ -94,10 +94,10 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 							$errorArr = $clLoaderManager->getWarningArr();
 							?>
 							<li> <?php echo $LANG['UPLOAD_STATUS']; ?></li>
-							<li style="margin-left:10px;"><?php echo $LANG['TAXA_LOADED']; ?> <?php echo $cnt; ?></li>
-							<li style="margin-left:10px;"><?php echo $LANG['PROBLEM_TAXA']; ?> <?php echo $probCnt.($probCnt?' (see below)':''); ?></li>
-							<li style="margin-left:10px;"><?php echo $LANG['GENERAL_ERRORS']; ?> <?php echo count($errorArr); ?></li>
-							<li style="margin-left:10px;"><?php echo $LANG['UPLOAD_COMPLETE']; ?> <a href="../checklist.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>">Proceed to Checklists</a></li>
+							<li style="margin-left:10px;"><?php echo $LANG['TAXA_LOADED'] . ' ' . $cnt; ?></li>
+							<li style="margin-left:10px;"><?php echo $LANG['PROBLEM_TAXA'] . ' ' . $probCnt.($probCnt?' (see below)':''); ?></li>
+							<li style="margin-left:10px;"><?php echo $LANG['GENERAL_ERRORS'] . ' ' .  count($errorArr); ?></li>
+							<li style="margin-left:10px;"><?php echo $LANG['UPLOAD_COMPLETE']; ?> <a href="../checklist.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo $LANG['PROCEED_CHECKL'] ?></a></li>
 						</ul>
 						<?php
 						if($probCnt){
@@ -109,8 +109,8 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 						if($errorArr){
 							?>
 							<fieldset style="padding:20px;">
-								<legend><b>General Errors</b></legend>
-								<a href="#" onclick="displayErrors(this);return false;"><b>Display <?php echo htmlspecialchars(count($errorArr), HTML_SPECIAL_CHARS_FLAGS); ?> <?php echo $LANG['GENERAL_ERRORS']; ?> </b></a>
+								<legend><b><?php echo $LANG['GENERAL_ERRORS']; ?></b></legend>
+								<a href="#" onclick="displayErrors(this);return false;"><b> <?php echo $LANG['DISPLAY'] . " " . htmlspecialchars(count($errorArr), HTML_SPECIAL_CHARS_FLAGS) . " " . $LANG['ERRORS']; ?> </b></a>
 								<div id="errordiv" style="display:none">
 									<ol style="margin-left:15px;">
 										<?php

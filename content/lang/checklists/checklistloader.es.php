@@ -2,9 +2,12 @@
 /*
 ------------------
 Language: Spanish
+Translated by: Google Translate
+Date Translated: 2024-01-26
 ------------------
 */
 
+$LANG['SPEC_CHECKLOAD'] = 'Cargador de listas de verificación de especies';
 $LANG['SELECT_FILE'] = 'Seleccione un archivo para cargar';
 $LANG['DOCUMENT'] = 'Documento ';
 $LANG['MUST_BE_CSV'] = 'debe ser un archivo CSV (con extensión .csv) ';
@@ -12,13 +15,16 @@ $LANG['RETURN_CHECKLIST'] = 'Volver a la lista de verificación';
 $LANG['CHECK_LOADER'] = 'Cargador de listas de verificación';
 $LANG['RETURN_LOADER'] = 'Volver al cargador';
 $LANG['INPUT_MATCH'] = 'y asegúrese de que el archivo de entrada coincida con los requisitos de las instrucciones';
+$LANG['LOAD_CHECKL'] = 'Cargando lista de verificación...';
 $LANG['UPLOAD_STATUS'] = 'Estado de carga...';
 $LANG['TAXA_LOADED'] = 'Taxones cargados exitosamente:';
 $LANG['PROBLEM_TAXA'] = 'Taxones problemáticos:';
 $LANG['GENERAL_ERRORS'] = 'Errores generales:';
+$LANG['PROCEED_CHECKL'] = 'Continuar con las listas de verificación';
 $LANG['UPLOAD_COMPLETE'] = '¡Carga completa!';
-$LANG['TAXA_RESOLUTION'] = 'Resolución de taxones problemáticos';
-$LANG['GENERAL_ERRORS'] = 'errores generales';
+$LANG['PROBLEM_TAXA_RESOLUTION'] = 'Resolución de taxones problemáticos';
+$LANG['DISPLAY'] = 'Mostrar';
+$LANG['ERRORS'] = 'errores generales';
 $LANG['UPLOAD_FORM'] = 'Formulario de carga de lista de verificación';
 $LANG['CHECKLIST_FILE'] = 'Archivo de lista de verificación:';
 $LANG['TAXA_RESOLUTION'] = 'Resolución taxonómica:';

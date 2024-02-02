@@ -2,9 +2,12 @@
 /*
 ------------------
 Language: French
+Translated by: Google Translate
+Date Translated: 2024-01-26
 ------------------
 */
 
+$LANG['SPEC_CHECKLOAD'] = 'Chargeur de liste de contrôle des espèces';
 $LANG['SELECT_FILE'] = 'Veuillez sélectionner un fichier à télécharger';
 $LANG['DOCUMENT'] = 'Document';
 $LANG['MUST_BE_CSV'] = 'doit être un fichier CSV (avec une extension .csv) ';
@@ -12,15 +15,18 @@ $LANG['RETURN_CHECKLIST'] = 'Retour à la liste de contrôle';
 $LANG['CHECK_LOADER'] = 'Chargeur de listes de contrôle';
 $LANG['RETURN_LOADER'] = 'Retour au chargeur';
 $LANG['INPUT_MATCH'] = 'et assurez-vous que le fichier d\'entrée correspond aux exigences des instructions';
+$LANG['LOAD_CHECKL'] = 'Chargement de la liste de contrôle...';
 $LANG['UPLOAD_STATUS'] = 'Statut du téléchargement...';
 $LANG['TAXA_LOADED'] = 'Taxa chargé avec succès :';
 $LANG['PROBLEM_TAXA'] = 'Tataxons problématiques :';
 $LANG['GENERAL_ERRORS'] = 'Erreurs générales :';
+$LANG['PROCEED_CHECKL'] = 'Passer aux listes de contrôle';
 $LANG['UPLOAD_COMPLETE'] = 'Téléchargement terminé !';
-$LANG['TAXA_RESOLUTION'] = 'Résolution des taxons problématiques';
-$LANG['GENERAL_ERRORS'] = 'erreurs générales';
+$LANG['PROBLEM_TAXA_RESOLUTION'] = 'Résolution problématique des taxons';
+$LANG['DISPLAY'] = 'Afficher';
+$LANG['ERRORS'] = 'erreurs générales';
 $LANG['UPLOAD_FORM'] = 'Formulaire de téléchargement de liste de contrôle';
-$LANG['CHECKLIST_FILE'] = 'Fichier de liste de contrôle :';
+$LANG['CHECKLIST_FILE'] = 'Fichier de liste de contrôle:';
 $LANG['TAXA_RESOLUTION'] = 'Résolution taxonomique :';
 $LANG['LEAVE_TAXA'] = 'Laisser la taxonomie telle quelle';
 $LANG['FILE_DESCR'] = 'Le fichier d\'entrée doit être un fichier texte CSV contenant les colonnes suivantes.

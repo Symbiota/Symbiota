@@ -2,9 +2,12 @@
 /*
 ------------------
 Language: English
+Translated by: Google Translate
+Date Translated: 2024-01-26
 ------------------
 */
 
+$LANG['SPEC_CHECKLOAD'] = 'Species Checklist Loader'; 
 $LANG['SELECT_FILE'] = 'Please select a file to upload';
 $LANG['DOCUMENT'] = 'Document ';
 $LANG['MUST_BE_CSV'] = 'must be a CSV file (with a .csv extension) ';
@@ -12,13 +15,16 @@ $LANG['RETURN_CHECKLIST'] = 'Return to Checklist';
 $LANG['CHECK_LOADER'] = 'Checklists Loader';
 $LANG['RETURN_LOADER'] = 'Return to Loader';
 $LANG['INPUT_MATCH'] = 'and make sure the input file matches requirements within instructions';
+$LANG['LOAD_CHECKL'] = 'Loading checklist...';
 $LANG['UPLOAD_STATUS'] = 'Upload status...';
 $LANG['TAXA_LOADED'] = 'Taxa successfully loaded:';
 $LANG['PROBLEM_TAXA'] = 'Problematic Taxa:';
 $LANG['GENERAL_ERRORS'] = 'General errors:';
+$LANG['PROCEED_CHECKL'] = 'Proceed to Checklists';
 $LANG['UPLOAD_COMPLETE'] = 'Upload Complete!';
-$LANG['TAXA_RESOLUTION'] = 'Problematic Taxa Resolution';
-$LANG['GENERAL_ERRORS'] = 'general errors';
+$LANG['PROBLEM_TAXA_RESOLUTION'] = 'Problematic Taxa Resolution';
+$LANG['DISPLAY'] = 'Display';
+$LANG['ERRORS'] = 'general errors';
 $LANG['UPLOAD_FORM'] = 'Checklist Upload Form';
 $LANG['CHECKLIST_FILE'] = 'Checklist File:';
 $LANG['TAXA_RESOLUTION'] = 'Taxonomic Resolution:';
