@@ -132,7 +132,7 @@ if ($traitID) {
 					document.getElementById("imgresmed").checked = true;
 					var imgResLgRadio = document.getElementById("imgreslg");
 					imgResLgRadio.disabled = true;
-					imgResLgRadio.title = " <?php echo $LANG['LARGE_RESOLUTION_IMAGE_NOT_AVAI'] ?> ";
+					imgResLgRadio.title = "<?php echo $LANG['LARGE_RESOLUTION_IMAGE_NOT_AVAI']?>";
 				}
 			}
 			if (imgArr[activeImgIndex] != null) {
@@ -194,11 +194,11 @@ if ($traitID) {
 		function verifyFilterForm(f) {
 			if (f.taxonfilter.value == "All Taxa") f.taxonfilter.value = '';
 			if (f.traitid.value == "") {
-				alert(" <?php echo $LANG['OCC_TRAIT_MUST_SELECTED'] ?> ");
+				alert("<?php echo $LANG['OCC_TRAIT_MUST_SELECTED'] ?>");
 				return false;
 			}
 			if (f.taxonfilter.value != "" && f.tidfilter.value == "") {
-				alert("<?php echo $LANG['TAXON_FILTER_NOT_SYNC_THES'] ?> ");
+				alert("<?php echo $LANG['TAXON_FILTER_NOT_SYNC_THES'] ?>");
 				return false;
 			}
 			return true;

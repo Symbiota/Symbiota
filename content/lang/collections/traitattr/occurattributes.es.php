@@ -1,7 +1,7 @@
 <?php
 /*
 ------------------
-Language: Espanol
+Language: Español (Spanish)
 Translated by: Google Translate
 Date Translated: 2024/01/31
 ------------------
