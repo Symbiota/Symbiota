@@ -799,7 +799,6 @@ if($action != "Update Statistics"){
 											</div>
 										</form>
 									</fieldset>
-									<div>
 										<fieldset class="extra-stats bottom-breathing-room-relative">
 											<form name="famstatscsv" id="famstatscsv" action="collstatscsv.php" method="post" onsubmit="">
 												<div class='legend'>
@@ -872,37 +871,36 @@ if($action != "Update Statistics"){
                                             }
                                         }
                                         ?>
-									</div>
 									<div class="clr"> </div>
 								</div>
 
 								<fieldset id="statspercollbox" class="statspercollbox">
 									<legend><b><?php echo (isset($LANG['STATS_PER_COL'])?$LANG['STATS_PER_COL']:'Statistics per Collection'); ?></b></legend>
 									<section class="gridlike-form">
-										<section class="gridlike-form-row">
-											<div class="cntr-text"><?php echo (isset($LANG['COLLECTION'])?$LANG['COLLECTION']:'Collection'); ?></div>
-											<div class="cntr-text"><?php echo (isset($LANG['OCCS'])?$LANG['OCCS']:'Occurrences'); ?></div>
-											<div class="cntr-text"><?php echo (isset($LANG['G_GEOREFERENCED'])?$LANG['G_GEOREFERENCED']:'Georeferenced'); ?></div>
-											<div class="cntr-text"><?php echo (isset($LANG['IMAGED'])?$LANG['IMAGED']:'Imaged'); ?></div>
-											<div class="cntr-text"><?php echo (isset($LANG['SPECIES_ID'])?$LANG['SPECIES_ID']:'Species ID'); ?></div>
-											<div class="cntr-text"><?php echo (isset($LANG['F_FAMILIES'])?$LANG['F_FAMILIES']:'Families'); ?></div>
-											<div class="cntr-text"><?php echo (isset($LANG['G_GENERA'])?$LANG['G_GENERA']:'Genera'); ?></div>
-											<div class="cntr-text"><?php echo (isset($LANG['S_SPECIES'])?$LANG['S_SPECIES']:'Species'); ?></div>
-											<div class="cntr-text"><?php echo (isset($LANG['T_TOTAL_TAXA'])?$LANG['T_TOTAL_TAXA']:'Total Taxa'); ?></div>
+										<section class="gridlike-form-row bottom-breathing-room-relative">
+											<div class="cntr-text gridlike-form-row-allign"><?php echo (isset($LANG['COLLECTION'])?$LANG['COLLECTION']:'Collection'); ?></div>
+											<div class="cntr-text gridlike-form-row-allign"><?php echo (isset($LANG['OCCS'])?$LANG['OCCS']:'Occurrences'); ?></div>
+											<div class="cntr-text gridlike-form-row-allign"><?php echo (isset($LANG['G_GEOREFERENCED'])?$LANG['G_GEOREFERENCED']:'Georeferenced'); ?></div>
+											<div class="cntr-text gridlike-form-row-allign"><?php echo (isset($LANG['IMAGED'])?$LANG['IMAGED']:'Imaged'); ?></div>
+											<div class="cntr-text gridlike-form-row-allign"><?php echo (isset($LANG['SPECIES_ID'])?$LANG['SPECIES_ID']:'Species ID'); ?></div>
+											<div class="cntr-text gridlike-form-row-allign"><?php echo (isset($LANG['F_FAMILIES'])?$LANG['F_FAMILIES']:'Families'); ?></div>
+											<div class="cntr-text gridlike-form-row-allign"><?php echo (isset($LANG['G_GENERA'])?$LANG['G_GENERA']:'Genera'); ?></div>
+											<div class="cntr-text gridlike-form-row-allign"><?php echo (isset($LANG['S_SPECIES'])?$LANG['S_SPECIES']:'Species'); ?></div>
+											<div class="cntr-text gridlike-form-row-allign"><?php echo (isset($LANG['T_TOTAL_TAXA'])?$LANG['T_TOTAL_TAXA']:'Total Taxa'); ?></div>
 											<!-- <th class="cntr-text">Types</th> -->
 										</section>
 										<?php
 										foreach($resultsTemp as $name => $data){
-											echo '<section class="gridlike-form-row">';
-											echo '<div>'.wordwrap($name,40,"<br />\n",true).'</div>';
-											echo '<div>'.(array_key_exists('recordcnt',$data)?$data['recordcnt']:0).'</div>';
-											echo '<div>'.(array_key_exists('georefcnt',$data)?$data['georefcnt']:0).'</div>';
-											echo '<div>'.(array_key_exists('OccurrenceImageCount',$data)?$data['OccurrenceImageCount']:0).'</div>';
-											echo '<div>'.(array_key_exists('speciesID',$data)?$data['speciesID']:0).'</div>';
-											echo '<div>'.(array_key_exists('familycnt',$data)?$data['familycnt']:0).'</div>';
-											echo '<div>'.(array_key_exists('genuscnt',$data)?$data['genuscnt']:0).'</div>';
-											echo '<div>'.(array_key_exists('speciescnt',$data)?$data['speciescnt']:0).'</div>';
-											echo '<div>'.(array_key_exists('TotalTaxaCount',$data)?$data['TotalTaxaCount']:0).'</div>';
+											echo '<section class="gridlike-form-row bottom-breathing-room-relative">';
+											echo '<div class="gridlike-form-row-allign">'.wordwrap($name,40,"<br />\n",true).'</div>';
+											echo '<div class="gridlike-form-row-allign">'.(array_key_exists('recordcnt',$data)?$data['recordcnt']:0).'</div>';
+											echo '<div class="gridlike-form-row-allign">'.(array_key_exists('georefcnt',$data)?$data['georefcnt']:0).'</div>';
+											echo '<div class="gridlike-form-row-allign">'.(array_key_exists('OccurrenceImageCount',$data)?$data['OccurrenceImageCount']:0).'</div>';
+											echo '<div class="gridlike-form-row-allign">'.(array_key_exists('speciesID',$data)?$data['speciesID']:0).'</div>';
+											echo '<div class="gridlike-form-row-allign">'.(array_key_exists('familycnt',$data)?$data['familycnt']:0).'</div>';
+											echo '<div class="gridlike-form-row-allign">'.(array_key_exists('genuscnt',$data)?$data['genuscnt']:0).'</div>';
+											echo '<div class="gridlike-form-row-allign">'.(array_key_exists('speciescnt',$data)?$data['speciescnt']:0).'</div>';
+											echo '<div class="gridlike-form-row-allign">'.(array_key_exists('TotalTaxaCount',$data)?$data['TotalTaxaCount']:0).'</div>';
 											//echo '<td>'.(array_key_exists('types',$data)?$data['types']:0).'</td>';
 											echo '</section>';
 										}
