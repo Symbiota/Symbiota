@@ -61,3 +61,9 @@ $LANG['TARGET_SPECIMEN'] = 'Spécimens cibles:';
 
 $LANG['MED_RESOLUTION_IMAGE_NOT_AVAI'] = 'Image moyenne résolution non disponible';
 $LANG['LARGE_RESOLUTION_IMAGE_NOT_AVAI'] = 'Image en grande résolution non disponible';
+
+$LANG['RECORD'] = 'enregistrements';
+$LANG['NEXT_RECORD'] = 'Enregistrement suivant';
+$LANG['TOGGLE_ATTRI_TREE'] = 'Basculer l\'ouverture/la fermeture de l\'arborescence des attributs';
+$LANG['NEXT'] = 'suivant';
+$LANG['SKIP'] = 'SAUTER';

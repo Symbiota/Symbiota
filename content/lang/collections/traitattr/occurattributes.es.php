@@ -65,3 +65,9 @@ $LANG['TARGET_SPECIMEN'] = 'Especímenes objetivo:';
 
 $LANG['MED_RESOLUTION_IMAGE_NOT_AVAI'] = 'Imagen de resolución media no disponible';
 $LANG['LARGE_RESOLUTION_IMAGE_NOT_AVAI'] = 'Imagen de gran resolución no disponible';
+
+$LANG['RECORD'] = 'registros';
+$LANG['NEXT_RECORD'] = 'Siguiente registro';
+$LANG['TOGGLE_ATTRI_TREE'] = 'Activar/cerrar árbol de atributos';
+$LANG['NEXT'] = 'siguiente';
+$LANG['SKIP'] = 'SALTAR';

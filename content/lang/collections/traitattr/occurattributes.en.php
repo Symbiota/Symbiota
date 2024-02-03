@@ -60,3 +60,9 @@ $LANG['TARGET_SPECIMEN'] = 'Target Specimens:';
 
 $LANG['MED_RESOLUTION_IMAGE_NOT_AVAI'] = 'Medium resolution image not available';
 $LANG['LARGE_RESOLUTION_IMAGE_NOT_AVAI'] = 'Large resolution image not available';
+
+$LANG['RECORD'] = 'records';
+$LANG['NEXT_RECORD'] = 'Next record';
+$LANG['TOGGLE_ATTRI_TREE'] = 'Toggle attribute tree open/close';
+$LANG['NEXT'] = 'next';
+$LANG['SKIP'] = 'SKIP';
