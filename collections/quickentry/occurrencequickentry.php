@@ -586,15 +586,6 @@ else{
 				lastModifiedElement.textContent = 'Last Modified: ' + convertTimeToUserTimezone(last_modified_utc);
 			});
 
-			function navigateToRecordNew(crowdSourceMode, gotomode, collId, batchId, imgId, imgIndex, barcode, occId, occIndex) {
-				if(barcode == null && occId == null) {
-					var url = 'occurrencequickentry.php?gotomode=' + gotomode + '&collid=' + collId + '&imgid=' + imgId + '&imgindex=' + imgIndex;
-				} else {
-					var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&collid=' + collId +'&batchid=' + batchId + '&imgid=' + imgId + '&imgindex=' + imgIndex + '&barcode=' + barcode + '&occid=' + occId + '&occindex=' + occIndex;
-				}
-				window.location.href = url;
-				event.preventDefault();
-			}
 			// TODO: find out how to get batchId and occId. Because for these ids, we need to use PHP to read from db. There is no way we can do it with pure JS
 			var barcodeHashTable = <?php echo json_encode($barcodeHashTable); ?>;
 			var occIdHashTable = <?php echo json_encode($occIdHashTable); ?>;

@@ -94,32 +94,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 		<script src="../../js/jquery.js" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 		<script src="../../js/symb/collections.editor.query.js?ver=5" type="text/javascript"></script>
+		<script src="../../js/symb/collections.editor.main.js?ver=3" type="text/javascript"></script>
 		<script type="text/javascript">
-			// function 
-			// TODO: currently, we leave the occIndex, it is exactly the same value as imgIndex
-			function navigateToRecordNew(crowdSourceMode, gotomode, collId, batchId, imgId, imgIndex, barcode, occId, occIndex) {
-				if(barcode == 0 && occId == 0) {
-					var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&collid=' + collId +'&batchid=' + batchId + '&imgid=' + imgId + '&imgindex=' + imgIndex + '&barcode=' + 0 + '&occid=' + 0;
-				} else if(barcode == 0) {
-					var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&collid=' + collId +'&batchid=' + batchId + '&imgid=' + imgId + '&imgindex=' + imgIndex + '&barcode=' + 0 + '&occid=' + occId + '&occindex=' + occIndex;
-				} else if(occId == 0) {
-					var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&collid=' + collId +'&batchid=' + batchId + '&imgid=' + imgId + '&imgindex=' + imgIndex + '&barcode=' + barcode + '&occid=' + 0;
-				} else {
-					var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&collid=' + collId +'&batchid=' + batchId + '&imgid=' + imgId + '&imgindex=' + imgIndex + '&barcode=' + barcode + '&occid=' + occId + '&occindex=' + occIndex;
-				}
-				window.location.href = url;
-				event.preventDefault();
-			}
-
-			function initScinameAutocomplete(f){
-				$( f.sciname ).autocomplete({
-					source: "rpc/getspeciessuggest.php",
-					minLength: 3,
-					change: function(event, ui) {
-					}
-				});
-			}
-
 		</script>
 	</head>
 	<body>

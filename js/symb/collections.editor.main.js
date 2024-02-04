@@ -22,6 +22,16 @@ $(document).ready(function() {
 			$("button").prop("disabled",false);
 		}
 	});
+
+	function navigateToRecordNew(crowdSourceMode, gotomode, collId, batchId, imgId, imgIndex, barcode, occId, occIndex) {
+		if(barcode == null && occId == null) {
+			var url = 'occurrencequickentry.php?gotomode=' + gotomode + '&collid=' + collId + '&imgid=' + imgId + '&imgindex=' + imgIndex;
+		} else {
+			var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&collid=' + collId +'&batchid=' + batchId + '&imgid=' + imgId + '&imgindex=' + imgIndex + '&barcode=' + barcode + '&occid=' + occId + '&occindex=' + occIndex;
+		}
+		window.location.href = url;
+		event.preventDefault();
+	}
 	
 	$("#occedittabs").tabs({
 		select: function(event, ui) {
