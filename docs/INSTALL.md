@@ -51,6 +51,8 @@
       Thus, you can modify this file to globally change design of portal.
    6. Misc: rename usagepolicy_template.php to usagepolicy.php, and modify as needed
 4. File permissions - the web server needs write access to the following files and their subdirectories  (e.g. sudo chmod -R 777 temp/)
+   - /api/storage/framework
+   - /api/storage/logs
    - /content/collections/ 
    - /content/collicon/
    - /content/dwca/
