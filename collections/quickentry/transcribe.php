@@ -163,11 +163,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 					</div>
 				</fieldset>
 				<!-- TODO: need to figure out what this status is -->
-				<fieldset>
+				<!-- <fieldset>
 					<div>
 						<p style="margin:0px;"><?php echo $LANG['STATUS']; ?></p>
 					</div>
-				</fieldset>
+				</fieldset> -->
 			</div>
 			<?php
 		}
