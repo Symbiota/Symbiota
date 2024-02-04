@@ -164,6 +164,9 @@ class OccurrenceSesar extends Manager {
 			}
 			elseif($this->registrationMethod == 'xml'){
 				$this->logOrEcho('XML document created');
+				ob_start();
+				ob_clean();
+				ob_end_flush();
 				header('Content-Description: ');
 				header('Content-Type: application/xml');
 				header('Content-Disposition: attachment; filename=SESAR_IGSN_registration_'.date('Y-m-d_His').'.xml');

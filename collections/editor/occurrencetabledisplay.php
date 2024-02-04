@@ -160,13 +160,11 @@ else{
 			?>
 			<div id="titleDiv">
 				<div style="float:right;">
-					<a href="#" title="<?php echo htmlspecialchars($LANG['SEARCH_FILTER'], HTML_SPECIAL_CHARS_FLAGS); ?>" aria-label="<?php echo htmlspecialchars($LANG['SEARCH_FILTER'], HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="toggleQueryForm();"><img src="../../images/find.png" style="width:16px;" alt="<?php echo htmlspecialchars($LANG['IMG_SEARCH'], HTML_SPECIAL_CHARS_FLAGS); ?>" /></a>
+					<a href="#" title="<?= $LANG['SEARCH_FILTER'] ?>" aria-label="<?= $LANG['SEARCH_FILTER'] ?>" onclick="toggleQueryForm();"><img src="../../images/find.png" style="width:1.3em;" alt="<?= $LANG['IMG_SEARCH'] ?>" /></a>
 					<?php
 					if($isEditor == 1 || $isGenObs){
 						?>
-						<a href="#" title="<?php echo htmlspecialchars($LANG['BATCH_TOOL'], HTML_SPECIAL_CHARS_FLAGS); ?>" aria-label="<?php echo htmlspecialchars($LANG['BATCH_TOOL'], HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="toggleBatchUpdate();return false;">
-							<img class="editimg" src="../../images/editplus.png" alt="<?php echo htmlspecialchars($LANG['IMG_EDIT'], HTML_SPECIAL_CHARS_FLAGS); ?>" />
-						</a>
+						<a href="#" title="<?= $LANG['BATCH_TOOL'] ?>" aria-label="<?= $LANG['BATCH_TOOL'] ?>" onclick="toggleBatchUpdate();return false;" style="width:1.3em;"><img class="editimg" src="../../images/editplus.png" alt="<?= $LANG['IMG_EDIT'] ?>" style="width:1.3em;"></a>
 						<?php
 					}
 					?>
@@ -340,8 +338,8 @@ else{
 								echo '<td>';
 								$url = 'occurrenceeditor.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$recStart).'&occid='.$id.'&collid='.$collId;
 								echo '<a href="' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars((isset($LANG['SAME_WINDOW'])?$LANG['SAME_WINDOW']:'open in same window'), HTML_SPECIAL_CHARS_FLAGS) . '" aria-label="' .  htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
-								echo '<a href="' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="' . htmlspecialchars((isset($LANG['NEW_WINDOW'])?$LANG['NEW_WINDOW']:'open in new window'), HTML_SPECIAL_CHARS_FLAGS) . '" aria-label="' . htmlspecialchars((isset($LANG['NEW_WINDOW'])?$LANG['NEW_WINDOW']:'open in new window'), HTML_SPECIAL_CHARS_FLAGS) . '">';
-								echo '<img src="../../images/newwin.png" style="width:10px;" alt="' . htmlspecialchars($LANG['IMG_LINK'], HTML_SPECIAL_CHARS_FLAGS) . '" />';
+								echo '<a href="' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="' . (isset($LANG['NEW_WINDOW'])?$LANG['NEW_WINDOW']:'open in new window') . '" aria-label="' . (isset($LANG['NEW_WINDOW'])?$LANG['NEW_WINDOW']:'open in new window') . '">';
+								echo '<img src="../../images/newwin.png" style="width:1.1em;" alt="' . $LANG['IMG_LINK'] . '" />';
 								echo '</a>';
 								echo '</td>'."\n";
 								foreach($headerMap as $k => $v){

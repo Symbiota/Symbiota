@@ -5,6 +5,8 @@ Language: Français (French)
 ------------------
 */
 
+include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.fr.php');
+
 $LANG['SPEC_UPLOAD'] = 'Télécharger Spécimens';
 $LANG['PATH_EMPTY'] = 'Le chemin du fichier est vide. Veuillez sélectionner le fichier à charger.';
 $LANG['MUST_CSV'] = 'Le fichier doit être séparé par des virgules (.csv), délimité par des tabulations (.txt ou .tab), un fichier ZIP (.zip) ou une URL vers une ressource IPT';
@@ -83,13 +85,6 @@ $LANG['CUSTOM_FILT'] = "Filtres d'Importation d'Enregistrements d'Occurrences Pe
 $LANG['FIELD'] = 'Champ';
 $LANG['SEL_FIELD'] = 'Sélectionnez Nom du Champ';
 $LANG['COND'] = 'État';
-$LANG['EQUALS'] = 'ÉQUIVAUT À';
-$LANG['STARTS_WITH'] = 'COMMENCE AVEC';
-$LANG['CONTAINS'] = 'CONTIENT';
-$LANG['LESS_THAN'] = 'MOINS QUE';
-$LANG['GREATER_THAN'] = 'PLUS GRAND QUE';
-$LANG['IS_NULL'] = 'EST NULL';
-$LANG['NOT_NULL'] = 'EST NON NULLE';
 $LANG['VALUE'] = 'Valeur';
 $LANG['MULT_TERMS'] = 'Ajout de plusieurs termes séparés par un point-virgule filtrera comme une condition OU';
 $LANG['IMPORT_ID'] = "Importer Historique d'Identification";

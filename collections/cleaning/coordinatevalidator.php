@@ -162,7 +162,7 @@ if($IS_ADMIN) $isEditor = 1;
 						echo '<tr>';
 						echo '<td>';
 						echo $country;
-						echo ' <a href="../list.php?db=all&country=' . htmlspecialchars($country, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><img src="../../images/list.png" style="width:12px" /></a>';
+						echo ' <a href="../list.php?db=all&country=' . htmlspecialchars($country, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><img src="../../images/list.png" style="width:1.2em" /></a>';
 						echo '</td>';
 						echo '<td>'.number_format($cnt).'</td>';
 						echo '<td>';

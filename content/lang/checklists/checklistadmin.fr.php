@@ -64,7 +64,8 @@ $LANG['REMOVEEDITPRIVCONFIRM'] = '&Ecirc;tes-vous s&ucirc;r de vouloir supprimer
 $LANG['MASSUPDATEED'] = 'Modifier D&eacute;tails de Liste';
 $LANG['ADDEDITOR'] = 'Ajouter un &Eacute;ditor';
 $LANG['DELETECHECK'] = 'Supprimer Liste';
-$LANG['EDITCHECKLIST'] = 'Enregistrer Modifications';
+$LANG['EDITCHECKLIST'] = 'Modifier Liste';
+$LANG['SAVE_EDITS'] = 'Enregistrer Modifications';
 $LANG['ADDCHECKLIST'] = 'Cr&eacuteer Liste';
 $LANG['DELETETHISU'] = 'Supprimer Cet Utilisateur';
 ?>

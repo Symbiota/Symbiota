@@ -60,7 +60,7 @@ $childArr = $clManager->getChildrenChecklist()
 <!-- inner text -->
 <div id="innertext" style="background-color:white;">
 	<div style="float:right;">
-		<a href="#" onclick="toggle('addchilddiv')"><img src="../images/add.png" /></a>
+		<a href="#" onclick="toggle('addchilddiv')"><img src="../images/add.png" style="width:1.5em;" /></a>
 	</div>
 	<div style="margin:15px;font-weight:bold;font-size:120%;">
 		<u><?php echo (isset($LANG['CHILD_CHECKLIST'])?$LANG['CHILD_CHECKLIST']:'Children Checklists'); ?></u>
@@ -107,7 +107,7 @@ $childArr = $clManager->getChildrenChecklist()
 						if($cArr['pclid'] == $clid){
 							$confirmStr = (isset($LANG['SURE'])?$LANG['SURE']:'Are you sure you want to remove').$cArr['name'].(isset($LANG['AS_CHILD'])?$LANG['AS_CHILD']:'as a child checklist');
 							echo '<a href="checklistadmin.php?submitaction=delchild&tabindex=2&cliddel=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '&clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '" onclick="return confirm(\'' . htmlspecialchars($confirmStr, HTML_SPECIAL_CHARS_FLAGS) . '\')">';
-							echo '<img src="../images/del.png" style="width:14px;" /></a>';
+							echo '<img src="../images/del.png" style="width:1em;" /></a>';
 							echo '</a>';
 						}
 						?>

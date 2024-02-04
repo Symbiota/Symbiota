@@ -83,7 +83,6 @@ class RpcTaxonomy extends RpcBase{
 		$retArr = Array();
 		$childArr = Array();
 		//Sanitation
-		$objId = filter_var($objId,FILTER_SANITIZE_STRING);
 		if(!is_numeric($objId) && $objId != 'root') $objId = 0;
 		if(!is_numeric($targetId)) $targetId = 0;
 		if(!is_numeric($displayAuthor)) $displayAuthor = 0;

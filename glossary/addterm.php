@@ -161,7 +161,7 @@ if($isEditor){
 									}
 									?>
 								</select>
-								<a href="#" onclick="toggle('addLangDiv');return false;"><img src="../images/add.png" /></a>&nbsp;&nbsp;
+								<a href="#" onclick="toggle('addLangDiv');return false;"><img src="../images/add.png" style="width:1.5em" /></a>&nbsp;&nbsp;
 							</div>
 							<div id="addLangDiv" style="float:left;display:none">
 								<input name="newlang" type="text" maxlength="45" style="width:200px;" />

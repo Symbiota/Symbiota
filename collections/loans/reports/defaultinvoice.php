@@ -354,6 +354,9 @@ if($outputMode == 'doc'){
 	$targetFile = $SERVER_ROOT.'/temp/report/'.$identifier.'_invoice.docx';
 	$phpWord->save($targetFile, 'Word2007');
 
+	ob_start();
+	ob_clean();
+	ob_end_flush();
 	header('Content-Description: File Transfer');
 	header('Content-type: application/force-download');
 	header('Content-Disposition: attachment; filename='.basename($targetFile));
@@ -368,7 +371,7 @@ else{
 		<head>
 			<title><?php echo $identifier; ?> Invoice</title>
 			<?php
-	
+
 			include_once($SERVER_ROOT.'/includes/head.php');
 			?>
 			<style type="text/css">
@@ -408,7 +411,7 @@ else{
 						invoice.style.border = '2px solid #03fc88';
 					}
 				}
-			</script>			
+			</script>
 		</head>
 		<body style="background-color:#ffffff;">
 			<div class="controls">

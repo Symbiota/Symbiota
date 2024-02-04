@@ -534,12 +534,12 @@ $traitArr = $indManager->getTraitArr();
 							?>
 							<div id="determination-div" class="bottom-breathing-room-sm-rel">
 								<div id="det-toogle-div" class="det-toogle-div">
-									<a href="#" onclick="toggle('det-toogle-div');return false"><img src="../../images/plus_sm.png" alt="image of a plus sign, indicating desire to show determination history"></a>
+									<a href="#" onclick="toggle('det-toogle-div');return false"><img src="../../images/plus.png" style="width:1em" alt="image of a plus sign; click to show determination history"></a>
 									<?php echo $LANG['SHOW_DET_HISTORY']; ?>
 								</div>
 								<div id="det-toogle-div" class="det-toogle-div" style="display:none;">
 									<div>
-										<a href="#" onclick="toggle('det-toogle-div');return false"><img src="../../images/minus_sm.png" alt="image of a minu sign, indicating desire to hide determination history"></a>
+										<a href="#" onclick="toggle('det-toogle-div');return false"><img src="../../images/minus.png" style="width:1em" alt="image of a minus sign; click to hide determination history"></a>
 										<?php echo $LANG['HIDE_DET_HISTORY']; ?>
 									</div>
 									<fieldset>

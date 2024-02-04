@@ -102,7 +102,7 @@ reset($treePath);
 			<div style="float:right;">
 				<a href="taxonomyloader.php" target="_blank">
 					<?php echo (isset($LANG['CREATE_NEW_TAXON'])?$LANG['CREATE_NEW_TAXON']:'Create a New Taxon');  ?>
-					<img class="img-add" src="../../images/add.png" title="<?php echo (isset($LANG['ADD_NEW_TAXON'])?$LANG['ADD_NEW_TAXON']:'Add a New Taxon'); ?>" alt="<?php echo (isset($LANG['PLUS_SIGN_DESC'])?$LANG['PLUS_SIGN_DESC']:'Image of a plus sign, indicating create new taxon'); ?>">
+					<img class="img-add" src="../../images/add.png" style="width:1.5em" title="<?php echo (isset($LANG['ADD_NEW_TAXON'])?$LANG['ADD_NEW_TAXON']:'Add a New Taxon'); ?>" alt="<?php echo (isset($LANG['PLUS_SIGN_DESC'])?$LANG['PLUS_SIGN_DESC']:'Image of a plus sign, indicating create new taxon'); ?>">
 				</a>
 			</div>
 			<?php

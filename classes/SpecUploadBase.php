@@ -1692,6 +1692,7 @@ class SpecUploadBase extends SpecUpload{
 							$this->outputMsg('<li>Transferring association failed for occid: ' . $r->occid . '. ERROR: '.$this->conn->error.'</li> ');
 						}
 					}
+					$rs1->free();
 				}
 
 				// Build query to update the associatedOccurrences field for the occurrence record
@@ -1712,7 +1713,6 @@ class SpecUploadBase extends SpecUpload{
 
 		// Free the database queries
 		$rs->free();
-		$rs1->free();
 	}
 
 	protected function finalCleanup(){
@@ -2231,7 +2231,7 @@ class SpecUploadBase extends SpecUpload{
 	}
 
 	public function addFilterCondition($columnName, $condition, $value){
-		if($columnName && ($value || $condition == 'ISNULL' || $condition == 'NOTNULL')){
+		if($columnName && ($value || $condition == 'IS_NULL' || $condition == 'NOT_NULL')){
 			$this->filterArr[strtolower($columnName)][$condition][] = strtolower(trim($value,'; '));
 		}
 	}
@@ -2406,7 +2406,11 @@ class SpecUploadBase extends SpecUpload{
 	}
 
 	public function setTargetFieldArr($targetStr){
-		$this->targetFieldArr = explode(',', $targetStr);
+		//Need to check field names against database to protect against SQL injection
+		if($targetStr){
+			$targetFieldArr = explode(',', $targetStr);
+			$this->targetFieldArr = $this->getOccurrenceFieldArr($targetFieldArr);
+		}
 	}
 
 	public function getTargetFieldStr(){

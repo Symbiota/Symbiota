@@ -156,7 +156,6 @@ if($parentID) $parentArr = $geoManager->getGeograpicUnit($parentID);
 					echo '<li><a href="index.php">'.$LANG['SHOW_BASE_LIST'].'</a></li>';
 					if($geoThesID && !empty($geoUnit['parentID'])){
 					echo '<li><a href="index.php?geoThesID=' . $geoUnit['parentID'] . '">' . $LANG['SHOW_PARENT'] . '</a></li>';
-
 					}elseif($parentID){
 					echo '<li><a href="index.php?geoThesID=' . $parentID . '">' . $LANG['SHOW_PARENT'] . '</a></li>';
 					}

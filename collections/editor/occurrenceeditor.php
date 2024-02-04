@@ -526,8 +526,7 @@ else{
 			if($isEditor && $isEditor != 3){
 				?>
 				<div id="querySymbolDiv" style="margin:5px 5px 5px 5px;">
-					<a href="#" title="<?php echo htmlspecialchars($LANG['SEARCH_FILTER'], HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="toggleQueryForm();"><img src="../../images/find.png" style="width:18px;" /></a>
-				</div>
+					<a href="#" title="<?php echo htmlspecialchars($LANG['SEARCH_FILTER'], HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="toggleQueryForm();"><img src="../../images/find.png" style="width:1.3em;" /></a>				</div>
 				<?php
 			}
 			?>
@@ -657,12 +656,12 @@ else{
 										$userEmail = ($person?$person->getEmail():'');
 
 										$anchorVars = 'occid='.$occManager->getOccId().'&occindex='.$occIndex.'&csmode='.$crowdSourceMode.'&collid='.$collId;
-										$detVars = 'identby='.urlencode($occArr['identifiedby']).'&dateident='.urlencode($occArr['dateidentified']).
-											'&sciname='.urlencode($occArr['sciname']).'&em='.$isEditor.
-											'&annotatorname='.urlencode($USER_DISPLAY_NAME).'&annotatoremail='.urlencode($userEmail).
-											(isset($collMap['collectioncode'])?'&collectioncode='.urlencode($collMap['collectioncode']):'').
-											(isset($collMap['institutioncode'])?'&institutioncode='.urlencode($collMap['institutioncode']):'').
-											'&catalognumber='.urlencode($occArr['catalognumber']??'');
+										$detVars = 'identby=' . urlencode($occArr['identifiedby'] ?? '') . '&dateident=' . urlencode($occArr['dateidentified'] ?? '') .
+											'&sciname=' . urlencode($occArr['sciname'] ?? '') . '&em=' . $isEditor . 
+											'&annotatorname=' . urlencode($USER_DISPLAY_NAME ?? '') . '&annotatoremail=' . urlencode($userEmail ?? '') . 
+											(isset($collMap['collectioncode']) ? '&collectioncode=' . urlencode($collMap['collectioncode']) : '') . 
+											(isset($collMap['institutioncode']) ? '&institutioncode=' . urlencode($collMap['institutioncode']) : '') . 
+											'&catalognumber=' . urlencode($occArr['catalognumber'] ?? '');
 										if($isEditor < 4){
 											?>
 											<li id="detTab">
@@ -787,7 +786,7 @@ else{
 																	<input class="idNameInput" name="idname[]" type="text" value="" onchange="fieldChanged('idname');" autocomplete="off" />
 																</div>
 																<div class="divTableCell">
-																	<input class="idValueInput" name="idvalue[]" type="text" value="" onchange="fieldChanged('idvalue');" autocomplete="off" /><a href="#" onclick="addIdentifierField(this);return false" tabindex="-1"><img src="../../images/plus.png" /></a>
+																	<input class="idValueInput" name="idvalue[]" type="text" value="" onchange="fieldChanged('idvalue');" autocomplete="off" /><a href="#" onclick="addIdentifierField(this);return false" tabindex="-1"><img src="../../images/plus.png" style="width:1em;" /></a>
 																</div>
 															</div>
 														</div>
@@ -817,7 +816,7 @@ else{
 												if($DUPE_SEARCH){
 													?>
 													<div id="dupesDiv">
-														<input type="button" value="Duplicates" onclick="searchDupes(this.form);" /><br/>
+														<button value="Duplicates" onclick="searchDupes(this.form);" ><?php echo $LANG['DUPLICATES']; ?></button><br/>
 														<input type="checkbox" name="autodupe" value="1" onchange="autoDupeChanged(this)" tabindex="-1" />
 														<?php echo (isset($LANG['AUTO_SEARCH'])?$LANG['AUTO_SEARCH']:'Auto search'); ?>
 													</div>
@@ -841,7 +840,7 @@ else{
 													<input type="text" name="verbatimeventdate" maxlength="255" value="<?php echo array_key_exists('verbatimeventdate',$occArr)?$occArr['verbatimeventdate']:''; ?>" onchange="verbatimEventDateChanged(this)" />
 												</div>
 												<div id="dateToggleDiv">
-													<a href="#" onclick="toggle('dateextradiv');return false;" tabindex="-1"><img class="editimg" src="../../images/editplus.png" /></a>
+													<a href="#" onclick="toggle('dateextradiv');return false;" tabindex="-1"><img class="editimg" src="../../images/editplus.png" style="width:1.5em"/></a>
 												</div>
 												<?php
 												if($loanArr = $occManager->getLoanData()){
@@ -958,7 +957,7 @@ else{
 													<input type="text" name="dateidentified" maxlength="45" value="<?php echo array_key_exists('dateidentified',$occArr)?$occArr['dateidentified']:''; ?>" onchange="fieldChanged('dateidentified');" />
 												</div>
 												<div id="idrefToggleDiv" onclick="toggle('idrefdiv');">
-													<img class="editimg" src="../../images/editplus.png" />
+													<img class="editimg" src="../../images/editplus.png" style="width:1.5em;" />
 												</div>
 											</div>
 											<div  id="idrefdiv">
@@ -1019,7 +1018,7 @@ else{
 												<br />
 												<textarea id="fflocality" name="locality" onchange="fieldChanged('locality');"><?php echo array_key_exists('locality',$occArr)?$occArr['locality']:''; ?></textarea>
 												<a id="localityExtraToggle" onclick="toggle('localityExtraDiv');">
-													<img class="editimg" src="../../images/editplus.png" />
+													<img class="editimg" src="../../images/editplus.png" style="width:1.5em;"/>
 												</a>
 											</div>
 											<?php
@@ -1094,17 +1093,17 @@ else{
 													<br/>
 													<input type="text" id="coordinateuncertaintyinmeters" name="coordinateuncertaintyinmeters" maxlength="10" value="<?php echo array_key_exists('coordinateuncertaintyinmeters',$occArr)?$occArr['coordinateuncertaintyinmeters']:''; ?>" onchange="coordinateUncertaintyInMetersChanged(this.form);" title="<?php echo (isset($LANG['UNCERTAINTY_METERS'])?$LANG['UNCERTAINTY_METERS']:'Uncertainty in Meters'); ?>" />
 												</div>
-												<div id="googleDiv" onclick="openMappingAid();" title="<?php echo (isset($LANG['GOOGLE_MAPS'])?$LANG['GOOGLE_MAPS']:'Google Maps'); ?>">
-													<img src="../../images/world.png" />
+												<div id="googleDiv" onclick="openMappingAid();" title="<?php echo (isset($LANG['MAP_COORDS'])?$LANG['MAP_COORDS']:'Map Coordinates'); ?>">
+													<img src="../../images/world.png" style="width:1.2em;" />
 												</div>
 												<div id="geoLocateDiv" title="<?php echo (isset($LANG['GEOLOCATE_LOC'])?$LANG['GEOLOCATE_LOC']:'GeoLocate Locality'); ?>">
-													<a href="#" onclick="geoLocateLocality();" tabindex="-1"><img src="../../images/geolocate.png"/></a>
+													<a href="#" onclick="geoLocateLocality();" tabindex="-1"><img src="../../images/geolocate.png" style="width:1.2em;" /></a>
 												</div>
 												<div id="coordCloningDiv" title="<?php echo (isset($LANG['COORD_CLONE_TOOL'])?$LANG['COORD_CLONE_TOOL']:'Coordinate Cloning Tool'); ?>" >
-													<input type="button" value="C" tabindex="-1" onclick="geoCloneTool()" />
+													<button value="C" tabindex="-1" onclick="geoCloneTool()" ><?php echo (isset($LANG['C'])?$LANG['C']:'C') ?></button>
 												</div>
 												<div id="geoToolsDiv" title="<?php echo (isset($LANG['CONVERSION_TOOLS'])?$LANG['CONVERSION_TOOLS']:'Tools for converting additional formats'); ?>" >
-													<input type="button" value="F" tabindex="-1" onclick="toggleCoordDiv()" />
+													<button value="F" tabindex="-1" onclick="toggleCoordDiv()" ><?php echo (isset($LANG['F'])?$LANG['F']:'F') ?></button>
 												</div>
 												<div id="geodeticDatumDiv">
 													<?php echo $LANG['DATUM']; ?>
@@ -1159,7 +1158,7 @@ else{
 													</div>
 												</div>
 												<div id="georefExtraToggleDiv" onclick="toggle('georefExtraDiv');">
-													<img class="editimg" src="../../images/editplus.png" tabindex="-1" />
+													<img class="editimg" src="../../images/editplus.png" style="width:1.5em;" tabindex="-1" />
 												</div>
 											</div>
 											<?php

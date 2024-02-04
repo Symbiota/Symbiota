@@ -92,7 +92,7 @@ if($IS_ADMIN){
 				<h1>
 					<?php
 						echo $user["firstname"]." ".$user["lastname"]." (#".$user["uid"].") ";
-						echo "<a href='viewprofile.php?emode=1&tabindex=2&&userid=" . htmlspecialchars($user["uid"], HTML_SPECIAL_CHARS_FLAGS) . "'><img src='../images/edit.png' style='border:0px;width:15px;' /></a>";
+						echo "<a href='viewprofile.php?emode=1&tabindex=2&&userid=" . htmlspecialchars($user["uid"], HTML_SPECIAL_CHARS_FLAGS) . "'><img src='../images/edit.png' style='border:0px;width:0.8em;' /></a>";
 					?>
 				</h1>
 				<div style="margin-left:10px;">
@@ -164,7 +164,7 @@ if($IS_ADMIN){
 									echo '</span>';
 									?></b>
 									<a href="usermanagement.php?delrole=SuperAdmin&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="../images/del.png" style="border:0px;width:15px;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
 									</a>
 								</li>
 								<?php
@@ -178,7 +178,7 @@ if($IS_ADMIN){
 									echo '</span>';
 									?></b>
 									<a href="usermanagement.php?delrole=Taxonomy&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="../images/del.png" style="border:0px;width:15px;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
 									</a>
 								</li>
 								<?php
@@ -192,7 +192,7 @@ if($IS_ADMIN){
 									echo '</span>';
 									?></b>
 									<a href="usermanagement.php?delrole=TaxonProfile&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="../images/del.png" style="border:0px;width:15px;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
 									</a>
 								</li>
 								<?php
@@ -206,7 +206,7 @@ if($IS_ADMIN){
 									echo '</span>';
 									?></b>
 									<a href="usermanagement.php?delrole=GlossaryEditor&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="../images/del.png" style="border:0px;width:15px;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
 									</a>
 								</li>
 								<?php
@@ -220,7 +220,7 @@ if($IS_ADMIN){
 									echo '</span>';
 									?></b>
 									<a href="usermanagement.php?delrole=KeyAdmin&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="../images/del.png" style="border:0px;width:15px;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
 									</a>
 								</li>
 								<?php
@@ -234,7 +234,7 @@ if($IS_ADMIN){
 									echo '</span>';
 									?></b>
 									<a href="usermanagement.php?delrole=KeyEditor&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="../images/del.png" style="border:0px;width:15px;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
 									</a>
 								</li>
 								<?php
@@ -248,7 +248,7 @@ if($IS_ADMIN){
 									echo '</span>';
 									?></b>
 									<a href="usermanagement.php?delrole=clCreate&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="../images/del.png" style="border:0px;width:15px;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
 									</a>
 								</li>
 								<?php
@@ -262,7 +262,7 @@ if($IS_ADMIN){
 									echo '</span>';
 									?></b>
 									<a href="usermanagement.php?delrole=RareSppAdmin&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="../images/del.png" style="border:0px;width:15px;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
 									</a>
 								</li>
 								<?php
@@ -276,7 +276,7 @@ if($IS_ADMIN){
 									echo '</span> ';
 									?></b>
 									<a href="usermanagement.php?delrole=RareSppReadAll&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="../images/del.png" style="border:0px;width:15px;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
 									</a>
 								</li>
 								<?php
@@ -289,7 +289,7 @@ if($IS_ADMIN){
 								foreach($collList as $k => $v){
 									echo '<li><span title="'.$v['aby'].'"><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($v['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a></span> ';
 									echo "<a href='usermanagement.php?delrole=CollAdmin&tablepk=$k&userid=$userId'>";
-									echo "<img src='../images/del.png' style='border:0px;width:15px;' title=".(isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission').'/>';
+									echo "<img src='../images/del.png' style='border:0px;width:1.2em;' title=".(isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission').'/>';
 									echo "</a></li>";
 								}
 								echo "</ul>";
@@ -302,7 +302,7 @@ if($IS_ADMIN){
 								foreach($collList as $k => $v){
 									echo '<li><span title="'.$v['aby'].'"><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($v['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a></span> ';
 									echo "<a href='usermanagement.php?delrole=CollEditor&tablepk=$k&userid=$userId'>";
-									echo "<img src='../images/del.png' style='border:0px;width:15px;' title=" . htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS) .'/>';
+									echo "<img src='../images/del.png' style='border:0px;width:1.2em;' title=" . htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS) .'/>';
 									echo "</a></li>";
 								}
 								echo "</ul>";
@@ -319,7 +319,7 @@ if($IS_ADMIN){
 										<li>
 											<?php echo '<span title="'.$v['aby'].'">'.$v['name'].'</span>'; ?>
 											<a href="usermanagement.php?delrole=RareSppReader&tablepk=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS)?>&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-												<img src="../images/del.png" style="border:0px;width:15px;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+												<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
 											</a>
 										</li>
 										<?php
@@ -337,7 +337,7 @@ if($IS_ADMIN){
 								foreach($collList as $k => $v){
 									echo '<li><span title="'.$v['aby'].'"><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) .'" target="_blank">' . htmlspecialchars($v['name'], HTML_SPECIAL_CHARS_FLAGS) .'</a></span> ';
 									echo "<a href='usermanagement.php?delrole=CollAdmin&tablepk=$k&userid=$userId'>";
-									echo "<img src='../images/del.png' style='border:0px;width:15px;' title=".(isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission').'/>';
+									echo "<img src='../images/del.png' style='border:0px;width:1.2em;' title=".(isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission').'/>';
 									echo "</a></li>";
 								}
 								echo "</ul>";
@@ -349,7 +349,7 @@ if($IS_ADMIN){
 								foreach($collList as $k => $v){
 									echo '<li><span title="'.$v['aby'].'"><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($v['name'], HTML_SPECIAL_CHARS_FLAGS) .'</a></span> ';
 									echo "<a href='usermanagement.php?delrole=CollEditor&tablepk=$k&userid=$userId'>";
-									echo "<img src='../images/del.png' style='border:0px;width:15px;' title=" . htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS) .'/>';
+									echo "<img src='../images/del.png' style='border:0px;width:1.2em;' title=" . htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS) .'/>';
 									echo "</a></li>";
 								}
 								echo "</ul>";
@@ -366,7 +366,7 @@ if($IS_ADMIN){
 										<li>
 											<?php echo '<span title="'.$v['aby'].'">'.$v['name'].'</span>'; ?>
 											<a href="usermanagement.php?delrole=RareSppReader&tablepk=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS)?>&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-												<img src="../images/del.png" style="border:0px;width:15px;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+												<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
 											</a>
 										</li>
 										<?php
@@ -388,7 +388,7 @@ if($IS_ADMIN){
 										foreach($projList as $k => $v){
 											echo '<li><a href="../projects/index.php?pid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><span title="' . htmlspecialchars($v['aby'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($v['name'], HTML_SPECIAL_CHARS_FLAGS) . '</span></a>';
 											echo "<a href='usermanagement.php?delrole=ProjAdmin&tablepk=$k&userid=$userId'>";
-											echo "<img src='../images/del.png' style='border:0px;width:15px;' title=" . htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS) . '/>';
+											echo "<img src='../images/del.png' style='border:0px;width:1.2em;' title=" . htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS) . '/>';
 											echo "</a></li>";
 										}
 										?>
@@ -413,7 +413,7 @@ if($IS_ADMIN){
 											echo '<span title="' . htmlspecialchars($v['aby'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($name, HTML_SPECIAL_CHARS_FLAGS) . '</span>';
 											echo '</a>';
 											echo "<a href='usermanagement.php?delrole=ClAdmin&tablepk=$k&userid=$userId'>";
-											echo "<img src='../images/del.png' style='border:0px;width:15px;' title=" . htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS) . '/>';
+											echo "<img src='../images/del.png' style='border:0px;width:1.2em;' title=" . htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS) . '/>';
 											echo "</a></li>";
 										}
 										?>

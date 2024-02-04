@@ -57,7 +57,7 @@ $photographerArr = $occManager->getPhotographerArr();
 </script>
 <div id="imagediv" style="width:795px;">
 	<div style="float:right;cursor:pointer;" onclick="toggle('addimgdiv');" title="<?php echo $LANG['ADD_IMG']; ?>">
-		<img style="border:0px;width:12px;" src="../../images/add.png" />
+		<img style="border:0px;width:1.5em;" src="../../images/add.png" />
 	</div>
 	<div id="addimgdiv" style="display:<?php echo ($specImgArr?'none':''); ?>;">
 		<form name="imgnewform" action="occurrenceeditor.php" method="post" enctype="multipart/form-data" onsubmit="return verifyImgAddForm(this);">
@@ -124,7 +124,7 @@ $photographerArr = $occManager->getPhotographerArr();
 						?>
 					</select>
 					<a href="#" onclick="toggle('imgaddoverride');return false;" title="<?php echo $LANG['DISPLAY_PHOTOG_OVER']; ?>">
-						<img src="../../images/editplus.png" style="border:0px;width:13px;" />
+						<img src="../../images/editplus.png" style="border:0px;width:1.5em;" />
 					</a>
 				</div>
 				<div id="imgaddoverride" style="margin:0px 0px 5px 10px;display:none;">
@@ -211,7 +211,7 @@ $photographerArr = $occManager->getPhotographerArr();
 						</td>
 						<td style="text-align:left;padding:10px;">
 							<div style="float:right;cursor:pointer;" onclick="toggle('img<?php echo $imgId; ?>editdiv');" title="<?php echo $LANG['EDIT_METADATA']; ?>">
-								<img style="border:0px;width:12px;" src="../../images/edit.png" />
+								<img style="border:0px;width:1.2em;" src="../../images/edit.png" />
 							</div>
 							<div style="margin-top:30px">
 								<div>
@@ -314,7 +314,7 @@ $photographerArr = $occManager->getPhotographerArr();
 												?>
 											</select>
 											<a href="#" onclick="toggle('imgeditoverride<?php echo $imgId; ?>');return false;" title="<?php echo $LANG['DISPLAY_PHOTOG_OVER']; ?>">
-												<img src="../../images/editplus.png" style="border:0px;width:13px;" />
+												<img src="../../images/editplus.png" style="border:0px;width:1.5em;" />
 											</a>
 										</div>
 										<div id="imgeditoverride<?php echo $imgId; ?>" style="display:<?php echo ($imgArr["photographer"]?'block':'none'); ?>;">

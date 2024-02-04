@@ -216,7 +216,7 @@ $clArr = $obsManager->getChecklists();
 								<label for="eventdate"><?php echo $LANG['DATE']; ?>:</label>
 								<input type="text" id="eventdate" name="eventdate" style="width:120px;" onchange="verifyDate(this);" title="format: yyyy-mm-dd" required />
 								<a href="#" style="margin:15px 0px 0px 5px;" onclick="toggle('obsextradiv');return false" title="<?php echo (isset($LANG['IEDIT_BTN']) ? $LANG['EDIT_BTN'] : 'Display additional fields'); ?>" aria-label="<?php echo (isset($LANG['IEDIT_BTN']) ? $LANG['EDIT_BTN'] : 'Display additional fields'); ?>">
-									<img src="../../images/editplus.png" style="width:15px;" alt="<?php echo (isset($LANG['IMG_EDIT']) ? $LANG['IMG_EDIT'] : 'Display additional fields image'); ?>"/>
+									<img src="../../images/editplus.png" style="width:1.5em;" alt="<?php echo (isset($LANG['IMG_EDIT']) ? $LANG['IMG_EDIT'] : 'Display additional fields image'); ?>"/>
 								</a>
 							</div>
 						</div>
@@ -281,7 +281,7 @@ $clArr = $obsManager->getChecklists();
 							</div>
 							<div style="margin-top:10px; margin-left:3px; margin-bottom:10px" >
 								<a onclick="openMappingAid('obsform','decimallatitude','decimallongitude');return false;">
-									<img src="../../images/world.png" style="width:15px;" title="Coordinate Map Aid" alt="<?php echo (isset($LANG['IMG_GLOBE']) ? $LANG['IMG_GLOBE'] : 'A small image of the globe'); ?>" />
+									<img src="../../images/world.png" style="width:1.3em;" title="Coordinate Map Aid" alt="<?php echo (isset($LANG['IMG_GLOBE']) ? $LANG['IMG_GLOBE'] : 'A small image of the globe'); ?>" />
 								</a>
 								<button id="dmsButton" type="button" onclick="toggle('dmsdiv');"><?php echo $LANG['DMS']; ?></button>
 							</div>

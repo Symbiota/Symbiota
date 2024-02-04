@@ -35,11 +35,11 @@ if($isEditor){
 			echo $vManager->getMissingTaxaCount();
 			?>
 			<span style="margin-left:5px">
-				<a href="voucheradmin.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&displaymode=' . htmlspecialchars($displayMode, HTML_SPECIAL_CHARS_FLAGS); ?>&tabindex=1"><img src="../images/refresh.png" style="width:14px;vertical-align: middle;" title="<?php echo htmlspecialchars((isset($LANG['REFRESH'])?$LANG['REFRESH']:'Refresh List'), HTML_SPECIAL_CHARS_FLAGS); ?>" /></a>
+				<a href="voucheradmin.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&displaymode=' . htmlspecialchars($displayMode, HTML_SPECIAL_CHARS_FLAGS); ?>&tabindex=1"><img src="../images/refresh.png" style="width:1.2em;vertical-align: middle;" title="<?php echo htmlspecialchars((isset($LANG['REFRESH'])?$LANG['REFRESH']:'Refresh List'), HTML_SPECIAL_CHARS_FLAGS); ?>" /></a>
 			</span>
 			<span style="margin-left:5px;">
 				<a href="voucherreporthandler.php?rtype=<?php echo htmlspecialchars(($displayMode==2?'problemtaxacsv':'missingoccurcsv'), HTML_SPECIAL_CHARS_FLAGS) . '&clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank" title="<?php echo htmlspecialchars((isset($LANG['DOWNLOAD'])?$LANG['DOWNLOAD']:'Download Specimen Records'), HTML_SPECIAL_CHARS_FLAGS); ?>">
-					<img src="<?php echo $CLIENT_ROOT; ?>/images/dl.png" style="vertical-align: middle;" />
+					<img src="<?php echo $CLIENT_ROOT; ?>/images/dl.png" style="width:1.3em;vertical-align: middle;" />
 				</a>
 			</span>
 		</div>
@@ -183,7 +183,7 @@ if($isEditor){
 							<div>
 								<a href="#" onclick="openPopup('../taxa/index.php?taxauthid=1&taxon=<?php echo htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>','taxawindow');return false;"><?php echo htmlspecialchars($sn, HTML_SPECIAL_CHARS_FLAGS); ?></a>
 								<a href="#" onclick="openPopup('../collections/list.php?db=all&usethes=1&reset=1&mode=voucher&taxa=<?php echo htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&targetclid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&targettid=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS);?>','editorwindow');return false;">
-									<img src="../images/link.png" style="width:13px;" title="<?php echo (isset($LANG['LINK_VOUCHERS'])?$LANG['LINK_VOUCHERS']:'Link Voucher Specimens'); ?>" />
+									<img src="../images/link.png" style="width:1.2em;" title="<?php echo (isset($LANG['LINK_VOUCHERS'])?$LANG['LINK_VOUCHERS']:'Link Voucher Specimens'); ?>" />
 								</a>
 							</div>
 							<?php

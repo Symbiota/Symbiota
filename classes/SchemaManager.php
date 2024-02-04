@@ -243,7 +243,7 @@ class SchemaManager extends Manager{
 			$this->logOrEcho('One or more connection variables not set');
 			return false;
 		}
-		$password = filter_var($_POST['password'], FILTER_SANITIZE_STRING);
+		$password = $_POST['password'];
 		$this->conn = new mysqli($this->host, $this->username, $password, $this->database, $this->port);
 		if($this->conn->connect_error){
 			$this->logOrEcho('Connection error: ' . $this->conn->connect_error);
@@ -257,7 +257,7 @@ class SchemaManager extends Manager{
 		$versionHistory = false;
 		$this->conn = MySQLiConnectionFactory::getCon('readonly');
 		if(!$this->conn && isset($_POST['password']) && $_POST['password']){
-			$password = filter_var($_POST['password'], FILTER_SANITIZE_STRING);
+			$password = $_POST['password'];
 			$this->conn = new mysqli($this->host, $this->username, $password, $this->database, $this->port);
 		}
 		if(!$this->conn) return false;

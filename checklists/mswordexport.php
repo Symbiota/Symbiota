@@ -248,6 +248,9 @@ if(strlen($fileName) > 30) $fileName = substr($fileName, 0, 30);
 $targetFile = $SERVER_ROOT.'/temp/report/'.$fileName.'_'.date('Y-m-d').'.docx';
 $phpWord->save($targetFile, 'Word2007');
 
+ob_start();
+ob_clean();
+ob_end_flush();
 header('Content-Description: File Transfer');
 header('Content-type: application/force-download');
 header('Content-Disposition: attachment; filename='.basename($targetFile));
