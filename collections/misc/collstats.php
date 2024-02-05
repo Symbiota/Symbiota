@@ -375,7 +375,7 @@ if($action != "Update Statistics"){
 					echo "<div class='navpath'>";
 					echo "<a href='../../index.php'>Home</a> &gt;&gt; ";
 					echo $collections_misc_collstatsCrumbs.' &gt;&gt; ';
-					echo "<b>".$LANG['COL_STATS']."</b>";
+					echo "<b>" . $LANG['COL_STATS'] . "</b>";
 					echo "</div>";
 				}
 			}
@@ -716,7 +716,7 @@ if($action != "Update Statistics"){
                             <?php
                         }
 						else{
-							echo '<div class="top-marg"><div class="heavy-txt">'.$LANG['NO_COLLECTIONS'].'</div></div>';
+							echo '<div class="top-marg"><div class="heavy-txt">' . $LANG['NO_COLLECTIONS'] . '</div></div>';
 						}
 						?>
 					</div>
@@ -738,43 +738,43 @@ if($action != "Update Statistics"){
 										<ul class="stats-display-ul">
 											<?php
 											echo "<li>";
-											echo ($results['SpecimenCount']?number_format($results['SpecimenCount']):0)." ".$LANG['OCC_RECORDS'];
+											echo ($results['SpecimenCount'] ? number_format($results['SpecimenCount']) : 0) . " " . $LANG['OCC_RECORDS'];
 											echo "</li>";
 											echo "<li>";
 											$percGeo = '';
 											if($results['SpecimenCount'] && $results['GeorefCount']){
 												$percGeo = (100* ($results['GeorefCount'] / $results['SpecimenCount']));
 											}
-											echo ($results['GeorefCount']?number_format($results['GeorefCount']):0).($percGeo?" (".($percGeo>1?round($percGeo):round($percGeo,2))."%)":'')." ".$LANG['GEOREFERENCED'];
+											echo ($results['GeorefCount'] ? number_format($results['GeorefCount']) : 0) . ($percGeo ? " (" . ($percGeo>1 ? round($percGeo) : round($percGeo,2)) . "%)" : '') . " " . $LANG['GEOREFERENCED'];
 											echo "</li>";
 											echo "<li>";
 											$percImg = '';
 											if($results['SpecimenCount'] && $results['TotalImageCount']){
 												$percImg = (100* ($results['TotalImageCount'] / $results['SpecimenCount']));
 											}
-											echo ($results['TotalImageCount']?number_format($results['TotalImageCount']):0).($percImg?" (".($percImg>1?round($percImg):round($percImg,2))."%)":'')." ".$LANG['OCCS_IMAGED'];
+											echo ($results['TotalImageCount'] ? number_format($results['TotalImageCount']) : 0) . ($percImg ? " (" . ($percImg>1 ? round($percImg) : round($percImg,2)) . "%)" : '') . " " . $LANG['OCCS_IMAGED'];
 											echo "</li>";
 											echo "<li>";
 											$percId = '';
 											if($results['SpecimenCount'] && $results['SpecimensCountID']){
 												$percId = (100* ($results['SpecimensCountID'] / $results['SpecimenCount']));
 											}
-											echo ($results['SpecimensCountID']?number_format($results['SpecimensCountID']):0).($percId?" (".($percId>1?round($percId):round($percId,2))."%)":'')." ".$LANG['IDED_TO_SP'];
+											echo ($results['SpecimensCountID'] ? number_format($results['SpecimensCountID']) : 0) . ($percId?" (" . ($percId>1 ? round($percId) : round($percId,2)) . "%)" : '') . " " . $LANG['IDED_TO_SP'];
 											echo "</li>";
 											echo "<li>";
-											echo ($results['FamilyCount']?number_format($results['FamilyCount']):0)." ".$LANG['FAMILIES'];
+											echo ($results['FamilyCount'] ? number_format($results['FamilyCount']) : 0) . " " . $LANG['FAMILIES'];
 											echo "</li>";
 											echo "<li>";
-											echo ($results['GeneraCount']?number_format($results['GeneraCount']):0)." ".$LANG['GENERA'];
+											echo ($results['GeneraCount'] ? number_format($results['GeneraCount']) : 0) . " " . $LANG['GENERA'];
 											echo "</li>";
 											echo "<li>";
-											echo ($results['SpeciesCount']?number_format($results['SpeciesCount']):0)." ".$LANG['SPECIES'];
+											echo ($results['SpeciesCount'] ? number_format($results['SpeciesCount']) : 0) . " " . $LANG['SPECIES'];
 											echo "</li>";
 											echo "<li>";
-											echo ($results['TotalTaxaCount']?number_format($results['TotalTaxaCount']):0)." ".$LANG['TOTAL_TAXA'];
+											echo ($results['TotalTaxaCount'] ? number_format($results['TotalTaxaCount']) : 0) . " " . $LANG['TOTAL_TAXA'];
 											echo "</li>";
 											/*echo "<li>";
-											echo ($results['TypeCount']?number_format($results['TypeCount']):0)." type specimens";
+											echo ($results['TypeCount'] ? number_format($results['TypeCount']) : 0)." type specimens";
 											echo "</li>";*/
 											?>
 										</ul>
@@ -945,9 +945,9 @@ if($action != "Update Statistics"){
 												echo '</a>';
 											}
 											echo '</div>';
-											echo '<div class="gridlike-form-row-align">'.($data['GeorefSpecimensPerFamily']?round(100*($data['GeorefSpecimensPerFamily']/$data['SpecimensPerFamily'])):0).'%</div>';
-											echo '<div class="gridlike-form-row-align">'.($data['IDSpecimensPerFamily']?round(100*($data['IDSpecimensPerFamily']/$data['SpecimensPerFamily'])):0).'%</div>';
-											echo '<div class="gridlike-form-row-align">'.($data['IDGeorefSpecimensPerFamily']?round(100*($data['IDGeorefSpecimensPerFamily']/$data['SpecimensPerFamily'])):0).'%</div>';
+											echo '<div class="gridlike-form-row-align">'.($data['GeorefSpecimensPerFamily'] ? round(100*($data['GeorefSpecimensPerFamily']/$data['SpecimensPerFamily'])) : 0).'%</div>';
+											echo '<div class="gridlike-form-row-align">'.($data['IDSpecimensPerFamily'] ? round(100*($data['IDSpecimensPerFamily']/$data['SpecimensPerFamily'])) : 0).'%</div>';
+											echo '<div class="gridlike-form-row-align">'.($data['IDGeorefSpecimensPerFamily'] ? round(100*($data['IDGeorefSpecimensPerFamily']/$data['SpecimensPerFamily'])) : 0).'%</div>';
 											echo '</section>';
 											$total = $total + $data['SpecimensPerFamily'];
 										}
@@ -996,9 +996,9 @@ if($action != "Update Statistics"){
 												echo '</a>';
 											}
 											echo '</div>';
-											echo '<div class="gridlike-form-row-align">'.($data['GeorefSpecimensPerCountry']?round(100*($data['GeorefSpecimensPerCountry']/$data['CountryCount'])):0).'%</div>';
-											echo '<div class="gridlike-form-row-align">'.($data['IDSpecimensPerCountry']?round(100*($data['IDSpecimensPerCountry']/$data['CountryCount'])):0).'%</div>';
-											echo '<div class="gridlike-form-row-align">'.($data['IDGeorefSpecimensPerCountry']?round(100*($data['IDGeorefSpecimensPerCountry']/$data['CountryCount'])):0).'%</div>';
+											echo '<div class="gridlike-form-row-align">'.($data['GeorefSpecimensPerCountry'] ? round(100*($data['GeorefSpecimensPerCountry']/$data['CountryCount'])) : 0).'%</div>';
+											echo '<div class="gridlike-form-row-align">'.($data['IDSpecimensPerCountry'] ? round(100*($data['IDSpecimensPerCountry']/$data['CountryCount'])) : 0).'%</div>';
+											echo '<div class="gridlike-form-row-align">'.($data['IDGeorefSpecimensPerCountry'] ? round(100*($data['IDGeorefSpecimensPerCountry']/$data['CountryCount'])) : 0).'%</div>';
 											echo '</section>';
 											$total = $total + $data['CountryCount'];
 										}
