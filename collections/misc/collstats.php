@@ -964,7 +964,7 @@ if($action != "Update Statistics"){
 									<section class="gridlike-form">
 										<section class="gridlike-form-row bottom-breathing-room-relative">
 											<div class="cntr-text gridlike-form-row-align">
-											<?php echo $LANG['FAMILY']; ?>
+											<?php echo $LANG['COUNTRY']; ?>
 										</div>
 											<div class="cntr-text gridlike-form-row-align">
 											<?php echo $LANG['SPECIMENS']; ?>
