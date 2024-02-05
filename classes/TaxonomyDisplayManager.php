@@ -394,6 +394,110 @@ class TaxonomyDisplayManager extends Manager{
 		return $retArr;
 	}
 
+	//Export taxonomic tree
+	public function exportCsv($tidTarget, $charsetOut){
+		$fullCount = 0;
+		if($accptedTid = $this->getAcceptedTid($tidTarget)){
+			$fileName = 'taxonomyExport_'.date('Y-m-d').'.csv';
+			header ('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+			header ('Content-Type: text/csv');
+			header ('Content-Disposition: attachment; filename="'.$fileName.'"');
+			$out = fopen('php://output', 'w');
+			$headerArr = array('taxaID', 'scientificName', 'scientificNameAuthorship', 'unitName1', 'unitName2', 'unitInd3', 'unitName3', 'rankID', 'kingdomName', 'family',
+				'parentTaxaID', 'parentScientificName', 'acceptance', 'acceptedTaxaID', 'acceptedScientificName');
+			fputcsv($out, $headerArr);
+			$sql = 'SELECT DISTINCT t.tid, t.sciname AS scientificName, t.author AS scientificNameAuthorship,
+				CONCAT_WS(" ", t.unitInd1, t.unitName1) AS unitName1, CONCAT_WS(" ", t.unitInd2, t.unitName2) AS unitName2, t.unitInd3, t.unitName3,
+				t.rankid, t.kingdomName, ts.family, p.tid AS parentTid, p.sciname AS parentScientificName, 1 as acceptance, a.tid AS acceptedTid, a.sciname AS acceptedScientificName
+				FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
+				INNER JOIN taxa p ON ts.parenttid = p.tid
+				INNER JOIN taxa a ON ts.tidaccepted = a.tid
+				INNER JOIN taxaenumtree e ON t.tid = e.parenttid
+				WHERE e.taxauthid = 1 AND ts.taxauthid = 1 ';
+			if($cnt = $this->exportHigherTaxa($sql, $accptedTid, $out)){
+				if(is_numeric($cnt)) $fullCount += $cnt;
+			}
+			if($cnt = $this->exportChildTaxa($sql, $tidTarget, $out, $charsetOut)){
+				if(is_numeric($cnt)) $fullCount += $cnt;
+			}
+			fclose($out);
+		} else {
+			$this->errorMessage = 'NO_TAXA';
+			return false;
+		}
+		return $fullCount;
+	}
+
+	private function getAcceptedTid($tid){
+		$retTid = false;
+		$sql = 'SELECT tidAccepted FROM taxstatus WHERE taxauthid = 1 AND tid = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $tid);
+			$stmt->execute();
+			$stmt->bind_result($retTid);
+			$stmt->fetch();
+			$stmt->close();
+		}
+		return $retTid;
+	}
+
+	private function exportHigherTaxa($sql, $tidTarget, $out, $charsetOut){
+		$status = false;
+		$sql .= 'AND  AND (t.tid = ? OR e.tid = ?) ORDER BY t.rankid';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('ii', $tidTarget, $tidTarget);
+			$stmt->exectue();
+			$status = 0;
+			$rs = $stmt->get_result();
+			while($r = $rs->fetch_array(MYSQLI_NUM)){
+				$status++;
+				$this->encodeArray($r, $charsetOut);
+				fputcsv($out, $r);
+			}
+			$rs->free();
+			$stmt->close();
+		}
+		return $status;
+	}
+
+	private function exportChildTaxa($sqlFrag, $tidTarget, $out, $charsetOut){
+		$status = false;
+		$tidArr = array($tidTarget);
+		//Output all accepted children
+		$sql1 = $sqlFrag . 'AND ts.tid = ts.tidaccepted AND e.parenttid = ? ORDER BY t.rankid, t.sciname';
+		if($stmt = $this->conn->prepare($sql1)){
+			$stmt->bind_param('i', $tidTarget);
+			$stmt->exectue();
+			$status = 0;
+			$rs = $stmt->get_result();
+			while($r = $rs->fetch_array(MYSQLI_NUM)){
+				$status++;
+				$tidArr[] = $r[0];
+				$this->encodeArray($r, $charsetOut);
+				fputcsv($out, $r);
+			}
+			$rs->free();
+			$stmt->close();
+		}
+		//Output all synonyms
+		$sql2 = $sqlFrag . 'AND ts.tid = ts.tidaccepted AND e.parenttid = ? ORDER BY t.rankid, t.sciname';
+		if($stmt = $this->conn->prepare($sql2)){
+			$stmt->bind_param('i', $tidTarget);
+			$stmt->exectue();
+			$status = 0;
+			$rs = $stmt->get_result();
+			while($r = $rs->fetch_array(MYSQLI_NUM)){
+				$status++;
+				$tidArr[] = $r[0];
+				$this->encodeArray($r, $charsetOut);
+				fputcsv($out, $r);
+			}
+			$rs->free();
+			$stmt->close();
+		}
+		return $status;
+	}
+
 	//Setters and getters
 	public function setTargetStr($target){
 		if(is_numeric($target)){
