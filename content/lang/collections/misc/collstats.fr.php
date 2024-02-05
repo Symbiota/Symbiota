@@ -71,7 +71,7 @@ $LANG['EXPAND'] = 'Développer';
 $LANG['CONDENSE'] = 'Condenser';
 $LANG['OBSERVATION'] = 'Observation';
 $LANG['SPECIMEN'] = 'Spécimen';
-
+$LANG['SAVE_CSV'] = 'Enregistrer au format CSV';
 
 
 ?>
