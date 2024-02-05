@@ -735,6 +735,7 @@ if($action != "Update Statistics"){
 										</div>
 									</div>
 									<fieldset class="stats-display-fieldset">
+										<legend><?php echo $LANG['GENERAL_STATISTICS']?></legend>
 										<ul class="stats-display-ul">
 											<?php
 											echo "<li>";
@@ -800,10 +801,10 @@ if($action != "Update Statistics"){
 										</form>
 									</fieldset>
 										<fieldset class="extra-stats bottom-breathing-room-relative">
+											<legend><?php echo $LANG['EXTRA_STATS']; ?></legend>
 											<form name="famstatscsv" id="famstatscsv" action="collstatscsv.php" method="post" onsubmit="">
-												<div class='legend'>
-													<b><?php echo $LANG['EXTRA_STATS']; ?></b>
-												</div>
+												<!-- <div class='legend'> -->
+												<!-- </div> -->
 												<div class="gridlike-form-no-margin">
 													<div class="stat-csv-margin gridlike-form-row">
 														<div id="showfamdist" class="float-and-block" >
