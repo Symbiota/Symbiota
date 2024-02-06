@@ -30,7 +30,7 @@ $LANG['REVIEWED'] = 'Révisé';
 $LANG['ALL_SOURCE_TYPE'] = 'Tous les types de sources';
 $LANG['GET_IMAGES'] = 'Obtenir des images';
 $LANG['NOTES'] = 'Remarques :';
-$LANG['STATUT'] = 'Statut :';
+$LANG['STATUS'] = 'Statut :';
 $LANG['NOT_REVIEWED'] = 'Non révisé';
 
 $LANG['SET_STATUS_SAVE'] = 'Définir le statut et enregistrer';

@@ -543,7 +543,7 @@ if ($traitID) {
 						</div>
 						<div style="margin-top:15px;">
 							<?php echo $LANG['TRAIT_TOOL_EXPLAIN'] ?>
-							<a href="https://tools.gbif.org/dwca-validator/extension.do?id=http://rs.iobis.org/obis/terms/ExtendedMeasurementOrFact" target="_blank"><?php echo $LANG['MEASUREMENT_OR_FACT'] ?></a><?php echo $LANG['DWC_EXTEN_FILE'] ?>
+							<a href="https://tools.gbif.org/dwca-validator/extension.do?id=http://rs.iobis.org/obis/terms/ExtendedMeasurementOrFact" target="_blank"><?php echo $LANG['MEASUREMENT_OR_FACT'] ?></a> <?php echo $LANG['DWC_EXTEN_FILE'] ?>
 						</div>
 				<?php
 					}
