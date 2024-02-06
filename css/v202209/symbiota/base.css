@@ -504,3 +504,7 @@ i {
 b {
   font-weight: bold;
 }
+
+.normal-font-weight {
+  font-weight: normal;
+}
