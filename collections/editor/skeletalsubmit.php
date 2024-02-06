@@ -117,7 +117,7 @@ if($collid){
 
 					<div class="flex-form" style="float:right">
 							<div>
-								<input name="clearform" type="reset" onclick="resetForm()" value="<?php echo (isset($LANG['CLEAR']) ? $LANG['CLEAR'] : 'Clear Form') ?>"/>
+								<button name="clearform" type="reset" onclick="resetForm()" value="<?php echo $LANG['CLEAR'] ?>"><?php echo $LANG['CLEAR'] ?></button>
 							</div>
 						</div>
 					<div class="flex-form">
