@@ -496,3 +496,11 @@ button {
   border-color: buttonborder;
   border-image: initial;
 }
+
+i {
+  font-style: italic;
+}
+
+b {
+  font-weight: bold;
+}
