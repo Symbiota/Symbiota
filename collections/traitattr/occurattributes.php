@@ -132,7 +132,7 @@ if ($traitID) {
 					document.getElementById("imgresmed").checked = true;
 					var imgResLgRadio = document.getElementById("imgreslg");
 					imgResLgRadio.disabled = true;
-					imgResLgRadio.title = "<?php echo $LANG['LARGE_RESOLUTION_IMAGE_NOT_AVAI']?>";
+					imgResLgRadio.title = "<?php echo $LANG['LARGE_RESOLUTION_IMAGE_NOT_AVAI'] ?>";
 				}
 			}
 			if (imgArr[activeImgIndex] != null) {
@@ -239,9 +239,9 @@ if ($traitID) {
 	if ($isEditor == 2) {
 		echo '<div style="float:right;margin:0px 3px;font-size:90%">';
 		if ($mode == 1) {
-			echo '<a href="occurattributes.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&mode=2&traitid=' . htmlspecialchars($traitID, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:1.3em" />'.$LANG['REVIEW'].'</a>';
+			echo '<a href="occurattributes.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&mode=2&traitid=' . htmlspecialchars($traitID, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:1.3em" />' . $LANG['REVIEW'] . '</a>';
 		} else {
-			echo '<a href="occurattributes.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&mode=1&traitid=' . htmlspecialchars($traitID, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:1.3em" />'.$LANG['EDIT'].'</a>';
+			echo '<a href="occurattributes.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&mode=1&traitid=' . htmlspecialchars($traitID, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:1.3em" />' . $LANG['EDIT'] . '</a>';
 		}
 		echo '</div>';
 	}
@@ -251,9 +251,9 @@ if ($traitID) {
 		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo $LANG['COLLECTION_MANAGEMENT'] ?></a> &gt;&gt;
 		<?php
 		if ($mode == 2) {
-			echo '<b>'.$LANG['ATTRIBUTE_REVIEWER'].'</b>';
+			echo '<b>' . $LANG['ATTRIBUTE_REVIEWER'] . '</b>';
 		} else {
-			echo '<b>'.$LANG['ATTRIBUTE_EDITOR'].'</b>';
+			echo '<b>' . $LANG['ATTRIBUTE_EDITOR'] . '</b>';
 		}
 		?>
 	</div>
@@ -319,7 +319,7 @@ if ($traitID) {
 								<span id="notvalid-span" style="display:none;font-weight:bold;color:red;"><?php echo $LANG['TAXON_NOT_VALID'] ?></span>
 							</div>
 							<div style="margin:10px">
-								<?php if ($traitID) echo '<b> '.$LANG['TARGET_SPECIMEN'].'</b> ' . $attrManager->getSpecimenCount(); ?>
+								<?php if ($traitID) echo '<b> ' . $LANG['TARGET_SPECIMEN'] . '</b> ' . $attrManager->getSpecimenCount(); ?>
 							</div>
 						</form>
 					</fieldset>
@@ -416,11 +416,11 @@ if ($traitID) {
 								<?php
 								if ($traitID) {
 									$rCnt = $attrManager->getReviewCount($traitID);
-									echo '<b>' . ($rCnt ? $start + 1 : 0) . ' of ' . $rCnt . ' '.$LANG['RECORD'].'</b>';
+									echo '<b>' . ($rCnt ? $start + 1 : 0) . ' of ' . $rCnt . ' ' . $LANG['RECORD'] . '</b>';
 									if ($rCnt > 1) {
 										$next = ($start + 1);
 										if ($next >= $rCnt) $next = 0;
-										echo ' (<a href="#" onclick="nextReviewRecord(' . ($next) . ')">'.$LANG['NEXT_RECORD'].' &gt;&gt;</a>)';
+										echo ' (<a href="#" onclick="nextReviewRecord(' . ($next) . ')">' . $LANG['NEXT_RECORD'] . ' &gt;&gt;</a>)';
 									}
 								}
 								?>
@@ -443,7 +443,7 @@ if ($traitID) {
 							<legend><b><?php echo $traitArr[$traitID]['name']; ?></b></legend>
 							<form name="submitform" method="post" action="occurattributes.php" onsubmit="return verifySubmitForm(this)">
 								<div style="float:right;margin-right:10px">
-									<div class="trianglediv" style="margin:4px 3px;float:right;cursor:pointer" onclick="setAttributeTree(this)" title="<?php echo $LANG['TOGGLE_ATTRI_TREE']?>">
+									<div class="trianglediv" style="margin:4px 3px;float:right;cursor:pointer" onclick="setAttributeTree(this)" title="<?php echo $LANG['TOGGLE_ATTRI_TREE'] ?>">
 										<img class="triangleright" src="../../images/triangleright.png" style="width:1.3em" />
 										<img class="triangledown" src="../../images/triangledown.png" style="display:none;width:1.3em" />
 									</div>
@@ -519,8 +519,8 @@ if ($traitID) {
 							echo '</span>';
 						}
 						$imgTotal = count($imgArr);
-						if ($imgTotal > 1) echo '<span id="labelcnt" style="margin-left:60px;">1</span> of ' . $imgTotal . ' images ' . ($imgTotal > 1 ? '<a href="#" onclick="nextImage()">&gt;&gt; '.$LANG['NEXT'].'</a>' : '');
-						if ($occid && $mode != 2) echo '<span style="margin-left:80px" title="' . $LANG['SKIP_SPECIMEN'] . '"><a href="#" onclick="skipSpecimen()">'.$LANG['SKIP'].' &gt;&gt;</a></span>';
+						if ($imgTotal > 1) echo '<span id="labelcnt" style="margin-left:60px;">1</span> of ' . $imgTotal . ' images ' . ($imgTotal > 1 ? '<a href="#" onclick="nextImage()">&gt;&gt; ' . $LANG['NEXT'] . '</a>' : '');
+						if ($occid && $mode != 2) echo '<span style="margin-left:80px" title="' . $LANG['SKIP_SPECIMEN'] . '"><a href="#" onclick="skipSpecimen()">' . $LANG['SKIP'] . ' &gt;&gt;</a></span>';
 						?>
 					</div>
 					<div>
