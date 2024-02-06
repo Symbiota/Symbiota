@@ -11,8 +11,10 @@ $LANG['OCC_ATTRI_MINING_TOOL'] = 'Outil d\'exploration d\'attributs d\'occurrenc
 $LANG['MUST_SELECT_TRAIT'] = 'Vous devez sélectionner un trait';
 $LANG['MUST_SELECT_SOURCE_FIELD'] = 'Un champ source doit être sélectionné';
 $LANG['MUST_SELECT_FIELD_VALUE'] = 'Vous devez sélectionner au moins une valeur de champ';
+
 $LANG['CHOOSE_ONE_STATE'] = 'Veuillez choisir au moins un état à attribuer';
-$LANG['SELECT_COLLECT_TO_HARVEST'] = 'Sélectionnez enfin lors de la collecte sur laquelle récolter';
+$LANG['SELECT_COLLECT_TO_HARVEST'] = 'Sélectionnez au moins une collection à partir de laquelle récolter';
+
 $LANG['HOME'] = 'Accueil';
 $LANG['COLLECTION_MANAGEMENT'] = 'Gestion des collections';
 $LANG['ADJUST_COLLECTION_SELECTION'] = 'Ajuster la sélection de la collection';

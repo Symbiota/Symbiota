@@ -9,9 +9,11 @@ $LANG['ATTRI_MINING_TOOL'] = 'Attribute Mining Tool';
 $LANG['OCC_ATTRI_MINING_TOOL'] = 'Occurrence Attribute Mining Tool';
 $LANG['MUST_SELECT_TRAIT'] = 'You must select a trait';
 $LANG['MUST_SELECT_SOURCE_FIELD'] = 'A source field must be selected';
-$LANG['MUST_SELECT_FIELD_VALUE'] = 'You muct select at least one field value';
+$LANG['MUST_SELECT_FIELD_VALUE'] = 'You must select at least one field value';
+
 $LANG['CHOOSE_ONE_STATE'] = 'Please choose at least one state to assign';
-$LANG['SELECT_COLLECT_TO_HARVEST'] = 'Select at last on collect to harvest from';
+$LANG['SELECT_COLLECT_TO_HARVEST'] = 'Select at least one collection to harvest from';
+
 $LANG['HOME'] = 'Home';
 $LANG['COLLECTION_MANAGEMENT'] = 'Collection Management';
 $LANG['ADJUST_COLLECTION_SELECTION'] = 'Adjust Collection Selection';

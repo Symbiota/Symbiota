@@ -11,8 +11,9 @@ $LANG['OCC_ATTRI_MINING_TOOL'] = 'Herramienta de minería de atributos de ocurre
 $LANG['MUST_SELECT_TRAIT'] = 'Debes seleccionar un rasgo';
 $LANG['MUST_SELECT_SOURCE_FIELD'] = 'Se debe seleccionar un campo de origen';
 $LANG['MUST_SELECT_FIELD_VALUE'] = 'Debes seleccionar al menos un valor de campo';
+
 $LANG['CHOOSE_ONE_STATE'] = 'Por favor elija al menos un estado para asignar';
-$LANG['SELECT_COLLECT_TO_HARVEST'] = 'Seleccione por fin la recolección para cosechar';
+$LANG['SELECT_COLLECT_TO_HARVEST'] = 'Seleccione al menos una colección para cosechar';
 $LANG['HOME'] = 'Inicio';
 $LANG['COLLECTION_MANAGEMENT'] = 'Gestión de colecciones';
 $LANG['ADJUST_COLLECTION_SELECTION'] = 'Ajustar selección de colección';
