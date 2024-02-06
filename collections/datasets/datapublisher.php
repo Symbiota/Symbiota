@@ -216,7 +216,7 @@ if ($isEditor) {
 		if ($collid) {
 			echo '<div style="font-weight:bold;font-size:120%;">' . $collArr['collectionname'] . '</div>';
 			?>
-			<div style="margin:10px;">
+			<div class="font-control top-breathing-room-rel">
 				<?php
 				echo $LANG['DWCA_EXPLAIN_1'] . ' <a href="https://en.wikipedia.org/wiki/Darwin_Core_Archive" target="_blank">' . $LANG['DWCA'] . '</a> ' . $LANG['DWCA_EXPLAIN_2'] .
 					' <a href="http://rs.tdwg.org/dwc/terms/" target="_blank">' . htmlspecialchars($LANG['DWC'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($LANG['DWCA_EXPLAIN_3'], HTML_SPECIAL_CHARS_FLAGS) .
@@ -227,13 +227,13 @@ if ($isEditor) {
 			<?php
 		} else {
 			?>
-			<div style="margin:10px;">
+			<div>
 				<?php
 				echo $LANG['DWCA_DOWNLOAD_EXPLAIN_1'] . ' <a href="https://en.wikipedia.org/wiki/Darwin_Core_Archive" target="_blank">' . htmlspecialchars($LANG['DWCA'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
 				echo $LANG['DWCA_DOWNLOAD_EXPLAIN_2'] . ' <a href="http://rs.tdwg.org/dwc/terms/" target="_blank">' . htmlspecialchars($LANG['DWC'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($LANG['DWCA_DOWNLOAD_EXPLAIN_3'], HTML_SPECIAL_CHARS_FLAGS);
 				?>
 			</div>
-			<div style="margin:10px;">
+			<div>
 				<?php
 				echo '<h2>' . $LANG['DATA_USE_POLICY'] . ':</h2>';
 				echo $LANG['DATA_POLICY_1'] . ' <a href="../../includes/usagepolicy.php">' . htmlspecialchars($LANG['DATA_USE_POLICY'], HTML_SPECIAL_CHARS_FLAGS) . '</a>. ' . htmlspecialchars($LANG['DATA_POLICY_2'], HTML_SPECIAL_CHARS_FLAGS);
@@ -242,7 +242,7 @@ if ($isEditor) {
 			<?php
 		}
 		?>
-		<div style="margin:20px;">
+		<div class="font-control top-breathing-room-rel">
 			<?php
 			echo '<b>' . $LANG['RSS_FEED'] . ':</b> ';
 			$urlPrefix = $dwcaManager->getServerDomain() . $CLIENT_ROOT . (substr($CLIENT_ROOT, -1) == '/' ? '' : '/');
@@ -285,7 +285,7 @@ if ($isEditor) {
 				$dwcUri = ($dArr['collid'] == $collid ? $dArr['link'] : '');
 				if (!$idigbioKey) $idigbioKey = $collManager->findIdigbioKey($collArr['recordid']);
 				?>
-				<div style="margin:10px;">
+				<div>
 					<div>
 						<b><?php echo $LANG['TITLE']; ?>:</b> <?php echo $dArr['title']; ?>
 						<form action="datapublisher.php" method="post" style="display:inline;" onsubmit="return window.confirm('<?php echo $LANG['SURE_DELETE']; ?>');">
@@ -303,18 +303,18 @@ if ($isEditor) {
 					<div><b><?php echo $LANG['PUB_DATE']; ?>:</b> <?php echo $dArr['pubDate']; ?></div>
 				</div>
 				<?php
-			} else echo '<div style="margin:20px;font-weight:bold;color:orange;">' . $LANG['DWCA_NOT_PUBLISHED'] . '</div>';
+			} else echo '<div style="font-weight:bold;color:orange;" class="font-control top-breathing-room-rel">' . $LANG['DWCA_NOT_PUBLISHED'] . '</div>';
 			?>
-			<fieldset style="margin:15px;padding:15px;">
+			<fieldset style="padding:15px;" class="top-breathing-room-rel">
 				<legend><b><?php echo $LANG['PUB_INFO']; ?></b></legend>
 				<?php
 				//Data integrity checks
 				$blockSubmitMsg = '';
 				$recFlagArr = $dwcaManager->verifyCollRecords($collid);
 				if ($collArr['guidtarget']) {
-					echo '<div style="margin:10px;"><b>GUID source:</b> ' . $collArr['guidtarget'] . '</div>';
+					echo '<div class="font-control"><b>' .  $LANG['GUID_SOURCE'] . ':</b> ' . $collArr['guidtarget'] . '</div>';
 					if (isset($recFlagArr['nullGUIDs']) && $recFlagArr['nullGUIDs']) {
-						echo '<div style="margin:10px;">';
+						echo '<div class="font-control">';
 						if ($collArr['guidtarget'] == 'occurrenceId') {
 							echo '<b>' . $LANG['RECORDS_MISSING'] . ' <a href="https://dwc.tdwg.org/terms/#dwc:occurrenceID" target="_blank">' . htmlspecialchars($LANG['OCCID_GUIDS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>:</b> ' . htmlspecialchars($recFlagArr['nullGUIDs'], HTML_SPECIAL_CHARS_FLAGS);
 							echo ' <span style="color:red;margin-left:15px;">' . $LANG['RECS_TO_NOT_PUBLISH'] . '</span> ';
@@ -336,23 +336,23 @@ if ($isEditor) {
 						}
 					}
 				} else {
-					echo '<div style="margin:10px;font-weight:bold;color:red;">' . $LANG['GUID_NOT_SET'] . ' <a href="../misc/collmetadata.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($LANG['EDIT_METADATA'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($LANG['TO_SET_GUID'], HTML_SPECIAL_CHARS_FLAGS) . '.</div>';
+					echo '<div style="margin:10px;font-weight:bold;color:red;" class="font-control top-breathing-room-rel">' . $LANG['GUID_NOT_SET'] . ' <a href="../misc/collmetadata.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($LANG['EDIT_METADATA'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($LANG['TO_SET_GUID'], HTML_SPECIAL_CHARS_FLAGS) . '.</div>';
 					$blockSubmitMsg = $LANG['CANNOT_PUBLISH'] . '<br/>';
 				}
 				if ($recFlagArr['nullBasisRec']) {
-					echo '<div style="margin:10px;font-weight:bold;color:red;">' . $LANG['THERE_ARE'] . ' ' . $recFlagArr['nullBasisRec'] . $LANG['MISSING_BASISOFRECORD'] . ' ' . ' <a href="../editor/occurrencetabledisplay.php?q_recordedby=&q_recordnumber=&q_catalognumber&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&csmode=0&occid=&occindex=0">' . htmlspecialchars($LANG['EDIT_EXISTING'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($LANG['TO_CORRECT'], HTML_SPECIAL_CHARS_FLAGS) . '</div>';
+					echo '<div style="margin:10px;font-weight:bold;color:red;" class="font-control top-breathing-room-rel">' . $LANG['THERE_ARE'] . ' ' . $recFlagArr['nullBasisRec'] . $LANG['MISSING_BASISOFRECORD'] . ' ' . ' <a href="../editor/occurrencetabledisplay.php?q_recordedby=&q_recordnumber=&q_catalognumber&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&csmode=0&occid=&occindex=0">' . htmlspecialchars($LANG['EDIT_EXISTING'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($LANG['TO_CORRECT'], HTML_SPECIAL_CHARS_FLAGS) . '</div>';
 				}
 				if ($publishGBIF && $dwcUri && isset($GBIF_USERNAME) && isset($GBIF_PASSWORD) && isset($GBIF_ORG_KEY) && $GBIF_ORG_KEY) {
 					if ($collManager->getDatasetKey()) {
 						$dataUrl = 'http://www.gbif.org/dataset/' . $collManager->getDatasetKey();
 						?>
-						<div style="margin:10px;">
+						<div>
 							<div><b><?php echo $LANG['GBIF_DATASET']; ?>:</b> <a href="<?php echo htmlspecialchars($dataUrl, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars($dataUrl, HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
 						</div>
 						<?php
 					} else {
 						?>
-						<div style="margin:10px;">
+						<div>
 							<?php
 							echo $LANG['YOU_SELECTED_GBIF_1'] .
 							' <a href="https://www.gbif.org/become-a-publisher" target="_blank">' . htmlspecialchars($LANG['GBIF_ENDORSE'], HTML_SPECIAL_CHARS_FLAGS) .
@@ -406,17 +406,17 @@ if ($isEditor) {
 				if ($idigbioKey && $dwcUri) {
 					$dataUrl = 'https://www.idigbio.org/portal/recordsets/' . $idigbioKey;
 					?>
-					<div style="margin:10px;">
+					<div>
 						<div><b><?php echo $LANG['IDIGBIO_DATASET']; ?>:</b> <a href="<?php echo htmlspecialchars($dataUrl, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars($dataUrl, HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
 					</div>
 					<?php
 				}
 				?>
 			</fieldset>
-			<fieldset style="padding:15px;margin:15px;">
+			<fieldset style="padding:15px;" class="top-breathing-room-rel">
 				<legend><b><?php echo $LANG['PUBLISH_REFRESH']; ?></b></legend>
 				<form name="dwcaform" action="datapublisher.php" method="post" onsubmit="return verifyDwcaForm(this)">
-					<div>
+					<div class="font-control top-breathing-room-rel">
 						<input type="checkbox" name="dets" value="1" <?php echo ($includeDets ? 'CHECKED' : ''); ?> /> <?php echo $LANG['INCLUDE_DETS']; ?><br />
 						<input type="checkbox" name="imgs" value="1" <?php echo ($includeImgs ? 'CHECKED' : ''); ?> /> <?php echo $LANG['INCLUDE_IMGS']; ?><br />
 						<?php
@@ -424,10 +424,10 @@ if ($isEditor) {
 						if($dwcaManager->hasMaterialSamples($collid)) echo '<input type="checkbox" name="matsample" value="1" '.($includeMatSample ? 'CHECKED' : '').'> '.$LANG['INCLUDE_MATSAMPLE'].'<br/>';
 						?>
 					</div>
-					<div style="margin-top:5px;">
+					<div style="margin-top:5px;" class="font-control top-breathing-room-rel">
 						<input type="checkbox" name="redact" value="1" <?php echo ($redactLocalities ? 'CHECKED' : ''); ?> /> <?php echo $LANG['REDACT_LOC']; ?><br />
 					</div>
-					<div style="margin:10px;">
+					<div class="font-control top-breathing-room-rel">
 						<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
 						<?php
 						echo '<button type="submit" name="formsubmit" value="buildDwca" ' . ($blockSubmitMsg ? 'disabled' : '') . '>' . $LANG['CREATE_REFRESH'] . '</button>';
@@ -437,7 +437,7 @@ if ($isEditor) {
 					<?php
 					if ($collArr['managementtype'] != 'Live Data' || $collArr['guidtarget'] != 'symbiotaUUID') {
 						?>
-						<div style="margin:10px;font-weight:bold">
+						<div style="margin:10px;font-weight:bold" class="font-control top-breathing-room-rel">
 							<?php echo $LANG['NOTE_LACKING_EXCLUDED']; ?>
 						</div>
 						<?php
@@ -462,9 +462,9 @@ if ($isEditor) {
 				?>
 				<div id="dwcaadmindiv" style="margin:10px;display:<?php echo ($emode ? 'block' : 'none'); ?>;">
 					<form name="dwcaadminform" action="datapublisher.php" method="post" onsubmit="return verifyDwcaAdminForm(this)">
-						<fieldset style="padding:15px;">
+						<fieldset  class="top-breathing-room-rel" style="padding:15px;">
 							<legend><b><?php echo $LANG['PUBLISH_REFRESH']; ?></b></legend>
-							<div style="margin:10px;">
+							<div>
 								<input name="collcheckall" type="checkbox" value="" onclick="checkAllColl(this)" /> <?php echo $LANG['SEL_DESEL_ALL']; ?><br /><br />
 								<?php
 								$collList = $dwcaManager->getCollectionList($catID);
@@ -487,7 +487,7 @@ if ($isEditor) {
 								}
 								?>
 							</div>
-							<fieldset style="margin:10px;padding:15px;">
+							<fieldset style="padding:15px;"  class="top-breathing-room-rel">
 								<legend><b><?php echo $LANG['OPTIONS']; ?></b></legend>
 								<div>
 									<input type="checkbox" name="dets" value="1" <?php echo ($includeDets ? 'CHECKED' : ''); ?> /> <?php echo $LANG['INCLUDE_DETS']; ?><br />
@@ -501,7 +501,7 @@ if ($isEditor) {
 									<input type="checkbox" name="redact" value="1" <?php echo ($redactLocalities ? 'CHECKED' : ''); ?> /> <?php echo $LANG['REDACT_LOC']; ?><br />
 								</div>
 							</fieldset>
-							<div style="clear:both;margin:20px;">
+							<div style="clear:both;">
 								<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
 								<button type="submit" name="formsubmit" value="buildDwca"><?php echo $LANG['CREATE_REFRESH']; ?></button>
 							</div>
@@ -552,7 +552,7 @@ if ($isEditor) {
 				</table>
 				<?php
 			} else {
-				echo '<div style="margin:10px;font-weight:bold;">' . $LANG['NO_PUBLISHABLE'] . '</div>';
+				echo '<div style="margin:10px;font-weight:bold;" class="font-control top-breathing-room-rel">' . $LANG['NO_PUBLISHABLE'] . '</div>';
 			}
 			if ($catID) {
 				if ($addDwca = $dwcaManager->getAdditionalDWCA($catID)) {
