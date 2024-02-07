@@ -586,9 +586,28 @@ class GeographicThesaurus extends Manager{
 		return $status;
    }
 
+   public function getGeoLevelString(int $geolevel) {
+         switch($geolevel) {
+            case 10: return 'Oceans';
+            case 20: return 'Island Group';
+            case 30: return 'Island';
+            case 40: return 'Continent/Region';
+            case 50: return 'Country';
+            case 60: return 'State/Province';
+            case 70: return 'County';
+            case 80: return 'Municipality';
+            case 100: return 'City/Town';
+            case 110: return 'Place Name';
+            case 150: return 'Lake/Pond';
+            case 160: return 'River/Creek';
+            //This seems like a sensible default
+            default: return "Place Name";
+         }
+      }
+
    public function searchGeothesaurus(string $geoterm) {
       $sql = <<<'SQL'
-      SELECT g.geoThesID, g.geoterm, g.category, g.parentID, g2.geoterm as parentterm, g2.category as parentcategory FROM geographicthesaurus g 
+      SELECT g.geoThesID, g.geoterm, g.geoLevel , g.parentID, g2.geoterm as parentterm, g2.geoLevel as parentlevel FROM geographicthesaurus g 
       LEFT JOIN geographicthesaurus g2 on g2.geoThesID = g.parentID
       where g.geoterm like ?
       SQL;
@@ -602,10 +621,10 @@ class GeographicThesaurus extends Manager{
       $row = $stmt->get_result();
 
       while($row && ($res = $row->fetch_assoc())) {
-         $label = $res["geoterm"] . " (" . $res["category"] . ")";
+         $label = $res["geoterm"] . " (" . $this->getGeoLevelString($res["geoLevel"]) . ")";
 
          if($res["parentID"] !== null) {
-            $label .= " child of " . $res["parentterm"] . " (" . $res["parentcategory"] . ")";
+            $label .= " child of " . $res["parentterm"] . " (" . $this->getGeoLevelString($res["parentlevel"]) . ")";
          }
 
          $res["label"] = $label;
