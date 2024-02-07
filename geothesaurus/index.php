@@ -217,6 +217,7 @@ function listGeoUnits($arr) {
 			if($statusStr){
 			echo '<div id="status-div">'.$statusStr.'</div>';
 			}
+         var_dump($geoUnit)
 			?>
 
          <!-- Add Form  -->
@@ -247,7 +248,7 @@ function listGeoUnits($arr) {
 						<div class="field-div">
 							<label> <?= $LANG['GEO_RANK'] ?> </label>:
 							<span>
-								<select name="geoLevel">
+								<select required name="geoLevel">
 									<option value=""> <?= $LANG['SELECT_RANK'] ?> </option>
 									<option value="">----------------------</option>
 									<?php
@@ -358,11 +359,11 @@ function listGeoUnits($arr) {
 							<label> <?= $LANG['GEO_RANK'] ?> </label>:
 							<span class="editTerm"><?= ($geoUnit['geoLevel']?$rankArr[$geoUnit['geoLevel']].' ('.$geoUnit['geoLevel'].')':''); ?></span>
 							<span class="editFormElem">
-								<select name="geoLevel">
+								<select required name="geoLevel">
 									<option value=""> <?= $LANG['SELECT_RANK'] ?> </option>
 									<option value="">----------------------</option>
 									<?php
-									foreach($rankArr as $rankID => $rankValue){
+									foreach($rankArr as $rankID => $rankValue) {
 									echo '<option value="'.$rankID.'" '.($rankID==$geoUnit['geoLevel']?'selected':'').'>'.$rankValue.'</option>';
 					}
 					?>

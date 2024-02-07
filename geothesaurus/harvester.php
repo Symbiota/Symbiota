@@ -76,7 +76,7 @@ if($isEditor && $submitAction) {
 				foreach($statusReport['active'] as $geoRank => $cnt){
 					echo '<div><b>'.$geoRankArr[$geoRank].':</b> '.$cnt.'</div>';
 				}
-				echo '<div style="margin-top:20px"><a href="index.php">Goto Geographic Thesaurus</a></div>';
+				echo '<div style="margin-top:20px"><a href="index.php">Go to Geographic Thesaurus</a></div>';
 			}
 			else echo '<div>Active thesaurus is empty</div>';
 			echo '</fieldset>';
