@@ -367,7 +367,7 @@ function listGeoUnits($arr) {
 									<?php
                            $currentGeoRank = intval($geoUnit["geoLevel"]);
 									foreach($rankArr as $rankID => $rankValue) {
-                           if($currentGeoRank > intval($rankID)) continue;
+                              if($currentGeoRank > intval($rankID) && $geoUnit["parentID"] !== null) continue;
 									echo '<option value="'.$rankID.'" '.($rankID==$geoUnit['geoLevel']?'selected':'').'>'.$rankValue.'</option>';
 					}
 					?>
