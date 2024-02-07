@@ -217,7 +217,6 @@ function listGeoUnits($arr) {
 			if($statusStr){
 			echo '<div id="status-div">'.$statusStr.'</div>';
 			}
-         var_dump($geoUnit)
 			?>
 
          <!-- Add Form  -->
@@ -254,13 +253,16 @@ function listGeoUnits($arr) {
 									<?php
 									$defaultGeoLevel = false;
 									if($geoArr) $defaultGeoLevel = $geoArr[key($geoArr)]['geoLevel'];
+                           $currentGeoRank = intval($geoUnit["geoLevel"]);
+                           
 									foreach($rankArr as $rankID => $rankValue){
-									if($geoThesID){
-									//Grabs the next highest rankid when matched
-									if($defaultGeoLevel == 'getNextRankid') $defaultGeoLevel = $rankID;
-									if($rankID == $geoUnit['geoLevel']) $defaultGeoLevel = 'getNextRankid';
-									}
-									echo '<option value="'.$rankID.'" '.($defaultGeoLevel === $rankID?'SELECTED':'').'>'.$rankValue.'</option>';
+                              if($currentGeoRank >= intval($rankID)) continue;
+                              if($geoThesID){
+                              //Grabs the next highest rankid when matched
+                                 if($defaultGeoLevel == 'getNextRankid') $defaultGeoLevel = $rankID;
+                                 if($rankID == $geoUnit['geoLevel']) $defaultGeoLevel = 'getNextRankid';
+                              }
+									   echo '<option value="'.$rankID.'" '.($defaultGeoLevel === $rankID?'SELECTED':'').'>'.$rankValue.'</option>';
 									}
 									?>
 								</select>
@@ -363,7 +365,9 @@ function listGeoUnits($arr) {
 									<option value=""> <?= $LANG['SELECT_RANK'] ?> </option>
 									<option value="">----------------------</option>
 									<?php
+                           $currentGeoRank = intval($geoUnit["geoLevel"]);
 									foreach($rankArr as $rankID => $rankValue) {
+                           if($currentGeoRank > intval($rankID)) continue;
 									echo '<option value="'.$rankID.'" '.($rankID==$geoUnit['geoLevel']?'selected':'').'>'.$rankValue.'</option>';
 					}
 					?>
