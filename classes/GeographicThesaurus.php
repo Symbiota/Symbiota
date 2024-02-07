@@ -588,7 +588,7 @@ class GeographicThesaurus extends Manager{
 
    public function searchGeothesaurus(string $geoterm) {
       $sql = <<<'SQL'
-      SELECT g.geoThesID, g.geoterm, g.category, g.parentID, g2.geoterm as parentterm FROM geographicthesaurus g 
+      SELECT g.geoThesID, g.geoterm, g.category, g.parentID, g2.geoterm as parentterm, g2.category as parentcategory FROM geographicthesaurus g 
       LEFT JOIN geographicthesaurus g2 on g2.geoThesID = g.parentID
       where g.geoterm like ?
       SQL;
@@ -605,7 +605,7 @@ class GeographicThesaurus extends Manager{
          $label = $res["geoterm"] . " (" . $res["category"] . ")";
 
          if($res["parentID"] !== null) {
-            $label .= " in " . $res["parentterm"];
+            $label .= " child of " . $res["parentterm"] . " (" . $res["parentcategory"] . ")";
          }
 
          $res["label"] = $label;
