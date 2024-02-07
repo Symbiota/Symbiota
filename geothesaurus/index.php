@@ -243,7 +243,7 @@ function listGeoUnits($arr) {
 						</div>
 						<div class="field-div">
 							<label> <?= $LANG['NUM_CODE'] ?> </label>:
-							<span><input type="text" name="numCode" style="width:50px;" /></span>
+							<span><input type="number" min="0" name="numCode" style="width:50px;" /></span>
 						</div>
 						<div class="field-div">
 							<label> <?= $LANG['GEO_RANK'] ?> </label>:
@@ -353,7 +353,7 @@ function listGeoUnits($arr) {
 						<div class="field-div">
 							<label> <?= $LANG['NUM_CODE'] ?> </label>:
 							<span class="editTerm"><?= $geoUnit['numCode']; ?></span>
-							<span class="editFormElem"><input type="text" name="numCode" value="<?= $geoUnit['numCode'] ?>" style="width:50px;" /></span>
+							<span class="editFormElem"><input type="number" min="0" name="numCode" value="<?= $geoUnit['numCode'] ?>" style="width:50px;" /></span>
 						</div>
 						<div class="field-div">
 							<label> <?= $LANG['GEO_RANK'] ?> </label>:
