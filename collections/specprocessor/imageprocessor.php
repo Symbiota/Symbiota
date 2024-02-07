@@ -28,8 +28,8 @@ if($spprid) $specManager->setProjVariables($spprid);
 		?>
 		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<style type="text/css">.profileDiv{ clear:both; margin:2px 0px } </style>
-		<script src="../../js/jquery-3.7.1.min.js" type="text/javascript"></script>
-		<script src="../../js/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 		<script src="../../js/symb/shared.js" type="text/javascript"></script>
 		<script>
 			$(function() {

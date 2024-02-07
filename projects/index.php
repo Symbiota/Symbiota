@@ -87,8 +87,8 @@ if(!$researchList && !$editMode){
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<script type="text/javascript" src="../js/jquery-3.7.1.min.js"></script>
-	<script type="text/javascript" src="../js/jquery-ui.min.js"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/tinymce/tinymce.min.js"></script>
 	<script type="text/javascript">
 		tinymce.init({

@@ -64,8 +64,8 @@ $clArr = $obsManager->getChecklists();
 		echo 'var maxUpload = '.$maxUpload.";\n";
 		?>
 	</script>
-	<script src="../../js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="../../js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="../../js/symb/collections.coordinateValidation.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.observations.js?ver=1" type="text/javascript"></script>
 	<style>

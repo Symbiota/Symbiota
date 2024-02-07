@@ -161,8 +161,8 @@ $traitArr = $indManager->getTraitArr();
 	?>
 	<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/individual/index.css?ver=1" type="text/css" rel="stylesheet" >
 	<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/individual/popup.css" type="text/css" rel="stylesheet" >
-	<script src="../../js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="../../js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		var tabIndex = <?= $tabIndex; ?>;
 		var map;

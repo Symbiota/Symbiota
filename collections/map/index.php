@@ -135,8 +135,8 @@ foreach ($coordArr as $collName => $coll) {
 		.panel-content a{ outline-color: transparent; font-size: 12px; font-weight: normal; }
 		.ui-front { z-index: 9999999 !important; }
 		</style>
-		<script src="../../js/jquery-3.7.1.min.js" type="text/javascript"></script>
-		<script src="../../js/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 		<link href="../../css/jquery.symbiota.css" type="text/css" rel="stylesheet" />
 		<script src="../../js/jquery.popupoverlay.js" type="text/javascript"></script>
 		<script src="../../js/jscolor/jscolor.js?ver=1" type="text/javascript"></script>

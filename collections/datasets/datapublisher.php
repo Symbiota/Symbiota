@@ -79,8 +79,8 @@ if ($isEditor) {
 			white-space: nowrap;
 		}
 	</style>
-	<script type="text/javascript" src="../../js/jquery-3.7.1.min.js"></script>
-	<script type="text/javascript" src="../../js/jquery-ui.min.js"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/symb/collections.gbifpublisher.js"></script>
 	<script type="text/javascript">
 		function toggle(target) {
