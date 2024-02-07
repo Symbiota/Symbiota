@@ -511,4 +511,37 @@ b {
 
 .font-control {
   font-size: 14px;
+.icon-mrgn-rel {
+  margin-bottom: 0.6rem;
+}
+
+.gridlike-form {
+  margin: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.gridlike-form-no-margin {
+  display: flex;
+  flex-direction: column;
+}
+
+.gridlike-form-row {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gridlike-form-row-align {
+  flex: 1;
+  text-align: center;
+}
+
+.gridlike-form-row-label {
+  width: 100px;
+}
+
+.gridlike-form-row-input {
+  width: 40%;
 }

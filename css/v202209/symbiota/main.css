@@ -354,32 +354,6 @@ hr {
   font-weight: bold;
 }
 
-.gridlike-form {
-  margin: 15px;
-  display: flex;
-  flex-direction: column;
-}
-
-.gridlike-form-no-margin {
-  display: flex;
-  flex-direction: column;
-}
-
-.gridlike-form-row {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  gap: 10px;
-}
-
-.gridlike-form-row-label {
-  width: 100px;
-}
-
-.gridlike-form-row-input {
-  width: 40%;
-}
-
 .bottom-breathing-room-relative {
   margin-bottom: 1rem;
 }
