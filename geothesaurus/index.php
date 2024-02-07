@@ -253,7 +253,7 @@ function listGeoUnits($arr) {
 									<?php
 									$defaultGeoLevel = false;
 									if($geoArr) $defaultGeoLevel = $geoArr[key($geoArr)]['geoLevel'];
-                           $currentGeoRank = intval($geoUnit["geoLevel"]);
+                           $currentGeoRank = isset($geoUnit["geoLevel"])? intval($geoUnit["geoLevel"]): 0;
                            
 									foreach($rankArr as $rankID => $rankValue){
                               if($currentGeoRank >= intval($rankID)) continue;
