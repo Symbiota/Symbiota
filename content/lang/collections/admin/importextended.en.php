@@ -5,6 +5,8 @@ Language: English
 ------------------
 */
 
+include_once($SERVER_ROOT . '/content/lang/collections/associations.en.php');
+
 $LANG['IMPORT_FILE'] = 'Import file';
 $LANG['IS_TOO_BIG'] = 'MB) is larger than is allowed (current limit';
 $LANG['MAYBE_ZIP'] = ' Note that import file size can be reduced by compressing within a zip file.';
@@ -42,6 +44,4 @@ $LANG['ASSOC_UPDATED'] = 'Association updated';
 $LANG['ASSOC_ADDED'] = 'Association added';
 $LANG['MAT_SAMPLE_ADDED'] = 'Material Sample added';
 $LANG['DETERMINATION_ADDED'] = 'Determination added';
-
-inlcude_once('../associations.en.php');
 ?>

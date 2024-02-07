@@ -4,18 +4,11 @@ include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
 include_once($SERVER_ROOT.'/content/lang/glossary/sources.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']:'';
+$tid = array_key_exists('tid', $_REQUEST) ? filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT) : '';
 $searchTerm = array_key_exists('keyword',$_REQUEST)?$_REQUEST['keyword']:'';
 $language = array_key_exists('language',$_REQUEST)?$_REQUEST['language']:'';
 $taxa = array_key_exists('taxa',$_REQUEST)?$_REQUEST['taxa']:'';
 $editMode = array_key_exists('emode',$_REQUEST)?1:0;
-
-//Sanitation
-if(!is_numeric($tid)) $tid = 0;
-$searchTerm = filter_var($searchTerm,FILTER_SANITIZE_STRING);
-$language = filter_var($language,FILTER_SANITIZE_STRING);
-$taxa = filter_var($taxa,FILTER_SANITIZE_STRING);
-if(!is_numeric($editMode)) $editMode = 0;
 
 $isEditor = false;
 if($IS_ADMIN || array_key_exists('GlossaryEditor',$USER_RIGHTS)) $isEditor = true;
@@ -26,7 +19,7 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE.(isset($LANG['G_SOURCES'])?$LANG['G_SOURCES']:'Glossary Sources Management'); ?></title>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -40,8 +33,8 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href='../index.php'><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
-		<a href='index.php'> <b><?php echo htmlspecialchars((isset($LANG['MAIN_G'])?$LANG['MAIN_G']:'Main Glossary'), HTML_SPECIAL_CHARS_FLAGS); ?></b></a> &gt;&gt;
+		<a href='../index.php'><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
+		<a href='index.php'> <b><?php echo (isset($LANG['MAIN_G'])?$LANG['MAIN_G']:'Main Glossary'); ?></b></a> &gt;&gt;
 		<b><?php echo (isset($LANG['G_CONTR'])?$LANG['G_CONTR']:'Glossary Contributors'); ?></b>
 	</div>
 	<!-- This is inner text! -->
@@ -87,9 +80,9 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 							</div>
 							<div>
 								<input name="tid" type="hidden" value="<?php echo $tid; ?>" />
-								<input name="searchterm" type="hidden" value="<?php echo $searchTerm; ?>" />
-								<input name="searchlanguage" type="hidden" value="<?php echo $language; ?>" />
-								<input name="searchtaxa" type="hidden" value="<?php echo $taxa; ?>" />
+								<input name="searchterm" type="hidden" value="<?= htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS) ?>" />
+								<input name="searchlanguage" type="hidden" value="<?= htmlspecialchars($language, HTML_SPECIAL_CHARS_FLAGS) ?>" />
+								<input name="searchtaxa" type="hidden" value="<?= htmlspecialchars($taxa, HTML_SPECIAL_CHARS_FLAGS) ?>" />
 							</div>
 							<?php
 							if($sourceArr){

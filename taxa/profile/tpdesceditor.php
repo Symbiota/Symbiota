@@ -34,7 +34,7 @@ if($isEditor){
 		legend{ font-weight: bold }
 	</style>
 	<div style="float:right;" onclick="toggle('adddescrblock');" title="Add a New Description">
-		<img style='border:0px;width:15px;' src='../../images/add.png'/>
+		<img style='border:0px;width:1.3em;' src='../../images/add.png'/>
 	</div>
 	<div id='adddescrblock' style='display:<?php echo ($descList?'none':''); ?>;'>
 		<form name='adddescrblockform' action="tpeditor.php" method="post">
@@ -86,7 +86,7 @@ if($isEditor){
 					<fieldset>
 						<legend><?php echo ($dArr["caption"]?$dArr["caption"]:"Description ".$dArr["displaylevel"]).' (#'.$tdbid.')'; ?></legend>
 						<div style="float:right;" onclick="toggle('dblock-<?php echo $tdbid;?>');" title="Edit Description Block">
-							<img style='border:0px;width:12px;' src='../../images/edit.png'/>
+							<img style='border:0px;width:1.3em;' src='../../images/edit.png'/>
 						</div>
 						<?php
 						if($descEditor->getTid() != $dArr['tid']){
@@ -160,7 +160,7 @@ if($isEditor){
 							<fieldset>
 								<legend>Statements</legend>
 								<div onclick="toggle('addstmt-<?php echo $tdbid;?>');" style="float:right;" title="Add a New Statement">
-									<img style='border:0px;width:15px;' src='../../images/add.png'/>
+									<img style='border:0px;width:1.3em;' src='../../images/add.png'/>
 								</div>
 								<div id='addstmt-<?php echo $tdbid;?>' style='display:<?php echo (isset($dArr["stmts"])?'none':'block'); ?>'>
 									<form name='adddescrstmtform' action="tpeditor.php" method="post">
@@ -192,7 +192,7 @@ if($isEditor){
 									foreach($sArr as $tdsid => $stmtArr){
 										?>
 										<div style="margin-top:3px;clear:both;">
-											<span onclick="toggle('edstmt-<?php echo $tdsid;?>');" title="Edit Statement"><img style='border:0px;width:12px;' src='../../images/edit.png'/></span>
+											<span onclick="toggle('edstmt-<?php echo $tdsid;?>');" title="Edit Statement"><img style='border:0px;width:1.2em;' src='../../images/edit.png'/></span>
 											<?php
 											echo ($stmtArr["heading"]?'<b>'.$stmtArr["heading"].'</b>:':'');
 											echo $stmtArr["statement"];

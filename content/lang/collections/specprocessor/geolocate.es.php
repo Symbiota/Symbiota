@@ -7,6 +7,8 @@ Date Translated: 2022-01-09
 ------------------
 */
 
+include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.es.php');
+
 $LANG['OCC_EXP_MAN'] = 'Administrador de Exportación de Ocurrencias';
 $LANG['GEO_COM_TOOL'] = 'Herramientas de la Comunidad GeoLocate';
 $LANG['GEO_COM_TOOL_EXPLAIN'] = 'Este módulo extrae registros de especímenes que tienen detalles de localidad en el texto, pero carecen de coordenadas decimales.
@@ -32,9 +34,8 @@ $LANG['PUSH_DATA'] = 'Enviar Datos a GeoLocate CoGe';
 $LANG['CREATING_PACKAGE'] = 'Creando paquete de datos';
 $LANG['PUSHING_TO_COGE'] = 'Enviando datos a CoGe';
 $LANG['SUCCESS_GEOLOCATE'] = '¡Éxito! Se requiere acción de GeoLocate (ver mensaje de abajo)';
-$LANG['DATA_IMPORT_COMPLETE'] = '¡Importación de datos completa! Ir al sitio web de GeoLocate y abrir el set de datos dentro de la comunidad seleccionada,
-					luego haga click en el botón de Actualizar Caché para indexar e integrar los datos en la comunidad.
-					Luego de completar los pasos de procesamiento, recuerde finalizar el proceso de importación haciendo click en el botón de guardar.';
+$LANG['DATA_IMPORT_COMPLETE'] = '¡Importación de datos completa! Ir al sitio web de GeoLocate y abrir el set de datos dentro de la comunidad seleccionada, luego haga click en el
+	botón de Actualizar Caché para indexar e integrar los datos en la comunidad. Luego de completar los pasos de procesamiento, recuerde finalizar el proceso de importación haciendo click en el botón de guardar.';
 $LANG['DOWNLOAD_LOCALLY'] = 'Descargar Datos Localmente';
 $LANG['RESET_PAGE'] = 'Reiniciar Página';
 $LANG['REVIEW_APPROVE_EDITS'] = 'Revisar y Aprobar Ediciones';

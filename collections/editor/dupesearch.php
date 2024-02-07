@@ -228,7 +228,7 @@ if(!$IS_ADMIN){
 							?>
 							<div style="float:right;margin:10px;">
 								<a href="occurrenceeditor.php?occid=<?php echo htmlspecialchars($occId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-									<img src="../../images/edit.png" />
+									<img src="../../images/edit.png" style="width:1.2em" />
 								</a>
 							</div>
 							<?php

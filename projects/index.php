@@ -235,7 +235,7 @@ if(!$researchList && !$editMode){
 				<div style="float:right;" title="<?php echo $LANG['TOGGLEEDIT'];?>">
 					<a href="#" onclick="toggleById('tabs');return false;">
 							<?php echo $LANG['EDIT'] ?>
-							<img src="../images/edit.png" srcset="../images/edit.svg" style="width:20px;height:20px;" alt="<?php echo $LANG['PENCIL_ALT'] ?>" />
+							<img src="../images/edit.png" style="width:1.2em;" alt="<?php echo $LANG['PENCIL_ALT'] ?>" />
 					</a>
 				</div>
 				<?php
@@ -360,15 +360,15 @@ if(!$researchList && !$editMode){
 						<div style="font-weight:bold;font-size:130%;">
 							<?php echo $LANG['RESCHECK'];?>
 							<span onclick="toggleResearchInfoBox(this);" title="<?php echo $LANG['QUESRESSPEC'];?>" style="cursor:pointer;">
-								<img src="../images/qmark_big.png" srcset="../images/help-circle.svg" style="width:15px; height:15px;" alt="<?php echo $LANG['QUESTION_ALT'] ?>" />
+								<img src="../images/qmark.png" style="width:1em;" alt="<?php echo $LANG['QUESTION_ALT'] ?>" />
 							</span>
 							<a href="../checklists/clgmap.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS);?>" title="<?php echo htmlspecialchars($LANG['MAPCHECK'], HTML_SPECIAL_CHARS_FLAGS);?>">
 								<?php echo $LANG['MAPCHECK'] ?>
-								<img src='../images/world.png'  srcset="../images/globe.svg" style="width:15px; height:15px;" alt="<?php echo $LANG['GLOBE_ALT'] ?>"/>
+								<img src='../images/world.png' style="width:1em; height:1em;" alt="<?php echo $LANG['GLOBE_ALT'] ?>"/>
 							</a>
 						</div>
 						<div id="researchlistpopup" class="genericpopup" style="display:none;">
-							<img src="../images/triangleup.png" style="position: relative; top: -22px; left: 30px;" alt="<?php echo $LANG['TRIANGLE_ALT'] ?>" />
+							<img src="../images/qmark.png" style="width:1.3em;" alt="<?php echo $LANG['QUESTION_ALT'] ?>" />
 							<?php echo $LANG['RESCHECKQUES'];?>
 						</div>
 						<?php
@@ -376,7 +376,7 @@ if(!$researchList && !$editMode){
 							?>
 							<div style="margin-left:15px;font-size:90%">
 								<?php echo $LANG['THE'];?> 
-								<img src="../images/key.png" style="width: 12px;" alt="<?php echo $LANG['GOLDEN_KEY_SYMBOL'] ?>" />
+								<img src="../images/key.png" style="width: 1.3em;" alt="<?php echo $LANG['KEY_SYMBOL'] ?>" />
 								<?php echo $LANG['SYMBOLOPEN'];?>.
 							</div>
 							<?php
@@ -421,7 +421,7 @@ if(!$researchList && !$editMode){
 											<span> | </span>
 											<a href='../ident/key.php?clid=<?php echo htmlspecialchars($key, HTML_SPECIAL_CHARS_FLAGS); ?>&pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>&taxon=All+Species'>
 												<?php echo $LANG['KEY'] ?>
-												<img style='width:12px;border:0px; margin-left: 0.5rem;' src='../images/key.png' alt="<?php echo $LANG['GOLDEN_KEY_SYMBOL'] ?>" />
+												<img style='width:1.2em; margin-left: 0.5rem;' src='../images/key.png' alt="<?php echo $LANG['KEY_SYMBOL'] ?>" />
 											</a>
 											<?php
 										}

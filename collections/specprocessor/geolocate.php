@@ -9,9 +9,9 @@ header("Content-Type: text/html; charset=".$CHARSET);
 $collid = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid']) ? $_REQUEST['collid'] : 0;
 $customArr = array();
 for($h = 1; $h < 4; $h++){
-	$customArr[$h]['f'] = array_key_exists('customfield'.$h,$_REQUEST)?filter_var($_REQUEST['customfield'].$h,FILTER_SANITIZE_STRING):'';
-	$customArr[$h]['t'] = array_key_exists('customtype'.$h,$_REQUEST)?filter_var($_REQUEST['customtype'].$h,FILTER_SANITIZE_STRING):'';
-	$customArr[$h]['v'] = array_key_exists('customvalue'.$h,$_REQUEST)?filter_var($_REQUEST['customvalue'].$h,FILTER_SANITIZE_STRING):'';
+	$customArr[$h]['f'] = array_key_exists('customfield' . $h, $_REQUEST) ? htmlspecialchars($_REQUEST['customfield'], HTML_SPECIAL_CHARS_FLAGS) . $h : '';
+	$customArr[$h]['t'] = array_key_exists('customtype' . $h, $_REQUEST) ? htmlspecialchars($_REQUEST['customtype'], HTML_SPECIAL_CHARS_FLAGS) . $h : '';
+	$customArr[$h]['v'] = array_key_exists('customvalue' . $h, $_REQUEST) ? htmlspecialchars($_REQUEST['customvalue'], HTML_SPECIAL_CHARS_FLAGS) . $h : '';
 }
 
 $dlManager = new OccurrenceDownload();
@@ -90,13 +90,13 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 											'georeferenceVerificationStatus'=>'Georeference Verification Status','georeferenceRemarks'=>'Georeference Remarks',
 											'minimumElevationInMeters'=>'Elevation Minimum (m)','maximumElevationInMeters'=>'Elevation Maximum (m)',
 											'verbatimElevation'=>'Verbatim Elevation','disposition'=>'Disposition');
-										$conditionArr = array('EQUALS'=>'EQUALS','NOTEQUALS'=>'NOT EQUALS','STARTS'=>'STARTS WITH','LIKE'=>'CONTAINS','NOTLIKE'=>'DOES NOT CONTAIN','NULL'=>'IS NULL','NOTNULL'=>'IS NOT NULL');
+										$conditionArr = array('EQUALS', 'NOT_EQUALS', 'STARTS_WITH', 'LIKE', 'NOT_LIKE', 'IS_NULL', 'NOT_NULL');
 										foreach($customArr as $i => $unitArr){
 											$field = $unitArr['f'];
 											$type = $unitArr['t'];
 											if($i == 1 && !$field){
 												$field = 'decimalLatitude';
-												$type = 'NULL';
+												$type = 'IS_NULL';
 											}
 											?>
 											<div style="margin:10px 0px;">
@@ -111,8 +111,8 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 												</select>
 												<select name="customtype<?php echo $i; ?>" onchange="cogeUpdateCount(this)">
 													<?php
-													foreach($conditionArr as $condKey => $condValue){
-														echo '<option '.($condKey == $type ? 'SELECTED' : '').' value="'.$condKey.'">'.$condValue.'</option>';
+													foreach($conditionArr as $condCode){
+														echo '<option ' . ($condCode == $type ? 'SELECTED' : '') . ' value="' . $condCode . '">' . $LANG[$condCode] . '</option>';
 													}
 													?>
 												</select>
@@ -135,11 +135,11 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 												$dwcaHandler->setVerboseMode(0);
 												$dwcaHandler->setOverrideConditionLimit(true);
 												if(!$customArr[1]['f']){
-													$dwcaHandler->addCondition('decimallatitude','NULL');
-													$dwcaHandler->addCondition('decimallongitude','NULL');
+													$dwcaHandler->addCondition('decimallatitude','IS_NULL');
+													$dwcaHandler->addCondition('decimallongitude','IS_NULL');
 												}
-												$dwcaHandler->addCondition('locality','NOTNULL');
-												$dwcaHandler->addCondition('catalognumber','NOTNULL');
+												$dwcaHandler->addCondition('locality','NOT_NULL');
+												$dwcaHandler->addCondition('catalognumber','NOT_NULL');
 												echo '<span id="countdiv">'.$dwcaHandler->getOccurrenceCnt().'</span> records';
 												?>
 												<span id="recalspan" style="color:orange;display:none;"><?php echo $LANG['RECALCULATING']; ?>... <img src="../../images/workingcircle.gif" style="width:13px;" /></span>

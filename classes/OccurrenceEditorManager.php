@@ -83,14 +83,20 @@ class OccurrenceEditorManager {
 				$rs->free();
 			}
 			else return false;
-			if(!empty($this->collMap['dynamicproperties'])){
-				$propArr = json_decode($this->collMap['dynamicproperties'],true);
-				if(isset($propArr['editorProps'])){
-					$retArr = $propArr['editorProps'];
-					if(isset($retArr['modules-panel'])){
-						foreach($retArr['modules-panel'] as $module){
-							if(!empty($module['paleo']['status'])) $this->collMap['paleoActivated'] = 1;
-							if(!empty($module['matSample']['status'])) $this->collMap['matSampleActivated'] = 1;
+		}
+	}
+
+	public function getDynamicPropertiesArr(){
+		$retArr = array();
+		$propArr = array();
+		if(!empty($this->collMap['dynamicproperties'])){
+			$propArr = json_decode($this->collMap['dynamicproperties'], true);
+			if(isset($propArr['editorProps'])){
+				$retArr = $propArr['editorProps'];
+				if(isset($retArr['modules-panel'])){
+					foreach($retArr['modules-panel'] as $module){
+						if(isset($module['paleo']['status']) && $module['paleo']['status']){
+							$this->paleoActivated = true;
 						}
 					}
 				}
@@ -521,21 +527,21 @@ class OccurrenceEditorManager {
 
 	private function setCustomSqlFragment($customField, $customTerm, $customValue, $cao, $cop, $ccp){
 		$sqlFrag = '';
-		if($customTerm == 'NULL'){
+		if($customTerm == 'IS_NULL'){
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' IS NULL) '.($ccp?$ccp.' ':'');
 		}
-		elseif($customTerm == 'NOTNULL'){
+		elseif($customTerm == 'NOT_NULL'){
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' IS NOT NULL) '.($ccp?$ccp.' ':'');
 		}
 		elseif($customTerm == 'NOT_EQUALS'){
 			if(!is_numeric($customValue)) $customValue = '"'.$customValue.'"';
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' (('.$customField.' != '.$customValue.') OR ('.$customField.' IS NULL)) '.($ccp?$ccp.' ':'');
 		}
-		elseif($customTerm == 'GREATER'){
+		elseif($customTerm == 'GREATER_THAN'){
 			if(!is_numeric($customValue)) $customValue = '"'.$customValue.'"';
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' > '.$customValue.') '.($ccp?$ccp.' ':'');
 		}
-		elseif($customTerm == 'LESS'){
+		elseif($customTerm == 'LESS_THAN'){
 			if(!is_numeric($customValue)) $customValue = '"'.$customValue.'"';
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' < '.$customValue.') '.($ccp?$ccp.' ':'');
 		}
@@ -545,7 +551,7 @@ class OccurrenceEditorManager {
 		elseif($customTerm == 'NOT_LIKE' && $customValue){
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' (('.$customField.' NOT LIKE "%'.trim($customValue,'%').'%") OR ('.$customField.' IS NULL)) '.($ccp?$ccp.' ':'');
 		}
-		elseif($customTerm == 'STARTS' && $customValue){
+		elseif($customTerm == 'STARTS_WITH' && $customValue){
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' LIKE "'.trim($customValue,'%').'%") '.($ccp?$ccp.' ':'');
 		}
 		elseif($customValue){
@@ -766,8 +772,8 @@ class OccurrenceEditorManager {
 			//Iterate through occurrences and merge addtional identifiers and otherCatalogNumbers field values
 			foreach($occurrenceArr as $occid => $occurArr){
 				$otherCatNumArr = array();
-				$trimmableOccurArr = $occurArr['othercatalognumbers'] ?? "";
-				if($ocnStr = trim($trimmableOccurArr,',;| ')){
+				if($occurArr['othercatalognumbers']){
+					$ocnStr = trim($occurArr['othercatalognumbers'],',;| ');
 					$ocnStr = str_replace(array(',',';'),'|',$ocnStr);
 					$ocnArr = explode('|',$ocnStr);
 					foreach($ocnArr as $identUnit){
@@ -2482,39 +2488,17 @@ class OccurrenceEditorManager {
 	}
 
 	//Misc functions
-	private function encodeStrTargeted($inStr,$inCharset,$outCharset){
+	private function encodeStrTargeted($inStr, $inCharset, $outCharset){
 		if($inCharset == $outCharset) return $inStr;
 		$retStr = $inStr;
-		if($inCharset == "latin" && $outCharset == 'utf8'){
-			if(mb_detect_encoding($retStr,'UTF-8,ISO-8859-1',true) == "ISO-8859-1"){
-				$retStr = utf8_encode($retStr);
-			}
-		}
-		elseif($inCharset == "utf8" && $outCharset == 'latin'){
-			if(mb_detect_encoding($retStr,'UTF-8,ISO-8859-1') == "UTF-8"){
-				$retStr = utf8_decode($retStr);
-			}
-		}
+		$retStr = mb_convert_encoding($retStr, $outCharset, mb_detect_encoding($retStr));
 		return $retStr;
 	}
 
 	protected function encodeStr($inStr){
-		global $CHARSET;
 		$retStr = $inStr;
-
 		if($inStr){
-			if(strtolower($CHARSET) == "utf-8" || strtolower($CHARSET) == "utf8"){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) == "ISO-8859-1"){
-					$retStr = utf8_encode($inStr);
-					//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
-				}
-			}
-			elseif(strtolower($CHARSET) == "iso-8859-1"){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') == "UTF-8"){
-					$retStr = utf8_decode($inStr);
-					//$retStr = iconv("UTF-8","ISO-8859-1//TRANSLIT",$inStr);
-				}
-			}
+			$retStr = mb_convert_encoding($retStr, $GLOBALS['CHARSET'], mb_detect_encoding($retStr));
  		}
 		return $retStr;
 	}
@@ -2527,25 +2511,31 @@ class OccurrenceEditorManager {
 	}
 
 	protected function cleanOutStr($str){
-		$safeStr = $str ?? "";
-		$newStr = str_replace('"',"&quot;",$safeStr);
-		$newStr = str_replace("'","&apos;",$newStr);
+		$newStr = $str;
+		if($newStr){
+			$newStr = str_replace('"',"&quot;",$str);
+			$newStr = str_replace("'","&apos;",$newStr);
+		}
 		return $newStr;
 	}
 
 	protected function cleanInStr($str){
-		$safeStr = $str ?? "";
-		$newStr = trim($safeStr);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
+		$newStr = $str;
+		if($newStr){
+			$newStr = trim($str);
+			$newStr = preg_replace('/\s\s+/', ' ',$newStr);
+			$newStr = $this->conn->real_escape_string($newStr);
+		}
 		return $newStr;
 	}
 
 	protected function cleanRawFragment($str){
-		$safeStr = $str ?? "";
-		$newStr = trim($safeStr);
-		$newStr = $this->encodeStr($newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
+		$newStr = $str;
+		if($newStr){
+			$newStr = trim($str);
+			$newStr = $this->encodeStr($newStr);
+			$newStr = $this->conn->real_escape_string($newStr);
+		}
 		return $newStr;
 	}
 }

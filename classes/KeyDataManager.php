@@ -611,7 +611,7 @@ class KeyDataManager extends Manager {
 
 	public function setRelevanceValue($rel){
 		if(is_numeric($rel)){
-			$this->relevanceValue = filter_var($rel, FILTER_SANITIZE_NUMBER_INT);
+			$this->relevanceValue = $rel;
 		}
 	}
 

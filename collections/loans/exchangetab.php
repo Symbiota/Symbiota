@@ -14,7 +14,7 @@ if(!$transInstList) echo '<script type="text/javascript">displayNewExchange();</
 ?>
 <div id="exchangeToggle" style="float:right;margin:10px;">
 	<a href="#" onclick="displayNewExchange()">
-		<img src="../../images/add.png" alt="<?php echo $LANG['CREATE_NEW_EXCHANGE']; ?>" />
+		<img src="../../images/add.png" style="width:1.5em;" title="<?php echo $LANG['CREATE_NEW_EXCHANGE']; ?>" alt="<?php echo $LANG['CREATE_NEW_EXCHANGE']; ?>" />
 	</a>
 </div>
 <div id="newexchangediv" style="display:<?php echo ($transInstList?'none':'block'); ?>;width:550px;">
@@ -64,7 +64,7 @@ if(!$transInstList) echo '<script type="text/javascript">displayNewExchange();</
 				</span>
 				<span>
 					<a href="../misc/institutioneditor.php?emode=1" target="_blank" title="<?php echo $LANG['ADD_NEW_INST']; ?>">
-						<img src="../../images/add.png" style="width:15px;" />
+						<img src="../../images/add.png" style="width:1.5em;" />
 					</a>
 				</span>
 			</div>
@@ -87,18 +87,19 @@ if(!$transInstList) echo '<script type="text/javascript">displayNewExchange();</
 			foreach($transInstList as $k => $transArr){
 				?>
 				<li>
-					<a href="#" onclick="toggle('<?php echo $k; ?>');"><?php echo ($transArr['institutioncode'] ? $transArr['institutioncode'] : ($transArr['institutionname'] ? $transArr['institutionname'] : '[no name]')); ?></a>
+					<?php echo ($transArr['institutioncode'] ? $transArr['institutioncode'] : ($transArr['institutionname'] ? $transArr['institutionname'] : '[no name]')); ?>
 					<?php
 					$bal = $transArr['invoicebalance'];
 					echo '(Balance: ' . ($bal?($bal < 0?'<span style="color:red;font-weight:bold;">' . $bal . '</span>':$bal):0) . ')';
 					?>
+					<a href="#" onclick="toggle('<?php echo $k; ?>');"><img src="../../images/tochild.png" style="width:1em;" /></a>
 					<div id="<?php echo $k; ?>" style="display:none;">
 						<ul>
 							<?php
 							$transList = $loanManager->getTransactions($collid,$k);
 							foreach($transList as $t => $transArr){
 								echo '<li>';
-								echo '<a href="exchange.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&exchangeid=' . htmlspecialchars($t, HTML_SPECIAL_CHARS_FLAGS) . '">#' . $transArr['identifier'] . ' <img src="../../images/edit.png" style="width:12px" /></a>: ';
+								echo '<a href="exchange.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&exchangeid=' . htmlspecialchars($t, HTML_SPECIAL_CHARS_FLAGS) . '">#' . $transArr['identifier'] . ' <img src="../../images/edit.png" style="width:1.2em;" /></a>: ';
 								if($transArr['transactiontype'] == 'Shipment'){
 									if($transArr['in_out'] == 'Out'){
 										echo $LANG['OUTGOING_EX_SENT'];

@@ -244,11 +244,11 @@ $projArr = $csManager->getProjectDetails();
 											<?php
 											if($isEditor || $rArr['reviewstatus'] == 5){
 												echo '<a href="../../editor/occurrenceeditor.php?csmode=1&occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
-												echo '<img src="../../../images/edit.png" style="border:solid 1px gray;height:13px;" />';
+												echo '<img src="../../../images/edit.png" style="border:solid 1px gray;width:1.3em;" />';
 												echo '</a>';
 											}
 											else{
-												echo '<img src="../../../images/cross-out.png" style="border:solid 1px gray;height:13px;" />';
+												echo '<img src="../../../images/cross-out.png" style="border:solid 1px gray;width:1.3em;" />';
 											}
 											?>
 										</td>

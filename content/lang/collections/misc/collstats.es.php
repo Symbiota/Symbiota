@@ -72,6 +72,8 @@ $LANG['EXPAND'] = 'Expandir';
 $LANG['CONDENSE'] = 'Condensar';
 $LANG['OBSERVATION'] = 'Observación';
 $LANG['SPECIMEN'] = 'Muestra';
-
+$LANG['SAVE_CSV'] = 'Guardar CSV';
+$LANG['GENERAL_STATISTICS'] = 'Estadísticas Generales';
+$LANG['STATS_PER_COL'] = 'Estadísticas por colección';
 
 ?>

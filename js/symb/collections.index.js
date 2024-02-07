@@ -82,7 +82,7 @@ function selectAllCat(cb, target) {
 
 function unselectCat(catTarget) {
   var catObj = document.getElementById(catTarget);
-  catObj.checked = false;
+  if (catObj) catObj.checked = false;
   uncheckAll();
 }
 

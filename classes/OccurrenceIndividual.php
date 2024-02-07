@@ -838,7 +838,7 @@ class OccurrenceIndividual extends Manager{
 		$status = false;
 		if($this->occid && is_numeric($postArr['vclid'])){
 			if(isset($GLOBALS['USER_RIGHTS']['ClAdmin']) && in_array($postArr['vclid'], $GLOBALS['USER_RIGHTS']['ClAdmin'])){
-				$voucherManager = new ChecklistVoucherAdmin($this->conn);
+				$voucherManager = new ChecklistVoucherAdmin();
 				$voucherManager->setClid($postArr['vclid']);
 				if($voucherManager->linkVoucher($postArr['vtid'], $this->occid, '', $postArr['veditnotes'], $postArr['vnotes'])){
 					$status = true;

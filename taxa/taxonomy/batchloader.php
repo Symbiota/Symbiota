@@ -10,9 +10,9 @@ ini_set('max_execution_time', 3600);
 
 $action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
 $taxAuthId = (array_key_exists('taxauthid', $_REQUEST) ? filter_var($_REQUEST['taxauthid'], FILTER_SANITIZE_NUMBER_INT) : 1);
-$kingdomName = (array_key_exists('kingdomname', $_REQUEST) ? filter_var($_REQUEST['kingdomname'], FILTER_SANITIZE_STRING) : '');
-$sciname = (array_key_exists('sciname', $_REQUEST) ? filter_var($_REQUEST['sciname'], FILTER_SANITIZE_STRING) : '');
-$targetApi = (array_key_exists('targetapi',$_REQUEST) ? filter_var($_REQUEST['targetapi'], FILTER_SANITIZE_STRING) : '');
+$kingdomName = (array_key_exists('kingdomname', $_REQUEST) ? htmlspecialchars($_REQUEST['kingdomname'], HTML_SPECIAL_CHARS_FLAGS) : '');
+$sciname = (array_key_exists('sciname', $_REQUEST) ? htmlspecialchars($_REQUEST['sciname'], HTML_SPECIAL_CHARS_FLAGS) : '');
+$targetApi = $_REQUEST['targetapi'] ?? '';
 $rankLimit = (array_key_exists('ranklimit', $_REQUEST) ? filter_var($_REQUEST['ranklimit'], FILTER_SANITIZE_NUMBER_INT):'');
 
 $isEditor = false;

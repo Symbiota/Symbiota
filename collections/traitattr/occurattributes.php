@@ -237,10 +237,10 @@ if($traitID){
 		if($isEditor == 2){
 			echo '<div style="float:right;margin:0px 3px;font-size:90%">';
 			if($mode == 1){
-				echo '<a href="occurattributes.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&mode=2&traitid=' . htmlspecialchars($traitID, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="" />review</a>';
+				echo '<a href="occurattributes.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&mode=2&traitid=' . htmlspecialchars($traitID, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:1.3em" />review</a>';
 			}
 			else{
-				echo '<a href="occurattributes.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&mode=1&traitid=' . htmlspecialchars($traitID, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="" />edit</a>';
+				echo '<a href="occurattributes.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&mode=1&traitid=' . htmlspecialchars($traitID, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:1.3em" />edit</a>';
 			}
 			echo '</div>';
 		}
@@ -446,8 +446,8 @@ if($traitID){
 							<form name="submitform" method="post" action="occurattributes.php" onsubmit="return verifySubmitForm(this)" >
 								<div style="float:right;margin-right:10px">
 									<div class="trianglediv" style="margin:4px 3px;float:right;cursor:pointer" onclick="setAttributeTree(this)" title="Toggle attribute tree open/close">
-										<img class="triangleright" src="../../images/triangleright.png" style="" />
-										<img class="triangledown" src="../../images/triangledown.png" style="display:none" />
+										<img class="triangleright" src="../../images/triangleright.png" style="width:1.3em" />
+										<img class="triangledown" src="../../images/triangledown.png" style="display:none;width:1.3em" />
 									</div>
 								</div>
 								<div>

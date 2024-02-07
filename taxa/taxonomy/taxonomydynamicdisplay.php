@@ -12,14 +12,12 @@ $target = array_key_exists('target',$_REQUEST)?$_REQUEST['target']:'';
 $displayAuthor = array_key_exists('displayauthor',$_REQUEST)?$_REQUEST['displayauthor']:0;
 $taxAuthId = array_key_exists('taxauthid',$_REQUEST)?$_REQUEST['taxauthid']:1;
 $editorMode = array_key_exists('emode',$_POST)?$_POST['emode']:0;
-$statusStr = array_key_exists('statusstr',$_REQUEST)?$_REQUEST['statusstr']:'';
+$statusStr = $_REQUEST['statusstr'] ?? '';
 
 //Sanitation
-$target = htmlspecialchars($target, HTML_SPECIAL_CHARS_FLAGS);
 $displayAuthor = (is_numeric($displayAuthor)?$displayAuthor:0);
 $taxAuthId = (is_numeric($taxAuthId)?$taxAuthId:0);
 $editorMode = (is_numeric($editorMode)?$editorMode:0);
-$statusStr = htmlspecialchars($statusStr, HTML_SPECIAL_CHARS_FLAGS);
 
 $taxonDisplayObj = new TaxonomyDisplayManager();
 $taxonDisplayObj->setTargetStr($target);
@@ -94,7 +92,7 @@ reset($treePath);
 			?>
 			<hr/>
 			<div style="color:<?php echo (strpos($statusStr,'SUCCESS') !== false?'green':'red'); ?>;margin:15px;">
-				<?php echo $statusStr; ?>
+				<?= $taxonDisplayObj->cleanOutStr($statusStr); ?>
 			</div>
 			<hr/>
 			<?php
@@ -104,7 +102,7 @@ reset($treePath);
 			<div style="float:right;">
 				<a href="taxonomyloader.php" target="_blank">
 					<?php echo (isset($LANG['CREATE_NEW_TAXON'])?$LANG['CREATE_NEW_TAXON']:'Create a New Taxon');  ?>
-					<img class="img-add" src="../../images/add.png" title="<?php echo (isset($LANG['ADD_NEW_TAXON'])?$LANG['ADD_NEW_TAXON']:'Add a New Taxon'); ?>" alt="<?php echo (isset($LANG['PLUS_SIGN_DESC'])?$LANG['PLUS_SIGN_DESC']:'Image of a plus sign, indicating create new taxon'); ?>">
+					<img class="img-add" src="../../images/add.png" style="width:1.5em" title="<?php echo (isset($LANG['ADD_NEW_TAXON'])?$LANG['ADD_NEW_TAXON']:'Add a New Taxon'); ?>" alt="<?php echo (isset($LANG['PLUS_SIGN_DESC'])?$LANG['PLUS_SIGN_DESC']:'Image of a plus sign, indicating create new taxon'); ?>">
 				</a>
 			</div>
 			<?php

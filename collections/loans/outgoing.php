@@ -246,7 +246,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 									?>
 									<span>
 										<a href="../misc/institutioneditor.php?iid=<?php echo htmlspecialchars($loanArr['iidborrower'], HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank" title="<?php echo $LANG['EDIT_INST_DETAILS']; ?>">
-											<img src="../../images/edit.png" style="width:15px;" />
+											<img src="../../images/edit.png" style="width:1.3em;" />
 										</a>
 									</span>
 									<?php
@@ -368,7 +368,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 											echo '<div style="float: left; margin-left: 5px;"><a href="../../' .
 												$attachArr['path'] . $attachArr['filename']  . '" target="_blank">' .
 												($attachArr['title'] != "" ? $attachArr['title'] : $attachArr['filename']) . '</a></div>';
-											echo '<a href="outgoing.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($loanId, HTML_SPECIAL_CHARS_FLAGS) . '&attachid=' . htmlspecialchars($attachId, HTML_SPECIAL_CHARS_FLAGS) . '&formsubmit=delAttachment"><img src="../../images/del.png" style="width: 15px; margin-left: 5px;"></a></li>';
+											echo '<a href="outgoing.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($loanId, HTML_SPECIAL_CHARS_FLAGS) . '&attachid=' . htmlspecialchars($attachId, HTML_SPECIAL_CHARS_FLAGS) . '&formsubmit=delAttachment"><img src="../../images/del.png" style="width: 1.2em; margin-left: 5px;"></a></li>';
 										}
 										echo '</ul>';
 									}
