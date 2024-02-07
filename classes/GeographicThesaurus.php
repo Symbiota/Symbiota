@@ -586,6 +586,36 @@ class GeographicThesaurus extends Manager{
 		return $status;
    }
 
+   public function searchGeothesaurus(string $geoterm) {
+      $sql = <<<'SQL'
+      SELECT g.geoThesID, g.geoterm, g.category, g.parentID, g2.geoterm as parentterm FROM geographicthesaurus g 
+      LEFT JOIN geographicthesaurus g2 on g2.geoThesID = g.parentID
+      where g.geoterm like ?
+      SQL;
+
+      $stmt = $this->conn->prepare($sql);
+      $geoterm = "%" . $geoterm . "%";
+
+      $stmt->bind_param("s", $geoterm);
+      $stmt->execute();
+      $geoterms = [];
+      $row = $stmt->get_result();
+
+      while($row && ($res = $row->fetch_assoc())) {
+         $label = $res["geoterm"] . " (" . $res["category"] . ")";
+
+         if($res["parentID"] !== null) {
+            $label .= " in " . $res["parentterm"];
+         }
+
+         $res["label"] = $label;
+
+         array_push($geoterms, $res);
+      }
+
+      return $geoterms;
+   }
+
    private function getGeoLevel(string $type): int {
       switch ($type) {
          case 'ADM1':

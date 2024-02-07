@@ -5,6 +5,15 @@ template.innerHTML = `<span style="display: inline-block; font-size 1em; positio
    <div id="suggestions" style="max-height:20rem; overflow-y:scroll; width: inherit; position: absolute; background-color:#fff;cursor:pointer !important; display: none; border: 1px solid gray; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);"></div>
 </span>`
 
+/* TODO (Logan) move to an itemized input
+template.innerHTML = `<span style="display: inline-block; font-size 1em; position: relative; width:300px">
+   <fieldset style="display:flex; padding:0;width:inherit;">
+      <span style="padding: 0 1rem; width: fit-content;background-color: #E9E9ED">item</span>
+      <input id="dropdown-input" style="border:none; width:100%;"></input>
+   </fieldset>
+   <div id="suggestions" style="max-height:20rem; overflow-y:scroll; width: inherit; position: absolute; background-color:#fff;cursor:pointer !important; display: none; border: 1px solid gray; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);"></div>
+</span>`*/
+
 class AutocompleteInput extends HTMLElement {
 
    constructor() {
@@ -20,6 +29,10 @@ class AutocompleteInput extends HTMLElement {
       this.input_delimter = this.getAttribute("input_delimiter")? 
          this.getAttribute("input_delimiter"):
          ',';
+
+      this.multi = this.getAttribute("multi")? 
+         this.getAttribute("multi"):
+         true;
 
       this.name = this.getAttribute("name")? 
          this.getAttribute("name"):
@@ -60,6 +73,7 @@ class AutocompleteInput extends HTMLElement {
          }
       }
    }
+
    getSelection() {
       const suggestions = this.shadowRoot.querySelector("#suggestions");
       if(!suggestions) return;
@@ -113,22 +127,36 @@ class AutocompleteInput extends HTMLElement {
       formData.append(this.name, this._inputEl.value);
    }
 
+   _select_option() {
+      const selected_option = this.getSelection();
+      console.log(selected_option)
+      if(selected_option) {
+         let values = this._inputEl.value.split(this.input_delimter);
+         let incoming_value = selected_option.getAttribute("data-value")? 
+            selected_option.getAttribute("data-value"):
+            selected_option.innerHTML
+
+         if(values.length > 1 && this.multi) {
+            if(!Array.isArray(this.value)) this.value = [this.value];
+
+            values[values.length - 1] = selected_option.innerHTML
+            this._inputEl.value = values.join(this.input_delimter);
+            this.value.push(incoming_value);
+         } else {
+            this.value = selected_option.getAttribute("data-value")? 
+               selected_option.getAttribute("data-value"):
+               selected_option.innerHTML
+            this._inputEl.value = selected_option.innerHTML;
+         }
+      }
+   }
+
    connectedCallback() {
       const el = this.getInputElement();
       this.menu = this.shadowRoot.querySelector("#suggestions");
 
       this.menu.addEventListener('mousedown', () => {
-         const selected_option = this.getSelection();
-         if(selected_option) {
-            let values = this._inputEl.value.split(this.input_delimter);
-            if(values.length > 1) {
-               values[values.length - 1] = selected_option.innerHTML
-               this._inputEl.value = values.join(this.input_delimter);
-            } else {
-               this._inputEl.value = selected_option.innerHTML;
-            }
-         }
-
+         this._select_option();
          this.selected_index = 0;
       });
 
@@ -151,6 +179,8 @@ class AutocompleteInput extends HTMLElement {
       });
 
       el.addEventListener('blur', () => this.toggleMenu(false));
+
+      el.addEventListener('focus', () => this.toggleMenu(true));
 
       el.addEventListener('keydown', e => {
          let scrollMenu= () => {
@@ -175,16 +205,7 @@ class AutocompleteInput extends HTMLElement {
                scrollMenu();
                break;
             case "Enter":
-               const selected_option = this.getSelection();
-               if(selected_option) {
-                  let values = this._inputEl.value.split(this.input_delimter);
-                  if(values.length > 1) {
-                     values[values.length - 1] = selected_option.innerHTML
-                     this._inputEl.value = values.join(this.input_delimter);
-                  } else {
-                     this._inputEl.value = selected_option.innerHTML;
-                  }
-               }
+               this._select_option();
                this.toggleMenu(false);
                break;
          }

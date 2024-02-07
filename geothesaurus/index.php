@@ -106,6 +106,7 @@ function listGeoUnits($arr) {
 		.button-div{ margin: 15px }
 		#status-div{ margin:15px; padding: 15px; color: red; }
 	</style>
+   <script src="<?php echo $CLIENT_ROOT?>/js/autocomplete-input.js" type="module"></script>
 	<script type="text/javascript">
 		function toggleEditor(){
 			toggle(".editTerm");
@@ -165,7 +166,16 @@ function listGeoUnits($arr) {
 				console.log("Leaflet Map failed to load")
             console.log(e)
 			}
-		}
+      }
+
+      function navigateGeothesaursSearch() {
+         let auto_input = document.getElementById("geothesaurus-suggest");
+
+         //Alert?
+         if(!auto_input || (auto_input.inputEl && !auto_input.inputEl.value)) return;
+
+         window.location.href = `index.php?geoThesID=${auto_input.value}`
+      }
 	</script>
 	</head>
 	<body onload="init()">
@@ -187,6 +197,18 @@ function listGeoUnits($arr) {
          <?php endif ?>
 		</div>
 		<div id='innertext'>
+         <fieldset>
+            <legend>Search Geothesaurus</legend>
+         <autocomplete-input 
+            id="geothesaurus-suggest"
+            name="external-taxa-input"
+            response_type="json"
+            json_label="label"
+            json_value="geoThesID"
+            completeUrl="rpc/searchGeothesaurus.php?geoterm=??">
+         </autocomplete-input>
+         <button type="button" style="margin-left:2rem"onclick="navigateGeothesaursSearch()">Search</button>
+         </fieldset>
          <div>
             <a href="harvester.php"><?= $LANG['GOTO_HARVESTER']?></a>
          </div>
