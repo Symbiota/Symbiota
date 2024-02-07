@@ -198,16 +198,17 @@ function listGeoUnits($arr) {
 		</div>
 		<div id='innertext'>
          <fieldset>
-            <legend>Search Geothesaurus</legend>
-         <autocomplete-input 
-            id="geothesaurus-suggest"
-            name="external-taxa-input"
-            response_type="json"
-            json_label="label"
-            json_value="geoThesID"
-            completeUrl="rpc/searchGeothesaurus.php?geoterm=??">
-         </autocomplete-input>
-         <button type="button" style="margin-left:2rem"onclick="navigateGeothesaursSearch()">Search</button>
+            <legend><?=$LANG["SEARCH_GEOTHESAURUS"]?></legend>
+            <autocomplete-input 
+               id="geothesaurus-suggest"
+               name="external-taxa-input"
+               response_type="json"
+               json_label="label"
+               json_value="geoThesID"
+               multi="false"
+               completeUrl="rpc/searchGeothesaurus.php?geoterm=??">
+            </autocomplete-input>
+            <button type="button" style="margin-left:2rem"onclick="navigateGeothesaursSearch()"><?=$LANG["SEARCH"]?></button>
          </fieldset>
          <div>
             <a href="harvester.php"><?= $LANG['GOTO_HARVESTER']?></a>

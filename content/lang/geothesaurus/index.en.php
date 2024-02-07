@@ -45,4 +45,6 @@ $LANG['POLYGON'] = 'Polygon';
 $LANG['NO_POLYGON'] = 'No';
 $LANG['YES_POLYGON'] = 'Yes';
 $LANG['EDIT_POLYGON'] = 'Edit Polygon';
+$LANG['SEARCH'] = 'Search';
+$LANG['SEARCH_GEOTHESAURUS'] = 'Search Geographic Thesaurus';
 ?>
