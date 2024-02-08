@@ -433,7 +433,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 				</form>
 			</div>
 			<?php
-		} 
+		}
 		//Display list of checklists specimen is linked to
 		if($checklistArr){
 			foreach($checklistArr as $vClid => $vClName){
