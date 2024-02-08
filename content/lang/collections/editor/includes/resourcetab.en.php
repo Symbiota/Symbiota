@@ -46,6 +46,8 @@ $LANG['GEN_RES_EDITOR'] = 'Genetic Resource Editor';
 $LANG['SAVE_EDITS'] = 'Save Edits';
 $LANG['DEL_GEN_RES'] = 'Delete Genetic Resource';
 $LANG['DEL_RES'] = 'Delete Resource';
+$LANG['NO_CHECKLISTS'] = 'No checklist voucher linkages have been established';
+$LANG['NO_GENETIC_RESOURCES'] = 'No genetics linkages have been established';
 
 include_once($SERVER_ROOT.'/content/lang/collections/associations.en.php');
 ?>
