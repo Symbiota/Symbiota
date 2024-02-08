@@ -692,6 +692,9 @@ class OccurrenceAttributes extends Manager {
 	public function getLocalFilterOptions(){
 		$retArr = array();
 		$sql = 'SELECT DISTINCT countryName AS localstr FROM lkupcountry UNION SELECT DISTINCT stateName AS localstr FROM lkupstateprovince';
+		if(!$this->lkupTablesExist()){
+			$sql = 'SELECT geoterm AS localstr FROM geographicthesaurus WHERE geolevel IN(50,60)';
+		}
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr[] = $r->localstr;
@@ -699,6 +702,18 @@ class OccurrenceAttributes extends Manager {
 		$rs->free();
 		sort($retArr);
 		return $retArr;
+	}
+
+	private function lkupTablesExist(){
+		$bool = false;
+		// Check to see is old deprecated lookup tables exist
+		$sql = 'SHOW tables LIKE "lkupcountry"';
+		$rs = $this->conn->query($sql);
+		if($rs->num_rows){
+			$bool = true;
+		}
+		$rs->free();
+		return $bool;
 	}
 
 	public function getSourceControlledArr($currentSetStr=''){

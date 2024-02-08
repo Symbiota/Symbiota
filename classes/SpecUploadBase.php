@@ -634,34 +634,37 @@ class SpecUploadBase extends SpecUpload{
 			WHERE (u.eventDate IS NULL) AND (u.year > 1300) AND (u.year <= '.date('Y').') AND (collid IN('.$this->collId.'))';
 		$this->conn->query($sql);
 
-		$this->outputMsg('<li style="margin-left:10px;">Cleaning country and state/province ...</li>');
-		//Convert country abbreviations to full spellings
-		$sql = 'UPDATE uploadspectemp u INNER JOIN lkupcountry c ON u.country = c.iso3 '.
-			'SET u.country = c.countryName '.
-			'WHERE (u.collid IN('.$this->collId.'))';
-		$this->conn->query($sql);
-		$sql = 'UPDATE uploadspectemp u INNER JOIN lkupcountry c ON u.country = c.iso '.
-			'SET u.country = c.countryName '.
-			'WHERE u.collid IN('.$this->collId.')';
-		$this->conn->query($sql);
+		if(!$this->isNewInstall()){
+			//Temporary code needed to adjust for lookup tables being left out of v3.0
+			$this->outputMsg('<li style="margin-left:10px;">Cleaning country and state/province ...</li>');
+			//Convert country abbreviations to full spellings
+			$sql = 'UPDATE uploadspectemp u INNER JOIN lkupcountry c ON u.country = c.iso3 '.
+				'SET u.country = c.countryName '.
+				'WHERE (u.collid IN('.$this->collId.'))';
+			$this->conn->query($sql);
+			$sql = 'UPDATE uploadspectemp u INNER JOIN lkupcountry c ON u.country = c.iso '.
+				'SET u.country = c.countryName '.
+				'WHERE u.collid IN('.$this->collId.')';
+			$this->conn->query($sql);
 
-		//Convert state abbreviations to full spellings
-		$sql = 'UPDATE uploadspectemp u INNER JOIN lkupstateprovince s ON u.stateProvince = s.abbrev '.
-			'SET u.stateProvince = s.stateName '.
-			'WHERE u.collid IN('.$this->collId.')';
-		$this->conn->query($sql);
+			//Convert state abbreviations to full spellings
+			$sql = 'UPDATE uploadspectemp u INNER JOIN lkupstateprovince s ON u.stateProvince = s.abbrev '.
+				'SET u.stateProvince = s.stateName '.
+				'WHERE u.collid IN('.$this->collId.')';
+			$this->conn->query($sql);
 
-		//Fill null country with state matches
-		$sql = 'UPDATE uploadspectemp u INNER JOIN lkupstateprovince s ON u.stateprovince = s.statename '.
-			'INNER JOIN lkupcountry c ON s.countryid = c.countryid '.
-			'SET u.country = c.countryName '.
-			'WHERE u.country IS NULL AND c.countryname = "United States" AND u.collid IN('.$this->collId.')';
-		$this->conn->query($sql);
-		$sql = 'UPDATE uploadspectemp u INNER JOIN lkupstateprovince s ON u.stateprovince = s.statename '.
-			'INNER JOIN lkupcountry c ON s.countryid = c.countryid '.
-			'SET u.country = c.countryName '.
-			'WHERE u.country IS NULL AND u.collid IN('.$this->collId.')';
-		$this->conn->query($sql);
+			//Fill null country with state matches
+			$sql = 'UPDATE uploadspectemp u INNER JOIN lkupstateprovince s ON u.stateprovince = s.statename '.
+				'INNER JOIN lkupcountry c ON s.countryid = c.countryid '.
+				'SET u.country = c.countryName '.
+				'WHERE u.country IS NULL AND c.countryname = "United States" AND u.collid IN('.$this->collId.')';
+			$this->conn->query($sql);
+			$sql = 'UPDATE uploadspectemp u INNER JOIN lkupstateprovince s ON u.stateprovince = s.statename '.
+				'INNER JOIN lkupcountry c ON s.countryid = c.countryid '.
+				'SET u.country = c.countryName '.
+				'WHERE u.country IS NULL AND u.collid IN('.$this->collId.')';
+			$this->conn->query($sql);
+		}
 
 		$this->outputMsg('<li style="margin-left:10px;">Cleaning coordinates...</li>');
 		$sql = 'UPDATE uploadspectemp '.
