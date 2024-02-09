@@ -23,7 +23,15 @@ if($isEditor && $submitAction) {
       //geoJson and how many children are within the feature collection past
       set_time_limit(300);
       foreach($_POST['geoJson'] as $geojson) {
-	      $geoManager->addGeoBoundary($geojson);
+         try {
+            $result = $geoManager->addGeoBoundary($geojson);
+            if(!$result) {
+               break;
+            }
+         } catch(Execption $e) {
+            var_dump($e);
+            break;
+         }
       }
 	}
 }
