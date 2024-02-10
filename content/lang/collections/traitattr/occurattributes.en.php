@@ -66,3 +66,4 @@ $LANG['NEXT_RECORD'] = 'Next record';
 $LANG['TOGGLE_ATTRI_TREE'] = 'Toggle attribute tree open/close';
 $LANG['NEXT'] = 'next';
 $LANG['SKIP'] = 'SKIP';
+$LANG['ALL_TAXA'] = 'All Taxa';

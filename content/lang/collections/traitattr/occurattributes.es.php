@@ -71,3 +71,4 @@ $LANG['NEXT_RECORD'] = 'Siguiente registro';
 $LANG['TOGGLE_ATTRI_TREE'] = 'Activar/cerrar árbol de atributos';
 $LANG['NEXT'] = 'siguiente';
 $LANG['SKIP'] = 'SALTAR';
+$LANG['ALL_TAXA'] = 'Todos los taxones';

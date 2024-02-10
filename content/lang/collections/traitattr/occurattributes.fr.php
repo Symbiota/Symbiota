@@ -67,3 +67,4 @@ $LANG['NEXT_RECORD'] = 'Enregistrement suivant';
 $LANG['TOGGLE_ATTRI_TREE'] = 'Basculer l\'ouverture/la fermeture de l\'arborescence des attributs';
 $LANG['NEXT'] = 'suivant';
 $LANG['SKIP'] = 'SAUTER';
+$LANG['ALL_TAXA'] = 'Tous les taxons';

@@ -192,7 +192,7 @@ if ($traitID) {
 		}
 
 		function verifyFilterForm(f) {
-			if (f.taxonfilter.value == "All Taxa") f.taxonfilter.value = '';
+			if (f.taxonfilter.value == "<?php echo $LANG['ALL_TAXA']; ?>") f.taxonfilter.value = '';
 			if (f.traitid.value == "") {
 				alert("<?php echo $LANG['OCC_TRAIT_MUST_SELECTED'] ?>");
 				return false;
@@ -216,7 +216,7 @@ if ($traitID) {
 		}
 
 		function taxonFilterFocus(formElem) {
-			if (formElem.value == "All Taxa") formElem.value = '';
+			if (formElem.value == "<?php echo $LANG['ALL_TAXA']; ?>") formElem.value = '';
 		}
 	</script>
 	<script src="../../js/symb/collections.traitattr.js" type="text/javascript"></script>
@@ -305,7 +305,7 @@ if ($traitID) {
 								</select>
 							</div>
 							<div>
-								<input id="taxonfilter" name="taxonfilter" type="text" value="<?php echo ($taxonFilter ? $taxonFilter : 'All Taxa'); ?>" taxonFilterFocus(this) />
+								<input id="taxonfilter" name="taxonfilter" type="text" value="<?php echo ($taxonFilter ? $taxonFilter : $LANG['ALL_TAXA']); ?>" taxonFilterFocus(this) />
 								<input id="tidfilter" name="tidfilter" type="hidden" value="<?php echo $tidFilter; ?>" />
 							</div>
 							<div>
