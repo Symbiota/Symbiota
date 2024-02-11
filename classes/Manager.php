@@ -132,13 +132,6 @@ class Manager  {
 		return $newArray;
 	}
 
-	protected function encodeArray(&$inArr, $charsetOut = ''){
-		if(!$charsetOut && !empty($GLOBALS['CHARSET'])) $charsetOut = $GLOBALS['CHARSET'];
-		foreach($inArr as $k => $v){
-			$inArr[$k] = $this->encodeString($v, $charsetOut);
-		}
-	}
-
 	protected function encodeString($inStr, $charsetOut = ''){
 		$retStr = '';
 		if(!$charsetOut && !empty($GLOBALS['CHARSET'])) $charsetOut = $GLOBALS['CHARSET'];
