@@ -212,7 +212,10 @@ if($isEditor){
 							</tr>
 							<?php
 							$translationMap = array('phylum'=>'division', 'division'=>'phylum', 'subphylum'=>'subdivision', 'subdivision'=>'subphylum', 'sciname'=>'scinameinput',
-								'scientificname'=>'scinameinput', 'scientificnameauthorship'=>'author', 'acceptedname'=>'acceptedstr', 'vernacularname'=>'vernacular');
+								'scientificname'=>'scinameinput', 'scientificnameauthorship'=>'author', 'vernacularname'=>'vernacular',
+								'taxonid'=>'sourceid', 'parenttaxonid'=>'sourceparentid', 'parentscientificname'=>'parentstr',
+								'acceptedtaxonid'=>'sourceacceptedid', 'acceptedscientificname'=>'acceptedstr', 'acceptedname'=>'acceptedstr'
+							);
 							$sArr = $loaderManager->getSourceArr();
 							$tArr = $loaderManager->getTargetArr();
 							asort($tArr);
@@ -220,37 +223,43 @@ if($isEditor){
 								?>
 								<tr>
 									<td style='padding:2px;'>
-										<?php echo $sField; ?>
+										<?php
+										echo $sField;
+										$sField = strtolower($sField);
+										$sTestField = str_replace(array(' ', '_'), '', $sField);
+										if(isset($translationMap[$sTestField])) $sTestField = $translationMap[$sTestField];
+										?>
 										<input type="hidden" name="sf[]" value="<?php echo $sField; ?>" />
 									</td>
 									<td>
-										<select name="tf[]" style="background:<?php echo (array_key_exists($sField,$fieldMap)?"":"yellow");?>">
+										<?php
+										$selStr = '';
+										$mappedTarget = (array_key_exists($sField,$fieldMap)?$fieldMap[$sField]:"");
+										if($mappedTarget=='unmapped') $selStr = 'SELECTED';
+										$optionStr = '<option value="unmapped" '.$selStr.'>'.(isset($LANG['LEAVE_UNMAPPED'])?$LANG['LEAVE_UNMAPPED']:'Leave Field Unmapped').'</option>';
+										if($selStr) $selStr = 0;
+										foreach($tArr as $k => $tField){
+											if($selStr !== 0){
+												$tTestField = strtolower($tField);
+												if($mappedTarget && $mappedTarget == $k){
+													$selStr = 'SELECTED';
+												}
+												elseif($tTestField == $sTestField && $tTestField != 'sciname'){
+													$selStr = 'SELECTED';
+												}
+												elseif($sTestField == $k){
+													$selStr = 'SELECTED';
+												}
+											}
+											$optionStr .= '<option value="'.$k.'" '.($selStr?$selStr:'').'>'.$tField."</option>\n";
+											if($selStr) $selStr = 0;
+										}
+										?>
+										<select name="tf[]" style="background:<?php echo ($selStr !== '' ? '' : 'yellow'); ?>">
 											<option value=""><?php echo (isset($LANG['FIELD_UNMAPPED'])?$LANG['FIELD_UNMAPPED']:'Field Unmapped'); ?></option>
 											<option value="">-------------------------</option>
 											<?php
-											$selStr = '';
-											$mappedTarget = (array_key_exists($sField,$fieldMap)?$fieldMap[$sField]:"");
-											if($mappedTarget=='unmapped') $selStr = 'SELECTED';
-											echo '<option value="unmapped" '.$selStr.'>'.(isset($LANG['LEAVE_UNMAPPED'])?$LANG['LEAVE_UNMAPPED']:'Leave Field Unmapped').'</option>';
-											if($selStr) $selStr = 0;
-											foreach($tArr as $k => $tField){
-												if($selStr !== 0){
-													$sTestField = str_replace(array(' ','_'), '', $sField);
-													if($mappedTarget && $mappedTarget == $k){
-														$selStr = 'SELECTED';
-													}
-													elseif($tField==$sTestField && $tField != 'sciname'){
-														$selStr = 'SELECTED';
-													}
-													elseif(isset($translationMap[strtolower($sTestField)]) && $translationMap[strtolower($sTestField)] == $tField){
-														$selStr = 'SELECTED';
-													}
-												}
-												echo '<option value="'.$k.'" '.($selStr?$selStr:'').'>'.$tField."</option>\n";
-												if($selStr){
-													$selStr = 0;
-												}
-											}
+											echo $optionStr;
 											?>
 										</select>
 									</td>
