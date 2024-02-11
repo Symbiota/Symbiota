@@ -818,7 +818,6 @@ class TaxonomyUpload{
 
 		//Update occurrences with new tids
 		$occurMaintenance = new OccurrenceMaintenance($this->conn);
-		$occurMaintenance->setCollidStr($this->collid);
 		$occurMaintenance->generalOccurrenceCleaning();
 		$occurMaintenance->batchUpdateGeoreferenceIndex();
 	}
