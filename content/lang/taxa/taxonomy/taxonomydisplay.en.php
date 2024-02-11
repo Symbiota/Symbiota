@@ -23,7 +23,6 @@ $LANG['DISP_FULL_TREE'] = 'Display full tree below family';
 $LANG['DISP_SUBGENERA'] = 'Display species with subgenera';
 $LANG['LIMIT_TO_OCCURRENCES'] = 'Display only taxa linked to occurrences';
 $LANG['EXPORT_TREE'] = 'Export Taxonomy';
-$LANG['CREATE_NEW_TAXON'] = 'Create a New Taxon';
 $LANG['PLUS_SIGN_DESC'] = 'Image of a plus sign, indicating create new taxon';
 
 //Dynamic display

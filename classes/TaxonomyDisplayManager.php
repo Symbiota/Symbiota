@@ -274,15 +274,15 @@ class TaxonomyDisplayManager extends Manager{
 				if($taxonRankId > 139) echo '<a href="../index.php?taxon=' . $key . '" target="_blank">' . $sciName. '</a>';
 				else echo $sciName;
 				if($this->isEditor){
-					echo ' <a href="taxoneditor.php?tid=' . $key . '" target="_blank"><img src="../../images/edit.png" style="width:1.1em" alt="Edit" /></a>';
+					echo ' <a href="taxoneditor.php?tid=' . $key . '" target="_blank"><img class="icon-image" src="../../images/edit.png" alt="Edit"></a>';
 				}
 				if($this->limitToOccurrences){
-					echo ' <a href="../../collections/list.php?taxa=' . $key . '" target="_blank"><img src="../../images/list.png" style="width:1.1em" alt="Edit" /></a>';
+					echo ' <a href="../../collections/list.php?taxa=' . $key . '" target="_blank"><img class="icon-image" src="../../images/list.png" alt="Edit"></a>';
 				}
 				if(!$this->displayFullTree){
 					if(($this->targetRankId < 140 && $taxonRankId == 140) || !$this->targetStr && $taxonRankId == 10){
 						echo ' <a href="taxonomydisplay.php?target=' . htmlspecialchars($sciName, HTML_SPECIAL_CHARS_FLAGS) . '">';
-						echo '<img src="../../images/tochild.png" style="width:1em;" alt="Go to child" >';
+						echo '<img class="icon-image" src="../../images/tochild.png" alt="Go to child" >';
 						echo '</a>';
 					}
 				}
@@ -297,7 +297,7 @@ class TaxonomyDisplayManager extends Manager{
 						if($taxonRankId > 139) echo '<a href="../index.php?taxon=' . $synTid . '" target="_blank">';
 						echo $synName;
 						if($taxonRankId > 139) echo '</a>';
-						if($this->isEditor) echo ' <a href="taxoneditor.php?tid=' . $synTid . '" target="_blank"><img src="../../images/edit.png" style="width:1.1em" /></a>';
+						if($this->isEditor) echo ' <a href="taxoneditor.php?tid=' . $synTid . '" target="_blank"><img class="icon-image" src="../../images/edit.png" ></a>';
 						echo ']';
 						echo '</div>';
 					}

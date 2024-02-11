@@ -64,6 +64,7 @@ reset($treePath);
 			padding: 10px;
 			max-width: 600px;
 		}
+		.icon-image{ border: 0px; width: 15px; }
 	</style>
 	<script src="../../js/jquery.js" type="text/javascript" ></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript" ></script>
@@ -109,10 +110,7 @@ reset($treePath);
 		if($isEditor){
 			?>
 			<div style="float:right;">
-				<a href="taxonomyloader.php" target="_blank">
-					<?php echo (isset($LANG['CREATE_NEW_TAXON'])?$LANG['CREATE_NEW_TAXON']:'Create a New Taxon');  ?>
-					<img class="img-add" src="../../images/add.png" style="width:1.5em" title="<?php echo (isset($LANG['ADD_NEW_TAXON'])?$LANG['ADD_NEW_TAXON']:'Add a New Taxon'); ?>" alt="<?php echo (isset($LANG['PLUS_SIGN_DESC'])?$LANG['PLUS_SIGN_DESC']:'Image of a plus sign, indicating create new taxon'); ?>">
-				</a>
+				<a href="taxonomyloader.php" target="_blank"><img class="icon-image" src="../../images/add.png" title="<?= $LANG['ADD_NEW_TAXON'] ?>" alt="<?= $LANG['PLUS_SIGN_DESC'] ?>"></a>
 			</div>
 			<?php
 		}
@@ -122,7 +120,7 @@ reset($treePath);
 			$taxMetaArr = $taxonDisplayObj->getTaxonomyMeta();
 			echo '<div class="tax-meta-arr">'.$taxMetaArr['name'].'</div>';
 			if(count($taxMetaArr) > 1){
-				echo '<div id="taxDetailDiv" class="tax-detail-div"><a href="#" onclick="displayTaxomonyMeta()">(more details)</a></div>';
+				//echo '<div id="taxDetailDiv" class="tax-detail-div"><a href="#" onclick="displayTaxomonyMeta()">(more details)</a></div>';
 				echo '<div id="taxMetaDiv" class="tax-meta-div">';
 				if(isset($taxMetaArr['description'])) echo '<div style="margin:3px 0px"><b>'.(isset($LANG['DESCRIPTION'])?$LANG['DESCRIPTION']:'Description').':</b> '.$taxMetaArr['description'].'</div>';
 				if(isset($taxMetaArr['editors'])) echo '<div style="margin:3px 0px"><b>'.(isset($LANG['EDITORS'])?$LANG['EDITORS']:'Editors').':</b> '.$taxMetaArr['editors'].'</div>';

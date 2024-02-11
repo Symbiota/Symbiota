@@ -69,6 +69,7 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 	<style>
 		label{ font-weight: bold; }
 		.field-div{ margin:3px 0px }
+		.icon-image{ border: 0px; width: 15px; }
 	</style>
 </head>
 <body>
@@ -95,7 +96,7 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 			?>
 			<div style="float:right;" title="<?= $LANG['ADD_NEW_TAXON'] ?>">
 				<a href="taxonomyloader.php">
-					<img style='border:0px;width:1.5em;' src='../../images/add.png' alt="Plus sign">
+					<img class="icon-image" src='../../images/add.png' alt="Plus sign">
 				</a>
 			</div>
 			<?php
