@@ -494,11 +494,6 @@ hr {
   width: 5rem;
 }
 
-.fieldset-size {
-  padding: 10px;
-  max-width: 500px;
-}
-
 .max-width-fit-75 {
   max-width: 100%;
   width: 75rem;

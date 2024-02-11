@@ -45,9 +45,12 @@ class TaxonomyDisplayManager extends Manager{
 		$this->primeTaxaEnumTree();
 		$taxaParentIndex = Array();
 		$zeroRank = array();
-		$sql = 'SELECT DISTINCT t.tid, ts.tidaccepted, t.sciname, t.author, t.rankid, ts.parenttid '.
-			'FROM taxa t LEFT JOIN taxstatus ts ON t.tid = ts.tid '.
-			'WHERE (ts.taxauthid = '.$this->taxAuthId.') ';
+		$sql = 'SELECT DISTINCT t.tid, ts.tidaccepted, t.sciname, t.author, t.rankid, ts.parenttid
+			FROM taxa t LEFT JOIN taxstatus ts ON t.tid = ts.tid ';
+		if($this->limitToOccurrences){
+			$sql .= 'INNER JOIN taxaenumtree pe ON t.tid = pe.parenttid INNER JOIN omoccurrences o ON pe.tid = o.tidInterpreted ';
+		}
+		$sql .= 'WHERE (ts.taxauthid = '.$this->taxAuthId.') ';
 		if($this->targetTid) $sql .= 'AND (ts.tid = '.$this->targetTid.') ';
 		elseif($this->targetStr){
 			$term = $this->targetStr;
@@ -110,18 +113,19 @@ class TaxonomyDisplayManager extends Manager{
 		if($this->taxaArr){
 			//Get direct children, but only accepted children
 			$tidStr = implode(',',array_keys($this->taxaArr));
-			$childArr = array();
-			$sql2 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, ts.parenttid '.
-				'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-				'INNER JOIN taxaenumtree te ON t.tid = te.tid '.
-				'WHERE (ts.taxauthid = '.$this->taxAuthId.') AND (ts.tid = ts.tidaccepted) AND (te.taxauthid = '.$this->taxAuthId.') '.
-				'AND ((te.parenttid IN('.$tidStr.')) OR (t.tid IN('.$tidStr.'))) ';
+			$sql2 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, ts.parenttid
+				FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
+				INNER JOIN taxaenumtree e ON t.tid = e.tid ';
+			if($this->limitToOccurrences){
+				$sql2 .= 'INNER JOIN taxaenumtree pe ON t.tid = pe.parenttid INNER JOIN omoccurrences o ON pe.tid = o.tidInterpreted ';
+			}
+			$sql2 .= 'WHERE (ts.taxauthid = '.$this->taxAuthId.') AND (ts.tid = ts.tidaccepted) AND (e.taxauthid = '.$this->taxAuthId.')
+				AND ((e.parenttid IN('.$tidStr.')) OR (t.tid IN('.$tidStr.'))) ';
 			if(!$this->targetStr) $sql2 .= 'AND t.rankid <= 10 AND t.rankid != 0 ';
 			elseif($this->targetRankId < 140 && !$this->displayFullTree) $sql2 .= 'AND t.rankid <= 140 ';
 			$rs2 = $this->conn->query($sql2);
 			while($row2 = $rs2->fetch_object()){
 				$tid = $row2->tid;
-				if(!array_key_exists($tid, $this->taxaArr)) $childArr[$tid] = $tid;
 				$this->taxaArr[$tid]["sciname"] = $row2->sciname;
 				$this->taxaArr[$tid]["author"] = $row2->author;
 				$this->taxaArr[$tid]["rankid"] = $row2->rankid;
@@ -131,21 +135,6 @@ class TaxonomyDisplayManager extends Manager{
 				if($parentTid) $taxaParentIndex[$tid] = $parentTid;
 			}
 			$rs2->free();
-			if($this->limitToOccurrences && $childArr){
-				//Get rid of child taxa that lack a link to at least one occurrence record
-				$sql = 'SELECT tidinterpreted FROM omoccurrences WHERE tidinterpreted IN('.implode(',',$childArr).')';
-				$rs = $this->conn->query($sql);
-				while($r = $rs->fetch_object()){
-					unset($childArr[$r->tidinterpreted]);
-				}
-				$rs->free();
-				foreach($childArr as $removeTid){
-					if(!in_array($removeTid, $taxaParentIndex)){
-						unset($this->taxaArr[$removeTid]);
-						unset($taxaParentIndex[$removeTid]);
-					}
-				}
-			}
 
 			//Get all parent taxa
 			$sql3 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, ts.parenttid '.
@@ -284,7 +273,12 @@ class TaxonomyDisplayManager extends Manager{
 				echo '<div>' . str_repeat('&nbsp;', intval($indent/5));
 				if($taxonRankId > 139) echo '<a href="../index.php?taxon=' . $key . '" target="_blank">' . $sciName. '</a>';
 				else echo $sciName;
-				if($this->isEditor) echo ' <a href="taxoneditor.php?tid=' . $key . '" target="_blank"><img src="../../images/edit.png" style="width:1.1em" alt="Edit" /></a>';
+				if($this->isEditor){
+					echo ' <a href="taxoneditor.php?tid=' . $key . '" target="_blank"><img src="../../images/edit.png" style="width:1.1em" alt="Edit" /></a>';
+				}
+				if($this->limitToOccurrences){
+					echo ' <a href="../../collections/list.php?taxa=' . $key . '" target="_blank"><img src="../../images/list.png" style="width:1.1em" alt="Edit" /></a>';
+				}
 				if(!$this->displayFullTree){
 					if(($this->targetRankId < 140 && $taxonRankId == 140) || !$this->targetStr && $taxonRankId == 10){
 						echo ' <a href="taxonomydisplay.php?target=' . htmlspecialchars($sciName, HTML_SPECIAL_CHARS_FLAGS) . '">';
@@ -397,7 +391,7 @@ class TaxonomyDisplayManager extends Manager{
 	}
 
 	//Export taxonomic tree
-	public function exportCsv($charsetOut){
+	public function exportCsv(){
 		$fullCount = 0;
 		$fileName = 'taxonomyExport_'.date('Y-m-d').'.csv';
 		header ('Cache-Control: must-revalidate, post-check=0, pre-check=0');
@@ -491,6 +485,10 @@ class TaxonomyDisplayManager extends Manager{
 
 	public function setDisplaySubGenera($displaySubg){
 		if($displaySubg) $this->displaySubGenera = true;
+	}
+
+	public function setLimitToOccurrences($limitToOccurrences){
+		if($limitToOccurrences) $this->limitToOccurrences = true;
 	}
 
 	public function getTargetStr(){

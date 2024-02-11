@@ -1,16 +1,17 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyDisplayManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once($SERVER_ROOT . '/classes/TaxonomyDisplayManager.php');
+header('Content-Type: text/html; charset=' . $CHARSET);
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.'.$LANG_TAG.'.php'))
 	include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.en.php');
 
 $target = $_REQUEST['target'] ?? '';
-$displayAuthor = array_key_exists('displayauthor', $_REQUEST) ? filter_var($_REQUEST['displayauthor'], FILTER_SANITIZE_NUMBER_INT): 0;
-$matchOnWords = array_key_exists('matchonwords', $_POST) ? filter_var($_POST['matchonwords'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$displayFullTree = array_key_exists('displayfulltree', $_REQUEST) ? filter_var($_REQUEST['displayfulltree'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$displaySubGenera = array_key_exists('displaysubgenera', $_REQUEST) ? filter_var($_REQUEST['displaysubgenera'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$displayAuthor = !empty($_REQUEST['displayauthor']) ? 1: 0;
+$matchOnWords = !empty($_POST['matchonwords']) ? 1 : 0;
+$displayFullTree = !empty($_REQUEST['displayfulltree']) ? 1 : 0;
+$displaySubGenera = !empty($_REQUEST['displaysubgenera']) ? 1 : 0;
+$limitToOccurrences = !empty($_REQUEST['limittooccurrences']) ? 1 : 0;
 $taxAuthId = array_key_exists('taxauthid', $_REQUEST) ? filter_var($_REQUEST['taxauthid'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $statusStr = array_key_exists('statusstr', $_REQUEST) ? $_REQUEST['statusstr'] : '';
 $submitAction = array_key_exists('tdsubmit', $_POST) ? $_POST['tdsubmit'] : '';
@@ -23,10 +24,11 @@ $taxonDisplayObj->setDisplayAuthor($displayAuthor);
 $taxonDisplayObj->setMatchOnWholeWords($matchOnWords);
 $taxonDisplayObj->setDisplayFullTree($displayFullTree);
 $taxonDisplayObj->setDisplaySubGenera($displaySubGenera);
+$taxonDisplayObj->setLimitToOccurrences($limitToOccurrences);
 
 if($submitAction){
 	if($submitAction == 'exportTaxonTree'){
-		$taxonDisplayObj->exportCsv('UTF-8');
+		$taxonDisplayObj->exportCsv();
 		exit;
 	}
 }
@@ -53,8 +55,9 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 			$("#taxontarget").autocomplete({
 				source: function( request, response ) {
 					$.getJSON( "rpc/gettaxasuggest.php", { term: request.term, taid: document.tdform.taxauthid.value }, response );
-				}
-			},{ minLength: 3 }
+				},
+				autoFocus: true,
+				minLength: 3 }
 			);
 		});
 
@@ -124,22 +127,25 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 						<input id="taxontarget" class="search-bar" name="target" type="text" value="<?= $taxonDisplayObj->getTargetStr(); ?>" />
 
 						<div>
-							<input id="displayauthor" name="displayauthor" type="checkbox" value="1" <?= ($displayAuthor?'checked':''); ?> />
+							<input id="displayauthor" name="displayauthor" type="checkbox" value="1" <?= ($displayAuthor ? 'checked' : '') ?> />
 							<label for="displayauthor" > <?= $LANG['DISP_AUTHORS']; ?> </label>
 						</div>
 						<div>
-							<input id="matchonwords" name="matchonwords" type="checkbox" value="1" <?= ($matchOnWords?'checked':''); ?> />
+							<input id="matchonwords" name="matchonwords" type="checkbox" value="1" <?= ($matchOnWords ? 'checked' : '') ?> />
 							<label for="matchonwords" > <?= $LANG['MATCH_WHOLE_WORDS'] ?> </label>
 						</div>
 						<div>
-							<input id="displayfulltree" name="displayfulltree" type="checkbox" value="1" <?= ($displayFullTree?'checked':''); ?> />
+							<input id="displayfulltree" name="displayfulltree" type="checkbox" value="1" <?= ($displayFullTree ? 'checked' : '') ?> />
 							<label for="displayfulltree" > <?= $LANG['DISP_FULL_TREE'] ?> </label>
 						</div>
 						<div>
-							<input id="displaysubgenera" name="displaysubgenera" type="checkbox" value="1" <?= ($displaySubGenera?'checked':''); ?> />
+							<input id="displaysubgenera" name="displaysubgenera" type="checkbox" value="1" <?= ($displaySubGenera ? 'checked' : '') ?> />
 							<label for="displaysubgenera"> <?= $LANG['DISP_SUBGENERA'] ?> </label>
 						</div>
-
+						<div>
+							<input id="limittooccurrences" name="limittooccurrences" type="checkbox" value="1" <?= ($limitToOccurrences ? 'checked' : '') ?> />
+							<label for="limittooccurrences"> <?= $LANG['LIMIT_TO_OCCURRENCES'] ?> </label>
+						</div>
 					</div>
 					<div class="flex-form" style="margin: 10px">
 						<div style="float: right">
