@@ -290,7 +290,9 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 						<div style="clear:both;">
 							<div style="float:left;">
 								<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
-								<input type="submit" name="submitaction" value="<?php echo (isset($LANG['FILT_SPEC_REC']) ? $LANG['FILT_SPEC_REC'] : 'Filter Specimen Records') ?>" />
+								<button type="submit" name="submitaction" value="<?php echo $LANG['FILT_SPEC_REC'] ?>">
+									<?php echo $LANG['FILT_SPEC_REC'] ?>
+								</button>
 							</div>
 							<div style="margin-left:20px;float:left;">
 								* <?= (isset($LANG['SPEC_LIM']) ? $LANG['SPEC_LIM'] : 'Specimen return is limited to') ?>: <?= $limit ?>
