@@ -634,12 +634,12 @@ else{
 				}
 				else{
 					?>
-					<table id="edittable" style="">
-						<tr><td id="editortd" style="" valign="top">
+					<table id="edittable">
+						<tr><td id="editortd" valign="top">
 							<div id="occedittabs" style="clear:both;">
 								<ul>
 									<li>
-										<a href="#occdiv"  style="">
+										<a href="#occdiv">
 											<?php
 											if($occId) echo (isset($LANG['OCC_DATA'])?$LANG['OCC_DATA']:'Occurrence Data');
 											else echo '<span style="color:red;">'.(isset($LANG['NEW_OCC_RECORD'])?$LANG['NEW_OCC_RECORD']:'New Occurrence Record').'</span>';

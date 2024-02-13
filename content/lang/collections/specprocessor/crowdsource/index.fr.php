@@ -13,6 +13,7 @@ $LANG['PENDING_SCORE'] = 'Score en attente';
 $LANG['TOP_SCORES_NOT_AVAIL'] = 'Meilleurs scores pas encore disponibles';
 $LANG['YOUR_STANDING'] = 'Votre statut actuel';
 $LANG['SPEC_PROC_AS_VOL'] = 'Spécimens traités en tant que volontaires';
+$LANG['ADD_AS_NONVOL'] = 'Supplémentaire en tant que non-bénévole';
 $LANG['PEND_POINTS'] = 'Points en attente';
 $LANG['APP_POINTS'] = 'Points approuvés';
 $LANG['TOT_POSS_SCORE'] = 'Score total possible';

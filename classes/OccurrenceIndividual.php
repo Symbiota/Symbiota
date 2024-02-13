@@ -139,12 +139,10 @@ class OccurrenceIndividual extends Manager{
 				if(!$this->collid) $this->collid = $this->occArr['collid'];
 				$this->loadMetadata();
 				if($this->occArr['institutioncode']){
-					if(!$this->metadataArr['institutioncode']) $this->metadataArr['institutioncode'] = $this->occArr['institutioncode'];
-					elseif($this->metadataArr['institutioncode'] != $this->occArr['institutioncode']) $this->metadataArr['institutioncode'] .= '-'.$this->occArr['institutioncode'];
+					if($this->metadataArr['institutioncode'] != $this->occArr['institutioncode']) $this->metadataArr['institutioncode'] = $this->occArr['institutioncode'];
 				}
 				if($this->occArr['collectioncode']){
-					if(!$this->metadataArr['collectioncode']) $this->metadataArr['collectioncode'] = $this->occArr['institutioncode'];
-					elseif($this->metadataArr['collectioncode'] != $this->occArr['collectioncode']) $this->metadataArr['collectioncode'] .= '-'.$this->occArr['institutioncode'];
+					if($this->metadataArr['collectioncode'] != $this->occArr['collectioncode']) $this->metadataArr['collectioncode'] = $this->occArr['collectioncode'];
 				}
 				if(!$this->occArr['occurrenceid']){
 					//Set occurrence GUID based on GUID target, but only if occurrenceID field isn't already populated

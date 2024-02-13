@@ -70,6 +70,10 @@ SET associationType = "observational"
 WHERE associationType = "" AND occidAssociate IS NULL AND resourceUrl IS NULL AND verbatimSciname IS NOT NULL;
 
 
+ALTER TABLE `omoccurdeterminations` 
+  CHANGE COLUMN `identificationID` `sourceIdentifier` VARCHAR(45) NULL DEFAULT NULL ;
+
+
 # Needed to ensure basisOfRecord values are tagged correctly based on collection type (aka collType field)
 UPDATE omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid
   SET o.basisofrecord = "PreservedSpecimen"

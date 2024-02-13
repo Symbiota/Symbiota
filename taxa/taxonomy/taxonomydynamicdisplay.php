@@ -1,33 +1,36 @@
-<!Doctype html>
-
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyDisplayManager.php');
-include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.'.$LANG_TAG.'.php'); //yes, the lang file is the same as taxonomydisplay
-header('Content-Type: text/html; charset='.$CHARSET);
-header('Cache-Control: no-cache, must-revalidate'); // HTTP/1.1
-header('Expires: Sat, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.'.$LANG_TAG.'.php'))
+	include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.'.$LANG_TAG.'.php');
+	else include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.en.php');
+header('Content-Type: text/html; charset=' . $CHARSET);
 
-$target = array_key_exists('target',$_REQUEST)?$_REQUEST['target']:'';
-$displayAuthor = array_key_exists('displayauthor',$_REQUEST)?$_REQUEST['displayauthor']:0;
-$taxAuthId = array_key_exists('taxauthid',$_REQUEST)?$_REQUEST['taxauthid']:1;
-$editorMode = array_key_exists('emode',$_POST)?$_POST['emode']:0;
+$target = $_REQUEST['target'] ?? '';
+$displayAuthor = !empty($_REQUEST['displayauthor']) ? 1: 0;
+$limitToOccurrences = !empty($_REQUEST['limittooccurrences']) ? 1 : 0;
+$taxAuthId = array_key_exists('taxauthid', $_REQUEST) ? filter_var($_REQUEST['taxauthid'], FILTER_SANITIZE_NUMBER_INT) : 1;
+$editorMode = !empty($_REQUEST['emode']) ? 1 : 0;
+$submitAction = array_key_exists('tdsubmit', $_POST) ? $_POST['tdsubmit'] : '';
 $statusStr = $_REQUEST['statusstr'] ?? '';
-
-//Sanitation
-$displayAuthor = (is_numeric($displayAuthor)?$displayAuthor:0);
-$taxAuthId = (is_numeric($taxAuthId)?$taxAuthId:0);
-$editorMode = (is_numeric($editorMode)?$editorMode:0);
 
 $taxonDisplayObj = new TaxonomyDisplayManager();
 $taxonDisplayObj->setTargetStr($target);
 $taxonDisplayObj->setTaxAuthId($taxAuthId);
 
+if($submitAction){
+	if($submitAction == 'exportTaxonTree'){
+		$taxonDisplayObj->setLimitToOccurrences($limitToOccurrences);
+		$taxonDisplayObj->exportCsv();
+		exit;
+	}
+}
+
 $isEditor = false;
-if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
+if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 	$isEditor = true;
 	$editorMode = 1;
-	if(array_key_exists('target',$_POST) && !array_key_exists('emode',$_POST)) $editorMode = 0;
+	if(array_key_exists('target', $_POST) && !array_key_exists('emode', $_POST)) $editorMode = 0;
 }
 
 $treePath = $taxonDisplayObj->getDynamicTreePath();
@@ -35,6 +38,7 @@ $targetId = end($treePath);
 reset($treePath);
 //echo json_encode($treePath);
 ?>
+<!Doctype html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' Taxonomy Explorer: '.$taxonDisplayObj->getTargetStr(); ?></title>
@@ -56,6 +60,11 @@ reset($treePath);
 			width: 0px;
 			height: 0px;
 		}
+		.fieldset-size {
+			padding: 10px;
+			max-width: 600px;
+		}
+		.icon-image{ border: 0px; width: 15px; }
 	</style>
 	<script src="../../js/jquery.js" type="text/javascript" ></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript" ></script>
@@ -65,8 +74,9 @@ reset($treePath);
 			$("#taxontarget").autocomplete({
 				source: function( request, response ) {
 					$.getJSON( "rpc/gettaxasuggest.php", { term: request.term, taid: document.tdform.taxauthid.value }, response );
-				}
-			},{ minLength: 3 }
+				},
+				autoFocus: true,
+				minLength: 3 }
 			);
 		});
 
@@ -100,10 +110,7 @@ reset($treePath);
 		if($isEditor){
 			?>
 			<div style="float:right;">
-				<a href="taxonomyloader.php" target="_blank">
-					<?php echo (isset($LANG['CREATE_NEW_TAXON'])?$LANG['CREATE_NEW_TAXON']:'Create a New Taxon');  ?>
-					<img class="img-add" src="../../images/add.png" style="width:1.5em" title="<?php echo (isset($LANG['ADD_NEW_TAXON'])?$LANG['ADD_NEW_TAXON']:'Add a New Taxon'); ?>" alt="<?php echo (isset($LANG['PLUS_SIGN_DESC'])?$LANG['PLUS_SIGN_DESC']:'Image of a plus sign, indicating create new taxon'); ?>">
-				</a>
+				<a href="taxonomyloader.php" target="_blank"><img class="icon-image" src="../../images/add.png" title="<?= $LANG['ADD_NEW_TAXON'] ?>" alt="<?= $LANG['PLUS_SIGN_DESC'] ?>"></a>
 			</div>
 			<?php
 		}
@@ -113,7 +120,7 @@ reset($treePath);
 			$taxMetaArr = $taxonDisplayObj->getTaxonomyMeta();
 			echo '<div class="tax-meta-arr">'.$taxMetaArr['name'].'</div>';
 			if(count($taxMetaArr) > 1){
-				echo '<div id="taxDetailDiv" class="tax-detail-div"><a href="#" onclick="displayTaxomonyMeta()">(more details)</a></div>';
+				//echo '<div id="taxDetailDiv" class="tax-detail-div"><a href="#" onclick="displayTaxomonyMeta()">(more details)</a></div>';
 				echo '<div id="taxMetaDiv" class="tax-meta-div">';
 				if(isset($taxMetaArr['description'])) echo '<div style="margin:3px 0px"><b>'.(isset($LANG['DESCRIPTION'])?$LANG['DESCRIPTION']:'Description').':</b> '.$taxMetaArr['description'].'</div>';
 				if(isset($taxMetaArr['editors'])) echo '<div style="margin:3px 0px"><b>'.(isset($LANG['EDITORS'])?$LANG['EDITORS']:'Editors').':</b> '.$taxMetaArr['editors'].'</div>';
@@ -130,23 +137,37 @@ reset($treePath);
 				<fieldset class="fieldset-size">
 					<legend><b><?php echo (isset($LANG['TAX_SEARCH'])?$LANG['TAX_SEARCH']:'Taxon Search'); ?></b></legend>
                     <div>
-						<label for="taxontarget"> <?php echo htmlspecialchars($LANG['TAXON'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
-						<input id="taxontarget" name="target" type="text" class="search-bar" value="<?php echo $taxonDisplayObj->getTargetStr(); ?>" />
-					</div>
-					<div style="float:right;margin:15px 80px 15px 15px;">
-						<button name="tdsubmit" type="submit" value="displayTaxonTree"><?php echo (isset($LANG['DISP_TAX_TREE'])?$LANG['DISP_TAX_TREE']:'Display Taxon Tree'); ?></button>
-						<input name="taxauthid" type="hidden" value="<?php echo $taxAuthId; ?>" />
+						<label for="taxontarget"> <?= $LANG['TAXON'] ?>: </label>
+						<input id="taxontarget" name="target" type="text" class="search-bar" value="<?= $taxonDisplayObj->getTargetStr() ?>" />
 					</div>
 					<div style="margin:15px 15px 0px 60px;">
-						<input id="displayauthor" name="displayauthor" type="checkbox" value="1" <?php echo ($displayAuthor?'checked':''); ?> />
-						<label for="displayauthor"> <?php echo (isset($LANG['DISP_AUTHORS'])?$LANG['DISP_AUTHORS']:'Display authors'); ?> </label>
+						<div>
+							<input id="displayauthor" name="displayauthor" type="checkbox" value="1" <?php echo ($displayAuthor ? 'checked' : ''); ?> />
+							<label for="displayauthor"> <?= $LANG['DISP_AUTHORS'] ?> </label>
+						</div>
+						<div>
+							<input id="limittooccurrences" name="limittooccurrences" type="checkbox" value="1" <?= ($limitToOccurrences ? 'checked' : ''); ?> />
+							<label for="limittooccurrences"> <?= $LANG['LIMIT_TO_OCCURRENCES'] ?> </label>
+						</div>
 						<?php
-						if($isEditor)
-						{
-							echo '<br/><input name="emode" id="emode" type="checkbox" value="1	" '.($editorMode?'checked':'').' /> ';
-							echo '<label for="emode">' . htmlspecialchars($LANG['EDITOR_MODE'], HTML_SPECIAL_CHARS_FLAGS) . '</label>';
+						if($isEditor){
+							?>
+							<div>
+								<input name="emode" id="emode" type="checkbox" value="1	" <?= ($editorMode ? 'checked' : '')?> />
+								<label for="emode"><?= $LANG['EDITOR_MODE'] ?></label>
+							</div>
+							<?php
 						}
 						?>
+					</div>
+					<div class="flex-form" style="margin: 10px">
+						<div style="float: right">
+							<button name="tdsubmit" type="submit" value="exportTaxonTree"><?= $LANG['EXPORT_TREE'] ?></button>
+						</div>
+						<div>
+							<button name="tdsubmit" type="submit" value="displayTaxonTree"><?= $LANG['DISP_TAX_TREE'] ?></button>
+							<input name="taxauthid" type="hidden" value="<?= $taxAuthId; ?>" />
+						</div>
 					</div>
 				</fieldset>
 			</form>
@@ -169,7 +190,7 @@ reset($treePath);
 					target: "rpc/getdynamicchildren.php",
 					labelAttribute: "label",
 					getChildren: function(object){
-						return this.query({id:object.id,authors:<?php echo $displayAuthor; ?>,targetid:<?php echo $targetId; ?>, emode:<?php echo $editorMode; ?>}).then(function(fullObject){
+						return this.query({id:object.id, authors:<?= $displayAuthor ?>, limittooccurrences:<?= $limitToOccurrences ?>, targetid:<?= $targetId ?>, emode:<?= $editorMode ?>}).then(function(fullObject){
 							return fullObject.children;
 						});
 					},

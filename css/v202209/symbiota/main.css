@@ -423,11 +423,6 @@ hr {
   margin-bottom: 0.75rem;
 }
 
-.img-add {
-  border: 0px;
-  width: 15px;
-}
-
 .load-button {
   margin-top: 0.75rem;
 }
@@ -466,11 +461,6 @@ hr {
 
 .search-bar-extraShort {
   width: 5rem;
-}
-
-.fieldset-size {
-  padding: 10px;
-  max-width: 500px;
 }
 
 .max-width-fit-75 {

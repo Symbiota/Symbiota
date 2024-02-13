@@ -129,8 +129,8 @@ class GeographicThesaurus extends Manager{
    }
 
    private function addPolygon($geoThesID, $polygon) {
-      $sql = 'INSERT INTO geographicpolygon 
-         (geoThesID, footprintPolygon ,footprintWKT) 
+      $sql = 'INSERT INTO geographicpolygon
+         (geoThesID, footprintPolygon ,footprintWKT)
          VALUES ('. $geoThesID .', ST_GeomFromText("' . $polygon . '"), "' . $polygon . '")';
       if(!$this->conn->query($sql)){
          $this->errorMessage = 'ERROR saving new polygon: '.$this->conn->error;
@@ -315,7 +315,7 @@ class GeographicThesaurus extends Manager{
 		}
 		$rs->free();
 
-		if($fullCnt < 100){
+		if($this->lkupTablesExist() && $fullCnt < 100){
 			$sql = 'SELECT COUNT(*) as cnt FROM lkupcountry ';
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
@@ -349,6 +349,7 @@ class GeographicThesaurus extends Manager{
 
 	public function transferDeprecatedThesaurus(){
 		$status = true;
+		if(!$this->lkupTablesExist()) return false;
 		$sqlArr = array();
 		$sqlArr[] = 'INSERT INTO geographicthesaurus(geoterm,iso2,iso3,numcode,category,geoLevel,termstatus)
 			SELECT countryName, iso, iso3, numcode, "Country", 50 as geoLevel, 1 as termStatus FROM lkupcountry WHERE iso IS NOT NULL';
@@ -615,7 +616,18 @@ class GeographicThesaurus extends Manager{
 	// Setters and getters
 
 
-
+	//Mics support functions
+	private function lkupTablesExist(){
+		$bool = false;
+		// Check to see is old deprecated lookup tables exist
+		$sql = 'SHOW tables LIKE "lkupcountry"';
+		$rs = $this->conn->query($sql);
+		if($rs->num_rows){
+			$bool = true;
+		}
+		$rs->free();
+		return $bool;
+	}
 
 }
 ?>

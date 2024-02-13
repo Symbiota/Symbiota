@@ -73,6 +73,10 @@ class TaxonomyUpload{
 
 		if(($fh = fopen($this->uploadTargetPath.$this->uploadFileName,'r')) !== FALSE){
 			$headerArr = fgetcsv($fh);
+			if(substr($headerArr[0], 0, 3) == chr(hexdec('EF')).chr(hexdec('BB')).chr(hexdec('BF'))){
+				//Remove UTF-8 BOM
+				$headerArr[0] = trim(substr($headerArr[0], 3), ' "');
+			}
 			$uploadTaxaFieldArr = $this->getUploadTaxaFieldArr();
 			if(!$this->taxonUnitArr) $this->setTaxonUnitArr();
 			$taxonUnitArr = $this->taxonUnitArr;
@@ -814,7 +818,6 @@ class TaxonomyUpload{
 
 		//Update occurrences with new tids
 		$occurMaintenance = new OccurrenceMaintenance($this->conn);
-		$occurMaintenance->setCollidStr($this->collid);
 		$occurMaintenance->generalOccurrenceCleaning();
 		$occurMaintenance->batchUpdateGeoreferenceIndex();
 	}
@@ -911,11 +914,11 @@ class TaxonomyUpload{
 		$retArr = $this->getUploadTaxaFieldArr();
 		unset($retArr['unitind1']);
 		unset($retArr['unitind2']);
-		$retArr['unitname1'] = 'genus';
+		$retArr['unitname1'] = 'unitname1 (e.g. genus)';
 		//unset($retArr['genus']);
-		$retArr['unitname2'] = 'specificepithet';
-		$retArr['unitind3'] = 'taxonrank';
-		$retArr['unitname3'] = 'infraspecificepithet';
+		$retArr['unitname2'] = 'unitname2 (specificEpithet)';
+		$retArr['unitind3'] = 'unitind3 (taxonrank)';
+		$retArr['unitname3'] = 'unitname3 (infraSpecificEpithet)';
 		if(!$this->taxonUnitArr) $this->setTaxonUnitArr();
 		foreach($this->taxonUnitArr as $rankid => $rankName){
 			if($rankName != 'genus' && $rankid < 220) $retArr[$rankName] = $rankName;
@@ -952,8 +955,12 @@ class TaxonomyUpload{
 		$sourceArr = array();
 		if(($fh = fopen($this->uploadTargetPath.$this->uploadFileName,'r')) !== FALSE){
 			$headerArr = fgetcsv($fh);
+			if(substr($headerArr[0], 0, 3) == chr(hexdec('EF')).chr(hexdec('BB')).chr(hexdec('BF'))){
+				//Remove UTF-8 BOM
+				$headerArr[0] = trim(substr($headerArr[0], 3), ' "');
+			}
 			foreach($headerArr as $field){
-				$fieldStr = strtolower(TRIM($field));
+				$fieldStr = trim($field);
 				if($fieldStr){
 					$sourceArr[] = $fieldStr;
 				}

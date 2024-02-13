@@ -406,9 +406,12 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 	<fieldset>
 		<legend><?php echo $LANG['CHECKLIST_LINKS']; ?></legend>
 		<?php
+		if(!$checklistArr){
+			echo '<div style="margin-bottom: 1rem;">' . $LANG['NO_CHECKLISTS'] . '</div>';
+		}
 		if($userChecklists){
 			?>
-			<div style="float:right;margin-right:15px;">
+			<div style="float:right;margin-right:15px; display:<?php echo ($checklistArr?'block':'none'); ?>">
 				<a href="#" onclick="toggle('voucheradddiv');return false;" title="<?php echo $LANG['LINK_TO_CHECKLIST']; ?>" ><img src="../../images/add.png"/></a>
 			</div>
 			<div id="voucheradddiv" style="display:<?php echo ($checklistArr?'none':'block'); ?>;">
@@ -531,7 +534,10 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 <div id="geneticdiv">
 	<fieldset>
 		<legend><?php echo $LANG['GEN_RES']; ?></legend>
-		<div style="float:right;">
+		<?php if(!$genticArr){
+			echo '<div>' . $LANG['NO_GENETIC_RESOURCES'] . '</div>';
+		} ?>
+		<div style="float:right; display:<?php echo ($genticArr?'block':'none'); ?>;">
 			<a href="#" onclick="toggle('genadddiv');return false;" title="<?php echo $LANG['ADD_NEW_GEN']; ?>" ><img src="../../images/add.png" /></a>
 		</div>
 		<div id="genadddiv" style="display:<?php echo ($genticArr?'none':'block'); ?>;">
