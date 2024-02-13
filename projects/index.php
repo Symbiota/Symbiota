@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ImInventories.php');
@@ -79,6 +77,7 @@ if(!$researchList && !$editMode){
 	if(!$managerArr) $tabIndex = 1;
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['INVPROJ'];?></title>

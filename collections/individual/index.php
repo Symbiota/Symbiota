@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceIndividual.php');
@@ -146,6 +145,7 @@ $dupClusterArr = $indManager->getDuplicateArr();
 $commentArr = $indManager->getCommentArr($isEditor);
 $traitArr = $indManager->getTraitArr();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['DETAILEDCOLREC'])?$LANG['DETAILEDCOLREC']:'Detailed Collection Record Information'); ?></title>

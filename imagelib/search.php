@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/imagelib/search.'.$LANG_TAG.'.php');
@@ -40,6 +38,7 @@ $imgLibManager->setImageCount($imageCount);
 $imgLibManager->setImageType($imageType);
 if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Image Library</title>

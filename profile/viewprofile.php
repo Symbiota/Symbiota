@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
@@ -112,6 +110,7 @@ if($isEditor){
 	if(!$person) $person = $pHandler->getPerson();
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' - '. (isset($LANG['VIEW_PROFILE'])?$LANG['VIEW_PROFILE']:'View User Profile'); ?></title>

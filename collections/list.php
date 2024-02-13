@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../config/symbini.php');
 if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php');
@@ -25,6 +23,7 @@ $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.
 
 $_SESSION['citationvar'] = $searchVar;
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 
 <head>

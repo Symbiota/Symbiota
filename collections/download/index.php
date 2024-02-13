@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
@@ -15,6 +13,7 @@ $searchVar = array_key_exists('searchvar', $_REQUEST) ? $_REQUEST['searchvar'] :
 
 $dwcManager = new DwcArchiverCore();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title> <?php echo (isset($LANG['COLL_SEARCH_DWNL']) ? $LANG['COLL_SEARCH_DWNL'] : 'Collections Search Download'); ?> </title>

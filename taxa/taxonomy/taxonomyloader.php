@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyEditorManager.php');
@@ -30,6 +28,7 @@ if($isEditor){
 	}
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['TAXON_LOADER']) ? $LANG['TAXON_LOADER'] : 'Taxon Loader'); ?>: </title>

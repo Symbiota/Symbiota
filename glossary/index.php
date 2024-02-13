@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
@@ -42,6 +40,7 @@ unset($languageArr['all']);
 $taxaArr = $glosManager->getTaxaGroupArr();
 $taxonName = ($tid?$taxaArr[$tid]:'');
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['GLOSSARY']; ?></title>

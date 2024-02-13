@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/collections/sharedterms.'.$LANG_TAG.'.php');
@@ -21,6 +19,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 
 $otherCatArr = $collManager->getOccurVoucherProjects();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">

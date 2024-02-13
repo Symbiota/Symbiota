@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 //TODO: add code to automatically select hide locality details when taxon/state match name on list
 include_once('../../config/symbini.php');
@@ -45,6 +43,7 @@ if($collMap){
 }
 $clArr = $obsManager->getChecklists();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">

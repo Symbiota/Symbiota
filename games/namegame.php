@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GamesManager.php');
@@ -15,6 +13,7 @@ $clName = $gameManager->getClName();
 
 $imgloc = "../images/games/namegame/";
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Name Game</title>

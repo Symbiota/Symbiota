@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <?php
 use PhpOffice\PhpSpreadsheet\Reader\Xml\Style\NumberFormat;
 
@@ -28,6 +27,7 @@ if($isEditor){
 $rsManager->setTaxonFilter($searchTaxon);
 $rsArr = $rsManager->getProtectedSpeciesList();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">

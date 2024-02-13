@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCollectionProfile.php');
@@ -65,6 +63,7 @@ if ($isEditor) {
 $collData = current($collManager->getCollectionMetadata());
 $collManager->cleanOutArr($collData);
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 
 <head>

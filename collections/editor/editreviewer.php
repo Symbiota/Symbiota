@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditReview.php');
@@ -96,6 +94,7 @@ if($subCnt < $recCnt) $navStr .= '<a href="' . htmlspecialchars($navPageBase, HT
 else $navStr .= '&gt;&gt;';
 $navStr .= '</div>';
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title><?php echo $LANG['EDIT_REVIEWER']; ?></title>

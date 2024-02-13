@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherReport.php');
@@ -64,6 +62,7 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USE
 $clManager->setCollectionVariables();
 $clMetaArr = $clManager->getClMetadata();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>

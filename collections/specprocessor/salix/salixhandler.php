@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/SalixUtilities.php');
@@ -27,7 +25,7 @@ if($SYMB_UID){
 	}
 }
 ?>
-
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title><?php echo (isset($LANG['SALIX_WRDST_MNGR']) ? $LANG['SALIX_WRDST_MNGR'] : 'SALIX Wordstat Manager'); ?></title>

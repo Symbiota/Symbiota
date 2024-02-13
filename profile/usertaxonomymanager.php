@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/UserTaxonomy.php');
@@ -38,6 +36,7 @@ if($isEditor){
 }
 $editorArr = $utManager->getTaxonomyEditors();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo (isset($LANG['TAX_PERMISSIONS'])?$LANG['TAX_PERMISSIONS']:'Taxonomic Interest User permissions'); ?></title>

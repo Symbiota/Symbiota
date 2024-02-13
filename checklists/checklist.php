@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistManager.php');
@@ -99,6 +98,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 //Output variable sanitation
 $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['CHECKLIST']) ? $LANG['CHECKLIST'] : 'Checklist').': '.$clManager->getClName(); ?></title>

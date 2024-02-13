@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <?php
 // error_reporting(E_ALL);
 // ini_set('display_errors', '1');
@@ -23,6 +22,7 @@ $collList = $collManager->getFullCollectionList($catId);
 $specArr = (isset($collList['spec'])?$collList['spec']:null);
 $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 
 <head>

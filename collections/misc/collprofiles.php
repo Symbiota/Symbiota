@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php');
@@ -36,6 +35,7 @@ if ($SYMB_UID) {
 	}
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE . ' ' . ($collid && isset($collData[$collid])? $collData[$collid]['collectionname'] : ''); ?></title>

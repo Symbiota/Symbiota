@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <?php
 include_once('../config/symbini.php');
 //include_once($SERVER_ROOT.'/classes/DynamicChecklistManager.php');
@@ -36,6 +35,7 @@ if(!$zoomInt){
 	elseif($coordRange > 40) $zoomInt = 3;
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' - '.(isset($LANG['CHECKLIST_GENERATOR'])?$LANG['CHECKLIST_GENERATOR']:'Dynamic Checklist Generator'); ?></title>
