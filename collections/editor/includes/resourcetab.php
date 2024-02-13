@@ -351,7 +351,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 				</div>
 			</form>
 		</fieldset>
-		<div id="occurAssocDiv" style="clear:both;margin:15px;">
+		<div id="occurAssocDiv" style="clear:both; margin: 15px 0px;">
 			<?php
 			if($assocArr){
 				foreach($assocArr as $assocID => $assocUnit){
@@ -521,7 +521,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 					echo $dupManager->getErrorStr();
 				}
 				else{
-					echo '<div style="font-weight:bold;font-size:120%;margin:15px 0px;">'.$LANG['NO_LINKED'].'</div>';
+					echo '<div style="margin:15px 0px;">' . $LANG['NO_LINKED'] . '</div>';
 				}
 			}
 			?>
