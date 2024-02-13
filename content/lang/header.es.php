@@ -6,6 +6,7 @@ Language: Español (Spanish)
 */
 
 $LANG['H_HOME'] = 'Inicio';
+$LANG['AFRICAN_PLANTS_PORTAL'] = 'Portal de Plantas Africanas';
 
 $LANG['H_SEARCH'] = 'B&uacute;squeda';
 $LANG['H_COLLECTIONS'] = 'Colecciones';
@@ -42,4 +43,6 @@ $LANG['H_MY_PROFILE'] = 'Mi Perfil';
 $LANG['H_LOGOUT'] = 'Finalizar Sesi&oacute;n';
 $LANG['H_LOGIN'] = 'Iniciar Sesi&oacute;n';
 $LANG['H_NEW_ACCOUNT'] = 'Nueva Cuenta';
+$LANG['CONTACT_US'] = 'Contacta con nosotros';
+
 ?>

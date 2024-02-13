@@ -23,7 +23,7 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 					?>
 					<span>
 						<a href="#">
-							Contact Us
+							<?php echo $LANG['CONTACT_US'] ?>
 						</a>
 					</span>
 					<span class="button button-secondary">
@@ -38,8 +38,8 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 			<div class="top-brand">
 				<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/AfricaTCN.png" alt="Tropical Africa TCN">
 				<div class="brand-name">
-					<h1>Africa plantae</h1>
-					<h2>Herbaria of Africa</h2>
+					<h1><?php echo $LANG['AFRICAN_PLANTS_PORTAL'] ?></h1>
+					<!-- <h2>Herbaria of Africa</h2> -->
 				</div>
 			</div>
 		</div>
@@ -56,6 +56,11 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 						</a>
 					</li>
 					<li>
+						<a href="<?php echo $CLIENT_ROOT; ?>/includes/about.php">
+							<?php echo (isset($LANG['H_ABOUT_PROJECT'])?$LANG['H_ABOUT_PROJECT']:'About Project'); ?>
+						</a>
+					</li>
+					<li>
 						<a href="<?php echo $CLIENT_ROOT; ?>/collections/index.php">
 							<?php echo (isset($LANG['H_COLLECTIONS'])?$LANG['H_COLLECTIONS']:'Collections'); ?>
 						</a>
@@ -68,11 +73,6 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 					<li>
 						<a href="<?php echo $CLIENT_ROOT; ?>/checklists/index.php">
 							<?php echo (isset($LANG['H_INVENTORIES'])?$LANG['H_INVENTORIES']:'Checklists'); ?>
-						</a>
-					</li>
-					<li>
-						<a href="<?php echo $CLIENT_ROOT; ?>/imagelib/search.php">
-							<?php echo (isset($LANG['H_IMAGES'])?$LANG['H_IMAGES']:'Images'); ?>
 						</a>
 					</li>
 					<li>

@@ -6,6 +6,7 @@ Language: English
 */
 
 $LANG['H_HOME'] = 'Home';
+$LANG['AFRICAN_PLANTS_PORTAL'] = 'African Plants Portal';
 
 $LANG['H_SEARCH'] = 'Search';
 $LANG['H_COLLECTIONS'] = 'Collections';
@@ -16,7 +17,7 @@ $LANG['H_IMAGES'] = 'Images';
 $LANG['H_IMAGE_BROWSER'] = 'Image Browser';
 $LANG['H_IMAGE_SEARCH'] = 'Image Search';
 
-$LANG['H_INVENTORIES'] = 'Species Checklists';
+$LANG['H_INVENTORIES'] = 'Checklists';
 $LANG['H_PROJECT_1'] = 'Checklist Project 1';
 $LANG['H_PROJECT_2'] = 'Checklist Project 2';
 
@@ -42,4 +43,6 @@ $LANG['H_MY_PROFILE'] = 'My Profile';
 $LANG['H_LOGOUT'] = 'Logout';
 $LANG['H_LOGIN'] = 'Login';
 $LANG['H_NEW_ACCOUNT'] = 'New Account';
+$LANG['CONTACT_US'] = 'Contact Us';
+
 ?>
