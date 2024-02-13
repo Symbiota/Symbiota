@@ -126,7 +126,9 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 					<input id="searchtaxon" name="searchtaxon" type="text" value="<?= htmlspecialchars($searchTaxon, HTML_SPECIAL_CHARS_FLAGS) ?>" />
 				</div>
 				<div style="margin:3px">
-					<input name="submitaction" type="submit" value="Search" />
+					<button name="submitaction" type="submit" value="<?php echo $LANG['SEARCH']; ?>" >
+						<?php echo $LANG['SEARCH']; ?>
+					</button>
 				</div>
 			</fieldset>
 		</form>
