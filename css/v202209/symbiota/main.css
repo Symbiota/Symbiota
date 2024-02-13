@@ -898,3 +898,11 @@ button.no-margin-left,
 div.no-margin-left {
   margin-left: 0;
 }
+
+.fieldset-sticky {
+  position: fixed;
+  top: 1.25rem;
+  height:95%;
+  background-color:white;
+  left: 53.75rem;
+}

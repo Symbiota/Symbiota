@@ -245,7 +245,7 @@ $photographerArr = $occManager->getPhotographerArr();
 								</div>
 								<div>
 									<b><?php echo $LANG['SOURCE_WEBPAGE']; ?>:</b>
-									<a href="<?php echo htmlspecialchars($imgArr['sourceurl'], HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank">
+									<a href="<?php echo htmlspecialchars($imgArr['sourceurl'] ?? '', HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank">
 										<?php
 										$sourceUrlDisplay = $imgArr['sourceurl'];
 										if($sourceUrlDisplay && strlen($sourceUrlDisplay) > 60) $sourceUrlDisplay = '...'.substr($sourceUrlDisplay,-60);
@@ -255,7 +255,7 @@ $photographerArr = $occManager->getPhotographerArr();
 								</div>
 								<div>
 									<b><?php echo $LANG['WEB_URL']; ?>: </b>
-									<a href="<?php echo htmlspecialchars($imgArr["url"], HTML_SPECIAL_CHARS_FLAGS); ?>"  title="<?php echo htmlspecialchars($imgArr["url"], HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank">
+									<a href="<?php echo htmlspecialchars($imgArr["url"] ?? '', HTML_SPECIAL_CHARS_FLAGS); ?>"  title="<?php echo htmlspecialchars($imgArr["url"], HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank">
 										<?php
 										$urlDisplay = $imgArr["url"];
 										if(strlen($urlDisplay) > 60) $urlDisplay = '...'.substr($urlDisplay,-60);
@@ -265,7 +265,7 @@ $photographerArr = $occManager->getPhotographerArr();
 								</div>
 								<div>
 									<b><?php echo $LANG['LARGE_IMG_URL']; ?>: </b>
-									<a href="<?php echo htmlspecialchars($imgArr["origurl"], HTML_SPECIAL_CHARS_FLAGS); ?>" title="<?php echo htmlspecialchars($imgArr["origurl"], HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank">
+									<a href="<?php echo htmlspecialchars($imgArr["origurl"] ?? '', HTML_SPECIAL_CHARS_FLAGS); ?>" title="<?php echo htmlspecialchars($imgArr["origurl"], HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank">
 										<?php
 										$origUrlDisplay = $imgArr["origurl"];
 										if(strlen($origUrlDisplay) > 60) $origUrlDisplay = '...'.substr($origUrlDisplay,-60);

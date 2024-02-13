@@ -1,9 +1,17 @@
 <?php
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/includes/imgprocessor.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgprocessor.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgprocessor.en.php');
+include_once($SERVER_ROOT.'/includes/head.php');
 ?>
 
 <script>
+
+	$(document).ready(function() {
+		var pos = $("#labelProcDiv").position();
+		var posLeft = pos.left - $(window).scrollLeft();
+		$("#labelProcFieldset").css('left', posLeft);
+	});
+
 	$(function() {
 		$( "#zoomInfoDialog" ).dialog({
 			autoOpen: false,
@@ -57,7 +65,7 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgpro
 	.ocr-box button{ margin: 5px; }
 </style>
 <div id="labelProcDiv" style="width:100%;height:1050px;position:relative">
-	<fieldset id="labelProcFieldset" style="height:95%;background-color:white;">
+	<fieldset id="labelProcFieldset" class="fieldset-sticky">
 		<legend><b><?php echo $LANG['LABEL_PROCESSING']; ?></b></legend>
 		<div id="labelHeaderDiv" style="margin-top:-10px;height:15px;position:relative">
 			<div style="float:left;margin-top:3px;margin-right:15px"><a id="zoomInfoDiv" href="#"><?php echo $LANG['ZOOM']; ?></a></div>
@@ -66,8 +74,8 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgpro
 			</div>
 			<div style="float:left;margin-right:15px">
 				<div id="draggableImgDiv" style="float:left" title="<?php echo $LANG['MAKE_DRAGGABLE']; ?>"><a href="#" onclick="draggableImgPanel()"><img src="../../images/draggable.png" style="width:1.3em" /></a></div>
-				<div id="floatImgDiv" style="float:left;margin-left:10px" title="<?php echo $LANG['ALLOW_REMAIN_ACTIVE']; ?>"><a href="#" onclick="floatImgPanel()"><img src="../../images/floatdown.png" style="width:1.3em" /></a></div>
-				<div id="anchorImgDiv" style="float:left;margin-left:10px;display:none" title="<?php echo $LANG['ANCHOR_IMG']; ?>"><a href="#" onclick="anchorImgPanel()"><img src="../../images/anchor.png" style="width:1.3em" /></a></div>
+				<div id="floatImgDiv" style="float:left;margin-left:10px;display:none" title="<?php echo $LANG['ALLOW_REMAIN_ACTIVE']; ?>"><a href="#" onclick="floatImgPanel()"><img src="../../images/floatdown.png" style="width:1.3em" /></a></div>
+				<div id="anchorImgDiv" style="float:left;margin-left:10px" title="<?php echo $LANG['ANCHOR_IMG']; ?>"><a href="#" onclick="anchorImgPanel()"><img src="../../images/anchor.png" style="width:1.3em" /></a></div>
 			</div>
 			<div style="float:left;;padding-right:10px;margin:2px 20px 0px 0px;"><?php echo $LANG['ROTATE']; ?>: <a href="#" onclick="rotateImage(-90)">&nbsp;L&nbsp;</a> &lt;&gt; <a href="#" onclick="rotateImage(90)">&nbsp;R&nbsp;</a></div>
 			<div style="float:right;padding:0px 3px;margin:0px 3px;"><input id="imgreslg" name="resradio" type="radio" onchange="changeImgRes('lg')" /><?php echo $LANG['HIGH_RES']; ?>.</div>
