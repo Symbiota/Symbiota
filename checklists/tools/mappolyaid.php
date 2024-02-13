@@ -58,7 +58,7 @@ else{
 	   include_once($SERVER_ROOT.'/includes/googleMap.php');
       ?>
 
-		<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['COORDINATE'] ?></title>
+		<title><?php echo $DEFAULT_TITLE . ' - ' . $LANG['COORDINATE'] ?></title>
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/wktpolygontools.js?ver=5" type="text/javascript"></script>
 <script src="https://unpkg.com/terraformer@1.0.8"></script>
