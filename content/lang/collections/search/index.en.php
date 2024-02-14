@@ -17,7 +17,7 @@ $LANG['COMMON_NAME'] = 'Common name';
 $LANG['TAXON_TYPE'] = 'Taxon type';
 $LANG['INCLUDE_SYNONYMS'] =' Include Synonyms';
 $LANG['SAMPLE_PROPERTIES'] = 'Sample Properties';
-$LANG['INCLUDE_CATA_NUM_GUIDS'] = 'Include other catalog numbers and GUIds';
+$LANG['INCLUDE_CATA_NUM_GUIDs'] = 'Include other catalog numbers and GUIds';
 $LANG['CATALOG_NUMBER'] = 'Catalog Number';
 $LANG['SEPARATE_MULTIPLE_W_COMMA'] = 'Separate multiple with commas.';
 $LANG['LIMIT_TO_SPECIMENS_W_IMAGES'] = 'Limit to specimens with images';
@@ -30,7 +30,7 @@ $LANG['LOCALITY_LOCALITIES'] = 'Locality/Localities';
 $LANG['MINIMUM_ELEVATION'] = 'Minimum Elevation';
 $LANG['NUMBER_IN_METERS'] = 'Number in meters.';
 $LANG['MAXIMUM_ELEVATION'] = 'Maximum Elevation';
-$LANG['LATITUDE_LONGTITUDE'] = 'Latitude & Longitude';
+$LANG['LATITUDE_LONGITUDE'] = 'Latitude & Longitude';
 $LANG['BOUNDING_BOX'] = 'Bounding Box';
 $LANG['SELECT_IN_MAP'] = 'Select in map (BB)';
 $LANG['UPPER_LATITUDE'] = 'Upper latitude';
@@ -41,13 +41,13 @@ $LANG['N'] = 'N';
 $LANG['S'] = 'S';
 $LANG['BOTTOM_LATITUDE'] = 'Bottom latitude';
 $LANG['SELECT_BOTTOM_LAT_DIREC'] = 'Select bottom lat direction N/S';
-$LANG['LEFT_LONGTITUDE'] = 'Left longitude';
+$LANG['LEFT_LONGITUDE'] = 'Left longitude';
 $LANG['VALUES_BETWEEN_NEG180_TO_180'] = 'Values between -180 and 180.';
 $LANG['SELECT_LEFT_LONG_DIREC_W_E'] = 'Select left long direction W/E';
 $LANG['SELECT_W_E'] = 'Select W/E';
 $LANG['W'] = 'W';
 $LANG['E'] = 'E';
-$LANG['RIGHT_LONGTITUDE'] = 'Right longitude';
+$LANG['RIGHT_LONGITUDE'] = 'Right longitude';
 $LANG['SELECT_RIGHT_LONG_DIREC_W_E'] = 'Select right long direction W/E';
 $LANG['POLYGON_WKT_FOOTPRINT'] = 'Polygon (WKT footprint)';
 $LANG['SELECT_MAP_POLYGON'] = 'Select in map (Polygon)';
@@ -57,10 +57,8 @@ $LANG['POINT_RADIUS'] = 'Point-Radius';
 $LANG['SELECT_MAP_PR'] = 'Select in map (PR)';
 $LANG['POINT_LATITUDE'] = 'Point latitude';
 $LANG['POINT_LAT_DIREC_N_S'] = 'Point latitude direction N/S';
-$LANG['POINT_LONGTITUDE'] = 'Point longitude';
-
-
-$LANG['POINT_LONGTITUDE_DIREC_E_W'] = 'Point longitude direction E/W';
+$LANG['POINT_LONGITUDE'] = 'Point longitude';
+$LANG['POINT_LONGITUDE_DIREC_E_W'] = 'Point longitude direction E/W';
 $LANG['RADIUS'] = 'Radius';
 $LANG['ANY_POSITIVE_VALUES'] = 'Any positive values.';
 $LANG['SELECT_RADIUS_UNITS'] = 'Select radius units';
@@ -97,13 +95,16 @@ $LANG['POINT_LONG'] = 'Point Long';
 $LANG['EVENT_DATE_START'] = 'Event Date Start';
 $LANG['EVENT_DATE_END'] = 'Event Date End';
 $LANG['COLLECTOR_LAST'] = 'Collector last';
-$LANG['_NORTHERN_LATITUDE'] = '_Northern Latitude';
-$LANG['_SOUTHERN_LATITUDE'] = '_Southern Latitude';
-$LANG['_WESTERN_LONTITUDE'] = '_Western Longitude';
-$LANG['_EASTERN_LONTITUDE'] = '_Eastern Longitude';
-$LANG['_LATITUDE'] = '_Latitude';
-$LANG['_LONGTITUDE'] = '_Longitude';
-$LANG['_RADIUS'] = '_Radius';
+
+
+$LANG['NORTHERN_LATITUDE'] = '_Northern Latitude';
+$LANG['SOUTHERN_LATITUDE'] = '_Southern Latitude';
+$LANG['WESTERN_LONGITUDE'] = '_Western Longitude';
+$LANG['EASTERN_LONGITUDE'] = '_Eastern Longitude';
+$LANG['LATITUDE'] = '_Latitude';
+$LANG['LONGITUDE'] = '_Longitude';
+$LANG['RADIUS'] = '_Radius';
+$LANG['ALERT_MSG_PREVIOUS_SEARCH_FORM'] = 'Looking for the previous search form? You can still use it here:';
 
 
 ?>
