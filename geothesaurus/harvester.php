@@ -29,7 +29,6 @@ if($isEditor && $submitAction) {
                break;
             }
          } catch(Execption $e) {
-            var_dump($e);
             break;
          }
       }

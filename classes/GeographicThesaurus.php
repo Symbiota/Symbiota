@@ -175,7 +175,7 @@ class GeographicThesaurus extends Manager{
 		if(!$postArr['geoTerm']){
 			$this->errorMessage = 'ERROR adding geoUnit: geographic term must have a value';
 			return false;
-		}
+      }
 		else{
 			$sql = 'INSERT INTO geographicthesaurus(geoterm, abbreviation, iso2, iso3, numcode, geoLevel, acceptedID, parentID, notes) '.
 				'VALUES("'.$this->cleanInStr($postArr['geoTerm']).'", '.
@@ -554,7 +554,59 @@ class GeographicThesaurus extends Manager{
       return $mean;
    }
 
-	public function addGeoBoundary($url){
+   //Assumes Most Points probably the biggest or main polygon which is fine for
+   //this function
+   private function getBiggestPolygon($arr) {
+      if(!is_array($arr) || count($arr) === 0) { 
+         return null;
+      } elseif(is_array($arr[0]) && count($arr[0]) === 2 && !is_array($arr[0][0])) {
+         return $arr;
+      } else {
+         $maxPoly = [];
+         for ($i=0; $i < count($arr); $i++) { 
+            $poly = $this->getBiggestPolygon($arr[$i]);
+            if(count($maxPoly) < count($poly)) {
+               $maxPoly = $poly;
+            }
+         }
+         return $maxPoly;
+      }
+   }
+
+   // TODO (Logan) this current is failing on some concave polygons like
+   // florida due to some algo mishaps
+   private function getPointWithinPoly($coordinates) {
+      $polygon = $this->getBiggestPolygon($coordinates);
+
+      if(!is_array($polygon) || count($polygon) < 2) return false;
+
+      $minDistance = null;
+      $minPt = null;
+      $start = [($polygon[0][0] + $polygon[1][0]) / 2, ($polygon[0][1] + $polygon[1][1]) / 2];
+
+      for ($i=1; $i < count($polygon); $i++) { 
+         $edge1 =$polygon[$i - 1];
+         $edge2 = $polygon[$i];
+
+         $pt = [($edge1[0] + $edge2[0]) / 2, ($edge1[1] + $edge2[1]) / 2];
+         if($i === 1) {
+            $start = $pt;
+            continue;
+         }
+
+         $distance = sqrt(pow($pt[0] - $start[0], 2) + pow($pt[1] - $start[1], 2));
+
+         if($minDistance === null || $distance < $minDistance) {
+            $minDistance = $distance;
+            $minPt = $pt;
+         }
+      }
+
+      return ["long" => ($start[0] + $minPt[0]) / 2, "lat" => ($start[1] + $minPt[1]) / 2];
+      
+   }
+
+	public function addGeoBoundary($url, $addMissing = false){
 		$status = false;
       $json = $this->getGeoboundariesJSON($url);
 		$obj = json_decode($json);
@@ -565,21 +617,46 @@ class GeographicThesaurus extends Manager{
          $geoLevel = $this->getGeoLevel($properties->shapeType);
 
          $geoThesIDs = $this->getGeoThesIDV2($properties->shapeName, $geoLevel);
+         $parentID = null;
 
          if(is_array($geoThesIDs) && count($geoThesIDs) != 1) {
-            $meanCenter = $this->getPolygonMeanCenter($feature->geometry->coordinates);
+            //$meanCenter = $this->getPolygonMeanCenter($feature->geometry->coordinates);
+            $testPoint = $this->getPointWithinPoly($feature->geometry->coordinates);
+            /*
             $parentID = $this->findParentGeometry(
                $meanCenter["lat"], 
                $meanCenter["long"], 
                $geoLevel - 10, 
                array_map( fn($val) => $val[1], $geoThesIDs)
-            );
+            );*/
+            if($testPoint) {
+               $parentID = $this->findParentGeometry(
+                  $testPoint["lat"], 
+                  $testPoint["long"], 
+                  $geoLevel - 10, 
+                  array_map( fn($val) => $val[1], $geoThesIDs)
+               );
 
-            $geoThesIDs = $this->getGeoThesIDV2($properties->shapeName, $geoLevel, $parentID);
+               var_dump(["pID" => $parentID, "test_point"=> $testPoint, "name" => $properties->shapeName]);
+               $geoThesIDs = $this->getGeoThesIDV2($properties->shapeName, $geoLevel, $parentID);
+            }
          } 
 
          if(is_array($geoThesIDs) && count($geoThesIDs) === 1) {
             $this->addPolygon($geoThesIDs[0][0], json_encode($feature));
+         } else if (true) {
+            $this->addGeoUnit([
+               "geoTerm" => $properties->shapeName, 
+               "iso2" =>"",
+               "iso3" => $properties->shapeISO,
+               "geoLevel" => $geoLevel,
+               "abbreviation" =>"",
+               "numCode" =>"",
+               "acceptedID" => "",
+               "parentID" => $parentID,
+               "notes" =>"",
+               "polygon" => json_encode($feature),
+            ]);
          }
       }
 
@@ -666,8 +743,7 @@ class GeographicThesaurus extends Manager{
       $stmt->bind_param("si", $geom, $parentGeoLevel);
 
       if(!$stmt->execute()){
-         $this->errorMessage = 'ERROR while finding parent polgon: '.$this->conn->error;
-         var_dump($this->conn->error);
+         $this->errorMessage = 'ERROR while finding parent polygon: '.$this->conn->error;
          return -1;
       }
 
