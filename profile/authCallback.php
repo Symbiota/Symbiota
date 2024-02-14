@@ -4,6 +4,9 @@ include_once($SERVER_ROOT.'/classes/OpenIdProfileManager.php');
 include_once($SERVER_ROOT . '/config/auth_config.php');
 require_once($SERVER_ROOT . '/vendor/autoload.php');
 use Jumbojett\OpenIDConnectClient;
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/profile/authCallback.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/profile/authCallback.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/profile/authCallback.en.php');
+
 
 $profManager = new OpenIdProfileManager();
 
@@ -25,15 +28,15 @@ if (array_key_exists('code', $_REQUEST) && $_REQUEST['code']) {
     $status = $oidc->authenticate();
   }
   catch (Exception $ex){
-    $_SESSION['last_message'] = 'Caught exception: ' . $ex->getMessage() . ' <ERR/>';
-    header('Location:' . $CLIENT_ROOT . '/profile/index.php');
+    $_SESSION['last_message'] = $LANG['CAUGHT_EXCEPTION'] . $ex->getMessage() . ' <ERR/>';
+    header($LANG['LOCATION'] . $CLIENT_ROOT . '/profile/index.php');
     exit();
   }  
   if($status){
     $sub = $oidc->requestUserInfo('sub');
     if($profManager->authenticate($sub, $providerUrls['oid'])){
       if($_SESSION['refurl']){
-        header("Location:" . $_SESSION['refurl']);
+        header($LANG['LOCATION'] . $_SESSION['refurl']);
         unset($_SESSION['refurl']);
       }
     }
@@ -43,34 +46,34 @@ if (array_key_exists('code', $_REQUEST) && $_REQUEST['code']) {
         try{
           $status = $profManager->linkLocalUserOidSub($email, $sub, $oidc->getProviderURL());
         }catch (Exception $ex){
-          $_SESSION['last_message'] = 'Caught exception: ' . $ex->getMessage();
-          header('Location:' . $CLIENT_ROOT . '/profile/index.php');
+          $_SESSION['last_message'] = $LANG['CAUGHT_EXCEPTION'] . $ex->getMessage();
+          header($LANG['LOCATION'] . $CLIENT_ROOT . '/profile/index.php');
           exit();
         }
         if($status){
           if($profManager->authenticate($sub, $providerUrls['oid'])){
             if($_SESSION['refurl']){
-              header("Location:" . $_SESSION['refurl']);
+              header($LANG['LOCATION'] . $_SESSION['refurl']);
               unset($_SESSION['refurl']);
             }
           }
           else{
-            $_SESSION['last_message'] = "Unkown Error - Could not authenticate - try again later or alert a system admin <ERR/>";
-            header('Location:' . $CLIENT_ROOT . '/profile/index.php');
+            $_SESSION['last_message'] = $LANG['UNKNOWN_ERROR'] . " <ERR/>";
+            header($LANG['LOCATION'] . $CLIENT_ROOT . '/profile/index.php');
             //@TODO Consider logging this error to PHP logfiles
           }
         }else{
-          $_SESSION['last_message'] = "Error - Could not authenticate with Authentication provider <ERR/>";
-          header('Location:' . $CLIENT_ROOT . '/profile/index.php');
+          $_SESSION['last_message'] = $LANG['ERROR'] . " <ERR/>";
+          header($LANG['LOCATION'] . $CLIENT_ROOT . '/profile/index.php');
         }
         
       }
       else{
-        $_SESSION['last_message'] = "Unable to retrieve email address from authentication provider. <ERR/>";
-        header('Location:' . $CLIENT_ROOT . '/profile/index.php');
+        $_SESSION['last_message'] = $LANG['UNABLE_RETRIEVE_EMAIL'] . " <ERR/>";
+        header($LANG['LOCATION'] . $CLIENT_ROOT . '/profile/index.php');
       }
     }
   }
-  $_SESSION['last_message'] = "Authentication failed. <ERR/>";
-  header('Location:' . $CLIENT_ROOT . '/profile/index.php');
+  $_SESSION['last_message'] =  $LANG['AUTHENTICATION_FAILED'] . " <ERR/>";
+  header($LANG['LOCATION'] . $CLIENT_ROOT . '/profile/index.php');
 }
