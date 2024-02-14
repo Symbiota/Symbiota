@@ -36,7 +36,7 @@ $LANG['INSTRUCTION'] = 'Haga clic en el símbolo de polígono para activar la he
                         La huella del polígono WKT dentro del cuadro de texto se puede modificar manualmente y reconstruir en el mapa usando el botón Redibujar polígono.
                         Una definición de polígono WKT se puede copiar en el área de texto desde otra aplicación.
                         Utilice el botón Cambiar orden de coordenadas para convertir pares de coordenadas Long-Lat al formato Lat-Long.';
-$LANG['COORDINATE'] = '- Coordinar ayuda';
+$LANG['COORDINATE'] = 'Coordinar ayuda';
 
 //Google Map Only
 $LANG['DELETE_SELECTED'] = 'Eliminar polígono seleccionado';
