@@ -174,7 +174,7 @@ include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class='navpath'>
 	<a href="../../index.php"><?php echo $LANG['HOME'] ?></a> &gt;&gt;
-	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo $LANG['CALL_MANAGE'] ?></a> &gt;&gt;
+	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo $LANG['COLL_MANAGE'] ?></a> &gt;&gt;
 	<a href="igsnmanagement.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo $LANG['IGSN_GUID_MANAGE'] ?></a> &gt;&gt;
 	<b><?php echo $LANG['IGSN_MAPPER'] ?></b>
 </div>
@@ -210,7 +210,7 @@ include($SERVER_ROOT.'/includes/header.php');
 				<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
 				<fieldset>
 					<legend><?php echo $LANG['IGSN_REG_PANEL'] ?></legend>
-					<p><?php echo $LANG['REG_IGSN'] . " "?><a href="http://www.geosamples.org/interop" target="_blank">SESAR API Web Services</a></p>
+					<p><?php echo $LANG['REG_IGSN'] . " "?><a href="http://www.geosamples.org/interop" target="_blank"><?php echo $LANG['SESAR_API_WEB'] ?></a></p>
 					<p>
 						<div>
 							<span class="form-label"><?php echo $LANG['USERNAME'] ?></span> <input name="username" type="text" value="<?php echo $username; ?>" />
