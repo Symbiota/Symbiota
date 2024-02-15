@@ -1,7 +1,6 @@
 body{
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
-	width: 820px;
 }
 
 #innertext{
@@ -13,7 +12,7 @@ body{
 #titleDiv{
 	font-weight: bold;
 	font-size: 16px;
-	width: 820px;
+	width: 900px;
 }
 
 #querySymbolDiv{
@@ -21,7 +20,6 @@ body{
 }
 
 #navDiv{
-	width: 820px;
 	clear: both;	
 }
 
@@ -29,8 +27,9 @@ body{
 }
 
 #occdiv{
-	position: relative;
-	width: 795px;
+	width: 900px;
+	resize:both;
+	overflow:auto; /* something other than visible */
 }
 
 #admindiv{
@@ -45,11 +44,6 @@ body{
 #dupesDiv{
 	float:left;
 	margin:5px 5px;
-}
-
-#dateToggleDiv{
-	float:left;
-	margin:15px 5px;
 }
 
 #dupeMsgDiv{
@@ -68,15 +62,6 @@ body{
 	border:2px outset blue;
 	background-color: white;
 	padding:3px;
-}
-
-#dateextradiv{
-	clear: both;
-	padding:10px;
-	margin:5px;
-	border:1px solid gray;
-	display:none;
-	height:20px;
 }
 
 #idrefToggleDiv{
@@ -137,6 +122,14 @@ body{
 	width:	90px;
 }
 
+#eventDate2Div {
+	float:	left;
+}
+
+#eventDate2Div input{
+	width:	90px;
+}
+
 #associatedCollectorsDiv {
 	float:	left;
 }
@@ -151,24 +144,6 @@ body{
 
 #verbatimEventDateDiv input{
 	width:	180px;
-}
-
-#ymdDiv {
-	float:	left;
-	margin-left: 5px;
-}
-
-#ymdDiv input{
-	width:	40px;
-}
-
-#dayOfYearDiv {
-	float:	left;
-	margin-left: 5px;
-}
-
-#dayOfYearDiv input{
-	width:	40px;
 }
 
 #endDateDiv {
