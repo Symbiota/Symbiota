@@ -53,7 +53,7 @@ if(isset($sesarProfile['generationMethod'])) $generationMethod = $sesarProfile['
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
-	<title><?php $LANG['IGSN_GUID'] ?></title>
+	<title><?php echo $LANG['IGSN_GUID'] ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
