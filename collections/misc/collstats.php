@@ -2,8 +2,8 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCollectionProfile.php');
-include_once($SERVER_ROOT.'/content/lang/collections/misc/collstats.'.$LANG_TAG.'.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once($SERVER_ROOT.'/content/lang/collections/misc/collstats.' . $LANG_TAG . '.php');
+header("Content-Type: text/html; charset=" . $CHARSET);
 ini_set('max_execution_time', 1200); //1200 seconds = 20 minutes
 
 $catID = array_key_exists('catid', $_REQUEST) ? $_REQUEST['catid'] : 0;
@@ -429,7 +429,7 @@ if($action != "Update Statistics"){
 										<hr/>
 										<h2><?php echo $LANG['SPECIMEN_COLLECTIONS'] ?></h2>
 									</div>
-									<div class="special-indent">
+									<div>
 										<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" />
 										<label for="dballcb"><?php echo $LANG['SEL_OR_DESEL']; ?> <a href="collprofiles.php"><?php echo htmlspecialchars($LANG['COLLECTIONS'], HTML_SPECIAL_CHARS_FLAGS); ?></a></label>
 									</div>
@@ -530,6 +530,9 @@ if($action != "Update Statistics"){
 											<?php
 										}
 										if(isset($specArr['coll'])){
+											if(!isset($specArr['cat'])){
+												echo '<section class="gridlike-form">';
+											}
 											$collArr = $specArr['coll'];
 											?>
 											<section class="gridlike-form-row">
@@ -557,7 +560,6 @@ if($action != "Update Statistics"){
 													$collCnt++;
 												}
 												?>
-											</section>
 											<div>
 												<div>
 													<button type="submit" name="submitaction" value="Run Statistics"><?php echo $LANG['VIEW_STATS']; ?></button>
@@ -573,6 +575,9 @@ if($action != "Update Statistics"){
 												?>
 											</div>
 											<?php
+											if(!isset($specArr['cat'])){
+												echo '</section>';
+											}
 										}
 										$collArrIndex++;
 									}
@@ -649,10 +654,10 @@ if($action != "Update Statistics"){
 																</fieldset>
 															</section>
 														</div>
-													<?php
-													$cnt++;
-													}
-													?>
+														<?php
+														$cnt++;
+														}
+														?>
 													</div>
 											</section>
 											<?php
@@ -670,18 +675,18 @@ if($action != "Update Statistics"){
 																<label for="db-<?php echo $collid ?>"><?php echo $LANG['SELECT_DESELECT'] ?></label>
 															</div>
 															<div class="gridlike-form-row bottom-breathing-room-relative">
-															<div class="collectiontitle">
-																<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
-																	<?php
-																	$codeStr = ' ('.$cArr['instcode'];
-																	if($cArr['collcode']) $codeStr .= '-'.$cArr['collcode'];
-																	$codeStr .= ')';
-																	echo $cArr["collname"].$codeStr;
-																	?>
-																	 - <?php echo $LANG['MORE_INFO']; ?>
-																</a>
+																<div class="collectiontitle">
+																	<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'>
+																		<?php
+																		$codeStr = ' ('.$cArr['instcode'];
+																		if($cArr['collcode']) $codeStr .= '-'.$cArr['collcode'];
+																		$codeStr .= ')';
+																		echo $cArr["collname"].$codeStr;
+																		?>
+																		- <?php echo $LANG['MORE_INFO']; ?>
+																	</a>
+																</div>
 															</div>
-														</div>
 														<?php
 														$collCnt++;
 													}

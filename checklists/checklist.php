@@ -685,7 +685,11 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 								//Edit family name display style here
 								?>
 								<div class="family-div" id="<?php echo strip_tags($group);?>">
-									<i><a href="<?php echo strip_tags($famUrl); ?>" target="_blank" style="color:black;"><?php echo strip_tags($group);?></a> </i>
+									<i>
+										<a href="<?php echo strip_tags($famUrl); ?>" target="_blank" style="color:black;">
+											<?php echo strip_tags($group);?>
+										</a> 
+									</i>
 								</div>
 								<?php
 								$prevGroup = $group;
@@ -694,7 +698,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 							//Edit species name display style here
 							echo '<div class="taxon-div">';
 							if(!preg_match('/\ssp\d/',$sppArr["sciname"])) echo '<a href="../taxa/index.php?taxauthid=1&taxon=' . $tid . '&clid=' . $clid . '" target="_blank">';
-							echo '<span class="taxon-span">'.$sppArr['sciname'] . '</span> ';
+							echo '<span class="taxon-span normal-font-weight">'.$sppArr['sciname'] . '</span> ';
 							if(array_key_exists("author",$sppArr)) echo $sppArr["author"];
 							if(!preg_match('/\ssp\d/',$sppArr["sciname"])) echo "</a>";
 							if(array_key_exists('vern',$sppArr)){

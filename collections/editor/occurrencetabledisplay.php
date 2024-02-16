@@ -154,7 +154,7 @@ else{
 </head>
 <body style="margin-left: 0px; margin-right: 0px;background-color:white;">
 	<a class="skip-link" href="#skip-search"><?php echo $LANG['SKIP_SEARCH'] ?></a>
-	<div id="innertext">
+	<div id="innertext" style="max-width: 100vw">
 		<?php
 		if(($isEditor || $crowdSourceMode)){
 			?>
@@ -316,7 +316,7 @@ else{
 						$tableClass = 'stripe hover order-column compact nowrap cell-border';
 					}
 					?>
-					<table id="<?php echo $tableId; ?>" class="<?php echo $tableClass; ?> accessible-font" title="<?php echo htmlspecialchars((isset($LANG['TABLE_VIEW']) ? $LANG['TABLE_VIEW'] : 'Occurrence Table View'), HTML_SPECIAL_CHARS_FLAGS); ?>" aria-describedby="table-desc">
+					<table id="<?php echo $tableId; ?>" class="<?php echo $tableClass; ?> accessible-font table-scroll" title="<?php echo htmlspecialchars((isset($LANG['TABLE_VIEW']) ? $LANG['TABLE_VIEW'] : 'Occurrence Table View'), HTML_SPECIAL_CHARS_FLAGS); ?>" aria-describedby="table-desc">
 						<thead>
 							<tr>
 								<th><?php echo (isset($LANG['SYMB_ID'])?$LANG['SYMB_ID']:'Symbiota ID'); ?></th>

@@ -20,7 +20,7 @@ $indManager->setOccid($occid);
 		<?php
 		$vClArr = $indManager->getVoucherChecklists();
 		$clArr = $indManager->getChecklists(array_keys($vClArr));
-		if($IS_ADMIN || $clArr) echo '<div style="float:right"><a href="#" onclick="toggle(\'voucher-block\');return false"><img src="../../images/add.png" style="width:1.5em;" /></a></div>';
+		if($IS_ADMIN || $clArr) echo '<div style="float:right"><a href="#" onclick="toggle(\'voucher-block\');return false"><img src="../../images/add.png" /></a></div>';
 		if($vClArr){
 			echo '<div class="section-title">' . ($LANG['VOUCHEROFFOLLOWING']) . '</div>';
 			echo '<ul style="margin:15px 0px 25px 0px;">';
