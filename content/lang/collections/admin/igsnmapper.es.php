@@ -8,7 +8,6 @@ Date Translated: 2024-02-12
 */
 
 $LANG['IGSN_GUID_MAPPER'] = 'Asignador GUID IGSN';
-$LANG['VALUEHERE'] = '¡¡¡INSERTVALOR AQUÍ!!!!';
 $LANG['ENTER_VALID'] = 'Por favor, introduzca un nombre de usuario y una contraseña válidos de SESAR';
 $LANG['MUST_BE_EMAIL'] = 'El nombre de usuario de SESAR debe ser una dirección de correo electrónico';
 $LANG['SELECT_REG'] = 'Seleccione un método de registro';

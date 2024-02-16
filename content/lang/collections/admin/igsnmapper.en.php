@@ -6,7 +6,6 @@ Language: English
 */
 
 $LANG['IGSN_GUID_MAPPER'] = 'IGSN GUID Mapper';
-$LANG['VALUEHERE'] = 'INSERTVALUE HERE!!!!';
 $LANG['ENTER_VALID'] = 'Please enter valid SESAR username and password';
 $LANG['MUST_BE_EMAIL'] = 'SESAR username must be an email address';
 $LANG['SELECT_REG'] = 'Select a registration method';
