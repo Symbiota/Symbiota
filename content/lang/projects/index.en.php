@@ -53,7 +53,7 @@ $LANG['GLOBE_ALT'] = 'image a globe, indicating a version of the checklist super
 $LANG['TRIANGLE_ALT'] = 'an image of a triangle. Just used to make the pop up look more like a dialog bubble';
 $LANG['EDIT'] = 'Edit';
 $LANG['KEY'] = 'Key';
-$LANG['GOLDEN_KEY_SYMBOL'] = 'Golden Key Symbol';
+$LANG['KEY_SYMBOL'] = 'Key Symbol';
 $LANG['ADD_NEW_PRJ'] = 'Add New Project';
 $LANG['EDIT_PRJ'] = 'Edit Project';
 

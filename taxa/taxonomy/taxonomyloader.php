@@ -80,8 +80,12 @@ if($isEditor){
 						<input type='text' id='author' name='author' class='search-bar-long' />
 					</div>
 					<div style="clear:both;">
-						<div class="left-column"> <label for="rankid"> <?php echo (isset($LANG['TAXON_RANK']) ? $LANG['TAXON_RANK'] : 'Taxon Rank'); ?>: </label></div>
-						<select id="rankid" name="rankid" title="Rank ID" class='search-bar-short'>
+						<div class="left-column"> 
+							<label for="rankid">
+								 <?php echo (isset($LANG['TAXON_RANK']) ? $LANG['TAXON_RANK'] : 'Taxon Rank'); ?>: 
+								</label>
+						</div>
+						<select id="rankid" name="rankid" title="Rank ID" class='search-bar-short bottom-breathing-room-sm-rel'>
 							<option value=""><?php echo (isset($LANG['SEL_TAX_RANK']) ? $LANG['SEL_TAX_RANK'] : 'Select Taxon Rank'); ?></option>
 							<option value="0"><?php echo (isset($LANG['NON_RANKED_NODE']) ? $LANG['NON_RANKED_NODE'] : 'Non-Ranked Node'); ?></option>
 							<option value="">--------------------------------</option>

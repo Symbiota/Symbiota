@@ -21,7 +21,8 @@ $LANG['DISP_AUTHORS'] = 'Afficher les auteurs';
 $LANG['MATCH_WHOLE_WORDS'] = 'Recherche sur des mots entiers';
 $LANG['DISP_FULL_TREE'] = 'Afficher l\'arborescence complète sous la famille';
 $LANG['DISP_SUBGENERA'] = 'Afficher les espèces avec les sous-genres';
-$LANG['CREATE_NEW_TAXON'] = 'Créer un Nouveau Taxon';
+$LANG['LIMIT_TO_OCCURRENCES'] = 'Afficher uniquement les taxons liés aux occurrences';
+$LANG['EXPORT_TREE'] = 'Taxonomie des exportations';
 $LANG['PLUS_SIGN_DESC'] = 'Image d\'un signe plus, indiquant la création d\'un nouveau taxon';
 
 //Affichage dynamique

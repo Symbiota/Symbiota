@@ -25,7 +25,6 @@ class OccurrenceImport extends UtilitiesFileImport{
 		parent::__construct(null, 'write');
 		$this->setVerboseMode(2);
 		set_time_limit(2000);
-		ini_set('auto_detect_line_endings', true);
 	}
 
 	function __destruct(){

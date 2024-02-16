@@ -6,21 +6,12 @@ include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrencetabledisplay.'.$LANG_TAG.'.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 
-
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:false;
-$recLimit = array_key_exists('reclimit',$_REQUEST)?$_REQUEST['reclimit']:1000;
-$occIndex = array_key_exists('occindex',$_REQUEST)?$_REQUEST['occindex']:0;
-$crowdSourceMode = array_key_exists('csmode',$_REQUEST)?$_REQUEST['csmode']:0;
-$dynamicTable = array_key_exists('dynamictable',$_REQUEST)?$_REQUEST['dynamictable']:0;
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
-
-//Sanitation
-if(!is_numeric($collId)) $collId = false;
-if(!is_numeric($recLimit)) $recLimit = 1000;
-if(!is_numeric($occIndex)) $occIndex = false;
-if(!is_numeric($crowdSourceMode)) $crowdSourceMode = 0;
-if(!is_numeric($dynamicTable)) $dynamicTable = 0;
-$action = htmlspecialchars($action, HTML_SPECIAL_CHARS_FLAGS);
+$collId = array_key_exists('collid',$_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : false;
+$recLimit = array_key_exists('reclimit', $_REQUEST) ? filter_var($_REQUEST['reclimit'], FILTER_SANITIZE_NUMBER_INT) : 1000;
+$occIndex = array_key_exists('occindex', $_REQUEST) ? filter_var($_REQUEST['occindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$crowdSourceMode = array_key_exists('csmode', $_REQUEST) ? filter_var($_REQUEST['csmode'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$dynamicTable = array_key_exists('dynamictable', $_REQUEST) ? filter_var($_REQUEST['dynamictable'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
 
 $occManager = new OccurrenceEditorManager();
 
@@ -163,19 +154,17 @@ else{
 </head>
 <body style="margin-left: 0px; margin-right: 0px;background-color:white;">
 	<a class="skip-link" href="#skip-search"><?php echo $LANG['SKIP_SEARCH'] ?></a>
-	<div id="innertext">
+	<div id="innertext" style="max-width: 100vw">
 		<?php
 		if(($isEditor || $crowdSourceMode)){
 			?>
 			<div id="titleDiv">
 				<div style="float:right;">
-					<a href="#" title="<?php echo htmlspecialchars($LANG['SEARCH_FILTER'], HTML_SPECIAL_CHARS_FLAGS); ?>" aria-label="<?php echo htmlspecialchars($LANG['SEARCH_FILTER'], HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="toggleQueryForm();"><img src="../../images/find.png" style="width:16px;" alt="<?php echo htmlspecialchars($LANG['IMG_SEARCH'], HTML_SPECIAL_CHARS_FLAGS); ?>" /></a>
+					<a href="#" title="<?= $LANG['SEARCH_FILTER'] ?>" aria-label="<?= $LANG['SEARCH_FILTER'] ?>" onclick="toggleQueryForm();"><img src="../../images/find.png" style="width:1.3em;" alt="<?= $LANG['IMG_SEARCH'] ?>" /></a>
 					<?php
 					if($isEditor == 1 || $isGenObs){
 						?>
-						<a href="#" title="<?php echo htmlspecialchars($LANG['BATCH_TOOL'], HTML_SPECIAL_CHARS_FLAGS); ?>" aria-label="<?php echo htmlspecialchars($LANG['BATCH_TOOL'], HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="toggleBatchUpdate();return false;">
-							<img class="editimg" src="../../images/editplus.png" alt="<?php echo htmlspecialchars($LANG['IMG_EDIT'], HTML_SPECIAL_CHARS_FLAGS); ?>" />
-						</a>
+						<a href="#" title="<?= $LANG['BATCH_TOOL'] ?>" aria-label="<?= $LANG['BATCH_TOOL'] ?>" onclick="toggleBatchUpdate();return false;" style="width:1.3em;"><img class="editimg" src="../../images/editplus.png" alt="<?= $LANG['IMG_EDIT'] ?>" style="width:1.3em;"></a>
 						<?php
 					}
 					?>
@@ -193,7 +182,7 @@ else{
 				foreach($recArr as $id => $occArr){
 					foreach($occArr as $k => $v){
 						if(!is_array($v)){
-							if(trim($v) && !array_key_exists($k,$headerArr)){
+							if($v && trim($v) && !array_key_exists($k,$headerArr)){
 								$headerArr[$k] = $k;
 							}
 						}
@@ -327,7 +316,7 @@ else{
 						$tableClass = 'stripe hover order-column compact nowrap cell-border';
 					}
 					?>
-					<table id="<?php echo $tableId; ?>" class="<?php echo $tableClass; ?> accessible-font" title="<?php echo htmlspecialchars((isset($LANG['TABLE_VIEW']) ? $LANG['TABLE_VIEW'] : 'Occurrence Table View'), HTML_SPECIAL_CHARS_FLAGS); ?>" aria-describedby="table-desc">
+					<table id="<?php echo $tableId; ?>" class="<?php echo $tableClass; ?> accessible-font table-scroll" title="<?php echo htmlspecialchars((isset($LANG['TABLE_VIEW']) ? $LANG['TABLE_VIEW'] : 'Occurrence Table View'), HTML_SPECIAL_CHARS_FLAGS); ?>" aria-describedby="table-desc">
 						<thead>
 							<tr>
 								<th><?php echo (isset($LANG['SYMB_ID'])?$LANG['SYMB_ID']:'Symbiota ID'); ?></th>
@@ -349,16 +338,18 @@ else{
 								echo '<td>';
 								$url = 'occurrenceeditor.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$recStart).'&occid='.$id.'&collid='.$collId;
 								echo '<a href="' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars((isset($LANG['SAME_WINDOW'])?$LANG['SAME_WINDOW']:'open in same window'), HTML_SPECIAL_CHARS_FLAGS) . '" aria-label="' .  htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
-								echo '<a href="' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="' . htmlspecialchars((isset($LANG['NEW_WINDOW'])?$LANG['NEW_WINDOW']:'open in new window'), HTML_SPECIAL_CHARS_FLAGS) . '" aria-label="' . htmlspecialchars((isset($LANG['NEW_WINDOW'])?$LANG['NEW_WINDOW']:'open in new window'), HTML_SPECIAL_CHARS_FLAGS) . '">';
-								echo '<img src="../../images/newwin.png" style="width:10px;" alt="' . htmlspecialchars($LANG['IMG_LINK'], HTML_SPECIAL_CHARS_FLAGS) . '" />';
+								echo '<a href="' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="' . (isset($LANG['NEW_WINDOW'])?$LANG['NEW_WINDOW']:'open in new window') . '" aria-label="' . (isset($LANG['NEW_WINDOW'])?$LANG['NEW_WINDOW']:'open in new window') . '">';
+								echo '<img src="../../images/newwin.png" style="width:1.1em;" alt="' . $LANG['IMG_LINK'] . '" />';
 								echo '</a>';
 								echo '</td>'."\n";
 								foreach($headerMap as $k => $v){
 									$displayStr = $occArr[$k];
-									if(strlen($displayStr) > 60){
-										$displayStr = substr($displayStr,0,60).'...';
+									if($displayStr){
+										if(strlen($displayStr) > 60){
+											$displayStr = substr($displayStr,0,60).'...';
+										}
 									}
-									if(!$displayStr) $displayStr = '&nbsp;';
+									else $displayStr = '&nbsp;';
 									echo '<td>'.$displayStr.'</td>'."\n";
 								}
 								echo "</tr>\n";

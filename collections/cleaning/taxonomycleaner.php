@@ -186,7 +186,7 @@ elseif($activeCollArr){
 					<?php
 					if(count($collMap) > 1 && $activeCollArr){
 						?>
-						<div style="float:left;margin-left:5px;"><a href="#" onclick="toggle('mult_coll_fs')"><img src="../../images/add.png" style="width:12px" alt="<?php echo (isset($LANG['ADD_BUTTON']) ? $LANG['ADD_BUTTON'] : 'Add Button') ?>" /></a></div>
+						<div style="float:left;margin-left:5px;"><a href="#" onclick="toggle('mult_coll_fs')"><img src="../../images/add.png" style="width:1em" alt="<?php echo (isset($LANG['ADD_BUTTON']) ? $LANG['ADD_BUTTON'] : 'Add Button') ?>" /></a></div>
 						<div style="clear:both">
 							<fieldset id="mult_coll_fs" style="display:none;padding: 15px;margin:20px;">
 								<legend><b><?php echo $LANG['MULT_COL_SEL']; ?></b></legend>

@@ -157,7 +157,7 @@ if($SYMB_UID){
 					if($hPrefix || $midStr || $hSuffix){
 						$headerStrArr = array();
 						$headerStrArr[] = $hPrefix;
-						$headerStrArr[] = trim($midStr);
+						$headerStrArr[] = trim($midStr ?? '');
 						$headerStrArr[] = $hSuffix;
 						$headerStr = implode("",$headerStrArr);
 					}

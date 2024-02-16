@@ -34,7 +34,7 @@ $LANG['EXPORT_BATCH_GEO_EXPLAIN_2'] = 'o las herramientas de la Comunidad de Geo
 					Estas descargas están particularmente diseñadas para importar las nuevas coordenadas a la base de datos local.
 					Si ningún registro ha sido georreferenciado dentro del portal, el archivo generado estará vacío.';
 $LANG['PROCESSING_STATUS'] = 'Estado de Procesamiento';
-$LANG['ALL_RECORDS'] = 'Todos los registros';
+$LANG['ALL_RECORDS'] = 'Todos Registros';
 $LANG['COMPRESSION'] = 'Compresión';
 $LANG['ARCHIVE_DATA_PACK'] = 'Paquete de Archivos de Datos (archivo ZIP)';
 $LANG['FILE_FORMAT'] = 'Formato del Archivo';
@@ -51,7 +51,7 @@ $LANG['COORDINATES'] = 'Coordenadas';
 $LANG['ARE_EMPTY'] = 'está vacío (es nulo)';
 $LANG['HAVE_VALUES'] = 'tiene valores (p.e. necesitan verificación)';
 $LANG['ADDITIONAL_FILTERS'] = 'Filtros<br/>Adicionales';
-$LANG['SELECT_FIELD'] = 'Seleccionar Nombre de Campo';
+$LANG['SELECT_FIELD'] = 'Seleccionar Campo';
 $LANG['DOWNLOAD_RECORDS'] = 'Descargar Registros';
 $LANG['DOWNLOAD_SPEC_RECORDS'] = 'Descargar Registros de Especímenes';
 $LANG['NEW_RECORDS_ONLY'] = 'Únicamente Registros Nuevos';

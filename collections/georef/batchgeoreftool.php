@@ -121,7 +121,7 @@ if($isEditor && $submitAction){
 					<?php
 					if(count($collMap) > 1 && $activeCollArr){
 						?>
-						<div style="float:left;margin-left:5px;"><a href="#" onclick="toggle('mult_coll_div')"><img src="../../images/add.png" style="width:12px" /></a></div>
+						<div style="float:left;margin-left:5px;"><a href="#" onclick="toggle('mult_coll_div')"><img src="../../images/add.png" style="width:1em" /></a></div>
 						<?php
 					}
 					?>
@@ -273,7 +273,7 @@ if($isEditor && $submitAction){
 											</select>
 										</div>
 										<div style="float:left;">
-											<img src="../../images/add.png" onclick="toggle('advfilterdiv')" title="<?php echo $LANG['ADVANCED_OPT']; ?>" />
+											<img src="../../images/add.png" style="width:1.5em;" onclick="toggle('advfilterdiv')" title="<?php echo $LANG['ADVANCED_OPT']; ?>" />
 										</div>
 									</div>
 								</div>
@@ -311,19 +311,19 @@ if($isEditor && $submitAction){
 						<form name="georefform" method="post" action="batchgeoreftool.php" onsubmit="return verifyGeorefForm(this)">
 							<div style="float:right;">
 								<span>
-									<a href="#" onclick="geoCloneTool();"><img src="../../images/list.png" title="<?php echo $LANG['SEARCH_CLONES']; ?>" style="width:15px;" /></a>
+									<a href="#" onclick="geoCloneTool();"><img src="../../images/list.png" title="<?php echo $LANG['SEARCH_CLONES']; ?>" style="width:1.3em;" /></a>
 								</span>
 								<span style="margin-left:10px;">
-									<a href="#" onclick="geoLocateLocality();"><img src="../../images/geolocate.png" title="<?php echo $LANG['GEOLOCATE_LOCALITY']; ?>" style="width:15px;" /></a>
+									<a href="#" onclick="geoLocateLocality();"><img src="../../images/geolocate.png" title="<?php echo $LANG['GEOLOCATE_LOCALITY']; ?>" style="width:1.3em;" /></a>
 								</span>
 								<span style="margin-left:10px;">
-									<a href="#" onclick="analyseLocalityStr();"><img src="../../images/find.png" title="<?php echo $LANG['ANALYZE_FOR_COORDS']; ?>" style="width:15px;" /></a>
+									<a href="#" onclick="analyseLocalityStr();"><img src="../../images/find.png" title="<?php echo $LANG['ANALYZE_FOR_COORDS']; ?>" style="width:1.3em;" /></a>
 								</span>
 								<?php
 								if(!strpos($collid,',')){
 									?>
 									<span style="margin-left:10px;">
-										<a href="#" onclick="openFirstRecSet();"><img src="../../images/edit.png" title="<?php echo $LANG['EDIT_FIRST_SET']; ?>" style="width:15px;" /></a>
+										<a href="#" onclick="openFirstRecSet();"><img src="../../images/edit.png" title="<?php echo $LANG['EDIT_FIRST_SET']; ?>" style="width:1.3em;" /></a>
 									</span>
 									<?php
 								}
@@ -408,7 +408,7 @@ if($isEditor && $submitAction){
 										<td>
 											<input id="decimallatitude" name="decimallatitude" type="text" value="" style="width:80px;" />
 											<span style="cursor:pointer;padding:3px;" onclick="openMappingAid();">
-												<img src="../../images/world.png" style="border:0px;width:13px;" />
+												<img src="../../images/world.png" style="border:0px;width:1.2em;" />
 											</span>
 										</td>
 									</tr>
@@ -437,7 +437,7 @@ if($isEditor && $submitAction){
 											<span style="margin-left:20px;font-weight:bold;"><?php echo $LANG['DATUM']; ?>:</span>
 											<input id="geodeticdatum" name="geodeticdatum" type="text" value="" style="width:75px;" />
 											<span style="cursor:pointer;margin-left:3px;" onclick="toggle('utmdiv');">
-												<img src="../../images/editplus.png" style="border:0px;width:14px;" />
+												<img src="../../images/editplus.png" style="border:0px;width:1.5em;" />
 											</span>
 										</td>
 									</tr>

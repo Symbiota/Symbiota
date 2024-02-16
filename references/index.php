@@ -110,7 +110,7 @@ if(!$formSubmit || $formSubmit != 'Search References'){
 		<div id="reflistdiv" style="min-height:200px;">
 			<div style="float:right;margin:10px;">
 				<a href="#" onclick="toggle('newreferencediv');">
-					<img src="../images/add.png" alt="Create New Reference" />
+					<img src="../images/add.png" style="width:1.3em" alt="Create New Reference" />
 				</a>
 			</div>
 			<div id="newreferencediv" style="display:none;">

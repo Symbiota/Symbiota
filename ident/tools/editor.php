@@ -113,8 +113,8 @@ if($isEditor && $action){
 					if(!$charValue){
 						echo '<fieldset>';
 						echo '<legend style="font-weight:bold;font-size:120%;color:#990000;">';
-						echo '<span id="minus-'.$headingID.'" onclick="toggle(\''.$headingID.'\')" style="display:none;"><img src="../../images/minus_sm.png"></span> ';
-						echo '<span id="plus-'.$headingID.'" onclick="toggle(\''.$headingID.'\')"><img src="../../images/plus_sm.png"></span> ';
+						echo '<span id="minus-'.$headingID.'" onclick="toggle(\''.$headingID.'\')" style="display:none;"><img src="../../images/minus.png" style="width:1em;" ></span> ';
+						echo '<span id="plus-'.$headingID.'" onclick="toggle(\''.$headingID.'\')"><img src="../../images/plus.png" style="width:1em;" ></span> ';
 						echo $heading.'</legend>';
 					}
 					echo '<div class="headingDiv" id="'.$headingID.'" style="text-indent:1em;">';

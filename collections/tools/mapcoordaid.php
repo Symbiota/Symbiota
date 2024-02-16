@@ -4,14 +4,14 @@
    include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:0;
+$clid = array_key_exists("clid",$_REQUEST) && is_numeric($_REQUEST["clid"])? $_REQUEST["clid"]:0;
 $formSubmit = array_key_exists("formsubmit",$_POST)?$_POST["formsubmit"]:0;
 $latDef = array_key_exists("latdef",$_REQUEST)?$_REQUEST["latdef"]:'';
 $lngDef = array_key_exists("lngdef",$_REQUEST)?$_REQUEST["lngdef"]:'';
-$zoom = array_key_exists("zoom",$_REQUEST)&&$_REQUEST["zoom"]?$_REQUEST["zoom"]:5;
-$mapMode = array_key_exists("mapmode",$_REQUEST)?$_REQUEST["mapmode"]:'';
-$mapModeStrict = array_key_exists("map_mode_strict",$_REQUEST)?$_REQUEST["map_mode_strict"]:false;
-$wktInputId = array_key_exists("wkt_input_id", $_REQUEST)?$_REQUEST["wkt_input_id"]:"footprintwkt";
+$zoom = array_key_exists("zoom",$_REQUEST)&&is_numeric($_REQUEST["zoom"])?$_REQUEST["zoom"]:5;
+$mapMode = array_key_exists("mapmode",$_REQUEST)? htmlspecialchars($_REQUEST["mapmode"]):'';
+$mapModeStrict = array_key_exists("map_mode_strict",$_REQUEST) && is_bool($_REQUEST["map_mode_strict"])? $_REQUEST["map_mode_strict"]:false;
+$wktInputId = array_key_exists("wkt_input_id", $_REQUEST)? htmlspecialchars($_REQUEST["wkt_input_id"]):"footprintwkt";
 
 $clManager = new ChecklistAdmin();
 $clManager->setClid($clid);
@@ -249,7 +249,7 @@ else{
                }
                break;
             default:
-               alert(`No Settings fo Map Mode: ${mapMode}`)
+               alert(`No Settings for Map Mode: ${mapMode}`)
                return false;
             break;
          } 

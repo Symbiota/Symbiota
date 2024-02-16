@@ -82,7 +82,7 @@ if($SYMB_UID){
 				$headerArr = array();
 				foreach($recArr as $occurArr){
 					foreach($occurArr as $k => $v){
-						if(trim($v) && !array_key_exists($k,$headerArr)){
+						if($v && trim($v) && !array_key_exists($k,$headerArr)){
 							$headerArr[$k] = $k;
 						}
 					}
@@ -120,13 +120,15 @@ if($SYMB_UID){
 						echo "<tr ".($cnt%2?'class="alt"':'').">\n";
 						foreach($headerArr as $k => $v){
 							$displayStr = $occArr[$k];
-							if(strlen($displayStr) > 60){
-								$displayStr = substr($displayStr,0,60).'...';
+							if($displayStr){
+								if(strlen($displayStr) > 60){
+									$displayStr = substr($displayStr,0,60).'...';
+								}
+								if($k == 'occid' && $searchVar != 'new') {
+									$displayStr = '<a href="../editor/occurrenceeditor.php?occid='.$displayStr.'" target="_blank">'.$displayStr.'</a>';
+								}
 							}
-							if($k == 'occid' && $displayStr && $searchVar != 'new') {
-								$displayStr = '<a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($displayStr, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($displayStr, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
-							}
-							if(!$displayStr) $displayStr = '&nbsp;';
+							else $displayStr = '&nbsp;';
 							echo '<td>'.$displayStr.'</td>'."\n";
 						}
 						echo "</tr>\n";

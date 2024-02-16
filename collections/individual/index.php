@@ -208,10 +208,6 @@ $traitArr = $indManager->getTraitArr();
 		function toggle(target){
 			var objDiv = document.getElementById(target);
 			if(objDiv){
-				if(objDiv.style.display=="none") objDiv.style.display = "block";
-				else objDiv.style.display = "none";
-			}
-			else{
 				var divObjs = document.getElementsByTagName("div");
 				for (i = 0; i < divObjs.length; i++) {
 					var obj = divObjs[i];
@@ -376,7 +372,8 @@ $traitArr = $indManager->getTraitArr();
 						</div>
 					</div>
 					<?php
-					$iconUrl = (substr($collMetadata["icon"],0,6)=='images'?'../../':'').$collMetadata['icon'];
+					$iconUrl = '';
+					if($collMetadata['icon']) $iconUrl = (substr($collMetadata['icon'], 0, 6) == 'images' ? '../../' : '') . $collMetadata['icon'];
 					if($iconUrl){
 						?>
 						<div id="collicon-div">
@@ -402,32 +399,32 @@ $traitArr = $indManager->getTraitArr();
 						}
 						if(array_key_exists('relation',$occArr)){
 							?>
-							<fieldset id="association-div">
-								<legend><?php echo (isset($LANG['RELATED_OCCUR'])?$LANG['RELATED_OCCUR']:'Related Occurrences'); ?></legend>
-								<?php
-								$displayLimit = 5;
-								$cnt = 0;
-								foreach($occArr['relation'] as $id => $assocArr){
-									if($cnt == $displayLimit){
-										echo '<div class="relation-hidden"><a href="#" onclick="$(\'.relation-hidden\').toggle();return false;">show all records</a></div>';
-										echo '<div class="relation-hidden" style="display:none">';
+								<fieldset id="association-div" class="top-light-margin">
+									<legend><?php echo (isset($LANG['RELATED_OCCUR'])?$LANG['RELATED_OCCUR']:'Related Occurrences'); ?></legend>
+									<?php
+									$displayLimit = 5;
+									$cnt = 0;
+									foreach($occArr['relation'] as $id => $assocArr){
+										if($cnt == $displayLimit){
+											echo '<div class="relation-hidden"><a href="#" onclick="$(\'.relation-hidden\').toggle();return false;">show all records</a></div>';
+											echo '<div class="relation-hidden" style="display:none">';
+										}
+										echo '<div>';
+										echo $assocArr['relationship'];
+										if($assocArr['subtype']) echo ' ('.$assocArr['subtype'].')';
+										echo ': ';
+										$relID = $assocArr['identifier'];
+										$relUrl = $assocArr['resourceurl'];
+										if(!$relUrl && $assocArr['occidassoc']) $relUrl = $GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$assocArr['occidassoc'];
+										if($relUrl) $relID = '<a href="' . htmlspecialchars($relUrl, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($relID, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+										if($relID) echo $relID;
+										elseif($assocArr['sciname']) echo $assocArr['sciname'];
+										echo '</div>';
+										$cnt++;
 									}
-									echo '<div>';
-									echo $assocArr['relationship'];
-									if($assocArr['subtype']) echo ' ('.$assocArr['subtype'].')';
-									echo ': ';
-									$relID = $assocArr['identifier'];
-									$relUrl = $assocArr['resourceurl'];
-									if(!$relUrl && $assocArr['occidassoc']) $relUrl = $GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$assocArr['occidassoc'];
-									if($relUrl) $relID = '<a href="' . htmlspecialchars($relUrl, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($relID, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
-									if($relID) echo $relID;
-									elseif($assocArr['sciname']) echo $assocArr['sciname'];
-									echo '</div>';
-									$cnt++;
-								}
-								if(count($occArr['relation']) > $displayLimit) echo '</div>';
-								?>
-							</fieldset>
+									if(count($occArr['relation']) > $displayLimit) echo '</div>';
+									?>
+								</fieldset>
 							<?php
 						}
 						if($occArr['catalognumber']){
@@ -537,12 +534,12 @@ $traitArr = $indManager->getTraitArr();
 							?>
 							<div id="determination-div" class="bottom-breathing-room-sm-rel">
 								<div id="det-toogle-div" class="det-toogle-div">
-									<a href="#" onclick="toggle('det-toogle-div');return false"><img src="../../images/plus_sm.png" alt="image of a plus sign, indicating desire to show determination history"></a>
+									<a href="#" onclick="toggle('det-toogle-div');return false"><img src="../../images/plus.png" style="width:1em" alt="image of a plus sign; click to show determination history"></a>
 									<?php echo $LANG['SHOW_DET_HISTORY']; ?>
 								</div>
 								<div id="det-toogle-div" class="det-toogle-div" style="display:none;">
 									<div>
-										<a href="#" onclick="toggle('det-toogle-div');return false"><img src="../../images/minus_sm.png" alt="image of a minu sign, indicating desire to hide determination history"></a>
+										<a href="#" onclick="toggle('det-toogle-div');return false"><img src="../../images/minus.png" style="width:1em" alt="image of a minus sign; click to hide determination history"></a>
 										<?php echo $LANG['HIDE_DET_HISTORY']; ?>
 									</div>
 									<fieldset>
@@ -1058,9 +1055,9 @@ $traitArr = $indManager->getTraitArr();
 							if(array_key_exists('fieldsModified',$_POST)){
 								echo '<div><label>'.$LANG['REFRESH_DATE'].':</label> '.(isset($occArr['source']['refreshTimestamp'])?$occArr['source']['refreshTimestamp']:'').'</div>';
 								//Input from refersh event
-								$dataStatus = filter_var($_POST['dataStatus'], FILTER_SANITIZE_STRING);
-								$fieldsModified = filter_var($_POST['fieldsModified'], FILTER_SANITIZE_STRING);
-								$sourceDateLastModified = filter_var($_POST['sourceDateLastModified'], FILTER_SANITIZE_STRING);
+								$dataStatus = htmlspecialchars($_POST['dataStatus'], HTML_SPECIAL_CHARS_FLAGS);
+								$fieldsModified = htmlspecialchars($_POST['fieldsModified'], HTML_SPECIAL_CHARS_FLAGS);
+								$sourceDateLastModified = htmlspecialchars($_POST['sourceDateLastModified'], HTML_SPECIAL_CHARS_FLAGS);
 								echo '<div><label>'.$LANG['UPDATE_STATUS'].':</label> '.$dataStatus.'</div>';
 								echo '<div><label>'.$LANG['FIELDS_MODIFIED'].':</label> '.$fieldsModified.'</div>';
 								echo '<div><label>'.$LANG['SOURCE_DATE_LAST_MODIFIED'].':</label> '.$sourceDateLastModified.'</div>';
@@ -1403,7 +1400,7 @@ $traitArr = $indManager->getTraitArr();
 													echo '<label>'.$LANG['NEW_VALUE'].':</label> '.$vArr['new'].'<br/>';
 													echo '</div>';
 												}
-												echo '<div style="margin:15px 0px;"><hr/></div>';
+												echo '<div style="margin:15px 0px; clear: both;"><hr/></div>';
 											}
 										}
 										?>

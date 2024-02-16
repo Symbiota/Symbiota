@@ -29,6 +29,12 @@ $LANG['POLYGON_FORMATTING'] = 'Polygon Formatting';
 $LANG['REDRAW'] = 'Redraw';
 $LANG['TRIM_DIGITS'] = 'Trim to 6 significant digits';
 $LANG['SWAP_COORDS'] = 'Switch lat/lng coordinates';
+$LANG['INSTRUCTION'] = 'Click on polygon symbol to activate polygon tool and create a shape representing research area.
+                        Click save button to link polygon to checklist.
+                        The WKT polygon footprint within the text box can be modifed by hand and rebuilt on map using the Redraw Polygon button.
+                        A WKT polygon definition can be copied into text area from another application.
+                        Use Switch Coordinate Order button to convert Long-Lat coordinate pairs to Lat-Long format.';
+$LANG['COORDINATE'] = 'Coordinate Aid';
 
 //Google Map Only
 $LANG['DELETE_SELECTED'] = 'Delete Selected Shape';

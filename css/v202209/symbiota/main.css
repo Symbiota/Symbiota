@@ -330,51 +330,6 @@ hr {
   margin-left: 1.5em;
 }
 
-.fieldset-like {
-  /* borrowed from: https://www.geeksforgeeks.org/how-to-achieve-fieldset-like-effect-without-using-fieldset-tag/ */
-  border: 0.2em solid;
-  border-top: none;
-  margin: 2rem 0 1rem 1rem;
-  padding: 0.8rem;
-}
-
-.fieldset-like h1,
-.fieldset-like h2,
-.fieldset-like h3 {
-  font: 1.5rem normal;
-  margin: -1.6rem -0.8rem 0rem;
-}
-
-.fieldset-like h1 span,
-.fieldset-like h2 span,
-.fieldset-like h3 span {
-  float: left;
-}
-
-.fieldset-like h1:before,
-.fieldset-like h2:before,
-.fieldset-like h3:before {
-  border-top: 0.15em solid;
-  content: " ";
-  float: left;
-  margin: 0.8rem 0.1rem 0 -0.2rem;
-  width: 1.2rem;
-}
-
-.fieldset-like h1:after,
-.fieldset-like h2:after,
-.fieldset-like h3:after {
-  border-top: 0.15em solid;
-  content: " ";
-  display: block;
-  height: 2.4rem;
-  left: 0.3rem;
-  margin: 0 0.1rem 0 0;
-  overflow: hidden;
-  position: relative;
-  top: 0.8rem;
-}
-
 .btn-medium-font {
   font-size: 0.6em;
   text-decoration: none;
@@ -397,32 +352,6 @@ hr {
 .small-header {
   font-size: 1.3em;
   font-weight: bold;
-}
-
-.gridlike-form {
-  margin: 15px;
-  display: flex;
-  flex-direction: column;
-}
-
-.gridlike-form-no-margin {
-  display: flex;
-  flex-direction: column;
-}
-
-.gridlike-form-row {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.gridlike-form-row-label {
-  width: 100px;
-}
-
-.gridlike-form-row-input {
-  width: 40%;
 }
 
 .bottom-breathing-room-relative {
@@ -494,11 +423,6 @@ hr {
   margin-bottom: 0.75rem;
 }
 
-.img-add {
-  border: 0px;
-  width: 15px;
-}
-
 .load-button {
   margin-top: 0.75rem;
 }
@@ -537,11 +461,6 @@ hr {
 
 .search-bar-extraShort {
   width: 5rem;
-}
-
-.fieldset-size {
-  padding: 10px;
-  max-width: 500px;
 }
 
 .max-width-fit-75 {
@@ -874,9 +793,6 @@ hr {
   clear: both;
 }
 
-.no-left-margin {
-  margin-left: 0;
-}
 .underlined-text {
   text-decoration: underline;
 }
@@ -902,7 +818,6 @@ hr {
   font-size: 125%;
   font-weight: bold;
 }
-
 
 .tr-center {
   text-align: center;
@@ -982,4 +897,10 @@ hr {
 button.no-margin-left,
 div.no-margin-left {
   margin-left: 0;
+}
+
+.table-scroll {
+  display: block;
+  white-space: nowrap;
+  overflow-x: scroll;
 }

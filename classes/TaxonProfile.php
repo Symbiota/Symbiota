@@ -458,6 +458,7 @@ class TaxonProfile extends Manager {
 				WHERE (e.tid IN('.$this->tid.') OR l.tid IN('.$this->tid.')) ORDER BY l.sortsequence, l.title';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
+				$this->linkArr = array();
 				$this->linkArr[$r->tlid]['title'] = $r->title;
 				$this->linkArr[$r->tlid]['url'] = str_replace('--SCINAME--',rawurlencode($this->taxonName),$r->url);
 				$this->linkArr[$r->tlid]['icon'] = $r->icon;

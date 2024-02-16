@@ -357,13 +357,13 @@ include($SERVER_ROOT.'/includes/header.php');
 													</select>
 													<?php echo (isset($LANG['COND']) ? $LANG['COND'] : 'Condition'); ?>:
 													<select name="condition<?php echo $x; ?>" style="margin-right:10px">
-														<option value="EQUALS" <?php if($savedCondition == 'EQUALS') echo 'SELECTED'; ?>><?php echo (isset($LANG['EQUALS']) ? $LANG['EQUALS'] : 'EQUALS'); ?></option>
-														<option value="STARTS" <?php if($savedCondition == 'STARTS') echo 'SELECTED'; ?>><?php echo (isset($LANG['STARTS_WITH']) ? $LANG['STARTS_WITH'] : 'STARTS WITH'); ?></option>
-														<option value="LIKE" <?php if($savedCondition == 'LIKE') echo 'SELECTED'; ?>><?php echo (isset($LANG['CONTAINS']) ? $LANG['CONTAINS'] : 'CONTAINS'); ?></option>
-														<option value="LESSTHAN" <?php if($savedCondition == 'LESSTHAN') echo 'SELECTED'; ?>><?php echo (isset($LANG['LESS_THAN']) ? $LANG['LESS_THAN'] : 'LESS THAN'); ?></option>
-														<option value="GREATERTHAN" <?php if($savedCondition == 'GREATERTHAN') echo 'SELECTED'; ?>><?php echo (isset($LANG['GREATER_THAN']) ? $LANG['GREATER_THAN'] : 'GREATER THAN'); ?></option>
-														<option value="ISNULL" <?php if($savedCondition == 'ISNULL') echo 'SELECTED'; ?>><?php echo (isset($LANG['IS_NULL']) ? $LANG['IS_NULL'] : 'IS NULL'); ?></option>
-														<option value="NOTNULL" <?php if($savedCondition == 'NOTNULL') echo 'SELECTED'; ?>><?php echo (isset($LANG['NOT_NULL']) ? $LANG['NOT_NULL'] : 'IS NOT NULL'); ?></option>
+														<option value="EQUALS" <?php if($savedCondition == 'EQUALS') echo 'SELECTED'; ?>><?= $LANG['EQUALS'] ?></option>
+														<option value="STARTS_WITH" <?php if($savedCondition == 'STARTS_WITH') echo 'SELECTED'; ?>><?= $LANG['STARTS_WITH'] ?></option>
+														<option value="LIKE" <?php if($savedCondition == 'LIKE') echo 'SELECTED'; ?>><?= $LANG['LIKE'] ?></option>
+														<option value="LESS_THAN" <?php if($savedCondition == 'LESS_THAN') echo 'SELECTED'; ?>><?= $LANG['LESS_THAN'] ?></option>
+														<option value="GREATER_THAN" <?php if($savedCondition == 'GREATER_THAN') echo 'SELECTED'; ?>><?= $LANG['GREATER_THAN'] ?></option>
+														<option value="IS_NULL" <?php if($savedCondition == 'IS_NULL') echo 'SELECTED'; ?>><?= $LANG['IS_NULL'] ?></option>
+														<option value="NOT_NULL" <?php if($savedCondition == 'NOT_NULL') echo 'SELECTED'; ?>><?= $LANG['NOT_NULL'] ?></option>
 													</select>
 													<?php echo (isset($LANG['VALUE']) ? $LANG['VALUE'] : 'Value'); ?>:
 													<input name="value<?php echo $x; ?>" type="text" value="<?php echo $savedValue; ?>" />

@@ -71,9 +71,9 @@ if($collid){
 			?>
 			<section class="fieldset-like">
 				<h1>
-					<span><b><?php echo $LANG['SKELETAL_DATA']; ?></b></span>
-					<span onclick="toggle('descriptiondiv')" onkeypress="toggle('descriptiondiv')" tabindex="0"><img src="../../images/info.png" style="width:12px;" title="<?php echo $LANG['TOOL_DESCRIPTION']; ?>" aria-label="<?php echo (isset($LANG['IMG_TOOL_DESCRIPTION'])?$LANG['IMG_TOOL_DESCRIPTION']:'Description of Tool Button'); ?>"/></span>
-					<span id="optionimgspan" onclick="showOptions()" onkeypress="showOptions()" tabindex="0"><img src="../../images/list.png" style="width:12px;" title="<?php echo $LANG['DISPLAY_OPTIONS']; ?>" aria-label="<?php echo (isset($LANG['IMG_DISPLAY_OPTIONS'])?$LANG['IMG_DISPLAY_OPTIONS']:'Display Options Button'); ?>"/></span>
+					<span><?php echo $LANG['SKELETAL_DATA']; ?></span>
+					<span onclick="toggle('descriptiondiv')" onkeypress="toggle('descriptiondiv')" tabindex="0"><img src="../../images/info.png" style="width:1em;" title="<?php echo $LANG['TOOL_DESCRIPTION']; ?>" aria-label="<?php echo (isset($LANG['IMG_TOOL_DESCRIPTION'])?$LANG['IMG_TOOL_DESCRIPTION']:'Description of Tool Button'); ?>"/></span>
+					<span id="optionimgspan" onclick="showOptions()" onkeypress="showOptions()" tabindex="0"><img src="../../images/list.png" style="width:1em;" title="<?php echo $LANG['DISPLAY_OPTIONS']; ?>" aria-label="<?php echo (isset($LANG['IMG_DISPLAY_OPTIONS'])?$LANG['IMG_DISPLAY_OPTIONS']:'Display Options Button'); ?>"/></span>
 				</h1>
 				<div id="descriptiondiv" style="display:none;margin:10px;width:80%">
 					<div style="margin-bottom:5px">
@@ -117,7 +117,7 @@ if($collid){
 
 					<div class="flex-form" style="float:right">
 							<div>
-								<input name="clearform" type="reset" onclick="resetForm()" value="<?php echo (isset($LANG['CLEAR']) ? $LANG['CLEAR'] : 'Clear Form') ?>"/>
+								<button name="clearform" type="reset" onclick="resetForm()" value="<?php echo $LANG['CLEAR'] ?>"><?php echo $LANG['CLEAR'] ?></button>
 							</div>
 						</div>
 					<div class="flex-form">
@@ -141,7 +141,7 @@ if($collid){
 							?>
 							<div style="float:left;padding:2px 3px;">
 								<a href="../../taxa/taxonomy/taxonomyloader.php" target="_blank">
-									<img src="../../images/add.png" style="width:14px;" title="<?php echo $LANG['ADD_NAME_THESAURUS']; ?>" aria-label="<?php echo $LANG['ADD_NAME_THESAURUS']; ?>" />
+									<img src="../../images/add.png" style="width:1.5em" title="<?php echo $LANG['ADD_NAME_THESAURUS']; ?>" aria-label="<?php echo $LANG['ADD_NAME_THESAURUS']; ?>" />
 								</a>
 							</div>
 							<?php
@@ -252,7 +252,7 @@ if($collid){
 			</section>
 			<section class="fieldset-like">
 				<h1>
-					<span><b><?php echo $LANG['RECORDS']; ?></b></span>
+					<span><?php echo $LANG['RECORDS']; ?></span>
 				</h1>
 			</section>
 			<?php

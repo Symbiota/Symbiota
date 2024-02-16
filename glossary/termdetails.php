@@ -201,7 +201,7 @@ if($glossId){
 					<li><a href="#termdetaildiv"><?php echo htmlspecialchars((isset($LANG['DETAILS'])?$LANG['DETAILS']:'Details'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
 					<li><a href="#termrelateddiv"><?php echo htmlspecialchars((isset($LANG['REL_TERMS'])?$LANG['REL_TERMS']:'Related Terms'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
 					<li><a href="#termtransdiv"><?php echo htmlspecialchars((isset($LANG['TRANSS'])?$LANG['TRANSS']:'Translations'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
-					<li><a href="#termimagediv"><?php echo htmlspecialchars((isset($LANG['TRANSS'])?$LANG['TRANSS']:'Translations'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
+					<li><a href="#termimagediv"><?php echo htmlspecialchars((isset($LANG['IMAGES'])?$LANG['IMAGES']:'Images'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
 					<li><a href="#termadmindiv"><?php echo htmlspecialchars((isset($LANG['ADMIN'])?$LANG['ADMIN']:'Admin'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
 				</ul>
 				<div id="termdetaildiv" style="">
@@ -236,7 +236,7 @@ if($glossId){
 										}
 										?>
 									</select>
-									<a href="#" onclick="toggle('addLangDiv');return false;"><img src="../images/add.png" /></a>&nbsp;&nbsp;
+									<a href="#" onclick="toggle('addLangDiv');return false;"><img src="../images/add.png" style="width:1.5em"/></a>&nbsp;&nbsp;
 								</div>
 								<div id="addLangDiv" style="float:left;display:none">
 									<input name="newlang" type="text" maxlength="45" style="width:200px;" />
@@ -299,7 +299,7 @@ if($glossId){
 									foreach($taxaArr as $taxId => $sciname){
 										echo '<li><form name="taxadelform" id="'.$sciname.'" action="termdetails.php" style="margin-top:0px;margin-bottom:0px;" method="post">';
 										echo $sciname;
-										echo '<input style="margin-left:15px;" type="image" src="../images/del.png" title=\"'.(isset($LANG['DEL_TAX'])?$LANG['DEL_TAX']:'Delete Taxon Group').'\">';
+										echo '<input style="margin-left:5px;width:1.3em" type="image" src="../images/del.png" title=\"'.(isset($LANG['DEL_TAX'])?$LANG['DEL_TAX']:'Delete Taxon Group').'\">';
 										echo '<input name="glossid" type="hidden" value="'.$glossId.'" />';
 										echo '<input name="tid" type="hidden" value="'.$taxId.'" />';
 										echo '<input name="formsubmit" type="hidden" value="Delete Taxa Group" />';
@@ -332,7 +332,7 @@ if($glossId){
 					$otherRelationshipsArr = $glosManager->getOtherRelatedTerms();
 					?>
 					<div style="margin:10px;float:right;cursor:pointer;<?php echo (!$synonymArr||$otherRelationshipsArr?'display:none;':''); ?>" onclick="toggle('addsyndiv');" title="Add a New Synonym">
-						<img style="border:0px;width:12px;" src="../images/add.png" />
+						<img style="border:0px;width:1.5em;" src="../images/add.png" />
 					</div>
 					<div id="addsyndiv" style="margin-bottom:10px;<?php echo ($synonymArr||$otherRelationshipsArr?'display:none;':''); ?>;">
 						<form name="relnewform" action="termdetails.php#termrelateddiv" method="post" onsubmit="return verifyRelLinkForm(this);">
@@ -394,12 +394,12 @@ if($glossId){
 											<input name="gltlinkid" type="hidden" value="<?php echo $synArr['gltlinkid']; ?>" />
 											<input name="relglossid" type="hidden" value="<?php echo $synGlossId; ?>" />
 											<input name="formsubmit" type="hidden" value="removeSynonym" >
-											<input type="image" name="delimage" src='../images/del.png' style="width:12px" <?php if($disableRemoveSyn) echo 'disabled'; ?>>
+											<input type="image" name="delimage" src='../images/del.png' style="width:1.3em" <?php if($disableRemoveSyn) echo 'disabled'; ?>>
 										</form>
 									</div>
 									<div style="float:right;margin:5px;cursor:pointer;" title="Edit Term">
 										<a href="termdetails.php?glossid=<?php echo htmlspecialchars($synGlossId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-											<img style="border:0px;width:12px;" src="../images/edit.png" />
+											<img style="border:0px;width:1.2em;" src="../images/edit.png" />
 										</a>
 									</div>
 									<div style='' >
@@ -447,12 +447,12 @@ if($glossId){
 												<input name="glossid" type="hidden" value="<?php echo $glossId; ?>" />
 												<input name="gltlinkid" type="hidden" value="<?php echo $relArr['gltlinkid']; ?>" />
 												<input name="relglossid" type="hidden" value="<?php echo $relGlossId; ?>" />
-												<input type="image" name="formsubmit" src='../images/del.png' value="Unlink Related Term" style="width:13px" <?php if($disableRemoveRel) echo 'disabled'; ?>>
+												<input type="image" name="formsubmit" src='../images/del.png' value="Unlink Related Term" style="width:1.3em" <?php if($disableRemoveRel) echo 'disabled'; ?>>
 											</form>
 										</div>
 										<div style="float:right;margin:5px;" title="<?php echo (isset($LANG['EDIT_T'])?$LANG['EDIT_T']:'Edit Term'); ?>">
 											<a href="termdetails.php?glossid=<?php echo htmlspecialchars($relGlossId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-												<img style="border:0px;width:12px;" src="../images/edit.png" />
+												<img style="border:0px;width:1.3em;" src="../images/edit.png" />
 											</a>
 										</div>
 										<div>
@@ -477,7 +477,7 @@ if($glossId){
 					$translationArr = $glosManager->getTranslations();
 					?>
 					<div style="margin:10px;float:right;cursor:pointer;<?php echo (!$translationArr?'display:none;':''); ?>" onclick="toggle('addtransdiv');" title="Add a New Translation">
-						<img style="border:0px;width:12px;" src="../images/add.png" />
+						<img style="border:0px;width:1.5em;" src="../images/add.png" />
 					</div>
 					<div id="addtransdiv" style="margin-bottom:10px;<?php echo ($translationArr?'display:none;':''); ?>;">
 						<form name="translinkform" action="termdetails.php#termtransdiv" method="post" onsubmit="return verifyTransLinkForm(this);">
@@ -526,7 +526,7 @@ if($glossId){
 												<input name="glossid" type="hidden" value="<?php echo $glossId; ?>" />
 												<input name="gltlinkid" type="hidden" value="<?php echo $transArr['gltlinkid']; ?>" />
 												<input name="relglossid" type="hidden" value="<?php echo $transGlossId; ?>" />
-												<input type="image" name="formsubmit" src='../images/del.png' value="Remove Translation" style="width:13px;">
+												<input type="image" name="formsubmit" src='../images/del.png' value="Remove Translation" style="width:1.3em;">
 											</form>
 										</div>
 										<?php
@@ -534,7 +534,7 @@ if($glossId){
 									?>
 									<div style="float:right;margin:5px;" title="<?php echo (isset($LANG['EDIT_T_DAT'])?$LANG['EDIT_T_DAT']:'Edit Term Data'); ?>">
 										<a href="termdetails.php?glossid=<?php echo ≈; ?>">
-											<img style="border:0px;width:12px;" src="../images/edit.png" />
+											<img style="border:0px;width:1.3em;" src="../images/edit.png" />
 										</a>
 									</div>
 									<div>
@@ -563,7 +563,7 @@ if($glossId){
 				<div id="termimagediv" style="min-height:300px;">
 					<div id="imagediv" style="">
 						<div style="margin:10px;float:right;cursor:pointer;<?php echo (!$termImgArr?'display:none;':''); ?>" onclick="toggle('addimgdiv');" title="Add a New Image">
-							<img style="border:0px;width:12px;" src="../images/add.png" />
+							<img style="border:0px;width:1.5em;" src="../images/add.png" />
 						</div>
 						<div id="addimgdiv" style="<?php echo ($termImgArr?'display:none;':''); ?>;">
 							<form name="imgnewform" action="termdetails.php#termimagediv" method="post" enctype="multipart/form-data" onsubmit="return verifyNewImageForm(this);">
@@ -641,7 +641,7 @@ if($glossId){
 									?>
 									<fieldset>
 										<div style="float:right;cursor:pointer;" onclick="toggle('img<?php echo $imgId; ?>editdiv');" title="<?php echo (isset($LANG['EDIT_META'])?$LANG['EDIT_META']:'Edit Image MetaData'); ?>">
-											<img style="border:0px;width:12px;" src="../images/edit.png" />
+											<img style="border:0px;width:1.3em;" src="../images/edit.png" />
 										</div>
 										<div style="float:left;">
 											<?php

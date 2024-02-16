@@ -111,7 +111,7 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 	if($isEditor){
 		?>
 		<div style="float:right;cursor:pointer;" onclick="toggle('editobj');" title="Toggle Editing Functions">
-			<?php echo $LANG['EDIT'] ?> <img style="border:0px;" src="../../images/edit.png" alt="pencil icon depicting edit capability" />
+			<?php echo $LANG['EDIT'] ?> <img style="width:1.5em;border:0px;" src="../../images/edit.png" alt="pencil icon depicting edit capability" />
 		</div>
 		<?php
 	}
@@ -126,7 +126,9 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 					<input id="searchtaxon" name="searchtaxon" type="text" value="<?= htmlspecialchars($searchTaxon, HTML_SPECIAL_CHARS_FLAGS) ?>" />
 				</div>
 				<div style="margin:3px">
-					<input name="submitaction" type="submit" value="Search" />
+					<button name="submitaction" type="submit" value="<?php echo $LANG['SEARCH']; ?>" >
+						<?php echo $LANG['SEARCH']; ?>
+					</button>
 				</div>
 			</fieldset>
 		</form>
@@ -152,13 +154,14 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 	<div style="clear:both">
 		<section class="fieldset-like">
 			<h1><span>Global Protections</span></h1>
+			<br/>
 			<?php
 			if($isEditor){
 				?>
-				<div class="editobj" style="display:none;width:400px;">
-					<form name="addspeciesform" action='protectedspecies.php' method='post'>
-						<fieldset style='margin:5px;background-color:#FFFFCC;'>
-							<legend><b>Add Species to List</b></legend>
+				<div class="editobj" style="display:none;width:400px;margin-bottom:20px">
+					<form name="addspeciesform" action='protectedspecies.php' method='post' >
+						<fieldset style='margin:5px'>
+							<legend><b>Add Taxon to List</b></legend>
 							<div style="margin:3px;">
 								Scientific Name:
 								<input type="text" id="speciestoadd" name="speciestoadd" style="width:300px" />
@@ -166,7 +169,7 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 							</div>
 							<div style="margin:3px;">
 								<input type="hidden" name="submitaction" value="addspecies" />
-								<input type="button" value="Add Species" onclick="submitAddSpecies(this.form)" />
+								<button value="Add Species" onclick="submitAddSpecies(this.form)" >Add Species</button>
 							</div>
 						</fieldset>
 					</form>
@@ -176,11 +179,18 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 			if($rsArr){
 				foreach($rsArr as $family => $speciesArr){
 					?>
-					<h3><?php echo $family; ?></h3>
-					<div style='margin-left:20px;'>
+					<h3>
+						<span>
+							<?php echo $family; ?>
+						</span>
+					</h3>
+					<div style='margin-left:20px; margin-bottom:20px;'>
 						<?php
 						foreach($speciesArr as $tid => $nameArr){
-							echo '<div id="tid-'.$tid.'"><a href="../../taxa/index.php?taxon=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><i>' . htmlspecialchars($nameArr['sciname'], HTML_SPECIAL_CHARS_FLAGS) . '</i> ' . htmlspecialchars($nameArr['author'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
+							echo '<div id="tid-'.$tid.'">';
+							echo '<a href="../../taxa/index.php?taxon=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
+							echo '<i>' . htmlspecialchars($nameArr['sciname'], HTML_SPECIAL_CHARS_FLAGS) . '</i> ';
+							echo htmlspecialchars($nameArr['author'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
 							if($isEditor){
 								?>
 								<span class="editobj" style="display:none;">
@@ -217,7 +227,7 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 					echo '<a href="../../checklists/checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '">';
 					echo $stateArr['locality'].': '.$stateArr['name'];
 					echo '</a>';
-					if(strpos($stateArr['access'], 'private') !== false) echo ' (private)';
+					if(strpos($stateArr['access'] ?? '', 'private') !== false) echo ' (private)';
 					echo '</div>';
 					$emptyList = false;
 				}

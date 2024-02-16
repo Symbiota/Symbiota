@@ -320,8 +320,8 @@ $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ??
 									<legend><b>Trait: <?php echo $traitData['name']; ?></b></legend>
 									<div style="float:right">
 										<div class="trianglediv" style="margin:4px 3px;float:right;cursor:pointer" onclick="setAttributeTree(this)" title="Toggle attribute tree open/close">
-											<img class="triangleright" src="../images/triangleright.png" style="display:none" />
-											<img class="triangledown" src="../images/triangledown.png" style="" />
+											<img class="triangleright" src="../images/triangleright.png" style="width:1.3em;display:none" />
+											<img class="triangledown" src="../images/triangledown.png" style="width:1.3em;" />
 										</div>
 									</div>
 									<div class="traitDiv" style="margin-left:5px;float:left">

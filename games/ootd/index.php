@@ -126,7 +126,7 @@ $genusAnswer = strtok($scinameAnswer, " ");
 					<div style="margin-left:auto;margin-right:auto;font-size:18px;text-align:center;margin-top:20px;margin-bottom:20px;" >
 						<b>Name that <?php echo $ootdType; ?>!</b>
 						<a id="gameinfo" href="#" onclick="return false" title="How to Play?">
-							<img src="../../images/games/ootd/qmark.png" style="height:20px;"/>
+							<img src="../../images/qmark.png" style="width:2em;"/>
 						</a>
 						<div id="gameinfodialog" title="How to Play">
 							Look at the picture, and see if you can figure out what the <?php echo $ootdType; ?> is. If you get completely stumped, you can

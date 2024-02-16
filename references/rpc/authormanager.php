@@ -25,7 +25,7 @@ if($action=="addauthor"){
 		foreach($authArr as $k => $v){
 			$listHtml .= '<li>';
 			$listHtml .= '<a href="authoreditor.php?authid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($v, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
-			$listHtml .= ' <input type="image" style="margin-left:5px;" src="../images/del.png" onclick="deleteRefAuthor('.$k.');" title="Delete author">';
+			$listHtml .= ' <input type="image" style="style="width:1.3em;margin-left:5px;" src="../images/del.png" onclick="deleteRefAuthor('.$k.');" title="Delete author">';
 			$listHtml .= '</li>';
 		}
 		$listHtml .= '</ul>';
@@ -46,7 +46,7 @@ if($action=="createauthor"){
 		foreach($authArr as $k => $v){
 			$listHtml .= '<li>';
 			$listHtml .= '<a href="authoreditor.php?authid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) .'" target="_blank">' . htmlspecialchars($v, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
-			$listHtml .= ' <input type="image" style="margin-left:5px;" src="../images/del.png" onclick="deleteRefAuthor('.$k.');" title="Delete author">';
+			$listHtml .= ' <input type="image" style="width:1.3em;margin-left:5px;" src="../images/del.png" onclick="deleteRefAuthor('.$k.');" title="Delete author">';
 			$listHtml .= '</li>';
 		}
 		$listHtml .= '</ul>';
@@ -65,7 +65,7 @@ if($action=="deleterefauthor"){
 		foreach($authArr as $k => $v){
 			$listHtml .= '<li>';
 			$listHtml .= '<a href="authoreditor.php?authid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($v, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
-			$listHtml .= ' <input type="image" style="margin-left:5px;" src="../images/del.png" onclick="deleteRefAuthor('.$k.');" title="Delete author">';
+			$listHtml .= ' <input type="image" style="width:1.3em;margin-left:5px;" src="../images/del.png" onclick="deleteRefAuthor('.$k.');" title="Delete author">';
 			$listHtml .= '</li>';
 		}
 		$listHtml .= '</ul>';

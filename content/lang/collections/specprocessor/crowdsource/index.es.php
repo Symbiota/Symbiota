@@ -13,6 +13,7 @@ $LANG['PENDING_SCORE'] = 'Puntaje Pendiente';
 $LANG['TOP_SCORES_NOT_AVAIL'] = ' Puntaje m&aacute;s alta a&uacute;n no disponible';
 $LANG['YOUR_STANDING'] = 'Posici&oacute;n Actual';
 $LANG['SPEC_PROC_AS_VOL'] = 'Especímenes procesados como voluntario';
+$LANG['ADD_AS_NONVOL'] = 'Adicional como no voluntario';
 $LANG['PEND_POINTS'] = 'Puntaje pendiente';
 $LANG['APP_POINTS'] = 'Puntaje aprobada';
 $LANG['TOT_POSS_SCORE'] = 'Puntuación total posible';

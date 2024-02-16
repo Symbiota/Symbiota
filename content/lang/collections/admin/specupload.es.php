@@ -5,6 +5,8 @@ Language: Español (Spanish)
 ------------------
 */
 
+include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.es.php');
+
 $LANG['SPEC_UPLOAD'] = 'Carga de Especímenes';
 $LANG['PATH_EMPTY'] = 'La dirección al archivo está vacía. Por favor seleccione el archivo que va a ser cargado.';
 $LANG['MUST_CSV'] = 'El archivo debe ser separado por comas (.csv), delimitado por tabulaciones (.txt o .tab), archivo ZIP (.zip), o una URL a un Recurso IPT';
@@ -83,13 +85,6 @@ $LANG['CUSTOM_FILT'] = 'Filtros de Importación de Ocurrencias Personalizados';
 $LANG['FIELD'] = 'Campo';
 $LANG['SEL_FIELD'] = 'Seleccionar Nombre del Campo';
 $LANG['COND'] = 'Condición';
-$LANG['EQUALS'] = 'IGUAL';
-$LANG['STARTS_WITH'] = 'INICIA CON';
-$LANG['CONTAINS'] = 'CONTIENE';
-$LANG['LESS_THAN'] = 'MENOR QUE';
-$LANG['GREATER_THAN'] = 'MAYOR QUE';
-$LANG['IS_NULL'] = 'ES NULO';
-$LANG['NOT_NULL'] = 'NO ES NULO';
 $LANG['VALUE'] = 'Valor';
 $LANG['MULT_TERMS'] = 'Añadir múltiples términos separados por un punto y coma será filtrado como una condición O';
 $LANG['IMPORT_ID'] = 'Importar Historia de Identificación';

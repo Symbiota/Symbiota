@@ -22,7 +22,7 @@ $LANG['SEL_CHECKLIST'] = 'Select a Checklist';
 $LANG['LINK_TO_CHECKLIST_2'] = 'Link to Checklist as Voucher';
 $LANG['DELETE_VOUCHER_LINK'] = 'Delete voucher link';
 $LANG['SURE_REMOVE_VOUCHER'] = 'Are you sure you want to remove this voucher link?';
-$LANG['IF_X'] = 'If a red X is not display to right of checklist name, you do not have editing rights for that checklist and therefore cannot remove the voucher link without contacting checklist owner';
+$LANG['IF_X'] = 'If the delete icon is not displayed to right of checklist name, you do not have editing rights for that checklist and therefore cannot remove the voucher link without contacting checklist owner';
 $LANG['SPEC_DUPES'] = 'Specimen Duplicates';
 $LANG['SEARCH_RECS'] = 'Search for Records to Link';
 $LANG['CLUSTER_TITLE'] = 'Cluster Title';
@@ -46,6 +46,8 @@ $LANG['GEN_RES_EDITOR'] = 'Genetic Resource Editor';
 $LANG['SAVE_EDITS'] = 'Save Edits';
 $LANG['DEL_GEN_RES'] = 'Delete Genetic Resource';
 $LANG['DEL_RES'] = 'Delete Resource';
+$LANG['NO_CHECKLISTS'] = 'No checklist voucher linkages have been established';
+$LANG['NO_GENETIC_RESOURCES'] = 'No genetics linkages have been established';
 
 include_once($SERVER_ROOT.'/content/lang/collections/associations.en.php');
 ?>

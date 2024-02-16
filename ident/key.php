@@ -14,28 +14,22 @@ $attrsValues = Array();
 
 $clValue = array_key_exists('cl',$_REQUEST)?$_REQUEST['cl']:'';
 if(!$clValue && array_key_exists('clid',$_REQUEST)) $clValue = $_REQUEST['clid'];
-$dynClid = array_key_exists('dynclid',$_REQUEST)?$_REQUEST['dynclid']:0;
+$dynClid = array_key_exists('dynclid', $_REQUEST) ? filter_var($_REQUEST['dynclid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $taxonValue = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']:'';
 $rv = array_key_exists('rv',$_REQUEST)?$_REQUEST['rv']:'';
-$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']:'';
+$pid = array_key_exists('pid', $_REQUEST) ? FILTER_VAR($_REQUEST['pid'], FILTER_SANITIZE_NUMBER_INT) : '';
 $langValue = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']:'';
-$sortBy = array_key_exists('sortby',$_REQUEST)?$_REQUEST['sortby']:0;
-$displayCommon = array_key_exists('displaycommon',$_REQUEST)?$_REQUEST['displaycommon']:0;
-$displayImages = array_key_exists('displayimages',$_REQUEST)?$_REQUEST['displayimages']:0;
+$sortBy = array_key_exists('sortby', $_REQUEST) ? FILTER_VAR($_REQUEST['sortby'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$displayCommon = array_key_exists('displaycommon', $_REQUEST) ? FILTER_VAR($_REQUEST['displaycommon'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$displayImages = array_key_exists('displayimages', $_REQUEST) ? FILTER_VAR($_REQUEST['displayimages'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $action = array_key_exists('submitbutton',$_REQUEST)?$_REQUEST['submitbutton']:'';
 if(!$action && array_key_exists('attr',$_REQUEST) && is_array($_REQUEST['attr'])){
 	$attrsValues = $_REQUEST['attr'];	//Array of: cid + '-' + cs (ie: 2-3)
 }
 
-//Sanitation
-if(!is_numeric($dynClid)) $dynClid = 0;
-$taxonValue = filter_var($taxonValue,FILTER_SANITIZE_STRING);
+//Variable check
 if(!is_numeric($rv)) $rv = '';
-if(!is_numeric($pid)) $pid = 0;
 $langValue = 'English';
-if(!is_numeric($sortBy)) $sortBy = 0;
-if(!is_numeric($displayCommon)) $displayCommon = 0;
-if(!is_numeric($displayImages)) $displayImages = 0;
 
 $dataManager = new KeyDataManager();
 
@@ -268,7 +262,7 @@ echo '</div>';
 		if($clid && $isEditor){
 			?>
 			<div style="float:right;margin:15px;" title="<?php echo htmlspecialchars($LANG['EDIT_CHAR_MATRIX'], HTML_SPECIAL_CHARS_FLAGS); ?>">
-				<a href="tools/matrixeditor.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>"><img class="editimg" src="../images/edit.png" /><span style="font-size:70%;">CM</span></a>
+				<a href="tools/matrixeditor.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>"><img class="editimg" src="../images/edit.png" style="width:1.2em" /><span style="font-size:70%;">CM</span></a>
 			</div>
 			<?php
 		}
@@ -306,7 +300,7 @@ echo '</div>';
 					if($displayCommon) echo ($displayImages?'<br/>':(isset($taxonArr['v'])?' - ':'')) . '<span class="vern-span">' . (isset($taxonArr['v'])?$taxonArr['v']:'&nbsp;') . '</span>';
 					if($isEditor && !$displayImages){
 						echo '<a href="#" onclick="openEditorPopup('.$tid.')">';
-						echo '<img class="editimg" src="../images/edit.png" title="' . $LANG['EDITMORP'] . '" />';
+						echo '<img class="editimg" src="../images/edit.png" style="width:1.2em" title="' . $LANG['EDITMORP'] . '" />';
 						echo '</a>';
 					}
 					echo '</div>';

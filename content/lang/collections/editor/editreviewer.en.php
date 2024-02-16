@@ -5,6 +5,7 @@ Language: English
 ------------------
 */
 
+$LANG['HOME'] = 'Home';
 $LANG['EDIT_REVIEWER'] = 'Specimen Edit Reviewer';
 $LANG['PREVIOUS'] = 'Previous';
 $LANG['RECORDS1'] = 'records';

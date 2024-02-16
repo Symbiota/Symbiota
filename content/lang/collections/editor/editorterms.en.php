@@ -11,6 +11,7 @@ $LANG['IDENT_VALUE'] = 'Additional Identifier Value';
 $LANG['RECORDED_BY'] = 'Collector / Observer';
 $LANG['RECORD_NUMBER'] = 'Number';
 $LANG['EVENT_DATE'] = 'Date';
+$LANG['DUPLICATES'] = 'Duplicates';
 $LANG['ASSOCIATED_COLLECTORS'] = 'Associated Collectors';
 $LANG['VERBATIM_EVENT_DATE'] = 'Verbatim Date';
 $LANG['YYYYMMDD'] = 'YYYY-MM-DD';

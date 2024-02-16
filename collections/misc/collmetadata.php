@@ -288,7 +288,7 @@ $collManager->cleanOutArr($collData);
 									</span>
 									<input id="institutionCode" type="text" name="institutionCode" value="<?php echo ($collid ? $collData['institutioncode'] : ''); ?>" required />
 									<a id="instcodeinfo" href="#" onclick="return false" tabindex="0"	>
-										<img src="../../images/info.png" style="width:15px;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_INST_CODE']) ? $LANG['MORE_INST_CODE'] : 'More information about Institution Code'); ?>"/>
+										<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_INST_CODE']) ? $LANG['MORE_INST_CODE'] : 'More information about Institution Code'); ?>"/>
 									</a>
 									<span id="instcodeinfodialog" aria-live="polite">
 										<?php
@@ -308,7 +308,7 @@ $collManager->cleanOutArr($collData);
 									</span>
 									<input id="collectionCode" type="text" name="collectionCode" value="<?php echo ($collid ? $collData['collectioncode'] : ''); ?>" />
 									<a id="collcodeinfo" href="#" onclick="return false" tabindex="0">
-										<img src="../../images/info.png" style="width:15px;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_COLL_CODE']) ? $LANG['MORE_COLL_CODE'] : 'More information about Collection Code'); ?>"/>
+										<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_COLL_CODE']) ? $LANG['MORE_COLL_CODE'] : 'More information about Collection Code'); ?>"/>
 									</a>
 									<span id="collcodeinfodialog" aria-live="polite">
 										<?php
@@ -375,7 +375,7 @@ $collManager->cleanOutArr($collData);
 									<input id="publicEdits" type="checkbox" name="publicEdits" value="1" <?php echo ($collData && $collData['publicedits'] ? 'CHECKED' : ''); ?> />
 									<label for="publicEdits"> <?php echo (isset($LANG['ALLOW_PUBLIC_EDITS']) ? htmlspecialchars($LANG['ALLOW_PUBLIC_EDITS'], HTML_SPECIAL_CHARS_FLAGS) : 'Allow Public Edits'); ?> </label>
 									<a id="peditsinfo" href="#" onclick="return false" tabindex="0">
-										<img src="../../images/info.png" style="width:15px;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_PUB_EDITS']) ? $LANG['MORE_PUB_EDITS'] : 'More information about Public Edits'); ?>"/>
+										<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_PUB_EDITS']) ? $LANG['MORE_PUB_EDITS'] : 'More information about Public Edits'); ?>"/>
 									</a>
 									<span id="peditsinfodialog" aria-live="polite">
 										<?php  echo (isset($LANG['EXPLAIN_PUBLIC']) ? $LANG['EXPLAIN_PUBLIC'] : ''); ?>
@@ -421,7 +421,7 @@ $collManager->cleanOutArr($collData);
 									}
 									?>
 									<a id="rightsinfo" href="#" onclick="return false" tabindex="0">
-										<img src="../../images/info.png" style="width:15px;" alt="Show more information button" title="<?php echo (isset($LANG['MORE_INFO_RIGHTS']) ? $LANG['MORE_INFO_RIGHTS'] : 'More information about Rights'); ?>"/>
+										<img src="../../images/info.png" style="width:1.3em;" alt="Show more information button" title="<?php echo (isset($LANG['MORE_INFO_RIGHTS']) ? $LANG['MORE_INFO_RIGHTS'] : 'More information about Rights'); ?>"/>
 									</a>
 									<span id="rightsinfodialog" aria-live="polite">
 										<?php
@@ -442,7 +442,7 @@ $collManager->cleanOutArr($collData);
 									</span>
 									<input type="text" id="rightsHolder" name="rightsHolder" value="<?php echo ($collid ? $collData["rightsholder"] : ''); ?>" style="max-width: 100%; width:600px" />
 									<a id="rightsholderinfo" href="#" onclick="return false" tabindex="0">
-										<img src="../../images/info.png" style="width:15px;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_INFO_RIGHTS_H']) ? $LANG['MORE_INFO_RIGHTS_H'] : 'More information about Rights Holder'); ?>"/>
+										<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_INFO_RIGHTS_H']) ? $LANG['MORE_INFO_RIGHTS_H'] : 'More information about Rights Holder'); ?>"/>
 									</a>
 									<span id="rightsholderinfodialog" aria-live="polite">
 										<?php
@@ -462,7 +462,7 @@ $collManager->cleanOutArr($collData);
 									</span>
 									<input type="text" id="accessRights" name="accessRights" value="<?php echo ($collid ? $collData["accessrights"] : ''); ?>" style="max-width: 100%; width:600px" />
 									<a id="accessrightsinfo" href="#" onclick="return false" tabindex="0">
-										<img src="../../images/info.png" style="width:15px;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo htmlspecialchars((isset($LANG['MORE_INFO_ACCESS_RIGHTS']) ? $LANG['MORE_INFO_ACCESS_RIGHTS'] : 'More information about Access Rights'), HTML_SPECIAL_CHARS_FLAGS); ?>"/>
+										<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo htmlspecialchars((isset($LANG['MORE_INFO_ACCESS_RIGHTS']) ? $LANG['MORE_INFO_ACCESS_RIGHTS'] : 'More information about Access Rights'), HTML_SPECIAL_CHARS_FLAGS); ?>"/>
 									</a>
 									<span id="accessrightsinfodialog" aria-live="polite">
 										<?php
@@ -485,7 +485,7 @@ $collManager->cleanOutArr($collData);
 										</select>
 										
 										<a id="colltypeinfo" href="#" onclick="return false" tabindex="0">
-											<img src="../../images/info.png" style="width:15px;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_COL_TYPE']) ? $LANG['MORE_COL_TYPE'] : 'More information about Collection Type'); ?>"/>
+											<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_COL_TYPE']) ? $LANG['MORE_COL_TYPE'] : 'More information about Collection Type'); ?>"/>
 										</a>
 										<span id="colltypeinfodialog" aria-live="polite">
 											<?php echo (isset($LANG['COL_TYPE_DEF']) ? $LANG['COL_TYPE_DEF'] : ''); ?>
@@ -501,7 +501,7 @@ $collManager->cleanOutArr($collData);
 										<input id="aggregate" type="radio" name="managementType" value="Aggregate" > <label for="aggregate">  <?php echo ($collid && $collData['managementtype'] == 'Aggregate' ? 'SELECTED' : ''); ?> <?php echo $LANG['AGGREGATE']; ?> </label>
 										
 										<a id="managementinfo" href="#" onclick="return false" tabindex="0">
-											<img src="../../images/info.png" style="width:15px;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_INFO_TYPE']) ? $LANG['MORE_INFO_TYPE'] : 'More information about Management Type'); ?>"/>
+											<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_INFO_TYPE']) ? $LANG['MORE_INFO_TYPE'] : 'More information about Management Type'); ?>"/>
 										</a>
 
 										<script src="../../js/symb/collections.misc.collmetadata.js"></script>
@@ -522,7 +522,7 @@ $collManager->cleanOutArr($collData);
 										<input id="symbiotaUUID" type="radio" name="guidTarget" value="symbiotaUUID" > <label for="symbiotaUUID">  <?php echo (isset($LANG['SYMB_GUID']) ? $LANG['SYMB_GUID'] : 'Symbiota Generated GUID (UUID)'); ?> </label>
 										
 										<a id="guidinfo" href="#" onclick="return false" tabindex="0">
-											<img src="../../images/info.png" style="width:15px;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_INFO_GUID']) ? $LANG['MORE_INFO_GUID'] : 'More information about Global Unique Identifier'); ?>"/>
+											<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_INFO_GUID']) ? $LANG['MORE_INFO_GUID'] : 'More information about Global Unique Identifier'); ?>"/>
 										</a>
 
 										<script src="../../js/symb/collections.misc.collmetadata.js"></script>
@@ -544,7 +544,7 @@ $collManager->cleanOutArr($collData);
 									<span class="field-elem">
 										GBIF <input type="checkbox" name="publishToGbif" value="1" onchange="checkGUIDSource(this.form);" <?php echo ($collData['publishtogbif'] ? 'CHECKED' : ''); ?> />
 										<a id="pubagginfo" href="#" onclick="return false" tabindex="0">
-											<img src="../../images/info.png" style="width:15px;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="More information about Publishing to Aggregators"/>
+											<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="More information about Publishing to Aggregators"/>
 										</a>
 										<!--
 										<span>
@@ -566,7 +566,7 @@ $collManager->cleanOutArr($collData);
 									<span class="field-elem">
 										<input type="text" name="individualUrl" class="max-width-fit-75" value="<?php echo ($collid ? $collData["individualurl"] : ''); ?>" title="<?php echo (isset($LANG['DYNAMIC_LINK_REC']) ? $LANG['DYNAMIC_LINK_REC'] : 'Dynamic link to source database individual record page'); ?>" />
 										<a id="sourceurlinfo" href="#" onclick="return false" tabindex="0">
-											<img src="../../images/info.png" style="width:15px;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_INFO_SOURCE']) ? $LANG['MORE_INFO_SOURCE'] : 'More information about Source Records URL'); ?>"/>
+											<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_INFO_SOURCE']) ? $LANG['MORE_INFO_SOURCE'] : 'More information about Source Records URL'); ?>"/>
 										</a>
 										<span id="sourceurlinfodialog" aria-live="polite">
 											<?php
@@ -590,7 +590,7 @@ $collManager->cleanOutArr($collData);
 									<span class="icon-elem" style="display:<?php echo (($collid && $collData["icon"]) ? 'inline' : 'none'); ?>">
 										<input style="max-width: 100%; width:600px;" type='text' name='iconUrl' id='iconurl' value="<?php echo ($collid ? $collData["icon"] : ''); ?>" onchange="verifyIconURL(this.form);" />
 									</span>
-									<a id="iconinfo" href="#" onclick="return false" title="<?php echo (isset($LANG['WHAT_ICON']) ? $LANG['WHAT_ICON'] : 'What is an Icon?'); ?>" tabindex="0"><img src="../../images/info.png" style="width:15px;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>"/></a>
+									<a id="iconinfo" href="#" onclick="return false" title="<?php echo (isset($LANG['WHAT_ICON']) ? $LANG['WHAT_ICON'] : 'What is an Icon?'); ?>" tabindex="0"><img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>"/></a>
 									<span id="iconinfodialog" aria-live="polite">
 										<?php echo (isset($LANG['UPLOAD_ICON']) ? $LANG['UPLOAD_ICON'] : ''); ?>
 									</span>
@@ -617,7 +617,7 @@ $collManager->cleanOutArr($collData);
 										</span>
 										<input id="sortSeq" type="text" name="sortSeq" value="<?php echo ($collid ? $collData["sortseq"] : ''); ?>" />
 										<a id="sortinfo" href="#" onclick="return false" tabindex="0">
-											<img src="../../images/info.png" style="width:15px;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_SORTING']) ? $LANG['MORE_SORTING'] : 'More information about Sorting'); ?>"/>
+											<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_SORTING']) ? $LANG['MORE_SORTING'] : 'More information about Sorting'); ?>"/>
 										</a>
 										<span id="sortinfodialog" aria-live="polite">
 											<?php echo (isset($LANG['LEAVE_IF_ALPHABET']) ? $LANG['LEAVE_IF_ALPHABET'] : 'Leave this field empty if you want the collections to sort alphabetically (default)'); ?>
@@ -637,7 +637,7 @@ $collManager->cleanOutArr($collData);
 									</span>
 									<input id="collectionID" type="text" name="collectionID" value="<?php echo ($collid ? $collData["collectionid"] : ''); ?>" style="max-width: 100%; width:400px" />
 									<a id="collectionidinfo" href="#" onclick="return false" tabindex="0">
-										<img src="../../images/info.png" style="width:15px;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'More information'); ?>"/>
+										<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'More information'); ?>"/>
 									</a>
 									<span id="collectionidinfodialog" aria-live="polite">
 										<?php echo (isset($LANG['EXPLAIN_COLLID']) ? $LANG['EXPLAIN_COLLID'] : 'Global Unique Identifier for this collection (see') .

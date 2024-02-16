@@ -58,7 +58,7 @@ else{
 	   include_once($SERVER_ROOT.'/includes/googleMap.php');
       ?>
 
-		<title><?php echo $DEFAULT_TITLE; ?> - Coordinate Aid</title>
+		<title><?php echo $DEFAULT_TITLE . ' - ' . $LANG['COORDINATE'] ?></title>
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/wktpolygontools.js?ver=5" type="text/javascript"></script>
 <script src="https://unpkg.com/terraformer@1.0.8"></script>
@@ -271,11 +271,7 @@ else{
 		<div id="map_canvas" style="width:100%;height:600px;"></div>
 		<div style="width:100%;">
 			<div id="helptext" style="display:none;margin:5px 0px">
-				Click on polygon symbol to activate polygon tool and create a shape representing research area.
-				Click save button to link polygon to checklist.
-				The WKT polygon footprint within the text box can be modifed by hand and rebuilt on map using the Redraw Polygon button.
-				A WKT polygon definition can be copied into text area from another application.
-				Use Switch Coordinate Order button to convert Long-Lat coordinate pairs to Lat-Long format.
+            <?php echo $LANG['INSTRUCTION'] ?>
 			</div>
 			<form name="polygonSubmitForm" method="post" action="mappolyaid.php" onsubmit="return submitPolygonForm(this)">
 				<div style="">
@@ -293,7 +289,7 @@ else{
                <button name="deleteButton" type="button" onclick="deleteSelectedPolygon()">
                   <?php echo isset($LANG['DELETE_SELECTED'])? $LANG['DELETE_SELECTED'] :'Delete Selected Polygon'?>
                </button>
-					<a href="#" onclick="toggle('helptext')"><img alt="Display Help Text" src="../../images/qmark_big.png" style="width:15px;" /></a>
+					<a href="#" onclick="toggle('helptext')"><img alt="Display Help Text" src="../../images/qmark.png" style="width:1.3em;" /></a>
                <?php endif?>
 					<fieldset id="reformatFieldset" style="width:300px;">
                   <legend>

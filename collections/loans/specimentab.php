@@ -432,8 +432,10 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 						</td>
 						<td>
 							<div>
-								<a href="#" onclick="openIndPopup(<?php echo $occid; ?>); return false;"><img src="../../images/list.png" style="width:13px" title="<?php echo $LANG['OPEN_SPECIMEN_DETAILS']; ?>" /></a><br/>
-								<a href="#" onclick="openEditorPopup(<?php echo $occid; ?>); return false;"><img src="../../images/edit.png" style="width:13px" title="<?php echo $LANG['OPEN_OCC_EDITOR']; ?>" /></a>
+								<a href="#" onclick="openIndPopup(<?php echo $occid; ?>); return false;"><img src="../../images/list.png" style="width:1.3em" title="<?php echo $LANG['OPEN_SPECIMEN_DETAILS']; ?>" /></a><br/>
+							</div>
+							<div>
+								<a href="#" onclick="openEditorPopup(<?php echo $occid; ?>); return false;"><img src="../../images/edit.png" style="width:1.3em" title="<?php echo $LANG['OPEN_OCC_EDITOR']; ?>" /></a>
 							</div>
 						</td>
 						<td>

@@ -84,9 +84,8 @@ $statusStr = '';
 				<legend><b><?php echo $LANG['YOUR_STANDING']; ?></b></legend>
 				<?php
 				if($SYMB_UID){
-					echo '<div style="margin-top:5px">' . $LANG['SPEC_PROC_AS_VOL'] . ': ' . number_format($userStats['totalcnt']);
-					if($userStats['nonvolcnt']) echo '<span style="margin-left:25px">(Additional as non-volunteer: '.number_format($userStats['nonvolcnt']) . '*)</span>';
-					echo '</div>';
+					echo '<div style="margin-top:5px">' . $LANG['SPEC_PROC_AS_VOL'] . ': ' . number_format($userStats['totalcnt']) . '</div>';
+					if($userStats['nonvolcnt']) echo '<div style="margin-left:25px">(' . $LANG['ADD_AS_NONVOL'] . ': '.number_format($userStats['nonvolcnt']) . '*)</div>';
 					echo '<div style="margin-top:5px">' . $LANG['PEND_POINTS'] . ': '. number_format($userStats['ppoints']);
 					if($userStats['ppoints']) echo ' (<a href="review.php?rstatus=5&uid=' . htmlspecialchars($SYMB_UID, HTML_SPECIAL_CHARS_FLAGS) .  '">' . htmlspecialchars($LANG['VIEW_RECORDS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>)';
 					echo '</div>';
@@ -127,7 +126,7 @@ $statusStr = '';
 					echo '<tr>';
 					echo '<td>';
 					echo '<b>'.$sArr['name'].'</b>';
-					if($IS_ADMIN || in_array($collId, $pArr)) echo ' <a href="../index.php?tabindex=1&collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../../images/edit.png" style="width:14px;" /></a>';
+					if($IS_ADMIN || in_array($collId, $pArr)) echo ' <a href="../index.php?tabindex=1&collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../../images/edit.png" style="width:1.3em;" /></a>';
 					echo '</td>';
 					echo '<td>'.number_format((array_key_exists(5,$cntArr)?$cntArr[5]:0)+(array_key_exists(10,$cntArr)?$cntArr[10]:0)).'</td>';
 					echo '<td>'.number_format(array_key_exists(5,$pointArr)?$pointArr[5]:0).'</td>';
