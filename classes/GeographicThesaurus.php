@@ -573,37 +573,105 @@ class GeographicThesaurus extends Manager{
       }
    }
 
-   // TODO (Logan) this current is failing on some concave polygons like
-   // florida due to some algo mishaps
+   private function normalize($v) {
+      $mag = sqrt(pow($v[0], 2) + pow($v[1], 2));
+      if($mag === 0) return;
+
+      $v[0] = $v[0] / $mag;
+      $v[1] = $v[1] / $mag;
+
+      return $v;
+   }
+
+   private function getIntersection($v1,$o1, $v2, $o2) {
+      $m1 = $v1[0] != 0? $v1[1] / $v1[0]: 0;
+      $m2 = $v2[0] != 0? $v2[1] / $v2[0]: 0;
+
+      //If slopes are paralell then no intersection
+      if($m1 === $m2) return false;
+
+      $x = ($o2 - $o1) / ($m1 - $m2);
+      return [
+         $x,
+         ($m2 * $x) + $o2
+      ];
+   }
+
    private function getPointWithinPoly($coordinates) {
       $polygon = $this->getBiggestPolygon($coordinates);
 
       if(!is_array($polygon) || count($polygon) < 2) return false;
-
-      $minDistance = null;
-      $minPt = null;
-      $start = [($polygon[0][0] + $polygon[1][0]) / 2, ($polygon[0][1] + $polygon[1][1]) / 2];
+ 
+      $maxDistance = 0;
+      $maxIndex = 1;
 
       for ($i=1; $i < count($polygon); $i++) { 
-         $edge1 =$polygon[$i - 1];
+         $v1 = $polygon[$i];
+         $v2 = $polygon[$i - 1];
+
+         $distance = sqrt(pow($v1[0] - $v2[0], 2) + pow($v1[1] - $v2[1], 2));
+         if ($maxDistance < $distance) {
+            $maxIndex = $i;
+            $maxDistance = $distance;
+         }
+      }
+      
+      $start = [
+         ($polygon[$maxIndex - 1][0] + $polygon[$maxIndex][0]) / 2,
+         ($polygon[$maxIndex - 1][1] + $polygon[$maxIndex][1]) / 2
+      ];
+      $ray = $this->normalize([
+         -($polygon[$maxIndex - 1][1] - $polygon[$maxIndex][1]),
+         $polygon[$maxIndex - 1][0] - $polygon[$maxIndex][0]
+      ]);
+      $crosses = [];
+
+      for ($i=1; $i < count($polygon); $i++) {
+         $edge1 = $polygon[$i - 1];
          $edge2 = $polygon[$i];
 
          $pt = [($edge1[0] + $edge2[0]) / 2, ($edge1[1] + $edge2[1]) / 2];
-         if($i === 1) {
-            $start = $pt;
-            continue;
+
+         if ($i === $maxIndex) {
+           continue;
          }
 
-         $distance = sqrt(pow($pt[0] - $start[0], 2) + pow($pt[1] - $start[1], 2));
+         $edgeVector = $this->normalize([$edge1[0] - $edge2[0], $edge1[1] - $edge2[1]]);
 
-         if($minDistance === null || $distance < $minDistance) {
-            $minDistance = $distance;
-            $minPt = $pt;
+         $ray_offest = $start[1] - (($ray[0] != 0? $ray[1] / $ray[0]: 0) * $start[0]);
+         $edge_offset = $edge1[1] - (($edgeVector[0] != 0? $edgeVector[1] / $edgeVector[0]: 0) * $edge1[0]);
+
+         $intersection = $this->getIntersection($ray, $ray_offest, $edgeVector, $edge_offset);
+
+         if(!$intersection) continue;
+
+         $longBounds = ($edge1[0] <= $intersection[0] && $edge2[0] >= $intersection[0]) || 
+            ($edge1[0] >= $intersection[0] && $edge2[0] <= $intersection[0]);
+
+         $latBounds = ($edge1[1] <= $intersection[1] && $edge2[1] >= $intersection[1]) || 
+            ($edge1[1] >= $intersection[1] && $edge2[1] <= $intersection[1]);
+
+         if($latBounds && $longBounds) {
+            array_push($crosses, $intersection);
          }
       }
 
-      return ["long" => ($start[0] + $minPt[0]) / 2, "lat" => ($start[1] + $minPt[1]) / 2];
-      
+      array_push($crosses, $start);
+
+      usort($crosses, function ($a, $b) {
+         if ($a[0] === $b[0]) {
+            return $a[1] === $b[1]? 0: ($a[1] > $b[1]? 1: -1);
+         } else {
+            return $a[1] > $b[1]? 1: -1;
+         }
+      });
+
+      if (count($crosses) === 0) {
+         return false;
+      } else {
+         $pt = ["long" => ($crosses[0][0] + $crosses[1][0]) / 2, "lat" => ($crosses[0][1] + $crosses[1][1]) / 2];
+         return $pt;
+      }
    }
 
 	public function addGeoBoundary($url, $addMissing = false){
