@@ -5,7 +5,7 @@ Language: English
 ------------------
 */
 
-include_once($SERVER_ROOT.'/content/lang/collections/editor/editorterms.en.php');
+include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/occurrenceterms.en.php');
 
 $LANG['HOME'] = 'Home';
 $LANG['CLONES_CREATED'] = 'Success! The following new clone record(s) have been created';
@@ -50,6 +50,7 @@ $LANG['ADMIN'] = 'Admin';
 $LANG['COLLECTOR_INFO'] = 'Collector Info';
 $LANG['LONG_FORM'] = 'Long Form';
 $LANG['SHORT_FORM'] = 'Short Form';
+$LANG['DUPLICATES'] = 'Duplicates';
 $LANG['AUTO_SEARCH'] = 'Auto search';
 $LANG['OUT_ON_LOAN'] = 'Out On Loan';
 $LANG['TO'] = 'To';
@@ -63,6 +64,7 @@ $LANG['NUMBER'] = 'Number';
 $LANG['LATEST_ID'] = 'Latest Identification';
 $LANG['LIMITED_EDITING'] = 'Limited editing rights: use determination tab to edit identification';
 $LANG['NEED_FULL'] = 'Note: Full editing permissions are needed to edit an identification';
+$LANG['IDENTIFICATION_CONFIDENCE'] = 'ID Confidence';
 $LANG['UNDEFINED'] = 'Undefined';
 ///$LANG['ABSOLUTE'] = 'Absolute';
 ///$LANG['V_HIGH'] = 'Very High';
@@ -81,7 +83,8 @@ $LANG['TAXONOMIC_SECURITY'] = 'Taxonomic Security';
 $LANG['LOC_AND_TAX_SECURITY'] = 'Locality &amp; Taxonomic Security';
 $LANG['FULL_SECURITY'] = 'Full Security';
 $LANG['SECURITY_SETTINGS'] = 'Security Settings';
-$LANG['SEC_NOT_APPLIED'] = 'Security not applied';
+$LANG['SECURITY_NOT_APPLIED'] = 'Security not applied';
+$LANG['SECURITY_APPLIED'] = 'Security applied';
 $LANG['LOCK_SEC_SETTING'] = 'Lock Security Setting';
 $LANG['EXPLAIN_SEC_STATUS'] = 'Entering any text will lock security status on or off; leave blank to accept default security status';
 $LANG['UNCERTAINTY_METERS'] = 'Uncertainty in Meters';

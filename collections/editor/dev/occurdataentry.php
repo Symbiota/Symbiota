@@ -199,7 +199,7 @@ if($SYMB_UID){
 									<input type="button" value="Tools" onclick="toggleCoordDiv();" />
 								</div>
 								<div id="geodeticDatumDiv">
-									<?php echo (defined('GEODETICDATIMLABEL')?GEODETICDATIMLABEL:'Datum'); ?>
+									<?php echo (defined('GEODETICDATUMLABEL') ? GEODETICDATUMLABEL : 'Datum'); ?>
 									<a href="#" onclick="return dwcDoc('geodeticDatum')"><img class="docimg" src="../../images/qmark.png" /></a>
 									<br/>
 									<input type="text" id="geodeticdatum" name="geodeticdatum" tabindex="56" maxlength="255" value="<?php echo array_key_exists('geodeticdatum',$occArr)?$occArr['geodeticdatum']:''; ?>" />
