@@ -5,7 +5,6 @@ Language: English
 ------------------
 */
 
-$LANG['VALUE_HERE'] = 'PUT VALUE HERE!!!';
 $LANG['IGSN_GUID_MANAGE'] = 'IGSN GUID Management';
 $LANG['IGSN_ADDED'] = 'SUCCESS: IGSN added!';
 $LANG['OCCID_EXISTS'] = 'FAILED: occurrenceID GUID already exists: ';

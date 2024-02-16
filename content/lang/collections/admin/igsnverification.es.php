@@ -7,7 +7,6 @@ Date Translated: 2024-02-16
 ------------------
 */
 
-$LANG['VALUE_HERE'] = '¡¡¡PONGA VALOR AQUÍ!!!';
 $LANG['IGSN_GUID_MANAGE'] = 'Gestión de GUID IGSN';
 $LANG['IGSN_ADDED'] = 'ÉXITO: ¡IGSN añadido!';
 $LANG['OCCID_EXISTS'] = 'FALLADO: el GUID de ID de ocurrencia ya existe: ';
