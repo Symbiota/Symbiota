@@ -523,37 +523,6 @@ class GeographicThesaurus extends Manager{
 		}
    }
 
-   private function getPolygonMeanCenter($coordinates) {
-      $mean = $this->getPolygonMeanParts($coordinates);
-
-      $mean["long"] = $mean["long"] / $mean["count"];
-      $mean["lat"] = $mean["lat"] / $mean["count"];
-
-      return $mean;
-   }
-
-   //Only use this function from getPolygonMeanCenter
-   private function getPolygonMeanParts($coordinates) {
-      if(!is_array($coordinates) || count($coordinates) === 0) { 
-         return ["count" => 0, "long" => 0, "lat" => 0];
-
-      } else if(count($coordinates) === 2 && !is_array($coordinates[0]) && !is_array($coordinates[1])) {
-         return ["count" => 1, "long" => $coordinates[0], "lat" => $coordinates[1]];
-      }
-
-      $mean = ["count"=> 0, "lat" => 0, "long" => 0];
-
-      foreach($coordinates as $nestedArr) {
-         $subMean = $this->getPolygonMeanParts($nestedArr);
-
-         $mean["count"] += $subMean["count"];
-         $mean["long"] += $subMean["long"];
-         $mean["lat"] += $subMean["lat"];
-      }
-
-      return $mean;
-   }
-
    //Assumes Most Points probably the biggest or main polygon which is fine for
    //this function
    private function getBiggestPolygon($arr) {
@@ -656,6 +625,10 @@ class GeographicThesaurus extends Manager{
          }
       }
 
+      if (count($crosses) === 0) {
+         return false;
+      }
+
       array_push($crosses, $start);
 
       usort($crosses, function ($a, $b) {
@@ -666,12 +639,8 @@ class GeographicThesaurus extends Manager{
          }
       });
 
-      if (count($crosses) === 0) {
-         return false;
-      } else {
-         $pt = ["long" => ($crosses[0][0] + $crosses[1][0]) / 2, "lat" => ($crosses[0][1] + $crosses[1][1]) / 2];
-         return $pt;
-      }
+      $pt = ["long" => ($crosses[0][0] + $crosses[1][0]) / 2, "lat" => ($crosses[0][1] + $crosses[1][1]) / 2];
+      return $pt;
    }
 
 	public function addGeoBoundary($url, $addMissing = false){
@@ -688,15 +657,7 @@ class GeographicThesaurus extends Manager{
          $parentID = null;
 
          if(is_array($geoThesIDs) && count($geoThesIDs) != 1) {
-            //$meanCenter = $this->getPolygonMeanCenter($feature->geometry->coordinates);
             $testPoint = $this->getPointWithinPoly($feature->geometry->coordinates);
-            /*
-            $parentID = $this->findParentGeometry(
-               $meanCenter["lat"], 
-               $meanCenter["long"], 
-               $geoLevel - 10, 
-               array_map( fn($val) => $val[1], $geoThesIDs)
-            );*/
             if($testPoint) {
                $parentID = $this->findParentGeometry(
                   $testPoint["lat"], 
@@ -705,14 +666,13 @@ class GeographicThesaurus extends Manager{
                   array_map( fn($val) => $val[1], $geoThesIDs)
                );
 
-               var_dump(["pID" => $parentID, "test_point"=> $testPoint, "name" => $properties->shapeName]);
                $geoThesIDs = $this->getGeoThesIDV2($properties->shapeName, $geoLevel, $parentID);
             }
          } 
 
          if(is_array($geoThesIDs) && count($geoThesIDs) === 1) {
             $this->addPolygon($geoThesIDs[0][0], json_encode($feature));
-         } else if (true) {
+         } else if ($addMissing) {
             $this->addGeoUnit([
                "geoTerm" => $properties->shapeName, 
                "iso2" =>"",

@@ -6,6 +6,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 $geoThesID = array_key_exists('geoThesID', $_REQUEST) ? filter_var($_REQUEST['geoThesID'], FILTER_SANITIZE_NUMBER_INT) : '';
 $gbAction = array_key_exists('gbAction', $_REQUEST) ? htmlspecialchars($_REQUEST['gbAction'], HTML_SPECIAL_CHARS_FLAGS) : '';
 $submitAction = array_key_exists('submitaction', $_POST) ? htmlspecialchars($_POST['submitaction'], HTML_SPECIAL_CHARS_FLAGS) : '';
+$addIfMissing = array_key_exists('addgeounit', $_POST)? filter_var($_POST['addgeounit'], FILTER_VALIDATE_BOOLEAN) : false;
 
 $geoManager = new GeographicThesaurus();
 
@@ -24,7 +25,7 @@ if($isEditor && $submitAction) {
       set_time_limit(300);
       foreach($_POST['geoJson'] as $geojson) {
          try {
-            $result = $geoManager->addGeoBoundary($geojson);
+            $result = $geoManager->addGeoBoundary($geojson, $addIfMissing);
             if(!$result) {
                break;
             }
@@ -198,8 +199,12 @@ if($isEditor && $submitAction) {
 							}
 							?>
 						</table>
+                  <div style="margin-top:1rem">
+                     <input type="checkbox" id="addgeounit" name="addgeounit" value="true" checked >
+                     <label style="text-decoration: none" for="addgeounit">Add geographical units if missing</label>
+                  </div>
 						<input name="gbAction" type="hidden" value="<?php echo $gbAction; ?>" />
-						<button name="submitaction" type="submit" value="submitCountryForm">Add Boundaries</button>
+						<button name="submitaction" style="margin-top:1rem" type="submit" value="submitCountryForm">Add Boundaries</button>
 					</form>
 					<?php
 				}
