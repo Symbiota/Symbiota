@@ -125,6 +125,8 @@ ALTER TABLE `omoccurrences`
 ALTER TABLE `omoccurresource` 
   RENAME TO  `deprecated_omoccurresource` ;
 
+ALTER TABLE `uploadspectemp` 
+  ADD COLUMN `vitality` VARCHAR(150) NULL DEFAULT NULL AFTER `behavior`;
 
 ALTER TABLE `uploadspectemp` 
   DROP INDEX `Index_uploadspectemp_occid`,
