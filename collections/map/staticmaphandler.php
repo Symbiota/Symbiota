@@ -67,8 +67,6 @@ if(!isset($IS_ADMIN) || !$IS_ADMIN || !isset($SYMB_UID) || !$SYMB_UID) {
                headers: {"Content-Type": "application/json"},
             });
             return await response.json();
-
-            //return Object.entries(res).map( ([k, v]) => ({tid: k, sciname: v.sciname}));
          }
 
          async function buildMaps(preview = true) {
@@ -84,7 +82,7 @@ if(!isset($IS_ADMIN) || !$IS_ADMIN || !isset($SYMB_UID) || !$SYMB_UID) {
             if(resultsTBody) resultsTBody.innerHTML = "";
 
             const data = document.getElementById('service-container');
-            //let taxaList = JSON.parse(data.getAttribute('data-taxa-list'))
+
             let taxon_groups = []; 
 
             const leafletControls = document.querySelector('.leaflet-control-container')
@@ -107,6 +105,7 @@ if(!isset($IS_ADMIN) || !$IS_ADMIN || !isset($SYMB_UID) || !$SYMB_UID) {
             let maxCount = taxon_groups.reduce((max, tg) => max + tg.taxa_list.length, 0);
 
             document.getElementById('loading-bar-max').innerHTML = `/ ${maxCount}`; 
+            let autoSnap = document.getElementById('auto-snap-coords').checked;
 
             let basebounds = getMapBounds()
             let userZoom = map.mapLayer.getZoom();
@@ -119,12 +118,14 @@ if(!isset($IS_ADMIN) || !$IS_ADMIN || !isset($SYMB_UID) || !$SYMB_UID) {
                   count++;
 
                   if(coords && coords.length > 0) { 
-                     //Fits bounds within our search bounds for a better image
-                     map.mapLayer.fitBounds(coords.map(c => [c.lat, c.lng]));
+                     if(autoSnap) {
+                        //Fits bounds within our search bounds for a better image
+                        map.mapLayer.fitBounds(coords.map(c => [c.lat, c.lng]));
 
-                     //Scale Back the zoom value if zoomed in too much
-                     let newZoom = map.mapLayer.getZoom()
-                     map.mapLayer.setZoom(newZoom <= baseZoom? newZoom: baseZoom);
+                        //Scale Back the zoom value if zoomed in too much
+                        let newZoom = map.mapLayer.getZoom()
+                        map.mapLayer.setZoom(newZoom <= baseZoom? newZoom: baseZoom);
+                     }
 
                      coordLayer = generateMap({maptype, coordinates: coords});
 
@@ -465,6 +466,11 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
                <input id="lower_lat" name="lower_lat"onkeydown="return event.key != 'Enter';" value="<?php echo $boundLatMin?>" placeholder="<?php echo $boundLatMin?>"/>
                <label for="lower_lng"><?php echo $LANG['LONGITUDE'] ?></label>
                <input id="lower_lng" name="lower_lat" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLngMin?>" placeholder="<?php echo $boundLngMin?>"/><br>
+
+               <div style="margin-bottom:1rem">
+                  <input type="checkbox" name="auto-snap-coords" id="auto-snap-coords" value="true" >
+                  <label for="auto-snap-coords"><?php echo $LANG['AUTOMATIC_BOUNDS_DESC'] ?></label>
+               </div>
 
                <button type="button" onclick="resetBounds(getState().bounds)"><?php echo $LANG['RESET_BOUNDS'] ?></button>
                <button type="button" onclick="resetBounds([ [90, 180], [-90, -180]])"><?php echo $LANG['GLOBAL_BOUNDS'] ?></button><br/>
