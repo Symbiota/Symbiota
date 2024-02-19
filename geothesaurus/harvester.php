@@ -25,17 +25,15 @@ if($isEditor && $submitAction) {
       set_time_limit(300);
       foreach($_POST['geoJson'] as $geojson) {
          try {
-            $result = $geoManager->addGeoBoundary($geojson, $addIfMissing);
-            if(!$result) {
-               break;
-            }
+            $geoManager->addGeoBoundary($geojson, $addIfMissing);
          } catch(Execption $e) {
+            $statusStr = 'The harvester encountered an issue';
             break;
          }
       }
 	}
 }
-//https://gadm.org/download_country.html
+
 ?>
 <html>
 <head>

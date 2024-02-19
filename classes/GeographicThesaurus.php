@@ -644,7 +644,6 @@ class GeographicThesaurus extends Manager{
    }
 
 	public function addGeoBoundary($url, $addMissing = false){
-		$status = false;
       $json = $this->getGeoboundariesJSON($url);
 		$obj = json_decode($json);
       unset($json);
@@ -692,8 +691,6 @@ class GeographicThesaurus extends Manager{
             ]);
          }
       }
-
-		return $status;
    }
 
    public function getGeoLevelString(int $geolevel) {
