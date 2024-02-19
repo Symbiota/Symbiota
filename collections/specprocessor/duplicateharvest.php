@@ -91,31 +91,31 @@ $collMetaArr = $dupeManager->getCollMetaArr();
 						</div>
 					</div>
 					<div class="fieldGroup">
-						<div class="fieldLabel" style="float:left"><?php $LANG['REC_NOT_EVAL_SINCE']; ?>: </div>
+						<div class="fieldLabel" style="float:left"><?= $LANG['REC_NOT_EVAL_SINCE']; ?>: </div>
 						<div style="margin-left: 5px">
 							<input name="evaldate" type="date" value="" />
 						</div>
 					</div>
 					<div class="fieldGroup">
-						<span class="fieldLabel" style="float:left"><?php $LANG['PROC_STATUS']; ?>: </span>
+						<span class="fieldLabel" style="float:left"><?= $LANG['PROC_STATUS']; ?>: </span>
 						<span style="margin-left: 5px">
 							<select name="processingstatus">
-								<option value=""><?php $LANG['ALL_RECS']; ?></option>
-								<option value="stage1" <?php echo ($processingStatus=='stage1'?'SELECTED':''); ?>><?php $LANG['STAGE_1']; ?></option>
-								<option value="stage2" <?php echo ($processingStatus=='stage2'?'SELECTED':''); ?>><?php $LANG['STAGE_2']; ?></option>
-								<option value="stage3" <?php echo ($processingStatus=='stage3'?'SELECTED':''); ?>><?php $LANG['STAGE_3']; ?></option>
-								<option value="unprocessed"  <?php echo ($processingStatus===''||$processingStatus=='unprocessed'?'SELECTED':''); ?>><?php $LANG['UNPROCESSED']; ?></option>
+								<option value=""><?= $LANG['ALL_RECS']; ?></option>
+								<option value="stage1" <?php echo ($processingStatus=='stage1'?'SELECTED':''); ?>><?= $LANG['STAGE_1']; ?></option>
+								<option value="stage2" <?php echo ($processingStatus=='stage2'?'SELECTED':''); ?>><?= $LANG['STAGE_2']; ?></option>
+								<option value="stage3" <?php echo ($processingStatus=='stage3'?'SELECTED':''); ?>><?= $LANG['STAGE_3']; ?></option>
+								<option value="unprocessed"  <?php echo ($processingStatus===''||$processingStatus=='unprocessed'?'SELECTED':''); ?>><?= $LANG['UNPROCESSED']; ?></option>
 							</select>
 						</span>
 					</div>
 					<div class="buttonDiv" style="float:right;">
 						<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-						<button name="formsubmit" type="submit" value="buildDuplicateArr"><?php $LANG['BUILD_LIST']; ?></button>
+						<button name="formsubmit" type="submit" value="buildDuplicateArr"><?= $LANG['BUILD_LIST']; ?></button>
 					</div>
 					<div style="">
-						<span class="fieldLabel"><?php $LANG['REC_LIMIT']; ?>: </span>
+						<span class="fieldLabel"><?= $LANG['REC_LIMIT']; ?>: </span>
 						<span style="margin-left: 5px">
-							<input name="limit" type="text" value="<?php echo $limit; ?>" style="width:100px" />
+							<input name="limit" type="text" value="<?= $limit; ?>" style="width:100px" />
 						</span>
 					</div>
 				</form>
@@ -131,8 +131,8 @@ $collMetaArr = $dupeManager->getCollMetaArr();
 								<tr>
 									<th><input name="all" type="checkbox" title="Select All" /></th>
 									<th>occid</th>
-									<th><?php $LANG['COLL_CODE']; ?></th>
-									<th><?php $LANG['CAT_BR_NUM']; ?></th>
+									<th><?= $LANG['COLL_CODE']; ?></th>
+									<th><?= $LANG['CAT_BR_NUM']; ?></th>
 									<?php
 									foreach($activeFieldArr as $fieldName => $code){
 										echo '<th>'.$fieldName.'</th>';
