@@ -171,35 +171,40 @@ class GeographicThesaurus extends Manager{
       return true;
    }
 
-	public function addGeoUnit($postArr){
-		if(!$postArr['geoTerm']){
-			$this->errorMessage = 'ERROR adding geoUnit: geographic term must have a value';
-			return false;
+   public function addGeoUnit($postArr){
+      try {
+         if(!$postArr['geoTerm']){
+            $this->errorMessage = 'ERROR adding geoUnit: geographic term must have a value';
+            return false;
+         }
+         else{
+            $sql = 'INSERT INTO geographicthesaurus(geoterm, abbreviation, iso2, iso3, numcode, geoLevel, acceptedID, parentID, notes) '.
+               'VALUES("'.$this->cleanInStr($postArr['geoTerm']).'", '.
+               ($postArr['abbreviation']?'"'.$this->cleanInStr($postArr['abbreviation']).'"':'NULL').', '.
+               ($postArr['iso2']?'"'.$this->cleanInStr($postArr['iso2']).'"':'NULL').', '.
+               ($postArr['iso3']?'"'.$this->cleanInStr($postArr['iso3']).'"':'NULL').', '.
+               (is_numeric($postArr['numCode'])?'"'.$this->cleanInStr($postArr['numCode']).'"':'NULL').', '.
+               (is_numeric($postArr['geoLevel'])?$this->cleanInStr($postArr['geoLevel']):'NULL').', '.
+               (is_numeric($postArr['acceptedID'])?'"'.$this->cleanInStr($postArr['acceptedID']).'"':'NULL').', '.
+               (is_numeric($postArr['parentID'])?'"'.$this->cleanInStr($postArr['parentID']).'"':'NULL').', '.
+               ($postArr['notes']?'"'.$this->cleanInStr($postArr['notes']).'"':'NULL').')';
+            if(!$this->conn->query($sql)){
+               $this->errorMessage = 'ERROR adding unit: '.$this->conn->error;
+               return false;
+            }
+
+            $geoThesID = $this->conn->insert_id;
+
+            if(!empty($postArr['polygon']) && $geoThesID) {
+               $this->addPolygon($geoThesID, $postArr['polygon']);
+            }
+         }
+         return true;
+      } catch(Exception $e) {
+         $this->errorMessage = 'ERROR adding unit: '. $e->getMessage();;
+         return false;
       }
-		else{
-			$sql = 'INSERT INTO geographicthesaurus(geoterm, abbreviation, iso2, iso3, numcode, geoLevel, acceptedID, parentID, notes) '.
-				'VALUES("'.$this->cleanInStr($postArr['geoTerm']).'", '.
-				($postArr['abbreviation']?'"'.$this->cleanInStr($postArr['abbreviation']).'"':'NULL').', '.
-				($postArr['iso2']?'"'.$this->cleanInStr($postArr['iso2']).'"':'NULL').', '.
-				($postArr['iso3']?'"'.$this->cleanInStr($postArr['iso3']).'"':'NULL').', '.
-				(is_numeric($postArr['numCode'])?'"'.$this->cleanInStr($postArr['numCode']).'"':'NULL').', '.
-				(is_numeric($postArr['geoLevel'])?$this->cleanInStr($postArr['geoLevel']):'NULL').', '.
-				(is_numeric($postArr['acceptedID'])?'"'.$this->cleanInStr($postArr['acceptedID']).'"':'NULL').', '.
-				(is_numeric($postArr['parentID'])?'"'.$this->cleanInStr($postArr['parentID']).'"':'NULL').', '.
-				($postArr['notes']?'"'.$this->cleanInStr($postArr['notes']).'"':'NULL').')';
-			if(!$this->conn->query($sql)){
-				$this->errorMessage = 'ERROR adding unit: '.$this->conn->error;
-				return false;
-         }
-
-         $geoThesID = $this->conn->insert_id;
-
-         if(!empty($postArr['polygon']) && $geoThesID) {
-            $this->addPolygon($geoThesID, $postArr['polygon']);
-         }
-		}
-		return true;
-	}
+   }
 
 	public function addChildGeoUnit($postArr){
 		//Add new child
