@@ -652,9 +652,13 @@ class GeographicThesaurus extends Manager{
       foreach ($obj->features as $feature) {
          $properties = $feature->properties;
          $geoLevel = $this->getGeoLevel($properties->shapeType);
-
-         $geoThesIDs = $this->getGeoThesIDV2($properties->shapeName, $geoLevel);
          $parentID = null;
+
+         $geoThesIDs = $this->getGeoThesIDByName($properties->shapeName, $geoLevel);
+
+         if (empty($geoThesIDs)) {
+            $geoThesIDs = $this->getGeoThesIDByIso3($properties->shapeISO, $geoLevel);
+         }
 
          if(is_array($geoThesIDs) && count($geoThesIDs) != 1) {
             $testPoint = $this->getPointWithinPoly($feature->geometry->coordinates);
@@ -663,10 +667,11 @@ class GeographicThesaurus extends Manager{
                   $testPoint["lat"], 
                   $testPoint["long"], 
                   $geoLevel - 10, 
-                  array_map( fn($val) => $val[1], $geoThesIDs)
+                  //map and grab parentIds
+                  array_filter(array_map( fn($val) => $val[1], $geoThesIDs), fn($val) => $val !== null)
                );
 
-               $geoThesIDs = $this->getGeoThesIDV2($properties->shapeName, $geoLevel, $parentID);
+               $geoThesIDs = $this->getGeoThesIDByName($properties->shapeName, $geoLevel, $parentID);
             }
          } 
 
@@ -758,14 +763,14 @@ class GeographicThesaurus extends Manager{
          SELECT g.geoThesID from geographicthesaurus g 
          join geographicpolygon gp on g.geoThesID = gp.geoThesID
          WHERE ST_CONTAINS(gp.footprintPolygon, ST_GEOMFROMTEXT(?)) = 1 and
-         g.geoLevel = ?
+         g.geoLevel <= ? ORDER BY g.geoLevel DESC
          SQL;
 
       $geom = 'POINT (' . $long . ' '. $lat . ')';
 
       if(!empty($potentialParents)) {
          $sql.=' and g.geoThesID in ('. implode(',', $potentialParents) .')';
-      } 
+      }
 
       $stmt = $this->conn->prepare($sql);
       $stmt->bind_param("si", $geom, $parentGeoLevel);
@@ -783,8 +788,12 @@ class GeographicThesaurus extends Manager{
       
    }
 
-   public function getGeoThesIDV2($geoTerm, $geoLevel, $parentID = null) {
-		$sql = 'SELECT geoThesID, parentID FROM geographicthesaurus WHERE geoTerm = "' . $geoTerm . '"and geoLevel=' . $geoLevel . ' and acceptedID is null';
+   public function getGeoThesIDByName($geoTerm, $geoLevel = null, $parentID = null) {
+		$sql = 'SELECT geoThesID, parentID FROM geographicthesaurus WHERE geoTerm = "' . $geoTerm . '" and acceptedID is null';
+
+      if($geoLevel !== null && is_numeric($geoLevel)) {
+         $sql .= ' and geoLevel = ' . $geoLevel;
+      }
 
       if($parentID !== null && is_numeric($parentID)) {
          $sql .= ' and parentID = ' . $parentID;
@@ -794,21 +803,15 @@ class GeographicThesaurus extends Manager{
       return $rs->fetch_all();
    }
 
-	private function getGeoThesID($iso3, $type){
-		$countryGeoThesID = 0;
-		$sql = 'SELECT geoThesID FROM geographicthesaurus WHERE iso3 = "'.$iso3.'" and acceptedID is null';
+	private function getGeoThesIDByIso3($iso3, $geoLevel = null){
+		$sql = 'SELECT geoThesID, parentID FROM geographicthesaurus WHERE iso3 = "'.$iso3.'" and acceptedID is null';
+
+      if($geoLevel !== null && is_numeric($geoLevel)) {
+         $sql .= ' and geoLevel = ' . $geoLevel;
+      }
+
 		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$countryGeoThesID = $r->geoThesID;
-		}
-		$rs->free();
-		if(!$countryGeoThesID) $countryGeoThesID = $this->insertGeoBoundary();
-		if($type = 'ADM0') return $countryGeoThesID;
-		if($countryGeoThesID){
-			if($type = 'ADM1'){
-				$this->getGeoThesID($iso3, 'ADM1');
-			}
-		}
+      return $rs->fetch_all();
 	}
 
 	private function insertGeoBoundary(){
