@@ -559,7 +559,9 @@ class GeographicThesaurus extends Manager{
       //If slopes are paralell then no intersection
       if($m1 === $m2) return false;
 
-      $x = ($o2 - $o1) / ($m1 - $m2);
+      $dm = ($m1 - $m2);
+
+      $x = $dm != 0? ($o2 - $o1) / $dm: 0;
       return [
          $x,
          ($m2 * $x) + $o2
