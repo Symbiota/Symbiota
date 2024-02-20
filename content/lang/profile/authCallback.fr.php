@@ -7,7 +7,7 @@ Date Translated: 2024/02/13
 ------------------
 */
 
-$LANG['CAUGHT_EXCEPTION'] = 'Exception interceptée : ';
+$LANG['CAUGHT_EXCEPTION'] = 'Exception interceptée :';
 $LANG['LOCATION'] = 'Emplacement :';
 $LANG['UNKNOWN_ERROR'] = 'Erreur inconnue - Impossible d\'authentifier - réessayez plus tard ou alertez un administrateur système';
 $LANG['ERROR'] = 'Erreur - Impossible de s\'authentifier auprès du fournisseur d\'authentification';

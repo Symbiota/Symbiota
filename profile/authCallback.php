@@ -28,15 +28,15 @@ if (array_key_exists('code', $_REQUEST) && $_REQUEST['code']) {
     $status = $oidc->authenticate();
   }
   catch (Exception $ex){
-    $_SESSION['last_message'] = $LANG['CAUGHT_EXCEPTION'] . $ex->getMessage() . ' <ERR/>';
-    header($LANG['LOCATION'] . $CLIENT_ROOT . '/profile/index.php');
+    $_SESSION['last_message'] = $LANG['CAUGHT_EXCEPTION'] . ' ' . $ex->getMessage() . ' <ERR/>';
+    header('Location:' . $CLIENT_ROOT . '/profile/index.php');
     exit();
   }  
   if($status){
     $sub = $oidc->requestUserInfo('sub');
     if($profManager->authenticate($sub, $providerUrls['oid'])){
       if($_SESSION['refurl']){
-        header($LANG['LOCATION'] . $_SESSION['refurl']);
+        header("Location:" . $_SESSION['refurl']);
         unset($_SESSION['refurl']);
       }
     }
@@ -46,34 +46,34 @@ if (array_key_exists('code', $_REQUEST) && $_REQUEST['code']) {
         try{
           $status = $profManager->linkLocalUserOidSub($email, $sub, $oidc->getProviderURL());
         }catch (Exception $ex){
-          $_SESSION['last_message'] = $LANG['CAUGHT_EXCEPTION'] . $ex->getMessage();
-          header($LANG['LOCATION'] . $CLIENT_ROOT . '/profile/index.php');
+          $_SESSION['last_message'] = $LANG['CAUGHT_EXCEPTION'] . ' '  . $ex->getMessage();
+          header('Location:' . $CLIENT_ROOT . '/profile/index.php');
           exit();
         }
         if($status){
           if($profManager->authenticate($sub, $providerUrls['oid'])){
             if($_SESSION['refurl']){
-              header($LANG['LOCATION'] . $_SESSION['refurl']);
+              header("Location:" . $_SESSION['refurl']);
               unset($_SESSION['refurl']);
             }
           }
           else{
             $_SESSION['last_message'] = $LANG['UNKNOWN_ERROR'] . " <ERR/>";
-            header($LANG['LOCATION'] . $CLIENT_ROOT . '/profile/index.php');
+            header('Location:' . $CLIENT_ROOT . '/profile/index.php');
             //@TODO Consider logging this error to PHP logfiles
           }
         }else{
           $_SESSION['last_message'] = $LANG['ERROR'] . " <ERR/>";
-          header($LANG['LOCATION'] . $CLIENT_ROOT . '/profile/index.php');
+          header('Location:'. $CLIENT_ROOT . '/profile/index.php');
         }
         
       }
       else{
         $_SESSION['last_message'] = $LANG['UNABLE_RETRIEVE_EMAIL'] . " <ERR/>";
-        header($LANG['LOCATION'] . $CLIENT_ROOT . '/profile/index.php');
+        header('Location:' . $CLIENT_ROOT . '/profile/index.php');
       }
     }
   }
-  $_SESSION['last_message'] =  $LANG['AUTHENTICATION_FAILED'] . " <ERR/>";
-  header($LANG['LOCATION'] . $CLIENT_ROOT . '/profile/index.php');
+  $_SESSION['last_message'] = $LANG['AUTHENTICATION_FAILED'] . " <ERR/>";
+  header('Location:' . $CLIENT_ROOT . '/profile/index.php');
 }
