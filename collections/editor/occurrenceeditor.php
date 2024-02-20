@@ -798,7 +798,7 @@ else{
 													<?= $LANG['EVENT_DATE2']; ?>
 													<a href="#" onclick="return dwcDoc('eventDate2')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 													<br/>
-													<input type="text" name="eventdate2" value="<?= array_key_exists('eventdate2',$occArr)?$occArr['eventdate2']:''; ?>" onchange="eventDate2Changed(this);" >
+													<input type="date" name="eventdate2" value="<?= array_key_exists('eventdate2',$occArr)?$occArr['eventdate2']:''; ?>" onchange="eventDate2Changed(this);" >
 												</div>
 												<?php
 												if($DUPE_SEARCH){
