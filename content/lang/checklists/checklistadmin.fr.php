@@ -7,8 +7,16 @@ Language: Français (French)
 
 include_once('checklist.fr.php');
 
+$LANG['NO_PERMISSIONS'] = 'Vous n\'êtes pas autorisé à créer une liste. Veuillez contacter un administrateur.';
+$LANG['ERR_DELETING_CHECKLIST'] = 'ERREUR lors de la suppression de la liste';
+$LANG['ERR_ADDING_CHILD'] = 'ERREUR lors de l\'ajout du lien vers la liste des enfants';
+$LANG['CHECK_PARSED_SUCCESS'] = 'Liste analysée avec succès !';
+$LANG['TARGET_PROJ'] = 'Projet cible';
+$LANG['TARGET_CHECKLIST'] = 'Liste cible';
+$LANG['PARENT_CHECKLIST'] = 'Liste des parents';
 $LANG['SELECTPROJECT'] = 'S&eacute;lectionner un Projet';
 $LANG['RETURNCHECK'] = 'Retour &agrave; Liste';
+$LANG['ERREUR'] = 'ERREUR';
 $LANG['ADMIN'] = 'Admin';
 $LANG['DESCRIPTION'] = 'Description';
 $LANG['RELATEDCHECK'] = 'Listes Connexes';
@@ -60,6 +68,7 @@ $LANG['ADDIMGVOUCH'] = 'Ajouter Image d\'&Eacute;chantillon';
 $LANG['IDNOTSET'] = ' Identificateur de liste non d&eacute;fini';
 $LANG['NOADMINPERM'] = ' Vous n\'avez pas d\'autorisation administrative pour cette liste';
 $LANG['CURREDIT'] = '&Eacute;diteurs actuels';
+$LANG['ASSIGNED_BY'] = 'Attribué par';
 $LANG['REMOVEEDITPRIVCONFIRM'] = '&Ecirc;tes-vous s&ucirc;r de vouloir supprimer les droits d\'&eacute;dition de cet utilisateur?';
 $LANG['MASSUPDATEED'] = 'Modifier D&eacute;tails de Liste';
 $LANG['ADDEDITOR'] = 'Ajouter un &Eacute;ditor';
@@ -68,4 +77,6 @@ $LANG['EDITCHECKLIST'] = 'Modifier Liste';
 $LANG['SAVE_EDITS'] = 'Enregistrer Modifications';
 $LANG['ADDCHECKLIST'] = 'Cr&eacuteer Liste';
 $LANG['DELETETHISU'] = 'Supprimer Cet Utilisateur';
+$LANG['ERROR_LOWER'] = 'Erreur';
+
 ?>

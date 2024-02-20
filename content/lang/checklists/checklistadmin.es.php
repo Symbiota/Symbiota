@@ -7,11 +7,19 @@ Language: Español (Spanish)
 
 include_once('checklist.es.php');
 
+$LANG['NO_PERMISSIONS'] = 'No tienes permiso para crear una lista. Por favor contacte a un administrador.';
+$LANG['ERR_DELETING_CHECKLIST'] = 'ERROR al eliminar la lista';
+$LANG['ERR_ADDING_CHILD'] = 'ERROR al agregar el enlace de la lista infantil';
+$LANG['CHECK_PARSED_SUCCESS'] = '¡Lista analizada correctamente!';
+$LANG['TARGET_PROJ'] = 'Proyecto de destino';
+$LANG['TARGET_CHECKLIST'] = 'Lista de objetivos';
+$LANG['PARENT_CHECKLIST'] = 'Lista de los padres';
 $LANG['SELECTPROJECT'] = 'Selecciona un proyecto';
 $LANG['RETURNCHECK'] = 'Volver al Listado de Comprobaci&oacute;n';
 $LANG['ADMIN'] = 'Admin';
 $LANG['DESCRIPTION'] = 'Descripci&oacute;n';
 $LANG['RELATEDCHECK'] = 'Listados de Comprobaci&oacute;n Relacionados';
+$LANG['ERROR'] = 'ERROR';
 $LANG['ADDIMGVOUCHER'] = 'Agregar Im&aacute;gen Voucher';
 $LANG['NOEDITOR'] = 'Nadie ha sido asignado expl&iacute;citamente como un editor';
 $LANG['ADDNEWUSER'] = 'Agregar Usuario Nuevo';
@@ -60,6 +68,7 @@ $LANG['ADDIMGVOUCH'] = 'Agregar Voucher de Im&aacute;gen';
 $LANG['IDNOTSET'] = ' Identificador de listado de Comprobaci&oacute;n no se ha establecido';
 $LANG['NOADMINPERM'] = ' Usted no tiene permiso administrativo para este listado de comprobaci&oacute;n';
 $LANG['CURREDIT'] = 'Editores Actuales';
+$LANG['ASSIGNED_BY'] = 'Asignado por';
 $LANG['REMOVEEDITPRIVCONFIRM'] = '¿Est&aacute; seguro de que desea eliminar los derechos de edici&oacute;n para este usuario?';
 $LANG['MASSUPDATEED'] = 'Editar Detalles del Listado de Comprobaci&oacute;n';
 $LANG['ADDEDITOR'] = 'Agregar Editor';
@@ -68,4 +77,6 @@ $LANG['EDITCHECKLIST'] = 'Editar Lista';
 $LANG['SAVE_EDITS'] = 'Someter Cambios';
 $LANG['ADDCHECKLIST'] = 'Crear Lista Nueva';
 $LANG['DELETETHISU'] = 'Borrar este usuario';
+$LANG['ERROR_LOWER'] = 'Error';
+
 ?>

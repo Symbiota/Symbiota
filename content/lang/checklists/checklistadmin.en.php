@@ -7,8 +7,16 @@ Language: English
 
 include_once('checklist.en.php');
 
+$LANG['NO_PERMISSIONS'] = 'You do not have permission to create a Checklist. Please contact an administrator.';
+$LANG['ERR_DELETING_CHECKLIST'] = 'ERROR deleting checklist';
+$LANG['ERR_ADDING_CHILD'] = 'ERROR adding child checklist link';
+$LANG['CHECK_PARSED_SUCCESS'] = 'Checklist parsed successfully!';
+$LANG['TARGET_PROJ'] = 'Target project';
+$LANG['TARGET_CHECKLIST'] = 'Target checklist';
+$LANG['PARENT_CHECKLIST'] = 'Parent checklist';
 $LANG['SELECTPROJECT'] = 'Select a project';
 $LANG['RETURNCHECK'] = 'Return to Checklist';
+$LANG['ERROR'] = 'ERROR';
 $LANG['ADMIN'] = 'Admin';
 $LANG['DESCRIPTION'] = 'Description';
 $LANG['RELATEDCHECK'] = 'Related Checklists';
@@ -60,6 +68,7 @@ $LANG['ADDIMGVOUCH'] = 'Add Image Voucher';
 $LANG['IDNOTSET'] = ' Checklist identifier not set';
 $LANG['NOADMINPERM'] = ' You do not have administrative permission for this checklist';
 $LANG['CURREDIT'] = 'Current Editors';
+$LANG['ASSIGNED_BY'] = 'Assigned by';
 $LANG['REMOVEEDITPRIVCONFIRM'] = 'Are you sure you want to remove editing rights for this user?';
 $LANG['MASSUPDATEED'] = 'Edit Checklist Details';
 $LANG['ADDEDITOR'] = 'Add Editor';
@@ -68,4 +77,5 @@ $LANG['EDITCHECKLIST'] = 'Edit Checklist';
 $LANG['SAVE_EDITS'] = 'Save Edits';
 $LANG['ADDCHECKLIST'] = 'Create Checklist';
 $LANG['DELETETHISU'] = 'Delete this user';
+$LANG['ERROR_LOWER'] = 'Error';
 ?>

@@ -1,7 +1,8 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
-include_once($SERVER_ROOT.'/content/lang/checklists/checklistadmin.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/checklistadmin.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/checklists/checklistadmin.'.$LANG_TAG.'.php');
+else include_once($SERVER_ROOT.'/content/lang/checklists/checklistadmin.en.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 if(!$SYMB_UID) header('Location: ../profile/index.php?refurl=../checklists/checklistadmin.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
@@ -27,7 +28,7 @@ if($action == 'submitAdd'){
 		if($newClid) header('Location: checklist.php?clid='.$newClid);
 	}
 	//If we made it here the user does not have any checklist roles. cancel further execution.
-	$statusStr = 'You do not have permission to create a Checklist. Please contact an administrator.';
+	$statusStr = $LANG['NO_PERMISSIONS'];
 }
 
 $isEditor = 0;
@@ -46,7 +47,7 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USE
 		if($clManager->deleteChecklist($_POST['delclid'])){
 			header('Location: ../index.php');
 		}
-		else $statusStr = 'ERROR deleting checklist: '.$clManager->getErrorMessage();
+		else $statusStr = $LANG['ERR_DELETING_CHECKLIST'] . ': ' . $clManager->getErrorMessage();
 	}
 	elseif($action == 'addEditor'){
 		$statusStr = $clManager->addEditor($_POST['editoruid']);
@@ -67,7 +68,7 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USE
 	}
 	elseif($action && array_key_exists('clidadd',$_POST)){
 		if(!$clManager->addChildChecklist($_POST['clidadd'])){
-			$statusStr = 'ERROR adding child checklist link';
+			$statusStr = $LANG['ERR_ADDING_CHILD'];
 		}
 	}
 	elseif($action && array_key_exists('cliddel',$_GET)){
@@ -82,15 +83,15 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USE
 		if(array_key_exists('taxon',$_POST)) $taxon = htmlspecialchars($_POST['taxon'], HTML_SPECIAL_CHARS_FLAGS);
 		$resultArr = $clManager->parseChecklist($parseTid, $taxon, $targetClid, $parentClid, $targetPid, $transferMethod, $copyAttributes);
 		if($resultArr){
-			$statusStr = '<div>Checklist parsed successfully!</div>';
+			$statusStr = '<div>' . $LANG['CHECK_PARSED_SUCCESS'] . '</div>';
 			if(isset($resultArr['targetPid'])){
 				$targetPid = $resultArr['targetPid'];
-				$statusStr .= '<div style="margin-left:15px"><a href="../projects/index.php?pid=' . $targetPid . '" target="_blank">Target project</a></div>';
+				$statusStr .= '<div style="margin-left:15px"><a href="../projects/index.php?pid=' . $targetPid . '" target="_blank">' . $LANG['TARGET_PROJ'] . '</a></div>';
 			}
-			if(isset($resultArr['targetClid'])) $statusStr .= '<div style="margin-left:15px"><a href="checklist.php?clid=' . $resultArr['targetClid'] . '&pid=' . $targetPid . '" target="_blank">Target checklist</a></div>';
+			if(isset($resultArr['targetClid'])) $statusStr .= '<div style="margin-left:15px"><a href="checklist.php?clid=' . $resultArr['targetClid'] . '&pid=' . $targetPid . '" target="_blank">' . $LANG['TARGET_CHECKLIST'] . '</a></div>';
 			if(isset($resultArr['parentClid'])){
 				$parentClid = $resultArr['parentClid'];
-				$statusStr .= '<div style="margin-left:15px"><a href="checklist.php?clid=' . $resultArr['parentClid'] . '&pid=' . $targetPid . '" target="_blank">Parent checklist</a></div>';
+				$statusStr .= '<div style="margin-left:15px"><a href="checklist.php?clid=' . $resultArr['parentClid'] . '&pid=' . $targetPid . '" target="_blank">' . $LANG['PARENT_CHECKLIST'] . '</a></div>';
 			}
 		}
 	}
@@ -125,7 +126,7 @@ $clArray = $clManager->getMetaData();
 
 		function verifyAddUser(f){
 			if(f.editoruid.value == ""){
-				alert("<?php echo isset($LANG['SELECTUSER'])?$LANG['SELECTUSER']:'Select User'; ?>");
+				alert("<?php echo $LANG['SELECTUSER']; ?>");
 				return false;
 			}
 			return true;
@@ -133,7 +134,7 @@ $clArray = $clManager->getMetaData();
 
 		function validateAddProjectForm(f){
 			if(f.pid.value == ""){
-				alert("<?php echo isset($LANG['SELECTPROJECT'])?$LANG['SELECTPROJECT']:'Select a project'; ?>");
+				alert("<?php echo $LANG['SELECTPROJECT']; ?>");
 				return false;
 			}
 			return true;
@@ -169,7 +170,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	<?php
 	if($statusStr){
 		$statusColor = 'green';
-		if(strpos($statusStr, 'ERROR') !== false) $statusColor = 'red';
+		if(strpos($statusStr, $LANG['ERROR']) !== false) $statusColor = 'red';
 		?>
 		<hr />
 		<div style="margin:20px;font-weight:bold;color:<?php echo $statusColor;?>;">
@@ -191,7 +192,7 @@ include($SERVER_ROOT.'/includes/header.php');
 				<li><a href="checklistadminchildren.php?<?php echo $varChildren; ?>"><span><?php echo $LANG['RELATEDCHECK'];?></span></a></li>
 
 				<?php
-				if($clManager->hasVoucherProjects()) echo '<li><a href="imgvouchertab.php?clid=' . $clid . '">' . (isset($LANG['ADDIMGVOUCHER'])?$LANG['ADDIMGVOUCHER']:'Add Image Voucher') . '</a></li>';
+				if($clManager->hasVoucherProjects()) echo '<li><a href="imgvouchertab.php?clid=' . $clid . '">' . $LANG['ADDIMGVOUCHER'] . '</a></li>';
 				?>
 			</ul>
 			<div id="admintab">
@@ -206,7 +207,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							foreach($editorArr as $uid => $uNameArr){
 								?>
 								<li>
-									<?php echo '<span title="'.($uNameArr['assignedby']?'Assigned by '.$uNameArr['assignedby']:'').'">'.$uNameArr['name'].'</span>'; ?>
+									<?php echo '<span title="'.($uNameArr['assignedby'] ? $LANG['ASSIGNED_BY'] . ' ' . $uNameArr['assignedby']:'') . '">' . $uNameArr['name'] . '</span>'; ?>
 									<form name="delEditorForm-<?php echo $uid; ?>" action="checklistadmin.php" method="post" onclick="return confirm(<?php echo $LANG['REMOVEEDITPRIVCONFIRM']; ?>);" title="<?php echo $LANG['DELETETHISU'];?>" style="display:inline">
 										<input name="clid" type="hidden" value="<?php echo $clid; ?>" />
 										<input name="pid" type="hidden" value="<?php echo $pid; ?>" />
@@ -222,15 +223,15 @@ include($SERVER_ROOT.'/includes/header.php');
 						<?php
 					}
 					else{
-						echo "<div>".$LANG['NOEDITOR']."</div>\n";
+						echo "<div>" . $LANG['NOEDITOR'] . "</div>\n";
 					}
 					?>
 					<fieldset>
-						<legend><?php echo (isset($LANG['ADDNEWUSER'])?$LANG['ADDNEWUSER']:'Add New User'); ?></legend>
+						<legend><?php echo $LANG['ADDNEWUSER']; ?></legend>
 						<form name="adduser" action="checklistadmin.php" method="post" onsubmit="return verifyAddUser(this)">
 							<div>
 								<select name="editoruid">
-									<option value=""><?php echo (isset($LANG['SELECTUSER'])?$LANG['SELECTUSER']:'Select User'); ?></option>
+									<option value=""><?php echo $LANG['SELECTUSER']; ?></option>
 									<option value="">------------------------------</option>
 									<?php
 									$userArr = $clManager->getUserList();
@@ -248,7 +249,7 @@ include($SERVER_ROOT.'/includes/header.php');
 				</div>
 				<hr/>
 				<div style="margin:20px;">
-					<div style="font-weight:bold;font-size:120%;"><?php echo (isset($LANG['INVENTORYPROJECTS'])?$LANG['INVENTORYPROJECTS']:'Inventory Project Assignments');?></div>
+					<div style="font-weight:bold;font-size:120%;"><?php echo $LANG['INVENTORYPROJECTS'];?></div>
 					<ul>
 						<?php
 						$projArr = $clManager->getInventoryProjects();
@@ -274,7 +275,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							}
 						}
 						else{
-							echo '<li>'.(isset($LANG['CHECKNOTASSIGNED'])?$LANG['CHECKNOTASSIGNED']:'Checklist has not been assigned to any inventory projects').'</li>';
+							echo '<li>' . $LANG['CHECKNOTASSIGNED'] . '</li>';
 						}
 						?>
 					</ul>
@@ -283,10 +284,10 @@ include($SERVER_ROOT.'/includes/header.php');
 						if($potentialProjects = array_diff_key($clManager->getPotentialProjects($USER_RIGHTS['ProjAdmin']),$projArr)){
 							?>
 							<fieldset>
-								<legend><?php echo (isset($LANG['LINKTOPROJECT'])?$LANG['LINKTOPROJECT']:'Link to a Project'); ?></legend>
+								<legend><?php echo $LANG['LINKTOPROJECT']; ?></legend>
 								<form name="addtoprojectform" action="checklistadmin.php" method="post" onsubmit="return validateAddProjectForm(this)">
 									<select name="pid">
-										<option value=""><?php echo (isset($LANG['SELECTPROJECT'])?$LANG['SELECTPROJECT']:'Select User'); ?></option>
+										<option value=""><?php echo $LANG['SELECTPROJECT']; ?></option>
 										<option value="">---------------------------------</option>
 										<?php
 										foreach($potentialProjects as $pid => $pName){
@@ -295,7 +296,7 @@ include($SERVER_ROOT.'/includes/header.php');
 										?>
 									</select>
 									<input name="clid" type="hidden" value="<?php echo $clid; ?>" />
-									<button name="submitaction" type="submit" value="addToProject"><?php echo isset($LANG['SUBMIT'])?$LANG['SUBMIT']:'Submit';?></button>
+									<button name="submitaction" type="submit" value="addToProject"><?php echo $LANG['SUBMIT']; ?></button>
 								</form>
 							</fieldset>
 							<?php
@@ -367,10 +368,10 @@ include($SERVER_ROOT.'/includes/header.php');
 	}
 	else{
 		if(!$clid){
-			echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span>'.$LANG['IDNOTSET'].'</div>';
+			echo '<div><span style="font-weight:bold;font-size:110%;">' . $LANG['ERROR_LOWER'] . ': ' . '</span>' . $LANG['IDNOTSET'] . '</div>';
 		}
 		else{
-			echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span>'.$LANG['NOADMINPERM'].'</div>';
+			echo '<div><span style="font-weight:bold;font-size:110%;">' . $LANG['ERROR_LOWER'] . ': '. '</span>' . $LANG['NOADMINPERM'] . '</div>';
 		}
 	}
 	?>
