@@ -60,7 +60,7 @@
    - /content/logs/
    - /temp/
 5. Misc configurations and recommendations
-   - Install robots.txt file within root directory - The robots.txt file is a standard method used by websites to indicate to visiting web crawlers and other web robots which portions of the website they are allowed to visit and under what conditions. A robots.txt template can be found within the /includes directory. This file should be moved into the domain's root directory, which may of may not be the Symbiota root directory. The file paths listed within the file should be adjusted to match the portal installation path (e.g. start with $CLIENT_ROOT). See links below for more information:
+   - Install robots.txt file within root directory - The robots.txt file is a standard method used by websites to indicate to visiting web crawlers and other web robots which portions of the website they are allowed to visit and under what conditions. A robots.txt template can be found within the /includes directory. This file should be moved into the domain's root directory, which may or may not be the Symbiota root directory. The file paths listed within the file should be adjusted to match the portal installation path (e.g., start with $CLIENT_ROOT). See links below for more information:
      - https://developers.google.com/search/docs/crawling-indexing/robots/create-robots-txt
      - https://en.wikipedia.org/wiki/Robots.txt
    - Refer to the [third party authentication instructions](https://github.com/BioKIC/Symbiota/blob/master/docs/third_party_auth_setup.md) for specifics about third party authentication setup.
