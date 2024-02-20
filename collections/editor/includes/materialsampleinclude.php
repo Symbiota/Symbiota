@@ -28,8 +28,8 @@ elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid,$USER_RIG
 $materialSampleArr = $materialSampleManager->getMaterialSampleArr();
 $controlTermArr = $materialSampleManager->getMSTypeControlValues();
 ?>
-<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
-<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>
+<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 <script>
 	var collid = <?php echo $collid; ?>;
 	$(document).ready(function() {

@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../../config/symbini.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/reports/annotationmanager.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/reports/annotationmanager.'.$LANG_TAG.'.php');
@@ -27,6 +25,7 @@ if($isEditor){
 	$annoArr = $datasetManager->getAnnoQueue();
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">

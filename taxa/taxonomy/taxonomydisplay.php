@@ -43,13 +43,17 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 <head>
 	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['TAX_DISPLAY'] . ': ' . $taxonDisplayObj->getTargetStr(); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
+<<<<<<< HEAD
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+=======
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+>>>>>>> Development
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<script src="../../js/jquery.js" type="text/javascript"></script>
-	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$("#taxontarget").autocomplete({

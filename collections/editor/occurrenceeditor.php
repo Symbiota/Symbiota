@@ -464,8 +464,8 @@ else{
 	}
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<script src="../../js/jquery.js?ver=140310" type="text/javascript"></script>
-	<script src="../../js/jquery-ui.js?ver=140310" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		var collId = "<?php echo (isset($collMap['collid'])?$collMap['collid']:(is_numeric($collId)?$collId:0)); ?>";
 		var csMode = "<?php echo $crowdSourceMode; ?>";
@@ -507,7 +507,6 @@ else{
 	<script src="../../js/symb/collections.georef.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.main.js?ver=7b" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.tools.js?ver=4" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.autocomplete.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.imgtools.js?ver=3" type="text/javascript"></script>
 	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.query.js?ver=6" type="text/javascript"></script>
@@ -798,7 +797,7 @@ else{
 													<?= $LANG['EVENT_DATE2']; ?>
 													<a href="#" onclick="return dwcDoc('eventDate2')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 													<br/>
-													<input type="date" name="eventdate2" value="<?= array_key_exists('eventdate2',$occArr)?$occArr['eventdate2']:''; ?>" onchange="eventDate2Changed(this);" >
+													<input type="text" name="eventdate2" value="<?= array_key_exists('eventdate2',$occArr)?$occArr['eventdate2']:''; ?>" onchange="eventDate2Changed(this);" >
 												</div>
 												<?php
 												if($DUPE_SEARCH){

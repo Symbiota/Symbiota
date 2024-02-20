@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDataset.php');
@@ -9,6 +7,7 @@ header('Content-Type: text/html; charset='.$CHARSET);
 $datasetManager = new OccurrenceDataset();
 $dArr = $datasetManager->getPublicDatasets();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title>Public Datasets List</title>

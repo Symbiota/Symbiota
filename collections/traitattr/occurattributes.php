@@ -83,36 +83,35 @@ if ($traitID) {
 }
 ?>
 <html>
-
-<head>
-	<title><?php echo $LANG['OCC_ATTRIBUTE_BATCH_EDIT'] ?></title>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
-	<?php
-	include_once($SERVER_ROOT . '/includes/head.php');
-	?>
-	<script src="../../js/jquery.js" type="text/javascript"></script>
-	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
-	<script src="../../js/jquery.imagetool-1.7.js?ver=160102" type="text/javascript"></script>
-	<script type="text/javascript">
-		var activeImgIndex = 1;
-		var imgArr = [];
-		var imgLgArr = [];
+	<head>
+		<title><?php echo $LANG['OCC_ATTRIBUTE_BATCH_EDIT'] ?></title>
+		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
-		$imgDomain = $IMAGE_DOMAIN;
-		if (!$imgDomain) $attrManager->getDomain();
-		foreach ($imgArr as $cnt => $iArr) {
-			//Regular url 
-			$url = $iArr['web'];
-			if (substr($url, 0, 1) == '/') $url = $imgDomain . $url;
-			echo 'imgArr[' . $cnt . '] = "' . $url . '";' . "\n";
-			//Large Url
-			$lgUrl = $iArr['lg'];
-			if ($lgUrl) {
-				if (substr($lgUrl, 0, 1) == '/') $lgUrl = $imgDomain . $lgUrl;
-				echo 'imgLgArr[' . $cnt . '] = "' . $lgUrl . '";' . "\n";
-			}
-		}
+		include_once($SERVER_ROOT . '/includes/head.php');
 		?>
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.imagetool-1.7.js?ver=160102" type="text/javascript"></script>
+		<script type="text/javascript">
+			var activeImgIndex = 1;
+			var imgArr = [];
+			var imgLgArr = [];
+			<?php
+			$imgDomain = $IMAGE_DOMAIN;
+			if(!$imgDomain) $attrManager->getDomain();
+			foreach($imgArr as $cnt => $iArr){
+				//Regular url
+				$url = $iArr['web'];
+				if(substr($url,0,1) == '/') $url = $imgDomain.$url;
+				echo 'imgArr['.$cnt.'] = "'.$url.'";'."\n";
+				//Large Url
+				$lgUrl = $iArr['lg'];
+				if($lgUrl){
+					if(substr($lgUrl,0,1) == '/') $lgUrl = $imgDomain.$lgUrl;
+					echo 'imgLgArr['.$cnt.'] = "'.$lgUrl.'";'."\n";
+				}
+			}
+			?>
 
 		$(document).ready(function() {
 			setImgRes();
@@ -219,8 +218,8 @@ if ($traitID) {
 			if (formElem.value == "<?php echo $LANG['ALL_TAXA']; ?>") formElem.value = '';
 		}
 	</script>
-	<script src="../../js/symb/collections.traitattr.js" type="text/javascript"></script>
-	<script src="../../js/symb/shared.js?ver=151229" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/collections.traitattr.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/shared.js?ver=151229" type="text/javascript"></script>
 	<style>
 		input {
 			margin: 3px

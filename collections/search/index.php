@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <?php
 // error_reporting(E_ALL);
 // ini_set('display_errors', '1');
@@ -23,6 +22,7 @@ $collList = $collManager->getFullCollectionList($catId);
 $specArr = (isset($collList['spec'])?$collList['spec']:null);
 $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 
 <head>
@@ -41,7 +41,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 	echo '<link href="' . $CLIENT_ROOT . '/collections/search/css/tables.css" type="text/css" rel="stylesheet" />';
 	echo '<link href="' . $CLIENT_ROOT . '/css/v202209/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />';
 	?>
-	<script src="js/jquery-3.2.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script>
 		const clientRoot = '<?php echo $CLIENT_ROOT; ?>';
 	</script>
@@ -440,7 +440,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 </body>
 <script src="js/searchform.js" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/collections/search/js/alerts.js?v=202107'; ?>" type="text/javascript"></script>
-<script src="<?php echo $CLIENT_ROOT . '/js/jquery-ui-1.12.1/jquery-ui.min.js'; ?>" type="text/javascript"></script>
+<script src="<?php echo $CLIENT_ROOT . '/js/jquery-ui.min.js'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/symb/api.taxonomy.taxasuggest.js'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/symb/collections.index.js?ver=20171215' ?>" type="text/javascript"></script>
 <script>

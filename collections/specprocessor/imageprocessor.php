@@ -28,10 +28,10 @@ if($spprid) $specManager->setProjVariables($spprid);
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
+		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<style type="text/css">.profileDiv{ clear:both; margin:2px 0px } </style>
-		<script src="../../js/jquery-3.2.1.min.js" type="text/javascript"></script>
-		<script src="../../js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
-		<link href="../../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 		<script src="../../js/symb/shared.js" type="text/javascript"></script>
 		<script>
 			$(function() {
@@ -150,8 +150,6 @@ if($spprid) $specManager->setProjVariables($spprid);
 						return false;
 					}
 				}
-				if(f.patternreplace.value == <?php echo $LANG['OPTIONAL']; ?>) f.patternreplace.value = "";
-				if(f.replacestr.value == <?php echo $LANG['OPTIONAL']; ?>) f.replacestr.value = "";
 				if(f.sourcepath.value == "-- Use Default Path --") f.sourcepath.value = "";
 				return true;
 			}
@@ -346,7 +344,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 									<div id="patternReplaceDiv" class="profileDiv" style="display:<?php echo ($projectType?'block':'none'); ?>">
 										<label><?php echo $LANG['REPLACEMENT_TERM']; ?>:</label>
 										<div style="float:left;">
-											<input name="patternreplace" type="text" style="width:300px;" value="<?php echo ($specManager->getPatternReplace()?$specManager->getPatternReplace():'-- $LANG['OPTIONAL'] --'); ?>" />
+											<input name="patternreplace" type="text" style="width:300px;" value="<?= ($specManager->getPatternReplace() ? $specManager->getPatternReplace() : '') ?>" placeholder="<?= $LANG['OPTIONAL'] ?>">
 											<a id="patternreplaceinfo" href="#" onclick="return false" title="<?php echo $LANG['MORE_INFO']; ?>">
 												<img src="../../images/info.png" style="width:1.2em;" />
 											</a>
@@ -358,7 +356,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 									<div id="replaceStrDiv" class="profileDiv" style="display:<?php echo ($projectType?'block':'none'); ?>">
 										<label><?php echo $LANG['REPLACEMENT_STR']; ?>:</label>
 										<div style="float:left;">
-											<input name="replacestr" type="text" style="width:300px;" value="<?php echo ($specManager->getReplaceStr()?$specManager->getReplaceStr():'-- $LANG['OPTIONAL'] --'); ?>" />
+											<input name="replacestr" type="text" style="width:300px;" value="<?= ($specManager->getReplaceStr() ? $specManager->getReplaceStr() : ''); ?>" placeholder="<?= $LANG['OPTIONAL'] ?>" >
 											<a id="replacestrinfo" href="#" onclick="return false" title="<?php echo $LANG['MORE_INFO']; ?>">
 												<img src="../../images/info.png" style="width:1.2em;" />
 											</a>
@@ -731,7 +729,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 				?>
 				<div id="tmp" class="top-breathing-room-rel">
 					<fieldset style="padding:15px;">
-						<legend><b><?php $LANG['LOG_FILES']; ?></b></legend>
+						<legend><b><?= $LANG['LOG_FILES']; ?></b></legend>
 						<?php
 						$logArr = $specManager->getLogListing();
 						if($logArr){
@@ -744,7 +742,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 								elseif($logCat=='processing/imgmap') echo $LANG['IMG_MAP_FILE'];
 								echo '</div><div style="margin:5px 0px 15px 10px">';
 								foreach($logList as $logFile){
-									echo '<div><a href="' . htmlspecialchars($logPath, HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars($logCat, HTML_SPECIAL_CHARS_FLAGS) . '/' . htmlspecialchars($logFile, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($logFile, HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
+									echo '<div><a href="' . $logPath . $logCat . '/' . $logFile . '" target="_blank">' . $logFile . '</a></div>';
 								}
 								echo '</div>';
 							}

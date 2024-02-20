@@ -52,10 +52,8 @@ $LANG['SELECT_LANGUAGE'] = 'Select Language';
 
 $LANG['CONTACT_US'] = 'Contact Us';
 $LANG['LOGIN'] = 'Log In';
-$LANG['HOME'] = 'Home';
 $LANG['SEARCH_COLLECTIONS'] = 'Search Collections';
 $LANG['CHECKLISTS'] = 'Checklists';
-$LANG['DATA_USE'] = 'Data Use';
 $LANG['ABOUT_SYMBIOTA'] = 'About Symbiota';
 $LANG['HELP'] = 'Help';
 $LANG['SPECIMENS'] = 'Specimens';

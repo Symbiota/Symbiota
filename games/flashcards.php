@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 //error_reporting(E_ALL);
 include_once('../config/symbini.php');
@@ -26,6 +24,7 @@ $fcManager->setLang($lang);
 
 $sciArr = array();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Flash Cards</title>

@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/KeyMatrixEditor.php');
@@ -35,6 +33,7 @@ if($isEditor){
 	}
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> <?php echo (isset($LANG['ALLOW_PUBLIC_EDITS']) ? $LANG['ALLOW_PUBLIC_EDITS'] : 'Allow Public Edits'); ?> </title>
