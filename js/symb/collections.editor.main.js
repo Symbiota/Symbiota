@@ -89,7 +89,9 @@ $(document).ready(function() {
 			$( "#tidinterpreted" ).val("");
 			$( 'input[name=scientificnameauthorship]' ).val("");
 			$( 'input[name=family]' ).val("");
-			$( 'input[name=localitysecurity]' ).prop('checked', false);
+			if($("input[name=localitysecurityreason]").val() == ""){
+				$("select[name=localitysecurity]").val(0);
+			}
 			fieldChanged('sciname');
 			fieldChanged('tidinterpreted');
 			fieldChanged('scientificnameauthorship');
@@ -254,7 +256,8 @@ function verifyFullFormSciName(){
 			}
 			*/
 			if(data.status == 1){
-				$( 'input[name=localitysecurity]' ).prop('checked', true);
+				$("select[name=localitysecurity]").val(1);
+				securityChanged(document.fullform);
 			}
 			else{
 				if(data.tid){
@@ -305,7 +308,8 @@ function localitySecurityCheck(){
 			data: { tid: tidIn, state: stateIn }
 		}).done(function( data ) {
 			if(data == "1"){
-				$( 'input[name=localitysecurity]' ).prop('checked', true);
+				$("select[name=localitysecurity]").val(1);
+				securityChanged(document.fullform);
 			}
 		});
 	}
