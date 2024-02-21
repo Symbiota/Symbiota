@@ -471,8 +471,18 @@ function listGeoUnits($arr) {
 				</span>
 			</div >
          <div style="margin: 10px">
-            <?php listGeoUnits($geoArr)?>
+            <?php listGeoUnits(array_filter($geoArr, fn($val) => 10 >= (intval($val['geoLevel']) - $geoUnit['geoLevel']))) ?>
          </div>
+         <?php $subChildren = array_filter($geoArr, fn($val) => 10 < (intval($val['geoLevel']) - $geoUnit['geoLevel']))?>
+
+         <?php if(!empty($subChildren)): ?>
+			<div style="font-size:1.3em;margin: 10px 0px">
+				<?= '<b>' . $LANG['OTHER'] . '</b>' . $LANG['TERMS_WITHIN'] . ' <b>' . $geoUnit['geoTerm'] . '</b>'?>
+			</div >
+         <div style="margin: 10px">
+            <?php listGeoUnits($subChildren)?>
+         </div>
+         <?php endif ?>
          </div>
 
 		<?php

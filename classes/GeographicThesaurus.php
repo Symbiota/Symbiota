@@ -676,7 +676,6 @@ class GeographicThesaurus extends Manager{
                   //map and grab parentIds
                   array_filter(array_map( fn($val) => $val[1], $geoThesIDs), fn($val) => $val !== null)
                );
-
                $geoThesIDs = $this->getGeoThesIDByName($properties->shapeName, $geoLevel, $parentID);
             }
          } 
@@ -693,7 +692,7 @@ class GeographicThesaurus extends Manager{
                "abbreviation" =>"",
                "numCode" =>"",
                "acceptedID" => "",
-               "parentID" => $parentID !== null? $parentID: $baseParentId,
+               "parentID" => $parentID ?? $baseParentId,
                "notes" =>"",
                "polygon" => json_encode($feature),
             ]));
