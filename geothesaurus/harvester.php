@@ -7,6 +7,7 @@ $geoThesID = array_key_exists('geoThesID', $_REQUEST) ? filter_var($_REQUEST['ge
 $gbAction = array_key_exists('gbAction', $_REQUEST) ? htmlspecialchars($_REQUEST['gbAction'], HTML_SPECIAL_CHARS_FLAGS) : '';
 $submitAction = array_key_exists('submitaction', $_POST) ? htmlspecialchars($_POST['submitaction'], HTML_SPECIAL_CHARS_FLAGS) : '';
 $addIfMissing = array_key_exists('addgeounit', $_POST)? filter_var($_POST['addgeounit'], FILTER_VALIDATE_BOOLEAN) : false;
+$baseParent = array_key_exists('baseParent', $_POST) && !empty($_POST['baseParent']) ? filter_var($_POST['baseParent'], FILTER_SANITIZE_NUMBER_INT) : null;
 
 $geoManager = new GeographicThesaurus();
 
@@ -25,7 +26,10 @@ if($isEditor && $submitAction) {
       set_time_limit(300);
       foreach($_POST['geoJson'] as $geojson) {
          try {
-            $geoManager->addGeoBoundary($geojson, $addIfMissing);
+            $results = $geoManager->addGeoBoundary($geojson, $addIfMissing, $baseParent);
+            if(is_array($results) && count($results) === 1) {
+               $baseParent = $results[0];
+            }
          } catch(Execption $e) {
             $statusStr = 'The harvester encountered an issue';
             break;
@@ -160,6 +164,7 @@ if($isEditor && $submitAction) {
 
             </script>
 					<form name="" method="post" action="harvester.php">
+                  <input style="display:none" name="baseParent" value="<?= isset($geoList['ADM0']['geoThesID'])? $geoList['ADM0']['geoThesID'] : null?>">
 						<table class="styledtable">
 							<tr>
 								<th></th><th>Type</th><th>ID</th><th>Database Count</th><th>Geoboundaries Count</th><th>Has Polygon</th><th>Canonical</th><th>Region</th><th>License</th><th>Full Link</th><th>Preview Image</th>
@@ -175,7 +180,7 @@ if($isEditor && $submitAction) {
 								if(isset($gArr['geoThesID'])){
 									$isInDbStr = 1;
 									if(is_numeric($gArr['geoThesID'])){
-										$isInDbStr = '<a href="index.php?geoThesID='.$gArr['geoThesID'].'" target="_blank">1</a>';
+							         $isInDbStr = '<a href="index.php?geoThesID='.$gArr['geoThesID'].'" target="_blank">1</a>';
 										$prevGeoThesID = $gArr['geoThesID'];
 									}
 									else{

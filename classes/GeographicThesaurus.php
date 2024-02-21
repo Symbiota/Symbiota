@@ -139,13 +139,12 @@ class GeographicThesaurus extends Manager{
       $stmt->bind_param("iss", $geoThesID, $polygon, $polygon);
 
       try {
-         !$stmt->execute();
+         $stmt->execute();
+         return true;
       } catch (Exception $e) {
-         $this->errorMessage = 'ERROR saving new polygon: '.$this->conn->error;
+         $this->errorMessage = 'ERROR saving new polygon: ' . $e->getMessage();
          return false;
       }
-
-      return true;
    }
 
    private function updatePolygon($geoThesID, $polygon) {
@@ -188,18 +187,15 @@ class GeographicThesaurus extends Manager{
                (is_numeric($postArr['acceptedID'])?'"'.$this->cleanInStr($postArr['acceptedID']).'"':'NULL').', '.
                (is_numeric($postArr['parentID'])?'"'.$this->cleanInStr($postArr['parentID']).'"':'NULL').', '.
                ($postArr['notes']?'"'.$this->cleanInStr($postArr['notes']).'"':'NULL').')';
-            if(!$this->conn->query($sql)){
-               $this->errorMessage = 'ERROR adding unit: '.$this->conn->error;
-               return false;
-            }
 
+            $this->conn->query($sql);
             $geoThesID = $this->conn->insert_id;
 
             if(!empty($postArr['polygon']) && $geoThesID) {
                $this->addPolygon($geoThesID, $postArr['polygon']);
             }
          }
-         return true;
+         return $geoThesID;
       } catch(Exception $e) {
          $this->errorMessage = 'ERROR adding unit: '. $e->getMessage();;
          return false;
@@ -398,7 +394,7 @@ class GeographicThesaurus extends Manager{
 		$obj = json_decode($json);
 		if($obj){
 			foreach($obj as $countryObj){
-				$key = $countryObj->boundaryName;
+				$key = $countryObj->boundaryISO;
 				$retArr[$key]['id'] = $countryObj->boundaryID;
 				$retArr[$key]['name'] = $countryObj->boundaryName;
 				$retArr[$key]['canonical'] = $countryObj->boundaryCanonical;
@@ -420,7 +416,7 @@ class GeographicThesaurus extends Manager{
 			//Check to see if country is already in thesaurus
 			$sql = 'SELECT g.geoThesID, g.iso3, p.geoThesID AS polygonID
 				FROM geographicthesaurus g LEFT JOIN geographicpolygon p ON g.geoThesID = p.geoThesID
-				WHERE g.geoLevel = 50 AND g.acceptedID IS NULL AND g.iso3 IN("'.implode('","',array_keys($retArr)).'")';
+				WHERE g.geoLevel = 50 AND g.acceptedID IS NULL AND g.iso3 IN("'.implode('","', array_keys($retArr)) .'")';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retArr[$r->iso3]['geoThesID'] = $r->geoThesID;
@@ -650,19 +646,23 @@ class GeographicThesaurus extends Manager{
       return $pt;
    }
 
-	public function addGeoBoundary($url, $addMissing = false){
+	public function addGeoBoundary($url, $addMissing = false, $baseParentId = null){
       $json = $this->getGeoboundariesJSON($url);
 		$obj = json_decode($json);
       unset($json);
+
+      $results = [];
 
       foreach ($obj->features as $feature) {
          $properties = $feature->properties;
          $geoLevel = $this->getGeoLevel($properties->shapeType);
          $parentID = null;
-
+         
          $geoThesIDs = $this->getGeoThesIDByName($properties->shapeName, $geoLevel);
 
-         if (empty($geoThesIDs)) {
+         //only does iso check for adm0 or countries because only case where
+         //there is just one
+         if (empty($geoThesIDs) && $geoLevel === 50) {
             $geoThesIDs = $this->getGeoThesIDByIso3($properties->shapeISO, $geoLevel);
          }
 
@@ -683,8 +683,9 @@ class GeographicThesaurus extends Manager{
 
          if(is_array($geoThesIDs) && count($geoThesIDs) === 1) {
             $this->addPolygon($geoThesIDs[0][0], json_encode($feature));
+            array_push($results, $geoThesIDs[0][0]);
          } else if ($addMissing) {
-            $this->addGeoUnit([
+            array_push($results, $this->addGeoUnit([
                "geoTerm" => $properties->shapeName, 
                "iso2" =>"",
                "iso3" => $properties->shapeISO,
@@ -692,12 +693,14 @@ class GeographicThesaurus extends Manager{
                "abbreviation" =>"",
                "numCode" =>"",
                "acceptedID" => "",
-               "parentID" => $parentID,
+               "parentID" => $parentID !== null? $parentID: $baseParentId,
                "notes" =>"",
                "polygon" => json_encode($feature),
-            ]);
+            ]));
          }
       }
+
+      return $results;
    }
 
    public function getGeoLevelString(int $geolevel) {
@@ -778,18 +781,18 @@ class GeographicThesaurus extends Manager{
 
       $stmt = $this->conn->prepare($sql);
       $stmt->bind_param("si", $geom, $parentGeoLevel);
-
-      if(!$stmt->execute()){
-         $this->errorMessage = 'ERROR while finding parent polygon: '.$this->conn->error;
-         return -1;
-      }
-
-      /* bind result variables */
-      $stmt->bind_result($result);
-      $stmt->fetch();
-
-      return $result;
       
+      try {
+         $stmt->execute();
+         $stmt->bind_result($result);
+         $stmt->fetch();
+
+         return $result;
+      } catch(Exception $e) {
+         $this->errorMessage = 'ERROR while finding parent polygon: ' . $e->getMessage();
+         return false;
+      }
+ 
    }
 
    public function getGeoThesIDByName($geoTerm, $geoLevel = null, $parentID = null) {
