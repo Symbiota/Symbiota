@@ -94,7 +94,7 @@ function closeModal(elementid) {
  */
 function openCoordAid(mapMode) {
   mapWindow = open(
-    "../collections/tools/mapcoordaid.php?mapmode=" + mapMode,
+    "../tools/mapcoordaid.php?mapmode=" + mapMode,
     "polygon",
     "resizable=0,width=900,height=630,left=20,top=20"
   );
