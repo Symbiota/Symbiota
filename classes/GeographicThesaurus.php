@@ -778,7 +778,7 @@ class GeographicThesaurus extends Manager{
          $sql.=' and g.geoThesID in ('. implode(',', $potentialParents) .')';
       }
 
-      $sql .= 'ORDER BY g.geoLevel DESC';
+      $sql .= ' ORDER BY g.geoLevel DESC';
       
       try {
          $stmt = $this->conn->prepare($sql);
