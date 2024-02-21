@@ -103,7 +103,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 				<!-- Colections -->
 				<section>
 					<!-- Accordion selector -->
-					<input type="checkbox" id="collections" class="accordion-selector" checked />
+					<input type="checkbox" id="collections" class="accordion-selector" />
 					<!-- Accordion header -->
 					<label for="collections" class="accordion-header">Collections</label>
 					<!-- Accordion content -->
@@ -123,7 +123,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 				<!-- Sample Properties -->
 				<section>
 					<!-- Accordion selector -->
-					<input type="checkbox" id="sample" class="accordion-selector" checked />
+					<input type="checkbox" id="sample" class="accordion-selector" />
 					<!-- Accordion header -->
 					<label for="sample" class="accordion-header">Sample Properties</label>
 					<!-- Accordion content -->
