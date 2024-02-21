@@ -41,7 +41,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 			</div>
 			<div style="margin:20px">
 				<p>JRS 2014: <a href="https://www.dropbox.com/scl/fi/ly4sbxq906117tca8f5ah/JRS_WAfrica_2014.pdf?rlkey=8n7rbdthzeprvbit5dh62trc2&dl=0" target="_blank">West African Plants Project</a> (led by Prof. Alex Asase)</p>
-				<p>NSF 2022: <a href="https://www.dropbox.com/s/soqy53xv6ve6rxm/African%20Plants%202022%20Final%20Reduced.pdf?dl=0" target="_blank">Tropical African Plants Project</a></p>
+				<p>NSF 2022: <a href="https://www.dropbox.com/scl/fi/lh9di7oo0hek25s8lnf73/African-Plants-2022-Final-Project-Description-only.pdf?rlkey=za4d08n016glut5ls9wjkamhx&dl=0" target="_blank">Tropical African Plants Project</a></p>
 			</div>
 			<h2>Opportunities</h2>
 			<div style="margin:20px">
