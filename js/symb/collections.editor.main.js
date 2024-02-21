@@ -255,7 +255,7 @@ function verifyFullFormSciName(){
 				$( 'select[name=confidenceranking]' ).val(8);
 			}
 			*/
-			if(data.status == 1){
+			if(data.status == 1 && !$("input[name=cultivationstatus]").prop('checked')){
 				$("select[name=localitysecurity]").val(1);
 				securityChanged(document.fullform);
 			}
@@ -307,7 +307,7 @@ function localitySecurityCheck(){
 			dataType: "json",
 			data: { tid: tidIn, state: stateIn }
 		}).done(function( data ) {
-			if(data == "1"){
+			if(data == "1" && !$("input[name=cultivationstatus]").prop('checked')){
 				$("select[name=localitysecurity]").val(1);
 				securityChanged(document.fullform);
 			}
@@ -333,6 +333,11 @@ function fieldChanged(fieldName){
 		document.fullform.editedfields.value = document.fullform.editedfields.value + fieldName + ";";
 	}
 	catch(ex){
+	}
+	if(fieldName == 'cultivationstatus'){
+		if($("input[name=cultivationstatus]").prop('checked') && $("input[name=localitysecurityreason]").val() == ""){
+			$("select[name=localitysecurity]").val(0);
+		}
 	}
 }
 
