@@ -33,10 +33,12 @@ $geoArr = $geoManager->getGeograpicList($geoThesID);
 $geoUnit = $geoManager->getGeograpicUnit($geoThesID);
 $rankArr = $geoManager->getGeoRankArr();
 $childrenTitleStr = '';
+$geoSubChildren = [];
 
 if($geoThesID && $geoUnit) {
    $childLevel = intval($geoUnit['geoLevel']) + 10;               
    $childrenTitleStr = '<b>'. $rankArr[$childLevel] . '</b> ' . $LANG['TERMS_WITHIN'] . ' <b>' . $geoUnit['geoTerm'] . '</b>';
+   $geoSubChildren = array_filter($geoArr, fn($val) => 10 < (intval($val['geoLevel']) - $geoUnit['geoLevel']));
 } else {
    $childrenTitleStr = '<b>' . $LANG['ROOT_TERMS'] . '</b>';
 }
@@ -471,16 +473,15 @@ function listGeoUnits($arr) {
 				</span>
 			</div >
          <div style="margin: 10px">
-            <?php listGeoUnits(array_filter($geoArr, fn($val) => 10 >= (intval($val['geoLevel']) - $geoUnit['geoLevel']))) ?>
+            <?php listGeoUnits($geoUnit? array_filter($geoArr, fn($val) => 10 >= (intval($val['geoLevel']) - $geoUnit['geoLevel'])): $geoArr) ?>
          </div>
-         <?php $subChildren = array_filter($geoArr, fn($val) => 10 < (intval($val['geoLevel']) - $geoUnit['geoLevel']))?>
 
-         <?php if(!empty($subChildren)): ?>
+         <?php if(!empty($geoSubChildren)): ?>
 			<div style="font-size:1.3em;margin: 10px 0px">
 				<?= '<b>' . $LANG['OTHER'] . '</b>' . $LANG['TERMS_WITHIN'] . ' <b>' . $geoUnit['geoTerm'] . '</b>'?>
 			</div >
          <div style="margin: 10px">
-            <?php listGeoUnits($subChildren)?>
+            <?php listGeoUnits($geoSubChildren)?>
          </div>
          <?php endif ?>
          </div>
