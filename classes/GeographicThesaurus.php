@@ -769,7 +769,7 @@ class GeographicThesaurus extends Manager{
          SELECT g.geoThesID from geographicthesaurus g 
          join geographicpolygon gp on g.geoThesID = gp.geoThesID
          WHERE ST_CONTAINS(gp.footprintPolygon, ST_GEOMFROMTEXT(?)) = 1 and
-         g.geoLevel <= ? ORDER BY g.geoLevel DESC
+         g.geoLevel <= ?
          SQL;
 
       $geom = 'POINT (' . $long . ' '. $lat . ')';
@@ -778,10 +778,11 @@ class GeographicThesaurus extends Manager{
          $sql.=' and g.geoThesID in ('. implode(',', $potentialParents) .')';
       }
 
-      $stmt = $this->conn->prepare($sql);
-      $stmt->bind_param("si", $geom, $parentGeoLevel);
+      $sql .= 'ORDER BY g.geoLevel DESC';
       
       try {
+         $stmt = $this->conn->prepare($sql);
+         $stmt->bind_param("si", $geom, $parentGeoLevel);
          $stmt->execute();
          $stmt->bind_result($result);
          $stmt->fetch();
