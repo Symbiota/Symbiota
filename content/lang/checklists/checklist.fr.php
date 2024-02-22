@@ -34,6 +34,7 @@ $LANG['NOTESVOUC'] = 'Notes &amp; &Eacute;chantillons';
 $LANG['TAXONAUTHOR'] = 'Auteurs de Taxon';
 $LANG['TAXONABC'] = 'Afficher Taxons par ordre Alphab&eacute;tique';
 $LANG['SHOWSUBGENERA'] = 'Afficher le classement sous-générique dans le nom scientifique';
+$LANG['ACTIVATEKEY'] = 'Activer Clé d\'Identification';
 $LANG['BUILD_LIST'] = 'Construire Liste';
 $LANG['DOWNLOAD_CHECKLIST'] = 'T&eacute;l&eacute;charger Liste';
 $LANG['PRINT_BROWSER'] = 'Imprimer dans Navigateur';
