@@ -109,6 +109,6 @@ $LANG['LATITUDE'] = '_Latitud';
 $LANG['LONGITUDE'] = '_Longitud';
 $LANG['RADIUS'] = '_Radio';
 $LANG['ALERT_MSG_PREVIOUS_SEARCH_FORM'] = '¿Está buscando el formulario de búsqueda anterior? Todavía puedes usarlo aquí:';
-
+$LANG['ALL_COLLECTIONS'] = 'Todas las colecciones';
 
 ?>
