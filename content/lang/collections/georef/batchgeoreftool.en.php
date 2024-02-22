@@ -78,4 +78,40 @@ $LANG['BATCH_GEO_TOOL'] = 'Batch Georeferencing Tool';
 $LANG['COL_SELECTOR'] = 'Collection Selector';
 $LANG['ERROR_COL_ID_NULL'] = 'ERROR: Collection identifier is null';
 
+
+$LANG['TABLE_CONTENT'] = 'Geographic Data Update Form: This form facilitates the modification of coordinates, including latitude, longitude, and additional parameters.';
+
+$LANG['MULT_COLL_DIV'] = 'Multiple Collection Div';
+$LANG['COUNTRY'] = 'Country';
+$LANG['STATE'] = 'State';
+$LANG['COUNTY'] = 'County';
+$LANG['MUNICIPALITY'] = 'Municipality';
+$LANG['LOCALITY'] = 'Locality';
+$LANG['LOCALLIST'] = 'Local list';
+$LANG['LATITUDE_DEGREE'] = 'Latitude Degrees';
+$LANG['LATITUDE_MINUTES'] = 'Latitude Minutes';
+$LANG['LATITUDE_SECONDS'] = 'Latitude Seconds';
+$LANG['LATITUDE_NORTH_SOUTH'] = 'Latitude North/South';
+$LANG['DECIMAL_LATITUDE'] = 'Decimal Latitude';
+$LANG['LONGITUDE_DEGREE'] ='Longitude Degrees';
+$LANG['LONGITUDE_MINUTES'] = 'Longitude Minutes';
+$LANG['LONGITUDE_SECONDS'] = 'Longitude Seconds';
+$LANG['LONGITUDE_EAST_WEST'] = 'Longitude East/West';
+$LANG['DECIMAL_LONGITUDE'] = 'Decimal Longitude';
+$LANG['COORDINATE_UNCERTAINTY_IN_METERS'] = 'Coordinate Uncertainty in Meters';
+$LANG['GEODETIC_DATUM'] = 'Geodetic Datum';
+$LANG['FOOT_PRINT_WKT'] = 'Foot Print WKT';
+$LANG['UTM_EAST'] = 'UTM East';
+$LANG['UTM_NORTH'] = 'UTM North';
+$LANG['UTM_ZONE'] = 'UTM Zone';
+$LANG['GEOREFERENCE_SOURCES'] = 'Georeference Sources';
+$LANG['GEOREFERENCE_PROTOCOL'] = 'Georeference Protocol';
+$LANG['GEOREFERENCE_REMARKS'] = 'Georeference Remarks';
+$LANG['GEOREFERENCE_VERIFICATION_STATUS'] = 'Georeference Verification Status';
+$LANG['MINIMUM_ELEVATION_IN_METERS'] = 'Minimum Elevation in Meters';
+$LANG['MAXIMUM_ELEVATION_IN_METERS'] = 'Maximum Elevation in Meters';
+$LANG['MINIMUM_ELEVATION'] = 'Minimum Elevation';
+$LANG['MAXIMUM_ELEVATION'] = 'Maximum Elevation';
+$LANG['GEOREFERENCED_BY'] = 'Georeferenced By';
+
 ?>

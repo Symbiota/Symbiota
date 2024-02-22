@@ -79,4 +79,39 @@ $LANG['BATCH_GEO_TOOL'] = 'Outil de Géoréférencement Par Lots';
 $LANG['COL_SELECTOR'] = 'Sélecteur de Collection';
 $LANG['ERROR_COL_ID_NULL'] = "ERREUR : Identifiant de collection est nul";
 
+$LANG['TABLE_CONTENT'] = 'Formulaire de mise à jour des données géographiques : Ce formulaire facilite la modification des coordonnées, notamment la latitude, la longitude et des paramètres supplémentaires.';
+
+$LANG['MULT_COLL_DIV'] = 'Divisions de collections multiples';
+$LANG['COUNTRY'] = 'Pays';
+$LANG['STATE'] = 'État';
+$LANG['COUNTY'] = 'Comté';
+$LANG['MUNICIPALITY'] = 'Municipalité';
+$LANG['LOCALITY'] = 'Localité';
+$LANG['LOCALLIST'] = 'Liste locale';
+$LANG['LATITUDE_DEGREE'] = 'Degrés de latitude';
+$LANG['LATITUDE_MINUTES'] = 'Minutes de latitude';
+$LANG['LATITUDE_SECONDS'] = 'Secondes de latitude';
+$LANG['LATITUDE_NORTH_SOUTH'] = 'Latitude Nord/Sud';
+$LANG['DECIMAL_LATITUDE'] = 'Latitude décimale';
+$LANG['LONGITUDE_DEGREE'] ='Degrés de longitude';
+$LANG['LONGITUDE_MINUTES'] = 'Longitude Minutes';
+$LANG['LONGITUDE_SECONDS'] = 'Longitude Secondes';
+$LANG['LONGITUDE_EAST_WEST'] = 'Longitude Est/Ouest';
+$LANG['DECIMAL_LONGITUDE'] = 'Longitude décimale';
+$LANG['COORDINATE_UNCERTAINTY_IN_METERS'] = 'Incertitude des coordonnées en mètres';
+$LANG['GEODETIC_DATUM'] = 'Donnée géodésique';
+$LANG['FOOT_PRINT_WKT'] = 'Empreinte WKT';
+$LANG['UTM_EAST'] = 'UTM Est';
+$LANG['UTM_NORTH'] = 'UTM Nord';
+$LANG['UTM_ZONE'] = 'Zone UTM';
+$LANG['GEOREFERENCE_SOURCES'] = 'Sources de géoréférence';
+$LANG['GEOREFERENCE_PROTOCOL'] = 'Protocole de géoréférence';
+$LANG['GEOREFERENCE_REMARKS'] = 'Remarques de géoréférence';
+$LANG['GEOREFERENCE_VERIFICATION_STATUS'] = 'Statut de vérification de géoréférence';
+$LANG['MINIMUM_ELEVATION_IN_METERS'] = 'Altitude minimale en mètres';
+$LANG['MAXIMUM_ELEVATION_IN_METERS'] = 'Altitude maximale en mètres';
+$LANG['MINIMUM_ELEVATION'] = 'Altitude minimale';
+$LANG['MAXIMUM_ELEVATION'] = 'Altitude maximale';
+$LANG['GEOREFERENCED_BY'] = 'Géoréférencé par';
+
 ?>
