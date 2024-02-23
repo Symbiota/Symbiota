@@ -646,7 +646,7 @@ class GeographicThesaurus extends Manager{
       return $pt;
    }
 
-	public function addGeoBoundary($url, $addMissing = false, $baseParentId = null){
+	public function addGeoBoundary($url, $addMissing = false, $baseParentId = null, $potentialParents = []){
       $json = $this->getGeoboundariesJSON($url);
 		$obj = json_decode($json);
       unset($json);
@@ -668,13 +668,15 @@ class GeographicThesaurus extends Manager{
 
          if(is_array($geoThesIDs) && count($geoThesIDs) != 1) {
             $testPoint = $this->getPointWithinPoly($feature->geometry->coordinates);
+            $parents = !empty($geoThesIDs)? array_filter(array_map(fn($val) => $val[1], $geoThesIDs), fn($val) => $val !== null): $potentialParents;
+
             if($testPoint) {
                $parentID = $this->findParentGeometry(
                   $testPoint["lat"], 
                   $testPoint["long"], 
                   $geoLevel - 10, 
                   //map and grab parentIds
-                  array_filter(array_map( fn($val) => $val[1], $geoThesIDs), fn($val) => $val !== null)
+                  $parents
                );
                $geoThesIDs = $this->getGeoThesIDByName($properties->shapeName, $geoLevel, $parentID);
             }

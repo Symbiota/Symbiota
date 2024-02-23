@@ -32,12 +32,15 @@ if($isEditor && $submitAction) {
       set_time_limit(600);
       $geoJsonLinks = array_key_exists('geoJson', $_POST) && is_array($_POST['geoJson'])? $_POST['geoJson'] : [];
 
+      $potentialParents = [];
+
       foreach($geoJsonLinks as $geojson) {
          try {
-            $results = $geoManager->addGeoBoundary($geojson, $addIfMissing, $baseParent);
+            $results = $geoManager->addGeoBoundary($geojson, $addIfMissing, $baseParent, $potentialParents);
             if(is_array($results) && count($results) === 1) {
                $baseParent = $results[0];
             }
+            $potentialParents = $results;
          } catch(Execption $e) {
             $statusStr = 'The harvester encountered an issue';
             break;
