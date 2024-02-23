@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y \
 RUN a2enmod php7.4
 
 # Allow Apache through the firewall
-RUN ufw allow 'Apache'
+#RUN ufw allow 'Apache'
 
 # Install PHP extensions
 RUN apt-get install -y \
@@ -35,7 +35,7 @@ RUN apt-get install -y \
     php-dom
 
 # Clone the GitHub repository
-RUN cd /var/www/html && git clone -b summer-2023 --single-branch https://github.com/BU-Spark/se-Symbiota-portal.git
+# RUN cd /var/www/html && git clone -b summer-2023 --single-branch https://github.com/BU-Spark/se-Symbiota-portal.git
 
 # Copy symbiota config files to the apache2 directory
 COPY 002-symbiota.conf /etc/apache2/sites-available

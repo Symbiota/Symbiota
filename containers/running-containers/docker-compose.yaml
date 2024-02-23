@@ -5,9 +5,9 @@ services:
       context: ./ubuntuContainer
       dockerfile: Dockerfile
     ports:
-      - "8080:80"
+      - "80:80"
     volumes:
-      - C:\\Users\\Computer\\Documents\\symbiota:/var/www/html
+      - /home/herbaria/running-symbiota:/var/www/html/symbiota
     depends_on:
       - symbiota-db
   symbiota-db:
@@ -21,3 +21,8 @@ services:
       MYSQL_PASSWORD: password
     ports:
       - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - /home/herbaria/running-containers/db-backups:/source
+volumes:
+  mysql-data:

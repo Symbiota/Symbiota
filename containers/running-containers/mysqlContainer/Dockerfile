@@ -12,8 +12,8 @@ ENV MYSQL_DATABASE=symbiota
 ENV MYSQL_USER=user
 ENV MYSQL_PASSWORD=password
 
-# Copy the SQL initialization script into the container
-COPY db_schema-3.0.sql /docker-entrypoint-initdb.d/
+# Copy the SQL initialization script into the container (only if no db volume is mounted)
+# COPY db_schema-3.0.sql /docker-entrypoint-initdb.d/
 
 # Expose the MySQL port
 EXPOSE 3306

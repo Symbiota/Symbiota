@@ -1,8 +1,3 @@
--- For container initialization use
-
-CREATE DATABASE IF NOT EXISTS symbiota;
-USE symbiota;
-
 SET FOREIGN_KEY_CHECKS=0;
 
 --
