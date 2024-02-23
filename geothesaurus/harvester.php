@@ -12,9 +12,15 @@ $baseParent = array_key_exists('baseParent', $_POST) && !empty($_POST['baseParen
 $geoManager = new GeographicThesaurus();
 
 $isEditor = false;
-if($IS_ADMIN || array_key_exists('CollAdmin',$USER_RIGHTS)) $isEditor = true;
+
+if(!isset($IS_ADMIN) || (!$IS_ADMIN && !array_key_exists('CollAdmin',$USER_RIGHTS))) {
+   header("Location: ". $CLIENT_ROOT . '/index.php');
+} else {
+   $isEditor = true;
+}
 
 $statusStr = '';
+
 if($isEditor && $submitAction) {
 	if($submitAction == 'transferDataFromLkupTables'){
 		if($geoManager->transferDeprecatedThesaurus()) $statusStr = '<span style="color:green;">Geographic Lookup tables transferred into new Geographic Thesaurus</span>';
