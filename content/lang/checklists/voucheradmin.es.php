@@ -41,9 +41,11 @@ $LANG['OCCURNONVOUCH'] = 'Ocurrencias para taxa sin vouchers';
 $LANG['NEWOCCUR'] = 'Ocurrencias nuevas para todos los taxa';
 $LANG['DISPLAYMODE'] = 'Modo Mostrar';
 $LANG['TAXWITHOUTVOUCH'] = 'Taxa sin Vouchers';
+$LANG['EXCLUDES_CHILDREN_TAXA'] = '(excluye taxones de las listas de niños)';
 $LANG['LISTEDBELOW'] = 'A continuaci&oacute;n se enumeran las ocurrencias que pueden ser vinculadas de una vez a las especies dentro del listado de Comprobaci&oacute;n.';
 $LANG['CHECKLISTID'] = 'Checklist ID';
 $LANG['ADDNAMECURRTAX'] = ' Agregar nombre utilizando la taxonom&iacute;a actual';
+$LANG['ADD_VOUCHERS'] = 'Agregar Vales';
 $LANG['NOVOUCHLOCA'] = 'No se localizaron vouchers';
 $LANG['LISTEDBELOWARESPECINSTRUC'] = 'A continuaci&oacute;n se enumeran las especies de la lista de control que no han sido vinculadas a esp&eacute;cimenes voucher.
 Haga clic en el nombre para utilizar la instrucci&oacute;n de b&uacute;squeda de arriba para consultar de forma din&aacute;mica el conjunto de datos de ocurrencia de

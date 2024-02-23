@@ -41,9 +41,11 @@ $LANG['OCCURNONVOUCH'] = 'Occurrences pour les Taxons sans Échantillons';
 $LANG['NEWOCCUR'] = 'Nouvelles occurrences pour tous les taxons';
 $LANG['DISPLAYMODE'] = 'Mode d\'Affichage';
 $LANG['TAXWITHOUTVOUCH'] = 'Taxons sans Échantillons';
+$LANG['EXCLUDES_CHILDREN_TAXA'] = '(exclut les taxons des listes des enfants)';
 $LANG['LISTEDBELOW'] = 'Ci-dessous sont listées les occurrences qui peuvent être liées par lot à des espèces dans la liste.';
 $LANG['CHECKLISTID'] = 'ID de Liste';
 $LANG['ADDNAMECURRTAX'] = 'Ajouter nom en utilisant la taxonomie actuelle';
+$LANG['ADD_VOUCHERS'] = 'Ajouter des Bons';
 $LANG['NOVOUCHLOCA'] = 'Aucun échantillon localisé';
 $LANG['LISTEDBELOWARESPECINSTRUC'] = "Ci-dessous figurent les espèces de la liste qui n'ont pas d'échantillons liés..
 Cliquez sur le nom pour utiliser l'instruction de recherche ci-dessus pour interroger dynamiquement l'ensemble de données

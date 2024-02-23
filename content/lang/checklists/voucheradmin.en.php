@@ -36,14 +36,19 @@ $LANG['LOOKUPEXT'] = 'Retrieve external voucher information';
 $LANG['SAVEEXTVOUCH'] = 'Save external vouchers to checklist';
 $LANG['EMPTY_LIST'] = 'Checklist is empty';
 $LANG['REPORTS'] = 'Reports';
+
+// nonvoucheredtab.php
+
 $LANG['NONVOUCHTAX'] = 'Non-vouchered taxa list';
 $LANG['OCCURNONVOUCH'] = 'Occurrences for non-vouchered taxa';
 $LANG['NEWOCCUR'] = 'New occurrences for all taxa';
 $LANG['DISPLAYMODE'] = 'Display Mode';
 $LANG['TAXWITHOUTVOUCH'] = 'Taxa without Vouchers';
+$LANG['EXCLUDES_CHILDREN_TAXA'] = '(excludes taxa from children checklists)';
 $LANG['LISTEDBELOW'] = 'Listed below are occurrences that can be batch linked to species within the checklist.';
 $LANG['CHECKLISTID'] = 'Checklist ID';
 $LANG['ADDNAMECURRTAX'] = ' Add name using current taxonomy';
+$LANG['ADD_VOUCHERS'] = 'Add Vouchers';
 $LANG['NOVOUCHLOCA'] = 'No vouchers located';
 $LANG['LISTEDBELOWARESPECINSTRUC'] = 'Listed below are species from the checklist that do not have linked specimen vouchers.
 Click on name to use the search statement above to dynamically query the occurrence dataset for
