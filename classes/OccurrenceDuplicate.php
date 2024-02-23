@@ -356,10 +356,10 @@ class OccurrenceDuplicate {
 			$result = $this->conn->query($sql);
 			while($row = $result->fetch_assoc()) {
 				foreach($row as $k => $v){
-					$vStr = trim($v);
-					$retArr[$row['occid']][$k] = $vStr;
+					if($v) $v = trim($v);
+					$retArr[$row['occid']][$k] = $v;
 					//Identify relevant fields
-					if($vStr) $relArr[$k] = '';
+					if($v) $relArr[$k] = '';
 				}
 			}
 			$result->free();

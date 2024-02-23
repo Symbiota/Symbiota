@@ -80,6 +80,9 @@ UPDATE omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid
   WHERE (o.basisofrecord = "HumanObservation" OR o.basisofrecord IS NULL) AND c.colltype = 'Preserved Specimens'
   AND o.occid NOT IN(SELECT occid FROM omoccuredits WHERE fieldname = "basisofrecord");
 
+ALTER TABLE `omoccurrences` 
+  ADD COLUMN `vitality` VARCHAR(150) NULL DEFAULT NULL AFTER `behavior`;
+
 #Standardize naming of indexes within occurrence table 
 ALTER TABLE `omoccurrences` 
   ADD INDEX `FK_occurrences_collid` (`collid` ASC);
@@ -122,6 +125,8 @@ ALTER TABLE `omoccurrences`
 ALTER TABLE `omoccurresource` 
   RENAME TO  `deprecated_omoccurresource` ;
 
+ALTER TABLE `uploadspectemp` 
+  ADD COLUMN `vitality` VARCHAR(150) NULL DEFAULT NULL AFTER `behavior`;
 
 ALTER TABLE `uploadspectemp` 
   DROP INDEX `Index_uploadspectemp_occid`,

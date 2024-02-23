@@ -614,13 +614,13 @@
 /* Select control ***********************************/
 .inner-search .select-container label {
   font-size: 0.8em;
-  postion: relative;
+  position: relative;
   top: 22px;
   background-color: white;
   padding: 2px 4px;
 }
 
-.inner-search .select-container label span {
+.inner-search .select-container label span::before {
   content: attr(data-label);
   left: 16px;
   top: 0;
