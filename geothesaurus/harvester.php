@@ -23,8 +23,10 @@ if($isEditor && $submitAction) {
 	elseif($submitAction == 'submitCountryForm'){
       //This Call can Take a very long time depending on the size of the
       //geoJson and how many children are within the feature collection past
-      set_time_limit(300);
-      foreach($_POST['geoJson'] as $geojson) {
+      set_time_limit(600);
+      $geoJsonLinks = array_key_exists('geoJson', $_POST) && is_array($_POST['geoJson'])? $_POST['geoJson'] : [];
+
+      foreach($geoJsonLinks as $geojson) {
          try {
             $results = $geoManager->addGeoBoundary($geojson, $addIfMissing, $baseParent);
             if(is_array($results) && count($results) === 1) {
@@ -61,6 +63,15 @@ if($isEditor && $submitAction) {
 		.link-div{ margin:0px 30px }
 		#status-div{ margin:15px; padding: 15px; }
 	</style>
+   <script type="text/javascript">
+      function submit_loading() {
+         let spinner = document.getElementById("submit-loading")
+         let helpText = document.getElementById("submit-loading-text")
+
+         if(spinner) spinner.style.display = "block";
+         if(helpText) helpText.style.display = "block";
+      }
+   </script>
 </head>
 <body>
 	<?php
@@ -161,7 +172,6 @@ if($isEditor && $submitAction) {
                      }
                   }
                }
-
             </script>
 					<form name="" method="post" action="harvester.php">
                   <input style="display:none" name="baseParent" value="<?= isset($geoList['ADM0']['geoThesID'])? $geoList['ADM0']['geoThesID'] : null?>">
@@ -207,7 +217,15 @@ if($isEditor && $submitAction) {
                      <label style="text-decoration: none" for="addgeounit">Add geographical units if missing</label>
                   </div>
 						<input name="gbAction" type="hidden" value="<?php echo $gbAction; ?>" />
-						<button name="submitaction" style="margin-top:1rem" type="submit" value="submitCountryForm">Add Boundaries</button>
+                  <span style="display:inline-flex;vertical-align:middle;margin-top:1rem">
+                     <button name="submitaction" onclick="submit_loading()" type="submit" value="submitCountryForm">
+                        Add Boundaries 
+                     </button>
+                     <img id="submit-loading"style="border:0px;width:2rem;height:2rem;display:none" src="../images/ajax-loader.gif" />
+                  </span>
+                  <div id="submit-loading-text" style="display:none">
+                     This process may take a while to process the geographical data
+                  </div> 
 					</form>
 					<?php
 				}

@@ -680,8 +680,7 @@ class GeographicThesaurus extends Manager{
             }
          } 
 
-         if(is_array($geoThesIDs) && count($geoThesIDs) === 1) {
-            $this->addPolygon($geoThesIDs[0][0], json_encode($feature));
+         if(is_array($geoThesIDs) && count($geoThesIDs) === 1 && $this->addPolygon($geoThesIDs[0][0], json_encode($feature))) {
             array_push($results, $geoThesIDs[0][0]);
          } else if ($addMissing) {
             array_push($results, $this->addGeoUnit([
