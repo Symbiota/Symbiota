@@ -308,7 +308,10 @@ class ChecklistManager extends Manager{
 				//echo $vSql; exit;
 		 		$vResult = $this->conn->query($vSql);
 				while ($row = $vResult->fetch_object()){
-					$displayStr = ($row->recordedby?$row->recordedby:($row->catalognumber?$row->catalognumber:$row->othercatalognumbers));
+					$displayStr = '';
+					if($row->recordedby) $displayStr = $row->recordedby;
+					elseif($row->catalognumber) $displayStr = $row->catalognumber;
+					elseif($row->othercatalognumbers) $displayStr = $row->othercatalognumbers;
 					if(strlen($displayStr) > 25){
 						//Collector string is too big, thus reduce
 						$strPos = strpos($displayStr,';');
