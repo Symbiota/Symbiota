@@ -370,7 +370,7 @@ if($isEditor && $submitAction){
 												if(array_key_exists('decimallatitude',$v) && $v['decimallatitude']){
 													$locStr .= ' ('.$v['decimallatitude'].', '.$v['decimallongitude'].') ';
 												}
-												echo '<option value="'.$v['occid'].'">'.trim($locStr,' ,').' ['.$v['cnt'].']</option>'."\n";
+												echo '<option value="' . $v['occid'].'">'.trim($locStr ?? '',' ,') . ' [' . $v['cnt'] . ']</option>' . "\n";
 											}
 										}
 										else{
@@ -399,7 +399,7 @@ if($isEditor && $submitAction){
 								</fieldset>
 							</div>
 							<div style="margin:15px;">
-								<table class='xdebug-error xe-deprecated' dir='ltr' cellspacing='0' cellpadding='1' style='border: 1px solid black;'>
+								<table class='xdebug-error xe-deprecated' dir='ltr' style='border: 1px solid black;'>
 								    <caption><b><?php echo $LANG['TABLE_CONTENT'] ?></b></caption>
 									<tr>
 										<td></td>
