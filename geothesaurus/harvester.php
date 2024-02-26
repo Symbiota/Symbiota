@@ -31,7 +31,19 @@ if($isEditor && $submitAction) {
       //geoJson and how many children are within the feature collection past
       set_time_limit(600);
       $geoJsonLinks = array_key_exists('geoJson', $_POST) && is_array($_POST['geoJson'])? $_POST['geoJson'] : [];
+      $types = array_key_exists('type', $_POST) && is_array($_POST['type'])? $_POST['type'] : [];
       $potentialParents = [];
+
+      if ($baseParent !== null && count($types) > 0) {
+         $potentialParents = array_map(
+            fn($val) => $val['geoThesID'],
+            array_filter(
+               $geoManager->getChildren([$baseParent]), 
+               fn($val) => $val['geoLevel'] === ($geoManager->getGeoLevel($types[0]) - 10)
+            )
+         );
+      }
+
       foreach($geoJsonLinks as $geojson) {
          try {
             $results = $geoManager->addGeoBoundary($geojson, $addIfMissing, $baseParent, $potentialParents);
@@ -41,6 +53,7 @@ if($isEditor && $submitAction) {
                }
                $potentialParents = $results;
             }
+
          } catch(Execption $e) {
             $statusStr = 'The harvester encountered an issue';
             break;
@@ -79,6 +92,22 @@ if($isEditor && $submitAction) {
 
          if(spinner) spinner.style.display = "block";
          if(helpText) helpText.style.display = "block";
+      }
+
+      function checkHierarchy(e) {
+         let ranked_inputs = document.getElementsByName("geoJson[]")
+         let types = document.getElementsByName("type[]")
+         let shouldCheck = true;
+
+         for(let i = 0; i < ranked_inputs.length; i++) {
+            if(e.value === ranked_inputs[i].value) {
+               shouldCheck = false;
+               if(!ranked_inputs[i].checked) types[i].disabled = true;
+            } else {
+               ranked_inputs[i].checked = shouldCheck;
+               types[i].disabled = ranked_inputs[i].checked? ranked_inputs[i].disabled: true;
+            }
+         }
       }
    </script>
 </head>
@@ -168,20 +197,6 @@ if($isEditor && $submitAction) {
 					<ul>
 						<li><a href="harvester.php">Return to Country List</a></li>
 					</ul>
-            <script type="text/javascript">
-               function checkHierarchy(e) {
-                  let ranked_inputs = document.getElementsByName("geoJson[]")
-                  let shouldCheck = true;
-
-                  for(let i = 0; i < ranked_inputs.length; i++) {
-                     if(e.value === ranked_inputs[i].value) {
-                        shouldCheck = false;
-                     } else {
-                        ranked_inputs[i].checked = shouldCheck;
-                     }
-                  }
-               }
-            </script>
 					<form name="" method="post" action="harvester.php">
                   <input style="display:none" name="baseParent" value="<?= isset($geoList['ADM0']['geoThesID'])? $geoList['ADM0']['geoThesID'] : null?>">
 						<table class="styledtable">
@@ -190,9 +205,11 @@ if($isEditor && $submitAction) {
 							</tr>
 							<?php
 							$prevGeoThesID = 0;
+
 							foreach($geoList as $type => $gArr){
 								echo '<tr class="'.(isset($gArr['geoThesID'])?'nodb':'').(isset($gArr['polygon'])?' nopoly':'').'">';
 								echo '<td><input name="geoJson[]" onchange="checkHierarchy(this)" type="checkbox" value="'.$gArr['geoJson'].'" '.(isset($gArr['polygon'])?'DISABLED':'').' /></td>';
+                        echo '<input name="type[]" type="hidden" value="' . $type . '"/>';
 								echo '<td>'.$type.'</td>';
 								echo '<td>'.$gArr['id'].'</td>';
 								$isInDbStr = 'No';

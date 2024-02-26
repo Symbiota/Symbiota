@@ -202,27 +202,6 @@ class GeographicThesaurus extends Manager{
       }
    }
 
-	public function addChildGeoUnit($postArr){
-		//Add new child
-		//Uses an INSERT INTO sql statement
-
-		/* 	$statusStr = '';
-		if(is_numeric($postArr['geoThesID'])){
-			$sql = 'UPDATE geographicthesaurus '.
-				'SET geoterm = '.($postArr['geoterm']?'"'.$postArr['geoterm'].'"':'NULL').
-				', iso2 = '.($postArr['iso2']?'"'.$postArr['iso2'].'"':'NULL').
-				', iso3 = '.($postArr['iso3']?'"'.$postArr['iso3'].'"':'NULL').
-				' WHERE (geoThesID = '.$postArr['geoThesID'].')';
-			if($this->conn->query($sql)){
-				$statusStr = 'SUCCESS: changes saved';
-			}
-			else{
-				$statusStr = 'ERROR: changes not saved'.$this->conn->error;
-			}
-		}
-		return $statusStr; */
-	}
-
 	public function deleteGeoUnit($geoThesID){
 		if(is_numeric($geoThesID)){
 			$sql = 'DELETE FROM geographicthesaurus WHERE (geoThesID = '.$geoThesID.')';
@@ -232,7 +211,27 @@ class GeographicThesaurus extends Manager{
 			}
 		}
 		return true;
-	}
+   }
+   
+   public function getChildren(array $parentIDs): array {
+      if(count($parentIDs) <= 0) return [];
+
+      $parameters = str_repeat('?,', count($parentIDs) - 1) . '?';
+      $sql = <<<SQL
+      SELECT geoThesID, geoterm, geoLevel FROM geographicthesaurus where parentID in ($parameters)
+      SQL;
+
+      try {
+         $result = $this->conn->execute_query($sql, $parentIDs);
+         $children = $result->fetch_all(MYSQLI_ASSOC);
+         $children_ids = array_map(fn($v) => $v["geoThesID"], $children);
+
+         return array_merge($children, $this->getChildren($children_ids));
+      } catch(Exception $e) {
+         $this->errorMessage = 'ERROR while finding parent polygon: ' . $e->getMessage();
+         return [];
+      }
+   }
 
 	private function setChildCnt($geoIdStr){
 		$retArr = array();
@@ -752,7 +751,7 @@ class GeographicThesaurus extends Manager{
       return $geoterms;
    }
 
-   private function getGeoLevel(string $type): int {
+   public function getGeoLevel(string $type): int {
       switch ($type) {
          case 'ADM1':
             return 60;
