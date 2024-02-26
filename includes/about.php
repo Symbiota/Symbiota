@@ -27,37 +27,39 @@ header("Content-Type: text/html; charset=".$CHARSET);
 			<?php
 				if ($LANG_TAG=='fr'){
 			?>
-			<h2>Qu’est-ce que le Projet Plantes Tropicales d’Afrique?</h2>
+			<h2>Qu’est-ce que le Projet sur les Plantes d'Afrique Tropicales ?</h2>
 			<div style="margin:20px">
 				<p>
-					The Tropical African Plants Project is a large-scale effort designed to establish an important new 
-					biodiversity data resource. The initiative began with a “proof of concept” project, supported by the 
-					JRS Biodiversity Foundation, and led by Prof. Alex Asase (University of Ghana), which resulted in the 
-					digitization of more than 250,000 biodiversity data records from European and West African herbaria. 
-					The present effort, supported by the U.S. National Science Foundation, will lead to the digitization 
-					of more than 1.1M herbarium specimens and associated data records from across tropical Africa housed 
-					in 21 U.S. herbaria. Links to both proposals are provided below.
+				Le Projet sur les plantes d'Afrique tropicales est un effort à grande échelle conçu pour établir 
+				une nouvelle ressource importante de données sur la biodiversité. L'initiative a débuté par un 
+				projet de « preuve de concept », soutenu par la Fondation JRS pour la biodiversité et dirigé par 
+				le professeur Alex Asase (Université du Ghana), qui a abouti à la numérisation de plus de 250 000 
+				enregistrements de données sur la biodiversité provenant d'herbiers européens et ouest-africains. 
+				Le présent effort, soutenu par la National Science Foundation des États-Unis, mènera à la numérisation 
+				de plus de 1,1 million de spécimens d'herbiers et d'enregistrements de données associés provenant 
+				de toute l'Afrique tropicale et hébergés dans 21 herbiers américains. Les liens vers les demandes 
+				de financement pour ces deux projets sont fournis ci-dessous.
 				</p>
 			</div>
 			<div style="margin:20px">
-				<p>JRS 2014: <a href="https://www.dropbox.com/scl/fi/ly4sbxq906117tca8f5ah/JRS_WAfrica_2014.pdf?rlkey=8n7rbdthzeprvbit5dh62trc2&dl=0" target="_blank">West African Plants Project</a> (led by Prof. Alex Asase)</p>
-				<p>NSF 2022: <a href="https://www.dropbox.com/scl/fi/lh9di7oo0hek25s8lnf73/African-Plants-2022-Final-Project-Description-only.pdf?rlkey=za4d08n016glut5ls9wjkamhx&dl=0" target="_blank">Tropical African Plants Project</a></p>
+				<p>JRS 2014: <a href="https://www.dropbox.com/scl/fi/ly4sbxq906117tca8f5ah/JRS_WAfrica_2014.pdf?rlkey=8n7rbdthzeprvbit5dh62trc2&dl=0" target="_blank">Projet sur les plantes d'Afrique de l'Ouest</a> (dirigé par le professeur Alex Asase)</p>
+				<p>NSF 2022: <a href="https://www.dropbox.com/scl/fi/lh9di7oo0hek25s8lnf73/African-Plants-2022-Final-Project-Description-only.pdf?rlkey=za4d08n016glut5ls9wjkamhx&dl=0" target="_blank">Projet sur les plantes d’Afrique tropicales</a></p>
 			</div>
-			<h2>Opportunities</h2>
+			<h2>Opportunités</h2>
 			<div style="margin:20px">
 				<p>
-					Our collaborative endeavor offers many opportunities for individuals and institutions around the world 
-					to participate in the Tropical African Plants Project. 
+					Notre effort de collaboration offre de nombreuses opportunités aux individus et aux institutions 
+					du monde entier de participer au projet sur les plantes d'Afrique tropicales.
 				</p>
 				<p>
-					For researchers and students interested in using the data, they are openly available and accessible via 
-					this portal. Individuals with more specialized or larger-scale requests are encouraged to contact the 
-					project leadership listed below.
+					Pour les chercheurs et étudiants intéressés par l'utilisation des données, elles sont librement 
+					accessibles via ce portail. Les personnes ayant des demandes plus spécialisées ou à plus grande 
+					échelle sont encouragées à contacter les responsables du projet listés ci-dessous.
 				</p>
 				<p>
-					Institutions with herbaria and other biocollections interested in contributing data should contact 
-					the <a href="https://symbiota.org/" target="_blank">Symbiota Support Hub</a>, which has created 
-					and is maintaining the system of portals for biodiversity data.
+					Les institutions disposant d'herbiers et d'autres biocollections intéressées à contribuer des données 
+					sont invitées à contacter le <a href="https://symbiota.org/" target="_blank">Symbiota Support Hub</a>, qui a créé 
+					et gère le système de portails pour les données sur la biodiversité.
 				</p>
 			</div>
 			<h2>Contacts</h2>

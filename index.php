@@ -41,6 +41,28 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 			</p>
 		</div>
 		<?php
+			if ($LANG_TAG=='fr'){
+		?>
+		<div class="lang fr">
+			<h1>Bem-vindo!</h1>
+			<!-- <h2>Collaborative Biodiversity Portal</h2> -->
+			<p>Le Portail des Plantes Africaines fournit un point d'accès unique à des millions d'enregistrements de plantes 
+				des pays africains. Cette initiative est financée par d'une <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=2223875" target="_blank">subvention</a> 
+				du programme Advancing the Digitization of Biological Collections de la National Science Foundation (USA) qui vise à 
+				(1) numériser les spécimens et les données associées des collections africaines déposées dans les herbiers aux 
+				États-Unis, (2) géoréférencer et améliorer ces données, et (3) les partager librement avec les communautés 
+				mondiales de la science et de la conservation. Vous pouvez lire la 
+				<a href="https://www.dropbox.com/scl/fi/lh9di7oo0hek25s8lnf73/African-Plants-2022-Final-Project-Description-only.pdf?rlkey=za4d08n016glut5ls9wjkamhx&dl=0" target="_blank">description complète du projet ici</a>.
+			</p>
+				
+			<p>Le Portail des plantes africaines a une portée large et est ouvert à la participation de toute institution 
+				souhaitant utiliser cette ressource et/ou fournir des images et des données. L'objectif ultime du Portail 
+				est d'établir une ressource mondiale en constante expansion contenant des données sur la biodiversité végétale 
+				concernant l'Afrique, afin de faciliter une nouvelle génération d'analyses qui informeront et éclaireront la 
+				compréhension et la conservation de la riche flore du continent.
+			</p>
+		</div>
+		<?php
 			} else {
 		?>
 		<div class="lang en">
