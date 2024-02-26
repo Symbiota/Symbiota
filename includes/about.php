@@ -68,8 +68,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 				<p><b>Project Manager:</b> <a href="slowell@ku.edu">Samantha Lowell</a></p>
 			</div>
 			<?php
-				}
-				if ($LANG_TAG=='pt'){
+				} else if ($LANG_TAG=='pt'){
 			?>
 			<h2>O que é o Projeto Plantas Tropicais Africanas?</h2>
 			<div style="margin:20px">

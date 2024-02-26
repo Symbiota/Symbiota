@@ -41,7 +41,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 			</p>
 		</div>
 		<?php
-			if ($LANG_TAG=='fr'){
+			} else if ($LANG_TAG=='fr'){
 		?>
 		<div class="lang fr">
 			<h1>Bem-vindo!</h1>
