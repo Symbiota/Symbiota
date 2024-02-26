@@ -54,6 +54,7 @@ $LANG['TITLE_TEXT_4'] = 'Fecha final del per&iacute;odo; dejar en blanco si busc
 $LANG['SPECIMEN_HEADER'] = 'Cat&aacute;logo de la Colecci&oacute;n';
 $LANG['CATALOG_NUMBER'] = 'N&uacute;mero de Cat&aacute;logo';
 $LANG['INCLUDE_OTHER_CATNUM'] = 'Includa todos n&uacute;meros de cat&eacute;logo y GUIDs';
+$LANG['MATERIAL_SAMPLE_TYPE'] = 'Limitar a Material Sample';
 $LANG['TYPE'] = 'Limitar a ejemplares tipo';
 $LANG['HAS_IMAGE'] = 'Limitar a ejemplares con im&aacute;genes';
 $LANG['HAS_GENETIC'] = 'Limitar a ejemplares con datos gen&eacute;ticos';

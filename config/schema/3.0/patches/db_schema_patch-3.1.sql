@@ -29,6 +29,11 @@ ALTER TABLE `images`
   ADD COLUMN `pixelXDimension` INT NULL AFTER `pixelYDimension`,
   CHANGE COLUMN `InitialTimeStamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;  
 
+
+ALTER TABLE `ommaterialsample` 
+  ADD INDEX `IX_ommatsample_sampleType` (`sampleType` ASC);
+
+
 ALTER TABLE `omoccurassociations` 
   ADD COLUMN `associationType` VARCHAR(45) NOT NULL AFTER `occid`;
 

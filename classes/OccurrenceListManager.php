@@ -39,8 +39,8 @@ class OccurrenceListManager extends OccurrenceManager{
 			$sql .= 'ORDER BY c.sortseq, c.collectionname ';
 			$pageRequest = ($pageRequest - 1)*$cntPerPage;
 		}
-		$sql .= ' LIMIT '.$pageRequest.",".$cntPerPage;
-		//echo "<div>Spec sql: ".$sql."</div>";
+		$sql .= ' LIMIT ' . $pageRequest . ',' . $cntPerPage;
+		//echo '<div>Spec sql: ' . $sql . '</div>'; exit;
 		$result = $this->conn->query($sql);
 		if($result){
 			$securityCollArr = array();
