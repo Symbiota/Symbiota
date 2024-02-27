@@ -81,13 +81,7 @@ $LANG['COL_SELECTOR'] = 'Seleccionador de Colecciones';
 $LANG['ERROR_COL_ID_NULL'] = 'ERROR: Identificador de la colección está vacío';
 
 $LANG['TABLE_CONTENT'] = 'Formulario de actualización de datos geográficos: este formulario facilita la modificación de coordenadas, incluyendo latitud, longitud y parámetros adicionales.';
-
 $LANG['MULT_COLL_DIV'] = 'División de colección múltiple';
-$LANG['COUNTRY'] = 'País';
-$LANG['STATE'] = 'Estado';
-$LANG['COUNTY'] = 'Condado';
-$LANG['MUNICIPALITY'] = 'Municipio';
-$LANG['LOCALITY'] = 'Localidad';
 $LANG['LOCALLIST'] = 'Lista local';
 $LANG['LATITUDE_DEGREE'] = 'Grados de latitud';
 $LANG['LATITUDE_MINUTES'] = 'Minutos de latitud';
@@ -99,20 +93,11 @@ $LANG['LONGITUDE_MINUTES'] = 'Minutos de longitud';
 $LANG['LONGITUDE_SECONDS'] = 'Segundos de longitud';
 $LANG['LONGITUDE_EAST_WEST'] = 'Longitud Este/Oeste';
 $LANG['DECIMAL_LONGITUDE'] = 'Longitud decimal';
-$LANG['COORDINATE_UNCERTAINTY_IN_METERS'] = 'Incertidumbre de coordenadas en metros';
-$LANG['GEODETIC_DATUM'] = 'Datum geodésico';
-$LANG['FOOT_PRINT_WKT'] = 'WKT de huella';
-$LANG['UTM_EAST'] = 'UTM Este';
-$LANG['UTM_NORTH'] = 'Norte UTM';
-$LANG['UTM_ZONE'] = 'Zona UTM';
-$LANG['GEOREFERENCE_SOURCES'] = 'Fuentes de georreferenciación';
-$LANG['GEOREFERENCE_PROTOCOL'] = 'Protocolo de georeferencia';
-$LANG['GEOREFERENCE_REMARKS'] = 'Observaciones de georeferencia';
-$LANG['GEOREFERENCE_VERIFICATION_STATUS'] = 'Estado de verificación de georeferencia';
 $LANG['MINIMUM_ELEVATION_IN_METERS'] = 'Elevación mínima en metros';
 $LANG['MAXIMUM_ELEVATION_IN_METERS'] = 'Elevación máxima en metros';
 $LANG['MINIMUM_ELEVATION'] = 'Elevación mínima';
 $LANG['MAXIMUM_ELEVATION'] = 'Elevación máxima';
-$LANG['GEOREFERENCED_BY'] = 'Georeferenciado por';
-
+$LANG['ADD_ICON'] = 'Agregar';
+$LANG['WORLD_ICON'] = 'Icono mundial';
+$LANG['EDIT_PLUS_ICON'] = 'Editar icono más';
 ?>
