@@ -7,6 +7,7 @@ include_once($SERVER_ROOT . '/classes/CollectionMetadata.php');
 include_once($SERVER_ROOT . '/classes/DatasetsMetadata.php');
 include_once($SERVER_ROOT.'/content/lang/collections/sharedterms.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceAttributeSearch.php');
 header("Content-Type: text/html; charset=" . $CHARSET);
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/search/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/search/index.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/search/index.en.php');
@@ -84,7 +85,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 						</div>
 						<div class="select-container">
 							<label for="taxontype" class="skip-link"><?php echo $LANG['TAXON_TYPE'] ?></label>
-							<select name="taxontype" id="taxontype">
+							<select name="taxontype" id="taxontype" style="margin-top:0;">
 								<option value="1"><?php echo $LANG['ANY_NAME'] ?></option>
 								<option value="2"><?php echo $LANG['SCIENTIFIC_NAME'] ?></option>
 								<option value="3"><?php echo $LANG['FAMILY'] ?></option>
@@ -102,75 +103,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 					</div>
 				</section>
 
-				<!-- Colections -->
-				<section>
-					<!-- Accordion selector -->
-					<input type="checkbox" id="collections" class="accordion-selector" />
-					<!-- Accordion header -->
-					<label for="collections" class="accordion-header"><?php echo $LANG['COLLECTIONS'] ?></label>
-					<!-- Accordion content -->
-					<div class="content">
-						<div id="search-form-colls">
-							<!-- Open Collections modal -->
-							<div id="specobsdiv">
-								<?php 
-								include_once('./collectionContent.php');
-								?>
-							</div>
-							
-						</div>
-					</div>
-				</section>
-				
-				<!-- Sample Properties -->
-				<section>
-					<!-- Accordion selector -->
-					<input type="checkbox" id="sample" class="accordion-selector" />
-					<!-- Accordion header -->
-					<label for="sample" class="accordion-header"><?php echo $LANG['SAMPLE_PROPERTIES'] ?></label>
-					<!-- Accordion content -->
-					<div class="content">
-						<div id="search-form-sample">
-							<div>
-								<div>
-									<input type="checkbox" name="includeothercatnum" id="includeothercatnum" value="1" data-chip="<?php echo $LANG['INCLUDE_OTHER_IDS'] ?>" checked>
-									<label for="includeothercatnum"><?php echo $LANG['INCLUDE_CATA_NUM_GUIDs'] ?></label>
-								</div>
-								<div class="input-text-container">
-									<label for="catnum" class="input-text--outlined">
-										<span class="skip-link"><?php echo $LANG['CATALOG_NUMBER'] ?></span>
-										<input type="text" name="catnum" id="catnum" data-chip="<?php echo $LANG['CATALOG_NUMBER'] ?>">
-										<span data-label="<?php echo $LANG['CATALOG_NUMBER'] ?>"></span>
-									</label>
-									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
-								</div>
-							</div>
-							<div>
-								<div>
-									<input type='checkbox' name='typestatus' id='typestatus' value='1' data-chip="<?php echo $LANG['ONLY_TYPE_SPECIMENS'] ?>" />
-									<label for="typestatus"><?php echo $LANG['TYPE'] ?></label>
-								</div>
-								<div>
-									<input type="checkbox" name="hasimages" id="hasimages" value=1 data-chip="<?php echo $LANG['ONLY_WITH_IMAGES'] ?>">
-									<label for="hasimages"><?php echo $LANG['LIMIT_TO_SPECIMENS_W_IMAGES'] ?></label>
-								</div>
-								<div>
-									<input type="checkbox" name="hasgenetic" id="hasgenetic" value=1 data-chip="<?php echo $LANG['ONLY_WITH_GENETIC'] ?>">
-									<label for="hasgenetic"><?php echo $LANG['LIMIT_TO_SPECIMENS_W_GENETIC_DATA'] ?></label>
-								</div>
-								<div>
-									<input type='checkbox' name='hascoords' id='hascoords' value='1' data-chip="<?php echo $LANG['ONLY_WITH_COORDINATES'] ?>" />
-									<label for="hascoords"><?php echo $LANG['HAS_COORDS'] ?></label>
-								</div>
-								<div>
-									<input type='checkbox' name='includecult' id='includecult' value='1' data-chip="<?php echo $LANG['INCLUDE_CULTIVATED'] ?>" <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? 'checked' : '' ?> />
-									<label for="includecult"><?php echo $LANG['INCLUDE_CULTIVATED'] ?></label>
-								</div>
-							</div>
-						</div>
-					</div>
-				</section>
-				
 				<!-- Locality -->
 				<section>
 					<!-- Accordion selector -->
@@ -383,6 +315,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 						</div>
 					</div>
 				</section>
+
 				<!-- Collecting Event -->
 				<section>
 					<!-- Accordion selector -->
@@ -425,6 +358,128 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 						</div>
 					</div>
 				</section>
+
+				<!-- Sample Properties -->
+				<section>
+					<!-- Accordion selector -->
+					<input type="checkbox" id="sample" class="accordion-selector" />
+					<!-- Accordion header -->
+					<label for="sample" class="accordion-header"><?php echo $LANG['SAMPLE_PROPERTIES'] ?></label>
+					<!-- Accordion content -->
+					<div class="content">
+						<div id="search-form-sample">
+							<div>
+								<div>
+									<input type="checkbox" name="includeothercatnum" id="includeothercatnum" value="1" data-chip="<?php echo $LANG['INCLUDE_OTHER_IDS'] ?>" checked>
+									<label for="includeothercatnum"><?php echo $LANG['INCLUDE_CATA_NUM_GUIDs'] ?></label>
+								</div>
+								<div class="input-text-container">
+									<label for="catnum" class="input-text--outlined">
+										<span class="skip-link"><?php echo $LANG['CATALOG_NUMBER'] ?></span>
+										<input type="text" name="catnum" id="catnum" data-chip="<?php echo $LANG['CATALOG_NUMBER'] ?>">
+										<span data-label="<?php echo $LANG['CATALOG_NUMBER'] ?>"></span>
+									</label>
+									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
+								</div>
+							</div>
+							<div>
+								<div>
+									<input type='checkbox' name='typestatus' id='typestatus' value='1' data-chip="<?php echo $LANG['ONLY_TYPE_SPECIMENS'] ?>" />
+									<label for="typestatus"><?php echo $LANG['TYPE'] ?></label>
+								</div>
+								<div>
+									<input type="checkbox" name="hasimages" id="hasimages" value=1 data-chip="<?php echo $LANG['ONLY_WITH_IMAGES'] ?>">
+									<label for="hasimages"><?php echo $LANG['LIMIT_TO_SPECIMENS_W_IMAGES'] ?></label>
+								</div>
+								<div>
+									<input type="checkbox" name="hasgenetic" id="hasgenetic" value=1 data-chip="<?php echo $LANG['ONLY_WITH_GENETIC'] ?>">
+									<label for="hasgenetic"><?php echo $LANG['LIMIT_TO_SPECIMENS_W_GENETIC_DATA'] ?></label>
+								</div>
+								<div>
+									<input type='checkbox' name='hascoords' id='hascoords' value='1' data-chip="<?php echo $LANG['ONLY_WITH_COORDINATES'] ?>" />
+									<label for="hascoords"><?php echo $LANG['HAS_COORDS'] ?></label>
+								</div>
+								<div>
+									<input type='checkbox' name='includecult' id='includecult' value='1' data-chip="<?php echo $LANG['INCLUDE_CULTIVATED'] ?>" <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? 'checked' : '' ?> />
+									<label for="includecult"><?php echo $LANG['INCLUDE_CULTIVATED'] ?></label>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- Traits -->
+				<?php
+					if(!empty($SEARCH_BY_TRAITS)) {
+						$attribSearch = new OccurrenceAttributeSearch();
+						$traitArr = $attribSearch->getTraitSearchArr($SEARCH_BY_TRAITS);
+						if($traitArr){
+				?>
+							<section>
+								<!-- Accordion selector -->
+								<input type="checkbox" id="trait" class="accordion-selector" />
+								<!-- Accordion header -->
+								<label for="trait" class="accordion-header"><?php echo $LANG['TRIAT_CRITERIA'] ?></label>
+								<!-- Accordion content -->
+								<div class="content">
+									<div id="search-form-trait">
+										<div>
+											<div> 
+												<!-- style="float:left" -->
+												<div>
+													<!-- class="catHeaderDiv" -->
+													<div class="bottom-breathing-room-relative"><?php echo $LANG['TRAIT_DESCRIPTION']; ?></div>
+													<input type="hidden" id="SearchByTraits" value="true">
+												</div>
+												<?php
+												foreach($traitArr as $traitID => $traitData){
+													if(!isset($traitData['dependentTrait'])) {
+												?>
+														<fieldset class="bottom-breathing-room-relative">
+															<!-- style="margin-top:10px;display:inline;min-width:500px" -->
+															<legend><?= $LANG['TRAIT']; ?>: <?php echo $traitData['name']; ?></legend>
+															<div>
+																<!-- style="float:right" -->
+															</div>
+															<div class="traitDiv">
+																<!-- style="margin-left:5px;float:left" -->
+																<?php $attribSearch->echoTraitSearchForm($traitID); ?>
+															</div>
+														</fieldset>
+												<?php
+														}
+													}
+												?>
+											</div>
+										</div>
+									</div>
+								</div>
+							</section>
+				<?php
+						}
+					}
+				?>
+
+				<!-- Colections -->
+				<section>
+					<!-- Accordion selector -->
+					<input type="checkbox" id="collections" class="accordion-selector" />
+					<!-- Accordion header -->
+					<label for="collections" class="accordion-header"><?php echo $LANG['COLLECTIONS'] ?></label>
+					<!-- Accordion content -->
+					<div class="content">
+						<div id="search-form-colls">
+							<!-- Open Collections modal -->
+							<div id="specobsdiv">
+								<?php 
+								include_once('./collectionContent.php');
+								?>
+							</div>
+							
+						</div>
+					</div>
+				</section>
+				
 			</div>
 			
 			<!-- Criteria panel -->
