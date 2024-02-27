@@ -645,7 +645,7 @@ class GeographicThesaurus extends Manager{
       return $pt;
    }
 
-	public function addGeoBoundary($url, $addMissing = false, $baseParentId = null, $potentialParents = []){
+	public function addGeoBoundary($url, $addMissing = false, $baseParentId = null, $potentialParents = []): array {
       $json = $this->getGeoboundariesJSON($url);
 		$obj = json_decode($json);
       unset($json);

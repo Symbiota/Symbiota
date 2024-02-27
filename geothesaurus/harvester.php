@@ -30,6 +30,9 @@ if($isEditor && $submitAction) {
       //This Call can Take a very long time depending on the size of the
       //geoJson and how many children are within the feature collection past
       set_time_limit(600);
+      //This script can consume a lot of memory loading the geoJson so this a
+      //large buffer to prevent those issues from occuring
+      ini_set("memory_limit", "512M");
       $geoJsonLinks = array_key_exists('geoJson', $_POST) && is_array($_POST['geoJson'])? $_POST['geoJson'] : [];
       $types = array_key_exists('type', $_POST) && is_array($_POST['type'])? $_POST['type'] : [];
       $potentialParents = [];
