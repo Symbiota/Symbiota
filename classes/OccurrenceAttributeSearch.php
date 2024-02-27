@@ -76,7 +76,7 @@ class OccurrenceAttributeSearch extends OccurrenceAttributes {
 				}
 				else{
 					$retStr .= '<div title="' . $sArr['description'] . '" style="clear:both;">';
-					$retStr .= '<input name="attr[]" id="traitstateid-' . $sid . '" class="' . $classStr . '" type="checkbox" value="' . $sid . '" onchange="traitChanged(this)" /> ';
+					$retStr .= '<input data-chip="' . $this->traitArr[$traitID]['name'] . ': ' . ucfirst($sArr['name']) . '" name="attr[]" id="traitstateid-' . $sid . '" class="' . $classStr . '" type="checkbox" value="' . $sid . '" onchange="traitChanged(this)" /> ';
 					$retStr .= ucfirst($sArr['name']);
 					if($depTraitIdArr){
 						foreach($depTraitIdArr as $depTraitId){

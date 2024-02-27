@@ -34,6 +34,7 @@ let paramNames = [
   "taxontype",
   "collnum",
   "collector",
+  "attr[]",
 ];
 const uLat = document.getElementById("upperlat") || null;
 const uLatNs = document.getElementById("upperlat_NS") || null;
@@ -424,6 +425,14 @@ function getCollsSelected() {
   return collsArr;
 }
 
+function getTraitsSelected() {
+  let selectedInForm = Array.from(
+    document.querySelectorAll('input[name="attr[]"]:checked')
+  );
+  let traitsArr = selectedInForm;
+  return traitsArr;
+}
+
 /**
  * Searches specified fields and capture values
  * @param {String} paramName Name of parameter to be looked for in form
@@ -437,6 +446,21 @@ function getParam(paramName) {
   const firstEl = elements[0];
 
   let elementValues = "";
+
+  // for traits
+  if (paramName === "attr[]") {
+    let dbArr = [];
+    let tempArr = getTraitsSelected();
+    console.log("deleteMe tempArr is: ");
+    console.log(tempArr);
+    tempArr.forEach((item) => {
+      dbArr.push(item.value);
+    });
+    elementValues = dbArr;
+    console.log("deleteMe elementValues are: ");
+    console.log(elementValues);
+    elementValues = dbArr;
+  }
 
   // for db and datasetid
   if (paramName === "db") {
@@ -657,6 +681,8 @@ function simpleSearch() {
   let isValid = errors.length == 0;
   if (isValid) {
     let searchUrl = getSearchUrl();
+    console.log("deleteMe searchUrl is: ");
+    console.log(searchUrl);
     window.location = searchUrl;
   } else {
     handleValErrors(errors);
