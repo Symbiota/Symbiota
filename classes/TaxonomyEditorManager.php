@@ -612,9 +612,9 @@ class TaxonomyEditorManager extends Manager{
 				$stmt->bind_param('s', $dataArr["sciname"]);
 				$stmt->execute();
 				if($stmt->error){
-					if(isset($this->langArr['WARNING_OCCURRENCES_NOT UPDATED'])) echo $this->langArr['WARNING_OCCURRENCES_NOT'];
+					if(isset($this->langArr['WARNING_OCCURRENCES_NOT'])) echo $this->langArr['WARNING_OCCURRENCES_NOT'];
 					else echo 'WARNING: Taxon loaded into taxa, but occurrences must be updated with matching name';
-					echo ': '.$this->conn->error;
+					echo ': ' . $this->conn->error;
 				}
 				$stmt->close();
 			}

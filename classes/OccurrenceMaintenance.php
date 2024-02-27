@@ -315,7 +315,7 @@ class OccurrenceMaintenance {
 			$sql = 'UPDATE omoccurrences
 				SET localitySecurity = 1
 				WHERE (localitySecurity IS NULL OR localitySecurity = 0) AND (localitySecurityReason IS NULL)
-				AND (cultivationStatus = 0 OR cultivationStatus IS NULL) AND (tidinterpreted IN('.implode(',',$sensitiveArr).')) ';
+				AND (cultivationStatus = 0 OR cultivationStatus IS NULL) AND (tidinterpreted IN(' . implode(',', $sensitiveArr) . ')) ';
 			if($this->collidStr) $sql .= 'AND collid IN('.$this->collidStr.')';
 			if($this->conn->query($sql)){
 				$status += $this->conn->affected_rows;

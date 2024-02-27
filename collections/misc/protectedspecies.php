@@ -128,9 +128,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					<input id="searchtaxon" name="searchtaxon" type="text" value="<?= htmlspecialchars($searchTaxon, HTML_SPECIAL_CHARS_FLAGS) ?>" />
 				</div>
 				<div style="margin:3px">
-					<button name="submitaction" type="submit" value="<?= $LANG['SEARCH']; ?>" >
-						<?= $LANG['SEARCH']; ?>
-					</button>
+					<button name="submitaction" type="submit" value="searchTaxonSubmit" ><?= $LANG['SEARCH']; ?></button>
 				</div>
 			</fieldset>
 		</form>
@@ -164,13 +162,13 @@ include($SERVER_ROOT.'/includes/header.php');
 						<fieldset style='margin:5px'>
 							<legend><b><?= $LANG['ADD_TAXON'] ?></b></legend>
 							<div style="margin:3px;">
-								<?= $LANG['SCIENTIFIC_NAME'] ?>:
+								<label for="speciestoadd"><?= $LANG['SCIENTIFIC_NAME'] ?>:</label>
 								<input type="text" id="speciestoadd" name="speciestoadd" style="width:300px" />
 								<input type="hidden" id="tidtoadd" name="tidtoadd" value="" />
 							</div>
 							<div style="margin:3px;">
 								<input type="hidden" name="submitaction" value="addspecies" />
-								<button value="Add Species" onclick="submitAddSpecies(this.form)" ><?= $LANG['ADD_SPECIES'] ?></button>
+								<button name="addSpeciesbutton" type="button" onclick="submitAddSpecies(this.form)" ><?= $LANG['ADD_SPECIES'] ?></button>
 							</div>
 						</fieldset>
 					</form>

@@ -664,11 +664,16 @@ class ChecklistManager extends Manager{
 		$inventoryManager = new ImInventories();
 		if(!$inventoryManager->insertChecklistTaxaLink($postArr)){
 			$insertStatus = 'ERROR adding species: ';
-			if(strpos($inventoryManager->getErrorMessage(), 'Duplicate') !== false){
-				$insertStatus .= 'Species already exists within checklist';
+			if($inventoryManager->getErrorMessage()){
+				if(strpos($inventoryManager->getErrorMessage(), 'Duplicate') !== false){
+					$insertStatus .= 'Species already exists within checklist';
+				}
+				else{
+					$insertStatus .= $inventoryManager->getErrorMessage();
+				}
 			}
 			else{
-				$insertStatus .= $inventoryManager->getErrorMessage();
+				$insertStatus .= 'unknown error';
 			}
 		}
 		return $insertStatus;
