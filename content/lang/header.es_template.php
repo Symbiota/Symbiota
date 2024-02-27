@@ -41,7 +41,7 @@ $LANG['H_DATA_USAGE'] = 'Uso de Datos';
 
 $LANG['H_WELCOME'] = 'Bienvenido';
 $LANG['H_MY_PROFILE'] = 'Mi Perfil';
-$LANG['H_LOGOUT'] = 'Finalizar Sesi&oacute;n';
+$LANG['H_LOGOUT'] = 'Finalizar Sesión';
 $LANG['H_LOGIN'] = 'Iniciar Sesi&oacute;n';
 $LANG['H_NEW_ACCOUNT'] = 'Nueva Cuenta';
 $LANG['TOGGLE_508_OFF'] = "Modo condensado";

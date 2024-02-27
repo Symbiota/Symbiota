@@ -255,7 +255,7 @@ class ImInventories extends Manager{
 	public function insertChecklistCoordinates($inputArr){
 		$status = false;
 		if($this->clid && isset($inputArr['tid']) && $inputArr['tid']){
-			$sql = 'INSERT INTO fmchklstcoordinates(clid';
+			$sql = 'INSERT IGNORE INTO fmchklstcoordinates(clid';
 			$sqlValues = '?, ';
 			$paramArr = array($this->clid);
 			$this->typeStr = 'i';

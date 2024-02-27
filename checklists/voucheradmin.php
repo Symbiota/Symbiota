@@ -33,7 +33,8 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USE
 	elseif($action == 'submitVouchers'){
 		$useCurrentTaxonomy = false;
 		if(array_key_exists('usecurrent',$_POST) && $_POST['usecurrent']) $useCurrentTaxonomy = true;
-		$clManager->linkTaxaVouchers($_POST['occids'], $useCurrentTaxonomy, $excludeVouchers);
+		$linkVouchers = $excludeVouchers ? false : true;
+		$clManager->linkTaxaVouchers($_POST['occids'], $useCurrentTaxonomy, $linkVouchers);
 	}
 	elseif($action == 'resolveconflicts'){
 		$clManager->batchTransferConflicts($_POST['occid'], (array_key_exists('removetaxa',$_POST) ? true : false));
