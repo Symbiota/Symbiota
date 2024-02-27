@@ -122,7 +122,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	<div style="float:right;">
 		<form name="searchform" action="protectedspecies.php" method="post">
 			<fieldset style="margin:0px 15px;padding:10px">
-				<legend><b><?= $LANG['FILTER'] ?></b></legend>
+				<legend><?= $LANG['FILTER'] ?></legend>
 				<div style="margin:3px">
 					<label for="searchtaxon"><?= $LANG['TAXON_SEARCH'] ?>:</label>
 					<input id="searchtaxon" name="searchtaxon" type="text" value="<?= htmlspecialchars($searchTaxon, HTML_SPECIAL_CHARS_FLAGS) ?>" />
@@ -178,11 +178,11 @@ include($SERVER_ROOT.'/includes/header.php');
 			if($rsArr){
 				foreach($rsArr as $family => $speciesArr){
 					?>
-					<h3>
+					<h2>
 						<span>
 							<?= $family ?>
 						</span>
-					</h3>
+					</h2>
 					<div style='margin-left:20px; margin-bottom:20px;'>
 						<?php
 						foreach($speciesArr as $tid => $nameArr){
