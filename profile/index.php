@@ -20,6 +20,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 
 $THIRD_PARTY_OID_AUTH_ENABLED = $THIRD_PARTY_OID_AUTH_ENABLED ?? false;
 $SYMBIOTA_LOGIN_ENABLED = $SYMBIOTA_LOGIN_ENABLED ?? true;
+$LOGIN_ACTION_PAGE = $LOGIN_ACTION_PAGE ?? 'profile/openIdAuth.php';
 
 $login = array_key_exists('login',$_REQUEST)?$_REQUEST['login']:'';
 $remMe = array_key_exists("remember",$_POST)?$_POST["remember"]:'';
@@ -225,7 +226,7 @@ include($SERVER_ROOT.'/includes/header.php');
 
 		?>
 			<div class="flex-item-login bottom-breathing-room-relative">
-				<form action='openIdAuth.php' onsubmit="">
+				<form action='<?= $LOGIN_ACTION_PAGE ?>' onsubmit="">
 					<fieldset  class="profile-fieldset">
 						<legend class="profile-legend"><?php echo (isset($LANG['THIRD_PARTY_LOGIN'])?$LANG['THIRD_PARTY_LOGIN']:'Login using third-party authentication'); ?></legend>
 						<div class="justify-center">

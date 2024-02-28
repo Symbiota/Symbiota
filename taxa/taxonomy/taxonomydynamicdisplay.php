@@ -20,6 +20,7 @@ $taxonDisplayObj->setTaxAuthId($taxAuthId);
 
 if($submitAction){
 	if($submitAction == 'exportTaxonTree'){
+		$taxonDisplayObj->setDisplayFullTree(1);
 		$taxonDisplayObj->setLimitToOccurrences($limitToOccurrences);
 		$taxonDisplayObj->exportCsv();
 		exit;

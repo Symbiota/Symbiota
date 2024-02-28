@@ -1,16 +1,19 @@
 <?php
-use PhpOffice\PhpSpreadsheet\Reader\Xml\Style\NumberFormat;
-
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceProtectedSpecies.php');
-include_once($SERVER_ROOT.'/content/lang/collections/misc/protectedspecies.' . $LANG_TAG . '.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/misc/protectedspecies.' . $LANG_TAG . '.php')){
+	include_once($SERVER_ROOT.'/content/lang/collections/misc/protectedspecies.' . $LANG_TAG . '.php');
+}
+else{
+	include_once($SERVER_ROOT.'/content/lang/collections/misc/protectedspecies.en.php');
+}
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $searchTaxon = array_key_exists('searchtaxon', $_REQUEST) ? $_REQUEST['searchtaxon'] : '';
 $action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
 
 $isEditor = 0;
-if($IS_ADMIN || array_key_exists('RareSppAdmin',$USER_RIGHTS)){
+if($IS_ADMIN || array_key_exists('RareSppAdmin', $USER_RIGHTS)){
 	$isEditor = 1;
 }
 
@@ -30,14 +33,14 @@ $rsArr = $rsManager->getProtectedSpeciesList();
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
-	<title>Rare, Threatened, Sensitive Species</title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET; ?>">
+	<title><?= $LANG['TITLE'] ?></title>
+	<link href="<?= $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
 			$("#speciestoadd").autocomplete({ source: "rpc/speciessuggest.php" },{ minLength: 3, autoFocus: true });
@@ -75,7 +78,7 @@ $rsArr = $rsManager->getProtectedSpeciesList();
 		function submitAddSpecies(f){
 			var sciName = f.speciestoadd.value;
 			if(sciName == ""){
-				alert("Enter the scientific name of species you wish to add");
+				alert("<?= $LANG['ENTER_SCINAME'] ?>");
 				return false;
 			}
 
@@ -88,62 +91,58 @@ $rsArr = $rsManager->getProtectedSpeciesList();
 				f.tidtoadd.value = data;
 				f.submit();
 			}).fail(function(jqXHR){
-				alert("ERROR: Scientific name does not exist in database. Did you spell it correctly? If so, it may have to be added to taxa table.");
+				alert("<?= $LANG['SCINAME_NOT_EXIST'] ?>");
 			});
 		}
 	</script>
+	<style>
+		.icon-img{ width:1.5em; border:0px; }
+		.message-div{ margin: 10px; font-weight: bold; }
+	</style>
 </head>
 <body>
 <?php
-$displayLeftMenu = (isset($collections_misc_rarespeciesMenu)?$collections_misc_rarespeciesMenu:true);
 include($SERVER_ROOT.'/includes/header.php');
-if(isset($collections_misc_rarespeciesCrumbs)){
-	echo "<div class='navpath'>";
-	echo "<a href='../index.php'>Home</a> &gt;&gt; ";
-	echo $collections_misc_rarespeciesCrumbs." &gt;&gt;";
-	echo " <b>Sensitive Species for Masking Locality Details</b>";
-	echo "</div>";
-}
 ?>
-<!-- This is inner text! -->
+<div class='navpath'>
+	<a href='../index.php'><?= $LANG['HOME'] ?></a> &gt;&gt;
+	<b><?= $LANG['SENSITIVE_TAXA'] ?></b>
+</div>
 <div id="innertext">
 	<?php
 	if($isEditor){
 		?>
-		<div style="float:right;cursor:pointer;" onclick="toggle('editobj');" title="Toggle Editing Functions">
-			<?php echo $LANG['EDIT'] ?> <img style="width:1.5em;border:0px;" src="../../images/edit.png" alt="pencil icon depicting edit capability" />
+		<div style="float:right;" title="<?= $LANG['TOGGLE_EDIT'] ?>">
+			<a href="#" onclick="toggle('editobj');" ><?= $LANG['EDIT'] ?> <img class="icon-img" src="../../images/edit.png" alt="<?= $LANG['PENCIL_ICON'] ?>"></a>
 		</div>
 		<?php
 	}
 	?>
-	<h1>Protected Species</h1>
+	<h1><?= $LANG['PROTECTED_SPECIES'] ?></h1>
 	<div style="float:right;">
 		<form name="searchform" action="protectedspecies.php" method="post">
 			<fieldset style="margin:0px 15px;padding:10px">
-				<legend><b>Filter</b></legend>
+				<legend><?= $LANG['FILTER'] ?></legend>
 				<div style="margin:3px">
-					<label for="searchtaxon"><?php echo $LANG['TAXON_SEARCH'] ?>:</label>
+					<label for="searchtaxon"><?= $LANG['TAXON_SEARCH'] ?>:</label>
 					<input id="searchtaxon" name="searchtaxon" type="text" value="<?= htmlspecialchars($searchTaxon, HTML_SPECIAL_CHARS_FLAGS) ?>" />
 				</div>
 				<div style="margin:3px">
-					<button name="submitaction" type="submit" value="<?php echo $LANG['SEARCH']; ?>" >
-						<?php echo $LANG['SEARCH']; ?>
-					</button>
+					<button name="submitaction" type="submit" value="searchTaxonSubmit" ><?= $LANG['SEARCH']; ?></button>
 				</div>
 			</fieldset>
 		</form>
 	</div>
 	<div class="bottom-breathing-room">
-		Species in the list below have protective status with specific locality details below county withheld (e.g. decimal lat/long).
-		Rare, threatened, or sensitive status are the typical causes for protection though species that are cherished by collectors or wild harvesters may also appear on the list.
+		<?= $LANG['DESCRIPTION'] ?>
 	</div>
 	<div>
 		<?php
 		$occurCnt = $rsManager->getSpecimenCnt();
-		if($occurCnt) echo '<div class="bottom-breathing-room">Occurrences protected: '.number_format($occurCnt).'</div>';
+		if($occurCnt) echo '<div class="bottom-breathing-room">' . $LANG['OCCURRENCES_PROTECTED'] . ': '.number_format($occurCnt).'</div>';
 		if($isEditor){
 			if($action == 'checkstats'){
-				echo '<div>Number of specimens affected: '.$rsManager->protectGlobalSpecies().'</div>';
+				echo '<div>' . $LANG['NUMBER_AFFECTED'] . ': '.$rsManager->protectGlobalSpecies().'</div>';
 			}
 			else{
 				echo "<div><a href=\"protectedspecies.php?submitaction=checkstats\">" . $LANG['VERIFY_PROTECTIONS'] . "</a></div>";
@@ -153,7 +152,7 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 	</div>
 	<div style="clear:both">
 		<section class="fieldset-like">
-			<h1><span>Global Protections</span></h1>
+			<h1><span><?= $LANG['GLOBAL_PROTECTIONS'] ?></span></h1>
 			<br/>
 			<?php
 			if($isEditor){
@@ -161,15 +160,15 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 				<div class="editobj" style="display:none;width:400px;margin-bottom:20px">
 					<form name="addspeciesform" action='protectedspecies.php' method='post' >
 						<fieldset style='margin:5px'>
-							<legend><b>Add Taxon to List</b></legend>
+							<legend><b><?= $LANG['ADD_TAXON'] ?></b></legend>
 							<div style="margin:3px;">
-								Scientific Name:
+								<label for="speciestoadd"><?= $LANG['SCIENTIFIC_NAME'] ?>:</label>
 								<input type="text" id="speciestoadd" name="speciestoadd" style="width:300px" />
 								<input type="hidden" id="tidtoadd" name="tidtoadd" value="" />
 							</div>
 							<div style="margin:3px;">
 								<input type="hidden" name="submitaction" value="addspecies" />
-								<button value="Add Species" onclick="submitAddSpecies(this.form)" >Add Species</button>
+								<button name="addSpeciesbutton" type="button" onclick="submitAddSpecies(this.form)" ><?= $LANG['ADD_SPECIES'] ?></button>
 							</div>
 						</fieldset>
 					</form>
@@ -179,28 +178,28 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 			if($rsArr){
 				foreach($rsArr as $family => $speciesArr){
 					?>
-					<h3>
+					<h2>
 						<span>
-							<?php echo $family; ?>
+							<?= $family ?>
 						</span>
-					</h3>
+					</h2>
 					<div style='margin-left:20px; margin-bottom:20px;'>
 						<?php
 						foreach($speciesArr as $tid => $nameArr){
 							echo '<div id="tid-'.$tid.'">';
-							echo '<a href="../../taxa/index.php?taxon=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
+							echo '<a href="../../taxa/index.php?taxon=' . $tid . '" target="_blank">';
 							echo '<i>' . htmlspecialchars($nameArr['sciname'], HTML_SPECIAL_CHARS_FLAGS) . '</i> ';
 							echo htmlspecialchars($nameArr['author'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
 							if($isEditor){
 								?>
 								<span class="editobj" style="display:none;">
-									<a href="protectedspecies.php?submitaction=deletespecies&tidtodel=<?php echo htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS);?>">
-										<img src="../../images/del.png" style="width:13px;border:0px;" title="remove species from list" />
+									<a href="protectedspecies.php?submitaction=deletespecies&tidtodel=<?= $tid ?>">
+										<img class="icon-img" src="../../images/del.png" title="<?= $LANG['REMOVE_SPECIES'] ?>" />
 									</a>
 								</span>
 								<?php
 							}
-							echo "</div>";
+							echo '</div>';
 						}
 						?>
 					</div>
@@ -209,34 +208,30 @@ if(isset($collections_misc_rarespeciesCrumbs)){
 			}
 			else{
 				?>
-				<div style="margin:20px;font-weight:bold;font-size:120%;">
-					No species were returned marked for global protection.
-				</div>
+				<div class="message-div"><?= $LANG['NO_TAXA'] ?></div>
 				<?php
 			}
 			?>
 		</section>
 		<section class="fieldset-like">
-			<h1><span>State/Province Level Protections</span></h1>
+			<h1><span><?= $LANG['STATE_PROTECTIONS'] ?></span></h1>
 			<?php
 			$stateList = $rsManager->getStateList();
 			$emptyList = true;
 			foreach($stateList as $clid => $stateArr){
 				if($isEditor || $stateArr['access'] == 'public'){
 					echo '<div>';
-					echo '<a href="../../checklists/checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '">';
+					echo '<a href="../../checklists/checklist.php?clid=' . $clid . '">';
 					echo $stateArr['locality'].': '.$stateArr['name'];
 					echo '</a>';
-					if(strpos($stateArr['access'] ?? '', 'private') !== false) echo ' (private)';
+					if(strpos($stateArr['access'] ?? '', 'private') !== false) echo ' (' . $LANG['PRIVATE'] . ')';
 					echo '</div>';
 					$emptyList = false;
 				}
 			}
 			if($emptyList){
 				?>
-				<div style="margin:20px;font-weight:bold;font-size:120%;">
-					 No checklists returned
-				</div>
+				<div class="message-div"><?= $LANG['NO_CHECKLIST'] ?></div>
 				<?php
 			}
 			?>

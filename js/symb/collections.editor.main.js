@@ -89,7 +89,9 @@ $(document).ready(function() {
 			$( "#tidinterpreted" ).val("");
 			$( 'input[name=scientificnameauthorship]' ).val("");
 			$( 'input[name=family]' ).val("");
-			$( 'input[name=localitysecurity]' ).prop('checked', false);
+			if($("input[name=localitysecurityreason]").val() == ""){
+				$("select[name=localitysecurity]").val(0);
+			}
 			fieldChanged('sciname');
 			fieldChanged('tidinterpreted');
 			fieldChanged('scientificnameauthorship');
@@ -253,8 +255,9 @@ function verifyFullFormSciName(){
 				$( 'select[name=confidenceranking]' ).val(8);
 			}
 			*/
-			if(data.status == 1){
-				$( 'input[name=localitysecurity]' ).prop('checked', true);
+			if(data.status == 1 && !$("input[name=cultivationstatus]").prop('checked')){
+				$("select[name=localitysecurity]").val(1);
+				securityChanged(document.fullform);
 			}
 			else{
 				if(data.tid){
@@ -304,8 +307,9 @@ function localitySecurityCheck(){
 			dataType: "json",
 			data: { tid: tidIn, state: stateIn }
 		}).done(function( data ) {
-			if(data == "1"){
-				$( 'input[name=localitysecurity]' ).prop('checked', true);
+			if(data == "1" && !$("input[name=cultivationstatus]").prop('checked')){
+				$("select[name=localitysecurity]").val(1);
+				securityChanged(document.fullform);
 			}
 		});
 	}
@@ -329,6 +333,11 @@ function fieldChanged(fieldName){
 		document.fullform.editedfields.value = document.fullform.editedfields.value + fieldName + ";";
 	}
 	catch(ex){
+	}
+	if(fieldName == 'cultivationstatus'){
+		if($("input[name=cultivationstatus]").prop('checked') && $("input[name=localitysecurityreason]").val() == ""){
+			$("select[name=localitysecurity]").val(0);
+		}
 	}
 }
 
