@@ -1,8 +1,8 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistManager.php');
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/checklists/clgmap.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/checklists/clgmap.en.php');
-else include_once($SERVER_ROOT.'/content/lang/checklists/clgmap.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/clgmap.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/checklists/clgmap.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT.'/content/lang/checklists/clgmap.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $pid = $_REQUEST['pid'];

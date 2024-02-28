@@ -1,7 +1,8 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistManager.php');
-include_once($SERVER_ROOT.'/content/lang/checklists/index.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/checklists/index.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT.'/content/lang/checklists/index.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']:0;
@@ -17,7 +18,7 @@ $clManager->setProj($pid);
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Species Lists</title>
+	<title><?php echo $DEFAULT_TITLE . $LANG['SPECIES_INVENTORIES']; ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
@@ -29,11 +30,11 @@ $clManager->setProj($pid);
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="../index.php"><?php echo htmlspecialchars((isset($LANG['NAV_HOME'])?$LANG['NAV_HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
-		<b><?php echo (isset($LANG['SPECIES_INVENTORIES'])?$LANG['SPECIES_INVENTORIES']:'Species Inventories'); ?></b>
+		<a href="../index.php"><?php echo htmlspecialchars($LANG['NAV_HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+		<b><?php echo $LANG['SPECIES_INVENTORIES']; ?></b>
 	</div>
 	<div id="innertext">
-		<h1><?php echo (isset($LANG['SPECIES_INVENTORIES'])?$LANG['SPECIES_INVENTORIES']:'Species Inventories'); ?></h1>
+		<h1><?php echo $LANG['SPECIES_INVENTORIES']; ?></h1>
         <div style="margin:20px;">
 			<?php
             $researchArr = $clManager->getChecklists();
@@ -43,11 +44,11 @@ $clManager->setProj($pid);
 					<h2>
 						<?php
 						$projName = $projArr['name'];
-						if($projName == 'Miscellaneous Inventories') $projName = (isset($LANG['MISC_INVENTORIES'])?$LANG['MISC_INVENTORIES']:'Miscellaneous Inventories');
+						if($projName == 'Miscellaneous Inventories') $projName = $LANG['MISC_INVENTORIES'];
 						echo $projName;
 						?>
-						<a class="button button-tertiary btn-medium-font" href="<?php echo "clgmap.php?pid=" . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>" title='<?php echo htmlspecialchars((isset($LANG['SHOW_MAP'])?$LANG['SHOW_MAP']:'Show inventories on map'), HTML_SPECIAL_CHARS_FLAGS); ?>'>
-							<?php echo (isset($LANG['MAP'])?$LANG['MAP']:'Map'); ?> <img src='../images/world.png' style='width:1em;border:0' alt='Image of the globe' />
+						<a class="button button-tertiary btn-medium-font" href="<?php echo "clgmap.php?pid=" . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>" title='<?php echo htmlspecialchars($LANG['SHOW_MAP'], HTML_SPECIAL_CHARS_FLAGS); ?>'>
+							<?php echo $LANG['MAP']; ?> <img src='../images/world.png' style='width:1em;border:0' alt='<?php echo $LANG['IMG_OF_GLOBE']; ?>' />
 						</a>
 					</h2>
 					<ul>
@@ -60,7 +61,7 @@ $clManager->setProj($pid);
 					<?php
 				}
 			}
-			else echo '<div><b>'.(isset($LANG['NO_INVENTORIES'])?$LANG['NO_INVENTORIES']:'No inventories returned').'</b></div>';
+			else echo '<div><b>' . $LANG['NO_INVENTORIES'] . '</b></div>';
 			?>
 		</div>
 	</div>

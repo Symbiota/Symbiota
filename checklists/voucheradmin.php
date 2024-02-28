@@ -1,7 +1,8 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherReport.php');
-include_once($SERVER_ROOT.'/content/lang/checklists/voucheradmin.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/voucheradmin.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/checklists/voucheradmin.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT.'/content/lang/checklists/voucheradmin.en.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 if(!$SYMB_UID) header('Location: ../profile/index.php?refurl=../checklists/voucheradmin.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
@@ -56,7 +57,7 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USE
 			}
 		}
 		if($cnt){
-			$statusStr = $cnt.' external vouchers have been linked to checklist';
+			$statusStr = $cnt . ' ' . $LANG['EXT_VOUCHERS_LINKED'];
 		}
 	}
 }
@@ -67,7 +68,7 @@ $clMetaArr = $clManager->getClMetadata();
 <html lang="<?php echo $LANG_TAG?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
-	<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['CHECKLIST_ADMIN'];?></title>
+	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['CHECKLIST_ADMIN']; ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -129,8 +130,8 @@ if($clid && $isEditor){
 			echo $clManager->getQueryVariableStr();
 			?>
 			<span style="margin-left:10px;">
-				<a href="#" onclick="toggle('sqlbuilderdiv');return false;" title="<?php echo (isset($LANG['EDITSEARCH'])?$LANG['EDITSEARCH']:'Edit Search Statement') ?>" aria-label="<?php echo (isset($LANG['EDITSEARCH'])?$LANG['EDITSEARCH']:'Edit Search Statement') ?>">
-					<img src="../images/edit.png" style="width:1.2em;border:0px;" alt="<?php echo (isset($LANG['IMG_EDIT'])?$LANG['IMG_EDIT']:'Edit Image') ?>"/>
+				<a href="#" onclick="toggle('sqlbuilderdiv');return false;" title="<?php echo $LANG['EDITSEARCH'] ?>" aria-label="<?php echo $LANG['EDITSEARCH'] ?>">
+					<img src="../images/edit.png" style="width:1.2em;border:0px;" alt="<?php echo $LANG['IMG_EDIT'] ?>"/>
 				</a>
 			</span>
 		</div>
@@ -149,21 +150,21 @@ if($clid && $isEditor){
 						<td>
 							<div style="margin:2px;">
 								<b><?php echo $LANG['COUNTRY'];?>:</b>
-								<input type="text" name="country" value="<?php echo isset($termArr['country'])?$termArr['country']:''; ?>" title="Enter multiple countries separated by semicolons" />
+								<input type="text" name="country" value="<?php echo isset($termArr['country'])?$termArr['country']:''; ?>" title="<?php echo $LANG['ENTER_MULT_COUNTRIES']; ?>" />
 							</div>
 							<div style="margin:2px;">
 								<b><?php echo $LANG['STATE'];?>:</b>
-								<input type="text" name="state" value="<?php echo isset($termArr['state'])?$termArr['state']:''; ?>" title="Enter multiple states separated by semicolons" />
+								<input type="text" name="state" value="<?php echo isset($termArr['state'])?$termArr['state']:''; ?>" title="<?php echo $LANG['ENTER_MULT_STATES'];?>" />
 							</div>
 							<div style="margin:2px;">
 								<b><?php echo $LANG['COUNTY'];?>:</b>
-								<input type="text" name="county" value="<?php echo isset($termArr['county'])?$termArr['county']:''; ?>" title="Enter multiple counties separated by semicolons" />
+								<input type="text" name="county" value="<?php echo isset($termArr['county'])?$termArr['county']:''; ?>" title="<?php echo $LANG['ENTER_MULT_COUNTIES'];?>" />
 							</div>
 							<div style="margin:2px;">
 								<b><?php echo $LANG['LOCALITY'];?>:</b>
 								<input type="text" name="locality" value="<?php echo isset($termArr['locality'])?$termArr['locality']:''; ?>" />
 							</div>
-							<div style="margin:2px;" title="Genus, family, or higher rank">
+							<div style="margin:2px;" title="<?php echo $LANG['GEN_FAM_HIGHER'];?>">
 								<b><?php echo $LANG['TAXON'];?>:</b>
 								<input type="text" name="taxon" value="<?php echo isset($termArr['taxon'])?$termArr['taxon']:''; ?>" />
 							</div>
@@ -182,43 +183,43 @@ if($clid && $isEditor){
 							</div>
 							<div>
 								<b><?php echo $LANG['COLLECTOR'];?>:</b>
-								<input name="recordedby" type="text" value="<?php echo isset($termArr['recordedby'])?$termArr['recordedby']:''; ?>" style="width:250px" title="Enter multiple collectors separated by semicolons" />
+								<input name="recordedby" type="text" value="<?php echo isset($termArr['recordedby'])?$termArr['recordedby']:''; ?>" style="width:250px" title="<?php echo $LANG['MULTIPLE_COLLECTORS'] ?>" />
 							</div>
 						</td>
 						<td style="padding-left:20px;">
 							<div style="float:left;">
 								<div>
 									<b><?php echo $LANG['LATN'];?>:</b>
-									<input id="upperlat" type="text" name="latnorth" style="width:80px;" value="<?php echo isset($termArr['latnorth'])?$termArr['latnorth']:''; ?>" title="Latitude North" />
+									<input id="upperlat" type="text" name="latnorth" style="width:80px;" value="<?php echo isset($termArr['latnorth'])?$termArr['latnorth']:''; ?>" title="<?php echo $LANG['LAT_NORTH'] ?>" />
 									<?php
 									$coordAidUrl = '../collections/tools/mapcoordaid.php?mapmode=rectangle&latdef='.$clMetaArr['latcentroid'].'&lngdef='.$clMetaArr['longcentroid'];
 									?>
-									<a href="#" onclick="openPopup('<?php echo htmlspecialchars($coordAidUrl, HTML_SPECIAL_CHARS_FLAGS); ?>','boundingbox')"><img src="../images/world.png" style="width:1.2em" title="Find Coordinate" /></a>
+									<a href="#" onclick="openPopup('<?php echo htmlspecialchars($coordAidUrl, HTML_SPECIAL_CHARS_FLAGS); ?>','boundingbox')"><img src="../images/world.png" style="width:1.2em" title="<?php echo $LANG['FIND_COORD'] ?>" /></a>
 								</div>
 								<div>
 									<b><?php echo $LANG['LATS'];?>:</b>
-									<input id="bottomlat" type="text" name="latsouth" style="width:80px;" value="<?php echo isset($termArr['latsouth'])?$termArr['latsouth']:''; ?>" title="Latitude South" />
+									<input id="bottomlat" type="text" name="latsouth" style="width:80px;" value="<?php echo isset($termArr['latsouth'])?$termArr['latsouth']:''; ?>" title="<?php echo $LANG['LAT_SOUTH'] ?>" />
 								</div>
 								<div>
 									<b><?php echo $LANG['LONGE'];?>:</b>
-									<input id="rightlong" type="text" name="lngeast" style="width:80px;" value="<?php echo isset($termArr['lngeast'])?$termArr['lngeast']:''; ?>" title="Longitude East" />
+									<input id="rightlong" type="text" name="lngeast" style="width:80px;" value="<?php echo isset($termArr['lngeast'])?$termArr['lngeast']:''; ?>" title="<?php echo $LANG['LONG_EAST'] ?>" />
 								</div>
 								<div>
 									<b><?php echo $LANG['LONGW'];?>:</b>
-									<input id="leftlong" name="lngwest" type="text" style="width:80px;" value="<?php echo isset($termArr['lngwest'])?$termArr['lngwest']:''; ?>" title="Longitude West" />
+									<input id="leftlong" name="lngwest" type="text" style="width:80px;" value="<?php echo isset($termArr['lngwest'])?$termArr['lngwest']:''; ?>" title="<?php echo $LANG['LONG_WEST'] ?>" />
 								</div>
 								<div>
 									<input name="onlycoord" value="1" type="checkbox" <?php if(isset($termArr['onlycoord'])) echo 'CHECKED'; ?> onclick="coordInputSelected(this)" />
-									<?php echo (isset($LANG['ONLYCOORD'])?$LANG['ONLYCOORD']:'Only include occurrences with coordinates');?>
+									<?php echo $LANG['ONLYCOORD'];?>
 								</div>
 								<div>
 									<input name="includewkt" value="1" type="checkbox" <?php if(isset($termArr['includewkt'])) echo 'CHECKED'; ?> onclick="coordInputSelected(this)" />
-									<?php echo (isset($LANG['POLYGON_SEARCH'])?$LANG['POLYGON_SEARCH']:'Search based on polygon defining checklist research boundaries'); ?>
-									<a href="#"  onclick="openPopup('tools/mappolyaid.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>','mappopup');return false;" title="Edit Metadata and polygon"><img src="../images/edit.png" style="width:1.2em" /></a>
+									<?php echo $LANG['POLYGON_SEARCH']; ?>
+									<a href="#"  onclick="openPopup('tools/mappolyaid.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>','mappopup');return false;" title="<?php echo $LANG['EDIT_META_POLYGON'] ?>"><img src="../images/edit.png" style="width:1.2em" /></a>
 								</div>
 								<div>
 									<input name="excludecult" value="1" type="checkbox" <?php if(isset($termArr['excludecult'])) echo 'CHECKED'; ?> />
-									<?php echo (isset($LANG['EXCLUDE'])?$LANG['EXCLUDE']:'Exclude cultivated/captive records');?>
+									<?php echo $LANG['EXCLUDE']; ?>
 								</div>
 							</div>
 						</td>
@@ -241,7 +242,7 @@ if($clid && $isEditor){
 			?>
 			<fieldset>
 				<legend><b><?php echo $LANG['REMOVESEARCH'];?></b></legend>
-				<form name="sqldeleteform" action="voucheradmin.php" method="post" onsubmit="return confirm('Are you sure you want to delete query variables?');">
+				<form name="sqldeleteform" action="voucheradmin.php" method="post" onsubmit="return confirm('<?php echo $LANG['SURE_DELETE_QUERY'];?>');">
 					<div style="margin:20px">
 						<input type="submit" name="submit" value="<?php echo $LANG['DELETEVARIABLES'];?>" />
 						<input type="hidden" name="submitaction" value="DeleteVariables" />
@@ -260,12 +261,12 @@ if($clid && $isEditor){
 		<div id="tabs" style="margin-top:25px;">
 			<ul>
 
-				<li><a href="nonvoucheredtab.php?clid=<?= $clid.'&pid='.$pid.'&start='.$startPos.'&displaymode='.$displayMode; ?>"><span><?= $LANG['NON_VOUCHERED'];?></span></a></li>
-				<li><a href="vamissingtaxa.php?clid=<?= $clid.'&pid='.$pid.'&start='.$startPos.'&displaymode='.($tabIndex==1?$displayMode:0).'&excludevouchers='.$excludeVouchers; ?>"><span><?= $LANG['MISSINGTAXA'];?></span></a></li>
-				<li><a href="vaconflicts.php?clid=<?= $clid.'&pid='.$pid.'&start='.$startPos; ?>"><span><?= $LANG['VOUCHCONF'];?></span></a></li>
+				<li><a href="nonvoucheredtab.php?clid=<?= $clid . '&pid=' . $pid . '&start=' . $startPos . '&displaymode=' . $displayMode; ?>"><span><?= $LANG['NON_VOUCHERED'];?></span></a></li>
+				<li><a href="vamissingtaxa.php?clid=<?= $clid . '&pid=' . $pid . '&start=' . $startPos . '&displaymode=' . ($tabIndex==1?$displayMode:0) . '&excludevouchers=' . $excludeVouchers; ?>"><span><?= $LANG['MISSINGTAXA'];?></span></a></li>
+				<li><a href="vaconflicts.php?clid=<?= $clid . '&pid=' . $pid . '&start=' . $startPos; ?>"><span><?= $LANG['VOUCHCONF'];?></span></a></li>
 				<?php
-				if($clManager->getAssociatedExternalService()) echo '<li><a href="externalvouchers.php?clid='.$clid.'&pid='.$pid.'"><span>' . $LANG['EXTERNALVOUCHERS'] . '</span></a></li>';
-				if($clManager->hasVoucherProjects()) echo '<li><a href="imgvouchertab.php?clid='.$clid.'">'.(isset($LANG['ADDIMGV'])?$LANG['ADDIMGV']:'Add Image Voucher').'</a></li>';
+				if($clManager->getAssociatedExternalService()) echo '<li><a href="externalvouchers.php?clid=' . $clid . '&pid=' . $pid . '"><span>' . $LANG['EXTERNALVOUCHERS'] . '</span></a></li>';
+				if($clManager->hasVoucherProjects()) echo '<li><a href="imgvouchertab.php?clid=' . $clid . '">' . (isset($LANG['ADDIMGV'])?$LANG['ADDIMGV']:'Add Image Voucher') . '</a></li>';
 				?>
 				<li><a href="#reportDiv"><span><?= $LANG['REPORTS'] ?></span></a></li>
 			</ul>
@@ -281,14 +282,14 @@ if($clid && $isEditor){
 							<li><a href="voucherreporthandler.php?rtype=fullvoucherscsv&clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['FULLSPECLISTVOUCHER'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
 							<li>
 								<a href="#" onclick="openPopup('../collections/download/index.php?searchvar=<?php echo urlencode('clid=' . htmlspecialchars($clManager->getClidFullStr(), HTML_SPECIAL_CHARS_FLAGS)); ?>&noheader=1','repvouchers');return false;">
-									<?php echo (isset($LANG['VOUCHERONLY'])?$LANG['VOUCHERONLY']:'Occurrence vouchers only (DwC-A, CSV, Tab-delimited)'); ?>
+									<?php echo $LANG['VOUCHERONLY']; ?>
 								</a>
 							</li>
 							<?php
 						}
 						?>
 						<li><a href="voucherreporthandler.php?rtype=fullalloccurcsv&clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['FULLSPECLISTALLOCCUR'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
-						<li><a href="voucherreporthandler.php?rtype=pensoftxlsx&clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars((isset($LANG['PENSOFT_XLSX_EXPORT'])?$LANG['PENSOFT_XLSX_EXPORT']:'Pensoft Excel Export'), HTML_SPECIAL_CHARS_FLAGS);?></a></li>
+						<li><a href="voucherreporthandler.php?rtype=pensoftxlsx&clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars($LANG['PENSOFT_XLSX_EXPORT'], HTML_SPECIAL_CHARS_FLAGS);?></a></li>
 						<li><?php echo $LANG['SPECMISSINGTITLE'];?></li>
 					</ul>
 					<ul style="list-style-type:circle">
@@ -303,10 +304,10 @@ if($clid && $isEditor){
 }
 else{
 	if(!$clid){
-		echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span>'.$LANG['CHECKIDNOTSET'].'</div>';
+		echo '<div><span style="font-weight:bold;font-size:110%;">' . $LANG['ERROR'] . ':</span>' . $LANG['CHECKIDNOTSET'] . '</div>';
 	}
 	else{
-		echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span>'.$LANG['NOADMINPERM'].'</div>';
+		echo '<div><span style="font-weight:bold;font-size:110%;">' . $LANG['ERROR'] . ':</span>' . $LANG['NOADMINPERM'] . '</div>';
 	}
 }
 ?>

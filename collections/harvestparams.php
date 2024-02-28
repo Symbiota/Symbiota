@@ -19,7 +19,7 @@ $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ??
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="../js/symb/collections.harvestparams.js?ver=2" type="text/javascript"></script>
+	<script src="../js/symb/collections.harvestparams.js?ver=3" type="text/javascript"></script>
 	<script src="../js/symb/collections.traitsearch.js?ver=8" type="text/javascript"></script> <!-- Contains search-by-trait modifications -->
 	<script src="../js/symb/wktpolygontools.js?ver=1c" type="text/javascript"></script>
 	<script type="text/javascript">
@@ -38,10 +38,12 @@ $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ??
 	<script src="../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
 	<style type="text/css">
 		hr{ clear:both; margin: 10px 0px }
+		button{ margin: 2px }
+		select{ margin-bottom: 4px }
 		.catHeaderDiv { font-weight:bold; font-size: 18px }
 		.coordBoxDiv { float:left; border:2px solid brown; padding:10px; margin:5px; white-space: nowrap; }
 		.coordBoxDiv .labelDiv { font-weight:bold;float:left }
-		.coordBoxDiv .iconDiv { float:right;margin-left:5px; }
+		.coordBoxDiv .iconDiv { float: left; margin-left: 5px; }
 		.coordBoxDiv .iconDiv img { width:18px; }
 		.coordBoxDiv .elemDiv { clear:both; }
 	</style>
@@ -209,8 +211,6 @@ $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ??
 							<div>
 								<label for="pointlat"><?php echo $LANG['LL_P-RADIUS_LAT']; ?>:</label>
 								<input type="text" id="pointlat" name="pointlat" size="7" value="" onchange="cleanNumericInput(this);">
-							</div>
-							<div>
 								<label for="pointlat_NS"><?php echo $LANG['DIRECTION'] ?>:</label>
 								<select id="pointlat_NS" name="pointlat_NS">
 									<option id="N" value="N"><?php echo $LANG['LL_N_SYMB']; ?></option>
@@ -222,8 +222,6 @@ $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ??
 							<div>
 								<label for="pointlong"><?php echo $LANG['LL_P-RADIUS_LNG']; ?>:</label>
 								<input type="text" id="pointlong" name="pointlong" size="7" value="" onchange="cleanNumericInput(this);">
-							</div>
-							<div>
 								<label for="pointlong_EW"><?php echo $LANG['DIRECTION'] ?>:</label>
 								<select id="pointlong_EW" name="pointlong_EW">
 									<option id="W" value="W"><?php echo $LANG['LL_W_SYMB']; ?></option>
@@ -278,6 +276,24 @@ $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ??
 					<input name="includeothercatnum" id="includeothercatnum" type="checkbox" value="1" checked />
 					<label for="includeothercatnum"><?php echo $LANG['INCLUDE_OTHER_CATNUM']?></label>
 				</div>
+				<?php
+				if($matSampleTypeArr = $collManager->getMaterialSampleTypeArr()){
+					?>
+					<div>
+						<label for="materialsampletype"><?= $LANG['MATERIAL_SAMPLE_TYPE'] ?></label>
+						<select name="materialsampletype" id="materialsampletype">
+							<option value="">---------------</option>
+							<option value="all-ms"><?= $LANG['ALL_MATERIAL_SAMPLE'] ?></option>
+							<?php
+							foreach($matSampleTypeArr as $matSampeType){
+								echo '<option value="' . $matSampeType . '">' . $matSampeType . '</option>';
+							}
+							?>
+						</select>
+					</div>
+					<?php
+				}
+				?>
 				<div>
 					<input type='checkbox' name='typestatus' id='typestatus' value='1' />
 					<label for="typestatus"><?php echo isset($LANG['TYPE'])?$LANG['TYPE']:'Limit to Type Specimens Only'; ?></label>

@@ -7,16 +7,17 @@ include_once($SERVER_ROOT.'/content/lang/collections/individual/index.'.$LANG_TA
 include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
-$occid = array_key_exists('occid', $_REQUEST) ? filter_var($_REQUEST['occid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$submit = array_key_exists('formsubmit', $_POST) ? $_POST['formsubmit'] : '';
+$indManager = new OccurrenceIndividual($submit ? 'write' : 'readonly');
+
+$occid = array_key_exists('occid', $_REQUEST) ? $indManager->sanitizeInt($_REQUEST['occid']) : 0;
+$collid = array_key_exists('collid', $_REQUEST) ? $indManager->sanitizeInt($_REQUEST['collid']) : 0;
 $pk = array_key_exists('pk', $_REQUEST) ? htmlspecialchars($_REQUEST['pk'], HTML_SPECIAL_CHARS_FLAGS) :'';
 $guid = array_key_exists('guid', $_REQUEST) ? htmlspecialchars($_REQUEST['guid'], HTML_SPECIAL_CHARS_FLAGS) : '';
-$tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$format = isset($_GET['format']) ? htmlspecialchars($_REQUEST['format'], HTML_SPECIAL_CHARS_FLAGS) : '';
-$submit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
+$tabIndex = array_key_exists('tabindex', $_REQUEST) ? $indManager->sanitizeInt($_REQUEST['tabindex']) : 0;
+$clid = array_key_exists('clid', $_REQUEST) ? $indManager->sanitizeInt($_REQUEST['clid']) : 0;
+$format = isset($_GET['format']) ? $_REQUEST['format'] : '';
 
-$indManager = new OccurrenceIndividual($submit?'write':'readonly');
 if($occid) $indManager->setOccid($occid);
 elseif($guid) $occid = $indManager->setGuid($guid);
 elseif($collid && $pk){
@@ -161,8 +162,8 @@ $traitArr = $indManager->getTraitArr();
 	?>
 	<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/individual/index.css?ver=1" type="text/css" rel="stylesheet" >
 	<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/individual/popup.css" type="text/css" rel="stylesheet" >
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		var tabIndex = <?= $tabIndex; ?>;
 		var map;
@@ -240,15 +241,15 @@ $traitArr = $indManager->getTraitArr();
 		}
 
 		<?php
-			if($displayMap){
-		 if(!empty($occArr["coordinateuncertaintyinmeters"])) {
-			echo 'const coordError = ' . $occArr["coordinateuncertaintyinmeters"] .';';
-		 } else {
-			echo 'const coordError = 0;';
-		 }
+		if($displayMap){
+			if(!empty($occArr['coordinateuncertaintyinmeters'])) {
+				echo 'const coordError = ' . $occArr['coordinateuncertaintyinmeters'] . ';';
+			} else {
+				echo 'const coordError = 0;';
+			}
 			?>
 			function googleInit() {
-				var mLatLng = new google.maps.LatLng(<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>);
+				var mLatLng = new google.maps.LatLng(<?php echo $occArr['decimallatitude'] . ',' . $occArr['decimallongitude']; ?>);
 				var dmOptions = {
 					zoom: 8,
 					center: mLatLng,
@@ -276,8 +277,8 @@ $traitArr = $indManager->getTraitArr();
 				let mLatLng = [<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>];
 
             map = new LeafletMap("map_canvas", {
-               center: mLatLng, 
-               zoom: 8, 
+               center: mLatLng,
+               zoom: 8,
             });
 
 			if(coordError > 0) {
@@ -293,9 +294,9 @@ $traitArr = $indManager->getTraitArr();
 					leafletInit();
 				<?php else: ?>
 					googleInit();
-				<?php endif?>
+				<?php endif ?>
 			}
-		<?php
+			<?php
 		}
 		?>
 	</script>
@@ -452,24 +453,17 @@ $traitArr = $indManager->getTraitArr();
 							<?php
 						}
 						if($occArr['othercatalognumbers']){
-							$char = substr($occArr['othercatalognumbers'],0,1);
-							if($char == '{' || $char == '['){
-								$otherCatArr = json_decode($occArr['othercatalognumbers'],true);
-								foreach($otherCatArr as $catTag => $catValueArr){
-									if(!$catTag) $catTag = $LANG['OTHER_CATALOG_NUMBERS'];
-									echo '<div id="assoccatnum-div" class="assoccatnum-div"><label>'.$catTag.':</label> '.implode('; ', $catValueArr).'</div>';
-								}
-							}
-							else{
-								?>
-								<div id="assoccatnum-div" class="assoccatnum-div bottom-breathing-room-sm-rel">
-									<?php
-									echo '<label>'.$LANG['OTHER_CATALOG_NUMBERS'].': </label>';
-									echo $occArr['othercatalognumbers'];
-									?>
-								</div>
+							?>
+							<div id="assoccatnum-div" class="assoccatnum-div bottom-breathing-room-sm-rel">
 								<?php
-							}
+								foreach($occArr['othercatalognumbers'] as $catValueArr){
+									$catTag = $LANG['OTHER_CATALOG_NUMBERS'];
+									if(!empty($catValueArr['name'])) $catTag = $catValueArr['name'];
+									echo '<div><label>'.$catTag.':</label> ' . $catValueArr['value'] . '</div>';
+								}
+								?>
+							</div>
+							<?php
 						}
 						if($occArr['sciname']){
 							?>
@@ -1086,7 +1080,14 @@ $traitArr = $indManager->getTraitArr();
 							if($collMetadata['contact']){
 								echo $LANG['ADDITIONAL_INFO'].': '.$collMetadata['contact'];
 								if($collMetadata['email']){
-									$emailSubject = $DEFAULT_TITLE.' occurrence: '.$occArr['catalognumber'].' ('.$occArr['othercatalognumbers'].')';
+									$otherCatNum = '';
+									if($occArr['othercatalognumbers']){
+										foreach($occArr['othercatalognumbers'] as $identArr){
+											$otherCatNum .= $identArr['value'] . ', ';
+										}
+										$otherCatNum = ' (' . trim($otherCatNum, ', ') . ')';
+									}
+									$emailSubject = $DEFAULT_TITLE . ' occurrence: ' . $occArr['catalognumber'] . $otherCatNum;
 									$refPath = $indManager->getDomain().$CLIENT_ROOT.'/collections/individual/index.php?occid='.$occArr['occid'];
 									$emailBody = $LANG['SPECIMEN_REFERENCED'].': '.$refPath;
 									$emailRef = 'subject=' . urlencode($emailSubject) . '&cc=' . urlencode($ADMIN_EMAIL) . '&body=' . urlencode($emailBody);

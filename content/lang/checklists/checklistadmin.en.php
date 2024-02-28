@@ -67,7 +67,6 @@ $LANG['ADDIMGVOUC'] = 'Add Image Voucher and Link to Checklist';
 $LANG['FORMADDVOUCH'] = 'This form will allow you to add an image voucher linked to this checklist.<br/>
 						If not already present, Scientific name will be added to checklist.';
 $LANG['SELECTVOUCPROJ'] = 'Select the voucher project to which you wish to add the voucher. ';
-$LANG['ADDIMGVOUCH'] = 'Add Image Voucher';
 $LANG['IDNOTSET'] = ' Checklist identifier not set';
 $LANG['NOADMINPERM'] = ' You do not have administrative permission for this checklist';
 $LANG['CURREDIT'] = 'Current Editors';

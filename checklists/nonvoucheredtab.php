@@ -1,7 +1,8 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherReport.php');
-include_once($SERVER_ROOT.'/content/lang/checklists/voucheradmin.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/voucheradmin.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/checklists/voucheradmin.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT.'/content/lang/checklists/voucheradmin.en.php');
 
 $clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $pid = array_key_exists('pid', $_REQUEST) ? filter_var($_REQUEST['pid'], FILTER_SANITIZE_NUMBER_INT) : '';
@@ -41,10 +42,10 @@ if($isEditor){
 			if(!$displayMode || $displayMode==1 || $displayMode==2){
 				?>
 				<div style='float:left;margin-top:3px;height:30px;'>
-					<b><?php echo $LANG['TAXWITHOUTVOUCH'];?>: <?php echo $nonVoucherCnt; ?></b>
+					<b><?php echo $LANG['TAXWITHOUTVOUCH'] . ': ' . $nonVoucherCnt; ?></b>
 					<?php
 					if($clManager->getChildClidArr()){
-						echo ' (excludes taxa from children checklists)';
+						echo ' ' . $LANG['EXCLUDES_CHILDREN_TAXA'];
 					}
 					?>
 					<span>
@@ -88,7 +89,7 @@ if($isEditor){
 											echo $oArr['collcode'];
 											echo '</a>';
 											echo '</td>';
-											echo '<td>'.$oArr['locality'].'</td>';
+											echo '<td>' . $oArr['locality'] . '</td>';
 											echo '</tr>';
 										}
 									}
@@ -99,12 +100,12 @@ if($isEditor){
 								<input name="pid" value="<?php echo $pid; ?>" type="hidden" />
 								<input name="displaymode" value="<?php echo $displayMode; ?>" type="hidden" />
 								<input name="usecurrent" value="1" type="checkbox" checked /><?php echo $LANG['ADDNAMECURRTAX'];?><br/>
-								<button name="submitaction" type="submit" value="addVouchers">Add Vouchers</button>
+								<button name="submitaction" type="submit" value="addVouchers"><?php echo $LANG['ADD_VOUCHERS'];?></button>
 							</form>
 							<?php
 						}
 						else{
-							echo '<div style="font-weight:bold;font-size:120%;">'.$LANG['NOVOUCHLOCA'].'</div>';
+							echo '<div style="font-weight:bold;font-size:120%;">' . $LANG['NOVOUCHLOCA'] . '</div>';
 						}
 						?>
 					</div>
@@ -121,7 +122,7 @@ if($isEditor){
 						<?php
 						if($nonVoucherArr = $clManager->getNonVoucheredTaxa($startPos)){
 							foreach($nonVoucherArr as $family => $tArr){
-								echo '<div class="family-div">'.strtoupper($family).'</div>';
+								echo '<div class="family-div">' . strtoupper($family) . '</div>';
 								echo '<div class="taxa-block">';
 								foreach($tArr as $clTaxaID => $taxaArr){
 									$tid = $taxaArr['t'];
@@ -141,17 +142,17 @@ if($isEditor){
 							if($startPos || $nonVoucherCnt > 100){
 								echo '<div style="text-weight:bold;">';
 								if($startPos > 0) echo '<a href="voucheradmin.php?clid=' . $clid . '&pid=' . $pid . '&start=' . ($startPos-100) . '">';
-								echo '&lt;&lt; '.$LANG['PREVIOUS'].'';
+								echo '&lt;&lt; ' . $LANG['PREVIOUS'] . '';
 								if($startPos > 0) echo '</a>';
-								echo ' || <b>'.$startPos.'-'.($startPos+($arrCnt<100?$arrCnt:100)).''.$LANG['RECORDS'].'</b> || ';
+								echo ' || <b>' . $startPos . '-' . ($startPos+($arrCnt<100?$arrCnt:100)) . '' . $LANG['RECORDS'] . '</b> || ';
 								if(($startPos + 100) <= $nonVoucherCnt) echo '<a href="voucheradmin.php?clid=' . $clid . '&pid=' . $pid . '&start=' . ($startPos+100) . '">';
-								echo ''.$LANG['NEXT'].' &gt;&gt;';
+								echo '' . $LANG['NEXT'] . ' &gt;&gt;';
 								if(($startPos + 100) <= $nonVoucherCnt) echo '</a>';
 								echo '</div>';
 							}
 						}
 						else{
-							echo '<h2>'.$LANG['ALLTAXACONTAINVOUCH'].'</h2>';
+							echo '<h2>' . $LANG['ALLTAXACONTAINVOUCH'] . '</h2>';
 						}
 						?>
 					</div>

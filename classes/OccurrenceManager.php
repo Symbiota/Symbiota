@@ -239,14 +239,6 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 				//Add a more percise circular definition that will run on bounding box points
 				$sqlWhere .= 'AND (( 3959 * acos( cos( radians('.$lat.') ) * cos( radians( o.DecimalLatitude ) ) * cos( radians( o.DecimalLongitude )'.
 						' - radians('.$lng.') ) + sin( radians('.$lat.') ) * sin(radians(o.DecimalLatitude)) ) ) < '.$radius.') ';
-				/*
-				if($this->hasFullSpatialSupport()){
-
-				}
-				else{
-
-				}
-				*/
 			}
 			$this->displaySearchArr[] = $pointArr[0]." ".$pointArr[1]." +- ".$pointArr[2].$pointArr[3];
 		}
@@ -421,25 +413,35 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$sqlWhere .= 'AND ('.substr($catWhere,3).') ';
 			$this->displaySearchArr[] = $this->searchTermArr['catnum'];
 		}
-		if(array_key_exists("typestatus",$this->searchTermArr)){
-			$sqlWhere .= "AND (o.typestatus IS NOT NULL) ";
+		if(!empty($this->searchTermArr['materialsampletype'])){
+			if($this->searchTermArr['materialsampletype'] == 'all-ms'){
+				$sqlWhere .= 'AND (o.occid IN(SELECT occid FROM ommaterialsample)) ';
+				$this->displaySearchArr[] = 'has Material Sample';
+			}
+			else{
+				$sqlWhere .= 'AND (o.occid IN(SELECT occid FROM ommaterialsample WHERE sampleType = "' . $this->cleanInStr($this->searchTermArr['materialsampletype']) . '")) ';
+				$this->displaySearchArr[] = 'has ' . $this->searchTermArr['materialsampletype'] . ' Material Sample';
+			}
+		}
+		if(array_key_exists('typestatus', $this->searchTermArr)){
+			$sqlWhere .= 'AND (o.typestatus IS NOT NULL) ';
 			$this->displaySearchArr[] = 'is type';
 		}
-		if(array_key_exists("hasimages",$this->searchTermArr)){
-			$sqlWhere .= "AND (o.occid IN(SELECT occid FROM images)) ";
+		if(array_key_exists('hasimages', $this->searchTermArr)){
+			$sqlWhere .= 'AND (o.occid IN(SELECT occid FROM images)) ';
 			$this->displaySearchArr[] = 'has images';
 		}
-		if(array_key_exists("hasgenetic",$this->searchTermArr)){
-			$sqlWhere .= "AND (o.occid IN(SELECT occid FROM omoccurgenetic)) ";
+		if(array_key_exists('hasgenetic', $this->searchTermArr)){
+			$sqlWhere .= 'AND (o.occid IN(SELECT occid FROM omoccurgenetic)) ';
 			$this->displaySearchArr[] = 'has genetic data';
 		}
-		if(array_key_exists("hascoords",$this->searchTermArr)){
-			$sqlWhere .= "AND (o.decimalLatitude IS NOT NULL) ";
+		if(array_key_exists('hascoords', $this->searchTermArr)){
+			$sqlWhere .= 'AND (o.decimalLatitude IS NOT NULL) ';
 			$this->displaySearchArr[] = 'has geocoordinates';
 		}
 		if($sqlWhere){
-			if(!array_key_exists("includecult",$this->searchTermArr)){
-				$sqlWhere .= "AND (o.cultivationStatus IS NULL OR o.cultivationStatus = 0) ";
+			if(!array_key_exists('includecult', $this->searchTermArr)){
+				$sqlWhere .= 'AND (o.cultivationStatus IS NULL OR o.cultivationStatus = 0) ';
 				$this->displaySearchArr[] = 'excluding cultivated/captive occurrences';
 			}
 			else{
@@ -825,6 +827,15 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 				unset($this->searchTermArr['catnum']);
 			}
 		}
+		if(array_key_exists('materialsampletype',$_REQUEST)){
+			if($matSample = $this->cleanInputStr($_REQUEST['materialsampletype'])){
+				$this->searchTermArr['materialsampletype'] = $matSample;
+
+			}
+			else{
+				unset($this->searchTermArr['materialsampletype']);
+			}
+		}
 		if(array_key_exists('typestatus',$_REQUEST)){
 			if($_REQUEST['typestatus']) $this->searchTermArr['typestatus'] = true;
 			else unset($this->searchTermArr['typestatus']);
@@ -934,25 +945,16 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	}
 
 	//Misc support functions
-	private function hasFullSpatialSupport(){
-		$serverStr = '';
-		if(mysqli_get_server_info($this->conn)) $serverStr = mysqli_get_server_info($this->conn);
-		else $serverStr = shell_exec('mysql -V');
-		if($serverStr){
-			if(strpos($serverStr,'MariaDB') !== false) return true;
-			else{	//db = mysql;
-				preg_match('@[0-9]+\.[0-9]+\.[0-9]+@',$serverStr,$m);
-				$mysqlVerNums = explode('.', $m[0]);
-				if($mysqlVerNums[0] > 5) return true;
-				elseif($mysqlVerNums[0] == 5){
-					if($mysqlVerNums[1] > 6) return true;
-					elseif($mysqlVerNums[1] == 6){
-						if($mysqlVerNums[2] >= 1) return true;
-					}
-				}
+	public function getMaterialSampleTypeArr(){
+		$retArr = array();
+		$sql = 'SELECT DISTINCT sampleType FROM ommaterialsample ORDER BY sampleType';
+		if($rs = $this->conn->query($sql)){
+			while($r = $rs->fetch_object()){
+				$retArr[] = $r->sampleType;
 			}
+			$rs->close();
 		}
-		return false;
+		return $retArr;
 	}
 
 	//Setters and getters

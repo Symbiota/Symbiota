@@ -8,6 +8,7 @@ Date Translated: 2021-08-05
 */
 
 $LANG['SPEC_DETAILS'] = 'Detalles de la Especie';
+$LANG['OF'] = 'de';
 $LANG['NAME_BLANK'] = 'El campo de nombre científico está vacío';
 $LANG['SCINAME_ERROR'] = 'ERROR: El nombre científico no existe en la base de datos. ¿Lo escribió correctamente? De ser así, puede ser ingresado en el tesauro taxonómico.';
 $LANG['GEN_EDIT'] = 'Edición General';
@@ -31,7 +32,8 @@ $LANG['VOUCHER_INFO'] = 'Información de los Vouchers';
 $LANG['NO_VOUCHERS'] = 'Ningún voucher de esta especie ha sido asignado al listado de especies';
 $LANG['SURE_DELETE'] = '¿Está seguro que quiere eliminar este voucher registrado?';
 $LANG['EDIT_VOUCHER'] = 'Editar Vouchers';
-$LANG['SUBMIT_V_EDITS'] = 'Enviar Ediciones de los Especímenes Voucher';
+$LANG['EDITOR_NOTES_DISPLAY'] = 'Notas del editor (solo visualización del editor)';
+$LANG['SUBMIT_V_EDITS'] = 'Enviar Ediciones';
 $LANG['NO_DATA'] = 'No fue posible recuperar los datos o posiblemente no cuenta con los permisos de edición necesarios';
 
 ?>

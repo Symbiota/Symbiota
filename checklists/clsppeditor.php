@@ -1,7 +1,8 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherManager.php');
-@include_once($SERVER_ROOT.'/content/lang/checklists/clsppeditor.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/clsppeditor.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/checklists/clsppeditor.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT.'/content/lang/checklists/clsppeditor.en.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -64,7 +65,7 @@ $clArray = $vManager->getChecklistData();
 ?>
 <html>
 	<head>
-		<title><?php echo (isset($LANG['SPEC_DETAILS'])?$LANG['SPEC_DETAILS']:'Species Details'); ?>: <?php echo $vManager->getTaxonName()." of ".$vManager->getClName(); ?></title>
+		<title><?php echo $LANG['SPEC_DETAILS'] . ': ' . $vManager->getTaxonName() . " " . $LANG['OF'] . " " . $vManager->getClName(); ?></title>
 		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
@@ -96,7 +97,7 @@ $clArray = $vManager->getChecklistData();
 
 			function validateRenameForm(f){
 				if(f.renamesciname.value == ""){
-					alert("<?php echo (isset($LANG['NAME_BLANK'])?$LANG['NAME_BLANK']:'Scientific name field is blank'); ?>");
+					alert("<?php echo $LANG['NAME_BLANK']; ?>");
 				}
 				else{
 					checkScinameExistence(f);
@@ -115,7 +116,7 @@ $clArray = $vManager->getChecklistData();
 						f.submit();
 					}
 					else{
-						alert("<?php echo (isset($LANG['SCINAME_ERROR'])?$LANG['SCINAME_ERROR']:'ERROR: Scientific name does not exist in database. Did you spell it correctly? If so, it may have to be added to taxa table.'); ?>");
+						alert("<?php echo $LANG['SCINAME_ERROR']; ?>");
 						f.renametid.value = "";
 					}
 				});
@@ -139,7 +140,7 @@ $clArray = $vManager->getChecklistData();
 	<body onload="<?php  if(!$status) echo $followUpAction; ?>" >
 		<!-- This is inner text! -->
 		<div id='popup-innertext'>
-			<h1><?php echo "<i>".$vManager->getTaxonName()."</i> of ".$vManager->getClName(); ?></h1>
+			<h1><?php echo "<i>" . $vManager->getTaxonName() . "</i> " . $LANG['OF'] . " " . $vManager->getClName(); ?></h1>
 			<?php
 			if($status){
 				?>
@@ -154,8 +155,8 @@ $clArray = $vManager->getChecklistData();
 				?>
 				<div id="tabs" style="margin:10px;">
 				    <ul>
-						<li><a href="#gendiv"><?php echo htmlspecialchars((isset($LANG['GEN_EDIT'])?$LANG['GEN_EDIT']:'General Editing'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
-						<li><a href="#voucherdiv"><?php echo htmlspecialchars((isset($LANG['VOUCHER_EDIT'])?$LANG['VOUCHER_EDIT']:'Voucher Admin'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
+						<li><a href="#gendiv"><?php echo htmlspecialchars($LANG['GEN_EDIT'], HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
+						<li><a href="#voucherdiv"><?php echo htmlspecialchars($LANG['VOUCHER_EDIT'], HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
 						<!--
 						<li><a href="#coorddiv">Coordinate Admin</a></li>
 						-->
@@ -163,10 +164,10 @@ $clArray = $vManager->getChecklistData();
 					<div id="gendiv">
 						<form name='editcl' action="clsppeditor.php" method='post' >
 							<fieldset style='margin:5px;padding:15px'>
-				   			<legend><b><?php echo (isset($LANG['EDIT_CHECKLIST'])?$LANG['EDIT_CHECKLIST']:'Edit Checklist Information'); ?></b></legend>
+				   			<legend><b><?php echo $LANG['EDIT_CHECKLIST']; ?></b></legend>
 				   			<div style="clear:both;margin:3px;">
 									<div style='width:100px;font-weight:bold;float:left;'>
-										<?php echo (isset($LANG['HABITAT'])?$LANG['HABITAT']:'Habitat'); ?>:
+										<?php echo $LANG['HABITAT']; ?>:
 									</div>
 									<div style="float:left;">
 										<input name='habitat' type='text' value="<?php echo $clArray["habitat"];?>" size='70' maxlength='250' />
@@ -174,7 +175,7 @@ $clArray = $vManager->getChecklistData();
 								</div>
 								<div style='clear:both;margin:3px;'>
 									<div style='width:100px;font-weight:bold;float:left;'>
-										<?php echo (isset($LANG['ABUNDANCE'])?$LANG['ABUNDANCE']:'Abundance'); ?>:
+										<?php echo $LANG['ABUNDANCE']; ?>:
 									</div>
 									<div style="float:left;">
 										<input type="text"  name="abundance" value="<?php echo $clArray["abundance"]; ?>" />
@@ -182,7 +183,7 @@ $clArray = $vManager->getChecklistData();
 								</div>
 								<div style='clear:both;margin:3px;'>
 									<div style='width:100px;font-weight:bold;float:left;'>
-										<?php echo (isset($LANG['NOTES'])?$LANG['NOTES']:'Notes'); ?>:
+										<?php echo $LANG['NOTES']; ?>:
 									</div>
 									<div style="float:left;">
 										<input name='notes' type='text' value="<?php echo $clArray["notes"];?>" size='65' maxlength='2000' />
@@ -190,7 +191,7 @@ $clArray = $vManager->getChecklistData();
 								</div>
 								<div style='clear:both;margin:3px;'>
 									<div style='width:100px;font-weight:bold;float:left;'>
-										<?php echo (isset($LANG['EDITOR_NOTES'])?$LANG['EDITOR_NOTES']:'Editor Notes'); ?>:
+										<?php echo $LANG['EDITOR_NOTES']; ?>:
 									</div>
 									<div style="float:left;">
 										<input name='internalnotes' type='text' value="<?php echo $clArray["internalnotes"];?>" size='65' maxlength='250' />
@@ -198,7 +199,7 @@ $clArray = $vManager->getChecklistData();
 								</div>
 								<div style='clear:both;margin:3px;'>
 									<div style='width:100px;font-weight:bold;float:left;'>
-										<?php echo (isset($LANG['SOURCE'])?$LANG['SOURCE']:'Source'); ?>:
+										<?php echo $LANG['SOURCE']; ?>:
 									</div>
 									<div style="float:left;">
 										<input name='source' type='text' value="<?php echo $clArray["source"];?>" size='65' maxlength='250' />
@@ -206,7 +207,7 @@ $clArray = $vManager->getChecklistData();
 								</div>
 								<div style='clear:both;margin:3px;'>
 									<div style='width:100px;font-weight:bold;float:left;'>
-										<?php echo (isset($LANG['OVERRIDE'])?$LANG['OVERRIDE']:'Family Override'); ?>:
+										<?php echo $LANG['OVERRIDE']; ?>:
 									</div>
 									<div style="float:left;">
 										<input name='familyoverride' type='text' value="<?php echo $clArray["familyoverride"];?>" size='65' maxlength='250' />
@@ -217,17 +218,17 @@ $clArray = $vManager->getChecklistData();
 									<input name='taxon' type="hidden" value="<?php echo $vManager->getTaxonName();?>" />
 									<input name='clid' type="hidden" value="<?php echo $vManager->getClid();?>" />
 									<input name='clname' type="hidden" value="<?php echo $vManager->getClName();?>" />
-									<button type="submit" name="action" value="editChecklist"><?php echo (isset($LANG['SUBMIT_EDITS'])?$LANG['SUBMIT_EDITS']:'Submit Checklist Edits'); ?></button>
+									<button type="submit" name="action" value="editChecklist"><?php echo $LANG['SUBMIT_EDITS']; ?></button>
 								</div>
 							</fieldset>
 						</form>
 						<hr />
 						<form name="renametaxonform" action="clsppeditor.php" method="post" onsubmit="return validateRenameForm(this)">
 							<fieldset style='margin:5px;padding:15px;'>
-								<legend><b><?php echo (isset($LANG['RENAME_TRANSFER'])?$LANG['RENAME_TRANSFER']:'Rename Taxon / Transfer Vouchers'); ?></b></legend>
+								<legend><b><?php echo $LANG['RENAME_TRANSFER']; ?></b></legend>
 								<div style='margin-top:2px;'>
 									<div style='width:130px;font-weight:bold;float:left;'>
-										<?php echo (isset($LANG['TARGET_TAXON'])?$LANG['TARGET_TAXON']:'Target Taxon'); ?>:
+										<?php echo $LANG['TARGET_TAXON']; ?>:
 									</div>
 									<div style='float:left;'>
 										<input id="renamesciname" name='renamesciname' type="text" size="50" />
@@ -235,7 +236,7 @@ $clArray = $vManager->getChecklistData();
 									</div>
 								</div>
 								<div style="clear:both;margin-top:2px;">
-									<b>*</b> <?php echo (isset($LANG['VOUCHERS_TRANSFER'])?$LANG['VOUCHERS_TRANSFER']:'Note that vouchers &amp; notes will transfer to new taxon'); ?>
+									<b>*</b> <?php echo $LANG['VOUCHERS_TRANSFER']; ?>
 								</div>
 								<div style="margin:15px">
 									<input name="tid" type="hidden" value="<?php echo $vManager->getTid(); ?>" />
@@ -243,19 +244,19 @@ $clArray = $vManager->getChecklistData();
 									<input name="cltype" type="hidden" value="<?php echo $clArray['cltype']; ?>" />
 									<input name="locality" type="hidden" value="<?php echo $clArray['locality']; ?>" />
 									<input name="action" type="hidden" value="renameTransfer" />
-									<button type="submit" name="submitaction"><?php echo (isset($LANG['RENAME'])?$LANG['RENAME']:'Rename and Transfer'); ?></button>
+									<button type="submit" name="submitaction"><?php echo $LANG['RENAME']; ?></button>
 								</div>
 							</fieldset>
 						</form>
 						<hr />
-						<form action="clsppeditor.php" method="post" name="deletetaxon" onsubmit="return window.confirm('<?php echo (isset($LANG['ARE_YOU_SURE'])?$LANG['ARE_YOU_SURE']:'Are you sure you want to delete this taxon from checklist?'); ?>');">
+						<form action="clsppeditor.php" method="post" name="deletetaxon" onsubmit="return window.confirm('<?php echo $LANG['ARE_YOU_SURE']; ?>');">
 							<fieldset style='margin:5px;padding:15px;'>
 						   	<legend><b><?php echo (isset($LANG['DELETE'])?$LANG['DELETE']:'Delete'); ?></b></legend>
 								<input type="hidden" name='tid' value="<?php echo $vManager->getTid(); ?>" />
 								<input type="hidden" name='clid' value="<?php echo $vManager->getClid(); ?>" />
 								<input type="hidden" name='cltype' value="<?php echo $clArray['cltype']; ?>" />
 								<input type="hidden" name='locality' value="<?php echo $clArray['locality']; ?>" />
-								<button type="submit" name="action" value="deleteTaxon"><?php echo (isset($LANG['DELETE_TAXON'])?$LANG['DELETE_TAXON']:'Delete Taxon From Checklist'); ?></button>
+								<button type="submit" name="action" value="deleteTaxon"><?php echo $LANG['DELETE_TAXON']; ?></button>
 							</fieldset>
 						</form>
 					</div>
@@ -268,11 +269,11 @@ $clArray = $vManager->getChecklistData();
 									<img src="../images/link.png"  style="border:0px;" />
 								</a>
 							</div>
-							<h3><?php echo (isset($LANG['VOUCHER_INFO'])?$LANG['VOUCHER_INFO']:'Voucher Information'); ?></h3>
+							<h3><?php echo $LANG['VOUCHER_INFO']; ?></h3>
 							<?php
 							$vArray = $vManager->getVoucherData();
 							if(!$vArray){
-								echo '<div>'.(isset($LANG['NO_VOUCHERS'])?$LANG['NO_VOUCHERS']:'No vouchers for this species has been assigned to checklist').' </div>';
+								echo '<div>' . $LANG['NO_VOUCHERS'] . ' </div>';
 							}
 							?>
 							<ul>
@@ -289,32 +290,32 @@ $clArray = $vManager->getChecklistData();
 										echo ($iArray['notes']?', '.$iArray['notes']:'').($iArray['editornotes']?', '.$iArray['editornotes']:'');
 										?>
 										<a href="#" onclick="toggle('vouch-<?php echo $voucherID;?>')"><img src="../images/edit.png" /></a>
-										<form action="clsppeditor.php" method='post' name='delform' style="display:inline;" onsubmit="return confirm('<?php echo (isset($LANG['SURE_DELETE'])?$LANG['SURE_DELETE']:'Are you sure you want to delete this voucher record?'); ?>');">
+										<form action="clsppeditor.php" method='post' name='delform' style="display:inline;" onsubmit="return confirm('<?php echo $LANG['SURE_DELETE']; ?>');">
 											<input type="hidden" name='tid' value="<?php echo $vManager->getTid();?>" />
 											<input type="hidden" name='clid' value="<?php echo $vManager->getClid();?>" />
 											<input type="hidden" name='voucherID' value="<?php echo $voucherID;?>" />
 											<input type="hidden" name='tabindex' value="1" />
 											<input type="hidden" name='action' value="deleteVoucher" />
-											<input type="image" name="action" src="../images/del.png" style="width:15px;" title="<?php echo (isset($LANG['DELETE_TAXON'])?$LANG['DELETE_TAXON']:'Delete Voucher'); ?>" />
+											<input type="image" name="action" src="../images/del.png" style="width:15px;" title="<?php echo $LANG['DELETE_TAXON']; ?>" />
 										</form>
 										<div id="vouch-<?php echo $voucherID;?>" style='margin:10px;clear:both;display:none;'>
 											<form action="clsppeditor.php" method='post' name='editvoucher'>
 												<fieldset style='margin:5px 0px 5px 5px;'>
-													<legend><b><?php echo (isset($LANG['EDIT_VOUCHER'])?$LANG['EDIT_VOUCHER']:'Edit Voucher'); ?></b></legend>
+													<legend><b><?php echo $LANG['EDIT_VOUCHER']; ?></b></legend>
 													<input type="hidden" name='tid' value="<?php echo $vManager->getTid();?>" />
 													<input type="hidden" name='clid' value="<?php echo $vManager->getClid();?>" />
 													<input type="hidden" name='voucherID' value="<?php echo $voucherID;?>" />
 													<input type="hidden" name='tabindex' value="1" />
 													<div style='margin-top:0.5em;'>
-														<b>Notes:</b>
+														<b><?php echo $LANG['NOTES']; ?>:</b>
 														<input name='notes' type='text' value="<?php echo $iArray["notes"];?>" size='60' maxlength='250' />
 													</div>
 													<div style='margin-top:0.5em;'>
-														<b>Editor Notes (editor display only):</b>
+														<b><?php echo $LANG['EDITOR_NOTES_DISPLAY']; ?>:</b>
 														<input name='editornotes' type='text' value="<?php echo $iArray["editornotes"];?>" size='30' maxlength='50' />
 													</div>
 													<div style='margin-top:0.5em;'>
-														<button type='submit' name='action' value="editVoucher"><?php echo (isset($LANG['SUBMIT_V_EDITS'])?$LANG['SUBMIT_V_EDITS']:'Submit Voucher Edits'); ?></button>
+														<button type='submit' name='action' value="editVoucher"><?php echo $LANG['SUBMIT_V_EDITS']; ?></button>
 													</div>
 												</fieldset>
 											</form>
@@ -337,7 +338,7 @@ $clArray = $vManager->getChecklistData();
 				<?php
 			}
 			else{
-				echo '<div>'.(isset($LANG['NO_DATA'])?$LANG['NO_DATA']:'Failed to return data or you might not have proper editing rights').'</div>';
+				echo '<div>' . $LANG['NO_DATA'] . '</div>';
 			}
 			?>
 		</div>

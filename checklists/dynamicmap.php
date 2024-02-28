@@ -1,7 +1,8 @@
 <?php
 include_once('../config/symbini.php');
 //include_once($SERVER_ROOT.'/classes/DynamicChecklistManager.php');
-@include_once($SERVER_ROOT.'/content/lang/checklists/dynamicmap.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/dynamicmap.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/checklists/dynamicmap.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT.'/content/lang/checklists/dynamicmap.en.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']:0;
@@ -38,7 +39,7 @@ if(!$zoomInt){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.' - '.(isset($LANG['CHECKLIST_GENERATOR'])?$LANG['CHECKLIST_GENERATOR']:'Dynamic Checklist Generator'); ?></title>
+	<title><?php echo $DEFAULT_TITLE . ' - ' . $LANG['CHECKLIST_GENERATOR']; ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -222,7 +223,7 @@ if(!$zoomInt){
 
       function checkForm(){
          if(submitCoord) return true;
-         alert("<?php echo (isset($LANG['CLICK_MAP'])?$LANG['CLICK_MAP']:'You must first click on map to capture coordinate points'); ?>");
+         alert("<?php echo $LANG['CLICK_MAP']; ?>");
          return false;
       }
    </script>
@@ -241,36 +242,32 @@ if(!$zoomInt){
 		if(isset($checklists_dynamicmapCrumbs)){
 			if($checklists_dynamicmapCrumbs){
 				echo "<div class='navpath'>";
-				echo "<a href='../index.php'>Home</a> &gt; ";
+				echo "<a href='../index.php'>" . $LANG['HOME'] . "</a> &gt; ";
 				echo $checklists_dynamicmapCrumbs;
-				echo "<b>Dynamic Map</b>";
+				echo "<b>" . $LANG['DYNAMIC_MAP'] . "</b>";
 				echo "</div>";
 			}
 		}
 		else{
 			?>
 			<div class='navpath'>
-				<a href='../index.php'><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;
-				<b><?php echo (isset($LANG['DYNAMIC_MAP'])?$LANG['DYNAMIC_MAP']:'Dynamic Map'); ?></b>
+				<a href='../index.php'><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;
+				<b><?php echo $LANG['DYNAMIC_MAP']; ?></b>
 			</div>
 			<?php
 		}
 		?>
 		<div class="flex-form" id='innertext'>
 			<div style="margin-left: 2rem; margin-bottom: 1rem;">
-				<?php echo (isset($LANG['CAPTURE_COORDS'])?$LANG['CAPTURE_COORDS']:'Pan, zoom and click on map to capture coordinates, then submit coordinates to build a species list.'); ?>
+				<?php echo $LANG['CAPTURE_COORDS']; ?>
 				<span id="moredetails" style="cursor:pointer;color:blue;font-size:80%;" onclick="this.style.display='none';document.getElementById('moreinfo').style.display='inline';document.getElementById('lessdetails').style.display='inline';">
-					<?php echo (isset($LANG['MORE_DETAILS'])?$LANG['MORE_DETAILS']:'More Details'); ?>
+					<?php echo $LANG['MORE_DETAILS']; ?>
 				</span>
 				<span id="moreinfo" style="display:none;">
-					<?php echo (isset($LANG['RADIUS_DESCRIPTION'])?$LANG['RADIUS_DESCRIPTION']:'If a radius is defined, species lists are generated using specimen data collected within the defined area.
-					If a radius is not supplied, the area is sampled in concentric rings until the sample size is determined to
-					best represent the local species diversity. In other words, poorly collected areas will have a larger radius sampled.
-					Setting the taxon filter will limit the return to species found within that taxonomic group.');
-					?>
+					<?php echo $LANG['RADIUS_DESCRIPTION']; ?>
 				</span>
 				<span id="lessdetails" style="cursor:pointer;color:blue;font-size:80%;display:none;" onclick="this.style.display='none';document.getElementById('moreinfo').style.display='none';document.getElementById('moredetails').style.display='inline';">
-					<?php echo (isset($LANG['LESS_DETAILS'])?$LANG['LESS_DETAILS']:'Less Details'); ?>
+					<?php echo $LANG['LESS_DETAILS']; ?>
 				</span>
 			</div>
 			<div>
@@ -280,23 +277,23 @@ if(!$zoomInt){
 						<input type="hidden" id="latbox" name="lat" value="" />
 						<input type="hidden" id="lngbox" name="lng" value="" />
 						<div class="bottom-breathing-room-relative">
-							<b><?php echo (isset($LANG['POINT'])?$LANG['POINT']:'Point (Lat, Long)'); ?>:</b>
-							<span id="latlngspan"> &lt; <?php echo (isset($LANG['CLICK_MAP'])?$LANG['CLICK_MAP']:'Click on map'); ?> &gt; </span>
+							<b><?php echo $LANG['POINT']; ?>:</b>
+							<span id="latlngspan"> &lt; <?php echo $LANG['CLICK_MAP']; ?> &gt; </span>
 						</div>
-						<button type="submit" class="bottom-breathing-room-relative" name="buildchecklistbutton" value="Build Checklist" disabled ><?php echo (isset($LANG['BUILD_CHECKLIST'])?$LANG['BUILD_CHECKLIST']:'Build Checklist'); ?></button>
+						<button type="submit" class="bottom-breathing-room-relative" name="buildchecklistbutton" value="Build Checklist" disabled ><?php echo $LANG['BUILD_CHECKLIST']; ?></button>
 					</div>
 					<div class="flex-form">
 						<div style="margin-left: 0;">
-							<label for="taxa"><?php echo (isset($LANG['TAXON_FILTER'])?$LANG['TAXON_FILTER']:'Taxon Filter'); ?>:</label>
+							<label for="taxa"><?php echo $LANG['TAXON_FILTER']; ?>:</label>
 							<input id="taxa" name="taxa" type="text" value="<?php echo $taxa; ?>" />
 							<input id="tid" name="tid" type="hidden" value="<?php echo $tid; ?>" />
 						</div>
 						<div style="margin-left: 0;">
-							<label for="radius"><?php echo (isset($LANG['RADIUS']) ? $LANG['RADIUS'] : 'Radius'); ?>:</label>
+							<label for="radius"><?php echo $LANG['RADIUS']; ?>:</label>
 							<input name="radius" id="radius" value="(optional)" type="text" style="width:140px;" onfocus="this.value = ''" />
 							<select id="radiusunits" name="radiusunits">
-								<option value="km"><?php echo (isset($LANG['KM'])?$LANG['KM']:'Kilometers'); ?></option>
-								<option value="mi"><?php echo (isset($LANG['MILES'])?$LANG['MILES']:'Miles'); ?></option>
+								<option value="km"><?php echo $LANG['KM']; ?></option>
+								<option value="mi"><?php echo $LANG['MILES']; ?></option>
 							</select>
 						</div>
 					</div>

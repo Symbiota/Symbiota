@@ -11,6 +11,7 @@ $LANG['SELECT_ONE'] = 'Al menos un voucher necesita ser seleccionado';
 $LANG['EXPLAIN_PARAGRAPH'] = 'Listado de especímenes voucher cuya identificación actual está en conflicto con el listado de especies. 
 		Los conflictos de voucher se deben típicamente a anotaciones recientes de especímenes localizados dentro de colecciones. 
 		Hacer click en ID del Listado de Especies para abrir el panel de edición para ese registro.';
+$LANG['CONFLICT_COUNT'] = 'Recuento de Conflictos';
 $LANG['CHECK_ID'] = 'ID del Listado de Especies';
 $LANG['VOUCHER_SPEC'] = 'Espécimen Voucher';
 $LANG['CORRECTED_ID'] = 'Identificación Corregida del Espécimen';

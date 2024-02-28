@@ -67,7 +67,6 @@ $LANG['ADDIMGVOUC'] = 'Ajouter Image d\'&Eacute;chantillon et lien vers Liste';
 $LANG['FORMADDVOUCH'] = 'Ce formulaire vous permettra d\'ajouter un image d\'&eacute;chantillon li&eacute; &agrave; cette liste.
                         <br/>Si ce n\'est pas d&eacute;j&agrave; pr&eacute;sent, le nom scientifique sera ajout&eacute; &agrave; la liste.';
 $LANG['SELECTVOUCPROJ'] = 'S&eacute;lectionnez le projet d\'&eacute;chantillon auquel vous souhaitez ajouter le &eacute;chantillon. ';
-$LANG['ADDIMGVOUCH'] = 'Ajouter Image d\'&Eacute;chantillon';
 $LANG['IDNOTSET'] = ' Identificateur de liste non d&eacute;fini';
 $LANG['NOADMINPERM'] = ' Vous n\'avez pas d\'autorisation administrative pour cette liste';
 $LANG['CURREDIT'] = '&Eacute;diteurs actuels';
