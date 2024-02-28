@@ -112,6 +112,8 @@ function openCoordAid(mapMode) {
  * @param {HTMLObjectElement} element Input for which chips are going to be created by default
  */
 function addChip(element) {
+  console.log("deleteMe addChip entered for element: ");
+  console.log(element);
   if (!element || !element.name) return;
   let inputChip = document.createElement("span") || null;
   if (!inputChip) return;
@@ -145,10 +147,14 @@ function addChip(element) {
     };
   } else {
     inputChip.id = "chip-" + element.id;
+    console.log("deleteMe element is: ");
+    console.log(element);
     let isTextOrNum = (element.type == "text") | (element.type == "number");
     isTextOrNum
       ? (inputChip.textContent = `${element.dataset.chip}: ${element.value}`)
       : (inputChip.textContent = element.dataset.chip);
+    console.log("deleteMe and inputChip is now: ");
+    console.log(inputChip);
     chipBtn.onclick = function () {
       element.type === "checkbox"
         ? (element.checked = false)
@@ -193,6 +199,7 @@ function removeChip(chip) {
  * @param {Event} e
  */
 function updateChip(e) {
+  console.log("deleteMe updateChip called");
   document.getElementById("chips").innerHTML = "";
   // first go through collections and sites
 
@@ -260,6 +267,19 @@ function updateChip(e) {
       }
     }
     // print inputs checked or filled in
+  });
+
+  // then go through remaining options and find selected items
+  const optionElements = document.querySelectorAll(".content option");
+  optionElements.forEach((item) => {
+    // console.log("deleteMe got here a3 and item is: ");
+    // console.log(item);
+    if (item.selected && item.value) {
+      console.log("deleteMe got here a1 and item is: ");
+      console.log(item);
+      // add chips depending on type of item
+      item.hasAttribute("data-chip") ? addChip(item) : "";
+    }
   });
 }
 
@@ -736,6 +756,12 @@ const formInputs = document.querySelectorAll(".content input");
 formInputs.forEach((formInput) => {
   formInput.addEventListener("change", updateChip);
 });
+
+const selectionElements = document.querySelectorAll(".content select");
+selectionElements.forEach((selectionElement) => {
+  selectionElement.addEventListener("change", updateChip);
+});
+
 // on default (on document load): All Neon Collections, All Domains & Sites, Include other IDs, All Domains & Sites
 document.addEventListener("DOMContentLoaded", updateChip);
 // Binds expansion function to plus and minus icons in selectors, uses jQuery

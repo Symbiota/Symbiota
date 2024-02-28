@@ -114,11 +114,11 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 						<div class="select-container">
 							<label for="taxontype" class="skip-link"><?php echo $LANG['TAXON_TYPE'] ?></label>
 							<select name="taxontype" id="taxontype" style="margin-top:0;">
-								<option value="1"><?php echo $LANG['ANY_NAME'] ?></option>
-								<option value="2"><?php echo $LANG['SCIENTIFIC_NAME'] ?></option>
-								<option value="3"><?php echo $LANG['FAMILY'] ?></option>
-								<option value="4"><?php echo $LANG['TAXONOMIC GROUP'] ?></option>
-								<option value="5"><?php echo $LANG['COMMON_NAME'] ?></option>
+								<option value="1" data-chip="<?php echo $LANG['TAXON'] . ': ' . $LANG['ANY_NAME'] ?>"><?php echo $LANG['ANY_NAME'] ?></option>
+								<option value="2" data-chip="<?php echo $LANG['TAXON'] . ': ' . $LANG['SCIENTIFIC_NAME'] ?>"><?php echo $LANG['SCIENTIFIC_NAME'] ?></option>
+								<option value="3" data-chip="<?php echo $LANG['TAXON'] . ': ' . $LANG['FAMILY'] ?>"><?php echo $LANG['FAMILY'] ?></option>
+								<option value="4" data-chip="<?php echo $LANG['TAXON'] . ': ' . $LANG['TAXONOMIC_GROUP'] ?>"><?php echo $LANG['TAXONOMIC_GROUP'] ?></option>
+								<option value="5" data-chip="<?php echo $LANG['TAXON'] . ': ' . $LANG['COMMON_NAME'] ?>"><?php echo $LANG['COMMON_NAME'] ?></option>
 							</select>
 							<span class="assistive-text"><?php echo $LANG['TAXON_TYPE'] ?></span>
 						</div>
@@ -432,6 +432,9 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 									<label for="includecult"><?php echo $LANG['INCLUDE_CULTIVATED'] ?></label>
 								</div>
 							</div>
+							<?php
+								// @TODO put material sample stuff here
+							?>
 						</div>
 					</div>
 				</section>
