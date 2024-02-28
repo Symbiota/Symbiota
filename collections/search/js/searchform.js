@@ -35,6 +35,7 @@ let paramNames = [
   "collnum",
   "collector",
   "attr[]",
+  "materialsampletype",
 ];
 const uLat = document.getElementById("upperlat") || null;
 const uLatNs = document.getElementById("upperlat_NS") || null;
