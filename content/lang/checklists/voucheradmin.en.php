@@ -6,23 +6,37 @@ Language: English
 */
 
 $LANG['NAV_HOME'] = 'Home';
+$LANG['EXT_VOUCHERS_LINKED'] = 'external vouchers have been linked to checklist';
 $LANG['CHECKLIST_ADMIN'] = 'Checklist Administration';
 $LANG['RETURNCHECK'] = 'Return to Checklist';
 $LANG['ADDIMGVOUCHER'] = 'Add Image Voucher';
 $LANG['EDITSEARCH'] = 'Edit Search Statement';
 $LANG['COUNTRY'] = 'Country';
+$LANG['ENTER_MULT_COUNTRIES'] = 'Enter multiple countries separated by semicolons';
 $LANG['STATE'] = 'State';
+$LANG['ENTER_MULT_STATES'] = 'Enter multiple states separated by semicolons';
 $LANG['COUNTY'] = 'County';
+$LANG['ENTER_MULT_COUNTIES'] = 'Enter multiple counties separated by semicolons';
 $LANG['LOCALITY'] = 'Locality';
 $LANG['TAXON'] = 'Taxon';
+$LANG['GEN_FAM_HIGHER'] = 'Genus, family, or higher rank';
 $LANG['COLLECTION'] = 'Collection';
 $LANG['TARGETCOLL'] = 'Search All Collections';
 $LANG['CHECKVOUCINSTRUC'] = 'To use the voucher administration functions, it is first necessary to define a search terms that will be used to limit occurrence records to those collected within the vicinity of the research area. ';
 $LANG['COLLECTOR'] = 'Collector';
+$LANG['MULTIPLE_COLLECTORS'] = 'Enter multiple collectors separated by semicolons';
 $LANG['LATN'] = 'Lat North';
+$LANG['LAT_NORTH'] = 'Latitude North';
+$LANG['FIND_COORD'] = 'Find Coordinate';
 $LANG['LATS'] = 'Lat South';
+$LANG['LAT_SOUTH'] = 'Latitude South';
 $LANG['LONGE'] = 'Long East';
+$LANG['LONG_EAST'] = 'Longitude East';
 $LANG['LONGW'] = 'Long West';
+$LANG['LONG_WEST'] = 'Longitude West';
+$LANG['EDIT_META_POLYGON'] = 'Edit Metadata and polygon';
+$LANG['SURE_DELETE_QUERY'] = 'Are you sure you want to delete query variables?';
+$LANG['ERROR'] = 'Error';
 $LANG['ONLYCOORD'] = 'Only include occurrences with coordinates';
 $LANG['POLYGON_SEARCH'] = 'Search based on polygon defining checklist research boundaries';
 $LANG['EXCLUDE'] = 'Exclude cultivated/captive occurrences';
