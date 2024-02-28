@@ -47,6 +47,29 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 	<script src="<?php echo $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script>
 		const clientRoot = '<?php echo $CLIENT_ROOT; ?>';
+		const handleAccordionExpand = () => {
+			const accordions = document.querySelectorAll('input[class="accordion-selector"]');
+			accordions.forEach(accordion => {
+				accordion.setAttribute('checked', true);
+			})
+
+			const expandButton = document.getElementById("expand-all-button");
+			expandButton.setAttribute('style', 'display: none;');
+			const collapseButton = document.getElementById("collapse-all-button");
+			collapseButton.removeAttribute('style', 'display: none;');
+		};
+
+		const handleAccordionCollapse = ()=>{
+			const accordions = document.querySelectorAll('input[class="accordion-selector"]');
+			accordions.forEach(accordion => {
+				accordion.removeAttribute('checked');
+			})
+
+			const collapseButton = document.getElementById("collapse-all-button");
+			collapseButton.setAttribute('style', 'display: none;');
+			const expandButton = document.getElementById("expand-all-button");
+			expandButton.removeAttribute('style', 'display: none;');
+		};
 	</script>
 	<?php include_once($SERVER_ROOT . '/includes/googleanalytics.php'); ?>
 	<!-- Search-specific styles -->
@@ -61,8 +84,13 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 	<div id="innertext" class="inner-search">
 		<h1><?php echo $LANG['SAMPLE_SEARCH'] ?></h1>
 		<div id="error-msgs" class="errors"></div>
+		<div style="display: grid; grid-template-columns: 3fr 1fr;">
+			<button onClick="handleAccordionExpand()" class="button button-primary" id="expand-all-button" type="button">Expand all sections</button>
+			<button onClick="handleAccordionCollapse()" class="button button-primary" id="collapse-all-button" type="button" style="display: none;">Collapse all sections</button>
+		</div>
 		<form id="params-form" action="javascript:void(0);">
 			<!-- Criteria forms -->
+
 			
 			<div class="accordions">
 				<!-- Taxonomy -->
