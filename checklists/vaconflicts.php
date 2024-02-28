@@ -1,7 +1,7 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherReport.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/checklists/vaconflicts.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/checklists/vaconflicts.' . $LANG_TAG . '.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/vaconflicts.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/checklists/vaconflicts.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT.'/content/lang/checklists/vaconflicts.en.php');
 
 $action = array_key_exists("submitaction",$_REQUEST)?$_REQUEST["submitaction"]:"";
