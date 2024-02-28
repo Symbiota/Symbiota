@@ -112,9 +112,7 @@ function openCoordAid(mapMode) {
  * @param {HTMLObjectElement} element Input for which chips are going to be created by default
  */
 function addChip(element) {
-  console.log("deleteMe addChip entered for element: ");
-  console.log(element);
-  if (!element || !element.name) return;
+  if (!element || (!element.name && element?.tagName !== "OPTION")) return;
   let inputChip = document.createElement("span") || null;
   if (!inputChip) return;
   inputChip?.classList?.add("chip");
@@ -147,14 +145,10 @@ function addChip(element) {
     };
   } else {
     inputChip.id = "chip-" + element.id;
-    console.log("deleteMe element is: ");
-    console.log(element);
     let isTextOrNum = (element.type == "text") | (element.type == "number");
     isTextOrNum
       ? (inputChip.textContent = `${element.dataset.chip}: ${element.value}`)
       : (inputChip.textContent = element.dataset.chip);
-    console.log("deleteMe and inputChip is now: ");
-    console.log(inputChip);
     chipBtn.onclick = function () {
       element.type === "checkbox"
         ? (element.checked = false)
@@ -199,7 +193,6 @@ function removeChip(chip) {
  * @param {Event} e
  */
 function updateChip(e) {
-  console.log("deleteMe updateChip called");
   document.getElementById("chips").innerHTML = "";
   // first go through collections and sites
 
@@ -272,11 +265,7 @@ function updateChip(e) {
   // then go through remaining options and find selected items
   const optionElements = document.querySelectorAll(".content option");
   optionElements.forEach((item) => {
-    // console.log("deleteMe got here a3 and item is: ");
-    // console.log(item);
     if (item.selected && item.value) {
-      console.log("deleteMe got here a1 and item is: ");
-      console.log(item);
       // add chips depending on type of item
       item.hasAttribute("data-chip") ? addChip(item) : "";
     }
@@ -471,14 +460,10 @@ function getParam(paramName) {
   if (paramName === "attr[]") {
     let dbArr = [];
     let tempArr = getTraitsSelected();
-    console.log("deleteMe tempArr is: ");
-    console.log(tempArr);
     tempArr.forEach((item) => {
       dbArr.push(item.value);
     });
     elementValues = dbArr;
-    console.log("deleteMe elementValues are: ");
-    console.log(elementValues);
     elementValues = dbArr;
   }
 
@@ -701,8 +686,6 @@ function simpleSearch() {
   let isValid = errors.length == 0;
   if (isValid) {
     let searchUrl = getSearchUrl();
-    console.log("deleteMe searchUrl is: ");
-    console.log(searchUrl);
     window.location = searchUrl;
   } else {
     handleValErrors(errors);
