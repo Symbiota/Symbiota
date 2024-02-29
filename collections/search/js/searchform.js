@@ -449,11 +449,7 @@ function getCollsSelected() {
 }
 
 function getTraitsSelected() {
-  let selectedInForm = Array.from(
-    document.querySelectorAll('input[name="attr[]"]:checked')
-  );
-  let traitsArr = selectedInForm;
-  return traitsArr;
+  return Array.from(document.querySelectorAll('input[name="attr[]"]:checked'));
 }
 
 /**
