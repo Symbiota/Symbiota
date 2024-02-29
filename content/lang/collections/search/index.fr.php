@@ -111,5 +111,9 @@ $LANG['LONGITUDE'] = '_Longitude';
 $LANG['RADIUS'] = '_Rayon';
 $LANG['ALERT_MSG_PREVIOUS_SEARCH_FORM'] = 'Vous recherchez le formulaire de recherche précédent ? Vous pouvez toujours l\'utiliser ici :';
 $LANG['ALL_COLLECTIONS'] = 'Toutes les collections';
+$LANG['TRIAT_CRITERIA'] = 'Critères de Caractéristiques';
+$LANG['TRAIT'] = 'Trait';
+$LANG['EXPAND_ALL_SECTIONS'] = 'Développer toutes les sections';
+$LANG['COLLAPSE_ALL_SECTIONS'] = 'Réduire toutes les sections';
 
 ?>

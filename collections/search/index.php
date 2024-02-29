@@ -85,8 +85,8 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 		<h1><?php echo $LANG['SAMPLE_SEARCH'] ?></h1>
 		<div id="error-msgs" class="errors"></div>
 		<div style="display: grid; grid-template-columns: 3fr 1fr;">
-			<button onClick="handleAccordionExpand()" class="inner-search button" id="expand-all-button" type="button" style="font-size: 1rem;">Expand all sections</button>
-			<button onClick="handleAccordionCollapse()" class="inner-search button" id="collapse-all-button" type="button" style="display: none; font-size: 1rem;">Collapse all sections</button>
+			<button onClick="handleAccordionExpand()" class="inner-search button" id="expand-all-button" type="button" style="font-size: 1rem;"><?= $LANG['EXPAND_ALL_SECTIONS']; ?></button>
+			<button onClick="handleAccordionCollapse()" class="inner-search button" id="collapse-all-button" type="button" style="display: none; font-size: 1rem;"><?= $LANG['COLLAPSE_ALL_SECTIONS']; ?></button>
 		</div>
 		<form id="params-form" action="javascript:void(0);">
 			<!-- Criteria forms -->

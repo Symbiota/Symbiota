@@ -108,5 +108,7 @@ $LANG['ALERT_MSG_PREVIOUS_SEARCH_FORM'] = 'Looking for the previous search form?
 $LANG['ALL_COLLECTIONS'] = 'All Collections';
 $LANG['TRIAT_CRITERIA'] = 'Trait Criteria';
 $LANG['TRAIT'] = 'Trait';
+$LANG['EXPAND_ALL_SECTIONS'] = 'Expand all sections';
+$LANG['COLLAPSE_ALL_SECTIONS'] = 'Collapse all sections';
 
 ?>
