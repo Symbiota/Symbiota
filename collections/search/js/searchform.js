@@ -181,6 +181,12 @@ function addChip(element) {
         document.getElementById("materialsampletype").selectedIndex =
           targetIndex;
       }
+      if (element?.getAttribute("id")?.startsWith("taxontype")) {
+        // if they close a taxontype chip, revert to the none option selected
+        const targetIndex =
+          document.getElementById("taxontype-any").selectedIndex;
+        document.getElementById("taxontype").selectedIndex = targetIndex;
+      }
       element.dataset.formId ? uncheckAll(element) : "";
       removeChip(inputChip);
     };
