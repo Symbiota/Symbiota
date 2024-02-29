@@ -667,7 +667,7 @@ class GeographicThesaurus extends Manager {
 
          if($properties->shapeName === null) continue;
          
-         $geoThesIDs = $this->getGeoThesIDByName($properties->shapeName, $geoLevel);
+         $geoThesIDs = $this->getGeoThesIDByName($properties->shapeName, $geoLevel, $potentialParents);
          $iso = empty($properties->shapeISO)?$properties->shapeGroup: $properties->shapeISO;
 
          //only does iso check for adm0 or countries because only case where
@@ -695,7 +695,7 @@ class GeographicThesaurus extends Manager {
                   $parents
                );
                $geoThesIDs = array_filter(
-                  $this->getGeoThesIDByName($properties->shapeName, $geoLevel, $parentID),
+                  $this->getGeoThesIDByName($properties->shapeName, $geoLevel, [$parentID]),
                   fn($val) => $val['hasPolygon'] === 0, 
                );
             }
@@ -829,7 +829,7 @@ class GeographicThesaurus extends Manager {
  
    }
 
-   public function getGeoThesIDByName(string $geoTerm, int $geoLevel = null, int $parentID = null): array {
+   public function getGeoThesIDByName(string $geoTerm, int $geoLevel = null, array $parentIDs = []): array {
       $params = [$geoTerm];
       $sql = <<<SQL
       SELECT g.geoThesID, g.parentID, g.iso3, CASE WHEN gp.geoThesID is null THEN false ELSE true END as hasPolygon 
@@ -842,9 +842,10 @@ class GeographicThesaurus extends Manager {
          array_push($params, $geoLevel);
       }
 
-      if($parentID !== null) {
-         $sql .= ' and parentID = ?';
-         array_push($params, $parentID);
+      if(count($parentIDs)) {
+         $parameters = str_repeat('?,', count($parentIDs) - 1) . '?';
+         $sql .= ' and parentID in ('. $parameters .')';
+         $params = array_merge($params, $parentIDs);
       }
       try {
          $result = $this->conn->execute_query($sql, $params);
