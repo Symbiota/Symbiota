@@ -100,4 +100,8 @@ $LANG['MAXIMUM_ELEVATION'] = 'Elevación máxima';
 $LANG['ADD_ICON'] = 'Agregar';
 $LANG['WORLD_ICON'] = 'Icono mundial';
 $LANG['EDIT_PLUS_ICON'] = 'Editar icono más';
+$LANG['FIND_CLONES'] ='Buscar duplicados previamente geolocalizados';
+$LANG['LOCATE_GEO_AREA'] = 'Ubicar el área geográfica';
+$LANG['EXAMINE_FOR_COORDS'] = 'Examinar la localidad para Lat/Long o UTM.';
+$LANG['INITIAL_RECORDS_EDIT'] ​​= 'Revisar el lote inicial de registros';
 ?>
