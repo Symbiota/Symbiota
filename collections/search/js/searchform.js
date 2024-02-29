@@ -280,9 +280,8 @@ function updateChip(e) {
   // then go through remaining options and find selected items
   const optionElements = document.querySelectorAll(".content option");
   optionElements.forEach((item) => {
-    if (item.selected && item.value) {
-      // add chips depending on type of item
-      item.hasAttribute("data-chip") ? addChip(item) : "";
+    if (item.selected && item.value && item.hasAttribute("data-chip")) {
+      addChip(item);
     }
   });
 }
