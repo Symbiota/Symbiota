@@ -438,8 +438,8 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								<div class="select-container">
 									<label for="materialsampletype"><?= $LANG['MATERIAL_SAMPLE_TYPE'] ?></label>
 									<select name="materialsampletype" id="materialsampletype">
-										<option data-chip="<?php echo $LANG['MATERIAL_SAMPLE'] . ': ---' ?>" value="">---------------</option>
-										<option data-chip="<?php echo $LANG['MATERIAL_SAMPLE'] . ': ' . $LANG['ALL_MATERIAL_SAMPLE'] ?>" value="all-ms"><?= $LANG['ALL_MATERIAL_SAMPLE'] ?></option>
+										<option id="materialsampletype-none" data-chip="<?php echo $LANG['MATERIAL_SAMPLE'] . ': ---' ?>" value="">---------------</option>
+										<option id="materialsampletype-all-ms" data-chip="<?php echo $LANG['MATERIAL_SAMPLE'] . ': ' . $LANG['ALL_MATERIAL_SAMPLE'] ?>" value="all-ms"><?= $LANG['ALL_MATERIAL_SAMPLE'] ?></option>
 										<?php
 										foreach($matSampleTypeArr as $matSampeType){
 											echo '<option data-chip=' . $LANG['MATERIAL_SAMPLE'] . ': ' . $matSampeType . 'value="' . $matSampeType . '">' . $matSampeType . '</option>';

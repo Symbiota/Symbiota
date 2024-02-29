@@ -173,6 +173,14 @@ function addChip(element) {
           collection.checked = false;
         });
       }
+      if (element?.getAttribute("id")?.startsWith("materialsampletype")) {
+        // if they close a materialsampletype chip, revert to the none option selected
+        const targetIndex = document.getElementById(
+          "materialsampletype-none"
+        ).selectedIndex;
+        document.getElementById("materialsampletype").selectedIndex =
+          targetIndex;
+      }
       element.dataset.formId ? uncheckAll(element) : "";
       removeChip(inputChip);
     };
