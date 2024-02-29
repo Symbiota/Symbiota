@@ -471,9 +471,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 									<div id="search-form-trait">
 										<div>
 											<div> 
-												<!-- style="float:left" -->
 												<div>
-													<!-- class="catHeaderDiv" -->
 													<div class="bottom-breathing-room-relative"><?php echo $LANG['TRAIT_DESCRIPTION']; ?></div>
 													<input type="hidden" id="SearchByTraits" value="true">
 												</div>
@@ -482,13 +480,10 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 													if(!isset($traitData['dependentTrait'])) {
 												?>
 														<fieldset class="bottom-breathing-room-relative">
-															<!-- style="margin-top:10px;display:inline;min-width:500px" -->
 															<legend><?= $LANG['TRAIT']; ?>: <?php echo $traitData['name']; ?></legend>
 															<div>
-																<!-- style="float:right" -->
 															</div>
 															<div class="traitDiv">
-																<!-- style="margin-left:5px;float:left" -->
 																<?php $attribSearch->echoTraitSearchForm($traitID); ?>
 															</div>
 														</fieldset>
