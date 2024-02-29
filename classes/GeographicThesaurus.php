@@ -702,19 +702,20 @@ class GeographicThesaurus extends Manager {
          } 
 
          if(is_array($geoThesIDs) && count($geoThesIDs) === 1) {
-            $this->addPolygon($geoThesIDs[0]['geoThesID'], json_encode($feature));
+            $key = array_keys($geoThesIDs)[0];
+            $this->addPolygon($geoThesIDs[$key]['geoThesID'], json_encode($feature));
             //update iso3 because data could be missing or wrong
-            if($iso !== $geoThesIDs[0]['iso3']) {
+            if($iso !== $geoThesIDs[$key]['iso3']) {
                try {
                   $sql = <<<'SQL'
                   UPDATE geographicthesaurus set iso3 = ? where geoThesID = ?
                   SQL;
-                  $this->conn->execute_query($sql, [$iso, $geoThesIDs[0]['geoThesID']]);
+                  $this->conn->execute_query($sql, [$iso, $geoThesIDs[$key]['geoThesID']]);
                } catch (\Throwable $e) {
                   $this->errorMessage = 'ERROR updating iso3 to match boundaryISO:' . $e->getMessage();
                }
             }
-            array_push($results, $geoThesIDs[0]['geoThesID']);
+            array_push($results, $geoThesIDs[$key]['geoThesID']);
          } else if ($addMissing) {
             array_push($results, $this->addGeoUnit([
                "geoTerm" => $properties->shapeName, 
