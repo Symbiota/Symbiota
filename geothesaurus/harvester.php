@@ -26,10 +26,10 @@ if($isEditor && $submitAction) {
 		if($geoManager->transferDeprecatedThesaurus()) $statusStr = '<span style="color:green;">Geographic Lookup tables transferred into new Geographic Thesaurus</span>';
 		else $statusStr = '<span style="color:green;">'.implode('<br/>',$geoManager->getWarningArr()).'<span style="color:green;">';
 	}
-	elseif($submitAction == 'submitCountryForm'){
+	elseif($submitAction == 'submitCountryForm') {
       //This Call can Take a very long time depending on the size of the
       //geoJson and how many children are within the feature collection past
-      set_time_limit(600);
+      set_time_limit(1200);
       //This script can consume a lot of memory loading the geoJson so this a
       //large buffer to prevent those issues from occuring
       ini_set("memory_limit", "512M");
@@ -221,8 +221,10 @@ if($isEditor && $submitAction) {
 									if(is_numeric($gArr['geoThesID'])){
 							         $isInDbStr = '<a href="index.php?geoThesID='.$gArr['geoThesID'].'" target="_blank">1</a>';
 										$prevGeoThesID = $gArr['geoThesID'];
-									}
-									else{
+									} elseif(is_array($gArr['geoThesID'])) {
+										$isInDbStr = count($gArr['geoThesID']);
+										if($prevGeoThesID) $isInDbStr = '<a href="index.php?parentID='.$prevGeoThesID.'" target="_blank">'.$isInDbStr.'</a>';
+                           } else{
 										$isInDbStr = substr($gArr['geoThesID'], 4);
 										if($prevGeoThesID) $isInDbStr = '<a href="index.php?parentID='.$prevGeoThesID.'" target="_blank">'.$isInDbStr.'</a>';
 									}
