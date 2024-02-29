@@ -468,18 +468,16 @@ function getParam(paramName) {
 
   // for traits
   if (paramName === "attr[]") {
-    let selectedTraits = getTraitsSelected();
+    const selectedTraits = getTraitsSelected();
     elementValues = selectedTraits?.map((selectedTrait) => selectedTrait.value);
   }
 
   // for db and datasetid
   if (paramName === "db") {
-    let dbArr = [];
-    let selectedCollections = getCollsSelected();
-    selectedCollections.forEach((selectedCollection) => {
-      dbArr.push(selectedCollection.value);
-    });
-    elementValues = dbArr;
+    const selectedCollections = getCollsSelected();
+    elementValues = selectedCollections?.map(
+      (selectedCollection) => selectedCollection.value
+    );
   } else if (paramName === "datasetid") {
     // won't happen in vanilla symbiota
     let datasetArr = [];
