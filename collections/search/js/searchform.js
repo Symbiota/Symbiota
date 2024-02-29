@@ -468,13 +468,8 @@ function getParam(paramName) {
 
   // for traits
   if (paramName === "attr[]") {
-    let dbArr = [];
     let selectedTraits = getTraitsSelected();
-    selectedTraits.forEach((selectedTrait) => {
-      dbArr.push(selectedTrait.value);
-    });
-    elementValues = dbArr;
-    elementValues = dbArr;
+    elementValues = selectedTraits?.map((selectedTrait) => selectedTrait.value);
   }
 
   // for db and datasetid
