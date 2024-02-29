@@ -182,7 +182,7 @@ function addChip(element) {
           targetIndex;
       }
       if (element?.getAttribute("id")?.startsWith("taxontype")) {
-        // if they close a taxontype chip, revert to the none option selected
+        // if they close a taxontype chip, revert to the any option selected
         const targetIndex =
           document.getElementById("taxontype-any").selectedIndex;
         document.getElementById("taxontype").selectedIndex = targetIndex;
