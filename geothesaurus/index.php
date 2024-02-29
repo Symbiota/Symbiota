@@ -37,7 +37,9 @@ $geoSubChildren = [];
 
 if($geoThesID && $geoUnit) {
    $childLevel = intval($geoUnit['geoLevel']) + 10;               
-   $childrenTitleStr = '<b>'. $rankArr[$childLevel] . '</b> ' . $LANG['TERMS_WITHIN'] . ' <b>' . $geoUnit['geoTerm'] . '</b>';
+   if($childLevel < 90) {
+      $childrenTitleStr = '<b>'. $rankArr[$childLevel] . '</b> ' . $LANG['TERMS_WITHIN'] . ' <b>' . $geoUnit['geoTerm'] . '</b>';
+   }
    $geoSubChildren = array_filter($geoArr, fn($val) => 10 < (intval($val['geoLevel']) - $geoUnit['geoLevel']));
 } else {
    $childrenTitleStr = '<b>' . $LANG['ROOT_TERMS'] . '</b>';
@@ -466,6 +468,7 @@ function listGeoUnits($arr) {
 
          <?php }?>
 
+         <?php if(!empty($childrenTitleStr)):?>
 			<div style="font-size:1.3em;margin: 10px 0px">
 				<?= $childrenTitleStr ?>
 				<span class="editIcon" title="Add term to list">
@@ -475,6 +478,7 @@ function listGeoUnits($arr) {
          <div style="margin: 10px">
             <?php listGeoUnits($geoUnit? array_filter($geoArr, fn($val) => 10 >= (intval($val['geoLevel']) - $geoUnit['geoLevel'])): $geoArr) ?>
          </div>
+         <?php endif?>
 
          <?php if(!empty($geoSubChildren)): ?>
 			<div style="font-size:1.3em;margin: 10px 0px">
