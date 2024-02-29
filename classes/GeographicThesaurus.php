@@ -725,7 +725,7 @@ class GeographicThesaurus extends Manager {
                "abbreviation" =>"",
                "numCode" =>"",
                "acceptedID" => "",
-               "parentID" => $parentID ?? $baseParentId,
+               "parentID" => $parentID ?$parentID: $baseParentId,
                "notes" =>"",
                "polygon" => json_encode($feature),
             ]));
