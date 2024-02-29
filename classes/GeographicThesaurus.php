@@ -664,6 +664,8 @@ class GeographicThesaurus extends Manager {
          $properties = $feature->properties;
          $geoLevel = $this->getGeoLevel($properties->shapeType);
          $parentID = null;
+
+         if($properties->shapeName === null) continue;
          
          $geoThesIDs = $this->getGeoThesIDByName($properties->shapeName, $geoLevel);
          $iso = empty($properties->shapeISO)?$properties->shapeGroup: $properties->shapeISO;
@@ -827,8 +829,6 @@ class GeographicThesaurus extends Manager {
    }
 
    public function getGeoThesIDByName(string $geoTerm, int $geoLevel = null, int $parentID = null): array {
-		//$sql = 'SELECT geoThesID, parentID FROM geographicthesaurus WHERE geoTerm = "' . $geoTerm . '" and acceptedID is null';
-
       $params = [$geoTerm];
       $sql = <<<SQL
       SELECT g.geoThesID, g.parentID, g.iso3, CASE WHEN gp.geoThesID is null THEN false ELSE true END as hasPolygon 
