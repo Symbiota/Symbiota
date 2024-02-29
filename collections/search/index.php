@@ -465,7 +465,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								<!-- Accordion selector -->
 								<input type="checkbox" id="trait" class="accordion-selector" />
 								<!-- Accordion header -->
-								<label for="trait" class="accordion-header"><?php echo $LANG['TRIAT_CRITERIA'] ?></label>
+								<label for="trait" class="accordion-header"><?php echo $LANG['TRAIT_CRITERIA'] ?></label>
 								<!-- Accordion content -->
 								<div class="content">
 									<div id="search-form-trait">
