@@ -60,7 +60,7 @@ $LANG['SEL_INST'] = 'Select Institution';
 $LANG['ADD_NEW_INST'] = 'Add a New Institution';
 $LANG['CREATE_EXCHANGE'] = 'Create Exchange';
 $LANG['TRANS_BY_INST'] = 'Transaction Records by Institution';
-$LANG['OUTGOING_EX_SENT'] = 'Outgoing exchange; Sent ';
+$LANG['BARCODE_CATNUM'] = 'Outgoing exchange; Sent ';
 $LANG['INCLUDING'] = 'including';
 $LANG['INCOMING_EX_RECEIVED'] = 'Incoming exchange; Received ';
 $LANG['MOUNTED'] = 'mounted';
@@ -130,6 +130,11 @@ $LANG['NO_LOANS'] = 'There are no loans matching your search criteria';
 $LANG['NO_LOANS_RECD'] = 'There are no loans received';
 $LANG['LOANS_TO_CHECK_IN'] = 'Loans to be Checked-in';
 $LANG['NOT_AUTH_LOANS'] = 'You are not authorized to manage loans for this collection';
+
+$LANG['ADD_ICON'] = 'Add Icon';
+$LANG['SEARCH'] = 'Search:';
+$LANG['GENERATION_ID_FAILED'] = 'Generation of new ID failed';
+$LANG['HOME'] = 'Home';
 
 //from outgoing.php
 $LANG['PROC_SUCCESS'] = 'specimens processed successfully';

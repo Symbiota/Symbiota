@@ -1,7 +1,7 @@
 <?php
 /*
 ------------------
-Language: English
+Language: Español (Spanish)
 ------------------
 */
 
@@ -130,6 +130,11 @@ $LANG['NO_LOANS'] = 'No existen préstamos que coincidan con sus criterios de b�
 $LANG['NO_LOANS_RECD'] = 'No existen préstamos recibidos';
 $LANG['LOANS_TO_CHECK_IN'] = 'Préstamos por ser Ingresados';
 $LANG['NOT_AUTH_LOANS'] = 'No está autorizdo para manejar préstamos en esta colección';
+
+$LANG['ADD_ICON'] = 'Agregar icono';
+$LANG['SEARCH'] = 'Buscar:';
+$LANG['GENERATION_ID_FAILED'] = 'Error al generar una nueva ID';
+$LANG['HOME'] = 'Inicio';
 
 //from outgoing.php
 $LANG['PROC_SUCCESS'] = 'especímenes procesados exitosamente';
