@@ -17,7 +17,7 @@ if($tid){
 }
 ?>
 <!-- This is inner text! -->
-<div id="innertext--max-width-100" style="background-color:white;">
+<div id="innertext" style="background-color:white;">
 	<?php
 	if($isEditor && $tid){
 		if($category == "imagequicksort"){
