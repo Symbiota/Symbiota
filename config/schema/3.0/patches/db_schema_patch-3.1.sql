@@ -152,4 +152,22 @@ SELECT cvID, "fieldNotes", "Field Notes" FROM ctcontrolvocab WHERE tableName = "
 INSERT INTO ctcontrolvocabterm(cvID, term, termDisplay)
 SELECT cvID, "genericResource", "Generic Resource" FROM ctcontrolvocab WHERE tableName = "omoccurassociations" AND fieldName = "relationship" AND filterVariable = "associationType:resource";
 
+-- Ensure these older tables are innoDB
+ALTER TABLE geographicpolygon ENGINE = InnoDB;
+ALTER TABLE geographicthesaurus  ENGINE = InnoDB;
+
 ALTER TABLE geographicpolygon MODIFY COLUMN footprintPolygon geometry not null;
+
+DROP PROCEDURE IF EXISTS insertGeographicPolygon;
+DROP PROCEDURE IF EXISTS updateGeographicPolygon;
+
+DELIMITER |
+CREATE PROCEDURE insertGeographicPolygon(in geo_id int, in geo_json longtext)
+BEGIN
+INSERT INTO geographicpolygon (geoThesID, footprintPolygon, geoJSON) VALUES (geo_id, ST_GeomFromGeoJSON(geo_json), geo_json);
+END |
+CREATE PROCEDURE updateGeographicPolygon(in geo_id int, in geo_json longtext)
+BEGIN
+UPDATE geographicpolygon SET geoJSON = geo_json, footprintPolygon = ST_GeomFromGeoJSON(geo_json) WHERE geoThesID = geo_id;
+END | 
+DELIMITER ;
