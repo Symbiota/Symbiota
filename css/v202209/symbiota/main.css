@@ -113,6 +113,13 @@ hr {
   width: 90%;
 }
 
+#innertext--max-width-100 {
+  margin: 0 auto;
+  padding: 3rem 0;
+  background-color: var(--body-bg-color);
+  width: 100%;
+}
+
 #innertext p {
   color: var(--body-text-color);
   line-height: 1.5;
