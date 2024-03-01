@@ -364,6 +364,11 @@ ol.mp_list li.mp_highlighted {
   top: 0.8rem;
 }
 
+.fieldset-like--small-float-right {
+  float: right;
+  width: 35rem;
+}
+
 .float-rt-no-overlap {
   /* this should occur after fieldset-like definitions */
   float: right;
