@@ -205,7 +205,7 @@ if($isEditor){
 				if($commentArr){
 					foreach($commentArr as $comid => $cArr){
 						echo '<div style="margin:15px;">';
-						echo '<div style="margin-bottom:10px;"><a href="../individual/index.php?occid=' . htmlspecialchars($cArr['occid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><b>' . $cArr['occurstr'] . '</b></a></div>';
+						echo '<div style="margin-bottom:10px;"><a href="../individual/index.php?occid=' . htmlspecialchars($cArr['occid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><b>' . strip_tags($cArr['occurstr']) . '</b></a></div>';
 						echo '<div>';
 						echo '<b>'.$userArr[$cArr['uid']].'</b> <span style="color:gray;">'.$LANG['POSTED_ON'].' '.$cArr['ts'].'</span>';
 						if($cArr['rs'] == 2 || $cArr['rs'] === '0'){
