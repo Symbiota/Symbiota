@@ -12,8 +12,9 @@ $boundLatMin = -90;
 $boundLatMax = 90;
 $boundLngMin = -180;
 $boundLngMax = 180;
-$latCen = 41.0;
-$longCen = -95.0;
+$latCen = 0;
+$longCen = 0;
+
 if(!empty($MAPPING_BOUNDARIES)){
 	$coorArr = explode(';', $MAPPING_BOUNDARIES);
 	if($coorArr && count($coorArr) == 4){
@@ -325,13 +326,17 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
          }
 
          function resetBounds(bounds) {
-            updateMapBounds(bounds);
-            refreshBoundInputs();
+            const state = getState();
+            if(state.latlng[0] === 0 && state.latlng[1] === 0) {
+               setGlobalBounds();
+            } else {
+               updateMapBounds(bounds);
+               refreshBoundInputs();
+            }
          }
 
          function setGlobalBounds() {
-            updateMapBounds([[-90, -180], [90, 180]]);
-            map.mapLayer.setZoom(1);
+            map.mapLayer.setView([0,0], 1)
          }
 
          function initialize() {
@@ -339,7 +344,7 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
 
             map = new LeafletMap('map', {
                center: state.latlng, 
-               zoom: 6, 
+               zoom: state.latlng[0] === 0 && state.latlng[0] === 0? 1 : 6, 
                scale: false, 
                lang: "<?php echo $LANG_TAG; ?>"
             });

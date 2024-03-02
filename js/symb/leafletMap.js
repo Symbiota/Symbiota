@@ -25,8 +25,8 @@ xmlns="http://www.w3.org/2000/svg"
 class LeafletMap {
    //DEFAULTS
    DEFAULT_MAP_OPTIONS = {
-      center: [43.64701, -79.39425],
-      zoom: 15,
+      center: [0, 0],
+      zoom: 1,
    };
 
    DEFAULT_SHAPE_OPTIONS = {
