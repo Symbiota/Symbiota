@@ -35,4 +35,5 @@ $LANG['SUCCESS'] = 'Succès';
 $LANG['FAILURE'] = 'Échec';
 $LANG['NO_COORDINATES'] = 'Aucune coordonnée à cartographier';
 $LANG['RESULTS'] = 'Résultats';
+$LANG['MAPS_GENERATED'] = 'Cartes Générées';
 ?>

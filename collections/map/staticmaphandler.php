@@ -439,7 +439,7 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
                <div id="loading-bar" style="height:2rem; width:0%; background-color:#1B3D2F"></div>
             </div>
             <div style="text-align: center; padding-top:0.5rem">
-               Maps Generated
+               <?php echo $LANG['MAPS_GENERATED'] ?>
                <span id="loading-bar-count">0</span>
                <span id="loading-bar-max">/ <?php echo count($taxaList)?></span>
             </div>
@@ -486,28 +486,13 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
                <input id="lower_lat" name="lower_lat"onkeydown="return event.key != 'Enter';" value="<?php echo $boundLatMin?>" placeholder="<?php echo $boundLatMin?>"/>
                <label for="lower_lng"><?php echo $LANG['LONGITUDE'] ?></label>
                <input id="lower_lng" name="lower_lat" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLngMin?>" placeholder="<?php echo $boundLngMin?>"/><br>
-
-               <div style="margin-bottom:1rem">
-                  <input type="checkbox" name="auto-snap-coords" id="auto-snap-coords" value="true" >
-                  <label for="auto-snap-coords"><?php echo $LANG['AUTOMATIC_BOUNDS_DESC'] ?></label>
-               </div>
-
                <button type="button" onclick="resetBounds(getState().bounds)"><?php echo $LANG['RESET_BOUNDS'] ?></button>
                <button type="button" onclick="setGlobalBounds()"><?php echo $LANG['GLOBAL_BOUNDS'] ?></button><br/>
             </fieldset><br/>
-<!---
-            <label for="taxon">Taxon</label><br>
-            <input id="taxon"/><br/>
---->
-<!---
-         Form options to be added now:
-         - map type (radio button): heat map, dot map
-         - bounding box (set of text boxes): fields filled with above default bounding box values, but provides user ability to adjust. Maybe add the bounding box assist tool to help user define a new box?
-         - replace (radio button): all maps, maps of set type (heat or dot), none
-         - Target a specific taxon (text box with autocomplete that displays only accepted taxa of rankid 220 or greater)
-         Form options to add later:
-         - replace maps older than a certain date (date text box)
---->
+            <div style="margin-bottom:1rem">
+               <input type="checkbox" name="auto-snap-coords" id="auto-snap-coords" value="true" >
+               <label for="auto-snap-coords"><?php echo $LANG['AUTOMATIC_BOUNDS_DESC'] ?></label>
+            </div>
             <button type="button" onclick="buildMaps(false)"><?= $LANG['BUILD_MAPS'] ?></button>
             <button type="button" onclick="buildMaps(true)"><?= $LANG['PREVIEW_MAP'] ?></button>
          </form>
