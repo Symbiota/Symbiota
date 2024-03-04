@@ -752,15 +752,36 @@ class SpecUploadBase extends SpecUpload{
 
 		if($this->collMetadataArr['managementtype'] == 'Live Data' && !$this->matchCatalogNumber  && !$this->matchOtherCatalogNumbers && $this->uploadType != $this->RESTOREBACKUP){
 			//Records that can be matched on Catalog Number, but will be appended
-			$sql = 'SELECT count(o.occid) AS cnt '.
-				'FROM uploadspectemp u INNER JOIN omoccurrences o ON u.collid = o.collid '.
-				'LEFT JOIN omoccuridentifiers i ON o.occid = i.occid '.
-				'WHERE (u.collid IN('.$this->collId.')) AND (u.occid IS NULL) AND (u.catalogNumber = o.catalogNumber OR u.othercatalogNumbers = o.othercatalogNumbers OR u.othercatalogNumbers = i.identifierValue) ';
+			$matchAppendArr = array();
+			$sql = 'SELECT DISTINCT o.occid
+				FROM uploadspectemp u INNER JOIN omoccurrences o ON u.catalogNumber = o.catalogNumber
+				WHERE (u.collid IN('.$this->collId.')) AND (o.collid IN('.$this->collId.')) AND (u.occid IS NULL) ';
 			$rs = $this->conn->query($sql);
-			if($r = $rs->fetch_object()){
-				$reportArr['matchappend'] = $r->cnt;
+			while($r = $rs->fetch_object()){
+				$matchAppendArr[$r->occid] = 1;
 			}
 			$rs->free();
+
+			$sql = 'SELECT DISTINCT o.occid
+				FROM uploadspectemp u INNER JOIN omoccurrences o ON u.othercatalogNumbers = o.othercatalogNumbers
+				WHERE (u.collid IN('.$this->collId.')) AND (o.collid IN('.$this->collId.')) AND (u.occid IS NULL) ';
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_object()){
+				$matchAppendArr[$r->occid] = 1;
+			}
+			$rs->free();
+
+			$sql = 'SELECT DISTINCT o.occid
+				FROM uploadspectemp u INNER JOIN omoccuridentifiers i ON u.othercatalogNumbers = i.identifierValue
+				INNER JOIN omoccurrences o ON i.occid = o.occid
+				WHERE (u.collid IN('.$this->collId.')) AND (o.collid IN('.$this->collId.')) AND (u.occid IS NULL) ';
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_object()){
+				$matchAppendArr[$r->occid] = 1;
+			}
+			$rs->free();
+
+			$reportArr['matchappend'] = count($matchAppendArr);
 		}
 
 		if($this->uploadType == $this->RESTOREBACKUP || ($this->collMetadataArr["managementtype"] == 'Snapshot' && $this->uploadType != $this->SKELETAL)){
