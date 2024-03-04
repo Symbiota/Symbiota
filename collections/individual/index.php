@@ -3,17 +3,19 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceIndividual.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
 include_once($SERVER_ROOT.'/classes/RdfUtility.php');
-include_once($SERVER_ROOT.'/content/lang/collections/individual/index.'.$LANG_TAG.'.php');
-include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/individual/index.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/individual/index.'.$LANG_TAG.'.php');
+else include_once($SERVER_ROOT.'/content/lang/collections/individual/index.en.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
+else include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.en.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
-$submit = array_key_exists('formsubmit', $_POST) ? $_POST['formsubmit'] : '';
+$submit = array_key_exists('formsubmit', $_REQUEST) ? $_REQUEST['formsubmit'] : '';
 $indManager = new OccurrenceIndividual($submit ? 'write' : 'readonly');
 
 $occid = array_key_exists('occid', $_REQUEST) ? $indManager->sanitizeInt($_REQUEST['occid']) : 0;
 $collid = array_key_exists('collid', $_REQUEST) ? $indManager->sanitizeInt($_REQUEST['collid']) : 0;
-$pk = array_key_exists('pk', $_REQUEST) ? htmlspecialchars($_REQUEST['pk'], HTML_SPECIAL_CHARS_FLAGS) :'';
-$guid = array_key_exists('guid', $_REQUEST) ? htmlspecialchars($_REQUEST['guid'], HTML_SPECIAL_CHARS_FLAGS) : '';
+$pk = array_key_exists('pk', $_REQUEST) ? $_REQUEST['pk'] : '';
+$guid = array_key_exists('guid', $_REQUEST) ? $_REQUEST['guid'] : '';
 $tabIndex = array_key_exists('tabindex', $_REQUEST) ? $indManager->sanitizeInt($_REQUEST['tabindex']) : 0;
 $clid = array_key_exists('clid', $_REQUEST) ? $indManager->sanitizeInt($_REQUEST['clid']) : 0;
 $format = isset($_GET['format']) ? $_REQUEST['format'] : '';
@@ -96,25 +98,25 @@ if(isset($_SERVER['HTTP_ACCEPT'])){
 
 if($SYMB_UID){
 	//Form action submitted
-	if(array_key_exists('commentstr',$_POST)){
+	if($submit == 'submitComment'){
 		if(!$indManager->addComment($_POST['commentstr'])){
 			$statusStr = $indManager->getErrorMessage();
 		}
 	}
-	elseif($submit == 'deleteComment'){
+	elseif($submit == 'deleteComment' && is_numeric($_POST['comid'])){
 		if(!$indManager->deleteComment($_POST['comid'])){
 			$statusStr = $indManager->getErrorMessage();
 		}
 	}
-	elseif(array_key_exists('repcomid',$_GET)){
+	elseif($submit == 'reportcomment' && is_numeric($_GET['repcomid'])){
 		if($indManager->reportComment($_GET['repcomid'])){
-			$statusStr = (isset($LANG['FLAGGEDCOMMENT'])?$LANG['FLAGGEDCOMMENT']:'Comment reported as inappropriate. Comment will remain unavailable to public until reviewed by an administrator.');
+			$statusStr = $LANG['FLAGGEDCOMMENT'];
 		}
 		else{
 			$statusStr = $indManager->getErrorMessage();
 		}
 	}
-	elseif(array_key_exists('publiccomid',$_GET)){
+	elseif($submit == 'makecommentpublic' && is_numeric($_GET['publiccomid'])){
 		if(!$indManager->makeCommentPublic($_GET['publiccomid'])){
 			$statusStr = $indManager->getErrorMessage();
 		}
@@ -124,7 +126,7 @@ if($SYMB_UID){
 			$statusStr = $indManager->getErrorMessage();
 		}
 	}
-	elseif(array_key_exists('delvouch',$_GET)){
+	elseif($submit == 'deletevoucher' && is_numeric($_GET['delvouch'])){
 		if(!$indManager->deleteVoucher($_GET['delvouch'])){
 			$statusStr = $indManager->getErrorMessage();
 		}
@@ -147,12 +149,10 @@ $commentArr = $indManager->getCommentArr($isEditor);
 $traitArr = $indManager->getTraitArr();
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $LANG_TAG ?>">
+<html lang="<?= $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['DETAILEDCOLREC'])?$LANG['DETAILEDCOLREC']:'Detailed Collection Record Information'); ?></title>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
-	<meta name="description" content="<?php echo 'Occurrence author: '.($occArr?$occArr['recordedby'].','.$occArr['recordnumber']:''); ?>" />
-	<meta name="keywords" content="<?php echo (!empty($occArr['occurrenceid'])?$occArr['occurrenceid']:'').', '.(!empty($occArr['recordid'])?$occArr['recordid']:''); ?>" />
+	<title><?= $DEFAULT_TITLE . ' ' . $LANG['DETAILEDCOLREC'] ?></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET; ?>">
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -346,27 +346,27 @@ $traitArr = $indManager->getTraitArr();
 			?>
 			<div id="tabs-div">
 				<ul>
-					<li><a href="#occurtab"><span><?php echo htmlspecialchars((isset($LANG['DETAILS'])?$LANG['DETAILS']:'Details'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
+					<li><a href="#occurtab"><span><?php echo (isset($LANG['DETAILS']) ? $LANG['DETAILS'] : 'Details'); ?></span></a></li>
 					<?php
-					if($displayMap) echo '<li><a href="#maptab"><span>' . htmlspecialchars((isset($LANG['MAP'])?$LANG['MAP']:'Map'), HTML_SPECIAL_CHARS_FLAGS) . '</span></a></li>';
-					if($genticArr) echo '<li><a href="#genetictab"><span>' . htmlspecialchars((isset($LANG['GENETIC'])?$LANG['GENETIC']:'Genetic'), HTML_SPECIAL_CHARS_FLAGS) . '</span></a></li>';
-					if($dupClusterArr) echo '<li><a href="#dupestab-div"><span>' . htmlspecialchars((isset($LANG['DUPLICATES'])?$LANG['DUPLICATES']:'Duplicates'), HTML_SPECIAL_CHARS_FLAGS) . '</span></a></li>';
+					if($displayMap) echo '<li><a href="#maptab"><span>' . (isset($LANG['MAP']) ? $LANG['MAP'] : 'Map') . '</span></a></li>';
+					if($genticArr) echo '<li><a href="#genetictab"><span>' . (isset($LANG['GENETIC']) ? $LANG['GENETIC'] : 'Genetic') . '</span></a></li>';
+					if($dupClusterArr) echo '<li><a href="#dupestab-div"><span>' . (isset($LANG['DUPLICATES']) ? $LANG['DUPLICATES'] : 'Duplicates') . '</span></a></li>';
 					?>
-					<li><a href="#commenttab"><span><?php echo ($commentArr?count($commentArr).' ':''); echo (isset($LANG['COMMENTS'])?$LANG['COMMENTS']:'Comments'); ?></span></a></li>
+					<li><a href="#commenttab"><span><?php echo ($commentArr?count($commentArr).' ':''); echo (isset($LANG['COMMENTS']) ? $LANG['COMMENTS'] : 'Comments'); ?></span></a></li>
 					<li>
-						<a href="linkedresources.php?occid=<?php echo htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '&tid=' . htmlspecialchars($occArr['tidinterpreted'], HTML_SPECIAL_CHARS_FLAGS) . '&clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) ?>">
-							<span><?php echo htmlspecialchars($LANG['LINKED_RESOURCES'], HTML_SPECIAL_CHARS_FLAGS); ?></span>
+						<a href="linkedresources.php?occid=<?php echo $occid . '&tid=' . $occArr['tidinterpreted'] . '&clid=' . $clid . '&collid=' . $collid ?>">
+							<span><?php echo $LANG['LINKED_RESOURCES']; ?></span>
 						</a>
 					</li>
 					<?php
-					if($traitArr) echo '<li><a href="#traittab"><span>' . htmlspecialchars((isset($LANG['TRAITS'])?$LANG['TRAITS']:'Traits'), HTML_SPECIAL_CHARS_FLAGS) . '</span></a></li>';
-					if($isEditor) echo '<li><a href="#edittab"><span>' . htmlspecialchars($LANG['EDIT_HISTORY'], HTML_SPECIAL_CHARS_FLAGS) . '</span></a></li>';
+					if($traitArr) echo '<li><a href="#traittab"><span>' . (isset($LANG['TRAITS'])?$LANG['TRAITS']:'Traits') . '</span></a></li>';
+					if($isEditor) echo '<li><a href="#edittab"><span>' . $LANG['EDIT_HISTORY'] . '</span></a></li>';
 					?>
 				</ul>
 				<div id="occurtab">
 					<div id="media-div">
 						<div>
-							<a class="twitter-share-button" href="https://twitter.com/share" data-url="<?php echo htmlspecialchars($_SERVER['HTTP_HOST'], HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/collections/individual/index.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '&clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars((isset($LANG['TWEET'])?$LANG['TWEET']:'Tweet'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
+							<a class="twitter-share-button" href="https://twitter.com/share" data-url="<?= $indManager->cleanOutStr($_SERVER['HTTP_HOST']) . $CLIENT_ROOT . '/collections/individual/index.php?occid=' . $occid . '&clid=' . $clid; ?>"><?= (isset($LANG['TWEET']) ? $LANG['TWEET'] : 'Tweet') ?></a>
 						</div>
 						<div>
 							<div class="fb-share-button" data-href="" data-layout="button_count"></div>
@@ -417,7 +417,7 @@ $traitArr = $indManager->getTraitArr();
 										$relID = $assocArr['identifier'];
 										$relUrl = $assocArr['resourceurl'];
 										if(!$relUrl && $assocArr['occidassoc']) $relUrl = $GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$assocArr['occidassoc'];
-										if($relUrl) $relID = '<a href="' . htmlspecialchars($relUrl, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($relID, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+										if($relUrl) $relID = '<a href="' . $relUrl . '">' . $relID . '</a>';
 										if($relID) echo $relID;
 										elseif($assocArr['sciname']) echo $assocArr['sciname'];
 										echo '</div>';
@@ -445,7 +445,7 @@ $traitArr = $indManager->getTraitArr();
 								echo '<label>'.$LANG['OCCURRENCE_ID'].': </label>';
 								$resolvableGuid = false;
 								if(substr($occArr['occurrenceid'],0,4) == 'http') $resolvableGuid = true;
-								if($resolvableGuid) echo '<a href="' . htmlspecialchars($occArr['occurrenceid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
+								if($resolvableGuid) echo '<a href="' . $occArr['occurrenceid'] . '" target="_blank">';
 								echo $occArr['occurrenceid'];
 								if($resolvableGuid) echo '</a>';
 								?>
@@ -475,7 +475,7 @@ $traitArr = $indManager->getTraitArr();
 									echo '<span class="notice-span"> '.$LANG['ID_PROTECTED'].'</span>';
 								}
 								if($occArr['tidinterpreted']){
-									//echo ' <a href="../../taxa/index.php?taxon=' . htmlspecialchars($occArr['tidinterpreted'], HTML_SPECIAL_CHARS_FLAGS) . '" title="Open Species Profile Page"><img src="" /></a>';
+									//echo ' <a href="../../taxa/index.php?taxon=' . $occArr['tidinterpreted'] . '" title="Open Species Profile Page"><img src="" /></a>';
 								}
 								?>
 							</div>
@@ -940,7 +940,7 @@ $traitArr = $indManager->getTraitArr();
 							<div id="exsiccati-div" class="bottom-breathing-room-sm-rel">
 								<label><?php echo $LANG['EXCICCATI_SERIES']; ?>:</label>
 								<?php
-								echo '<a href="../exsiccati/index.php?omenid=' . htmlspecialchars($occArr['exs']['omenid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
+								echo '<a href="../exsiccati/index.php?omenid=' . $occArr['exs']['omenid'] . '" target="_blank">';
 								echo $occArr['exs']['title'].'&nbsp;#'.$occArr['exs']['exsnumber'];
 								echo '</a>';
 								?>
@@ -988,15 +988,15 @@ $traitArr = $indManager->getTraitArr();
 									}
 									?>
 									<div id="thumbnail-div" class="thumbnail-div">
-										<a href='<?php echo htmlspecialchars($imgArr['url'], HTML_SPECIAL_CHARS_FLAGS); ?>' target="_blank">
-											<img border="1" src="<?php echo $thumbUrl; ?>" title="<?php echo $imgArr['caption']; ?>" style="max-width:170;" alt="thumbnail image of current specimen" />
+										<a href='<?= $imgArr['url'] ?>' target="_blank">
+											<img border="1" src="<?= $thumbUrl; ?>" title="<?= $imgArr['caption']; ?>" style="max-width:170;" alt="thumbnail image of current specimen" />
 										</a>
 										<?php
 										if($imgArr['caption']) echo '<div><i>'.$imgArr['caption'].'</i></div>';
 										if($imgArr['photographer']) echo '<div>'.(isset($LANG['AUTHOR'])?$LANG['AUTHOR']:'Author').': '.$imgArr['photographer'].'</div>';
-										if($imgArr['url'] && substr($thumbUrl,0,7)!='process' && $imgArr['url'] != $imgArr['lgurl']) echo '<div><a href="' . htmlspecialchars($imgArr['url'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($LANG['OPEN_MEDIUM'], HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
-										if($imgArr['lgurl']) echo '<div><a href="' . htmlspecialchars($imgArr['lgurl'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($LANG['OPEN_LARGE'], HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
-										if($imgArr['sourceurl']) echo '<div><a href="' . htmlspecialchars($imgArr['sourceurl'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($LANG['OPEN_SOURCE'], HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
+										if($imgArr['url'] && substr($thumbUrl,0,7)!='process' && $imgArr['url'] != $imgArr['lgurl']) echo '<div><a href="' . $imgArr['url'] . '" target="_blank">' . $LANG['OPEN_MEDIUM'] . '</a></div>';
+										if($imgArr['lgurl']) echo '<div><a href="' . $imgArr['lgurl'] . '" target="_blank">' . $LANG['OPEN_LARGE'] . '</a></div>';
+										if($imgArr['sourceurl']) echo '<div><a href="' . $imgArr['sourceurl'] . '" target="_blank">' . $LANG['OPEN_SOURCE'] . '</a></div>';
 										?>
 									</div>
 									<?php
@@ -1009,9 +1009,9 @@ $traitArr = $indManager->getTraitArr();
 						$rightsStr = $collMetadata['rights'];
 						if($collMetadata['rights']){
 							$rightsHeading = '';
-							if(isset($RIGHTS_TERMS)) $rightsHeading = array_search($rightsStr,$RIGHTS_TERMS);
+							if(isset($RIGHTS_TERMS)) $rightsHeading = array_search($rightsStr, $RIGHTS_TERMS);
 							if(substr($collMetadata['rights'],0,4) == 'http'){
-								$rightsStr = '<a href="' . htmlspecialchars($rightsStr, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars(($LANG['USAGE_RIGHTS']), HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+								$rightsStr = '<a href="' . $rightsStr . '" target="_blank">' . ($LANG['USAGE_RIGHTS']) . '</a>';
 							}
 							$rightsStr = '<div style="margin-top:2px;">'.$rightsStr.'</div>';
 						}
@@ -1025,7 +1025,7 @@ $traitArr = $indManager->getTraitArr();
 						<div id="rights-div">
 							<?php
 							if($rightsStr) echo $rightsStr;
-							else echo '<a href="../../includes/usagepolicy.php">' . htmlspecialchars($LANG['USAGE_POLICY'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+							else echo '<a href="../../includes/usagepolicy.php">' . $LANG['USAGE_POLICY'] . '</a>';
 							?>
 						</div>
 						<div id="record-id-div" style="margin:3px 0px;">
@@ -1040,7 +1040,7 @@ $traitArr = $indManager->getTraitArr();
 							if(isset($occArr['source']['displayStr'])) $displayStr = $occArr['source']['displayStr'];
 							elseif(isset($occArr['source']['sourceID'])) $displayStr = '#'.$occArr['source']['sourceID'];
 							if($recordType == 'symbiota') echo '<fieldset><legend>Externally Managed Snapshot Record</legend>';
-							echo '<div><label>'.$displayTitle.':</label> <a href="' . htmlspecialchars($occArr['source']['url'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($displayStr, HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
+							echo '<div><label>'.$displayTitle.':</label> <a href="' . $occArr['source']['url'] . '" target="_blank">' . $displayStr . '</a></div>';
 							echo '<div style="float:left;">';
 							if(isset($occArr['source']['sourceName'])){
 								echo '<div><label>'.$LANG['DATA_SOURCE'].':</label> '.$occArr['source']['sourceName'].'</div>';
@@ -1049,9 +1049,9 @@ $traitArr = $indManager->getTraitArr();
 							if(array_key_exists('fieldsModified',$_POST)){
 								echo '<div><label>'.$LANG['REFRESH_DATE'].':</label> '.(isset($occArr['source']['refreshTimestamp'])?$occArr['source']['refreshTimestamp']:'').'</div>';
 								//Input from refersh event
-								$dataStatus = htmlspecialchars($_POST['dataStatus'], HTML_SPECIAL_CHARS_FLAGS);
-								$fieldsModified = htmlspecialchars($_POST['fieldsModified'], HTML_SPECIAL_CHARS_FLAGS);
-								$sourceDateLastModified = htmlspecialchars($_POST['sourceDateLastModified'], HTML_SPECIAL_CHARS_FLAGS);
+								$dataStatus = $indManager->cleanOutStr($_POST['dataStatus']);
+								$fieldsModified = $indManager->cleanOutStr($_POST['fieldsModified']);
+								$sourceDateLastModified = $indManager->cleanOutStr($_POST['sourceDateLastModified']);
 								echo '<div><label>'.$LANG['UPDATE_STATUS'].':</label> '.$dataStatus.'</div>';
 								echo '<div><label>'.$LANG['FIELDS_MODIFIED'].':</label> '.$fieldsModified.'</div>';
 								echo '<div><label>'.$LANG['SOURCE_DATE_LAST_MODIFIED'].':</label> '.$sourceDateLastModified.'</div>';
@@ -1104,14 +1104,14 @@ $traitArr = $indManager->getTraitArr();
 								if($SYMB_UID){
 									echo $LANG['SEE_ERROR'].' ';
 									?>
-									<a href="../editor/occurrenceeditor.php?occid=<?php echo htmlspecialchars($occArr['occid'], HTML_SPECIAL_CHARS_FLAGS);?>">
+									<a href="../editor/occurrenceeditor.php?occid=<?= $occArr['occid'] ?>">
 										<?php echo $LANG['OCCURRENCE_EDITOR']; ?>.
 									</a>
 									<?php
 								}
 								else{
 									echo $LANG['SEE_AN_ERROR']; ?>
-									<a href="../../profile/index.php?refurl=../collections/individual/index.php?occid=<?php echo htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS); ?>">
+									<a href="../../profile/index.php?refurl=../collections/individual/index.php?occid=<?= $occid ?>">
 										<?php echo $LANG['LOGIN']; ?>
 									</a> <?php echo $LANG['TO_EDIT_DATA'];
 								}
@@ -1126,7 +1126,7 @@ $traitArr = $indManager->getTraitArr();
 								<?php
 								foreach($occArr['ref'] as $refid => $refArr){
 									echo '<div id="occur-ref" class="occur-ref">';
-									if($refArr['url']) echo '<a href="' . htmlspecialchars($refArr['url'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
+									if($refArr['url']) echo '<a href="' . $refArr['url'] . '" target="_blank">';
 									echo $refArr['display'];
 									if($refArr['url']) echo '</a>';
 									echo '</div>';
@@ -1158,7 +1158,7 @@ $traitArr = $indManager->getTraitArr();
 								<div style="margin-left:15px;"><label><?php echo $LANG['LOCUS']; ?>:</label> <?php echo $gArr['locus']; ?></div>
 								<div style="margin-left:15px;">
 									<label>URL:</label>
-									<a href="<?php echo htmlspecialchars($gArr['resourceurl'], HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars($gArr['resourceurl'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
+									<a href="<?= $gArr['resourceurl'] ?>" target="_blank"><?= $gArr['resourceurl'] ?></a>
 								</div>
 								<div style="margin-left:15px;"><label><?php echo $LANG['NOTES']; ?>:</label> <?php echo $gArr['notes']; ?></div>
 							</div>
@@ -1241,13 +1241,13 @@ $traitArr = $indManager->getTraitArr();
 								echo '<div style="margin:10px;">'.$comArr['comment'].'</div>';
 								if($comArr['reviewstatus']){
 									if($SYMB_UID){
-										echo '<div><a href="index.php?repcomid=' . htmlspecialchars($comId, HTML_SPECIAL_CHARS_FLAGS) . '&occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '&tabindex=' . htmlspecialchars($commentTabIndex, HTML_SPECIAL_CHARS_FLAGS) . '">';
+										echo '<div><a href="index.php?formsubmit=reportcomment&repcomid=' . $comId . '&occid=' . $occid . '&tabindex=' . $commentTabIndex . '">';
 										echo $LANG['REPORT'];
 										echo '</a></div>';
 									}
 								}
 								else{
-									echo '<div><a href="index.php?publiccomid=' . htmlspecialchars($comId, HTML_SPECIAL_CHARS_FLAGS) . '&occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '&tabindex=' . htmlspecialchars($commentTabIndex, HTML_SPECIAL_CHARS_FLAGS) . '">';
+									echo '<div><a href="index.php?formsubmit=makecommentpublic&publiccomid=' . $comId . '&occid=' . $occid . '&tabindex=' . $commentTabIndex . '">';
 									echo $LANG['MAKE_COMMENT_PUBLIC'];
 									echo '</a></div>';
 								}
@@ -1290,7 +1290,7 @@ $traitArr = $indManager->getTraitArr();
 						}
 						else{
 							echo '<div style="margin:10px;">';
-							echo '<a href="../../profile/index.php?refurl=../collections/individual/index.php?tabindex=2&occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '">';
+							echo '<a href="../../profile/index.php?refurl=../collections/individual/index.php?tabindex=2&occid=' . $occid . '">';
 							echo $LANG['LOGIN'];
 							echo '</a> ';
 							echo $LANG['TO_LEAVE_COMMENT'];
@@ -1324,7 +1324,7 @@ $traitArr = $indManager->getTraitArr();
 							 if($USER_RIGHTS && array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin'])){
 								?>
 								<div style="float:right;" title="Manage Edits">
-									<a href="../editor/editreviewer.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS); ?>"><img src="../../images/edit.png" style="border:0px;width:14px;" /></a>
+									<a href="../editor/editreviewer.php?collid=<?php echo $collid . '&occid=' . $occid; ?>"><img src="../../images/edit.png" style="border:0px;width:14px;" /></a>
 								</div>
 								<?php
 							}

@@ -427,7 +427,7 @@ value="${color}"
 			document.getElementById("leftlong").value = '';
 			document.getElementById("bottomlat").value = '';
 			document.getElementById("rightlong").value = '';
-			document.getElementById("poly_array").value = '';
+			document.getElementById("polycoords").value = '';
 			document.getElementById("distFromMe").value = '';
 			document.getElementById("noshapecriteria").style.display = "block";
 			document.getElementById("polygeocriteria").style.display = "none";
@@ -455,7 +455,7 @@ value="${color}"
 			document.getElementById("leftlong").value = '';
 			document.getElementById("bottomlat").value = '';
 			document.getElementById("rightlong").value = '';
-			document.getElementById("poly_array").value = '';
+			document.getElementById("polycoords").value = '';
 			document.getElementById("distFromMe").value = '';
 			document.getElementById("noshapecriteria").style.display = "none";
 			document.getElementById("polygeocriteria").style.display = "none";
@@ -472,7 +472,7 @@ value="${color}"
 			document.getElementById("pointlat").value = '';
 			document.getElementById("pointlong").value = '';
 			document.getElementById("radius").value = '';
-			document.getElementById("poly_array").value = '';
+			document.getElementById("polycoords").value = '';
 			document.getElementById("distFromMe").value = '';
 			document.getElementById("noshapecriteria").style.display = "none";
 			document.getElementById("polygeocriteria").style.display = "none";
@@ -482,7 +482,7 @@ value="${color}"
 		}
 
 		function setPolyCoords(wkt) {
-			document.getElementById("poly_array").value = wkt;
+			document.getElementById("polycoords").value = wkt;
 			document.getElementById("pointlat").value = '';
 			document.getElementById("pointlong").value = '';
 			document.getElementById("radius").value = '';
@@ -759,9 +759,9 @@ value="${color}"
 
 
 			document.getElementById("mapsearchform").addEventListener('submit', async e => {
+				e.preventDefault();
 				if(!verifyCollForm(e.target)) return;
 				showWorking();
-				e.preventDefault();
 				let formData = new FormData(e.target);
 
 				mapGroups.forEach(group => {
@@ -1534,13 +1534,13 @@ value="${color}"
 					shapeType = "circle"
 				} else if(document.getElementById("upperlat").value) {
 					shapeType = "rectangle"
-				} else if(document.getElementById("poly_array").value) {
+				} else if(document.getElementById("polycoords").value) {
 					shapeType = "polygon"
 				}
 
 				if(shapeType) {
 					shape = loadMapShape(shapeType, {
-						polygonLoader: () => document.getElementById("poly_array").value,
+						polygonLoader: () => document.getElementById("polycoords").value,
 						circleLoader: () => {
 							return {
 								radius: document.getElementById("upperlat").value,
@@ -1656,7 +1656,7 @@ Record Limit:
 											<input type="hidden" id="rightlong" name="rightlong" value='<?php echo $mapManager->getSearchTerm('rightlong'); ?>' />
 											<input type="hidden" id="bottomlat" name="bottomlat" value='<?php echo $mapManager->getSearchTerm('bottomlat'); ?>' />
 											<input type="hidden" id="leftlong" name="leftlong" value='<?php echo $mapManager->getSearchTerm('leftlong'); ?>' />
-											<input type="hidden" id="poly_array" name="poly_array" value='<?php echo $mapManager->getSearchTerm('polycoords'); ?>' />
+											<input type="hidden" id="polycoords" name="poly_array" value='<?php echo $mapManager->getSearchTerm('polycoords'); ?>' />
 											<button data-role="none" type="button" name="resetbutton" onclick="resetQueryForm(this.form)"><?php echo (isset($LANG['RESET'])?$LANG['RESET']:'Reset'); ?></button>
 											<button data-role="none" name="submitform" type="submit" ><?php echo (isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search'); ?></button>
 										</div>
@@ -1730,8 +1730,8 @@ Record Limit:
 									</div>
 									<div style="margin:5 0 5 0;"><hr /></div>
 									<div id="shapecriteria">
-										<div id="noshapecriteria" style="display:<?php echo ((!$mapManager->getSearchTerm('poly_array') && !$mapManager->getSearchTerm('upperlat'))?'block':'none'); ?>;">
-											<div id="geocriteria" style="display:<?php echo ((!$mapManager->getSearchTerm('poly_array') && !$distFromMe && !$mapManager->getSearchTerm('pointlat') && !$mapManager->getSearchTerm('upperlat'))?'block':'none'); ?>;">
+										<div id="noshapecriteria" style="display:<?php echo ((!$mapManager->getSearchTerm('polycoords') && !$mapManager->getSearchTerm('upperlat'))?'block':'none'); ?>;">
+											<div id="geocriteria" style="display:<?php echo ((!$mapManager->getSearchTerm('polycoords') && !$distFromMe && !$mapManager->getSearchTerm('pointlat') && !$mapManager->getSearchTerm('upperlat'))?'block':'none'); ?>;">
 												<div>
 													<?php echo (isset($LANG['SHAPE_TOOLS'])?$LANG['SHAPE_TOOLS']:'Use the shape tools on the map to select occurrences within a given shape'); ?>.
 												</div>
