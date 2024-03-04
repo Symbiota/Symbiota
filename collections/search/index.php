@@ -20,7 +20,6 @@ $collData = new CollectionMetadata();
 $siteData = new DatasetsMetadata();
 
 $catId = array_key_exists("catid",$_REQUEST)?$_REQUEST["catid"]:'';
-$collManager = new OccurrenceManager();
 $collList = $collManager->getFullCollectionList($catId);
 $specArr = (isset($collList['spec'])?$collList['spec']:null);
 $obsArr = (isset($collList['obs'])?$collList['obs']:null);
@@ -71,6 +70,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 			expandButton.removeAttribute('style', 'display: none;');
 		};
 	</script>
+	
 	<?php include_once($SERVER_ROOT . '/includes/googleanalytics.php'); ?>
 	<!-- Search-specific styles -->
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -541,6 +541,18 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 <script src="<?php echo $CLIENT_ROOT . '/js/jquery-ui.min.js'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/symb/api.taxonomy.taxasuggest.js'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/symb/collections.index.js?ver=20171215' ?>" type="text/javascript"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		<?php
+		if($collectionSource){
+			?>
+			sessionStorage.querystr = "<?php echo $collectionSource; ?>";
+			<?php
+		}
+		?>
+		setSearchForm(document.getElementById("params-form"));
+	});
+</script>
 <script>
 	let alerts = [{
 		'alertMsg': '<?php echo $LANG['ALERT_MSG_PREVIOUS_SEARCH_FORM'] ?> <a href="<?php echo $CLIENT_ROOT ?>/collections/harvestparams.php" alt="Traditional Sample Search Form"><?= $LANG['PREVIOUS_SAMPLE_SEARCH']; ?></a>.'
@@ -552,8 +564,8 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 		var ul = this.menu.element;
 		ul.outerWidth(this.element.outerWidth());
 	}
-
-	const collectionSource = <?php echo $collectionSource ?>;
+	const collectionSource = <?php echo isset($collectionSource) ? json_encode($collectionSource) : 'null'; ?>;
+	const sanitizedCollectionSource = collectionSource.replace('db=','');
 
 	if(collectionSource){
 		// go through all collections and set them all to unchecked
@@ -569,12 +581,12 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 		});
 
 		// set the one with collectionSource as checked
-		const targetCheckbox = document.querySelectorAll('input[id^="coll-' + collectionSource + '"]');
+		const targetCheckbox = document.querySelectorAll('input[id^="coll-' + sanitizedCollectionSource + '"]');
 		targetCheckbox.forEach(collection => {
 			collection.checked = true;
 		});
 		//do the same for collections with slightly different format
-		const targetCheckboxAlt = document.querySelectorAll('input[id^="collection-' + collectionSource + '"]');
+		const targetCheckboxAlt = document.querySelectorAll('input[id^="collection-' + sanitizedCollectionSource + '"]');
 		targetCheckboxAlt.forEach(collection => {
 			collection.checked = true;
 		});

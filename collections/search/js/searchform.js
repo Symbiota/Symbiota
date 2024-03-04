@@ -711,6 +711,138 @@ function hideColCheckbox(collid) {
   });
 }
 
+function setSearchForm(frm) {
+  if (sessionStorage.querystr) {
+    var urlVar = parseUrlVariables(sessionStorage.querystr);
+
+    if (
+      typeof urlVar.usethes !== "undefined" &&
+      (urlVar.usethes == "" || urlVar.usethes == "0")
+    ) {
+      frm.usethes.checked = false;
+    }
+    if (urlVar.taxontype) {
+      if (frm?.taxontype) {
+        frm.taxontype.value = urlVar.taxontype;
+      }
+    }
+    if (urlVar.taxa) {
+      if (frm?.taxa) {
+        frm.taxa.value = urlVar.taxa;
+      }
+    }
+    if (urlVar.country) {
+      countryStr = urlVar.country;
+      countryArr = countryStr.split(";");
+      if (countryArr.indexOf("USA") > -1 || countryArr.indexOf("usa") > -1)
+        countryStr = countryArr[0];
+      //if(countryStr.indexOf('United States') > -1) countryStr = 'United States';
+      if (frm?.country) {
+        frm.country.value = countryStr;
+      }
+    }
+    if (urlVar.state) {
+      frm.state.value = urlVar.state;
+    }
+    if (urlVar.county) {
+      frm.county.value = urlVar.county;
+    }
+    if (urlVar.local) {
+      frm.local.value = urlVar.local;
+    }
+    if (urlVar.elevlow) {
+      frm.elevlow.value = urlVar.elevlow;
+    }
+    if (urlVar.elevhigh) {
+      frm.elevhigh.value = urlVar.elevhigh;
+    }
+    if (urlVar.llbound) {
+      var coordArr = urlVar.llbound.split(";");
+      frm.upperlat.value = Math.abs(parseFloat(coordArr[0]));
+      frm.bottomlat.value = Math.abs(parseFloat(coordArr[1]));
+      frm.leftlong.value = Math.abs(parseFloat(coordArr[2]));
+      frm.rightlong.value = Math.abs(parseFloat(coordArr[3]));
+    }
+    if (urlVar.footprintwkt) {
+      frm.footprintwkt.value = urlVar.footprintwkt;
+    }
+    if (urlVar.llpoint) {
+      var coordArr = urlVar.llpoint.split(";");
+      frm.pointlat.value = Math.abs(parseFloat(coordArr[0]));
+      frm.pointlong.value = Math.abs(parseFloat(coordArr[1]));
+      frm.radius.value = Math.abs(parseFloat(coordArr[2]));
+      if (coordArr[4] == "mi") frm.radiusunits.value = "mi";
+    }
+    if (urlVar.collector) {
+      frm.collector.value = urlVar.collector;
+    }
+    if (urlVar.collnum) {
+      frm.collnum.value = urlVar.collnum;
+    }
+    if (urlVar.eventdate1) {
+      frm.eventdate1.value = urlVar.eventdate1;
+    }
+    if (urlVar.eventdate2) {
+      frm.eventdate2.value = urlVar.eventdate2;
+    }
+    if (urlVar.catnum) {
+      frm.catnum.value = urlVar.catnum;
+    }
+    //if(!urlVar.othercatnum){frm.includeothercatnum.checked = false;}
+    if (urlVar.eventdate2) {
+      frm.eventdate2.value = urlVar.eventdate2;
+    }
+    if (urlVar.materialsampletype) {
+      frm.materialsampletype.value = urlVar.materialsampletype;
+    }
+    if (typeof urlVar.typestatus !== "undefined") {
+      frm.typestatus.checked = true;
+    }
+    if (typeof urlVar.hasimages !== "undefined") {
+      frm.hasimages.checked = true;
+    }
+    if (typeof urlVar.hasgenetic !== "undefined") {
+      frm.hasgenetic.checked = true;
+    }
+    if (typeof urlVar.hascoords !== "undefined") {
+      frm.hascoords.checked = true;
+    }
+    if (typeof urlVar.includecult !== "undefined") {
+      if (frm?.includecult) {
+        frm.includecult.checked = true;
+      }
+    }
+    if (urlVar.db) {
+      if (frm?.db) {
+        frm.db.value = urlVar.db;
+      }
+    }
+    for (var i in urlVar) {
+      if (`${i}`.indexOf("traitid-") == 0) {
+        var traitInput = document.getElementById("traitstateid-" + urlVar[i]);
+        if (traitInput.type == "checkbox" || traitInput.type == "radio") {
+          traitInput.checked = true;
+        }
+        // if(traitInput.type == 'select') { traitInput.value = urlVar[i]; }; // Must improve this to deal with multiple possible selections
+      }
+    }
+    updateChip();
+  }
+}
+
+function parseUrlVariables(varStr) {
+  var result = {};
+  varStr.split("&").forEach(function (part) {
+    if (!part) return;
+    part = part.split("+").join(" ");
+    var eq = part.indexOf("=");
+    var key = eq > -1 ? part.substr(0, eq) : part;
+    var val = eq > -1 ? decodeURIComponent(part.substr(eq + 1)) : "";
+    result[key] = val;
+  });
+  return result;
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 /**
