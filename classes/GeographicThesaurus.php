@@ -172,7 +172,7 @@ class GeographicThesaurus extends Manager {
 
    private function deletePolygon($geoThesID) {
       $sql = <<<'SQL'
-         DELETE FROM geographicpolygon WHERE ?
+         DELETE FROM geographicpolygon WHERE geoThesID = ?
          SQL;
 
       try {
