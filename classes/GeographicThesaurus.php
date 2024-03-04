@@ -668,7 +668,7 @@ class GeographicThesaurus extends Manager {
          if($properties->shapeName === null) continue;
          
          $geoThesIDs = $this->getGeoThesIDByName($properties->shapeName, $geoLevel, $potentialParents);
-         $iso = empty($properties->shapeISO)?$properties->shapeGroup: $properties->shapeISO;
+         $iso = !empty($properties->shapeGroup)?$properties->shapeGroup: $properties->shapeISO;
 
          //only does iso check for adm0 or countries because only case where
          //there is just one
