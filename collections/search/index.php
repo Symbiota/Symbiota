@@ -210,18 +210,15 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 							<div id="bounding-box-form">
 								<h3><?php echo $LANG['BOUNDING_BOX'] ?></h3>
 								<button onclick="openCoordAid('rectangle');return false;"><?php echo $LANG['SELECT_IN_MAP'] ?></button>
-								<div class="fieldset-like">
-									<h3>
-										<span>
-											<?php echo $LANG['UPPER_LATITUDE'] ?>
-										</span>
-									</h3>
+								<div class="input-text-container">
 										<label for="upperlat" class="input-text--outlined">
 											<span class="skip-link"><?php echo $LANG['UPPER_LATITUDE'] ?></span>
 											<input type="number" step="any" min="-90" max="90" id="upperlat" name="upperlat" data-chip="<?php echo $LANG['UPPER_LAT'] ?>">
+											<span data-label="<?php echo $LANG['UPPER_LATITUDE'] ?>"></span>
 											<span class="assistive-text"><?php echo $LANG['VALUE_BETWEEN_NUM'] ?></span>
 										</label>
-										<label for="upperlat_NS">
+
+										<label for="upperlat_NS" class="input-text--outlined">
 											<span class="skip-link"><?php echo $LANG['SELECT_UPPER_LAT_DIRECTION_NORTH_SOUTH'] ?></span>
 											<select class="mt-1" id="upperlat_NS" name="upperlat_NS">
 												<option value=""><?php echo $LANG['SELECT_NORTH_SOUTH'] ?></option>
@@ -230,14 +227,11 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 											</select>
 										</label>
 								</div>
-								<div class="fieldset-like">
-									<h3>
-										<span><?php echo $LANG['SOUTHERN_LATITUDE'] ?></span>
-									</h3>
+								<div class="input-text-container">
 									<label for="bottomlat" class="input-text--outlined">
 										<span class="skip-link"><?php echo $LANG['BOTTOM_LATITUDE'] ?></span>
 										<input type="number" step="any" min="-90" max="90" id="bottomlat" name="bottomlat" data-chip="<?php echo $LANG['BOTTOM_LAT'] ?>">
-										
+										<span data-label="<?php echo $LANG['SOUTHERN_LATITUDE'] ?>"></span>
 										<span class="assistive-text"><?php echo $LANG['VALUE_BETWEEN_NUM'] ?></span>
 									</label>
 									<label for="bottomlat_NS">
@@ -249,14 +243,11 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										</select>
 									</label>
 								</div>
-								<div class="fieldset-like">
-									<h3>
-										<span><?php echo $LANG['WESTERN_LONGITUDE'] ?></span>
-									</h3>
+								<div class="input-text-container">
 									<label for="leftlong" class="input-text--outlined">
 										<span class="skip-link"><?php echo $LANG['LEFT_LONGITUDE'] ?></span>
 										<input type="number" step="any" min="-180" max="180" id="leftlong" name="leftlong" data-chip="<?php echo $LANG['LEFT_LONG'] ?>">
-										<!-- <span data-label="<?php echo $LANG['WESTERN_LONGITUDE'] ?>"></span> -->
+										<span data-label="<?php echo $LANG['WESTERN_LONGITUDE'] ?>"></span>
 										<span class="assistive-text"><?php echo $LANG['VALUES_BETWEEN_NEG180_TO_180'] ?></span>
 									</label>
 									<label for="leftlong_EW" class="input-text--outlined">
@@ -268,14 +259,11 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										</select>
 									</label>
 								</div>
-								<div class="fieldset-like">
-									<h3>
-										<span><?php echo $LANG['EASTERN_LONGITUDE'] ?></span>
-									</h3>
+								<div class="input-text-container">
 									<label for="rightlong" class="input-text--outlined">
 										<span class="skip-link"><?php echo $LANG['RIGHT_LONGITUDE'] ?></span>
 										<input type="number" step="any" min="-180" max="180" id="rightlong" name="rightlong" data-chip="<?php echo $LANG['RIGHT_LONG'] ?>">
-										<!-- <span data-label="<?php echo $LANG['EASTERN_LONGITUDE'] ?>"></span> -->
+										<span data-label="<?php echo $LANG['EASTERN_LONGITUDE'] ?>"></span>
 										<span class="assistive-text"><?php echo $LANG['VALUES_BETWEEN_NEG180_TO_180'] ?></span>
 									</label>
 										<label for="rightlong_EW" class="input-text--outlined">
@@ -291,14 +279,11 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 							<div id="polygon-form">
 								<h3><?php echo $LANG['POLYGON_WKT_FOOTPRINT'] ?></h3>
 								<button onclick="openCoordAid('polygon');return false;"><?php echo $LANG['SELECT_MAP_POLYGON'] ?></button>
-								<div class="fieldset-like">
-									<h3>
-										<span><?php echo $LANG['POLYGON'] ?></span>
-									</h3>
+								<div class="text-area-container">
 									<label for="footprintwkt" class="text-area--outlined">
 										<span class="skip-link"><?php echo $LANG['POLYGON'] ?></span>
 										<textarea id="footprintwkt" name="footprintwkt" class="full-width-pcnt" rows="5"></textarea>
-										<!-- <span data-label="<?php echo $LANG['POLYGON'] ?>"></span> -->
+										<span data-label="<?php echo $LANG['POLYGON'] ?>"></span>
 									</label>
 									<span class="assistive-text"><?php echo $LANG['SELECT_MAP_BUTTON_PASTE'] ?></span>
 								</div>
@@ -306,14 +291,11 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 							<div id="point-radius-form">
 								<h3><?php echo $LANG['POINT_RADIUS'] ?></h3>
 								<button onclick="openCoordAid('circle');return false;"><?php echo $LANG['SELECT_MAP_PR'] ?></button>
-								<div class="fieldset-like">
-									<h3>
-										<span><?php echo $LANG['LATITUDE'] ?></span>
-									</h3>
+								<div class="input-text-container">
 									<label for="pointlat" class="input-text--outlined">
 										<span class="skip-link"><?php echo $LANG['POINT_LATITUDE'] ?></span>
 										<input type="number" step="any" min="-90" max="90" id="pointlat" name="pointlat" data-chip="<?php echo $LANG['POINT_LAT'] ?>">
-										<!-- <span data-label="<?php echo $LANG['LATITUDE'] ?>"></span> -->
+										<span data-label="<?php echo $LANG['LATITUDE'] ?>"></span>
 										<span class="assistive-text"><?php echo $LANG['VALUE_BETWEEN_NUM'] ?></span>
 									</label>
 									<label for="pointlat_NS" class="input-text--outlined">
@@ -325,14 +307,11 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										</select>
 									</label>
 								</div>
-								<div class="fieldset-like">
-									<h3>
-										<span><?php echo $LANG['LONGITUDE'] ?></span>
-									</h3>
+								<div class="input-text-container">
 									<label for="pointlong" class="input-text--outlined">
 										<span class="skip-link"><?php echo $LANG['POINT_LONGITUDE'] ?></span>
 										<input type="number" step="any" min="-180" max="180" id="pointlong" name="pointlong" data-chip="<?php echo $LANG['POINT_LONG'] ?>">
-										<!-- <span data-label="<?php echo $LANG['LONGITUDE'] ?>"></span> -->
+										<span data-label="<?php echo $LANG['LONGITUDE'] ?>"></span>
 										<span class="assistive-text"><?php echo $LANG['VALUES_BETWEEN_NEG180_TO_180'] ?></span>
 									</label>
 									<label for="pointlong_EW" class="input-text--outlined">
@@ -344,14 +323,11 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										</select>
 									</label>
 								</div>
-								<div class="fieldset-like">
-									<h3>
-										<span><?php echo $LANG['RADIUS'] ?></span>
-									</h3>
+								<div class="input-text-container">
 									<label for="radius" class="input-text--outlined">
 										<span class="skip-link"><?php echo $LANG['RADIUS'] ?></span>
 										<input type="number" min="0" step="any" id="radius" name="radius" data-chip="<?php echo $LANG['RADIUS'] ?>">
-										<!-- <span data-label="<?php echo $LANG['RADIUS'] ?>"></span> -->
+										<span data-label="<?php echo $LANG['RADIUS'] ?>"></span>
 										<span class="assistive-text"><?php echo $LANG['ANY_POSITIVE_VALUES'] ?></span>
 									</label>
 									<label for="radiusunits" class="input-text--outlined">
