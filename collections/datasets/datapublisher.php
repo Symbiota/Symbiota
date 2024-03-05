@@ -34,6 +34,7 @@ $includeImgs = 1;
 $includeAttributes = 1;
 $includeMatSample = 1;
 $redactLocalities = 1;
+
 if ($action == 'savekey' || (isset($_REQUEST['datasetKey']) && $_REQUEST['datasetKey'])) {
 	$collManager->setAggKeys($_POST);
 	$collManager->updateAggKeys();
@@ -449,16 +450,34 @@ if ($isEditor) {
 			<?php
 		} else {
 			$catID = (isset($DEFAULTCATID) ? $DEFAULTCATID : 0);
-			if ($IS_ADMIN) {
-				if ($action == 'buildDwca') {
-					echo '<ul>';
-					$dwcaManager->setVerboseMode(2);
-					$dwcaManager->setLimitToGuids(true);
-					$dwcaManager->batchCreateDwca($_POST['coll']);
-					echo '</ul>';
-					echo '<ul>';
-					$collManager->batchTriggerGBIFCrawl($_POST['coll']);
-					echo '</ul>';
+			if($IS_ADMIN) {
+				if($action == 'buildDwca') {
+					if($collIdArr = $_POST['coll']){
+						echo '<div>Starting batch process (' . date('Y-m-d h:i:s A') . ')</div>';
+						echo '<div>--------------------------------------------------------</div>';
+						echo '<ul>';
+						$dwcaManager->setVerboseMode(2);
+						$dwcaManager->setLimitToGuids(true);
+						foreach($collIdArr as $id){
+							$dwcaManager->resetCollArr($id);
+							if($includeAttributes){
+								if($dwcaManager->hasAttributes($id)) $dwcaManager->setIncludeAttributes(1);
+								else $dwcaManager->setIncludeAttributes(0);
+							}
+							if($includeMatSample){
+								if($dwcaManager->hasMaterialSamples($id)) $dwcaManager->setIncludeMaterialSample(1);
+								else  $dwcaManager->setIncludeMaterialSample(0);
+							}
+							if($dwcaManager->createDwcArchive()){
+								$dwcaManager->writeRssFile();
+								$collManager->batchTriggerGBIFCrawl(array($id));
+							}
+						}
+						$dwcaManager->setIncludeAttributes($includeAttributes);
+						$dwcaManager->setIncludeMaterialSample($includeMatSample);
+						echo '</ul>';
+						echo 'Batch process finished! (' . date('Y-m-d h:i:s A') . ')';
+					}
 				}
 				?>
 				<div id="dwcaadmindiv" style="margin:10px;display:<?php echo ($emode ? 'block' : 'none'); ?>;">

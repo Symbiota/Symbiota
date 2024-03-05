@@ -11,10 +11,12 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		parent::__destruct();
 	}
 
-	private function resetCollArr($collTarget){
+	public function resetCollArr($id){
 		unset($this->collArr);
 		$this->collArr = array();
-		$this->setCollArr($collTarget);
+		$this->setCollArr($id);
+		$this->conditionArr['collid'] = $id;
+		$this->conditionSql = '';
 	}
 
 	public function verifyCollRecords($collId){
@@ -80,7 +82,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 
 	public function writeRssFile(){
 
-		$this->logOrEcho("Mapping data to RSS feed... \n");
+		$this->logOrEcho('Mapping data to RSS feed... ');
 
 		//Create new document and write out to target
 		$newDoc = new DOMDocument('1.0',$this->charSetOut);
@@ -212,7 +214,8 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 			$redirectDoc->save($deprecatedPath);
 		}
 
-		$this->logOrEcho("Done!\n");
+		$this->logOrEcho('Done!', 1);
+		$this->logOrEcho('-----------------------------------------------------');
 	}
 
 	//Misc data retrival functions
