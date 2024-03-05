@@ -1264,8 +1264,8 @@ class SpecUploadBase extends SpecUpload{
 				//Reset existing current determinations to match fields in the omoccurrences table (e.g. import data changes, will equal current determinations)
 				$sql = 'UPDATE uploadspectemp u INNER JOIN omoccurrences o ON u.occid = o.occid
 					INNER JOIN omoccurdeterminations d ON o.occid = d.occid
-					SET d.sciname = o.sciname, d.identifiedBy = o.identifiedBy, d.dateIdentified = o.dateIdentified, d.family = o.family,
-					d.scientificNameAuthorship = o.scientificNameAuthorship, d.tidInterpreted = o.tidInterpreted, d.identificationQualifier = o.identificationQualifier,
+					SET d.sciname = IFNULL(o.sciname, "undetermined"), d.identifiedBy = IFNULL(o.identifiedBy, "unknown"), d.dateIdentified = IFNULL(o.dateIdentified, "s.d."),
+					d.family = o.family, d.scientificNameAuthorship = o.scientificNameAuthorship, d.tidInterpreted = o.tidInterpreted, d.identificationQualifier = o.identificationQualifier,
 					d.identificationReferences = o.identificationReferences, d.identificationRemarks = o.identificationRemarks, d.taxonRemarks = o.taxonRemarks
 					WHERE o.collid = ? AND d.isCurrent = 1';
 				if($stmt = $this->conn->prepare($sql)){
@@ -1278,8 +1278,8 @@ class SpecUploadBase extends SpecUpload{
 				//Add new determinations to omoccurdetermination table
 				$sql = 'INSERT INTO omoccurdeterminations(occid, sciname, identifiedBy, dateIdentified, family, scientificNameAuthorship, tidInterpreted, identificationQualifier,
 					identificationReferences, identificationRemarks, taxonRemarks, isCurrent)
-					SELECT o.occid, IFNULL(o.sciname, "undetermined") AS sciname, IFNULL(o.identifiedBy, "unknown") AS identifiedBy, IFNULL(o.dateIdentified, "s.d.") AS dateIdentified, o.family, o.scientificNameAuthorship, o.tidInterpreted, o.identificationQualifier,
-					o.identificationReferences, o.identificationRemarks, o.taxonRemarks, 1 AS isCurrent
+					SELECT o.occid, IFNULL(o.sciname, "undetermined") AS sciname, IFNULL(o.identifiedBy, "unknown") AS identifiedBy, IFNULL(o.dateIdentified, "s.d.") AS dateIdentified,
+					o.family, o.scientificNameAuthorship, o.tidInterpreted, o.identificationQualifier, o.identificationReferences, o.identificationRemarks, o.taxonRemarks, 1 AS isCurrent
 					FROM uploadspectemp u INNER JOIN omoccurrences o ON u.occid = o.occid
 					LEFT JOIN omoccurdeterminations d ON o.occid = d.occid
 					WHERE o.collid = ? AND d.occid IS NULL;';
