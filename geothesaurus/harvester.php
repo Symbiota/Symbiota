@@ -1,6 +1,8 @@
 <?php
 include_once ('../config/symbini.php');
 include_once ($SERVER_ROOT . '/classes/GeographicThesaurus.php');
+include_once($SERVER_ROOT.'/content/lang/geothesaurus/index.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT.'/content/lang/geothesaurus/harvester.'.$LANG_TAG.'.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $geoThesID = array_key_exists('geoThesID', $_REQUEST) ? filter_var($_REQUEST['geoThesID'], FILTER_SANITIZE_NUMBER_INT) : '';
@@ -138,9 +140,9 @@ if($isEditor && $submitAction) {
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="../index.php">Home</a> &gt;&gt;
-		<a href="index.php">Geographic Thesaurus Listing</a> &gt;&gt;
-		<b>Geographic Harvester</b>
+		<a href="../index.php"><?= $LANG['NAV_HOME'] ?> </a> &gt;&gt;
+		<a href="index.php"><b> <?= $LANG['NAV_GEOTHES'] ?> </b></a> &gt;&gt;
+         <b><?= $LANG['GEOGRAPHIC_HARVESTER']?></b>
 	</div>
 	<div id='innertext'>
 		<?php
@@ -163,8 +165,8 @@ if($isEditor && $submitAction) {
 			if(isset($statusReport['lkup'])){
 				?>
 				<fieldset>
-					<legend>Geopraphic Lookup Tables - deprecated</legend>
-					<p>There appears to be records within the deprecated Geographic lookup tables that are no longer used.<br/>Do you want to transfer this data into the new geographic thesaurus?</p>
+            <legend><?=$LANG['LOOKUP_TABLES_TITLE']?></legend>
+            <p><?=$LANG['LOOKUP_TABLES_DESC']?></p>
 					<?php
 					foreach($statusReport['lkup'] as $k => $v){
 						echo '<div><b>'.$k.':</b> '.$v.'</div>';
@@ -172,35 +174,42 @@ if($isEditor && $submitAction) {
 					?>
 					<hr/>
 					<form name="transThesForm" action="harvester.php" method="post" style="margin-top:15px">
-						<button name="submitaction" type="submit" value="transferDataFromLkupTables">Transfer Lookup Tables</button>
+               <button name="submitaction" type="submit" value="transferDataFromLkupTables"><?= $LANG['TRANSFER_LOOKUP_TABLES']?></button>
 					</form>
 				</fieldset>
 				<?php
 			}
 			?>
 			<fieldset>
-				<legend>geoBoundaries Harvesting Tools</legend>
+            <legend><?= $LANG['ACTIVE_GEOGRAPHIC_THESAURUS']?></legend>
 				<?php
 				if(!$gbAction){
 					?>
 					<div>
-						<div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nopoly').hide();" /> Show no polygon only</div>
-						<div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nodb').hide();" /> Show not in database only</div>
-						<div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nopoly').show();$('.nodb').show();" /> Show all</div>
+                  <div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nodb').show();$('.nopoly').hide();" /> <?= $LANG['SHOW_NO_POLYGON']?> </div>
+						<div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nopoly').show();$('.nodb').hide();" /> <?= $LANG['SHOW_NO_DATABASE']?></div>
+						<div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nopoly').show();$('.nodb').show();" /> <?= $LANG['SHOW_ALL']?></div>
 					</div>
 
-            <form name="" method="post" action="harvester.php">
-
-               <span style="display:inline-flex;vertical-align:middle;margin-top:1rem">
-                  <button name="submitaction" onclick="submit_loading()" type="submit" value="harvestCountries">Add All Country Boundaries</button>
-                  <img id="submit-loading"style="border:0px;width:2rem;height:2rem;display:none" src="../images/ajax-loader.gif" />
-               </span>
+            <form style="position:relative" name="" method="post" action="harvester.php">
+                  <span style="position:absoulte;top:0px;display:inline-flex;vertical-align:middle;">
+                  <button name="submitaction" onclick="submit_loading()" type="submit" value="harvestCountries"><?= $LANG['ADD_ALL_BOUNDARIES']?></button>
+                     <img id="submit-loading"style="border:0px;width:2rem;height:2rem;display:none" src="../images/ajax-loader.gif" />
+                  </span>
                <div id="submit-loading-text" style="display:none">
-                  This process may take a while to process the geographical data
+                  <?=$LANG['LOADING_GEO_DATA_TEXT']?>
                </div> 
 					<table class="styledtable">
 						<tr>
-							<th>Name</th><th>ISO</th><th>In Database</th><th>Has Polygon</th><th>ID</th><th>Canonical</th><th>License</th><th>Region</th><th>Preview Image</th>
+                     <th><?=$LANG['TABLE_NAME']?></th>
+                     <th><?=$LANG['TABLE_ISO3']?></th>
+                     <th><?=$LANG['TABLE_DATABASE']?></th>
+                     <th><?=$LANG['TABLE_POLYGON']?></th>
+                     <th><?=$LANG['TABLE_BOUNDARY_ID']?></th>
+                     <th><?=$LANG['TABLE_CANONICAL_NAME']?></th>
+                     <th><?=$LANG['TABLE_LICENSE']?></th>
+                     <th><?=$LANG['TABLE_REGION']?></th>
+                     <th><?=$LANG['TABLE_IMAGE_PREVIEW']?></th>
 						</tr>
 						<?php
 						$countryList = $geoManager->getGBCountryList();
@@ -227,14 +236,24 @@ if($isEditor && $submitAction) {
 				else{
                $geoList = $geoManager->getGBGeoList($gbAction);
 					?>
-					<ul>
-						<li><a href="harvester.php">Return to Country List</a></li>
-					</ul>
+               <div style="margin-bottom:1rem">
+               <a href="harvester.php"><?= $LANG['COUNTRY_LIST_NAV']?></a>
+               </div>
 					<form name="" method="post" action="harvester.php">
                   <input style="display:none" name="baseParent" value="<?= isset($geoList['ADM0']['geoThesID'])? $geoList['ADM0']['geoThesID'] : null?>">
 						<table class="styledtable">
 							<tr>
-								<th></th><th>Type</th><th>ID</th><th>Database Count</th><th>Geoboundaries Count</th><th>Has Polygon</th><th>Canonical</th><th>Region</th><th>License</th><th>Full Link</th><th>Preview Image</th>
+								<th></th>
+                        <th><?=$LANG['TABLE_TYPE']?></th>
+                        <th><?=$LANG['TABLE_BOUNDARY_ID']?></th>
+                        <th><?=$LANG['TABLE_INCOMING_COUNT']?></th>
+                        <th><?=$LANG['TABLE_DATABASE_COUNT']?></th>
+                        <th><?=$LANG['TABLE_POLYGON']?></th>
+                        <th><?=$LANG['TABLE_CANONICAL_NAME']?></th>
+                        <th><?=$LANG['TABLE_REGION']?></th>
+                        <th><?=$LANG['TABLE_LICENSE']?></th>
+                        <th><?=$LANG['TABLE_FULL_LINK']?></th>
+                        <th><?=$LANG['TABLE_IMAGE_PREVIEW']?></th>
 							</tr>
 							<?php
 							$prevGeoThesID = 0;
@@ -275,17 +294,17 @@ if($isEditor && $submitAction) {
 						</table>
                   <div style="margin-top:1rem">
                      <input type="checkbox" id="addgeounit" name="addgeounit" value="true" checked >
-                     <label style="text-decoration: none" for="addgeounit">Add geographical units if missing</label>
+                  <label style="text-decoration: none" for="addgeounit"><?=$LANG['ADD_IF_GEOUNITS_MISSING']?></label>
                   </div>
 						<input name="gbAction" type="hidden" value="<?php echo $gbAction; ?>" />
                   <span style="display:inline-flex;vertical-align:middle;margin-top:1rem">
                      <button name="submitaction" onclick="submit_loading()" type="submit" value="submitCountryForm">
-                        Add Boundaries 
+                        <?= $LANG['ADD_BOUNDARIES'] ?>
                      </button>
                      <img id="submit-loading"style="border:0px;width:2rem;height:2rem;display:none" src="../images/ajax-loader.gif" />
                   </span>
                   <div id="submit-loading-text" style="display:none">
-                     This process may take a while to process the geographical data
+                     <?= $LANG['LOADING_GEO_DATA_TEXT'] ?>
                   </div> 
 					</form>
 					<?php

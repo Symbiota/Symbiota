@@ -329,12 +329,12 @@ class GeographicThesaurus extends Manager {
 
 	//Reporting and data transfer functions
 	public function getThesaurusStatus() {
-		$retArr = false;
+		$retArr = [];
 		$fullCnt = 0;
 		$sql = 'SELECT geoLevel, COUNT(*) as cnt FROM geographicthesaurus GROUP BY geoLevel';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr['active'][$r->geoLevel] = $r->cnt;
+         $retArr['active'][$r->geoLevel] = $r->cnt;
 			$fullCnt += $r->cnt;
 		}
 		$rs->free();
@@ -369,9 +369,8 @@ class GeographicThesaurus extends Manager {
 			}
 			$rs->free();
 		}
-		return $retArr;
+		return !empty($retArr)? $retArr: false;
       } catch(Exception $e) {
-         var_dump($e);
          return false;
       }
 	}
