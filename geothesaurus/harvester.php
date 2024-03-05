@@ -62,7 +62,25 @@ if($isEditor && $submitAction) {
             break;
          }
       }
-	}
+	} elseif($submitAction == 'harvestCountries') {
+      //This Call can Take a very long time depending on the size of the
+      //geoJson and how many children are within the feature collection past
+      set_time_limit(1200);
+
+      //This script can consume a lot of memory loading the geoJson so this a
+      //large buffer to prevent those issues from occuring
+      ini_set("memory_limit", "512M");
+
+      $geoJsonLinks = array_key_exists('geoJson', $_POST) && is_array($_POST['geoJson'])? $_POST['geoJson'] : [];
+      foreach($geoJsonLinks as $geojson) {
+         try {
+            $geoManager->addGeoBoundary($geojson, true);
+         } catch(Execption $e) {
+            $statusStr = 'The country batch harvester encountered an issue';
+            break;
+         }
+      }
+   }
 }
 
 ?>
@@ -170,6 +188,16 @@ if($isEditor && $submitAction) {
 						<div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nodb').hide();" /> Show not in database only</div>
 						<div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nopoly').show();$('.nodb').show();" /> Show all</div>
 					</div>
+
+            <form name="" method="post" action="harvester.php">
+
+               <span style="display:inline-flex;vertical-align:middle;margin-top:1rem">
+                  <button name="submitaction" onclick="submit_loading()" type="submit" value="harvestCountries">Add All Country Boundaries</button>
+                  <img id="submit-loading"style="border:0px;width:2rem;height:2rem;display:none" src="../images/ajax-loader.gif" />
+               </span>
+               <div id="submit-loading-text" style="display:none">
+                  This process may take a while to process the geographical data
+               </div> 
 					<table class="styledtable">
 						<tr>
 							<th>Name</th><th>ISO</th><th>In Database</th><th>Has Polygon</th><th>ID</th><th>Canonical</th><th>License</th><th>Region</th><th>Preview Image</th>
@@ -179,6 +207,7 @@ if($isEditor && $submitAction) {
 						foreach($countryList as $cArr){
 							echo '<tr class="'.(isset($cArr['geoThesID'])?'nodb':'').(isset($cArr['polygon'])?' nopoly':'').'">';
 							echo '<td><a href="harvester.php?gbAction=' . $cArr['iso'] . '">' . htmlspecialchars($cArr['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a></td>';
+							echo '<input type="hidden" name="geoJson[]" value="' . $cArr['geoJson'] .'"' . (isset($cArr['polygon'])?'disabled':'') . '>';
 							echo '<td>'.$cArr['iso'].'</td>';
 							echo '<td>'.(isset($cArr['geoThesID'])?'Yes':'No').'</td>';
 							echo '<td>'.(isset($cArr['polygon'])?'Yes':'No').'</td>';
@@ -192,6 +221,7 @@ if($isEditor && $submitAction) {
 						}
 						?>
 					</table>
+               </form>
 					<?php
 				}
 				else{
