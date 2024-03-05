@@ -2145,18 +2145,22 @@ class DwcArchiverCore extends Manager{
 
 	public function setIncludeDets($includeDets){
 		if($includeDets) $this->includeDets = true;
+		else $this->includeDets = false;
 	}
 
 	public function setIncludeImgs($includeImgs){
 		if($includeImgs) $this->includeImgs = true;
+		else $this->includeImgs = false;
 	}
 
 	public function setIncludeAttributes($include){
 		if($include) $this->includeAttributes = true;
+		else $this->includeAttributes = false;
 	}
 
 	public function setIncludeMaterialSample($include){
 		if($include) $this->includeMaterialSample = true;
+		else $this->includeMaterialSample = false;
 	}
 
 	public function hasAttributes($collid = false){
