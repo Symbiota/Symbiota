@@ -102,4 +102,5 @@ $LANG['FIND_CLONES'] ='Find previously geolocated duplicates';
 $LANG['LOCATE_GEO_AREA'] = 'Locate the geographical area';
 $LANG['EXAMINE_FOR_COORDS'] = 'Examine Locality for Lat/Long or UTM.';
 $LANG['INITIAL_RECORDS_EDIT'] = 'Revise the initial batch of records';
+$LANG['SKIP_NAV'] = 'Skip breadcrumbs section';
 ?>

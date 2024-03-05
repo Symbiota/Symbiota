@@ -103,5 +103,6 @@ $LANG['EDIT_PLUS_ICON'] = 'Editar icono más';
 $LANG['FIND_CLONES'] ='Buscar duplicados previamente geolocalizados';
 $LANG['LOCATE_GEO_AREA'] = 'Ubicar el área geográfica';
 $LANG['EXAMINE_FOR_COORDS'] = 'Examinar la localidad para Lat/Long o UTM.';
-$LANG['INITIAL_RECORDS_EDIT'] ​​= 'Revisar el lote inicial de registros';
+$LANG['INITIAL_RECORDS_EDIT'] = 'Revisar el lote inicial de registros';
+$LANG['SKIP_NAV'] = 'Saltar sección de navegación';
 ?>

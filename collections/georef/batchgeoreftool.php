@@ -107,12 +107,13 @@ if($isEditor && $submitAction){
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/collections.georef.batchgeoreftool.js?ver=201912" type="text/javascript"></script>
 	</head>
 	<body>
+		<a class="skip-link" href="#queryform-section"><?php echo $LANG['SKIP_NAV'] ?></a>
 		<!-- This is inner text! -->
 		<div  id='innertext'>
 			<?php
 			if($collid){
 				?>
-				<div style="float:left;">
+				<div id="breadcrumbs-section" style="float:left;">
 					<div style="font-weight: bold; font-size:140%;float:left">
 						<?php
 						if(is_numeric($collid)) echo $collMap[$collid]['collectionname'].' ('.$collMap[$collid]['code'].')';
@@ -190,7 +191,7 @@ if($isEditor && $submitAction){
 			if($collid){
 				if($isEditor){
 					?>
-					<div style="float:right;">
+					<div id="queryform-section" style="float:right;">
 						<form name="queryform" method="post" action="batchgeoreftool.php" onsubmit="return verifyQueryForm(this)">
 							<fieldset style="padding:5px;width:600px;background-color:lightyellow;">
 								<legend><b><?php echo $LANG['QUERY_FORM']; ?></b></legend>
