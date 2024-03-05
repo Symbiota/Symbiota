@@ -187,7 +187,7 @@ if($isEditor && $submitAction) {
 				if(!$gbAction){
 					?>
             <form style="position:relative" name="" method="post" action="harvester.php">
-               <span style="position:absoulte;top:0px;display:inline-flex;vertical-align:middle;">
+               <span style="position:absoulte;top:0px;display:inline-flex;vertical-align:middle; margin-bottom: 1rem">
                   <button name="submitaction" onclick="submit_loading()" type="submit" value="harvestCountries"><?= $LANG['ADD_ALL_BOUNDARIES']?></button>
                   <img id="submit-loading"style="border:0px;width:2rem;height:2rem;display:none" src="../images/ajax-loader.gif" />
                </span>
@@ -199,7 +199,7 @@ if($isEditor && $submitAction) {
                   <input name="displayRadio" style="margin-left:1rem" type="radio" id="show-all" onclick="$('.nopoly').show();$('.nodb').show();" value="all">
                   <label for="show-all"><?= $LANG['SHOW_ALL']?></label>
                </span>
-               <div id="submit-loading-text" style="display:none; margin-bottom:1rem">
+               <div id="submit-loading-text" style="display:none; margin-bottom:1.5rem">
                   <?=$LANG['LOADING_GEO_DATA_TEXT']?>
                </div> 
 					<table class="styledtable">
