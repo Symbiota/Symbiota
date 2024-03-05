@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistManager.php');
@@ -99,6 +98,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 //Output variable sanitation
 $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['CHECKLIST']) ? $LANG['CHECKLIST'] : 'Checklist').': '.$clManager->getClName(); ?></title>
@@ -108,8 +108,8 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
 	<link href="<?= $CSS_BASE_PATH ?>/symbiota/checklists/checklist.css" type="text/css" rel="stylesheet" />
-	<script src="../js/jquery.js" type="text/javascript"></script>
-	<script src="../js/jquery-ui.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		<?php
 		if($clid) echo 'var clid = '.$clid.';'."\n";
@@ -685,7 +685,11 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 								//Edit family name display style here
 								?>
 								<div class="family-div" id="<?php echo strip_tags($group);?>">
-									<i><a href="<?php echo strip_tags($famUrl); ?>" target="_blank" style="color:black;"><?php echo strip_tags($group);?></a> </i>
+									<i>
+										<a href="<?php echo strip_tags($famUrl); ?>" target="_blank" style="color:black;">
+											<?php echo strip_tags($group);?>
+										</a> 
+									</i>
 								</div>
 								<?php
 								$prevGroup = $group;
@@ -694,7 +698,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 							//Edit species name display style here
 							echo '<div class="taxon-div">';
 							if(!preg_match('/\ssp\d/',$sppArr["sciname"])) echo '<a href="../taxa/index.php?taxauthid=1&taxon=' . $tid . '&clid=' . $clid . '" target="_blank">';
-							echo '<span class="taxon-span">'.$sppArr['sciname'] . '</span> ';
+							echo '<span class="taxon-span normal-font-weight">'.$sppArr['sciname'] . '</span> ';
 							if(array_key_exists("author",$sppArr)) echo $sppArr["author"];
 							if(!preg_match('/\ssp\d/',$sppArr["sciname"])) echo "</a>";
 							if(array_key_exists('vern',$sppArr)){

@@ -476,27 +476,6 @@ class OccurrenceMapManager extends OccurrenceManager {
 		return $retVar;
 	}
 
-	public function hasFullSpatialSupport(){
-		$serverStr = '';
-		if(mysqli_get_server_info($this->conn)) $serverStr = mysqli_get_server_info($this->conn);
-		else $serverStr = shell_exec('mysql -V');
-		if($serverStr){
-			if(strpos($serverStr,'MariaDB') !== false) return true;
-			else{	//db = mysql;
-				preg_match('@[0-9]+\.[0-9]+\.[0-9]+@',$serverStr,$m);
-				$mysqlVerNums = explode(".", $m[0]);
-				if($mysqlVerNums[0] > 5) return true;
-				elseif($mysqlVerNums[0] == 5){
-					if($mysqlVerNums[1] > 6) return true;
-					elseif($mysqlVerNums[1] == 6){
-						if($mysqlVerNums[2] >= 1) return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
-
 	//Misc support functions
 	private function htmlEntities($string){
 		return htmlspecialchars($string, ENT_XML1 | ENT_QUOTES, 'UTF-8');

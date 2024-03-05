@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyEditorManager.php');
@@ -30,16 +28,17 @@ if($isEditor){
 	}
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['TAXON_LOADER']) ? $LANG['TAXON_LOADER'] : 'Taxon Loader'); ?>: </title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script type="text/javascript" src="../../js/jquery.js"></script>
-	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="../../js/symb/taxa.taxonomyloader.js?ver=4"></script>
 </head>
 <body>
@@ -80,8 +79,12 @@ if($isEditor){
 						<input type='text' id='author' name='author' class='search-bar-long' />
 					</div>
 					<div style="clear:both;">
-						<div class="left-column"> <label for="rankid"> <?php echo (isset($LANG['TAXON_RANK']) ? $LANG['TAXON_RANK'] : 'Taxon Rank'); ?>: </label></div>
-						<select id="rankid" name="rankid" title="Rank ID" class='search-bar-short'>
+						<div class="left-column"> 
+							<label for="rankid">
+								 <?php echo (isset($LANG['TAXON_RANK']) ? $LANG['TAXON_RANK'] : 'Taxon Rank'); ?>: 
+								</label>
+						</div>
+						<select id="rankid" name="rankid" title="Rank ID" class='search-bar-short bottom-breathing-room-sm-rel'>
 							<option value=""><?php echo (isset($LANG['SEL_TAX_RANK']) ? $LANG['SEL_TAX_RANK'] : 'Select Taxon Rank'); ?></option>
 							<option value="0"><?php echo (isset($LANG['NON_RANKED_NODE']) ? $LANG['NON_RANKED_NODE'] : 'Non-Ranked Node'); ?></option>
 							<option value="">--------------------------------</option>

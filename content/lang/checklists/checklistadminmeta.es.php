@@ -29,5 +29,6 @@ $LANG['CLICK_TO_CREATE'] = 'Hacer click aquí para crear un nuevo listado de esp
 $LANG['PROJ_ADMIN'] = 'Administración de Proyectos de Inventario';
 $LANG['EDIT_PROJECT'] = 'Editar Proyecto';
 $LANG['NO_PROJECTS'] = 'No hay Proyectos para los cuales tenga permisos administrativos';
+$LANG['INATURALIST'] = 'iNaturalist';
 
 ?>

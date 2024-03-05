@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <?php
 include_once('../../config/symbini.php');
 @include_once('Image/Barcode.php');
@@ -37,6 +36,7 @@ if($isEditor){
 }
 $labelFormatArr = $labelManager->getLabelFormatArr(true);
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
@@ -290,7 +290,9 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 						<div style="clear:both;">
 							<div style="float:left;">
 								<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
-								<input type="submit" name="submitaction" value="<?php echo (isset($LANG['FILT_SPEC_REC']) ? $LANG['FILT_SPEC_REC'] : 'Filter Specimen Records') ?>" />
+								<button type="submit" name="submitaction" value="<?php echo $LANG['FILT_SPEC_REC'] ?>">
+									<?php echo $LANG['FILT_SPEC_REC'] ?>
+								</button>
 							</div>
 							<div style="margin-left:20px;float:left;">
 								* <?= (isset($LANG['SPEC_LIM']) ? $LANG['SPEC_LIM'] : 'Specimen return is limited to') ?>: <?= $limit ?>

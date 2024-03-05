@@ -48,6 +48,8 @@ $LANG['GEN_RES_EDITOR'] = 'Editor de Recursos Genéticos';
 $LANG['SAVE_EDITS'] = 'Guardar Ediciones';
 $LANG['DEL_GEN_RES'] = 'Eliminar Recurso Genético';
 $LANG['DEL_RES'] = 'Eliminar Recurso';
+$LANG['NO_CHECKLISTS'] = 'No se han establecido vínculos con los vales de la lista de verificación';
+$LANG['NO_GENETIC_RESOURCES'] = 'No se han establecido vínculos genéticos.';
 
 include_once($SERVER_ROOT.'/content/lang/collections/associations.es.php');
 ?>

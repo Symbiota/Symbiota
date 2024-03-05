@@ -45,7 +45,11 @@ function selectAll(cb) {
   }
   var f = cb.form;
   for (var i = 0; i < f.length; i++) {
-    if (f.elements[i].name == "db[]" || f.elements[i].name == "cat[]")
+    if (
+      f.elements[i].name == "db[]" ||
+      f.elements[i].name == "cat[]" ||
+      f.elements[i].name == "current-collid"
+    )
       f.elements[i].checked = boxesChecked;
   }
 }

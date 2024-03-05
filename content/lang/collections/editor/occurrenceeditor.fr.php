@@ -5,7 +5,7 @@ Language: Français (French)
 ------------------
 */
 
-include_once($SERVER_ROOT.'/content/lang/collections/editor/editorterms.fr.php');
+include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/occurrenceterms.fr.php');
 
 $LANG['HOME'] = 'Accueil';
 $LANG['CLONES_CREATED'] = 'Succès! Les nouveaux enregistrements clones suivants ont été créés';
@@ -50,6 +50,7 @@ $LANG['ADMIN'] = 'Admin';
 $LANG['COLLECTOR_INFO'] = 'Informations sur Collectionneur';
 $LANG['LONG_FORM'] = 'Forme Longue';
 $LANG['SHORT_FORM'] = 'Forme Courte';
+$LANG['DUPLICATES'] = 'Duplicates';
 $LANG['AUTO_SEARCH'] = 'Recherche automatique';
 $LANG['OUT_ON_LOAN'] = 'En Prêt';
 $LANG['TO'] = 'À';
@@ -58,16 +59,12 @@ $LANG['NOT_DEFINED'] = 'Non Défini';
 $LANG['SEARCHING_DUPE'] = 'Recherche des Doublons';
 $LANG['NO_DUPES_FOUND'] = 'Aucun Doublon Trouvé';
 $LANG['DISPLAY_DUPES'] = 'Affichage des Doublons';
-$LANG['NUM_YEAR'] = 'Année Numérique';
-$LANG['NUM_MONTH'] = 'Mois Numérique';
-$LANG['NUM_DAY'] = 'Jour Numérique';
-$LANG['START_DOY'] = 'Jour de Début de Année';
-$LANG['END_DOY'] = 'Jour de fin Année';
 $LANG['EXS_TITLE'] = 'Titre de Exsiccati';
 $LANG['NUMBER'] = 'Nombre';
 $LANG['LATEST_ID'] = 'Dernière Identification';
 $LANG['LIMITED_EDITING'] = 'Droits de modification limités: utilisez onglet de détermination pour modifier identification';
 $LANG['NEED_FULL'] = "Remarque: Des autorisations d'édition complètes sont nécessaires pour modifier une identification";
+$LANG['IDENTIFICATION_CONFIDENCE'] = 'Confiance du Identifié';
 $LANG['UNDEFINED'] = 'Indéfini';
 ///$LANG['ABSOLUTE'] = 'Absolute';
 ///$LANG['V_HIGH'] = 'Very High';
@@ -86,7 +83,8 @@ $LANG['TAXONOMIC_SECURITY'] = 'Sécurité Taxonomique';
 $LANG['LOC_AND_TAX_SECURITY'] = 'Localité &amp; Sécurité Taxonomique';
 $LANG['FULL_SECURITY'] = 'Sécurité Totale';
 $LANG['SECURITY_SETTINGS'] = 'Paramètres de Sécurité';
-$LANG['SEC_NOT_APPLIED'] = 'Sécurité non Appliquée';
+$LANG['SECURITY_NOT_APPLIED'] = 'Security not applied';
+$LANG['SECURITY_APPLIED'] = 'Security applied';
 $LANG['LOCK_SEC_SETTING'] = 'Verrouiller Paramètre de Sécurité';
 $LANG['EXPLAIN_SEC_STATUS'] = "La saisie de n'importe quel texte verrouillera l'état de sécurité activé ou désactivé; laisser vide pour accepter l'état de sécurité par défaut";
 $LANG['UNCERTAINTY_METERS'] = 'Incertitude en Mètres';

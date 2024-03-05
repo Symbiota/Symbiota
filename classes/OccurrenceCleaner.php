@@ -329,11 +329,6 @@ class OccurrenceCleaner extends Manager{
 	//Bad countries
 	public function getBadCountryCount(){
 		$retCnt = 0;
-		/*
-		$sql = 'SELECT COUNT(DISTINCT o.country) AS cnt '.
-			'FROM omoccurrences o LEFT JOIN lkupcountry l ON o.country = l.countryname '.
-			'WHERE o.country IS NOT NULL AND o.collid = '.$this->collid.' AND l.countryid IS NULL ';
-		*/
 		$sql = 'SELECT COUNT(DISTINCT country) AS cnt
 			FROM omoccurrences
 			WHERE country IS NOT NULL AND collid = 1 AND country NOT IN(SELECT geoterm FROM geographicthesaurus WHERE geolevel = 50)';
@@ -347,12 +342,6 @@ class OccurrenceCleaner extends Manager{
 
 	public function getBadCountryArr(){
 		$retArr = array();
-		/*
-		$sql = 'SELECT country, count(o.occid) as cnt '.
-			'FROM omoccurrences o LEFT JOIN lkupcountry l ON o.country = l.countryname '.
-			'WHERE o.country IS NOT NULL AND o.collid = '.$this->collid.' AND l.countryid IS NULL '.
-			'GROUP BY o.country ';
-		*/
 		$sql = 'SELECT country, count(occid) as cnt
 			FROM omoccurrences
 			WHERE country IS NOT NULL AND collid = 1 AND country NOT IN(SELECT geoterm FROM geographicthesaurus WHERE geolevel = 50)
@@ -370,7 +359,6 @@ class OccurrenceCleaner extends Manager{
 	public function getGoodCountryArr($includeStates = false){
 		$retArr = array();
 		if($includeStates){
-			//$sql = 'SELECT c.countryname, s.statename FROM lkupcountry c LEFT JOIN lkupstateprovince s ON c.countryid = s.countryid ';
 			$sql = 'SELECT g1.geoterm as countryName, g2.geoterm AS stateName
 				FROM geographicthesaurus g1 INNER JOIN geographicthesaurus g2 ON g1.geoThesID = g2.parentID
 				WHERE g1.geoLevel = 50 AND g2.geoLevel = 60';

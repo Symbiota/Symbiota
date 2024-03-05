@@ -1,7 +1,8 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistManager.php');
-@include_once($SERVER_ROOT.'/content/lang/checklists/checklistmap.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/checklistmap.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/checklists/checklistmap.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT.'/content/lang/checklists/checklistmap.en.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $clid = filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT);
@@ -35,7 +36,7 @@ $metaJson = json_encode($clMeta);
 ?>
 <html>
 <head>
-	<title><?php echo $DEFAULT_TITLE.' - '.(isset($LANG['COORD_MAP'])?$LANG['COORD_MAP']:'Checklist Coordinate Map'); ?></title>
+	<title><?php echo $DEFAULT_TITLE . ' - ' . $LANG['COORD_MAP']; ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	include_once($SERVER_ROOT.'/includes/leafletMap.php');
@@ -243,10 +244,10 @@ $metaJson = json_encode($clMeta);
 	if(!$coordArr){
 		?>
 		<div style='font-size:120%;font-weight:bold;'>
-			<?php echo (isset($LANG['NO_COORDS'])?$LANG['NO_COORDS']:'Your query apparently does not contain any records with coordinates that can be mapped'); ?>.
+			<?php echo $LANG['NO_COORDS']; ?>.
 		</div>
 		<div style="margin:15px;">
-			<?php echo (isset($LANG['MAYBE_RARE'])?$LANG['MAYBE_RARE']:'It may be that the vouchers have rare/threatened status that require the locality coordinates be hidden'); ?>.
+			<?php echo $LANG['MAYBE_RARE']; ?>.
 		</div>
 		<?php
 	}

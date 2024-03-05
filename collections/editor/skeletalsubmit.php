@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceSkeletal.php');
@@ -31,16 +29,17 @@ if($collid){
 	}
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['OCC_SKEL_SUBMIT']; ?></title>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script src="../../js/jquery.js" type="text/javascript"></script>
-	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.skeletal.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.autocomplete.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/shared.js?ver=1" type="text/javascript"></script>
@@ -71,7 +70,7 @@ if($collid){
 			?>
 			<section class="fieldset-like">
 				<h1>
-					<span><b><?php echo $LANG['SKELETAL_DATA']; ?></b></span>
+					<span><?php echo $LANG['SKELETAL_DATA']; ?></span>
 					<span onclick="toggle('descriptiondiv')" onkeypress="toggle('descriptiondiv')" tabindex="0"><img src="../../images/info.png" style="width:1em;" title="<?php echo $LANG['TOOL_DESCRIPTION']; ?>" aria-label="<?php echo (isset($LANG['IMG_TOOL_DESCRIPTION'])?$LANG['IMG_TOOL_DESCRIPTION']:'Description of Tool Button'); ?>"/></span>
 					<span id="optionimgspan" onclick="showOptions()" onkeypress="showOptions()" tabindex="0"><img src="../../images/list.png" style="width:1em;" title="<?php echo $LANG['DISPLAY_OPTIONS']; ?>" aria-label="<?php echo (isset($LANG['IMG_DISPLAY_OPTIONS'])?$LANG['IMG_DISPLAY_OPTIONS']:'Display Options Button'); ?>"/></span>
 				</h1>
@@ -117,7 +116,7 @@ if($collid){
 
 					<div class="flex-form" style="float:right">
 							<div>
-								<input name="clearform" type="reset" onclick="resetForm()" value="<?php echo (isset($LANG['CLEAR']) ? $LANG['CLEAR'] : 'Clear Form') ?>"/>
+								<button name="clearform" type="reset" onclick="resetForm()" value="<?php echo $LANG['CLEAR'] ?>"><?php echo $LANG['CLEAR'] ?></button>
 							</div>
 						</div>
 					<div class="flex-form">
@@ -252,7 +251,7 @@ if($collid){
 			</section>
 			<section class="fieldset-like">
 				<h1>
-					<span><b><?php echo $LANG['RECORDS']; ?></b></span>
+					<span><?php echo $LANG['RECORDS']; ?></span>
 				</h1>
 			</section>
 			<?php

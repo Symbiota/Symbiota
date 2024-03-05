@@ -16,6 +16,7 @@ $localSession = isset($_SESSION['active_stylesheet']) ? $_SESSION['active_styles
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- Symbiota styles -->
+<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/reset.css" type="text/css" rel="stylesheet">
 <link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/normalize.slim.css" type="text/css" rel="stylesheet">
 <link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/main.css" type="text/css" rel="stylesheet">
 <script src="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/js/symb/lang.js" type="text/javascript"></script>

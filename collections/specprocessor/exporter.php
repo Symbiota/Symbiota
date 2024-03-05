@@ -1,8 +1,17 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDownload.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/specprocessor/exporter.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/specprocessor/exporter.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/specprocessor/exporter.en.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/specprocessor/exporter.' . $LANG_TAG . '.php')){
+	include_once($SERVER_ROOT . '/content/lang/collections/specprocessor/exporter.' . $LANG_TAG . '.php');
+}else{
+	include_once($SERVER_ROOT . '/content/lang/collections/specprocessor/exporter.en.php');
+} 
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/customsearchtype.' . $LANG_TAG . '.php')){
+	include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.' . $LANG_TAG . '.php');
+}
+else{
+	include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.en.php');
+}
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
@@ -48,9 +57,9 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
-		<script src="../../js/jquery-3.2.1.min.js" type="text/javascript"></script>
-		<script src="../../js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
-		<link href="../../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
+		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 		<script src="../../js/symb/shared.js" type="text/javascript"></script>
 		<script>
 			$(function() {
@@ -98,7 +107,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 	<body>
 		<!-- This is inner text! -->
 		<div id="innertext" style="background-color:white;">
-			<div style="float:right;width:165px;margin-right:50px">
+			<div style="float:right;width:165px;margin-right:100px">
 				<fieldset>
 					<legend><b><?php echo $LANG['EXP_TYPE']; ?></b></legend>
 					<form name="submenuForm" method="post" action="index.php">

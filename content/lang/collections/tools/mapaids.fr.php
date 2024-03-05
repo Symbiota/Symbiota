@@ -1,7 +1,9 @@
 <?php
 /*
 ------------------
-Language: French 
+Language: French
+Translated by: Google Translate
+Date Translated: 2024-02-05
 ------------------
 */
 
@@ -31,6 +33,12 @@ $LANG['POLYGON_FORMATTING'] = 'Formatage des polygones';
 $LANG['REDRAW'] = 'Redessiner';
 $LANG['TRIM_DIGITS'] = 'Couper à 6 chiffres significatifs';
 $LANG['SWAP_COORDS'] = 'Changer les coordonnées lat/long';
+$LANG['INSTRUCTION'] = 'Cliquez sur le symbole du polygone pour activer l\'outil Polygone et créer une forme représentant la zone de recherche.
+                        Cliquez sur le bouton Enregistrer pour lier le polygone à la liste de contrôle.
+                        L\'empreinte du polygone WKT dans la zone de texte peut être modifiée à la main et reconstruite sur la carte à l\'aide du bouton Redessiner le polygone.
+                        Une définition de polygone WKT peut être copiée dans la zone de texte à partir d\'une autre application.
+                        Utilisez le bouton Changer l\'ordre des coordonnées pour convertir les paires de coordonnées Long-Lat au format Lat-Long.';
+$LANG['COORDINATE'] = 'Coordonner l\'aide';
 
 //Google Map Only
 $LANG['DELETE_SELECTED'] = 'Supprimer le polygone sélectionné';

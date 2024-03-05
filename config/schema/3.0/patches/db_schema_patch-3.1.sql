@@ -29,6 +29,11 @@ ALTER TABLE `images`
   ADD COLUMN `pixelXDimension` INT NULL AFTER `pixelYDimension`,
   CHANGE COLUMN `InitialTimeStamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;  
 
+
+ALTER TABLE `ommaterialsample` 
+  ADD INDEX `IX_ommatsample_sampleType` (`sampleType` ASC);
+
+
 ALTER TABLE `omoccurassociations` 
   ADD COLUMN `associationType` VARCHAR(45) NOT NULL AFTER `occid`;
 
@@ -70,11 +75,18 @@ SET associationType = "observational"
 WHERE associationType = "" AND occidAssociate IS NULL AND resourceUrl IS NULL AND verbatimSciname IS NOT NULL;
 
 
+ALTER TABLE `omoccurdeterminations` 
+  CHANGE COLUMN `identificationID` `sourceIdentifier` VARCHAR(45) NULL DEFAULT NULL ;
+
+
 # Needed to ensure basisOfRecord values are tagged correctly based on collection type (aka collType field)
 UPDATE omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid
   SET o.basisofrecord = "PreservedSpecimen"
   WHERE (o.basisofrecord = "HumanObservation" OR o.basisofrecord IS NULL) AND c.colltype = 'Preserved Specimens'
   AND o.occid NOT IN(SELECT occid FROM omoccuredits WHERE fieldname = "basisofrecord");
+
+ALTER TABLE `omoccurrences` 
+  ADD COLUMN `vitality` VARCHAR(150) NULL DEFAULT NULL AFTER `behavior`;
 
 #Standardize naming of indexes within occurrence table 
 ALTER TABLE `omoccurrences` 
@@ -118,6 +130,8 @@ ALTER TABLE `omoccurrences`
 ALTER TABLE `omoccurresource` 
   RENAME TO  `deprecated_omoccurresource` ;
 
+ALTER TABLE `uploadspectemp` 
+  ADD COLUMN `vitality` VARCHAR(150) NULL DEFAULT NULL AFTER `behavior`;
 
 ALTER TABLE `uploadspectemp` 
   DROP INDEX `Index_uploadspectemp_occid`,

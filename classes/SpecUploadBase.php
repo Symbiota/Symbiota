@@ -1294,59 +1294,62 @@ class SpecUploadBase extends SpecUpload{
 	}
 
 	protected function transferIdentificationHistory(){
+		$identificationsExist = false;
 		$sql = 'SELECT count(*) AS cnt FROM uploaddetermtemp WHERE (collid IN('.$this->collId.'))';
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
-			if($r->cnt){
-				$this->outputMsg('<li>Transferring Determination History...</li>');
-
-				//Update occid for determinations of occurrence records already in portal
-				$sql = 'UPDATE uploaddetermtemp ud INNER JOIN uploadspectemp u ON ud.collid = u.collid AND ud.dbpk = u.dbpk '.
-					'SET ud.occid = u.occid '.
-					'WHERE (ud.occid IS NULL) AND (u.occid IS NOT NULL) AND (ud.collid IN('.$this->collId.'))';
-				if(!$this->conn->query($sql)){
-					$this->outputMsg('<li style="margin-left:20px;">WARNING updating occids within uploaddetermtemp: '.$this->conn->error.'</li> ');
-				}
-
-				//Update determinations where the sourceIdentifiers match
-				$sql = 'UPDATE IGNORE omoccurdeterminations d INNER JOIN uploaddetermtemp u ON d.occid = u.occid '.
-					'SET d.sciname = u.sciname, d.scientificNameAuthorship = u.scientificNameAuthorship, d.identifiedBy = u.identifiedBy, d.dateIdentified = u.dateIdentified, '.
-					'd.identificationQualifier = u.identificationQualifier, d.iscurrent = u.iscurrent, d.identificationReferences = u.identificationReferences, '.
-					'd.identificationRemarks = u.identificationRemarks, d.sourceIdentifier = u.sourceIdentifier '.
-					'WHERE (u.collid IN('.$this->collId.')) AND (d.sourceIdentifier = u.sourceIdentifier)';
-				//echo $sql;
-				if(!$this->conn->query($sql)){
-					$this->outputMsg('<li style="margin-left:20px;">ERROR updating determinations with matching sourceIdentifiers: '.$this->conn->error.'</li> ');
-				}
-				$sql = 'DELETE u.* FROM omoccurdeterminations d INNER JOIN uploaddetermtemp u ON d.occid = u.occid WHERE (u.collid IN('.$this->collId.')) AND (d.sourceIdentifier = u.sourceIdentifier) ';
-				if(!$this->conn->query($sql)){
-					$this->outputMsg('<li style="margin-left:20px;">ERROR removing determinations with matching sourceIdentifiers: '.$this->conn->error.'</li> ');
-				}
-
-				//Delete duplicate determinations (likely previously loaded)
-				$sqlDel = 'DELETE IGNORE u.* '.
-					'FROM uploaddetermtemp u INNER JOIN omoccurdeterminations d ON u.occid = d.occid '.
-					'WHERE (u.collid IN('.$this->collId.')) AND (d.sciname = u.sciname) AND (d.identifiedBy = u.identifiedBy) AND (d.dateIdentified = u.dateIdentified)';
-				$this->conn->query($sqlDel);
-
-				//Load identification history records
-				$sql = 'INSERT IGNORE INTO omoccurdeterminations (occid, sciname, scientificNameAuthorship, identifiedBy, dateIdentified, '.
-					'identificationQualifier, iscurrent, identificationReferences, identificationRemarks, sourceIdentifier) '.
-					'SELECT u.occid, u.sciname, u.scientificNameAuthorship, u.identifiedBy, u.dateIdentified, '.
-					'u.identificationQualifier, u.iscurrent, u.identificationReferences, u.identificationRemarks, sourceIdentifier '.
-					'FROM uploaddetermtemp u '.
-					'WHERE u.occid IS NOT NULL AND (u.collid IN('.$this->collId.'))';
-				if($this->conn->query($sql)){
-					//Delete all determinations
-					$sqlDel = 'DELETE FROM uploaddetermtemp WHERE (collid IN('.$this->collId.'))';
-					$this->conn->query($sqlDel);
-				}
-				else{
-					$this->outputMsg('<li>FAILED! ERROR: '.$this->conn->error.'</li> ');
-				}
-			}
+			if($r->cnt) $identificationsExist = true;
 		}
 		$rs->free();
+
+		if($identificationsExist){
+			$this->outputMsg('<li>Transferring Determination History...</li>');
+
+			//Update occid for determinations of occurrence records already in portal
+			$sql = 'UPDATE uploaddetermtemp ud INNER JOIN uploadspectemp u ON ud.collid = u.collid AND ud.dbpk = u.dbpk '.
+				'SET ud.occid = u.occid '.
+				'WHERE (ud.occid IS NULL) AND (u.occid IS NOT NULL) AND (ud.collid IN('.$this->collId.'))';
+			if(!$this->conn->query($sql)){
+				$this->outputMsg('<li style="margin-left:20px;">WARNING updating occids within uploaddetermtemp: '.$this->conn->error.'</li> ');
+			}
+
+			//Update determinations where the sourceIdentifiers match
+			$sql = 'UPDATE IGNORE omoccurdeterminations d INNER JOIN uploaddetermtemp u ON d.occid = u.occid '.
+				'SET d.sciname = u.sciname, d.scientificNameAuthorship = u.scientificNameAuthorship, d.identifiedBy = u.identifiedBy, d.dateIdentified = u.dateIdentified, '.
+				'd.identificationQualifier = u.identificationQualifier, d.iscurrent = u.iscurrent, d.identificationReferences = u.identificationReferences, '.
+				'd.identificationRemarks = u.identificationRemarks, d.sourceIdentifier = u.sourceIdentifier '.
+				'WHERE (u.collid IN('.$this->collId.')) AND (d.sourceIdentifier = u.sourceIdentifier)';
+			if(!$this->conn->query($sql)){
+				$this->outputMsg('<li style="margin-left:20px;">ERROR updating determinations with matching sourceIdentifiers: '.$this->conn->error.'</li> ');
+			}
+			$sql = 'DELETE u.* FROM omoccurdeterminations d INNER JOIN uploaddetermtemp u ON d.occid = u.occid
+				WHERE (u.collid IN('.$this->collId.')) AND (d.sourceIdentifier = u.sourceIdentifier) ';
+			if(!$this->conn->query($sql)){
+				$this->outputMsg('<li style="margin-left:20px;">ERROR removing determinations with matching sourceIdentifiers: '.$this->conn->error.'</li> ');
+			}
+
+			//Delete duplicate determinations (likely previously loaded)
+			$sqlDel = 'DELETE IGNORE u.* '.
+				'FROM uploaddetermtemp u INNER JOIN omoccurdeterminations d ON u.occid = d.occid '.
+				'WHERE (u.collid IN('.$this->collId.')) AND (d.sciname = u.sciname) AND (d.identifiedBy = u.identifiedBy) AND (d.dateIdentified = u.dateIdentified)';
+			$this->conn->query($sqlDel);
+
+			//Load identification history records
+			$sql = 'INSERT IGNORE INTO omoccurdeterminations (occid, sciname, scientificNameAuthorship, identifiedBy, dateIdentified, '.
+				'identificationQualifier, iscurrent, identificationReferences, identificationRemarks, sourceIdentifier) '.
+				'SELECT u.occid, u.sciname, u.scientificNameAuthorship, u.identifiedBy, u.dateIdentified, '.
+				'u.identificationQualifier, u.iscurrent, u.identificationReferences, u.identificationRemarks, sourceIdentifier '.
+				'FROM uploaddetermtemp u '.
+				'WHERE u.occid IS NOT NULL AND (u.collid IN('.$this->collId.'))';
+			if($this->conn->query($sql)){
+				//Delete all determinations
+				$sqlDel = 'DELETE FROM uploaddetermtemp WHERE (collid IN('.$this->collId.'))';
+				$this->conn->query($sqlDel);
+			}
+			else{
+				$this->outputMsg('<li>FAILED! ERROR: '.$this->conn->error.'</li> ');
+			}
+		}
 	}
 
 	private function prepareAssociatedMedia(){

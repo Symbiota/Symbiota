@@ -64,8 +64,8 @@ if($chars){
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
 	<link href="../css/alerts.css" type="text/css" rel="stylesheet" />
-	<script src="../js/jquery.js" type="text/javascript"></script>
-	<script src="../js/jquery-ui.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="../js/symb/ident.key.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		$( function() {
