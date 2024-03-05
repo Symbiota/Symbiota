@@ -240,7 +240,7 @@ if($tid){
 										?>
 									</div>
 								</div>
-								<div>
+								<div class="div--overflow-wrap-anywhere">
 									<?php
 									if($imgArr['occid']){
 										?>
