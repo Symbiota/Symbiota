@@ -199,7 +199,7 @@ if($isEditor && $submitAction) {
                   <input name="displayRadio" style="margin-left:1rem" type="radio" id="show-all" onclick="$('.nopoly').show();$('.nodb').show();" value="all">
                   <label for="show-all"><?= $LANG['SHOW_ALL']?></label>
                </span>
-               <div id="submit-loading-text" style="display:none">
+               <div id="submit-loading-text" style="display:none; margin-bottom:1rem">
                   <?=$LANG['LOADING_GEO_DATA_TEXT']?>
                </div> 
 					<table class="styledtable">
