@@ -1,8 +1,10 @@
 <?php
 include_once ('../config/symbini.php');
 include_once ($SERVER_ROOT . '/classes/GeographicThesaurus.php');
-include_once($SERVER_ROOT.'/content/lang/geothesaurus/index.'.$LANG_TAG.'.php');
-include_once($SERVER_ROOT.'/content/lang/geothesaurus/harvester.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/geothesaurus/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/geothesaurus/index.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/geothesaurus/index.en.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/geothesaurus/harvester.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/geothesaurus/harvester.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/geothesaurus/harvester.en.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $geoThesID = array_key_exists('geoThesID', $_REQUEST) ? filter_var($_REQUEST['geoThesID'], FILTER_SANITIZE_NUMBER_INT) : '';
@@ -25,7 +27,7 @@ $statusStr = '';
 
 if($isEditor && $submitAction) {
 	if($submitAction == 'transferDataFromLkupTables'){
-		if($geoManager->transferDeprecatedThesaurus()) $statusStr = '<span style="color:green;">Geographic Lookup tables transferred into new Geographic Thesaurus</span>';
+		if($geoManager->transferDeprecatedThesaurus()) $statusStr = '<span style="color:green;">' . $LANG['TRANSFERRED_TO_GEOTHESAURUS'] . '</span>';
 		else $statusStr = '<span style="color:green;">'.implode('<br/>',$geoManager->getWarningArr()).'<span style="color:green;">';
 	}
 	elseif($submitAction == 'submitCountryForm') {
@@ -60,7 +62,7 @@ if($isEditor && $submitAction) {
             }
 
          } catch(Execption $e) {
-            $statusStr = 'The harvester encountered an issue';
+            $statusStr = $LANG['HARVESTER_ISSUE'];
             break;
          }
       }
@@ -78,7 +80,7 @@ if($isEditor && $submitAction) {
          try {
             $geoManager->addGeoBoundary($geojson, true);
          } catch(Execption $e) {
-            $statusStr = 'The country batch harvester encountered an issue';
+            $statusStr = $LANG['BATCH_HARVESTER_ISSUE'];
             break;
          }
       }
@@ -89,7 +91,7 @@ if($isEditor && $submitAction) {
 <!DOCTYPE html>
 <html lang="<?=$LANG_TAG?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> - Geographic Thesaurus Havester</title>
+	<title><?php echo $DEFAULT_TITLE. ' - ' . $LANG['GEOTHESAURUS_HARVESTER']; ?></title>
 	<?php
 	include_once ($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -154,14 +156,14 @@ if($isEditor && $submitAction) {
 		if($statusReport = $geoManager->getThesaurusStatus()){
 			$geoRankArr = $geoManager->getGeoRankArr();
 			echo '<fieldset style="width: 800px">';
-			echo '<legend>Active Geographic Thesaurus</legend>';
+			echo '<legend>' . $LANG['ACTIVE_GEOGRAPHIC_THESAURUS'] . '</legend>';
 			if(isset($statusReport['active'])){
 				foreach($statusReport['active'] as $geoRank => $cnt){
 					echo '<div><b>'.$geoRankArr[$geoRank].':</b> '.$cnt.'</div>';
 				}
-				echo '<div style="margin-top:20px"><a href="index.php">Go to Geographic Thesaurus</a></div>';
+				echo '<div style="margin-top:20px"><a href="index.php">' . $LANG['GO_TO_GEOGRAPHIC_THESAURUS'] . '</a></div>';
 			}
-			else echo '<div>Active thesaurus is empty</div>';
+			else echo '<div>' . $LANG['ACTIVE_THES_EMPTY'] . '</div>';
 			echo '</fieldset>';
 			if(isset($statusReport['lkup'])){
 				?>
@@ -170,7 +172,7 @@ if($isEditor && $submitAction) {
             <p><?=$LANG['LOOKUP_TABLES_DESC']?></p>
 					<?php
 					foreach($statusReport['lkup'] as $k => $v){
-						echo '<div><b>'.$k.':</b> '.$v.'</div>';
+						echo '<div><b>' . $k . ':</b> ' . $v . '</div>';
 					}
 					?>
 					<hr/>
@@ -217,18 +219,18 @@ if($isEditor && $submitAction) {
 						<?php
 						$countryList = $geoManager->getGBCountryList();
 						foreach($countryList as $cArr){
-							echo '<tr class="'.(isset($cArr['geoThesID'])?'nodb':'').(isset($cArr['polygon'])?' nopoly':'').'">';
+							echo '<tr class="' . (isset($cArr['geoThesID'])?'nodb':'') . (isset($cArr['polygon'])?' nopoly':'') . '">';
 							echo '<td><a href="harvester.php?gbAction=' . $cArr['iso'] . '">' . htmlspecialchars($cArr['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a></td>';
 							echo '<input type="hidden" name="geoJson[]" value="' . $cArr['geoJson'] .'"' . (isset($cArr['polygon'])?'disabled':'') . '>';
-							echo '<td>'.$cArr['iso'].'</td>';
-							echo '<td>'.(isset($cArr['geoThesID'])?'Yes':'No').'</td>';
-							echo '<td>'.(isset($cArr['polygon'])?'Yes':'No').'</td>';
-							echo '<td>'.$cArr['id'].'</td>';
-							echo '<td>'.$cArr['canonical'].'</td>';
-							echo '<td>'.$cArr['license'].'</td>';
-							echo '<td>'.$cArr['region'].'</td>';
+							echo '<td>'.$cArr['iso'] . '</td>';
+							echo '<td>'.(isset($cArr['geoThesID']) ? $LANG['YES'] : $LANG['NO']) . '</td>';
+							echo '<td>'.(isset($cArr['polygon']) ? $LANG['YES'] : $LANG['NO']) . '</td>';
+							echo '<td>'.$cArr['id'] . '</td>';
+							echo '<td>'.$cArr['canonical'] . '</td>';
+							echo '<td>'.$cArr['license'] . '</td>';
+							echo '<td>'.$cArr['region'] . '</td>';
 							//echo '<td><a href="' . $cArr['link'] . '" target="_blank">link</a></td>';
-							echo '<td><a href="' . $cArr['img'] . '" target="_blank">IMG</a></td>';
+							echo '<td><a href="' . $cArr['img'] . '" target="_blank">' . $LANG['IMG'] . '</a></td>';
 							echo '</tr>';
 						}
 						?>
@@ -262,35 +264,35 @@ if($isEditor && $submitAction) {
 							$prevGeoThesID = 0;
 
 							foreach($geoList as $type => $gArr){
-								echo '<tr class="'.(isset($gArr['geoThesID'])?'nodb':'').(isset($gArr['polygon'])?' nopoly':'').'">';
+								echo '<tr class="' . (isset($gArr['geoThesID'])?'nodb':'') . (isset($gArr['polygon']) ? ' nopoly' : '') . '">';
 								echo '<td><input name="geoJson[]" onchange="checkHierarchy(this)" type="checkbox" value="'.$gArr['geoJson'].'" '.(isset($gArr['polygon'])?'DISABLED':'').' /></td>';
                         echo '<input name="type[]" type="hidden" value="' . $type . '"/>';
-								echo '<td>'.$type.'</td>';
-								echo '<td>'.$gArr['id'].'</td>';
+								echo '<td>' . $type . '</td>';
+								echo '<td>' . $gArr['id'] . '</td>';
 								$isInDbStr = 'No';
 								if(isset($gArr['geoThesID'])){
 									$isInDbStr = 1;
 									if(is_numeric($gArr['geoThesID'])){
-							         $isInDbStr = '<a href="index.php?geoThesID='.$gArr['geoThesID'].'" target="_blank">1</a>';
+							         $isInDbStr = '<a href="index.php?geoThesID=' . $gArr['geoThesID'] . '" target="_blank">1</a>';
 										$prevGeoThesID = $gArr['geoThesID'];
 									} elseif(is_array($gArr['geoThesID'])) {
 										$isInDbStr = count($gArr['geoThesID']);
-										if($prevGeoThesID) $isInDbStr = '<a href="index.php?parentID='.$prevGeoThesID.'" target="_blank">'.$isInDbStr.'</a>';
+										if($prevGeoThesID) $isInDbStr = '<a href="index.php?parentID=' . $prevGeoThesID . '" target="_blank">' . $isInDbStr . '</a>';
                            } else{
 										$isInDbStr = substr($gArr['geoThesID'], 4);
-										if($prevGeoThesID) $isInDbStr = '<a href="index.php?parentID='.$prevGeoThesID.'" target="_blank">'.$isInDbStr.'</a>';
+										if($prevGeoThesID) $isInDbStr = '<a href="index.php?parentID=' . $prevGeoThesID . '" target="_blank">' . $isInDbStr . '</a>';
 									}
 
                         //echo '<input name="parentID" style="display:none" value="'. $gArr['geoThesID'] .'"/>';
 								}
-								echo '<td>'.$gArr['gbCount'].'</td>';
-								echo '<td>'.$isInDbStr.'</td>';
-								echo '<td>'.(isset($gArr['polygon'])?'Yes':'No').'</td>';
-								echo '<td>'.$gArr['canonical'].'</td>';
-								echo '<td>'.$gArr['region'].'</td>';
-								echo '<td>'.$gArr['license'].'</td>';
-								echo '<td><a href="' . $gArr['link'] . '" target="_blank">link</a></td>';
-								echo '<td><a href="' . $gArr['img'] . '" target="_blank">IMG</a></td>';
+								echo '<td>' . $gArr['gbCount'] . '</td>';
+								echo '<td>' . $isInDbStr . '</td>';
+								echo '<td>' . (isset($gArr['polygon']) ? $LANG['YES'] : $LANG['NO']) . '</td>';
+								echo '<td>' . $gArr['canonical'] . '</td>';
+								echo '<td>' . $gArr['region'] . '</td>';
+								echo '<td>' . $gArr['license'] . '</td>';
+								echo '<td><a href="' . $gArr['link'] . '" target="_blank">' . $LANG['LINK'] . '</a></td>';
+								echo '<td><a href="' . $gArr['img'] . '" target="_blank">' . $LANG['IMG'] . '</a></td>';
 								echo '</tr>';
 							}
 							?>

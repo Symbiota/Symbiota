@@ -2,40 +2,52 @@
 /*
 ------------------
 Language: Español (Spanish)
+Translated by: Google Translate
+Date Translated: 2024-03-05
 ------------------
 */
 
-$LANG['GEOGRAPHIC_HARVESTER'] = 'Geographic Harvester';
-$LANG['LOOKUP_TABLES_TITLE'] = 'Geopraphic Lookup Tables - deprecated';
-$LANG['LOOKUP_TABLES_DESC'] = 'There appears to be records within the deprecated Geographic lookup tables that are no longer used.<br/>Do you want to transfer this data into the new geographic thesaurus?';
-$LANG['TRANSFER_LOOKUP_TABLES'] = 'Transfer Lookup Tables';
-$LANG['ACTIVE_GEOGRAPHIC_THESAURUS'] = 'Active Geographic Thesaurus';
-$LANG['SHOW_ALL']  = 'Show all boundaries';
-$LANG['SHOW_NO_POLYGON']  = 'Show boundaries missing a polygon';
-$LANG['SHOW_NO_DATABASE']  = 'Show boundaries missing in database';
-$LANG['COUNTRY'] = 'Country';
-$LANG['COUNTY'] = 'County';
-$LANG['STATE/PROVINCE'] = 'State/Province';
-$LANG['MUNICIPALITIES'] = 'Municipalities';
-$LANG['GO_TO_GEOGRAPHIC_THESAURUS'] = 'Go to Geographic Thesaurus';
-$LANG['AVAILABLE_BOUNDARIES'] = 'Available Boundaries';
-$LANG['ADD_ALL_BOUNDARIES'] = 'Add All International Boundaries';
-$LANG['COUNTRY_LIST_NAV'] = 'Return to Country List';
-$LANG['ADD_BOUNDARIES'] = 'Add Boundaries';
-$LANG['LOADING_GEO_DATA_TEXT'] = 'This process may take a while to process the geographical data';
-$LANG['ADD_IF_GEOUNITS_MISSING'] = 'Add geographical units if missing';
+$LANG['TRANSFERRED_TO_GEOTHESAURUS'] = 'Tablas de búsqueda geográfica transferidas al nuevo tesauro geográfico';
+$LANG['HARVESTER_ISSUE'] = 'La cosechadora encontró un problema';
+$LANG['BATCH_HARVESTER_ISSUE'] = 'El recolector encontró un problema';
+$LANG['GEOTHESAURUS_HARVESTER'] = 'Tesauro geográfico Havester';
+$LANG['GEOGRAPHIC_HARVESTER'] = 'Cosechadora geográfica';
+$LANG['LOOKUP_TABLES_TITLE'] = 'Tablas de búsqueda geográfica - obsoletas';
+$LANG['LOOKUP_TABLES_DESC'] = 'Parece que hay registros dentro de las tablas de búsqueda geográfica obsoletas que ya no se utilizan.<br/>¿Desea transferir estos datos al nuevo tesauro geográfico?';
+$LANG['TRANSFER_LOOKUP_TABLES'] = 'Transferir tablas de búsqueda';
+$LANG['ACTIVE_GEOGRAPHIC_THESAURUS'] = 'Tesauro geográfico activo';
+$LANG['SHOW_ALL'] = 'Mostrar todos los límites';
+$LANG['SHOW_NO_POLYGON'] = 'Mostrar límites faltando un polígono';
+$LANG['SHOW_NO_DATABASE'] = 'Mostrar límites que faltan en la base de datos';
+$LANG['COUNTRY'] = 'País';
+$LANG['COUNTY'] = 'Condado';
+$LANG['STATE/PROVINCE'] = 'Estado/Provincia';
+$LANG['MUNICIPALITIES'] = 'Municipios';
+$LANG['GO_TO_GEOGRAPHIC_THESAURUS'] = 'Ir al Tesauro Geográfico';
+$LANG['ACTIVE_THES_EMPTY'] = 'El diccionario de sinónimos activo está vacío';
+$LANG['AVAILABLE_BOUNDARIES'] = 'Límites disponibles';
+$LANG['ADD_ALL_BOUNDARIES'] = 'Agregar todos los límites internacionales';
+$LANG['COUNTRY_LIST_NAV'] = 'Volver a la lista de países';
+$LANG['ADD_BOUNDARIES'] = 'Agregar límites';
+$LANG['LOADING_GEO_DATA_TEXT'] = 'Este proceso puede tardar un poco en procesar los datos geográficos';
+$LANG['ADD_IF_GEOUNITS_MISSING'] = 'Agregar unidades geográficas si faltan';
    
-$LANG['TABLE_NAME'] = 'Name';
-$LANG['TABLE_TYPE'] = 'Type';
-$LANG['TABLE_INCOMING_COUNT'] = 'Incoming Count';
-$LANG['TABLE_DATABASE_COUNT'] = 'Database Count';
+$LANG['TABLE_NAME'] = 'Nombre';
+$LANG['TABLE_TYPE'] = 'Tipo';
+$LANG['TABLE_INCOMING_COUNT'] = 'Recuento entrante';
+$LANG['TABLE_DATABASE_COUNT'] = 'Recuento de la base de datos';
 $LANG['TABLE_ISO3'] = 'ISO3';
-$LANG['TABLE_DATABASE'] = 'Database';
-$LANG['TABLE_POLYGON'] = 'Polygon';
-$LANG['TABLE_BOUNDARY_ID'] = 'Boundary ID';
-$LANG['TABLE_CANONICAL_NAME'] = 'Canonical Name';
-$LANG['TABLE_LICENSE'] = 'License';
-$LANG['TABLE_REGION'] = 'Region';
-$LANG['TABLE_FULL_LINK'] = 'Full Link';
-$LANG['TABLE_IMAGE_PREVIEW'] = 'Image Preview';
+$LANG['TABLE_DATABASE'] = 'Base de datos';
+$LANG['TABLE_POLYGON'] = 'Polígono';
+$LANG['TABLE_BOUNDARY_ID'] = 'ID de límite';
+$LANG['TABLE_CANONICAL_NAME'] = 'Nombre canónico';
+$LANG['TABLE_LICENSE'] = 'Licencia';
+$LANG['TABLE_REGION'] = 'Región';
+$LANG['TABLE_FULL_LINK'] = 'Enlace completo';
+$LANG['TABLE_IMAGE_PREVIEW'] = 'Vista previa de imagen';
+$LANG['YES'] = 'Sí';
+$LANG['NO'] = 'No';
+$LANG['IMG'] = 'IMG'; //como en "imagen"
+$LANG['LINK'] = 'enlace';
+
 ?>

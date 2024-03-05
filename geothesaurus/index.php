@@ -1,7 +1,8 @@
 <?php
 include_once ('../config/symbini.php');
 include_once ($SERVER_ROOT . '/classes/GeographicThesaurus.php');
-include_once($SERVER_ROOT.'/content/lang/geothesaurus/index.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/geothesaurus/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/geothesaurus/index.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/geothesaurus/index.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $geoThesID = array_key_exists('geoThesID', $_REQUEST) ? filter_var($_REQUEST['geoThesID'], FILTER_SANITIZE_NUMBER_INT) : '';
@@ -88,7 +89,7 @@ function listGeoUnits($arr) {
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
 <head>
-	<title><?= $DEFAULT_TITLE; ?> - <?= $LANG['GEOTHES_TITLE'] ?></title>
+	<title><?= $DEFAULT_TITLE . ' - ' . $LANG['GEOTHES_TITLE'] ?></title>
 	<?php
 	include_once ($SERVER_ROOT.'/includes/head.php');
 	include_once ($SERVER_ROOT.'/includes/leafletMap.php');
@@ -313,7 +314,7 @@ function listGeoUnits($arr) {
 						<div class="field-div">
 							<label><?=$LANG['POLYGON']?></label>:
 							<a onclick="openCoordAid('addfootprintwkt')">
-								<img src='../images/world.png' style='width:10px;border:0' alt='Image of the globe' /> <?= $LANG['EDIT_POLYGON']?> 
+								<img src='../images/world.png' style='width:10px;border:0' alt='<?= $LANG['IMG_OF_GLOBE'] ?>' /> <?= $LANG['EDIT_POLYGON']?> 
 							</a>
 							<span><textarea id="addfootprintwkt" name="polygon" style="margin-top: 0.5rem; width:98%;height:90px;"></textarea></span>
 						</div>
@@ -333,7 +334,7 @@ function listGeoUnits($arr) {
 					<fieldset id="edit-fieldset">
 						<legend><span id="edit-legend"><?= $LANG['EDIT'] ?></span> <?= $LANG['GEO_UNIT'] ?> </legend>
 						<div style="float:right">
-							<span class="editIcon" title="Edit term"><a href="#" onclick="toggleEditor()"><img class="editimg" src="../images/edit.png" alt="<?= $LANG['EDIT']; ?>"></a></span>
+							<span class="editIcon" title="<?= $LANG['EDIT_TERM'] ?>"><a href="#" onclick="toggleEditor()"><img class="editimg" src="../images/edit.png" alt="<?= $LANG['EDIT']; ?>"></a></span>
 							<!-- <span class="editIcon" title="Add child term"><a href="#" onclick="toggle('#addGeoUnit-div');"><img class="editimg" src="../images/add.png" alt="<?= $LANG['EDIT'] ?>" /></a></span> -->
 						</div>
 						<div class="field-div">
@@ -436,7 +437,7 @@ function listGeoUnits($arr) {
 						</span>
 						<div class="editTerm" id="map_canvas" style="margin: 1rem 0; width:100%; height:20rem"></div>
 						<a class="editFormElem" onclick="openCoordAid()">
-							<img src='../images/world.png' style='width:10px;border:0' alt='Image of the globe' /> <?= $LANG['EDIT_POLYGON']?> 
+							<img src='../images/world.png' style='width:10px;border:0' alt='<?= $LANG['IMG_OF_GLOBE'] ?>' /> <?= $LANG['EDIT_POLYGON']?> 
 						</a>
 						<span class="editFormElem" style="margin-top: 0.5rem">
 							<textarea id="footprintwkt" name="polygon" style="margin-top: 0.5rem; width:98%;height:90px;"><?= isset($geoUnit['geoJSON'])?trim($geoUnit['geoJSON']): null ?></textarea>
@@ -471,7 +472,7 @@ function listGeoUnits($arr) {
          <?php if(!empty($childrenTitleStr)):?>
 			<div style="font-size:1.3em;margin: 10px 0px">
 				<?= $childrenTitleStr ?>
-				<span class="editIcon" title="Add term to list">
+				<span class="editIcon" title="<?= $LANG['ADD_TERM_LIST'] ?>">
 					<a href="#" onclick="toggle('#addGeoUnit-div');"><img class="editimg" src="../images/add.png" alt="<?= $LANG['EDIT'] ?>" /></a>
 				</span>
 			</div >
