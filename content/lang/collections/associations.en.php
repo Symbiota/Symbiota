@@ -8,13 +8,13 @@
 
 $LANG['ASSOC_OCC'] = 'Associated Occurrences';
 $LANG['CREATE_NEW_ASSOC'] = 'Create New Association';
-$LANG['ASSOCIATION_TYPE'] = 'Association Type';
+$LANG['ASSOCIATION_TYPE'] = 'Association Type (required)';
 $LANG['RESOURCE_LINK'] = 'Non-occurrence Resource Link';
 $LANG['INTERNAL_OCCURRENCE'] = 'Occurrence - Internal (this portal)';
 $LANG['EXTERNAL_OCCURRENCE'] = 'Occurrence - External Link';
 $LANG['OBSERVATION'] = 'Taxon Observation';
-$LANG['RELATIONSHIP'] = 'Relationship';
-$LANG['REL_SUBTYPE'] = 'Relationship subtype';
+$LANG['RELATIONSHIP'] = 'Relationship (required)';
+$LANG['REL_SUBTYPE'] = 'Relationship Subtype';
 $LANG['BASIS_OF_RECORD'] = 'Basis of Record';
 $LANG['HUMAN_OBS'] = 'Human Observation';
 $LANG['LIVING_SPEC'] = 'Living Specimen';

@@ -184,7 +184,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 				}
 				elseif($action == 'initiateImport'){
 					if($actionStatus = $importManager->importFile()){
-						$importManager->setTargetFieldArr();
+						$importManager->setTargetFieldArr($associationType);
 						?>
 						<form name="mappingform" action="importextended.php" method="post" onsubmit="return validateMappingForm(this)">
 							<fieldset>
@@ -206,8 +206,20 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 											<option value="">-------------------</option>
 											<?php
 											$filter = '';
-											if($associationType == 'resource') $filter = 'associationType:resource';
+											//if($associationType == 'resource') $filter = 'associationType:resource';
 											$relationshipArr = $importManager->getControlledVocabulary('omoccurassociations', 'relationship', $filter);
+											foreach($relationshipArr as $term => $display){
+												echo '<option value="'.$term.'">'.$display.'</option>';
+											}
+											?>
+										</select>
+									</div>
+									<div class="formField-div">
+										<label><?= $LANG['REL_SUBTYPE'] ?>:</label>
+										<select name="subType">
+											<option value="">-------------------</option>
+											<?php
+											$relationshipArr = $importManager->getControlledVocabulary('omoccurassociations', 'subtype');
 											foreach($relationshipArr as $term => $display){
 												echo '<option value="'.$term.'">'.$display.'</option>';
 											}

@@ -8,12 +8,12 @@
 
 $LANG['ASSOC_OCC'] = 'Occurrences Associées';
 $LANG['CREATE_NEW_ASSOC'] = 'Créer Nouvelle Association';
-$LANG['ASSOCIATION_TYPE'] = "Type d'Association";
+$LANG['ASSOCIATION_TYPE'] = "Type d'Association (requis)";
 $LANG['RESOURCE_LINK'] = 'Lien vers une ressource de non-occurrence';
 $LANG['INTERNAL_OCCURRENCE'] = 'Occurrence - Interne (ce portail)';
 $LANG['EXTERNAL_OCCURRENCE'] = 'Occurrence - Lien externe';
 $LANG['OBSERVATION'] = 'Observation des taxons';
-$LANG['RELATIONSHIP'] = 'Relations';
+$LANG['RELATIONSHIP'] = 'Relations (requis)';
 $LANG['REL_SUBTYPE'] = 'Sous-type de relation';
 $LANG['BASIS_OF_RECORD'] = "Base d'Enregistrement";
 $LANG['HUMAN_OBS'] = 'Observation Jumaine';

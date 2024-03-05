@@ -27,7 +27,8 @@ $LANG['DONE_PROCESSING'] = 'Done process input file';
 $LANG['FIELD_MAPPING'] = 'Field Mapping';
 
 $LANG['NEW_BLANK_RECORD'] = 'Link image to new blank record if catalog number does not exist';
-$LANG['MATCHING_IDENTIFIERS'] = 'Update records with matching &quot;identifiers&quot';
+$LANG['MATCHING_IDENTIFIERS'] = 'Update records with matching &quot;subject identifier&quot and &quot;identifier&quot';
+$LANG['DELETE_MATCHING_NULLS'] = 'Batch delete records with matching identifiers and lacking data';
 $LANG['IMPORT_DATA'] = 'Import Data';
 $LANG['ERR_SETTING_IMPORT'] = 'ERROR setting import file';
 $LANG['INITIALIZE_IMPORT'] = 'Initialize Import';

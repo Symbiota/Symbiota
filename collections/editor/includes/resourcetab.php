@@ -41,7 +41,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 	});
 
 	function associationTypeChanged(selectElem){
-		document.getElementById("subType-div").style.display = "none";
+		document.getElementById("subType-div").style.display = "block";
 		document.getElementById("basisOfRecord-div").style.display = "block";
 		document.getElementById("locationOnHost-div").style.display = "block";
 		document.getElementById("taxonomy-fieldset").style.display = "block";
@@ -49,18 +49,16 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 		document.getElementById("internalResource").style.display = "none";
 		if(selectElem.value == 'externalOccurrence'){
 			document.getElementById("externalResource").style.display = "block";
-			document.getElementById("subType-div").style.display = "block";
 		}
 		else if(selectElem.value == 'internalOccurrence'){
 			document.getElementById("internalResource").style.display = "block";
-			document.getElementById("subType-div").style.display = "block";
 		}
 		if(selectElem.value == 'resource'){
 			document.getElementById("externalResource").style.display = "block";
 			document.getElementById("basisOfRecord-div").style.display = "none";
 			document.getElementById("locationOnHost-div").style.display = "none";
 			document.getElementById("taxonomy-fieldset").style.display = "none";
-			setRelationshipSelect("resource");
+			//setRelationshipSelect("resource");
 		}
 		else{
 			setRelationshipSelect("default");
