@@ -84,9 +84,10 @@ if($isEditor && $submitAction) {
       }
    }
 }
-
 ?>
-<html>
+
+<!DOCTYPE html>
+<html lang="<?=$LANG_TAG?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> - Geographic Thesaurus Havester</title>
 	<?php
@@ -185,17 +186,19 @@ if($isEditor && $submitAction) {
 				<?php
 				if(!$gbAction){
 					?>
-					<div>
-                  <div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nodb').show();$('.nopoly').hide();" /> <?= $LANG['SHOW_NO_POLYGON']?> </div>
-						<div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nopoly').show();$('.nodb').hide();" /> <?= $LANG['SHOW_NO_DATABASE']?></div>
-						<div style="float:right;margin-left:15px"><input name="displayRadio" type="radio" onclick="$('.nopoly').show();$('.nodb').show();" /> <?= $LANG['SHOW_ALL']?></div>
-					</div>
-
             <form style="position:relative" name="" method="post" action="harvester.php">
-                  <span style="position:absoulte;top:0px;display:inline-flex;vertical-align:middle;">
+               <span style="position:absoulte;top:0px;display:inline-flex;vertical-align:middle;">
                   <button name="submitaction" onclick="submit_loading()" type="submit" value="harvestCountries"><?= $LANG['ADD_ALL_BOUNDARIES']?></button>
-                     <img id="submit-loading"style="border:0px;width:2rem;height:2rem;display:none" src="../images/ajax-loader.gif" />
-                  </span>
+                  <img id="submit-loading"style="border:0px;width:2rem;height:2rem;display:none" src="../images/ajax-loader.gif" />
+               </span>
+               <span style="float:right;">
+                  <input name="displayRadio" style="margin-left:1rem" type="radio" id="show-no-polygon" onclick="$('.nodb').show();$('.nopoly').hide();" value="no-polygon">
+                  <label for="show-no-polygon"><?= $LANG['SHOW_NO_POLYGON']?></label>
+                  <input name="displayRadio" style="margin-left:1rem" type="radio" id="show-no-database" onclick="$('.nopoly').show();$('.nodb').hide();" value="no-database">
+                  <label for="show-no-database"><?= $LANG['SHOW_NO_DATABASE']?></label>
+                  <input name="displayRadio" style="margin-left:1rem" type="radio" id="show-all" onclick="$('.nopoly').show();$('.nodb').show();" value="all">
+                  <label for="show-all"><?= $LANG['SHOW_ALL']?></label>
+               </span>
                <div id="submit-loading-text" style="display:none">
                   <?=$LANG['LOADING_GEO_DATA_TEXT']?>
                </div> 
