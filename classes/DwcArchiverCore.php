@@ -254,7 +254,7 @@ class DwcArchiverCore extends Manager{
 	public function addCondition($field, $cond, $value = ''){
 		$cond = strtoupper(trim($cond));
 		if (!preg_match('/^[A-Za-z]+$/', $field)) return false;
-		if (!preg_match('/^[A-Z]+$/', $cond)) return false;
+		if (!preg_match('/^[A-Z_]+$/', $cond)) return false;
 		if ($field) {
 			if ($this->overrideConditionLimit || in_array(strtolower($field), $this->condAllowArr)) {
 				if (!$cond) $cond = 'EQUALS';
