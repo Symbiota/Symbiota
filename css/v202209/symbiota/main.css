@@ -904,3 +904,8 @@ div.no-margin-left {
   white-space: nowrap;
   overflow-x: scroll;
 }
+
+.div--overflow-wrap-anywhere {
+  overflow-wrap: anywhere;
+  width: 100%;
+}
