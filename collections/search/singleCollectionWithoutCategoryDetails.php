@@ -1,23 +1,6 @@
 <?php
 ?>
     <section class="gridlike-form-row bottom-breathing-room-relative">
-        <?php
-        if($displayIcons){
-            ?>
-            <div class="<?php ($cArr["icon"]?'cat-icon-div':''); ?>">
-                <?php
-                if($cArr["icon"]){
-                    $cIcon = (substr($cArr["icon"],0,6)=='images'?$CLIENT_ROOT:'').$cArr["icon"];
-                    ?>
-                    <a href = '<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>'><img src="<?php echo htmlspecialchars($cIcon, HTML_SPECIAL_CHARS_FLAGS); ?>" style="border:0px;width:30px;height:30px;" /></a>
-                    <?php
-                }
-                ?>
-                &nbsp;
-            </div>
-            <?php
-        }
-        ?>
         <div class="collection-checkbox">
             <?php
             $codeStr = '(';

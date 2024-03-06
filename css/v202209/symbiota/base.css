@@ -547,3 +547,15 @@ b {
 .gridlike-form-row-input {
   width: 40%;
 }
+
+.bounding-box-form__header {
+  font-size: 1.3rem;
+}
+
+.trait-section__label--spacer {
+  margin-left: 0.5rem;
+}
+
+.trait-section__input--no-margin {
+  margin: 0;
+}

@@ -106,7 +106,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 						<div id="taxa-text" class="input-text-container">
 							<label for="taxa" class="input-text--outlined">
 								<span class="skip-link"><?php echo $LANG['TAXON'] ?></span>
-								<input type="text" name="taxa" id="taxa" data-chip="<?php echo $LANG['TAXON'] ?>">
+								<input type="text" name="taxa" id="taxa" data-chip="<?php echo $LANG['TAXON'] ?>" />
 								<span data-label="<?php echo $LANG['TAXON'] ?>"></span>
 							</label>
 							<span class="assistive-text"><?php echo $LANG['TYPE_CHAR_FOR_SUGGESTIONS'] ?></span>
@@ -123,7 +123,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 							<span class="assistive-text"><?php echo $LANG['TAXON_TYPE'] ?></span>
 						</div>
 						<div>
-							<input type="checkbox" name="usethes" id="usethes" data-chip="<?php echo $LANG['INCLUDE_SYNONYMS'] ?>" value="1" checked>
+							<input type="checkbox" name="usethes" id="usethes" data-chip="<?php echo $LANG['INCLUDE_SYNONYMS'] ?>" value="1" checked />
 							<label for="usethes">
 								<span class="ml-1"><?php echo $LANG['INCLUDE_SYNONYMS'] ?></span>
 							</label>
@@ -145,7 +145,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 									<div class="input-text-container">
 										<label for="country" class="input-text--outlined">
 											<span class="skip-link"><?php echo $LANG['COUNTRY'] ?></span>
-											<input type="text" name="country" id="country" data-chip="<?php echo $LANG['COUNTRY'] ?>">
+											<input type="text" name="country" id="country" data-chip="<?php echo $LANG['COUNTRY'] ?>" />
 											<span data-label="<?php echo $LANG['COUNTRY'] ?>"></span>
 										</label>
 										<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
@@ -153,7 +153,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 									<div class="input-text-container">
 										<label for="state" class="input-text--outlined">
 											<span class="skip-link"><?php echo $LANG['STATE'] ?></span>
-											<input type="text" name="state" id="state" data-chip="<?php echo $LANG['STATE'] ?>">
+											<input type="text" name="state" id="state" data-chip="<?php echo $LANG['STATE'] ?>" />
 											<span data-label="<?php echo $LANG['STATE'] ?>"></span>
 										</label>
 										<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
@@ -161,7 +161,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 									<div class="input-text-container">
 										<label for="county" class="input-text--outlined">
 											<span class="skip-link"><?php echo $LANG['COUNTY'] ?></span>
-											<input type="text" name="county" id="county" data-chip="<?php echo $LANG['COUNTY'] ?>">
+											<input type="text" name="county" id="county" data-chip="<?php echo $LANG['COUNTY'] ?>" />
 											<span data-label="<?php echo $LANG['COUNTY'] ?>"></span>
 										</label>
 										<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
@@ -169,7 +169,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 									<div class="input-text-container">
 										<label for="local" class="input-text--outlined">
 											<span class="skip-link"><?php echo $LANG['LOCALITY_LOCALITIES'] ?></span>
-											<input type="text" name="local" id="local" data-chip="<?php echo $LANG['LOCALITY'] ?>">
+											 <input type="text" name="local" id="local" data-chip="<?php echo $LANG['LOCALITY'] ?>" />
 											<span data-label="<?php echo $LANG['LOCALITY_LOCALITIES'] ?>"></span>
 										</label>
 										<span class="assistive-text" style="line-height:1.7em"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
@@ -179,7 +179,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 									<div class="input-text-container">
 										<label for="elevlow" class="input-text--outlined">
 											<span class="skip-link"><?php echo $LANG['MINIMUM_ELEVATION'] ?></span>
-											<input type="number" step="any" name="elevlow" id="elevlow" data-chip="<?php echo $LANG['MIN_ELEVATION'] ?>">
+											<input type="number" step="any" name="elevlow" id="elevlow" data-chip="<?php echo $LANG['MIN_ELEVATION'] ?>" />
 											<span data-label="<?php echo $LANG['MINIMUM_ELEVATION'] ?>"></span>
 										</label>
 										<span class="assistive-text"><?php echo $LANG['NUMBER_IN_METERS'] ?></span>
@@ -187,7 +187,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 									<div class="input-text-container">
 										<label for="elevhigh" class="input-text--outlined">
 											<span class="skip-link"><?php echo $LANG['MAXIMUM_ELEVATION'] ?></span>
-											<input type="number" step="any" name="elevhigh" id="elevhigh" data-chip="<?php echo $LANG['MAX_ELEVATION'] ?>">
+											<input type="number" step="any" name="elevhigh" id="elevhigh" data-chip="<?php echo $LANG['MAX_ELEVATION'] ?>" />
 											<span data-label="<?php echo $LANG['MAXIMUM_ELEVATION'] ?>"></span>
 										</label>
 										<span class="assistive-text"><?php echo $LANG['NUMBER_IN_METERS'] ?></span>
@@ -208,12 +208,12 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 					<div class="content">
 						<div id="search-form-latlong">
 							<div id="bounding-box-form">
-								<h3><?php echo $LANG['BOUNDING_BOX'] ?></h3>
+								<h1 class="bounding-box-form__header"><?php echo $LANG['BOUNDING_BOX'] ?></h1>
 								<button onclick="openCoordAid('rectangle');return false;"><?php echo $LANG['SELECT_IN_MAP'] ?></button>
 								<div class="input-text-container">
 										<label for="upperlat" class="input-text--outlined">
 											<span class="skip-link"><?php echo $LANG['UPPER_LATITUDE'] ?></span>
-											<input type="number" step="any" min="-90" max="90" id="upperlat" name="upperlat" data-chip="<?php echo $LANG['UPPER_LAT'] ?>">
+											<input type="number" step="any" min="-90" max="90" id="upperlat" name="upperlat" data-chip="<?php echo $LANG['UPPER_LAT'] ?>" />
 											<span data-label="<?php echo $LANG['UPPER_LATITUDE'] ?>"></span>
 											<span class="assistive-text"><?php echo $LANG['VALUE_BETWEEN_NUM'] ?></span>
 										</label>
@@ -230,7 +230,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								<div class="input-text-container">
 									<label for="bottomlat" class="input-text--outlined">
 										<span class="skip-link"><?php echo $LANG['BOTTOM_LATITUDE'] ?></span>
-										<input type="number" step="any" min="-90" max="90" id="bottomlat" name="bottomlat" data-chip="<?php echo $LANG['BOTTOM_LAT'] ?>">
+										<input type="number" step="any" min="-90" max="90" id="bottomlat" name="bottomlat" data-chip="<?php echo $LANG['BOTTOM_LAT'] ?>" />
 										<span data-label="<?php echo $LANG['SOUTHERN_LATITUDE'] ?>"></span>
 										<span class="assistive-text"><?php echo $LANG['VALUE_BETWEEN_NUM'] ?></span>
 									</label>
@@ -246,7 +246,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								<div class="input-text-container">
 									<label for="leftlong" class="input-text--outlined">
 										<span class="skip-link"><?php echo $LANG['LEFT_LONGITUDE'] ?></span>
-										<input type="number" step="any" min="-180" max="180" id="leftlong" name="leftlong" data-chip="<?php echo $LANG['LEFT_LONG'] ?>">
+										<input type="number" step="any" min="-180" max="180" id="leftlong" name="leftlong" data-chip="<?php echo $LANG['LEFT_LONG'] ?>" />
 										<span data-label="<?php echo $LANG['WESTERN_LONGITUDE'] ?>"></span>
 										<span class="assistive-text"><?php echo $LANG['VALUES_BETWEEN_NEG180_TO_180'] ?></span>
 									</label>
@@ -262,7 +262,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								<div class="input-text-container">
 									<label for="rightlong" class="input-text--outlined">
 										<span class="skip-link"><?php echo $LANG['RIGHT_LONGITUDE'] ?></span>
-										<input type="number" step="any" min="-180" max="180" id="rightlong" name="rightlong" data-chip="<?php echo $LANG['RIGHT_LONG'] ?>">
+										<input type="number" step="any" min="-180" max="180" id="rightlong" name="rightlong" data-chip="<?php echo $LANG['RIGHT_LONG'] ?>" />
 										<span data-label="<?php echo $LANG['EASTERN_LONGITUDE'] ?>"></span>
 										<span class="assistive-text"><?php echo $LANG['VALUES_BETWEEN_NEG180_TO_180'] ?></span>
 									</label>
@@ -277,7 +277,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								</div>
 							</div>
 							<div id="polygon-form">
-								<h3><?php echo $LANG['POLYGON_WKT_FOOTPRINT'] ?></h3>
+								<h1 class="bounding-box-form__header"><?php echo $LANG['POLYGON_WKT_FOOTPRINT'] ?></h1>
 								<button onclick="openCoordAid('polygon');return false;"><?php echo $LANG['SELECT_MAP_POLYGON'] ?></button>
 								<div class="text-area-container">
 									<label for="footprintwkt" class="text-area--outlined">
@@ -289,12 +289,12 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								</div>
 							</div>
 							<div id="point-radius-form">
-								<h3><?php echo $LANG['POINT_RADIUS'] ?></h3>
+								<h1 class="bounding-box-form__header"><?php echo $LANG['POINT_RADIUS'] ?></h1>
 								<button onclick="openCoordAid('circle');return false;"><?php echo $LANG['SELECT_MAP_PR'] ?></button>
 								<div class="input-text-container">
 									<label for="pointlat" class="input-text--outlined">
 										<span class="skip-link"><?php echo $LANG['POINT_LATITUDE'] ?></span>
-										<input type="number" step="any" min="-90" max="90" id="pointlat" name="pointlat" data-chip="<?php echo $LANG['POINT_LAT'] ?>">
+										<input type="number" step="any" min="-90" max="90" id="pointlat" name="pointlat" data-chip="<?php echo $LANG['POINT_LAT'] ?>" />
 										<span data-label="<?php echo $LANG['LATITUDE'] ?>"></span>
 										<span class="assistive-text"><?php echo $LANG['VALUE_BETWEEN_NUM'] ?></span>
 									</label>
@@ -310,7 +310,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								<div class="input-text-container">
 									<label for="pointlong" class="input-text--outlined">
 										<span class="skip-link"><?php echo $LANG['POINT_LONGITUDE'] ?></span>
-										<input type="number" step="any" min="-180" max="180" id="pointlong" name="pointlong" data-chip="<?php echo $LANG['POINT_LONG'] ?>">
+										<input type="number" step="any" min="-180" max="180" id="pointlong" name="pointlong" data-chip="<?php echo $LANG['POINT_LONG'] ?>" />
 										<span data-label="<?php echo $LANG['LONGITUDE'] ?>"></span>
 										<span class="assistive-text"><?php echo $LANG['VALUES_BETWEEN_NEG180_TO_180'] ?></span>
 									</label>
@@ -326,7 +326,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								<div class="input-text-container">
 									<label for="radius" class="input-text--outlined">
 										<span class="skip-link"><?php echo $LANG['RADIUS'] ?></span>
-										<input type="number" min="0" step="any" id="radius" name="radius" data-chip="<?php echo $LANG['RADIUS'] ?>">
+										<input type="number" min="0" step="any" id="radius" name="radius" data-chip="<?php echo $LANG['RADIUS'] ?>" />
 										<span data-label="<?php echo $LANG['RADIUS'] ?>"></span>
 										<span class="assistive-text"><?php echo $LANG['ANY_POSITIVE_VALUES'] ?></span>
 									</label>
@@ -356,7 +356,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 							<div class="input-text-container">
 								<label for="eventdate1" class="input-text--outlined">
 									<span class="skip-link"><?php echo $LANG['COLLECTION_START_DATE'] ?></span>
-									<input type="text" name="eventdate1" id="eventdate1" data-chip="<?php echo $LANG['EVENT_DATE_START'] ?>">
+									<input type="text" name="eventdate1" id="eventdate1" data-chip="<?php echo $LANG['EVENT_DATE_START'] ?>" />
 									<span data-label="<?php echo $LANG['COLLECTION_START_DATE'] ?>"></span>
 								</label>
 								<span class="assistive-text"><?php echo $LANG['SINGLE_DATE_START_DATE'] ?></span>
@@ -364,7 +364,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 							<div class="input-text-container">
 								<label for="eventdate2" class="input-text--outlined">
 									<span class="skip-link"><?php echo $LANG['COLLECTION_END_DATE'] ?></span>
-									<input type="text" name="eventdate2" id="eventdate2" data-chip="<?php echo $LANG['EVENT_DATE_END'] ?>">
+									<input type="text" name="eventdate2" id="eventdate2" data-chip="<?php echo $LANG['EVENT_DATE_END'] ?>" />
 									<span data-label="<?php echo $LANG['COLLECTION_END_DATE'] ?>"></span>
 								</label>
 								<span class="assistive-text"><?php echo $LANG['SINGLE_DATE_END_DATE'] ?></span>
@@ -398,13 +398,13 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 						<div id="search-form-sample">
 							<div>
 								<div>
-									<input type="checkbox" name="includeothercatnum" id="includeothercatnum" value="1" data-chip="<?php echo $LANG['INCLUDE_OTHER_IDS'] ?>" checked>
+									<input type="checkbox" name="includeothercatnum" id="includeothercatnum" value="1" data-chip="<?php echo $LANG['INCLUDE_OTHER_IDS'] ?>" checked />
 									<label for="includeothercatnum"><?php echo $LANG['INCLUDE_CATA_NUM_GUIDs'] ?></label>
 								</div>
 								<div class="input-text-container">
 									<label for="catnum" class="input-text--outlined">
 										<span class="skip-link"><?php echo $LANG['CATALOG_NUMBER'] ?></span>
-										<input type="text" name="catnum" id="catnum" data-chip="<?php echo $LANG['CATALOG_NUMBER'] ?>">
+										<input type="text" name="catnum" id="catnum" data-chip="<?php echo $LANG['CATALOG_NUMBER'] ?>" />
 										<span data-label="<?php echo $LANG['CATALOG_NUMBER'] ?>"></span>
 									</label>
 									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
@@ -416,11 +416,11 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 									<label for="typestatus"><?php echo $LANG['TYPE'] ?></label>
 								</div>
 								<div>
-									<input type="checkbox" name="hasimages" id="hasimages" value=1 data-chip="<?php echo $LANG['ONLY_WITH_IMAGES'] ?>">
+									<input type="checkbox" name="hasimages" id="hasimages" value=1 data-chip="<?php echo $LANG['ONLY_WITH_IMAGES'] ?>" />
 									<label for="hasimages"><?php echo $LANG['LIMIT_TO_SPECIMENS_W_IMAGES'] ?></label>
 								</div>
 								<div>
-									<input type="checkbox" name="hasgenetic" id="hasgenetic" value=1 data-chip="<?php echo $LANG['ONLY_WITH_GENETIC'] ?>">
+									<input type="checkbox" name="hasgenetic" id="hasgenetic" value=1 data-chip="<?php echo $LANG['ONLY_WITH_GENETIC'] ?>" />
 									<label for="hasgenetic"><?php echo $LANG['LIMIT_TO_SPECIMENS_W_GENETIC_DATA'] ?></label>
 								</div>
 								<div>
@@ -473,7 +473,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 											<div> 
 												<div>
 													<div class="bottom-breathing-room-relative"><?php echo $LANG['TRAIT_DESCRIPTION']; ?></div>
-													<input type="hidden" id="SearchByTraits" value="true">
+													<input type="hidden" id="SearchByTraits" value="true" />
 												</div>
 												<?php
 												foreach($traitArr as $traitID => $traitData){
@@ -501,7 +501,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 					}
 				?>
 
-				<!-- Colections -->
+				<!-- Collections -->
 				<section>
 					<!-- Accordion selector -->
 					<input type="checkbox" id="collections" class="accordion-selector" />
@@ -516,7 +516,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								include_once('./collectionContent.php');
 								?>
 							</div>
-							
 						</div>
 					</div>
 				</section>
