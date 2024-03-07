@@ -1301,8 +1301,10 @@ class OccurrenceIndividual extends Manager{
 		if($stmt = $this->conn->prepare($sqlut)){
 			$stmt->bind_param('i', $GLOBALS['SYMB_UID']);
 			$stmt->execute();
-			$tid = ''; $geographicScope = '';
-			$stmt->bind_result($tid, $geographicScope);
+			$idusertaxonomy = '';
+			$tid = ''; 
+			$geographicScope = '';
+			$stmt->bind_result($idusertaxonomy,$tid, $geographicScope);
 			while($stmt->fetch()){
 				$editTidArr[$tid] = $geographicScope;
 			}
