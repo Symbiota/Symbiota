@@ -12,8 +12,9 @@ $boundLatMin = -90;
 $boundLatMax = 90;
 $boundLngMin = -180;
 $boundLngMax = 180;
-$latCen = 41.0;
-$longCen = -95.0;
+$latCen = 0;
+$longCen = 0;
+
 if(!empty($MAPPING_BOUNDARIES)){
 	$coorArr = explode(';', $MAPPING_BOUNDARIES);
 	if($coorArr && count($coorArr) == 4){
@@ -67,8 +68,6 @@ if(!isset($IS_ADMIN) || !$IS_ADMIN || !isset($SYMB_UID) || !$SYMB_UID) {
                headers: {"Content-Type": "application/json"},
             });
             return await response.json();
-
-            //return Object.entries(res).map( ([k, v]) => ({tid: k, sciname: v.sciname}));
          }
 
          async function buildMaps(preview = true) {
@@ -84,7 +83,7 @@ if(!isset($IS_ADMIN) || !$IS_ADMIN || !isset($SYMB_UID) || !$SYMB_UID) {
             if(resultsTBody) resultsTBody.innerHTML = "";
 
             const data = document.getElementById('service-container');
-            //let taxaList = JSON.parse(data.getAttribute('data-taxa-list'))
+
             let taxon_groups = []; 
 
             const leafletControls = document.querySelector('.leaflet-control-container')
@@ -107,8 +106,9 @@ if(!isset($IS_ADMIN) || !$IS_ADMIN || !isset($SYMB_UID) || !$SYMB_UID) {
             let maxCount = taxon_groups.reduce((max, tg) => max + tg.taxa_list.length, 0);
 
             document.getElementById('loading-bar-max').innerHTML = `/ ${maxCount}`; 
+            let autoSnap = document.getElementById('auto-snap-coords').checked;
 
-            let basebounds = getMapBounds()
+            let basebounds = getMapBounds();
             let userZoom = map.mapLayer.getZoom();
             let baseZoom = userZoom >= 7 ? userZoom: 7;
             let count = 0;
@@ -119,14 +119,18 @@ if(!isset($IS_ADMIN) || !$IS_ADMIN || !isset($SYMB_UID) || !$SYMB_UID) {
                   count++;
 
                   if(coords && coords.length > 0) { 
-                     //Fits bounds within our search bounds for a better image
-                     map.mapLayer.fitBounds(coords.map(c => [c.lat, c.lng]));
-
-                     //Scale Back the zoom value if zoomed in too much
-                     let newZoom = map.mapLayer.getZoom()
-                     map.mapLayer.setZoom(newZoom <= baseZoom? newZoom: baseZoom);
-
                      coordLayer = generateMap({maptype, coordinates: coords});
+                     if(autoSnap) {
+                        //Fits bounds within our search bounds for a better image
+                        map.mapLayer.fitBounds(coords.map(c => [c.lat, c.lng]));
+
+                        //bounds need time before adjusting the zoom
+                        await new Promise(r => setTimeout(r, 100));
+
+                        //Scale Back the zoom value if zoomed in too much
+                        let newZoom = map.mapLayer.getZoom()
+                        map.mapLayer.setZoom(newZoom <= baseZoom? newZoom: baseZoom)
+                     }
 
                      if(preview) break;
 
@@ -161,8 +165,11 @@ if(!isset($IS_ADMIN) || !$IS_ADMIN || !isset($SYMB_UID) || !$SYMB_UID) {
                   }
                }
             }
-
-            map.mapLayer.fitBounds(basebounds);
+            if(preview) {
+               setTimeout(() => setBoundInputs(basebounds[0], basebounds[1]), 500);
+            } else {
+               setTimeout(() => map.mapLayer.fitBounds(basebounds), 500);
+            }
 
             //Turn Controls back on when done processing maps
             leafletControls.style.display = "block";
@@ -272,18 +279,28 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
             mapBounds = map.mapLayer.getBounds();
             let northEast = mapBounds.getNorthEast();
             let southWest = mapBounds.getSouthWest();
+            setBoundInputs([northEast.lat, northEast.lng], [southWest.lat, southWest.lng]);
+         }
 
-            document.getElementById("upper_lat").value = northEast.lat.toFixed(6);
-            document.getElementById("upper_lng").value = northEast.lng.toFixed(6);
+         function setBoundInputs(upperBound, lowerBound) {
+            function bindValue(value, absLimit) {
+               const sign = value > 0? 1: -1;
+               return (sign * value) > absLimit? (-1 * sign * absLimit) + (value - (sign * absLimit)): value;
+            }
+            const lat = 0;
+            const lng = 1;
 
-            document.getElementById("lower_lat").value = southWest.lat.toFixed(6);
-            document.getElementById("lower_lng").value = southWest.lng.toFixed(6);
+            document.getElementById("upper_lat").value = bindValue(upperBound[lat].toFixed(6), 90);
+            document.getElementById("upper_lng").value = bindValue(upperBound[lng].toFixed(6), 180);
+
+            document.getElementById("lower_lat").value = bindValue(lowerBound[lat].toFixed(6), 90);
+            document.getElementById("lower_lng").value = bindValue(lowerBound[lng].toFixed(6), 180);
          }
 
          function getMapBounds() { 
             return [
-               [document.getElementById("upper_lat").value, document.getElementById("upper_lng").value],
-               [document.getElementById("lower_lat").value, document.getElementById("lower_lng").value]
+               [parseFloat(document.getElementById("upper_lat").value), parseFloat(document.getElementById("upper_lng").value)],
+               [parseFloat(document.getElementById("lower_lat").value), parseFloat(document.getElementById("lower_lng").value)]
             ];
          }
 
@@ -309,8 +326,17 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
          }
 
          function resetBounds(bounds) {
-            updateMapBounds(bounds);
-            refreshBoundInputs();
+            const state = getState();
+            if(state.latlng[0] === 0 && state.latlng[1] === 0) {
+               setGlobalBounds();
+            } else {
+               updateMapBounds(bounds);
+               refreshBoundInputs();
+            }
+         }
+
+         function setGlobalBounds() {
+            map.mapLayer.setView([0,0], 1)
          }
 
          function initialize() {
@@ -318,7 +344,7 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
 
             map = new LeafletMap('map', {
                center: state.latlng, 
-               zoom: 6, 
+               zoom: state.latlng[0] === 0 && state.latlng[0] === 0? 1 : 6, 
                scale: false, 
                lang: "<?php echo $LANG_TAG; ?>"
             });
@@ -418,7 +444,7 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
                <div id="loading-bar" style="height:2rem; width:0%; background-color:#1B3D2F"></div>
             </div>
             <div style="text-align: center; padding-top:0.5rem">
-               Maps Generated
+               <?php echo $LANG['MAPS_GENERATED'] ?>
                <span id="loading-bar-count">0</span>
                <span id="loading-bar-max">/ <?php echo count($taxaList)?></span>
             </div>
@@ -465,23 +491,13 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
                <input id="lower_lat" name="lower_lat"onkeydown="return event.key != 'Enter';" value="<?php echo $boundLatMin?>" placeholder="<?php echo $boundLatMin?>"/>
                <label for="lower_lng"><?php echo $LANG['LONGITUDE'] ?></label>
                <input id="lower_lng" name="lower_lat" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLngMin?>" placeholder="<?php echo $boundLngMin?>"/><br>
-
                <button type="button" onclick="resetBounds(getState().bounds)"><?php echo $LANG['RESET_BOUNDS'] ?></button>
-               <button type="button" onclick="resetBounds([ [90, 180], [-90, -180]])"><?php echo $LANG['GLOBAL_BOUNDS'] ?></button><br/>
+               <button type="button" onclick="setGlobalBounds()"><?php echo $LANG['GLOBAL_BOUNDS'] ?></button><br/>
             </fieldset><br/>
-<!---
-            <label for="taxon">Taxon</label><br>
-            <input id="taxon"/><br/>
---->
-<!---
-         Form options to be added now:
-         - map type (radio button): heat map, dot map
-         - bounding box (set of text boxes): fields filled with above default bounding box values, but provides user ability to adjust. Maybe add the bounding box assist tool to help user define a new box?
-         - replace (radio button): all maps, maps of set type (heat or dot), none
-         - Target a specific taxon (text box with autocomplete that displays only accepted taxa of rankid 220 or greater)
-         Form options to add later:
-         - replace maps older than a certain date (date text box)
---->
+            <div style="margin-bottom:1rem">
+               <input type="checkbox" name="auto-snap-coords" id="auto-snap-coords" value="true" >
+               <label for="auto-snap-coords"><?php echo $LANG['AUTOMATIC_BOUNDS_DESC'] ?></label>
+            </div>
             <button type="button" onclick="buildMaps(false)"><?= $LANG['BUILD_MAPS'] ?></button>
             <button type="button" onclick="buildMaps(true)"><?= $LANG['PREVIEW_MAP'] ?></button>
          </form>

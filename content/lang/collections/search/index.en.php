@@ -12,7 +12,7 @@ $LANG['TAXON_TYPE'] = 'Taxon type';
 $LANG['ANY_NAME'] = 'Any name';
 $LANG['SCIENTIFIC_NAME'] ='Scientific name';
 $LANG['FAMILY'] = 'Family';
-$LANG['TAXONOMIC GROUP'] = 'Taxonomic group';
+$LANG['TAXONOMIC_GROUP'] = 'Taxonomic group';
 $LANG['COMMON_NAME'] = 'Common name';
 $LANG['TAXON_TYPE'] = 'Taxon type';
 $LANG['INCLUDE_SYNONYMS'] ='Include Synonyms';
@@ -97,8 +97,6 @@ $LANG['POINT_LONG'] = 'Point Long';
 $LANG['EVENT_DATE_START'] = 'Event Date Start';
 $LANG['EVENT_DATE_END'] = 'Event Date End';
 $LANG['COLLECTOR_LAST'] = 'Collector last';
-
-
 $LANG['NORTHERN_LATITUDE'] = '_Northern Latitude';
 $LANG['SOUTHERN_LATITUDE'] = '_Southern Latitude';
 $LANG['WESTERN_LONGITUDE'] = '_Western Longitude';
@@ -108,5 +106,9 @@ $LANG['LONGITUDE'] = '_Longitude';
 $LANG['RADIUS'] = '_Radius';
 $LANG['ALERT_MSG_PREVIOUS_SEARCH_FORM'] = 'Looking for the previous search form? You can still use it here:';
 $LANG['ALL_COLLECTIONS'] = 'All Collections';
+$LANG['TRAIT_CRITERIA'] = 'Trait Criteria';
+$LANG['TRAIT'] = 'Trait';
+$LANG['EXPAND_ALL_SECTIONS'] = 'Expand all sections';
+$LANG['COLLAPSE_ALL_SECTIONS'] = 'Collapse all sections';
 
 ?>

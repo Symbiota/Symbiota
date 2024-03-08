@@ -1,14 +1,16 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceIndividual.php');
-@include_once($SERVER_ROOT.'/content/lang/collections/individual/linkedresources.'.$LANG_TAG.'.php');
-header("Content-Type: text/html; charset=".$CHARSET);
-
-$occid = isset($_GET['occid']) ? filter_var($_GET['occid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$tid = array_key_exists('tid', $_REQUEST) ? filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/individual/linkedresources.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/individual/linkedresources.'.$LANG_TAG.'.php');
+else include_once($SERVER_ROOT.'/content/lang/collections/individual/linkedresources.en.php');
+header('Content-Type: text/html; charset=' . $CHARSET);
 
 $indManager = new OccurrenceIndividual();
+
+$occid = isset($_GET['occid']) ? $indManager->sanitizeInt($_GET['occid']) : 0;
+$tid = array_key_exists('tid', $_REQUEST) ? $indManager->sanitizeInt($_REQUEST['tid']) : 0;
+$clid = array_key_exists('clid', $_REQUEST) ? $indManager->sanitizeInt($_REQUEST['clid']) : 0;
+
 $indManager->setOccid($occid);
 ?>
 <style>
@@ -16,45 +18,43 @@ $indManager->setOccid($occid);
 </style>
 <div id='innertext' style='width:95%;min-height:400px;clear:both;background-color:white;'>
 	<fieldset>
-		<legend><?php echo ($LANG['SPCHECKREL']); ?></legend>
+		<legend><?= $LANG['SPCHECKREL'] ?></legend>
 		<?php
 		$vClArr = $indManager->getVoucherChecklists();
 		$clArr = $indManager->getChecklists(array_keys($vClArr));
 		if($IS_ADMIN || $clArr) echo '<div style="float:right"><a href="#" onclick="toggle(\'voucher-block\');return false"><img src="../../images/add.png" /></a></div>';
 		if($vClArr){
-			echo '<div class="section-title">' . ($LANG['VOUCHEROFFOLLOWING']) . '</div>';
+			echo '<div class="section-title">' . $LANG['VOUCHEROFFOLLOWING'] . '</div>';
 			echo '<ul style="margin:15px 0px 25px 0px;">';
 			foreach($vClArr as $vClid => $vClArr){
 				echo '<li>';
-				echo '<a href="../../checklists/checklist.php?showvouchers=1&clid=' . htmlspecialchars($vClid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($vClArr['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a>&nbsp;&nbsp;';
+				echo '<a href="../../checklists/checklist.php?showvouchers=1&clid=' . $vClid . '" target="_blank">' . $vClArr['name'] . '</a>&nbsp;&nbsp;';
 				if(isset($USER_RIGHTS['ClAdmin']) && in_array($vClid, $USER_RIGHTS['ClAdmin'])){
-					$delStr = ($LANG['DELVOUCHER']);
-					$confirmStr = ($LANG['CONFIRMVOUCHER']);
-					echo '<a href="index.php?delvouch=' . htmlspecialchars($vClArr['voucherID'], HTML_SPECIAL_CHARS_FLAGS) . '&occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" title=' . htmlspecialchars($delStr, HTML_SPECIAL_CHARS_FLAGS) . ' onclick="return confirm(\"' . htmlspecialchars($confirmStr, HTML_SPECIAL_CHARS_FLAGS) . '\")"><img src="../../images/drop.png" style="width:12px;" /></a>';
+					echo '<a href="index.php?formsubmit=deletevoucher&delvouch=' . $vClArr['voucherID'] . '&occid=' . $occid . '" title=' . $LANG['DELVOUCHER'] . ' onclick="return confirm(\"' . $LANG['CONFIRMVOUCHER'] . '\")"><img src="../../images/drop.png" style="width:12px;" /></a>';
 				}
 				echo '</li>';
 			}
 			echo '</ul>';
 		}
 		else{
-			echo '<div style="margin:15px 0px">'.(isset($LANG['NOTAVOUCHER'])?$LANG['NOTAVOUCHER']:'This occurrence has not been designated as a voucher for a species checklist').'</div>';
+			echo '<div style="margin:15px 0px">' . $LANG['NOTAVOUCHER'] . '</div>';
 		}
 		if($IS_ADMIN || $clArr){
 			?>
 			<div style='margin-top:15px; display: none;'  id="voucher-block" class="voucher-block">
 				<fieldset>
-					<legend><?php echo ($LANG['NEWVOUCHER']); ?></legend>
+					<legend><?= $LANG['NEWVOUCHER'] ?></legend>
 					<?php
 					if($tid){
 						?>
 						<div style="margin:10px;">
 							<form action="index.php" method="post" onsubmit="return verifyVoucherForm(this);">
 								<div>
-									<?php echo (isset($LANG['ADDVOUCHERCHECK'])?$LANG['ADDVOUCHERCHECK']:'Add as voucher to checklist'); ?>:
-									<input name='occid' type='hidden' value='<?php echo $occid; ?>'>
-									<input name='vtid' type='hidden' value='<?php echo $tid; ?>'>
+									<?= $LANG['ADDVOUCHERCHECK'] ?>:
+									<input name='occid' type='hidden' value='<?= $occid; ?>'>
+									<input name='vtid' type='hidden' value='<?= $tid; ?>'>
 									<select id='vclid' name='vclid'>
-						  				<option value='0'><?php echo (isset($LANG['SELECTCHECKLIST'])?$LANG['SELECTCHECKLIST']:'Select a Checklist'); ?></option>
+						  				<option value='0'><?= $LANG['SELECTCHECKLIST'] ?></option>
 						  				<option value='0'>--------------------------</option>
 						  				<?php
 							  			foreach($clArr as $clKey => $clValue){
@@ -64,16 +64,16 @@ $indManager->setOccid($occid);
 									</select>
 								</div>
 								<div style='margin:5px 0px 0px 10px;'>
-									<?php echo (isset($LANG['NOTES'])?$LANG['NOTES']:'Notes'); ?>:
-									<input name="vnotes" type="text" size="50" title="<?php echo (isset($LANG['VIEWABLEPUBLIC'])?$LANG['VIEWABLEPUBLIC']:'Viewable to public'); ?>" />
+									<?= $LANG['NOTES'] ?>:
+									<input name="vnotes" type="text" size="50" title="<?= $LANG['VIEWABLEPUBLIC'] ?>" />
 								</div>
 								<div style='margin:5px 0px 0px 10px;'>
-									<?php echo (isset($LANG['EDITORNOTES'])?$LANG['EDITORNOTES']:'Editor Notes'); ?>:
-									<input name="veditnotes" type="text" size="50" title="<?php echo (isset($LANG['VIEWABLEEDITORS'])?$LANG['VIEWABLEEDITORS']:'Viewable only to checklist editors'); ?>">
+									<?= $LANG['EDITORNOTES'] ?>:
+									<input name="veditnotes" type="text" size="50" title="<?= $LANG['VIEWABLEEDITORS']; ?>">
 								</div>
 								<div>
 									<input name="tabindex" type="hidden" value="2" >
-									<button type='submit' name='formsubmit' value="addVoucher"><?php echo (isset($LANG['ADDVOUCHER'])?$LANG['ADDVOUCHER']:'Add Voucher'); ?></button>
+									<button type='submit' name='formsubmit' value="addVoucher"><?= $LANG['ADDVOUCHER'] ?></button>
 								</div>
 							</form>
 						</div>
@@ -82,8 +82,7 @@ $indManager->setOccid($occid);
 					else{
 						?>
 						<div style='margin:20px;'>
-							<?php echo (isset($LANG['UNABLETOADD'])?$LANG['UNABLETOADD']:'Unable to use this specimen record as a voucher
-							because scientific name counld not be verified in the taxonomic thesaurus (misspelled?)'); ?>
+							<?= $LANG['UNABLETOADD'] ?>
 						</div>
 						<?php
 					}
@@ -104,26 +103,26 @@ $indManager->setOccid($occid);
 		foreach($datasetArr as $dsid => $dsArr){
 			if(isset($dsArr['linked']) && $dsArr['linked']){
 				$dsDisplayStr .= '<li>';
-				$dsDisplayStr .= '<a href="../datasets/datasetmanager.php?datasetid=' . htmlspecialchars($dsid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($dsArr['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+				$dsDisplayStr .= '<a href="../datasets/datasetmanager.php?datasetid=' . $dsid . '" target="_blank">' . $dsArr['name'] . '</a>';
 				if(isset($dsArr['role']) && $dsArr['role']) $dsDisplayStr .= ' (role: '.$dsArr['role'].')';
 				if(isset($dsArr['notes']) && $dsArr['notes']) $dsDisplayStr .= ' - '.$dsArr['notes'];
 				$dsDisplayStr .= '</li>';
 			}
 		}
 		if($dsDisplayStr){
-			echo '<div class="section-title">'.(isset($LANG['MEMBEROF'])?$LANG['MEMBEROF']:'Member of the following datasets').'</div>';
+			echo '<div class="section-title">' . $LANG['MEMBEROF'] . '</div>';
 			echo '<ul>'.$dsDisplayStr.'</ul>';
 		}
-		else echo '<div style="margin:15px 0px">'.(isset($LANG['OCCURRENCENOTLINKED'])?$LANG['OCCURRENCENOTLINKED']:'Occurrence is not linked to any datasets').'</div>';
+		else echo '<div style="margin:15px 0px">' . $LANG['OCCURRENCENOTLINKED'] . '</div>';
 		if($SYMB_UID){
 			?>
 			<div class="dataset-block" id="dataset-block" style="display: none;">
 				<fieldset>
-					<legend><?php echo (isset($LANG['CREATENEWREL'])?$LANG['CREATENEWREL']:'Create New Dataset Relationship'); ?></legend>
+					<legend><?= $LANG['CREATENEWREL'] ?></legend>
 					<form action="../datasets/datasetHandler.php" method="post" onsubmit="return verifyDatasetForm(this);">
 						<div style="margin:3px">
 							<select name="targetdatasetid">
-								<option value=""><?php echo (isset($LANG['SELECTEXISTING'])?$LANG['SELECTEXISTING']:'Select an Existing Dataset'); ?></option>
+								<option value=""><?= $LANG['SELECTEXISTING'] ?></option>
 								<option value="">----------------------------------</option>
 								<?php
 								foreach($datasetArr as $dsid => $dsArr){
@@ -132,17 +131,17 @@ $indManager->setOccid($occid);
 									}
 								}
 								?>
-								<option value="--newDataset"><?php echo (isset($LANG['CREATENEWDATASET'])?$LANG['CREATENEWDATASET']:'Create New Dataset'); ?></option>
+								<option value="--newDataset"><?= $LANG['CREATENEWDATASET'] ?></option>
 							</select>
 						</div>
 						<div style="margin:5px">
-							<b><?php echo (isset($LANG['NOTES'])?$LANG['NOTES']:'Notes'); ?>:<br/>
+							<label><?= $LANG['NOTES'] ?>:</label><br/>
 							<input name="notes" type="text" value="" maxlength="250" style="width:90%;" />
 						</div>
 						<div style="margin:15px">
-							<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
+							<input name="occid" type="hidden" value="<?= $occid; ?>" />
 							<input name="sourcepage" type="hidden" value="individual" />
-							<button name="action" type="submit" value="addSelectedToDataset" ><?php echo (isset($LANG['LINKTO'])?$LANG['LINKTO']:'Link to Dataset'); ?></button>
+							<button name="action" type="submit" value="addSelectedToDataset" ><?= $LANG['LINKTO'] ?></button>
 						</div>
 					</form>
 				</fieldset>

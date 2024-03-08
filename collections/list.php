@@ -4,7 +4,6 @@ if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/l
 else include_once($SERVER_ROOT . '/content/lang/collections/list.en.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceListManager.php');
 header("Content-Type: text/html; charset=" . $CHARSET);
-
 $taxonFilter = array_key_exists('taxonfilter', $_REQUEST) ? filter_var($_REQUEST['taxonfilter'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $targetTid = array_key_exists('targettid', $_REQUEST) ? filter_var($_REQUEST['targettid'], FILTER_SANITIZE_NUMBER_INT) : '';
 $tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 1;
