@@ -553,6 +553,15 @@ else{
 					}
 				});
 			}
+			function navigateToRecordNew(crowdSourceMode, gotomode, collId, batchId, imgId, imgIndex, barcode, occId, occIndex) {
+				if(barcode == null && occId == null) {
+					var url = 'occurrencequickentry.php?gotomode=' + gotomode + '&collid=' + collId + '&imgid=' + imgId + '&imgindex=' + imgIndex;
+				} else {
+					var url = 'occurrencequickentry.php?csmode=' + crowdSourceMode + '&collid=' + collId +'&batchid=' + batchId + '&imgid=' + imgId + '&imgindex=' + imgIndex + '&barcode=' + barcode + '&occid=' + occId + '&occindex=' + occIndex;
+				}
+				window.location.href = url;
+				event.preventDefault();
+			}
 		</script>
 		<script src="../../js/symb/collections.coordinateValidation.js?ver=2" type="text/javascript"></script>
 		<script src="../../js/symb/wktpolygontools.js?ver=2" type="text/javascript"></script>
@@ -930,7 +939,7 @@ else{
 						</div>
 						<div class="login-info" style = "backgroufnd-color:#86C5D8; text-align: center; height: 450px;">
 							<?php
-								include_once('/home/herbaria/running-symbiota/collections/editor/includes/quickentryimgprocessor.php');
+								include_once($SERVER_ROOT.'/collections/editor/includes/quickentryimgprocessor.php');
 							?>
 						</div>
 						<div class="login-info">
