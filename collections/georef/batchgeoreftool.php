@@ -309,16 +309,16 @@ if($isEditor && $submitAction){
 									</div>
 								</div>
 								<div style="margin-top:5px;clear:both;">
+									<div style="float:left">
+										<b><?php echo $LANG['LOCALITY_TERM']; ?>:</b>
+										<input name="qlocality" type="text" value="<?php echo $qLocality; ?>" style="width:250px;" aria-label="<?php echo $LANG['LOCALITY_TERM'] ?>" />
+									</div>
 									<div style="float:right;">
 										<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 										<button name="submitaction" type="submit" value="Generate List" ><?php echo $LANG['GENERATE_LIST']; ?></button>
 										<span id="qworkingspan" style="display:none;">
 											<img src="../../images/workingcircle.gif" />
 										</span>
-									</div>
-									<div style="float:left">
-										<b><?php echo $LANG['LOCALITY_TERM']; ?>:</b>
-										<input name="qlocality" type="text" value="<?php echo $qLocality; ?>" style="width:250px;" aria-label="<?php echo $LANG['LOCALITY_TERM'] ?>"  />
 									</div>
 								</div>
 							</fieldset>
