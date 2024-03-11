@@ -1297,14 +1297,13 @@ class OccurrenceIndividual extends Manager{
 
 		//Grab taxonomic node id and geographic scopes
 		$editTidArr = array();
-		$sqlut = 'SELECT idusertaxonomy, tid, geographicscope FROM usertaxonomy WHERE editorstatus = "OccurrenceEditor" AND uid = ?';
+		$sqlut = 'SELECT tid, geographicscope FROM usertaxonomy WHERE editorstatus = "OccurrenceEditor" AND uid = ?';
 		if($stmt = $this->conn->prepare($sqlut)){
 			$stmt->bind_param('i', $GLOBALS['SYMB_UID']);
 			$stmt->execute();
-			$idusertaxonomy = '';
 			$tid = ''; 
 			$geographicScope = '';
-			$stmt->bind_result($idusertaxonomy,$tid, $geographicScope);
+			$stmt->bind_result($tid, $geographicScope);
 			while($stmt->fetch()){
 				$editTidArr[$tid] = $geographicScope;
 			}
