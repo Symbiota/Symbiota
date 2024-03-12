@@ -6,4 +6,4 @@ SET o.localitySecurity = 1, o.localitySecurityReason = "[Security Setting Explic
 WHERE o.localitySecurityReason IS NULL AND e.fieldName = "localitySecurity" AND e.fieldValueNew = 1
 AND e2.occid IS NULL;
 
-UPDATE omoccurrences SET localitySecurity=0 WHERE occid IN (SELECT occid FROM omoccurrences WHERE cultivationStatus=1 AND localitySecurity=1 AND localitySecurityReason IS NULL);
+UPDATE omoccurrences SET localitySecurity=0 WHERE cultivationStatus=1 AND localitySecurity=1 AND localitySecurityReason IS NULL;
