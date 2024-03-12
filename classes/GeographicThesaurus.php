@@ -124,7 +124,7 @@ class GeographicThesaurus extends Manager {
             SELECT * from geographicpolygon WHERE geoThesID = ?
             SQL;
 
-         $polygon_exists = $this->conn->execute_query($sql, [$postArr['geoThesID']]);
+         $polygon_exists = $this->conn->execute_query($sql, [htmlspecialchars($postArr['geoThesID']]));
 
          if(!$polygon_exists) {
             $this->errorMessage = 'ERROR saving polygon edits: '.$this->conn->error;
