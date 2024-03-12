@@ -1,4 +1,4 @@
-# Clean up localitySecurity for occurrences that are cultivated and have not explicitly had their localitySecurity edited to be 1
+# Clean up localitySecurity for occurrences that are cultivated and have not explicitly had their localitySecurity edited to be 1 (and are missing a security reason) more recently than it has been edited to 0.
 
 UPDATE omoccurrences o INNER JOIN omoccuredits e ON o.occid = e.occid
 LEFT JOIN (SELECT occid, ocedid FROM omoccuredits WHERE fieldName = "localitySecurity" AND fieldValueNew = 0) e2 ON e.occid = e2.occid AND e.ocedid < e2.ocedid
