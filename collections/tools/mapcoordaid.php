@@ -217,9 +217,9 @@ else{
          switch(mapMode) {
             case "polygon":
                if(polyOutputType === "geoJson") {
-                  let geoJsonStr = getField(wktInputId);
+                  const geoJsonStr = getField(wktInputId);
                   try {
-                     let geoJson = JSON.parse(geoJsonStr);
+                     const geoJson = JSON.parse(geoJsonStr);
                         return { 
                            type: "geoJSON", 
                            geoJSON: geoJson
@@ -228,9 +228,9 @@ else{
                      alert(e.message);
                   }
                } else {
-                  let origFootprintWkt = getField(wktInputId);
+                  const origFootprintWkt = getField(wktInputId);
                   try {
-                     let polyPoints = parseWkt(origFootprintWkt);
+                     const polyPoints = parseWkt(origFootprintWkt);
                      if(polyPoints) {
                         return { type: "polygon", latlngs: polyPoints, wkt: getField(wktInputId)};
                      }

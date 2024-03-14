@@ -5,15 +5,6 @@ template.innerHTML = `<span style="display: inline-block; font-size 1em; positio
    <div id="suggestions" style="max-height:20rem; overflow-y:scroll; width: inherit; position: absolute; background-color:#fff;cursor:pointer !important; display: none; border: 1px solid gray; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);"></div>
 </span>`
 
-/* TODO (Logan) move to an itemized input
-template.innerHTML = `<span style="display: inline-block; font-size 1em; position: relative; width:300px">
-   <fieldset style="display:flex; padding:0;width:inherit;">
-      <span style="padding: 0 1rem; width: fit-content;background-color: #E9E9ED">item</span>
-      <input id="dropdown-input" style="border:none; width:100%;"></input>
-   </fieldset>
-   <div id="suggestions" style="max-height:20rem; overflow-y:scroll; width: inherit; position: absolute; background-color:#fff;cursor:pointer !important; display: none; border: 1px solid gray; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);"></div>
-</span>`*/
-
 class AutocompleteInput extends HTMLElement {
 
    constructor() {

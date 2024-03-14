@@ -232,8 +232,8 @@ class GeographicThesaurus extends Manager {
 
       $parameters = str_repeat('?,', count($parentIDs) - 1) . '?';
       $sql = <<<SQL
-      SELECT g.geoThesID, g.geoterm, g.geoLevel, CASE WHEN gp.geoThesID is null THEN false ELSE true END as hasPolygon 
-      FROM geographicthesaurus as g left join geographicpolygon as gp on gp.geoThesID = g.geoThesID where parentID in ($parameters)
+      SELECT g.geoThesID, g.geoterm, g.geoLevel, CASE WHEN gp.geoThesID IS NULL THEN false ELSE true END AS hasPolygon 
+      FROM geographicthesaurus AS g LEFT JOIN geographicpolygon AS gp ON gp.geoThesID = g.geoThesID WHERE parentID IN ($parameters)
       SQL;
 
       try {
@@ -251,7 +251,7 @@ class GeographicThesaurus extends Manager {
 
 	private function setChildCnt($geoIdStr){
 		$retArr = array();
-		$sql = 'SELECT parentID, count(*) as cnt FROM geographicthesaurus WHERE parentID IN('.$geoIdStr.') GROUP BY parentID ';
+		$sql = 'SELECT parentID, count(*) AS cnt FROM geographicthesaurus WHERE parentID IN('.$geoIdStr.') GROUP BY parentID ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr[$r->parentID] = $r->cnt;
@@ -427,9 +427,7 @@ class GeographicThesaurus extends Manager {
 				if($region == 'Northern America') $region == 'North America';
 				if($countryObj->boundaryISO == 'ATA') $region = 'Antartica';
 				$retArr[$key]['region'] = $region;
-				//$retArr[$key]['geoJson'] = $countryObj->gjDownloadURL;
 				$retArr[$key]['geoJson'] = $countryObj->simplifiedGeometryGeoJSON;
-				//$retArr[$key]['link'] = $countryObj->apiURL;
 				$retArr[$key]['img'] = $countryObj->imagePreview;
 			}
 			ksort($retArr);
@@ -668,7 +666,7 @@ class GeographicThesaurus extends Manager {
          if($properties->shapeName === null) continue;
          
          $geoThesIDs = $this->getGeoThesIDByName($properties->shapeName, $geoLevel, $potentialParents);
-         $iso = !empty($properties->shapeGroup)?$properties->shapeGroup: $properties->shapeISO;
+         $iso = !empty($properties->shapeGroup)? $properties->shapeGroup: $properties->shapeISO;
 
          //only does iso check for adm0 or countries because only case where
          //there is just one
@@ -757,9 +755,9 @@ class GeographicThesaurus extends Manager {
 
    public function searchGeothesaurus(string $geoterm) {
       $sql = <<<'SQL'
-      SELECT g.geoThesID, g.geoterm, g.geoLevel , g.parentID, g2.geoterm as parentterm, g2.geoLevel as parentlevel FROM geographicthesaurus g 
-      LEFT JOIN geographicthesaurus g2 on g2.geoThesID = g.parentID
-      where g.geoterm like ?
+      SELECT g.geoThesID, g.geoterm, g.geoLevel , g.parentID, g2.geoterm AS parentterm, g2.geoLevel AS parentlevel FROM geographicthesaurus g 
+      LEFT JOIN geographicthesaurus g2 ON g2.geoThesID = g.parentID
+      WHERE g.geoterm LIKE ?
       SQL;
 
       $stmt = $this->conn->prepare($sql);
@@ -903,9 +901,6 @@ class GeographicThesaurus extends Manager {
 	private function getContinentArr(){
 		return array('Asia','Caribbean','Oceania','Africa','Europe','Central America','Northern America','South America');
 	}
-
-	// Setters and getters
-
 
 	//Mics support functions
 	private function lkupTablesExist(){
