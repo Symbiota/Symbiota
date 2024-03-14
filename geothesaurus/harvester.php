@@ -26,11 +26,11 @@ if(!isset($IS_ADMIN) || (!$IS_ADMIN && !array_key_exists('CollAdmin',$USER_RIGHT
 $statusStr = '';
 
 if($isEditor && $submitAction) {
-	if($submitAction == 'transferDataFromLkupTables'){
-		if($geoManager->transferDeprecatedThesaurus()) $statusStr = '<span style="color:green;">' . $LANG['TRANSFERRED_TO_GEOTHESAURUS'] . '</span>';
-		else $statusStr = '<span style="color:green;">'.implode('<br/>',$geoManager->getWarningArr()).'<span style="color:green;">';
-	}
-	elseif($submitAction == 'submitCountryForm') {
+   if($submitAction == 'transferDataFromLkupTables'){
+      if($geoManager->transferDeprecatedThesaurus()) $statusStr = '<span style="color:green;">' . $LANG['TRANSFERRED_TO_GEOTHESAURUS'] . '</span>';
+      else $statusStr = '<span style="color:green;">'.implode('<br/>',$geoManager->getWarningArr()).'<span style="color:green;">';
+   }
+   elseif($submitAction == 'submitCountryForm') {
       //This Call can Take a very long time depending on the size of the
       //geoJson and how many children are within the feature collection past
       set_time_limit(1200);
@@ -66,7 +66,7 @@ if($isEditor && $submitAction) {
             break;
          }
       }
-	} elseif($submitAction == 'harvestCountries') {
+   } elseif($submitAction == 'harvestCountries') {
       //This Call can Take a very long time depending on the size of the
       //geoJson and how many children are within the feature collection past
       set_time_limit(1200);
@@ -90,28 +90,28 @@ if($isEditor && $submitAction) {
 
 <!DOCTYPE html>
 <html lang="<?=$LANG_TAG?>">
-<head>
-	<title><?php echo $DEFAULT_TITLE. ' - ' . $LANG['GEOTHESAURUS_HARVESTER']; ?></title>
-	<?php
-	include_once ($SERVER_ROOT.'/includes/head.php');
-	?>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<style type="text/css">
-		fieldset{ margin: 10px; padding: 15px; }
-		legend{ font-weight: bold; }
-		label{ text-decoration: underline; }
-		#edit-legend{ display: none }
-		.field-div{ margin: 3px 0px }
-		.editIcon{  }
-		.editTerm{ }
-		.editFormElem{ display: none }
-		#editButton-div{ display: none }
-		#unitDel-div{ display: none }
-		.button-div{ margin: 15px }
-		.link-div{ margin:0px 30px }
-		#status-div{ margin:15px; padding: 15px; }
-	</style>
-   <script type="text/javascript">
+   <head>
+      <title><?php echo $DEFAULT_TITLE. ' - ' . $LANG['GEOTHESAURUS_HARVESTER']; ?></title>
+      <?php
+      include_once ($SERVER_ROOT.'/includes/head.php');
+      ?>
+      <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+      <style type="text/css">
+      fieldset{ margin: 10px; padding: 15px; }
+      legend{ font-weight: bold; }
+      label{ text-decoration: underline; }
+      #edit-legend{ display: none }
+      .field-div{ margin: 3px 0px }
+      .editIcon{  }
+      .editTerm{ }
+      .editFormElem{ display: none }
+      #editButton-div{ display: none }
+      #unitDel-div{ display: none }
+      .button-div{ margin: 15px }
+      .link-div{ margin:0px 30px }
+      #status-div{ margin:15px; padding: 15px; }
+      </style>
+      <script type="text/javascript">
       function submit_loading() {
          let spinner = document.getElementById("submit-loading")
          let helpText = document.getElementById("submit-loading-text")
@@ -135,59 +135,59 @@ if($isEditor && $submitAction) {
             }
          }
       }
-   </script>
-</head>
-<body>
-	<?php
-	$displayLeftMenu = false;
-	include($SERVER_ROOT.'/includes/header.php');
-	?>
-	<div class="navpath">
-		<a href="../index.php"><?= $LANG['NAV_HOME'] ?> </a> &gt;&gt;
-		<a href="index.php"><b> <?= $LANG['NAV_GEOTHES'] ?> </b></a> &gt;&gt;
+      </script>
+   </head>
+   <body>
+      <?php
+      $displayLeftMenu = false;
+      include($SERVER_ROOT.'/includes/header.php');
+      ?>
+      <div class="navpath">
+         <a href="../index.php"><?= $LANG['NAV_HOME'] ?> </a> &gt;&gt;
+         <a href="index.php"><b> <?= $LANG['NAV_GEOTHES'] ?> </b></a> &gt;&gt;
          <b><?= $LANG['GEOGRAPHIC_HARVESTER']?></b>
-	</div>
-	<div id='innertext'>
-		<?php
-		if($statusStr){
-			echo '<div id="status-div">'.$statusStr.'</div>';
-		}
+      </div>
+      <div id='innertext'>
+         <?php
+         if($statusStr){
+         echo '<div id="status-div">'.$statusStr.'</div>';
+         }
 
-		if($statusReport = $geoManager->getThesaurusStatus()){
-			$geoRankArr = $geoManager->getGeoRankArr();
-			echo '<fieldset style="width: 800px">';
-			echo '<legend>' . $LANG['ACTIVE_GEOGRAPHIC_THESAURUS'] . '</legend>';
-			if(isset($statusReport['active'])){
-				foreach($statusReport['active'] as $geoRank => $cnt){
-					echo '<div><b>'.$geoRankArr[$geoRank].':</b> '.$cnt.'</div>';
-				}
-				echo '<div style="margin-top:20px"><a href="index.php">' . $LANG['GO_TO_GEOGRAPHIC_THESAURUS'] . '</a></div>';
-			}
-			else echo '<div>' . $LANG['ACTIVE_THES_EMPTY'] . '</div>';
-			echo '</fieldset>';
-			if(isset($statusReport['lkup'])){
-				?>
-				<fieldset>
+         if($statusReport = $geoManager->getThesaurusStatus()){
+         $geoRankArr = $geoManager->getGeoRankArr();
+         echo '<fieldset style="width: 800px">';
+         echo '<legend>' . $LANG['ACTIVE_GEOGRAPHIC_THESAURUS'] . '</legend>';
+         if(isset($statusReport['active'])){
+         foreach($statusReport['active'] as $geoRank => $cnt){
+         echo '<div><b>'.$geoRankArr[$geoRank].':</b> '.$cnt.'</div>';
+         }
+         echo '<div style="margin-top:20px"><a href="index.php">' . $LANG['GO_TO_GEOGRAPHIC_THESAURUS'] . '</a></div>';
+         }
+         else echo '<div>' . $LANG['ACTIVE_THES_EMPTY'] . '</div>';
+         echo '</fieldset>';
+         if(isset($statusReport['lkup'])){
+         ?>
+         <fieldset>
             <legend><?=$LANG['LOOKUP_TABLES_TITLE']?></legend>
             <p><?=$LANG['LOOKUP_TABLES_DESC']?></p>
-					<?php
-					foreach($statusReport['lkup'] as $k => $v){
-						echo '<div><b>' . $k . ':</b> ' . $v . '</div>';
-					}
-					?>
-					<hr/>
-					<form name="transThesForm" action="harvester.php" method="post" style="margin-top:15px">
+            <?php
+            foreach($statusReport['lkup'] as $k => $v){
+            echo '<div><b>' . $k . ':</b> ' . $v . '</div>';
+            }
+            ?>
+            <hr/>
+            <form name="transThesForm" action="harvester.php" method="post" style="margin-top:15px">
                <button name="submitaction" type="submit" value="transferDataFromLkupTables"><?= $LANG['TRANSFER_LOOKUP_TABLES']?></button>
-					</form>
-				</fieldset>
-				<?php
-			}
-			?>
-			<fieldset>
+            </form>
+         </fieldset>
+         <?php
+         }
+         ?>
+         <fieldset>
             <legend><?= $LANG['ACTIVE_GEOGRAPHIC_THESAURUS']?></legend>
-				<?php
-				if(!$gbAction){
-					?>
+            <?php
+            if(!$gbAction){
+            ?>
             <form style="position:relative" name="" method="post" action="harvester.php">
                <span style="position:absoulte;top:0px;display:inline-flex;vertical-align:middle; margin-bottom: 1rem">
                   <button name="submitaction" onclick="submit_loading()" type="submit" value="harvestCountries"><?= $LANG['ADD_ALL_BOUNDARIES']?></button>
@@ -204,8 +204,8 @@ if($isEditor && $submitAction) {
                <div id="submit-loading-text" style="display:none; margin-bottom:1.5rem">
                   <?=$LANG['LOADING_GEO_DATA_TEXT']?>
                </div> 
-					<table class="styledtable">
-						<tr>
+               <table class="styledtable">
+                  <tr>
                      <th><?=$LANG['TABLE_NAME']?></th>
                      <th><?=$LANG['TABLE_ISO3']?></th>
                      <th><?=$LANG['TABLE_DATABASE']?></th>
@@ -215,113 +215,113 @@ if($isEditor && $submitAction) {
                      <th><?=$LANG['TABLE_LICENSE']?></th>
                      <th><?=$LANG['TABLE_REGION']?></th>
                      <th><?=$LANG['TABLE_IMAGE_PREVIEW']?></th>
-						</tr>
-						<?php
-						$countryList = $geoManager->getGBCountryList();
-						foreach($countryList as $cArr){
-							echo '<tr class="' . (isset($cArr['geoThesID'])?'nodb':'') . (isset($cArr['polygon'])?' nopoly':'') . '">';
-							echo '<td><a href="harvester.php?gbAction=' . $cArr['iso'] . '">' . htmlspecialchars($cArr['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a></td>';
-							echo '<input type="hidden" name="geoJson[]" value="' . $cArr['geoJson'] .'"' . (isset($cArr['polygon'])?'disabled':'') . '>';
-							echo '<td>'.$cArr['iso'] . '</td>';
-							echo '<td>'.(isset($cArr['geoThesID']) ? $LANG['YES'] : $LANG['NO']) . '</td>';
-							echo '<td>'.(isset($cArr['polygon']) ? $LANG['YES'] : $LANG['NO']) . '</td>';
-							echo '<td>'.$cArr['id'] . '</td>';
-							echo '<td>'.$cArr['canonical'] . '</td>';
-							echo '<td>'.$cArr['license'] . '</td>';
-							echo '<td>'.$cArr['region'] . '</td>';
-							//echo '<td><a href="' . $cArr['link'] . '" target="_blank">link</a></td>';
-							echo '<td><a href="' . $cArr['img'] . '" target="_blank">' . $LANG['IMG'] . '</a></td>';
-							echo '</tr>';
-						}
-						?>
-					</table>
-               </form>
-					<?php
-				}
-				else{
-               $geoList = $geoManager->getGBGeoList($gbAction);
-					?>
-               <div style="margin-bottom:1rem">
+                  </tr>
+                  <?php
+                  $countryList = $geoManager->getGBCountryList();
+                  foreach($countryList as $cArr){
+                  echo '<tr class="' . (isset($cArr['geoThesID'])?'nodb':'') . (isset($cArr['polygon'])?' nopoly':'') . '">';
+                  echo '<td><a href="harvester.php?gbAction=' . $cArr['iso'] . '">' . htmlspecialchars($cArr['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a></td>';
+                  echo '<input type="hidden" name="geoJson[]" value="' . $cArr['geoJson'] .'"' . (isset($cArr['polygon'])?'disabled':'') . '>';
+                  echo '<td>'.$cArr['iso'] . '</td>';
+                  echo '<td>'.(isset($cArr['geoThesID']) ? $LANG['YES'] : $LANG['NO']) . '</td>';
+                  echo '<td>'.(isset($cArr['polygon']) ? $LANG['YES'] : $LANG['NO']) . '</td>';
+                  echo '<td>'.$cArr['id'] . '</td>';
+                  echo '<td>'.$cArr['canonical'] . '</td>';
+                  echo '<td>'.$cArr['license'] . '</td>';
+                  echo '<td>'.$cArr['region'] . '</td>';
+                  //echo '<td><a href="' . $cArr['link'] . '" target="_blank">link</a></td>';
+                  echo '<td><a href="' . $cArr['img'] . '" target="_blank">' . $LANG['IMG'] . '</a></td>';
+                  echo '</tr>';
+                  }
+                  ?>
+               </table>
+            </form>
+            <?php
+            }
+            else{
+            $geoList = $geoManager->getGBGeoList($gbAction);
+            ?>
+            <div style="margin-bottom:1rem">
                <a href="harvester.php"><?= $LANG['COUNTRY_LIST_NAV']?></a>
-               </div>
-					<form name="" method="post" action="harvester.php">
-                  <input style="display:none" name="baseParent" value="<?= isset($geoList['ADM0']['geoThesID'])? $geoList['ADM0']['geoThesID'] : null?>">
-						<table class="styledtable">
-							<tr>
-								<th></th>
-                        <th><?=$LANG['TABLE_TYPE']?></th>
-                        <th><?=$LANG['TABLE_BOUNDARY_ID']?></th>
-                        <th><?=$LANG['TABLE_INCOMING_COUNT']?></th>
-                        <th><?=$LANG['TABLE_DATABASE_COUNT']?></th>
-                        <th><?=$LANG['TABLE_POLYGON']?></th>
-                        <th><?=$LANG['TABLE_CANONICAL_NAME']?></th>
-                        <th><?=$LANG['TABLE_REGION']?></th>
-                        <th><?=$LANG['TABLE_LICENSE']?></th>
-                        <th><?=$LANG['TABLE_FULL_LINK']?></th>
-                        <th><?=$LANG['TABLE_IMAGE_PREVIEW']?></th>
-							</tr>
-							<?php
-							$prevGeoThesID = 0;
+            </div>
+            <form name="" method="post" action="harvester.php">
+               <input style="display:none" name="baseParent" value="<?= isset($geoList['ADM0']['geoThesID'])? $geoList['ADM0']['geoThesID'] : null?>">
+               <table class="styledtable">
+                  <tr>
+                     <th></th>
+                     <th><?=$LANG['TABLE_TYPE']?></th>
+                     <th><?=$LANG['TABLE_BOUNDARY_ID']?></th>
+                     <th><?=$LANG['TABLE_INCOMING_COUNT']?></th>
+                     <th><?=$LANG['TABLE_DATABASE_COUNT']?></th>
+                     <th><?=$LANG['TABLE_POLYGON']?></th>
+                     <th><?=$LANG['TABLE_CANONICAL_NAME']?></th>
+                     <th><?=$LANG['TABLE_REGION']?></th>
+                     <th><?=$LANG['TABLE_LICENSE']?></th>
+                     <th><?=$LANG['TABLE_FULL_LINK']?></th>
+                     <th><?=$LANG['TABLE_IMAGE_PREVIEW']?></th>
+                  </tr>
+                  <?php
+                  $prevGeoThesID = 0;
 
-							foreach($geoList as $type => $gArr){
-								echo '<tr class="' . (isset($gArr['geoThesID'])?'nodb':'') . (isset($gArr['polygon']) ? ' nopoly' : '') . '">';
-								echo '<td><input name="geoJson[]" onchange="checkHierarchy(this)" type="checkbox" value="'.$gArr['geoJson'].'" '.(isset($gArr['polygon'])?'DISABLED':'').' /></td>';
-                        echo '<input name="type[]" type="hidden" value="' . $type . '"/>';
-								echo '<td>' . $type . '</td>';
-								echo '<td>' . $gArr['id'] . '</td>';
-								$isInDbStr = 'No';
-								if(isset($gArr['geoThesID'])){
-									$isInDbStr = 1;
-									if(is_numeric($gArr['geoThesID'])){
-							         $isInDbStr = '<a href="index.php?geoThesID=' . $gArr['geoThesID'] . '" target="_blank">1</a>';
-										$prevGeoThesID = $gArr['geoThesID'];
-									} elseif(is_array($gArr['geoThesID'])) {
-										$isInDbStr = count($gArr['geoThesID']);
-										if($prevGeoThesID) $isInDbStr = '<a href="index.php?parentID=' . $prevGeoThesID . '" target="_blank">' . $isInDbStr . '</a>';
-                           } else{
-										$isInDbStr = substr($gArr['geoThesID'], 4);
-										if($prevGeoThesID) $isInDbStr = '<a href="index.php?parentID=' . $prevGeoThesID . '" target="_blank">' . $isInDbStr . '</a>';
-									}
+                  foreach($geoList as $type => $gArr){
+                  echo '<tr class="' . (isset($gArr['geoThesID'])?'nodb':'') . (isset($gArr['polygon']) ? ' nopoly' : '') . '">';
+                  echo '<td><input name="geoJson[]" onchange="checkHierarchy(this)" type="checkbox" value="'.$gArr['geoJson'].'" '.(isset($gArr['polygon'])?'DISABLED':'').' /></td>';
+                  echo '<input name="type[]" type="hidden" value="' . $type . '"/>';
+                  echo '<td>' . $type . '</td>';
+                  echo '<td>' . $gArr['id'] . '</td>';
+                  $isInDbStr = 'No';
+                  if(isset($gArr['geoThesID'])){
+                  $isInDbStr = 1;
+                  if(is_numeric($gArr['geoThesID'])){
+                  $isInDbStr = '<a href="index.php?geoThesID=' . $gArr['geoThesID'] . '" target="_blank">1</a>';
+                  $prevGeoThesID = $gArr['geoThesID'];
+                  } elseif(is_array($gArr['geoThesID'])) {
+                  $isInDbStr = count($gArr['geoThesID']);
+                  if($prevGeoThesID) $isInDbStr = '<a href="index.php?parentID=' . $prevGeoThesID . '" target="_blank">' . $isInDbStr . '</a>';
+                  } else{
+                  $isInDbStr = substr($gArr['geoThesID'], 4);
+                  if($prevGeoThesID) $isInDbStr = '<a href="index.php?parentID=' . $prevGeoThesID . '" target="_blank">' . $isInDbStr . '</a>';
+                  }
 
-                        //echo '<input name="parentID" style="display:none" value="'. $gArr['geoThesID'] .'"/>';
-								}
-								echo '<td>' . $gArr['gbCount'] . '</td>';
-								echo '<td>' . $isInDbStr . '</td>';
-								echo '<td>' . (isset($gArr['polygon']) ? $LANG['YES'] : $LANG['NO']) . '</td>';
-								echo '<td>' . $gArr['canonical'] . '</td>';
-								echo '<td>' . $gArr['region'] . '</td>';
-								echo '<td>' . $gArr['license'] . '</td>';
-								echo '<td><a href="' . $gArr['link'] . '" target="_blank">' . $LANG['LINK'] . '</a></td>';
-								echo '<td><a href="' . $gArr['img'] . '" target="_blank">' . $LANG['IMG'] . '</a></td>';
-								echo '</tr>';
-							}
-							?>
-						</table>
-                  <div style="margin-top:1rem">
-                     <input type="checkbox" id="addgeounit" name="addgeounit" value="true" checked >
+                  //echo '<input name="parentID" style="display:none" value="'. $gArr['geoThesID'] .'"/>';
+                  }
+                  echo '<td>' . $gArr['gbCount'] . '</td>';
+                  echo '<td>' . $isInDbStr . '</td>';
+                  echo '<td>' . (isset($gArr['polygon']) ? $LANG['YES'] : $LANG['NO']) . '</td>';
+                  echo '<td>' . $gArr['canonical'] . '</td>';
+                  echo '<td>' . $gArr['region'] . '</td>';
+                  echo '<td>' . $gArr['license'] . '</td>';
+                  echo '<td><a href="' . $gArr['link'] . '" target="_blank">' . $LANG['LINK'] . '</a></td>';
+                  echo '<td><a href="' . $gArr['img'] . '" target="_blank">' . $LANG['IMG'] . '</a></td>';
+                  echo '</tr>';
+                  }
+                  ?>
+               </table>
+               <div style="margin-top:1rem">
+                  <input type="checkbox" id="addgeounit" name="addgeounit" value="true" checked >
                   <label style="text-decoration: none" for="addgeounit"><?=$LANG['ADD_IF_GEOUNITS_MISSING']?></label>
-                  </div>
-						<input name="gbAction" type="hidden" value="<?php echo $gbAction; ?>" />
-                  <span style="display:inline-flex;vertical-align:middle;margin-top:1rem">
-                     <button name="submitaction" onclick="submit_loading()" type="submit" value="submitCountryForm">
-                        <?= $LANG['ADD_BOUNDARIES'] ?>
-                     </button>
-                     <img id="submit-loading"style="border:0px;width:2rem;height:2rem;display:none" src="../images/ajax-loader.gif" />
-                  </span>
-                  <div id="submit-loading-text" style="display:none">
-                     <?= $LANG['LOADING_GEO_DATA_TEXT'] ?>
-                  </div> 
-					</form>
-					<?php
-				}
-			?>
-			</fieldset>
-			<?php
-		}
-		?>
-	</div>
-	<?php
-	include($SERVER_ROOT.'/includes/footer.php');
-	?>
-</body>
+               </div>
+               <input name="gbAction" type="hidden" value="<?php echo $gbAction; ?>" />
+               <span style="display:inline-flex;vertical-align:middle;margin-top:1rem">
+                  <button name="submitaction" onclick="submit_loading()" type="submit" value="submitCountryForm">
+                     <?= $LANG['ADD_BOUNDARIES'] ?>
+                  </button>
+                  <img id="submit-loading"style="border:0px;width:2rem;height:2rem;display:none" src="../images/ajax-loader.gif" />
+               </span>
+               <div id="submit-loading-text" style="display:none">
+                  <?= $LANG['LOADING_GEO_DATA_TEXT'] ?>
+               </div> 
+            </form>
+            <?php
+            }
+            ?>
+         </fieldset>
+         <?php
+         }
+         ?>
+      </div>
+      <?php
+      include($SERVER_ROOT.'/includes/footer.php');
+      ?>
+   </body>
 </html>
