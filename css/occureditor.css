@@ -354,14 +354,14 @@ body{
 	width:	70px;
 }
 
-#googleDiv{
+#mapIconDiv{
 	float:	left;
 	margin-top:18px;
 	cursor:	pointer;
 	padding:3px;
 }
 
-#googleDiv img{
+#mapIconDiv img{
 	border:	0px;
 	width:	13px;
 }

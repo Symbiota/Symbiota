@@ -125,7 +125,7 @@ class DwcArchiverCore extends Manager{
 				$tPath = ini_get('upload_tmp_dir');
 			}
 			if (!$tPath) {
-				$tPath = $GLOBALS["serverRoot"];
+				$tPath = $GLOBALS['SERVER_ROOT'];
 				if (substr($tPath, -1) != '/' && substr($tPath, -1) != '\\') {
 					$tPath .= '/';
 				}
@@ -254,7 +254,7 @@ class DwcArchiverCore extends Manager{
 	public function addCondition($field, $cond, $value = ''){
 		$cond = strtoupper(trim($cond));
 		if (!preg_match('/^[A-Za-z]+$/', $field)) return false;
-		if (!preg_match('/^[A-Z]+$/', $cond)) return false;
+		if (!preg_match('/^[A-Z_]+$/', $cond)) return false;
 		if ($field) {
 			if ($this->overrideConditionLimit || in_array(strtolower($field), $this->condAllowArr)) {
 				if (!$cond) $cond = 'EQUALS';
@@ -297,7 +297,7 @@ class DwcArchiverCore extends Manager{
 					$taxaArr = array();
 					$taxaArr['taxa'] = implode(';', $condArr['EQUALS']);
 					if ($field == 'family') $taxaArr['taxontype'] = 3;
-					$taxaManager->setTaxonRequestVariable($taxaArr);
+					$taxaManager->setTaxonRequestVariable($taxaArr, true);
 					$sqlFrag .= $taxaManager->getTaxonWhereFrag();
 				} elseif ($field == 'cultivationstatus') {
 					if (current(current($condArr)) === '0') $sqlFrag .= 'AND (o.cultivationStatus = 0 OR o.cultivationStatus IS NULL) ';
@@ -897,10 +897,13 @@ class DwcArchiverCore extends Manager{
 		else {
 			$this->errorMessage = 'FAILED to create archive file due to failure to return occurrence records; check and adjust search variables';
 			$this->logOrEcho($this->errorMessage);
-			if($this->collArr){
-				$collid = key($this->collArr);
-				if ($collid) $this->deleteArchive($collid);
-				unset($this->collArr[$collid]);
+			if($this->targetPath && strpos($this->targetPath, 'content/dwca')){
+				//Archive is being published to Dwc-A publishing directory, thus remove from RSS feed since it's an empty archive
+				if($this->collArr){
+					$collid = key($this->collArr);
+					if ($collid) $this->deleteArchive($collid);
+					unset($this->collArr[$collid]);
+				}
 			}
 		}
 		$this->logOrEcho("\n-----------------------------------------------------\n");

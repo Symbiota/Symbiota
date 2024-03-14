@@ -79,11 +79,11 @@ foreach ($coordArr as $collName => $coll) {
 		//Collect all taxon
 		if(!array_key_exists($record['tid'], $taxaArr)) {
 			$taxaArr[$record['tid']] = [
-				'sn' => $record['sn'], 
-				'tid' => $record['tid'], 
+				'sn' => $record['sn'],
+				'tid' => $record['tid'],
 				'family' => $record['fam'],
 				'color' => $coll['c'],
-				'records' => [$recordCnt] 
+				'records' => [$recordCnt]
 			];
 		} else {
 			array_push($taxaArr[$record['tid']]['records'], $recordCnt);
@@ -95,7 +95,7 @@ foreach ($coordArr as $collName => $coll) {
 				'name' => $collName,
 				'collid' => $record['collid'],
 				'color' => $coll['c'],
-				'records' => [$recordCnt] 
+				'records' => [$recordCnt]
 			];
 		} else {
 			array_push($collArr[$record['collid']]['records'], $recordCnt);
@@ -106,13 +106,13 @@ foreach ($coordArr as $collName => $coll) {
 
 		//Collect all records
 		array_push($recordArr, [
-			'id' => $record['id'], 
-			'tid' => $record['tid'], 
-			'collid' => $record['collid'], 
+			'id' => $record['id'],
+			'tid' => $record['tid'],
+			'collid' => $record['collid'],
 			'family' => $record['fam'],
 			'occid' => $recordId,
-			'collname' => $collName, 
-			'type' => in_array($record['collid'], $obsIDs)? 'observation':'specimen', 
+			'collname' => $collName,
+			'type' => in_array($record['collid'], $obsIDs)? 'observation':'specimen',
 			'lat' => floatval($llstrArr[0]),
 			'lng' => floatval($llstrArr[1]),
 		]);
@@ -140,7 +140,7 @@ foreach ($coordArr as $collName => $coll) {
 		<link href="../../css/jquery.symbiota.css" type="text/css" rel="stylesheet" />
 		<script src="../../js/jquery.popupoverlay.js" type="text/javascript"></script>
 		<script src="../../js/jscolor/jscolor.js?ver=1" type="text/javascript"></script>
-		<!---	<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'&key='.$GOOGLE_MAP_KEY:''); ?>&callback=Function.prototype" ></script> -->
+		<!---	<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing<?= (!empty($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY != 'DEV' ? 'key=' . $GOOGLE_MAP_KEY : '') ?>&callback=Function.prototype" ></script> -->
 		<script src="../../js/symb/collections.map.index.js?ver=2" type="text/javascript"></script>
 
 		<?php
@@ -333,12 +333,12 @@ foreach ($coordArr as $collName => $coll) {
 			return (
 				`<div style="display:table-row;">
 <div style="display:table-cell;vertical-align:middle;padding-bottom:5px;" >
-<input 
-data-role="none" 
-id="${id}" 
-class="color" 
+<input
+data-role="none"
+id="${id}"
+class="color"
 onchange="onColorChange(this)"
-style="cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0px;" 
+style="cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0px;"
 value="${color}"
 />
 </div>
@@ -359,7 +359,7 @@ value="${color}"
 
 			for(let i = 0; i < mapGroups.length; i++) {
 				for(taxon of Object.values(mapGroups[i].taxonMapGroup.group_map)) {
-					if(!taxaLegendMap[taxon.sn]) { 
+					if(!taxaLegendMap[taxon.sn]) {
 						taxaLegendMap[taxon.sn] = taxon
 						taxaLegendMap[taxon.sn].id_map = [{tid: taxon.tid, index: i}];
 					} else {
@@ -393,7 +393,7 @@ value="${color}"
 
 			for(let i = 0; i < mapGroups.length; i++) {
 				for(coll of Object.values(mapGroups[i].collectionMapGroup.group_map)) {
-					if(!collLegendMap[coll.name]) { 
+					if(!collLegendMap[coll.name]) {
 						collLegendMap[coll.name] = coll
 						collLegendMap[coll.name].id_map = [{collid: coll.collid, index: i}];
 					} else {
@@ -498,7 +498,7 @@ value="${color}"
 			document.getElementById("deleteshapediv").style.display = "block";
 		}
 
-		function leafletInit() { 
+		function leafletInit() {
 
 			L.DivIcon.CustomColor = L.DivIcon.extend({
 				createIcon: function(oldIcon) {
@@ -637,7 +637,7 @@ value="${color}"
 						if(marker.options.icon && marker.options.icon.options.observation) {
 							marker.setIcon(getObservationSvg({color: `#${color}`, size:30 }))
 						} else {
-							marker.options.fillColor =`#${color}` 
+							marker.options.fillColor =`#${color}`
 						}
 					}
 				}
@@ -657,10 +657,10 @@ value="${color}"
 							opacity: 1.0,
 							fillOpacity: 1.0,
 							className: `coll-${record['collid']} taxa-${record['tid']}`
-						}):               
+						}):
 						L.marker([record.lat, record.lng], {
 							icon: getObservationSvg({
-								color: `#${tMap[record['tid']].color}`, 
+								color: `#${tMap[record['tid']].color}`,
 								className: `coll-${record['collid']} taxa-${record['tid']}`,
 								size: 30
 							})
@@ -683,9 +683,9 @@ value="${color}"
 				for(let value of Object.values(legendMap)) {
 					const colorCluster = (cluster) => {
 						let childCount = cluster.getChildCount();
-						return new L.DivIcon.CustomColor({ 
-							html: `<div style="background-color: #${value.color};"><span>` + childCount + '</span></div>', 
-							className: `marker-cluster`, 
+						return new L.DivIcon.CustomColor({
+							html: `<div style="background-color: #${value.color};"><span>` + childCount + '</span></div>',
+							className: `marker-cluster`,
 							iconSize: new L.Point(40, 40),
 							color: `#${value.color}77`,
 							mainColor: `#${value.color}`,
@@ -693,11 +693,11 @@ value="${color}"
 					}
 
 					let cluster = L.markerClusterGroup({
-						iconCreateFunction: colorCluster 
+						iconCreateFunction: colorCluster
 					});
 
 					value.id_map.forEach(g => {
-						if(type === "taxa") { 
+						if(type === "taxa") {
 							mapGroups[g.index].taxonMapGroup.genLayer(g.tid, cluster);
 						} else if(type === "coll") {
 							mapGroups[g.index].collectionMapGroup.genLayer(g.collid, cluster);
@@ -769,7 +769,7 @@ value="${color}"
 					group.collectionMapGroup.resetGroup();
 				})
 
-				markers = []; 
+				markers = [];
 
 				getOccurenceRecords(formData).then(res => {
 					if (res) loadOccurenceRecords(res);
@@ -781,13 +781,13 @@ value="${color}"
 
             //If Cross Portal Checkbox Enabled add cross portal search
             if(formData.get('cross_portal_switch') && formData.get('cross_portal')) {
-               formData.set("taxa", formData.get('external-taxa-input')) 
+               formData.set("taxa", formData.get('external-taxa-input'))
                searches.push(searchCollections(formData, formData.get('cross_portal')))
 
                getOccurenceRecords(formData, formData.get('cross_portal')).then(res => {
                   if (res) loadOccurenceRecords(res, "external_occurrencelist");
                });
-               
+
             }
 
 				//This is for handeling multiple portals
@@ -892,7 +892,7 @@ value="${color}"
 			document.getElementById('heatmap_on').addEventListener('change', e => {
 				heatmap = e.target.checked;
 				if(e.target.checked) {
-					//Clear points 
+					//Clear points
 					if(cluster_type == "taxa") mapGroups.forEach(group => group.taxonMapGroup.removeGroup())
 					else if(cluster_type == "coll") mapGroups.forEach(group => group.collectionMapGroup.removeGroup())
 
@@ -941,7 +941,7 @@ value="${color}"
 			let heatmapon = false;
 			let heatmapLayer;
 
-			let bounds; 
+			let bounds;
 			let clusteroff = false;
 
 			let cluster_type = "taxa";
@@ -1049,7 +1049,7 @@ value="${color}"
 					let marker = new google.maps.Marker({
 						position: new google.maps.LatLng(record['lat'], record['lng']),
 						text: "Test",
-						icon: record['type'] === "specimen"? 
+						icon: record['type'] === "specimen"?
 							{
 								path: google.maps.SymbolPath.CIRCLE,
 								fillColor: `#${tMap[record['tid']].color}`,
@@ -1074,14 +1074,14 @@ value="${color}"
 					const infoWin = new google.maps.InfoWindow({content:`<div>${record.id}</div>`});
 
 					google.maps.event.addListener(marker, 'mouseover', function() {
-						infoWin.open(map.mapLayer, marker); 
+						infoWin.open(map.mapLayer, marker);
 					})
 
 					google.maps.event.addListener(marker, 'mouseout', function() {
-						infoWin.close(); 
+						infoWin.close();
 					})
 
-					google.maps.event.addListener(marker, 'click', function() { 
+					google.maps.event.addListener(marker, 'click', function() {
 						openRecord(record);
 					})
 
@@ -1099,8 +1099,8 @@ value="${color}"
 			function drawPoints() {
 
 				if(heatmapon) {
-					if(!heatmapLayer) initHeatmap(); 
-					else updateHeatmap(); 
+					if(!heatmapLayer) initHeatmap();
+					else updateHeatmap();
 				} else {
 					mapGroups.forEach(g => {
 						if(cluster_type === "taxa") g.taxonMapGroup.drawGroup();
@@ -1134,7 +1134,7 @@ value="${color}"
 			function fitMap() {
 				if(map.activeShape) map.mapLayer.fitBounds(map.activeShape.layer.getBounds())
 				else if(bounds) map.mapLayer.fitBounds(bounds);
-				else if (map_bounds) { 
+				else if (map_bounds) {
 					const new_bounds = new google.maps.LatLngBounds()
 					new_bounds.extend(new google.maps.LatLng(parseFloat(map_bounds[0][0]), parseFloat(map_bounds[0][1])))
 					new_bounds.extend(new google.maps.LatLng(parseFloat(map_bounds[1][0]), parseFloat(map_bounds[1][1])))
@@ -1170,7 +1170,7 @@ value="${color}"
 				heatmapLayer.setData({
 					max: heatMaxDensity || 3,
 					min: heatMinDensity || 1,
-					data: recordArr 
+					data: recordArr
 				});
 			}
 
@@ -1201,7 +1201,7 @@ value="${color}"
 
             //If Cross Portal Checkbox Enabled add cross portal search
             if(formData.get('cross_portal_switch') && formData.get('cross_portal')) {
-               formData.set("taxa", formData.get('external-taxa-input')) 
+               formData.set("taxa", formData.get('external-taxa-input'))
                searches.push(searchCollections(formData, formData.get('cross_portal')))
 
                getOccurenceRecords(formData, formData.get('cross_portal')).then(res => {
@@ -1219,7 +1219,7 @@ value="${color}"
 
 				buildPanels(formData.get('cross_portal_switch'));
 
-				//Must have build panels called b4 
+				//Must have build panels called b4
 				genClusters(taxaLegendMap, "taxa");
 				genClusters(collLegendMap, "coll");
 
@@ -1241,7 +1241,7 @@ value="${color}"
 				for (let i = 0; i < recordArr.length; i++) {
 					if(recordArr[i]['occid'] === e.detail.occid) {
 						const current_zoom = map.mapLayer.getZoom();
-						map.mapLayer.setCenter(new google.maps.LatLng(recordArr[i]['lat'], recordArr[i]['lng'])) 
+						map.mapLayer.setCenter(new google.maps.LatLng(recordArr[i]['lat'], recordArr[i]['lng']))
 						map.mapLayer.setZoom(current_zoom > 12? current_zoom: 12);
 						break;
 					}
@@ -1327,7 +1327,7 @@ value="${color}"
 				heatmapon = e.target.checked;
 
 				if(e.target.checked) {
-					//Clear points 
+					//Clear points
 					if(cluster_type == "taxa") {
 						mapGroups.forEach(g=>g.taxonMapGroup.resetGroup())
 					} else if(cluster_type == "coll") {
@@ -1411,7 +1411,7 @@ value="${color}"
 			let response = await fetch(url, {
 				method: "POST",
 				credentials: "same-origin",
-				body: body 
+				body: body
 			});
 
 			return response? await response.text(): '';
@@ -1461,7 +1461,7 @@ value="${color}"
 		};
 
 		const resetTaxaSymbology = (reset = false) => {
-			resetSymbology(taxaLegendMap, 'taxa', v => v.tid, reset);   
+			resetSymbology(taxaLegendMap, 'taxa', v => v.tid, reset);
 		}
 
 		function autoColor(type, getId = v => v.id, keyMap) {
@@ -1564,9 +1564,9 @@ value="${color}"
 				alert("Failed to initialize map coordinate data")
 			}
 
-			<?php if(empty($GOOGLE_MAP_KEY)): ?> 
+			<?php if(empty($GOOGLE_MAP_KEY)): ?>
 				leafletInit();
-			<?php else: ?> 
+			<?php else: ?>
 				googleInit();
 			<?php endif?>
 	  }
@@ -1574,15 +1574,15 @@ value="${color}"
 		<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
 	</head>
 	<body style='width:100%;max-width:100%;min-width:500px;' <?php echo (!$activateGeolocation?'onload="initialize();"':''); ?>>
-		<div 
-			id="service-container" 
+		<div
+			id="service-container"
 			data-search-var="<?=htmlspecialchars($searchVar)?>"
 			data-map-bounds="<?=htmlspecialchars(json_encode($bounds))?>"
 			data-taxa-map="<?=htmlspecialchars(json_encode($taxaArr))?>"
 			data-coll-map="<?=htmlspecialchars(json_encode($collArr))?>"
 			data-records="<?=htmlspecialchars(json_encode($recordArr))?>"
 			data-external-portal-hosts="<?=htmlspecialchars(json_encode($EXTERNAL_PORTAL_HOSTS))?>"
-			class="service-container" 
+			class="service-container"
 		/>
 		<div>
 			<button onclick="document.getElementById('defaultpanel').style.width='380px';  " style="position:absolute;top:0;left:0;margin:0px;z-index:10;font-size: 14px;">&#9776; <b>Open Search Panel</b></button>

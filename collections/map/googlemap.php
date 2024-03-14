@@ -42,7 +42,7 @@ if(array_key_exists('taxa', $taxaArr)){
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script src="//www.google.com/jsapi"></script>
-	<script src="//maps.googleapis.com/maps/api/js?<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'key='.$GOOGLE_MAP_KEY:''); ?>"></script>
+	<script src="//maps.googleapis.com/maps/api/js?<?= (!empty($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY != 'DEV' ? 'key=' . $GOOGLE_MAP_KEY : '') ?>"></script>
 	<script type="text/javascript" src="../../js/symb/markerclusterer.js?ver=260913"></script>
 	<script type="text/javascript" src="../../js/symb/oms.min.js"></script>
 	<script type="text/javascript" src="../../js/symb/keydragzoom.js"></script>
@@ -407,7 +407,7 @@ if(array_key_exists('taxa', $taxaArr)){
                      <div style="float:left;margin-right:5px">
                         <?php echo (isset($LANG['LATITUDE']) ? $LANG['LATITUDE']: 'Longitude') ?>
                         (<?php echo (isset($LANG['DECIMAL']) ? $LANG['DECIMAL']: 'Decimal') ?>):
-                        <input name='lat' id='lat' size='10' type='text' /> 
+                        <input name='lat' id='lat' size='10' type='text' />
                      </div>
 						<div style="float:left;">eg: 34.57</div>
 					</div>

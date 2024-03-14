@@ -280,13 +280,13 @@ body{
 	width:	70px;
 }
 
-#googleDiv{
+#mapIconDiv{
 	float:left;
 	margin: 17px 2px 0px 2px;
 	cursor:	pointer;
 }
 
-#googleDiv img{
+#mapIconDiv img{
 	border:	0px;
 	width:	13px;
 }

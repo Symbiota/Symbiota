@@ -51,7 +51,7 @@ $LANG['IMG_TABLE_DISPLAY'] = 'Abrir visualización de tabla';
 $LANG['IMG_DWNL_DATA'] = 'Botón Descargar';
 $LANG['IMG_COPY'] = 'Botón Copiar';
 $LANG['ID_PROTECTED'] = 'Identificación protegida';
-$LANG['IMG_ADD_VOUCHER'] = 'Agregar cupón';
+$LANG['IMG_ADD_VOUCHER'] = 'Agregar voucher';
 $LANG['IMG_EDIT_OCC'] = 'Editar ocurrencia';
 $LANG['IMG_OCC'] = 'Imagen asociada con el suceso';
 

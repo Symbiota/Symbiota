@@ -165,5 +165,3 @@ INSERT INTO ctcontrolvocabterm(cvID, term, termDisplay)
 SELECT cvID, "fieldNotes", "Field Notes" FROM ctcontrolvocab WHERE tableName = "omoccurassociations" AND fieldName = "relationship" AND filterVariable = "associationType:resource";
 INSERT INTO ctcontrolvocabterm(cvID, term, termDisplay)
 SELECT cvID, "genericResource", "Generic Resource" FROM ctcontrolvocab WHERE tableName = "omoccurassociations" AND fieldName = "relationship" AND filterVariable = "associationType:resource";
-
-
