@@ -69,6 +69,11 @@ $uuidManager = new UuidFactory();
 $displayLeftMenu = (isset($admin_guidmapperMenu)?$admin_guidmapperMenu:"true");
 include($SERVER_ROOT.'/includes/header.php');
 ?>
+<div class="navpath">
+	<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars($LANG['COL_MGMNT'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+	<b><?php echo $LANG['UID_MAP']; ?></b>
+</div>
 <!-- This is inner text! -->
 <div id="innertext">
 	<?php
