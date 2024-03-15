@@ -149,8 +149,25 @@ class OccurrenceImport extends UtilitiesFileImport{
 						$assocArr['associationType'] = $postArr['associationType'];
 						$assocArr['relationship'] = $postArr['relationship'];
 						if(!empty($postArr['subType']) && empty($assocArr['subType'])) $assocArr['subType'] = $postArr['subType'];
-						if(!empty($postArr['replace']) && !empty($assocArr['identifier'])){
-							if($existingAssociation = $importManager->getAssociationArr(array('identifier' => $assocArr['identifier']))){
+						if(!empty($postArr['replace'])){
+							$existingAssociation = null;
+							if(!empty($assocArr['instanceID'])){
+								$existingAssociation = $importManager->getAssociationArr(array('recordID' => $assocArr['instanceID']));
+								if($existingAssociation){
+									//instanceID is recordID, thus don't add to instanceID
+									unset($assocArr['instanceID']);
+								}
+							}
+							if(!$existingAssociation && !empty($assocArr['instanceID'])){
+								$existingAssociation = $importManager->getAssociationArr(array('instanceID' => $assocArr['instanceID']));
+							}
+							if(!$existingAssociation && !empty($assocArr['resourceUrl'])){
+								$existingAssociation = $importManager->getAssociationArr(array('resourceUrl' => $assocArr['resourceUrl']));
+							}
+							if(!$existingAssociation && !empty($assocArr['objectID'])){
+								$existingAssociation = $importManager->getAssociationArr(array('objectID' => $assocArr['objectID']));
+							}
+							if($existingAssociation){
 								if($assocID = key($existingAssociation)){
 									$importManager->setAssocID($assocID);
 									if($importManager->updateAssociation($assocArr)){
@@ -160,11 +177,10 @@ class OccurrenceImport extends UtilitiesFileImport{
 									else{
 										$this->logOrEcho('ERROR updating Occurrence Association: '.$importManager->getErrorMessage(), 1);
 									}
-									continue;
 								}
 							}
 						}
-						if($importManager->insertAssociation($assocArr)){
+						elseif($importManager->insertAssociation($assocArr)){
 							$this->logOrEcho($LANG['ASSOC_ADDED'].': <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>', 1);
 							$status = true;
 						}

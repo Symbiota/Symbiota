@@ -381,7 +381,7 @@ class OccurrenceIndividual extends Manager{
 
 	private function setOccurrenceRelationships(){
 		$relOccidArr = array();
-		$sql = 'SELECT assocID, occid, occidAssociate, relationship, subType, resourceUrl, identifier, dynamicProperties, verbatimSciname, tid
+		$sql = 'SELECT assocID, occid, occidAssociate, relationship, subType, resourceUrl, objectID, dynamicProperties, verbatimSciname, tid
 			FROM omoccurassociations
 			WHERE occid = ? OR occidAssociate = ?';
 		if($stmt = $this->conn->prepare($sql)){
@@ -400,9 +400,8 @@ class OccurrenceIndividual extends Manager{
 					$this->occArr['relation'][$r->assocID]['subtype'] = $r->subType;
 					$this->occArr['relation'][$r->assocID]['occidassoc'] = $relOccid;
 					$this->occArr['relation'][$r->assocID]['resourceurl'] = $r->resourceUrl;
-					$this->occArr['relation'][$r->assocID]['identifier'] = $r->identifier;
+					$this->occArr['relation'][$r->assocID]['objectID'] = $r->objectID;
 					$this->occArr['relation'][$r->assocID]['sciname'] = $r->verbatimSciname;
-					if(!$r->identifier && $r->resourceUrl) $this->occArr['relation'][$r->assocID]['identifier'] = 'unknown ID';
 				}
 				$rs->free();
 			}
@@ -414,7 +413,7 @@ class OccurrenceIndividual extends Manager{
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				foreach($relOccidArr[$r->occid] as $targetAssocID){
-					$this->occArr['relation'][$targetAssocID]['identifier'] = $r->collcode . ':' . $r->catnum;
+					$this->occArr['relation'][$targetAssocID]['objectID'] = $r->collcode . ':' . $r->catnum;
 				}
 			}
 			$rs->free();

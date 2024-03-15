@@ -124,7 +124,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 			alert("<?php echo $LANG['DEFINE_REL']; ?>");
 			return false;
 		}
-		else if(f.resourceurl.value == "" && f.identifier.value == "" && f.verbatimsciname.value == "" && (!f.occidAssoc || f.occidAssoc.value == "")){
+		else if(f.resourceurl.value == "" && f.objectid.value == "" && f.verbatimsciname.value == "" && (!f.occidAssoc || f.occidAssoc.value == "")){
 			alert("<?php echo $LANG['REL_NOT_DEFINED']; ?>");
 			return false;
 		}
@@ -205,10 +205,14 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 	.field-div label{ display: block; }
 	.field-div button{ margin-top: 10px; }
 	.assoc-div{ margin-bottom: 10px; }
+	#subType-div select{ min-width: 130px; }
+	#taxonomy-fieldset{ display: none; }
 </style>
 <div id="voucherdiv" style="width:795px;">
 	<?php
 	$assocArr = $occManager->getOccurrenceRelationships();
+	$basisOfRecordArr = array('HumanObservation' => $LANG['HUMAN_OBS'], 'LivingSpecimen' => $LANG['LIVING_SPEC'], 'MachineObservation' => $LANG['MACHINE_OBS'],
+		'MaterialSample' => $LANG['MAT_SAMPLE'], 'PreservedSpecimen' => $LANG['PRES_SAMPLE'], 'ReferenceCitation' => $LANG['REF_CITATION']);
 	?>
 	<fieldset>
 		<legend><?php echo $LANG['ASSOC_OCC']; ?></legend>
@@ -221,7 +225,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 				<div class="formRow-div" style="margin:10px">
 					<div class="field-div">
 						<label for="associationType"><?= $LANG['ASSOCIATION_TYPE'] ?>: </label>
-						<select name="associationType" onclick="associationTypeChanged(this)" required>
+						<select name="associationType" onchange="associationTypeChanged(this)" required>
 							<option value="">-------------------</option>
 							<option value="resource"><?= $LANG['RESOURCE_LINK'] ?></option>
 							<option value="internalOccurrence"><?= $LANG['INTERNAL_OCCURRENCE'] ?></option>
@@ -257,12 +261,11 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 						<label for="basisofrecord"><?php echo $LANG['BASIS_OF_RECORD']; ?>: </label>
 						<select name="basisofrecord">
 							<option value="">--------------------</option>
-							<option value="HumanObservation"><?php echo $LANG['HUMAN_OBS']; ?></option>
-							<option value="LivingSpecimen"><?php echo $LANG['LIVING_SPEC']; ?></option>
-							<option value="MachineObservation"><?php echo $LANG['MACHINE_OBS']; ?></option>
-							<option value="MaterialSample"><?php echo $LANG['MAT_SAMPLE']; ?></option>
-							<option value="PreservedSpecimen"><?php echo $LANG['PRES_SAMPLE']; ?></option>
-							<option value="ReferenceCitation"><?php echo $LANG['REF_CITATION']; ?></option>
+							<?php
+							foreach($basisOfRecordArr as $borKey => $borName){
+								echo '<option value="' . $borKey . '">' . $borName . '</option>';
+							}
+							?>
 						</select>
 					</div>
 					<div id="locationOnHost-div" class="field-div">
@@ -276,15 +279,6 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 						<input name="notes" type="text" value="" style="width:100%" />
 					</div>
 				</div>
-				<fieldset id="taxonomy-fieldset">
-					<legend><?php echo $LANG['TAXONOMY']; ?></legend>
-					<div class="formRow-div">
-						<div class="field-div">
-							<label for="verbatimsciname"><?php echo $LANG['VERBAT_SCINAME']; ?>: </label>
-							<input id="verbatimsciname" name="verbatimsciname" type="text" value="" style="width: 250px">
-						</div>
-					</div>
-				</fieldset>
 				<fieldset id="internalResource" style="display:none">
 					<legend><?php echo $LANG['INTERNAL_RESOURCE']; ?></legend>
 					<div class="formRow-div">
@@ -330,12 +324,23 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 					<legend><?php echo $LANG['EXTERNAL_RESOURCE']; ?></legend>
 					<div class="formRow-div">
 						<div class="field-div">
-							<label for="identifier"><?php echo $LANG['EXT_ID']; ?>: </label>
-							<input name="identifier" type="text" value="" />
-						</div>
-						<div class="field-div">
-							<label for="resourceurl"><?php echo $LANG['RES_URL']; ?>: </label>
+							<label for="resourceurl"><?php echo $LANG['RESOURCE_URL']; ?>: </label>
 							<input name="resourceurl" type="text" value="" style="width:400px" />
+						</div>
+					</div>
+					<div class="formRow-div">
+						<div class="field-div">
+							<label for="objectid"><?php echo $LANG['ADDITIONAL_ID']; ?>: </label>
+							<input name="objectid" type="text" value="" style="width:250px" >
+						</div>
+					</div>
+				</fieldset>
+				<fieldset id="taxonomy-fieldset">
+					<legend><?php echo $LANG['TAXONOMY']; ?></legend>
+					<div class="formRow-div">
+						<div class="field-div">
+							<label for="verbatimsciname"><?php echo $LANG['VERBAT_SCINAME']; ?>: </label>
+							<input id="verbatimsciname" name="verbatimsciname" type="text" value="" style="width: 250px">
 						</div>
 					</div>
 				</fieldset>
@@ -364,6 +369,101 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 								<input name="delassocid" type="hidden" value="<?php echo $assocID; ?>" />
 								<input type="image" src="../../images/del.png" style="width:1em" />
 							</form>
+							<span onclick="toggle('edit-assoc-div-<?= $assocID ?>')"><img src="../../images/edit.png" ></span>
+						</div>
+						<div id="edit-assoc-div-<?= $assocID ?>" style="display:none">
+							<form name="edit-association-form-<?= $assocID ?>" action="resourcehandler.php" method="post">
+								<div class="formRow-div" style="margin:10px">
+									<div class="field-div">
+										<label for="relationship"><?= $LANG['RELATIONSHIP']; ?>: </label>
+										<select name="relationship" required>
+											<option value="">--------------------</option>
+											<?php
+											foreach($defaultRelationshipArr as $rValue){
+												echo '<option value="'.$rValue.'" ' . ($assocUnit['relationship'] == $rValue ? 'selected' : '') . ' >'.$rValue.'</option>';
+											}
+											?>
+										</select>
+									</div>
+									<div id="subType-div" class="field-div">
+										<label for="subtype"><?= $LANG['REL_SUBTYPE']; ?>: </label>
+										<select name="subtype">
+											<option value="">--------------------</option>
+											<?php
+											$subtypeArr = $occManager->getSubtypeArr();
+											foreach($subtypeArr as $term => $display){
+												if(!$display) $display = $term;
+												echo '<option value="'.$term.'" ' . ($assocUnit['subType'] == $term ? 'selected' : '') . ' >'.$display.'</option>';
+											}
+											?>
+										</select>
+									</div>
+									<?php
+									if($assocUnit['associationType'] != 'resource'){
+										?>
+										<div id="basisOfRecord-div" class="field-div">
+											<label for="basisofrecord"><?= $LANG['BASIS_OF_RECORD']; ?>: </label>
+											<select name="basisofrecord">
+												<option value="">--------------------</option>
+												<?php
+												foreach($basisOfRecordArr as $borKey => $borName){
+													echo '<option value="' . $borKey . '" ' . ($assocUnit['basisOfRecord'] == $borKey ? 'selected' : '') . ' >' . $borName . '</option>';
+												}
+												?>
+											</select>
+										</div>
+										<div id="locationOnHost-div" class="field-div">
+											<label for="locationonhost"><?= $LANG['LOC_ON_HOST']; ?>: </label>
+											<input name="locationonhost" type="text" value="<?= $assocUnit['locationOnHost'] ?>" >
+										</div>
+										<?php
+									}
+									?>
+								</div>
+								<div class="formRow-div" style="margin:10px">
+									<div class="field-div" style="width:100%">
+										<label for="notes"><?= $LANG['NOTES']; ?>: </label>
+										<input name="notes" type="text" value="<?= $assocUnit['notes'] ?>" style="width:100%" >
+									</div>
+								</div>
+								<?php
+								if($assocUnit['associationType'] == 'resource' || $assocUnit['associationType'] == 'externalOccurrence'){
+									?>
+									<div class="formRow-div">
+										<div class="field-div">
+											<label for="resourceurl"><?= $LANG['RESOURCE_URL']; ?>: </label>
+											<input name="resourceurl" type="text" value="<?= $assocUnit['resourceUrl'] ?>" style="width:400px" >
+										</div>
+									</div>
+									<div class="formRow-div">
+										<div class="field-div">
+											<label for="objectid"><?= $LANG['ADDITIONAL_ID']; ?>: </label>
+											<input name="objectid" type="text" value="<?= $assocUnit['objectID'] ?>" style="width:250px" >
+										</div>
+									</div>
+									<?php
+								}
+								if($assocUnit['associationType'] == 'externalOccurrence' || $assocUnit['associationType'] == 'observational'){
+									?>
+									<div class="formRow-div">
+										<div class="field-div">
+											<label for="verbatimsciname"><?= $LANG['VERBAT_SCINAME']; ?>: </label>
+											<input name="verbatimsciname" type="text" value="<?= $assocUnit['verbatimSciname'] ?>" style="width: 250px">
+										</div>
+									</div>
+									<?php
+								}
+								?>
+								<div class="formRow-div" style="margin:10px">
+									<div class="field-div">
+										<input name="occid" type="hidden" value="<?= $occid; ?>" >
+										<input name="collid" type="hidden" value="<?= $collid; ?>" >
+										<input name="occindex" type="hidden" value="<?= $occIndex ?>" >
+										<input name="assocID" type="hidden" value="<?= $assocID ?>" >
+										<button name="submitaction" type="submit" value="saveAssociation"><?= $LANG['SAVE_EDITS']; ?></button>
+									</div>
+								</div>
+							</form>
 						</div>
 						<?php
 						$relationship = $assocUnit['relationship'];
@@ -371,7 +471,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 						echo '<div><label>'.$LANG['RELATIONSHIP'].':</label> '.$relationship.'</div>';
 						if($assocUnit['basisOfRecord']) echo '<div><label>'.$LANG['BASIS_OF_RECORD'].':</label> '.$assocUnit['basisOfRecord'].'</div>';
 						if($assocUnit['accordingTo']) echo '<div><label>'.$LANG['ACCORDING_TO'].':</label> '.$assocUnit['accordingTo'].'</div>';
-						if($assocUnit['identifier']) echo '<div><label>'.$LANG['IDENTIFIER'].':</label> '.$assocUnit['identifier'].'</div>';
+						if($assocUnit['objectID']) echo '<div><label>'.$LANG['OBJECT_IDENTIFIER'].':</label> '.$assocUnit['objectID'].'</div>';
 						if($assocUnit['occidAssociate']){
 							echo '<div><label>'.$LANG['INTERNAL_RESOURCE'].':</label> <a href="#" onclick="openIndividual('.$assocUnit['occidAssociate'].')">'.$assocUnit['occidAssociate'].'</a></div>';
 						}
