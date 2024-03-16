@@ -20,6 +20,7 @@ $LANG['TRANS_TYPE'] = 'Type de transaction';
 $LANG['SHIPMENT'] = 'Expédition';
 $LANG['ADJUSTMENT'] = 'Ajustement';
 $LANG['ENTERED_BY'] = 'Entré par';
+$LANG['SUBMITTED_BY'] = 'Soumis par';
 $LANG['INSTITUTION'] = 'Établissement';
 $LANG['ADJ_AMOUNT'] = 'Montant de l\'ajustement';
 $LANG['EDIT_GIFT_EX'] = 'Modifier le cadeau/l\'échange';

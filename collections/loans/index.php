@@ -218,8 +218,8 @@ if($isEditor){
 							<fieldset>
 								<legend><?php echo $LANG['OPTIONS'] ?></legend>
 								<div>
-									<b><label for="searchterm"><?php echo $LANG['SEARCH'] ?></label> </b>
-									<input type="text" id="searchterm" autocomplete="off" name="searchterm" value="<?php echo $searchTerm;?>" size="20" />
+									<b><label for="search"><?php echo $LANG['SEARCH'] ?></label> </b>
+									<input type="text" id="search" autocomplete="off" name="searchterm" value="<?php echo $searchTerm;?>" size="20" />
 								</div>
 								<div>
 									<input type="radio" name="displayall" value="0"<?php echo ($displayAll==0?'checked':'');?> aria-label="<?php echo $LANG['DISP_OUTSTANDING']; ?>" /> <?php echo $LANG['DISP_OUTSTANDING']; ?>
@@ -255,7 +255,7 @@ if($isEditor){
 										<?php echo $LANG['ENTERED_BY']; ?>:
 									</span><br />
 									<span>
-										<input type="text" autocomplete="off" name="createdbyown" maxlength="32" style="width:100px;" value="<?php echo $PARAMS_ARR['un']; ?>" aria-label="<?php echo $LANG['ENTERED_BY'] ?>" />
+										<input type="text" autocomplete="off" name="createdbyown" maxlength="32" style="width:100px;" value="<?php echo $PARAMS_ARR['un']; ?>" title="<?php echo $LANG['ENTERED_BY'] ?>" aria-label="<?php echo $LANG['SUBMITTED_BY'] ?>" />
 									</span>
 								</div>
 								<div style="padding-top:15px;float:right;">
@@ -340,14 +340,14 @@ if($isEditor){
 							<fieldset>
 								<legend><?php echo $LANG['OPTIONS']; ?></legend>
 								<div>
-									<b><label for="searchterm"><?php echo $LANG['SEARCH'] ?></label> </b><input type="text" id="searchterm" autocomplete="off" name="searchterm" value="<?php echo $searchTerm;?>" size="20" />
+									<b><label for="search"><?php echo $LANG['SEARCH'] ?></label> </b><input type="text" id="search" autocomplete="off" name="searchterm" value="<?php echo $searchTerm;?>" size="20" />
 								</div>
 								<div>
 									<input type="radio" name="displayall" value="0"<?php echo ($displayAll==0 ? 'checked' : ''); ?> aria-label="<?php echo $LANG['DISP_OUTSTANDING']; ?>" /> <?php echo $LANG['DISP_OUTSTANDING']; ?>
 								</div>
 								<div>
 									<input type="radio" name="displayall" value="1"<?php echo ($displayAll ? 'checked' : ''); ?> aria-label="<?php echo $LANG['DISP_ALL']; ?>" /> <?php echo $LANG['DISP_ALL']; ?>
-
+								</div>
 								<div style="float:right;">
 									<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
 									<input type="hidden" name="tabindex" value="1" />
