@@ -113,6 +113,7 @@ $LANG['DISP_OUTSTANDING'] = 'Desplegar únicamente préstamos destacados';
 $LANG['DISP_ALL'] = 'Desplegar todos los préstamos';
 $LANG['REFRESH_LIST'] = 'Refrescar Listados';
 $LANG['CREATE_NEW_LOAN'] = 'Crear Nuevo Préstamo';
+$LANG['CREATE_A_NEW_LOAN'] = 'Crear un nuevo préstamo';
 $LANG['CREATE_OUTGOING'] = 'Nuevo Préstamo Saliente';
 $LANG['LOAN_ID'] = 'Identificador del Préstamo';
 $LANG['SEND_INSTITUTION'] = 'Enviar a la Institución';

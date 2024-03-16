@@ -116,8 +116,8 @@ $LANG['DISP_OUTSTANDING'] = 'Afficher uniquement les prêts en cours';
 $LANG['DISP_ALL'] = 'Afficher tous les prêts';
 $LANG['REFRESH_LIST'] = 'Actualiser la liste';
 $LANG['CREATE_NEW_LOAN'] = 'Créer un nouveau prêt';
+$LANG['CREATE_A_NEW_LOAN'] = 'Créer un nouveau prêt';
 $LANG['CREATE_OUTGOING'] = 'Nouveau prêt sortant';
-
 $LANG['LOAN_ID'] = 'Identifiant du prêt';
 $LANG['SEND_INSTITUTION'] = 'Envoyer à l\'établissement';
 $LANG['CREATE_LOAN'] = 'Créer un prêt';

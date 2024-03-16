@@ -240,7 +240,7 @@ if($isEditor){
 						?>
 						<div id="loanoutToggle" style="float:right;margin:10px;">
 							<a href="#" onclick="displayNewLoanOut();">
-								<img src="../../images/add.png" style="width:1.5em;" alt="<?php echo $LANG['CREATE_NEW_LOAN']; ?>"  />
+								<img src="../../images/add.png" style="width:1.5em;" title="<?php echo $LANG['CREATE_NEW_LOAN']; ?>" alt="<?php echo $LANG['CREATE_NEW_LOAN']; ?>" aria-label="<?php echo $LANG['CREATE_A_NEW_LOAN']; ?>"  />
 							</a>
 						</div>
 						<?php
@@ -280,8 +280,8 @@ if($isEditor){
 										</select>
 									</span>
 									<span>
-										<a href="../misc/institutioneditor.php?emode=1" target="_blank" aria-label="<?php echo $LANG['ADD_NEW_INST']; ?>">
-											<img src="../../images/add.png" style="width:1.2em;" alt="<?php echo $LANG['CREATE_NEW_LOAN']; ?>" />
+										<a href="../misc/institutioneditor.php?emode=1" target="_blank" title="<?php echo $LANG['ADD_NEW_INST']; ?>" aria-label="<?php echo $LANG['ADD_NEW_INST']; ?>">
+											<img src="../../images/add.png" style="width:1.2em;" alt="<?php echo $LANG['ADD_NEW_INST']; ?>" />
 										</a>
 									</span>
 								</div>
@@ -362,7 +362,7 @@ if($isEditor){
 					?>
 					<div id="loaninToggle" style="float:right;margin:10px;">
 						<a href="#" onclick="displayNewLoanIn();">
-							<img src="../../images/add.png" style="width:1.5em;" alt="<?php echo $LANG['CREATE_NEW_LOAN']; ?>" />
+							<img src="../../images/add.png" style="width:1.5em;"  title="<?php echo $LANG['CREATE_NEW_LOAN']; ?>" alt="<?php echo $LANG['CREATE_NEW_LOAN']; ?>" aria-label="<?php echo $LANG['CREATE_A_NEW_LOAN']; ?>" />
 						</a>
 					</div>
 					<div id="newloanindiv" style="display:<?php echo (($loanInList || $loansOnWay || $searchTerm)?'none':'block'); ?>;">
@@ -400,8 +400,8 @@ if($isEditor){
 										</select>
 									</span>
 									<span>
-										<a href="../misc/institutioneditor.php?emode=1" target="_blank" aria-label="<?php echo $LANG['ADD_NEW_INST']; ?>">
-											<img src="../../images/add.png" style="width:1.2em;" alt="<?php echo $LANG['CREATE_NEW_LOAN']; ?>" />
+										<a href="../misc/institutioneditor.php?emode=1" target="_blank" title="<?php echo $LANG['ADD_NEW_INST']; ?>" aria-label="<?php echo $LANG['ADD_NEW_INST']; ?>">
+											<img src="../../images/add.png" style="width:1.2em;" alt="<?php echo $LANG['ADD_NEW_INST']; ?>" />
 										</a>
 									</span>
 								</div>

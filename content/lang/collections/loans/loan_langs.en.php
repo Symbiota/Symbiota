@@ -113,6 +113,7 @@ $LANG['DISP_OUTSTANDING'] = 'Display outstanding loans only';
 $LANG['DISP_ALL'] = 'Display all loans';
 $LANG['REFRESH_LIST'] = 'Refresh List';
 $LANG['CREATE_NEW_LOAN'] = 'Create New Loan';
+$LANG['CREATE_A_NEW_LOAN'] = 'Create  a New Loan';
 $LANG['CREATE_OUTGOING'] = 'New Outgoing Loan';
 $LANG['LOAN_ID'] = 'Loan Identifier';
 $LANG['SEND_INSTITUTION'] = 'Send to Institution';
