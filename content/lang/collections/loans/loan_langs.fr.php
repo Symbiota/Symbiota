@@ -62,6 +62,7 @@ $LANG['CREATE_NEW_EXCHANGE'] = 'Créer un nouvel échange';
 $LANG['NEW_GIFT'] = 'Nouveau cadeau/échange';
 $LANG['SEL_INST'] = 'Sélectionner un établissement';
 $LANG['ADD_NEW_INST'] = 'Ajouter un nouvel établissement';
+$LANG['ADD_A_NEW_INST'] = 'Inclure une nouvelle institution';
 $LANG['CREATE_EXCHANGE'] = 'Créer un échange';
 $LANG['TRANS_BY_INST'] = 'Enregistrements de transactions par institution';
 $LANG['OUTGOING_EX_SENT'] = 'Échange sortant ; Envoyé ';

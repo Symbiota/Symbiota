@@ -280,7 +280,7 @@ if($isEditor){
 										</select>
 									</span>
 									<span>
-										<a href="../misc/institutioneditor.php?emode=1" target="_blank" title="<?php echo $LANG['ADD_NEW_INST']; ?>" aria-label="<?php echo $LANG['ADD_NEW_INST']; ?>">
+										<a href="../misc/institutioneditor.php?emode=1" target="_blank" title="<?php echo $LANG['ADD_NEW_INST']; ?>" aria-label="<?php echo $LANG['ADD_A_NEW_INST']; ?>">
 											<img src="../../images/add.png" style="width:1.2em;" alt="<?php echo $LANG['ADD_NEW_INST']; ?>" />
 										</a>
 									</span>
@@ -400,7 +400,7 @@ if($isEditor){
 										</select>
 									</span>
 									<span>
-										<a href="../misc/institutioneditor.php?emode=1" target="_blank" title="<?php echo $LANG['ADD_NEW_INST']; ?>" aria-label="<?php echo $LANG['ADD_NEW_INST']; ?>">
+										<a href="../misc/institutioneditor.php?emode=1" target="_blank" title="<?php echo $LANG['ADD_NEW_INST']; ?>" aria-label="<?php echo $LANG['ADD_A_NEW_INST']; ?>">
 											<img src="../../images/add.png" style="width:1.2em;" alt="<?php echo $LANG['ADD_NEW_INST']; ?>" />
 										</a>
 									</span>

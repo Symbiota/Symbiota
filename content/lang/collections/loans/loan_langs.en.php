@@ -59,6 +59,7 @@ $LANG['CREATE_NEW_EXCHANGE'] = 'Create New Exchange';
 $LANG['NEW_GIFT'] = 'New Gift/Exchange';
 $LANG['SEL_INST'] = 'Select Institution';
 $LANG['ADD_NEW_INST'] = 'Add a New Institution';
+$LANG['ADD_A_NEW_INST'] = 'Include a New Institution';
 $LANG['CREATE_EXCHANGE'] = 'Create Exchange';
 $LANG['TRANS_BY_INST'] = 'Transaction Records by Institution';
 $LANG['OUTGOING_EX_SENT'] = 'Outgoing exchange; Sent ';
