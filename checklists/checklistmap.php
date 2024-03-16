@@ -24,6 +24,9 @@ $coords = [];
 
 foreach($coordArr as $tid => $taxaCoords) {
    foreach($taxaCoords as $coord) {
+
+
+
       $ll = explode(',',$coord['ll']);
       if(count($ll) == 2 && trim($ll[0]) != 0 && trim($ll[1]) != 0) {
          array_push($coords, ['lat' => $ll[0], 'lng' => $ll[1], 'occid' => $coord['occid'], 'notes' => $coord['notes']]);
@@ -34,7 +37,8 @@ $coordJson = json_encode($coords);
 $metaJson = json_encode($clMeta);
 
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE . ' - ' . $LANG['COORD_MAP']; ?></title>
 	<?php
@@ -208,7 +212,7 @@ $metaJson = json_encode($clMeta);
             occurCoords = JSON.parse(data.getAttribute('data-occur-coords'));
             clMeta = parseNested(data.getAttribute('data-cl-meta'));
          } catch (err) {
-            alert("Failed to load occurence data")
+            alert("<?php echo $LANG['FAILED_TO_LOAD'] ?>")
          }
 
          if(clMeta && clMeta.footprintwkt) {
@@ -255,7 +259,7 @@ $metaJson = json_encode($clMeta);
    <div id="service-container"
       data-occur-coords="<?= htmlspecialchars($coordJson) ?>"
       data-cl-meta="<?= htmlspecialchars($metaJson)?>"
-   />
+   >
 	<div id='map_canvas'></div>
 </body>
 </html>
