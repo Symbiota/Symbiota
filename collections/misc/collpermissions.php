@@ -121,9 +121,8 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 			$collPerms = $permManager->getCollectionEditors($collId);
 			if(!$isGenObs){
 				?>
-				<form>
-				<fieldset style="margin:15px;padding:15px;">
-					<legend><b><?php echo (isset($LANG['ADMINS'])?$LANG['ADMINS']:'Administrators'); ?></b></legend>
+				<section class="fieldset-like">
+				<h1><span><b><?php echo (isset($LANG['ADMINS'])?$LANG['ADMINS']:'Administrators'); ?></b></span></h1>
 					<?php
 					if(array_key_exists('admin',$collPerms)){
 						?>
@@ -134,7 +133,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 							?>
 							<li>
 								<?php echo $uName; ?>
-								<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&deladmin=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="return confirm('<?php echo htmlspecialchars(isset($LANG['YES_REM_ADMIN'])?$LANG['YES_REM_ADMIN']:'Are you sure you want to remove administrative rights for this user?', HTML_SPECIAL_CHARS_FLAGS); ?>');" aria-label="<?php echo htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), HTML_SPECIAL_CHARS_FLAGS); ?>">
+								<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&deladmin=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="return confirm('<?php echo htmlspecialchars(isset($LANG['YES_REM_ADMIN'])?$LANG['YES_REM_ADMIN']:'Are you sure you want to remove administrative rights for this user?', HTML_SPECIAL_CHARS_FLAGS); ?>');" title="<?php echo htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), HTML_SPECIAL_CHARS_FLAGS); ?>" aria-label="<?php echo $LANG['REMOVE_PERMISSIONS'] ?>">
 									<img src="../../images/drop.png" style="width:1em;" alt="<?php echo $LANG['DROP_ICON']; ?>" />
 								</a>
 							</li>
@@ -150,14 +149,12 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 						echo '</div>';
 					}
 					?>
-				</fieldset>
-				</form>
+				</section>
 				<?php
 			}
 			?>
-			<form>
-			<fieldset style="margin:15px;padding:15px;">
-				<legend><b><?php echo (isset($LANG['EDITORS'])?$LANG['EDITORS']:'Editors'); ?></b></legend>
+			<section class="fieldset-like">
+				<h1><span><b><?php echo (isset($LANG['EDITORS'])?$LANG['EDITORS']:'Editors'); ?></b></span></h1> 
 				<?php
 				if(array_key_exists('editor',$collPerms)){
 					?>
@@ -168,7 +165,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 						?>
 						<li>
 							<?php echo $uName; ?>
-							<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&deleditor=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="return confirm('<?php echo htmlspecialchars((isset($LANG['YES_REM_EDIT'])?$LANG['YES_REM_EDIT']:'Are you sure you want to remove editor rights for this user?'), HTML_SPECIAL_CHARS_FLAGS); ?>');" aria-label="<?php echo htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), HTML_SPECIAL_CHARS_FLAGS); ?>">
+							<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&deleditor=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="return confirm('<?php echo htmlspecialchars((isset($LANG['YES_REM_EDIT'])?$LANG['YES_REM_EDIT']:'Are you sure you want to remove editor rights for this user?'), HTML_SPECIAL_CHARS_FLAGS); ?>');" title="<?php echo htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), HTML_SPECIAL_CHARS_FLAGS); ?>" aria-label="<?php echo $LANG['REMOVE_PERMISSIONS'] ?>">
 								<img src="../../images/drop.png" style="width:1em;" alt="<?php echo $LANG['DROP_ICON']; ?>" />
 							</a>
 						</li>
@@ -187,14 +184,12 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 				<div style="margin:10px">
 					*<?php echo (isset($LANG['ADMINS_INHERIT'])?$LANG['ADMINS_INHERIT']:'Administrators automatically inherit editing rights'); ?>
 				</div>
-			</fieldset>
-			</form>
+			</section>
 			<?php
 			if(!$isGenObs){
 				?>
-				<form>
-				<fieldset style="margin:15px;padding:15px;">
-					<legend><b><?php echo (isset($LANG['RARE_SP_READERS'])?$LANG['RARE_SP_READERS']:'Rare Species Readers'); ?></b></legend>
+				<section class="fieldset-like">
+					<h1><span><b><?php echo (isset($LANG['RARE_SP_READERS'])?$LANG['RARE_SP_READERS']:'Rare Species Readers'); ?></b></span></h1>
 					<?php
 					if(array_key_exists('rarespp',$collPerms)){
 						?>
@@ -205,7 +200,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 							?>
 							<li>
 								<?php echo $uName; ?>
-								<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&delrare=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="return confirm('<?php echo htmlspecialchars((isset($LANG['YES_REM_RARE'])?$LANG['YES_REM_RARE']:'Are you sure you want to remove user rights to view locality details for rare species?'), HTML_SPECIAL_CHARS_FLAGS); ?>');" aria-label="<?php echo htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), HTML_SPECIAL_CHARS_FLAGS); ?>">
+								<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&delrare=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="return confirm('<?php echo htmlspecialchars((isset($LANG['YES_REM_RARE'])?$LANG['YES_REM_RARE']:'Are you sure you want to remove user rights to view locality details for rare species?'), HTML_SPECIAL_CHARS_FLAGS); ?>');" title="<?php echo htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), HTML_SPECIAL_CHARS_FLAGS); ?>" aria-label="<?php echo $LANG['REMOVE_PERMISSIONS'] ?>">
 									<img src="../../images/drop.png" style="width:1em;" alt="<?php echo $LANG['DROP_ICON']; ?>" />
 								</a>
 							</li>
@@ -224,15 +219,13 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 					<div style="margin:10px">
 						*<?php echo (isset($LANG['ADMINS_EDITS_INHERIT'])?$LANG['ADMINS_EDITS_INHERIT']:'Administrators and editors automatically inherit protected species viewing rights'); ?>
 					</div>
-				</fieldset>
-				</form>
+				</section>
 				<?php
 			}
 			$userArr = $permManager->getUsers();
 			?>
-			<form>
-			<fieldset style="margin:15px;padding:15px;">
-				<legend><b><?php echo (isset($LANG['ADD_NEW_USER'])?$LANG['ADD_NEW_USER']:'Add a New Admin/Editor/Reader'); ?></b></legend>
+			<section class="fieldset-like">
+				<h1><span><b><?php echo (isset($LANG['ADD_NEW_USER'])?$LANG['ADD_NEW_USER']:'Add a New Admin/Editor/Reader'); ?></b></span></h1>
 				<form name="addrights" action="collpermissions.php" method="post" onsubmit="return verifyAddRights(this)">
 					<div>
 					    <label for="uid"><?php echo $LANG['SEL_USER'] ?></label>
@@ -266,18 +259,15 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 						<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
 						<button name="action" type="submit" value="Add Permissions for User"><?php echo (isset($LANG['ADD_PERMS'])?$LANG['ADD_PERMS']:'Add Permissions for User'); ?></button>
 					</div>
-				
-			</fieldset>
-			</form>
+				</form>
+			</section>
 			<?php
 			//Personal specimen management sponsorship
 			$genObsArr = $permManager->getGeneralObservationCollidArr();
 			if(!$isGenObs && $genObsArr){
 				?>
-				<form>
-				<fieldset style="margin:15px;padding:15px;">
-					<legend><b><?php echo (isset($LANG['PERS_OBS_SPONSOR'])?$LANG['PERS_OBS_SPONSOR']:'Personal Observation Management Sponsorship'); ?></b></legend>
-					<div style="margin:10px">
+				<section class="fieldset-like">
+					<h1><span><b><?php echo (isset($LANG['PERS_OBS_SPONSOR'])?$LANG['PERS_OBS_SPONSOR']:'Personal Observation Management Sponsorship'); ?></b></span></h1>					<div style="margin:10px">
 					<?php echo (isset($LANG['SPONSOR_EXPLAIN'])?$LANG['SPONSOR_EXPLAIN']:'
 						Collection administrators listed above can sponsor users for Personal Observation Management.
 						This allows users to enter field data as observations that are linked directly to their user profile, print labels,
@@ -295,7 +285,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 								if(count($genObsArr) > 1) $titleStr .= ' access to '.$genObsArr[$pmArr['persobscollid']];
 								echo '<span title="'.$titleStr.'">'.$pmArr['name'].'</span> ';
 								if($SYMB_UID == $pmArr['uidab']){
-									echo '<a href="collpermissions.php?collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&delpersobs=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS) . '&persobscollid=' . htmlspecialchars($pmArr['persobscollid'], HTML_SPECIAL_CHARS_FLAGS) . '" onclick="return confirm(\'' . htmlspecialchars((isset($LANG['SURE_DELETE'])?$LANG['SURE_DELETE']:'Are you sure you want to delete these permissions?'), HTML_SPECIAL_CHARS_FLAGS) . '\');" aria-label="' . htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), HTML_SPECIAL_CHARS_FLAGS) . '">';
+									echo '<a href="collpermissions.php?collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&delpersobs=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS) . '&persobscollid=' . htmlspecialchars($pmArr['persobscollid'], HTML_SPECIAL_CHARS_FLAGS) . '" onclick="return confirm(\'' . htmlspecialchars((isset($LANG['SURE_DELETE'])?$LANG['SURE_DELETE']:'Are you sure you want to delete these permissions?'), HTML_SPECIAL_CHARS_FLAGS) . '\');" title="' . htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), HTML_SPECIAL_CHARS_FLAGS) . '" aria-label="' . $LANG['REMOVE_PERMISSIONS'] . '">';
 									echo '<img src="../../images/drop.png" style="width:1em;" alt="' . $LANG['DROP_ICON'] . '" />';
 									echo '</a>';
 								}
@@ -353,15 +343,13 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 						<?php
 					}
 					?>
-				</fieldset>
-				</form>
+				</section>
 				<?php
 			}
 			//Checklist / Dataset sponsorship
 				?>
-				<form>
-				<fieldset style="margin:15px;padding:15px;">
-					<legend><b><?php echo (isset($LANG['CHECKLIST_SPONSOR'])?$LANG['CHECKLIST_SPONSOR']:'Checklist / Dataset Management Sponsorship'); ?></b></legend>
+				<section class="fieldset-like">
+					<h1><span><b><?php echo (isset($LANG['CHECKLIST_SPONSOR'])?$LANG['CHECKLIST_SPONSOR']:'Checklist / Dataset Management Sponsorship'); ?></b></span></h1>
 					<div style="margin:10px">
 					<?php echo (isset($LANG['CHECKLIST_SPONSOR_EXPLAIN'])?$LANG['CHECKLIST_SPONSOR_EXPLAIN']:'
 						Collection administrators listed above can sponsor users for Checklist and Dataset Management.
@@ -397,8 +385,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 						<?php
 					}
 					?>
-				</fieldset>
-				</form>
+				</section>
 				<?php
 
 			//Identification Editors
@@ -476,7 +463,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 								?>
 								<li>
 									<?php echo $username.' ('.(isset($LANG['ALL_RANGES'])?$LANG['ALL_RANGES']:'All approved taxonomic ranges listed below').')'; ?>
-									<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&delidenteditor=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS) . '&utid=all'; ?>" onclick="return confirm('<?php echo htmlspecialchars((isset($LANG['SURE_REM_ID'])?$LANG['SURE_REM_ID']:'Are you sure you want to remove identification editing rights for this user?'), HTML_SPECIAL_CHARS_FLAGS); ?>');" aria-label="<?php echo htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), HTML_SPECIAL_CHARS_FLAGS); ?>">
+									<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&delidenteditor=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS) . '&utid=all'; ?>" onclick="return confirm('<?php echo htmlspecialchars((isset($LANG['SURE_REM_ID'])?$LANG['SURE_REM_ID']:'Are you sure you want to remove identification editing rights for this user?'), HTML_SPECIAL_CHARS_FLAGS); ?>');" title="<?php echo htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), HTML_SPECIAL_CHARS_FLAGS); ?>" aria-label="<?php echo $LANG['REMOVE_PERMISSIONS'] ?>">
 										<img src="../../images/drop.png" style="width:1em;" alt="<?php echo $LANG['DROP_ICON']; ?>" />
 									</a>
 								</li>
@@ -489,7 +476,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 									echo $username.' ('.$sciname.')';
 									if(!$hasAll){
 										?>
-										<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&delidenteditor=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS) . '&utid=' . htmlspecialchars($utid, HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="return confirm('<?php echo htmlspecialchars((isset($LANG['SURE_REM_ID'])?$LANG['SURE_REM_ID']:'Are you sure you want to remove identification editing rights for this user?'), HTML_SPECIAL_CHARS_FLAGS); ?>');" aria-label="<?php echo htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), HTML_SPECIAL_CHARS_FLAGS); ?>">
+										<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&delidenteditor=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS) . '&utid=' . htmlspecialchars($utid, HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="return confirm('<?php echo htmlspecialchars((isset($LANG['SURE_REM_ID'])?$LANG['SURE_REM_ID']:'Are you sure you want to remove identification editing rights for this user?'), HTML_SPECIAL_CHARS_FLAGS); ?>');" title="<?php echo htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), HTML_SPECIAL_CHARS_FLAGS); ?>" aria-label="<?php echo $LANG['REMOVE_PERMISSIONS'] ?>">
 											<img src="../../images/drop.png" style="width:1em;" alt="<?php echo $LANG['DROP_ICON']; ?>" />
 										</a>
 										<?php

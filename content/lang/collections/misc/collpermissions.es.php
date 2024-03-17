@@ -18,6 +18,7 @@ $LANG['PERMISSIONS'] = 'Permisos';
 $LANG['ADMINS'] = 'Administradores';
 $LANG['YES_REM_ADMIN'] = '¿Está seguro que quiere remover los permisos de administrador para este usuario?';
 $LANG['DEL_PERMISSIONS'] = 'Eliminar permisos para este usuario';
+$LANG['REMOVE_PERMISSIONS'] = 'Eliminar permisos de usuario';
 $LANG['NO_PERMS'] = 'No existen permisos administrativos (excluyendo Super Administradores)';
 $LANG['EDITORS'] = 'Editores';
 $LANG['YES_REM_EDIT'] = '¿Está seguro que quiere remover los permisos de editor para este usuario?';

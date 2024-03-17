@@ -20,6 +20,7 @@ $LANG['NO_PERMS'] = "Il n'y a pas d'autorisations administratives (à l'exceptio
 $LANG['EDITORS'] = 'Éditeurs';
 $LANG['YES_REM_EDIT'] = "Voulez-vous vraiment supprimer les droits d'éditeur pour cet utilisateur?";
 $LANG['DEL_PERMISSIONS'] = 'Supprimer autorisations pour cet utilisateur';
+$LANG['REMOVE_PERMISSIONS'] = 'Supprimer les autorisations utilisateur';
 $LANG['NO_GENERAL_PERMS'] = "Il n'y a pas d'autorisations générales d'éditeur";
 $LANG['ADMINS_INHERIT'] = "Les administrateurs héritent automatiquement des droits d'édition";
 $LANG['RARE_SP_READERS'] = "Lecteurs d'Espèces Rares";
