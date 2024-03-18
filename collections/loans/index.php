@@ -218,8 +218,8 @@ if($isEditor){
 							<fieldset>
 								<legend><?php echo $LANG['OPTIONS'] ?></legend>
 								<div>
-									<b><label for="search"><?php echo $LANG['SEARCH'] ?></label> </b>
-									<input type="text" id="search" autocomplete="off" name="searchterm" value="<?php echo $searchTerm;?>" size="20" />
+									<b><label for="search-loanout"><?php echo $LANG['SEARCH'] ?></label> </b>
+									<input type="text" id="search-loanout" autocomplete="off" name="searchterm" value="<?php echo $searchTerm;?>" size="20" />
 								</div>
 								<div>
 									<input type="radio" name="displayall" value="0"<?php echo ($displayAll==0?'checked':'');?> aria-label="<?php echo $LANG['DISP_OUTSTANDING']; ?>" /> <?php echo $LANG['DISP_OUTSTANDING']; ?>
@@ -340,7 +340,8 @@ if($isEditor){
 							<fieldset>
 								<legend><?php echo $LANG['OPTIONS']; ?></legend>
 								<div>
-									<b><label for="search"><?php echo $LANG['SEARCH'] ?></label> </b><input type="text" id="search" autocomplete="off" name="searchterm" value="<?php echo $searchTerm;?>" size="20" />
+									<b><label for="search-loanin"><?php echo $LANG['SEARCH'] ?></label> </b>
+									<input type="text" id="search-loanin" autocomplete="off" name="searchterm" value="<?php echo $searchTerm;?>" size="20" />
 								</div>
 								<div>
 									<input type="radio" name="displayall" value="0"<?php echo ($displayAll==0 ? 'checked' : ''); ?> aria-label="<?php echo $LANG['DISP_OUTSTANDING']; ?>" /> <?php echo $LANG['DISP_OUTSTANDING']; ?>
