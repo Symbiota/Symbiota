@@ -301,44 +301,44 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 					if((array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"]))){
 						?>
 						<form>
-						<fieldset style="margin:40px 15px 0px 15px;padding:15px;">
-							<legend><b><?php echo (isset($LANG['NEW_SPONSOR'])?$LANG['NEW_SPONSOR']:'New Sponsorship'); ?></b></legend>
-							<form name="addpersobsman" action="collpermissions.php" method="post" onsubmit="return verifyAddRights(this)">
-								<div>
-								    <label for="uid"><?php echo $LANG['SEL_USER'] ?></label>
-									<select id="uid" name="uid">
-										<option value=""><?php echo (isset($LANG['SEL_USER'])?$LANG['SEL_USER']:'Select User'); ?></option>
-										<option value="">-----------------------------------</option>
+							<fieldset style="margin:40px 15px 0px 15px;padding:15px;">
+								<legend><b><?php echo (isset($LANG['NEW_SPONSOR'])?$LANG['NEW_SPONSOR']:'New Sponsorship'); ?></b></legend>
+								<form name="addpersobsman" action="collpermissions.php" method="post" onsubmit="return verifyAddRights(this)">
+									<div>
+										<label for="uid"><?php echo $LANG['SEL_USER'] ?></label>
+										<select id="uid" name="uid">
+											<option value=""><?php echo (isset($LANG['SEL_USER'])?$LANG['SEL_USER']:'Select User'); ?></option>
+											<option value="">-----------------------------------</option>
+											<?php
+											foreach($userArr as $uid => $uName){
+												echo '<option value="'.$uid.'">'.$uName.'</option>';
+											}
+											?>
+										</select>
+									</div>
+									<div>
 										<?php
-										foreach($userArr as $uid => $uName){
-											echo '<option value="'.$uid.'">'.$uName.'</option>';
+										if(count($genObsArr) == 1){
+											echo '<input name="persobscollid" type="hidden" value="'.key($genObsArr).'" aria-label="' . $LANG['SEL_PERS_OBS'] . '" />';
+										}
+										else{
+											echo '<label for="persobscollid">' . $LANG['SEL_PERS_OBS'] . '</label>';
+											echo '<select id="persobscollid" name="persobscollid">';
+											echo '<option value="">'.(isset($LANG['SEL_PERS_OBS'])?$LANG['SEL_PERS_OBS']:'Select Personal Observation Project').'</option>';
+											echo '<option value="">-----------------------------------</option>';
+											foreach($genObsArr as $persObsCollid => $perObsName){
+												echo '<option value="'.$persObsCollid.'">'.$perObsName.'</option>';
+											}
+											echo '</select>';
 										}
 										?>
-									</select>
-								</div>
-								<div>
-									<?php
-									if(count($genObsArr) == 1){
-										echo '<input name="persobscollid" type="hidden" value="'.key($genObsArr).'" aria-label="' . $LANG['SEL_PERS_OBS'] . '" />';
-									}
-									else{
-										echo '<label for="persobscollid">' . $LANG['SEL_PERS_OBS'] . '</label>';
-										echo '<select id="persobscollid" name="persobscollid">';
-										echo '<option value="">'.(isset($LANG['SEL_PERS_OBS'])?$LANG['SEL_PERS_OBS']:'Select Personal Observation Project').'</option>';
-										echo '<option value="">-----------------------------------</option>';
-										foreach($genObsArr as $persObsCollid => $perObsName){
-											echo '<option value="'.$persObsCollid.'">'.$perObsName.'</option>';
-										}
-										echo '</select>';
-									}
-									?>
-								</div>
-								<div style="margin:15px;">
-									<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
-									<button name="action" type="submit" value="Sponsor Personal Observation User"><?php echo (isset($LANG['SPONSOR_USER'])?$LANG['SPONSOR_USER']:'Sponsor User'); ?></button>
-								</div>
-							</form>
-						</fieldset>
+									</div>
+									<div style="margin:15px;">
+										<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
+										<button name="action" type="submit" value="Sponsor Personal Observation User"><?php echo (isset($LANG['SPONSOR_USER'])?$LANG['SPONSOR_USER']:'Sponsor User'); ?></button>
+									</div>
+								</form>
+							</fieldset>
 						</form>
 						<?php
 					}
@@ -360,27 +360,27 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 					if((array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"]))){
 						?>
 						<form>
-						<fieldset style="margin:40px 15px 0px 15px;padding:15px;">
-							<legend><b><?php echo (isset($LANG['NEW_SPONSOR'])?$LANG['NEW_SPONSOR']:'New Sponsorship'); ?></b></legend>
-							<form name="addchecklistman" action="collpermissions.php" method="post" onsubmit="return verifyAddRights(this)">
-								<div>
-								    <label for="uid"><?php echo $LANG['SEL_USER'] ?></label>
-									<select id="uid" name="uid">
-										<option value=""><?php echo (isset($LANG['SEL_USER'])?$LANG['SEL_USER']:'Select User'); ?></option>
-										<option value="">-----------------------------------</option>
-										<?php
-										foreach($userArr as $uid => $uName){
-											echo '<option value="'.$uid.'">'.$uName.'</option>';
-										}
-										?>
-									</select>
-								</div>
-								<div style="margin:15px;">
-									<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
-									<button name="action" type="submit" value="Sponsor Checklist User"><?php echo (isset($LANG['SPONSOR_USER'])?$LANG['SPONSOR_USER']:'Sponsor User'); ?></button>
-								</div>
-							
-						</fieldset>
+							<fieldset style="margin:40px 15px 0px 15px;padding:15px;">
+								<legend><b><?php echo (isset($LANG['NEW_SPONSOR'])?$LANG['NEW_SPONSOR']:'New Sponsorship'); ?></b></legend>
+								<form name="addchecklistman" action="collpermissions.php" method="post" onsubmit="return verifyAddRights(this)">
+									<div>
+										<label for="uid"><?php echo $LANG['SEL_USER'] ?></label>
+										<select id="uid" name="uid">
+											<option value=""><?php echo (isset($LANG['SEL_USER'])?$LANG['SEL_USER']:'Select User'); ?></option>
+											<option value="">-----------------------------------</option>
+											<?php
+											foreach($userArr as $uid => $uName){
+												echo '<option value="'.$uid.'">'.$uName.'</option>';
+											}
+											?>
+										</select>
+									</div>
+									<div style="margin:15px;">
+										<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
+										<button name="action" type="submit" value="Sponsor Checklist User"><?php echo (isset($LANG['SPONSOR_USER'])?$LANG['SPONSOR_USER']:'Sponsor User'); ?></button>
+									</div>
+								</form>
+							</fieldset>
 						</form>
 						<?php
 					}
@@ -406,9 +406,8 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 						<fieldset style="margin:15px;padding:15px;">
 							<legend><b><?php echo (isset($LANG['ADD_ID_EDIT'])?$LANG['ADD_ID_EDIT']:'Add Identification Editor'); ?></b></legend>
 							<div style="margin:0px 20px 10px 10px;">
-							<?php echo (isset($LANG['LIST_ID_EDITS'])?$LANG['LIST_ID_EDITS']:'The user list below contains only Identification Editors
-							that been approved by a portal manager. Contact your portal manager to request the addition of a new user.'); ?>
-
+								<?php echo (isset($LANG['LIST_ID_EDITS'])?$LANG['LIST_ID_EDITS']:'The user list below contains only Identification Editors
+								that been approved by a portal manager. Contact your portal manager to request the addition of a new user.'); ?>
 							</div>
 							<div style="margin:10px;">
 								<form name="addidenteditor" action="collpermissions.php" method="post" onsubmit="return verifyAddIdentEditor(this)">
