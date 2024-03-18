@@ -93,7 +93,7 @@ if ($SYMB_UID) {
 			}
 		}
 	</script>
-	<style type="text/css">
+	<style>
 		.importItem { margin-left:10px; display:none; }
 		.field-div { margin: 10px 0px; clear: both; }
 		.label { font-weight: bold; }
@@ -122,7 +122,7 @@ if ($SYMB_UID) {
 					</span>
 					<input name="catalog-number" id="catalog-number" type="text" />
 					<a href="#" id="q_catalognumberinfo" style="text-decoration:none;">
-						<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO_ALT']) ? $LANG['MORE_INFO_ALT'] : 'More information about catalog number'); ?>" title="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'More information.'); ?>"/>
+						<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO_ALT']; ?>" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>"/>
 					</a>
 					<dialog id="dialogEl" aria-live="polite" aria-label="Catalog number search dialog">
 						<?php
@@ -139,7 +139,7 @@ if ($SYMB_UID) {
 					<?php
 						if($editCode == 1 || $editCode == 2 || $editCode == 3){
 					?>
-						<button type="submit" id="search-by-catalog-number-admin-btn"; ?>
+						<button type="submit" id="search-by-catalog-number-admin-btn">
 							<?php echo (isset($LANG['OCCURRENCE_EDITOR']) ? $LANG['OCCURRENCE_EDITOR'] : 'Edit'); ?>
 						</button>
 					<?php
