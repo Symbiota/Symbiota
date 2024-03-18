@@ -82,15 +82,15 @@ class OccurrenceGeorefTools {
 			$countryStr='';$stateStr='';$countyStr='';$municipalityStr='';$localityStr='';$verbCoordStr = '';$decLatStr='';$decLngStr='';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$localityStrNew = trim($r->locality,' .,;');
-				$verbCoordStrNew = trim($r->verbatimcoordinates,' .,;');
+				$localityStrNew = trim($r->locality ?? '',' .,;');
+				$verbCoordStrNew = trim($r->verbatimcoordinates ?? '',' .,;');
 				if($localityStrNew || $verbCoordStrNew){
-					if($countryStr != trim($r->country) || $stateStr != trim($r->stateprovince) || $countyStr != trim($r->county) || $municipalityStr != trim($r->municipality)
+					if($countryStr != trim($r->country ?? '') || $stateStr != trim($r->stateprovince ?? '') || $countyStr != trim($r->county ?? '') || $municipalityStr != trim($r->municipality ?? '')
 						|| $localityStr != $localityStrNew || $verbCoordStr != $verbCoordStrNew || $decLatStr != $r->decimallatitude || $decLngStr != $r->decimallongitude){
-						$countryStr = trim($r->country);
-						$stateStr = trim($r->stateprovince);
-						$countyStr = trim($r->county);
-						$municipalityStr = trim($r->municipality);
+						$countryStr = trim($r->country ?? '');
+						$stateStr = trim($r->stateprovince ?? '');
+						$countyStr = trim($r->county ?? '');
+						$municipalityStr = trim($r->municipality ?? '');
 						$localityStr = $localityStrNew;
 						$verbCoordStr = $verbCoordStrNew;
 						$decLatStr = $r->decimallatitude;
