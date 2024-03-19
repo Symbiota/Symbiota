@@ -14,7 +14,7 @@ type: "docs"
 ## This guide contains instructions for users to configure a Symbiota portal to leverage third party authentication platforms.
 
 1. If you have not installed your Symbiota portal as described in the [installation instructions](https://github.com/BioKIC/Symbiota/blob/master/docs/INSTALL.md), complete the installation before proceeding.
-2. If you are implementing this on a pre-existing Symbiota portal, you will need to load the new schema from <SymbiotaBaseFolder>/config/schema/3.1/TODO_PATCH_NAME.sql in order to establish the `users_thirdpartyauth` table in the database. Refer to the [installation instructions](https://github.com/BioKIC/Symbiota/blob/master/docs/INSTALL.md) for how to load database schemas.
+2. If you are implementing this on a pre-existing Symbiota portal, you will need to load the new schema from <SymbiotaBaseFolder>/config/schema/3.1/TODO_PATCH_NAME.sql in order to establish the `usersthirdpartyauth` table in the database. Refer to the [installation instructions](https://github.com/BioKIC/Symbiota/blob/master/docs/INSTALL.md) for how to load database schemas.
 3. Copy the config/auth_config_template.php file into the same config/ directory and rename it as auth_config.php: `cp config/auth_config_template.php config/auth_config.php`.
 4. Obtain a provider URL, client ID, and client secret from your desired third party provider, such as [Microsoft EntraID](https://www.microsoft.com/en-us/security/business/microsoft-entra).
 5. Modify the newly-created config/auth_config.php file to include the new values obtained in the previous step.

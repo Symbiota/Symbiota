@@ -31,7 +31,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 ?>
 <html>
 	<head>
-		<title><?= $DEFAULT_TITLE ?> Import Extended Data</title>
+		<title><?= $DEFAULT_TITLE ?> <?= $LANG['IMPORT_EXTEND'] ?> </title>
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -142,7 +142,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div class="navpath">
-			<a href="../../index.php">Home</a> &gt;&gt;
+			<a href="../../index.php"><?= $LANG['HOME'] ?></a> &gt;&gt;
 			<a href="../misc/collprofiles.php?collid=<?= $collid ?>&emode=1"><?= $LANG['COLLECTION_MENU'] ?></a> &gt;&gt;
 			<a href="importextended.php?collid=<?= $collid ?>"><b><?= $LANG['DATA_IMPORTER'] ?></b></a>
 		</div>
@@ -159,10 +159,10 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 			</div>
 			<?php
 			if(!$isEditor){
-				echo '<h2>ERROR: not authorized to access this page</h2>';
+				echo '<h2>' . $LANG['ERR_NOT_AUTH'] . '</h2>';
 			}
 			elseif(!$importManager->getCollMeta('collName')){
-				echo '<h2>ERROR: Collection identifier not valid</h2>';
+				echo '<h2>' . $LANG['ERR_COLL_NOT_VALID'] . '</h2>';
 			}
 			else{
 				$actionStatus = false;

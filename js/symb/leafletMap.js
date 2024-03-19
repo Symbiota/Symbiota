@@ -25,8 +25,8 @@ xmlns="http://www.w3.org/2000/svg"
 class LeafletMap {
    //DEFAULTS
    DEFAULT_MAP_OPTIONS = {
-      center: [43.64701, -79.39425],
-      zoom: 15,
+      center: [0, 0],
+      zoom: 1,
    };
 
    DEFAULT_SHAPE_OPTIONS = {
@@ -69,6 +69,7 @@ class LeafletMap {
          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
          subdomains:['mt0','mt1','mt2','mt3'],
          maxZoom: 20, 
+         worldCopyJump: true,
          detectRetina:true,
       }).addTo(this.mapLayer);
 
@@ -76,12 +77,14 @@ class LeafletMap {
          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
          subdomains:['mt1','mt2','mt3'],
          maxZoom: 20, 
+         noWrap:true,
          displayRetina:true,
          tileSize: 256,
       });
       const basicLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
          displayRetina:true,
          maxZoom: 20, 
+         noWrap:true,
          tileSize: 256,
          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       });

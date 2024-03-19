@@ -243,6 +243,7 @@ function verifyCollForm(f) {
     f.locality.value == "" &&
     f.upperlat.value == "" &&
     f.pointlat.value == "" &&
+    f.poly_array.value == "" &&
     f.collector.value == "" &&
     f.collnum.value == "" &&
     f.eventdate1.value == ""

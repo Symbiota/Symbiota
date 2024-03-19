@@ -1,5 +1,6 @@
 var imgAssocCleared = false;
 var voucherAssocCleared = false;
+var localitySecurityIsDefault = false;
 
 $(document).ready(function() {
 	
@@ -335,8 +336,14 @@ function fieldChanged(fieldName){
 	catch(ex){
 	}
 	if(fieldName == 'cultivationstatus'){
-		if($("input[name=cultivationstatus]").prop('checked') && $("input[name=localitysecurityreason]").val() == ""){
-			$("select[name=localitysecurity]").val(0);
+		if($("input[name=cultivationstatus]").prop('checked')){
+			if($("select[name=localitysecurity]").val() == 1 && $("input[name=localitysecurityreason]").val() == ""){
+				localitySecurityIsDefault = true;
+				$("select[name=localitysecurity]").val(0);
+			}
+		}
+		else if(localitySecurityIsDefault){
+			$("select[name=localitysecurity]").val(1);
 		}
 	}
 }
@@ -1156,6 +1163,17 @@ function openOccurrenceSearch(target) {
 	if (occWindow.opener == null) occWindow.opener = self;
 }
 
+function securityChangedByUser(f){
+	securityChanged(f);
+	if(f.localitysecurity.value == 1){
+		f.lockLocalitySecurity.checked = true;
+	}
+	else{
+		f.lockLocalitySecurity.checked = false;
+	}
+	securityLockChanged(f.lockLocalitySecurity);
+}
+
 function securityChanged(f){
 	fieldChanged('localitysecurity');
 	$("#locsecreason").show();
@@ -1173,12 +1191,15 @@ function localitySecurityReasonChanged(){
 
 function securityLockChanged(cb){
 	if(cb.checked == true){
-		if($("input[name=localitysecurityreason]").val() == '') $("input[name=localitysecurityreason]").val("[Security Setting Locked]");
+		if($("input[name=localitysecurityreason]").val() == ''){
+			$("input[name=localitysecurityreason]").val("[Security Setting Locked]");
+			fieldChanged('localitysecurityreason');
+		} 
 	}
 	else{
 		$("input[name=localitysecurityreason]").val("")
+		fieldChanged('localitysecurityreason');
 	}
-	fieldChanged('localitysecurityreason');
 }
 
 function autoProcessingStatusChanged(selectObj){

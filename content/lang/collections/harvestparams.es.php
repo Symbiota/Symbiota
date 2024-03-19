@@ -67,4 +67,5 @@ $LANG['TYPE_TAXON'] = 'Escriba el taxón';
 $LANG['SELECT_TAXON_TYPE'] = 'Seleccionar tipo de taxón';
 $LANG['DIRECTION'] = 'Dirección';
 $LANG['DISTANCE_UNIT'] = 'Unidad de distancia';
+$LANG['MATERIAL_SAMPLE'] = 'Muestra de Materiales';
 ?>

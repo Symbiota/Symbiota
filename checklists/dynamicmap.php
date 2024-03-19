@@ -47,7 +47,7 @@ if(!$zoomInt){
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="//maps.googleapis.com/maps/api/js?<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'key='.$GOOGLE_MAP_KEY:''); ?>"></script>
+	<script src="//maps.googleapis.com/maps/api/js?<?= (!empty($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY != 'DEV' ? 'key=' . $GOOGLE_MAP_KEY : '') ?>"></script>
 
    <script type="text/javascript">
       var map;
@@ -83,7 +83,7 @@ if(!$zoomInt){
 
          const MILES_TO_METERS = 1609.344;
 
-         return radius * MILES_TO_METERS; 
+         return radius * MILES_TO_METERS;
       }
 
       function onRadiusChange(eventFunction) {
@@ -207,7 +207,7 @@ if(!$zoomInt){
             leafletInit();
          <?php } else { ?>
          googleInit();
-      <?php } ?>      
+      <?php } ?>
       }
 
       function updateMarkerPosition(lat, lng) {
@@ -229,9 +229,9 @@ if(!$zoomInt){
    </script>
 </head>
 <body style="background-color:#ffffff;" onload="initialize()">
-   <div 
-      id="service-container" 
-      class="service-container" 
+   <div
+      id="service-container"
+      class="service-container"
       data-latCen="<?=htmlspecialchars($latCen) ?>"
       data-lngCen="<?=htmlspecialchars($longCen) ?>"
       data-mapZoom="<?=htmlspecialchars($zoomInt) ?>"

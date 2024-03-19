@@ -7,6 +7,7 @@ Language: English
 
 include_once($SERVER_ROOT . '/content/lang/collections/associations.en.php');
 
+$LANG['IMPORT_EXTEND'] = 'Import Extended Data';
 $LANG['IMPORT_FILE'] = 'Import file';
 $LANG['IS_TOO_BIG'] = 'MB) is larger than is allowed (current limit';
 $LANG['MAYBE_ZIP'] = ' Note that import file size can be reduced by compressing within a zip file.';
@@ -15,6 +16,8 @@ $LANG['SELECT_IMPORT_TYPE'] = 'Select an import type';
 $LANG['SELECT_ASSOC_TYPE'] = 'Select an Association type';
 $LANG['ERR_DUPLICATE_SOURCE'] = 'ERROR: Source field names must be unique (duplicate field:';
 $LANG['ERR_DUPLICATE_TARGET'] = "ERROR: Can't map to the same target field more than once (";
+$LANG['ERR_NOT_AUTH'] = 'ERROR: not authorized to access this page';
+$LANG['ERR_COLL_NOT_VALID'] = 'ERROR: Collection identifier not valid';
 $LANG['NEED_CAT'] = 'ERROR: subject catalogNumber, occurrenceID, or otherCatalogNumbers is required';
 $LANG['SELECT_RELATIONSHIP'] = 'Select a Relationship (required)';
 $LANG['COLLECTION_MENU'] = 'Collection Management Menu';

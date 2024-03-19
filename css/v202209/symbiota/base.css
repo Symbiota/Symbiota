@@ -364,6 +364,11 @@ ol.mp_list li.mp_highlighted {
   top: 0.8rem;
 }
 
+.fieldset-like--small-float-right {
+  float: right;
+  width: 35rem;
+}
+
 .float-rt-no-overlap {
   /* this should occur after fieldset-like definitions */
   float: right;
@@ -546,4 +551,21 @@ b {
 
 .gridlike-form-row-input {
   width: 40%;
+}
+
+.bounding-box-form__header {
+  font-size: 1.3rem;
+}
+
+.trait-section__label--spacer {
+  margin-left: 0.5rem;
+}
+
+.trait-section__input--no-margin {
+  margin: 0;
+}
+
+.div--overflow-wrap-anywhere {
+  overflow-wrap: anywhere;
+  width: 100%;
 }

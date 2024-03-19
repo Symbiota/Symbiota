@@ -34,7 +34,7 @@ class OpenIdProfileManager extends ProfileManager{
 	private function authenticateUsingOidSub($sub, $provider){
 		$status = false;
 		if($sub && $provider){
-            $sql = 'SELECT uid from users_thirdpartyauth WHERE sub_uuid = ? AND provider = ?';
+            $sql = 'SELECT uid from usersthirdpartyauth WHERE subUuid = ? AND provider = ?';
             if($stmt = $this->conn->prepare($sql)){
 				if($stmt->bind_param('ss', $sub, $provider)){
 					$stmt->execute();
@@ -63,7 +63,7 @@ class OpenIdProfileManager extends ProfileManager{
 
 	public function linkLocalUserOidSub($email, $sub, $provider){
 		if($email && $sub && $provider){
-            $sql = 'SELECT u.uid, oid.sub_uuid, oid.provider from users u LEFT join users_thirdpartyauth oid ON u.uid = oid.uid 
+            $sql = 'SELECT u.uid, oid.subUuid, oid.provider from users u LEFT join usersthirdpartyauth oid ON u.uid = oid.uid 
 			WHERE u.email = ?';
             if($stmt = $this->conn->prepare($sql)){
 				if($stmt->bind_param('s', $email)){
@@ -78,9 +78,9 @@ class OpenIdProfileManager extends ProfileManager{
 				else {
 					if($results->num_rows == 1){
 						$row = $results->fetch_array(MYSQLI_ASSOC);
-						if (($row['provider'] == '' && $row['sub_uuid'] == '') || ($row['provider'] && $row['provider'] !== $provider)){
+						if (($row['provider'] == '' && $row['subUuid'] == '') || ($row['provider'] && $row['provider'] !== $provider)){
 						//found existing user. add 3rdparty auth info
-							$sql = 'INSERT INTO users_thirdpartyauth (uid, sub_uuid, provider) VALUES(?,?,?)';
+							$sql = 'INSERT INTO usersthirdpartyauth (uid, subUuid, provider) VALUES(?,?,?)';
 							$this->resetConnection();
 							if($stmt = $this->conn->prepare($sql)) {
 								$stmt->bind_param('iss', $row['uid'], $sub, $provider);
@@ -95,14 +95,14 @@ class OpenIdProfileManager extends ProfileManager{
 						$uidPlaceholder = '';
 						while ($row = $results->fetch_array(MYSQLI_ASSOC)) {
 							$uidPlaceholder = $row['uid']; // assumes one-to-one relationship between user and email address
-							if ($row['provider'] == $provider && $row['sub_uuid'] !== $sub){
-								return false; // current assumption is that if this happens, the sub_uuid is not kosher. 
-								// If this assumption is ever violated, one solution would be to purge relevant rows from users_thirdpartyauth
+							if ($row['provider'] == $provider && $row['subUuid'] !== $sub){
+								return false; // current assumption is that if this happens, the subUuid is not kosher. 
+								// If this assumption is ever violated, one solution would be to purge relevant rows from usersthirdpartyauth
 							}
 							else continue;
 						}
-						// Provider not found - handle adding new entry to users_thirdpartyauth table
-						$sql = 'INSERT INTO users_thirdpartyauth (uid, sub_uuid, provider) VALUES(?,?,?)';
+						// Provider not found - handle adding new entry to usersthirdpartyauth table
+						$sql = 'INSERT INTO usersthirdpartyauth (uid, subUuid, provider) VALUES(?,?,?)';
 						$this->resetConnection();
 						if($stmt = $this->conn->prepare($sql)) {
 							$stmt->bind_param('iss', $uidPlaceholder, $sub, $provider);

@@ -211,146 +211,145 @@ if($tid){
 			if($images = $imageEditor->getImages()){
 				?>
 				<div style='clear:both;'>
-					<table>
+					<section class="gridlike-form">
 						<?php
 						foreach($images as $imgArr){
 							?>
-							<tr><td>
-								<div style="margin:20px;float:left;text-align:center;">
-									<?php
-									$webUrl = $imgArr["url"];
-									$tnUrl = $imgArr["thumbnailurl"];
-									if($GLOBALS['imageDomain']){
-										if(substr($imgArr["url"],0,1) == "/") $webUrl = $GLOBALS["imageDomain"].$imgArr["url"];
-										if(substr($imgArr["thumbnailurl"],0,1) == "/") $tnUrl = $GLOBALS["imageDomain"].$imgArr["thumbnailurl"];
-									}
-									if(!$tnUrl) $tnUrl = $webUrl;
-									?>
-									<a href="../../imagelib/imgdetails.php?imgid=<?php echo htmlspecialchars($imgArr['imgid'], HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="<?php echo $tnUrl;?>" style="width:200px;"/>
-									</a>
-									<?php
-									if($imgArr["originalurl"]){
-										$origUrl = (array_key_exists("imageDomain",$GLOBALS)&&substr($imgArr["originalurl"],0,1)=="/"?$GLOBALS["imageDomain"]:"").$imgArr["originalurl"];
-										?>
-										<br /><a href="<?php echo htmlspecialchars($origUrl, HTML_SPECIAL_CHARS_FLAGS);?>"><?php echo htmlspecialchars($LANG['OPEN_LARGE_IMAGE'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
+							<section class="gridlike-form-row bottom-breathing-room-relative">
+								<div>
+									<div style="margin:20px;float:left;text-align:center;">
 										<?php
-									}
-									?>
+										$webUrl = $imgArr["url"];
+										$tnUrl = $imgArr["thumbnailurl"];
+										if($GLOBALS['imageDomain']){
+											if(substr($imgArr["url"],0,1) == "/") $webUrl = $GLOBALS["imageDomain"].$imgArr["url"];
+											if(substr($imgArr["thumbnailurl"],0,1) == "/") $tnUrl = $GLOBALS["imageDomain"].$imgArr["thumbnailurl"];
+										}
+										if(!$tnUrl) $tnUrl = $webUrl;
+										?>
+										<a href="../../imagelib/imgdetails.php?imgid=<?php echo htmlspecialchars($imgArr['imgid'], HTML_SPECIAL_CHARS_FLAGS); ?>">
+											<img src="<?php echo $tnUrl;?>" style="width:200px;"/>
+										</a>
+										<?php
+										if($imgArr["originalurl"]){
+											$origUrl = (array_key_exists("imageDomain",$GLOBALS)&&substr($imgArr["originalurl"],0,1)=="/"?$GLOBALS["imageDomain"]:"").$imgArr["originalurl"];
+											?>
+											<br /><a href="<?php echo htmlspecialchars($origUrl, HTML_SPECIAL_CHARS_FLAGS);?>"><?php echo htmlspecialchars($LANG['OPEN_LARGE_IMAGE'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
+											<?php
+										}
+										?>
+									</div>
 								</div>
-							</td>
-							<td valign="middle" style="width:90%">
-								<?php
-								if($imgArr['occid']){
-									?>
-									<div style="float:right;margin-right:10px;" title="<?php echo $LANG['MUST_HAVE_EDIT_PERM']; ?>">
-										<a href="../../collections/editor/occurrenceeditor.php?occid=<?php echo htmlspecialchars($imgArr['occid'], HTML_SPECIAL_CHARS_FLAGS); ?>&tabtarget=2" target="_blank">
-											<img src="../../images/edit.png" style="width:1.3em;border:0px;"/>
-										</a>
-									</div>
+								<div class="div--overflow-wrap-anywhere">
 									<?php
-								}
-								else{
-									?>
-									<div style='float:right;margin-right:10px;'>
-										<a href="../../imagelib/imgdetails.php?imgid=<?php echo htmlspecialchars($imgArr["imgid"], HTML_SPECIAL_CHARS_FLAGS);?>&emode=1">
-											<img src="../../images/edit.png" style="width:1.3em;border:0px;" />
-										</a>
-									</div>
-									<?php
-								}
-								?>
-								<div style='margin:60px 0px 10px 10px;clear:both;'>
-									<?php
-									if($imgArr["tid"] != $tid){
+									if($imgArr['occid']){
 										?>
-										<div>
-											<b><?php echo $LANG['IMAGE_LINKED_FROM']; ?>:</b>
-											<a href="tpeditor.php?tid=<?php echo htmlspecialchars($imgArr["tid"], HTML_SPECIAL_CHARS_FLAGS);?>" target=""><?php echo htmlspecialchars($imgArr["sciname"], HTML_SPECIAL_CHARS_FLAGS);?></a>
-										</div>
-										<?php
-									}
-									if($imgArr["caption"]){
-										?>
-										<div>
-											<b><?php echo $LANG['CAPTION']; ?>:</b>
-											<?php echo $imgArr["caption"];?>
-										</div>
-										<?php
-									}
-									?>
-									<div>
-										<b><?php echo $LANG['PHOTOGRAPHER']; ?>:</b>
-										<?php echo $imgArr["photographerdisplay"];?>
-									</div>
-									<?php
-									if($imgArr["owner"]){
-										?>
-										<div>
-											<b><?php echo $LANG['MANAGER']; ?>:</b>
-											<?php echo $imgArr["owner"];?>
-										</div>
-										<?php
-									}
-									if($imgArr["sourceurl"]){
-										?>
-										<div>
-											<b><?php echo $LANG['SOURCE_URL']; ?>:</b>
-											<a href="<?php echo htmlspecialchars($imgArr["sourceurl"], HTML_SPECIAL_CHARS_FLAGS);?>" target="_blank"><?php echo htmlspecialchars($imgArr["sourceurl"], HTML_SPECIAL_CHARS_FLAGS); ?></a>
-										</div>
-										<?php
-									}
-									if($imgArr["copyright"]){
-										?>
-										<div>
-											<b><?php echo $LANG['COPYRIGHT']; ?>:</b>
-											<?php echo $imgArr["copyright"];?>
-										</div>
-										<?php
-									}
-									if($imgArr["locality"]){
-										?>
-										<div>
-											<b><?php echo $LANG['LOCALITY']; ?>:</b>
-											<?php echo $imgArr["locality"];?>
-										</div>
-										<?php
-									}
-									if($imgArr["occid"]){
-										?>
-										<div>
-											<b><?php echo $LANG['OCC_REC_NUM']; ?>:</b>
-											<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS);?>/collections/individual/index.php?occid=<?php echo htmlspecialchars($imgArr["occid"], HTML_SPECIAL_CHARS_FLAGS); ?>">
-												<?php echo $imgArr["occid"];?>
+										<div style="float:right;margin-right:10px;" title="<?php echo $LANG['MUST_HAVE_EDIT_PERM']; ?>">
+											<a href="../../collections/editor/occurrenceeditor.php?occid=<?php echo htmlspecialchars($imgArr['occid'], HTML_SPECIAL_CHARS_FLAGS); ?>&tabtarget=2" target="_blank">
+												<img src="../../images/edit.png" style="width:1.3em;border:0px;"/>
 											</a>
 										</div>
 										<?php
 									}
-									if($imgArr["notes"]){
+									else{
 										?>
-										<div>
-											<b><?php echo $LANG['NOTES']; ?>:</b>
-											<?php echo $imgArr["notes"];?>
+										<div style='float:right;margin-right:10px;'>
+											<a href="../../imagelib/imgdetails.php?imgid=<?php echo htmlspecialchars($imgArr["imgid"], HTML_SPECIAL_CHARS_FLAGS);?>&emode=1">
+												<img src="../../images/edit.png" style="width:1.3em;border:0px;" />
+											</a>
 										</div>
 										<?php
 									}
 									?>
-									<div>
-										<b><?php echo $LANG['SORT_SEQUENCE']; ?>:</b>
-										<?php echo $imgArr["sortsequence"];?>
+									<div style='margin:60px 0px 10px 10px;clear:both;'>
+										<?php
+										if($imgArr["tid"] != $tid){
+											?>
+											<div>
+												<b><?php echo $LANG['IMAGE_LINKED_FROM']; ?>:</b>
+												<a href="tpeditor.php?tid=<?php echo htmlspecialchars($imgArr["tid"], HTML_SPECIAL_CHARS_FLAGS);?>" target=""><?php echo htmlspecialchars($imgArr["sciname"], HTML_SPECIAL_CHARS_FLAGS);?></a>
+											</div>
+											<?php
+										}
+										if($imgArr["caption"]){
+											?>
+											<div>
+												<b><?php echo $LANG['CAPTION']; ?>:</b>
+												<?php echo $imgArr["caption"];?>
+											</div>
+											<?php
+										}
+										?>
+										<div>
+											<b><?php echo $LANG['PHOTOGRAPHER']; ?>:</b>
+											<?php echo $imgArr["photographerdisplay"];?>
+										</div>
+										<?php
+										if($imgArr["owner"]){
+											?>
+											<div>
+												<b><?php echo $LANG['MANAGER']; ?>:</b>
+												<?php echo $imgArr["owner"];?>
+											</div>
+											<?php
+										}
+										if($imgArr["sourceurl"]){
+											?>
+											<div>
+												<b><?php echo $LANG['SOURCE_URL']; ?>:</b>
+												<a href="<?php echo htmlspecialchars($imgArr["sourceurl"], HTML_SPECIAL_CHARS_FLAGS);?>" target="_blank"><?php echo htmlspecialchars($imgArr["sourceurl"], HTML_SPECIAL_CHARS_FLAGS); ?></a>
+											</div>
+											<?php
+										}
+										if($imgArr["copyright"]){
+											?>
+											<div>
+												<b><?php echo $LANG['COPYRIGHT']; ?>:</b>
+												<?php echo $imgArr["copyright"];?>
+											</div>
+											<?php
+										}
+										if($imgArr["locality"]){
+											?>
+											<div>
+												<b><?php echo $LANG['LOCALITY']; ?>:</b>
+												<?php echo $imgArr["locality"];?>
+											</div>
+											<?php
+										}
+										if($imgArr["occid"]){
+											?>
+											<div>
+												<b><?php echo $LANG['OCC_REC_NUM']; ?>:</b>
+												<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS);?>/collections/individual/index.php?occid=<?php echo htmlspecialchars($imgArr["occid"], HTML_SPECIAL_CHARS_FLAGS); ?>">
+													<?php echo $imgArr["occid"];?>
+												</a>
+											</div>
+											<?php
+										}
+										if($imgArr["notes"]){
+											?>
+											<div>
+												<b><?php echo $LANG['NOTES']; ?>:</b>
+												<?php echo $imgArr["notes"];?>
+											</div>
+											<?php
+										}
+										?>
+										<div>
+											<b><?php echo $LANG['SORT_SEQUENCE']; ?>:</b>
+											<?php echo $imgArr["sortsequence"];?>
+										</div>
 									</div>
 								</div>
-
-							</td></tr>
-							<tr><td colspan='2'>
-								<div style='margin:10px 0px 0px 0px;clear:both;'>
-									<hr />
-								</div>
-							</td></tr>
+							</section>
+							<div>
+								<hr/>
+							</div>
 							<?php
 						}
 						?>
-					</table>
+					</section>
 				</div>
 				<?php
 			}

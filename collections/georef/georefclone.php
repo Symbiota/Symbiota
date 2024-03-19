@@ -44,7 +44,7 @@ if($coorArr && count($coorArr) == 4){
 		include_once($SERVER_ROOT.'/includes/leafletMap.php');
 		?>
 		<script src="//www.google.com/jsapi"></script>
-		<script src="//maps.googleapis.com/maps/api/js?<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'key='.$GOOGLE_MAP_KEY:''); ?>"></script>
+		<script src="//maps.googleapis.com/maps/api/js?<?= (!empty($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY != 'DEV' ? 'key=' . $GOOGLE_MAP_KEY : '') ?>"></script>
 		<script type="text/javascript">
 		var map;
 		let lat, lng = 0;
@@ -196,19 +196,19 @@ alert("<?php echo isset($LANG['LOCALITY_INVALID_ERROR'])? $LANG['LOCALITY_INVALI
 						<input name="locality" type="text" value="<?php echo $locality; ?>" style="width:600px" />
 					</div>
 					<div>
-                  <input id="exactinput" name="searchtype" type="radio" value="1" <?php echo ($searchType=='1'?'checked':''); ?> /> 
+                  <input id="exactinput" name="searchtype" type="radio" value="1" <?php echo ($searchType=='1'?'checked':''); ?> />
                   <?php echo isset($LANG['EXACT_MATCH'])? $LANG['EXACT_MATCH']:'Exact Match' ?>
-                  <input id="wildsearch" name="searchtype" type="radio" value="2" <?php echo ($searchType=='2'?'checked':''); ?> /> 
+                  <input id="wildsearch" name="searchtype" type="radio" value="2" <?php echo ($searchType=='2'?'checked':''); ?> />
                   <?php echo isset($LANG['CONTAINS'])? $LANG['CONTAINS']:'Contains' ?>
-                  <input id="deepsearch" name="searchtype" type="radio" value="3" <?php echo ($searchType=='3'?'checked':''); ?> /> 
+                  <input id="deepsearch" name="searchtype" type="radio" value="3" <?php echo ($searchType=='3'?'checked':''); ?> />
                   <?php echo isset($LANG['DEEP_SEARCH'])? $LANG['DEEP_SEARCH']:'Deep Search' ?>
 					</div>
 					<?php if($collid):?>
 						<div>
-                  <input name="colltype" type="radio" value="0" <?php echo ($collType?'':'checked'); ?> /> 
+                  <input name="colltype" type="radio" value="0" <?php echo ($collType?'':'checked'); ?> />
 
                   <?php echo isset($LANG['SEARCH_ALL_COLS'])? $LANG['SEARCH_ALL_COLS']:'Search all collections' ?>
-                  <input name="colltype" type="radio" value="1" <?php echo ($collType?'checked':''); ?> /> 
+                  <input name="colltype" type="radio" value="1" <?php echo ($collType?'checked':''); ?> />
 
                   <?php echo isset($LANG['TARGET_COL_ONLY'])? $LANG['TARGET_COL_ONLY']:'Target collection only' ?>
 						</div>

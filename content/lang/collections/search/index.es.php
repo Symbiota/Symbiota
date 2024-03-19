@@ -14,7 +14,7 @@ $LANG['TAXON_TYPE'] = 'Tipo de taxón';
 $LANG['ANY_NAME'] = 'Cualquier nombre';
 $LANG['SCIENTIFIC_NAME'] ='Nombre científico';
 $LANG['FAMILY'] = 'Familia';
-$LANG['TAXONOMIC GROUP'] = 'Grupo taxonómico';
+$LANG['TAXONOMIC_GROUP'] = 'Grupo taxonómico';
 $LANG['COMMON_NAME'] = 'Nombre común';
 $LANG['TAXON_TYPE'] = 'Tipo de taxón';
 $LANG['INCLUDE_SYNONYMS'] ='Incluir sinónimos';
@@ -110,5 +110,8 @@ $LANG['LONGITUDE'] = '_Longitud';
 $LANG['RADIUS'] = '_Radio';
 $LANG['ALERT_MSG_PREVIOUS_SEARCH_FORM'] = '¿Está buscando el formulario de búsqueda anterior? Todavía puedes usarlo aquí:';
 $LANG['ALL_COLLECTIONS'] = 'Todas las colecciones';
-
+$LANG['TRAIT_CRITERIA'] = 'Criterios de Rasgo';
+$LANG['TRAIT'] = 'Rasgo';
+$LANG['EXPAND_ALL_SECTIONS'] = 'Expandir todas las secciones';
+$LANG['COLLAPSE_ALL_SECTIONS'] = 'Contraer todas las secciones';
 ?>
