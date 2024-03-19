@@ -94,6 +94,7 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USE
 	}
 }
 $clArray = $clManager->getMetaData();
+$clArray = $clManager->cleanOutArray($clArray);
 ?>
 <html>
 <head>

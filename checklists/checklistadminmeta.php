@@ -11,6 +11,7 @@ $clManager = new ChecklistAdmin();
 $clManager->setClid($clid);
 
 $clArray = $clManager->getMetaData($pid);
+$clArray = $clManager->cleanOutArray($clArray);
 $defaultArr = array();
 if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
 	$defaultArr = json_decode($clArray['defaultsettings'], true);

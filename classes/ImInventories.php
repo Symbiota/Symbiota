@@ -23,13 +23,13 @@ class ImInventories extends Manager{
 				FROM fmchecklists WHERE (clid = '.$this->clid.')';
 			$result = $this->conn->query($sql);
 			if($row = $result->fetch_object()){
-				$retArr['name'] = $this->cleanOutStr($row->name);
-				$retArr['locality'] = $this->cleanOutStr($row->locality);
-				$retArr['notes'] = $this->cleanOutStr($row->notes);
+				$retArr['name'] = $row->name;
+				$retArr['locality'] = $row->locality;
+				$retArr['notes'] = $row->notes;
 				$retArr['type'] = $row->type;
-				$retArr['publication'] = $this->cleanOutStr($row->publication);
-				$retArr['abstract'] = $this->cleanOutStr($row->abstract);
-				$retArr['authors'] = $this->cleanOutStr($row->authors);
+				$retArr['publication'] = $row->publication;
+				$retArr['abstract'] = $row->abstract;
+				$retArr['authors'] = $row->authors;
 				$retArr['parentclid'] = $row->parentclid;
 				$retArr['uid'] = $row->uid;
 				$retArr['latcentroid'] = $row->latcentroid;
@@ -57,7 +57,7 @@ class ImInventories extends Manager{
 					$rs = $this->conn->query($sql);
 					if($rs){
 						if($r = $rs->fetch_object()){
-							$retArr['clNameOverride'] = $this->cleanOutStr($r->clNameOverride);
+							$retArr['clNameOverride'] = $r->clNameOverride;
 							$retArr['mapchecklist'] = $r->mapChecklist;
 							$retArr['sortOverride'] = $r->sortSequence;
 						}
@@ -295,7 +295,7 @@ class ImInventories extends Manager{
 		$fullDescription = (isset($inputArr['fulldescription'])?$inputArr['fulldescription']:NULL);
 		$notes = (isset($inputArr['notes'])?$inputArr['notes']:NULL);
 		$isPublic = (isset($inputArr['ispublic'])?$inputArr['ispublic']:0);
-		$sql = 'INSERT INTO fmprojects(projname, managers, fulldescription, notes, ispublic) VALUES(?, ?, ?, ?, ?)';
+		$sql = 'INSERT IGNORE INTO fmprojects(projname, managers, fulldescription, notes, ispublic) VALUES(?, ?, ?, ?, ?)';
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('ssssi', $projName, $managers, $fullDescription, $notes, $isPublic);
 			if($stmt->execute()){
@@ -319,7 +319,7 @@ class ImInventories extends Manager{
 		$notes = $inputArr['notes'];
 		$isPublic = $inputArr['ispublic'];
 
-		$sql = 'UPDATE fmprojects SET projname = ?, managers = ?, fulldescription = ?, notes = ?, ispublic = ? WHERE (pid = ?)';
+		$sql = 'UPDATE IGNORE fmprojects SET projname = ?, managers = ?, fulldescription = ?, notes = ?, ispublic = ? WHERE (pid = ?)';
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('ssssii', $projName, $managers, $fullDescription, $notes, $isPublic, $this->pid);
 			if($stmt->execute()){
