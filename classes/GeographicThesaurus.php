@@ -559,6 +559,8 @@ class GeographicThesaurus extends Manager {
    }
 
    private function getIntersection($v1,$o1, $v2, $o2) {
+
+      //Currently igonores vertical slope case
       $m1 = $v1[0] != 0? $v1[1] / $v1[0]: 0;
       $m2 = $v2[0] != 0? $v2[1] / $v2[0]: 0;
 

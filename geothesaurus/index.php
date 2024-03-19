@@ -169,16 +169,12 @@ function listGeoUnits($arr) {
             leafletInit();
          } catch(e) {
             console.log("Leaflet Map failed to load")
-            console.log(e)
          }
       }
 
       function navigateGeothesaursSearch() {
-         let auto_input = document.getElementById("geothesaurus-suggest");
-
-         //Alert?
+         const auto_input = document.getElementById("geothesaurus-suggest");
          if(!auto_input || (auto_input.inputEl && !auto_input.inputEl.value)) return;
-
          window.location.href = `index.php?geoThesID=${auto_input.value}`
       }
       </script>
@@ -213,7 +209,7 @@ function listGeoUnits($arr) {
                multi="false"
                completeUrl="rpc/searchGeothesaurus.php?geoterm=??">
             </autocomplete-input>
-            <button type="button" style="margin-left:2rem"onclick="navigateGeothesaursSearch()"><?=$LANG["SEARCH"]?></button>
+            <button type="button" style="margin-left:2rem" onclick="navigateGeothesaursSearch()"><?=$LANG["SEARCH"]?></button>
          </fieldset>
          <div>
             <a href="harvester.php"><?= $LANG['GOTO_HARVESTER']?></a>
@@ -267,7 +263,7 @@ function listGeoUnits($arr) {
                            if($defaultGeoLevel == 'getNextRankid') $defaultGeoLevel = $rankID;
                            if($rankID == $geoUnit['geoLevel']) $defaultGeoLevel = 'getNextRankid';
                            }
-                           echo '<option value="'.$rankID.'" '.($defaultGeoLevel === $rankID?'SELECTED':'').'>'.$rankValue.'</option>';
+                           echo '<option value="' . $rankID . '" '. ($defaultGeoLevel === $rankID?'SELECTED':'') . '>' . $rankValue . '</option>';
                            }
                            ?>
                         </select>
@@ -335,7 +331,6 @@ function listGeoUnits($arr) {
                   <legend><span id="edit-legend"><?= $LANG['EDIT'] ?></span> <?= $LANG['GEO_UNIT'] ?> </legend>
                   <div style="float:right">
                      <span class="editIcon" title="<?= $LANG['EDIT_TERM'] ?>"><a href="#" onclick="toggleEditor()"><img class="editimg" src="../images/edit.png" alt="<?= $LANG['EDIT']; ?>"></a></span>
-                     <!-- <span class="editIcon" title="Add child term"><a href="#" onclick="toggle('#addGeoUnit-div');"><img class="editimg" src="../images/add.png" alt="<?= $LANG['EDIT'] ?>" /></a></span> -->
                   </div>
                   <div class="field-div">
                      <label> <?= $LANG['GEO_UNIT_NAME'] ?> </label>:
@@ -440,7 +435,7 @@ function listGeoUnits($arr) {
                         <img src='../images/world.png' style='width:10px;border:0' alt='<?= $LANG['IMG_OF_GLOBE'] ?>' /> <?= $LANG['EDIT_POLYGON']?> 
                      </a>
                      <span class="editFormElem" style="margin-top: 0.5rem">
-                        <textarea id="footprintwkt" name="polygon" style="margin-top: 0.5rem; width:98%;height:90px;"><?= isset($geoUnit['geoJSON'])?trim($geoUnit['geoJSON']): null ?></textarea>
+                        <textarea id="footprintwkt" name="polygon" style="margin-top: 0.5rem; width:98%;height:90px;"><?= isset($geoUnit['geoJSON'])? trim($geoUnit['geoJSON']): null ?></textarea>
                      </span>
                   </div>
                   <div id="editButton-div" class="button-div">

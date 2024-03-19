@@ -91,7 +91,7 @@ if($isEditor && $submitAction) {
 <!DOCTYPE html>
 <html lang="<?=$LANG_TAG?>">
    <head>
-      <title><?php echo $DEFAULT_TITLE. ' - ' . $LANG['GEOTHESAURUS_HARVESTER']; ?></title>
+      <title><?php echo $DEFAULT_TITLE . ' - ' . $LANG['GEOTHESAURUS_HARVESTER']; ?></title>
       <?php
       include_once ($SERVER_ROOT.'/includes/head.php');
       ?>
@@ -113,8 +113,8 @@ if($isEditor && $submitAction) {
       </style>
       <script type="text/javascript">
       function submit_loading() {
-         let spinner = document.getElementById("submit-loading")
-         let helpText = document.getElementById("submit-loading-text")
+         const spinner = document.getElementById("submit-loading")
+         const helpText = document.getElementById("submit-loading-text")
 
          if(spinner) spinner.style.display = "block";
          if(helpText) helpText.style.display = "block";
