@@ -2115,14 +2115,14 @@ class OccurrenceEditorManager {
 	public function getImageMap($imgId = 0){
 		$imageMap = Array();
 		if($this->occid){
-			$sql = 'SELECT imgid, url, thumbnailurl, originalurl, caption, photographer, photographeruid, sourceurl, copyright, notes, occid, username, sortoccurrence, initialtimestamp FROM images ';
+			$sql = 'SELECT imgid, url, sourceIdentifier, thumbnailurl, originalurl, caption, photographer, photographeruid, sourceurl, copyright, notes, occid, username, sortoccurrence, initialtimestamp FROM images ';
 			if($imgId) $sql .= 'WHERE (imgid = '.$imgId.') ';
 			else $sql .= 'WHERE (occid = '.$this->occid.') ';
 			$sql .= 'ORDER BY sortoccurrence';
 			//echo $sql;
 			$result = $this->conn->query($sql);
 			while($row = $result->fetch_object()){
-				$imageMap[$row->imgid]['url'] = $row->url;
+				$imageMap[$row->imgid]['url'] = $row->sourceIdentifier;
 				$imageMap[$row->imgid]['tnurl'] = $row->thumbnailurl;
 				$imageMap[$row->imgid]['origurl'] = $row->originalurl;
 				$imageMap[$row->imgid]['caption'] = $this->cleanOutStr($row->caption);
