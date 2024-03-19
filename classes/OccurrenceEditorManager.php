@@ -557,7 +557,7 @@ class OccurrenceEditorManager {
 		elseif($customTerm == 'STARTS' && $customValue){
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' LIKE "'.trim($customValue,'%').'%") '.($ccp?$ccp.' ':'');
 		}
-		elseif($customValue){
+		elseif($customValue !== ''){
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' = "'.$customValue.'") '.($ccp?$ccp.' ':'');
 		}
 		return $sqlFrag;
