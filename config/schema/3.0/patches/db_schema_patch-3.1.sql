@@ -168,10 +168,10 @@ SELECT cvID, "genericResource", "Generic Resource" FROM ctcontrolvocab WHERE tab
 
 # Establish a table to track third party auth
 
-CREATE TABLE `users_thirdpartyauth` (
+CREATE TABLE `usersthirdpartyauth` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `uid` INT(10) UNSIGNED NOT NULL,
-  `sub_uuid` VARCHAR(100) NOT NULL,
+  `subUuid` VARCHAR(100) NOT NULL,
   `provider` VARCHAR(200) NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_users_uid`
