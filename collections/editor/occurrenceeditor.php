@@ -960,29 +960,25 @@ else{
 											}
 											?>
 											<legend><?php echo $LANG['LOCALITY']; ?></legend>
-											<div id="geography1-div" class="fieldGroup-div" style="<?= ($displayGeo1Div ? 'display:block' : '') ?>">
+											<div id="geography1-div" class="fieldGroup-div" style="<?= ($displayGeo1Div ? 'display:flex' : 'display:none') ?>">
 												<div id="continentDiv" class="field-div">
 													<?= $LANG['CONTINENT']; ?>
 													<a href="#" onclick="return dwcDoc('continent')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
 													<input type="text" id="ffcontinent" name="continent" value="<?= $continent ?>" onchange="fieldChanged('continent');" autocomplete="off" />
 												</div>
 												<div id="waterBodyDiv" class="field-div">
 													<?= $LANG['WATER_BODY']; ?>
 													<a href="#" onclick="return dwcDoc('waterBody')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
 													<input type="text" id="ffwaterbody" name="waterbody" value="<?= $waterBody ?>" onchange="fieldChanged('waterbody');" autocomplete="off" />
 												</div>
 												<div id="islandGroupDiv" class="field-div">
 													<?= $LANG['ISLAND_GROUP']; ?>
 													<a href="#" onclick="return dwcDoc('islandGroup')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
 													<input type="text" id="ffislandgroup" name="islandgroup" value="<?= $islandGroup ?>" onchange="fieldChanged('islandgroup');" autocomplete="off" />
 												</div>
 												<div id="islandDiv" class="field-div">
 													<?= $LANG['ISLAND']; ?>
 													<a href="#" onclick="return dwcDoc('island')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
 													<input type="text" id="ffisland" name="island" value="<?= $island ?>" onchange="fieldChanged('island');" autocomplete="off" />
 												</div>
 											</div>
@@ -1016,7 +1012,7 @@ else{
 													<a href="#" onclick="return dwcDoc('locationID')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 													<br/>
 													<input type="text" id="locationid" name="locationid" value="<?php echo array_key_exists('locationid',$occArr)?$occArr['locationid']:''; ?>" onchange="fieldChanged('locationid');" autocomplete="off" />
-													<a id="geography1Toggle" onclick="toggle('geography1-div');">
+													<a id="geography1Toggle" onclick="toggle('geography1-div', 'flex');">
 														<img class="editimg" src="../../images/editplus.png">
 													</a>
 												</div>
