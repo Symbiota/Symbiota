@@ -48,7 +48,8 @@ if($isEditor){
 	}
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['LOAN_MANAGE']; ?></title>
@@ -63,7 +64,7 @@ if($isEditor){
 
 		function verifyLoanInAddForm(f){
 			if(f.iidowner.options[f.iidowner.selectedIndex].value == 0){
-				alert("Select an institution");
+				alert("<?php echo $LANG['SEL_INSTITUTION'] ?>");
 				return false;
 			}
 			if(f.loanidentifierborr.value == ""){
@@ -168,7 +169,7 @@ if($isEditor){
 				targetObj.value = retID;
 			})
 			.fail(function() {
-				alert("Generation of new ID failed");
+				alert("<?php echo $LANG['GENERATION_ID_FAILED'] ?>");
 			});
 		}
 	</script>
@@ -185,7 +186,7 @@ if($isEditor){
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href='../../index.php'>Home</a> &gt;&gt;
+		<a href='../../index.php'><?php echo $LANG['HOME'] ?></a> &gt;&gt;
 		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo $LANG['COL_MNG_MENU']; ?></a> &gt;&gt;
 		<a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><b><?php echo $LANG['LOAN_INDEX']; ?></b></a>
 	</div>
@@ -215,16 +216,16 @@ if($isEditor){
 					<div style="float:right;">
 						<form name='optionform' action='index.php' method='post'>
 							<fieldset>
-								<legend>Options</legend>
+								<legend><?php echo $LANG['OPTIONS'] ?></legend>
 								<div>
-									<b>Search: </b>
-									<input type="text" autocomplete="off" name="searchterm" value="<?php echo $searchTerm;?>" size="20" />
+									<b><label for="search-loanout"><?php echo $LANG['SEARCH'] ?></label> </b>
+									<input type="text" id="search-loanout" autocomplete="off" name="searchterm" value="<?php echo $searchTerm;?>" size="20" />
 								</div>
 								<div>
-									<input type="radio" name="displayall" value="0"<?php echo ($displayAll==0?'checked':'');?> /> <?php echo $LANG['DISP_OUTSTANDING']; ?>
+									<input type="radio" name="displayall" value="0"<?php echo ($displayAll==0?'checked':'');?> aria-label="<?php echo $LANG['DISP_OUTSTANDING']; ?>" /> <?php echo $LANG['DISP_OUTSTANDING']; ?>
 								</div>
 								<div>
-									<input type="radio" name="displayall" value="1"<?php echo ($displayAll?'checked':'');?> /> <?php echo $LANG['DISP_ALL']; ?>
+									<input type="radio" name="displayall" value="1"<?php echo ($displayAll?'checked':'');?> aria-label="<?php echo $LANG['DISP_ALL']; ?>" /> <?php echo $LANG['DISP_ALL']; ?>
 								</div>
 								<div style="float:right;">
 									<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
@@ -239,7 +240,7 @@ if($isEditor){
 						?>
 						<div id="loanoutToggle" style="float:right;margin:10px;">
 							<a href="#" onclick="displayNewLoanOut();">
-								<img src="../../images/add.png" style="width:1.5em;" title="<?php echo $LANG['CREATE_NEW_LOAN']; ?>" alt="<?php echo $LANG['CREATE_NEW_LOAN']; ?>" />
+								<img src="../../images/add.png" style="width:1.5em;" title="<?php echo $LANG['CREATE_NEW_LOAN']; ?>" alt="<?php echo $LANG['CREATE_NEW_LOAN']; ?>" aria-label="<?php echo $LANG['CREATE_A_NEW_LOAN']; ?>"  />
 							</a>
 						</div>
 						<?php
@@ -254,12 +255,12 @@ if($isEditor){
 										<?php echo $LANG['ENTERED_BY']; ?>:
 									</span><br />
 									<span>
-										<input type="text" autocomplete="off" name="createdbyown" maxlength="32" style="width:100px;" value="<?php echo $PARAMS_ARR['un']; ?>" />
+										<input type="text" autocomplete="off" name="createdbyown" maxlength="32" style="width:100px;" value="<?php echo $PARAMS_ARR['un']; ?>" title="<?php echo $LANG['ENTERED_BY'] ?>" aria-label="<?php echo $LANG['SUBMITTED_BY'] ?>" />
 									</span>
 								</div>
 								<div style="padding-top:15px;float:right;">
 									<span>
-										<b><?php echo $LANG['LOAN_ID']; ?>: </b><input type="text" autocomplete="off" name="loanidentifierown" maxlength="255" style="width:120px;border:2px solid black;text-align:center;font-weight:bold;color:black;" value="" />
+										<b><label for="loanidentifierown"><?php echo $LANG['LOAN_ID']; ?></label> </b><input type="text" id="loanidentifierown" autocomplete="off" name="loanidentifierown" maxlength="255" style="width:120px;border:2px solid black;text-align:center;font-weight:bold;color:black;" value="" />
 									</span>
 								</div>
 								<div style="clear:both;padding-top:6px;float:left;">
@@ -267,7 +268,7 @@ if($isEditor){
 										<?php echo $LANG['SEND_INSTITUTION']; ?>:
 									</span><br />
 									<span>
-										<select name="reqinstitution" style="width:400px;">
+										<select name="reqinstitution" style="width:400px;" aria-label="<?php echo $LANG['SEND_INSTITUTION'] ?>" >
 											<option value=""><?php echo $LANG['SEL_INST']; ?></option>
 											<option value="">------------------------------------------</option>
 											<?php
@@ -279,8 +280,8 @@ if($isEditor){
 										</select>
 									</span>
 									<span>
-										<a href="../misc/institutioneditor.php?emode=1" target="_blank" title="<?php echo $LANG['ADD_NEW_INST']; ?>">
-											<img src="../../images/add.png" style="width:1.2em;" />
+										<a href="../misc/institutioneditor.php?emode=1" target="_blank" title="<?php echo $LANG['ADD_NEW_INST']; ?>" aria-label="<?php echo $LANG['ADD_A_NEW_INST']; ?>">
+											<img src="../../images/add.png" style="width:1.2em;" alt="<?php echo $LANG['ADD_NEW_INST']; ?>" />
 										</a>
 									</span>
 								</div>
@@ -314,7 +315,7 @@ if($isEditor){
 								}
 
 								echo '<li>';
-								echo '<a href="outgoing.php?collid=' . htmlspecialchars($targetCollid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($loanArr['loanidentifierown'], HTML_SPECIAL_CHARS_FLAGS) . ' <img src="../../images/edit.png" style="width:1.2em" /></a> ';
+								echo '<a href="outgoing.php?collid=' . htmlspecialchars($targetCollid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($loanArr['loanidentifierown'], HTML_SPECIAL_CHARS_FLAGS) . ' <img src="../../images/edit.png" style="width:1.2em"  /></a> ';
 								if(isset($loanArr['isexternal'])) echo '<span style="color:orange">' . $LANG['EXTERNAL_COLL'] . '</span>';
 								echo ': ' . ($loanArr['institutioncode'] ? $loanArr['institutioncode'] : ($loanArr['institutionname'] ? $loanArr['institutionname'] : '[no name]'));
 								echo ' (' . $loanArr['forwhom'] . ') - ' . ($loanArr['dateclosed']? $LANG['CLOSED'] . ': ' . $loanArr['dateclosed']:'<b>' . $LANG['OPEN'] . '</b>');
@@ -339,14 +340,15 @@ if($isEditor){
 							<fieldset>
 								<legend><?php echo $LANG['OPTIONS']; ?></legend>
 								<div>
-									<b>Search: </b><input type="text" autocomplete="off" name="searchterm" value="<?php echo $searchTerm;?>" size="20" />
+									<b><label for="search-loanin"><?php echo $LANG['SEARCH'] ?></label> </b>
+									<input type="text" id="search-loanin" autocomplete="off" name="searchterm" value="<?php echo $searchTerm;?>" size="20" />
 								</div>
 								<div>
-									<input type="radio" name="displayall" value="0"<?php echo ($displayAll==0 ? 'checked' : ''); ?> /> <?php echo $LANG['DISP_OUTSTANDING']; ?>
+									<input type="radio" name="displayall" value="0"<?php echo ($displayAll==0 ? 'checked' : ''); ?> aria-label="<?php echo $LANG['DISP_OUTSTANDING']; ?>" /> <?php echo $LANG['DISP_OUTSTANDING']; ?>
 								</div>
 								<div>
-									<input type="radio" name="displayall" value="1"<?php echo ($displayAll ? 'checked' : ''); ?> /> <?php echo $LANG['DISP_ALL']; ?>
-
+									<input type="radio" name="displayall" value="1"<?php echo ($displayAll ? 'checked' : ''); ?> aria-label="<?php echo $LANG['DISP_ALL']; ?>" /> <?php echo $LANG['DISP_ALL']; ?>
+								</div>
 								<div style="float:right;">
 									<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
 									<input type="hidden" name="tabindex" value="1" />
@@ -361,7 +363,7 @@ if($isEditor){
 					?>
 					<div id="loaninToggle" style="float:right;margin:10px;">
 						<a href="#" onclick="displayNewLoanIn();">
-							<img src="../../images/add.png" style="width:1.5em;" title="<?php echo $LANG['CREATE_NEW_LOAN']; ?>" alt="<?php echo $LANG['CREATE_NEW_LOAN']; ?>" />
+							<img src="../../images/add.png" style="width:1.5em;"  title="<?php echo $LANG['CREATE_NEW_LOAN']; ?>" alt="<?php echo $LANG['CREATE_NEW_LOAN']; ?>" aria-label="<?php echo $LANG['CREATE_A_NEW_LOAN']; ?>" />
 						</a>
 					</div>
 					<div id="newloanindiv" style="display:<?php echo (($loanInList || $loansOnWay || $searchTerm)?'none':'block'); ?>;">
@@ -373,13 +375,13 @@ if($isEditor){
 										<?php echo $LANG['ENTERED_BY']; ?>:
 									</span><br />
 									<span>
-										<input type="text" autocomplete="off" name="createdbyborr" maxlength="32" style="width:100px;" value="<?php echo $PARAMS_ARR['un']; ?>" />
+										<input type="text" autocomplete="off" name="createdbyborr" maxlength="32" style="width:100px;" value="<?php echo $PARAMS_ARR['un']; ?>" aria-label="<?php echo $LANG['ENTERED_BY']; ?>" />
 									</span>
 								</div>
 								<div style="padding-top:15px;float:right;">
 									<span>
-										<b><?php echo $LANG['LOAN_ID']; ?>: </b>
-										<input type="text" autocomplete="off" id="loanidentifierborr" name="loanidentifierborr" maxlength="255" style="width:120px;border:2px solid black;text-align:center;font-weight:bold;color:black;" value="" />
+										<b><label for="loanidentifierborr"><?php echo $LANG['LOAN_ID']; ?></label>: </b>
+										<input type="text" id="loanidentifierborr" autocomplete="off" name="loanidentifierborr" maxlength="255" style="width:120px;border:2px solid black;text-align:center;font-weight:bold;color:black;" value="" />
 									</span>
 								</div>
 								<div style="clear:both;padding-top:6px;float:left;">
@@ -387,7 +389,7 @@ if($isEditor){
 										<?php echo $LANG['SENT_FROM']; ?>:
 									</span><br />
 									<span>
-										<select name="iidowner" style="width:400px;">
+										<select name="iidowner" style="width:400px;" aria-label="<?php echo $LANG['SENT_FROM'] ?>">
 											<option value="0"><?php echo $LANG['SEL_INST']; ?></option>
 											<option value="0">------------------------------------------</option>
 											<?php
@@ -399,8 +401,8 @@ if($isEditor){
 										</select>
 									</span>
 									<span>
-										<a href="../misc/institutioneditor.php?emode=1" target="_blank" title="<?php echo $LANG['ADD_NEW_INST']; ?>">
-											<img src="../../images/add.png" style="width:1.2em;" />
+										<a href="../misc/institutioneditor.php?emode=1" target="_blank" title="<?php echo $LANG['ADD_NEW_INST']; ?>" aria-label="<?php echo $LANG['ADD_A_NEW_INST']; ?>">
+											<img src="../../images/add.png" style="width:1.2em;" alt="<?php echo $LANG['ADD_NEW_INST']; ?>" />
 										</a>
 									</span>
 								</div>
@@ -444,7 +446,6 @@ if($isEditor){
 							echo '</div>';
 						}
 						?>
-						</ul>
 					</div>
 					<div style="margin-top:50px">
 						<?php

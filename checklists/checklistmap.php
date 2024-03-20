@@ -24,9 +24,6 @@ $coords = [];
 
 foreach($coordArr as $tid => $taxaCoords) {
    foreach($taxaCoords as $coord) {
-
-
-
       $ll = explode(',',$coord['ll']);
       if(count($ll) == 2 && trim($ll[0]) != 0 && trim($ll[1]) != 0) {
          array_push($coords, ['lat' => $ll[0], 'lng' => $ll[1], 'occid' => $coord['occid'], 'notes' => $coord['notes']]);
@@ -122,9 +119,7 @@ $metaJson = json_encode($clMeta);
                   inat_markerGroup.addTo(map.mapLayer)
                });
             }
-
          }
-
          function googleInit() {
             var vIcon = new google.maps.MarkerImage("../images/google/smpin_red.png");
             var pIcon = new google.maps.MarkerImage("../images/google/smpin_blue.png");
@@ -199,17 +194,35 @@ $metaJson = json_encode($clMeta);
          }
 
          // Note Need to Throttle to < 100 requests per minute as per iNaturalist API guidelines
-         async function getInatProjectOccurrences(inat_proj_id) {
-
-            let url = `https://api.inaturalist.org/v1/observations?project_id=${inat_proj_id}&geo=true&mappable=true&per_page=200`;
+         async function getInatProjectOccurrences(inat_proj_id, page = 1) {
+            let url = `https://api.inaturalist.org/v1/observations?project_id=${inat_proj_id}&geo=true&page=${page}&mappable=true&per_page=200`;
             let response = await fetch(url, {
                method: "GET",
                headers: {
                   "Content-Type": "application/json",
                }
             })
+            const records = await response.json(); 
+            const resultLimit = 10000;
+            const totalResults = records.total_results > resultLimit? resultLimit: records.total_results;
+            const maxPage = Math.floor(totalResults / 200);
 
-            return await response.json();
+            if(!records) return {
+               page,
+               per_page: 200,
+               results: [],
+               total_results: 0 
+            }
+
+            if(page !== maxPage) {
+               //Wait a second and then make another api call for next page
+               await new Promise(resolve => {
+                  setTimeout(resolve, 1000, false);
+               })
+               const nextResult = await getInatProjectOccurrences(inat_proj_id, page + 1)
+               records.results = [...records.results, ...nextResult.results];
+            }
+            return records;
          }
 
          function initialize() {

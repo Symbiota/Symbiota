@@ -12,6 +12,7 @@ $zoom = array_key_exists("zoom",$_REQUEST)&&is_numeric($_REQUEST["zoom"])?$_REQU
 $mapMode = array_key_exists("mapmode",$_REQUEST)? htmlspecialchars($_REQUEST["mapmode"]):'';
 $mapModeStrict = array_key_exists("map_mode_strict",$_REQUEST) && is_bool($_REQUEST["map_mode_strict"])? $_REQUEST["map_mode_strict"]:false;
 $wktInputId = array_key_exists("wkt_input_id", $_REQUEST)? htmlspecialchars($_REQUEST["wkt_input_id"]):"footprintwkt";
+$outputType= array_key_exists("geoJson", $_REQUEST)?"geoJson":"wkt";
 
 $clManager = new ChecklistAdmin();
 $clManager->setClid($clid);
@@ -108,6 +109,7 @@ else{
       const KMtoM = 1000; 
       const SIG_FIGS = 6;
       const wktInputId = "<?= $wktInputId?>";
+      const polyOutputType = "<?= $outputType ?>";
 
       const setField = (id, v) => {
          var elem = opener.document.getElementById(id);
@@ -150,8 +152,8 @@ else{
          setField("pointlong", Math.abs(center_lng).toFixed(SIG_FIGS));
       }
 
-      function setPolygon(wkt) {
-         setField(wktInputId, wkt);
+      function setPolygon(poly_output) {
+         setField(wktInputId, poly_output);
       }
 
       /* setShapeToSearchForm: 
@@ -181,7 +183,18 @@ else{
 
          switch(activeShape.type) {
             case "polygon":
-               setPolygon(activeShape.wkt);
+               if(polyOutputType === "geoJson") {
+                  setPolygon( JSON.stringify({
+                     "type": "Feature",
+                     "properties": {},
+                     "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [activeShape.latlngs.map(([lat, lng]) => [lng, lat])]
+                     },
+                  }));
+               } else {
+                  setPolygon(activeShape.wkt);
+               }
                break;
             case "rectangle":
                const rec = activeShape;
@@ -203,15 +216,28 @@ else{
       function loadShape(mapMode) {
          switch(mapMode) {
             case "polygon":
-               let origFootprintWkt = getField(wktInputId);
-               try {
-                  let polyPoints = parseWkt(origFootprintWkt);
-                  if(polyPoints) {
-                     return { type: "polygon", latlngs: polyPoints, wkt: getField(wktInputId)};
+               if(polyOutputType === "geoJson") {
+                  const geoJsonStr = getField(wktInputId);
+                  try {
+                     const geoJson = JSON.parse(geoJsonStr);
+                        return { 
+                           type: "geoJSON", 
+                           geoJSON: geoJson
+                        };
+                  } catch(e) {
+                     alert(e.message);
                   }
-               } catch(e) {
-                  alert(e.message);
-						opener.document.getElementById(wktInputId).value = origFootprintWkt;
+               } else {
+                  const origFootprintWkt = getField(wktInputId);
+                  try {
+                     const polyPoints = parseWkt(origFootprintWkt);
+                     if(polyPoints) {
+                        return { type: "polygon", latlngs: polyPoints, wkt: getField(wktInputId)};
+                     }
+                  } catch(e) {
+                     alert(e.message);
+                     opener.document.getElementById(wktInputId).value = origFootprintWkt;
+                  }
                }
             break;
             case "rectangle":
@@ -277,7 +303,6 @@ else{
 
          if(formShape) {
             map.drawShape(formShape);
-            map.mapLayer.fitBounds(map.activeShape.layer.getBounds());
          }
       }
       function googleInit() {

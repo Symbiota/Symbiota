@@ -17,6 +17,7 @@ $LANG['TRANS_TYPE'] = 'Transaction Type';
 $LANG['SHIPMENT'] = 'Shipment';
 $LANG['ADJUSTMENT'] = 'Adjustment';
 $LANG['ENTERED_BY'] = 'Entered By';
+$LANG['SUBMITTED_BY'] = 'Submitted By';
 $LANG['INSTITUTION'] = 'Institution';
 $LANG['ADJ_AMOUNT'] = 'Adjustment Amount';
 $LANG['EDIT_GIFT_EX'] = 'Edit Gift/Exchange';
@@ -58,6 +59,7 @@ $LANG['CREATE_NEW_EXCHANGE'] = 'Create New Exchange';
 $LANG['NEW_GIFT'] = 'New Gift/Exchange';
 $LANG['SEL_INST'] = 'Select Institution';
 $LANG['ADD_NEW_INST'] = 'Add a New Institution';
+$LANG['ADD_A_NEW_INST'] = 'Include a New Institution';
 $LANG['CREATE_EXCHANGE'] = 'Create Exchange';
 $LANG['TRANS_BY_INST'] = 'Transaction Records by Institution';
 $LANG['OUTGOING_EX_SENT'] = 'Outgoing exchange; Sent ';
@@ -112,6 +114,7 @@ $LANG['DISP_OUTSTANDING'] = 'Display outstanding loans only';
 $LANG['DISP_ALL'] = 'Display all loans';
 $LANG['REFRESH_LIST'] = 'Refresh List';
 $LANG['CREATE_NEW_LOAN'] = 'Create New Loan';
+$LANG['CREATE_A_NEW_LOAN'] = 'Create  a New Loan';
 $LANG['CREATE_OUTGOING'] = 'New Outgoing Loan';
 $LANG['LOAN_ID'] = 'Loan Identifier';
 $LANG['SEND_INSTITUTION'] = 'Send to Institution';
@@ -130,6 +133,11 @@ $LANG['NO_LOANS'] = 'There are no loans matching your search criteria';
 $LANG['NO_LOANS_RECD'] = 'There are no loans received';
 $LANG['LOANS_TO_CHECK_IN'] = 'Loans to be Checked-in';
 $LANG['NOT_AUTH_LOANS'] = 'You are not authorized to manage loans for this collection';
+
+$LANG['ADD_ICON'] = 'Add Icon';
+$LANG['SEARCH'] = 'Search:';
+$LANG['GENERATION_ID_FAILED'] = 'Generation of new ID failed';
+$LANG['HOME'] = 'Home';
 
 //from outgoing.php
 $LANG['PROC_SUCCESS'] = 'specimens processed successfully';

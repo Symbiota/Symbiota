@@ -24,63 +24,64 @@
 		$borderStyle = ('margin:10px;padding:10px 20px;border:inset');
 		?>
 			<div>
-		<?php
-		if(isset($specArr['cat'])){
-			$categoryArr = $specArr['cat'];
-			$collTypeLabel = 'Specimens';
-			$uniqGrouping = '';
-			?>
-			<section class="gridlike-form">
-				<?php
-				foreach($categoryArr as $catid => $catEl){
-					include('./singleCollectionGroupDetails.php');
-					$collCnt++;
-				}
-				?>
-			</section>
-		<?php
-		}
-		if(isset($specArr['coll'])){
-			$collArr = $specArr['coll'];
-			?>
-			<table style="float:left;width:80%;">
-				<?php
-				foreach($collArr as $collid => $cArr){
-					include('./singleCollectionWithoutCategoryDetails.php');
-					$collCnt++;
-				}
-				?>
-			</table>
 			<?php
-		}
-		$hrAndHeaderText = '<div class="specimen-header-margin"><hr/><h2>' . $LANG['OBSERVATION_COLLECTIONS'] . '</h2></div>';
-		if($specArr && $obsArr) echo $hrAndHeaderText;
-		if(isset($obsArr['cat'])){
-			$categoryArr = $obsArr['cat'];
-			$collTypeLabel = 'Observations';
-			$uniqGrouping = '';
-			?>
-			<section class="gridlike-form">
+				if(isset($specArr['cat'])){
+					$categoryArr = $specArr['cat'];
+					$collTypeLabel = 'Specimens';
+					$uniqGrouping = '';
+					?>
+					<section class="gridlike-form">
+						<?php
+						foreach($categoryArr as $catid => $catEl){
+							include('./singleCollectionGroupDetails.php');
+							$collCnt++;
+						}
+						?>
+					</section>
 				<?php
-				foreach($categoryArr as $catid => $catEl){
-					include('./singleCollectionGroupDetails.php');
-					$collCnt++;
 				}
-				?>
-			</section>
-		<?php
-		}
-		if(isset($obsArr['coll'])){
-			$collArr = $obsArr['coll'];
-			?>
-			<table style="float:left;width:80%;">
+				if(isset($specArr['coll'])){
+					$collArr = $specArr['coll'];
+					?>
+					<table style="float:left;width:80%;">
+						<?php
+						foreach($collArr as $collid => $cArr){
+							include('./singleCollectionWithoutCategoryDetails.php');
+							$collCnt++;
+						}
+						?>
+					</table>
+					<?php
+				}
+				$hrAndHeaderText = '<div class="specimen-header-margin"><hr/><h2>' . $LANG['OBSERVATION_COLLECTIONS'] . '</h2></div>';
+				if($specArr && $obsArr) echo $hrAndHeaderText;
+				if(isset($obsArr['cat'])){
+					$categoryArr = $obsArr['cat'];
+					$collTypeLabel = 'Observations';
+					$uniqGrouping = '';
+					?>
+					<section class="gridlike-form">
+						<?php
+						foreach($categoryArr as $catid => $catEl){
+							include('./singleCollectionGroupDetails.php');
+							$collCnt++;
+						}
+						?>
+					</section>
 				<?php
-				foreach($collArr as $collid => $cArr){
-					include('./singleCollectionWithoutCategoryDetails.php');
-					$collCnt++;
 				}
-				?>
-			</table>
-			<?php
-		}
-	?>
+				if(isset($obsArr['coll'])){
+					$collArr = $obsArr['coll'];
+					?>
+					<table style="float:left;width:80%;">
+						<?php
+						foreach($collArr as $collid => $cArr){
+							include('./singleCollectionWithoutCategoryDetails.php');
+							$collCnt++;
+						}
+						?>
+					</table>
+					<?php
+				}
+			?>
+			</div>

@@ -547,7 +547,7 @@ class OccurrenceEditorManager {
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' < '.$customValue.') '.($ccp?$ccp.' ':'');
 		}
 		elseif($customTerm == 'LIKE' && $customValue){
-			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' LIKE "%'.trim($customValue,'%').'%") '.($ccp?$ccp.' ':'');
+			$sqlFrag .= $cao . ($cop ? ' ' . $cop : '') . ' (' . $customField . ' LIKE "%' . $customValue . '%") ' . ($ccp ? $ccp . ' ' : '');
 		}
 		elseif($customTerm == 'NOT_LIKE' && $customValue){
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' (('.$customField.' NOT LIKE "%'.trim($customValue,'%').'%") OR ('.$customField.' IS NULL)) '.($ccp?$ccp.' ':'');
@@ -555,7 +555,7 @@ class OccurrenceEditorManager {
 		elseif($customTerm == 'STARTS_WITH' && $customValue){
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' LIKE "'.trim($customValue,'%').'%") '.($ccp?$ccp.' ':'');
 		}
-		elseif($customValue){
+		elseif($customValue !== ''){
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' = "'.$customValue.'") '.($ccp?$ccp.' ':'');
 		}
 		return $sqlFrag;

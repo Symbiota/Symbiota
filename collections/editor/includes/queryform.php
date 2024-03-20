@@ -98,7 +98,7 @@ else{
 						<input type="text" name="q_eventdate" id="q_eventdate" value="<?php echo $qEventDate; ?>" style="width:160px" onchange="setOrderBy(this)" />
 					</div>
 
-					<button type="button" class="icon-button float-right" onclick="copyQueryLink(event)" title="<?php echo $LANG['COPY_SEARCH']; ?>" aria-label="<?php echo $LANG['COPY_SEARCH']; ?>">
+					<button type="button" class="icon-button float-right" onclick="copyQueryLink(event)" title="<?php echo $LANG['COPY_SEARCH']; ?>" aria-label="<?php echo $LANG['COPY_LINK']; ?>">
 						<img src="../../images/link.png" style="width:1.2em;margin-right:5px;" alt="Link icon. Copies the search terms as a link." /><?php echo $LANG['COPY_LINK']; ?>
 					</button>
 				</div>
