@@ -757,6 +757,18 @@ value="${color}"
 				}
 			}
 
+         document.addEventListener('resetMap', async e => {
+			   setPanels(false);
+				mapGroups.forEach(group => {
+					group.taxonMapGroup.resetGroup();
+					group.collectionMapGroup.resetGroup();
+				})
+
+				markers = [];
+				recordArr = [];
+
+            if(heatmapLayer) map.mapLayer.removeLayer(heatmapLayer);
+         })
 
 			document.getElementById("mapsearchform").addEventListener('submit', async e => {
 				e.preventDefault();
@@ -770,6 +782,8 @@ value="${color}"
 				})
 
 				markers = [];
+
+            if(heatmapLayer) map.mapLayer.removeLayer(heatmapLayer);
 
 				getOccurenceRecords(formData).then(res => {
 					if (res) loadOccurenceRecords(res);
@@ -1174,6 +1188,19 @@ value="${color}"
 				});
 			}
 
+         document.addEventListener('resetMap', async e => {
+			   setPanels(false);
+				mapGroups.forEach(group => {
+					group.taxonMapGroup.resetGroup();
+					group.collectionMapGroup.resetGroup();
+				})
+
+				markers = [];
+				recordArr = [];
+
+				if(heatmapLayer) heatmapLayer.setData({data: []})
+         })
+
 			document.getElementById("mapsearchform").addEventListener('submit', async e => {
 				if(!verifyCollForm(e.target)) return;
 
@@ -1510,7 +1537,6 @@ value="${color}"
 
 		function deleteMapShape() {
 			document.dispatchEvent(new Event('deleteShape'));
-			setQueryShape(shape)
 		}
 
 		function initialize() {
@@ -1559,6 +1585,7 @@ value="${color}"
 						}
 					})
 				}
+            document.addEventListener("deleteShape", () => setQueryShape(shape))
 
 			} catch(e) {
 				alert("Failed to initialize map coordinate data")
@@ -1760,7 +1787,7 @@ Record Limit:
 											</div>
 										</div>
 										<div id="deleteshapediv" style="margin-top:5px;display:<?php echo (($mapManager->getSearchTerm('pointlat') || $mapManager->getSearchTerm('upperlat') || $mapManager->getSearchTerm('polycoords'))?'block':'none'); ?>;">
-											<button data-role="none" type=button onclick="deleteMapShape()"><?php echo (isset($LANG['DELETE_SHAPE'])?$LANG['DELETE_SHAPE']:'Delete Selected Shape'); ?></button>
+											<button data-role="none" type="button" onclick="deleteMapShape()"><?php echo (isset($LANG['DELETE_SHAPE'])?$LANG['DELETE_SHAPE']:'Delete Selected Shape'); ?></button>
 										</div>
 									</div>
 									<div style="margin:5 0 5 0;"><hr /></div>

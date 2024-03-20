@@ -338,7 +338,12 @@ function resetQueryForm(f) {
   $("input[name=hasimages]").attr("checked", false);
   $("input[name=hasgenetic]").attr("checked", false);
   $("input[name=includecult]").attr("checked", false);
-  deleteSelectedShape();
+  const crossPortalForm = $("autocomplete-input[name=external-taxa-input]");
+  if(crossPortalForm && crossPortalForm[0]) {
+    crossPortalForm[0].getInputElement().value="";
+  }
+  document.dispatchEvent(new Event('deleteShape'));
+  document.dispatchEvent(new Event('resetMap'));
 }
 
 function shiftKeyBox(tid) {

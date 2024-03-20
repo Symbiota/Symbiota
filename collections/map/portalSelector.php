@@ -26,22 +26,13 @@ $PORTAL_SELECTOR_ID = !isset($PORTAL_SELECTOR_ID) || !is_int($PORTAL_SELECTOR_ID
 <div>
    <?php if(count($portals) > 0):?>
    <script src="<?php echo $CLIENT_ROOT?>/js/autocomplete-input.js" type="module"></script>
-   <script type="text/javascript">
-   function onPortalSelect(v) {
-      let input = document.getElementById("portal-taxa-suggest-<?php echo $PORTAL_SELECTOR_ID?>")
-      input.completeUrl = v + '/rpc/taxasuggest.php?term=??';
-   }
-
-   function onEnablePortalSelector(on) {
-      let selector = document.getElementById("portal-selector-<?php echo $PORTAL_SELECTOR_ID?>")
-      selector.style.display= on ?'block': 'none';
-   }
-   </script>
    <div>
       <input 
          onchange="onEnablePortalSelector(this.checked)"
          data_role="none" 
          type="checkbox" 
+         id="cross_portal_switch_<?php echo $PORTAL_SELECTOR_ID?>"
+         autocomplete='off'
          name="cross_portal_switch"
       />
       <label for="cross_portal_switch">
@@ -69,6 +60,17 @@ $PORTAL_SELECTOR_ID = !isset($PORTAL_SELECTOR_ID) || !is_int($PORTAL_SELECTOR_ID
          </autocomplete-input>
       </div>
    </div>
+   <script type="text/javascript" defer>
+   function onPortalSelect(v) {
+      let input = document.getElementById("portal-taxa-suggest-<?php echo $PORTAL_SELECTOR_ID?>")
+      input.completeUrl = v + '/rpc/taxasuggest.php?term=??';
+   }
+
+   function onEnablePortalSelector(on) {
+      let selector = document.getElementById("portal-selector-<?php echo $PORTAL_SELECTOR_ID?>")
+      selector.style.display= on ?'block': 'none';
+   }
+   </script>
    <?php else: ?>
    <?= (isset($LANG['NO_EXTERNAL_PORTALS_SEARCH_COMPATIBLE'])? $LANG['NO_EXTERNAL_PORTALS_SEARCH_COMPATIBLE']: 'No external portals are search compatible')?>
    <?php endif; ?>
