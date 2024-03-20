@@ -1,9 +1,13 @@
 function imageTypeChanged(selectObj){
 	if(selectObj.value == 1 || selectObj.value == 2){
 		$("#collection-div").show();
+		$("input[name='db[]']").prop('checked', true);
+		$("input[name='cat[]']").prop('checked', true);
 	}
 	else{
 		$("#collection-div").hide();
+		$("input[name='db[]']").prop('checked', false);
+		$("input[name='cat[]']").prop('checked', false);
 	}
 }
 

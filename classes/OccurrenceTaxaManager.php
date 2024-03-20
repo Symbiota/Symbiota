@@ -383,10 +383,24 @@ class OccurrenceTaxaManager {
 		return '';
 	}
 
+	public function cleanOutArray($inputArray){
+		if(is_array($inputArray)){
+			foreach($inputArray as $key => $value){
+				if(is_array($value)){
+					$inputArray[$key] = $this->cleanOutArray($value);
+				}
+				else{
+					$inputArray[$key] = $this->cleanOutStr($value);
+				}
+			}
+		}
+		return $inputArray;
+	}
+
 	public function cleanOutStr($str){
 		if(!is_string($str) && !is_numeric($str) && !is_bool($str)) $str = '';
 		if(strpos($str, '=') !== false) $str = '';
-		return htmlspecialchars($str);
+		return htmlspecialchars($str, HTML_SPECIAL_CHARS_FLAGS);
 	}
 
 	protected function cleanInputStr($str){
