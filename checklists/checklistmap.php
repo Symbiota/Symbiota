@@ -98,9 +98,6 @@ $metaJson = json_encode($clMeta);
 
             //Only for inaturalist for now
             if(clMeta.dynamicProperties && clMeta.dynamicProperties.externalserviceid) {
-               //TODO (Logan) Only grabs 200 records for now setup multi request
-               //fill in. Note this must be throttled to be less than 100 requests
-               //per minute for iNaturalist guidelines
                getInatProjectOccurrences(clMeta.dynamicProperties.externalserviceid).then(res => {
                   let inat_markers = [];
                   for(let occur of res.results) {
@@ -157,9 +154,6 @@ $metaJson = json_encode($clMeta);
 
             //Only for inaturalist for now
             if(clMeta.dynamicProperties && clMeta.dynamicProperties.externalserviceid) {
-               //TODO (Logan) Only grabs 200 records for now setup multi request
-               //fill in. Note this must be throttled to be less than 100 requests
-               //per minute for iNaturalist guidelines
                getInatProjectOccurrences(clMeta.dynamicProperties.externalserviceid).then(res => {
                   for(let occur of res.results) {
                      if(occur.geojson && occur.geojson.type === "Point") {
