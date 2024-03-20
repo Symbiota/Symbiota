@@ -49,4 +49,6 @@ $LANG['ASSOC_UPDATED'] = 'Association mise à jour';
 $LANG['ASSOC_ADDED'] = 'Association ajoutée';
 $LANG['MAT_SAMPLE_ADDED'] = 'Échantillon de matériau ajouté';
 $LANG['DETERMINATION_ADDED'] = 'Détermination ajoutée';
+$LANG['CHOOSE_FILE'] = 'Choisir un fichier';
+$LANG['ASSOCIATION_TYPE'] = 'Type d\'association';
 ?>
