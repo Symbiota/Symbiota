@@ -41,6 +41,7 @@ $LANG['OBSERVATION'] = 'Observation';
 $LANG['RESET_SYMBOLOGY'] = 'Reset Symbology';
 $LANG['AUTO_COLOR'] = 'Auto Color';
 $LANG['TAXA_COUNT'] = 'Taxa Count';
+$LANG['CURRENT_PORTAL'] = 'Current Portal';
 
 $LANG['MORE_INFO'] = 'more info...';
 

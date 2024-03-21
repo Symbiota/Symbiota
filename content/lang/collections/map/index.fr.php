@@ -41,6 +41,7 @@ $LANG['OBSERVATION'] = 'Observation';
 $LANG['RESET_SYMBOLOGY'] = 'Réinitialiser la symbologie';
 $LANG['AUTO_COLOR'] = 'Couleur automatique';
 $LANG['TAXA_COUNT'] = 'Nombre de taxons';
+$LANG['CURRENT_PORTAL'] = 'Portail Actuel';
 
 $LANG['MORE_INFO'] = "Plus d'informations...";
 

@@ -45,6 +45,7 @@ $LANG['OBSERVATION'] = 'Observación';
 $LANG['RESET_SYMBOLOGY'] = 'Reiniciar Simbología';
 $LANG['AUTO_COLOR'] = 'Color Automático';
 $LANG['TAXA_COUNT'] = 'Conteo de Taxa';
+$LANG['CURRENT_PORTAL'] = 'Portal Actual';
 
 $LANG['MORE_INFO'] = 'Más información...';
 ?>

@@ -43,6 +43,7 @@ $LANG['OBSERVATION'] = 'Observação';
 $LANG['RESET_SYMBOLOGY'] = 'Redefinir Simbologia';
 $LANG['AUTO_COLOR'] = 'Cor Automática';
 $LANG['TAXA_COUNT'] = 'Contagem de Impostos';
+$LANG['CURRENT_PORTAL'] = 'Portal Actual';
 
 $LANG['MORE_INFO'] = 'mais informações...';
 

@@ -824,7 +824,7 @@ value="${color}"
 
 				let searches = [
                searchCollections(formData).then(res => {
-                  res.label = "This Portal"
+               res.label = "<?= $LANG['CURRENT_PORTAL']?>";
                   return res;
                })
             ]
@@ -1284,7 +1284,7 @@ value="${color}"
 
 				let searches = [
                searchCollections(formData).then(res=>{
-                  res.label = "This Portal"
+                  res.label = "<?= $LANG['CURRENT_PORTAL']?>";
                   return res;
                }),
             ]
