@@ -289,6 +289,8 @@ foreach ($coordArr as $collName => $coll) {
 		let taxaLegendMap = {}
 		//Object that maps collections to matching mapGroup Index
 		let collLegendMap = {}
+		//Object that maps portals to matching mapGroup Index
+		let portalLegendMap = {}
 
 		const colorChange = new Event("colorchange",  {
 			bubbles: true,
@@ -312,15 +314,19 @@ foreach ($coordArr as $collName => $coll) {
 
 		function buildPanels(cross_portal_enabled) {
          const cross_portal_results = document.getElementById("cross_portal_results");
+         const cross_portal_list = document.getElementById("cross_portal_list");
          if(cross_portal_results) {
             if(cross_portal_enabled) {
                cross_portal_results.style.display = "block";
+               cross_portal_list.style.display = "block";
             } else {
                cross_portal_results.style.display = "none";
+               cross_portal_list.style.display = "none";
             }
          }
 			setPanels(true);
 			$("#accordion").accordion("option",{active: 1});
+         buildPortalLegend();
 			buildTaxaLegend();
 			buildCollectionLegend();
 
@@ -387,6 +393,28 @@ value="${color}"
 			document.getElementById("taxasymbologykeysbox").innerHTML = taxaHtml;
 			document.getElementById("taxaCountNum").innerHTML = taxaArr.length;
 		}
+
+      function buildPortalLegend() {
+         portalLegendMap = {};
+         for(let i = 0; i < mapGroups.length; i++) {
+            for(portal of Object.values(mapGroups[i].portalMapGroup.group_map)) {
+					if(!portalLegendMap[portal.name]) {
+						portalLegendMap[portal.name] = portal; 
+						portalLegendMap[portal.name].id_map = [{portalid: portal.portalid, index: i}];
+					} else {
+						portalLegendMap[portal.name].id_map.push({portalid: portal.portalid, index: i});
+					}
+            }
+         }
+
+			let html = "<div style='display:table;'>";
+
+			for (let portal of Object.values(portalLegendMap)) {
+				html += legendRow(`portal-${portal.id_map.map(v => `${v.index}*${v.portalid}`).join(",")}`, portal.color, portal.name);
+			}
+
+			document.getElementById("portalsymbologykeysbox").innerHTML = html;
+      }
 
 		function buildCollectionLegend() {
 			collLegendMap = {}
@@ -566,7 +594,6 @@ value="${color}"
 
 				drawGroup() {
 					for (let id of Object.keys(this.group_map)) {
-						// TODO (Logan) clusteroff is global see if way to remove
 						if(clusteroff) {
 							this.layer_groups[id].addTo(map.mapLayer);
 						} else if(!map.mapLayer.hasLayer(this.group_map[id].cluster)) {
@@ -643,9 +670,10 @@ value="${color}"
 				}
 			}
 
-			function genMapGroups(records, tMap, cMap) {
+			function genMapGroups(records, tMap, cMap, origin) {
 				let taxon = new LeafletMapGroup("taxa", tMap);
 				let collections = new LeafletMapGroup("coll", cMap);
+				let portal = new LeafletMapGroup("portal", { [origin]: { name: origin, portalid: origin, color: generateRandColor()} });
 
 				for(let record of records) {
 					let marker = (record.type === "specimen"?
@@ -668,14 +696,14 @@ value="${color}"
 					.on('click', function() { openRecord(record) })
 					.bindTooltip(`<div style="font-size:1.5rem">${record.id}</div>`)
 
-					//TODO (Logan) remove global
 					markers.push(marker);
 
 					taxon.addMarker(record['tid'], marker);
 					collections.addMarker(record['collid'], marker);
+					portal.addMarker(origin, marker);
 				}
 
-				return {taxonMapGroup: taxon, collectionMapGroup: collections};
+				return {taxonMapGroup: taxon, collectionMapGroup: collections, portalMapGroup: portal};
 			}
 
 			function genClusters(legendMap, type) {
@@ -701,6 +729,8 @@ value="${color}"
 							mapGroups[g.index].taxonMapGroup.genLayer(g.tid, cluster);
 						} else if(type === "coll") {
 							mapGroups[g.index].collectionMapGroup.genLayer(g.collid, cluster);
+						} else if(type === "portal") {
+							mapGroups[g.index].portalMapGroup.genLayer(g.portalid, cluster);
 						}
 					});
 				}
@@ -712,6 +742,7 @@ value="${color}"
 				} else {
 					if(cluster_type === "taxa") mapGroups.forEach(group => group.taxonMapGroup.drawGroup())
 					else if(cluster_type === "coll") mapGroups.forEach(group => group.collectionMapGroup.drawGroup())
+					else if(cluster_type === "portal") mapGroups.forEach(group => group.portalMapGroup.drawGroup())
 				}
 			}
 
@@ -790,13 +821,19 @@ value="${color}"
 				});
 
 				let searches = [
-					searchCollections(formData),
+               searchCollections(formData).then(res => {
+                  res.label = "This Portal"
+                  return res;
+               })
             ]
 
             //If Cross Portal Checkbox Enabled add cross portal search
             if(formData.get('cross_portal_switch') && formData.get('cross_portal')) {
-               formData.set("taxa", formData.get('external-taxa-input'))
-               searches.push(searchCollections(formData, formData.get('cross_portal')))
+               formData.set("taxa", formData.get('external-taxa-input'));
+               searches.push(searchCollections(formData, formData.get('cross_portal')).then(res => {
+                  res.label= formData.get('cross_portal_label')
+                  return res;
+               }));
 
                getOccurenceRecords(formData, formData.get('cross_portal')).then(res => {
                   if (res) loadOccurenceRecords(res, "external_occurrencelist");
@@ -806,21 +843,28 @@ value="${color}"
 
 				//This is for handeling multiple portals
 				searches = await Promise.all(searches)
+            console.log(searches)
 
 				recordArr = [];
 				mapGroups = [];
+            let count = 0;
 
 				for(let search of searches) {
+               if(count > 0) search.origin = "external-portal"
 					if(search.recordArr) {
 						recordArr = recordArr.concat(search.recordArr)
-						mapGroups.push(genMapGroups(search.recordArr, search.taxaArr, search.collArr))
+						mapGroups.push(genMapGroups(search.recordArr, search.taxaArr, search.collArr, search.label))
 					}
+               count++;
             }
-
+            //Need to generate colors for eadch group
 				buildPanels(formData.get('cross_portal_switch'));
 
 				genClusters(taxaLegendMap, "taxa");
 				genClusters(collLegendMap, "coll");
+				genClusters(portalLegendMap, "portal");
+
+            autoColorTaxa();
 
 				drawPoints();
 				fitMap();
@@ -834,6 +878,7 @@ value="${color}"
 
 					if(type === "taxa") mapGroups[index].taxonMapGroup.removeLayer(id);
 					else if(type === "coll") mapGroups[index].collectionMapGroup.removeLayer(id);
+					else if(type === "portal") mapGroups[index].portalMapGroup.removeLayer(id);
 				}
 
 				for(let idParts of id_arr) {
@@ -841,6 +886,7 @@ value="${color}"
 
 					if(type === "taxa") mapGroups[index].taxonMapGroup.updateColor(id, color);
 					else if(type === "coll") mapGroups[index].collectionMapGroup.updateColor(id, color);
+					else if(type === "portal") mapGroups[index].portalMapGroup.updateColor(id, color);
 				}
 
 				for(let idParts of id_arr) {
@@ -848,6 +894,7 @@ value="${color}"
 
 					if(type === "taxa") mapGroups[index].taxonMapGroup.addLayer(id);
 					else if(type === "coll") mapGroups[index].collectionMapGroup.addLayer(id);
+					else if(type === "portal") mapGroups[index].portalMapGroup.addLayer(id);
 				}
 			}
 
@@ -867,6 +914,8 @@ value="${color}"
 						group.collectionMapGroup.removeGroup();
 					} else if(cluster_type === "taxa") {
 						group.taxonMapGroup.removeGroup();
+					} else if(cluster_type === "portal") {
+						group.portalMapGroup.removeGroup();
 					}
 				})
 
@@ -1250,6 +1299,8 @@ value="${color}"
 				genClusters(taxaLegendMap, "taxa");
 				genClusters(collLegendMap, "coll");
 
+            autoColorTaxa();
+
 				drawPoints();
 
 				fitMap()
@@ -1419,6 +1470,7 @@ value="${color}"
 		}
 
 		async function searchCollections(body, host) {
+         const emptyResponse = { taxaArr: [], collArr: [], recordArr: [], origin: host? host: "host" };
 			try {
 				const url = host? `${host}/collections/map/rpc/searchCollections.php`: 'rpc/searchCollections.php'
 
@@ -1427,9 +1479,9 @@ value="${color}"
 					mode: "cors",
 					body: body,
 				});
-				return response? await response.json(): { taxaArr: [], collArr: [], recordArr: [] };
+				return response? await response.json(): emptyResponse;
 			} catch(e) {
-				return { taxaArr: [], collArr: [], recordArr: [] }
+				return emptyResponse;
 			}
 		}
 
@@ -1491,6 +1543,10 @@ value="${color}"
 			resetSymbology(taxaLegendMap, 'taxa', v => v.tid, reset);
 		}
 
+		const resetPortalSymbology = (reset = false) => {
+			resetSymbology(portalLegendMap, 'portal', v => v.portalid, reset);
+		}
+
 		function autoColor(type, getId = v => v.id, keyMap) {
 			var usedColors = {};
 			for(let key of Object.values(keyMap)) {
@@ -1517,13 +1573,22 @@ value="${color}"
 			}));
 		}
 
-		const autoColorTaxa = () => {
+		function autoColorTaxa() {
 			resetCollSymbology();
+			resetPortalSymbology();
 			autoColor("taxa", v => v.tid, taxaLegendMap);
 		}
+
 		const autoColorColl = () => {
 			resetTaxaSymbology();
+			resetPortalSymbology();
 			autoColor("coll", v => v.collid, collLegendMap)
+		};
+
+		const autoColorPortal = () => {
+			resetTaxaSymbology();
+			resetCollSymbology();
+			autoColor("portal", v => v.portalid, portalLegendMap)
 		};
 
 		//This is used in occurrencelist.php which is submodule of this
@@ -1876,7 +1941,8 @@ Record Limit:
 							<ul>
 								<li><a href='#occurrencelist'><span><?php echo htmlspecialchars((isset($LANG['RECORDS'])?$LANG['RECORDS']:'Records'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
 								<li id="cross_portal_results"><a href='#external_occurrencelist'><span><?php echo htmlspecialchars((isset($LANG['EXTERNAL_RECORDS'])?$LANG['EXTERNAL_RECORDS']:'External Records'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
-							<li><a href='#symbology'><span><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
+								<li id="cross_portal_list"><a href='#portalsymbology'><span><?php echo htmlspecialchars((isset($LANG['PORTAL_LIST'])?$LANG['PORTAL_LIST']:'Portal List'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
+						   	<li><a href='#symbology'><span><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
 								<li><a href='#maptaxalist'><span><?php echo htmlspecialchars((isset($LANG['TAXA_LIST'])?$LANG['TAXA_LIST']:'Taxa List'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
 							</ul>
 							<div id="occurrencelist" style="">
@@ -1885,10 +1951,44 @@ Record Limit:
 							<div id="external_occurrencelist" style="">
 								loading...
 							</div>
+							<div id="portalsymbology" style="">
+								<div style="height:40px;margin-bottom:15px;">
+								<div style="float:left;">
+										<div>
+											<svg xmlns="http://www.w3.org/2000/svg" style="height:15px;width:15px;margin-bottom:-2px;">">
+												<g>
+													<circle cx="7.5" cy="7.5" r="7" fill="white" stroke="#000000" stroke-width="1px" ></circle>
+												</g>
+											</svg> = <?php echo (isset($LANG['COLLECTION'])?$LANG['COLLECTION']:'Collection'); ?>
+										</div>
+										<div style="margin-top:5px;" >
+											<svg style="height:14px;width:14px;margin-bottom:-2px;">" xmlns="http://www.w3.org/2000/svg">
+												<g>
+													<path stroke="#000000" d="m6.70496,0.23296l-6.70496,13.48356l13.88754,0.12255l-7.18258,-13.60611z" stroke-width="1px" fill="white"/>
+												</g>
+											</svg> = <?php echo (isset($LANG['OBSERVATION'])?$LANG['OBSERVATION']:'Observation'); ?>
+										</div>
+									</div>
+									<div id="portalsymbolizeResetButt" style='float:right;margin-bottom:5px;' >
+										<div>
+											<button data-role="none" id="portalsymbolizeReset1" name="symbolizeReset1" onclick="resetPortalSymbology(true);" ><?php echo (isset($LANG['RESET_SYMBOLOGY'])?$LANG['RESET_SYMBOLOGY']:'Reset Symbology'); ?></button>
+										</div>
+										<div style="margin-top:5px;">
+											<button data-role="none" id="randomColorPortal" name="randomColorColl" onclick='autoColorPortal();' ><?php echo (isset($LANG['AUTO_COLOR'])?$LANG['AUTO_COLOR']:'Auto Color'); ?></button>
+										</div>
+									</div>
+								</div>
+								<div style="margin:5 0 5 0;clear:both;"><hr /></div>
+								<div style="" >
+									<div style="margin-top:8px;">
+										<div style="display:table;">
+											<div id="portalsymbologykeysbox"></div>
+										</div>
+									</div>
+								</div>
+							</div>
 							<div id="symbology" style="">
 								<div style="height:40px;margin-bottom:15px;">
-									<?php
-									?>
 								<div style="float:left;">
 										<div>
 											<svg xmlns="http://www.w3.org/2000/svg" style="height:15px;width:15px;margin-bottom:-2px;">">

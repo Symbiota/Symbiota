@@ -41,7 +41,13 @@ $PORTAL_SELECTOR_ID = !isset($PORTAL_SELECTOR_ID) || !is_int($PORTAL_SELECTOR_ID
    </div>
    <div id="portal-selector-<?php echo $PORTAL_SELECTOR_ID?>" style="display:none">
       <div style="margin-top: 5px">   
-         <select name="cross_portal" onchange="onPortalSelect(this.value)">
+         <input 
+            data_role="none" 
+            type="hidden" 
+            name="cross_portal_label"
+            id="portal-selector-name-<?php echo $PORTAL_SELECTOR_ID?>"
+         />
+         <select name="cross_portal" onchange="onPortalSelect(this)">
             <?php foreach($portals as $portal): ?>
             <option value="<?= $portal['urlRoot']?>"><?=$portal['portalName']?></option>
             <?php endforeach; ?>
@@ -61,9 +67,13 @@ $PORTAL_SELECTOR_ID = !isset($PORTAL_SELECTOR_ID) || !is_int($PORTAL_SELECTOR_ID
       </div>
    </div>
    <script type="text/javascript" defer>
-   function onPortalSelect(v) {
+   function onPortalSelect(el) {
       let input = document.getElementById("portal-taxa-suggest-<?php echo $PORTAL_SELECTOR_ID?>")
-      input.completeUrl = v + '/rpc/taxasuggest.php?term=??';
+      let hiddenInput = document.getElementById("portal-selector-name-<?php echo $PORTAL_SELECTOR_ID?>")
+      if(hiddenInput) {
+         hiddenInput.value = el.options[el.selectedIndex].innerHTML;
+      }
+      input.completeUrl = el.value + '/rpc/taxasuggest.php?term=??';
    }
 
    function onEnablePortalSelector(on) {
