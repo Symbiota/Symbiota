@@ -298,103 +298,33 @@ hr {
 }
 /* -------------------- */
 
-.lat-long-group-label {
-  margin-top: 4px;
-}
-
-.accessible-font {
-  font-size: 1.4em;
-}
-
-.bottom-breathing-room {
-  margin-bottom: 10px;
-}
-
-.top-tiny-breathing-room {
-  margin-top: 5px;
-}
-
 .top-breathing-room-rel {
   margin-top: 1rem;
 }
 
-.top-small-breathing-room-rel {
-  margin-top: 3rem;
+.top-breathing-room-rel-sm {
+  margin-top: 0.5rem;
 }
 
 .left-breathing-room-rel {
   margin-left: 1rem;
 }
 
-.nested-li {
-  margin-left: 1.5em;
-}
-
-.btn-medium-font {
-  font-size: 0.6em;
-  text-decoration: none;
-}
-
-.profile-fieldset {
-  padding: 20px;
-  background-color: #f9f9f9;
-  border: 2px outset #808080;
-}
-
-.profile-legend {
-  font-weight: bold;
-}
-
-.checkbox-pre-label {
+.bottom-breathing-room {
   margin-bottom: 10px;
 }
 
-.small-header {
-  font-size: 1.3em;
-  font-weight: bold;
-}
-
-.bottom-breathing-room-relative {
+.bottom-breathing-room-rel {
   margin-bottom: 1rem;
 }
 
-.col-profile-img {
-  border: 1px;
-  height: 6.4rem;
-  width: 6.4rem;
-}
-
-.col-profile-header {
-  margin-left: 0.5em;
-}
-
-.col-profile-inst-code {
-  min-width: 9rem;
-  max-width: 9rem;
+.bottom-breathing-room-rel-sm {
+  margin-bottom: 0.5rem;
 }
 
 .justify-center {
   display: flex;
   justify-content: center;
-}
-
-.sciname-search {
-  float: left;
-  margin: 10px 0px 10px 30px;
-}
-
-.sciname-search-container {
-  float: right;
-  width: 30rem;
-  margin-bottom: 1rem;
-}
-
-.margin-rt-rel {
-  margin-right: 1rem;
-}
-
-.bottom-breathing-room-sm-rel {
-  margin-bottom: 0.5rem;
 }
 
 .cat-icon-div {
@@ -411,66 +341,10 @@ hr {
   margin: 0;
 }
 
-.no-margin-left {
-  margin-left: 0;
-}
-
 .search-bar {
   width: 25rem;
 }
 
-.welcome-text {
-  margin-bottom: 0.75rem;
-}
-
-.load-button {
-  margin-top: 0.75rem;
-}
-
-.top-breathing-room-rel-sm {
-  margin-top: 0.5rem;
-}
-
-.tax-meta-arr {
-  float: left;
-  margin: 1rem 0rem 2.5rem 0rem;
-  font-weight: bold;
-  font-size: 120%;
-}
-
-.tax-detail-div {
-  margin-top: 1.35rem;
-  margin-left: 0.7rem;
-  float: left;
-  font-size: 80%;
-}
-
-.tax-meta-div {
-  margin: 1rem 1.35rem 3rem 1.35rem;
-  display: none;
-  clear: both;
-}
-
-.search-bar-long {
-  width: 35rem;
-}
-
-.search-bar-short {
-  width: 15rem;
-}
-
-.search-bar-extraShort {
-  width: 5rem;
-}
-
-.max-width-fit-75 {
-  max-width: 100%;
-  width: 75rem;
-}
-
-.underlined-text {
-  text-decoration: underline;
-}
 /* Accordion styling from NEON
 ========================================================================== */
 
@@ -789,118 +663,11 @@ hr {
 
 /* End Text Area ********************************************************************************/
 
-.clear-both {
-  clear: both;
-}
-
-.underlined-text {
-  text-decoration: underline;
-}
-
-.background-gray-light {
-  background-color: #f2f2f2;
-}
-
-.max-width-fit-65 {
-  max-width: 100%;
-  width: 65rem;
-}
-.bigger-left-margin-rel {
-  margin-left: 3rem;
-}
-
-.left-column {
-  float: left;
-  width: 170px;
-}
-.nativity-div {
-  margin-top: 1em;
-  font-size: 125%;
-  font-weight: bold;
-}
-
-.tr-center {
-  text-align: center;
-}
-
 .float-right {
   float: right;
-}
-
-.margin-left-20 {
-  margin-left: 20px;
-}
-
-.voucher-admin-header {
-  font-size: 2em;
-  font-weight: bold;
-  margin: 0px 10px 10px 0px;
-}
-
-.left-breathing-room-rel-lg {
-  margin-left: 2em;
-}
-
-.smaller-header {
-  font-size: 2rem;
 }
 
 .ui-autocomplete {
   /* from https://stackoverflow.com/questions/32517694/jquery-autocomplete-dropdown-is-transparent */
   background-color: inherit;
-}
-
-.full-width-pcnt {
-  width: 100%;
-}
-
-/* alert box from https://www.w3schools.com/howto/howto_js_alert.asp */
-/* The alert message box */
-.alert {
-  max-width: 30%;
-  padding: 20px;
-  background-color: green; /* Red */
-  color: white;
-  margin-bottom: 15px;
-}
-
-/* The close button */
-.closebtn {
-  margin-left: 15px;
-  color: white;
-  font-weight: bold;
-  float: right;
-  font-size: 22px;
-  line-height: 20px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-/* When moving the mouse over the close button */
-.closebtn:hover {
-  color: black;
-}
-
-.justify-center-full-screen {
-  display: flex;
-  justify-content: center;
-  width: 100vw;
-}
-
-.flex-item-login {
-  width: 100%;
-  max-width: 350px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-button.no-margin-left,
-div.no-margin-left {
-  margin-left: 0;
-}
-
-.table-scroll {
-  display: block;
-  white-space: nowrap;
-  overflow-x: scroll;
 }

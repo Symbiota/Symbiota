@@ -53,6 +53,9 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 	<style>
 		fieldset{ padding: 15px }
 		fieldset legend{ font-weight:bold }
+		.load-button {
+			margin-top: 0.75rem;
+		}
 	</style>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>

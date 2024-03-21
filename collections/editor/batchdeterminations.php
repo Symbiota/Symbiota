@@ -281,6 +281,14 @@ if($isEditor){
 				return false;
 			}
 		</script>
+		<style>
+			.top-breathing-room-sm-px {
+				margin-top: 5px;
+			}
+			.left-breathing-room-rel-lg {
+				margin-left: 2em;
+			}
+		</style>
 	</head>
 	<body>
 	<?php
@@ -320,11 +328,11 @@ if($isEditor){
 								<input type="text" id="nomsciname" name="sciname" style="width:260px;" onfocus="initScinameAutocomplete(this.form)" />
 							</div>
 							<section class="flex-form">
-								<div class="top-tiny-breathing-room">
+								<div class="top-breathing-room-sm-px">
 									<button name="addrecord" type="submit"><?php echo $LANG['ADD_RECORDS']; ?></button>
 									<img id="workingcircle" src="../../images/workingcircle.gif" style="display:none;" alt="progress is being made" />
 								</div>
-								<div class="top-tiny-breathing-room">
+								<div class="top-breathing-room-sm-px">
 									<button name="clearaccform" type="button" onclick='clearAccForm(this.form)'><?php echo $LANG['CLEAR_LIST']; ?></button>
 									<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 								</div>

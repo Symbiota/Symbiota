@@ -110,6 +110,15 @@ if($isEditor){
 			position: sticky;
 			top: 0;
 		}
+		.gridlike-form-no-margin {
+			display: flex;
+			flex-direction: column;
+		}
+		.nativity-div {
+			margin-top: 1em;
+			font-size: 125%;
+			font-weight: bold;
+		}
 	</style>
 </head>
 <body>
@@ -142,7 +151,7 @@ include($SERVER_ROOT.'/includes/header.php');
 				<fieldset>
 					<legend> <?php echo (isset($LANG['CHAR_EDIT']) ? $LANG['CHAR_EDIT'] : 'Character Edit'); ?></legend>
 					<div class="gridlike-form-no-margin">
-						<label for="selection" class="bottom-breathing-room-relative"> <?php echo (isset($LANG['SELECT_CHAR']) ? $LANG['SELECT_CHAR'] : 'Select character to edit'); ?> </label>
+						<label for="selection" class="bottom-breathing-room-rel"> <?php echo (isset($LANG['SELECT_CHAR']) ? $LANG['SELECT_CHAR'] : 'Select character to edit'); ?> </label>
 						<select name="tf" id="selection">
 							<option value=""> <?php echo (isset($LANG['ALL_TAXA']) ? $LANG['ALL_TAXA'] : 'All Taxa'); ?> </option>
 							<option value="">--------------------------</option>
@@ -163,7 +172,7 @@ include($SERVER_ROOT.'/includes/header.php');
 			 		<?php
 	 				$cList = $muManager->getCharList($taxonFilter);
 					foreach($cList as $h => $charData){
-						echo "<div class='nativity-div bottom-breathing-room-relative'>$h</div>\n";
+						echo "<div class='nativity-div bottom-breathing-room-rel'>$h</div>\n";
 						ksort($charData);
 						foreach($charData as $cidKey => $charValue){
 							echo '<div> <input name="cid" type="radio" id="' . $cidKey . '" value="' . $cidKey . '" onclick="this.form.submit()">' . '<label for="' . $cidKey . '">' . $charValue . '</label></div>'."\n";

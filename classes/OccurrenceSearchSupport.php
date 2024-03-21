@@ -118,7 +118,7 @@ class OccurrenceSearchSupport {
 					unset($catArr['icon']);
 					$idStr = $this->collArrIndex.'-'.$catid;
 					?>
-					<section class="gridlike-form-row bottom-breathing-room-relative">
+					<section class="gridlike-form-row bottom-breathing-room-rel">
 						<?php
 						if($displayIcons){
 							?>
@@ -162,7 +162,7 @@ class OccurrenceSearchSupport {
 							</div>
 						</div>
 					</section>
-					<section id="cat-<?php echo $idStr ?>" class="gridlike-form-row bottom-breathing-room-relative">
+					<section id="cat-<?php echo $idStr ?>" class="gridlike-form-row bottom-breathing-room-rel">
 						<div>
 							<fieldset>
 								<legend>
@@ -180,7 +180,7 @@ class OccurrenceSearchSupport {
 									<?php
 									foreach($catArr as $collid => $collName2){
 										?>
-										<section class="gridlike-form-row bottom-breathing-room-relative">
+										<section class="gridlike-form-row bottom-breathing-room-rel">
 											<?php
 											if($displayIcons){
 												?>
@@ -240,7 +240,7 @@ class OccurrenceSearchSupport {
 				<?php
 				foreach($collArr as $collid => $cArr){
 					?>
-					<section class="gridlike-form-row bottom-breathing-room-relative">
+					<section class="gridlike-form-row bottom-breathing-room-rel">
 						<?php
 						if($displayIcons){
 							?>

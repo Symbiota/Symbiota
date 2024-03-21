@@ -10,6 +10,14 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
 ?>
 <div class="header-wrapper">
 	<header>
+		<style>
+			.accessibility-button {
+				font-size: 1.1em;
+			}
+			.welcome-text {
+				margin-bottom: 0.75rem;
+			}
+		</style>
 		<div class="top-wrapper">
 			<a class="skip-link" href="#end-nav"><?php echo $LANG['SKIP_NAV'] ?></a>
 			<nav class="top-login" aria-label="horizontal-nav">

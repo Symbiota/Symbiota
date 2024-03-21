@@ -32,6 +32,11 @@ $smManager = new SiteMapManager();
 		}
 	</script>
 	<script type="text/javascript" src="js/symb/shared.js"></script>
+	<style>
+		.nested-li {
+			margin-left: 1.5em;
+		}
+	</style>
 </head>
 <body>
 	<?php

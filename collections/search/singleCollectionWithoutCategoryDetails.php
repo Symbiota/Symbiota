@@ -1,6 +1,6 @@
 <?php
 ?>
-    <section class="gridlike-form-row bottom-breathing-room-relative">
+    <section class="gridlike-form-row bottom-breathing-room-rel">
         <?php
         if($displayIcons){
             ?>
