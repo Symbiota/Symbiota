@@ -843,7 +843,6 @@ value="${color}"
 
 				//This is for handeling multiple portals
 				searches = await Promise.all(searches)
-            console.log(searches)
 
 				recordArr = [];
 				mapGroups = [];
@@ -1100,11 +1099,12 @@ value="${color}"
 				}
 			}
 
-			function genGroups(records, tMap, cMap) {
+			function genGroups(records, tMap, cMap, origin) {
 				if(records.length < 1) return;
 
 				let taxon = new GoogleMapGroup("taxa", tMap);
 				let collections = new GoogleMapGroup("coll", cMap);
+				let portals = new GoogleMapGroup("portal", { [origin]: { name: origin, portalid: origin, color: generateRandColor()} });
 
 				bounds = new google.maps.LatLngBounds();
 
@@ -1154,9 +1154,10 @@ value="${color}"
 
 					taxon.addMarker(record['tid'], marker);
 					collections.addMarker(record['collid'], marker);
+					portals.addMarker(origin, marker);
 				}
 
-				return { taxonMapGroup: taxon, collectionMapGroup: collections };
+				return { taxonMapGroup: taxon, collectionMapGroup: collections, portalMapGroup: portals};
 			}
 
 			function drawPoints() {
@@ -1168,6 +1169,7 @@ value="${color}"
 					mapGroups.forEach(g => {
 						if(cluster_type === "taxa") g.taxonMapGroup.drawGroup();
 						else if(cluster_type === "coll") g.collectionMapGroup.drawGroup();
+						else if(cluster_type === "portal") g.portalMapGroup.drawGroup();
 					})
 				}
 			}
@@ -1189,6 +1191,8 @@ value="${color}"
 							mapGroups[g.index].taxonMapGroup.genLayer(g.tid, cluster);
 						} else if(type === "coll") {
 							mapGroups[g.index].collectionMapGroup.genLayer(g.collid, cluster);
+						} else if(type === "portal") {
+							mapGroups[g.index].portalMapGroup.genLayer(g.portalid, cluster);
 						}
 					});
 				}
@@ -1242,6 +1246,7 @@ value="${color}"
 				mapGroups.forEach(group => {
 					group.taxonMapGroup.resetGroup();
 					group.collectionMapGroup.resetGroup();
+					group.portalMapGroup.resetGroup();
 				})
 
 				markers = [];
@@ -1260,6 +1265,7 @@ value="${color}"
 				mapGroups.map(g => {
 					g.taxonMapGroup.resetGroup();
 					g.collectionMapGroup.resetGroup();
+					group.portalMapGroup.resetGroup();
 				});
 
 				mapGroups = [];
@@ -1272,13 +1278,19 @@ value="${color}"
 				});
 
 				let searches = [
-					searchCollections(formData),
+               searchCollections(formData).then(res=>{
+                  res.label = "This Portal"
+                  return res;
+               }),
             ]
 
             //If Cross Portal Checkbox Enabled add cross portal search
             if(formData.get('cross_portal_switch') && formData.get('cross_portal')) {
                formData.set("taxa", formData.get('external-taxa-input'))
-               searches.push(searchCollections(formData, formData.get('cross_portal')))
+               searches.push(searchCollections(formData, formData.get('cross_portal')).then(res => {
+                  res.label= formData.get('cross_portal_label')
+                  return res;
+               }))
 
                getOccurenceRecords(formData, formData.get('cross_portal')).then(res => {
                   if (res) loadOccurenceRecords(res, "external_occurrencelist");
@@ -1290,7 +1302,7 @@ value="${color}"
 
 				for(let search of searches) {
 					recordArr = recordArr.concat(search.recordArr);
-					mapGroups.push(genGroups(search.recordArr, search.taxaArr, search.collArr));
+					mapGroups.push(genGroups(search.recordArr, search.taxaArr, search.collArr, search.label));
 				}
 
 				buildPanels(formData.get('cross_portal_switch'));
@@ -1298,6 +1310,7 @@ value="${color}"
 				//Must have build panels called b4
 				genClusters(taxaLegendMap, "taxa");
 				genClusters(collLegendMap, "coll");
+				genClusters(portalLegendMap, "portal");
 
             autoColorTaxa();
 
@@ -1338,13 +1351,15 @@ value="${color}"
 				})
 
 				const getIndex = v => v[0];
-				const getId = v => parseInt(v[1]);
+				const getId = v => v[1];
 
 				id_arr.forEach(v => {
 					if(type === "taxa") {
 						mapGroups[getIndex(v)].taxonMapGroup.removeLayer(getId(v));
 					} else if (type === "coll") {
 						mapGroups[getIndex(v)].collectionMapGroup.removeLayer(getId(v));
+					} else if (type === "portal") {
+						mapGroups[getIndex(v)].portalMapGroup.removeLayer(getId(v));
 					}
 				});
 
@@ -1355,6 +1370,9 @@ value="${color}"
 					} else if (type === "coll") {
 						mapGroups[getIndex(v)].collectionMapGroup.group_map[getId(v)].cluster = cluster;
 						mapGroups[getIndex(v)].collectionMapGroup.updateColor(getId(v), color);
+					} else if (type === "portal") {
+						mapGroups[getIndex(v)].portalMapGroup.group_map[getId(v)].cluster = cluster;
+						mapGroups[getIndex(v)].portalMapGroup.updateColor(getId(v), color);
 					}
 				})
 
@@ -1363,6 +1381,8 @@ value="${color}"
 						mapGroups[getIndex(v)].taxonMapGroup.addLayer(getId(v));
 					} else if (type === "coll") {
 						mapGroups[getIndex(v)].collectionMapGroup.addLayer(getId(v));
+					} else if (type === "portal") {
+						mapGroups[getIndex(v)].portalMapGroup.addLayer(getId(v));
 					}
 				});
 			}
@@ -1379,10 +1399,12 @@ value="${color}"
 				const {type, colorMap} = e.detail;
 
 				mapGroups.map(group => {
-					if(cluster_type === "coll" && type === "taxa") {
+					if(cluster_type === "coll" && type !== "coll") {
 						group.collectionMapGroup.removeGroup();
-					} else if(cluster_type === "taxa" && type === "coll") {
+					} else if(cluster_type === "taxa" && type !== "taxa") {
 						group.taxonMapGroup.removeGroup();
+					} else if(cluster_type === "portal" && type !== "portal") {
+						group.portalMapGroup.removeGroup();
 					}
 				})
 
