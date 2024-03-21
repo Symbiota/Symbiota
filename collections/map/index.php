@@ -793,6 +793,7 @@ value="${color}"
 				mapGroups.forEach(group => {
 					group.taxonMapGroup.resetGroup();
 					group.collectionMapGroup.resetGroup();
+					group.portalMapGroup.resetGroup();
 				})
 
 				markers = [];
@@ -810,6 +811,7 @@ value="${color}"
 				mapGroups.forEach(group => {
 					group.taxonMapGroup.resetGroup();
 					group.collectionMapGroup.resetGroup();
+					group.portalMapGroup.resetGroup();
 				})
 
 				markers = [];
@@ -948,6 +950,7 @@ value="${color}"
 				if(!heatmap) {
 					if(cluster_type === "taxa") mapGroups.forEach(group => group.taxonMapGroup.toggleClustering())
 					else if(cluster_type === "coll") mapGroups.forEach(group => group.collectionMapGroup.toggleClustering())
+					else if(cluster_type === "portal") mapGroups.forEach(group => group.portalMapGroup.toggleClustering())
 				}
 			});
 
@@ -955,14 +958,16 @@ value="${color}"
 				heatmap = e.target.checked;
 				if(e.target.checked) {
 					//Clear points
-					if(cluster_type == "taxa") mapGroups.forEach(group => group.taxonMapGroup.removeGroup())
-					else if(cluster_type == "coll") mapGroups.forEach(group => group.collectionMapGroup.removeGroup())
+					if(cluster_type === "taxa") mapGroups.forEach(group => group.taxonMapGroup.removeGroup())
+					else if(cluster_type === "coll") mapGroups.forEach(group => group.collectionMapGroup.removeGroup())
+					else if(cluster_type === "portal") mapGroups.forEach(group => group.portalMapGroup.removeGroup())
 
 					drawHeatmap();
 				} else {
 					map.mapLayer.removeLayer(heatmapLayer);
-					if(cluster_type == "taxa") mapGroups.forEach(group => group.taxonMapGroup.drawGroup())
-					else if(cluster_type == "coll") mapGroups.forEach(group => group.collectionMapGroup.drawGroup())
+					if(cluster_type === "taxa") mapGroups.forEach(group => group.taxonMapGroup.drawGroup())
+					else if(cluster_type === "coll") mapGroups.forEach(group => group.collectionMapGroup.drawGroup())
+					else if(cluster_type === "portal") mapGroups.forEach(group => group.portalMapGroup.drawGroup())
 				}
 			});
 
@@ -1420,6 +1425,7 @@ value="${color}"
 				if(!heatmapon) {
 					if(cluster_type === "taxa") mapGroups.map(g => g.taxonMapGroup.toggleClustering());
 					else if(cluster_type === "coll") mapGroups.map(g => g.collectionMapGroup.toggleClustering());
+					else if(cluster_type === "portal") mapGroups.map(g => g.portalMapGroup.toggleClustering());
 				}
 			});
 
@@ -1428,10 +1434,12 @@ value="${color}"
 
 				if(e.target.checked) {
 					//Clear points
-					if(cluster_type == "taxa") {
-						mapGroups.forEach(g=>g.taxonMapGroup.resetGroup())
-					} else if(cluster_type == "coll") {
-						mapGroups.forEach(g=>g.collectionMapGroup.resetGroup())
+					if(cluster_type === "taxa") {
+						mapGroups.forEach(g => g.taxonMapGroup.resetGroup())
+					} else if(cluster_type === "coll") {
+						mapGroups.forEach(g => g.collectionMapGroup.resetGroup())
+					} else if(cluster_type === "portal") {
+						mapGroups.forEach(g => g.portalMapGroup.resetGroup())
 					}
 					if(!heatmapLayer) initHeatmap();
 					else updateHeatmap();
@@ -1441,9 +1449,11 @@ value="${color}"
 					};
 
 					if(cluster_type == "taxa") {
-						mapGroups.forEach(g=>g.taxonMapGroup.drawGroup())
-					} else if(cluster_type == "coll") {
-						mapGroups.forEach(g=>g.collectionMapGroup.drawGroup())
+						mapGroups.forEach(g => g.taxonMapGroup.drawGroup())
+					} else if(cluster_type === "coll") {
+						mapGroups.forEach(g => g.collectionMapGroup.drawGroup())
+					} else if(cluster_type === "portal") {
+						mapGroups.forEach(g => g.portalMapGroup.drawGroup())
 					}
 				}
 			});
