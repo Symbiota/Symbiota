@@ -5,7 +5,7 @@ Language: Français (French)
 ------------------
 */
 
-$LANG['ACTION_SUCCESS'] = 'Success! Tag applied to all images';
+$LANG['ACTION_SUCCESS'] = 'images successfully tagged';
 $LANG['ACTION_ERROR'] = 'ERROR applying tag to images';
 $LANG['IMAGE_SEARCH'] = 'Image Search';
 $LANG['SELECT_TAG'] = 'Select an image tag';
@@ -33,6 +33,8 @@ $LANG['IMAGE_TYPE'] = 'Image Type';
 $LANG['ALL_IMAGES'] = 'All Images';
 $LANG['SPECIMEN_VOUCHERED'] = 'Specimen/Vouchered Images';
 $LANG['FIELD_IMAGES'] = 'Field Images (lacking specific locality details)';
+$LANG['DISPLAY_COLLECTIONS'] = 'Display Collection Panel';
+$LANG['HIDE_COLLECTIONS'] = 'Hide Collection Panel';
 $LANG['COUNT_PER_PAGE'] = 'Count per page';
 $LANG['LOAD_IMAGES'] = 'Load Images';
 $LANG['COLLECTIONS'] = 'Colecciones';

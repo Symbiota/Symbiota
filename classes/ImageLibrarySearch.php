@@ -274,46 +274,22 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		return trim($retStr,' &');
 	}
 
-	private function getPhotographerStr($uidStr){
-		$retArr = array();
-		if($uidStr){
-			$sql = 'SELECT CONCAT_WS(" ",firstname,lastname) as name FROM users WHERE uid IN('.$uidStr.')';
-			$rs = $this->conn->query($sql);
-			while ($r = $rs->fetch_object()) {
-				$retArr[] = $r->name;
-			}
-			$rs->free();
-		}
-		return implode(', ',$retArr);
-	}
-
-	private function getCollectionStr($collidStr){
-		$retArr = array();
-		$collidStr = trim($collidStr,';, ');
-		if($collidStr && preg_match('/^[,\s\d]+$/', $collidStr)){
-			$sql = 'SELECT CONCAT(collectionname," (",CONCAT_WS(" ",institutioncode,collectioncode),")") as collname FROM omcollections WHERE collid IN('.$collidStr.')';
-			$rs = $this->conn->query($sql);
-			while ($r = $rs->fetch_object()) {
-				$retArr[] = $r->collname;
-			}
-			$rs->free();
-		}
-		return implode(', ',$retArr);
-	}
-
 	//Action editing functions
 	public function batchAssignImageTag($postArr){
 		$status = false;
 		$imageArr = $postArr['imgid'];
 		$tagName = $postArr['imgTagAction'];
 		if($imageArr && $tagName){
+			$cnt = 0;
 			foreach($imageArr as $imgid){
 				if(is_numeric($imgid)){
 					$sql = 'INSERT INTO imagetag(imgid, keyValue) VALUE(?, ?)';
 					if($stmt = $this->conn->prepare($sql)){
 						$stmt->bind_param('is', $imgid, $tagName);
 						$stmt->execute();
-						if($stmt->affected_rows) $status = true;
+						if($stmt->affected_rows){
+							$cnt++;
+						}
 						elseif($stmt->error){
 							$this->errorStr = 'ERROR adding image tag: '.$this->error;
 							$status = false;
@@ -322,6 +298,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 					}
 				}
 			}
+			if($cnt) $status = $cnt;
 		}
 		return $status;
 	}
@@ -336,14 +313,14 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		}
 		$rs1->free();
 		if($retArr){
-			$sql2 = 'SELECT uid, CONCAT_WS(", ", lastname, firstname) AS fullname FROM users WHERE uid IN('.implode(',',array_keys($retArr)).')';
+			$sql2 = 'SELECT uid, CONCAT_WS(", ", lastname, firstname) AS fullname FROM users WHERE uid IN(' . implode(',', array_keys($retArr)) . ')';
 			$rs2 = $this->conn->query($sql2);
 			while ($r2 = $rs2->fetch_object()) {
 				$retArr[$r2->uid] = $r2->fullname;
 			}
 			$rs2->free();
 		}
-		asort($retArr,SORT_NATURAL | SORT_FLAG_CASE);
+		asort($retArr, SORT_NATURAL | SORT_FLAG_CASE);
 		return $retArr;
 	}
 

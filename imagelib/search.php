@@ -1,6 +1,6 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ImageLibrarySearch.php');
+include_once($SERVER_ROOT . '/classes/ImageLibrarySearch.php');
 if($LANG_TAG != 'en' && !file_exists($SERVER_ROOT . '/content/lang/imagelib/search.' . $LANG_TAG . '.php')) $LANG_TAG = 'en';
 include_once($SERVER_ROOT . '/content/lang/imagelib/search.' . $LANG_TAG . '.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
@@ -16,14 +16,10 @@ $imageCount = isset($_REQUEST['imagecount']) ? $_REQUEST['imagecount'] : 'all';
 $imageType = isset($_REQUEST['imagetype']) ? filter_var($_REQUEST['imagetype'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $pageNumber = array_key_exists('page', $_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $cntPerPage = array_key_exists('cntperpage', $_REQUEST) ? filter_var($_REQUEST['cntperpage'], FILTER_SANITIZE_NUMBER_INT) : 200;
-$imgTagAction = array_key_exists('imgTagAction', $_REQUEST) ? $_REQUEST['imgTagAction'] : '';
-$action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
+$action = $_POST['submitaction'] ?? '';
 
 if(!$useThes && !$action) $useThes = 1;
 if(!$taxonType && isset($DEFAULT_TAXON_SEARCH)) $taxonType = $DEFAULT_TAXON_SEARCH;
-
-//Sanitation
-if(preg_match('/[^\D]+/', $action)) $action = '';
 
 $connType = 'readonly';
 if($action == 'batchAssignTag') $connType = 'write';
@@ -41,22 +37,25 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 
 $statusStr = '';
 if($action == 'batchAssignTag'){
-	$statusStr = '<span style="color:green">' . $LANG['ACTION_SUCCESS'] . '</span>';
-	if(!$imgLibManager->batchAssignImageTag($_POST)){
+	$numberImagesTagged = $imgLibManager->batchAssignImageTag($_POST);
+	if($numberImagesTagged){
+		$statusStr = '<span style="color:green">' . $numberImagesTagged . ' ' . $LANG['ACTION_SUCCESS'] . '</span>';
+	}
+	else{
 		$statusStr = '<span style="color:red">' . $LANG['ACTION_ERROR'] . ': ' . $imgLibManager->getErrorStr() . '</span>';
 	}
 }
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $LANG_TAG ?>">
+<html lang="<?= $LANG_TAG ?>">
 <head>
 	<title><?= $DEFAULT_TITLE . ' ' . $LANG['IMAGE_SEARCH'] ?> </title>
 	<?php
-	include_once($SERVER_ROOT.'/includes/head.php');
-	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
+	include_once($SERVER_ROOT . '/includes/head.php');
+	include_once($SERVER_ROOT . '/includes/googleanalytics.php');
 	?>
 	<link href="<?= $CSS_BASE_PATH; ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
-	<link href="<?= $CSS_BASE_PATH; ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />';
+	<link href="<?= $CSS_BASE_PATH; ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />
 	<link href="<?= $CSS_BASE_PATH; ?>/jquery-ui.min.css?ver=1" type="text/css" rel="Stylesheet" />
 	<script src="../js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui.min.js" type="text/javascript"></script>
@@ -66,7 +65,7 @@ if($action == 'batchAssignTag'){
 
 		function validateBatchActionBtn(f){
 			if(f.imgTagAction.value == ""){
-				alert("<?php echo $LANG['SELECT_TAG']; ?>");
+				alert("<?= $LANG['SELECT_TAG']; ?>");
 				return false;
 			}
 			var formVerified = false;
@@ -77,7 +76,7 @@ if($action == 'batchAssignTag'){
 				}
 			}
 			if(!formVerified){
-				alert("<?php echo $LANG['SELECT_IMAGE']; ?>");
+				alert("<?= $LANG['SELECT_IMAGE']; ?>");
 				return false;
 			}
 			return true;
@@ -95,12 +94,12 @@ if($action == 'batchAssignTag'){
 		}
 	</script>
 	<script src="../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
-	<script src="../js/symb/imagelib.search.js?ver=2" type="text/javascript"></script>
+	<script src="../js/symb/imagelib.search.js?ver=3a" type="text/javascript"></script>
 	<style type="text/css">
 		fieldset{ padding: 15px }
 		fieldset legend{ font-weight:bold }
 		label{ font-weight:bold }
-		.row-div{ clear: both; }
+		.row-div{ clear: both; margin: 3px; }
 		#action-status-div{ padding: 15px; }
 	</style>
 </head>
@@ -221,6 +220,14 @@ if($action == 'batchAssignTag'){
 								<option value="1" <?= ($imgLibManager->getImageType() == 1 ? 'SELECTED' : '') ?>><?= $LANG['SPECIMEN_VOUCHERED'] ?></option>
 								<option value="3" <?= ($imgLibManager->getImageType() == 3 ? 'SELECTED' : '') ?>><?= $LANG['FIELD_IMAGES'] ?></option>
 							</select>
+							<?php
+							$showCollections = false;
+							if($imgLibManager->getImageType() == 1 || $imgLibManager->getImageType() == 2) $showCollections = true;
+							?>
+							<span id="collections-control-span" style="margin-left: 5px; display: <?= ($showCollections ? '' : 'none') ?>">
+								<span id="display-collections-span"><a href="#" onclick="showCollections()"><?= $LANG['DISPLAY_COLLECTIONS'] ?></a></span>
+								<span id="hide-collections-span" style="display: none"><a href="#" onclick="hideCollections()"><?= $LANG['HIDE_COLLECTIONS'] ?></a></span>
+							</span>
 						</div>
 						<div class="row-div flex-form">
 							<div style="margin-bottom:5px;float:left;">
@@ -242,7 +249,7 @@ if($action == 'batchAssignTag'){
 							$allChecked = '';
 							if(!$imgLibManager->getDbStr() || $imgLibManager->getDbStr() == 'all') $allChecked = 'checked';
 							?>
-							<div id="collection-div" style="margin:15px;clear:both;display:<?= ($imgLibManager->getImageType() == 1 || $imgLibManager->getImageType() == 2 ? '' : 'none') ?>">
+							<div id="collection-div" style="margin:15px; clear:both; display:none">
 								<fieldset>
 									<legend><?= $LANG['COLLECTIONS'] ?></legend>
 									<div id="specobsdiv">
@@ -367,21 +374,21 @@ if($action == 'batchAssignTag'){
 									</div>
 									<div class="details-div">
 										<?php
-										$isEditorThis = false;
-										if($isEditor == 1) $isEditorThis = true;
+										$isEditorOfThisImage = false;
+										if($isEditor == 1) $isEditorOfThisImage = true;
 										elseif($isEditor == 2){
 											if($imgArr['occid']){
 												$collid = $occArr[$imgArr['occid']]['collid'];
 												if($collid){
-													if(isset($USER_RIGHTS['CollAdmin'][$collid])) $isEditorThis = true;
-													elseif(isset($USER_RIGHTS['CollEditor'][$collid])) $isEditorThis = true;
+													if(isset($USER_RIGHTS['CollAdmin'][$collid])) $isEditorOfThisImage = true;
+													elseif(isset($USER_RIGHTS['CollEditor'][$collid])) $isEditorOfThisImage = true;
 												}
 											}
 											else{
-												if(isset($USER_RIGHTS['TaxonProfile'])) $isEditorThis = true;
+												if(isset($USER_RIGHTS['TaxonProfile'])) $isEditorOfThisImage = true;
 											}
 										}
-										if($isEditorThis){
+										if($isEditorOfThisImage){
 											$isEditorOfAtLeastOne = true;
 											echo '<div class="editor-div" style="display:none;margin-top:3px;"><input name="imgid[]" type="checkbox" value="' . $imgId . '"></div>';
 										}
