@@ -72,6 +72,11 @@ $editorArr = $utManager->getTaxonomyEditors();
 		}
 	</script>
 	<script type="text/javascript" src="../js/symb/shared.js"></script>
+	<style>
+		.underlined-text {
+			text-decoration: underline;
+		}
+	</style>
 </head>
 <body>
 	<?php

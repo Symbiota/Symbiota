@@ -20,6 +20,17 @@ $imgManager->setSearchTerm($taxon);
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
 	<script src="../js/symb/imagelib.search.js?ver=201902" type="text/javascript"></script>
+	<style>
+		.sciname-search {
+			float: left;
+			margin: 10px 0px 10px 30px;
+		}
+		.sciname-search-container {
+			float: right;
+			width: 30rem;
+			margin-bottom: 1rem;
+		}
+	</style>
 </head>
 <body>
 	<?php

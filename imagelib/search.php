@@ -61,8 +61,15 @@ if($action == 'batchAssignTag'){
 	<link href="<?= $CSS_BASE_PATH; ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
 	<link href="<?= $CSS_BASE_PATH; ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />
 	<link href="<?= $CSS_BASE_PATH; ?>/jquery-ui.min.css?ver=1" type="text/css" rel="Stylesheet" />
-	<script src="../js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="../js/jquery-ui.min.js" type="text/javascript"></script>
+	<style>
+		fieldset{ padding: 15px }
+		fieldset legend{ font-weight:bold }
+		.load-button {
+			margin-top: 0.75rem;
+		}
+	</style>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="../js/symb/collections.index.js?ver=2" type="text/javascript"></script>
 	<script type="text/javascript">
 		var clientRoot = "<?= $CLIENT_ROOT; ?>";

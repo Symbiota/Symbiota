@@ -40,6 +40,21 @@ if($isEditor){
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="../../js/symb/taxa.taxonomyloader.js?ver=4"></script>
+	<style>
+		.search-bar-long {
+			width: 35rem;
+		}
+		.search-bar-short {
+			width: 15rem;
+		}
+		.search-bar-extraShort {
+			width: 5rem;
+		}
+		.left-column {
+			float: left;
+			width: 170px;
+		}
+	</style>
 </head>
 <body>
 <?php
@@ -84,7 +99,7 @@ if($isEditor){
 								 <?php echo (isset($LANG['TAXON_RANK']) ? $LANG['TAXON_RANK'] : 'Taxon Rank'); ?>: 
 								</label>
 						</div>
-						<select id="rankid" name="rankid" title="Rank ID" class='search-bar-short bottom-breathing-room-sm-rel'>
+						<select id="rankid" name="rankid" title="Rank ID" class='search-bar-short bottom-breathing-room-rel-sm'>
 							<option value=""><?php echo (isset($LANG['SEL_TAX_RANK']) ? $LANG['SEL_TAX_RANK'] : 'Select Taxon Rank'); ?></option>
 							<option value="0"><?php echo (isset($LANG['NON_RANKED_NODE']) ? $LANG['NON_RANKED_NODE'] : 'Non-Ranked Node'); ?></option>
 							<option value="">--------------------------------</option>

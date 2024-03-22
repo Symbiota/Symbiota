@@ -21,6 +21,14 @@ $localSession = isset($_SESSION['active_stylesheet']) ? $_SESSION['active_styles
 <link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/main.css" type="text/css" rel="stylesheet">
 <script src="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/js/symb/lang.js" type="text/javascript"></script>
 <script src="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/js/symb/accessibilityUtils.js" type="text/javascript"></script>
+<style>
+    .accessibility-button {
+        font-size: 1.1em;
+    }
+    .welcome-text {
+        margin-bottom: 0.75rem;
+    }
+</style>
 <?php 
     if($isAccessiblePreferred){
         if(isset($localSession) && strpos($localSession, "condensed.css")){

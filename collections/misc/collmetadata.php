@@ -234,6 +234,11 @@ $collManager->cleanOutArr($collData);
 		}
 
 		.field-label {}
+
+		.max-width-fit-75 {
+			max-width: 100%;
+			width: 75rem;
+		}
 	</style>
 </head>
 

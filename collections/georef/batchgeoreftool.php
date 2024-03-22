@@ -402,7 +402,7 @@ if($isEditor && $submitAction){
 							<div style="margin:15px;">
 							    <span id="tableContent" style="display: none;"><?php echo $LANG['TABLE_CONTENT'] ?></span>
 								<section class="gridlike-form" aria-describedby="tableContent">
-								    <section class="gridlike-form-row bottom-breathing-room-relative">
+								    <section class="gridlike-form-row bottom-breathing-room-rel">
 										<div style="width:65px;"></div>
 										<div style="width:30px;"><b><?php echo $LANG['DEG']; ?>.</b></div>
 										<div style="width:50px;"><b><?php echo $LANG['MIN']; ?>.</b></div>
@@ -411,7 +411,7 @@ if($isEditor && $submitAction){
 										<div style="width:15px;">&nbsp;</div>
 										<div><b><?php echo $LANG['DECIMAL']; ?></b></div>
 									</section>
-									<section class="gridlike-form-row bottom-breathing-room-relative">
+									<section class="gridlike-form-row bottom-breathing-room-rel">
 										<div style="width:62px;"><b><?php echo $LANG['LATITUDE']; ?>:</b> </div>
 										<div><input name="latdeg" type="text" value="" onchange="updateLatDec(this.form)" style="width:30px;" aria-label="<?php echo $LANG['LATITUDE_DEGREE'] ?>" /></div>
 										<div><input name="latmin" type="text" value="" onchange="updateLatDec(this.form)" style="width:50px;" aria-label="<?php echo $LANG['LATITUDE_MINUTES'] ?>" /></div>
@@ -430,7 +430,7 @@ if($isEditor && $submitAction){
 											</span>
 										</div>
 									</section>
-									<section class="gridlike-form-row bottom-breathing-room-relative">
+									<section class="gridlike-form-row bottom-breathing-room-rel">
 										<div style="vertical-align:middle"><b><?php echo $LANG['LONGITUDE']; ?>:</b> </div>
 										<div><input name="lngdeg" type="text" value="" onchange="updateLngDec(this.form)" style="width:30px;" aria-label="<?php echo $LANG['LONGITUDE_DEGREE'] ?>" /></div>
 										<div><input name="lngmin" type="text" value="" onchange="updateLngDec(this.form)" style="width:50px;" aria-label="<?php echo $LANG['LONGITUDE_MINUTES'] ?>" /></div>
@@ -444,7 +444,7 @@ if($isEditor && $submitAction){
 										<div> = </div>
 										<div><input id="decimallongitude" name="decimallongitude" type="text" value="" style="width:80px;" aria-label="<?php echo $LANG['DECIMAL_LONGITUDE'] ?>" /></div>
 									</section>
-									<section class="gridlike-form-row bottom-breathing-room-relative">
+									<section class="gridlike-form-row bottom-breathing-room-rel">
 										<div style="vertical-align:middle">
 											<b><?php echo $LANG['ERROR_METERS']; ?>:</b>
 										</div>
@@ -459,7 +459,7 @@ if($isEditor && $submitAction){
 											</span>
 										</div>
 									</section>
-									<section class="gridlike-form-row bottom-breathing-room-relative">
+									<section class="gridlike-form-row bottom-breathing-room-rel">
 										<div style="vertical-align:middle">
 											<b><?php echo $LANG['FOOTPRINT_WKT']; ?>:</b>
 										</div>
@@ -467,7 +467,7 @@ if($isEditor && $submitAction){
 											<input id="footprintwkt" name="footprintwkt" type="text" value="" style="width:500px;" aria-label="<?php echo $LANG['FOOTPRINT_WKT'] ?>" onchange="verifyFootprintWKT(this)" />
 										</div>
 									</section>
-									<section class="gridlike-form-row bottom-breathing-room-relative">
+									<section class="gridlike-form-row bottom-breathing-room-rel">
 										<div>
 											<div id="utmdiv" style="display:none;padding:15px 10px;background-color:lightyellow;border:1px solid yellow;width:400px;height:75px;margin-bottom:10px;">
 												<div>
@@ -496,7 +496,7 @@ if($isEditor && $submitAction){
 											</div>
 										</div>
 									</section>
-									<section class="gridlike-form-row bottom-breathing-room-relative">
+									<section class="gridlike-form-row bottom-breathing-room-rel">
 										<div style="vertical-align:middle">
 											<b><?php echo $LANG['SOURCES']; ?>:</b>
 										</div>
@@ -504,7 +504,7 @@ if($isEditor && $submitAction){
 											<input id="georeferencesources" name="georeferencesources" type="text" value="<?php echo $georeferenceSources; ?>" style="width:500px;" aria-label="<?php echo $LANG['SOURCES'] ?>" />
 										</div>
 									</section>
-									<section class="gridlike-form-row bottom-breathing-room-relative">
+									<section class="gridlike-form-row bottom-breathing-room-rel">
 										<div style="vertical-align:middle">
 											<b><?php echo $LANG['PROTOCOLS']; ?>:</b>
 										</div>
@@ -512,7 +512,7 @@ if($isEditor && $submitAction){
 											<input id="georeferenceprotocol" name="georeferenceprotocol" type="text" value="<?php echo $georeferenceProtocol; ?>" style="width:500px;" aria-label="<?php echo $LANG['PROTOCOLS'] ?>" />
 										</div>
 									</section>
-									<section class="gridlike-form-row bottom-breathing-room-relative">
+									<section class="gridlike-form-row bottom-breathing-room-rel">
 										<div style="vertical-align:middle">
 											<b><?php echo $LANG['REMARKS']; ?>:</b>
 										</div>
@@ -520,7 +520,7 @@ if($isEditor && $submitAction){
 											<input name="georeferenceremarks" type="text" value="" style="width:500px;" aria-label="<?php echo $LANG['REMARKS'] ?>" />
 										</div>
 									</section>
-									<section class="gridlike-form-row bottom-breathing-room-relative">
+									<section class="gridlike-form-row bottom-breathing-room-rel">
 										<div style="vertical-align:middle">
 											<b><?php echo $LANG['VERIF_STATUS']; ?>:</b>
 										</div>
@@ -528,7 +528,7 @@ if($isEditor && $submitAction){
 											<input id="georeferenceverificationstatus" name="georeferenceverificationstatus" type="text" value="<?php echo $georeferenceVerificationStatus; ?>" style="width:400px;" aria-label="<?php echo $LANG['VERIF_STATUS'] ?>" />
 										</div>
 									</section>
-									<section class="gridlike-form-row bottom-breathing-room-relative">
+									<section class="gridlike-form-row bottom-breathing-room-rel">
 										<div style="vertical-align:middle">
 											<b><?php echo $LANG['ELEVATION']; ?>:</b>
 										</div>
@@ -541,7 +541,7 @@ if($isEditor && $submitAction){
 											</span>
 										</div>
 									</section>
-									<section class="gridlike-form-row bottom-breathing-room-relative">
+									<section class="gridlike-form-row bottom-breathing-room-rel">
 										<div>
 											<b><?php echo $LANG['PROCESSING_STATUS']; ?>: </b>
 										</div>
@@ -565,7 +565,7 @@ if($isEditor && $submitAction){
 											</span>
 										</div>
 								    </section>
-									<section class="gridlike-form-row bottom-breathing-room-relative">
+									<section class="gridlike-form-row bottom-breathing-room-rel">
 										<div>
 											<button name="submitaction" type="submit" value="Update Coordinates" aria-label="<?php echo $LANG['UPDATE_COORDS'] ?>" ><?php echo $LANG['UPDATE_COORDS']; ?></button>
 											<span id="workingspan" style="display:none;">

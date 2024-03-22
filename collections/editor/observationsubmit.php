@@ -70,6 +70,9 @@ $clArr = $obsManager->getChecklists();
 	<style>
 		#dmsdiv{ display: none; clear: both; padding: 15px; width: 565px; background-color: #f2f2f2; border: 2px outset #E8EEFA; }
 		#dmsButton { margin: 0px 3px; }
+		.lat-long-group-label {
+			margin-top: 4px;
+		}
 	</style>
 </head>
 <body>

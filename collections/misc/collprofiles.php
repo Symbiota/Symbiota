@@ -97,7 +97,33 @@ if ($SYMB_UID) {
 		.importItem { margin-left:10px; display:none; }
 		.field-div { margin: 10px 0px; clear: both; }
 		.label { font-weight: bold; }
+		.float-rt-no-overlap {
+			/* this should occur after fieldset-like definitions */
+			float: right;
+			clear: both;
+			margin: 2rem 2rem 2rem 2rem;
+		}
+		.no-left-margin {
+			margin-left: 0;
+		}
+		.col-profile-img {
+			border: 1px;
+			height: 6.4rem;
+			width: 6.4rem;
+		}
+		.col-profile-header {
+			margin-left: 0.5em;
+		}
+		.col-profile-inst-code {
+			min-width: 9rem;
+			max-width: 9rem;
+		}
+		.bigger-left-margin-rel {
+			margin-left: 3rem;
+		}
 	</style>
+	<link href="<?php echo $CLIENT_ROOT ?>/collections/search/css/searchStyles.css?ver=1" type="text/css" rel="stylesheet" />
+	<link href="<?php echo $CLIENT_ROOT ?>/collections/search/css/searchStylesInner.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
 	<?php
