@@ -312,7 +312,9 @@ class OccurrenceIndividual extends Manager{
 			}
 		}
 		if($retArr) $this->occArr['othercatalognumbers'] = $retArr;
-		elseif($this->occArr['othercatalognumbers']) $this->occArr['othercatalognumbers'][0]['value'] = $this->occArr['othercatalognumbers'];
+		elseif($this->occArr['othercatalognumbers']){
+			$this->occArr['othercatalognumbers'] = array(array('value' => $this->occArr['othercatalognumbers']));
+		}
 	}
 
 	private function setPaleo(){
@@ -1301,7 +1303,7 @@ class OccurrenceIndividual extends Manager{
 		if($stmt = $this->conn->prepare($sqlut)){
 			$stmt->bind_param('i', $GLOBALS['SYMB_UID']);
 			$stmt->execute();
-			$tid = ''; 
+			$tid = '';
 			$geographicScope = '';
 			$stmt->bind_result($tid, $geographicScope);
 			while($stmt->fetch()){
