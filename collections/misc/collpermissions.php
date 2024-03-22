@@ -44,12 +44,13 @@ if($isEditor){
 			$permManager->addPermission($_POST['uid'],"RareSppReader",$collId);
 		}
 	}
-	elseif($action == 'Add Identification Editor'){
-		$identEditor = $_POST['identeditor'];
-		$pTokens = explode(':',$identEditor);
-		$permManager->addPermission($pTokens[0],'CollTaxon',$collId,$pTokens[1]);
-		//$permManager->addPermission($pTokens[0],'CollTaxon-'.$collId.':'.$pTokens[1]);
-	}
+// TODO: Identification Editor features need to be reviewed and refactored
+//	elseif($action == 'Add Identification Editor'){
+//		$identEditor = $_POST['identeditor'];
+//		$pTokens = explode(':',$identEditor);
+//		$permManager->addPermission($pTokens[0],'CollTaxon',$collId,$pTokens[1]);
+//		//$permManager->addPermission($pTokens[0],'CollTaxon-'.$collId.':'.$pTokens[1]);
+//	}
 	elseif($action == 'Sponsor Personal Observation User'){
 		$permManager->addPermission($_POST['uid'],'CollEditor',$_POST['persobscollid']);
 	}
@@ -387,7 +388,8 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 					?>
 				</section>
 				<?php
-
+// TODO: Identification Editor features need to be reviewed and refactored
+/*
 			//Identification Editors
 			$taxonEditorArr = $permManager->getTaxonEditorArr($collId,1);
 			$taxonSelectArr = $permManager->getTaxonEditorArr($collId,0);
@@ -499,6 +501,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 				</form>
 				<?php
 			}
+*/
 		}
 		else{
 			echo '<div style="font-weight:bold;font-size:120%;">';
