@@ -10,18 +10,17 @@ function hideCollections(){
 	$("#collection-div").hide();
 }
 
-function imageTypeChanged(selectObj){
-	if(selectObj.value == 1 || selectObj.value == 2){
-		$("#collections-control-span").show();
-		$("input[name='db[]']").prop('checked', true);
-		$("input[name='cat[]']").prop('checked', true);
-	}
-	else{
-		$("#collections-control-span").hide();
-		$("#collection-div").hide();
-		$("input[name='db[]']").prop('checked', false);
-		$("input[name='cat[]']").prop('checked', false);
-	}
+function activateCollectionControl(){
+	$("#collections-control-span").show();
+	$("input[name='db[]']").prop('checked', true);
+	$("input[name='cat[]']").prop('checked', true);
+}
+
+function deactivateCollectionControl(){
+	$("#collections-control-span").hide();
+	$("#collection-div").hide();
+	$("input[name='db[]']").prop('checked', false);
+	$("input[name='cat[]']").prop('checked', false);
 }
 
 function openIndPU(occId,clid){

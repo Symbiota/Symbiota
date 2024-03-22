@@ -6,6 +6,7 @@ Language: English
 */
 
 $LANG['ACTION_SUCCESS'] = 'images successfully tagged!';
+$LANG['ACTION_FAILED'] = 'images were already tagged with target';
 $LANG['ACTION_ERROR'] = 'ERROR applying tag to images';
 $LANG['IMAGE_SEARCH'] = 'Image Search';
 $LANG['SELECT_TAG'] = 'Select an image tag';
@@ -26,13 +27,13 @@ $LANG['WITH'] = 'with';
 $LANG['WITHOUT'] = 'without';
 $LANG['ANY_TAG'] = 'Any Tag';
 $LANG['IMAGE_COUNTS'] = 'Image Counts';
-$LANG['ALL_IMAGES'] = 'All images';
-$LANG['ONE_PER_TAXON'] = 'One per taxon';
-$LANG['ONE_PER_SPEC'] = 'One per specimen';
+$LANG['COUNT_ALL'] = 'All images';
+$LANG['COUNT_TAXON'] = 'One per taxon';
+$LANG['COUNT_SPECIMEN'] = 'One per specimen';
 $LANG['IMAGE_TYPE'] = 'Image Type';
-$LANG['ALL_IMAGES'] = 'All Images';
-$LANG['SPECIMEN_VOUCHERED'] = 'Specimen/Vouchered Images';
-$LANG['FIELD_IMAGES'] = 'Field Images (lacking specific locality details)';
+$LANG['TYPE_ALL'] = 'All Images';
+$LANG['TYPE_SPECIMEN'] = 'Specimen/Vouchered Images';
+$LANG['TYPE_FIELD'] = 'Field Images (lacking specific locality details)';
 $LANG['DISPLAY_COLLECTIONS'] = 'Display Collection Panel';
 $LANG['HIDE_COLLECTIONS'] = 'Hide Collection Panel';
 $LANG['COUNT_PER_PAGE'] = 'Count per page';

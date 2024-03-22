@@ -12,7 +12,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 	private $tagExistance = 0;
 	private $tag;
 	private $keywords;
-	private $imageCount = 'all';
+	private $imageCount = 0;
 	private $imageType = 0;
 
 	private $recordCount = 0;
@@ -42,8 +42,8 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 			'o.occid, o.stateprovince, o.catalognumber, CONCAT_WS("-",c.institutioncode, c.collectioncode) as instcode ';
 		*/
 		$sqlWhere = $this->sqlWhere;
-		if($this->imageCount == 'taxon') $sqlWhere .= 'GROUP BY sciname ';
-		elseif($this->imageCount == 'specimen') $sqlWhere .= 'GROUP BY i.occid ';
+		if($this->imageCount == 1) $sqlWhere .= 'GROUP BY sciname ';
+		elseif($this->imageCount == 2) $sqlWhere .= 'GROUP BY i.occid ';
 		if($this->sqlWhere) $sqlWhere .= 'ORDER BY o.sciname ';
 		$bottomLimit = ($pageRequest - 1)*$cntPerPage;
 		$sql .= $this->getSqlBase().$sqlWhere.'LIMIT '.$bottomLimit.','.$cntPerPage;
@@ -208,12 +208,10 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 	private function setRecordCnt(){
 		$sql = 'SELECT COUNT(DISTINCT i.imgid) AS cnt ';
 		if($this->imageCount){
-			if($this->imageCount == 'taxon') $sql = 'SELECT COUNT(DISTINCT i.tid) AS cnt ';
-			elseif($this->imageCount == 'specimen') $sql = 'SELECT COUNT(DISTINCT i.occid) AS cnt ';
-			else $sql = 'SELECT COUNT(DISTINCT i.imgid) AS cnt ';
+			if($this->imageCount == 1) $sql = 'SELECT COUNT(DISTINCT i.tid) AS cnt ';
+			elseif($this->imageCount == 2) $sql = 'SELECT COUNT(DISTINCT i.occid) AS cnt ';
 		}
 		$sql .= $this->getSqlBase().$this->sqlWhere;
-		//echo '<div>Count sql: '.$sql.'</div>';
 		$result = $this->conn->query($sql);
 		if($row = $result->fetch_object()){
 			$this->recordCount = $row->cnt;
@@ -281,24 +279,24 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		$tagName = $postArr['imgTagAction'];
 		if($imageArr && $tagName){
 			$cnt = 0;
+			$fail = 0;
 			foreach($imageArr as $imgid){
 				if(is_numeric($imgid)){
-					$sql = 'INSERT INTO imagetag(imgid, keyValue) VALUE(?, ?)';
+					$sql = 'INSERT IGNORE INTO imagetag(imgid, keyValue) VALUE(?, ?)';
 					if($stmt = $this->conn->prepare($sql)){
 						$stmt->bind_param('is', $imgid, $tagName);
 						$stmt->execute();
-						if($stmt->affected_rows){
-							$cnt++;
-						}
+						if($stmt->affected_rows) $cnt++;
 						elseif($stmt->error){
 							$this->errorStr = 'ERROR adding image tag: '.$this->error;
 							$status = false;
 						}
+						else $fail++;
 						$stmt->close();
 					}
 				}
 			}
-			if($cnt) $status = $cnt;
+			$status = $cnt . '-' . $fail;
 		}
 		return $status;
 	}
@@ -427,7 +425,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 	}
 
 	public function setImageCount($c){
-		if(in_array($c, array('all','taxon','specimen'))) $this->imageCount = $c;
+		if(is_numeric($c)) $this->imageCount = $c;
 	}
 
 	public function getImageCount(){

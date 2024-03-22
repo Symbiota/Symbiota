@@ -37,9 +37,13 @@ if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 
 $statusStr = '';
 if($action == 'batchAssignTag'){
-	$numberImagesTagged = $imgLibManager->batchAssignImageTag($_POST);
-	if($numberImagesTagged){
-		$statusStr = '<span style="color:green">' . $numberImagesTagged . ' ' . $LANG['ACTION_SUCCESS'] . '</span>';
+	$statusCnt = $imgLibManager->batchAssignImageTag($_POST);
+	$statusArr = explode('-', $statusCnt);
+	if(isset($statusArr[0]) && is_numeric($statusArr[0])){
+		$statusStr = '<span style="color:green">';
+		$statusStr .= $statusArr[0] . ' ' . $LANG['ACTION_SUCCESS'];
+		if(isset($statusArr[1]) && is_numeric($statusArr[1])) $statusStr .= '; ' . $statusArr[1] . ' ' . $LANG['ACTION_FAILED'];
+		$statusStr .= '</span>';
 	}
 	else{
 		$statusStr = '<span style="color:red">' . $LANG['ACTION_ERROR'] . ': ' . $imgLibManager->getErrorStr() . '</span>';
@@ -94,7 +98,7 @@ if($action == 'batchAssignTag'){
 		}
 	</script>
 	<script src="../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
-	<script src="../js/symb/imagelib.search.js?ver=3a" type="text/javascript"></script>
+	<script src="../js/symb/imagelib.search.js?ver=3b" type="text/javascript"></script>
 	<style type="text/css">
 		fieldset{ padding: 15px }
 		fieldset legend{ font-weight:bold }
@@ -123,21 +127,21 @@ if($action == 'batchAssignTag'){
 			<div id="search-div">
 				<fieldset>
 					<legend><?= $LANG['SEARCH_CRITERIA'] ?></legend>
-					<?php
-					$isEditor = 0;
-					if($IS_ADMIN) $isEditor = 1;
-					elseif(isset($USER_RIGHTS['CollAdmin']) || isset($USER_RIGHTS['CollEditor'])) $isEditor = 2;
-					elseif(isset($USER_RIGHTS['TaxonProfile'])) $isEditor = 2;
-					if($isEditor){
-						?>
-						<div id="edit-div" style="float:right">
-							<a href="#" onclick="$('.editor-div').toggle()"><img class="icon-img" style="width:15px;" src="../images/edit.png"></a>
-						</div>
-						<?php
-					}
-					?>
 					<div id="criteria-div">
 						<div class="row-div flex-form">
+							<?php
+							$isEditor = 0;
+							if($IS_ADMIN) $isEditor = 1;
+							elseif(isset($USER_RIGHTS['CollAdmin']) || isset($USER_RIGHTS['CollEditor'])) $isEditor = 2;
+							elseif(isset($USER_RIGHTS['TaxonProfile'])) $isEditor = 2;
+							if($isEditor){
+								?>
+								<div id="edit-div" style="float:right">
+									<a href="#" onclick="$('.editor-div').toggle(); return false;"><img class="icon-img" style="width:15px;" src="../images/edit.png"></a>
+								</div>
+								<?php
+							}
+							?>
 							<div style="float:left;">
 								<select id="taxontype" name="taxontype">
 									<?php
@@ -200,34 +204,40 @@ if($action == 'batchAssignTag'){
 						$obsArr = (isset($collList['obs'])?$collList['obs']:null);
 						?>
 						<div class="row-div flex-form">
-							<label for="imageCount"><?= $LANG['IMAGE_COUNTS'] ?></label>:
-							<select id="imageCount" name="imagecount">
-								<option value="all" <?= ($imgLibManager->getImageCount() == 'all' ? 'SELECTED ' : '') ?>><?= $LANG['ALL_IMAGES'] ?></option>
-								<option value="taxon" <?= ($imgLibManager->getImageCount() == 'taxon' ? 'SELECTED ' : '') ?>><?= $LANG['ONE_PER_TAXON'] ?></option>
+							<fieldset>
+								<legend> <?= $LANG['IMAGE_COUNTS'] ?> </legend>
+								<input id="countAll" type="radio" name="imagecount" value="0" <?= (!$imgLibManager->getImageCount() ? 'CHECKED ' : '') ?>>
+								<label for="countAll"> <?= $LANG['COUNT_ALL'] ?></label><br>
+								<input id="countTaxon" type="radio" name="imagecount" value="1" <?= ($imgLibManager->getImageCount() == 1 ? 'CHECKED ' : '') ?>>
+								<label for="countTaxon"> <?= $LANG['COUNT_TAXON'] ?></label><br>
 								<?php
 								if($specArr){
 									?>
-									<option value="specimen" <?= ($imgLibManager->getImageCount() == 'specimen' ? 'SELECTED ' : '') ?>><?= $LANG['ONE_PER_SPEC'] ?></option>
+									<input id="countSpecimen" type="radio" name="imagecount" value="2" <?= ($imgLibManager->getImageCount() == 2 ? 'CHECKED ' : '') ?> >
+									<label for="countSpecimen"> <?= $LANG['COUNT_SPECIMEN'] ?></label>
 									<?php
 								}
 								?>
-							</select>
+							</fieldset>
 						</div>
 						<div class="row-div flex-form">
-							<label for="imageType"><?= $LANG['IMAGE_TYPE'] ?></label>:
-							<select id="imageType" name="imagetype" onchange="imageTypeChanged(this)">
-								<option value="0"><?= $LANG['ALL_IMAGES'] ?></option>
-								<option value="1" <?= ($imgLibManager->getImageType() == 1 ? 'SELECTED' : '') ?>><?= $LANG['SPECIMEN_VOUCHERED'] ?></option>
-								<option value="3" <?= ($imgLibManager->getImageType() == 3 ? 'SELECTED' : '') ?>><?= $LANG['FIELD_IMAGES'] ?></option>
-							</select>
-							<?php
-							$showCollections = false;
-							if($imgLibManager->getImageType() == 1 || $imgLibManager->getImageType() == 2) $showCollections = true;
-							?>
-							<span id="collections-control-span" style="margin-left: 5px; display: <?= ($showCollections ? '' : 'none') ?>">
-								<span id="display-collections-span"><a href="#" onclick="showCollections()"><?= $LANG['DISPLAY_COLLECTIONS'] ?></a></span>
-								<span id="hide-collections-span" style="display: none"><a href="#" onclick="hideCollections()"><?= $LANG['HIDE_COLLECTIONS'] ?></a></span>
-							</span>
+							<fieldset>
+								<?php
+								$showCollections = false;
+								if($imgLibManager->getImageType() == 1 || $imgLibManager->getImageType() == 2) $showCollections = true;
+								?>
+								<legend> <?= $LANG['IMAGE_TYPE'] ?> </legend>
+								<input id="typeAll" type="radio" name="imagetype" value="0" <?= (!$imgLibManager->getImageType() ? 'CHECKED' : '') ?> onclick="deactivateCollectionControl()">
+								<label for="typeAll"><?= $LANG['TYPE_ALL'] ?></label><br>
+								<input id="typeSpecimen" type="radio" name="imagetype" value="1" <?= ($imgLibManager->getImageType() == 1 ? 'CHECKED' : '') ?> onclick="activateCollectionControl()">
+								<label for="typeSpecimen">  <?= $LANG['TYPE_SPECIMEN'] ?></label>
+								<span id="collections-control-span" style="margin-left: 5px; display: <?= ($showCollections ? '' : 'none') ?>">
+									<span id="display-collections-span"><a href="#" onclick="showCollections()"><?= $LANG['DISPLAY_COLLECTIONS'] ?></a></span>
+									<span id="hide-collections-span" style="display: none"><a href="#" onclick="hideCollections()"><?= $LANG['HIDE_COLLECTIONS'] ?></a></span>
+								</span><br>
+								<input id="typeField" type="radio" name="imagetype" value="3" <?= ($imgLibManager->getImageType() == 3 ? 'CHECKED' : '') ?> onclick="deactivateCollectionControl()">
+								<label for="typeField"><?= $LANG['TYPE_FIELD'] ?></label>
+							</fieldset>
 						</div>
 						<div class="row-div flex-form">
 							<div style="margin-bottom:5px;float:left;">
@@ -240,9 +250,9 @@ if($action == 'batchAssignTag'){
 									<option <?= ($cntPerPage==1000 ? 'selected' : '') ?>>1000</option>
 								</select>
 							</div>
-							<div style="margin:0px 40px;float:left">
-								<button name="submitaction" type="submit" value="search"><?= $LANG['LOAD_IMAGES'] ?></button>
-							</div>
+						</div>
+						<div class="row-div flex-form" style="padding-top:10px">
+							<button name="submitaction" type="submit" value="search"><?= $LANG['LOAD_IMAGES'] ?></button>
 						</div>
 						<?php
 						if($specArr || $obsArr){
