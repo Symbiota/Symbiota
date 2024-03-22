@@ -67,8 +67,8 @@
   cursor: pointer;
   background-color: #ffffff;
   border-radius: 2px;
-  border: 1px solid #0073cf;
-  color: #0073cf;
+  border: 1px solid var(--darkest-color);
+  color: var(--darkest-color);
   -webkit-transition: ease 0.5s;
   transition: ease 0.5s;
   position: relative;
