@@ -32,7 +32,7 @@ if($isEditor){
 	<div style="padding:15px;">
 		<div>
 			<div>
-				<b><span style="text-decoration: underline;"><?php echo (isset($LANG['DETAILS'])?$LANG['DETAILS']:'Profile Details'); ?></span></b>
+				<h1><span style="text-decoration: underline;"><?php echo (isset($LANG['DETAILS'])?$LANG['DETAILS']:'Profile Details'); ?></span></h1>
 			</div>
 			<div style="margin:20px;">
 				<?php
