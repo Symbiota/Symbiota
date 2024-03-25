@@ -1504,6 +1504,7 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 
 		async function searchCollections(body, host) {
          const emptyResponse = { taxaArr: [], collArr: [], recordArr: [], origin: host? host: "host" };
+         sessionStorage.querystr = "";
 			try {
 				const url = host? `${host}/collections/map/rpc/searchCollections.php`: 'rpc/searchCollections.php'
 
@@ -1511,8 +1512,14 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 					method: "POST",
 					mode: "cors",
 					body: body,
-				});
-				return response? await response.json(): emptyResponse;
+			});
+            if(response) {
+             const search = await response.json()
+               sessionStorage.querystr = search.query;
+               return search;
+            } else {
+               return emptyResponse;
+            }
 			} catch(e) {
 				return emptyResponse;
 			}
