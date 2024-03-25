@@ -48,8 +48,8 @@ $LANG['H_LOGIN'] = 'Entrar';
 $LANG['H_NEW_ACCOUNT'] = 'Nova Conta';
 $LANG['SELECT_LANGUAGE'] = 'Selecionar Idioma';
 
-$LANG['TOGGLE_508_OFF'] = "Alternar Layout de Formulário Condensado";
-$LANG['TOGGLE_508_ON'] = "Alternar Layout de Formulário Vertical";
+$LANG['TOGGLE_508_OFF'] = "Modo Condensado";
+$LANG['TOGGLE_508_ON'] = "Modo de Acessibilidade";
 
 $LANG['CONTACT_US'] = 'Entre em Contato Conosco';
 $LANG['LOGIN'] = 'Login';
@@ -66,5 +66,10 @@ $LANG['NAV_IMG_LIB'] = 'Biblioteca de Imagens';
 $LANG['NAV_IMG_CONTR'] = 'Contribuidores de Imagem';
 $LANG['NAV_IMG_SEARCH'] = 'Pesquisa de Imagens';
 $LANG['SKIP_NAV'] = 'Pular Navegação';
+
+// Footer-specific
+$LANG['ACCESSIBILITY_OPTIONS'] = 'Opções de acessibilidade';
+$LANG['ACCESSIBILITY_OPTIONS_DESCRIPTION'] = 'Mais recursos de acessibilidade serão adicionados ao longo do tempo. Alterne aqueles que atendem às suas necessidades.';
+$LANG['CLOSE'] = 'Fechar';
 
 ?>
