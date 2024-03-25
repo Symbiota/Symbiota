@@ -100,7 +100,7 @@ $clArray = $clManager->getMetaData();
 $clArray = $clManager->cleanOutArray($clArray);
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET ?>"/>
 	<title><?= $DEFAULT_TITLE . ' - ' . $LANG['CHECKLIST_ADMIN'] ?></title>

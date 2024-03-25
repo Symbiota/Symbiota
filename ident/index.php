@@ -16,7 +16,8 @@ if($pid === '' && isset($DEFAULT_PROJ_ID)) $pid = $DEFAULT_PROJ_ID;
 $clManager = new ChecklistManager();
 $clManager->setPid($pid);
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['IDKEY'];?></title>
 	<?php

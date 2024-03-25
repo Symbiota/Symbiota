@@ -83,7 +83,8 @@ if(array_key_exists("sf",$_POST)){
 }
 $duManager->loadFieldMap(true);
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['RESTORE'])?$LANG['RESTORE']:'Restore Backup'); ?></title>

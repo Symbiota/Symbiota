@@ -48,7 +48,7 @@ if($isEditor && $action){
 $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General Observations')?true:false);
 ?>
 <!DOCTYPE HTML>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 		<title><?php echo $DEFAULT_TITLE; ?> Specimen Label Manager</title>

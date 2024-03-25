@@ -55,7 +55,8 @@ if($chars){
 	unset($chars['Languages']);
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo htmlspecialchars($DEFAULT_TITLE . ' ' . $LANG['WEBKEY'], HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars(preg_replace('/\<[^\>]+\>/','',$dataManager->getClName()), HTML_SPECIAL_CHARS_FLAGS); ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">

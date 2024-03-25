@@ -17,7 +17,8 @@ if(array_key_exists('CollEditor',$USER_RIGHTS)) $collEditorArr = array_unique(ar
 
 $occManager = new OccurrenceSupport();
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Search Page</title>

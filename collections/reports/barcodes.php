@@ -16,7 +16,8 @@ if($SYMB_UID){
 	elseif(array_key_exists("CollEditor",$USER_RIGHTS) && in_array($labelManager->getCollid(),$USER_RIGHTS["CollEditor"])) $isEditor = 1;
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title><?php echo $DEFAULT_TITLE; ?> Labels</title>
 		<style type="text/css">

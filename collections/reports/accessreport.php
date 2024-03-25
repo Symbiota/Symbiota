@@ -53,7 +53,8 @@ else{
 	$headerStr = '<th>'.$periodArr[$duration].'</th><th>Access Type</th><th>Record Count</th>';
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title>Occurrence Access Reporting</title>
 		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">

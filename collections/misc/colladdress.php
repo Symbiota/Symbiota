@@ -39,7 +39,8 @@ if($isEditor){
 $collData = current($collManager->getCollectionMetadata());
 $collManager->cleanOutArr($collData);
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE." ".($collid?$collData["collectionname"]:"").' '.(isset($LANG['MAILING_ADD'])?$LANG['MAILING_ADD']:'Mailing Address'); ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
