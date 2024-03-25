@@ -1,18 +1,13 @@
 <footer>
 	<style>
-		.circle-button {
-			/* border-radius: 50%; */
+		.accessibility-option-button {
 			width: fit-content;
 			padding: 10px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
 			background-color: var(--link-color);
 			color: var(--body-bg-color);
-			border: none;
 		}
 
-		.circle-button:hover {
+		.accessibility-option-button:hover {
 			cursor: pointer;
 			background-color: var(--medium-color);
 		}
@@ -41,7 +36,7 @@
 		</form>
 	</dialog>
 	<div class="logo-gallery">
-		<button id="accessibility-options-button" type="button" class="btn btn-primary  circle-button">
+		<button id="accessibility-options-button" type="button" class="btn btn-primary  accessibility-option-button">
 			<div class="button__item-container">
 				<p class="button__item-container__item-text">
 					<?= $LANG['ACCESSIBILITY_OPTIONS']; ?>
