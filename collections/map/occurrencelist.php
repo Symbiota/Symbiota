@@ -104,16 +104,13 @@ if(!$recLimit || $recCnt < $recLimit){
 					foreach($occArr as $occId => $recArr){
 						$trCnt++;
 						echo '<tr '.($trCnt%2?'class="alt"':'').' id="tr'.$occId.'">';
-						//echo '<td style="width:10px;">';
-						//echo '<input type="checkbox" class="occcheck" id="ch'.$occId.'" name="occid[]" value="'.$occId.'" onchange="findSelections(this);" '.(in_array($occId,$selections)?"checked":"").' />';
-						//echo '</td>';
 						echo '<td id="cat' . $occId . '" >' . $recArr["cat"] . '</td>';
 						echo '<td id="label' . $occId .'" >';
 						echo '<a href="#" onmouseover="openOccidInfoBox(\'' . $recArr["c"] . '\',' . $recArr["lat"] . ',' . $recArr["lon"] . ');" onmouseout="closeOccidInfoBox();" onclick="openRecord({occid:' . $occId . ($host?', host:\'' . $host . '\'' : '' ) . '}); return false;">' . ($recArr["c"]?$recArr["c"]:"Not available") .'</a>';
 						echo '</td>';
 						echo '<td id="e' . $occId.'" >' . $recArr["e"] . '</td>';
 						echo '<td id="s' . $occId.'" >'.$recArr["s"].'</td>';
-						echo '<td id="li' . $occId.'" ><a href="#occid=' . $occId .'" onclick="emit_occurrence('.$occId.')">See Map Occurrence</a></td>';
+						echo '<td id="li' . $occId.'" ><a href="#occid=' . $occId .'" onclick="emit_occurrence('.$occId.')">See Map Point</a></td>';
 						echo '</tr>';
 					}
 					?>

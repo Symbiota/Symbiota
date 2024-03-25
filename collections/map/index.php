@@ -711,6 +711,7 @@ value="${color}"
 				for(let value of Object.values(legendMap)) {
 					const colorCluster = (cluster) => {
 						let childCount = cluster.getChildCount();
+cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?></div>`);
 						return new L.DivIcon.CustomColor({
 							html: `<div style="background-color: #${value.color};"><span>` + childCount + '</span></div>',
 							className: `marker-cluster`,
