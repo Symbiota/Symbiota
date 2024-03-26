@@ -121,6 +121,24 @@ foreach ($coordArr as $collName => $coll) {
 	}
 }
 
+if(isset($_REQUEST['llpoint'])) {
+   $llpoint = explode(";", $_REQUEST['llpoint']);
+   if(count($llpoint) === 4) {
+      $pointLat = $llpoint[0];
+      $pointLng = $llpoint[1];
+      $pointRad = $llpoint[2];
+      $pointUnit = $llpoint[3];
+   }
+} elseif(isset($_REQUEST['llbound'])) {
+   $llbound = explode(";", $_REQUEST['llbound']);
+   if(count($llbound) === 4) {
+      $upperLat= $llbound[0];
+      $lowerLat= $llbound[1];
+      $upperLng= $llbound[2];
+      $lowerLng = $llbound[3];
+   }
+}
+
 ?>
 <html>
 	<head>
@@ -1671,21 +1689,28 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 
 				if(shapeType) {
 					shape = loadMapShape(shapeType, {
-						polygonLoader: () => document.getElementById("polycoords").value,
+						polygonLoader: () => document.getElementById("polycoords").value.trim(),
 						circleLoader: () => {
+                     const units = document.getElementById("pointunits").value;
 							return {
-								radius: document.getElementById("upperlat").value,
-								radUnits: "km",
-								pointLng: document.getElementById("pointlng").value,
-								pointLat: document.getElementById("pointlat").value
+								radius: parseFloat(document.getElementById("radius").value),
+								radUnits: units == "mi" || units == "km"? units: "km",
+								pointLng: parseFloat(document.getElementById("pointlong").value),
+								pointLat: parseFloat(document.getElementById("pointlat").value)
 							}
 						},
 						rectangleLoader: () => {
+                     console.log({
+								upperLat: parseFloat(document.getElementById("upperlat").value),
+								lowerLat: parseFloat(document.getElementById("bottomlat").value),
+								rightLng: parseFloat(document.getElementById("rightlong").value),
+								leftLng: parseFloat(document.getElementById("leftlong").value)
+							})
 							return {
-								upperLat: document.getElementById("upperlat").value,
-								lowerLat: document.getElementById("bottomlat").value,
-								rightLng: document.getElementById("rightlong").value,
-								leftLng: document.getElementById("leftlong").value
+								upperLat: parseFloat(document.getElementById("upperlat").value),
+								lowerLat: parseFloat(document.getElementById("bottomlat").value),
+								rightLng: parseFloat(document.getElementById("rightlong").value),
+								leftLng: parseFloat(document.getElementById("leftlong").value)
 							}
 						}
 					})
@@ -1781,14 +1806,15 @@ Record Limit:
 											<input type="hidden" id="gridSizeSetting" name="gridSizeSetting" value="<?php echo $gridSize; ?>" />
 											<input type="hidden" id="minClusterSetting" name="minClusterSetting" value="<?php echo $minClusterSize; ?>" />
 											<input type="hidden" id="clusterSwitch" name="clusterSwitch" value="<?php echo $clusterOff; ?>" />
-											<input type="hidden" id="pointlat" name="pointlat" value='<?php echo $mapManager->getSearchTerm('pointlat'); ?>' />
-											<input type="hidden" id="pointlong" name="pointlong" value='<?php echo $mapManager->getSearchTerm('pointlong'); ?>' />
-											<input type="hidden" id="radius" name="radius" value='<?php echo $mapManager->getSearchTerm('radius'); ?>' />
-											<input type="hidden" id="upperlat" name="upperlat" value='<?php echo $mapManager->getSearchTerm('upperlat'); ?>' />
-											<input type="hidden" id="rightlong" name="rightlong" value='<?php echo $mapManager->getSearchTerm('rightlong'); ?>' />
-											<input type="hidden" id="bottomlat" name="bottomlat" value='<?php echo $mapManager->getSearchTerm('bottomlat'); ?>' />
-											<input type="hidden" id="leftlong" name="leftlong" value='<?php echo $mapManager->getSearchTerm('leftlong'); ?>' />
-											<input type="hidden" id="polycoords" name="poly_array" value='<?php echo $mapManager->getSearchTerm('polycoords'); ?>' />
+											<input type="hidden" id="pointlat" name="pointlat" value='<?php echo isset($pointLat)? $pointLat:"" ?>' />
+											<input type="hidden" id="pointlong" name="pointlong" value='<?php echo isset($pointLng)? $pointLng:"" ?>' />
+											<input type="hidden" id="pointunits" name="pointunits" value='<?php echo isset($pointUnit)? $pointUnit:"km" ?>' />
+											<input type="hidden" id="radius" name="radius" value='<?php echo isset($pointRad)? $pointRad:"" ?>' />
+											<input type="hidden" id="upperlat" name="upperlat" value='<?php echo isset($upperLat)? $upperLat:"" ?>' />
+											<input type="hidden" id="rightlong" name="rightlong" value='<?php echo isset($upperLng)? $upperLng:"" ?>' />
+											<input type="hidden" id="bottomlat" name="bottomlat" value='<?php echo isset($lowerLat)? $lowerLat:"" ?>' />
+											<input type="hidden" id="leftlong" name="leftlong" value='<?php echo isset($lowerLng)? $lowerLng:"" ?>' />
+											<input type="hidden" id="polycoords" name="polycoords" value='<?php echo $mapManager->getSearchTerm('polycoords'); ?>' />
 											<button data-role="none" type="button" name="resetbutton" onclick="resetQueryForm(this.form)"><?php echo (isset($LANG['RESET'])?$LANG['RESET']:'Reset'); ?></button>
 											<button data-role="none" name="submitform" type="submit" ><?php echo (isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search'); ?></button>
 										</div>
