@@ -18,7 +18,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class="navpath"></div>
-	<div id="innertext">
+	<div id="innertext" role="main">
 		<?php
 		if($LANG_TAG == 'es'){
 			?>
