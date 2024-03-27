@@ -400,7 +400,7 @@ if($imgArr){
 					if($origUrl) echo '<div><a href="' . htmlspecialchars($origUrl, HTML_SPECIAL_CHARS_FLAGS) . '">' . $LANG['OPEN_LARGE_IMAGE'] . '</a></div>';
 					?>
 					<div style="margin-top:20px;">
-						<?php echo $LANG['ERROR_COMMENT_ABOUT_IMAGE'] ?>? <br/><?php echo $LANG['SEND_EMAIL'] ?>:
+						<?php echo $LANG['ERROR_COMMENT_ABOUT_IMAGE'] ?> <br/><?php echo $LANG['SEND_EMAIL'] ?>:
 						<?php
 						$emailSubject = $DEFAULT_TITLE . ' ' . $LANG['IMG_NO'] . ' ' . $imgId;
 						$emailBody = 'Image being referenced: '.$serverPath.$CLIENT_ROOT.'/imagelib/imgdetails.php?imgid='.$imgId;
