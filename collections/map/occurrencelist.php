@@ -46,7 +46,7 @@ if(!$recLimit || $recCnt < $recLimit){
 						<img src="../../images/dl2.png" style="width:1.3em; vertical-align:top" />KML
 					</button>
 				</form>
-				<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;cursor: pointer;" onclick="copyUrl()" title="<?php echo (isset($LANG['COPY_TO_CLIPBOARD'])?$LANG['COPY_TO_CLIPBOARD']:'Copy URL to Clipboard'); ?>">
+            <button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;cursor: pointer;" onclick="copyUrl('<?=htmlspecialchars($SERVER_HOST)?>')" title="<?php echo (isset($LANG['COPY_TO_CLIPBOARD'])?$LANG['COPY_TO_CLIPBOARD']:'Copy URL to Clipboard'); ?>">
 					<img src="../../images/link.png" style="width:1.3em" /></button>
 			</div>
 		</div>

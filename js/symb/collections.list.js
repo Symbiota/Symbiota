@@ -1,11 +1,10 @@
-function copyUrl(){
+function copyUrl(host = window.location.host){
 	var $temp = $("<input>");
 	$("body").append($temp);
-	var activeLink = window.location.host + window.location.pathname;
+	var activeLink = host + window.location.pathname;
 	if(sessionStorage.querystr){
 		activeLink = activeLink + "?" + sessionStorage.querystr;
    }
-   console.log(sessionStorage.querystr)
 	$temp.val(activeLink).select();
 	document.execCommand("copy");
 	$temp.remove();
