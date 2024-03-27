@@ -86,7 +86,8 @@ $selectLookupArr = array();
 if($ometid || $omenid) $selectLookupArr = $exsManager->getSelectLookupArr();
 if($ometid) unset($selectLookupArr[$ometid]);
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Exsiccatae</title>
 	<?php

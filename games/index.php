@@ -8,7 +8,8 @@ $gameManager = new GamesManager();
 $clArr = $gameManager->getChecklistArr($pid);
 
  ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Games</title>
 	<?php

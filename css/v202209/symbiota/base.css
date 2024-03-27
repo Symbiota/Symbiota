@@ -298,10 +298,6 @@ ol.mp_list li.mp_highlighted {
   border-radius: 4px;
 }
 
-.accessibility-button {
-  font-size: 1.1em;
-}
-
 /*
 * OccurrenceSearchSupport
 */
@@ -313,10 +309,6 @@ ol.mp_list li.mp_highlighted {
   position: sticky;
   top: 1rem;
   float: right;
-}
-
-.no-left-margin {
-  margin-left: 0;
 }
 
 .fieldset-like {
@@ -364,22 +356,7 @@ ol.mp_list li.mp_highlighted {
   top: 0.8rem;
 }
 
-.fieldset-like--small-float-right {
-  float: right;
-  width: 35rem;
-}
-
-.float-rt-no-overlap {
-  /* this should occur after fieldset-like definitions */
-  float: right;
-  clear: both;
-  margin: 2rem 2rem 2rem 2rem;
-}
-
-.top-light-margin {
-  margin: 2px 10px 10px 10px;
-}
-
+/* The section below addresses CSS reset recommended by USDA 508 compliance:  https://github.com/BioKIC/Symbiota/pull/881 https://www.usda.gov/digital-strategy/development/plays#development3*/
 ul {
   display: block;
   list-style-type: disc;
@@ -480,7 +457,6 @@ fieldset {
 button {
   appearance: auto;
   text-rendering: auto;
-  color: buttontext;
   letter-spacing: normal;
   word-spacing: normal;
   line-height: normal;
@@ -492,7 +468,6 @@ button {
   align-items: flex-start;
   cursor: default;
   box-sizing: border-box;
-  background-color: buttonface;
   margin: 0em;
   padding-block: 1px;
   padding-inline: 6px;
@@ -510,25 +485,8 @@ b {
   font-weight: bold;
 }
 
-.normal-font-weight {
-  font-weight: normal;
-}
-
-.font-control {
-  font-size: 14px;
-}
-
-.icon-mrgn-rel {
-  margin-bottom: 0.6rem;
-}
-
 .gridlike-form {
   margin: 15px;
-  display: flex;
-  flex-direction: column;
-}
-
-.gridlike-form-no-margin {
   display: flex;
   flex-direction: column;
 }
@@ -538,34 +496,4 @@ b {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.gridlike-form-row-align {
-  flex: 1;
-  text-align: center;
-}
-
-.gridlike-form-row-label {
-  width: 100px;
-}
-
-.gridlike-form-row-input {
-  width: 40%;
-}
-
-.bounding-box-form__header {
-  font-size: 1.3rem;
-}
-
-.trait-section__label--spacer {
-  margin-left: 0.5rem;
-}
-
-.trait-section__input--no-margin {
-  margin: 0;
-}
-
-.div--overflow-wrap-anywhere {
-  overflow-wrap: anywhere;
-  width: 100%;
 }

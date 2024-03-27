@@ -275,7 +275,7 @@ else{
 				?>
 			</div>
 			<div class="fieldGroupDiv">
-				<div class="bottom-breathing-room-relative">
+				<div class="bottom-breathing-room-rel">
 
 					<?php
 					if(!$crowdSourceMode){
@@ -307,13 +307,13 @@ else{
 				<input type="hidden" name="occidlist" value="<?php echo $occManager->getOccidIndexStr(); ?>" />
 				<input type="hidden" name="direction" value="" />
 				<section class="flex-form">
-					<div class="no-margin-left">
+					<div style="margin-left: 0;">
 						<button name="submitaction" type="submit" onclick="submitQueryEditor(this.form)" ><?php echo $LANG['DISPLAY_EDITOR']; ?></button>
 					</div>
-					<div class="no-margin-left">
+					<div style="margin-left: 0;">
 						<button name="submitaction" type="submit" onclick="submitQueryTable(this.form)" ><?php echo $LANG['DISPLAY_TABLE']; ?></button>
 					</div>
-					<div class="no-margin-left">
+					<div style="margin-left: 0;">
 						<button type="button" name="reset" value="Reset Form" onclick="resetQueryForm(this.form)">Reset Form</button>
 					</div>
 					<div>

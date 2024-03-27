@@ -1,5 +1,49 @@
 <footer>
+	<style>
+		.accessibility-option-button {
+			width: fit-content;
+			padding: 10px;
+			background-color: var(--link-color);
+			color: var(--body-bg-color);
+		}
+
+		.accessibility-option-button:hover {
+			cursor: pointer;
+			background-color: var(--medium-color);
+		}
+		.accessibility-dialog{
+			position: fixed;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+			padding: 20px;
+			border-radius: 5px;
+		}
+		.button__item-container{
+			display: flex;
+			justify-content: center;
+		}
+		.button__item-container__item-text{
+			margin-top: 0.5rem;
+		}
+	</style>
+	<dialog id="accessibility-modal" class="accessibility-dialog">
+		<h1><?= $LANG['ACCESSIBILITY_OPTIONS']; ?></h1>
+		<p class="bottom-breathing-room-rel"><?= $LANG['ACCESSIBILITY_OPTIONS_DESCRIPTION']; ?></p>
+		<button type="button" class="btn btn-primary bottom-breathing-room-rel" onclick="toggleAccessibilityStyles('<?php echo $CLIENT_ROOT . '/includes' . '/' ?>', '<?php echo $CSS_BASE_PATH ?>', '<?php echo $LANG['TOGGLE_508_OFF'] ?>', '<?php echo $LANG['TOGGLE_508_ON'] ?>')" id="accessibility-button" data-accessibility="accessibility-button">
+			<?php echo (isset($LANG['TOGGLE_508_ON'])?$LANG['TOGGLE_508_ON']:'Switch Form Layout'); ?>
+		</button>
+		<form method="dialog">
+			<button type="submit" class="btn btn-primary"><?= $LANG['CLOSE']; ?></button>
+		</form>
+	</dialog>
 	<div class="logo-gallery">
+		<button id="accessibility-options-button" type="button" class="btn btn-primary  accessibility-option-button">
+			<div class="button__item-container">
+				<p class="button__item-container__item-text">
+					<?= $LANG['ACCESSIBILITY_OPTIONS']; ?>
+				</p>
+				<img alt="accessibility icon of a person" src="<?php echo $CLIENT_ROOT ?>/images/accessibility_FILL0_wght400_GRAD0_opsz24.svg" />
+			</div>
+		</button>
 		<a href="https://www.nsf.gov" target="_blank" aria-label="Visit National Science Foundation website">
 			<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/logo_nsf.gif" alt="Logo for the National Science Foundation" />
 		</a>
@@ -26,6 +70,13 @@
 		document.addEventListener('DOMContentLoaded', ()=>{
 			document.getElementById('accessibility-button').disabled=false;
 			updateButtonTextBasedOnEnabledStylesheet('<?php echo $LANG['TOGGLE_508_OFF'] ?>', '<?php echo $LANG['TOGGLE_508_ON'] ?>');
+		});
+
+		const openDialogButton = document.getElementById('accessibility-options-button');
+		const accessibilityDialog = document.getElementById('accessibility-modal');
+
+		openDialogButton.addEventListener('click', function() {
+			accessibilityDialog.showModal();
 		});
 	</script>
 </footer>

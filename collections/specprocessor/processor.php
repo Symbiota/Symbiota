@@ -35,7 +35,8 @@ if(in_array($action, array('dlnoimg','unprocnoimg','noskel','unprocwithdata'))){
 
 $statusStr = "";
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title>Specimen Processor Control Panel</title>
 		<?php

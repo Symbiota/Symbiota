@@ -51,4 +51,6 @@ $LANG['TAX_THES'] = 'Editor de Tesauro Taxonómico';
 $LANG['NO_RELS'] = 'Sin relaciones definidas';
 $LANG['ACCESSIBILITY_PREF'] = 'Preferencias de accesibilidad';
 $LANG['ACCESSIBILITY_PREF_DESC'] = 'Marque para indicar una preferencia por estilos optimizados para accesibilidad';
+$LANG['CREATE_TAXON_REL'] = 'Crear una nueva relación taxonómica';
+$LANG['ADD_ICON'] = 'Agregar icono';
 ?>

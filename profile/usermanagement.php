@@ -45,6 +45,33 @@ if($IS_ADMIN){
 	?>
 	<style>
 		th{ font-size: 90% }
+		/* alert box from https://www.w3schools.com/howto/howto_js_alert.asp */
+		
+		/* The alert message box */
+		.alert {
+			max-width: 30%;
+			padding: 20px;
+			background-color: green; /* Red */
+			color: white;
+			margin-bottom: 15px;
+		}
+
+		/* The close button */
+		.closebtn {
+			margin-left: 15px;
+			color: white;
+			font-weight: bold;
+			float: right;
+			font-size: 22px;
+			line-height: 20px;
+			cursor: pointer;
+			transition: 0.3s;
+		}
+
+		/* When moving the mouse over the close button */
+		.closebtn:hover {
+			color: black;
+		}
 	</style>
 </head>
 <body>
@@ -702,7 +729,7 @@ if($IS_ADMIN){
 								<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
 								<?php echo (isset($LANG['USER_CREATED_SUCCESSFULLY']) ? $LANG['USER_CREATED_SUCCESSFULLY'] : 'Successfully created user: ') . $_SESSION['adminRegisterSuccessfulUsername'] ?>
 							</div>
-							<div class="bottom-breathing-room-relative">
+							<div class="bottom-breathing-room-rel">
 								<span class="success-alert"></span>
 							</div>
 						<?php

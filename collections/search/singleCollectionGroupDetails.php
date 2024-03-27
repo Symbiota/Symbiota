@@ -7,7 +7,7 @@ unset($catEl['acronym']);
 unset($catEl['icon']);
 $idStr = $collCnt . '-' . $catId;
 ?>
-<section class="gridlike-form-row bottom-breathing-room-relative">
+<section class="gridlike-form-row bottom-breathing-room-rel">
     <?php
     if($displayIcons){
         ?>

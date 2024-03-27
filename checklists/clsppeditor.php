@@ -63,7 +63,8 @@ elseif($action == 'Add Voucher'){
 }
 $clArray = $vManager->getChecklistData();
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title><?php echo $LANG['SPEC_DETAILS'] . ': ' . $vManager->getTaxonName() . " " . $LANG['OF'] . " " . $vManager->getClName(); ?></title>
 		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">

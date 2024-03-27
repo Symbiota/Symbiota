@@ -6,6 +6,10 @@ Translated by: Samanta Orellana (2021-06-23)
  ------------------
  */
 
+$LANG['FLAGGED_COMMENT'] = 'Comentario reportado como inapropiado. El comentario no estará disponible para el público hasta que lo revise un administrador.';
+$LANG['OCCURRENCE_PROFILE'] = 'Perfil de ocurrencia';
+$LANG['SKIP_NAV'] = 'Saltar Navegación';
+$LANG['FULL_RECORD_DETAILS'] = 'Detalles Completos del Registro';
 $LANG['DETAILS'] = 'Detalles';
 $LANG['MAP'] = 'Mapa';
 $LANG['GENETIC'] = 'Gen&eacute;tica';
@@ -155,8 +159,6 @@ $LANG['RESTORE_RECORD'] = 'Restore Record';
 $LANG['RECORD_DELETED'] = 'Registro eliminado';
 $LANG['VALUE'] = 'Valor';
 $LANG['LAT_LNG'] = 'Latitud/Longitud';
-$LANG['FULL_RECORD_DETAILS'] = 'Detalles Completos del Registro';
-$LANG['SKIP_NAV'] = 'Saltar Navegación';
 
 //Used within OccurrenceIndividual class
 $LANG['INAPPROPRIATE'] = 'Comentario inapropiado reportado';

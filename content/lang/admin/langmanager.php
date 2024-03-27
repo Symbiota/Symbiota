@@ -18,7 +18,8 @@ if($SYMB_UID){
 }
 
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title>Language Variables Manager</title>
 		<?php

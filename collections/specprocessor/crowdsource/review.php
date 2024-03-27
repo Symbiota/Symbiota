@@ -38,7 +38,8 @@ if($isEditor && $action){
 
 $projArr = $csManager->getProjectDetails();
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['CROWDSOURCING_REVIEW']; ?></title>

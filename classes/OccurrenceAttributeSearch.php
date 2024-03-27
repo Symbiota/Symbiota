@@ -77,8 +77,8 @@ class OccurrenceAttributeSearch extends OccurrenceAttributes {
 				else{
 					$retStr .= '<div title="' . $sArr['description'] . '" style="clear:both;">';
 					$retStr .= '<div style="display:flex;">';
-					$retStr .= '<div><input data-chip="' . $this->traitArr[$traitID]['name'] . ': ' . ucfirst($sArr['name']) . '" name="attr[]" id="traitstateid-' . $sid . '" class="' . $classStr . ' trait-section__input--no-margin" type="checkbox" value="' . $sid . '" onchange="traitChanged(this)" /></div> ';
-					$retStr .= '<div class="trait-section__label--spacer"><label for="traitstateid-' . $sid . '">' . ucfirst($sArr['name']) . '<span class="skip-link"> ('. $this->traitArr[$traitID]['name'] . ')</span></label></div>';
+					$retStr .= '<div><input data-chip="' . $this->traitArr[$traitID]['name'] . ': ' . ucfirst($sArr['name']) . '" name="attr[]" id="traitstateid-' . $sid . '" class="' . $classStr . ' " style="margin: 0;"  type="checkbox" value="' . $sid . '" onchange="traitChanged(this)" /></div> ';
+					$retStr .= '<div style="margin-left: 0.5rem;"><label for="traitstateid-' . $sid . '">' . ucfirst($sArr['name']) . '<span class="skip-link"> ('. $this->traitArr[$traitID]['name'] . ')</span></label></div>';
 					$retStr .= '</div>';
 					if($depTraitIdArr){
 						foreach($depTraitIdArr as $depTraitId){

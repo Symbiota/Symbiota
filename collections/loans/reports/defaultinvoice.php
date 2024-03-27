@@ -367,7 +367,8 @@ if($outputMode == 'doc'){
 }
 else{
 	?>
-	<html>
+	<!DOCTYPE html>
+	<html lang="<?php echo $LANG_TAG ?>">
 		<head>
 			<title><?php echo $identifier; ?> Invoice</title>
 			<?php

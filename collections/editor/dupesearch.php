@@ -50,7 +50,8 @@ if(!$IS_ADMIN){
 	}
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title><?php echo $DEFAULT_TITLE; ?> - Duplicate Record Search</title>
 		<?php

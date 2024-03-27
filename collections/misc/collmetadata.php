@@ -234,6 +234,11 @@ $collManager->cleanOutArr($collData);
 		}
 
 		.field-label {}
+
+		.max-width-fit-75 {
+			max-width: 100%;
+			width: 75rem;
+		}
 	</style>
 </head>
 
@@ -495,9 +500,9 @@ $collManager->cleanOutArr($collData);
 									<fieldset>
 										<legend> <?php echo htmlspecialchars($LANG['MANAGEMENT'], HTML_SPECIAL_CHARS_FLAGS) ?>: </legend>
 										
-										<input class="top-breathing-room-rel-sm" id="snapshot" type="radio" name="managementType" value="Snapshot" CHECKED> <label for="snapshot">  <?php echo (isset($LANG['SNAPSHOT']) ? $LANG['SNAPSHOT'] : 'Snapshot'); ?> </label> <br/>
-										<input id="liveData" type="radio" name="managementType" value="Live Data" > <label for="liveData">  <?php echo ($collid && $collData['managementtype'] == 'Live Data' ? 'SELECTED' : ''); ?> <?php echo $LANG['LIVE_DATA']; ?> </label> <br/>
-										<input id="aggregate" type="radio" name="managementType" value="Aggregate" > <label for="aggregate">  <?php echo ($collid && $collData['managementtype'] == 'Aggregate' ? 'SELECTED' : ''); ?> <?php echo $LANG['AGGREGATE']; ?> </label>
+										<input class="top-breathing-room-rel-sm" id="snapshot" type="radio" name="managementType" value="Snapshot" CHECKED> <label for="snapshot">  <?php echo $LANG['SNAPSHOT']; ?> </label> <br/>
+										<input id="liveData" type="radio" name="managementType" value="Live Data" <?php echo ($collid && $collData['managementtype'] == 'Live Data' ? 'CHECKED' : ''); ?>> <label for="liveData"> <?php echo $LANG['LIVE_DATA']; ?> </label> <br/>
+										<input id="aggregate" type="radio" name="managementType" value="Aggregate" <?php echo ($collid && $collData['managementtype'] == 'Aggregate' ? 'CHECKED' : ''); ?>> <label for="aggregate"> <?php echo $LANG['AGGREGATE']; ?> </label>
 										
 										<a id="managementinfo" href="#" onclick="return false" tabindex="0">
 											<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_INFO_TYPE']) ? $LANG['MORE_INFO_TYPE'] : 'More information about Management Type'); ?>"/>
@@ -517,8 +522,8 @@ $collManager->cleanOutArr($collData);
 										<legend> <?php echo (isset($LANG['GUID_SOURCE']) ? htmlspecialchars($LANG['GUID_SOURCE'], HTML_SPECIAL_CHARS_FLAGS) : 'GUID source'); ?>: </legend>
 										
 										<input class="top-breathing-room-rel-sm" id="occurrenceId" type="radio" name="guidTarget" value="occurrenceId" CHECKED> <label for="occurrenceId">  <?php echo (isset($LANG['OCCURRENCE_ID']) ? $LANG['OCCURRENCE_ID'] : 'occurrenceID GUID'); ?> </label> <br/>
-										<input id="catalogNumber" type="radio" name="guidTarget" value="catalogNumber" > <label for="catalogNumber"> <?php echo (isset($LANG['CAT_NUM']) ? $LANG['CAT_NUM'] : 'Catalog Number'); ?> </label> <br/>
-										<input id="symbiotaUUID" type="radio" name="guidTarget" value="symbiotaUUID" > <label for="symbiotaUUID">  <?php echo (isset($LANG['SYMB_GUID']) ? $LANG['SYMB_GUID'] : 'Symbiota Generated GUID (UUID)'); ?> </label>
+										<input id="catalogNumber" type="radio" name="guidTarget" value="catalogNumber" <?php echo ($collid && $collData['guidtarget'] == 'catalogNumber' ? 'CHECKED' : ''); ?>> <label for="catalogNumber"> <?php echo (isset($LANG['CAT_NUM']) ? $LANG['CAT_NUM'] : 'Catalog Number'); ?> </label> <br/>
+										<input id="symbiotaUUID" type="radio" name="guidTarget" value="symbiotaUUID" <?php echo ($collid && $collData['guidtarget'] == 'symbiotaUUID' ? 'CHECKED' : ''); ?>> <label for="symbiotaUUID">  <?php echo (isset($LANG['SYMB_GUID']) ? $LANG['SYMB_GUID'] : 'Symbiota Generated GUID (UUID)'); ?> </label>
 										
 										<a id="guidinfo" href="#" onclick="return false" tabindex="0">
 											<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_INFO_GUID']) ? $LANG['MORE_INFO_GUID'] : 'More information about Global Unique Identifier'); ?>"/>
@@ -587,6 +592,7 @@ $collManager->cleanOutArr($collData);
 										<input id="iconFile" name='iconFile' type='file' onchange="verifyIconImage(this.form);" />
 									</span>
 									<span class="icon-elem" style="display:<?php echo (($collid && $collData["icon"]) ? 'inline' : 'none'); ?>">
+										<label for="iconurl"><?= $LANG['ICON_URL']; ?>: </label>
 										<input style="max-width: 100%; width:600px;" type='text' name='iconUrl' id='iconurl' value="<?php echo ($collid ? $collData["icon"] : ''); ?>" onchange="verifyIconURL(this.form);" />
 									</span>
 									<a id="iconinfo" href="#" onclick="return false" title="<?php echo (isset($LANG['WHAT_ICON']) ? $LANG['WHAT_ICON'] : 'What is an Icon?'); ?>" tabindex="0"><img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>"/></a>

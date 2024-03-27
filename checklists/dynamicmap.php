@@ -276,11 +276,11 @@ if(!$zoomInt){
 						<input type="hidden" name="interface" value="<?php echo $interface; ?>" />
 						<input type="hidden" id="latbox" name="lat" value="" />
 						<input type="hidden" id="lngbox" name="lng" value="" />
-						<div class="bottom-breathing-room-relative">
+						<div class="bottom-breathing-room-rel">
 							<b><?php echo $LANG['POINT']; ?>:</b>
 							<span id="latlngspan"> &lt; <?php echo $LANG['CLICK_MAP']; ?> &gt; </span>
 						</div>
-						<button type="submit" class="bottom-breathing-room-relative" name="buildchecklistbutton" value="Build Checklist" disabled ><?php echo $LANG['BUILD_CHECKLIST']; ?></button>
+						<button type="submit" class="bottom-breathing-room-rel" name="buildchecklistbutton" value="Build Checklist" disabled ><?php echo $LANG['BUILD_CHECKLIST']; ?></button>
 					</div>
 					<div class="flex-form">
 						<div style="margin-left: 0;">

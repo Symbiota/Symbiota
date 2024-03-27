@@ -46,8 +46,8 @@ $LANG['H_LOGIN'] = 'Sign In';
 $LANG['H_NEW_ACCOUNT'] = 'New Account';
 $LANG['SELECT_LANGUAGE'] = 'Select Language';
 
-$LANG['TOGGLE_508_OFF'] = "Condensed Mode";
-$LANG['TOGGLE_508_ON'] = "Accessibility Mode";
+$LANG['TOGGLE_508_OFF'] = "Toggle Condensed Form Layout";
+$LANG['TOGGLE_508_ON'] = "Toggle Vertical Form Layout";
 $LANG['SELECT_LANGUAGE'] = 'Select Language';
 
 $LANG['CONTACT_US'] = 'Contact Us';
@@ -65,4 +65,9 @@ $LANG['NAV_IMG_LIB'] = 'Image Library';
 $LANG['NAV_IMG_CONTR'] = 'Image Contributors';
 $LANG['NAV_IMG_SEARCH'] = 'Image Search';
 $LANG['SKIP_NAV'] = 'Skip Navigation';
+
+// Footer-specific
+$LANG['ACCESSIBILITY_OPTIONS'] = 'Accessibility Options';
+$LANG['ACCESSIBILITY_OPTIONS_DESCRIPTION'] = 'More accessibility features will be added over time. Toggle those that suit your needs.';
+$LANG['CLOSE'] = 'Close';
 ?>

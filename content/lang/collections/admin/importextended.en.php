@@ -47,4 +47,5 @@ $LANG['ASSOC_UPDATED'] = 'Association updated';
 $LANG['ASSOC_ADDED'] = 'Association added';
 $LANG['MAT_SAMPLE_ADDED'] = 'Material Sample added';
 $LANG['DETERMINATION_ADDED'] = 'Determination added';
+$LANG['HOME'] = 'Home';
 ?>

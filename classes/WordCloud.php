@@ -183,7 +183,7 @@ class WordCloud{
 	}
 
 	private function getCloudHtmlWrapper($cloudStr){
-		$htmlStr = '<html>
+		$htmlStr = '<!DOCTYPE html><html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>'.$GLOBALS['DEFAULT_TITLE'].' - Word Cloud </title>';

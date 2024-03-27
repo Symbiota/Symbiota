@@ -71,7 +71,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 	}
 
 	public function getVisibleMetadataHtml($LANG, $LANG_TAG){
-		$outStr = '<div class="coll-description bottom-breathing-room-relative">' . $this->collMeta[$this->collid]["fulldescription"] . '</div>';
+		$outStr = '<div class="coll-description bottom-breathing-room-rel">' . $this->collMeta[$this->collid]["fulldescription"] . '</div>';
 
 		if(isset($this->collMeta[$this->collid]['resourcejson'])){
 			if($resourceArr = json_decode($this->collMeta[$this->collid]['resourcejson'],true)){
@@ -89,7 +89,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 			if($contactArr = json_decode($this->collMeta[$this->collid]['contactjson'],true)){
 				if(!empty($contactArr)){
 					$title = (isset($LANG['CONTACT'])?$LANG['CONTACT']:'Contacts');
-					$outStr .= '<section class=" no-left-margin"><h1 style="font: 1.5rem normal;"><span>' . $title . ': ' . '</span></h1> ';
+					$outStr .= '<section style="margin-left: 0;"><h1 style="font: 1.5rem normal;"><span>' . $title . ': ' . '</span></h1> ';
 					$outStr .= '<ul>';
 				}
 				foreach($contactArr as $cArr){
@@ -121,12 +121,12 @@ class OccurrenceCollectionProfile extends OmCollections{
 				$outStr .= '<div id="collection-type" class="content">';
 
 					//Collection Type
-					$outStr .= '<div class="bottom-breathing-room-relative">';
+					$outStr .= '<div class="bottom-breathing-room-rel">';
 					$outStr .= '<span class="label">' . $LANG['COLLECTION_TYPE'] . ':</span> ' . $this->collMeta[$this->collid]['colltype'];
 					$outStr .= '</div>';
 
 					//Management
-					$outStr .= '<div class="bottom-breathing-room-relative">';
+					$outStr .= '<div class="bottom-breathing-room-rel">';
 						$outStr .= '<span class="label">'.$LANG['MANAGEMENT'].':</span> ';
 						if($this->collMeta[$this->collid]['managementtype'] == 'Live Data'){
 							$outStr .= (isset($LANG['LIVE_DATA'])?$LANG['LIVE_DATA']:'Live Data managed directly within data portal');
@@ -142,28 +142,28 @@ class OccurrenceCollectionProfile extends OmCollections{
 					$outStr .= '</div>';
 
 					// Last Updated
-					$outStr .= '<div class="bottom-breathing-room-relative">';
+					$outStr .= '<div class="bottom-breathing-room-rel">';
 						$outStr .= '<span class="label">' . $LANG['LAST_UPDATE'] . ':</span> ';
 						$outStr .= $this->collMeta[$this->collid]['uploaddate'];
 					$outStr .= '</div>';
 
 					// GUID
 					if($this->collMeta[$this->collid]['managementtype'] == 'Live Data'){
-						$outStr .= '<div class="bottom-breathing-room-relative">';
+						$outStr .= '<div class="bottom-breathing-room-rel">';
 							$outStr .= '<span class="label">'.$LANG['GLOBAL_UNIQUE_ID'].':</span> '.$this->collMeta[$this->collid]['recordid'];
 						$outStr .= '</div>';
 					}
 
 					// Darwin-core url
 					if($this->collMeta[$this->collid]['dwcaurl']){
-						$outStr .= '<div class="bottom-breathing-room-relative">';
+						$outStr .= '<div class="bottom-breathing-room-rel">';
 							$dwcaUrl = $this->collMeta[$this->collid]['dwcaurl'];
 							$outStr .= '<a href="' . htmlspecialchars($dwcaUrl, HTML_SPECIAL_CHARS_FLAGS) . '">' . (isset($LANG['DWCA_PUB'])?$LANG['DWCA_PUB']:'DwC-Archive Access Point') . '</a>';
 						$outStr .= '</div>';
 					}
 
 					//Digital metadata
-					$outStr .= '<div class="bottom-breathing-room-relative">';
+					$outStr .= '<div class="bottom-breathing-room-rel">';
 						$outStr .= '<span class="label">' . htmlspecialchars((isset($LANG['DIGITAL_METADATA'])?$LANG['DIGITAL_METADATA']:'Digital Metadata'), HTML_SPECIAL_CHARS_FLAGS) . ':</span>';
 						$outStr .= '<a href="../datasets/emlhandler.php?collid=' . htmlspecialchars($this->collMeta[$this->collid]['collid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">EML File</a>';
 					$outStr .= '</div>';
@@ -171,7 +171,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 					//Live Download
 					if($this->collMeta[$this->collid]['managementtype'] == 'Live Data'){
 						if($GLOBALS['SYMB_UID']){
-							$outStr .= '<div class="bottom-breathing-room-relative">';
+							$outStr .= '<div class="bottom-breathing-room-rel">';
 								$outStr .= '<span class="label">'.(isset($LANG['LIVE_DOWNLOAD'])?$LANG['LIVE_DOWNLOAD']:'Live Data Download').':</span> ';
 								$outStr .= '<a href="../../webservices/dwc/dwcapubhandler.php?collid=' . htmlspecialchars($this->collMeta[$this->collid]['collid'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars((isset($LANG['FULL_DATA'])?$LANG['FULL_DATA']:'DwC-Archive File'), HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 							$outStr .= '</div>';
@@ -181,7 +181,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 					elseif($this->collMeta[$this->collid]['managementtype'] == 'Snapshot'){
 						$pathArr = $this->getDwcaPath($this->collMeta[$this->collid]['collid']);
 						if($pathArr){
-							$outStr .= '<div class="bottom-breathing-room-relative">';
+							$outStr .= '<div class="bottom-breathing-room-rel">';
 								$outStr .= '<span class="label">'.(isset($LANG['IPT_SOURCE'])?$LANG['IPT_SOURCE']:'IPT / DwC-A Source').':</span>';
 							foreach($pathArr as $titleStr => $pathStr){
 								$outStr .= '<a href="' . htmlspecialchars($pathStr, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($titleStr, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
@@ -201,21 +201,21 @@ class OccurrenceCollectionProfile extends OmCollections{
 								}
 							}
 						}
-						$outStr .= '<div class="bottom-breathing-room-relative">';
+						$outStr .= '<div class="bottom-breathing-room-rel">';
 							if($rightsUrl) $outStr .= '<a href="' . htmlspecialchars($rightsUrl, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 							$outStr .= $LANG['USAGE_RIGHTS'];
 							if($rightsUrl) $outStr .= '</a>';
 						$outStr .= '</div>';
 					}
 					elseif(file_exists('../../includes/usagepolicy.php')){
-						$outStr .= '<div class="bottom-breathing-room-relative">';
+						$outStr .= '<div class="bottom-breathing-room-rel">';
 							$outStr .= '<a href="../../includes/usagepolicy.php" target="_blank">'.(isset($LANG['USAGE_POLICY'])?$LANG['USAGE_POLICY']:'Usage policy').'</a>';
 						$outStr .= '</div>';
 					}
 
 					// Rights holder
 					if($this->collMeta[$this->collid]['rightsholder']){
-						$outStr .= '<div class="bottom-breathing-room-relative">';
+						$outStr .= '<div class="bottom-breathing-room-rel">';
 							$outStr .= '<span class="label">'.$LANG['RIGHTS_HOLDER'].':</span> ';
 							$outStr .= $this->collMeta[$this->collid]['rightsholder'];
 						$outStr .= '</div>';
@@ -223,7 +223,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 
 					// Access rights
 					if($this->collMeta[$this->collid]['accessrights']){
-						$outStr .= '<div class="bottom-breathing-room-relative">';
+						$outStr .= '<div class="bottom-breathing-room-rel">';
 							$outStr .= '<span class="label">'.$LANG['ACCESS_RIGHTS'].':</span> '. $this->collMeta[$this->collid]['accessrights'] ;
 						$outStr .= '</div>';
 					}

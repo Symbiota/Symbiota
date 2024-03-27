@@ -50,7 +50,8 @@ else{
 $status = "";
 
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['TAX_NAME_CLEANER'])?$LANG['TAX_NAME_CLEANER']:'Taxonomic Name Cleaner'); ?></title>
 		<?php

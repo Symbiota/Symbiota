@@ -37,8 +37,8 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 		echo '<link href="' . $CLIENT_ROOT . '/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
 		echo '<link href="' . $CLIENT_ROOT . '/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
 	}
-	echo '<link href="' . $CLIENT_ROOT . '/collections/search/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-	echo '<link href="' . $CLIENT_ROOT . '/collections/search/css/app.css" type="text/css" rel="stylesheet" />';
+	echo '<link href="' . $CLIENT_ROOT . '/collections/search/css/searchStyles.css?ver=1" type="text/css" rel="stylesheet" />';
+	echo '<link href="' . $CLIENT_ROOT . '/collections/search/css/searchStylesInner.css" type="text/css" rel="stylesheet" />';
 	
 	echo '<link href="' . $CLIENT_ROOT . '/collections/search/css/tables.css" type="text/css" rel="stylesheet" />';
 	echo '<link href="' . $CLIENT_ROOT . '/css/v202209/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />';
@@ -74,6 +74,14 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 	<?php include_once($SERVER_ROOT . '/includes/googleanalytics.php'); ?>
 	<!-- Search-specific styles -->
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<style>
+		.bounding-box-form__header {
+			font-size: 1.3rem;
+		}
+		.full-width-pcnt {
+			width: 100%;
+		}
+	</style>
 </head>
 
 <body>
@@ -472,14 +480,14 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										<div>
 											<div> 
 												<div>
-													<div class="bottom-breathing-room-relative"><?php echo $LANG['TRAIT_DESCRIPTION']; ?></div>
+													<div class="bottom-breathing-room-rel"><?php echo $LANG['TRAIT_DESCRIPTION']; ?></div>
 													<input type="hidden" id="SearchByTraits" value="true" />
 												</div>
 												<?php
 												foreach($traitArr as $traitID => $traitData){
 													if(!isset($traitData['dependentTrait'])) {
 												?>
-														<fieldset class="bottom-breathing-room-relative">
+														<fieldset class="bottom-breathing-room-rel">
 															<legend><?= $LANG['TRAIT']; ?>: <?php echo $traitData['name']; ?></legend>
 															<div>
 															</div>

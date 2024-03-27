@@ -87,6 +87,11 @@ $clMetaArr = $clManager->getClMetadata();
 		.taxa-block{ margin: 10px; font-style: italic; }
 		.taxon-input{ width: 200px; }
 		.styledtable{ font-family:Arial; font-size: 1rem; }
+		.voucher-admin-header {
+			font-size: 2em;
+			font-weight: bold;
+			margin: 0px 10px 10px 0px;
+		}
 	</style>
 </head>
 <body>

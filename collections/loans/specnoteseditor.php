@@ -26,7 +26,8 @@ if($SYMB_UID && $collid){
 $loanManager = new OccurrenceLoans();
 $loanManager->setCollId($collid);
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['LOAN_NOTES_EDITOR']; ?></title>

@@ -20,7 +20,8 @@ if($SYMB_UID){
 	}
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title><?php echo $DEFAULT_TITLE; ?> Default Annotations</title>
 		<style type="text/css">

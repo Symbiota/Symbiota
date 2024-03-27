@@ -31,7 +31,8 @@ else{
 	$lngCenter = -97.380979;
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title><?php echo $DEFAULT_TITLE; ?> - Coordinate Polygon Aid</title>
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />

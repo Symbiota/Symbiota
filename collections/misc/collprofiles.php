@@ -39,7 +39,7 @@ if ($SYMB_UID) {
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE . ' ' . ($collid && isset($collData[$collid])? $collData[$collid]['collectionname'] : ''); ?></title>
-	<meta name="keywords" content="Natural history collections,<?php echo ($collid ? $collData[$collid]['collectionname'] : ''); ?>" />
+	<meta name="keywords" content="Natural history collections,<?php echo ($collid && array_key_exists($collid, $collData) ? $collData[$collid]['collectionname'] : ''); ?>" />
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<?php
@@ -93,11 +93,37 @@ if ($SYMB_UID) {
 			}
 		}
 	</script>
-	<style type="text/css">
+	<style>
 		.importItem { margin-left:10px; display:none; }
 		.field-div { margin: 10px 0px; clear: both; }
 		.label { font-weight: bold; }
+		.float-rt-no-overlap {
+			/* this should occur after fieldset-like definitions */
+			float: right;
+			clear: both;
+			margin: 2rem 2rem 2rem 2rem;
+		}
+		.no-left-margin {
+			margin-left: 0;
+		}
+		.col-profile-img {
+			border: 1px;
+			height: 6.4rem;
+			width: 6.4rem;
+		}
+		.col-profile-header {
+			margin-left: 0.5em;
+		}
+		.col-profile-inst-code {
+			min-width: 9rem;
+			max-width: 9rem;
+		}
+		.bigger-left-margin-rel {
+			margin-left: 3rem;
+		}
 	</style>
+	<link href="<?php echo $CLIENT_ROOT ?>/collections/search/css/searchStyles.css?ver=1" type="text/css" rel="stylesheet" />
+	<link href="<?php echo $CLIENT_ROOT ?>/collections/search/css/searchStylesInner.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
 	<?php
@@ -122,7 +148,7 @@ if ($SYMB_UID) {
 					</span>
 					<input name="catalog-number" id="catalog-number" type="text" />
 					<a href="#" id="q_catalognumberinfo" style="text-decoration:none;">
-						<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO_ALT']) ? $LANG['MORE_INFO_ALT'] : 'More information about catalog number'); ?>" title="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'More information.'); ?>"/>
+						<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO_ALT']; ?>" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>"/>
 					</a>
 					<dialog id="dialogEl" aria-live="polite" aria-label="Catalog number search dialog">
 						<?php
@@ -139,7 +165,7 @@ if ($SYMB_UID) {
 					<?php
 						if($editCode == 1 || $editCode == 2 || $editCode == 3){
 					?>
-						<button type="submit" id="search-by-catalog-number-admin-btn"; ?>
+						<button type="submit" id="search-by-catalog-number-admin-btn">
 							<?php echo (isset($LANG['OCCURRENCE_EDITOR']) ? $LANG['OCCURRENCE_EDITOR'] : 'Edit'); ?>
 						</button>
 					<?php

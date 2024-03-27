@@ -38,7 +38,8 @@ if($isEditor){
 	}
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title>Specimen NLP Profile Manager</title>
 		<?php

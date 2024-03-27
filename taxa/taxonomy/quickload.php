@@ -19,7 +19,8 @@ if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
 
 $status = '';
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Taxon Loader: </title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>

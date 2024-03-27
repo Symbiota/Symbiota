@@ -67,7 +67,8 @@ if($formSubmit && $isEditor){
 if(!$cid) header('Location: index.php');
 
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 	<title>Character Admin</title>

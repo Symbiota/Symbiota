@@ -28,7 +28,8 @@ foreach($imageArr as $k => $imgValue){
 }
 $genusAnswer = strtok($scinameAnswer, " ");
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $ootdTitle; ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">

@@ -79,6 +79,15 @@ if ($isEditor) {
 		.nowrap {
 			white-space: nowrap;
 		}
+		.font-control {
+			font-size: 14px;
+		}
+		.accessible-font {
+			font-size: 1.4em;
+		}
+		.margin-rt-rel {
+			margin-right: 1rem;
+		}
 	</style>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>

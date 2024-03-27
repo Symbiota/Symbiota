@@ -49,4 +49,5 @@ $LANG['ASSOC_UPDATED'] = 'Asociación actualizada';
 $LANG['ASSOC_ADDED'] = 'Asociación agregada';
 $LANG['MAT_SAMPLE_ADDED'] = 'Muestra de material agregada';
 $LANG['DETERMINATION_ADDED'] = 'Determinación agregada';
+$LANG['HOME'] = 'Inicio';
 ?>

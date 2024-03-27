@@ -4,7 +4,8 @@ if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/prohibit.'.$LANG
 else include_once($SERVER_ROOT.'/content/lang/prohibit.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title><?php echo $LANG['NO_ACCESS']; ?></title>
 	<?php

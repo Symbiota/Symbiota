@@ -36,7 +36,8 @@ if($action == 'buildDuplicateArr'){
 }
 $collMetaArr = $dupeManager->getCollMetaArr();
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE .  ' - ' . $LANG['DUP_GEOREFERENCE']; ?></title>

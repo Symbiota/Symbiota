@@ -5,8 +5,8 @@ include_once($SERVER_ROOT.'/classes/ReportsManager.php');
 $rm = new ReportsManager();
 
 ?>
-
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
     <title>SCAN Reports</title>
     <style>

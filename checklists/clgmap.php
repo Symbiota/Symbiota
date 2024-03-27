@@ -15,14 +15,14 @@ if(!is_numeric($pid)) $pid = 0;
 $clManager = new ChecklistManager();
 $clManager->setProj($pid);
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
    <head>
       <?php 
         include_once($SERVER_ROOT.'/includes/leafletMap.php');
 	     include_once($SERVER_ROOT.'/includes/googleMap.php');
       ?>
 		<title><?php echo $DEFAULT_TITLE.' - '.(isset($LANG['H_INVENTORIES'])?$LANG['H_INVENTORIES']:'Species Checklists'); ?></title>
-		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 
 		<script type="text/javascript">
 
@@ -125,12 +125,14 @@ $clManager->setProj($pid);
 		</style>
 	</head>
 	<body style="background-color:#ffffff;" onload="initialize()">
+      <h1 class="skip-link" style="margin: 0;"></h1>
 		<div id="map_canvas"></div>
       <div 
         id="service-container" 
         class="service-container" 
         data-checklists="<?= htmlspecialchars(json_encode($clManager->getResearchPoints()))?>"
         data-pid="<?= htmlspecialchars($pid)?>"
-   />
+      >
+      </div>
 	</body>
 </html>

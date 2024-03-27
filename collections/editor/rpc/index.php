@@ -2,7 +2,8 @@
 include_once('../../../config/symbini.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title>No Access</title>
 	<?php
