@@ -49,6 +49,7 @@ $LANG['BOX_CHECKED_IMG_DELETED'] = '(Nota: si se marca la casilla, la imagen se 
 $LANG['CLICK_IMAGE'] = 'Haga clic en la imagen para ampliarla';
 $LANG['SCIENTIFIC_NAME'] = 'Nombre científico';
 $LANG['ERROR_COMMENT_ABOUT_IMAGE'] = '¿Ves un error o tienes un comentario sobre esta imagen?';
+$LANG['IMG_NO'] = 'Imagen #';
 $LANG['SEND_EMAIL'] = 'Si es así, envíe un correo electrónico a';
 $LANG['SPEC'] = 'ESPEC';
 $LANG['IMG'] = 'IMG';
