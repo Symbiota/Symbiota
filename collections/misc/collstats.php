@@ -622,8 +622,8 @@ if($action != "Update Statistics"){
 														<div>
 															<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;" class="condense-expand-flex">
 																<div class="condense-expand-button-set">
-																	<img id="plus-<?php echo $idStr; ?>" alt="plus sign to expand menu" src="../../images/plus.png" style="<?php echo ('width:1em;' . ($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>" />
-																	<img id="minus-<?php echo $idStr; ?>" alt="minus sign to condense menu" src="../../images/minus.png" style="<?php echo 'width:1em;' . (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" />
+																	<img id="plus-<?php echo $idStr; ?>" src="../../images/plus.png" alt="plus sign to expand menu" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?> width:1em;" />
+																	<img id="minus-<?php echo $idStr; ?>" src="../../images/minus.png" alt="minus sign to condense menu" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?> width:1em;" />
 																	<p id="ptext-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>">
 																		<?php echo $LANG['EXPAND'] ?>
 																	</p>
