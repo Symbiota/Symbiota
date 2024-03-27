@@ -90,7 +90,8 @@ if($isEditor && $collid){
 	$duManager->loadFieldMap();
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['SPEC_UPLOAD']) ? $LANG['SPEC_UPLOAD'] : 'Specimen Uploader'); ?></title>

@@ -142,6 +142,14 @@ elseif($activeCollArr){
 			}
 		</script>
 		<script src="../../js/symb/shared.js?ver=1" type="text/javascript"></script>
+		<style>
+			.top-breathing-room-rel-sm {
+				margin-top: 3rem;
+			}
+			.underlined-text {
+				text-decoration: underline;
+			}
+		</style>
 	</head>
 	<body>
 		<?php
@@ -238,7 +246,7 @@ elseif($activeCollArr){
 						$badSpecimenCount = $cleanManager->getBadSpecimenCount();
 						?>
 					</div>
-					<div class="top-small-breathing-room-rel">
+					<div class="top-breathing-room-rel-sm">
 						<section class="fieldset-like">
 							<h1> <span> <?php echo (isset($LANG['ACTION_MENU']) ? $LANG['ACTION_MENU'] : 'Action Menu'); ?> </span> </h1>
 							<form name="maincleanform" action="taxonomycleaner.php" method="post" onsubmit="return verifyCleanerForm(this)">

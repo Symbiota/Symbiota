@@ -34,6 +34,9 @@ $imgloc = "../images/games/namegame/";
 		.buttonup{border:5px outset #CCCC99;cursor:pointer;font-weight:normal;font-weight:bold}
 		.question{font-size:2.5rem}
 		#rw{margin-left:auto;margin-right:auto}
+		.tr-center {
+			text-align: center;
+		}
 	</style>
 	<script>
 		//COLLAPSE MENU

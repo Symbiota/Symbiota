@@ -698,7 +698,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$this->searchTermArr['clid'] = $clidStr;
 		}
 		elseif(array_key_exists('db',$_REQUEST) && $_REQUEST['db']){
-			$dbStr = $this->cleanInputStr(OccurrenceSearchSupport::getDbRequestVariable($_REQUEST));
+			$dbStr = $this->cleanInputStr(OccurrenceSearchSupport::getDbRequestVariable());
 			if(preg_match('/^[0-9,;]+$/', $dbStr)) $this->searchTermArr['db'] = $dbStr;
 		}
 		if(array_key_exists('datasetid',$_REQUEST) && $_REQUEST['datasetid']){

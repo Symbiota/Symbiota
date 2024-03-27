@@ -149,6 +149,14 @@ else{
 		.fieldDiv{ float:left; margin-right: 20px}
 		#innertext{ background-color: white; margin: 0px 10px; }
 		.editimg{ width: 15px; }
+		.accessible-font {
+			font-size: 1.4em;
+		}
+		.table-scroll {
+			display: block;
+			white-space: nowrap;
+			overflow-x: scroll;
+		}
 	</style>
 </head>
 <body style="margin-left: 0px; margin-right: 0px;background-color:white;">

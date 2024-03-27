@@ -54,8 +54,8 @@ if($chars){
 	unset($chars["Languages"]);
 }
 ?>
-
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.$LANG['WEBKEY'] . ' ' . preg_replace('/\<[^\>]+\>/','',$dataManager->getClName()); ?></title>
 	<?php

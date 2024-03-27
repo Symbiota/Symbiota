@@ -436,7 +436,8 @@ else{
 	header('Location: ../../profile/index.php?refurl=../collections/editor/occurrenceeditor.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET; ?>">
 	<title><?= $DEFAULT_TITLE . ' ' . $LANG['OCCEDITOR'] ?></title>
@@ -449,7 +450,7 @@ else{
     }
     else{
 		?>
-		<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/editor/occurrenceeditor.css?ver=7" type="text/css" rel="stylesheet" id="editorCssLink" >
+		<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/editor/occurrenceeditor.css?ver=8" type="text/css" rel="stylesheet" id="editorCssLink" >
 		<?php
 		if(isset($CSSARR)){
 			foreach($CSSARR as $cssVal){
@@ -505,7 +506,7 @@ else{
 	<script src="../../js/symb/collections.coordinateValidation.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/wktpolygontools.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/collections.georef.js?ver=2" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.main.js?ver=8" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.main.js?ver=9" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.tools.js?ver=4" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.imgtools.js?ver=3" type="text/javascript"></script>
 	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
@@ -960,29 +961,25 @@ else{
 											}
 											?>
 											<legend><?php echo $LANG['LOCALITY']; ?></legend>
-											<div id="geography1-div" class="fieldGroup-div" style="<?= ($displayGeo1Div ? 'display:block' : '') ?>">
+											<div id="geography1-div" class="fieldGroup-div" style="<?= ($displayGeo1Div ? 'display:flex' : 'display:none') ?>">
 												<div id="continentDiv" class="field-div">
 													<?= $LANG['CONTINENT']; ?>
 													<a href="#" onclick="return dwcDoc('continent')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
 													<input type="text" id="ffcontinent" name="continent" value="<?= $continent ?>" onchange="fieldChanged('continent');" autocomplete="off" />
 												</div>
 												<div id="waterBodyDiv" class="field-div">
 													<?= $LANG['WATER_BODY']; ?>
 													<a href="#" onclick="return dwcDoc('waterBody')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
 													<input type="text" id="ffwaterbody" name="waterbody" value="<?= $waterBody ?>" onchange="fieldChanged('waterbody');" autocomplete="off" />
 												</div>
 												<div id="islandGroupDiv" class="field-div">
 													<?= $LANG['ISLAND_GROUP']; ?>
 													<a href="#" onclick="return dwcDoc('islandGroup')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
 													<input type="text" id="ffislandgroup" name="islandgroup" value="<?= $islandGroup ?>" onchange="fieldChanged('islandgroup');" autocomplete="off" />
 												</div>
 												<div id="islandDiv" class="field-div">
 													<?= $LANG['ISLAND']; ?>
 													<a href="#" onclick="return dwcDoc('island')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-													<br/>
 													<input type="text" id="ffisland" name="island" value="<?= $island ?>" onchange="fieldChanged('island');" autocomplete="off" />
 												</div>
 											</div>
@@ -1016,7 +1013,7 @@ else{
 													<a href="#" onclick="return dwcDoc('locationID')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 													<br/>
 													<input type="text" id="locationid" name="locationid" value="<?php echo array_key_exists('locationid',$occArr)?$occArr['locationid']:''; ?>" onchange="fieldChanged('locationid');" autocomplete="off" />
-													<a id="geography1Toggle" onclick="toggle('geography1-div');">
+													<a id="geography1Toggle" onclick="toggle('geography1-div', 'flex');">
 														<img class="editimg" src="../../images/editplus.png">
 													</a>
 												</div>
@@ -1056,7 +1053,7 @@ else{
 													$securityCode = array_key_exists('localitysecurity',$occArr)&&$occArr['localitysecurity']?$occArr['localitysecurity']:0;
 													$lsrValue = array_key_exists('localitysecurityreason',$occArr)?$occArr['localitysecurityreason']:'';
 													?>:
-													<select name="localitysecurity" onchange="securityChanged(this.form);" title="<?php echo (isset($LANG['SECURITY_SETTINGS'])?$LANG['SECURITY_SETTINGS']:'Security Settings'); ?>" tabindex="-1">
+													<select name="localitysecurity" onchange="securityChangedByUser(this.form);" title="<?php echo (isset($LANG['SECURITY_SETTINGS'])?$LANG['SECURITY_SETTINGS']:'Security Settings'); ?>" tabindex="-1">
 														<option value="0"><?= $LANG['SECURITY_NOT_APPLIED'] ?></option>
 														<option value="1" ' <?= ($securityCode ? 'SELECTED' : '') ?>><?= $LANG['SECURITY_APPLIED'] ?></option>
 													</select>
@@ -1097,7 +1094,7 @@ else{
 													<br/>
 													<input type="text" id="coordinateuncertaintyinmeters" name="coordinateuncertaintyinmeters" maxlength="10" value="<?php echo array_key_exists('coordinateuncertaintyinmeters',$occArr)?$occArr['coordinateuncertaintyinmeters']:''; ?>" onchange="coordinateUncertaintyInMetersChanged(this.form);" title="<?php echo (isset($LANG['UNCERTAINTY_METERS'])?$LANG['UNCERTAINTY_METERS']:'Uncertainty in Meters'); ?>" />
 												</div>
-												<div id="googleDiv" onclick="openMappingAid();" title="<?php echo (isset($LANG['MAP_COORDS'])?$LANG['MAP_COORDS']:'Map Coordinates'); ?>">
+												<div id="mapIconDiv" onclick="openMappingAid();" title="<?= $LANG['MAP_COORDS'] ?>">
 													<img src="../../images/world.png" style="width:1.2em;" />
 												</div>
 												<div id="geoLocateDiv" title="<?php echo (isset($LANG['GEOLOCATE_LOC'])?$LANG['GEOLOCATE_LOC']:'GeoLocate Locality'); ?>">
@@ -1222,8 +1219,8 @@ else{
 													<div id="footprintWktDiv" class="field-div">
 														<?php echo $LANG['FOOTPRINT_WKT']; ?>
 														<br/>
-														<div style="float:right;margin-top:-2px;margin-left:2px;" id="googleDiv" onclick="openMappingPolyAid();" title="<?php echo $LANG['GOOGLE_MAPS']; ?>">
-															<img src="../../images/world.png" />
+														<div id="mapPolyAidDiv" style="float:right;margin-top:-2px;margin-left:2px;" onclick="openMappingPolyAid();" title="">
+															<img src="../../images/world.png" style="width:14px;" >
 														</div>
 														<textarea name="footprintwkt" id="footprintwkt" onchange="footPrintWktChanged(this)" style="height:40px;resize:vertical;" ><?php echo array_key_exists('footprintwkt',$occArr)?$occArr['footprintwkt']:''; ?></textarea>
 													</div>

@@ -523,7 +523,7 @@ class ChecklistAdmin extends Manager{
 			if($copyAttributes) $clManagerArr = $inventoryManager->getManagers('ClAdmin', 'fmchecklists', $this->clid);
 			if(!array_key_exists($GLOBALS['SYMB_UID'], $clManagerArr)) $clManagerArr[$GLOBALS['SYMB_UID']] = '';
 			if(!$targetClid){
-				$fieldArr['name'] = $clMeta['name'].' new sub-checklist - '.$taxa;
+				$fieldArr['name'] = 'Copy ' . $clMeta['name'] . ' - ' . $taxa;
 				$inventoryManager->insertChecklist($fieldArr);
 				$targetClid = $inventoryManager->getPrimaryKey();
 				if($targetClid && $copyAttributes){
@@ -537,7 +537,7 @@ class ChecklistAdmin extends Manager{
 					$statusArr['targetClid'] = $targetClid;
 					if($targetPid === '0'){
 						$projectFieldArr = array(
-							'projname' => $clMeta['name'].' project',
+							'projname' => $clMeta['name'] . ' project',
 							'managers' => $clMeta['authors'],
 							'ispublic' => ($clMeta['access'] == 'private'?0:1));
 						$targetPid = $inventoryManager->insertProject($projectFieldArr);
@@ -553,7 +553,7 @@ class ChecklistAdmin extends Manager{
 						$statusArr['targetPid'] = $targetPid;
 					}
 					if($parentClid === '0'){
-						$fieldArr['name'] = $clMeta['name'].' parent checklist';
+						$fieldArr['name'] = 'Parent: ' . $clMeta['name'];
 						$inventoryManager->insertChecklist($fieldArr);
 						$parentClid = $inventoryManager->getPrimaryKey();
 						if($parentClid && $copyAttributes){
@@ -611,6 +611,24 @@ class ChecklistAdmin extends Manager{
 
 	public function getClName(){
 		return $this->clName;
+	}
+
+	//Misc support functions
+	public function cleanOutArray($inputArray){
+		$skip = array('defaultsettings', 'dynamicsql', 'footprintWkt');
+		if(is_array($inputArray)){
+			foreach($inputArray as $key => $value){
+				if(is_array($value)){
+					$inputArray[$key] = $this->cleanOutArray($value);
+				}
+				else{
+					if(!in_array($key, $skip)){
+						$inputArray[$key] = $this->cleanOutStr($value);
+					}
+				}
+			}
+		}
+		return $inputArray;
 	}
 }
 ?>

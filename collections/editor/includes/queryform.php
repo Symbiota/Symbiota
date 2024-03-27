@@ -98,7 +98,7 @@ else{
 						<input type="text" name="q_eventdate" id="q_eventdate" value="<?php echo $qEventDate; ?>" style="width:160px" onchange="setOrderBy(this)" />
 					</div>
 
-					<button type="button" class="icon-button float-right" onclick="copyQueryLink(event)" title="<?php echo $LANG['COPY_SEARCH']; ?>" aria-label="<?php echo $LANG['COPY_SEARCH']; ?>">
+					<button type="button" class="icon-button float-right" onclick="copyQueryLink(event)" title="<?php echo $LANG['COPY_SEARCH']; ?>" aria-label="<?php echo $LANG['COPY_LINK']; ?>">
 						<img src="../../images/link.png" style="width:1.2em;margin-right:5px;" alt="Link icon. Copies the search terms as a link." /><?php echo $LANG['COPY_LINK']; ?>
 					</button>
 				</div>
@@ -275,7 +275,7 @@ else{
 				?>
 			</div>
 			<div class="fieldGroupDiv">
-				<div class="bottom-breathing-room-relative">
+				<div class="bottom-breathing-room-rel">
 
 					<?php
 					if(!$crowdSourceMode){
@@ -307,13 +307,13 @@ else{
 				<input type="hidden" name="occidlist" value="<?php echo $occManager->getOccidIndexStr(); ?>" />
 				<input type="hidden" name="direction" value="" />
 				<section class="flex-form">
-					<div class="no-margin-left">
+					<div style="margin-left: 0;">
 						<button name="submitaction" type="submit" onclick="submitQueryEditor(this.form)" ><?php echo $LANG['DISPLAY_EDITOR']; ?></button>
 					</div>
-					<div class="no-margin-left">
+					<div style="margin-left: 0;">
 						<button name="submitaction" type="submit" onclick="submitQueryTable(this.form)" ><?php echo $LANG['DISPLAY_TABLE']; ?></button>
 					</div>
-					<div class="no-margin-left">
+					<div style="margin-left: 0;">
 						<button type="button" name="reset" value="Reset Form" onclick="resetQueryForm(this.form)">Reset Form</button>
 					</div>
 					<div>

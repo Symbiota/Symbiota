@@ -97,8 +97,10 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USE
 	}
 }
 $clArray = $clManager->getMetaData();
+$clArray = $clManager->cleanOutArray($clArray);
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET ?>"/>
 	<title><?= $DEFAULT_TITLE . ' - ' . $LANG['CHECKLIST_ADMIN'] ?></title>

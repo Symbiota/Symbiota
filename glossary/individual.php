@@ -41,7 +41,8 @@ if($glossId){
 	}
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.(isset($LANG['GLOSS_TERM_INFO'])?$LANG['GLOSS_TERM_INFO']:'Glossary Term Information'); ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">

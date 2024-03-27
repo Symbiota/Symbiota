@@ -19,8 +19,8 @@ if($IS_ADMIN
 		$editable = 1;
 }
 ?>
-
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo (isset($LANG['PERS_SPEC_BACKUP'])?$LANG['PERS_SPEC_BACKUP']:'Personal Specimen Backup'); ?></title>

@@ -170,6 +170,27 @@ if (array_key_exists('last_message', $_SESSION)){
 		}
 	</script>
 	<script src="../js/symb/shared.js" type="text/javascript"></script>
+	<style>
+		.profile-fieldset {
+			padding: 20px;
+			background-color: #f9f9f9;
+			border: 2px outset #808080;
+		}
+		.profile-legend {
+			font-weight: bold;
+		}
+		.justify-center-full-screen {
+			display: flex;
+			justify-content: center;
+			width: 100vw;
+		}
+		.flex-item-login {
+			width: 100%;
+			max-width: 350px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+	</style>
 </head>
 <body>
 <?php
@@ -192,7 +213,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	}
 	?>
 	<div class="gridlike-form justify-center-full-screen" style="margin: 0;">
-		<div class="flex-item-login bottom-breathing-room-relative">
+		<div class="flex-item-login bottom-breathing-room-rel">
 			<form id="loginform" name="loginform" action="index.php" onsubmit="return checkCreds();" method="post">
 				<?php if($SYMBIOTA_LOGIN_ENABLED){ ?>
 					<fieldset class="profile-fieldset">
@@ -225,7 +246,7 @@ include($SERVER_ROOT.'/includes/header.php');
 				$_SESSION['refurl'] = array_key_exists('refurl', $_REQUEST) ? $_REQUEST['refurl'] : '';
 
 		?>
-			<div class="flex-item-login bottom-breathing-room-relative">
+			<div class="flex-item-login bottom-breathing-room-rel">
 				<form action='<?= $LOGIN_ACTION_PAGE ?>' onsubmit="">
 					<fieldset  class="profile-fieldset">
 						<legend class="profile-legend"><?php echo (isset($LANG['THIRD_PARTY_LOGIN'])?$LANG['THIRD_PARTY_LOGIN']:'Login using third-party authentication'); ?></legend>

@@ -18,8 +18,8 @@ if($IS_ADMIN || array_key_exists("KeyEditor",$USER_RIGHTS) || array_key_exists("
 	$editable = true;
 }
 ?>
-
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Character Deficit Finder</title>
 	<?php

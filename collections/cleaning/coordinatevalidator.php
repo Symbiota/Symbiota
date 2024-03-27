@@ -28,7 +28,8 @@ $isEditor = 0;
 if($IS_ADMIN) $isEditor = 1;
 
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Coordinate Validator</title>

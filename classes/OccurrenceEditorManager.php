@@ -547,7 +547,7 @@ class OccurrenceEditorManager {
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' < '.$customValue.') '.($ccp?$ccp.' ':'');
 		}
 		elseif($customTerm == 'LIKE' && $customValue){
-			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' LIKE "%'.trim($customValue,'%').'%") '.($ccp?$ccp.' ':'');
+			$sqlFrag .= $cao . ($cop ? ' ' . $cop : '') . ' (' . $customField . ' LIKE "%' . $customValue . '%") ' . ($ccp ? $ccp . ' ' : '');
 		}
 		elseif($customTerm == 'NOT_LIKE' && $customValue){
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' (('.$customField.' NOT LIKE "%'.trim($customValue,'%').'%") OR ('.$customField.' IS NULL)) '.($ccp?$ccp.' ':'');
@@ -555,7 +555,7 @@ class OccurrenceEditorManager {
 		elseif($customTerm == 'STARTS_WITH' && $customValue){
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' LIKE "'.trim($customValue,'%').'%") '.($ccp?$ccp.' ':'');
 		}
-		elseif($customValue){
+		elseif($customValue !== ''){
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' = "'.$customValue.'") '.($ccp?$ccp.' ':'');
 		}
 		return $sqlFrag;
@@ -2091,18 +2091,19 @@ class OccurrenceEditorManager {
 				$imageMap[$row->imgid]['url'] = $row->url;
 				$imageMap[$row->imgid]['tnurl'] = $row->thumbnailurl;
 				$imageMap[$row->imgid]['origurl'] = $row->originalurl;
-				$imageMap[$row->imgid]['caption'] = $this->cleanOutStr($row->caption);
-				$imageMap[$row->imgid]['photographer'] = $this->cleanOutStr($row->photographer);
+				$imageMap[$row->imgid]['caption'] = $row->caption;
+				$imageMap[$row->imgid]['photographer'] = $row->photographer;
 				$imageMap[$row->imgid]['photographeruid'] = $row->photographeruid;
 				$imageMap[$row->imgid]['sourceurl'] = $row->sourceurl;
-				$imageMap[$row->imgid]['copyright'] = $this->cleanOutStr($row->copyright);
-				$imageMap[$row->imgid]['notes'] = $this->cleanOutStr($row->notes);
+				$imageMap[$row->imgid]['copyright'] = $row->copyright;
+				$imageMap[$row->imgid]['notes'] = $row->notes;
 				$imageMap[$row->imgid]['occid'] = $row->occid;
-				$imageMap[$row->imgid]['username'] = $this->cleanOutStr($row->username);
+				$imageMap[$row->imgid]['username'] = $row->username;
 				$imageMap[$row->imgid]['sort'] = $row->sortoccurrence;
 			}
 			$result->free();
 		}
+		$this->cleanOutArr($imageMap);
 		return $imageMap;
 	}
 
@@ -2512,12 +2513,9 @@ class OccurrenceEditorManager {
 	}
 
 	protected function cleanOutStr($str){
-		$newStr = $str;
-		if($newStr){
-			$newStr = str_replace('"',"&quot;",$str);
-			$newStr = str_replace("'","&apos;",$newStr);
-		}
-		return $newStr;
+		if(!is_string($str) && !is_numeric($str) && !is_bool($str)) $str = '';
+		$str = htmlspecialchars($str, HTML_SPECIAL_CHARS_FLAGS);
+		return $str;
 	}
 
 	protected function cleanInStr($str){

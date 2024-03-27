@@ -51,7 +51,8 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 	'minimumElevationInMeters'=>'Elevation Minimum (m)','maximumElevationInMeters'=>'Elevation Maximum (m)',
 	'verbatimElevation'=>'Verbatim Elevation','disposition'=>'Disposition','processingStatus'=>'Processing Status','dbpk'=>'Source Identifier (dbpk)');
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title><?php echo $LANG['OCC_EXP_MAN']; ?></title>
 		<?php

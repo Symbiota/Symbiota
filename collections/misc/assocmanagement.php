@@ -30,7 +30,8 @@ if($SYMB_UID){
 	}
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title><?php echo (isset($LANG['OCC_BATCH'])?$LANG['OCC_BATCH']:'Occurrence Association Batch Build'); ?></title>
 		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">

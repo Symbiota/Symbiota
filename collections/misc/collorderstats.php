@@ -19,7 +19,8 @@ if($collId){
 }
 $_SESSION['statsOrderArr'] = $orderArr;
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta name="keywords" content="Natural history collections yearly statistics" />
 		<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['ORDER_DIST'])?$LANG['ORDER_DIST']:'Order Distribution'); ?></title>

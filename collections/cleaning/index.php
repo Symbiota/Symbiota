@@ -33,6 +33,12 @@ if($collMap['colltype'] == 'General Observations'){
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
+	<style>
+		.max-width-fit-65 {
+			max-width: 100%;
+			width: 65rem;
+		}
+	</style>
 </head>
 <body>
 	<?php

@@ -34,5 +34,6 @@ $LANG['UPLOAD_IMAGE'] = 'Upload Image';
 $LANG['OPEN_LARGE_IMAGE'] = 'Open Large Image';
 $LANG['MUST_HAVE_EDIT_PERM'] = 'Must have editing privileges for the collection managing this image';
 $LANG['IMAGE_LINKED_FROM'] = 'Image linked from';
+$LANG['TP_IMAGE_EDITOR'] = 'Tp Image Editor';
 
 ?>

@@ -136,6 +136,9 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 		}
 		?>
 		#editsppon { display: none; color:green; font-size: 70%; font-weight:bold; padding-bottom: 5px; position: relative; top: -4px; }
+		.normal-font-weight {
+			font-weight: normal;
+		}
 	</style>
 </head>
 <body>

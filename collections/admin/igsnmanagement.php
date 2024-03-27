@@ -50,7 +50,8 @@ $sesarProfile = $guidManager->getSesarProfile();
 if(isset($sesarProfile['namespace'])) $namespace = $sesarProfile['namespace'];
 if(isset($sesarProfile['generationMethod'])) $generationMethod = $sesarProfile['generationMethod'];
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $LANG['IGSN_GUID'] ?></title>

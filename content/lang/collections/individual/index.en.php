@@ -6,6 +6,10 @@
  */
 
 
+$LANG['FLAGGED_COMMENT'] = 'Comment reported as inappropriate. Comment will remain unavailable to public until reviewed by an administrator';
+$LANG['OCCURRENCE_PROFILE'] = 'Occurrence Profile';
+$LANG['SKIP_NAV'] = 'Skip Navigation';
+$LANG['FULL_RECORD_DETAILS'] = 'Full Record Details';
 $LANG['DETAILS'] = 'Details';
 $LANG['MAP'] = 'Map';
 $LANG['GENETIC'] = 'Genetic';
@@ -155,8 +159,6 @@ $LANG['RESTORE_RECORD'] = 'Restore Record';
 $LANG['RECORD_DELETED'] = 'Record deleted';
 $LANG['VALUE'] = 'Value';
 $LANG['LAT_LNG'] = 'Latitude/Longitude';
-$LANG['FULL_RECORD_DETAILS'] = 'Full Record Details';
-$LANG['SKIP_NAV'] = 'Skip Navigation';
 
 //Used within OccurrenceIndividual class
 $LANG['INAPPROPRIATE'] = 'Inappropriate comment reported';

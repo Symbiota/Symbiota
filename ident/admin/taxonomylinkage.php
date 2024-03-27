@@ -11,7 +11,8 @@ $keyManager->setLangId($langId);
 $keyManager->setCid($cid);
 $tLinks = $keyManager->getTaxonRelevance();
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">

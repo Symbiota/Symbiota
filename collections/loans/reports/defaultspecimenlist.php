@@ -79,7 +79,8 @@ if($outputMode == 'doc'){
 }
 else{
 	?>
-	<html>
+	<!DOCTYPE html>
+	<html lang="<?php echo $LANG_TAG ?>">
 		<head>
 			<title><?php echo $sourceCode.' '.$invoiceArr['loanidentifierown']; ?> Specimen List</title>
 			<?php

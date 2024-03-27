@@ -126,6 +126,18 @@ if($action == 'Create Login'){
 	<?php
 	if($useRecaptcha) echo '<script src="https://www.google.com/recaptcha/api.js"></script>';
 	?>
+	<style>
+		.gridlike-form-row-label {
+			width: 100px;
+		}
+		.gridlike-form-row-input {
+  			width: 40%;
+		}
+		.small-header {
+			font-size: 1.3em;
+			font-weight: bold;
+		}
+	</style>
 </head>
 <body>
 	<?php

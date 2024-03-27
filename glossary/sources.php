@@ -16,7 +16,8 @@ if($IS_ADMIN || array_key_exists('GlossaryEditor',$USER_RIGHTS)) $isEditor = tru
 $glosManager = new GlossaryManager();
 $sourceArr = $glosManager->getTaxonSources($tid);
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.(isset($LANG['G_SOURCES'])?$LANG['G_SOURCES']:'Glossary Sources Management'); ?></title>
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
