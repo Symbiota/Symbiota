@@ -46,10 +46,11 @@ $PORTAL_SELECTOR_ID = !isset($PORTAL_SELECTOR_ID) || !is_int($PORTAL_SELECTOR_ID
             type="hidden" 
             name="cross_portal_label"
             id="portal-selector-name-<?php echo $PORTAL_SELECTOR_ID?>"
+            value="<?= htmlspecialchars($portals[0]['portalName'])?>"
          />
          <select name="cross_portal" onchange="onPortalSelect(this)">
             <?php foreach($portals as $portal): ?>
-            <option value="<?= $portal['urlRoot']?>"><?=$portal['portalName']?></option>
+            <option value="<?= htmlspecialchars($portal['urlRoot'])?>"><?= htmlspecialchars($portal['portalName'])?></option>
             <?php endforeach; ?>
          </select>
       </div>

@@ -853,7 +853,7 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
             if(formData.get('cross_portal_switch') && formData.get('cross_portal')) {
                formData.set("taxa", formData.get('external-taxa-input'));
                searches.push(searchCollections(formData, formData.get('cross_portal')).then(res => {
-                  res.label= formData.get('cross_portal_label')
+                  res.label= formData.get('cross_portal_label');
                   return res;
                }));
 
