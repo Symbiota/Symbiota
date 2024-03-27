@@ -165,7 +165,7 @@ class OmAssociations extends Manager{
 			}
 			$paramArr[] = $this->assocID;
 			$this->typeStr .= 'i';
-			$sql = 'UPDATE omoccurassociations SET '.trim($sqlFrag, ', ').' WHERE (assocID = ?)';
+			$sql = 'UPDATE IGNORE omoccurassociations SET '.trim($sqlFrag, ', ').' WHERE (assocID = ?)';
 			if($stmt = $this->conn->prepare($sql)) {
 				$stmt->bind_param($this->typeStr, ...$paramArr);
 				$stmt->execute();

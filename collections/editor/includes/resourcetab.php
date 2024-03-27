@@ -1,21 +1,16 @@
 <?php
 include_once('../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorResource.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceDuplicate.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceEditorResource.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceDuplicate.php');
 
-if($LANG_TAG != 'en' && !file_exists($SERVER_ROOT.'/content/lang/collections/editor/includes/resourcetab.'.$LANG_TAG.'.php')) $LANG_TAG = 'en';
-include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/resourcetab.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && !file_exists($SERVER_ROOT.'/content/lang/collections/editor/includes/resourcetab.' . $LANG_TAG . '.php')) $LANG_TAG = 'en';
+include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/resourcetab.' . $LANG_TAG . '.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
-$occid = $_GET['occid'];
-$collid = $_GET['collid'];
-$occIndex = $_GET['occindex'];
-$crowdSourceMode = $_GET['csmode'];
-
-//Sanitation
-$occid = filter_var($occid, FILTER_SANITIZE_NUMBER_INT);
-$collid = filter_var($collid, FILTER_SANITIZE_NUMBER_INT);
-$occIndex = filter_var($occIndex, FILTER_SANITIZE_NUMBER_INT);
+$occid = filter_var($_GET['occid'] ?? 0, FILTER_SANITIZE_NUMBER_INT);
+$collid = filter_var($_GET['collid'] ?? 0, FILTER_SANITIZE_NUMBER_INT);
+$occIndex = filter_var($_GET['occindex'] ?? 0, FILTER_SANITIZE_NUMBER_INT);
+$crowdSourceMode = htmlspecialchars($_GET['csmode'], HTML_SPECIAL_CHARS_FLAGS);
 
 $occManager = new OccurrenceEditorResource();
 $occManager->setOccId($occid);
@@ -199,9 +194,9 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 <style type="text/css">
 	fieldset{ clear:both; margin:10px; padding:10px; }
 	legend{ font-weight: bold }
-	.formRow-div{ clear:both; margin: 2px 0px; }
-	.field-div{ float:left; margin: 2px 10px 2px 0px; }
 	label{ font-weight: bold; }
+	.formRow-div{ clear:both; margin: 2px 10px; }
+	.field-div{ float:left; margin: 2px 10px 2px 0px; }
 	.field-div label{ display: block; }
 	.field-div button{ margin-top: 10px; }
 	.assoc-div{ margin-bottom: 10px; }
@@ -363,132 +358,137 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 						<div><label><?= $LANG['ASSOCIATION_TYPE'] ?>:</label>
 							<?= $assocUnit['associationType'] ?>
 							<form action="resourcehandler.php" method="post" style="display:inline">
-								<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
-								<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-								<input name="occindex" type="hidden" value="<?php echo $occIndex; ?>" />
-								<input name="delassocid" type="hidden" value="<?php echo $assocID; ?>" />
-								<input type="image" src="../../images/del.png" style="width:1em" />
+								<input name="occid" type="hidden" value="<?php echo $occid; ?>">
+								<input name="collid" type="hidden" value="<?php echo $collid; ?>">
+								<input name="occindex" type="hidden" value="<?php echo $occIndex; ?>">
+								<input name="delassocid" type="hidden" value="<?php echo $assocID; ?>">
+								<input type="image" src="../../images/del.png" style="width:1em">
 							</form>
-							<span onclick="toggle('edit-assoc-div-<?= $assocID ?>')"><img src="../../images/edit.png" ></span>
+							<span onclick="toggle('edit-assoc-div-<?= $assocID ?>')"><img src="../../images/edit.png" style="width:1em"></span>
 						</div>
 						<div id="edit-assoc-div-<?= $assocID ?>" style="display:none">
 							<form name="edit-association-form-<?= $assocID ?>" action="resourcehandler.php" method="post">
-								<div class="formRow-div" style="margin:10px">
-									<div class="field-div">
-										<label for="relationship"><?= $LANG['RELATIONSHIP']; ?>: </label>
-										<select name="relationship" required>
-											<option value="">--------------------</option>
-											<?php
-											foreach($defaultRelationshipArr as $rValue){
-												echo '<option value="'.$rValue.'" ' . ($assocUnit['relationship'] == $rValue ? 'selected' : '') . ' >'.$rValue.'</option>';
-											}
-											?>
-										</select>
-									</div>
-									<div id="subType-div" class="field-div">
-										<label for="subtype"><?= $LANG['REL_SUBTYPE']; ?>: </label>
-										<select name="subtype">
-											<option value="">--------------------</option>
-											<?php
-											$subtypeArr = $occManager->getSubtypeArr();
-											foreach($subtypeArr as $term => $display){
-												if(!$display) $display = $term;
-												echo '<option value="'.$term.'" ' . ($assocUnit['subType'] == $term ? 'selected' : '') . ' >'.$display.'</option>';
-											}
-											?>
-										</select>
-									</div>
-									<?php
-									if($assocUnit['associationType'] != 'resource'){
-										?>
-										<div id="basisOfRecord-div" class="field-div">
-											<label for="basisofrecord"><?= $LANG['BASIS_OF_RECORD']; ?>: </label>
-											<select name="basisofrecord">
+								<fieldset>
+									<legend>Edit Association</legend>
+									<div class="formRow-div">
+										<div class="field-div">
+											<label for="relationship"><?= $LANG['RELATIONSHIP']; ?>: </label>
+											<select name="relationship" required>
 												<option value="">--------------------</option>
 												<?php
-												foreach($basisOfRecordArr as $borKey => $borName){
-													echo '<option value="' . $borKey . '" ' . ($assocUnit['basisOfRecord'] == $borKey ? 'selected' : '') . ' >' . $borName . '</option>';
+												foreach($defaultRelationshipArr as $rValue){
+													echo '<option value="'.$rValue.'" ' . ($assocUnit['relationship'] == $rValue ? 'selected' : '') . ' >'.$rValue.'</option>';
 												}
 												?>
 											</select>
 										</div>
-										<div id="locationOnHost-div" class="field-div">
-											<label for="locationonhost"><?= $LANG['LOC_ON_HOST']; ?>: </label>
-											<input name="locationonhost" type="text" value="<?= $assocUnit['locationOnHost'] ?>" >
+										<div id="subType-div" class="field-div">
+											<label for="subtype"><?= $LANG['REL_SUBTYPE']; ?>: </label>
+											<select name="subtype">
+												<option value="">--------------------</option>
+												<?php
+												$subtypeArr = $occManager->getSubtypeArr();
+												foreach($subtypeArr as $term => $display){
+													if(!$display) $display = $term;
+													echo '<option value="'.$term.'" ' . ($assocUnit['subType'] == $term ? 'selected' : '') . ' >'.$display.'</option>';
+												}
+												?>
+											</select>
+										</div>
+										<?php
+										if($assocUnit['associationType'] != 'resource'){
+											?>
+											<div id="basisOfRecord-div" class="field-div">
+												<label for="basisofrecord"><?= $LANG['BASIS_OF_RECORD']; ?>: </label>
+												<select name="basisofrecord">
+													<option value="">--------------------</option>
+													<?php
+													foreach($basisOfRecordArr as $borKey => $borName){
+														echo '<option value="' . $borKey . '" ' . ($assocUnit['basisOfRecord'] == $borKey ? 'selected' : '') . ' >' . $borName . '</option>';
+													}
+													?>
+												</select>
+											</div>
+											<div id="locationOnHost-div" class="field-div">
+												<label for="locationonhost"><?= $LANG['LOC_ON_HOST']; ?>: </label>
+												<input name="locationonhost" type="text" value="<?= $assocUnit['locationOnHost'] ?>" >
+											</div>
+											<?php
+										}
+										?>
+									</div>
+									<div class="formRow-div">
+										<div class="field-div" style="width:100%">
+											<label for="notes"><?= $LANG['NOTES']; ?>: </label>
+											<input name="notes" type="text" value="<?= $assocUnit['notes'] ?>" style="width:100%" >
+										</div>
+									</div>
+									<?php
+									if($assocUnit['associationType'] == 'resource' || $assocUnit['associationType'] == 'externalOccurrence'){
+										?>
+										<div class="formRow-div">
+											<div class="field-div">
+												<label for="resourceurl"><?= $LANG['RESOURCE_URL']; ?>: </label>
+												<input name="resourceurl" type="text" value="<?= $assocUnit['resourceUrl'] ?>" style="width:400px" >
+											</div>
+										</div>
+										<div class="formRow-div">
+											<div class="field-div">
+												<label for="objectid"><?= $LANG['ADDITIONAL_ID']; ?>: </label>
+												<input name="objectid" type="text" value="<?= $assocUnit['objectID'] ?>" style="width:250px" >
+											</div>
+										</div>
+										<?php
+									}
+									if($assocUnit['associationType'] == 'externalOccurrence' || $assocUnit['associationType'] == 'observational'){
+										?>
+										<div class="formRow-div">
+											<div class="field-div">
+												<label for="verbatimsciname"><?= $LANG['VERBAT_SCINAME']; ?>: </label>
+												<input name="verbatimsciname" type="text" value="<?= $assocUnit['verbatimSciname'] ?>" style="width: 250px">
+											</div>
 										</div>
 										<?php
 									}
 									?>
-								</div>
-								<div class="formRow-div" style="margin:10px">
-									<div class="field-div" style="width:100%">
-										<label for="notes"><?= $LANG['NOTES']; ?>: </label>
-										<input name="notes" type="text" value="<?= $assocUnit['notes'] ?>" style="width:100%" >
-									</div>
-								</div>
-								<?php
-								if($assocUnit['associationType'] == 'resource' || $assocUnit['associationType'] == 'externalOccurrence'){
-									?>
-									<div class="formRow-div">
+									<div class="formRow-div" style="margin:10px">
 										<div class="field-div">
-											<label for="resourceurl"><?= $LANG['RESOURCE_URL']; ?>: </label>
-											<input name="resourceurl" type="text" value="<?= $assocUnit['resourceUrl'] ?>" style="width:400px" >
+											<input name="occid" type="hidden" value="<?= $occid; ?>" >
+											<input name="collid" type="hidden" value="<?= $collid; ?>" >
+											<input name="occindex" type="hidden" value="<?= $occIndex ?>" >
+											<input name="assocID" type="hidden" value="<?= $assocID ?>" >
+											<button name="submitaction" type="submit" value="saveAssociation"><?= $LANG['SAVE_EDITS']; ?></button>
 										</div>
 									</div>
-									<div class="formRow-div">
-										<div class="field-div">
-											<label for="objectid"><?= $LANG['ADDITIONAL_ID']; ?>: </label>
-											<input name="objectid" type="text" value="<?= $assocUnit['objectID'] ?>" style="width:250px" >
-										</div>
-									</div>
-									<?php
-								}
-								if($assocUnit['associationType'] == 'externalOccurrence' || $assocUnit['associationType'] == 'observational'){
-									?>
-									<div class="formRow-div">
-										<div class="field-div">
-											<label for="verbatimsciname"><?= $LANG['VERBAT_SCINAME']; ?>: </label>
-											<input name="verbatimsciname" type="text" value="<?= $assocUnit['verbatimSciname'] ?>" style="width: 250px">
-										</div>
-									</div>
-									<?php
-								}
-								?>
-								<div class="formRow-div" style="margin:10px">
-									<div class="field-div">
-										<input name="occid" type="hidden" value="<?= $occid; ?>" >
-										<input name="collid" type="hidden" value="<?= $collid; ?>" >
-										<input name="occindex" type="hidden" value="<?= $occIndex ?>" >
-										<input name="assocID" type="hidden" value="<?= $assocID ?>" >
-										<button name="submitaction" type="submit" value="saveAssociation"><?= $LANG['SAVE_EDITS']; ?></button>
-									</div>
-								</div>
+								</fieldset>
 							</form>
 						</div>
-						<?php
-						$relationship = $assocUnit['relationship'];
-						if($assocUnit['subType']) $relationship .= ' ('.$assocUnit['subType'].')';
-						echo '<div><label>'.$LANG['RELATIONSHIP'].':</label> '.$relationship.'</div>';
-						if($assocUnit['basisOfRecord']) echo '<div><label>'.$LANG['BASIS_OF_RECORD'].':</label> '.$assocUnit['basisOfRecord'].'</div>';
-						if($assocUnit['accordingTo']) echo '<div><label>'.$LANG['ACCORDING_TO'].':</label> '.$assocUnit['accordingTo'].'</div>';
-						if($assocUnit['objectID']) echo '<div><label>'.$LANG['OBJECT_IDENTIFIER'].':</label> '.$assocUnit['objectID'].'</div>';
-						if($assocUnit['occidAssociate']){
-							echo '<div><label>'.$LANG['INTERNAL_RESOURCE'].':</label> <a href="#" onclick="openIndividual('.$assocUnit['occidAssociate'].')">'.$assocUnit['occidAssociate'].'</a></div>';
-						}
-						elseif($assocUnit['resourceUrl']){
-							echo '<div><label>'.$LANG['EXTERNAL_RESOURCE'].':</label> <a href="'.$assocUnit['resourceUrl'].'" target="_blank">'.$assocUnit['resourceUrl'].'</a></div>';
-						}
-						if($assocUnit['verbatimSciname']){
-							$sciname = $assocUnit['verbatimSciname'];
-							if($assocUnit['tid']) $sciname = '<a href="'.$SERVER_ROOT.'/taxa/index.php?tid='.$assocUnit['tid'].'" target="_blank">'.$sciname.'</a>';
-							echo '<div><label>'.$LANG['VERBAT_SCINAME'].':</label> '.$sciname.'</div>';
-						}
-						if($assocUnit['locationOnHost']) echo '<div><label>'.$LANG['LOC_ON_HOST'].':</label> '.$assocUnit['locationOnHost'].'</div>';
-						if($assocUnit['notes']) echo '<div><label>'.$LANG['NOTES'].':</label> '.$assocUnit['notes'].'</div>';
-						if($assocUnit['establishedDate']) echo '<div><label>'.$LANG['ESTABLISHED_DATE'].':</label> '.$assocUnit['establishedDate'].'</div>';
-						echo '<div><label>'.$LANG['RECORD_ID'].':</label> '.$assocUnit['recordID'].'</div>';
-						echo '<div><label>'.$LANG['ENTERED_BY'].':</label> '.(empty($assocUnit['definedBy'])?'unknown':$assocUnit['definedBy']).' ('.$assocUnit['initialTimestamp'].')'.'</div>';
-						?>
+						<div>
+							<?php
+							$relationship = $assocUnit['relationship'];
+							if($assocUnit['subType']) $relationship .= ' ('.$assocUnit['subType'].')';
+							echo '<div><label>'.$LANG['RELATIONSHIP'].':</label> '.$relationship.'</div>';
+							if($assocUnit['basisOfRecord']) echo '<div><label>'.$LANG['BASIS_OF_RECORD'].':</label> '.$assocUnit['basisOfRecord'].'</div>';
+							if($assocUnit['accordingTo']) echo '<div><label>'.$LANG['ACCORDING_TO'].':</label> '.$assocUnit['accordingTo'].'</div>';
+							if($assocUnit['objectID']) echo '<div><label>'.$LANG['OBJECT_IDENTIFIER'].':</label> '.$assocUnit['objectID'].'</div>';
+							if($assocUnit['occidAssociate']){
+								echo '<div><label>'.$LANG['INTERNAL_RESOURCE'].':</label> <a href="#" onclick="openIndividual('.$assocUnit['occidAssociate'].')">'.$assocUnit['occidAssociate'].'</a></div>';
+							}
+							elseif($assocUnit['resourceUrl']){
+								echo '<div><label>'.$LANG['EXTERNAL_RESOURCE'].':</label> <a href="'.$assocUnit['resourceUrl'].'" target="_blank">'.$assocUnit['resourceUrl'].'</a></div>';
+							}
+							if($assocUnit['verbatimSciname']){
+								$sciname = $assocUnit['verbatimSciname'];
+								if($assocUnit['tid']) $sciname = '<a href="'.$SERVER_ROOT.'/taxa/index.php?tid='.$assocUnit['tid'].'" target="_blank">'.$sciname.'</a>';
+								echo '<div><label>'.$LANG['VERBAT_SCINAME'].':</label> '.$sciname.'</div>';
+							}
+							if($assocUnit['locationOnHost']) echo '<div><label>'.$LANG['LOC_ON_HOST'].':</label> '.$assocUnit['locationOnHost'].'</div>';
+							if($assocUnit['notes']) echo '<div><label>'.$LANG['NOTES'].':</label> '.$assocUnit['notes'].'</div>';
+							if($assocUnit['establishedDate']) echo '<div><label>'.$LANG['ESTABLISHED_DATE'].':</label> '.$assocUnit['establishedDate'].'</div>';
+							echo '<div><label>'.$LANG['RECORD_ID'].':</label> '.$assocUnit['recordID'].'</div>';
+							echo '<div><label>'.$LANG['ENTERED_BY'].':</label> '.(empty($assocUnit['definedBy'])?'unknown':$assocUnit['definedBy']).' ('.$assocUnit['initialTimestamp'].')'.'</div>';
+							?>
+						</div>
 					</div>
 					<?php
 				}
@@ -509,10 +509,10 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 		}
 		if($userChecklists){
 			?>
-			<div style="float:right;margin-right:15px; display:<?php echo ($checklistArr?'block':'none'); ?>">
+			<div style="float:right;margin-right:15px; display:<?= ($checklistArr ? 'block' : 'none') ?>">
 				<a href="#" onclick="toggle('voucheradddiv');return false;" title="<?php echo $LANG['LINK_TO_CHECKLIST']; ?>" ><img src="../../images/add.png"/></a>
 			</div>
-			<div id="voucheradddiv" style="display:<?php echo ($checklistArr?'none':'block'); ?>;">
+			<div id="voucheradddiv" style="display:<?= ($checklistArr ? 'none' : 'block') ?>;">
 				<form name="voucherAddForm" method="post" target="occurrenceeditor.php" onsubmit="return validateVoucherAddForm(this)">
 					<select name="clidvoucher">
 						<option value=""><?php echo $LANG['SEL_CHECKLIST']; ?></option>
@@ -535,11 +535,12 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 		//Display list of checklists specimen is linked to
 		if($checklistArr){
 			foreach($checklistArr as $vClid => $vClName){
+				$vClid = filter_var($vClid, FILTER_SANITIZE_NUMBER_INT);
 				echo '<div style="margin:3px">';
-				echo '<a href="../../checklists/checklist.php?showvouchers=1&clid=' . htmlspecialchars($vClid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($vClName, HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
+				echo '<a href="../../checklists/checklist.php?showvouchers=1&clid=' . $vClid . '" target="_blank">' . htmlspecialchars($vClName, HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
 				if(array_key_exists($vClid, $userChecklists)){
-					$href = 'occurrenceeditor.php?submitaction=deletevoucher&delclid='.$vClid.'&occid='.$occid.'&tabtarget=3';
-					echo '<a href="' . htmlspecialchars($href, HTML_SPECIAL_CHARS_FLAGS) .'" title="' . htmlspecialchars($LANG['DELETE_VOUCHER_LINK'], HTML_SPECIAL_CHARS_FLAGS) . '" onclick="return confirm(\'' . htmlspecialchars($LANG['SURE_REMOVE_VOUCHER'], HTML_SPECIAL_CHARS_FLAGS) . '\'">';
+					$href = 'occurrenceeditor.php?submitaction=deletevoucher&delclid=' . $vClid . '&occid=' . $occid . '&tabtarget=3';
+					echo '<a href="' . $href .'" title="' . $LANG['DELETE_VOUCHER_LINK'] . '" onclick="return confirm(\'' . $LANG['SURE_REMOVE_VOUCHER'] . '\'">';
 					echo '<img src="../../images/drop.png" style="width:1em;" />';
 					echo '</a>';
 				}
