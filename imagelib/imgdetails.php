@@ -380,11 +380,11 @@ if($imgArr){
 						if(!$imgArr['photographer']) echo '</a>';
 						echo '</div>';
 					}
-					if($imgArr['owner']) echo '<div><b>' . $LANG['MANAGER'] . ':</b> '.$imgArr['owner'].'</div>';
+					if($imgArr['owner']) echo '<div><b>' . $LANG['MANAGER'] . ':</b> ' . $imgArr['owner'] . '</div>';
 					if($imgArr['sourceurl']) echo '<div><b>' . $LANG['IMAGE_SOURCE'] . ':</b> <a href="' . htmlspecialchars($imgArr['sourceurl'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($imgArr['sourceurl'], HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
-					if($imgArr['locality']) echo '<div><b>' . $LANG['LOCALITY'] . ':</b> '.$imgArr['locality'].'</div>';
-					if($imgArr['notes']) echo '<div><b>' . $LANG['NOTES'] . ':</b> '.$imgArr['notes'].'</div>';
-					if($imgArr['rights']) echo '<div><b>' . $LANG['RIGHTS'] . ':</b> '.$imgArr['rights'].'</div>';
+					if($imgArr['locality']) echo '<div><b>' . $LANG['LOCALITY'] . ':</b> ' . $imgArr['locality'] . '</div>';
+					if($imgArr['notes']) echo '<div><b>' . $LANG['NOTES'] . ':</b> ' . $imgArr['notes'] . '</div>';
+					if($imgArr['rights']) echo '<div><b>' . $LANG['RIGHTS'] . ':</b> ' . $imgArr['rights'] . '</div>';
 					if($imgArr['copyright']){
 						echo '<div>';
 						echo '<b>' . $LANG['COPYRIGHT'] . ':</b> ';
@@ -402,9 +402,9 @@ if($imgArr){
 					<div style="margin-top:20px;">
 						<?php echo $LANG['ERROR_COMMENT_ABOUT_IMAGE'] ?>? <br/><?php echo $LANG['SEND_EMAIL'] ?>:
 						<?php
-						$emailSubject = $DEFAULT_TITLE.' Image #'.$imgId;
+						$emailSubject = $DEFAULT_TITLE . ' ' . $LANG['IMG_NO'] . ' ' . $imgId;
 						$emailBody = 'Image being referenced: '.$serverPath.$CLIENT_ROOT.'/imagelib/imgdetails.php?imgid='.$imgId;
-						$emailRef = 'subject='.$emailSubject.'&cc='.$ADMIN_EMAIL.'&body='.$emailBody;
+						$emailRef = 'subject=' . $emailSubject . '&cc=' . $ADMIN_EMAIL . '&body=' . $emailBody;
 						echo '<a href="mailto:' . htmlspecialchars($ADMIN_EMAIL, HTML_SPECIAL_CHARS_FLAGS) . '?' . htmlspecialchars($emailRef, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($ADMIN_EMAIL, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 						?>
 					</div>
@@ -414,7 +414,7 @@ if($imgArr){
 			<?php
 		}
 		else{
-			echo '<h2 style="margin:30px;">' . $LANG['UNABLE_TO_LOCATE'] . '.</h2>';
+			echo '<h2 style="margin:30px;">' . $LANG['UNABLE_TO_LOCATE'] . '</h2>';
 		}
 		?>
 	</div>
