@@ -68,5 +68,6 @@ $LANG['DATE'] = 'Data';
 $LANG['SCIENTIFIC_NAME'] = 'Nome Científico';
 $LANG['MAP_LINK'] = 'Link do Mapa';
 $LANG['SEE_MAP_POINT'] = 'Ver ponto do mapa';
-
+$LANG['RECORD_COUNT_EXCEEDS_LIMIT'] = 'A contagem de registros excede o limite';
+$LANG['NO_RECORDS'] = 'Nenhum registro encontrado correspondente à consulta';
 ?>

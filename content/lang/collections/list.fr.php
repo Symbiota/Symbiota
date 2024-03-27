@@ -60,5 +60,6 @@ $LANG['DATE'] = 'Date';
 $LANG['SCIENTIFIC_NAME'] = 'Nom Scientifique';
 $LANG['MAP_LINK'] = 'Lien vers la Carte';
 $LANG['SEE_MAP_POINT'] = 'Voir le point sur la carte';
-
+$LANG['RECORD_COUNT_EXCEEDS_LIMIT'] = 'Le nombre d\'enregistrements dépasse la limite';
+$LANG['NO_RECORDS'] = 'Aucun enregistrement trouvé correspondant à la requête';
 ?>
