@@ -93,11 +93,11 @@ if(!$recLimit || $recCnt < $recLimit){
 							<input id="selectallcheck" type="checkbox" onclick="selectAll(this);" '.($allSelected==true?"checked":"").' />
 						</th>
 						 -->
-						<th>Catalog #</th>
-						<th>Collector</th>
-						<th>Date</th>
-						<th>Scientific Name</th>
-						<th>Map Link</th>
+                  <th><?=$LANG['CATALOG_NUMBER']?></th>
+						<th><?=$LANG['COLLECTOR']?></th>
+						<th><?=$LANG['DATE']?></th>
+						<th><?=$LANG['SCIENTIFIC_NAME']?></th>
+						<th><?=$LANG['MAP_LINK']?></th>
 					</tr>
 					<?php
 					$trCnt = 0;
@@ -108,9 +108,9 @@ if(!$recLimit || $recCnt < $recLimit){
 						echo '<td id="label' . $occId .'" >';
 						echo '<a href="#" onmouseover="openOccidInfoBox(\'' . $recArr["c"] . '\',' . $recArr["lat"] . ',' . $recArr["lon"] . ');" onmouseout="closeOccidInfoBox();" onclick="openRecord({occid:' . $occId . ($host?', host:\'' . $host . '\'' : '' ) . '}); return false;">' . ($recArr["c"]?$recArr["c"]:"Not available") .'</a>';
 						echo '</td>';
-						echo '<td id="e' . $occId.'" >' . $recArr["e"] . '</td>';
-						echo '<td id="s' . $occId.'" >'.$recArr["s"].'</td>';
-						echo '<td id="li' . $occId.'" ><a href="#occid=' . $occId .'" onclick="emit_occurrence('.$occId.')">See Map Point</a></td>';
+						echo '<td id="e' . $occId .'" >' . $recArr["e"] . '</td>';
+						echo '<td id="s' . $occId .'" >'. $recArr["s"] . '</td>';
+						echo '<td id="li' . $occId . '" ><a href="#occid=' . $occId . '" onclick="emit_occurrence(' . $occId . ')">' . $LANG['SEE_MAP_POINT'] . '</a></td>';
 						echo '</tr>';
 					}
 					?>
