@@ -1007,6 +1007,8 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 					genClusters(taxaLegendMap, "taxa");
 					genClusters(collLegendMap, "coll");
 
+               autoColorTaxa();
+
 					drawPoints();
 
 					fitMap();
@@ -1499,6 +1501,8 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 
 					genClusters(taxaLegendMap, "taxa");
 					genClusters(collLegendMap, "coll");
+
+               autoColorTaxa();
 
 					drawPoints();
 
