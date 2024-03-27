@@ -500,9 +500,9 @@ $collManager->cleanOutArr($collData);
 									<fieldset>
 										<legend> <?php echo htmlspecialchars($LANG['MANAGEMENT'], HTML_SPECIAL_CHARS_FLAGS) ?>: </legend>
 										
-										<input class="top-breathing-room-rel-sm" id="snapshot" type="radio" name="managementType" value="Snapshot" CHECKED> <label for="snapshot">  <?php echo (isset($LANG['SNAPSHOT']) ? $LANG['SNAPSHOT'] : 'Snapshot'); ?> </label> <br/>
-										<input id="liveData" type="radio" name="managementType" value="Live Data" > <label for="liveData">  <?php echo ($collid && $collData['managementtype'] == 'Live Data' ? 'SELECTED' : ''); ?> <?php echo $LANG['LIVE_DATA']; ?> </label> <br/>
-										<input id="aggregate" type="radio" name="managementType" value="Aggregate" > <label for="aggregate">  <?php echo ($collid && $collData['managementtype'] == 'Aggregate' ? 'SELECTED' : ''); ?> <?php echo $LANG['AGGREGATE']; ?> </label>
+										<input class="top-breathing-room-rel-sm" id="snapshot" type="radio" name="managementType" value="Snapshot" CHECKED> <label for="snapshot">  <?php echo $LANG['SNAPSHOT']; ?> </label> <br/>
+										<input id="liveData" type="radio" name="managementType" value="Live Data" <?php echo ($collid && $collData['managementtype'] == 'Live Data' ? 'CHECKED' : ''); ?>> <label for="liveData"> <?php echo $LANG['LIVE_DATA']; ?> </label> <br/>
+										<input id="aggregate" type="radio" name="managementType" value="Aggregate" <?php echo ($collid && $collData['managementtype'] == 'Aggregate' ? 'CHECKED' : ''); ?>> <label for="aggregate"> <?php echo $LANG['AGGREGATE']; ?> </label>
 										
 										<a id="managementinfo" href="#" onclick="return false" tabindex="0">
 											<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_INFO_TYPE']) ? $LANG['MORE_INFO_TYPE'] : 'More information about Management Type'); ?>"/>
