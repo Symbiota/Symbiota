@@ -40,6 +40,7 @@ class OccurrenceEditorResource extends OccurrenceEditorManager {
 	public function updateAssociation($postArr){
 		$status = true;
 		$this->assocManager->setOccid($postArr['occid']);
+		$this->assocManager->setAssocID($postArr['assocID']);
 		$status = $this->assocManager->updateAssociation($postArr);
 		if(!$status) $this->errorArr[] = $this->assocManager->getErrorMessage();
 		return $status;
