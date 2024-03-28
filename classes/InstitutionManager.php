@@ -175,19 +175,20 @@ class InstitutionManager {
 
 	public function getInstitutionList(){
 		$retArr = Array();
-		$sql = 'SELECT i.iid, c.collid, i.institutioncode, i.institutionname, i.institutionname2, i.address1, i.address2, i.city, '.
-			'i.stateprovince, i.postalcode, i.country, i.phone, i.contact, i.email, i.url, i.notes '.
+		$sql = 'SELECT i.iid, c.collid, i.institutioncode, i.institutionname '.
 			'FROM institutions i LEFT JOIN omcollections c ON i.iid = c.iid '.
 			'ORDER BY i.institutionname, i.institutioncode';
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			if(isset($retArr[$r->iid])){
-				$collStr = $retArr[$r->iid]['collid'].','.$r->collid;
+				$collStr = $retArr[$r->iid]['collid'] . ',' . $r->collid;
 				$retArr[$r->iid]['collid'] = $collStr;
 			}
 			else{
-				$retArr[$r->iid] = $this->cleanOutArr($r);
+				$retArr[$r->iid]['collid'] = $r->collid;
+				$retArr[$r->iid]['institutioncode'] = $r->institutioncode;
+				$retArr[$r->iid]['institutionname'] = $r->institutionname;
 			}
 		}
 		$rs->free();
