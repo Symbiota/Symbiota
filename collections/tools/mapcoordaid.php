@@ -51,17 +51,20 @@ else{
 	<title><?php echo $DEFAULT_TITLE; ?> - Taxon Map</title>
 	<?php
 	   include_once($SERVER_ROOT.'/includes/head.php');
-      include_once($SERVER_ROOT.'/includes/leafletMap.php');
-      include_once($SERVER_ROOT.'/includes/googleMap.php');
+      if(empty($GOOGLE_MAP_KEY)) {
+         include_once($SERVER_ROOT.'/includes/leafletMap.php');
+      } else {
+         include_once($SERVER_ROOT.'/includes/googleMap.php');
+      }
 	?>
    <meta charset="utf-8">
 
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/wktpolygontools.js" type="text/javascript"></script>
 	<style>
-		#map { width:100%; height: auto; }
+		html, body, #map { width:100%; height: 100%; }
 	</style>
 </head>
-<body style="background-color:#ffffff;width:100%;height:100%;image-rendering: auto;
+<body style="background-color:#ffffff;image-rendering: auto;
   image-rendering: crisp-edges;
   image-rendering: pixelated; ">
 
