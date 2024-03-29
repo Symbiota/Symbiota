@@ -34,4 +34,9 @@ $LANG['EDITOR_NOTES_DISPLAY'] = 'Editor Notes (editor display only)';
 $LANG['SUBMIT_V_EDITS'] = 'Submit Voucher Edits';
 $LANG['NO_DATA'] = 'Failed to return data or you might not have proper editing rights';
 
+$LANG['INTERNAL_NOTES'] = 'Internal Notes';
+$LANG['RENAME_SCI_NAME'] = 'Rename Scientific Name';
+$LANG['LINK_ICON'] = 'Link Icon';
+
+
 ?>

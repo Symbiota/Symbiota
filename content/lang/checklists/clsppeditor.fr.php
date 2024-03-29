@@ -34,4 +34,8 @@ $LANG['EDITOR_NOTES_DISPLAY'] = 'Notes de l\'Éditeur (affichage de l\'Éditeur 
 $LANG['SUBMIT_V_EDITS'] = 'Soumettre Modifications';
 $LANG['NO_DATA'] = "Échec de la restitution des données ou vous n'avez peut-être pas les droits d'édition appropriés";
 
+$LANG['INTERNAL_NOTES'] = 'Notes Internes';
+$LANG['RENAME_SCI_NAME'] = 'Renommer le Nom Scientifique';
+$LANG['LINK_ICON'] = 'Icône de Lien';
+
 ?>
