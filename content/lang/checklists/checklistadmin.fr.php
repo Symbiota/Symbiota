@@ -80,5 +80,9 @@ $LANG['SAVE_EDITS'] = 'Enregistrer Modifications';
 $LANG['ADDCHECKLIST'] = 'Cr&eacuteer Liste';
 $LANG['DELETETHISU'] = 'Supprimer Cet Utilisateur';
 $LANG['ERROR_LOWER'] = 'Erreur';
+$LANG['DROP_ICON'] = 'Icône de Dépôt';
+$LANG['ADD_AN_EDITOR'] = 'Ajouter un Éditeur';
+$LANG['SUBMIT_BUTTON'] = 'Bouton Soumettre';
+$LANG['DELETE_THE_CHECK'] = 'Supprimer la Liste de Contrôle';
 
 ?>

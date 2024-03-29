@@ -145,7 +145,7 @@ $clArray = $clManager->cleanOutArray($clArray);
 	</script>
 	<script type="text/javascript" src="../js/symb/shared.js"></script>
 	<script type="text/javascript" src="../js/symb/checklists.checklistadmin.js?ver=2"></script>
-	<style type="text/css">
+	<style>
 		.tox-dialog { min-height: 400px }
 		fieldset{ padding:15px; margin:40px 10px; }
 		legend{ font-weight: bold; }
@@ -164,7 +164,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	<b><?php echo $LANG['CHECKLIST_ADMIN']; ?></b>
 </div>
 <div id='innertext'>
-	<div style="color:#990000;font-size:20px;font-weight:bold;margin:0px 10px 10px 0px;">
+	<div style="color:#990000;font-size:125%;font-weight:bold;margin:0px 10px 10px 0px;">
 		<a href="checklist.php?clid=<?php echo $clid . '&pid=' . $pid; ?>">
 			<?php echo $clManager->getClName(); ?>
 		</a>
@@ -215,7 +215,7 @@ include($SERVER_ROOT.'/includes/header.php');
 										<input name="pid" type="hidden" value="<?php echo $pid; ?>" />
 										<input name="deleteuid" type="hidden" value="<?php echo $uid; ?>" />
 										<input name="submitaction" type="hidden" value="DeleteEditor" />
-										<input name="submit" type="image" src="../images/drop.png" style="width:1em;" />
+										<input name="submit" type="image" src="../images/drop.png" style="width:1em;" alt="<?php echo $LANG['DROP_ICON']; ?>" />
 									</form>
 								</li>
 								<?php
@@ -228,11 +228,12 @@ include($SERVER_ROOT.'/includes/header.php');
 						echo "<div>" . $LANG['NOEDITOR'] . "</div>\n";
 					}
 					?>
-					<fieldset>
-						<legend><?php echo $LANG['ADDNEWUSER']; ?></legend>
+                    <section class="fieldset-like">
+							<h2><span><b><?php echo $LANG['ADDNEWUSER']; ?></b></span></h2>
 						<form name="adduser" action="checklistadmin.php" method="post" onsubmit="return verifyAddUser(this)">
 							<div>
-								<select name="editoruid">
+							    <label for="editoruid"><?php echo $LANG['SELECTUSER']; ?></label>
+								<select id="editoruid" name="editoruid">
 									<option value=""><?php echo $LANG['SELECTUSER']; ?></option>
 									<option value="">------------------------------</option>
 									<?php
@@ -242,12 +243,12 @@ include($SERVER_ROOT.'/includes/header.php');
 									}
 									?>
 								</select>
-								<button name="submitaction" type="submit" value="addEditor"><?php echo $LANG['ADDEDITOR'];?></button>
+								<button name="submitaction" type="submit" value="addEditor" aria-label="<?php echo $LANG['ADD_AN_EDITOR'];?>"><?php echo $LANG['ADDEDITOR'];?></button>
 								<input type="hidden" name="pid" value="<?php echo $pid; ?>" />
 								<input type="hidden" name="clid" value="<?php echo $clid; ?>" />
 							</div>
 						</form>
-					</fieldset>
+					</section>
 				</div>
 				<hr/>
 				<div style="margin:20px;">
@@ -267,7 +268,7 @@ include($SERVER_ROOT.'/includes/header.php');
 											<input name="clid" type="hidden" value="<?php echo $clid; ?>" />
 											<input name="pid" type="hidden" value="<?php echo $pid; ?>" />
 											<input name="submitaction" type="hidden" value="deleteProject" />
-											<input name="submit" type="image" src="../images/drop.png" style="width:1em;" />
+											<input name="submit" type="image" src="../images/drop.png" style="width:1em;" alt="<?php echo $LANG['DROP_ICON']; ?>" />
 										</form>
 										<?php
 									}
@@ -285,10 +286,11 @@ include($SERVER_ROOT.'/includes/header.php');
 					if(array_key_exists('ProjAdmin',$USER_RIGHTS)){
 						if($potentialProjects = array_diff_key($clManager->getPotentialProjects($USER_RIGHTS['ProjAdmin']),$projArr)){
 							?>
-							<fieldset>
-								<legend><?php echo $LANG['LINKTOPROJECT']; ?></legend>
+							<section class="fieldset-like">
+								<h3><span><?php echo $LANG['LINKTOPROJECT']; ?></span></h3>
 								<form name="addtoprojectform" action="checklistadmin.php" method="post" onsubmit="return validateAddProjectForm(this)">
-									<select name="pid">
+								    <label for="pid"><?php echo $LANG['SELECTPROJECT']; ?></label>
+									<select id="pid" name="pid">
 										<option value=""><?php echo $LANG['SELECTPROJECT']; ?></option>
 										<option value="">---------------------------------</option>
 										<?php
@@ -298,9 +300,9 @@ include($SERVER_ROOT.'/includes/header.php');
 										?>
 									</select>
 									<input name="clid" type="hidden" value="<?php echo $clid; ?>" />
-									<button name="submitaction" type="submit" value="addToProject"><?php echo $LANG['SUBMIT']; ?></button>
+									<button name="submitaction" type="submit" value="addToProject" aria-label="<?php echo $LANG['SUBMIT_BUTTON'];?>"><?php echo $LANG['SUBMIT']; ?></button>
 								</form>
-							</fieldset>
+							</section>
 							<?php
 						}
 					}
@@ -317,18 +319,19 @@ include($SERVER_ROOT.'/includes/header.php');
 					<div style="margin:15px;">
 						<form name="deleteclform" action="checklistadmin.php" method="post" onsubmit="return window.confirm('<?php echo $LANG['CONFIRMDELETE'];?>')">
 							<input name="delclid" type="hidden" value="<?php echo $clid; ?>" />
-							<button name="submitaction" type="submit" value="deleteChecklist" <?php if($projArr || count($editorArr) > 1) echo 'DISABLED'; ?>><?php echo $LANG['DELETECHECK'];?></button>
+							<button name="submitaction" type="submit" value="deleteChecklist"  aria-label="<?php echo $LANG['DELETE_THE_CHECK'];?>" <?php if($projArr || count($editorArr) > 1) echo 'DISABLED'; ?>><?php echo $LANG['DELETECHECK'];?></button>
 						</form>
 					</div>
 				</div>
 			</div>
 			<!--
 			<div id="pointtab">
-				<fieldset>
-					<legend>Add New Point</legend>
+				<section class="fieldset-like">
+					<h3><span>Add New Point</span></h3>
 					<form name="pointaddform" target="checklistadmin.php" method="post" onsubmit="return verifyPointAddForm(this)">
 						Taxon<br/>
-						<select name="pointtid" onchange="togglePoint(this.form);">
+						<label for="pointtid">Select Taxon</label>
+						<select id="pointtid" name="pointtid" onchange="togglePoint(this.form);">
 							<option value="">Select Taxon</option>
 							<option value="">-----------------------</option>
 							<?php
@@ -362,7 +365,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							</div>
 						</div>
 					</form>
-				</fieldset>
+				</section>
 			</div>
 			-->
 		</div>

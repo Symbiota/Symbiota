@@ -80,5 +80,9 @@ $LANG['SAVE_EDITS'] = 'Someter Cambios';
 $LANG['ADDCHECKLIST'] = 'Crear Lista Nueva';
 $LANG['DELETETHISU'] = 'Borrar este usuario';
 $LANG['ERROR_LOWER'] = 'Error';
+$LANG['DROP_ICON'] = 'Icono de Colocación';
+$LANG['ADD_AN_EDITOR'] = 'Agregar un Editor';
+$LANG['SUBMIT_BUTTON'] = 'Botón Enviar';
+$LANG['DELETE_THE_CHECK'] = 'Eliminar la Lista de Verificación';
 
 ?>
