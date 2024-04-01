@@ -125,7 +125,7 @@ $clManager->setProj($pid);
 		</style>
 	</head>
 	<body style="background-color:#ffffff;" onload="initialize()">
-      <h1 class="skip-link" style="margin: 0;"></h1>
+      <h1 class="screen-reader-only" style="margin: 0;"></h1>
 		<div id="map_canvas"></div>
       <div 
         id="service-container" 

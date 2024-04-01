@@ -261,7 +261,7 @@ hr {
   padding: 0.5rem 0.9rem;
 }
 
-.skip-link {
+.screen-reader-only {
   position: absolute;
   left: -10000px;
 }

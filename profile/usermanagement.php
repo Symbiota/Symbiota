@@ -97,7 +97,7 @@ if($IS_ADMIN){
 						<button name="submit" type="submit" value="Search"><?php echo (isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search'); ?></button>
 					</form>
 
-					<span class="skip-link">
+					<span class="screen-reader-only">
 						<a href = "#userlist"><?php echo (isset($LANG['SKIP_LINK'])?$LANG['SKIP_LINK']:'Skip to list of users'); ?></a>
 					</span>			
 

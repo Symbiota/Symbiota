@@ -285,7 +285,7 @@ $collManager->cleanOutArr($collData);
 							<div class="field-block">
 								<span class="field-elem">
 									<label for="institutionCode"> <?php echo (isset($LANG['INST_CODE']) ? htmlspecialchars($LANG['INST_CODE'], HTML_SPECIAL_CHARS_FLAGS) : 'Institution Code'); ?>: </label>
-									<span class="skip-link">
+									<span class="screen-reader-only">
 										<?php
 											echo (isset($LANG['NAME_ONE']) ? $LANG['NAME_ONE'] : '') . ' ';
 										?>
@@ -305,7 +305,7 @@ $collManager->cleanOutArr($collData);
 							<div class="field-block">
 								<span class="field-elem">
 									<label for="collectionCode"> <?php echo (isset($LANG['COLL_CODE']) ? htmlspecialchars($LANG['COLL_CODE'], HTML_SPECIAL_CHARS_FLAGS) : 'Collection Code'); ?>: </label>
-									<span class="skip-link">
+									<span class="screen-reader-only">
 										<?php
 											echo (isset($LANG['NAME_ACRO']) ? $LANG['NAME_ACRO'] : '') . ' ';
 										?>
@@ -371,7 +371,7 @@ $collManager->cleanOutArr($collData);
 							?>
 							<div class="field-block">
 								<span class="field-elem">
-									<span class="skip-link">
+									<span class="screen-reader-only">
 										<?php
 											echo (isset($LANG['EXPLAIN_PUBLIC']) ? $LANG['EXPLAIN_PUBLIC'] : '') . ' ';
 										?>
@@ -388,7 +388,7 @@ $collManager->cleanOutArr($collData);
 							</div>
 							<div class="field-block">
 								<span class="field-elem">
-								<a class="skip-link">
+								<a class="screen-reader-only">
 										<?php
 											echo (isset($LANG['LEGAL_DOC']) ? $LANG['LEGAL_DOC'] : '') . ' ';
 										?>
@@ -439,7 +439,7 @@ $collManager->cleanOutArr($collData);
 							<div class="field-block">
 								<span class="field-elem">
 									<label for="rightsHolder"> <?php echo (isset($LANG['RIGHTS_HOLDER']) ? htmlspecialchars($LANG['RIGHTS_HOLDER'], HTML_SPECIAL_CHARS_FLAGS) : 'Rights Holder'); ?>: </label>
-									<span class="skip-link">
+									<span class="screen-reader-only">
 										<?php
 											echo (isset($LANG['HOLDER_DEF']) ? $LANG['HOLDER_DEF'] : '') . ' ';
 										?>
@@ -459,7 +459,7 @@ $collManager->cleanOutArr($collData);
 							<div class="field-block">
 								<span class="field-elem">
 									<label for="accessRights"> <?php echo (isset($LANG['ACCESS_RIGHTS']) ? htmlspecialchars($LANG['ACCESS_RIGHTS'], HTML_SPECIAL_CHARS_FLAGS) : 'Access Rights'); ?>: </label>
-									<span class="skip-link">
+									<span class="screen-reader-only">
 										<?php
 											echo (isset($LANG['ACCESS_DEF']) ? $LANG['ACCESS_DEF'] : '') . ' ';
 										?>
@@ -615,7 +615,7 @@ $collManager->cleanOutArr($collData);
 								<div class="field-block" style="clear:both">
 									<span class="field-elem">
 										<label for="sortSeq"> <?php echo (isset($LANG['SORT_SEQUENCE']) ? htmlspecialchars($LANG['SORT_SEQUENCE'], HTML_SPECIAL_CHARS_FLAGS) : 'Sort Sequence'); ?>: </label>
-										<span class="skip-link">
+										<span class="screen-reader-only">
 											<?php
 												echo (isset($LANG['LEAVE_IF_ALPHABET']) ? $LANG['LEAVE_IF_ALPHABET'] : 'Leave this field empty if you want the collections to sort alphabetically (default)') . ' ';
 											?>
@@ -635,7 +635,7 @@ $collManager->cleanOutArr($collData);
 							<div class="field-block">
 								<span class="field-elem">
 									<label for="collectionID"> <?php echo (isset($LANG['COLLECTION_ID']) ? htmlspecialchars($LANG['COLLECTION_ID'], HTML_SPECIAL_CHARS_FLAGS) : 'Collection ID (GUID)'); ?>: </label>
-									<span class="skip-link">
+									<span class="screen-reader-only">
 											<?php
 												echo (isset($LANG['EXPLAIN_COLLID']) ? $LANG['EXPLAIN_COLLID'] : '') . ' ';
 											?>

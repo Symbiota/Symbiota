@@ -11,7 +11,7 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
 <div class="header-wrapper">
 	<header>
 		<div class="top-wrapper">
-			<a class="skip-link" href="#end-nav"><?php echo $LANG['SKIP_NAV'] ?></a>
+			<a class="screen-reader-only" href="#end-nav"><?php echo $LANG['SKIP_NAV'] ?></a>
 			<nav class="top-login" aria-label="horizontal-nav">
 				<?php
 				if ($USER_DISPLAY_NAME) {

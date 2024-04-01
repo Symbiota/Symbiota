@@ -160,7 +160,7 @@ else{
 	</style>
 </head>
 <body style="margin-left: 0px; margin-right: 0px;background-color:white;">
-	<a class="skip-link" href="#skip-search"><?php echo $LANG['SKIP_SEARCH'] ?></a>
+	<a class="screen-reader-only" href="#skip-search"><?php echo $LANG['SKIP_SEARCH'] ?></a>
 	<div id="innertext" style="max-width: 100vw">
 		<?php
 		if(($isEditor || $crowdSourceMode)){

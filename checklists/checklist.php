@@ -326,7 +326,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 				<div class="printoff" id="cloptiondiv">
 					<div style="">
 						<form id="optionform" name="optionform" action="checklist.php" method="post">
-						<span class="skip-link">
+						<span class="screen-reader-only">
 							<a href = "#img-container"><?php echo $LANG['SKIP_LINK']; ?></a>
 						</span>
 							<fieldset style="background-color:white;padding-bottom:10px;">
@@ -548,28 +548,28 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 							<?php
 							echo '<b>' . $LANG['FAMILIES'] . '</b>: ';
 							echo $clManager->getFamilyCount();
-							echo '<span class="skip-link">.</span>';
+							echo '<span class="screen-reader-only">.</span>';
 							?>
 						</div>
 						<div style="margin:3px;">
 							<?php
 							echo '<b>' . $LANG['GENERA'] . '</b>: ';
 							echo $clManager->getGenusCount();
-							echo '<span class="skip-link">.</span>';
+							echo '<span class="screen-reader-only">.</span>';
 							?>
 						</div>
 						<div style="margin:3px;">
 							<?php
 							echo '<b>' . $LANG['SPECIES'] . '</b>: ';
 							echo $clManager->getSpeciesCount();
-							echo '<span class="skip-link">.</span>';
+							echo '<span class="screen-reader-only">.</span>';
 							?>
 						</div>
 						<div style="margin:3px;">
 							<?php
 							echo '<b>' . $LANG['TOTAL_TAXA'] . '</b>: ';
 							echo $clManager->getTaxaCount();
-							echo '<span class="skip-link">.</span>';
+							echo '<span class="screen-reader-only">.</span>';
 							?>
 						</div>
 					</div>
