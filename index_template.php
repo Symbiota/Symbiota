@@ -14,6 +14,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 	?>
 </head>
 <body>
+	<h1 class="page-heading"><?php echo $DEFAULT_TITLE; ?> Home</h1>
 	<?php
 	include($SERVER_ROOT . '/includes/header.php');
 	?>

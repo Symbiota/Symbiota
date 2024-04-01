@@ -70,6 +70,7 @@ $guidManager->setNamespace($namespace);
 	</style>
 </head>
 <body>
+	<h1 class="page-heading">IGSN Verification</h1>
 <?php
 $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');

@@ -190,6 +190,7 @@ if ($isEditor) {
 </head>
 
 <body>
+	<h1 class="page-heading">Data Publisher</h1>
 	<?php
 	$displayLeftMenu = (isset($collections_datasets_datapublisherMenu) ? $collections_datasets_datapublisherMenu : 'true');
 	include($SERVER_ROOT . '/includes/header.php');

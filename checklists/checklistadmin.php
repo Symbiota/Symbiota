@@ -152,6 +152,7 @@ $clArray = $clManager->cleanOutArray($clArray);
 	</style>
 </head>
 <body>
+	<h1 class="page-heading">Checklist Admin</h1>
 <?php
 //$HEADER_URL = '';
 //if(isset($clArray['headerurl']) && $clArray['headerurl']) $HEADER_URL = $CLIENT_ROOT.$clArray['headerurl'];

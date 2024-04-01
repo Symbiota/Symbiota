@@ -123,6 +123,7 @@ if(isset($sesarProfile['generationMethod'])) $generationMethod = $sesarProfile['
 	</style>
 </head>
 <body>
+	<h1 class="page-heading"><?= $LANG['IGSN_MANAGE']; ?></h1>
 <?php
 $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');

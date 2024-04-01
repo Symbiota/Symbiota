@@ -95,6 +95,7 @@ $clMetaArr = $clManager->getClMetadata();
 	</style>
 </head>
 <body>
+	<h1 class="page-heading">Voucher Administration</h1>
 <?php
 //$HEADER_URL = '';
 //if(isset($clArray['headerurl']) && $clArray['headerurl']) $HEADER_URL = $CLIENT_ROOT.$clArray['headerurl'];

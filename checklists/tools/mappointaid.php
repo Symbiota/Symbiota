@@ -155,6 +155,7 @@ else{
 		</script>
 	</head>
 	<body style="background-color:#ffffff;" onload="initialize()">
+		<h1 class="page-heading">Map Point Helper</h1>
 		<div style="">
 			<div>
             <?php echo isset($LANG['MPR_INSTRUCTIONS']) ?$LANG['MPR_INSTRUCTIONS']: 'Click once to capture coordinates. Click on the submit button to transfer coordinates.' ?>

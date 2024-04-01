@@ -257,6 +257,7 @@ $metaJson = json_encode($clMeta);
       </style>
    </head>
    <body style="background-color:#ffffff;" onload="initialize();">
+      <h1 class="page-heading">Checklist Map</h1>
       <?php
          if(!$coordArr){
             ?>

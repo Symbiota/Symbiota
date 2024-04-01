@@ -229,6 +229,7 @@ if(!$zoomInt){
    </script>
 </head>
 <body style="background-color:#ffffff;" onload="initialize()">
+   <h1 class="page-heading">Dynamic Map</h1>
    <div
       id="service-container"
       class="service-container"

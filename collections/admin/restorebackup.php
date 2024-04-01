@@ -142,6 +142,7 @@ $duManager->loadFieldMap(true);
 	</script>
 </head>
 <body>
+	<h1 class="page-heading">Restore Backup</h1>
 <?php
 $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');

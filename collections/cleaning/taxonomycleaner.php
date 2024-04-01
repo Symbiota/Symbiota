@@ -152,6 +152,7 @@ elseif($activeCollArr){
 		</style>
 	</head>
 	<body>
+		<h1 class="page-heading">Taxonomy Cleaner</h1>
 		<?php
 		$displayLeftMenu = (isset($taxa_admin_taxonomycleanerMenu)?$taxa_admin_taxonomycleanerMenu:'true');
 		include($SERVER_ROOT.'/includes/header.php');

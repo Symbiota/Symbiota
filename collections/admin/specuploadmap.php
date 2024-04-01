@@ -255,6 +255,7 @@ if($isEditor && $collid){
 	</style>
 </head>
 <body>
+	<h1 class="page-heading"><?= $LANG['UP_MODULE']; ?></h1>
 <?php
 $displayLeftMenu = (isset($collections_admin_specuploadMenu) ? $collections_admin_specuploadMenu:false);
 include($SERVER_ROOT.'/includes/header.php');
@@ -267,7 +268,6 @@ include($SERVER_ROOT.'/includes/header.php');
 </div>
 <div id="innertext">
 	<?php
-	echo '<h1>'.(isset($LANG['UP_MODULE']) ? $LANG['UP_MODULE'] : 'Data Upload Module').'</h1>';
 	if($statusStr){
 		echo '<hr />';
 		echo '<div>'.$statusStr.'</div>';

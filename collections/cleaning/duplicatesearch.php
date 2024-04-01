@@ -97,6 +97,7 @@ if($collMap){
 	</script>
 </head>
 <body style="margin-left:10px; width: 100%">
+	<h1 class="page-heading">Duplicate Search</h1>
 	<div class='navpath' style="margin:10px">
 		<a href="../../index.php"><?php echo $LANG['HOME']; ?></a> &gt;&gt;
 		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1"><?php echo $LANG['COL_MAN']; ?></a> &gt;&gt;

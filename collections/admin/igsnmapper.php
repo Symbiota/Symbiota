@@ -169,6 +169,7 @@ if($action == 'populateGUIDs'){
 	</style>
 </head>
 <body>
+	<h1 class="page-heading"><?= $LANG['IGSN_GUID_MAPPER']; ?></h1>
 <?php
 $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');

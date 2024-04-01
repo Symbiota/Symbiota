@@ -132,6 +132,7 @@ if($action && $isEditor){
 	</script>
 </head>
 <body>
+	<h1 class="page-heading">Political Units</h1>
 	<?php
 	$displayLeftMenu = false;
 	include($SERVER_ROOT.'/includes/header.php');

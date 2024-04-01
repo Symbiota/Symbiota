@@ -104,6 +104,7 @@ if($isEditor && $collid){
 	<script src="../../js/symb/shared.js" type="text/javascript"></script>
 </head>
 <body>
+	<h1 class="page-heading"><?= $LANG['UP_MODULE']; ?></h1>
 <?php
 $displayLeftMenu = (isset($collections_admin_specuploadMenu) ? $collections_admin_specuploadMenu:false);
 include($SERVER_ROOT.'/includes/header.php');
@@ -116,7 +117,6 @@ include($SERVER_ROOT.'/includes/header.php');
 </div>
 <div id="innertext">
 	<?php
-	echo '<h1>'.(isset($LANG['UP_MODULE']) ? $LANG['UP_MODULE'] : 'Data Upload Module').'</h1>';
 	if($isEditor && $collid){
 		//Grab collection name and last upload date and display for all
 		echo '<div style="font-weight:bold;font-size:130%;">'.$duManager->getCollInfo('name').'</div>';

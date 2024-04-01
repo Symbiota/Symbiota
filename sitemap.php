@@ -39,6 +39,7 @@ $smManager = new SiteMapManager();
 	</style>
 </head>
 <body>
+	<h1 class="page-heading">Sitemap</h1>
 	<?php
 	$displayLeftMenu = (isset($sitemapMenu)?$sitemapMenu:"true");
 	include($SERVER_ROOT.'/includes/header.php');

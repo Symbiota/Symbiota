@@ -157,6 +157,7 @@ $duManager->readUploadParameters();
 	</script>
 </head>
 <body onload="<?php if($uspid && $action) echo 'adjustParameterForm()'; ?>">
+	<h1 class="page-heading"><?= $LANG['DAT_UP_MAN']; ?></h1>
 <?php
 	$displayLeftMenu = (isset($collections_admin_specuploadMenu) ? $collections_admin_specuploadMenu : false);
 	include($SERVER_ROOT.'/includes/header.php');
@@ -183,7 +184,6 @@ $duManager->readUploadParameters();
 ?>
 <!-- This is inner text! -->
 <div id="innertext">
-	<h1><?php echo (isset($LANG['DAT_UP_MAN']) ? $LANG['DAT_UP_MAN'] : 'Data Upload Management'); ?></h1>
 	<?php
 	if($statusStr){
 		echo '<hr />';

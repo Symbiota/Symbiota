@@ -12,6 +12,7 @@ header('Location: '.$CLIENT_ROOT.'/index.php');
 		?>
 	</head>
 	<body>
+		<h1 class="page-heading">Access Denied</h1>
 		<?php
 		$displayLeftMenu = false;
 		include($SERVER_ROOT.'/includes/header.php');

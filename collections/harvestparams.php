@@ -50,6 +50,7 @@ $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ??
 	</style>
 </head>
 <body>
+	<h1 class="page-heading">Search</h1>
 <?php
 	$displayLeftMenu = (isset($collections_harvestparamsMenu)?$collections_harvestparamsMenu:false);
 	include($SERVER_ROOT.'/includes/header.php');

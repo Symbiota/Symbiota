@@ -46,6 +46,7 @@ if($collMap['colltype'] == 'General Observations' && $obsUid !== 0){
 	?>
 </head>
 <body>
+	<h1 class="page-heading">Field Standardization</h1>
 	<?php
 	$displayLeftMenu = false;
 	if(!$dupArr) include($SERVER_ROOT.'/includes/header.php');

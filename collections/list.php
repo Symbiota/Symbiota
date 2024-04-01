@@ -120,6 +120,7 @@ $_SESSION['citationvar'] = $searchVar;
 </head>
 
 <body>
+	<h1 class="page-heading">Collections List</h1>
 	<?php
 	$displayLeftMenu = (isset($collections_listMenu) ? $collections_listMenu : false);
 	include($SERVER_ROOT . '/includes/header.php');

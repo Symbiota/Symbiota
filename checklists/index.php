@@ -31,6 +31,7 @@ $clManager->setProj($pid);
 	</style>
 </head>
 <body>
+	<h1 class="page-heading">Checklists</h1>
 	<?php
 	$displayLeftMenu = (isset($checklists_indexMenu)?$checklists_indexMenu:'true');
 	include($SERVER_ROOT.'/includes/header.php');

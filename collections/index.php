@@ -50,6 +50,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 		</script>
 	</head>
 	<body>
+		<h1 class="page-heading">Collections</h1>
 	<?php
 	$displayLeftMenu = (isset($collections_indexMenu)?$collections_indexMenu:false);
 	include($SERVER_ROOT.'/includes/header.php');

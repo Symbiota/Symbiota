@@ -65,6 +65,7 @@ $uuidManager = new UuidFactory();
     </script>
 </head>
 <body>
+	<h1 class="page-heading">GUID Mapper</h1>
 <?php
 $displayLeftMenu = (isset($admin_guidmapperMenu)?$admin_guidmapperMenu:"true");
 include($SERVER_ROOT.'/includes/header.php');

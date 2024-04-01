@@ -41,6 +41,7 @@ if($collMap['colltype'] == 'General Observations'){
 	</style>
 </head>
 <body>
+	<h1 class="page-heading">Collection Cleaner</h1>
 	<?php
 	$displayLeftMenu = false;
 	include($SERVER_ROOT.'/includes/header.php');

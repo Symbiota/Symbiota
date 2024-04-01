@@ -45,6 +45,7 @@ if($isEditor){
 	</script>
 </head>
 <body>
+	<h1 class="page-heading">Image Recycler</h1>
 	<?php
 	$displayLeftMenu = false;
 	include($SERVER_ROOT.'/includes/header.php');
