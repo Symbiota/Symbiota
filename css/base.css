@@ -397,3 +397,8 @@ ol.mp_list li.mp_highlighted {
   color: #212121;
   border-radius: 4px;
 }
+
+.screen-reader-only {
+  position: absolute;
+  left: -10000px;
+}
