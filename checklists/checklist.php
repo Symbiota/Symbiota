@@ -142,7 +142,6 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 	</style>
 </head>
 <body>
-	<h1 class="page-heading">Checklist</h1>
 	<?php
 	$HEADER_URL = '';
 	if(isset($clArray['headerurl']) && $clArray['headerurl']) $HEADER_URL = $CLIENT_ROOT.$clArray['headerurl'];
@@ -164,6 +163,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 	?>
 	<!-- This is inner text! -->
 	<div id='innertext'>
+		<h1 class="page-heading">Checklist</h1>
 		<?php
 		if(($clid || $dynClid) && $clArray && is_numeric($isEditor)){
 			if($clid && $isEditor){

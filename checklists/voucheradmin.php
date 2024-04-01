@@ -95,7 +95,6 @@ $clMetaArr = $clManager->getClMetadata();
 	</style>
 </head>
 <body>
-	<h1 class="page-heading">Voucher Administration</h1>
 <?php
 //$HEADER_URL = '';
 //if(isset($clArray['headerurl']) && $clArray['headerurl']) $HEADER_URL = $CLIENT_ROOT.$clArray['headerurl'];
@@ -109,6 +108,7 @@ include($SERVER_ROOT.'/includes/header.php');
 </div>
 <!-- This is inner text! -->
 <div id='innertext'>
+	<h1 class="page-heading">Voucher Administration</h1>
 <div class="voucher-admin-header">
 	<a href="checklist.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>">
 		<?php echo $clManager->getClName(); ?>

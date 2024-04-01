@@ -152,7 +152,6 @@ $clArray = $clManager->cleanOutArray($clArray);
 	</style>
 </head>
 <body>
-	<h1 class="page-heading">Checklist Admin</h1>
 <?php
 //$HEADER_URL = '';
 //if(isset($clArray['headerurl']) && $clArray['headerurl']) $HEADER_URL = $CLIENT_ROOT.$clArray['headerurl'];
@@ -165,6 +164,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	<b><?php echo $LANG['CHECKLIST_ADMIN']; ?></b>
 </div>
 <div id='innertext'>
+	<h1 class="page-heading">Checklist Admin</h1>
 	<div style="color:#990000;font-size:20px;font-weight:bold;margin:0px 10px 10px 0px;">
 		<a href="checklist.php?clid=<?php echo $clid . '&pid=' . $pid; ?>">
 			<?php echo $clManager->getClName(); ?>

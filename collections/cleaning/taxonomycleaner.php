@@ -152,7 +152,6 @@ elseif($activeCollArr){
 		</style>
 	</head>
 	<body>
-		<h1 class="page-heading">Taxonomy Cleaner</h1>
 		<?php
 		$displayLeftMenu = (isset($taxa_admin_taxonomycleanerMenu)?$taxa_admin_taxonomycleanerMenu:'true');
 		include($SERVER_ROOT.'/includes/header.php');
@@ -176,6 +175,7 @@ elseif($activeCollArr){
 		</div>
 		<!-- inner text block -->
 		<div id="innertext">
+			<h1 class="page-heading">Taxonomy Cleaner</h1>
 			<?php
 			$collMap = $cleanManager->getCollMap();
 			if($collid){

@@ -70,8 +70,7 @@ $guidManager->setNamespace($namespace);
 	</style>
 </head>
 <body>
-	<h1 class="page-heading">IGSN Verification</h1>
-<?php
+	<?php
 $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
@@ -84,6 +83,7 @@ include($SERVER_ROOT.'/includes/header.php');
 </div>
 <!-- This is inner text! -->
 <div id="innertext">
+	<h1 class="page-heading">IGSN Verification</h1>
 	<?php
 	if($isEditor){
 		echo '<h3>' . $LANG['IGSN_MANAGE'] . ': '.$guidManager->getCollectionName().'</h3>';

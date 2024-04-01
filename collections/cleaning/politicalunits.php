@@ -132,7 +132,6 @@ if($action && $isEditor){
 	</script>
 </head>
 <body>
-	<h1 class="page-heading">Political Units</h1>
 	<?php
 	$displayLeftMenu = false;
 	include($SERVER_ROOT.'/includes/header.php');
@@ -145,9 +144,10 @@ if($action && $isEditor){
 		if($mode) echo '&gt;&gt; <a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '"><b>' . htmlspecialchars($LANG['POL_GEO_CLEAN_MENU'], HTML_SPECIAL_CHARS_FLAGS) . '</b></a>';
 		?>
 	</div>
-
+	
 	<!-- inner text -->
 	<div id="innertext">
+		<h1 class="page-heading">Political Units</h1>
 		<?php
 		if($statusStr){
 			?>

@@ -65,8 +65,7 @@ $uuidManager = new UuidFactory();
     </script>
 </head>
 <body>
-	<h1 class="page-heading">GUID Mapper</h1>
-<?php
+	<?php
 $displayLeftMenu = (isset($admin_guidmapperMenu)?$admin_guidmapperMenu:"true");
 include($SERVER_ROOT.'/includes/header.php');
 ?>
@@ -77,6 +76,7 @@ include($SERVER_ROOT.'/includes/header.php');
 </div>
 <!-- This is inner text! -->
 <div id="innertext">
+	<h1 class="page-heading">GUID Mapper</h1>
 	<?php
 	if($isEditor){
 		?>

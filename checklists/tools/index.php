@@ -12,13 +12,13 @@ header('Location: '.$CLIENT_ROOT.'/index.php');
 		?>
 	</head>
 	<body>
-		<h1 class="page-heading">Checklist Tools</h1>
 		<?php
 		$displayLeftMenu = false;
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<!-- This is inner text! -->
 		<div id="innertext">
+			<h1 class="page-heading">Checklist Tools</h1>
 			<h1>Forbidden</h1>
 			<div style="font-weight:bold;">
 				You don't have permission to access this page.

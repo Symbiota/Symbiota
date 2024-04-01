@@ -46,7 +46,6 @@ if($collMap['colltype'] == 'General Observations' && $obsUid !== 0){
 	?>
 </head>
 <body>
-	<h1 class="page-heading">Field Standardization</h1>
 	<?php
 	$displayLeftMenu = false;
 	if(!$dupArr) include($SERVER_ROOT.'/includes/header.php');
@@ -56,9 +55,10 @@ if($collMap['colltype'] == 'General Observations' && $obsUid !== 0){
 		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo $LANG['COLLECTION_MANAGEMENT'] ?></a> &gt;&gt;
 		<b><?php echo $LANG['BATCH_FIELD_TOOLS'] ?></b>
 	</div>
-
+	
 	<!-- inner text -->
 	<div id="innertext">
+		<h1 class="page-heading">Field Standardization</h1>
 		<?php
 		if($statusStr){
 			?>

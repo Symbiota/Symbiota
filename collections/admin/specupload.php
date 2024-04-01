@@ -100,8 +100,7 @@ elseif($uploadType == $DIRECTUPLOAD || $uploadType == $STOREDPROCEDURE || $uploa
 	</script>
 </head>
 <body>
-	<h1 class="page-heading"><?= $LANG['UP_MODULE']; ?></h1>
-<?php
+	<?php
 $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
@@ -112,6 +111,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	<b><?php echo (isset($LANG['SPEC_UPLOAD'])?$LANG['SPEC_UPLOAD']:'Specimen Uploader'); ?></b>
 </div>
 <div id="innertext">
+	<h1 class="page-heading"><?= $LANG['UP_MODULE']; ?></h1>
 	<?php
 	if($isEditor && $collid){
 		//Grab collection name and last upload date and display for all

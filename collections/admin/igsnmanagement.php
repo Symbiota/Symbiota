@@ -123,8 +123,7 @@ if(isset($sesarProfile['generationMethod'])) $generationMethod = $sesarProfile['
 	</style>
 </head>
 <body>
-	<h1 class="page-heading"><?= $LANG['IGSN_MANAGE']; ?></h1>
-<?php
+	<?php
 $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
@@ -135,6 +134,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	<b><?php echo $LANG['IGSN_MANAGE'] ?></b>
 </div>
 <div id="innertext">
+	<h1 class="page-heading"><?= $LANG['IGSN_MANAGE']; ?></h1>
 	<?php
 	if($isEditor && $collid){
 		echo '<h3>' . $LANG['IGSN_MANAGE'] . ': '.$guidManager->getCollectionName().'</h3>';

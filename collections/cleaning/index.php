@@ -41,7 +41,6 @@ if($collMap['colltype'] == 'General Observations'){
 	</style>
 </head>
 <body>
-	<h1 class="page-heading">Collection Cleaner</h1>
 	<?php
 	$displayLeftMenu = false;
 	include($SERVER_ROOT.'/includes/header.php');
@@ -51,9 +50,10 @@ if($collMap['colltype'] == 'General Observations'){
 		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"> <?php echo (isset($LANG['COLL_MNGMT']) ? $LANG['COLL_MNGMT'] : 'Collection Management') ?> </a> &gt;&gt;
 		<b> <?php echo (isset($LANG['DATA_CLEAN']) ? $LANG['DATA_CLEAN'] : 'Data Cleaning Module') ?> </b>
 	</div>
-
+	
 	<!-- inner text -->
 	<div id="innertext" style="background-color:white;">
+		<h1 class="page-heading">Collection Cleaner</h1>
 		<?php
 		if($isEditor){
 			echo '<h1>' . $collMap['collectionname'] .' (' . $collMap['code'] . ')</h1>';

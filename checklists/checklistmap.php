@@ -257,8 +257,7 @@ $metaJson = json_encode($clMeta);
       </style>
    </head>
    <body style="background-color:#ffffff;" onload="initialize();">
-      <h1 class="page-heading">Checklist Map</h1>
-      <?php
+      <h1 class="page-heading screen-reader-only">Checklist Map</h1><?php
          if(!$coordArr){
             ?>
             <h1 class="for-screen-reader"><?= $LANG['NO_COORDS_HEADER']; ?></h1>

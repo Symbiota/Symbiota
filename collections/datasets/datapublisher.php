@@ -190,7 +190,6 @@ if ($isEditor) {
 </head>
 
 <body>
-	<h1 class="page-heading">Data Publisher</h1>
 	<?php
 	$displayLeftMenu = (isset($collections_datasets_datapublisherMenu) ? $collections_datasets_datapublisherMenu : 'true');
 	include($SERVER_ROOT . '/includes/header.php');
@@ -212,6 +211,7 @@ if ($isEditor) {
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext" class="accessible-font">
+		<h1 class="page-heading">Data Publisher</h1>
 		<?php
 		if (!$collid && $IS_ADMIN) {
 			?>

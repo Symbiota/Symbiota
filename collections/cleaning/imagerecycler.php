@@ -45,7 +45,6 @@ if($isEditor){
 	</script>
 </head>
 <body>
-	<h1 class="page-heading">Image Recycler</h1>
 	<?php
 	$displayLeftMenu = false;
 	include($SERVER_ROOT.'/includes/header.php');
@@ -59,6 +58,7 @@ if($isEditor){
 	if($collid){
 		?>
 		<div id="innertext">
+			<h1 class="page-heading">Image Recycler</h1>
 			<form name="imgdelform" action="imagerecycler.php" method="post" enctype="multipart/form-data" onsubmit="return verifyRecycleForm(this)">
 				<fieldset style="width:90%;">
 					<legend style="font-weight:bold;font-size:120%;"><?php echo $LANG['BATCH_IMAGE_REMOVER'] ?></legend>

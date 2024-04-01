@@ -97,7 +97,6 @@ if($collMap){
 	</script>
 </head>
 <body style="margin-left:10px; width: 100%">
-	<h1 class="page-heading">Duplicate Search</h1>
 	<div class='navpath' style="margin:10px">
 		<a href="../../index.php"><?php echo $LANG['HOME']; ?></a> &gt;&gt;
 		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1"><?php echo $LANG['COL_MAN']; ?></a> &gt;&gt;
@@ -105,6 +104,7 @@ if($collMap){
 		<b><?php echo $LANG['DUP_OCCS']; ?></b>
 	</div>
 	<div id="innertext" style="background-color:white; margin:10px; width: 100%; max-width: 100%; padding: 0px;">
+		<h1 class="page-heading">Duplicate Search</h1>
 		<?php
 		if($collMap && $isEditor){
 			if($IS_ADMIN && $limit < 900) echo '<div style="max-width: 1000px">'.$LANG['SUPERADMIN_NOTICE'].'</div>';

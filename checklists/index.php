@@ -31,7 +31,6 @@ $clManager->setProj($pid);
 	</style>
 </head>
 <body>
-	<h1 class="page-heading">Checklists</h1>
 	<?php
 	$displayLeftMenu = (isset($checklists_indexMenu)?$checklists_indexMenu:'true');
 	include($SERVER_ROOT.'/includes/header.php');
@@ -41,7 +40,7 @@ $clManager->setProj($pid);
 		<b><?php echo $LANG['SPECIES_INVENTORIES']; ?></b>
 	</div>
 	<div id="innertext">
-		<h1><?php echo $LANG['SPECIES_INVENTORIES']; ?></h1>
+		<h1 class="page-heading"><?= $LANG['SPECIES_INVENTORIES']; ?></h1>
         <div style="margin:20px;">
 			<?php
             $researchArr = $clManager->getChecklists();
