@@ -409,13 +409,15 @@ class OccurrenceIndividual extends Manager{
 			}
 		}
 		if($relOccidArr){
-			$sql = 'SELECT o.occid, CONCAT_WS("-",IFNULL(o.institutioncode,c.institutioncode),IFNULL(o.collectioncode,c.collectioncode)) as collcode, IFNULL(o.catalogNumber,o.otherCatalogNumbers) as catnum
+			$sql = 'SELECT o.occid, o.sciname,
+				CONCAT_WS("-",IFNULL(o.institutioncode, c.institutioncode), IFNULL(o.collectioncode, c.collectioncode)) as collcode, IFNULL(o.catalogNumber, o.otherCatalogNumbers) as catnum
 				FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid
 				WHERE o.occid IN(' . implode(',', array_keys($relOccidArr)) . ')';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				foreach($relOccidArr[$r->occid] as $targetAssocID){
 					$this->occArr['relation'][$targetAssocID]['objectID'] = $r->collcode . ':' . $r->catnum;
+					$this->occArr['relation'][$targetAssocID]['sciname'] = $r->sciname;
 				}
 			}
 			$rs->free();

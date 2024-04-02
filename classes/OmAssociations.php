@@ -70,8 +70,8 @@ class OmAssociations extends Manager{
 			}
 		}
 		if($relOccidArr){
-			//Get catalog numbers for object occurrences
-			$sql = 'SELECT o.occid, IFNULL(o.institutioncode, c.institutioncode) as instCode, IFNULL(o.collectioncode, c.collectioncode) as collCode, o.catalogNumber
+			//Get catalog numbers and scientific name for object occurrences
+			$sql = 'SELECT o.occid, IFNULL(o.institutioncode, c.institutioncode) as instCode, IFNULL(o.collectioncode, c.collectioncode) as collCode, o.catalogNumber, o.sciname
 				FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid
 				WHERE o.occid IN('.implode(',',array_keys($relOccidArr)).')';
 			$rs = $this->conn->query($sql);
@@ -84,6 +84,7 @@ class OmAssociations extends Manager{
 				}
 				foreach($relOccidArr[$r->occid] as $targetAssocID){
 					$retArr[$targetAssocID]['object-catalogNumber'] = $prefix . $r->catalogNumber;
+					$retArr[$targetAssocID]['verbatimSciname'] = $r->sciname;
 				}
 			}
 			$rs->free();

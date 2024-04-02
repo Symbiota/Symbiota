@@ -80,7 +80,7 @@ class OccurrenceEditorResource extends OccurrenceEditorManager {
 		if($target == 'occid'){
 			if(is_numeric($id)) $sqlWhere .= 'AND (occid = '.$id.') ';
 		}
-		else $sqlWhere .= 'AND ((catalogNumber = "'.$id.'") OR (othercatalognumbers = "'.$id.'")) ';
+		else $sqlWhere .= 'AND ((catalogNumber LIKE "'.$id.'") OR (othercatalognumbers = "'.$id.'")) ';
 		if($sqlWhere){
 			$sql = 'SELECT o.occid, o.catalogNumber, o.otherCatalogNumbers, o.recordedBy, o.recordNumber, IFNULL(o.eventDate,o.verbatimEventDate) as eventDate, '.
 				'CONCAT_WS("-",c.institutionCode,c.collectionCode) AS collcode, o.sciname, o.tidInterpreted '.

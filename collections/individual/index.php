@@ -422,12 +422,12 @@ $traitArr = $indManager->getTraitArr();
 										echo $assocArr['relationship'];
 										if($assocArr['subtype']) echo ' ('.$assocArr['subtype'].')';
 										echo ': ';
-										$relID = $assocArr['identifier'];
+										$relID = $assocArr['objectID'];
 										$relUrl = $assocArr['resourceurl'];
 										if(!$relUrl && $assocArr['occidassoc']) $relUrl = $GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$assocArr['occidassoc'];
 										if($relUrl) $relID = '<a href="' . $relUrl . '">' . $relID . '</a>';
 										if($relID) echo $relID;
-										elseif($assocArr['sciname']) echo $assocArr['sciname'];
+										if($assocArr['sciname']) echo ' [' . $assocArr['sciname'] . ']';
 										echo '</div>';
 										$cnt++;
 									}
