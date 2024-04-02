@@ -163,7 +163,6 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 	?>
 	<!-- This is inner text! -->
 	<div id='innertext'>
-		<h1 class="page-heading">Checklist</h1>
 		<?php
 		if(($clid || $dynClid) && $clArray && is_numeric($isEditor)){
 			if($clid && $isEditor){
@@ -185,9 +184,9 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 				<?php
 			}
 			?>
-			<div id="title-div">
+			<h1 class="page-heading">
 				<?php echo $clManager->getClName(); ?>
-			</div>
+			</h1>
 			<?php
 			if($activateKey){
 				?>

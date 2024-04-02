@@ -122,6 +122,7 @@ if($isEditor && $formSubmit){
 
 	<!-- inner text -->
 	<div id="innertext">
+		<h1 class="page-heading">Duplicate Manager</h1>
 		<?php
 		if($statusStr){
 			?>
