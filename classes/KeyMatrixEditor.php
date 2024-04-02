@@ -180,7 +180,7 @@ class KeyMatrixEditor extends KeyManager{
 		if(is_numeric($tid)){
 			echo '<tr><td>';
 			echo '<span style="margin-left:'.($indent*10).'px"><b>'.($indent?'<i>':'').htmlspecialchars($sciname, ENT_QUOTES, 'UTF-8').($indent?'</i>':'').'</b></span>';
-			echo '<a href="editor.php?tid='.$tid.'" target="_blank"> <img src="../../images/edit.png" /></a>';
+			echo '<a href="editor.php?tid=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"> <img src="../../images/edit.png" /></a>';
 			echo '</td>';
 			foreach($this->stateArr as $cs => $csName){
 				$isSelected = false;

@@ -363,7 +363,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 				$iconStr = $this->googleIconArr[$cnt%44];
 				echo "<Style id='sn_".$iconStr."'>\n";
 				echo "<IconStyle><scale>1.1</scale><Icon>";
-				echo "<href>http://maps.google.com/mapfiles/kml/".$iconStr.".png</href>";
+				echo "<href>http://maps.google.com/mapfiles/kml/" . htmlspecialchars($iconStr, HTML_SPECIAL_CHARS_FLAGS) . ".png</href>";
 				echo "</Icon><hotSpot x='20' y='2' xunits='pixels' yunits='pixels'/></IconStyle>\n</Style>\n";
 				echo "<Style id='sh_".$iconStr."'>\n";
 				echo "<IconStyle><scale>1.3</scale><Icon>";
@@ -474,27 +474,6 @@ class OccurrenceMapManager extends OccurrenceManager {
 		}
 		$rs->free();
 		return $retVar;
-	}
-
-	public function hasFullSpatialSupport(){
-		$serverStr = '';
-		if(mysqli_get_server_info($this->conn)) $serverStr = mysqli_get_server_info($this->conn);
-		else $serverStr = shell_exec('mysql -V');
-		if($serverStr){
-			if(strpos($serverStr,'MariaDB') !== false) return true;
-			else{	//db = mysql;
-				preg_match('@[0-9]+\.[0-9]+\.[0-9]+@',$serverStr,$m);
-				$mysqlVerNums = explode(".", $m[0]);
-				if($mysqlVerNums[0] > 5) return true;
-				elseif($mysqlVerNums[0] == 5){
-					if($mysqlVerNums[1] > 6) return true;
-					elseif($mysqlVerNums[1] == 6){
-						if($mysqlVerNums[2] >= 1) return true;
-					}
-				}
-			}
-		}
-		return false;
 	}
 
 	//Misc support functions

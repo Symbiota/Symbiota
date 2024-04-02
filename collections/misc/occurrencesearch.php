@@ -6,10 +6,10 @@ header('Content-Type: text/html; charset='.$CHARSET);
 $targetId = filter_var($_REQUEST['targetid'], FILTER_SANITIZE_NUMBER_INT);
 $collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $action = array_key_exists('action', $_POST) ? $_POST['action'] : '';
-$catalogNumber = array_key_exists('catalognumber',$_POST) ? filter_var($_POST['catalognumber'], FILTER_SANITIZE_STRING) : '';
-$otherCatalogNumbers = array_key_exists('othercatalognumbers',$_POST) ? filter_var($_POST['othercatalognumbers'], FILTER_SANITIZE_STRING) : '';
-$recordedBy = array_key_exists('recordedby',$_POST) ? filter_var($_POST['recordedby'], FILTER_SANITIZE_STRING) : '';
-$recordNumber = array_key_exists('recordnumber',$_POST) ? filter_var($_POST['recordnumber'], FILTER_SANITIZE_STRING) : '';
+$catalogNumber = array_key_exists('catalognumber',$_POST) ? $_POST['catalognumber'] : '';
+$otherCatalogNumbers = array_key_exists('othercatalognumbers',$_POST) ? $_POST['othercatalognumbers'] : '';
+$recordedBy = array_key_exists('recordedby',$_POST) ? $_POST['recordedby'] : '';
+$recordNumber = array_key_exists('recordnumber',$_POST) ? $_POST['recordnumber'] : '';
 
 $collEditorArr = array();
 if(array_key_exists('CollAdmin',$USER_RIGHTS)) $collEditorArr = $USER_RIGHTS['CollAdmin'];
@@ -17,7 +17,8 @@ if(array_key_exists('CollEditor',$USER_RIGHTS)) $collEditorArr = array_unique(ar
 
 $occManager = new OccurrenceSupport();
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Search Page</title>
@@ -25,8 +26,8 @@ $occManager = new OccurrenceSupport();
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script src="../../js/jquery.js" type="text/javascript"></script>
-	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		function updateParentForm(occId) {
 			if(opener.document.getElementById("imgdisplay-<?php echo $targetId;?>")){
@@ -120,19 +121,19 @@ $occManager = new OccurrenceSupport();
 					</div>
 					<div style="clear:both;padding:2px;">
 						<div style="float:left;width:130px;">Catalog #:</div>
-						<div style="float:left;"><input name="catalognumber" type="text" value="<?php echo $catalogNumber; ?>" /></div>
+						<div style="float:left;"><input name="catalognumber" type="text" value="<?= htmlspecialchars($catalogNumber, HTML_SPECIAL_CHARS_FLAGS) ?>" /></div>
 					</div>
 					<div style="clear:both;padding:2px;">
 						<div style="float:left;width:130px;">Other Catalog #:</div>
-						<div style="float:left;"><input name="othercatalognumbers" type="text" value="<?php echo $otherCatalogNumbers; ?>" /></div>
+						<div style="float:left;"><input name="othercatalognumbers" type="text" value="<?= htmlspecialchars($otherCatalogNumbers, HTML_SPECIAL_CHARS_FLAGS) ?>" /></div>
 					</div>
 					<div style="clear:both;padding:2px;">
 						<div style="float:left;width:130px;">Collector Last Name:</div>
-						<div style="float:left;"><input name="recordedby" type="text"  value="<?php echo $recordedBy; ?>" /></div>
+						<div style="float:left;"><input name="recordedby" type="text"  value="<?= htmlspecialchars($recordedBy, HTML_SPECIAL_CHARS_FLAGS) ?>" /></div>
 					</div>
 					<div style="clear:both;padding:2px;">
 						<div style="float:left;width:130px;">Collector Number:</div>
-						<div style="float:left;"><input name="recordnumber" type="text" value="<?php echo $recordNumber; ?>" /></div>
+						<div style="float:left;"><input name="recordnumber" type="text" value="<?= htmlspecialchars($recordNumber, HTML_SPECIAL_CHARS_FLAGS) ?>" /></div>
 					</div>
 					<div style="clear:both;padding:2px;">
 						<button name="action" type="submit" value="Search Occurrences">Search Occurrences</button>

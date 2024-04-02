@@ -58,7 +58,7 @@ $genusStr = $taxonEditorObj->cleanOutStr($genusStr);
 				$childArr = $verifyArr['child'];
 				echo '<div style="color:red;">'.(isset($LANG['CHILDREN_EXIST'])?$LANG['CHILDREN_EXIST']:'Warning: children taxa exist for this taxon. They must be remapped before this taxon can be removed').'</div>';
 				foreach($childArr as $childTid => $childSciname){
-					echo '<div style="margin:3px 10px;"><a href="taxoneditor.php?tid='.$childTid.'" target="_blank">'.$childSciname.'</a></div>';
+					echo '<div style="margin:3px 10px;"><a href="taxoneditor.php?tid=' . htmlspecialchars($childTid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($childSciname, HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 				}
 			}
 			else{
@@ -77,7 +77,7 @@ $genusStr = $taxonEditorObj->cleanOutStr($genusStr);
 				$synArr = $verifyArr['syn'];
 				echo '<div style="color:red;">'.(isset($LANG['SYN_EXISTS'])?$LANG['SYN_EXISTS']:'Warning: synonym links exist for this taxon. They must be remapped before this taxon can be removed').'</div>';
 				foreach($synArr as $synTid => $synSciname){
-					echo '<div style="margin:3px 10px;"><a href="taxoneditor.php?tid='.$synTid.'" target="_blank">'.$synSciname.'</a></div>';
+					echo '<div style="margin:3px 10px;"><a href="taxoneditor.php?tid=' . htmlspecialchars($synTid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($synSciname, HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 				}
 			}
 			else{
@@ -94,7 +94,7 @@ $genusStr = $taxonEditorObj->cleanOutStr($genusStr);
 			<?php
 			if($verifyArr['img'] > 0){
 				?>
-				<span style="color:red;"><?php echo (isset($LANG['WARNING'])?$LANG['WARNING']:'Warning').": ".$verifyArr['img'].(isset($LANG['IMGS_LINKED'])?$LANG['IMGS_LINKED']:'images linked to this taxon'); ?></span>
+				<span style="color:red;"><?php echo (isset($LANG['WARNING'])?$LANG['WARNING']:'Warning').": ".$verifyArr['img'].' '.(isset($LANG['IMGS_LINKED'])?$LANG['IMGS_LINKED']:'images linked to this taxon'); ?></span>
 				<?php
 			}
 			else{
@@ -157,7 +157,7 @@ $genusStr = $taxonEditorObj->cleanOutStr($genusStr);
 					<?php
 					foreach($verifyArr['occur'] as $occid){
 						echo '<li>';
-						echo '<a href="../../collections/individual/index.php?occid='.$occid.'">#'.$occid.'</a>';
+						echo '<a href="../../collections/individual/index.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '">#' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 						echo '</li>';
 					}
 					?>
@@ -178,7 +178,7 @@ $genusStr = $taxonEditorObj->cleanOutStr($genusStr);
 					<?php
 					foreach($verifyArr['dets'] as $occid){
 						echo '<li>';
-						echo '<a href="../../collections/individual/index.php?occid='.$occid.'" target="_blank">#'.$occid.'</a>';
+						echo '<a href="../../collections/individual/index.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">#' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 						echo '</li>';
 					}
 					?>
@@ -204,7 +204,7 @@ $genusStr = $taxonEditorObj->cleanOutStr($genusStr);
 				<ul>
 					<?php
 					foreach($clArr as $k => $v){
-						echo '<li><a href="../../checklists/checklist.php?clid='.$k.'" target="_blank">';
+						echo '<li><a href="../../checklists/checklist.php?clid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
 						echo $v;
 						echo '</a></li>';
 					}

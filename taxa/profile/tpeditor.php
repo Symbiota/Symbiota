@@ -116,7 +116,8 @@ if($isEditor && $action){
 	}
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['TAXON_EDITOR'] .': '.$tEditor->getSciName(); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>" />
@@ -125,8 +126,8 @@ if($isEditor && $action){
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script type="text/javascript" src="../../js/symb/shared.js"></script>
-	<script type="text/javascript" src="../../js/jquery.js"></script>
-	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		var clientRoot = "<?php echo $CLIENT_ROOT; ?>";
 
@@ -160,12 +161,12 @@ if($isEditor && $action){
 		}
 	</script>
 	<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
-	<style type="text/css">
+	<style>
 		.sectionDiv{ clear:both; }
 		.sectionDiv div{ float:left }
 		.labelDiv{ margin-right: 5px }
-		#redirectedfrom{ font-size:16px; margin-top:5px; margin-left:10px; font-weight:bold; }
-		#taxonDiv{ font-size:18px; margin-top:15px; margin-left:10px; }
+		#redirectedfrom{ font-size:1rem; margin-top:5px; margin-left:10px; font-weight:bold; }
+		#taxonDiv{ font-size:1.125rem; margin-top:15px; margin-left:10px; }
 		#taxonDiv a{ color:#990000; font-weight: bold; font-style: italic; }
 		#taxonDiv img{ border: 0px; margin: 0px; height: 15px; }
 		#familyDiv{ margin-left:20px; margin-top:0.25em; }
@@ -180,9 +181,9 @@ if($isEditor && $action){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="../../index.php"><?php echo $LANG['HOME']; ?></a> &gt;&gt;
+		<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 		<?php
-		if($tid) echo '<a href="../index.php?tid='.$tid.'">'.$LANG['TAX_PROF_PUBLIC_DISP'].'</a> &gt;&gt; ';
+		if($tid) echo '<a href="../index.php?tid=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($LANG['TAX_PROF_PUBLIC_DISP'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
 		echo '<b>'.$LANG['TAX_PROF_EDITOR'].'</b>';
 		?>
 	</div>
@@ -191,19 +192,19 @@ if($isEditor && $action){
 		if($tEditor->getTid()){
 			if($isEditor){
 				if($tEditor->isForwarded()) echo '<div id="redirectedfrom">'.$LANG['REDIRECTED_FROM'].': <i>'.$tEditor->getSubmittedValue('sciname').'</i></div>';
-				echo '<div id="taxonDiv"><a href="../index.php?taxon='.$tEditor->getTid().'">'.$tEditor->getSciName().'</a> '.$tEditor->getAuthor();
-				if($tEditor->getRankId() > 140) echo "&nbsp;<a href='tpeditor.php?tid=".$tEditor->getParentTid()."'><img src='../../images/toparent.png' title='".$LANG['GO_TO_PARENT']."' /></a>";
+				echo '<div id="taxonDiv"><a href="../index.php?taxon=' . htmlspecialchars($tEditor->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($tEditor->getSciName(), HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($tEditor->getAuthor(), HTML_SPECIAL_CHARS_FLAGS);
+				if($tEditor->getRankId() > 140) echo "&nbsp;<a href='tpeditor.php?tid=" . htmlspecialchars($tEditor->getParentTid(), HTML_SPECIAL_CHARS_FLAGS) . "'><img src='../../images/toparent.png' style='width:1.3em' title='" . htmlspecialchars($LANG['GO_TO_PARENT'], HTML_SPECIAL_CHARS_FLAGS) . "' /></a>";
 				echo "</div>\n";
 				if($tEditor->getFamily()) echo '<div id="familyDiv"><b>'.$LANG['FAMILY'].':</b> '.$tEditor->getFamily().'</div>'."\n";
 				if($statusStr) echo '<div style="margin:15px;font-weight:bold;font-size:120%;color:'.(stripos($statusStr,'error') !== false?'red':'green') .';">'.$statusStr.'</div>';
 				?>
 				<div id="tabs" style="margin:10px;">
 					<ul>
-						<li><a href="#commontab"><span><?php echo $LANG['SYN_VERNAC']; ?></span></a></li>
-						<li><a href="tpimageeditor.php?tid=<?php echo $tEditor->getTid().'"><span>'.$LANG['IMAGES'].'</span></a></li>'; ?>
-						<li><a href="tpimageeditor.php?tid=<?php echo $tEditor->getTid().'&cat=imagequicksort'.'"><span>'.$LANG['IMAGE_SORT'].'</span></a></li>'; ?>
-						<li><a href="tpimageeditor.php?tid=<?php echo $tEditor->getTid().'&cat=imageadd'.'"><span>'.$LANG['ADD_IMAGE'].'</span></a></li>'; ?>
-						<li><a href="tpdesceditor.php?tid=<?php echo $tEditor->getTid().'&action='.$action.'"><span>'.$LANG['DESCRIPTIONS'].'</span></a></li>'; ?>
+						<li><a href="#commontab"><span><?php echo htmlspecialchars($LANG['SYN_VERNAC'], HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
+						<li><a href="tpimageeditor.php?tid=<?php echo htmlspecialchars($tEditor->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '"><span>' . htmlspecialchars($LANG['IMAGES'], HTML_SPECIAL_CHARS_FLAGS) . '</span></a></li>'; ?>
+						<li><a href="tpimageeditor.php?tid=<?php echo htmlspecialchars($tEditor->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '&cat=imagequicksort'.'"><span>' . htmlspecialchars($LANG['IMAGE_SORT'], HTML_SPECIAL_CHARS_FLAGS) . '</span></a></li>'; ?>
+						<li><a href="tpimageeditor.php?tid=<?php echo htmlspecialchars($tEditor->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '&cat=imageadd'.'"><span>' . htmlspecialchars($LANG['ADD_IMAGE'], HTML_SPECIAL_CHARS_FLAGS) . '</span></a></li>'; ?>
+						<li><a href="tpdesceditor.php?tid=<?php echo htmlspecialchars($tEditor->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '&action='.$action.'"><span>' . htmlspecialchars($LANG['DESCRIPTIONS'], HTML_SPECIAL_CHARS_FLAGS) . '</span></a></li>'; ?>
 					</ul>
 					<div id="commontab">
 						<?php
@@ -215,7 +216,7 @@ if($isEditor && $action){
 							<div style="margin:10px 0px" title="<?php echo $LANG['ADD_COMMON_NAME']; ?>">
 								<b><?php echo ($vernacularList?$LANG['COMMON_NAMES']:$LANG['NO_COMMON_NAMES']); ?></b>
 								<a href="#" onclick="toggle('addvern');return false;">
-									<img style="border:0px;width:15px;" src="../../images/add.png"/>
+									<img style="border:0px;width:1.3em;" src="../../images/add.png"/>
 								</a>
 							</div>
 							<div id="addvern" class="addvern" style="display:<?php echo ($vernacularList?'none':'block'); ?>;">
@@ -268,7 +269,7 @@ if($isEditor && $action){
 											<div style="margin-left:10px;" title="<?php echo $LANG['EDIT_COMMON_NAME']; ?>">
 												<b><?php echo $vernArr['vernname']; ?></b>
 												<a href="#" onclick="toggle('vid-<?php echo $vid; ?>');return false;">
-													<img style="border:0px;width:12px;" src="../../images/edit.png" />
+													<img style="border:0px;width:1.2em;" src="../../images/edit.png" />
 												</a>
 											</div>
 											<form name="updatevern" action="tpeditor.php" method="post" style="margin:15px;clear:both">
@@ -345,7 +346,7 @@ if($isEditor && $action){
 							if($synonymArr = $tEditor->getSynonym()){
 								?>
 								<div style="float:right;" title="<?php echo $LANG['EDIT_SYN_ORDER']; ?>">
-									<a href="#"  onclick="toggle('synsort');return false;"><img style="border:0px;width:12px;" src="../../images/edit.png"/></a>
+									<a href="#"  onclick="toggle('synsort');return false;"><img style="border:0px;width:1.2em;" src="../../images/edit.png"/></a>
 								</div>
 								<div style="font-weight:bold;margin-left:15px;">
 									<ul>
@@ -388,7 +389,7 @@ if($isEditor && $action){
 							}
 							?>
 							<div style="margin:10px;">
-								*<?php echo $LANG['MOST_SYN_IN_TAX_THES'].' <a href="../../sitemap.php">'.$LANG['SITEMAP'].'</a>).'; ?>
+								*<?php echo $LANG['MOST_SYN_IN_TAX_THES'].' <a href="../../sitemap.php">' . htmlspecialchars($LANG['SITEMAP'], HTML_SPECIAL_CHARS_FLAGS) . '</a>).'; ?>
 							</div>
 						</fieldset>
 					</div>
@@ -407,7 +408,7 @@ if($isEditor && $action){
 			?>
 			<div style="margin:20px;">
 				<form name="gettidform" action="tpeditor.php" method="post" onsubmit="return checkGetTidForm(this);">
-					<b><?php echo $LANG['SCINAME']; ?>: </b><input id="taxa" name="taxon" value="<?php echo $taxon; ?>" size="40" />
+					<b> <label for="taxa"> <?php echo $LANG['SCINAME']; ?>: </label> </b> <input id="taxa" name="taxon" value="<?php echo $taxon; ?>" size="40" />
 					<input type="hidden" name="tabindex" value="<?php echo $tabIndex; ?>" />
 					<button type="submit" name="action" value="Edit Taxon" ><?php echo $LANG['EDIT_TAXON']; ?></button>
 				</form>
@@ -422,7 +423,7 @@ if($isEditor && $action){
 					$outStr .= $sciArr['author'].'</b> ';
 					if(isset($sciArr['rankname'])) $outStr .= '- '.$sciArr['rankname'].' rank ';
 					if(isset($sciArr['kingdom'])) $outStr .= ' ('.$sciArr['kingdom'].')';
-					echo '<div><a href="tpeditor.php?tid='.$tidKey.'">'.$outStr.'</a></div>';
+					echo '<div><a href="tpeditor.php?tid=' . htmlspecialchars($tidKey, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($outStr, HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 				}
 				echo '</div>';
 			}

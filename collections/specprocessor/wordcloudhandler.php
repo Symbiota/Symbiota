@@ -7,7 +7,8 @@ $collidStr = array_key_exists('collidstr',$_REQUEST)?$_REQUEST['collidstr']:fals
 $csMode = array_key_exists('csmode',$_REQUEST)?$_REQUEST['csmode']:false;
 
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 	    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 		<title><?php echo $DEFAULT_TITLE; ?> - Word Cloud Handler Collections</title>
@@ -31,7 +32,7 @@ $csMode = array_key_exists('csmode',$_REQUEST)?$_REQUEST['csmode']:false;
 				$collidArr = explode(',',$collidStr);
 				foreach($collidArr as $collid){
 					$url = $cloudHandler->buildWordCloud($collid,$csMode);
-					echo '<div class="url-div"><a href="'.$url.'" target="_blank">'.$url.'</a></div>';
+					echo '<div class="url-div"><a href="' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS).'</a></div>';
 				}
 			}
 			else echo '<div>No collid target submitted</div>';

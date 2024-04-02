@@ -433,7 +433,7 @@ class ActionRequest {
       if($this->tablename=="omoccurrences") {
          $occ = new OmOccurrences();
          $occ->load($this->fk);
-         $result = "<a href='../collections/individual/index.php?occid=$this->fk&clid=0'>".$occ->getinstitutionCode().":".$occ->getcollectionCode()." ".$occ->getcatalogNumber()."</a>";
+         $result = "<a href='../collections/individual/index.php?occid=$this->fk&clid=0'>" . htmlspecialchars($occ->getinstitutionCode(), HTML_SPECIAL_CHARS_FLAGS) . ":" . htmlspecialchars($occ->getcollectionCode(), HTML_SPECIAL_CHARS_FLAGS) . " " . htmlspecialchars($occ->getcatalogNumber(), HTML_SPECIAL_CHARS_FLAGS) . "</a>";
       }
       if($this->tablename=="images") {
          $im = new ImageDetailManager($this->fk);
@@ -449,7 +449,7 @@ class ActionRequest {
          }
          $caption .= " " . $imArr['initialtimestamp'];
          $caption = trim($caption);
-         $result = "<a href='../imagelib/imgdetails.php?imgid=$this->fk'>".$caption."</a>";
+         $result = "<a href='../imagelib/imgdetails.php?imgid=$this->fk'>" .  htmlspecialchars($caption, HTML_SPECIAL_CHARS_FLAGS) . "</a>";
       }
       return $result;
    }

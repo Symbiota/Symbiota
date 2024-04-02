@@ -29,11 +29,11 @@ $gameInfo = $gameManager->setOOTD($oodID,$ootdGameChecklist);
 	<div style="font-size:130%;font-weight:bold;">
 		<?php echo $ootdGameTitle; ?>
 	</div>
-	<a href="<?php echo $CLIENT_ROOT; ?>/games/ootd/index.php?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>">
+	<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/games/ootd/index.php?oodid=<?php echo htmlspecialchars($oodID, HTML_SPECIAL_CHARS_FLAGS) . '&cl=' . htmlspecialchars($ootdGameChecklist, HTML_SPECIAL_CHARS_FLAGS) . '&title=' . htmlspecialchars($ootdGameTitle, HTML_SPECIAL_CHARS_FLAGS) . '&type=' . htmlspecialchars($ootdGameType, HTML_SPECIAL_CHARS_FLAGS); ?>">
 		<img src="<?php echo $gameInfo['images'][0]; ?>" style="width:250px;border:0px;" />
 	</a><br/>
 	<b>What is this <?php echo $ootdGameType; ?>?</b><br/>
-	<a href="<?php echo $CLIENT_ROOT; ?>/games/ootd/index.php?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>">
+	<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/games/ootd/index.php?oodid=<?php echo htmlspecialchars($oodID, HTML_SPECIAL_CHARS_FLAGS) . '&cl=' . htmlspecialchars($ootdGameChecklist, HTML_SPECIAL_CHARS_FLAGS) . '&title=' . htmlspecialchars($ootdGameTitle, HTML_SPECIAL_CHARS_FLAGS) . '&type=' . htmlspecialchars($ootdGameType\, HTML_SPECIAL_CHARS_FLAGS); ?>">
 		Click here to test your knowledge
 	</a>
 </div>

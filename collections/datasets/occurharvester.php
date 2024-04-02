@@ -40,7 +40,7 @@ if($isEditor){
 }
 ?>
 <!DOCTYPE HTML>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 	    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 		<title><?php echo $DEFAULT_TITLE; ?> - Occurrence Harvester</title>
@@ -48,8 +48,8 @@ if($isEditor){
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
-		<script src="../../js/jquery.js" type="text/javascript"></script>
-		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 		<script type="text/javascript">
 			function validateDownloadForm(f){
 				return true;
@@ -142,12 +142,16 @@ if($isEditor){
 		<div style="margin:20px 0px">
 			<hr/>
 		</div>
-		<div style="width:450px;float:right;">
+		<div class="bottom-breathing-room">
+			<label for="occidsubmit">Occurrence ID:</label>
+			<input type="text" name="occidsubmit" id="occidsubmit" onchange="loadOccurRecord(this)" />
+		</div>
+		<div style="width:450px;">
 			<form name="dlform" method="post" action="occurharvester.php" target="_blank">
 				<fieldset>
 					<legend><b>Specimen Queue</b></legend>
 					<div id="emptylistdiv" style="margin:20px;">
-						<b>List Empty: </b>enter barcode in field to left
+						<b>List Empty: </b>enter barcode in Occurrence ID field
 					</div>
 					<div id="occidlist" style="margin:10px;">
 					</div>
@@ -165,10 +169,6 @@ if($isEditor){
 					</div>
 				</fieldset>
 			</form>
-		</div>
-		<div style="">
-			<b>Occurrence ID:</b><br/>
-			<input type="text" name="occidsubmit" onchange="loadOccurRecord(this)" />
 		</div>
 
 	</div>

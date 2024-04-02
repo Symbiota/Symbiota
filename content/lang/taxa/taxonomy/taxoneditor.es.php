@@ -21,8 +21,8 @@ $LANG['HIERARCHY'] = 'Jerarquía';
 $LANG['CHILDREN_TAXA'] = 'Taxa inferiores';
 $LANG['DELETE'] = 'Eliminar';
 $LANG['UNITNAME1'] = 'NombreUnitario1';
-$LANG['UNITNAME2'] = 'NombreUnitario2';
-$LANG['UNITNAME3'] = 'NombreUnitario3';
+$LANG['UNITNAME2'] = 'Epíteto específico';
+$LANG['UNITNAME3'] = 'Epíteto infraespecífico';
 $LANG['AUTHOR'] = 'Autor';
 $LANG['KINGDOM'] = 'Reino';
 $LANG['RANK_NAME'] = 'Rango del Nombre';
@@ -64,6 +64,6 @@ $LANG['SYNONYMS_TRANSFERRED'] = 'Sinónimos serán transferidos a Taxón Aceptad
 $LANG['QUERY_HIERARCHY'] = 'Búsqueda Rápida de Jerarquía Taxonómica';
 $LANG['EMPTY'] = 'Vacío';
 $LANG['NOT_AUTH'] = 'No está autorizado para acceder a esta página';
-
+$LANG['GENUS_NAME'] = 'Nombre del Género';
 
 ?>

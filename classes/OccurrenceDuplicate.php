@@ -356,10 +356,10 @@ class OccurrenceDuplicate {
 			$result = $this->conn->query($sql);
 			while($row = $result->fetch_assoc()) {
 				foreach($row as $k => $v){
-					$vStr = trim($v);
-					$retArr[$row['occid']][$k] = $vStr;
+					if($v) $v = trim($v);
+					$retArr[$row['occid']][$k] = $v;
 					//Identify relevant fields
-					if($vStr) $relArr[$k] = '';
+					if($v) $relArr[$k] = '';
 				}
 			}
 			$result->free();
@@ -678,7 +678,7 @@ class OccurrenceDuplicate {
 							$sqlI2 = 'INSERT INTO omoccurduplicatelink(duplicateid,occid) VALUES ';
 							foreach($unlinkedArr as $v){
 								$sqlI2 .= '('.$dupId.','.$v.'),';
-								$outLink .= ' <a href="../individual/index.php?occid='.$v.'" target="_blank">'.$v.'</a>,';
+								$outLink .= ' <a href="../individual/index.php?occid=' . htmlspecialchars($v, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($v, HTML_SPECIAL_CHARS_FLAGS) . '</a>,';
 							}
 							if($this->conn->query(trim($sqlI2,','))){
 								if($verbose) echo '<li style="margin-left:20px;">'.count($unlinkedArr).' duplicates linked ('.trim($outLink,' ,').')</li>';

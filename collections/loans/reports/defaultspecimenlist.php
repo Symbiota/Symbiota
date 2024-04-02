@@ -66,6 +66,9 @@ if($outputMode == 'doc'){
 	$targetFile = $SERVER_ROOT.'/temp/report/'.$loanId.'_specimen_list.docx';
 	$phpWord->save($targetFile, 'Word2007');
 
+	ob_start();
+	ob_clean();
+	ob_end_flush();
 	header('Content-Description: File Transfer');
 	header('Content-type: application/force-download');
 	header('Content-Disposition: attachment; filename='.basename($targetFile));
@@ -76,11 +79,12 @@ if($outputMode == 'doc'){
 }
 else{
 	?>
-	<html>
+	<!DOCTYPE html>
+	<html lang="<?php echo $LANG_TAG ?>">
 		<head>
 			<title><?php echo $sourceCode.' '.$invoiceArr['loanidentifierown']; ?> Specimen List</title>
 			<?php
-	
+
 			include_once($SERVER_ROOT.'/includes/head.php');
 			?>
 			<style type="text/css">

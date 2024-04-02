@@ -25,7 +25,8 @@ if($isEditor){
 	$annoArr = $datasetManager->getAnnoQueue();
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 		<title><?php echo $DEFAULT_TITLE.' '.$LANG['ANN_LAB_MAN']; ?></title>
@@ -91,13 +92,13 @@ if($isEditor){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href='../../index.php'><?php echo $LANG['NAV_HOME']; ?></a> &gt;&gt;
+		<a href='../../index.php'><?php echo htmlspecialchars($LANG['NAV_HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 		<?php
 		if(stripos(strtolower($datasetManager->getMetaDataTerm('colltype')), "observation") !== false){
-			echo '<a href="../../profile/viewprofile.php?tabindex=1">'.$LANG['PERS_MAN_MEN'].'</a> &gt;&gt; ';
+			echo '<a href="../../profile/viewprofile.php?tabindex=1">' . htmlspecialchars($LANG['PERS_MAN_MEN'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
 		}
 		else{
-			echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">'.$LANG['COL_MAN_PAN'].'</a> &gt;&gt; ';
+			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . htmlspecialchars($LANG['COL_MAN_PAN'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
 		}
 		?>
 		<b><?php echo $LANG['ANN_LAB_PRINT']; ?></b>
@@ -147,7 +148,7 @@ if($isEditor){
 											<?php echo $recArr['collector']; ?>
 										</a>
 										<a href="#" onclick="openEditorPopup(<?php echo $recArr['occid']; ?>); return false;">
-											<img src="../../images/edit.png" />
+											<img src="../../images/edit.png" style="width:1.3em" />
 										</a>
 									</td>
 									<td>
@@ -227,8 +228,8 @@ if($isEditor){
 				}
 				else{
 					?>
-					<div style="font-weight:bold;margin:20px;font-weight:150%;">
-						<?php echo $LANG['NO_ANNO']; ?>
+					<div>
+						<b> <?php echo $LANG['NO_ANNO']; ?> </b>
 					</div>
 					<?php
 				}
@@ -238,8 +239,8 @@ if($isEditor){
 		}
 		else{
 			?>
-			<div style="font-weight:bold;margin:20px;font-weight:150%;">
-				<?php echo $LANG['NO_ANNO_PERMISSIONS']; ?>
+			<div>
+				<b> <?php echo $LANG['NO_ANNO_PERMISSIONS']; ?> </b>
 			</div>
 			<?php
 		}

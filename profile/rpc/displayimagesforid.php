@@ -27,12 +27,12 @@ include_once($SERVER_ROOT.'/classes/ImageExplorer.php');
 
                     <div class="tndiv" style="margin-top: 15px; margin-bottom: 15px">
                         <div class="tnimg">
-                            <a href="imgdetails.php?imgid=<?php echo $imgId; ?>">
+                            <a href="imgdetails.php?imgid=<?php echo htmlspecialchars($imgId, HTML_SPECIAL_CHARS_FLAGS); ?>">
                                 <img src="<?php echo $imgUrl; ?>" />
                             </a>
                         </div>
                         <div>
-                            <?php echo "<a href=\"../collections/editor/occurrenceeditor.php?q_customtypeone=EQUALS&occid=". $imgArr['occid']. "\">". $imgArr['instcode'] . " - " . $imgArr['catalognumber'].  "<br />" . $imgArr['sciname'] . "<br />" . $imgArr['stateprovince']; ?>
+                            <?php echo "<a href=\"../collections/editor/occurrenceeditor.php?q_customtypeone=EQUALS&occid=". htmlspecialchars($imgArr['occid'], HTML_SPECIAL_CHARS_FLAGS) .  "\">". htmlspecialchars($imgArr['instcode'], HTML_SPECIAL_CHARS_FLAGS) . " - " . htmlspecialchars($imgArr['catalognumber'], HTML_SPECIAL_CHARS_FLAGS) .  "<br />" . htmlspecialchars($imgArr['sciname'], HTML_SPECIAL_CHARS_FLAGS) . "<br />" . htmlspecialchars($imgArr['stateprovince'], HTML_SPECIAL_CHARS_FLAGS); ?>
                             </a>
                         </div>
                     </div>

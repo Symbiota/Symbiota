@@ -19,8 +19,8 @@ if($IS_ADMIN
 		$editable = 1;
 }
 ?>
-
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo (isset($LANG['PERS_SPEC_BACKUP'])?$LANG['PERS_SPEC_BACKUP']:'Personal Specimen Backup'); ?></title>
@@ -38,7 +38,7 @@ if($IS_ADMIN
 			$dlFile = $dlManager->dlSpecBackup($collId,$cSet,$zipFile);
 			if($dlFile){
 				echo '<li style="font-weight:bold;">'.(isset($LANG['BACK_COMPLETE'])?$LANG['BACK_COMPLETE']:'Backup Complete').'!</li>';
-				echo '<li style="font-weight:bold;">'.(isset($LANG['CLICK'])?$LANG['CLICK']:'Click on file to download').': <a href="'.$dlFile.'">'.$dlFile.'</a></li>';
+				echo '<li style="font-weight:bold;">'.(isset($LANG['CLICK'])?$LANG['CLICK']:'Click on file to download').': <a href="' . htmlspecialchars($dlFile, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($dlFile, HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
 				echo '</ul>';
 			}
 			echo '</ul>';

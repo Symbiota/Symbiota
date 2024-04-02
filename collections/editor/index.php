@@ -1,9 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/content/lang/prohibit.'.$LANG_TAG.'.php')
+include_once($SERVER_ROOT.'/content/lang/prohibit.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title><?php echo $LANG['NO_ACCESS']; ?></title>
 	<?php
@@ -23,7 +24,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 				<?php echo $LANG['NO_PERMISSION']; ?>.
 			</div>
 			<div style="font-weight:bold;margin:10px;">
-				<a href="<?php echo $CLIENT_ROOT; ?>/index.php"><?php echo $LANG['RETURN']; ?></a>
+				<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php"><?php echo htmlspecialchars($LANG['RETURN'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
 			</div>
 		</div>
 		<?php

@@ -25,7 +25,7 @@ $occManager->setOccId($occid);
 				if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId,$USER_RIGHTS['CollAdmin']))){
 					?>
 					<div style="float:right;" title="<?php echo $LANG['MANAGE_HISTORY']; ?>">
-						<a href="../editor/editreviewer.php?collid=<?php echo $collId.'&occid='.$occid; ?>" target="_blank"><img src="../../images/edit.png" style="border:0px;width:14px;" /></a>
+						<a href="../editor/editreviewer.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><img src="../../images/edit.png" style="border:0px;width:14px;" /></a>
 					</div>
 					<?php
 				}

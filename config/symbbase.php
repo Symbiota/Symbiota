@@ -44,6 +44,8 @@ if(isset($_COOKIE['SymbiotaCrumb']) && !$PARAMS_ARR){
 if(!isset($CSS_BASE_PATH) || $CSS_BASE_PATH == $CLIENT_ROOT . '/css/symb') $CSS_BASE_PATH = $CLIENT_ROOT . '/css/';
 if(!isset($CSS_VERSION_RELEASE)) $CSS_BASE_PATH .= 'v202209';
 
+$EXTERNAL_PORTAL_HOSTS = [];
+
 $CSS_VERSION = '13';
 $USER_DISPLAY_NAME = (array_key_exists('dn',$PARAMS_ARR)?$PARAMS_ARR['dn']:'');
 $USERNAME = (array_key_exists('un',$PARAMS_ARR)?$PARAMS_ARR['un']:0);

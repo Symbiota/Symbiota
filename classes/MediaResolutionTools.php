@@ -157,7 +157,7 @@ class MediaResolutionTools extends Manager {
 				}
 			}
 			else{
-				$this->logOrEcho('ERROR: image unwritable (imgid: <a href="'.$GLOBALS['CLIENT_ROOT'].'/imagelib/imgdetails.php?imgid='.$imgid.'" target="_blank">'.$imgid.'</a>, path: '.$path.')');
+				$this->logOrEcho('ERROR: image unwritable (imgid: <a href="' . htmlspecialchars($GLOBALS['CLIENT_ROOT'], HTML_SPECIAL_CHARS_FLAGS) . '/imagelib/imgdetails.php?imgid=' . htmlspecialchars($imgid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($imgid, HTML_SPECIAL_CHARS_FLAGS) . '</a>, path: ' . htmlspecialchars($path, HTML_SPECIAL_CHARS_FLAGS) . ')');
 			}
 		}
 		return $status;
@@ -288,7 +288,7 @@ class MediaResolutionTools extends Manager {
 							}
 							if(!$pathFrag) $pathFrag = date('Ymd').'/';
 							if(!file_exists($this->imgRootPath.$pathFrag)) mkdir($this->imgRootPath.$pathFrag);
-							$this->logOrEcho($processingCnt.': Processing: <a href="../../individual/index.php?occid='.$r->occid.'" target="_blank">'.$r->occid.'</a>');
+							$this->logOrEcho($processingCnt.': Processing: <a href="../../individual/index.php?occid=' . htmlspecialchars($r->occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($r->occid, HTML_SPECIAL_CHARS_FLAGS) . '</a>');
 							if($this->transferThumbnail && $r->thumbnailurl){
 								$fileName = basename($r->thumbnailurl);
 								$targetPath = $this->imgRootPath.$pathFrag.$fileName;

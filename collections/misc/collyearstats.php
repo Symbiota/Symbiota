@@ -21,7 +21,8 @@ if($collId){
 	$statArr = $collManager->getYearStatsDataArr($collId,$days);
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta name="keywords" content="Natural history collections yearly statistics" />
 		<title><?php echo $DEFAULT_TITLE; ?> Year Statistics</title>
@@ -29,8 +30,8 @@ if($collId){
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
-		<script type="text/javascript" src="../../js/jquery.js"></script>
-		<script type="text/javascript" src="../../js/jquery-ui.js"></script>
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 		<script type="text/javascript" src="../../js/symb/collections.index.js"></script>
 	</head>
 	<body>

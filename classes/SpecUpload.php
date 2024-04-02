@@ -284,10 +284,10 @@ class SpecUpload{
 						$vArr = explode(':',$varStr);
 						$sql .= 'AND '.$vArr[0];
 						switch($vArr[1]){
-							case 'ISNULL':
+							case 'IS_NULL':
 								$sql .= ' IS NULL ';
 								break;
-							case 'ISNOTNULL':
+							case 'NOT_NULL':
 								$sql .= ' IS NOT NULL ';
 								break;
 							default:

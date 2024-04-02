@@ -21,6 +21,9 @@ $LANG['DISP_AUTHORS'] = 'Display authors';
 $LANG['MATCH_WHOLE_WORDS'] = 'Match on whole words';
 $LANG['DISP_FULL_TREE'] = 'Display full tree below family';
 $LANG['DISP_SUBGENERA'] = 'Display species with subgenera';
+$LANG['LIMIT_TO_OCCURRENCES'] = 'Display only taxa linked to occurrences';
+$LANG['EXPORT_TREE'] = 'Export Taxonomy';
+$LANG['PLUS_SIGN_DESC'] = 'Image of a plus sign, indicating create new taxon';
 
 //Dynamic display
 $LANG['TAX_EXPLORE'] = 'Taxonomy Explorer';

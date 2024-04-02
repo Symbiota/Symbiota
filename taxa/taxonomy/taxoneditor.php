@@ -74,16 +74,17 @@ if($isEditor){
 	$taxonEditorObj->setTaxon();
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE." ".(isset($LANG['TAX_EDITOR'])?$LANG['TAX_EDITOR']:'Taxon Editor').": ".$tid; ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>"/>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script src="../../js/jquery-3.2.1.min.js" type="text/javascript"></script>
-	<script src="../../js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
-	<link href="../../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script>
 		var tid = <?php echo $taxonEditorObj->getTid(); ?>;
 		var tabIndex = <?php echo $tabIndex; ?>;
@@ -112,8 +113,8 @@ if($isEditor){
 	else{
 		?>
 		<div class="navpath">
-			<a href="../../index.php"><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
-			<a href="taxonomydisplay.php"><?php echo (isset($LANG['TAX_TREE_VIEW'])?$LANG['TAX_TREE_VIEW']:'Taxonomy Tree Viewer'); ?></a> &gt;&gt;
+			<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+			<a href="taxonomydisplay.php"><?php echo htmlspecialchars((isset($LANG['TAX_TREE_VIEW'])?$LANG['TAX_TREE_VIEW']:'Taxonomy Tree Viewer'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
 			<b><?php echo (isset($LANG['TAXONOMY_EDITOR'])?$LANG['TAXONOMY_EDITOR']:'Taxonomy Editor'); ?></b>
 		</div>
 		<?php
@@ -135,33 +136,33 @@ if($isEditor){
 			$hierarchyArr = $taxonEditorObj->getHierarchyArr()
 			?>
 			<div style="float:right;" title="<?php echo (isset($LANG['GO_TAX_DISPLAY'])?$LANG['GO_TAX_DISPLAY']:'Go to taxonomy display'); ?>">
-				<a href="taxonomydisplay.php?target=<?php echo $taxonEditorObj->getUnitName1();?>&showsynonyms=1">
-					<img style='border:0px;width:15px;' src='../../images/toparent.png'/>
+				<a href="taxonomydisplay.php?target=<?php echo htmlspecialchars($taxonEditorObj->getUnitName1(), HTML_SPECIAL_CHARS_FLAGS);?>&showsynonyms=1">
+					<img style='border:0px;width:1.3em;' src='../../images/toparent.png'/>
 				</a>
 			</div>
 			<div style="float:right;" title="<?php echo (isset($LANG['ADD_NEW_TAXON'])?$LANG['ADD_NEW_TAXON']:'Add a New Taxon'); ?>">
 				<a href="taxonomyloader.php">
-					<img style='border:0px;width:15px;' src='../../images/add.png'/>
+					<img style='border:0px;width:1.3em;' src='../../images/add.png'/>
 				</a>
 			</div>
 			<h1>
 				<?php
-				echo "<a href='../profile/tpeditor.php?tid=".$taxonEditorObj->getTid()."' style='color:inherit;text-decoration:none;'>";
+				echo "<a href='../profile/tpeditor.php?tid=" . htmlspecialchars($taxonEditorObj->getTid(), HTML_SPECIAL_CHARS_FLAGS) . "' style='color:inherit;text-decoration:none;'>";
 				echo "<i>".$taxonEditorObj->getSciName()."</i> ".$taxonEditorObj->getAuthor()." [".$taxonEditorObj->getTid()."]";
 				echo "</a>"
 				?>
 			</h1>
 			<div id="tabs" class="taxondisplaydiv">
 				<ul>
-					<li><a href="#editorDiv"><?php echo (isset($LANG['EDITOR'])?$LANG['EDITOR']:'Editor'); ?></a></li>
-					<li><a href="#taxonstatusdiv"><?php echo (isset($LANG['TAX_STATUS'])?$LANG['TAX_STATUS']:'Taxonomic Status'); ?></a></li>
-					<li><a href="#hierarchydiv"><?php echo (isset($LANG['HIERARCHY'])?$LANG['HIERARCHY']:'Hierarchy'); ?></a></li>
-					<li><a href="taxonomychildren.php?tid=<?php echo $tid.'&taxauthid='.$taxAuthId; ?>"><?php echo (isset($LANG['CHILDREN_TAXA'])?$LANG['CHILDREN_TAXA']:'Children Taxa'); ?></a></li>
-					<li><a href="taxonomydelete.php?tid=<?php echo $tid; ?>&genusstr=<?php echo $taxonEditorObj->getUnitName1(); ?>"><?php echo (isset($LANG['DELETE'])?$LANG['DELETE']:'Delete'); ?></a></li>
+					<li><a href="#editorDiv"><?php echo htmlspecialchars((isset($LANG['EDITOR'])?$LANG['EDITOR']:'Editor'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
+					<li><a href="#taxonstatusdiv"><?php echo htmlspecialchars((isset($LANG['TAX_STATUS'])?$LANG['TAX_STATUS']:'Taxonomic Status'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
+					<li><a href="#hierarchydiv"><?php echo htmlspecialchars((isset($LANG['HIERARCHY'])?$LANG['HIERARCHY']:'Hierarchy'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
+					<li><a href="taxonomychildren.php?tid=<?php echo htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&taxauthid=' . htmlspecialchars($taxAuthId, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars((isset($LANG['CHILDREN_TAXA'])?$LANG['CHILDREN_TAXA']:'Children Taxa'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
+					<li><a href="taxonomydelete.php?tid=<?php echo htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS); ?>&genusstr=<?php echo htmlspecialchars($taxonEditorObj->getUnitName1(), HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars((isset($LANG['DELETE'])?$LANG['DELETE']:'Delete'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
 				</ul>
 				<div id="editorDiv" style="height:400px;">
 					<div style="float:right;cursor:pointer;" onclick="toggleEditFields()" title="Toggle Taxon Editing Functions">
-						<img style='border:0px;' src='../../images/edit.png'/>
+						<img style='width:1.3em;border:0px;' src='../../images/edit.png'/>
 					</div>
 					<form id="taxoneditform" name="taxoneditform" action="taxoneditor.php" method="post" onsubmit="return validateTaxonEditForm(this)">
 						<div class="editDiv">
@@ -257,15 +258,15 @@ if($isEditor){
 							<div class="editLabel"><?php echo (isset($LANG['SOURCE'])?$LANG['SOURCE']:'Source'); ?>: </div>
 							<div class="editfield">
 								<?php
-								$source = $taxonEditorObj->getSource();
-								if(stripos($source, '<a ') === false){
-									$source = htmlspecialchars($source);
+								$safeSource = $taxonEditorObj->getSource() ?? '';
+								if(stripos($safeSource, '<a ') === false){
+									$safeSource = htmlspecialchars($safeSource);
 								}
-								echo $source;
+								echo $safeSource;
 								?>
 							</div>
 							<div class="editfield" style="display:none;width:90%;">
-								<input type="text" id="source" name="source" style="width:100%;" value="<?php echo htmlspecialchars($taxonEditorObj->getSource()); ?>" />
+								<input type="text" id="source" name="source" style="width:100%;" value="<?php echo htmlspecialchars($safeSource); ?>" />
 							</div>
 						</div>
 						<div class="editDiv">
@@ -343,7 +344,7 @@ if($isEditor){
 						</div>
 						<div style="clear:both;margin:10px;">
 							<div style="float:right;">
-								<a href="#" onclick="toggle('tsedit');return false;"><img style='border:0px;' src='../../images/edit.png'/></a>
+								<a href="#" onclick="toggle('tsedit');return false;"><img style='width:1.3em;border:0px;' src='../../images/edit.png'/></a>
 							</div>
 							<div style="float:left">
 								<form name="taxstatusform" action="taxoneditor.php" method="post">
@@ -362,7 +363,7 @@ if($isEditor){
 									<div class="editDiv">
 										<div class="editLabel"><?php echo (isset($LANG['PARENT_TAXON'])?$LANG['PARENT_TAXON']:'Parent Taxon'); ?>: </div>
 										<div class="tsedit">
-											<?php echo '<a href="taxoneditor.php?tid='.$taxonEditorObj->getParentTid().'">'.$taxonEditorObj->getParentNameFull().'</a>';?>
+											<?php echo '<a href="taxoneditor.php?tid=' . htmlspecialchars($taxonEditorObj->getParentTid(), HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($taxonEditorObj->getParentNameFull(), HTML_SPECIAL_CHARS_FLAGS) . '</a>';?>
 										</div>
 										<div class="tsedit" style="display:none;margin:3px;">
 											<input id="parentstr" name="parentstr" type="text" value="<?php echo $taxonEditorObj->getParentName(); ?>" style="width:450px" />
@@ -391,17 +392,17 @@ if($isEditor){
 								?>
 								<div class="headingDiv"><?php echo (isset($LANG['ACCEPTED_TAXON'])?$LANG['ACCEPTED_TAXON']:'Accepted Taxon'); ?></div>
 								<div style="float:right;">
-									<a href="#" onclick="toggle('acceptedits');return false;"><img style="border:0px;width:15px;" src="../../images/edit.png" /></a>
+									<a href="#" onclick="toggle('acceptedits');return false;"><img style="border:0px;width:1.3em;" src="../../images/edit.png" /></a>
 								</div>
 								<?php
 								if($acceptedArr){
 									echo "<ul>\n";
 									foreach($acceptedArr as $tidAccepted => $linkedTaxonArr){
 										echo "<li id='acclink-".$tidAccepted."'>\n";
-										echo "<a href='taxoneditor.php?tid=".$tidAccepted."&taxauthid=".$taxAuthId."'><i>".$linkedTaxonArr["sciname"]."</i></a> ".$linkedTaxonArr["author"]."\n";
+										echo "<a href='taxoneditor.php?tid=" . htmlspecialchars($tidAccepted, HTML_SPECIAL_CHARS_FLAGS) . "&taxauthid=" . htmlspecialchars($taxAuthId, HTML_SPECIAL_CHARS_FLAGS) . "'><i>" . htmlspecialchars($linkedTaxonArr["sciname"], HTML_SPECIAL_CHARS_FLAGS) . "</i></a> " . htmlspecialchars($linkedTaxonArr["author"], HTML_SPECIAL_CHARS_FLAGS) . "\n";
 										if(count($acceptedArr)>1){
-											echo '<span class="acceptedits" style="display:none;"><a href="taxoneditor.php?tabindex=1&tid='.$tid.'&deltidaccepted='.$tidAccepted.'&taxauthid='.$taxAuthId.'">';
-											echo '<img style="border:0px;width:12px;" src="../../images/del.png" />';
+											echo '<span class="acceptedits" style="display:none;"><a href="taxoneditor.php?tabindex=1&tid=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&deltidaccepted=' . htmlspecialchars($tidAccepted, HTML_SPECIAL_CHARS_FLAGS) . '&taxauthid=' . htmlspecialchars($taxAuthId, HTML_SPECIAL_CHARS_FLAGS) . '">';
+											echo '<img style="border:0px;width:1.3em;" src="../../images/del.png" />';
 											echo '</a></span>';
 										}
 										if($linkedTaxonArr["usagenotes"]){
@@ -473,7 +474,7 @@ if($isEditor){
 								?>
 								<div class="headingDiv"><?php echo (isset($LANG['SYNONYMS'])?$LANG['SYNONYMS']:'Synonyms'); ?></div>
 								<div style="float:right;">
-									<a href="#"  onclick="toggle('tonotaccepted');return false;"><img style='border:0px;width:15px;' src='../../images/edit.png'/></a>
+									<a href="#"  onclick="toggle('tonotaccepted');return false;"><img style='border:0px;width:1.3em;' src='../../images/edit.png'/></a>
 								</div>
 								<ul>
 								<?php
@@ -481,9 +482,9 @@ if($isEditor){
 								if($synonymArr){
 									foreach($synonymArr as $tidSyn => $synArr){
 										echo '<li> ';
-										echo '<a href="taxoneditor.php?tid='.$tidSyn.'&taxauthid='.$taxAuthId.'"><i>'.$synArr['sciname'].'</i></a> '.$synArr['author'].' ';
+										echo '<a href="taxoneditor.php?tid=' . htmlspecialchars($tidSyn, HTML_SPECIAL_CHARS_FLAGS) . '&taxauthid=' . htmlspecialchars($taxAuthId, HTML_SPECIAL_CHARS_FLAGS) . '"><i>' . htmlspecialchars($synArr['sciname'], HTML_SPECIAL_CHARS_FLAGS) . '</i></a> ' . htmlspecialchars($synArr['author'], HTML_SPECIAL_CHARS_FLAGS) . ' ';
 										echo '<a href="#" onclick="toggle(\'syn-'.$tidSyn.'\');">';
-										echo '<img style="border:0px;width:10px;" src="../../images/edit.png" />';
+										echo '<img style="border:0px;width:1.3em;" src="../../images/edit.png" />';
 										echo '</a>';
 										if($synArr["notes"] || $synArr["unacceptabilityreason"]){
 											if($synArr["unacceptabilityreason"]){
@@ -587,12 +588,12 @@ if($isEditor){
 							$indent = 0;
 							foreach($hierarchyArr as $hierTid => $hierSciname){
 								echo '<div style="margin-left:'.$indent.'px;">';
-								echo '<a href="taxoneditor.php?tid='.$hierTid.'">'.$hierSciname.'</a>';
+								echo '<a href="taxoneditor.php?tid=' . htmlspecialchars($hierTid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($hierSciname, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 								echo "</div>\n";
 								$indent += 10;
 							}
 							echo '<div style="margin-left:'.$indent.'px;">';
-							echo '<a href="taxoneditor.php?tid='.$taxonEditorObj->getTid().'">'.$taxonEditorObj->getSciName().'</a>';
+							echo '<a href="taxoneditor.php?tid=' . htmlspecialchars($taxonEditorObj->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($taxonEditorObj->getSciName(), HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 							echo "</div>\n";
 						}
 						else{

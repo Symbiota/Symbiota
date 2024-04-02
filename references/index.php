@@ -39,7 +39,7 @@ if(!$formSubmit || $formSubmit != 'Search References'){
 
 ?>
 <!DOCTYPE HTML>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Reference Management</title>
@@ -48,8 +48,8 @@ if(!$formSubmit || $formSubmit != 'Search References'){
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<script type="text/javascript" src="../js/jquery.js"></script>
-	<script type="text/javascript" src="../js/jquery-ui.js"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/symb/references.index.js"></script>
 	<script type="text/javascript">
 		function verifyNewRefForm(f){
@@ -110,7 +110,7 @@ if(!$formSubmit || $formSubmit != 'Search References'){
 		<div id="reflistdiv" style="min-height:200px;">
 			<div style="float:right;margin:10px;">
 				<a href="#" onclick="toggle('newreferencediv');">
-					<img src="../images/add.png" alt="Create New Reference" />
+					<img src="../images/add.png" style="width:1.3em" alt="Create New Reference" />
 				</a>
 			</div>
 			<div id="newreferencediv" style="display:none;">
@@ -152,7 +152,7 @@ if(!$formSubmit || $formSubmit != 'Search References'){
 				echo '<div><ul>';
 				foreach($refArr as $refId => $recArr){
 					echo '<li>';
-					echo '<a href="refdetails.php?refid='.$refId.'"><b>'.$recArr["title"].'</b></a>';
+					echo '<a href="refdetails.php?refid=' . htmlspecialchars($refId, HTML_SPECIAL_CHARS_FLAGS) . '"><b>' . htmlspecialchars($recArr["title"], HTML_SPECIAL_CHARS_FLAGS) . '</b></a>';
 					if($recArr["ReferenceTypeId"] == 27){
 						echo ' series.';
 					}

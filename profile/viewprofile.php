@@ -110,7 +110,8 @@ if($isEditor){
 	if(!$person) $person = $pHandler->getPerson();
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' - '. (isset($LANG['VIEW_PROFILE'])?$LANG['VIEW_PROFILE']:'View User Profile'); ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
@@ -120,11 +121,11 @@ if($isEditor){
 	<script type="text/javascript">
 		var tabIndex = <?php echo $tabIndex; ?>;
 	</script>
-	<script type="text/javascript" src="../js/jquery.js"></script>
-	<script type="text/javascript" src="../js/jquery-ui.js"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/symb/profile.viewprofile.js?ver=20170530"></script>
 	<script type="text/javascript" src="../js/symb/shared.js"></script>
-	<style type="text/css">
+	<style>
 		fieldset{ padding:15px;margin:15px; }
 		legend{ font-weight: bold; }
 		.tox-dialog { min-height: 400px }
@@ -136,8 +137,8 @@ if($isEditor){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href='../index.php'><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
-		<a href="../profile/viewprofile.php"><?php echo (isset($LANG['MY_PROFILE'])?$LANG['MY_PROFILE']:'My Profile'); ?></a>
+		<a href='../index.php'><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+		<a href="../profile/viewprofile.php"><?php echo htmlspecialchars((isset($LANG['MY_PROFILE'])?$LANG['MY_PROFILE']:'My Profile'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
 	</div>
 	<div id="innertext">
 		<?php

@@ -31,12 +31,12 @@ if($SYMB_UID){
 	if($occNum > -1){
 		$occMsg = number_format($occNum).' '.(isset($LANG['OCCURRENCES'])?'occurrences':'');
 		if($occNum){
-			$occHref = '../collections/list.php?usethes=1&taxa='.$tid;
-			$occMsg = '<a class="btn" href="'.$occHref.'" target="_blank">'.$occMsg.'</a>';
+			$occHref = '../collections/list.php?usethes=1&taxa=' . $tid;
+			$occMsg = '<a class="btn" href="' . htmlspecialchars($occHref, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($occMsg, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 		}
 		echo '<li>'.$occMsg.'</li>';
 	}
-	echo '<li><a href="taxonomy/taxonomydynamicdisplay.php?target='.$tid.'" target="_blank">Taxonomic Tree</a></li>';
+	echo '<li><a href="taxonomy/taxonomydynamicdisplay.php?target=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">Taxonomic Tree</a></li>';
 	echo '</ul>';
 	echo '</div>';
 	//TODO: list other internal resources such as Taxon Traits, etc
@@ -46,7 +46,7 @@ if($SYMB_UID){
 		echo '<div class="resource-title">'.(isset($LANG['EXTERNAL_RESOURCES'])?$LANG['EXTERNAL_RESOURCES']:'External Resources').'</div>';
 		echo '<ul>';
 		foreach($linkArr as $linkObj){
-			echo '<li><a href="'.$linkObj['url'].'" target="_blank">'.$linkObj['title'].'</a></li>';
+			echo '<li><a href="' . htmlspecialchars($linkObj['url'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($linkObj['title'], HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
 			if($linkObj['notes']) echo '<li style="margin-left:10px">'.$linkObj['notes'].'</li>';
 		}
 		echo '</ul>';

@@ -50,7 +50,8 @@ if(!$IS_ADMIN){
 	}
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title><?php echo $DEFAULT_TITLE; ?> - Duplicate Record Search</title>
 		<?php
@@ -195,14 +196,14 @@ if(!$IS_ADMIN){
 								<td>
 									<?php
 									if($curOccid){
-										echo '<a href="dupesearch.php?submitaction=mergerecs&curoccid='.$curOccid.'&occidmerge='.$id.'&collid='.$collId.'" onclick="return confirm(\'Are you sure you want to merge these two records?\')">Merge</a>';
+										echo '<a href="dupesearch.php?submitaction=mergerecs&curoccid=' .htmlspecialchars($curOccid, HTML_SPECIAL_CHARS_FLAGS) . '&occidmerge=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '" onclick="return confirm(\'Are you sure you want to merge these two records?\')">Merge</a>';
 									}
 									?>
 								</td>
 								<td>
 									<?php
 									if($collId == $oArr['collid']){
-										echo '<a href="occurrenceeditor.php?occid='.$occId.'"><img src="../../images/edit.png" /></a>';
+										echo '<a href="occurrenceeditor.php?occid=' . htmlspecialchars($occId, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" /></a>';
 									}
 									?>
 								</td>
@@ -227,8 +228,8 @@ if(!$IS_ADMIN){
 							//User can edit this specimen
 							?>
 							<div style="float:right;margin:10px;">
-								<a href="occurrenceeditor.php?occid=<?php echo $occId; ?>">
-									<img src="../../images/edit.png" />
+								<a href="occurrenceeditor.php?occid=<?php echo htmlspecialchars($occId, HTML_SPECIAL_CHARS_FLAGS); ?>">
+									<img src="../../images/edit.png" style="width:1.2em" />
 								</a>
 							</div>
 							<?php
@@ -352,14 +353,15 @@ if(!$IS_ADMIN){
 							if(!isset($ACTIVATE_DUPLICATES) || $ACTIVATE_DUPLICATES){
 								?>
 								<div style="margin-left:30px;float:left;">
-									<input id="linkdupe-<?php echo $occId; ?>" type="checkbox" <?php echo ($dupeType == 'exact'?'checked':''); ?> /> <?php echo $LANG['LINK_DUPE']; ?>
+									<input id="linkdupe-<?php echo $occId; ?>" type="checkbox" <?php echo ($dupeType == 'exact'?'checked':''); ?> /> 
+									<label for="linkdupe-<?php echo $occId; ?>"><?php echo $LANG['LINK_DUPE']; ?></label>
 								</div>
 								<?php
 							}
 							if($collId == $occObj['collid']){
 								?>
 								<div style="margin-left:30px;float:left;">
-									<a href="occurrenceeditor.php?occid=<?php echo $occId; ?>">
+									<a href="occurrenceeditor.php?occid=<?php echo htmlspecialchars($occId, HTML_SPECIAL_CHARS_FLAGS); ?>">
 										<?php echo $LANG['GO_TO_RECORD']; ?>
 									</a>
 								</div>
@@ -367,7 +369,7 @@ if(!$IS_ADMIN){
 								if($curOccid){
 									?>
 									<div style="margin-left:30px;float:left;">
-										<a href="dupesearch.php?submitaction=mergerecs&curoccid=<?php echo $curOccid.'&occidmerge='.$occId.'&collid='.$collId; ?>" onclick="return confirm('<?php echo $LANG['SURE_MERGE']; ?>')">
+										<a href="dupesearch.php?submitaction=mergerecs&curoccid=<?php echo htmlspecialchars($curOccid, HTML_SPECIAL_CHARS_FLAGS) . '&occidmerge=' . htmlspecialchars($occId, HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="return confirm('<?php echo htmlspecialchars($LANG['SURE_MERGE'], HTML_SPECIAL_CHARS_FLAGS); ?>')">
 											<?php echo $LANG['MERGE_RECORDS']; ?>
 										</a>
 									</div>

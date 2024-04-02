@@ -16,7 +16,8 @@ $taxaUrl = '../../collections/list.php?datasetid='.$datasetid.'&tabindex=0';
 // $downloadUrl = '../../collections/download/index.php?datasetid='.$datasetid;
 $ocArr = $datasetManager->getOccurrences($datasetid);
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title>Dataset: <?php echo $dArr['name'] ;?></title>
 		<?php
@@ -29,7 +30,7 @@ $ocArr = $datasetManager->getOccurrences($datasetid);
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div class="navpath">
-			<a href="<?php echo $CLIENT_ROOT; ?>/index.php">Home</a> &gt;&gt;
+			<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php">Home</a> &gt;&gt;
 			<b>Dataset: <?php echo $dArr['name'] ;?></b>
 		</div>
 		<!-- This is inner text! -->
@@ -41,9 +42,9 @@ $ocArr = $datasetManager->getOccurrences($datasetid);
       <!-- Occurrences Summary -->
       <p>This dataset includes <?php echo count($ocArr); ?> records.</p>
 
-      <p><a class="btn" href="<?php echo $searchUrl ;?>">View and download samples in this Dataset (List view)</a></p>
-      <p><a class="btn" href="<?php echo $tableUrl ;?>">View samples in this Dataset (Table view)</a></p>
-      <p><a class="btn" href="<?php echo $taxaUrl ;?>">View list of taxa in this Dataset</a></p>
+      <p><a class="btn" href="<?php echo htmlspecialchars($searchUrl, HTML_SPECIAL_CHARS_FLAGS) ;?>">View and download samples in this Dataset (List view)</a></p>
+      <p><a class="btn" href="<?php echo htmlspecialchars($tableUrl, HTML_SPECIAL_CHARS_FLAGS) ;?>">View samples in this Dataset (Table view)</a></p>
+      <p><a class="btn" href="<?php echo htmlspecialchars($taxaUrl, HTML_SPECIAL_CHARS_FLAGS) ;?>">View list of taxa in this Dataset</a></p>
       <!-- <p><a href="#">Download this Dataset</a></p> -->
     </ul>
 		</div>

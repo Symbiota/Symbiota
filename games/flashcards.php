@@ -24,7 +24,8 @@ $fcManager->setLang($lang);
 
 $sciArr = array();
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Flash Cards</title>
 	<?php
@@ -146,7 +147,7 @@ $sciArr = array();
 		echo $checklists_flashcardsCrumbs;
 	}
 	else{
-		echo '<a href="../checklists/checklist.php?clid='.$clid.'&dynclid='.$dynClid.'">';
+		echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&dynclid=' . htmlspecialchars($dynClid, HTML_SPECIAL_CHARS_FLAGS) . '">';
 		echo $fcManager->getClName();
 		echo '</a> &gt;&gt; ';
 	}
@@ -159,25 +160,25 @@ $sciArr = array();
 			<div style="width:420px;height:420px;text-align:center;">
 				<div>
 					<a id="imageanchor" href="" target="_blank">
-						<img id="activeimage" src="" style="height:97%;max-width:450px" />
+						<img src="#" id="activeimage" style="height:97%;max-width:450px" alt="Image to guess"/>
 					</a>
 				</div>
 			</div>
 			<div style="width:450px;text-align:center;">
 				<div style="width:100%;">
 					<div style="float:left;cursor:pointer;text-align:center;" onclick="insertNewImage()">
-						<img src="../images/skipthisone.png" title="Skip to Next Species" />
+						<img src="../images/skipthisone.png" title="Skip to Next Species" aria-label="Skip to Next Species"/>
 					</div>
 					<div id="rightarrow" style="float:right;cursor:pointer;text-align:center;" onclick="nextImage()">
-						<img src="../images/rightarrow.png" title="Show Next Image" />
+						<img src="../images/rightarrow.png" title="Show Next Image" aria-label="Show Next Image"/>
 					</div>
 					<div style="width:200px;margin-left:auto;margin-right:auto;">
 						Image <span id="imageindex">1</span> of <span id="imagecount">?</span>
 					</div>
 				</div>
 				<div style="clear:both;margin-top:10px;">
-					<select id="scinameselect" onchange="checkId(this)">
-						<option value="0">Name of Above Organism</option>
+					<label for="scinameselect">Name of Above Organism:</label>
+					<select id="scinameselect">
 						<option value="0">-------------------------</option>
 						<?php
 						asort($sciArr);
@@ -187,6 +188,7 @@ $sciArr = array();
 
 						?>
 					</select>
+					<button type="submit" onclick="checkId(document.getElementById('scinameselect'))">Check Image</button>
 				</div>
 				<div style="clear:both;margin-top:10px;">
 					<div>
@@ -204,7 +206,7 @@ $sciArr = array();
 							<input type="hidden" name="clid" value="<?php echo $clid; ?>" />
 							<input type="hidden" name="lang" value="<?php echo $lang; ?>" />
 							<div>
-								<select name="taxonfilter" onchange="document.getElementById('taxonfilterform').submit();">
+								<select name="taxonfilter" aria-label="Filter Quiz by Taxonomic Group">
 									<option value="0">Filter Quiz by Taxonomic Group</option>
 									<?php
 										$fcManager->echoFlashcardTaxonFilterList();
@@ -215,10 +217,11 @@ $sciArr = array();
 								<?php
 									//Display Common Names: 0 = false, 1 = true
 									if($displayCommonNames){
-										echo '<input id="showcommon" name="showcommon" type="checkbox" value="1" '.($showCommon?"checked":"").' onchange="document.getElementById(\'taxonfilterform\').submit();"/> Display Common Names'."\n";
+										echo '<input id="showcommon" name="showcommon" type="checkbox" value="1" '.($showCommon?"checked":"").' /> <label for="showcommon">Display Common Names</label>'."\n";
 									}
 								?>
 							</div>
+							<button type="submit" onclick="document.getElementById('taxonfilterform').submit();">Show Image</button>
 						</fieldset>
 					</form>
 				</div>

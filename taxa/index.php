@@ -50,19 +50,20 @@ if($SYMB_UID){
 	}
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE." - ".$taxonManager->getTaxonName(); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
-	<link href="<?php echo $CSS_BASE_PATH; ?>/symbiota/taxa/index.css" type="text/css" rel="stylesheet" />
-	<link href="<?php echo $CSS_BASE_PATH; ?>/symbiota/taxa/traitplot.css" type="text/css" rel="stylesheet" >
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/taxa/index.css" type="text/css" rel="stylesheet" />
+	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/taxa/traitplot.css" type="text/css" rel="stylesheet" >
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<script src="../js/jquery.js" type="text/javascript"></script>
-	<script src="../js/jquery-ui.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="../js/symb/taxa.index.js?ver=202101" type="text/javascript"></script>
 	<script src="../js/symb/taxa.editor.js?ver=202101" type="text/javascript"></script>
 	<style type="text/css">
@@ -89,8 +90,8 @@ include($SERVER_ROOT.'/includes/header.php');
 							?>
 							<div id="editorDiv">
 								<?php
-								echo '<a href="profile/tpeditor.php?tid='.$taxonManager->getTid().'" title="'.(isset($LANG['EDIT_TAXON_DATA'])?$LANG['EDIT_TAXON_DATA']:'Edit Taxon Data').'">';
-								echo '<img class="navIcon" src="../images/edit.png" />';
+								echo '<a href="profile/tpeditor.php?tid=' . htmlspecialchars($taxonManager->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars((isset($LANG['EDIT_TAXON_DATA'])?$LANG['EDIT_TAXON_DATA']:'Edit Taxon Data'), HTML_SPECIAL_CHARS_FLAGS) . '">';
+								echo '<img class="navIcon" src="../images/edit.png" style="width:1.3em" />';
 								echo '</a>';
 								?>
 							</div>
@@ -101,8 +102,8 @@ include($SERVER_ROOT.'/includes/header.php');
 							<?php echo '<span id="'.($taxonManager->getRankId() > 179?'sciname':'taxon').'">'.$taxonManager->getTaxonName().'</span>'; ?>
 							<span id="author"><?php echo $taxonManager->getTaxonAuthor(); ?></span>
 							<?php
-							$parentLink = 'index.php?tid='.$taxonManager->getParentTid().'&clid='.$clid.'&pid='.$pid.'&taxauthid='.$taxAuthId;
-							echo '&nbsp;<a href="'.$parentLink.'"><img class="navIcon" src="../images/toparent.png" title="Go to Parent" /></a>';
+							$parentLink = 'index.php?tid='.$taxonManager->getParentTid().'&clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&taxauthid='.$taxAuthId;
+							echo '&nbsp;<a href="' . htmlspecialchars($parentLink, HTML_SPECIAL_CHARS_FLAGS) . '"><img class="navIcon" src="../images/toparent.png" style="width:1.3em" title="Go to Parent" /></a>';
 							if($taxonManager->isForwarded()){
 						 		echo '<span id="redirectedfrom"> ('.(isset($LANG['REDIRECT'])?$LANG['REDIRECT']:'redirected from').': <i>'.$taxonManager->getSubmittedValue('sciname').'</i> '.$taxonManager->getSubmittedValue('author').')</span>';
 						 	}
@@ -114,7 +115,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							<div id="linkDiv">
 								<?php
 								foreach($linkArr as $linkObj){
-									if($linkObj['icon']) echo '<span title="'.$linkObj['title'].'"><a href="'.$linkObj['url'].'" target="_blank"><img src="'.$linkObj['icon'].'" /></a></span>';
+									if($linkObj['icon']) echo '<span title="' . htmlspecialchars($linkObj['title'], HTML_SPECIAL_CHARS_FLAGS) . '"><a href="' . htmlspecialchars($linkObj['url'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><img src="' . htmlspecialchars($linkObj['icon'], HTML_SPECIAL_CHARS_FLAGS) . '" /></a></span>';
 								}
 								?>
 							</div>
@@ -171,7 +172,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						if(!$taxonManager->echoImages(0,1,0)){
 							echo '<div class="image" style="width:260px;height:260px;border-style:solid;margin-top:5px;margin-left:20px;text-align:center;">';
 							if($isEditor){
-								echo '<a href="profile/tpeditor.php?category=imageadd&tid='.$taxonManager->getTid().'"><b>'.(isset($LANG['ADD_IMAGE'])?$LANG['ADD_IMAGE']:'Add an Image').'</b></a>';
+								echo '<a href="profile/tpeditor.php?category=imageadd&tid=' . htmlspecialchars($taxonManager->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '"><b>' . htmlspecialchars((isset($LANG['ADD_IMAGE'])?$LANG['ADD_IMAGE']:'Add an Image'), HTML_SPECIAL_CHARS_FLAGS) . '</b></a>';
 							}
 							else{
 								echo (isset($LANG['IMAGE_NOT_AVAILABLE'])?$LANG['IMAGE_NOT_AVAILABLE']:'Images<br/>not available');
@@ -196,7 +197,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							if(isset($MAP_THUMBNAILS) && $MAP_THUMBNAILS) $url = $taxonManager->getGoogleStaticMap();
 							else $url = $CLIENT_ROOT.'/images/mappoint.png';
 							if($occurrenceModIsActive && $taxonManager->getDisplayLocality()){
-								$gAnchor = "openMapPopup('".$taxonManager->getTid()."',".$clid.")";
+								$gAnchor = "openMapPopup('".$taxonManager->getTid()."',".$clid.','. (!empty($GOOGLE_MAP_KEY)? 'false': 'true') .")";
 							}
 							if($mapSrc = $taxonManager->getMapArr()){
 								$url = array_shift($mapSrc);
@@ -208,7 +209,7 @@ include($SERVER_ROOT.'/includes/header.php');
 									echo '<a href="#" onclick="'.$gAnchor.';return false">';
 								}
 								elseif($aUrl){
-									echo '<a href="'.$aUrl.'">';
+									echo '<a href="' . htmlspecialchars($aUrl, HTML_SPECIAL_CHARS_FLAGS) . '">';
 								}
 								echo '<img src="'.$url.'" title="'.$taxonManager->getTaxonName().'" alt="'.$taxonManager->getTaxonName().'" />';
 								if($aUrl || $gAnchor) echo '</a>';
@@ -223,7 +224,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						$tabText = (isset($LANG['TOTAL_IMAGES'])?$LANG['TOTAL_IMAGES']:'Total Images');
 						if($imgCnt == 100){
 							$tabText = (isset($LANG['INITIAL_IMAGES'])?$LANG['INITIAL_IMAGES']:'Initial Images').'<br/>- - - - -<br/>';
-							$tabText .= '<a href="'.$CLIENT_ROOT.'/imagelib/search.php?submitaction=search&taxa='.$tid.'">'.(isset($LANG['VIEW_ALL_IMAGES'])?$LANG['VIEW_ALL_IMAGES']:'View All Images').'</a>';
+							$tabText .= '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/imagelib/search.php?submitaction=search&taxa=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars((isset($LANG['VIEW_ALL_IMAGES'])?$LANG['VIEW_ALL_IMAGES']:'View All Images'), HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 						}
 						?>
 						<div id="img-tab-div" style="display:<?php echo $imgCnt > 6?'block':'none';?>;border-top:2px solid gray;margin-top:2px;">
@@ -247,8 +248,8 @@ include($SERVER_ROOT.'/includes/header.php');
 						if($isEditor){
 							?>
 							<div id="editorDiv">
-								<a href="profile/tpeditor.php?tid=<?php echo $taxonManager->getTid(); ?>" title="<?php echo (isset($LANG['EDIT_TAXON_DATA'])?$LANG['EDIT_TAXON_DATA']:'Edit Taxon Data'); ?>">
-									<img class="navIcon" src='../images/edit.png'/>
+								<a href="profile/tpeditor.php?tid=<?php echo htmlspecialchars($taxonManager->getTid(), HTML_SPECIAL_CHARS_FLAGS); ?>" title="<?php echo htmlspecialchars((isset($LANG['EDIT_TAXON_DATA'])?$LANG['EDIT_TAXON_DATA']:'Edit Taxon Data'), HTML_SPECIAL_CHARS_FLAGS); ?>">
+									<img class="navIcon" src='../images/edit.png' style='width:1.3em' />
 								</a>
 							</div>
 							<?php
@@ -258,9 +259,9 @@ include($SERVER_ROOT.'/includes/header.php');
 							<?php
 							$displayName = $taxonManager->getTaxonName();
 							if($taxonRank > 140){
-								$parentLink = "index.php?tid=".$taxonManager->getParentTid()."&clid=".$clid."&pid=".$pid."&taxauthid=".$taxAuthId;
-								$displayName .= ' <a href="'.$parentLink.'">';
-								$displayName .= '<img class="navIcon" src="../images/toparent.png" title="'.(isset($LANG['GO_TO_PARENT'])?$LANG['GO_TO_PARENT']:'Go to Parent Taxon').'" />';
+								$parentLink = "index.php?tid=".$taxonManager->getParentTid()."&clid=" . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . "&pid=".$pid."&taxauthid=".$taxAuthId;
+								$displayName .= ' <a href="' . htmlspecialchars($parentLink, HTML_SPECIAL_CHARS_FLAGS) . '">';
+								$displayName .= '<img class="navIcon" src="../images/toparent.png" style="width:1.3em" title="'.(isset($LANG['GO_TO_PARENT'])?$LANG['GO_TO_PARENT']:'Go to Parent Taxon').'" />';
 								$displayName .= '</a>';
 							}
 							echo '<div id="taxon">'.$displayName.'</div>';
@@ -275,7 +276,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						if(!$taxonManager->echoImages(0,1,0)){
 							echo "<div class='image' style='width:260px;height:260px;border-style:solid;margin-top:5px;margin-left:20px;text-align:center;'>";
 							if($isEditor){
-								echo '<a href="profile/tpeditor.php?category=imageadd&tid='.$taxonManager->getTid().'"><b>'.(isset($LANG['ADD_IMAGE'])?$LANG['ADD_IMAGE']:'Add an Image').'</b></a>';
+								echo '<a href="profile/tpeditor.php?category=imageadd&tid=' . htmlspecialchars($taxonManager->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '"><b>' . htmlspecialchars((isset($LANG['ADD_IMAGE'])?$LANG['ADD_IMAGE']:'Add an Image'), HTML_SPECIAL_CHARS_FLAGS) . '</b></a>';
 							}
 							else{
 								echo (isset($LANG['IMAGE_NOT_AVAILABLE'])?$LANG['IMAGE_NOT_AVAILABLE']:'Images<br/>not available');
@@ -304,16 +305,16 @@ include($SERVER_ROOT.'/includes/header.php');
 									}
 									if($parentChecklistArr = $taxonManager->getParentChecklist($clid)){
 										$titleStr = (isset($LANG['GO_TO_PARENT_CHECKLIST'])?$LANG['GO_TO_PARENT_CHECKLIST']:'Include species within checklist').': '.current($parentChecklistArr);
-										$legendStr .= ' <a href="index.php?tid='.$tid.'&clid='.key($parentChecklistArr).'&pid='.$pid.'&taxauthid='.$taxAuthId.'" title="'.$titleStr.'">';
-										$legendStr .= '<img style="border:0px;width:10px;" src="../images/toparent.png"/>';
+										$legendStr .= ' <a href="index.php?tid=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&clid='. htmlspecialchars(key($parentChecklistArr), HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&taxauthid=' . htmlspecialchars($taxAuthId, HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars($titleStr, HTML_SPECIAL_CHARS_FLAGS) . '">';
+										$legendStr .= '<img style="border:0px;width:1.3em;" src="../images/toparent.png"/>';
 										$legendStr .= '</a>';
 									}
 									elseif($pid){
 										$projName = $taxonManager->getProjName($pid);
 										if($projName) $titleStr = (isset($LANG['WITHIN_INVENTORY'])?$LANG['WITHIN_INVENTORY']:'Species within inventory project').': '.$projName;
 										else $titleStr = (isset($LANG['SHOW_ALL_TAXA'])?$LANG['SHOW_ALL_TAXA']:'Show all taxa');
-										$legendStr .= ' <a href="index.php?tid='.$tid.'&clid=0&pid='.$pid.'&taxauthid='.$taxAuthId.'" title="'.$titleStr.'">';
-										$legendStr .= '<img style="border:0px;width:10px;" src="../images/toparent.png"/>';
+										$legendStr .= ' <a href="index.php?tid=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&clid=0&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&taxauthid=' . htmlspecialchars($taxAuthId, HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars($titleStr, HTML_SPECIAL_CHARS_FLAGS) . '">';
+										$legendStr .= '<img style="border:0px;width:1.3em;" src="../images/toparent.png"/>';
 										$legendStr .= '</a>';
 									}
 								}
@@ -322,8 +323,8 @@ include($SERVER_ROOT.'/includes/header.php');
 									if($projName) $legendStr .= (isset($LANG['WITHIN_INVENTORY'])?$LANG['WITHIN_INVENTORY']:'Species within inventory project').': <b>'.$projName.'</b>';
 									else $legendStr = (isset($LANG['SHOW_ALL_TAXA'])?$LANG['SHOW_ALL_TAXA']:'Show all taxa');
 									$titleStr = (isset($LANG['SHOW_ALL_TAXA'])?$LANG['SHOW_ALL_TAXA']:'Show all taxa');
-									$legendStr .= ' <a href="index.php?tid='.$tid.'&clid=0&pid=0&taxauthid='.$taxAuthId.'" title="'.$titleStr.'">';
-									$legendStr .= '<img style="border:0px;width:10px;" src="../images/toparent.png"/>';
+									$legendStr .= ' <a href="index.php?tid=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&clid=0&pid=0&taxauthid=' . htmlspecialchars($taxAuthId, HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars($titleStr, HTML_SPECIAL_CHARS_FLAGS) . '">';
+									$legendStr .= '<img style="border:0px;width:1.3em;" src="../images/toparent.png"/>';
 									$legendStr .= '</a>';
 								}
 								if($legendStr){
@@ -333,13 +334,13 @@ include($SERVER_ROOT.'/includes/header.php');
 								$taxonCnt = count($sppArr);
 								if($taxonCnt > $taxaLimit || $page){
 									$navStr = '<span style="margin:0px 10px">';
-									$dynLink = 'tid='.$tid.'&taxauthid='.$taxAuthId.'&clid='.$clid.'&pid='.$pid.'&lang='.$lang.'&taxalimit='.$taxaLimit;
-									if($page) $navStr .= '<a href="index.php?'.$dynLink.'&page='.($page-1).'">&lt;&lt;</a>';
+									$dynLink = 'tid='.$tid.'&taxauthid=' . htmlspecialchars($taxAuthId, HTML_SPECIAL_CHARS_FLAGS) . '&clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&lang='.$lang.'&taxalimit='.$taxaLimit;
+									if($page) $navStr .= '<a href="index.php?' . htmlspecialchars($dynLink, HTML_SPECIAL_CHARS_FLAGS) . '&page=' . htmlspecialchars(($page-1), HTML_SPECIAL_CHARS_FLAGS) . '">&lt;&lt;</a>';
 									else $navStr .= '&lt;&lt;';
 									$upperCnt = ($page+1)*$taxaLimit;
 									if($taxonCnt < $taxaLimit) $upperCnt = ($page*$taxaLimit)+$taxonCnt;
 									$navStr .= ' '.(($page*$taxaLimit)+1).' - '.$upperCnt.' taxa ';
-									if($taxonCnt > $taxaLimit) $navStr .= '<a href="index.php?'.$dynLink.'&page='.($page+1).'">&gt;&gt;</a>';
+									if($taxonCnt > $taxaLimit) $navStr .= '<a href="index.php?' . htmlspecialchars($dynLink, HTML_SPECIAL_CHARS_FLAGS) . '&page=' . htmlspecialchars(($page+1), HTML_SPECIAL_CHARS_FLAGS) . '">&gt;&gt;</a>';
 									else $navStr .= '&gt;&gt;';
 									$navStr .= '</span>';
 									if($legendStr) $legendStr .= ' || ';
@@ -354,7 +355,7 @@ include($SERVER_ROOT.'/includes/header.php');
 									foreach($sppArr as $sciNameKey => $subArr){
 										echo "<div class='spptaxon'>";
 										echo "<div style='margin-top:10px;'>";
-										echo "<a href='index.php?tid=".$subArr["tid"]."&taxauthid=".$taxAuthId."&clid=".$clid."'>";
+										echo "<a href='index.php?tid=" . htmlspecialchars($subArr["tid"], HTML_SPECIAL_CHARS_FLAGS) . "&taxauthid=" . htmlspecialchars($taxAuthId, HTML_SPECIAL_CHARS_FLAGS) . "&clid=" . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . "'>";
 										echo "<i>".$sciNameKey."</i>";
 										echo "</a></div>\n";
 										echo "<div class='sppimg' style='overflow:hidden;'>";
@@ -364,7 +365,7 @@ include($SERVER_ROOT.'/includes/header.php');
 											if(array_key_exists("imageDomain",$GLOBALS) && substr($imgUrl,0,1)=="/"){
 												$imgUrl = $GLOBALS["imageDomain"].$imgUrl;
 											}
-											echo "<a href='index.php?tid=".$subArr["tid"]."&taxauthid=".$taxAuthId."&clid=".$clid."'>";
+											echo "<a href='index.php?tid=" . htmlspecialchars($subArr["tid"], HTML_SPECIAL_CHARS_FLAGS) . "&taxauthid=" . htmlspecialchars($taxAuthId, HTML_SPECIAL_CHARS_FLAGS) . "&clid=" . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . "'>";
 
 											if($subArr["thumbnailurl"]){
 												$imgUrl = $subArr["thumbnailurl"];
@@ -381,7 +382,7 @@ include($SERVER_ROOT.'/includes/header.php');
 											echo '</div>';
 										}
 										elseif($isEditor){
-											echo '<div class="spptext"><a href="profile/tpeditor.php?category=imageadd&tid='.$subArr['tid'].'">'.(isset($LANG['ADD_IMAGE'])?$LANG['ADD_IMAGE']:'Add an Image').'!</a></div>';
+											echo '<div class="spptext"><a href="profile/tpeditor.php?category=imageadd&tid=' . htmlspecialchars($subArr['tid'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars((isset($LANG['ADD_IMAGE'])?$LANG['ADD_IMAGE']:'Add an Image'), HTML_SPECIAL_CHARS_FLAGS) . '!</a></div>';
 										}
 										else{
 											echo '<div class="spptext">'.(isset($LANG['IMAGE_NOT_AVAILABLE'])?$LANG['IMAGE_NOT_AVAILABLE']:'Images<br/>not available').'</div>';
@@ -424,8 +425,8 @@ include($SERVER_ROOT.'/includes/header.php');
 					?>
 					<div id="editorDiv">
 						<?php
-						echo '<a href="profile/tpeditor.php?tid='.$taxonManager->getTid().'" title="'.(isset($LANG['EDIT_TAXON_DATA'])?$LANG['EDIT_TAXON_DATA']:'Edit Taxon Data').'">';
-						echo '<img class="navIcon" src="../images/edit.png" />';
+						echo '<a href="profile/tpeditor.php?tid=' . htmlspecialchars($taxonManager->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars((isset($LANG['EDIT_TAXON_DATA'])?$LANG['EDIT_TAXON_DATA']:'Edit Taxon Data'), HTML_SPECIAL_CHARS_FLAGS) . '">';
+						echo '<img class="navIcon" src="../images/edit.png" style="width:1.3em" />';
 						echo '</a>';
 						?>
 					</div>
@@ -441,7 +442,7 @@ include($SERVER_ROOT.'/includes/header.php');
 								<?php
 								$acceptedArr = $taxonManager->getAcceptedArr();
 								foreach($acceptedArr as $accTid => $accArr){
-									echo '<div><a href="index.php?tid='.$accTid.'"><b>'.$accArr['sciname'].'</b></a></div>';
+									echo '<div><a href="index.php?tid=' . htmlspecialchars($accTid, HTML_SPECIAL_CHARS_FLAGS) . '"><b>' . htmlspecialchars($accArr['sciname'], HTML_SPECIAL_CHARS_FLAGS) . '</b></a></div>';
 								}
 								?>
 							</div>
@@ -465,7 +466,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					<div style=margin-left:25px;>
 						<?php
 						foreach($matchArr as $t => $n){
-							echo '<a href="index.php?tid='.$t.'">'.$n.'</a><br/>';
+							echo '<a href="index.php?tid=' . htmlspecialchars($t, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($n, HTML_SPECIAL_CHARS_FLAGS) . '</a><br/>';
 						}
 						?>
 					</div>

@@ -45,4 +45,36 @@ $LANG['GOOGLE_EARTH_HEADER'] = 'Google Earth (KML)';
 $LANG['GOOGLE_EARTH_DESCRIPTION'] = 'Esto crea un archivo KML que puede abrirse en la aplicación de mapeo Google Earth. Note que se debe de tener instalado <a href="http://earth.google.com/" target="_blank"> Google Earth</a> en su computadora para hacer uso de esta opción.';
 $LANG['GOOGLE_EARTH_EXTRA'] = 'Adicionar Campos Extras';
 $LANG['CREATE_KML'] = 'Crear KML';
+$LANG['DATASET_MANAGEMENT'] = 'Gestión de conjuntos de datos';
+$LANG['IMG_DATASET_MANAGEMENT'] = 'Abrir gestión de conjuntos de datos';
+$LANG['IMG_TABLE_DISPLAY'] = 'Abrir visualización de tabla';
+$LANG['IMG_DWNL_DATA'] = 'Botón Descargar';
+$LANG['IMG_COPY'] = 'Botón Copiar';
+$LANG['ID_PROTECTED'] = 'Identificación protegida';
+$LANG['IMG_ADD_VOUCHER'] = 'Agregar voucher';
+$LANG['IMG_EDIT_OCC'] = 'Editar ocurrencia';
+$LANG['IMG_OCC'] = 'Imagen asociada con el suceso';
+
+$LANG['CATALOG_NUMBER'] = 'Numero de Catalogo';
+$LANG['COLLECTOR'] = 'Coleccionista';
+$LANG['DATE'] = 'Fecha';
+$LANG['SCIENTIFIC_NAME'] = 'Nombre Científico';
+$LANG['MAP_LINK'] = 'Enlace al Mapa';
+$LANG['SEE_MAP_POINT'] = 'Ver punto del mapa';
+//pt
+$LANG['CATALOG_NUMBER'] = 'Número de Catálogo';
+$LANG['COLLECTOR'] = 'Colecionador';
+$LANG['DATE'] = 'Data';
+$LANG['SCIENTIFIC_NAME'] = 'Nome Científico';
+$LANG['MAP_LINK'] = 'Link do Mapa';
+$LANG['SEE_MAP_POINT'] = 'Ver ponto do mapa';
+//fr
+$LANG['CATALOG_NUMBER'] = 'Numéro de Catalogue';
+$LANG['COLLECTOR'] = 'Collectionneur';
+$LANG['DATE'] = 'Date';
+$LANG['SCIENTIFIC_NAME'] = 'Nom Scientifique';
+$LANG['MAP_LINK'] = 'Lien vers la Carte';
+$LANG['SEE_MAP_POINT'] = 'Voir le point sur la carte';
+$LANG['RECORD_COUNT_EXCEEDS_LIMIT'] = 'El recuento de registros supera el límite';
+$LANG['NO_RECORDS'] = 'No se encontraron registros que coincidan con la consulta';
 ?>

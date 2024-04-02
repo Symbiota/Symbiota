@@ -462,9 +462,9 @@ class SpecProcessorManager {
 		$retArr = array();
 		$startDate = (preg_match('/^[\d-]+$/', $getArr['startdate'])?$getArr['startdate']:'');
 		$endDate = (preg_match('/^[\d-]+$/', $getArr['enddate'])?$getArr['enddate']:'');
-		$uid = (is_numeric($getArr['uid'])?$getArr['uid']:'');
+		$uid = filter_var($getArr['uid'], FILTER_SANITIZE_NUMBER_INT);
 		$interval = $getArr['interval'];
-		$processingStatus = $this->cleanInStr($getArr['processingstatus']);
+		$processingStatus = $getArr['processingstatus'];
 
 		$dateFormat = '';
 		$dfgb = '';
@@ -509,7 +509,7 @@ class SpecProcessorManager {
 		if($processingStatus){
 			$sql .= 'AND e.fieldname = "processingstatus" ';
 			if($processingStatus != 'all'){
-				$sql .= 'AND (e.fieldvaluenew = "'.$processingStatus.'") ';
+				$sql .= 'AND (e.fieldvaluenew = "'.$this->cleanInStr($processingStatus).'") ';
 			}
 		}
 		$sql .= 'GROUP BY DATE_FORMAT(e.initialtimestamp, "'.$dfgb.'"), u.username ';

@@ -1,4 +1,4 @@
-	<link href="<?php echo $CSS_PATH; ?>/symbiota/quicksearch.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CSS_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/quicksearch.css" type="text/css" rel="stylesheet">
 
 	<script type="text/javascript">
 		var clientRoot = "<?php echo $CLIENT_ROOT; ?>";

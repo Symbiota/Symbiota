@@ -83,7 +83,8 @@ if($editorCode){
 	}
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Institution Editor</title>
@@ -91,8 +92,8 @@ if($editorCode){
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script src="../../js/jquery.js?ver=140310" type="text/javascript"></script>
-	<script src="../../js/jquery-ui.js?ver=140310" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="../../js/symb/collections.grscicoll.js?ver=2" type="text/javascript"></script>
 	<script>
 		function toggle(target){
@@ -143,7 +144,7 @@ include($SERVER_ROOT.'/includes/header.php');
 		$targetCollid = key($collList);
 	}
 	if($targetCollid){
-		echo '<a href="../misc/collprofiles.php?collid='.$targetCollid.'&emode=1">'.$collList[$targetCollid].' Management</a> &gt;&gt;';
+		echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($targetCollid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . htmlspecialchars($collList[$targetCollid], HTML_SPECIAL_CHARS_FLAGS) . ' Management</a> &gt;&gt;';
 	}
 	else{
 		echo '<a href="institutioneditor.php">Full Address List</a> &gt;&gt;';
@@ -173,13 +174,13 @@ include($SERVER_ROOT.'/includes/header.php');
 			?>
 			<div style="float:right;">
 				<a href="institutioneditor.php">
-					<img src="<?php echo $CLIENT_ROOT;?>/images/toparent.png" style="width:15px;border:0px;" title="Return to Institution List" />
+					<img src="<?php echo $CLIENT_ROOT;?>/images/toparent.png" style="width:1.2em;border:0px;" title="Return to Institution List" />
 				</a>
 				<?php
 				if($editorCode > 1){
 					?>
 					<a href="#" onclick="toggle('editdiv');">
-						<img src="<?php echo $CLIENT_ROOT;?>/images/edit.png" style="width:15px;border:0px;" title="Edit Institution" />
+						<img src="<?php echo $CLIENT_ROOT;?>/images/edit.png" style="width:1.2em;border:0px;" title="Edit Institution" />
 					</a>
 					<?php
 				}
@@ -327,7 +328,7 @@ include($SERVER_ROOT.'/includes/header.php');
 								URL:
 							</div>
 							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<a href="<?php echo $instArr['url']; ?>" target="_blank">
+								<a href="<?php echo htmlspecialchars($instArr['url'], HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank">
 									<?php echo $instArr['url']; ?>
 								</a>
 							</div>
@@ -361,9 +362,9 @@ include($SERVER_ROOT.'/includes/header.php');
 							if($collList){
 								foreach($collList as $id => $collName){
 									echo '<div style="margin:5px;font-weight:bold;clear:both;height:15px;">';
-									echo '<div style="float:left;"><a href="../misc/collprofiles.php?collid='.$id.'">'.$collName.'</a></div> ';
+									echo '<div style="float:left;"><a href="../misc/collprofiles.php?collid=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($collName, HTML_SPECIAL_CHARS_FLAGS) . '</a></div> ';
 									if($editorCode == 3 || in_array($id,$USER_RIGHTS["CollAdmin"]))
-										echo ' <div class="editdiv" style="margin-left:10px;display:'.($eMode?'':'none').'"><a href="institutioneditor.php?iid='.$iid.'&removecollid='.$id.'"><img src="../../images/del.png" style="width:15px;"/></a></div>';
+										echo ' <div class="editdiv" style="margin-left:10px;display:'.($eMode?'':'none').'"><a href="institutioneditor.php?iid=' . htmlspecialchars($iid, HTML_SPECIAL_CHARS_FLAGS) . '&removecollid=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/del.png" style="width:1em;"/></a></div>';
 									echo '</div>';
 								}
 							}
@@ -429,7 +430,7 @@ include($SERVER_ROOT.'/includes/header.php');
 			?>
 			<div style="float:right;">
 				<a href="#" onclick="toggle('instadddiv');">
-					<img src="<?php echo $CLIENT_ROOT;?>/images/add.png" style="width:15px;border:0px;" title="Add a New Institution" />
+					<img src="<?php echo $CLIENT_ROOT;?>/images/add.png" style="width:1.5em;border:0px;" title="Add a New Institution" />
 				</a>
 			</div>
 			<div id="instadddiv" style="display:<?php echo ($eMode?'block':'none'); ?>;margin-bottom:8px;">
@@ -587,7 +588,7 @@ include($SERVER_ROOT.'/includes/header.php');
 								echo '<li><a href="institutioneditor.php?iid='.$iid.'">';
 								echo $iArr['institutionname'].' ('.$iArr['institutioncode'].')';
 								if($editorCode == 3 || array_intersect(explode(',',$iArr['collid']),$USER_RIGHTS["CollAdmin"])){
-									echo ' <a href="institutioneditor.php?emode=1&iid='.$iid.'"><img src="'.$CLIENT_ROOT.'/images/edit.png" style="width:13px;" /></a>';
+									echo ' <a href="institutioneditor.php?emode=1&iid=' .htmlspecialchars($iid, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/images/edit.png" style="width:1.2em;" /></a>';
 								}
 								echo '</a></li>';
 							}

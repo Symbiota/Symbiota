@@ -17,7 +17,7 @@ $formSubmit = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'
 if(!is_numeric($ometid)) $ometid = 0;
 if(!is_numeric($omenid)) $omenid = 0;
 if(!is_numeric($occidToAdd)) $occidToAdd = 0;
-$searchTerm = filter_var($searchTerm,FILTER_SANITIZE_STRING);
+$searchTerm = htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS);
 if(!is_numeric($specimenOnly)) $specimenOnly = 0;
 if(!is_numeric($collId)) $collId = 0;
 if(!is_numeric($imagesOnly)) $imagesOnly = 0;
@@ -86,16 +86,17 @@ $selectLookupArr = array();
 if($ometid || $omenid) $selectLookupArr = $exsManager->getSelectLookupArr();
 if($ometid) unset($selectLookupArr[$ometid]);
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Exsiccatae</title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<script src="../../js/jquery-3.2.1.min.js?ver=3" type="text/javascript"></script>
-	<script src="../../js/jquery-ui/jquery-ui.min.js?ver=1" type="text/javascript"></script>
-	<link href="../../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="../../js/symb/shared.js?ver=130926" type="text/javascript"></script>
 	<script type="text/javascript">
 		function toggleExsEditDiv(){
@@ -291,7 +292,7 @@ if($ometid) unset($selectLookupArr[$ometid]);
 		<?php
 		if($statusStr){
 			echo '<hr/>';
-			echo '<div style="margin:10px;color:'.(strpos($statusStr,'SUCCESS') === false?'red':'green').';">'.$statusStr.'</div>';
+			echo '<div style="margin:10px;color:'.(strpos($statusStr,'SUCCESS') === false?'red':'green').';">' . htmlspecialchars($statusStr, HTML_SPECIAL_CHARS_FLAGS) . '</div>';
 			echo '<hr/>';
 		}
 		if(!$ometid && !$omenid){
@@ -317,7 +318,7 @@ if($ometid) unset($selectLookupArr[$ometid]);
 									<?php
 									$acroArr = $exsManager->getCollArr('all');
 									foreach($acroArr as $id => $collTitle){
-										echo '<option value="'.$id.'" '.($id==$collId?'SELECTED':'').'>'.$collTitle.'</option>';
+										echo '<option value="' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '" ' . ($id==$collId?'SELECTED':'') . '>' . htmlspecialchars($collTitle, HTML_SPECIAL_CHARS_FLAGS) . '</option>';
 									}
 									?>
 								</select>
@@ -333,13 +334,13 @@ if($ometid) unset($selectLookupArr[$ometid]);
 							<input type="radio" name="sortby" value="1" <?php echo ($sortBy == 1?"CHECKED":""); ?> onchange="this.form.submit()"> Abbreviation
 						</div>
 						<div style="margin-top:5px">
-							<div style="float:right;">
-								<span title="Exsiccata download: titles only"><button name="formsubmit" type="submit" value="dlexs_titleOnly"><img src="../../images/dl.png" style="width:15px" /></button></span>
-								<span title="Exsiccata download: with numbers and occurrences"><button name="formsubmit" type="submit" value="dlexs"><img src="../../images/dl.png" style="width:15px" /></button></span>
-							</div>
 							<div>
-								<button name="formsubmit" type="submit" value="rebuildList">Rebuild List</button>
+								<span title="Exsiccata download: titles only"><button name="formsubmit" type="submit" value="dlexs_titleOnly"><img src="../../images/dl.png" style="width:1.2em;margin-right:0.3em" />Titles</button></span>
+								<span title="Exsiccata download: with numbers and occurrences"><button name="formsubmit" type="submit" value="dlexs"><img src="../../images/dl.png" style="width:1.2em;margin-right:0.3em" />Occurrences</button></span>
 							</div>
+						</div>
+						<div>
+							<button name="formsubmit" type="submit" value="rebuildList">Rebuild List</button>
 						</div>
 					</fieldset>
 				</form>
@@ -349,7 +350,7 @@ if($ometid) unset($selectLookupArr[$ometid]);
 			if($isEditor){
 				?>
 				<div style="cursor:pointer;float:right;" onclick="toggle('exsadddiv');" title="Edit Exsiccata Number">
-					<img style="border:0px;" src="../../images/add.png" />
+					<img style="border:0px;" src="../../images/add.png" style="width:1.3em" />
 				</div>
 				<div id="exsadddiv" style="display:none;">
 					<form name="exsaddform" action="index.php" method="post" onsubmit="return verfifyExsAddForm(this)">
@@ -399,13 +400,13 @@ if($ometid) unset($selectLookupArr[$ometid]);
 						<li>
 							<?php
 							echo '<div class="exs-div">';
-							echo '<div class="exstitle-div"><a href="index.php?ometid='.$k.'&specimenonly='.$specimenOnly.'&imagesonly='.$imagesOnly.'&collid='.$collId.'&sortBy='.$sortBy.'">';
+							echo '<div class="exstitle-div"><a href="index.php?ometid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '&specimenonly=' . htmlspecialchars($specimenOnly, HTML_SPECIAL_CHARS_FLAGS) . '&imagesonly=' . htmlspecialchars($imagesOnly, HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&sortBy=' . htmlspecialchars($sortBy, HTML_SPECIAL_CHARS_FLAGS) . '">';
 							echo $tArr['title'];
 							echo '</a></div>';
 							$extra = '';
 							if($tArr['editor']) $extra  = $tArr['editor'];
 							if($tArr['exsrange']) $extra .= ' ['.$tArr['exsrange'].']';
-							if($extra) echo '<div class="exseditor-div" style="margin-left:15px;">'.$extra.'</div>';
+							if($extra) echo '<div class="exseditor-div" style="margin-left:15px;">' . htmlspecialchars($extra, HTML_SPECIAL_CHARS_FLAGS) . '</div>';
 							echo '</div>';
 							?>
 						</li>
@@ -426,10 +427,10 @@ if($ometid) unset($selectLookupArr[$ometid]);
 						?>
 						<div style="float:right;">
 							<span style="cursor:pointer;" onclick="toggleExsEditDiv('exseditdiv');" title="Edit Exsiccata">
-								<img style="border:0px;" src="../../images/edit.png" />
+								<img style="width:1.5em;border:0px;" src="../../images/edit.png" />
 							</span>
 							<span style="cursor:pointer;" onclick="toggleNumAddDiv('numadddiv');" title="Add Exsiccata Number">
-								<img style="border:0px;" src="../../images/add.png" />
+								<img style="width:1.5em;border:0px;" src="../../images/add.png" />
 							</span>
 						</div>
 						<?php
@@ -438,10 +439,10 @@ if($ometid) unset($selectLookupArr[$ometid]);
 					if(isset($exsArr['sourceidentifier'])){
 						if(preg_match('/^http.+IndExs.+={1}(\d+)$/', $exsArr['sourceidentifier'], $m)) echo ' (<a href="'.$exsArr['sourceidentifier'].'" target="_blank">IndExs #'.$m[1].'</a>)';
 					}
-					if($exsArr['abbreviation']) echo '<div>Abbreviation: '.$exsArr['abbreviation'].'</div>';
-					if($exsArr['editor']) echo '<div>Editor(s): '.$exsArr['editor'].'</div>';
-					if($exsArr['exsrange']) echo '<div>Range: '.$exsArr['exsrange'].'</div>';
-					if($exsArr['notes']) echo '<div>Notes: '.$exsArr['notes'].'</div>';
+					if($exsArr['abbreviation']) echo '<div>Abbreviation: ' . htmlspecialchars($exsArr['abbreviation'], HTML_SPECIAL_CHARS_FLAGS) . '</div>';
+					if($exsArr['editor']) echo '<div>Editor(s): ' . htmlspecialchars($exsArr['editor'], HTML_SPECIAL_CHARS_FLAGS) . '</div>';
+					if($exsArr['exsrange']) echo '<div>Range: ' . htmlspecialchars($exsArr['exsrange'], HTML_SPECIAL_CHARS_FLAGS) . '</div>';
+					if($exsArr['notes']) echo '<div>Notes: ' . htmlspecialchars($exsArr['notes'], HTML_SPECIAL_CHARS_FLAGS) . '</div>';
 					?>
 				</div>
 				<div id="exseditdiv" style="display:none;">
@@ -498,7 +499,7 @@ if($ometid) unset($selectLookupArr[$ometid]);
 									<option value="">-------------------------------</option>
 									<?php
 									foreach($selectLookupArr as $titleId => $titleStr){
-										echo '<option value="'.$titleId.'">'.$titleStr.'</option>';
+										echo '<option value="' . htmlspecialchars($titleId, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($titleStr, HTML_SPECIAL_CHARS_FLAGS) . '</option>';
 									}
 									?>
 								</select>
@@ -537,12 +538,12 @@ if($ometid) unset($selectLookupArr[$ometid]);
 								?>
 								<li>
 									<?php
-									echo '<div><a href="index.php?omenid='.$k.'">';
-									echo '#'.$numArr['number'];
-									if($numArr['sciname']) echo ' - <i>'.$numArr['sciname'].'</i>';
-									if($numArr['occurstr']) echo ', '.$numArr['occurstr'];
+									echo '<div><a href="index.php?omenid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '">';
+									echo '#' . htmlspecialchars($numArr['number'], HTML_SPECIAL_CHARS_FLAGS);
+									if($numArr['sciname']) echo ' - <i>' . htmlspecialchars($numArr['sciname'], HTML_SPECIAL_CHARS_FLAGS) . '</i>';
+									if($numArr['occurstr']) echo ', ' . htmlspecialchars($numArr['occurstr'], HTML_SPECIAL_CHARS_FLAGS);
 									echo '</a></div>';
-									if($numArr['notes']) echo '<div style="margin-left:15px;">'.$numArr['notes'].'</div>';
+									if($numArr['notes']) echo '<div style="margin-left:15px;">' . htmlspecialchars($numArr['notes'], HTML_SPECIAL_CHARS_FLAGS) . '</div>';
 									?>
 								</li>
 								<?php
@@ -570,10 +571,10 @@ if($ometid) unset($selectLookupArr[$ometid]);
 					?>
 					<div style="float:right;">
 						<span style="cursor:pointer;" onclick="toggleNumEditDiv('numeditdiv');" title="Edit Exsiccata Number">
-							<img style="border:0px;" src="../../images/edit.png"/>
+							<img style="width:1.5em;border:0px;" src="../../images/edit.png"/>
 						</span>
 						<span style="cursor:pointer;" onclick="toggleOccAddDiv('occadddiv');" title="Add Occurrence to Exsiccata Number">
-							<img style="border:0px;" src="../../images/add.png" />
+							<img style="width:1.5em;border:0px;" src="../../images/add.png" />
 						</span>
 					</div>
 					<?php
@@ -586,12 +587,12 @@ if($ometid) unset($selectLookupArr[$ometid]);
 				</div>
 				<div style="margin-left:15px;">
 					<?php
-					echo $mdArr['abbreviation'].'</br>';
-					echo $mdArr['editor'];
-					if($mdArr['exsrange']) echo ' ['.$mdArr['exsrange'].']';
-					if($mdArr['notes']) echo '</br>'.$mdArr['notes'];
+					echo htmlspecialchars($mdArr['abbreviation'], HTML_SPECIAL_CHARS_FLAGS) . '</br>';
+					echo htmlspecialchars($mdArr['editor'], HTML_SPECIAL_CHARS_FLAGS);
+					if($mdArr['exsrange']) echo ' [' . htmlspecialchars($mdArr['exsrange'], HTML_SPECIAL_CHARS_FLAGS) . ']';
+					if($mdArr['notes']) echo '</br>' . htmlspecialchars($mdArr['notes'], HTML_SPECIAL_CHARS_FLAGS);
 					if(isset($mdArr['sourceidentifier'])){
-						if(preg_match('/^http.+IndExs.+={1}(\d+)$/', $mdArr['sourceidentifier'], $m)) echo '<br/><a href="'.$mdArr['sourceidentifier'].'" target="_blank">IndExs #'.$m[1].'</a>';
+						if(preg_match('/^http.+IndExs.+={1}(\d+)$/', $mdArr['sourceidentifier'], $m)) echo '<br/><a href="' . htmlspecialchars($mdArr['sourceidentifier'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">IndExs #' . htmlspecialchars($m[1], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
 					}
 					?>
 				</div>
@@ -650,7 +651,7 @@ if($ometid) unset($selectLookupArr[$ometid]);
 									<?php
 									$collArr = $exsManager->getCollArr();
 									foreach($collArr as $id => $collName){
-										echo '<option value="'.$id.'">'.$collName.'</option>';
+										echo '<option value="' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($collName, HTML_SPECIAL_CHARS_FLAGS) . '</option>';
 									}
 									?>
 									<option value="occid">Symbiota Primary Key (occid)</option>
@@ -702,47 +703,47 @@ if($ometid) unset($selectLookupArr[$ometid]);
 									<td>
 										<div style="font-weight:bold;">
 											<?php
-											echo $occArr['collname'];
+											echo htmlspecialchars($occArr['collname'], HTML_SPECIAL_CHARS_FLAGS);
 											?>
 										</div>
 										<div style="">
 											<div style="">
-												Catalog #: <?php echo $occArr['catalognumber']; ?>
+												Catalog #: <?php echo htmlspecialchars($occArr['catalognumber'], HTML_SPECIAL_CHARS_FLAGS); ?>
 											</div>
 											<?php
 											if($occArr['occurrenceid']){
 												echo '<div style="float:right;">';
-												echo $occArr['occurrenceid'];
+												echo htmlspecialchars($occArr['occurrenceid'], HTML_SPECIAL_CHARS_FLAGS);
 												echo '</div>';
 											}
 											?>
 										</div>
 										<div style="clear:both;">
 											<?php
-											echo $occArr['recby'];
-											echo ($occArr['recnum']?' #'.$occArr['recnum'].' ':' s.n. ');
-											echo '<span style="margin-left:70px;">'.$occArr['eventdate'].'</span> ';
+											echo htmlspecialchars($occArr['recby'], HTML_SPECIAL_CHARS_FLAGS);
+											echo ($occArr['recnum']?' #' . htmlspecialchars($occArr['recnum'], HTML_SPECIAL_CHARS_FLAGS) . ' ':' s.n. ');
+											echo '<span style="margin-left:70px;">' . htmlspecialchars($occArr['eventdate'], HTML_SPECIAL_CHARS_FLAGS) . '</span> ';
 											?>
 										</div>
 										<div style="clear:both;">
 											<?php
-											echo '<i>'.$occArr['sciname'].'</i> ';
-											echo $occArr['author'];
+											echo '<i>' . htmlspecialchars($occArr['sciname'], HTML_SPECIAL_CHARS_FLAGS) . '</i> ';
+											echo htmlspecialchars($occArr['author'], HTML_SPECIAL_CHARS_FLAGS);
 											?>
 										</div>
 										<div>
 											<?php
-											echo $occArr['country'];
-											echo (($occArr['country'] && $occArr['state'])?', ':'').$occArr['state'];
-											echo ($occArr['county']?', '.$occArr['county']:'');
-											echo ($occArr['locality']?', '.$occArr['locality']:'');
+											echo htmlspecialchars($occArr['country'], HTML_SPECIAL_CHARS_FLAGS);
+											echo (($occArr['country'] && $occArr['state'])?', ':'') . htmlspecialchars($occArr['state'], HTML_SPECIAL_CHARS_FLAGS);
+											echo ($occArr['county'] ? ', ' . htmlspecialchars($occArr['county'], HTML_SPECIAL_CHARS_FLAGS) : '');
+											echo ($occArr['locality'] ? ', ' . htmlspecialchars($occArr['locality'], HTML_SPECIAL_CHARS_FLAGS) : '');
 											?>
 										</div>
 										<div>
-											<?php echo ($occArr['notes']?$occArr['notes']:''); ?>
+											<?php echo htmlspecialchars(($occArr['notes']?$occArr['notes']:''), HTML_SPECIAL_CHARS_FLAGS); ?>
 										</div>
 										<div>
-											<a href="#" onclick="openIndPU(<?php echo $k; ?>)">
+											<a href="#" onclick="openIndPU(<?php echo htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS); ?>)">
 												Full Record Details
 											</a>
 										</div>
@@ -752,8 +753,8 @@ if($ometid) unset($selectLookupArr[$ometid]);
 										if(array_key_exists('img',$occArr)){
 											$imgArr = array_shift($occArr['img']);
 											?>
-											<a href="<?php echo $imgArr['url']; ?>">
-												<img src="<?php echo $imgArr['tnurl']; ?>" style="width:75px;" />
+											<a href="<?php echo htmlspecialchars($imgArr['url'], HTML_SPECIAL_CHARS_FLAGS); ?>">
+												<img src="<?php echo htmlspecialchars($imgArr['tnurl'], HTML_SPECIAL_CHARS_FLAGS); ?>" style="width:75px;" />
 											</a>
 											<?php
 										}
@@ -774,10 +775,10 @@ if($ometid) unset($selectLookupArr[$ometid]);
 												<fieldset style="margin:10px;padding:15px;background-color:#B0C4DE;">
 													<legend><b>Edit Specimen Link</b></legend>
 													<div style="margin:2px;">
-														Ranking: <input name="ranking" type="text" value="<?php echo $occArr['ranking']; ?>" />
+														Ranking: <input name="ranking" type="text" value="<?php echo htmlspecialchars($occArr['ranking'], HTML_SPECIAL_CHARS_FLAGS); ?>" />
 													</div>
 													<div style="margin:2px;">
-														Notes: <input name="notes" type="text" value="<?php echo $occArr['notes']; ?>" style="width:450px;" />
+														Notes: <input name="notes" type="text" value="<?php echo htmlspecialchars($occArr['notes'], HTML_SPECIAL_CHARS_FLAGS); ?>" style="width:450px;" />
 													</div>
 													<div style="margin:10px;">
 														<input name="omenid" type="hidden" value="<?php echo $omenid; ?>" />
