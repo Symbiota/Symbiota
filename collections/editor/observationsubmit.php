@@ -91,7 +91,7 @@ $clArr = $obsManager->getChecklists();
 	echo '</div>';
 	?>
 	<div id="innertext">
-		<h1><?php echo $collMap['collectionname']; ?></h1>
+		<h1 class="page-heading"><?php echo $collMap['collectionname']; ?></h1>
 		<?php
 		if($action || (isset($_SERVER['REQUEST_METHOD']) && strtolower($_SERVER['REQUEST_METHOD']) == 'post' && empty($_FILES) && empty($_POST))){
 			?>

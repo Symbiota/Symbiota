@@ -26,7 +26,7 @@ $dArr = $datasetManager->getPublicDatasets();
 		</div>
 		<!-- This is inner text! -->
 		<div id="innertext">
-			<h1> <?php echo htmlspecialchars($LANG['PUB_DAT_LIST'], HTML_SPECIAL_CHARS_FLAGS) ?> </h1>
+			<h1 class="page-heading"><?php echo htmlspecialchars($LANG['PUB_DAT_LIST'], HTML_SPECIAL_CHARS_FLAGS) ?></h1>
 			<ul>
 				<?php
 				if($dArr){

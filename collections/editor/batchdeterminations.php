@@ -302,6 +302,7 @@ if($isEditor){
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?= $LANG['BATCH_DETERS']; ?></h1>
 		<?php
 		if($isEditor){
 			echo '<h2>'.$occManager->getCollName().'</h2>';

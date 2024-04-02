@@ -105,6 +105,7 @@ elseif($action == 'addAllToDataset'){
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading">Datasets</h1>
 		<?php
 		if($statusStr){
 			$color = 'green';
