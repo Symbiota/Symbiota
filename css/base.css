@@ -402,3 +402,7 @@ ol.mp_list li.mp_highlighted {
   position: absolute;
   left: -10000px;
 }
+
+.page-heading {
+  font-size: 3rem;
+}

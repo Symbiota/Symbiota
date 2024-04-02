@@ -502,3 +502,7 @@ b {
   position: absolute;
   left: -10000px;
 }
+
+.page-heading {
+  font-size: 3rem;
+}
