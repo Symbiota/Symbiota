@@ -54,5 +54,12 @@ $LANG['ID_PROTECTED'] = 'ID protégé';
 $LANG['IMG_ADD_VOUCHER'] = 'Ajouter un bon';
 $LANG['IMG_EDIT_OCC'] = 'Modifier l\'occurrence';
 $LANG['IMG_OCC'] = 'Image associée à l\'occurrence';
-
+$LANG['CATALOG_NUMBER'] = 'Numéro de Catalogue';
+$LANG['COLLECTOR'] = 'Collectionneur';
+$LANG['DATE'] = 'Date';
+$LANG['SCIENTIFIC_NAME'] = 'Nom Scientifique';
+$LANG['MAP_LINK'] = 'Lien vers la Carte';
+$LANG['SEE_MAP_POINT'] = 'Voir le point sur la carte';
+$LANG['RECORD_COUNT_EXCEEDS_LIMIT'] = 'Le nombre d\'enregistrements dépasse la limite';
+$LANG['NO_RECORDS'] = 'Aucun enregistrement trouvé correspondant à la requête';
 ?>

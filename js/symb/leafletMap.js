@@ -617,9 +617,9 @@ function getShapeCoords(layerType, layer) {
    switch(layerType) {
       case "polygon":
          let latlngs = layer._latlngs[0].map(coord=> [coord.lat, coord.lng]);
+         latlngs.push(latlngs[0]);
          let polygon = latlngs.map(coord => 
             (`${coord[0].toFixed(SIG_FIGS)} ${coord[1].toFixed(SIG_FIGS)}`));
-
          shape.latlngs = latlngs;
          shape.wkt = "POLYGON ((" + polygon.join(',') + "))";
          shape.center = layer.getBounds().getCenter();

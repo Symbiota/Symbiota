@@ -522,8 +522,8 @@ $collManager->cleanOutArr($collData);
 										<legend> <?php echo (isset($LANG['GUID_SOURCE']) ? htmlspecialchars($LANG['GUID_SOURCE'], HTML_SPECIAL_CHARS_FLAGS) : 'GUID source'); ?>: </legend>
 										
 										<input class="top-breathing-room-rel-sm" id="occurrenceId" type="radio" name="guidTarget" value="occurrenceId" CHECKED> <label for="occurrenceId">  <?php echo (isset($LANG['OCCURRENCE_ID']) ? $LANG['OCCURRENCE_ID'] : 'occurrenceID GUID'); ?> </label> <br/>
-										<input id="catalogNumber" type="radio" name="guidTarget" value="catalogNumber" > <label for="catalogNumber"> <?php echo (isset($LANG['CAT_NUM']) ? $LANG['CAT_NUM'] : 'Catalog Number'); ?> </label> <br/>
-										<input id="symbiotaUUID" type="radio" name="guidTarget" value="symbiotaUUID" > <label for="symbiotaUUID">  <?php echo (isset($LANG['SYMB_GUID']) ? $LANG['SYMB_GUID'] : 'Symbiota Generated GUID (UUID)'); ?> </label>
+										<input id="catalogNumber" type="radio" name="guidTarget" value="catalogNumber" <?php echo ($collid && $collData['guidtarget'] == 'catalogNumber' ? 'CHECKED' : ''); ?>> <label for="catalogNumber"> <?php echo (isset($LANG['CAT_NUM']) ? $LANG['CAT_NUM'] : 'Catalog Number'); ?> </label> <br/>
+										<input id="symbiotaUUID" type="radio" name="guidTarget" value="symbiotaUUID" <?php echo ($collid && $collData['guidtarget'] == 'symbiotaUUID' ? 'CHECKED' : ''); ?>> <label for="symbiotaUUID">  <?php echo (isset($LANG['SYMB_GUID']) ? $LANG['SYMB_GUID'] : 'Symbiota Generated GUID (UUID)'); ?> </label>
 										
 										<a id="guidinfo" href="#" onclick="return false" tabindex="0">
 											<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo (isset($LANG['MORE_INFO_GUID']) ? $LANG['MORE_INFO_GUID'] : 'More information about Global Unique Identifier'); ?>"/>
