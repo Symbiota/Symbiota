@@ -148,36 +148,49 @@ class OccurrenceImport extends UtilitiesFileImport{
 					if(!empty($postArr['associationType']) && !empty($postArr['relationship'])){
 						$assocArr['associationType'] = $postArr['associationType'];
 						$assocArr['relationship'] = $postArr['relationship'];
-						if(!empty($postArr['subType']) && empty($assocArr['subType'])) $assocArr['subType'] = $postArr['subType'];
+						if(isset($postArr['subType']) && empty($assocArr['subType'])) $assocArr['subType'] = $postArr['subType'];
 						if(!empty($postArr['replace'])){
 							$existingAssociation = null;
 							if(!empty($assocArr['instanceID'])){
-								$existingAssociation = $importManager->getAssociationArr(array('recordID' => $assocArr['instanceID']));
+								$existingAssociation = $importManager->getAssociationArr(array('associationType' => $assocArr['associationType'], 'recordID' => $assocArr['instanceID']));
 								if($existingAssociation){
 									//instanceID is recordID, thus don't add to instanceID
 									unset($assocArr['instanceID']);
 								}
-							}
-							if(!$existingAssociation && !empty($assocArr['instanceID'])){
-								$existingAssociation = $importManager->getAssociationArr(array('instanceID' => $assocArr['instanceID']));
+								if(!$existingAssociation){
+									$existingAssociation = $importManager->getAssociationArr(array('associationType' => $assocArr['associationType'], 'instanceID' => $assocArr['instanceID']));
+								}
 							}
 							if(!$existingAssociation && !empty($assocArr['resourceUrl'])){
-								$existingAssociation = $importManager->getAssociationArr(array('resourceUrl' => $assocArr['resourceUrl']));
+								$existingAssociation = $importManager->getAssociationArr(array('associationType' => $assocArr['associationType'], 'resourceUrl' => $assocArr['resourceUrl']));
 							}
 							if(!$existingAssociation && !empty($assocArr['objectID'])){
-								$existingAssociation = $importManager->getAssociationArr(array('objectID' => $assocArr['objectID']));
+								$existingAssociation = $importManager->getAssociationArr(array('associationType' => $assocArr['associationType'], 'objectID' => $assocArr['objectID']));
 							}
 							if($existingAssociation){
 								if($assocID = key($existingAssociation)){
 									$importManager->setAssocID($assocID);
-									if($importManager->updateAssociation($assocArr)){
-										$this->logOrEcho($LANG['ASSOC_UPDATED'].': <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>', 1);
-										$status = true;
+									if($assocArr['relationship'] == 'DELETE'){
+										if($importManager->deleteAssociation()){
+											$this->logOrEcho($LANG['ASSOC_DELETED'].': <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>', 1);
+										}
+										else{
+											$this->logOrEcho($LANG['ERROR_DELETING'] . ': '.$importManager->getErrorMessage(), 1);
+										}
 									}
 									else{
-										$this->logOrEcho('ERROR updating Occurrence Association: '.$importManager->getErrorMessage(), 1);
+										if($importManager->updateAssociation($assocArr)){
+											$this->logOrEcho($LANG['ASSOC_UPDATED'].': <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>', 1);
+											$status = true;
+										}
+										else{
+											$this->logOrEcho($LANG['ERROR_UPDATING'] . ': '.$importManager->getErrorMessage(), 1);
+										}
 									}
 								}
+							}
+							else{
+								$this->logOrEcho($LANG['TARGET_NOT_FOUND'], 1);
 							}
 						}
 						elseif($importManager->insertAssociation($assocArr)){
@@ -185,7 +198,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 							$status = true;
 						}
 						else{
-							$this->logOrEcho('ERROR loading Occurrence Association: '.$importManager->getErrorMessage(), 1);
+							$this->logOrEcho($LANG['ERROR_ADDING'] . ': '.$importManager->getErrorMessage(), 1);
 						}
 					}
 				}
@@ -302,7 +315,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 				'format', 'sourceIdentifier', 'hashFunction', 'hashValue', 'mediaMD5', 'copyright', 'rights', 'accessRights', 'sortOccurrence');
 		}
 		elseif($this->importType == self::IMPORT_ASSOCIATIONS){
-			$fieldArr = array('relationshipID', 'subType', 'identifier', 'basisOfRecord', 'establishedDate', 'notes', 'accordingTo');
+			$fieldArr = array('relationshipID', 'objectID', 'basisOfRecord', 'establishedDate', 'notes', 'accordingTo');
 			if($associationType == 'resource'){
 				$fieldArr[] = 'resourceUrl';
 			}
