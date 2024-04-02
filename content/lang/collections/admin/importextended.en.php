@@ -49,4 +49,5 @@ $LANG['MAT_SAMPLE_ADDED'] = 'Material Sample added';
 $LANG['DETERMINATION_ADDED'] = 'Determination added';
 $LANG['CHOOSE_FILE'] = 'Choose a file';
 $LANG['ASSOCIATION_TYPE'] = 'Association Type';
+$LANG['HOME'] = 'Home';
 ?>

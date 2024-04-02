@@ -91,7 +91,8 @@ if($glossId){
 	$termImgArr = $glosManager->getImgArr();
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.(isset($LANG['G_MGMNT'])?$LANG['G_MGMNT']:'Glossary Management'); ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">

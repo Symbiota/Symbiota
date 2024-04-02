@@ -67,4 +67,9 @@ $LANG['NAV_IMG_CONTR'] = 'Contribuidores de Imagem';
 $LANG['NAV_IMG_SEARCH'] = 'Pesquisa de Imagens';
 $LANG['SKIP_NAV'] = 'Pular Navegação';
 
+// Footer-specific
+$LANG['ACCESSIBILITY_OPTIONS'] = 'Opções de acessibilidade';
+$LANG['ACCESSIBILITY_OPTIONS_DESCRIPTION'] = 'Mais recursos de acessibilidade serão adicionados ao longo do tempo. Alterne aqueles que atendem às suas necessidades.';
+$LANG['CLOSE'] = 'Fechar';
+
 ?>

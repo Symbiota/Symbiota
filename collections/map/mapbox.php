@@ -33,7 +33,8 @@ if(array_key_exists('taxa', $taxaArr)){
 	}
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> - Taxon Map</title>
 	<?php

@@ -3,6 +3,7 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ImageImport.php');
 include_once($SERVER_ROOT.'/content/lang/imagelib/admin/imageloader.en.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/imagelib/admin/imageloader.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/imagelib/admin/imageloader.'.$LANG_TAG.'.php');
+else include_once($SERVER_ROOT . '/content/lang/imagelib/admin/imageloader.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $action = array_key_exists('action', $_POST) ? $_POST['action'] : '';
@@ -32,7 +33,8 @@ if($isEditor){
 	}
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['IMG_LOADER']; ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>" />
@@ -150,7 +152,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							* <?php echo $LANG['FIELDS_YELLOW']; ?>
 						</div>
 						<div style="margin:10px;">
-							<input type="submit" name="action" value="Verify Mapping" /><br/>
+							<button type="submit" name="action" value="Verify Mapping" ><?php echo $LANG['VERIFY_MAPPING']; ?></button><<br/>
 							<fieldset>
 								<legend><?php echo $LANG['LRG_IMG']; ?></legend>
 								<input name="lgimg" type="radio" value="0" checked /> <?php echo $LANG['LEAVE_BLANK']; ?><br/>

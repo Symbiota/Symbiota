@@ -36,7 +36,8 @@ if($coorArr && count($coorArr) == 4){
 }
 
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title>Georeference Clone Tool</title>
 		<?php

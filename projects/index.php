@@ -197,6 +197,19 @@ if(!$researchList && !$editMode){
 	<style>
 		fieldset.form-color{ background-color:#f2f2f2; margin:15px; padding:20px; }
 		fieldset.form-color legend{ font-weight: bold; }
+		.gridlike-form-row-label {
+			width: 100px;
+		}
+		.gridlike-form-row-input {
+			width: 40%;
+		}
+		.background-gray-light {
+			background-color: #f2f2f2;
+		}
+		.max-width-fit-65 {
+			max-width: 100%;
+			width: 65rem;
+		}
 	</style>
 </head>
 <body>

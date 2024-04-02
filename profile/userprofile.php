@@ -23,10 +23,16 @@ if(isset($SYMB_UID) && $SYMB_UID){
 }
 if($isEditor){
 	?>
+	<!DOCTYPE html>
+    <html lang="<?php echo $LANG_TAG ?>">
+	<head>
+    <title><?php echo (isset($LANG['DETAILS'])?$LANG['DETAILS']:'Profile Details'); ?></title>
+    </head>
+	<body>
 	<div style="padding:15px;">
 		<div>
 			<div>
-				<b><u><?php echo (isset($LANG['DETAILS'])?$LANG['DETAILS']:'Profile Details'); ?></u></b>
+				<h1><span style="text-decoration: underline;"><?php echo (isset($LANG['DETAILS'])?$LANG['DETAILS']:'Profile Details'); ?></span></h1>
 			</div>
 			<div style="margin:20px;">
 				<?php
@@ -60,7 +66,7 @@ if($isEditor){
 			<form name="editprofileform" action="viewprofile.php" method="post">
 				<fieldset>
 					<legend><b><?php echo (isset($LANG['EDIT_U_PROFILE'])?$LANG['EDIT_U_PROFILE']:'Edit User Profile'); ?></b></legend>
-					<table cellspacing='1' style="width:100%;">
+					<table style="width:100%; border-spacing: 1px;">
 						<tr>
 							<td><b><?php echo (isset($LANG['FIRST_NAME'])?$LANG['FIRST_NAME']:'First Name'); ?>:</b></td>
 							<td>
@@ -252,9 +258,9 @@ if($isEditor){
 		</div>
 		<div>
 			<div>
-				<b><u><?php echo (isset($LANG['TAXON_RELS'])?$LANG['TAXON_RELS']:'Taxonomic Relationships'); ?></u></b>
-				<a href="#" onclick="toggle('addtaxonrelationdiv')" title="<?php echo (isset($LANG['ADD_TAXON_REL'])?$LANG['ADD_TAXON_REL']:'Add a New Taxonomic Relationship'); ?>">
-					<img style='border:0px;width:1.3em;' src='../images/add.png'/>
+				<b><span style="text-decoration: underline;"><?php echo (isset($LANG['TAXON_RELS'])?$LANG['TAXON_RELS']:'Taxonomic Relationships'); ?></span></b>
+				<a href="#" onclick="toggle('addtaxonrelationdiv')" title="<?php echo (isset($LANG['ADD_TAXON_REL'])?$LANG['ADD_TAXON_REL']:'Add a New Taxonomic Relationship'); ?>" aria-label="<?php echo $LANG['CREATE_TAXON_REL'] ?>" >
+					<img style='border:0px;width:1.3em;' src='../images/add.png' alt='<?php echo $LANG['ADD_ICON'] ?>'/>
 				</a>
 			</div>
 			<div id="addtaxonrelationdiv" style="display:none;">
@@ -318,6 +324,8 @@ if($isEditor){
 			?>
 		</div>
 	</div>
+	</body>
+	</html>
 	<?php
 }
 ?>

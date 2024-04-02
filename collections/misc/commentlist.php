@@ -87,6 +87,12 @@ if($isEditor){
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
+		<style>
+			.fieldset-like--small-float-right {
+				float: right;
+				width: 35rem;
+			}
+		</style>
 	</head>
 	<body>
 		<?php

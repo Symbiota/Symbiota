@@ -36,7 +36,8 @@ if($collMap['colltype'] == 'General Observations' && $obsUid !== 0){
 }
 
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['FIELD_STANDARDIZATION'] ?></title>

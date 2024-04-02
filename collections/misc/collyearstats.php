@@ -21,7 +21,8 @@ if($collId){
 	$statArr = $collManager->getYearStatsDataArr($collId,$days);
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta name="keywords" content="Natural history collections yearly statistics" />
 		<title><?php echo $DEFAULT_TITLE; ?> Year Statistics</title>

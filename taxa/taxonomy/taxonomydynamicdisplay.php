@@ -66,6 +66,23 @@ reset($treePath);
 			max-width: 600px;
 		}
 		.icon-image{ border: 0px; width: 15px; }
+		.tax-meta-arr {
+			float: left;
+			margin: 1rem 0rem 2.5rem 0rem;
+			font-weight: bold;
+			font-size: 120%;
+		}
+		.tax-detail-div {
+			margin-top: 1.35rem;
+			margin-left: 0.7rem;
+			float: left;
+			font-size: 80%;
+		}
+		.tax-meta-div {
+			margin: 1rem 1.35rem 3rem 1.35rem;
+			display: none;
+			clear: both;
+		}
 	</style>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>

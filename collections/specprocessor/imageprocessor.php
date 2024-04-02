@@ -22,7 +22,8 @@ if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,
 
 if($spprid) $specManager->setProjVariables($spprid);
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title><?php echo $LANG['IMG_PROCESSOR']; ?></title>
 		<?php

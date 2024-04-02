@@ -16,7 +16,8 @@ $taxaUrl = '../../collections/list.php?datasetid='.$datasetid.'&tabindex=0';
 // $downloadUrl = '../../collections/download/index.php?datasetid='.$datasetid;
 $ocArr = $datasetManager->getOccurrences($datasetid);
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title>Dataset: <?php echo $dArr['name'] ;?></title>
 		<?php

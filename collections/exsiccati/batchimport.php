@@ -35,7 +35,8 @@ if($isEditor && $formSubmit){
 }
 
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Exsiccatae Batch Transfer</title>
 	<?php

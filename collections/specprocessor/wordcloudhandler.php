@@ -7,7 +7,8 @@ $collidStr = array_key_exists('collidstr',$_REQUEST)?$_REQUEST['collidstr']:fals
 $csMode = array_key_exists('csmode',$_REQUEST)?$_REQUEST['csmode']:false;
 
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 	    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 		<title><?php echo $DEFAULT_TITLE; ?> - Word Cloud Handler Collections</title>

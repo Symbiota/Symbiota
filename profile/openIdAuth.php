@@ -27,8 +27,8 @@ if(isset($shouldVerifyPeers)){
 $oidc->authenticate();
 
 ?>
-
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
     <title>Example OpenID Connect Client Use</title>
     <style>

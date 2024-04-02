@@ -3,7 +3,8 @@ include_once('../config/symbini.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 include_once('content/lang/misc/aboutproject.'.$LANG_TAG.'.php');
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title>About Project</title>
 		<?php

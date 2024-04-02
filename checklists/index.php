@@ -23,6 +23,12 @@ $clManager->setProj($pid);
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
+	<style>
+		.btn-medium-font {
+			font-size: 0.6em;
+			text-decoration: none;
+		}
+	</style>
 </head>
 <body>
 	<?php
