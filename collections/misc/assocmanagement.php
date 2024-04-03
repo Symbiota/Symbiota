@@ -33,7 +33,7 @@ if($SYMB_UID){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
-		<title><?php echo (isset($LANG['OCC_BATCH'])?$LANG['OCC_BATCH']:'Occurrence Association Batch Build'); ?></title>
+		<title><?php echo $LANG['OCC_BATCH']; ?></title>
 		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
@@ -59,6 +59,7 @@ if($SYMB_UID){
 		</div>
 		<!-- This is inner text! -->
 		<div id="innertext">
+			<h1 class="page-heading"><?= $LANG['OCC_BATCH']; ?></h1>
 			<?php
 			if($isEditor){
 				if($formSubmit == 'Parse Associated Taxa'){

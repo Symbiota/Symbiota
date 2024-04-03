@@ -338,6 +338,7 @@ $traitArr = $indManager->getTraitArr();
 	</script>
 	<!-- This is inner text! -->
 	<div id="popup-innertext">
+		<h1 class="page-heading"><?= $LANG['OCCURRENCE_PROFILE']; ?></h1>
 		<?php
 		if($statusStr){
 			$statusColor = 'green';

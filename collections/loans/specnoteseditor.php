@@ -51,6 +51,7 @@ $loanManager->setCollId($collid);
 <body>
 	<!-- This is inner text! -->
 	<div id="popup-innertext">
+		<h1 class="page-heading"><?= $LANG['LOAN_NOTES_EDITOR']; ?></h1>
 		<?php
 		if($isEditor && $collid){
 			$noteArr = $loanManager->getSpecimenDetails($loanID, $occid)
