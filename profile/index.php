@@ -130,7 +130,7 @@ if (array_key_exists('last_message', $_SESSION)){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['LOGIN_NAME'])?$LANG['LOGIN_NAME']:'Login'); ?></title>
+	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['LOGIN_NAME']; ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -199,6 +199,7 @@ include($SERVER_ROOT.'/includes/header.php');
 ?>
 <!-- inner text -->
 <div id="innertext" style="padding-left:0px;margin-left:0px;">
+	<h1 class="page-heading">User Profile</h1>
 	<?php
 	if($statusStr){
 		$color = 'green';
