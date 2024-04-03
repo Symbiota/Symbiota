@@ -134,6 +134,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?= $LANG['GLOSSARY']; ?></h1>
 		<?php
 		if($statusStr){
 			?>

@@ -36,7 +36,7 @@ if($isEditor){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> <?php echo (isset($LANG['ALLOW_PUBLIC_EDITS']) ? $LANG['ALLOW_PUBLIC_EDITS'] : 'Allow Public Edits'); ?> </title>
+	<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['ALLOW_PUBLIC_EDITS']; ?> </title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -143,6 +143,7 @@ include($SERVER_ROOT.'/includes/header.php');
 </div>
 <!-- This is inner text! -->
 <div id="innertext">
+	<h1 class="page-heading"><?= $LANG['ALLOW_PUBLIC_EDITS']; ?></h1>
 	<?php
 	if($clid && $isEditor){
 		if(!$cidValue){

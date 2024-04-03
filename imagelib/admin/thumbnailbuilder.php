@@ -72,6 +72,7 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?= $LANG['THUMB_BUILDER']; ?></h1>
 		<?php
 		if($isEditor){
 			echo '<h2>'.$LANG['THUMB_MAINT_TOOL'];

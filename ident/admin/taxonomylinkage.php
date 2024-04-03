@@ -72,6 +72,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 	</script>
 </head>
 <body>
+	<h1 class="page-heading">Taxonomy Linkage</h1>
 	<div id="tlinkdiv" style="margin:15px;">
 		<div style="margin:10px;">
 			<b>Taxonomic relevance of character</b> -
