@@ -46,6 +46,7 @@ if($SYMB_UID){
 		</style>
 	</head>
 	<body style="background-color:#ffffff;">
+		<h1 class="page-heading">Default Annotations</h1>
 		<div>
 			<?php
 			if($isEditor){

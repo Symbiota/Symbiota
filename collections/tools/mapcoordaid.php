@@ -64,6 +64,7 @@ else{
 <body style="background-color:#ffffff;width:100%;height:100%;image-rendering: auto;
   image-rendering: crisp-edges;
   image-rendering: pixelated; ">
+   <h1 class="page-heading">Taxon Map</h1>
 
 		<div style="float:right;margin-top:5px;margin-right:15px;">
          <button name="closebutton" type="button" onclick="self.close()">

@@ -26,6 +26,7 @@ if($SYMB_UID){
 		</style>
 	</head>
 	<body>
+		<h1 class="page-heading">Labels</h1>
 		<div>
 			<?php
 			if($action && $isEditor){

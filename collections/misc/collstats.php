@@ -404,7 +404,7 @@ if($action != "Update Statistics"){
 			?>
 			<!-- This is inner text! -->
 			<div id="innertext">
-				<h1><?php echo $LANG['SELECT_COLS']; ?></h1>
+				<h1 class="page-heading"><?= $LANG['SELECT_COLS']; ?></h1>
 				<div id="tabs" class="tabby">
 					<ul class="full-tab">
 						<li><a href="#specobsdiv"><?php echo htmlspecialchars($LANG['COLLECTIONS'], HTML_SPECIAL_CHARS_FLAGS); ?></a></li>

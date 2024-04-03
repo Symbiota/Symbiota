@@ -15,7 +15,7 @@ if(!file_exists('./config/symbini.php')) {
 		</head>
 		<body style="width: 100vw; height: 100vh;display: flex">      
 			<div style="text-align: center; margin: auto; background-color: --primary">
-				<h1>Command Line Only Script</h1>
+				<h1 class="page-heading">Command Line Only Script</h1>
 				<a href="$CLIENT_ROOT">Back to Home</a>
 			</div> 
 		</body>

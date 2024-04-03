@@ -90,7 +90,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext" class="inner-search">
-		<h1><?php echo $LANG['SAMPLE_SEARCH'] ?></h1>
+		<h1 class="page-heading"><?php echo $LANG['SAMPLE_SEARCH'] ?></h1>
 		<div id="error-msgs" class="errors"></div>
 		<div style="display: grid; grid-template-columns: 3fr 1fr;">
 			<button onClick="handleAccordionExpand()" class="inner-search button" id="expand-all-button" type="button" style="font-size: 1rem;"><?= $LANG['EXPAND_ALL_SECTIONS']; ?></button>

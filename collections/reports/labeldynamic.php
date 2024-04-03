@@ -130,6 +130,7 @@ if($SYMB_UID){
 		</style>
 	</head>
 	<body style="background-color:#ffffff;">
+		<h1 class="page-heading">Labels</h1>
 		<?php
 		echo '<div class="body'.(isset($targetLabelFormatArr['pageSize'])?' '.$targetLabelFormatArr['pageSize']:'').'">'  ;
 		if($targetLabelFormatArr && $isEditor){

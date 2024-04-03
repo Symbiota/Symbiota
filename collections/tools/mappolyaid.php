@@ -230,6 +230,7 @@ else{
 		</script>
 	</head>
 	<body style="background-color:#ffffff;" onload="initialize()">
+		<h1 class="page-heading">Coordinate Polygon Aid</h1>
 		<div style="float:right" style="margin-left:20px;">
          <button type="submit" name="addcoords" onclick="updateParentForm()">
             <?php echo isset($LANG['SAVE_N_CLOSE'])? $LANG['SAVE_N_CLOSE'] :'Save and Close'?>

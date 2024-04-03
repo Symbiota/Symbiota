@@ -17,6 +17,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 	</head>
 	<body>
     <main>
+      <h1 class="page-heading">Label Content Format Visual Editor</h1>
       <div>
         <div id="fields">
           <h4>Fields Available</h4>
