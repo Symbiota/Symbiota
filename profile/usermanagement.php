@@ -39,7 +39,7 @@ if($IS_ADMIN){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['USER_MNGMT'])?$LANG['USER_MNGMT']:'User Management'); ?></title>
+	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['USER_MNGMT']; ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -87,6 +87,7 @@ if($IS_ADMIN){
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?= $LANG['USER_MNGMT']; ?></h1>
 		<div style="float:right;">
 			<div style="margin:10px 0px 15px 0px;">
 				<section class="fieldset-like" style="background-color:#FFFFCC;">

@@ -53,7 +53,7 @@ if($SYMB_UID){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE." - ".$taxonManager->getTaxonName(); ?></title>
+	<title><?php echo $DEFAULT_TITLE . " - " . $taxonManager->getTaxonName(); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/taxa/index.css" type="text/css" rel="stylesheet" />
@@ -76,6 +76,7 @@ $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div id="popup-innertext">
+	<h1 class="page-heading"><?= $taxonManager->getTaxonName() ?></h1>
 	<?php
 	if($taxonManager->getTaxonName()){
 		if(count($taxonManager->getAcceptedArr()) == 1){

@@ -53,7 +53,7 @@ $status = "";
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
-		<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['TAX_NAME_CLEANER'])?$LANG['TAX_NAME_CLEANER']:'Taxonomic Name Cleaner'); ?></title>
+		<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['TAX_NAME_CLEANER']; ?></title>
 		<?php
 
 		include_once($SERVER_ROOT.'/includes/head.php');
@@ -103,6 +103,7 @@ $status = "";
 		?>
 		<!-- inner text block -->
 		<div id="innertext">
+			<h1 class="page-heading"><?= $LANG['TAX_NAME_CLEANER']; ?></h1>
 			<?php
 			if($SYMB_UID){
 				if($status){

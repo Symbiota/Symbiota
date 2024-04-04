@@ -77,7 +77,7 @@ if($isEditor){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE." ".(isset($LANG['TAX_EDITOR'])?$LANG['TAX_EDITOR']:'Taxon Editor').": ".$tid; ?></title>
+	<title><?php echo $DEFAULT_TITLE . " " . $LANG['TAX_EDITOR'] . ": " . $tid; ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>"/>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -122,6 +122,7 @@ if($isEditor){
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?php echo $LANG['TAX_EDITOR'] . ": " . $tid; ?></h1>
 		<?php
 		if($statusStr){
 			?>

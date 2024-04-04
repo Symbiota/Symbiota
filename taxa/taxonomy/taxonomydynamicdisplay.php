@@ -42,7 +42,7 @@ reset($treePath);
 <!Doctype html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.' Taxonomy Explorer: '.$taxonDisplayObj->getTargetStr(); ?></title>
+	<title><?php echo $DEFAULT_TITLE . ' Taxonomy Explorer: ' . $taxonDisplayObj->getTargetStr(); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
@@ -115,6 +115,7 @@ reset($treePath);
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?php echo 'Taxonomy Explorer: '.$taxonDisplayObj->getTargetStr(); ?></h1>
 		<?php
 		if($statusStr){
 			?>

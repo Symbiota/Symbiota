@@ -119,7 +119,7 @@ if($isEditor && $action){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.' '.$LANG['TAXON_EDITOR'] .': '.$tEditor->getSciName(); ?></title>
+	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['TAXON_EDITOR'] .': ' . $tEditor->getSciName(); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>" />
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
@@ -188,6 +188,7 @@ if($isEditor && $action){
 		?>
 	</div>
 	<div id="innertext">
+		<h1 class="page-heading"><?php echo $LANG['TAXON_EDITOR'] .': ' . $tEditor->getSciName(); ?></h1>
 		<?php
 		if($tEditor->getTid()){
 			if($isEditor){

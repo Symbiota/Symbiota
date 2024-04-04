@@ -231,6 +231,7 @@ if(!$researchList && !$editMode){
 
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?= $LANG['INVPROJ']; ?></h1>
 		<?php
 		if($statusStr){
 			?>

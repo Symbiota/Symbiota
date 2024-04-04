@@ -53,7 +53,7 @@ if($isEditor){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['TAXA_LOADER'])?$LANG['TAXA_LOADER']:'Taxa Loader'); ?></title>
+	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['TAXA_LOADER']; ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>" />
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -189,7 +189,7 @@ if($isEditor){
 	$rankArr = $loaderManager->getTaxonRankArr();
 	?>
 	<div id="innertext">
-		<h1><?php echo (isset($LANG['TAX_NAME_BATCH_LOADER'])?$LANG['TAX_NAME_BATCH_LOADER']:'Taxonomic Name Batch Loader'); ?></h1>
+		<h1 class="page-heading"><?php echo $LANG['TAX_NAME_BATCH_LOADER']; ?></h1>
 		<div style="margin:30px;">
 			<div style="margin-bottom:30px;">
 				<?php echo (isset($LANG['TAX_UPLOAD_EXPLAIN1'])?$LANG['TAX_UPLOAD_EXPLAIN1']:'This page allows a Taxonomic Administrator to batch upload taxonomic data files. See').' '; ?><a href="https://biokic.github.io/symbiota-docs/portal_manager/taxonomy/batch_load/"><?php echo htmlspecialchars((isset($LANG['SYMB_DOC'])?$LANG['SYMB_DOC']:'Symbiota Documentation'), HTML_SPECIAL_CHARS_FLAGS); ?></a><?php echo ' ' . htmlspecialchars((isset($LANG['TAX_UPLOAD_EXPLAIN2'])?$LANG['TAX_UPLOAD_EXPLAIN2']:'pages for more details on the Taxonomic Thesaurus layout.'), HTML_SPECIAL_CHARS_FLAGS); ?>

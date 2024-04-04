@@ -81,6 +81,7 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 		<a href="taxonomydisplay.php"><b><?= $LANG['TAX_TREE_VIEWER'] ?></b></a>
 	</div>
 	<div id="innertext">
+		<h1 class="page-heading"><?php echo $LANG['TAX_DISPLAY'] . ': ' . $taxonDisplayObj->getTargetStr(); ?></h1>
 		<?php
 		if($statusStr){
 			$statusStr = str_replace(';', '<br/>', htmlspecialchars($statusStr, HTML_SPECIAL_CHARS_FLAGS));

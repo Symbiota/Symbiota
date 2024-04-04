@@ -30,6 +30,7 @@ if($tid){
 </head>
 <body>
 	<div id="innertext" style="background-color:white;">
+		<h1 class="page-heading"><?= $LANG['TP_IMAGE_EDITOR']; ?></h1>
 		<?php
 		if($isEditor && $tid){
 			if($category == "imagequicksort"){
