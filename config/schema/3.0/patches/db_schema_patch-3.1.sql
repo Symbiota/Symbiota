@@ -38,6 +38,20 @@ ALTER TABLE `omoccurassociations`
   ADD COLUMN `associationType` VARCHAR(45) NOT NULL AFTER `occid`;
 
 ALTER TABLE `omoccurassociations` 
+  ADD COLUMN `objectID` VARCHAR(250) NULL DEFAULT NULL COMMENT 'dwc:relatedResourceID (object identifier)' AFTER `subType`,
+  ADD COLUMN `instanceID` VARCHAR(45) NULL DEFAULT NULL COMMENT 'dwc:resourceRelationshipID, if association was defined externally ' AFTER `accordingTo`,
+  CHANGE COLUMN `identifier` `identifier` VARCHAR(250) NULL DEFAULT NULL COMMENT 'Deprecated field' ,
+  CHANGE COLUMN `sourceIdentifier` `sourceIdentifier` VARCHAR(45) NULL DEFAULT NULL COMMENT 'deprecated field' ;
+  
+UPDATE omoccurassociations
+  SET objectID = identifier
+  WHERE objectID IS NULL AND identifier IS NOT NULL;
+
+UPDATE omoccurassociations
+  SET instanceID = sourceIdentifier
+  WHERE instanceID IS NULL AND sourceIdentifier IS NOT NULL;
+
+ALTER TABLE `omoccurassociations` 
   DROP INDEX `UQ_omoccurassoc_sciname` ,
   ADD UNIQUE INDEX `UQ_omoccurassoc_sciname` (`occid` ASC, `verbatimSciname` ASC, `associationType` ASC);
 

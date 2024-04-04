@@ -634,9 +634,10 @@ class DwcArchiverOccurrence extends Manager{
 		$retArr = array();
 		$this->setServerDomain();
 		//Replace GUID identifiers with occurrenceID values
-		$sql = 'SELECT occid, occurrenceID, recordID FROM omoccurrences WHERE occid IN('.implode(',',array_keys($internalAssocOccidArr)).')';
+		$sql = 'SELECT occid, sciname, occurrenceID, recordID FROM omoccurrences WHERE occid IN('.implode(',',array_keys($internalAssocOccidArr)).')';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
+			$retArr[$r->occid]['scientificName'] = $r->sciname;
 			$guid = $r->recordID;
 			if($r->occurrenceID) $guid = $r->occurrenceID;
 			$retArr[$r->occid]['identifier'] = $guid;
