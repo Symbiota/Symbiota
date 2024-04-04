@@ -526,7 +526,7 @@ else{
 	<div id="innertext">
 		<div id="titleDiv">
 			<?php
-			if($collMap) echo '<h1 class="page-heading">' . $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').') </h1>';
+			if($collMap) echo '<h1 class="page-heading" style="font-size: 3.0rem;"> Occurrence Editor: ' . $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').') </h1>';
 			if($isEditor && $isEditor != 3){
 				?>
 				<div id="querySymbolDiv" style="margin:5px 5px 5px 5px;">

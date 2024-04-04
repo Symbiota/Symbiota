@@ -279,6 +279,7 @@ $collManager->cleanOutArr($collData);
 					?>
 				</ul>
 				<div id="colleditor">
+					<h1 class="page-heading">Collection Metadata Editor</h1>
 					<section class="fieldset-like">
 						<h1> <span> <?php echo ($collid ? 'Edit' : 'Add New') . ' ' . (isset($LANG['COL_INFO']) ? $LANG['COL_INFO'] : 'Collection Information'); ?> </span> </h1>
 						<form id="colleditform" name="colleditform" action="collmetadata.php" method="post" enctype="multipart/form-data" onsubmit="return verifyCollEditForm(this)">

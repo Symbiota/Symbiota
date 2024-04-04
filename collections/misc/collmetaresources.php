@@ -39,6 +39,7 @@ if($collid && $isEditor){
 		hr{ margin:10px 0px; }
 	</style>
 	<div id="contacts_resources">
+		<h1 class="page-heading">Contacts and Resources</h1>
 		<fieldset>
 			<legend><?php echo (isset($LANG['LINK_RESOURCE'])?$LANG['LINK_RESOURCE']:'Link Resource Listing'); ?></legend>
 			<div id="link-listing">
