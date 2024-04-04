@@ -2,8 +2,7 @@
 /*
 ------------------
 Language: Español (Spanish)
-Translated by: Google Translator
-Date Translated: 2024-03-06
+Translated by: Google Translator (2024-03-06)
 ------------------
 */
 
@@ -20,7 +19,8 @@ $LANG['ERR_DUPLICATE_SOURCE'] = 'ERROR: Los nombres de los campos de origen debe
 $LANG['ERR_DUPLICATE_TARGET'] = "ERROR: No se puede asignar al mismo campo de destino más de una vez (";
 $LANG['ERR_NOT_AUTH'] = 'ERROR: no autorizado para acceder a esta página';
 $LANG['ERR_COLL_NOT_VALID'] = 'ERROR: Identificador de colección no válido';
-$LANG['NEED_CAT'] = 'ERROR: se requiere el número de catálogo del asunto, el ID de ocurrencia u otros números de catálogo';
+$LANG['SUBJECT_ID_REQUIRED'] = 'ERROR: se requiere identificador de sujeto (catalogNumber, occurrenceID, otherCatalogNumbers)';
+$LANG['OBJECT_ID_REQUIRED'] = 'ERROR: se requiere identificador de objeto (catalogNumber, occurrenceID, occid)';
 $LANG['SELECT_RELATIONSHIP'] = 'Seleccione una relación (obligatorio)';
 $LANG['COLLECTION_MENU'] = 'Menú de gestión de colecciones';
 $LANG['DATA_IMPORTER'] = 'Importador de datos ampliado';
@@ -31,8 +31,9 @@ $LANG['STARTING_PROCESS'] = 'Comenzando a procesar el archivo de entrada';
 $LANG['DONE_PROCESSING'] = 'Archivo de entrada de proceso terminado';
 $LANG['FIELD_MAPPING'] = 'Mapeo de campos';
 
+$LANG['BATCH_DELETE'] = 'Eliminar por lotes';
 $LANG['NEW_BLANK_RECORD'] = 'Vincular imagen a nuevo registro en blanco si el número de catálogo no existe';
-$LANG['MATCHING_IDENTIFIERS'] = 'Actualizar registros con &quot;identificadores&quot; coincidentes';
+$LANG['MATCHING_IDENTIFIERS'] = 'Actualizar o eliminar registros con identificadores coincidentes (identificador de sujeto más ID de objeto o URL de recurso)';
 $LANG['IMPORT_DATA'] = 'Importar datos';
 $LANG['ERR_SETTING_IMPORT'] = 'ERROR al configurar el archivo de importación';
 $LANG['INITIALIZE_IMPORT'] = 'Inicializar importación';
@@ -45,8 +46,13 @@ $LANG['MATERIAL_SAMPLE'] = 'Muestra de material';
 $LANG['PROCESSING_CATNUM'] = 'Identificador de procesamiento';
 $LANG['UPDATING_STATS'] = 'Actualizando estadísticas';
 $LANG['IMAGE_LOADED'] = 'Imagen cargada correctamente';
+$LANG['ASSOC_DELETED'] = 'Asociación eliminada';
+$LANG['ERROR_DELETING'] = 'ERROR al eliminar la asociación de ocurrencia';
 $LANG['ASSOC_UPDATED'] = 'Asociación actualizada';
+$LANG['ERROR_UPDATING'] = 'ERROR al actualizar la asociación de ocurrencia';
+$LANG['TARGET_NOT_FOUND'] = 'Error en la actualización: no se encontró el registro de destino de la asociación';
 $LANG['ASSOC_ADDED'] = 'Asociación agregada';
+$LANG['ERROR_ADDING'] = 'ERROR cargando Asociación de ocurrencia';
 $LANG['MAT_SAMPLE_ADDED'] = 'Muestra de material agregada';
 $LANG['DETERMINATION_ADDED'] = 'Determinación agregada';
 $LANG['HOME'] = 'Inicio';

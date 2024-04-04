@@ -64,18 +64,18 @@ function loadMapShape(shapeType, loaders) {
          }
          break;
       case "circle":
-         let {radius, pointlat, pointlng, radUnits} = circleLoader();
+         let {radius, pointLat, pointLng, radUnits} = circleLoader();
 
          //Can only be km or miles
          if(!radUnits) radUnits = "km";
 
-         if(isNumeric(radius) && isNumeric(pointlng) && isNumeric(pointlng)) {
+         if(isNumeric(radius) && isNumeric(pointLng) && isNumeric(pointLng)) {
             return {
                type: "circle",
                radius: (radUnits === "mi"? radius * MILEStoKM: parseFloat(radius)) * KMtoM,
                latlng: [
-                  pointlat, 
-                  pointlng
+                  pointLat, 
+                  pointLng
                ]
             }
          }

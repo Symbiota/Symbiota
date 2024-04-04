@@ -35,8 +35,18 @@ else{
 		<title><?php echo $DEFAULT_TITLE; ?> - Coordinate Aid</title>
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 
-		<?php include_once($SERVER_ROOT.'/includes/leafletMap.php')?>
-		<script src="//maps.googleapis.com/maps/api/js?<?= (!empty($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY != 'DEV' ? 'key=' . $GOOGLE_MAP_KEY : '') ?>"></script>
+		<?php 
+		if(empty($GOOGLE_MAP_KEY)) {
+			include_once($SERVER_ROOT.'/includes/leafletMap.php');
+		} else {
+			include_once($SERVER_ROOT.'/includes/googleMap.php');
+		}
+		?>
+
+		<style>
+         body { padding:0; margin:0 }
+			html, body, #map_canvas { width:100%; height: 100%;}
+		</style>
 		<script type="text/javascript">
 		var map;
 		var currentMarker;
@@ -113,11 +123,11 @@ else{
 			});
 		}
 		function initialize() {
-			<?php if(empty($GOOGLE_MAP_KEY)) {?>
+			<?php if(empty($GOOGLE_MAP_KEY)): ?> 
 				leafletInit();
-			<?php } else { ?>
+			<?php else:?> 
 				googleInit();
-			<?php } ?>
+			<?php endif ?>
 		}
 
 		function placeMarker() {
@@ -140,8 +150,8 @@ else{
 
 		function updateParentForm() {
 			try{
-				var latObj = opener.document.<?php echo $formName.'.'.$latName; ?>;
-				var lngObj = opener.document.<?php echo $formName.'.'.$longName; ?>;
+				var latObj = opener.document.<?php echo $formName . '.' . $latName; ?>;
+				var lngObj = opener.document.<?php echo $formName . '.' . $longName; ?>;
 				latObj.value = document.getElementById("latbox").value;
 				lngObj.value = document.getElementById("lngbox").value;
 				lngObj.onchange();
@@ -154,21 +164,20 @@ else{
 		}
 		</script>
 	</head>
-	<body style="background-color:#ffffff;" onload="initialize()">
-		<div style="">
+	<body style="display:flex; flex-direction: column; background-color:#ffffff;" onload="initialize()">
+		<div style="padding:0.5rem; width: fit-content; height:fit-content">
 			<div>
-            <?php echo isset($LANG['MPR_INSTRUCTIONS']) ?$LANG['MPR_INSTRUCTIONS']: 'Click once to capture coordinates. Click on the submit button to transfer coordinates.' ?>
+				<?php echo isset($LANG['MPR_INSTRUCTIONS']) ?$LANG['MPR_INSTRUCTIONS']: 'Click once to capture coordinates. Click on the submit button to transfer coordinates.' ?>
 			</div>
-			<div style="margin-right:30px;">
-            <b>
-            <?php echo isset($LANG['MPR_LAT'])? $LANG['MPR_LAT']: 'Latitude' ?>:
-            </b>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="latbox" size="13" name="lat" value="<?php echo $latDef; ?>" />&nbsp;&nbsp;&nbsp;
-            <b>
-               <?php echo isset($LANG['MPR_LNG'])? $LANG['MPR_LNG']: 'Longitude' ?>:
-            </b> <input type="text" id="lngbox" size="13" name="lon" value="<?php echo $lngDef; ?>" />
-   <input type="submit" name="addcoords" value="<?php echo isset($LANG['SUBMIT'])? $LANG['SUBMIT']: 'Submit'?>" onclick="updateParentForm();" />&nbsp;&nbsp;&nbsp;
+			<div>
+				<b> <?php echo isset($LANG['MPR_LAT'])? $LANG['MPR_LAT']: 'Latitude' ?>:
+				</b>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="latbox" size="13" name="lat" value="<?php echo $latDef; ?>" />&nbsp;&nbsp;&nbsp;
+				<b>
+					<?php echo isset($LANG['MPR_LNG'])? $LANG['MPR_LNG']: 'Longitude' ?>:
+				</b> <input type="text" id="lngbox" size="13" name="lon" value="<?php echo $lngDef; ?>" />
+				<input type="submit" name="addcoords" value="<?php echo isset($LANG['SUBMIT'])? $LANG['SUBMIT']: 'Submit'?>" onclick="updateParentForm();" />&nbsp;&nbsp;&nbsp;
 			</div>
-			<div id='map_canvas' style='width:95%; height:90%; clear:both;'></div>
 		</div>
+		<div id='map_canvas'></div>
 	</body>
 </html>

@@ -201,11 +201,25 @@ class MediaController extends Controller{
 		if($user = $this->authenicate($request)){
 			$this->validate($request, [
 				'occid' => 'integer',
-				'originalUrl' => 'required',
-				//'format' => '',
-				'occid' => 'integer',
-				'tid' => 'integer',
-				'photographerUid' => 'integer'
+				'originalUrl' => 'required'
+				'format' => '',
+				'originalUrl
+				'mediumUrl
+				'thumbnailUrl
+				'archiveUrl
+				'referenceUrl
+				'occid
+				'tid
+				'photographer
+				'photographerUid
+				'imageType
+				'caption
+				'copyright
+				'rights
+				'accessRights
+				'locality
+				'notes
+				'sourceIdentifier
 			]);
 			$inputArr = $request->all();
 			$occid = $request->input('occid');

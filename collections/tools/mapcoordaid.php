@@ -47,288 +47,289 @@ else{
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
-<head>
-	<title><?php echo $DEFAULT_TITLE; ?> - Taxon Map</title>
-	<?php
-	   include_once($SERVER_ROOT.'/includes/head.php');
-      include_once($SERVER_ROOT.'/includes/leafletMap.php');
-      include_once($SERVER_ROOT.'/includes/googleMap.php');
-	?>
-   <meta charset="utf-8">
-
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/wktpolygontools.js" type="text/javascript"></script>
-	<style>
-		#map { width:100%; height: auto; }
-	</style>
-</head>
-<body style="background-color:#ffffff;width:100%;height:100%;image-rendering: auto;
-  image-rendering: crisp-edges;
-  image-rendering: pixelated; ">
-
+	<head>
+		<title><?php echo $DEFAULT_TITLE; ?> - Taxon Map</title>
+		<?php
+		include_once($SERVER_ROOT.'/includes/head.php');
+		if(empty($GOOGLE_MAP_KEY)) {
+			include_once($SERVER_ROOT.'/includes/leafletMap.php');
+		} else {
+			include_once($SERVER_ROOT.'/includes/googleMap.php');
+		}
+		?>
+		<meta charset="utf-8">
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/wktpolygontools.js" type="text/javascript"></script>
+		<style>
+			html, body, #map { width:100%; height: 100%; }
+		</style>
+	</head>
+	<body style="background-color:#ffffff;image-rendering: auto;
+	image-rendering: crisp-edges;
+	image-rendering: pixelated; ">
 		<div style="float:right;margin-top:5px;margin-right:15px;">
-         <button name="closebutton" type="button" onclick="self.close()">
-            <?php echo isset($LANG['SAVE_N_CLOSE'])? $LANG['SAVE_N_CLOSE'] :'Save and Close'?>
-         </button>
-         <?php echo isset($LANG['COORD_AID_HELP_TEXT'])? $LANG['COORD_AID_HELP_TEXT'] :'Click the map to start drawing or select from the shape controls to draw bounds of that shape'?>
+			<button name="closebutton" type="button" onclick="self.close()">
+				<?php echo isset($LANG['SAVE_N_CLOSE'])? $LANG['SAVE_N_CLOSE'] :'Save and Close'?>
+			</button>
+			<?php echo isset($LANG['COORD_AID_HELP_TEXT'])? $LANG['COORD_AID_HELP_TEXT'] :'Click the map to start drawing or select from the shape controls to draw bounds of that shape'?>
 		</div>
 		<div id="helptext">
 		</div>
-      <div id="map"></div>
-      <script>
+		<div id="map"></div>
+		<script type="text/javascript">
 
-      /* Type Definitions
-       *
-       * lat: -90 < float < 90;
-       * lng: -180 < float < 180;
-       *
-       */
+		/* Type Definitions
+	   *
+	   * lat: -90 < float < 90;
+	   * lng: -180 < float < 180;
+	   *
+	   */
 
-      /* Shape Defintions:
-       *
-       * Polygon {
-       *    type: polygon, 
-       *    latlngs: [[lat, lng]...],
-       *    wkt: String (Wkt format),
-       * }
-       *
-       * Rectangle {
-       *    type: "rectangle",
-       *    upperLat: lat,
-       *    lowerLat: lat,
-       *    rightLng: lng,
-       *    leftLng: lng,
-       * }
-       *
-       * Circle { 
-       *    type: "circle"
-       *    radius: float,
-       *    center [lat, lng]
-       * }
-       */
+		/* Shape Defintions:
+	   *
+	   * Polygon {
+	   *    type: polygon, 
+	   *    latlngs: [[lat, lng]...],
+	   *    wkt: String (Wkt format),
+	   * }
+	   *
+	   * Rectangle {
+	   *    type: "rectangle",
+	   *    upperLat: lat,
+	   *    lowerLat: lat,
+	   *    rightLng: lng,
+	   *    leftLng: lng,
+	   * }
+	   *
+	   * Circle { 
+	   *    type: "circle"
+	   *    radius: float,
+	   *    center [lat, lng]
+	   * }
+	   */
 
-      const MILEStoKM = 1.60934;
-      const KMtoM = 1000; 
-      const SIG_FIGS = 6;
-      const wktInputId = "<?= $wktInputId?>";
-      const polyOutputType = "<?= $outputType ?>";
+		const MILEStoKM = 1.60934;
+		const KMtoM = 1000; 
+		const SIG_FIGS = 6;
+		const wktInputId = "<?= $wktInputId?>";
+		const polyOutputType = "<?= $outputType ?>";
 
-      const setField = (id, v) => {
-         var elem = opener.document.getElementById(id);
-         if(elem) elem.value = v;
-      };
+		const setField = (id, v) => {
+			var elem = opener.document.getElementById(id);
+			if(elem) elem.value = v;
+		};
 
-      const getField = (id) => {
-         var elem = opener.document.getElementById(id);
-         return elem? elem.value: null;
-      };
+		const getField = (id) => {
+			var elem = opener.document.getElementById(id);
+			return elem? elem.value: null;
+		};
 
 		function isNumeric(n) {
 			return !isNaN(parseFloat(n)) && isFinite(n);
 		}
 
-      function setRectangle(upperLat, lowerLat, leftLng, rightLng) {
+		function setRectangle(upperLat, lowerLat, leftLng, rightLng) {
 
-         setField("upperlat_NS", upperLat > 0 ? "N": "S");
-         setField("upperlat", Math.abs(upperLat).toFixed(SIG_FIGS));
+			setField("upperlat_NS", upperLat > 0 ? "N": "S");
+			setField("upperlat", Math.abs(upperLat).toFixed(SIG_FIGS));
 
-         setField("bottomlat_NS", lowerLat > 0 ? "N": "S");
-         setField("bottomlat", Math.abs(lowerLat).toFixed(SIG_FIGS));
+			setField("bottomlat_NS", lowerLat > 0 ? "N": "S");
+			setField("bottomlat", Math.abs(lowerLat).toFixed(SIG_FIGS));
 
-         setField("leftlong_EW", leftLng > 0 ? "E": "W");
-         setField("leftlong", Math.abs(leftLng).toFixed(SIG_FIGS));
+			setField("leftlong_EW", leftLng > 0 ? "E": "W");
+			setField("leftlong", Math.abs(leftLng).toFixed(SIG_FIGS));
 
-         setField("rightlong_EW", rightLng> 0 ? "E": "W");
-         setField("rightlong", Math.abs(rightLng).toFixed(SIG_FIGS));
-      }
-      
-      function setCircle(radius, center_lat, center_lng) {
-         //Assuming Radius is always in meters
-         setField("radius", ((isNaN(radius)? radius: Math.abs(radius)) / KMtoM).toFixed(SIG_FIGS));
-         setField("radiusunits", "km");
+			setField("rightlong_EW", rightLng> 0 ? "E": "W");
+			setField("rightlong", Math.abs(rightLng).toFixed(SIG_FIGS));
+		}
 
-         setField("pointlat_NS", center_lat > 0? "N": "S");
-         setField("pointlat", Math.abs(center_lat).toFixed(SIG_FIGS));
+		function setCircle(radius, center_lat, center_lng) {
+			//Assuming Radius is always in meters
+			setField("radius", ((isNaN(radius)? radius: Math.abs(radius)) / KMtoM).toFixed(SIG_FIGS));
+			setField("radiusunits", "km");
 
-         setField("pointlong_EW", center_lng > 0? "E": "W");
-         setField("pointlong", Math.abs(center_lng).toFixed(SIG_FIGS));
-      }
+			setField("pointlat_NS", center_lat > 0? "N": "S");
+			setField("pointlat", Math.abs(center_lat).toFixed(SIG_FIGS));
 
-      function setPolygon(poly_output) {
-         setField(wktInputId, poly_output);
-      }
+			setField("pointlong_EW", center_lng > 0? "E": "W");
+			setField("pointlong", Math.abs(center_lng).toFixed(SIG_FIGS));
+		}
 
-      /* setShapeToSearchForm: 
-       *
-       * Sets Shape data to search form.
-       *
-       * activeShape: Shape Type (See Def at top of script)
-       * 
-       */
-      function setShapeToSearchForm(activeShape) {
-         //Clear Form
-         setField("pointlat", "");
-         setField("pointlong", "");
-         setField("radius", "");
-         setField("radiusunits", "");
+		function setPolygon(poly_output) {
+			setField(wktInputId, poly_output);
+		}
 
-         setField(wktInputId, "");
+	  /* setShapeToSearchForm: 
+	   *
+	   * Sets Shape data to search form.
+	   *
+	   * activeShape: Shape Type (See Def at top of script)
+	   * 
+	   */
+		function setShapeToSearchForm(activeShape) {
+			//Clear Form
+			setField("pointlat", "");
+			setField("pointlong", "");
+			setField("radius", "");
+			setField("radiusunits", "");
 
-         setField("upperlat", "");
-         setField("bottomlat", "");
-         setField("leftlong", "");
-         setField("rightlong", "");
+			setField(wktInputId, "");
 
-         //If Active Shape is null bail
-         if(!activeShape)
-            return;
+			setField("upperlat", "");
+			setField("bottomlat", "");
+			setField("leftlong", "");
+			setField("rightlong", "");
 
-         switch(activeShape.type) {
-            case "polygon":
-               if(polyOutputType === "geoJson") {
-                  setPolygon( JSON.stringify({
-                     "type": "Feature",
-                     "properties": {},
-                     "geometry": {
-                        "type": "Polygon",
-                        "coordinates": [activeShape.latlngs.map(([lat, lng]) => [lng, lat])]
-                     },
-                  }));
-               } else {
-                  setPolygon(activeShape.wkt);
-               }
-               break;
-            case "rectangle":
-               const rec = activeShape;
-               setRectangle(rec.upperLat, rec.lowerLat, rec.leftLng, rec.rightLng);
-               break;
-            case "circle":
-               const circ = activeShape; 
-               setCircle(circ.radius, circ.center.lat, circ.center.lng);
-               break;
-         }
-      }
+			//If Active Shape is null bail
+			if(!activeShape)
+			return;
 
-      /* LoadShape Reads Coordinates from Form: 
-       *
-       * mapMode: enum ("polygon", "rectangle", "circle")
-       *
-       * Returns A Shape (See top of script):
-       */
-      function loadShape(mapMode) {
-         switch(mapMode) {
-            case "polygon":
-               if(polyOutputType === "geoJson") {
-                  const geoJsonStr = getField(wktInputId);
-                  try {
-                     const geoJson = JSON.parse(geoJsonStr);
-                        return { 
-                           type: "geoJSON", 
-                           geoJSON: geoJson
-                        };
-                  } catch(e) {
-                     alert(e.message);
-                  }
-               } else {
-                  const origFootprintWkt = getField(wktInputId);
-                  try {
-                     const polyPoints = parseWkt(origFootprintWkt);
-                     if(polyPoints) {
-                        return { type: "polygon", latlngs: polyPoints, wkt: getField(wktInputId)};
-                     }
-                  } catch(e) {
-                     alert(e.message);
-                     opener.document.getElementById(wktInputId).value = origFootprintWkt;
-                  }
-               }
-            break;
-            case "rectangle":
-               const upperLat = getField("upperlat");
-               const lowerLat= getField("bottomlat");
-               const leftLng = getField("leftlong");
-               const rightLng = getField("rightlong");
+			switch(activeShape.type) {
+				case "polygon":
+					if(polyOutputType === "geoJson") {
+						setPolygon( JSON.stringify({
+							"type": "Feature",
+							"properties": {},
+							"geometry": {
+								"type": "Polygon",
+								"coordinates": [activeShape.latlngs.map(([lat, lng]) => [lng, lat])]
+							},
+						}));
+					} else {
+						setPolygon(activeShape.wkt);
+					}
+					break;
+				case "rectangle":
+					const rec = activeShape;
+					setRectangle(rec.upperLat, rec.lowerLat, rec.leftLng, rec.rightLng);
+					break;
+				case "circle":
+					const circ = activeShape; 
+					setCircle(circ.radius, circ.center.lat, circ.center.lng);
+					break;
+			}
+		}
 
-               if(isNumeric(upperLat) && isNumeric(lowerLat) && isNumeric(leftLng) && isNumeric(rightLng)) {
-                  return {
-                     type: "rectangle",
-                     upperLat: upperLat * (getField("upperlat_NS") === "N"? 1: -1),
-                     rightLng: rightLng * (getField("rightlong_EW") === "E"? 1: -1),
+	  /* LoadShape Reads Coordinates from Form: 
+	   *
+	   * mapMode: enum ("polygon", "rectangle", "circle")
+	   *
+	   * Returns A Shape (See top of script):
+	   */
+		function loadShape(mapMode) {
+			switch(mapMode) {
+				case "polygon":
+					if(polyOutputType === "geoJson") {
+						const geoJsonStr = getField(wktInputId);
+						try {
+							const geoJson = JSON.parse(geoJsonStr);
+							return { 
+								type: "geoJSON", 
+								geoJSON: geoJson
+							};
+						} catch(e) {
+							alert(e.message);
+						}
+					} else {
+						const origFootprintWkt = getField(wktInputId);
+						try {
+							const polyPoints = parseWkt(origFootprintWkt);
+							if(polyPoints) {
+								return { type: "polygon", latlngs: polyPoints, wkt: getField(wktInputId)};
+							}
+						} catch(e) {
+							alert(e.message);
+							opener.document.getElementById(wktInputId).value = origFootprintWkt;
+						}
+					}
+					break;
+				case "rectangle":
+					const upperLat = getField("upperlat");
+					const lowerLat= getField("bottomlat");
+					const leftLng = getField("leftlong");
+					const rightLng = getField("rightlong");
 
-                     lowerLat: lowerLat * (getField("bottomlat_NS") === "N"? 1: -1),
-                     leftLng: leftLng * (getField("leftlong_EW") === "E"? 1: -1),
-                  }
-               }
-            break;
-            case "circle":
-               const radius = getField("radius");
-               const pointlat = getField("pointlat");
-               const pointlng = getField("pointlong");
-               const radUnits = getField("radiusunits", "");
+					if(isNumeric(upperLat) && isNumeric(lowerLat) && isNumeric(leftLng) && isNumeric(rightLng)) {
+						return {
+							type: "rectangle",
+							upperLat: upperLat * (getField("upperlat_NS") === "N"? 1: -1),
+							rightLng: rightLng * (getField("rightlong_EW") === "E"? 1: -1),
 
-               if(isNumeric(radius) && isNumeric(pointlng) && isNumeric(pointlng)) {
-                  return {
-                     type: "circle",
-                     radius: (radUnits === "mi"? radius * MILEStoKM: parseFloat(radius)) * KMtoM,
-                     latlng: [
-                        pointlat * (getField("pointlat_NS") === "N"? 1: -1), 
-                        pointlng * (getField("pointlong_EW") === "E"? 1: -1)
-                     ]
-                  }
-               }
-               break;
-            default:
-               alert(`No Settings for Map Mode: ${mapMode}`)
-               return false;
-            break;
-         } 
-      }
-      let formShape = loadShape("<?php echo $mapMode?>");
-      let mapModeStrict = <?php echo $mapModeStrict? "true": "false"?>;
-      function leafletInit() {
-         const MapOptions = {
-            center: [<?php echo $latCenter?>, <?php echo $lngCenter?>],
-            zoom: <?php echo $zoom?>,
+							lowerLat: lowerLat * (getField("bottomlat_NS") === "N"? 1: -1),
+							leftLng: leftLng * (getField("leftlong_EW") === "E"? 1: -1),
+						}
+					}
+					break;
+				case "circle":
+					const radius = getField("radius");
+					const pointlat = getField("pointlat");
+					const pointlng = getField("pointlong");
+					const radUnits = getField("radiusunits", "");
+
+					if(isNumeric(radius) && isNumeric(pointlng) && isNumeric(pointlng)) {
+						return {
+							type: "circle",
+							radius: (radUnits === "mi"? radius * MILEStoKM: parseFloat(radius)) * KMtoM,
+							latlng: [
+								pointlat * (getField("pointlat_NS") === "N"? 1: -1), 
+								pointlng * (getField("pointlong_EW") === "E"? 1: -1)
+							]
+						}
+					}
+					break;
+				default:
+					alert(`No Settings for Map Mode: ${mapMode}`)
+					return false;
+					break;
+			} 
+		}
+		let formShape = loadShape("<?php echo $mapMode?>");
+		//let mapModeStrict = <?php echo $mapModeStrict? "true": "false"?>;
+		function leafletInit() {
+			const MapOptions = {
+				center: [<?php echo $latCenter?>, <?php echo $lngCenter?>],
+			zoom: <?php echo $zoom?>,
 				lang: "<?php echo $LANG_TAG; ?>"
-         };
+			};
 
-         let map = new LeafletMap('map', MapOptions );
-         let mode = "<?php echo $mapMode?>";
+			let map = new LeafletMap('map', MapOptions );
+			let mode = "<?php echo $mapMode?>";
 
-         map.enableDrawing({
-            polyline: false,
-            mode: "<?php echo $mapMode?>",
-            map_mode_strict: mapModeStrict,
-            circlemarker: false,
-            marker: false,
-            drawColor: {opacity: 0.85, fillOpacity: 0.55, color: '#000' }
-         }, setShapeToSearchForm);
+			map.enableDrawing({
+				polyline: false,
+				mode: "<?php echo $mapMode?>",
+				map_mode_strict: mapModeStrict,
+				circlemarker: false,
+				marker: false,
+				drawColor: {opacity: 0.85, fillOpacity: 0.55, color: '#000' }
+				}, setShapeToSearchForm);
 
-         if(formShape) {
-            map.drawShape(formShape);
-         }
-      }
-      function googleInit() {
-		   const MapOptions= {
+			if(formShape) {
+				map.drawShape(formShape);
+			}
+		}
+		function googleInit() {
+			const MapOptions= {
 				zoom: <?php echo $zoom; ?>,
 				center: new google.maps.LatLng(<?php echo $latCenter . ',' . $lngCenter; ?>),
 				mapTypeId: google.maps.MapTypeId.TERRAIN,
 				scaleControl: true
 			};
 
-         let map = new GoogleMap('map', MapOptions)
-         map.enableDrawing({
-            mode: "<?php echo $mapMode?>",
-            map_mode_strict: mapModeStrict
-         }, setShapeToSearchForm);
+			let map = new GoogleMap('map', MapOptions)
+			map.enableDrawing({
+				mode: "<?php echo $mapMode?>",
+				map_mode_strict: mapModeStrict
+				}, setShapeToSearchForm);
 
-         if(formShape) 
-            map.drawShape(formShape, setShapeToSearchForm)
-      }
+			if(formShape) 
+			map.drawShape(formShape, setShapeToSearchForm)
+		}
 
-      <?php if(empty($GOOGLE_MAP_KEY)) { ?> 
-         leafletInit();
-      <?php } else { ?> 
-         googleInit();
-      <?php } ?>
-   </script>
-</body>
+		<?php if(empty($GOOGLE_MAP_KEY)): ?> 
+			leafletInit();
+		<?php else:?> 
+			googleInit();
+		<?php endif ?>
+		</script>
+	</body>
 </html>
