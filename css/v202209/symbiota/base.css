@@ -497,3 +497,8 @@ b {
   align-items: center;
   gap: 10px;
 }
+
+.screen-reader-only {
+  position: absolute;
+  left: -10000px;
+}
