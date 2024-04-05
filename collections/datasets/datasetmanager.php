@@ -295,7 +295,7 @@ if($isEditor){
 		}
 		if($datasetId){
 			echo '<div style="margin:10px 0px 5px 20px;font-weight:bold;font-size:130%;">'.$mdArr['name'].'</div>';
-			if($role) echo '<div style="margin-left:20px" title="'.$roleLabel.'">'.$LANG['ROLE'].': '.$role.'</div>';
+			if($role) echo '<div style="margin-left:20px" title="' . $LANG['ROLE'] . '"'.$roleLabel.'">'.$LANG['ROLE'].': '.$role.'</div>';
 			if($isEditor){
 				?>
 				<div id="tabs" style="margin:10px;">
@@ -384,26 +384,26 @@ if($isEditor){
 					if($isEditor == 1){
 						?>
 						<div id="admintab">
-							<fieldset style="padding:15px;margin:15px;">
-								<legend><p><b><?php echo $LANG['EDITOR']; ?></b></p></legend>
+						        <section class="fieldset-like">
+								<h1><span><b><?php echo $LANG['EDITOR']; ?></b></span></h1>
 								<form name="editform" action="datasetmanager.php" method="post" onsubmit="return validateEditForm(this)">
 									<div>
-										<p><b><?php echo $LANG['NAME']; ?></p>
-										<input name="name" type="text" value="<?php echo $mdArr['name']; ?>" style="width:70%" />
+										<p><b><?php echo $LANG['NAME']; ?></b></p>
+										<input name="name" type="text" value="<?php echo $mdArr['name']; ?>" aria-label="<?php echo $LANG['NAME']; ?>" style="width:70%" />
 									</div>
 									<div>
 										<p>
-											<input type="checkbox" name="ispublic" id="ispublic" value="1" <?php echo ($mdArr['ispublic']?'CHECKED':''); ?> />
+											<input type="checkbox" name="ispublic" id="ispublic" value="1" aria-label="<?php echo $LANG['PUB_VISIBLE']; ?>" <?php echo ($mdArr['ispublic']?'CHECKED':''); ?> />
 											<b><?php echo $LANG['PUB_VISIBLE']; ?></b>
 										</p>
 									</div>
 									<div>
 										<p><b><?php echo $LANG['NOTES_INTERNAL']; ?></b></p>
-										<input name="notes" type="text" value="<?php echo $mdArr['notes']; ?>" style="width:70%" />
+										<input name="notes" type="text" value="<?php echo $mdArr['notes']; ?>" style="width:70%" aria-label="<?php echo $LANG['NOTES_INTERNAL']; ?>" />
 									</div>
 									<div>
 										<p><b><?php echo $LANG['DESCRIPTION']; ?></b></p>
-										<textarea name="description" id="description" cols="100" rows="10" width="70%"><?php echo $mdArr['description']; ?></textarea>
+										<textarea name="description" id="description" cols="100" rows="10" style="width: 70%;" aria-label="<?php echo $LANG['DESCRIPTION']; ?>" ><?php echo $mdArr['description']; ?></textarea>
 									</div>
 									<div style="margin:15px;">
 										<input name="tabindex" type="hidden" value="1" />
@@ -411,9 +411,9 @@ if($isEditor){
 										<button name="submitaction" type="submit" value="Save Edits" ><?php echo $LANG['SAVE_EDITS']; ?></button>
 									</div>
 								</form>
-							</fieldset>
-							<fieldset style="padding:15px;margin:15px;">
-								<legend><b><?php echo $LANG['DEL_DS']; ?></b></legend>
+								</section>
+							<section class="fieldset-like">
+								<h1><span><b><?php echo $LANG['DEL_DS']; ?></b></span></h1>
 								<form name="editform" action="datasetmanager.php" method="post" onsubmit="return confirm('<?php echo $LANG['SURE_DEL_DS_PERM']; ?>')">
 									<div style="margin:15px;">
 										<input name="datasetid" type="hidden" value="<?php echo $datasetId; ?>" />
@@ -421,7 +421,7 @@ if($isEditor){
 										<button name="submitaction" type="submit" value="Delete Dataset" ><?php echo $LANG['DEL_DS']; ?></button>
 									</div>
 								</form>
-							</fieldset>
+							</section>
 						</div>
 						<div id="accesstab">
 							<div style="margin:25px 10px;">
@@ -448,7 +448,7 @@ if($isEditor){
 															<input name="uid" type="hidden" value="<?php echo $uid; ?>" />
 															<input name="datasetid" type="hidden" value="<?php echo $datasetId; ?>" />
 															<input name="tabindex" type="hidden" value="2" />
-															<input name="submitimage" type="image" src="../../images/drop.png" style="width:1.2em" />
+															<input name="submitimage" type="image" src="../../images/drop.png" style="width:1.2em" alt="<?php echo $LANG['DROP_ICON']; ?>" />
 														</form>
 													</li>
 													<?php
@@ -465,16 +465,16 @@ if($isEditor){
 								?>
 							</div>
 							<div style="margin:15px;">
-								<fieldset>
-									<legend><p><b><?php echo $LANG['ADD_USER']; ?></b></legend>
+								<section class="fieldset-like">
+									<h1><span><b><?php echo $LANG['ADD_USER']; ?></b></span></h1>
 									<form name="addform" action="datasetmanager.php" method="post" onsubmit="return validateUserAddForm(this)">
 										<div title="<?php echo $LANG['TYPE_LOGIN']; ?>">
 											<?php echo $LANG['LOGIN_NAME']; ?>:
-											<input id="userinput" type="text" style="width:400px;" />
+											<input id="userinput" type="text" style="width:400px;" aria-label="<?php echo $LANG['LOGIN_NAME'] ?>" />
 											<input id="uid-add" name="uid" type="hidden" value="" />
 										</div>
-										<?php echo $LANG['ROLE']; ?>:
-										<select name="role">
+										<label for="role"><?php echo $LANG['ROLE']; ?>:</label>
+                                        <select name="role" id="role">
 											<option value="DatasetAdmin"><?php echo $LANG['FULL_ACCESS']; ?></option>
 											<option value="DatasetEditor"><?php echo $LANG['READ_WRITE_ACCESS']; ?></option>
 											<option value="DatasetReader"><?php echo $LANG['READ_ACCESS']; ?></option>
@@ -485,7 +485,7 @@ if($isEditor){
 											<button type="submit" name="submitaction" value="addUser"><?php echo $LANG['ADD_USER']; ?></button>
 										</div>
 									</form>
-								</fieldset>
+								</section>
 							</div>
 						</div>
 						<?php
