@@ -3,9 +3,9 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecProcNlpProfiles.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$action = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$spNlpId = array_key_exists('spnlpid',$_REQUEST)?$_REQUEST['spnlpid']:0;
+$action = array_key_exists('formsubmit',$_REQUEST) ? $_REQUEST['formsubmit'] : '';
+$collId = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$spNlpId = array_key_exists('spnlpid',$_REQUEST)? filter_var($_REQUEST['spnlpid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 
 $nlpManager = new SpecProcNlpProfiles();
 //$nlpManager->setCollId($collId);
