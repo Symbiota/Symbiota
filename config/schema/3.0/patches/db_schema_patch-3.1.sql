@@ -1,6 +1,20 @@
 INSERT INTO schemaversion (versionnumber) values ("3.1");
 
+ALTER TABLE `ctcontrolvocab` 
+  ADD COLUMN `filterVariable` VARCHAR(150) NOT NULL DEFAULT '' AFTER `fieldName`,
+  DROP INDEX `UQ_ctControlVocab` ,
+  ADD UNIQUE INDEX `UQ_ctControlVocab` (`title` ASC, `tableName` ASC, `fieldName` ASC, `filterVariable` ASC);
 
+INSERT INTO ctcontrolvocab(title, tableName, fieldName, filterVariable)
+  VALUES("Occurrence Associations Type", "omoccurassociations", "relationship", "associationType:resource");
+
+INSERT INTO ctcontrolvocabterm(cvID, term, termDisplay)
+  SELECT cvID, "fieldNotes", "Field Notes" FROM ctcontrolvocab WHERE tableName = "omoccurassociations" AND fieldName = "relationship" AND filterVariable = "associationType:resource";
+
+INSERT INTO ctcontrolvocabterm(cvID, term, termDisplay)
+  SELECT cvID, "genericResource", "Generic Resource" FROM ctcontrolvocab WHERE tableName = "omoccurassociations" AND fieldName = "relationship" AND filterVariable = "associationType:resource";
+
+  
 ALTER TABLE `fmchklsttaxalink` 
   DROP FOREIGN KEY `FK_chklsttaxalink_cid`;
 
@@ -13,8 +27,8 @@ ALTER TABLE `fmchklstcoordinates`
   DROP INDEX `FKchklsttaxalink` ;
 
 ALTER TABLE `fmchklstcoordinates` 
-  ADD INDEX `FK_checklistCoord_tid_idx` (`tid` ASC),
-  ADD INDEX `FK_checklistCoord_clid_idx` (`clid` ASC);
+  ADD INDEX `IX_checklistCoord_tid` (`tid` ASC),
+  ADD INDEX `IX_checklistCoord_clid` (`clid` ASC);
 
 ALTER TABLE `fmchklstcoordinates` 
   ADD UNIQUE INDEX `UQ_checklistCoord_unique` (`clid` ASC, `tid` ASC, `decimalLatitude` ASC, `decimalLongitude` ASC);
@@ -62,11 +76,11 @@ ALTER TABLE `omoccurassociations`
 
 ALTER TABLE `omoccurassociations` 
   DROP INDEX `omossococcur_occid_idx`,
-  ADD INDEX `FK_ossococcur_occid_idx` (`occid` ASC);
+  ADD INDEX `IX_ossococcur_occid` (`occid` ASC);
 
 ALTER TABLE `omoccurassociations` 
   DROP INDEX `omossococcur_occidassoc_idx`,
-  ADD INDEX `FK_ossococcur_occidassoc_idx` (`occidAssociate` ASC);
+  ADD INDEX `IX_ossococcur_occidassoc` (`occidAssociate` ASC);
 
 ALTER TABLE `omoccurassociations` 
   DROP INDEX `INDEX_verbatimSciname`,
@@ -77,16 +91,16 @@ ALTER TABLE `omoccurassociations`
   ADD UNIQUE INDEX `UQ_omoccurassoc_identifier` (`occid` ASC, `identifier` ASC);
 
 UPDATE omoccurassociations
-SET associationType = "internalOccurrence"
-WHERE associationType = "" AND occidAssociate IS NOT NULL;
+  SET associationType = "internalOccurrence"
+  WHERE associationType = "" AND occidAssociate IS NOT NULL;
 
 UPDATE omoccurassociations
-SET associationType = "externalOccurrence"
-WHERE associationType = "" AND occidAssociate IS NULL AND resourceUrl IS NOT NULL;
+  SET associationType = "externalOccurrence"
+  WHERE associationType = "" AND occidAssociate IS NULL AND resourceUrl IS NOT NULL;
 
 UPDATE omoccurassociations
-SET associationType = "observational"
-WHERE associationType = "" AND occidAssociate IS NULL AND resourceUrl IS NULL AND verbatimSciname IS NOT NULL;
+  SET associationType = "observational"
+  WHERE associationType = "" AND occidAssociate IS NULL AND resourceUrl IS NULL AND verbatimSciname IS NOT NULL;
 
 
 ALTER TABLE `omoccurdeterminations` 
@@ -104,40 +118,71 @@ ALTER TABLE `omoccurrences`
 
 #Standardize naming of indexes within occurrence table 
 ALTER TABLE `omoccurrences` 
-  ADD INDEX `FK_occurrences_collid` (`collid` ASC);
+  DROP INDEX `omossococcur_occidassoc_idx`,
+  DROP INDEX `Index_collid`,
+  DROP INDEX `UNIQUE_occurrenceID`,
+  DROP INDEX `Index_sciname`,
+  DROP INDEX `Index_family`,
+  DROP INDEX `Index_country`,
+  DROP INDEX `Index_state`,
+  DROP INDEX `Index_county`,
+  DROP INDEX `Index_collector`,
+  DROP INDEX `Index_gui`,
+  DROP INDEX `Index_ownerInst`,
+  DROP INDEX `FK_omoccurrences_tid`,
+  DROP INDEX `FK_omoccurrences_uid`,
+  DROP INDEX `Index_municipality`,
+  DROP INDEX `Index_collnum`,
+  DROP INDEX `Index_catalognumber`,
+  DROP INDEX `Index_eventDate`,
+  DROP INDEX `Index_occurrences_procstatus`,
+  DROP INDEX `occelevmin`,
+  DROP INDEX `occelevmax`,
+  DROP INDEX `Index_occurrences_cult`,
+  DROP INDEX `Index_occurrences_typestatus`,
+  DROP INDEX `Index_occurDateLastModifed`,
+  DROP INDEX `Index_occurDateEntered`,
+  DROP INDEX `Index_occurRecordEnteredBy`,
+  DROP INDEX `Index_locality`,
+  DROP INDEX `Index_otherCatalogNumbers`,
+  DROP INDEX `Index_locationID`,
+  DROP INDEX `Index_eventID`,
+  DROP INDEX `Index_occur_localitySecurity`,
+  DROP INDEX `IX_omoccur_eventDate2`,
+  DROP INDEX `IX_omoccurrences_recordID`;
 
 ALTER TABLE `omoccurrences` 
-  RENAME INDEX `Index_collid` TO `UQ_occurrences_collid_dbpk`,
-  RENAME INDEX `UNIQUE_occurrenceID` TO `UQ_occurrences_occurrenceID`,
-  RENAME INDEX `Index_sciname` TO `IX_occurrences_sciname`,
-  RENAME INDEX `Index_family` TO `IX_occurrences_family`,
-  RENAME INDEX `Index_country` TO `IX_occurrences_country`,
-  RENAME INDEX `Index_state` TO `IX_occurrences_state`,
-  RENAME INDEX `Index_county` TO `IX_occurrences_county`,
-  RENAME INDEX `Index_collector` TO `IX_occurrences_collector`,
-  RENAME INDEX `Index_gui` TO `IX_occurrences_gui`,
-  RENAME INDEX `Index_ownerInst` TO `IX_occurrences_ownerInst`,
-  RENAME INDEX `FK_omoccurrences_tid` TO `FK_occurrences_tid_idx`,
-  RENAME INDEX `FK_omoccurrences_uid` TO `FK_occurrences_uid_idx`,
-  RENAME INDEX `Index_municipality` TO `IX_occurrences_municipality`,
-  RENAME INDEX `Index_collnum` TO `IX_occurrences_collnum`,
-  RENAME INDEX `Index_catalognumber` TO `IX_occurrences_catalognumber`,
-  RENAME INDEX `Index_eventDate` TO `IX_occurrences_eventDate`,
-  RENAME INDEX `Index_occurrences_procstatus` TO `IX_occurrences_procstatus`,
-  RENAME INDEX `occelevmin` TO `IX_occurrences_occelevmin`,
-  RENAME INDEX `occelevmax` TO `IX_occurrences_occelevmax`,
-  RENAME INDEX `Index_occurrences_cult` TO `IX_occurrences_cult`,
-  RENAME INDEX `Index_occurrences_typestatus` TO `IX_occurrences_typestatus`,
-  RENAME INDEX `Index_occurDateLastModifed` TO `IX_occurrences_dateLastModifed`,
-  RENAME INDEX `Index_occurDateEntered` TO `IX_occurrences_dateEntered`,
-  RENAME INDEX `Index_occurRecordEnteredBy` TO `IX_occurrences_recordEnteredBy`,
-  RENAME INDEX `Index_locality` TO `IX_occurrences_locality`,
-  RENAME INDEX `Index_otherCatalogNumbers` TO `IX_occurrences_otherCatalogNumbers`,
-  RENAME INDEX `Index_locationID` TO `IX_occurrences_locationID`,
-  RENAME INDEX `Index_eventID` TO `IX_occurrences_eventID`,
-  RENAME INDEX `Index_occur_localitySecurity` TO `IX_occurrences_localitySecurity`,
-  RENAME INDEX `IX_omoccur_eventDate2` TO `IX_occurrences_eventDate2`,
-  RENAME INDEX `IX_omoccurrences_recordID` TO `IX_occurrences_recordID`;
+  ADD UNIQUE INDEX `UQ_occurrences_collid_dbpk` (`collid` ASC, `dbpk` ASC),
+  ADD UNIQUE INDEX `UQ_occurrences_occurrenceID` (`occurrenceID` ASC),
+  ADD INDEX `IX_occurrences_collid` (`collid` ASC),
+  ADD INDEX `IX_occurrences_tid` (`tidInterpreted` ASC),
+  ADD INDEX `IX_occurrences_uid` (`observerUid` ASC),
+  ADD INDEX `IX_occurrences_ownerInst` (`ownerInstitutionCode` ASC),
+  ADD INDEX `IX_occurrences_catalognumber` (`catalogNumber` ASC),
+  ADD INDEX `IX_occurrences_otherCatalogNumbers` (`otherCatalogNumbers` ASC),
+  ADD INDEX `IX_occurrences_sciname` (`sciname` ASC),
+  ADD INDEX `IX_occurrences_family` (`family` ASC),
+  ADD INDEX `IX_occurrences_recordedBy` (`recordedBy` ASC),
+  ADD INDEX `IX_occurrences_recordNumber` (`recordNumber` ASC),
+  ADD INDEX `IX_occurrences_eventDate` (`eventDate` ASC),
+  ADD INDEX `IX_occurrences_eventDate2` (`eventDate2` ASC),
+  ADD INDEX `IX_occurrences_eventID` (`eventID` ASC),
+  ADD INDEX `IX_occurrences_cultStatus` (`cultivationStatus` ASC),
+  ADD INDEX `IX_occurrences_typestatus` (`typeStatus` ASC),
+  ADD INDEX `IX_occurrences_country` (`country` ASC),
+  ADD INDEX `IX_occurrences_stateProvince` (`stateProvince` ASC),
+  ADD INDEX `IX_occurrences_county` (`county` ASC),
+  ADD INDEX `IX_occurrences_municipality` (`municipality` ASC),
+  ADD INDEX `IX_occurrences_locality` (`locality` ASC),
+  ADD INDEX `IX_occurrences_locationID` (`locationID` ASC),
+  ADD INDEX `IX_occurrences_localitySecurity` (`localitySecurity` ASC),
+  ADD INDEX `IX_occurrences_elevMin` (`minimumElevationInMeters` ASC),
+  ADD INDEX `IX_occurrences_elevMax` (`maximumElevationInMeters` ASC),
+  ADD INDEX `IX_occurrences_procStatus` (`processingStatus` ASC),
+  ADD INDEX `IX_occurrences_recordID` (`recordID` ASC),
+  ADD INDEX `IX_occurrences_recordEnteredBy` (`recordEnteredBy` ASC),
+  ADD INDEX `IX_occurrences_dateEntered` (`dateEntered` ASC),
+  ADD INDEX `IX_occurrences_dateLastModified` (`dateLastModified` ASC);
 
 
 #deprecate omoccurresource table in preference for omoccurassociations 
@@ -164,21 +209,6 @@ ALTER TABLE `uploadspectemp`
 ALTER TABLE `uploadspectemp` 
   ADD INDEX `IX_uploadspectemp_occurrenceID` (`occurrenceID` ASC);
 
-# Following `uploadspectemp` index may need to be deleted within BioKIC hosted resources Index_uploadspec_occurid 
-
-
-ALTER TABLE `ctcontrolvocab` 
-  ADD COLUMN `filterVariable` VARCHAR(150) NOT NULL DEFAULT '' AFTER `fieldName`,
-  DROP INDEX `UQ_ctControlVocab` ,
-  ADD UNIQUE INDEX `UQ_ctControlVocab` (`title` ASC, `tableName` ASC, `fieldName` ASC, `filterVariable` ASC);
-
-
-INSERT INTO ctcontrolvocab(title, tableName, fieldName, filterVariable)
-VALUES("Occurrence Associations Type", "omoccurassociations", "relationship", "associationType:resource");
-INSERT INTO ctcontrolvocabterm(cvID, term, termDisplay)
-SELECT cvID, "fieldNotes", "Field Notes" FROM ctcontrolvocab WHERE tableName = "omoccurassociations" AND fieldName = "relationship" AND filterVariable = "associationType:resource";
-INSERT INTO ctcontrolvocabterm(cvID, term, termDisplay)
-SELECT cvID, "genericResource", "Generic Resource" FROM ctcontrolvocab WHERE tableName = "omoccurassociations" AND fieldName = "relationship" AND filterVariable = "associationType:resource";
 
 -- Ensure these older tables are innoDB
 ALTER TABLE geographicpolygon ENGINE = InnoDB;
@@ -222,3 +252,4 @@ WHERE o.localitySecurityReason IS NULL AND e.fieldName = "localitySecurity" AND 
 AND e2.occid IS NULL;
 
 UPDATE omoccurrences SET localitySecurity=0 WHERE cultivationStatus=1 AND localitySecurity=1 AND localitySecurityReason IS NULL;
+
