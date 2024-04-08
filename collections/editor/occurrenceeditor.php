@@ -444,7 +444,6 @@ else{
 	<title><?= $DEFAULT_TITLE . ' ' . $LANG['OCCEDITOR'] ?></title>
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
     <?php
-	include_once($SERVER_ROOT.'/includes/head.php');
     if($crowdSourceMode == 1){
 		?>
 		<link href="includes/config/occureditorcrowdsource.css?ver=2" type="text/css" rel="stylesheet" id="editorCssLink" />
@@ -526,7 +525,7 @@ else{
 	<div id="innertext">
 		<div id="titleDiv">
 			<?php
-			if($collMap) echo '<h1 class="page-heading" style="font-size: 3.0rem;"> Occurrence Editor: ' . $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').') </h1>';
+			if($collMap) echo '<h1 class="page-heading" style="font-size: 1.5rem;"> Occurrence Editor: ' . $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').') </h1>';
 			if($isEditor && $isEditor != 3){
 				?>
 				<div id="querySymbolDiv" style="margin:5px 5px 5px 5px;">
