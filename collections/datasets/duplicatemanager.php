@@ -136,8 +136,7 @@ if($isEditor && $formSubmit){
 		if($isEditor){
 			if(!$action){
 				?>
-				<section class="fieldset-like">
-					<h1> <span> <?php echo (isset($LANG['DUP_LINKAGES']) ? $LANG['DUP_LINKAGES'] : 'Duplicate Linkages'); ?> </span> </h1>
+				<section>
 					<div>
 						<?php echo $LANG['DUP_EXPLANATION']; ?>
 					</div>
