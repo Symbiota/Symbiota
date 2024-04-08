@@ -27,7 +27,7 @@ $projArr = $csManager->getProjectDetails();
 ?>
 <!-- inner text -->
 <div id="innertext" style="background-color:white;">
-	<h1 class="page-heading">Crowdsourcing</h1>
+	<h1 class="page-heading screen-reader-only">Crowdsourcing</h1>
 	<?php
 	if($statusStr){
 		?>
