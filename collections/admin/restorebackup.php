@@ -153,7 +153,7 @@ include($SERVER_ROOT.'/includes/header.php');
 </div>
 <!-- This is inner text! -->
 <div id="innertext">
-	<h1 class="page-heading">Restore Backup</h1>
+	<h1 class="page-heading">Restore Collection from Backup File</h1>
 	<?php
 	$recReplaceMsg = '<span style="color:orange"><b>'.(isset($LANG['CAUTION'])?$LANG['CAUTION']:'Caution').':</b></span> '.(isset($LANG['MATCH_REPLACE'])?$LANG['MATCH_REPLACE']:'Matching records will be replaced with incoming records');
 	if($isEditor){
