@@ -86,7 +86,7 @@ else{
 			</style>
 		</head>
 		<body style="background-color:#ffffff;">
-			<h1 class="page-heading">Addressed Envelope</h1>
+			<h1 class="page-heading screen-reader-only">Addressed Envelope</h1>
 			<div>
 				<table>
 					<tr style="height:1in;">
