@@ -355,7 +355,7 @@ class SpecProcessorManager {
 				'WHERE collid = '.$this->collid.' GROUP BY processingstatus';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$psArr[strtolower($r->processingstatus)] = $r->cnt;
+				$psArr[strtolower($r->processingstatus ?? '')] = $r->cnt;
 			}
 			$rs->free();
 			//Load into $retArr in a specific order
