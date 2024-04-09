@@ -139,10 +139,9 @@ $clArray = $vManager->getChecklistData();
 		</style>
 	</head>
 	<body onload="<?php  if(!$status) echo $followUpAction; ?>" >
-		<h1 class="page-heading">Checklist Editor</h1>
 		<!-- This is inner text! -->
 		<div id='popup-innertext'>
-			<h1><?php echo "<i>" . $vManager->getTaxonName() . "</i> " . $LANG['OF'] . " " . $vManager->getClName(); ?></h1>
+			<h1 class="page-heading"><?php echo "<i>" . $vManager->getTaxonName() . "</i> " . $LANG['OF'] . " " . $vManager->getClName(); ?></h1>
 			<?php
 			if($status){
 				?>
