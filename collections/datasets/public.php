@@ -1,6 +1,9 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDataset.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/datasets/public.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/datasets/public.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/datasets/public.en.php');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 // Datasets
@@ -19,7 +22,7 @@ $ocArr = $datasetManager->getOccurrences($datasetid);
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
-		<title>Dataset: <?php echo $dArr['name'] ;?></title>
+		<title><?php echo $LANG['DATASET']; ?>: <?php echo $dArr['name'] ;?></title>
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -30,21 +33,21 @@ $ocArr = $datasetManager->getOccurrences($datasetid);
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div class="navpath">
-			<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php">Home</a> &gt;&gt;
-			<b>Dataset: <?php echo $dArr['name'] ;?></b>
+			<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php"><?php echo $LANG['HOME']; ?></a> &gt;&gt;
+			<b><?php echo $LANG['DATASET']; ?>: <?php echo $dArr['name'] ;?></b>
 		</div>
 		<!-- This is inner text! -->
 		<div id="innertext">
-    <h1>Dataset: <?php echo $dArr['name'] ;?></h1>
+    <h1><?php echo $LANG['DATASET']; ?>: <?php echo $dArr['name'] ;?></h1>
     <ul>
       <!-- Metadata -->
       <div><?php echo $dArr['description'] ;?></div>
       <!-- Occurrences Summary -->
-      <p>This dataset includes <?php echo count($ocArr); ?> records.</p>
+      <p><?php echo $LANG['INCLUDES']; ?> <?php echo count($ocArr); ?> <?php echo $LANG['RECORDS']; ?></p>
 
-      <p><a class="btn" href="<?php echo htmlspecialchars($searchUrl, HTML_SPECIAL_CHARS_FLAGS) ;?>">View and download samples in this Dataset (List view)</a></p>
-      <p><a class="btn" href="<?php echo htmlspecialchars($tableUrl, HTML_SPECIAL_CHARS_FLAGS) ;?>">View samples in this Dataset (Table view)</a></p>
-      <p><a class="btn" href="<?php echo htmlspecialchars($taxaUrl, HTML_SPECIAL_CHARS_FLAGS) ;?>">View list of taxa in this Dataset</a></p>
+      <p><a class="btn" href="<?php echo htmlspecialchars($searchUrl, HTML_SPECIAL_CHARS_FLAGS) ;?>"><?php echo $LANG['VIEW_AND_DOWNLOAD']; ?></a></p>
+      <p><a class="btn" href="<?php echo htmlspecialchars($tableUrl, HTML_SPECIAL_CHARS_FLAGS) ;?>"><?php echo $LANG['VIEW_SAMPLE']; ?></a></p>
+      <p><a class="btn" href="<?php echo htmlspecialchars($taxaUrl, HTML_SPECIAL_CHARS_FLAGS) ;?>"><?php echo $LANG['VIEW_LIST']; ?></a></p>
       <!-- <p><a href="#">Download this Dataset</a></p> -->
     </ul>
 		</div>
