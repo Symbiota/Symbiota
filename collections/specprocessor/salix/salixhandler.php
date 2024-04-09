@@ -69,7 +69,7 @@ if($SYMB_UID){
 
 		<!-- This is inner text! -->
 		<div id="innertext">
-			<h1 class="page-heading"><?= $LANG['SALIX_WRDST_MNGR']; ?></h1>
+			<h1 class="page-heading screen-reader-only"><?= $LANG['SALIX_WRDST_MNGR']; ?></h1>
 			<?php
 			if($isEditor){
 				$salixHanlder = new SalixUtilities();
