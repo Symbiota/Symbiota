@@ -270,7 +270,7 @@ $collManager->cleanOutArr($collData);
 		<div id="tabs" style="margin:0px;">
 			<?php
 			if ($isEditor) {
-				if ($collid) echo '<h1 class="page-heading">' . $collData['collectionname'] . (array_key_exists('institutioncode', $collData) ? ' (' . $collData['institutioncode'] . ')' : '') . '</h1>';
+				if ($collid) echo '<h1 class="page-heading">Edit Collection Metadata & Contacts: ' . $collData['collectionname'] . (array_key_exists('institutioncode', $collData) ? ' (' . $collData['institutioncode'] . ')' : '') . '</h1>';
 				?>
 				<ul>
 					<li><a href="#colleditor"><?php echo htmlspecialchars((isset($LANG['COL_META_EDIT']) ? $LANG['COL_META_EDIT'] : 'Collection Metadata Editor'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
@@ -279,7 +279,7 @@ $collManager->cleanOutArr($collData);
 					?>
 				</ul>
 				<div id="colleditor">
-					<h1 class="page-heading">Collection Metadata Editor</h1>
+					<h1 class="page-heading screen-reader-only">Collection Metadata Editor Tab</h1>
 					<section class="fieldset-like">
 						<h1> <span> <?php echo ($collid ? 'Edit' : 'Add New') . ' ' . (isset($LANG['COL_INFO']) ? $LANG['COL_INFO'] : 'Collection Information'); ?> </span> </h1>
 						<form id="colleditform" name="colleditform" action="collmetadata.php" method="post" enctype="multipart/form-data" onsubmit="return verifyCollEditForm(this)">
