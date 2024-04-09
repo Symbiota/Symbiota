@@ -947,6 +947,16 @@ else{
 													<input type="text" name="taxonremarks" value="<?php echo array_key_exists('taxonremarks',$occArr)?$occArr['taxonremarks']:''; ?>" onchange="fieldChanged('taxonremarks');" />
 												</div>
 											</div>
+											<div id="custom-name-div" style="clear:both;padding:0.38rem 0px 0px 10px; display: flex; align-items: center; margin-top:1rem;">
+												<div id="cultivarnameDiv" class="field-div">
+													<?php echo $LANG['CULTIVAR_NAME']; ?>:
+													<input type="text" id="cultivarname" name="cultivarname" value="<?php echo array_key_exists('cultivarname',$occArr) ? $occArr['cultivarname'] : ''; ?>" onchange="fieldChanged('cultivarname');" />
+												</div>
+												<div id="tradenameDiv" style="margin-left: 0.5rem;" class="field-div">
+													<?php echo $LANG['TRADE_NAME']; ?>:
+													<input type="text" id="tradename" name="tradename" value="<?php echo array_key_exists('tradename',$occArr) ? $occArr['tradename'] : ''; ?>" onchange="fieldChanged('tradename');" />
+												</div>
+											</div>
 										</fieldset>
 										<fieldset>
 											<?php

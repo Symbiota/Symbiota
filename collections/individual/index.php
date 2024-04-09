@@ -493,6 +493,29 @@ $traitArr = $indManager->getTraitArr();
 								echo '<div id="idqualifier-div" class="bottom-breathing-room-rel-sm"><label>'.$LANG['ID_QUALIFIER'].':</label> '.$occArr['identificationqualifier'].'</div>';
 							}
 						}
+						if($occArr['cultivarname']){
+							?>
+							<div id="cultivarname-div" class="cultivarname-div bottom-breathing-room-rel-sm">
+								<?php
+								echo '<label>'.$LANG['CULTIVAR_NAME'].':</label> ';
+								echo '<i>'.$occArr['cultivarname'].'</i> ';
+								?>
+							</div>
+							<?php
+						}
+						if($occArr['tradename']){
+							?>
+							<div id="tradename-div" class="tradename-div bottom-breathing-room-rel-sm">
+								<?php
+								echo '<label>'.$LANG['TAXON'].':</label> ';
+								echo '<i>'.$occArr['tradename'].'</i> ';
+								?>
+							</div>
+							<?php
+							if($occArr['identificationqualifier']){
+								echo '<div id="idqualifier-div" class="bottom-breathing-room-rel-sm"><label>'.$LANG['ID_QUALIFIER'].':</label> '.$occArr['identificationqualifier'].'</div>';
+							}
+						}
 						if($occArr['family']) echo '<div id="family-div" class="bottom-breathing-room-rel-sm"><label>'.$LANG['FAMILY'].':</label> ' . $occArr['family'] . '</div>';
 						if($occArr['identifiedby']){
 							?>

@@ -196,4 +196,7 @@ $LANG['ERROR_UNABLE_INSERT'] = "ERREUR: impossible d'INSÉRER un fragment de tex
 $LANG['ERROR_UNABLE_UPDATE'] = 'ERREUR: impossible de mettre à jour le fragment de texte';
 $LANG['ERROR_UNABLE_DELETE'] = 'ERREUR: impossible de supprimer le fragment de texte';
 
+$LANG['MAP'] = 'Carte';
+$LANG['CULTIVAR_NAME'] = 'Nom du Cultivar';
+$LANG['TRADE_NAME'] = 'Nom Commercial';
 ?>
