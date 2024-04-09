@@ -170,4 +170,7 @@ $LANG['EMAIL_NOT_DEFINED'] = 'ERROR: El correo electrónico del administrador de
 $LANG['PRIVATE_STATUS'] = 'estado privado';
 $LANG['UNABLE_TO_VERIFY_TARGET'] = 'ERROR al eliminar el cupón: no se puede verificar la lista de verificación objetivo del cupón';
 $LANG['PERMISSION_ERROR'] = 'ERROR al eliminar el comprobante: error de permiso';
+
+$LANG['CULTIVAR_NAME'] = 'Nombre del Cultivar';
+$LANG['TRADE_NAME'] = 'Nombre Comercial';
 ?>

@@ -170,4 +170,7 @@ $LANG['EMAIL_NOT_DEFINED'] = 'ERROR: Portal admin email not defined in central c
 $LANG['PRIVATE_STATUS'] = 'private status';
 $LANG['UNABLE_TO_VERIFY_TARGET'] = 'ERROR deleting voucher: unable to verify target checklist for voucher';
 $LANG['PERMISSION_ERROR'] = 'ERROR deleting voucher: permission error';
+
+$LANG['CULTIVAR_NAME'] = 'Cultivar Name';
+$LANG['TRADE_NAME'] = 'Trade Name';
 ?>
