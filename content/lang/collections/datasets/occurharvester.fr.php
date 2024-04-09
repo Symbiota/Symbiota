@@ -2,6 +2,8 @@
 /*
 ------------------
 Language: Français (French)
+Translated by: Google Translate
+Date Translated: 2024/04/08
 ------------------
 */
 
