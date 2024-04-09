@@ -149,7 +149,6 @@ $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General
 			</div>
 			<?php
 		}
-		echo '<h2>Specimen Label Profiles</h2>';
 		$labelFormatArr = $labelManager->getLabelFormatArr();
 		foreach($labelFormatArr as $group => $groupArr){
 			$fieldsetTitle = '';
