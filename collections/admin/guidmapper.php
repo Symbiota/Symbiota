@@ -76,15 +76,11 @@ include($SERVER_ROOT.'/includes/header.php');
 </div>
 <!-- This is inner text! -->
 <div id="innertext">
-	<h1 class="page-heading">GUID Mapper</h1>
+	<div style="margin:10px;">
+		<h1 class="page-heading"><?php echo $LANG['GUID_CP']; ?></h1>
+	</div>
 	<?php
 	if($isEditor){
-		?>
-		<h3><?php echo (isset($LANG['GUID_CP'])?$LANG['GUID_CP']:'GUID Maintenance Control Panel'); ?></h3>
-		<div style="margin:10px;">
-
-		</div>
-		<?php
 		if($action == 'Populate Collection GUIDs'){
 			echo '<ul>';
 			$uuidManager->populateGuids($collId);
