@@ -53,10 +53,9 @@ if($collMap['colltype'] == 'General Observations'){
 	
 	<!-- inner text -->
 	<div id="innertext" style="background-color:white;">
-		<h1 class="page-heading">Collection Cleaner</h1>
 		<?php
 		if($isEditor){
-			echo '<h1>' . $collMap['collectionname'] .' (' . $collMap['code'] . ')</h1>';
+			echo '<h1 class="page-heading">Data Cleaning Tools: ' . $collMap['collectionname'] .' (' . $collMap['code'] . ')</h1>';
 			?>
 			<div style="color:orange;margin:20px 0px"> <?php echo (isset($LANG['DOWNLOAD_BACKUP']) ? $LANG['DOWNLOAD_BACKUP'] : 'Downloading a backup of your collection data before running any batch updates is strongly recommended') ?> </div>
 			<?php
