@@ -115,7 +115,7 @@ if($isEditor){
 <body>
 	<!-- This is inner text! -->
 	<div id="innertext">
-		<h1 class="page-heading"><?= $LANG['GLOSSARY'] . $LANG['ADD_TERM']; ?></h1>
+		<h1 class="page-heading">Add New Glossary Term</h1>
 		<?php
 		if($statusStr){
 			?>
