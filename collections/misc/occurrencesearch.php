@@ -98,7 +98,7 @@ $occManager = new OccurrenceSupport();
 </head>
 <body>
 	<div id="innertext">
-		<h1 class="page-heading">Occurrence Search</h1>
+		<h1 class="page-heading">Search Occurrences</h1>
 		<?php
 		if($collEditorArr){
 			$collArr = $occManager->getCollectionArr($IS_ADMIN?null:$collEditorArr);
