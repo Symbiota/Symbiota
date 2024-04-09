@@ -147,8 +147,8 @@ if($action && $isEditor){
 	
 	<!-- inner text -->
 	<div id="innertext">
-		<h1 class="page-heading">Political Units</h1>
 		<?php
+		echo '<h1 class="page-heading">Geography Cleaning Tools: ' . $collMap['collectionname'] . ' (' . $collMap['code'] . ')</h1>';
 		if($statusStr){
 			?>
 			<hr/>
@@ -158,7 +158,6 @@ if($action && $isEditor){
 			<hr/>
 			<?php
 		}
-		echo '<h2>' . $collMap['collectionname'] . ' (' . $collMap['code'] . ')</h2>';
 		if($isEditor){
 			?>
 			<section class="fieldset-like">
