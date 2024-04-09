@@ -16,8 +16,10 @@ header("Content-Type: text/html; charset=".$CHARSET);
 		</style>
 	</head>
 	<body>
-    <main>
+    <div class="top-breathing-room-rel bottom-breathing-room-rel" style="text-align: center;">
       <h1 class="page-heading">Label Content Format Visual Editor</h1>
+    </div>
+    <main>
       <div>
         <div id="fields">
           <h4>Fields Available</h4>
@@ -45,7 +47,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
                 <span class="material-icons">close</span><span class="material-icons">keyboard_arrow_up</span><span class="material-icons">keyboard_arrow_down</span>
               </div>
             </div>
-            <button class="btn" onClick="addLine()">Add line</button>
+            <button class="btn top-breathing-room-rel" onClick="addLine()">Add line</button>
           </div>
         </div>
         <div id="preview">
@@ -55,8 +57,8 @@ header("Content-Type: text/html; charset=".$CHARSET);
           <!-- <button class="btn" onclick="printJson()">Display JSON</button>
           <button class="btn" onclick="loadJson()">Load JSON</button> -->
           <!-- <button class="btn" id='copyBtn' onclick="copyJson()" style="display: none;">Copy JSON to clipboard</button> -->
-          <button class="btn" onclick="saveJson()">Save format & Close</button>
-          <button class="btn" onclick="cancelWindow()">Cancel & Close</button>
+          <button class="btn top-breathing-room-rel" onclick="saveJson()">Save format & Close</button>
+          <button class="btn top-breathing-room-rel" onclick="cancelWindow()">Cancel & Close</button>
           <textarea id="dummy" style="display: none; height: 300px; width: 100%;" data-format-id=""></textarea>
         </div>
       </div>
@@ -79,7 +81,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
             <h4>Line Options</h4>
             <div>
               <label for="delimiter">Fields Delimiter:</label>
-              <input type="text" name="delimiter" id="delimiter" class="control" disabled="true" data-group="field-block">
+              <input type="text" name="delimiter" id="delimiter" class="control bottom-breathing-room-rel" disabled="true" data-group="field-block">
             </div>
           </div>
         </div>
