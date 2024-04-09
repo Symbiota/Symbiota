@@ -312,8 +312,8 @@ $traitArr = $indManager->getTraitArr();
 <body>
 	<header style="background-image: none;">
 		<a class="screen-reader-only" href="#end-nav"><?php echo $LANG['SKIP_NAV'] ?></a>
-		<h1 class="smaller-header">
-			<?php echo (isset($LANG['FULL_RECORD_DETAILS']) ? $LANG['FULL_RECORD_DETAILS'] : 'Full Record Details'); ?>
+		<h1 class="page-heading">
+			<?php echo $LANG['FULL_RECORD_DETAILS']; ?>
 		</h1>
 		<div id="end-nav"></div>
 	</header>
@@ -338,7 +338,6 @@ $traitArr = $indManager->getTraitArr();
 	</script>
 	<!-- This is inner text! -->
 	<div id="popup-innertext">
-		<h1 class="page-heading"><?= $LANG['OCCURRENCE_PROFILE']; ?></h1>
 		<?php
 		if($statusStr){
 			$statusColor = 'green';
