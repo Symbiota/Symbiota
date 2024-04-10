@@ -122,7 +122,14 @@ if($isEditor){
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
-		<h1 class="page-heading"><?php echo $LANG['TAX_EDITOR'] . ": " . $tid; ?></h1>
+		<h1 class="page-heading">
+			<?php 
+				echo "<a href='../profile/tpeditor.php?tid=" . htmlspecialchars($taxonEditorObj->getTid(), HTML_SPECIAL_CHARS_FLAGS) . "' style='color:inherit;text-decoration:none;'>";
+				echo $LANG['TAX_EDITOR'] . ": <i>" . $taxonEditorObj->getSciName() . "</i> " . $taxonEditorObj->getAuthor() . " [" . $taxonEditorObj->getTid() . "]"; 
+				echo "</a>";
+			?>
+
+		</h1>
 		<?php
 		if($statusStr){
 			?>
@@ -148,9 +155,9 @@ if($isEditor){
 			</div>
 			<h1>
 				<?php
-				echo "<a href='../profile/tpeditor.php?tid=" . htmlspecialchars($taxonEditorObj->getTid(), HTML_SPECIAL_CHARS_FLAGS) . "' style='color:inherit;text-decoration:none;'>";
-				echo "<i>".$taxonEditorObj->getSciName()."</i> ".$taxonEditorObj->getAuthor()." [".$taxonEditorObj->getTid()."]";
-				echo "</a>"
+				// echo "<a href='../profile/tpeditor.php?tid=" . htmlspecialchars($taxonEditorObj->getTid(), HTML_SPECIAL_CHARS_FLAGS) . "' style='color:inherit;text-decoration:none;'>";
+				// echo "<i>".$taxonEditorObj->getSciName()."</i> ".$taxonEditorObj->getAuthor()." [".$taxonEditorObj->getTid()."]";
+				// echo "</a>"
 				?>
 			</h1>
 			<div id="tabs" class="taxondisplaydiv">
