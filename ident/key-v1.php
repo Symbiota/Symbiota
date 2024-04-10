@@ -117,7 +117,7 @@ if($chars){
 
 ?>
 <div id="innertext">
-	<h1 class="page-heading">Key</h1>
+	<h1 class="page-heading screen-reader-only">Key</h1>
 	<?php
 	if($isEditor){
 		?>
