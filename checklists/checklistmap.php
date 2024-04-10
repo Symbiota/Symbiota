@@ -19,6 +19,7 @@ if($taxonFilter) $clManager->setTaxonFilter($taxonFilter);
 $coordArr = $clManager->getVoucherCoordinates();
 $clMeta = $clManager->getClMetaData();
 $coordJson = json_encode($coordArr);
+$clName = htmlspecialchars($clManager->getClName() ?? 'Unknown Collection', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 
 $coords = [];
 
@@ -255,7 +256,8 @@ $metaJson = json_encode($clMeta);
       </style>
    </head>
    <body style="background-color:#ffffff;" onload="initialize();">
-      <h1 class="page-heading screen-reader-only">Checklist Map</h1><?php
+      <h1 class="page-heading screen-reader-only"><?= $LANG['MAP_SECTION'] . ' ' . $clName; ?></h1>
+      <?php
          if(!$coordArr){
             ?>
             <h1 class="screen-reader-only"><?= $LANG['NO_COORDS_HEADER']; ?></h1>
@@ -267,8 +269,8 @@ $metaJson = json_encode($clMeta);
             </div>
             <?php
          }
+
          ?>
-         <h1 class="for-screen-reader"><?= $LANG['MAP_SECTION']; ?></h1>
          <div id="service-container"
             data-occur-coords="<?= htmlspecialchars($coordJson) ?>"
             data-cl-meta="<?= htmlspecialchars($metaJson)?>"
