@@ -30,11 +30,6 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
 				} else {
 					?>
 					<span class="button button-tertiary">
-						<a style="font-size: 1.1em;" onclick="toggleAccessibilityStyles('<?php echo $CLIENT_ROOT . '/includes' . '/' ?>', '<?php echo $CSS_BASE_PATH ?>', '<?php echo $LANG['TOGGLE_508_OFF'] ?>', '<?php echo $LANG['TOGGLE_508_ON'] ?>')" id="accessibility-button" data-accessibility="accessibility-button" >
-							<?php echo (isset($LANG['TOGGLE_508_ON'])?$LANG['TOGGLE_508_ON']:'Accessibility Mode'); ?>
-						</a>
-					</span>
-					<span class="button button-tertiary">
 						<a onclick="window.location.href='#'">
 							<?php echo htmlspecialchars($LANG['CONTACT_US'], HTML_SPECIAL_CHARS_FLAGS); ?>
 						</a>
