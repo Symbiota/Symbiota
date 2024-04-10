@@ -63,7 +63,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
-		<h1 class="page-heading">Taxon Character Administration</h1>
+		<h1 class="page-heading"><?= $LANG['CHAR_ADMIN']; ?></h1>
 		<?php
 		if($isEditor){
 			?>
