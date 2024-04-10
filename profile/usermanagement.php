@@ -748,7 +748,6 @@ if($IS_ADMIN){
 				<a id="userlist"></a>
 				<?php
 				$users = $userManager->getUsers($searchTerm);
-				echo '<h1>' . (isset($LANG['USERS']) ? $LANG['USERS'] : 'Users') . '</h1>';
 				foreach($users as $id => $name){
 					echo '<div><a href="usermanagement.php?userid=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($name, HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 				}
