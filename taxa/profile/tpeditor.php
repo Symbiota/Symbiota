@@ -193,7 +193,7 @@ if($isEditor && $action){
 		if($tEditor->getTid()){
 			if($isEditor){
 				if($tEditor->isForwarded()) echo '<div id="redirectedfrom">'.$LANG['REDIRECTED_FROM'].': <i>'.$tEditor->getSubmittedValue('sciname').'</i></div>';
-				echo '<div id="taxonDiv"><a href="../index.php?taxon=' . htmlspecialchars($tEditor->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($tEditor->getSciName(), HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($tEditor->getAuthor(), HTML_SPECIAL_CHARS_FLAGS);
+				echo '<div id="taxonDiv"><a href="../index.php?taxon=' . htmlspecialchars($tEditor->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '">View Public Taxon Profile</a> ';
 				if($tEditor->getRankId() > 140) echo "&nbsp;<a href='tpeditor.php?tid=" . htmlspecialchars($tEditor->getParentTid(), HTML_SPECIAL_CHARS_FLAGS) . "'><img src='../../images/toparent.png' style='width:1.3em' title='" . htmlspecialchars($LANG['GO_TO_PARENT'], HTML_SPECIAL_CHARS_FLAGS) . "' /></a>";
 				echo "</div>\n";
 				if($tEditor->getFamily()) echo '<div id="familyDiv"><b>'.$LANG['FAMILY'].':</b> '.$tEditor->getFamily().'</div>'."\n";
