@@ -96,6 +96,9 @@ if($isEditor){
 		.editfield{ float:left; margin-left:5px; }
 		.tsedit{ float:left; margin-left:5px; }
 		.headingDiv{ font-size:110%; font-weight:bold; padding-top:10px; }
+		.taxonDiv{ font-size:1.125rem; margin-top:15px; margin-left:10px; }
+		.taxonDiv a{ color:#990000; font-weight: bold; font-style: italic; }
+		.taxonDiv img{ border: 0px; margin: 0px; height: 15px; }
 	</style>
 </head>
 <body>
@@ -150,9 +153,9 @@ if($isEditor){
 			</div>
 			<h1>
 				<?php
-				echo "<a href='../profile/tpeditor.php?tid=" . htmlspecialchars($taxonEditorObj->getTid(), HTML_SPECIAL_CHARS_FLAGS) . "' style='color:inherit;'>";
+				echo "<div class='taxonDiv'><a href='../profile/tpeditor.php?tid=" . htmlspecialchars($taxonEditorObj->getTid(), HTML_SPECIAL_CHARS_FLAGS) . "'>";
 				echo "View Taxon Profile Editor";
-				echo "</a>"
+				echo "</a></div>";
 				?>
 			</h1>
 			<div id="tabs" class="taxondisplaydiv">
