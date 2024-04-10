@@ -199,7 +199,7 @@ include($SERVER_ROOT.'/includes/header.php');
 ?>
 <!-- inner text -->
 <div id="innertext" style="padding-left:0px;margin-left:0px;">
-	<h1 class="page-heading">User Profile</h1>
+	<h1 class="page-heading screen-reader-only">Login</h1>
 	<?php
 	if($statusStr){
 		$color = 'green';
