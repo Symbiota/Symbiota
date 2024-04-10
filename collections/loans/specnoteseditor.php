@@ -50,7 +50,7 @@ $loanManager->setCollId($collid);
 </head>
 <body>
 	<!-- This is inner text! -->
-	<div id="popup-innertext">
+	<div id="popup-innertext" class="left-breathing-room-rel">
 		<h1 class="page-heading"><?= $LANG['LOAN_NOTES_EDITOR']; ?></h1>
 		<?php
 		if($isEditor && $collid){
