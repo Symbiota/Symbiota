@@ -54,6 +54,6 @@ $LANG['DETAILS'] = 'Detalles';
 $LANG['SECTION_DETAILS'] = 'Detalles de la sección';
 $LANG['MERIDIAN'] = 'Meridiano';
 $LANG['MERIDIAN_SELECTION'] = 'Selección de Meridiano';
-$LANG['INSER_TRS_VALUES'] = 'Insertar valores TRS';
+$LANG['INSERT_TRS_VALUES'] = 'Insertar valores TRS';
 
 ?>
