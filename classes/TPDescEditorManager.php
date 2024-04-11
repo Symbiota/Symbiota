@@ -195,8 +195,12 @@ class TPDescEditorManager extends TPEditorManager{
 				if($stmt = $this->conn->prepare($sql)){
 					if($stmt->bind_param($paramType, ...$paramArr)){
 						if($stmt->execute()){
-							if($stmt->affected_rows) $status = true;
-							elseif($stmt->error) $this->errorMessage = $stmt->error;
+							if($stmt->affected_rows >= 0){ 
+								$status = true; 
+							}
+							elseif($stmt->error){
+								 $this->errorMessage = $stmt->error; 
+							}
 							$stmt->close();
 						}
 						else  $this->errorMessage = $stmt->error;
