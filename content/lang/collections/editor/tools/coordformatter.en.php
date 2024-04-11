@@ -52,7 +52,7 @@ $LANG['DETAILS'] = 'Details';
 $LANG['SECTION_DETAILS'] = 'Section Details';
 $LANG['MERIDIAN'] = 'Meridian';
 $LANG['MERIDIAN_SELECTION'] = 'Meridian Selection';
-$LANG['INSER_TRS_VALUES'] = 'Insert TRS Values';
+$LANG['INSERT_TRS_VALUES'] = 'Insert TRS Values';
 
 
 
