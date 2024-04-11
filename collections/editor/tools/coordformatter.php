@@ -322,7 +322,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 						<option value="WRWY">Wyoming, Wind River</option>
 					</select>
 					<div class="buttonDiv">
-						<button type="button" onclick="formatTRS(this.form)"><?php echo $LANG['INSER_TRS_VALUES'] ?></button>
+						<button type="button" onclick="formatTRS(this.form)"><?php echo $LANG['INSERT_TRS_VALUES'] ?></button>
 					</div>
 				</fieldset>
 			</div>
