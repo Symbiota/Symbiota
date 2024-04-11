@@ -152,7 +152,7 @@ if($isEditor){
 				<fieldset>
 					<legend><b><?php echo $LANG['SPEC_QUEUE']; ?></b></legend>
 					<div id="emptylistdiv" style="margin:20px;">
-						<b><?php echo $LANG['LIST_EMPTY']; ?>: </b><?php echo $LANG['ENTER_BARCODE_IN_OCC_ID']; ?>
+						<b><?php echo $LANG['LIST_EMPTY']; ?>: </b><?php echo $LANG['ENTER_OCC_ID']; ?>
 					</div>
 					<div id="occidlist" style="margin:10px;">
 					</div>
