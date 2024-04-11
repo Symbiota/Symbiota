@@ -17,7 +17,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 	</head>
 	<body>
     <div class="top-breathing-room-rel bottom-breathing-room-rel" style="text-align: center;">
-      <h1 class="page-heading">Label Content Format Visual Editor</h1>
+      <h1 class="page-heading">Label Format Visual Editor</h1>
     </div>
     <main>
       <div>
