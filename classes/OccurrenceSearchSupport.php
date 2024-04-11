@@ -124,7 +124,7 @@ class OccurrenceSearchSupport {
 								<?php
 								if($catIcon){
 									$catIcon = (substr($catIcon,0,6)=='images'?$CLIENT_ROOT:'').$catIcon;
-									echo '<img src="'.$catIcon.'" style="border:0px;width:30px;height:30px;" />';
+									echo '<img alt="" src="'.$catIcon.'" style="border:0px;width:30px;height:30px;" />';
 								}
 								?>
 							</div>
