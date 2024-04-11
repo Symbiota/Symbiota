@@ -215,7 +215,7 @@ include($SERVER_ROOT.'/includes/header.php');
 										<input name="pid" type="hidden" value="<?php echo $pid; ?>" />
 										<input name="deleteuid" type="hidden" value="<?php echo $uid; ?>" />
 										<input name="submitaction" type="hidden" value="DeleteEditor" />
-										<input name="submit" type="image" src="../images/drop.png" style="width:1em;" alt="<?php echo $LANG['DROP_ICON']; ?>" />
+										<input name="submit" type="image" src="../images/drop.png" style="width:1em;" alt="<?php echo $LANG['DROP_ICON_FOR_EDITOR']; ?>" />
 									</form>
 								</li>
 								<?php
@@ -243,7 +243,7 @@ include($SERVER_ROOT.'/includes/header.php');
 									}
 									?>
 								</select>
-								<button name="submitaction" type="submit" value="addEditor" aria-label="<?php echo $LANG['ADD_AN_EDITOR'];?>"><?php echo $LANG['ADDEDITOR'];?></button>
+								<button name="submitaction" type="submit" value="addEditor" aria-label="<?php echo $LANG['ADDEDITOR'];?>"><?php echo $LANG['ADDEDITOR'];?></button>
 								<input type="hidden" name="pid" value="<?php echo $pid; ?>" />
 								<input type="hidden" name="clid" value="<?php echo $clid; ?>" />
 							</div>
@@ -268,7 +268,7 @@ include($SERVER_ROOT.'/includes/header.php');
 											<input name="clid" type="hidden" value="<?php echo $clid; ?>" />
 											<input name="pid" type="hidden" value="<?php echo $pid; ?>" />
 											<input name="submitaction" type="hidden" value="deleteProject" />
-											<input name="submit" type="image" src="../images/drop.png" style="width:1em;" alt="<?php echo $LANG['DROP_ICON']; ?>" />
+											<input name="submit" type="image" src="../images/drop.png" style="width:1em;" alt="<?php echo $LANG['DROP_ICON_FOR_DELETE_PROJECT']; ?>" />
 										</form>
 										<?php
 									}
@@ -319,7 +319,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					<div style="margin:15px;">
 						<form name="deleteclform" action="checklistadmin.php" method="post" onsubmit="return window.confirm('<?php echo $LANG['CONFIRMDELETE'];?>')">
 							<input name="delclid" type="hidden" value="<?php echo $clid; ?>" />
-							<button name="submitaction" type="submit" value="deleteChecklist"  aria-label="<?php echo $LANG['DELETE_THE_CHECK'];?>" <?php if($projArr || count($editorArr) > 1) echo 'DISABLED'; ?>><?php echo $LANG['DELETECHECK'];?></button>
+							<button name="submitaction" type="submit" value="deleteChecklist"  aria-label="<?php echo $LANG['DELETECHECK'];?>" <?php if($projArr || count($editorArr) > 1) echo 'DISABLED'; ?>><?php echo $LANG['DELETECHECK'];?></button>
 						</form>
 					</div>
 				</div>

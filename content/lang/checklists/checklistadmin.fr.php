@@ -80,9 +80,9 @@ $LANG['SAVE_EDITS'] = 'Enregistrer Modifications';
 $LANG['ADDCHECKLIST'] = 'Cr&eacuteer Liste';
 $LANG['DELETETHISU'] = 'Supprimer Cet Utilisateur';
 $LANG['ERROR_LOWER'] = 'Erreur';
-$LANG['DROP_ICON'] = 'Icône de Dépôt';
-$LANG['ADD_AN_EDITOR'] = 'Ajouter un Éditeur';
+
+$LANG['DROP_ICON_FOR_EDITOR'] = 'Déposer l\'Icône pour l\'éditeur';
+$LANG['DROP_ICON_FOR_DELETE_PROJECT'] = 'Déposer l\'Icône pour Supprimer le Projet';
 $LANG['SUBMIT_BUTTON'] = 'Bouton Soumettre';
-$LANG['DELETE_THE_CHECK'] = 'Supprimer la Liste de Contrôle';
 
 ?>
