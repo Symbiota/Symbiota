@@ -414,7 +414,7 @@ function openIndPopup(occid, clid) {
 
 function openRecord(record) {
    let url = record.host? 
-      `https://${record.host}/collections/individual/index.php?occid=${record.occid}` :
+      `${record.host}/collections/individual/index.php?occid=${record.occid}` :
       "../individual/index.php?occid=" + record.occid 
    openPopup(url);
 }
