@@ -155,13 +155,15 @@ $clArray = $vManager->getChecklistData();
 			if($isEditor && $clArray){
 				?>
 				<div id="tabs" style="margin:10px;">
-				    <div>
-						<div><a href="#gendiv"><?php echo htmlspecialchars($LANG['GEN_EDIT'], HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
-						<div><a href="#voucherdiv"><?php echo htmlspecialchars($LANG['VOUCHER_EDIT'], HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
+					<nav>
+				    <ul>
+						<li><a href="#gendiv"><?php echo htmlspecialchars($LANG['GEN_EDIT'], HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
+						<li><a href="#voucherdiv"><?php echo htmlspecialchars($LANG['VOUCHER_EDIT'], HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
 						<!--
 						<li><a href="#coorddiv">Coordinate Admin</a></li>
 						-->
-			</div>
+					</ul>
+					</nav>
 					<div id="gendiv">
 						<form name='editcl' action="clsppeditor.php" method='post' >
 							<fieldset style='margin:5px;padding:15px'>
@@ -290,14 +292,14 @@ $clArray = $vManager->getChecklistData();
 										if($iArray['sciname']) echo $iArray['sciname'];
 										echo ($iArray['notes']?', '.$iArray['notes']:'').($iArray['editornotes']?', '.$iArray['editornotes']:'');
 										?>
-										<a href="#" onclick="toggle('vouch-<?php echo $voucherID;?>')"><img src="../images/edit.png" /></a>
+										<a href="#" onclick="toggle('vouch-<?php echo $voucherID;?>')"><img src="../images/edit.png" alt="<?php echo $LANG['EDIT_VOUCHER']; ?>" /></a>
 										<form action="clsppeditor.php" method='post' name='delform' style="display:inline;" onsubmit="return confirm('<?php echo $LANG['SURE_DELETE']; ?>');">
 											<input type="hidden" name='tid' value="<?php echo $vManager->getTid();?>" />
 											<input type="hidden" name='clid' value="<?php echo $vManager->getClid();?>" />
 											<input type="hidden" name='voucherID' value="<?php echo $voucherID;?>" />
 											<input type="hidden" name='tabindex' value="1" />
 											<input type="hidden" name='action' value="deleteVoucher" />
-											<input type="image" name="action" src="../images/del.png" style="width:15px;" title="<?php echo $LANG['DELETE_TAXON']; ?>" />
+											<input type="image" name="action" src="../images/del.png" style="width:15px;" title="<?php echo $LANG['DELETE_TAXON']; ?>" aria-label="<?php echo $LANG['REMOVE_TAXON']; ?>" />
 										</form>
 										<div id="vouch-<?php echo $voucherID;?>" style='margin:10px;clear:both;display:none;'>
 											<form action="clsppeditor.php" method='post' name='editvoucher'>

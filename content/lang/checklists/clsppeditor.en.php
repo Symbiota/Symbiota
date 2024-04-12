@@ -38,5 +38,8 @@ $LANG['INTERNAL_NOTES'] = 'Internal Notes';
 $LANG['RENAME_SCI_NAME'] = 'Rename Scientific Name';
 $LANG['LINK_ICON'] = 'Link Icon';
 
+$LANG['REMOVE_TAXON'] = 'Remove Taxon From Checklist';
+
+
 
 ?>

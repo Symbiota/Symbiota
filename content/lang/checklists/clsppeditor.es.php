@@ -40,4 +40,6 @@ $LANG['INTERNAL_NOTES'] = 'Notas Internas';
 $LANG['RENAME_SCI_NAME'] = 'Cambiar Nombre del Nombre Científico';
 $LANG['LINK_ICON'] = 'Icono de Enlace';
 
+$LANG['REMOVE_TAXON'] = 'Eliminar Taxón de la Lista de Verificación';
+
 ?>
