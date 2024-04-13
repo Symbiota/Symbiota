@@ -5,19 +5,26 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgpro
 	
 <script src="../../js/symb/collections.editor.imgtools.js?ver=3" type="text/javascript"></script>
 <script>
-	function nextProcessingImage(){
-		document.getElementById("labeldiv-"+(imgCnt+1)).style.display = "none";
-		var imgObj = document.getElementById("labeldiv-"+imgCnt+1);
-		if(imgCnt > imgLen){
-			imgObj = document.getElementById("labeldiv-1");
-			imgCnt = "1";
-		}
-		imgObj.style.display = "block";
-		
-		initImageTool("activeimg-"+imgCnt);
-		activeImgIndex = imgCnt;
-		
-		return false;
+	function nextProcessingImage() {
+		var imgArr = <?php echo json_encode($imgUrlCollection); ?>;
+		var currentImageIndex = parseInt(document.getElementById('current-image-index').textContent);
+		var totalImages = imgArr.length;
+		var nextImageIndex = (currentImageIndex + 1) % totalImages; // This ensures the index loops back to 0
+
+		// Correctly reference the new image URL from the JavaScript array
+		var newImgSrc = imgArr[nextImageIndex]; // This should be the URL of the next image
+
+		// Update the display of the current image index and count
+		document.getElementById('current-image-index').textContent = nextImageIndex;
+		document.getElementById('image-count').textContent = 'Image ' + (nextImageIndex + 1) + ' of ' + totalImages;
+		document.getElementById('activeimg').src = newImgSrc; // Set the new image source
+
+		// Optionally update the onload event for the new image
+		document.getElementById('activeimg').onload = function() {
+			initImageTool('activeimg-' + nextImageIndex); // You might need to adjust this if it uses the image ID dynamically
+		};
+
+		return false; // Prevent the default behavior of the link
 	}
 	$(function() {
 		$( "#zoomInfoDialog" ).dialog({
@@ -98,18 +105,18 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgpro
 			<div style="float:left;;padding-right:10px;margin:2px 20px 0px 0px;"><?php echo $LANG['ROTATE']; ?>: <a href="#" onclick="rotateImage(-90)">&nbsp;L&nbsp;</a> &lt;&gt; <a href="#" onclick="rotateImage(90)">&nbsp;R&nbsp;</a></div>
 		</div>
 		<div id="labelprocessingdiv" style="clear:both;">
-			<!-- <div><?php // echo($imgUrl) ?></div> -->
-				<div id="labeldiv-<?php echo $imgCnt; ?>" style="display:'block'; ?>;">
+				<?php $currentImageId = 0; ?>
+				<div id="labeldiv-<?php echo $currentImageId; ?>">
 					<div>
-						<img id="activeimg-<?php echo ($imgCnt); ?>" src="<?php echo($imgUrl) ?>" style="height:400px;" onload="initImageTool('activeimg-<?php echo ($imgCnt); ?>')" />
-					<div style="width:100%;clear:both;">
-						<div style="float:right;margin-right:20px;font-weight:bold;">
-							<?php echo $LANG['IMAGE'].' '.($imgCnt-1).' '.$LANG['OF'].' ';
-							echo count($imgArr);
-							if(count($imgArr)>1){
-								echo '<a href="#" onclick="return nextProcessingImage();">=&gt;&gt;</a>';
-							}
-							?>
+						<img id="activeimg" src="<?php echo($imgUrlCollection[$currentImageId]) ?>" style="height:400px;" onload="initImageTool('activeimg-<?php echo $currentImageId; ?>')" />
+					</div>
+					<div style="width:100%; clear:both;">
+						<div style="float:right; margin-right:20px; font-weight:bold;">
+							<span id="current-image-index" style="display:none;"><?php echo $currentImageId; ?></span>
+							<span id="image-count">Image <?php echo ($currentImageId + 1); ?> of <?php echo count($imgUrlCollection); ?></span>
+							<?php if(count($imgUrlCollection) > 1): ?>
+								<a href="#" onclick="return nextProcessingImage();">>&gt;</a>
+							<?php endif; ?>
 						</div>
 					</div>
 				</div>
