@@ -154,10 +154,10 @@ if(array_key_exists('taxa', $taxaArr)){
 						foreach($colorKey as $iconKey => $colorCode){
 							echo '<div>';
 							echo '<svg xmlns="http://www.w3.org/2000/svg" style="height:12px;width:12px;margin-bottom:-2px;"><g><rect x="1" y="1" width="11" height="10" fill="#'.$colorCode.'" stroke="#000000" stroke-width="1px" /></g></svg> ';
-							if(!$iconKey) echo '= ' . $LANG['VARIOUS_TAXA'] . '';
+							if(!$iconKey) echo '= ' . $LANG['VARIOUS_TAXA'];
 							elseif(is_numeric($iconKey)) echo '= <i>'.$taxaKey[$iconKey]['str'].'</i>';
 							elseif(isset($taxaKey['orphan'][$iconKey])) echo '= <i>'.$iconKey.'</i>';
-							else echo '= ' . $LANG['VARIOUS_TAXA'] . '';
+							else echo '= ' . $LANG['VARIOUS_TAXA'];
 							echo '</div>';
 						}
 						?>
