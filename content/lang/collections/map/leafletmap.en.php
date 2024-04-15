@@ -5,7 +5,7 @@ Language: English
 ------------------
 */
 
-$LANG['GOOGLE_MAP'] = 'Google Map';
+$LANG['LEAFLET_MAP'] = 'Leaflet Map';
 $LANG['FAILED_TO_LOAD_OCCR_DATA'] = 'Failed to load occurrence data';
 $LANG['ENTER_VALUES_IN_LAT_LONG'] = 'Enter values in the latitude and longitude fields';
 $LANG['LAT_LONG_MUST_BE_BETWEEN_VALUES'] = 'Latitude and Longitude must be of values between -180 and 180';
