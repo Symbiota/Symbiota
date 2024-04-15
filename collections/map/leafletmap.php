@@ -116,7 +116,7 @@ if(isset($MAPPING_BOUNDARIES)){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> - <?php echo $LANG['GOOGLE_MAP']; ?></title>
+	<title><?php echo $DEFAULT_TITLE; ?> - <?php echo $LANG['LEAFLET_MAP']; ?></title>
 	<?php
 	   include_once($SERVER_ROOT.'/includes/head.php');
 	   include_once($SERVER_ROOT.'/includes/leafletMap.php');
