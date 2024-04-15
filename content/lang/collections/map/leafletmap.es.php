@@ -7,7 +7,7 @@ Date Translated: 2024/04/11
 ------------------
 */
 
-$LANG['GOOGLE_MAP'] = 'Mapa de Google';
+$LANG['LEAFLETE_MAP'] = 'Folleto Mapa';
 $LANG['FAILED_TO_LOAD_OCCR_DATA'] = 'Error al cargar los datos de ocurrencia';
 $LANG['ENTER_VALUES_IN_LAT_LONG'] = 'Ingrese valores en los campos de latitud y longitud';
 $LANG['LAT_LONG_MUST_BE_BETWEEN_VALUES'] = 'Latitud y Longitud deben tener valores entre -180 y 180';
