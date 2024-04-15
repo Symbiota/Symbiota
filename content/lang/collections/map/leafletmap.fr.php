@@ -6,7 +6,7 @@ Translated by: Google Translate
 Date Translated: 2024/04/11
 ------------------
 */
-$LANG['GOOGLE_MAP'] = 'Google Map';
+$LANG['LEAFLET_MAP'] = 'Carte du Dépliant';
 $LANG['FAILED_TO_LOAD_OCCR_DATA'] = 'Échec du chargement des données d\'occurrence';
 $LANG['ENTER_VALUES_IN_LAT_LONG'] = 'Entrez les valeurs dans les champs de latitude et de longitude';
 $LANG['LAT_LONG_MUST_BE_BETWEEN_VALUES'] = 'Latitude et Longitude doivent avoir des valeurs comprises entre -180 et 180';
