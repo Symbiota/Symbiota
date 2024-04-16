@@ -1655,7 +1655,7 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 		};
 
 		//This is used in occurrencelist.php which is submodule of this
-		function emit_occurrence(occid) {
+		function emit_occurrence_click(occid) {
 			document.dispatchEvent(new CustomEvent('occur_click', {
 				detail: {
 					occid: occid
@@ -1705,12 +1705,6 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 							}
 						},
 						rectangleLoader: () => {
-                     console.log({
-								upperLat: parseFloat(document.getElementById("upperlat").value),
-								lowerLat: parseFloat(document.getElementById("bottomlat").value),
-								rightLng: parseFloat(document.getElementById("rightlong").value),
-								leftLng: parseFloat(document.getElementById("leftlong").value)
-							})
 							return {
 								upperLat: parseFloat(document.getElementById("upperlat").value),
 								lowerLat: parseFloat(document.getElementById("bottomlat").value),
