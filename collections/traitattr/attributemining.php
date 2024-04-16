@@ -187,6 +187,7 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 		?>
 		<!-- This is inner text! -->
 		<div id="innertext">
+			<h1 class="page-heading"><?= $LANG['OCC_ATTRI_MINING_TOOL']; ?></h1>
 			<?php
 			if($collid){
 				if($collid == 'all'){

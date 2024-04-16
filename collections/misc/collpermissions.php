@@ -67,7 +67,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $collMetadata['collectionname'].(isset($LANG['COL_PERMISSIONS'])?$LANG['COL_PERMISSIONS']:'Collection Permissions'); ?></title>
+	<title><?php echo $collMetadata['collectionname'] . $LANG['COL_PERMISSIONS']; ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -116,6 +116,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?php echo $LANG['COL_PERMISSIONS'] . ' for: ' . $collMetadata['collectionname']; ?></h1>
 		<?php
 		if($isEditor){
 			$collPerms = $permManager->getCollectionEditors($collId);

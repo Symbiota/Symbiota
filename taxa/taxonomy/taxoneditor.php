@@ -77,7 +77,7 @@ if($isEditor){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE." ".(isset($LANG['TAX_EDITOR'])?$LANG['TAX_EDITOR']:'Taxon Editor').": ".$tid; ?></title>
+	<title><?php echo $DEFAULT_TITLE . " " . $LANG['TAX_EDITOR'] . ": " . $tid; ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>"/>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -96,6 +96,9 @@ if($isEditor){
 		.editfield{ float:left; margin-left:5px; }
 		.tsedit{ float:left; margin-left:5px; }
 		.headingDiv{ font-size:110%; font-weight:bold; padding-top:10px; }
+		.taxonDiv{ font-size:1.125rem; margin-top:15px; margin-left:10px; }
+		.taxonDiv a{ color:#990000; font-weight: bold; font-style: italic; }
+		.taxonDiv img{ border: 0px; margin: 0px; height: 15px; }
 	</style>
 </head>
 <body>
@@ -122,6 +125,9 @@ if($isEditor){
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading">
+			<?php echo $LANG['TAX_EDITOR'] . ": <i>" . $taxonEditorObj->getSciName() . "</i> " . $taxonEditorObj->getAuthor() . " [" . $taxonEditorObj->getTid() . "]"; ?>
+		</h1>
 		<?php
 		if($statusStr){
 			?>
@@ -147,9 +153,9 @@ if($isEditor){
 			</div>
 			<h1>
 				<?php
-				echo "<a href='../profile/tpeditor.php?tid=" . htmlspecialchars($taxonEditorObj->getTid(), HTML_SPECIAL_CHARS_FLAGS) . "' style='color:inherit;text-decoration:none;'>";
-				echo "<i>".$taxonEditorObj->getSciName()."</i> ".$taxonEditorObj->getAuthor()." [".$taxonEditorObj->getTid()."]";
-				echo "</a>"
+				echo "<div class='taxonDiv'><a href='../profile/tpeditor.php?tid=" . htmlspecialchars($taxonEditorObj->getTid(), HTML_SPECIAL_CHARS_FLAGS) . "'>";
+				echo "View Taxon Profile Editor";
+				echo "</a></div>";
 				?>
 			</h1>
 			<div id="tabs" class="taxondisplaydiv">

@@ -26,10 +26,15 @@ if($tid){
 			overflow-wrap: anywhere;
 			width: 100%;
 		}
+		.screen-reader-only {
+			position: absolute;
+			left: -10000px;
+		}
 	</style>
 </head>
 <body>
 	<div id="innertext" style="background-color:white;">
+		<h1 class="page-heading screen-reader-only">Taxon Profile Image Editor</h1>
 		<?php
 		if($isEditor && $tid){
 			if($category == "imagequicksort"){

@@ -53,7 +53,7 @@ $status = "";
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
-		<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['TAX_NAME_CLEANER'])?$LANG['TAX_NAME_CLEANER']:'Taxonomic Name Cleaner'); ?></title>
+		<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['TAX_NAME_CLEANER']; ?></title>
 		<?php
 
 		include_once($SERVER_ROOT.'/includes/head.php');
@@ -103,6 +103,7 @@ $status = "";
 		?>
 		<!-- inner text block -->
 		<div id="innertext">
+			<h1 class="page-heading"><?php echo $LANG['TAX_THES_VALIDATOR']; ?></h1>
 			<?php
 			if($SYMB_UID){
 				if($status){
@@ -197,7 +198,6 @@ $status = "";
 					}
 					else{
 						?>
-						<h1><?php echo (isset($LANG['TAX_THES_VALIDATOR'])?$LANG['TAX_THES_VALIDATOR']:'Taxonomic Thesaurus Validator'); ?></h1>
 						<div style="margin:15px;">
 							<?php echo (isset($LANG['VALIDATOR_EXPLAIN'])?$LANG['VALIDATOR_EXPLAIN']:'This module is designed to aid in validating scientific names within the taxonomic thesauri'); ?>.
 						</div>

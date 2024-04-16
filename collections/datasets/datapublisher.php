@@ -222,7 +222,7 @@ if ($isEditor) {
 			</div>
 			<?php
 		}
-		echo '<h1>' . $LANG['DWCA_PUBLISHING'] . '</h1>';
+		echo '<h1 class="page-heading">' . $LANG['DWCA_PUBLISHING'] . '</h1>';
 		if ($collid) {
 			echo '<div style="font-weight:bold;font-size:120%;">' . $collArr['collectionname'] . '</div>';
 			?>

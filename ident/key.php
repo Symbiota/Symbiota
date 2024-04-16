@@ -185,6 +185,7 @@ echo '<b>' . htmlspecialchars($LANG['NEW_ID_KEY'], HTML_SPECIAL_CHARS_FLAGS) . '
 echo '</div>';
 ?>
 <div id="innertext">
+	<h1 class="page-heading screen-reader-only">Key</h1>
 	<?php
 	if($clid || $dynClid){
 		?>

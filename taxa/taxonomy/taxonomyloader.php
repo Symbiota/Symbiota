@@ -31,7 +31,7 @@ if($isEditor){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['TAXON_LOADER']) ? $LANG['TAXON_LOADER'] : 'Taxon Loader'); ?>: </title>
+	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['TAXON_LOADER']; ?>: </title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
@@ -68,6 +68,7 @@ if($isEditor){
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?= $LANG['TAXON_LOADER']; ?></h1>
 		<?php
 		if($status){
 			echo '<div style="color:red;font-size:120%;">'.$status.'</div>';

@@ -183,10 +183,10 @@ elseif($activeCollArr){
 					<div style="float:left;font-weight: bold; font-size: 130%; margin-bottom: 10px">
 						<?php
 						if(is_numeric($collid)){
-							echo $collMap[$collid]['collectionname'].' ('.$collMap[$collid]['code'].')';
+							echo '<h1 class="page-heading">Taxonomy Cleaning Tool: ' . $collMap[$collid]['collectionname'].' ('.$collMap[$collid]['code'].')</h1>';
 						}
 						else{
-							echo $LANG['MULT_CLEAN_TOOL'].' '.'(<a href="#" onclick="$(\'#collDiv\').show()" style="color:blue;text-decoration:underline">' . htmlspecialchars(count($activeCollArr), HTML_SPECIAL_CHARS_FLAGS) . ' ' . htmlspecialchars($LANG['COLS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>)';
+							echo '<h1 class="page-heading">' . $LANG['MULT_CLEAN_TOOL'].' '.'(<a href="#" onclick="$(\'#collDiv\').show()" style="color:blue;text-decoration:underline">' . htmlspecialchars(count($activeCollArr), HTML_SPECIAL_CHARS_FLAGS) . ' ' . htmlspecialchars($LANG['COLS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>)</h1>';
 						}
 						?>
 					</div>

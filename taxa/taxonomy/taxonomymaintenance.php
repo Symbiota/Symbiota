@@ -35,7 +35,7 @@ if($isEditor){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE." ".(isset($LANG['TAXON_MAINT'])?$LANG['TAXON_MAINT']:'Taxonomy Maintenance'); ?></title>
+	<title><?php echo $DEFAULT_TITLE . " " . $LANG['TAX_MAINT']; ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
@@ -74,6 +74,7 @@ if($isEditor){
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?= $LANG['TAX_MAINT']; ?></h1>
 		<?php
 		if($statusStr){
 			?>

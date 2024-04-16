@@ -113,7 +113,7 @@ if($isEditor){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.' - '. (isset($LANG['VIEW_PROFILE'])?$LANG['VIEW_PROFILE']:'View User Profile'); ?></title>
+	<title><?php echo $DEFAULT_TITLE . ' - ' . $LANG['VIEW_PROFILE']; ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -141,6 +141,7 @@ if($isEditor){
 		<a href="../profile/viewprofile.php"><?php echo htmlspecialchars((isset($LANG['MY_PROFILE'])?$LANG['MY_PROFILE']:'My Profile'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
 	</div>
 	<div id="innertext">
+		<h1 class="page-heading"><?= $LANG['VIEW_PROFILE']; ?></h1>
 		<?php
 		if($isEditor){
 			if($statusStr) echo $statusStr;

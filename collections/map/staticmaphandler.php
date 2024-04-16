@@ -435,6 +435,7 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
          data-lng="<?= htmlspecialchars($longCen)?>"
       ></div>
       <div id="innertext">
+         <h1 class="page-heading">Static distribution map generator</h1>
          <div style="display:flex; justify-content:center">
             <div id="map" style="width:50rem;height:50rem;"></div>
          </div>

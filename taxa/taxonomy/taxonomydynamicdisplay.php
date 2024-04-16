@@ -42,7 +42,7 @@ reset($treePath);
 <!Doctype html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.' Taxonomy Explorer: '.$taxonDisplayObj->getTargetStr(); ?></title>
+	<title><?php echo $DEFAULT_TITLE . ' Taxonomy Explorer: ' . $taxonDisplayObj->getTargetStr(); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
@@ -115,6 +115,8 @@ reset($treePath);
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<?php $taxMetaArr = $taxonDisplayObj->getTaxonomyMeta(); ?>
+		<h1 class="page-heading"><?php echo 'Taxonomy Explorer: ' . (array_key_exists('name', $taxMetaArr) ? $taxMetaArr['name'] : 'Central Thesaurus'); ?></h1>
 		<?php
 		if($statusStr){
 			?>
@@ -135,8 +137,7 @@ reset($treePath);
 		?>
 		<div>
 			<?php
-			$taxMetaArr = $taxonDisplayObj->getTaxonomyMeta();
-			echo '<div class="tax-meta-arr">'.$taxMetaArr['name'].'</div>';
+			
 			if(count($taxMetaArr) > 1){
 				//echo '<div id="taxDetailDiv" class="tax-detail-div"><a href="#" onclick="displayTaxomonyMeta()">(more details)</a></div>';
 				echo '<div id="taxMetaDiv" class="tax-meta-div">';

@@ -122,10 +122,14 @@ $clManager->setProj($pid);
 				margin: 0;
 				padding: 0;
 			}
+         .screen-reader-only {
+				position: absolute;
+				left: -10000px;
+			}
 		</style>
 	</head>
 	<body style="background-color:#ffffff;" onload="initialize()">
-      <h1 class="skip-link" style="margin: 0;"></h1>
+      <h1 class="page-heading screen-reader-only">Checklist Map</h1>
 		<div id="map_canvas"></div>
       <div 
         id="service-container" 

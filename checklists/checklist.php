@@ -184,39 +184,12 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 				<?php
 			}
 			?>
-			<div id="title-div">
+			<h1 class="page-heading">
 				<?php echo $clManager->getClName(); ?>
-			</div>
+			</h1>
 			<?php
-			if($activateKey){
-				?>
-				<div class="printoff" style="float:left;padding:5px;">
-					<a href="../ident/key.php?clid=<?php echo $clid . "&pid=" . $pid . "&dynclid=" . $dynClid; ?>&taxon=All+Species">
-						<img src='../images/key.png' style="width:1.3em" aria-label="<?php echo $LANG['IMG_OPEN_KEY']; ?>" alt="<?php echo $LANG['IMG_OPEN_KEY']; ?>" title='<?php echo $LANG['OPEN_KEY']; ?>' />
-					</a>
-				</div>
-				<?php
-			}
-			if($taxaArray){
-				?>
-				<div class="printoff" style="padding:5px;">
-					<ul id="game-dropdown">
-						<li>
-							<span onmouseover="mopen('m1')" onmouseout="mclosetime()" onfocus="mopen('m1')" onblur="mclosetime()" tabindex="0">
-								<img src="../images/games/games.png" style="width:2em" alt="<?php echo $LANG['GAMES']; ?>"/>
-							</span>
-							<div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
-								<?php
-								$varStr = "?clid=".$clid."&dynclid=".$dynClid."&listname=".urlencode($clManager->getClName()).'&taxonfilter='.$taxonFilter.'&showcommon='.$showCommon.($clManager->getThesFilter()?'&thesfilter='.$clManager->getThesFilter():'');
-								?>
-								<a href="../games/namegame.php<?php echo $varStr; ?>" onfocus="mcancelclosetime('m1')" onblur="mclosetime()"><?php echo $LANG['NAMEGAME'];?></a>
-								<a href="../games/flashcards.php<?php echo $varStr; ?>" onfocus="mcancelclosetime('m1')" onblur="mclosetime()"><?php echo $LANG['FLASH'];?></a>
-							</div>
-						</li>
-					</ul>
-				</div>
-				<?php
-			}
+			
+			
 			echo '<div style="clear:both;"></div>';
 			$argStr = '&clid='.$clid.'&dynclid='.$dynClid.($showCommon?'&showcommon=1':'').($showSynonyms?'&showsynonyms=1':'').($showVouchers?'&showvouchers=1':'');
 			$argStr .= ($showAuthors?'&showauthors=1':'').($clManager->getThesFilter()?'&thesfilter='.$clManager->getThesFilter():'');
@@ -326,11 +299,45 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 				<div class="printoff" id="cloptiondiv">
 					<div style="">
 						<form id="optionform" name="optionform" action="checklist.php" method="post">
-						<span class="skip-link">
+						<span class="screen-reader-only">
 							<a href = "#img-container"><?php echo $LANG['SKIP_LINK']; ?></a>
 						</span>
 							<fieldset style="background-color:white;padding-bottom:10px;">
 								<legend><b><?php echo $LANG['OPTIONS'];?></b></legend>
+								<?php
+									if($activateKey){
+										?>
+										<div class="printoff" style="padding:5px;">
+											<a href="../ident/key.php?clid=<?php echo $clid . "&pid=" . $pid . "&dynclid=" . $dynClid; ?>&taxon=All+Species">
+												<div style="display: flex; align-items: center;">
+														Open Symbiota Key
+													<img src='../images/key.png' style="margin-left: 0.5rem; width:1.3em;" aria-label="<?php echo $LANG['IMG_OPEN_KEY']; ?>" alt="<?php echo $LANG['IMG_OPEN_KEY']; ?>" title='<?php echo $LANG['OPEN_KEY']; ?>' />
+												</div>
+											</a>
+										</div>
+										<?php
+									}
+									if($taxaArray){
+										?>
+										<div class="printoff" style="padding:5px; margin-bottom: 2.5rem;">
+											<ul id="game-dropdown">
+												<li>
+													<span style="display: flex; align-items: center;" onmouseover="mopen('m1')" onmouseout="mclosetime()" onfocus="mopen('m1')" onblur="mclosetime()" tabindex="0">
+														<span style=" color: var(--link-color); font-size:1.2rem; text-decoration: underline;">Games</span> <img src="../images/games/games.png" style="width:2em" alt="<?php echo $LANG['GAMES']; ?>"/>
+													</span>
+													<div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
+														<?php
+														$varStr = "?clid=".$clid."&dynclid=".$dynClid."&listname=".urlencode($clManager->getClName()).'&taxonfilter='.$taxonFilter.'&showcommon='.$showCommon.($clManager->getThesFilter()?'&thesfilter='.$clManager->getThesFilter():'');
+														?>
+														<a href="../games/namegame.php<?php echo $varStr; ?>" onfocus="mcancelclosetime('m1')" onblur="mclosetime()"><?php echo $LANG['NAMEGAME'];?></a>
+														<a href="../games/flashcards.php<?php echo $varStr; ?>" onfocus="mcancelclosetime('m1')" onblur="mclosetime()"><?php echo $LANG['FLASH'];?></a>
+													</div>
+												</li>
+											</ul>
+										</div>
+										<?php
+									}
+								?>
 								<!-- Taxon Filter option -->
 								<div id="taxonfilterdiv">
 									<div>
@@ -350,9 +357,9 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 										</div>
 									</div>
 								</div>
-								<div>
+								<div class="top-breathing-room-rel">
 									<b> <label for="thesfilter"> <?php echo $LANG['FILTER']; ?>: </label></b><br/>
-									<select id='thesfilter' name='thesfilter'>
+									<select id='thesfilter' name='thesfilter' class="top-breathing-room-rel-sm bottom-breathing-room-rel-sm">
 										<option value='0'><?php echo $LANG['OGCHECK'];?></option>
 										<?php
 										$taxonAuthList = Array();
@@ -548,28 +555,28 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 							<?php
 							echo '<b>' . $LANG['FAMILIES'] . '</b>: ';
 							echo $clManager->getFamilyCount();
-							echo '<span class="skip-link">.</span>';
+							echo '<span class="screen-reader-only">.</span>';
 							?>
 						</div>
 						<div style="margin:3px;">
 							<?php
 							echo '<b>' . $LANG['GENERA'] . '</b>: ';
 							echo $clManager->getGenusCount();
-							echo '<span class="skip-link">.</span>';
+							echo '<span class="screen-reader-only">.</span>';
 							?>
 						</div>
 						<div style="margin:3px;">
 							<?php
 							echo '<b>' . $LANG['SPECIES'] . '</b>: ';
 							echo $clManager->getSpeciesCount();
-							echo '<span class="skip-link">.</span>';
+							echo '<span class="screen-reader-only">.</span>';
 							?>
 						</div>
 						<div style="margin:3px;">
 							<?php
 							echo '<b>' . $LANG['TOTAL_TAXA'] . '</b>: ';
 							echo $clManager->getTaxaCount();
-							echo '<span class="skip-link">.</span>';
+							echo '<span class="screen-reader-only">.</span>';
 							?>
 						</div>
 					</div>

@@ -154,6 +154,7 @@ include($SERVER_ROOT.'/includes/header.php');
 </div>
 <!-- This is inner text! -->
 <div id="innertext">
+	<h1 class="page-heading">Institution Editor</h1>
 	<div id="dialog" title="" style="display: none;">
 		<div id="dialogmsg"></div>
 		<select id="getresult">

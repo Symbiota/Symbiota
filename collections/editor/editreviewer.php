@@ -203,6 +203,7 @@ $navStr .= '</div>';
 		?>
 		<!-- This is inner text! -->
 		<div id="innertext" style="min-width:1100px">
+			<h1 class="page-heading">Occurrence Edit Reviewer</h1>
 			<?php
 			if($collid && $isEditor){
 				?>
@@ -356,7 +357,7 @@ $navStr .= '</div>';
 					echo '<div style="clear:both">'.$navStr.'</div>';
 					?>
 					<table class="styledtable" style="font-family:Arial;font-size:1.25rem;" aria-label="<?php echo (isset($LANG['TABLE']) ? $LANG['TABLE'] : 'Table of Records'); ?>" aria-labeledby="table-desc">
-						<caption id="table-desc" class="bottom-breathing-room-rel top-breathing-room-rel skip-link">
+						<caption id="table-desc" class="bottom-breathing-room-rel top-breathing-room-rel screen-reader-only">
 							<?php echo $LANG['TABLE_DESC']; ?>
 						</caption>
 						<tr>
@@ -389,7 +390,7 @@ $navStr .= '</div>';
 													<?php
 													if($displayAll){
 														echo '<input id="id[]-' . $id . '" name="id[]" type="checkbox" value="'.$id.'" />';
-														echo '<label class="skip-link" for="id[]-' . $id . '">' . $id . '</label>';
+														echo '<label class="screen-reader-only" for="id[]-' . $id . '">' . $id . '</label>';
 													}
 													?>
 												</td>

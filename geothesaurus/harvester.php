@@ -148,6 +148,7 @@ if($isEditor && $submitAction) {
          <b><?= $LANG['GEOGRAPHIC_HARVESTER']?></b>
       </div>
       <div id='innertext'>
+         <h1 class="page-heading"><?= $LANG['GEOTHESAURUS_HARVESTER']; ?></h1>
          <?php
          if($statusStr){
          echo '<div id="status-div">'.$statusStr.'</div>';

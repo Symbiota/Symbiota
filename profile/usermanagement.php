@@ -39,7 +39,7 @@ if($IS_ADMIN){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['USER_MNGMT'])?$LANG['USER_MNGMT']:'User Management'); ?></title>
+	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['USER_MNGMT']; ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -87,6 +87,7 @@ if($IS_ADMIN){
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?= $LANG['USER_MNGMT']; ?></h1>
 		<div style="float:right;">
 			<div style="margin:10px 0px 15px 0px;">
 				<section class="fieldset-like" style="background-color:#FFFFCC;">
@@ -97,7 +98,7 @@ if($IS_ADMIN){
 						<button name="submit" type="submit" value="Search"><?php echo (isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search'); ?></button>
 					</form>
 
-					<span class="skip-link">
+					<span class="screen-reader-only">
 						<a href = "#userlist"><?php echo (isset($LANG['SKIP_LINK'])?$LANG['SKIP_LINK']:'Skip to list of users'); ?></a>
 					</span>			
 
@@ -747,7 +748,6 @@ if($IS_ADMIN){
 				<a id="userlist"></a>
 				<?php
 				$users = $userManager->getUsers($searchTerm);
-				echo '<h1>' . (isset($LANG['USERS']) ? $LANG['USERS'] : 'Users') . '</h1>';
 				foreach($users as $id => $name){
 					echo '<div><a href="usermanagement.php?userid=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($name, HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 				}

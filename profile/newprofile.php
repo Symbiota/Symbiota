@@ -78,7 +78,7 @@ if($action == 'Create Login'){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.' - '.(isset($LANG['NEW_USER'])?$LANG['NEW_USER']:'New User Profile'); ?></title>
+	<title><?php echo $DEFAULT_TITLE . ' - ' . $LANG['NEW_USER']; ?></title>
 	<?php
 
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -154,7 +154,7 @@ if($action == 'Create Login'){
 	?>
 		<div id="innertext">
 		<?php
-		echo '<h1>'.(isset($LANG['CREATE_NEW']) ? $LANG['CREATE_NEW'] : 'Create New Profile') . '</h1>';
+		echo '<h1 class="page-heading">'.(isset($LANG['CREATE_NEW']) ? $LANG['CREATE_NEW'] : 'Create New Profile') . '</h1>';
 		if($displayStr){
 			echo '<div style="margin:10px;color:red;">';
 			if($displayStr == 'login_exists'){

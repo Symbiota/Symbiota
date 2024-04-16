@@ -24,8 +24,15 @@ foreach($collArr as $id => $collectionArr){
 	<head>
 		<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['OCCURRENCE_MENU'];?></title>	
 		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/main.css" type="text/css" rel="stylesheet">
+		<style>
+         .screen-reader-only{ 
+            position: absolute;
+            left: -10000px;
+         }
+      </style>
 </head>
 	<div style="margin:10px;">
+		<h1 class="page-heading screen-reader-only">Occurrence Menu</h1>
 	<?php
 	if($SYMB_UID){
 		if(!$collArr) echo '<div style="margin:40px 15px;font-weight:bold">' . $LANG['NO_PROJECTS'] . '</div>';

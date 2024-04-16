@@ -301,6 +301,7 @@ if(isset($MAPPING_BOUNDARIES)){
 	</script>
 </head>
 <body style="width:100%; min-width: 900px" onload="initialize();">
+   <h1 class="page-heading">Leaflet Map</h1>
 	<?php
 	if(!$coordArr){
 		?>

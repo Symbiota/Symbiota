@@ -20,7 +20,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 
 $THIRD_PARTY_OID_AUTH_ENABLED = $THIRD_PARTY_OID_AUTH_ENABLED ?? false;
 $SYMBIOTA_LOGIN_ENABLED = $SYMBIOTA_LOGIN_ENABLED ?? true;
-$LOGIN_ACTION_PAGE = $LOGIN_ACTION_PAGE ?? 'profile/openIdAuth.php';
+$LOGIN_ACTION_PAGE = $LOGIN_ACTION_PAGE ?? $CLIENT_ROOT . '/profile/openIdAuth.php';
 
 $login = array_key_exists('login',$_REQUEST)?$_REQUEST['login']:'';
 $remMe = array_key_exists("remember",$_POST)?$_POST["remember"]:'';
@@ -130,7 +130,7 @@ if (array_key_exists('last_message', $_SESSION)){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['LOGIN_NAME'])?$LANG['LOGIN_NAME']:'Login'); ?></title>
+	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['LOGIN_NAME']; ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -199,6 +199,7 @@ include($SERVER_ROOT.'/includes/header.php');
 ?>
 <!-- inner text -->
 <div id="innertext" style="padding-left:0px;margin-left:0px;">
+	<h1 class="page-heading screen-reader-only">Login</h1>
 	<?php
 	if($statusStr){
 		$color = 'green';

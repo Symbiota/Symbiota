@@ -141,7 +141,7 @@ if ($SYMB_UID) {
 			<div id="dialogContainer" style="position: relative;">
 				<form name="quicksearch" action="javascript:void(0);" onsubmit="processEditQuickSearch('<?php echo $CLIENT_ROOT ?>')">
 					<label for="catalog-number"><?php echo (isset($LANG['OCCURENCE_IDENTIFIER']) ? $LANG['OCCURENCE_IDENTIFIER'] : 'Catalog Number'); ?></label>
-					<span class="skip-link">
+					<span class="screen-reader-only">
 						<?php
 							echo (isset($LANG['IDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Search by Catalog Number, Occurrence ID, or Record ID.') . ' ';
 						?>
@@ -201,7 +201,7 @@ if ($SYMB_UID) {
 			if ($collData['collectioncode']) $codeStr .= '-' . $collData['collectioncode'];
 			$codeStr .= ')';
 			$_SESSION['colldata'] = $collData;
-			echo '<h1>' . $collData['collectionname'] . $codeStr . '</h1>';
+			echo '<h1 class="page-heading">Collection Profile for: ' . $collData['collectionname'] . $codeStr . '</h1>';
 			// GBIF citations widget
 			if ($datasetKey) {
 				echo '<div style="margin-left: 10px; margin-bottom: 20px;">';
