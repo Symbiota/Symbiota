@@ -69,6 +69,7 @@ if($isEditor){
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?php echo $collMeta['collName'] . ': ' . $LANG['SPECIAL_PROPS']; ?></h1>
 		<?php
 		echo '<div style="font-weight:bold;font-size: 1.3em">'.$collMeta['collName'].'' . $LANG['MANAGEMENT_PROP'] . '</div>';
 		if($isEditor){
