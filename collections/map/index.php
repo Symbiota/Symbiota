@@ -617,7 +617,6 @@ value="${color}"
 							this.layer_groups[id].addTo(map.mapLayer);
 						} else if(!map.mapLayer.hasLayer(this.group_map[id].cluster)) {
 							this.group_map[id].cluster.addTo(map.mapLayer)
-							this.group_map[id].cluster.addLayer(this.layer_groups[id])
 						}
 					}
 				}
@@ -627,7 +626,6 @@ value="${color}"
 						if(clusteroff) {
 							map.mapLayer.removeLayer(this.layer_groups[id])
 						} else {
-							this.group_map[id].cluster.removeLayer(this.layer_groups[id])
 							map.mapLayer.removeLayer(this.group_map[id].cluster)
 						}
 					}
@@ -647,13 +645,15 @@ value="${color}"
 				}
 
 				addLayer(id) {
-					if(clusteroff) {
-						this.layer_groups[id] = L.layerGroup(this.markers[id]);
-						map.mapLayer.addLayer(this.layer_groups[id]);
-					} else {
-						this.group_map[id].cluster.addLayer(this.layer_groups[id])
+					//First Add layer for both regular layer group and for clustering
+					this.layer_groups[id] = L.layerGroup(this.markers[id]);
+					this.group_map[id].cluster.addLayer(this.layer_groups[id])
 
-						if(!map.mapLayer.hasLayer(this.group_map[id].cluster)) {
+					//Then Decide which is visible
+					if(!heatmap) {
+						if(clusteroff) {
+							map.mapLayer.addLayer(this.layer_groups[id]);
+						} else if(!map.mapLayer.hasLayer(this.group_map[id].cluster)) {
 							this.group_map[id].cluster.addTo(map.mapLayer);
 						}
 					}
@@ -668,7 +668,6 @@ value="${color}"
 							map.mapLayer.addLayer(this.layer_groups[id]);
 						} else {
 							map.mapLayer.removeLayer(this.layer_groups[id]);
-
 							if(!map.mapLayer.hasLayer(this.group_map[id].cluster)) {
 								this.group_map[id].cluster.addTo(map.mapLayer);
 							}
@@ -1099,13 +1098,15 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 				}
 
 				addLayer(id) {
-					if(clusteroff) {
-						for(let marker of Object.values(this.markers[id])) {
-							marker.setMap(map.mapLayer)
+					if(!heatmapon) {
+						if(clusteroff) {
+							for(let marker of Object.values(this.markers[id])) {
+								marker.setMap(map.mapLayer)
+							}
+						} else {
+							this.group_map[id].cluster.addMarkers(this.markers[id])
+							this.group_map[id].cluster.setMap(map.mapLayer);
 						}
-					} else {
-						this.group_map[id].cluster.addMarkers(this.markers[id])
-						this.group_map[id].cluster.setMap(map.mapLayer);
 					}
 				}
 
@@ -1289,9 +1290,9 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 				e.preventDefault();
 				let formData = new FormData(e.target);
 
-				mapGroups.map(g => {
-					g.taxonMapGroup.resetGroup();
-					g.collectionMapGroup.resetGroup();
+				mapGroups.map(group => {
+					group.taxonMapGroup.resetGroup();
+					group.collectionMapGroup.resetGroup();
 					group.portalMapGroup.resetGroup();
 				});
 
@@ -1338,8 +1339,8 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 				genClusters(taxaLegendMap, "taxa");
 				genClusters(collLegendMap, "coll");
 				genClusters(portalLegendMap, "portal");
-
-            autoColorTaxa();
+            
+				autoColorTaxa();
 
 				drawPoints();
 
