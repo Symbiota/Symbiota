@@ -18,9 +18,7 @@ $LANG['CONVERT_TO_NEW_FORMAT'] = 'Convert to new format';
 $LANG['ACTION_PANEL'] = 'Action Panel';
 $LANG['OVERRIDE_COLLECTION_TITLE'] = 'Following field will override the title of the collection/observation project that is published in the EML file within the Darwin Core Archive (DwC-A) export file';
 $LANG['SAVE_TITLE_OVERRIDE'] = 'Save Title Override';
-$LANG['SESATOOLS'] = 'sesarTools';
-$LANG['IGSN_PROFILE'] = 'IGSN Profile';
-$LANG['LABEL_FORMAT'] = 'labelFormat';
+
 
 
 ?>

@@ -20,9 +20,7 @@ $LANG['CONVERT_TO_NEW_FORMAT'] = 'Convertir al nuevo formato';
 $LANG['ACTION_PANEL'] = 'Panel de Acciones';
 $LANG['OVERRIDE_COLLECTION_TITLE'] = 'El siguiente campo anulará el título del proyecto de colección/observación que se publica en el archivo EML dentro del archivo de exportación Darwin Core Archive (DwC-A)';
 $LANG['SAVE_TITLE_OVERRIDE'] = 'Guardar Anulación de Título';
-$LANG['SESATOOLS'] = 'sesarHerramientas';
-$LANG['IGSN_PROFILE'] = 'Perfil IGSN';
-$LANG['LABEL_FORMAT'] = 'etiquetaFormato';
+
 
 ?>
 

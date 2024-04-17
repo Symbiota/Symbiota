@@ -130,8 +130,8 @@ if($isEditor){
 				</div>
 			</fieldset>
 
-			<?php echo $LANG['SESATOOLS']; ?>', '<?php echo $LANG['IGSN_PROFILE']; ?>
-			<?php echo $LANG['LABEL_FORMAT']; ?>
+			sesarTools', 'IGSN Profile
+			labelFormat
 
 			<?php
 		}
