@@ -89,7 +89,11 @@ $collManager->cleanOutArr($collData);
 			block_unsupported_drop: true,
 			images_file_types: 'jpg,jpeg,png,gif',
 			images_upload_url: 'tinymceimagehandler.php',
-			a11y_advanced_options: true
+			a11y_advanced_options: true,
+			init_instance_callback: function (editor) {
+				var iframeBody = editor.getBody();
+				iframeBody.setAttribute('aria-label', <?php echo json_encode($LANG['TINYMCE_INFO'], JSON_UNESCAPED_UNICODE); ?>);
+			}
 		});
 
 		$(function() {
@@ -330,7 +334,7 @@ $collManager->cleanOutArr($collData);
 							</div>
 							<div class="field-block">
 								<div class="field-elem">
-									<label for="full-description"> <?php echo (isset($LANG['DESC']) ? htmlspecialchars($LANG['DESC'], HTML_SPECIAL_CHARS_FLAGS) : 'Description (2000 character max)'); ?>: </label>
+									<label for="full-description"  tabindex="0" > <?php echo (isset($LANG['DESC']) ? htmlspecialchars($LANG['DESC'], HTML_SPECIAL_CHARS_FLAGS) : 'Description (2000 character max)');?>: </label>
 									<textarea id="full-description" name="fullDescription" style="width:95%;height:90px;"><?php echo ($collid ? $collData["fulldescription"] : ''); ?></textarea>
 								</div>
 							</div>

@@ -123,5 +123,7 @@ $LANG['SECURITY_KEY'] = 'Security Key';
 $LANG['RECORDID'] = 'recordID';
 $LANG['SAVE_EDITS'] = 'Save Edits';
 $LANG['CREATE_COLL_2'] = 'Create New Collection';
+$LANG['TINYMCE_INFO'] = 'You can access toolbar by pressing key combination ALT + F10 on Windows or OPTION + F10 on MacOS. 
+							To exit toolbar press ESCAPE key.';
 
 ?>
