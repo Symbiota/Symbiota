@@ -771,9 +771,7 @@ else{
 									$filedUnderValue = isset($filedUnderDrop[$occArr["filedUnder"]]) ? $filedUnderDrop[$occArr["filedUnder"]] : null;
 								}
 								?>	
-								<input type="text" size="50" name="filedUnderDisplay" id="fffileunder" value="<?php echo array_key_exists('filedUnder',$occArr)?$occArr['filedUnder']:''; ?>" onchange="fieldChanged('filedUnder');" <?php if($isEditor > 2) echo 'disabled'; ?>/>
-								<!-- TODO: figure out what is this for -->
-								<!-- <input type="hidden" id="tidinterpreted" name="tidinterpreted" value="<?php echo array_key_exists('tidinterpreted',$occArr)?$occArr['tidinterpreted']:''; ?>" /> -->
+								<input type="text" size="50" name="filedUnder" id="fffileunder" value="<?php echo array_key_exists('filedUnder',$occArr)?$occArr['filedUnder']:''; ?>" onchange="fieldChanged('filedUnder');" <?php if($isEditor > 2) echo 'disabled'; ?>/>
 							</span>
 						</div>
 						<div class="field-block">
