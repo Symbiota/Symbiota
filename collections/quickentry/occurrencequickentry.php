@@ -586,7 +586,10 @@ else{
 
 			// Convert and set the adjusted timestamp in the input field
 			document.addEventListener('DOMContentLoaded', function() {
-				document.getElementById('modifiedInput').value = convertTimeToUserTimezone(record_created_utc);
+				// Convert UTC to user's timezone and update display element
+				var modifiedDisplayElement = document.getElementById('displayModified');
+				modifiedDisplayElement.textContent = convertTimeToUserTimezone(record_created_utc);
+
 				var lastModifiedElement = document.getElementById('lastModified');
 				lastModifiedElement.textContent = 'Last Modified: ' + convertTimeToUserTimezone(last_modified_utc);
 			});
@@ -622,12 +625,6 @@ else{
 		</script>
 	</head>
 <body>
-	<div><?php // print_r($imgArr) ?></div>
-	<div><?php // print_r($specImgArr) ?></div>
-	<div><?php // print_r($imgidCollection) ?></div>
-	<div><?php // echo($currentImgId) ?></div>
-	<div><?php // echo($imgidCollection[$currentImage]) ?></div>
-	<div><?php // echo($imgUrl) ?></div>
 	<div id="innertext">
 		<div id="top">
 			<div id="titleDiv">
@@ -696,9 +693,6 @@ else{
 					?>
 				</div>
 
-
-			<!-- body part of the new form start from here -->
-			<!-- TODO: we leave the old form so that some of its funcitons can be reused in the new form  -->
 			<?php
 				if($statusStr){
 					?>
@@ -940,11 +934,11 @@ else{
 							?>
 						</div>
 						<div class="login-info">
-							<!-- TODO: need to figure out how to deal with this input. It supposes to be generated automatically based on the form -->
 							<div class="field-block">
 								<span class="field-label"><?php echo (isset($LANG['RECCORECTED']) ? $LANG['RECCORECTED'] : 'Record Created'); ?>:</span>
 								<span class="field-elem">
-									<input readonly size='25' type='text' name='modified' id='modifiedInput' value="<?php echo $occArr['modified']; ?>" />
+									<input readonly size='25' type='hidden' type='text' name='modified' id='modifiedInput' value="<?php echo $occArr['modified']; ?>" />
+									<span id="displayModified"></span>
 								</span>
 							</div>
 							<div class="field-block">
