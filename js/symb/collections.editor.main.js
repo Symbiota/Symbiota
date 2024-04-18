@@ -81,6 +81,15 @@ $(document).ready(function() {
 		}
 	});
 
+	$("#fffileunder").autocomplete({
+		source: "/rpc/getfiledundersuggest.php",
+		minLength: 3, 
+		autoFocus: true, 
+		change: function(event, ui) {
+			fieldChanged('filedUnder')
+		}
+	});
+
 	$("#ffsciname").autocomplete({ 
 		source: "rpc/getspeciessuggest.php", 
 		minLength: 3,

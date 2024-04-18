@@ -78,9 +78,6 @@ $statusStr = '';
 $navStr = '';
 $isEditor = 0;
 
-// Dropdown arrays
-$filedUnderDrop = $occManager->getValues('dd_filedUnderID', 'dropdown_filedUnder_values');
-
 if($SYMB_UID){
 	//Set variables
 	$occManager->setOccId($occId);
@@ -498,14 +495,13 @@ if($SYMB_UID){
 	if($occId) $isLocked = $occManager->getLock();
 
 	// collect image arrays
-	$imgidCollection = []; 
+	$imgidCollection = [];
+	$imgUrlCollection = [];
 	foreach ($imgArr as $item) {
 		$imgidCollection[] = $item['imgid'];
+		$imgUrlCollection[] = $item['web'];
 	}
-	$currentImage = 0;
 	$totalImage = count($imgidCollection);
-	$imgUrl = $occManager->getImgUrl($imgidCollection[$currentImage]);
-
 }
 else{
 	header('Location: ../../profile/index.php?refurl=../collections/editor/occurrenceeditor.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
@@ -774,15 +770,16 @@ else{
 								</span>
 							</div>
 						<?php endif; ?>
-						<div class="field-block">
+						<div id="filedUnderDiv" class="field-block">
 							<span class="field-label"><?php echo (isset($LANG['FILED_UNDER']) ? $LANG['FILED_UNDER'] : 'Filed Under'); ?></span>
 							<span class="field-elem">
 								<?php if(array_key_exists('filedUnder',$occArr)) { 
 									$filedUnderValue = isset($filedUnderDrop[$occArr["filedUnder"]]) ? $filedUnderDrop[$occArr["filedUnder"]] : null;
 								}
 								?>	
-								<input type="text" size="50" name="filedUnderDisplay" id="filedUnderDisplay" value="<?php echo $filedUnderValue; ?>" onkeyup="filterDropdown('filedUnderDisplay', 'filedUnder', <?php echo htmlspecialchars(json_encode($filedUnderDrop), ENT_QUOTES, 'UTF-8'); ?>)" />
-								<select name="filedUnder" id="filedUnder" style="display: none;" onchange="selectOption(this, 'filedUnderDisplay',<?php echo htmlspecialchars(json_encode($filedUnderDrop), ENT_QUOTES, 'UTF-8'); ?>);"></select>
+								<input type="text" size="50" name="filedUnderDisplay" id="fffileunder" value="<?php echo array_key_exists('filedUnder',$occArr)?$occArr['filedUnder']:''; ?>" onchange="fieldChanged('filedUnder');" <?php if($isEditor > 2) echo 'disabled'; ?>/>
+								<!-- TODO: figure out what is this for -->
+								<!-- <input type="hidden" id="tidinterpreted" name="tidinterpreted" value="<?php echo array_key_exists('tidinterpreted',$occArr)?$occArr['tidinterpreted']:''; ?>" /> -->
 							</span>
 						</div>
 						<div class="field-block">
@@ -1089,7 +1086,6 @@ else{
 				</form>
 				<section>
 					<div class="info function-bar">
-						<?php echo "info needed   " ?>
 						<div style="float:left;" title="<?php echo $LANG['PRIMARY_KEY']; ?>">
 							<?php if($occId) echo 'Key: '.$occManager->getOccId(); ?>
 						</div>

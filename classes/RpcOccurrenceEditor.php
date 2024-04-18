@@ -168,6 +168,28 @@ class RpcOccurrenceEditor extends RpcBase{
 		return $ometid;
 	}
 
+	public function getFiledUnderSuggest($term){
+		$retArr = array();
+		$term = preg_replace('/[^a-zA-Z0-9()\-. ]+/', '', $term);
+
+		// If the search term has less than 3 characters, return an empty array (or you may choose to skip the search)
+		if (strlen($term) < 3) {
+			return $retArr;
+		}
+
+		// Construct the SQL query
+		$sql = 'SELECT DISTINCT filedUnder FROM dd_filedUnder_view WHERE filedUnder LIKE "'.$term.'%" ORDER BY filedUnder';
+
+		$rs = $this->conn->query($sql);
+		if($rs) {
+			while ($r = $rs->fetch_object()) {
+				$retArr[] = array('id' => $r->filedUnder, 'value' => $r->filedUnder);
+			}
+			$rs->free();
+		}
+		return $retArr;
+	}
+
 	//Used by /collections/editor/rpc/getspeciessuggest.php,
 	public function getSpeciesSuggest($term){
 		$retArr = Array();
