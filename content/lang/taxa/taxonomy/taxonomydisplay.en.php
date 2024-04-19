@@ -28,5 +28,6 @@ $LANG['PLUS_SIGN_DESC'] = 'Image of a plus sign, indicating create new taxon';
 //Dynamic display
 $LANG['TAX_EXPLORE'] = 'Taxonomy Explorer';
 $LANG['EDITOR_MODE'] = 'Editor mode';
+$LANG['CENTRAL_THESAURUS'] = 'Central Thesaurus';
 
 ?>

@@ -28,5 +28,6 @@ $LANG['PLUS_SIGN_DESC'] = 'Image d\'un signe plus, indiquant la création d\'un 
 //Affichage dynamique
 $LANG['TAX_EXPLORE'] = 'Explorateur de taxonomie';
 $LANG['EDITOR_MODE'] = 'Mode éditeur';
+$LANG['CENTRAL_THESAURUS'] = 'Central Thesaurus';
 
 ?>

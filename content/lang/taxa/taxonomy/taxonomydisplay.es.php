@@ -28,5 +28,7 @@ $LANG['PLUS_SIGN_DESC'] = 'Imagen de un signo más que indica crear un nuevo tax
 //Dynamic display
 $LANG['TAX_EXPLORE'] = 'Explorador Taxonómico';
 $LANG['EDITOR_MODE'] = 'Modo de Editor';
+$LANG['CENTRAL_THESAURUS'] = 'Central Thesaurus';
+
 
 ?>
