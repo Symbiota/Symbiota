@@ -45,7 +45,7 @@ class ImInventories extends Manager{
 			$result->free();
 			if($retArr){
 				if($retArr['type'] == 'excludespp'){
-					$sql = 'SELECT clid FROM fmchklstchildren WHERE clidchild = '.$this->clid;
+					$sql = 'SELECT clid FROM fmchklstchildren WHERE clid != clidchild AND clidchild = ' . $this->clid;
 					$rs = $this->conn->query($sql);
 					while($r = $rs->fetch_object()){
 						$retArr['excludeparent'] = $r->clid;
@@ -155,13 +155,15 @@ class ImInventories extends Manager{
 					}
 				}
 				elseif($inputArr['type'] == 'excludespp' && is_numeric($inputArr['excludeparent'])){
-					$sql = 'INSERT IGNORE INTO fmchklstchildren(clid, clidchild) VALUES(?, ?)';
-					if($stmt = $this->conn->prepare($sql)){
-						$stmt->bind_param('ii', $inputArr['excludeparent'], $this->clid);
-						if(!$stmt->execute()){
-							$this->errorMessage = 'Error updating parent checklist for exclusion species list: '.$this->conn->error;
+					if($inputArr['excludeparent'] != $this->clid){
+						$sql = 'INSERT IGNORE INTO fmchklstchildren(clid, clidchild) VALUES(?, ?)';
+						if($stmt = $this->conn->prepare($sql)){
+							$stmt->bind_param('ii', $inputArr['excludeparent'], $this->clid);
+							if(!$stmt->execute()){
+								$this->errorMessage = 'Error updating parent checklist for exclusion species list: ' . $this->conn->error;
+							}
+							$stmt->close();
 						}
-						$stmt->close();
 					}
 				}
 			}
@@ -229,17 +231,19 @@ class ImInventories extends Manager{
 	//Child-Parent checklist functions
 	public function insertChildChecklist($clidChild, $modifiedUid){
 		$status = false;
-		$sql = 'INSERT INTO fmchklstchildren(clid, clidchild, modifiedUid) VALUES(?,?,?) ';
-		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('iii', $this->clid, $clidChild, $modifiedUid);
-			if($stmt->execute()){
-				if($stmt->affected_rows && !$stmt->error){
-					$status = true;
+		if($this->clid != $clidChild){
+			$sql = 'INSERT INTO fmchklstchildren(clid, clidchild, modifiedUid) VALUES(?,?,?) ';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('iii', $this->clid, $clidChild, $modifiedUid);
+				if($stmt->execute()){
+					if($stmt->affected_rows && !$stmt->error){
+						$status = true;
+					}
+					else $this->errorMessage = 'ERROR inserting child checklist record (2): ' . $stmt->error;
 				}
-				else $this->errorMessage = 'ERROR inserting child checklist record (2): '.$stmt->error;
+				else $this->errorMessage = 'ERROR inserting child checklist record (1): ' . $stmt->error;
+				$stmt->close();
 			}
-			else $this->errorMessage = 'ERROR inserting child checklist record (1): '.$stmt->error;
-			$stmt->close();
 		}
 		return $status;
 	}

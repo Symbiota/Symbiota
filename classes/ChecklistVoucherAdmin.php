@@ -129,7 +129,7 @@ class ChecklistVoucherAdmin extends Manager {
 			}
 			$result->free();
 			//Get children checklists
-			$sqlChildBase = 'SELECT clidchild FROM fmchklstchildren WHERE clid IN(';
+			$sqlChildBase = 'SELECT clidchild FROM fmchklstchildren WHERE clid != clidchild AND clid IN(';
 			$sqlChild = $sqlChildBase.$this->clid.')';
 			do{
 				$childStr = "";

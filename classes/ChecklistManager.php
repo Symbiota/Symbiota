@@ -149,7 +149,7 @@ class ChecklistManager extends Manager{
 	public function getParentChecklist(){
 		$parentArr = array();
 		if($this->clid){
-			$sql = 'SELECT cl.clid, cl.name FROM fmchecklists cl INNER JOIN fmchklstchildren ch ON cl.clid = ch.clid WHERE ch.clidchild = '.$this->clid;
+			$sql = 'SELECT cl.clid, cl.name FROM fmchecklists cl INNER JOIN fmchklstchildren ch ON cl.clid = ch.clid WHERE ch.clid != ch.clidchild AND ch.clidchild = ' . $this->clid;
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
 				$parentArr[$r->clid] = $r->name;
