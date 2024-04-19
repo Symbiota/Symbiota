@@ -2,7 +2,7 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyHarvester.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomymaintenance.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/taxa/taxonomy/taxonomymaintenance.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomymaintenance..en.php');
+else include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomymaintenance.en.php');
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../taxa/taxonomy/taxonomymaintenance.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
