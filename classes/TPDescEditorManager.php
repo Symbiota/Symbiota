@@ -176,7 +176,7 @@ class TPDescEditorManager extends TPEditorManager{
 	public function updateDescriptionBlock($postArr){
 		$status = false;
 		if(is_numeric($postArr['tdbid'])){
-			$blockFieldArr = array('source' => 's', 'sourceurl' => 's', 'displaylevel' => 'i', 'notes' => 's' );
+			$blockFieldArr = array( 'caption' => 's', 'source' => 's', 'sourceurl' => 's', 'displaylevel' => 'i', 'notes' => 's', 'langid' => 's' );
 			$sqlFrag = '';
 			$paramArr = array();
 			$paramType = '';
@@ -206,6 +206,7 @@ class TPDescEditorManager extends TPEditorManager{
 				else  $this->errorMessage = $this->conn->error;
 			}
 			// Temp code until total refactor: transfer selected fields to decription profile
+			unset($postArr['caption']);
 			if(isset($postArr['source'])){
 				$postArr['publication'] = $postArr['source'];
 			}
