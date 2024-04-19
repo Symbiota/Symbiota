@@ -4,7 +4,7 @@ include_once($SERVER_ROOT . '/classes/TaxonomyDisplayManager.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.'.$LANG_TAG.'.php'))
 	include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.en.php');
+	else include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.en.php');
 
 $target = $_REQUEST['target'] ?? '';
 $displayAuthor = !empty($_REQUEST['displayauthor']) ? 1: 0;
@@ -162,7 +162,7 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 		</div>
 		<?php
 		if(!$taxonDisplayObj->displayTaxonomyHierarchy()){
-			echo '<div style="margin:20px;">No taxa found matching your search</div>';
+			echo '<div style="margin:20px;">' . $LANG['NO_TAXA_FOUND'] . '</div>';
 		}
 		?>
 	</div>
