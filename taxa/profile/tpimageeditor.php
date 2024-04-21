@@ -1,7 +1,8 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TPImageEditorManager.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/profile/tpimageeditor.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpimageeditor.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/profile/tpimageeditor.' . $LANG_TAG . '.php'))
+include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpimageeditor.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpimageeditor.en.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 
@@ -34,7 +35,7 @@ if($tid){
 </head>
 <body>
 	<div id="innertext" style="background-color:white;">
-		<h1 class="page-heading screen-reader-only">Taxon Profile Image Editor</h1>
+		<h1 class="page-heading screen-reader-only"><?= $LANG['TP_IMAGE_EDITOR'] ?></h1>
 		<?php
 		if($isEditor && $tid){
 			if($category == "imagequicksort"){
@@ -51,8 +52,8 @@ if($tid){
 										if($tnUrl && substr($tnUrl,0,10) != 'processing'){
 											$webUrl = $imgArr["url"];
 											if($GLOBALS["imageDomain"]){
-												if(substr($imgArr["url"],0,1)=="/") $webUrl = $GLOBALS["imageDomain"].$imgArr["url"];
-												if(substr($imgArr["thumbnailurl"],0,1)=="/") $tnUrl = $GLOBALS["imageDomain"].$imgArr["thumbnailurl"];
+												if(substr($imgArr["url"],0,1)=="/") $webUrl = $GLOBALS["imageDomain"] . $imgArr["url"];
+												if(substr($imgArr["thumbnailurl"],0,1)=="/") $tnUrl = $GLOBALS["imageDomain"] . $imgArr["thumbnailurl"];
 											}
 											?>
 											<td align='center' valign='bottom'>
@@ -73,13 +74,13 @@ if($tid){
 												if($imgArr["tid"] != $tid){
 													?>
 													<div>
-														<a href="tpeditor.php?tid=<?php echo htmlspecialchars($imgArr["tid"], HTML_SPECIAL_CHARS_FLAGS);?>" target="" title="Linked from"><?php echo htmlspecialchars($imgArr["sciname"], HTML_SPECIAL_CHARS_FLAGS);?></a>
+														<a href="tpeditor.php?tid=<?php echo htmlspecialchars($imgArr["tid"], HTML_SPECIAL_CHARS_FLAGS);?>" target="" title="<?= $LANG['LINKED_FROM'] ?>"><?php echo htmlspecialchars($imgArr["sciname"], HTML_SPECIAL_CHARS_FLAGS);?></a>
 													</div>
 													<?php
 												}
 												?>
 												<div style='margin-top:2px;'>
-													<?php echo $LANG['SORT_SEQUENCE'].': '.'<b>'.$imgArr["sortsequence"].'</b>'; ?>
+													<?php echo $LANG['SORT_SEQUENCE'] . ': ' . '<b>' . $imgArr["sortsequence"] . '</b>'; ?>
 												</div>
 												<div>
 													<?php echo $LANG['NEW_VALUE']; ?>:
@@ -113,7 +114,7 @@ if($tid){
 							<input name='tid' type='hidden' value='<?php echo $imageEditor->getTid(); ?>'>
 							<input type="hidden" name="tabindex" value="2" />
 							<?php
-							if($imgCnt%5 != 0) echo "<div style='margin-top:2px;'><button type='submit' name='action' id='imgsortsubmit' value='Submit Image Sort Edits'>".$LANG['SUBMIT_SORT_EDITS']."</button></div>\n";
+							if($imgCnt%5 != 0) echo "<div style='margin-top:2px;'><button type='submit' name='action' id='imgsortsubmit' value='Submit Image Sort Edits'>" . $LANG['SUBMIT_SORT_EDITS'] . "</button></div>\n";
 							?>
 						</form>
 					</div>
@@ -128,7 +129,7 @@ if($tid){
 				<div style='clear:both;'>
 					<form enctype='multipart/form-data' action='tpeditor.php' id='imageaddform' method='post' target='_self' onsubmit='return submitAddImageForm(this);'>
 						<fieldset style='margin:15px;padding:15px;width:90%;'>
-							<legend><b>Add a New Image</b></legend>
+							<legend><b><?php echo $LANG['ADD_NEW_IMAGE']; ?></b></legend>
 							<div style='padding:10px;border:1px solid #c2c2c2;background-color:#f7f7f7;'>
 								<div class="targetdiv" style="display:block;">
 									<div style="font-weight:bold;margin-bottom:5px;">
@@ -371,7 +372,7 @@ if($tid){
 					<?php
 				}
 				else{
-					echo '<h2>'.$LANG['NO_IMAGES'].'</h2>';
+					echo '<h2>' . $LANG['NO_IMAGES'] . '</h2>';
 				}
 			}
 		}
