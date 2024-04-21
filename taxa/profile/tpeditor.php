@@ -3,7 +3,8 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TPEditorManager.php');
 include_once($SERVER_ROOT.'/classes/TPDescEditorManager.php');
 include_once($SERVER_ROOT.'/classes/TPImageEditorManager.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.' . $LANG_TAG . '.php'))
+include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
@@ -192,12 +193,12 @@ if($isEditor && $action){
 		<?php
 		if($tEditor->getTid()){
 			if($isEditor){
-				if($tEditor->isForwarded()) echo '<div id="redirectedfrom">'.$LANG['REDIRECTED_FROM'].': <i>'.$tEditor->getSubmittedValue('sciname').'</i></div>';
-				echo '<div id="taxonDiv"><a href="../index.php?taxon=' . htmlspecialchars($tEditor->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '">View Public Taxon Profile</a> ';
+				if($tEditor->isForwarded()) echo '<div id="redirectedfrom">' . $LANG['REDIRECTED_FROM'] . ': <i>' . $tEditor->getSubmittedValue('sciname') . '</i></div>';
+				echo '<div id="taxonDiv"><a href="../index.php?taxon=' . htmlspecialchars($tEditor->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '">' . $LANG['VIEW_PUBLIC_TAXON'] . '</a> ';
 				if($tEditor->getRankId() > 140) echo "&nbsp;<a href='tpeditor.php?tid=" . htmlspecialchars($tEditor->getParentTid(), HTML_SPECIAL_CHARS_FLAGS) . "'><img src='../../images/toparent.png' style='width:1.3em' title='" . htmlspecialchars($LANG['GO_TO_PARENT'], HTML_SPECIAL_CHARS_FLAGS) . "' /></a>";
 				echo "</div>\n";
-				if($tEditor->getFamily()) echo '<div id="familyDiv"><b>'.$LANG['FAMILY'].':</b> '.$tEditor->getFamily().'</div>'."\n";
-				if($statusStr) echo '<div style="margin:15px;font-weight:bold;font-size:120%;color:'.(stripos($statusStr,'error') !== false?'red':'green') .';">'.$statusStr.'</div>';
+				if($tEditor->getFamily()) echo '<div id="familyDiv"><b>' . $LANG['FAMILY'] . ':</b> ' . $tEditor->getFamily() . '</div>' . "\n";
+				if($statusStr) echo '<div style="margin:15px;font-weight:bold;font-size:120%;color:' . (stripos($statusStr,'error') !== false?'red':'green') .';">' . $statusStr . '</div>';
 				?>
 				<div id="tabs" style="margin:10px;">
 					<ul>
@@ -215,7 +216,7 @@ if($isEditor && $action){
 						?>
 						<div>
 							<div style="margin:10px 0px" title="<?php echo $LANG['ADD_COMMON_NAME']; ?>">
-								<b><?php echo ($vernacularList?$LANG['COMMON_NAMES']:$LANG['NO_COMMON_NAMES']); ?></b>
+								<b><?php echo ($vernacularList ? $LANG['COMMON_NAMES'] : $LANG['NO_COMMON_NAMES']); ?></b>
 								<a href="#" onclick="toggle('addvern');return false;">
 									<img style="border:0px;width:1.3em;" src="../../images/add.png"/>
 								</a>
@@ -234,7 +235,7 @@ if($isEditor && $action){
 												<option value=""><?php echo $LANG['SEL_LANGUAGE']; ?></option>
 												<?php
 												foreach($langArr as $langID => $langName){
-													echo '<option value="'.$langID.'" '.(strpos($langName,'('.$DEFAULT_LANG.')')?'SELECTED':'').'>'.$langName.'</option>';
+													echo '<option value="' . $langID . '" ' . (strpos($langName,'(' . $DEFAULT_LANG . ')') ? 'SELECTED' : '') . '>' . $langName . '</option>';
 												}
 												?>
 											</select>
@@ -287,7 +288,7 @@ if($isEditor && $action){
 															<option value=""><?php echo $LANG['SEL_LANGUAGE']; ?></option>
 															<?php
 															foreach($langArr as $langID => $langName){
-																echo '<option value="'.$langID.'" '.($vernArr['langid']==$langID?'SELECTED':'').'>'.$langName.'</option>';
+																echo '<option value="' . $langID . '" ' . ($vernArr['langid']==$langID ? 'SELECTED' : '') . '>' . $langName . '</option>';
 															}
 															?>
 														</select>
@@ -353,7 +354,7 @@ if($isEditor && $action){
 									<ul>
 										<?php
 										foreach($synonymArr as $tidKey => $valueArr){
-											 echo '<li>'.$valueArr["sciname"].'</li>';
+											 echo '<li>' . $valueArr["sciname"] . '</li>';
 										}
 										?>
 									</ul>
@@ -386,11 +387,11 @@ if($isEditor && $action){
 								<?php
 							}
 							else{
-								echo '<div style="margin:20px 0px"><b>'.$LANG['NO_SYN_LINK'].'</b></div>';
+								echo '<div style="margin:20px 0px"><b>' . $LANG['NO_SYN_LINK'] . '</b></div>';
 							}
 							?>
 							<div style="margin:10px;">
-								*<?php echo $LANG['MOST_SYN_IN_TAX_THES'].' <a href="../../sitemap.php">' . htmlspecialchars($LANG['SITEMAP'], HTML_SPECIAL_CHARS_FLAGS) . '</a>).'; ?>
+								*<?php echo $LANG['MOST_SYN_IN_TAX_THES'] . ' <a href="../../sitemap.php">' . htmlspecialchars($LANG['SITEMAP'], HTML_SPECIAL_CHARS_FLAGS) . '</a>).'; ?>
 							</div>
 						</fieldset>
 					</div>
@@ -419,18 +420,18 @@ if($isEditor && $action){
 				echo '<div style="margin:15px">'.$LANG['MORE_THAN_ONE_TAXON'].': </div>';
 				echo '<div style="margin:10px">';
 				foreach($taxaArr as $tidKey => $sciArr){
-					$outStr = '<b>'.$sciArr['sciname'];
+					$outStr = '<b>' . $sciArr['sciname'];
 					if($sciArr['rankid'] > 179) $outStr = '<i>'.$outStr.'</i> ';
 					$outStr .= $sciArr['author'].'</b> ';
-					if(isset($sciArr['rankname'])) $outStr .= '- '.$sciArr['rankname'].' rank ';
-					if(isset($sciArr['kingdom'])) $outStr .= ' ('.$sciArr['kingdom'].')';
+					if(isset($sciArr['rankname'])) $outStr .= '- ' . $sciArr['rankname'] . ' rank ';
+					if(isset($sciArr['kingdom'])) $outStr .= ' (' . $sciArr['kingdom'] . ')';
 					echo '<div><a href="tpeditor.php?tid=' . htmlspecialchars($tidKey, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($outStr, HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
 				}
 				echo '</div>';
 			}
 			else{
 				echo '<div style="margin:15px">';
-				if($taxon) echo "<i>".ucfirst($taxon)."</i> ".$LANG['NOT_IN_SYSTEM'].".";
+				if($taxon) echo "<i>" . ucfirst($taxon) . "</i> " . $LANG['NOT_IN_SYSTEM'] . ".";
 				echo '</div>';
 			}
 		}
