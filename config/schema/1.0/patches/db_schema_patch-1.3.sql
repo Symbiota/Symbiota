@@ -56,20 +56,20 @@ CREATE TABLE `images_barcode` (
 
 -- Add missing columns to the omocurrences table where the quick entry data is stored
 ALTER TABLE `omoccurrences` 
-    ADD COLUMN `filedUnder` int DEFAULT NULL,
-    ADD COLUMN `geoWithin` int DEFAULT NULL,
+    ADD COLUMN `filedUnder` varchar(255) DEFAULT NULL,
+    ADD COLUMN `geoWithin` varchar(255) DEFAULT NULL,
     ADD COLUMN `herbarium` varchar(4) NOT NULL,
     ADD COLUMN `accesNum` varchar(255) DEFAULT NULL,
-    ADD COLUMN `currName` int DEFAULT NULL,
+    ADD COLUMN `currName` varchar(255) DEFAULT NULL,
     ADD COLUMN `idQualifier` varchar(16) DEFAULT NULL,
     ADD COLUMN `detText` text DEFAULT NULL,
     ADD COLUMN `provenance` text DEFAULT NULL,
-    ADD COLUMN `container` int DEFAULT NULL,
-    ADD COLUMN `collTrip` int DEFAULT NULL,
-    ADD COLUMN `highGeo` int DEFAULT NULL,
+    ADD COLUMN `container` varchar(255) DEFAULT NULL,
+    ADD COLUMN `collTrip` varchar(255) DEFAULT NULL,
+    ADD COLUMN `highGeo` varchar(255) DEFAULT NULL,
     ADD COLUMN `frequency` varchar(255) DEFAULT NULL,
-    ADD COLUMN `prepMethod` int DEFAULT NULL,
-    ADD COLUMN `format` int DEFAULT NULL,
+    ADD COLUMN `prepMethod` varchar(255) DEFAULT NULL,
+    ADD COLUMN `format` varchar(255) DEFAULT NULL,
     ADD COLUMN `verbLat` varchar(255) DEFAULT NULL,
     ADD COLUMN `verbLong` varchar(255) DEFAULT NULL,
     ADD COLUMN `method` varchar(255) DEFAULT NULL;
