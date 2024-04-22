@@ -191,7 +191,7 @@ $_SESSION['citationvar'] = $searchVar;
 						</form>
 						<div style="float:left">
 							<button class="icon-button" onclick="copyUrl()" aria-label="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>" title="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>">
-								<img src="../images/dl2.png" style="width:1.3em" alt="<?php echo (isset($LANG['IMG_COPY']) ? $LANG['IMG_COPY'] : 'Copy Button'); ?>"/>
+								<img src="../images/link.png" style="width:1.3em" alt="<?php echo (isset($LANG['IMG_COPY']) ? $LANG['IMG_COPY'] : 'Copy Button'); ?>"/>
 							</button>
 						</div>
 					</div>
