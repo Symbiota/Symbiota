@@ -39,5 +39,7 @@ $LANG['RENAME_SCI_NAME'] = 'Renommer le Nom Scientifique';
 $LANG['LINK_ICON'] = 'Icône de Lien';
 
 $LANG['REMOVE_TAXON'] = 'Supprimer le Taxon de la Liste de Contrôle';
+$LANG['UNKNOWN_TAXON'] = 'Taxon Inconnu';
+$LANG['UNKNOWN_COLLECTION'] = 'Collection Inconnue';
 
 ?>

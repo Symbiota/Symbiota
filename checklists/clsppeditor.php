@@ -66,7 +66,7 @@ $clArray = $vManager->getChecklistData();
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
-		<title><?php echo $LANG['SPEC_DETAILS'] . ': ' . $vManager->getTaxonName() . " " . $LANG['OF'] . " " . $vManager->getClName(); ?></title>
+		<title><?php echo $LANG['SPEC_DETAILS'] . ': ' . ($vManager->getTaxonName() ?? $LANG['UNKNOWN_TAXON']) . " " . $LANG['OF'] . " " . $vManager->getClName() ?? $LANG['UNKNOWN_COLLECTION']; ?></title>
 		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
@@ -141,7 +141,7 @@ $clArray = $vManager->getChecklistData();
 	<body onload="<?php  if(!$status) echo $followUpAction; ?>" >
 		<!-- This is inner text! -->
 		<div id='popup-innertext'>
-			<h1><?php echo "<i>" . $vManager->getTaxonName() . "</i> " . $LANG['OF'] . " " . $vManager->getClName(); ?></h1>
+			<h1><?php echo "<i>" . ($vManager->getTaxonName() ?? $LANG['UNKNOWN_TAXON']) . "</i> " . $LANG['OF'] . " " . ($vManager->getClName() ?? $LANG['UNKNOWN_COLLECTION']); ?></h1>
 			<?php
 			if($status){
 				?>
