@@ -144,10 +144,11 @@ if($action && $isEditor){
 		if($mode) echo '&gt;&gt; <a href="politicalunits.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '"><b>' . htmlspecialchars($LANG['POL_GEO_CLEAN_MENU'], HTML_SPECIAL_CHARS_FLAGS) . '</b></a>';
 		?>
 	</div>
-
+	
 	<!-- inner text -->
 	<div id="innertext">
 		<?php
+		echo '<h1 class="page-heading">Geography Cleaning Tools: ' . $collMap['collectionname'] . ' (' . $collMap['code'] . ')</h1>';
 		if($statusStr){
 			?>
 			<hr/>
@@ -157,7 +158,6 @@ if($action && $isEditor){
 			<hr/>
 			<?php
 		}
-		echo '<h2>' . $collMap['collectionname'] . ' (' . $collMap['code'] . ')</h2>';
 		if($isEditor){
 			?>
 			<section class="fieldset-like">

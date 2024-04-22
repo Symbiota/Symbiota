@@ -33,6 +33,7 @@ $LANG['EDIT_VOUCHER'] = 'Modifier Échantillon';
 $LANG['EDITOR_NOTES_DISPLAY'] = 'Notes de l\'Éditeur (affichage de l\'Éditeur uniquement)';
 $LANG['SUBMIT_V_EDITS'] = 'Soumettre Modifications';
 $LANG['NO_DATA'] = "Échec de la restitution des données ou vous n'avez peut-être pas les droits d'édition appropriés";
+$LANG['IN'] = 'dans';
 
 $LANG['INTERNAL_NOTES'] = 'Notes Internes';
 $LANG['RENAME_SCI_NAME'] = 'Renommer le Nom Scientifique';

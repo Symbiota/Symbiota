@@ -28,6 +28,30 @@ $localSession = isset($_SESSION['active_stylesheet']) ? $_SESSION['active_styles
     .welcome-text {
         margin-bottom: 0.75rem;
     }
+    .accessibility-option-button {
+        width: fit-content;
+        padding: 10px;
+        background-color: var(--link-color);
+        color: var(--body-bg-color);
+    }
+
+    .accessibility-option-button:hover {
+        cursor: pointer;
+        background-color: var(--medium-color);
+    }
+    .accessibility-dialog{
+        position: fixed;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        border-radius: 5px;
+    }
+    .button__item-container{
+        display: flex;
+        justify-content: center;
+    }
+    .button__item-container__item-text{
+        margin-top: 0.5rem;
+    }
 </style>
 <?php 
     if($isAccessiblePreferred){

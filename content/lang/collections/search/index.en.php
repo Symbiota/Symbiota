@@ -4,7 +4,7 @@
 Language: English
 ------------------
 */
-$LANG['SAMPLE_SEARCH'] = 'Sample Search';
+$LANG['SAMPLE_SEARCH'] = 'Record Search';
 $LANG['TAXONOMY'] = 'Taxonomy';
 $LANG['TAXON'] = 'Taxon';
 $LANG['TYPE_CHAR_FOR_SUGGESTIONS'] = 'Type at least 4 characters for quick suggestions. Separate multiple with commas.';

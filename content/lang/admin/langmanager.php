@@ -37,6 +37,7 @@ if($SYMB_UID){
 		</div>
 		<!-- This is inner text! -->
 		<div id="innertext">
+			<h1 class="page-heading">Language Variables Manager</h1>
 			<div style="margin:20px"><b>Source path:</b> <?php echo '<a href="' . htmlspecialchars($refUrl, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($refUrl, HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
 			<div style="margin:20px">
 				<table class="styledtable">

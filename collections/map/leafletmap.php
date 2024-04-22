@@ -113,7 +113,7 @@ if(isset($MAPPING_BOUNDARIES)){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> - Google Map</title>
+	<title><?php echo $DEFAULT_TITLE; ?> - Leaflet Map</title>
 	<?php
 	   include_once($SERVER_ROOT.'/includes/head.php');
 	   include_once($SERVER_ROOT.'/includes/leafletMap.php');
@@ -298,6 +298,7 @@ if(isset($MAPPING_BOUNDARIES)){
 	</script>
 </head>
 <body style="width:100%; min-width: 900px" onload="initialize();">
+   <h1 class="page-heading">Leaflet Map</h1>
 	<?php
 	if(!$coordArr){
 		?>

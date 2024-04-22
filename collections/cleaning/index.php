@@ -50,12 +50,12 @@ if($collMap['colltype'] == 'General Observations'){
 		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"> <?php echo (isset($LANG['COLL_MNGMT']) ? $LANG['COLL_MNGMT'] : 'Collection Management') ?> </a> &gt;&gt;
 		<b> <?php echo (isset($LANG['DATA_CLEAN']) ? $LANG['DATA_CLEAN'] : 'Data Cleaning Module') ?> </b>
 	</div>
-
+	
 	<!-- inner text -->
 	<div id="innertext" style="background-color:white;">
 		<?php
 		if($isEditor){
-			echo '<h1>' . $collMap['collectionname'] .' (' . $collMap['code'] . ')</h1>';
+			echo '<h1 class="page-heading">Data Cleaning Tools: ' . $collMap['collectionname'] .' (' . $collMap['code'] . ')</h1>';
 			?>
 			<div style="color:orange;margin:20px 0px"> <?php echo (isset($LANG['DOWNLOAD_BACKUP']) ? $LANG['DOWNLOAD_BACKUP'] : 'Downloading a backup of your collection data before running any batch updates is strongly recommended') ?> </div>
 			<?php

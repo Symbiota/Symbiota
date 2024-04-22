@@ -78,6 +78,7 @@ if(!$addAuth){
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading">Author Management</h1>
 		<?php
 		if($isEditor){
 			if($statusStr){

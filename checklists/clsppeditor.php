@@ -141,7 +141,7 @@ $clArray = $vManager->getChecklistData();
 	<body onload="<?php  if(!$status) echo $followUpAction; ?>" >
 		<!-- This is inner text! -->
 		<div id='popup-innertext'>
-			<h1><?php echo "<i>" . ($vManager->getTaxonName() ?? $LANG['UNKNOWN_TAXON']) . "</i> " . $LANG['OF'] . " " . ($vManager->getClName() ?? $LANG['UNKNOWN_COLLECTION']); ?></h1>
+			<h1 class="page-heading"><?php echo "<i>" . ($vManager->getTaxonName() ?? $LANG['UNKNOWN_TAXON']) . "</i> " . $LANG['IN'] . " " . ($vManager->getClName() ?? $LANG['UNKNOWN_COLLECTION']); ?></h1>
 			<?php
 			if($status){
 				?>

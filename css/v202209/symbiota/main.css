@@ -261,11 +261,6 @@ hr {
   padding: 0.5rem 0.9rem;
 }
 
-.skip-link {
-  position: absolute;
-  left: -10000px;
-}
-
 /* Media queries
 ========================================================================== */
 /* Medium screens and up */

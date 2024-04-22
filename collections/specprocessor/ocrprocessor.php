@@ -70,6 +70,7 @@ $procManager->setProjVariables('OCR Harvest');
 	}
 </script>
 <div style="margin:15px;">
+	<h1 class="page-heading screen-reader-only">Optical Character Recognition</h1>
 	<?php
 	$cntTotal = $procManager->getSpecWithImage();
 	$cntUnproc = $procManager->getSpecWithImage($procStatus);

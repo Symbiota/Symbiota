@@ -142,7 +142,7 @@ $duManager->loadFieldMap(true);
 	</script>
 </head>
 <body>
-<?php
+	<?php
 $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
@@ -153,6 +153,7 @@ include($SERVER_ROOT.'/includes/header.php');
 </div>
 <!-- This is inner text! -->
 <div id="innertext">
+	<h1 class="page-heading">Restore Collection from Backup File</h1>
 	<?php
 	$recReplaceMsg = '<span style="color:orange"><b>'.(isset($LANG['CAUTION'])?$LANG['CAUTION']:'Caution').':</b></span> '.(isset($LANG['MATCH_REPLACE'])?$LANG['MATCH_REPLACE']:'Matching records will be replaced with incoming records');
 	if($isEditor){
@@ -168,7 +169,7 @@ include($SERVER_ROOT.'/includes/header.php');
 								<input name="uploadfile" type="file" size="50" onchange="verifyFileSize(this)" />
 							</div>
 							<div class="ulfnoptions" style="display:none;margin:15px 0px">
-								<b><?php echo (isset($LANG['RES_URL'])?$LANG['RES_URL']:'Resource Path or URL'); ?>:</b>
+								<b><?php echo (isset($LANG['RESOURCE_URL'])?$LANG['RESOURCE_URL']:'Resource Path or URL'); ?>:</b>
 								<input name="ulfnoverride" type="text" size="70" /><br/>
 								<div>
 									<?php

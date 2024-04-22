@@ -70,7 +70,7 @@ $guidManager->setNamespace($namespace);
 	</style>
 </head>
 <body>
-<?php
+	<?php
 $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
@@ -83,9 +83,9 @@ include($SERVER_ROOT.'/includes/header.php');
 </div>
 <!-- This is inner text! -->
 <div id="innertext">
+	<h1 class="page-heading"><?= $LANG['IGSN_MANAGE'] . ': ' . $guidManager->getCollectionName(); ?></h1>
 	<?php
 	if($isEditor){
-		echo '<h3>' . $LANG['IGSN_MANAGE'] . ': '.$guidManager->getCollectionName().'</h3>';
 		if($statusStr){
 			?>
 			<fieldset>

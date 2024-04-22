@@ -35,6 +35,7 @@ $LANG['EDIT_VOUCHER'] = 'Editar Vouchers';
 $LANG['EDITOR_NOTES_DISPLAY'] = 'Notas del editor (solo visualización del editor)';
 $LANG['SUBMIT_V_EDITS'] = 'Enviar Ediciones';
 $LANG['NO_DATA'] = 'No fue posible recuperar los datos o posiblemente no cuenta con los permisos de edición necesarios';
+$LANG['IN'] = 'en';
 
 $LANG['INTERNAL_NOTES'] = 'Notas Internas';
 $LANG['RENAME_SCI_NAME'] = 'Cambiar Nombre del Nombre Científico';

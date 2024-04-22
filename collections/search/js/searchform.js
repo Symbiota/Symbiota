@@ -121,6 +121,7 @@ function addChip(element) {
   if (!chipBtn) return;
   chipBtn?.setAttribute("type", "button");
   chipBtn?.classList?.add("chip-remove-btn");
+
   // if element is domain or site, pass other content
   if (element?.name == "some-datasetid") {
     if (element.text != "" && inputChip && chipBtn) {
@@ -191,6 +192,15 @@ function addChip(element) {
       removeChip(inputChip);
     };
   }
+  let screenReaderSpan = document.createElement("span");
+  const dataChipText = element.getAttribute("data-chip");
+  const screenReaderText = dataChipText
+    ? dataChipText
+    : element?.text || "Unknown chip";
+  screenReaderSpan.textContent =
+    "Remove " + screenReaderText + " from search criteria";
+  screenReaderSpan?.classList?.add("screen-reader-only");
+  chipBtn.appendChild(screenReaderSpan);
   inputChip.appendChild(chipBtn);
   document.getElementById("chips").appendChild(inputChip);
 }

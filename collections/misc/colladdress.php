@@ -42,7 +42,7 @@ $collManager->cleanOutArr($collData);
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE." ".($collid?$collData["collectionname"]:"").' '.(isset($LANG['MAILING_ADD'])?$LANG['MAILING_ADD']:'Mailing Address'); ?></title>
+	<title><?php echo $DEFAULT_TITLE." " . ($collid?$collData["collectionname"]:"") . ' '. $LANG['MAILING_ADD']; ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -230,6 +230,7 @@ $collManager->cleanOutArr($collData);
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?php echo ($collid?$collData["collectionname"]:"") . ' '. $LANG['MAILING_ADD']; ?></h1>
 		<?php
 		if($statusStr){
 			?>

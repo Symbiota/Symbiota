@@ -122,6 +122,7 @@ if($isEditor && $formSubmit){
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading">Exsiccatae Batch Import</h1>
 		<?php
 		if($statusStr){
 			echo '<hr/>';

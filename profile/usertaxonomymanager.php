@@ -39,7 +39,7 @@ $editorArr = $utManager->getTaxonomyEditors();
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo (isset($LANG['TAX_PERMISSIONS'])?$LANG['TAX_PERMISSIONS']:'Taxonomic Interest User permissions'); ?></title>
+	<title><?php echo $LANG['TAX_PERMISSIONS']; ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -113,7 +113,7 @@ $editorArr = $utManager->getTaxonomyEditors();
 		?>
 		<!-- This is inner text! -->
 		<div id="innertext">
-			<h2><?php echo (isset($LANG['TAX_PERMISSIONS'])?$LANG['TAX_PERMISSIONS']:'Taxonomic Interest User permissions'); ?></h2>
+			<h1 class="page-heading"><?= $LANG['TAX_PERMISSIONS']; ?></h1>
 			<div style="float:right;" title="Add a new taxonomic relationship">
 				<a href="#" onclick="toggle('addUserDiv')">
 					<img style='border:0px;width:1.3em;' src='../images/add.png' alt='<?php echo (isset($LANG['ADD'])?$LANG['ADD']:'Add Button'); ?>'/>

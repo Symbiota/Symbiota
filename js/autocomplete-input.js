@@ -120,7 +120,6 @@ class AutocompleteInput extends HTMLElement {
 
 	_select_option() {
 		const selected_option = this.getSelection();
-		console.log(selected_option)
 		if(selected_option) {
 			let values = this._inputEl.value.split(this.input_delimter);
 			let incoming_value = selected_option.getAttribute("data-value")? 
@@ -156,6 +155,9 @@ class AutocompleteInput extends HTMLElement {
 		if (this._form) {
 			this._form.addEventListener('formdata', e => this._handleFormData(e));
 		}
+
+		this.addEventListener("change", e => { console.log(e) })
+		this.addEventListener("onchange", e => { console.log(e) })
 
 		el.addEventListener('input', e => {
 			this._inputEl = e.target;

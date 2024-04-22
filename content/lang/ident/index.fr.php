@@ -11,7 +11,7 @@ $LANG['IDKEYLIST'] = 'Liste des clés d\'identification';
 $LANG['IDKEYS'] = 'Clés d\'identification';
 $LANG['SHOWCHECK'] = 'Afficher les listes de contrôle sur la carte';
 
-$LANG['CHAR_ADMIN'] = 'Administrateur du personnage';
+$LANG['CHAR_ADMIN'] = 'Administration des Caractères Taxonaux';
 $LANG['ALERT_NAME'] = 'Le nom du personnage doit avoir une valeur';
 $LANG['ALERT_TYPE'] = 'Un type de caractère doit être sélectionné';
 $LANG['ALERT_SORT'] = 'La séquence de tri doit être une valeur numérique uniquement';
