@@ -228,7 +228,7 @@ class TaxonomyHarvester extends Manager{
 						if(preg_match('/^([A-Z]{1}[a-z]+)\s{1}\(\D+\)\s{1}([a-z .]+)/', $approvedNameUsageArr[$targetKey]['accepted']['name']['scientificName'], $m)){
 							$acceptedBaseName = $m[1].' '.$m[2];
 							if($approvedNameUsageArr[$targetKey]['name']['scientificName'] == $acceptedBaseName){
-								$approvedNameUsageArr[0] = $approvedNameUsageArr[$targetKey]['name']['scientificName'];
+								$approvedNameUsageArr[0] = $approvedNameUsageArr[$targetKey];
 								$targetKey = 0;
 							}
 						}
