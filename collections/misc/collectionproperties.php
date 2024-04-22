@@ -31,7 +31,7 @@ if($isEditor){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $collMeta['collName'].(isset($LANG['SPECIAL_PROPS'])?$LANG['SPECIAL_PROPS']:'Special Properties'); ?></title>
+	<title><?php echo $collMeta['collName'] . ': ' . $LANG['SPECIAL_PROPS']; ?></title>
 	<?php
 
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -66,6 +66,7 @@ if($isEditor){
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?php echo $collMeta['collName'] . ': ' . $LANG['SPECIAL_PROPS']; ?></h1>
 		<?php
 		echo '<div style="font-weight:bold;font-size: 1.3em">'.$collMeta['collName'].' Management Properties</div>';
 		if($isEditor){

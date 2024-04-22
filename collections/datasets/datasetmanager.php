@@ -283,6 +283,7 @@ if($isEditor){
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?= $LANG['DS_OCC_MANAGER']; ?></h1>
 		<?php
 		if($statusStr){
 			$color = 'green';

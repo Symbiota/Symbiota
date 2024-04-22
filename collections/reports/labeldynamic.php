@@ -69,6 +69,10 @@ if($SYMB_UID){
 		<style type="text/css">
 			.row { display: flex; flex-wrap: nowrap; margin-left: auto; margin-right: auto;}
 			.label { page-break-before: auto; page-break-inside: avoid; }
+			.screen-reader-only {
+				position: absolute;
+				left: -10000px;
+			}
 			<?php
 			if($columnCount == 'packet'){
 				?>
@@ -130,6 +134,7 @@ if($SYMB_UID){
 		</style>
 	</head>
 	<body style="background-color:#ffffff;">
+		<h1 class="page-heading screen-reader-only">Labels</h1>
 		<?php
 		echo '<div class="body'.(isset($targetLabelFormatArr['pageSize'])?' '.$targetLabelFormatArr['pageSize']:'').'">'  ;
 		if($targetLabelFormatArr && $isEditor){

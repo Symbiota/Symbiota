@@ -143,6 +143,7 @@ $_SESSION['citationvar'] = $searchVar;
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading">Search Results (List)</h1>
 		<div id="tabs" style="width:95%;">
 			<ul>
 				<li>
@@ -378,37 +379,37 @@ $_SESSION['citationvar'] = $searchVar;
 				</form>
 
 				<div style='margin-top:10px;'>
-					<h2><?php echo $LANG['GOOGLE_MAP_HEADER']; ?></h2>
+					<h2><?php echo $LANG['MAP_HEADER']; ?></h2>
 				</div>
 				<div>
+					<?php echo $LANG['MAP_DESCRIPTION']; ?>
+				</div>
+				<div style='margin-top:10px;'>
 					<?php if (empty($GOOGLE_MAP_KEY)) { ?>
 						<button onclick="openLeafletMapPU();">
-							<?php echo $LANG['GOOGLE_MAP_DISPLAY']; ?>
+							<?php echo $LANG['MAP_DISPLAY']; ?>
 						</button>
 					<?php } else { ?>
 						<button onclick="openGoogleMapPU();">
-							<?php echo $LANG['GOOGLE_MAP_DISPLAY']; ?>
+							<?php echo $LANG['MAP_DISPLAY']; ?>
 						</button>
 					<?php } ?>
 				</div>
-				<div>
-					<?php echo $LANG['GOOGLE_MAP_DESCRIPTION']; ?>
-				</div>
 
 				<div style='margin-top:10px;'>
-					<h2><?php echo $LANG['GOOGLE_EARTH_HEADER']; ?></h2>
+					<h2><?php echo $LANG['KML_HEADER']; ?></h2>
 				</div>
 				<form name="kmlform" action="map/kmlhandler.php" method="post">
 					<div>
-						<?php echo $LANG['GOOGLE_EARTH_DESCRIPTION']; ?>
+						<?php echo $LANG['KML_DESCRIPTION']; ?>
 					</div>
-					<div style="margin:20px;">
+					<div style="margin:10px 0;">
 						<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 						<button name="formsubmit" type="submit" value="createKML"><?php echo $LANG['CREATE_KML']; ?></button>
 					</div>
 					<div>
 						<a href="#" onclick="toggleFieldBox('fieldBox');">
-							<?php echo $LANG['GOOGLE_EARTH_EXTRA']; ?>
+							<?php echo $LANG['KML_EXTRA']; ?>
 						</a>
 					</div>
 					<div id="fieldBox" style="display:none;">

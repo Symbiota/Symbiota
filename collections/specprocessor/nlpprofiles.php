@@ -82,7 +82,7 @@ if($isEditor){
 		?>
 		<!-- This is inner text! -->
 		<div id="innertext">
-			<h1>Specimen NLP Profile Manager</h1>
+			<h1 class="page-heading">Specimen NLP Profile Manager</h1>
 			<?php
 			if($status){
 				?>

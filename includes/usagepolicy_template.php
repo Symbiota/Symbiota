@@ -26,7 +26,7 @@ $serverHost = UtilityFunctions::getDomain();
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
-		<h1>Guidelines for Acceptable Use of Data</h1>
+		<h1 class="page-heading">Guidelines for Acceptable Use of Data</h1>
 		<h2>Recommended Citation Formats</h2>
 		<p>Use one of the following formats to cite data retrieved from the <?php echo $DEFAULT_TITLE; ?> network:</p>
 		<h3>General Citation</h3>

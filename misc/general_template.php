@@ -85,7 +85,7 @@ if($isEditor){
 		</div>
 		<!-- This is inner text! -->
 		<div id="innertext">
-
+			<h1 class="page-heading">Template Page Header</h1>
 			Add static, dynamic and form content here.<br/>
 
 		</div>

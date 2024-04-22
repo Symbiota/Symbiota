@@ -37,7 +37,7 @@ $clManager->setPid($pid);
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
-		<h2><?php echo $LANG['IDKEYS']; ?></h2>
+		<h1 classes="page-heading"><?php echo $LANG['IDKEYS']; ?></h1>
 	    <div style='margin:20px;'>
 	        <?php
 	        $projArr = $clManager->getChecklists(true);

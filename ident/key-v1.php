@@ -57,7 +57,7 @@ if($chars){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.$LANG['WEBKEY'] . ' ' . preg_replace('/\<[^\>]+\>/','',$dataManager->getClName()); ?></title>
+	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['WEBKEY'] . ' ' . preg_replace('/\<[^\>]+\>/','',$dataManager->getClName()); ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
@@ -117,6 +117,7 @@ if($chars){
 
 ?>
 <div id="innertext">
+	<h1 class="page-heading screen-reader-only">Key</h1>
 	<?php
 	if($isEditor){
 		?>

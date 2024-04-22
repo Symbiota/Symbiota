@@ -23,7 +23,7 @@ if($IS_ADMIN
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
-	<title><?php echo (isset($LANG['PERS_SPEC_BACKUP'])?$LANG['PERS_SPEC_BACKUP']:'Personal Specimen Backup'); ?></title>
+	<title><?php echo $LANG['PERS_SPEC_BACKUP']; ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -31,6 +31,7 @@ if($IS_ADMIN
 <body>
 <!-- This is inner text! -->
 <div id="innertext">
+	<h1 class="page-heading"><?= $LANG['PERS_SPEC_BACKUP']; ?></h1>
 	<?php
 	if($editable){
 		if($action == 'Perform Backup'){

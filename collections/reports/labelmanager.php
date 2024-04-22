@@ -40,7 +40,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-		<title><?php echo $DEFAULT_TITLE; ?> <?php echo (isset($LANG['SPEC_LABEL_MANAGER']) ? $LANG['SPEC_LABEL_MANAGER'] : 'Specimen Label Manager') ?> </title>
+		<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['SPEC_LABEL_MANAGER'] ?> </title>
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -190,6 +190,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?= $LANG['SPEC_LABEL_MANAGER']; ?></h1>
 		<?php
 		if($isEditor){
 			$reportsWritable = false;

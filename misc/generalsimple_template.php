@@ -22,6 +22,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 		</div>
 		<!-- This is inner text! -->
 		<div id="innertext">
+			<h1 class="page-heading">Template Page Header</h1>
 
 
 

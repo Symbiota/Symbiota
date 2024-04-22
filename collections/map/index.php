@@ -1736,6 +1736,7 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 		<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
 	</head>
 	<body style='width:100%;max-width:100%;min-width:500px;' <?php echo (!$activateGeolocation?'onload="initialize();"':''); ?>>
+	  	<h1 class="page-heading screen-reader-only">Map Interface</h1>
 		<div
 			id="service-container"
 			data-search-var="<?=htmlspecialchars($searchVar)?>"

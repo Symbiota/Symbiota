@@ -40,7 +40,7 @@ $clManager->setProj($pid);
 		<b><?php echo $LANG['SPECIES_INVENTORIES']; ?></b>
 	</div>
 	<div id="innertext">
-		<h1><?php echo $LANG['SPECIES_INVENTORIES']; ?></h1>
+		<h1 class="page-heading"><?= $LANG['SPECIES_INVENTORIES']; ?></h1>
         <div style="margin:20px;">
 			<?php
             $researchArr = $clManager->getChecklists();

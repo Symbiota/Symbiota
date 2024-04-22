@@ -56,6 +56,7 @@ $statusStr = "";
 		?>
 		<!-- This is inner text! -->
 		<div id="innertext">
+			<h1 class="page-heading">Specimen Processor Control Panel</h1>
 			<h2><?php echo $specManager->getCollectionName(); ?></h2>
 			<?php
 			if($isEditor){

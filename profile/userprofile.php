@@ -26,13 +26,13 @@ if($isEditor){
 	<!DOCTYPE html>
     <html lang="<?php echo $LANG_TAG ?>">
 	<head>
-    <title><?php echo (isset($LANG['DETAILS'])?$LANG['DETAILS']:'Profile Details'); ?></title>
+    <title><?php echo $LANG['DETAILS']; ?></title>
     </head>
 	<body>
 	<div style="padding:15px;">
 		<div>
 			<div>
-				<h1><span style="text-decoration: underline;"><?php echo (isset($LANG['DETAILS'])?$LANG['DETAILS']:'Profile Details'); ?></span></h1>
+				<h1 class="page-heading"><?php echo $LANG['DETAILS']; ?></h1>
 			</div>
 			<div style="margin:20px;">
 				<?php

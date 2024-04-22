@@ -52,6 +52,7 @@ if($IS_ADMIN || array_key_exists("KeyEditor",$USER_RIGHTS) || array_key_exists("
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading">Character Deficit Finder</h1>
   		<form action="chardeficit.php" method="get">
 			<?php
 		 	if($editable){

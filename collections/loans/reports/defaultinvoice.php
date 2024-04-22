@@ -415,6 +415,7 @@ else{
 			</script>
 		</head>
 		<body style="background-color:#ffffff;">
+			<h1 class="page-heading screen-reader-only">Invoice</h1>
 			<div class="controls">
 				<button id="edit" style="font-weight: bold;" onclick="toggleEdits();">Edit Invoice</button>
 			</div>

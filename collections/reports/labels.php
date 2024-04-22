@@ -66,6 +66,10 @@ else{
 
 				.cnbarcode { width:100%; text-align:center; }
 				.symbbarcode { width:100%; text-align:center; margin-top:10px; }
+				.screen-reader-only {
+					position: absolute;
+					left: -10000px;
+				}
 				<?php
 				if($columnCount == 'packet'){
 					?>
@@ -90,6 +94,7 @@ else{
 			</style>
 		</head>
 		<body>
+			<h1 class="page-heading screen-reader-only">Labels</h1>
 			<div>
 				<?php
 				if($action && $isEditor){

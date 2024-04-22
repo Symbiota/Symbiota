@@ -163,6 +163,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?= $LANG['OUTGOING_LOAN_MANAGE']; ?></h1>
 		<?php
 		if($isEditor && $collid){
 			//Collection is defined and User is logged-in and have permissions

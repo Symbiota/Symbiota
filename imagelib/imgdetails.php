@@ -144,6 +144,7 @@ if($imgArr){
 	 -->
 	<div id="innertext">
 		<!-- This is inner text! -->
+		<h1 class="page-heading">Image Details</h1>
 		<?php
 		if($imgArr){
 			?>

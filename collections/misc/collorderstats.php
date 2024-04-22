@@ -23,7 +23,7 @@ $_SESSION['statsOrderArr'] = $orderArr;
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta name="keywords" content="Natural history collections yearly statistics" />
-		<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['ORDER_DIST'])?$LANG['ORDER_DIST']:'Order Distribution'); ?></title>
+		<title><?php echo $DEFAULT_TITLE.' '. $LANG['ORDER_DIST']; ?></title>
 		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
@@ -38,6 +38,7 @@ $_SESSION['statsOrderArr'] = $orderArr;
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div id="innertext">
+			<h1 class="page-heading"><?= $LANG['ORDER_DIST']; ?></h1>
 			<fieldset id="orderdistbox" style="clear:both;margin-top:15px;width:800px;">
 				<legend><b><?php echo (isset($LANG['ORDER_DIST'])?$LANG['ORDER_DIST']:'Order Distribution'); ?></b></legend>
 				<table class="styledtable" style="font-family:Arial;font-size:12px;width:780px;">

@@ -183,7 +183,7 @@ $duManager->readUploadParameters();
 ?>
 <!-- This is inner text! -->
 <div id="innertext">
-	<h1><?php echo (isset($LANG['DAT_UP_MAN']) ? $LANG['DAT_UP_MAN'] : 'Data Upload Management'); ?></h1>
+	<h1 class="page-heading"><?= $LANG['DAT_UP_MAN']; ?></h1>
 	<?php
 	if($statusStr){
 		echo '<hr />';

@@ -302,6 +302,7 @@ if($isEditor){
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?= $LANG['BATCH_DETERS']; ?></h1>
 		<?php
 		if($isEditor){
 			echo '<h2>'.$occManager->getCollName().'</h2>';
@@ -357,7 +358,7 @@ if($isEditor){
 							<input name="accselectall" value="" type="checkbox" onclick="selectAll(this);" checked />
 							<?php echo $LANG['SELECT_DESELECT']; ?>
 						</div>
-						<table class="styledtable" style="font-family:Arial;font-size: 0.75rem;">
+						<table class="styledtable" style="font-family:Arial;font-size: 1.45rem;">
 							<thead>
 								<tr>
 									<th style="width:25px;text-align:center;">&nbsp;</th>

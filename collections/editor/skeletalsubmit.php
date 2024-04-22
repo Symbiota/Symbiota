@@ -61,7 +61,7 @@ if($collid){
 	</div>
 	<!-- inner text -->
 	<div id="innertext">
-		<h1><?php echo $collMap['collectionname']; ?></h1>
+		<h1 class="page-heading"><?php echo $LANG['OCC_SKEL_SUBMIT'] . ': ' . $collMap['collectionname']; ?></h1>
 		<?php
 		if($statusStr){
 			echo '<div style="margin:15px;color:red;">'.$statusStr.'</div>';

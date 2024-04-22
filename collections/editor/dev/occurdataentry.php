@@ -62,7 +62,7 @@ if($SYMB_UID){
 			?>
 			<div id="titleDiv">
 				<?php
-				echo $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').')';
+				echo '<h1 class="page-heading">' . $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').')</h1>';
 				?>
 			</div>
 			<div class='navpath'>

@@ -69,6 +69,7 @@ if($SYMB_UID){
 	?>
 </head>
 <body style="margin-left: 0px; margin-right: 0px;background-color:white;">
+	<h1 class="page-heading">Data Upload Reviewer</h1>
 	<!-- inner text -->
 	<div id="">
 		<?php

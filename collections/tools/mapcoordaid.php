@@ -66,6 +66,7 @@ else{
 	<body style="background-color:#ffffff;image-rendering: auto;
 	image-rendering: crisp-edges;
 	image-rendering: pixelated; ">
+		<h1 class="page-heading">Taxon Map</h1>
 		<div style="float:right;margin-top:5px;margin-right:15px;">
 			<button name="closebutton" type="button" onclick="self.close()">
 				<?php echo isset($LANG['SAVE_N_CLOSE'])? $LANG['SAVE_N_CLOSE'] :'Save and Close'?>

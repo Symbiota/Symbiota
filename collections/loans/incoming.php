@@ -102,6 +102,7 @@ if($isEditor){
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?= $LANG['INCOMING_LOAN_MANAGE']; ?></h1>
 		<?php
 		if($isEditor && $collid){
 			if($statusStr){

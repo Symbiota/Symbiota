@@ -17,7 +17,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 		?>
 		<!-- This is inner text! -->
 		<div id="innertext">
-			<h1>Forbidden</h1>
+			<h1 class="page-heading">Forbidden</h1>
 			<div style="font-weight:bold;">
 				You don't have permission to access this page.
 			</div>

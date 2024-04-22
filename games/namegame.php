@@ -564,7 +564,7 @@ $imgloc = "../images/games/namegame/";
 	?>
 	<div id="innertext">
 		<div style="width:100%;text-align:center;">
-			<h1><?php echo $DEFAULT_TITLE; ?> Name Game</h1>
+			<h1 class="page-heading screen-reader-only">Name Guessing Game</h1>
 		</div>
 		<div style="width:100%;text-align:center;margin:10px;">
 			I am thinking of a species found within the following checklist: <b><?php echo $clName;?></b><br/>

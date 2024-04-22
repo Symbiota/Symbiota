@@ -46,7 +46,7 @@ if($isEditor){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['LOADER'])?$LANG['LOADER']:'Glossary Term Loader'); ?></title>
+	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['LOADER']; ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>" />
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
@@ -113,7 +113,7 @@ else{
 if($isEditor){
 	?>
 	<div id="innertext">
-		<h1><?php echo (isset($LANG['G_BATCH_LOAD'])?$LANG['G_BATCH_LOAD']:'Glossary Term Batch Loader'); ?></h1>
+		<h1 class="page-heading"><?php echo (isset($LANG['G_BATCH_LOAD'])?$LANG['G_BATCH_LOAD']:'Glossary Term Batch Loader'); ?></h1>
 		<div style="margin:30px;">
 			<div style="margin-bottom:30px;">
 				<?php echo (isset($LANG['BATCH_EXPLAIN'])?$LANG['BATCH_EXPLAIN']:'This page allows a Taxonomic Administrator to batch upload glossary data files.'); ?>

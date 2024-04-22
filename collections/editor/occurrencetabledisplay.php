@@ -160,8 +160,9 @@ else{
 	</style>
 </head>
 <body style="margin-left: 0px; margin-right: 0px;background-color:white;">
-	<a class="skip-link" href="#skip-search"><?php echo $LANG['SKIP_SEARCH'] ?></a>
+	<a class="screen-reader-only" href="#skip-search"><?php echo $LANG['SKIP_SEARCH'] ?></a>
 	<div id="innertext" style="max-width: 100vw">
+		<h1 class="page-heading screen-reader-only">Occurrence Table Display</h1>
 		<?php
 		if(($isEditor || $crowdSourceMode)){
 			?>
@@ -177,7 +178,7 @@ else{
 					?>
 				</div>
 				<?php
-				if($collMap) echo $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').')';
+				if($collMap) echo '<h2>' . $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').')</h2>';
 				?>
 			</div>
 			<?php

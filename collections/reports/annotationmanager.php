@@ -105,6 +105,7 @@ if($isEditor){
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?= $LANG['ANN_LAB_MAN']; ?></h1>
 		<?php
 		if($isEditor){
 			$reportsWritable = false;

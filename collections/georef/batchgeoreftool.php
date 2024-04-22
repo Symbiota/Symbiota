@@ -107,9 +107,10 @@ if($isEditor && $submitAction){
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/collections.georef.batchgeoreftool.js?ver=201912" type="text/javascript"></script>
 	</head>
 	<body>
-		<a class="skip-link" href="#queryform-section"><?php echo $LANG['SKIP_NAV'] ?></a>
+		<a class="screen-reader-only" href="#queryform-section"><?php echo $LANG['SKIP_NAV'] ?></a>
 		<!-- This is inner text! -->
 		<div  id='innertext'>
+			<h1 class="page-heading">Batch Georeferencing Tool</h1>
 			<?php
 			if($collid){
 				?>

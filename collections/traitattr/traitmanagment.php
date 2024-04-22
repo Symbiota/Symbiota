@@ -73,7 +73,7 @@ if($isEditor){
 		?>
 		<!-- This is inner text! -->
 		<div id="innertext">
-
+			<h1 class="page-heading screen-reader-only">Trait Management Tools</h1>
 		</div>
 	</body>
 </html>

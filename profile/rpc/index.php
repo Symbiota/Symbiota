@@ -19,7 +19,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 		?>
 		<!-- This is inner text! -->
 		<div id="innertext">
-			<h1><?php echo (isset($LANG['FORBIDDEN'])?$LANG['FORBIDDEN']:'Forbidden'); ?></h1>
+			<h1 class="page-heading"><?= $LANG['FORBIDDEN']; ?></h1>
 			<div style="font-weight:bold;">
 				<?php echo (isset($LANG['NO_PERMISSION'])?$LANG['NO_PERMISSION']:'You don\'t have permission to access this page'); ?>.
 			</div>

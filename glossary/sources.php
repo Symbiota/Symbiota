@@ -19,7 +19,7 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.(isset($LANG['G_SOURCES'])?$LANG['G_SOURCES']:'Glossary Sources Management'); ?></title>
+	<title><?php echo $DEFAULT_TITLE . $LANG['G_SOURCES']; ?></title>
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -40,6 +40,7 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?= $LANG['G_SOURCES']; ?></h1>
 		<?php
 		if($editMode){
 			if($isEditor){

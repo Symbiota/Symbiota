@@ -50,13 +50,12 @@ $loanManager->setCollId($collid);
 </head>
 <body>
 	<!-- This is inner text! -->
-	<div id="popup-innertext">
+	<div id="popup-innertext" class="left-breathing-room-rel">
+		<h1 class="page-heading"><?= $LANG['LOAN_NOTES_EDITOR']; ?></h1>
 		<?php
 		if($isEditor && $collid){
 			$noteArr = $loanManager->getSpecimenDetails($loanID, $occid)
 			?>
-			<fieldset class="notesDiv" >
-				<legend><?php echo $LANG['LOAN_SPEC_EDIT']; ?></legend>
 				<form name="noteEditor" action="outgoing.php" method="post" target="parentWin" onsubmit="submitNotesForm()">
 					<div>
 						<b><?php echo $LANG['DATE_RETURNED']; ?>:</b>
@@ -74,7 +73,6 @@ $loanManager->setCollId($collid);
 						<button name="formsubmit" type="submit" value="saveSpecimenDetails"><?php echo $LANG['SAVE_EDITS']; ?></button>
 					</div>
 				</form>
-			</fieldset>
 			<?php
 		}
 		else{

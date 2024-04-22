@@ -58,7 +58,7 @@ if($isEditor){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['GLOSSARY'])?$LANG['GLOSSARY']:'Glossary').' - '.(isset($LANG['ADD_TERM'])?$LANG['ADD_TERM']:'Add New Term'); ?> </title>
+	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['GLOSSARY'] . ' - ' . $LANG['ADD_TERM']; ?> </title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -115,6 +115,7 @@ if($isEditor){
 <body>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading">Add New Glossary Term</h1>
 		<?php
 		if($statusStr){
 			?>

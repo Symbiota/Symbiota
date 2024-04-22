@@ -25,6 +25,7 @@ $csMode = array_key_exists('csmode',$_REQUEST)?$_REQUEST['csmode']:false;
 	<body>
 		<!-- This is inner text! -->
 		<div id="innertext">
+			<h1 class="page-heading">Word Cloud Handler</h1>
 			<?php
 			$cloudHandler = new WordCloud();
 			$cloudHandler->setWidth(800);
