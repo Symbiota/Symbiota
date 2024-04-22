@@ -39,9 +39,9 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		return $lastEditImgId;
 	}
 
-	public function getBatch() {
+	public function getBatch($collid) {
 		$batchValues = array();	
-        $query = "SELECT batchID FROM batch";
+		$query = "SELECT batchID FROM batch WHERE collID = '$collid'";
         $result = $this->conn->query($query);
         while ($row = $result->fetch_assoc()) {
             $batchValues[] = $row['batchID'];
