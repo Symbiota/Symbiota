@@ -78,3 +78,26 @@ ALTER TABLE `omoccurrences`
 -- That uploadspectemp table's eventDate column uses date format, when it should be
 -- varchar(32) like the omoccurrences table. Not sure if it's intended, but this fixes it for now:
 ALTER TABLE `uploadspectemp` MODIFY `eventDate` varchar(32);
+
+-- Create views for dropdown columns
+CREATE VIEW dd_filedUnder_view AS
+SELECT DISTINCT filedUnder
+FROM omoccurrences;
+CREATE VIEW dd_currName_view AS
+SELECT DISTINCT currName 
+FROM omoccurrences;
+CREATE VIEW dd_identifiedBy_view AS
+SELECT DISTINCT identifiedBy 
+FROM omoccurrences;
+CREATE VIEW dd_collectors_view AS
+SELECT DISTINCT recordedBy 
+FROM omoccurrences;
+CREATE VIEW dd_collTrip_view AS
+SELECT DISTINCT collTrip 
+FROM omoccurrences;
+CREATE VIEW dd_geoWithin_view AS
+SELECT DISTINCT geoWithin 
+FROM omoccurrences;
+CREATE VIEW dd_highGeo_view AS
+SELECT DISTINCT highGeo 
+FROM omoccurrences;
