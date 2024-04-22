@@ -103,7 +103,7 @@ $dwcManager = new DwcArchiverCore();
 	}
 	?>
 	<div style="width:100%; background-color:white;">
-		<h1> <?php echo (isset($LANG['DATA_GUIDE']) ? $LANG['DATA_GUIDE'] : 'Data Usage Guidelines'); ?> </h1>
+		<h1 class="page-heading"><?php echo (isset($LANG['DATA_GUIDE']) ? $LANG['DATA_GUIDE'] : 'Data Usage Guidelines'); ?></h1>
 		<div style="margin:15px 0px;">
 		<?php echo (isset($LANG['GUIDE_ONE']) ? $LANG['GUIDE_ONE'] : 'By downloading data, the user confirms that he/she has read and agrees with the general'); ?> <a href="../../includes/usagepolicy.php#images"> <?php echo (isset($LANG['GUIDE_LINK']) ? $LANG['GUIDE_LINK'] : 'data usage terms'); ?> </a>.
 			<?php echo (isset($LANG['GUIDE_TWO']) ? $LANG['GUIDE_TWO'] : 'Note that additional terms of use specific to the individual collections may be distributed with the data download. When present, the terms

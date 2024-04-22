@@ -37,6 +37,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 	<body>
 		<!-- This is inner text! -->
 		<div id="innertext" style="background-color:white;">
+			<h1 class="page-heading screen-reader-only">GeoLocate CoGe Export Manager</h1>
 			<?php
 			if($collid && $isEditor){
 				if($ACTIVATE_GEOLOCATE_TOOLKIT){

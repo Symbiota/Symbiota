@@ -19,6 +19,7 @@ if($taxonFilter) $clManager->setTaxonFilter($taxonFilter);
 $coordArr = $clManager->getVoucherCoordinates();
 $clMeta = $clManager->getClMetaData();
 $coordJson = json_encode($coordArr);
+$clName = htmlspecialchars($clManager->getClName() ?? 'Unknown Collection', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 
 $coords = [];
 
@@ -46,12 +47,6 @@ $metaJson = json_encode($clMeta);
 
       <script src="<?php echo $CLIENT_ROOT?>/js/symb/wktpolygontools.js" type="text/javascript"></script>
       <script src="<?php echo $CLIENT_ROOT?>/js/symb/MapShapeHelper.js" type="text/javascript"></script>
-      <style>
-			.for-screen-reader{ 
-            position: absolute;
-            left: -10000px;
-         }
-		</style>
 
       <script type="text/javascript">
          var map;
@@ -254,13 +249,18 @@ $metaJson = json_encode($clMeta);
             margin: 0;
             padding: 0;
          }
+         .screen-reader-only{ 
+            position: absolute;
+            left: -10000px;
+         }
       </style>
    </head>
    <body style="background-color:#ffffff;" onload="initialize();">
+      <h1 class="page-heading screen-reader-only"><?= $LANG['MAP_SECTION'] . ' ' . $clName; ?></h1>
       <?php
          if(!$coordArr){
             ?>
-            <h1 class="for-screen-reader"><?= $LANG['NO_COORDS_HEADER']; ?></h1>
+            <h1 class="screen-reader-only"><?= $LANG['NO_COORDS_HEADER']; ?></h1>
             <div style='font-size:120%;font-weight:bold;'>
                <?php echo $LANG['NO_COORDS']; ?>.
             </div>
@@ -269,8 +269,8 @@ $metaJson = json_encode($clMeta);
             </div>
             <?php
          }
+
          ?>
-         <h1 class="for-screen-reader"><?= $LANG['MAP_SECTION']; ?></h1>
          <div id="service-container"
             data-occur-coords="<?= htmlspecialchars($coordJson) ?>"
             data-cl-meta="<?= htmlspecialchars($metaJson)?>"

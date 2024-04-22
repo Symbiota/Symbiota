@@ -81,6 +81,7 @@ if($IS_ADMIN) $isEditor = 1;
 	</div>
 	<!-- inner text -->
 	<div id="innertext">
+		<h1 class="page-heading">Coordinate Validator</h1>
 		<?php
 		if($statusStr){
 			?>

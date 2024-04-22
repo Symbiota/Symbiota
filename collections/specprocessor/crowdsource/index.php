@@ -53,7 +53,7 @@ $statusStr = '';
 
 	<!-- inner text -->
 	<div id="innertext">
-		<h1><?php echo $LANG['CROWDSOURCE_SCORE_BOARD']; ?></h1>
+		<h1 class="page-heading"><?php echo $LANG['CROWDSOURCE_SCORE_BOARD']; ?></h1>
 
 		<div style="margin:20px;">
 			<h2><?php echo $LANG['TOP_SCORES']; ?></h2>

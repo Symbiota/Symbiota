@@ -71,6 +71,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext" class="inntertext-tab pin-things-here">
+		<h1 class="page-heading screen-reader-only">Collections List</h1>
         <div id="tabs">
 			<ul>
 				<?php

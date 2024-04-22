@@ -148,27 +148,57 @@ class OccurrenceImport extends UtilitiesFileImport{
 					if(!empty($postArr['associationType']) && !empty($postArr['relationship'])){
 						$assocArr['associationType'] = $postArr['associationType'];
 						$assocArr['relationship'] = $postArr['relationship'];
-						if(!empty($postArr['replace']) && !empty($assocArr['identifier'])){
-							if($existingAssociation = $importManager->getAssociationArr(array('identifier' => $assocArr['identifier']))){
-								if($assocID = key($existingAssociation)){
-									$importManager->setAssocID($assocID);
-									if($importManager->updateAssociation($assocArr)){
-										$this->logOrEcho($LANG['ASSOC_UPDATED'].': <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>', 1);
-										$status = true;
-									}
-									else{
-										$this->logOrEcho('ERROR updating Occurrence Association: '.$importManager->getErrorMessage(), 1);
-									}
-									continue;
+						if(isset($postArr['subType']) && empty($assocArr['subType'])) $assocArr['subType'] = $postArr['subType'];
+						if(!empty($postArr['replace'])){
+							$existingAssociation = null;
+							if(!empty($assocArr['instanceID'])){
+								$existingAssociation = $importManager->getAssociationArr(array('associationType' => $assocArr['associationType'], 'recordID' => $assocArr['instanceID']));
+								if($existingAssociation){
+									//instanceID is recordID, thus don't add to instanceID
+									unset($assocArr['instanceID']);
+								}
+								if(!$existingAssociation){
+									$existingAssociation = $importManager->getAssociationArr(array('associationType' => $assocArr['associationType'], 'instanceID' => $assocArr['instanceID']));
 								}
 							}
+							if(!$existingAssociation && !empty($assocArr['resourceUrl'])){
+								$existingAssociation = $importManager->getAssociationArr(array('associationType' => $assocArr['associationType'], 'resourceUrl' => $assocArr['resourceUrl']));
+							}
+							if(!$existingAssociation && !empty($assocArr['objectID'])){
+								$existingAssociation = $importManager->getAssociationArr(array('associationType' => $assocArr['associationType'], 'objectID' => $assocArr['objectID']));
+							}
+							if($existingAssociation){
+								if($assocID = key($existingAssociation)){
+									$importManager->setAssocID($assocID);
+									if($assocArr['relationship'] == 'DELETE'){
+										if($importManager->deleteAssociation()){
+											$this->logOrEcho($LANG['ASSOC_DELETED'].': <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>', 1);
+										}
+										else{
+											$this->logOrEcho($LANG['ERROR_DELETING'] . ': '.$importManager->getErrorMessage(), 1);
+										}
+									}
+									else{
+										if($importManager->updateAssociation($assocArr)){
+											$this->logOrEcho($LANG['ASSOC_UPDATED'].': <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>', 1);
+											$status = true;
+										}
+										else{
+											$this->logOrEcho($LANG['ERROR_UPDATING'] . ': '.$importManager->getErrorMessage(), 1);
+										}
+									}
+								}
+							}
+							else{
+								$this->logOrEcho($LANG['TARGET_NOT_FOUND'], 1);
+							}
 						}
-						if($importManager->insertAssociation($assocArr)){
+						elseif($importManager->insertAssociation($assocArr)){
 							$this->logOrEcho($LANG['ASSOC_ADDED'].': <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>', 1);
 							$status = true;
 						}
 						else{
-							$this->logOrEcho('ERROR loading Occurrence Association: '.$importManager->getErrorMessage(), 1);
+							$this->logOrEcho($LANG['ERROR_ADDING'] . ': '.$importManager->getErrorMessage(), 1);
 						}
 					}
 				}
@@ -274,15 +304,34 @@ class OccurrenceImport extends UtilitiesFileImport{
 	}
 
 	//Mapping functions
-	public function setTargetFieldArr(){
+	public function setTargetFieldArr($associationType = null){
+		$this->targetFieldMap['catalognumber'] = 'subject identifier: catalogNumber';
+		$this->targetFieldMap['othercatalognumbers'] = 'subject identifier: otherCatalogNumbers';
+		$this->targetFieldMap['occurrenceid'] = 'subject identifier: occurrenceID';
+		$this->targetFieldMap[''] = '------------------------------------';
 		$fieldArr = array();
 		if($this->importType == self::IMPORT_IMAGE_MAP){
 			$fieldArr = array('url', 'originalUrl', 'thumbnailUrl', 'archiveUrl', 'referenceUrl', 'photographer', 'photographerUid', 'caption', 'owner', 'anatomy', 'notes',
 				'format', 'sourceIdentifier', 'hashFunction', 'hashValue', 'mediaMD5', 'copyright', 'rights', 'accessRights', 'sortOccurrence');
 		}
 		elseif($this->importType == self::IMPORT_ASSOCIATIONS){
-			$fieldArr = array('occidAssociate', 'relationshipID', 'subType', 'identifier', 'basisOfRecord',
-				'resourceUrl', 'verbatimSciname', 'establishedDate', 'notes', 'accordingTo');
+			$fieldArr = array('relationshipID', 'objectID', 'basisOfRecord', 'establishedDate', 'notes', 'accordingTo');
+			if($associationType == 'resource'){
+				$fieldArr[] = 'resourceUrl';
+			}
+			elseif($associationType == 'internalOccurrence'){
+				$this->targetFieldMap['object-catalognumber'] = 'object identifier: catalogNumber';
+				$this->targetFieldMap['object-occurrenceid'] = 'object identifier: occurrenceID';
+				$this->targetFieldMap['occidassociate'] = 'object identifier: occid';
+				$this->targetFieldMap['0'] = '------------------------------------';
+			}
+			elseif($associationType == 'externalOccurrence'){
+				$fieldArr[] = 'verbatimSciname';
+				$fieldArr[] = 'resourceUrl';
+			}
+			elseif($associationType == 'observational'){
+				$fieldArr[] = 'verbatimSciname';
+			}
 		}
 		elseif($this->importType == self::IMPORT_DETERMINATIONS){
 			$detManager = new OmDeterminations($this->conn);
@@ -296,17 +345,8 @@ class OccurrenceImport extends UtilitiesFileImport{
 				'preparedByUid', 'individualCount', 'sampleSize', 'storageLocation', 'remarks');
 		}
 		sort($fieldArr);
-		$this->targetFieldMap['catalognumber'] = 'subject identifier: catalogNumber';
-		$this->targetFieldMap['othercatalognumbers'] = 'subject identifier: otherCatalogNumbers';
-		$this->targetFieldMap['occurrenceid'] = 'subject identifier: occurrenceID';
-		$this->targetFieldMap[''] = '------------------------------------';
 		foreach($fieldArr as $field){
-			if($field == 'occidAssociate'){
-				$this->targetFieldMap['object-catalognumber'] = 'object identifier: catalogNumber';
-				$this->targetFieldMap['object-occurrenceid'] = 'object identifier: occurrenceID';
-				$this->targetFieldMap['occidassociate'] = 'object identifier: occid';
-			}
-			else $this->targetFieldMap[strtolower($field)] = $field;
+			$this->targetFieldMap[strtolower($field)] = $field;
 		}
 	}
 

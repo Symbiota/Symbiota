@@ -311,9 +311,9 @@ $traitArr = $indManager->getTraitArr();
 </head>
 <body>
 	<header style="background-image: none;">
-		<a class="skip-link" href="#end-nav"><?php echo $LANG['SKIP_NAV'] ?></a>
-		<h1 class="smaller-header">
-			<?php echo (isset($LANG['FULL_RECORD_DETAILS']) ? $LANG['FULL_RECORD_DETAILS'] : 'Full Record Details'); ?>
+		<a class="screen-reader-only" href="#end-nav"><?php echo $LANG['SKIP_NAV'] ?></a>
+		<h1 class="page-heading">
+			<?php echo $LANG['FULL_RECORD_DETAILS']; ?>
 		</h1>
 		<div id="end-nav"></div>
 	</header>
@@ -422,12 +422,12 @@ $traitArr = $indManager->getTraitArr();
 										echo $assocArr['relationship'];
 										if($assocArr['subtype']) echo ' ('.$assocArr['subtype'].')';
 										echo ': ';
-										$relID = $assocArr['identifier'];
+										$relID = $assocArr['objectID'];
 										$relUrl = $assocArr['resourceurl'];
 										if(!$relUrl && $assocArr['occidassoc']) $relUrl = $GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$assocArr['occidassoc'];
 										if($relUrl) $relID = '<a href="' . $relUrl . '">' . $relID . '</a>';
 										if($relID) echo $relID;
-										elseif($assocArr['sciname']) echo $assocArr['sciname'];
+										if($assocArr['sciname']) echo ' [' . $assocArr['sciname'] . ']';
 										echo '</div>';
 										$cnt++;
 									}

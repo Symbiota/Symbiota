@@ -44,7 +44,7 @@ if($glossId){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.(isset($LANG['GLOSS_TERM_INFO'])?$LANG['GLOSS_TERM_INFO']:'Glossary Term Information'); ?></title>
+	<title><?php echo $DEFAULT_TITLE . $LANG['GLOSS_TERM_INFO']; ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -69,6 +69,7 @@ if($glossId){
 	if($termArr){
 		?>
 		<!-- This is inner text! -->
+		<h1 class="page-heading"><?= $LANG['GLOSS_TERM_INFO']; ?></h1>
 		<div style="width:100%;margin-left:auto;margin-right:auto">
 			<div id="tabs" style="padding:10px">
 				<div style="clear:both;">

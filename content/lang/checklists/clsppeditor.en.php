@@ -33,5 +33,6 @@ $LANG['EDIT_VOUCHER'] = 'Edit Voucher';
 $LANG['EDITOR_NOTES_DISPLAY'] = 'Editor Notes (editor display only)';
 $LANG['SUBMIT_V_EDITS'] = 'Submit Voucher Edits';
 $LANG['NO_DATA'] = 'Failed to return data or you might not have proper editing rights';
+$LANG['IN'] = 'in';
 
 ?>

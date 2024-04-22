@@ -58,8 +58,8 @@ include($SERVER_ROOT.'/includes/header.php');
 	<b><?php echo $LANG['IMG_IMPORTER']; ?></b>
 </div>
 
-<h1><?php echo $LANG['IMG_IMPORTER']; ?></h1>
 <div  id="innertext">
+	<h1 class="page-heading"><?php echo $LANG['IMG_IMPORTER']; ?></h1>
 	<div style="margin-bottom:30px;">
 
 	</div>

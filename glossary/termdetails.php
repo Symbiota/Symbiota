@@ -94,7 +94,7 @@ if($glossId){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.(isset($LANG['G_MGMNT'])?$LANG['G_MGMNT']:'Glossary Management'); ?></title>
+	<title><?php echo $DEFAULT_TITLE . $LANG['G_MGMNT']; ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -187,6 +187,7 @@ if($glossId){
 <body>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?= $LANG['G_MGMNT']; ?></h1>
 		<?php
 		if($glossId && $isEditor){
 			if($statusStr){

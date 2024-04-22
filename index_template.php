@@ -18,7 +18,8 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class="navpath"></div>
-	<div id="innertext">
+	<main id="innertext">
+		<h1 class="page-heading"><?php echo $DEFAULT_TITLE; ?> Home</h1>
 		<?php
 		if($LANG_TAG == 'es'){
 			?>
@@ -50,7 +51,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 			<?php
 		}
 		?>
-	</div>
+	</main>
 	<?php
 	include($SERVER_ROOT . '/includes/footer.php');
 	?>

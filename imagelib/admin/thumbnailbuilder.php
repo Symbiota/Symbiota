@@ -74,10 +74,10 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 	<div id="innertext">
 		<?php
 		if($isEditor){
-			echo '<h2>'.$LANG['THUMB_MAINT_TOOL'];
+			echo '<h1 class="page-heading">'.$LANG['THUMB_MAINT_TOOL'];
 			if($collid) echo ' - '.$imgManager->getCollectionName();
 			elseif($collid === '0') echo ' - '.$LANG['FIELD_IMAGES'];
-			echo '</h2>';
+			echo '</h1>';
 			if($action && $action != 'none'){
 				if($action == 'resetprocessing'){
 					$imgManager->resetProcessing();

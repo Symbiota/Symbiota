@@ -472,6 +472,7 @@ $whereManager = new GamesWhereManager();
 		</div>
 		<!-- This is inner text! -->
 		<div id="innertext">
+			<h1 class="page-heading">Where in the World Game</h1>
 			<h2>Where in the World do these plants grow?</h2>
 			<table>
 				<tr>

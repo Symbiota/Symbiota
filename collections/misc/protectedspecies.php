@@ -118,7 +118,7 @@ include($SERVER_ROOT.'/includes/header.php');
 		<?php
 	}
 	?>
-	<h1><?= $LANG['PROTECTED_SPECIES'] ?></h1>
+	<h1 class="page-heading"><?= $LANG['PROTECTED_SPECIES'] ?></h1>
 	<div style="float:right;">
 		<form name="searchform" action="protectedspecies.php" method="post">
 			<fieldset style="margin:0px 15px;padding:10px">

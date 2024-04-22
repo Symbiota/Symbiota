@@ -198,6 +198,7 @@ function listGeoUnits($arr) {
          <?php endif ?>
       </div>
       <div id='innertext'>
+         <h1 class="page-heading"><?= $LANG['GEOTHES_TITLE']; ?></h1>
          <fieldset>
             <legend><?=$LANG["SEARCH_GEOTHESAURUS"]?></legend>
             <autocomplete-input 

@@ -24,9 +24,11 @@ $LANG['DISP_SUBGENERA'] = 'Afficher les espèces avec les sous-genres';
 $LANG['LIMIT_TO_OCCURRENCES'] = 'Afficher uniquement les taxons liés aux occurrences';
 $LANG['EXPORT_TREE'] = 'Taxonomie des exportations';
 $LANG['PLUS_SIGN_DESC'] = 'Image d\'un signe plus, indiquant la création d\'un nouveau taxon';
+$LANG['NO_TAXA_FOUND'] = 'Aucun taxon trouvé correspondant à votre recherche';
 
 //Affichage dynamique
 $LANG['TAX_EXPLORE'] = 'Explorateur de taxonomie';
 $LANG['EDITOR_MODE'] = 'Mode éditeur';
+$LANG['CENTRAL_THESAURUS'] = 'Thésaurus Central';
 
 ?>

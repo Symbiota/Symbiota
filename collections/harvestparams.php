@@ -72,6 +72,7 @@ $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ??
 	}
 	?>
 	<div id="innertext">
+		<h1 class="page-heading">Search</h1>
 		<form name="harvestparams" id="harvestparams" action="list.php" method="post" onsubmit="return checkHarvestParamsForm(this)">
 			<hr/>
 			<div>

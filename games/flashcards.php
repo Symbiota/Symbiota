@@ -156,6 +156,7 @@ $sciArr = array();
 	?>
 	<!-- This is inner text! -->
 	<div id='innertext'>
+		<h1 class="page-heading screen-reader-only">Flash Cards</h1>
 		<div style="width:420px;margin-left:auto;margin-right:auto;">
 			<div style="width:420px;height:420px;text-align:center;">
 				<div>

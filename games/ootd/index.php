@@ -109,7 +109,7 @@ $genusAnswer = strtok($scinameAnswer, " ");
 		<!-- This is inner text! -->
 		<div style="width:80%;margin-left:auto;margin-right:auto;">
 			<div style="text-align:center;margin-bottom:20px;">
-				<h1><?php echo $ootdTitle; ?></h1>
+				<h1 class="page-heading"><?php echo $ootdTitle; ?></h1>
 			</div>
 			<?php
 			if(!$submitAction){
