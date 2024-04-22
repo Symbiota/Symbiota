@@ -247,7 +247,7 @@ if($isEditor){
 		}
 	}
 	else{
-		echo '<h3>' . $LANG['NO_DESC'] . '</h3>';
+		echo '<h2 style="font-size: 2rem;">' . $LANG['NO_DESC'] . '</h2>';
 	}
 }
 ?>
