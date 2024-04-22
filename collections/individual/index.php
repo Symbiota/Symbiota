@@ -956,6 +956,10 @@ $traitArr = $indManager->getTraitArr();
 										if($imgArr['url'] && substr($thumbUrl,0,7)!='process' && $imgArr['url'] != $imgArr['lgurl']) echo '<div><a href="'.$imgArr['url'].'" target="_blank">'.$LANG['OPEN_MEDIUM'].'</a></div>';
 										if($imgArr['lgurl']) echo '<div><a href="'.$imgArr['lgurl'].'" target="_blank">'.$LANG['OPEN_LARGE'].'</a></div>';
 										if($imgArr['sourceurl']) echo '<div><a href="'.$imgArr['sourceurl'].'" target="_blank">'.$LANG['OPEN_SOURCE'].'</a></div>';
+										//Use image rights settings as the default for current record
+										if($imgArr['rights']) $collMetadata['rights'] = $imgArr['rights'];
+										if($imgArr['copyright']) $collMetadata['rightsholder'] = $imgArr['copyright'];
+										if($imgArr['accessrights']) $collMetadata['accessrights'] = $imgArr['accessrights'];
 										?>
 									</div>
 									<?php
@@ -966,11 +970,9 @@ $traitArr = $indManager->getTraitArr();
 						}
 						//Rights
 						$rightsStr = $collMetadata['rights'];
-						if($collMetadata['rights']){
-							$rightsHeading = '';
-							if(isset($RIGHTS_TERMS)) $rightsHeading = array_search($rightsStr,$RIGHTS_TERMS);
+						if($rightsStr){
 							if(substr($collMetadata['rights'],0,4) == 'http'){
-								$rightsStr = '<a href="'.$rightsStr.'" target="_blank">'.($rightsHeading?$rightsHeading:$rightsStr).'</a>';
+								$rightsStr = '<a href="'.$rightsStr.'" target="_blank">' . $rightsStr . '</a>';
 							}
 							$rightsStr = '<div style="margin-top:2px;"><label>'.$LANG['USAGE_RIGHTS'].':</label> '.$rightsStr.'</div>';
 						}

@@ -237,9 +237,10 @@ class OccurrenceIndividual extends Manager{
 
 	private function setImages(){
 		global $imageDomain;
-		$sql = 'SELECT i.imgid, i.url, i.thumbnailurl, i.originalurl, i.sourceurl, i.notes, i.caption, CONCAT_WS(" ",u.firstname,u.lastname) as innerPhotographer, i.photographer  '.
-			'FROM images i LEFT JOIN users u ON i.photographeruid = u.uid '.
-			'WHERE (i.occid = '.$this->occid.') ORDER BY i.sortoccurrence,i.sortsequence';
+		$sql = 'SELECT i.imgid, i.url, i.thumbnailurl, i.originalurl, i.sourceurl, i.notes, i.caption,
+			CONCAT_WS(" ",u.firstname,u.lastname) as innerPhotographer, i.photographer, i.rights, i.accessRights, i.copyright
+			FROM images i LEFT JOIN users u ON i.photographeruid = u.uid
+			WHERE (i.occid = '.$this->occid.') ORDER BY i.sortoccurrence,i.sortsequence';
 		$rs = $this->conn->query($sql);
 		if($rs){
 			while($row = $rs->fetch_object()){
@@ -260,6 +261,9 @@ class OccurrenceIndividual extends Manager{
 				$this->occArr['imgs'][$imgId]['sourceurl'] = $row->sourceurl;
 				$this->occArr['imgs'][$imgId]['caption'] = $row->caption;
 				$this->occArr['imgs'][$imgId]['photographer'] = $row->photographer;
+				$this->occArr['imgs'][$imgId]['rights'] = $row->rights;
+				$this->occArr['imgs'][$imgId]['accessrights'] = $row->accessRights;
+				$this->occArr['imgs'][$imgId]['copyright'] = $row->copyright;
 				if($row->innerPhotographer) $this->occArr['imgs'][$imgId]['photographer'] = $row->innerPhotographer;
 			}
 			$rs->free();
