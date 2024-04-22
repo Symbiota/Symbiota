@@ -190,6 +190,139 @@ class RpcOccurrenceEditor extends RpcBase{
 		return $retArr;
 	}
 
+	public function getCurrNameSuggest($term){
+		$retArr = array();
+		$term = preg_replace('/[^a-zA-Z0-9()\-. ]+/', '', $term);
+
+		// If the search term has less than 3 characters, return an empty array (or you may choose to skip the search)
+		if (strlen($term) < 3) {
+			return $retArr;
+		}
+
+		// Construct the SQL query
+		$sql = 'SELECT DISTINCT currName FROM dd_currName_view WHERE currName LIKE "'.$term.'%" ORDER BY currName';
+
+		$rs = $this->conn->query($sql);
+		if($rs) {
+			while ($r = $rs->fetch_object()) {
+				$retArr[] = array('id' => $r->currName, 'value' => $r->currName);
+			}
+			$rs->free();
+		}
+		return $retArr;
+	}
+
+	public function getIdentifedBySuggest($term){
+		$retArr = array();
+		$term = preg_replace('/[^a-zA-Z0-9()\-. ]+/', '', $term);
+
+		// If the search term has less than 3 characters, return an empty array (or you may choose to skip the search)
+		if (strlen($term) < 3) {
+			return $retArr;
+		}
+
+		// Construct the SQL query
+		$sql = 'SELECT DISTINCT identifiedBy FROM dd_identifiedBy_view WHERE identifiedBy LIKE "'.$term.'%" ORDER BY identifiedBy';
+
+		$rs = $this->conn->query($sql);
+		if($rs) {
+			while ($r = $rs->fetch_object()) {
+				$retArr[] = array('id' => $r->identifiedBy, 'value' => $r->identifiedBy);
+			}
+			$rs->free();
+		}
+		return $retArr;
+	}
+
+	public function getRecordedBySuggest($term){
+		$retArr = array();
+		$term = preg_replace('/[^a-zA-Z0-9()\-. ]+/', '', $term);
+
+		// If the search term has less than 3 characters, return an empty array (or you may choose to skip the search)
+		if (strlen($term) < 3) {
+			return $retArr;
+		}
+
+		// Construct the SQL query
+		$sql = 'SELECT DISTINCT recordedBy FROM dd_collectors_view WHERE recordedBy LIKE "'.$term.'%" ORDER BY recordedBy';
+
+		$rs = $this->conn->query($sql);
+		if($rs) {
+			while ($r = $rs->fetch_object()) {
+				$retArr[] = array('id' => $r->recordedBy, 'value' => $r->recordedBy);
+			}
+			$rs->free();
+		}
+		return $retArr;
+	}
+
+	public function getCollTripSuggest($term){
+		$retArr = array();
+		$term = preg_replace('/[^a-zA-Z0-9()\-. ]+/', '', $term);
+
+		// If the search term has less than 3 characters, return an empty array (or you may choose to skip the search)
+		if (strlen($term) < 3) {
+			return $retArr;
+		}
+
+		// Construct the SQL query
+		$sql = 'SELECT DISTINCT collTrip FROM dd_collTrip_view WHERE collTrip LIKE "'.$term.'%" ORDER BY collTrip';
+
+		$rs = $this->conn->query($sql);
+		if($rs) {
+			while ($r = $rs->fetch_object()) {
+				$retArr[] = array('id' => $r->collTrip, 'value' => $r->collTrip);
+			}
+			$rs->free();
+		}
+		return $retArr;
+	}
+
+	public function getGeoWithinSuggest($term){
+		$retArr = array();
+		$term = preg_replace('/[^a-zA-Z0-9()\-. ]+/', '', $term);
+
+		// If the search term has less than 3 characters, return an empty array (or you may choose to skip the search)
+		if (strlen($term) < 3) {
+			return $retArr;
+		}
+
+		// Construct the SQL query
+		$sql = 'SELECT DISTINCT geoWithin FROM dd_geoWithin_view WHERE geoWithin LIKE "'.$term.'%" ORDER BY geoWithin';
+
+		$rs = $this->conn->query($sql);
+		if($rs) {
+			while ($r = $rs->fetch_object()) {
+				$retArr[] = array('id' => $r->geoWithin, 'value' => $r->geoWithin);
+			}
+			$rs->free();
+		}
+		return $retArr;
+	}
+
+	public function getHighGeoSuggest($term){
+		$retArr = array();
+		$term = preg_replace('/[^a-zA-Z0-9()\-. ]+/', '', $term);
+
+		// If the search term has less than 3 characters, return an empty array (or you may choose to skip the search)
+		if (strlen($term) < 3) {
+			return $retArr;
+		}
+
+		// Construct the SQL query
+		$sql = 'SELECT DISTINCT highGeo FROM dd_highGeo_view WHERE highGeo LIKE "'.$term.'%" ORDER BY highGeo';
+
+		$rs = $this->conn->query($sql);
+		if($rs) {
+			while ($r = $rs->fetch_object()) {
+				$retArr[] = array('id' => $r->highGeo, 'value' => $r->highGeo);
+			}
+			$rs->free();
+		}
+		return $retArr;
+	}
+
+
 	//Used by /collections/editor/rpc/getspeciessuggest.php,
 	public function getSpeciesSuggest($term){
 		$retArr = Array();

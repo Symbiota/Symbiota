@@ -777,7 +777,7 @@ else{
 						<div class="field-block">
 							<span class="field-label"><?php echo (isset($LANG['CURR_NAME']) ? $LANG['CURR_NAME'] : 'Current Name'); ?></span>
 							<span class="field-elem">
-								<input type="text" size = '50' name="currName" value="<?php echo $occArr["currName"]; ?>" onchange="fieldChanged('currName');" />
+								<input type="text" size = '50' name="currName" id="ffcurrname" value="<?php echo $occArr["currName"]; ?>" onchange="fieldChanged('currName');" />
 							</span>
 						</div>
 						<?php if(!isset($_POST['toggle-button']) || (isset($_POST['toggle-button']) && $_POST['toggle-button'] != 'Minimal')): ?>
@@ -800,7 +800,7 @@ else{
 							<div class="field-block">
 								<span class="field-label"><?php echo (defined('IDENTIFIEDBYLABEL')?IDENTIFIEDBYLABEL:'Identified By'); ?></span>
 								<span class="field-elem">
-									<input size = '50' type="text"  maxlength="255" name="identifiedby" value="<?php echo array_key_exists('identifiedby',$occArr)?$occArr['identifiedby']:''; ?>" onchange="fieldChanged('identifiedby');" />
+									<input size = '50' type="text"  maxlength="255" name="identifiedby" id="ffidentifiedby" value="<?php echo array_key_exists('identifiedby',$occArr)?$occArr['identifiedby']:''; ?>" onchange="fieldChanged('identifiedby');" />
 								</span>
 							</div>
 							<div class="field-block">
@@ -826,7 +826,7 @@ else{
 						<div class="field-block">
 							<span class="field-label"><?php echo (defined('RECORDEDBYLABEL')?RECORDEDBYLABEL:'Collectors'); ?></span>
 							<span class="field-elem">
-								<input size = '50' type="text" name="recordedby" maxlength="255" value="<?php echo array_key_exists('recordedby',$occArr)?$occArr['recordedby']:''; ?>" onchange="fieldChanged('recordedby');" />
+								<input size = '50' type="text" name="recordedby" id="ffrecordedby" maxlength="255" value="<?php echo array_key_exists('recordedby',$occArr)?$occArr['recordedby']:''; ?>" onchange="fieldChanged('recordedby');" />
 							</span>
 						</div>
 						<!-- I put associated collectors here -->
@@ -864,20 +864,20 @@ else{
 							<div class="field-block">
 								<span class="field-label"><?php echo (isset($LANG['COLL_TRIP']) ? $LANG['COLL_TRIP'] : 'Collecting Trip'); ?></span>
 								<span class="field-elem">
-									<input size = '50' type="text" name="collTrip" value="<?php echo $occArr["collTrip"]; ?>" onchange="fieldChanged('collTrip');" />
+									<input size = '50' type="text" name="collTrip" id="ffcolltrip" value="<?php echo $occArr["collTrip"]; ?>" onchange="fieldChanged('collTrip');" />
 								</span>
 							</div>
 						<?php endif; ?>
 						<div class="field-block">
 							<span class="field-label"><?php echo (isset($LANG['GEO_WITHIN']) ? $LANG['GEO_WITHIN'] : 'Geography Within'); ?></span>
 							<span class="field-elem">
-								<input size = '50' type="text" name="geoWithin" value="<?php echo $occArr["geoWithin"]; ?>" onchange="fieldChanged('geoWithin');" />
+								<input size = '50' type="text" name="geoWithin" id="ffgeowithin" value="<?php echo $occArr["geoWithin"]; ?>" onchange="fieldChanged('geoWithin');" />
 							</span>
 						</div>
 						<div class="field-block">
 							<span class="field-label"><?php echo (isset($LANG['HIGH_GEO']) ? $LANG['HIGH_GEO'] : 'Higher Geography'); ?></span>
 							<span class="field-elem">
-								<input type="text" size = '50' name="highGeo" value="<?php echo $occArr["highGeo"]; ?>" onchange="fieldChanged('highGeo');" />
+								<input type="text" size = '50' name="highGeo" id="ffhighgeo" value="<?php echo $occArr["highGeo"]; ?>" onchange="fieldChanged('highGeo');" />
 							</span>
 						</div>
 						<?php if(!isset($_POST['toggle-button']) || (isset($_POST['toggle-button']) && $_POST['toggle-button'] != 'Minimal')): ?>

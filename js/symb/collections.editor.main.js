@@ -81,8 +81,17 @@ $(document).ready(function() {
 		}
 	});
 
+	$("#ffcurrname").autocomplete({
+		source: "/collections/quickentry/rpc/getcurrnamesuggest.php",
+		minLength: 3, 
+		autoFocus: true, 
+		change: function(event, ui) {
+			fieldChanged('currName')
+		}
+	});
+	
 	$("#fffileunder").autocomplete({
-		source: "/rpc/getfiledundersuggest.php",
+		source: "/collections/quickentry/rpc/getfiledundersuggest.php",
 		minLength: 3, 
 		autoFocus: true, 
 		change: function(event, ui) {
@@ -90,8 +99,53 @@ $(document).ready(function() {
 		}
 	});
 
+	$("#ffidentifiedby").autocomplete({
+		source: "/collections/quickentry/rpc/getidentifiedbysuggest.php",
+		minLength: 3, 
+		autoFocus: true, 
+		change: function(event, ui) {
+			fieldChanged('identifiedby')
+		}
+	});
+
+	$("#ffrecordedby").autocomplete({
+		source: "/collections/quickentry/rpc/getrecordedbysuggest.php",
+		minLength: 3, 
+		autoFocus: true, 
+		change: function(event, ui) {
+			fieldChanged('recordedby')
+		}
+	});
+
+	$("#ffcolltrip").autocomplete({
+		source: "/collections/quickentry/rpc/getcolltripsuggest.php",
+		minLength: 3, 
+		autoFocus: true, 
+		change: function(event, ui) {
+			fieldChanged('collTrip')
+		}
+	});
+
+	$("#ffgeowithin").autocomplete({
+		source: "/collections/quickentry/rpc/getgeowithnsuggest.php",
+		minLength: 3, 
+		autoFocus: true, 
+		change: function(event, ui) {
+			fieldChanged('geoWithin')
+		}
+	});
+
+	$("#ffhighgeo").autocomplete({
+		source: "/collections/quickentry/rpc/gethighgeosuggest.php",
+		minLength: 3, 
+		autoFocus: true, 
+		change: function(event, ui) {
+			fieldChanged('highGeo')
+		}
+	});
+
 	$("#ffsciname").autocomplete({ 
-		source: "rpc/getspeciessuggest.php", 
+		source: "/rpc/getspeciessuggest.php", 
 		minLength: 3,
 		autoFocus: true,
 		change: function(event, ui) {
