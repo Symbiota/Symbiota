@@ -81,4 +81,8 @@ $LANG['ADDCHECKLIST'] = 'Cr&eacuteer Liste';
 $LANG['DELETETHISU'] = 'Supprimer Cet Utilisateur';
 $LANG['ERROR_LOWER'] = 'Erreur';
 
+$LANG['DROP_ICON_FOR_EDITOR'] = 'Déposer l\'Icône pour l\'éditeur';
+$LANG['DROP_ICON_FOR_DELETE_PROJECT'] = 'Déposer l\'Icône pour Supprimer le Projet';
+$LANG['SUBMIT_BUTTON'] = 'Bouton Soumettre';
+
 ?>

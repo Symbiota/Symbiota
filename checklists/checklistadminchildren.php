@@ -101,11 +101,11 @@ $childArr = $clManager->getChildrenChecklist()
 				foreach($childArr as $k => $cArr){
 					?>
 					<li>
-						<a href="checklist.php?clid=<?php echo htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars($cArr['name'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
+						<a href="checklist.php?clid=<?php echo htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank"><?php echo htmlspecialchars($cArr['name'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 						<?php
 						if($cArr['pclid'] == $clid){
 							$confirmStr = $LANG['SURE'] . $cArr['name'] . $LANG['AS_CHILD'];
-							echo '<a href="checklistadmin.php?submitaction=delchild&tabindex=2&cliddel=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '&clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '" onclick="return confirm(\'' . htmlspecialchars($confirmStr, HTML_SPECIAL_CHARS_FLAGS) . '\')">';
+							echo '<a href="checklistadmin.php?submitaction=delchild&tabindex=2&cliddel=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&clid=' . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" onclick="return confirm(\'' . htmlspecialchars($confirmStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '\')">';
 							echo '<img src="../images/del.png" style="width:1em;" /></a>';
 							echo '</a>';
 						}
@@ -129,7 +129,7 @@ $childArr = $clManager->getChildrenChecklist()
 				foreach($parentArr as $k => $name){
 					?>
 					<li>
-						<a href="checklist.php?clid=<?php echo htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars($name, HTML_SPECIAL_CHARS_FLAGS); ?></a>
+						<a href="checklist.php?clid=<?php echo htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank"><?php echo htmlspecialchars($name, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 					</li>
 					<?php
 				}
@@ -208,7 +208,7 @@ $childArr = $clManager->getChildrenChecklist()
 					<button name="submitaction" type="submit" value="parseChecklist"><?php echo $LANG['PARSE_CHECKLIST'] ?></button>
 				</div>
 			</form>
-			<div><a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/taxa/taxonomy/taxonomydisplay.php" target="_blank"><?php echo $LANG['OPEN_TAX_THES_EXPLORE'] ?></a></div>
+			<div><a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/taxa/taxonomy/taxonomydisplay.php" target="_blank"><?php echo $LANG['OPEN_TAX_THES_EXPLORE'] ?></a></div>
 		</fieldset>
 	</div>
 </div>

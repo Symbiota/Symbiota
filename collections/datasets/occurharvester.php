@@ -134,6 +134,7 @@ if($isEditor){
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading">Add Occurrences to Dataset</h1>
 		<div style="margin:15px">
 			Scan or type barcode number into field below and then hit enter or tab to add the specimen to the list.
 			Once list is complete, you can enter your catalog number in the text field and then transfer to your collection

@@ -150,8 +150,8 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['sex'] = 'o.sex';
 		$this->occurDefArr['terms']['individualCount'] = 'http://rs.tdwg.org/dwc/terms/individualCount';
 		$this->occurDefArr['fields']['individualCount'] = 'CASE WHEN o.individualCount REGEXP("(^[0-9]+$)") THEN o.individualCount ELSE NULL END AS individualCount';
-		//$this->occurDefArr['terms']['samplingProtocol'] = 'http://rs.tdwg.org/dwc/terms/samplingProtocol';
-		//$this->occurDefArr['fields']['samplingProtocol'] = 'o.samplingProtocol';
+		$this->occurDefArr['terms']['samplingProtocol'] = 'http://rs.tdwg.org/dwc/terms/samplingProtocol';
+		$this->occurDefArr['fields']['samplingProtocol'] = 'o.samplingProtocol';
 		//$this->occurDefArr['terms']['samplingEffort'] = 'http://rs.tdwg.org/dwc/terms/samplingEffort';
 		//$this->occurDefArr['fields']['samplingEffort'] = 'o.samplingEffort';
 		$this->occurDefArr['terms']['preparations'] = 'http://rs.tdwg.org/dwc/terms/preparations';
@@ -634,9 +634,10 @@ class DwcArchiverOccurrence extends Manager{
 		$retArr = array();
 		$this->setServerDomain();
 		//Replace GUID identifiers with occurrenceID values
-		$sql = 'SELECT occid, occurrenceID, recordID FROM omoccurrences WHERE occid IN('.implode(',',array_keys($internalAssocOccidArr)).')';
+		$sql = 'SELECT occid, sciname, occurrenceID, recordID FROM omoccurrences WHERE occid IN('.implode(',',array_keys($internalAssocOccidArr)).')';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
+			$retArr[$r->occid]['scientificName'] = $r->sciname;
 			$guid = $r->recordID;
 			if($r->occurrenceID) $guid = $r->occurrenceID;
 			$retArr[$r->occid]['identifier'] = $guid;

@@ -104,6 +104,7 @@ if($collMap){
 		<b><?php echo $LANG['DUP_OCCS']; ?></b>
 	</div>
 	<div id="innertext" style="background-color:white; margin:10px; width: 100%; max-width: 100%; padding: 0px;">
+		<h1 class="page-heading">Duplicate Catalog Number Cleaning Tool</h1>
 		<?php
 		if($collMap && $isEditor){
 			if($IS_ADMIN && $limit < 900) echo '<div style="max-width: 1000px">'.$LANG['SUPERADMIN_NOTICE'].'</div>';
@@ -213,13 +214,13 @@ if($collMap){
 					if((count($dupArr)+2)>$limit){
 						?>
 							<div>
-								<a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['RETURN_TO_FORM'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
+								<a href="index.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars($LANG['RETURN_TO_FORM'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 							</div>
 							<?php
 						}
 					?>
 					<div>
-						<a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['RETURN_TO_MAIN'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
+						<a href="index.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars($LANG['RETURN_TO_MAIN'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 					</div>
 				</div>
 				<?php

@@ -12,11 +12,13 @@
 	<div class="logo-gallery">
 		<button id="accessibility-options-button" type="button" class="btn btn-primary  accessibility-option-button">
 			<span class="button__item-container">
-				<p class="button__item-container__item-text">
+				<span class="button__item-container__item-text">
 					<?= $LANG['ACCESSIBILITY_OPTIONS']; ?>
-				</p>
-				<img alt="accessibility icon of a person" src="<?php echo $CLIENT_ROOT ?>/images/accessibility_FILL0_wght400_GRAD0_opsz24.svg" />
-        	</span>
+				</span>
+				<span>
+					<img alt="accessibility icon of a person" src="<?php echo $CLIENT_ROOT ?>/images/accessibility_FILL0_wght400_GRAD0_opsz24.svg" />
+				</span>
+	        </span>
 		</button>
 		<a href="https://www.nsf.gov" target="_blank" aria-label="Visit National Science Foundation website">
 			<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/logo_nsf.gif" alt="Logo for the National Science Foundation" />

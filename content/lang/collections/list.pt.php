@@ -40,18 +40,16 @@ $LANG['FULL_DETAILS'] = 'Detalhes completos do registro';
 $LANG['NO_RESULTS'] = 'Sua consulta não retornou nenhum resultado. Por favor modifique seus parâmetros de consulta';
 $LANG['PERHAPS_LOOKING_FOR'] = 'Talvez você estivesse procurando por:';
 $LANG['MAP_DOWNLOAD'] = 'Baixar dados de coordenadas';
-$LANG['GOOGLE_MAP_HEADER'] = 'Google Mapa';
-$LANG['GOOGLE_MAP_DISPLAY'] = 'Exibir coordenadas no Google Map';
-$LANG['GOOGLE_MAP_DESCRIPTION'] = 'Google Maps é um serviço de mapeamento da web fornecido pelo Google 
-        que apresenta um mapa que os usuários podem deslocar (arrastando o mouse) e ampliar (usando a roda do mouse). 
-        Os pontos de coleta são exibidos como marcadores coloridos que, quando clicados, exibem as informações 
-        completas daquela coleta. Quando múltiplas espécies são consultadas (separadas por ponto e vírgula), 
-        marcadores coloridos diferentes indicam cada espécie individual.';
-$LANG['GOOGLE_EARTH_HEADER'] = 'Google Earth (KML)';
-$LANG['GOOGLE_EARTH_DESCRIPTION'] = 'Isso cria um arquivo KML que pode ser aberto no aplicativo de mapeamento do 
-        Google Earth. Observe que você deve ter o <a href="http://earth.google.com/" target="_blank"> Google Earth</a> 
-        instalado em seu computador para usar esta opção.';
-$LANG['GOOGLE_EARTH_EXTRA'] = 'Adicionar Campos Extras';
+$LANG['MAP_HEADER'] = 'Mapa';
+$LANG['MAP_DISPLAY'] = 'Exibir coordenadas no mapa';
+$LANG['MAP_DESCRIPTION'] = 'O recurso de mapas fornece aos usuários um mapa 
+        interativo que pode ser panorâmico (arrastando o mouse) e zoom (usando a roda do mouse). 
+        Os pontos de coleta são exibidos como marcadores coloridos que, quando clicados, exibem as 
+        informações completas daquela coleta. Quando múltiplas espécies são consultadas (separadas 
+        por ponto e vírgula), marcadores coloridos diferentes indicam cada espécie individual.';
+$LANG['KML_HEADER'] = 'KML';
+$LANG['KML_DESCRIPTION'] = 'Isso cria um arquivo KML para uso no Google Earth ou qualquer outro aplicativo que use arquivos KML.';
+$LANG['KML_EXTRA'] = 'Adicionar Campos Extras';
 $LANG['CREATE_KML'] = 'Criar KML';
 $LANG['DATASET_MANAGEMENT'] = 'Gerenciamento de Conjunto de Dados';
 $LANG['IMG_DATASET_MANAGEMENT'] = 'Gerenciamento de Conjunto de Dados Aberto';

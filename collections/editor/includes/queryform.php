@@ -63,7 +63,7 @@ for($x=1; $x<9; $x++){
 	if(array_key_exists('cop'.$x, $qryArr) && preg_match('/^\({1,3}$/', $qryArr['cop'.$x])) $customArr[$x]['openparen'] = $qryArr['cop'.$x];
 	if(array_key_exists('cf'.$x, $qryArr) && array_key_exists($qryArr['cf'.$x], $customFieldArr)) $customArr[$x]['field'] = $qryArr['cf'.$x];
 	if(array_key_exists('ct'.$x, $qryArr) && in_array($qryArr['ct'.$x], $customTermArr)) $customArr[$x]['term'] = $qryArr['ct'.$x];
-	if(array_key_exists('cv'.$x, $qryArr)) $customArr[$x]['value'] = htmlspecialchars($qryArr['cv'.$x], HTML_SPECIAL_CHARS_FLAGS);
+	if(array_key_exists('cv'.$x, $qryArr)) $customArr[$x]['value'] = htmlspecialchars($qryArr['cv'.$x], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 	if(array_key_exists('ccp'.$x, $qryArr) && preg_match('/^\){1,3}$/', $qryArr['ccp'.$x])) $customArr[$x]['closeparen'] = $qryArr['ccp'.$x];
 }
 
@@ -99,7 +99,12 @@ else{
 					</div>
 
 					<button type="button" class="icon-button float-right" onclick="copyQueryLink(event)" title="<?php echo $LANG['COPY_SEARCH']; ?>" aria-label="<?php echo $LANG['COPY_LINK']; ?>">
-						<img src="../../images/link.png" style="width:1.2em;margin-right:5px;" alt="Link icon. Copies the search terms as a link." /><?php echo $LANG['COPY_LINK']; ?>
+						<span style="display:flex; align-content: center;">
+								<svg alt="Link icon. Copies the search terms as a link." style="width:1.2em;margin-right:5px;" xmlns="http://www.w3.org/2000/svg" fill="var(--light-color)" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg>
+								<span style="align-content: center;">
+									<?php echo $LANG['COPY_LINK']; ?>
+								</span>
+						</span>
 					</button>
 				</div>
 				<?php
@@ -257,7 +262,7 @@ else{
 						?>
 					</select>
 					<a href="#" onclick="toggleCustomDiv(<?php echo ($x+1); ?>);return false;">
-						<img class="editimg" src="../../images/editplus.png" style="width:1.2em;" alt="<?php echo htmlspecialchars($LANG['IMG_EDIT'], HTML_SPECIAL_CHARS_FLAGS); ?>" />
+						<img class="editimg" src="../../images/editplus.png" style="width:1.2em;" alt="<?php echo htmlspecialchars($LANG['IMG_EDIT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" />
 					</a>
 				</div>
 				<?php
@@ -290,7 +295,7 @@ else{
 						if($qDateLastModified) $qryStr .= '&datelastmodified='.$qDateLastModified;
 						if($qryStr){
 							?>
-							<a href="../reports/labelmanager.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars($qryStr, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank">
+							<a href="../reports/labelmanager.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . htmlspecialchars($qryStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank">
 								<button type="button" class="icon-button" title="<?php echo $LANG['GO_LABEL_PRINT']; ?>">
 									<img src="../../images/list.png" style="width:1.3em" />
 								</button>

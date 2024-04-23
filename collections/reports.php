@@ -15,6 +15,7 @@ $rm = new ReportsManager();
     </style>
 </head>
 <body>
+    <h1 class="page-heading">Reports</h1>
 <h3>New identifications to the species level (by determiner)</h3>
 <table>
     <thead><tr><th>Full Name</th><th>Number of Determinations</th></tr></thead>

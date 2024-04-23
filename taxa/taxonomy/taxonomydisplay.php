@@ -4,7 +4,7 @@ include_once($SERVER_ROOT . '/classes/TaxonomyDisplayManager.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.'.$LANG_TAG.'.php'))
 	include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.en.php');
+	else include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.en.php');
 
 $target = $_REQUEST['target'] ?? '';
 $displayAuthor = !empty($_REQUEST['displayauthor']) ? 1: 0;
@@ -81,9 +81,10 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 		<a href="taxonomydisplay.php"><b><?= $LANG['TAX_TREE_VIEWER'] ?></b></a>
 	</div>
 	<div id="innertext">
+		<h1 class="page-heading">Central Taxonomic Thesaurus</h1>
 		<?php
 		if($statusStr){
-			$statusStr = str_replace(';', '<br/>', htmlspecialchars($statusStr, HTML_SPECIAL_CHARS_FLAGS));
+			$statusStr = str_replace(';', '<br/>', htmlspecialchars($statusStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE));
 			?>
 			<hr/>
 			<div style="color:<?php echo (stripos($statusStr,'SUCCESS') !== false?'green':'red'); ?>;margin:15px;">
@@ -105,7 +106,6 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 		<div>
 			<?php
 			$taxMetaArr = $taxonDisplayObj->getTaxonomyMeta();
-			echo '<h2>'.$taxMetaArr['name'].'</h2>';
 			if(count($taxMetaArr) > 1){
 				//echo '<div id="taxDetailDiv" style="margin-top:15px;margin-left:5px;float:left;font-size:80%"><a href="#" onclick="displayTaxomonyMeta()">(more details)</a></div>';
 				echo '<div id="taxMetaDiv" style="margin:10px 15px 35px 15px;display:none;clear:both;">';
@@ -162,7 +162,7 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 		</div>
 		<?php
 		if(!$taxonDisplayObj->displayTaxonomyHierarchy()){
-			echo '<div style="margin:20px;">No taxa found matching your search</div>';
+			echo '<div style="margin:20px;">' . $LANG['NO_TAXA_FOUND'] . '</div>';
 		}
 		?>
 	</div>

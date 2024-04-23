@@ -81,4 +81,8 @@ $LANG['ADDCHECKLIST'] = 'Crear Lista Nueva';
 $LANG['DELETETHISU'] = 'Borrar este usuario';
 $LANG['ERROR_LOWER'] = 'Error';
 
+$LANG['DROP_ICON_FOR_EDITOR'] = 'Soltar Icono para el Editor';
+$LANG['DROP_ICON_FOR_DELETE_PROJECT'] = 'Soltar Icono para Dliminar Proyecto';
+$LANG['SUBMIT_BUTTON'] = 'Botón Enviar';
+
 ?>

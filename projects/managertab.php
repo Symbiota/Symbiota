@@ -19,7 +19,7 @@ $projManager->setPid($pid);
 	if($managerArr){
 		foreach($managerArr as $uid => $userName){
 			echo '<li title="'.$uid.'">';
-			echo $userName.' <a href="index.php?tabindex=1&emode=1&projsubmit=deluid&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&uid=' . htmlspecialchars($uid, HTML_SPECIAL_CHARS_FLAGS) . '" title="Remove manager"><img src="../images/del.png" style="width:1.3em;" /></a>';
+			echo $userName.' <a href="index.php?tabindex=1&emode=1&projsubmit=deluid&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&uid=' . htmlspecialchars($uid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" title="Remove manager"><img src="../images/del.png" style="width:1.3em;" /></a>';
 			echo '</li>';
 		}
 	}

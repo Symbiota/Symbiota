@@ -43,9 +43,14 @@ if($SYMB_UID){
 			.scientificnamediv {clear:both;font-size:10pt;}
 			.subfielddiv {font-size:8pt;margin-top:5px;clear:both;}
 			.lfooter {clear:both;width:100%;text-align:center;font:bold 9pt arial,sans-serif;margin-top:10px;}
+			.screen-reader-only {
+				position: absolute;
+				left: -10000px;
+			}
 		</style>
 	</head>
 	<body style="background-color:#ffffff;">
+		<h1 class="page-heading screen-reader-only">Default Annotations</h1>
 		<div>
 			<?php
 			if($isEditor){

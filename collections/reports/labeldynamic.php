@@ -69,6 +69,10 @@ if($SYMB_UID){
 		<style type="text/css">
 			.row { display: flex; flex-wrap: nowrap; margin-left: auto; margin-right: auto;}
 			.label { page-break-before: auto; page-break-inside: avoid; }
+			.screen-reader-only {
+				position: absolute;
+				left: -10000px;
+			}
 			<?php
 			if($columnCount == 'packet'){
 				?>
@@ -113,14 +117,14 @@ if($SYMB_UID){
 			if(substr($cssPath,0,1) == '/' && !file_exists($cssPath)){
 				if(file_exists($SERVER_ROOT.$targetLabelFormatArr['defaultCss'])) $cssPath = $CLIENT_ROOT.$targetLabelFormatArr['defaultCss'];
 			}
-			echo '<link href="' . htmlspecialchars($cssPath, HTML_SPECIAL_CHARS_FLAGS) . '" type="text/css" rel="stylesheet" />'."\n";
+			echo '<link href="' . htmlspecialchars($cssPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" type="text/css" rel="stylesheet" />'."\n";
 		}
 		if(isset($targetLabelFormatArr['customCss']) && $targetLabelFormatArr['customCss']){
 			$cssPath = $targetLabelFormatArr['customCss'];
 			if(substr($cssPath,0,1) == '/' && !file_exists($cssPath)){
 				if(file_exists($SERVER_ROOT.$targetLabelFormatArr['customCss'])) $cssPath = $CLIENT_ROOT.$targetLabelFormatArr['customCss'];
 			}
-			echo '<link href="' . htmlspecialchars($cssPath, HTML_SPECIAL_CHARS_FLAGS) . '" type="text/css" rel="stylesheet" />'."\n";
+			echo '<link href="' . htmlspecialchars($cssPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" type="text/css" rel="stylesheet" />'."\n";
 		}
 		?>
 		<style>
@@ -130,6 +134,7 @@ if($SYMB_UID){
 		</style>
 	</head>
 	<body style="background-color:#ffffff;">
+		<h1 class="page-heading screen-reader-only">Labels</h1>
 		<?php
 		echo '<div class="body'.(isset($targetLabelFormatArr['pageSize'])?' '.$targetLabelFormatArr['pageSize']:'').'">'  ;
 		if($targetLabelFormatArr && $isEditor){

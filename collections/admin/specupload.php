@@ -100,19 +100,19 @@ elseif($uploadType == $DIRECTUPLOAD || $uploadType == $STOREDPROCEDURE || $uploa
 	</script>
 </head>
 <body>
-<?php
+	<?php
 $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath">
-	<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
-	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars((isset($LANG['COL_MGMNT'])?$LANG['COL_MGMNT']:'Collection Management Panel'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
-	<a href="specuploadmanagement.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars((isset($LANG['LIST_UPLOAD'])?$LANG['LIST_UPLOAD']:'List of Upload Profiles'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+	<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo htmlspecialchars((isset($LANG['COL_MGMNT'])?$LANG['COL_MGMNT']:'Collection Management Panel'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+	<a href="specuploadmanagement.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars((isset($LANG['LIST_UPLOAD'])?$LANG['LIST_UPLOAD']:'List of Upload Profiles'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 	<b><?php echo (isset($LANG['SPEC_UPLOAD'])?$LANG['SPEC_UPLOAD']:'Specimen Uploader'); ?></b>
 </div>
 <div id="innertext">
+	<h1 class="page-heading"><?= $LANG['UP_MODULE']; ?></h1>
 	<?php
-	echo '<h1>'.(isset($LANG['UP_MODULE'])?$LANG['UP_MODULE']:'Data Upload Module').'</h1>';
 	if($isEditor && $collid){
 		//Grab collection name and last upload date and display for all
 		echo '<div style="font-weight:bold;font-size:130%;">'.$duManager->getCollInfo('name').'</div>';
@@ -126,7 +126,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						<?php
 						$pathLabel = (isset($LANG['IPT_URL'])?$LANG['IPT_URL']:'IPT Resource URL');
 						if($uploadType != $IPTUPLOAD){
-							$pathLabel = (isset($LANG['RES_URL'])?$LANG['RES_URL']:'Resource Path or URL');
+							$pathLabel = (isset($LANG['RESOURCE_URL'])?$LANG['RESOURCE_URL']:'Resource Path or URL');
 							?>
 							<div>
 								<input name="uploadfile" type="file" onchange="verifyFileSize(this)" aria-label="<?php echo (isset($LANG['UPLOAD']) ? $LANG['UPLOAD'] : 'Upload File') ?>" />
@@ -145,7 +145,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						if($uploadType != $IPTUPLOAD){
 							?>
 							<div class="ulfnoptions">
-								<a href="#" onclick="toggle('ulfnoptions');return false;"><?php echo htmlspecialchars((isset($LANG['DISPLAY_OPS'])?$LANG['DISPLAY_OPS']:'Display Additional Options'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
+								<a href="#" onclick="toggle('ulfnoptions');return false;"><?php echo htmlspecialchars((isset($LANG['DISPLAY_OPS'])?$LANG['DISPLAY_OPS']:'Display Additional Options'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 							</div>
 							<?php
 						}

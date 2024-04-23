@@ -259,7 +259,8 @@ class OccurrenceIndividual extends Manager{
 
 	private function setImages(){
 		global $imageDomain;
-		$sql = 'SELECT i.imgid, i.url, i.thumbnailurl, i.originalurl, i.sourceurl, i.notes, i.caption, CONCAT_WS(" ",u.firstname,u.lastname) as innerPhotographer, i.photographer
+		$sql = 'SELECT i.imgid, i.url, i.thumbnailurl, i.originalurl, i.sourceurl, i.notes, i.caption, 
+      CONCAT_WS(" ",u.firstname,u.lastname) as innerPhotographer, i.photographer, i.rights, i.accessRights, i.copyright
 			FROM images i LEFT JOIN users u ON i.photographeruid = u.uid
 			WHERE (i.occid = ?) ORDER BY i.sortoccurrence,i.sortsequence';
 		if($stmt = $this->conn->prepare($sql)){
@@ -284,7 +285,10 @@ class OccurrenceIndividual extends Manager{
 					$this->occArr['imgs'][$imgId]['sourceurl'] = $row->sourceurl;
 					$this->occArr['imgs'][$imgId]['caption'] = $row->caption;
 					$this->occArr['imgs'][$imgId]['photographer'] = $row->photographer;
-					if($row->innerPhotographer) $this->occArr['imgs'][$imgId]['photographer'] = $row->innerPhotographer;
+					$this->occArr['imgs'][$imgId]['rights'] = $row->rights;
+					$this->occArr['imgs'][$imgId]['accessrights'] = $row->accessRights;
+					$this->occArr['imgs'][$imgId]['copyright'] = $row->copyright;
+          if($row->innerPhotographer) $this->occArr['imgs'][$imgId]['photographer'] = $row->innerPhotographer;
 				}
 				$rs->free();
 			}
@@ -383,7 +387,7 @@ class OccurrenceIndividual extends Manager{
 
 	private function setOccurrenceRelationships(){
 		$relOccidArr = array();
-		$sql = 'SELECT assocID, occid, occidAssociate, relationship, subType, resourceUrl, identifier, dynamicProperties, verbatimSciname, tid
+		$sql = 'SELECT assocID, occid, occidAssociate, relationship, subType, resourceUrl, objectID, dynamicProperties, verbatimSciname, tid
 			FROM omoccurassociations
 			WHERE occid = ? OR occidAssociate = ?';
 		if($stmt = $this->conn->prepare($sql)){
@@ -402,21 +406,22 @@ class OccurrenceIndividual extends Manager{
 					$this->occArr['relation'][$r->assocID]['subtype'] = $r->subType;
 					$this->occArr['relation'][$r->assocID]['occidassoc'] = $relOccid;
 					$this->occArr['relation'][$r->assocID]['resourceurl'] = $r->resourceUrl;
-					$this->occArr['relation'][$r->assocID]['identifier'] = $r->identifier;
+					$this->occArr['relation'][$r->assocID]['objectID'] = $r->objectID;
 					$this->occArr['relation'][$r->assocID]['sciname'] = $r->verbatimSciname;
-					if(!$r->identifier && $r->resourceUrl) $this->occArr['relation'][$r->assocID]['identifier'] = 'unknown ID';
 				}
 				$rs->free();
 			}
 		}
 		if($relOccidArr){
-			$sql = 'SELECT o.occid, CONCAT_WS("-",IFNULL(o.institutioncode,c.institutioncode),IFNULL(o.collectioncode,c.collectioncode)) as collcode, IFNULL(o.catalogNumber,o.otherCatalogNumbers) as catnum
+			$sql = 'SELECT o.occid, o.sciname,
+				CONCAT_WS("-",IFNULL(o.institutioncode, c.institutioncode), IFNULL(o.collectioncode, c.collectioncode)) as collcode, IFNULL(o.catalogNumber, o.otherCatalogNumbers) as catnum
 				FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid
 				WHERE o.occid IN(' . implode(',', array_keys($relOccidArr)) . ')';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				foreach($relOccidArr[$r->occid] as $targetAssocID){
-					$this->occArr['relation'][$targetAssocID]['identifier'] = $r->collcode . ':' . $r->catnum;
+					$this->occArr['relation'][$targetAssocID]['objectID'] = $r->collcode . ':' . $r->catnum;
+					$this->occArr['relation'][$targetAssocID]['sciname'] = $r->sciname;
 				}
 			}
 			$rs->free();

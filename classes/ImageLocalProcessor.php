@@ -1006,7 +1006,7 @@ class ImageLocalProcessor {
 					'VALUES('.$this->activeCollid.',"'.$catalogNumber.'","unprocessed","'.date('Y-m-d H:i:s').'")';
 				if($this->conn->query($sql2)){
 					$occid = $this->conn->insert_id;
-					$this->logOrEcho('Specimen record does not exist; new empty specimen record created and assigned an "unprocessed" status (occid = <a href="../individual/index.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '</a>) ',1);
+					$this->logOrEcho('Specimen record does not exist; new empty specimen record created and assigned an "unprocessed" status (occid = <a href="../individual/index.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>) ',1);
 				}
 				else $this->logOrEcho("ERROR creating new occurrence record: ".$this->conn->error,1);
 			}
@@ -1712,7 +1712,7 @@ class ImageLocalProcessor {
 				'Content-Transfer-Encoding: 8bit'.$eol.
 				'Images in the attached file have been processed and are ready to be uploaded into your collection. '.
 				'This can be done using the image loading tools located in the Processing Tools (see link below).'.
-				'<a href="' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '</a>'.
+				'<a href="' . htmlspecialchars($url, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($url, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>'.
 				'<br/>If you have problems with the new password, contact the System Administrator ';
 
 			//Add attachment

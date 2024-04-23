@@ -189,7 +189,10 @@ class UtilitiesFileImport extends Manager {
 		}
 		else{
 			$record = fgets($this->fileHandler);
-			if($record) $recordArr = explode($this->delimiter, $record);
+			if($record){
+				$recordArr = explode($this->delimiter, $record);
+				foreach($recordArr as $k => $v) $recordArr[$k] = trim($v);
+			}
 		}
 		return $recordArr;
 	}

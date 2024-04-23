@@ -281,7 +281,7 @@ class TaxonomyDisplayManager extends Manager{
 				}
 				if(!$this->displayFullTree){
 					if(($this->targetRankId < 140 && $taxonRankId == 140) || !$this->targetStr && $taxonRankId == 10){
-						echo ' <a href="taxonomydisplay.php?target=' . htmlspecialchars($sciName, HTML_SPECIAL_CHARS_FLAGS) . '">';
+						echo ' <a href="taxonomydisplay.php?target=' . htmlspecialchars($sciName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 						echo '<img class="icon-image" src="../../images/tochild.png" alt="Go to child" >';
 						echo '</a>';
 					}

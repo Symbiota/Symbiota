@@ -51,7 +51,7 @@ class ImInventories extends Manager{
 			$result->free();
 			if($retArr){
 				if($retArr['type'] == 'excludespp'){
-					$sql = 'SELECT clid FROM fmchklstchildren WHERE clidchild = '.$this->clid;
+					$sql = 'SELECT clid FROM fmchklstchildren WHERE clid != clidchild AND clidchild = ' . $this->clid;
 					$rs = $this->conn->query($sql);
 					while($r = $rs->fetch_object()){
 						$retArr['excludeparent'] = $r->clid;
@@ -149,13 +149,15 @@ class ImInventories extends Manager{
 					}
 				}
 				elseif($inputArr['type'] == 'excludespp' && is_numeric($inputArr['excludeparent'])){
-					$sql = 'INSERT IGNORE INTO fmchklstchildren(clid, clidchild) VALUES(?, ?)';
-					if($stmt = $this->conn->prepare($sql)){
-						$stmt->bind_param('ii', $inputArr['excludeparent'], $this->clid);
-						if(!$stmt->execute()){
-							$this->errorMessage = 'Error updating parent checklist for exclusion species list: '.$this->conn->error;
+					if($inputArr['excludeparent'] != $this->clid){
+						$sql = 'INSERT IGNORE INTO fmchklstchildren(clid, clidchild) VALUES(?, ?)';
+						if($stmt = $this->conn->prepare($sql)){
+							$stmt->bind_param('ii', $inputArr['excludeparent'], $this->clid);
+							if(!$stmt->execute()){
+								$this->errorMessage = 'Error updating parent checklist for exclusion species list: ' . $this->conn->error;
+							}
+							$stmt->close();
 						}
-						$stmt->close();
 					}
 				}
 			}
@@ -372,17 +374,19 @@ class ImInventories extends Manager{
 	//Child-Parent checklist functions
 	public function insertChildChecklist($clidChild, $modifiedUid){
 		$status = false;
-		$sql = 'INSERT INTO fmchklstchildren(clid, clidchild, modifiedUid) VALUES(?,?,?) ';
-		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('iii', $this->clid, $clidChild, $modifiedUid);
-			if($stmt->execute()){
-				if($stmt->affected_rows && !$stmt->error){
-					$status = true;
+		if($this->clid != $clidChild){
+			$sql = 'INSERT INTO fmchklstchildren(clid, clidchild, modifiedUid) VALUES(?,?,?) ';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('iii', $this->clid, $clidChild, $modifiedUid);
+				if($stmt->execute()){
+					if($stmt->affected_rows && !$stmt->error){
+						$status = true;
+					}
+					else $this->errorMessage = 'ERROR inserting child checklist record (2): ' . $stmt->error;
 				}
-				else $this->errorMessage = 'ERROR inserting child checklist record (2): '.$stmt->error;
+				else $this->errorMessage = 'ERROR inserting child checklist record (1): ' . $stmt->error;
+				$stmt->close();
 			}
-			else $this->errorMessage = 'ERROR inserting child checklist record (1): '.$stmt->error;
-			$stmt->close();
 		}
 		return $status;
 	}
@@ -560,7 +564,7 @@ class ImInventories extends Manager{
 			$sql = 'DELETE FROM fmprojects WHERE pid = '.$projID;
 			if(!$this->conn->query($sql)){
 				$status = false;
-				$this->errorStr = 'ERROR deleting inventory project: '.$this->conn->error;
+				$this->errorMessage = 'ERROR deleting inventory project: '.$this->conn->error;
 			}
 		}
 		return $status;
@@ -663,11 +667,11 @@ class ImInventories extends Manager{
 			if($postField){
 				$value = trim($inputArr[$postField]);
 				if(!$value) $value = null;
-				$this->parameterArr[$field] = $value;
+				$this->parameterArr[$field] = htmlspecialchars($value, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 				$this->typeStr .= $type;
 			}
 		}
-		if(isset($inputArr['clid']) && $inputArr['clid'] && !$this->clid) $this->clid = $inputArr['clid'];
+		if(isset($inputArr['clid']) && $inputArr['clid'] && !$this->clid) $this->clid = filter_var($inputArr['clid'], FILTER_SANITIZE_NUMBER_INT);
 	}
 
 	//Setter and getter functions

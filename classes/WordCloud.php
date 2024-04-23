@@ -194,8 +194,9 @@ class WordCloud{
 		$htmlStr .= '
 	</head>
 	<body>
-			<!-- This is inner text! -->
-			<div id="innertext">';
+	<!-- This is inner text! -->
+	<div id="innertext">
+		<h1 class="page-heading">Word Cloud</h1>';
 		$htmlStr .= $cloudStr;
 		$htmlStr .= '		</div>
 	</body>

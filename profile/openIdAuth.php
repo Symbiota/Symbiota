@@ -30,7 +30,7 @@ $oidc->authenticate();
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-    <title>Example OpenID Connect Client Use</title>
+    <title>OpenID Connect Client</title>
     <style>
         body {
             font-family: 'Lucida Grande', Verdana, Arial, sans-serif;
@@ -38,7 +38,7 @@ $oidc->authenticate();
     </style>
 </head>
 <body>
-
+    <h1 class="page-heading">OpenID Connect Client</h1>
     <div>
         Hello <?php echo $name; ?>
     </div>

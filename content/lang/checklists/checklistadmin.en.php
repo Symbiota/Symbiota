@@ -80,4 +80,10 @@ $LANG['SAVE_EDITS'] = 'Save Edits';
 $LANG['ADDCHECKLIST'] = 'Create Checklist';
 $LANG['DELETETHISU'] = 'Delete this user';
 $LANG['ERROR_LOWER'] = 'Error';
+
+$LANG['DROP_ICON_FOR_EDITOR'] = 'Drop Icon for Editor';
+$LANG['DROP_ICON_FOR_DELETE_PROJECT'] = 'Drop Icon for Delete Project';
+$LANG['SUBMIT_BUTTON'] = 'Submit Button';
+
+
 ?>
