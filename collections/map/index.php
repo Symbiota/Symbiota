@@ -325,12 +325,6 @@ if(isset($_REQUEST['llpoint'])) {
 			$('#loadingOverlay').popup('hide');
 		}
 
-		function openIndPU(occId){
-			newWindow = window.open('../individual/index.php?occid='+occId,'indspec' + occId,'scrollbars=1,toolbar=0,resizable=1,width=1100,height=800,left=20,top=20');
-			if (newWindow.opener == null) newWindow.opener = self;
-			setTimeout(function () { newWindow.focus(); }, 0.5);
-		}
-
 		function buildPanels(cross_portal_enabled) {
          const cross_portal_results = document.getElementById("cross_portal_results");
          const cross_portal_list = document.getElementById("cross_portal_list");
