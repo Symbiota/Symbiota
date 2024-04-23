@@ -9,12 +9,6 @@ $catID = array_key_exists('catid', $_REQUEST) ? filter_var($_REQUEST['catid'], F
 if(!$catID && isset($DEFAULTCATID) && $DEFAULTCATID) $catID = $DEFAULTCATID;
 $collIdInitial = array_key_exists('collid', $_REQUEST) ? $_REQUEST['collid'] : 0; // can't sanitize here as int because this could be a comma-delimited set of collIds
 $collIds = explode(",",$collIdInitial);
-function cleanIntOut($num){
-	return filter_var($num, FILTER_SANITIZE_NUMBER_INT);
-}
-
-$sanitizedCollIds = array_map('cleanIntOut',$collIds);
-$collId = implode(',', $sanitizedCollIds);
 
 $cPartentTaxon = isset($_REQUEST['taxon']) ? htmlspecialchars($_REQUEST['taxon'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $cCountry = isset($_REQUEST['country']) ? htmlspecialchars($_REQUEST['country'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
@@ -22,11 +16,16 @@ $days = array_key_exists('days', $_REQUEST) ? filter_var($_REQUEST['days'], FILT
 $months = array_key_exists('months', $_REQUEST)? filter_var($_REQUEST['months'], FILTER_SANITIZE_NUMBER_INT) : 12;
 $action = array_key_exists('submitaction', $_REQUEST) ? htmlspecialchars($_REQUEST['submitaction'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 
+$collManager = new OccurrenceCollectionProfile();
+
+$sanitizedCollIds = array_map(array($collManager, 'cleanOutInt'),$collIds);
+var_dump($sanitizedCollIds);
+$collId = implode(',', $sanitizedCollIds);
+
 //Variable sanitation
 if(!preg_match('/^[0-9,]+$/',$catID)) $catID = 0;
 if(!preg_match('/^[0-9,]+$/',$collId)) $collId = 0;
 
-$collManager = new OccurrenceCollectionProfile();
 
 //if($collId) $collManager->setCollectionId($collId);
 $collList = $collManager->getStatCollectionList($catID);
