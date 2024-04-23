@@ -11,32 +11,6 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
 ?>
 <div class="header-wrapper">
 	<header>
-		<style>
-			.accessibility-option-button {
-				width: fit-content;
-				padding: 10px;
-				background-color: var(--link-color);
-				color: var(--body-bg-color);
-			}
-
-			.accessibility-option-button:hover {
-				cursor: pointer;
-				background-color: var(--medium-color);
-			}
-			.accessibility-dialog{
-				position: fixed;
-				box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-				padding: 20px;
-				border-radius: 5px;
-			}
-			.button__item-container{
-				display: flex;
-				justify-content: center;
-			}
-			.button__item-container__item-text{
-				margin-top: 0.5rem;
-			}
-		</style>
 		<div class="top-wrapper">
 			<a class="screen-reader-only" href="#end-nav"><?= $LANG['SKIP_NAV'] ?></a>
 			<nav class="top-login" aria-label="horizontal-nav">

@@ -317,7 +317,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 							</div>
 							<div class="formField-div">
 								<label for="importType"><?= $LANG['IMPORT_TYPE'] ?>: </label>
-								<select id="importType" name="importType" type="file" onchange="importTypeChanged(this)" aria-label="<?php echo $LANG['IMPORT_TYPE'] ?>">
+								<select id="importType" name="importType" onchange="importTypeChanged(this)" aria-label="<?php echo $LANG['IMPORT_TYPE'] ?>">
 									<option value="">-------------------</option>
 									<option value="1"><?= $LANG['ASSOCIATIONS'] ?></option>
 									<?php if($IS_ADMIN) echo '<option value="2">'.$LANG['DETERMINATIONS'].'</option>'; ?>
