@@ -105,6 +105,7 @@ else{
 			</style>
 		</head>
 		<body style="background-color:#ffffff;">
+			<h1 class="page-heading screen-reader-only">Mailing Label</h1>
 			<div>
 				<table style="width:8in;">
 					<tr>

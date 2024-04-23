@@ -14,7 +14,7 @@ $zoomInt = array_key_exists('zoom',$_REQUEST)?$_REQUEST['zoom']:'';
 
 //Sanitation
 if(!is_numeric($tid)) $tid = 0;
-$taxa = htmlspecialchars($taxa, HTML_SPECIAL_CHARS_FLAGS);
+$taxa = htmlspecialchars($taxa, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 if($interface && $interface != 'key') $interface = 'checklist';
 
 //$dynClManager = new DynamicChecklistManager();
@@ -251,13 +251,14 @@ if(!$zoomInt){
 		else{
 			?>
 			<div class='navpath'>
-				<a href='../index.php'><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;
+				<a href='../index.php'><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;
 				<b><?php echo $LANG['DYNAMIC_MAP']; ?></b>
 			</div>
 			<?php
 		}
 		?>
 		<div class="flex-form" id='innertext'>
+         <h1 class="page-heading">Dynamic Map</h1>
 			<div style="margin-left: 2rem; margin-bottom: 1rem;">
 				<?php echo $LANG['CAPTURE_COORDS']; ?>
 				<span id="moredetails" style="cursor:pointer;color:blue;font-size:80%;" onclick="this.style.display='none';document.getElementById('moreinfo').style.display='inline';document.getElementById('lessdetails').style.display='inline';">

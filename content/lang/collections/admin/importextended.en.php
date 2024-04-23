@@ -55,5 +55,7 @@ $LANG['ASSOC_ADDED'] = 'Association added';
 $LANG['ERROR_ADDING'] = 'ERROR loading Occurrence Association';
 $LANG['MAT_SAMPLE_ADDED'] = 'Material Sample added';
 $LANG['DETERMINATION_ADDED'] = 'Determination added';
+$LANG['CHOOSE_FILE'] = 'Choose a file';
+$LANG['ASSOCIATION_TYPE'] = 'Association Type';
 $LANG['HOME'] = 'Home';
 ?>

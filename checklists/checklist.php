@@ -13,7 +13,7 @@ $dynClid = array_key_exists('dynclid', $_REQUEST) ? filter_var($_REQUEST['dyncli
 $pageNumber = array_key_exists('pagenumber', $_REQUEST) ? filter_var($_REQUEST['pagenumber'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $pid = array_key_exists('pid', $_REQUEST) ? filter_var($_REQUEST['pid'], FILTER_SANITIZE_NUMBER_INT) : '';
 $thesFilter = array_key_exists('thesfilter', $_REQUEST) ? filter_var($_REQUEST['thesfilter'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$taxonFilter = array_key_exists('taxonfilter', $_REQUEST) ? $_REQUEST['taxonfilter'] : '';
+$taxonFilter = array_key_exists('taxonfilter', $_REQUEST) ? htmlspecialchars($_REQUEST['taxonfilter'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $showAuthors = array_key_exists('showauthors', $_REQUEST) ? filter_var($_REQUEST['showauthors'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $showSynonyms = array_key_exists('showsynonyms', $_REQUEST) ? filter_var($_REQUEST['showsynonyms'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $showCommon = array_key_exists('showcommon', $_REQUEST) ? filter_var($_REQUEST['showcommon'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -40,7 +40,13 @@ $clArray = $clManager->getClMetaData();
 $activateKey = $KEY_MOD_IS_ACTIVE;
 $showDetails = 0;
 if(isset($clArray['defaultSettings'])){
-	$defaultArr = json_decode($clArray['defaultSettings'], true);
+	try {
+		$defaultArr = json_decode($clArray['defaultSettings'], true, $depth=512, JSON_THROW_ON_ERROR);
+	}
+	catch (Exception $e){
+		$statusStr = $e->getMessage();
+		$defaultArr = [];
+	}
 	$showDetails = $defaultArr['ddetails'];
 	if(!$defaultOverride){
 		if(array_key_exists('dsynonyms',$defaultArr)) $showSynonyms = $defaultArr['dsynonyms'];
@@ -55,7 +61,7 @@ if(isset($clArray['defaultSettings'])){
 	if(isset($defaultArr['activatekey'])) $activateKey = $defaultArr['activatekey'];
 }
 if($pid) $clManager->setProj($pid);
-elseif(array_key_exists('proj',$_REQUEST) && $_REQUEST['proj']) $pid = $clManager->setProj($_REQUEST['proj']);
+elseif(array_key_exists('proj',$_REQUEST) && $_REQUEST['proj']) $pid = $clManager->setProj(filter_var($_REQUEST['proj'], FILTER_SANITIZE_NUMBER_INT));
 if($thesFilter) $clManager->setThesFilter($thesFilter);
 if($taxonFilter) $clManager->setTaxonFilter($taxonFilter);
 $clManager->setLanguage($LANG_TAG);
@@ -97,7 +103,7 @@ if($isEditor && array_key_exists('formsubmit',$_POST)){
 $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 
 //Output variable sanitation
-$taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
+$taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -184,39 +190,10 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 				<?php
 			}
 			?>
-			<div id="title-div">
+			<h1 class="page-heading">
 				<?php echo $clManager->getClName(); ?>
-			</div>
+			</h1>
 			<?php
-			if($activateKey){
-				?>
-				<div class="printoff" style="float:left;padding:5px;">
-					<a href="../ident/key.php?clid=<?php echo $clid . "&pid=" . $pid . "&dynclid=" . $dynClid; ?>&taxon=All+Species">
-						<img src='../images/key.png' style="width:1.3em" aria-label="<?php echo $LANG['IMG_OPEN_KEY']; ?>" alt="<?php echo $LANG['IMG_OPEN_KEY']; ?>" title='<?php echo $LANG['OPEN_KEY']; ?>' />
-					</a>
-				</div>
-				<?php
-			}
-			if($taxaArray){
-				?>
-				<div class="printoff" style="padding:5px;">
-					<ul id="game-dropdown">
-						<li>
-							<span onmouseover="mopen('m1')" onmouseout="mclosetime()" onfocus="mopen('m1')" onblur="mclosetime()" tabindex="0">
-								<img src="../images/games/games.png" style="width:2em" alt="<?php echo $LANG['GAMES']; ?>"/>
-							</span>
-							<div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
-								<?php
-								$varStr = "?clid=".$clid."&dynclid=".$dynClid."&listname=".urlencode($clManager->getClName()).'&taxonfilter='.$taxonFilter.'&showcommon='.$showCommon.($clManager->getThesFilter()?'&thesfilter='.$clManager->getThesFilter():'');
-								?>
-								<a href="../games/namegame.php<?php echo $varStr; ?>" onfocus="mcancelclosetime('m1')" onblur="mclosetime()"><?php echo $LANG['NAMEGAME'];?></a>
-								<a href="../games/flashcards.php<?php echo $varStr; ?>" onfocus="mcancelclosetime('m1')" onblur="mclosetime()"><?php echo $LANG['FLASH'];?></a>
-							</div>
-						</li>
-					</ul>
-				</div>
-				<?php
-			}
 			echo '<div style="clear:both;"></div>';
 			$argStr = '&clid='.$clid.'&dynclid='.$dynClid.($showCommon?'&showcommon=1':'').($showSynonyms?'&showsynonyms=1':'').($showVouchers?'&showvouchers=1':'');
 			$argStr .= ($showAuthors?'&showauthors=1':'').($clManager->getThesFilter()?'&thesfilter='.$clManager->getThesFilter():'');
@@ -326,11 +303,45 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 				<div class="printoff" id="cloptiondiv">
 					<div style="">
 						<form id="optionform" name="optionform" action="checklist.php" method="post">
-						<span class="skip-link">
+						<span class="screen-reader-only">
 							<a href = "#img-container"><?php echo $LANG['SKIP_LINK']; ?></a>
 						</span>
 							<fieldset style="background-color:white;padding-bottom:10px;">
 								<legend><b><?php echo $LANG['OPTIONS'];?></b></legend>
+								<?php
+									if($activateKey){
+										?>
+										<div class="printoff" style="padding:5px;">
+											<a href="../ident/key.php?clid=<?php echo $clid . "&pid=" . $pid . "&dynclid=" . $dynClid; ?>&taxon=All+Species">
+												<div style="display: flex; align-items: center;">
+														Open Symbiota Key
+													<img src='../images/key.png' style="margin-left: 0.5rem; width:1.3em;" aria-label="<?php echo $LANG['IMG_OPEN_KEY']; ?>" alt="<?php echo $LANG['IMG_OPEN_KEY']; ?>" title='<?php echo $LANG['OPEN_KEY']; ?>' />
+												</div>
+											</a>
+										</div>
+										<?php
+									}
+									if($taxaArray){
+										?>
+										<div class="printoff" style="padding:5px; margin-bottom: 2.5rem;">
+											<ul id="game-dropdown">
+												<li>
+													<span style="display: flex; align-items: center;" onmouseover="mopen('m1')" onmouseout="mclosetime()" onfocus="mopen('m1')" onblur="mclosetime()" tabindex="0">
+														<span style=" color: var(--link-color); font-size:1.2rem; text-decoration: underline;">Games</span> <img src="../images/games/games.png" style="width:2em" alt="<?php echo $LANG['GAMES']; ?>"/>
+													</span>
+													<div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
+														<?php
+														$varStr = "?clid=".$clid."&dynclid=".$dynClid."&listname=".urlencode($clManager->getClName()).'&taxonfilter='.$taxonFilter.'&showcommon='.$showCommon.($clManager->getThesFilter()?'&thesfilter='.$clManager->getThesFilter():'');
+														?>
+														<a href="../games/namegame.php<?php echo $varStr; ?>" onfocus="mcancelclosetime('m1')" onblur="mclosetime()"><?php echo $LANG['NAMEGAME'];?></a>
+														<a href="../games/flashcards.php<?php echo $varStr; ?>" onfocus="mcancelclosetime('m1')" onblur="mclosetime()"><?php echo $LANG['FLASH'];?></a>
+													</div>
+												</li>
+											</ul>
+										</div>
+										<?php
+									}
+								?>
 								<!-- Taxon Filter option -->
 								<div id="taxonfilterdiv">
 									<div>
@@ -350,9 +361,9 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 										</div>
 									</div>
 								</div>
-								<div>
+								<div class="top-breathing-room-rel">
 									<b> <label for="thesfilter"> <?php echo $LANG['FILTER']; ?>: </label></b><br/>
-									<select id='thesfilter' name='thesfilter'>
+									<select id='thesfilter' name='thesfilter' class="top-breathing-room-rel-sm bottom-breathing-room-rel-sm">
 										<option value='0'><?php echo $LANG['OGCHECK'];?></option>
 										<?php
 										$taxonAuthList = Array();
@@ -509,7 +520,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 										</a>
 									</div>
 									<div style="float:left;margin-left:15px" title="<?php echo $LANG['VOUCHERS_DYNAMIC_MAP']; ?>">
-										<a href="../collections/map/index.php?clid=<?php echo $clid . '&cltype=vouchers&taxonfilter=' . $taxonFilter; ?>&db=all&type=1&reset=1" target="_blank">
+										<a href="../collections/map/index.php?clid=<?php echo $clid . '&cltype=vouchers&taxonfilter=' . $taxonFilter; ?>&db=all&type=1&reset=1">
 											<img src="<?php echo $tnUrl; ?>" style="width:<?php echo $tnWidth; ?>px" alt="<?php echo $LANG['IMG_VOUCHERS_DYNAMIC_MAP']; ?>"/><br/>
 											<?php echo $LANG['DYNAMIC_MAP']; ?>
 										</a>
@@ -521,7 +532,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 								//Temporarily turned off
 								?>
 								<span style="margin:5px">
-									<a href="../collections/map/index.php?clid=<?php echo $clid . '&cltype=all&taxonfilter=' . $taxonFilter; ?>&db=all&type=1&reset=1" target="_blank">
+									<a href="../collections/map/index.php?clid=<?php echo $clid . '&cltype=all&taxonfilter=' . $taxonFilter; ?>&db=all&type=1&reset=1">
 										<?php
 										if($coordArr){
 											echo '<img src="../images/world.png" style="width:30px" title="' . $LANG['OCCUR_DYNAMIC_MAP'] . '" alt="' . $LANG['IMG_OCCUR_DYNAMIC_MAP'] . '" />';
@@ -548,28 +559,28 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 							<?php
 							echo '<b>' . $LANG['FAMILIES'] . '</b>: ';
 							echo $clManager->getFamilyCount();
-							echo '<span class="skip-link">.</span>';
+							echo '<span class="screen-reader-only">.</span>';
 							?>
 						</div>
 						<div style="margin:3px;">
 							<?php
 							echo '<b>' . $LANG['GENERA'] . '</b>: ';
 							echo $clManager->getGenusCount();
-							echo '<span class="skip-link">.</span>';
+							echo '<span class="screen-reader-only">.</span>';
 							?>
 						</div>
 						<div style="margin:3px;">
 							<?php
 							echo '<b>' . $LANG['SPECIES'] . '</b>: ';
 							echo $clManager->getSpeciesCount();
-							echo '<span class="skip-link">.</span>';
+							echo '<span class="screen-reader-only">.</span>';
 							?>
 						</div>
 						<div style="margin:3px;">
 							<?php
 							echo '<b>' . $LANG['TOTAL_TAXA'] . '</b>: ';
 							echo $clManager->getTaxaCount();
-							echo '<span class="skip-link">.</span>';
+							echo '<span class="screen-reader-only">.</span>';
 							?>
 						</div>
 					</div>
@@ -692,7 +703,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 									<i>
 										<a href="<?php echo strip_tags($famUrl); ?>" target="_blank" style="color:black;">
 											<?php echo strip_tags($group);?>
-										</a> 
+										</a>
 									</i>
 								</div>
 								<?php
@@ -762,7 +773,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 											$voucStr .= '<a href="#" id="morevouch-' . $tid . '" onclick="return toggleVoucherDiv(' . $tid . ');">' . $LANG['MORE'] . '...</a>'.
 												'<span id="voucdiv-'.$tid.'" style="display:none;">';
 										}
-										$voucStr .= '<a href="#" onclick="return openIndividualPopup(' . $occid . ')">' . htmlspecialchars($collName, HTML_SPECIAL_CHARS_FLAGS) . '</a>, ';
+										$voucStr .= '<a href="#" onclick="return openIndividualPopup(' . $occid . ')">' . htmlspecialchars($collName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>, ';
 										$voucCnt++;
 									}
 									if($voucCnt > 4 && !$printMode) $voucStr .= '</span><a href="#" id="lessvouch-' . $tid . '" style="display:none;" onclick="return toggleVoucherDiv(' . $tid . ');">...' . $LANG['LESS'] . '</a>';

@@ -55,5 +55,7 @@ $LANG['ASSOC_ADDED'] = 'Asociación agregada';
 $LANG['ERROR_ADDING'] = 'ERROR cargando Asociación de ocurrencia';
 $LANG['MAT_SAMPLE_ADDED'] = 'Muestra de material agregada';
 $LANG['DETERMINATION_ADDED'] = 'Determinación agregada';
+$LANG['CHOOSE_FILE'] = 'Elegir un archivo';
+$LANG['ASSOCIATION_TYPE'] = 'Tipo de asociación';
 $LANG['HOME'] = 'Inicio';
 ?>

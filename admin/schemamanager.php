@@ -98,7 +98,7 @@ $IS_ADMIN = true;
 						</div>
 						<div class="form-section">
 							<label for="username">Username: </label>
-							<input id="username" name="username" type="text" value="<?= htmlspecialchars($username, HTML_SPECIAL_CHARS_FLAGS) ?>" required autocomplete="off">
+							<input id="username" name="username" type="text" value="<?= htmlspecialchars($username, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" required autocomplete="off">
 						</div>
 						<div class="form-section">
 							<label for="password">Password: </label>

@@ -555,7 +555,7 @@ $imgloc = "../images/games/namegame/";
 		echo $games_namegameCrumbs;
 	}
 	else{
-		echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&dynclid=' . htmlspecialchars($dynClid, HTML_SPECIAL_CHARS_FLAGS) . '">';
+		echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&dynclid=' . htmlspecialchars($dynClid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 		echo $clName;
 		echo '</a> &gt;&gt; ';
 	}
@@ -564,7 +564,7 @@ $imgloc = "../images/games/namegame/";
 	?>
 	<div id="innertext">
 		<div style="width:100%;text-align:center;">
-			<h1><?php echo $DEFAULT_TITLE; ?> Name Game</h1>
+			<h1 class="page-heading screen-reader-only">Name Guessing Game</h1>
 		</div>
 		<div style="width:100%;text-align:center;margin:10px;">
 			I am thinking of a species found within the following checklist: <b><?php echo $clName;?></b><br/>

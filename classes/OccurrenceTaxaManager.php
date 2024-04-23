@@ -399,7 +399,7 @@ class OccurrenceTaxaManager {
 
 	public function cleanOutStr($str){
 		if(!is_string($str) && !is_numeric($str) && !is_bool($str)) $str = '';
-		return htmlspecialchars($str, HTML_SPECIAL_CHARS_FLAGS);
+		return htmlspecialchars($str, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 	}
 
 	protected function cleanInputStr($str){

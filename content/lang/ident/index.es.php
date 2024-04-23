@@ -11,7 +11,7 @@ $LANG['IDKEYLIST'] = 'Listado de claves de identificaci&oacute;n';
 $LANG['IDKEYS'] = 'Claves de Identificaci&oacute;n';
 $LANG['SHOWCHECK'] = 'Mostrar listados de verificaci&oacute;n en mapa';
 
-$LANG['CHAR_ADMIN'] = 'Administrador de personajes';
+$LANG['CHAR_ADMIN'] = 'Administración de Caracteres Taxonómicos';
 $LANG['ALERT_NAME'] = 'El nombre del personaje debe tener un valor';
 $LANG['ALERT_TYPE'] = 'Se debe seleccionar un tipo de carácter';
 $LANG['ALERT_SORT'] = 'La secuencia de clasificación debe ser sólo un valor numérico';

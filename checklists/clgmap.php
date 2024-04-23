@@ -9,7 +9,7 @@ $pid = $_REQUEST['pid'];
 $target = array_key_exists('target',$_REQUEST)?$_REQUEST['target']:'checklists';
 
 //Sanitation
-$pid = htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS);
+$pid = htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 if(!is_numeric($pid)) $pid = 0;
 
 $clManager = new ChecklistManager();
@@ -122,10 +122,14 @@ $clManager->setProj($pid);
 				margin: 0;
 				padding: 0;
 			}
+         .screen-reader-only {
+				position: absolute;
+				left: -10000px;
+			}
 		</style>
 	</head>
 	<body style="background-color:#ffffff;" onload="initialize()">
-      <h1 class="skip-link" style="margin: 0;"></h1>
+      <h1 class="page-heading screen-reader-only">Checklist Map</h1>
 		<div id="map_canvas"></div>
       <div 
         id="service-container" 

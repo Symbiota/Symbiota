@@ -311,9 +311,9 @@ $traitArr = $indManager->getTraitArr();
 </head>
 <body>
 	<header style="background-image: none;">
-		<a class="skip-link" href="#end-nav"><?php echo $LANG['SKIP_NAV'] ?></a>
-		<h1 class="smaller-header">
-			<?php echo (isset($LANG['FULL_RECORD_DETAILS']) ? $LANG['FULL_RECORD_DETAILS'] : 'Full Record Details'); ?>
+		<a class="screen-reader-only" href="#end-nav"><?php echo $LANG['SKIP_NAV'] ?></a>
+		<h1 class="page-heading">
+			<?php echo $LANG['FULL_RECORD_DETAILS']; ?>
 		</h1>
 		<div id="end-nav"></div>
 	</header>
@@ -1005,6 +1005,10 @@ $traitArr = $indManager->getTraitArr();
 										if($imgArr['url'] && substr($thumbUrl,0,7)!='process' && $imgArr['url'] != $imgArr['lgurl']) echo '<div><a href="' . $imgArr['url'] . '" target="_blank">' . $LANG['OPEN_MEDIUM'] . '</a></div>';
 										if($imgArr['lgurl']) echo '<div><a href="' . $imgArr['lgurl'] . '" target="_blank">' . $LANG['OPEN_LARGE'] . '</a></div>';
 										if($imgArr['sourceurl']) echo '<div><a href="' . $imgArr['sourceurl'] . '" target="_blank">' . $LANG['OPEN_SOURCE'] . '</a></div>';
+										//Use image rights settings as the default for current record
+										if($imgArr['rights']) $collMetadata['rights'] = $imgArr['rights'];
+										if($imgArr['copyright']) $collMetadata['rightsholder'] = $imgArr['copyright'];
+										if($imgArr['accessrights']) $collMetadata['accessrights'] = $imgArr['accessrights'];
 										?>
 									</div>
 									<?php
@@ -1015,13 +1019,11 @@ $traitArr = $indManager->getTraitArr();
 						}
 						//Rights
 						$rightsStr = $collMetadata['rights'];
-						if($collMetadata['rights']){
-							$rightsHeading = '';
-							if(isset($RIGHTS_TERMS)) $rightsHeading = array_search($rightsStr, $RIGHTS_TERMS);
-							if(substr($collMetadata['rights'],0,4) == 'http'){
-								$rightsStr = '<a href="' . $rightsStr . '" target="_blank">' . ($LANG['USAGE_RIGHTS']) . '</a>';
+						if($rightsStr){
+							if(substr($collMetadata['rights'], 0, 4) == 'http'){
+								$rightsStr = '<a href="' . $rightsStr . '" target="_blank">' . $rightsStr . '</a>';
 							}
-							$rightsStr = '<div style="margin-top:2px;">'.$rightsStr.'</div>';
+							$rightsStr = '<div style="margin-top:2px;">' . $rightsStr . '</div>';
 						}
 						if($collMetadata['rightsholder']){
 							$rightsStr .= '<div style="margin-top:2px;"><label>'.$LANG['RIGHTS_HOLDER'].':</label> '.$collMetadata['rightsholder'].'</div>';

@@ -5,7 +5,7 @@ Language: English
 ------------------
 */
 
-$LANG['OCC_ATTRIBUTE_BATCH_EDIT'] = 'Occurrence Attribute batch Editor';
+$LANG['OCC_ATTRIBUTE_BATCH_EDIT'] = 'Occurrence Attribute Batch Editor';
 $LANG['HOME'] = 'Home';
 $LANG['COLLECTION_MANAGEMENT'] = 'Collection Management';
 $LANG['FILTER'] = 'Filter';

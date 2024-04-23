@@ -11,7 +11,7 @@ $LANG['IDKEYLIST'] = 'Identification Key Listing';
 $LANG['IDKEYS'] = 'Identification Keys';
 $LANG['SHOWCHECK'] = 'Show checklists on map';
 
-$LANG['CHAR_ADMIN'] = 'Character Admin';
+$LANG['CHAR_ADMIN'] = 'Taxon Character Administration';
 $LANG['ALERT_NAME'] = 'Character name must have a value';
 $LANG['ALERT_TYPE'] = 'A character type must be selected';
 $LANG['ALERT_SORT'] = 'Sort Sequence must be a numeric value only';

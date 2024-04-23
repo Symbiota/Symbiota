@@ -46,6 +46,10 @@ else{
 		<style>
          body { padding:0; margin:0 }
 			html, body, #map_canvas { width:100%; height: 100%;}
+		.screen-reader-only {
+			position: absolute;
+			left: -10000px;
+		}
 		</style>
 		<script type="text/javascript">
 		var map;
@@ -165,6 +169,7 @@ else{
 		</script>
 	</head>
 	<body style="display:flex; flex-direction: column; background-color:#ffffff;" onload="initialize()">
+		<h1 class="page-heading screen-reader-only">Map Point Helper</h1>
 		<div style="padding:0.5rem; width: fit-content; height:fit-content">
 			<div>
 				<?php echo isset($LANG['MPR_INSTRUCTIONS']) ?$LANG['MPR_INSTRUCTIONS']: 'Click once to capture coordinates. Click on the submit button to transfer coordinates.' ?>
