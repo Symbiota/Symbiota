@@ -19,7 +19,6 @@ $action = array_key_exists('submitaction', $_REQUEST) ? htmlspecialchars($_REQUE
 $collManager = new OccurrenceCollectionProfile();
 
 $sanitizedCollIds = array_map(array($collManager, 'cleanOutInt'),$collIds);
-var_dump($sanitizedCollIds);
 $collId = implode(',', $sanitizedCollIds);
 
 //Variable sanitation
