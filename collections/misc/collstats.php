@@ -7,7 +7,15 @@ ini_set('max_execution_time', 1200); //1200 seconds = 20 minutes
 
 $catID = array_key_exists('catid', $_REQUEST) ? filter_var($_REQUEST['catid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 if(!$catID && isset($DEFAULTCATID) && $DEFAULTCATID) $catID = $DEFAULTCATID;
-$collId = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$collIdInitial = array_key_exists('collid', $_REQUEST) ? $_REQUEST['collid'] : 0; // can't sanitize here as int because this could be a comma-delimited set of collIds
+$collIds = explode(",",$collIdInitial);
+function cleanIntOut($num){
+	return filter_var($num, FILTER_SANITIZE_NUMBER_INT);
+}
+
+$sanitizedCollIds = array_map('cleanIntOut',$collIds);
+$collId = implode(',', $sanitizedCollIds);
+
 $cPartentTaxon = isset($_REQUEST['taxon']) ? htmlspecialchars($_REQUEST['taxon'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $cCountry = isset($_REQUEST['country']) ? htmlspecialchars($_REQUEST['country'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $days = array_key_exists('days', $_REQUEST) ? filter_var($_REQUEST['days'], FILTER_SANITIZE_NUMBER_INT) : 365;
@@ -33,6 +41,7 @@ $results = array();
 $collStr = '';
 if($collId){
 	$collIdArr = explode(",",$collId);
+
 	if($action == "Run Statistics" && (!$cPartentTaxon && !$cCountry)){
 		$resultsTemp = $collManager->runStatistics($collId);
 		$results['FamilyCount'] = $resultsTemp['familycnt'];
