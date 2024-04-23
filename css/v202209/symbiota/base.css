@@ -70,14 +70,13 @@ span[class="link"]:hover {
 button.icon-button {
   margin: 2px 5px;
   padding: 6px;
-  background-color: buttoncolor;
   border-width: 1px;
   border-style: outset;
   border-color: buttonborder;
 }
 
 button.icon-button:hover {
-  background: #e4f2fb;
+  background: var(--medium-color);
 }
 
 /* Species list component */
