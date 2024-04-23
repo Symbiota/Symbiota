@@ -18,8 +18,11 @@ $mapManager = new OccurrenceMapManager();
 $searchVar = $mapManager->getQueryTermStr();
 $recCnt = $mapManager->getRecordCnt();
 $occArr = array();
+$host = false;
 
-$host = ($SERVER_HOST === '127.0.0.1' || $SERVER_HOST === 'localhost'? "http://": "https://") . $SERVER_HOST . $CLIENT_ROOT;
+if(isset($SERVER_HOST)) {
+   $host = ($SERVER_HOST === '127.0.0.1' || $SERVER_HOST === 'localhost'? "http://": "https://") . $SERVER_HOST . $CLIENT_ROOT;
+}
 
 if(!$recLimit || $recCnt < $recLimit){
 	$occArr = $mapManager->getOccurrenceArr($pageNumber,$cntPerPage);
@@ -29,7 +32,7 @@ if(!$recLimit || $recCnt < $recLimit){
 	<div style="height:25px;margin-top:-5px;">
 		<div>
 			<div style="float:left;">
-            <form name="downloadForm" action="<?= $host ?>/collections/download/index.php" method="post" onsubmit="targetPopup(this)" style="float:left">
+            <form name="downloadForm" action="<?= $host ? $host . '/collections/download/index.php': '../download/index.php'?>" method="post" onsubmit="targetPopup(this)" style="float:left">
 					<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;cursor: pointer" title="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>">
 						<img src="../../images/dl2.png" style="width:1.3em" />
 					</button>
@@ -38,7 +41,7 @@ if(!$recLimit || $recCnt < $recLimit){
 					<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 					<input name="dltype" type="hidden" value="specimen" />
 				</form>
-				<form name="fullquerykmlform" action="kmlhandler.php" method="post" target="_blank" style="float:left;">
+				<form name="fullquerykmlform" action="<?= $host ? $host . '/collections/map/kmlhandler.php': 'kmlhandler.php' ?>" method="post" target="_blank" style="float:left;">
 					<input name="reclimit" type="hidden" value="<?php echo $recLimit; ?>" />
 					<input name="sourcepage" type="hidden" value="map" />
 					<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
@@ -54,7 +57,7 @@ if(!$recLimit || $recCnt < $recLimit){
 	<div>
 		<?php
 		$paginationStr = '<div><div style="clear:both;"><hr/></div><div style="margin:5px;">';
-      $href = $host . '/collections/map/occurrencelist.php?';
+      $href = $host? $host . '/collections/map/occurrencelist.php?':'occurrencelist.php?' ;
 		$lastPage = (int)($recCnt / $cntPerPage) + 1;
 		$startPage = ($pageNumber > 5?$pageNumber - 5:1);
 		$endPage = ($lastPage > $startPage + 10?$startPage + 10:$lastPage);
