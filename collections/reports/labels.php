@@ -135,7 +135,7 @@ else{
 								if($headerStr){
 									?>
 									<div class="lheader">
-										<?= htmlspecialchars($headerStr, HTML_SPECIAL_CHARS_FLAGS) ?>
+										<?= htmlspecialchars($headerStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>
 									</div>
 									<?php
 								}
@@ -347,7 +347,7 @@ else{
 									}
 								}
 								?>
-								<div class="lfooter"><?= htmlspecialchars($lFooter, HTML_SPECIAL_CHARS_FLAGS) ?></div>
+								<div class="lfooter"><?= htmlspecialchars($lFooter, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?></div>
 								<?php
 								if($useSymbBarcode){
 									?>

@@ -560,7 +560,7 @@ class ImInventories extends Manager{
 			$sql = 'DELETE FROM fmprojects WHERE pid = '.$projID;
 			if(!$this->conn->query($sql)){
 				$status = false;
-				$this->errorStr = 'ERROR deleting inventory project: '.$this->conn->error;
+				$this->errorMessage = 'ERROR deleting inventory project: '.$this->conn->error;
 			}
 		}
 		return $status;
@@ -663,11 +663,11 @@ class ImInventories extends Manager{
 			if($postField){
 				$value = trim($inputArr[$postField]);
 				if(!$value) $value = null;
-				$this->parameterArr[$field] = $value;
+				$this->parameterArr[$field] = htmlspecialchars($value, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 				$this->typeStr .= $type;
 			}
 		}
-		if(isset($inputArr['clid']) && $inputArr['clid'] && !$this->clid) $this->clid = $inputArr['clid'];
+		if(isset($inputArr['clid']) && $inputArr['clid'] && !$this->clid) $this->clid = filter_var($inputArr['clid'], FILTER_SANITIZE_NUMBER_INT);
 	}
 
 	//Setter and getter functions

@@ -12,8 +12,8 @@ ini_set('max_execution_time', 3600);
 
 $action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
 $taxAuthId = (array_key_exists('taxauthid', $_REQUEST) ? filter_var($_REQUEST['taxauthid'], FILTER_SANITIZE_NUMBER_INT) : 1);
-$kingdomName = (array_key_exists('kingdomname', $_REQUEST) ? htmlspecialchars($_REQUEST['kingdomname'], HTML_SPECIAL_CHARS_FLAGS) : '');
-$sciname = (array_key_exists('sciname', $_REQUEST) ? htmlspecialchars($_REQUEST['sciname'], HTML_SPECIAL_CHARS_FLAGS) : '');
+$kingdomName = (array_key_exists('kingdomname', $_REQUEST) ? htmlspecialchars($_REQUEST['kingdomname'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '');
+$sciname = (array_key_exists('sciname', $_REQUEST) ? htmlspecialchars($_REQUEST['sciname'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '');
 $targetApi = $_REQUEST['targetapi'] ?? '';
 $rankLimit = (array_key_exists('ranklimit', $_REQUEST) ? filter_var($_REQUEST['ranklimit'], FILTER_SANITIZE_NUMBER_INT):'');
 
@@ -181,10 +181,10 @@ $displayLeftMenu = (isset($taxa_admin_taxaloaderMenu)?$taxa_admin_taxaloaderMenu
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath">
-	<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
-	<a href="taxonomydisplay.php"><?php echo htmlspecialchars($LANG['BASIC_TREE_VIEWER'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
-	<a href="taxonomydynamicdisplay.php"><?php echo htmlspecialchars($LANG['DYN_TREE_VIEWER'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
-	<a href="batchloader.php"><b><?php echo htmlspecialchars($LANG['TAX_BATCH_LOADER'], HTML_SPECIAL_CHARS_FLAGS); ?></b></a>
+	<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+	<a href="taxonomydisplay.php"><?php echo htmlspecialchars($LANG['BASIC_TREE_VIEWER'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+	<a href="taxonomydynamicdisplay.php"><?php echo htmlspecialchars($LANG['DYN_TREE_VIEWER'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+	<a href="batchloader.php"><b><?php echo htmlspecialchars($LANG['TAX_BATCH_LOADER'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></b></a>
 </div>
 <?php
 if($isEditor){
@@ -194,7 +194,11 @@ if($isEditor){
 		<h1 class="page-heading"><?php echo $LANG['TAX_NAME_BATCH_LOADER']; ?></h1>
 		<div style="margin:30px;">
 			<div style="margin-bottom:30px;">
-				<?php echo $LANG['TAX_UPLOAD_EXPLAIN1'] . ' '; ?><a href="https://biokic.github.io/symbiota-docs/portal_manager/taxonomy/batch_load/"><?php echo htmlspecialchars($LANG['SYMB_DOC'], HTML_SPECIAL_CHARS_FLAGS); ?></a><?php echo ' ' . htmlspecialchars($LANG['TAX_UPLOAD_EXPLAIN2'], HTML_SPECIAL_CHARS_FLAGS); ?>
+				<?php echo $LANG['TAX_UPLOAD_EXPLAIN1'] . ' '; ?>
+				<a href="https://biokic.github.io/symbiota-docs/portal_manager/taxonomy/batch_load/">
+					<?php echo htmlspecialchars($LANG['SYMB_DOC'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>
+				</a>
+				<?php echo ' ' . htmlspecialchars($LANG['TAX_UPLOAD_EXPLAIN2'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>
 			</div>
 			<?php
 			if($action == 'mapInputFile' || $action == 'verifyMapping'){
@@ -365,7 +369,7 @@ if($isEditor){
 							<button type="submit" name="action" value="activateTaxa"><?php echo $LANG['ACTIVATE_TAXA']; ?></button>
 						</div>
 						<div style="float:right;margin:10px;">
-							<a href="batchloader.php?action=downloadcsv" target="_blank"><?php echo htmlspecialchars($LANG['DOWNLOAD_CSV'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
+							<a href="batchloader.php?action=downloadcsv" target="_blank"><?php echo htmlspecialchars($LANG['DOWNLOAD_CSV'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 						</div>
 					</fieldset>
 				</form>
@@ -375,7 +379,7 @@ if($isEditor){
 				echo '<ul>';
 				$loaderManager->transferUpload($taxAuthId);
 				echo "<li>" . $LANG['TAX_UPLOAD_SUCCESS'] . ".</li>";
-				echo "<li>" . $LANG['GO_TO'] . " <a href='taxonomydisplay.php'>" . htmlspecialchars($LANG['TAX_TREE_SEARCH'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($LANG['TO_QUERY'], HTML_SPECIAL_CHARS_FLAGS) . ".</li>";
+				echo "<li>" . $LANG['GO_TO'] . " <a href='taxonomydisplay.php'>" . htmlspecialchars($LANG['TAX_TREE_SEARCH'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ' . htmlspecialchars($LANG['TO_QUERY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ".</li>";
 				echo '</ul>';
 			}
 			elseif($action == 'loadApiNode'){
@@ -414,7 +418,7 @@ if($isEditor){
 								}
 								else{
 									echo '<div>' . $LANG['NAME'] . ': ' . $colArr['label'] . '</div>';
-									echo '<div>' . $LANG['DATSET_KEY'] . ': <a href="https://api.catalogueoflife.org/dataset/' . htmlspecialchars($colArr['datasetKey'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($colArr['datasetKey'], HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
+									echo '<div>' . $LANG['DATSET_KEY'] . ': <a href="https://api.catalogueoflife.org/dataset/' . htmlspecialchars($colArr['datasetKey'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($colArr['datasetKey'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></div>';
 									echo '<div>'.(isset($LANG['STATUS'])?$LANG['STATUS']:'Status').': '.$colArr['status'].'</div>';
 									if(isset($colArr['link'])) echo '<div>' . $LANG['SOURCE_LINK'] . ': <a href="' . $colArr['link'] . '" target="_blank">' . $colArr['link'] . '</a></div>';
 									$targetStatus = '<span style="color:orange">' . $LANG['NOT_PREF'] . '</span>';
@@ -423,7 +427,7 @@ if($isEditor){
 									if(isset($colArr['apiUrl'])) echo '<div>' . $LANG['API_URL'] . ': <a href="' . $colArr['apiUrl'] . '" target="_blank">' . $colArr['apiUrl'] . '</a></div>';
 									$harvestLink = 'batchloader.php?id=' . $cbNameUsageID . '&dskey=' . $colArr['datasetKey'] . '&targetapi=col&taxauthid=' . $_POST['taxauthid'].
 										'&kingdomname=' . $_POST['kingdomname'] . '&ranklimit=' . $_POST['ranklimit'] . '&sciname=' . $sciname . '&action=loadApiNode';
-									if($colArr['datasetKey']) echo '<div><b><a href="' . htmlspecialchars($harvestLink, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($LANG['TARGET_THIS_NODE'], HTML_SPECIAL_CHARS_FLAGS) . '</a></b></div>';
+									if($colArr['datasetKey']) echo '<div><b><a href="' . htmlspecialchars($harvestLink, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($LANG['TARGET_THIS_NODE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></b></div>';
 								}
 								echo '</div>';
 							}
@@ -443,7 +447,7 @@ if($isEditor){
 					echo '<ul>';
 					if($harvester->addWormsNode($_POST)){
 						echo '<li>' . $harvester->getTransactionCount() . ' ' . $LANG['TAXA_LOADED_SUCCESS'] . '</li>';
-						echo '<li>' . $LANG['GO_TO'] . ' <a href="taxonomydisplay.php">' . htmlspecialchars($LANG['TAX_TREE_SEARCH'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($LANG['TO_QUERY'], HTML_SPECIAL_CHARS_FLAGS) . '</li>';
+						echo '<li>' . $LANG['GO_TO'] . ' <a href="taxonomydisplay.php">' . htmlspecialchars($LANG['TAX_TREE_SEARCH'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ' . htmlspecialchars($LANG['TO_QUERY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</li>';
 					}
 					echo '</ul>';
 				}

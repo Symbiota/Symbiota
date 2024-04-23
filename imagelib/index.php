@@ -38,7 +38,7 @@ $imgManager->setSearchTerm($taxon);
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+		<a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 		<b><?php echo $LANG['IMG_LIBRARY']; ?></b>
 	</div>
 	<!-- This is inner text! -->
@@ -48,10 +48,10 @@ $imgManager->setSearchTerm($taxon);
 		</div>
 		<div class="sciname-search">
 			<div>
-				<a href='index.php?target=family'><?php echo htmlspecialchars($LANG['BROWSE_FAMILY'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
+				<a href='index.php?target=family'><?php echo htmlspecialchars($LANG['BROWSE_FAMILY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 			</div>
 			<div style='margin-top:10px;'>
-				<a href='index.php?target=genus'><?php echo htmlspecialchars($LANG['BROWSE_GENUS'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
+				<a href='index.php?target=genus'><?php echo htmlspecialchars($LANG['BROWSE_GENUS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 			</div>
 			<div style='margin-top:10px;'>
 				<?php echo $LANG['BROWSE_SPECIES']; ?>
@@ -75,13 +75,13 @@ $imgManager->setSearchTerm($taxon);
 			</div>
 			<div style="font-weight:bold;margin:15px 10px 0px 20px;">
 				<div>
-					<a href="../includes/usagepolicy.php#images"><?php echo htmlspecialchars($LANG['IMG_CP_POLICY'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
+					<a href="../includes/usagepolicy.php#images"><?php echo htmlspecialchars($LANG['IMG_CP_POLICY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 				</div>
 				<div>
-					<a href="contributors.php"><?php echo htmlspecialchars($LANG['IMG_CONTRIBUTORS'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
+					<a href="contributors.php"><?php echo htmlspecialchars($LANG['IMG_CONTRIBUTORS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 				</div>
 				<div>
-					<a href="search.php"><?php echo htmlspecialchars($LANG['IMG_SEARCH'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
+					<a href="search.php"><?php echo htmlspecialchars($LANG['IMG_SEARCH'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 				</div>
 			</div>
 		</div>
@@ -93,7 +93,7 @@ $imgManager->setSearchTerm($taxon);
 				if($taxaList){
 					echo '<h2>'.$LANG['SELECT_GENUS'].'</h2>';
 					foreach($taxaList as $value){
-						echo "<div style='margin-left:30px;'><a href='index.php?taxon=" . htmlspecialchars($value, HTML_SPECIAL_CHARS_FLAGS) . "'>" . htmlspecialchars($value, HTML_SPECIAL_CHARS_FLAGS) . "</a></div>";
+						echo "<div style='margin-left:30px;'><a href='index.php?taxon=" . htmlspecialchars($value, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'>" . htmlspecialchars($value, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a></div>";
 					}
 				}
 				else{
@@ -106,8 +106,8 @@ $imgManager->setSearchTerm($taxon);
 					echo '<h2>'.$LANG['SELECT_SPECIES'].'</h2>';
 					foreach($taxaList as $key => $value){
 						echo '<div style="margin-left:30px;font-style:italic;">';
-						echo '<a href="#" onclick="openTaxonPopup(' . htmlspecialchars($key, HTML_SPECIAL_CHARS_FLAGS) . ');return false;">' . htmlspecialchars($value, HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
-						echo '<a href="search.php?taxa=' . htmlspecialchars($key, HTML_SPECIAL_CHARS_FLAGS) . '&usethes=1&taxontype=2&submitaction=search" target="_blank"> <img src="../images/image.png" style="width:1.5em;" /></a> ';
+						echo '<a href="#" onclick="openTaxonPopup(' . htmlspecialchars($key, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ');return false;">' . htmlspecialchars($value, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ';
+						echo '<a href="search.php?taxa=' . htmlspecialchars($key, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&usethes=1&taxontype=2&submitaction=search" target="_blank"> <img src="../images/image.png" style="width:1.5em;" /></a> ';
 						echo '</div>';
 					}
 				}
@@ -120,7 +120,7 @@ $imgManager->setSearchTerm($taxon);
 				if($taxaList){
 					echo '<h2>'.$LANG['SELECT_FAMILY'].'.</h2>';
 					foreach($taxaList as $value){
-						echo '<div style="margin-left:30px;"><a href="index.php?target=genus&taxon=' . htmlspecialchars($value, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars(strtoupper($value), HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
+						echo '<div style="margin-left:30px;"><a href="index.php?target=genus&taxon=' . htmlspecialchars($value, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars(strtoupper($value), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></div>';
 					}
 				}
 				else{

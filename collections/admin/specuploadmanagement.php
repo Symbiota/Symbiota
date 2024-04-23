@@ -164,7 +164,7 @@ $duManager->readUploadParameters();
 		if($collections_admin_specuploadCrumbs){
 			?>
 			<div class="navpath">
-				<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME']) ? $LANG['HOME'] : 'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+				<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME']) ? $LANG['HOME'] : 'Home'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 				<?php echo $collections_admin_specuploadCrumbs; ?>
 				<b><?php echo (isset($LANG['SPEC_LOADER']) ? $LANG['SPEC_LOADER'] : 'Specimen Loader'); ?></b>
 			</div>
@@ -174,8 +174,8 @@ $duManager->readUploadParameters();
 	else{
 		?>
 		<div class="navpath">
-			<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME']) ? $LANG['HOME'] : 'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
-			<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars((isset($LANG['COL_MAN_PAN']) ? $LANG['COL_MAN_PAN'] : 'Collection Management Panel'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+			<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME']) ? $LANG['HOME'] : 'Home'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+			<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo htmlspecialchars((isset($LANG['COL_MAN_PAN']) ? $LANG['COL_MAN_PAN'] : 'Collection Management Panel'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 			<b><?php echo (isset($LANG['SPEC_LOADER']) ? $LANG['SPEC_LOADER'] : 'Specimen Loader'); ?></b>
 		</div>
 		<?php
@@ -204,7 +204,7 @@ $duManager->readUploadParameters();
 						<legend style="font-weight:bold;font-size:120%;"><?php echo (isset($LANG['UP_OPT']) ? $LANG['UP_OPT'] : 'Upload Options'); ?></legend>
 						<div style="float:right;">
 							<?php
-							echo '<a href="specuploadmanagement.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&action=addprofile"><img src="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/images/add.png" style="width:1.5em;border:0px;" title="' . htmlspecialchars((isset($LANG['ADD_PROF']) ? $LANG['ADD_PROF'] : 'Add a New Upload Profile'), HTML_SPECIAL_CHARS_FLAGS) . '" aria-label="' . htmlspecialchars((isset($LANG['ADD_PROF']) ? $LANG['ADD_PROF'] : 'Add a New Upload Profile'), HTML_SPECIAL_CHARS_FLAGS) . '" /></a>';
+							echo '<a href="specuploadmanagement.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&action=addprofile"><img src="' . htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/images/add.png" style="width:1.5em;border:0px;" title="' . htmlspecialchars((isset($LANG['ADD_PROF']) ? $LANG['ADD_PROF'] : 'Add a New Upload Profile'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" aria-label="' . htmlspecialchars((isset($LANG['ADD_PROF']) ? $LANG['ADD_PROF'] : 'Add a New Upload Profile'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" /></a>';
 							?>
 						</div>
 						<?php
@@ -214,8 +214,8 @@ $duManager->readUploadParameters();
 						 		<div style="margin:10px;">
 									<input type="radio" id="uspid-<?php echo $id ?>" name="uspid-<?php echo $id ?>" value="<?php echo $id.'-'.$v['uploadtype'];?>" />
 									<label for="uspid-<?php echo $id ?>"> <?php echo $v['title']; ?> </label>
-									<a href="specuploadmanagement.php?action=editprofile&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&uspid=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS); ?>" title="<?php echo htmlspecialchars((isset($LANG['VIEW_PARS']) ? $LANG['VIEW_PARS'] : 'View/Edit Parameters'), HTML_SPECIAL_CHARS_FLAGS); ?>" aria-label="<?php echo htmlspecialchars((isset($LANG['VIEW_PARS']) ? $LANG['VIEW_PARS'] : 'View/Edit Parameters'), HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="../../images/edit.png" style="width:1.2em;" alt="<?php echo htmlspecialchars((isset($LANG['IMG_EDIT']) ? $LANG['IMG_EDIT'] : 'Edit Image'), HTML_SPECIAL_CHARS_FLAGS); ?>"/>
+									<a href="specuploadmanagement.php?action=editprofile&collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&uspid=' . htmlspecialchars($id, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" title="<?php echo htmlspecialchars((isset($LANG['VIEW_PARS']) ? $LANG['VIEW_PARS'] : 'View/Edit Parameters'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" aria-label="<?php echo htmlspecialchars((isset($LANG['VIEW_PARS']) ? $LANG['VIEW_PARS'] : 'View/Edit Parameters'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+										<img src="../../images/edit.png" style="width:1.2em;" alt="<?php echo htmlspecialchars((isset($LANG['IMG_EDIT']) ? $LANG['IMG_EDIT'] : 'Edit Image'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"/>
 									</a>
 									<input type="hidden" name="uploadtype" value="<?php echo $v['uploadtype']; ?>" />
 								</div>
@@ -232,7 +232,7 @@ $duManager->readUploadParameters();
 					 		?>
 							<div style="padding:30px;">
 								<?php echo (isset($LANG['NO_PROFS']) ? $LANG['NO_PROFS'] : 'There are no Upload Profiles associated with this collection'); ?>. <br />
-								<?php echo (isset($LANG['CLICK']) ? $LANG['CLICK'] : 'Click'); ?> <a href="specuploadmanagement.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS);?>&action=addprofile"><?php echo htmlspecialchars((isset($LANG['HERE']) ? $LANG['HERE'] : 'here'), HTML_SPECIAL_CHARS_FLAGS); ?></a> <?php echo htmlspecialchars((isset($LANG['TO_ADD']) ? $LANG['TO_ADD'] : 'to add a new profile'), HTML_SPECIAL_CHARS_FLAGS); ?>.
+								<?php echo (isset($LANG['CLICK']) ? $LANG['CLICK'] : 'Click'); ?> <a href="specuploadmanagement.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?>&action=addprofile"><?php echo htmlspecialchars((isset($LANG['HERE']) ? $LANG['HERE'] : 'here'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> <?php echo htmlspecialchars((isset($LANG['TO_ADD']) ? $LANG['TO_ADD'] : 'to add a new profile'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>.
 							</div>
 							<?php
 					 	}
@@ -249,7 +249,7 @@ $duManager->readUploadParameters();
 						<legend><b><?php echo (isset($LANG['UPLOAD_PARS']) ? $LANG['UPLOAD_PARS'] : 'Upload Parameters'); ?></b></legend>
 						<div style="float:right;">
 							<?php
-							echo '<a href="specuploadmanagement.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '">View All</a> ';
+							echo '<a href="specuploadmanagement.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">View All</a> ';
 							?>
 						</div>
 						<form name="parameterform" action="specuploadmanagement.php" method="post" onsubmit="return checkParameterForm(this)">

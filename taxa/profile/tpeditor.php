@@ -182,9 +182,9 @@ if($isEditor && $action){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+		<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 		<?php
-		if($tid) echo '<a href="../index.php?tid=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($LANG['TAX_PROF_PUBLIC_DISP'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
+		if($tid) echo '<a href="../index.php?tid=' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($LANG['TAX_PROF_PUBLIC_DISP'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
 		echo '<b>'.$LANG['TAX_PROF_EDITOR'].'</b>';
 		?>
 	</div>
@@ -194,19 +194,19 @@ if($isEditor && $action){
 		if($tEditor->getTid()){
 			if($isEditor){
 				if($tEditor->isForwarded()) echo '<div id="redirectedfrom">' . $LANG['REDIRECTED_FROM'] . ': <i>' . $tEditor->getSubmittedValue('sciname') . '</i></div>';
-				echo '<div id="taxonDiv"><a href="../index.php?taxon=' . htmlspecialchars($tEditor->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '">' . $LANG['VIEW_PUBLIC_TAXON'] . '</a> ';
-				if($tEditor->getRankId() > 140) echo "&nbsp;<a href='tpeditor.php?tid=" . htmlspecialchars($tEditor->getParentTid(), HTML_SPECIAL_CHARS_FLAGS) . "'><img src='../../images/toparent.png' style='width:1.3em' title='" . htmlspecialchars($LANG['GO_TO_PARENT'], HTML_SPECIAL_CHARS_FLAGS) . "' /></a>";
+				echo '<div id="taxonDiv"><a href="../index.php?taxon=' . htmlspecialchars($tEditor->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . $LANG['VIEW_PUBLIC_TAXON'] . '</a> ';
+				if($tEditor->getRankId() > 140) echo "&nbsp;<a href='tpeditor.php?tid=" . htmlspecialchars($tEditor->getParentTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'><img src='../../images/toparent.png' style='width:1.3em' title='" . htmlspecialchars($LANG['GO_TO_PARENT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "' /></a>";
 				echo "</div>\n";
 				if($tEditor->getFamily()) echo '<div id="familyDiv"><b>' . $LANG['FAMILY'] . ':</b> ' . $tEditor->getFamily() . '</div>' . "\n";
 				if($statusStr) echo '<div style="margin:15px;font-weight:bold;font-size:120%;color:' . (stripos($statusStr,'error') !== false?'red':'green') .';">' . $statusStr . '</div>';
 				?>
 				<div id="tabs" style="margin:10px;">
 					<ul>
-						<li><a href="#commontab"><span><?php echo htmlspecialchars($LANG['SYN_VERNAC'], HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
-						<li><a href="tpimageeditor.php?tid=<?php echo htmlspecialchars($tEditor->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '"><span>' . htmlspecialchars($LANG['IMAGES'], HTML_SPECIAL_CHARS_FLAGS) . '</span></a></li>'; ?>
-						<li><a href="tpimageeditor.php?tid=<?php echo htmlspecialchars($tEditor->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '&cat=imagequicksort'.'"><span>' . htmlspecialchars($LANG['IMAGE_SORT'], HTML_SPECIAL_CHARS_FLAGS) . '</span></a></li>'; ?>
-						<li><a href="tpimageeditor.php?tid=<?php echo htmlspecialchars($tEditor->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '&cat=imageadd'.'"><span>' . htmlspecialchars($LANG['ADD_IMAGE'], HTML_SPECIAL_CHARS_FLAGS) . '</span></a></li>'; ?>
-						<li><a href="tpdesceditor.php?tid=<?php echo htmlspecialchars($tEditor->getTid(), HTML_SPECIAL_CHARS_FLAGS) . '&action='.$action.'"><span>' . htmlspecialchars($LANG['DESCRIPTIONS'], HTML_SPECIAL_CHARS_FLAGS) . '</span></a></li>'; ?>
+						<li><a href="#commontab"><span><?php echo htmlspecialchars($LANG['SYN_VERNAC'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
+						<li><a href="tpimageeditor.php?tid=<?php echo htmlspecialchars($tEditor->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><span>' . htmlspecialchars($LANG['IMAGES'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</span></a></li>'; ?>
+						<li><a href="tpimageeditor.php?tid=<?php echo htmlspecialchars($tEditor->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&cat=imagequicksort'.'"><span>' . htmlspecialchars($LANG['IMAGE_SORT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</span></a></li>'; ?>
+						<li><a href="tpimageeditor.php?tid=<?php echo htmlspecialchars($tEditor->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&cat=imageadd'.'"><span>' . htmlspecialchars($LANG['ADD_IMAGE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</span></a></li>'; ?>
+						<li><a href="tpdesceditor.php?tid=<?php echo htmlspecialchars($tEditor->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&action='.$action.'"><span>' . htmlspecialchars($LANG['DESCRIPTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</span></a></li>'; ?>
 					</ul>
 					<div id="commontab">
 						<?php
@@ -391,7 +391,7 @@ if($isEditor && $action){
 							}
 							?>
 							<div style="margin:10px;">
-								*<?php echo $LANG['MOST_SYN_IN_TAX_THES'] . ' <a href="../../sitemap.php">' . htmlspecialchars($LANG['SITEMAP'], HTML_SPECIAL_CHARS_FLAGS) . '</a>).'; ?>
+								*<?php echo $LANG['MOST_SYN_IN_TAX_THES'] . ' <a href="../../sitemap.php">' . htmlspecialchars($LANG['SITEMAP'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>).'; ?>
 							</div>
 						</fieldset>
 					</div>
@@ -425,7 +425,7 @@ if($isEditor && $action){
 					$outStr .= $sciArr['author'].'</b> ';
 					if(isset($sciArr['rankname'])) $outStr .= '- ' . $sciArr['rankname'] . ' rank ';
 					if(isset($sciArr['kingdom'])) $outStr .= ' (' . $sciArr['kingdom'] . ')';
-					echo '<div><a href="tpeditor.php?tid=' . htmlspecialchars($tidKey, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($outStr, HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
+					echo '<div><a href="tpeditor.php?tid=' . htmlspecialchars($tidKey, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($outStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></div>';
 				}
 				echo '</div>';
 			}

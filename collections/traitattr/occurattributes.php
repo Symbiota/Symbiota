@@ -239,16 +239,16 @@ if ($traitID) {
 	if ($isEditor == 2) {
 		echo '<div style="float:right;margin:0px 3px;font-size:90%">';
 		if ($mode == 1) {
-			echo '<a href="occurattributes.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&mode=2&traitid=' . htmlspecialchars($traitID, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:1.3em" />' . $LANG['REVIEW'] . '</a>';
+			echo '<a href="occurattributes.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&mode=2&traitid=' . htmlspecialchars($traitID, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><img src="../../images/edit.png" style="width:1.3em" />' . $LANG['REVIEW'] . '</a>';
 		} else {
-			echo '<a href="occurattributes.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&mode=1&traitid=' . htmlspecialchars($traitID, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:1.3em" />' . $LANG['EDIT'] . '</a>';
+			echo '<a href="occurattributes.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&mode=1&traitid=' . htmlspecialchars($traitID, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><img src="../../images/edit.png" style="width:1.3em" />' . $LANG['EDIT'] . '</a>';
 		}
 		echo '</div>';
 	}
 	?>
 	<div class="navpath">
 		<a href="../../index.php"><?php echo $LANG['HOME'] ?></a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo $LANG['COLLECTION_MANAGEMENT'] ?></a> &gt;&gt;
+		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo $LANG['COLLECTION_MANAGEMENT'] ?></a> &gt;&gt;
 		<?php
 		if ($mode == 2) {
 			echo '<b>' . $LANG['ATTRIBUTE_REVIEWER'] . '</b>';
@@ -517,7 +517,7 @@ if ($traitID) {
 						if ($occid) {
 							if (!$catNum) $catNum = 'Specimen Details';
 							echo '<span style="margin-left:50px;">';
-							echo '<a href="../individual/index.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title= " ' . $LANG['SPECIMEN_DETAILS'] . ' ">' . htmlspecialchars($catNum, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+							echo '<a href="../individual/index.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" title= " ' . $LANG['SPECIMEN_DETAILS'] . ' ">' . htmlspecialchars($catNum, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 							echo '</span>';
 						}
 						$imgTotal = count($imgArr);

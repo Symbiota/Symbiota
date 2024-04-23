@@ -76,9 +76,9 @@ include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class='navpath'>
 	<a href="../../index.php"><?php echo $LANG['HOME'] ?></a> &gt;&gt;
-	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo $LANG['COLL_MANAGE'] ?></a> &gt;&gt;
-	<a href="igsnmapper.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo $LANG['IGSN_GUID_GEN'] ?></a> &gt;&gt;
-	<a href="igsnmanagement.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo $LANG['IGSN_MANAGE'] ?></a> &gt;&gt;
+	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo $LANG['COLL_MANAGE'] ?></a> &gt;&gt;
+	<a href="igsnmapper.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo $LANG['IGSN_GUID_GEN'] ?></a> &gt;&gt;
+	<a href="igsnmanagement.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo $LANG['IGSN_MANAGE'] ?></a> &gt;&gt;
 	<b><?php echo $LANG['IGSN_VERIFY'] ?></b>
 </div>
 <!-- This is inner text! -->
@@ -108,7 +108,7 @@ include($SERVER_ROOT.'/includes/header.php');
 			if(isset($sesarArr['collid'])){
 				echo '<li style="margin-left:25px">' . $LANG['REG_IGSN_BY_COLL'] . '</li>';
 				foreach($sesarArr['collid'] as $id => $collArr){
-					echo '<li style="margin-left:40px"><a href="../misc/collprofiles.php?collid=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($collArr['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a>: ' . htmlspecialchars($collArr['cnt'],) . ' ' . $LANG['IGSNS'] . '</li>';
+					echo '<li style="margin-left:40px"><a href="../misc/collprofiles.php?collid=' . htmlspecialchars($id, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($collArr['name'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>: ' . htmlspecialchars($collArr['cnt'],) . ' ' . $LANG['IGSNS'] . '</li>';
 				}
 			}
 			$missingCnt = 0;
@@ -120,9 +120,9 @@ include($SERVER_ROOT.'/includes/header.php');
 			if($missingCnt){
 				echo '<div id="missingGuidList" style="margin-left:40px;display:none">';
 				foreach($sesarArr['missing'] as $igsn => $missingArr){
-					echo '<li><a href="https://app.geosamples.org/sample/igsn/' . htmlspecialchars($igsn, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="' . $LANG['OPEN_IN_IGSN'] . '">' . htmlspecialchars($igsn, HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
+					echo '<li><a href="https://app.geosamples.org/sample/igsn/' . htmlspecialchars($igsn, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" title="' . $LANG['OPEN_IN_IGSN'] . '">' . htmlspecialchars($igsn, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ';
 					if(isset($missingArr['occid'])){
-						echo '=> <a href="../individual/index.php?occid=' . htmlspecialchars($missingArr['occid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="' . $LANG['OPEN_OCC'] . '">' . htmlspecialchars($missingArr['catNum'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
+						echo '=> <a href="../individual/index.php?occid=' . htmlspecialchars($missingArr['occid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" title="' . $LANG['OPEN_OCC'] . '">' . htmlspecialchars($missingArr['catNum'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ';
 						echo '<a href="#" onclick="syncIGSN(' . $missingArr['occid'] . ',\'' . $missingArr['catNum'] . '\',\'' . $igsn . '\');return false" title="' . $LANG['ADD_IGSN'] . '"><img src="../../images/link.png" style="width:13px"/></a>';
 						echo '<span id="syncDiv-'.$missingArr['occid'].'" style="margin-left:15px;color:green;"></span>';
 					}
@@ -148,7 +148,7 @@ include($SERVER_ROOT.'/includes/header.php');
 				if($missingCnt){
 					echo '<div id="unmappedGuidList" style="margin-left:30px;display:none">';
 					foreach($localArr as $occid => $guid){
-						echo '<li><a href="../individual/index.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($guid, HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
+						echo '<li><a href="../individual/index.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($guid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
 					}
 					echo '</div>';
 				}

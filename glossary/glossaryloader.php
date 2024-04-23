@@ -103,9 +103,9 @@ if(isset($glossary_admin_glossaryloaderCrumbs)){
 else{
 	?>
 	<div class="navpath">
-		<a href="../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
-		<a href="index.php"><b><?php echo htmlspecialchars((isset($LANG['GLOSS_MGMNT'])?$LANG['GLOSS_MGMNT']:'Glossary Management'), HTML_SPECIAL_CHARS_FLAGS); ?></b></a> &gt;&gt;
-		<b><?php echo htmlspecialchars((isset($LANG['BATCH_LOAD'])?$LANG['BATCH_LOAD']:'Glossary Batch Loader'), HTML_SPECIAL_CHARS_FLAGS); ?></b>
+		<a href="../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+		<a href="index.php"><b><?php echo htmlspecialchars((isset($LANG['GLOSS_MGMNT'])?$LANG['GLOSS_MGMNT']:'Glossary Management'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></b></a> &gt;&gt;
+		<b><?php echo htmlspecialchars((isset($LANG['BATCH_LOAD'])?$LANG['BATCH_LOAD']:'Glossary Batch Loader'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></b>
 	</div>
 	<?php
 }
@@ -221,7 +221,7 @@ if($isEditor){
 							<input type="submit" name="action" value="Activate Terms" />
 						</div>
 						<div style="float:right;margin:10px;">
-							<a href="glossaryloader.php?action=downloadcsv" ><?php echo htmlspecialchars((isset($LANG['DOWNLOAD_TERMS'])?$LANG['DOWNLOAD_TERMS']:'Download CSV Terms File'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
+							<a href="glossaryloader.php?action=downloadcsv" ><?php echo htmlspecialchars((isset($LANG['DOWNLOAD_TERMS'])?$LANG['DOWNLOAD_TERMS']:'Download CSV Terms File'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 						</div>
 					</fieldset>
 				</form>
@@ -231,7 +231,7 @@ if($isEditor){
 				echo '<ul>';
 				$loaderManager->transferUpload();
 				echo "<li>".(isset($LANG['TERM_SUCCESS'])?$LANG['TERM_SUCCESS']:'Terms upload appears to have been successful').".</li>";
-				echo "<li>".(isset($LANG['GO_TO'])?$LANG['GO_TO']:'Go to')." <a href='index.php'>" . htmlspecialchars((isset($LANG['G_SEARCH'])?$LANG['G_SEARCH']:'Glossary Search'), HTML_SPECIAL_CHARS_FLAGS) . "</a> " . htmlspecialchars((isset($LANG['TO_SEARCH'])?$LANG['TO_SEARCH']:'page to search for a loaded name.'), HTML_SPECIAL_CHARS_FLAGS) . "</li>";
+				echo "<li>".(isset($LANG['GO_TO'])?$LANG['GO_TO']:'Go to')." <a href='index.php'>" . htmlspecialchars((isset($LANG['G_SEARCH'])?$LANG['G_SEARCH']:'Glossary Search'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a> " . htmlspecialchars((isset($LANG['TO_SEARCH'])?$LANG['TO_SEARCH']:'page to search for a loaded name.'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</li>";
 				echo '</ul>';
 			}
 			else{

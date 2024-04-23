@@ -5,12 +5,12 @@ if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/edit
 else include_once($SERVER_ROOT.'/content/lang/collections/editor/dupesearch.en.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 
-$occidQuery = array_key_exists('occidquery',$_REQUEST)?$_REQUEST['occidquery']:'';
-$curOccid = (array_key_exists('curoccid',$_GET)?$_REQUEST['curoccid']:0);
-$collId = (array_key_exists('collid',$_GET)?$_GET['collid']:0);
+$occidQuery = array_key_exists('occidquery',$_REQUEST) ? htmlspecialchars($_REQUEST['occidquery'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
+$curOccid = (array_key_exists('curoccid',$_GET) ? filter_var($_REQUEST['curoccid'], FILTER_SANITIZE_NUMBER_INT) : 0);
+$collId = (array_key_exists('collid',$_GET) ? filter_var($_GET['collid'], FILTER_SANITIZE_NUMBER_INT) : 0);
 
-$occIdMerge = (array_key_exists('occidmerge',$_GET)?$_GET['occidmerge']:0);
-$submitAction = (array_key_exists('submitaction',$_GET)?$_GET['submitaction']:'');
+$occIdMerge = (array_key_exists('occidmerge',$_GET) ? filter_var($_GET['occidmerge'], FILTER_SANITIZE_NUMBER_INT) : 0);
+$submitAction = (array_key_exists('submitaction',$_GET) ? $_GET['submitaction'] : '');
 
 $dupeManager = new OccurrenceDuplicate();
 
@@ -197,14 +197,14 @@ if(!$IS_ADMIN){
 								<td>
 									<?php
 									if($curOccid){
-										echo '<a href="dupesearch.php?submitaction=mergerecs&curoccid=' .htmlspecialchars($curOccid, HTML_SPECIAL_CHARS_FLAGS) . '&occidmerge=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '" onclick="return confirm(\'Are you sure you want to merge these two records?\')">Merge</a>';
+										echo '<a href="dupesearch.php?submitaction=mergerecs&curoccid=' .htmlspecialchars($curOccid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&occidmerge=' . htmlspecialchars($id, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" onclick="return confirm(\'Are you sure you want to merge these two records?\')">Merge</a>';
 									}
 									?>
 								</td>
 								<td>
 									<?php
 									if($collId == $oArr['collid']){
-										echo '<a href="occurrenceeditor.php?occid=' . htmlspecialchars($occId, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" /></a>';
+										echo '<a href="occurrenceeditor.php?occid=' . htmlspecialchars($occId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><img src="../../images/edit.png" /></a>';
 									}
 									?>
 								</td>
@@ -229,7 +229,7 @@ if(!$IS_ADMIN){
 							//User can edit this specimen
 							?>
 							<div style="float:right;margin:10px;">
-								<a href="occurrenceeditor.php?occid=<?php echo htmlspecialchars($occId, HTML_SPECIAL_CHARS_FLAGS); ?>">
+								<a href="occurrenceeditor.php?occid=<?php echo htmlspecialchars($occId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
 									<img src="../../images/edit.png" style="width:1.2em" />
 								</a>
 							</div>
@@ -362,7 +362,7 @@ if(!$IS_ADMIN){
 							if($collId == $occObj['collid']){
 								?>
 								<div style="margin-left:30px;float:left;">
-									<a href="occurrenceeditor.php?occid=<?php echo htmlspecialchars($occId, HTML_SPECIAL_CHARS_FLAGS); ?>">
+									<a href="occurrenceeditor.php?occid=<?php echo htmlspecialchars($occId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
 										<?php echo $LANG['GO_TO_RECORD']; ?>
 									</a>
 								</div>
@@ -370,7 +370,7 @@ if(!$IS_ADMIN){
 								if($curOccid){
 									?>
 									<div style="margin-left:30px;float:left;">
-										<a href="dupesearch.php?submitaction=mergerecs&curoccid=<?php echo htmlspecialchars($curOccid, HTML_SPECIAL_CHARS_FLAGS) . '&occidmerge=' . htmlspecialchars($occId, HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="return confirm('<?php echo htmlspecialchars($LANG['SURE_MERGE'], HTML_SPECIAL_CHARS_FLAGS); ?>')">
+										<a href="dupesearch.php?submitaction=mergerecs&curoccid=<?php echo htmlspecialchars($curOccid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&occidmerge=' . htmlspecialchars($occId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" onclick="return confirm('<?php echo htmlspecialchars($LANG['SURE_MERGE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>')">
 											<?php echo $LANG['MERGE_RECORDS']; ?>
 										</a>
 									</div>

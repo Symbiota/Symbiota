@@ -55,10 +55,10 @@ if($isEditor){
 				echo '<div>Login name: '.($person->getUserName()?$person->getUserName():'not registered').'</div>';
 				?>
 				<div style="font-weight:bold;margin-top:10px;">
-					<div><a href="#" onclick="toggleEditingTools('profileeditdiv');return false;"><?php echo htmlspecialchars((isset($LANG['EDIT_PROFILE'])?$LANG['EDIT_PROFILE']:'Edit Profile'), HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
-					<div><a href="#" onclick="toggleEditingTools('pwdeditdiv');return false;"><?php echo htmlspecialchars((isset($LANG['CHANGE_PASSWORD'])?$LANG['CHANGE_PASSWORD']:'Change Password'), HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
-					<div><a href="#" onclick="toggleEditingTools('logineditdiv');return false;"><?php echo htmlspecialchars((isset($LANG['CHANGE_LOGIN'])?$LANG['CHANGE_LOGIN']:'Change Login'), HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
-					<div><a href="#" onclick="toggleEditingTools('managetokensdiv');return false;"><?php echo htmlspecialchars((isset($LANG['MANAGE_ACCESS'])?$LANG['MANAGE_ACCESS']:'Manage Access'), HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
+					<div><a href="#" onclick="toggleEditingTools('profileeditdiv');return false;"><?php echo htmlspecialchars((isset($LANG['EDIT_PROFILE'])?$LANG['EDIT_PROFILE']:'Edit Profile'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></div>
+					<div><a href="#" onclick="toggleEditingTools('pwdeditdiv');return false;"><?php echo htmlspecialchars((isset($LANG['CHANGE_PASSWORD'])?$LANG['CHANGE_PASSWORD']:'Change Password'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></div>
+					<div><a href="#" onclick="toggleEditingTools('logineditdiv');return false;"><?php echo htmlspecialchars((isset($LANG['CHANGE_LOGIN'])?$LANG['CHANGE_LOGIN']:'Change Login'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></div>
+					<div><a href="#" onclick="toggleEditingTools('managetokensdiv');return false;"><?php echo htmlspecialchars((isset($LANG['MANAGE_ACCESS'])?$LANG['MANAGE_ACCESS']:'Manage Access'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></div>
 				</div>
 			</div>
 		</div>
@@ -311,7 +311,7 @@ if($isEditor){
 						echo $utArr['sciname'];
 						if($utArr['geographicScope']) echo ' - '.$utArr['geographicScope'].' ';
 						if($utArr['notes']) echo ', '.$utArr['notes'];
-						echo ' <a href="viewprofile.php?action=delusertaxonomy&utid=' . htmlspecialchars($utid, HTML_SPECIAL_CHARS_FLAGS) . '&userid=' . htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../images/drop.png" style="width:1.2em;" /></a>';
+						echo ' <a href="viewprofile.php?action=delusertaxonomy&utid=' . htmlspecialchars($utid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&userid=' . htmlspecialchars($userId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><img src="../images/drop.png" style="width:1.2em;" /></a>';
 						echo '</li>';
 					}
 					echo '</ul>';

@@ -6,14 +6,14 @@ else include_once($SERVER_ROOT.'/content/lang/collections/misc/commentlist.en.ph
 
 if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../collections/misc/commentlist.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$collid = $_REQUEST['collid'];
-$start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
-$limit = array_key_exists('limit',$_REQUEST)?$_REQUEST['limit']:100;
-$tsStart = array_key_exists('tsstart',$_POST)?$_POST['tsstart']:'';
-$tsEnd = array_key_exists('tsend',$_POST)?$_POST['tsend']:'';
-$uid = array_key_exists('uid',$_POST)?$_POST['uid']:0;
-$rs = array_key_exists('rs',$_POST)?$_POST['rs']:1;
-$showAllGeneralObservations = (array_key_exists('showallgenobs',$_POST) && $_POST['showallgenobs'] == 1?true:false);
+$collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$start = array_key_exists('start',$_REQUEST) ? filter_var($_REQUEST['start'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$limit = array_key_exists('limit',$_REQUEST) ? filter_var($_REQUEST['limit'], FILTER_SANITIZE_NUMBER_INT) : 100;
+$tsStart = array_key_exists('tsstart',$_POST) ? htmlspecialchars($_POST['tsstart'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
+$tsEnd = array_key_exists('tsend',$_POST) ? htmlspecialchars($_POST['tsend'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) :'';
+$uid = array_key_exists('uid',$_POST) ? filter_var($_POST['uid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$rs = array_key_exists('rs',$_POST) ? filter_var($_POST['rs'], FILTER_SANITIZE_NUMBER_INT) : 1;
+$showAllGeneralObservations = (array_key_exists('showallgenobs', $_POST) && $_POST['showallgenobs'] === 1) ? true : false;
 
 //Sanition
 if(!is_numeric($collid)) $collid = 0;
@@ -49,30 +49,31 @@ if($SYMB_UID){
 $statusStr = '';
 $commentArr = null;
 if($isEditor){
-	$formSubmit = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
+	$formSubmit = array_key_exists('formsubmit',$_REQUEST) ? $_REQUEST['formsubmit'] : '';
 	if($formSubmit){
+		$comId = htmlspecialchars($_POST['comid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?? '';
 		if($formSubmit == 'Delete Comment'){
-			if(!$commentManager->deleteComment($_POST['comid'])){
+			if(!$commentManager->deleteComment($comId)){
 				$statusStr = $commentManager->getErrorStr();
 			}
 		}
 		elseif($formSubmit == 'Make Comment Public'){
-			if(!$commentManager->setReviewStatus($_POST['comid'],1)){
+			if(!$commentManager->setReviewStatus($comId,1)){
 				$statusStr = $commentManager->getErrorStr();
 			}
 		}
 		elseif($formSubmit == 'Hide Comment from Public'){
-			if(!$commentManager->setReviewStatus($_POST['comid'],2)){
+			if(!$commentManager->setReviewStatus($comId,2)){
 				$statusStr = $commentManager->getErrorStr();
 			}
 		}
 		elseif($formSubmit == 'Mark as Reviewed'){
-			if(!$commentManager->setReviewStatus($_POST['comid'],3)){
+			if(!$commentManager->setReviewStatus($comId,3)){
 				$statusStr = $commentManager->getErrorStr();
 			}
 		}
 		elseif($formSubmit == 'Mark as Unreviewed'){
-			if(!$commentManager->setReviewStatus($_POST['comid'],1)){
+			if(!$commentManager->setReviewStatus($comId,1)){
 				$statusStr = $commentManager->getErrorStr();
 			}
 		}
@@ -100,13 +101,13 @@ if($isEditor){
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div class="navpath">
-			<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+			<a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 			<?php
 			if($collMeta['colltype'] == 'General Observations'){
-				echo '<a href="../../profile/viewprofile.php?tabindex=1">' . htmlspecialchars($LANG['COL_MANAGE'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt;';
+				echo '<a href="../../profile/viewprofile.php?tabindex=1">' . htmlspecialchars($LANG['COL_MANAGE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt;';
 			}
 			else{
-				echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">Collection Management</a> &gt;&gt;';
+				echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">Collection Management</a> &gt;&gt;';
 			}
 			?>
 			<b><?php echo $LANG['OCC_COMMENTS_LISTING']; ?></b>
@@ -176,17 +177,25 @@ if($isEditor){
 						unset($commentArr['cnt']);
 					}
 					$urlVars = 'collid='.$collid.'&limit='.$limit.'&tsstart='.$tsStart.'&tsend='.$tsEnd.'&uid='.$uid.'&rs='.$rs;
-					$currentPage = ($start/$limit)+1;
-					$lastPage = ceil($recCnt / $limit);
-					$startPage = $currentPage > 4?$currentPage - 4:1;
+					try {
+						$currentPage = ($limit != 0) ? ($start / $limit) + 1 : 1;
+					} catch (Exception $e) {
+						$currentPage = 1;
+					}
+					try {
+						$currentPage = ($limit != 0) ? ($start / $limit) + 1 : 1;
+					} catch (Exception $e) {
+						$lastPage = 1;
+					}
+					$startPage = $currentPage > 4 ? $currentPage - 4 : 1;
 					$endPage = ($lastPage > $startPage + 9?$startPage + 9:$lastPage);
 					$hrefPrefix = 'commentlist.php?' . $urlVars . "&start=";
 					$pageBar .= "<span style='margin:5px;'>\n";
 					if($endPage > 1){
-					    $pageBar .= "<span style='margin-right:5px;'><a href='" . htmlspecialchars($hrefPrefix, HTML_SPECIAL_CHARS_FLAGS) . "0'>" . htmlspecialchars($LANG['FIRST_PAGE'], HTML_SPECIAL_CHARS_FLAGS) . "</a> &lt;&lt;</span>";
+					    $pageBar .= "<span style='margin-right:5px;'><a href='" . htmlspecialchars($hrefPrefix, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "0'>" . htmlspecialchars($LANG['FIRST_PAGE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a> &lt;&lt;</span>";
 						for($x = $startPage; $x <= $endPage; $x++){
 						    if($currentPage != $x){
-						        $pageBar .= "<span style='margin-right:3px;margin-right:3px;'><a href='" . htmlspecialchars($hrefPrefix, HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars((($x-1)*$limit), HTML_SPECIAL_CHARS_FLAGS) . "'>" . htmlspecialchars($x, HTML_SPECIAL_CHARS_FLAGS) . "</a></span>";
+						        $pageBar .= "<span style='margin-right:3px;margin-right:3px;'><a href='" . htmlspecialchars($hrefPrefix, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . htmlspecialchars((($x-1)*$limit), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'>" . htmlspecialchars($x, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a></span>";
 						    }
 						    else{
 						        $pageBar .= "<span style='margin-right:3px;margin-right:3px;font-weight:bold;'>".$x."</span>";
@@ -194,7 +203,7 @@ if($isEditor){
 						}
 					}
 					if($lastPage > $endPage){
-					    $pageBar .= "<span style='margin-left:5px;'>&gt;&gt; <a href='" . htmlspecialchars($hrefPrefix, HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars((($lastPage-1)*$limit), HTML_SPECIAL_CHARS_FLAGS) . "'>Last Page</a></span>";
+					    $pageBar .= "<span style='margin-left:5px;'>&gt;&gt; <a href='" . htmlspecialchars($hrefPrefix, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . htmlspecialchars((($lastPage-1)*$limit), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'>Last Page</a></span>";
 					}
 					$pageBar .= "</span>";
 					$endNum = $start + $limit;
@@ -211,7 +220,7 @@ if($isEditor){
 				if($commentArr){
 					foreach($commentArr as $comid => $cArr){
 						echo '<div style="margin:15px;">';
-						echo '<div style="margin-bottom:10px;"><a href="../individual/index.php?occid=' . htmlspecialchars($cArr['occid'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><b>' . strip_tags($cArr['occurstr']) . '</b></a></div>';
+						echo '<div style="margin-bottom:10px;"><a href="../individual/index.php?occid=' . htmlspecialchars($cArr['occid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" rel="noopener"><b>' . strip_tags($cArr['occurstr']) . '</b></a></div>';
 						echo '<div>';
 						echo '<b>'.$userArr[$cArr['uid']].'</b> <span style="color:gray;">'.$LANG['POSTED_ON'].' '.$cArr['ts'].'</span>';
 						if($cArr['rs'] == 2 || $cArr['rs'] === '0'){

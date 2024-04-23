@@ -16,9 +16,9 @@ $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 //Sanitation
 if(!is_numeric($relatedGlossId)) $relatedGlossId = 0;
 if(!is_numeric($taxaTid)) $taxaTid = 0;
-$taxaName = htmlspecialchars($taxaName, HTML_SPECIAL_CHARS_FLAGS);
-$relationship = htmlspecialchars($relationship, HTML_SPECIAL_CHARS_FLAGS);
-$relatedLanguage = htmlspecialchars($relatedLanguage, HTML_SPECIAL_CHARS_FLAGS);
+$taxaName = htmlspecialchars($taxaName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$relationship = htmlspecialchars($relationship, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$relatedLanguage = htmlspecialchars($relatedLanguage, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 
 if(!$relatedLanguage) $relatedLanguage = $DEFAULT_LANG;
 if($relatedLanguage == 'en') $relatedLanguage = 'English';

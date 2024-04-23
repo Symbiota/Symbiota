@@ -26,7 +26,7 @@ if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/prohibit.' . $LA
 				<?= $LANG['NO_PERMISSION'] ?>
 			</div>
 			<div style="font-weight:bold;margin:10px;">
-				<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php"><?= $LANG['RETURN'] ?></a>
+				<a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php"><?= $LANG['RETURN'] ?></a>
 			</div>
 		</div>
 		<?php

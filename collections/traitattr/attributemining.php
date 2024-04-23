@@ -173,7 +173,7 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 		<div class="navpath">
 			<a href="../../index.php"><?php echo $LANG['HOME'] ?></a> &gt;&gt;
 			<?php
-			if(is_numeric($collid)) echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . $LANG['COLLECTION_MANAGEMENT'] . '</a> &gt;&gt;';
+			if(is_numeric($collid)) echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">' . $LANG['COLLECTION_MANAGEMENT'] . '</a> &gt;&gt;';
 			else if($IS_ADMIN || count($collRights) > 1) echo '<a href="attributemining.php">' . $LANG['ADJUST_COLLECTION_SELECTION'] . '</a> &gt;&gt;';
 			?>
 			<b><?php echo $LANG['ATTRI_MINING_TOOL'] ?></b>

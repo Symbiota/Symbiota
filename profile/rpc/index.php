@@ -24,7 +24,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 				<?php echo (isset($LANG['NO_PERMISSION'])?$LANG['NO_PERMISSION']:'You don\'t have permission to access this page'); ?>.
 			</div>
 			<div style="font-weight:bold;margin:10px;">
-				<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php"><?php echo htmlspecialchars((isset($LANG['RETURN'])?$LANG['RETURN']:'Return to index page'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
+				<a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php"><?php echo htmlspecialchars((isset($LANG['RETURN'])?$LANG['RETURN']:'Return to index page'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 			</div>
 		</div>
 		<?php

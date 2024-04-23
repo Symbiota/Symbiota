@@ -6,7 +6,7 @@ else include_once($SERVER_ROOT.'/content/lang/glossary/index.'.$LANG_TAG.'.php')
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $glossId = array_key_exists('glossid', $_REQUEST) ? filter_var($_REQUEST['glossid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$language = array_key_exists('searchlanguage', $_REQUEST) ? htmlspecialchars($_REQUEST['searchlanguage'], HTML_SPECIAL_CHARS_FLAGS) : '';
+$language = array_key_exists('searchlanguage', $_REQUEST) ? htmlspecialchars($_REQUEST['searchlanguage'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $tid = array_key_exists('searchtaxa', $_REQUEST) ? filter_var($_REQUEST['searchtaxa'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $searchTerm = array_key_exists('searchterm', $_REQUEST) ? $_REQUEST['searchterm'] : '';
 $deepSearch = array_key_exists('deepsearch', $_POST) ? filter_var($_POST['deepsearch'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -227,7 +227,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 						<div style="clear:both;padding:15px">
 							<input name="searchlanguage" type="hidden" value="<?php echo $language; ?>" />
 							<input name="searchtaxa" type="hidden" value="<?php echo $tid; ?>" />
-							<input name="searchterm" type="hidden" value="<?php echo htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS); ?>" />
+							<input name="searchterm" type="hidden" value="<?php echo htmlspecialchars($searchTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" />
 							<input name="deepsearch" type="hidden" value="<?php echo $deepSearch; ?>" />
 							<button name="formsubmit" type="submit" value="Download"><?php echo (isset($LANG['DOWNLOAD'])?$LANG['DOWNLOAD']:'Download'); ?></button>
 						</div>
@@ -273,7 +273,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 				</div>
 				<div style="clear:both;">
 					<b><?php echo (isset($LANG['SEARCH_TERM'])?$LANG['SEARCH_TERM']:'Search Term'); ?>:</b>
-					<input type="text" autocomplete="off" name="searchterm" size="25" value="<?php echo htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS); ?>" />
+					<input type="text" autocomplete="off" name="searchterm" size="25" value="<?php echo htmlspecialchars($searchTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" />
 				</div>
 				<div style="margin-left:40px">
 					<input id="deepsearch" name="deepsearch" type="checkbox" value="1" <?php echo $deepSearch?'checked':''; ?> />
@@ -295,7 +295,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 						$title = $LANG['TERMS'];
 						if($taxonName) $title .= ' '.$LANG['FOR'].' '.$taxonName;
 						if($language) $title .= ' '.$LANG['IN'].' '.$language;
-						if($searchTerm) $title .= ' '.$LANG['KEYWORD'].' &quot;'.htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS).'&quot;';
+						if($searchTerm) $title .= ' '.$LANG['KEYWORD'].' &quot;'.htmlspecialchars($searchTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE).'&quot;';
 						echo '<div style="float:left;font-weight:bold;font-size:120%;">'.$title.'</div>';
 						$sourceArrFull = $glosManager->getTaxonSources($tid);
 						$sourceArr = current($sourceArrFull);
@@ -312,7 +312,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 							if($isEditor){
 								?>
 								<div style="float:left;margin-left:5px;">
-									(<a href="sources.php?emode=1&tid=<?php echo $tid.'&searchterm='.htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS).'&language='.$language.'&taxa='.$tid; ?>"><?php echo (isset($LANG['ADD_SRC'])?$LANG['ADD_SRC']:'Add Sources'); ?></a>)
+									(<a href="sources.php?emode=1&tid=<?php echo $tid.'&searchterm='.htmlspecialchars($searchTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE).'&language='.$language.'&taxa='.$tid; ?>"><?php echo (isset($LANG['ADD_SRC'])?$LANG['ADD_SRC']:'Add Sources'); ?></a>)
 								</div>
 								<?php
 							}
@@ -329,7 +329,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 								if($isEditor){
 									?>
 									<div style="float:right;">
-										<a href="sources.php?emode=1&tid=<?php echo $tid.'&searchterm='.htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS).'&language='.$language.'&taxa='.$tid; ?>"><img src="../images/edit.png" style="width:1.3em" /></a>
+										<a href="sources.php?emode=1&tid=<?php echo $tid.'&searchterm='.htmlspecialchars($searchTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE).'&language='.$language.'&taxa='.$tid; ?>"><img src="../images/edit.png" style="width:1.3em" /></a>
 									</div>
 									<?php
 								}

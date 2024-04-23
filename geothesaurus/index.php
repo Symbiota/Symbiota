@@ -66,13 +66,13 @@ function listGeoUnits($arr) {
       $referenceText = '';
 
       if($unitArr['acceptedTerm']) {
-         $referenceText = '<a href="index.php?geoThesID=' . htmlspecialchars($unitArr['acceptedID']) . '">' . htmlspecialchars($unitArr['acceptedTerm'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+         $referenceText = '<a href="index.php?geoThesID=' . htmlspecialchars($unitArr['acceptedID']) . '">' . htmlspecialchars($unitArr['acceptedTerm'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
       } elseif(isset($unitArr['childCnt'])) {
-         $referenceText = '- '. htmlspecialchars($unitArr['childCnt'], HTML_SPECIAL_CHARS_FLAGS) . ' ' . $LANG['CHILDREN'];
+         $referenceText = '- '. htmlspecialchars($unitArr['childCnt'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' ' . $LANG['CHILDREN'];
       }
 
-      $geoTerm = htmlspecialchars($geoTerm, HTML_SPECIAL_CHARS_FLAGS);
-      $codeStr = htmlspecialchars($codeStr, HTML_SPECIAL_CHARS_FLAGS);
+      $geoTerm = htmlspecialchars($geoTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+      $codeStr = htmlspecialchars($codeStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 
       echo <<<HTML
       <li>
@@ -407,7 +407,7 @@ function listGeoUnits($arr) {
                   }
                   $acceptedStr = '';
                   if($geoUnit['acceptedTerm']) {
-                  $acceptedStr = '<a href="index.php?geoThesID=' . $geoUnit['acceptedID'] . '">' . htmlspecialchars($geoUnit['acceptedTerm'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+                  $acceptedStr = '<a href="index.php?geoThesID=' . $geoUnit['acceptedID'] . '">' . htmlspecialchars($geoUnit['acceptedTerm'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
                   }
                   ?>
                   <div class="field-div">

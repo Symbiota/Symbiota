@@ -162,7 +162,7 @@ $status = "";
 							echo '<ul>';
 							foreach($nameArr as $k => $sciName){
 								echo '<li>';
-								echo '<a href="spectaxcleaner.php?submitaction=analyzenames&analyzeindex=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '">';
+								echo '<a href="spectaxcleaner.php?submitaction=analyzenames&analyzeindex=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 								echo '<b><i>'.$sciName.'</i></b>';
 								echo '</a>';
 								echo '</li>';
@@ -189,7 +189,7 @@ $status = "";
 										foreach($snArr['soundex'] as $t => $s){
 											echo '<div style="margin-left:15px;font-weight:bold;">';
 											echo $s;
-											echo ' <a href="" title="' . htmlspecialchars($LANG['REMAP_TO_NAME'], HTML_SPECIAL_CHARS_FLAGS) . '...">==>></a>';
+											echo ' <a href="" title="' . htmlspecialchars($LANG['REMAP_TO_NAME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '...">==>></a>';
 											echo '</div>';
 										}
 									}
@@ -258,7 +258,7 @@ $status = "";
 			else{
 				?>
 				<div style="font-weight:bold;">
-					<?php echo $LANG['PLEASE'] . "<a href='../../profile/index.php?refurl=" . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . "/taxa/taxonomy/taxonomycleaner.php?collid=" . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . ">" . htmlspecialchars($LANG['LOGIN'], HTML_SPECIAL_CHARS_FLAGS) . "</a>!" ?>
+					<?php echo $LANG['PLEASE'] . "<a href='../../profile/index.php?refurl=" . htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "/taxa/taxonomy/taxonomycleaner.php?collid=" . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ">" . htmlspecialchars($LANG['LOGIN'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a>!" ?>
 				</div>
 				<?php
 			}

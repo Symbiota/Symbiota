@@ -274,8 +274,8 @@ if($isEditor){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href='../../index.php'><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
-		<a href="../../profile/viewprofile.php?tabindex=1"><?php echo htmlspecialchars($LANG['MY_PROF'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+		<a href='../../index.php'><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+		<a href="../../profile/viewprofile.php?tabindex=1"><?php echo htmlspecialchars($LANG['MY_PROF'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 		<a href="index.php">
 			<?php echo $LANG['RETURN_DS_LISTING']; ?>
 		</a> &gt;&gt;
@@ -301,12 +301,12 @@ if($isEditor){
 				?>
 				<div id="tabs" style="margin:10px;">
 					<ul>
-						<li><a href="#occurtab"><span><?php echo htmlspecialchars($LANG['OCC_LIST'], HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
+						<li><a href="#occurtab"><span><?php echo htmlspecialchars($LANG['OCC_LIST'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
 						<?php
 						if($isEditor == 1){
 							?>
-							<li><a href="#admintab"><span><?php echo htmlspecialchars($LANG['GEN_MANAGEMENT'], HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
-							<li><a href="#accesstab"><span><?php echo htmlspecialchars($LANG['USER_ACCESS'], HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
+							<li><a href="#admintab"><span><?php echo htmlspecialchars($LANG['GEN_MANAGEMENT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
+							<li><a href="#accesstab"><span><?php echo htmlspecialchars($LANG['USER_ACCESS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
 							<?php
 						}
 						?>
@@ -376,7 +376,7 @@ if($isEditor){
 						else{
 							?>
 							<div style="font-weight:bold; margin:15px"><?php echo $LANG['NO_OCCS_DS']; ?></div>
-							<div style="margin:15px"><?php echo $LANG['LINK_OCCS_VIA'].' <a href="../index.php">' . htmlspecialchars($LANG['OCC_SEARCH'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($LANG['OR_VIA_OCC_PROF'], HTML_SPECIAL_CHARS_FLAGS); ?></div>
+							<div style="margin:15px"><?php echo $LANG['LINK_OCCS_VIA'].' <a href="../index.php">' . htmlspecialchars($LANG['OCC_SEARCH'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ' . htmlspecialchars($LANG['OR_VIA_OCC_PROF'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></div>
 							<?php
 						}
 						?>

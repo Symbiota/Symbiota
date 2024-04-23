@@ -534,7 +534,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 									<fieldset style="padding:15px;">
 										<legend><b><?php echo $specManager->getTitle(); ?></b></legend>
 										<div style="float:right" title="<?php echo $LANG['SHOW_ALL_OR_ADD']; ?>">
-											<a href="index.php?tabindex=0&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><img src="../../images/add.png" style="width:1.5em;border:0px" /></a>
+											<a href="index.php?tabindex=0&collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><img src="../../images/add.png" style="width:1.5em;border:0px" /></a>
 										</div>
 										<div style="float:right" title="<?php echo $LANG['OPEN_EDITOR']; ?>">
 											<a href="#" onclick="toggle('editdiv');toggle('imgprocessdiv');return false;"><img src="../../images/edit.png" style="border:0px;width:1.5em;" /></a>

@@ -120,7 +120,7 @@ if($isEditor){
 		else{
 			echo '<div class="navpath">';
 			echo '<a href="../../index.php">' . (isset($LANG['HOME']) ? $LANG['HOME'] : 'Home') . '</a> &gt;&gt; ';
-			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . (isset($LANG['COLL_CONTROL_PANEL']) ? $LANG['COLL_CONTROL_PANEL'] : 'Collection Control Panel') . '</a> &gt;&gt; ';
+			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">' . (isset($LANG['COLL_CONTROL_PANEL']) ? $LANG['COLL_CONTROL_PANEL'] : 'Collection Control Panel') . '</a> &gt;&gt; ';
 			echo '<b>' . (isset($LANG['SPEC_CONTROL_PANEL']) ? $LANG['SPEC_CONTROL_PANEL'] : 'Specimen Processor Control Panel') . '</b>';
 			echo '</div>';
 		}
@@ -145,18 +145,18 @@ if($isEditor){
 				?>
 				<div id="tabs" class="taxondisplaydiv">
 				    <ul>
-				        <li><a href="imageprocessor.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&spprid=' . htmlspecialchars($spprId, HTML_SPECIAL_CHARS_FLAGS) . '&submitaction=' . htmlspecialchars($action, HTML_SPECIAL_CHARS_FLAGS) . '&filename=' . htmlspecialchars($fileName, HTML_SPECIAL_CHARS_FLAGS); ?>"> <?php echo (isset($LANG['IMG_LOAD']) ? $LANG['IMG_LOAD'] : 'Image Loading')?> </a></li>
-				        <li><a href="crowdsource/controlpanel.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"> <?php echo (isset($LANG['CROWDSRC']) ? $LANG['CROWDSRC'] : 'Crowdsourcing')?> </a></li>
-				        <li><a href="ocrprocessor.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&procstatus=' . htmlspecialchars($procStatus, HTML_SPECIAL_CHARS_FLAGS) . '&spprid=' . htmlspecialchars($spprId, HTML_SPECIAL_CHARS_FLAGS); ?>"> <?php echo (isset($LANG['OCR']) ? $LANG['OCR'] : 'OCR')?> </a></li>
+				        <li><a href="imageprocessor.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&spprid=' . htmlspecialchars($spprId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&submitaction=' . htmlspecialchars($action, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&filename=' . htmlspecialchars($fileName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"> <?php echo (isset($LANG['IMG_LOAD']) ? $LANG['IMG_LOAD'] : 'Image Loading')?> </a></li>
+				        <li><a href="crowdsource/controlpanel.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"> <?php echo (isset($LANG['CROWDSRC']) ? $LANG['CROWDSRC'] : 'Crowdsourcing')?> </a></li>
+				        <li><a href="ocrprocessor.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&procstatus=' . htmlspecialchars($procStatus, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&spprid=' . htmlspecialchars($spprId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"> <?php echo (isset($LANG['OCR']) ? $LANG['OCR'] : 'OCR')?> </a></li>
 				        <!--
-				        <li><a href="nlpprocessor.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&spnlpid=' . htmlspecialchars($spNlpId, HTML_SPECIAL_CHARS_FLAGS); ?>">NLP</a></li>
+				        <li><a href="nlpprocessor.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&spnlpid=' . htmlspecialchars($spNlpId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">NLP</a></li>
 				         -->
-				        <li><a href="reports.php?<?php echo htmlspecialchars($_SERVER['QUERY_STRING'], HTML_SPECIAL_CHARS_FLAGS); ?>"> <?php echo (isset($LANG['REPORTS']) ? $LANG['REPORTS'] : 'Reports')?> </a></li>
-				        <li><a href="exporter.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&displaymode=' . htmlspecialchars($displayMode, HTML_SPECIAL_CHARS_FLAGS); ?>"> <?php echo (isset($LANG['EXPORTER']) ? $LANG['EXPORTER'] : 'Exporter')?> </a></li>
+				        <li><a href="reports.php?<?php echo htmlspecialchars($_SERVER['QUERY_STRING'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"> <?php echo (isset($LANG['REPORTS']) ? $LANG['REPORTS'] : 'Reports')?> </a></li>
+				        <li><a href="exporter.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&displaymode=' . htmlspecialchars($displayMode, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"> <?php echo (isset($LANG['EXPORTER']) ? $LANG['EXPORTER'] : 'Exporter')?> </a></li>
 				        <?php
 				        if($ACTIVATE_GEOLOCATE_TOOLKIT){
 					        ?>
-					        <li><a href="geolocate.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"> <?php echo (isset($LANG['GEOLOC_COGE']) ? $LANG['GEOLOC_COGE'] : 'GeoLocate CoGe')?> </a></li>
+					        <li><a href="geolocate.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"> <?php echo (isset($LANG['GEOLOC_COGE']) ? $LANG['GEOLOC_COGE'] : 'GeoLocate CoGe')?> </a></li>
 					        <?php
 				        }
 				        ?>

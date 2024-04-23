@@ -8,8 +8,13 @@ if(!$SYMB_UID) header('Location: ../profile/index.php?refurl='.$CLIENT_ROOT.'/gl
 
 $glossId = array_key_exists('glossid', $_REQUEST) ? filter_var($_REQUEST['glossid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $formSubmit = array_key_exists('formsubmit', $_POST) ? htmlspecialchars($_POST['formsubmit']) : '';
-$statusStr = array_key_exists('statusstr',$_REQUEST)?$_REQUEST['statusstr']:'';
+$statusStr = array_key_exists('statusstr',$_REQUEST) ? htmlspecialchars($_REQUEST['statusstr'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$glimgid = array_key_exists('glimgid', $_POST) ? filter_var($_POST['glimgid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$relglossid = array_key_exists('relglossid', $_POST) ? filter_var($_POST['relglossid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$relationship = array_key_exists('relationship', $_POST) ? htmlspecialchars($_POST['relationship'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : 0;
+$gltlinkid = array_key_exists('gltlinkid', $_POST) ? filter_var($_POST['gltlinkid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$tid = array_key_exists('tid', $_POST) ? filter_var($_POST['tid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 
 $isEditor = false;
 if($IS_ADMIN || array_key_exists('GlossaryEditor', $USER_RIGHTS)) $isEditor = true;
@@ -32,44 +37,44 @@ if($formSubmit){
 		$statusStr = $glosManager->editImageData($_POST);
 	}
 	elseif($formSubmit == 'Delete Image'){
-		$statusStr = $glosManager->deleteImage($_POST['glimgid']);
+		$statusStr = $glosManager->deleteImage($glimgid);
 	}
 	elseif($formSubmit == 'Link Translation'){
-		if(!$glosManager->linkTranslation($_POST['relglossid'])){
+		if(!$glosManager->linkTranslation($relglossid)){
 			$statusStr = $glosManager->getErrorMessage();
 		}
 		$glosManager->setGlossId($glossId);
 	}
 	elseif($formSubmit == 'Link Related Term'){
-		if(!$glosManager->linkRelation($_POST['relglossid'],$_POST['relationship'])){
+		if(!$glosManager->linkRelation($relglossid, $relationship)){
 			$statusStr = $glosManager->getErrorMessage();
 		}
 		$glosManager->setGlossId($glossId);
 	}
 	elseif($formSubmit == 'Remove Translation'){
-		if(!$glosManager->removeRelation($_POST['gltlinkid'],$_POST['relglossid'])){
+		if(!$glosManager->removeRelation($gltlinkid, $relglossid)){
 			$statusStr = $glosManager->getErrorMessage();
 		}
 		$glosManager->setGlossId($glossId);
 	}
 	elseif($formSubmit == 'removeSynonym'){
-		if(!$glosManager->removeRelation($_POST['gltlinkid'], $_POST['relglossid'])){
+		if(!$glosManager->removeRelation($gltlinkid, $relglossid)){
 			$statusStr = $glosManager->getErrorMessage();
 		}
 		$glosManager->setGlossId($glossId);
 	}
 	elseif($formSubmit == 'Unlink Related Term'){
-		if(!$glosManager->removeRelation($_POST['gltlinkid'])){
+		if(!$glosManager->removeRelation($gltlinkid)){
 			$statusStr = $glosManager->getErrorMessage();
 		}
 	}
 	elseif($formSubmit == 'Add Taxa Group'){
-		if(!$glosManager->addGroupTaxaLink($_POST['tid'])){
+		if(!$glosManager->addGroupTaxaLink($tid)){
 			$statusStr = $glosManager->getErrorMessage();
 		}
 	}
 	elseif($formSubmit == 'Delete Taxa Group'){
-		if(!$glosManager->deleteGroupTaxaLink($_POST['tid'])){
+		if(!$glosManager->deleteGroupTaxaLink($tid)){
 			$statusStr = $glosManager->getErrorMessage();
 		}
 	}
@@ -193,18 +198,18 @@ if($glossId){
 			if($statusStr){
 				?>
 				<div style="margin:15px;color:<?php echo (stripos($statusStr, 'SUCCESS') !== false?'green':'red'); ?>;">
-					<?php echo htmlspecialchars($statusStr, HTML_SPECIAL_CHARS_FLAGS); ?>
+					<?php echo htmlspecialchars($statusStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>
 				</div>
 				<?php
 			}
 			?>
 			<div id="tabs" style="margin:0px;">
 				<ul>
-					<li><a href="#termdetaildiv"><?php echo htmlspecialchars((isset($LANG['DETAILS'])?$LANG['DETAILS']:'Details'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
-					<li><a href="#termrelateddiv"><?php echo htmlspecialchars((isset($LANG['REL_TERMS'])?$LANG['REL_TERMS']:'Related Terms'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
-					<li><a href="#termtransdiv"><?php echo htmlspecialchars((isset($LANG['TRANSS'])?$LANG['TRANSS']:'Translations'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
-					<li><a href="#termimagediv"><?php echo htmlspecialchars((isset($LANG['IMAGES'])?$LANG['IMAGES']:'Images'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
-					<li><a href="#termadmindiv"><?php echo htmlspecialchars((isset($LANG['ADMIN'])?$LANG['ADMIN']:'Admin'), HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
+					<li><a href="#termdetaildiv"><?php echo htmlspecialchars((isset($LANG['DETAILS'])?$LANG['DETAILS']:'Details'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></li>
+					<li><a href="#termrelateddiv"><?php echo htmlspecialchars((isset($LANG['REL_TERMS'])?$LANG['REL_TERMS']:'Related Terms'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></li>
+					<li><a href="#termtransdiv"><?php echo htmlspecialchars((isset($LANG['TRANSS'])?$LANG['TRANSS']:'Translations'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></li>
+					<li><a href="#termimagediv"><?php echo htmlspecialchars((isset($LANG['IMAGES'])?$LANG['IMAGES']:'Images'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></li>
+					<li><a href="#termadmindiv"><?php echo htmlspecialchars((isset($LANG['ADMIN'])?$LANG['ADMIN']:'Admin'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></li>
 				</ul>
 				<div id="termdetaildiv" style="">
 					<div id="termdetails" style="overflow:auto;">
@@ -368,7 +373,7 @@ if($glossId){
 								</div>
 								<div style="clear:both;"></div>
 								<div style="clear:both;margin:30px 10px;">
-									<div style="margin:3px"><?php echo (isset($LANG['OR_ADD'])?$LANG['OR_ADD']:'Or add a'); ?> <a href="addterm.php?relationship=synonym&relglossid=<?php echo htmlspecialchars($glossId, HTML_SPECIAL_CHARS_FLAGS) . '&rellanguage=' . htmlspecialchars($glosManager->getTermLanguage(), HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars((isset($LANG['NEW_SYN'])?$LANG['NEW_SYN']:'New Synonym'), HTML_SPECIAL_CHARS_FLAGS); ?></a> <?php echo htmlspecialchars((isset($LANG['NOT_YET'])?$LANG['NOT_YET']:'that is not yet in the system'), HTML_SPECIAL_CHARS_FLAGS); ?></div>
+									<div style="margin:3px"><?php echo (isset($LANG['OR_ADD'])?$LANG['OR_ADD']:'Or add a'); ?> <a href="addterm.php?relationship=synonym&relglossid=<?php echo htmlspecialchars($glossId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&rellanguage=' . htmlspecialchars($glosManager->getTermLanguage(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars((isset($LANG['NEW_SYN'])?$LANG['NEW_SYN']:'New Synonym'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> <?php echo htmlspecialchars((isset($LANG['NOT_YET'])?$LANG['NOT_YET']:'that is not yet in the system'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></div>
 								</div>
 							</fieldset>
 						</form>
@@ -400,7 +405,7 @@ if($glossId){
 										</form>
 									</div>
 									<div style="float:right;margin:5px;cursor:pointer;" title="Edit Term">
-										<a href="termdetails.php?glossid=<?php echo htmlspecialchars($synGlossId, HTML_SPECIAL_CHARS_FLAGS); ?>">
+										<a href="termdetails.php?glossid=<?php echo htmlspecialchars($synGlossId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
 											<img style="border:0px;width:1.2em;" src="../images/edit.png" />
 										</a>
 									</div>
@@ -453,7 +458,7 @@ if($glossId){
 											</form>
 										</div>
 										<div style="float:right;margin:5px;" title="<?php echo (isset($LANG['EDIT_T'])?$LANG['EDIT_T']:'Edit Term'); ?>">
-											<a href="termdetails.php?glossid=<?php echo htmlspecialchars($relGlossId, HTML_SPECIAL_CHARS_FLAGS); ?>">
+											<a href="termdetails.php?glossid=<?php echo htmlspecialchars($relGlossId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
 												<img style="border:0px;width:1.3em;" src="../images/edit.png" />
 											</a>
 										</div>
@@ -509,7 +514,7 @@ if($glossId){
 								</div>
 								<div style="clear:both;"></div>
 								<div style="clear:both;margin: 30px 10px;">
-									<?php echo (isset($LANG['OR_ADD'])?$LANG['OR_ADD']:'Or add a'); ?> <a href="addterm.php?relationship=translation&relglossid=<?php echo htmlspecialchars($glossId, HTML_SPECIAL_CHARS_FLAGS) . '&rellanguage=' . htmlspecialchars($glosManager->getTermLanguage(), HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars((isset($LANG['NEW_TRANS'])?$LANG['NEW_TRANS']:'New Translation'), HTML_SPECIAL_CHARS_FLAGS); ?></a> <?php echo htmlspecialchars((isset($LANG['TO_T'])?$LANG['TO_T']:'to this term'), HTML_SPECIAL_CHARS_FLAGS); ?>
+									<?php echo (isset($LANG['OR_ADD'])?$LANG['OR_ADD']:'Or add a'); ?> <a href="addterm.php?relationship=translation&relglossid=<?php echo htmlspecialchars($glossId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&rellanguage=' . htmlspecialchars($glosManager->getTermLanguage(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars((isset($LANG['NEW_TRANS'])?$LANG['NEW_TRANS']:'New Translation'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> <?php echo htmlspecialchars((isset($LANG['TO_T'])?$LANG['TO_T']:'to this term'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>
 								</div>
 							</fieldset>
 						</form>
@@ -578,7 +583,7 @@ if($glossId){
 											</div>
 											<!-- following line sets MAX_FILE_SIZE (must precede the file input field)  -->
 											<div style="height:10px;float:right;text-decoration:underline;font-weight:bold;">
-												<a href="#" onclick="toggle('targetdiv');return false;"><?php echo htmlspecialchars((isset($LANG['ENT_URL'])?$LANG['ENT_URL']:'Enter URL'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
+												<a href="#" onclick="toggle('targetdiv');return false;"><?php echo htmlspecialchars((isset($LANG['ENT_URL'])?$LANG['ENT_URL']:'Enter URL'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 											</div>
 											<input type='hidden' name='MAX_FILE_SIZE' value='20000000' />
 											<div>
@@ -655,7 +660,7 @@ if($glossId){
 											}
 											$displayUrl = $imgUrl;
 											?>
-											<a href="<?php echo htmlspecialchars($imgUrl, HTML_SPECIAL_CHARS_FLAGS);?>" target="_blank">
+											<a href="<?php echo htmlspecialchars($imgUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?>" target="_blank">
 												<img src="<?php echo $displayUrl;?>" style="width:250px;" title="<?php echo $imgArr["structures"]; ?>" />
 											</a>
 										</div>

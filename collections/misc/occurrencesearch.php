@@ -122,19 +122,19 @@ $occManager = new OccurrenceSupport();
 					</div>
 					<div style="clear:both;padding:2px;">
 						<div style="float:left;width:130px;">Catalog #:</div>
-						<div style="float:left;"><input name="catalognumber" type="text" value="<?= htmlspecialchars($catalogNumber, HTML_SPECIAL_CHARS_FLAGS) ?>" /></div>
+						<div style="float:left;"><input name="catalognumber" type="text" value="<?= htmlspecialchars($catalogNumber, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" /></div>
 					</div>
 					<div style="clear:both;padding:2px;">
 						<div style="float:left;width:130px;">Other Catalog #:</div>
-						<div style="float:left;"><input name="othercatalognumbers" type="text" value="<?= htmlspecialchars($otherCatalogNumbers, HTML_SPECIAL_CHARS_FLAGS) ?>" /></div>
+						<div style="float:left;"><input name="othercatalognumbers" type="text" value="<?= htmlspecialchars($otherCatalogNumbers, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" /></div>
 					</div>
 					<div style="clear:both;padding:2px;">
 						<div style="float:left;width:130px;">Collector Last Name:</div>
-						<div style="float:left;"><input name="recordedby" type="text"  value="<?= htmlspecialchars($recordedBy, HTML_SPECIAL_CHARS_FLAGS) ?>" /></div>
+						<div style="float:left;"><input name="recordedby" type="text"  value="<?= htmlspecialchars($recordedBy, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" /></div>
 					</div>
 					<div style="clear:both;padding:2px;">
 						<div style="float:left;width:130px;">Collector Number:</div>
-						<div style="float:left;"><input name="recordnumber" type="text" value="<?= htmlspecialchars($recordNumber, HTML_SPECIAL_CHARS_FLAGS) ?>" /></div>
+						<div style="float:left;"><input name="recordnumber" type="text" value="<?= htmlspecialchars($recordNumber, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" /></div>
 					</div>
 					<div style="clear:both;padding:2px;">
 						<button name="action" type="submit" value="Search Occurrences">Search Occurrences</button>

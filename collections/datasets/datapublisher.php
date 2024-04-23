@@ -195,15 +195,15 @@ if ($isEditor) {
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+		<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 		<?php
 		if ($collid) {
 			?>
-			<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars($LANG['COL_MANAGEMENT'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+			<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo htmlspecialchars($LANG['COL_MANAGEMENT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 			<?php
 		} else {
 			?>
-			<a href="../../sitemap.php"><?php echo htmlspecialchars($LANG['SITEMAP'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+			<a href="../../sitemap.php"><?php echo htmlspecialchars($LANG['SITEMAP'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 			<?php
 		}
 		?>
@@ -215,7 +215,7 @@ if ($isEditor) {
 		if (!$collid && $IS_ADMIN) {
 			?>
 			<div style="float:right;">
-				<a href="#" title="<?php echo htmlspecialchars($LANG['DISPLAY_CONTROL_PANEL'], HTML_SPECIAL_CHARS_FLAGS); ?>" onclick="toggle('dwcaadmindiv')">
+				<a href="#" title="<?php echo htmlspecialchars($LANG['DISPLAY_CONTROL_PANEL'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" onclick="toggle('dwcaadmindiv')">
 					<?php echo $LANG['EDIT'] ?> 
 					<img style="border:0;width:1.2em;" src="../../images/edit.png" alt="pencil icon to indicate edit mode toggle" />
 				</a>
@@ -229,9 +229,9 @@ if ($isEditor) {
 			<div class="font-control top-breathing-room-rel">
 				<?php
 				echo $LANG['DWCA_EXPLAIN_1'] . ' <a href="https://en.wikipedia.org/wiki/Darwin_Core_Archive" target="_blank">' . $LANG['DWCA'] . '</a> ' . $LANG['DWCA_EXPLAIN_2'] .
-					' <a href="http://rs.tdwg.org/dwc/terms/" target="_blank">' . htmlspecialchars($LANG['DWC'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($LANG['DWCA_EXPLAIN_3'], HTML_SPECIAL_CHARS_FLAGS) .
-					' <a href="https://biokic.github.io/symbiota-docs/coll_manager/data_publishing/idigbio/" target="_blank"> ' . htmlspecialchars($LANG['PUBLISH_IDIGBIO'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &amp;' .
-					' <a href="https://biokic.github.io/symbiota-docs/coll_manager/data_publishing/gbif/" target="_blank"> ' . htmlspecialchars($LANG['PUBLISH_GBIF'], HTML_SPECIAL_CHARS_FLAGS) . '</a>.';
+					' <a href="http://rs.tdwg.org/dwc/terms/" target="_blank">' . htmlspecialchars($LANG['DWC'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ' . htmlspecialchars($LANG['DWCA_EXPLAIN_3'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .
+					' <a href="https://biokic.github.io/symbiota-docs/coll_manager/data_publishing/idigbio/" target="_blank"> ' . htmlspecialchars($LANG['PUBLISH_IDIGBIO'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &amp;' .
+					' <a href="https://biokic.github.io/symbiota-docs/coll_manager/data_publishing/gbif/" target="_blank"> ' . htmlspecialchars($LANG['PUBLISH_GBIF'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>.';
 				?>
 			</div>
 			<?php
@@ -239,14 +239,14 @@ if ($isEditor) {
 			?>
 			<div>
 				<?php
-				echo $LANG['DWCA_DOWNLOAD_EXPLAIN_1'] . ' <a href="https://en.wikipedia.org/wiki/Darwin_Core_Archive" target="_blank">' . htmlspecialchars($LANG['DWCA'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
-				echo $LANG['DWCA_DOWNLOAD_EXPLAIN_2'] . ' <a href="http://rs.tdwg.org/dwc/terms/" target="_blank">' . htmlspecialchars($LANG['DWC'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($LANG['DWCA_DOWNLOAD_EXPLAIN_3'], HTML_SPECIAL_CHARS_FLAGS);
+				echo $LANG['DWCA_DOWNLOAD_EXPLAIN_1'] . ' <a href="https://en.wikipedia.org/wiki/Darwin_Core_Archive" target="_blank">' . htmlspecialchars($LANG['DWCA'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ';
+				echo $LANG['DWCA_DOWNLOAD_EXPLAIN_2'] . ' <a href="http://rs.tdwg.org/dwc/terms/" target="_blank">' . htmlspecialchars($LANG['DWC'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ' . htmlspecialchars($LANG['DWCA_DOWNLOAD_EXPLAIN_3'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 				?>
 			</div>
 			<div>
 				<?php
 				echo '<h2>' . $LANG['DATA_USE_POLICY'] . ':</h2>';
-				echo $LANG['DATA_POLICY_1'] . ' <a href="../../includes/usagepolicy.php">' . htmlspecialchars($LANG['DATA_USE_POLICY'], HTML_SPECIAL_CHARS_FLAGS) . '</a>. ' . htmlspecialchars($LANG['DATA_POLICY_2'], HTML_SPECIAL_CHARS_FLAGS);
+				echo $LANG['DATA_POLICY_1'] . ' <a href="../../includes/usagepolicy.php">' . htmlspecialchars($LANG['DATA_USE_POLICY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>. ' . htmlspecialchars($LANG['DATA_POLICY_2'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 				?>
 			</div>
 			<?php
@@ -258,7 +258,7 @@ if ($isEditor) {
 			$urlPrefix = $dwcaManager->getServerDomain() . $CLIENT_ROOT . (substr($CLIENT_ROOT, -1) == '/' ? '' : '/');
 			if (file_exists('../../content/dwca/rss.xml')) {
 				$feedLink = $urlPrefix . 'content/dwca/rss.xml';
-				echo '<a href="' . htmlspecialchars($feedLink, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($feedLink, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+				echo '<a href="' . htmlspecialchars($feedLink, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($feedLink, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 			} else {
 				echo '--' . $LANG['FEED_NOT_PUBLISHED'] . '--';
 			}
@@ -308,8 +308,8 @@ if ($isEditor) {
 					<?php
 					$emlLink = $urlPrefix . 'collections/datasets/emlhandler.php?collid=' . $collid;
 					?>
-					<div><b>EML:</b> <a href="<?php echo htmlspecialchars($emlLink, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars($emlLink, HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
-					<div><b><?php echo $LANG['DWCA_FILE']; ?>:</b> <a href="<?php echo htmlspecialchars($dArr['link'], HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($dArr['link'], HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
+					<div><b>EML:</b> <a href="<?php echo htmlspecialchars($emlLink, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank"><?php echo htmlspecialchars($emlLink, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></div>
+					<div><b><?php echo $LANG['DWCA_FILE']; ?>:</b> <a href="<?php echo htmlspecialchars($dArr['link'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars($dArr['link'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></div>
 					<div><b><?php echo $LANG['PUB_DATE']; ?>:</b> <?php echo $dArr['pubDate']; ?></div>
 				</div>
 				<?php
@@ -326,14 +326,14 @@ if ($isEditor) {
 					if (isset($recFlagArr['nullGUIDs']) && $recFlagArr['nullGUIDs']) {
 						echo '<div class="font-control">';
 						if ($collArr['guidtarget'] == 'occurrenceId') {
-							echo '<b>' . $LANG['RECORDS_MISSING'] . ' <a href="https://dwc.tdwg.org/terms/#dwc:occurrenceID" target="_blank">' . htmlspecialchars($LANG['OCCID_GUIDS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>:</b> ' . htmlspecialchars($recFlagArr['nullGUIDs'], HTML_SPECIAL_CHARS_FLAGS);
+							echo '<b>' . $LANG['RECORDS_MISSING'] . ' <a href="https://dwc.tdwg.org/terms/#dwc:occurrenceID" target="_blank">' . htmlspecialchars($LANG['OCCID_GUIDS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>:</b> ' . htmlspecialchars($recFlagArr['nullGUIDs'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 							echo ' <span style="color:red;margin-left:15px;">' . $LANG['RECS_TO_NOT_PUBLISH'] . '</span> ';
 						} elseif ($collArr['guidtarget'] == 'catalogNumber') {
 							echo '<b>' . $LANG['RECS_WO_CATNUMS'] . ':</b> ' . $recFlagArr['nullGUIDs'];
 							echo ' <span style="color:red;margin-left:15px;">' . $LANG['RECS_WILL_NOT_PUBLISH'] . '</span> ';
 						} else {
 							echo $LANG['RECS_MISSING_GUIDS'] . ': ' . $recFlagArr['nullGUIDs'] . '<br/>';
-							echo $LANG['PLEASE_GO_TO'] . ' <a href="../admin/guidmapper.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($LANG['COLL_GUID_MAP'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($LANG['TO_ASSIGN_GUIDS'], HTML_SPECIAL_CHARS_FLAGS);
+							echo $LANG['PLEASE_GO_TO'] . ' <a href="../admin/guidmapper.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($LANG['COLL_GUID_MAP'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ' . htmlspecialchars($LANG['TO_ASSIGN_GUIDS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 						}
 						echo '</div>';
 					}
@@ -342,22 +342,22 @@ if ($isEditor) {
 						if(substr($serverName, 0, 4) == 'www.') $serverName = str_replace('www.', '', $serverName);
 						if(!strpos($serverName, 'localhost') && strpos($collArr['dwcaurl'], $serverName) === false) {
 							$baseUrl = substr($collArr['dwcaurl'], 0, strpos($collArr['dwcaurl'], '/content')) . '/collections/datasets/datapublisher.php';
-							$blockSubmitMsg = $LANG['ALREADY_PUBLISHED'] . ' (<a href="' . htmlspecialchars($baseUrl, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars(substr($baseUrl, 0, strpos($baseUrl, '/', 10)), HTML_SPECIAL_CHARS_FLAGS) . '</a>) ';
+							$blockSubmitMsg = $LANG['ALREADY_PUBLISHED'] . ' (<a href="' . htmlspecialchars($baseUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars(substr($baseUrl, 0, strpos($baseUrl, '/', 10)), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>) ';
 						}
 					}
 				} else {
-					echo '<div style="margin:10px;font-weight:bold;color:red;" class="font-control top-breathing-room-rel">' . $LANG['GUID_NOT_SET'] . ' <a href="../misc/collmetadata.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($LANG['EDIT_METADATA'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($LANG['TO_SET_GUID'], HTML_SPECIAL_CHARS_FLAGS) . '.</div>';
+					echo '<div style="margin:10px;font-weight:bold;color:red;" class="font-control top-breathing-room-rel">' . $LANG['GUID_NOT_SET'] . ' <a href="../misc/collmetadata.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($LANG['EDIT_METADATA'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ' . htmlspecialchars($LANG['TO_SET_GUID'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '.</div>';
 					$blockSubmitMsg = $LANG['CANNOT_PUBLISH'] . '<br/>';
 				}
 				if ($recFlagArr['nullBasisRec']) {
-					echo '<div style="margin:10px;font-weight:bold;color:red;" class="font-control top-breathing-room-rel">' . $LANG['THERE_ARE'] . ' ' . $recFlagArr['nullBasisRec'] . $LANG['MISSING_BASISOFRECORD'] . ' ' . ' <a href="../editor/occurrencetabledisplay.php?q_recordedby=&q_recordnumber=&q_catalognumber&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&csmode=0&occid=&occindex=0">' . htmlspecialchars($LANG['EDIT_EXISTING'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($LANG['TO_CORRECT'], HTML_SPECIAL_CHARS_FLAGS) . '</div>';
+					echo '<div style="margin:10px;font-weight:bold;color:red;" class="font-control top-breathing-room-rel">' . $LANG['THERE_ARE'] . ' ' . $recFlagArr['nullBasisRec'] . $LANG['MISSING_BASISOFRECORD'] . ' ' . ' <a href="../editor/occurrencetabledisplay.php?q_recordedby=&q_recordnumber=&q_catalognumber&collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&csmode=0&occid=&occindex=0">' . htmlspecialchars($LANG['EDIT_EXISTING'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ' . htmlspecialchars($LANG['TO_CORRECT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</div>';
 				}
 				if ($publishGBIF && $dwcUri && isset($GBIF_USERNAME) && isset($GBIF_PASSWORD) && isset($GBIF_ORG_KEY) && $GBIF_ORG_KEY) {
 					if ($collManager->getDatasetKey()) {
 						$dataUrl = 'http://www.gbif.org/dataset/' . $collManager->getDatasetKey();
 						?>
 						<div>
-							<div><b><?php echo $LANG['GBIF_DATASET']; ?>:</b> <a href="<?php echo htmlspecialchars($dataUrl, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars($dataUrl, HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
+							<div><b><?php echo $LANG['GBIF_DATASET']; ?>:</b> <a href="<?php echo htmlspecialchars($dataUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank"><?php echo htmlspecialchars($dataUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></div>
 						</div>
 						<?php
 					} else {
@@ -365,7 +365,7 @@ if ($isEditor) {
 						<div>
 							<?php
 							echo $LANG['YOU_SELECTED_GBIF_1'] .
-							' <a href="https://www.gbif.org/become-a-publisher" target="_blank">' . htmlspecialchars($LANG['GBIF_ENDORSE'], HTML_SPECIAL_CHARS_FLAGS) .
+							' <a href="https://www.gbif.org/become-a-publisher" target="_blank">' . htmlspecialchars($LANG['GBIF_ENDORSE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .
 							'</a> ' . $LANG['TO'] . ' ' . $LANG['YOU_SELECTED_GBIF_2'];
 							?>
 							<form style="margin-top:10px;" name="gbifpubform" action="datapublisher.php" method="post" onsubmit="return validateGbifForm(this)">
@@ -396,7 +396,7 @@ if ($isEditor) {
 										echo $LANG['BEFORE_SUBMITTING'];
 										echo ' (<a href="mailto:helpdesk@gbif.org?subject=Publishing%20data%20from%20Symbiota%20portal%20to%20GBIF...&body=' . rawurlencode(str_replace('<br/>', "\n", $bodyStr)) . '">helpdesk@gbif.org</a>) ';
 										echo $LANG['WITH_REQUEST_1'] . ' &quot;<b>' . $GBIF_USERNAME . '</b>&quot; ' . $LANG['WITH_REQUEST_2'];
-										echo ' <a href="#" onclick="toggle(\'emailMsg\');return false;" style="color:blue">' . htmlspecialchars($LANG['HERE'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ' . htmlspecialchars($LANG['WITH_REQUEST_3'], HTML_SPECIAL_CHARS_FLAGS);
+										echo ' <a href="#" onclick="toggle(\'emailMsg\');return false;" style="color:blue">' . htmlspecialchars($LANG['HERE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ' . htmlspecialchars($LANG['WITH_REQUEST_3'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 										?>
 										<fieldset id="emailMsg" style="display:none;padding:15px;margin:15px">
 											<legend><?php echo $LANG['EMAIL_DRAFT']; ?></legend><?php echo trim($bodyStr, ' <br/>'); ?>
@@ -417,7 +417,7 @@ if ($isEditor) {
 					$dataUrl = 'https://www.idigbio.org/portal/recordsets/' . $idigbioKey;
 					?>
 					<div>
-						<div><b><?php echo $LANG['IDIGBIO_DATASET']; ?>:</b> <a href="<?php echo htmlspecialchars($dataUrl, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars($dataUrl, HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
+						<div><b><?php echo $LANG['IDIGBIO_DATASET']; ?>:</b> <a href="<?php echo htmlspecialchars($dataUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank"><?php echo htmlspecialchars($dataUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></div>
 					</div>
 					<?php
 				}
@@ -500,14 +500,14 @@ if ($isEditor) {
 									$errMsg = '';
 									if (isset($v['err']) && $v['err']) {
 										$errMsg = $LANG[$v['err']];
-										if ($v['err'] == 'ALREADY_PUB_DOMAIN') $errMsg .= ' (<a href="' . htmlspecialchars($v['url'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars(substr($v['url'], 0, strpos($v['url'], '/', 10)), HTML_SPECIAL_CHARS_FLAGS) . '</a>)';
+										if ($v['err'] == 'ALREADY_PUB_DOMAIN') $errMsg .= ' (<a href="' . htmlspecialchars($v['url'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars(substr($v['url'], 0, strpos($v['url'], '/', 10)), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>)';
 									}
 									$inputAttr = '';
 									if ($errMsg) $inputAttr = 'DISABLED';
 									elseif ($v['url']) $inputAttr = 'CHECKED';
 									echo '<div class="bottom-breathing-room">';
 									echo '<input class="margin-rt-rel" name="coll[]" type="checkbox" value="' . $k . '" ' . $inputAttr . ' />';
-									echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($v['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
+									echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($v['name'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ';
 									if ($errMsg) echo '<span style="color:red;margin-left:15px;">' . $errMsg . '</span>';
 									elseif ($v['url']) echo '<span> - published</span>';
 									echo '</div>';
@@ -552,11 +552,11 @@ if ($isEditor) {
 					foreach ($dwcaArr as $k => $v) {
 						?>
 						<tr>
-							<td><?php echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($v['collid'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars(str_replace(' DwC-Archive', '', $v['title']), HTML_SPECIAL_CHARS_FLAGS) . '</a>'; ?></td>
+							<td><?php echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($v['collid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars(str_replace(' DwC-Archive', '', $v['title']), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>'; ?></td>
 							<td><?php echo substr($v['description'], 24); ?></td>
 							<td class="nowrap">
 								<?php
-								echo '<a href="' . htmlspecialchars($v['link'], HTML_SPECIAL_CHARS_FLAGS) . '">DwC-A (' . htmlspecialchars($dwcaManager->humanFileSize($v['link']), HTML_SPECIAL_CHARS_FLAGS) . ')</a>';
+								echo '<a href="' . htmlspecialchars($v['link'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">DwC-A (' . htmlspecialchars($dwcaManager->humanFileSize($v['link']), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ')</a>';
 								if ($IS_ADMIN) {
 									?>
 									<form action="datapublisher.php" method="post" style="display:inline;" onsubmit="return window.confirm('<?php echo $LANG['SURE_DELETE']; ?>');">
@@ -569,7 +569,7 @@ if ($isEditor) {
 							</td>
 							<td>
 								<?php
-								echo '<a href="' . htmlspecialchars($urlPrefix, HTML_SPECIAL_CHARS_FLAGS) . 'collections/datasets/emlhandler.php?collid=' . htmlspecialchars($v['collid'], HTML_SPECIAL_CHARS_FLAGS) . '">EML</a>';
+								echo '<a href="' . htmlspecialchars($urlPrefix, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . 'collections/datasets/emlhandler.php?collid=' . htmlspecialchars($v['collid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">EML</a>';
 								?>
 							</td>
 							<td class="nowrap"><?php echo date('Y-m-d', strtotime($v['pubDate'])); ?></td>
@@ -587,7 +587,7 @@ if ($isEditor) {
 					echo '<div style="font-weight:bold;font-size:140%;margin:50px 0px 15px 0px;">' . $LANG['ADDIT_SOURCES'] . '</div>';
 					echo '<ul>';
 					foreach ($addDwca as $domanName => $domainArr) {
-						echo '<li><a href="' . htmlspecialchars($domainArr['url'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($domanName, HTML_SPECIAL_CHARS_FLAGS) . '</a> - ' . htmlspecialchars($domainArr['cnt'], HTML_SPECIAL_CHARS_FLAGS) . ' Archives</li>';
+						echo '<li><a href="' . htmlspecialchars($domainArr['url'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($domanName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> - ' . htmlspecialchars($domainArr['cnt'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' Archives</li>';
 					}
 					echo '</ul>';
 				}

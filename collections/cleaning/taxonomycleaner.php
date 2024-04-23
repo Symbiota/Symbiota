@@ -157,17 +157,17 @@ elseif($activeCollArr){
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div class='navpath'>
-			<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+			<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 			<?php
 			if($collid && is_numeric($collid)){
 				?>
-				<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars($LANG['COL_MAN_MEN'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
-				<a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars($LANG['DATA_CLEAN_MEN'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+				<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo htmlspecialchars($LANG['COL_MAN_MEN'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+				<a href="index.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo htmlspecialchars($LANG['DATA_CLEAN_MEN'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 				<?php
 			}
 			else{
 				?>
-				<a href="../../profile/viewprofile.php?tabindex=1"><?php echo htmlspecialchars($LANG['SPEC_MAN'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+				<a href="../../profile/viewprofile.php?tabindex=1"><?php echo htmlspecialchars($LANG['SPEC_MAN'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 				<?php
 			}
 			?>
@@ -186,7 +186,7 @@ elseif($activeCollArr){
 							echo '<h1 class="page-heading">Taxonomy Cleaning Tool: ' . $collMap[$collid]['collectionname'].' ('.$collMap[$collid]['code'].')</h1>';
 						}
 						else{
-							echo '<h1 class="page-heading">' . $LANG['MULT_CLEAN_TOOL'].' '.'(<a href="#" onclick="$(\'#collDiv\').show()" style="color:blue;text-decoration:underline">' . htmlspecialchars(count($activeCollArr), HTML_SPECIAL_CHARS_FLAGS) . ' ' . htmlspecialchars($LANG['COLS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>)</h1>';
+							echo '<h1 class="page-heading">' . $LANG['MULT_CLEAN_TOOL'].' '.'(<a href="#" onclick="$(\'#collDiv\').show()" style="color:blue;text-decoration:underline">' . htmlspecialchars(count($activeCollArr), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' ' . htmlspecialchars($LANG['COLS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>)</h1>';
 						}
 						?>
 					</div>

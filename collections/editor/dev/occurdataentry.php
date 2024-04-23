@@ -44,7 +44,7 @@ if($SYMB_UID){
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Editor</title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
-	<link href="../../css/occureditor.css?<?php echo htmlspecialchars($CSS_VERSION, HTML_SPECIAL_CHARS_FLAGS); ?>" type="text/css" rel="stylesheet" id="editorCssLink" />
+	<link href="../../css/occureditor.css?<?php echo htmlspecialchars($CSS_VERSION, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" type="text/css" rel="stylesheet" id="editorCssLink" />
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
@@ -70,7 +70,7 @@ if($SYMB_UID){
 				<?php
 				if(!$isGenObs || $isEditor){
 					?>
-					<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1" onclick="return verifyLeaveForm()">Collection Management</a> &gt;&gt;
+					<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1" onclick="return verifyLeaveForm()">Collection Management</a> &gt;&gt;
 					<?php
 				}
 				if($isGenObs){

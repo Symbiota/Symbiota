@@ -193,7 +193,7 @@ elseif($action == 'addAllToDataset'){
 					foreach($otherArr as $dsid => $dsArr){
 						?>
 						<div>
-							<a href="datasetmanager.php?datasetid=<?php echo htmlspecialchars($dsid, HTML_SPECIAL_CHARS_FLAGS); ?>" title="Access Dataset">
+							<a href="datasetmanager.php?datasetid=<?php echo htmlspecialchars($dsid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" title="Access Dataset">
 								<?php
 								$role = 'Dataset reader';
 								if($dsArr['role'] == 'DatasetAdmin') $role = 'Dataset Administator';

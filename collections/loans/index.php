@@ -13,7 +13,7 @@ $tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 //Sanitation
-$searchTerm = htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS);
+$searchTerm = htmlspecialchars($searchTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 if(!is_numeric($collid)) $collid = 0;
 if(!is_numeric($displayAll)) $displayAll = 0;
 if(!is_numeric($tabIndex)) $tabIndex = 0;
@@ -187,8 +187,8 @@ if($isEditor){
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'><?php echo $LANG['HOME'] ?></a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo $LANG['COL_MNG_MENU']; ?></a> &gt;&gt;
-		<a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><b><?php echo $LANG['LOAN_INDEX']; ?></b></a>
+		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo $LANG['COL_MNG_MENU']; ?></a> &gt;&gt;
+		<a href="index.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><b><?php echo $LANG['LOAN_INDEX']; ?></b></a>
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
@@ -211,7 +211,7 @@ if($isEditor){
 			    <ul>
 					<li><a href="#loanoutdiv"><span><?php echo $LANG['OUTGOING_LOANS']; ?></span></a></li>
 					<li><a href="#loanindiv"><span><?php echo $LANG['INCOMING_LOANS']; ?></span></a></li>
-					<li><a href="exchangetab.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><span><?php echo $LANG['GIFTS_EX']; ?></span></a></li>
+					<li><a href="exchangetab.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><span><?php echo $LANG['GIFTS_EX']; ?></span></a></li>
 				</ul>
 				<div id="loanoutdiv" style="">
 					<div style="float:right;">
@@ -316,7 +316,7 @@ if($isEditor){
 								}
 
 								echo '<li>';
-								echo '<a href="outgoing.php?collid=' . htmlspecialchars($targetCollid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($loanArr['loanidentifierown'], HTML_SPECIAL_CHARS_FLAGS) . ' <img src="../../images/edit.png" style="width:1.2em"  /></a> ';
+								echo '<a href="outgoing.php?collid=' . htmlspecialchars($targetCollid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&loanid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($loanArr['loanidentifierown'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' <img src="../../images/edit.png" style="width:1.2em"  /></a> ';
 								if(isset($loanArr['isexternal'])) echo '<span style="color:orange">' . $LANG['EXTERNAL_COLL'] . '</span>';
 								echo ': ' . ($loanArr['institutioncode'] ? $loanArr['institutioncode'] : ($loanArr['institutionname'] ? $loanArr['institutionname'] : '[no name]'));
 								echo ' (' . $loanArr['forwhom'] . ') - ' . ($loanArr['dateclosed']? $LANG['CLOSED'] . ': ' . $loanArr['dateclosed']:'<b>' . $LANG['OPEN'] . '</b>');
@@ -432,7 +432,7 @@ if($isEditor){
 									$due = ' (<span class="' . ($overdue?'important':'') . '">' . $LANG['DUE'] . ': ' . $loanArr['datedue'] . '</span>)';
 								}
 								echo '<li>';
-								echo '<a href="incoming.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($loanArr['loanidentifierborr'], HTML_SPECIAL_CHARS_FLAGS) . ' <img src="../../images/edit.png" style="width:1.2em" /></a>: ';
+								echo '<a href="incoming.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&loanid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($loanArr['loanidentifierborr'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' <img src="../../images/edit.png" style="width:1.2em" /></a>: ';
 								echo ($loanArr['institutioncode'] ? $loanArr['institutioncode'] : ($loanArr['institutionname'] ? $loanArr['institutionname'] : '[' . $LANG['NO_NAME'] . ']'));
 								echo ' (' . $loanArr['forwhom'] . ') - ' . ($loanArr['dateclosed'] ? $LANG['CLOSED'] . ': ' . $loanArr['dateclosed'] : '<b>' . $LANG['OPEN'] . '</b>');
 								echo ($loanArr['dateclosed'] ? '' : ($loanArr['datedue'] ? $due : ''));
@@ -455,7 +455,7 @@ if($isEditor){
 							echo '<ul>';
 							foreach($loansOnWay as $k => $loanArr){
 								echo '<li>';
-								echo '<a href="incoming.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '">';
+								echo '<a href="incoming.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&loanid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 								echo $loanArr['loanidentifierown'];
 								echo ' from ' . $loanArr['collectionname'] . '</a>';
 								echo '</li>';

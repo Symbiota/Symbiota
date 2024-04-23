@@ -128,12 +128,12 @@ include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class='navpath'>
 	<a href="../../index.php"> <?php echo (isset($LANG['HOME']) ? $LANG['HOME'] : 'Home'); ?> </a> &gt;&gt;
-	<a href="../../checklists/checklist.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>"> <?php echo (isset($LANG['OPEN_CHKLIST']) ? $LANG['OPEN_CHKLIST'] : 'Open Checklist'); ?> </a> &gt;&gt;
-	<a href="../key.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>&taxon=All+Species"> <?php echo (isset($LANG['OPEN_KEY']) ? $LANG['OPEN_KEY'] : 'Open Key'); ?> </a> &gt;&gt;
+	<a href="../../checklists/checklist.php?clid=<?php echo htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"> <?php echo (isset($LANG['OPEN_CHKLIST']) ? $LANG['OPEN_CHKLIST'] : 'Open Checklist'); ?> </a> &gt;&gt;
+	<a href="../key.php?clid=<?php echo htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&taxon=All+Species"> <?php echo (isset($LANG['OPEN_KEY']) ? $LANG['OPEN_KEY'] : 'Open Key'); ?> </a> &gt;&gt;
 	<?php
 	if($cidValue){
 		?>
-		<a href='matrixeditor.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&tf=' . htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS) . '&lang=' . htmlspecialchars($langValue, HTML_SPECIAL_CHARS_FLAGS); ?>'>
+		<a href='matrixeditor.php?clid=<?php echo htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&tf=' . htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&lang=' . htmlspecialchars($langValue, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>'>
 		<?php echo (isset($LANG['RETURN_TO_LIST']) ? $LANG['RETURN_TO_LIST'] : 'Return to Character List'); ?>
 		</a> &gt;&gt;
 		<?php

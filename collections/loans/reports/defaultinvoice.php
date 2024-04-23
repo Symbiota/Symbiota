@@ -3,9 +3,9 @@ include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLoans.php');
 require_once $SERVER_ROOT.'/vendor/phpoffice/phpword/bootstrap.php';
 
-$collId = $_REQUEST['collid'];
-$identifier = array_key_exists('identifier',$_REQUEST)?$_REQUEST['identifier']:0;
-$loanType = array_key_exists('loantype',$_REQUEST)?$_REQUEST['loantype']:0;
+$collId = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$identifier = array_key_exists('identifier',$_REQUEST) ? filter_var($_REQUEST['identifier'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$loanType = array_key_exists('loantype',$_REQUEST) ? filter_var($_REQUEST['loantype'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $outputMode = $_POST['outputmode'];
 $languageDef = $_POST['languagedef'];
 

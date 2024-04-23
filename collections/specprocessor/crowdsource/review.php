@@ -86,10 +86,10 @@ $projArr = $csManager->getProjectDetails();
 </head>
 <body style="margin-left: 0px; margin-right: 0px;background-color:white;">
 	<div class='navpath'>
-		<a href="../../../index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
-		<a href="index.php"><?php echo htmlspecialchars($LANG['SCORE_BOARD'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+		<a href="../../../index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+		<a href="index.php"><?php echo htmlspecialchars($LANG['SCORE_BOARD'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 		<?php
-		if($collid) echo '<a href="../index.php?tabindex=1&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($LANG['CONTROL_PANEL'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt;';
+		if($collid) echo '<a href="../index.php?tabindex=1&collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($LANG['CONTROL_PANEL'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt;';
 		?>
 		<b><?php echo $LANG['CROWDSOURCING_REVIEW']; ?></b>
 	</div>
@@ -114,19 +114,19 @@ $projArr = $csManager->getProjectDetails();
 			$end = ($start + $pageCnt);
 			$urlPrefix = 'review.php?collid='.$collid.'&uid='.$uid.'&rstatus='.$rStatus;
 			$navStr = '<b>';
-			if($start > 0) $navStr .= '<a href="' . htmlspecialchars($urlPrefix, HTML_SPECIAL_CHARS_FLAGS) . '&start=0&limit=' . htmlspecialchars($limit, HTML_SPECIAL_CHARS_FLAGS) . '">';
+			if($start > 0) $navStr .= '<a href="' . htmlspecialchars($urlPrefix, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&start=0&limit=' . htmlspecialchars($limit, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 			$navStr .= '|&lt; ';
 			if($start > 0) $navStr .= '</a>';
 			$navStr .= '&nbsp;&nbsp;&nbsp;';
-			if($start > 0) $navStr .= '<a href="' . htmlspecialchars($urlPrefix, HTML_SPECIAL_CHARS_FLAGS) . '&start=' . htmlspecialchars(($start-$limit), HTML_SPECIAL_CHARS_FLAGS) . '&limit=' . htmlspecialchars($limit, HTML_SPECIAL_CHARS_FLAGS) . '">';
+			if($start > 0) $navStr .= '<a href="' . htmlspecialchars($urlPrefix, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&start=' . htmlspecialchars(($start-$limit), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&limit=' . htmlspecialchars($limit, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 			$navStr .= '&lt;&lt;';
 			if($start > 0) $navStr .= '</a>';
 			$navStr .= '&nbsp;&nbsp;|&nbsp;&nbsp;'.($start + 1).' - '.($end).' of '.number_format($totalCnt).'&nbsp;&nbsp;|&nbsp;&nbsp;';
-			if($totalCnt > ($start+$limit)) $navStr .= '<a href="' . htmlspecialchars($urlPrefix, HTML_SPECIAL_CHARS_FLAGS) . '&start=' . htmlspecialchars(($start+$limit), HTML_SPECIAL_CHARS_FLAGS) . '&limit=' .htmlspecialchars($limit, HTML_SPECIAL_CHARS_FLAGS) . '">';
+			if($totalCnt > ($start+$limit)) $navStr .= '<a href="' . htmlspecialchars($urlPrefix, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&start=' . htmlspecialchars(($start+$limit), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&limit=' .htmlspecialchars($limit, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 			$navStr .= '&gt;&gt;';
 			if($totalCnt > ($start+$limit)) $navStr .= '</a>';
 			$navStr .= '&nbsp;&nbsp;&nbsp;';
-			if(($start+$pageCnt) < $totalCnt) $navStr .= '<a href="' .htmlspecialchars($urlPrefix, HTML_SPECIAL_CHARS_FLAGS) . '&start=' . htmlspecialchars((floor($totalCnt/$limit)*$limit), HTML_SPECIAL_CHARS_FLAGS) . '&limit=' . htmlspecialchars($limit, HTML_SPECIAL_CHARS_FLAGS) . '">';
+			if(($start+$pageCnt) < $totalCnt) $navStr .= '<a href="' .htmlspecialchars($urlPrefix, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&start=' . htmlspecialchars((floor($totalCnt/$limit)*$limit), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&limit=' . htmlspecialchars($limit, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 			$navStr .= '&gt;|';
 			if(($start+$pageCnt) < $totalCnt) $navStr .= '</a> ';
 			$navStr .= '</b>';
@@ -245,7 +245,7 @@ $projArr = $csManager->getProjectDetails();
 										<td>
 											<?php
 											if($isEditor || $rArr['reviewstatus'] == 5){
-												echo '<a href="../../editor/occurrenceeditor.php?csmode=1&occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
+												echo '<a href="../../editor/occurrenceeditor.php?csmode=1&occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">';
 												echo '<img src="../../../images/edit.png" style="border:solid 1px gray;width:1.3em;" />';
 												echo '</a>';
 											}
@@ -304,10 +304,10 @@ $projArr = $csManager->getProjectDetails();
 								<?php echo $LANG['NO_RECS_THIS_USER']; ?>
 							</div>
 							<div style="margin:15px;">
-								<?php echo $LANG['RETURN_TO']; ?> <a href="../index.php?tabindex=1&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo $LANG['CONTROL_PANEL']; ?></a>
+								<?php echo $LANG['RETURN_TO']; ?> <a href="../index.php?tabindex=1&collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo $LANG['CONTROL_PANEL']; ?></a>
 							</div>
 							<div style="margin:15px;">
-								<?php echo $LANG['RETURN_TO']; ?> <a href="index.php"><?php echo htmlspecialchars($LANG['SCORE_BOARD'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
+								<?php echo $LANG['RETURN_TO']; ?> <a href="index.php"><?php echo htmlspecialchars($LANG['SCORE_BOARD'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 							</div>
 						</div>
 						<?php

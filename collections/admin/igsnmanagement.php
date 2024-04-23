@@ -129,8 +129,8 @@ include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class='navpath'>
 	<a href="../../index.php"> <?php echo $LANG['HOME'] ?></a> &gt;&gt;
-	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"> <?php echo $LANG['COLL_MANAGE'] ?></a> &gt;&gt;
-	<a href="igsnmapper.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"> <?php echo $LANG['IGSN_GUID_GEN'] ?></a> &gt;&gt;
+	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"> <?php echo $LANG['COLL_MANAGE'] ?></a> &gt;&gt;
+	<a href="igsnmapper.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"> <?php echo $LANG['IGSN_GUID_GEN'] ?></a> &gt;&gt;
 	<b><?php echo $LANG['IGSN_MANAGE'] ?></b>
 </div>
 <div id="innertext">
@@ -175,7 +175,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							<button name="formsubmit" type="submit" value="deleteProfile" onclick="return confirm('<?php echo $LANG['DEL_CONFIRM'] ?>')"><?php echo $LANG['DEL_PROFILE'] ?></button>
 						</span>
 						<span style="margin-left:10px;">
-							<a href="igsnmapper.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><button type="button"><?php echo $LANG['GO_TO_MAPPER'] ?></button></a>
+							<a href="igsnmapper.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><button type="button"><?php echo $LANG['GO_TO_MAPPER'] ?></button></a>
 						</span>
 					</form>
 				</div>

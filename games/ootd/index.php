@@ -13,10 +13,10 @@ $submitAction = array_key_exists("submitaction",$_POST)?$_POST["submitaction"]:'
 
 //Sanitation
 if(!preg_match('/^[\d,]+$/', $clidStr)) $clidStr = 0;
-$ootdTitle = htmlspecialchars($ootdTitle, HTML_SPECIAL_CHARS_FLAGS);
-$ootdType = htmlspecialchars($ootdType, HTML_SPECIAL_CHARS_FLAGS);
-$familyAnswer = htmlspecialchars($familyAnswer, HTML_SPECIAL_CHARS_FLAGS);
-$scinameAnswer = htmlspecialchars($scinameAnswer, HTML_SPECIAL_CHARS_FLAGS);
+$ootdTitle = htmlspecialchars($ootdTitle, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$ootdType = htmlspecialchars($ootdType, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$familyAnswer = htmlspecialchars($familyAnswer, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$scinameAnswer = htmlspecialchars($scinameAnswer, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 
 $gameManager = new GamesManager();
 $gameInfo = $gameManager->setOOTD($oodID,$clidStr);
@@ -235,11 +235,11 @@ $genusAnswer = strtok($scinameAnswer, " ");
 								</div>
 								<div style="margin-top:40px;font-size:16px;" >
 									<div>
-										<a href = "index.php?oodid=<?php echo htmlspecialchars($oodID, HTML_SPECIAL_CHARS_FLAGS) . '&cl=' . htmlspecialchars($clidStr, HTML_SPECIAL_CHARS_FLAGS) . '&title=' . htmlspecialchars($ootdTitle, HTML_SPECIAL_CHARS_FLAGS) . '&type=' . htmlspecialchars($ootdType, HTML_SPECIAL_CHARS_FLAGS); ?>">Click here to try again!</a>
+										<a href = "index.php?oodid=<?php echo htmlspecialchars($oodID, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&cl=' . htmlspecialchars($clidStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&title=' . htmlspecialchars($ootdTitle, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&type=' . htmlspecialchars($ootdType, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">Click here to try again!</a>
 									</div>
 									<div>-- OR --</div>
 									<div>
-										<a href = "index.php?submitaction=giveup?oodid=<?php echo htmlspecialchars($oodID, HTML_SPECIAL_CHARS_FLAGS) .'&cl=' . htmlspecialchars($clidStr, HTML_SPECIAL_CHARS_FLAGS) . '&title=' . htmlspecialchars($ootdTitle, HTML_SPECIAL_CHARS_FLAGS) . '&type=' . htmlspecialchars($ootdType, HTML_SPECIAL_CHARS_FLAGS); ?>" onClick="openTaxonProfile()" >-Click here reveal what the <?php echo htmlspecialchars($ootdType, HTML_SPECIAL_CHARS_FLAGS); ?> was-</a>
+										<a href = "index.php?submitaction=giveup?oodid=<?php echo htmlspecialchars($oodID, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .'&cl=' . htmlspecialchars($clidStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&title=' . htmlspecialchars($ootdTitle, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&type=' . htmlspecialchars($ootdType, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" onClick="openTaxonProfile()" >-Click here reveal what the <?php echo htmlspecialchars($ootdType, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?> was-</a>
 									</div>
 								</div>
 							</div>

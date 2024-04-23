@@ -53,7 +53,7 @@ if($SYMB_UID){
 			<?php
 			if($collid){
 				?>
-				<a href="../../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"> <?php echo (isset($LANG['COLL_MGMT'])?$LANG['COLL_MGMT']:'Collection Management'); ?> </a> &gt;&gt;
+				<a href="../../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"> <?php echo (isset($LANG['COLL_MGMT'])?$LANG['COLL_MGMT']:'Collection Management'); ?> </a> &gt;&gt;
 				<?php
 			}
 			else{
@@ -61,7 +61,7 @@ if($SYMB_UID){
 				<a href="../../../sitemap.php"> <?php echo (isset($LANG['BREADCRUMB_SITEMAP'])?$LANG['BREADCRUMB_SITEMAP']:'Sitemap'); ?> </a> &gt;&gt;
 				<?php
 			}
-			echo '<a href="salixhandler.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&actiontype=' . htmlspecialchars($actionType, HTML_SPECIAL_CHARS_FLAGS) . '&limit=' . htmlspecialchars($limit, HTML_SPECIAL_CHARS_FLAGS) . '">';
+			echo '<a href="salixhandler.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&actiontype=' . htmlspecialchars($actionType, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&limit=' . htmlspecialchars($limit, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 			echo '<b>' . (isset($LANG['SALIX_WRDST_MNGR'])?$LANG['SALIX_WRDST_MNGR']:'SALIX Wordstat Manager') . '</b>';
 			echo '</a>';
 			?>
@@ -76,7 +76,7 @@ if($SYMB_UID){
 				$salixHanlder->setVerbose($verbose);
 				if($action == 'Build Wordstat Tables'){
 					$salixHanlder->buildWordStats($collid,$actionType,$limit);
-					echo '<div style="margin:15px;"><a href="salixhandler.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&actiontype=' . htmlspecialchars($actionType, HTML_SPECIAL_CHARS_FLAGS) . '&limit=' . htmlspecialchars($limit, HTML_SPECIAL_CHARS_FLAGS) . '">' . (isset($LANG['RETURN'])?$LANG['RETURN']:'Return to Main Menu') . '</a></div>';
+					echo '<div style="margin:15px;"><a href="salixhandler.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&actiontype=' . htmlspecialchars($actionType, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&limit=' . htmlspecialchars($limit, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . (isset($LANG['RETURN'])?$LANG['RETURN']:'Return to Main Menu') . '</a></div>';
 				}
 				else{
 					?>

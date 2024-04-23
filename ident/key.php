@@ -58,7 +58,7 @@ if($chars){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo htmlspecialchars($DEFAULT_TITLE . ' ' . $LANG['WEBKEY'], HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars(preg_replace('/\<[^\>]+\>/','',$dataManager->getClName()), HTML_SPECIAL_CHARS_FLAGS); ?></title>
+	<title><?php echo htmlspecialchars($DEFAULT_TITLE . ' ' . $LANG['WEBKEY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . htmlspecialchars(preg_replace('/\<[^\>]+\>/','',$dataManager->getClName()), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -165,23 +165,23 @@ echo '<div class="navpath">';
 echo '<a href="../index.php">' . $LANG['HOME'] . '</a> &gt;&gt; ';
 if($dynClid){
 	if($dataManager->getClType() == 'Specimen Checklist'){
-		echo '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/collections/list.php?tabindex=0">';
+		echo '<a href="' . htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/collections/list.php?tabindex=0">';
 		echo $LANG['OCC_CHECKLIST'];
 		echo '</a> &gt;&gt; ';
 	}
 }
 elseif($clid){
-	echo '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/checklists/checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">';
-	echo $LANG['CHECKLIST'] . ': ' . htmlspecialchars($dataManager->getClName(), HTML_SPECIAL_CHARS_FLAGS);
+	echo '<a href="' . htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/checklists/checklist.php?clid=' . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
+	echo $LANG['CHECKLIST'] . ': ' . htmlspecialchars($dataManager->getClName(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 	echo '</a> &gt;&gt; ';
 }
 elseif($pid){
-	echo '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/projects/index.php?pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">';
+	echo '<a href="' . htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/projects/index.php?pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 	echo $LANG['PROJ_CHECKLISTS'];
 	echo '</a> &gt;&gt; ';
 }
-echo '<a href="key-v1.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '&taxon=All+Species" alt="' . htmlspecialchars($LANG['TRAD_KEY'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($LANG['PREV_KEY'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
-echo '<b>' . htmlspecialchars($LANG['NEW_ID_KEY'], HTML_SPECIAL_CHARS_FLAGS) . ': ' . htmlspecialchars($dataManager->getClName(), HTML_SPECIAL_CHARS_FLAGS) . '</b>';
+echo '<a href="key-v1.php?clid=' . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&taxon=All+Species" alt="' . htmlspecialchars($LANG['TRAD_KEY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($LANG['PREV_KEY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
+echo '<b>' . htmlspecialchars($LANG['NEW_ID_KEY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ': ' . htmlspecialchars($dataManager->getClName(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</b>';
 echo '</div>';
 ?>
 <div id="innertext">
@@ -263,16 +263,16 @@ echo '</div>';
 		<?php
 		if($clid && $isEditor){
 			?>
-			<div style="float:right;margin:15px;" title="<?php echo htmlspecialchars($LANG['EDIT_CHAR_MATRIX'], HTML_SPECIAL_CHARS_FLAGS); ?>">
-				<a href="tools/matrixeditor.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>"><img class="editimg" src="../images/edit.png" style="width:1.2em" /><span style="font-size:70%;">CM</span></a>
+			<div style="float:right;margin:15px;" title="<?php echo htmlspecialchars($LANG['EDIT_CHAR_MATRIX'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+				<a href="tools/matrixeditor.php?clid=<?php echo htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><img class="editimg" src="../images/edit.png" style="width:1.2em" /><span style="font-size:70%;">CM</span></a>
 			</div>
 			<?php
 		}
 		?>
 		<div id="title-div">
 			<?php
-			if($FLORA_MOD_IS_ACTIVE) echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&dynclid=' . htmlspecialchars($dynClid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">';
-			echo htmlspecialchars($dataManager->getClName(), HTML_SPECIAL_CHARS_FLAGS) . ' ';
+			if($FLORA_MOD_IS_ACTIVE) echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&dynclid=' . htmlspecialchars($dynClid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
+			echo htmlspecialchars($dataManager->getClName(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' ';
 			if($FLORA_MOD_IS_ACTIVE) echo '</a>';
 			?>
 		</div>
@@ -291,14 +291,14 @@ echo '</div>';
 					echo '<div class="taxon-div">';
 					if($displayImages){
 						echo '<div class="img-div">';
-						echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . "&clid=" . htmlspecialchars(($clType=="static"?$clid:""), HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
+						echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "&clid=" . htmlspecialchars(($clType=="static"?$clid:""), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">';
 						if(isset($taxonArr['i'])) echo '<img src="' . $taxonArr['i'] . '" />';
-						else echo '<div>' . htmlspecialchars($LANG['IMG_NOT_AVAILABLE'], HTML_SPECIAL_CHARS_FLAGS) . '</div>';
+						else echo '<div>' . htmlspecialchars($LANG['IMG_NOT_AVAILABLE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</div>';
 						echo '</a>';
 						echo '</div>';
 					}
 					echo '<div class="sciname-div">';
-					echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . "&clid=" . htmlspecialchars(($clType=="static"?$clid:""), HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><i>' . htmlspecialchars($taxonArr['s'], HTML_SPECIAL_CHARS_FLAGS) . '</i></a>';
+					echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "&clid=" . htmlspecialchars(($clType=="static"?$clid:""), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank"><i>' . htmlspecialchars($taxonArr['s'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</i></a>';
 					if($displayCommon) echo ($displayImages?'<br/>':(isset($taxonArr['v'])?' - ':'')) . '<span class="vern-span">' . (isset($taxonArr['v'])?$taxonArr['v']:'&nbsp;') . '</span>';
 					if($isEditor && !$displayImages){
 						echo '<a href="#" onclick="openEditorPopup('.$tid.')">';

@@ -33,7 +33,7 @@ $ocArr = $datasetManager->getOccurrences($datasetid);
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div class="navpath">
-			<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php"><?php echo $LANG['HOME']; ?></a> &gt;&gt;
+			<a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php"><?php echo $LANG['HOME']; ?></a> &gt;&gt;
 			<b><?php echo $LANG['DATASET']; ?>: <?php echo $dArr['name'] ;?></b>
 		</div>
 		<!-- This is inner text! -->
@@ -45,9 +45,9 @@ $ocArr = $datasetManager->getOccurrences($datasetid);
       <!-- Occurrences Summary -->
       <p><?php echo $LANG['INCLUDES']; ?> <?php echo count($ocArr); ?> <?php echo $LANG['RECORDS']; ?></p>
 
-      <p><a class="btn" href="<?php echo htmlspecialchars($searchUrl, HTML_SPECIAL_CHARS_FLAGS) ;?>"><?php echo $LANG['VIEW_AND_DOWNLOAD']; ?></a></p>
-      <p><a class="btn" href="<?php echo htmlspecialchars($tableUrl, HTML_SPECIAL_CHARS_FLAGS) ;?>"><?php echo $LANG['VIEW_SAMPLE']; ?></a></p>
-      <p><a class="btn" href="<?php echo htmlspecialchars($taxaUrl, HTML_SPECIAL_CHARS_FLAGS) ;?>"><?php echo $LANG['VIEW_LIST']; ?></a></p>
+      <p><a class="btn" href="<?php echo htmlspecialchars($searchUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ;?>"><?php echo $LANG['VIEW_AND_DOWNLOAD']; ?></a></p>
+      <p><a class="btn" href="<?php echo htmlspecialchars($tableUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ;?>"><?php echo $LANG['VIEW_SAMPLE']; ?></a></p>
+      <p><a class="btn" href="<?php echo htmlspecialchars($taxaUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ;?>"><?php echo $LANG['VIEW_LIST']; ?></a></p>
       <!-- <p><a href="#">Download this Dataset</a></p> -->
     </ul>
 		</div>
