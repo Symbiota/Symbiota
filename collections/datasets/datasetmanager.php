@@ -295,7 +295,7 @@ if($isEditor){
 		}
 		if($datasetId){
 			echo '<div style="margin:10px 0px 5px 20px;font-weight:bold;font-size:130%;">'.$mdArr['name'].'</div>';
-			if($role) echo '<div style="margin-left:20px" title="' . $LANG['ROLE'] . '"'.$roleLabel.'">'.$LANG['ROLE'].': '.$role.'</div>';
+			if($role) echo '<div style="margin-left:20px" title="' . $LANG['ROLE'] . '"' . $roleLabel . '>' . $LANG['ROLE'] . ': ' . $role . '</div>';
 			if($isEditor){
 				?>
 				<div id="tabs" style="margin:10px;">
@@ -388,21 +388,22 @@ if($isEditor){
 								<h1><span><b><?php echo $LANG['EDITOR']; ?></b></span></h1>
 								<form name="editform" action="datasetmanager.php" method="post" onsubmit="return validateEditForm(this)">
 									<div>
-										<p><b><?php echo $LANG['NAME']; ?></b></p>
-										<input name="name" type="text" value="<?php echo $mdArr['name']; ?>" aria-label="<?php echo $LANG['NAME']; ?>" style="width:70%" />
+										<label for="name"><?php echo $LANG['NAME']; ?></label>
+										<input name="name" id="name" type="text" value="<?php echo $mdArr['name']; ?>" aria-label="<?php echo $LANG['NAME']; ?>" style="width:70%" />
 									</div>
 									<div>
 										<p>
 											<input type="checkbox" name="ispublic" id="ispublic" value="1" aria-label="<?php echo $LANG['PUB_VISIBLE']; ?>" <?php echo ($mdArr['ispublic']?'CHECKED':''); ?> />
-											<b><?php echo $LANG['PUB_VISIBLE']; ?></b>
+											<!-- <b><?php echo $LANG['PUB_VISIBLE']; ?></b> -->
+											<label for="ispublic"><?php echo $LANG['PUB_VISIBLE']; ?></label>
 										</p>
 									</div>
 									<div>
-										<p><b><?php echo $LANG['NOTES_INTERNAL']; ?></b></p>
-										<input name="notes" type="text" value="<?php echo $mdArr['notes']; ?>" style="width:70%" aria-label="<?php echo $LANG['NOTES_INTERNAL']; ?>" />
+										<label for="notes"><?php echo $LANG['NOTES_INTERNAL']; ?></label>
+										<input name="notes" id="notes" type="text" value="<?php echo $mdArr['notes']; ?>" style="width:70%" aria-label="<?php echo $LANG['NOTES_INTERNAL']; ?>" />
 									</div>
 									<div>
-										<p><b><?php echo $LANG['DESCRIPTION']; ?></b></p>
+										<label for="description"><?php echo $LANG['DESCRIPTION']; ?></label>
 										<textarea name="description" id="description" cols="100" rows="10" style="width: 70%;" aria-label="<?php echo $LANG['DESCRIPTION']; ?>" ><?php echo $mdArr['description']; ?></textarea>
 									</div>
 									<div style="margin:15px;">
