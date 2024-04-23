@@ -43,4 +43,5 @@ $LANG['REMOVE_TAXON'] = 'Supprimer le Taxon de la Liste de Contrôle';
 $LANG['UNKNOWN_TAXON'] = 'Taxon Inconnu';
 $LANG['UNKNOWN_COLLECTION'] = 'Collection Inconnue';
 $LANG['REMOVE'] = 'Retirer';
+$LANG['TO_COLLECTIONS_LINK'] = 'Lien vers les collections et taxons cibles';
 ?>

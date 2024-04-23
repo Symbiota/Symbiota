@@ -284,7 +284,7 @@ $clArray = $vManager->getChecklistData();
 							?>
 							<div style="float:right;margin-top:10px;">
 								<a href="../collections/list.php?mode=voucher&db=all&usethes=1&reset=1&taxa=<?php echo urlencode(htmlspecialchars($vManager->getTaxonName(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)) . "&targetclid=" . htmlspecialchars($vManager->getClid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "&targettid=" . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?>">
-									<img src="../images/link.png"  style="border:0px;" />
+									<img src="../images/link.png" alt="<?= $LANG['TO_COLLECTIONS_LINK']; ?>" style="border:0px;" />
 								</a>
 							</div>
 							<h2><?php echo $LANG['VOUCHER_INFO']; ?></h2>

@@ -45,4 +45,5 @@ $LANG['REMOVE_TAXON'] = 'Eliminar Taxón de la Lista de Verificación';
 $LANG['UNKNOWN_TAXON'] = 'Taxón Desconocido';
 $LANG['UNKNOWN_COLLECTION'] = 'Colección Desconocida';
 $LANG['REMOVE'] = 'Eliminar';
+$LANG['TO_COLLECTIONS_LINK'] = 'Enlace a colecciones y taxones objetivo';
 ?>
