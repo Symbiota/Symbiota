@@ -139,6 +139,7 @@ $clArray = $vManager->getChecklistData();
 		</style>
 	</head>
 	<body onload="<?php  if(!$status) echo $followUpAction; ?>" >
+		<a class="screen-reader-only" href="#popup-innertext"><?php echo $LANG['SKIP_NAV'] ?></a>
 		<!-- This is inner text! -->
 		<div id='popup-innertext'>
 			<h1 class="page-heading"><?php echo "<i>" . ($vManager->getTaxonName() ?? $LANG['UNKNOWN_TAXON']) . "</i> " . $LANG['IN'] . " " . ($vManager->getClName() ?? $LANG['UNKNOWN_COLLECTION']); ?></h1>
@@ -268,7 +269,7 @@ $clArray = $vManager->getChecklistData();
 						if($OCCURRENCE_MOD_IS_ACTIVE){
 							?>
 							<div style="float:right;margin-top:10px;">
-								<a href="../collections/list.php?mode=voucher&db=all&usethes=1&reset=1&taxa=<?php echo htmlspecialchars($vManager->getTaxonName(), HTML_SPECIAL_CHARS_FLAGS) . "&targetclid=" . htmlspecialchars($vManager->getClid(), HTML_SPECIAL_CHARS_FLAGS) . "&targettid=" . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS);?>">
+								<a href="../collections/list.php?mode=voucher&db=all&usethes=1&reset=1&taxa=<?php echo urlencode(htmlspecialchars($vManager->getTaxonName(), HTML_SPECIAL_CHARS_FLAGS)) . "&targetclid=" . htmlspecialchars($vManager->getClid(), HTML_SPECIAL_CHARS_FLAGS) . "&targettid=" . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS);?>">
 									<img src="../images/link.png"  style="border:0px;" alt="<?php echo $LANG['LINK_ICON']; ?>" />
 								</a>
 							</div>
@@ -299,7 +300,7 @@ $clArray = $vManager->getChecklistData();
 											<input type="hidden" name='voucherID' value="<?php echo $voucherID;?>" />
 											<input type="hidden" name='tabindex' value="1" />
 											<input type="hidden" name='action' value="deleteVoucher" />
-											<input type="image" name="action" src="../images/del.png" style="width:15px;" title="<?php echo $LANG['DELETE_TAXON']; ?>" aria-label="<?php echo $LANG['REMOVE_TAXON']; ?>" />
+											<input type="image" name="action" src="../images/del.png" style="width:15px;" title="<?php echo $LANG['DELETE_TAXON']; ?>" alt="<?php echo $LANG['REMOVE'] . ' ' . $voucherID; ?>" aria-label="<?php echo $LANG['REMOVE_TAXON']; ?>" />
 										</form>
 										<div id="vouch-<?php echo $voucherID;?>" style='margin:10px;clear:both;display:none;'>
 											<form action="clsppeditor.php" method='post' name='editvoucher'>

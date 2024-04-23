@@ -44,5 +44,5 @@ $LANG['LINK_ICON'] = 'Icono de Enlace';
 $LANG['REMOVE_TAXON'] = 'Eliminar Taxón de la Lista de Verificación';
 $LANG['UNKNOWN_TAXON'] = 'Taxón Desconocido';
 $LANG['UNKNOWN_COLLECTION'] = 'Colección Desconocida';
-
+$LANG['REMOVE'] = 'Eliminar';
 ?>

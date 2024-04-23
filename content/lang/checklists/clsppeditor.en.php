@@ -42,7 +42,7 @@ $LANG['LINK_ICON'] = 'Link Icon';
 $LANG['REMOVE_TAXON'] = 'Remove Taxon From Checklist';
 $LANG['UNKNOWN_TAXON'] = 'Unknown Taxon';
 $LANG['UNKNOWN_COLLECTION'] = 'Unknown Collection';
-
-
+$LANG['SKIP_NAV'] = 'Skip Navigation';
+$LANG['REMOVE'] = 'Remove';
 
 ?>
