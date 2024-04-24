@@ -23,8 +23,6 @@ $collId = implode(',', $sanitizedCollIds);
 
 //Variable sanitation
 if(!preg_match('/^[0-9,]+$/',$catID)) $catID = 0;
-if(!preg_match('/^[0-9,]+$/',$collId)) $collId = 0;
-
 
 //if($collId) $collManager->setCollectionId($collId);
 $collList = $collManager->getStatCollectionList($catID);
