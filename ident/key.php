@@ -264,7 +264,7 @@ echo '</div>';
 		if($clid && $isEditor){
 			?>
 			<div style="float:right;margin:15px;" title="<?php echo htmlspecialchars($LANG['EDIT_CHAR_MATRIX'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
-				<a href="tools/matrixeditor.php?clid=<?php echo htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><img class="editimg" src="../images/edit.png" style="width:1.2em" /><span style="font-size:70%;">CM</span></a>
+				<a href="tools/matrixeditor.php?clid=<?php echo htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><img class="editimg" src="../images/edit.png" style="width:1.2em" /><span style="font-size:70%;"><?= $LANG['EDIT_CHAR_MATRIX'] ?></span></a>
 			</div>
 			<?php
 		}
