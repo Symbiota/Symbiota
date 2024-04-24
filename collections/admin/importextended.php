@@ -313,7 +313,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 						<fieldset>
 							<legend><?= $LANG['INITIALIZE_IMPORT'] ?></legend>
 							<div class="formField-div">
-								<input name="importFile" onchange="verifyFileSize(this)" aria-label="<?php echo $LANG['CHOOSE_FILE'] ?>" />
+								<input name="importFile" type="file" onchange="verifyFileSize(this)" aria-label="<?php echo $LANG['CHOOSE_FILE'] ?>" />
 							</div>
 							<div class="formField-div">
 								<label for="importType"><?= $LANG['IMPORT_TYPE'] ?>: </label>
