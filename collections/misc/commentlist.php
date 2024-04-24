@@ -264,7 +264,7 @@ if($isEditor){
 								}
 								?>
 								<span style="margin-left:20px;">
-									<button name="formsubmit" type="submit" value="Delete Comment"  onclick="return confirm('<?php echo $LANG['SURE_DELETE_COMMENT']; ?>')" ><?php echo $LANG['DEL_COMMENT']; ?></button>
+									<button name="formsubmit" type="submit" value="Delete Comment" style="background-color:#DF5151" onclick="return confirm('<?php echo $LANG['SURE_DELETE_COMMENT']; ?>')" ><?php echo $LANG['DEL_COMMENT']; ?></button>
 								</span>
 								<input name="comid" type="hidden" value="<?php echo $comid; ?>" />
 							</form>
