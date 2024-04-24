@@ -197,12 +197,12 @@ $clArr = $obsManager->getChecklists();
 								</div>
 								<div>
 									<label for="scientificnameauthorship"><?php echo $LANG['AUTHOR']; ?>:</label>
-									<input type="text" name="scientificnameauthorship" id="scientificnameauthorship" maxlength="100" tabindex="-1" value="" />
+									<input type="text" name="scientificnameauthorship" id="scientificnameauthorship" maxlength="100" value="" />
 								</div>
 							</section>
 							<div style="clear:both;" class="flex-form">
 								<label for="family"><?php echo $LANG['FAMILY']; ?>:</label>
-								<input type="text" name="family" id="family" size="30" maxlength="50" style="" tabindex="-1" value="" />
+								<input type="text" name="family" id="family" size="30" maxlength="50" value="" />
 							</div>
 						</div>
 						<div style="clear:both;" class="flex-form">
@@ -282,7 +282,7 @@ $clArr = $obsManager->getChecklists();
 								<input type="text" id="decimallongitude" name="decimallongitude" maxlength="13" style="width:88px;" value="" onchange="verifyLngValue(this.form)" title="Decimal Format (eg -112.5436)" required />
 							</div>
 							<div style="margin-top:10px; margin-left:3px; margin-bottom:10px" >
-								<a onclick="openMappingAid('obsform','decimallatitude','decimallongitude');return false;">
+								<a tabindex="0" onclick="openMappingAid('obsform','decimallatitude','decimallongitude');return false;">
 									<img src="../../images/world.png" style="width:1.3em;" title="Coordinate Map Aid" alt="<?php echo (isset($LANG['IMG_GLOBE']) ? $LANG['IMG_GLOBE'] : 'A small image of the globe'); ?>" />
 								</a>
 								<button id="dmsButton" type="button" onclick="toggle('dmsdiv');"><?php echo $LANG['DMS']; ?></button>
