@@ -225,7 +225,7 @@ if(!$researchList && !$editMode){
 	else{
 		echo "<a href='" . $CLIENT_ROOT . "'>" . (isset($LANG['HOME']) ? $LANG['HOME'] : 'Home') . "</a> &gt;&gt; ";
 	}
-	echo '<b><a href="index.php?pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars(($projArr?$projArr['projname']: (isset($LANG['INVPROJLIST']) ? $LANG['INVPROJLIST'] : 'Inventory Project List')), HTML_SPECIAL_CHARS_FLAGS) . '</a></b>';
+	echo '<b><a href="index.php?pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars(($projArr?$projArr['projname']: (isset($LANG['INVPROJLIST']) ? $LANG['INVPROJLIST'] : 'Inventory Project List')), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></b>';
 	echo "</div>";
 	?>
 
@@ -274,12 +274,12 @@ if(!$researchList && !$editMode){
 				?>
 				<div id="tabs" style="height:auto;margin:10px;display:<?php echo ($newProj||$editMode?'block':'none'); ?>;">
 					<ul>
-						<li><a href="#mdtab"><span><?php echo htmlspecialchars($LANG['METADATA'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
+						<li><a href="#mdtab"><span><?php echo htmlspecialchars($LANG['METADATA'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?></span></a></li>
 						<?php
 						if($pid){
 							?>
-							<li><a href="managertab.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><span><?php echo htmlspecialchars($LANG['INVMANAG'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
-							<li><a href="checklisttab.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><span><?php echo htmlspecialchars($LANG['CHECKMANAG'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
+							<li><a href="managertab.php?pid=<?php echo htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><span><?php echo htmlspecialchars($LANG['INVMANAG'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?></span></a></li>
+							<li><a href="checklisttab.php?pid=<?php echo htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><span><?php echo htmlspecialchars($LANG['CHECKMANAG'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?></span></a></li>
 							<?php
 						}
 						?>
@@ -375,7 +375,7 @@ if(!$researchList && !$editMode){
 							<span onclick="toggleResearchInfoBox(this);" title="<?php echo $LANG['QUESRESSPEC'];?>" style="cursor:pointer;">
 								<img src="../images/qmark.png" style="width:1em;" alt="<?php echo $LANG['QUESTION_ALT'] ?>" />
 							</span>
-							<a href="../checklists/clgmap.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS);?>" title="<?php echo htmlspecialchars($LANG['MAPCHECK'], HTML_SPECIAL_CHARS_FLAGS);?>">
+							<a href="../checklists/clgmap.php?pid=<?php echo htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?>" title="<?php echo htmlspecialchars($LANG['MAPCHECK'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?>">
 								<?php echo $LANG['MAPCHECK'] ?>
 								<img src='../images/world.png' style="width:1em; height:1em;" alt="<?php echo $LANG['GLOBE_ALT'] ?>"/>
 							</a>
@@ -410,8 +410,8 @@ if(!$researchList && !$editMode){
 							if(isset($LANG['MAPREP'])) $mapTitle = $LANG['MAPREP'];
 							?>
 							<div style="float:right;text-align:center;">
-								<a href="../checklists/clgmap.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS);?>" title="<?php echo htmlspecialchars($mapTitle, HTML_SPECIAL_CHARS_FLAGS); ?>">
-									<img src="<?php echo htmlspecialchars($tnUrl, HTML_SPECIAL_CHARS_FLAGS); ?>" style="width:<?php echo $tnWidth; ?>px;" alt="<?php echo htmlspecialchars($mapTitle, HTML_SPECIAL_CHARS_FLAGS); ?>" />
+								<a href="../checklists/clgmap.php?pid=<?php echo htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?>" title="<?php echo htmlspecialchars($mapTitle, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+									<img src="<?php echo htmlspecialchars($tnUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" style="width:<?php echo $tnWidth; ?>px;" alt="<?php echo htmlspecialchars($mapTitle, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" />
 									<br/>
 									<?php echo $LANG['OPENMAP'];?>
 								</a>
@@ -432,7 +432,7 @@ if(!$researchList && !$editMode){
 										if($KEY_MOD_IS_ACTIVE){
 											?>
 											<span> | </span>
-											<a href='../ident/key.php?clid=<?php echo htmlspecialchars($key, HTML_SPECIAL_CHARS_FLAGS); ?>&pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>&taxon=All+Species'>
+											<a href='../ident/key.php?clid=<?php echo htmlspecialchars($key, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&pid=<?php echo htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&taxon=All+Species'>
 												<?php echo $LANG['KEY'] ?>
 												<img style='width:1.2em; margin-left: 0.5rem;' src='../images/key.png' alt="<?php echo $LANG['KEY_SYMBOL'] ?>" />
 											</a>
@@ -457,7 +457,7 @@ if(!$researchList && !$editMode){
 			$projectArr = $projManager->getProjectList();
 			foreach($projectArr as $pid => $projList){
 				?>
-				<h2><a href="index.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($projList["projname"], HTML_SPECIAL_CHARS_FLAGS); ?></a></h2>
+				<h2><a href="index.php?pid=<?php echo htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars($projList["projname"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></h2>
 				<div style="margin:0px 0px 30px 15px;">
 					<div><b><?php echo $LANG['MANAG'];?>:</b> <?php echo ($projList["managers"]?$projList["managers"]:'Not defined'); ?></div>
 					<div style='margin-top:10px;'><?php echo $projList["descr"]; ?></div>

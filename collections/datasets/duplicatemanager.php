@@ -9,7 +9,7 @@ $collId = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid']
 $dupeDepth = array_key_exists('dupedepth', $_REQUEST) ? filter_var($_REQUEST['dupedepth'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $start = array_key_exists('start', $_REQUEST) ? filter_var($_REQUEST['start'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $limit = array_key_exists('limit', $_REQUEST) ? filter_var($_REQUEST['limit'], FILTER_SANITIZE_NUMBER_INT) : 1000;
-$action = array_key_exists('action', $_REQUEST) ? htmlspecialchars($_REQUEST['action'], HTML_SPECIAL_CHARS_FLAGS) : '';
+$action = array_key_exists('action', $_REQUEST) ? htmlspecialchars($_REQUEST['action'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $formSubmit = array_key_exists('formsubmit' , $_POST) ? $_POST['formsubmit'] : '';
 
 if(!$SYMB_UID){
@@ -102,16 +102,16 @@ if($isEditor && $formSubmit){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href="../../index.php"> <?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?> </a> &gt;&gt;
+		<a href="../../index.php"> <?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?> </a> &gt;&gt;
 		<?php
 		if($collMap['colltype'] == 'General Observations'){
-			echo '<a href="../../profile/viewprofile.php?tabindex=1">' . htmlspecialchars($LANG['PERS_MANAGE_MENU'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
+			echo '<a href="../../profile/viewprofile.php?tabindex=1">' . htmlspecialchars($LANG['PERS_MANAGE_MENU'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
 		}
 		else{
-			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . htmlspecialchars($LANG['COL_MANAGE'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
+			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">' . htmlspecialchars($LANG['COL_MANAGE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
 		}
 		if($action){
-			echo '<a href="duplicatemanager.php?collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($LANG['DUP_MANAGE'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
+			echo '<a href="duplicatemanager.php?collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($LANG['DUP_MANAGE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
 			echo '<b>'.$LANG['DUP_CLUSTERS'].'</b>';
 		}
 		else{
@@ -141,17 +141,17 @@ if($isEditor && $formSubmit){
 						<?php echo $LANG['DUP_EXPLANATION']; ?>
 					</div>
 					<div style="margin:25px;">
-						<a href="duplicatemanager.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>&action=listdupes">
+						<a href="duplicatemanager.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&action=listdupes">
 							<?php echo $LANG['SPEC_DUP_CLUSTERS']; ?>
 						</a>
 					</div>
 					<div style="margin:25px;">
-						<a href="duplicatemanager.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>&dupedepth=2&action=listdupeconflicts">
+						<a href="duplicatemanager.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&dupedepth=2&action=listdupeconflicts">
 							<?php echo $LANG['DUP_CLUSTERS_CONFLICTING']; ?>
 						</a>
 					</div>
 					<div style="margin:25px;">
-						<a href="duplicatemanager.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>&action=batchlinkdupes">
+						<a href="duplicatemanager.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&action=batchlinkdupes">
 							<?php echo $LANG['BATCH_LINK_DUPS']; ?>
 						</a> - <?php echo $LANG['BATCH_LINK_EXPLANATION']; ?>
 					</div>
@@ -159,12 +159,12 @@ if($isEditor && $formSubmit){
 					if(!empty($ACTIVATE_EXSICCATI) && $collMap['colltype'] == 'Preserved Specimens'){
 						?>
 						<div style="margin:25px;">
-							<a href="../exsiccati/index.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank">
+							<a href="../exsiccati/index.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank">
 								<?php echo $LANG['EXS_DUPS']; ?>
 							</a> - <?php echo $LANG['EXS_DUP_EXPLANATION']; ?>
 						</div>
 						<div style="margin:25px;">
-							<a href="../exsiccati/index.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>&formsubmit=dlexs">
+							<a href="../exsiccati/index.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&formsubmit=dlexs">
 								<?php echo $LANG['EXS_DOWNLOAD']; ?>
 							</a> - <?php echo $LANG['EXS_DOWNLOAD_EXPLANATION']; ?>
 						</div>
@@ -190,13 +190,13 @@ if($isEditor && $formSubmit){
 					unset($clusterArr['cnt']);
 					if($clusterArr){
 						$paginationStr = '<span>';
-						if($start) $paginationStr .= '<a href="duplicatemanager.php?collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&dupeDepth=' . htmlspecialchars($dupeDepth, HTML_SPECIAL_CHARS_FLAGS) . '&action=' . htmlspecialchars($action, HTML_SPECIAL_CHARS_FLAGS) . '&start=' . htmlspecialchars(($start - $limit), HTML_SPECIAL_CHARS_FLAGS) . '&limit=' . htmlspecialchars($limit, HTML_SPECIAL_CHARS_FLAGS) . '">';
+						if($start) $paginationStr .= '<a href="duplicatemanager.php?collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&dupeDepth=' . htmlspecialchars($dupeDepth, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&action=' . htmlspecialchars($action, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&start=' . htmlspecialchars(($start - $limit), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&limit=' . htmlspecialchars($limit, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 						$paginationStr .= '&lt;&lt; '.$LANG['PREVIOUS'];
 						if($start) $paginationStr .= '</a>';
 						$paginationStr .= '</span>';
 						$paginationStr .= ' || '.($start+1).' - '.(count($clusterArr)<$limit?$totalCnt:($start + $limit)).' || ';
 						$paginationStr .= '<span>';
-						if($totalCnt >= ($start+$limit)) $paginationStr .= '<a href="duplicatemanager.php?collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&dupeDepth=' . htmlspecialchars($dupeDepth, HTML_SPECIAL_CHARS_FLAGS) . '&action=' . htmlspecialchars($action, HTML_SPECIAL_CHARS_FLAGS) . '&start=' . htmlspecialchars(($start + $limit), HTML_SPECIAL_CHARS_FLAGS) . '&limit=' . htmlspecialchars($limit, HTML_SPECIAL_CHARS_FLAGS) . '">';
+						if($totalCnt >= ($start+$limit)) $paginationStr .= '<a href="duplicatemanager.php?collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&dupeDepth=' . htmlspecialchars($dupeDepth, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&action=' . htmlspecialchars($action, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&start=' . htmlspecialchars(($start + $limit), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&limit=' . htmlspecialchars($limit, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 						$paginationStr .= $LANG['NEXT'].' &gt;&gt;';
 						if($totalCnt >= ($start+$limit)) $paginationStr .= '</a>';
 						$paginationStr .= '</span>';
@@ -258,7 +258,7 @@ if($isEditor && $formSubmit){
 											?>
 											<div style="margin:10px">
 												<div style="float:left;">
-													<a href="#" onclick="openOccurPopup(<?php echo htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS); ?>); return false;"><b><?php echo htmlspecialchars($oArr['id'], HTML_SPECIAL_CHARS_FLAGS); ?></b></a> =&gt;
+													<a href="#" onclick="openOccurPopup(<?php echo htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>); return false;"><b><?php echo htmlspecialchars($oArr['id'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></b></a> =&gt;
 													<?php echo $oArr['recby']; ?>
 												</div>
 												<div class="editdiv-<?php echo $dupId; ?>" style="display:none;float:left;" title="<?php echo $LANG['DEL_SPEC_FROM_CLUSTER']; ?>">
@@ -298,7 +298,7 @@ if($isEditor && $formSubmit){
 				}
 				?>
 				<div>
-					<a href="duplicatemanager.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($LANG['RETURN_MAIN'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
+					<a href="duplicatemanager.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars($LANG['RETURN_MAIN'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 				</div>
 				<?php
 			}

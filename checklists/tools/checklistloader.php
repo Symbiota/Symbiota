@@ -59,14 +59,14 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 		<a href='../../index.php'> <?php echo $LANG['HOME']; ?> </a> &gt;&gt;
 		<?php
 		if($pid) echo '<a href="'.$CLIENT_ROOT.'/projects/index.php?pid='.$pid.'">';
-		echo '<a href="../checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">' . $LANG['RETURN_CHECKLIST'] . '</a> &gt;&gt; ';
+		echo '<a href="../checklist.php?clid=' . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . $LANG['RETURN_CHECKLIST'] . '</a> &gt;&gt; ';
 		?>
-		<a href="checklistloader.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><b><?php echo $LANG['CHECK_LOADER']; ?></b></a>
+		<a href="checklistloader.php?clid=<?php echo htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><b><?php echo $LANG['CHECK_LOADER']; ?></b></a>
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
 		<h1>
-			<a href="<?php echo $CLIENT_ROOT."/checklists/checklist.php?clid=" . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>">
+			<a href="<?php echo $CLIENT_ROOT."/checklists/checklist.php?clid=" . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
 				<?php echo $clMeta['name']; ?>
 			</a>
 		</h1>
@@ -86,7 +86,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 							if(!$cnt && $statusStr){
 								echo '<div style="margin:20px;font-weight:bold;">';
 								echo '<div style="font-size:110%;color:red;">'.$statusStr.'</div>';
-								echo '<div><a href="checklistloader.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">' . $LANG['RETURN_LOADER'] . '</a>' . $LANG['INPUT_MATCH'] . '</div>';
+								echo '<div><a href="checklistloader.php?clid=' . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . $LANG['RETURN_LOADER'] . '</a>' . $LANG['INPUT_MATCH'] . '</div>';
 								echo '</div>';
 								exit;
 							}
@@ -97,7 +97,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 							<li style="margin-left:10px;"><?php echo $LANG['TAXA_LOADED'] . ' ' . $cnt; ?></li>
 							<li style="margin-left:10px;"><?php echo $LANG['PROBLEM_TAXA'] . ' ' . $probCnt.($probCnt?' (see below)':''); ?></li>
 							<li style="margin-left:10px;"><?php echo $LANG['GENERAL_ERRORS'] . ' ' .  count($errorArr); ?></li>
-							<li style="margin-left:10px;"><?php echo $LANG['UPLOAD_COMPLETE']; ?> <a href="../checklist.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo $LANG['PROCEED_CHECKL'] ?></a></li>
+							<li style="margin-left:10px;"><?php echo $LANG['UPLOAD_COMPLETE']; ?> <a href="../checklist.php?clid=<?php echo htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo $LANG['PROCEED_CHECKL'] ?></a></li>
 						</ul>
 						<?php
 						if($probCnt){
@@ -110,7 +110,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 							?>
 							<fieldset style="padding:20px;">
 								<legend><b><?php echo $LANG['GENERAL_ERRORS']; ?></b></legend>
-								<a href="#" onclick="displayErrors(this);return false;"><b> <?php echo $LANG['DISPLAY'] . " " . htmlspecialchars(count($errorArr), HTML_SPECIAL_CHARS_FLAGS) . " " . $LANG['ERRORS']; ?> </b></a>
+								<a href="#" onclick="displayErrors(this);return false;"><b> <?php echo $LANG['DISPLAY'] . " " . htmlspecialchars(count($errorArr), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . " " . $LANG['ERRORS']; ?> </b></a>
 								<div id="errordiv" style="display:none">
 									<ol style="margin-left:15px;">
 										<?php

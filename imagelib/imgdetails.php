@@ -137,8 +137,8 @@ if($imgArr){
 		<a href="index.php">Image Browser</a> &gt;&gt;
 		<a href="search.php">Image Search</a> &gt;&gt;
 		<?php
-		//if(isset($imgArr['tid']) && $imgArr['tid']) echo '<a href="../taxa/index.php?tid=' . htmlspecialchars($imgArr['tid'], HTML_SPECIAL_CHARS_FLAGS) . '">Image Search</a> &gt;&gt;';
-		//echo '<b>Image Profile: image <a href="imgdetails.php?imgid=' . htmlspecialchars($imgId, HTML_SPECIAL_CHARS_FLAGS) . '">#' . htmlspecialchars($imgId, HTML_SPECIAL_CHARS_FLAGS) . '</a></b>';
+		//if(isset($imgArr['tid']) && $imgArr['tid']) echo '<a href="../taxa/index.php?tid=' . htmlspecialchars($imgArr['tid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">Image Search</a> &gt;&gt;';
+		//echo '<b>Image Profile: image <a href="imgdetails.php?imgid=' . htmlspecialchars($imgId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">#' . htmlspecialchars($imgId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></b>';
 		?>
 	</div>
 	 -->
@@ -153,7 +153,7 @@ if($imgArr){
 				if($SYMB_UID && ($IS_ADMIN || array_key_exists("TaxonProfile",$USER_RIGHTS))){
 					?>
 					<div style="float:right;margin-right:15px;" title="<?php echo $LANG['TAXON_PROFILE_EDITING'] ?>">
-						<a href="../taxa/profile/tpeditor.php?tid=<?php echo htmlspecialchars($imgArr['tid'], HTML_SPECIAL_CHARS_FLAGS); ?>&tabindex=1" target="_blank">
+						<a href="../taxa/profile/tpeditor.php?tid=<?php echo htmlspecialchars($imgArr['tid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&tabindex=1" target="_blank">
 							<img src="../images/edit.png" style="width:1.3em;border:0px;" /><span style="font-size:70%"><?php echo $LANG['TP'] ?></span>
 						</a>
 					</div>
@@ -162,7 +162,7 @@ if($imgArr){
 				if($imgArr['occid']){
 					?>
 					<div style="float:right;margin-right:15px;" title="<?php echo $LANG['EDITING_PRIVILEGES'] ?>">
-						<a href="../collections/editor/occurrenceeditor.php?occid=<?php echo htmlspecialchars($imgArr['occid'], HTML_SPECIAL_CHARS_FLAGS); ?>&tabtarget=2" target="_blank">
+						<a href="../collections/editor/occurrenceeditor.php?occid=<?php echo htmlspecialchars($imgArr['occid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&tabtarget=2" target="_blank">
 							<img src="../images/edit.png" style="width:1.3em;border:0px;" /><span style="font-size:70%"><?php echo $LANG['SPEC'] ?></span>
 						</a>
 					</div>
@@ -181,7 +181,7 @@ if($imgArr){
 				}
 				?>
 				<div style="float:right;margin-right:10px;">
-					<a class="twitter-share-button" data-text="<?php echo $imgArr["sciname"]; ?>" href="https://twitter.com/share" data-url="<?php echo htmlspecialchars($_SERVER['HTTP_HOST'], HTML_SPECIAL_CHARS_FLAGS). htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/imagelib/imgdetails.php?imgid=' . htmlspecialchars($imgId, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo $LANG['TWEET'] ?></a>
+					<a class="twitter-share-button" data-text="<?php echo $imgArr["sciname"]; ?>" href="https://twitter.com/share" data-url="<?php echo htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE). htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/imagelib/imgdetails.php?imgid=' . htmlspecialchars($imgId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo $LANG['TWEET'] ?></a>
 					<script>
 						window.twttr=(function(d,s,id){
 							var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};
@@ -358,16 +358,16 @@ if($imgArr){
 					$imgDisplay = $imgUrl;
 					if((!$imgDisplay || $imgDisplay == 'empty') && $origUrl) $imgDisplay = $origUrl;
 					?>
-					<a href="<?php echo htmlspecialchars($imgDisplay, HTML_SPECIAL_CHARS_FLAGS);?>">
-						<img src="<?php echo htmlspecialchars($imgDisplay, HTML_SPECIAL_CHARS_FLAGS);?>" style="width:300px;" />
+					<a href="<?php echo htmlspecialchars($imgDisplay, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?>">
+						<img src="<?php echo htmlspecialchars($imgDisplay, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?>" style="width:300px;" />
 					</a>
 					<?php
-					if($origUrl) echo '<div><a href="' . htmlspecialchars($origUrl, HTML_SPECIAL_CHARS_FLAGS) . '">' . $LANG['CLICK_IMAGE'] . '</a></div>';
+					if($origUrl) echo '<div><a href="' . htmlspecialchars($origUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . $LANG['CLICK_IMAGE'] . '</a></div>';
 					?>
 				</div>
 				<div style="padding:10px;float:left;">
 					<div style="clear:both;margin-top:40px;">
-						<b><?php echo $LANG['SCIENTIFIC_NAME'] ?>:</b> <?php echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($imgArr["tid"], HTML_SPECIAL_CHARS_FLAGS) . '"><i>' . htmlspecialchars($imgArr["sciname"], HTML_SPECIAL_CHARS_FLAGS) . '</i> ' . htmlspecialchars($imgArr["author"], HTML_SPECIAL_CHARS_FLAGS) . '</a>'; ?>
+						<b><?php echo $LANG['SCIENTIFIC_NAME'] ?>:</b> <?php echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($imgArr["tid"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><i>' . htmlspecialchars($imgArr["sciname"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</i> ' . htmlspecialchars($imgArr["author"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>'; ?>
 					</div>
 					<?php
 					if($imgArr['caption']) echo '<div><b>' . $LANG['CAPTION'] . ':</b> '.$imgArr['caption'].'</div>';
@@ -375,30 +375,30 @@ if($imgArr){
 						echo '<div><b>' . $LANG['PHOTOGRAPHER'] . ':</b> ';
 						if(!$imgArr['photographer']){
 							$phLink = 'search.php?imagetype=all&phuid='.$imgArr['photographeruid'].'&submitaction=search';
-							echo '<a href="' . htmlspecialchars($phLink, HTML_SPECIAL_CHARS_FLAGS) . '">';
+							echo '<a href="' . htmlspecialchars($phLink, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 						}
 						echo $imgArr['photographerdisplay'];
 						if(!$imgArr['photographer']) echo '</a>';
 						echo '</div>';
 					}
 					if($imgArr['owner']) echo '<div><b>' . $LANG['MANAGER'] . ':</b> ' . $imgArr['owner'] . '</div>';
-					if($imgArr['sourceurl']) echo '<div><b>' . $LANG['IMAGE_SOURCE'] . ':</b> <a href="' . htmlspecialchars($imgArr['sourceurl'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($imgArr['sourceurl'], HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
+					if($imgArr['sourceurl']) echo '<div><b>' . $LANG['IMAGE_SOURCE'] . ':</b> <a href="' . htmlspecialchars($imgArr['sourceurl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($imgArr['sourceurl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></div>';
 					if($imgArr['locality']) echo '<div><b>' . $LANG['LOCALITY'] . ':</b> ' . $imgArr['locality'] . '</div>';
 					if($imgArr['notes']) echo '<div><b>' . $LANG['NOTES'] . ':</b> ' . $imgArr['notes'] . '</div>';
 					if($imgArr['rights']) echo '<div><b>' . $LANG['RIGHTS'] . ':</b> ' . $imgArr['rights'] . '</div>';
 					if($imgArr['copyright']){
 						echo '<div>';
 						echo '<b>' . $LANG['COPYRIGHT'] . ':</b> ';
-						if(stripos($imgArr['copyright'],'http') === 0) echo '<a href="' . htmlspecialchars($imgArr['copyright'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($imgArr['copyright'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+						if(stripos($imgArr['copyright'],'http') === 0) echo '<a href="' . htmlspecialchars($imgArr['copyright'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($imgArr['copyright'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 						else echo $imgArr['copyright'];
 						echo '</div>';
 					}
 					else{
 						echo '<div><a href="../includes/usagepolicy.php#images">' . $LANG['COPYRIGHT_DETAILS'] . '</a></div>';
 					}
-					if($imgArr['occid']) echo '<div><a href="../collections/individual/index.php?occid=' .htmlspecialchars($imgArr['occid'], HTML_SPECIAL_CHARS_FLAGS) . '">' . $LANG['DISPLAY_SPECIMEN_DETAILS'] . '</a></div>';
-					if($imgUrl) echo '<div><a href="' . htmlspecialchars($imgUrl, HTML_SPECIAL_CHARS_FLAGS) . '">' . $LANG['OPEN_MEDIUM_SIZED_IMAGE'] . '</a></div>';
-					if($origUrl) echo '<div><a href="' . htmlspecialchars($origUrl, HTML_SPECIAL_CHARS_FLAGS) . '">' . $LANG['OPEN_LARGE_IMAGE'] . '</a></div>';
+					if($imgArr['occid']) echo '<div><a href="../collections/individual/index.php?occid=' .htmlspecialchars($imgArr['occid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . $LANG['DISPLAY_SPECIMEN_DETAILS'] . '</a></div>';
+					if($imgUrl) echo '<div><a href="' . htmlspecialchars($imgUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . $LANG['OPEN_MEDIUM_SIZED_IMAGE'] . '</a></div>';
+					if($origUrl) echo '<div><a href="' . htmlspecialchars($origUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . $LANG['OPEN_LARGE_IMAGE'] . '</a></div>';
 					?>
 					<div style="margin-top:20px;">
 						<?php echo $LANG['ERROR_COMMENT_ABOUT_IMAGE'] ?> <br/><?php echo $LANG['SEND_EMAIL'] ?>:
@@ -406,7 +406,7 @@ if($imgArr){
 						$emailSubject = $DEFAULT_TITLE . ' ' . $LANG['IMG_NO'] . ' ' . $imgId;
 						$emailBody = 'Image being referenced: '.$serverPath.$CLIENT_ROOT.'/imagelib/imgdetails.php?imgid='.$imgId;
 						$emailRef = 'subject=' . $emailSubject . '&cc=' . $ADMIN_EMAIL . '&body=' . $emailBody;
-						echo '<a href="mailto:' . htmlspecialchars($ADMIN_EMAIL, HTML_SPECIAL_CHARS_FLAGS) . '?' . htmlspecialchars($emailRef, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($ADMIN_EMAIL, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+						echo '<a href="mailto:' . htmlspecialchars($ADMIN_EMAIL, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '?' . htmlspecialchars($emailRef, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($ADMIN_EMAIL, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 						?>
 					</div>
 				</div>

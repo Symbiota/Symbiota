@@ -9,9 +9,9 @@ header("Content-Type: text/html; charset=".$CHARSET);
 $collid = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid']) ? $_REQUEST['collid'] : 0;
 $customArr = array();
 for($h = 1; $h < 4; $h++){
-	$customArr[$h]['f'] = array_key_exists('customfield' . $h, $_REQUEST) ? htmlspecialchars($_REQUEST['customfield'], HTML_SPECIAL_CHARS_FLAGS) . $h : '';
-	$customArr[$h]['t'] = array_key_exists('customtype' . $h, $_REQUEST) ? htmlspecialchars($_REQUEST['customtype'], HTML_SPECIAL_CHARS_FLAGS) . $h : '';
-	$customArr[$h]['v'] = array_key_exists('customvalue' . $h, $_REQUEST) ? htmlspecialchars($_REQUEST['customvalue'], HTML_SPECIAL_CHARS_FLAGS) . $h : '';
+	$customArr[$h]['f'] = array_key_exists('customfield' . $h, $_REQUEST) ? htmlspecialchars($_REQUEST['customfield'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . $h : '';
+	$customArr[$h]['t'] = array_key_exists('customtype' . $h, $_REQUEST) ? htmlspecialchars($_REQUEST['customtype'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . $h : '';
+	$customArr[$h]['v'] = array_key_exists('customvalue' . $h, $_REQUEST) ? htmlspecialchars($_REQUEST['customvalue'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . $h : '';
 }
 
 $dlManager = new OccurrenceDownload();
@@ -151,7 +151,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 												<b><?php echo $LANG['COGE_AUTH']; ?>:</b>
 												<span id="coge-status" style="width:150px;color:red;"><?php echo $LANG['DISCONNECTED']; ?></span>
 												<span style="margin-left:40px"><button name="cogeCheckStatusButton" type="button" value="Check Status" onclick="cogeCheckAuthentication()"><?php echo $LANG['CHECK_STATUS']; ?></button></span>
-												<span style="margin-left:40px"><a href="http://coge.geo-locate.org" target="_blank" onclick="startAuthMonitoring()"><?php echo htmlspecialchars($LANG['LOGIN_COGE'], HTML_SPECIAL_CHARS_FLAGS); ?></a></span>
+												<span style="margin-left:40px"><a href="http://coge.geo-locate.org" target="_blank" onclick="startAuthMonitoring()"><?php echo htmlspecialchars($LANG['LOGIN_COGE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></span>
 											</div>
 										</fieldset>
 										<fieldset id="coge-communities" style="margin:10px;padding:10px;">
@@ -202,7 +202,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 											</div>
 										</div>
 										<div style="margin:20px;">
-											<a href="../editor/editreviewer.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&display=2"><?php echo htmlspecialchars($LANG['REVIEW_APPROVE_EDITS'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
+											<a href="../editor/editreviewer.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&display=2"><?php echo htmlspecialchars($LANG['REVIEW_APPROVE_EDITS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 										</div>
 										<div style="margin:20px;">
 											<b>* <?php echo $LANG['DEFAULT_QUERY']; ?></b>

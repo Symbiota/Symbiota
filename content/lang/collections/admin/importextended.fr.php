@@ -55,5 +55,7 @@ $LANG['ASSOC_ADDED'] = 'Association ajoutée';
 $LANG['ERROR_ADDING'] = "ERREUR lors du chargement de l'association d'occurrence";
 $LANG['MAT_SAMPLE_ADDED'] = 'Échantillon de matériau ajouté';
 $LANG['DETERMINATION_ADDED'] = 'Détermination ajoutée';
+$LANG['CHOOSE_FILE'] = 'Choisir un fichier';
+$LANG['ASSOCIATION_TYPE'] = 'Type d\'association';
 $LANG['HOME'] = 'Accueil';
 ?>

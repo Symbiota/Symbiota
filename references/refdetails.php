@@ -164,7 +164,7 @@ else{
 										echo '<ul>';
 										foreach($authArr as $k => $v){
 											echo '<li>';
-											echo '<a href="authoreditor.php?authid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($v, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+											echo '<a href="authoreditor.php?authid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($v, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 											echo ' <input type="image" style="width:1.3em;margin-left:5px;" src="../images/del.png" onclick="deleteRefAuthor('.$k.');" title="Delete author">';
 											echo '</li>';
 										}
@@ -445,7 +445,7 @@ else{
 								echo '<ul>';
 								foreach($refChecklistArr as $k => $v){
 									echo '<li>';
-									echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '&pid=" target="_blank" >';
+									echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=" target="_blank" >';
 									echo $v;
 									echo '</a>';
 									echo '</li>';
@@ -463,7 +463,7 @@ else{
 								echo '<ul>';
 								foreach($refCollArr as $k => $v){
 									echo '<li>';
-									echo '<a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" >';
+									echo '<a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" >';
 									echo $v;
 									echo '</a>';
 									echo '</li>';
@@ -481,7 +481,7 @@ else{
 								echo '<ul>';
 								foreach($refOccArr as $k => $v){
 									echo '<li>';
-									echo '<a href="../collections/individual/index.php?occid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '&clid=0" target="_blank" >';
+									echo '<a href="../collections/individual/index.php?occid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&clid=0" target="_blank" >';
 									echo $v;
 									echo '</a>';
 									echo '</li>';
@@ -500,7 +500,7 @@ else{
 								foreach($refTaxaArr as $k => $v){
 									$name = str_replace(' ','%20',$v);
 									echo '<li>';
-									echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($name, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" >';
+									echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($name, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" >';
 									echo $v;
 									echo '</a>';
 									echo '</li>';

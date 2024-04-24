@@ -82,9 +82,9 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 							</div>
 							<div>
 								<input name="tid" type="hidden" value="<?php echo $tid; ?>" />
-								<input name="searchterm" type="hidden" value="<?= htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS) ?>" />
-								<input name="searchlanguage" type="hidden" value="<?= htmlspecialchars($language, HTML_SPECIAL_CHARS_FLAGS) ?>" />
-								<input name="searchtaxa" type="hidden" value="<?= htmlspecialchars($taxa, HTML_SPECIAL_CHARS_FLAGS) ?>" />
+								<input name="searchterm" type="hidden" value="<?= htmlspecialchars($searchTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" />
+								<input name="searchlanguage" type="hidden" value="<?= htmlspecialchars($language, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" />
+								<input name="searchtaxa" type="hidden" value="<?= htmlspecialchars($taxa, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" />
 							</div>
 							<?php
 							if($sourceArr){

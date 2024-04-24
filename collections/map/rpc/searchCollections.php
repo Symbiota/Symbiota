@@ -48,8 +48,10 @@ $recordArr = [];
 $collArr = [];
 $defaultColor = "#B2BEB5";
 
-$host = ($SERVER_HOST === '127.0.0.1' || $SERVER_HOST === 'localhost'? false: $SERVER_HOST . $CLIENT_ROOT);
-//$host = $SERVER_HOST . $CLIENT_ROOT;
+$host = false;
+if(isset($SERVER_HOST)) {
+   $host = ($SERVER_HOST === '127.0.0.1' || $SERVER_HOST === 'localhost'? "http://": "https://") . $SERVER_HOST . $CLIENT_ROOT;
+}
 
 foreach ($coordArr as $collName => $coll) {
 	//Collect all the collections

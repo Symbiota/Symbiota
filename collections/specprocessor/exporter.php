@@ -146,7 +146,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 								<legend><b><?php echo $LANG['EXPORT_BATCH_GEO']; ?></b></legend>
 								<div style="margin:15px;">
 									<?php echo $LANG['EXPORT_BATCH_GEO_EXPLAIN_1'].' '.'
-									<a href="../georef/batchgeoreftool.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank">' . htmlspecialchars($LANG['BATCH_GEO_TOOLS'], HTML_SPECIAL_CHARS_FLAGS) . '</a> '.
+									<a href="../georef/batchgeoreftool.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank">' . htmlspecialchars($LANG['BATCH_GEO_TOOLS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> '.
 									$LANG['EXPORT_BATCH_GEO_EXPLAIN_2']; ?>
 								</div>
 								<table>

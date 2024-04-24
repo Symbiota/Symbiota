@@ -33,8 +33,8 @@ $recCnt = $uploadManager->getUploadCount();
 $navStr = '<div style="float:right;">';
 if($SYMB_UID){
 	if(($pageIndex) >= $recLimit){
-		$navStr .= '<a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&reclimit=' . htmlspecialchars($reclimit, HTML_SPECIAL_CHARS_FLAGS) . '&pageindex=0" title="First page">|&lt;&lt;</a> | ';
-		$navStr .= '<a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&reclimit=' . htmlspecialchars($reclimit, HTML_SPECIAL_CHARS_FLAGS) . '&pageindex=' . htmlspecialchars(($pageIndex-1), HTML_SPECIAL_CHARS_FLAGS) . '" title="Previous ' . htmlspecialchars($recLimit, HTML_SPECIAL_CHARS_FLAGS) . ' record">&lt;&lt;</a>';
+		$navStr .= '<a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&reclimit=' . htmlspecialchars($reclimit, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pageindex=0" title="First page">|&lt;&lt;</a> | ';
+		$navStr .= '<a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&reclimit=' . htmlspecialchars($reclimit, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pageindex=' . htmlspecialchars(($pageIndex-1), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" title="Previous ' . htmlspecialchars($recLimit, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' record">&lt;&lt;</a>';
 	}
 	else{
 		$navStr .= '|&lt;&lt;</a> | &lt;&lt;';
@@ -44,8 +44,8 @@ if($SYMB_UID){
 	$navStr .= (($pageIndex*$recLimit)+1).'-'.($recCnt<$highRange?$recCnt:$highRange).' of '.$recCnt.' records';
 	$navStr .= ' | ';
 	if($recCnt > $highRange){
-		$navStr .= '<a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&reclimit=' . htmlspecialchars($reclimit, HTML_SPECIAL_CHARS_FLAGS) . '&pageindex=' . htmlspecialchars(($pageIndex+1), HTML_SPECIAL_CHARS_FLAGS) . '" title="Next ' . htmlspecialchars($recLimit, HTML_SPECIAL_CHARS_FLAGS) . ' records">&gt;&gt;</a> | ';
-		$navStr .= '<a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&reclimit=' . htmlspecialchars($reclimit, HTML_SPECIAL_CHARS_FLAGS) . '&pageindex=' . htmlspecialchars(($recCnt/$recLimit), HTML_SPECIAL_CHARS_FLAGS) . '" title="Last page">&gt;&gt;|</a>';
+		$navStr .= '<a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&reclimit=' . htmlspecialchars($reclimit, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pageindex=' . htmlspecialchars(($pageIndex+1), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" title="Next ' . htmlspecialchars($recLimit, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' records">&gt;&gt;</a> | ';
+		$navStr .= '<a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&reclimit=' . htmlspecialchars($reclimit, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pageindex=' . htmlspecialchars(($recCnt/$recLimit), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" title="Last page">&gt;&gt;|</a>';
 	}
 	else{
 		$navStr .= '&gt;&gt; | &gt;&gt;|';

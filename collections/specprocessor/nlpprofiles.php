@@ -3,9 +3,9 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecProcNlpProfiles.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$action = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$spNlpId = array_key_exists('spnlpid',$_REQUEST)?$_REQUEST['spnlpid']:0;
+$action = array_key_exists('formsubmit',$_REQUEST) ? $_REQUEST['formsubmit'] : '';
+$collId = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$spNlpId = array_key_exists('spnlpid',$_REQUEST)? filter_var($_REQUEST['spnlpid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 
 $nlpManager = new SpecProcNlpProfiles();
 //$nlpManager->setCollId($collId);
@@ -136,7 +136,7 @@ if($isEditor){
 								foreach($profileArr as $k => $vArr){
 									?>
 									<li>
-										<a href="nlpprofiles.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&spnlpid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS); ?>">
+										<a href="nlpprofiles.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&spnlpid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
 											<?php echo $vArr['title']; ?>
 										</a>
 									</li>
@@ -314,7 +314,7 @@ if($isEditor){
 				if(!$SYMB_UID){
 					?>
 					<div style='font-weight:bold;'>
-						Please <a href='../../profile/index.php?refurl=<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/specprocessor/index.php'>login</a>!
+						Please <a href='../../profile/index.php?refurl=<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/collections/specprocessor/index.php'>login</a>!
 					</div>
 					<?php
 				}

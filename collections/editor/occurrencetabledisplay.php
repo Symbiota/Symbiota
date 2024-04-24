@@ -121,7 +121,7 @@ else{
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<link href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/js/datatables/datatables.min.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/js/datatables/datatables.min.css" type="text/css" rel="stylesheet">
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="../../js/datatables/datatables.min.js?ver=1" type="text/javascript"></script>
@@ -287,22 +287,22 @@ else{
 			?>
 			<div style="width:850px;clear:both;">
 				<div class='navpath' style="float:left">
-					<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+					<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 					<?php
 					if($crowdSourceMode){
 						?>
-						<a href="../specprocessor/crowdsource/index.php"><?php echo htmlspecialchars((isset($LANG['CENTRAL_CROWD'])?$LANG['CENTRAL_CROWD']:'Crowd Source Central'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+						<a href="../specprocessor/crowdsource/index.php"><?php echo htmlspecialchars((isset($LANG['CENTRAL_CROWD'])?$LANG['CENTRAL_CROWD']:'Crowd Source Central'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 						<?php
 					}
 					else{
 						if(!$isGenObs || $IS_ADMIN){
 							?>
-							<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars((isset($LANG['COL_MANAGEMENT'])?$LANG['COL_MANAGEMENT']:'Collection Management'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+							<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo htmlspecialchars((isset($LANG['COL_MANAGEMENT'])?$LANG['COL_MANAGEMENT']:'Collection Management'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 							<?php
 						}
 						if($isGenObs){
 							?>
-							<a href="../../profile/viewprofile.php?tabindex=1"><?php echo htmlspecialchars((isset($LANG['PERS_MANAGEMENT'])?$LANG['PERS_MANAGEMENT']:'Personal Management'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+							<a href="../../profile/viewprofile.php?tabindex=1"><?php echo htmlspecialchars((isset($LANG['PERS_MANAGEMENT'])?$LANG['PERS_MANAGEMENT']:'Personal Management'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 							<?php
 						}
 					}
@@ -324,7 +324,7 @@ else{
 						$tableClass = 'stripe hover order-column compact nowrap cell-border';
 					}
 					?>
-					<table id="<?php echo $tableId; ?>" class="<?php echo $tableClass; ?> accessible-font table-scroll" title="<?php echo htmlspecialchars((isset($LANG['TABLE_VIEW']) ? $LANG['TABLE_VIEW'] : 'Occurrence Table View'), HTML_SPECIAL_CHARS_FLAGS); ?>" aria-describedby="table-desc">
+					<table id="<?php echo $tableId; ?>" class="<?php echo $tableClass; ?> accessible-font table-scroll" title="<?php echo htmlspecialchars((isset($LANG['TABLE_VIEW']) ? $LANG['TABLE_VIEW'] : 'Occurrence Table View'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" aria-describedby="table-desc">
 						<thead>
 							<tr>
 								<th><?php echo (isset($LANG['SYMB_ID'])?$LANG['SYMB_ID']:'Symbiota ID'); ?></th>
@@ -345,8 +345,8 @@ else{
 								echo "<tr ".($recCnt%2?'class="alt"':'').">\n";
 								echo '<td>';
 								$url = 'occurrenceeditor.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$recStart).'&occid='.$id.'&collid='.$collId;
-								echo '<a href="' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '" title="' . htmlspecialchars((isset($LANG['SAME_WINDOW'])?$LANG['SAME_WINDOW']:'open in same window'), HTML_SPECIAL_CHARS_FLAGS) . '" aria-label="' .  htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
-								echo '<a href="' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="' . (isset($LANG['NEW_WINDOW'])?$LANG['NEW_WINDOW']:'open in new window') . '" aria-label="' . (isset($LANG['NEW_WINDOW'])?$LANG['NEW_WINDOW']:'open in new window') . '">';
+								echo '<a href="' . htmlspecialchars($url, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" title="' . htmlspecialchars((isset($LANG['SAME_WINDOW'])?$LANG['SAME_WINDOW']:'open in same window'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" aria-label="' .  htmlspecialchars($id, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($id, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ';
+								echo '<a href="' . htmlspecialchars($url, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" title="' . (isset($LANG['NEW_WINDOW'])?$LANG['NEW_WINDOW']:'open in new window') . '" aria-label="' . (isset($LANG['NEW_WINDOW'])?$LANG['NEW_WINDOW']:'open in new window') . '">';
 								echo '<img src="../../images/newwin.png" style="width:1.1em;" alt="' . $LANG['IMG_LINK'] . '" />';
 								echo '</a>';
 								echo '</td>'."\n";
@@ -367,7 +367,7 @@ else{
 						</tbody>
 					</table>
 					<p id="table-desc">
-							<?php echo htmlspecialchars((isset($LANG['TABLE_VIEW_DESC']) ? $LANG['TABLE_VIEW_DESC'] : 'Table displays occurrence information with columns showing Symbiota ID, Family, Event Date, Author, Location, and other details'), HTML_SPECIAL_CHARS_FLAGS); ?>
+							<?php echo htmlspecialchars((isset($LANG['TABLE_VIEW_DESC']) ? $LANG['TABLE_VIEW_DESC'] : 'Table displays occurrence information with columns showing Symbiota ID, Family, Event Date, Author, Location, and other details'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>
 					</p>
 				</div>
 				<div style="width:790px;">

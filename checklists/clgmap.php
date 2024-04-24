@@ -9,7 +9,7 @@ $pid = $_REQUEST['pid'];
 $target = array_key_exists('target',$_REQUEST)?$_REQUEST['target']:'checklists';
 
 //Sanitation
-$pid = htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS);
+$pid = htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 if(!is_numeric($pid)) $pid = 0;
 
 $clManager = new ChecklistManager();

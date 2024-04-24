@@ -12,6 +12,7 @@ $LANG['HOME'] = 'Home';
 $LANG['TAX_PROF_PUBLIC_DISP'] = 'Taxon Profile Public Display';
 $LANG['TAX_PROF_EDITOR'] = 'Taxon Profile Editor';
 $LANG['REDIRECTED_FROM'] = 'Redirected from';
+$LANG['VIEW_PUBLIC_TAXON'] = 'View Public Taxon Profile';
 $LANG['GO_TO_PARENT'] = 'Go to Parent';
 $LANG['FAMILY'] = 'Family';
 $LANG['SYN_VERNAC'] = 'Synonyms / Vernaculars';

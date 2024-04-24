@@ -25,8 +25,8 @@ if($isEditor){
 		$targetFields = $_POST['tf'];
 		for($x = 0; $x < count($targetFields); $x++){
 			if($sourceFields[$x] && $targetFields[$x] !== ''){
-				$sourceField = htmlspecialchars($sourceFields[$x], HTML_SPECIAL_CHARS_FLAGS);
-				$targetField = htmlspecialchars($targetFields[$x], HTML_SPECIAL_CHARS_FLAGS);
+				$sourceField = htmlspecialchars($sourceFields[$x], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+				$targetField = htmlspecialchars($targetFields[$x], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 				$fieldMap[$sourceField] = $targetField;
 			}
 		}
@@ -54,7 +54,7 @@ include($SERVER_ROOT.'/includes/header.php');
 
 ?>
 <div class="navpath">
-	<b><a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a></b> &gt;&gt;
+	<b><a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></b> &gt;&gt;
 	<b><?php echo $LANG['IMG_IMPORTER']; ?></b>
 </div>
 

@@ -147,8 +147,8 @@ $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath">
-	<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
-	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars((isset($LANG['COL_MGMNT'])?$LANG['COL_MGMNT']:'Collection Management Panel'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+	<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo htmlspecialchars((isset($LANG['COL_MGMNT'])?$LANG['COL_MGMNT']:'Collection Management Panel'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 	<b><?php echo (isset($LANG['BACKUP_MOD'])?$LANG['BACKUP_MOD']:'Backup Restore Module'); ?></b>
 </div>
 <!-- This is inner text! -->
@@ -190,7 +190,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							<input name="MAX_FILE_SIZE" type="hidden" value="100000000" />
 						</div>
 						<div class="ulfnoptions">
-							<a href="#" onclick="toggle('ulfnoptions');return false;"><?php echo htmlspecialchars((isset($LANG['MANUAL'])?$LANG['MANUAL']:'Manual File Upload Option'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
+							<a href="#" onclick="toggle('ulfnoptions');return false;"><?php echo htmlspecialchars((isset($LANG['MANUAL'])?$LANG['MANUAL']:'Manual File Upload Option'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 						</div>
 					</fieldset>
 				</form>
@@ -265,8 +265,8 @@ include($SERVER_ROOT.'/includes/header.php');
 								$reportArr = $duManager->getTransferReport();
 								echo '<div>'.(isset($LANG['OCCS_TRANSFERING'])?$LANG['OCCS_TRANSFERING']:'Occurrences pending transfer').': '.$reportArr['occur'];
 								if($reportArr['occur']){
-									echo ' <a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="' . htmlspecialchars((isset($LANG['PREVIEW'])?$LANG['PREVIEW']:'Preview 1st 1000 Records'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/list.png" style="width:1.2em;" /></a>';
-									echo ' <a href="uploadreviewer.php?action=export&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_self" title="' . htmlspecialchars((isset($LANG['DOWNLOAD_RECS'])?$LANG['DOWNLOAD_RECS']:'Download Records'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/dl.png" style="width:1.2em;" /></a>';
+									echo ' <a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" title="' . htmlspecialchars((isset($LANG['PREVIEW'])?$LANG['PREVIEW']:'Preview 1st 1000 Records'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><img src="../../images/list.png" style="width:1.2em;" /></a>';
+									echo ' <a href="uploadreviewer.php?action=export&collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_self" title="' . htmlspecialchars((isset($LANG['DOWNLOAD_RECS'])?$LANG['DOWNLOAD_RECS']:'Download Records'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><img src="../../images/dl.png" style="width:1.2em;" /></a>';
 								}
 								echo '</div>';
 								echo '<div style="margin-left:15px;">';
@@ -281,8 +281,8 @@ include($SERVER_ROOT.'/includes/header.php');
 									echo '<div>Records to be restored: ';
 									echo $reportArr['new'];
 									if($reportArr['new']){
-										echo ' <a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&searchvar=new" target="_blank" title="' . htmlspecialchars((isset($LANG['PREVIEW'])?$LANG['PREVIEW']:'Preview 1st 1000 Records'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/list.png" style="width:1.2em;" /></a>';
-										echo ' <a href="uploadreviewer.php?action=export&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&searchvar=new" target="_self" title="' . htmlspecialchars((isset($LANG['DOWNLOAD_RECS'])?$LANG['DOWNLOAD_RECS']:'Download Records'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/dl.png" style="width:1.2em;" /></a>';
+										echo ' <a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&searchvar=new" target="_blank" title="' . htmlspecialchars((isset($LANG['PREVIEW'])?$LANG['PREVIEW']:'Preview 1st 1000 Records'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><img src="../../images/list.png" style="width:1.2em;" /></a>';
+										echo ' <a href="uploadreviewer.php?action=export&collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&searchvar=new" target="_self" title="' . htmlspecialchars((isset($LANG['DOWNLOAD_RECS'])?$LANG['DOWNLOAD_RECS']:'Download Records'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><img src="../../images/dl.png" style="width:1.2em;" /></a>';
 									}
 									echo '</div>';
 								}
@@ -290,8 +290,8 @@ include($SERVER_ROOT.'/includes/header.php');
 									echo '<div>Previous loaded records not matching incoming records: ';
 									echo $reportArr['exist'];
 									if($reportArr['exist']){
-										echo ' <a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&searchvar=exist" target="_blank" title="' . htmlspecialchars((isset($LANG['PREVIEW'])?$LANG['PREVIEW']:'Preview 1st 1000 Records'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/list.png" style="width:1.2em;" /></a>';
-										echo ' <a href="uploadreviewer.php?action=export&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&searchvar=exist" target="_self" title="' . htmlspecialchars((isset($LANG['DOWNLOAD_RECS'])?$LANG['DOWNLOAD_RECS']:'Download Records'), HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/dl.png" style="width:1.2em;" /></a>';
+										echo ' <a href="uploadreviewer.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&searchvar=exist" target="_blank" title="' . htmlspecialchars((isset($LANG['PREVIEW'])?$LANG['PREVIEW']:'Preview 1st 1000 Records'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><img src="../../images/list.png" style="width:1.2em;" /></a>';
+										echo ' <a href="uploadreviewer.php?action=export&collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&searchvar=exist" target="_self" title="' . htmlspecialchars((isset($LANG['DOWNLOAD_RECS'])?$LANG['DOWNLOAD_RECS']:'Download Records'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><img src="../../images/dl.png" style="width:1.2em;" /></a>';
 									}
 									echo '</div>';
 									echo '<div style="margin-left:15px;">';

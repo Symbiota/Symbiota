@@ -148,7 +148,7 @@ if(isset($_REQUEST['llpoint'])) {
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
-		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
+		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
 		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<style type="text/css">
 		.panel-content a{ outline-color: transparent; font-size: 12px; font-weight: normal; }
@@ -323,12 +323,6 @@ if(isset($_REQUEST['llpoint'])) {
 
 		function hideWorking(){
 			$('#loadingOverlay').popup('hide');
-		}
-
-		function openIndPU(occId){
-			newWindow = window.open('../individual/index.php?occid='+occId,'indspec' + occId,'scrollbars=1,toolbar=0,resizable=1,width=1100,height=800,left=20,top=20');
-			if (newWindow.opener == null) newWindow.opener = self;
-			setTimeout(function () { newWindow.focus(); }, 0.5);
 		}
 
 		function buildPanels(cross_portal_enabled) {
@@ -617,7 +611,6 @@ value="${color}"
 							this.layer_groups[id].addTo(map.mapLayer);
 						} else if(!map.mapLayer.hasLayer(this.group_map[id].cluster)) {
 							this.group_map[id].cluster.addTo(map.mapLayer)
-							this.group_map[id].cluster.addLayer(this.layer_groups[id])
 						}
 					}
 				}
@@ -627,7 +620,6 @@ value="${color}"
 						if(clusteroff) {
 							map.mapLayer.removeLayer(this.layer_groups[id])
 						} else {
-							this.group_map[id].cluster.removeLayer(this.layer_groups[id])
 							map.mapLayer.removeLayer(this.group_map[id].cluster)
 						}
 					}
@@ -647,13 +639,15 @@ value="${color}"
 				}
 
 				addLayer(id) {
-					if(clusteroff) {
-						this.layer_groups[id] = L.layerGroup(this.markers[id]);
-						map.mapLayer.addLayer(this.layer_groups[id]);
-					} else {
-						this.group_map[id].cluster.addLayer(this.layer_groups[id])
+					//First Add layer for both regular layer group and for clustering
+					this.layer_groups[id] = L.layerGroup(this.markers[id]);
+					this.group_map[id].cluster.addLayer(this.layer_groups[id])
 
-						if(!map.mapLayer.hasLayer(this.group_map[id].cluster)) {
+					//Then Decide which is visible
+					if(!heatmap) {
+						if(clusteroff) {
+							map.mapLayer.addLayer(this.layer_groups[id]);
+						} else if(!map.mapLayer.hasLayer(this.group_map[id].cluster)) {
 							this.group_map[id].cluster.addTo(map.mapLayer);
 						}
 					}
@@ -668,7 +662,6 @@ value="${color}"
 							map.mapLayer.addLayer(this.layer_groups[id]);
 						} else {
 							map.mapLayer.removeLayer(this.layer_groups[id]);
-
 							if(!map.mapLayer.hasLayer(this.group_map[id].cluster)) {
 								this.group_map[id].cluster.addTo(map.mapLayer);
 							}
@@ -1099,13 +1092,15 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 				}
 
 				addLayer(id) {
-					if(clusteroff) {
-						for(let marker of Object.values(this.markers[id])) {
-							marker.setMap(map.mapLayer)
+					if(!heatmapon) {
+						if(clusteroff) {
+							for(let marker of Object.values(this.markers[id])) {
+								marker.setMap(map.mapLayer)
+							}
+						} else {
+							this.group_map[id].cluster.addMarkers(this.markers[id])
+							this.group_map[id].cluster.setMap(map.mapLayer);
 						}
-					} else {
-						this.group_map[id].cluster.addMarkers(this.markers[id])
-						this.group_map[id].cluster.setMap(map.mapLayer);
 					}
 				}
 
@@ -1289,9 +1284,9 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 				e.preventDefault();
 				let formData = new FormData(e.target);
 
-				mapGroups.map(g => {
-					g.taxonMapGroup.resetGroup();
-					g.collectionMapGroup.resetGroup();
+				mapGroups.map(group => {
+					group.taxonMapGroup.resetGroup();
+					group.collectionMapGroup.resetGroup();
 					group.portalMapGroup.resetGroup();
 				});
 
@@ -1338,8 +1333,8 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 				genClusters(taxaLegendMap, "taxa");
 				genClusters(collLegendMap, "coll");
 				genClusters(portalLegendMap, "portal");
-
-            autoColorTaxa();
+            
+				autoColorTaxa();
 
 				drawPoints();
 
@@ -1655,7 +1650,7 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 		};
 
 		//This is used in occurrencelist.php which is submodule of this
-		function emit_occurrence(occid) {
+		function emit_occurrence_click(occid) {
 			document.dispatchEvent(new CustomEvent('occur_click', {
 				detail: {
 					occid: occid
@@ -1705,12 +1700,6 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 							}
 						},
 						rectangleLoader: () => {
-                     console.log({
-								upperLat: parseFloat(document.getElementById("upperlat").value),
-								lowerLat: parseFloat(document.getElementById("bottomlat").value),
-								rightLng: parseFloat(document.getElementById("rightlong").value),
-								leftLng: parseFloat(document.getElementById("leftlong").value)
-							})
 							return {
 								upperLat: parseFloat(document.getElementById("upperlat").value),
 								lowerLat: parseFloat(document.getElementById("bottomlat").value),
@@ -1754,7 +1743,7 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 		<div id="defaultpanel" class="sidepanel" style="width:390px">
 			<div class="panel-content">
 				<span style="position:absolute; top:0.7rem; right:0.7rem; z-index:1">
-					<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php">
+					<a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php">
 						<?php echo (isset($LANG['H_HOME'])?$LANG['H_HOME']:'Home'); ?>
 					</a>
 					<button onclick="document.getElementById('defaultpanel').style.width='0px'" style="margin-left:1rem">&times</button>
@@ -1765,9 +1754,9 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 						<div id="tabs1" style="padding:0px;height:100%">
 							<form name="mapsearchform" id="mapsearchform" data-ajax="false">
 								<ul>
-									<li><a href="#searchcollections"><span><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
-									<li><a href="#searchcriteria"><span><?php echo htmlspecialchars((isset($LANG['CRITERIA'])?$LANG['CRITERIA']:'Criteria'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
-									<li><a href="#mapoptions"><span><?php echo htmlspecialchars((isset($LANG['MAP_OPTIONS'])?$LANG['MAP_OPTIONS']:'Map Options'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
+									<li><a href="#searchcollections"><span><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
+									<li><a href="#searchcriteria"><span><?php echo htmlspecialchars((isset($LANG['CRITERIA'])?$LANG['CRITERIA']:'Criteria'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
+									<li><a href="#mapoptions"><span><?php echo htmlspecialchars((isset($LANG['MAP_OPTIONS'])?$LANG['MAP_OPTIONS']:'Map Options'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
 								</ul>
 								<div id="searchcollections" style="">
 									<div class="mapinterface">
@@ -1780,7 +1769,7 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 										<div id="specobsdiv">
 											<div style="margin:0px 0px 10px 5px;">
 												<input id="dballcb" data-role="none" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" <?php echo (!$mapManager->getSearchTerm('db') || $mapManager->getSearchTerm('db')=='all'?'checked':'') ?> />
-												<?php echo $LANG['SELECT_DESELECT'].' <a href="misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>'; ?>
+												<?php echo $LANG['SELECT_DESELECT'].' <a href="misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>'; ?>
 											</div>
 											<?php
 											if($specArr){
@@ -2011,11 +2000,11 @@ Record Limit:
 						<h3 id="recordstaxaheader" style="display:none;padding-left:30px;"><?php echo (isset($LANG['RECORDS_TAXA'])?$LANG['RECORDS_TAXA']:'Records and Taxa'); ?></h3>
 						<div id="tabs2" style="display:none;padding:0px;">
 							<ul>
-								<li><a href='#occurrencelist'><span><?php echo htmlspecialchars((isset($LANG['RECORDS'])?$LANG['RECORDS']:'Records'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
-								<li id="cross_portal_results"><a href='#external_occurrencelist'><span><?php echo htmlspecialchars((isset($LANG['EXTERNAL_RECORDS'])?$LANG['EXTERNAL_RECORDS']:'External Records'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
-								<li id="cross_portal_list"><a href='#portalsymbology'><span><?php echo htmlspecialchars((isset($LANG['PORTAL_LIST'])?$LANG['PORTAL_LIST']:'Portal List'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
-						   	<li><a href='#symbology'><span><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
-								<li><a href='#maptaxalist'><span><?php echo htmlspecialchars((isset($LANG['TAXA_LIST'])?$LANG['TAXA_LIST']:'Taxa List'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
+								<li><a href='#occurrencelist'><span><?php echo htmlspecialchars($LANG['RECORDS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
+								<li id="cross_portal_results"><a href='#external_occurrencelist'><span><?php echo htmlspecialchars($LANG['EXTERNAL_RECORDS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
+								<li id="cross_portal_list"><a href='#portalsymbology'><span><?php echo htmlspecialchars($LANG['PORTAL_LIST'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
+						   	<li><a href='#symbology'><span><?php echo htmlspecialchars($LANG['COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
+								<li><a href='#maptaxalist'><span><?php echo htmlspecialchars($LANG['TAXA_LIST'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
 							</ul>
 							<div id="occurrencelist" style="">
 								loading...

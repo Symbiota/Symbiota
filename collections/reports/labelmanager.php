@@ -183,7 +183,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 			echo '<a href="../../profile/viewprofile.php?tabindex=1">' . (isset($LANG["PERS_MANAG_MENU"]) ? $LANG["PERS_MANAG_MENU"] : "Personal Management Menu") . '</a> &gt;&gt; ';
 		}
 		else{
-			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . (isset($LANG["COLL_MANAG_PANEL"]) ? $LANG["COLL_MANAG_PANEL"] : "Collection Management Panel") . '</a> &gt;&gt; ';
+			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">' . (isset($LANG["COLL_MANAG_PANEL"]) ? $LANG["COLL_MANAG_PANEL"] : "Collection Management Panel") . '</a> &gt;&gt; ';
 		}
 		?>
 		<b> <?php echo (isset($LANG['LABEL_PRINT']) ? $LANG['LABEL_PRINT'] : 'Label Printing') ?> </b>
@@ -359,7 +359,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 										<div class="fieldDiv">
 											<div class="fieldLabel"> <?php echo (isset($LANG['LABEL_PROFILE']) ? $LANG['LABEL_PROFILE'] : 'Label Profiles:') ?>
 												<?php
-												echo '<span title="Open label profile manager"><a href="labelprofile.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:1.2em" /></a></span>';
+												echo '<span title="Open label profile manager"><a href="labelprofile.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><img src="../../images/edit.png" style="width:1.2em" /></a></span>';
 												?>
 											</div>
 											<div class="fieldElement">

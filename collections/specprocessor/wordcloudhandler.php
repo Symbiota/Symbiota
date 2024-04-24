@@ -33,7 +33,7 @@ $csMode = array_key_exists('csmode',$_REQUEST)?$_REQUEST['csmode']:false;
 				$collidArr = explode(',',$collidStr);
 				foreach($collidArr as $collid){
 					$url = $cloudHandler->buildWordCloud($collid,$csMode);
-					echo '<div class="url-div"><a href="' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS).'</a></div>';
+					echo '<div class="url-div"><a href="' . htmlspecialchars($url, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($url, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE).'</a></div>';
 				}
 			}
 			else echo '<div>No collid target submitted</div>';

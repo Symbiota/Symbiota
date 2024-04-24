@@ -153,7 +153,7 @@ if(!$formSubmit || $formSubmit != 'Search References'){
 				echo '<div><ul>';
 				foreach($refArr as $refId => $recArr){
 					echo '<li>';
-					echo '<a href="refdetails.php?refid=' . htmlspecialchars($refId, HTML_SPECIAL_CHARS_FLAGS) . '"><b>' . htmlspecialchars($recArr["title"], HTML_SPECIAL_CHARS_FLAGS) . '</b></a>';
+					echo '<a href="refdetails.php?refid=' . htmlspecialchars($refId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><b>' . htmlspecialchars($recArr["title"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</b></a>';
 					if($recArr["ReferenceTypeId"] == 27){
 						echo ' series.';
 					}

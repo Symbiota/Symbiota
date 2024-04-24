@@ -37,4 +37,13 @@ $LANG['SUBMIT_V_EDITS'] = 'Enviar Ediciones';
 $LANG['NO_DATA'] = 'No fue posible recuperar los datos o posiblemente no cuenta con los permisos de edición necesarios';
 $LANG['IN'] = 'en';
 
+$LANG['INTERNAL_NOTES'] = 'Notas Internas';
+$LANG['RENAME_SCI_NAME'] = 'Cambiar Nombre del Nombre Científico';
+$LANG['LINK_ICON'] = 'Icono de Enlace';
+
+$LANG['REMOVE_TAXON'] = 'Eliminar Taxón de la Lista de Verificación';
+$LANG['UNKNOWN_TAXON'] = 'Taxón Desconocido';
+$LANG['UNKNOWN_COLLECTION'] = 'Colección Desconocida';
+$LANG['REMOVE'] = 'Eliminar';
+$LANG['TO_COLLECTIONS_LINK'] = 'Enlace a colecciones y taxones objetivo';
 ?>

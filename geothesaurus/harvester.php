@@ -8,8 +8,8 @@ else include_once($SERVER_ROOT . '/content/lang/geothesaurus/harvester.en.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $geoThesID = array_key_exists('geoThesID', $_REQUEST) ? filter_var($_REQUEST['geoThesID'], FILTER_SANITIZE_NUMBER_INT) : '';
-$gbAction = array_key_exists('gbAction', $_REQUEST) ? htmlspecialchars($_REQUEST['gbAction'], HTML_SPECIAL_CHARS_FLAGS) : '';
-$submitAction = array_key_exists('submitaction', $_POST) ? htmlspecialchars($_POST['submitaction'], HTML_SPECIAL_CHARS_FLAGS) : '';
+$gbAction = array_key_exists('gbAction', $_REQUEST) ? htmlspecialchars($_REQUEST['gbAction'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
+$submitAction = array_key_exists('submitaction', $_POST) ? htmlspecialchars($_POST['submitaction'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $addIfMissing = array_key_exists('addgeounit', $_POST)? filter_var($_POST['addgeounit'], FILTER_VALIDATE_BOOLEAN) : false;
 $baseParent = array_key_exists('baseParent', $_POST) && !empty($_POST['baseParent']) ? filter_var($_POST['baseParent'], FILTER_SANITIZE_NUMBER_INT) : null;
 
@@ -221,7 +221,7 @@ if($isEditor && $submitAction) {
                   $countryList = $geoManager->getGBCountryList();
                   foreach($countryList as $cArr){
                   echo '<tr class="' . (isset($cArr['geoThesID'])?'nodb':'') . (isset($cArr['polygon'])?' nopoly':'') . '">';
-                  echo '<td><a href="harvester.php?gbAction=' . $cArr['iso'] . '">' . htmlspecialchars($cArr['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a></td>';
+                  echo '<td><a href="harvester.php?gbAction=' . $cArr['iso'] . '">' . htmlspecialchars($cArr['name'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></td>';
                   echo '<input type="hidden" name="geoJson[]" value="' . $cArr['geoJson'] .'"' . (isset($cArr['polygon'])?'disabled':'') . '>';
                   echo '<td>'.$cArr['iso'] . '</td>';
                   echo '<td>'.(isset($cArr['geoThesID']) ? $LANG['YES'] : $LANG['NO']) . '</td>';

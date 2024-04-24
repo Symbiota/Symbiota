@@ -104,7 +104,7 @@ else{
 		include($SERVER_ROOT.'/includes/header.php');
 		echo '<div class="navpath">';
 		echo '<a href="../../index.php">Home</a> &gt;&gt; ';
-		echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">Collection Management Panel</a> &gt;&gt; ';
+		echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">Collection Management Panel</a> &gt;&gt; ';
 		echo '<b>Occurrence Access Reports</b>';
 		echo '</div>';
 		?>
@@ -129,7 +129,7 @@ else{
 				$navPageBase = 'accessreport.php?collid='.$collid.'&display='.$display.'&duration='.$duration.'&startdate='.$startDate.'&enddate='.$endDate.'&accesstype='.$accessType;
 				$navStr = '<div class="navbarDiv" style="float:right;">';
 				if($pageNum){
-					$navStr .= '<a href="' . htmlspecialchars($navPageBase, HTML_SPECIAL_CHARS_FLAGS) . '&pagenum=' .htmlspecialchars(($pageNum-1), HTML_SPECIAL_CHARS_FLAGS) . '&limitcnt=' . htmlspecialchars($limitCnt, HTML_SPECIAL_CHARS_FLAGS) . '" title="Previous ' . htmlspecialchars($limitCnt, HTML_SPECIAL_CHARS_FLAGS) . ' records">&lt;&lt;</a>';
+					$navStr .= '<a href="' . htmlspecialchars($navPageBase, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pagenum=' .htmlspecialchars(($pageNum-1), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&limitcnt=' . htmlspecialchars($limitCnt, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" title="Previous ' . htmlspecialchars($limitCnt, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' records">&lt;&lt;</a>';
 				}
 				else{
 					$navStr .= '&lt;&lt;';
@@ -138,7 +138,7 @@ else{
 				$navStr .= ($pageNum*$limitCnt).'-'.$subsetCnt.' of '.$recCnt.' records';
 				$navStr .= ' | ';
 				if($subsetCnt < $recCnt){
-					$navStr .= '<a href="' . htmlspecialchars($navPageBase, HTML_SPECIAL_CHARS_FLAGS) . '&pagenum=' .htmlspecialchars(($pageNum+1), HTML_SPECIAL_CHARS_FLAGS) . '&limitcnt=' . htmlspecialchars($limitCnt, HTML_SPECIAL_CHARS_FLAGS) . '" title="Next ' . htmlspecialchars($limitCnt, HTML_SPECIAL_CHARS_FLAGS) . ' records">&gt;&gt;</a>';
+					$navStr .= '<a href="' . htmlspecialchars($navPageBase, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pagenum=' .htmlspecialchars(($pageNum+1), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&limitcnt=' . htmlspecialchars($limitCnt, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" title="Next ' . htmlspecialchars($limitCnt, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' records">&gt;&gt;</a>';
 				}
 				else{
 					$navStr .= '&gt;&gt;';
@@ -194,7 +194,7 @@ else{
 				</div>
 				<div style="font-weight:bold;font-size:130%;">
 					<?php echo $collName; ?>
-					<a href="<?php echo htmlspecialchars($navPageBase, HTML_SPECIAL_CHARS_FLAGS) . '&action=export'; ?>" title="Download Results"><img src="../../images/dl.png" style="margin-left:10px;width:1.3em;" /></a>
+					<a href="<?php echo htmlspecialchars($navPageBase, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&action=export'; ?>" title="Download Results"><img src="../../images/dl.png" style="margin-left:10px;width:1.3em;" /></a>
 				</div>
 				<div style="width:400px">
 					<div style="clear:both"><?php echo $navStr; ?></div>

@@ -5,11 +5,11 @@ include_once($SERVER_ROOT.'/classes/ProfileManager.php');
 @include_once($SERVER_ROOT.'/content/lang/profile/usermanagement.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$loginAs = array_key_exists("loginas",$_REQUEST)?trim($_REQUEST["loginas"]):"";
-$searchTerm = array_key_exists("searchterm",$_REQUEST)?trim($_REQUEST["searchterm"]):"";
-$userId = array_key_exists("userid",$_REQUEST)?$_REQUEST["userid"]:"";
-$delRole = array_key_exists("delrole",$_REQUEST)?$_REQUEST["delrole"]:"";
-$tablePk = array_key_exists("tablepk",$_REQUEST)?$_REQUEST["tablepk"]:"";
+$loginAs = array_key_exists("loginas",$_REQUEST) ? htmlspecialchars($_REQUEST["loginas"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : "";
+$searchTerm = array_key_exists("searchterm",$_REQUEST) ? htmlspecialchars($_REQUEST["searchterm"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : "";
+$userId = array_key_exists("userid",$_REQUEST) ? htmlspecialchars($_REQUEST["userid"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : "";
+$delRole = array_key_exists("delrole",$_REQUEST) ? htmlspecialchars($_REQUEST["delrole"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : "";
+$tablePk = array_key_exists("tablepk",$_REQUEST) ? htmlspecialchars($_REQUEST["tablepk"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : "";
 
 $userManager = new PermissionsManager();
 if($IS_ADMIN){
@@ -46,7 +46,7 @@ if($IS_ADMIN){
 	<style>
 		th{ font-size: 90% }
 		/* alert box from https://www.w3schools.com/howto/howto_js_alert.asp */
-		
+
 		/* The alert message box */
 		.alert {
 			max-width: 30%;
@@ -100,7 +100,7 @@ if($IS_ADMIN){
 
 					<span class="screen-reader-only">
 						<a href = "#userlist"><?php echo (isset($LANG['SKIP_LINK'])?$LANG['SKIP_LINK']:'Skip to list of users'); ?></a>
-					</span>			
+					</span>
 
 					<?php echo (isset($LANG['QUICK_SEARCH'])?$LANG['QUICK_SEARCH']:'Quick Search'); ?>:
 					<div style='margin:2px 0px 0px 10px;'>
@@ -119,7 +119,7 @@ if($IS_ADMIN){
 				<h1>
 					<?php
 						echo $user["firstname"]." ".$user["lastname"]." (#".$user["uid"].") ";
-						echo "<a href='viewprofile.php?emode=1&tabindex=2&&userid=" . htmlspecialchars($user["uid"], HTML_SPECIAL_CHARS_FLAGS) . "'><img src='../images/edit.png' style='border:0px;width:0.8em;' /></a>";
+						echo "<a href='viewprofile.php?emode=1&tabindex=2&&userid=" . htmlspecialchars($user["uid"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'><img src='../images/edit.png' style='border:0px;width:0.8em;' /></a>";
 					?>
 				</h1>
 				<div style="margin-left:10px;">
@@ -168,7 +168,7 @@ if($IS_ADMIN){
 				if($user["username"]){
 					?>
 					<div style="clear:both;margin:0px 0px 20px 30px;">
-						<a href="usermanagement.php?loginas=<?php echo htmlspecialchars($user["username"], HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars((isset($LANG['LOG_IN'])?$LANG['LOG_IN']:'Log in'), HTML_SPECIAL_CHARS_FLAGS); ?></a> <?php echo htmlspecialchars($DEFAULT_TITLE, HTML_SPECIAL_CHARS_FLAGS) . ' ' . htmlspecialchars((isset($LANG['AS_USER'])?$LANG['AS_USER']:'as this user'), HTML_SPECIAL_CHARS_FLAGS); ?>
+						<a href="usermanagement.php?loginas=<?php echo htmlspecialchars($user["username"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars((isset($LANG['LOG_IN'])?$LANG['LOG_IN']:'Log in'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> <?php echo htmlspecialchars($DEFAULT_TITLE, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' ' . htmlspecialchars((isset($LANG['AS_USER'])?$LANG['AS_USER']:'as this user'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>
 					</div>
 					<?php
 				}
@@ -190,8 +190,8 @@ if($IS_ADMIN){
 									echo str_replace('SuperAdmin',(isset($LANG['SUPERADMIN'])?$LANG['SUPERADMIN']:'Super Administrator'),$userPermissions['SuperAdmin']['role']);
 									echo '</span>';
 									?></b>
-									<a href="usermanagement.php?delrole=SuperAdmin&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+									<a href="usermanagement.php?delrole=SuperAdmin&userid=<?php echo htmlspecialchars($userId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?> />
 									</a>
 								</li>
 								<?php
@@ -204,8 +204,8 @@ if($IS_ADMIN){
 									echo str_replace('Taxonomy',(isset($LANG['TAX_EDITOR'])?$LANG['TAX_EDITOR']:'Taxonomy Editor'),$userPermissions['Taxonomy']['role']);
 									echo '</span>';
 									?></b>
-									<a href="usermanagement.php?delrole=Taxonomy&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+									<a href="usermanagement.php?delrole=Taxonomy&userid=<?php echo htmlspecialchars($userId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?> />
 									</a>
 								</li>
 								<?php
@@ -218,8 +218,8 @@ if($IS_ADMIN){
 									echo str_replace('TaxonProfile',(isset($LANG['TAX_PROF_EDITOR'])?$LANG['TAX_PROF_EDITOR']:'Taxon Profile Editor'),$userPermissions['TaxonProfile']['role']);
 									echo '</span>';
 									?></b>
-									<a href="usermanagement.php?delrole=TaxonProfile&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+									<a href="usermanagement.php?delrole=TaxonProfile&userid=<?php echo htmlspecialchars($userId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?> />
 									</a>
 								</li>
 								<?php
@@ -232,8 +232,8 @@ if($IS_ADMIN){
 									echo str_replace('GlossaryEditor',(isset($LANG['GLOSSARY_EDITOR'])?$LANG['GLOSSARY_EDITOR']:'Glossary Editor'),$userPermissions['GlossaryEditor']['role']);
 									echo '</span>';
 									?></b>
-									<a href="usermanagement.php?delrole=GlossaryEditor&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+									<a href="usermanagement.php?delrole=GlossaryEditor&userid=<?php echo htmlspecialchars($userId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?> />
 									</a>
 								</li>
 								<?php
@@ -246,8 +246,8 @@ if($IS_ADMIN){
 									echo str_replace('KeyAdmin',(isset($LANG['ID_KEY_ADMIN'])?$LANG['ID_KEY_ADMIN']:'Identification Keys Administrator'),$userPermissions['KeyAdmin']['role']);
 									echo '</span>';
 									?></b>
-									<a href="usermanagement.php?delrole=KeyAdmin&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+									<a href="usermanagement.php?delrole=KeyAdmin&userid=<?php echo htmlspecialchars($userId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?> />
 									</a>
 								</li>
 								<?php
@@ -260,8 +260,8 @@ if($IS_ADMIN){
 									echo str_replace('KeyEditor',(isset($LANG['ID_KEY_EDITOR'])?$LANG['ID_KEY_EDITOR']:'Identification Keys Editor'),$userPermissions['KeyEditor']['role']);
 									echo '</span>';
 									?></b>
-									<a href="usermanagement.php?delrole=KeyEditor&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+									<a href="usermanagement.php?delrole=KeyEditor&userid=<?php echo htmlspecialchars($userId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?> />
 									</a>
 								</li>
 								<?php
@@ -274,8 +274,8 @@ if($IS_ADMIN){
 									echo str_replace('ClCreate',(isset($LANG['CL_CREATE'])?$LANG['CL_CREATE']:'Create a Checklist'),$userPermissions['ClCreate']['role']);
 									echo '</span>';
 									?></b>
-									<a href="usermanagement.php?delrole=clCreate&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+									<a href="usermanagement.php?delrole=clCreate&userid=<?php echo htmlspecialchars($userId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?> />
 									</a>
 								</li>
 								<?php
@@ -288,8 +288,8 @@ if($IS_ADMIN){
 									echo str_replace('RareSppAdmin',(isset($LANG['RARE_SP_ADMIN'])?$LANG['RARE_SP_ADMIN']:'Rare Species List Administrator'),$userPermissions['RareSppAdmin']['role']);
 									echo '</span>';
 									?></b>
-									<a href="usermanagement.php?delrole=RareSppAdmin&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+									<a href="usermanagement.php?delrole=RareSppAdmin&userid=<?php echo htmlspecialchars($userId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?> />
 									</a>
 								</li>
 								<?php
@@ -302,8 +302,8 @@ if($IS_ADMIN){
 									echo str_replace('RareSppReadAll',(isset($LANG['RARE_SP_VIEWER'])?$LANG['RARE_SP_VIEWER']:'View and Map Specimens of Rare Species from all Collections'),$userPermissions['RareSppReadAll']['role']);
 									echo '</span> ';
 									?></b>
-									<a href="usermanagement.php?delrole=RareSppReadAll&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+									<a href="usermanagement.php?delrole=RareSppReadAll&userid=<?php echo htmlspecialchars($userId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+										<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?> />
 									</a>
 								</li>
 								<?php
@@ -314,10 +314,12 @@ if($IS_ADMIN){
 								$collList = $userPermissions["CollAdmin"];
 								echo "<ul>";
 								foreach($collList as $k => $v){
-									echo '<li><span title="'.$v['aby'].'"><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($v['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a></span> ';
-									echo "<a href='usermanagement.php?delrole=CollAdmin&tablepk=$k&userid=$userId'>";
-									echo "<img src='../images/del.png' style='border:0px;width:1.2em;' title=".(isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission').'/>';
-									echo "</a></li>";
+									if(!empty($v['name'])){
+										echo '<li><span title="'.$v['aby'].'"><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($v['name'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></span> ';
+										echo "<a href='usermanagement.php?delrole=CollAdmin&tablepk=$k&userid=$userId'>";
+										echo "<img src='../images/del.png' style='border:0px;width:1.2em;' title=".(isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission').'/>';
+										echo "</a></li>";
+									}
 								}
 								echo "</ul>";
 							}
@@ -327,9 +329,9 @@ if($IS_ADMIN){
 								$collList = $userPermissions["CollEditor"];
 								echo "<ul>";
 								foreach($collList as $k => $v){
-									echo '<li><span title="'.$v['aby'].'"><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($v['name'], HTML_SPECIAL_CHARS_FLAGS) . '</a></span> ';
+									echo '<li><span title="'.$v['aby'].'"><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($v['name'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></span> ';
 									echo "<a href='usermanagement.php?delrole=CollEditor&tablepk=$k&userid=$userId'>";
-									echo "<img src='../images/del.png' style='border:0px;width:1.2em;' title=" . htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS) .'/>';
+									echo "<img src='../images/del.png' style='border:0px;width:1.2em;' title=" . htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .'/>';
 									echo "</a></li>";
 								}
 								echo "</ul>";
@@ -345,8 +347,8 @@ if($IS_ADMIN){
 										?>
 										<li>
 											<?php echo '<span title="'.$v['aby'].'">'.$v['name'].'</span>'; ?>
-											<a href="usermanagement.php?delrole=RareSppReader&tablepk=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS)?>&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-												<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+											<a href="usermanagement.php?delrole=RareSppReader&tablepk=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)?>&userid=<?php echo htmlspecialchars($userId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+												<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?> />
 											</a>
 										</li>
 										<?php
@@ -362,7 +364,7 @@ if($IS_ADMIN){
 								$collList = $userPermissions['PersonalObsAdmin'];
 								echo "<ul>";
 								foreach($collList as $k => $v){
-									echo '<li><span title="'.$v['aby'].'"><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) .'" target="_blank">' . htmlspecialchars($v['name'], HTML_SPECIAL_CHARS_FLAGS) .'</a></span> ';
+									echo '<li><span title="'.$v['aby'].'"><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .'" target="_blank">' . htmlspecialchars($v['name'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .'</a></span> ';
 									echo "<a href='usermanagement.php?delrole=CollAdmin&tablepk=$k&userid=$userId'>";
 									echo "<img src='../images/del.png' style='border:0px;width:1.2em;' title=".(isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission').'/>';
 									echo "</a></li>";
@@ -374,9 +376,9 @@ if($IS_ADMIN){
 								$collList = $userPermissions["PersonalObsEditor"];
 								echo "<ul>";
 								foreach($collList as $k => $v){
-									echo '<li><span title="'.$v['aby'].'"><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($v['name'], HTML_SPECIAL_CHARS_FLAGS) .'</a></span> ';
+									echo '<li><span title="'.$v['aby'].'"><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($v['name'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .'</a></span> ';
 									echo "<a href='usermanagement.php?delrole=CollEditor&tablepk=$k&userid=$userId'>";
-									echo "<img src='../images/del.png' style='border:0px;width:1.2em;' title=" . htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS) .'/>';
+									echo "<img src='../images/del.png' style='border:0px;width:1.2em;' title=" . htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .'/>';
 									echo "</a></li>";
 								}
 								echo "</ul>";
@@ -392,8 +394,8 @@ if($IS_ADMIN){
 										?>
 										<li>
 											<?php echo '<span title="'.$v['aby'].'">'.$v['name'].'</span>'; ?>
-											<a href="usermanagement.php?delrole=RareSppReader&tablepk=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS)?>&userid=<?php echo htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS); ?>">
-												<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS); ?> />
+											<a href="usermanagement.php?delrole=RareSppReader&tablepk=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)?>&userid=<?php echo htmlspecialchars($userId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+												<img src="../images/del.png" style="border:0px;width:1.2em;" title=<?php echo htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?> />
 											</a>
 										</li>
 										<?php
@@ -413,9 +415,9 @@ if($IS_ADMIN){
 										$projList = $userPermissions["ProjAdmin"];
 										asort($projList);
 										foreach($projList as $k => $v){
-											echo '<li><a href="../projects/index.php?pid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><span title="' . htmlspecialchars($v['aby'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($v['name'], HTML_SPECIAL_CHARS_FLAGS) . '</span></a>';
+											echo '<li><a href="../projects/index.php?pid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank"><span title="' . htmlspecialchars($v['aby'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($v['name'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</span></a>';
 											echo "<a href='usermanagement.php?delrole=ProjAdmin&tablepk=$k&userid=$userId'>";
-											echo "<img src='../images/del.png' style='border:0px;width:1.2em;' title=" . htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS) . '/>';
+											echo "<img src='../images/del.png' style='border:0px;width:1.2em;' title=" . htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/>';
 											echo "</a></li>";
 										}
 										?>
@@ -436,11 +438,11 @@ if($IS_ADMIN){
 											$name = '&lt;resource deleted&gt;';
 											if(isset($v['name'])) $name = $v['name'];
 											echo '<li>';
-											echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
-											echo '<span title="' . htmlspecialchars($v['aby'], HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($name, HTML_SPECIAL_CHARS_FLAGS) . '</span>';
+											echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">';
+											echo '<span title="' . htmlspecialchars($v['aby'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($name, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</span>';
 											echo '</a>';
 											echo "<a href='usermanagement.php?delrole=ClAdmin&tablepk=$k&userid=$userId'>";
-											echo "<img src='../images/del.png' style='border:0px;width:1.2em;' title=" . htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), HTML_SPECIAL_CHARS_FLAGS) . '/>';
+											echo "<img src='../images/del.png' style='border:0px;width:1.2em;' title=" . htmlspecialchars((isset($LANG['DEL_PERM'])?$LANG['DEL_PERM']:'Delete permission'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/>';
 											echo "</a></li>";
 										}
 										?>
@@ -568,7 +570,7 @@ if($IS_ADMIN){
 										?>
 										<td>
 											<?php
-											echo '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/collections/misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1" target="_blank" >';
+											echo '<a href="' . htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/collections/misc/collprofiles.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1" target="_blank" >';
 											echo $cArr['collectionname'];
 											echo ' ('.$cArr['institutioncode'].($cArr['collectioncode']?'-'.$cArr['collectioncode']:'').')';
 											echo '</a>';
@@ -616,7 +618,7 @@ if($IS_ADMIN){
 										?>
 										<td>
 											<?php
-											echo '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/collections/misc/collprofiles.php?collid=' . htmlspecialchars($obsid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1" target="_blank" >';
+											echo '<a href="' . htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/collections/misc/collprofiles.php?collid=' . htmlspecialchars($obsid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1" target="_blank" >';
 											echo $oArr['collectionname'];
 											echo ' ('.$oArr['institutioncode'].($oArr['collectioncode']?'-'.$oArr['collectioncode']:'').')';
 											echo '</a>';
@@ -654,7 +656,7 @@ if($IS_ADMIN){
 										</td>
 										<td>
 											<?php
-											echo '<a href="' . htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . '/collections/misc/collprofiles.php?collid=' . htmlspecialchars($genObsID, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1" target="_blank" >';
+											echo '<a href="' . htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/collections/misc/collprofiles.php?collid=' . htmlspecialchars($genObsID, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1" target="_blank" >';
 											echo $genObjArr['collectionname'];
 											echo ' ('.$genObjArr['institutioncode'].($genObjArr['collectioncode']?'-'.$genObjArr['collectioncode']:'').')';
 											echo '</a>';
@@ -686,7 +688,7 @@ if($IS_ADMIN){
 								<div style='margin-left:15px;'>
 									<?php
 									echo '<input type="checkbox" name="p[]" value="ProjAdmin-'.$k.'" />';
-									echo '<a href="../projects/index.php?pid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($v, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+									echo '<a href="../projects/index.php?pid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($v, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 									?>
 								</div>
 								<?php
@@ -711,7 +713,7 @@ if($IS_ADMIN){
 								<div style='margin-left:15px;'>
 									<?php
 									echo '<input type="checkbox" name="p[]" value="ClAdmin-'.$k.'" />';
-									echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($v, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+									echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($v, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 									?>
 								</div>
 								<?php
@@ -749,7 +751,7 @@ if($IS_ADMIN){
 				<?php
 				$users = $userManager->getUsers($searchTerm);
 				foreach($users as $id => $name){
-					echo '<div><a href="usermanagement.php?userid=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($name, HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
+					echo '<div><a href="usermanagement.php?userid=' . htmlspecialchars($id, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($name, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></div>';
 				}
 			}
 		}

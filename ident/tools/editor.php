@@ -97,10 +97,10 @@ if($isEditor && $action){
 			if($editorManager->getRankId() > 140) $sn = "<i>$sn</i>";
 			echo "<div style='float:right;'>";
 			if($editorManager->getRankId() > 140){
-				echo "<a href='editor.php?tid=" . htmlspecialchars($editorManager->getParentTid(), HTML_SPECIAL_CHARS_FLAGS) . "&children=" . htmlspecialchars(($childrenStr?$childrenStr.',':''), HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . "'>edit parent</a>&nbsp;&nbsp;";
+				echo "<a href='editor.php?tid=" . htmlspecialchars($editorManager->getParentTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "&children=" . htmlspecialchars(($childrenStr?$childrenStr.',':''), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'>edit parent</a>&nbsp;&nbsp;";
 			}
 			if($childrenStr){
-				echo "<br><a href='editor.php?children=" . htmlspecialchars($childrenStr, HTML_SPECIAL_CHARS_FLAGS) . "'>back to child</a>";
+				echo "<br><a href='editor.php?children=" . htmlspecialchars($childrenStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'>back to child</a>";
 			}
 			echo '</div>';
 			echo '<h2>'.$sn.'</h2>';
@@ -126,7 +126,7 @@ if($isEditor && $action){
 							echo "<div style='margin-top:1em;'><span style='font-weight:bold;'>$charNameStr</span>\n";
 							if($editorManager->getRankId() > 140){
 								echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='font-size:smaller;'>";
-								echo "<a href=\"#\" onclick=\"openPopup('editor.php?tid=" . htmlspecialchars($editorManager->getParentTid(), HTML_SPECIAL_CHARS_FLAGS) . "&char=" . htmlspecialchars($cidKey, HTML_SPECIAL_CHARS_FLAGS) . "','technical');\">parent</a>";
+								echo "<a href=\"#\" onclick=\"openPopup('editor.php?tid=" . htmlspecialchars($editorManager->getParentTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "&char=" . htmlspecialchars($cidKey, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "','technical');\">parent</a>";
 								echo "</span>\n";
 							}
 							echo "</div>\n";

@@ -179,16 +179,16 @@ class ChecklistAdmin extends Manager{
 		$retArr = Array();
 		$targetStr = $this->clid;
 		do{
-			$sql = 'SELECT c.clid, c.name, child.clid as pclid '.
-				'FROM fmchklstchildren child INNER JOIN fmchecklists c ON child.clidchild = c.clid '.
-				'WHERE child.clid IN('.trim($targetStr,',').') '.
-				'ORDER BY c.name ';
+			$sql = 'SELECT c.clid, c.name, child.clid as pclid
+				FROM fmchklstchildren child INNER JOIN fmchecklists c ON child.clidchild = c.clid
+				WHERE child.clid IN(' . trim($targetStr, ',') . ') AND child.clid != child.clidchild
+				ORDER BY c.name ';
 			$rs = $this->conn->query($sql);
 			$targetStr = '';
 			while($r = $rs->fetch_object()){
 				$retArr[$r->clid]['name'] = $r->name;
 				$retArr[$r->clid]['pclid'] = $r->pclid;
-				$targetStr .= ','.$r->clid;
+				$targetStr .= ',' . $r->clid;
 			}
 			$rs->free();
 		}while($targetStr);
@@ -200,16 +200,16 @@ class ChecklistAdmin extends Manager{
 		$retArr = Array();
 		$targetStr = $this->clid;
 		do{
-			$sql = 'SELECT c.clid, c.name, child.clid as pclid '.
-				'FROM fmchklstchildren child INNER JOIN fmchecklists c ON child.clid = c.clid '.
-				'WHERE child.clidchild IN('.trim($targetStr,',').') ';
+			$sql = 'SELECT c.clid, c.name
+				FROM fmchklstchildren child INNER JOIN fmchecklists c ON child.clid = c.clid
+				WHERE child.clidchild IN(' . trim($targetStr, ',') . ') AND child.clid != child.clidchild';
 			$rs = $this->conn->query($sql);
 			$targetStr = '';
 			while($r = $rs->fetch_object()){
 				$retArr[$r->clid] = $r->name;
 				$targetStr .= ','.$r->clid;
 			}
-			if($targetStr) $targetStr = substr($targetStr,1);
+			if($targetStr) $targetStr = substr($targetStr, 1);
 			$rs->free();
 		}while($targetStr);
 		asort($retArr);

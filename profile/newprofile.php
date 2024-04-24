@@ -7,8 +7,8 @@ header('Cache-Control: no-cache, no-cache="set-cookie", no-store, must-revalidat
 header('Pragma: no-cache'); // HTTP 1.0.
 header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
-$login = array_key_exists('login', $_POST) ? htmlspecialchars($_POST['login'], HTML_SPECIAL_CHARS_FLAGS) : '';
-$emailAddr = array_key_exists('email',$_POST) ? htmlspecialchars($_POST['email'], HTML_SPECIAL_CHARS_FLAGS) : '';
+$login = array_key_exists('login', $_POST) ? htmlspecialchars($_POST['login'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
+$emailAddr = array_key_exists('email',$_POST) ? htmlspecialchars($_POST['email'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $action = array_key_exists('submit', $_POST) ? $_POST['submit'] : '';
 $adminRegister = array_key_exists('adminRegister', $_POST) ? true : false;
 
@@ -161,7 +161,7 @@ if($action == 'Create Login'){
 				echo (isset($LANG['USERNAME_EXISTS_1']) ? $LANG['USERNAME_EXISTS_1'] : 'This username');
 				echo '(' . $login . ') ' . (isset($LANG['USERNAME_EXISTS_2']) ? $LANG['USERNAME_EXISTS_2'] : 'is already being used') . '.<br>';
 				echo (isset($LANG['USERNAME_EXISTS_3']) ? $LANG['USERNAME_EXISTS_3'] : 'Please choose a different login name or visit the');
-				echo ' <a href="index.php?login=' . htmlspecialchars($login, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars((isset($LANG['LOGIN_PAGE']) ? $LANG['LOGIN_PAGE'] : 'login page'), HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
+				echo ' <a href="index.php?login=' . htmlspecialchars($login, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars((isset($LANG['LOGIN_PAGE']) ? $LANG['LOGIN_PAGE'] : 'login page'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ';
 				echo (isset($LANG['USERNAME_EXISTS_4']) ? $LANG['USERNAME_EXISTS_4'] : 'if you believe this might be you').'.';
 			}
 			elseif($displayStr == 'email_registered'){
@@ -208,12 +208,12 @@ if($action == 'Create Login'){
 					</section>
 					<section class="bottom-breathing-room gridlike-form-row">
 						<label class="gridlike-form-row-label" for="firstname"><?php echo (isset($LANG['FIRST_NAME']) ? $LANG['FIRST_NAME'] : 'First Name'); ?>:</label>
-						<input class="gridlike-form-row-input" id="firstname" name="firstname" type="text" size="40" value="<?php echo (isset($_POST['firstname']) ? htmlspecialchars($_POST['firstname'],HTML_SPECIAL_CHARS_FLAGS) : ''); ?>" required />
+						<input class="gridlike-form-row-input" id="firstname" name="firstname" type="text" size="40" value="<?php echo (isset($_POST['firstname']) ? htmlspecialchars($_POST['firstname'],ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>" required />
 						<span style="color:red;">*</span>
 					</section>
 					<section class="bottom-breathing-room gridlike-form-row">
 						<label class="gridlike-form-row-label" for="lastname"><?php echo (isset($LANG['LAST_NAME'])?$LANG['LAST_NAME']:'Last Name'); ?>:</label>
-						<input class="gridlike-form-row-input" id="lastname" name="lastname" type="text" size="40" value="<?php echo (isset($_POST['lastname']) ? htmlspecialchars($_POST['lastname'], HTML_SPECIAL_CHARS_FLAGS) : ''); ?>" required />
+						<input class="gridlike-form-row-input" id="lastname" name="lastname" type="text" size="40" value="<?php echo (isset($_POST['lastname']) ? htmlspecialchars($_POST['lastname'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>" required />
 						<span style="color:red;">*</span>
 					</section>
 					<section class="bottom-breathing-room gridlike-form-row">
@@ -223,7 +223,7 @@ if($action == 'Create Login'){
 					</section>
 					<section class="bottom-breathing-room gridlike-form-row">
 						<label class="gridlike-form-row-label" for="guid"><?php echo (isset($LANG['ORCID']) ? $LANG['ORCID'] : 'ORCID or other GUID'); ?>:</label>
-						<input class="gridlike-form-row-input" name="guid" id="guid" type="text" size="40" value="<?php echo (isset($_POST['guid']) ? htmlspecialchars($_POST['guid'], HTML_SPECIAL_CHARS_FLAGS) : ''); ?>" />
+						<input class="gridlike-form-row-input" name="guid" id="guid" type="text" size="40" value="<?php echo (isset($_POST['guid']) ? htmlspecialchars($_POST['guid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>" />
 					</section>
 					<section class="bottom-breathing-room gridlike-form-row">
 							<span class="gridlike-form-row-label"><?php echo (isset($LANG['ACCESSIBILITY_PREF']) ? $LANG['ACCESSIBILITY_PREF'] : 'Accessibility Preferences'); ?>:</span>
@@ -240,27 +240,27 @@ if($action == 'Create Login'){
 						</section>
 						<section class="gridlike-form-row">
 							<label class="gridlike-form-row-label" for="title"><?php echo (isset($LANG['TITLE'])?$LANG['TITLE']:'Title'); ?>:</label>
-							<input class="gridlike-form-row-input" name="title" id="title" type="text" size="40" value="<?php echo (isset($_POST['title']) ? htmlspecialchars($_POST['title'],HTML_SPECIAL_CHARS_FLAGS) : ''); ?>">
+							<input class="gridlike-form-row-input" name="title" id="title" type="text" size="40" value="<?php echo (isset($_POST['title']) ? htmlspecialchars($_POST['title'],ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>">
 						</section>
 						<section class="gridlike-form-row">
 							<label class="gridlike-form-row-label" for="institution"><?php echo (isset($LANG['INSTITUTION'])?$LANG['INSTITUTION']:'Institution'); ?>:</label>
-							<input class="gridlike-form-row-input" name="institution" id="institution"  type="text" size="40" value="<?php echo (isset($_POST['institution']) ? htmlspecialchars($_POST['institution'], HTML_SPECIAL_CHARS_FLAGS) : '') ?>">
+							<input class="gridlike-form-row-input" name="institution" id="institution"  type="text" size="40" value="<?php echo (isset($_POST['institution']) ? htmlspecialchars($_POST['institution'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '') ?>">
 						</section>
 						<section class="gridlike-form-row">
 							<label class="gridlike-form-row-label" for="city"><?php echo (isset($LANG['CITY'])?$LANG['CITY']:'City'); ?>:</label>
-							<input class="gridlike-form-row-input" id="city" name="city" type="text" size="40" value="<?php echo (isset($_POST['city']) ? htmlspecialchars($_POST['city'],HTML_SPECIAL_CHARS_FLAGS) : ''); ?>">
+							<input class="gridlike-form-row-input" id="city" name="city" type="text" size="40" value="<?php echo (isset($_POST['city']) ? htmlspecialchars($_POST['city'],ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>">
 						</section>
 						<section class="gridlike-form-row">
 							<label class="gridlike-form-row-label" for="state"><?php echo (isset($LANG['STATE'])?$LANG['STATE']:'State'); ?>:</label>
-							<input class="gridlike-form-row-input" id="state" name="state" type="text" size="40" value="<?php echo (isset($_POST['state']) ? htmlspecialchars($_POST['state'], HTML_SPECIAL_CHARS_FLAGS) : ''); ?>">
+							<input class="gridlike-form-row-input" id="state" name="state" type="text" size="40" value="<?php echo (isset($_POST['state']) ? htmlspecialchars($_POST['state'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>">
 						</section>
 						<section class="gridlike-form-row">
 							<label class="gridlike-form-row-label" for="zip"><?php echo (isset($LANG['ZIP_CODE'])?$LANG['ZIP_CODE']:'Zip Code'); ?>:</label>
-							<input class="gridlike-form-row-input" name="zip" id="zip" type="text" size="40" value="<?php echo (isset($_POST['zip']) ? htmlspecialchars($_POST['zip'], HTML_SPECIAL_CHARS_FLAGS) : ''); ?>">
+							<input class="gridlike-form-row-input" name="zip" id="zip" type="text" size="40" value="<?php echo (isset($_POST['zip']) ? htmlspecialchars($_POST['zip'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>">
 						</section>
 						<section class="gridlike-form-row">
 							<label class="gridlike-form-row-label" for="country"><?php echo (isset($LANG['COUNTRY'])?$LANG['COUNTRY']:'Country'); ?>:</label>
-							<input class="gridlike-form-row-input" id="country" name="country" type="text" size="40" value="<?php echo (isset($_POST['country']) ? htmlspecialchars($_POST['country'],HTML_SPECIAL_CHARS_FLAGS) : ''); ?>">
+							<input class="gridlike-form-row-input" id="country" name="country" type="text" size="40" value="<?php echo (isset($_POST['country']) ? htmlspecialchars($_POST['country'],ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>">
 						</section>
 							<div style="margin:10px;">
 								<?php
@@ -280,7 +280,7 @@ if($action == 'Create Login'){
 	} else{
 	?>
 		<div id="innertext">
-			<h1><?php echo htmlspecialchars((isset($LANG['IPROFILE_CREATION_DISABLED']) ? $LANG['PROFILE_CREATION_DISABLED'] : 'Public user creation has been disabled on this portal.'), HTML_SPECIAL_CHARS_FLAGS); ?></h1>
+			<h1><?php echo htmlspecialchars((isset($LANG['IPROFILE_CREATION_DISABLED']) ? $LANG['PROFILE_CREATION_DISABLED'] : 'Public user creation has been disabled on this portal.'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></h1>
 		</div>
 	<?php
 	}

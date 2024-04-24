@@ -2,6 +2,9 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMapManager.php');
 include_once($SERVER_ROOT.'/content/lang/collections/map/simplemap.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/map/leafletmap.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/map/leafletmap.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/map/leafletmap.en.php');
+
 
 header("Content-Type: text/html; charset=".$CHARSET);
 
@@ -113,7 +116,7 @@ if(isset($MAPPING_BOUNDARIES)){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> - Leaflet Map</title>
+	<title><?php echo $DEFAULT_TITLE; ?> - <?php echo $LANG['LEAFLET_MAP']; ?></title>
 	<?php
 	   include_once($SERVER_ROOT.'/includes/head.php');
 	   include_once($SERVER_ROOT.'/includes/leafletMap.php');
@@ -219,7 +222,7 @@ if(isset($MAPPING_BOUNDARIES)){
             colorLegend = JSON.parse(data.getAttribute('data-legend'))
             clid = JSON.parse(data.getAttribute('data-clid'))
          } catch (err) {
-            alert("Failed to load occurence data")
+            alert("<?php echo $LANG['FAILED_TO_LOAD_OCCR_DATA']; ?>")
          }
          //Keeping Google and leaflet files seperate for sake of saving repeat
          //work when trying to move away from google maps.
@@ -253,12 +256,12 @@ if(isset($MAPPING_BOUNDARIES)){
 			}
 
 			if(lat === null && lng === null){
-				window.alert("Enter values in the latitude and longitude fields");
+				window.alert("<?php echo $LANG['ENTER_VALUES_IN_LAT_LONG']; ?>");
          } else if(lat < -180 || lat > 180 || lng < -180 || lng > 180) {
-					window.alert("Latitude and Longitude must be of values between -180 and 180 (" + lat + ";" + lng + ")");
+					window.alert("<?php echo $LANG['LAT_LONG_MUST_BE_BETWEEN_VALUES']; ?> (" + lat + ";" + lng + ")");
          } else {
             var addPoint = true;
-            if(lng > 0) addPoint = window.confirm("Longitude is positive, which will put the marker in the eastern hemisphere (e.g. Asia).\nIs this what you want?");
+            if(lng > 0) addPoint = window.confirm("<?php echo $LANG['LONGITUDE_IS_POSITIVE']; ?>?");
             if(!addPoint) lng = -1*lng;
 
             map.mapLayer.addLayer(
@@ -303,16 +306,16 @@ if(isset($MAPPING_BOUNDARIES)){
 	if(!$coordArr){
 		?>
 			<div style="font-size:120%;font-weight:bold;">
-				Your query apparently does not contain any records with coordinates that can be mapped.
+            <?php echo $LANG['QUERY_DOES_NOT_CONTAIN_RECORDS']; ?>.
 			</div>
 			<div style="margin-left:20px;">
-				Either the records in the query are not georeferenced (no lat/long)<br/>
+				<?php echo $LANG['EITHER_REC_NOT_GEOREF']; ?><br/>
 			</div>
 			<div style="margin-left:100px;">
-				-or-
+				-<?php echo $LANG['OR']; ?>-
 			</div>
 			<div style="margin-left:20px;">
-				Rare/threatened status requires the locality coordinates be hidden.
+				<?php echo $LANG['RARE_STATUS_REQUIRES']; ?>.
 			</div>
 		<?php
 	}
@@ -407,8 +410,8 @@ if(isset($MAPPING_BOUNDARIES)){
 						<input name='latmin' id='latmin' size='4' type='text' />&prime;
 						<input name='latsec' id='latsec' size='4' type='text' />&Prime;
 						<select name='latns' id='latns'>
-							<option value='N'>N</option>
-							<option value='S'>S</option>
+							<option value='N'><?php echo $LANG['NORTH']; ?></option>
+							<option value='S'><?php echo $LANG['SOUTH']; ?></option>
 						</select>
 					</div>
 					<div style="margin-top:5px;">
@@ -417,8 +420,8 @@ if(isset($MAPPING_BOUNDARIES)){
 						<input name='longmin' id='longmin' size='4' type='text' />&prime;
 						<input name='longsec' id='longsec' size='4' type='text' />&Prime;
 						<select name='longew' id='longew'>
-							<option value='E'>E</option>
-							<option value='W' selected>W</option>
+							<option value='E'><?php echo $LANG['EAST']; ?></option>
+							<option value='W' selected><?php echo $LANG['WEST']; ?></option>
 						</select>
 					</div>
 					<div style='font-size:80%;margin-top:5px;'>

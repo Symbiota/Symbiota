@@ -7,7 +7,7 @@
 		?>
 		<input data-chip="<?php echo $LANG['ALL_COLLECTIONS'] ?>" id="dballcb" name="db[]" class="specobs all-neon-colls" value='all' type="checkbox" onclick="selectAll(this);" <?php echo $checkedStatus ?> />
 		<label for="dballcb">
-			<?php echo $LANG['SELECT_DESELECT'] . ' <a href="' . $CLIENT_ROOT .'/collections/misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS_CAP'], HTML_SPECIAL_CHARS_FLAGS) . '</a>'; ?>
+			<?php echo $LANG['SELECT_DESELECT'] . ' <a href="' . $CLIENT_ROOT .'/collections/misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS_CAP'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>'; ?>
 		</label>
 	</div>
 	<?php

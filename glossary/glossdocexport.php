@@ -16,13 +16,13 @@ $definitions = array_key_exists('definitions',$_POST)?$_POST['definitions']:'';
 $images = array_key_exists('images',$_POST)?$_POST['images']:'';
 
 //Sanitation
-$language = htmlspecialchars($language, HTML_SPECIAL_CHARS_FLAGS);
-$taxon = htmlspecialchars($taxon, HTML_SPECIAL_CHARS_FLAGS);
-$searchTerm = htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS);
+$language = htmlspecialchars($language, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$taxon = htmlspecialchars($taxon, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$searchTerm = htmlspecialchars($searchTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 if(!is_numeric($deepSearch)) $relatedLanguage = 0;
-$exportType = htmlspecialchars($exportType, HTML_SPECIAL_CHARS_FLAGS);
-$definitions = htmlspecialchars($definitions, HTML_SPECIAL_CHARS_FLAGS);
-$images = htmlspecialchars($images, HTML_SPECIAL_CHARS_FLAGS);
+$exportType = htmlspecialchars($exportType, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$definitions = htmlspecialchars($definitions, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$images = htmlspecialchars($images, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 
 $fileName = '';
 $citationFormat = $DEFAULT_TITLE.'. '.date('Y').'. ';

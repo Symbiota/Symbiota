@@ -346,16 +346,6 @@ function resetQueryForm(f) {
   document.dispatchEvent(new Event('resetMap'));
 }
 
-function shiftKeyBox(tid) {
-  var currentkeys = document.getElementById("symbologykeysbox").innerHTML;
-  var keyDivName = tid + "keyrow";
-  var colorBoxName = "taxaColor" + tid;
-  var newKeyToAdd = document.getElementById(keyDivName).innerHTML;
-  document.getElementById(colorBoxName).color.hidePicker();
-  document.getElementById("symbologykeysbox").innerHTML =
-    currentkeys + newKeyToAdd;
-}
-
 function prepSelectionKml(f) {
   if (f.kmltype.value == "dsselectionquery") {
     if (dsselections.length != 0) {
@@ -372,49 +362,9 @@ function prepSelectionKml(f) {
   f.submit();
 }
 
-function closeAllInfoWins() {
-  for (var w = 0; w < infoWins.length; w++) {
-    var win = infoWins[w];
-    win.close();
-  }
-}
-
-function openOccidInfoBox(label, lat, lon) {
-  var myOptions = {
-    content: label,
-    boxStyle: {
-      border: "1px solid black",
-      background: "#ffffff",
-      textAlign: "center",
-      padding: "2px",
-      fontSize: "12px",
-    },
-    disableAutoPan: true,
-    pixelOffset: new google.maps.Size(-25, 0),
-    position: new google.maps.LatLng(lat, lon),
-    isHidden: false,
-    closeBoxURL: "",
-    pane: "floatPane",
-    enableEventPropagation: false,
-  };
-
-  ibLabel = new InfoBox(myOptions);
-  ibLabel.open(map);
-}
-
-function closeOccidInfoBox() {
-  if (ibLabel) {
-    ibLabel.close();
-  }
-}
-
-function openIndPopup(occid, clid) {
-  openPopup("../individual/index.php?occid=" + occid + "&clid=" + clid);
-}
-
 function openRecord(record) {
    let url = record.host? 
-      `https://${record.host}/collections/individual/index.php?occid=${record.occid}` :
+      `${record.host}/collections/individual/index.php?occid=${record.occid}` :
       "../individual/index.php?occid=" + record.occid 
    openPopup(url);
 }
@@ -428,29 +378,11 @@ function openPopup(urlStr) {
   } catch (err) {}
   newWindow = window.open(
     urlStr,
-    "popup",
+   "_blank",
     "scrollbars=1,toolbar=0,resizable=1,width=" +
       wWidth +
       ",height=600,left=20,top=20"
   );
   if (newWindow.opener == null) newWindow.opener = self;
   return false;
-}
-
-function setClustering() {
-  var gridSizeSett = document.getElementById("gridsize").value;
-  var minClusterSett = document.getElementById("minclustersize").value;
-  if (document.getElementById("clusteroff").checked == true) {
-    var clstrSwitch = "y";
-  } else {
-    var clstrSwitch = "n";
-  }
-  document.getElementById("gridSizeSetting").value = gridSizeSett;
-  document.getElementById("minClusterSetting").value = minClusterSett;
-  document.getElementById("clusterSwitch").value = clstrSwitch;
-}
-
-function refreshClustering() {
-  var searchForm = document.getElementById("mapsearchform");
-  searchForm.submit();
 }

@@ -13,7 +13,7 @@ $dynClid = array_key_exists('dynclid', $_REQUEST) ? filter_var($_REQUEST['dyncli
 $pageNumber = array_key_exists('pagenumber', $_REQUEST) ? filter_var($_REQUEST['pagenumber'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $pid = array_key_exists('pid', $_REQUEST) ? filter_var($_REQUEST['pid'], FILTER_SANITIZE_NUMBER_INT) : '';
 $thesFilter = array_key_exists('thesfilter', $_REQUEST) ? filter_var($_REQUEST['thesfilter'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$taxonFilter = array_key_exists('taxonfilter', $_REQUEST) ? $_REQUEST['taxonfilter'] : '';
+$taxonFilter = array_key_exists('taxonfilter', $_REQUEST) ? htmlspecialchars($_REQUEST['taxonfilter'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $showAuthors = array_key_exists('showauthors', $_REQUEST) ? filter_var($_REQUEST['showauthors'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $showSynonyms = array_key_exists('showsynonyms', $_REQUEST) ? filter_var($_REQUEST['showsynonyms'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $showCommon = array_key_exists('showcommon', $_REQUEST) ? filter_var($_REQUEST['showcommon'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -40,7 +40,13 @@ $clArray = $clManager->getClMetaData();
 $activateKey = $KEY_MOD_IS_ACTIVE;
 $showDetails = 0;
 if(isset($clArray['defaultSettings'])){
-	$defaultArr = json_decode($clArray['defaultSettings'], true);
+	try {
+		$defaultArr = json_decode($clArray['defaultSettings'], true, $depth=512, JSON_THROW_ON_ERROR);
+	}
+	catch (Exception $e){
+		$statusStr = $e->getMessage();
+		$defaultArr = [];
+	}
 	$showDetails = $defaultArr['ddetails'];
 	if(!$defaultOverride){
 		if(array_key_exists('dsynonyms',$defaultArr)) $showSynonyms = $defaultArr['dsynonyms'];
@@ -55,7 +61,7 @@ if(isset($clArray['defaultSettings'])){
 	if(isset($defaultArr['activatekey'])) $activateKey = $defaultArr['activatekey'];
 }
 if($pid) $clManager->setProj($pid);
-elseif(array_key_exists('proj',$_REQUEST) && $_REQUEST['proj']) $pid = $clManager->setProj($_REQUEST['proj']);
+elseif(array_key_exists('proj',$_REQUEST) && $_REQUEST['proj']) $pid = $clManager->setProj(filter_var($_REQUEST['proj'], FILTER_SANITIZE_NUMBER_INT));
 if($thesFilter) $clManager->setThesFilter($thesFilter);
 if($taxonFilter) $clManager->setTaxonFilter($taxonFilter);
 $clManager->setLanguage($LANG_TAG);
@@ -97,7 +103,7 @@ if($isEditor && array_key_exists('formsubmit',$_POST)){
 $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 
 //Output variable sanitation
-$taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
+$taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -188,8 +194,6 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 				<?php echo $clManager->getClName(); ?>
 			</h1>
 			<?php
-			
-			
 			echo '<div style="clear:both;"></div>';
 			$argStr = '&clid='.$clid.'&dynclid='.$dynClid.($showCommon?'&showcommon=1':'').($showSynonyms?'&showsynonyms=1':'').($showVouchers?'&showvouchers=1':'');
 			$argStr .= ($showAuthors?'&showauthors=1':'').($clManager->getThesFilter()?'&thesfilter='.$clManager->getThesFilter():'');
@@ -516,7 +520,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 										</a>
 									</div>
 									<div style="float:left;margin-left:15px" title="<?php echo $LANG['VOUCHERS_DYNAMIC_MAP']; ?>">
-										<a href="../collections/map/index.php?clid=<?php echo $clid . '&cltype=vouchers&taxonfilter=' . $taxonFilter; ?>&db=all&type=1&reset=1" target="_blank">
+										<a href="../collections/map/index.php?clid=<?php echo $clid . '&cltype=vouchers&taxonfilter=' . $taxonFilter; ?>&db=all&type=1&reset=1">
 											<img src="<?php echo $tnUrl; ?>" style="width:<?php echo $tnWidth; ?>px" alt="<?php echo $LANG['IMG_VOUCHERS_DYNAMIC_MAP']; ?>"/><br/>
 											<?php echo $LANG['DYNAMIC_MAP']; ?>
 										</a>
@@ -528,7 +532,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 								//Temporarily turned off
 								?>
 								<span style="margin:5px">
-									<a href="../collections/map/index.php?clid=<?php echo $clid . '&cltype=all&taxonfilter=' . $taxonFilter; ?>&db=all&type=1&reset=1" target="_blank">
+									<a href="../collections/map/index.php?clid=<?php echo $clid . '&cltype=all&taxonfilter=' . $taxonFilter; ?>&db=all&type=1&reset=1">
 										<?php
 										if($coordArr){
 											echo '<img src="../images/world.png" style="width:30px" title="' . $LANG['OCCUR_DYNAMIC_MAP'] . '" alt="' . $LANG['IMG_OCCUR_DYNAMIC_MAP'] . '" />';
@@ -699,7 +703,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 									<i>
 										<a href="<?php echo strip_tags($famUrl); ?>" target="_blank" style="color:black;">
 											<?php echo strip_tags($group);?>
-										</a> 
+										</a>
 									</i>
 								</div>
 								<?php
@@ -769,7 +773,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, HTML_SPECIAL_CHARS_FLAGS);
 											$voucStr .= '<a href="#" id="morevouch-' . $tid . '" onclick="return toggleVoucherDiv(' . $tid . ');">' . $LANG['MORE'] . '...</a>'.
 												'<span id="voucdiv-'.$tid.'" style="display:none;">';
 										}
-										$voucStr .= '<a href="#" onclick="return openIndividualPopup(' . $occid . ')">' . htmlspecialchars($collName, HTML_SPECIAL_CHARS_FLAGS) . '</a>, ';
+										$voucStr .= '<a href="#" onclick="return openIndividualPopup(' . $occid . ')">' . htmlspecialchars($collName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>, ';
 										$voucCnt++;
 									}
 									if($voucCnt > 4 && !$printMode) $voucStr .= '</span><a href="#" id="lessvouch-' . $tid . '" style="display:none;" onclick="return toggleVoucherDiv(' . $tid . ');">...' . $LANG['LESS'] . '</a>';

@@ -555,7 +555,7 @@ $imgloc = "../images/games/namegame/";
 		echo $games_namegameCrumbs;
 	}
 	else{
-		echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&dynclid=' . htmlspecialchars($dynClid, HTML_SPECIAL_CHARS_FLAGS) . '">';
+		echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&dynclid=' . htmlspecialchars($dynClid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 		echo $clName;
 		echo '</a> &gt;&gt; ';
 	}

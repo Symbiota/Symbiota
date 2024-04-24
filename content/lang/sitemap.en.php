@@ -36,7 +36,8 @@ $LANG['BUILDDKEY'] = 'dynamically build a key using georeferenced specimen recor
 $LANG['MANAGTOOL'] = 'Data Management Tools';
 $LANG['ADMIN'] = 'Administrative Functions (Super Admins only)';
 $LANG['USERPERM'] = 'User Permissions';
-$LANG['TAXINTER'] = 'Taxonomic Interest User Permissions';
+// TODO: Identification Editor features need to be reviewed and refactored
+//$LANG['TAXINTER'] = 'Taxonomic Interest User Permissions';
 $LANG['TAXONOMIC_CLEANER'] = 'Global Taxonomic Name Cleaner';
 $LANG['CREATENEWCOLL'] = 'Create a New Collection or Observation Profile';
 $LANG['GEOTHESAURUS'] = 'Geographic Thesaurus';

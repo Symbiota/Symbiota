@@ -28,22 +28,16 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 <html lang="<?php echo $LANG_TAG ?>">
 
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?><?php echo $LANG['SAMPLE_SEARCH'] ?></title>
+	<title><?php echo $DEFAULT_TITLE; ?> - <?php echo $LANG['SAMPLE_SEARCH'] ?></title>
+	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	$activateJQuery = true;
-	if (file_exists($SERVER_ROOT . '/includes/head.php')) {
-		include_once($SERVER_ROOT . '/includes/head.php');
-	} else {
-		echo '<link href="' . $CLIENT_ROOT . '/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-		echo '<link href="' . $CLIENT_ROOT . '/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-	}
-	echo '<link href="' . $CLIENT_ROOT . '/collections/search/css/searchStyles.css?ver=1" type="text/css" rel="stylesheet" />';
-	echo '<link href="' . $CLIENT_ROOT . '/collections/search/css/searchStylesInner.css" type="text/css" rel="stylesheet" />';
-	
-	echo '<link href="' . $CLIENT_ROOT . '/collections/search/css/tables.css" type="text/css" rel="stylesheet" />';
-	echo '<link href="' . $CLIENT_ROOT . '/css/v202209/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />';
+	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
-	<script src="<?php echo $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<link href="<?= $CLIENT_ROOT ?>/collections/search/css/searchStyles.css?ver=1" type="text/css" rel="stylesheet">
+	<link href="<?= $CLIENT_ROOT ?>/collections/search/css/searchStylesInner.css" type="text/css" rel="stylesheet">
+	<link href="<?= $CLIENT_ROOT ?>/collections/search/css/tables.css" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet">
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script>
 		const clientRoot = '<?php echo $CLIENT_ROOT; ?>';
 		const handleAccordionExpand = () => {
@@ -70,7 +64,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 			expandButton.removeAttribute('style', 'display: none;');
 		};
 	</script>
-	
+
 	<?php include_once($SERVER_ROOT . '/includes/googleanalytics.php'); ?>
 	<!-- Search-specific styles -->
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -99,7 +93,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 		<form id="params-form" action="javascript:void(0);">
 			<!-- Criteria forms -->
 
-			
+
 			<div class="accordions">
 				<!-- Taxonomy -->
 				<section>
@@ -122,7 +116,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 						<div class="select-container">
 							<label for="taxontype" class="screen-reader-only"><?php echo $LANG['TAXON_TYPE'] ?></label>
 							<select name="taxontype" id="taxontype" style="margin-top:0;">
-								<option id="taxontype-any" value="1" data-chip="<?php echo $LANG['TAXON'] . ': ' . $LANG['ANY_NAME'] ?>"><?php echo $LANG['ANY_NAME'] ?></option>
 								<option id="taxontype-scientific" value="2" data-chip="<?php echo $LANG['TAXON'] . ': ' . $LANG['SCIENTIFIC_NAME'] ?>"><?php echo $LANG['SCIENTIFIC_NAME'] ?></option>
 								<option id="taxontype-family" value="3" data-chip="<?php echo $LANG['TAXON'] . ': ' . $LANG['FAMILY'] ?>"><?php echo $LANG['FAMILY'] ?></option>
 								<option id="taxontype-group" value="4" data-chip="<?php echo $LANG['TAXON'] . ': ' . $LANG['TAXONOMIC_GROUP'] ?>"><?php echo $LANG['TAXONOMIC_GROUP'] ?></option>
@@ -387,7 +380,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 							<div class="input-text-container">
 								<label for="collnum" class="input-text--outlined">
 									<span class="screen-reader-only"><?php echo $LANG['COLLECTOR_NUMBER_'] ?></span>
-									<input type="text" id="collnum" size="31" name="collnum" value="" title="<?php echo htmlspecialchars($LANG['TITLE_TEXT_2'], HTML_SPECIAL_CHARS_FLAGS); ?>" data-chip="<?php echo $LANG['COLLECTOR_NUMBER'] ?>" />
+									<input type="text" id="collnum" size="31" name="collnum" value="" title="<?php echo htmlspecialchars($LANG['TITLE_TEXT_2'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" data-chip="<?php echo $LANG['COLLECTOR_NUMBER'] ?>" />
 									<span data-label="<?php echo $LANG['COLLECTOR_NUMBER']; ?>:"></span>
 								</label>
 							</div>
@@ -468,7 +461,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 						$attribSearch = new OccurrenceAttributeSearch();
 						$traitArr = $attribSearch->getTraitSearchArr($SEARCH_BY_TRAITS);
 						if($traitArr){
-				?>
+							?>
 							<section>
 								<!-- Accordion selector -->
 								<input type="checkbox" id="trait" class="accordion-selector" />
@@ -478,7 +471,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								<div class="content">
 									<div id="search-form-trait">
 										<div>
-											<div> 
+											<div>
 												<div>
 													<div class="bottom-breathing-room-rel"><?php echo $LANG['TRAIT_DESCRIPTION']; ?></div>
 													<input type="hidden" id="SearchByTraits" value="true" />
@@ -486,7 +479,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 												<?php
 												foreach($traitArr as $traitID => $traitData){
 													if(!isset($traitData['dependentTrait'])) {
-												?>
+														?>
 														<fieldset class="bottom-breathing-room-rel">
 															<legend><?= $LANG['TRAIT']; ?>: <?php echo $traitData['name']; ?></legend>
 															<div>
@@ -495,7 +488,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 																<?php $attribSearch->echoTraitSearchForm($traitID); ?>
 															</div>
 														</fieldset>
-												<?php
+														<?php
 														}
 													}
 												?>
@@ -504,7 +497,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 									</div>
 								</div>
 							</section>
-				<?php
+							<?php
 						}
 					}
 				?>
@@ -520,16 +513,16 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 						<div id="search-form-colls">
 							<!-- Open Collections modal -->
 							<div id="specobsdiv">
-								<?php 
+								<?php
 								include_once('./collectionContent.php');
 								?>
 							</div>
 						</div>
 					</div>
 				</section>
-				
+
 			</div>
-			
+
 			<!-- Criteria panel -->
 			<div id="criteria-panel" style="position: sticky; top: 0; height: 100vh">
 				<button id="search-btn" onclick="simpleSearch()"><?php echo $LANG['SEARCH'] ?></button>

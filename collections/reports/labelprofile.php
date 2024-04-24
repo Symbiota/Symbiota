@@ -130,10 +130,10 @@ $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General
 		<?php
 		if($isGeneralObservation) echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Management Menu</a> &gt;&gt; ';
 		elseif($collid){
-			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">Collection Management Panel</a> &gt;&gt; ';
+			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">Collection Management Panel</a> &gt;&gt; ';
 		}
 		?>
-		<a href="labelmanager.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">Label Manager</a> &gt;&gt;
+		<a href="labelmanager.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1">Label Manager</a> &gt;&gt;
 		<b>Label Profile Editor</b>
 	</div>
 	<!-- This is inner text! -->

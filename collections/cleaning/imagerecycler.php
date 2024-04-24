@@ -51,7 +51,7 @@ if($isEditor){
 	?>
 	<div class="navpath">
 		<a href="../../index.php"><?php echo $LANG['HOMEPAGE'] ?></a> &gt;&gt;
-		<a href="../../collections/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo $LANG['COL_MAN_MEN'] ?></a> &gt;&gt;
+		<a href="../../collections/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo $LANG['COL_MAN_MEN'] ?></a> &gt;&gt;
 		<b><?php echo $LANG['BULK_IMAGE_RECYCLER'] ?></b>
 	</div>
 	<?php

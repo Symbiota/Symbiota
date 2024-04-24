@@ -1,4 +1,5 @@
-function copyUrl(host = window.location.host){
+function copyUrl(host){
+   if(!host) host = window.location.host;
 	var $temp = $("<input>");
 	$("body").append($temp);
 	var activeLink = host + window.location.pathname;

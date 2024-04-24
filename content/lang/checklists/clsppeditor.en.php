@@ -35,4 +35,15 @@ $LANG['SUBMIT_V_EDITS'] = 'Submit Voucher Edits';
 $LANG['NO_DATA'] = 'Failed to return data or you might not have proper editing rights';
 $LANG['IN'] = 'in';
 
+$LANG['INTERNAL_NOTES'] = 'Internal Notes';
+$LANG['RENAME_SCI_NAME'] = 'Rename Scientific Name';
+$LANG['LINK_ICON'] = 'Link Icon';
+
+$LANG['REMOVE_TAXON'] = 'Remove Taxon From Checklist';
+$LANG['UNKNOWN_TAXON'] = 'Unknown Taxon';
+$LANG['UNKNOWN_COLLECTION'] = 'Unknown Collection';
+$LANG['SKIP_NAV'] = 'Skip Navigation';
+$LANG['REMOVE'] = 'Remove';
+$LANG['TO_COLLECTIONS_LINK'] = 'Link to target collections and taxa';
+
 ?>

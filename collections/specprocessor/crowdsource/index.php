@@ -88,10 +88,10 @@ $statusStr = '';
 					echo '<div style="margin-top:5px">' . $LANG['SPEC_PROC_AS_VOL'] . ': ' . number_format($userStats['totalcnt']) . '</div>';
 					if($userStats['nonvolcnt']) echo '<div style="margin-left:25px">(' . $LANG['ADD_AS_NONVOL'] . ': '.number_format($userStats['nonvolcnt']) . '*)</div>';
 					echo '<div style="margin-top:5px">' . $LANG['PEND_POINTS'] . ': '. number_format($userStats['ppoints']);
-					if($userStats['ppoints']) echo ' (<a href="review.php?rstatus=5&uid=' . htmlspecialchars($SYMB_UID, HTML_SPECIAL_CHARS_FLAGS) .  '">' . htmlspecialchars($LANG['VIEW_RECORDS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>)';
+					if($userStats['ppoints']) echo ' (<a href="review.php?rstatus=5&uid=' . htmlspecialchars($SYMB_UID, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .  '">' . htmlspecialchars($LANG['VIEW_RECORDS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>)';
 					echo '</div>';
 					echo '<div style="margin-top:5px">' . $LANG['APP_POINTS'] . ': ' . number_format($userStats['apoints']);
-					if($userStats['apoints']) echo ' (<a href="review.php?rstatus=10&uid=' . htmlspecialchars($SYMB_UID, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($LANG['VIEW_RECORDS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>)';
+					if($userStats['apoints']) echo ' (<a href="review.php?rstatus=10&uid=' . htmlspecialchars($SYMB_UID, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($LANG['VIEW_RECORDS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>)';
 					echo '</div>';
 					echo '<div style="margin-top:5px">' . $LANG['TOT_POSS_SCORE'] . ': ' . number_format($userStats['ppoints']+$userStats['apoints']) . '</div>';
 					if($userStats['nonvolcnt']) echo '<div style="margin-top:10px">* ' . $LANG['ONLY_PROCESSED_SPECIMENS_ELIGIBLE'] . '</div>';
@@ -99,7 +99,7 @@ $statusStr = '';
 				else{
 					?>
 					<div>
-						<a href="../../../profile/index.php?refurl=../collections/specprocessor/crowdsource/index.php"><?php echo htmlspecialchars($LANG['LOGIN'], HTML_SPECIAL_CHARS_FLAGS); ?></a> <?php echo htmlspecialchars($LANG['TO_VIEW_CURRENT'], HTML_SPECIAL_CHARS_FLAGS); ?>
+						<a href="../../../profile/index.php?refurl=../collections/specprocessor/crowdsource/index.php"><?php echo htmlspecialchars($LANG['LOGIN'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> <?php echo htmlspecialchars($LANG['TO_VIEW_CURRENT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>
 					</div>
 					<?php
 				}
@@ -127,12 +127,12 @@ $statusStr = '';
 					echo '<tr>';
 					echo '<td>';
 					echo '<b>'.$sArr['name'].'</b>';
-					if($IS_ADMIN || in_array($collId, $pArr)) echo ' <a href="../index.php?tabindex=1&collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../../images/edit.png" style="width:1.3em;" /></a>';
+					if($IS_ADMIN || in_array($collId, $pArr)) echo ' <a href="../index.php?tabindex=1&collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><img src="../../../images/edit.png" style="width:1.3em;" /></a>';
 					echo '</td>';
 					echo '<td>'.number_format((array_key_exists(5,$cntArr)?$cntArr[5]:0)+(array_key_exists(10,$cntArr)?$cntArr[10]:0)).'</td>';
 					echo '<td>'.number_format(array_key_exists(5,$pointArr)?$pointArr[5]:0).'</td>';
 					echo '<td>'.number_format(array_key_exists(10,$pointArr)?$pointArr[10]:0).'</td>';
-					echo '<td><a href="../../editor/occurrencetabledisplay.php?csmode=1&occindex=0&displayquery=1&reset=1&collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars(number_format(array_key_exists(0,$cntArr)?$cntArr[0]:0), HTML_SPECIAL_CHARS_FLAGS) . '</a></td>';
+					echo '<td><a href="../../editor/occurrencetabledisplay.php?csmode=1&occindex=0&displayquery=1&reset=1&collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars(number_format(array_key_exists(0,$cntArr)?$cntArr[0]:0), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></td>';
 					echo '</tr>';
 				}
 				?>

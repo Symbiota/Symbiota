@@ -99,7 +99,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 								$beUrl2 = $beUrl.$urlBase.'&q_processingstatus=unprocessed&q_withoutimg=1';
 								echo '<span style="margin-left:10px;"><a href="' . $eUrl2 . '" target="_blank" title="Edit Records"><img src="../../images/edit.png" style="width:12px;" /></a></span>';
 								echo '<span style="margin-left:10px;"><a href="' . $beUrl2 . '" target="_blank" title="Batch Edit Records"><img src="../../images/list.png" style="width:12px;" /></a></span>';
-								echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=unprocnoimg&tabindex=' . $tabIndex . '&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank" title="Download Report File"><img src="../../images/dl.png" style="width:13px;" /></a></span>';
+								echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=unprocnoimg&tabindex=' . $tabIndex . '&collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" title="Download Report File"><img src="../../images/dl.png" style="width:13px;" /></a></span>';
 							}
 							?>
 						</div>
@@ -181,8 +181,8 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 							</select>
 						</div>
 						<div style="margin:2px">
-							Date: <input name="startdate" type="date" value="<?= htmlspecialchars($startDate, HTML_SPECIAL_CHARS_FLAGS) ?>" />
-							to <input name="enddate" type="date" value="<?= htmlspecialchars($endDate, HTML_SPECIAL_CHARS_FLAGS) ?>" />
+							Date: <input name="startdate" type="date" value="<?= htmlspecialchars($startDate, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" />
+							to <input name="enddate" type="date" value="<?= htmlspecialchars($endDate, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" />
 						</div>
 						<div style="margin:2px">
 							Processing Status set to:
@@ -201,7 +201,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 						</div>
 						<div style="float:right;margin-top:25px;">
 							<?php
-							$editReviewUrl = '../editor/editreviewer.php?collid='.$collid.'&editor='.$uid.'&startdate='.htmlspecialchars($startDate, HTML_SPECIAL_CHARS_FLAGS).'&enddate='.htmlspecialchars($endDate, HTML_SPECIAL_CHARS_FLAGS);
+							$editReviewUrl = '../editor/editreviewer.php?collid='.$collid.'&editor='.$uid.'&startdate='.htmlspecialchars($startDate, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE).'&enddate='.htmlspecialchars($endDate, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 							echo '<a href="' . $editReviewUrl . '" target="_blank">Visit Edit Reviewer</a>';
 							?>
 						</div>
@@ -224,7 +224,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 					echo '</tr>';
 					$repArr = $procManager->getFullStatReport($_GET);
 					if($repArr){
-						//$editReviewUrl = '../editor/editreviewer.php?collid='.$collid.'&editor='.$uid.'&startdate='.htmlspecialchars($startDate, HTML_SPECIAL_CHARS_FLAGS).'&enddate='.htmlspecialchars($endDate, HTML_SPECIAL_CHARS_FLAGS);
+						//$editReviewUrl = '../editor/editreviewer.php?collid='.$collid.'&editor='.$uid.'&startdate='.htmlspecialchars($startDate, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE).'&enddate='.htmlspecialchars($endDate, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 						foreach($repArr as $t => $arr2){
 							foreach($arr2 as $u => $arr3){
 								echo '<tr><td>'.$t.'</td>';

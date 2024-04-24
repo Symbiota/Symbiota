@@ -24,7 +24,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 				<?php echo $LANG['NO_PERMISSION']; ?>.
 			</div>
 			<div style="font-weight:bold;margin:10px;">
-				<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php"><?php echo htmlspecialchars($LANG['RETURN'], HTML_SPECIAL_CHARS_FLAGS); ?></a>
+				<a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php"><?php echo htmlspecialchars($LANG['RETURN'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 			</div>
 		</div>
 		<?php

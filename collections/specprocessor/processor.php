@@ -49,8 +49,8 @@ $statusStr = "";
 		include($SERVER_ROOT.'/includes/header.php');
 		echo '<div class="navpath">';
 		echo '<a href="../../index.php">Home</a> &gt;&gt; ';
-		echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">Collection Control Panel</a> &gt;&gt; ';
-		echo '<a href="index.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) .'&tabindex=' . htmlspecialchars($tabIndex, HTML_SPECIAL_CHARS_FLAGS) . '"><b>Specimen Processor</b></a> &gt;&gt ; ';
+		echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">Collection Control Panel</a> &gt;&gt; ';
+		echo '<a href="index.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .'&tabindex=' . htmlspecialchars($tabIndex, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><b>Specimen Processor</b></a> &gt;&gt ; ';
 		echo '<b>Processing Handler</b>';
 		echo '</div>';
 		?>
@@ -151,7 +151,7 @@ $statusStr = "";
 				}
 			}
 			?>
-			<div style="font-weight:bold;font-size:120%;"><a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&tabindex=' . htmlspecialchars($tabIndex, HTML_SPECIAL_CHARS_FLAGS); ?>"><b>Return to Specimen Processor</b></a></div>
+			<div style="font-weight:bold;font-size:120%;"><a href="index.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&tabindex=' . htmlspecialchars($tabIndex, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><b>Return to Specimen Processor</b></a></div>
 		</div>
 		<?php
 		include($SERVER_ROOT.'/includes/footer.php');

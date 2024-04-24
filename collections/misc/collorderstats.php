@@ -56,7 +56,7 @@ $_SESSION['statsOrderArr'] = $orderArr;
 						echo '<td>'.wordwrap($name,52,"<br />\n",true).'</td>';
 						echo '<td>';
 						if($data['SpecimensPerOrder'] == 1){
-							echo '<a href="../list.php?db[]=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '&reset=1&taxa=' . htmlspecialchars($name, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">';
+							echo '<a href="../list.php?db[]=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&reset=1&taxa=' . htmlspecialchars($name, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">';
 						}
 						echo number_format($data['SpecimensPerOrder']);
 						if($data['SpecimensPerOrder'] == 1){
