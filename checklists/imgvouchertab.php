@@ -31,7 +31,7 @@ $voucherProjects = $clManager->getVoucherProjects();
 				<input type="hidden" name="clid" value="<?php echo $clid; ?>" />
 			</div>
 			<div style="margin:5px;">
-				<input type="submit" name="submitvoucher" value=<?php echo $LANG['ADDIMGVOUC'];?> /><br/>
+				<button type="submit" name="submitvoucher" value="Add Image Voucher" /><?php echo $LANG['IMAGE_VOUCHER_SUBMISSION_FORM'];?><br/>
 			</div>
 		</fieldset>
 	</form>

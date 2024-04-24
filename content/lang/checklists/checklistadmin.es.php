@@ -67,6 +67,7 @@ $LANG['ADDIMGVOUC'] = 'Agregar Im&aacute;gen Voucher y V&iacute;nculo a Listado 
 $LANG['FORMADDVOUCH'] = 'Este formulario le permitir&aacute; a&ntilde;adir un voucher de im&aacute;gen vinculado a este listado de comprobaci&oacute;n.<br/>
 						Si no est&aacute; ya presente, el nombre cient&iacute;fico se a&ntilde;adir&aacute; al listado de comprobaci&oacute;n.';
 $LANG['SELECTVOUCPROJ'] = 'Seleccione el proyecto al que desea a&ntilde;adir el voucher.';
+$LANG['IMAGE_VOUCHER_SUBMISSION_FORM'] = 'Ir al Formulario de Envío de Vale de Imagen';
 $LANG['IDNOTSET'] = ' Identificador de listado de Comprobaci&oacute;n no se ha establecido';
 $LANG['NOADMINPERM'] = ' Usted no tiene permiso administrativo para este listado de comprobaci&oacute;n';
 $LANG['CURREDIT'] = 'Editores Actuales';
