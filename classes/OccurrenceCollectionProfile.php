@@ -1,10 +1,8 @@
 <?php
 include_once ($SERVER_ROOT . '/classes/OmCollections.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
-include_once($SERVER_ROOT.'/traits/Sanitizer.php');
 
 class OccurrenceCollectionProfile extends OmCollections{
-	use Sanitizer;
 
 	private $collMeta = array();
 	private $organizationKey;
