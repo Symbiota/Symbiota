@@ -429,7 +429,7 @@ include($SERVER_ROOT.'/includes/header.php');
 										?>
 									</select>
 									<input name="iid" type="hidden" value="<?php echo $iid; ?>" />
-									<button name="formsubmit" type="submit" value="Add Collection" ><<?php echo $LANG['ADD_COLLECTION']; ?></button>
+									<button name="formsubmit" type="submit" value="Add Collection" ><?php echo $LANG['ADD_COLLECTION']; ?></button>
 								</form>
 								<?php
 							}
