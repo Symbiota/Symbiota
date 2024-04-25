@@ -8,7 +8,7 @@ Date Translated: 2024/04/16
 */
 
 
-$LANG['OCCUE_SEARCH_PAGE'] = 'Página de Búsqueda de Ocurrencias';
+$LANG['OCCUR_SEARCH_PAGE'] = 'Página de Búsqueda de Ocurrencias';
 $LANG['MUST_SELECT_TARGET_COLL'] = 'Debes seleccionar la colección de destino';
 $LANG['MUST_SELECT_SEARCH_TERM'] = 'Debe ingresar al menos un término de búsqueda';
 $LANG['UNABLE_TO_CREATE_NEW_RECORD'] = 'No se puede crear un nuevo registro debido a un error';
