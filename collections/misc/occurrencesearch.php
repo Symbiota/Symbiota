@@ -24,7 +24,7 @@ $occManager = new OccurrenceSupport();
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
-	<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['OCCUE_SEARCH_PAGE']; ?></title>
+	<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['OCCUR_SEARCH_PAGE']; ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
