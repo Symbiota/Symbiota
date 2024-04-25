@@ -5,7 +5,7 @@ Language: English
 ------------------
 */
 
-$LANG['OCCUE_SEARCH_PAGE'] = 'Occurrence Search Page';
+$LANG['OCCUR_SEARCH_PAGE'] = 'Occurrence Search Page';
 $LANG['MUST_SELECT_TARGET_COLL'] = 'You must select target collection';
 $LANG['MUST_SELECT_SEARCH_TERM'] = 'You must enter at least one search term';
 $LANG['UNABLE_TO_CREATE_NEW_RECORD'] = 'Unable to create new record due to error';
