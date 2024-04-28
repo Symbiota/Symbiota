@@ -19,7 +19,7 @@ $LANG['VOUCHER_SEARCH_PANEL'] = 'Panneau de Recherche de Bons';
 $LANG['TARGET_COLLECTION'] = 'Collection Cible';
 $LANG['SELECT_COLLECTION'] = 'Sélectionner une Collection';
 
-$LANG['CATALOGUE'] = 'Catalogue';
+$LANG['CATALOGUE'] = 'Catalogue #';
 $LANG['OTHER_CATALOG'] = 'Autre Catalogue';
 $LANG['COLLECTOR_LAST_NAME'] = 'Nom du Collecteur';
 $LANG['COLLECTOR_NUMBER'] = 'Numéro de Collecteur';
