@@ -17,7 +17,7 @@ $LANG['VOUCHER_SEARCH_PANEL'] = 'Voucher Search Panel';
 $LANG['TARGET_COLLECTION'] = 'Target Collection';
 $LANG['SELECT_COLLECTION'] = 'Select Collection';
 
-$LANG['CATALOG'] = 'Catalog';
+$LANG['CATALOG'] = 'Catalog #';
 $LANG['OTHER_CATALOG'] = 'Other Catalog';
 $LANG['COLLECTOR_LAST_NAME'] = 'Collector Last Name';
 $LANG['COLLECTOR_NUMBER'] = 'Collector Number';
