@@ -124,11 +124,11 @@ $occManager = new OccurrenceSupport();
 						</div>
 					</div>
 					<div style="clear:both;padding:2px;">
-						<div style="float:left;width:130px;"><?php echo $LANG['CATALOG']; ?>:</div>
+						<div style="float:left;width:130px;"><?php echo $LANG['CATALOG_NO']; ?>:</div>
 						<div style="float:left;"><input name="catalognumber" type="text" value="<?= htmlspecialchars($catalogNumber, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" /></div>
 					</div>
 					<div style="clear:both;padding:2px;">
-						<div style="float:left;width:130px;"><?php echo $LANG['OTHER_CATALOG']; ?> #:</div>
+						<div style="float:left;width:130px;"><?php echo $LANG['OTHER_CATALOG_NO']; ?>:</div>
 						<div style="float:left;"><input name="othercatalognumbers" type="text" value="<?= htmlspecialchars($otherCatalogNumbers, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" /></div>
 					</div>
 					<div style="clear:both;padding:2px;">
