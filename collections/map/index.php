@@ -1000,6 +1000,7 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 
 					genClusters(taxaLegendMap, "taxa");
 					genClusters(collLegendMap, "coll");
+					genClusters(portalLegendMap, "portal");
 
                autoColorTaxa();
 
@@ -1283,7 +1284,6 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 				showWorking();
 				e.preventDefault();
 				let formData = new FormData(e.target);
-
 				mapGroups.map(group => {
 					group.taxonMapGroup.resetGroup();
 					group.collectionMapGroup.resetGroup();
@@ -1497,6 +1497,7 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 
 					genClusters(taxaLegendMap, "taxa");
 					genClusters(collLegendMap, "coll");
+					genClusters(portalLegendMap, "portal");
 
                autoColorTaxa();
 
