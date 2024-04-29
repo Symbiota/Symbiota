@@ -245,6 +245,7 @@ function resetCustomElements(x){
 
 function toggle(target, displayStyle = "block") {
   var ele = document.getElementById(target);
+
   if (ele) {
     if (ele.style.display == "none" || ele.style.display == "") {
       ele.style.display = displayStyle;

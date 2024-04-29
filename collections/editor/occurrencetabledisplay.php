@@ -166,16 +166,42 @@ else{
 		<?php
 		if(($isEditor || $crowdSourceMode)){
 			?>
-			<div id="titleDiv">
-				<div style="float:right;">
-					<a href="#" title="<?= $LANG['SEARCH_FILTER'] ?>" aria-label="<?= $LANG['SEARCH_FILTER'] ?>" onclick="toggleQueryForm();"><img src="../../images/find.png" style="width:1.3em;" alt="<?= $LANG['IMG_SEARCH'] ?>" /></a>
+
+			<div style="width:850px;clear:both;">
+				<div class='navpath' style="float:left; padding-left: 5px">
+					<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 					<?php
-					if($isEditor == 1 || $isGenObs){
+					if($crowdSourceMode){
 						?>
-						<a href="#" title="<?= $LANG['BATCH_TOOL'] ?>" aria-label="<?= $LANG['BATCH_TOOL'] ?>" onclick="toggleBatchUpdate();return false;" style="width:1.3em;"><img class="editimg" src="../../images/editplus.png" alt="<?= $LANG['IMG_EDIT'] ?>" style="width:1.3em;"></a>
+						<a href="../specprocessor/crowdsource/index.php"><?php echo htmlspecialchars((isset($LANG['CENTRAL_CROWD'])?$LANG['CENTRAL_CROWD']:'Crowd Source Central'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 						<?php
 					}
+					else{
+						if(!$isGenObs || $IS_ADMIN){
+							?>
+							<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo htmlspecialchars((isset($LANG['COL_MANAGEMENT'])?$LANG['COL_MANAGEMENT']:'Collection Management'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+							<?php
+						}
+						if($isGenObs){
+							?>
+							<a href="../../profile/viewprofile.php?tabindex=1"><?php echo htmlspecialchars((isset($LANG['PERS_MANAGEMENT'])?$LANG['PERS_MANAGEMENT']:'Personal Management'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+							<?php
+						}
+					}
 					?>
+					<b><?php echo (isset($LANG['TABLE_VIEW'])?$LANG['TABLE_VIEW']:'Occurrence Table View'); ?></b>
+				</div>
+			</div>
+			<div id="titleDiv">
+				<div >
+               <button type="button" onclick="toggleSearch();">
+                  <?= $LANG['SEARCH_FILTER'] ?>
+               </button>
+               <?php if($isEditor == 1 || $isGenObs): ?>
+               <button type="button" onclick="toggleBatchUpdate();">
+                  <?= $LANG['BATCH_TOOL'] ?>
+               </button>
+               <?php endif ?>
 				</div>
 				<?php
 				if($collMap) echo '<h2>' . $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').')</h2>';
@@ -183,6 +209,7 @@ else{
 			</div>
 			<?php
 			if(!$recArr) $displayQuery = 1;
+
 			include 'includes/queryform.php';
 			//Setup header map
 			if($recArr){
@@ -286,31 +313,7 @@ else{
 			}
 			?>
 			<div style="width:850px;clear:both;">
-				<div class='navpath' style="float:left">
-					<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-					<?php
-					if($crowdSourceMode){
-						?>
-						<a href="../specprocessor/crowdsource/index.php"><?php echo htmlspecialchars((isset($LANG['CENTRAL_CROWD'])?$LANG['CENTRAL_CROWD']:'Crowd Source Central'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-						<?php
-					}
-					else{
-						if(!$isGenObs || $IS_ADMIN){
-							?>
-							<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo htmlspecialchars((isset($LANG['COL_MANAGEMENT'])?$LANG['COL_MANAGEMENT']:'Collection Management'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-							<?php
-						}
-						if($isGenObs){
-							?>
-							<a href="../../profile/viewprofile.php?tabindex=1"><?php echo htmlspecialchars((isset($LANG['PERS_MANAGEMENT'])?$LANG['PERS_MANAGEMENT']:'Personal Management'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-							<?php
-						}
-					}
-					?>
-					<b><?php echo (isset($LANG['TABLE_VIEW'])?$LANG['TABLE_VIEW']:'Occurrence Table View'); ?></b>
-				</div>
-				<?php
-				echo $navStr; ?>
+				<?php echo $navStr; ?>
 			</div>
 			<?php
 			if($recArr){
