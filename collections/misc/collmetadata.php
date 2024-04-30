@@ -536,8 +536,8 @@ $collManager->cleanOutArr($collData);
 										<?php
 										echo (isset($LANG['OCCID_DEF_1']) ? $LANG['OCCID_DEF_1'] : '');
 										echo ' <a href="http://rs.tdwg.org/dwc/terms/index.htm#occurrenceID" target="_blank">';
-										echo (isset($LANG['OCCURRENCEID']) ? $LANG['OCCURRENCEID'] : 'occurrenceId') . ' </a>';
-										echo (isset($LANG['OCCID_DEF_2']) ? $LANG['OCCID_DEF_2'] : '');
+										echo (isset($LANG['OCCURRENCEID']) ? $LANG['OCCURRENCEID'] : 'occurrenceId') . '</a>';
+										echo (isset($LANG['OCCID_DEF_2']) ? ' ' . $LANG['OCCID_DEF_2'] : '');
 										?>
 									</span>
 							</div>
