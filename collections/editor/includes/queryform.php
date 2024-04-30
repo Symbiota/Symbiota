@@ -258,7 +258,7 @@ else{
 						?>
 					</select>
 					<a href="#" onclick="toggleCustomDiv(<?php echo ($x+1); ?>);return false;">
-						<img class="editimg" src="../../images/plus.png" style="width:1.2em;" alt="<?php echo htmlspecialchars($LANG['IMG_EDIT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" />
+						<img class="editimg" src="../../images/plus.png" style="width:1.2em;" alt="<?php echo htmlspecialchars($LANG['ADD_CUSTOM_FIELD'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" />
 					</a>
 				</div>
 				<?php
