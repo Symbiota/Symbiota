@@ -79,8 +79,16 @@ else{
 ?>
 <div id="querydiv" style="clear:both;width:900px;display:<?php echo ($displayQuery?'block':'none'); ?>;">
 	<form name="queryform" action="<?php echo $_SERVER['SCRIPT_NAME']; ?>" method="post" onsubmit="return verifyQueryForm(this)">
-		<fieldset style="padding:5px;">
+		<fieldset style="padding:5px; position: relative">
 			<legend><?php echo $LANG['RECORD_SEARCH_FORM']; ?></legend>
+			<button style="position: absolute; right: 3vw;" type="button" class="icon-button" onclick="copyQueryLink(event)" title="<?php echo $LANG['COPY_SEARCH']; ?>" aria-label="<?php echo $LANG['COPY_LINK']; ?>">
+				<span style="display:flex; align-content: center;">
+						<svg alt="Link icon. Copies the search terms as a link." style="width:1.2em;margin-right:5px;" xmlns="http://www.w3.org/2000/svg" fill="var(--light-color)" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg>
+						<span style="align-content: center;">
+							<?php echo $LANG['COPY_LINK']; ?>
+						</span>
+				</span>
+			</button>
 			<?php
 			if(!$crowdSourceMode){
 				?>
@@ -92,21 +100,11 @@ else{
 					<div class="fieldDiv" title="<?php echo $LANG['SEPARATE_RANGES']; ?>">
 						<label for="q_recordnumber"><?php echo $LANG['NUMBER']; ?>:</label>
 						<input type="text" name="q_recordnumber" id="q_recordnumber" value="<?php echo $qRecordNumber; ?>" style="width:120px;" onchange="setOrderBy(this)" />
+							<label  title="<?php echo $LANG['ENTER_RANGES']; ?>" for="q_eventdate"><?php echo $LANG['DATE']; ?>:</label>
+							<input type="text" name="q_eventdate" id="q_eventdate" value="<?php echo $qEventDate; ?>" style="width:160px" onchange="setOrderBy(this)" />
+						</div>
 					</div>
-					<div class="fieldDiv" title="<?php echo $LANG['ENTER_RANGES']; ?>">
-						<label for="q_eventdate"><?php echo $LANG['DATE']; ?>:</label>
-						<input type="text" name="q_eventdate" id="q_eventdate" value="<?php echo $qEventDate; ?>" style="width:160px" onchange="setOrderBy(this)" />
-					</div>
-
-					<button type="button" class="icon-button float-right" onclick="copyQueryLink(event)" title="<?php echo $LANG['COPY_SEARCH']; ?>" aria-label="<?php echo $LANG['COPY_LINK']; ?>">
-						<span style="display:flex; align-content: center;">
-								<svg alt="Link icon. Copies the search terms as a link." style="width:1.2em;margin-right:5px;" xmlns="http://www.w3.org/2000/svg" fill="var(--light-color)" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg>
-								<span style="align-content: center;">
-									<?php echo $LANG['COPY_LINK']; ?>
-								</span>
-						</span>
-					</button>
-				</div>
+					
 				<?php
 			}
 			?>
@@ -126,7 +124,7 @@ else{
 				}
 				else{
 					?>
-					<div class="fieldDiv" title="<?php echo $LANG['SEPARATE_RANGES']; ?>">
+					<div class="fieldDiv " title="<?php echo $LANG['SEPARATE_RANGES']; ?>">
 						<label for="q_othercatalognumbers"><?php echo $LANG['OTHER_CAT_NUMS']; ?>:</label>
 						<input type="text" name="q_othercatalognumbers" id="q_othercatalognumbers" value="<?php echo $qOtherCatalogNumbers; ?>" />
 					</div>
@@ -138,20 +136,18 @@ else{
 			if(!$crowdSourceMode){
 				?>
 				<div class="fieldGroupDiv">
-					<div class="fieldDiv" style="<?php echo ($isGenObs?'display:none':''); ?>">
+					<div class="fieldDiv" style="display: flex; align-items: center; <?php echo ($isGenObs?'display:none':''); ?>">
 						<label for="q_recordenteredby"><?php echo $LANG['ENTERED_BY']; ?>:</label>
-						<input type="text" name="q_recordenteredby" id="q_recordenteredby" value="<?php echo $qRecordEnteredBy; ?>" style="width:70px;" onchange="setOrderBy(this)" />
-					</div>
-					<div>
-						<button type="button" onclick="enteredByCurrentUser()" style="font-size:70%" title="<?php echo $LANG['LIMIT_TO_CURRENT']; ?>"><?php echo $LANG['CU']; ?></button>
-					</div>
-					<div class="fieldDiv" title="<?php echo $LANG['ENTER_RANGES']; ?>">
-						<label for="q_dateentered"><?php echo $LANG['DATE_ENTERED']; ?>:</label>
-						<input type="text" name="q_dateentered" id="q_dateentered" value="<?php echo $qDateEntered; ?>" style="width:160px" onchange="setOrderBy(this)" />
-					</div>
-					<div class="fieldDiv" title="<?php echo $LANG['ENTER_RANGES']; ?>">
-						<label for="q_datelastmodified"><?php echo $LANG['DATE_MODIFIED']; ?>:</label>
-						<input type="text" name="q_datelastmodified" id="q_datelastmodified" value="<?php echo $qDateLastModified; ?>" style="width:160px" onchange="setOrderBy(this)" />
+						<input class="left-breathing-room-rel" type="text" name="q_recordenteredby" id="q_recordenteredby" value="<?php echo $qRecordEnteredBy; ?>" style="max-width:70px;" onchange="setOrderBy(this)" />
+						<div>
+							<button class="left-breathing-room-rel" type="button" onclick="enteredByCurrentUser()" style="font-size:70%" title="<?php echo $LANG['LIMIT_TO_CURRENT']; ?>"><?php echo $LANG['CU']; ?></button>
+						</div>
+							<label title="<?php echo $LANG['ENTER_RANGES']; ?>" class="left-breathing-room-rel" for="q_dateentered"><?php echo $LANG['DATE_ENTERED']; ?>:</label>
+							<input class="left-breathing-room-rel" type="text" name="q_dateentered" id="q_dateentered" value="<?php echo $qDateEntered; ?>" style="width:160px" onchange="setOrderBy(this)" />
+							<div title="<?php echo $LANG['ENTER_RANGES']; ?>">
+								<label class="left-breathing-room-rel" for="q_datelastmodified"><?php echo $LANG['DATE_MODIFIED']; ?>:</label>
+								<input class="left-breathing-room-rel" type="text" name="q_datelastmodified" id="q_datelastmodified" value="<?php echo $qDateLastModified; ?>" style="width:160px" onchange="setOrderBy(this)" />
+							</div>
 					</div>
 				</div>
 				<div class="fieldGroupDiv">
