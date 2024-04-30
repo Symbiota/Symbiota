@@ -145,7 +145,7 @@ else{
 		table.styledtable td { white-space: nowrap; }
 		fieldset{ padding:15px }
 		fieldset > legend{ font-weight:bold }
-		.fieldGroupDiv{ clear:both; margin-bottom:2px; overflow: auto}
+		.fieldGroupDiv{ clear:both; margin-bottom: 1rem; overflow: auto}
 		.fieldDiv{ float:left; margin-right: 1rem;}
 		#innertext{ background-color: white; margin: 0px 10px; }
 		.editimg{ width: 15px; }

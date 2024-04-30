@@ -258,25 +258,25 @@ else{
 						?>
 					</select>
 					<a href="#" onclick="toggleCustomDiv(<?php echo ($x+1); ?>);return false;">
-						<img class="editimg" src="../../images/editplus.png" style="width:1.2em;" alt="<?php echo htmlspecialchars($LANG['IMG_EDIT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" />
+						<img class="editimg" src="../../images/plus.png" style="width:1.2em;" alt="<?php echo htmlspecialchars($LANG['IMG_EDIT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" />
 					</a>
 				</div>
 				<?php
 			}
 			?>
-			<div class="fieldGroupDiv">
 				<?php
 				if($isGenObs && ($IS_ADMIN || ($collId && array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"])))){
 					?>
-					<div>
-						<input type="checkbox" name="q_returnall" value="1" <?php echo ($qReturnAll?'CHECKED':''); ?> /> <?php echo $LANG['SHOW_RECS_ALL']; ?>
+					<div class="fieldGroupDiv">
+						<div>
+							<input type="checkbox" name="q_returnall" value="1" <?php echo ($qReturnAll?'CHECKED':''); ?> /> <?php echo $LANG['SHOW_RECS_ALL']; ?>
+						</div>
 					</div>
 					<?php
 				}
 				?>
-			</div>
 			<div class="fieldGroupDiv">
-				<div class="bottom-breathing-room-rel">
+				<div>
 
 					<?php
 					if(!$crowdSourceMode){
@@ -307,7 +307,7 @@ else{
 				<input type="hidden" name="occindex" value="<?php echo $occManager->getOccIndex(); ?>" />
 				<input type="hidden" name="occidlist" value="<?php echo $occManager->getOccidIndexStr(); ?>" />
 				<input type="hidden" name="direction" value="" />
-				<section class="flex-form">
+				<section class="flex-form bottom-breathing-room-rel">
 					<div style="margin-left: 0;">
 						<button name="submitaction" type="submit" onclick="submitQueryEditor(this.form)" ><?php echo $LANG['DISPLAY_EDITOR']; ?></button>
 					</div>
@@ -317,7 +317,9 @@ else{
 					<div style="margin-left: 0;">
 						<button type="button" name="reset" value="Reset Form" onclick="resetQueryForm(this.form)">Reset Form</button>
 					</div>
-					<div>
+				</section>
+				<section class="flex-form">
+					<div class="fieldGroupDiv" style="margin-left: 0;">
 						<label for="orderby"><?php echo $LANG['SORT_BY']; ?>:</label>
 						<select name="orderby" id="orderby">
 							<option value=""></option>
@@ -350,22 +352,24 @@ else{
 							<option value="DESC" <?php echo ($qOrderByDir=='DESC'?'SELECTED':''); ?>><?php echo $LANG['DESCENDING']; ?></option>
 						</select>
 					</div>
+					<div style="display: flex; align-items: center; margin-bottom: 1rem;">
 						<label for="reclimit">
 							<?php
 							if(!isset($recLimit) || !$recLimit) $recLimit = 1000;
 							echo $LANG['OUTPUT'] . ':';
 							?>
 						</label>
-						<select name="reclimit" id="reclimit">
+						<select name="reclimit" id="reclimit" class="left-breathing-room-rel">
 							<option <?php echo ($recLimit==500?'selected':''); ?>>500</option>
 							<option <?php echo ($recLimit==1000?'selected':''); ?>>1000</option>
 							<option <?php echo ($recLimit==2000?'selected':''); ?>>2000</option>
 							<option <?php echo ($recLimit==3000?'selected':''); ?>>3000</option>
 						</select> <?php //echo $LANG['RECORDS']; ?>
+					</div>
 				</section>
-				<div>
+				<div style="display: flex; align-content: center;">
 					<input name="dynamictable" id="dynamictable-1" type="checkbox" value="1" <?php if(isset($dynamicTable) && $dynamicTable) echo 'checked'; ?> />
-					<label for="dynamictable-1"><?php echo $LANG['DYNAMIC_TABLE']; ?></label>
+					<label class="left-breathing-room-rel"for="dynamictable-1"><?php echo $LANG['DYNAMIC_TABLE']; ?></label>
 				</div>
  			</div>
 		</fieldset>
