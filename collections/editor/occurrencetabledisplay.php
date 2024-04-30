@@ -193,7 +193,10 @@ else{
 				</div>
 			</div>
 			<div id="titleDiv">
-				<div >
+				<?php
+				if($collMap) echo '<h2>' . $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').')</h2>';
+				?>
+				<div>
                <button type="button" onclick="toggleSearch();">
                   <?= $LANG['SEARCH_FILTER'] ?>
                </button>
@@ -203,9 +206,6 @@ else{
                </button>
                <?php endif ?>
 				</div>
-				<?php
-				if($collMap) echo '<h2>' . $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').')</h2>';
-				?>
 			</div>
 			<?php
 			if(!$recArr) $displayQuery = 1;
