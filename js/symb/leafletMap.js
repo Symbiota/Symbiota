@@ -559,6 +559,11 @@ class LeafletMap {
 
    drawShape(shape, fitbounds=true) {
       const id = this.shapes.length;
+
+      const fitShape = () => {
+         this.mapLayer.fitBounds(this.activeShape.layer.getBounds());
+      }
+
       switch(shape.type) {
          case "geoJSON":
             const geoJSON = L.geoJSON(shape.geoJSON);
