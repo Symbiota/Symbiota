@@ -52,17 +52,38 @@ function submitBatchUpdate(f){
 		}
 	});
 }
+function toggleButtonVisuals(el, containerId, linkedBtnIds) {
+	for (let id of linkedBtnIds) {
+		const linkedBtn = document.getElementById(id);
+		linkedBtn.style.backgroundColor = "transparent";
+		linkedBtn.style.color = "var(--body-text-color)";
+	}
+
+	const toggleContainer = document.getElementById(containerId)
+	
+	if(toggleContainer && toggleContainer.style.display === 'none') {
+		el.style.backgroundColor = "transparent";
+		el.style.color = "var(--body-text-color)";
+	} else {
+		el.style.backgroundColor = "var(--darkest-color)";
+		el.style.color = "white";
+	}
+}
 
 function toggleSearch(){
-   if(document.getElementById("batchupdatediv")){
-      document.getElementById("batchupdatediv").style.display = "none";
-   }
+	const batchupdatediv = document.getElementById("batchupdatediv");
+
+	if(batchupdatediv){
+		document.getElementById("batchupdatediv").style.display = "none";
+	}
 	toggle("querydiv");
 }
 
 function toggleBatchUpdate(){
-   if(document.getElementById("querydiv")){
-	   document.getElementById("querydiv").style.display = "none";
-   }
+	const querydiv = document.getElementById("querydiv");
+	if(querydiv){
+		querydiv.style.display = "none";
+	}
+
 	toggle("batchupdatediv");
 }

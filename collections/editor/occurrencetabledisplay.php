@@ -197,14 +197,14 @@ else{
 				if($collMap) echo '<h2>' . $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').')</h2>';
 				?>
 				<div>
-               <button type="button" onclick="toggleSearch();">
-                  <?= $LANG['SEARCH_FILTER'] ?>
-               </button>
-               <?php if($isEditor == 1 || $isGenObs): ?>
-               <button type="button" onclick="toggleBatchUpdate();">
-                  <?= $LANG['BATCH_TOOL'] ?>
-               </button>
-               <?php endif ?>
+				   <button id="query-btn" type="button" style="background-color: var(--darkest-color); color: white; border: 2px solid var(--darkest-color)" onclick="toggleSearch(); toggleButtonVisuals(this, 'querydiv', ['batch-update-btn'])">
+					  <?= $LANG['SEARCH_FILTER'] ?>
+				   </button>
+				   <?php if($isEditor == 1 || $isGenObs): ?>
+				   <button id="batch-update-btn" type="button" style="background-color: transparent; color: var(--body-text-color); border: 2px solid var(--darkest-color)" onclick="toggleBatchUpdate(); toggleButtonVisuals(this, 'batchupdatediv', ['query-btn'])">
+					  <?= $LANG['BATCH_TOOL'] ?>
+				   </button>
+				   <?php endif ?>
 				</div>
 			</div>
 			<?php
