@@ -204,7 +204,7 @@ class TaxonomyEditorManager extends Manager{
 		//echo $sql."<br>";
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
-			$this->parentNameFull = '<i>'.$r->sciname.'</i> '.$r->author;
+			$this->parentNameFull = $r->sciname.$r->author;
 			$this->parentName = $r->sciname;
 		}
 		$rs->free();

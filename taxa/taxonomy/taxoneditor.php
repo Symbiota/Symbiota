@@ -371,7 +371,7 @@ if($isEditor){
 									<div class="editDiv">
 										<div class="editLabel"><?php echo $LANG['PARENT_TAXON']; ?>: </div>
 										<div class="tsedit">
-											<?php echo '<a href="taxoneditor.php?tid=' . htmlspecialchars($taxonEditorObj->getParentTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($taxonEditorObj->getParentNameFull(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';?>
+											<?php echo '<a href="taxoneditor.php?tid=' . htmlspecialchars($taxonEditorObj->getParentTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . '<i>' . htmlspecialchars($taxonEditorObj->getParentNameFull(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</i></a>';?>
 										</div>
 										<div class="tsedit" style="display:none;margin:3px;">
 											<input id="parentstr" name="parentstr" type="text" value="<?php echo $taxonEditorObj->getParentName(); ?>" style="width:450px" />
