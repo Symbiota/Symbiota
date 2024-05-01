@@ -46,5 +46,6 @@ $LANG['SCINAME'] = 'Scientific Name';
 $LANG['EDIT_TAXON'] = 'Edit Taxon';
 $LANG['MORE_THAN_ONE_TAXON'] = 'Your search term matched on more than one taxa. Select the target taxon below';
 $LANG['NOT_IN_SYSTEM'] = 'not found in system. Check spelling, or contact administrator to request name to be added into system';
+$LANG['EDIT_TAXON_PROFILE'] = 'Edit Taxon Profile';
 
 ?>

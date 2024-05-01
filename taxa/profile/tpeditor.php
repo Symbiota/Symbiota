@@ -189,7 +189,7 @@ if($isEditor && $action){
 		?>
 	</div>
 	<div id="innertext">
-		<h1 class="page-heading"><?php echo $LANG['TAXON_EDITOR'] .': ' . $tEditor->getSciName(); ?></h1>
+		<h1 class="page-heading"><?php echo $LANG['TAX_PROF_EDITOR'] .': ' . $tEditor->getSciName(); ?></h1>
 		<?php
 		if($tEditor->getTid()){
 			if($isEditor){
@@ -412,7 +412,7 @@ if($isEditor && $action){
 				<form name="gettidform" action="tpeditor.php" method="post" onsubmit="return checkGetTidForm(this);">
 					<b> <label for="taxa"> <?php echo $LANG['SCINAME']; ?>: </label> </b> <input id="taxa" name="taxon" value="<?php echo $taxon; ?>" size="40" />
 					<input type="hidden" name="tabindex" value="<?php echo $tabIndex; ?>" />
-					<button type="submit" name="action" value="Edit Taxon" ><?php echo $LANG['EDIT_TAXON']; ?></button>
+					<button type="submit" name="action" value="Edit Taxon" ><?php echo $LANG['EDIT_TAXON_PROFILE']; ?></button>
 				</form>
 			</div>
 			<?php
