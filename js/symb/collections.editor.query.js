@@ -270,6 +270,21 @@ function toggle(target, displayStyle = "block") {
   }
 }
 
+function toggleButtonVisuals(el, containerId, linkedBtnIds) {
+	for (let id of linkedBtnIds) {
+		const linkedBtn = document.getElementById(id);
+		linkedBtn.classList.remove('active');
+	}
+
+	const toggleContainer = document.getElementById(containerId)
+	
+	if(toggleContainer && toggleContainer.style.display === 'none') {
+		el.classList.remove('active');
+	} else {
+		el.classList.add('active');
+	}
+}
+
 //Misc
 function verifyLeaveForm(){
 	if(document.fullform && document.fullform.editedfields && document.fullform.editedfields.value != ""){

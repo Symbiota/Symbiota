@@ -443,6 +443,8 @@ else{
 	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET; ?>">
 	<title><?= $DEFAULT_TITLE . ' ' . $LANG['OCCEDITOR'] ?></title>
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH ?>/symbiota/variables.css" type="text/css" rel="stylesheet">
+
     <?php
     if($crowdSourceMode == 1){
 		?>
@@ -519,6 +521,23 @@ else{
 		.field-div{ margin: 2px; }
 		select{ height: 20px; margin-bottom: 2px; }
 		#identifierDiv img{ width:10px; margin-left: 5px; }
+		
+		.button-toggle {
+			background-color: transparent; 
+			color: var(--body-text-color); 
+			border-radius: 5px;
+			border: 2px solid var(--darkest-color);
+
+			&.active {
+				background-color: var(--darkest-color); 
+				color: white; 
+			}
+			&:hover {
+				background-color: var(--medium-color);
+				border: 2px solid var(--medium-color);
+				color: var(--light-color);
+			}
+		}
 	</style>
 </head>
 <body>
@@ -615,7 +634,7 @@ else{
 							</div>
 							<?php if($isEditor && $isEditor != 3):?>
 							<div id="querySymbolDiv" style="margin:5px 5px 5px 0px;">
-								<button type="button" onclick="toggleQueryForm();">
+								<button class="button-toggle" type="button" onclick="toggleQueryForm(); toggleButtonVisuals(this, 'querydiv', [])">
 									<?= $LANG['SEARCH_FILTER'] ?>
 								</button>
 							</div>
