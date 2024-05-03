@@ -17,7 +17,7 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
 				<?php
 				if ($USER_DISPLAY_NAME) {
 					?>
-					<div class="bottom-breathing-room-rel">
+					<div class="welcome-text bottom-breathing-room-rel">
 						<?= (isset($LANG['H_WELCOME'])?$LANG['H_WELCOME']:'Welcome') . ' ' . $USER_DISPLAY_NAME ?>!
 					</div>
 					<span style="white-space: nowrap; padding: 0.8rem;" class="button button-tertiary bottom-breathing-room-rel">
