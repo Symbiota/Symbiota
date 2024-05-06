@@ -47,6 +47,10 @@ $rsArr = $rsManager->getProtectedSpeciesList();
 			$("#searchtaxon").autocomplete({ source: "rpc/speciessuggest.php" },{ minLength: 3 });
 		});
 
+		function navigateToSubmitAction(){
+			window.location.href= 'protectedspecies.php?submitaction=checkstats';
+		}
+
 		function toggle(target){
 		  	var divs = document.getElementsByTagName("div");
 		  	for (var i = 0; i < divs.length; i++) {
@@ -145,7 +149,7 @@ include($SERVER_ROOT.'/includes/header.php');
 				echo '<div>' . $LANG['NUMBER_AFFECTED'] . ': '.$rsManager->protectGlobalSpecies().'</div>';
 			}
 			else{
-				echo "<div><a href=\"protectedspecies.php?submitaction=checkstats\">" . $LANG['VERIFY_PROTECTIONS'] . "</a></div>";
+				echo "<div><button type=\"button\" onclick=\"navigateToSubmitAction()\">" . $LANG['VERIFY_PROTECTIONS'] . "</button></div>";
 			}
 		}
 		?>
