@@ -55,7 +55,6 @@ if($collId){
 			$countryTempArr = array();
 			if($c>0) $collStr .= ", ";
 			$collStr .= $collArr['CollectionName'];
-			var_dump($collStr);
 			if(array_key_exists("SpecimenCount",$results)){
 				$results['SpecimenCount'] = $results['SpecimenCount'] + $collArr['recordcnt'];
 			}
