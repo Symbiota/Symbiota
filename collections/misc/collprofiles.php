@@ -136,50 +136,56 @@ if ($SYMB_UID) {
 		<b><?php echo (isset($LANG['COLL_PROFILE']) ? $LANG['COLL_PROFILE'] : 'Collection Profile'); ?></b>
 	</div>
 	<div id="innertext">
-		<section id="quicksearch-box" class="fieldset-like no-left-margin float-rt-no-overlap">
-			<h1><span><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></span></h1>
-			<div id="dialogContainer" style="position: relative;">
-				<form name="quicksearch" action="javascript:void(0);" onsubmit="processEditQuickSearch('<?php echo $CLIENT_ROOT ?>')">
-					<label for="catalog-number"><?php echo (isset($LANG['OCCURENCE_IDENTIFIER']) ? $LANG['OCCURENCE_IDENTIFIER'] : 'Catalog Number'); ?></label>
-					<span class="screen-reader-only">
+		<?php if ($collid && !$collid == 0){
+		?>
+			<section id="quicksearch-box" class="fieldset-like no-left-margin float-rt-no-overlap">
+				<h1><span><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></span></h1>
+				<div id="dialogContainer" style="position: relative;">
+					<form name="quicksearch" action="javascript:void(0);" onsubmit="processEditQuickSearch('<?php echo $CLIENT_ROOT ?>')">
+						<label for="catalog-number"><?php echo (isset($LANG['OCCURENCE_IDENTIFIER']) ? $LANG['OCCURENCE_IDENTIFIER'] : 'Catalog Number'); ?></label>
+						<span class="screen-reader-only">
+							<?php
+								echo (isset($LANG['IDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Search by Catalog Number, Occurrence ID, or Record ID.') . ' ';
+							?>
+						</span>
+						<input name="catalog-number" id="catalog-number" type="text" />
+						<a href="#" id="q_catalognumberinfo" style="text-decoration:none;">
+							<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO_ALT']; ?>" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>"/>
+						</a>
+						<dialog id="dialogEl" aria-live="polite" aria-label="Catalog number search dialog">
+							<?php
+								echo (isset($LANG['IDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Search by Catalog Number, Occurrence ID, or Record ID.') . ' ';
+							?>
+							<button id="closeDialog">Close</button>
+						</dialog>
+						<br>
+						<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
+						<input name="occindex" type="hidden" value="0" />
+						<label for="taxon-search"><?php echo (isset($LANG['TAXON']) ? $LANG['TAXON'] : 'Taxon'); ?></label>
+						<input name="taxon-search" id="taxon-search" type="text" />
+						<br>
 						<?php
-							echo (isset($LANG['IDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Search by Catalog Number, Occurrence ID, or Record ID.') . ' ';
+							if($editCode == 1 || $editCode == 2 || $editCode == 3){
 						?>
-					</span>
-					<input name="catalog-number" id="catalog-number" type="text" />
-					<a href="#" id="q_catalognumberinfo" style="text-decoration:none;">
-						<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO_ALT']; ?>" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>"/>
-					</a>
-					<dialog id="dialogEl" aria-live="polite" aria-label="Catalog number search dialog">
+							<button type="submit" id="search-by-catalog-number-admin-btn">
+								<?php echo (isset($LANG['OCCURRENCE_EDITOR']) ? $LANG['OCCURRENCE_EDITOR'] : 'Edit'); ?>
+							</button>
 						<?php
-							echo (isset($LANG['IDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Search by Catalog Number, Occurrence ID, or Record ID.') . ' ';
+							}
 						?>
-						<button id="closeDialog">Close</button>
-					</dialog>
-					<br>
-					<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-					<input name="occindex" type="hidden" value="0" />
-					<label for="taxon-search"><?php echo (isset($LANG['TAXON']) ? $LANG['TAXON'] : 'Taxon'); ?></label>
-					<input name="taxon-search" id="taxon-search" type="text" />
-					<br>
-					<?php
-						if($editCode == 1 || $editCode == 2 || $editCode == 3){
-					?>
-						<button type="submit" id="search-by-catalog-number-admin-btn">
-							<?php echo (isset($LANG['OCCURRENCE_EDITOR']) ? $LANG['OCCURRENCE_EDITOR'] : 'Edit'); ?>
-						</button>
-					<?php
-						}
-					?>
 
-				</form>
-				<form name="quicksearch" action="javascript:void(0);" onsubmit="submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&includeothercatnum=1', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&usethes=1&taxontype=2 '); return false;">
-					<button class="top-breathing-room-rel" type="submit" id="search-by-catalog-number-btn" title="<?php echo (isset($LANG['IDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Occurrence ID and Record ID also accepted.'); ?>">
-						<?php echo (isset($LANG['SEARCH']) ? $LANG['SEARCH'] : 'Search'); ?>
-					</button>
-				</form>
-			</div>
-		</section>
+					</form>
+					<form name="quicksearch" action="javascript:void(0);" onsubmit="submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&includeothercatnum=1', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&usethes=1&taxontype=2 '); return false;">
+						<button class="top-breathing-room-rel" type="submit" id="search-by-catalog-number-btn" title="<?php echo (isset($LANG['IDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Occurrence ID and Record ID also accepted.'); ?>">
+							<?php echo (isset($LANG['SEARCH']) ? $LANG['SEARCH'] : 'Search'); ?>
+						</button>
+					</form>
+				</div>
+			</section>
+		<?php	
+		} 
+		?>
+		
 		<?php
 		if ($editCode > 1) {
 			if ($action == 'UpdateStatistics') {
