@@ -211,7 +211,7 @@ class GeographicThesaurus extends Manager {
          }
          return $geoThesID;
       } catch(Exception $e) {
-         $this->errorMessage = 'ERROR adding geounit: '. $e->getMessage();;
+         $this->errorMessage = 'ERROR adding geounit: '. $e->getMessage();
          return false;
       }
    }
