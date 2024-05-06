@@ -406,7 +406,7 @@ class SpecUploadBase extends SpecUpload{
 			return false;
 		}
 		//Output table rows for source data
-		echo '<table class="styledtable" style="width:600px;font-family:Arial;font-size:12px;">';
+		echo '<table class="styledtable" style="width:600px;font-size:12px;">';
 		echo '<tr><th>Source Field</th><th>Target Field</th></tr>'."\n";
 		foreach($sourceArr as $fieldName){
 			if($fieldName == 'coreid') continue;
