@@ -182,66 +182,24 @@ $(document).ready(function() {
 		}
 	});
 
-	function optionizeJson(json, label = 'label', value = 'value') {
-		return (data) => json.map(v => ({ label: v[label], value: v[value] }))
-	}
-
-	function geothesaurusSource(params) {
-		const parent_selector = params.parent;
-		return (request, response) => {
-			function optionize(data) {
-				response(data.map(v => ({ label: v.geoterm, value: v.geoterm})))
-			}
-
-			if(params.parent) {
-				const el = document.querySelector(parent_selector)
-				if(el) {
-					params.parent =	el.value
-				}
-			}
-
-			const url = "../../geothesaurus/rpc/searchGeothesaurus.php";
-			params.geoterm = request.term;
-			$.getJSON(url, params, optionize)
-		}
-	}
-
-	//Misc fields with lookups
-	$("#ffcountry").autocomplete({
-		source: geothesaurusSource({geolevel: 50}),
-		minLength: 2,
-		autoFocus: true,
-		change: function(event, ui) {
-			fieldChanged("country");
-		}
-	});
-
-	$("#ffstate").autocomplete({
-		source: geothesaurusSource({geolevel: 60, parent: "#ffcountry"}),
-		minLength: 2,
-		autoFocus: true,
-		change: function(event, ui) {
-			fieldChanged("stateprovince");
-		}
-	});
-
-	$("#ffcounty").autocomplete({
-		source: geothesaurusSource({geolevel: 70, parent: "#ffstate"}),
-		minLength: 2,
-		autoFocus: true,
-		change: function(event, ui) {
-			fieldChanged("county");
-		}
-	});
-
-	$("#ffmunicipality").autocomplete({
-		source: geothesaurusSource({geolevel: 80, parent: "#ffmunicipality"}),
-		minLength: 2,
-		autoFocus: true,
-		change: function(event, ui) {
-			fieldChanged("municipality");
-		}
-	});
+	window.initLocalitySuggest({
+		country: {
+			id: 'ffcountry',
+			change: () => fieldChanged("country")
+		},
+		state_province: {
+			id: 'ffstate',
+			change: () => fieldChanged("stateprovince")
+		},
+		county: {
+			id: 'ffcounty',
+			change: () => fieldChanged("county")
+		},
+		municipality: {
+			id: 'ffmunicipality',
+			change: () => fieldChanged("municipality")
+		},
+	})
 
 	//Misc fields with lookups
 	$("textarea[name=associatedtaxa]").autocomplete({
