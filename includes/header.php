@@ -36,7 +36,7 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 				?>
 			</nav>
 			<div class="top-brand">
-				<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/AfricaTCN.png" alt="Tropical Africa TCN">
+				<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/africa_plants_tcn.png" alt="Tropical Africa TCN Logo">
 				<div class="brand-name">
 					<h1><?php echo $LANG['AFRICAN_PLANTS_PORTAL'] ?></h1>
 					<!-- <h2>Herbaria of Africa</h2> -->
