@@ -42,6 +42,7 @@ class DwcArchiverBaseManager extends Manager{
 					$this->writeOutRecord($r);
 				}
 				$rs->free();
+				fclose($this->fileHandler);
 			}
 			else{
 				$this->logOrEcho('ERROR writing out to extension file: '.$this->conn->error."\n");
