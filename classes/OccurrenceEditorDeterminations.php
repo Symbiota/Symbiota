@@ -258,10 +258,10 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			if(isset($taxonArr['tid']) && $taxonArr['tid']) $sql .= ', o.tidinterpreted = '.$taxonArr['tid'];
 			if(isset($taxonArr['security']) && $taxonArr['security']) $sql .= ', o.localitysecurity = '.$taxonArr['security'].', o.localitysecurityreason = "<Security Setting Locked>"';
 			$sql .= ' WHERE (d.iscurrent = 1) AND (d.detid = '.$detId.')';
-			$this->conn->query($sql);
+			$updated_base = $this->conn->query($sql);
 
 			//Whenever occurrence is updated also update associated images
-			if(isset($taxonArr['tid']) && $taxonArr['tid']) {
+			if($updated_base && isset($taxonArr['tid']) && $taxonArr['tid']) {
 				$sql = <<<'SQL'
 				UPDATE images i
 				INNER JOIN omoccurdeterminations od on od.occid = i.occid
