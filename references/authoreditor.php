@@ -78,6 +78,7 @@ if(!$addAuth){
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading">Author Management</h1>
 		<?php
 		if($isEditor){
 			if($statusStr){
@@ -133,7 +134,7 @@ if(!$addAuth){
 							echo '<div><ul>';
 							foreach($authArr as $authId => $recArr){
 								echo '<li>';
-								echo '<a href="authoreditor.php?authid=' . htmlspecialchars($authId, HTML_SPECIAL_CHARS_FLAGS) . '"><b>' . htmlspecialchars($recArr["authorName"], HTML_SPECIAL_CHARS_FLAGS) . '</b></a>';
+								echo '<a href="authoreditor.php?authid=' . htmlspecialchars($authId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><b>' . htmlspecialchars($recArr["authorName"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</b></a>';
 								echo '</li>';
 							}
 							echo '</ul></div>';
@@ -186,7 +187,7 @@ if(!$addAuth){
 									echo '<div><ul>';
 									foreach($authPubArr as $refId => $recArr){
 										echo '<li>';
-										echo '<a href="refdetails.php?refid=' . htmlspecialchars($refId, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><b>' . htmlspecialchars($recArr["title"], HTML_SPECIAL_CHARS_FLAGS) . '</b></a>';
+										echo '<a href="refdetails.php?refid=' . htmlspecialchars($refId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank"><b>' . htmlspecialchars($recArr["title"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</b></a>';
 										echo ($recArr["secondarytitle"]?', '.$recArr["secondarytitle"].'.':'');
 										echo ($recArr["shorttitle"]?', '.$recArr["shorttitle"].'.':'');
 										echo ($recArr["pubdate"]?$recArr["pubdate"].'.':'');

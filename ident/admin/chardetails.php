@@ -251,6 +251,7 @@ if(!$cid) header('Location: index.php');
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading">Taxon Character Administration</h1>
 		<?php
 		if($isEditor){
 			if($statusStr){

@@ -12,6 +12,7 @@ header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 	</head>
 
 	<body>
+    <h1 class="page-heading">Character Encoding Cleaner</h1>
 		<div>
 			<b>READ ME:</b> This page is for cleaning central database tabels that may contain mixed latin and UTF-8 character sets.
 			This module will convert mixed character sets to UTF-8. If you want to convert from UTF-8 to another character set,

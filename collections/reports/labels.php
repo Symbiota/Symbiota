@@ -66,6 +66,10 @@ else{
 
 				.cnbarcode { width:100%; text-align:center; }
 				.symbbarcode { width:100%; text-align:center; margin-top:10px; }
+				.screen-reader-only {
+					position: absolute;
+					left: -10000px;
+				}
 				<?php
 				if($columnCount == 'packet'){
 					?>
@@ -90,6 +94,7 @@ else{
 			</style>
 		</head>
 		<body>
+			<h1 class="page-heading screen-reader-only">Labels</h1>
 			<div>
 				<?php
 				if($action && $isEditor){
@@ -130,7 +135,7 @@ else{
 								if($headerStr){
 									?>
 									<div class="lheader">
-										<?= htmlspecialchars($headerStr, HTML_SPECIAL_CHARS_FLAGS) ?>
+										<?= htmlspecialchars($headerStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>
 									</div>
 									<?php
 								}
@@ -342,7 +347,7 @@ else{
 									}
 								}
 								?>
-								<div class="lfooter"><?= htmlspecialchars($lFooter, HTML_SPECIAL_CHARS_FLAGS) ?></div>
+								<div class="lfooter"><?= htmlspecialchars($lFooter, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?></div>
 								<?php
 								if($useSymbBarcode){
 									?>

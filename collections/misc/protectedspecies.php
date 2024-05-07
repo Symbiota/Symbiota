@@ -47,6 +47,10 @@ $rsArr = $rsManager->getProtectedSpeciesList();
 			$("#searchtaxon").autocomplete({ source: "rpc/speciessuggest.php" },{ minLength: 3 });
 		});
 
+		function navigateToSubmitAction(){
+			window.location.href= 'protectedspecies.php?submitaction=checkstats';
+		}
+
 		function toggle(target){
 		  	var divs = document.getElementsByTagName("div");
 		  	for (var i = 0; i < divs.length; i++) {
@@ -118,14 +122,14 @@ include($SERVER_ROOT.'/includes/header.php');
 		<?php
 	}
 	?>
-	<h1><?= $LANG['PROTECTED_SPECIES'] ?></h1>
+	<h1 class="page-heading"><?= $LANG['PROTECTED_SPECIES'] ?></h1>
 	<div style="float:right;">
 		<form name="searchform" action="protectedspecies.php" method="post">
 			<fieldset style="margin:0px 15px;padding:10px">
 				<legend><?= $LANG['FILTER'] ?></legend>
 				<div style="margin:3px">
 					<label for="searchtaxon"><?= $LANG['TAXON_SEARCH'] ?>:</label>
-					<input id="searchtaxon" name="searchtaxon" type="text" value="<?= htmlspecialchars($searchTaxon, HTML_SPECIAL_CHARS_FLAGS) ?>" />
+					<input id="searchtaxon" name="searchtaxon" type="text" value="<?= htmlspecialchars($searchTaxon, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" />
 				</div>
 				<div style="margin:3px">
 					<button name="submitaction" type="submit" value="searchTaxonSubmit" ><?= $LANG['SEARCH']; ?></button>
@@ -145,7 +149,7 @@ include($SERVER_ROOT.'/includes/header.php');
 				echo '<div>' . $LANG['NUMBER_AFFECTED'] . ': '.$rsManager->protectGlobalSpecies().'</div>';
 			}
 			else{
-				echo "<div><a href=\"protectedspecies.php?submitaction=checkstats\">" . $LANG['VERIFY_PROTECTIONS'] . "</a></div>";
+				echo "<div><button type=\"button\" onclick=\"navigateToSubmitAction()\">" . $LANG['VERIFY_PROTECTIONS'] . "</button></div>";
 			}
 		}
 		?>
@@ -188,8 +192,8 @@ include($SERVER_ROOT.'/includes/header.php');
 						foreach($speciesArr as $tid => $nameArr){
 							echo '<div id="tid-'.$tid.'">';
 							echo '<a href="../../taxa/index.php?taxon=' . $tid . '" target="_blank">';
-							echo '<i>' . htmlspecialchars($nameArr['sciname'], HTML_SPECIAL_CHARS_FLAGS) . '</i> ';
-							echo htmlspecialchars($nameArr['author'], HTML_SPECIAL_CHARS_FLAGS) . '</a> ';
+							echo '<i>' . htmlspecialchars($nameArr['sciname'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</i> ';
+							echo htmlspecialchars($nameArr['author'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ';
 							if($isEditor){
 								?>
 								<span class="editobj" style="display:none;">

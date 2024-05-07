@@ -24,7 +24,7 @@ if($action=="addauthor"){
 		$listHtml .= '<ul>';
 		foreach($authArr as $k => $v){
 			$listHtml .= '<li>';
-			$listHtml .= '<a href="authoreditor.php?authid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($v, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+			$listHtml .= '<a href="authoreditor.php?authid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($v, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 			$listHtml .= ' <input type="image" style="style="width:1.3em;margin-left:5px;" src="../images/del.png" onclick="deleteRefAuthor('.$k.');" title="Delete author">';
 			$listHtml .= '</li>';
 		}
@@ -45,7 +45,7 @@ if($action=="createauthor"){
 		$listHtml .= '<ul>';
 		foreach($authArr as $k => $v){
 			$listHtml .= '<li>';
-			$listHtml .= '<a href="authoreditor.php?authid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) .'" target="_blank">' . htmlspecialchars($v, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+			$listHtml .= '<a href="authoreditor.php?authid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .'" target="_blank">' . htmlspecialchars($v, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 			$listHtml .= ' <input type="image" style="width:1.3em;margin-left:5px;" src="../images/del.png" onclick="deleteRefAuthor('.$k.');" title="Delete author">';
 			$listHtml .= '</li>';
 		}
@@ -64,7 +64,7 @@ if($action=="deleterefauthor"){
 		$listHtml .= '<ul>';
 		foreach($authArr as $k => $v){
 			$listHtml .= '<li>';
-			$listHtml .= '<a href="authoreditor.php?authid=' . htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($v, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+			$listHtml .= '<a href="authoreditor.php?authid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($v, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 			$listHtml .= ' <input type="image" style="width:1.3em;margin-left:5px;" src="../images/del.png" onclick="deleteRefAuthor('.$k.');" title="Delete author">';
 			$listHtml .= '</li>';
 		}

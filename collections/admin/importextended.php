@@ -7,17 +7,12 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/admin/importextended.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$collid = array_key_exists('collid', $_REQUEST) ? $_REQUEST['collid'] : 0;
-$importType = array_key_exists('importType', $_REQUEST) ? $_REQUEST['importType'] : 0;
+$collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$importType = array_key_exists('importType', $_REQUEST) ? filter_var($_REQUEST['importType'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $associationType = array_key_exists('associationType', $_POST) ? $_POST['associationType'] : '';
-$createNew = array_key_exists('createNew', $_POST) ? $_POST['createNew'] : 0;
+$createNew = array_key_exists('createNew', $_POST) ? filter_var($_POST['createNew'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $fileName = array_key_exists('fileName', $_POST) ? $_POST['fileName'] : '';
 $action = array_key_exists('submitAction', $_POST) ? $_POST['submitAction'] : '';
-
-//Sanitation
-$collid = filter_var($collid, FILTER_SANITIZE_NUMBER_INT);
-$importType = filter_var($importType, FILTER_SANITIZE_NUMBER_INT);
-$createNew = filter_var($createNew, FILTER_SANITIZE_NUMBER_INT);
 
 $importManager = new OccurrenceImport();
 $importManager->setCollid($collid);
@@ -30,9 +25,9 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 }
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $LANG_TAG ?>">
+<html lang="<?= $LANG_TAG ?>">
 	<head>
-		<title><?= $DEFAULT_TITLE ?> <?= $LANG['IMPORT_EXTEND'] ?> </title>
+		<title><?= $DEFAULT_TITLE ?> - <?= $LANG['IMPORT_EXTEND'] ?> </title>
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -75,7 +70,17 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 			function validateMappingForm(f){
 				let sourceArr = [];
 				let targetArr = [];
-				let catalogNumberIndex = 0;
+				let requiredFieldArr = [];
+				<?php
+				if($associationType == 'resource' || $associationType == 'externalOccurrence'){
+					echo 'requiredFieldArr["resourceUrl"] = 0; ';
+				}
+				elseif($associationType == 'observational'){
+					echo 'requiredFieldArr["verbatimSciname"] = 0; ';
+				}
+				?>
+				let subjectIdentifierIsMapped = false;
+				let objectIdentifierIsMapped = false;
 				const formElements = f.elements;
 				for (const key in formElements) {
 					const value = formElements[key].value;
@@ -97,23 +102,57 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 					}
 					if(key.substring(0, 3) == "tf["){
 						if(value == "catalognumber"){
-							catalogNumberIndex++;
+							subjectIdentifierIsMapped = true;
 						}
 						else if(value == "othercatalognumbers"){
-							catalogNumberIndex++;
+							subjectIdentifierIsMapped = true;
 						}
 						else if(value == "occurrenceid"){
-							catalogNumberIndex++;
+							subjectIdentifierIsMapped = true;
+						}
+						<?php
+						if($associationType == 'internalOccurrence'){
+							?>
+							if(value == "object-catalognumber"){
+								objectIdentifierIsMapped = true;
+							}
+							else if(value == "object-occurrenceid"){
+								objectIdentifierIsMapped = true;
+							}
+							else if(value == "occidassociate"){
+								objectIdentifierIsMapped = true;
+							}
+							<?php
+						}
+						?>
+						for (const fieldName2 in requiredFieldArr) {
+							if(value == fieldName2.toLowerCase()) requiredFieldArr[fieldName2] = 1;
 						}
 					}
 				}
-				if(catalogNumberIndex == 0){
-					alert("<?= $LANG['NEED_CAT'] ?>");
+				if(!subjectIdentifierIsMapped){
+					alert("<?= $LANG['SUBJECT_ID_REQUIRED'] ?>");
 					return false;
 				}
+				<?php
+				if($associationType == 'internalOccurrence'){
+					?>
+					if(!objectIdentifierIsMapped){
+						alert("<?= $LANG['OBJECT_ID_REQUIRED'] ?>");
+						return false;
+					}
+					<?php
+				}
+				?>
 				if(f.relationship && f.relationship.value == ""){
 					alert("<?= $LANG['SELECT_RELATIONSHIP'] ?>");
 					return false;
+				}
+				for (const fieldName in requiredFieldArr) {
+					if(requiredFieldArr[fieldName] == 0){
+						alert(fieldName + " is a required import field");
+						return false;
+					}
 				}
 				return true;
 			}
@@ -149,7 +188,8 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 		</div>
 		<!-- This is inner text! -->
 		<div id="innertext">
-			<h2><?= $importManager->getCollMeta('collName').' '.$LANG['DATA_IMPORTER']; ?></h2>
+			<h1 class="page-heading"><?= $LANG['DATA_IMPORTER']; ?></h1>
+			<h2><?= $importManager->getCollMeta('collName'); ?></h2>
 			<div class="pageDescription-div">
 				<?= $LANG['INSTRUCTIONS'] ?>:
 				<ul>
@@ -185,7 +225,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 				}
 				elseif($action == 'initiateImport'){
 					if($actionStatus = $importManager->importFile()){
-						$importManager->setTargetFieldArr();
+						$importManager->setTargetFieldArr($associationType);
 						?>
 						<form name="mappingform" action="importextended.php" method="post" onsubmit="return validateMappingForm(this)">
 							<fieldset>
@@ -207,8 +247,22 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 											<option value="">-------------------</option>
 											<?php
 											$filter = '';
-											if($associationType == 'resource') $filter = 'associationType:resource';
+											//if($associationType == 'resource') $filter = 'associationType:resource';
 											$relationshipArr = $importManager->getControlledVocabulary('omoccurassociations', 'relationship', $filter);
+											foreach($relationshipArr as $term => $display){
+												echo '<option value="'.$term.'">'.$display.'</option>';
+											}
+											?>
+											<option value="">-------------------</option>
+											<option value="DELETE"><?= $LANG['BATCH_DELETE'] ?></option>
+										</select>
+									</div>
+									<div class="formField-div">
+										<label><?= $LANG['REL_SUBTYPE'] ?>:</label>
+										<select name="subType">
+											<option value="">-------------------</option>
+											<?php
+											$relationshipArr = $importManager->getControlledVocabulary('omoccurassociations', 'subtype');
 											foreach($relationshipArr as $term => $display){
 												echo '<option value="'.$term.'">'.$display.'</option>';
 											}
@@ -244,7 +298,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 								<div style="margin:15px;">
 									<input name="collid" type="hidden" value="<?= $collid; ?>">
 									<input name="importType" type="hidden" value="<?= $importType ?>">
-									<input name="fileName" type="hidden" value="<?= htmlspecialchars($importManager->getFileName(), HTML_SPECIAL_CHARS_FLAGS) ?>">
+									<input name="fileName" type="hidden" value="<?= htmlspecialchars($importManager->getFileName(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>">
 									<button name="submitAction" type="submit" value="importData"><?= $LANG['IMPORT_DATA'] ?></button>
 								</div>
 							</fieldset>
@@ -259,11 +313,11 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 						<fieldset>
 							<legend><?= $LANG['INITIALIZE_IMPORT'] ?></legend>
 							<div class="formField-div">
-								<input name="importFile" type="file" size="50" onchange="verifyFileSize(this)" />
+								<input name="importFile" type="file" onchange="verifyFileSize(this)" aria-label="<?php echo $LANG['CHOOSE_FILE'] ?>" />
 							</div>
 							<div class="formField-div">
 								<label for="importType"><?= $LANG['IMPORT_TYPE'] ?>: </label>
-								<select name="importType" onchange="importTypeChanged(this)">
+								<select id="importType" name="importType" onchange="importTypeChanged(this)" aria-label="<?php echo $LANG['IMPORT_TYPE'] ?>">
 									<option value="">-------------------</option>
 									<option value="1"><?= $LANG['ASSOCIATIONS'] ?></option>
 									<?php if($IS_ADMIN) echo '<option value="2">'.$LANG['DETERMINATIONS'].'</option>'; ?>
@@ -275,7 +329,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 							</div>
 							<div id="associationType-div" class="formField-div" style="display:none">
 								<label for="associationType"><?= $LANG['ASSOCIATION_TYPE'] ?>: </label>
-								<select name="associationType">
+								<select id="associationType" name="associationType" aria-label="<?php echo $LANG['ASSOCIATION_TYPE'] ?>">
 									<option value="">-------------------</option>
 									<option value="resource"><?= $LANG['RESOURCE_LINK'] ?></option>
 									<option value="internalOccurrence"><?= $LANG['INTERNAL_OCCURRENCE'] ?></option>

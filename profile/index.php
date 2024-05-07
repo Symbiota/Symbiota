@@ -20,7 +20,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 
 $THIRD_PARTY_OID_AUTH_ENABLED = $THIRD_PARTY_OID_AUTH_ENABLED ?? false;
 $SYMBIOTA_LOGIN_ENABLED = $SYMBIOTA_LOGIN_ENABLED ?? true;
-$LOGIN_ACTION_PAGE = $LOGIN_ACTION_PAGE ?? 'profile/openIdAuth.php';
+$LOGIN_ACTION_PAGE = $LOGIN_ACTION_PAGE ?? $CLIENT_ROOT . '/profile/openIdAuth.php';
 
 $login = array_key_exists('login',$_REQUEST)?$_REQUEST['login']:'';
 $remMe = array_key_exists("remember",$_POST)?$_POST["remember"]:'';
@@ -33,21 +33,21 @@ $refUrl = '';
 if(array_key_exists('refurl',$_REQUEST)){
 	$refGetStr = '';
 	foreach($_GET as $k => $v){
-		$k = htmlspecialchars($k, HTML_SPECIAL_CHARS_FLAGS);
+		$k = htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 		if($k != 'refurl'){
 			if($k == 'attr' && is_array($v)){
 				foreach($v as $v2){
-					$v2 = htmlspecialchars($v2, HTML_SPECIAL_CHARS_FLAGS);
+					$v2 = htmlspecialchars($v2, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 					$refGetStr .= '&attr[]='.$v2;
 				}
 			}
 			else{
-				$v = htmlspecialchars($v, HTML_SPECIAL_CHARS_FLAGS);
+				$v = htmlspecialchars($v, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 				$refGetStr .= '&'.$k.'='.$v;
 			}
 		}
 	}
-	$refUrl = str_replace('&amp;','&',htmlspecialchars($_REQUEST['refurl'], HTML_SPECIAL_CHARS_FLAGS));
+	$refUrl = str_replace('&amp;','&',htmlspecialchars($_REQUEST['refurl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE));
 	if(substr($refUrl,-4) == '.php') $refUrl .= '?'.substr($refGetStr,1);
 	else $refUrl .= $refGetStr;
 }
@@ -130,7 +130,7 @@ if (array_key_exists('last_message', $_SESSION)){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['LOGIN_NAME'])?$LANG['LOGIN_NAME']:'Login'); ?></title>
+	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['LOGIN_NAME']; ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -199,6 +199,7 @@ include($SERVER_ROOT.'/includes/header.php');
 ?>
 <!-- inner text -->
 <div id="innertext" style="padding-left:0px;margin-left:0px;">
+	<h1 class="page-heading screen-reader-only">Login</h1>
 	<?php
 	if($statusStr){
 		$color = 'green';
@@ -268,7 +269,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					<?php echo (isset($LANG['NO_ACCOUNT'])?$LANG['NO_ACCOUNT']:"Don't have an Account?"); ?>
 				</div>
 				<div>
-					<a href="newprofile.php?refurl=<?php echo htmlspecialchars($refUrl, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars((isset($LANG['CREATE_ACCOUNT'])?$LANG['CREATE_ACCOUNT']:'Create an account'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
+					<a href="newprofile.php?refurl=<?php echo htmlspecialchars($refUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars((isset($LANG['CREATE_ACCOUNT'])?$LANG['CREATE_ACCOUNT']:'Create an account'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 				</div>
 			<?php
 		 		} 
@@ -282,7 +283,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					<?php echo (isset($LANG['REMEMBER_LOGIN'])?$LANG['REMEMBER_LOGIN']:"Can't Remember Login Name?"); ?>
 				</div>
 				<div>
-					<div><a href="#" onclick="toggle('emaildiv');"><?php echo htmlspecialchars((isset($LANG['RETRIEVE'])?$LANG['RETRIEVE']:'Retrieve Login'), HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
+					<div><a href="#" onclick="toggle('emaildiv');"><?php echo htmlspecialchars((isset($LANG['RETRIEVE'])?$LANG['RETRIEVE']:'Retrieve Login'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></div>
 					<div id="emaildiv" style="display:none;margin:10px 0px 10px 40px;">
 						<fieldset class="profile-fieldset">
 							<form id="retrieveloginform" name="retrieveloginform" action="index.php" method="post">

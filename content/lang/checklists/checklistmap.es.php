@@ -12,6 +12,6 @@ $LANG['NO_COORDS'] = 'Su búsqueda aparentemente no contiene ningún registro co
 $LANG['MAYBE_RARE'] = 'Puede ser que los ejemplares tengan estado de especie rara/amenazada que requiere que las coordenadas de la localidad permenezcan ocultas';
 $LANG['FAILED_TO_LOAD'] = 'Error al cargar los datos del suceso';
 $LANG['NO_COORDS_HEADER'] = "Sin coordenadas";
-$LANG['MAP_SECTION'] = "Sección de mapa";
+$LANG['MAP_SECTION'] = "Mapa de Vales de";
 
 ?>

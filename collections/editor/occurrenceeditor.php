@@ -4,6 +4,7 @@ include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.'.$
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.en.php');
 
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 $occId = array_key_exists('occid', $_REQUEST) ? filter_var($_REQUEST['occid'], FILTER_SANITIZE_NUMBER_INT) : '';
 $collId = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : false;
@@ -209,12 +210,12 @@ if($SYMB_UID){
 				if($cloneArr){
 					$statusStr = (isset($LANG['CLONES_CREATED'])?$LANG['CLONES_CREATED']:'Success! The following new clone record(s) have been created').' ';
 					$statusStr .= '<div style="margin:5px 10px;color:black">';
-					$statusStr .= '<div><a href="occurrenceeditor.php?occid=' . htmlspecialchars($occId, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">#' . htmlspecialchars($occId, HTML_SPECIAL_CHARS_FLAGS) . '</a> - ' . htmlspecialchars((isset($LANG['CLONE_SOURCE'])?$LANG['CLONE_SOURCE']:'clone source'), HTML_SPECIAL_CHARS_FLAGS) . '</div>';
+					$statusStr .= '<div><a href="occurrenceeditor.php?occid=' . htmlspecialchars($occId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">#' . htmlspecialchars($occId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> - ' . htmlspecialchars((isset($LANG['CLONE_SOURCE'])?$LANG['CLONE_SOURCE']:'clone source'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</div>';
 					$occId = current($cloneArr);
 					$occManager->setOccId($occId);
 					foreach($cloneArr as $cloneOccid){
 						if($cloneOccid==$occId) $statusStr .= '<div>#'.$cloneOccid.' - '.(isset($LANG['THIS_RECORD'])?$LANG['THIS_RECORD']:'this record').'</div>';
-						else $statusStr .= '<div><a href="occurrenceeditor.php?occid=' . htmlspecialchars($cloneOccid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">#' . htmlspecialchars($cloneOccid, HTML_SPECIAL_CHARS_FLAGS) . '</a></div>';
+						else $statusStr .= '<div><a href="occurrenceeditor.php?occid=' . htmlspecialchars($cloneOccid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">#' . htmlspecialchars($cloneOccid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></div>';
 					}
 					$statusStr .= '</div>';
 					if(isset($_POST['targetcollid']) && $_POST['targetcollid'] && $_POST['targetcollid'] != $collId){
@@ -264,7 +265,7 @@ if($SYMB_UID){
 			}
 			elseif($action == 'Remap Image'){
 				if($occManager->remapImage($_POST['imgid'], $_POST['targetoccid'])){
-					$statusStr = (isset($LANG['IMAGE_REMAP_SUCCESS'])?$LANG['IMAGE_REMAP_SUCCESS']:'SUCCESS: Image remapped to record').' <a href="occurrenceeditor.php?occid=' . htmlspecialchars($_POST["targetoccid"], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($_POST["targetoccid"], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+					$statusStr = (isset($LANG['IMAGE_REMAP_SUCCESS'])?$LANG['IMAGE_REMAP_SUCCESS']:'SUCCESS: Image remapped to record').' <a href="occurrenceeditor.php?occid=' . htmlspecialchars($_POST["targetoccid"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($_POST["targetoccid"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 				}
 				else{
 					$statusStr = (isset($LANG['IMAGE_REMAP_ERROR'])?$LANG['IMAGE_REMAP_ERROR']:'ERROR linking image to new specimen').': '.$occManager->getErrorStr();
@@ -273,7 +274,7 @@ if($SYMB_UID){
 			elseif($action == 'remapImageToNewRecord'){
 				$newOccid = $occManager->remapImage($_POST['imgid'], 'new');
 				if($newOccid){
-					$statusStr = (isset($LANG['IMAGE_REMAP_SUCCESS'])?$LANG['IMAGE_REMAP_SUCCESS']:'SUCCESS: Image remapped to record').' <a href="occurrenceeditor.php?occid=' . htmlspecialchars($newOccid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($newOccid, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+					$statusStr = (isset($LANG['IMAGE_REMAP_SUCCESS'])?$LANG['IMAGE_REMAP_SUCCESS']:'SUCCESS: Image remapped to record').' <a href="occurrenceeditor.php?occid=' . htmlspecialchars($newOccid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($newOccid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 				}
 				else{
 					$statusStr = (isset($LANG['NEW_IMAGE_ERROR'])?$LANG['NEW_IMAGE_ERROR']:'ERROR linking image to new blank specimen').': '.$occManager->getErrorStr();
@@ -281,7 +282,7 @@ if($SYMB_UID){
 			}
 			elseif($action == "Disassociate Image"){
 				if($occManager->remapImage($_POST["imgid"])){
-					$statusStr = (isset($LANG['DISASS_SUCCESS'])?$LANG['DISASS_SUCCESS']:'SUCCESS disassociating image').' <a href="../../imagelib/imgdetails.php?imgid=' . htmlspecialchars($_POST["imgid"], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">#' . htmlspecialchars($_POST["imgid"], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+					$statusStr = (isset($LANG['DISASS_SUCCESS'])?$LANG['DISASS_SUCCESS']:'SUCCESS disassociating image').' <a href="../../imagelib/imgdetails.php?imgid=' . htmlspecialchars($_POST["imgid"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">#' . htmlspecialchars($_POST["imgid"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 				}
 				else{
 					$statusStr = (isset($LANG['DISASS_ERORR'])?$LANG['DISASS_ERORR']:'ERROR disassociating image').': '.$occManager->getErrorStr();
@@ -401,7 +402,7 @@ if($SYMB_UID){
 		if($occIndex<$qryCnt-1) $navStr .= '</a> ';
 		if(!$crowdSourceMode){
 			$navStr .= '&nbsp;&nbsp;&nbsp;&nbsp;';
-			$navStr .= '<a href="occurrenceeditor.php?gotomode=1&collid=' . htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . '" onclick="return verifyLeaveForm()" title="' . htmlspecialchars((isset($LANG['NEW_REC'])?$LANG['NEW_REC']:'New Record'), HTML_SPECIAL_CHARS_FLAGS) . '">&gt;*</a>';
+			$navStr .= '<a href="occurrenceeditor.php?gotomode=1&collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" onclick="return verifyLeaveForm()" title="' . htmlspecialchars((isset($LANG['NEW_REC'])?$LANG['NEW_REC']:'New Record'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">&gt;*</a>';
 		}
 		$navStr .= '</b>';
 	}
@@ -442,6 +443,8 @@ else{
 	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET; ?>">
 	<title><?= $DEFAULT_TITLE . ' ' . $LANG['OCCEDITOR'] ?></title>
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH ?>/symbiota/variables.css" type="text/css" rel="stylesheet">
+
     <?php
     if($crowdSourceMode == 1){
 		?>
@@ -506,6 +509,7 @@ else{
 	<script src="../../js/symb/collections.coordinateValidation.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/wktpolygontools.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/collections.georef.js?ver=2" type="text/javascript"></script>
+	<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.main.js?ver=9" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.tools.js?ver=4" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.imgtools.js?ver=3" type="text/javascript"></script>
@@ -518,25 +522,35 @@ else{
 		.field-div{ margin: 2px; }
 		select{ height: 20px; margin-bottom: 2px; }
 		#identifierDiv img{ width:10px; margin-left: 5px; }
+		
+		.button-toggle {
+			background-color: transparent; 
+			color: var(--body-text-color); 
+			border-radius: 5px;
+			border: 2px solid var(--darkest-color);
+
+			&.active {
+				background-color: var(--darkest-color); 
+				color: white; 
+			}
+			&:hover {
+				background-color: var(--medium-color);
+				border: 2px solid var(--medium-color);
+				color: var(--light-color);
+			}
+		}
 	</style>
 </head>
 <body>
 	<div id="innertext">
 		<div id="titleDiv">
 			<?php
-			if($collMap) echo $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').')';
-			if($isEditor && $isEditor != 3){
-				?>
-				<div id="querySymbolDiv" style="margin:5px 5px 5px 5px;">
-					<a href="#" title="<?= $LANG['SEARCH_FILTER'] ?>" onclick="toggleQueryForm();"><img src="../../images/find.png" style="width:1.3em;" /></a>				</div>
-				<?php
-			}
+			if($collMap) echo '<h1 class="page-heading" style="font-size: 1.5rem;"> Occurrence Editor: ' . $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').') </h1>';
 			?>
 		</div>
 		<?php
 		if($isEditor && ($occId || ($collId && $isEditor < 3))){
 			if(!$occArr && !$goToMode) $displayQuery = 1;
-			include 'includes/queryform.php';
 			if($statusStr){
 				?>
 				<div id="statusdiv" style="margin:5px 0px 5px 15px;">
@@ -619,6 +633,17 @@ else{
 									<b><?php if($isEditor == 3) echo $LANG['TAXONOMIC_EDITOR']; ?></b>
 								</div>
 							</div>
+							<?php if($isEditor && $isEditor != 3):?>
+							<div id="querySymbolDiv" style="margin:5px 5px 5px 0px;">
+								<button class="button-toggle" type="button" onclick="toggleQueryForm(); toggleButtonVisuals(this, 'querydiv', [])">
+									<?= $LANG['SEARCH_FILTER'] ?>
+								</button>
+							</div>
+							<div style="margin-bottom:5px">
+								<?php include 'includes/queryform.php'; ?>
+							</div>
+							<?php endif?>
+
 							<div id="occedittabs" style="clear:both;">
 								<ul>
 									<li>
@@ -832,7 +857,7 @@ else{
 													?>
 													<fieldset style="float:right;margin:3px;padding:5px;border:1px solid red;">
 														<legend style="color:red;"><?php echo (isset($LANG['OUT_ON_LOAN'])?$LANG['OUT_ON_LOAN']:'Out On Loan'); ?></legend>
-														<b><?php echo (isset($LANG['TO'])?$LANG['TO']:'To'); ?>:</b> <a href="../loans/outgoing.php?tabindex=1&collid=<?php echo htmlspecialchars($occManager->getCollId(), HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($loanArr['id'], HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($loanArr['code'], HTML_SPECIAL_CHARS_FLAGS); ?></a><br/>
+														<b><?php echo (isset($LANG['TO'])?$LANG['TO']:'To'); ?>:</b> <a href="../loans/outgoing.php?tabindex=1&collid=<?php echo htmlspecialchars($occManager->getCollId(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&loanid=' . htmlspecialchars($loanArr['id'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars($loanArr['code'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a><br/>
 														<b><?php echo (isset($LANG['DUE_DATE'])?$LANG['DUE_DATE']:'Due date'); ?>:</b> <?php echo (isset($loanArr['date'])?$loanArr['date']:(isset($LANG['NOT_DEFINED'])?$LANG['NOT_DEFINED']:'Not Defined')); ?>
 													</fieldset>
 													<?php
@@ -1596,7 +1621,7 @@ else{
 															<div class="fieldGroup-div">
 																<label><?php echo $LANG['NUMBER_RECORDS']; ?>:</label> <input id="clonecount" name="clonecount" type="text" value="1" style="width:40px" />
 															</div>
-															<div class="fieldGroup-div"><a href="#" onclick="return prePopulateCatalogNumbers();"><?php echo htmlspecialchars($LANG['PRE_POPULATE'], HTML_SPECIAL_CHARS_FLAGS); ?></a></div>
+															<div class="fieldGroup-div"><a href="#" onclick="return prePopulateCatalogNumbers();"><?php echo htmlspecialchars($LANG['PRE_POPULATE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></div>
 															<fieldset id="cloneCatalogNumber-Fieldset" style="display:none">
 																<div id="cloneCatalogNumberDiv" class="fieldGroup-div"></div>
 															</fieldset>

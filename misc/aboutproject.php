@@ -18,12 +18,12 @@ include_once('content/lang/misc/aboutproject.'.$LANG_TAG.'.php');
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div class="navpath">
-			<a href="../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+			<a href="../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 			<b><?php echo (isset($LANG['ABOUT_PROJECT'])?$LANG['ABOUT_PROJECT']:'About the Project'); ?></b>
 		</div>
 		<!-- This is inner text! -->
 		<div id="innertext" style="margin:10px 20px">
-			<h1><?php echo (isset($LANG['ABOUT_PROJECT'])?$LANG['ABOUT_PROJECT']:'About the Project'); ?>:</h1>
+			<h1 class="page-heading"><?php echo $LANG['ABOUT_PROJECT']; ?>:</h1>
 
 			<p></p>
 

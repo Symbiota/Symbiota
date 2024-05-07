@@ -28,7 +28,7 @@ if($SYMB_UID){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
-		<title><?php echo (isset($LANG['SALIX_WRDST_MNGR']) ? $LANG['SALIX_WRDST_MNGR'] : 'SALIX Wordstat Manager'); ?></title>
+		<title><?php echo $LANG['SALIX_WRDST_MNGR']; ?></title>
 		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
@@ -53,7 +53,7 @@ if($SYMB_UID){
 			<?php
 			if($collid){
 				?>
-				<a href="../../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"> <?php echo (isset($LANG['COLL_MGMT'])?$LANG['COLL_MGMT']:'Collection Management'); ?> </a> &gt;&gt;
+				<a href="../../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"> <?php echo (isset($LANG['COLL_MGMT'])?$LANG['COLL_MGMT']:'Collection Management'); ?> </a> &gt;&gt;
 				<?php
 			}
 			else{
@@ -61,7 +61,7 @@ if($SYMB_UID){
 				<a href="../../../sitemap.php"> <?php echo (isset($LANG['BREADCRUMB_SITEMAP'])?$LANG['BREADCRUMB_SITEMAP']:'Sitemap'); ?> </a> &gt;&gt;
 				<?php
 			}
-			echo '<a href="salixhandler.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&actiontype=' . htmlspecialchars($actionType, HTML_SPECIAL_CHARS_FLAGS) . '&limit=' . htmlspecialchars($limit, HTML_SPECIAL_CHARS_FLAGS) . '">';
+			echo '<a href="salixhandler.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&actiontype=' . htmlspecialchars($actionType, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&limit=' . htmlspecialchars($limit, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 			echo '<b>' . (isset($LANG['SALIX_WRDST_MNGR'])?$LANG['SALIX_WRDST_MNGR']:'SALIX Wordstat Manager') . '</b>';
 			echo '</a>';
 			?>
@@ -69,13 +69,14 @@ if($SYMB_UID){
 
 		<!-- This is inner text! -->
 		<div id="innertext">
+			<h1 class="page-heading screen-reader-only"><?= $LANG['SALIX_WRDST_MNGR']; ?></h1>
 			<?php
 			if($isEditor){
 				$salixHanlder = new SalixUtilities();
 				$salixHanlder->setVerbose($verbose);
 				if($action == 'Build Wordstat Tables'){
 					$salixHanlder->buildWordStats($collid,$actionType,$limit);
-					echo '<div style="margin:15px;"><a href="salixhandler.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&actiontype=' . htmlspecialchars($actionType, HTML_SPECIAL_CHARS_FLAGS) . '&limit=' . htmlspecialchars($limit, HTML_SPECIAL_CHARS_FLAGS) . '">' . (isset($LANG['RETURN'])?$LANG['RETURN']:'Return to Main Menu') . '</a></div>';
+					echo '<div style="margin:15px;"><a href="salixhandler.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&actiontype=' . htmlspecialchars($actionType, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&limit=' . htmlspecialchars($limit, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . (isset($LANG['RETURN'])?$LANG['RETURN']:'Return to Main Menu') . '</a></div>';
 				}
 				else{
 					?>
@@ -88,7 +89,7 @@ if($SYMB_UID){
 								<input id="recentEnter" name="actiontype" type="radio" value="2" /> <label for="recentEnter"> <?php echo (isset($LANG['RECENTLY_ENTERED'])?$LANG['RECENTLY_ENTERED']:'Rebuild with most recently entered occurrences') ?> </label> <br/>
 								<input id="appendLast" name="actiontype" type="radio" value="3" checked /> <label for="appendLast"> <?php echo (isset($LANG['APPEND_LAST_BUILD'])?$LANG['APPEND_LAST_BUILD']:'Append using occurrences entered since last build') ?> (<?php echo $salixHanlder->getLastBuildTimestamp(); ?>) </label> <br/><br/>
 								<label for="limit"> <?php echo (isset($LANG['LIMIT_TO'])?$LANG['LIMIT_TO']:'Limit to') ?> 
-									<span class="skip-link"> <?php echo (isset($LANG['UNIQUE_VALS'])?$LANG['UNIQUE_VALS']:'unique values per column') ?> </span> 
+									<span class="screen-reader-only"> <?php echo (isset($LANG['UNIQUE_VALS'])?$LANG['UNIQUE_VALS']:'unique values per column') ?> </span> 
 								</label> 
 								<input id="limit" name="limit" type="text" value="100000" /> 
 								<?php echo (isset($LANG['UNIQUE_VALS'])?$LANG['UNIQUE_VALS']:'unique values per column') ?>

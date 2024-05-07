@@ -6,7 +6,7 @@ Translated by: Google Translate
 Date Translated: 2024/02/12
 ------------------
 */
-$LANG['SAMPLE_SEARCH'] = 'Búsqueda de Muestra';
+$LANG['SAMPLE_SEARCH'] = 'Búsqueda de Registros';
 $LANG['TAXONOMY'] = 'Taxonomía';
 $LANG['TAXON'] = 'Taxón';
 $LANG['TYPE_CHAR_FOR_SUGGESTIONS'] = 'Escriba al menos 4 caracteres para sugerencias rápidas. Separe varios con comas.';

@@ -26,9 +26,9 @@ $childrenArr = $taxonEditorObj->getChildren();
 			if($childrenArr){
 				foreach($childrenArr as $childTid => $childArr){
 					echo '<div style="margin:3px 10px;">';
-					echo '<a href="taxoneditor.php?tid=' . htmlspecialchars($childTid, HTML_SPECIAL_CHARS_FLAGS) . '"><i>' . htmlspecialchars($childArr['sciname'], HTML_SPECIAL_CHARS_FLAGS) . '</i> ' . htmlspecialchars($childArr['author'], HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+					echo '<a href="taxoneditor.php?tid=' . htmlspecialchars($childTid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><i>' . htmlspecialchars($childArr['sciname'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</i> ' . htmlspecialchars($childArr['author'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 					if($childArr['accTid'] && $childArr['accTid'] != $childTid){
-						echo '<span style="margin-left:10px">&#10140; <a href="taxoneditor.php?tid=' . htmlspecialchars($childArr['accTid'], HTML_SPECIAL_CHARS_FLAGS) . '"><i>' . htmlspecialchars($childArr['accSciname'], HTML_SPECIAL_CHARS_FLAGS) . '</i> ' . htmlspecialchars($childArr['accAuthor'], HTML_SPECIAL_CHARS_FLAGS) . '</a></span>';
+						echo '<span style="margin-left:10px">&#10140; <a href="taxoneditor.php?tid=' . htmlspecialchars($childArr['accTid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><i>' . htmlspecialchars($childArr['accSciname'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</i> ' . htmlspecialchars($childArr['accAuthor'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></span>';
 					}
 					echo '</div>';
 				}

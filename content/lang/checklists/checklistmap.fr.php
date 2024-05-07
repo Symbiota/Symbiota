@@ -10,6 +10,6 @@ $LANG['NO_COORDS'] = 'Votre requête ne contient apparemment aucun enregistremen
 $LANG['MAYBE_RARE'] = 'Il se peut que les échantillons aient un statut rare/menacé qui nécessite que les coordonnées de la localité soient cachées';
 $LANG['FAILED_TO_LOAD'] = 'Échec du chargement des données d\'occurrence';
 $LANG['NO_COORDS_HEADER'] = "Aucune coordonnée";
-$LANG['MAP_SECTION'] = "Section de la carte";
+$LANG['MAP_SECTION'] = "Carte des Bons de";
 
 ?>
