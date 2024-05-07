@@ -755,31 +755,40 @@ class GeographicThesaurus extends Manager {
 		}
 	}
 
-	public function searchGeothesaurus(string $geoterm) {
+	public function searchGeothesaurus(string $geoterm, int|null $geolevel = null, string|null $parent = null): array {
 		$sql = <<<'SQL'
-		SELECT g.geoThesID, g.geoterm, g.geoLevel , g.parentID, g2.geoterm AS parentterm, g2.geoLevel AS parentlevel FROM geographicthesaurus g 
+		SELECT g.geoThesID, g.geoterm, g.geoLevel, g.parentID, g2.geoterm AS parentterm, g2.geoLevel AS parentlevel FROM geographicthesaurus g 
 		LEFT JOIN geographicthesaurus g2 ON g2.geoThesID = g.parentID
 		WHERE g.geoterm LIKE ?
 		SQL;
 
-		$stmt = $this->conn->prepare($sql);
-		$geoterm = "%" . $geoterm . "%";
+		$params = ['%' . $geoterm . '%'];
 
-		$stmt->bind_param("s", $geoterm);
-		$stmt->execute();
-		$geoterms = [];
-		$row = $stmt->get_result();
+		if($geolevel !== null) {
+			$sql .= ' and g.geoLevel = ?';
+			array_push($params, $geolevel);
+		}
 
-		while($row && ($res = $row->fetch_assoc())) {
-			$label = $res["geoterm"] . " (" . $this->getGeoLevelString($res["geoLevel"]) . ")";
+		if($parent !== null) {
+			$sql .= ' and g2.geoterm like ?';
+			array_push($params, '%' . $parent . '%');
+		}
 
-			if($res["parentID"] !== null) {
-				$label .= " child of " . $res["parentterm"] . " (" . $this->getGeoLevelString($res["parentlevel"]) . ")";
+		$result = $this->conn->execute_query($sql, $params);
+
+		$geoterms = $result->fetch_all(MYSQLI_ASSOC);
+		for($i=0; $i < count($geoterms); $i++) {
+			$label = $geoterms[$i]["geoterm"];
+
+			if($geolevel === null) {
+				$label .= " (" . $this->getGeoLevelString($geoterms[$i]["geoLevel"]) . ")";
 			}
 
-			$res["label"] = $label;
+			if($geoterms[$i]["parentID"] !== null) {
+				$label .= " child of " . $geoterms[$i]["parentterm"] . " (" . $this->getGeoLevelString($geoterms[$i]["parentlevel"]) . ")";
+			}
 
-			array_push($geoterms, $res);
+			$geoterms[$i]['label'] = $label;
 		}
 
 		return $geoterms;
@@ -916,6 +925,5 @@ class GeographicThesaurus extends Manager {
 		$rs->free();
 		return $bool;
 	}
-
 }
 ?>
