@@ -403,6 +403,12 @@ ol.mp_list li.mp_highlighted {
   left: -10000px;
 }
 
+.welcome-text {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+}
+
 .page-heading {
   font-size: 3rem;
 }
