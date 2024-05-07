@@ -176,7 +176,7 @@ class TPDescEditorManager extends TPEditorManager{
 	public function updateDescriptionBlock($postArr){
 		$status = false;
 		if(is_numeric($postArr['tdbid'])){
-			$blockFieldArr = array('source' => 's', 'sourceurl' => 's', 'displaylevel' => 'i', 'notes' => 's' );
+			$blockFieldArr = array( 'caption' => 's', 'source' => 's', 'sourceurl' => 's', 'displaylevel' => 'i', 'notes' => 's', 'langid' => 's' );
 			$sqlFrag = '';
 			$paramArr = array();
 			$paramType = '';
@@ -195,8 +195,12 @@ class TPDescEditorManager extends TPEditorManager{
 				if($stmt = $this->conn->prepare($sql)){
 					if($stmt->bind_param($paramType, ...$paramArr)){
 						if($stmt->execute()){
-							if($stmt->affected_rows) $status = true;
-							elseif($stmt->error) $this->errorMessage = $stmt->error;
+							if($stmt->affected_rows >= 0){ 
+								$status = true; 
+							}
+							elseif($stmt->error){
+								 $this->errorMessage = $stmt->error; 
+							}
 							$stmt->close();
 						}
 						else  $this->errorMessage = $stmt->error;
@@ -206,6 +210,7 @@ class TPDescEditorManager extends TPEditorManager{
 				else  $this->errorMessage = $this->conn->error;
 			}
 			// Temp code until total refactor: transfer selected fields to decription profile
+			unset($postArr['caption']);
 			if(isset($postArr['source'])){
 				$postArr['publication'] = $postArr['source'];
 			}

@@ -138,7 +138,7 @@ if(isset($clArray['dynamicProperties']) && $clArray['dynamicProperties']){
 if(!$clid){
 	?>
 	<div style="float:right;">
-		<a href="#" onclick="toggle('checklistDiv')" title="<?php echo htmlspecialchars($LANG['CREATE_CHECKLIST'], HTML_SPECIAL_CHARS_FLAGS); ?>"><img src="../images/add.png" style="width:1.5em;" /></a>
+		<a href="#" onclick="toggle('checklistDiv')" title="<?php echo htmlspecialchars($LANG['CREATE_CHECKLIST'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><img src="../images/add.png" style="width:1.5em;" /></a>
 	</div>
 	<?php
 }
@@ -369,11 +369,11 @@ if(!$clid){
 			foreach($clArr as $kClid => $vName){
 				?>
 				<li>
-					<a href="../checklists/checklist.php?clid=<?php echo htmlspecialchars($kClid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=0">
-						<?php echo htmlspecialchars($vName, HTML_SPECIAL_CHARS_FLAGS); ?>
+					<a href="../checklists/checklist.php?clid=<?php echo htmlspecialchars($kClid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=0">
+						<?php echo htmlspecialchars($vName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>
 					</a>
-					<a href="../checklists/checklistadmin.php?clid=<?php echo htmlspecialchars($kClid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">
-						<img src="../images/edit.png" style="width:1em;border:0px;" title="<?php echo htmlspecialchars($LANG['EDITCHECKLIST'], HTML_SPECIAL_CHARS_FLAGS);?>" />
+					<a href="../checklists/checklistadmin.php?clid=<?php echo htmlspecialchars($kClid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1">
+						<img src="../images/edit.png" style="width:1em;border:0px;" title="<?php echo htmlspecialchars($LANG['EDITCHECKLIST'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?>" />
 					</a>
 				</li>
 				<?php
@@ -387,7 +387,7 @@ if(!$clid){
 			<div style="margin:10px;">
 				<div><?php echo $LANG['NO_CHECKLISTS']; ?></div>
 				<div style="margin-top:5px">
-					<a href="#" onclick="toggle('checklistDiv')"><?php echo htmlspecialchars($LANG['CLICK_TO_CREATE'], HTML_SPECIAL_CHARS_FLAGS);?></a>
+					<a href="#" onclick="toggle('checklistDiv')"><?php echo htmlspecialchars($LANG['CLICK_TO_CREATE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?></a>
 				</div>
 			</div>
 			<?php
@@ -402,11 +402,11 @@ if(!$clid){
 			foreach($projArr as $pid => $projName){
 				?>
 				<li>
-					<a href="../projects/index.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=0">
-						<?php echo htmlspecialchars($projName, HTML_SPECIAL_CHARS_FLAGS); ?>
+					<a href="../projects/index.php?pid=<?php echo htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=0">
+						<?php echo htmlspecialchars($projName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>
 					</a>
-					<a href="../projects/index.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">
-						<img src="../images/edit.png" style="width:1em;border:0px;" title="<?php echo htmlspecialchars($LANG['EDIT_PROJECT'], HTML_SPECIAL_CHARS_FLAGS);?>" />
+					<a href="../projects/index.php?pid=<?php echo htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1">
+						<img src="../images/edit.png" style="width:1em;border:0px;" title="<?php echo htmlspecialchars($LANG['EDIT_PROJECT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?>" />
 					</a>
 				</li>
 				<?php

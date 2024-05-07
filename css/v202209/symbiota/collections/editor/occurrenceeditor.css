@@ -15,10 +15,6 @@ body{
 	width: 900px;
 }
 
-#querySymbolDiv{
-	float:right;
-}
-
 #navDiv{
 	clear: both;	
 }

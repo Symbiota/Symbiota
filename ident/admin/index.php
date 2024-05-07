@@ -24,7 +24,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-	<title> <?php echo (isset($LANG['CHAR_ADMIN']) ? $LANG['CHAR_ADMIN'] : 'Character Admin'); ?> </title>
+	<title> <?php echo $LANG['CHAR_ADMIN']; ?> </title>
 	<?php
 
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -63,6 +63,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 	</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
+		<h1 class="page-heading"><?= $LANG['CHAR_ADMIN']; ?></h1>
 		<?php
 		if($isEditor){
 			?>
@@ -143,7 +144,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 												$charList = $charArr[$hid];
 												foreach($charList as $cid => $charName){
 													if ($charName)
-														echo '<li><a href="chardetails.php?cid=' . htmlspecialchars($cid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($charName, HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
+														echo '<li><a href="chardetails.php?cid=' . htmlspecialchars($cid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($charName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
 												}
 												?>
 											</ul>
@@ -161,7 +162,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 										<ul>
 											<?php
 											foreach($noHeaderArr as $cid => $charName){
-												echo '<li><a href="chardetails.php?cid=' . htmlspecialchars($cid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($charName, HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
+												echo '<li><a href="chardetails.php?cid=' . htmlspecialchars($cid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($charName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
 											}
 											?>
 										</ul>

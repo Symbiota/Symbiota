@@ -61,7 +61,7 @@ if($isEditor){
 		?>
 		<div class="navpath">
 			<a href="../../index.php">Home</a> &gt;&gt;
-			<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">Collection Management</a> &gt;&gt;
+			<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1">Collection Management</a> &gt;&gt;
 			<b>Attribute Mining Tool</b>
 		</div>
 		<?php
@@ -73,7 +73,7 @@ if($isEditor){
 		?>
 		<!-- This is inner text! -->
 		<div id="innertext">
-
+			<h1 class="page-heading screen-reader-only">Trait Management Tools</h1>
 		</div>
 	</body>
 </html>

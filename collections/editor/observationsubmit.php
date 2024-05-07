@@ -7,11 +7,11 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/observationsubm
 header("Content-Type: text/html; charset=".$CHARSET);
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/observationsubmit.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$action = array_key_exists("action",$_POST)?$_POST["action"]:"";
-$collId  = array_key_exists("collid",$_REQUEST)?$_REQUEST["collid"]:0;
-$clid  = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:0;
-$recordedBy = array_key_exists("recordedby",$_POST)?$_POST["recordedby"]:0;
-$uncertaintyInMeters = array_key_exists("coordinateuncertaintyinmeters",$_POST)?$_POST["coordinateuncertaintyinmeters"]:50;
+$action = array_key_exists("action",$_POST) ? $_POST["action"] : "";
+$collId  = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$clid  = array_key_exists("clid",$_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$recordedBy = array_key_exists("recordedby",$_POST) ? $_POST["recordedby"] : 0;
+$uncertaintyInMeters = array_key_exists("coordinateuncertaintyinmeters",$_POST) ? filter_var($_POST["coordinateuncertaintyinmeters"], FILTER_SANITIZE_NUMBER_INT) : 50;
 
 //Sanitation
 if(!is_numeric($collId)) $collId = 0;
@@ -37,7 +37,7 @@ if($collMap){
 		$isEditor = 1;
 	}
 	if(($isEditor && $action == (isset($LANG['SUBMIT_OBS']) ? $LANG['SUBMIT_OBS'] : 'Submit Observation')) || $isEditor && $action == "Submit"){
-		$occid = $obsManager->addObservation($_POST);
+		$occid = htmlspecialchars($obsManager->addObservation($_POST), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 	}
 	if(!$recordedBy) $recordedBy = $obsManager->getUserName();
 }
@@ -91,7 +91,7 @@ $clArr = $obsManager->getChecklists();
 	echo '</div>';
 	?>
 	<div id="innertext">
-		<h1><?php echo $collMap['collectionname']; ?></h1>
+		<h1 class="page-heading"><?php echo $collMap['collectionname'] ?? $LANG['NO_COLLECTION']; ?></h1>
 		<?php
 		if($action || (isset($_SERVER['REQUEST_METHOD']) && strtolower($_SERVER['REQUEST_METHOD']) == 'post' && empty($_FILES) && empty($_POST))){
 			?>
@@ -104,7 +104,7 @@ $clArr = $obsManager->getChecklists();
 						<?php echo $LANG['SUCCESS_IMAGE']; ?>
 					</div>
 					<div style="font:weight;font-size:120%;margin-top:10px;">
-						<?php echo $LANG['OPEN']; ?> <a href="../individual/index.php?occid=<?php echo htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars($LANG['OCC_DET_VIEW'], HTML_SPECIAL_CHARS_FLAGS); ?></a> <?php echo htmlspecialchars($LANG['TO_SEE_NEW'], HTML_SPECIAL_CHARS_FLAGS); ?>
+						<?php echo $LANG['OPEN']; ?> <a href="../individual/index.php?occid=<?php echo htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank" rel="noopener"><?php echo htmlspecialchars($LANG['OCC_DET_VIEW'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> <?php echo htmlspecialchars($LANG['TO_SEE_NEW'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>
 					</div>
 					<?php
 					if($clid){
@@ -112,7 +112,7 @@ $clArr = $obsManager->getChecklists();
 						if(isset($clArr[$clid])) $checklistName = $clArr[$clid];
 						?>
 						<div style="font:weight;font-size:120%;margin-top:10px;">
-							<?php echo $LANG['GO_TO']; ?> <a href="../../checklists/checklist.php?clid=<?php echo htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank"><?php echo htmlspecialchars($checklistName, HTML_SPECIAL_CHARS_FLAGS); ?></a> <?php echo htmlspecialchars($LANG['CHECKLIST'], HTML_SPECIAL_CHARS_FLAGS); ?>
+							<?php echo $LANG['GO_TO']; ?> <a href="../../checklists/checklist.php?clid=<?php echo htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank" rel="noopener"><?php echo htmlspecialchars($checklistName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> <?php echo htmlspecialchars($LANG['CHECKLIST'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>
 						</div>
 						<?php
 					}
@@ -197,12 +197,12 @@ $clArr = $obsManager->getChecklists();
 								</div>
 								<div>
 									<label for="scientificnameauthorship"><?php echo $LANG['AUTHOR']; ?>:</label>
-									<input type="text" name="scientificnameauthorship" id="scientificnameauthorship" maxlength="100" tabindex="-1" value="" />
+									<input type="text" name="scientificnameauthorship" id="scientificnameauthorship" maxlength="100" value="" />
 								</div>
 							</section>
 							<div style="clear:both;" class="flex-form">
 								<label for="family"><?php echo $LANG['FAMILY']; ?>:</label>
-								<input type="text" name="family" id="family" size="30" maxlength="50" style="" tabindex="-1" value="" />
+								<input type="text" name="family" id="family" size="30" maxlength="50" value="" />
 							</div>
 						</div>
 						<div style="clear:both;" class="flex-form">
@@ -282,7 +282,7 @@ $clArr = $obsManager->getChecklists();
 								<input type="text" id="decimallongitude" name="decimallongitude" maxlength="13" style="width:88px;" value="" onchange="verifyLngValue(this.form)" title="Decimal Format (eg -112.5436)" required />
 							</div>
 							<div style="margin-top:10px; margin-left:3px; margin-bottom:10px" >
-								<a onclick="openMappingAid('obsform','decimallatitude','decimallongitude');return false;">
+								<a tabindex="0" onclick="openMappingAid('obsform','decimallatitude','decimallongitude');return false;">
 									<img src="../../images/world.png" style="width:1.3em;" title="Coordinate Map Aid" alt="<?php echo (isset($LANG['IMG_GLOBE']) ? $LANG['IMG_GLOBE'] : 'A small image of the globe'); ?>" />
 								</a>
 								<button id="dmsButton" type="button" onclick="toggle('dmsdiv');"><?php echo $LANG['DMS']; ?></button>

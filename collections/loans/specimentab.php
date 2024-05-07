@@ -260,7 +260,7 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 				<li><a href="#" onclick="displayBatchPanel(true,'speccheckin');return false;"><?php echo $LANG['CHECKIN_VIA_CATNUM']; ?></a></li>
 				<li><a href="#" onclick="displayBarcodePanel(true,'speccheckin');return false;"><?php echo $LANG['CHECKIN_VIA_BARCODE']; ?></a></li>
 				<li><a href="#" onclick="displayNewDetPanel(true);return false;"><?php echo $LANG['ADD_DETS']; ?></a></li>
-				<li><a href="outgoing.php?formsubmit=exportSpecimenList&loanid=<?php echo htmlspecialchars($loanId, HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo $LANG['EXPORT_FULL_LIST']; ?></a></li>
+				<li><a href="outgoing.php?formsubmit=exportSpecimenList&loanid=<?php echo htmlspecialchars($loanId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo $LANG['EXPORT_FULL_LIST']; ?></a></li>
 				<li><a href="#" onclick="displayBatchActionPanel(true);return false;"><?php echo $LANG['DISPLAY_BATCH_FORM']; ?></a></li>
 			</ul>
 		</fieldset>
