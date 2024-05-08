@@ -132,6 +132,7 @@ $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
 		}
 		?>
 		#editsppon { display: none; color:green; font-size: 70%; font-weight:bold; padding-bottom: 5px; position: relative; top: -4px; }
+		.moredetails{ clear: both }
 	</style>
 </head>
 <body>
