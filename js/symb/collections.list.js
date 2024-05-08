@@ -3,7 +3,7 @@ function copyUrl(){
 	$("body").append($temp);
 	var activeLink = window.location.href;
 	if(activeLink.substring(activeLink.length - 3) == "php"){
-		activeLink = activeLink + "?" + sessionStorage.querystr;
+		activeLink = activeLink + "?" + encodedQueryStr(sessionStorage.querystr);
 	}
 	$temp.val(activeLink).select();
 	document.execCommand("copy");
@@ -55,8 +55,20 @@ function openIndPU(occId,clid){
 }
 
 function openMapPU(){
-	var url = 'map/googlemap.php?'+sessionStorage.querystr;
+	var url = 'map/googlemap.php?' + encodedQueryStr(sessionStorage.querystr);
 	window.open(url,'gmap','toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=1,resizable=1,width=1150,height=900,left=20,top=20');
+}
+
+function encodedQueryStr(querystr){
+	let encodedQueryStr = "";
+	querystr.split("&").forEach(function(part) {
+		let eq = part.indexOf("=");
+		let key = eq > -1 ? part.substr(0, eq) : part;
+		let val = eq > -1 ? encodeURIComponent(part.substr(eq + 1)) : "";
+		if(encodedQueryStr != "") encodedQueryStr = encodedQueryStr + "&";
+		encodedQueryStr = encodedQueryStr + key + "=" + val;
+	});
+	return encodedQueryStr;
 }
 
 function targetPopup(f) {
