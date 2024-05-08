@@ -957,7 +957,7 @@ else{
 											</div>
 											<div  id="idrefdiv">
 												<div id="identificationReferencesDiv" class="field-div">
-													<?php echo $LANG['ID_REFERENCE']; ?>:
+													<?php echo $LANG['ID_REFERENCES']; ?>:
 													<a href="#" onclick="return dwcDoc('identificationReferences')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 													<input type="text" name="identificationreferences" value="<?php echo array_key_exists('identificationreferences',$occArr)?$occArr['identificationreferences']:''; ?>" onchange="fieldChanged('identificationreferences');" />
 												</div>
