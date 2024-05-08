@@ -58,9 +58,10 @@ if($action == 'batchAssignTag'){
 	include_once($SERVER_ROOT . '/includes/head.php');
 	include_once($SERVER_ROOT . '/includes/googleanalytics.php');
 	?>
+
+	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<link href="<?= $CSS_BASE_PATH; ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
 	<link href="<?= $CSS_BASE_PATH; ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />
-	<link href="<?= $CSS_BASE_PATH; ?>/jquery-ui.min.css?ver=1" type="text/css" rel="Stylesheet" />
 	<style>
 		fieldset{ padding: 15px }
 		fieldset legend{ font-weight:bold }
