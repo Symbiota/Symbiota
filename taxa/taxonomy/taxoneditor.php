@@ -192,7 +192,7 @@ if($isEditor){
 							<div class="editfield" style="display:none;">
 								<select name="unitind2">
 									<option value=""></option>
-									<option value="&#215;" <?php echo (ord($unitInd2)==195 || strtolower($unitInd2) == 'x'?'selected':''); ?>>&#215;</option>
+									<option value="&#215;" <?php echo (ord($unitInd2 ?? '') == 195 || strtolower($unitInd2 ?? '') == 'x'?'selected':''); ?>>&#215;</option>
 								</select>
 								<input type="text" id="unitname2" name="unitname2" style="width:300px;border-style:inset;" value="<?php echo $taxonEditorObj->getUnitName2(); ?>" />
 							</div>
