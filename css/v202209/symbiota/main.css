@@ -233,8 +233,14 @@ hr {
   background-color: var(--darkest-color);
 }
 
+.button-danger {
+  background-color: var(--danger-color, var(--darkest-color));
+}
+
 .button-primary:hover,
-.button-secondary:hover {
+.button-secondary:hover 
+.button-danger:hover 
+{
   background-color: var(--medium-color);
 }
 
