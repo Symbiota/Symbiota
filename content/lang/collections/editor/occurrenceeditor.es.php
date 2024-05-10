@@ -66,6 +66,7 @@ $LANG['LIMITED_EDITING'] = 'Derechos de edición limitados: use la pestaña de d
 $LANG['NEED_FULL'] = 'Nota: Se necesitan permisos completos de edición para editar una identificación';
 $LANG['IDENTIFICATION_CONFIDENCE'] = 'ID Confidence';
 $LANG['UNDEFINED'] = 'No Identificado';
+$LANG['TOGG_ADD_FIELDS'] = "Alternar Campo(s) Adicional(es)";
 ///$LANG['ABSOLUTE'] = 'Absoluta';
 ///$LANG['V_HIGH'] = 'Muy Alta';
 ///$LANG['HIGH'] = 'Alta';
