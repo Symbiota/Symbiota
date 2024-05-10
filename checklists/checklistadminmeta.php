@@ -262,7 +262,7 @@ if(!$clid){
 						<?php echo $LANG['POLYGON_NOT_DEFINED']; ?>
 					</span>
 					<span style="margin:10px;"><a href="#" onclick="openMappingPolyAid();return false;" title="<?php echo $LANG['CREATE_EDIT_POLYGON']; ?>"><img src="../images/world.png" style="width:1em;" /></a></span>
-					<input type="hidden" id="footprintwkt" name="footprintwkt" value="" />
+					<input type="hidden" id="footprintwkt" name="footprintwkt" value="<?= $clArray['footprintwkt']?>" />
 				</fieldset>
 			</div>
 			<div style="clear:both;margin-top:5px;">

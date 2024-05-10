@@ -615,7 +615,7 @@ class ChecklistAdmin extends Manager{
 
 	//Misc support functions
 	public function cleanOutArray($inputArray){
-		$skip = array('defaultsettings', 'dynamicsql', 'footprintWkt');
+		$skip = array('defaultsettings', 'dynamicsql', 'footprintwkt');
 		if(is_array($inputArray)){
 			foreach($inputArray as $key => $value){
 				if(is_array($value)){
