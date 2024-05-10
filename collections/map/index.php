@@ -1926,7 +1926,7 @@ Record Limit:
 											</div>
 										</div>
 										<div id="deleteshapediv" style="margin-top:5px;display:<?php echo (($mapManager->getSearchTerm('pointlat') || $mapManager->getSearchTerm('upperlat') || $mapManager->getSearchTerm('polycoords'))?'block':'none'); ?>;">
-											<button data-role="none" type="button" onclick="deleteMapShape()"><?php echo (isset($LANG['DELETE_SHAPE'])?$LANG['DELETE_SHAPE']:'Delete Selected Shape'); ?></button>
+											<button class="button-danger" data-role="none" type="button" onclick="deleteMapShape()"><?php echo (isset($LANG['DELETE_SHAPE'])?$LANG['DELETE_SHAPE']:'Delete Selected Shape'); ?></button>
 										</div>
 									</div>
 									<div style="margin:5 0 5 0;"><hr /></div>
