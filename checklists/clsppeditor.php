@@ -274,7 +274,7 @@ $clArray = $vManager->getChecklistData();
 								<input type="hidden" name='clid' value="<?php echo $vManager->getClid(); ?>" />
 								<input type="hidden" name='cltype' value="<?php echo $clArray['cltype']; ?>" />
 								<input type="hidden" name='locality' value="<?php echo $clArray['locality']; ?>" />
-								<button type="submit" name="action" value="deleteTaxon"><?php echo $LANG['DELETE_TAXON']; ?></button>
+								<button class="button-danger" type="submit" name="action" value="deleteTaxon"><?php echo $LANG['DELETE_TAXON']; ?></button>
 							</fieldset>
 						</form>
 					</div>
