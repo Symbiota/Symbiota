@@ -119,6 +119,8 @@ function listGeoUnits($arr) {
          toggle("#editButton-div", "block");
          toggle("#edit-legend");
          toggle("#unitDel-div", "block");
+		 let map = document.getElementById("map_canvas");
+		 if(map) map.style.display = map.style.display === 'none'?'block': 'none';
       }
 
       function toggle (target, defaultDisplay = "inline"){
@@ -182,8 +184,9 @@ function listGeoUnits($arr) {
    <body onload="init()">
       <div 
          id="service-container" 
-         data-geo-unit="<?php echo htmlspecialchars(json_encode($geoUnit))?>"
-      />
+		 data-geo-unit='<?php echo htmlspecialchars(json_encode($geoUnit))?>'
+		>
+      </div>
       <?php
       include($SERVER_ROOT.'/includes/header.php');
       ?>
@@ -431,7 +434,7 @@ function listGeoUnits($arr) {
                      <span class="editTerm">
                         <?= $geoUnit['geoJSON'] !== null? $LANG['YES_POLYGON']: $LANG['NO_POLYGON'] ?>
                      </span>
-                     <div class="editTerm" id="map_canvas" style="margin: 1rem 0; width:100%; height:20rem"></div>
+                     <div id="map_canvas" style="margin: 1rem 0; width:100%; height:20rem"></div>
                      <a class="editFormElem" onclick="openCoordAid()">
                         <img src='../images/world.png' style='width:10px;border:0' alt='<?= $LANG['IMG_OF_GLOBE'] ?>' /> <?= $LANG['EDIT_POLYGON']?> 
                      </a>
@@ -454,7 +457,7 @@ function listGeoUnits($arr) {
                      <input name="parentID" type="hidden" value="<?= $geoUnit['parentID']; ?>" />
                      <input name="delGeoThesID" type="hidden"  value="<?= $geoThesID; ?>" />
                      <!-- We need to decide if we want to allow folks to delete a term and all their children, or only can delete if no children or synonym exists. I'm thinking the later. -->
-                     <button type="submit" name="submitaction" value="deleteGeoUnits" onclick="return confirm(<?= $LANG['CONFIRM_DELETE'] ?>)" <?= ($geoUnit['childCnt'] ? 'disabled' : ''); ?>> <?= $LANG['DEL_GEO_UNIT'] ?> </button>
+                     <button class="button-danger" type="submit" name="submitaction" value="deleteGeoUnits" onclick="return confirm(<?= $LANG['CONFIRM_DELETE'] ?>)" <?= ($geoUnit['childCnt'] ? 'disabled' : ''); ?>> <?= $LANG['DEL_GEO_UNIT'] ?> </button>
                   </div>
                   <?php
                   if($geoUnit['childCnt']) echo '<div>* ' . $LANG['CANT_DELETE'] . '</div>';
