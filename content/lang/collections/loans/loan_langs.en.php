@@ -50,7 +50,6 @@ $LANG['ATTACH_DESCRIPTION'] = 'Supported file types include PDF, Word, Excel, im
 									PDFs, images, and text files are preferred, since they will display in the browser.';
 $LANG['RETURN_LOAN_INDEX'] = 'Return to Loan Index Page';
 $LANG['SURE_DELETE_EX'] = 'Are you sure you want to permanently delete this exchange?';
-$LANG['DEL_EXCHANGE'] = 'Delete Exchange';
 $LANG['NOT_AUTHORIZED'] = 'You are not authorized to add occurrence records';
 $LANG['UNKNOWN_ERROR'] = 'ERROR: unknown error, please contact system administrator';
 
@@ -61,6 +60,7 @@ $LANG['SEL_INST'] = 'Select Institution';
 $LANG['ADD_NEW_INST'] = 'Add a New Institution';
 $LANG['ADD_A_NEW_INST'] = 'Include a New Institution';
 $LANG['CREATE_EXCHANGE'] = 'Create Exchange';
+$LANG['DELETE_EXCHANGE'] = 'Delete Exchange';
 $LANG['TRANS_BY_INST'] = 'Transaction Records by Institution';
 $LANG['OUTGOING_EX_SENT'] = 'Outgoing exchange; Sent ';
 $LANG['INCLUDING'] = 'including';
