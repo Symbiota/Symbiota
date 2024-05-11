@@ -318,7 +318,7 @@ if(!$clid){
 						<?php
 						// Activate Identification key: 0 = false, 1 = true
 						$activateKey = $KEY_MOD_IS_ACTIVE;
-						if(array_key_exists('activatekey', $defaultArr)) $activateKey = $defaultArr["activatekey"];
+						if(array_key_exists('activatekey', $defaultArr??[])) $activateKey = $defaultArr["activatekey"];
 						?>
 						<input name='activatekey' type='checkbox' value='1' <?php echo ($activateKey?"checked":""); ?> />
 						<?php echo $LANG['ACTIVATEKEY']; ?>
