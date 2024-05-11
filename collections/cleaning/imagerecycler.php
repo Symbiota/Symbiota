@@ -75,7 +75,7 @@ if($isEditor){
 					</div>
 					<div style="margin:20px;">
 						<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-						<button type="submit" name="submitaction" value="remove_images"><?php echo $LANG['BULK_REMOVE_IMAGE_FILES'] ?></button>
+						<button class="button-danger" type="submit" name="submitaction" value="remove_images"><?php echo $LANG['BULK_REMOVE_IMAGE_FILES'] ?></button>
 					</div>
 				</fieldset>
 			</form>
