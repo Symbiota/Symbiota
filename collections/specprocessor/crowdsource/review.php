@@ -284,7 +284,7 @@ $projArr = $csManager->getProjectDetails();
 										</div>
 										<div id="showAddDiv" style="margin:10px"><a href="#" onclick="showAdditionalActions();return false;"><?php echo $LANG['SHOW_ADD_ACTIONS']; ?></a></div>
 										<div id="addActionsDiv" style="display:none;margin:20px 10px;">
-											<div><button name="action" type="submit" value="resetToNotReviewed" onclick="return confirm('<?php echo $LANG['SURE_CHANGE_STATUS']; ?>')"><?php echo $LANG['REMOVE_POINTS_CHANGE_NR']; ?></button></div>
+											<div><button class="button-danger" name="action" type="submit" value="resetToNotReviewed" onclick="return confirm('<?php echo $LANG['SURE_CHANGE_STATUS']; ?>')"><?php echo $LANG['REMOVE_POINTS_CHANGE_NR']; ?></button></div>
 											<div style="margin-top:5px"><button name="action" type="submit" value="resetToOpen" onclick="return confirm('<?php echo $LANG['SURE_RESET_STATUS']; ?>')"><?php echo $LANG['MOVE_BACK_QUEUE']; ?></button></div>
 										</div>
 										<?php

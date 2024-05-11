@@ -518,7 +518,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 											<input name="sppriddel" type="hidden" value="<?php echo $spprid; ?>" />
 											<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 											<input name="tabindex" type="hidden" value="0" />
-											<button name="submitaction" type="submit" value="Delete Profile" ><?php echo $LANG['DELETE_PROF']; ?></button>
+											<button class="button-danger" name="submitaction" type="submit" value="Delete Profile" ><?php echo $LANG['DELETE_PROF']; ?></button>
 										</div>
 									</fieldset>
 								</form>
