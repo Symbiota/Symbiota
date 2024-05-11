@@ -154,7 +154,7 @@ if($isEditor){
 										<input type='hidden' name='tdbid' value='<?php echo $tdbid;?>' />
 										<input type='hidden' name='tid' value='<?php echo $descEditor->getTid();?>' />
 										<input type="hidden" name="tabindex" value="4" />
-										<button name='action' type="submit" value='Delete Description Block'><?= $LANG['DEL_DESC_BLOCK'] ?></button> <?= $LANG['INC_STATEMENTS_BELOW'] ?>
+										<button class="button-danger" name='action' type="submit" value='Delete Description Block'><?= $LANG['DEL_DESC_BLOCK'] ?></button> <?= $LANG['INC_STATEMENTS_BELOW'] ?>
 									</form>
 								</div>
 							</fieldset>
