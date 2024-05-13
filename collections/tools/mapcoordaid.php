@@ -283,7 +283,6 @@ else{
 		}
 		let formShape = loadShape("<?php echo $mapMode?>");
 		let mapModeStrict = <?php echo $mapModeStrict? "true": "false"?>;
-console.log(mapModeStrict);
 		function leafletInit() {
 			const MapOptions = {
 				center: [<?php echo $latCenter?>, <?php echo $lngCenter?>],
