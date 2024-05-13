@@ -86,27 +86,6 @@ span[class="link"]:hover {
   color: #c0c0c0;
 }
 
-button {
-  font-family: Verdana, Arial, sans-serif;
-  font-size: 1em;
-  margin: 2px;
-  padding: 3px 8px;
-  cursor: pointer;
-  border-bottom-right-radius: 4px;
-  border-bottom-left-radius: 4px;
-  border-top-right-radius: 4px;
-  border-top-left-radius: 4px;
-}
-
-button:hover {
-  background: #e4f2fb;
-}
-
-button.icon-button {
-  margin: 5px;
-  padding: 5px;
-}
-
 /* /collections/ folder pages */
 
 .collectiontable {
@@ -157,21 +136,6 @@ button.icon-button {
 
 #omlisttable img {
   border: medium double #990000;
-}
-
-/*Download buttons on the search display pages*/
-div.button {
-  background-color: #ffffd7;
-  padding: 3px;
-  border: 1px outset #a0a0a0;
-}
-
-div.button img {
-  border: 0px;
-}
-
-div.button:hover {
-  border: 1px inset #a0a0a0;
 }
 
 /* Species list component */
@@ -411,4 +375,107 @@ ol.mp_list li.mp_highlighted {
 
 .page-heading {
   font-size: 3rem;
+}
+
+/* Base Button CSS
+========================================================================== */
+
+button {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 1em;
+  margin: 2px;
+  padding: 3px 8px;
+  cursor: pointer;
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;
+}
+
+button:hover {
+  background: #e4f2fb;
+}
+
+button.icon-button {
+  margin: 5px;
+  padding: 5px;
+}
+
+/*Download buttons on the search display pages*/
+div.button {
+  background-color: #ffffd7;
+  padding: 3px;
+  border: 1px outset #a0a0a0;
+}
+
+div.button img {
+  border: 0px;
+}
+
+div.button:hover {
+  border: 1px inset #a0a0a0;
+}
+
+.button {
+  border: none;
+  border-radius: 5px;
+  padding: 0.6rem 1rem;
+  font-family: var(--heading-font-family);
+  letter-spacing: 1px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  width: fit-content;
+}
+
+.button > a {
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.button-primary {
+  background-color: var(--darkest-color);
+}
+
+.button-danger {
+  background-color: var(--danger-color, var(--darkest-color));
+}
+
+.button-primary:hover,
+.button-secondary:hover,
+.button-danger:hover 
+{
+  background-color: var(--medium-color);
+}
+
+.button-primary:disabled,
+.button-secondary:disabled,
+.button-danger:disabled
+{
+	opacity: 50%;
+	pointer-events: none;
+}
+
+.button-primary:hover > a,
+.button-secondary:hover > a {
+  color: var(--light-color);
+}
+
+.button-primary > a {
+  color: var(--light-color);
+}
+
+.button-secondary {
+  background-color: var(--bright-color);
+}
+
+.button-secondary > a {
+  color: var(--darkest-color);
+}
+
+.button-tertiary {
+  background-color: none;
+  border: 1px solid var(--bright-color);
+  padding: 0.5rem 0.9rem;
 }
