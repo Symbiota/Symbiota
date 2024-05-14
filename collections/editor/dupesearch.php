@@ -171,7 +171,7 @@ if(!$IS_ADMIN){
 				/*
 				?>
 				<div id="tableview" style="display:none;">
-					<table class="styledtable" style="font-family:Arial;font-size:12px;">
+					<table class="styledtable" style="font-size:12px;">
 						<tr>
 							<th>&nbsp;</th>
 							<th>&nbsp;</th>

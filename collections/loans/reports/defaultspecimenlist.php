@@ -88,7 +88,6 @@ else{
 			include_once($SERVER_ROOT.'/includes/head.php');
 			?>
 			<style type="text/css">
-				body {font-family:arial,sans-serif;}
 				p.printbreak {page-break-after:always;}
 				.header {width:100%;text-align:left;font:14pt arial,sans-serif;}
 				.loaninfo {width:100%;text-align:left;font:11pt arial,sans-serif;}

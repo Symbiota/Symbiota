@@ -43,7 +43,7 @@ if($collId){
 			<h1 class="page-heading">Year Statistics</h1>
 			<fieldset id="yearstatsbox" style="clear:both;margin-top:15px;width:97%;">
 				<legend><b>Month Totals</b></legend>
-				<table class="styledtable" style="font-family:Arial;font-size:12px;width:98%;">
+				<table class="styledtable" style="font-size:12px;width:98%;">
 					<tr>
 						<th style="text-align:center;">Institution</th>
 						<th style="text-align:center;">Object</th>

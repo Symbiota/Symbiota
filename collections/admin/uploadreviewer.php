@@ -105,7 +105,7 @@ if($SYMB_UID){
 					'datelastmodified' => 'dateLastModified','processingstatus' => 'processingStatus','recordenteredby' => 'recordEnteredBy',
 					'basisofrecord' => 'basisOfRecord','occid' => 'occid (Primary Key)','dbpk'=>'dbpk (Source Identifier)');
 				?>
-				<table class="styledtable" style="font-family:Arial;font-size:12px;">
+				<table class="styledtable" style="font-size:12px;">
 					<tr>
 						<?php
 						foreach($headerArr as $k => $v){

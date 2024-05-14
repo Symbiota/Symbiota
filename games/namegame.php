@@ -27,7 +27,7 @@ $imgloc = "../images/games/namegame/";
 	<style>
 		.lettertable{border:1px solid #000000;border-spacing:3px;}
 		.tableplain{border:1px}
-		#charactertable td{margin-left: auto;margin-right: auto;vertical-align: middle;border:1px solid #000000;width:50px;cursor:pointer;font-family:times new roman;font-size:2.5rem;font-weight:bold;color:#000000}
+		#charactertable td{margin-left: auto;margin-right: auto;vertical-align: middle;border:1px solid #000000;width:50px;cursor:pointer;font-size:2.5rem;font-weight:bold;color:#000000}
 		.buttonover{border:5px outset gray;cursor:pointer;font-weight:normal;font-weight:bold}
 		.buttonout{border:5px outset #CCCC99;font-weight:normal}
 		.buttondown{border:5px inset gray;cursor:pointer;font-weight:bold}

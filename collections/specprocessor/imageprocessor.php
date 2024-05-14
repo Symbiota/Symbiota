@@ -226,7 +226,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 							<fieldset>
 								<legend><b><?php echo $LANG['IMG_FILE_UPLOAD_MAP']; ?></b></legend>
 								<div style="margin:15px;">
-									<table class="styledtable" style="width:600px;font-family:Arial;font-size:12px;">
+									<table class="styledtable" style="width:600px;font-size:12px;">
 										<tr><th><?php echo $LANG['SOURCE_FIELD']; ?></th><th><?php echo $LANG['TARGET_FIELD']; ?></th></tr>
 										<?php
 										$translationMap = array('catalognumber' => 'catalognumber', 'othercatalognumbers' => 'othercatalognumbers', 'othercatalognumber' => 'othercatalognumbers', 'url' => 'url',

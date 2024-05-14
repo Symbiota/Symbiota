@@ -345,7 +345,7 @@ if($isEditor){
 				if($specList){
 					?>
 					<div id="specdiv">
-						<table class="styledtable" style="font-family:Arial;font-size:12px;">
+						<table class="styledtable" style="font-size:12px;">
 							<tr>
 								<th style="width:100px;text-align:center;"><?php echo $LANG['CATNO']; ?></th>
 								<th style="width:375px;text-align:center;"><?php echo $LANG['DETAILS']; ?></th>

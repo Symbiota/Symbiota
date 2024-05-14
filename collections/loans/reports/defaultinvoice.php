@@ -376,7 +376,6 @@ else{
 			include_once($SERVER_ROOT.'/includes/head.php');
 			?>
 			<style type="text/css">
-				body {font-family:arial,sans-serif;}
 				p.printbreak {page-break-after:always;}
 				.header {width:100%;text-align:center;font:bold 12pt arial,sans-serif;margin-bottom:30px;}
 				.toaddress {float:left;text-align:left;font:10pt arial,sans-serif;margin-top:10px;}

@@ -267,8 +267,6 @@ if(isset($_REQUEST['llpoint'])) {
 		}
 
 		#mapSearchRecordsTable {
-
-		font-family:Arial;
 		font-size:12px;
 		}
 
