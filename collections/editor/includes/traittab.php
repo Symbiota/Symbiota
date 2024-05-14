@@ -174,7 +174,7 @@ if($isEditor){
 								<span id="msgDiv-<?php echo $traitID; ?>"></span>
 							</div>
 							<div style="margin:20px;float:right;">
-								<button type="button" value="deleteTraitCoding" style="border:1px solid red;"  onclick="submitEditForm(this); return false"><?php echo $LANG['DEL_CODING'];?></button>
+								<button class="button-danger" type="button" value="deleteTraitCoding" style="border:1px solid red;"  onclick="submitEditForm(this); return false"><?php echo $LANG['DEL_CODING'];?></button>
 							</div>
 						</div>
 					</form>

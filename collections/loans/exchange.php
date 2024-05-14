@@ -375,11 +375,11 @@ if($isEditor){
 				<div id="exchangedeldiv">
 					<form name="delexchangeform" action="index.php" method="post" onsubmit="return confirm('<?php echo $LANG['SURE_DELETE_EX']; ?>')">
 						<fieldset>
-							<legend><?php echo $LANG['DEL_EXCHANGE']; ?></legend>
+							<legend><?php echo $LANG['DELETE_EXCHANGE']; ?></legend>
 							<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 							<input name="tabindex" type="hidden" value="2" />
 							<input name="exchangeid" type="hidden" value="<?php echo $exchangeId; ?>" />
-							<input name="formsubmit" type="submit" value="Delete Exchange" />
+							<button class="button-danger" name="formsubmit" type="submit" value="Delete Exchange"><?php echo $LANG['DELETE_EXCHANGE']; ?></button>
 						</fieldset>
 					</form>
 				</div>

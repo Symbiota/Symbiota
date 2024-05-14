@@ -327,7 +327,7 @@ if($isEditor && $action){
 												<form id="delvern" name="delvern" action="tpeditor.php" method="post" onsubmit="return window.confirm('<?php echo $LANG['SURE_DELETE_COMMON']; ?>')">
 													<input type="hidden" name="delvern" value="<?php echo $vid; ?>" />
 													<input type="hidden" name="tid" value="<?php echo $tEditor->getTid(); ?>" />
-													<button name="action" type="submit" value="Delete Common Name"><?php echo $LANG['DELETE_COMMON']; ?></button>
+													<button class="button-danger" name="action" type="submit" value="Delete Common Name"><?php echo $LANG['DELETE_COMMON']; ?></button>
 												</form>
 											</div>
 											<div style="clear:both;margin:10px 0px"><hr/></div>

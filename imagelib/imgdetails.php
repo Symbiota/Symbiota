@@ -340,7 +340,7 @@ if($imgArr){
 					    	<legend><b><?php echo $LANG['AUTHORIZED_REMOVE_IMAGE'] ?></b></legend>
 							<input name="imgid" type="hidden" value="<?php echo $imgId; ?>" />
 							<div style="margin-top:2px;">
-								<button type="submit" name="submitaction" id="submit" value="Delete Image"><?php echo $LANG['DELETE_IMAGE'] ?></button>
+								<button class="button-danger" type="submit" name="submitaction" id="submit" value="Delete Image"><?php echo $LANG['DELETE_IMAGE'] ?></button>
 							</div>
 							<input name="removeimg" type="checkbox" value="1" /> <?php echo $LANG['REMOVE_IMG_FROM_SERVER'] ?>
 							<div style="margin-left:20px;color:red;">

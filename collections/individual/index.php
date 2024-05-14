@@ -1268,7 +1268,7 @@ $traitArr = $indManager->getTraitArr();
 											<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
 											<input name="comid" type="hidden" value="<?php echo $comId; ?>" />
 											<input name="tabindex" type="hidden" value="<?php echo $commentTabIndex; ?>" />
-											<button name="formsubmit" type="submit" value="deleteComment"><?php echo $LANG['DELETE_COMMENT']; ?></button>
+											<button class="button-danger" name="formsubmit" type="submit" value="deleteComment"><?php echo $LANG['DELETE_COMMENT']; ?></button>
 										</form>
 									</div>
 									<?php

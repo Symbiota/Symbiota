@@ -172,7 +172,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
 						<input type="hidden" name="namespace" value="<?php echo $namespace; ?>" />
 						<span style="margin-left:10px;">
-							<button name="formsubmit" type="submit" value="deleteProfile" onclick="return confirm('<?php echo $LANG['DEL_CONFIRM'] ?>')"><?php echo $LANG['DEL_PROFILE'] ?></button>
+							<button class="button-danger" name="formsubmit" type="submit" value="deleteProfile" onclick="return confirm('<?php echo $LANG['DEL_CONFIRM'] ?>')"><?php echo $LANG['DEL_PROFILE'] ?></button>
 						</span>
 						<span style="margin-left:10px;">
 							<a href="igsnmapper.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><button type="button"><?php echo $LANG['GO_TO_MAPPER'] ?></button></a>

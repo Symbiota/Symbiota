@@ -233,7 +233,9 @@ if($clid && $isEditor){
 					<tr>
 						<td colspan="2">
 							<div style="margin:10px;">
-								<input type="submit" name="submit" value="<?php echo $LANG['SAVESEARCH'];?>" />
+								<button type="submit">
+									<?php echo $LANG['SAVESEARCH'];?>
+								</button>
 								<input type="hidden" name="submitaction" value="SaveSearch" />
 								<input type='hidden' name='clid' value='<?php echo $clid; ?>' />
 								<input type='hidden' name='pid' value='<?php echo $pid; ?>' />
@@ -250,8 +252,10 @@ if($clid && $isEditor){
 				<legend><b><?php echo $LANG['REMOVESEARCH'];?></b></legend>
 				<form name="sqldeleteform" action="voucheradmin.php" method="post" onsubmit="return confirm('<?php echo $LANG['SURE_DELETE_QUERY'];?>');">
 					<div style="margin:20px">
-						<input type="submit" name="submit" value="<?php echo $LANG['DELETEVARIABLES'];?>" />
-						<input type="hidden" name="submitaction" value="DeleteVariables" />
+					<button class="button-danger" type="submit">
+						<?php echo $LANG['DELETEVARIABLES'];?>
+					</button>
+					<input type="hidden" name="submitaction" value="DeleteVariables" />
 					</div>
 					<input type="hidden" name="clid" value="<?php echo $clid; ?>" />
 					<input type="hidden" name="pid" value="<?php echo $pid; ?>" />

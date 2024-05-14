@@ -67,18 +67,6 @@ span[class="link"]:hover {
   margin-left: 3px;
 }
 
-button.icon-button {
-  margin: 2px 5px;
-  padding: 6px;
-  border-width: 1px;
-  border-style: outset;
-  border-color: buttonborder;
-}
-
-button.icon-button:hover {
-  background: var(--medium-color);
-}
-
 /* Species list component */
 #taxalist-div {
   line-height: 1em;
@@ -309,7 +297,6 @@ ol.mp_list li.mp_highlighted {
   top: 1rem;
   float: right;
 }
-
 .fieldset-like {
   /* borrowed from: https://www.geeksforgeeks.org/how-to-achieve-fieldset-like-effect-without-using-fieldset-tag/ */
   border: 0.2em solid;
@@ -453,29 +440,6 @@ fieldset {
   border-image: initial;
 }
 
-button {
-  appearance: auto;
-  text-rendering: auto;
-  letter-spacing: normal;
-  word-spacing: normal;
-  line-height: normal;
-  text-transform: none;
-  text-indent: 0px;
-  text-shadow: none;
-  display: inline-block;
-  text-align: center;
-  align-items: flex-start;
-  cursor: default;
-  box-sizing: border-box;
-  margin: 0em;
-  padding-block: 1px;
-  padding-inline: 6px;
-  border-width: 2px;
-  border-style: outset;
-  border-color: buttonborder;
-  border-image: initial;
-}
-
 i {
   font-style: italic;
 }
@@ -510,4 +474,105 @@ b {
 
 .page-heading {
   font-size: 3rem;
+}
+
+/* Base Button Button CSS
+========================================================================== */
+button {
+  appearance: auto;
+  text-rendering: auto;
+  letter-spacing: normal;
+  word-spacing: normal;
+  line-height: normal;
+  text-transform: none;
+  text-indent: 0px;
+  text-shadow: none;
+  display: inline-block;
+  text-align: center;
+  align-items: flex-start;
+  cursor: default;
+  box-sizing: border-box;
+  margin: 0em;
+  padding-block: 1px;
+  padding-inline: 6px;
+  border-width: 2px;
+  border-style: outset;
+  border-color: buttonborder;
+  border-image: initial;
+}
+
+button.icon-button {
+  margin: 2px 5px;
+  padding: 6px;
+  border-width: 1px;
+  border-style: outset;
+  border-color: buttonborder;
+}
+
+button.icon-button:hover {
+  background: var(--medium-color);
+}
+
+.button {
+  border: none;
+  border-radius: 5px;
+  padding: 0.6rem 1rem;
+  font-family: var(--heading-font-family);
+  letter-spacing: 1px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  width: fit-content;
+}
+
+.button > a {
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.button-primary {
+  background-color: var(--darkest-color);
+}
+
+.button-danger {
+  background-color: var(--danger-color, var(--darkest-color));
+}
+
+.button-primary:hover,
+.button-secondary:hover,
+.button-danger:hover 
+{
+  background-color: var(--medium-color);
+}
+
+.button-primary:disabled,
+.button-secondary:disabled,
+.button-danger:disabled
+{
+	opacity: 50%;
+	pointer-events: none;
+}
+
+.button-primary:hover > a,
+.button-secondary:hover > a {
+  color: var(--light-color);
+}
+
+.button-primary > a {
+  color: var(--light-color);
+}
+
+.button-secondary {
+  background-color: var(--bright-color);
+}
+
+.button-secondary > a {
+  color: var(--darkest-color);
+}
+
+.button-tertiary {
+  background-color: none;
+  border: 1px solid var(--bright-color);
+  padding: 0.5rem 0.9rem;
 }

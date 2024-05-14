@@ -372,7 +372,7 @@ $_SESSION['citationvar'] = $searchVar;
 			<div id="maps" style="min-height:400px;margin-bottom:10px;">
 				<form action="download/index.php" method="post" style="float:right" onsubmit="targetPopup(this)">
 					<button class="icon-button" aria-label="<?php echo isset($LANG['DOWNLOAD_SPECIMEN_DATA']) ? $LANG['DOWNLOAD_SPECIMEN_DATA'] : "Download Specimen Data"; ?>" title="<?php echo isset($LANG['DOWNLOAD_SPECIMEN_DATA']) ? $LANG['DOWNLOAD_SPECIMEN_DATA'] : "Download Specimen Data"; ?>">
-						<img src="../../images/dl2.png" style="width:1.3em" alt="<?php echo (isset($LANG['IMG_DWNL_DATA']) ? $LANG['IMG_DWNL_DATA'] : 'Download Button'); ?>" />
+						<svg style="width:1.3em" alt="<?php echo $LANG['IMG_DWNL_DATA']; ?>" fill="var(--light-color)" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
 					</button>
 					<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 					<input name="dltype" type="hidden" value="georef" />

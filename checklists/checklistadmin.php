@@ -326,7 +326,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					<div style="margin:15px;">
 						<form name="deleteclform" action="checklistadmin.php" method="post" onsubmit="return window.confirm('<?php echo $LANG['CONFIRMDELETE'];?>')">
 							<input name="delclid" type="hidden" value="<?php echo $clid; ?>" />
-							<button name="submitaction" type="submit" value="deleteChecklist"  aria-label="<?php echo $LANG['DELETECHECK'];?>" <?php if($projArr || count($editorArr) > 1) echo 'DISABLED'; ?>><?php echo $LANG['DELETECHECK'];?></button>
+							<button class="button-danger" name="submitaction" type="submit" value="deleteChecklist"  aria-label="<?php echo $LANG['DELETECHECK'];?>" <?php if($projArr || count($editorArr) > 1) echo 'DISABLED'; ?>><?php echo $LANG['DELETECHECK'];?></button>
 						</form>
 					</div>
 				</div>

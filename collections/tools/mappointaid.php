@@ -359,13 +359,15 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 		}
 		</script>
 		<style>
+         body { padding:0; margin:0 }
+			html, body, #map_canvas { width:100%; height: 100%;}
          .screen-reader-only{ 
             position: absolute;
             left: -10000px;
          }
       </style>
 	</head>
-	<body style="background-color:#ffffff;" onload="initialize()">
+	<body style="display:flex; flex-direction: column;background-color:#ffffff;" onload="initialize()">
 		<h1 class="page-heading screen-reader-only">Point-Radius Aid</h1>
 		<div
 			id="service-container" 
@@ -373,31 +375,30 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 			data-lat="<?= htmlspecialchars($latCenter)?>"
 			data-lng="<?= htmlspecialchars($lngCenter)?>"
 			>
-			<div style="">
-				<form name="coordform" action="" method="post" onsubmit="return false">
-					<div style="float:right;margin:5px 20px">
-                  <button name="addcoords" type="button" onclick="updateParentForm(this.form);">
-                     <b><?php echo isset($LANG['SUBMIT'])? $LANG['SUBMIT']: 'Submit' ?></b> 
-                  </button><br/>
-					</div>
-					<div style="margin:3px 20px 3px 0px;">
-                  <?php echo isset($LANG['MPR_INSTRUCTIONS']) ?$LANG['MPR_INSTRUCTIONS']: 'Click once to capture coordinates. Click on the submit coordinate button to transfer coordinates.' ?>
-                  <?php if($errMode) echo isset($LANG['MPR_UNCERTAINTY_INSTRUCTIONS']) ?$LANG['MPR_UNCERTAINTY_INSTRUCTIONS']: 'Enter uncertainty to create an error radius circle around the marker. '?>
-					</div>
-					<div style="margin-right:10px;">
-                  <b><?php echo isset($LANG['MPR_LAT'])? $LANG['MPR_LAT']: 'Latitude' ?>:</b> 
-                  <input type="text" id="latbox" name="lat" style="width:100px" />
-                  <b><?php echo isset($LANG['MPR_LNG'])? $LANG['MPR_LNG']: 'Longitude' ?>:</b> 
-                  <input type="text" id="lngbox" name="lon" style="width:100px" />
-						<?php if($errMode):?>
-                  <b>
-                  <?php echo isset($LANG['UNCERTAINTY_METERS']) ?$LANG['UNCERTAINTY_METERS']: 'Uncertainty in Meters'?>:
-                  </b>
-                  <input type="text" id="errRadius" name="errRadius" size="13" />
-						<?php endif?>
-					</div>
-				</form>
-				<div id='map_canvas' style='width:100%; height:88%; clear:both;'></div>
+		</div>
+		<form style="padding:0.5rem" name="coordform" action="" method="post" onsubmit="return false">
+			<div style="float:right;">
+				<button name="addcoords" type="button" onclick="updateParentForm(this.form);">
+					<b><?php echo isset($LANG['SUBMIT'])? $LANG['SUBMIT']: 'Submit' ?></b> 
+				</button><br/>
 			</div>
+			<div style="margin:3px 20px 3px 0px;">
+			<?php echo isset($LANG['MPR_INSTRUCTIONS']) ?$LANG['MPR_INSTRUCTIONS']: 'Click once to capture coordinates. Click on the submit coordinate button to transfer coordinates.' ?>
+			<?php if($errMode) echo isset($LANG['MPR_UNCERTAINTY_INSTRUCTIONS']) ?$LANG['MPR_UNCERTAINTY_INSTRUCTIONS']: 'Enter uncertainty to create an error radius circle around the marker. '?>
+			</div>
+			<div style="margin-right:10px;">
+				<b><?php echo isset($LANG['MPR_LAT'])? $LANG['MPR_LAT']: 'Latitude' ?>:</b> 
+				<input type="text" id="latbox" name="lat" style="width:100px" />
+				<b><?php echo isset($LANG['MPR_LNG'])? $LANG['MPR_LNG']: 'Longitude' ?>:</b> 
+				<input type="text" id="lngbox" name="lon" style="width:100px" />
+				<?php if($errMode):?>
+				<b>
+				<?php echo isset($LANG['UNCERTAINTY_METERS']) ?$LANG['UNCERTAINTY_METERS']: 'Uncertainty in Meters'?>:
+				</b>
+				<input type="text" id="errRadius" name="errRadius" size="13" />
+				<?php endif?>
+			</div>
+		</form>
+		<div id='map_canvas'></div>
 	</body>
 </html>

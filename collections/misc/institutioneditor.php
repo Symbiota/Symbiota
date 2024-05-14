@@ -441,7 +441,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							<legend><b><?php echo $LANG['DEL_INSTITUTION']; ?></b></legend>
 							<form name="instdelform" action="institutioneditor.php" method="post" onsubmit="return confirm('<?php echo $LANG['WANT_TO_DELETE_INST']; ?>')">
 								<div style="position:relative;clear:both;">
-									<button name="formsubmit" type="submit" value="Delete Institution" <?php if($collList) echo 'disabled'; ?> ><?php echo $LANG['DEL_INSTITUTION']; ?></button>
+									<button class="button-danger" name="formsubmit" type="submit" value="Delete Institution" <?php if($collList) echo 'disabled'; ?> ><?php echo $LANG['DEL_INSTITUTION']; ?></button>
 									<input name="deliid" type="hidden" value="<?php echo $iid; ?>" />
 									<?php
 									if($collList) echo '<div style="margin:15px;color:red;">' . $LANG['DELETION_OF_ADDRESS'] . '</div>';

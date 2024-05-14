@@ -420,7 +420,7 @@ if($isEditor){
 									<div style="margin:15px;">
 										<input name="datasetid" type="hidden" value="<?php echo $datasetId; ?>" />
 										<input name="tabindex" type="hidden" value="1" />
-										<button name="submitaction" type="submit" value="Delete Dataset" ><?php echo $LANG['DEL_DS']; ?></button>
+										<button class="button-danger" name="submitaction" type="submit" value="Delete Dataset" ><?php echo $LANG['DEL_DS']; ?></button>
 									</div>
 								</form>
 							</section>

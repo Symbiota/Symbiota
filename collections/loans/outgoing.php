@@ -407,7 +407,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 								<?php
 							}
 							?>
-							<button name="formsubmit" type="submit" value="Delete Loan" <?php if($specimenTotal) echo 'DISABLED'; ?>><?php echo $LANG['DELETE_LOAN']; ?></button>
+							<button class="button-danger" name="formsubmit" type="submit" value="Delete Loan" <?php if($specimenTotal) echo 'DISABLED'; ?>><?php echo $LANG['DELETE_LOAN']; ?></button>
 							<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 							<input name="loanid" type="hidden" value="<?php echo $loanId; ?>" />
 						</fieldset>

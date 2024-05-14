@@ -57,4 +57,17 @@ $LANG['KEY_SYMBOL'] = 'Key Symbol';
 $LANG['ADD_NEW_PRJ'] = 'Add New Project';
 $LANG['EDIT_PRJ'] = 'Edit Project';
 
+//Manager Tab
+$LANG['INVENTORY_PROJECT_MANAGERS'] = 'Inventory Project Managers';
+$LANG['ADD_NEW_MANAGER'] = 'Add a New Manager';
+$LANG['ADD_TO_MANAGER_LIST'] = 'Add to Manager List';
+$LANG['SELECT_USER'] = 'Select a User';
+
+//Checklist Tab
+$LANG['ADD_A_CHECKLIST'] = 'Add a Checklist';
+$LANG['SELECT_CHECKLIST_TO_ADD'] = 'Select Checklist to Add';
+$LANG['ADD_CHECKLIST'] = 'Add Checklist';
+$LANG['DELETE_A_CHECKLIST'] = 'Delete a Checklist';
+$LANG['SELECT_CHECKLIST_TO_DELETE'] = 'Select Checklist to Delete';
+$LANG['DELETE_CHECKLIST'] = 'Delete Checklist';
 ?>

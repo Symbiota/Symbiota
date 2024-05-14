@@ -291,7 +291,7 @@ $genusStr = $taxonEditorObj->cleanOutStr($genusStr);
 				if(array_key_exists('syn',$verifyArr)) $deactivateStr = 'disabled';
 				if($verifyArr['img'] > 0) $deactivateStr = 'disabled';
 				if(array_key_exists('tdesc',$verifyArr)) $deactivateStr = 'disabled';
-				echo '<button name="submitaction" type="submit" value="deleteTaxon" ' . $deactivateStr . '>' . $LANG['DELETE_TAXON'] . '</button>';
+				echo '<button class="button-danger" name="submitaction" type="submit" value="deleteTaxon" ' . $deactivateStr . '>' . $LANG['DELETE_TAXON'] . '</button>';
 				?>
 				<input name="tid" type="hidden" value="<?php echo $tid; ?>" />
 				<input name="genusstr" type="hidden" value="<?php echo $genusStr; ?>" />

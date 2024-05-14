@@ -504,22 +504,23 @@
   transition: 200ms ease-in-out;
 }
 
+.inner-search .text-area-container label span::before,
 .inner-search .input-text-container label span::before {
   content: attr(data-label);
-  left: 16px;
-  top: 16px;
-  margin: auto;
+  left: 1rem;
+  top: 0px;
+  margin: 0;
   pointer-events: none;
-  height: 12px;
-  font-size: var(--fz);
+  height: fit-content;
   color: gray;
   line-height: 1;
 }
 
 .inner-search .input-text-container label input:focus ~ span::before,
+.inner-search .text-area-container textarea ~ span::before,
 .input-text-container label input:valid ~ span::before,
 .input-text-container label input:invalid ~ span::before {
-  font-size: 0.8em;
+  font-size: 1.45rem;
   color: var(--medium-color);
 }
 
@@ -603,12 +604,14 @@
   .input-text--outlined
   > input:focus
   ~ span::before,
+.text-area-container .text-area--outlined > textarea:valid ~ span::before,
 .input-text-container .input-text--outlined > input:valid ~ span::before,
 .input-text-container .input-text--outlined > input:invalid ~ span::before {
-  -webkit-transform: translateY(-22px);
-  transform: translateY(-22px);
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
   background-color: white;
-  padding: 2px 4px;
+  padding: 0 0.5rem 0 0;
+  text-indent: 0.5rem;
 }
 
 /* Select control ***********************************/
@@ -654,7 +657,7 @@
   --bbc: rgba(0, 0, 0, 0.42);
   --opaq1: 0.08;
   --padding: 10px;
-  --fz: 16px;
+  --fz: 50px;
   margin: 10px auto;
   width: 100%;
   max-width: 600px;
@@ -680,18 +683,6 @@
   transition: 200ms ease-in-out;
 }
 
-.inner-search .text-area-container label span::before {
-  content: attr(data-label);
-  left: 16px;
-  top: 0;
-  bottom: 0;
-  margin: auto;
-  pointer-events: none;
-  height: 12px;
-  font-size: var(--fz);
-  line-height: 1;
-}
-
 .inner-search .text-area-container textarea {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
@@ -699,13 +690,8 @@
   border: 0;
   height: 100px;
   padding: var(--padding);
+  margin-top: 4px;
   font-size: 1em;
-}
-
-.inner-search .text-area-container textarea ~ span::before {
-  top: -60px;
-  font-size: 0.8em;
-  color: #005dab;
 }
 
 .inner-search .text-area-container textarea:focus,
@@ -723,18 +709,6 @@
   -webkit-box-shadow: 0 0 0 2px #005dab;
   box-shadow: 0 0 0 2px #005dab;
   border-color: transparent;
-}
-
-.inner-search
-  .text-area-container
-  .text-area--outlined
-  > textarea:focus
-  ~ span::before,
-.text-area-container .text-area--outlined > textarea:valid ~ span::before {
-  -webkit-transform: translateY(-22px);
-  transform: translateY(-22px);
-  background-color: white;
-  padding: 2px 4px;
 }
 
 .inner-search .modal {
