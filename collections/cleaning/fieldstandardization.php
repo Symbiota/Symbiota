@@ -57,7 +57,7 @@ if($collMap['colltype'] == 'General Observations' && $obsUid !== 0){
 	</div>
 	
 	<!-- inner text -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading">Field Standardization</h1>
 		<?php
 		if($statusStr){

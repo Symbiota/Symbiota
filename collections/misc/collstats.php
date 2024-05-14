@@ -291,6 +291,11 @@ if($action != "Update Statistics"){
                         },{});
 				});
 
+				function toggleDisplayListOfCollectionsAnalyzed(){
+					toggleById("colllist");
+					toggleById("colllistlabel");
+				}
+
 				function toggleStatsPerColl(){
 					toggleById("statspercollbox");
 					toggleById("showstatspercoll");
@@ -409,7 +414,7 @@ if($action != "Update Statistics"){
 			}
 			?>
 			<!-- This is inner text! -->
-			<div id="innertext">
+			<div role="main" id="innertext">
 				<h1 class="page-heading"><?= $LANG['SELECT_COLS']; ?></h1>
 				<div id="tabs" class="tabby">
 					<ul class="full-tab">
@@ -549,19 +554,16 @@ if($action != "Update Statistics"){
 											<?php
 										}
 										if(isset($specArr['coll'])){
-											if(!isset($specArr['cat'])){
-												echo '<section class="gridlike-form">';
-											}
 											$collArr = $specArr['coll'];
 											?>
-											<section class="gridlike-form-row">
+											<section class="gridlike-form">
 												<?php
 												foreach($collArr as $collid => $cArr){
 													?>
 													<div class="gridlike-form-row bottom-breathing-room-rel">
 														<div>
-															<input id="current-collid" name="current-collid" value="<?php echo $collid; ?>" type="checkbox" onclick="uncheckAll();" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
-															<label for="current-collid">Collection ID TODO</label>
+															<input id="current-collid-<?= $collid; ?>" name="db[]" value="<?php echo $collid; ?>" type="checkbox" onclick="uncheckAll();" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
+															<label class="screen-reader-only" for="current-collid-<?= $collid; ?>"><?= $LANG['COLLECTION'] . '-' . $cArr['instcode']; ?></label>
 														</div>
 														<div>
 															<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>'>
@@ -753,7 +755,7 @@ if($action != "Update Statistics"){
 								<div>
 									<h1><?php echo $LANG['SEL_COL_STATS']; ?></h1>
 									<div class="big-fnt-margin">
-										<div id="colllistlabel"><a href="#" onclick="toggle('colllist');toggle('colllistlabel');"><?php echo $LANG['DISPLAY_LIST']; ?></a></div>
+										<div id="colllistlabel"><a href="#" onclick="return toggleDisplayListOfCollectionsAnalyzed();"><?php echo $LANG['DISPLAY_LIST']; ?></a></div>
 										<div id="colllist" class="dsply-none">
 											<?php echo $collStr; ?>
 										</div>

@@ -57,7 +57,7 @@ if($isEditor){
 	<?php
 	if($collid){
 		?>
-		<div id="innertext">
+		<div role="main" id="innertext">
 			<h1 class="page-heading">Image Recycler</h1>
 			<form name="imgdelform" action="imagerecycler.php" method="post" enctype="multipart/form-data" onsubmit="return verifyRecycleForm(this)">
 				<fieldset style="width:90%;">
@@ -75,7 +75,7 @@ if($isEditor){
 					</div>
 					<div style="margin:20px;">
 						<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-						<button type="submit" name="submitaction" value="remove_images"><?php echo $LANG['BULK_REMOVE_IMAGE_FILES'] ?></button>
+						<button class="button-danger" type="submit" name="submitaction" value="remove_images"><?php echo $LANG['BULK_REMOVE_IMAGE_FILES'] ?></button>
 					</div>
 				</fieldset>
 			</form>

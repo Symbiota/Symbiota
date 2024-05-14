@@ -36,7 +36,7 @@ $clManager->setPid($pid);
 	}
 	?>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 classes="page-heading"><?php echo $LANG['IDKEYS']; ?></h1>
 	    <div style='margin:20px;'>
 	        <?php

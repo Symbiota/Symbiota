@@ -52,7 +52,7 @@ $status = '';
 		<b>Taxonomy Loader</b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading">Taxon Loader</h1>
 		<?php
 		if($status){

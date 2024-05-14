@@ -301,7 +301,7 @@ if($isEditor){
 		<b><?php echo $LANG['BATCH_DETERS']; ?></b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['BATCH_DETERS']; ?></h1>
 		<?php
 		if($isEditor){

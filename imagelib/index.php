@@ -42,7 +42,7 @@ $imgManager->setSearchTerm($taxon);
 		<b><?php echo $LANG['IMG_LIBRARY']; ?></b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?php echo $LANG['TAXA_W_IMGS']; ?></h1>
 		<div style="margin:0px 0px 5px 20px;"><?php echo $LANG['TAXA_IMG_EXPLAIN']; ?>
 		</div>

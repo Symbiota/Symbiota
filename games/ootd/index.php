@@ -105,7 +105,7 @@ $genusAnswer = strtok($scinameAnswer, " ");
 	$displayLeftMenu = (isset($indexMenu)?$indexMenu:"true");
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
-	<div id="innertext" style="">
+	<div role="main" id="innertext" style="">
 		<!-- This is inner text! -->
 		<div style="width:80%;margin-left:auto;margin-right:auto;">
 			<div style="text-align:center;margin-bottom:20px;">

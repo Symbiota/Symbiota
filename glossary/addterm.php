@@ -114,7 +114,7 @@ if($isEditor){
 </head>
 <body>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading">Add New Glossary Term</h1>
 		<?php
 		if($statusStr){

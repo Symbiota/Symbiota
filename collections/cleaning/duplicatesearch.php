@@ -103,7 +103,7 @@ if($collMap){
 		<a href="index.php?collid=<?php echo $collid; ?>"><?php echo $LANG['CLEAN_MOD_INDEX']; ?></a> &gt;&gt;
 		<b><?php echo $LANG['DUP_OCCS']; ?></b>
 	</div>
-	<div id="innertext" style="background-color:white; margin:10px; width: 100%; max-width: 100%; padding: 0px;">
+	<div role="main" id="innertext" style="background-color:white; margin:10px; width: 100%; max-width: 100%; padding: 0px;">
 		<h1 class="page-heading">Duplicate Catalog Number Cleaning Tool</h1>
 		<?php
 		if($collMap && $isEditor){

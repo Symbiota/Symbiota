@@ -17,7 +17,7 @@ header("Location: ".$CLIENT_ROOT."/index.php");
 		$displayLeftMenu = true;
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
-		<div id="innertext">
+		<div role="main" id="innertext">
 			<h1><?php echo $LANG['FORBIDDEN']; ?></h1>
 			<div style="font-weight:bold;">
 				<?php echo $LANG['NO_PERMISSION']; ?>

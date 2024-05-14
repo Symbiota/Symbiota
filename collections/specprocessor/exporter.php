@@ -107,7 +107,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 	</head>
 	<body>
 		<!-- This is inner text! -->
-		<div id="innertext" style="background-color:white;">
+		<div role="main" id="innertext" style="background-color:white;">
 			<h1 class="page-heading screen-reader-only"><?= $LANG['OCC_EXP_MAN']; ?></h1>
 			<div style="float:right;width:165px;margin-right:100px">
 				<fieldset>

@@ -76,7 +76,7 @@ if(!$formSubmit || $formSubmit != 'Search References'){
 		<a href="index.php"> <b>Reference Management</b></a>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading">Reference Management</h1>
 		<?php
 		if($statusStr){

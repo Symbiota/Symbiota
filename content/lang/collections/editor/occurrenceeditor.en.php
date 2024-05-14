@@ -66,6 +66,7 @@ $LANG['LIMITED_EDITING'] = 'Limited editing rights: use determination tab to edi
 $LANG['NEED_FULL'] = 'Note: Full editing permissions are needed to edit an identification';
 $LANG['IDENTIFICATION_CONFIDENCE'] = 'ID Confidence';
 $LANG['UNDEFINED'] = 'Undefined';
+$LANG['TOGG_ADD_FIELDS'] = "Toggle Additional Field(s)";
 ///$LANG['ABSOLUTE'] = 'Absolute';
 ///$LANG['V_HIGH'] = 'Very High';
 ///$LANG['HIGH'] = 'High';

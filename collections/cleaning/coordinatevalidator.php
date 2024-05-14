@@ -80,7 +80,7 @@ if($IS_ADMIN) $isEditor = 1;
 		<b><a href="coordinatevalidator.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">Coordinate Validator</a></b>
 	</div>
 	<!-- inner text -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading">Coordinate Validator</h1>
 		<?php
 		if($statusStr){

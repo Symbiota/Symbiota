@@ -69,7 +69,7 @@ $collMetaArr = $dupeManager->getCollMetaArr();
 		<b><?php echo $LANG['BATCH_HARVEST_DUP']; ?></b>
 	</div>
 	<!-- inner text -->
-	<div id="innertext" style="background-color:white;">
+	<div role="main" id="innertext" style="background-color:white;">
 	<h1 class="page-heading"><?= $LANG['DUP_GEOREFERENCE']; ?></h1>
 		<?php
 		echo '<div id="page-title">'.$collMetaArr[$collid]['name'].' ('.$collMetaArr[$collid]['collcode'].')</div>';

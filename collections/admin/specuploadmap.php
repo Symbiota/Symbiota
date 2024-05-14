@@ -265,7 +265,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	<a href="specuploadmanagement.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars((isset($LANG['LIST_UPLOAD']) ? $LANG['LIST_UPLOAD'] : 'List of Upload Profiles'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 	<b><?php echo (isset($LANG['SPEC_UPLOAD']) ? $LANG['SPEC_UPLOAD'] : 'Specimen Uploader'); ?></b>
 </div>
-<div id="innertext">
+<div role="main" id="innertext">
 	<h1 class="page-heading"><?= $LANG['UP_MODULE']; ?></h1>
 	<?php
 	if($statusStr){

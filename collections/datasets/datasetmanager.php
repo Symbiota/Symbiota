@@ -282,7 +282,7 @@ if($isEditor){
 		<b><?php echo $LANG['DS_MANAGER']; ?></b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['DS_OCC_MANAGER']; ?></h1>
 		<?php
 		if($statusStr){
@@ -420,7 +420,7 @@ if($isEditor){
 									<div style="margin:15px;">
 										<input name="datasetid" type="hidden" value="<?php echo $datasetId; ?>" />
 										<input name="tabindex" type="hidden" value="1" />
-										<button name="submitaction" type="submit" value="Delete Dataset" ><?php echo $LANG['DEL_DS']; ?></button>
+										<button class="button-danger" name="submitaction" type="submit" value="Delete Dataset" ><?php echo $LANG['DEL_DS']; ?></button>
 									</div>
 								</form>
 							</section>

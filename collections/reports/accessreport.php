@@ -109,7 +109,7 @@ else{
 		echo '</div>';
 		?>
 		<!-- This is inner text! -->
-		<div id="innertext" style="min-width:1100px">
+		<div role="main" id="innertext" style="min-width:1100px">
 			<h1 class="page-heading">Occurrence Access Reporting</h1>
 			<div>
 				<div style="float:left;font-size:120%"><b><u>User Access Statistics</u></b></div>

@@ -52,7 +52,7 @@ if($collMap['colltype'] == 'General Observations'){
 	</div>
 	
 	<!-- inner text -->
-	<div id="innertext" style="background-color:white;">
+	<div role="main" id="innertext" style="background-color:white;">
 		<?php
 		if($isEditor){
 			echo '<h1 class="page-heading">Data Cleaning Tools: ' . $collMap['collectionname'] .' (' . $collMap['code'] . ')</h1>';

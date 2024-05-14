@@ -27,7 +27,7 @@ $imgManager = new ImageLibraryBrowser();
 	</div>
 
 	<!-- This is inner text! -->
-	<div id="innertext" style="height:100%">
+	<div role="main" id="innertext" style="height:100%">
 		<h1 class="page-heading">Photographer List</h1>
 		<?php
 		$pList = $imgManager->getPhotographerList();

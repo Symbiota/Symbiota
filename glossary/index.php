@@ -133,7 +133,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 		<a href='index.php'> <b><?php echo (isset($LANG['GLOSSARY'])?$LANG['GLOSSARY']:'Glossary'); ?></b></a>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<?php
 		if($statusStr){
 			?>

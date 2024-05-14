@@ -58,7 +58,7 @@ if($chars){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo htmlspecialchars($DEFAULT_TITLE . ' ' . $LANG['WEBKEY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . htmlspecialchars(preg_replace('/\<[^\>]+\>/','',$dataManager->getClName()), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></title>
+	<title><?php echo htmlspecialchars($DEFAULT_TITLE . ' ' . $LANG['WEBKEY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' '. htmlspecialchars(preg_replace('/\<[^\>]+\>/','',$dataManager->getClName()), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -184,7 +184,7 @@ echo '<a href="key-v1.php?clid=' . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML
 echo '<b>' . htmlspecialchars($LANG['NEW_ID_KEY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ': ' . htmlspecialchars($dataManager->getClName(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</b>';
 echo '</div>';
 ?>
-<div id="innertext">
+<div role="main" id="innertext">
 	<h1 class="page-heading screen-reader-only">Key</h1>
 	<?php
 	if($clid || $dynClid){
@@ -194,7 +194,7 @@ echo '</div>';
 				<legend><?php echo $LANG['FILTER_OPTIONS']; ?></legend>
 				<form name="keyform" id="keyform" action="key.php" method="post">
 					<div>
-						<div style="float:right"><button type="button" onclick="resetForm(this.form)">Reset</button></div>
+						<div class="float-right bottom-breathing-room-rel-sm"><button type="button" onclick="resetForm(this.form)">Reset</button></div>
 						<div><span><?php echo (isset($LANG['TAXON_SEARCH'])?$LANG['TAXON_SEARCH']:'Family/Genus Filter');?>:</span></div>
 						<select name="taxon" onchange="this.form.submit();">
 							<?php

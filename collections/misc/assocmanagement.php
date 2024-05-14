@@ -58,7 +58,7 @@ if($SYMB_UID){
 			<b><?php echo (isset($LANG['OCC_AS_MAN'])?$LANG['OCC_AS_MAN']:'Occurrence Association Manager'); ?></b>
 		</div>
 		<!-- This is inner text! -->
-		<div id="innertext">
+		<div role="main" id="innertext">
 			<h1 class="page-heading"><?= $LANG['OCC_BATCH']; ?></h1>
 			<?php
 			if($isEditor){

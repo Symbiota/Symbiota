@@ -74,7 +74,7 @@ if($isEditor){
 	}
 	?>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['TAX_MAINT']; ?></h1>
 		<?php
 		if($statusStr){

@@ -68,7 +68,7 @@ if($isEditor){
 		<b><?php echo $LANG['TAXONOMY_LOADER']; ?></b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['TAXON_LOADER']; ?></h1>
 		<?php
 		if($status){

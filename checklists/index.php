@@ -39,7 +39,7 @@ $clManager->setProj($pid);
 		<a href="../index.php"><?php echo htmlspecialchars($LANG['NAV_HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 		<b><?php echo $LANG['SPECIES_INVENTORIES']; ?></b>
 	</div>
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['SPECIES_INVENTORIES']; ?></h1>
         <div style="margin:20px;">
 			<?php

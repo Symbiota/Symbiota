@@ -75,7 +75,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	<b><?php echo $LANG['UID_MAP']; ?></b>
 </div>
 <!-- This is inner text! -->
-<div id="innertext">
+<div role="main" id="innertext">
 	<div style="margin:10px;">
 		<h1 class="page-heading"><?php echo $LANG['GUID_CP']; ?></h1>
 	</div>

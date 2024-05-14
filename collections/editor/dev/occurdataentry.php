@@ -56,7 +56,7 @@ if($SYMB_UID){
 </head>
 <body>
 	<!-- inner text -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<?php
 		if($isEditor && $collid){
 			?>

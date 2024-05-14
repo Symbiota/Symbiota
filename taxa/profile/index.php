@@ -21,7 +21,7 @@ else include_once($SERVER_ROOT.'/content/lang/prohibit.en.php');
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<!-- This is inner text! -->
-		<div id="innertext">
+		<div role="main" id="innertext">
 			<h1 class="page-heading"><?= $LANG['FORBIDDEN'] ?></h1>
 			<div style="font-weight:bold;">
 				<?= $LANG['NO_PERMISSION'] ?>

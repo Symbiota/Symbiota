@@ -43,7 +43,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 		f.submit();
 	}
 </script>
-<div id="innertext" style="background-color:white;">
+<div role="main" id="innertext" style="background-color:white;">
 	<div style="margin-bottom:10px;">
 		<?php
 		echo $LANG['EXPLAIN_PARAGRAPH'];

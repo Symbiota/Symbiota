@@ -140,7 +140,7 @@ if($isEditor){
 		<a href='../index.php'><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 		<a href="../profile/viewprofile.php"><?php echo htmlspecialchars((isset($LANG['MY_PROFILE'])?$LANG['MY_PROFILE']:'My Profile'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 	</div>
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['VIEW_PROFILE']; ?></h1>
 		<?php
 		if($isEditor){

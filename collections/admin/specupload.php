@@ -7,14 +7,8 @@ header('Content-Type: text/html; charset='.$CHARSET);
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/admin/specupload.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $collid = filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT);
-$uploadType = filter_var($_REQUEST['uploadtype'], FILTER_SANITIZE_NUMBER_INT);
-$uspid = array_key_exists('uspid', $_REQUEST) ? filter_var($_REQUEST['uspid'], FILTER_SANITIZE_NUMBER_INT) : '';
-
-if(strpos($uspid,'-')){
-	$tok = explode('-',$uspid);
-	$uspid = $tok[0];
-	$uploadType = $tok[1];
-}
+$uploadType = array_key_exists('uploadtype', $_REQUEST) ? filter_var($_REQUEST['uploadtype'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$uspid = array_key_exists('uspid', $_REQUEST) ? filter_var($_REQUEST['uspid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 
 $DIRECTUPLOAD = 1; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9; $STOREDPROCEDURE = 4; $SCRIPTUPLOAD = 5; $SYMBIOTA = 13;
 
@@ -22,13 +16,14 @@ $duManager = new SpecUploadBase();
 
 $duManager->setCollId($collid);
 $duManager->setUspid($uspid);
-$duManager->setUploadType($uploadType);
+$duManager->readUploadParameters();
+if($uploadType) $duManager->setUploadType($uploadType);
+else $uploadType = $duManager->getUploadType();
 
 $isEditor = 0;
 if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin']))){
 	$isEditor = 1;
 }
-$duManager->readUploadParameters();
 if($uploadType == $IPTUPLOAD || $uploadType == $SYMBIOTA){
 	if($duManager->getPath()) header('Location: specuploadmap.php?uploadtype='.$uploadType.'&uspid='.$uspid.'&collid='.$collid);
 }
@@ -110,7 +105,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	<a href="specuploadmanagement.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars((isset($LANG['LIST_UPLOAD'])?$LANG['LIST_UPLOAD']:'List of Upload Profiles'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 	<b><?php echo (isset($LANG['SPEC_UPLOAD'])?$LANG['SPEC_UPLOAD']:'Specimen Uploader'); ?></b>
 </div>
-<div id="innertext">
+<div role="main" id="innertext">
 	<h1 class="page-heading"><?= $LANG['UP_MODULE']; ?></h1>
 	<?php
 	if($isEditor && $collid){

@@ -18,7 +18,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<!-- This is inner text! -->
-		<div id="innertext">
+		<div role="main" id="innertext">
 			<h1 class="page-heading"><?= $LANG['FORBIDDEN']; ?></h1>
 			<div style="font-weight:bold;">
 				<?php echo $LANG['NO_PERMISSION']; ?>.

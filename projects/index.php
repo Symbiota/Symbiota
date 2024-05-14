@@ -230,7 +230,7 @@ if(!$researchList && !$editMode){
 	?>
 
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading screen-reader-only">View Inventory Project</h1>
 		<?php
 		if($statusStr){
@@ -278,8 +278,8 @@ if(!$researchList && !$editMode){
 						<?php
 						if($pid){
 							?>
-							<li><a href="managertab.php?pid=<?php echo htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><span><?php echo htmlspecialchars($LANG['INVMANAG'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?></span></a></li>
-							<li><a href="checklisttab.php?pid=<?php echo htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><span><?php echo htmlspecialchars($LANG['CHECKMANAG'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?></span></a></li>
+							<li><a href="managertab.php?pid=<?php echo $pid ?>"><span><?php echo $LANG['INVMANAG'] ?></span></a></li>
+							<li><a href="checklisttab.php?pid=<?php echo htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><span><?php echo $LANG['CHECKMANAG']?></span></a></li>
 							<?php
 						}
 						?>
@@ -291,22 +291,22 @@ if(!$researchList && !$editMode){
 								<section class="gridlike-form">
 									<div class="bottom-breathing-room gridlike-form-row">
 										<label for="projname" class="gridlike-form-row-label"  > <?php echo (isset($LANG['PROJNAME']) ? $LANG['PROJNAME'] : 'Project Name'); ?>: </label>
-										<input id="projname" class="gridlike-form-row-input max-width-fit-65" type="text" name="projname"  value="<?php if($projArr) echo htmlspecialchars($projArr["projname"]); ?>"/>
+										<input id="projname" class="gridlike-form-row-input max-width-fit-65" type="text" name="projname"  value="<?php if($projArr) echo htmlspecialchars($projArr["projname"]?? '') ?>"/>
 									</div>
 
 									<div class="bottom-breathing-room gridlike-form-row">
 										<label for="managers" class="gridlike-form-row-label" > <?php echo (isset($LANG['MANAG']) ? $LANG['MANAG'] : 'Managers'); ?>: </label>
-										<input id="managers" class="gridlike-form-row-input max-width-fit-65" type="text" name="managers" value="<?php if($projArr) echo htmlspecialchars($projArr["managers"]); ?>"/>
+										<input id="managers" class="gridlike-form-row-input max-width-fit-65" type="text" name="managers" value="<?php if($projArr) echo htmlspecialchars($projArr["managers"]??''); ?>"/>
 									</div>
 									
 									<div class="bottom-breathing-room gridlike-form-row">
 										<label for="fulldescription" class="gridlike-form-row-label"> <?php echo (isset($LANG['DESCRIP']) ? $LANG['DESCRIP'] : 'Description'); ?>: </label>
-										<textarea class="gridlike-form-row-input max-width-fit-65" rows="8" cols="45" id="fulldescription"  name="fulldescription" maxlength="5000"><?php if($projArr) echo htmlspecialchars($projArr["fulldescription"]);?></textarea>
+										<textarea class="gridlike-form-row-input max-width-fit-65" rows="8" cols="45" id="fulldescription"  name="fulldescription" maxlength="5000"><?php if($projArr) echo htmlspecialchars($projArr["fulldescription"]?? '');?></textarea>
 									</div>
 
 									<div class="bottom-breathing-room gridlike-form-row">
 										<label for="notes" class="gridlike-form-row-label"> <?php echo (isset($LANG['NOTES']) ? $LANG['NOTES'] : 'Notes'); ?>: </label>
-										<input type="text" class="gridlike-form-row-input max-width-fit-65" id="notes" name="notes" value="<?php if($projArr) echo htmlspecialchars($projArr["notes"]);?>"/>
+										<input type="text" class="gridlike-form-row-input max-width-fit-65" id="notes" name="notes" value="<?php if($projArr) echo htmlspecialchars($projArr["notes"] ?? '');?>"/>
 									</div>
 
 									<div class="bottom-breathing-room gridlike-form-row">
@@ -342,8 +342,11 @@ if(!$researchList && !$editMode){
 								<form action="index.php" method="post" onsubmit="return confirm('<?php echo (isset($LANG['CONFIRMDEL'])?$LANG['CONFIRMDEL']:'Are you sure you want to delete this inventory Project') ?>')">
 									<input type="hidden" name="pid" value="<?php echo $pid;?>">
 									<input type="hidden" name="projsubmit" value="submitDelete" />
+
+							<button class="button-danger" type="submit" name="submit" <?= (count($managerArr)>1 || $researchList)?'disabled':'' ?> >
+								<?= isset($LANG['SUBMITDELETE'])?$LANG['SUBMITDELETE']:'Delete Project'?>
+							</button>
 									<?php
-									echo '<input type="submit" name="submit" value="'.(isset($LANG['SUBMITDELETE'])?$LANG['SUBMITDELETE']:'Delete Project').'" '.((count($managerArr)>1 || $researchList)?'disabled':'').' />';
 									echo '<div style="margin:10px;color:orange">';
 									if(count($managerArr) > 1){
 										if(isset($LANG['DELCONDITION1'])) echo $LANG['DELCONDITION1'];

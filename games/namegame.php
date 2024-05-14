@@ -562,7 +562,7 @@ $imgloc = "../images/games/namegame/";
 	echo ' <b>Name Game</b>';
 	echo '</div>';
 	?>
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<div style="width:100%;text-align:center;">
 			<h1 class="page-heading screen-reader-only">Name Guessing Game</h1>
 		</div>

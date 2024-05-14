@@ -40,7 +40,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	<b>Encyclopedia of Life Manager</b>
 </div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading">Encyclopedia of Life Linkage Manager</h1>
 		<?php
 		if($statusStr){

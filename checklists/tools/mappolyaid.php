@@ -71,6 +71,10 @@ else{
          //Default is that trim is checked and lnglat/switchCoord is not
          let trimPolyFlag = true;
          let lnglatLayoutFlag = false;
+		 let action = "<?= htmlspecialchars($formSubmit) ?>"
+		 if(action === 'exit') {
+			 window.close();
+		 }
 
          function onPolyUpdate(shape) {
             setWkt(map.shapes);
@@ -215,8 +219,11 @@ else{
             let polygons;
 
             //Loads wkt from opener value otherwise db value is used
-            let wkt = opener.document.getElementById("footprintwkt").value;
-            if(wkt) document.getElementById("footprintwkt").value = wkt;
+            let parent_wkt = opener.document.getElementById("footprintwkt");
+			 console.log(parent_wkt)
+			if(parent_wkt) {
+				document.getElementById("footprintwkt").value = parent_wkt.value 
+			}
 
             if(<?= (!empty($GOOGLE_MAP_KEY)?'true':'false') ?>) {
                googleInit();
@@ -262,8 +269,11 @@ else{
 					opener.document.getElementById("polyDefDiv").style.display = str1;
 					opener.document.getElementById("polyNotDefDiv").style.display = str2;
 				}
-            opener.document.getElementById("footprintwkt").value = f.footprintwkt.value;
-				window.close();
+				if(opener.document.getElementById("footprintwkt")) {
+					opener.document.getElementById("footprintwkt").value = f.footprintwkt.value;
+					// If Tool is filling out form value from parent form don't finish action on itself just forward value to parent form
+					window.close();
+				}
 				return f.clid.value != 0;
 			}
 		</script>

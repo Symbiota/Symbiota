@@ -100,7 +100,7 @@ $occManager = new OccurrenceSupport();
 	</style>
 </head>
 <body>
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?php echo $LANG['SEARCH_OCCUR']; ?></h1>
 		<?php
 		if($collEditorArr){

@@ -111,7 +111,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo htmlspecialchars($LANG['COL_MNT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)?></a> &gt;&gt;
 		<b><?php echo $LANG['OCC_IMAGE_SUBMIT']?></b>
 	</div>
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?php echo 'Occurrence Image Submission: ' . $collMap['collectionname']; ?></h1>
 		<?php
 		if($statusStr){

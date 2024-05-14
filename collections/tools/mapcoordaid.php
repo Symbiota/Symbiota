@@ -10,7 +10,7 @@ $latDef = array_key_exists("latdef",$_REQUEST)?$_REQUEST["latdef"]:'';
 $lngDef = array_key_exists("lngdef",$_REQUEST)?$_REQUEST["lngdef"]:'';
 $zoom = array_key_exists("zoom",$_REQUEST)&&is_numeric($_REQUEST["zoom"])?$_REQUEST["zoom"]:5;
 $mapMode = array_key_exists("mapmode",$_REQUEST)? htmlspecialchars($_REQUEST["mapmode"]):'';
-$mapModeStrict = array_key_exists("map_mode_strict",$_REQUEST) && is_bool($_REQUEST["map_mode_strict"])? $_REQUEST["map_mode_strict"]:false;
+$mapModeStrict = array_key_exists("map_mode_strict",$_REQUEST)? true:false;
 $wktInputId = array_key_exists("wkt_input_id", $_REQUEST)? htmlspecialchars($_REQUEST["wkt_input_id"]):"footprintwkt";
 $outputType= array_key_exists("geoJson", $_REQUEST)?"geoJson":"wkt";
 
@@ -63,11 +63,9 @@ else{
 			html, body, #map { width:100%; height: 100%; }
 		</style>
 	</head>
-	<body style="background-color:#ffffff;image-rendering: auto;
-	image-rendering: crisp-edges;
-	image-rendering: pixelated; ">
-		<h1 class="page-heading">Taxon Map</h1>
-		<div style="float:right;margin-top:5px;margin-right:15px;">
+	<body style="background-color:#ffffff; display:flex; flex-direction:column;">
+		<h1 class="page-heading" style="margin-left:5px;">Taxon Map</h1>
+		<div style="float:right;margin-top:5px;margin-bottom:5px;margin-right:15px;margin-left:5px;">
 			<button name="closebutton" type="button" onclick="self.close()">
 				<?php echo isset($LANG['SAVE_N_CLOSE'])? $LANG['SAVE_N_CLOSE'] :'Save and Close'?>
 			</button>
@@ -116,7 +114,11 @@ else{
 
 		const setField = (id, v) => {
 			var elem = opener.document.getElementById(id);
-			if(elem) elem.value = v;
+			if(elem) {
+				elem.value = v;
+				var event = new Event('change');
+				elem.dispatchEvent(event);
+			}
 		};
 
 		const getField = (id) => {
@@ -284,7 +286,7 @@ else{
 			} 
 		}
 		let formShape = loadShape("<?php echo $mapMode?>");
-		//let mapModeStrict = <?php echo $mapModeStrict? "true": "false"?>;
+		let mapModeStrict = <?php echo $mapModeStrict? "true": "false"?>;
 		function leafletInit() {
 			const MapOptions = {
 				center: [<?php echo $latCenter?>, <?php echo $lngCenter?>],

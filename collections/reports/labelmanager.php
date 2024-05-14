@@ -189,7 +189,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 		<b> <?php echo (isset($LANG['LABEL_PRINT']) ? $LANG['LABEL_PRINT'] : 'Label Printing') ?> </b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['SPEC_LABEL_MANAGER']; ?></h1>
 		<?php
 		if($isEditor){

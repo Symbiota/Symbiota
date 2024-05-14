@@ -191,7 +191,7 @@ if($isEditor){
 		<a href="index.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><b><?php echo $LANG['LOAN_INDEX']; ?></b></a>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['LOAN_MANAGE']; ?></h1>
 		<?php
 		if($isEditor && $collid){

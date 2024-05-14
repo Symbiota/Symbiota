@@ -198,7 +198,7 @@ if($clid && $isEditor){
 									<b><?php echo $LANG['LATN'];?>:</b>
 									<input id="upperlat" type="text" name="latnorth" style="width:80px;" value="<?php echo isset($termArr['latnorth'])?$termArr['latnorth']:''; ?>" title="<?php echo $LANG['LAT_NORTH'] ?>" />
 									<?php
-									$coordAidUrl = '../collections/tools/mapcoordaid.php?mapmode=rectangle&latdef='.$clMetaArr['latcentroid'].'&lngdef='.$clMetaArr['longcentroid'];
+									$coordAidUrl = '../collections/tools/mapcoordaid.php?map_mode_strict=true&mapmode=rectangle&latdef='.$clMetaArr['latcentroid'].'&lngdef='.$clMetaArr['longcentroid'];
 									?>
 									<a href="#" onclick="openPopup('<?php echo htmlspecialchars($coordAidUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>','boundingbox')"><img src="../images/world.png" style="width:1.2em" title="<?php echo $LANG['FIND_COORD'] ?>" /></a>
 								</div>
@@ -233,7 +233,9 @@ if($clid && $isEditor){
 					<tr>
 						<td colspan="2">
 							<div style="margin:10px;">
-								<input type="submit" name="submit" value="<?php echo $LANG['SAVESEARCH'];?>" />
+								<button type="submit">
+									<?php echo $LANG['SAVESEARCH'];?>
+								</button>
 								<input type="hidden" name="submitaction" value="SaveSearch" />
 								<input type='hidden' name='clid' value='<?php echo $clid; ?>' />
 								<input type='hidden' name='pid' value='<?php echo $pid; ?>' />
@@ -250,8 +252,10 @@ if($clid && $isEditor){
 				<legend><b><?php echo $LANG['REMOVESEARCH'];?></b></legend>
 				<form name="sqldeleteform" action="voucheradmin.php" method="post" onsubmit="return confirm('<?php echo $LANG['SURE_DELETE_QUERY'];?>');">
 					<div style="margin:20px">
-						<input type="submit" name="submit" value="<?php echo $LANG['DELETEVARIABLES'];?>" />
-						<input type="hidden" name="submitaction" value="DeleteVariables" />
+					<button class="button-danger" type="submit">
+						<?php echo $LANG['DELETEVARIABLES'];?>
+					</button>
+					<input type="hidden" name="submitaction" value="DeleteVariables" />
 					</div>
 					<input type="hidden" name="clid" value="<?php echo $clid; ?>" />
 					<input type="hidden" name="pid" value="<?php echo $pid; ?>" />

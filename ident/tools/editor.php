@@ -86,7 +86,7 @@ if($isEditor && $action){
 	</script>
 </head>
 <body>
-<div id="innertext">
+<div role="main" id="innertext">
 	<h1 class="page-heading">Identification Character Editor</h1>
 	<?php
 	if($isEditor && $tid){

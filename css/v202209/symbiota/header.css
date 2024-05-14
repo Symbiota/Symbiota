@@ -25,6 +25,7 @@ header {
 
 .top-login > .button {
   margin-left: 0.8rem;
+  display: inline-block;
 }
 
 .top-brand {

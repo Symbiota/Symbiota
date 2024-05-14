@@ -97,8 +97,6 @@ if($SYMB_UID){
 	if(defined('LOCALITYAUTOLOOKUP') && !LOCALITYAUTOLOOKUP) $LOCALITY_AUTO_LOOKUP = LOCALITYAUTOLOOKUP;
 	if(defined('CATNUMDUPECHECK') && !CATNUMDUPECHECK) $CATNUM_DUPE_CHECK = false;
 	if(defined('OTHERCATNUMDUPECHECK') && !OTHERCATNUMDUPECHECK) $OTHER_CATNUM_DUPE_CHECK = false;
-	$DUPE_SEARCH = true;
-	if(defined('DUPESEARCH') && !DUPESEARCH) $DUPE_SEARCH = false;
 
 	//0 = not editor, 1 = admin, 2 = editor, 3 = taxon editor, 4 = crowdsource editor or collection allows public edits
 	//If not editor, edits will be submitted to omoccuredits table but not applied to omoccurrences
@@ -444,6 +442,9 @@ else{
 	<title><?= $DEFAULT_TITLE . ' ' . $LANG['OCCEDITOR'] ?></title>
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<link href="<?= $CSS_BASE_PATH ?>/symbiota/variables.css" type="text/css" rel="stylesheet">
+	<?php
+	include_once($SERVER_ROOT.'/includes/head.php');
+	?>
 
     <?php
     if($crowdSourceMode == 1){
@@ -509,6 +510,7 @@ else{
 	<script src="../../js/symb/collections.coordinateValidation.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/wktpolygontools.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/collections.georef.js?ver=2" type="text/javascript"></script>
+	<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.main.js?ver=9" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.tools.js?ver=4" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.imgtools.js?ver=3" type="text/javascript"></script>
@@ -517,10 +519,13 @@ else{
 	<style type="text/css">
 		fieldset{ padding:15px }
 		fieldset > legend{ font-weight:bold; }
-		.fieldGroup-div{ clear:both; overflow: auto; margin-bottom: 2px; }
-		.field-div{ margin: 2px; }
+		.fieldGroupDiv{ clear:both; margin-bottom: 1rem; overflow: auto}
+		.fieldDiv{ float:left; margin-right: 1rem;}
 		select{ height: 20px; margin-bottom: 2px; }
 		#identifierDiv img{ width:10px; margin-left: 5px; }
+		#innertext{ background-color: white; margin: 0px 10px; }
+
+		.editimg{ width: 15px; }
 		
 		.button-toggle {
 			background-color: transparent; 
@@ -541,7 +546,7 @@ else{
 	</style>
 </head>
 <body>
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<div id="titleDiv">
 			<?php
 			if($collMap) echo '<h1 class="page-heading" style="font-size: 1.5rem;"> Occurrence Editor: ' . $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').') </h1>';
@@ -825,7 +830,7 @@ else{
 													<input type="text" name="eventdate2" value="<?= array_key_exists('eventdate2',$occArr)?$occArr['eventdate2']:''; ?>" onchange="eventDate2Changed(this);" >
 												</div>
 												<?php
-												if($DUPE_SEARCH){
+												if($ACTIVATE_DUPLICATES){
 													?>
 													<div id="dupesDiv">
 														<button type="button" value="Duplicates" onclick="searchDupes(this.form);" ><?php echo $LANG['DUPLICATES']; ?></button><br/>
@@ -950,13 +955,13 @@ else{
 													<a href="#" onclick="return dwcDoc('dateIdentified')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 													<input type="text" name="dateidentified" maxlength="45" value="<?php echo array_key_exists('dateidentified',$occArr)?$occArr['dateidentified']:''; ?>" onchange="fieldChanged('dateidentified');" />
 												</div>
-												<div id="idrefToggleDiv" onclick="toggle('idrefdiv');">
-													<img class="editimg" src="../../images/editplus.png">
+												<div id="idrefToggleDiv" onclick="toggle('idrefdiv');" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>">
+													<img class="seemore" src="../../images/tochild.png" style="width:1.3em;height:1.3em">
 												</div>
 											</div>
 											<div  id="idrefdiv">
 												<div id="identificationReferencesDiv" class="field-div">
-													<?php echo $LANG['ID_REFERENCE']; ?>:
+													<?php echo $LANG['ID_REFERENCES']; ?>:
 													<a href="#" onclick="return dwcDoc('identificationReferences')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 													<input type="text" name="identificationreferences" value="<?php echo array_key_exists('identificationreferences',$occArr)?$occArr['identificationreferences']:''; ?>" onchange="fieldChanged('identificationreferences');" />
 												</div>
@@ -1037,8 +1042,8 @@ else{
 													<a href="#" onclick="return dwcDoc('locationID')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 													<br/>
 													<input type="text" id="locationid" name="locationid" value="<?php echo array_key_exists('locationid',$occArr)?$occArr['locationid']:''; ?>" onchange="fieldChanged('locationid');" autocomplete="off" />
-													<a id="geography1Toggle" onclick="toggle('geography1-div', 'flex');">
-														<img class="editimg" src="../../images/editplus.png">
+													<a id="geography1Toggle" onclick="toggle('geography1-div', 'flex');" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>">
+														<img class="seemore" src="../../images/toparent.png" style="width:1.3em;height:1.3em">
 													</a>
 												</div>
 											</div>
@@ -1047,8 +1052,8 @@ else{
 												<a href="#" onclick="return dwcDoc('locality')" tabindex="-1"><img class="docimg" src="../../images/qmark.png"></a>
 												<br />
 												<textarea id="fflocality" name="locality" onchange="fieldChanged('locality');"><?php echo array_key_exists('locality',$occArr)?$occArr['locality']:''; ?></textarea>
-												<a id="localityExtraToggle" onclick="toggle('localityExtraDiv');">
-													<img class="editimg" src="../../images/editplus.png">
+												<a id="localityExtraToggle" onclick="toggle('localityExtraDiv');" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>">
+													<img class="seemore" src="../../images/tochild.png" style="width:1.3em" />
 												</a>
 											</div>
 											<?php
@@ -1183,7 +1188,7 @@ else{
 													</div>
 												</div>
 												<div id="georefExtraToggleDiv" onclick="toggle('georefExtraDiv');">
-													<img class="editimg" src="../../images/editplus.png">
+													<img class="seemore" src="../../images/tochild.png" style="width:1.3em;height:1.3em" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>" >
 												</div>
 											</div>
 											<?php
@@ -1302,8 +1307,8 @@ else{
 												<a href="#" onclick="return dwcDoc('occurrenceRemarks')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 												<br/>
 												<input type="text" name="occurrenceremarks" value="<?php echo array_key_exists('occurrenceremarks',$occArr)?$occArr['occurrenceremarks']:''; ?>" onchange="fieldChanged('occurrenceremarks');" title="<?php echo $LANG['OCC_REMARKS']; ?>" />
-												<span id="dynPropToggleSpan" onclick="toggle('dynamicPropertiesDiv');">
-													<img class="editimg" src="../../images/editplus.png">
+												<span id="dynPropToggleSpan" onclick="toggle('dynamicPropertiesDiv');" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>" >
+													<img class="seemore" src="../../images/tochild.png" style="width:1.3em;height:1.3em">
 												</span>
 											</div>
 											<div id="dynamicPropertiesDiv" class="field-div" style="display:<?= empty($occArr['dynamicproperties']) ? 'none' : '' ?>">

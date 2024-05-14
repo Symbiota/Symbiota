@@ -20,7 +20,7 @@ if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/prohibit.' . $LA
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<!-- This is inner text! -->
-		<div id="innertext">
+		<div role="main" id="innertext">
 			<h1 class="page-heading"><?= $LANG['FORBIDDEN'] ;?></h1>
 			<div style="font-weight:bold;">
 				<?= $LANG['NO_PERMISSION'] ?>

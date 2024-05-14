@@ -121,7 +121,7 @@ if($isEditor && $formSubmit){
 		<a href="batchimport.php">Batch Import Module</a>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading">Exsiccatae Batch Import</h1>
 		<?php
 		if($statusStr){

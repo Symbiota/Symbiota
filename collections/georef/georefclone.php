@@ -186,7 +186,7 @@ alert("<?php echo isset($LANG['LOCALITY_INVALID_ERROR'])? $LANG['LOCALITY_INVALI
 		data-lng="<?=htmlspecialchars($lngCen)?>"
 		/>
 		<!-- This is inner text! -->
-		<div id="innertext">
+		<div role="main" id="innertext">
 			<h1 class="page-heading">Georeference Clone Tool</h1>
 			<fieldset style="padding:10px;">
             <legend><b>

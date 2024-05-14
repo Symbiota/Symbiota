@@ -104,7 +104,7 @@ if($isEditor){
 		<b><?php echo $LANG['ANN_LAB_PRINT']; ?></b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['ANN_LAB_MAN']; ?></h1>
 		<?php
 		if($isEditor){

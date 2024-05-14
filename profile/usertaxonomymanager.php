@@ -112,7 +112,7 @@ $editorArr = $utManager->getTaxonomyEditors();
 	if($isEditor){
 		?>
 		<!-- This is inner text! -->
-		<div id="innertext">
+		<div role="main" id="innertext">
 			<h1 class="page-heading"><?= $LANG['TAX_PERMISSIONS']; ?></h1>
 			<div style="float:right;" title="Add a new taxonomic relationship">
 				<a href="#" onclick="toggle('addUserDiv')">

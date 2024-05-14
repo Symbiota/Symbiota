@@ -136,7 +136,7 @@ if($isEditor){
 		<b><?php echo $LANG['OCCUR_HARV']; ?></b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading">Add Occurrences to Dataset</h1>
 		<div style="margin:15px">
 		    <?php echo $LANG['BARCODE_INPUT_INSTRUCTIONS']; ?>

@@ -34,7 +34,7 @@ if($tid){
 	</style>
 </head>
 <body>
-	<div id="innertext" style="background-color:white;">
+	<div role="main" id="innertext" style="background-color:white;">
 		<h1 class="page-heading screen-reader-only"><?= $LANG['TP_IMAGE_EDITOR'] ?></h1>
 		<?php
 		if($isEditor && $tid){

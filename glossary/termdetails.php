@@ -193,7 +193,7 @@ if($glossId){
 	<div class='navpath'>
 		&lt; &lt; <a href='individual.php?glossid=<?= $glossId ?>'><?= $LANG['GOTO_PUBLIC_DISPLAY'] ?></a>
 	</div>
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['G_MGMNT']; ?></h1>
 		<?php
 		if($glossId && $isEditor){
@@ -744,7 +744,7 @@ if($glossId){
 															<input name="glossid" type="hidden" value="<?php echo $glossId; ?>" />
 															<input name="glimgid" type="hidden" value="<?php echo $imgId; ?>" />
 															<input name="tabindex" type="hidden" value="3" />
-															<button name="formsubmit" type="submit" value="Delete Image" onclick="return confirm(<?php echo (isset($LANG['SURE_DEL_IMG'])?$LANG['SURE_DEL_IMG']:'Are you sure you want to permanently delete this image?'); ?>);"><?php echo (isset($LANG['DEL_IMG'])?$LANG['DEL_IMG']:'Delete Image'); ?></button>
+															<button class="button-danger" name="formsubmit" type="submit" value="Delete Image" onclick="return confirm(<?php echo (isset($LANG['SURE_DEL_IMG'])?$LANG['SURE_DEL_IMG']:'Are you sure you want to permanently delete this image?'); ?>);"><?php echo (isset($LANG['DEL_IMG'])?$LANG['DEL_IMG']:'Delete Image'); ?></button>
 														</div>
 													</fieldset>
 												</form>
@@ -772,7 +772,9 @@ if($glossId){
 								echo '</div>';
 							}
 							?>
-							<input name="formsubmit" type="submit" value="Delete Term" <?php if($hasImages) echo (isset($LANG['DISABLED'])?$LANG['DISABLED']:'DISABLED'); ?> />
+							<button class="button-danger" name="formsubmit" type="submit" value="Delete Term" <?php if($hasImages) echo (isset($LANG['DISABLED'])?$LANG['DISABLED']:'DISABLED'); ?>>
+								Delete Term
+							</button>
 							<input name="glossid" type="hidden" value="<?php echo $glossId; ?>" />
 						</fieldset>
 					</form>

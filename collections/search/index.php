@@ -38,6 +38,8 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 	<link href="<?= $CLIENT_ROOT ?>/collections/search/css/tables.css" type="text/css" rel="stylesheet">
 	<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet">
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT . '/js/jquery-ui.min.js'; ?>" type="text/javascript"></script>
+	<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
 	<script>
 		const clientRoot = '<?php echo $CLIENT_ROOT; ?>';
 		const handleAccordionExpand = () => {
@@ -83,7 +85,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<!-- This is inner text! -->
-	<div id="innertext" class="inner-search">
+	<div role="main" id="innertext" class="inner-search">
 		<h1 class="page-heading"><?php echo $LANG['SAMPLE_SEARCH'] ?></h1>
 		<div id="error-msgs" class="errors"></div>
 		<div style="display: grid; grid-template-columns: 3fr 1fr;">
@@ -142,39 +144,39 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 					<div class="content">
 						<div id="search-form-locality">
 							<div>
-								<div>
-									<div class="input-text-container">
-										<label for="country" class="input-text--outlined">
-											<span class="screen-reader-only"><?php echo $LANG['COUNTRY'] ?></span>
-											<input type="text" name="country" id="country" data-chip="<?php echo $LANG['COUNTRY'] ?>" />
-											<span data-label="<?php echo $LANG['COUNTRY'] ?>"></span>
-										</label>
-										<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
-									</div>
-									<div class="input-text-container">
-										<label for="state" class="input-text--outlined">
-											<span class="screen-reader-only"><?php echo $LANG['STATE'] ?></span>
-											<input type="text" name="state" id="state" data-chip="<?php echo $LANG['STATE'] ?>" />
-											<span data-label="<?php echo $LANG['STATE'] ?>"></span>
-										</label>
-										<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
-									</div>
-									<div class="input-text-container">
-										<label for="county" class="input-text--outlined">
-											<span class="screen-reader-only"><?php echo $LANG['COUNTY'] ?></span>
-											<input type="text" name="county" id="county" data-chip="<?php echo $LANG['COUNTY'] ?>" />
-											<span data-label="<?php echo $LANG['COUNTY'] ?>"></span>
-										</label>
-										<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
-									</div>
-									<div class="input-text-container">
-										<label for="local" class="input-text--outlined">
-											<span class="screen-reader-only"><?php echo $LANG['LOCALITY_LOCALITIES'] ?></span>
-											 <input type="text" name="local" id="local" data-chip="<?php echo $LANG['LOCALITY'] ?>" />
-											<span data-label="<?php echo $LANG['LOCALITY_LOCALITIES'] ?>"></span>
-										</label>
-										<span class="assistive-text" style="line-height:1.7em"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
-									</div>
+								<div class="input-text-container">
+									<label for="country" class="input-text--outlined">
+										<span class="screen-reader-only"><?php echo $LANG['COUNTRY'] ?></span>
+										<input type="text" name="country" id="country" data-chip="<?php echo $LANG['COUNTRY'] ?>" />
+										<span data-label="<?php echo $LANG['COUNTRY'] ?>"></span>
+									</label>
+									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
+								</div>
+								<div class="input-text-container">
+									<label for="state" class="input-text--outlined">
+										<span class="screen-reader-only"><?php echo $LANG['STATE'] ?></span>
+										<input type="text" name="state" id="state" data-chip="<?php echo $LANG['STATE'] ?>" />
+										<span data-label="<?php echo $LANG['STATE'] ?>"></span>
+									</label>
+									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
+								</div>
+								<div class="input-text-container">
+									<label for="county" class="input-text--outlined">
+										<span class="screen-reader-only"><?php echo $LANG['COUNTY'] ?></span>
+										<input type="text" name="county" id="county" data-chip="<?php echo $LANG['COUNTY'] ?>" />
+										<span data-label="<?php echo $LANG['COUNTY'] ?>"></span>
+									</label>
+									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
+								</div>
+							</div>
+<div>
+								<div class="input-text-container">
+									<label for="local" class="input-text--outlined">
+										<span class="screen-reader-only"><?php echo $LANG['LOCALITY_LOCALITIES'] ?></span>
+										 <input type="text" name="local" id="local" data-chip="<?php echo $LANG['LOCALITY'] ?>" />
+										<span data-label="<?php echo $LANG['LOCALITY_LOCALITIES'] ?>"></span>
+									</label>
+									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
 								</div>
 								<div class="grid grid--half">
 									<div class="input-text-container">
@@ -538,7 +540,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 </body>
 <script src="js/searchform.js" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/collections/search/js/alerts.js?v=202107'; ?>" type="text/javascript"></script>
-<script src="<?php echo $CLIENT_ROOT . '/js/jquery-ui.min.js'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/symb/api.taxonomy.taxasuggest.js'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/symb/collections.index.js?ver=20171215' ?>" type="text/javascript"></script>
 <script type="text/javascript">
@@ -593,6 +594,17 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 		updateChip();
 	}
 
+	window.initLocalitySuggest({
+		country: {
+			id: 'country',
+		},
+		state_province: {
+			id: 'state',
+		},
+		county: {
+			id: 'county',
+		},
+	})
 </script>
 
 </html>

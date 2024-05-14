@@ -74,7 +74,7 @@ if($isEditor){
 			<b>Batch GeoLocate Tools</b>
 		</div>
 		<!-- This is inner text! -->
-		<div id="innertext">
+		<div role="main" id="innertext">
 			<h1 class="page-heading">GeoLocate Batch Processes</h1>
 		<?php
 		if($collId){

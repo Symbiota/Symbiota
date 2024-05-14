@@ -104,7 +104,7 @@ elseif($action == 'addAllToDataset'){
 		<a href="index.php"><b> <?php echo (isset($LANG['DATLIST']) ? $LANG['DATLIST'] : 'Dataset Listing') ?> </b></a>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<?php
 		if($statusStr){
 			$color = 'green';

@@ -68,7 +68,7 @@ if($SYMB_UID){
 		</div>
 
 		<!-- This is inner text! -->
-		<div id="innertext">
+		<div role="main" id="innertext">
 			<h1 class="page-heading screen-reader-only"><?= $LANG['SALIX_WRDST_MNGR']; ?></h1>
 			<?php
 			if($isEditor){

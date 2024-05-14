@@ -37,7 +37,7 @@ $ocArr = $datasetManager->getOccurrences($datasetid);
 			<b><?php echo $LANG['DATASET']; ?>: <?php echo $dArr['name'] ;?></b>
 		</div>
 		<!-- This is inner text! -->
-		<div id="innertext">
+		<div role="main" id="innertext">
     	<h1 class="page-heading"><?php echo $LANG['DATASET']; ?>: <?php echo $dArr['name'] ;?></h1>
     <ul>
       <!-- Metadata -->

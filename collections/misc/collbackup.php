@@ -40,7 +40,7 @@ elseif($collid && isset($USER_RIGHTS['CollAdmin']) && in_array($collid, $USER_RI
     </style>
 </head>
 <body>
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading">Download Backup File</h1>
 		<?php
 		if($isEditor){

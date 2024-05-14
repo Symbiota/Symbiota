@@ -575,7 +575,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 					echo '<div id="dupediv-'.$occid.'">';
 					echo '<div style="padding:15px;"><b>'.$LANG['CLUSTER_TITLE'].':</b> '.$dupArr['title'];
 					echo '<div style="float:right" title="'.$LANG['UNLINK_BUT_MAINTAIN'].'">';
-					echo '<button name="unlinkthisdupebutton" onclick="deleteDuplicateLink('.$dupid.','.$occid.')">'.$LANG['REM_FROM_CLUSTER'].'</button>';
+					echo '<button class="button-danger" name="unlinkthisdupebutton" onclick="deleteDuplicateLink('.$dupid.','.$occid.')">'.$LANG['REM_FROM_CLUSTER'].'</button>';
 					echo '</div>';
 					$note = trim($dupArr['description'].'; '.$dupArr['notes'],' ;');
 					if($note) echo ' - '.$notes;
@@ -732,7 +732,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 						<form name="delgeneticform" method="post" action="occurrenceeditor.php">
 							<div style="margin:2px;">
 								<input name="submitaction" type="hidden" value="deletegeneticsubmit" />
-								<button name="subbut" type="button" value="Delete Resource" onclick="submitDeleteGeneticResource(this.form)" ><?php echo $LANG['DEL_RES']; ?></button>
+								<button class="button-danger" name="subbut" type="button" value="Delete Resource" onclick="submitDeleteGeneticResource(this.form)" ><?php echo $LANG['DEL_RES']; ?></button>
 								<input name="genid" type="hidden" value="<?php echo $genId; ?>" />
 								<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
 								<input name="csmode" type="hidden" value="<?php echo $crowdSourceMode; ?>" />

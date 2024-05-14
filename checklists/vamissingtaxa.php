@@ -24,7 +24,7 @@ if($isEditor){
 	elseif($displayMode==2) $missingArr = $vManager->getMissingProblemTaxa();
 	else $missingArr = $vManager->getMissingTaxa();
 	?>
-	<div id="innertext" style="background-color:white;">
+	<div role="main" id="innertext" style="background-color:white;">
 		<div style='float:left;font-weight:bold;margin-left:5px'>
 			<?php
 			if($displayMode == 2){

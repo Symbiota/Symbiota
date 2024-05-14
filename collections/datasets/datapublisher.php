@@ -210,7 +210,7 @@ if ($isEditor) {
 		<b><?php echo $LANG['DWCA_PUBLISHER']; ?></b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext" class="accessible-font">
+	<div role="main" id="innertext" class="accessible-font">
 		<?php
 		if (!$collid && $IS_ADMIN) {
 			?>

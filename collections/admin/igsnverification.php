@@ -82,7 +82,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	<b><?php echo $LANG['IGSN_VERIFY'] ?></b>
 </div>
 <!-- This is inner text! -->
-<div id="innertext">
+<div role="main" id="innertext">
 	<h1 class="page-heading"><?= $LANG['IGSN_MANAGE'] . ': ' . $guidManager->getCollectionName(); ?></h1>
 	<?php
 	if($isEditor){

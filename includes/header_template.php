@@ -17,13 +17,13 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
 				<?php
 				if ($USER_DISPLAY_NAME) {
 					?>
-					<div style="margin-bottom: 0.75rem;">
+					<div class="welcome-text bottom-breathing-room-rel">
 						<?= (isset($LANG['H_WELCOME'])?$LANG['H_WELCOME']:'Welcome') . ' ' . $USER_DISPLAY_NAME ?>!
 					</div>
-					<span style="white-space: nowrap; padding: 0.8rem;" class="button button-tertiary">
+					<span style="white-space: nowrap; padding: 0.8rem;" class="button button-tertiary bottom-breathing-room-rel">
 						<a style="font-size: 1.1em;" href="<?= $CLIENT_ROOT ?>/profile/viewprofile.php"><?= (isset($LANG['H_MY_PROFILE'])?$LANG['H_MY_PROFILE']:'My Profile') ?></a>
 					</span>
-					<span style="white-space: nowrap; padding: 0.8rem;" class="button button-secondary">
+					<span style="white-space: nowrap; padding: 0.8rem;" class="button button-secondary bottom-breathing-room-rel">
 						<a style="font-size: 1.1em;" href="<?= $CLIENT_ROOT ?>/profile/index.php?submit=logout"><?= (isset($LANG['H_LOGOUT'])?$LANG['H_LOGOUT']:'Sign Out') ?></a>
 					</span>
 					<?php

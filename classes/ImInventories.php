@@ -44,6 +44,7 @@ class ImInventories extends Manager{
 				$retArr['defaultsettings'] = $row->defaultsettings;
 				$retArr['dynamicsql'] = $row->dynamicsql;
 				$retArr['hasfootprintwkt'] = ($row->footprintwkt?'1':'0');
+				$retArr['footprintwkt'] = $row->footprintwkt;
 				$retArr['sortsequence'] = $row->sortsequence;
 				$retArr['datelastmodified'] = $row->datelastmodified;
 				$retArr['dynamicProperties'] = $row->dynamicProperties;

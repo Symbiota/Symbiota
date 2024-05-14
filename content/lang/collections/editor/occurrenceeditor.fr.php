@@ -66,6 +66,7 @@ $LANG['LIMITED_EDITING'] = 'Droits de modification limités: utilisez onglet de 
 $LANG['NEED_FULL'] = "Remarque: Des autorisations d'édition complètes sont nécessaires pour modifier une identification";
 $LANG['IDENTIFICATION_CONFIDENCE'] = 'Confiance du Identifié';
 $LANG['UNDEFINED'] = 'Indéfini';
+$LANG['TOGG_ADD_FIELDS'] = "Activer/Désactiver Champ(s) Supplémentaire(s)";
 ///$LANG['ABSOLUTE'] = 'Absolute';
 ///$LANG['V_HIGH'] = 'Very High';
 ///$LANG['HIGH'] = 'High';

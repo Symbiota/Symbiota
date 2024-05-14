@@ -137,7 +137,7 @@ if(!$IS_ADMIN){
 		</style>
 	</head>
 	<body onload="<?php echo $onLoadStr; ?>" style="background-color:white;">
-		<div id="innertext">
+		<div role="main" id="innertext">
 			<h1 class="page-heading">Duplicate Record Search</h1>
 			<?php
 			if($statusStr){

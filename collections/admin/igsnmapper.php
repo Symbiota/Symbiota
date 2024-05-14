@@ -180,7 +180,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	<b><?php echo $LANG['IGSN_MAPPER'] ?></b>
 </div>
 <!-- This is inner text! -->
-<div id="innertext">
+<div role="main" id="innertext">
 	<h1 class="page-heading"><?= $LANG['IGSN_GUID_MAPPER']; ?></h1>
 	<?php
 	if($isEditor && $collid){

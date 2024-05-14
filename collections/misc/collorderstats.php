@@ -37,7 +37,7 @@ $_SESSION['statsOrderArr'] = $orderArr;
 		$displayLeftMenu = (isset($collections_misc_collstatsMenu)?$collections_misc_collstatsMenu:false);
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
-		<div id="innertext">
+		<div role="main" id="innertext">
 			<h1 class="page-heading"><?= $LANG['ORDER_DIST']; ?></h1>
 			<fieldset id="orderdistbox" style="clear:both;margin-top:15px;width:800px;">
 				<legend><b><?php echo (isset($LANG['ORDER_DIST'])?$LANG['ORDER_DIST']:'Order Distribution'); ?></b></legend>

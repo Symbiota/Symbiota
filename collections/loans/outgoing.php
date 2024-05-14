@@ -162,7 +162,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 		<a href="outgoing.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&loanid=' . htmlspecialchars($loanId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><b><?php echo $LANG['OUTGOING_LOAN_MANAGE']; ?></b></a>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['OUTGOING_LOAN_MANAGE']; ?></h1>
 		<?php
 		if($isEditor && $collid){
@@ -407,7 +407,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 								<?php
 							}
 							?>
-							<button name="formsubmit" type="submit" value="Delete Loan" <?php if($specimenTotal) echo 'DISABLED'; ?>><?php echo $LANG['DELETE_LOAN']; ?></button>
+							<button class="button-danger" name="formsubmit" type="submit" value="Delete Loan" <?php if($specimenTotal) echo 'DISABLED'; ?>><?php echo $LANG['DELETE_LOAN']; ?></button>
 							<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 							<input name="loanid" type="hidden" value="<?php echo $loanId; ?>" />
 						</fieldset>

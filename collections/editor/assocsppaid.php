@@ -44,7 +44,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 
 <body style="background-color:white">
 	<!-- This is inner text! -->
-	<div id="innertext" style="background-color:white;">
+	<div role="main" id="innertext" style="background-color:white;">
 		<h1 class="page-heading screen-reader-only"><?php echo $LANG['ASSOC_SPP_AID']; ?></h1>
 		<fieldset style="width:450px;">
 			<legend><b><?php echo $LANG['ASSOC_SPP_AID']; ?></b></legend>

@@ -288,7 +288,7 @@ if($ometid) unset($selectLookupArr[$ometid]);
 		?>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext" style="width:95%;">
+	<div role="main" id="innertext" style="width:95%;">
 		<h1 class="page-heading">Exsiccatae</h1>
 		<?php
 		if($statusStr){

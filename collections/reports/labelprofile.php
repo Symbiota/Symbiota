@@ -137,7 +137,7 @@ $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General
 		<b>Label Profile Editor</b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading">Specimen Label Manager</h1>
 		<div style="width:700px"><span style="color:orange;font-weight:bold;">In development!</span> We are currently working on developing a new system that will allow collection managers and general users to create their own custom label formats that can be saved within the collection and user profiles. We are trying our best to develop these tools with minimum disruptions to normal label printing. More details to provided in the near future.</div>
 		<?php

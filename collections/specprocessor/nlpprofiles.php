@@ -81,7 +81,7 @@ if($isEditor){
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<!-- This is inner text! -->
-		<div id="innertext">
+		<div role="main" id="innertext">
 			<h1 class="page-heading">Specimen NLP Profile Manager</h1>
 			<?php
 			if($status){

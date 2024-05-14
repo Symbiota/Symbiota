@@ -80,7 +80,7 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 		<a href="../../index.php"><?= $LANG['HOME'] ?></a> &gt;&gt;
 		<a href="taxonomydisplay.php"><b><?= $LANG['TAX_TREE_VIEWER'] ?></b></a>
 	</div>
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading">Central Taxonomic Thesaurus</h1>
 		<?php
 		if($statusStr){

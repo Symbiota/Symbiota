@@ -187,7 +187,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 			<a href="importextended.php?collid=<?= $collid ?>"><b><?= $LANG['DATA_IMPORTER'] ?></b></a>
 		</div>
 		<!-- This is inner text! -->
-		<div id="innertext">
+		<div role="main" id="innertext">
 			<h1 class="page-heading"><?= $LANG['DATA_IMPORTER']; ?></h1>
 			<h2><?= $importManager->getCollMeta('collName'); ?></h2>
 			<div class="pageDescription-div">

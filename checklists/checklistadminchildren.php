@@ -60,7 +60,7 @@ $childArr = $clManager->getChildrenChecklist()
 	button{ margin:20px; }
 </style>
 <!-- inner text -->
-<div id="innertext" style="background-color:white;">
+<div role="main" id="innertext" style="background-color:white;">
 	<div style="float:right;">
 		<a href="#" onclick="toggle('addchilddiv')"><img src="../images/add.png" style="width:1.5em;" /></a>
 	</div>

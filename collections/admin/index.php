@@ -17,7 +17,7 @@ header('Location: '.$CLIENT_ROOT.'/index.php');
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<!-- This is inner text! -->
-		<div id="innertext">
+		<div role="main" id="innertext">
 			<h1 class="page-heading">Access Denied</h1>
 			<h1 class="page-heading">Forbidden</h1>
 			<div style="font-weight:bold;">

@@ -39,7 +39,7 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 		<b><?php echo (isset($LANG['G_CONTR'])?$LANG['G_CONTR']:'Glossary Contributors'); ?></b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['G_SOURCES']; ?></h1>
 		<?php
 		if($editMode){
@@ -93,7 +93,7 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 									<button name="formsubmit" type="submit" value="Edit Source"><?php echo (isset($LANG['SAVE'])?$LANG['SAVE']:'Save Edits'); ?></button>
 								</div>
 								<div style="margin:20px;">
-									<button name="formsubmit" type="submit" value="Delete Source" onclick="return confirm(<?php echo (isset($LANG['SURE_DEL'])?$LANG['SURE_DEL']:'Are you sure you want to delete this source?'); ?>)"><?php echo (isset($LANG['DEL_SRC'])?$LANG['DEL_SRC']:'Delete Source'); ?></button>
+									<button class="button-danger" name="formsubmit" type="submit" value="Delete Source" onclick="return confirm(<?php echo (isset($LANG['SURE_DEL'])?$LANG['SURE_DEL']:'Are you sure you want to delete this source?'); ?>)"><?php echo (isset($LANG['DEL_SRC'])?$LANG['DEL_SRC']:'Delete Source'); ?></button>
 								</div>
 								<?php
 							}

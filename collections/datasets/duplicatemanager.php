@@ -121,7 +121,7 @@ if($isEditor && $formSubmit){
 	</div>
 
 	<!-- inner text -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading">Duplicate Manager</h1>
 		<?php
 		if($statusStr){
@@ -245,7 +245,7 @@ if($isEditor && $formSubmit){
 												<input name="limit" type="hidden" value="<?php echo $limit; ?>" />
 												<input name="action" type="hidden" value="<?php echo $action; ?>" />
 												<input name="formsubmit" type="hidden" value="clusterdelete" />
-												<button name="submit" type="submit" value="Delete Cluster" ><?php echo $LANG['DEL_CLUSTER']; ?></button>
+												<button class="button-danger" name="submit" type="submit" value="Delete Cluster" ><?php echo $LANG['DEL_CLUSTER']; ?></button>
 											</form>
 										</fieldset>
 									</div>

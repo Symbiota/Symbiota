@@ -86,7 +86,7 @@ if($IS_ADMIN){
 	}
 	?>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['USER_MNGMT']; ?></h1>
 		<div style="float:right;">
 			<div style="margin:10px 0px 15px 0px;">

@@ -60,7 +60,7 @@ if($collid){
 		<b><?php echo $LANG['OCC_SKEL_SUBMIT']; ?></b>
 	</div>
 	<!-- inner text -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?php echo $LANG['OCC_SKEL_SUBMIT'] . ': ' . $collMap['collectionname']; ?></h1>
 		<?php
 		if($statusStr){

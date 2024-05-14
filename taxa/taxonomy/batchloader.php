@@ -190,7 +190,7 @@ include($SERVER_ROOT.'/includes/header.php');
 if($isEditor){
 	$rankArr = $loaderManager->getTaxonRankArr();
 	?>
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?php echo $LANG['TAX_NAME_BATCH_LOADER']; ?></h1>
 		<div style="margin:30px;">
 			<div style="margin-bottom:30px;">

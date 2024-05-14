@@ -37,7 +37,7 @@ $IS_ADMIN = true;
 		<?php
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
-		<div id="innertext">
+		<div role="main" id="innertext">
 			<h1>Database Schema Manager</h1>
 			<?php
 			if($IS_ADMIN || !$curentVersion){

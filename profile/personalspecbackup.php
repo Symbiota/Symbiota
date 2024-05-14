@@ -30,7 +30,7 @@ if($IS_ADMIN
 </head>
 <body>
 <!-- This is inner text! -->
-<div id="innertext">
+<div role="main" id="innertext">
 	<h1 class="page-heading"><?= $LANG['PERS_SPEC_BACKUP']; ?></h1>
 	<?php
 	if($editable){

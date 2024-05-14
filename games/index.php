@@ -44,7 +44,7 @@ $clArr = $gameManager->getChecklistArr($pid);
 	?>
 
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading">Games</h1>
 
 		<div style='margin:10px;'>

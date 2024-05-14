@@ -112,7 +112,7 @@ else{
 
 if($isEditor){
 	?>
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?php echo (isset($LANG['G_BATCH_LOAD'])?$LANG['G_BATCH_LOAD']:'Glossary Term Batch Loader'); ?></h1>
 		<div style="margin:30px;">
 			<div style="margin-bottom:30px;">

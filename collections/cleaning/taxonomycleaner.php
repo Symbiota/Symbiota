@@ -174,7 +174,7 @@ elseif($activeCollArr){
 			<b><?php echo $LANG['TAX_NAME_CLEAN']; ?></b>
 		</div>
 		<!-- inner text block -->
-		<div id="innertext">
+		<div role="main" id="innertext">
 			<?php
 			$collMap = $cleanManager->getCollMap();
 			if($collid){

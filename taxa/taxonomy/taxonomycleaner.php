@@ -104,7 +104,7 @@ $status = "";
 		}
 		?>
 		<!-- inner text block -->
-		<div id="innertext">
+		<div role="main" id="innertext">
 			<h1 class="page-heading"><?php echo $LANG['TAX_THES_VALIDATOR']; ?></h1>
 			<?php
 			if($SYMB_UID){

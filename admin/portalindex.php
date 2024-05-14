@@ -52,7 +52,7 @@ if($IS_ADMIN) $isEditor = 1;
 			<a href="../../index.php">Home</a> &gt;&gt;
 			<b><a href="portalindex.php">Portal Index Control Panel</a></b>
 		</div>
-		<div id="innertext">
+		<div role="main" id="innertext">
 			<?php
 			if(!isset($GLOBALS['ACTIVATE_PORTAL_INDEX'])){
 				echo 'This feature has not yet been activated within this portal';

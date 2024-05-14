@@ -1790,11 +1790,11 @@ class DwcArchiverCore extends Manager{
 			}
 			if ($this->includeAttributes){
 				$this->writeAttributeData($batchOccidArr);
-				if($this->attributeHandler !== null) $this->attributeHandler->__destruct();
+				if($this->attributeHandler !== null) $this->attributeHandler = null;
 			}
 			if ($this->includeMaterialSample){
 				$this->writeMaterialSampleData($batchOccidArr);
-				if($this->materialSampleHandler !== null) $this->materialSampleHandler->__destruct();
+				if($this->materialSampleHandler !== null) $this->materialSampleHandler = null;
 			}
 		}
 		else {

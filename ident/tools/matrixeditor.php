@@ -142,7 +142,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	<b> <?php echo (isset($LANG['MTRX_EDIT']) ? $LANG['MTRX_EDIT'] : 'Matrix Editor'); ?> </b>
 </div>
 <!-- This is inner text! -->
-<div id="innertext">
+<div role="main" id="innertext">
 	<h1 class="page-heading"><?= $LANG['MTRX_EDIT']; ?></h1>
 	<?php
 	if($clid && $isEditor){

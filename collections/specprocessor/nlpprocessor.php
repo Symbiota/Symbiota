@@ -38,7 +38,7 @@ if($isEditor){
 }
 ?>
 <!-- This is inner text! -->
-<div id="innertext">
+<div role="main" id="innertext">
 	<h1><?php echo $LANG['NLP_PROCESSOR']; ?></h1>
 	<?php 
 	if($status){ 

@@ -229,7 +229,7 @@ $collManager->cleanOutArr($collData);
 	echo '</div>';
 	?>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?php echo ($collid?$collData["collectionname"]:"") . ' '. $LANG['MAILING_ADD']; ?></h1>
 		<?php
 		if($statusStr){

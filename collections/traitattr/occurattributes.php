@@ -265,7 +265,7 @@ if ($traitID) {
 	}
 	?>
 	<!-- This is inner text! -->
-	<div id="innertext" style="position:relative;">
+	<div role="main" id="innertext" style="position:relative;">
 		<h1 class="page-heading"><?= $LANG['OCC_ATTRIBUTE_BATCH_EDIT']; ?></h1>
 		<?php
 		if ($collid) {
@@ -445,8 +445,8 @@ if ($traitID) {
 							<form name="submitform" method="post" action="occurattributes.php" onsubmit="return verifySubmitForm(this)">
 								<div style="float:right;margin-right:10px">
 									<div class="trianglediv" style="margin:4px 3px;float:right;cursor:pointer" onclick="setAttributeTree(this)" title="<?php echo $LANG['TOGGLE_ATTRI_TREE'] ?>">
-										<img class="triangleright" src="../../images/triangleright.png" style="width:1.3em" />
-										<img class="triangledown" src="../../images/triangledown.png" style="display:none;width:1.3em" />
+										<img class="triangleright" src="../../images/tochild.png" style="width:1.4em" />
+										<img class="triangledown" src="../../images/toparent.png" style="display:none;width:1.4em" />
 									</div>
 								</div>
 								<div>

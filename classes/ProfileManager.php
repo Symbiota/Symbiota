@@ -478,7 +478,7 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	protected function setUserRights(){
+	public function setUserRights(){
 		if($this->uid){
 			$userRights = array();
 			$sql = 'SELECT role, tablepk FROM userroles WHERE (uid = ?) ';

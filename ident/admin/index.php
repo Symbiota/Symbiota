@@ -62,7 +62,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 		<b> <?php echo (isset($LANG['CHAR_MGMT']) ? $LANG['CHAR_MGMT'] : 'Character Management'); ?> </b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['CHAR_ADMIN']; ?></h1>
 		<?php
 		if($isEditor){

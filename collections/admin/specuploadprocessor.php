@@ -114,7 +114,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	<a href="specuploadmanagement.php?collid=<?= $collid ?>"><?php echo (isset($LANG['LIST_UPLOAD']) ? $LANG['LIST_UPLOAD'] : 'List of Upload Profiles'); ?></a> &gt;&gt;
 	<b><?php echo (isset($LANG['SPEC_UPLOAD']) ? $LANG['SPEC_UPLOAD'] : 'Specimen Uploader'); ?></b>
 </div>
-<div id="innertext">
+<div role="main" id="innertext">
 	<h1 class="page-heading"><?= $LANG['UP_MODULE']; ?></h1>
 	<?php
 	if($isEditor && $collid){

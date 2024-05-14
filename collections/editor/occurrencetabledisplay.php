@@ -91,7 +91,7 @@ if($SYMB_UID){
 	if(!is_numeric($occIndex)) $occIndex = 0;
 	$recStart = floor($occIndex/$recLimit)*$recLimit;
 	$recArr = $occManager->getOccurMap($recStart, $recLimit);
-	$navStr = '<div class="navpath" style="float:right;">';
+	$navStr = '<div class="navpath">';
 
 
 	if($recStart >= $recLimit){
@@ -106,6 +106,7 @@ if($SYMB_UID){
 
 		$navStr .= '<a href="#" onclick="return submitQueryForm('.(floor($qryCnt/$recLimit) * $recLimit).');" title="'.(isset($LANG['LAST'])?$LANG['LAST']:'Last').' '.$recLimit.' '.(isset($LANG['RECORDS'])?$LANG['RECORDS']:'records').'">&gt;|</a>';
 	}
+	$navStr .= ' * ' . (isset($LANG['CLICK_ID'])?$LANG['CLICK_ID']:'Click on the Symbiota identifier in the first column to open the editor.');
 	$navStr .= '</div>';
 }
 else{
@@ -148,6 +149,12 @@ else{
 		.fieldGroupDiv{ clear:both; margin-bottom: 1rem; overflow: auto}
 		.fieldDiv{ float:left; margin-right: 1rem;}
 		#innertext{ background-color: white; margin: 0px 10px; }
+
+		#record-viewer-innertext { 
+			margin-left: 2em;
+			width: calc(100vw - 4em);
+			background-color: white; 
+		}
 		.editimg{ width: 15px; }
 		.accessible-font {
 			font-size: 1.4em;
@@ -156,6 +163,8 @@ else{
 			display: block;
 			white-space: nowrap;
 			overflow-x: scroll;
+			overflow-y: scroll;
+			height: 80vh;
 		}
 
 		.button-toggle {
@@ -178,7 +187,7 @@ else{
 </head>
 <body style="margin-left: 0px; margin-right: 0px;background-color:white;">
 	<a class="screen-reader-only" href="#skip-search"><?php echo $LANG['SKIP_SEARCH'] ?></a>
-	<div id="innertext" style="max-width: 100vw">
+	<div id="record-viewer-innertext">
 		<h1 class="page-heading screen-reader-only">Occurrence Table Display</h1>
 		<?php
 		if(($isEditor || $crowdSourceMode)){
@@ -329,8 +338,9 @@ else{
 				<?php
 			}
 			?>
-			<div style="width:850px;clear:both;">
+			<div style="display:flex;width:850px;clear:both;">
 				<?php echo $navStr; ?>
+				
 			</div>
 			<?php
 			if($recArr){
@@ -390,10 +400,6 @@ else{
 							<?php echo htmlspecialchars((isset($LANG['TABLE_VIEW_DESC']) ? $LANG['TABLE_VIEW_DESC'] : 'Table displays occurrence information with columns showing Symbiota ID, Family, Event Date, Author, Location, and other details'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>
 					</p>
 				</div>
-				<div style="width:790px;">
-					<?php echo $navStr; ?>
-				</div>
-				*<?php echo (isset($LANG['CLICK_ID'])?$LANG['CLICK_ID']:'Click on the Symbiota identifier in the first column to open the editor.'); ?>
 				<?php
 			}
 			else{

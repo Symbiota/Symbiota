@@ -52,7 +52,7 @@ $statusStr = '';
 	?>
 
 	<!-- inner text -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<h1 class="page-heading"><?php echo $LANG['CROWDSOURCE_SCORE_BOARD']; ?></h1>
 
 		<div style="margin:20px;">
