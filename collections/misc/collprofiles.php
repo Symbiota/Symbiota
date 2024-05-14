@@ -92,6 +92,18 @@ if ($SYMB_UID) {
 				window.location.href = redirectUrl;
 			}
 		}
+		function directSubmitAction(e) {
+			if(!e.submitter || !e.submitter.value) return false;
+
+			if(e.submitter.value === "edit") {
+				return processEditQuickSearch('<?php echo $CLIENT_ROOT ?>')
+			} else if(e.submitter.value === "search") {
+				return submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&includeothercatnum=1', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&usethes=1&taxontype=2 ');
+			}
+
+			e.preventDefault();
+			return false;
+		}
 	</script>
 	<style>
 		.importItem { margin-left:10px; display:none; }
@@ -135,13 +147,13 @@ if ($SYMB_UID) {
 		<a href="../index.php"><?php echo htmlspecialchars((isset($LANG['COLLECTION_SEARCH']) ? $LANG['COLLECTION_SEARCH'] : 'Collection Search Page'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 		<b><?php echo (isset($LANG['COLL_PROFILE']) ? $LANG['COLL_PROFILE'] : 'Collection Profile'); ?></b>
 	</div>
-	<div id="innertext">
+	<div id="innertext" style="padding-top:0">
 		<?php if ($collid && !$collid == 0){
 		?>
-			<section id="quicksearch-box" class="fieldset-like no-left-margin float-rt-no-overlap">
+			<section id="quicksearch-box" class="fieldset-like float-rt-no-overlap" style="margin:0">
 				<h1><span><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></span></h1>
 				<div id="dialogContainer" style="position: relative;">
-					<form name="quicksearch" action="javascript:void(0);" onsubmit="processEditQuickSearch('<?php echo $CLIENT_ROOT ?>')">
+					<form name="quicksearch" action="javascript:void(0);" onsubmit="directSubmitAction(event)">
 						<label for="catalog-number"><?php echo (isset($LANG['OCCURENCE_IDENTIFIER']) ? $LANG['OCCURENCE_IDENTIFIER'] : 'Catalog Number'); ?></label>
 						<span class="screen-reader-only">
 							<?php
@@ -167,16 +179,14 @@ if ($SYMB_UID) {
 						<?php
 							if($editCode == 1 || $editCode == 2 || $editCode == 3){
 						?>
-							<button type="submit" id="search-by-catalog-number-admin-btn">
+							<button type="submit" id="search-by-catalog-number-admin-btn" value="edit"> 
 								<?php echo (isset($LANG['OCCURRENCE_EDITOR']) ? $LANG['OCCURRENCE_EDITOR'] : 'Edit'); ?>
 							</button>
 						<?php
 							}
 						?>
 
-					</form>
-					<form name="quicksearch" action="javascript:void(0);" onsubmit="submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&includeothercatnum=1', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&usethes=1&taxontype=2 '); return false;">
-						<button class="top-breathing-room-rel" type="submit" id="search-by-catalog-number-btn" title="<?php echo (isset($LANG['IDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Occurrence ID and Record ID also accepted.'); ?>">
+						<button class="top-breathing-room-rel" type="submit" value='search' id="search-by-catalog-number-btn" title="<?php echo (isset($LANG['IDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Occurrence ID and Record ID also accepted.'); ?>">
 							<?php echo (isset($LANG['SEARCH']) ? $LANG['SEARCH'] : 'Search'); ?>
 						</button>
 					</form>
@@ -228,7 +238,7 @@ if ($SYMB_UID) {
 			}
 			if ($editCode) {
 				?>
-				<div id="controlpanel" style="margin-top: 9rem; display:<?php echo ($eMode ? 'block' : 'none'); ?>;">
+				<div id="controlpanel" style="margin-top: 4rem; display:<?php echo ($eMode ? 'block' : 'none'); ?>;">
 					<section class="fieldset-like no-left-margin">
 						<h1><span><?php echo (isset($LANG['DAT_EDIT']) ? $LANG['DAT_EDIT'] : 'Data Editor Control Panel'); ?></span></h1>
 						<ul>
