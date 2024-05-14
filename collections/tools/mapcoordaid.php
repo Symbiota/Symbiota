@@ -114,7 +114,11 @@ else{
 
 		const setField = (id, v) => {
 			var elem = opener.document.getElementById(id);
-			if(elem) elem.value = v;
+			if(elem) {
+				elem.value = v;
+				var event = new Event('change');
+				elem.dispatchEvent(event);
+			}
 		};
 
 		const getField = (id) => {
