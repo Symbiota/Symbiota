@@ -792,9 +792,11 @@ class OccurrenceEditorManager {
 					foreach($occurArr['identifiers'] as $idKey => $idArr){
 						$idName = $idArr['name'];
 						$idValue = $idArr['value'];
-						if(array_key_exists($idValue, $otherCatNumArr)){
-							if(!$idName && $otherCatNumArr[$idValue]) $occurrenceArr[$occid]['identifiers'][$idKey]['name'] = $otherCatNumArr[$idValue];
-							unset($otherCatNumArr[$idValue]);
+						foreach($otherCatNumArr as $ocnValue => $ocnTag){
+							if($ocnValue == $idValue || $ocnValue == $idName . ' ' . $idValue){
+								if(!$idName && $otherCatNumArr[$idValue]) $occurrenceArr[$occid]['identifiers'][$idKey]['name'] = $otherCatNumArr[$idValue];
+								unset($otherCatNumArr[$ocnValue]);
+							}
 						}
 					}
 				}
