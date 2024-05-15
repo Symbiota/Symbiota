@@ -557,9 +557,9 @@ value="${color}"
 				}
 			})
 
-         let map = new LeafletMap('map', {
-            lang: "<?php echo $LANG_TAG; ?>"
-         })
+			let map = new LeafletMap('map', {
+				lang: "<?php echo $LANG_TAG; ?>",
+			})
 			map.enableDrawing({
 				polyline: false,
 				circlemarker: false,

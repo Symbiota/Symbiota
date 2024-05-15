@@ -26,7 +26,8 @@ class LeafletMap {
    //DEFAULTS
    DEFAULT_MAP_OPTIONS = {
       center: [0, 0],
-      zoom: 1,
+      zoom: 2,
+      minZoom: 2,
    };
 
    DEFAULT_SHAPE_OPTIONS = {
@@ -61,7 +62,12 @@ class LeafletMap {
    /* Reference Leaflet Feature Group for all drawn items*/
    drawLayer;
 
-   constructor(map_id, map_options=this.DEFAULT_MAP_OPTIONS) {
+   constructor(map_id, map_options={}) {
+
+	  map_options = {
+		 ...map_options,
+		 ...this.DEFAULT_MAP_OPTIONS,
+	  }
 
       this.mapLayer = L.map(map_id, map_options);
 
