@@ -98,12 +98,13 @@ class TaxonomyController extends Controller{
 		->join('taxa as a', 's.tidAccepted', '=', 'a.tid')
 		->where('s.tid', $id)->where('s.taxauthid', 1);
 		$taxStatusResult = $taxStatus->get();
-		$taxonObj['parentTid'] = $taxStatusResult[0]->parentTid;
+		$taxonObj->parentTid = $taxStatusResult[0]->parentTid;
+
 		//Set Status
 		if($id == $taxStatusResult[0]->tid){
-			$taxonObj['status'] = 'accepted';
+			$taxonObj->status = 'accepted';
 		}else{
-			$taxonObj['status'] = 'synonym';
+			$taxonObj->status = 'synonym';
 			$accepted = [];
 			$accepted['tid'] = $taxStatusResult[0]->tid;
 			$accepted['scientificName'] = $taxStatusResult[0]->sciname;
@@ -111,7 +112,7 @@ class TaxonomyController extends Controller{
 			$accepted['taxonomicSource'] = $taxStatusResult[0]->taxonomicSource;
 			$accepted['unacceptabilityReason'] = $taxStatusResult[0]->unacceptabilityReason;
 			$accepted['taxonRemarks'] = $taxStatusResult[0]->notes;
-			$taxonObj['accepted'] = $accepted;
+			$taxonObj->accepted = $accepted;
 		}
 
 		//Set parent
@@ -120,7 +121,7 @@ class TaxonomyController extends Controller{
 		->join('taxa as p', 'e.parentTid', '=', 'p.tid')
 		->where('e.tid', $id)->where('e.taxauthid', 1);
 		$parStatusResult = $parStatus->get();
-		$taxonObj['classification'] = $parStatusResult;
+		$taxonObj->classification = $parStatusResult;
 
 		if(!$taxonObj->count()) $taxonObj = ['status' =>false, 'error' => 'Unable to locate inventory based on identifier'];
 		return response()->json($taxonObj);
