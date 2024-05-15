@@ -19,7 +19,7 @@ if(!is_numeric($cidValue)) $cidValue = 0;
 
 $muManager = new KeyMatrixEditor();
 $muManager->setClid($clid);
-if($langValue) $muManager->setLang($langValue);
+if($langValue) $muManager->setLanguage($langValue);
 if($cidValue) $muManager->setCid($cidValue);
 
 $isEditor = false;
@@ -49,7 +49,7 @@ if($isEditor){
 
 		function verifyClose() {
 			if(dataChanged == true) {
-				return <?php echo (isset($LANG['DATA_CHANGED']) ? $LANG['DATA_CHANGED'] : 'You will lose any unsaved data if you don\'t first save your changes!'); ?>;
+				return "<?php echo (isset($LANG['DATA_CHANGED']) ? $LANG['DATA_CHANGED'] : 'You will lose any unsaved data if you don\'t first save your changes!'); ?>";
 			}
 		}
 
@@ -98,7 +98,7 @@ if($isEditor){
 				submitForm = true;
 			}
 			if(submitForm) sform.submit();
-			else alert(<?php echo (isset($LANG['NO_EDITS_MADE']) ? $LANG['NO_EDITS_MADE'] : 'It doesn\'t appear that any edits have been made'); ?>);
+			else alert("<?php echo (isset($LANG['NO_EDITS_MADE']) ? $LANG['NO_EDITS_MADE'] : 'It doesn\'t appear that any edits have been made'); ?>");
 		}
 	</script>
 	<style>
@@ -142,7 +142,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	<b> <?php echo (isset($LANG['MTRX_EDIT']) ? $LANG['MTRX_EDIT'] : 'Matrix Editor'); ?> </b>
 </div>
 <!-- This is inner text! -->
-<div role="main" id="innertext">
+<div role="main" id="innertext" style="padding-top: 0">
 	<h1 class="page-heading"><?= $LANG['MTRX_EDIT']; ?></h1>
 	<?php
 	if($clid && $isEditor){
@@ -192,7 +192,7 @@ include($SERVER_ROOT.'/includes/header.php');
 		else{
 			$inheritStr = '&nbsp;<span title="' . (isset($LANG['STATE_INHERITED']) ? $LANG['STATE_INHERITED'] : 'State has been inherited from parent taxon') . '"><b>(i)</b></span>';
 			?>
-			<div><?php echo $inheritStr; ?> <?php echo (isset($LANG['INHERITED_TRUE']) ? $LANG['INHERITED_TRUE'] : ' = character state is inherited as true from a parent taxon (genus, family, etc)') ?> </div>
+			<div style="margin-bottom:1rem"><?php echo $inheritStr; ?> <?php echo (isset($LANG['INHERITED_TRUE']) ? $LANG['INHERITED_TRUE'] : ' = character state is inherited as true from a parent taxon (genus, family, etc)') ?> </div>
 		 	<table class="styledtable" style="font-family:Arial;font-size:12px;">
 				<?php
 				$muManager->echoTaxaList($taxonFilter,$generaOnly);
