@@ -111,7 +111,7 @@ class LeafletMap {
       }
 
       if(map_options.scale !== false) {
-         L.control.scale().addTo(this.mapLayer);
+         L.control.scale({maxWidth: 200}).addTo(this.mapLayer);
       }
 
       this.setLang(map_options.lang);
