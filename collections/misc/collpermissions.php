@@ -15,8 +15,8 @@ if (array_key_exists('action', $_REQUEST)){
 }
 else $action = "";
 $collId = array_key_exists("collid",$_REQUEST) ? filter_var($_REQUEST["collid"], FILTER_SANITIZE_NUMBER_INT) : 0;
-$targetUID = array_key_exists('uid', $_POST) ? filter_var($targetUID, FILTER_SANITIZE_NUMBER_INT) : 0;
-$persObsCollId = array_key_exists('persobscollid', $_POST) ? filter_var($persObsCollId, FILTER_SANITIZE_NUMBER_INT) : 0;
+$targetUID = array_key_exists('uid', $_POST) ? filter_var($_POST['uid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$persObsCollId = array_key_exists('persobscollid', $_POST) ? filter_var($_POST['persobscollid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 
 $permManager = new PermissionsManager();
 
