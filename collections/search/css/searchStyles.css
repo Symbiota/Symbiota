@@ -827,7 +827,7 @@
 .inner-search select {
   border: 1px solid #d0d0d0 !important;
   border-radius: 0;
-  color: #333333;
+  color: var(--body-text-color);
 }
 
 .inner-search input[type="text"]:focus,
