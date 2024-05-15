@@ -7,7 +7,7 @@ class Taxonomy extends Model{
 
 	protected $table = 'taxa';
 	protected $primaryKey = 'tid';
-	protected $hidden = [ 'phyloSortSequence', 'nomenclaturalStatus', 'nomenclaturalCode', 'statusNotes', 'hybrid', 'pivot' ];
+	protected $hidden = [ 'phyloSortSequence', 'nomenclaturalStatus', 'nomenclaturalCode', 'statusNotes', 'hybrid', 'pivot', 'modifiedUid', 'modifiedTimeStamp', 'initialTimeStamp', 'InitialTimeStamp' ];
 	protected $fillable = [  ];
 
 	public function descriptions(){

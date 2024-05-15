@@ -91,6 +91,36 @@ class TaxonomyController extends Controller{
 	 */
 	public function showOneTaxon($id, Request $request){
 		$taxonObj = Taxonomy::find($id);
+
+		//Set status and parent (can't use Eloquent model due to table containing complex PKs)
+		$taxStatus = DB::table('taxstatus as s')
+		->select('s.taxonomicSource', 's.unacceptabilityReason', 's.notes', 'a.tid', 'a.sciname', 'a.author')
+		->join('taxa as a', 's.tidAccepted', '=', 'a.tid')
+		->where('s.tid', $id)->where('s.taxauthid', 1);
+		$taxStatusResult = $taxStatus->get();
+		//Set Status
+		if($id == $taxStatusResult[0]->tid){
+			$taxonObj['status'] = 'accepted';
+		}else{
+			$taxonObj['status'] = 'synonym';
+			$accepted = [];
+			$accepted['tid'] = $taxStatusResult[0]->tid;
+			$accepted['scientificName'] = $taxStatusResult[0]->sciname;
+			$accepted['scientificNameAuthorship'] = $taxStatusResult[0]->author;
+			$accepted['taxonomicSource'] = $taxStatusResult[0]->taxonomicSource;
+			$accepted['unacceptabilityReason'] = $taxStatusResult[0]->unacceptabilityReason;
+			$accepted['taxonRemarks'] = $taxStatusResult[0]->notes;
+			$taxonObj['accepted'] = $accepted;
+		}
+
+		//Set parent
+		$parStatus = DB::table('taxaenumtree as e')
+		->select('p.tid', 'p.sciname as scientificName', 'p.author', 'p.rankid')
+		->join('taxa as p', 'e.parentTid', '=', 'p.tid')
+		->where('e.tid', $id)->where('e.taxauthid', 1);
+		$parStatusResult = $parStatus->get();
+		$taxonObj['classifications'] = $parStatusResult;
+
 		if(!$taxonObj->count()) $taxonObj = ['status' =>false, 'error' => 'Unable to locate inventory based on identifier'];
 		return response()->json($taxonObj);
 	}
