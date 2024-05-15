@@ -253,6 +253,8 @@ if($collid){
 				<h1>
 					<span><?php echo $LANG['RECORDS']; ?></span>
 				</h1>
+				<div id="occurlistdiv">
+				</div>
 			</section>
 			<?php
 		}
