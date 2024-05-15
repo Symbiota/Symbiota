@@ -94,10 +94,11 @@ class TaxonomyController extends Controller{
 
 		//Set status and parent (can't use Eloquent model due to table containing complex PKs)
 		$taxStatus = DB::table('taxstatus as s')
-		->select('s.taxonomicSource', 's.unacceptabilityReason', 's.notes', 'a.tid', 'a.sciname', 'a.author')
+		->select('s.parentTid', 's.taxonomicSource', 's.unacceptabilityReason', 's.notes', 'a.tid', 'a.sciname', 'a.author')
 		->join('taxa as a', 's.tidAccepted', '=', 'a.tid')
 		->where('s.tid', $id)->where('s.taxauthid', 1);
 		$taxStatusResult = $taxStatus->get();
+		$taxonObj['parentTid'] = $taxStatusResult[0]->parentTid;
 		//Set Status
 		if($id == $taxStatusResult[0]->tid){
 			$taxonObj['status'] = 'accepted';
@@ -119,7 +120,7 @@ class TaxonomyController extends Controller{
 		->join('taxa as p', 'e.parentTid', '=', 'p.tid')
 		->where('e.tid', $id)->where('e.taxauthid', 1);
 		$parStatusResult = $parStatus->get();
-		$taxonObj['classifications'] = $parStatusResult;
+		$taxonObj['classification'] = $parStatusResult;
 
 		if(!$taxonObj->count()) $taxonObj = ['status' =>false, 'error' => 'Unable to locate inventory based on identifier'];
 		return response()->json($taxonObj);
