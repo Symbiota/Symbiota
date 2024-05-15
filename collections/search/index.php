@@ -112,10 +112,12 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								<span class="screen-reader-only"><?php echo $LANG['TAXON'] ?></span>
 								<input type="text" name="taxa" id="taxa" data-chip="<?php echo $LANG['TAXON'] ?>" />
 								<span data-label="<?php echo $LANG['TAXON'] ?>"></span>
+								<div class="inset-input-label"><?php echo $LANG['TAXON'] ?></div>
 							</label>
 							<span class="assistive-text"><?php echo $LANG['TYPE_CHAR_FOR_SUGGESTIONS'] ?></span>
 						</div>
-						<div class="select-container">
+							<div style="padding-top:14px">
+						<div class="select-container" style="position: relative">
 							<label for="taxontype" class="screen-reader-only"><?php echo $LANG['TAXON_TYPE'] ?></label>
 							<select name="taxontype" id="taxontype" style="margin-top:0;">
 								<option id="taxontype-scientific" value="2" data-chip="<?php echo $LANG['TAXON'] . ': ' . $LANG['SCIENTIFIC_NAME'] ?>"><?php echo $LANG['SCIENTIFIC_NAME'] ?></option>
@@ -123,8 +125,10 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								<option id="taxontype-group" value="4" data-chip="<?php echo $LANG['TAXON'] . ': ' . $LANG['TAXONOMIC_GROUP'] ?>"><?php echo $LANG['TAXONOMIC_GROUP'] ?></option>
 								<option id="taxontype-common" value="5" data-chip="<?php echo $LANG['TAXON'] . ': ' . $LANG['COMMON_NAME'] ?>"><?php echo $LANG['COMMON_NAME'] ?></option>
 							</select>
+							<span class="inset-input-label"><?php echo $LANG['TAXON_TYPE'] ?></span>
 							<span class="assistive-text"><?php echo $LANG['TAXON_TYPE'] ?></span>
 						</div>
+							</div>
 						<div>
 							<input type="checkbox" name="usethes" id="usethes" data-chip="<?php echo $LANG['INCLUDE_SYNONYMS'] ?>" value="1" checked />
 							<label for="usethes">

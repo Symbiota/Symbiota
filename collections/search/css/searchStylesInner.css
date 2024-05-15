@@ -76,8 +76,8 @@
 
 /* INPUTS */
 .inner-search .assistive-text {
-  color: var(--medium-color);
-  font-size: 0.8em;
+  color: var(--body-text-color);
+  font-size: 1em;
 }
 
 .inner-search .invalid {
@@ -521,7 +521,7 @@
 .input-text-container label input:valid ~ span::before,
 .input-text-container label input:invalid ~ span::before {
   font-size: 1.45rem;
-  color: var(--medium-color);
+  color: var(--body-text-color);
 }
 
 .inner-search .input-text-container input {
@@ -612,6 +612,19 @@
   background-color: white;
   padding: 0 0.5rem 0 0;
   text-indent: 0.5rem;
+}
+
+.inset-input-label {
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  background-color: white;
+  padding: 0 0.5rem 0 0;
+  text-indent: 0.5rem;
+  position: absolute;
+  top: 0;
+  left: 1rem;
+  font-size: 1.45rem;
+  line-height: 1;
 }
 
 /* Select control ***********************************/
