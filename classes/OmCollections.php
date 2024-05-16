@@ -25,7 +25,7 @@ class OmCollections extends Manager{
 			SQL;
 			$result = $this->conn->execute_query($sql, [$this->collid, $collectionCode, $institutionCode]);
 			if($col = $result->fetch_object()) {
-				$this->errorMessage = 'Error: Same collection code and institution code as ' 
+				$this->errorMessage = 'Error: Duplicate collection + institution code found in ' 
 					. '<a href="'
 					. $CLIENT_ROOT 
 					. '/collections/misc/collprofiles.php?collid='
