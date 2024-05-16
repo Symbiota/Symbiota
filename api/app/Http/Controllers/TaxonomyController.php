@@ -57,11 +57,63 @@ class TaxonomyController extends Controller{
 
 		$eor = false;
 		$retObj = [
-			"offset" => (int)$offset,
-			"limit" => (int)$limit,
-			"endOfRecords" => $eor,
-			"count" => $fullCnt,
-			"results" => $result
+			'offset' => (int)$offset,
+			'limit' => (int)$limit,
+			'endOfRecords' => $eor,
+			'count' => $fullCnt,
+			'results' => $result
+		];
+		return response()->json($retObj);
+	}
+
+	/**
+	 * @OA\Get(
+	 *	 path="/api/v2/taxonomy/search",
+	 *	 operationId="/api/v2/taxonomy/search",
+	 *	 tags={""},
+	 *	 @OA\Parameter(
+	 *		 name="limit",
+	 *		 in="query",
+	 *		 description="Controls the number of results in the page.",
+	 *		 required=false,
+	 *		 @OA\Schema(type="integer", default=100)
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="offset",
+	 *		 in="query",
+	 *		 description="Determines the offset for the search results. A limit of 200 and offset of 100, will get the third page of 100 results.",
+	 *		 required=false,
+	 *		 @OA\Schema(type="integer", default=0)
+	 *	 ),
+	 *	 @OA\Response(
+	 *		 response="200",
+	 *		 description="Returns list of inventories registered within system",
+	 *		 @OA\JsonContent()
+	 *	 ),
+	 *	 @OA\Response(
+	 *		 response="400",
+	 *		 description="Error: Bad request. ",
+	 *	 ),
+	 * )
+	 */
+	public function showAllTaxaSearch(Request $request){
+		$this->validate($request, [
+			'limit' => 'integer',
+			'offset' => 'integer'
+		]);
+		$limit = $request->input('limit',100);
+		$offset = $request->input('offset',0);
+
+		$fullCnt = Taxonomy::count();
+		$result = Taxonomy::skip($offset)->take($limit)->get();
+
+		$eor = false;
+		$retObj = [
+			'offset' => (int)$offset,
+			'limit' => (int)$limit,
+			'endOfRecords' => $eor,
+			'count' => $fullCnt,
+			'results' => $result
 		];
 		return response()->json($retObj);
 	}
