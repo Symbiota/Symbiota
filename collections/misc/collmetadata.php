@@ -71,7 +71,7 @@ $collManager->cleanOutArr($collData);
 <html lang="<?php echo $LANG_TAG ?>">
 
 <head>
-	<title><?php echo $DEFAULT_TITLE . ' ' . ($collid ? $collData['collectionname'] : '') . ' ' . $LANG['COLL_PROFS']; ?></title>
+	<title><?php echo $DEFAULT_TITLE . ' ' . ($collid ? $collData['collectionname'] : '') . ' ' . $LANG['COL_PROFS']; ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT . '/includes/head.php');
