@@ -10,7 +10,7 @@ class DwcArchiverBaseManager extends Manager{
 	protected $charSetSource = '';
 	protected $charSetOut = '';
 	protected $sqlBase;
-	protected $fileHandler;
+	private $fileHandler;
 
 	public function __construct($conType, $connOverride){
 		parent::__construct(null, $conType, $connOverride);
@@ -42,7 +42,7 @@ class DwcArchiverBaseManager extends Manager{
 					$this->writeOutRecord($r);
 				}
 				$rs->free();
-				fclose($this->fileHandler);
+				if($this->fileHandler) fclose($this->fileHandler);
 			}
 			else{
 				$this->logOrEcho('ERROR writing out to extension file: '.$this->conn->error."\n");

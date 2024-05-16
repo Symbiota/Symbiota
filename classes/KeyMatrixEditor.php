@@ -178,10 +178,10 @@ class KeyMatrixEditor extends KeyManager{
 	private function echoTaxaRow($tid,$sciname,$indent = 0){
 		if(!is_numeric($indent)) $indent = 0;
 		if(is_numeric($tid)){
-			echo '<tr><td>';
+			echo '<tr><td><div style="display: flex;align-items: center;gap: 0.5rem;line-height: 1; padding: 0.5rem 0">';
 			echo '<span style="margin-left:'.($indent*10).'px"><b>'.($indent?'<i>':'').htmlspecialchars($sciname, ENT_QUOTES, 'UTF-8').($indent?'</i>':'').'</b></span>';
-			echo '<a href="editor.php?tid='.$tid.'" target="_blank"> <img src="../../images/edit.png" /></a>';
-			echo '</td>';
+			echo '<a href="editor.php?tid=' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank"><img style="width:1.5em" src="../../images/edit.png" /></a>';
+			echo '</div></td>';
 			foreach($this->stateArr as $cs => $csName){
 				$isSelected = false;
 				$isInherited = false;

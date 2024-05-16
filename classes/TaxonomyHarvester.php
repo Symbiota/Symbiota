@@ -556,7 +556,7 @@ class TaxonomyHarvester extends Manager{
 						$taxonArr = $this->translateChecklistBankNode($nodeArr);
 						$tid = $this->getTid($taxonArr);
 						if($tid){
-							$display = '<a href="'.$GLOBALS['CLIENT_ROOT'].'/taxa/taxonomy/taxoneditor.php?tid='.$tid.'" target="_blank">'.$nodeArr['labelHtml'].'</a>';
+							$display = '<a href="' . htmlspecialchars($GLOBALS['CLIENT_ROOT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/taxa/taxonomy/taxoneditor.php?tid=' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($nodeArr['labelHtml'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 							$this->logOrEcho($display.' already in thesaurus',2);
 						}
 						else{
@@ -617,8 +617,8 @@ class TaxonomyHarvester extends Manager{
 			$taxonKingdom = $taxonArr['kingdom'];
 			if($this->kingdomName && $this->kingdomName != $taxonKingdom){
 				//Skip if kingdom doesn't match target kingdom
-				$msg = 'Target taxon (<a href="https://marinespecies.org/aphia.php?p=taxdetails&id='.$id.'&marine_only=false" target="_blank">';
-				$msg .= $taxonArr['sciname'].'</a>) skipped due to not matching targeted kingdom: '.$this->kingdomName.' (!= '.$taxonKingdom.')';
+				$msg = 'Target taxon (<a href="https://marinespecies.org/aphia.php?p=taxdetails&id=' . htmlspecialchars($id, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&marine_only=false" target="_blank">';
+				$msg .= htmlspecialchars($taxonArr['sciname'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>) skipped due to not matching targeted kingdom: ' . htmlspecialchars($this->kingdomName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' (!= ' . htmlspecialchars($taxonKingdom, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ')';
 					$this->logOrEcho($msg,2);
 				return false;
 			}
@@ -769,7 +769,7 @@ class TaxonomyHarvester extends Manager{
 					$taxonArr = $this->getWormsNode($nodeArr);
 					$tid = $this->getTid($taxonArr);
 					if($tid){
-						$display = '<a href="'.$GLOBALS['CLIENT_ROOT'].'/taxa/taxonomy/taxoneditor.php?tid='.$tid.'" target="_blank">'.$nodeArr['scientificname'].'</a>';
+						$display = '<a href="' . htmlspecialchars($GLOBALS['CLIENT_ROOT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/taxa/taxonomy/taxoneditor.php?tid=' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . $nodeArr['scientificname'] . '</a>';
 						$this->logOrEcho($display.' already in thesaurus',2);
 					}
 					else{
@@ -1294,7 +1294,7 @@ class TaxonomyHarvester extends Manager{
 							$accStr = 'synonym of taxon <a href="'.$GLOBALS['CLIENT_ROOT'].'/taxa/taxonomy/taxoneditor.php?tid='.$tidAccepted.'" target="_blank">#'.$tidAccepted.'</a>';
 						}
 						else{
-							$accStr = 'synonym of taxon #'.$tidAccepted;
+							$accStr = 'synonym of taxon #' . $tidAccepted;
 						}
 					}
 					$this->logOrEcho('Taxon <b>'.$taxonDisplay.'</b> added to thesaurus as '.$accStr,2);

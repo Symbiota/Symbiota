@@ -24,7 +24,7 @@ $searchVarEncoded = urlencode($searchVar);
 		?>
 		<form action="checklistsymbiota.php" method="post" style="float:right">
 			<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;cursor: pointer" title="<?php echo $LANG['OPEN_KEY']; ?>">
-				<img src="../images/key.png" style="width:15px" />
+				<img src="../images/key.png" style="width:1.3em" />
 			</button>
 			<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 			<input name="taxonfilter" type="hidden" value="<?php echo $taxonFilter; ?>" />
@@ -36,7 +36,7 @@ $searchVarEncoded = urlencode($searchVar);
 		?>
 		<form action="checklistsymbiota.php" method="post" style="float:right">
 			<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;cursor: pointer" title="<?php echo $LANG['OPEN_CHECKLIST_EXPLORER']; ?>">
-				<img src="../images/list.png" style="width:15px" />
+				<img src="../images/list.png" style="width:1.3em" />
 			</button>
 			<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 			<input name="taxonfilter" type="hidden" value="<?php echo $taxonFilter; ?>" />
@@ -76,7 +76,7 @@ $searchVarEncoded = urlencode($searchVar);
 			echo '<div style="margin-left:5;margin-top:5;">'.$family.'</div>';
 			foreach($sciNameArr as $sciName => $tid){
 				echo '<div style="margin-left:20;font-style:italic;">';
-				if($tid) echo '<a target="_blank" href="../taxa/index.php?tid='.$tid.'">';
+				if($tid) echo '<a target="_blank" href="../taxa/index.php?tid=' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 				echo $sciName;
 				if($tid) echo '</a>';
 				echo '</div>';
@@ -86,7 +86,7 @@ $searchVarEncoded = urlencode($searchVar);
 			echo '<div style="margin-left:5;margin-top:5;">'.$LANG['FAMILY_NOT_DEFINED'].'</div>';
 			foreach($undFamilyArray as $sciName => $tid){
 				echo '<div style="margin-left:20;font-style:italic;">';
-				if($tid) echo '<a target="_blank" href="../taxa/index.php?tid='.$tid.'">';
+				if($tid) echo '<a target="_blank" href="../taxa/index.php?tid=' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 				echo $sciName;
 				if($tid) echo '</a>';
 				echo '</div>';

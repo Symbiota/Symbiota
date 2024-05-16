@@ -83,7 +83,7 @@ class EOLManager {
 			$url .= '&key='.$GLOBALS['TAXONOMIC_AUTHORITIES']['EOL'];
 		}
 		if($fh = fopen($url, 'r')){
-			echo '<li>Reading identifier for '.$sciName.' (tid: <a href="../index.php?taxon='.$tid.'" target="_blank">'.$tid.'</a>)... ';
+			echo '<li>Reading identifier for '.$sciName.' (tid: <a href="../index.php?taxon=' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>)... ';
 			$content = '';
 			while($line = fread($fh, 1024)){
 				$content .= trim($line);
@@ -170,7 +170,7 @@ class EOLManager {
 		$this->imgManager = new ImageShared();
 		while($r = $rs->fetch_object()){
 			$tid = $r->tid;
-			echo '<li>Mapping images for '.$this->cleanOutStr($r->sciname).' (tid: <a href="../index.php?taxon='.$tid.'" target="_blank">'.$tid.'</a>; EOL:<a href="http://eol.org/pages/'.$r->sourceidentifier.'/overview" target="_blank">'.$r->sourceidentifier."</a>)</li>\n";
+			echo '<li>Mapping images for '.$this->cleanOutStr($r->sciname).' (tid: <a href="../index.php?taxon=' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>; EOL:<a href="http://eol.org/pages/' . htmlspecialchars($r->sourceidentifier, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/overview" target="_blank">' . htmlspecialchars($r->sourceidentifier, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a>)</li>\n";
 			if($this->mapEolImages($tid, $this->cleanOutStr($r->sourceidentifier))){
 				$successCnt++;
 			}

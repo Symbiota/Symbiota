@@ -148,7 +148,7 @@ class ImageLibraryBrowser extends OccurrenceTaxaManager{
 
 	//Setters and getters
 	public function setSearchTerm($t){
-		$this->searchTerm = htmlspecialchars($t);
+		$this->searchTerm = htmlspecialchars($t, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 	}
 }
 ?>

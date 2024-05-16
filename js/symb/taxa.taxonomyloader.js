@@ -1,74 +1,84 @@
-$(document).ready(function() {
-	$("#acceptedstr").autocomplete({ 
-		source: "rpc/getacceptedsuggest.php",
-		focus: function( event, ui ){
-			$("#tidaccepted").val("");
-		},
-		select: function( event, ui ){
-			if(ui.item) $("#tidaccepted").val(ui.item.id);
-		},
-		change: function( event, ui ){
-			if(!$("#tidaccepted").val()){
-				alert("You must select a name from the list. If accepted name is not in the list, it needs to be added or it is in the system as a non-accepted synonym");
-			}
-		},
-		minLength: 2, 
-		autoFocus: true 
-	});
-	
-	$("#parentname").autocomplete({
-		source: function( request, response ) {
-			$.getJSON( "rpc/gettaxasuggest.php", { term: request.term, rhigh: $("#rankid").val() }, response );
-		},
-		focus: function( event, ui ){
-			$("#parenttid").val("");
-		},
-		select: function( event, ui ){
-			if(ui.item) $("#parenttid").val(ui.item.id);
-		},
-		change: function( event, ui ){
-			if(!$("#parenttid").val()){
-				alert("You must select a name from the list. If parent name is not in the list, it may need to be added");
-			}
-		},
-		minLength: 2,
-		autoFocus: true
-	});
+$(document).ready(function () {
+  $("#acceptedstr").autocomplete({
+    source: "rpc/getacceptedsuggest.php",
+    focus: function (event, ui) {
+      $("#tidaccepted").val("");
+    },
+    select: function (event, ui) {
+      if (ui.item) $("#tidaccepted").val(ui.item.id);
+    },
+    change: function (event, ui) {
+      if (!$("#tidaccepted").val()) {
+        alert(
+          "You must select a name from the list. If accepted name is not in the list, it needs to be added or it is in the system as a non-accepted synonym"
+        );
+      }
+    },
+    minLength: 2,
+    autoFocus: true,
+  });
+
+  $("#parentname").autocomplete({
+    source: function (request, response) {
+      $.getJSON(
+        "rpc/gettaxasuggest.php",
+        { term: request.term, rhigh: $("#rankid").val() },
+        response
+      );
+    },
+    focus: function (event, ui) {
+      $("#parenttid").val("");
+    },
+    select: function (event, ui) {
+      if (ui.item) $("#parenttid").val(ui.item.id);
+    },
+    change: function (event, ui) {
+      if (!$("#parenttid").val()) {
+        alert(
+          "You must select a name from the list. If parent name is not in the list, it may need to be added"
+        );
+      }
+    },
+    minLength: 2,
+    autoFocus: true,
+  });
 });
 
-function verifyLoadForm(f){
-	if(f.sciname.value == ""){
-		alert("Scientific Name field required.");
-		return false;
-	}
-	if(f.unitname1.value == ""){
-		alert("Unit Name 1 (genus or uninomial) field required.");
-		return false;
-	}
-	var rankId = f.rankid.value;
-	if(rankId == ""){
-		alert("Taxon rank field required.");
-		return false;
-	}
-	if(f.parentname.value == "" && rankId > "10"){
-		alert("Parent taxon required");
-		return false;
-	}
-	if(f.parenttid.value == "" && rankId > "10"){
-		alert("Parent identifier is not set! Make sure to select parent taxon from the list");
-		return false;
-	}
+function verifyLoadForm(f) {
+  if (f.sciname.value == "") {
+    alert("Scientific Name field required.");
+    return false;
+  }
+  if (f.unitname1.value == "") {
+    alert("Unit Name 1 (genus or uninomial) field required.");
+    return false;
+  }
+  var rankId = f.rankid.value;
+  if (rankId == "") {
+    alert("Taxon rank field required.");
+    return false;
+  }
+  if (f.parentname.value == "" && rankId > "10") {
+    alert("Parent taxon required");
+    return false;
+  }
+  if (f.parenttid.value == "" && rankId > "10") {
+    alert(
+      "Parent identifier is not set! Make sure to select parent taxon from the list"
+    );
+    return false;
+  }
 
-	//If name is not accepted, verify accetped name
-	var accStatusObj = f.acceptstatus;
-	if(accStatusObj[0].checked == false){
-		if(f.acceptedstr.value == ""){
-			alert("Accepted name needs to have a value");
-			return false
-		}
-	}
+  //If name is not accepted, verify accetped name
+  var accStatusObj = f.acceptstatus;
+  if (accStatusObj[0].checked == false) {
+    if (f.acceptedstr.value == "") {
+      alert("Accepted name needs to have a value");
+      return false;
+    }
+  }
 
-	return true;
+  return true;
 }
 
 function parseName(f){
@@ -212,27 +222,35 @@ function parseName(f){
 	updateFullname(f);
 }
 
-function setParent(parentName, unitind1){
-	$.ajax({
-		type: "POST",
-		url: "rpc/gettid.php",
-		async: true,
-		data: { sciname: parentName }
-	}).done(function( msg ) {
-		if(msg == 0){
-			if(!unitind1) alert("Parent taxon '"+parentName+"' does not exist. Please first add parent to system.");
-			else{
-				setParent(unitind1 + " " + parentName, "");
-			}
-		}
-		else{
-			if(msg.indexOf(",") == -1){
-				document.getElementById("parentname").value = parentName;
-				document.getElementById("parenttid").value = msg;
-			}
-			else alert("Parent taxon '"+parentName+"' is matching two different names in the thesaurus. Please select taxon with the correct author.");;
-		}
-	});
+function setParent(parentName, unitind1) {
+  $.ajax({
+    type: "POST",
+    url: "rpc/gettid.php",
+    async: true,
+    data: { sciname: parentName },
+  }).done(function (msg) {
+    if (msg == 0) {
+      if (!unitind1)
+        alert(
+          "Parent taxon '" +
+            parentName +
+            "' does not exist. Please first add parent to system."
+        );
+      else {
+        setParent(unitind1 + " " + parentName, "");
+      }
+    } else {
+      if (msg.indexOf(",") == -1) {
+        document.getElementById("parentname").value = parentName;
+        document.getElementById("parenttid").value = msg;
+      } else
+        alert(
+          "Parent taxon '" +
+            parentName +
+            "' is matching two different names in the thesaurus. Please select taxon with the correct author."
+        );
+    }
+  });
 }
 
 function updateFullname(f){
@@ -244,22 +262,64 @@ function updateFullname(f){
 	checkNameExistence(f);
 }
 
-function checkNameExistence(f){
-	$.ajax({
-		type: "POST",
-		url: "rpc/gettid.php",
-		async: false,
-		data: { sciname: f.sciname.value, rankid: f.rankid.value, author: f.author.value }
-	}).done(function( msg ) {
-		if(msg != '0'){
-			alert("Taxon "+f.sciname.value+" "+f.author.value+" ("+msg+") already exists in database");
-			return false;
-		}
-	});
+function checkNameExistence(f) {
+  $.ajax({
+    type: "POST",
+    url: "rpc/gettid.php",
+    async: false,
+    data: {
+      sciname: f.sciname.value,
+      rankid: f.rankid.value,
+      author: f.author.value,
+    },
+  }).done(function (msg) {
+    if (msg != "0") {
+      alert(
+        "Taxon " +
+          f.sciname.value +
+          " " +
+          f.author.value +
+          " (" +
+          msg +
+          ") already exists in database"
+      );
+      return false;
+    }
+  });
 }
 
-function acceptanceChanged(f){
-	var accStatusObj = f.acceptstatus;
-	if(accStatusObj[0].checked) document.getElementById("accdiv").style.display = "none";
-	else document.getElementById("accdiv").style.display = "block";
+function acceptanceChanged(f) {
+  var accStatusObj = f.acceptstatus;
+  if (accStatusObj[0].checked)
+    document.getElementById("accdiv").style.display = "none";
+  else document.getElementById("accdiv").style.display = "block";
 }
+
+// listener for taxon rank
+
+document.getElementById("rankid").addEventListener("change", function () {
+  const selectedValue = this.value; // Get the chosen value
+  $rankId = selectedValue;
+
+  const div1 = document.getElementById("div1hide");
+  const div2 = document.getElementById("div2hide");
+  const label = document.getElementById("unitind1label");
+
+  if (selectedValue > 150) {
+    div1.style.display = "block";
+    div2.style.display = "block";
+  } else {
+    div1.style.display = "none";
+    div2.style.display = "none";
+  }
+  if (selectedValue <= 180) {
+    // Get the name of selected option
+    const selectedOption = this.options[this.selectedIndex];
+    const selectedOptionText = selectedOption.textContent.trim();
+
+    // Set the label for "UnitName1" based on the selected option text
+    label.textContent = selectedOptionText + " Name";
+  } else {
+    label.textContent = "Genus Name";
+  }
+});

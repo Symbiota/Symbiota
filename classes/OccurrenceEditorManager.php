@@ -26,8 +26,6 @@ class OccurrenceEditorManager {
 	protected $errorArr = array();
 	protected $isShareConn = false;
 
-	private $paleoActivated = false;
-
 	public function __construct($conn = null){
 		if($conn){
 			$this->conn = $conn;
@@ -38,10 +36,11 @@ class OccurrenceEditorManager {
 			'institutioncode' => 's', 'collectioncode' => 's', 'eventid' => 's',
 			'family' => 's', 'sciname' => 's', 'tidinterpreted' => 'n', 'scientificnameauthorship' => 's', 'identifiedby' => 's', 'dateidentified' => 's',
 			'identificationreferences' => 's', 'identificationremarks' => 's', 'taxonremarks' => 's', 'identificationqualifier' => 's', 'typestatus' => 's',
-			'recordedby' => 's', 'recordnumber' => 's', 'associatedcollectors' => 's', 'eventdate' => 'd', 'eventdate2' => 'd', 'year' => 'n', 'month' => 'n', 'day' => 'n', 'startdayofyear' => 'n',
-			'enddayofyear' => 'n', 'verbatimeventdate' => 's', 'habitat' => 's', 'substrate' => 's', 'fieldnumber' => 's', 'occurrenceremarks' => 's', 'datageneralizations' => 's',
-			'associatedtaxa' => 's', 'verbatimattributes' => 's', 'dynamicproperties' => 's', 'reproductivecondition' => 's', 'cultivationstatus' => 's', 'establishmentmeans' => 's',
+			'recordedby' => 's', 'recordnumber' => 's', 'associatedcollectors' => 's', 'eventdate' => 'd', 'eventdate2' => 'd',
+			'verbatimeventdate' => 's', 'habitat' => 's', 'substrate' => 's', 'fieldnumber' => 's', 'occurrenceremarks' => 's', 'datageneralizations' => 's',
+			'associatedtaxa' => 's', 'verbatimattributes' => 's', 'behavior' => 's', 'vitality' => 's', 'dynamicproperties' => 's', 'reproductivecondition' => 's', 'cultivationstatus' => 's', 'establishmentmeans' => 's',
 			'lifestage' => 's', 'sex' => 's', 'individualcount' => 's', 'samplingprotocol' => 's', 'preparations' => 's',
+			'continent' => 's', 'waterbody' => 's', 'islandgroup' => 's', 'island' => 's', 'countrycode' => 's',
 			'country' => 's', 'stateprovince' => 's', 'county' => 's', 'municipality' => 's', 'locationid' => 's', 'locality' => 's', 'localitysecurity' => 'n', 'localitysecurityreason' => 's',
 			'locationremarks' => 'n', 'decimallatitude' => 'n', 'decimallongitude' => 'n', 'geodeticdatum' => 's', 'coordinateuncertaintyinmeters' => 'n', 'verbatimcoordinates' => 's',
 			'footprintwkt' => 's', 'georeferencedby' => 's', 'georeferenceprotocol' => 's', 'georeferencesources' => 's', 'georeferenceverificationstatus' => 's',
@@ -104,7 +103,6 @@ class OccurrenceEditorManager {
 				}
 			}
 		}
-		return $retArr;
 	}
 
 	//Query functions
@@ -530,21 +528,21 @@ class OccurrenceEditorManager {
 
 	private function setCustomSqlFragment($customField, $customTerm, $customValue, $cao, $cop, $ccp){
 		$sqlFrag = '';
-		if($customTerm == 'NULL'){
+		if($customTerm == 'IS_NULL'){
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' IS NULL) '.($ccp?$ccp.' ':'');
 		}
-		elseif($customTerm == 'NOTNULL'){
+		elseif($customTerm == 'NOT_NULL'){
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' IS NOT NULL) '.($ccp?$ccp.' ':'');
 		}
 		elseif($customTerm == 'NOT_EQUALS'){
 			if(!is_numeric($customValue)) $customValue = '"'.$customValue.'"';
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' (('.$customField.' != '.$customValue.') OR ('.$customField.' IS NULL)) '.($ccp?$ccp.' ':'');
 		}
-		elseif($customTerm == 'GREATER'){
+		elseif($customTerm == 'GREATER_THAN'){
 			if(!is_numeric($customValue)) $customValue = '"'.$customValue.'"';
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' > '.$customValue.') '.($ccp?$ccp.' ':'');
 		}
-		elseif($customTerm == 'LESS'){
+		elseif($customTerm == 'LESS_THAN'){
 			if(!is_numeric($customValue)) $customValue = '"'.$customValue.'"';
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' < '.$customValue.') '.($ccp?$ccp.' ':'');
 		}
@@ -554,7 +552,7 @@ class OccurrenceEditorManager {
 		elseif($customTerm == 'NOT_LIKE' && $customValue){
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' (('.$customField.' NOT LIKE "%'.trim($customValue,'%').'%") OR ('.$customField.' IS NULL)) '.($ccp?$ccp.' ':'');
 		}
-		elseif($customTerm == 'STARTS' && $customValue){
+		elseif($customTerm == 'STARTS_WITH' && $customValue){
 			$sqlFrag .= $cao.($cop?' '.$cop:'').' ('.$customField.' LIKE "'.trim($customValue,'%').'%") '.($ccp?$ccp.' ':'');
 		}
 		elseif($customValue !== ''){
@@ -780,10 +778,13 @@ class OccurrenceEditorManager {
 					$ocnStr = str_replace(array(',',';'),'|',$ocnStr);
 					$ocnArr = explode('|',$ocnStr);
 					foreach($ocnArr as $identUnit){
-						$unitArr = explode(':',trim($identUnit,': '));
+						$trimmableIdentUnit = $identUnit ?? "";
+						$unitArr = explode(':',trim($trimmableIdentUnit,': '));
+						$safeUnitArr = $unitArr ?? array();
 						$tag = '';
-						if(count($unitArr) > 1) $tag = trim(array_shift($unitArr));
-						$value = trim(implode(', ',$unitArr));
+						$trimmableShiftedUnitArr = array_shift($safeUnitArr) ?? "";
+						if(count($safeUnitArr) > 1) $tag = trim($trimmableShiftedUnitArr);
+						$value = trim(implode(', ',$safeUnitArr));
 						$otherCatNumArr[$value] = $tag;
 					}
 				}
@@ -792,9 +793,11 @@ class OccurrenceEditorManager {
 					foreach($occurArr['identifiers'] as $idKey => $idArr){
 						$idName = $idArr['name'];
 						$idValue = $idArr['value'];
-						if(array_key_exists($idValue, $otherCatNumArr)){
-							if(!$idName && $otherCatNumArr[$idValue]) $occurrenceArr[$occid]['identifiers'][$idKey]['name'] = $otherCatNumArr[$idValue];
-							unset($otherCatNumArr[$idValue]);
+						foreach($otherCatNumArr as $ocnValue => $ocnTag){
+							if($ocnValue == $idValue || $ocnValue == $idName . ' ' . $idValue){
+								if(!$idName && $otherCatNumArr[$idValue]) $occurrenceArr[$occid]['identifiers'][$idKey]['name'] = $otherCatNumArr[$idValue];
+								unset($otherCatNumArr[$ocnValue]);
+							}
 						}
 					}
 				}
@@ -874,7 +877,7 @@ class OccurrenceEditorManager {
 				}
 				//Get current paleo values to be saved within versioning tables
 				$editFieldArr['omoccurpaleo'] = array_intersect($editArr, $this->fieldArr['omoccurpaleo']);
-				if($this->paleoActivated && $editFieldArr['omoccurpaleo']){
+				if(isset($this->collMap['paleoActivated']) && $editFieldArr['omoccurpaleo']){
 					$sql = 'SELECT '.implode(',',$editFieldArr['omoccurpaleo']).' FROM omoccurpaleo WHERE occid = '.$this->occid;
 					$rs = $this->conn->query($sql);
 					if($rs->num_rows) $oldValueArr['omoccurpaleo'] = $rs->fetch_assoc();
@@ -1025,7 +1028,7 @@ class OccurrenceEditorManager {
 						//Deal with additional identifiers
 						if(isset($postArr['idvalue'])) $this->updateIdentifiers($postArr, $identArr);
 						//Deal with paleo fields
-						if($this->paleoActivated && array_key_exists('eon',$postArr)){
+						if(isset($this->collMap['paleoActivated']) && array_key_exists('eon',$postArr)){
 							//Check to see if paleo record already exists
 							$paleoRecordExist = false;
 							$paleoSql = 'SELECT paleoid FROM omoccurpaleo WHERE occid = '.$this->occid;
@@ -1185,7 +1188,7 @@ class OccurrenceEditorManager {
 				//Deal with identifiers
 				if(isset($postArr['idvalue'])) $this->updateIdentifiers($postArr);
 				//Deal with paleo
-				if($this->paleoActivated && array_key_exists('eon',$postArr)){
+				if(isset($this->collMap['paleoActivated']) && array_key_exists('eon',$postArr)){
 					//Add new record
 					$paleoFrag1 = '';
 					$paleoFrag2 = '';
@@ -1347,7 +1350,7 @@ class OccurrenceEditorManager {
 				}
 
 				//Archive paleo
-				if($this->paleoActivated){
+				if(isset($this->collMap['paleoActivated'])){
 					$sql = 'SELECT * FROM omoccurpaleo WHERE occid = '.$delOccid;
 					if($rs = $this->conn->query($sql)){
 						if($r = $rs->fetch_assoc()){
@@ -1534,7 +1537,7 @@ class OccurrenceEditorManager {
 		}
 
 		//Remap paleo
-		if($this->paleoActivated){
+		if(isset($this->collMap['paleoActivated'])){
 			$sql = 'UPDATE omoccurpaleo SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
 			if(!$this->conn->query($sql)){
 				//$this->errorArr[] .= '; '.$LANG['ERROR_REMAPPING_PALEOS'].': '.$this->conn->error;
@@ -1668,7 +1671,7 @@ class OccurrenceEditorManager {
 	}
 
 	private function setPaleoData(){
-		if($this->paleoActivated){
+		if(isset($this->collMap['paleoActivated'])){
 			$sql = 'SELECT '.implode(',',$this->fieldArr['omoccurpaleo']).' FROM omoccurpaleo WHERE occid = '.$this->occid;
 			//echo $sql;
 			$rs = $this->conn->query($sql);
@@ -1766,7 +1769,7 @@ class OccurrenceEditorManager {
 					$statusStr = $LANG['ERROR_ADDING_UPDATE'].': '.$this->conn->error;
 				}
 				//Apply edits to core tables
-				if($this->paleoActivated && array_key_exists($fn, $this->fieldArr['omoccurpaleo'])){
+				if(isset($this->collMap['paleoActivated']) && array_key_exists($fn, $this->fieldArr['omoccurpaleo'])){
 					$sql = 'UPDATE omoccurpaleo SET '.$fn.' = '.$nvSqlFrag.' '.$sqlWhere;
 				}
 				else{
@@ -1815,8 +1818,8 @@ class OccurrenceEditorManager {
 	}
 
 	public function carryOverValues($fArr){
-		$locArr = Array('recordedby','associatedcollectors','eventdate','eventdate2','verbatimeventdate','month','day','year',
-			'startdayofyear','enddayofyear','country','stateprovince','county','municipality','locationid','locality','decimallatitude','decimallongitude',
+		$locArr = Array('recordedby','associatedcollectors','eventdate','eventdate2','verbatimeventdate',
+			'country','stateprovince','county','municipality','locationid','locality','decimallatitude','decimallongitude',
 			'verbatimcoordinates','coordinateuncertaintyinmeters','footprintwkt','geodeticdatum','georeferencedby','georeferenceprotocol',
 			'georeferencesources','georeferenceverificationstatus','georeferenceremarks',
 			'minimumelevationinmeters','maximumelevationinmeters','verbatimelevation','minimumdepthinmeters','maximumdepthinmeters','verbatimdepth',
@@ -2326,7 +2329,7 @@ class OccurrenceEditorManager {
 
 	public function getPaleoGtsTerms(){
 		$retArr = array();
-		if($this->paleoActivated){
+		if(isset($this->collMap['paleoActivated'])){
 			$sql = 'SELECT gtsterm, rankid FROM omoccurpaleogts ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
@@ -2513,7 +2516,7 @@ class OccurrenceEditorManager {
 
 	protected function cleanOutStr($str){
 		if(!is_string($str) && !is_numeric($str) && !is_bool($str)) $str = '';
-		$str = htmlspecialchars($str, HTML_SPECIAL_CHARS_FLAGS);
+		$str = htmlspecialchars($str, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 		return $str;
 	}
 

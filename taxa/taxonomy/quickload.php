@@ -19,7 +19,8 @@ if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
 
 $status = '';
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Taxon Loader: </title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
@@ -27,8 +28,8 @@ $status = '';
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script type="text/javascript" src="../../js/jquery.js"></script>
-	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		function verifyLoadForm(f){
 			if(f.sciname.value == ""){
@@ -51,7 +52,8 @@ $status = '';
 		<b>Taxonomy Loader</b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
+		<h1 class="page-heading">Taxon Loader</h1>
 		<?php
 		if($status){
 			echo '<div style="margin:20px;">'.$status.'</div>';
