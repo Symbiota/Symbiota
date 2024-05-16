@@ -27,7 +27,11 @@ $statusStr = '';
 if ($isEditor) {
 	if ($action == 'saveEdits') {
 		$statusStr = $collManager->collectionUpdate($_POST);
-		if ($statusStr === true) header('Location: collprofiles.php?collid=' . $collid);
+		if ($statusStr === true) { 
+			header('Location: collprofiles.php?collid=' . $collid);
+		} else {
+			$statusStr = $collManager->getErrorMessage();
+		}
 	}
 	elseif ($action == 'newCollection') {
 		if ($IS_ADMIN) {
