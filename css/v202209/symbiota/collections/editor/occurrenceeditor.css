@@ -870,6 +870,11 @@ body{
 	margin:	15px 30px;
 }
 
+#editortd{
+	vertical-align: top;
+	padding-right: 1em;
+}
+
 /*Misc styling*/
 img.docimg { 
 	border:			0px;
