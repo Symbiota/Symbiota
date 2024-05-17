@@ -725,16 +725,6 @@ function setSearchForm(frm) {
   if (sessionStorage.querystr) {
     var urlVar = parseUrlVariables(sessionStorage.querystr);
 
-    if (urlVar.db) {
-      qryCollections = urlVar.db.split(',');
-      let allcb = document.getElementById("dballcb");
-      allcb.checked = false;
-      selectAll(allcb);
-      for (var i = 0; i < qryCollections.length; i++){
-        document.getElementById("collection-" + qryCollections[i]).checked = true;
-      }
-    }
-
     if (
       typeof urlVar.usethes !== "undefined" &&
       (urlVar.usethes == "" || urlVar.usethes == "0")
@@ -830,6 +820,11 @@ function setSearchForm(frm) {
     if (typeof urlVar.includecult !== "undefined") {
       if (frm?.includecult) {
         frm.includecult.checked = true;
+      }
+    }
+    if (urlVar.db) {
+      if (frm?.db) {
+        frm.db.value = urlVar.db;
       }
     }
     for (var i in urlVar) {
