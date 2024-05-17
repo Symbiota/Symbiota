@@ -573,14 +573,6 @@ else{
 				</div>
 				<?php
 			}
-			if($qryCnt == 0 && !$occId && array_key_exists('q_catalognumber',$_POST)){
-				?>
-				<div style="clear:both;padding:20px;font-weight:bold;font-size:120%;">
-					<?php echo (isset($LANG['NONE_FOUND'])?$LANG['NONE_FOUND']:'No records found matching the query'); ?>
-				</div>
-				<?php
-			}
-			if($occArr || $goToMode == 1 || $goToMode == 2){		//$action == 'gotonew'
 				if($occId && $isLocked){
 					?>
 					<div style="margin:25px;border:2px double;padding:20px;width:90%;">
@@ -647,7 +639,7 @@ else{
 								<?php include 'includes/queryform.php'; ?>
 							</div>
 							<?php endif?>
-
+							<?php if ($occArr || $goToMode == 1 || $goToMode == 2): ?>
 							<div id="occedittabs" style="clear:both;">
 								<ul>
 									<li>
@@ -1660,6 +1652,13 @@ else{
 									</form>
 								</div>
 							</div>
+							<?php endif ?>
+
+							<?php if($qryCnt == 0 && !$occId && array_key_exists('q_catalognumber',$_POST)): ?>
+							<div style="clear:both;padding:20px;font-weight:bold;font-size:120%;">
+								<?php echo (isset($LANG['NONE_FOUND'])?$LANG['NONE_FOUND']:'No records found matching the query'); ?>
+							</div>
+							<?php endif ?>
 						</td>
 						<td id="imgtd" style="display:none;width:430px;" valign="top">
 							<?php
@@ -1671,7 +1670,6 @@ else{
 					</table>
 					<?php
 				}
-			}
 		}
 		else{
 			if(!$collId && !$occId) echo $LANG['ERROR_ID_NULL'];
