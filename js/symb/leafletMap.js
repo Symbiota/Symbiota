@@ -65,8 +65,8 @@ class LeafletMap {
    constructor(map_id, map_options={}) {
 
 	  map_options = {
-		 ...map_options,
 		 ...this.DEFAULT_MAP_OPTIONS,
+		 ...map_options,
 	  }
 
       this.mapLayer = L.map(map_id, map_options);
