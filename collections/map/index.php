@@ -678,7 +678,7 @@ value="${color}"
 						if(marker.options.icon && marker.options.icon.options.observation) {
 							marker.setIcon(getObservationSvg({color: `#${color}`, size:30 }))
 						} else {
-							marker.options.fillColor =`#${color}`
+							marker.setStyle({fillColor: `#${color}`})
 						}
 					}
 				}
