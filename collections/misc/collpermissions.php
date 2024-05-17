@@ -75,6 +75,7 @@ if($isEditor){
 $collMetadata = current($permManager->getCollectionMetadata($collId));
 $isGenObs = 0;
 if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
+
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -313,10 +314,9 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 					<?php
 					if((array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"]))){
 						?>
-						<form>
 							<fieldset style="margin:40px 15px 0px 15px;padding:15px;">
 								<legend><b><?php echo (isset($LANG['NEW_SPONSOR'])?$LANG['NEW_SPONSOR']:'New Sponsorship'); ?></b></legend>
-								<form name="addpersobsman" action="collpermissions.php" method="post" onsubmit="return verifyAddRights(this)">
+								<form name="addpersobsman" action="collpermissions.php" method="POST" onsubmit="return verifyAddRights(this)">
 									<div>
 										<label for="uid"><?php echo $LANG['SEL_USER'] ?></label>
 										<select id="uid" name="uid">
@@ -352,7 +352,6 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 									</div>
 								</form>
 							</fieldset>
-						</form>
 						<?php
 					}
 					?>
@@ -372,7 +371,6 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 					<?php
 					if((array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"]))){
 						?>
-						<form>
 							<fieldset style="margin:40px 15px 0px 15px;padding:15px;">
 								<legend><b><?php echo (isset($LANG['NEW_SPONSOR'])?$LANG['NEW_SPONSOR']:'New Sponsorship'); ?></b></legend>
 								<form name="addchecklistman" action="collpermissions.php" method="post" onsubmit="return verifyAddRights(this)">
@@ -394,7 +392,6 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 									</div>
 								</form>
 							</fieldset>
-						</form>
 						<?php
 					}
 					?>
