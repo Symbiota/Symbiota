@@ -731,7 +731,7 @@ function setSearchForm(frm) {
       allcb.checked = false;
       selectAll(allcb);
       for (var i = 0; i < qryCollections.length; i++){
-        document.getElementById("collection-" + urlVar.db[i]).checked = true;
+        document.getElementById("collection-" + qryCollections[i]).checked = true;
       }
     }
 
