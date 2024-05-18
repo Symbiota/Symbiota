@@ -22,5 +22,5 @@ $LANG['GO_TO_RECORD'] = 'Go To Record';
 $LANG['SURE_MERGE'] = 'Are you sure you want to merge these two records?';
 $LANG['MERGE_RECORDS'] = 'Merge Records';
 $LANG['NO_DUPES'] = 'No duplicate records have been located';
-
+$LANG['UNKNOWN_ERROR_WHILE_MERGING'] ='Unknown error occurred while merging the occurrences';
 ?>

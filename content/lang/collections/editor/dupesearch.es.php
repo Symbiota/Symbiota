@@ -22,5 +22,5 @@ $LANG['GO_TO_RECORD'] = 'Ir a Registro';
 $LANG['SURE_MERGE'] = '¿Está seguro que quiere combinar estos dos registros?';
 $LANG['MERGE_RECORDS'] = 'Combinar Registros';
 $LANG['NO_DUPES'] = 'No se han localizado registros duplicados';
-
+$LANG['UNKNOWN_ERROR_WHILE_MERGING'] ='Se produjo un error desconocido al fusionar las ocurrencias';
 ?>
