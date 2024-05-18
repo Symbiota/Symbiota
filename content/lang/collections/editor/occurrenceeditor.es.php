@@ -196,5 +196,16 @@ $LANG['GEN_RES_ADD_SUCCESS'] = 'Genetic resource added successfully!';
 $LANG['ERROR_UNABLE_INSERT'] = 'ERROR: unable to INSERT text fragment';
 $LANG['ERROR_UNABLE_UPDATE'] = 'ERROR: unable to UPDATE text fragment';
 $LANG['ERROR_UNABLE_DELETE'] = 'ERROR: unable DELETE text fragment';
-
+$LANG['ERROR_TRYING_TO_UPDATE_COL_CNT'] = 'ERROR: actualizando el recuento de estadísticas de recopilación';
+$LANG['ERROR_CREATING_TRANSACTION'] = 'ERROR - Creando transacción';
+$LANG['ERROR_FETCHING_OCCURRENCE_DATA'] = 'ERROR: obteniendo datos de ocurrencia';
+$LANG['ERROR_ARCHIVING_DET_HISTORY'] = 'ERROR: Archivado del historial de determinación';
+$LANG['ERROR_ARCHIVING_IMG_HISTORY'] = 'ERROR: Archivando el historial de imágenes';
+$LANG['ERROR_DELETING_IMGS'] = 'ERROR - Eliminando imágenes';
+$LANG['ERROR_ARCHIVING_PALEO'] = 'ERROR - Archivando información paleo';
+$LANG['ERROR_ARCHIVING_EXSICCATI'] = 'ERROR - Archivando información exsiccati';
+$LANG['ERROR_ARCHIVING_ASSOC'] = 'ERROR - Archivando información de asociaciones';
+$LANG['ERROR_ARCHIVING_MAT_SAMPLE'] = 'ERROR: Archivar información de muestra de material';
+$LANG['ERROR_CREATING_ARCHIVE'] = 'ERROR - Creando archivo';
+$LANG['ERROR_DELETING_OCCURRENCE'] = 'ERROR: no se pudo eliminar la aparición de origen';
 ?>
