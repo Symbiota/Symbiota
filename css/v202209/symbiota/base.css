@@ -17,7 +17,7 @@ span[class="link"]:hover {
 /*  navpath styles */
 .navpath {
   color: #000000;
-  font-size: 14px;
+  font-size: 1rem;
 }
 
 .navpath a {
@@ -42,7 +42,7 @@ span[class="link"]:hover {
 }
 
 .collectiontitle {
-  font-size: 14px;
+  font-size: 1rem;
   margin-top: 8px;
 }
 
