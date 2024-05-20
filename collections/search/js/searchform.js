@@ -576,6 +576,10 @@ function getSearchUrl() {
     baseUrl.searchParams.append(key, paramsArr[key]);
   });
 
+  baseUrl.searchParams.append("comingFrom", "search/index.php");
+  console.log("deleteMe baseUrl is: ");
+  console.log(baseUrl);
+
   return baseUrl.href;
 }
 
