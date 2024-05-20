@@ -23,7 +23,7 @@ $localSession = isset($_SESSION['active_stylesheet']) ? $_SESSION['active_styles
 <script src="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/js/symb/accessibilityUtils.js" type="text/javascript"></script>
 <style>
     .accessibility-button {
-        font-size: 1.1em;
+        font-size: 1rem;
     }
     .welcome-text {
         margin-bottom: 0.75rem;
@@ -48,9 +48,7 @@ $localSession = isset($_SESSION['active_stylesheet']) ? $_SESSION['active_styles
     .button__item-container{
         display: flex;
         justify-content: center;
-    }
-    .button__item-container__item-text{
-        margin-top: 0.5rem;
+		align-items: center;
     }
 </style>
 <?php 
