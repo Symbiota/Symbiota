@@ -670,7 +670,7 @@ if ($SYMB_UID) {
 			</div>
 			<div>
 				<span class="button button-primary">
-					<a id="image-search" href="<?php echo $CLIENT_ROOT?>/imagelib/search.php?submitaction=search&db[]=1<?php echo $collid ?>" ><?php echo (isset($LANG['IMAGE_SEARCH_THIS_COLLECTION'])?$LANG['IMAGE_SEARCH_THIS_COLLECTION']:'Image Search this Collection'); ?></a>
+					<a id="image-search" href="<?php echo $CLIENT_ROOT?>/imagelib/search.php?submitaction=search&db[]=<?php echo $collid ?>" ><?php echo (isset($LANG['IMAGE_SEARCH_THIS_COLLECTION'])?$LANG['IMAGE_SEARCH_THIS_COLLECTION']:'Image Search this Collection'); ?></a>
 				</span>
 			</div>
 			<?php

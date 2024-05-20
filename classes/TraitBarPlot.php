@@ -26,6 +26,7 @@ class BarPlot {
   private $AxisRotation = 0;      // 0 = vertical bars, 1 = horizontal bars
   private $AxisLength = array();
   private $AxisLabels = array();
+  private $AxisNumber;        
   private $TickNumber = 2;        // 1 = the outer edge, >1 = outer + inner, 0 = spokes only
   private $TickScale;
   private $DataValues = array();  // Future: consider making this into a 2D array holding data series

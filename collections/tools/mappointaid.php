@@ -91,7 +91,7 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 			map = new LeafletMap('map_canvas', {
 				center: [latCenter, lngCenter], 
 				zoom: 7,
-            lang: "<?php echo $LANG_TAG; ?>"
+				lang: "<?php echo $LANG_TAG; ?>"
 			});
 
 			var drawnItems = new L.FeatureGroup();
@@ -127,7 +127,7 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 
 				if(errRadius && errRadius > 0) {
 					marker.addTo(map.mapLayer);
-					L.circle([lat, lng], errRadius)
+					const circ = L.circle([lat, lng], errRadius)
 						.on('drag', e=> {
 							const pos = e.target.getLatLng()
 
@@ -139,6 +139,8 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 						})
 						.setStyle(map.DEFAULT_SHAPE_OPTIONS)
 					.addTo(drawnItems);
+
+					map.mapLayer.fitBounds(circ.getBounds());
 
 					map.mapLayer.on('draw:deleted', e => {
 						map.mapLayer.removeLayer(marker);
@@ -208,7 +210,7 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 			})
 
 			//Draw marker if one exists
-		if(latlng) {
+			if(latlng) {
 				createMarker(latlng[0], latlng[1]);
 			}
 		}

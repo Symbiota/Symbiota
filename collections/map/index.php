@@ -555,9 +555,9 @@ value="${color}"
 				}
 			})
 
-         let map = new LeafletMap('map', {
-            lang: "<?php echo $LANG_TAG; ?>"
-         })
+			let map = new LeafletMap('map', {
+				lang: "<?php echo $LANG_TAG; ?>",
+			})
 			map.enableDrawing({
 				polyline: false,
 				circlemarker: false,
@@ -676,7 +676,7 @@ value="${color}"
 						if(marker.options.icon && marker.options.icon.options.observation) {
 							marker.setIcon(getObservationSvg({color: `#${color}`, size:30 }))
 						} else {
-							marker.options.fillColor =`#${color}`
+							marker.setStyle({fillColor: `#${color}`})
 						}
 					}
 				}
@@ -793,6 +793,8 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 			function fitMap() {
 				if(shape && !map.activeShape) {
 					map.drawShape(shape);
+				} else if(map.activeShape) {
+					map.mapLayer.fitBounds(map.activeShape.layer.getBounds());
 				} else if(markers && markers.length > 0) {
 					const group = new L.FeatureGroup(markers);
 					map.mapLayer.fitBounds(group.getBounds());
@@ -801,8 +803,8 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 				}
 			}
 
-         document.addEventListener('resetMap', async e => {
-			   setPanels(false);
+			document.addEventListener('resetMap', async e => {
+				setPanels(false);
 				mapGroups.forEach(group => {
 					group.taxonMapGroup.resetGroup();
 					group.collectionMapGroup.resetGroup();
@@ -812,13 +814,15 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 				markers = [];
 				recordArr = [];
 
-            if(heatmapLayer) map.mapLayer.removeLayer(heatmapLayer);
-         })
+				if(heatmapLayer) map.mapLayer.removeLayer(heatmapLayer);
+			})
 
 			document.getElementById("mapsearchform").addEventListener('submit', async e => {
 				e.preventDefault();
-				if(!verifyCollForm(e.target)) return;
+				if(!verifyCollForm(e.target)) return false;
+
 				showWorking();
+
 				let formData = new FormData(e.target);
 
 				mapGroups.forEach(group => {
@@ -829,56 +833,56 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 
 				markers = [];
 
-            if(heatmapLayer) map.mapLayer.removeLayer(heatmapLayer);
+				if(heatmapLayer) map.mapLayer.removeLayer(heatmapLayer);
 
 				getOccurenceRecords(formData).then(res => {
 					if (res) loadOccurenceRecords(res);
 				});
 
 				let searches = [
-               searchCollections(formData).then(res => {
-               res.label = "<?= $LANG['CURRENT_PORTAL']?>";
-                  return res;
-               })
-            ]
+					searchCollections(formData).then(res => {
+						res.label = "<?= $LANG['CURRENT_PORTAL']?>";
+						return res;
+					})
+				]
 
-            //If Cross Portal Checkbox Enabled add cross portal search
-            if(formData.get('cross_portal_switch') && formData.get('cross_portal')) {
-               formData.set("taxa", formData.get('external-taxa-input'));
-               searches.push(searchCollections(formData, formData.get('cross_portal')).then(res => {
-                  res.label= formData.get('cross_portal_label');
-                  return res;
-               }));
+				//If Cross Portal Checkbox Enabled add cross portal search
+				if(formData.get('cross_portal_switch') && formData.get('cross_portal')) {
+					formData.set("taxa", formData.get('external-taxa-input'));
+					searches.push(searchCollections(formData, formData.get('cross_portal')).then(res => {
+						res.label= formData.get('cross_portal_label');
+						return res;
+					}));
 
-               getOccurenceRecords(formData, formData.get('cross_portal')).then(res => {
-                  if (res) loadOccurenceRecords(res, "external_occurrencelist");
-               });
+					getOccurenceRecords(formData, formData.get('cross_portal')).then(res => {
+						if (res) loadOccurenceRecords(res, "external_occurrencelist");
+					});
 
-            }
+				}
 
 				//This is for handeling multiple portals
 				searches = await Promise.all(searches)
 
 				recordArr = [];
 				mapGroups = [];
-            let count = 0;
+				let count = 0;
 
 				for(let search of searches) {
-               if(count > 0) search.origin = "external-portal"
+					if(count > 0) search.origin = "external-portal"
 					if(search.recordArr) {
 						recordArr = recordArr.concat(search.recordArr)
 						mapGroups.push(genMapGroups(search.recordArr, search.taxaArr, search.collArr, search.label))
 					}
-               count++;
-            }
-            //Need to generate colors for eadch group
+					count++;
+				}
+				//Need to generate colors for each group
 				buildPanels(formData.get('cross_portal_switch'));
 
 				genClusters(taxaLegendMap, "taxa");
 				genClusters(collLegendMap, "coll");
 				genClusters(portalLegendMap, "portal");
 
-            autoColorTaxa();
+				autoColorTaxa();
 
 				drawPoints();
 				fitMap();
@@ -1264,8 +1268,8 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 				});
 			}
 
-         document.addEventListener('resetMap', async e => {
-			   setPanels(false);
+			document.addEventListener('resetMap', async e => {
+				setPanels(false);
 				mapGroups.forEach(group => {
 					group.taxonMapGroup.resetGroup();
 					group.collectionMapGroup.resetGroup();
@@ -1276,13 +1280,13 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 				recordArr = [];
 
 				if(heatmapLayer) heatmapLayer.setData({data: []})
-         })
+			})
 
 			document.getElementById("mapsearchform").addEventListener('submit', async e => {
-				if(!verifyCollForm(e.target)) return;
+				e.preventDefault();
+				if(!verifyCollForm(e.target)) return false;
 
 				showWorking();
-				e.preventDefault();
 				let formData = new FormData(e.target);
 				mapGroups.map(group => {
 					group.taxonMapGroup.resetGroup();
@@ -1337,7 +1341,6 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 				autoColorTaxa();
 
 				drawPoints();
-
 				fitMap()
 				hideWorking();
 			});
@@ -1499,7 +1502,7 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 					genClusters(collLegendMap, "coll");
 					genClusters(portalLegendMap, "portal");
 
-               autoColorTaxa();
+					autoColorTaxa();
 
 					drawPoints();
 

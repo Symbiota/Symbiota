@@ -85,7 +85,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<!-- This is inner text! -->
-	<div role="main" id="innertext" class="inner-search">
+	<div role="main" id="innertext" class="inner-search" style="max-width: 1920px">
 		<h1 class="page-heading"><?php echo $LANG['SAMPLE_SEARCH'] ?></h1>
 		<div id="error-msgs" class="errors"></div>
 		<div style="display: grid; grid-template-columns: 3fr 1fr;">
