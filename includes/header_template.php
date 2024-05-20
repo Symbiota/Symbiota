@@ -115,3 +115,4 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
 		</div>
 		<div id="end-nav"></div>
 	</header>
+</div>
