@@ -1,28 +1,28 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistManager.php');
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/checklists/clgmap.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/checklists/clgmap.en.php');
-else include_once($SERVER_ROOT.'/content/lang/checklists/clgmap.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/clgmap.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/checklists/clgmap.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT.'/content/lang/checklists/clgmap.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $pid = $_REQUEST['pid'];
 $target = array_key_exists('target',$_REQUEST)?$_REQUEST['target']:'checklists';
 
 //Sanitation
-$pid = htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS);
+$pid = htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 if(!is_numeric($pid)) $pid = 0;
 
 $clManager = new ChecklistManager();
 $clManager->setProj($pid);
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
    <head>
       <?php 
         include_once($SERVER_ROOT.'/includes/leafletMap.php');
 	     include_once($SERVER_ROOT.'/includes/googleMap.php');
       ?>
 		<title><?php echo $DEFAULT_TITLE.' - '.(isset($LANG['H_INVENTORIES'])?$LANG['H_INVENTORIES']:'Species Checklists'); ?></title>
-		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 
 		<script type="text/javascript">
 
@@ -122,15 +122,21 @@ $clManager->setProj($pid);
 				margin: 0;
 				padding: 0;
 			}
+         .screen-reader-only {
+				position: absolute;
+				left: -10000px;
+			}
 		</style>
 	</head>
 	<body style="background-color:#ffffff;" onload="initialize()">
+      <h1 class="page-heading screen-reader-only">Checklist Map</h1>
 		<div id="map_canvas"></div>
       <div 
         id="service-container" 
         class="service-container" 
         data-checklists="<?= htmlspecialchars(json_encode($clManager->getResearchPoints()))?>"
         data-pid="<?= htmlspecialchars($pid)?>"
-   />
+      >
+      </div>
 	</body>
 </html>

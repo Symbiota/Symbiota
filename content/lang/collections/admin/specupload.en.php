@@ -4,6 +4,7 @@
 Language: English
 ------------------
 */
+include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.en.php');
 
 $LANG['SPEC_UPLOAD'] = 'Specimen Uploader';
 $LANG['PATH_EMPTY'] = 'File path is empty. Please select the file that is to be loaded.';
@@ -62,7 +63,7 @@ $LANG['APPENDED'] = 'Incoming skeletal data will be appended only if targeted fi
 $LANG['BOTH_CATS'] = 'If both checkboxes are selected, matches will first be made on catalog numbers and secondarily on other catalog numbers';
 $LANG['ID_SOURCE'] = 'Identify Data Source';
 $LANG['IPT_URL'] = 'IPT Resource URL';
-$LANG['RES_URL'] = 'Resource Path or URL';
+$LANG['RESOURCE_URL'] = 'Resource Path or URL';
 $LANG['WORKAROUND'] = 'This option is for pointing to a data file that was manually uploaded to a server. This option offers a workaround for importing files that are larger than what is allowed by server upload limitations (e.g. PHP configuration limits)';
 $LANG['DISPLAY_OPS'] = 'Display Additional Options';
 $LANG['AUTOMAP'] = 'Automap Fields';
@@ -83,13 +84,6 @@ $LANG['CUSTOM_FILT'] = 'Custom Occurrence Record Import Filters';
 $LANG['FIELD'] = 'Field';
 $LANG['SEL_FIELD'] = 'Select Field Name';
 $LANG['COND'] = 'Condition';
-$LANG['EQUALS'] = 'EQUALS';
-$LANG['STARTS_WITH'] = 'STARTS WITH';
-$LANG['CONTAINS'] = 'CONTAINS';
-$LANG['LESS_THAN'] = 'LESS THAN';
-$LANG['GREATER_THAN'] = 'GREATER THAN';
-$LANG['IS_NULL'] = 'IS NULL';
-$LANG['NOT_NULL'] = 'IS NOT NULL';
 $LANG['VALUE'] = 'Value';
 $LANG['MULT_TERMS'] = 'Adding multiple terms separated by semi-colon will filter as an OR condition';
 $LANG['IMPORT_ID'] = 'Import Identification History';

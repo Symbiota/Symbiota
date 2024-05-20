@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecUploadBase.php');
@@ -9,14 +7,8 @@ header('Content-Type: text/html; charset='.$CHARSET);
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/admin/specupload.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $collid = filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT);
-$uploadType = filter_var($_REQUEST['uploadtype'], FILTER_SANITIZE_NUMBER_INT);
-$uspid = array_key_exists('uspid', $_REQUEST) ? filter_var($_REQUEST['uspid'], FILTER_SANITIZE_NUMBER_INT) : '';
-
-if(strpos($uspid,'-')){
-	$tok = explode('-',$uspid);
-	$uspid = $tok[0];
-	$uploadType = $tok[1];
-}
+$uploadType = array_key_exists('uploadtype', $_REQUEST) ? filter_var($_REQUEST['uploadtype'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$uspid = array_key_exists('uspid', $_REQUEST) ? filter_var($_REQUEST['uspid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 
 $DIRECTUPLOAD = 1; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9; $STOREDPROCEDURE = 4; $SCRIPTUPLOAD = 5; $SYMBIOTA = 13;
 
@@ -24,13 +16,14 @@ $duManager = new SpecUploadBase();
 
 $duManager->setCollId($collid);
 $duManager->setUspid($uspid);
-$duManager->setUploadType($uploadType);
+$duManager->readUploadParameters();
+if($uploadType) $duManager->setUploadType($uploadType);
+else $uploadType = $duManager->getUploadType();
 
 $isEditor = 0;
 if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin']))){
 	$isEditor = 1;
 }
-$duManager->readUploadParameters();
 if($uploadType == $IPTUPLOAD || $uploadType == $SYMBIOTA){
 	if($duManager->getPath()) header('Location: specuploadmap.php?uploadtype='.$uploadType.'&uspid='.$uspid.'&collid='.$collid);
 }
@@ -38,16 +31,17 @@ elseif($uploadType == $DIRECTUPLOAD || $uploadType == $STOREDPROCEDURE || $uploa
 	header('Location: specuploadprocessor.php?uploadtype='.$uploadType.'&uspid='.$uspid.'&collid='.$collid);
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['SPEC_UPLOAD'])?$LANG['SPEC_UPLOAD']:'Specimen Uploader - file selector'); ?></title>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script src="../../js/jquery.js" type="text/javascript"></script>
-	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="../../js/symb/shared.js" type="text/javascript"></script>
 	<script>
 		function verifyFileUploadForm(f){
@@ -101,19 +95,19 @@ elseif($uploadType == $DIRECTUPLOAD || $uploadType == $STOREDPROCEDURE || $uploa
 	</script>
 </head>
 <body>
-<?php
+	<?php
 $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath">
-	<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
-	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars((isset($LANG['COL_MGMNT'])?$LANG['COL_MGMNT']:'Collection Management Panel'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
-	<a href="specuploadmanagement.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars((isset($LANG['LIST_UPLOAD'])?$LANG['LIST_UPLOAD']:'List of Upload Profiles'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+	<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo htmlspecialchars((isset($LANG['COL_MGMNT'])?$LANG['COL_MGMNT']:'Collection Management Panel'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+	<a href="specuploadmanagement.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars((isset($LANG['LIST_UPLOAD'])?$LANG['LIST_UPLOAD']:'List of Upload Profiles'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 	<b><?php echo (isset($LANG['SPEC_UPLOAD'])?$LANG['SPEC_UPLOAD']:'Specimen Uploader'); ?></b>
 </div>
-<div id="innertext">
+<div role="main" id="innertext">
+	<h1 class="page-heading"><?= $LANG['UP_MODULE']; ?></h1>
 	<?php
-	echo '<h1>'.(isset($LANG['UP_MODULE'])?$LANG['UP_MODULE']:'Data Upload Module').'</h1>';
 	if($isEditor && $collid){
 		//Grab collection name and last upload date and display for all
 		echo '<div style="font-weight:bold;font-size:130%;">'.$duManager->getCollInfo('name').'</div>';
@@ -127,7 +121,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						<?php
 						$pathLabel = (isset($LANG['IPT_URL'])?$LANG['IPT_URL']:'IPT Resource URL');
 						if($uploadType != $IPTUPLOAD){
-							$pathLabel = (isset($LANG['RES_URL'])?$LANG['RES_URL']:'Resource Path or URL');
+							$pathLabel = (isset($LANG['RESOURCE_URL'])?$LANG['RESOURCE_URL']:'Resource Path or URL');
 							?>
 							<div>
 								<input name="uploadfile" type="file" onchange="verifyFileSize(this)" aria-label="<?php echo (isset($LANG['UPLOAD']) ? $LANG['UPLOAD'] : 'Upload File') ?>" />
@@ -146,7 +140,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						if($uploadType != $IPTUPLOAD){
 							?>
 							<div class="ulfnoptions">
-								<a href="#" onclick="toggle('ulfnoptions');return false;"><?php echo htmlspecialchars((isset($LANG['DISPLAY_OPS'])?$LANG['DISPLAY_OPS']:'Display Additional Options'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
+								<a href="#" onclick="toggle('ulfnoptions');return false;"><?php echo htmlspecialchars((isset($LANG['DISPLAY_OPS'])?$LANG['DISPLAY_OPS']:'Display Additional Options'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 							</div>
 							<?php
 						}

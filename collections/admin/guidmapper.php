@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/UuidFactory.php');
@@ -19,6 +17,7 @@ if($IS_ADMIN || array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$
 
 $uuidManager = new UuidFactory();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
@@ -66,20 +65,22 @@ $uuidManager = new UuidFactory();
     </script>
 </head>
 <body>
-<?php
+	<?php
 $displayLeftMenu = (isset($admin_guidmapperMenu)?$admin_guidmapperMenu:"true");
 include($SERVER_ROOT.'/includes/header.php');
 ?>
+<div class="navpath">
+	<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo htmlspecialchars($LANG['COL_MGMNT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+	<b><?php echo $LANG['UID_MAP']; ?></b>
+</div>
 <!-- This is inner text! -->
-<div id="innertext">
+<div role="main" id="innertext">
+	<div style="margin:10px;">
+		<h1 class="page-heading"><?php echo $LANG['GUID_CP']; ?></h1>
+	</div>
 	<?php
 	if($isEditor){
-		?>
-		<h3><?php echo (isset($LANG['GUID_CP'])?$LANG['GUID_CP']:'GUID Maintenance Control Panel'); ?></h3>
-		<div style="margin:10px;">
-
-		</div>
-		<?php
 		if($action == 'Populate Collection GUIDs'){
 			echo '<ul>';
 			$uuidManager->populateGuids($collId);

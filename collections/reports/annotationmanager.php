@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../../config/symbini.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/reports/annotationmanager.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/reports/annotationmanager.'.$LANG_TAG.'.php');
@@ -27,6 +25,7 @@ if($isEditor){
 	$annoArr = $datasetManager->getAnnoQueue();
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
@@ -93,19 +92,20 @@ if($isEditor){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href='../../index.php'><?php echo htmlspecialchars($LANG['NAV_HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+		<a href='../../index.php'><?php echo htmlspecialchars($LANG['NAV_HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 		<?php
 		if(stripos(strtolower($datasetManager->getMetaDataTerm('colltype')), "observation") !== false){
-			echo '<a href="../../profile/viewprofile.php?tabindex=1">' . htmlspecialchars($LANG['PERS_MAN_MEN'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
+			echo '<a href="../../profile/viewprofile.php?tabindex=1">' . htmlspecialchars($LANG['PERS_MAN_MEN'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
 		}
 		else{
-			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . htmlspecialchars($LANG['COL_MAN_PAN'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
+			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">' . htmlspecialchars($LANG['COL_MAN_PAN'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
 		}
 		?>
 		<b><?php echo $LANG['ANN_LAB_PRINT']; ?></b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
+		<h1 class="page-heading"><?= $LANG['ANN_LAB_MAN']; ?></h1>
 		<?php
 		if($isEditor){
 			$reportsWritable = false;
@@ -149,7 +149,7 @@ if($isEditor){
 											<?php echo $recArr['collector']; ?>
 										</a>
 										<a href="#" onclick="openEditorPopup(<?php echo $recArr['occid']; ?>); return false;">
-											<img src="../../images/edit.png" />
+											<img src="../../images/edit.png" style="width:1.3em" />
 										</a>
 									</td>
 									<td>

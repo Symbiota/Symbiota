@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <?php
 include_once('../../config/symbini.php');
 @include_once('Image/Barcode.php');
@@ -18,6 +17,10 @@ if(!is_numeric($collid)) $collid = 0;
 $labelManager = new OccurrenceLabel();
 $labelManager->setCollid($collid);
 
+$limit = (ini_get('max_input_vars')/2) - 100;
+if(!$limit) $limit = 400;
+elseif($limit > 1000) $limit = 1000;
+
 $isEditor = 0;
 $occArr = array();
 if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
@@ -28,15 +31,16 @@ elseif(array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collid,$USER_RIG
 }
 if($isEditor){
 	if($action == (isset($LANG['FILT_SPEC_REC']) ? $LANG['FILT_SPEC_REC'] : 'Filter Specimen Records')){
-		$occArr = $labelManager->queryOccurrences($_POST);
+		$occArr = $labelManager->queryOccurrences($_POST, $limit);
 	}
 }
 $labelFormatArr = $labelManager->getLabelFormatArr(true);
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-		<title><?php echo $DEFAULT_TITLE; ?> <?php echo (isset($LANG['SPEC_LABEL_MANAGER']) ? $LANG['SPEC_LABEL_MANAGER'] : 'Specimen Label Manager') ?> </title>
+		<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['SPEC_LABEL_MANAGER'] ?> </title>
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -179,13 +183,14 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 			echo '<a href="../../profile/viewprofile.php?tabindex=1">' . (isset($LANG["PERS_MANAG_MENU"]) ? $LANG["PERS_MANAG_MENU"] : "Personal Management Menu") . '</a> &gt;&gt; ';
 		}
 		else{
-			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . (isset($LANG["COLL_MANAG_PANEL"]) ? $LANG["COLL_MANAG_PANEL"] : "Collection Management Panel") . '</a> &gt;&gt; ';
+			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">' . (isset($LANG["COLL_MANAG_PANEL"]) ? $LANG["COLL_MANAG_PANEL"] : "Collection Management Panel") . '</a> &gt;&gt; ';
 		}
 		?>
 		<b> <?php echo (isset($LANG['LABEL_PRINT']) ? $LANG['LABEL_PRINT'] : 'Label Printing') ?> </b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
+		<h1 class="page-heading"><?= $LANG['SPEC_LABEL_MANAGER']; ?></h1>
 		<?php
 		if($isEditor){
 			$reportsWritable = false;
@@ -231,7 +236,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 							</div>
 							<div style="margin-left:20px;float:left;">
 								<label for="date1"><?php echo (isset($LANG['DATE_RANGE']) ? $LANG['DATE_RANGE'] : 'Date range:') ?></label>
-								<input type="text" name="date1" id="date1" style="width:100px;" value="<?php echo (array_key_exists('date1',$_REQUEST)?$_REQUEST['date1']:''); ?>" onchange="validateDateFields(this.form)" /> 
+								<input type="text" name="date1" id="date1" style="width:100px;" value="<?php echo (array_key_exists('date1',$_REQUEST)?$_REQUEST['date1']:''); ?>" onchange="validateDateFields(this.form)" />
 								<label for="date2"> <?php echo (isset($LANG['TO']) ? $LANG['TO'] : 'to') ?> </label>
 								<input type="text" name="date2" id="date2" style="width:100px;" value="<?php echo (array_key_exists('date2',$_REQUEST)?$_REQUEST['date2']:''); ?>" onchange="validateDateFields(this.form)" />
 								<label for="datetarget"><?php echo (isset($LANG['ITYPE_OF_DATE']) ? $LANG['TYPE_OF_DATE'] : 'Type of date'); ?>:</label>
@@ -286,10 +291,12 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 						<div style="clear:both;">
 							<div style="float:left;">
 								<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
-								<input type="submit" name="submitaction" value="<?php echo (isset($LANG['FILT_SPEC_REC']) ? $LANG['FILT_SPEC_REC'] : 'Filter Specimen Records') ?>" />
+								<button type="submit" name="submitaction" value="<?php echo $LANG['FILT_SPEC_REC'] ?>">
+									<?php echo $LANG['FILT_SPEC_REC'] ?>
+								</button>
 							</div>
 							<div style="margin-left:20px;float:left;">
-								<?php echo (isset($LANG['SPEC_LIM']) ? $LANG['SPEC_LIM'] : '* Specimen return is limited to 1000 records') ?>
+								* <?= (isset($LANG['SPEC_LIM']) ? $LANG['SPEC_LIM'] : 'Specimen return is limited to') ?>: <?= $limit ?>
 							</div>
 						</div>
 					</fieldset>
@@ -329,7 +336,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 													if(!$isGeneralObservation || $recArr['uid'] == $SYMB_UID){
 														?>
 														<a href="#" onclick="openEditorPopup(<?php echo $occId; ?>); return false;">
-															<img src="../../images/edit.png" />
+															<img src="../../images/edit.png" style="width:1.3em" />
 														</a>
 														<?php
 													}
@@ -352,7 +359,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 										<div class="fieldDiv">
 											<div class="fieldLabel"> <?php echo (isset($LANG['LABEL_PROFILE']) ? $LANG['LABEL_PROFILE'] : 'Label Profiles:') ?>
 												<?php
-												echo '<span title="Open label profile manager"><a href="labelprofile.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:13px" /></a></span>';
+												echo '<span title="Open label profile manager"><a href="labelprofile.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><img src="../../images/edit.png" style="width:1.2em" /></a></span>';
 												?>
 											</div>
 											<div class="fieldElement">

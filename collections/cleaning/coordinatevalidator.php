@@ -28,16 +28,17 @@ $isEditor = 0;
 if($IS_ADMIN) $isEditor = 1;
 
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Coordinate Validator</title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script src="../../js/jquery-3.2.1.min.js" type="text/javascript"></script>
-	<script src="../../js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
-	<link href="../../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script>
 		function selectAllCollections(cb,classNameStr){
 			boxesChecked = true;
@@ -76,10 +77,11 @@ if($IS_ADMIN) $isEditor = 1;
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
 		<a href="../../sitemap.php">Sitemap</a> &gt;&gt;
-		<b><a href="coordinatevalidator.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '">Coordinate Validator</a></b>
+		<b><a href="coordinatevalidator.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">Coordinate Validator</a></b>
 	</div>
 	<!-- inner text -->
-	<div id="innertext">
+	<div role="main" id="innertext">
+		<h1 class="page-heading">Coordinate Validator</h1>
 		<?php
 		if($statusStr){
 			?>
@@ -115,7 +117,7 @@ if($IS_ADMIN) $isEditor = 1;
 							if($occurList){
 								foreach($occurList as $occid => $inArr){
 									echo '<div>';
-									echo '<a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+									echo '<a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 									echo ' - checked by '.$inArr['username'].' on '.$inArr['ts'];
 									echo '</div>';
 								}
@@ -143,7 +145,7 @@ if($IS_ADMIN) $isEditor = 1;
 							echo '<td>'.$rank.'</td>';
 							echo '<td>'.$protocolStr.'</td>';
 							echo '<td>'.number_format($cnt);
-							//if(is_numeric($cnt)) echo ' <a href="coordinatevalidator.php?ranking=' . htmlspecialchars($rank, HTML_SPECIAL_CHARS_FLAGS) . '&action=displayranklist" title="List specimens"><img src="'.$CLIENT_ROOT.'/images/list.png" style="width:12px" /></a>';
+							//if(is_numeric($cnt)) echo ' <a href="coordinatevalidator.php?ranking=' . htmlspecialchars($rank, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&action=displayranklist" title="List specimens"><img src="'.$CLIENT_ROOT.'/images/list.png" style="width:12px" /></a>';
 							echo '</td>';
 							echo '</tr>';
 						}
@@ -162,7 +164,7 @@ if($IS_ADMIN) $isEditor = 1;
 						echo '<tr>';
 						echo '<td>';
 						echo $country;
-						echo ' <a href="../list.php?db=all&country=' . htmlspecialchars($country, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank"><img src="../../images/list.png" style="width:12px" /></a>';
+						echo ' <a href="../list.php?db=all&country=' . htmlspecialchars($country, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank"><img src="../../images/list.png" style="width:1.2em" /></a>';
 						echo '</td>';
 						echo '<td>'.number_format($cnt).'</td>';
 						echo '<td>';

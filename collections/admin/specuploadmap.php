@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecUploadDirect.php');
@@ -8,21 +7,21 @@ include_once($SERVER_ROOT.'/content/lang/collections/admin/specupload.'.$LANG_TA
 header('Content-Type: text/html; charset='.$CHARSET);
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/admin/specupload.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$collid = array_key_exists('collid',$_REQUEST) ? $_REQUEST['collid'] : '';
-$uploadType = array_key_exists('uploadtype',$_REQUEST) ? $_REQUEST['uploadtype'] : '';
-$uspid = array_key_exists('uspid',$_REQUEST) ? $_REQUEST['uspid'] : '';
+$collid = htmlspecialchars(array_key_exists('collid',$_REQUEST) ? $_REQUEST['collid']: '', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$uploadType = htmlspecialchars(array_key_exists('uploadtype',$_REQUEST) ? $_REQUEST['uploadtype']: '', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$uspid = htmlspecialchars(array_key_exists('uspid',$_REQUEST) ? $_REQUEST['uspid']: '', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 $autoMap = array_key_exists('automap',$_POST) ? true : false;
-$action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
-$ulPath = array_key_exists('ulpath',$_REQUEST) ? $_REQUEST['ulpath'] : '';
+$action = htmlspecialchars(array_key_exists('action',$_REQUEST) ? $_REQUEST['action']: '', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$ulPath = htmlspecialchars(array_key_exists('ulpath',$_REQUEST) ? $_REQUEST['ulpath']: '', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 $importIdent = array_key_exists('importident',$_REQUEST) ? true : false;
 $importImage = array_key_exists('importimage',$_REQUEST) ? true : false;
-$observerUid = array_key_exists('observeruid',$_POST) ? $_POST['observeruid'] : '';
+$observerUid = htmlspecialchars(array_key_exists('observeruid',$_POST) ? $_POST['observeruid']: '', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 $matchCatNum = array_key_exists('matchcatnum',$_REQUEST) ? true : false;
 $matchOtherCatNum = array_key_exists('matchothercatnum',$_REQUEST)&&$_REQUEST['matchothercatnum'] ? true : false;
 $versionData = array_key_exists('versiondata',$_REQUEST) && $_REQUEST['versiondata'] ? true : false;
 $verifyImages = array_key_exists('verifyimages',$_REQUEST) && $_REQUEST['verifyimages'] ? true : false;
-$processingStatus = array_key_exists('processingstatus',$_REQUEST) ? $_REQUEST['processingstatus'] : '';
-$dbpk = array_key_exists('dbpk',$_REQUEST) ? $_REQUEST['dbpk'] : '';
+$processingStatus = htmlspecialchars(array_key_exists('processingstatus',$_REQUEST) ? $_REQUEST['processingstatus']: '', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$dbpk = htmlspecialchars(array_key_exists('dbpk',$_REQUEST) ? $_REQUEST['dbpk']: '', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 
 if(strpos($uspid,'-')){
 	$tok = explode('-',$uspid);
@@ -102,16 +101,17 @@ if($isEditor && $collid){
 	$duManager->loadFieldMap();
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['SPEC_UPLOAD']) ? $LANG['SPEC_UPLOAD'] : 'Specimen Uploader'); ?></title>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script src="../../js/jquery.js" type="text/javascript"></script>
-	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="../../js/symb/shared.js" type="text/javascript"></script>
 	<script>
 		function verifyMappingForm(f){
@@ -255,19 +255,19 @@ if($isEditor && $collid){
 	</style>
 </head>
 <body>
-<?php
+	<?php
 $displayLeftMenu = (isset($collections_admin_specuploadMenu) ? $collections_admin_specuploadMenu:false);
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath">
-	<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME']) ? $LANG['HOME'] : 'Home'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
-	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars((isset($LANG['COL_MGMNT']) ? $LANG['COL_MGMNT'] : 'Collection Management Panel'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
-	<a href="specuploadmanagement.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars((isset($LANG['LIST_UPLOAD']) ? $LANG['LIST_UPLOAD'] : 'List of Upload Profiles'), HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+	<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME']) ? $LANG['HOME'] : 'Home'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo htmlspecialchars((isset($LANG['COL_MGMNT']) ? $LANG['COL_MGMNT'] : 'Collection Management Panel'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+	<a href="specuploadmanagement.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars((isset($LANG['LIST_UPLOAD']) ? $LANG['LIST_UPLOAD'] : 'List of Upload Profiles'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 	<b><?php echo (isset($LANG['SPEC_UPLOAD']) ? $LANG['SPEC_UPLOAD'] : 'Specimen Uploader'); ?></b>
 </div>
-<div id="innertext">
+<div role="main" id="innertext">
+	<h1 class="page-heading"><?= $LANG['UP_MODULE']; ?></h1>
 	<?php
-	echo '<h1>'.(isset($LANG['UP_MODULE']) ? $LANG['UP_MODULE'] : 'Data Upload Module').'</h1>';
 	if($statusStr){
 		echo '<hr />';
 		echo '<div>'.$statusStr.'</div>';
@@ -302,7 +302,7 @@ include($SERVER_ROOT.'/includes/header.php');
 								<div style="margin:10px;">
 									<div>
 										<input name="importspec" value="1" type="checkbox" checked />
-										<?php echo (isset($LANG['IMPORT_OCCS']) ? $LANG['IMPORT_OCCS'] : 'Import Occurrence Records'); ?> (<a href="#" onclick="toggle('dwcaOccurDiv');return false;"><?php echo htmlspecialchars((isset($LANG['VIEW_DETS']) ? $LANG['VIEW_DETS'] : 'view details'), HTML_SPECIAL_CHARS_FLAGS); ?></a>)
+										<?php echo (isset($LANG['IMPORT_OCCS']) ? $LANG['IMPORT_OCCS'] : 'Import Occurrence Records'); ?> (<a href="#" onclick="toggle('dwcaOccurDiv');return false;"><?php echo htmlspecialchars((isset($LANG['VIEW_DETS']) ? $LANG['VIEW_DETS'] : 'view details'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>)
 									</div>
 									<div id="dwcaOccurDiv" style="display:none;margin:20px;">
 										<div style="margin-bottom:5px">
@@ -357,13 +357,13 @@ include($SERVER_ROOT.'/includes/header.php');
 													</select>
 													<?php echo (isset($LANG['COND']) ? $LANG['COND'] : 'Condition'); ?>:
 													<select name="condition<?php echo $x; ?>" style="margin-right:10px">
-														<option value="EQUALS" <?php if($savedCondition == 'EQUALS') echo 'SELECTED'; ?>><?php echo (isset($LANG['EQUALS']) ? $LANG['EQUALS'] : 'EQUALS'); ?></option>
-														<option value="STARTS" <?php if($savedCondition == 'STARTS') echo 'SELECTED'; ?>><?php echo (isset($LANG['STARTS_WITH']) ? $LANG['STARTS_WITH'] : 'STARTS WITH'); ?></option>
-														<option value="LIKE" <?php if($savedCondition == 'LIKE') echo 'SELECTED'; ?>><?php echo (isset($LANG['CONTAINS']) ? $LANG['CONTAINS'] : 'CONTAINS'); ?></option>
-														<option value="LESSTHAN" <?php if($savedCondition == 'LESSTHAN') echo 'SELECTED'; ?>><?php echo (isset($LANG['LESS_THAN']) ? $LANG['LESS_THAN'] : 'LESS THAN'); ?></option>
-														<option value="GREATERTHAN" <?php if($savedCondition == 'GREATERTHAN') echo 'SELECTED'; ?>><?php echo (isset($LANG['GREATER_THAN']) ? $LANG['GREATER_THAN'] : 'GREATER THAN'); ?></option>
-														<option value="ISNULL" <?php if($savedCondition == 'ISNULL') echo 'SELECTED'; ?>><?php echo (isset($LANG['IS_NULL']) ? $LANG['IS_NULL'] : 'IS NULL'); ?></option>
-														<option value="NOTNULL" <?php if($savedCondition == 'NOTNULL') echo 'SELECTED'; ?>><?php echo (isset($LANG['NOT_NULL']) ? $LANG['NOT_NULL'] : 'IS NOT NULL'); ?></option>
+														<option value="EQUALS" <?php if($savedCondition == 'EQUALS') echo 'SELECTED'; ?>><?= $LANG['EQUALS'] ?></option>
+														<option value="STARTS_WITH" <?php if($savedCondition == 'STARTS_WITH') echo 'SELECTED'; ?>><?= $LANG['STARTS_WITH'] ?></option>
+														<option value="LIKE" <?php if($savedCondition == 'LIKE') echo 'SELECTED'; ?>><?= $LANG['LIKE'] ?></option>
+														<option value="LESS_THAN" <?php if($savedCondition == 'LESS_THAN') echo 'SELECTED'; ?>><?= $LANG['LESS_THAN'] ?></option>
+														<option value="GREATER_THAN" <?php if($savedCondition == 'GREATER_THAN') echo 'SELECTED'; ?>><?= $LANG['GREATER_THAN'] ?></option>
+														<option value="IS_NULL" <?php if($savedCondition == 'IS_NULL') echo 'SELECTED'; ?>><?= $LANG['IS_NULL'] ?></option>
+														<option value="NOT_NULL" <?php if($savedCondition == 'NOT_NULL') echo 'SELECTED'; ?>><?= $LANG['NOT_NULL'] ?></option>
 													</select>
 													<?php echo (isset($LANG['VALUE']) ? $LANG['VALUE'] : 'Value'); ?>:
 													<input name="value<?php echo $x; ?>" type="text" value="<?php echo $savedValue; ?>" />
@@ -379,7 +379,7 @@ include($SERVER_ROOT.'/includes/header.php');
 										<?php
 										echo (isset($LANG['IMPORT_ID']) ? $LANG['IMPORT_ID'] : 'Import Identification History');
 										if(isset($metaArr['ident'])){
-											echo '(<a href="#" onclick="toggle(\'dwcaIdentDiv\');return false;">' . htmlspecialchars((isset($LANG['VIEW_DETS']) ? $LANG['VIEW_DETS'] : 'view details'), HTML_SPECIAL_CHARS_FLAGS) . '</a>)';
+											echo '(<a href="#" onclick="toggle(\'dwcaIdentDiv\');return false;">' . htmlspecialchars((isset($LANG['VIEW_DETS']) ? $LANG['VIEW_DETS'] : 'view details'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>)';
 											?>
 											<div id="dwcaIdentDiv" style="display:none;margin:20px;">
 												<?php $duManager->echoFieldMapTable(true,'ident'); ?>
@@ -576,7 +576,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							?>
 							<div style="margin-left:15px;">
 								<a href="https://symbiota.org/wp-content/uploads/SymbiotaOccurrenceFields.pdf" target="_blank">SymbiotaOccurrenceFields.pdf</a><br/>
-								<a href="https://symbiota.org/symbiota-introduction/loading-specimen-data/" target="_blank"><?php echo htmlspecialchars((isset($LANG['LOADING_DATA']) ? $LANG['LOADING_DATA'] : 'Loading Data into Symbiota'), HTML_SPECIAL_CHARS_FLAGS); ?></a>
+								<a href="https://symbiota.org/symbiota-introduction/loading-specimen-data/" target="_blank"><?php echo htmlspecialchars((isset($LANG['LOADING_DATA']) ? $LANG['LOADING_DATA'] : 'Loading Data into Symbiota'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 							</div>
 						</div>
 						<div style="margin:10px;">

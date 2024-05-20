@@ -32,11 +32,11 @@ if($SYMB_UID){
 		$occMsg = number_format($occNum).' '.(isset($LANG['OCCURRENCES'])?'occurrences':'');
 		if($occNum){
 			$occHref = '../collections/list.php?usethes=1&taxa=' . $tid;
-			$occMsg = '<a class="btn" href="' . htmlspecialchars($occHref, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($occMsg, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+			$occMsg = '<a class="btn" href="' . htmlspecialchars($occHref, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($occMsg, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 		}
 		echo '<li>'.$occMsg.'</li>';
 	}
-	echo '<li><a href="taxonomy/taxonomydynamicdisplay.php?target=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">Taxonomic Tree</a></li>';
+	echo '<li><a href="taxonomy/taxonomydynamicdisplay.php?target=' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">Taxonomic Tree</a></li>';
 	echo '</ul>';
 	echo '</div>';
 	//TODO: list other internal resources such as Taxon Traits, etc
@@ -46,7 +46,7 @@ if($SYMB_UID){
 		echo '<div class="resource-title">'.(isset($LANG['EXTERNAL_RESOURCES'])?$LANG['EXTERNAL_RESOURCES']:'External Resources').'</div>';
 		echo '<ul>';
 		foreach($linkArr as $linkObj){
-			echo '<li><a href="' . htmlspecialchars($linkObj['url'], HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($linkObj['title'], HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
+			echo '<li><a href="' . htmlspecialchars($linkObj['url'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($linkObj['title'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
 			if($linkObj['notes']) echo '<li style="margin-left:10px">'.$linkObj['notes'].'</li>';
 		}
 		echo '</ul>';

@@ -1,7 +1,7 @@
 <?php
 /*
 ------------------
-Language: English
+Language: Español (Spanish)
 ------------------
 */
 
@@ -17,6 +17,7 @@ $LANG['TRANS_TYPE'] = 'Tipo de Transacción';
 $LANG['SHIPMENT'] = 'Envío';
 $LANG['ADJUSTMENT'] = 'Ajustes';
 $LANG['ENTERED_BY'] = 'Ingresado Por';
+$LANG['SUBMITTED_BY'] = 'Enviado por';
 $LANG['INSTITUTION'] = 'Institución';
 $LANG['ADJ_AMOUNT'] = 'Cantidad de Ajustes';
 $LANG['EDIT_GIFT_EX'] = 'Editar Obsequio/Intercambio';
@@ -49,18 +50,19 @@ $LANG['ATTACH_DESCRIPTION'] = 'Tipos de archivo aceptados incluyen PDF, Word, Ex
 									PDFs, imágenes y archivos de texto son preferidos, ya que serán desplegados en el navegador.';
 $LANG['RETURN_LOAN_INDEX'] = 'Regresar a Página de Índice de Préstamos';
 $LANG['SURE_DELETE_EX'] = 'Está seguro que quiere borrar permanentemente este intercambio?';
-$LANG['DEL_EXCHANGE'] = 'Borrar Intercambio';
 $LANG['NOT_AUTHORIZED'] = 'No está autorizado para añadir registros de ocurrencia';
 $LANG['UNKNOWN_ERROR'] = 'ERROR: error desconocido, por favor contacte al administrador del sistema';
 
 // from exchangetab.php
 $LANG['CREATE_NEW_EXCHANGE'] = 'Crear un Nuevo Intercambio';
+$LANG['DELETE_EXCHANGE'] = 'Borrar Intercambio';
 $LANG['NEW_GIFT'] = 'Nuevo Obsequio/Intercambio';
 $LANG['SEL_INST'] = 'Seleccionar Institución';
 $LANG['ADD_NEW_INST'] = 'Añadir una Nueva Institución';
+$LANG['ADD_A_NEW_INST'] = 'Incluir una nueva institución';
 $LANG['CREATE_EXCHANGE'] = 'Crear Intercambio';
 $LANG['TRANS_BY_INST'] = 'Registros de Transacción por Institución';
-$LANG['OUTGOING_EX_SENT'] = 'Intercambio saliente; Enviar ';
+$LANG['OUTGOING_EX_SENT'] = 'Intercambio saliente; Enviado ';
 $LANG['INCLUDING'] = 'incluyendo';
 $LANG['INCOMING_EX_RECEIVED'] = 'Intercambio entrante; Recibir ';
 $LANG['MOUNTED'] = 'montado';
@@ -112,6 +114,7 @@ $LANG['DISP_OUTSTANDING'] = 'Desplegar únicamente préstamos destacados';
 $LANG['DISP_ALL'] = 'Desplegar todos los préstamos';
 $LANG['REFRESH_LIST'] = 'Refrescar Listados';
 $LANG['CREATE_NEW_LOAN'] = 'Crear Nuevo Préstamo';
+$LANG['CREATE_A_NEW_LOAN'] = 'Crear un nuevo préstamo';
 $LANG['CREATE_OUTGOING'] = 'Nuevo Préstamo Saliente';
 $LANG['LOAN_ID'] = 'Identificador del Préstamo';
 $LANG['SEND_INSTITUTION'] = 'Enviar a la Institución';
@@ -130,6 +133,11 @@ $LANG['NO_LOANS'] = 'No existen préstamos que coincidan con sus criterios de b�
 $LANG['NO_LOANS_RECD'] = 'No existen préstamos recibidos';
 $LANG['LOANS_TO_CHECK_IN'] = 'Préstamos por ser Ingresados';
 $LANG['NOT_AUTH_LOANS'] = 'No está autorizdo para manejar préstamos en esta colección';
+
+$LANG['ADD_ICON'] = 'Agregar icono';
+$LANG['SEARCH'] = 'Buscar:';
+$LANG['GENERATION_ID_FAILED'] = 'Error al generar una nueva ID';
+$LANG['HOME'] = 'Inicio';
 
 //from outgoing.php
 $LANG['PROC_SUCCESS'] = 'especímenes procesados exitosamente';

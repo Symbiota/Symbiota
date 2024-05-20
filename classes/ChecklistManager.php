@@ -1,5 +1,6 @@
 <?php
 include_once($SERVER_ROOT.'/classes/Manager.php');
+include_once($SERVER_ROOT.'/classes/ImInventories.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
 
 class ChecklistManager extends Manager{
@@ -161,7 +162,7 @@ class ChecklistManager extends Manager{
 	public function getParentChecklist(){
 		$parentArr = array();
 		if($this->clid){
-			$sql = 'SELECT cl.clid, cl.name FROM fmchecklists cl INNER JOIN fmchklstchildren ch ON cl.clid = ch.clid WHERE ch.clidchild = '.$this->clid;
+			$sql = 'SELECT cl.clid, cl.name FROM fmchecklists cl INNER JOIN fmchklstchildren ch ON cl.clid = ch.clid WHERE ch.clid != ch.clidchild AND ch.clidchild = ' . $this->clid;
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
 				$parentArr[$r->clid] = $r->name;
@@ -212,7 +213,7 @@ class ChecklistManager extends Manager{
 		if(!$this->basicSql) $this->setClSql();
 		$result = $this->conn->query($this->basicSql);
 		while($row = $result->fetch_object()){
-			$family = strtoupper($row->family);
+			$family = strtoupper($row->family ?? '');
 			if($row->rankid > 140 && !$family) $family = 'Incertae Sedis';
 			$this->filterArr[$family] = '';
 			$taxonGroup = $family;
@@ -308,7 +309,10 @@ class ChecklistManager extends Manager{
 				//echo $vSql; exit;
 		 		$vResult = $this->conn->query($vSql);
 				while ($row = $vResult->fetch_object()){
-					$displayStr = ($row->recordedby?$row->recordedby:($row->catalognumber?$row->catalognumber:$row->othercatalognumbers));
+					$displayStr = '';
+					if($row->recordedby) $displayStr = $row->recordedby;
+					elseif($row->catalognumber) $displayStr = $row->catalognumber;
+					elseif($row->othercatalognumbers) $displayStr = $row->othercatalognumbers;
 					if(strlen($displayStr) > 25){
 						//Collector string is too big, thus reduce
 						$strPos = strpos($displayStr,';');
@@ -552,7 +556,7 @@ class ChecklistManager extends Manager{
 					$sql .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid WHERE (ST_Within(p.point,GeomFromText("'.$this->clMetadata['footprintwkt'].'"))) ';
 				}
 				else{
-					$voucherManager = new ChecklistVoucherAdmin($this->conn);
+					$voucherManager = new ChecklistVoucherAdmin();
 					$voucherManager->setClid($this->clid);
 					$voucherManager->setCollectionVariables();
 					$sql .= 'WHERE ('.$voucherManager->getSqlFrag().') ';
@@ -660,39 +664,21 @@ class ChecklistManager extends Manager{
 	public function addNewSpecies($postArr){
 		if(!$this->clid) return 'ERROR adding species: checklist identifier not set';
 		$insertStatus = false;
-		$dataArr = array('tid','familyoverride','morphospecies','habitat','abundance','notes','source','internalnotes');
-		$colSql = '';
-		$valueSql = '';
-		foreach($dataArr as $v){
-			if(isset($postArr[$v]) && $postArr[$v]){
-				$colSql .= ','.$v;
-				if(is_numeric($postArr[$v])) $valueSql .= ','.$postArr[$v];
-				else $valueSql .= ',"'.$this->cleanInStr($postArr[$v]).'"';
-			}
-		}
-		$conn = MySQLiConnectionFactory::getCon('write');
-		$sql = 'INSERT INTO fmchklsttaxalink (clid'.$colSql.') VALUES ('.$this->clid.$valueSql.')';
-		if($conn->query($sql)){
-			if($this->clMetadata['type'] == 'rarespp' && $this->clMetadata['locality'] && is_numeric($postArr['tid'])){
-				$sqlRare = 'UPDATE omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid '.
-					'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-					'SET o.localitysecurity = 1 '.
-					'WHERE (o.localitysecurity IS NULL OR o.localitysecurity = 0) AND (o.localitySecurityReason IS NULL) '.
-					'AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1) AND (o.stateprovince = "'.$this->clMetadata['locality'].'") AND (ts2.tid = '.$postArr['tid'].')';
-				$conn->query($sqlRare);
-			}
-		}
-		else{
-			$mysqlErr = $conn->error;
+		$inventoryManager = new ImInventories();
+		if(!$inventoryManager->insertChecklistTaxaLink($postArr)){
 			$insertStatus = 'ERROR adding species: ';
-			if(strpos($mysqlErr,'Duplicate') !== false){
-				$insertStatus .= 'Species already exists within checklist';
+			if($inventoryManager->getErrorMessage()){
+				if(strpos($inventoryManager->getErrorMessage(), 'Duplicate') !== false){
+					$insertStatus .= 'Species already exists within checklist';
+				}
+				else{
+					$insertStatus .= $inventoryManager->getErrorMessage();
+				}
 			}
 			else{
-				$insertStatus .= $conn->error;
+				$insertStatus .= 'unknown error';
 			}
 		}
-		$conn->close();
 		return $insertStatus;
 	}
 

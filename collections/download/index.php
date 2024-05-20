@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
@@ -7,25 +5,26 @@ include_once($SERVER_ROOT.'/content/lang/collections/download/index.'.$LANG_TAG.
 
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$sourcePage = array_key_exists('sourcepage', $_REQUEST) ? htmlspecialchars($_REQUEST['sourcepage'], HTML_SPECIAL_CHARS_FLAGS) : 'specimen';
-$downloadType = array_key_exists('dltype', $_REQUEST) ? htmlspecialchars($_REQUEST['dltype'], HTML_SPECIAL_CHARS_FLAGS) : 'specimen';
+$sourcePage = array_key_exists('sourcepage', $_REQUEST) ? $_REQUEST['sourcepage'] : 'specimen';
+$downloadType = array_key_exists('dltype', $_REQUEST) ? $_REQUEST['dltype'] : 'specimen';
 $taxonFilterCode = array_key_exists('taxonFilterCode', $_REQUEST) ? filter_var($_REQUEST['taxonFilterCode'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $displayHeader = array_key_exists('displayheader', $_REQUEST) ? filter_var($_REQUEST['displayheader'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$searchVar = array_key_exists('searchvar', $_REQUEST) ? htmlspecialchars($_REQUEST['searchvar'], HTML_SPECIAL_CHARS_FLAGS) : '';
+$searchVar = array_key_exists('searchvar', $_REQUEST) ? $_REQUEST['searchvar'] : '';
 
 $dwcManager = new DwcArchiverCore();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title> <?php echo (isset($LANG['COLL_SEARCH_DWNL']) ? $LANG['COLL_SEARCH_DWNL'] : 'Collections Search Download'); ?> </title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<script src="../../js/jquery.js" type="text/javascript"></script>
-	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
 			var dialogArr = new Array("schemanative","schemadwc");
@@ -104,7 +103,7 @@ $dwcManager = new DwcArchiverCore();
 	}
 	?>
 	<div style="width:100%; background-color:white;">
-		<h1> <?php echo (isset($LANG['DATA_GUIDE']) ? $LANG['DATA_GUIDE'] : 'Data Usage Guidelines'); ?> </h1>
+		<h1 class="page-heading"><?php echo (isset($LANG['DATA_GUIDE']) ? $LANG['DATA_GUIDE'] : 'Data Usage Guidelines'); ?></h1>
 		<div style="margin:15px 0px;">
 		<?php echo (isset($LANG['GUIDE_ONE']) ? $LANG['GUIDE_ONE'] : 'By downloading data, the user confirms that he/she has read and agrees with the general'); ?> <a href="../../includes/usagepolicy.php#images"> <?php echo (isset($LANG['GUIDE_LINK']) ? $LANG['GUIDE_LINK'] : 'data usage terms'); ?> </a>.
 			<?php echo (isset($LANG['GUIDE_TWO']) ? $LANG['GUIDE_TWO'] : 'Note that additional terms of use specific to the individual collections may be distributed with the data download. When present, the terms
@@ -129,7 +128,7 @@ $dwcManager = new DwcArchiverCore();
 								<input type="radio" name="schema" id="symbiota-native" value="symbiota" onclick="georefRadioClicked(this)" CHECKED />
 								<label for="symbiota-native">  <?php echo (isset($LANG['SYMB_NATIVE']) ? $LANG['SYMB_NATIVE'] : 'Symbiota Native'); ?>  </label>
 								<a id="schemanativeinfo" aria-label="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'More Information'); ?>" href="#" onclick="return false" title="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'More Information'); ?>">
-									<img src="../../images/info.png" alt=" <?php echo (isset($LANG['IMG_NATIVE_INFO']) ? $LANG['IMG_NATIVE_INFO'] : 'Info icon clarifying that Symbiota native is similar to Darwin Core plus some fields'); ?> " style="width:13px;" />
+									<img src="../../images/info.png" alt=" <?php echo (isset($LANG['IMG_NATIVE_INFO']) ? $LANG['IMG_NATIVE_INFO'] : 'Info icon clarifying that Symbiota native is similar to Darwin Core plus some fields'); ?> " style="width:1.2em;" />
 								</a><br/>
 								<div id="schemanativeinfodialog">
 									<?php echo (isset($LANG['SYMB_NATIVE_INFO']) ? $LANG['SYMB_NATIVE_INFO'] : 'Symbiota native is very similar to Darwin Core except with the addtion of a few fields
@@ -138,7 +137,7 @@ $dwcManager = new DwcArchiverCore();
 								<input type="radio" name="schema" id="darwin-core" value="dwc" onclick="georefRadioClicked(this)" />
 								<label for="darwin-core">  <?php echo (isset($LANG['DARWIN_CORE']) ? $LANG['DARWIN_CORE'] : 'Darwin Core'); ?> </label>
 								<a id="schemadwcinfo" href="#" title="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'More Information'); ?>" aria-label="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'More Information'); ?>">
-									<img src="../../images/info.png" alt=" <?php echo (isset($LANG['IMG_DARWIN_INFO']) ? $LANG['IMG_DARWIN_INFO'] : 'Info icon: DwC is a TDWG endorsed standard for biodata. Link to DwC quick ref guide in the dialog.'); ?>" style="width:13px;" />
+									<img src="../../images/info.png" alt=" <?php echo (isset($LANG['IMG_DARWIN_INFO']) ? $LANG['IMG_DARWIN_INFO'] : 'Info icon: DwC is a TDWG endorsed standard for biodata. Link to DwC quick ref guide in the dialog.'); ?>" style="width:1.2em;" />
 								</a><br/>
 								<div id="schemadwcinfodialog">
 									<?php echo (isset($LANG['DARWIN_GUIDE']) ? $LANG['DARWIN_GUIDE'] : 'Darwin Core (DwC) is a TDWG endorsed exchange standard specifically for biodiversity datasets.
@@ -201,10 +200,10 @@ $dwcManager = new DwcArchiverCore();
 						elseif($downloadType == 'georef') echo '<input name="schema" type="hidden" value="georef" />';
 						?>
 						<input name="publicsearch" type="hidden" value="1" />
-						<input name="taxonFilterCode" type="hidden" value="<?php echo $taxonFilterCode; ?>" />
-						<input name="sourcepage" type="hidden" value="<?php echo $sourcePage; ?>" />
-						<input name="searchvar" type="hidden" value="<?php echo str_replace('"','&quot;',$searchVar); ?>" />
-						<button type="submit" name="submitaction"> <?php echo (isset($LANG['DOWNLOAD_DATA']) ? $LANG['DOWNLOAD_DATA'] : 'Download Data'); ?> </button>
+						<input name="taxonFilterCode" type="hidden" value="<?= $taxonFilterCode; ?>" />
+						<input name="sourcepage" type="hidden" value="<?= htmlspecialchars($sourcePage); ?>" />
+						<input name="searchvar" type="hidden" value="<?= htmlspecialchars($searchVar); ?>" />
+						<button type="submit" name="submitaction"> <?= $LANG['DOWNLOAD_DATA'] ?></button>
 						<img id="workingcircle" src="../../images/ajax-loader_sm.gif" style="margin-bottom:-4px;width:20px;display:none;" />
 					</div>
 					<div class="sectionDiv">

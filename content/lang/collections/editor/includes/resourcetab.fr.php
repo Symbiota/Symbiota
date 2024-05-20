@@ -22,7 +22,7 @@ $LANG['SEL_CHECKLIST'] = 'Sélectionnez Liste';
 $LANG['LINK_TO_CHECKLIST_2'] = 'Lien vers Liste en Tant que Échantillon';
 $LANG['DELETE_VOUCHER_LINK'] = 'Supprimer lien du échantillon';
 $LANG['SURE_REMOVE_VOUCHER'] = 'Êtes-vous sûr de vouloir supprimer ce lien de échantillon?';
-$LANG['IF_X'] = "Si un X rouge ne s'affiche pas à droite du nom de la liste, vous n'avez pas les droits de modification pour cette liste et ne pouvez donc pas supprimer le lien du échantillon sans contacter le propriétaire de la liste";
+$LANG['IF_X'] = "Si l'icône de suppression ne s'affiche pas à droite du nom de la liste, vous ne disposez pas des droits de modification pour cette liste et ne pouvez donc pas supprimer le lien du bon sans contacter le propriétaire de la liste.";
 $LANG['SPEC_DUPES'] = "Spécimens Doublons";
 $LANG['SEARCH_RECS'] = 'Rechercher des Enregistrements à Lier';
 $LANG['CLUSTER_TITLE'] = 'Titre du Cluster';
@@ -46,6 +46,8 @@ $LANG['GEN_RES_EDITOR'] = 'Éditeur de Ressources Génétiques';
 $LANG['SAVE_EDITS'] = 'Enregistrer Modifications';
 $LANG['DEL_GEN_RES'] = 'Supprimer Ressource Génétique';
 $LANG['DEL_RES'] = 'Supprimer Ressource';
+$LANG['NO_CHECKLISTS'] = "Aucun lien entre les bons de vérification et les listes de contrôle n'a été établi";
+$LANG['NO_GENETIC_RESOURCES'] = 'Aucun lien génétique n’a été établi';
 
 include_once($SERVER_ROOT.'/content/lang/collections/associations.fr.php');
 ?>

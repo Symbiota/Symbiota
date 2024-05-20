@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorImages.php');
@@ -8,7 +6,7 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/imageoccursubmi
 header("Content-Type: text/html; charset=".$CHARSET);
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/imageoccursubmit.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$collid  = $_REQUEST['collid'];
+$collid  = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $action = array_key_exists('action',$_POST)?$_POST['action']:'';
 
 $occurManager = new OccurrenceEditorImages();
@@ -32,7 +30,7 @@ if($isEditor){
 	if($action == 'Submit Occurrence'){
 		if($occurManager->addImageOccurrence($_POST)){
 			$occid = $occurManager->getOccid();
-			if($occid) $statusStr = $LANG['NEW_RECORD_CREATED'].': <a href="occurrenceeditor.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+			if($occid) $statusStr = $LANG['NEW_RECORD_CREATED'].': <a href="occurrenceeditor.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" rel="noopener">' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 		}
 		else{
 			$statusStr = $occurManager->getErrorStr();
@@ -48,16 +46,17 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 	include('includes/config/occurVarDefault.php');
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['IMAGE_SUBMIT']?></title>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
     ?>
-	<script src="../../js/jquery.js" type="text/javascript"></script>
-	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="../../js/symb/collections.imageoccursubmit.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.tools.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/shared.js?ver=141119" type="text/javascript"></script>
@@ -108,12 +107,12 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS)?></a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo htmlspecialchars($LANG['COL_MNT'], HTML_SPECIAL_CHARS_FLAGS)?></a> &gt;&gt;
+		<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)?></a> &gt;&gt;
+		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo htmlspecialchars($LANG['COL_MNT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)?></a> &gt;&gt;
 		<b><?php echo $LANG['OCC_IMAGE_SUBMIT']?></b>
 	</div>
-	<div id="innertext">
-		<h1><?php echo $collMap['collectionname']; ?></h1>
+	<div role="main" id="innertext">
+		<h1 class="page-heading"><?php echo 'Occurrence Image Submission: ' . $collMap['collectionname']; ?></h1>
 		<?php
 		if($statusStr){
 			echo '<div style="margin:15px;color:'.(stripos($statusStr,'error') !== false?'red':'green').';">'.$statusStr.'</div>';

@@ -56,14 +56,14 @@ else{
 			'substrate'=>$LANG['SUBSTRATE'],'taxonRemarks'=>$LANG['TAXON_REMARKS'],'typeStatus'=>$LANG['TYPE_STATUS'],'verbatimCoordinates'=>$LANG['VERBAT_COORDS'],
 			'verbatimEventDate'=>$LANG['VERBATIM_DATE'],'verbatimDepth'=>$LANG['VERBATIM_DEPTH'],'verbatimElevation'=>$LANG['VERBATIM_ELE']);
 }
-$customTermArr = array('EQUALS', 'NOT_EQUALS', 'STARTS', 'LIKE', 'NOT_LIKE', 'GREATER', 'LESS', 'NULL', 'NOTNULL');
+$customTermArr = array('EQUALS', 'NOT_EQUALS', 'STARTS_WITH', 'LIKE', 'NOT_LIKE', 'GREATER_THAN', 'LESS_THAN', 'IS_NULL', 'NOT_NULL');
 $customArr = array();
 for($x=1; $x<9; $x++){
 	if(array_key_exists('cao'.$x, $qryArr) && ($qryArr['cao'.$x] == 'AND' || $qryArr['cao'.$x] == 'OR')) $customArr[$x]['andor'] = $qryArr['cao'.$x];
 	if(array_key_exists('cop'.$x, $qryArr) && preg_match('/^\({1,3}$/', $qryArr['cop'.$x])) $customArr[$x]['openparen'] = $qryArr['cop'.$x];
 	if(array_key_exists('cf'.$x, $qryArr) && array_key_exists($qryArr['cf'.$x], $customFieldArr)) $customArr[$x]['field'] = $qryArr['cf'.$x];
 	if(array_key_exists('ct'.$x, $qryArr) && in_array($qryArr['ct'.$x], $customTermArr)) $customArr[$x]['term'] = $qryArr['ct'.$x];
-	if(array_key_exists('cv'.$x, $qryArr)) $customArr[$x]['value'] = htmlspecialchars($qryArr['cv'.$x], HTML_SPECIAL_CHARS_FLAGS);
+	if(array_key_exists('cv'.$x, $qryArr)) $customArr[$x]['value'] = htmlspecialchars($qryArr['cv'.$x], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 	if(array_key_exists('ccp'.$x, $qryArr) && preg_match('/^\){1,3}$/', $qryArr['ccp'.$x])) $customArr[$x]['closeparen'] = $qryArr['ccp'.$x];
 }
 
@@ -79,8 +79,16 @@ else{
 ?>
 <div id="querydiv" style="clear:both;width:900px;display:<?php echo ($displayQuery?'block':'none'); ?>;">
 	<form name="queryform" action="<?php echo $_SERVER['SCRIPT_NAME']; ?>" method="post" onsubmit="return verifyQueryForm(this)">
-		<fieldset style="padding:5px;">
+		<fieldset style="padding:5px; position: relative">
 			<legend><?php echo $LANG['RECORD_SEARCH_FORM']; ?></legend>
+			<button style="position: absolute; right: 3vw;" type="button" class="icon-button" onclick="copyQueryLink(event)" title="<?php echo $LANG['COPY_SEARCH']; ?>" aria-label="<?php echo $LANG['COPY_LINK']; ?>">
+				<span style="display:flex; align-content: center;">
+						<svg alt="Copies the search terms as a link." style="width:1.2em;margin-right:5px;" xmlns="http://www.w3.org/2000/svg" fill="var(--light-color)" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg>
+						<span style="align-content: center;">
+							<?php echo $LANG['COPY_LINK']; ?>
+						</span>
+				</span>
+			</button>
 			<?php
 			if(!$crowdSourceMode){
 				?>
@@ -92,12 +100,11 @@ else{
 					<div class="fieldDiv" title="<?php echo $LANG['SEPARATE_RANGES']; ?>">
 						<label for="q_recordnumber"><?php echo $LANG['NUMBER']; ?>:</label>
 						<input type="text" name="q_recordnumber" id="q_recordnumber" value="<?php echo $qRecordNumber; ?>" style="width:120px;" onchange="setOrderBy(this)" />
+							<label  title="<?php echo $LANG['ENTER_RANGES']; ?>" for="q_eventdate"><?php echo $LANG['DATE']; ?>:</label>
+							<input type="text" name="q_eventdate" id="q_eventdate" value="<?php echo $qEventDate; ?>" style="width:160px" onchange="setOrderBy(this)" />
+						</div>
 					</div>
-					<div class="fieldDiv" title="<?php echo $LANG['ENTER_RANGES']; ?>">
-						<label for="q_eventdate"><?php echo $LANG['DATE']; ?>:</label>
-						<input type="text" name="q_eventdate" id="q_eventdate" value="<?php echo $qEventDate; ?>" style="width:160px" onchange="setOrderBy(this)" />
-					</div>
-				</div>
+					
 				<?php
 			}
 			?>
@@ -117,7 +124,7 @@ else{
 				}
 				else{
 					?>
-					<div class="fieldDiv" title="<?php echo $LANG['SEPARATE_RANGES']; ?>">
+					<div class="fieldDiv " title="<?php echo $LANG['SEPARATE_RANGES']; ?>">
 						<label for="q_othercatalognumbers"><?php echo $LANG['OTHER_CAT_NUMS']; ?>:</label>
 						<input type="text" name="q_othercatalognumbers" id="q_othercatalognumbers" value="<?php echo $qOtherCatalogNumbers; ?>" />
 					</div>
@@ -129,20 +136,18 @@ else{
 			if(!$crowdSourceMode){
 				?>
 				<div class="fieldGroupDiv">
-					<div class="fieldDiv" style="<?php echo ($isGenObs?'display:none':''); ?>">
+					<div class="fieldDiv" style="display: flex; align-items: center; <?php echo ($isGenObs?'display:none':''); ?>">
 						<label for="q_recordenteredby"><?php echo $LANG['ENTERED_BY']; ?>:</label>
-						<input type="text" name="q_recordenteredby" id="q_recordenteredby" value="<?php echo $qRecordEnteredBy; ?>" style="width:70px;" onchange="setOrderBy(this)" />
-					</div>
-					<div>
-						<button type="button" onclick="enteredByCurrentUser()" style="font-size:70%" title="<?php echo $LANG['LIMIT_TO_CURRENT']; ?>"><?php echo $LANG['CU']; ?></button>
-					</div>
-					<div class="fieldDiv" title="<?php echo $LANG['ENTER_RANGES']; ?>">
-						<label for="q_dateentered"><?php echo $LANG['DATE_ENTERED']; ?>:</label>
-						<input type="text" name="q_dateentered" id="q_dateentered" value="<?php echo $qDateEntered; ?>" style="width:160px" onchange="setOrderBy(this)" />
-					</div>
-					<div class="fieldDiv" title="<?php echo $LANG['ENTER_RANGES']; ?>">
-						<label for="q_datelastmodified"><?php echo $LANG['DATE_MODIFIED']; ?>:</label>
-						<input type="text" name="q_datelastmodified" id="q_datelastmodified" value="<?php echo $qDateLastModified; ?>" style="width:160px" onchange="setOrderBy(this)" />
+						<input class="left-breathing-room-rel" type="text" name="q_recordenteredby" id="q_recordenteredby" value="<?php echo $qRecordEnteredBy; ?>" style="max-width:70px;" onchange="setOrderBy(this)" />
+						<div>
+							<button class="left-breathing-room-rel" type="button" onclick="enteredByCurrentUser()" style="font-size:70%" title="<?php echo $LANG['LIMIT_TO_CURRENT']; ?>"><?php echo $LANG['CU']; ?></button>
+						</div>
+							<label title="<?php echo $LANG['ENTER_RANGES']; ?>" class="left-breathing-room-rel" for="q_dateentered"><?php echo $LANG['DATE_ENTERED']; ?>:</label>
+							<input class="left-breathing-room-rel" type="text" name="q_dateentered" id="q_dateentered" value="<?php echo $qDateEntered; ?>" style="width:160px" onchange="setOrderBy(this)" />
+							<div title="<?php echo $LANG['ENTER_RANGES']; ?>">
+								<label class="left-breathing-room-rel" for="q_datelastmodified"><?php echo $LANG['DATE_MODIFIED']; ?>:</label>
+								<input class="left-breathing-room-rel" type="text" name="q_datelastmodified" id="q_datelastmodified" value="<?php echo $qDateLastModified; ?>" style="width:160px" onchange="setOrderBy(this)" />
+							</div>
 					</div>
 				</div>
 				<div class="fieldGroupDiv">
@@ -205,7 +210,7 @@ else{
 				if(isset($customArr[$x]['value'])) $cValue = $customArr[$x]['value'];
 
 				$divDisplay = 'none';
-				if($x == 1 || $cValue != '' || $cTerm == 'NULL' || $cTerm == 'NOTNULL') $divDisplay = 'block';
+				if($x == 1 || $cValue != '' || $cTerm == 'IS_NULL' || $cTerm == 'NOT_NULL') $divDisplay = 'block';
 				?>
 				<div id="customdiv<?php echo $x; ?>" class="fieldGroupDiv" style="display:<?php echo $divDisplay; ?>;">
 					<?php echo $LANG['CUSTOM_FIELD'].' '.$x; ?>:
@@ -253,28 +258,26 @@ else{
 						?>
 					</select>
 					<a href="#" onclick="toggleCustomDiv(<?php echo ($x+1); ?>);return false;">
-						<img class="editimg" src="../../images/editplus.png" alt="<?php echo htmlspecialchars($LANG['IMG_EDIT'], HTML_SPECIAL_CHARS_FLAGS); ?>" />
+						<img class="editimg" src="../../images/plus.png" style="width:1.2em;" alt="<?php echo htmlspecialchars($LANG['ADD_CUSTOM_FIELD'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" />
 					</a>
 				</div>
 				<?php
 			}
 			?>
-			<div class="fieldGroupDiv">
 				<?php
 				if($isGenObs && ($IS_ADMIN || ($collId && array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"])))){
 					?>
-					<div>
-						<input type="checkbox" name="q_returnall" value="1" <?php echo ($qReturnAll?'CHECKED':''); ?> /> <?php echo $LANG['SHOW_RECS_ALL']; ?>
+					<div class="fieldGroupDiv">
+						<div>
+							<input type="checkbox" name="q_returnall" value="1" <?php echo ($qReturnAll?'CHECKED':''); ?> /> <?php echo $LANG['SHOW_RECS_ALL']; ?>
+						</div>
 					</div>
 					<?php
 				}
 				?>
-			</div>
 			<div class="fieldGroupDiv">
-				<div class="bottom-breathing-room-relative">
-					<button type="button" class="icon-button no-margin-left" onclick="copyQueryLink(event)" title="<?php echo (isset($LANG['COPY_SEARCH'])?$LANG['COPY_SEARCH']:'Copy Search As Link'); ?>" aria-label="<?php echo (isset($LANG['COPY_SEARCH'])?$LANG['COPY_SEARCH']:'Copy Search As Link'); ?>">
-						<img src="../../images/dl2.png" srcset="../../images/link.svg" class="svg-icon" style="width:15px; height:15px" alt="Link icon. Copies the search terms as a link." />
-					</button>
+				<div>
+
 					<?php
 					if(!$crowdSourceMode){
 						$qryStr = '';
@@ -288,9 +291,9 @@ else{
 						if($qDateLastModified) $qryStr .= '&datelastmodified='.$qDateLastModified;
 						if($qryStr){
 							?>
-							<a href="../reports/labelmanager.php?collid=<?php echo htmlspecialchars($collId, HTML_SPECIAL_CHARS_FLAGS) . htmlspecialchars($qryStr, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank">
+							<a href="../reports/labelmanager.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . htmlspecialchars($qryStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank">
 								<button type="button" class="icon-button" title="<?php echo $LANG['GO_LABEL_PRINT']; ?>">
-									<img src="../../images/list.png" style="width:15px; height:15px" />
+									<img src="../../images/list.png" style="width:1.3em" />
 								</button>
 							</a>
 							<?php
@@ -304,17 +307,19 @@ else{
 				<input type="hidden" name="occindex" value="<?php echo $occManager->getOccIndex(); ?>" />
 				<input type="hidden" name="occidlist" value="<?php echo $occManager->getOccidIndexStr(); ?>" />
 				<input type="hidden" name="direction" value="" />
-				<section class="flex-form">
-					<div class="no-margin-left">
+				<section class="flex-form bottom-breathing-room-rel">
+					<div style="margin-left: 0;">
 						<button name="submitaction" type="submit" onclick="submitQueryEditor(this.form)" ><?php echo $LANG['DISPLAY_EDITOR']; ?></button>
 					</div>
-					<div class="no-margin-left">
+					<div style="margin-left: 0;">
 						<button name="submitaction" type="submit" onclick="submitQueryTable(this.form)" ><?php echo $LANG['DISPLAY_TABLE']; ?></button>
 					</div>
-					<div class="no-margin-left">
+					<div style="margin-left: 0;">
 						<button type="button" name="reset" value="Reset Form" onclick="resetQueryForm(this.form)">Reset Form</button>
 					</div>
-					<div>
+				</section>
+				<section class="flex-form">
+					<div class="fieldGroupDiv" style="margin-left: 0;">
 						<label for="orderby"><?php echo $LANG['SORT_BY']; ?>:</label>
 						<select name="orderby" id="orderby">
 							<option value=""></option>
@@ -347,22 +352,24 @@ else{
 							<option value="DESC" <?php echo ($qOrderByDir=='DESC'?'SELECTED':''); ?>><?php echo $LANG['DESCENDING']; ?></option>
 						</select>
 					</div>
+					<div style="display: flex; align-items: center; margin-bottom: 1rem;">
 						<label for="reclimit">
 							<?php
 							if(!isset($recLimit) || !$recLimit) $recLimit = 1000;
 							echo $LANG['OUTPUT'] . ':';
 							?>
 						</label>
-						<select name="reclimit" id="reclimit">
+						<select name="reclimit" id="reclimit" class="left-breathing-room-rel">
 							<option <?php echo ($recLimit==500?'selected':''); ?>>500</option>
 							<option <?php echo ($recLimit==1000?'selected':''); ?>>1000</option>
 							<option <?php echo ($recLimit==2000?'selected':''); ?>>2000</option>
 							<option <?php echo ($recLimit==3000?'selected':''); ?>>3000</option>
 						</select> <?php //echo $LANG['RECORDS']; ?>
+					</div>
 				</section>
-				<div>
+				<div style="display: flex; align-content: center;">
 					<input name="dynamictable" id="dynamictable-1" type="checkbox" value="1" <?php if(isset($dynamicTable) && $dynamicTable) echo 'checked'; ?> />
-					<label for="dynamictable-1"><?php echo $LANG['DYNAMIC_TABLE']; ?></label>
+					<label class="left-breathing-room-rel"for="dynamictable-1"><?php echo $LANG['DYNAMIC_TABLE']; ?></label>
 				</div>
  			</div>
 		</fieldset>

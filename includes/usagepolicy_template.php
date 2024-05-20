@@ -1,10 +1,10 @@
-<!DOCTYPE html>
 <?php
 include_once('../config/symbini.php');
 include_once ($SERVER_ROOT.'/classes/UtilityFunctions.php');
 header("Content-Type: text/html; charset=" . $CHARSET);
 $serverHost = UtilityFunctions::getDomain();
 ?>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -21,12 +21,12 @@ $serverHost = UtilityFunctions::getDomain();
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php">Home</a> &gt;&gt;
+		<a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php">Home</a> &gt;&gt;
 		<b>Data Usage Guidelines</b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
-		<h1>Guidelines for Acceptable Use of Data</h1>
+	<div role="main" id="innertext">
+		<h1 class="page-heading">Guidelines for Acceptable Use of Data</h1>
 		<h2>Recommended Citation Formats</h2>
 		<p>Use one of the following formats to cite data retrieved from the <?php echo $DEFAULT_TITLE; ?> network:</p>
 		<h3>General Citation</h3>

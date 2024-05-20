@@ -123,5 +123,7 @@ $LANG['SECURITY_KEY'] = 'Clave de seguridad';
 $LANG['RECORDID'] = 'ID de registro';
 $LANG['SAVE_EDITS'] = 'Guardar ediciones';
 $LANG['CREATE_COLL_2'] = 'Crear nueva colección';
+$LANG['TINYMCE_INFO'] = 'Descripción de la colección. Puede acceder a la barra de herramientas de edición de texto para esta descripción presionando 
+                        la combinación de teclas ALT + F10 en Windows u OPCIÓN + F10 en MacOS.';
 
 ?>

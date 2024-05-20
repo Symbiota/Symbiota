@@ -4,16 +4,17 @@ if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/edit
 else include_once($SERVER_ROOT.'/content/lang/collections/editor/assocsppaid.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $LANG['ASSOC_SPP_AID']; ?></title>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script type="text/javascript" src="../../js/jquery.js"></script>
-	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 
 		$(document).ready(function() {
@@ -43,7 +44,8 @@ header("Content-Type: text/html; charset=".$CHARSET);
 
 <body style="background-color:white">
 	<!-- This is inner text! -->
-	<div id="innertext" style="background-color:white;">
+	<div role="main" id="innertext" style="background-color:white;">
+		<h1 class="page-heading screen-reader-only"><?php echo $LANG['ASSOC_SPP_AID']; ?></h1>
 		<fieldset style="width:450px;">
 			<legend><b><?php echo $LANG['ASSOC_SPP_AID']; ?></b></legend>
 			<div style="">

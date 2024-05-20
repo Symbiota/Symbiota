@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GamesManager.php');
@@ -15,16 +13,17 @@ $clName = $gameManager->getClName();
 
 $imgloc = "../images/games/namegame/";
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Name Game</title>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
     ?>
-	<script src="../js/jquery.js" type="text/javascript"></script>
-	<script src="../js/jquery-ui.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<style>
 		.lettertable{border:1px solid #000000;border-spacing:3px;}
 		.tableplain{border:1px}
@@ -35,6 +34,9 @@ $imgloc = "../images/games/namegame/";
 		.buttonup{border:5px outset #CCCC99;cursor:pointer;font-weight:normal;font-weight:bold}
 		.question{font-size:2.5rem}
 		#rw{margin-left:auto;margin-right:auto}
+		.tr-center {
+			text-align: center;
+		}
 	</style>
 	<script>
 		//COLLAPSE MENU
@@ -553,16 +555,16 @@ $imgloc = "../images/games/namegame/";
 		echo $games_namegameCrumbs;
 	}
 	else{
-		echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&dynclid=' . htmlspecialchars($dynClid, HTML_SPECIAL_CHARS_FLAGS) . '">';
+		echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&dynclid=' . htmlspecialchars($dynClid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 		echo $clName;
 		echo '</a> &gt;&gt; ';
 	}
 	echo ' <b>Name Game</b>';
 	echo '</div>';
 	?>
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<div style="width:100%;text-align:center;">
-			<h1><?php echo $DEFAULT_TITLE; ?> Name Game</h1>
+			<h1 class="page-heading screen-reader-only">Name Guessing Game</h1>
 		</div>
 		<div style="width:100%;text-align:center;margin:10px;">
 			I am thinking of a species found within the following checklist: <b><?php echo $clName;?></b><br/>

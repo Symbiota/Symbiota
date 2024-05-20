@@ -234,6 +234,27 @@ class RpcOccurrenceEditor extends RpcBase{
 		return $retArr;
 	}
 
+	//Used by /collections/editor/rpc/localitysecuritycheck.php
+	public function getStateSecuritySetting($tid, $state){
+		$retStr = 0;
+		if(is_numeric($tid) && $state){
+			$sql = 'SELECT c.clid
+				FROM fmchecklists c INNER JOIN fmchklsttaxalink cl ON c.clid = cl.clid
+				INNER JOIN taxstatus ts1 ON cl.tid = ts1.tid
+				INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted
+				WHERE c.type = "rarespp" AND ts1.taxauthid = 1 AND ts2.taxauthid = 1
+				AND (ts2.tid = ?) AND (c.locality = ?)';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('is', $tid, $state);
+				$stmt->execute();
+				$stmt->store_result();
+				if($stmt->num_rows) $retStr = 1;
+				$stmt->close();
+			}
+		}
+		return $retStr;
+	}
+
 	//Used by Geographic Thesaurus calls
 	public function getGeography($term, $target, $parentTerm){
 		$retArr = Array();
