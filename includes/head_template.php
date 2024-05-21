@@ -22,12 +22,6 @@ $localSession = isset($_SESSION['active_stylesheet']) ? $_SESSION['active_styles
 <script src="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/js/symb/lang.js" type="text/javascript"></script>
 <script src="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/js/symb/accessibilityUtils.js" type="text/javascript"></script>
 <style>
-    .accessibility-button {
-        font-size: 1rem;
-    }
-    .welcome-text {
-        margin-bottom: 0.75rem;
-    }
     .accessibility-option-button {
         width: fit-content;
         padding: 10px;
