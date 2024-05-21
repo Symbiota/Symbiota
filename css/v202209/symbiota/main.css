@@ -96,6 +96,9 @@ button {
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   white-space: nowrap;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 button:hover {
