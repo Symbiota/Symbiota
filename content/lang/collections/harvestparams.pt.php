@@ -67,5 +67,4 @@ $LANG['TYPE_TAXON'] = 'Nome do Táxon';
 $LANG['SELECT_TAXON_TYPE'] = 'Selecionar tipo de táxon';
 $LANG['DIRECTION'] = 'Direção';
 $LANG['DISTANCE_UNIT'] = 'Unidade de distância';
-$LANG['COLLECTIONS_TO_BE_QUERIED'] = 'Coleções a serem consultadas';
 ?>
