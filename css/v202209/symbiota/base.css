@@ -355,7 +355,7 @@ ul {
 
 h1 {
   display: block;
-  font-size: 1.5em;
+  /*font-size: 1.5em;*/
   margin-block-start: 0.83em;
   margin-block-end: 0.83em;
   margin-inline-start: 0px;
@@ -365,7 +365,7 @@ h1 {
 
 h2 {
   display: block;
-  font-size: 1.5em;
+  /*font-size: 1.5em;*/
   margin-block-start: 0.83em;
   margin-block-end: 0.83em;
   margin-inline-start: 0px;
@@ -375,7 +375,7 @@ h2 {
 
 h3 {
   display: block;
-  font-size: 1.17em;
+  /*font-size: 1.17em;*/
   margin-block-start: 1em;
   margin-block-end: 1em;
   margin-inline-start: 0px;
@@ -473,7 +473,7 @@ b {
 }
 
 .page-heading {
-  font-size: 3rem;
+  font-size: 2.5rem;
 }
 
 /* Base Button Button CSS
@@ -523,6 +523,9 @@ button.icon-button:hover {
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   width: fit-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .button > a {

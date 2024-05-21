@@ -30,7 +30,7 @@
 /* Global styles
    ========================================================================== */
 html {
-  font-size: 14px; /* 1rem = 10px */
+  font-size: 16px; /* This is what 1 rem will be base off of */
 }
 
 body {
@@ -38,7 +38,7 @@ body {
   color: var(--body-text-color);
   margin: 0;
   -webkit-text-size-adjust: 100%;
-  font-size: 1.2rem;
+  font-size: var(--body-font-size, 1rem);
   font-weight: 400;
   font-family: var(--body-font-family);
 }
@@ -51,7 +51,7 @@ h4 {
   font-weight: 700;
   font-family: var(--heading-font-family);
 }
-
+/*
 h1 {
   font-size: 3rem;
 }
@@ -71,6 +71,7 @@ h4 {
 p {
   font-size: 1.4rem;
 }
+*/
 
 a {
   transition: all 0.2s ease-in-out;
@@ -108,7 +109,6 @@ hr {
 
 #innertext {
   margin: 0 auto;
-  padding: 3rem 0;
   background-color: var(--body-bg-color);
   width: 90%;
 }
@@ -221,6 +221,9 @@ hr {
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   width: fit-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .button > a {

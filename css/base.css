@@ -374,7 +374,7 @@ ol.mp_list li.mp_highlighted {
 }
 
 .page-heading {
-  font-size: 3rem;
+  font-size: 2.5rem;
 }
 
 /* Base Button CSS
@@ -426,6 +426,9 @@ div.button:hover {
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   width: fit-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .button > a {
