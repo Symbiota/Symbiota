@@ -20,7 +20,7 @@ div#keymodule {
 }
 
 #admin{
-        margin: 2rem 0 1rem 1rem;
+        margin: 2rem 0 0rem 0rem;
         padding-left: 1rem;
         padding-right: 1rem;
 }
@@ -34,7 +34,7 @@ div#adminobservation{
 }
 
 div#symbiotaschema{
-        margin: 1.5rem 0 0 1rem;
+        margin: 1.5rem 0 0 0rem;
 }
 
 div#symbiotaschema img{

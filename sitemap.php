@@ -141,12 +141,11 @@ $smManager = new SiteMapManager();
 			</ul>
 
 			<section id="admin" class="fieldset-like">
-				<h1>
+				<h1 style="margin-bottom: 1.6rem">
 					<span>
 						<?php echo $LANG['MANAGTOOL'];?>
 					</span>
 				</h1>
-			</br>
 				<?php
 				if($SYMB_UID){
 					if($IS_ADMIN){
