@@ -726,18 +726,34 @@ function hideColCheckbox(collid) {
 function uncheckEverything() {
   const checkUncheckAllElem = document.getElementById("dballcb");
   checkUncheckAllElem.checked = false;
-  let categoryCollectionsChecked = Array.from(
+  const categoryCollectionsChecked = Array.from(
     document.querySelectorAll(`#search-form-colls input[name="cat[]"]:checked`)
   );
   categoryCollectionsChecked.forEach((individualCollectionChecked) => {
     individualCollectionChecked.checked = false;
   });
 
-  let individualCollectionsChecked = Array.from(
+  const individualCollectionsChecked = Array.from(
     document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked`)
   );
   individualCollectionsChecked.forEach((individualCollectionChecked) => {
     individualCollectionChecked.checked = false;
+  });
+}
+
+function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
+  queriedCollections.forEach((queriedCollection) => {
+    let targetElem = document.getElementById("collection-" + queriedCollection);
+    if (!targetElem) {
+      // get elements if categories exist
+      const prefix = "coll-" + queriedCollection + "-";
+      const candidateTargetElems =
+        document.querySelectorAll(`[id^="${prefix}"]`) || [];
+      if (candidateTargetElems.length > 0) {
+        targetElem = candidateTargetElems[0]; // there should only be one match; get the first one
+      }
+    }
+    targetElem.checked = true;
   });
 }
 
@@ -846,19 +862,7 @@ function setSearchForm(frm) {
       const queriedCollections = urlVar.db.split(",");
       if (queriedCollections.length > 0) {
         uncheckEverything();
-
-        // go back and check the ones that should be checked
-        queriedCollections.forEach((queriedCollection) => {
-          let targetElem = document.getElementById(
-            "collection-" + queriedCollection
-          );
-          if (!targetElem) {
-            // get elements if categories exist
-            const prefix = "coll-" + queriedCollection + "-";
-            targetElem = document.querySelectorAll(`[id^="${prefix}"]`)[0];
-          }
-          targetElem.checked = true;
-        });
+        checkTheCollectionsThatShouldBeChecked(queriedCollections);
       }
     }
     for (var i in urlVar) {
