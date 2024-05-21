@@ -68,4 +68,5 @@ $LANG['SELECT_TAXON_TYPE'] = 'Seleccionar tipo de taxón';
 $LANG['DIRECTION'] = 'Dirección';
 $LANG['DISTANCE_UNIT'] = 'Unidad de distancia';
 $LANG['MATERIAL_SAMPLE'] = 'Muestra de Materiales';
+$LANG['COLLECTIONS_TO_BE_QUERIED'] = 'Colecciones a consultar';
 ?>
