@@ -48,7 +48,6 @@ $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ??
 		.coordBoxDiv .iconDiv { float: left; margin-left: 5px; }
 		.coordBoxDiv .iconDiv img { width:18px; }
 		.coordBoxDiv .elemDiv { clear:both; }
-		.no-top-margin {margin-top: 0;}
 	</style>
 </head>
 <body>
@@ -75,13 +74,6 @@ $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ??
 	?>
 	<div role="main" id="innertext">
 		<h1 class="page-heading bottom-breathing-room-rel top-breathing-room-rel">Search</h1>
-		<?php if($collSearchStr = $collManager->getCollectionSearchStr()){
-		?>
-			<h2 class="bottom-breathing-room-rel no-top-margin"><?= $LANG['COLLECTIONS_TO_BE_QUERIED']; ?>: </h2>
-			<span><?= $collSearchStr; ?></span>
-			<?php 
-		}
-		?>
 		<form name="harvestparams" id="harvestparams" action="list.php" method="post" onsubmit="return checkHarvestParamsForm(this)">
 			<hr/>
 			<div>
