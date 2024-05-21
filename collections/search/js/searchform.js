@@ -723,11 +723,27 @@ function hideColCheckbox(collid) {
   });
 }
 
+function uncheckEverything() {
+  const checkUncheckAllElem = document.getElementById("dballcb");
+  checkUncheckAllElem.checked = false;
+  let categoryCollectionsChecked = Array.from(
+    document.querySelectorAll(`#search-form-colls input[name="cat[]"]:checked`)
+  );
+  categoryCollectionsChecked.forEach((individualCollectionChecked) => {
+    individualCollectionChecked.checked = false;
+  });
+
+  let individualCollectionsChecked = Array.from(
+    document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked`)
+  );
+  individualCollectionsChecked.forEach((individualCollectionChecked) => {
+    individualCollectionChecked.checked = false;
+  });
+}
+
 function setSearchForm(frm) {
   if (sessionStorage.querystr) {
     var urlVar = parseUrlVariables(sessionStorage.querystr);
-    console.log("deleteMe urlVar is: ");
-    console.log(urlVar);
 
     if (
       typeof urlVar.usethes !== "undefined" &&
@@ -826,30 +842,10 @@ function setSearchForm(frm) {
         frm.includecult.checked = true;
       }
     }
-    console.log(urlVar);
     if (urlVar.db) {
       const queriedCollections = urlVar.db.split(",");
       if (queriedCollections.length > 0) {
-        // uncheck all
-        const checkUncheckAllElem = document.getElementById("dballcb");
-        checkUncheckAllElem.checked = false;
-        let categoryCollectionsChecked = Array.from(
-          document.querySelectorAll(
-            `#search-form-colls input[name="cat[]"]:checked`
-          )
-        );
-        categoryCollectionsChecked.forEach((individualCollectionChecked) => {
-          individualCollectionChecked.checked = false;
-        });
-
-        let individualCollectionsChecked = Array.from(
-          document.querySelectorAll(
-            `#search-form-colls input[name="db[]"]:checked`
-          )
-        );
-        individualCollectionsChecked.forEach((individualCollectionChecked) => {
-          individualCollectionChecked.checked = false;
-        });
+        uncheckEverything();
 
         // go back and check the ones that should be checked
         queriedCollections.forEach((queriedCollection) => {
@@ -862,7 +858,6 @@ function setSearchForm(frm) {
             targetElem = document.querySelectorAll(`[id^="${prefix}"]`)[0];
           }
           targetElem.checked = true;
-          // updateChip();
         });
       }
     }

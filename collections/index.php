@@ -91,7 +91,6 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 				?>
 			</ul>
 			<?php
-			// $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.php";
 			$actionPage = "harvestparams.php";
 			if($specArr && $obsArr){
 				?>
