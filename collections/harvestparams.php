@@ -73,10 +73,11 @@ $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ??
 	}
 	?>
 	<div role="main" id="innertext">
-		<h1 class="page-heading">Search</h1>
+		<h1 class="page-heading bottom-breathing-room-rel top-breathing-room-rel">Search</h1>
 		<?php if($collSearchStr = $collManager->getCollectionSearchStr()){
 		?>
-			<h2><?= $LANG['COLLECTIONS_TO_BE_QUERIED']; ?>: <?= $collSearchStr; ?></h2>
+			<h2 class="bottom-breathing-room-rel" style="margin-top:0;"><?= $LANG['COLLECTIONS_TO_BE_QUERIED']; ?>: </h2>
+			<span><?= $collSearchStr; ?></span>
 			<?php 
 		}
 		?>
