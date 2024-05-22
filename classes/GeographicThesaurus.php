@@ -759,7 +759,7 @@ class GeographicThesaurus extends Manager {
 		$sql = <<<'SQL'
 		SELECT g.geoThesID, g.geoterm, g.geoLevel, g.parentID, g2.geoterm AS parentterm, g2.geoLevel AS parentlevel FROM geographicthesaurus g 
 		LEFT JOIN geographicthesaurus g2 ON g2.geoThesID = g.parentID
-		WHERE g.geoterm LIKE ?
+		WHERE g.geoterm LIKE ? ORDER BY g.geoterm, CHAR_LENGTH(g.geoterm)
 		SQL;
 
 		$params = ['%' . $geoterm . '%'];
