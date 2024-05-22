@@ -217,7 +217,7 @@ hr {
 .button {
   border: none;
   border-radius: 5px;
-  padding: 0.6rem 1rem;
+  padding: 0.5rem 1rem;
   font-family: var(--heading-font-family);
   letter-spacing: 1px;
   text-align: center;
