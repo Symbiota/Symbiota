@@ -374,6 +374,18 @@ if(!$IS_ADMIN){
 											<?php echo $LANG['MERGE_RECORDS']; ?>
 										</a>
 									</div>
+									<div style="margin-left:5px;float:left;">
+										<a href="#" id="mergeduplicateinfo" style="text-decoration:none;">
+											<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO_ALT']; ?>" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>"/>
+										</a>
+										<dialog id="dialogEl" aria-label="Merge duplicates dialog" >
+											<?php
+											echo $LANG['MERGE_DUPE_EXPLAIN'] ;
+											?>
+											<br>
+											<button id="closeDialog" style="margin-top:1em;float:right"><?php echo $LANG['CLOSE'] ?></button>
+										</dialog>
+									</div>
 									<?php
 								}
 							}
@@ -391,5 +403,25 @@ if(!$IS_ADMIN){
 			}
 			?>
 		</div>
+		<script>
+		const showDialogLink = document.getElementById('mergeduplicateinfo');
+		const closeDialogButton = document.getElementById('closeDialog');
+		const dialogEl = document.getElementById('dialogEl');
+		const dialogContainer = document.getElementById('dialogContainer');
+
+		showDialogLink.addEventListener('click', (e) => {
+			e.preventDefault();
+			dialogEl.showModal();
+
+			dialogContainer.style.position = 'relative';
+			dialogContainer.appendChild(dialogEl);
+
+		});
+
+		closeDialogButton.addEventListener('click', (e) => {
+			e.preventDefault();
+			dialogEl.close();
+		});
+	</script>
 	</body>
 </html>
