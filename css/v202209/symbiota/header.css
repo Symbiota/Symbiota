@@ -133,7 +133,7 @@ header a:hover {
   content: "";
   display: block;
   height: 100%;
-  position: absolute;
+  /*position: absolute; */
   /* transition: all 0.2s ease-out; */
   width: 100%;
 }
