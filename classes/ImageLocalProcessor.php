@@ -998,17 +998,17 @@ class ImageLocalProcessor {
 						}
 						if($this->conn->query('DELETE FROM images WHERE imgid = '.$r->imgid)){
 							//Remove images
-							$urlPath = current(parse_url($r->url, PHP_URL_PATH));
+							$urlPath = parse_url($r->url, PHP_URL_PATH);
 							if($urlPath && strpos($urlPath, $this->imgUrlBase) === 0){
 								$wFile = str_replace($this->imgUrlBase,$this->targetPathBase,$urlPath);
 								if(file_exists($wFile) && is_writable($wFile)) unlink($wFile);
 							}
-							$urlTnPath = current(parse_url($r->thumbnailUrl, PHP_URL_PATH));
+							$urlTnPath = parse_url($r->thumbnailUrl, PHP_URL_PATH);
 							if($urlTnPath && strpos($urlTnPath, $this->imgUrlBase) === 0){
 								$wFile = str_replace($this->imgUrlBase,$this->targetPathBase,$urlTnPath);
 								if(file_exists($wFile) && is_writable($wFile)) unlink($wFile);
 							}
-							$urlLgPath = current(parse_url($r->originalUrl, PHP_URL_PATH));
+							$urlLgPath = parse_url($r->originalUrl, PHP_URL_PATH);
 							if($urlLgPath && strpos($urlLgPath, $this->imgUrlBase) === 0){
 								$wFile = str_replace($this->imgUrlBase,$this->targetPathBase,$urlLgPath);
 								if(file_exists($wFile) && is_writable($wFile)) unlink($wFile);
