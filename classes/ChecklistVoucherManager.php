@@ -58,13 +58,15 @@ class ChecklistVoucherManager extends  ChecklistVoucherAdmin{
 		$statusStr = false;
 		if(is_numeric($targetTid)){
 			$clTaxaID = $this->getClTaxaID($this->tid);
-			$sql = 'UPDATE fmchklsttaxalink SET TID = '.$targetTid.' WHERE (clTaxaID = '.$clTaxaID.')';
+			//First transfer taxa that
+			$sql = 'UPDATE IGNORE fmchklsttaxalink SET TID = '.$targetTid.' WHERE (clTaxaID = '.$clTaxaID.')';
 			if($this->conn->query($sql)){
 				$this->tid = $targetTid;
 				$this->taxonName = '';
 				$statusStr = true;
 			}
-			else{
+			if(!$this->conn->affected_rows){
+				//Transferred failed due to target name already exiting within checklist
 				$sqlTarget = 'SELECT clTaxaID, Habitat, Abundance, Notes, internalnotes, source, Nativity FROM fmchklsttaxalink WHERE (tid = '.$targetTid.') AND (clid = '.$this->clid.')';
 				$rsTarget = $this->conn->query($sqlTarget);
 				if($row = $rsTarget->fetch_object()){
@@ -93,12 +95,12 @@ class ChecklistVoucherManager extends  ChecklistVoucherAdmin{
 					$sqlSourceCl = 'SELECT Habitat, Abundance, Notes, internalnotes, source, Nativity FROM fmchklsttaxalink WHERE (clTaxaID = '.$clTaxaID.')';
 					$rsSourceCl =  $this->conn->query($sqlSourceCl);
 					if($row = $rsSourceCl->fetch_object()){
-						$habitatSource = $this->cleanInStr($row->Habitat);
-						$abundSource = $this->cleanInStr($row->Abundance);
-						$notesSource = $this->cleanInStr($row->Notes);
-						$internalNotesSource = $this->cleanInStr($row->internalnotes);
-						$sourceSource = $this->cleanInStr($row->source);
-						$nativeSource = $this->cleanInStr($row->Nativity);
+						$habitatSource = $row->Habitat;
+						$abundSource = $row->Abundance;
+						$notesSource = $row->Notes;
+						$internalNotesSource = $row->internalnotes;
+						$sourceSource = $row->source;
+						$nativeSource = $row->Nativity;
 					}
 					$rsSourceCl->free();
 					//Transfer source chklsttaxalink data to target record
