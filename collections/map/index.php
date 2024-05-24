@@ -13,6 +13,7 @@ $distFromMe = array_key_exists('distFromMe', $_REQUEST)?$_REQUEST['distFromMe']:
 $gridSize = array_key_exists('gridSizeSetting', $_REQUEST) && $_REQUEST['gridSizeSetting']?$_REQUEST['gridSizeSetting']:60;
 $minClusterSize = array_key_exists('minClusterSetting',$_REQUEST)&&$_REQUEST['minClusterSetting']?$_REQUEST['minClusterSetting']:10;
 $clusterOff = array_key_exists('clusterSwitch',$_REQUEST)&&$_REQUEST['clusterSwitch']?$_REQUEST['clusterSwitch']:'n';
+$menuClosed = array_key_exists('menuClosed',$_REQUEST)? true: false;
 $recLimit = array_key_exists('recordlimit',$_REQUEST)?$_REQUEST['recordlimit']:15000;
 $catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
@@ -311,6 +312,9 @@ if(isset($_REQUEST['llpoint'])) {
 		//Object that maps portals to matching mapGroup Index
 		let portalLegendMap = {}
 
+		//Indciates if clustering should be drawn. Only comes into effect after redraw or refreshes 
+		let clusteroff = false;
+
 		const colorChange = new Event("colorchange",  {
 			bubbles: true,
 			cancelable: true,
@@ -339,7 +343,7 @@ if(isset($_REQUEST['llpoint'])) {
          }
 			setPanels(true);
 			$("#accordion").accordion("option",{active: 1});
-         buildPortalLegend();
+			buildPortalLegend();
 			buildTaxaLegend();
 			buildCollectionLegend();
 
@@ -539,6 +543,51 @@ value="${color}"
 			document.getElementById("deleteshapediv").style.display = "block";
 		}
 
+		function addRefPoint() {
+			let lat = document.getElementById("lat").value;
+			let lng = document.getElementById("lng").value;
+			let title = document.getElementById("title").value;
+			let useLLDecimal = document.getElementById("useLLDecimal");
+			if(useLLDecimal?.style?.display === 'block'){
+				var latdeg = document.getElementById("latdeg").value;
+				var latmin = document.getElementById("latmin").value;
+				var latsec = document.getElementById("latsec").value;
+				var latns = document.getElementById("latns").value;
+				var longdeg = document.getElementById("longdeg").value;
+				var longmin = document.getElementById("longmin").value;
+				var longsec = document.getElementById("longsec").value;
+				var longew = document.getElementById("longew").value;
+				if(latdeg != null && longdeg != null){
+					if(latmin == null) latmin = 0;
+					if(latsec == null) latsec = 0;
+					if(longmin == null) longmin = 0;
+					if(longsec == null) longsec = 0;
+					lat = latdeg*1 + latmin/60 + latsec/3600;
+					lng = longdeg*1 + longmin/60 + longsec/3600;
+					if(latns == "S") lat = lat * -1;
+					if(longew == "W") lng = lng * -1;
+				}
+			}
+
+			if((lat === null || lat === "") && (lng === null || lng === "")){
+				window.alert("<?php echo $LANG['ENTER_VALUES_IN_LAT_LONG']; ?>");
+			} else if(lat < -180 || lat > 180 || lng < -180 || lng > 180) {
+				window.alert("<?php echo $LANG['LAT_LONG_MUST_BE_BETWEEN_VALUES']; ?> (" + lat + ";" + lng + ")");
+			} else {
+				var addPoint = true;
+				if(lng > 0) addPoint = window.confirm("<?php echo $LANG['LONGITUDE_IS_POSITIVE']; ?>?");
+				if(!addPoint) lng = -1*lng;
+
+				document.dispatchEvent(new CustomEvent('addReferencePoint', {
+					detail: {
+						lat,
+						lng,
+						title 
+					}
+				}));
+			}
+		}
+
 		function leafletInit() {
 
 			L.DivIcon.CustomColor = L.DivIcon.extend({
@@ -565,8 +614,6 @@ value="${color}"
 				drawColor: {opacity: 0.85, fillOpacity: 0.55, color: '#000' },
 			}, setQueryShape);
 
-			let cluster = L.markerClusterGroup();
-			let clusteroff = false;
 			let cluster_type = "taxa";
 
 			let markers = [];
@@ -734,7 +781,10 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 					}
 
 					let cluster = L.markerClusterGroup({
-						iconCreateFunction: colorCluster
+						iconCreateFunction: colorCluster,
+						disableClusteringAtZoom: recordArr.length >= 10000? 12 : 10,
+						spiderfyOnMaxZoom: false,
+					    chunkedLoading: true
 					});
 
 					value.id_map.forEach(g => {
@@ -962,6 +1012,21 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 				shape = null;
 			});
 
+			document.addEventListener('addReferencePoint', e => {
+				try {
+					marker = L.marker([
+						parseFloat(e.detail.lat), 
+						parseFloat(e.detail.lng)
+					]);
+					if(e.detail.title) {
+						marker.bindTooltip(`<div style="font-size: 1.5rem">${e.detail.title}</div>`)
+					}
+					marker.addTo(map.drawLayer);
+				} catch(e) {
+					console.log('failed to add point because: ' + e)
+				}
+			});
+
 			document.getElementById('clusteroff').addEventListener('change', e => {
 				clusteroff = e.target.checked;
 				if(!heatmap) {
@@ -1029,7 +1094,6 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 			let heatmapLayer;
 
 			let bounds;
-			let clusteroff = false;
 
 			let cluster_type = "taxa";
 
@@ -1351,6 +1415,37 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 
 				map.clearMap();
 				shape = null;
+			});
+
+			document.addEventListener('addReferencePoint', e => {
+				try {
+					var iconImg = new google.maps.MarkerImage( '../../images/google/arrow.png' );
+					let marker = new google.maps.Marker({
+						position: new google.maps.LatLng(
+							parseFloat(e.detail.lat), 
+							parseFloat(e.detail.lng)
+						),
+						icon: iconImg,
+						zIndex: google.maps.Marker.MAX_ZINDEX
+					});
+
+					if(e.detail.title) {
+						const infoWin = new google.maps.InfoWindow({
+							content:`<div>${e.detail.title}</div>`
+						});
+
+						google.maps.event.addListener(marker, 'mouseover', () => {
+							infoWin.open(map.mapLayer, marker);
+						})
+
+						google.maps.event.addListener(marker, 'mouseout', () => {
+							infoWin.close();
+						})
+					}
+					marker.setMap(map.mapLayer);
+				} catch(e) {
+					console.log('failed to add point because: ' + e)
+				}
 			});
 
 			document.addEventListener('occur_click', function(e) {
@@ -1676,6 +1771,8 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 				collArr = JSON.parse(data.getAttribute('data-coll-map'));
 				recordArr = JSON.parse(data.getAttribute('data-records'));
 
+				clusteroff = data.getAttribute('data-cluster-off') ==='y'?true: false;
+
 				externalPortalHosts = JSON.parse(data.getAttribute('data-external-portal-hosts'));
 
 				searchVar = data.getAttribute('data-search-var');
@@ -1749,6 +1846,7 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 			data-taxa-map="<?=htmlspecialchars(json_encode($taxaArr))?>"
 			data-coll-map="<?=htmlspecialchars(json_encode($collArr))?>"
 			data-records="<?=htmlspecialchars(json_encode($recordArr))?>"
+			data-cluster-off="<?=htmlspecialchars($clusterOff)?>"
 			data-external-portal-hosts="<?=htmlspecialchars(json_encode($EXTERNAL_PORTAL_HOSTS))?>"
 			class="service-container"
 		>
@@ -1757,7 +1855,7 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 			<button onclick="document.getElementById('defaultpanel').style.width='380px';  " style="position:absolute;top:0;left:0;margin:0px;z-index:10;font-size: 14px;">&#9776; <b>Open Search Panel</b></button>
 		</div>
 		<div id='map' style='width:100vw;height:100vh;z-index:1'></div>
-		<div id="defaultpanel" class="sidepanel" style="width:390px">
+		<div id="defaultpanel" class="sidepanel" style="width: <?= $menuClosed? '0': '390px'?>">
 			<div class="panel-content">
 				<span style="position:absolute; top:0.7rem; right:0.7rem; z-index:1">
 					<a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php">
@@ -1999,6 +2097,71 @@ Record Limit:
 									<label for="heat-max-density"><?php echo (isset($LANG['MAX_DENSITY'])?$LANG['MAX_DENSITY']: 'Maximum Density') ?>: </label>
 									<input style="margin: 0 1rem; width: 5rem;"value="3" id="heat-max-density" name="heat-max-density">
 									<br/>
+								</fieldset>
+								<br/>
+								<fieldset>
+									<legend>
+									   <?= $LANG['ADD_REFERENCE_POINT'] ?>
+									</legend>
+									<div>
+										<div>
+									   <?= $LANG['MARKER_NAME'] ?>:
+											<input name='title' id='title' size='15' type='text' />
+										</div>
+										<div class="latlongdiv">
+											<div>
+											 <div style="float:left;margin-right:5px">
+												<?= $LANG['LATITUDE'] ?>
+												(<?= $LANG['DECIMAL'] ?>):
+												<input name='lat' id='lat' size='10' type='text' /> </div>
+												<div style="float:left;">eg: 34.57</div>
+											</div>
+											<div style="margin-top:5px;clear:both">
+											 <div style="float:left;margin-right:5px">
+												<?= $LANG['LONGITUDE'] ?>
+												(<?= $LANG['DECIMAL'] ?>):
+												<input name='lng' id='lng' size='10' type='text' /> </div>
+												<div style="float:left;">eg: -112.38</div>
+											</div>
+											<div style='font-size:80%;margin-top:5px;clear:both'>
+											 <a href='#' onclick='toggleLatLongDivs();'> 
+												<?= $LANG['ENTER_IN_DMS']?>
+											 </a>
+											</div>
+										</div>
+										<div id="useLLDecimal" class='latlongdiv' style='display:none;clear:both'>
+											<div>
+												<?= $LANG['LATITUDE'] ?>:
+												<input name='latdeg' id='latdeg' size='2' type='text' />&deg;
+												<input name='latmin' id='latmin' size='4' type='text' />&prime;
+												<input name='latsec' id='latsec' size='4' type='text' />&Prime;
+												<select name='latns' id='latns'>
+													<option value='N'><?= $LANG['NORTH']; ?></option>
+													<option value='S'><?= $LANG['SOUTH']; ?></option>
+												</select>
+											</div>
+											<div style="margin-top:5px;">
+										  <?= $LANG['LONGITUDE'] ?>:
+												<input name='longdeg' id='longdeg' size='2' type='text' />&deg;
+												<input name='longmin' id='longmin' size='4' type='text' />&prime;
+												<input name='longsec' id='longsec' size='4' type='text' />&Prime;
+												<select name='longew' id='longew'>
+													<option value='E'><?= $LANG['EAST']; ?></option>
+													<option value='W' selected><?= $LANG['WEST']; ?></option>
+												</select>
+											</div>
+											<div style='font-size:80%;margin-top:5px;'>
+											 <a href='#' onclick='toggleLatLongDivs();'>
+												<?= $LANG['ENTER_IN_DECIMAL'] ?>
+											 </a>
+											</div>
+										</div>
+										<div style="margin-top:10px;">
+									   <button onclick='addRefPoint();'>
+										  <?= $LANG['ADD_MARKER'] ?>
+									   </button>
+										</div>
+									</div>
 								</fieldset>
 							</div>
 							<form style="display:none;" name="csvcontrolform" id="csvcontrolform" action="csvdownloadhandler.php" method="post" onsubmit="">
