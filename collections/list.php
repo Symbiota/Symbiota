@@ -389,17 +389,10 @@ $_SESSION['citationvar'] = $searchVar;
 					<?php echo $LANG['MAP_DESCRIPTION']; ?>
 				</div>
 				<div style='margin-top:10px;'>
-					<?php if (empty($GOOGLE_MAP_KEY)) { ?>
-						<button onclick="openLeafletMapPU();">
-							<?php echo $LANG['MAP_DISPLAY']; ?>
-						</button>
-					<?php } else { ?>
-						<button onclick="openGoogleMapPU();">
-							<?php echo $LANG['MAP_DISPLAY']; ?>
-						</button>
-					<?php } ?>
+					<button onclick="openMapPU();">
+						<?php echo $LANG['MAP_DISPLAY']; ?>
+					</button>
 				</div>
-
 				<div style='margin-top:10px;'>
 					<h2><?php echo $LANG['KML_HEADER']; ?></h2>
 				</div>
