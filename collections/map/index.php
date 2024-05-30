@@ -30,7 +30,7 @@ $obsIDs = $mapManager->getObservationIds();
 //Sanitation
 if(!is_numeric($gridSize)) $gridSize = 60;
 if(!is_numeric($minClusterSize)) $minClusterSize = 10;
-if(!is_string($clusterOff) || strlen($clusterOff) > 1) $clusterOff = 'n';
+if(!is_string($clusterOff) || strlen($clusterOff) > 1) $clusterOff = 'y';
 if(!is_numeric($recLimit)) $recLimit = 15000;
 if(!is_numeric($distFromMe)) $distFromMe = '';
 if(!is_numeric($catId)) $catId = 0;
