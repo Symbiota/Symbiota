@@ -12,7 +12,7 @@ ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 $distFromMe = array_key_exists('distFromMe', $_REQUEST)?$_REQUEST['distFromMe']:'';
 $gridSize = array_key_exists('gridSizeSetting', $_REQUEST) && $_REQUEST['gridSizeSetting']?$_REQUEST['gridSizeSetting']:60;
 $minClusterSize = array_key_exists('minClusterSetting',$_REQUEST)&&$_REQUEST['minClusterSetting']?$_REQUEST['minClusterSetting']:10;
-$clusterOff = array_key_exists('clusterSwitch',$_REQUEST)&&$_REQUEST['clusterSwitch']? $_REQUEST['clusterSwitch']:'n';
+$clusterOff = array_key_exists('clusterSwitch',$_REQUEST)&&$_REQUEST['clusterSwitch']? $_REQUEST['clusterSwitch']:'y';
 $menuClosed = array_key_exists('menuClosed',$_REQUEST)? true: false;
 $recLimit = array_key_exists('recordlimit',$_REQUEST)?$_REQUEST['recordlimit']:15000;
 $catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
@@ -313,7 +313,7 @@ if(isset($_REQUEST['llpoint'])) {
 		let portalLegendMap = {}
 
 		//Indciates if clustering should be drawn. Only comes into effect after redraw or refreshes 
-		let clusteroff = false;
+		let clusteroff = true;
 
 		const colorChange = new Event("colorchange",  {
 			bubbles: true,
