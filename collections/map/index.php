@@ -12,7 +12,7 @@ ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 $distFromMe = array_key_exists('distFromMe', $_REQUEST)?$_REQUEST['distFromMe']:'';
 $gridSize = array_key_exists('gridSizeSetting', $_REQUEST) && $_REQUEST['gridSizeSetting']?$_REQUEST['gridSizeSetting']:60;
 $minClusterSize = array_key_exists('minClusterSetting',$_REQUEST)&&$_REQUEST['minClusterSetting']?$_REQUEST['minClusterSetting']:10;
-$clusterOff = array_key_exists('clusterSwitch',$_REQUEST)&&$_REQUEST['clusterSwitch']?$_REQUEST['clusterSwitch']:'n';
+$clusterOff = array_key_exists('clusterSwitch',$_REQUEST)&&$_REQUEST['clusterSwitch']? $_REQUEST['clusterSwitch']:'n';
 $menuClosed = array_key_exists('menuClosed',$_REQUEST)? true: false;
 $recLimit = array_key_exists('recordlimit',$_REQUEST)?$_REQUEST['recordlimit']:15000;
 $catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
@@ -1771,7 +1771,7 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 				collArr = JSON.parse(data.getAttribute('data-coll-map'));
 				recordArr = JSON.parse(data.getAttribute('data-records'));
 
-				clusteroff = data.getAttribute('data-cluster-off') ==='y'?true: false;
+				clusteroff = data.getAttribute('data-cluster-off') ==='y'? true: false;
 
 				externalPortalHosts = JSON.parse(data.getAttribute('data-external-portal-hosts'));
 
