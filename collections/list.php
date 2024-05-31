@@ -116,6 +116,10 @@ $_SESSION['citationvar'] = $searchVar;
 		.ui-tabs .ui-tabs-nav li a {
 			margin-left: 10px;
 		}
+		#tabs {
+			font-size: 1rem;
+			width:95%;
+		}
 	</style>
 </head>
 
@@ -144,7 +148,7 @@ $_SESSION['citationvar'] = $searchVar;
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
 		<h1 class="page-heading">Search Results (List)</h1>
-		<div id="tabs" style="width:95%;">
+		<div id="tabs">
 			<ul>
 				<li>
 					<a id="taxatablink" href='<?php echo 'checklist.php?' . htmlspecialchars($searchVar, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&taxonfilter=' . htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>'>
