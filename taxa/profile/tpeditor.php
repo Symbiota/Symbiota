@@ -200,7 +200,7 @@ if($isEditor && $action){
 				if($tEditor->getFamily()) echo '<div id="familyDiv"><b>' . $LANG['FAMILY'] . ':</b> ' . $tEditor->getFamily() . '</div>' . "\n";
 				if($statusStr) echo '<div style="margin:15px;font-weight:bold;font-size:120%;color:' . (stripos($statusStr,'error') !== false?'red':'green') .';">' . $statusStr . '</div>';
 				?>
-				<div id="tabs" style="margin:10px;">
+				<div id="tabs" style="margin:10px;font-size: var(--body-font-size)">
 					<ul>
 						<li><a href="#commontab"><span><?php echo htmlspecialchars($LANG['SYN_VERNAC'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
 						<li><a href="tpimageeditor.php?tid=<?php echo htmlspecialchars($tEditor->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><span>' . htmlspecialchars($LANG['IMAGES'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</span></a></li>'; ?>
