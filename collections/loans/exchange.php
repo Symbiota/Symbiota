@@ -244,7 +244,7 @@ if($isEditor){
 									</div>
 								</div>
 								<div style="padding-top:8px;padding-bottom:8px;">
-									<table class="styledtable" style="font-family:Arial;font-size:12px;">
+									<table class="styledtable" style="font-size:12px;">
 										<tr>
 											<th style="width:220px;text-align:center;"><?php echo $LANG['GIFT_SPECIMENS']; ?></th>
 											<th style="width:220px;text-align:center;"><?php echo $LANG['EXCH_SPECIMENS']; ?></th>

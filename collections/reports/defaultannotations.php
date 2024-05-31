@@ -25,7 +25,6 @@ if($SYMB_UID){
 	<head>
 		<title><?php echo $DEFAULT_TITLE; ?> Default Annotations</title>
 		<style type="text/css">
-			body {font-family:arial,sans-serif;}
 			table.labels { page-break-before:auto; }
 			table.labels tr td { page-break-inside: avoid; white-space: nowrap; }
 			<?php

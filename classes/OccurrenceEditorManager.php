@@ -778,14 +778,16 @@ class OccurrenceEditorManager {
 					$ocnStr = str_replace(array(',',';'),'|',$ocnStr);
 					$ocnArr = explode('|',$ocnStr);
 					foreach($ocnArr as $identUnit){
-						$trimmableIdentUnit = $identUnit ?? "";
-						$unitArr = explode(':',trim($trimmableIdentUnit,': '));
-						$safeUnitArr = $unitArr ?? array();
-						$tag = '';
-						$trimmableShiftedUnitArr = array_shift($safeUnitArr) ?? "";
-						if(count($safeUnitArr) > 1) $tag = trim($trimmableShiftedUnitArr);
-						$value = trim(implode(', ',$safeUnitArr));
-						$otherCatNumArr[$value] = $tag;
+						$identUnit = trim($identUnit, ': ');
+						if($identUnit){
+							$tag = '';
+							$value = $identUnit;
+							if(preg_match('/^([A-Za-z\s]+[\s#:]+)(\d+)$/', $identUnit, $m)){
+								$tag = $m[1];
+								$value = $m[2];
+							}
+							$otherCatNumArr[$value] = $tag;
+						}
 					}
 				}
 				if(isset($occurArr['identifiers'])){
@@ -793,9 +795,11 @@ class OccurrenceEditorManager {
 					foreach($occurArr['identifiers'] as $idKey => $idArr){
 						$idName = $idArr['name'];
 						$idValue = $idArr['value'];
-						if(array_key_exists($idValue, $otherCatNumArr)){
-							if(!$idName && $otherCatNumArr[$idValue]) $occurrenceArr[$occid]['identifiers'][$idKey]['name'] = $otherCatNumArr[$idValue];
-							unset($otherCatNumArr[$idValue]);
+						foreach($otherCatNumArr as $ocnValue => $ocnTag){
+							if($ocnValue == $idValue || $ocnValue == $idName . ' ' . $idValue){
+								if(!$idName && $otherCatNumArr[$idValue]) $occurrenceArr[$occid]['identifiers'][$idKey]['name'] = $otherCatNumArr[$idValue];
+								unset($otherCatNumArr[$ocnValue]);
+							}
 						}
 					}
 				}

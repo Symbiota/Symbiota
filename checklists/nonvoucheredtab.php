@@ -65,7 +65,7 @@ if($isEditor){
 						if($specArr = $clManager->getNewVouchers($startPos, $displayMode)){
 							?>
 							<form name="batchnonvoucherform" method="post" action="voucheradmin.php" onsubmit="return validateBatchNonVoucherForm(this)">
-								<table class="styledtable" style="font-family:Arial;font-size:12px;">
+								<table class="styledtable" style="font-size:12px;">
 									<tr>
 										<th>
 											<span title="Select All">

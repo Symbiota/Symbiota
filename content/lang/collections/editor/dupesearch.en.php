@@ -21,6 +21,8 @@ $LANG['LINK_DUPE'] = 'Link as Duplicate';
 $LANG['GO_TO_RECORD'] = 'Go To Record';
 $LANG['SURE_MERGE'] = 'Are you sure you want to merge these two records?';
 $LANG['MERGE_RECORDS'] = 'Merge Records';
+$LANG['MORE_INFO'] = 'More Information';
+$LANG['MORE_INFO_ALT'] = 'More information about merging duplicates';
 $LANG['NO_DUPES'] = 'No duplicate records have been located';
 
 ?>

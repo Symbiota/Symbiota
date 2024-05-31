@@ -307,7 +307,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 						if($occArr){
 							?>
 							<form name="selectform" id="selectform" action="labeldynamic.php" method="post" onsubmit="return validateSelectForm(this);">
-								<table class="styledtable" style="font-family:Arial;font-size:12px;">
+								<table class="styledtable" style="font-size:12px;">
 									<tr>
 										<th title="Select/Deselect all Specimens"><input type="checkbox" onclick="selectAll(this);" /></th>
 										<th title="Label quantity"> <?php echo (isset($LANG['QTY']) ? $LANG['QTY'] : 'Qty') ?> </th>

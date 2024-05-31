@@ -576,6 +576,8 @@ function getSearchUrl() {
     baseUrl.searchParams.append(key, paramsArr[key]);
   });
 
+  baseUrl.searchParams.append("comingFrom", "search/index.php");
+
   return baseUrl.href;
 }
 
@@ -721,6 +723,40 @@ function hideColCheckbox(collid) {
   });
 }
 
+function uncheckEverything() {
+  const checkUncheckAllElem = document.getElementById("dballcb");
+  checkUncheckAllElem.checked = false;
+  const categoryCollectionsChecked = Array.from(
+    document.querySelectorAll(`#search-form-colls input[name="cat[]"]:checked`)
+  );
+  categoryCollectionsChecked.forEach((individualCollectionChecked) => {
+    individualCollectionChecked.checked = false;
+  });
+
+  const individualCollectionsChecked = Array.from(
+    document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked`)
+  );
+  individualCollectionsChecked.forEach((individualCollectionChecked) => {
+    individualCollectionChecked.checked = false;
+  });
+}
+
+function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
+  queriedCollections.forEach((queriedCollection) => {
+    let targetElem = document.getElementById("collection-" + queriedCollection);
+    if (!targetElem) {
+      // get elements if categories exist
+      const prefix = "coll-" + queriedCollection + "-";
+      const candidateTargetElems =
+        document.querySelectorAll(`[id^="${prefix}"]`) || [];
+      if (candidateTargetElems.length > 0) {
+        targetElem = candidateTargetElems[0]; // there should only be one match; get the first one
+      }
+    }
+    targetElem.checked = true;
+  });
+}
+
 function setSearchForm(frm) {
   if (sessionStorage.querystr) {
     var urlVar = parseUrlVariables(sessionStorage.querystr);
@@ -823,8 +859,10 @@ function setSearchForm(frm) {
       }
     }
     if (urlVar.db) {
-      if (frm?.db) {
-        frm.db.value = urlVar.db;
+      const queriedCollections = urlVar.db.split(",");
+      if (queriedCollections.length > 0) {
+        uncheckEverything();
+        checkTheCollectionsThatShouldBeChecked(queriedCollections);
       }
     }
     for (var i in urlVar) {
