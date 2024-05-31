@@ -31,11 +31,6 @@ $oidc->authenticate();
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
     <title>OpenID Connect Client</title>
-    <style>
-        body {
-            font-family: 'Lucida Grande', Verdana, Arial, sans-serif;
-        }
-    </style>
 </head>
 <body>
     <h1 class="page-heading">OpenID Connect Client</h1>

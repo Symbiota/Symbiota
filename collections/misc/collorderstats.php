@@ -41,7 +41,7 @@ $_SESSION['statsOrderArr'] = $orderArr;
 			<h1 class="page-heading"><?= $LANG['ORDER_DIST']; ?></h1>
 			<fieldset id="orderdistbox" style="clear:both;margin-top:15px;width:800px;">
 				<legend><b><?php echo (isset($LANG['ORDER_DIST'])?$LANG['ORDER_DIST']:'Order Distribution'); ?></b></legend>
-				<table class="styledtable" style="font-family:Arial;font-size:12px;width:780px;">
+				<table class="styledtable" style="font-size:12px;width:780px;">
 					<tr>
 						<th style="text-align:center;"><?php echo (isset($LANG['ORDER'])?$LANG['ORDER']:'Order'); ?></th>
 						<th style="text-align:center;"><?php echo (isset($LANG['SPECIMENS'])?$LANG['SPECIMENS']:'Specimens'); ?></th>

@@ -37,7 +37,7 @@ else{
 		<head>
 			<title><?php echo $DEFAULT_TITLE; ?> Labels</title>
 			<style type="text/css">
-				body { background-color:#ffffff;font-family:arial,sans-serif; font-size:10pt; }
+				body { background-color:#ffffff; font-size:10pt; }
 
 				table.labels { table-layout:fixed; width:100%; page-break-before:auto; page-break-inside:avoid; }
 				table.labels td { width: 600px; }

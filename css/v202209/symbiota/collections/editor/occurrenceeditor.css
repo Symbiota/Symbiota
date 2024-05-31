@@ -900,3 +900,6 @@ table {
 .divTableHead { padding: 1px 8px; }
 .divTableBody { display: table-row-group;}
 
+.imgInfo {
+	vertical-align: top;
+}

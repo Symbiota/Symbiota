@@ -164,7 +164,8 @@ else{
 			white-space: nowrap;
 			overflow-x: scroll;
 			overflow-y: scroll;
-			height: 80vh;
+			max-height: 80vh;
+			padding-bottom: 1.2rem;
 		}
 
 		.button-toggle {

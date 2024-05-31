@@ -778,14 +778,16 @@ class OccurrenceEditorManager {
 					$ocnStr = str_replace(array(',',';'),'|',$ocnStr);
 					$ocnArr = explode('|',$ocnStr);
 					foreach($ocnArr as $identUnit){
-						$trimmableIdentUnit = $identUnit ?? "";
-						$unitArr = explode(':',trim($trimmableIdentUnit,': '));
-						$safeUnitArr = $unitArr ?? array();
-						$tag = '';
-						$trimmableShiftedUnitArr = array_shift($safeUnitArr) ?? "";
-						if(count($safeUnitArr) > 1) $tag = trim($trimmableShiftedUnitArr);
-						$value = trim(implode(', ',$safeUnitArr));
-						$otherCatNumArr[$value] = $tag;
+						$identUnit = trim($identUnit, ': ');
+						if($identUnit){
+							$tag = '';
+							$value = $identUnit;
+							if(preg_match('/^([A-Za-z\s]+[\s#:]+)(\d+)$/', $identUnit, $m)){
+								$tag = $m[1];
+								$value = $m[2];
+							}
+							$otherCatNumArr[$value] = $tag;
+						}
 					}
 				}
 				if(isset($occurArr['identifiers'])){

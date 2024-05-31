@@ -10,6 +10,7 @@ $tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabi
 $cntPerPage = array_key_exists('cntperpage', $_REQUEST) ? filter_var($_REQUEST['cntperpage'], FILTER_SANITIZE_NUMBER_INT) : 100;
 $pageNumber = array_key_exists('page', $_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $datasetid = array_key_exists('datasetid', $_REQUEST) ? filter_var($_REQUEST['datasetid'], FILTER_SANITIZE_NUMBER_INT) : '';
+$comingFrom = array_key_exists('comingFrom', $_REQUEST) ? htmlspecialchars($_REQUEST['comingFrom'], HTML_SPECIAL_CHARS_FLAGS) : '';
 $_SESSION['datasetid'] = filter_var($datasetid, FILTER_SANITIZE_NUMBER_INT);
 
 $collManager = new OccurrenceListManager();
@@ -18,7 +19,6 @@ if ($targetTid && array_key_exists('mode', $_REQUEST)) $searchVar .= '&mode=vouc
 $occurArr = $collManager->getSpecimenMap($pageNumber, $cntPerPage);
 $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ?? false;
 $SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
-$actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.php";
 
 $_SESSION['citationvar'] = $searchVar;
 ?>
@@ -139,8 +139,12 @@ $_SESSION['citationvar'] = $searchVar;
 	else {
 		echo '<div class="navpath">';
 		echo '<a href="../index.php">' . htmlspecialchars($LANG['NAV_HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
-		echo '<a href="index.php">' . htmlspecialchars($LANG['NAV_COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
-		echo '<a href="' . $actionPage . '">' . htmlspecialchars($LANG['NAV_SEARCH'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
+		if($comingFrom !== 'search/index.php'){
+			echo '<a href="index.php">' . htmlspecialchars($LANG['NAV_COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
+			echo '<a href="' . $CLIENT_ROOT . '/collections/harvestparams.php">' . htmlspecialchars($LANG['NAV_SEARCH'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
+		} else{
+			echo '<a href="' . $CLIENT_ROOT . '/collections/search/index.php">' . htmlspecialchars($LANG['NAV_SEARCH'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
+		}
 		echo '<b>' . $LANG['NAV_SPECIMEN_LIST'] . '</b>';
 		echo '</div>';
 	}
@@ -389,17 +393,10 @@ $_SESSION['citationvar'] = $searchVar;
 					<?php echo $LANG['MAP_DESCRIPTION']; ?>
 				</div>
 				<div style='margin-top:10px;'>
-					<?php if (empty($GOOGLE_MAP_KEY)) { ?>
-						<button onclick="openLeafletMapPU();">
-							<?php echo $LANG['MAP_DISPLAY']; ?>
-						</button>
-					<?php } else { ?>
-						<button onclick="openGoogleMapPU();">
-							<?php echo $LANG['MAP_DISPLAY']; ?>
-						</button>
-					<?php } ?>
+					<button onclick="openMapPU();">
+						<?php echo $LANG['MAP_DISPLAY']; ?>
+					</button>
 				</div>
-
 				<div style='margin-top:10px;'>
 					<h2><?php echo $LANG['KML_HEADER']; ?></h2>
 				</div>

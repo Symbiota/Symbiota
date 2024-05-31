@@ -196,7 +196,7 @@ $projArr = $csManager->getProjectDetails();
 								echo '<input name="uid" type="hidden" value="'.$uid.'" />';
 							}
 							?>
-							<table class="styledtable" style="font-family:Arial;font-size:12px;">
+							<table class="styledtable" style="font-size:12px;">
 								<tr>
 									<?php
 									if($collid) echo '<th><span title="'.$LANG['SELECT_ALL'].'"><input name="selectall" type="checkbox" onclick="selectAll(this)" /></span></th>';

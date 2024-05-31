@@ -21,6 +21,8 @@ $LANG['LINK_DUPE'] = 'Vincular como Duplicado';
 $LANG['GO_TO_RECORD'] = 'Ir a Registro';
 $LANG['SURE_MERGE'] = '¿Está seguro que quiere combinar estos dos registros?';
 $LANG['MERGE_RECORDS'] = 'Combinar Registros';
+$LANG['MORE_INFO'] = 'Más Información';
+$LANG['MORE_INFO_ALT'] = 'Más información sobre cómo fusionar duplicados';
 $LANG['NO_DUPES'] = 'No se han localizado registros duplicados';
 
 ?>

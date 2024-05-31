@@ -171,7 +171,7 @@ if(!$IS_ADMIN){
 				/*
 				?>
 				<div id="tableview" style="display:none;">
-					<table class="styledtable" style="font-family:Arial;font-size:12px;">
+					<table class="styledtable" style="font-size:12px;">
 						<tr>
 							<th>&nbsp;</th>
 							<th>&nbsp;</th>
@@ -372,6 +372,11 @@ if(!$IS_ADMIN){
 									<div style="margin-left:30px;float:left;">
 										<a href="dupesearch.php?submitaction=mergerecs&curoccid=<?php echo htmlspecialchars($curOccid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&occidmerge=' . htmlspecialchars($occId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" onclick="return confirm('<?php echo htmlspecialchars($LANG['SURE_MERGE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>')">
 											<?php echo $LANG['MERGE_RECORDS']; ?>
+										</a>
+									</div>
+									<div style="margin-left:5px;float:left;">
+										<a href="https://biokic.github.io/symbiota-docs/editor/edit/duplicates/#merge-records" id="mergeduplicateinfo" style="text-decoration:none;">
+											<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO_ALT']; ?>" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>"/>
 										</a>
 									</div>
 									<?php

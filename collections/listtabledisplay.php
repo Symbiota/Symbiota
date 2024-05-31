@@ -170,7 +170,7 @@ $searchVar = $collManager->getQueryTermStr();
 				if($recArr){
 					?>
 					<div style="clear:both;height:5px;"></div>
-					<table class="styledtable" style="font-family:Arial;font-size:12px;">
+					<table class="styledtable" style="font-size:12px;">
 						<tr>
 							<th><?php echo (isset($LANG['SYMB_ID']) ? $LANG['SYMB_ID'] : 'Symbiota ID'); ?></th>
 							<th><?php echo (isset($LANG['COLLECTION']) ? $LANG['COLLECTION'] : 'Collection'); ?></th>

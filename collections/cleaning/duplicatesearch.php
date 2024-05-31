@@ -129,7 +129,7 @@ if($collMap){
 							?>
 						</div>
 						<div style="clear: both">
-							<table class="styledtable" style="font-family:Arial;font-size:12px;">
+							<table class="styledtable" style="font-size:12px;">
 								<tr>
 									<th style="width:40px;"><?php echo $LANG['ID']; ?></th>
 									<th style="width:20px;"><input name="selectalldupes" type="checkbox" title="<?php echo $LANG['SEL_DESEL_ALL']; ?>" onclick="selectAllDuplicates(this.form)" /></th>

@@ -126,7 +126,7 @@ class UtilitiesFileImport extends Manager {
 
 	//Field mapping functions
 	public function getFieldMappingTable(){
-		$tableHtml = '<table class="styledtable" style="width:600px;font-family:Arial;font-size:12px;">';
+		$tableHtml = '<table class="styledtable" style="width:600px;font-size:12px;">';
 		$tableHtml .= '<tr><th>Source Field</th><th>Target Field</th></tr>';
 		$sourceFieldArr = $this->getHeaderArr();
 		foreach($sourceFieldArr as $i => $sourceField){

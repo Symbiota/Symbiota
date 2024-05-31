@@ -400,7 +400,7 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 					<input name="tabindex" type="hidden" value="1" />
 				</fieldset>
 			</div>
-			<table class="styledtable" style="font-family:Arial;font-size:12px;">
+			<table class="styledtable" style="font-size:12px;">
 				<tr>
 					<th class="form-checkbox"><input type="checkbox" onclick="selectAll(this);" title="<?php echo $LANG['SEC_DESEL_ALL']; ?>" /></th>
 					<th>&nbsp;</th>

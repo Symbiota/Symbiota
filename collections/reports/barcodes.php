@@ -21,7 +21,7 @@ if($SYMB_UID){
 	<head>
 		<title><?php echo $DEFAULT_TITLE; ?> Labels</title>
 		<style type="text/css">
-			body { background-color:#ffffff;font-family:arial,sans-serif; font-size:10pt; }
+			body { background-color:#ffffff; font-size:10pt; }
 			.barcode { width:220px; height:50px; float:left; padding:10px; text-align:center; }
 			.screen-reader-only {
 				position: absolute;
