@@ -582,8 +582,8 @@
 }
 
 .inner-search .input-text-container .input-text--outlined > input:focus {
-  -webkit-box-shadow: 0 0 0 2px #005dab;
-  box-shadow: 0 0 0 2px #005dab;
+  -webkit-box-shadow: 0 0 0 2px var(--medium-color);
+  box-shadow: 0 0 0 2px var(--medium-color);
   border-color: transparent;
 }
 
@@ -646,7 +646,13 @@
 
 .inner-search .select-container select:active,
 .select-container select:focus {
-  border-color: #005dab;
+  border-color: transparent;
+  outline: 2px solid var(--medium-color)
+}
+
+.inner-search  select:active, .inner-search select:focus {
+  border-color: transparent;
+  outline: 2px solid var(--medium-color)
 }
 
 /* Text Area ********************************************************************************/
@@ -704,8 +710,8 @@
 }
 
 .inner-search .text-area-container .text-area--outlined > textarea:focus {
-  -webkit-box-shadow: 0 0 0 2px #005dab;
-  box-shadow: 0 0 0 2px #005dab;
+  -webkit-box-shadow: 0 0 0 2px var(--medium-color);
+  box-shadow: 0 0 0 2px var(--medium-color);
   border-color: transparent;
 }
 
