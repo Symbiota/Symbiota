@@ -12,6 +12,7 @@ $tabTarget = array_key_exists('tabtarget', $_REQUEST) ? filter_var($_REQUEST['ta
 $goToMode = array_key_exists('gotomode', $_REQUEST) ? filter_var($_REQUEST['gotomode'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $occIndex = array_key_exists('occindex', $_REQUEST) ? filter_var($_REQUEST['occindex'], FILTER_SANITIZE_NUMBER_INT) : false;
 $crowdSourceMode = array_key_exists('csmode', $_REQUEST) ? filter_var($_REQUEST['csmode'], FILTER_SANITIZE_NUMBER_INT) : 0;
+
 $action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
 if(!$action && array_key_exists('carryover', $_REQUEST)) $goToMode = 2;
 
@@ -505,7 +506,6 @@ else{
                 }
             });
         }
-
 	</script>
 	<script src="../../js/symb/collections.coordinateValidation.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/wktpolygontools.js?ver=2" type="text/javascript"></script>

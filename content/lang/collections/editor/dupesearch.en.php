@@ -23,4 +23,5 @@ $LANG['SURE_MERGE'] = 'Are you sure you want to merge these two records?';
 $LANG['MERGE_RECORDS'] = 'Merge Records';
 $LANG['NO_DUPES'] = 'No duplicate records have been located';
 $LANG['UNKNOWN_ERROR_WHILE_MERGING'] ='Unknown error occurred while merging the occurrences';
+$LANG['CHECK_DETERMINATIONS_ALERT'] ='All unique determinations have been merged to this record. Please check the Determination History tab to ensure it accurately represents your record\'s determination history';
 ?>

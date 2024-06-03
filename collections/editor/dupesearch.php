@@ -132,6 +132,8 @@ if(!$IS_ADMIN){
 				if(opener.document.fullform.occindex) {
 					qForm.occindex.value = opener.document.fullform.occindex.value;
 				}
+
+				alert("<?= $LANG['CHECK_DETERMINATIONS_ALERT']?>");
 				opener.document.queryform.submit();
 				window.close();
 			}
