@@ -206,7 +206,6 @@ class OccurrenceMapManager extends OccurrenceManager {
 	private function setGeoSqlWhere(){
 		global $USER_RIGHTS;
 		$sqlWhere = $this->getSqlWhere();
-		$sqlWhere .= ($sqlWhere?'AND ':'WHERE ').'((o.decimallatitude BETWEEN -90 AND 90) AND (o.decimallongitude BETWEEN -180 AND 180)) ';
 		if($this->searchTermArr){
 			if(array_key_exists('clid',$this->searchTermArr) && $this->searchTermArr['clid']){
 				if(isset($this->searchTermArr['cltype']) && $this->searchTermArr['cltype'] == 'all'){
@@ -232,6 +231,10 @@ class OccurrenceMapManager extends OccurrenceManager {
 		}
 		else{
 			$sqlWhere .= ' AND (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ';
+		}
+
+		if($sqlWhere) {
+			$sqlWhere .= 'AND ((o.decimallatitude BETWEEN -90 AND 90) AND (o.decimallongitude BETWEEN -180 AND 180)) ';
 		}
 		$this->sqlWhere = $sqlWhere;
 		//echo '<div style="margin-left:10px">sql: '.$this->sqlWhere.'</div>'; exit;
