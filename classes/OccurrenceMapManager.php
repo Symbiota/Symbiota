@@ -188,6 +188,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 		if($this->sqlWhere){
 			$sql = "SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences o ".$this->getTableJoins($this->sqlWhere).$this->sqlWhere;
 			//echo "<div>Count sql: ".$sql."</div>";
+
 			$result = $this->conn->query($sql);
 			if($result){
 				if($row = $result->fetch_object()){
@@ -229,8 +230,8 @@ class OccurrenceMapManager extends OccurrenceManager {
 			if(isset($USER_RIGHTS['RareSppReader'])) $securityCollArr = array_unique(array_merge($securityCollArr, $USER_RIGHTS['RareSppReader']));
 			$sqlWhere .= ($sqlWhere ? ' AND' : ' WHERE' ) . ' (o.CollId IN ('.implode(',',$securityCollArr).') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
 		}
-		else{
-			$sqlWhere .= ($sqlWhere ? ' AND' : ' WHERE' ) . ' (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ';
+		elseif(!empty($sqlWhere)){
+				$sqlWhere .= ($sqlWhere ? ' AND' : ' WHERE' ) . ' (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ';
 		}
 
 		if($sqlWhere) {
