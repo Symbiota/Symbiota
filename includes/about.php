@@ -149,6 +149,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 			<div style="margin:20px">
 				<p><b>Lead PI:</b> <a href="town@ku.edu">A. Townsend Peterson</a></p>
 				<p><b>Project Manager:</b> <a href="slowell@ku.edu">Samantha Lowell</a></p>
+				<p><b><a href="https://www.idigbio.org/wiki/index.php/TCN:_Collaborative_Research:_Digitization_and_Enrichment_of_U.S._Herbarium_Data_from_Tropical_Africa_to_Enable_Urgent_Quantitative_Conservation_Assessments#Project_Collaborators" target="_blank">Project Collaborators</b></a></p>
 			</div>
 			<?php
 				}
