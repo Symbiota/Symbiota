@@ -1870,7 +1870,7 @@ cluster.bindTooltip(`<div style="font-size:1rem"><?=$LANG['CLICK_TO_EXPAND']?></
 					<a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php">
 						<?php echo (isset($LANG['H_HOME'])?$LANG['H_HOME']:'Home'); ?>
 					</a>
-				</div>
+				</span>
 				<div style="display: flex; flex-grow: 1; margin-right:1rem; justify-content: right">
 					<a onclick="document.getElementById('defaultpanel').style.width='0px'">Hide Panel</a>
 				</div>
