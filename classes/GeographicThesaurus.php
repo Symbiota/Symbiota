@@ -755,11 +755,11 @@ class GeographicThesaurus extends Manager {
 		}
 	}
 
-	public function searchGeothesaurus(string $geoterm, int|null $geolevel = null, string|null $parent = null): array {
-		$sql = <<<'SQL'
+	public function searchGeothesaurus(string $geoterm, int|null $geolevel = null, string|null $parent = null, bool $distict_geoterms = false): array {
+		$sql = <<<SQL
 		SELECT g.geoThesID, g.geoterm, g.geoLevel, g.parentID, g2.geoterm AS parentterm, g2.geoLevel AS parentlevel FROM geographicthesaurus g 
 		LEFT JOIN geographicthesaurus g2 ON g2.geoThesID = g.parentID
-		WHERE g.geoterm LIKE ? ORDER BY g.geoterm, CHAR_LENGTH(g.geoterm)
+		WHERE g.geoterm LIKE ? 
 		SQL;
 
 		$params = ['%' . $geoterm . '%'];
@@ -772,7 +772,13 @@ class GeographicThesaurus extends Manager {
 		if($parent !== null) {
 			$sql .= ' and g2.geoterm like ?';
 			array_push($params, '%' . $parent . '%');
+		} 
+
+		if($distict_geoterms) {
+			$sql .= ' GROUP BY geoterm ';
 		}
+
+		$sql .= ' ORDER BY g.geoterm, CHAR_LENGTH(g.geoterm)';
 
 		$result = $this->conn->execute_query($sql, $params);
 
