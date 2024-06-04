@@ -575,37 +575,9 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 		checkTheCollectionsThatShouldBeChecked(catIdsFromUrl);
 	}
 	const sanitizedCollectionSource = collectionSource.replace('db=','');
-	// if (sanitizedCollectionSource) {
-	// 	console.log('deleteMe sanitizedCollectionSource is: ');
-	// 	console.log(sanitizedCollectionSource);
-	// 	uncheckEverything();
-	// 	checkTheCollectionsThatShouldBeChecked(sanitizedCollectionSource);
-	// }
-
-
-	if(collectionSource){
-		// go through all collections and set them all to unchecked
-		const collectionCheckboxes = document.querySelectorAll('input[id^="coll"]');
-		collectionCheckboxes.forEach(collection => {
-			collection.checked = false;
-		});
-
-		//go through all collections and set the parent collections to unchecked
-		const parentCollectionCheckboxes = document.querySelectorAll('input[id^="cat-"]');
-		parentCollectionCheckboxes.forEach(collection => {
-			collection.checked = false;
-		});
-
-		// set the one with collectionSource as checked
-		const targetCheckbox = document.querySelectorAll('input[id^="coll-' + sanitizedCollectionSource + '"]');
-		targetCheckbox.forEach(collection => {
-			collection.checked = true;
-		});
-		//do the same for collections with slightly different format
-		const targetCheckboxAlt = document.querySelectorAll('input[id^="collection-' + sanitizedCollectionSource + '"]');
-		targetCheckboxAlt.forEach(collection => {
-			collection.checked = true;
-		});
+	if (collectionSource) {
+		uncheckEverything();
+		checkTheCollectionsThatShouldBeChecked(sanitizedCollectionSource);
 		updateChip();
 	}
 
