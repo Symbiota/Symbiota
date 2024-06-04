@@ -24,5 +24,6 @@ $LANG['MERGE_RECORDS'] = 'Combinar Registros';
 $LANG['MORE_INFO'] = 'Más Información';
 $LANG['MORE_INFO_ALT'] = 'Más información sobre cómo fusionar duplicados';
 $LANG['NO_DUPES'] = 'No se han localizado registros duplicados';
-
+$LANG['UNKNOWN_ERROR_WHILE_MERGING'] ='Se produjo un error desconocido al fusionar las ocurrencias';
+$LANG['CHECK_DETERMINATIONS_ALERT'] ='Todas las determinaciones únicas se han fusionado en este registro. Consulte la pestaña Historial de determinación para asegurarse de que represente con precisión el historial de determinación de su registro.';
 ?>

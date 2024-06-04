@@ -32,10 +32,20 @@ if($submitAction){
 	}
 	if($isEditor){
 		if($submitAction == 'mergerecs'){
-			if(!$dupeManager->mergeRecords($occIdMerge,$curOccid)){
+			if(!$dupeManager->mergeRecords($occIdMerge,$curOccid, $collId)){
 				$statusStr = $dupeManager->getErrorStr();
+
+				//Add a unknown error message to user if no error is given
+				if(empty($statusStr)) {
+					$statusStr = $LANG['UNKNOWN_ERROR_WHILE_MERGING'];
+				}
+				//Fetch Occurrences Again for error display
+				$occArr = $dupeManager->getDupesOccid(substr($occidQuery,6));
+				unset($occArr[$curOccid]);
+			} else {
+				//Re route to merged occid if sucessful
+				$onLoadStr = 'gotoMergedOccur(' . $occIdMerge . ');';
 			}
-			$onLoadStr = 'reloadParent();close()';
 		}
 	}
 }
@@ -115,20 +125,17 @@ if(!$IS_ADMIN){
 				window.close();
 			}
 
-			function reloadParent(){
+			function gotoMergedOccur(occIdMerge){
 				opener.pendingDataEdits = false;
 				var qForm = opener.document.queryform;
-				qForm.occid.value = <?php echo $occIdMerge; ?>;
-				if(opener.document.fullform.occindex) qForm.occindex.value = opener.document.fullform.occindex.value;
-				opener.document.queryform.submit();
-				//opener.location.reload();
-				<?php
-				if($statusStr === true){
-					?>
-					window.close();
-					<?php
+				qForm.occid.value = occIdMerge;
+				if(opener.document.fullform.occindex) {
+					qForm.occindex.value = opener.document.fullform.occindex.value;
 				}
-				?>
+
+				alert("<?= $LANG['CHECK_DETERMINATIONS_ALERT']?>");
+				opener.document.queryform.submit();
+				window.close();
 			}
 
 		</script>
@@ -136,7 +143,7 @@ if(!$IS_ADMIN){
 			table.styledtable td { white-space: nowrap; }
 		</style>
 	</head>
-	<body onload="<?php echo $onLoadStr; ?>" style="background-color:white;">
+	<body onload="<?php echo $onLoadStr; ?>">
 		<div role="main" id="innertext">
 			<h1 class="page-heading">Duplicate Record Search</h1>
 			<?php
@@ -370,7 +377,8 @@ if(!$IS_ADMIN){
 								if($curOccid){
 									?>
 									<div style="margin-left:30px;float:left;">
-										<a href="dupesearch.php?submitaction=mergerecs&curoccid=<?php echo htmlspecialchars($curOccid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&occidmerge=' . htmlspecialchars($occId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" onclick="return confirm('<?php echo htmlspecialchars($LANG['SURE_MERGE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>')">
+						<a href="dupesearch.php?submitaction=mergerecs&curoccid=<?php echo htmlspecialchars($curOccid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&occidmerge=' . htmlspecialchars($occId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&occidquery=' . htmlspecialchars($occidQuery, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); 
+							?>" onclick="return confirm('<?php echo htmlspecialchars($LANG['SURE_MERGE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>')">
 											<?php echo $LANG['MERGE_RECORDS']; ?>
 										</a>
 									</div>

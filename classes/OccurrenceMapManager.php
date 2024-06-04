@@ -188,6 +188,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 		if($this->sqlWhere){
 			$sql = "SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences o ".$this->getTableJoins($this->sqlWhere).$this->sqlWhere;
 			//echo "<div>Count sql: ".$sql."</div>";
+
 			$result = $this->conn->query($sql);
 			if($result){
 				if($row = $result->fetch_object()){
@@ -206,18 +207,17 @@ class OccurrenceMapManager extends OccurrenceManager {
 	private function setGeoSqlWhere(){
 		global $USER_RIGHTS;
 		$sqlWhere = $this->getSqlWhere();
-		$sqlWhere .= ($sqlWhere?'AND ':'WHERE ').'((o.decimallatitude BETWEEN -90 AND 90) AND (o.decimallongitude BETWEEN -180 AND 180)) ';
 		if($this->searchTermArr){
 			if(array_key_exists('clid',$this->searchTermArr) && $this->searchTermArr['clid']){
 				if(isset($this->searchTermArr['cltype']) && $this->searchTermArr['cltype'] == 'all'){
-					$sqlWhere .= "AND (ST_Within(p.point,GeomFromText('".$this->getClFootprintWkt()." '))) ";
+					$sqlWhere .= ($sqlWhere ? ' AND' : ' WHERE' ) . "(ST_Within(p.point,GeomFromText('".$this->getClFootprintWkt()." '))) ";
 				}
 				else{
 					//$sqlWhere .= "AND (v.clid IN(".$this->searchTermArr['clid'].")) ";
 				}
 			}
 			elseif(array_key_exists("polycoords",$this->searchTermArr)){
-				$sqlWhere .= "AND (ST_Within(p.point,GeomFromText('".$this->searchTermArr["polycoords"]." '))) ";
+				$sqlWhere .= ($sqlWhere ? ' AND' : ' WHERE' ) . " (ST_Within(p.point,GeomFromText('".$this->searchTermArr["polycoords"]." '))) ";
 			}
 		}
 		//Check and exclude records with sensitive species protections
@@ -228,10 +228,14 @@ class OccurrenceMapManager extends OccurrenceManager {
 			$securityCollArr = array();
 			if(isset($USER_RIGHTS['CollEditor'])) $securityCollArr = $USER_RIGHTS['CollEditor'];
 			if(isset($USER_RIGHTS['RareSppReader'])) $securityCollArr = array_unique(array_merge($securityCollArr, $USER_RIGHTS['RareSppReader']));
-			$sqlWhere .= ' AND (o.CollId IN ('.implode(',',$securityCollArr).') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
+			$sqlWhere .= ($sqlWhere ? ' AND' : ' WHERE' ) . ' (o.CollId IN ('.implode(',',$securityCollArr).') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
 		}
-		else{
-			$sqlWhere .= ' AND (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ';
+		elseif(!empty($sqlWhere)){
+				$sqlWhere .= ($sqlWhere ? ' AND' : ' WHERE' ) . ' (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ';
+		}
+
+		if($sqlWhere) {
+			$sqlWhere .=  ' AND ((o.decimallatitude BETWEEN -90 AND 90) AND (o.decimallongitude BETWEEN -180 AND 180)) ';
 		}
 		$this->sqlWhere = $sqlWhere;
 		//echo '<div style="margin-left:10px">sql: '.$this->sqlWhere.'</div>'; exit;

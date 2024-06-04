@@ -48,7 +48,9 @@ if ($schema == 'backup') {
 	}
 } else {
 	$zip = (array_key_exists('zip', $_POST) ? $_POST['zip'] : 0);
-	$format = (array_key_exists('format', $_POST) ? $_POST['format'] : 'csv');
+	$allowedFormats = ['csv', 'tab'];
+	$formatFromPost = (array_key_exists('format', $_POST) ? $_POST['format'] : 'csv');
+	$format = in_array($formatFromPost, $allowedFormats) ? $formatFromPost : 'csv';
 	$extended = (array_key_exists('extended', $_POST) ? $_POST['extended'] : 0);
 	$overrideConditionLimit = (array_key_exists('overrideconditionlimit', $_POST) ? $_POST['overrideconditionlimit'] : 0);
 
