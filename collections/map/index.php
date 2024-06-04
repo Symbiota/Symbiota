@@ -1864,21 +1864,19 @@ cluster.bindTooltip(`<div style="font-size:1rem"><?=$LANG['CLICK_TO_EXPAND']?></
 			</button>
 		</div>
 		<div id='map' style='width:100vw;height:100vh;z-index:1'></div>
-		<div id="defaultpanel" class="sidepanel" style="width: <?= $menuClosed? '0': '390px'?>">
-			<div class="panel-content">
-				<span style="position:absolute; top:0.7rem; right:0.7rem; z-index:1">
-					<a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php">
-						<?php echo (isset($LANG['H_HOME'])?$LANG['H_HOME']:'Home'); ?>
-					</a>
-				</span>
-				<div style="display: flex; flex-grow: 1; margin-right:1rem; justify-content: right">
+		<div id="defaultpanel" class="sidepanel"  <?= $menuClosed? 'style="width: 0"': ''?>>
+			<div class="menu" style="display:flex; align-items: center; background-color: var(--darkest-color); height: 2rem">
+				<a style="text-decoration: none; margin-left: 0.5rem;" href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php">
+					<?php echo (isset($LANG['H_HOME'])?$LANG['H_HOME']:'Home'); ?>
+				</a>
+				<span style="display: flex; flex-grow: 1; margin-right:1rem; justify-content: right">
 					<a onclick="document.getElementById('defaultpanel').style.width='0px'">Hide Panel</a>
-				</div>
+				</span>
 			</div>
 			<div class="panel-content">
 				<div id="mapinterface">
 					<div id="accordion">
-						<h3><?php echo (isset($LANG['SEARCH_CRITERIA'])?$LANG['SEARCH_CRITERIA']:'Search Criteria and Options'); ?></h3>
+						<h3 style="margin-top:0"><?php echo (isset($LANG['SEARCH_CRITERIA'])?$LANG['SEARCH_CRITERIA']:'Search Criteria and Options'); ?></h3>
 						<div id="tabs1" style="padding:0px;height:100%">
 							<form name="mapsearchform" id="mapsearchform" data-ajax="false">
 								<ul>
