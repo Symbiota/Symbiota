@@ -12,7 +12,7 @@ header("Content-Type: text/html; charset=" . $CHARSET);
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/search/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/search/index.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/search/index.en.php');
 
-$catIdsFromUrl = array_key_exists("db",$_GET) ? explode(",", str_replace(array('[',']'), '', $_GET["db"])) : '';
+$collIdsFromUrl = array_key_exists("db",$_GET) ? explode(",", str_replace(array('[',']'), '', $_GET["db"])) : '';
 
 $collManager = new OccurrenceManager();
 $collectionSource = $collManager->getQueryTermStr();
@@ -569,10 +569,10 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 		ul.outerWidth(this.element.outerWidth());
 	}
 	const collectionSource = <?php echo isset($collectionSource) ? json_encode($collectionSource) : 'null'; ?>;
-	const catIdsFromUrl = <?php echo isset($catIdsFromUrl) ? json_encode($catIdsFromUrl) : 'null'; ?>;
-	if (catIdsFromUrl.length > 0) {
+	const collIdsFromUrl = <?php echo isset($collIdsFromUrl) ? json_encode($collIdsFromUrl) : 'null'; ?>;
+	if (collIdsFromUrl.length > 0) {
 		uncheckEverything();
-		checkTheCollectionsThatShouldBeChecked(catIdsFromUrl);
+		checkTheCollectionsThatShouldBeChecked(collIdsFromUrl);
 	}
 	const sanitizedCollectionSource = collectionSource.replace('db=','');
 	if (collectionSource) {
