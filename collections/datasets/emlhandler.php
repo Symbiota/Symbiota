@@ -2,8 +2,7 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
 
-$collid = isset($_REQUEST['collid']) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : '';
-if(!is_numeric($collid))$collid=0;
+$collid = (isset($_REQUEST['collid']) && is_numeric($_REQUEST['collid'])) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : '';
 
 if($collid){
 	$dwcaManager = new DwcArchiverCore();
