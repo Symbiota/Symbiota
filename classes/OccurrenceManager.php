@@ -625,10 +625,10 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		$retStr = '';
 		foreach($this->searchTermArr as $k => $v){
 			if(is_array($v)) $v = implode(',', $v);
-			if($v) $retStr .= '&'.$this->cleanOutStr($k).'='. $this->cleanOutStr($v);
+			if($v) $retStr .= '&'.$this->cleanOutStr($k).'='.$this->cleanOutStr($v);
 		}
 		if(isset($this->taxaArr['search'])){
-			$retStr .= '&taxa='. $this->cleanOutStr($this->taxaArr['search']);
+			$retStr .= '&taxa='.$this->cleanOutStr($this->taxaArr['search']);
 			if($this->taxaArr['usethes']) $retStr .= '&usethes=1';
 			if(is_numeric($this->taxaArr['taxontype'])) {
 				$retStr .= '&taxontype=' . intval($this->taxaArr['taxontype']);
