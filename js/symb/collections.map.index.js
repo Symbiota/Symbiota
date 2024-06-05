@@ -206,6 +206,7 @@ function verifyCollForm(f) {
       break;
     }
   }
+
   if (!formVerified) {
     alert("Please choose at least one collection!");
     return false;
@@ -246,7 +247,8 @@ function verifyCollForm(f) {
     f.polycoords.value == "" &&
     f.collector.value == "" &&
     f.collnum.value == "" &&
-    f.eventdate1.value == ""
+    f.eventdate1.value == "" &&
+    f.catnum.value == ""
   ) {
     alert("Please fill in at least one search parameter!");
     return false;

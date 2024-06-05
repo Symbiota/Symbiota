@@ -94,7 +94,7 @@ if(!$recLimit || $recCnt < $recLimit){
 		if($occArr){
 			?>
 			<form name="selectform" id="selectform" action="" method="post" onsubmit="" target="_blank">
-				<table class="styledtable" style="font-family:Arial;font-size:12px;margin-left:-15px;">
+				<table class="styledtable" style="font-size:12px;margin-left:-15px;">
 					<tr>
 						<!--
 						<th style="width:10px;" title="Select/Deselect all Records">

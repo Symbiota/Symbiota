@@ -93,7 +93,6 @@ button {
   font-weight: 600;
   letter-spacing: 1px;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
   white-space: nowrap;
 }
 
@@ -253,14 +252,12 @@ table.styledtable tr.alt td {
   letter-spacing: 1px;
   text-align: center;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
   width: fit-content;
 }
 
 .button > a {
   text-decoration: none;
   font-weight: 600;
-  transition: all 0.2s ease-in-out;
 }
 
 .button-primary {

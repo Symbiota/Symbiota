@@ -79,7 +79,6 @@ else{
 			include_once($SERVER_ROOT.'/includes/head.php');
 			?>
 			<style type="text/css">
-				body {font-family:arial,sans-serif;}
 				p.printbreak {page-break-after:always;}
 				.accnum {margin-left:2.5in;font:8pt arial,sans-serif;}
 				.toaddress {margin-left:3in;font:12pt arial,sans-serif;}

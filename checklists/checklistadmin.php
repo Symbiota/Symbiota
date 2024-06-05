@@ -216,14 +216,16 @@ include($SERVER_ROOT.'/includes/header.php');
 							foreach($editorArr as $uid => $uNameArr){
 								?>
 								<li>
-									<?php echo '<span title="'.($uNameArr['assignedby'] ? $LANG['ASSIGNED_BY'] . ' ' . $uNameArr['assignedby']:'') . '">' . $uNameArr['name'] . '</span>'; ?>
-									<form name="delEditorForm-<?php echo $uid; ?>" action="checklistadmin.php" method="post" onclick="return confirm(<?php echo $LANG['REMOVEEDITPRIVCONFIRM']; ?>);" title="<?php echo $LANG['DELETETHISU'];?>" style="display:inline">
-										<input name="clid" type="hidden" value="<?php echo $clid; ?>" />
-										<input name="pid" type="hidden" value="<?php echo $pid; ?>" />
-										<input name="deleteuid" type="hidden" value="<?php echo $uid; ?>" />
-										<input name="submitaction" type="hidden" value="DeleteEditor" />
-										<input name="submit" type="image" src="../images/drop.png" style="width:1em;" alt="<?php echo $LANG['DROP_ICON_FOR_EDITOR']; ?>" />
-									</form>
+									<div style="display: flex; align-items: center;">
+										<?php echo '<span title="'.($uNameArr['assignedby'] ? $LANG['ASSIGNED_BY'] . ' ' . $uNameArr['assignedby']:'') . '">' . $uNameArr['name'] . '</span>'; ?>
+										<form name="delEditorForm-<?php echo $uid; ?>" action="checklistadmin.php" method="post" onclick="return confirm(<?php echo $LANG['REMOVEEDITPRIVCONFIRM']; ?>);" title="<?php echo $LANG['DELETETHISU'];?>" style="display:inline">
+											<input name="clid" type="hidden" value="<?php echo $clid; ?>" />
+											<input name="pid" type="hidden" value="<?php echo $pid; ?>" />
+											<input name="deleteuid" type="hidden" value="<?php echo $uid; ?>" />
+											<input name="submitaction" type="hidden" value="DeleteEditor" />
+											<input name="submit" type="image" src="../images/drop.png" style="width:1em; margin:0;" alt="<?php echo $LANG['DROP_ICON_FOR_EDITOR']; ?>" />
+										</form>
+									</div>
 								</li>
 								<?php
 							}
@@ -236,7 +238,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					}
 					?>
                     <section class="fieldset-like">
-							<h2><span><b><?php echo $LANG['ADDNEWUSER']; ?></b></span></h2>
+							<h2><span><?php echo $LANG['ADDNEWUSER']; ?></span></h2>
 						<form name="adduser" action="checklistadmin.php" method="post" onsubmit="return verifyAddUser(this)">
 							<div>
 							    <label for="editoruid"><?php echo $LANG['SELECTUSER']; ?></label>

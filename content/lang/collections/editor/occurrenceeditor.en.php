@@ -199,4 +199,16 @@ $LANG['ERROR_UNABLE_DELETE'] = 'ERROR: unable DELETE text fragment';
 $LANG['MAP'] = 'Map';
 $LANG['CULTIVAR_NAME'] = 'Cultivar Name';
 $LANG['TRADE_NAME'] = 'Trade Name';
+$LANG['ERROR_TRYING_TO_UPDATE_COL_CNT'] = 'ERROR - Updating collection stats count';
+$LANG['ERROR_CREATING_TRANSACTION'] = 'ERROR - Creating transaction';
+$LANG['ERROR_FETCHING_OCCURRENCE_DATA'] = 'ERROR - Fetching occurrence data';
+$LANG['ERROR_ARCHIVING_DET_HISTORY'] = 'ERROR - Archiving determination history';
+$LANG['ERROR_ARCHIVING_IMG_HISTORY'] = 'ERROR - Archiving image history';
+$LANG['ERROR_DELETING_IMGS'] = 'ERROR - Deleting images';
+$LANG['ERROR_ARCHIVING_PALEO'] = 'ERROR - Archiving paleo info';
+$LANG['ERROR_ARCHIVING_EXSICCATI'] = 'ERROR - Archiving exsiccati info';
+$LANG['ERROR_ARCHIVING_ASSOC'] = 'ERROR - Archiving associations info';
+$LANG['ERROR_ARCHIVING_MAT_SAMPLE'] = 'ERROR - Archiving material sample info';
+$LANG['ERROR_CREATING_ARCHIVE'] = 'ERROR - Creating Archive';
+$LANG['ERROR_DELETING_OCCURRENCE'] = 'ERROR - Failed to delete the source occurrence';
 ?>

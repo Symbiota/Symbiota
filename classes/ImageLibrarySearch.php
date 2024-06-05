@@ -363,7 +363,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 	}
 
 	public function setCollectionVariables($reqArr){
-		$this->dbStr = trim(OccurrenceSearchSupport::getDbRequestVariable(), '; ');
+		$this->dbStr = trim(OccurrenceSearchSupport::getDbRequestVariable(), ',; ');
 	}
 
 	public function setTaxonType($t){

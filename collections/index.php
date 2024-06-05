@@ -9,6 +9,7 @@ $catId = array_key_exists("catid",$_REQUEST)?$_REQUEST["catid"]:'';
 if(!preg_match('/^[,\d]+$/',$catId)) $catId = '';
 if($catId == '' && isset($DEFAULTCATID)) $catId = $DEFAULTCATID;
 
+
 $collManager = new OccurrenceManager();
 $SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
 //$collManager->reset();
@@ -90,7 +91,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 				?>
 			</ul>
 			<?php
-			$actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.php";
+			$actionPage = "harvestparams.php";
 			if($specArr && $obsArr){
 				?>
 				<div id="specobsdiv">

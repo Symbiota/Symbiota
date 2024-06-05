@@ -77,7 +77,7 @@ button.icon-button {
 }
 
 button.icon-button:hover {
-  background: #e4f2fb;
+  background: var(--medium-color);
 }
 
 /* Species list component */

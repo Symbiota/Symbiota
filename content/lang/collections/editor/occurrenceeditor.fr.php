@@ -199,4 +199,17 @@ $LANG['ERROR_UNABLE_DELETE'] = 'ERREUR: impossible de supprimer le fragment de t
 $LANG['MAP'] = 'Carte';
 $LANG['CULTIVAR_NAME'] = 'Nom du Cultivar';
 $LANG['TRADE_NAME'] = 'Nom Commercial';
+$LANG['ERROR_TRYING_TO_UPDATE_COL_CNT'] = 'ERREUR – Mise à jour du nombre de statistiques de collection';
+$LANG['ERROR_CREATING_TRANSACTION'] = 'ERREUR – Création d\'une transaction';
+$LANG['ERROR_FETCHING_OCCURRENCE_DATA'] = 'ERREUR – Récupération des données d\'occurrence';
+$LANG['ERROR_ARCHIVING_DET_HISTORY'] = 'ERREUR - Archivage de l\'historique des déterminations';
+$LANG['ERROR_ARCHIVING_IMG_HISTORY'] = 'ERREUR - Archivage de l\'historique des images';
+$LANG['ERROR_DELETING_IMGS'] = 'ERREUR - Suppression d\'images';
+$LANG['ERROR_ARCHIVING_PALEO'] = 'ERREUR - Archivage des informations paléo';
+$LANG['ERROR_ARCHIVING_EXSICCATI'] = 'ERREUR - Archivage des informations exsiccati';
+$LANG['ERROR_ARCHIVING_ASSOC'] = 'ERREUR - Archivage des informations sur les associations';
+$LANG['ERROR_ARCHIVING_MAT_SAMPLE'] = 'ERREUR - Archivage des informations sur l\'échantillon de matériau';
+$LANG['ERROR_CREATING_ARCHIVE'] = 'ERREUR – Création d\'une archive';
+$LANG['ERROR_DELETING_OCCURRENCE'] = 'ERREUR – Échec de la suppression de l\'occurrence source';
+
 ?>

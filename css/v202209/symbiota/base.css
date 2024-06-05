@@ -462,8 +462,8 @@ b {
 }
 
 .screen-reader-only {
-  position: absolute;
-  left: -10000px;
+  position: absolute !important;
+  left: -10000px !important;
 }
 
 .welcome-text {
@@ -521,14 +521,12 @@ button.icon-button:hover {
   letter-spacing: 1px;
   text-align: center;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
   width: fit-content;
 }
 
 .button > a {
   text-decoration: none;
   font-weight: 600;
-  transition: all 0.2s ease-in-out;
 }
 
 .button-primary {
@@ -541,17 +539,15 @@ button.icon-button:hover {
 
 .button-primary:hover,
 .button-secondary:hover,
-.button-danger:hover 
-{
+.button-danger:hover {
   background-color: var(--medium-color);
 }
 
 .button-primary:disabled,
 .button-secondary:disabled,
-.button-danger:disabled
-{
-	opacity: 50%;
-	pointer-events: none;
+.button-danger:disabled {
+  opacity: 50%;
+  pointer-events: none;
 }
 
 .button-primary:hover > a,

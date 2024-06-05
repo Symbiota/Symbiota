@@ -204,7 +204,7 @@ $projArr = $csManager->getProjectDetails();
 				?>
 				<div style="margin:15px;">
 					<div style="font-weight:bold;text-decoration:underline;margin-bottom:15px;"><?php echo $LANG['VOLUNTEERS']; ?></div>
-					<table class="styledtable" style="font-family:Arial;font-size:12px;width:500px;">
+					<table class="styledtable" style="font-size:12px;width:500px;">
 						<tr>
 							<th><?php echo $LANG['USER']; ?></th>
 							<th><?php echo $LANG['SCORE']; ?></th>
@@ -239,7 +239,7 @@ $projArr = $csManager->getProjectDetails();
 				</div>
 				<div style="margin:25px 15px">
 					<div style="font-weight:bold;text-decoration:underline;margin-bottom:15px;"><?php echo $LANG['APPROVED_EDITORS']; ?></div>
-					<table class="styledtable" style="font-family:Arial;font-size:12px;width:500px;">
+					<table class="styledtable" style="font-size:12px;width:500px;">
 						<tr>
 							<th><?php echo $LANG['USER']; ?></th>
 							<th><?php echo $LANG['SCORE']; ?></th>

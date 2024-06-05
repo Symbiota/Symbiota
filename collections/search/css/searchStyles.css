@@ -145,18 +145,6 @@
   transition: 200ms ease-in-out;
 }
 
-.input-text-container label span::before {
-  content: attr(data-label);
-  left: 16px;
-  top: 16px;
-  margin: auto;
-  pointer-events: none;
-  height: 12px;
-  font-size: var(--fz);
-  color: gray;
-  line-height: 1;
-}
-
 .input-text-container label input:focus ~ span::before,
 .input-text-container label input:valid ~ span::before,
 .input-text-container label input:invalid ~ span::before {
@@ -266,8 +254,6 @@
   margin-top: 14px;
   height: 46px;
   border: 2px solid #939292;
-  -webkit-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.17);
-  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.17);
   font-family: inherit;
   font-size: 1em;
   width: 100%;
@@ -287,7 +273,7 @@
   --opaq1: 0.08;
   --padding: 10px;
   --fz: 100px;
-  margin: 10px auto;
+  margin: 14px auto;
   width: 100%;
   max-width: 600px;
 }
@@ -310,18 +296,6 @@
   top: 0;
   -webkit-transition: 200ms ease-in-out;
   transition: 200ms ease-in-out;
-}
-
-.text-area-container label span::before {
-  content: attr(data-label);
-  left: 16px;
-  top: 0;
-  bottom: 0;
-  margin: auto;
-  pointer-events: none;
-  height: 12px;
-  font-size: var(--fz);
-  line-height: 1;
 }
 
 .text-area-container textarea {
@@ -827,7 +801,7 @@
 .inner-search select {
   border: 1px solid #d0d0d0 !important;
   border-radius: 0;
-  color: #333333;
+  color: var(--body-text-color);
 }
 
 .inner-search input[type="text"]:focus,

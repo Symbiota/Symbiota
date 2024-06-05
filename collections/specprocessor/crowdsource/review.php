@@ -85,13 +85,15 @@ $projArr = $csManager->getProjectDetails();
 	</script>
 </head>
 <body style="margin-left: 0px; margin-right: 0px;background-color:white;">
-	<div class='navpath'>
-		<a href="../../../index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-		<a href="index.php"><?php echo htmlspecialchars($LANG['SCORE_BOARD'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-		<?php
-		if($collid) echo '<a href="../index.php?tabindex=1&collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($LANG['CONTROL_PANEL'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt;';
-		?>
-		<b><?php echo $LANG['CROWDSOURCING_REVIEW']; ?></b>
+	<div style="width:850px;clear:both;">
+		<div class='navpath' style="float:left; padding-left: 5px">
+			<a href="../../../index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+			<a href="index.php"><?php echo htmlspecialchars($LANG['SCORE_BOARD'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+			<?php
+			if($collid) echo '<a href="../index.php?tabindex=1&collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($LANG['CONTROL_PANEL'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt;';
+			?>
+			<b><?php echo $LANG['CROWDSOURCING_REVIEW']; ?></b>
+		</div>
 	</div>
 	<div style="margin:10px;">
 		<h1 class="page-heading">Review Crowdsourced Records</h1>
@@ -194,7 +196,7 @@ $projArr = $csManager->getProjectDetails();
 								echo '<input name="uid" type="hidden" value="'.$uid.'" />';
 							}
 							?>
-							<table class="styledtable" style="font-family:Arial;font-size:12px;">
+							<table class="styledtable" style="font-size:12px;">
 								<tr>
 									<?php
 									if($collid) echo '<th><span title="'.$LANG['SELECT_ALL'].'"><input name="selectall" type="checkbox" onclick="selectAll(this)" /></span></th>';

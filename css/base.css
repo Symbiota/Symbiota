@@ -363,8 +363,8 @@ ol.mp_list li.mp_highlighted {
 }
 
 .screen-reader-only {
-  position: absolute;
-  left: -10000px;
+  position: absolute !important;
+  left: -10000px !important;
 }
 
 .welcome-text {

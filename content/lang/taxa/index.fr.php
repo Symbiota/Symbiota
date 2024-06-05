@@ -35,6 +35,7 @@ $LANG['RESOURCES'] = 'Ressources';
 $LANG['INTERNAL_RESOURCES'] = 'Ressources internes';
 $LANG['OCCURRENCES'] = 'occurrences';
 $LANG['EXTERNAL_LINKS'] = 'Ressources externes';
+$LANG['ACCEPTED_TAXA'] = 'Taxons acceptés';
 $LANG['NOT_FOUND'] = 'pas trouvé';
 $LANG['DID_YOU_MEAN'] = 'Vouliez-vous dire?';
 $LANG['CALENDAR_TRAIT_PLOT'] = 'Graphiques de Traits';
