@@ -1296,12 +1296,15 @@ class OccurrenceEditorManager {
 
 	public function deleteOccurrence($delOccid){
 		global $CHARSET, $USER_DISPLAY_NAME, $LANG;
-		$status = true;
-		if(is_numeric($delOccid)){
+		
+		if(!is_numeric($delOccid)) return true;
+
+		$stage = $LANG['ERROR_CREATING_TRANSACTION'];
+		try {
 			//Archive data, first grab occurrence data
 			$archiveArr = array();
 			$sql = 'SELECT * FROM omoccurrences WHERE occid = '.$delOccid;
-			//echo $sql; exit;
+			$stage = $LANG['ERROR_FETCHING_OCCURRENCE_DATA'];
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_assoc()){
 				foreach($r as $k => $v){
@@ -1312,6 +1315,7 @@ class OccurrenceEditorManager {
 			if($archiveArr){
 				//Archive determinations history
 				$sql = 'SELECT * FROM omoccurdeterminations WHERE occid = '.$delOccid;
+				$stage = $LANG['ERROR_ARCHIVING_DET_HISTORY'];
 				$rs = $this->conn->query($sql);
 				while($r = $rs->fetch_assoc()){
 					$detId = $r['detid'];
@@ -1323,6 +1327,7 @@ class OccurrenceEditorManager {
 
 				//Archive image history
 				$sql = 'SELECT * FROM images WHERE occid = '.$delOccid;
+				$stage = $LANG['ERROR_ARCHIVING_IMG_HISTORY'];
 				if($rs = $this->conn->query($sql)){
 					$imgidStr = '';
 					while($r = $rs->fetch_assoc()){
@@ -1334,6 +1339,7 @@ class OccurrenceEditorManager {
 					}
 					$rs->free();
 					//Delete images
+					$stage = $LANG['ERROR_DELETING_IMGS'];
 					if($imgidStr){
 						$imgidStr = trim($imgidStr, ', ');
 						//Remove any OCR text blocks linked to the image
@@ -1354,6 +1360,7 @@ class OccurrenceEditorManager {
 				//Archive paleo
 				if(isset($this->collMap['paleoActivated'])){
 					$sql = 'SELECT * FROM omoccurpaleo WHERE occid = '.$delOccid;
+					$stage = $LANG['ERROR_ARCHIVING_PALEO'];
 					if($rs = $this->conn->query($sql)){
 						if($r = $rs->fetch_assoc()){
 							foreach($r as $k => $v){
@@ -1370,6 +1377,7 @@ class OccurrenceEditorManager {
 					'FROM omexsiccatiocclink l INNER JOIN omexsiccatinumbers n ON l.omenid = n.omenid '.
 					'INNER JOIN omexsiccatititles t ON n.ometid = t.ometid '.
 					'WHERE l.occid = '.$delOccid;
+				$stage = $LANG['ERROR_ARCHIVING_EXSICCATI'];
 				if($rs = $this->conn->query($sql)){
 					if($r = $rs->fetch_assoc()){
 						foreach($r as $k => $v){
@@ -1381,9 +1389,10 @@ class OccurrenceEditorManager {
 
 				//Archive associations info
 				$sql = 'SELECT * FROM omoccurassociations WHERE occid = '.$delOccid;
+				$stage = $LANG['ERROR_ARCHIVING_ASSOC'];
 				if($rs = $this->conn->query($sql)){
 					while($r = $rs->fetch_assoc()){
-						$id = $r['associd'];
+					$id = $r['associd'];
 						foreach($r as $k => $v){
 							if($v) $archiveArr['assoc'][$id][$k] = $this->encodeStrTargeted($v,$CHARSET,'utf8');
 						}
@@ -1393,6 +1402,7 @@ class OccurrenceEditorManager {
 
 				//Archive Material Sample info
 				$sql = 'SELECT * FROM ommaterialsample WHERE occid = '.$delOccid;
+				$stage = $LANG['ERROR_ARCHIVING_MAT_SAMPLE'];
 				if($rs = $this->conn->query($sql)){
 					while($r = $rs->fetch_assoc()){
 						foreach($r as $k => $v){
@@ -1406,27 +1416,48 @@ class OccurrenceEditorManager {
 				//Archive complete occurrence record
 				$archiveArr['dateDeleted'] = date('r').' by '.$USER_DISPLAY_NAME;
 				$archiveObj = json_encode($archiveArr);
+				$stage = 'Create Archive';
 				$sqlArchive = 'INSERT INTO omoccurarchive(archiveobj, occid, catalogNumber, occurrenceID, recordID) '.
 					'VALUES ("'.$this->cleanInStr($this->encodeStrTargeted($archiveObj,'utf8',$CHARSET)).'", '.$delOccid.','.
 					(isset($archiveArr['catalogNumber']) && $archiveArr['catalogNumber']?'"'.$this->cleanInStr($archiveArr['catalogNumber']).'"':'NULL').', '.
 					(isset($archiveArr['occurrenceID']) && $archiveArr['occurrenceID']?'"'.$this->cleanInStr($archiveArr['occurrenceID']).'"':'NULL').', '.
 					(isset($archiveArr['recordID']) && $archiveArr['recordID']?'"'.$this->cleanInStr($archiveArr['recordID']).'"':'NULL').')';
 				$this->conn->query($sqlArchive);
-			}
+			}			
 
 			//Go ahead and delete
-			//Associated records will be deleted from: omexsiccatiocclink, omoccurdeterminations, fmvouchers
-			$sqlDel = 'DELETE FROM omoccurrences WHERE (occid = '.$delOccid.')';
-			if($this->conn->query($sqlDel)){
-				//Update collection stats
-				$this->conn->query('UPDATE omcollectionstats SET recordcnt = recordcnt - 1 WHERE collid = '.$this->collId);
-			}
-			else{
-				$this->errorArr[] = $LANG['ERROR_TRYING_TO_DELETE'].': '.$this->conn->error;
-				$status = false;
-			}
-		}
-		return $status;
+			// Associated records will be deleted from: 
+			// omexsiccatiocclink
+			// omoccurdeterminations
+			// fmvouchers
+			// omoccurpaleo
+			// omoccuridentifiers
+			// omogenetic
+			// omoccuridentifiers
+			// omoccurloanslink
+			// (Note this list can and like is not comprehensive of all the Cascade Keys)
+			$sqlDel = <<<SQL
+				DELETE FROM omoccurrences WHERE occid = ?
+			SQL;
+			$stage = $LANG['ERROR_TRYING_TO_DELETE'];
+			$this->conn->execute_query($sqlDel, [$delOccid]);
+
+			$sql = <<<SQL
+				UPDATE omcollectionstats SET recordcnt = recordcnt - 1 WHERE collid = ?
+			SQL;
+			$stage = $LANG['ERROR_TRYING_TO_UPDATE_COL_CNT'];
+			$this->conn->execute_query($sql, [$this->collId]);
+
+			return true;
+		} catch (\Throwable $th) {
+			error_log(
+				"Error deleting occid " . $delOccid 
+					. ", Line: " . $th->getLine()
+					. " : " . $th->getMessage()
+			);
+			$this->errorArr[] = $stage . ': ' . $th->getMessage();
+			return false;
+		} 
 	}
 
 	public function cloneOccurrence($postArr){
@@ -1491,154 +1522,191 @@ class OccurrenceEditorManager {
 			return false;
 		}
 
-		$oArr = array();
-		//Merge records
-		$sql = 'SELECT * FROM omoccurrences WHERE occid = '.$targetOccid.' OR occid = '.$sourceOccid;
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_assoc()){
-			$tempArr = array_change_key_case($r);
-			$id = $tempArr['occid'];
-			unset($tempArr['occid']);
-			unset($tempArr['collid']);
-			unset($tempArr['dbpk']);
-			unset($tempArr['datelastmodified']);
+		/* Start transaction */
+		// This will autocommit if not rollback explicitly
+		$this->conn->begin_transaction();
+		$stage = '';
+		try {
+			$oArr = array();
+			//Merge records
+			$sql = 'SELECT * FROM omoccurrences WHERE occid = '.$targetOccid.' OR occid = '.$sourceOccid;
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_assoc()){
+				$tempArr = array_change_key_case($r);
+				$id = $tempArr['occid'];
+				unset($tempArr['occid']);
+				unset($tempArr['collid']);
+				unset($tempArr['dbpk']);
+				unset($tempArr['datelastmodified']);
 			$oArr[$id] = $tempArr;
-		}
-		$rs->free();
-
-		$tArr = $oArr[$targetOccid];
-		$sArr = $oArr[$sourceOccid];
-		$sqlFrag = '';
-		foreach($sArr as $k => $v){
-			if(($v != '') && $tArr[$k] == ''){
-				$sqlFrag .= ','.$k.'="'.$this->cleanInStr($v).'"';
 			}
-		}
-		if($sqlFrag){
-			//Remap source to target
-			$sqlIns = 'UPDATE omoccurrences SET '.substr($sqlFrag,1).' WHERE occid = '.$targetOccid;
-			//echo $sqlIns;
-			if(!$this->conn->query($sqlIns)){
-				$this->errorArr[] = $LANG['ABORT_DUE_TO_ERROR'].': '.$this->conn->error;
+			$rs->free();
+
+			$tArr = $oArr[$targetOccid];
+			$sArr = $oArr[$sourceOccid];
+			$sqlFrag = '';
+
+			foreach($sArr as $k => $v){
+				if(($v != '') && $tArr[$k] == ''){
+					$sqlFrag .= ','.$k.'="'.$this->cleanInStr($v).'"';
+				}
+			}
+			if($sqlFrag){
+				$sqlIns = 'UPDATE IGNORE omoccurrences SET ' . substr($sqlFrag,1) . ' WHERE occid = ?';
+				$stage = $LANG['ABORT_DUE_TO_ERROR'];
+				$this->conn->execute_query($sqlIns, [$targetOccid]);
+			}
+
+			//Fetch List of Old Current Determinations
+			$sql =<<<'SQL'
+			SELECT detid FROM omoccurdeterminations where occid = ? and isCurrent = 1;
+			SQL;
+			$result = $this->conn->execute_query($sql, [$targetOccid]);
+			$currentDeterminations = array_map(fn($v) => $v[0], $result->fetch_all());
+
+			//Remap determinations
+			$sql = <<<'SQL'
+			UPDATE omoccurdeterminations 
+			SET occid = ? WHERE occid = ?
+			AND detid NOT IN (
+				SELECT source.detid FROM omoccurdeterminations source
+				JOIN omoccurdeterminations target ON target.occid = ? 
+				WHERE source.occid = ? 
+				AND source.sciname = target.sciname
+				AND source.dateIdentified = target.dateIdentified
+				AND source.identifiedBy = target.identifiedBy
+			);
+			SQL;
+			$this->conn->execute_query($sql, [
+				//Update To This Occid
+				$targetOccid, 
+				//From Options of This Occid
+				$sourceOccid, 
+				//Check This Occid Determinations for Duplicates
+				$targetOccid, 
+				//Of this Occid Record
+				$sourceOccid
+			]);
+
+			//Downgrade old determinations if new determinations have a current determination
+			$parameters = str_repeat('?,', count($currentDeterminations) - 1) . '?';
+			$sql = <<<"SQL"
+			UPDATE omoccurdeterminations 
+			JOIN (SELECT count(*) as cnt FROM omoccurdeterminations WHERE isCurrent = 1 AND occid = ? AND detid NOT IN ($parameters)) as update_flag on cnt > 0 
+			SET isCurrent = 0
+			WHERE occid = ? AND isCurrent = 1 AND detid IN ($parameters);
+			SQL;
+			$this->conn->execute_query($sql, array_merge([$targetOccid], $currentDeterminations, [$targetOccid], $currentDeterminations));
+
+			//Remap images
+			$sql = <<<'SQL'
+			UPDATE images SET occid = ? WHERE occid = ?;
+			SQL;
+			$stage = $LANG['ERROR_REMAPPING_IMAGES'];
+			$this->conn->execute_query($sql, [$targetOccid, $sourceOccid]);
+
+			//Remap paleo
+			if(isset($this->collMap['paleoActivated'])){
+				$sql = <<<'SQL'
+				UPDATE IGNORE omoccurpaleo SET occid = ? WHERE occid = ?;
+				SQL;
+				$stage = $LANG['ERROR_REMAPPING_PALEOS'];
+				$this->conn->execute_query($sql, [$targetOccid, $sourceOccid]);
+			}
+
+			//Delete source occurrence edits
+			$sql = <<<'SQL'
+			DELETE FROM omoccuredits WHERE occid = ?
+			SQL;
+			$stage = $LANG['ERROR_REMAPPING_OCC_EDITS'];
+			$this->conn->execute_query($sql, [$sourceOccid]);
+
+			//Remap associations
+			$sql = <<<'SQL'
+			UPDATE IGNORE omoccurassociations SET occid = ? WHERE occid = ?
+			SQL;
+			$stage = $LANG['ERROR_REMAPPING_ASSOCS_1'];
+			$this->conn->execute_query($sql, [$targetOccid, $sourceOccid]);
+
+			$sql = <<<'SQL'
+			UPDATE IGNORE omoccurassociations SET occidAssociate = ? WHERE occidAssociate = ?
+			SQL;
+			$stage = $LANG['ERROR_REMAPPING_ASSOCS_2'];
+			$this->conn->execute_query($sql, [$targetOccid, $sourceOccid]);
+
+			//Remap comments
+			$sql = <<<'SQL'
+			UPDATE IGNORE omoccurcomments SET occid = ? WHERE occid = ?
+			SQL;
+			$stage = $LANG['ERROR_REMAPPING_COMMENTS'];
+			$this->conn->execute_query($sql, [$targetOccid, $sourceOccid]);
+
+			//Remap genetic resources
+			$sql = <<<'SQL'
+			UPDATE IGNORE omoccurgenetic SET occid = ? WHERE occid = ?
+			SQL;
+			$stage = $LANG['ERROR_REMAPPING_GENETIC'];
+			$this->conn->execute_query($sql, [$targetOccid, $sourceOccid]);
+
+			//Remap identifiers
+			$sql = <<<'SQL'
+			UPDATE IGNORE omoccuridentifiers SET occid = ? WHERE occid = ?
+			SQL;
+			$stage = $LANG['ERROR_REMAPPING_OCCIDS'];
+			$this->conn->execute_query($sql, [$targetOccid, $sourceOccid]);
+
+			//Remap exsiccati
+			$sql = <<<'SQL'
+			UPDATE IGNORE omexsiccatiocclink SET occid = ? WHERE occid = ?
+			SQL;
+			$stage = $LANG['ERROR_REMAPPING_EXS'];
+			$this->conn->execute_query($sql, [$targetOccid, $sourceOccid]);
+
+			//Remap occurrence dataset links
+			$sql = <<<'SQL'
+			UPDATE IGNORE omoccurdatasetlink SET occid = ? WHERE occid = ?
+			SQL;
+			$stage = $LANG['ERROR_REMAPPING_DATASET'];
+			$this->conn->execute_query($sql, [$targetOccid, $sourceOccid]);
+
+			//Remap loans
+			$sql = <<<'SQL'
+			UPDATE IGNORE omoccurloanslink SET occid = ? WHERE occid = ?
+			SQL;
+			$stage = $LANG['ERROR_REMAPPING_LOANS'];
+			$this->conn->execute_query($sql, [$targetOccid, $sourceOccid]);
+
+			//Remap checklists voucher links
+			$sql = <<<'SQL'
+			UPDATE IGNORE fmvouchers SET occid = ? WHERE occid = ?
+			SQL;
+			$stage = $LANG['ERROR_REMAPPING_VOUCHER'];
+			$this->conn->execute_query($sql, [$targetOccid, $sourceOccid]);
+
+			if(!$this->deleteOccurrence($sourceOccid)){
+				error_log(
+					'Error: Could not delete ' . $sourceOccid 
+						. ' while trying to merge into '. $targetOccid 
+				);
+				$this->errorArr[] = $LANG['ERROR_DELETING_OCCURRENCE'];
 				return false;
 			}
-		}
 
-		//Remap determinations
-		$sql = 'UPDATE IGNORE omoccurdeterminations SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
-		if(!$this->conn->query($sql)){
-			//$this->errorArr[] .= '; '.$LANG['ERROR_REMAPPING_DETS'].': '.$this->conn->error;
-			//$status = false;
+			$this->conn->commit();
+			return true;
+		} catch (\Throwable $th) {
+			error_log(
+				'Error: Merging Record ' . $sourceOccid . ' into '. $targetOccid 
+					. ' at '. $stage 
+					.', line: ' . $th->getLine() 
+					. ' : ' . $th->getMessage()
+			);
+			$this->errorArr[] = $stage . ' : ' . $th->getMessage();
+			return false;
+		} finally {
+			//Explicit Rollback if not committed
+			$this->conn->rollback();
 		}
-
-		//Remap images
-		$sql = 'UPDATE images SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
-		if(!$this->conn->query($sql)){
-			$this->errorArr[] .= '; '.$LANG['ERROR_REMAPPING_IMAGES'].': '.$this->conn->error;
-			$status = false;
-		}
-
-		//Remap paleo
-		if(isset($this->collMap['paleoActivated'])){
-			$sql = 'UPDATE omoccurpaleo SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
-			if(!$this->conn->query($sql)){
-				//$this->errorArr[] .= '; '.$LANG['ERROR_REMAPPING_PALEOS'].': '.$this->conn->error;
-				//$status = false;
-			}
-		}
-
-		//Delete source occurrence edits
-		$sql = 'DELETE FROM omoccuredits WHERE occid = '.$sourceOccid;
-		if(!$this->conn->query($sql)){
-			$this->errorArr[] .= '; '.$LANG['ERROR_REMAPPING_OCC_EDITS'].': '.$this->conn->error;
-			$status = false;
-		}
-
-		//Remap associations
-		$sql = 'UPDATE omoccurassociations SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
-		if(!$this->conn->query($sql)){
-			$this->errorArr[] .= '; '.$LANG['ERROR_REMAPPING_ASSOCS_1'].': '.$this->conn->error;
-			$status = false;
-		}
-		$sql = 'UPDATE omoccurassociations SET occidAssociate = '.$targetOccid.' WHERE occidAssociate = '.$sourceOccid;
-		if(!$this->conn->query($sql)){
-			$this->errorArr[] .= '; '.$LANG['ERROR_REMAPPING_ASSOCS_2'].': '.$this->conn->error;
-			$status = false;
-		}
-
-		//Remap comments
-		$sql = 'UPDATE omoccurcomments SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
-		if(!$this->conn->query($sql)){
-			$this->errorArr[] .= '; '.$LANG['ERROR_REMAPPING_COMMENTS'].': '.$this->conn->error;
-			$status = false;
-		}
-
-		//Remap genetic resources
-		$sql = 'UPDATE omoccurgenetic SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
-		if(!$this->conn->query($sql)){
-			$this->errorArr[] .= '; '.$LANG['ERROR_REMAPPING_GENETIC'].': '.$this->conn->error;
-			$status = false;
-		}
-
-		//Remap identifiers
-		$sql = 'UPDATE omoccuridentifiers SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
-		if(!$this->conn->query($sql)){
-			//$this->errorArr[] .= '; '.$LANG['ERROR_REMAPPING_OCCIDS'].': '.$this->conn->error;
-			//$status = false;
-		}
-
-		//Remap exsiccati
-		$sql = 'UPDATE omexsiccatiocclink SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
-		if(!$this->conn->query($sql)){
-			if(strpos($this->conn->error,'Duplicate') !== false){
-				$this->conn->query('DELETE FROM omexsiccatiocclink WHERE occid = '.$sourceOccid);
-			}
-			else{
-				$this->errorArr[] .= '; '.$LANG['ERROR_REMAPPING_EXS'].': '.$this->conn->error;
-				$status = false;
-			}
-		}
-
-		//Remap occurrence dataset links
-		$sql = 'UPDATE omoccurdatasetlink SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
-		if(!$this->conn->query($sql)){
-			if(strpos($this->conn->error,'Duplicate') !== false){
-				$this->conn->query('DELETE FROM omoccurdatasetlink WHERE occid = '.$sourceOccid);
-			}
-			else{
-				$this->errorArr[] .= '; '.$LANG['ERROR_REMAPPING_DATASET'].': '.$this->conn->error;
-				$status = false;
-			}
-		}
-
-		//Remap loans
-		$sql = 'UPDATE omoccurloanslink SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
-		if(!$this->conn->query($sql)){
-			if(strpos($this->conn->error,'Duplicate') !== false){
-				$this->conn->query('DELETE FROM omoccurloanslink WHERE occid = '.$sourceOccid);
-			}
-			else{
-				$this->errorArr[] .= '; '.$LANG['ERROR_REMAPPING_LOANS'].': '.$this->conn->error;
-				$status = false;
-			}
-		}
-
-		//Remap checklists voucher links
-		$sql = 'UPDATE fmvouchers SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
-		if(!$this->conn->query($sql)){
-			if(strpos($this->conn->error,'Duplicate') !== false){
-				$this->conn->query('DELETE FROM fmvouchers WHERE occid = '.$sourceOccid);
-			}
-			else{
-				$this->errorArr[] .= '; '.$LANG['ERROR_REMAPPING_VOUCHER'].': '.$this->conn->error;
-				$status = false;
-			}
-		}
-
-		if(!$this->deleteOccurrence($sourceOccid)){
-			$status = false;
-		}
-		return $status;
 	}
 
 	public function transferOccurrence($targetOccid,$transferCollid){

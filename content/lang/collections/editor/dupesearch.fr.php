@@ -24,5 +24,6 @@ $LANG['MERGE_RECORDS'] = 'Fusionner des Enregistrements';
 $LANG['MORE_INFO'] = 'Plus d\'Information';
 $LANG['MORE_INFO_ALT'] = 'Plus d\'informations sur la fusion des doublons';
 $LANG['NO_DUPES'] = 'Aucun enregistrement en double n\'a été localisé';
-
+$LANG['UNKNOWN_ERROR_WHILE_MERGING'] ='Une erreur inconnue s\'est produite lors de la fusion des occurrences';
+$LANG['CHECK_DETERMINATIONS_ALERT'] = 'Toutes les déterminations uniques ont été fusionnées dans cet enregistrement. Veuillez vérifier l\'onglet Historique des déterminations pour vous assurer qu\'il représente avec précision l\'historique des déterminations de votre dossier.';
 ?>

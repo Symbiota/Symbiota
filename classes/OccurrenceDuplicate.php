@@ -492,16 +492,12 @@ class OccurrenceDuplicate {
 
 
 	//Action functions
-	public function mergeRecords($targetOccid,$sourceOccid){
+	public function mergeRecords($targetOccid, $sourceOccid, $collId){
 		$status = true;
 		$editorManager = new OccurrenceEditorManager($this->conn);
-		if($editorManager->mergeRecords($targetOccid,$sourceOccid)){
-			if(!$editorManager->deleteOccurrence($sourceOccid)){
-				$this->errorStr = trim($editorManager->getErrorStr(),' ;');
-			}
-		}
-		else{
-			$this->errorStr = $editorManager->getErrorStr;
+		$editorManager->setCollId($collId);
+		if(!$editorManager->mergeRecords($targetOccid,$sourceOccid)){
+			$this->errorStr = $editorManager->getErrorStr();
 			$status = false;
 		}
 		return $status;
