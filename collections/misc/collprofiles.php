@@ -150,10 +150,10 @@ if ($SYMB_UID) {
 	<div role="main" id="innertext" style="padding-top:0">
 		<?php if ($collid && !$collid == 0){
 		?>
-			<section id="quicksearch-box" class="fieldset-like float-rt-no-overlap" style="margin:0">
+			<section id="quicksearch-box" class="fieldset-like float-rt-no-overlap" style="margin:0 -26rem 0 0;  width: 25rem; position:sticky; top: 1rem">
 				<h1><span><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></span></h1>
 				<div id="dialogContainer" style="position: relative;">
-					<form name="quicksearch" style="display: flex; align-items:center; gap:0.5rem" action="javascript:void(0);" onsubmit="directSubmitAction(event)">
+					<form name="quicksearch" style="display: flex; align-items:center; gap:0.5rem; flex-wrap: wrap" action="javascript:void(0);" onsubmit="directSubmitAction(event)">
 						<div>
 						<label for="catalog-number"><?php echo (isset($LANG['OCCURENCE_IDENTIFIER']) ? $LANG['OCCURENCE_IDENTIFIER'] : 'Catalog Number'); ?></label>
 						<span class="screen-reader-only">
