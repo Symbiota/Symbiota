@@ -153,14 +153,15 @@ if ($SYMB_UID) {
 			<section id="quicksearch-box" class="fieldset-like float-rt-no-overlap" style="margin:0">
 				<h1><span><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></span></h1>
 				<div id="dialogContainer" style="position: relative;">
-					<form name="quicksearch" action="javascript:void(0);" onsubmit="directSubmitAction(event)">
+					<form name="quicksearch" style="display: flex; align-items:center; gap:0.5rem" action="javascript:void(0);" onsubmit="directSubmitAction(event)">
+						<div>
 						<label for="catalog-number"><?php echo (isset($LANG['OCCURENCE_IDENTIFIER']) ? $LANG['OCCURENCE_IDENTIFIER'] : 'Catalog Number'); ?></label>
 						<span class="screen-reader-only">
 							<?php
 								echo (isset($LANG['IDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Search by Catalog Number, Occurrence ID, or Record ID.') . ' ';
 							?>
 						</span>
-						<input name="catalog-number" id="catalog-number" type="text" />
+						<input style="margin-bottom: 0" name="catalog-number" id="catalog-number" type="text" />
 						<a href="#" id="q_catalognumberinfo" style="text-decoration:none;">
 							<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO_ALT']; ?>" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>"/>
 						</a>
@@ -170,12 +171,14 @@ if ($SYMB_UID) {
 							?>
 							<button id="closeDialog">Close</button>
 						</dialog>
-						<br>
+						</div>
 						<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 						<input name="occindex" type="hidden" value="0" />
+						<div>
 						<label for="taxon-search"><?php echo (isset($LANG['TAXON']) ? $LANG['TAXON'] : 'Taxon'); ?></label>
-						<input name="taxon-search" id="taxon-search" type="text" />
-						<br>
+						<input style="margin-bottom: 0" name="taxon-search" id="taxon-search" type="text" />
+						</div>
+						<div style="display:flex; gap: 0.5rem">
 						<?php
 							if($editCode == 1 || $editCode == 2 || $editCode == 3){
 						?>
@@ -186,9 +189,10 @@ if ($SYMB_UID) {
 							}
 						?>
 
-						<button class="top-breathing-room-rel" type="submit" value='search' id="search-by-catalog-number-btn" title="<?php echo (isset($LANG['IDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Occurrence ID and Record ID also accepted.'); ?>">
+						<button type="submit" value='search' id="search-by-catalog-number-btn" title="<?php echo (isset($LANG['IDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Occurrence ID and Record ID also accepted.'); ?>">
 							<?php echo (isset($LANG['SEARCH']) ? $LANG['SEARCH'] : 'Search'); ?>
 						</button>
+						</div>
 					</form>
 				</div>
 			</section>
@@ -211,6 +215,7 @@ if ($SYMB_UID) {
 			</div>
 			<?php
 		}
+
 		if ($collid && isset($collData[$collid])) {
 			$collData = $collData[$collid];
 			$codeStr = ' (' . $collData['institutioncode'];
