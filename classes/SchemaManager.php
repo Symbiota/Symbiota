@@ -143,8 +143,11 @@ class SchemaManager extends Manager{
 		if($this->targetSchema == 'baseInstall'){
 			$filename .= '/config/schema/3.0/db_schema-3.0.sql';
 		}
-		else{
+		elseif($this->targetSchema < 3){
 			$filename .= '/config/schema/1.0/patches/db_schema_patch-'.$this->targetSchema.'.sql';
+		}
+		else{
+			$filename .= '/config/schema/3.0/patches/db_schema_patch-'.$this->targetSchema.'.sql';
 		}
 		if(file_exists($filename)){
 			if($fileHandler = fopen($filename, 'r')){
@@ -244,8 +247,14 @@ class SchemaManager extends Manager{
 			return false;
 		}
 		$password = $_POST['password'];
-		$this->conn = new mysqli($this->host, $this->username, $password, $this->database, $this->port);
-		if($this->conn->connect_error){
+		try{
+			$this->conn = new mysqli($this->host, $this->username, $password, $this->database, $this->port);
+			if($this->conn->connect_error){
+				$this->logOrEcho('Connection error: ' . $this->conn->connect_error);
+				return false;
+			}
+		}
+		catch(Exception $e){
 			$this->logOrEcho('Connection error: ' . $this->conn->connect_error);
 			return false;
 		}
@@ -260,7 +269,16 @@ class SchemaManager extends Manager{
 			$password = $_POST['password'];
 			$this->conn = new mysqli($this->host, $this->username, $password, $this->database, $this->port);
 		}
-		if(!$this->conn) return false;
+		if(!$this->conn){
+			$this->errorMessage = 'ERROR_NO_CONNECTION';
+			return false;
+		}
+		//Check to see if a base schema exists
+		if($rs = $this->conn->query('SHOW TABLES')){
+			if(!$rs->num_rows) return false;
+			$rs->free();
+		}
+		//Get version history
 		$sql = 'SELECT versionNumber, dateApplied FROM schemaversion ORDER BY id';
 		if($rs = $this->conn->query($sql)){
 			$versionHistory = array();
