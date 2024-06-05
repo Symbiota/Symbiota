@@ -560,8 +560,15 @@ function getParam(paramName) {
  * Define parameters to be looked for in `paramNames` array
  */
 function getSearchUrl() {
+  const formatPreference = document.getElementById("list-button").checked
+    ? "list"
+    : "table";
   const harvestUrl = location.href.slice(0, location.href.indexOf("search"));
-  const baseUrl = new URL(harvestUrl + "list.php");
+  const urlSuffix =
+    formatPreference === "list" ? "list.php" : "listtabledisplay.php";
+
+  const baseUrl = new URL(harvestUrl + urlSuffix);
+  console.log("deleteMe baseUrl is: " + baseUrl);
 
   // Clears array temporarily to avoid redundancy
   paramsArr = [];
@@ -701,7 +708,7 @@ function simpleSearch() {
   let isValid = errors.length == 0;
   if (isValid) {
     let searchUrl = getSearchUrl();
-    window.location = searchUrl;
+    window.location = searchUrl; // @TODO comment back in
   } else {
     handleValErrors(errors);
   }

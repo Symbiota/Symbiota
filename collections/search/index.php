@@ -530,6 +530,19 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 
 			<!-- Criteria panel -->
 			<div id="criteria-panel" style="position: sticky; top: 0; height: 100vh">
+			<fieldset class="bottom-breathing-room-rel">
+				<legend>
+					<?php echo $LANG['DISPLAY_FORMAT']; ?>
+				</legend>
+				<div style="display: flex; align-items: center;" class="bottom-breathing-room-rel">
+					<input style="margin-bottom:0; margin-right: 0.5rem;" name="display-format-pref" id="list-button" type="radio" value="list" checked />
+					<label for="list-button"><?php echo $LANG['LIST'] ?></label>
+				</div>
+				<div style="display: flex; align-items: center;">
+					<input style="margin-bottom:0; margin-right: 0.5rem;" name="display-format-pref" id="table-button" type="radio" value="table" /> 	
+					<label for="table-button"><?php echo $LANG['TABLE'] ?></label>
+				</div>
+			</fieldset>
 				<button id="search-btn" onclick="simpleSearch()"><?php echo $LANG['SEARCH'] ?></button>
 				<button id="reset-btn"><?php echo $LANG['RESET'] ?></button>
 				<h2><?php echo $LANG['CRITERIA'] ?></h2>
