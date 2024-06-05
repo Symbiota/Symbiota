@@ -569,7 +569,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 		ul.outerWidth(this.element.outerWidth());
 	}
 	const collectionSource = <?php echo isset($collectionSource) ? json_encode($collectionSource) : 'null'; ?>;
-	const collIdsFromUrl = <?php echo isset($collIdsFromUrl) ? json_encode($collIdsFromUrl) : 'null'; ?>;
+	const collIdsFromUrl = <?php echo isset($collIdsFromUrl) ? json_encode($collIdsFromUrl) : []; ?>;
 	if (collIdsFromUrl.length > 0) {
 		uncheckEverything();
 		checkTheCollectionsThatShouldBeChecked(collIdsFromUrl);
