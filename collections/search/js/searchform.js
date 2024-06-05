@@ -568,7 +568,6 @@ function getSearchUrl() {
     formatPreference === "list" ? "list.php" : "listtabledisplay.php";
 
   const baseUrl = new URL(harvestUrl + urlSuffix);
-  console.log("deleteMe baseUrl is: " + baseUrl);
 
   // Clears array temporarily to avoid redundancy
   paramsArr = [];
@@ -708,7 +707,7 @@ function simpleSearch() {
   let isValid = errors.length == 0;
   if (isValid) {
     let searchUrl = getSearchUrl();
-    window.location = searchUrl; // @TODO comment back in
+    window.location = searchUrl;
   } else {
     handleValErrors(errors);
   }
