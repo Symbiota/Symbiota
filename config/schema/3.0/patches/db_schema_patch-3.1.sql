@@ -103,6 +103,7 @@ UPDATE omoccurassociations
   WHERE associationType = "" AND occidAssociate IS NULL AND resourceUrl IS NULL AND verbatimSciname IS NOT NULL;
 
 
+# Corrects an issue with db_schema-3.0.sql. Will fail when udating 1.x schemas, thus ignore
 ALTER TABLE `omoccurdeterminations` 
   CHANGE COLUMN `identificationID` `sourceIdentifier` VARCHAR(45) NULL DEFAULT NULL ;
 
@@ -116,9 +117,11 @@ UPDATE omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid
 ALTER TABLE `omoccurrences` 
   ADD COLUMN `vitality` VARCHAR(150) NULL DEFAULT NULL AFTER `behavior`;
 
+
 #Standardize naming of indexes within occurrence table 
+SET FOREIGN_KEY_CHECKS=0;
+
 ALTER TABLE `omoccurrences` 
-  DROP INDEX `omossococcur_occidassoc_idx`,
   DROP INDEX `Index_collid`,
   DROP INDEX `UNIQUE_occurrenceID`,
   DROP INDEX `Index_sciname`,
@@ -127,7 +130,6 @@ ALTER TABLE `omoccurrences`
   DROP INDEX `Index_state`,
   DROP INDEX `Index_county`,
   DROP INDEX `Index_collector`,
-  DROP INDEX `Index_gui`,
   DROP INDEX `Index_ownerInst`,
   DROP INDEX `FK_omoccurrences_tid`,
   DROP INDEX `FK_omoccurrences_uid`,
@@ -184,10 +186,8 @@ ALTER TABLE `omoccurrences`
   ADD INDEX `IX_occurrences_dateEntered` (`dateEntered` ASC),
   ADD INDEX `IX_occurrences_dateLastModified` (`dateLastModified` ASC);
 
+SET FOREIGN_KEY_CHECKS=1; 
 
-#deprecate omoccurresource table in preference for omoccurassociations 
-ALTER TABLE `omoccurresource` 
-  RENAME TO  `deprecated_omoccurresource` ;
 
 ALTER TABLE `uploadspectemp` 
   ADD COLUMN `vitality` VARCHAR(150) NULL DEFAULT NULL AFTER `behavior`;
@@ -252,4 +252,10 @@ WHERE o.localitySecurityReason IS NULL AND e.fieldName = "localitySecurity" AND 
 AND e2.occid IS NULL;
 
 UPDATE omoccurrences SET localitySecurity=0 WHERE cultivationStatus=1 AND localitySecurity=1 AND localitySecurityReason IS NULL;
+
+
+# Deprecate omoccurresource table in preference for omoccurassociations. 
+# Table does not exist within db_schema-3.0, thus statement is expected to fail if this is a new 3.0 install
+ALTER TABLE `omoccurresource` 
+  RENAME TO  `deprecated_omoccurresource` ;
 
