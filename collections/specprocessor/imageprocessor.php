@@ -497,7 +497,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 										<div style="margin:5px 15px;">
 											<b><?php echo $LANG['SEL_URL_MAP_FILE']; ?>:</b>
 											<input type='hidden' name='MAX_FILE_SIZE' value='20000000' />
-											<button name='uploadfile' type='file' size='70' value="Choose File"><?php echo $LANG['CHOOSE_FILE']; ?></button>
+											<input name='uploadfile' type='file' size='70' value="Choose File">
 										</div>
 									</div>
 									<div id="submitDiv" class="profileDiv" style="clear:both;padding:15px;display:<?php echo ($projectType?'block':'none'); ?>">
