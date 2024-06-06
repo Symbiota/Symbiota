@@ -81,33 +81,35 @@ class SchemaManager extends Manager{
 						$sql = trim($sql, ',');
 						if($sql){
 							//$this->logOrEcho('Statement: ' . $sql, 1);
-							if($this->conn->query($sql)){
-								$this->logOrEcho('Success!', 1);
-								if(isset($this->warningArr['updated'])){
-									$this->logOrEcho('Following adjustments applied:', 2);
-									foreach($this->warningArr['updated'] as $colName => $adjustStr){
-										$this->logOrEcho($colName . ': ' . $adjustStr, 3);
-									}
-									unset($this->warningArr['updated']);
-								}
-								if($this->warningArr){
-									//Add these warnings to amendment file since they should be reapplied
-									if(!$this->amendmentFH) $this->amendmentFH = fopen($this->amendmentPath, 'w');
-									$this->logOrEcho('Following fragments excluded due to errors:', 2);
-									$failedSql = '';
-									foreach($this->warningArr as $errCode => $errArr){
-										foreach($errArr as $colName => $frag){
-											if($errCode == 'exists') $this->logOrEcho($colName.' already exists ', 3);
-											elseif($errCode == 'missing') $this->logOrEcho($colName.' does not exists ', 3);
-											$failedSql .= $frag;
+							try{
+								if($this->conn->query($sql)){
+									$this->logOrEcho('Success!', 1);
+									if(isset($this->warningArr['updated'])){
+										$this->logOrEcho('Following adjustments applied:', 2);
+										foreach($this->warningArr['updated'] as $colName => $adjustStr){
+											$this->logOrEcho($colName . ': ' . $adjustStr, 3);
 										}
+										unset($this->warningArr['updated']);
 									}
-									$failedSql = trim($failedSql, ', ') . ';';
-									fwrite($this->amendmentFH, '# '.$targetTable."\n");
-									fwrite($this->amendmentFH, $failedSql . "\n\n");
+									if($this->warningArr){
+										//Add these warnings to amendment file since they should be reapplied
+										if(!$this->amendmentFH) $this->amendmentFH = fopen($this->amendmentPath, 'w');
+										$this->logOrEcho('Following fragments excluded due to errors:', 2);
+										$failedSql = '';
+										foreach($this->warningArr as $errCode => $errArr){
+											foreach($errArr as $colName => $frag){
+												if($errCode == 'exists') $this->logOrEcho($colName.' already exists ', 3);
+												elseif($errCode == 'missing') $this->logOrEcho($colName.' does not exists ', 3);
+												$failedSql .= $frag;
+											}
+										}
+										$failedSql = trim($failedSql, ', ') . ';';
+										fwrite($this->amendmentFH, '# '.$targetTable."\n");
+										fwrite($this->amendmentFH, $failedSql . "\n\n");
+									}
 								}
 							}
-							else{
+							catch(Exception $e){
 								$sql = trim($sql,', ') . ';';
 								if(!$this->amendmentFH) $this->amendmentFH = fopen($this->amendmentPath, 'w');
 								fwrite($this->amendmentFH, '# ERROR: '.$this->conn->error."\n\n");
@@ -143,13 +145,14 @@ class SchemaManager extends Manager{
 		if($this->targetSchema == 'baseInstall'){
 			$filename .= '/config/schema/3.0/db_schema-3.0.sql';
 		}
-		elseif($this->targetSchema < 3){
+		elseif($this->targetSchema <= 3){
 			$filename .= '/config/schema/1.0/patches/db_schema_patch-'.$this->targetSchema.'.sql';
 		}
 		else{
 			$filename .= '/config/schema/3.0/patches/db_schema_patch-'.$this->targetSchema.'.sql';
 		}
 		if(file_exists($filename)){
+			$this->logOrEcho('Evaluating DB schema file: ' . $filename);
 			if($fileHandler = fopen($filename, 'r')){
 				$sqlArr = array();
 				$cnt = 1;
@@ -191,7 +194,8 @@ class SchemaManager extends Manager{
 		if($targetTable){
 			$this->activeTableArr = array();
 			$sql = 'SHOW COLUMNS FROM ' . $targetTable;
-			if($rs = $this->conn->query($sql)){
+			try{
+				$rs = $this->conn->query($sql);
 				while($r = $rs->fetch_object()){
 					$fieldName = strtolower($r->Field);
 					$type = $r->Type;
@@ -204,7 +208,7 @@ class SchemaManager extends Manager{
 				}
 				$rs->free();
 			}
-			else{
+			catch(Exception $e){
 				$this->logOrEcho('ERROR: '.$this->conn->error, 2);
 				$this->logOrEcho($sql, 2);
 			}

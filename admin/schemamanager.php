@@ -95,7 +95,7 @@ $IS_ADMIN = true;
 								<select name="schemaCode">
 									<?php
 									if($curentVersion){
-										$schemaPatchArr = array(1.1, 1.2, 3.0, 3.1);
+										$schemaPatchArr = array('1.1', '1.2', '3.0', '3.1');
 										foreach($schemaPatchArr as $schemaOption){
 											if($schemaOption > $curentVersion) echo '<option value="' . $schemaOption . '">Schema Patch ' . $schemaOption . '</option>';
 										}
