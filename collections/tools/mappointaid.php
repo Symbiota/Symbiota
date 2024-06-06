@@ -64,7 +64,12 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 			document.getElementById("lngbox").value = parseFloat(lng).toFixed(5);
 		}
 
-		//Function For refreshing markers based upon user input
+		function clearForm() {
+			document.getElementById("latbox").value = "";
+			document.getElementById("lngbox").value = "";
+			document.getElementById("errRadius").value = "";
+		}
+
 		//Function For Submission
 		function SubmitCoordinates(lat, lng) {
 			opener.document.getElementById("decimallatitude").value = lat;
@@ -112,33 +117,62 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 
 			map.mapLayer.addControl(drawControl);
 			const markerControl = document.querySelector(".leaflet-draw-draw-marker");
-			if(markerControl) markerControl.click();
 
 			let marker;
+
+			let deleteOn = false;
+			map.mapLayer.on(L.Draw.Event.DELETESTART, () => deleteOn = true)
+			map.mapLayer.on(L.Draw.Event.DELETESTOP, () => deleteOn = false)
 
 			function createMarker(lat, lng)  {
 				drawnItems.clearLayers();
 				if(marker) map.mapLayer.removeLayer(marker);
 
 				latlng = [lat,lng];
+
 				setLatLngForm(lat, lng);
 
+				function handleModeClick() {
+					if(deleteOn) {
+						//Ensures marker is removed
+						map.mapLayer.removeLayer(marker);
+					} else {
+						try {
+							//Very Jank and all the other ways current are also Jank 
+							drawControl._toolbars.edit._modes.edit.handler.enable()
+						} catch(e) {
+							console.log("Failed to enable edit")
+						}
+					}
+				}
+
 				marker = L.marker([lat, lng])
+					.on('click', handleModeClick)
+
+				map.mapLayer.on('draw:deleted', e => {
+					clearForm()
+				})
 
 				if(errRadius && errRadius > 0) {
-					marker.addTo(map.mapLayer);
 					const circ = L.circle([lat, lng], errRadius)
 						.on('drag', e=> {
 							const pos = e.target.getLatLng()
-
 							setLatLngForm(pos.lat, pos.lng);
-
-							map.mapLayer.removeLayer(marker)
-							marker = L.marker([pos.lat, pos.lng])
-							.addTo(map.mapLayer) 
+							marker.setLatLng(pos);
 						})
+						.on('click', handleModeClick)
 						.setStyle(map.DEFAULT_SHAPE_OPTIONS)
 					.addTo(drawnItems);
+
+					marker.on('drag', e => {
+						const pos = e.target.getLatLng()
+						setLatLngForm(pos.lat, pos.lng);
+						circ.setLatLng(pos);
+						//Jank way of reseting the edit handle
+						circ.editing.disable();
+						circ.editing.enable();
+					}).addTo(drawnItems);
+
 
 					map.mapLayer.fitBounds(circ.getBounds());
 
@@ -163,10 +197,11 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 					map.mapLayer.on('draw:editstop', e => {
 						map.mapLayer.removeLayer(marker);
 						marker = L.marker([latlng[0], latlng[1]])
-						.addTo(map.mapLayer) 
+						.addTo(drawnItems) 
 					})
 
 				} else {
+
 					marker.on('drag', e => {
 						const pos = e.target.getLatLng();
 						setLatLngForm(pos.lat, pos.lng);
@@ -179,6 +214,7 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 					map.mapLayer.on('draw:edited', function(e) {
 						latlng = getLatLng();
 					})
+
 
 					marker.addTo(drawnItems);
 
@@ -203,15 +239,13 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 					createMarker(lat, lng)
 
 				} 
-
-				if(markerControl) { 
-					setTimeout(() => markerControl.click(), 50);
-				}
 			})
 
 			//Draw marker if one exists
 			if(latlng) {
 				createMarker(latlng[0], latlng[1]);
+			} else if(markerControl) {
+				markerControl.click();
 			}
 		}
 
@@ -262,7 +296,7 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 
 			function drawError() {
 				if(!marker || isNaN(errRadius) || errRadius <= 0) return;
-			if(errCircle) errCircle.setMap();
+				if(errCircle) errCircle.setMap();
 
 				errCircle = new google.maps.Circle({
 					center: new google.maps.LatLng(latlng[0], latlng[1]),
@@ -330,9 +364,9 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 			} 
 			<?php if(empty($GOOGLE_MAP_KEY)) { ?> 
 			leafletInit();
-		<?php } else { ?> 
+			<?php } else { ?> 
 			googleInit();
-	<?php } ?>
+			<?php } ?>
 		}
 
 		function updateParentForm(f) {
