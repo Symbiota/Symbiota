@@ -778,7 +778,7 @@ class GeographicThesaurus extends Manager {
 			$sql .= ' GROUP BY geoterm ';
 		}
 
-		$sql .= ' ORDER BY g.geoterm, CHAR_LENGTH(g.geoterm)';
+		$sql .= ' ORDER BY CHAR_LENGTH(g.geoterm), g.geoterm ';
 
 		$result = $this->conn->execute_query($sql, $params);
 
