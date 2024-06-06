@@ -129,6 +129,14 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 			map.mapLayer.on(L.Draw.Event.EDITSTART, () => editOn = true)
 			map.mapLayer.on(L.Draw.Event.EDITSTOP, () => editOn = false)
 
+			function moveCircle(c, pos) {
+				c.setLatLng(pos);
+				if(editOn) {
+					circ.editing.disable();
+					circ.editing.enable();
+				}
+			}
+
 			function createMarker(lat, lng)  {
 				drawnItems.clearLayers();
 				errRadius = parseFloat(document.getElementById("errRadius").value);
@@ -178,12 +186,8 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 					.on('drag', e => {
 						const pos = e.target.getLatLng();
 						setLatLngForm(pos.lat, pos.lng);
-
 						if(circ) {
-							circ.setLatLng(pos);
-							//Jank way of reseting the edit handle
-							circ.editing.disable();
-							circ.editing.enable();
+							moveCircle(circ, pos);
 						}
 					})
 					.addTo(drawnItems)
@@ -225,24 +229,31 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 				if(radiusInput) {
 					radiusInput.addEventListener("change", event => {
 						const radius = parseFloat(event.target.value);
-						if(circ) {
+
+						if(!radius && circ) {
+							drawnItems.removeLayer(circ);
+						} else if(circ) {
 							circ.setRadius(radius);
 							if(editOn) {
 								circ.editing.disable();
 								circ.editing.enable();
 							}
+							map.mapLayer.fitBounds(circ.getBounds())
 						} else if(radius) {
 							if(!editOn) errRadius = radius;
 							circ = L.circle(latlng, radius); 
 							addCircleEvents(circ);
-						}
-						console.log(radius)
+							map.mapLayer.fitBounds(circ.getBounds())
+						} 
 
-						map.mapLayer.fitBounds(circ.getBounds())
 					});
 				}
 
-				const onFormChange = () => marker.setLatLng(getLatLng());
+				const onFormChange = () => {
+					const pos = getLatLng();
+					marker.setLatLng(pos);
+					if(circ) moveCircle(circ, pos);
+				};
 
 				latInput.addEventListener("change", onFormChange);
 				lngInput.addEventListener("change", onFormChange);
@@ -251,7 +262,7 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 				if(!marker) { 
 					const pos = getLatLng();
 					createMarker();
-				}
+				} 
 			}
 			latInput.addEventListener("change", onFormChange);
 			lngInput.addEventListener("change", onFormChange);
