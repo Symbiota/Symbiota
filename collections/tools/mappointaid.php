@@ -126,102 +126,103 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 
 			function createMarker(lat, lng)  {
 				drawnItems.clearLayers();
-				if(marker) map.mapLayer.removeLayer(marker);
 
 				latlng = [lat,lng];
 
 				setLatLngForm(lat, lng);
 
+				let circ = errRadius && errRadius > 0?
+					L.circle(latlng, errRadius): 
+					false;
+				let marker = L.marker(latlng);
+
 				function handleModeClick() {
-					if(deleteOn) {
+					if(deleteOn && circ) {
 						//Ensures marker is removed
-						map.mapLayer.removeLayer(marker);
-					} else {
-						try {
-							//Very Jank and all the other ways current are also Jank 
-							drawControl._toolbars.edit._modes.edit.handler.enable()
-						} catch(e) {
-							console.log("Failed to enable edit")
+						drawnItems.removeLayer(marker);
+						if(circ) {
+							drawnItems.removeLayer(circ);
 						}
+					} else {
 					}
 				}
 
-				marker = L.marker([lat, lng])
-					.on('click', handleModeClick)
+				function enableEdit() {
+					try {
+						//Very Jank and all the other ways current are also Jank 
+						drawControl._toolbars.edit._modes.edit.button.click()
+					} catch(e) {
+						console.log("Failed to enable edit")
+					}
+				}
 
-				map.mapLayer.on('draw:deleted', e => {
-					clearForm()
-				})
+				function handleMarkerClick() {
+					if(deleteOn && circ) drawnItems.removeLayer(circ);
+					else enableEdit();
+				}
 
-				if(errRadius && errRadius > 0) {
-					const circ = L.circle([lat, lng], errRadius)
+				function handleCircleClick() {
+					if(deleteOn) drawnItems.removeLayer(marker);
+					else enableEdit();
+				}
+
+				marker
+					.on('click', handleMarkerClick)
+					.on('drag', e => {
+						const pos = e.target.getLatLng();
+						setLatLngForm(pos.lat, pos.lng);
+
+						if(circ) {
+							circ.setLatLng(pos);
+							//Jank way of reseting the edit handle
+							circ.editing.disable();
+							circ.editing.enable();
+						}
+					})
+					.addTo(drawnItems)
+				if(circ) {
+					circ
 						.on('drag', e=> {
 							const pos = e.target.getLatLng()
 							setLatLngForm(pos.lat, pos.lng);
 							marker.setLatLng(pos);
 						})
-						.on('click', handleModeClick)
+						.on('click', handleCircleClick)
 						.setStyle(map.DEFAULT_SHAPE_OPTIONS)
 					.addTo(drawnItems);
-
-					marker.on('drag', e => {
-						const pos = e.target.getLatLng()
-						setLatLngForm(pos.lat, pos.lng);
-						circ.setLatLng(pos);
-						//Jank way of reseting the edit handle
-						circ.editing.disable();
-						circ.editing.enable();
-					}).addTo(drawnItems);
-
-
-					map.mapLayer.fitBounds(circ.getBounds());
-
-					map.mapLayer.on('draw:deleted', e => {
-						map.mapLayer.removeLayer(marker);
-					})
 
 					map.mapLayer.on('draw:editresize', e => {
 						document.getElementById("errRadius").value = e.layer._mRadius.toFixed(5);
 					})
 
-					map.mapLayer.on('draw:edited', function(e) {
+					map.mapLayer.fitBounds(circ.getBounds());
+				} else {
+					map.mapLayer.setView(latlng, map.mapLayer.getZoom());
+				}
+
+				map.mapLayer
+					.on('draw:deleted', e => { 
+						clearForm();
+					})
+					.on('draw:deletestop', e => { 
+						const hasCircle = circ && drawnItems.hasLayer(circ);
+						const hasMarker = drawnItems.hasLayer(marker);
+						//Add Back marker or Circle if change Reverted and were present
+						if(hasCircle && !hasMarker) {
+							drawnItems.addLayer(marker);
+						} else if(hasMarker && circ && !hasCircle) {
+							drawnItems.addLayer(circ);
+						}
+					})
+					.on('draw:edited', function(e) {
 						latlng = getLatLng();
 						errRadius = parseFloat(document.getElementById("errRadius").value);
 					})
-
-					map.mapLayer.on('draw:editstop', e => {
+					.on('draw:editstop', e => {
 						setLatLngForm(latlng[0], latlng[1]);
 						document.getElementById("errRadius").value = errRadius;
 					})
-
-					map.mapLayer.on('draw:editstop', e => {
-						map.mapLayer.removeLayer(marker);
-						marker = L.marker([latlng[0], latlng[1]])
-						.addTo(drawnItems) 
-					})
-
-				} else {
-
-					marker.on('drag', e => {
-						const pos = e.target.getLatLng();
-						setLatLngForm(pos.lat, pos.lng);
-					})
-
-					map.mapLayer.on('draw:editstop', e => {
-						setLatLngForm(latlng[0], latlng[1]);
-					})
-
-					map.mapLayer.on('draw:edited', function(e) {
-						latlng = getLatLng();
-					})
-
-
-					marker.addTo(drawnItems);
-
-					map.mapLayer.setView(latlng, map.mapLayer.getZoom());
-				}
 			} 
-
 			onFormChange = (event) => { 
 				errRadius = parseFloat(event.target.value);
 				const pos = getLatLng();
