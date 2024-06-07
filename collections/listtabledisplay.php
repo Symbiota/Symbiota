@@ -160,8 +160,12 @@ $searchVar = $collManager->getQueryTermStr();
 			</div>
 			<div class="navpath">
 				<a href="../index.php"><?php echo htmlspecialchars((isset($LANG['NAV_HOME']) ? $LANG['NAV_HOME'] : 'Home'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-				<a href="index.php"><?php echo htmlspecialchars((isset($LANG['NAV_COLLECTIONS']) ? $LANG['NAV_COLLECTIONS'] : 'Collections'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-				<a href="<?php echo $actionPage ?>"><?php echo htmlspecialchars((isset($LANG['NAV_SEARCH']) ? $LANG['NAV_SEARCH'] : 'Search Criteria'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+				<?php if($comingFrom !== 'search/index.php'){ ?>
+					<a href="index.php"><?php echo htmlspecialchars((isset($LANG['NAV_COLLECTIONS']) ? $LANG['NAV_COLLECTIONS'] : 'Collections'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+					<a href="<?php echo $CLIENT_ROOT . '/collections/harvestparams.php' ?>"><?php echo htmlspecialchars((isset($LANG['NAV_SEARCH']) ? $LANG['NAV_SEARCH'] : 'Search Criteria'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+				<?php }else{ ?>
+					<a href="<?php echo $CLIENT_ROOT . '/collections/search/index.php' ?>"><?php echo htmlspecialchars((isset($LANG['NAV_SEARCH']) ? $LANG['NAV_SEARCH'] : 'Search Criteria'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+				<?php } ?>
 				<b><?php echo (isset($LANG['SPEC_REC_TAB']) ? $LANG['SPEC_REC_TAB'] : 'Specimen Records Table'); ?></b>
 			</div>
 		</div>
