@@ -117,7 +117,6 @@ $_SESSION['citationvar'] = $searchVar;
 			margin-left: 10px;
 		}
 		#tabs {
-			font-size: 1rem;
 			width:95%;
 		}
 	</style>

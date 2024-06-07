@@ -157,6 +157,7 @@ hr {
 
 #tabs {
   font-family: var(--body-font-family);
+  font-size: var(--body-font-size);
 }
 
 #tabs div:first-child {
@@ -169,10 +170,6 @@ hr {
 
 #tabs a:hover {
   color: var(--bright-color);
-}
-
-#tabs table {
-  width: 90%;
 }
 
 /***********************************************************************/
