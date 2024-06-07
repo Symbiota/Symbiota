@@ -133,6 +133,25 @@ if ($SYMB_UID) {
 		.bigger-left-margin-rel {
 			margin-left: 3rem;
 		}
+
+		@media (min-width: 1880px) {
+			#quicksearch-box {
+				margin: 0 -26rem 0 0;
+				width: 25rem;
+				top: 1rem;
+				float: right;
+				position:sticky;
+			}
+		}
+		@media (max-width: 1880px) {
+			#quicksearch-box {
+				width:100%;
+				margin: 1rem 0;
+			}
+			#quicksearch-btn-container {
+				justify-content: right
+			}
+		}
 	</style>
 	<link href="<?php echo $CLIENT_ROOT ?>/collections/search/css/searchStyles.css?ver=1" type="text/css" rel="stylesheet" />
 	<link href="<?php echo $CLIENT_ROOT ?>/collections/search/css/searchStylesInner.css" type="text/css" rel="stylesheet" />
@@ -150,7 +169,7 @@ if ($SYMB_UID) {
 	<div role="main" id="innertext" style="padding-top:0">
 		<?php if ($collid && !$collid == 0){
 		?>
-			<section id="quicksearch-box" class="fieldset-like float-rt-no-overlap" style="margin:0 -26rem 0 0;  width: 25rem; position:sticky; top: 1rem">
+			<section id="quicksearch-box" class="fieldset-like" >
 				<h1><span><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></span></h1>
 				<div id="dialogContainer" style="position: relative;">
 					<form name="quicksearch" style="display: flex; align-items:center; gap:0.5rem; flex-wrap: wrap" action="javascript:void(0);" onsubmit="directSubmitAction(event)">
@@ -178,20 +197,19 @@ if ($SYMB_UID) {
 						<label for="taxon-search"><?php echo (isset($LANG['TAXON']) ? $LANG['TAXON'] : 'Taxon'); ?></label>
 						<input style="margin-bottom: 0" name="taxon-search" id="taxon-search" type="text" />
 						</div>
-						<div style="display:flex; gap: 0.5rem">
-						<?php
-							if($editCode == 1 || $editCode == 2 || $editCode == 3){
-						?>
-							<button type="submit" id="search-by-catalog-number-admin-btn" value="edit"> 
-								<?php echo (isset($LANG['OCCURRENCE_EDITOR']) ? $LANG['OCCURRENCE_EDITOR'] : 'Edit'); ?>
+						<div id="quicksearch-btn-container" style="display:flex; gap: 0.5rem; flex-grow:1">
+							<?php
+								if($editCode == 1 || $editCode == 2 || $editCode == 3){
+							?>
+								<button type="submit" id="search-by-catalog-number-admin-btn" value="edit"> 
+									<?php echo (isset($LANG['OCCURRENCE_EDITOR']) ? $LANG['OCCURRENCE_EDITOR'] : 'Edit'); ?>
+								</button>
+							<?php
+								}
+							?>
+							<button type="submit" value='search' id="search-by-catalog-number-btn" title="<?php echo (isset($LANG['IDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Occurrence ID and Record ID also accepted.'); ?>">
+								<?php echo (isset($LANG['SEARCH']) ? $LANG['SEARCH'] : 'Search'); ?>
 							</button>
-						<?php
-							}
-						?>
-
-						<button type="submit" value='search' id="search-by-catalog-number-btn" title="<?php echo (isset($LANG['IDENTIFIER_PLACEHOLDER_LIST']) ? $LANG['IDENTIFIER_PLACEHOLDER_LIST'] : 'Occurrence ID and Record ID also accepted.'); ?>">
-							<?php echo (isset($LANG['SEARCH']) ? $LANG['SEARCH'] : 'Search'); ?>
-						</button>
 						</div>
 					</form>
 				</div>
@@ -207,13 +225,6 @@ if ($SYMB_UID) {
 				$collManager->updateStatistics(true);
 				echo '<hr/>';
 			}
-		}
-		if ($editCode && $collid) {
-			?>
-			<div style="float:right;margin:3px;cursor:pointer;" onclick="toggleById('controlpanel');" title="<?php echo (isset($LANG['TOGGLE_MAN']) ? $LANG['TOGGLE_MAN'] : 'Toggle Manager\'s Control Panel'); ?>">
-				<img style='width:1.7em;border:0px;' src='../../images/tochild.png' alt="edit icon" />
-			</div>
-			<?php
 		}
 
 		if ($collid && isset($collData[$collid])) {
@@ -241,9 +252,13 @@ if ($SYMB_UID) {
 				}
 				echo '</div>';
 			}
+
 			if ($editCode) {
 				?>
-				<div id="controlpanel" style="margin-top: 4rem; display:<?php echo ($eMode ? 'block' : 'none'); ?>;">
+				<button style="margin-bottom: 0.5rem" type="button" onclick="toggleById('controlpanel');" >
+					<?= $LANG['TOGGLE_MAN'] ?>
+				</button>
+				<div id="controlpanel" style="display:<?php echo ($eMode ? 'block' : 'none'); ?>;">
 					<section class="fieldset-like no-left-margin">
 						<h1><span><?php echo (isset($LANG['DAT_EDIT']) ? $LANG['DAT_EDIT'] : 'Data Editor Control Panel'); ?></span></h1>
 						<ul>
