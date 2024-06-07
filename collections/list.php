@@ -152,7 +152,7 @@ $_SESSION['citationvar'] = $searchVar;
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
 		<h1 class="page-heading">Search Results (List)</h1>
-		<div id="tabs">
+		<div id="tabs" style="margin-bottom: 1rem">
 			<ul>
 				<li>
 					<a id="taxatablink" href='<?php echo 'checklist.php?' . htmlspecialchars($searchVar, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE | ENT_QUOTES) . '&taxonfilter=' . htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE | ENT_QUOTES); ?>'>
