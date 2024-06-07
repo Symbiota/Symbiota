@@ -62,7 +62,7 @@ $clManager->setProj($pid);
 						if($projName == 'Miscellaneous Inventories') $projName = $LANG['MISC_INVENTORIES'];
 						echo $projName;
 						?>
-						<a class="button button-tertiary btn-medium-font" href="<?php echo "clgmap.php?pid=" . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" title='<?php echo htmlspecialchars($LANG['SHOW_MAP'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>'>
+						<a class="button button-tertiary btn-medium-font" style="gap:0.5rem" href="<?php echo "clgmap.php?pid=" . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" title='<?php echo htmlspecialchars($LANG['SHOW_MAP'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>'>
 							<?php echo $LANG['MAP']; ?> <img src='../images/world.png' style='width:1em;border:0' alt='<?php echo $LANG['IMG_OF_GLOBE']; ?>' />
 						</a>
 					</h2>
