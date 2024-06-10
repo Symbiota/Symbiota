@@ -64,7 +64,12 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 			document.getElementById("lngbox").value = parseFloat(lng).toFixed(5);
 		}
 
-		//Function For refreshing markers based upon user input
+		function clearForm() {
+			document.getElementById("latbox").value = "";
+			document.getElementById("lngbox").value = "";
+			document.getElementById("errRadius").value = "";
+		}
+
 		//Function For Submission
 		function SubmitCoordinates(lat, lng) {
 			opener.document.getElementById("decimallatitude").value = lat;
@@ -112,86 +117,153 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 
 			map.mapLayer.addControl(drawControl);
 			const markerControl = document.querySelector(".leaflet-draw-draw-marker");
-			if(markerControl) markerControl.click();
 
 			let marker;
+			let circ;
+
+			let deleteOn = false;
+			map.mapLayer.on(L.Draw.Event.DELETESTART, () => deleteOn = true)
+			map.mapLayer.on(L.Draw.Event.DELETESTOP, () => deleteOn = false)
+
+			let editOn = false;
+			map.mapLayer.on(L.Draw.Event.EDITSTART, () => editOn = true)
+			map.mapLayer.on(L.Draw.Event.EDITSTOP, () => editOn = false)
+
+			function moveCircle(c, pos) {
+				c.setLatLng(pos);
+				if(editOn) {
+					circ.editing.disable();
+					circ.editing.enable();
+				}
+			}
 
 			function createMarker(lat, lng)  {
 				drawnItems.clearLayers();
-				if(marker) map.mapLayer.removeLayer(marker);
+				errRadius = parseFloat(document.getElementById("errRadius").value);
 
 				latlng = [lat,lng];
+
 				setLatLngForm(lat, lng);
 
-				marker = L.marker([lat, lng])
+				circ = errRadius && errRadius > 0?
+					L.circle(latlng, errRadius): 
+					false;
+				marker = L.marker(latlng);
 
-				if(errRadius && errRadius > 0) {
-					marker.addTo(map.mapLayer);
-					const circ = L.circle([lat, lng], errRadius)
+				function enableEdit() {
+					try {
+						//Very Jank and all the other ways current are also Jank 
+						drawControl._toolbars.edit._modes.edit.button.click()
+					} catch(e) {
+						console.log("Failed to enable edit")
+					}
+				}
+
+				function handleMarkerClick() {
+					if(deleteOn && circ) drawnItems.removeLayer(circ);
+					else enableEdit();
+				}
+
+				function handleCircleClick() {
+					if(deleteOn) drawnItems.removeLayer(marker);
+					else enableEdit();
+				}
+
+				function addCircleEvents(circle) {
+					circle
 						.on('drag', e=> {
 							const pos = e.target.getLatLng()
-
 							setLatLngForm(pos.lat, pos.lng);
-
-							map.mapLayer.removeLayer(marker)
-							marker = L.marker([pos.lat, pos.lng])
-							.addTo(map.mapLayer) 
+							marker.setLatLng(pos);
 						})
+						.on('click', handleCircleClick)
 						.setStyle(map.DEFAULT_SHAPE_OPTIONS)
 					.addTo(drawnItems);
+				}
 
-					map.mapLayer.fitBounds(circ.getBounds());
-
-					map.mapLayer.on('draw:deleted', e => {
-						map.mapLayer.removeLayer(marker);
+				marker
+					.on('click', handleMarkerClick)
+					.on('drag', e => {
+						const pos = e.target.getLatLng();
+						setLatLngForm(pos.lat, pos.lng);
+						if(circ) {
+							moveCircle(circ, pos);
+						}
 					})
+					.addTo(drawnItems)
+				if(circ) {
+					addCircleEvents(circ);
 
 					map.mapLayer.on('draw:editresize', e => {
 						document.getElementById("errRadius").value = e.layer._mRadius.toFixed(5);
 					})
 
-					map.mapLayer.on('draw:edited', function(e) {
+					map.mapLayer.fitBounds(circ.getBounds());
+				} else {
+					map.mapLayer.setView(latlng, map.mapLayer.getZoom());
+				}
+
+				map.mapLayer
+					.on('draw:deleted', e => { 
+						errRadius = 0;
+						clearForm();
+					})
+					.on('draw:deletestop', e => { 
+						const hasCircle = circ && drawnItems.hasLayer(circ);
+						const hasMarker = drawnItems.hasLayer(marker);
+						//Add Back marker or Circle if change Reverted and were present
+						if(hasCircle && !hasMarker) {
+							drawnItems.addLayer(marker);
+						} else if(hasMarker && circ && !hasCircle) {
+							drawnItems.addLayer(circ);
+						}
+					})
+					.on('draw:edited', function(e) {
 						latlng = getLatLng();
 						errRadius = parseFloat(document.getElementById("errRadius").value);
 					})
-
-					map.mapLayer.on('draw:editstop', e => {
+					.on('draw:editstop', e => {
 						setLatLngForm(latlng[0], latlng[1]);
 						document.getElementById("errRadius").value = errRadius;
 					})
+				if(radiusInput) {
+					radiusInput.addEventListener("change", event => {
+						const radius = parseFloat(event.target.value);
 
-					map.mapLayer.on('draw:editstop', e => {
-						map.mapLayer.removeLayer(marker);
-						marker = L.marker([latlng[0], latlng[1]])
-						.addTo(map.mapLayer) 
-					})
+						if(!radius && circ) {
+							drawnItems.removeLayer(circ);
+						} else if(circ) {
+							circ.setRadius(radius);
+							if(editOn) {
+								circ.editing.disable();
+								circ.editing.enable();
+							}
+							map.mapLayer.fitBounds(circ.getBounds())
+						} else if(radius) {
+							if(!editOn) errRadius = radius;
+							circ = L.circle(latlng, radius); 
+							addCircleEvents(circ);
+							map.mapLayer.fitBounds(circ.getBounds())
+						} 
 
-				} else {
-					marker.on('drag', e => {
-						const pos = e.target.getLatLng();
-						setLatLngForm(pos.lat, pos.lng);
-					})
-
-					map.mapLayer.on('draw:editstop', e => {
-						setLatLngForm(latlng[0], latlng[1]);
-					})
-
-					map.mapLayer.on('draw:edited', function(e) {
-						latlng = getLatLng();
-					})
-
-					marker.addTo(drawnItems);
-
-					map.mapLayer.setView(latlng, map.mapLayer.getZoom());
+					});
 				}
-			} 
 
+				const onFormChange = () => {
+					const pos = getLatLng();
+					marker.setLatLng(pos);
+					if(circ) moveCircle(circ, pos);
+				};
+
+				latInput.addEventListener("change", onFormChange);
+				lngInput.addEventListener("change", onFormChange);
+			} 
 			onFormChange = (event) => { 
-				errRadius = parseFloat(event.target.value);
-				const pos = getLatLng();
-				if(pos) createMarker(pos[0], pos[1]);
+				if(!marker) { 
+					const pos = getLatLng();
+					createMarker();
+				} 
 			}
-			if(radiusInput) radiusInput.addEventListener("change", onFormChange);
 			latInput.addEventListener("change", onFormChange);
 			lngInput.addEventListener("change", onFormChange);
 
@@ -203,15 +275,13 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 					createMarker(lat, lng)
 
 				} 
-
-				if(markerControl) { 
-					setTimeout(() => markerControl.click(), 50);
-				}
 			})
 
 			//Draw marker if one exists
 			if(latlng) {
 				createMarker(latlng[0], latlng[1]);
+			} else if(markerControl) {
+				markerControl.click();
 			}
 		}
 
@@ -262,7 +332,7 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 
 			function drawError() {
 				if(!marker || isNaN(errRadius) || errRadius <= 0) return;
-			if(errCircle) errCircle.setMap();
+				if(errCircle) errCircle.setMap();
 
 				errCircle = new google.maps.Circle({
 					center: new google.maps.LatLng(latlng[0], latlng[1]),
@@ -330,9 +400,9 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 			} 
 			<?php if(empty($GOOGLE_MAP_KEY)) { ?> 
 			leafletInit();
-		<?php } else { ?> 
+			<?php } else { ?> 
 			googleInit();
-	<?php } ?>
+			<?php } ?>
 		}
 
 		function updateParentForm(f) {

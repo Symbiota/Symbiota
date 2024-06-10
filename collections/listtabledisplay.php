@@ -7,6 +7,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ?? false;
 $SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
 $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.php";
+$comingFrom = array_key_exists('comingFrom', $_REQUEST) ? htmlspecialchars($_REQUEST['comingFrom'], HTML_SPECIAL_CHARS_FLAGS) : '';
 
 $page = array_key_exists('page',$_REQUEST) ? $_REQUEST['page'] : 1;
 $tableCount= array_key_exists('tablecount',$_REQUEST) ? $_REQUEST['tablecount'] : 1000;
@@ -67,7 +68,8 @@ $searchVar = $collManager->getQueryTermStr();
 				</div>
 				-->
 				<form action="list.php" method="post" style="float:left">
-					<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;" title="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>"  aria-label="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>">
+					<input name="comingFrom" type="hidden" value="<?php echo $comingFrom; ?>" />
+					<button type="submit" class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;" title="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>"  aria-label="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>">
 						<img src="<?php echo $CLIENT_ROOT; ?>/images/list_FILL0_wght400_GRAD0_opsz24.svg" style="width:1.3em" alt="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>"/>
 					</button>
 					<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
@@ -158,8 +160,12 @@ $searchVar = $collManager->getQueryTermStr();
 			</div>
 			<div class="navpath">
 				<a href="../index.php"><?php echo htmlspecialchars((isset($LANG['NAV_HOME']) ? $LANG['NAV_HOME'] : 'Home'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-				<a href="index.php"><?php echo htmlspecialchars((isset($LANG['NAV_COLLECTIONS']) ? $LANG['NAV_COLLECTIONS'] : 'Collections'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-				<a href="<?php echo $actionPage ?>"><?php echo htmlspecialchars((isset($LANG['NAV_SEARCH']) ? $LANG['NAV_SEARCH'] : 'Search Criteria'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+				<?php if($comingFrom !== 'search/index.php'){ ?>
+					<a href="index.php"><?php echo htmlspecialchars((isset($LANG['NAV_COLLECTIONS']) ? $LANG['NAV_COLLECTIONS'] : 'Collections'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+					<a href="<?php echo $CLIENT_ROOT . '/collections/harvestparams.php' ?>"><?php echo htmlspecialchars((isset($LANG['NAV_SEARCH']) ? $LANG['NAV_SEARCH'] : 'Search Criteria'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+				<?php }else{ ?>
+					<a href="<?php echo $CLIENT_ROOT . '/collections/search/index.php' ?>"><?php echo htmlspecialchars((isset($LANG['NAV_SEARCH']) ? $LANG['NAV_SEARCH'] : 'Search Criteria'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+				<?php } ?>
 				<b><?php echo (isset($LANG['SPEC_REC_TAB']) ? $LANG['SPEC_REC_TAB'] : 'Specimen Records Table'); ?></b>
 			</div>
 		</div>

@@ -28,5 +28,8 @@ $LANG['COPY_TO_CLIPBOARD'] = 'Copiar URL para Área de Transferência';
 
 $LANG['BUTTON_RESET'] = 'Redefinir Formulário';
 $LANG['SEARCH'] = 'Pesquisar';
+$LANG['DISPLAY_FORMAT'] = 'Formato de Exibição de Resultados';
+$LANG['LIST'] = 'Lista';
+$LANG['TABLE'] = 'Tabela de Dados';
 
 ?>
