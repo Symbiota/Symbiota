@@ -117,7 +117,7 @@ class RpcTaxonomy extends RpcBase{
 					$lowestRank = $row->RankId;
 				}
 				$result->free();
-				$result->close();
+				$statement->close();
 			}
 			$sql1 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid FROM taxa t LEFT JOIN taxstatus ts ON t.tid = ts.tid WHERE ts.taxauthid = ? AND t.RankId = ? ';
 			//echo "<div>".$sql1."</div>";
