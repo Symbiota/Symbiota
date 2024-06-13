@@ -170,7 +170,7 @@ if ($SYMB_UID) {
 		<?php if ($collid && !$collid == 0){
 		?>
 			<section id="quicksearch-box" class="fieldset-like" >
-				<h1><span><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></span></h1>
+				<h3><span><?php echo (isset($LANG['QUICK_SEARCH']) ? $LANG['QUICK_SEARCH'] : 'Quick Search'); ?></span></h3>
 				<div id="dialogContainer" style="position: relative;">
 					<form name="quicksearch" style="display: flex; align-items:center; gap:0.5rem; flex-wrap: wrap" action="javascript:void(0);" onsubmit="directSubmitAction(event)">
 						<div>
@@ -260,7 +260,7 @@ if ($SYMB_UID) {
 				</button>
 				<div id="controlpanel" style="display:<?php echo ($eMode ? 'block' : 'none'); ?>;">
 					<section class="fieldset-like no-left-margin">
-						<h1><span><?php echo (isset($LANG['DAT_EDIT']) ? $LANG['DAT_EDIT'] : 'Data Editor Control Panel'); ?></span></h1>
+						<h2><span><?php echo (isset($LANG['DAT_EDIT']) ? $LANG['DAT_EDIT'] : 'Data Editor Control Panel'); ?></span></h2>
 						<ul>
 							<?php
 							if (stripos($collData['colltype'], 'observation') !== false) {
@@ -357,7 +357,7 @@ if ($SYMB_UID) {
 					if ($editCode > 1) {
 						?>
 						<section class="fieldset-like no-left-margin">
-							<h1><span><?php echo (isset($LANG['ADMIN_CONTROL']) ? $LANG['ADMIN_CONTROL'] : 'Administration Control Panel'); ?></span></h1>
+							<h2><span><?php echo (isset($LANG['ADMIN_CONTROL']) ? $LANG['ADMIN_CONTROL'] : 'Administration Control Panel'); ?></span></h2>
 							<ul>
 								<li>
 									<a href="commentlist.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
@@ -583,7 +583,7 @@ if ($SYMB_UID) {
 				if ($addrArr = $collManager->getAddress()) {
 					?>
 					<section class="fieldset-like no-left-margin">
-						<h1><span><?php echo (isset($LANG['ADDRESS']) ? $LANG['ADDRESS'] : 'Address'); ?>:</span></h1>
+						<h2><span><?php echo (isset($LANG['ADDRESS']) ? $LANG['ADDRESS'] : 'Address'); ?>:</span></h2>
 						<div class="bigger-left-margin-rel">
 							<?php
 							echo "<div>" . $addrArr["institutionname"];
@@ -613,7 +613,7 @@ if ($SYMB_UID) {
 				}
 				?>
 				<section class="fieldset-like no-left-margin">
-					<h1><span><?php echo (isset($LANG['COLL_STATISTICS']) ? $LANG['COLL_STATISTICS'] : 'Collection Statistics'); ?></span></h1>
+					<h2><span><?php echo (isset($LANG['COLL_STATISTICS']) ? $LANG['COLL_STATISTICS'] : 'Collection Statistics'); ?></span></h2>
 					<div style="clear:both;margin-top:5px;">
 						<ul style="margin-top:5px;">
 							<li><?php echo number_format($statsArr["recordcnt"]) . ' ' . (isset($LANG['SPECIMEN_RECORDS']) ? $LANG['SPECIMEN_RECORDS'] : 'specimen records'); ?></li>
@@ -668,7 +668,7 @@ if ($SYMB_UID) {
 					</div>
 				</section>
 			<section class="fieldset-like no-left-margin">
-				<h1><span><?php echo (isset($LANG['EXTRA_STATS']) ? $LANG['EXTRA_STATS'] : 'Extra Statistics'); ?></span></h1>
+				<h2><span><?php echo (isset($LANG['EXTRA_STATS']) ? $LANG['EXTRA_STATS'] : 'Extra Statistics'); ?></span></h2>
 				<div style="margin:3px;">
 					<a href="collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&stat=geography#geographystats"><?php echo htmlspecialchars((isset($LANG['SHOW_GEOG_DIST']) ? $LANG['SHOW_GEOG_DIST'] : 'Show Geographic Distribution'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 				</div>

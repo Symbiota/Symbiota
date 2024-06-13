@@ -1,6 +1,16 @@
 #innertext ul {
-        margin-left: 1.5rem;
-        padding: .25rem 0 .5rem 0;
+    margin-left: 1.5rem;
+    padding: .25rem 0 .5rem 0;
+}
+
+#innertext .fieldset-like ul {
+    margin-left: 2.5rem;
+    padding: .25rem 0 .5rem 0;
+}
+
+#innertext .fieldset-like .description {
+    margin-left: 1.5rem;
+    padding: .25rem 0 .5rem 0;
 }
 
 li {
@@ -46,5 +56,5 @@ div#symbiotaschema img{
 }
 
 .description{
-        margin-left: .5rem;
+ margin-left: 0.5rem;
 }

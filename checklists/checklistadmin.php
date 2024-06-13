@@ -238,7 +238,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					}
 					?>
                     <section class="fieldset-like" style="width:fit-content">
-							<h2><span><?php echo $LANG['ADDNEWUSER']; ?></span></h2>
+							<h3><span><?php echo $LANG['ADDNEWUSER']; ?></span></h3>
 						<form name="adduser" action="checklistadmin.php" method="post" onsubmit="return verifyAddUser(this)" style="display:flex; gap:0.5rem; align-items: center; flex-wrap: wrap">
 								<div style="display:flex; gap:0.5rem; align-items: center; flex-wrap: nowrap">
 							    <label style="white-space:nowrap"for="editoruid"><?php echo $LANG['SELECTUSER']; ?></label>
