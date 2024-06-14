@@ -102,6 +102,11 @@ button:hover {
   color: var(--light-color);
 }
 
+button:disabled {
+  background-color: var(--light-color);
+  color: var(--medium-color);
+}
+
 hr {
   border: 1px solid var(--bright-color);
 }
