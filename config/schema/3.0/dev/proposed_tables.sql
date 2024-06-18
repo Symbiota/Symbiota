@@ -107,32 +107,6 @@ CREATE TABLE `omoccurrencetypes` (
 
 
 --
--- Table structure for table `omoccurresource`
---
-
-CREATE TABLE `omoccurresource` (
-  `resourceID` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `occid` int(10) unsigned NOT NULL,
-  `reourceTitle` varchar(45) NOT NULL,
-  `resourceType` varchar(45) NOT NULL,
-  `uri` varchar(250) NOT NULL,
-  `source` varchar(45) DEFAULT NULL,
-  `resourceIdentifier` varchar(45) DEFAULT NULL,
-  `notes` varchar(250) DEFAULT NULL,
-  `modifiedUid` int(10) unsigned DEFAULT NULL,
-  `createdUid` int(10) unsigned DEFAULT NULL,
-  `initialTimestamp` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`resourceID`),
-  KEY `FK_omoccurresource_occid_idx` (`occid`),
-  KEY `FK_omoccurresource_modUid_idx` (`modifiedUid`),
-  KEY `FK_omoccurresource_createdUid_idx` (`createdUid`),
-  CONSTRAINT `FK_omoccurresource_createdUid` FOREIGN KEY (`createdUid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `FK_omoccurresource_modUid` FOREIGN KEY (`modifiedUid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `FK_omoccurresource_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB;
-
-
---
 -- Table structure for table `taxanestedtree`
 --
 

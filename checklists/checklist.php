@@ -41,7 +41,7 @@ $activateKey = $KEY_MOD_IS_ACTIVE;
 $showDetails = 0;
 if(isset($clArray['defaultSettings'])){
 	try {
-		$defaultArr = json_decode($clArray['defaultSettings'], true, $depth=512, JSON_THROW_ON_ERROR);
+		$defaultArr = json_decode(stripslashes(html_entity_decode($clArray['defaultSettings'])), true, $depth=512, JSON_THROW_ON_ERROR);
 	}
 	catch (Exception $e){
 		$statusStr = $e->getMessage();
