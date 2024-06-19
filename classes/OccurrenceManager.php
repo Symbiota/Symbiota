@@ -108,7 +108,10 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$this->displaySearchArr[] = $this->LANG['CHECKLIST_ID'] . ': ' . $this->searchTermArr['clid'];
 		}
 		elseif(array_key_exists('db',$this->searchTermArr) && $this->searchTermArr['db']){
-			$sqlWhere .= OccurrenceSearchSupport::getDbWhereFrag($this->cleanInStr($this->searchTermArr['db']));
+			$pattern = '/[^\d,]/';
+			if (preg_match($pattern, $this->searchTermArr['db'])==0) {
+				$sqlWhere .= OccurrenceSearchSupport::getDbWhereFrag($this->cleanInStr($this->searchTermArr['db']));
+			}
 		}
 		if(array_key_exists('datasetid',$this->searchTermArr)){
 			
@@ -632,10 +635,10 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		$retStr = '';
 		foreach($this->searchTermArr as $k => $v){
 			if(is_array($v)) $v = implode(',', $v);
-			if($v) $retStr .= '&'.$this->cleanOutStr($k).'='.$this->cleanOutStr($v);
+			if($v) $retStr .= '&'. htmlspecialchars($this->cleanOutStr($k), ENT_QUOTES) . '=' . htmlspecialchars($this->cleanOutStr($v), ENT_QUOTES);
 		}
 		if(isset($this->taxaArr['search'])){
-			$retStr .= '&taxa='.$this->cleanOutStr($this->taxaArr['search']);
+			$retStr .= '&taxa=' . htmlspecialchars($this->cleanOutStr($this->taxaArr['search']), ENT_QUOTES);
 			if($this->taxaArr['usethes']) $retStr .= '&usethes=1';
 			if(is_numeric($this->taxaArr['taxontype'])) {
 				$retStr .= '&taxontype=' . intval($this->taxaArr['taxontype']);
