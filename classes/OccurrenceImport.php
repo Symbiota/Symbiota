@@ -137,6 +137,9 @@ class OccurrenceImport extends UtilitiesFileImport{
 					$this->logOrEcho($LANG['DETERMINATION_ADDED'].': <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>', 1);
 					$status = true;
 				}
+				else{
+					$this->logOrEcho('ERROR loading determination: '.$detManager->getErrorMessage(), 1);
+				}
 			}
 		}
 		elseif($this->importType == self::IMPORT_ASSOCIATIONS){
