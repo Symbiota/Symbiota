@@ -124,7 +124,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 					if(isset($this->fieldMap[$fieldLower]) && !empty($recordArr[$this->fieldMap[$fieldLower]])) $detArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
 				}
 				if (empty($detArr['sciname'])) {
-					echo ('SKIPPED loading determination ' . $occid . ': sciname is null');
+					$this->logOrEcho ('SKIPPED: sciname is null', 1);
 					continue;
 				}
 				if (empty($detArr['identifiedBy'])) {
