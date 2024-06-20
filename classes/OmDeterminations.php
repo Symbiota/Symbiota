@@ -86,7 +86,7 @@ class OmDeterminations extends Manager{
 					else $this->errorMessage = 'ERROR inserting omoccurdeterminations record (1): '.$stmt->error;
 				} catch (mysqli_sql_exception $e) {
 					if ($e->getCode() == '1062' || $e->getCode() == '1406') {
-						$this->errorMessage = "SKIPPED: " . $e->getMessage();
+						$this->errorMessage = $e->getMessage();
 					}
 					else {
 						throw $e;
