@@ -123,12 +123,19 @@ class OccurrenceImport extends UtilitiesFileImport{
 					$fieldLower = strtolower($field);
 					if(isset($this->fieldMap[$fieldLower]) && !empty($recordArr[$this->fieldMap[$fieldLower]])) $detArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
 				}
+				if (empty($detArr['sciname'])) {
+					echo ('ERROR loading determination ' . $occid . ': sciname is null');
+					continue;
+				}
+				if (empty($detArr['identifiedBy'])) {
+					$paramArr['identifiedBy'] = 'unknown';
+				}
+				if (empty($detArr['dateIdentified'])) {
+					$paramArr['dateIdentified'] = 's.d.';
+				}
 				if($detManager->insertDetermination($detArr)){
 					$this->logOrEcho($LANG['DETERMINATION_ADDED'].': <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>', 1);
 					$status = true;
-				}
-				else{
-					$this->logOrEcho('ERROR loading determination: '.$detManager->getErrorMessage(), 1);
 				}
 			}
 		}
