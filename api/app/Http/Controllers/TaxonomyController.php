@@ -6,12 +6,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class TaxonomyController extends Controller{
+
 	/**
 	 * Taxonomy controller instance.
 	 *
 	 * @return void
 	 */
 	public function __construct(){
+		parent::__construct();
 	}
 
 	/**
@@ -72,6 +74,27 @@ class TaxonomyController extends Controller{
 	 *	 operationId="/api/v2/taxonomy/search",
 	 *	 tags={""},
 	 *	 @OA\Parameter(
+	 *		 name="taxon",
+	 *		 in="query",
+	 *		 description="Taxon searh term",
+	 *		 required=true,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="taxon",
+	 *		 in="query",
+	 *		 description="Taxon searh term",
+	 *		 required=true,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="type",
+	 *		 in="query",
+	 *		 description="Type of search (EXACT, START, WHOLEWORD, WILD)",
+	 *		 required=false,
+	 *		 @OA\Schema(type="boolean", default="EXACT")
+	 *	 ),
+	 *	 @OA\Parameter(
 	 *		 name="limit",
 	 *		 in="query",
 	 *		 description="Controls the number of results in the page.",
@@ -98,14 +121,40 @@ class TaxonomyController extends Controller{
 	 */
 	public function showAllTaxaSearch(Request $request){
 		$this->validate($request, [
+			'taxon' => 'required',
 			'limit' => 'integer',
 			'offset' => 'integer'
 		]);
 		$limit = $request->input('limit',100);
 		$offset = $request->input('offset',0);
 
-		$fullCnt = Taxonomy::count();
-		$result = Taxonomy::skip($offset)->take($limit)->get();
+		$type = $request->input('type', 'EXACT');
+
+		$fullCnt = 0;
+		$result = [];
+		if($type == 'START'){
+			$fullCnt = Taxonomy::where('sciname', 'like', $request->taxon . '%')->count();
+			$result = Taxonomy::where('sciname', 'like', $request->taxon . '%')->skip($offset)->take($limit)->get();
+		}
+		elseif($type == 'WILD'){
+			$fullCnt = Taxonomy::where('sciname', 'like', '%' . $request->taxon . '%')->count();
+			$result = Taxonomy::where('sciname', 'like', '%' . $request->taxon . '%')->skip($offset)->take($limit)->get();
+		}
+		elseif($type == 'WHOLEWORD'){
+			$fullCnt = Taxonomy::where('unitname1', $request->taxon)
+				->orWhere('unitname2', $request->taxon)
+				->orWhere('unitname3', $request->taxon)
+				->count();
+			$result = Taxonomy::where('unitname1', $request->taxon)
+				->orWhere('unitname2', $request->taxon)
+				->orWhere('unitname3', $request->taxon)
+				->skip($offset)->take($limit)->get();
+		}
+		else{
+			//Exact match
+			$fullCnt = Taxonomy::where('sciname', $request->taxon)->count();
+			$result = Taxonomy::where('sciname', $request->taxon)->skip($offset)->take($limit)->get();
+		}
 
 		$eor = false;
 		$retObj = [
