@@ -10,6 +10,7 @@ $tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabi
 $cntPerPage = array_key_exists('cntperpage', $_REQUEST) ? filter_var($_REQUEST['cntperpage'], FILTER_SANITIZE_NUMBER_INT) : 100;
 $pageNumber = array_key_exists('page', $_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $datasetid = array_key_exists('datasetid', $_REQUEST) ? filter_var($_REQUEST['datasetid'], FILTER_SANITIZE_NUMBER_INT) : '';
+$comingFrom = array_key_exists('comingFrom', $_REQUEST) ? htmlspecialchars($_REQUEST['comingFrom'], HTML_SPECIAL_CHARS_FLAGS) : '';
 $_SESSION['datasetid'] = filter_var($datasetid, FILTER_SANITIZE_NUMBER_INT);
 
 $collManager = new OccurrenceListManager();
@@ -18,7 +19,6 @@ if ($targetTid && array_key_exists('mode', $_REQUEST)) $searchVar .= '&mode=vouc
 $occurArr = $collManager->getSpecimenMap($pageNumber, $cntPerPage);
 $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ?? false;
 $SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
-$actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.php";
 
 $_SESSION['citationvar'] = $searchVar;
 ?>
@@ -33,7 +33,7 @@ $_SESSION['citationvar'] = $searchVar;
 	include_once($SERVER_ROOT . '/includes/googleanalytics.php');
 	?>
 	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
@@ -135,8 +135,12 @@ $_SESSION['citationvar'] = $searchVar;
 	else {
 		echo '<div class="navpath">';
 		echo '<a href="../index.php">' . htmlspecialchars($LANG['NAV_HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
-		echo '<a href="index.php">' . htmlspecialchars($LANG['NAV_COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
-		echo '<a href="' . $actionPage . '">' . htmlspecialchars($LANG['NAV_SEARCH'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
+		if($comingFrom !== 'search/index.php'){
+			echo '<a href="index.php">' . htmlspecialchars($LANG['NAV_COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
+			echo '<a href="' . $CLIENT_ROOT . '/collections/harvestparams.php">' . htmlspecialchars($LANG['NAV_SEARCH'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
+		} else{
+			echo '<a href="' . $CLIENT_ROOT . '/collections/search/index.php">' . htmlspecialchars($LANG['NAV_SEARCH'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
+		}
 		echo '<b>' . $LANG['NAV_SPECIMEN_LIST'] . '</b>';
 		echo '</div>';
 	}
@@ -147,7 +151,7 @@ $_SESSION['citationvar'] = $searchVar;
 		<div id="tabs" style="width:95%;">
 			<ul>
 				<li>
-					<a id="taxatablink" href='<?php echo 'checklist.php?' . htmlspecialchars($searchVar, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&taxonfilter=' . htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>'>
+					<a id="taxatablink" href='<?php echo 'checklist.php?' . htmlspecialchars($searchVar, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE | ENT_QUOTES) . '&taxonfilter=' . htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE | ENT_QUOTES); ?>'>
 						<span><?php echo $LANG['TAB_CHECKLIST']; ?></span>
 					</a>
 				</li>
@@ -177,6 +181,7 @@ $_SESSION['citationvar'] = $searchVar;
 						}
 						?>
 						<form action="listtabledisplay.php" method="post" style="float:left">
+							<input name="comingFrom" type="hidden" value="<?php echo $comingFrom; ?>" />
 							<button class="icon-button" aria-label="<?php echo (isset($LANG['TABLE_DISPLAY']) ? $LANG['TABLE_DISPLAY'] : 'Table Display'); ?>" title="<?php echo (isset($LANG['TABLE_DISPLAY']) ? $LANG['TABLE_DISPLAY'] : 'Table Display'); ?>">
 								<svg style="width:1.3em;height:1.3em" alt="<?php echo $LANG['IMG_TABLE_DISPLAY']; ?>" xmlns="http://www.w3.org/2000/svg" fill="var(--light-color)" height="24" viewBox="0 -960 960 960" width="24"><path d="M120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200Zm80-400h560v-160H200v160Zm213 200h134v-120H413v120Zm0 200h134v-120H413v120ZM200-400h133v-120H200v120Zm427 0h133v-120H627v120ZM200-200h133v-120H200v120Zm427 0h133v-120H627v120Z"/></svg>
 							</button>
@@ -385,17 +390,10 @@ $_SESSION['citationvar'] = $searchVar;
 					<?php echo $LANG['MAP_DESCRIPTION']; ?>
 				</div>
 				<div style='margin-top:10px;'>
-					<?php if (empty($GOOGLE_MAP_KEY)) { ?>
-						<button onclick="openLeafletMapPU();">
-							<?php echo $LANG['MAP_DISPLAY']; ?>
-						</button>
-					<?php } else { ?>
-						<button onclick="openGoogleMapPU();">
-							<?php echo $LANG['MAP_DISPLAY']; ?>
-						</button>
-					<?php } ?>
+					<button onclick="openMapPU();">
+						<?php echo $LANG['MAP_DISPLAY']; ?>
+					</button>
 				</div>
-
 				<div style='margin-top:10px;'>
 					<h2><?php echo $LANG['KML_HEADER']; ?></h2>
 				</div>

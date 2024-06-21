@@ -3,6 +3,8 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceGeorefTools.php');
 include_once($SERVER_ROOT.'/content/lang/collections/georef/georefclone.' . $LANG_TAG . '.php');
 header("Content-Type: text/html; charset=".$CHARSET);
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/header.en.php');
+else include_once($SERVER_ROOT . '/content/lang/header.' . $LANG_TAG . '.php');
 
 $country = array_key_exists('country',$_REQUEST)?$_REQUEST['country']:'';
 $state = array_key_exists('state',$_REQUEST)?$_REQUEST['state']:'';
@@ -12,6 +14,9 @@ $searchType = array_key_exists('searchtype',$_POST)?$_POST['searchtype']:1;
 $collType = array_key_exists('colltype',$_POST)?$_POST['colltype']:0;
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $submitAction = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
+
+$shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
+$topVal = $shouldUseMinimalMapHeader ? '1rem' : '0';
 
 //Remove country, state, county from beginning of string
 if(!$country || !$state || !$county){
@@ -177,8 +182,16 @@ alert("<?php echo isset($LANG['LOCALITY_INVALID_ERROR'])? $LANG['LOCALITY_INVALI
 		}
 
 		</script>
+		<style type="text/css">
+		.header-wrapper {
+			z-index: 1000;
+		}
+		</style>
 	</head>
 	<body style="background-color:#ffffff;" onload="initialize()">
+		<?php
+			if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimal_header_template.php');
+		?>
 		<!-- Data Container for Passing to Js -->
 		<div id="service-container"
 		data-clones="<?=htmlspecialchars(json_encode($clones))?>"
@@ -186,7 +199,7 @@ alert("<?php echo isset($LANG['LOCALITY_INVALID_ERROR'])? $LANG['LOCALITY_INVALI
 		data-lng="<?=htmlspecialchars($lngCen)?>"
 		/>
 		<!-- This is inner text! -->
-		<div role="main" id="innertext">
+		<div role="main" id="innertext" style="margin-top: <?php echo $topVal; ?>">
 			<h1 class="page-heading">Georeference Clone Tool</h1>
 			<fieldset style="padding:10px;">
             <legend><b>

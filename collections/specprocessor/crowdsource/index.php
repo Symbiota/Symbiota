@@ -57,7 +57,7 @@ $statusStr = '';
 
 		<div style="margin:20px;">
 			<h2><?php echo $LANG['TOP_SCORES']; ?></h2>
-			<table class="styledtable" style="font-family:Arial;font-size:12px;width:300px;">
+			<table class="styledtable" style="font-size:12px;width:300px;">
 				<tr><th style="min-width: 150px"><b><?php echo $LANG['USER']; ?></b></th><th style="text-align:center"><b><?php echo $LANG['APPROVED_SCORE']; ?></b></th><th style="text-align:center"><b><?php echo $LANG['PENDING_SCORE']; ?></b></th></tr>
 				<?php
 				$topScoreArr = $csManager->getTopScores($catid);
@@ -108,7 +108,7 @@ $statusStr = '';
 		</div>
 		<div style="padding:20px;clear:both;">
 			<h2><?php echo $LANG['YOUR_STATS_BY_COLL']; ?></h2>
-			<table class="styledtable" style="font-family:Arial;font-size:12px;">
+			<table class="styledtable" style="font-size:12px;">
 				<tr>
 					<th><b><?php echo $LANG['COLLECTION']; ?></b></th>
 					<th><b><?php echo $LANG['SPEC_COUNTS']; ?></b></th>

@@ -110,13 +110,13 @@ if(isset($clArray['dynamicProperties']) && $clArray['dynamicProperties']){
 	}
 
 	function openMappingAid() {
-		mapWindow=open("<?php echo $CLIENT_ROOT; ?>/checklists/tools/mappointaid.php?clid=<?php echo $clid; ?>&formname=editclmatadata&latname=latcentroid&longname=longcentroid","mapaid","resizable=0,width=1000,height=800,left=20,top=20");
+		mapWindow=open("<?php echo $CLIENT_ROOT; ?>/collections/tools/mappointaid.php?clid=<?php echo $clid; ?>&formname=editclmatadata&latname=latcentroid&longname=longcentroid","mapaid","resizable=0,width=1000,height=800,left=20,top=20");
 	    if(mapWindow.opener == null) mapWindow.opener = self;
 	}
 
 	function openMappingPolyAid() {
-		var latDec = document.getElementById("latdec").value;
-		var lngDec = document.getElementById("lngdec").value;
+		var latDec = document.getElementById("decimallatitude").value;
+		var lngDec = document.getElementById("decimallongtitude").value;
 		mapWindow=open("<?php echo $CLIENT_ROOT; ?>/checklists/tools/mappolyaid.php?clid=<?php echo $clid; ?>&formname=editclmatadata&latname=latcentroid&longname=longcentroid&latdef="+latDec+"&lngdef="+lngDec,"mapaid","resizable=0,width=1000,height=800,left=20,top=20");
 	    if(mapWindow.opener == null) mapWindow.opener = self;
 	}
@@ -238,18 +238,18 @@ if(!$clid){
 			<div id="geoDiv" style="width:100%;margin-top:5px">
 				<div style="float:left;">
 					<b><?php echo $LANG['LATCENT']; ?></b><br/>
-					<input id="latdec" type="text" name="latcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray["latcentroid"]:''); ?>" />
+					<input id="decimallatitude" type="text" name="latcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray["latcentroid"]:''); ?>" />
 				</div>
 				<div style="float:left;margin-left:15px;">
 					<b><?php echo $LANG['LONGCENT']; ?></b><br/>
-					<input id="lngdec" type="text" name="longcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray["longcentroid"]:''); ?>" />
+					<input id="decimallongitude" type="text" name="longcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray["longcentroid"]:''); ?>" />
 				</div>
 				<div style="float:left;margin:25px 3px;">
 					<a href="#" onclick="openMappingAid();return false;"><img src="../images/world.png" style="width:1em;" /></a>
 				</div>
 				<div style="float:left;margin-left:15px;">
 					<b><?php echo $LANG['POINTRAD']; ?></b><br/>
-					<input type="number" name="pointradiusmeters" style="width:110px;" value="<?php echo ($clArray?$clArray["pointradiusmeters"]:''); ?>" />
+					<input id="coordinateuncertaintyinmeters" type="number" name="pointradiusmeters" style="width:110px;" value="<?php echo ($clArray?$clArray["pointradiusmeters"]:''); ?>" />
 				</div>
 			</div>
 			<div style="clear:both;margin-top:5px;">

@@ -153,21 +153,25 @@ class OccurrenceTaxaManager {
 			$sql = 'SELECT DISTINCT v.VernacularName, t.tid, t.sciname, t.rankid
 				FROM taxstatus ts INNER JOIN taxavernaculars v ON ts.TID = v.TID
 				INNER JOIN taxa t ON t.TID = ts.tidaccepted
-				WHERE (ts.taxauthid = '.$this->taxAuthId.') AND (v.VernacularName IN("'.$searchTerm.'"))
+				WHERE (ts.taxauthid = ?) AND (v.VernacularName IN(?))
 				ORDER BY t.rankid LIMIT 10';
-			$rs = $this->conn->query($sql);
-			while($row = $rs->fetch_object()){
-				//$vernName = strtolower($row->VernacularName);
-				$vernName = $row->VernacularName;
-				if($row->rankid == 140){
-					$this->taxaArr['taxa'][$vernName]['families'][] = $row->sciname;
+			if ($statement = $this->conn->prepare($sql)) {
+				$statement->bind_param("ss", $this->taxAuthId, $searchTerm);
+				$statement->execute();
+				$result = $statement->get_result();
+				while($row = $result->fetch_object()){
+					$vernName = $row->VernacularName;
+					if($row->rankid == 140){
+						$this->taxaArr['taxa'][$vernName]['families'][] = $row->sciname;
+					}
+					else{
+						$this->taxaArr['taxa'][$vernName]['scinames'][] = $row->sciname;
+					}
+					$this->taxaArr['taxa'][$vernName]['tid'][$row->tid] = $row->rankid;
 				}
-				else{
-					$this->taxaArr['taxa'][$vernName]['scinames'][] = $row->sciname;
-				}
-				$this->taxaArr['taxa'][$vernName]['tid'][$row->tid] = $row->rankid;
+				$result->free();
+				$statement->close();
 			}
-			$rs->free();
 		}
 	}
 

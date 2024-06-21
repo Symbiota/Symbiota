@@ -20,6 +20,7 @@ class DwcArchiverBaseManager extends Manager{
 
 	public function __destruct(){
 		parent::__destruct();
+		if($this->fileHandler) fclose($this->fileHandler);
 	}
 
 	protected function setFileHandler($filePath){
@@ -42,7 +43,6 @@ class DwcArchiverBaseManager extends Manager{
 					$this->writeOutRecord($r);
 				}
 				$rs->free();
-				if($this->fileHandler) fclose($this->fileHandler);
 			}
 			else{
 				$this->logOrEcho('ERROR writing out to extension file: '.$this->conn->error."\n");

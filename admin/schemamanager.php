@@ -63,7 +63,7 @@ $IS_ADMIN = true;
 				?>
 				<div style="margin:15px;">
 					<label>Current version: </label>
-					<?php echo $curentVersion?$curentVersion:'no schema detected'; ?>
+					<?php echo $curentVersion ? $curentVersion : 'no schema detected'; ?>
 				</div>
 				<?php
 				if($verHistory){
@@ -80,48 +80,60 @@ $IS_ADMIN = true;
 					</div>
 					<?php
 				}
-				?>
-				<fieldset style="width:800px">
-					<legend>Database Schema Assistant</legend>
-					<div class="info-div">Enter login criteria for database user that has full DDL privileges (e.g. create/alter tables, routines, indexes, etc.).<br>
-					We recommend creating a backup of the database before applying any database patches.</div>
-					<form name="databaseMaintenanceForm" action="schemamanager.php" method="post">
-						<div class="form-section">
-							<label>Schema: </label>
-							<select name="schemaCode">
-								<option value="baseInstall" <?php echo !$curentVersion || $curentVersion < 1 ? 'selected' : ''; ?>>New Install (ver. 3.0)</option>
-								<option value="1.1" <?php echo $curentVersion == 1.0 ? 'selected' : ''; ?>>Schema Patch 1.1</option>
-								<option value="1.2" <?php echo $curentVersion == 1.1 ? 'selected' : ''; ?>>Schema Patch 1.2</option>
-								<option value="3.0" <?php echo $curentVersion == 1.2 ? 'selected' : ''; ?>>Schema Patch 3.0</option>
-								<option value="" <?php echo $curentVersion == 3.0 ? 'selected' : ''; ?>>Schema is Current - nothing to do</option>
-							</select>
-						</div>
-						<div class="form-section">
-							<label for="username">Username: </label>
-							<input id="username" name="username" type="text" value="<?= htmlspecialchars($username, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" required autocomplete="off">
-						</div>
-						<div class="form-section">
-							<label for="password">Password: </label>
-							<input id="password" name="password" type="password" value="" required autocomplete="off">
-						</div>
-						<div class="form-section">
-							<label>Host:</label>
-							<?php echo $host; ?>
-						</div>
-						<div class="form-section">
-							<label>Database:</label>
-							<?php echo $database; ?>
-						</div>
-						<div class="form-section">
-							<label>Port:</label>
-							<?php echo $port; ?>
-						</div>
-						<div class="form-section">
-							<button name="action" type="submit" value="installSchema">Install</button>
-						</div>
-					</form>
-				</fieldset>
-				<?php
+				if(!$curentVersion && $schemaManager->getErrorMessage() == 'ERROR_NO_CONNECTION'){
+					echo '<h2>ERROR: unable to establish connection to database</h2>';
+				}
+				else{
+					?>
+					<fieldset style="width:800px">
+						<legend>Database Schema Assistant</legend>
+						<div class="info-div">Enter login criteria for database user that has full DDL privileges (e.g. create/alter tables, routines, indexes, etc.).<br>
+						We recommend creating a backup of the database before applying any database patches.</div>
+						<form name="databaseMaintenanceForm" action="schemamanager.php" method="post">
+							<div class="form-section">
+								<label>Schema: </label>
+								<select name="schemaCode">
+									<?php
+									if($curentVersion){
+										$schemaPatchArr = array('1.1', '1.2', '3.0', '3.1');
+										foreach($schemaPatchArr as $schemaOption){
+											if($schemaOption > $curentVersion) echo '<option value="' . $schemaOption . '">Schema Patch ' . $schemaOption . '</option>';
+										}
+										echo '<option value="">Schema is Current - nothing to do</option>';
+									}
+									else{
+										echo '<option value="baseInstall">New Install (ver. 3.0)</option>';
+									}
+									?>
+								</select>
+							</div>
+							<div class="form-section">
+								<label for="username">Username: </label>
+								<input id="username" name="username" type="text" value="<?= htmlspecialchars($username, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" required autocomplete="off">
+							</div>
+							<div class="form-section">
+								<label for="password">Password: </label>
+								<input id="password" name="password" type="password" value="" required autocomplete="off">
+							</div>
+							<div class="form-section">
+								<label>Host:</label>
+								<?php echo $host; ?>
+							</div>
+							<div class="form-section">
+								<label>Database:</label>
+								<?php echo $database; ?>
+							</div>
+							<div class="form-section">
+								<label>Port:</label>
+								<?php echo $port; ?>
+							</div>
+							<div class="form-section">
+								<button name="action" type="submit" value="installSchema">Install</button>
+							</div>
+						</form>
+					</fieldset>
+					<?php
+				}
 			}
 			else{
 				echo '<div>Not Authorized</div>';

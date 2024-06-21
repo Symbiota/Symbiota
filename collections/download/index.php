@@ -9,7 +9,7 @@ $sourcePage = array_key_exists('sourcepage', $_REQUEST) ? $_REQUEST['sourcepage'
 $downloadType = array_key_exists('dltype', $_REQUEST) ? $_REQUEST['dltype'] : 'specimen';
 $taxonFilterCode = array_key_exists('taxonFilterCode', $_REQUEST) ? filter_var($_REQUEST['taxonFilterCode'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $displayHeader = array_key_exists('displayheader', $_REQUEST) ? filter_var($_REQUEST['displayheader'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$searchVar = array_key_exists('searchvar', $_REQUEST) ? $_REQUEST['searchvar'] : '';
+$searchVar = array_key_exists('searchvar', $_REQUEST) ? htmlspecialchars($_REQUEST['searchvar'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE| ENT_QUOTES) : '';
 
 $dwcManager = new DwcArchiverCore();
 ?>

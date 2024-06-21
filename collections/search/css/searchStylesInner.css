@@ -76,8 +76,8 @@
 
 /* INPUTS */
 .inner-search .assistive-text {
-  color: var(--medium-color);
-  font-size: 0.8em;
+  color: var(--body-text-color);
+  font-size: 1em;
 }
 
 .inner-search .invalid {
@@ -504,24 +504,12 @@
   transition: 200ms ease-in-out;
 }
 
-.inner-search .text-area-container label span::before,
-.inner-search .input-text-container label span::before {
-  content: attr(data-label);
-  left: 1rem;
-  top: 0px;
-  margin: 0;
-  pointer-events: none;
-  height: fit-content;
-  color: gray;
-  line-height: 1;
-}
-
 .inner-search .input-text-container label input:focus ~ span::before,
 .inner-search .text-area-container textarea ~ span::before,
 .input-text-container label input:valid ~ span::before,
 .input-text-container label input:invalid ~ span::before {
   font-size: 1.45rem;
-  color: var(--medium-color);
+  color: var(--body-text-color);
 }
 
 .inner-search .input-text-container input {
@@ -594,8 +582,8 @@
 }
 
 .inner-search .input-text-container .input-text--outlined > input:focus {
-  -webkit-box-shadow: 0 0 0 2px #005dab;
-  box-shadow: 0 0 0 2px #005dab;
+  -webkit-box-shadow: 0 0 0 2px var(--medium-color);
+  box-shadow: 0 0 0 2px var(--medium-color);
   border-color: transparent;
 }
 
@@ -612,6 +600,19 @@
   background-color: white;
   padding: 0 0.5rem 0 0;
   text-indent: 0.5rem;
+}
+
+.inset-input-label {
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  background-color: white;
+  padding: 0 0.5rem 0 0;
+  text-indent: 0.5rem;
+  position: absolute;
+  top: 0;
+  left: 1rem;
+  font-size: 1.45rem;
+  line-height: 1;
 }
 
 /* Select control ***********************************/
@@ -638,8 +639,6 @@
   margin-top: 14px;
   height: 46px;
   border: 2px solid #939292;
-  -webkit-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.17);
-  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.17);
   font-family: inherit;
   font-size: 1em;
   width: 100%;
@@ -647,7 +646,13 @@
 
 .inner-search .select-container select:active,
 .select-container select:focus {
-  border-color: #005dab;
+  border-color: transparent;
+  outline: 2px solid var(--medium-color)
+}
+
+.inner-search  select:active, .inner-search select:focus {
+  border-color: transparent;
+  outline: 2px solid var(--medium-color)
 }
 
 /* Text Area ********************************************************************************/
@@ -658,7 +663,7 @@
   --opaq1: 0.08;
   --padding: 10px;
   --fz: 50px;
-  margin: 10px auto;
+  margin: 14px auto;
   width: 100%;
   max-width: 600px;
 }
@@ -690,7 +695,6 @@
   border: 0;
   height: 100px;
   padding: var(--padding);
-  margin-top: 4px;
   font-size: 1em;
 }
 
@@ -706,8 +710,8 @@
 }
 
 .inner-search .text-area-container .text-area--outlined > textarea:focus {
-  -webkit-box-shadow: 0 0 0 2px #005dab;
-  box-shadow: 0 0 0 2px #005dab;
+  -webkit-box-shadow: 0 0 0 2px var(--medium-color);
+  box-shadow: 0 0 0 2px var(--medium-color);
   border-color: transparent;
 }
 

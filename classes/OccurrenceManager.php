@@ -58,6 +58,9 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	protected function setSqlWhere(){
 		$sqlWhere = '';
 		if(array_key_exists("targetclid",$this->searchTermArr) && is_numeric($this->searchTermArr["targetclid"])){
+			if(!$this->voucherManager){
+				$this->setChecklistVariables($this->searchTermArr['targetclid']);
+			}
 			$voucherVariableArr = $this->voucherManager->getQueryVariableArr();
 			if($voucherVariableArr){
 				if(isset($voucherVariableArr['collid'])) $this->searchTermArr['db'] = $voucherVariableArr['collid'];
@@ -105,13 +108,19 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$this->displaySearchArr[] = $this->LANG['CHECKLIST_ID'] . ': ' . $this->searchTermArr['clid'];
 		}
 		elseif(array_key_exists('db',$this->searchTermArr) && $this->searchTermArr['db']){
-			$sqlWhere .= OccurrenceSearchSupport::getDbWhereFrag($this->cleanInStr($this->searchTermArr['db']));
+			$pattern = '/[^\d,]/';
+			if (preg_match($pattern, $this->searchTermArr['db'])==0) {
+				$sqlWhere .= OccurrenceSearchSupport::getDbWhereFrag($this->cleanInStr($this->searchTermArr['db']));
+			}
 		}
 		if(array_key_exists('datasetid',$this->searchTermArr)){
+			
 			$sqlWhere .= 'AND (ds.datasetid IN('.$this->searchTermArr['datasetid'].')) ';
 			$this->displaySearchArr[] = $this->LANG['DATASETS'] . ': ' . $this->getDatasetTitle($this->searchTermArr['datasetid']);
 		}
+		
 		$sqlWhere .= $this->getTaxonWhereFrag();
+		
 		if(array_key_exists('country',$this->searchTermArr)){
 			$countryArr = explode(";",$this->searchTermArr["country"]);
 			$tempArr = Array();
@@ -153,6 +162,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 				else{
 					$term = $this->cleanInStr(trim(str_ireplace(' county',' ',$value),'%'));
 					//if(strlen($term) < 4) $term .= ' ';
+					
 					$tempArr[] = '(o.county LIKE "'.$term.'%")';
 				}
 			}
@@ -625,12 +635,16 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		$retStr = '';
 		foreach($this->searchTermArr as $k => $v){
 			if(is_array($v)) $v = implode(',', $v);
-			if($v) $retStr .= '&'.$this->cleanOutStr($k).'='.$this->cleanOutStr($v);
+			if($v) $retStr .= '&'. htmlspecialchars($this->cleanOutStr($k), ENT_QUOTES) . '=' . htmlspecialchars($this->cleanOutStr($v), ENT_QUOTES);
 		}
 		if(isset($this->taxaArr['search'])){
-			$retStr .= '&taxa='.$this->cleanOutStr($this->taxaArr['search']);
+			$retStr .= '&taxa=' . htmlspecialchars($this->cleanOutStr($this->taxaArr['search']), ENT_QUOTES);
 			if($this->taxaArr['usethes']) $retStr .= '&usethes=1';
-			$retStr .= '&taxontype='.$this->taxaArr['taxontype'];
+			if(is_numeric($this->taxaArr['taxontype'])) {
+				$retStr .= '&taxontype=' . intval($this->taxaArr['taxontype']);
+			} else {
+				$retStr .= '&taxontype=1';
+			}
 		}
 		return substr($retStr, 1);
 	}

@@ -7,6 +7,8 @@ if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/indi
 else include_once($SERVER_ROOT.'/content/lang/collections/individual/index.en.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.en.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/header.en.php');
+else include_once($SERVER_ROOT . '/content/lang/header.' . $LANG_TAG . '.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $submit = array_key_exists('formsubmit', $_REQUEST) ? $_REQUEST['formsubmit'] : '';
@@ -19,6 +21,8 @@ $guid = array_key_exists('guid', $_REQUEST) ? $_REQUEST['guid'] : '';
 $tabIndex = array_key_exists('tabindex', $_REQUEST) ? $indManager->sanitizeInt($_REQUEST['tabindex']) : 0;
 $clid = array_key_exists('clid', $_REQUEST) ? $indManager->sanitizeInt($_REQUEST['clid']) : 0;
 $format = isset($_GET['format']) ? $_REQUEST['format'] : '';
+
+$shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 
 if($occid) $indManager->setOccid($occid);
 elseif($guid) $occid = $indManager->setGuid($guid);
@@ -307,12 +311,20 @@ $traitArr = $indManager->getTraitArr();
 		.smaller-header {
 			font-size: 2rem;
 		}
+		<?php if($shouldUseMinimalMapHeader){ ?>
+			.minimal-header-margin{
+			   margin-top: 6rem;
+			}
+		<?php } ?>
 		</style>
 </head>
 <body>
+	<?php
+		if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimal_header_template.php');
+	?>
 	<header style="background-image: none;">
 		<a class="screen-reader-only" href="#end-nav"><?php echo $LANG['SKIP_NAV'] ?></a>
-		<h1 class="page-heading">
+		<h1 class="page-heading minimal-header-margin">
 			<?php echo $LANG['FULL_RECORD_DETAILS']; ?>
 		</h1>
 		<div id="end-nav"></div>
@@ -997,7 +1009,7 @@ $traitArr = $indManager->getTraitArr();
 									?>
 									<div id="thumbnail-div" class="thumbnail-div">
 										<a href='<?= $imgArr['url'] ?>' target="_blank">
-											<img border="1" src="<?= $thumbUrl; ?>" title="<?= $imgArr['caption']; ?>" style="max-width:170;" alt="thumbnail image of current specimen" />
+											<img border="1" src="<?= $thumbUrl; ?>" title="<?= $imgArr['caption']; ?>" style="max-width:21.9rem;" alt="thumbnail image of current specimen" />
 										</a>
 										<?php
 										if($imgArr['caption']) echo '<div><i>'.$imgArr['caption'].'</i></div>';

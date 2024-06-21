@@ -406,7 +406,7 @@ class SpecUploadBase extends SpecUpload{
 			return false;
 		}
 		//Output table rows for source data
-		echo '<table class="styledtable" style="width:600px;font-family:Arial;font-size:12px;">';
+		echo '<table class="styledtable" style="width:600px;font-size:12px;">';
 		echo '<tr><th>Source Field</th><th>Target Field</th></tr>'."\n";
 		foreach($sourceArr as $fieldName){
 			if($fieldName == 'coreid') continue;
@@ -1283,7 +1283,7 @@ class SpecUploadBase extends SpecUpload{
 		if($this->collId){
 			if($this->uploadType == $this->FILEUPLOAD || $this->uploadType == $this->SKELETAL){
 				//Reset existing current determinations to match fields in the omoccurrences table (e.g. import data changes, will equal current determinations)
-				$sql = 'UPDATE uploadspectemp u INNER JOIN omoccurrences o ON u.occid = o.occid
+				$sql = 'UPDATE IGNORE uploadspectemp u INNER JOIN omoccurrences o ON u.occid = o.occid
 					INNER JOIN omoccurdeterminations d ON o.occid = d.occid
 					SET d.sciname = IFNULL(o.sciname, "undetermined"), d.identifiedBy = IFNULL(o.identifiedBy, "unknown"), d.dateIdentified = IFNULL(o.dateIdentified, "s.d."),
 					d.family = o.family, d.scientificNameAuthorship = o.scientificNameAuthorship, d.tidInterpreted = o.tidInterpreted, d.identificationQualifier = o.identificationQualifier,
@@ -1297,7 +1297,7 @@ class SpecUploadBase extends SpecUpload{
 				}
 
 				//Add new determinations to omoccurdetermination table
-				$sql = 'INSERT INTO omoccurdeterminations(occid, sciname, identifiedBy, dateIdentified, family, scientificNameAuthorship, tidInterpreted, identificationQualifier,
+				$sql = 'INSERT IGNORE INTO omoccurdeterminations(occid, sciname, identifiedBy, dateIdentified, family, scientificNameAuthorship, tidInterpreted, identificationQualifier,
 					identificationReferences, identificationRemarks, taxonRemarks, isCurrent)
 					SELECT o.occid, IFNULL(o.sciname, "undetermined") AS sciname, IFNULL(o.identifiedBy, "unknown") AS identifiedBy, IFNULL(o.dateIdentified, "s.d.") AS dateIdentified,
 					o.family, o.scientificNameAuthorship, o.tidInterpreted, o.identificationQualifier, o.identificationReferences, o.identificationRemarks, o.taxonRemarks, 1 AS isCurrent

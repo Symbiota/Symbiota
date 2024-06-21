@@ -319,7 +319,7 @@ if($isEditor){
 								<div style="float:right;margin-right:10px">
 									<?php echo '<b>'.$LANG['COUNT'].': '.count($occArr).' '.$LANG['RECORDS'].'</b>'; ?>
 								</div>
-								<table class="styledtable" style="font-family:Arial;font-size:12px;">
+								<table class="styledtable" style="font-size:12px;">
 									<tr>
 										<th><input name="" value="" type="checkbox" onclick="selectAll(this);" title="<?php echo $LANG['SEL_DESEL_SPCS']; ?>" /></th>
 										<th><?php echo $LANG['CAT_NUM']; ?></th>

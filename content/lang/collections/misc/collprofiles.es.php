@@ -108,7 +108,6 @@ $LANG['ADVANCED_SEARCH_THIS_COLLECTION'] = 'Búsqueda avanzada en esta colecció
 $LANG['IMAGE_SEARCH_THIS_COLLECTION'] = 'Imagen Buscar esta colección';
 $LANG['SEARCH'] = 'Buscar';
 $LANG['IDENTIFIER_PLACEHOLDER_LIST'] = 'Buscar por número de catálogo, ID de ocurrencia o ID de registro.';
-$LANG['MORE_INFO'] = 'Más Información';
 $LANG['MORE_INFO_ALT'] = 'Más información sobre el número de catálogo';
 $LANG['SEARCH_BY_TAXON'] = 'Buscar por taxón';
 $LANG['OCCURENCE_IDENTIFIER'] = 'Numero de Catalogo';

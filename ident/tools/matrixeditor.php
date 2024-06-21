@@ -192,8 +192,8 @@ include($SERVER_ROOT.'/includes/header.php');
 		else{
 			$inheritStr = '&nbsp;<span title="' . (isset($LANG['STATE_INHERITED']) ? $LANG['STATE_INHERITED'] : 'State has been inherited from parent taxon') . '"><b>(i)</b></span>';
 			?>
-			<div style="margin-bottom:1rem"><?php echo $inheritStr; ?> <?php echo (isset($LANG['INHERITED_TRUE']) ? $LANG['INHERITED_TRUE'] : ' = character state is inherited as true from a parent taxon (genus, family, etc)') ?> </div>
-		 	<table class="styledtable" style="font-family:Arial;font-size:12px;">
+			<div style="margin-bottom:1rem"><?php echo $inheritStr; ?> <?php echo $LANG['INHERITED_TRUE']; ?> </div>
+		 	<table class="styledtable" style="font-size:12px;">
 				<?php
 				$muManager->echoTaxaList($taxonFilter,$generaOnly);
 				?>

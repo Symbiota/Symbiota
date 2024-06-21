@@ -2,6 +2,8 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/collections/tools/mapaids.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/header.en.php');
+else include_once($SERVER_ROOT . '/content/lang/header.' . $LANG_TAG . '.php');
 
 $formName = array_key_exists("formname",$_REQUEST)?$_REQUEST["formname"]:"";
 $latName = array_key_exists("latname",$_REQUEST)?$_REQUEST["latname"]:"";
@@ -28,6 +30,8 @@ else{
 	$lat = 42.877742;
 	$lng = -97.380979;
 }
+
+$shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -50,6 +54,11 @@ else{
 			position: absolute;
 			left: -10000px;
 		}
+		<?php if($shouldUseMinimalMapHeader){ ?>
+			.minimal-header-margin{
+			   margin-top: 6rem;
+			}
+		<?php } ?>
 		</style>
 		<script type="text/javascript">
 		var map;
@@ -169,8 +178,11 @@ else{
 		</script>
 	</head>
 	<body style="display:flex; flex-direction: column; background-color:#ffffff;" onload="initialize()">
+		<?php
+			if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimal_header_template.php');
+		?>
 		<h1 class="page-heading screen-reader-only">Map Point Helper</h1>
-		<div style="padding:0.5rem; width: fit-content; height:fit-content">
+		<div style="padding:0.5rem; width: fit-content; height:fit-content" class="minimal-header-margin">
 			<div>
 				<?php echo isset($LANG['MPR_INSTRUCTIONS']) ?$LANG['MPR_INSTRUCTIONS']: 'Click once to capture coordinates. Click on the submit button to transfer coordinates.' ?>
 			</div>

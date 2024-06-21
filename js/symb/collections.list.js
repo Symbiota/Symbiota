@@ -55,14 +55,9 @@ function openIndPU(occId,clid){
 	return false;
 }
 
-function openGoogleMapPU(){
-	let url = 'map/googlemap.php?'+encodedQueryStr(sessionStorage.querystr);
-	window.open(url,'gmap','toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=1,resizable=1,width=1150,height=900,left=20,top=20');
-}
-
-function openLeafletMapPU(){
-	let url = 'map/leafletmap.php?'+encodedQueryStr(sessionStorage.querystr);
-	window.open(url,'leafmap','toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=1,resizable=1,width=1150,height=900,left=20,top=20');
+function openMapPU() {
+	let url = 'map/index.php?'+encodedQueryStr(sessionStorage.querystr)+'&gridSizeSetting=60&minClusterSetting=10&clusterSwitch=y&menuClosed';
+	window.open(url,'Map Search','toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=1,resizable=1,width=1150,height=900,left=20,top=20');
 }
 
 function encodedQueryStr(querystr){
