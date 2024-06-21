@@ -3,6 +3,7 @@
 .header-wrapper {
   padding: 20px;
   background-color: var(--menu-top-bg-color);
+  z-index: 10;
 }
 
 header {
@@ -194,6 +195,7 @@ ul.menu {
 @media (min-width: 768px) {
   .header-wrapper > * {
     min-width: 0;
+    z-index: 10;
   }
   .header-wrapper {
     padding: 0;

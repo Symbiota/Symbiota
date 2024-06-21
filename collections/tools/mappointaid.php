@@ -2,6 +2,8 @@
 include_once('../../config/symbini.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 include_once($SERVER_ROOT.'/content/lang/collections/tools/mapaids.'.$LANG_TAG.'.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/header.en.php');
+else include_once($SERVER_ROOT . '/content/lang/header.' . $LANG_TAG . '.php');
 
 if($MAPPING_BOUNDARIES){
 	$boundaryArr = explode(";",$MAPPING_BOUNDARIES);
@@ -13,6 +15,7 @@ if($MAPPING_BOUNDARIES){
 }
 
 $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
+$shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -437,9 +440,17 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
             position: absolute;
             left: -10000px;
          }
+		 <?php if($shouldUseMinimalMapHeader){ ?>
+			.minimal-header-margin{
+			   margin-top: 6rem;
+			}
+		<?php } ?>
       </style>
 	</head>
 	<body style="display:flex; flex-direction: column;background-color:#ffffff;" onload="initialize()">
+		 <?php
+			if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimal_header_template.php');
+		?>
 		<h1 class="page-heading screen-reader-only">Point-Radius Aid</h1>
 		<div
 			id="service-container" 
@@ -448,7 +459,7 @@ $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 			data-lng="<?= htmlspecialchars($lngCenter)?>"
 			>
 		</div>
-		<form style="padding:0.5rem" name="coordform" action="" method="post" onsubmit="return false">
+		<form class="minimal-header-margin" style="padding:0.5rem" name="coordform" action="" method="post" onsubmit="return false">
 			<div style="float:right;">
 				<button name="addcoords" type="button" onclick="updateParentForm(this.form);">
 					<b><?php echo isset($LANG['SUBMIT'])? $LANG['SUBMIT']: 'Submit' ?></b> 
