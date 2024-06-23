@@ -23,7 +23,7 @@ $router->get('/', function () use ($router) {
 });
 
 $router->get('/v2', function () use ($router) {
-	return redirect('/v2/documentation');;
+	return redirect('/v2/documentation');
 });
 
 $router->group(['prefix' => 'v2'], function () use ($router) {

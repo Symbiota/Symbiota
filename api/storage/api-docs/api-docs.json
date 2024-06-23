@@ -1229,6 +1229,77 @@
                 }
             }
         },
+        "/api/v2/taxonomy/search": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/taxonomy/search",
+                "parameters": [
+                    {
+                        "name": "taxon",
+                        "in": "query",
+                        "description": "Taxon searh term",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "taxon",
+                        "in": "query",
+                        "description": "Taxon searh term",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Type of search (EXACT, START, WHOLEWORD, WILD)",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": "EXACT"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Controls the number of results in the page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 100
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Determines the offset for the search results. A limit of 200 and offset of 100, will get the third page of 100 results.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns list of inventories registered within system",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. "
+                    }
+                }
+            }
+        },
         "/api/v2/taxonomy/{identifier}": {
             "get": {
                 "tags": [
