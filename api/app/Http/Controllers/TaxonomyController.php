@@ -90,9 +90,13 @@ class TaxonomyController extends Controller{
 	 *	 @OA\Parameter(
 	 *		 name="type",
 	 *		 in="query",
-	 *		 description="Type of search (EXACT, START, WHOLEWORD, WILD)",
+	 *		 description="Type of search",
 	 *		 required=false,
-	 *		 @OA\Schema(type="boolean", default="EXACT")
+	 *		 @OA\Schema(
+	 *			type="string",
+	 *			default="EXACT",
+	 *			enum={"EXACT", "START", "WHOLEWORD", "WILD"}
+	 *		)
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="limit",

@@ -1257,11 +1257,17 @@
                     {
                         "name": "type",
                         "in": "query",
-                        "description": "Type of search (EXACT, START, WHOLEWORD, WILD)",
+                        "description": "Type of search",
                         "required": false,
                         "schema": {
-                            "type": "boolean",
-                            "default": "EXACT"
+                            "type": "string",
+                            "default": "EXACT",
+                            "enum": [
+                                "EXACT",
+                                "START",
+                                "WHOLEWORD",
+                                "WILD"
+                            ]
                         }
                     },
                     {
