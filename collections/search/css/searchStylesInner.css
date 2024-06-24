@@ -3,7 +3,6 @@
    BASE STYLES
    @mixin ============================= */
 
-@import "../../../css/uswds/symbiota/variables.css";
 /* BASE STYLES ******************************************/
 /* Typography */
 .inner-search body {
@@ -647,12 +646,13 @@
 .inner-search .select-container select:active,
 .select-container select:focus {
   border-color: transparent;
-  outline: 2px solid var(--medium-color)
+  outline: 2px solid var(--medium-color);
 }
 
-.inner-search  select:active, .inner-search select:focus {
+.inner-search select:active,
+.inner-search select:focus {
   border-color: transparent;
-  outline: 2px solid var(--medium-color)
+  outline: 2px solid var(--medium-color);
 }
 
 /* Text Area ********************************************************************************/

@@ -67,6 +67,7 @@ $LANG['NEED_FULL'] = 'Note: Full editing permissions are needed to edit an ident
 $LANG['IDENTIFICATION_CONFIDENCE'] = 'ID Confidence';
 $LANG['UNDEFINED'] = 'Undefined';
 $LANG['TOGG_ADD_FIELDS'] = "Toggle Additional Field(s)";
+$LANG['LOCATION_REMARKS'] = "Location Remarks";
 ///$LANG['ABSOLUTE'] = 'Absolute';
 ///$LANG['V_HIGH'] = 'Very High';
 ///$LANG['HIGH'] = 'High';

@@ -222,6 +222,20 @@ ALTER TABLE `taxa`
   CHANGE COLUMN `modifiedTimeStamp` `modifiedTimestamp` DATETIME NULL DEFAULT NULL ,
   CHANGE COLUMN `InitialTimeStamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
 
+ALTER TABLE `taxa` 
+  ADD INDEX `IX_taxa_unitname1` (`unitName1` ASC),
+  ADD INDEX `IX_taxa_unitname2` (`unitName2` ASC),
+  ADD INDEX `IX_taxa_unitname3` (`unitName3` ASC),
+  ADD INDEX `IX_taxa_rankid` (`rankID` ASC),
+  ADD INDEX `IX_taxa_sciname` (`sciName` ASC),
+  ADD INDEX `IX_taxa_kingdom` (`kingdomName` ASC),
+  ADD INDEX `FK_taxa_ts` (`InitialTimeStamp` ASC),
+  DROP INDEX `idx_taxacreated` ,
+  DROP INDEX `idx_taxa_kingdomName` ,
+  DROP INDEX `sciname_index` ,
+  DROP INDEX `unitname1_index` ,
+  DROP INDEX `rankid_index` ;
+
 
 ALTER TABLE `uploadspectemp` 
   ADD COLUMN `vitality` VARCHAR(150) NULL DEFAULT NULL AFTER `behavior`;

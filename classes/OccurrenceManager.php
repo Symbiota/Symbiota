@@ -638,7 +638,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			if($v) $retStr .= '&'. htmlspecialchars($this->cleanOutStr($k), ENT_QUOTES) . '=' . htmlspecialchars($this->cleanOutStr($v), ENT_QUOTES);
 		}
 		if(isset($this->taxaArr['search'])){
-			$patternOfOnlyLettersDigitsAndSpaces = '/^[a-zA-Z0-9\s]*$/';
+			$patternOfOnlyLettersDigitsAndSpaces = '/^[a-zA-Z0-9\s\-]*$/'; // TOOD accommodate symbols associated with extinct taxa, hybrid crosses, and abbreviations with periods, e.g. "var."?
 			if (preg_match($patternOfOnlyLettersDigitsAndSpaces, $this->getTaxaSearchTerm())==1) {
 				$retStr .= '&taxa=' . $this->getTaxaSearchTerm();
 			}

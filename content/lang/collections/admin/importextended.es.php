@@ -44,6 +44,7 @@ $LANG['IMAGE_FIELD_MAP'] = 'Mapa de campo de imagen';
 $LANG['MATERIAL_SAMPLE'] = 'Muestra de material';
 //Fragmentos de idioma ubicados dentro del archivo de clase OccurrenceImport
 $LANG['PROCESSING_CATNUM'] = 'Identificador de procesamiento';
+$LANG['VALUES_SET'] = 'Los valores vacíos "dateIdentified" se han establecido como "s.d" y los valores vacíos "identifiedBy" se han establecido como "unknown"';
 $LANG['UPDATING_STATS'] = 'Actualizando estadísticas';
 $LANG['IMAGE_LOADED'] = 'Imagen cargada correctamente';
 $LANG['ASSOC_DELETED'] = 'Asociación eliminada';

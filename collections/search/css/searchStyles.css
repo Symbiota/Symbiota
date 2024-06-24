@@ -47,8 +47,6 @@
   --alertredborder: #cc0000;
 }
 
-@import "../../../css/uswds/symbiota/variables.css";
-
 /* Accordion styling from NEON
 ========================================================================== */
 
@@ -791,7 +789,7 @@
 .inner-search button#reset-btn {
   background-color: var(--medium-color) !important;
   &:hover {
-	background-color: var(--bright-color) !important;
+    background-color: var(--bright-color) !important;
   }
 }
 

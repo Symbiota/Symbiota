@@ -67,6 +67,7 @@ $LANG['NEED_FULL'] = 'Nota: Se necesitan permisos completos de edición para edi
 $LANG['IDENTIFICATION_CONFIDENCE'] = 'ID Confidence';
 $LANG['UNDEFINED'] = 'No Identificado';
 $LANG['TOGG_ADD_FIELDS'] = "Alternar Campo(s) Adicional(es)";
+$LANG['LOCATION_REMARKS'] = "Comentarios Sobre la Ubicación";
 ///$LANG['ABSOLUTE'] = 'Absoluta';
 ///$LANG['V_HIGH'] = 'Muy Alta';
 ///$LANG['HIGH'] = 'Alta';
