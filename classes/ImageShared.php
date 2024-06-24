@@ -1081,6 +1081,7 @@ class ImageShared{
 						$block_size = hexdec($block_size[1]);
 						while(!feof($handle)) {
 							$i += $block_size;
+							if(!$block_size) return false;
 							$new_block .= fread($handle, $block_size);
 							if(isset($new_block[$i]) && $new_block[$i]=="\xFF") {
 								// New block detected, check for SOF marker
