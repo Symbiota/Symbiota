@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Media;
-use App\Models\Occurrence;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class MediaController extends Controller{
 
@@ -76,7 +75,11 @@ class MediaController extends Controller{
 	 * )
 	 */
 	public function showOneMedia($id){
-		return response()->json(Media::find($this->getImgid($id)));
+		$media = Media::find($this->getImgid($id));
+		if(!$media){
+			return response()->json(['status' => 'failure', 'error' => 'Media resource not found'], 400);
+		}
+		return response()->json($media);
 	}
 
 	/**
@@ -108,31 +111,31 @@ class MediaController extends Controller{
      *				@OA\Property(
      *					property="originalUrl",
      *					type="string",
-	 *					description="URL returning original large image; image should be a web-ready JPG",
+	 *					description="URL of original media file; images should be a web-ready JPG",
 	 *					maxLength=255
      *				),
      *				@OA\Property(
      *					property="mediumUrl",
      *					type="string",
-	 *					description="URL returning medium sized image of original large image; image should be a web-ready JPG",
+	 *					description="URL of medium sized image of original image",
 	 *					maxLength=255
      *				),
      *				@OA\Property(
      *					property="thumbnailUrl",
      *					type="string",
-	 *					description="URL returning thumbnail derivative of original large image; image should be a web-ready JPG",
+	 *					description="URL of thumbnail representation original media file",
 	 *					maxLength=255
      *				),
      *				@OA\Property(
      *					property="archiveUrl",
      *					type="string",
-	 *					description="URL returning large archival image (e.g. DNG, TIFF, etc), if web accessible ",
+	 *					description="URL of archival media file (e.g. DNG, TIFF, etc), if publicly web accessible",
 	 *					maxLength=255
      *				),
      *				@OA\Property(
      *					property="referenceUrl",
      *					type="string",
-	 *					description="URL returning original large image; image should be a web-ready JPG",
+	 *					description="URL of a web representation of media file. Maybe consist of html wrapper, viewer, player, etc",
 	 *					maxLength=255
      *				),
      *				@OA\Property(
@@ -216,18 +219,22 @@ class MediaController extends Controller{
 	 *					description="Value computed by a hash function applied to the media that will be delivered at the access point",
 	 *					maxLength=45
      *				),
+     *				@OA\Property(
+     *					property="sortSequence",
+     *					type="integer",
+	 *					description="Media sort control within the taxon profile page"
+     *				),
+     *				@OA\Property(
+     *					property="sortOccurrence",
+     *					type="integer",
+	 *					description="Media sort control within the occurrence profile page"
+     *				),
      *			),
 	 *		)
 	 *	 ),
 	 *	 @OA\Response(
 	 *		 response="201",
-	 *		 description="Returns UUID recordID (GUID)",
-	 *		 @OA\JsonContent(
-	 *			oneOf={
-	 *				@OA\Schema(@OA\Property(property="status", type="boolean"),@OA\Property(property="recordID", type="string")),
-	 *				@OA\Schema(@OA\Property(property="status", type="boolean"))
-	 *			},
-	 *		)
+	 *		 description="Returns JSON object of the of media record that was created"
 	 *	 ),
 	 *	 @OA\Response(
 	 *		 response="400",
@@ -241,10 +248,10 @@ class MediaController extends Controller{
 	 */
 	public function insert(Request $request){
 		if($user = $this->authenticate($request)){
-			$request->validate($this->rulesInsert);
-
+			$this->validate($request, $this->rulesInsert);
 			$inputArr = $request->all();
 			$this->adjustInputData($inputArr);
+			$inputArr['recordID'] = (string) Str::uuid();
 			$media = Media::create($inputArr);
 			return response()->json($media, 201);
 		}
@@ -281,36 +288,37 @@ class MediaController extends Controller{
      *					property="format",
      *					type="string",
 	 *					description="Media Type (MIME type)",
-	 *					maxLength=45
+	 *					maxLength=45,
+	 *					enum={"image/jpeg", "image/png", "image/tiff", "audio/wav"}
      *				),
      *				@OA\Property(
      *					property="originalUrl",
      *					type="string",
-	 *					description="URL returning original large image; image should be a web-ready JPG",
+	 *					description="URL of original media file; images should be a web-ready JPG",
 	 *					maxLength=255
      *				),
      *				@OA\Property(
      *					property="mediumUrl",
      *					type="string",
-	 *					description="URL returning medium sized image of original large image; image should be a web-ready JPG",
+	 *					description="URL of medium sized image of original image",
 	 *					maxLength=255
      *				),
      *				@OA\Property(
      *					property="thumbnailUrl",
      *					type="string",
-	 *					description="URL returning thumbnail derivative of original large image; image should be a web-ready JPG",
+	 *					description="URL of thumbnail representation original media file",
 	 *					maxLength=255
      *				),
      *				@OA\Property(
      *					property="archiveUrl",
      *					type="string",
-	 *					description="URL returning large archival image (e.g. DNG, TIFF, etc), if web accessible ",
+	 *					description="URL of archival media file (e.g. DNG, TIFF, etc), if publicly web accessible",
 	 *					maxLength=255
      *				),
      *				@OA\Property(
      *					property="referenceUrl",
      *					type="string",
-	 *					description="URL returning original large image; image should be a web-ready JPG",
+	 *					description="URL of a web representation of media file. Maybe consist of html wrapper, viewer, player, etc",
 	 *					maxLength=255
      *				),
      *				@OA\Property(
@@ -394,13 +402,22 @@ class MediaController extends Controller{
 	 *					description="Value computed by a hash function applied to the media that will be delivered at the access point",
 	 *					maxLength=45
      *				),
+     *				@OA\Property(
+     *					property="sortSequence",
+     *					type="integer",
+	 *					description="Media sort control within the taxon profile page"
+     *				),
+     *				@OA\Property(
+     *					property="sortOccurrence",
+     *					type="integer",
+	 *					description="Media sort control within the occurrence profile page"
+     *				),
      *			),
 	 *		)
 	 *	 ),
 	 *	 @OA\Response(
-	 *		 response="201",
-	 *		 description="",
-	 *		 @OA\JsonContent()
+	 *		 response="200",
+	 *		 description="Returns full JSON object of the of media record that was edited"
 	 *	 ),
 	 *	 @OA\Response(
 	 *		 response="400",
@@ -414,9 +431,11 @@ class MediaController extends Controller{
 	 */
 	public function update($id, Request $request){
 		if($user = $this->authenticate($request)){
-			$media = Media::findOrFail($id);
+			$media = Media::find($id);
+			if(!$media){
+				return response()->json(['status' => 'failure', 'error' => 'Media resource not found'], 400);
+			}
 			$this->validate($request, $this->rulesUpdate);
-
 			$inputArr = $request->all();
 			$this->adjustInputData($inputArr);
 			$media->update($inputArr);
@@ -445,11 +464,8 @@ class MediaController extends Controller{
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Response(
-	 *		 response="200",
-	 *		 description="Record deleted successfully",
-	 *		 @OA\JsonContent(
-	 *			@OA\Schema(@OA\Property(property="status", type="boolean"))
-	 *		)
+	 *		 response="204",
+	 *		 description="Record deleted successfully"
 	 *	 ),
 	 *	 @OA\Response(
 	 *		 response="400",
@@ -463,10 +479,14 @@ class MediaController extends Controller{
 	 */
 	public function delete($id, Request $request){
 		if($user = $this->authenticate($request)){
-			Media::findOrFail($id)->delete();
-			return response('Media object deleted successfully', 200);
+			$media = Media::find($this->getImgid($id));
+			if(!$media){
+				return response()->json(['status' => 'failure', 'error' => 'Media resource not found'], 400);
+			}
+			$media->delete();
+			return response('', 200);
 		}
-		return response()->json(['error' => 'Unauthorized'], 401);
+		return response()->json(['status' => 'failure', 'error' => 'Unauthorized'], 401);
 	}
 
 	private function adjustInputData(&$data){
