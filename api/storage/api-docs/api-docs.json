@@ -458,14 +458,19 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "format",
                                     "originalUrl"
                                 ],
                                 "properties": {
                                     "format": {
                                         "description": "Media Type (MIME type)",
                                         "type": "string",
-                                        "maxLength": 45
+                                        "maxLength": 45,
+                                        "enum": [
+                                            "image/jpeg",
+                                            "image/png",
+                                            "image/tiff",
+                                            "audio/wav"
+                                        ]
                                     },
                                     "originalUrl": {
                                         "description": "URL of original media file; images should be a web-ready JPG",
@@ -687,10 +692,6 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "format",
-                                    "originalUrl"
-                                ],
                                 "properties": {
                                     "format": {
                                         "description": "Media Type (MIME type)",

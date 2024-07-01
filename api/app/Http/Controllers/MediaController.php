@@ -11,7 +11,6 @@ class MediaController extends Controller{
 	private $rulesInsert = [
 		'apiToken' => 'required',
 		'originalUrl' => 'required',
-		'format' => 'required',
 		'occid' => 'integer|exists:omoccurrences,occid',
 		'tid' => 'integer|exists:taxa,tid',
 		'photographerUid' => 'integer|exists:users,uid'
@@ -28,7 +27,6 @@ class MediaController extends Controller{
 		parent::__construct();
 		$this->rulesUpdate = $this->rulesInsert;
 		unset($this->rulesUpdate['originalUrl']);
-		unset($this->rulesUpdate['format']);
 	}
 
 	/**
@@ -101,12 +99,13 @@ class MediaController extends Controller{
      *		@OA\MediaType(
      *			mediaType="application/json",
      *			@OA\Schema(
-	 *				required={"format", "originalUrl"},
+	 *				required={"originalUrl"},
      *				@OA\Property(
      *					property="format",
      *					type="string",
 	 *					description="Media Type (MIME type)",
-	 *					maxLength=45
+	 *					maxLength=45,
+	 *					enum={"image/jpeg", "image/png", "image/tiff", "audio/wav"}
      *				),
      *				@OA\Property(
      *					property="originalUrl",
@@ -252,6 +251,15 @@ class MediaController extends Controller{
 			$inputArr = $request->all();
 			$this->adjustInputData($inputArr);
 			$inputArr['recordID'] = (string) Str::uuid();
+			if(!isset($inputArr['format'])){
+				$mimeType = $this->getMimeType($inputArr['originalUrl']);
+				if($mimeType && strpos($mimeType, 'text/html') === false){
+					$inputArr['format'] = $mimeType;
+				}
+				else{
+					return response()->json(['error' => 'format field required; unable to determine mime type dynamically'], 401);
+				}
+			}
 			$media = Media::create($inputArr);
 			return response()->json($media, 201);
 		}
@@ -283,7 +291,6 @@ class MediaController extends Controller{
      *		@OA\MediaType(
      *			mediaType="application/json",
      *			@OA\Schema(
-	 *				required={"format", "originalUrl"},
      *				@OA\Property(
      *					property="format",
      *					type="string",
@@ -503,5 +510,16 @@ class MediaController extends Controller{
 			if(is_numeric($imgId)) $id = $imgId;
 		}
 		return $id;
+	}
+
+	private function getMimeType($url){
+		$mimeType = '';
+		$headerArr = get_headers($url);
+		foreach($headerArr as $value){
+			if(preg_match('/Content-Type: (.*)/', $value, $m)){
+				$mimeType = $m[1];
+			}
+		}
+		return $mimeType;
 	}
 }
