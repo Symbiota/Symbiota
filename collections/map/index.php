@@ -607,13 +607,8 @@ value="${color}"
 			L.DivIcon.CustomColor = L.DivIcon.extend({
 				createIcon: function(oldIcon) {
 					var icon = L.DivIcon.prototype.createIcon.call(this, oldIcon);
-					icon.style.backgroundColor = this.options.color;
-
 					icon.style.textShadow="0 0 8px white, 0 0 8px white, 0 0 8px white";
-					icon.style.width="42px";
-					icon.style.height="42px";
-
-					icon.style.border=`1px solid ${this.options.mainColor}`;
+					icon.style.margin ="0 0 0 0";
 					return icon;
 				}
 			})
@@ -784,11 +779,12 @@ value="${color}"
 				for(let value of Object.values(legendMap)) {
 					const colorCluster = (cluster) => {
 						let childCount = cluster.getChildCount();
-cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?></div>`);
+						cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?></div>`);
+						cluster.on("click", e => e.target.spiderfy() )
 						return new L.DivIcon.CustomColor({
-							html: `<div style="background-color: #${value.color};"><span>` + childCount + '</span></div>',
-							className: `marker-cluster`,
-							iconSize: new L.Point(40, 40),
+							html: `<div class="symbiota-cluster" style="background-color: #${value.color};"><span>` + childCount + '</span></div>',
+							className: `symbiota-cluster-div`,
+							iconSize: new L.Point(20, 20),
 							color: `#${value.color}77`,
 							mainColor: `#${value.color}`,
 						});
@@ -796,8 +792,8 @@ cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?>
 
 					let cluster = L.markerClusterGroup({
 						iconCreateFunction: colorCluster,
-						disableClusteringAtZoom: recordArr.length >= 10000? 12 : 10,
-						spiderfyOnMaxZoom: false,
+						maxClusterRadius: 1,
+						zoomToBoundsOnClick: false,
 					    chunkedLoading: true
 					});
 
