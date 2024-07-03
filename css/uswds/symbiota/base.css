@@ -515,3 +515,7 @@ b {
 .page-heading {
   font-size: 3rem;
 }
+
+.overlap {
+  z-index: 99999;
+}
