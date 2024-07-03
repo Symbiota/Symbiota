@@ -351,7 +351,7 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 								<?php
 							}
 							?>
-							<div style="padding:15px;background-color:lightblue;width:155px;margin:15px;">
+							<div style="width:155px;margin:15px;">
 								<form name="detdelform" action="occurrenceeditor.php" method="post" onsubmit="return window.confirm('<?php echo $LANG['SURE_DELETE']; ?>');">
 									<input type="hidden" name="occid" value="<?php echo $occId; ?>" />
 									<input type="hidden" name="detid" value="<?php echo $detId; ?>" />
