@@ -725,6 +725,45 @@ value="${color}"
 					}
 				}
 
+				updateClusterRadius(new_radius) {
+					this.genClusters();
+				}
+
+				genClusters(draw = false) {
+					for(let id in this.group_map) {
+						if(this.group_map[id].cluster && map.mapLayer.hasLayer(this.group_map[id].cluster)) {
+							map.mapLayer.removeLayer(this.group_map[id].cluster);
+						}
+						const value = this.group_map[id];
+						const colorCluster = (cluster) => {
+							let childCount = cluster.getChildCount();
+							cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?></div>`);
+							cluster.on("click", e => e.target.spiderfy() )
+							return new L.DivIcon.CustomColor({
+								html: `<div class="symbiota-cluster" style="background-color: #${value.color};"><span>` + childCount + '</span></div>',
+								className: `symbiota-cluster-div`,
+								iconSize: new L.Point(20, 20),
+								color: `#${value.color}77`,
+								mainColor: `#${value.color}`,
+							});
+						}
+
+						let cluster = L.markerClusterGroup({
+							iconCreateFunction: colorCluster,
+							maxClusterRadius: parseInt(document.getElementById("cluster-radius").value),
+							zoomToBoundsOnClick: false,
+							chunkedLoading: true
+						});
+
+						this.group_map[id].cluster = cluster ;
+						this.group_map[id].cluster.addLayer(this.layer_groups[id]);
+
+						if(!clusteroff && draw) {
+							this.group_map[id].cluster.addTo(map.mapLayer);
+						}
+					}
+				}
+
 				updateColor(id, color) {
 					this.group_map[id].color = color;
 
@@ -1044,6 +1083,14 @@ value="${color}"
 					else if(cluster_type === "coll") mapGroups.forEach(group => group.collectionMapGroup.toggleClustering())
 					else if(cluster_type === "portal") mapGroups.forEach(group => group.portalMapGroup.toggleClustering())
 				}
+			});
+			document.getElementById("cluster-radius").addEventListener('change', e => {
+				const radius = parseInt(e.target.value);
+				mapGroups.forEach(group => {
+					group.taxonMapGroup.genClusters(cluster_type === "taxa");
+					group.collectionMapGroup.genClusters(cluster_type === "coll");
+					group.portalMapGroup.genClusters(cluster_type === "portal");
+				})
 			});
 
 			document.getElementById('heatmap_on').addEventListener('change', e => {
@@ -2091,6 +2138,11 @@ Record Limit:
 									<legend><?php echo $LANG['CLUSTERING']; ?></legend>
 									<label><?php echo (isset($LANG['TURN_OFF_CLUSTERING'])?$LANG['TURN_OFF_CLUSTERING']:'Turn Off Clustering'); ?>:</label>
 									<input data-role="none" type="checkbox" id="clusteroff" name="clusteroff" value='1' <?php echo ($clusterOff=="y"?'checked':'') ?>/>
+
+									<span style="display: flex; align-items:center">
+										<label for="cluster-radius"><?php echo (isset($LANG['CLUSTER_RADIUS'])? $LANG['CLUSTER_RADIUS']:'Radius') ?>: 1px </label>
+										<input style="margin: 0 1rem;"type="range" value="1" id="cluster-radius" name="cluster-radius" min="1" max="100">100px
+									</span>
 								</fieldset>
 								<br/>
 								<fieldset>
