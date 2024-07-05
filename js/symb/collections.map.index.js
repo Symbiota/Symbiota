@@ -98,17 +98,17 @@ function generateRandColor() {
 
 	// max red 76.245
 	// min red is 0
-	let r = Math.round(256 * Math.random());
+	let r = Math.round(255 * Math.random());
 	let redLuminance = redLuminanceCoef * r;
 
 	//max is 29.07
 	//min blue is 0
-	let b = Math.round(256 * Math.random());
+	let b = Math.round(255 * Math.random());
 	let blueLuminance = blueLuminanceCoef * b;
 
 	//max g is 149.685  min green 
 	let minGreen = ((luminance * 3) - redLuminance - blueLuminance) / greenLuminanceCoef;
-	let g = Math.round((256 - minGreen - 1) * Math.random()) + minGreen;
+	let g = Math.round((255 - minGreen) * Math.random()) + minGreen;
 
 	return (r < 16? "0": "") + parseInt(r).toString(16) + (g < 16? "0": "") + parseInt(g).toString(16) + (b < 16? "0": "") + parseInt(b).toString(16);
 }
