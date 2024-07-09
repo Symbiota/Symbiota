@@ -374,6 +374,10 @@ hr {
   font-size: 1rem;
 }
 
+.ui-tabs-tab {
+  font-size: 1rem;
+}
+
 .ui-autocomplete {
   /* from https://stackoverflow.com/questions/32517694/jquery-autocomplete-dropdown-is-transparent */
   background-color: inherit;
