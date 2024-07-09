@@ -34,6 +34,8 @@ foreach($coordArr as $tid => $taxaCoords) {
 $coordJson = json_encode($coords);
 $metaJson = json_encode($clMeta);
 
+$shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
+
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -256,6 +258,9 @@ $metaJson = json_encode($clMeta);
       </style>
    </head>
    <body style="background-color:#ffffff;" onload="initialize();">
+      <?php
+			if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimal_header_template.php');
+		?>
       <h1 class="page-heading screen-reader-only"><?= $LANG['MAP_SECTION'] . ' ' . $clName; ?></h1>
       <?php
          if(!$coordArr){

@@ -120,6 +120,8 @@ $AUTH_PROVIDER = 'oid';
 $LOGIN_ACTION_PAGE = 'openIdAuth.php';
 $SHOULD_USE_HARVESTPARAMS = false;
 
+$SHOULD_USE_MINIMAL_MAP_HEADER = false;
+
 $COOKIE_SECURE = false;
 if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) {
 	header("strict-transport-security: max-age=600");

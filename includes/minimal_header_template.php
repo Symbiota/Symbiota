@@ -1,6 +1,11 @@
 <?php
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/header.en.php');
-else include_once($SERVER_ROOT . '/content/lang/header.' . $LANG_TAG . '.php');
+// try{
+    // if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/header.en.php');
+    // else include_once($SERVER_ROOT . '/content/lang/header.' . $LANG_TAG . '.php');
+// } 
+// catch(Exception $error){
+//     // var_dump($error);
+// }
 include_once($SERVER_ROOT . '/includes/head.php');
 
 include_once($SERVER_ROOT . '/classes/ProfileManager.php');
@@ -9,52 +14,8 @@ $isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
 $SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
 $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '/collections/search/index.php';
 ?>
-<div class="header-wrapper">
+<div class="header-wrapper" style="width: 100vw;">
 	<header>
-		<div class="top-wrapper">
-			<a class="screen-reader-only" href="#end-nav"><?= $LANG['SKIP_NAV'] ?></a>
-			<nav class="top-login" aria-label="horizontal-nav">
-				<?php
-				if ($USER_DISPLAY_NAME) {
-					?>
-					<div class="welcome-text bottom-breathing-room-rel">
-						<?= (isset($LANG['H_WELCOME'])?$LANG['H_WELCOME']:'Welcome') . ' ' . $USER_DISPLAY_NAME ?>!
-					</div>
-					<span style="white-space: nowrap;" class="button button-tertiary bottom-breathing-room-rel">
-						<a href="<?= $CLIENT_ROOT ?>/profile/viewprofile.php"><?= (isset($LANG['H_MY_PROFILE'])?$LANG['H_MY_PROFILE']:'My Profile') ?></a>
-					</span>
-					<span style="white-space: nowrap;" class="button button-secondary bottom-breathing-room-rel">
-						<a href="<?= $CLIENT_ROOT ?>/profile/index.php?submit=logout"><?= (isset($LANG['H_LOGOUT'])?$LANG['H_LOGOUT']:'Sign Out') ?></a>
-					</span>
-					<?php
-				} else {
-					?>
-					<span class="button button-tertiary">
-						<a onclick="window.location.href='#'">
-							<?= $LANG['CONTACT_US'] ?>
-						</a>
-					</span>
-					<span class="button button-secondary">
-						<a href="<?= $CLIENT_ROOT . "/profile/index.php?refurl=" . htmlspecialchars($_SERVER['SCRIPT_NAME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "?" . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES); ?>">
-							<?= (isset($LANG['H_LOGIN'])?$LANG['H_LOGIN']:'Login') ?>
-						</a>
-					</span>
-					<?php
-				}
-				?>
-			</nav>
-			<div class="top-brand">
-				<a href="https://symbiota.org">
-					<div class="image-container">
-						<img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="Symbiota logo">
-					</div>
-				</a>
-				<div class="brand-name">
-					<h1>Symbiota Brand New Portal</h1>
-					<h2>Redesigned by the Symbiota Support Hub</h2>
-				</div>
-			</div>
-		</div>
 		<div class="menu-wrapper">
 			<!-- Hamburger icon -->
 			<input class="side-menu" type="checkbox" id="side-menu" name="side-menu" />
@@ -103,25 +64,6 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
 						</a>
 					</li>
 					<li>
-						<a href="#">Example Dropdown</a>
-						<ul>
-							<li>
-								<a href="#">Link 1</a>
-							</li>
-							<li>
-								<a href="#">Link 2</a>
-							</li>
-							<li>
-								<a href="#">Sub Menu</a>
-								<ul>
-									<li>
-										<a href="#">Link 3</a>
-									</li>
-								</ul>
-							</li>	
-						</ul>
-					</li>
-					<li id="lang-select-li">
 						<label for="language-selection"><?= $LANG['SELECT_LANGUAGE'] ?>: </label>
 						<select oninput="setLanguage(this)" id="language-selection" name="language-selection">
 							<option value="en">English</option>
@@ -129,6 +71,37 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
 							<option value="fr" <?= ($LANG_TAG=='fr'?'SELECTED':'') ?>>Français</option>
 						</select>
 					</li>
+					
+						<?php
+						if ($USER_DISPLAY_NAME) {
+							?>
+							<li>
+								<span>
+									<?= (isset($LANG['H_WELCOME'])?$LANG['H_WELCOME']:'Welcome') . ' ' . $USER_DISPLAY_NAME ?>!
+								</span>
+							</li>
+							<li>
+									<a style="font-size: 1.1em;" href="<?= $CLIENT_ROOT ?>/profile/viewprofile.php"><?= (isset($LANG['H_MY_PROFILE'])?$LANG['H_MY_PROFILE']:'My Profile') ?></a>
+							</li>
+							<li>
+									<a style="font-size: 1.1em;" href="<?= $CLIENT_ROOT ?>/profile/index.php?submit=logout"><?= (isset($LANG['H_LOGOUT'])?$LANG['H_LOGOUT']:'Sign Out') ?></a>
+							</li>
+							<?php
+						} else {
+							?>
+							<li>
+								<a onclick="window.location.href='#'">
+									<?= $LANG['CONTACT_US']; ?>
+								</a>
+							</li>
+							<li>
+									<a href="<?= $CLIENT_ROOT . "/profile/index.php?refurl=" . htmlspecialchars($_SERVER['SCRIPT_NAME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "?" . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES); ?>">
+										<?= (isset($LANG['H_LOGIN'])?$LANG['H_LOGIN']:'Login') ?>
+									</a>
+							</li>
+							<?php
+						}
+						?>
 				</ul>
 			</nav>
 		</div>

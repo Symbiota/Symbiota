@@ -5,7 +5,7 @@ function geothesaurusSource(params) {
 			response(data.map(v => ({ label: v.geoterm, value: v.geoterm })))
 		}
 
-		if (params.parent) {
+		if (parent_selector) {
 			const el = document.getElementById(parent_selector)
 			if (el) {
 				params.parent = el.value
@@ -14,6 +14,9 @@ function geothesaurusSource(params) {
 
 		const url = "../../geothesaurus/rpc/searchGeothesaurus.php";
 		params.geoterm = request.term;
+
+		//Always Reduce to unique geoterms for locality suggestions
+		params.distict = true;
 		$.getJSON(url, params, optionize)
 	}
 }

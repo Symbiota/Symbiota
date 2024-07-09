@@ -57,6 +57,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 						$cnt++;
 					}
 					$occurMain = new OccurrenceMaintenance($this->conn);
+					$this->logOrEcho($LANG['VALUES_SET']);
 					$this->logOrEcho($LANG['UPDATING_STATS'].'...');
 					if(!$occurMain->updateCollectionStatsBasic($this->collid)){
 						$errorArr = $occurMain->getErrorArr();
@@ -122,6 +123,16 @@ class OccurrenceImport extends UtilitiesFileImport{
 				foreach($fieldArr as $field){
 					$fieldLower = strtolower($field);
 					if(isset($this->fieldMap[$fieldLower]) && !empty($recordArr[$this->fieldMap[$fieldLower]])) $detArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
+				}
+				if (empty($detArr['sciname'])) {
+					$this->logOrEcho ('ERROR loading determination: Scientific name is empty.', 1);
+					continue;
+				}
+				if (empty($detArr['identifiedBy'])) {
+					$paramArr['identifiedBy'] = 'unknown';
+				}
+				if (empty($detArr['dateIdentified'])) {
+					$paramArr['dateIdentified'] = 's.d.';
 				}
 				if($detManager->insertDetermination($detArr)){
 					$this->logOrEcho($LANG['DETERMINATION_ADDED'].': <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>', 1);

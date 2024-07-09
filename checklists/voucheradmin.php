@@ -153,7 +153,7 @@ if($clid && $isEditor){
 				</div>
 				<table style="margin:15px;">
 					<tr>
-						<td>
+						<td style="vertical-align: middle">
 							<div style="margin:2px;">
 								<b><?php echo $LANG['COUNTRY'];?>:</b>
 								<input type="text" name="country" value="<?php echo isset($termArr['country'])?$termArr['country']:''; ?>" title="<?php echo $LANG['ENTER_MULT_COUNTRIES']; ?>" />
@@ -192,7 +192,7 @@ if($clid && $isEditor){
 								<input name="recordedby" type="text" value="<?php echo isset($termArr['recordedby'])?$termArr['recordedby']:''; ?>" style="width:250px" title="<?php echo $LANG['MULTIPLE_COLLECTORS'] ?>" />
 							</div>
 						</td>
-						<td style="padding-left:20px;">
+						<td style="padding-left:20px; vertical-align: middle">
 							<div style="float:left;">
 								<div>
 									<b><?php echo $LANG['LATN'];?>:</b>

@@ -11,6 +11,12 @@ include_once($SERVER_ROOT.'/classes/OccurrenceAttributeSearch.php');
 header("Content-Type: text/html; charset=" . $CHARSET);
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/search/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/search/index.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/search/index.en.php');
+$dbsWithBracketsRemoved = array_key_exists("db",$_GET) ?  str_replace(array('[',']'), '', $_GET["db"]) : '';
+$explodable = $dbsWithBracketsRemoved;
+if(is_array($dbsWithBracketsRemoved)){
+	$explodable = $dbsWithBracketsRemoved[0];
+} 
+$collIdsFromUrl = array_key_exists("db",$_GET) ? explode(",", $explodable) : '';
 
 $collManager = new OccurrenceManager();
 $collectionSource = $collManager->getQueryTermStr();
@@ -527,6 +533,19 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 
 			<!-- Criteria panel -->
 			<div id="criteria-panel" style="position: sticky; top: 0; height: 100vh">
+			<fieldset class="bottom-breathing-room-rel">
+				<legend>
+					<?php echo $LANG['DISPLAY_FORMAT']; ?>
+				</legend>
+				<div style="display: flex; align-items: center;" class="bottom-breathing-room-rel">
+					<input style="margin-bottom:0; margin-right: 0.5rem;" name="display-format-pref" id="list-button" type="radio" value="list" checked />
+					<label for="list-button"><?php echo $LANG['LIST'] ?></label>
+				</div>
+				<div style="display: flex; align-items: center;">
+					<input style="margin-bottom:0; margin-right: 0.5rem;" name="display-format-pref" id="table-button" type="radio" value="table" /> 	
+					<label for="table-button"><?php echo $LANG['TABLE'] ?></label>
+				</div>
+			</fieldset>
 				<button id="search-btn" onclick="simpleSearch()"><?php echo $LANG['SEARCH'] ?></button>
 				<button id="reset-btn"><?php echo $LANG['RESET'] ?></button>
 				<h2><?php echo $LANG['CRITERIA'] ?></h2>
@@ -566,31 +585,15 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 		ul.outerWidth(this.element.outerWidth());
 	}
 	const collectionSource = <?php echo isset($collectionSource) ? json_encode($collectionSource) : 'null'; ?>;
+	const collIdsFromUrl = <?php echo isset($collIdsFromUrl) ? json_encode($collIdsFromUrl) : 'null'; ?>;
+	if (collIdsFromUrl && Array.isArray(collIdsFromUrl) && collIdsFromUrl.length > 0) {
+		uncheckEverything();
+		checkTheCollectionsThatShouldBeChecked(collIdsFromUrl);
+	}
 	const sanitizedCollectionSource = collectionSource.replace('db=','');
-
-	if(collectionSource){
-		// go through all collections and set them all to unchecked
-		const collectionCheckboxes = document.querySelectorAll('input[id^="coll"]');
-		collectionCheckboxes.forEach(collection => {
-			collection.checked = false;
-		});
-
-		//go through all collections and set the parent collections to unchecked
-		const parentCollectionCheckboxes = document.querySelectorAll('input[id^="cat-"]');
-		parentCollectionCheckboxes.forEach(collection => {
-			collection.checked = false;
-		});
-
-		// set the one with collectionSource as checked
-		const targetCheckbox = document.querySelectorAll('input[id^="coll-' + sanitizedCollectionSource + '"]');
-		targetCheckbox.forEach(collection => {
-			collection.checked = true;
-		});
-		//do the same for collections with slightly different format
-		const targetCheckboxAlt = document.querySelectorAll('input[id^="collection-' + sanitizedCollectionSource + '"]');
-		targetCheckboxAlt.forEach(collection => {
-			collection.checked = true;
-		});
+	if (collectionSource) {
+		uncheckEverything();
+		checkTheCollectionsThatShouldBeChecked(sanitizedCollectionSource);
 		updateChip();
 	}
 
