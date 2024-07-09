@@ -58,7 +58,7 @@ $LANG['SPECIMENS'] = 'Especímenes';
 $LANG['IMG_CONTR'] = 'Contribuidores de imágenes';
 $LANG['OBS'] = 'Observaciones';
 
-$LANG['NAV_HOME'] = 'Hogar';
+$LANG['NAV_HOME'] = 'Inicio';
 $LANG['NAV_IMG_LIB'] = 'Biblioteca de Imágenes';
 $LANG['NAV_IMG_CONTR'] = 'Colaboradores de Imágenes';
 $LANG['NAV_IMG_SEARCH'] = 'Búsqueda de Imágenes';
