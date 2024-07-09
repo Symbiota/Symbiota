@@ -618,7 +618,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 											<ul id="game-dropdown">
 												<li>
 													<span style="display: flex; align-items: center;" onmouseover="mopen('m1')" onmouseout="mclosetime()" onfocus="mopen('m1')" onblur="mclosetime()" tabindex="0">
-														<span style=" color: var(--link-color); font-size:1.2rem; text-decoration: underline;">Games</span> <img src="../images/games/games.png" style="width:2em" alt="<?php echo $LANG['GAMES']; ?>"/>
+														<span style=" color: var(--link-color); font-size:1rem; text-decoration: underline;">Games</span> <img src="../images/games/games.png" style="width:2em" alt="<?php echo $LANG['GAMES']; ?>"/>
 													</span>
 													<div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
 														<?php
