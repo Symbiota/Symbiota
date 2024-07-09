@@ -78,7 +78,7 @@ $LANG['COLLECTION_START_DATE'] = 'Fecha de inicio de la colección';
 $LANG['SINGLE_DATE_START_DATE'] = 'Fecha única o fecha de inicio del rango (por ejemplo, AAAA-MM-DD o formato similar).';
 $LANG['COLLECTION_END_DATE'] = 'Fecha de finalización de la colección';
 $LANG['SINGLE_DATE_END_DATE'] = 'Fecha única o fecha de finalización del rango (por ejemplo, AAAA-MM-DD o formato similar).';
-$LANG['COLLECTOR_LAST_NAME'] = 'Apellido del Coleccionista';
+$LANG['COLLECTOR_LAST_NAME'] = 'Apellido del Colector';
 $LANG['COLLECTOR_NUMBER_'] = 'Número de Coleccionista';
 $LANG['COLLECTIONS'] = 'Colecciones';
 
