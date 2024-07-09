@@ -193,7 +193,7 @@ include($SERVER_ROOT.'/includes/header.php');
 		$varBase = 'clid='.$clid.'&pid='.$pid;
 		$varChildren = $varBase.'&targetclid='.$targetClid.'&parentclid='.$parentClid.'&targetpid='.$targetPid.'&transmethod='.$transferMethod.'&copyattributes='.$copyAttributes;
 		?>
-		<div id="tabs" style="margin:10px; font-size: 1rem">
+		<div id="tabs" style="margin:10px;">
 			<ul>
 				<li><a href="#admintab"><span><?= $LANG['ADMIN']; ?></span></a></li>
 				<li><a href="checklistadminmeta.php?<?php echo $varBase; ?>"><span><?php echo $LANG['DESCRIPTION'];?></span></a></li>
