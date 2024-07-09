@@ -282,3 +282,8 @@ table.styledtable tr.alt td {
 .disp-none {
   display: none;
 }
+
+/* JQUERY UI modifications */
+.ui-tabs-panel {
+  font-size: 1rem;
+}
