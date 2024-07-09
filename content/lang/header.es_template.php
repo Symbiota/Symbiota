@@ -48,7 +48,7 @@ $LANG['TOGGLE_508_OFF'] = "Alternar el Diseño de Formulario Condensado";
 $LANG['TOGGLE_508_ON'] = "Alternar Diseño de Formulario Vertical";
 $LANG['SELECT_LANGUAGE'] = 'Seleccionar Idioma';
 
-$LANG['CONTACT_US'] = 'Contacta con Nosotros';
+$LANG['CONTACT_US'] = 'Contáctenos';
 $LANG['LOGIN'] = 'Acceso';
 $LANG['SEARCH_COLLECTIONS'] = 'Buscar Colecciones';
 $LANG['CHECKLISTS'] = 'Listas de Control';
