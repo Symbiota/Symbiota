@@ -656,7 +656,7 @@ class OccurrenceCleaner extends Manager{
 		$rs = $this->conn->query($sql);
 		$previousCoordStr = '';
 		while($r = $rs->fetch_object()){
-			echo '<li>Checking occurrence <a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($r->occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($r->occid, HTML_SPECIAL_CHARS_FLAGS) . '</a>...</li>';
+			echo '<li>Checking occurrence <a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($r->occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($r->occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>...</li>';
 			$recCnt++;
 			if($previousCoordStr != $r->decimallatitude.','.$r->decimallongitude){
 				$googleUnits = $this->callGoogleApi($r->decimallatitude, $r->decimallongitude);

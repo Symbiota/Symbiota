@@ -26,4 +26,7 @@ $LANG['COPY_TO_CLIPBOARD'] = 'Copia URL al Portapapeles';
 
 $LANG['BUTTON_RESET'] = 'Restablecer';
 $LANG['SEARCH'] = 'Buscar';
+$LANG['DISPLAY_FORMAT'] = 'Formato de Visualización de Resultados';
+$LANG['LIST'] = 'Lista';
+$LANG['TABLE'] = 'Tabla de Datos';
 ?>

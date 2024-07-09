@@ -50,12 +50,12 @@ $LANG['ATTACH_DESCRIPTION'] = 'Tipos de archivo aceptados incluyen PDF, Word, Ex
 									PDFs, imágenes y archivos de texto son preferidos, ya que serán desplegados en el navegador.';
 $LANG['RETURN_LOAN_INDEX'] = 'Regresar a Página de Índice de Préstamos';
 $LANG['SURE_DELETE_EX'] = 'Está seguro que quiere borrar permanentemente este intercambio?';
-$LANG['DEL_EXCHANGE'] = 'Borrar Intercambio';
 $LANG['NOT_AUTHORIZED'] = 'No está autorizado para añadir registros de ocurrencia';
 $LANG['UNKNOWN_ERROR'] = 'ERROR: error desconocido, por favor contacte al administrador del sistema';
 
 // from exchangetab.php
 $LANG['CREATE_NEW_EXCHANGE'] = 'Crear un Nuevo Intercambio';
+$LANG['DELETE_EXCHANGE'] = 'Borrar Intercambio';
 $LANG['NEW_GIFT'] = 'Nuevo Obsequio/Intercambio';
 $LANG['SEL_INST'] = 'Seleccionar Institución';
 $LANG['ADD_NEW_INST'] = 'Añadir una Nueva Institución';

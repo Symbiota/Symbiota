@@ -22,8 +22,8 @@ include_once('content/lang/misc/aboutproject.'.$LANG_TAG.'.php');
 			<b><?php echo (isset($LANG['CONTACTS'])?$LANG['CONTACTS']:'Contacts'); ?></b>
 		</div>
 		<!-- This is inner text! -->
-		<div id="innertext" style="margin:10px 20px">
-			<h1><?php echo (isset($LANG['CONTACTS'])?$LANG['CONTACTS']:'Contacts'); ?>:</h1>
+		<div role="main" id="innertext" style="margin:10px 20px">
+			<h1 class="page-heading"><?php echo $LANG['CONTACTS']; ?>:</h1>
 
 			<p></p>
 

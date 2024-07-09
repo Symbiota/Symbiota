@@ -16,9 +16,9 @@ $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 //Sanitation
 if(!is_numeric($relatedGlossId)) $relatedGlossId = 0;
 if(!is_numeric($taxaTid)) $taxaTid = 0;
-$taxaName = htmlspecialchars($taxaName, HTML_SPECIAL_CHARS_FLAGS);
-$relationship = htmlspecialchars($relationship, HTML_SPECIAL_CHARS_FLAGS);
-$relatedLanguage = htmlspecialchars($relatedLanguage, HTML_SPECIAL_CHARS_FLAGS);
+$taxaName = htmlspecialchars($taxaName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$relationship = htmlspecialchars($relationship, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$relatedLanguage = htmlspecialchars($relatedLanguage, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 
 if(!$relatedLanguage) $relatedLanguage = $DEFAULT_LANG;
 if($relatedLanguage == 'en') $relatedLanguage = 'English';
@@ -58,7 +58,7 @@ if($isEditor){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['GLOSSARY'])?$LANG['GLOSSARY']:'Glossary').' - '.(isset($LANG['ADD_TERM'])?$LANG['ADD_TERM']:'Add New Term'); ?> </title>
+	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['GLOSSARY'] . ' - ' . $LANG['ADD_TERM']; ?> </title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -114,7 +114,8 @@ if($isEditor){
 </head>
 <body>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
+		<h1 class="page-heading">Add New Glossary Term</h1>
 		<?php
 		if($statusStr){
 			?>

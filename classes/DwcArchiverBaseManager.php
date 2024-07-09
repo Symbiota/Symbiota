@@ -10,7 +10,7 @@ class DwcArchiverBaseManager extends Manager{
 	protected $charSetSource = '';
 	protected $charSetOut = '';
 	protected $sqlBase;
-	protected $fileHandler;
+	private $fileHandler;
 
 	public function __construct($conType, $connOverride){
 		parent::__construct(null, $conType, $connOverride);
@@ -20,6 +20,7 @@ class DwcArchiverBaseManager extends Manager{
 
 	public function __destruct(){
 		parent::__destruct();
+		if($this->fileHandler) fclose($this->fileHandler);
 	}
 
 	protected function setFileHandler($filePath){

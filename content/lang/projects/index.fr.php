@@ -53,8 +53,21 @@ $LANG['GLOBE_ALT'] = 'imaginez un globe, indiquant une version de la liste de co
 $LANG['TRIANGLE_ALT'] = 'une image d\'un triangle. Juste utilisé pour que la fenêtre contextuelle ressemble davantage à une bulle de dialogue';
 $LANG['EDIT'] = 'Modifier';
 $LANG['KEY'] = 'Clé';
-$LANG['GOLDEN_KEY_SYMBOL'] = 'Symbole de la clé d\'or';
+$LANG['KEY_SYMBOL'] = 'Symbole de clé';
 $LANG['ADD_NEW'] = 'Ajouter un nouveau projet';
 $LANG['EDIT'] = 'Modifier le projet';
 
+//Manager Tab
+$LANG['INVENTORY_PROJECT_MANAGERS'] = 'Chefs de projets d\'inventaire';
+$LANG['ADD_NEW_MANAGER'] = 'Ajouter un nouveau gestionnaire';
+$LANG['ADD_TO_MANAGER_LIST'] = 'Ajouter à la liste des gestionnaires';
+$LANG['SELECT_USER'] = 'Sélectionnez un utilisateur';
+
+//Checklist Tab
+$LANG['ADD_A_CHECKLIST'] = 'Ajouter une liste de contrôle';
+$LANG['SELECT_CHECKLIST_TO_ADD'] = 'Sélectionnez la liste de contrôle à ajouter';
+$LANG['ADD_CHECKLIST'] = 'Ajouter une liste de contrôle';
+$LANG['DELETE_A_CHECKLIST'] = 'Supprimer une liste de contrôle';
+$LANG['SELECT_CHECKLIST_TO_DELETE'] = 'Supprimer la liste de contrôle';
+$LANG['DELETE_CHECKLIST'] = 'Supprimer la liste de contrôle';
 ?>

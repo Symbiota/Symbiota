@@ -28,7 +28,11 @@ $statusStr = '';
 if ($isEditor) {
 	if ($action == 'saveEdits') {
 		$statusStr = $collManager->collectionUpdate($_POST);
-		if ($statusStr === true) header('Location: collprofiles.php?collid=' . $collid);
+		if ($statusStr === true) { 
+			header('Location: collprofiles.php?collid=' . $collid);
+		} else {
+			$statusStr = $collManager->getErrorMessage();
+		}
 	}
 	elseif ($action == 'newCollection') {
 		if ($IS_ADMIN) {
@@ -68,7 +72,7 @@ $collManager->cleanOutArr($collData);
 <html lang="<?php echo $LANG_TAG ?>">
 
 <head>
-	<title><?php echo $DEFAULT_TITLE . ' ' . ($collid ? $collData['collectionname'] : '') . ' ' . $LANG['COLL_PROFILE']; ?></title>
+	<title><?php echo $DEFAULT_TITLE . ' ' . ($collid ? $collData['collectionname'] : '') . ' ' . $LANG['COL_PROFS']; ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT . '/includes/head.php');
@@ -90,7 +94,11 @@ $collManager->cleanOutArr($collData);
 			block_unsupported_drop: true,
 			images_file_types: 'jpg,jpeg,png,gif',
 			images_upload_url: 'tinymceimagehandler.php',
-			a11y_advanced_options: true
+			a11y_advanced_options: true,
+			init_instance_callback: function (editor) {
+				var iframeBody = editor.getBody();
+				iframeBody.setAttribute('aria-label', <?php echo json_encode($LANG['TINYMCE_INFO'], JSON_UNESCAPED_UNICODE); ?>);
+			}
 		});
 
 		$(function() {
@@ -248,15 +256,15 @@ $collManager->cleanOutArr($collData);
 	$displayLeftMenu = (isset($collections_misc_collmetadataMenu) ? $collections_misc_collmetadataMenu : true);
 	include($SERVER_ROOT . '/includes/header.php');
 	echo '<div class="navpath">';
-	echo '<a href="../../index.php">' . htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
+	echo '<a href="../../index.php">' . htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
 	if ($collid) {
-		echo '<a href="collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . htmlspecialchars($LANG['COL_MGMNT'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt; ';
+		echo '<a href="collprofiles.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">' . htmlspecialchars($LANG['COL_MGMNT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
 		echo '<b>' . $collData['collectionname'] . ' ' . $LANG['META_EDIT'] . '</b>';
 	}
 	else echo '<b>' . $LANG['CREATE_COLL'] . '</b>';
 	echo '</div>';
 	?>
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<?php
 		if ($statusStr) {
 			?>
@@ -271,22 +279,23 @@ $collManager->cleanOutArr($collData);
 		<div id="tabs" style="margin:0px;">
 			<?php
 			if ($isEditor) {
-				if ($collid) echo '<h1>' . $collData['collectionname'] . (array_key_exists('institutioncode', $collData) ? ' (' . $collData['institutioncode'] . ')' : '') . '</h1>';
+				if ($collid) echo '<h1 class="page-heading">Edit Collection Metadata & Contacts: ' . $collData['collectionname'] . (array_key_exists('institutioncode', $collData) ? ' (' . $collData['institutioncode'] . ')' : '') . '</h1>';
 				?>
 				<ul>
-					<li><a href="#colleditor"><?php echo htmlspecialchars($LANG['COL_META_EDIT'], HTML_SPECIAL_CHARS_FLAGS); ?></a></li>
+					<li><a href="#colleditor"><?php echo htmlspecialchars($LANG['COL_META_EDIT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></li>
 					<?php
-					if ($collid) echo '<li><a href="collmetaresources.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($LANG['CONT_RES'], HTML_SPECIAL_CHARS_FLAGS) . '</a></li>';
+					if ($collid) echo '<li><a href="collmetaresources.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($LANG['CONT_RES'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
 					?>
 				</ul>
 				<div id="colleditor">
+					<h1 class="page-heading screen-reader-only">Collection Metadata Editor Tab</h1>
 					<section class="fieldset-like">
 						<h1> <span> <?php echo ($collid ? 'Edit' : 'Add New') . ' ' . $LANG['COL_INFO'] ?> </span> </h1>
 						<form id="colleditform" name="colleditform" action="collmetadata.php" method="post" enctype="multipart/form-data" onsubmit="return verifyCollEditForm(this)">
 							<div class="field-block">
 								<span class="field-elem">
-									<label for="institutionCode"> <?php echo htmlspecialchars($LANG['INST_CODE'], HTML_SPECIAL_CHARS_FLAGS); ?>: </label>
-									<span class="skip-link">
+									<label for="institutionCode"> <?php echo htmlspecialchars($LANG['INST_CODE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>: </label>
+									<span class="screen-reader-only">
 										<?php
 											echo $LANG['NAME_ONE'] . ' ';
 										?>
@@ -298,15 +307,15 @@ $collManager->cleanOutArr($collData);
 									<span id="instcodeinfodialog" aria-live="polite">
 										<?php
 											echo $LANG['NAME_ONE'] . ' ';
-											echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#institutionCode" target="_blank">' . htmlspecialchars($LANG['DWC_DEF'], HTML_SPECIAL_CHARS_FLAGS) . '</a>.';
+											echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#institutionCode" target="_blank">' . htmlspecialchars($LANG['DWC_DEF'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>.';
 										?>
 									</span>
 								</span>
 							</div>
 							<div class="field-block">
 								<span class="field-elem">
-									<label for="collectionCode"> <?php echo htmlspecialchars($LANG['COLL_CODE'], HTML_SPECIAL_CHARS_FLAGS); ?>: </label>
-									<span class="skip-link">
+									<label for="collectionCode"> <?php echo htmlspecialchars($LANG['COLL_CODE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>: </label>
+									<span class="screen-reader-only">
 										<?php
 											echo $LANG['NAME_ACRO'] . ' ';
 										?>
@@ -318,33 +327,33 @@ $collManager->cleanOutArr($collData);
 									<span id="collcodeinfodialog" aria-live="polite">
 										<?php
 										echo $LANG['NAME_ACRO'] . ' ';
-										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#institutionCode" target="_blank">' . htmlspecialchars($LANG['DWC_DEF'], HTML_SPECIAL_CHARS_FLAGS) . '</a>.'
+										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#institutionCode" target="_blank">' . htmlspecialchars($LANG['DWC_DEF'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>.'
 										?>
 									</span>
 								</span>
 							</div>
 							<div class="field-block">
 								<span class="field-elem">
-									<label for="collectionName"> <?php echo htmlspecialchars($LANG['COLL_NAME'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
+									<label for="collectionName"> <?php echo htmlspecialchars($LANG['COLL_NAME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>: </label>
 									<input id="collectionName" type="text" name="collectionName" value="<?php echo ($collid ? $collData['collectionname'] : ''); ?>" class="max-width-fit-75" required />
 								</span>
 							</div>
 							<div class="field-block">
 								<div class="field-elem">
-									<label for="full-description"> <?php echo htmlspecialchars($LANG['DESC'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
+									<label for="full-description"  tabindex="0" > <?php echo htmlspecialchars($LANG['DESC'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?>: </label>
 									<textarea id="full-description" name="fullDescription" style="width:95%;height:90px;"><?php echo ($collid ? $collData["fulldescription"] : ''); ?></textarea>
 								</div>
 							</div>
 							<div class="field-block">
 								<span class="field-elem">
-									<label for="decimallatitude"> <?php echo htmlspecialchars($LANG['LAT'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
+									<label for="decimallatitude"> <?php echo htmlspecialchars($LANG['LAT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>: </label>
 									<input id="decimallatitude" name="latitudeDecimal" type="text" value="<?php echo ($collid ? $collData["latitudedecimal"] : ''); ?>" />
 									<a href="#" onclick="openPopup('../tools/mappointaid.php?errmode=0');return false;" tabindex="0"><img src="../../images/world.png" alt="<?php echo $LANG['MAP'] ?>" style="width:12px;" /></a>
 								</span>
 							</div>
 							<div class="field-block">
 								<span class="field-elem">
-									<label for="decimallongitude"> <?php echo htmlspecialchars($LANG['LONG'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
+									<label for="decimallongitude"> <?php echo htmlspecialchars($LANG['LONG'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>: </label>
 									<input id="decimallongitude" name="longitudeDecimal" type="text" value="<?php echo ($collid ? $collData["longitudedecimal"] : ''); ?>" />
 								</span>
 							</div>
@@ -354,7 +363,7 @@ $collManager->cleanOutArr($collData);
 								?>
 								<div class="field-block">
 									<span class="field-elem">
-									<label for="ccpk"> <?php echo htmlspecialchars($LANG['CATEGORY'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
+									<label for="ccpk"> <?php echo htmlspecialchars($LANG['CATEGORY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>: </label>
 										<select id="ccpk" name="ccpk">
 											<option value=""><?php echo $LANG['NO_CATEGORY'] ?></option>
 											<option value="">-------------------------------------------</option>
@@ -372,13 +381,13 @@ $collManager->cleanOutArr($collData);
 							?>
 							<div class="field-block">
 								<span class="field-elem">
-									<span class="skip-link">
+									<span class="screen-reader-only">
 										<?php
 											echo $LANG['EXPLAIN_PUBLIC'] . ' ';
 										?>
 									</span>
 									<input id="publicEdits" type="checkbox" name="publicEdits" value="1" <?php echo ($collData && $collData['publicedits'] ? 'CHECKED' : ''); ?> />
-									<label for="publicEdits"> <?php echo htmlspecialchars($LANG['ALLOW_PUBLIC_EDITS'], HTML_SPECIAL_CHARS_FLAGS) ?> </label>
+									<label for="publicEdits"> <?php echo htmlspecialchars($LANG['ALLOW_PUBLIC_EDITS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?> </label>
 									<a id="peditsinfo" href="#" onclick="return false" tabindex="0">
 										<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_PUB_EDITS'] ?>"/>
 									</a>
@@ -389,13 +398,13 @@ $collManager->cleanOutArr($collData);
 							</div>
 							<div class="field-block">
 								<span class="field-elem">
-								<a class="skip-link">
+								<a class="screen-reader-only">
 										<?php
 											echo $LANG['LEGAL_DOC'] . ' ';
 										?>
 								</a>
-								<label for="rights"> <?php echo htmlspecialchars($LANG['LICENSE'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
-									<?php
+								<label for="rights"> <?php echo htmlspecialchars($LANG['LICENSE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>: </label>
+								<?php
 									if (isset($RIGHTS_TERMS)) {
 										?>
 										<select id="rights" name="rights" class="max-width-fit-75">
@@ -439,9 +448,9 @@ $collManager->cleanOutArr($collData);
 							</div>
 							<div class="field-block">
 								<span class="field-elem">
-									<label for="rightsHolder"> <?php echo htmlspecialchars($LANG['RIGHTS_HOLDER'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
-									<span class="skip-link">
-										<?php
+									<label for="rightsHolder"> <?php echo htmlspecialchars($LANG['RIGHTS_HOLDER'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>: </label>
+									<span class="screen-reader-only">
+									<?php
 											echo $LANG['HOLDER_DEF'] . ' ';
 										?>
 									</span>
@@ -452,27 +461,27 @@ $collManager->cleanOutArr($collData);
 									<span id="rightsholderinfodialog" aria-live="polite">
 										<?php
 										echo $LANG['HOLDER_DEF'] . ' ';
-										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#dcterms:rightsHolder" target="_blank">' . htmlspecialchars($LANG['DWC_DEF'], HTML_SPECIAL_CHARS_FLAGS) . '</a>.'
+										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#dcterms:rightsHolder" target="_blank">' . htmlspecialchars($LANG['DWC_DEF'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>.'
 										?>
 									</span>
 								</span>
 							</div>
 							<div class="field-block">
 								<span class="field-elem">
-									<label for="accessRights"> <?php echo htmlspecialchars($LANG['ACCESS_RIGHTS'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
-									<span class="skip-link">
+									<label for="accessRights"> <?php echo htmlspecialchars($LANG['ACCESS_RIGHTS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>: </label>
+									<span class="screen-reader-only">
 										<?php
 											echo $LANG['ACCESS_DEF'] . ' ';
 										?>
 									</span>
 									<input type="text" id="accessRights" name="accessRights" value="<?php echo ($collid ? $collData["accessrights"] : ''); ?>" style="max-width: 100%; width:600px" />
 									<a id="accessrightsinfo" href="#" onclick="return false" tabindex="0">
-										<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo htmlspecialchars($LANG['MORE_INFO_ACCESS_RIGHTS'], HTML_SPECIAL_CHARS_FLAGS); ?>"/>
+										<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo htmlspecialchars((isset($LANG['MORE_INFO_ACCESS_RIGHTS']) ? $LANG['MORE_INFO_ACCESS_RIGHTS'] : 'More information about Access Rights'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"/>
 									</a>
 									<span id="accessrightsinfodialog" aria-live="polite">
 										<?php
 										echo $LANG['ACCESS_DEF'] . ' ';
-										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#dcterms:accessRights" target="_blank">' . htmlspecialchars($LANG['DWC_DEF'], HTML_SPECIAL_CHARS_FLAGS) . '</a>.';
+										echo '<a href="http://rs.tdwg.org/dwc/terms/index.htm#dcterms:accessRights" target="_blank">' . htmlspecialchars($LANG['DWC_DEF'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>.';
 										?>
 									</span>
 								</span>
@@ -482,7 +491,7 @@ $collManager->cleanOutArr($collData);
 								?>
 								<div class="field-block">
 									<span class="field-elem">
-										<label for="collType"> <?php echo htmlspecialchars($LANG['DATASET_TYPE'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
+										<label for="collType"> <?php echo htmlspecialchars($LANG['DATASET_TYPE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>: </label>
 										<select id="collType" name="collType">
 											<option value="Preserved Specimens"><?php echo $LANG['PRES_SPECS']; ?></option>
 											<option value="Observations" <?php echo ($collid && $collData["colltype"] == 'Observations' ? 'SELECTED' : ''); ?>><?php echo $LANG['OBSERVATIONS']; ?></option>
@@ -499,7 +508,7 @@ $collManager->cleanOutArr($collData);
 								</div>
 								<div class="field-block">
 									<fieldset>
-										<legend> <?php echo htmlspecialchars($LANG['MANAGEMENT'], HTML_SPECIAL_CHARS_FLAGS) ?>: </legend>
+										<legend> <?php echo htmlspecialchars($LANG['MANAGEMENT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>: </legend>
 										
 										<input class="top-breathing-room-rel-sm" id="snapshot" type="radio" name="managementType" value="Snapshot" CHECKED> <label for="snapshot">  <?php echo $LANG['SNAPSHOT']; ?> </label> <br/>
 										<input id="liveData" type="radio" name="managementType" value="Live Data" <?php echo ($collid && $collData['managementtype'] == 'Live Data' ? 'CHECKED' : ''); ?>> <label for="liveData"> <?php echo $LANG['LIVE_DATA']; ?> </label> <br/>
@@ -520,8 +529,7 @@ $collManager->cleanOutArr($collData);
 							?>
 							<div class="field-block">
 									<fieldset>
-										<legend> <?php echo htmlspecialchars($LANG['GUID_SOURCE'], HTML_SPECIAL_CHARS_FLAGS) ?>: </legend>
-										
+										<legend> <?php echo htmlspecialchars($LANG['GUID_SOURCE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>: </legend>										
 										<input class="top-breathing-room-rel-sm" id="occurrenceId" type="radio" name="guidTarget" value="occurrenceId" CHECKED> <label for="occurrenceId">  <?php echo (isset($LANG['OCCURRENCE_ID']) ? $LANG['OCCURRENCE_ID'] : 'occurrenceID GUID'); ?> </label> <br/>
 										<input id="catalogNumber" type="radio" name="guidTarget" value="catalogNumber" <?php echo ($collid && $collData['guidtarget'] == 'catalogNumber' ? 'CHECKED' : ''); ?>> <label for="catalogNumber"> <?php echo (isset($LANG['CAT_NUM']) ? $LANG['CAT_NUM'] : 'Catalog Number'); ?> </label> <br/>
 										<input id="symbiotaUUID" type="radio" name="guidTarget" value="symbiotaUUID" <?php echo ($collid && $collData['guidtarget'] == 'symbiotaUUID' ? 'CHECKED' : ''); ?>> <label for="symbiotaUUID">  <?php echo (isset($LANG['SYMB_GUID']) ? $LANG['SYMB_GUID'] : 'Symbiota Generated GUID (UUID)'); ?> </label>
@@ -536,8 +544,8 @@ $collManager->cleanOutArr($collData);
 										<?php
 										echo $LANG['OCCID_DEF_1'];
 										echo ' <a href="http://rs.tdwg.org/dwc/terms/index.htm#occurrenceID" target="_blank">';
-										echo $LANG['OCCURRENCEID'] . ' </a>';
-										echo $LANG['OCCID_DEF_2'];
+										echo $LANG['OCCURRENCEID'] . '</a>';
+										echo (isset($LANG['OCCID_DEF_2']) ? ' ' . $LANG['OCCID_DEF_2'] : '');
 										?>
 									</span>
 							</div>
@@ -589,7 +597,7 @@ $collManager->cleanOutArr($collData);
 								<span class="field-elem">
 									<span class="icon-elem" style="display:<?php echo (($collid && $collData["icon"]) ? 'none;' : 'inline'); ?>">
 										<input type='hidden' name='MAX_FILE_SIZE' value='20000000' />
-										<label for="iconFile"> <?php echo htmlspecialchars($LANG['ICON_URL'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
+										<label for="iconFile"> <?php echo htmlspecialchars($LANG['ICON_URL'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>: </label>
 										<input id="iconFile" name='iconFile' type='file' onchange="verifyIconImage(this.form);" />
 									</span>
 									<span class="icon-elem" style="display:<?php echo (($collid && $collData["icon"]) ? 'inline' : 'none'); ?>">
@@ -615,8 +623,8 @@ $collManager->cleanOutArr($collData);
 								?>
 								<div class="field-block" style="clear:both">
 									<span class="field-elem">
-										<label for="sortSeq"> <?php echo htmlspecialchars($LANG['SORT_SEQUENCE'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
-										<span class="skip-link">
+										<label for="sortSeq"> <?php echo htmlspecialchars($LANG['SORT_SEQUENCE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>: </label>
+										<span class="screen-reader-only">
 											<?php
 												echo $LANG['LEAVE_IF_ALPHABET'] . ' ';
 											?>
@@ -635,8 +643,8 @@ $collManager->cleanOutArr($collData);
 							?>
 							<div class="field-block">
 								<span class="field-elem">
-									<label for="collectionID"> <?php echo htmlspecialchars($LANG['COLLECTION_ID'], HTML_SPECIAL_CHARS_FLAGS) ?>: </label>
-									<span class="skip-link">
+									<label for="collectionID"> <?php echo htmlspecialchars($LANG['COLLECTION_ID'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>: </label>
+									<span class="screen-reader-only">
 											<?php
 												echo $LANG['EXPLAIN_COLLID'] . ' ';
 											?>
@@ -647,7 +655,7 @@ $collManager->cleanOutArr($collData);
 									</a>
 									<span id="collectionidinfodialog" aria-live="polite">
 										<?php echo $LANG['EXPLAIN_COLLID'] .
-											' <a href="https://dwc.tdwg.org/terms/#dwc:collectionID" target="_blank">' . htmlspecialchars($LANG['DWC_COLLID'], HTML_SPECIAL_CHARS_FLAGS) .
+											' <a href="https://dwc.tdwg.org/terms/#dwc:collectionID" target="_blank">' . htmlspecialchars($LANG['DWC_COLLID'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .
 											'</a>): ' . $LANG['EXPLAIN_COLLID_2'] . ' (<a href="http://grbio.org" target="_blank">http://grbio.org</a>).';
 										?>
 									</span>

@@ -7,6 +7,8 @@ if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/indi
 else include_once($SERVER_ROOT.'/content/lang/collections/individual/index.en.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.en.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/header.en.php');
+else include_once($SERVER_ROOT . '/content/lang/header.' . $LANG_TAG . '.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $submit = array_key_exists('formsubmit', $_REQUEST) ? $_REQUEST['formsubmit'] : '';
@@ -19,6 +21,8 @@ $guid = array_key_exists('guid', $_REQUEST) ? $_REQUEST['guid'] : '';
 $tabIndex = array_key_exists('tabindex', $_REQUEST) ? $indManager->sanitizeInt($_REQUEST['tabindex']) : 0;
 $clid = array_key_exists('clid', $_REQUEST) ? $indManager->sanitizeInt($_REQUEST['clid']) : 0;
 $format = isset($_GET['format']) ? $_REQUEST['format'] : '';
+
+$shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 
 if($occid) $indManager->setOccid($occid);
 elseif($guid) $occid = $indManager->setGuid($guid);
@@ -307,13 +311,21 @@ $traitArr = $indManager->getTraitArr();
 		.smaller-header {
 			font-size: 2rem;
 		}
+		<?php if($shouldUseMinimalMapHeader){ ?>
+			.minimal-header-margin{
+			   margin-top: 6rem;
+			}
+		<?php } ?>
 		</style>
 </head>
 <body>
+	<?php
+		if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimal_header_template.php');
+	?>
 	<header style="background-image: none;">
-		<a class="skip-link" href="#end-nav"><?php echo $LANG['SKIP_NAV'] ?></a>
-		<h1 class="smaller-header">
-			<?php echo (isset($LANG['FULL_RECORD_DETAILS']) ? $LANG['FULL_RECORD_DETAILS'] : 'Full Record Details'); ?>
+		<a class="screen-reader-only" href="#end-nav"><?php echo $LANG['SKIP_NAV'] ?></a>
+		<h1 class="page-heading minimal-header-margin">
+			<?php echo $LANG['FULL_RECORD_DETAILS']; ?>
 		</h1>
 		<div id="end-nav"></div>
 	</header>
@@ -422,12 +434,12 @@ $traitArr = $indManager->getTraitArr();
 										echo $assocArr['relationship'];
 										if($assocArr['subtype']) echo ' ('.$assocArr['subtype'].')';
 										echo ': ';
-										$relID = $assocArr['identifier'];
+										$relID = $assocArr['objectID'];
 										$relUrl = $assocArr['resourceurl'];
 										if(!$relUrl && $assocArr['occidassoc']) $relUrl = $GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$assocArr['occidassoc'];
 										if($relUrl) $relID = '<a href="' . $relUrl . '">' . $relID . '</a>';
 										if($relID) echo $relID;
-										elseif($assocArr['sciname']) echo $assocArr['sciname'];
+										if($assocArr['sciname']) echo ' [' . $assocArr['sciname'] . ']';
 										echo '</div>';
 										$cnt++;
 									}
@@ -997,7 +1009,7 @@ $traitArr = $indManager->getTraitArr();
 									?>
 									<div id="thumbnail-div" class="thumbnail-div">
 										<a href='<?= $imgArr['url'] ?>' target="_blank">
-											<img border="1" src="<?= $thumbUrl; ?>" title="<?= $imgArr['caption']; ?>" style="max-width:170;" alt="thumbnail image of current specimen" />
+											<img border="1" src="<?= $thumbUrl; ?>" title="<?= $imgArr['caption']; ?>" style="max-width:21.9rem;" alt="thumbnail image of current specimen" />
 										</a>
 										<?php
 										if($imgArr['caption']) echo '<div><i>'.$imgArr['caption'].'</i></div>';
@@ -1005,6 +1017,10 @@ $traitArr = $indManager->getTraitArr();
 										if($imgArr['url'] && substr($thumbUrl,0,7)!='process' && $imgArr['url'] != $imgArr['lgurl']) echo '<div><a href="' . $imgArr['url'] . '" target="_blank">' . $LANG['OPEN_MEDIUM'] . '</a></div>';
 										if($imgArr['lgurl']) echo '<div><a href="' . $imgArr['lgurl'] . '" target="_blank">' . $LANG['OPEN_LARGE'] . '</a></div>';
 										if($imgArr['sourceurl']) echo '<div><a href="' . $imgArr['sourceurl'] . '" target="_blank">' . $LANG['OPEN_SOURCE'] . '</a></div>';
+										//Use image rights settings as the default for current record
+										if($imgArr['rights']) $collMetadata['rights'] = $imgArr['rights'];
+										if($imgArr['copyright']) $collMetadata['rightsholder'] = $imgArr['copyright'];
+										if($imgArr['accessrights']) $collMetadata['accessrights'] = $imgArr['accessrights'];
 										?>
 									</div>
 									<?php
@@ -1015,13 +1031,11 @@ $traitArr = $indManager->getTraitArr();
 						}
 						//Rights
 						$rightsStr = $collMetadata['rights'];
-						if($collMetadata['rights']){
-							$rightsHeading = '';
-							if(isset($RIGHTS_TERMS)) $rightsHeading = array_search($rightsStr, $RIGHTS_TERMS);
-							if(substr($collMetadata['rights'],0,4) == 'http'){
-								$rightsStr = '<a href="' . $rightsStr . '" target="_blank">' . ($LANG['USAGE_RIGHTS']) . '</a>';
+						if($rightsStr){
+							if(substr($collMetadata['rights'], 0, 4) == 'http'){
+								$rightsStr = '<a href="' . $rightsStr . '" target="_blank">' . $rightsStr . '</a>';
 							}
-							$rightsStr = '<div style="margin-top:2px;">'.$rightsStr.'</div>';
+							$rightsStr = '<div style="margin-top:2px;">' . $rightsStr . '</div>';
 						}
 						if($collMetadata['rightsholder']){
 							$rightsStr .= '<div style="margin-top:2px;"><label>'.$LANG['RIGHTS_HOLDER'].':</label> '.$collMetadata['rightsholder'].'</div>';
@@ -1266,7 +1280,7 @@ $traitArr = $indManager->getTraitArr();
 											<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
 											<input name="comid" type="hidden" value="<?php echo $comId; ?>" />
 											<input name="tabindex" type="hidden" value="<?php echo $commentTabIndex; ?>" />
-											<button name="formsubmit" type="submit" value="deleteComment"><?php echo $LANG['DELETE_COMMENT']; ?></button>
+											<button class="button-danger" name="formsubmit" type="submit" value="deleteComment"><?php echo $LANG['DELETE_COMMENT']; ?></button>
 										</form>
 									</div>
 									<?php

@@ -171,7 +171,7 @@ class OccurrenceAssociations extends Manager {
 			$sql = trim($sql,', ');
 			//echo $sql; exit;
 			if(!$this->conn->query($sql)){
-				echo '<li style="margin-left:20px;">ERROR adding assocaited values (<a href="../individual/index.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '</a>): ' . htmlspecialchars($this->conn->error, HTML_SPECIAL_CHARS_FLAGS) . '</li>';
+				echo '<li style="margin-left:20px;">ERROR adding assocaited values (<a href="../individual/index.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>): ' . htmlspecialchars($this->conn->error, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</li>';
 				//echo '<li style="margin-left:20px;">SQL: '.$sql.'</li>';
 			}
 		}

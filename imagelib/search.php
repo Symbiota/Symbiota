@@ -7,7 +7,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 
 $taxonType = isset($_REQUEST['taxontype']) ? filter_var($_REQUEST['taxontype'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $useThes = array_key_exists('usethes',$_REQUEST) ? filter_var($_REQUEST['usethes'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$taxaStr = isset($_REQUEST['taxa']) ? $_REQUEST['taxa'] : '';
+$taxaStr = isset($_REQUEST['taxa']) ? htmlspecialchars($_REQUEST['taxa'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $phUid = array_key_exists('phuid',$_REQUEST) ? filter_var($_REQUEST['phuid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $tagExistance = array_key_exists('tagExistance',$_REQUEST) ? filter_var($_REQUEST['tagExistance'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $tag = array_key_exists('tag',$_REQUEST) ? $_REQUEST['tag'] : '';
@@ -15,8 +15,9 @@ $keywords = array_key_exists('keywords',$_REQUEST) ? $_REQUEST['keywords'] : '';
 $imageCount = isset($_REQUEST['imagecount']) ? $_REQUEST['imagecount'] : 'all';
 $imageType = isset($_REQUEST['imagetype']) ? filter_var($_REQUEST['imagetype'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $pageNumber = array_key_exists('page', $_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
-$cntPerPage = array_key_exists('cntperpage', $_REQUEST) ? filter_var($_REQUEST['cntperpage'], FILTER_SANITIZE_NUMBER_INT) : 200;
-$action = $_POST['submitaction'] ?? '';
+$cntPerPage = array_key_exists('cntperpage', $_REQUEST) && is_numeric($_REQUEST['cntperpage']) ? filter_var($_REQUEST['cntperpage'], FILTER_SANITIZE_NUMBER_INT) : 200;
+
+$action = $_REQUEST['submitaction'] ?? '';
 
 if(!$useThes && !$action) $useThes = 1;
 if(!$taxonType && isset($DEFAULT_TAXON_SEARCH)) $taxonType = $DEFAULT_TAXON_SEARCH;
@@ -58,9 +59,10 @@ if($action == 'batchAssignTag'){
 	include_once($SERVER_ROOT . '/includes/head.php');
 	include_once($SERVER_ROOT . '/includes/googleanalytics.php');
 	?>
+
+	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
 	<link href="<?= $CSS_BASE_PATH; ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
 	<link href="<?= $CSS_BASE_PATH; ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />
-	<link href="<?= $CSS_BASE_PATH; ?>/jquery-ui.min.css?ver=1" type="text/css" rel="Stylesheet" />
 	<style>
 		fieldset{ padding: 15px }
 		fieldset legend{ font-weight:bold }
@@ -124,8 +126,9 @@ if($action == 'batchAssignTag'){
 		<b><?= $LANG['IMAGE_SEARCH'] ?></b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
-		<form name="imagesearchform" id="imagesearchform" action="search.php" method="post">
+	<div role="main" id="innertext">
+		<h1 class="page-heading"><?= $LANG['IMAGE_SEARCH']; ?></h1>
+		<form name="imagesearchform" id="imagesearchform" action="search.php?<?=$imgLibManager->getQueryTermStr()?>" method="post">
 			<?php
 			if($statusStr){
 				echo '<div id="action-status-div">' . $statusStr . '</div>';

@@ -53,12 +53,12 @@ $LANG['ATTACH_DESCRIPTION'] = 'Les types de fichiers pris en charge incluent PDF
 Les fichiers PDF, images et texte sont préférés, car ils s\'afficheront dans le navigateur.';
 $LANG['RETURN_LOAN_INDEX'] = 'Retourner à la page d\'index des prêts';
 $LANG['SURE_DELETE_EX'] = 'Êtes-vous sûr de vouloir supprimer définitivement cet échange ?';
-$LANG['DEL_EXCHANGE'] = 'Supprimer l\'échange';
 $LANG['NOT_AUTHORIZED'] = 'Vous n\'êtes pas autorisé à ajouter des enregistrements d\'occurrence';
 $LANG['UNKNOWN_ERROR'] = 'ERREUR : erreur inconnue, veuillez contacter l\'administrateur système';
 
 // from exchangetab.php
 $LANG['CREATE_NEW_EXCHANGE'] = 'Créer un nouvel échange';
+$LANG['DELETE_EXCHANGE'] = 'Supprimer l\'échange';
 $LANG['NEW_GIFT'] = 'Nouveau cadeau/échange';
 $LANG['SEL_INST'] = 'Sélectionner un établissement';
 $LANG['ADD_NEW_INST'] = 'Ajouter un nouvel établissement';

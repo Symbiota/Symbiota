@@ -3,6 +3,10 @@ body{
 	font-size: 12px;
 }
 
+table, tr, th, td {
+	vertical-align: top;
+}
+
 #innertext{
 	padding:	10px;
 	font-size:	12px;
@@ -13,10 +17,6 @@ body{
 	font-weight: bold;
 	font-size: 16px;
 	width: 595px;
-}
-
-#querySymbolDiv{
-	float:right;
 }
 
 #navDiv{
@@ -55,6 +55,10 @@ body{
 	width: 95px;
 }
 
+#identifierDiv{
+	display: none;
+}
+
 #recordedByDiv {
 	float:left;
 	margin-right: 2px;
@@ -78,6 +82,14 @@ body{
 }
 
 #eventDateDiv input{
+	width:	110px;
+}
+
+#eventDate2Div {
+	float:left;
+}
+
+#eventDate2Div input{
 	width:	110px;
 }
 
@@ -147,7 +159,7 @@ body{
 }
 
 #exstitleinput {
-	width: 500px;
+	width: 400px;
 }
 
 #exsnumberDiv {
@@ -385,7 +397,7 @@ body{
 }
 
 #verbatimCoordinatesDiv input{
-	width:	225px;
+	width:	200px;
 }
 
 #georeferencedByDiv{
@@ -487,6 +499,14 @@ body{
 }
 
 #reproductiveConditionDiv{
+	display:none;
+}
+
+#behaviorDiv{
+	display:none;
+}
+
+#vitalityDiv{
 	display:none;
 }
 

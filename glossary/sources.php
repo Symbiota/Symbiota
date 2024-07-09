@@ -19,7 +19,7 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.(isset($LANG['G_SOURCES'])?$LANG['G_SOURCES']:'Glossary Sources Management'); ?></title>
+	<title><?php echo $DEFAULT_TITLE . $LANG['G_SOURCES']; ?></title>
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -39,7 +39,8 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 		<b><?php echo (isset($LANG['G_CONTR'])?$LANG['G_CONTR']:'Glossary Contributors'); ?></b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
+		<h1 class="page-heading"><?= $LANG['G_SOURCES']; ?></h1>
 		<?php
 		if($editMode){
 			if($isEditor){
@@ -81,9 +82,9 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 							</div>
 							<div>
 								<input name="tid" type="hidden" value="<?php echo $tid; ?>" />
-								<input name="searchterm" type="hidden" value="<?= htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS) ?>" />
-								<input name="searchlanguage" type="hidden" value="<?= htmlspecialchars($language, HTML_SPECIAL_CHARS_FLAGS) ?>" />
-								<input name="searchtaxa" type="hidden" value="<?= htmlspecialchars($taxa, HTML_SPECIAL_CHARS_FLAGS) ?>" />
+								<input name="searchterm" type="hidden" value="<?= htmlspecialchars($searchTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" />
+								<input name="searchlanguage" type="hidden" value="<?= htmlspecialchars($language, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" />
+								<input name="searchtaxa" type="hidden" value="<?= htmlspecialchars($taxa, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" />
 							</div>
 							<?php
 							if($sourceArr){
@@ -92,7 +93,7 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 									<button name="formsubmit" type="submit" value="Edit Source"><?php echo (isset($LANG['SAVE'])?$LANG['SAVE']:'Save Edits'); ?></button>
 								</div>
 								<div style="margin:20px;">
-									<button name="formsubmit" type="submit" value="Delete Source" onclick="return confirm(<?php echo (isset($LANG['SURE_DEL'])?$LANG['SURE_DEL']:'Are you sure you want to delete this source?'); ?>)"><?php echo (isset($LANG['DEL_SRC'])?$LANG['DEL_SRC']:'Delete Source'); ?></button>
+									<button class="button-danger" name="formsubmit" type="submit" value="Delete Source" onclick="return confirm(<?php echo (isset($LANG['SURE_DEL'])?$LANG['SURE_DEL']:'Are you sure you want to delete this source?'); ?>)"><?php echo (isset($LANG['DEL_SRC'])?$LANG['DEL_SRC']:'Delete Source'); ?></button>
 								</div>
 								<?php
 							}
