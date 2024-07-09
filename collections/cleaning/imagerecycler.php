@@ -51,13 +51,14 @@ if($isEditor){
 	?>
 	<div class="navpath">
 		<a href="../../index.php"><?php echo $LANG['HOMEPAGE'] ?></a> &gt;&gt;
-		<a href="../../collections/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo $LANG['COL_MAN_MEN'] ?></a> &gt;&gt;
+		<a href="../../collections/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo $LANG['COL_MAN_MEN'] ?></a> &gt;&gt;
 		<b><?php echo $LANG['BULK_IMAGE_RECYCLER'] ?></b>
 	</div>
 	<?php
 	if($collid){
 		?>
-		<div id="innertext">
+		<div role="main" id="innertext">
+			<h1 class="page-heading">Image Recycler</h1>
 			<form name="imgdelform" action="imagerecycler.php" method="post" enctype="multipart/form-data" onsubmit="return verifyRecycleForm(this)">
 				<fieldset style="width:90%;">
 					<legend style="font-weight:bold;font-size:120%;"><?php echo $LANG['BATCH_IMAGE_REMOVER'] ?></legend>
@@ -74,7 +75,7 @@ if($isEditor){
 					</div>
 					<div style="margin:20px;">
 						<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-						<button type="submit" name="submitaction" value="remove_images"><?php echo $LANG['BULK_REMOVE_IMAGE_FILES'] ?></button>
+						<button class="button-danger" type="submit" name="submitaction" value="remove_images"><?php echo $LANG['BULK_REMOVE_IMAGE_FILES'] ?></button>
 					</div>
 				</fieldset>
 			</form>

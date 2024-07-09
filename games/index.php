@@ -44,8 +44,8 @@ $clArr = $gameManager->getChecklistArr($pid);
 	?>
 
 	<!-- This is inner text! -->
-	<div id="innertext">
-		<h1><?php echo $DEFAULT_TITLE; ?> Games</h1>
+	<div role="main" id="innertext">
+		<h1 class="page-heading">Games</h1>
 
 		<div style='margin:10px;'>
 			Games are designed to provide a fun interface for exploring the species found

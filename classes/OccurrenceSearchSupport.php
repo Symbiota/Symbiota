@@ -124,7 +124,7 @@ class OccurrenceSearchSupport {
 								<?php
 								if($catIcon){
 									$catIcon = (substr($catIcon,0,6)=='images'?$CLIENT_ROOT:'').$catIcon;
-									echo '<img src="'.$catIcon.'" style="border:0px;width:30px;height:30px;" />';
+									echo '<img alt="" src="'.$catIcon.'" style="border:0px;width:30px;height:30px;" />';
 								}
 								?>
 							</div>
@@ -251,7 +251,7 @@ class OccurrenceSearchSupport {
 								if($cArr["icon"]){
 									$cIcon = (substr($cArr["icon"],0,6)=='images'?$CLIENT_ROOT:'').$cArr["icon"];
 									?>
-									<a href = '<?= $CLIENT_ROOT ?>/collections/misc/collprofiles.php?collid=<?= $collid ?>'><img src="<?= $cIcon ?>" style="border:0px;width:30px;height:30px;" /></a>
+									<a href = '<?= $CLIENT_ROOT ?>/collections/misc/collprofiles.php?collid=<?= $collid ?>'><img alt="" src="<?= $cIcon ?>" style="border:0px;width:30px;height:30px;" /></a>
 									<?php
 								}
 								?>
@@ -368,16 +368,10 @@ class OccurrenceSearchSupport {
 			}
 			elseif($dbSearchTerm == 'allobs'){
 				$sqlRet .= 'AND (o.collid IN(SELECT collid FROM omcollections WHERE colltype IN("General Observations","Observations"))) ';
-			}
-			else{
+			} else {
+				// Check in case there is ; inside dbSearchTerm
 				$dbArr = explode(';',$dbSearchTerm);
-				$dbStr = '';
-				if(isset($dbArr[0]) && $dbArr[0]){
-					$dbStr = "(o.collid IN(".$dbArr[0].")) ";
-				}
-				if(isset($dbArr[1]) && $dbArr[1]){
-					//$dbStr .= ($dbStr?'OR ':'').'(o.CollID IN(SELECT collid FROM omcollcatlink WHERE (ccpk IN('.$dbArr[1].')))) ';
-				}
+				$dbStr = "o.collid IN(" . (is_array($dbArr)? implode(',', $dbArr): $dbArr) . ")";
 				$sqlRet .= 'AND ('.$dbStr.') ';
 			}
 		}

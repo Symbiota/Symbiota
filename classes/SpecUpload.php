@@ -342,7 +342,7 @@ class SpecUpload{
 				$this->schemaName = $row->SchemaName;
 				$this->code = $row->code;
 				if(!$this->path) $this->path = $row->path;
-				$this->pKField = strtolower($row->pkfield);
+				$this->pKField = strtolower($row->pkfield ?? '');
 				$this->queryStr = $row->querystr;
 				$this->storedProcedure = $row->cleanupsp;
 				$this->lastUploadDate = $row->uploaddate;

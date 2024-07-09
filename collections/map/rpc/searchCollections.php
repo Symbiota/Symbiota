@@ -48,7 +48,10 @@ $recordArr = [];
 $collArr = [];
 $defaultColor = "#B2BEB5";
 
-$host = ($SERVER_HOST === '127.0.0.1' || $SERVER_HOST === 'localhost'? false: $SERVER_HOST . $CLIENT_ROOT);
+$host = false;
+if(isset($SERVER_HOST)) {
+   $host = ($SERVER_HOST === '127.0.0.1' || $SERVER_HOST === 'localhost'? "http://": "https://") . $SERVER_HOST . $CLIENT_ROOT;
+}
 
 foreach ($coordArr as $collName => $coll) {
 	//Collect all the collections
@@ -94,5 +97,5 @@ foreach ($coordArr as $collName => $coll) {
 }
 ob_get_clean();
 
-echo json_encode(['taxaArr' => $taxaArr, 'collArr' => $collArr, 'recordArr' => $recordArr]);
+echo json_encode(['taxaArr' => $taxaArr, 'collArr' => $collArr, 'recordArr' => $recordArr, 'origin' => $host, 'query' => $searchVar]);
 ?>

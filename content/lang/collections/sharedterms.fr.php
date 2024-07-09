@@ -26,4 +26,7 @@ $LANG['COPY_TO_CLIPBOARD'] = "Copier l'URL dans le presse-papiers";
 
 $LANG['BUTTON_RESET'] = 'Réinitialiser Formulaire';
 $LANG['SEARCH'] = 'Rechercher';
+$LANG['DISPLAY_FORMAT'] = 'Format d\'Affichage des Résultats';
+$LANG['LIST'] = 'Liste';
+$LANG['TABLE'] = 'Tableau de Données';
 ?>

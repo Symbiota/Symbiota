@@ -110,13 +110,13 @@ if(isset($clArray['dynamicProperties']) && $clArray['dynamicProperties']){
 	}
 
 	function openMappingAid() {
-		mapWindow=open("<?php echo $CLIENT_ROOT; ?>/checklists/tools/mappointaid.php?clid=<?php echo $clid; ?>&formname=editclmatadata&latname=latcentroid&longname=longcentroid","mapaid","resizable=0,width=1000,height=800,left=20,top=20");
+		mapWindow=open("<?php echo $CLIENT_ROOT; ?>/collections/tools/mappointaid.php?clid=<?php echo $clid; ?>&formname=editclmatadata&latname=latcentroid&longname=longcentroid","mapaid","resizable=0,width=1000,height=800,left=20,top=20");
 	    if(mapWindow.opener == null) mapWindow.opener = self;
 	}
 
 	function openMappingPolyAid() {
-		var latDec = document.getElementById("latdec").value;
-		var lngDec = document.getElementById("lngdec").value;
+		var latDec = document.getElementById("decimallatitude").value;
+		var lngDec = document.getElementById("decimallongitude").value;
 		mapWindow=open("<?php echo $CLIENT_ROOT; ?>/checklists/tools/mappolyaid.php?clid=<?php echo $clid; ?>&formname=editclmatadata&latname=latcentroid&longname=longcentroid&latdef="+latDec+"&lngdef="+lngDec,"mapaid","resizable=0,width=1000,height=800,left=20,top=20");
 	    if(mapWindow.opener == null) mapWindow.opener = self;
 	}
@@ -138,7 +138,7 @@ if(isset($clArray['dynamicProperties']) && $clArray['dynamicProperties']){
 if(!$clid){
 	?>
 	<div style="float:right;">
-		<a href="#" onclick="toggle('checklistDiv')" title="<?php echo htmlspecialchars($LANG['CREATE_CHECKLIST'], HTML_SPECIAL_CHARS_FLAGS); ?>"><img src="../images/add.png" style="width:1.5em;" /></a>
+		<a href="#" onclick="toggle('checklistDiv')" title="<?php echo htmlspecialchars($LANG['CREATE_CHECKLIST'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><img src="../images/add.png" style="width:1.5em;" /></a>
 	</div>
 	<?php
 }
@@ -238,18 +238,18 @@ if(!$clid){
 			<div id="geoDiv" style="width:100%;margin-top:5px">
 				<div style="float:left;">
 					<b><?php echo $LANG['LATCENT']; ?></b><br/>
-					<input id="latdec" type="text" name="latcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray["latcentroid"]:''); ?>" />
+					<input id="decimallatitude" type="text" name="latcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray["latcentroid"]:''); ?>" />
 				</div>
 				<div style="float:left;margin-left:15px;">
 					<b><?php echo $LANG['LONGCENT']; ?></b><br/>
-					<input id="lngdec" type="text" name="longcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray["longcentroid"]:''); ?>" />
+					<input id="decimallongitude" type="text" name="longcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray["longcentroid"]:''); ?>" />
 				</div>
 				<div style="float:left;margin:25px 3px;">
 					<a href="#" onclick="openMappingAid();return false;"><img src="../images/world.png" style="width:1em;" /></a>
 				</div>
 				<div style="float:left;margin-left:15px;">
 					<b><?php echo $LANG['POINTRAD']; ?></b><br/>
-					<input type="number" name="pointradiusmeters" style="width:110px;" value="<?php echo ($clArray?$clArray["pointradiusmeters"]:''); ?>" />
+					<input id="coordinateuncertaintyinmeters" type="number" name="pointradiusmeters" style="width:110px;" value="<?php echo ($clArray?$clArray["pointradiusmeters"]:''); ?>" />
 				</div>
 			</div>
 			<div style="clear:both;margin-top:5px;">
@@ -262,7 +262,7 @@ if(!$clid){
 						<?php echo $LANG['POLYGON_NOT_DEFINED']; ?>
 					</span>
 					<span style="margin:10px;"><a href="#" onclick="openMappingPolyAid();return false;" title="<?php echo $LANG['CREATE_EDIT_POLYGON']; ?>"><img src="../images/world.png" style="width:1em;" /></a></span>
-					<input type="hidden" id="footprintwkt" name="footprintwkt" value="" />
+					<input type="hidden" id="footprintwkt" name="footprintwkt" value="<?= $clArray['footprintwkt']?>" />
 				</fieldset>
 			</div>
 			<div style="clear:both;margin-top:5px;">
@@ -318,7 +318,7 @@ if(!$clid){
 						<?php
 						// Activate Identification key: 0 = false, 1 = true
 						$activateKey = $KEY_MOD_IS_ACTIVE;
-						if(array_key_exists('activatekey', $defaultArr)) $activateKey = $defaultArr["activatekey"];
+						if(array_key_exists('activatekey', $defaultArr??[])) $activateKey = $defaultArr["activatekey"];
 						?>
 						<input name='activatekey' type='checkbox' value='1' <?php echo ($activateKey?"checked":""); ?> />
 						<?php echo $LANG['ACTIVATEKEY']; ?>
@@ -369,11 +369,11 @@ if(!$clid){
 			foreach($clArr as $kClid => $vName){
 				?>
 				<li>
-					<a href="../checklists/checklist.php?clid=<?php echo htmlspecialchars($kClid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=0">
-						<?php echo htmlspecialchars($vName, HTML_SPECIAL_CHARS_FLAGS); ?>
+					<a href="../checklists/checklist.php?clid=<?php echo htmlspecialchars($kClid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=0">
+						<?php echo htmlspecialchars($vName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>
 					</a>
-					<a href="../checklists/checklistadmin.php?clid=<?php echo htmlspecialchars($kClid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">
-						<img src="../images/edit.png" style="width:1em;border:0px;" title="<?php echo htmlspecialchars($LANG['EDITCHECKLIST'], HTML_SPECIAL_CHARS_FLAGS);?>" />
+					<a href="../checklists/checklistadmin.php?clid=<?php echo htmlspecialchars($kClid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1">
+						<img src="../images/edit.png" style="width:1em;border:0px;" title="<?php echo htmlspecialchars($LANG['EDITCHECKLIST'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?>" />
 					</a>
 				</li>
 				<?php
@@ -387,7 +387,7 @@ if(!$clid){
 			<div style="margin:10px;">
 				<div><?php echo $LANG['NO_CHECKLISTS']; ?></div>
 				<div style="margin-top:5px">
-					<a href="#" onclick="toggle('checklistDiv')"><?php echo htmlspecialchars($LANG['CLICK_TO_CREATE'], HTML_SPECIAL_CHARS_FLAGS);?></a>
+					<a href="#" onclick="toggle('checklistDiv')"><?php echo htmlspecialchars($LANG['CLICK_TO_CREATE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?></a>
 				</div>
 			</div>
 			<?php
@@ -402,11 +402,11 @@ if(!$clid){
 			foreach($projArr as $pid => $projName){
 				?>
 				<li>
-					<a href="../projects/index.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=0">
-						<?php echo htmlspecialchars($projName, HTML_SPECIAL_CHARS_FLAGS); ?>
+					<a href="../projects/index.php?pid=<?php echo htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=0">
+						<?php echo htmlspecialchars($projName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>
 					</a>
-					<a href="../projects/index.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">
-						<img src="../images/edit.png" style="width:1em;border:0px;" title="<?php echo htmlspecialchars($LANG['EDIT_PROJECT'], HTML_SPECIAL_CHARS_FLAGS);?>" />
+					<a href="../projects/index.php?pid=<?php echo htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1">
+						<img src="../images/edit.png" style="width:1em;border:0px;" title="<?php echo htmlspecialchars($LANG['EDIT_PROJECT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?>" />
 					</a>
 				</li>
 				<?php

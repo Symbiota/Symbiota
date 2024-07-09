@@ -24,7 +24,7 @@ if(!$transInstList) echo '<script type="text/javascript">displayNewExchange();</
 			<div style="padding-top:10px;float:left;">
 				<span>
 					<b><?php echo $LANG['TRANS_NO']; ?>:</b>
-					<input type="text" autocomplete="off" name="identifier" maxlength="255" style="width:120px;border:2px solid black;text-align:center;font-weight:bold;color:black;" value="" />
+					<input type="text" autocomplete="off" name="identifier" maxlength="255" style="width:120px;border:2px solid black;text-align:center;font-weight:bold;color:black;" value="1" />
 				</span>
 			</div>
 			<div style="clear:left;padding-top:6px;float:left;">
@@ -99,7 +99,7 @@ if(!$transInstList) echo '<script type="text/javascript">displayNewExchange();</
 							$transList = $loanManager->getTransactions($collid,$k);
 							foreach($transList as $t => $transArr){
 								echo '<li>';
-								echo '<a href="exchange.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&exchangeid=' . htmlspecialchars($t, HTML_SPECIAL_CHARS_FLAGS) . '">#' . $transArr['identifier'] . ' <img src="../../images/edit.png" style="width:1.2em;" /></a>: ';
+								echo '<a href="exchange.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&exchangeid=' . htmlspecialchars($t, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">#' . $transArr['identifier'] . ' <img src="../../images/edit.png" style="width:1.2em;" /></a>: ';
 								if($transArr['transactiontype'] == 'Shipment'){
 									if($transArr['in_out'] == 'Out'){
 										echo $LANG['OUTGOING_EX_SENT'];

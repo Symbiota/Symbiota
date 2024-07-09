@@ -40,7 +40,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-		<title><?php echo $DEFAULT_TITLE; ?> <?php echo (isset($LANG['SPEC_LABEL_MANAGER']) ? $LANG['SPEC_LABEL_MANAGER'] : 'Specimen Label Manager') ?> </title>
+		<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['SPEC_LABEL_MANAGER'] ?> </title>
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -183,13 +183,14 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 			echo '<a href="../../profile/viewprofile.php?tabindex=1">' . (isset($LANG["PERS_MANAG_MENU"]) ? $LANG["PERS_MANAG_MENU"] : "Personal Management Menu") . '</a> &gt;&gt; ';
 		}
 		else{
-			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . (isset($LANG["COLL_MANAG_PANEL"]) ? $LANG["COLL_MANAG_PANEL"] : "Collection Management Panel") . '</a> &gt;&gt; ';
+			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">' . (isset($LANG["COLL_MANAG_PANEL"]) ? $LANG["COLL_MANAG_PANEL"] : "Collection Management Panel") . '</a> &gt;&gt; ';
 		}
 		?>
 		<b> <?php echo (isset($LANG['LABEL_PRINT']) ? $LANG['LABEL_PRINT'] : 'Label Printing') ?> </b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
+		<h1 class="page-heading"><?= $LANG['SPEC_LABEL_MANAGER']; ?></h1>
 		<?php
 		if($isEditor){
 			$reportsWritable = false;
@@ -306,7 +307,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 						if($occArr){
 							?>
 							<form name="selectform" id="selectform" action="labeldynamic.php" method="post" onsubmit="return validateSelectForm(this);">
-								<table class="styledtable" style="font-family:Arial;font-size:12px;">
+								<table class="styledtable" style="font-size:12px;">
 									<tr>
 										<th title="Select/Deselect all Specimens"><input type="checkbox" onclick="selectAll(this);" /></th>
 										<th title="Label quantity"> <?php echo (isset($LANG['QTY']) ? $LANG['QTY'] : 'Qty') ?> </th>
@@ -358,7 +359,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 										<div class="fieldDiv">
 											<div class="fieldLabel"> <?php echo (isset($LANG['LABEL_PROFILE']) ? $LANG['LABEL_PROFILE'] : 'Label Profiles:') ?>
 												<?php
-												echo '<span title="Open label profile manager"><a href="labelprofile.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '"><img src="../../images/edit.png" style="width:1.2em" /></a></span>';
+												echo '<span title="Open label profile manager"><a href="labelprofile.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><img src="../../images/edit.png" style="width:1.2em" /></a></span>';
 												?>
 											</div>
 											<div class="fieldElement">

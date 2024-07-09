@@ -3,9 +3,9 @@ include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLoans.php');
 require_once $SERVER_ROOT.'/vendor/phpoffice/phpword/bootstrap.php';
 
-$collId = $_REQUEST['collid'];
-$identifier = array_key_exists('identifier',$_REQUEST)?$_REQUEST['identifier']:0;
-$loanType = array_key_exists('loantype',$_REQUEST)?$_REQUEST['loantype']:0;
+$collId = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$identifier = array_key_exists('identifier',$_REQUEST) ? filter_var($_REQUEST['identifier'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$loanType = array_key_exists('loantype',$_REQUEST) ? $_REQUEST['loantype'] : '';
 $outputMode = $_POST['outputmode'];
 $languageDef = $_POST['languagedef'];
 
@@ -376,7 +376,6 @@ else{
 			include_once($SERVER_ROOT.'/includes/head.php');
 			?>
 			<style type="text/css">
-				body {font-family:arial,sans-serif;}
 				p.printbreak {page-break-after:always;}
 				.header {width:100%;text-align:center;font:bold 12pt arial,sans-serif;margin-bottom:30px;}
 				.toaddress {float:left;text-align:left;font:10pt arial,sans-serif;margin-top:10px;}
@@ -415,6 +414,7 @@ else{
 			</script>
 		</head>
 		<body style="background-color:#ffffff;">
+			<h1 class="page-heading screen-reader-only">Invoice</h1>
 			<div class="controls">
 				<button id="edit" style="font-weight: bold;" onclick="toggleEdits();">Edit Invoice</button>
 			</div>

@@ -26,10 +26,10 @@ $profileHandler->setUid($SYMB_UID);
 		<?php
 		if($userId){
 			if($action == 'showmissingids'){
-				echo '<a href="viewprofile.php?tabindex=2&userid=' . htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS) . '"><b>' . htmlspecialchars((isset($LANG['DISPLAY_SPECS'])?$LANG['DISPLAY_SPECS']:'Display Specimens within your Taxonomic Scope'), HTML_SPECIAL_CHARS_FLAGS) . '</b></a>';
+				echo '<a href="viewprofile.php?tabindex=2&userid=' . htmlspecialchars($userId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><b>' . htmlspecialchars((isset($LANG['DISPLAY_SPECS'])?$LANG['DISPLAY_SPECS']:'Display Specimens within your Taxonomic Scope'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</b></a>';
 			}
 			else{
-				echo '<a href="viewprofile.php?action=showmissingids&tabindex=2&userid=' . htmlspecialchars($userId, HTML_SPECIAL_CHARS_FLAGS) . '"><b>' . htmlspecialchars((isset($LANG['ORDER'])?$LANG['ORDER']:'Order Level or Above (open to all identification editors)'), HTML_SPECIAL_CHARS_FLAGS) . '</b></a>';
+				echo '<a href="viewprofile.php?action=showmissingids&tabindex=2&userid=' . htmlspecialchars($userId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><b>' . htmlspecialchars((isset($LANG['ORDER'])?$LANG['ORDER']:'Order Level or Above (open to all identification editors)'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</b></a>';
 			}
 		}
 		?>

@@ -1652,7 +1652,7 @@ class AgentManager{
        }
        $result .= '<ul>';
        foreach ($baddups as $keyagentid => $valueagent) { 
-          $result .= "<li><a href='$CLIENT_ROOT/agents/agent.php?agentid=$keyagentid'>" . htmlspecialchars($valueagent->getAssembledName(), HTML_SPECIAL_CHARS_FLAGS) . "</a>";
+          $result .= "<li><a href='$CLIENT_ROOT/agents/agent.php?agentid=$keyagentid'>" . htmlspecialchars($valueagent->getAssembledName(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a>";
        } 
        $result .= '</ul>';
        return $result;
@@ -2785,7 +2785,7 @@ class AgentView {
        $returnvalue .= "<li>".Agent::TAXONOMICGROUPS.": ".$model->gettaxonomicgroups()."</li>\n";
        $returnvalue .= "<li>".Agent::COLLECTIONSAT.": ".$model->getcollectionsat()."</li>\n";
        $returnvalue .= "<li>".Agent::MBOX_SHA1SUM.": ".$model->getmbox_sha1sum()."</li>\n";
-       $returnvalue .= "<li>".Agent::UUID.": <a href='$CLIENT_ROOT/agents/agent.php?uuid=" . htmlspecialchars($model->getuuid(), HTML_SPECIAL_CHARS_FLAGS) . "'>" . htmlspecialchars($model->getuuid(), HTML_SPECIAL_CHARS_FLAGS) . "</a></li>\n";
+       $returnvalue .= "<li>".Agent::UUID.": <a href='$CLIENT_ROOT/agents/agent.php?uuid=" . htmlspecialchars($model->getuuid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'>" . htmlspecialchars($model->getuuid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a></li>\n";
        $returnvalue .= "<li>".Agent::DATELASTMODIFIED.": ".$model->getdatelastmodified()."</li>\n";
        $returnvalue .= "<li>".Agent::LASTMODIFIEDBYUID.": ".$model->getlastmodifiedbyuid()."</li>\n";
        $returnvalue .= "<div id='statusDiv'></div>";
@@ -3029,7 +3029,7 @@ class AgentView {
        $returnvalue = '<tr>';
        $model = $this->model;
        $dates = "(".$model->getyearofbirth()."-".$model->getyearofdeath().")";
-       $returnvalue .= "<td><a href='$CLIENT_ROOT/agents/agent.php?agentid=" . htmlspecialchars($model->getagentid(), HTML_SPECIAL_CHARS_FLAGS) . "'>" . htmlspecialchars($model->getMinimalName(), HTML_SPECIAL_CHARS_FLAGS) . "</a></td>\n";
+       $returnvalue .= "<td><a href='$CLIENT_ROOT/agents/agent.php?agentid=" . htmlspecialchars($model->getagentid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'>" . htmlspecialchars($model->getMinimalName(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a></td>\n";
        $returnvalue .= "<td>$dates</td>\n";
        $returnvalue .= "<td>".$model->gettype()."</td>\n";
        $returnvalue .= '</tr>';

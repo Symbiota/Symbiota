@@ -130,14 +130,15 @@ $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General
 		<?php
 		if($isGeneralObservation) echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Management Menu</a> &gt;&gt; ';
 		elseif($collid){
-			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">Collection Management Panel</a> &gt;&gt; ';
+			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">Collection Management Panel</a> &gt;&gt; ';
 		}
 		?>
-		<a href="labelmanager.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1">Label Manager</a> &gt;&gt;
+		<a href="labelmanager.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1">Label Manager</a> &gt;&gt;
 		<b>Label Profile Editor</b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
+		<h1 class="page-heading">Specimen Label Manager</h1>
 		<div style="width:700px"><span style="color:orange;font-weight:bold;">In development!</span> We are currently working on developing a new system that will allow collection managers and general users to create their own custom label formats that can be saved within the collection and user profiles. We are trying our best to develop these tools with minimum disruptions to normal label printing. More details to provided in the near future.</div>
 		<?php
 		if($statusStr){
@@ -148,7 +149,6 @@ $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General
 			</div>
 			<?php
 		}
-		echo '<h2>Specimen Label Profiles</h2>';
 		$labelFormatArr = $labelManager->getLabelFormatArr();
 		foreach($labelFormatArr as $group => $groupArr){
 			$fieldsetTitle = '';

@@ -129,8 +129,8 @@ if($isEditor){
 							</form>
 						</div>
 						<div class="trianglediv" style="margin:4px 3px;float:right;cursor:pointer" onclick="setAttributeTree(this)" title="<?php echo $LANG['TOGGLE_TREE'];?>">
-							<img class="triangleright" src="../../images/triangleright.png" style="width:1.2em" />
-							<img class="triangledown" src="../../images/triangledown.png" style="width:1.2em;display:none" />
+							<img class="triangleright" src="../../images/tochild.png" style="width:1.4em" />
+							<img class="triangledown" src="../../images/toparent.png" style="width:1.4em;display:none" />
 						</div>
 					</div>
 					<form name="submitform<?php echo '-'.$traitID; ?>" method="post" action="occurrenceeditor.php" onsubmit="return false">
@@ -174,7 +174,7 @@ if($isEditor){
 								<span id="msgDiv-<?php echo $traitID; ?>"></span>
 							</div>
 							<div style="margin:20px;float:right;">
-								<button type="button" value="deleteTraitCoding" style="border:1px solid red;"  onclick="submitEditForm(this); return false"><?php echo $LANG['DEL_CODING'];?></button>
+								<button class="button-danger" type="button" value="deleteTraitCoding" style="border:1px solid red;"  onclick="submitEditForm(this); return false"><?php echo $LANG['DEL_CODING'];?></button>
 							</div>
 						</div>
 					</form>

@@ -1,7 +1,8 @@
 <?php
 include_once('../../config/symbini.php');
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/header.en.php');
 include_once($SERVER_ROOT.'/content/lang/collections/map/index.'.$LANG_TAG.'.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/header.en.php');
+    else include_once($SERVER_ROOT . '/content/lang/header.' . $LANG_TAG . '.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMapManager.php');
 
 header('Content-Type: text/html; charset='.$CHARSET);
@@ -12,11 +13,15 @@ ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 $distFromMe = array_key_exists('distFromMe', $_REQUEST)?$_REQUEST['distFromMe']:'';
 $gridSize = array_key_exists('gridSizeSetting', $_REQUEST) && $_REQUEST['gridSizeSetting']?$_REQUEST['gridSizeSetting']:60;
 $minClusterSize = array_key_exists('minClusterSetting',$_REQUEST)&&$_REQUEST['minClusterSetting']?$_REQUEST['minClusterSetting']:10;
-$clusterOff = array_key_exists('clusterSwitch',$_REQUEST)&&$_REQUEST['clusterSwitch']?$_REQUEST['clusterSwitch']:'n';
+$clusterOff = array_key_exists('clusterSwitch',$_REQUEST)&&$_REQUEST['clusterSwitch']? $_REQUEST['clusterSwitch']:'y';
+$menuClosed = array_key_exists('menuClosed',$_REQUEST)? true: false;
 $recLimit = array_key_exists('recordlimit',$_REQUEST)?$_REQUEST['recordlimit']:15000;
 $catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
 $submitForm = array_key_exists('submitform',$_REQUEST)?$_REQUEST['submitform']:'';
+
+$shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
+$topVal = $shouldUseMinimalMapHeader ? '6rem' : '0';
 
 if(!$catId && isset($DEFAULTCATID) && $DEFAULTCATID) $catId = $DEFAULTCATID;
 
@@ -29,7 +34,7 @@ $obsIDs = $mapManager->getObservationIds();
 //Sanitation
 if(!is_numeric($gridSize)) $gridSize = 60;
 if(!is_numeric($minClusterSize)) $minClusterSize = 10;
-if(!is_string($clusterOff) || strlen($clusterOff) > 1) $clusterOff = 'n';
+if(!is_string($clusterOff) || strlen($clusterOff) > 1) $clusterOff = 'y';
 if(!is_numeric($recLimit)) $recLimit = 15000;
 if(!is_numeric($distFromMe)) $distFromMe = '';
 if(!is_numeric($catId)) $catId = 0;
@@ -121,6 +126,24 @@ foreach ($coordArr as $collName => $coll) {
 	}
 }
 
+if(isset($_REQUEST['llpoint'])) {
+   $llpoint = explode(";", $_REQUEST['llpoint']);
+   if(count($llpoint) === 4) {
+      $pointLat = $llpoint[0];
+      $pointLng = $llpoint[1];
+      $pointRad = $llpoint[2];
+      $pointUnit = $llpoint[3];
+   }
+} elseif(isset($_REQUEST['llbound'])) {
+   $llbound = explode(";", $_REQUEST['llbound']);
+   if(count($llbound) === 4) {
+      $upperLat= $llbound[0];
+      $lowerLat= $llbound[1];
+      $upperLng= $llbound[2];
+      $lowerLng = $llbound[3];
+   }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -130,7 +153,7 @@ foreach ($coordArr as $collName => $coll) {
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
-		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
+		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
 		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<style type="text/css">
 		.panel-content a{ outline-color: transparent; font-size: 12px; font-weight: normal; }
@@ -138,6 +161,8 @@ foreach ($coordArr as $collName => $coll) {
 		</style>
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+
+		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery.symbiota.css" type="text/css" rel="stylesheet" />
 		<script src="../../js/jquery.popupoverlay.js" type="text/javascript"></script>
 		<script src="../../js/jscolor/jscolor.js?ver=1" type="text/javascript"></script>
@@ -154,7 +179,7 @@ foreach ($coordArr as $collName => $coll) {
 
 		<script src="../../js/symb/wktpolygontools.js" type="text/javascript"></script>
 		<script src="../../js/symb/MapShapeHelper.js" type="text/javascript"></script>
-
+		<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
 		<script src="../../js/symb/collections.list.js?ver=1" type="text/javascript"></script>
 
 		<style type="text/css">
@@ -247,8 +272,6 @@ foreach ($coordArr as $collName => $coll) {
 		}
 
 		#mapSearchRecordsTable {
-
-		font-family:Arial;
 		font-size:12px;
 		}
 
@@ -267,6 +290,16 @@ foreach ($coordArr as $collName => $coll) {
 		.cluster text {
 		text-shadow: 0 0 8px white, 0 0 8px white, 0 0 8px white;
 		}
+
+		<?php if($shouldUseMinimalMapHeader){ ?>
+			.leaflet-top {
+				top: <?php echo $topVal; ?>;
+				margin-top: 0px;
+			}
+			.leaflet-top .leaflet-control {
+				margin-top: 0px;
+			}
+		<?php } ?>
 		</style>
 		<script type="text/javascript">
 		//Clid
@@ -290,6 +323,11 @@ foreach ($coordArr as $collName => $coll) {
 		let taxaLegendMap = {}
 		//Object that maps collections to matching mapGroup Index
 		let collLegendMap = {}
+		//Object that maps portals to matching mapGroup Index
+		let portalLegendMap = {}
+
+		//Indciates if clustering should be drawn. Only comes into effect after redraw or refreshes 
+		let clusteroff = true;
 
 		const colorChange = new Event("colorchange",  {
 			bubbles: true,
@@ -305,23 +343,21 @@ foreach ($coordArr as $collName => $coll) {
 			$('#loadingOverlay').popup('hide');
 		}
 
-		function openIndPU(occId){
-			newWindow = window.open('../individual/index.php?occid='+occId,'indspec' + occId,'scrollbars=1,toolbar=0,resizable=1,width=1100,height=800,left=20,top=20');
-			if (newWindow.opener == null) newWindow.opener = self;
-			setTimeout(function () { newWindow.focus(); }, 0.5);
-		}
-
 		function buildPanels(cross_portal_enabled) {
          const cross_portal_results = document.getElementById("cross_portal_results");
+         const cross_portal_list = document.getElementById("cross_portal_list");
          if(cross_portal_results) {
             if(cross_portal_enabled) {
                cross_portal_results.style.display = "block";
+               cross_portal_list.style.display = "block";
             } else {
                cross_portal_results.style.display = "none";
+               cross_portal_list.style.display = "none";
             }
          }
 			setPanels(true);
 			$("#accordion").accordion("option",{active: 1});
+			buildPortalLegend();
 			buildTaxaLegend();
 			buildCollectionLegend();
 
@@ -388,6 +424,28 @@ value="${color}"
 			document.getElementById("taxasymbologykeysbox").innerHTML = taxaHtml;
 			document.getElementById("taxaCountNum").innerHTML = taxaArr.length;
 		}
+
+      function buildPortalLegend() {
+         portalLegendMap = {};
+         for(let i = 0; i < mapGroups.length; i++) {
+            for(portal of Object.values(mapGroups[i].portalMapGroup.group_map)) {
+					if(!portalLegendMap[portal.name]) {
+						portalLegendMap[portal.name] = portal; 
+						portalLegendMap[portal.name].id_map = [{portalid: portal.portalid, index: i}];
+					} else {
+						portalLegendMap[portal.name].id_map.push({portalid: portal.portalid, index: i});
+					}
+            }
+         }
+
+			let html = "<div style='display:table;'>";
+
+			for (let portal of Object.values(portalLegendMap)) {
+				html += legendRow(`portal-${portal.id_map.map(v => `${v.index}*${v.portalid}`).join(",")}`, portal.color, portal.name);
+			}
+
+			document.getElementById("portalsymbologykeysbox").innerHTML = html;
+      }
 
 		function buildCollectionLegend() {
 			collLegendMap = {}
@@ -499,6 +557,51 @@ value="${color}"
 			document.getElementById("deleteshapediv").style.display = "block";
 		}
 
+		function addRefPoint() {
+			let lat = document.getElementById("lat").value;
+			let lng = document.getElementById("lng").value;
+			let title = document.getElementById("title").value;
+			let useLLDecimal = document.getElementById("useLLDecimal");
+			if(useLLDecimal?.style?.display === 'block'){
+				var latdeg = document.getElementById("latdeg").value;
+				var latmin = document.getElementById("latmin").value;
+				var latsec = document.getElementById("latsec").value;
+				var latns = document.getElementById("latns").value;
+				var longdeg = document.getElementById("longdeg").value;
+				var longmin = document.getElementById("longmin").value;
+				var longsec = document.getElementById("longsec").value;
+				var longew = document.getElementById("longew").value;
+				if(latdeg != null && longdeg != null){
+					if(latmin == null) latmin = 0;
+					if(latsec == null) latsec = 0;
+					if(longmin == null) longmin = 0;
+					if(longsec == null) longsec = 0;
+					lat = latdeg*1 + latmin/60 + latsec/3600;
+					lng = longdeg*1 + longmin/60 + longsec/3600;
+					if(latns == "S") lat = lat * -1;
+					if(longew == "W") lng = lng * -1;
+				}
+			}
+
+			if((lat === null || lat === "") && (lng === null || lng === "")){
+				window.alert("<?php echo $LANG['ENTER_VALUES_IN_LAT_LONG']; ?>");
+			} else if(lat < -180 || lat > 180 || lng < -180 || lng > 180) {
+				window.alert("<?php echo $LANG['LAT_LONG_MUST_BE_BETWEEN_VALUES']; ?> (" + lat + ";" + lng + ")");
+			} else {
+				var addPoint = true;
+				if(lng > 0) addPoint = window.confirm("<?php echo $LANG['LONGITUDE_IS_POSITIVE']; ?>?");
+				if(!addPoint) lng = -1*lng;
+
+				document.dispatchEvent(new CustomEvent('addReferencePoint', {
+					detail: {
+						lat,
+						lng,
+						title 
+					}
+				}));
+			}
+		}
+
 		function leafletInit() {
 
 			L.DivIcon.CustomColor = L.DivIcon.extend({
@@ -515,9 +618,9 @@ value="${color}"
 				}
 			})
 
-         let map = new LeafletMap('map', {
-            lang: "<?php echo $LANG_TAG; ?>"
-         })
+			let map = new LeafletMap('map', {
+				lang: "<?php echo $LANG_TAG; ?>",
+			})
 			map.enableDrawing({
 				polyline: false,
 				circlemarker: false,
@@ -525,8 +628,6 @@ value="${color}"
 				drawColor: {opacity: 0.85, fillOpacity: 0.55, color: '#000' },
 			}, setQueryShape);
 
-			let cluster = L.markerClusterGroup();
-			let clusteroff = false;
 			let cluster_type = "taxa";
 
 			let markers = [];
@@ -567,12 +668,10 @@ value="${color}"
 
 				drawGroup() {
 					for (let id of Object.keys(this.group_map)) {
-						// TODO (Logan) clusteroff is global see if way to remove
 						if(clusteroff) {
 							this.layer_groups[id].addTo(map.mapLayer);
 						} else if(!map.mapLayer.hasLayer(this.group_map[id].cluster)) {
 							this.group_map[id].cluster.addTo(map.mapLayer)
-							this.group_map[id].cluster.addLayer(this.layer_groups[id])
 						}
 					}
 				}
@@ -582,7 +681,6 @@ value="${color}"
 						if(clusteroff) {
 							map.mapLayer.removeLayer(this.layer_groups[id])
 						} else {
-							this.group_map[id].cluster.removeLayer(this.layer_groups[id])
 							map.mapLayer.removeLayer(this.group_map[id].cluster)
 						}
 					}
@@ -602,13 +700,15 @@ value="${color}"
 				}
 
 				addLayer(id) {
-					if(clusteroff) {
-						this.layer_groups[id] = L.layerGroup(this.markers[id]);
-						map.mapLayer.addLayer(this.layer_groups[id]);
-					} else {
-						this.group_map[id].cluster.addLayer(this.layer_groups[id])
+					//First Add layer for both regular layer group and for clustering
+					this.layer_groups[id] = L.layerGroup(this.markers[id]);
+					this.group_map[id].cluster.addLayer(this.layer_groups[id])
 
-						if(!map.mapLayer.hasLayer(this.group_map[id].cluster)) {
+					//Then Decide which is visible
+					if(!heatmap) {
+						if(clusteroff) {
+							map.mapLayer.addLayer(this.layer_groups[id]);
+						} else if(!map.mapLayer.hasLayer(this.group_map[id].cluster)) {
 							this.group_map[id].cluster.addTo(map.mapLayer);
 						}
 					}
@@ -623,7 +723,6 @@ value="${color}"
 							map.mapLayer.addLayer(this.layer_groups[id]);
 						} else {
 							map.mapLayer.removeLayer(this.layer_groups[id]);
-
 							if(!map.mapLayer.hasLayer(this.group_map[id].cluster)) {
 								this.group_map[id].cluster.addTo(map.mapLayer);
 							}
@@ -638,15 +737,16 @@ value="${color}"
 						if(marker.options.icon && marker.options.icon.options.observation) {
 							marker.setIcon(getObservationSvg({color: `#${color}`, size:30 }))
 						} else {
-							marker.options.fillColor =`#${color}`
+							marker.setStyle({fillColor: `#${color}`})
 						}
 					}
 				}
 			}
 
-			function genMapGroups(records, tMap, cMap) {
+			function genMapGroups(records, tMap, cMap, origin) {
 				let taxon = new LeafletMapGroup("taxa", tMap);
 				let collections = new LeafletMapGroup("coll", cMap);
+				let portal = new LeafletMapGroup("portal", { [origin]: { name: origin, portalid: origin, color: generateRandColor()} });
 
 				for(let record of records) {
 					let marker = (record.type === "specimen"?
@@ -669,14 +769,14 @@ value="${color}"
 					.on('click', function() { openRecord(record) })
 					.bindTooltip(`<div style="font-size:1.5rem">${record.id}</div>`)
 
-					//TODO (Logan) remove global
 					markers.push(marker);
 
 					taxon.addMarker(record['tid'], marker);
 					collections.addMarker(record['collid'], marker);
+					portal.addMarker(origin, marker);
 				}
 
-				return {taxonMapGroup: taxon, collectionMapGroup: collections};
+				return {taxonMapGroup: taxon, collectionMapGroup: collections, portalMapGroup: portal};
 			}
 
 			function genClusters(legendMap, type) {
@@ -684,6 +784,7 @@ value="${color}"
 				for(let value of Object.values(legendMap)) {
 					const colorCluster = (cluster) => {
 						let childCount = cluster.getChildCount();
+cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?></div>`);
 						return new L.DivIcon.CustomColor({
 							html: `<div style="background-color: #${value.color};"><span>` + childCount + '</span></div>',
 							className: `marker-cluster`,
@@ -694,7 +795,10 @@ value="${color}"
 					}
 
 					let cluster = L.markerClusterGroup({
-						iconCreateFunction: colorCluster
+						iconCreateFunction: colorCluster,
+						disableClusteringAtZoom: recordArr.length >= 10000? 12 : 10,
+						spiderfyOnMaxZoom: false,
+					    chunkedLoading: true
 					});
 
 					value.id_map.forEach(g => {
@@ -702,6 +806,8 @@ value="${color}"
 							mapGroups[g.index].taxonMapGroup.genLayer(g.tid, cluster);
 						} else if(type === "coll") {
 							mapGroups[g.index].collectionMapGroup.genLayer(g.collid, cluster);
+						} else if(type === "portal") {
+							mapGroups[g.index].portalMapGroup.genLayer(g.portalid, cluster);
 						}
 					});
 				}
@@ -713,6 +819,7 @@ value="${color}"
 				} else {
 					if(cluster_type === "taxa") mapGroups.forEach(group => group.taxonMapGroup.drawGroup())
 					else if(cluster_type === "coll") mapGroups.forEach(group => group.collectionMapGroup.drawGroup())
+					else if(cluster_type === "portal") mapGroups.forEach(group => group.portalMapGroup.drawGroup())
 				}
 			}
 
@@ -750,6 +857,8 @@ value="${color}"
 			function fitMap() {
 				if(shape && !map.activeShape) {
 					map.drawShape(shape);
+				} else if(map.activeShape) {
+					map.mapLayer.fitBounds(map.activeShape.layer.getBounds());
 				} else if(markers && markers.length > 0) {
 					const group = new L.FeatureGroup(markers);
 					map.mapLayer.fitBounds(group.getBounds());
@@ -758,56 +867,86 @@ value="${color}"
 				}
 			}
 
+			document.addEventListener('resetMap', async e => {
+				setPanels(false);
+				mapGroups.forEach(group => {
+					group.taxonMapGroup.resetGroup();
+					group.collectionMapGroup.resetGroup();
+					group.portalMapGroup.resetGroup();
+				})
+
+				markers = [];
+				recordArr = [];
+
+				if(heatmapLayer) map.mapLayer.removeLayer(heatmapLayer);
+			})
 
 			document.getElementById("mapsearchform").addEventListener('submit', async e => {
 				e.preventDefault();
-				if(!verifyCollForm(e.target)) return;
+				if(!verifyCollForm(e.target)) return false;
+
 				showWorking();
+
 				let formData = new FormData(e.target);
 
 				mapGroups.forEach(group => {
 					group.taxonMapGroup.resetGroup();
 					group.collectionMapGroup.resetGroup();
+					group.portalMapGroup.resetGroup();
 				})
 
 				markers = [];
+
+				if(heatmapLayer) map.mapLayer.removeLayer(heatmapLayer);
 
 				getOccurenceRecords(formData).then(res => {
 					if (res) loadOccurenceRecords(res);
 				});
 
 				let searches = [
-					searchCollections(formData),
-            ]
+					searchCollections(formData).then(res => {
+						res.label = "<?= $LANG['CURRENT_PORTAL']?>";
+						return res;
+					})
+				]
 
-            //If Cross Portal Checkbox Enabled add cross portal search
-            if(formData.get('cross_portal_switch') && formData.get('cross_portal')) {
-               formData.set("taxa", formData.get('external-taxa-input'))
-               searches.push(searchCollections(formData, formData.get('cross_portal')))
+				//If Cross Portal Checkbox Enabled add cross portal search
+				if(formData.get('cross_portal_switch') && formData.get('cross_portal')) {
+					formData.set("taxa", formData.get('external-taxa-input'));
+					searches.push(searchCollections(formData, formData.get('cross_portal')).then(res => {
+						res.label= formData.get('cross_portal_label');
+						return res;
+					}));
 
-               getOccurenceRecords(formData, formData.get('cross_portal')).then(res => {
-                  if (res) loadOccurenceRecords(res, "external_occurrencelist");
-               });
+					getOccurenceRecords(formData, formData.get('cross_portal')).then(res => {
+						if (res) loadOccurenceRecords(res, "external_occurrencelist");
+					});
 
-            }
+				}
 
 				//This is for handeling multiple portals
 				searches = await Promise.all(searches)
 
 				recordArr = [];
 				mapGroups = [];
+				let count = 0;
 
 				for(let search of searches) {
+					if(count > 0) search.origin = "external-portal"
 					if(search.recordArr) {
 						recordArr = recordArr.concat(search.recordArr)
-						mapGroups.push(genMapGroups(search.recordArr, search.taxaArr, search.collArr))
+						mapGroups.push(genMapGroups(search.recordArr, search.taxaArr, search.collArr, search.label))
 					}
-            }
-
+					count++;
+				}
+				//Need to generate colors for each group
 				buildPanels(formData.get('cross_portal_switch'));
 
 				genClusters(taxaLegendMap, "taxa");
 				genClusters(collLegendMap, "coll");
+				genClusters(portalLegendMap, "portal");
+
+				autoColorTaxa();
 
 				drawPoints();
 				fitMap();
@@ -821,6 +960,7 @@ value="${color}"
 
 					if(type === "taxa") mapGroups[index].taxonMapGroup.removeLayer(id);
 					else if(type === "coll") mapGroups[index].collectionMapGroup.removeLayer(id);
+					else if(type === "portal") mapGroups[index].portalMapGroup.removeLayer(id);
 				}
 
 				for(let idParts of id_arr) {
@@ -828,6 +968,7 @@ value="${color}"
 
 					if(type === "taxa") mapGroups[index].taxonMapGroup.updateColor(id, color);
 					else if(type === "coll") mapGroups[index].collectionMapGroup.updateColor(id, color);
+					else if(type === "portal") mapGroups[index].portalMapGroup.updateColor(id, color);
 				}
 
 				for(let idParts of id_arr) {
@@ -835,6 +976,7 @@ value="${color}"
 
 					if(type === "taxa") mapGroups[index].taxonMapGroup.addLayer(id);
 					else if(type === "coll") mapGroups[index].collectionMapGroup.addLayer(id);
+					else if(type === "portal") mapGroups[index].portalMapGroup.addLayer(id);
 				}
 			}
 
@@ -854,6 +996,8 @@ value="${color}"
 						group.collectionMapGroup.removeGroup();
 					} else if(cluster_type === "taxa") {
 						group.taxonMapGroup.removeGroup();
+					} else if(cluster_type === "portal") {
+						group.portalMapGroup.removeGroup();
 					}
 				})
 
@@ -882,11 +1026,27 @@ value="${color}"
 				shape = null;
 			});
 
+			document.addEventListener('addReferencePoint', e => {
+				try {
+					marker = L.marker([
+						parseFloat(e.detail.lat), 
+						parseFloat(e.detail.lng)
+					]);
+					if(e.detail.title) {
+						marker.bindTooltip(`<div style="font-size: 1.5rem">${e.detail.title}</div>`)
+					}
+					marker.addTo(map.drawLayer);
+				} catch(e) {
+					console.log('failed to add point because: ' + e)
+				}
+			});
+
 			document.getElementById('clusteroff').addEventListener('change', e => {
 				clusteroff = e.target.checked;
 				if(!heatmap) {
 					if(cluster_type === "taxa") mapGroups.forEach(group => group.taxonMapGroup.toggleClustering())
 					else if(cluster_type === "coll") mapGroups.forEach(group => group.collectionMapGroup.toggleClustering())
+					else if(cluster_type === "portal") mapGroups.forEach(group => group.portalMapGroup.toggleClustering())
 				}
 			});
 
@@ -894,14 +1054,16 @@ value="${color}"
 				heatmap = e.target.checked;
 				if(e.target.checked) {
 					//Clear points
-					if(cluster_type == "taxa") mapGroups.forEach(group => group.taxonMapGroup.removeGroup())
-					else if(cluster_type == "coll") mapGroups.forEach(group => group.collectionMapGroup.removeGroup())
+					if(cluster_type === "taxa") mapGroups.forEach(group => group.taxonMapGroup.removeGroup())
+					else if(cluster_type === "coll") mapGroups.forEach(group => group.collectionMapGroup.removeGroup())
+					else if(cluster_type === "portal") mapGroups.forEach(group => group.portalMapGroup.removeGroup())
 
 					drawHeatmap();
 				} else {
 					map.mapLayer.removeLayer(heatmapLayer);
-					if(cluster_type == "taxa") mapGroups.forEach(group => group.taxonMapGroup.drawGroup())
-					else if(cluster_type == "coll") mapGroups.forEach(group => group.collectionMapGroup.drawGroup())
+					if(cluster_type === "taxa") mapGroups.forEach(group => group.taxonMapGroup.drawGroup())
+					else if(cluster_type === "coll") mapGroups.forEach(group => group.collectionMapGroup.drawGroup())
+					else if(cluster_type === "portal") mapGroups.forEach(group => group.portalMapGroup.drawGroup())
 				}
 			});
 
@@ -921,6 +1083,9 @@ value="${color}"
 
 					genClusters(taxaLegendMap, "taxa");
 					genClusters(collLegendMap, "coll");
+					genClusters(portalLegendMap, "portal");
+
+               autoColorTaxa();
 
 					drawPoints();
 
@@ -943,7 +1108,6 @@ value="${color}"
 			let heatmapLayer;
 
 			let bounds;
-			let clusteroff = false;
 
 			let cluster_type = "taxa";
 
@@ -1011,13 +1175,15 @@ value="${color}"
 				}
 
 				addLayer(id) {
-					if(clusteroff) {
-						for(let marker of Object.values(this.markers[id])) {
-							marker.setMap(map.mapLayer)
+					if(!heatmapon) {
+						if(clusteroff) {
+							for(let marker of Object.values(this.markers[id])) {
+								marker.setMap(map.mapLayer)
+							}
+						} else {
+							this.group_map[id].cluster.addMarkers(this.markers[id])
+							this.group_map[id].cluster.setMap(map.mapLayer);
 						}
-					} else {
-						this.group_map[id].cluster.addMarkers(this.markers[id])
-						this.group_map[id].cluster.setMap(map.mapLayer);
 					}
 				}
 
@@ -1038,11 +1204,12 @@ value="${color}"
 				}
 			}
 
-			function genGroups(records, tMap, cMap) {
+			function genGroups(records, tMap, cMap, origin) {
 				if(records.length < 1) return;
 
 				let taxon = new GoogleMapGroup("taxa", tMap);
 				let collections = new GoogleMapGroup("coll", cMap);
+				let portals = new GoogleMapGroup("portal", { [origin]: { name: origin, portalid: origin, color: generateRandColor()} });
 
 				bounds = new google.maps.LatLngBounds();
 
@@ -1092,9 +1259,10 @@ value="${color}"
 
 					taxon.addMarker(record['tid'], marker);
 					collections.addMarker(record['collid'], marker);
+					portals.addMarker(origin, marker);
 				}
 
-				return { taxonMapGroup: taxon, collectionMapGroup: collections };
+				return { taxonMapGroup: taxon, collectionMapGroup: collections, portalMapGroup: portals};
 			}
 
 			function drawPoints() {
@@ -1106,6 +1274,7 @@ value="${color}"
 					mapGroups.forEach(g => {
 						if(cluster_type === "taxa") g.taxonMapGroup.drawGroup();
 						else if(cluster_type === "coll") g.collectionMapGroup.drawGroup();
+						else if(cluster_type === "portal") g.portalMapGroup.drawGroup();
 					})
 				}
 			}
@@ -1127,6 +1296,8 @@ value="${color}"
 							mapGroups[g.index].taxonMapGroup.genLayer(g.tid, cluster);
 						} else if(type === "coll") {
 							mapGroups[g.index].collectionMapGroup.genLayer(g.collid, cluster);
+						} else if(type === "portal") {
+							mapGroups[g.index].portalMapGroup.genLayer(g.portalid, cluster);
 						}
 					});
 				}
@@ -1175,16 +1346,30 @@ value="${color}"
 				});
 			}
 
+			document.addEventListener('resetMap', async e => {
+				setPanels(false);
+				mapGroups.forEach(group => {
+					group.taxonMapGroup.resetGroup();
+					group.collectionMapGroup.resetGroup();
+					group.portalMapGroup.resetGroup();
+				})
+
+				markers = [];
+				recordArr = [];
+
+				if(heatmapLayer) heatmapLayer.setData({data: []})
+			})
+
 			document.getElementById("mapsearchform").addEventListener('submit', async e => {
-				if(!verifyCollForm(e.target)) return;
+				e.preventDefault();
+				if(!verifyCollForm(e.target)) return false;
 
 				showWorking();
-				e.preventDefault();
 				let formData = new FormData(e.target);
-
-				mapGroups.map(g => {
-					g.taxonMapGroup.resetGroup();
-					g.collectionMapGroup.resetGroup();
+				mapGroups.map(group => {
+					group.taxonMapGroup.resetGroup();
+					group.collectionMapGroup.resetGroup();
+					group.portalMapGroup.resetGroup();
 				});
 
 				mapGroups = [];
@@ -1197,13 +1382,19 @@ value="${color}"
 				});
 
 				let searches = [
-					searchCollections(formData),
+               searchCollections(formData).then(res=>{
+                  res.label = "<?= $LANG['CURRENT_PORTAL']?>";
+                  return res;
+               }),
             ]
 
             //If Cross Portal Checkbox Enabled add cross portal search
             if(formData.get('cross_portal_switch') && formData.get('cross_portal')) {
                formData.set("taxa", formData.get('external-taxa-input'))
-               searches.push(searchCollections(formData, formData.get('cross_portal')))
+               searches.push(searchCollections(formData, formData.get('cross_portal')).then(res => {
+                  res.label= formData.get('cross_portal_label')
+                  return res;
+               }))
 
                getOccurenceRecords(formData, formData.get('cross_portal')).then(res => {
                   if (res) loadOccurenceRecords(res, "external_occurrencelist");
@@ -1215,7 +1406,7 @@ value="${color}"
 
 				for(let search of searches) {
 					recordArr = recordArr.concat(search.recordArr);
-					mapGroups.push(genGroups(search.recordArr, search.taxaArr, search.collArr));
+					mapGroups.push(genGroups(search.recordArr, search.taxaArr, search.collArr, search.label));
 				}
 
 				buildPanels(formData.get('cross_portal_switch'));
@@ -1223,9 +1414,11 @@ value="${color}"
 				//Must have build panels called b4
 				genClusters(taxaLegendMap, "taxa");
 				genClusters(collLegendMap, "coll");
+				genClusters(portalLegendMap, "portal");
+            
+				autoColorTaxa();
 
 				drawPoints();
-
 				fitMap()
 				hideWorking();
 			});
@@ -1236,6 +1429,37 @@ value="${color}"
 
 				map.clearMap();
 				shape = null;
+			});
+
+			document.addEventListener('addReferencePoint', e => {
+				try {
+					var iconImg = new google.maps.MarkerImage( '../../images/google/arrow.png' );
+					let marker = new google.maps.Marker({
+						position: new google.maps.LatLng(
+							parseFloat(e.detail.lat), 
+							parseFloat(e.detail.lng)
+						),
+						icon: iconImg,
+						zIndex: google.maps.Marker.MAX_ZINDEX
+					});
+
+					if(e.detail.title) {
+						const infoWin = new google.maps.InfoWindow({
+							content:`<div>${e.detail.title}</div>`
+						});
+
+						google.maps.event.addListener(marker, 'mouseover', () => {
+							infoWin.open(map.mapLayer, marker);
+						})
+
+						google.maps.event.addListener(marker, 'mouseout', () => {
+							infoWin.close();
+						})
+					}
+					marker.setMap(map.mapLayer);
+				} catch(e) {
+					console.log('failed to add point because: ' + e)
+				}
 			});
 
 			document.addEventListener('occur_click', function(e) {
@@ -1261,13 +1485,15 @@ value="${color}"
 				})
 
 				const getIndex = v => v[0];
-				const getId = v => parseInt(v[1]);
+				const getId = v => v[1];
 
 				id_arr.forEach(v => {
 					if(type === "taxa") {
 						mapGroups[getIndex(v)].taxonMapGroup.removeLayer(getId(v));
 					} else if (type === "coll") {
 						mapGroups[getIndex(v)].collectionMapGroup.removeLayer(getId(v));
+					} else if (type === "portal") {
+						mapGroups[getIndex(v)].portalMapGroup.removeLayer(getId(v));
 					}
 				});
 
@@ -1278,6 +1504,9 @@ value="${color}"
 					} else if (type === "coll") {
 						mapGroups[getIndex(v)].collectionMapGroup.group_map[getId(v)].cluster = cluster;
 						mapGroups[getIndex(v)].collectionMapGroup.updateColor(getId(v), color);
+					} else if (type === "portal") {
+						mapGroups[getIndex(v)].portalMapGroup.group_map[getId(v)].cluster = cluster;
+						mapGroups[getIndex(v)].portalMapGroup.updateColor(getId(v), color);
 					}
 				})
 
@@ -1286,6 +1515,8 @@ value="${color}"
 						mapGroups[getIndex(v)].taxonMapGroup.addLayer(getId(v));
 					} else if (type === "coll") {
 						mapGroups[getIndex(v)].collectionMapGroup.addLayer(getId(v));
+					} else if (type === "portal") {
+						mapGroups[getIndex(v)].portalMapGroup.addLayer(getId(v));
 					}
 				});
 			}
@@ -1302,10 +1533,12 @@ value="${color}"
 				const {type, colorMap} = e.detail;
 
 				mapGroups.map(group => {
-					if(cluster_type === "coll" && type === "taxa") {
+					if(cluster_type === "coll" && type !== "coll") {
 						group.collectionMapGroup.removeGroup();
-					} else if(cluster_type === "taxa" && type === "coll") {
+					} else if(cluster_type === "taxa" && type !== "taxa") {
 						group.taxonMapGroup.removeGroup();
+					} else if(cluster_type === "portal" && type !== "portal") {
+						group.portalMapGroup.removeGroup();
 					}
 				})
 
@@ -1321,6 +1554,7 @@ value="${color}"
 				if(!heatmapon) {
 					if(cluster_type === "taxa") mapGroups.map(g => g.taxonMapGroup.toggleClustering());
 					else if(cluster_type === "coll") mapGroups.map(g => g.collectionMapGroup.toggleClustering());
+					else if(cluster_type === "portal") mapGroups.map(g => g.portalMapGroup.toggleClustering());
 				}
 			});
 
@@ -1329,10 +1563,12 @@ value="${color}"
 
 				if(e.target.checked) {
 					//Clear points
-					if(cluster_type == "taxa") {
-						mapGroups.forEach(g=>g.taxonMapGroup.resetGroup())
-					} else if(cluster_type == "coll") {
-						mapGroups.forEach(g=>g.collectionMapGroup.resetGroup())
+					if(cluster_type === "taxa") {
+						mapGroups.forEach(g => g.taxonMapGroup.resetGroup())
+					} else if(cluster_type === "coll") {
+						mapGroups.forEach(g => g.collectionMapGroup.resetGroup())
+					} else if(cluster_type === "portal") {
+						mapGroups.forEach(g => g.portalMapGroup.resetGroup())
 					}
 					if(!heatmapLayer) initHeatmap();
 					else updateHeatmap();
@@ -1342,9 +1578,11 @@ value="${color}"
 					};
 
 					if(cluster_type == "taxa") {
-						mapGroups.forEach(g=>g.taxonMapGroup.drawGroup())
-					} else if(cluster_type == "coll") {
-						mapGroups.forEach(g=>g.collectionMapGroup.drawGroup())
+						mapGroups.forEach(g => g.taxonMapGroup.drawGroup())
+					} else if(cluster_type === "coll") {
+						mapGroups.forEach(g => g.collectionMapGroup.drawGroup())
+					} else if(cluster_type === "portal") {
+						mapGroups.forEach(g => g.portalMapGroup.drawGroup())
 					}
 				}
 			});
@@ -1371,6 +1609,9 @@ value="${color}"
 
 					genClusters(taxaLegendMap, "taxa");
 					genClusters(collLegendMap, "coll");
+					genClusters(portalLegendMap, "portal");
+
+					autoColorTaxa();
 
 					drawPoints();
 
@@ -1393,6 +1634,8 @@ value="${color}"
 		}
 
 		async function searchCollections(body, host) {
+         const emptyResponse = { taxaArr: [], collArr: [], recordArr: [], origin: host? host: "host" };
+         sessionStorage.querystr = "";
 			try {
 				const url = host? `${host}/collections/map/rpc/searchCollections.php`: 'rpc/searchCollections.php'
 
@@ -1400,10 +1643,16 @@ value="${color}"
 					method: "POST",
 					mode: "cors",
 					body: body,
-				});
-				return response? await response.json(): { taxaArr: [], collArr: [], recordArr: [] };
+			});
+            if(response) {
+             const search = await response.json()
+               sessionStorage.querystr = search.query;
+               return search;
+            } else {
+               return emptyResponse;
+            }
 			} catch(e) {
-				return { taxaArr: [], collArr: [], recordArr: [] }
+				return emptyResponse;
 			}
 		}
 
@@ -1465,6 +1714,10 @@ value="${color}"
 			resetSymbology(taxaLegendMap, 'taxa', v => v.tid, reset);
 		}
 
+		const resetPortalSymbology = (reset = false) => {
+			resetSymbology(portalLegendMap, 'portal', v => v.portalid, reset);
+		}
+
 		function autoColor(type, getId = v => v.id, keyMap) {
 			var usedColors = {};
 			for(let key of Object.values(keyMap)) {
@@ -1491,17 +1744,26 @@ value="${color}"
 			}));
 		}
 
-		const autoColorTaxa = () => {
+		function autoColorTaxa() {
 			resetCollSymbology();
+			resetPortalSymbology();
 			autoColor("taxa", v => v.tid, taxaLegendMap);
 		}
+
 		const autoColorColl = () => {
 			resetTaxaSymbology();
+			resetPortalSymbology();
 			autoColor("coll", v => v.collid, collLegendMap)
 		};
 
+		const autoColorPortal = () => {
+			resetTaxaSymbology();
+			resetCollSymbology();
+			autoColor("portal", v => v.portalid, portalLegendMap)
+		};
+
 		//This is used in occurrencelist.php which is submodule of this
-		function emit_occurrence(occid) {
+		function emit_occurrence_click(occid) {
 			document.dispatchEvent(new CustomEvent('occur_click', {
 				detail: {
 					occid: occid
@@ -1511,7 +1773,6 @@ value="${color}"
 
 		function deleteMapShape() {
 			document.dispatchEvent(new Event('deleteShape'));
-			setQueryShape(shape)
 		}
 
 		function initialize() {
@@ -1523,6 +1784,8 @@ value="${color}"
 				taxaMap = JSON.parse(data.getAttribute('data-taxa-map'));
 				collArr = JSON.parse(data.getAttribute('data-coll-map'));
 				recordArr = JSON.parse(data.getAttribute('data-records'));
+
+				clusteroff = data.getAttribute('data-cluster-off') ==='y'? true: false;
 
 				externalPortalHosts = JSON.parse(data.getAttribute('data-external-portal-hosts'));
 
@@ -1541,25 +1804,39 @@ value="${color}"
 
 				if(shapeType) {
 					shape = loadMapShape(shapeType, {
-						polygonLoader: () => document.getElementById("polycoords").value,
+						polygonLoader: () => document.getElementById("polycoords").value.trim(),
 						circleLoader: () => {
+                     const units = document.getElementById("pointunits").value;
 							return {
-								radius: document.getElementById("upperlat").value,
-								radUnits: "km",
-								pointLng: document.getElementById("pointlng").value,
-								pointLat: document.getElementById("pointlat").value
+								radius: parseFloat(document.getElementById("radius").value),
+								radUnits: units == "mi" || units == "km"? units: "km",
+								pointLng: parseFloat(document.getElementById("pointlong").value),
+								pointLat: parseFloat(document.getElementById("pointlat").value)
 							}
 						},
 						rectangleLoader: () => {
 							return {
-								upperLat: document.getElementById("upperlat").value,
-								lowerLat: document.getElementById("bottomlat").value,
-								rightLng: document.getElementById("rightlong").value,
-								leftLng: document.getElementById("leftlong").value
+								upperLat: parseFloat(document.getElementById("upperlat").value),
+								lowerLat: parseFloat(document.getElementById("bottomlat").value),
+								rightLng: parseFloat(document.getElementById("rightlong").value),
+								leftLng: parseFloat(document.getElementById("leftlong").value)
 							}
 						}
 					})
 				}
+            document.addEventListener("deleteShape", () => setQueryShape(shape))
+
+			window.initLocalitySuggest({
+				country: {
+					id: 'country',
+				},
+				state_province: {
+					id: 'state',
+				},
+				county: {
+					id: 'county',
+				},
+			})
 
 			} catch(e) {
 				alert("Failed to initialize map coordinate data")
@@ -1575,6 +1852,10 @@ value="${color}"
 		<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
 	</head>
 	<body style='width:100%;max-width:100%;min-width:500px;' <?php echo (!$activateGeolocation?'onload="initialize();"':''); ?>>
+		<?php
+			if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimal_header_template.php');
+		?>
+	  	<h1 class="page-heading screen-reader-only">Map Interface</h1>
 		<div
 			id="service-container"
 			data-search-var="<?=htmlspecialchars($searchVar)?>"
@@ -1582,43 +1863,45 @@ value="${color}"
 			data-taxa-map="<?=htmlspecialchars(json_encode($taxaArr))?>"
 			data-coll-map="<?=htmlspecialchars(json_encode($collArr))?>"
 			data-records="<?=htmlspecialchars(json_encode($recordArr))?>"
+			data-cluster-off="<?=htmlspecialchars($clusterOff)?>"
 			data-external-portal-hosts="<?=htmlspecialchars(json_encode($EXTERNAL_PORTAL_HOSTS))?>"
 			class="service-container"
-		/>
+		>
+		</div>
 		<div>
-			<button onclick="document.getElementById('defaultpanel').style.width='380px';  " style="position:absolute;top:0;left:0;margin:0px;z-index:10;font-size: 14px;">&#9776; <b>Open Search Panel</b></button>
+			<button onclick="document.getElementById('defaultpanel').style.width='380px';  " style="position:absolute;top:<?php echo $topVal ?>;left:0;margin:0px;z-index:10;font-size: 14px;border-style: solid; border-color: var(--medium-color);">&#9776; <b>Open Search Panel</b></button>
 		</div>
 		<div id='map' style='width:100vw;height:100vh;z-index:1'></div>
-		<div id="defaultpanel" class="sidepanel" style="width:390px">
+		<div id="defaultpanel" class="sidepanel" style="width: <?= $menuClosed? '0': '390px'?>">
 			<div class="panel-content">
 				<span style="position:absolute; top:0.7rem; right:0.7rem; z-index:1">
-					<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php">
-						<?php echo (isset($LANG['H_HOME'])?$LANG['H_HOME']:'Home'); ?>
+					<a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php">
+						<?php echo $LANG['H_HOME']; ?>
 					</a>
 					<button onclick="document.getElementById('defaultpanel').style.width='0px'" style="margin-left:1rem">&times</button>
 				</span>
 				<div id="mapinterface">
 					<div id="accordion">
-						<h3 style="padding-left:30px;"><?php echo (isset($LANG['SEARCH_CRITERIA'])?$LANG['SEARCH_CRITERIA']:'Search Criteria and Options'); ?></h3>
+						<h3 style="padding-left:30px;"><?php echo $LANG['SEARCH_CRITERIA']; ?></h3>
 						<div id="tabs1" style="padding:0px;height:100%">
 							<form name="mapsearchform" id="mapsearchform" data-ajax="false">
 								<ul>
-									<li><a href="#searchcollections"><span><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
-									<li><a href="#searchcriteria"><span><?php echo htmlspecialchars((isset($LANG['CRITERIA'])?$LANG['CRITERIA']:'Criteria'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
-									<li><a href="#mapoptions"><span><?php echo htmlspecialchars((isset($LANG['MAP_OPTIONS'])?$LANG['MAP_OPTIONS']:'Map Options'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
+									<li><a href="#searchcollections"><span><?php echo htmlspecialchars($LANG['COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
+									<li><a href="#searchcriteria"><span><?php echo htmlspecialchars($LANG['CRITERIA'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
+									<li><a href="#mapoptions"><span><?php echo htmlspecialchars((isset($LANG['MAP_OPTIONS'])?$LANG['MAP_OPTIONS']:'Map Options'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
 								</ul>
 								<div id="searchcollections" style="">
 									<div class="mapinterface">
 										<?php
 										$collList = $mapManager->getFullCollectionList($catId);
-										$specArr = (isset($collList['spec'])?$collList['spec']:null);
-										$obsArr = (isset($collList['obs'])?$collList['obs']:null);
+										$specArr = (isset($collList['spec']) ? $collList['spec'] : null);
+										$obsArr = (isset($collList['obs']) ? $collList['obs'] : null);
 										if($specArr || $obsArr){
 										?>
 										<div id="specobsdiv">
 											<div style="margin:0px 0px 10px 5px;">
 												<input id="dballcb" data-role="none" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" <?php echo (!$mapManager->getSearchTerm('db') || $mapManager->getSearchTerm('db')=='all'?'checked':'') ?> />
-												<?php echo $LANG['SELECT_DESELECT'].' <a href="misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS'], HTML_SPECIAL_CHARS_FLAGS) . '</a>'; ?>
+												<?php echo $LANG['SELECT_DESELECT'].' <a href="misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>'; ?>
 											</div>
 											<?php
 											if($specArr){
@@ -1638,7 +1921,7 @@ value="${color}"
 								</div>
 								<div id="searchcriteria" style="">
 									<div style="height:25px;">
-										<!-- <div style="float:left;<?php echo (isset($SOLR_MODE) && $SOLR_MODE?'display:none;':''); ?>">
+										<!-- <div style="float:left;<?php echo (isset($SOLR_MODE) && $SOLR_MODE ? 'display:none;' : ''); ?>">
 Record Limit:
 <input data-role="none" type="text" id="recordlimit" style="width:75px;" name="recordlimit" value="<?php echo ($recLimit?$recLimit:""); ?>" title="Maximum record amount returned from search." onchange="return checkRecordLimit(this.form);" />
 										</div> -->
@@ -1650,16 +1933,17 @@ Record Limit:
 											<input type="hidden" id="gridSizeSetting" name="gridSizeSetting" value="<?php echo $gridSize; ?>" />
 											<input type="hidden" id="minClusterSetting" name="minClusterSetting" value="<?php echo $minClusterSize; ?>" />
 											<input type="hidden" id="clusterSwitch" name="clusterSwitch" value="<?php echo $clusterOff; ?>" />
-											<input type="hidden" id="pointlat" name="pointlat" value='<?php echo $mapManager->getSearchTerm('pointlat'); ?>' />
-											<input type="hidden" id="pointlong" name="pointlong" value='<?php echo $mapManager->getSearchTerm('pointlong'); ?>' />
-											<input type="hidden" id="radius" name="radius" value='<?php echo $mapManager->getSearchTerm('radius'); ?>' />
-											<input type="hidden" id="upperlat" name="upperlat" value='<?php echo $mapManager->getSearchTerm('upperlat'); ?>' />
-											<input type="hidden" id="rightlong" name="rightlong" value='<?php echo $mapManager->getSearchTerm('rightlong'); ?>' />
-											<input type="hidden" id="bottomlat" name="bottomlat" value='<?php echo $mapManager->getSearchTerm('bottomlat'); ?>' />
-											<input type="hidden" id="leftlong" name="leftlong" value='<?php echo $mapManager->getSearchTerm('leftlong'); ?>' />
-											<input type="hidden" id="polycoords" name="poly_array" value='<?php echo $mapManager->getSearchTerm('polycoords'); ?>' />
-											<button data-role="none" type="button" name="resetbutton" onclick="resetQueryForm(this.form)"><?php echo (isset($LANG['RESET'])?$LANG['RESET']:'Reset'); ?></button>
-											<button data-role="none" name="submitform" type="submit" ><?php echo (isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search'); ?></button>
+											<input type="hidden" id="pointlat" name="pointlat" value='<?php echo isset($pointLat)? $pointLat : "" ?>' />
+											<input type="hidden" id="pointlong" name="pointlong" value='<?php echo isset($pointLng)? $pointLng : "" ?>' />
+											<input type="hidden" id="pointunits" name="pointunits" value='<?php echo isset($pointUnit)? $pointUnit : "km" ?>' />
+											<input type="hidden" id="radius" name="radius" value='<?php echo isset($pointRad)? $pointRad : "" ?>' />
+											<input type="hidden" id="upperlat" name="upperlat" value='<?php echo isset($upperLat)? $upperLat : "" ?>' />
+											<input type="hidden" id="rightlong" name="rightlong" value='<?php echo isset($upperLng)? $upperLng : "" ?>' />
+											<input type="hidden" id="bottomlat" name="bottomlat" value='<?php echo isset($lowerLat)? $lowerLat : "" ?>' />
+											<input type="hidden" id="leftlong" name="leftlong" value='<?php echo isset($lowerLng)? $lowerLng : "" ?>' />
+											<input type="hidden" id="polycoords" name="polycoords" value='<?php echo $mapManager->getSearchTerm('polycoords'); ?>' />
+											<button data-role="none" type="button" name="resetbutton" onclick="resetQueryForm(this.form)"><?php echo $LANG['RESET']; ?></button>
+											<button data-role="none" name="submitform" type="submit" ><?php echo $LANG['SEARCH']; ?></button>
 										</div>
 									</div>
 									<div style="margin:5 0 5 0;"><hr /></div>
@@ -1680,7 +1964,7 @@ Record Limit:
 											</select>
 										</div>
 										<div style="margin-top:5px;">
-											<?php echo (isset($LANG['TAXA'])?$LANG['TAXA']:'Taxa'); ?>:
+											<?php echo $LANG['TAXA']; ?>:
 											<input data-role="none" id="taxa" name="taxa" type="text" style="width:275px;" value="<?php echo $mapManager->getTaxaSearchTerm(); ?>" title="<?php echo (isset($LANG['SEPARATE_MULTIPLE'])?$LANG['SEPARATE_MULTIPLE']:'Separate multiple taxa w/ commas'); ?>" />
 										</div>
 									</div>
@@ -1718,16 +2002,16 @@ Record Limit:
 									}
 									?>
 									<div>
-										<?php echo (isset($LANG['COUNTRY'])?$LANG['COUNTRY']:'Country'); ?>: <input data-role="none" type="text" id="country" style="width:225px;" name="country" value="<?php echo $mapManager->getSearchTerm('country'); ?>" title="<?php echo (isset($LANG['SEPARATE_MULTIPLE'])?$LANG['SEPARATE_MULTIPLE']:'Separate multiple taxa w/ commas'); ?>" />
+										<?php echo $LANG['COUNTRY']; ?>: <input data-role="none" type="text" id="country" style="width:225px;" name="country" value="<?php echo $mapManager->getSearchTerm('country'); ?>" title="<?php echo (isset($LANG['SEPARATE_MULTIPLE'])?$LANG['SEPARATE_MULTIPLE']:'Separate multiple taxa w/ commas'); ?>" />
 									</div>
 									<div style="margin-top:5px;">
 										<?php echo (isset($LANG['STATE'])?$LANG['STATE']:'State/Province'); ?>: <input data-role="none" type="text" id="state" style="width:150px;" name="state" value="<?php echo $mapManager->getSearchTerm('state'); ?>" title="<?php echo (isset($LANG['SEPARATE_MULTIPLE'])?$LANG['SEPARATE_MULTIPLE']:'Separate multiple taxa w/ commas'); ?>" />
 									</div>
 									<div style="margin-top:5px;">
-										<?php echo (isset($LANG['COUNTY'])?$LANG['COUNTY']:'County'); ?>: <input data-role="none" type="text" id="county" style="width:225px;"  name="county" value="<?php echo $mapManager->getSearchTerm('county'); ?>" title="<?php echo (isset($LANG['SEPARATE_MULTIPLE'])?$LANG['SEPARATE_MULTIPLE']:'Separate multiple taxa w/ commas'); ?>" />
+										<?php echo $LANG['COUNTY']; ?>: <input data-role="none" type="text" id="county" style="width:225px;"  name="county" value="<?php echo $mapManager->getSearchTerm('county'); ?>" title="<?php echo (isset($LANG['SEPARATE_MULTIPLE'])?$LANG['SEPARATE_MULTIPLE']:'Separate multiple taxa w/ commas'); ?>" />
 									</div>
 									<div style="margin-top:5px;">
-										<?php echo (isset($LANG['LOCALITY'])?$LANG['LOCALITY']:'Locality'); ?>: <input data-role="none" type="text" id="locality" style="width:225px;" name="local" value="<?php echo $mapManager->getSearchTerm('local'); ?>" />
+										<?php echo $LANG['LOCALITY']; ?>: <input data-role="none" type="text" id="locality" style="width:225px;" name="local" value="<?php echo $mapManager->getSearchTerm('local'); ?>" />
 									</div>
 									<div style="margin:5 0 5 0;"><hr /></div>
 									<div id="shapecriteria">
@@ -1739,7 +2023,7 @@ Record Limit:
 											</div>
 											<div id="distancegeocriteria" style="display:<?php echo ($distFromMe?'block':'none'); ?>;">
 												<div>
-													<?php echo (isset($LANG['WITHIN'])?$LANG['WITHIN']:'Within'); ?>
+													<?php echo $LANG['WITHIN']; ?>
 													<input data-role="none" type="text" id="distFromMe" style="width:40px;" name="distFromMe" value="<?php $distFromMe; ?>" /> miles from me, or
 													<?php echo (isset($LANG['SHAPE_TOOLS'])?strtolower($LANG['SHAPE_TOOLS']):'use the shape tools on the map to select occurrences within a given shape'); ?>.
 												</div>
@@ -1761,7 +2045,7 @@ Record Limit:
 											</div>
 										</div>
 										<div id="deleteshapediv" style="margin-top:5px;display:<?php echo (($mapManager->getSearchTerm('pointlat') || $mapManager->getSearchTerm('upperlat') || $mapManager->getSearchTerm('polycoords'))?'block':'none'); ?>;">
-											<button data-role="none" type=button onclick="deleteMapShape()"><?php echo (isset($LANG['DELETE_SHAPE'])?$LANG['DELETE_SHAPE']:'Delete Selected Shape'); ?></button>
+											<button class="button-danger" data-role="none" type="button" onclick="deleteMapShape()"><?php echo (isset($LANG['DELETE_SHAPE'])?$LANG['DELETE_SHAPE']:'Delete Selected Shape'); ?></button>
 										</div>
 									</div>
 									<div style="margin:5 0 5 0;"><hr /></div>
@@ -1808,13 +2092,13 @@ Record Limit:
 							</form>
 							<div id="mapoptions" style="">
 								<fieldset>
-									<legend><?php echo (isset($LANG['CLUSTERING'])?$LANG['CLUSTERING']:'Clustering'); ?></legend>
+									<legend><?php echo $LANG['CLUSTERING']; ?></legend>
 									<label><?php echo (isset($LANG['TURN_OFF_CLUSTERING'])?$LANG['TURN_OFF_CLUSTERING']:'Turn Off Clustering'); ?>:</label>
 									<input data-role="none" type="checkbox" id="clusteroff" name="clusteroff" value='1' <?php echo ($clusterOff=="y"?'checked':'') ?>/>
 								</fieldset>
 								<br/>
 								<fieldset>
-									<legend><?php echo (isset($LANG['HEATMAP'])?$LANG['HEATMAP']:'Heatmap'); ?></legend>
+									<legend><?php echo $LANG['HEATMAP']; ?></legend>
 									<label><?php echo (isset($LANG['TURN_ON_HEATMAP'])?$LANG['TURN_ON_HEATMAP']:'Turn on heatmap'); ?>:</label>
 									<input data-role="none" type="checkbox" id="heatmap_on" name="heatmap_on" value='1'/>
 									<br/>
@@ -1830,6 +2114,71 @@ Record Limit:
 									<label for="heat-max-density"><?php echo (isset($LANG['MAX_DENSITY'])?$LANG['MAX_DENSITY']: 'Maximum Density') ?>: </label>
 									<input style="margin: 0 1rem; width: 5rem;"value="3" id="heat-max-density" name="heat-max-density">
 									<br/>
+								</fieldset>
+								<br/>
+								<fieldset>
+									<legend>
+									   <?= $LANG['ADD_REFERENCE_POINT'] ?>
+									</legend>
+									<div>
+										<div>
+									   <?= $LANG['MARKER_NAME'] ?>:
+											<input name='title' id='title' size='15' type='text' />
+										</div>
+										<div class="latlongdiv">
+											<div>
+											 <div style="float:left;margin-right:5px">
+												<?= $LANG['LATITUDE'] ?>
+												(<?= $LANG['DECIMAL'] ?>):
+												<input name='lat' id='lat' size='10' type='text' /> </div>
+												<div style="float:left;">eg: 34.57</div>
+											</div>
+											<div style="margin-top:5px;clear:both">
+											 <div style="float:left;margin-right:5px">
+												<?= $LANG['LONGITUDE'] ?>
+												(<?= $LANG['DECIMAL'] ?>):
+												<input name='lng' id='lng' size='10' type='text' /> </div>
+												<div style="float:left;">eg: -112.38</div>
+											</div>
+											<div style='font-size:80%;margin-top:5px;clear:both'>
+											 <a href='#' onclick='toggleLatLongDivs();'> 
+												<?= $LANG['ENTER_IN_DMS']?>
+											 </a>
+											</div>
+										</div>
+										<div id="useLLDecimal" class='latlongdiv' style='display:none;clear:both'>
+											<div>
+												<?= $LANG['LATITUDE'] ?>:
+												<input name='latdeg' id='latdeg' size='2' type='text' />&deg;
+												<input name='latmin' id='latmin' size='4' type='text' />&prime;
+												<input name='latsec' id='latsec' size='4' type='text' />&Prime;
+												<select name='latns' id='latns'>
+													<option value='N'><?= $LANG['NORTH']; ?></option>
+													<option value='S'><?= $LANG['SOUTH']; ?></option>
+												</select>
+											</div>
+											<div style="margin-top:5px;">
+										  <?= $LANG['LONGITUDE'] ?>:
+												<input name='longdeg' id='longdeg' size='2' type='text' />&deg;
+												<input name='longmin' id='longmin' size='4' type='text' />&prime;
+												<input name='longsec' id='longsec' size='4' type='text' />&Prime;
+												<select name='longew' id='longew'>
+													<option value='E'><?= $LANG['EAST']; ?></option>
+													<option value='W' selected><?= $LANG['WEST']; ?></option>
+												</select>
+											</div>
+											<div style='font-size:80%;margin-top:5px;'>
+											 <a href='#' onclick='toggleLatLongDivs();'>
+												<?= $LANG['ENTER_IN_DECIMAL'] ?>
+											 </a>
+											</div>
+										</div>
+										<div style="margin-top:10px;">
+									   <button onclick='addRefPoint();'>
+										  <?= $LANG['ADD_MARKER'] ?>
+									   </button>
+										</div>
+									</div>
 								</fieldset>
 							</div>
 							<form style="display:none;" name="csvcontrolform" id="csvcontrolform" action="csvdownloadhandler.php" method="post" onsubmit="">
@@ -1848,10 +2197,11 @@ Record Limit:
 						<h3 id="recordstaxaheader" style="display:none;padding-left:30px;"><?php echo (isset($LANG['RECORDS_TAXA'])?$LANG['RECORDS_TAXA']:'Records and Taxa'); ?></h3>
 						<div id="tabs2" style="display:none;padding:0px;">
 							<ul>
-								<li><a href='#occurrencelist'><span><?php echo htmlspecialchars((isset($LANG['RECORDS'])?$LANG['RECORDS']:'Records'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
-								<li id="cross_portal_results"><a href='#external_occurrencelist'><span><?php echo htmlspecialchars((isset($LANG['EXTERNAL_RECORDS'])?$LANG['EXTERNAL_RECORDS']:'External Records'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
-							<li><a href='#symbology'><span><?php echo htmlspecialchars((isset($LANG['COLLECTIONS'])?$LANG['COLLECTIONS']:'Collections'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
-								<li><a href='#maptaxalist'><span><?php echo htmlspecialchars((isset($LANG['TAXA_LIST'])?$LANG['TAXA_LIST']:'Taxa List'), HTML_SPECIAL_CHARS_FLAGS); ?></span></a></li>
+								<li><a href='#occurrencelist'><span><?php echo htmlspecialchars($LANG['RECORDS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
+								<li id="cross_portal_results"><a href='#external_occurrencelist'><span><?php echo htmlspecialchars($LANG['EXTERNAL_RECORDS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
+								<li id="cross_portal_list"><a href='#portalsymbology'><span><?php echo htmlspecialchars($LANG['PORTAL_LIST'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
+						   	<li><a href='#symbology'><span><?php echo htmlspecialchars($LANG['COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
+								<li><a href='#maptaxalist'><span><?php echo htmlspecialchars($LANG['TAXA_LIST'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
 							</ul>
 							<div id="occurrencelist" style="">
 								loading...
@@ -1859,24 +2209,58 @@ Record Limit:
 							<div id="external_occurrencelist" style="">
 								loading...
 							</div>
-							<div id="symbology" style="">
+							<div id="portalsymbology" style="">
 								<div style="height:40px;margin-bottom:15px;">
-									<?php
-									?>
 								<div style="float:left;">
 										<div>
 											<svg xmlns="http://www.w3.org/2000/svg" style="height:15px;width:15px;margin-bottom:-2px;">">
 												<g>
 													<circle cx="7.5" cy="7.5" r="7" fill="white" stroke="#000000" stroke-width="1px" ></circle>
 												</g>
-											</svg> = <?php echo (isset($LANG['COLLECTION'])?$LANG['COLLECTION']:'Collection'); ?>
+											</svg> = <?php echo $LANG['COLLECTION']; ?>
 										</div>
 										<div style="margin-top:5px;" >
 											<svg style="height:14px;width:14px;margin-bottom:-2px;">" xmlns="http://www.w3.org/2000/svg">
 												<g>
 													<path stroke="#000000" d="m6.70496,0.23296l-6.70496,13.48356l13.88754,0.12255l-7.18258,-13.60611z" stroke-width="1px" fill="white"/>
 												</g>
-											</svg> = <?php echo (isset($LANG['OBSERVATION'])?$LANG['OBSERVATION']:'Observation'); ?>
+											</svg> = <?php echo $LANG['OBSERVATION']; ?>
+										</div>
+									</div>
+									<div id="portalsymbolizeResetButt" style='float:right;margin-bottom:5px;' >
+										<div>
+											<button data-role="none" id="portalsymbolizeReset1" name="symbolizeReset1" onclick="resetPortalSymbology(true);" ><?php echo (isset($LANG['RESET_SYMBOLOGY'])?$LANG['RESET_SYMBOLOGY']:'Reset Symbology'); ?></button>
+										</div>
+										<div style="margin-top:5px;">
+											<button data-role="none" id="randomColorPortal" name="randomColorColl" onclick='autoColorPortal();' ><?php echo (isset($LANG['AUTO_COLOR'])?$LANG['AUTO_COLOR']:'Auto Color'); ?></button>
+										</div>
+									</div>
+								</div>
+								<div style="margin:5 0 5 0;clear:both;"><hr /></div>
+								<div style="" >
+									<div style="margin-top:8px;">
+										<div style="display:table;">
+											<div id="portalsymbologykeysbox"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div id="symbology" style="">
+								<div style="height:40px;margin-bottom:15px;">
+								<div style="float:left;">
+										<div>
+											<svg xmlns="http://www.w3.org/2000/svg" style="height:15px;width:15px;margin-bottom:-2px;">">
+												<g>
+													<circle cx="7.5" cy="7.5" r="7" fill="white" stroke="#000000" stroke-width="1px" ></circle>
+												</g>
+											</svg> = <?php echo $LANG['COLLECTION']; ?>
+										</div>
+										<div style="margin-top:5px;" >
+											<svg style="height:14px;width:14px;margin-bottom:-2px;">" xmlns="http://www.w3.org/2000/svg">
+												<g>
+													<path stroke="#000000" d="m6.70496,0.23296l-6.70496,13.48356l13.88754,0.12255l-7.18258,-13.60611z" stroke-width="1px" fill="white"/>
+												</g>
+											</svg> = <?php echo $LANG['OBSERVATION']; ?>
 										</div>
 									</div>
 									<div id="symbolizeResetButt" style='float:right;margin-bottom:5px;' >
@@ -1907,14 +2291,14 @@ Record Limit:
 												<g>
 													<circle cx="7.5" cy="7.5" r="7" fill="white" stroke="#000000" stroke-width="1px" ></circle>
 												</g>
-											</svg> = <?php echo (isset($LANG['COLLECTION'])?$LANG['COLLECTION']:'Collection'); ?>
+											</svg> = <?php echo $LANG['COLLECTION']; ?>
 										</div>
 										<div style="margin-top:5px;" >
 											<svg style="height:14px;width:14px;margin-bottom:-2px;">" xmlns="http://www.w3.org/2000/svg">
 												<g>
 													<path stroke="#000000" d="m6.70496,0.23296l-6.70496,13.48356l13.88754,0.12255l-7.18258,-13.60611z" stroke-width="1px" fill="white"/>
 												</g>
-											</svg> = <?php echo (isset($LANG['OBSERVATION'])?$LANG['OBSERVATION']:'Observation'); ?>
+											</svg> = <?php echo $LANG['OBSERVATION']; ?>
 										</div>
 									</div>
 									<?php

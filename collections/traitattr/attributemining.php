@@ -173,7 +173,7 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 		<div class="navpath">
 			<a href="../../index.php"><?php echo $LANG['HOME'] ?></a> &gt;&gt;
 			<?php
-			if(is_numeric($collid)) echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . $LANG['COLLECTION_MANAGEMENT'] . '</a> &gt;&gt;';
+			if(is_numeric($collid)) echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">' . $LANG['COLLECTION_MANAGEMENT'] . '</a> &gt;&gt;';
 			else if($IS_ADMIN || count($collRights) > 1) echo '<a href="attributemining.php">' . $LANG['ADJUST_COLLECTION_SELECTION'] . '</a> &gt;&gt;';
 			?>
 			<b><?php echo $LANG['ATTRI_MINING_TOOL'] ?></b>
@@ -186,7 +186,8 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 		}
 		?>
 		<!-- This is inner text! -->
-		<div id="innertext">
+		<div role="main" id="innertext">
+			<h1 class="page-heading"><?= $LANG['OCC_ATTRI_MINING_TOOL']; ?></h1>
 			<?php
 			if($collid){
 				if($collid == 'all'){
@@ -290,8 +291,8 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 								</div>
 								<div class="trianglediv" style="float:left;margin-left:20px">
 									<div style="margin:4px 3px;float:right;cursor:pointer" onclick="setAttributeTree(this)" title="<?php echo $LANG['TOGGLE_ATTRI_TREE'] ?>">
-										<img class="triangleright" src="../../images/triangleright.png" style="width:1.3em" />
-										<img class="triangledown" src="../../images/triangledown.png" style="display:none;width:1.3em" />
+										<img class="triangleright" src="../../images/tochild.png" style="width:1.4em" />
+										<img class="triangledown" src="../../images/toparent.png" style="display:none;width:1.4em" />
 									</div>
 								</div>
 								<div style="margin:10px 5px;clear:both">

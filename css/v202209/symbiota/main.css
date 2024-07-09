@@ -102,6 +102,11 @@ button:hover {
   color: var(--light-color);
 }
 
+button:disabled {
+  background-color: var(--light-color);
+  color: var(--medium-color);
+}
+
 hr {
   border: 1px solid var(--bright-color);
 }
@@ -233,9 +238,23 @@ hr {
   background-color: var(--darkest-color);
 }
 
+.button-danger {
+  background-color: var(--danger-color, var(--darkest-color));
+}
+
 .button-primary:hover,
-.button-secondary:hover {
+.button-secondary:hover,
+.button-danger:hover 
+{
   background-color: var(--medium-color);
+}
+
+.button-primary:disabled,
+.button-secondary:disabled,
+.button-danger:disabled
+{
+	opacity: 50%;
+	pointer-events: none;
 }
 
 .button-primary:hover > a,
@@ -259,11 +278,6 @@ hr {
   background-color: none;
   border: 1px solid var(--bright-color);
   padding: 0.5rem 0.9rem;
-}
-
-.skip-link {
-  position: absolute;
-  left: -10000px;
 }
 
 /* Media queries

@@ -15,7 +15,7 @@ $idStr = $collCnt . '-' . $catId;
         <?php
         if($catIcon){
             $catIcon = (substr($catIcon,0,6)=='images'?$CLIENT_ROOT:'').$catIcon;
-            echo '<img src="'.$catIcon.'" style="border:0px;width:30px;height:30px;" />';
+            echo '<img alt="" src="' . $catIcon . '" style="border:0px;width:30px;height:30px;" />';
         }
         ?>
         </div>
@@ -33,7 +33,7 @@ $idStr = $collCnt . '-' . $catId;
         ?>
     </div>
     <div>
-        <a href="#" class="condense-expand-flex" onclick="toggleCat('<?php echo htmlspecialchars($idStr, HTML_SPECIAL_CHARS_FLAGS); ?>');return false;">
+        <a href="#" class="condense-expand-flex" onclick="toggleCat('<?php echo htmlspecialchars($idStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>');return false;">
         <div class="condense-expand-button-set">
             <img id="plus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/plus.png" style="display:none; width:1em;" alt="plus sign to expand menu" />
             <img id="minus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/minus.png" style="width:1em;" alt="minus sign to condense menu" />

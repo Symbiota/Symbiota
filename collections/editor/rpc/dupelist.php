@@ -47,7 +47,8 @@ $dupArr = $dupeManager->getDupeList($recordedBy, $recordNumber, $eventDate, $cat
 </head>
 <body>
 	<!-- inner text -->
-	<div id="innertext">
+	<div role="main" id="innertext">
+		<h1 class="page-heading"><?= $LANG['DUPLICATE_LINKER']; ?></h1>
 		<fieldset style="padding:15px;">
 			<legend><b><?php echo $LANG['LINK_NEW_SPECIMEN'] ?></b></legend>
 			<form name="adddupform" method="post" action="dupelist.php" onsubmit="return validateDupeForm(this)">

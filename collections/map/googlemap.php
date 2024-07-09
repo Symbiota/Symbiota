@@ -328,6 +328,7 @@ if(array_key_exists('taxa', $taxaArr)){
 	</script>
 </head>
 <body style="width:100%; min-width: 900px" onload="initialize();">
+	<h1 class="page-heading">Google Map</h1>
 	<?php
 	if(!$coordArr){
 		?>

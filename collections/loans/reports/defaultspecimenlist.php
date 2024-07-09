@@ -88,7 +88,6 @@ else{
 			include_once($SERVER_ROOT.'/includes/head.php');
 			?>
 			<style type="text/css">
-				body {font-family:arial,sans-serif;}
 				p.printbreak {page-break-after:always;}
 				.header {width:100%;text-align:left;font:14pt arial,sans-serif;}
 				.loaninfo {width:100%;text-align:left;font:11pt arial,sans-serif;}
@@ -97,6 +96,7 @@ else{
 			</style>
 		</head>
 		<body style="background-color:#ffffff;">
+			<h1 class="page-heading screen-reader-only"><?php echo $sourceCode.' '.$invoiceArr['loanidentifierown']; ?> Specimen List</h1>
 			<div>
 				<div class="header">
 					List of specimens loaned to: <?php echo $targetCode; ?>

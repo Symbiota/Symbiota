@@ -43,7 +43,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 		f.submit();
 	}
 </script>
-<div id="innertext" style="background-color:white;">
+<div role="main" id="innertext" style="background-color:white;">
 	<div style="margin-bottom:10px;">
 		<?php
 		echo $LANG['EXPLAIN_PARAGRAPH'];
@@ -54,7 +54,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 		echo '<div style="font-weight:bold;">' . $LANG['CONFLICT_COUNT'] . ': ' . count($conflictArr) . '</div>';
 		?>
 		<form name="batchConflictForm" method="post" action="voucheradmin.php">
-			<table class="styledtable" style="font-family:Arial;font-size:12px;">
+			<table class="styledtable" style="font-size:12px;">
 				<tr>
 					<th><input type="checkbox" onclick="selectAll(this)" /></th>
 					<th><b><?php echo $LANG['CHECK_ID']; ?></b></th>
@@ -70,7 +70,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 							<input name="occid[]" type="checkbox" value="<?php echo $vArr['occid']; ?>" />
 						</td>
 						<td>
-							<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo htmlspecialchars($vArr['tid'], HTML_SPECIAL_CHARS_FLAGS) . "&clid=" . htmlspecialchars($vArr['clid'], HTML_SPECIAL_CHARS_FLAGS); ?>','editorwindow');">
+							<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo htmlspecialchars($vArr['tid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "&clid=" . htmlspecialchars($vArr['clid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>','editorwindow');">
 								<?php echo $vArr['listid']; ?>
 							</a>
 							<?php
@@ -78,7 +78,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 							?>
 						</td>
 						<td>
-							<a href="#" onclick="return openPopup('../collections/individual/index.php?occid=<?php echo htmlspecialchars($vArr['occid'], HTML_SPECIAL_CHARS_FLAGS); ?>','occwindow');">
+							<a href="#" onclick="return openPopup('../collections/individual/index.php?occid=<?php echo htmlspecialchars($vArr['occid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>','occwindow');">
 								<?php echo $vArr['recordnumber']; ?>
 							</a>
 						</td>

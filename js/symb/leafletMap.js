@@ -26,7 +26,8 @@ class LeafletMap {
    //DEFAULTS
    DEFAULT_MAP_OPTIONS = {
       center: [0, 0],
-      zoom: 1,
+      zoom: 2,
+      minZoom: 2,
    };
 
    DEFAULT_SHAPE_OPTIONS = {
@@ -61,7 +62,12 @@ class LeafletMap {
    /* Reference Leaflet Feature Group for all drawn items*/
    drawLayer;
 
-   constructor(map_id, map_options=this.DEFAULT_MAP_OPTIONS) {
+   constructor(map_id, map_options={}) {
+
+	  map_options = {
+		 ...this.DEFAULT_MAP_OPTIONS,
+		 ...map_options,
+	  }
 
       this.mapLayer = L.map(map_id, map_options);
 
@@ -111,7 +117,7 @@ class LeafletMap {
       }
 
       if(map_options.scale !== false) {
-         L.control.scale().addTo(this.mapLayer);
+         L.control.scale({maxWidth: 200}).addTo(this.mapLayer);
       }
 
       this.setLang(map_options.lang);
@@ -617,9 +623,9 @@ function getShapeCoords(layerType, layer) {
    switch(layerType) {
       case "polygon":
          let latlngs = layer._latlngs[0].map(coord=> [coord.lat, coord.lng]);
+         latlngs.push(latlngs[0]);
          let polygon = latlngs.map(coord => 
             (`${coord[0].toFixed(SIG_FIGS)} ${coord[1].toFixed(SIG_FIGS)}`));
-
          shape.latlngs = latlngs;
          shape.wkt = "POLYGON ((" + polygon.join(',') + "))";
          shape.center = layer.getBounds().getCenter();

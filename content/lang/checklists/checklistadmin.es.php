@@ -34,6 +34,8 @@ $LANG['PERMREMOVECHECK'] = 'Retirar permanentemente Listado de Comprobaci&oacute
 $LANG['REMOVEUSERCHECK'] = 'Antes de que una lista de comprobaci&oacute;n se pueda eliminar, todos los editores (excepto a s&iacute; mismo) y las asignaciones del proyecto de inventario deben ser eliminados.
 							Las asignaciones del proyecto de inventario s&oacute;lo pueden ser eliminados por el administrador activo del proyecto o un administrador del sistema. ';
 $LANG['WARNINGNOUN'] = 'ADVERTENCIA: La acci&oacute;n no se puede deshacer.';
+$LANG['EDITOR_DELETE'] = '¿Está seguro de que desea eliminar este editor:';
+$LANG['PROJECT_DELETE'] = '¿Está seguro de que desea desvincular esta lista de verificación de';
 $LANG['CONFIRMDELETE'] = '¿Est&aacute; seguro de que desea eliminar permanentemente el Listado de Comprobaci&oacute;n? ¡Esta acci&oacute;n no se puede deshacer!';
 $LANG['CREATECHECKDET'] = 'Crear Nueva Lista';
 $LANG['EDITCHECKDET'] = 'Editar detalles del Listado de Comprobaci&oacute;n';
@@ -80,5 +82,9 @@ $LANG['SAVE_EDITS'] = 'Someter Cambios';
 $LANG['ADDCHECKLIST'] = 'Crear Lista Nueva';
 $LANG['DELETETHISU'] = 'Borrar este usuario';
 $LANG['ERROR_LOWER'] = 'Error';
+
+$LANG['DROP_ICON_FOR_EDITOR'] = 'Soltar Icono para el Editor';
+$LANG['DROP_ICON_FOR_DELETE_PROJECT'] = 'Soltar Icono para Dliminar Proyecto';
+$LANG['SUBMIT_BUTTON'] = 'Botón Enviar';
 
 ?>

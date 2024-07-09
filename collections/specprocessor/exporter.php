@@ -107,7 +107,8 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 	</head>
 	<body>
 		<!-- This is inner text! -->
-		<div id="innertext" style="background-color:white;">
+		<div role="main" id="innertext" style="background-color:white;">
+			<h1 class="page-heading screen-reader-only"><?= $LANG['OCC_EXP_MAN']; ?></h1>
 			<div style="float:right;width:165px;margin-right:100px">
 				<fieldset>
 					<legend><b><?php echo $LANG['EXP_TYPE']; ?></b></legend>
@@ -145,7 +146,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 								<legend><b><?php echo $LANG['EXPORT_BATCH_GEO']; ?></b></legend>
 								<div style="margin:15px;">
 									<?php echo $LANG['EXPORT_BATCH_GEO_EXPLAIN_1'].' '.'
-									<a href="../georef/batchgeoreftool.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>" target="_blank">' . htmlspecialchars($LANG['BATCH_GEO_TOOLS'], HTML_SPECIAL_CHARS_FLAGS) . '</a> '.
+									<a href="../georef/batchgeoreftool.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank">' . htmlspecialchars($LANG['BATCH_GEO_TOOLS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> '.
 									$LANG['EXPORT_BATCH_GEO_EXPLAIN_2']; ?>
 								</div>
 								<table>

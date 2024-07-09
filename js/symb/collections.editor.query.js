@@ -245,6 +245,7 @@ function resetCustomElements(x){
 
 function toggle(target, displayStyle = "block") {
   var ele = document.getElementById(target);
+
   if (ele) {
     if (ele.style.display == "none" || ele.style.display == "") {
       ele.style.display = displayStyle;
@@ -267,6 +268,21 @@ function toggle(target, displayStyle = "block") {
       }
     }
   }
+}
+
+function toggleButtonVisuals(el, containerId, linkedBtnIds) {
+	for (let id of linkedBtnIds) {
+		const linkedBtn = document.getElementById(id);
+		linkedBtn.classList.remove('active');
+	}
+
+	const toggleContainer = document.getElementById(containerId)
+	
+	if(toggleContainer && toggleContainer.style.display === 'none') {
+		el.classList.remove('active');
+	} else {
+		el.classList.add('active');
+	}
 }
 
 //Misc

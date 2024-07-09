@@ -27,7 +27,7 @@ $imgloc = "../images/games/namegame/";
 	<style>
 		.lettertable{border:1px solid #000000;border-spacing:3px;}
 		.tableplain{border:1px}
-		#charactertable td{margin-left: auto;margin-right: auto;vertical-align: middle;border:1px solid #000000;width:50px;cursor:pointer;font-family:times new roman;font-size:2.5rem;font-weight:bold;color:#000000}
+		#charactertable td{margin-left: auto;margin-right: auto;vertical-align: middle;border:1px solid #000000;width:50px;cursor:pointer;font-size:2.5rem;font-weight:bold;color:#000000}
 		.buttonover{border:5px outset gray;cursor:pointer;font-weight:normal;font-weight:bold}
 		.buttonout{border:5px outset #CCCC99;font-weight:normal}
 		.buttondown{border:5px inset gray;cursor:pointer;font-weight:bold}
@@ -555,16 +555,16 @@ $imgloc = "../images/games/namegame/";
 		echo $games_namegameCrumbs;
 	}
 	else{
-		echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&dynclid=' . htmlspecialchars($dynClid, HTML_SPECIAL_CHARS_FLAGS) . '">';
+		echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&dynclid=' . htmlspecialchars($dynClid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 		echo $clName;
 		echo '</a> &gt;&gt; ';
 	}
 	echo ' <b>Name Game</b>';
 	echo '</div>';
 	?>
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<div style="width:100%;text-align:center;">
-			<h1><?php echo $DEFAULT_TITLE; ?> Name Game</h1>
+			<h1 class="page-heading screen-reader-only">Name Guessing Game</h1>
 		</div>
 		<div style="width:100%;text-align:center;margin:10px;">
 			I am thinking of a species found within the following checklist: <b><?php echo $clName;?></b><br/>
