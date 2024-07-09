@@ -271,10 +271,6 @@ if(isset($_REQUEST['llpoint'])) {
 			grid-column: 1;
 		}
 
-		#mapSearchRecordsTable {
-		font-size:12px;
-		}
-
 		#mapSearchRecordsTable th {
 		top: 0;
 		position: sticky;
@@ -1037,7 +1033,7 @@ cluster.bindTooltip(`<div style="font-size:1rem"><?=$LANG['CLICK_TO_EXPAND']?></
 						parseFloat(e.detail.lng)
 					]);
 					if(e.detail.title) {
-						marker.bindTooltip(`<div style="font-size: 1.5rem">${e.detail.title}</div>`)
+						marker.bindTooltip(`<div style="font-size: 1rem">${e.detail.title}</div>`)
 					}
 					marker.addTo(map.drawLayer);
 				} catch(e) {
@@ -1901,7 +1897,7 @@ cluster.bindTooltip(`<div style="font-size:1rem"><?=$LANG['CLICK_TO_EXPAND']?></
 									<li><a href="#searchcriteria"><span><?php echo htmlspecialchars($LANG['CRITERIA'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
 									<li><a href="#mapoptions"><span><?php echo htmlspecialchars((isset($LANG['MAP_OPTIONS'])?$LANG['MAP_OPTIONS']:'Map Options'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
 								</ul>
-								<div id="searchcollections" style="font-size: 1rem">
+								<div id="searchcollections">
 									<div >
 										<?php
 										$collList = $mapManager->getFullCollectionList($catId);
@@ -2260,7 +2256,7 @@ Record Limit:
 									</div>
 								</div>
 							</div>
-							<div id="symbology" style="font-size: 1rem">
+							<div id="symbology">
 								<div style="height:40px;margin-bottom:15px;">
 								<div style="float:left;">
 										<div>
@@ -2296,7 +2292,7 @@ Record Limit:
 									</div>
 								</div>
 							</div>
-							<div id="maptaxalist" style="font-size: 1rem">
+							<div id="maptaxalist">
 								<div style="height:40px;margin-bottom:15px;">
 									<?php
 									?>
