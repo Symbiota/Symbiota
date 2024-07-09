@@ -75,14 +75,23 @@ class OmDeterminations extends Manager{
 			$sql .= ') VALUES('.trim($sqlValues, ', ').') ';
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param($this->typeStr, ...$paramArr);
-				if($stmt->execute()){
-					if($stmt->affected_rows || !$stmt->error){
-						$this->detID = $stmt->insert_id;
-						$status = true;
+				try {
+					if($stmt->execute()){
+						if($stmt->affected_rows || !$stmt->error){
+							$this->detID = $stmt->insert_id;
+							$status = true;
+						}
+						else $this->errorMessage = 'ERROR inserting omoccurdeterminations record (2): '.$stmt->error;
 					}
-					else $this->errorMessage = 'ERROR inserting omoccurdeterminations record (2): '.$stmt->error;
+					else $this->errorMessage = 'ERROR inserting omoccurdeterminations record (1): '.$stmt->error;
+				} catch (mysqli_sql_exception $e) {
+					if ($e->getCode() == '1062' || $e->getCode() == '1406') {
+						$this->errorMessage = $e->getMessage();
+					}
+					else {
+						throw $e;
+					}
 				}
-				else $this->errorMessage = 'ERROR inserting omoccurdeterminations record (1): '.$stmt->error;
 				$stmt->close();
 			}
 			else $this->errorMessage = 'ERROR preparing statement for omoccurdeterminations insert: '.$this->conn->error;

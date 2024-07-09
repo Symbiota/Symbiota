@@ -142,7 +142,7 @@ class ChecklistVoucherAdmin extends Manager {
 			}
 			$result->free();
 			//Get children checklists
-			$sqlChildBase = 'SELECT clidchild FROM fmchklstchildren WHERE clid IN(';
+			$sqlChildBase = 'SELECT clidchild FROM fmchklstchildren WHERE clid != clidchild AND clid IN(';
 			$sqlChild = $sqlChildBase.$this->clid.')';
 			do{
 				$childStr = "";
@@ -430,9 +430,9 @@ class ChecklistVoucherAdmin extends Manager {
 				$tidTarget = $this->getTidInterpreted($occid);
 				if($oldClTaxaID && $tidTarget){
 					//Make sure target name is already linked to checklist
-					$sql2 = 'INSERT IGNORE INTO fmchklsttaxalink(tid, clid, morphospecies, familyoverride, habitat, abundance, notes, explicitExclude, source, internalnotes, dynamicProperties) '.
-						'SELECT '.$tidTarget.' as tid, c.clid, c.morphospecies, c.familyoverride, c.habitat, c.abundance, c.notes, c.explicitExclude, c.source, c.internalnotes, c.dynamicProperties '.
-						'FROM fmchklsttaxalink WHERE (cltaxaid = ?)';
+					$sql2 = 'INSERT IGNORE INTO fmchklsttaxalink(tid, clid, morphospecies, familyoverride, habitat, abundance, notes, explicitExclude, source, internalnotes, dynamicProperties)
+						SELECT '.$tidTarget.' as tid, clid, morphospecies, familyoverride, habitat, abundance, notes, explicitExclude, source, internalnotes, dynamicProperties
+						FROM fmchklsttaxalink WHERE (cltaxaid = ?)';
 					if($stmt2 = $this->conn->prepare($sql2)) {
 						$stmt2->bind_param('i', $oldClTaxaID);
 						$stmt2->execute();

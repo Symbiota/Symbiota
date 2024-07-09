@@ -78,5 +78,6 @@ $LANG['EST_MEANS_EG'] = 'p.ej. plantado, sembrado, escape del jardín, etc.';
 $LANG['CULT_CAPT_EG'] = 'Haga clic si el espécimen fue cultivado o cautivo';
 $LANG['IMG_GLOBE'] = 'Una pequeña imagen del globo terráqueo';
 $LANG['IMG_EDIT'] = 'Botón Mostrar campos adicionales';
+$LANG['NO_COLLECTION'] = 'Sin Colección';
 
 ?>

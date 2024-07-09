@@ -98,13 +98,13 @@ else{
 			include_once($SERVER_ROOT.'/includes/head.php');
 			?>
 			<style type="text/css">
-				body {font-family:arial,sans-serif;}
 				p.printbreak {page-break-after:always;}
 				.fromaddress {font:10pt arial,sans-serif;}
 				.toaddress {margin-left:1in;font:14pt arial,sans-serif;}
 			</style>
 		</head>
 		<body style="background-color:#ffffff;">
+			<h1 class="page-heading screen-reader-only">Mailing Label</h1>
 			<div>
 				<table style="width:8in;">
 					<tr>

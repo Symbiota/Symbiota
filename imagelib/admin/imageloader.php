@@ -3,6 +3,7 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ImageImport.php');
 include_once($SERVER_ROOT.'/content/lang/imagelib/admin/imageloader.en.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/imagelib/admin/imageloader.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/imagelib/admin/imageloader.'.$LANG_TAG.'.php');
+else include_once($SERVER_ROOT . '/content/lang/imagelib/admin/imageloader.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $action = array_key_exists('action', $_POST) ? $_POST['action'] : '';
@@ -24,8 +25,8 @@ if($isEditor){
 		$targetFields = $_POST['tf'];
 		for($x = 0; $x < count($targetFields); $x++){
 			if($sourceFields[$x] && $targetFields[$x] !== ''){
-				$sourceField = htmlspecialchars($sourceFields[$x], HTML_SPECIAL_CHARS_FLAGS);
-				$targetField = htmlspecialchars($targetFields[$x], HTML_SPECIAL_CHARS_FLAGS);
+				$sourceField = htmlspecialchars($sourceFields[$x], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+				$targetField = htmlspecialchars($targetFields[$x], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 				$fieldMap[$sourceField] = $targetField;
 			}
 		}
@@ -53,12 +54,12 @@ include($SERVER_ROOT.'/includes/header.php');
 
 ?>
 <div class="navpath">
-	<b><a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a></b> &gt;&gt;
+	<b><a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></b> &gt;&gt;
 	<b><?php echo $LANG['IMG_IMPORTER']; ?></b>
 </div>
 
-<h1><?php echo $LANG['IMG_IMPORTER']; ?></h1>
 <div  id="innertext">
+	<h1 class="page-heading"><?php echo $LANG['IMG_IMPORTER']; ?></h1>
 	<div style="margin-bottom:30px;">
 
 	</div>
@@ -151,7 +152,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							* <?php echo $LANG['FIELDS_YELLOW']; ?>
 						</div>
 						<div style="margin:10px;">
-							<input type="submit" name="action" value="Verify Mapping" /><br/>
+							<button type="submit" name="action" value="Verify Mapping" ><?php echo $LANG['VERIFY_MAPPING']; ?></button><<br/>
 							<fieldset>
 								<legend><?php echo $LANG['LRG_IMG']; ?></legend>
 								<input name="lgimg" type="radio" value="0" checked /> <?php echo $LANG['LEAVE_BLANK']; ?><br/>

@@ -67,19 +67,6 @@ span[class="link"]:hover {
   margin-left: 3px;
 }
 
-button.icon-button {
-  margin: 2px 5px;
-  padding: 6px;
-  background-color: buttoncolor;
-  border-width: 1px;
-  border-style: outset;
-  border-color: buttonborder;
-}
-
-button.icon-button:hover {
-  background: #e4f2fb;
-}
-
 /* Species list component */
 #taxalist-div {
   line-height: 1em;
@@ -310,7 +297,6 @@ ol.mp_list li.mp_highlighted {
   top: 1rem;
   float: right;
 }
-
 .fieldset-like {
   /* borrowed from: https://www.geeksforgeeks.org/how-to-achieve-fieldset-like-effect-without-using-fieldset-tag/ */
   border: 0.2em solid;
@@ -454,6 +440,44 @@ fieldset {
   border-image: initial;
 }
 
+i {
+  font-style: italic;
+}
+
+b {
+  font-weight: bold;
+}
+
+.gridlike-form {
+  margin: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.gridlike-form-row {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.screen-reader-only {
+  position: absolute !important;
+  left: -10000px !important;
+}
+
+.welcome-text {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+}
+
+.page-heading {
+  font-size: 3rem;
+}
+
+/* Base Button Button CSS
+========================================================================== */
 button {
   appearance: auto;
   text-rendering: auto;
@@ -477,23 +501,78 @@ button {
   border-image: initial;
 }
 
-i {
-  font-style: italic;
+button.icon-button {
+  margin: 2px 5px;
+  padding: 6px;
+  border-width: 1px;
+  border-style: outset;
+  border-color: buttonborder;
 }
 
-b {
-  font-weight: bold;
+button.icon-button:hover {
+  background: var(--medium-color);
 }
 
-.gridlike-form {
-  margin: 15px;
-  display: flex;
-  flex-direction: column;
+.button {
+  border: none;
+  border-radius: 5px;
+  padding: 0.6rem 1rem;
+  font-family: var(--heading-font-family);
+  letter-spacing: 1px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  width: fit-content;
 }
 
-.gridlike-form-row {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.button > a {
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.button-primary {
+  background-color: var(--darkest-color);
+}
+
+.button-danger {
+  background-color: var(--danger-color, var(--darkest-color));
+}
+
+.button-primary:hover,
+.button-secondary:hover,
+.button-danger:hover 
+{
+  background-color: var(--medium-color);
+}
+
+.button-primary:disabled,
+.button-secondary:disabled,
+.button-danger:disabled
+{
+	opacity: 50%;
+	pointer-events: none;
+}
+
+.button-primary:hover > a,
+.button-secondary:hover > a {
+  color: var(--light-color);
+}
+
+.button-primary > a {
+  color: var(--light-color);
+}
+
+.button-secondary {
+  background-color: var(--bright-color);
+}
+
+.button-secondary > a {
+  color: var(--darkest-color);
+}
+
+.button-tertiary {
+  background-color: none;
+  border: 1px solid var(--bright-color);
+  padding: 0.5rem 0.9rem;
 }

@@ -357,7 +357,7 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 									<input type="hidden" name="detid" value="<?php echo $detId; ?>" />
 									<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
 									<input type="hidden" name=" <?php echo $crowdSourceMode; ?>" />
-									<button type="submit" name="submitaction" value="Delete Determination" ><?php echo $LANG['DELETE_DET']; ?></button>
+									<button class="button-danger" type="submit" name="submitaction" value="Delete Determination" ><?php echo $LANG['DELETE_DET']; ?></button>
 								</form>
 							</div>
 						</fieldset>

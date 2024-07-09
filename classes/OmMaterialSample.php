@@ -145,7 +145,7 @@ class OmMaterialSample{
 	//Misc support functions
 	public function cleanFormData(&$postArr){
 		foreach($postArr as $k => $v){
-			if(substr($k,0,3) == 'ms_') $postArr[$k] = htmlspecialchars($v, HTML_SPECIAL_CHARS_FLAGS);
+			if(substr($k,0,3) == 'ms_') $postArr[$k] = htmlspecialchars($v, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 		}
 	}
 

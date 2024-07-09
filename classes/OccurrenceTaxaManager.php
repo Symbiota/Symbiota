@@ -153,21 +153,25 @@ class OccurrenceTaxaManager {
 			$sql = 'SELECT DISTINCT v.VernacularName, t.tid, t.sciname, t.rankid
 				FROM taxstatus ts INNER JOIN taxavernaculars v ON ts.TID = v.TID
 				INNER JOIN taxa t ON t.TID = ts.tidaccepted
-				WHERE (ts.taxauthid = '.$this->taxAuthId.') AND (v.VernacularName IN("'.$searchTerm.'"))
+				WHERE (ts.taxauthid = ?) AND (v.VernacularName IN(?))
 				ORDER BY t.rankid LIMIT 10';
-			$rs = $this->conn->query($sql);
-			while($row = $rs->fetch_object()){
-				//$vernName = strtolower($row->VernacularName);
-				$vernName = $row->VernacularName;
-				if($row->rankid == 140){
-					$this->taxaArr['taxa'][$vernName]['families'][] = $row->sciname;
+			if ($statement = $this->conn->prepare($sql)) {
+				$statement->bind_param("ss", $this->taxAuthId, $searchTerm);
+				$statement->execute();
+				$result = $statement->get_result();
+				while($row = $result->fetch_object()){
+					$vernName = $row->VernacularName;
+					if($row->rankid == 140){
+						$this->taxaArr['taxa'][$vernName]['families'][] = $row->sciname;
+					}
+					else{
+						$this->taxaArr['taxa'][$vernName]['scinames'][] = $row->sciname;
+					}
+					$this->taxaArr['taxa'][$vernName]['tid'][$row->tid] = $row->rankid;
 				}
-				else{
-					$this->taxaArr['taxa'][$vernName]['scinames'][] = $row->sciname;
-				}
-				$this->taxaArr['taxa'][$vernName]['tid'][$row->tid] = $row->rankid;
+				$result->free();
+				$statement->close();
 			}
-			$rs->free();
 		}
 	}
 
@@ -223,6 +227,7 @@ class OccurrenceTaxaManager {
 			$tidInArr = array();
 			$taxonType = $this->taxaArr['taxontype'];
 			foreach($this->taxaArr['taxa'] as $searchTaxon => $searchArr){
+				$cleanedSearchTaxon = $this->cleanInStr($searchTaxon);
 				if(isset($searchArr['taxontype'])) $taxonType = $searchArr['taxontype'];
 				if($taxonType == TaxaSearchType::TAXONOMIC_GROUP){
 					//Class, order, or other higher rank
@@ -247,10 +252,10 @@ class OccurrenceTaxaManager {
 					//$sqlWhereTaxa .= 'OR (((ts.family = "'.$searchTaxon.'") AND (ts.taxauthid = '.$this->taxAuthId.')) OR o.sciname = "'.$searchTaxon.'") ';
 					if(isset($searchArr['tid'])){
 						$tidArr = array_keys($searchArr['tid']);
-						$sqlWhereTaxa .= 'OR ((ts.family = "'.$searchTaxon.'") OR (ts.tid IN('.implode(',', $tidArr).'))) ';
+						$sqlWhereTaxa .= 'OR ((ts.family = "'.$cleanedSearchTaxon.'") OR (ts.tid IN('.implode(',', $tidArr).'))) ';
 					}
 					else{
-						$sqlWhereTaxa .= 'OR ((o.family = "'.$searchTaxon.'") OR (o.sciname = "'.$searchTaxon.'")) ';
+						$sqlWhereTaxa .= 'OR ((o.family = "'.$cleanedSearchTaxon.'") OR (o.sciname = "'.$cleanedSearchTaxon.'")) ';
 					}
 				}
 				else{
@@ -399,7 +404,7 @@ class OccurrenceTaxaManager {
 
 	public function cleanOutStr($str){
 		if(!is_string($str) && !is_numeric($str) && !is_bool($str)) $str = '';
-		return htmlspecialchars($str, HTML_SPECIAL_CHARS_FLAGS);
+		return htmlspecialchars($str, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 	}
 
 	protected function cleanInputStr($str){

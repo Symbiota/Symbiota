@@ -6,7 +6,7 @@ Translated by: Google Translate
 Date Translated: 2024/01/31
 ------------------
 */
-$LANG['OCC_ATTRIBUTE_BATCH_EDIT'] = 'Editor por lotes de atributos de ocurrencia';
+$LANG['OCC_ATTRIBUTE_BATCH_EDIT'] = 'Editor por Lotes de Atributos de Ocurrencia';
 $LANG['HOME'] = 'Inicio';
 $LANG['COLLECTION_MANAGEMENT'] = 'Gestión de colecciones';
 $LANG['FILTER'] = 'Filtro';

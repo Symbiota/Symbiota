@@ -9,7 +9,7 @@ $sourcePage = array_key_exists('sourcepage', $_REQUEST) ? $_REQUEST['sourcepage'
 $downloadType = array_key_exists('dltype', $_REQUEST) ? $_REQUEST['dltype'] : 'specimen';
 $taxonFilterCode = array_key_exists('taxonFilterCode', $_REQUEST) ? filter_var($_REQUEST['taxonFilterCode'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $displayHeader = array_key_exists('displayheader', $_REQUEST) ? filter_var($_REQUEST['displayheader'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$searchVar = array_key_exists('searchvar', $_REQUEST) ? $_REQUEST['searchvar'] : '';
+$searchVar = array_key_exists('searchvar', $_REQUEST) ? htmlspecialchars($_REQUEST['searchvar'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE| ENT_QUOTES) : '';
 
 $dwcManager = new DwcArchiverCore();
 ?>
@@ -103,7 +103,7 @@ $dwcManager = new DwcArchiverCore();
 	}
 	?>
 	<div style="width:100%; background-color:white;">
-		<h1> <?php echo (isset($LANG['DATA_GUIDE']) ? $LANG['DATA_GUIDE'] : 'Data Usage Guidelines'); ?> </h1>
+		<h1 class="page-heading"><?php echo (isset($LANG['DATA_GUIDE']) ? $LANG['DATA_GUIDE'] : 'Data Usage Guidelines'); ?></h1>
 		<div style="margin:15px 0px;">
 		<?php echo (isset($LANG['GUIDE_ONE']) ? $LANG['GUIDE_ONE'] : 'By downloading data, the user confirms that he/she has read and agrees with the general'); ?> <a href="../../includes/usagepolicy.php#images"> <?php echo (isset($LANG['GUIDE_LINK']) ? $LANG['GUIDE_LINK'] : 'data usage terms'); ?> </a>.
 			<?php echo (isset($LANG['GUIDE_TWO']) ? $LANG['GUIDE_TWO'] : 'Note that additional terms of use specific to the individual collections may be distributed with the data download. When present, the terms
@@ -202,7 +202,7 @@ $dwcManager = new DwcArchiverCore();
 						<input name="publicsearch" type="hidden" value="1" />
 						<input name="taxonFilterCode" type="hidden" value="<?= $taxonFilterCode; ?>" />
 						<input name="sourcepage" type="hidden" value="<?= htmlspecialchars($sourcePage); ?>" />
-						<input name="searchvar" type="hidden" value="<?= htmlspecialchars($searchVar); ?>" />
+						<input name="searchvar" type="hidden" value="<?= $searchVar ?>" />
 						<button type="submit" name="submitaction"> <?= $LANG['DOWNLOAD_DATA'] ?></button>
 						<img id="workingcircle" src="../../images/ajax-loader_sm.gif" style="margin-bottom:-4px;width:20px;display:none;" />
 					</div>

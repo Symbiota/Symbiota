@@ -79,13 +79,13 @@ if($isEditor){
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div class="navpath">
-			<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php">Home</a> &gt;&gt;
+			<a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php">Home</a> &gt;&gt;
 			<a href="othersupportpage.php">Previous Relevent Page</a> &gt;&gt;
 			<b>New Page</b>
 		</div>
 		<!-- This is inner text! -->
-		<div id="innertext">
-
+		<div role="main" id="innertext">
+			<h1 class="page-heading">Template Page Header</h1>
 			Add static, dynamic and form content here.<br/>
 
 		</div>

@@ -84,7 +84,8 @@ if($IS_ADMIN) $isEditor = true;
 	<?php
 	if($isEditor){
 		?>
-		<div id="innertext">
+		<div role="main" id="innertext">
+			<h1 class="page-heading">Media Tools</h1>
 			<div id="actionDiv">
 				<?php
 				$imgidEnd = 0;

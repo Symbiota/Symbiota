@@ -121,5 +121,7 @@ $LANG['SECURITY_KEY'] = 'Clef de Sécurité';
 $LANG['RECORDID'] = 'IDenregistrement';
 $LANG['SAVE_EDITS'] = 'Énregistrer Modifications';
 $LANG['CREATE_COLL_2'] = 'Créer Nouvelle Collection';
+$LANG['TINYMCE_INFO'] = 'Descriptif des collections. Vous pouvez accéder à la barre d\'outils d\'édition de texte pour cette description en appuyant
+						 sur la combinaison de touches ALT + F10 sous Windows ou OPTION + F10 sous MacOS.';
 
 ?>

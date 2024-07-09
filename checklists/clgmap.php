@@ -3,17 +3,21 @@ include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistManager.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/clgmap.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/checklists/clgmap.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT.'/content/lang/checklists/clgmap.en.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/header.en.php');
+else include_once($SERVER_ROOT . '/content/lang/header.' . $LANG_TAG . '.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $pid = $_REQUEST['pid'];
 $target = array_key_exists('target',$_REQUEST)?$_REQUEST['target']:'checklists';
 
 //Sanitation
-$pid = htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS);
+$pid = htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 if(!is_numeric($pid)) $pid = 0;
 
 $clManager = new ChecklistManager();
 $clManager->setProj($pid);
+
+$shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -122,10 +126,17 @@ $clManager->setProj($pid);
 				margin: 0;
 				padding: 0;
 			}
+         .screen-reader-only {
+				position: absolute;
+				left: -10000px;
+			}
 		</style>
 	</head>
 	<body style="background-color:#ffffff;" onload="initialize()">
-      <h1 class="skip-link" style="margin: 0;"></h1>
+      <?php
+			// if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimal_header_template.php');
+		?>
+      <h1 class="page-heading screen-reader-only" style="margin-top:30px;">Checklist Map</h1>
 		<div id="map_canvas"></div>
       <div 
         id="service-container" 

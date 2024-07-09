@@ -39,8 +39,8 @@ class ChecklistAdmin extends Manager{
 				//Add permissions to allow creater to be an editor and then reset user permissions stored in browser cache
 				$inventoryManager->insertUserRole($GLOBALS['SYMB_UID'], 'ClAdmin', 'fmchecklists', $newClid, $GLOBALS['SYMB_UID']);
 				$newPManager = new ProfileManager();
-				$newPManager->setUserName($GLOBALS['USERNAME']);
-				$newPManager->authenticate();
+				$newPManager->setUid($GLOBALS['SYMB_UID']);
+				$newPManager->setUserRights();
 				if($postArr['type'] == 'excludespp' && $postArr['excludeparent']){
 					//If is an exclusion checklists, link to parent checklist
 					if(!$inventoryManager->insertChildChecklist($postArr['excludeparent'], $newClid, $GLOBALS['SYMB_UID'])){
@@ -179,16 +179,16 @@ class ChecklistAdmin extends Manager{
 		$retArr = Array();
 		$targetStr = $this->clid;
 		do{
-			$sql = 'SELECT c.clid, c.name, child.clid as pclid '.
-				'FROM fmchklstchildren child INNER JOIN fmchecklists c ON child.clidchild = c.clid '.
-				'WHERE child.clid IN('.trim($targetStr,',').') '.
-				'ORDER BY c.name ';
+			$sql = 'SELECT c.clid, c.name, child.clid as pclid
+				FROM fmchklstchildren child INNER JOIN fmchecklists c ON child.clidchild = c.clid
+				WHERE child.clid IN(' . trim($targetStr, ',') . ') AND child.clid != child.clidchild
+				ORDER BY c.name ';
 			$rs = $this->conn->query($sql);
 			$targetStr = '';
 			while($r = $rs->fetch_object()){
 				$retArr[$r->clid]['name'] = $r->name;
 				$retArr[$r->clid]['pclid'] = $r->pclid;
-				$targetStr .= ','.$r->clid;
+				$targetStr .= ',' . $r->clid;
 			}
 			$rs->free();
 		}while($targetStr);
@@ -200,16 +200,16 @@ class ChecklistAdmin extends Manager{
 		$retArr = Array();
 		$targetStr = $this->clid;
 		do{
-			$sql = 'SELECT c.clid, c.name, child.clid as pclid '.
-				'FROM fmchklstchildren child INNER JOIN fmchecklists c ON child.clid = c.clid '.
-				'WHERE child.clidchild IN('.trim($targetStr,',').') ';
+			$sql = 'SELECT c.clid, c.name
+				FROM fmchklstchildren child INNER JOIN fmchecklists c ON child.clid = c.clid
+				WHERE child.clidchild IN(' . trim($targetStr, ',') . ') AND child.clid != child.clidchild';
 			$rs = $this->conn->query($sql);
 			$targetStr = '';
 			while($r = $rs->fetch_object()){
 				$retArr[$r->clid] = $r->name;
 				$targetStr .= ','.$r->clid;
 			}
-			if($targetStr) $targetStr = substr($targetStr,1);
+			if($targetStr) $targetStr = substr($targetStr, 1);
 			$rs->free();
 		}while($targetStr);
 		asort($retArr);
@@ -615,7 +615,7 @@ class ChecklistAdmin extends Manager{
 
 	//Misc support functions
 	public function cleanOutArray($inputArray){
-		$skip = array('defaultsettings', 'dynamicsql', 'footprintWkt');
+		$skip = array('defaultsettings', 'dynamicsql', 'footprintwkt');
 		if(is_array($inputArray)){
 			foreach($inputArray as $key => $value){
 				if(is_array($value)){

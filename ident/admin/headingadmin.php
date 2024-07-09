@@ -58,6 +58,7 @@ $headingArr = $charManager->getHeadingArr();
 <body>
 	<!-- This is inner text! -->
 	<div  id="innertext" style="width:700px;padding:15px">
+		<h1 class="page-heading">Heading Administration</h1>
 		<?php
 		if($statusStr){
 			?>
