@@ -735,7 +735,7 @@ if(isset($_REQUEST['llpoint'])) {
 						const value = this.group_map[id];
 						const colorCluster = (cluster) => {
 							let childCount = cluster.getChildCount();
-							cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?></div>`);
+							cluster.bindTooltip(`<div style="font-size:1rem"><?=$LANG['CLICK_TO_EXPAND']?></div>`);
 							cluster.on("click", e => e.target.spiderfy() )
 							return new L.DivIcon.CustomColor({
 								html: `<div class="symbiota-cluster" style="background-color: #${value.color};"><span>` + childCount + '</span></div>',
@@ -815,42 +815,6 @@ if(isset($_REQUEST['llpoint'])) {
 				}
 
 				return {taxonMapGroup: taxon, collectionMapGroup: collections, portalMapGroup: portal};
-			}
-
-			function genClusters(legendMap, type) {
-
-				for(let value of Object.values(legendMap)) {
-					const colorCluster = (cluster) => {
-						let childCount = cluster.getChildCount();
-						cluster.bindTooltip(`<div style="font-size:1.5rem"><?=$LANG['CLICK_TO_EXPAND']?></div>`);
-						cluster.on("click", e => e.target.spiderfy())
-cluster.bindTooltip(`<div style="font-size:1rem"><?=$LANG['CLICK_TO_EXPAND']?></div>`);
-						return new L.DivIcon.CustomColor({
-							html: `<div class="symbiota-cluster" style="background-color: #${value.color};"><span>` + childCount + '</span></div>',
-							className: `symbiota-cluster-div`,
-							iconSize: new L.Point(20, 20),
-							color: `#${value.color}77`,
-							mainColor: `#${value.color}`,
-						});
-					}
-
-					let cluster = L.markerClusterGroup({
-						iconCreateFunction: colorCluster,
-						maxClusterRadius: 1,
-						zoomToBoundsOnClick: false,
-					    chunkedLoading: true
-					});
-
-					value.id_map.forEach(g => {
-						if(type === "taxa") {
-							mapGroups[g.index].taxonMapGroup.genLayer(g.tid, cluster);
-						} else if(type === "coll") {
-							mapGroups[g.index].collectionMapGroup.genLayer(g.collid, cluster);
-						} else if(type === "portal") {
-							mapGroups[g.index].portalMapGroup.genLayer(g.portalid, cluster);
-						}
-					});
-				}
 			}
 
 			function drawPoints() {
@@ -981,11 +945,6 @@ cluster.bindTooltip(`<div style="font-size:1rem"><?=$LANG['CLICK_TO_EXPAND']?></
 				}
 				//Need to generate colors for each group
 				buildPanels(formData.get('cross_portal_switch'));
-/*
-				genClusters(taxaLegendMap, "taxa");
-				genClusters(collLegendMap, "coll");
-				genClusters(portalLegendMap, "portal");
-				*/
 
 				mapGroups.forEach(group => {
 					group.taxonMapGroup.genClusters();
@@ -1136,11 +1095,6 @@ cluster.bindTooltip(`<div style="font-size:1rem"><?=$LANG['CLICK_TO_EXPAND']?></
 				getOccurenceRecords(formData).then(res => {
 					if(res) loadOccurenceRecords(res);
 					buildPanels(formData.get('cross_portal_switch'));
-/*
-					genClusters(taxaLegendMap, "taxa");
-					genClusters(collLegendMap, "coll");
-					genClusters(portalLegendMap, "portal");
-					*/
 
 					mapGroups.forEach(group => {
 						group.taxonMapGroup.genClusters();
