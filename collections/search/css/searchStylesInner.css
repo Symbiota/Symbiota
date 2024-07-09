@@ -97,7 +97,7 @@
    @mixin ============================= */
 /* Search Form Layout ********************/
 .inner-search body {
-  font-size: 14px;
+  font-size: 1rem;
 }
 
 .inner-search input:invalid {
@@ -241,7 +241,7 @@
   border-radius: 4px;
   background-color: rgba(230, 20, 20, 0.8);
   color: var(--body-bg-color);
-  font-size: 14px;
+  font-size: 1rem;
   -webkit-transform: translateY(300px);
   transform: translateY(300px);
   pointer-events: all;
@@ -372,7 +372,7 @@
   height: 35px;
   line-height: 35px;
   padding: 0 1.5rem;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.8px;
   text-align: center;
@@ -442,7 +442,7 @@
 
 .inner-search .accordions label.accordion-header::after {
   font-family: "Material Icons";
-  font-size: 24px;
+  font-size: 2rem;
   content: "\e313";
   position: absolute;
   right: 20px;
@@ -508,7 +508,6 @@
 .inner-search .text-area-container textarea ~ span::before,
 .input-text-container label input:valid ~ span::before,
 .input-text-container label input:invalid ~ span::before {
-  font-size: 1rem;
   color: var(--body-text-color);
 }
 
@@ -611,13 +610,11 @@
   position: absolute;
   top: 0;
   left: 1rem;
-  font-size: 1rem;
   line-height: 1;
 }
 
 /* Select control ***********************************/
 .inner-search .select-container label {
-  font-size: 0.8em;
   position: relative;
   top: 22px;
   background-color: white;
