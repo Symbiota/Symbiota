@@ -1589,15 +1589,16 @@ class OccurrenceEditorManager {
 			]);
 
 			//Downgrade old determinations if new determinations have a current determination
-			$parameters = str_repeat('?,', count($currentDeterminations) - 1) . '?';
-			$sql = <<<"SQL"
-			UPDATE omoccurdeterminations 
-			JOIN (SELECT count(*) as cnt FROM omoccurdeterminations WHERE isCurrent = 1 AND occid = ? AND detid NOT IN ($parameters)) as update_flag on cnt > 0 
-			SET isCurrent = 0
-			WHERE occid = ? AND isCurrent = 1 AND detid IN ($parameters);
-			SQL;
-			$this->conn->execute_query($sql, array_merge([$targetOccid], $currentDeterminations, [$targetOccid], $currentDeterminations));
-
+			if(count($currentDeterminations) > 0) {
+				$parameters = str_repeat('?,', count($currentDeterminations) - 1) . '?';
+				$sql = <<<"SQL"
+				UPDATE omoccurdeterminations 
+				JOIN (SELECT count(*) as cnt FROM omoccurdeterminations WHERE isCurrent = 1 AND occid = ? AND detid NOT IN ($parameters)) as update_flag on cnt > 0 
+				SET isCurrent = 0
+				WHERE occid = ? AND isCurrent = 1 AND detid IN ($parameters);
+				SQL;
+				$this->conn->execute_query($sql, array_merge([$targetOccid], $currentDeterminations, [$targetOccid], $currentDeterminations));
+			}
 			//Remap images
 			$sql = <<<'SQL'
 			UPDATE images SET occid = ? WHERE occid = ?;
