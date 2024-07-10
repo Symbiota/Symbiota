@@ -82,12 +82,12 @@ include($SERVER_ROOT.'/includes/header.php');
 	</div>
 	<?php
 	if($isEditor){
-		if($action == 'Populate Collection GUIDs'){
+		if($action == 'populateCollectionGUIDs'){
 			echo '<ul>';
 			$uuidManager->populateGuids($collId);
 			echo '</ul>';
 		}
-		elseif($action == 'Populate GUIDs'){
+		elseif($action == 'populateGUIDs'){
 			echo '<ul>';
 			$uuidManager->populateGuids();
 			echo '</ul>';
@@ -113,7 +113,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					<legend><b><?php echo $LANG['UID_MAP']; ?></b></legend>
 					<div style="clear:both;">
 						<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
-						<button type="submit" name="formsubmit" value="Populate GUIDs" ><?php echo $LANG['POP_COLL_GUID']; ?></button>
+						<button type="submit" name="formsubmit" value="populateCollectionGUIDs" ><?php echo $LANG['POP_COLL_GUID']; ?></button>
 					</div>
 				</fieldset>
 			</form>
@@ -127,7 +127,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						<legend><b><?php echo $LANG['UID_MAP']; ?></b></legend>
 						<div style="clear:both;margin:10px;">
 							<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
-							<button type="submit" name="formsubmit" value="Populate GUIDs" ><?php echo $LANG['POP_COLL_GUID']; ?></button>
+							<button type="submit" name="formsubmit" value="populateGUIDs" ><?php echo $LANG['POP_GUID']; ?></button>
 						</div>
 					</fieldset>
 				</form>
