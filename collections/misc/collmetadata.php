@@ -392,7 +392,7 @@ $collManager->cleanOutArr($collData);
 										<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_PUB_EDITS'] ?>"/>
 									</a>
 									<span id="peditsinfodialog" aria-live="polite">
-										<?php  $LANG['EXPLAIN_PUBLIC'] ?>
+										<?php echo $LANG['EXPLAIN_PUBLIC'] ?>
 									</span>
 								</span>
 							</div>
