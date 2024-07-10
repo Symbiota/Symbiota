@@ -113,7 +113,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					<legend><b><?php echo $LANG['UID_MAP']; ?></b></legend>
 					<div style="clear:both;">
 						<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
-						<input type="submit" name="formsubmit" value="<?php echo $LANG['POP_COLL_GUID']; ?>" />
+						<button type="submit" name="formsubmit" value="Populate GUIDs" ><?php echo $LANG['POP_COLL_GUID']; ?></button>
 					</div>
 				</fieldset>
 			</form>
@@ -127,7 +127,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						<legend><b><?php echo $LANG['UID_MAP']; ?></b></legend>
 						<div style="clear:both;margin:10px;">
 							<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
-							<input type="submit" name="formsubmit" value="<?php echo $LANG['POP_GUID']; ?>" />
+							<button type="submit" name="formsubmit" value="Populate GUIDs" ><?php echo $LANG['POP_COLL_GUID']; ?></button>
 						</div>
 					</fieldset>
 				</form>
