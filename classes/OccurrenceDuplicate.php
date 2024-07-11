@@ -654,6 +654,12 @@ class OccurrenceDuplicate {
 						if($mArr) $dupId = key($mArr);
 						if(!$dupId){
 							//Create a new dupliate project
+							if (strlen($dupIdStr) > 50) {
+								if($verbose){
+									echo '<li style="margin-left:20px;">ERROR creating dupe project: title "' . $dupIdStr . '" is too long (limit is 50 characters)</li>';
+									break;
+								}
+							}
 							$sqlI1 = 'INSERT INTO omoccurduplicates(title,dupetype) VALUES("'.$this->cleanInStr($dupIdStr).'",1)';
 							if($this->conn->query($sqlI1)){
 								$dupId = $this->conn->insert_id;
