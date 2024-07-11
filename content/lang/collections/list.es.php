@@ -8,6 +8,7 @@ Language: Español (Spanish)
 include_once('sharedterms.es.php');
 
 $LANG['PAGE_TITLE'] = 'Resultados de Búsqueda de Colecciones';
+$LANG['SEARCH_RES_LIST'] = 'Resultados de Búsqueda (Lista)';
 $LANG['NAV_SPECIMEN_LIST'] = 'Registros de Ejemplares';
 $LANG['TABLE_DISPLAY'] = 'Mostrar Tabla';
 $LANG['LIST_DISPLAY'] = 'Mostrar Lista';

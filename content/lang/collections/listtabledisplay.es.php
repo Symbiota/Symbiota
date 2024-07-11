@@ -8,6 +8,7 @@ Language: Español (Spanish)
 include_once($SERVER_ROOT.'/content/lang/collections/list.es.php');
 
 $LANG['COL_RESULTS'] = 'Tabla de Resultados de Búsqueda en Colecciones';
+$LANG['SEARCH_RES_TABLE'] = 'Resultados de Búsqueda (Tabla)';
 $LANG['SORT'] = 'Organizar Resultados';
 $LANG['COLLECTION'] = 'Colección';
 $LANG['SCINAME'] = 'Nombre Científico';

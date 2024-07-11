@@ -8,6 +8,7 @@ Language: English
 include_once($SERVER_ROOT.'/content/lang/collections/list.en.php');
 
 $LANG['COL_RESULTS'] = 'Collections Search Results Table';
+$LANG['SEARCH_RES_TABLE'] = 'Search Results (Table)';
 $LANG['SORT'] = 'Sort Results';
 $LANG['COLLECTION'] = 'Collection';
 $LANG['SCINAME'] = 'Scientific Name';

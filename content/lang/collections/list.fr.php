@@ -8,6 +8,7 @@ Language: Français (French)
 include_once('sharedterms.fr.php');
 
 $LANG['PAGE_TITLE'] = 'Résultats de Recherche de Collections';
+$LANG['SEARCH_RES_LIST'] = 'Résultats de Recherche (Liste)';
 $LANG['NAV_SPECIMEN_LIST'] = 'Dossiers de Spécimens';
 $LANG['TABLE_DISPLAY'] = 'Affichage du Tableau';
 $LANG['LIST_DISPLAY'] = 'Affichage de Liste';

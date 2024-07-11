@@ -10,6 +10,7 @@ Date Translated: 2024-02-16
 include_once('sharedterms.pt.php');
 
 $LANG['PAGE_TITLE'] = 'Resultados da Pesquisa';
+$LANG['SEARCH_RES_LIST'] = 'Resultados da Pesquisa (Lista)';
 $LANG['NAV_SPECIMEN_LIST'] = 'Registros de Amostras';
 $LANG['TABLE_DISPLAY'] = 'Exibição da Tabela';
 $LANG['LIST_DISPLAY'] = 'Exibição da Lista';
