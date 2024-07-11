@@ -55,7 +55,7 @@ $LANG['IMG_ADD_VOUCHER'] = 'Agregar voucher';
 $LANG['IMG_EDIT_OCC'] = 'Editar ocurrencia';
 $LANG['IMG_OCC'] = 'Imagen asociada con el suceso';
 
-$LANG['CATALOG_NUMBER'] = 'Numero de Catalogo';
+$LANG['CATALOG_NUMBER'] = 'Número de Catálogo';
 $LANG['COLLECTOR'] = 'Coleccionista';
 $LANG['DATE'] = 'Fecha';
 $LANG['SCIENTIFIC_NAME'] = 'Nombre Científico';
