@@ -140,12 +140,16 @@ if($collId){
     elseif($action == "Run Statistics" && ($cPartentTaxon || $cCountry)){
         $resultsTemp = $collManager->runStatisticsQuery($collId,$cPartentTaxon,$cCountry);
 		if ($resultsTemp){
-			$familyArr = $resultsTemp['families'];
-			ksort($familyArr, SORT_STRING | SORT_FLAG_CASE);
-			$countryArr = $resultsTemp['countries'];
-			ksort($countryArr, SORT_STRING | SORT_FLAG_CASE);
-			unset($resultsTemp['families']);
-			unset($resultsTemp['countries']);
+			if (array_key_exists('families', $resultsTemp)){
+				$familyArr = $resultsTemp['families'];
+				ksort($familyArr, SORT_STRING | SORT_FLAG_CASE);
+				unset($resultsTemp['families']);
+			}
+			if (array_key_exists('countries', $resultsTemp)){
+				$countryArr = $resultsTemp['countries'];
+				ksort($countryArr, SORT_STRING | SORT_FLAG_CASE);
+				unset($resultsTemp['countries']);
+			}
 			ksort($resultsTemp, SORT_STRING | SORT_FLAG_CASE);
 			$c = 0;
 			foreach($resultsTemp as $k => $collArr){
@@ -343,7 +347,7 @@ if($action != "Update Statistics"){
 					if(target != null){
 						var obj = document.getElementById(target);
 						var style = window.getComputedStyle(obj);
-						
+
 						if(style.display=="none" || style.display==""){
 							obj.style.display="block";
 						}
