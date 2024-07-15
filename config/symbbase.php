@@ -15,6 +15,21 @@ session_start(array('gc_maxlifetime'=>3600,'cookie_path'=>$CLIENT_ROOT,'cookie_s
 include_once($SERVER_ROOT.'/classes/Encryption.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
 
+$pHandler = new ProfileManager();
+$ACCESSIBILITY_ACTIVE == false;
+$isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
+// $_SESSION['active_stylesheet'] = null; // use this if you want to troubleshoot the behavior of just the persisted preference
+$localSession = isset($_SESSION['active_stylesheet']) ? $_SESSION['active_stylesheet'] : null;
+if($isAccessiblePreferred){
+	if(!isset($localSession) || !strpos($localSession, 'condensed.css')){
+		$ACCESSIBILITY_ACTIVE == true;
+	}
+} else{
+	if(isset($localSession) && strpos($localSession, 'accessibility-compliant.css')){
+		$ACCESSIBILITY_ACTIVE == true;
+	}
+}
+
 //Check session data to see if signed in
 $PARAMS_ARR = Array();				//params => 'un=egbot&dn=Edward&uid=301'
 $USER_RIGHTS = Array();
@@ -23,7 +38,6 @@ if(isset($_SESSION['userrights'])) $USER_RIGHTS = $_SESSION['userrights'];
 if(isset($_COOKIE['SymbiotaCrumb']) && !$PARAMS_ARR){
 	$tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true);
 	if($tokenArr){
-		$pHandler = new ProfileManager();
 		if((isset($_REQUEST['submit']) && $_REQUEST['submit'] == 'logout') || isset($_REQUEST['loginas'])){
 	        $pHandler->deleteToken($pHandler->getUid($tokenArr[0]),$tokenArr[1]);
 		}

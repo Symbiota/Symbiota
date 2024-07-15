@@ -86,33 +86,6 @@ a:hover {
   cursor: pointer;
 }
 
-button {
-  background-color: var(--darkest-color);
-  border: none;
-  border-radius: 5px;
-  padding: 0.5rem 1rem;
-  color: #fff;
-  font-family: var(--heading-font-family);
-  font-weight: 600;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  white-space: nowrap;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-button:hover {
-  background-color: var(--medium-color);
-  color: var(--light-color);
-}
-
-button:disabled {
-  background-color: var(--light-color);
-  color: var(--medium-color);
-}
-
 hr {
   border: 1px solid var(--bright-color);
 }
@@ -216,6 +189,91 @@ hr {
 .grid-4 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+}
+
+.gridlike-form {
+  margin: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.gridlike-form-row {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.screen-reader-only {
+  position: absolute !important;
+  left: -10000px !important;
+}
+
+.welcome-text {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+}
+
+.page-heading {
+  font-size: 2.5rem;
+}
+
+/* Base Button Button CSS
+========================================================================== */
+button {
+  background-color: var(--darkest-color);
+  border: none;
+  border-radius: 5px;
+  border-width: 2px;
+  border-style: outset;
+  border-color: buttonborder;
+  border-image: initial;
+  margin: 0em;
+  padding: 0.5rem 1rem;
+  padding-block: 1px;
+  padding-inline: 6px;
+  color: #fff;
+  font-family: var(--heading-font-family);
+  font-weight: 600;
+  letter-spacing: 1px;
+  word-spacing: normal;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  white-space: nowrap;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  appearance: auto;
+  text-rendering: auto;
+  text-align: center;
+  text-transform: none;
+  text-indent: 0px;
+  text-shadow: none;
+  line-height: normal;
+  box-sizing: border-box;  
+}
+
+button:hover {
+  background-color: var(--medium-color);
+  color: var(--light-color);
+}
+
+button:disabled {
+  background-color: var(--light-color);
+  color: var(--medium-color);
+}
+
+button.icon-button {
+  margin: 2px 5px;
+  padding: 6px;
+  border-width: 1px;
+  border-style: outset;
+  border-color: buttonborder;
+}
+
+button.icon-button:hover {
+  background: var(--medium-color);
 }
 
 .button {
