@@ -82,12 +82,13 @@ class OccurrenceEditorManager {
 					$this->collMap['collectionname'] = $this->cleanOutStr($this->collMap['collectionname']);
 				}
 				$rs->free();
+				$this->getDynamicPropertiesArr();
 			}
 			else return false;
 		}
 	}
 
-	public function getDynamicPropertiesArr(){
+	private function getDynamicPropertiesArr(){
 		$retArr = array();
 		$propArr = array();
 		if(!empty($this->collMap['dynamicproperties'])){
@@ -96,8 +97,11 @@ class OccurrenceEditorManager {
 				$retArr = $propArr['editorProps'];
 				if(isset($retArr['modules-panel'])){
 					foreach($retArr['modules-panel'] as $module){
-						if(isset($module['paleo']['status']) && $module['paleo']['status']){
-							$this->paleoActivated = true;
+						if(!empty($module['paleo']['status'])){
+							$this->collMap['paleoActivated'] = true;
+						}
+						if(!empty($module['matSample']['status'])){
+							$this->collMap['matSampleActivated'] = true;
 						}
 					}
 				}
@@ -1296,7 +1300,7 @@ class OccurrenceEditorManager {
 
 	public function deleteOccurrence($delOccid){
 		global $CHARSET, $USER_DISPLAY_NAME, $LANG;
-		
+
 		if(!is_numeric($delOccid)) return true;
 
 		$stage = $LANG['ERROR_CREATING_TRANSACTION'];
@@ -1423,10 +1427,10 @@ class OccurrenceEditorManager {
 					(isset($archiveArr['occurrenceID']) && $archiveArr['occurrenceID']?'"'.$this->cleanInStr($archiveArr['occurrenceID']).'"':'NULL').', '.
 					(isset($archiveArr['recordID']) && $archiveArr['recordID']?'"'.$this->cleanInStr($archiveArr['recordID']).'"':'NULL').')';
 				$this->conn->query($sqlArchive);
-			}			
+			}
 
 			//Go ahead and delete
-			// Associated records will be deleted from: 
+			// Associated records will be deleted from:
 			// omexsiccatiocclink
 			// omoccurdeterminations
 			// fmvouchers
@@ -1451,13 +1455,13 @@ class OccurrenceEditorManager {
 			return true;
 		} catch (\Throwable $th) {
 			error_log(
-				"Error deleting occid " . $delOccid 
+				"Error deleting occid " . $delOccid
 					. ", Line: " . $th->getLine()
 					. " : " . $th->getMessage()
 			);
 			$this->errorArr[] = $stage . ': ' . $th->getMessage();
 			return false;
-		} 
+		}
 	}
 
 	public function cloneOccurrence($postArr){
@@ -1579,11 +1583,11 @@ class OccurrenceEditorManager {
 			SQL;
 			$this->conn->execute_query($sql, [
 				//Update To This Occid
-				$targetOccid, 
+				$targetOccid,
 				//From Options of This Occid
-				$sourceOccid, 
+				$sourceOccid,
 				//Check This Occid Determinations for Duplicates
-				$targetOccid, 
+				$targetOccid,
 				//Of this Occid Record
 				$sourceOccid
 			]);
@@ -1685,8 +1689,8 @@ class OccurrenceEditorManager {
 
 			if(!$this->deleteOccurrence($sourceOccid)){
 				error_log(
-					'Error: Could not delete ' . $sourceOccid 
-						. ' while trying to merge into '. $targetOccid 
+					'Error: Could not delete ' . $sourceOccid
+						. ' while trying to merge into '. $targetOccid
 				);
 				$this->errorArr[] = $LANG['ERROR_DELETING_OCCURRENCE'];
 				return false;
@@ -1696,9 +1700,9 @@ class OccurrenceEditorManager {
 			return true;
 		} catch (\Throwable $th) {
 			error_log(
-				'Error: Merging Record ' . $sourceOccid . ' into '. $targetOccid 
-					. ' at '. $stage 
-					.', line: ' . $th->getLine() 
+				'Error: Merging Record ' . $sourceOccid . ' into '. $targetOccid
+					. ' at '. $stage
+					.', line: ' . $th->getLine()
 					. ' : ' . $th->getMessage()
 			);
 			$this->errorArr[] = $stage . ' : ' . $th->getMessage();
