@@ -622,6 +622,7 @@ class OccurrenceDuplicate {
 				if(preg_match('#\d#',$recNum)){
 					$lastName = $this->parseLastName($r2->recordedby);
 					if(strpos($lastName,'.')) $lastName = $r2->recordedby;
+					$lastName = substr($lastName, 0, 25);
 					if(isset($lastName) && $lastName && !preg_match('#\d#',$lastName)){
 						$rArr[$recNum][$lastName][$r2->dupid][] = $r2->occid;
 						if($r2->collid == $collid && (!$this->obsUid || $r2->observeruid == $this->obsUid)) $keepArr[$recNum][$lastName] = 1;
@@ -653,14 +654,7 @@ class OccurrenceDuplicate {
 						$dupId = 0;
 						if($mArr) $dupId = key($mArr);
 						if(!$dupId){
-							//Create a new dupliate project
-							if (strlen($dupIdStr) > 50) {
-								if($verbose){
-									echo '<li style="margin-left:20px;">ERROR creating dupe project: title "' . $dupIdStr . '" is too long (limit is 50 characters)</li>';
-									break;
-								}
-							}
-							$sqlI1 = 'INSERT INTO omoccurduplicates(title,dupetype) VALUES("'.$this->cleanInStr($dupIdStr).'",1)';
+							$sqlI1 = 'INSERT IGNORE INTO omoccurduplicates(title,dupetype) VALUES("'.$this->cleanInStr($dupIdStr).'",1)';
 							if($this->conn->query($sqlI1)){
 								$dupId = $this->conn->insert_id;
 								if($verbose) echo '<li style="margin-left:20px;">New duplicate project created: #'.$dupId.'</li>';
