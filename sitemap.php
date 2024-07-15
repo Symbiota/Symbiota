@@ -529,7 +529,7 @@ $smManager = new SiteMapManager();
 					<?php
 				}
 				else{
-					echo '' . $LANG['PLEASE'] . ' <a href="' . htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/profile/index.php?refurl=../sitemap.php">' . htmlspecialchars($LANG['LOGIN'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>' . htmlspecialchars($LANG['TOACCESS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '<br/>' . htmlspecialchars($LANG['CONTACTPORTAL'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '.';
+					echo '' . $LANG['PLEASE'] . ' <a href="' . htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/profile/index.php?refurl=../sitemap.php">' . htmlspecialchars($LANG['LOGIN'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ' . htmlspecialchars($LANG['TOACCESS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '<br/>' . htmlspecialchars($LANG['CONTACTPORTAL'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '.';
 				}
 			?>
 			</section>

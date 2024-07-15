@@ -31,6 +31,7 @@
    ========================================================================== */
 html {
   font-size: 16px; /* This is what 1 rem will be base off of */
+  height: 100%;
 }
 
 body {
@@ -41,6 +42,7 @@ body {
   font-size: var(--body-font-size, 1rem);
   font-weight: 400;
   font-family: var(--body-font-family);
+  min-height: 100%;
 }
 
 h1,
