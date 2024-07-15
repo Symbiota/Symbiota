@@ -10,8 +10,11 @@
 <!-- Symbiota styles -->
 <link href="<?= $CSS_BASE_PATH ?>/symbiota/reset.css" type="text/css" rel="stylesheet">
 <link href="<?= $CSS_BASE_PATH ?>/symbiota/normalize.slim.css" type="text/css" rel="stylesheet">
+<link href="<?= $CSS_BASE_PATH ?>/symbiota/header.css" type="text/css" rel="stylesheet">
+<link href="<?= $CSS_BASE_PATH ?>/symbiota/footer.css" type="text/css" rel="stylesheet">
 <link href="<?= $CSS_BASE_PATH ?>/symbiota/main.css" type="text/css" rel="stylesheet">
 <link href="<?= $CSS_BASE_PATH ?>/symbiota/accessibility-controls.css" type="text/css" rel="stylesheet">
+
 <?php
 if($ACCESSIBILITY_ACTIVE){
 	?>
