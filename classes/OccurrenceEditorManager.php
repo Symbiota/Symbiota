@@ -1161,6 +1161,91 @@ class OccurrenceEditorManager {
 		return $retArr;
 	}
 
+	private function addLatestIdentToDetermination($occid) : void {
+		//If determination is already in omoccurdeterminations, INSERT will fail
+		$guid = UuidFactory::getUuidV4();
+		$sqlInsert = 'INSERT IGNORE INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
+			'identificationQualifier, identificationReferences, identificationRemarks, recordID, sortsequence, isCurrent) '.
+			'SELECT occid, IFNULL(identifiedby,"unknown") AS idby, IFNULL(dateidentified,"s.d.") AS di, '.
+			'sciname, scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, "'.$guid.'", 10 AS sortseq, (SELECT IF(COUNT(*) > 0, 0, 1) AS isCur from omoccurdeterminations where isCurrent = 1 and occid = '. $occid . ') '. 
+			'FROM omoccurrences WHERE (occid = ' . $occid . ') AND (identifiedBy IS NOT NULL OR dateIdentified IS NOT NULL OR sciname IS NOT NULL)';
+		try {
+			$this->conn->query($sqlInsert);
+		} catch (mysqli_sql_exception $e) {
+			echo 'Duplicate: '.$this->conn->error;
+			error_log('Error Duplicate determination from latest identification:' . $e->getMessage());
+		}
+		//$tidToAdd = $detArr['tidtoadd'];
+		//if($tidToAdd && !is_numeric($tidToAdd)) $tidToAdd = 0;
+		//$this->updateBaseOccurrence($detId);
+
+		//Add identification confidence
+		/*
+		if(isset($detArr['confidenceranking'])){
+			$idStatus = $this->editIdentificationRanking($detArr['confidenceranking'],'');
+			if($idStatus) $status .= '; '.$idStatus;
+		}*/
+	}
+
+	// Copy of updateBaseOccurrence in OccurrenceEditorDeterminations for temporary utility till 3.2 
+	// TODO (Logan) remove once latest Identification section in editor is removed
+	private function updateBaseOccurrence($detId){
+		if(is_numeric($detId)){
+			$taxonArr = $this->getTaxonVariables($detId);
+			$sql = 'UPDATE omoccurrences o INNER JOIN omoccurdeterminations d ON o.occid = d.occid
+				SET o.identifiedBy = d.identifiedBy, o.dateIdentified = d.dateIdentified, o.sciname = d.sciname, o.scientificNameAuthorship = d.scientificnameauthorship,
+				o.identificationQualifier = d.identificationqualifier, o.identificationReferences = d.identificationReferences, o.identificationRemarks = d.identificationRemarks,
+				o.taxonRemarks = d.taxonRemarks, o.genus = NULL, o.specificEpithet = NULL, o.taxonRank = NULL, o.infraspecificepithet = NULL, o.scientificname = NULL ';
+			if(isset($taxonArr['family']) && $taxonArr['family']) $sql .= ', o.family = "'.$this->cleanInStr($taxonArr['family']).'"';
+			if(isset($taxonArr['tid']) && $taxonArr['tid']) $sql .= ', o.tidinterpreted = '.$taxonArr['tid'];
+			if(isset($taxonArr['security']) && $taxonArr['security']) $sql .= ', o.localitysecurity = '.$taxonArr['security'].', o.localitysecurityreason = "<Security Setting Locked>"';
+			$sql .= ' WHERE (d.iscurrent = 1) AND (d.detid = '.$detId.')';
+			$updated_base = $this->conn->query($sql);
+
+			//Whenever occurrence is updated also update associated images
+			if($updated_base && isset($taxonArr['tid']) && $taxonArr['tid']) {
+				$sql = <<<'SQL'
+				UPDATE images i
+				INNER JOIN omoccurdeterminations od on od.occid = i.occid
+				SET tid = ? WHERE detid = ?;
+				SQL;
+				$this->conn->execute_query($sql, [$taxonArr['tid'], $detId]);
+			}
+		}
+	}
+
+	// Copy of getTaxonVariables in OccurrenceEditorDeterminations for temporary utility till 3.2 
+	// TODO (Logan) remove once latest Identification section in editor is removed
+	private function getTaxonVariables($detId){
+		$retArr = array();
+		$sqlTid = 'SELECT t.tid, t.securitystatus, ts.family
+			FROM omoccurdeterminations d INNER JOIN taxa t ON d.sciname = t.sciname
+			INNER JOIN taxstatus ts ON t.tid = ts.tid
+			WHERE (d.detid = '.$detId.') AND (taxauthid = 1)';
+		$rs = $this->conn->query($sqlTid);
+		if($r = $rs->fetch_object()){
+			$retArr['tid'] = $r->tid;
+			$retArr['family'] = $r->family;
+			$retArr['security'] = ($r->securitystatus == 1 ? 1 : 0);
+		}
+		$rs->free();
+		if($retArr && !$retArr['security'] && $retArr['tid']){
+			$sql2 = 'SELECT c.clid
+				FROM fmchecklists c INNER JOIN fmchklsttaxalink cl ON c.clid = cl.clid
+				INNER JOIN taxstatus ts1 ON cl.tid = ts1.tid
+				INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted
+				INNER JOIN omoccurrences o ON c.locality = o.stateprovince
+				WHERE c.type = "rarespp" AND ts1.taxauthid = 1 AND ts2.taxauthid = 1
+				AND (ts2.tid = '.$retArr['tid'].') AND (o.occid = '.$this->occid.')';
+			$rs2 = $this->conn->query($sql2);
+			if($rs2->num_rows){
+				$retArr['security'] = 1;
+			}
+			$rs2->free();
+		}
+		return $retArr;
+	}
+
 	public function addOccurrence($postArr){
 		global $LANG;
 		$status = $LANG['SUCCESS_NEW_OCC_SUBMITTED'];
@@ -1186,6 +1271,7 @@ class OccurrenceEditorManager {
 				}
 				else $sql .= ', NULL';
 			}
+
 			$sql .= ')';
 			if($this->conn->query($sql)){
 				$this->occid = $this->conn->insert_id;
@@ -1268,6 +1354,9 @@ class OccurrenceEditorManager {
 				$status = $LANG['FAILED_ADD_OCC'].": ".$this->conn->error.'<br/>SQL: '.$sql;
 			}
 		}
+
+		$this->addLatestIdentToDetermination($this->occid);
+
 		return $status;
 	}
 
@@ -1514,6 +1603,7 @@ class OccurrenceEditorManager {
 		return $retArr;
 	}
 
+	// Note source is record that started duplicate lookup and is deleted up success
 	public function mergeRecords($targetOccid,$sourceOccid){
 		global $LANG;
 		$status = true;
@@ -1529,6 +1619,8 @@ class OccurrenceEditorManager {
 		/* Start transaction */
 		// This will autocommit if not rollback explicitly
 		$this->conn->begin_transaction();
+		$this->addLatestIdentToDetermination($targetOccid);
+		$this->addLatestIdentToDetermination($sourceOccid);
 		$stage = '';
 		try {
 			$oArr = array();
@@ -1561,12 +1653,17 @@ class OccurrenceEditorManager {
 				$this->conn->execute_query($sqlIns, [$targetOccid]);
 			}
 
+			// Anon function for util of merging determinations
+			$get_current_determinations = function ($occid) {
+				$sql =<<<'SQL'
+				SELECT detid FROM omoccurdeterminations where occid = ? and isCurrent = 1;
+				SQL;
+				$result = $this->conn->execute_query($sql, [$occid]);
+				return array_map(fn($v) => $v[0], $result->fetch_all());
+			};
+
 			//Fetch List of Old Current Determinations
-			$sql =<<<'SQL'
-			SELECT detid FROM omoccurdeterminations where occid = ? and isCurrent = 1;
-			SQL;
-			$result = $this->conn->execute_query($sql, [$targetOccid]);
-			$currentDeterminations = array_map(fn($v) => $v[0], $result->fetch_all());
+			$currentDeterminations = $get_current_determinations($targetOccid);
 
 			//Remap determinations
 			$sql = <<<'SQL'
@@ -1603,6 +1700,13 @@ class OccurrenceEditorManager {
 				SQL;
 				$this->conn->execute_query($sql, array_merge([$targetOccid], $currentDeterminations, [$targetOccid], $currentDeterminations));
 			}
+
+			// Get New Current determination and updateBaseOccurrence to match
+			$currentDeterminations = $get_current_determinations($targetOccid);
+			if(is_array($currentDeterminations) && count($currentDeterminations) > 0) {
+				$this->updateBaseOccurrence($currentDeterminations[0]);
+			}
+
 			//Remap images
 			$sql = <<<'SQL'
 			UPDATE images SET occid = ? WHERE occid = ?;
