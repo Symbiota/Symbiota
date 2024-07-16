@@ -12,21 +12,6 @@ include_once($SERVER_ROOT.'/classes/Encryption.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
 
 $pHandler = new ProfileManager();
-//Set accessibilty variables
-$ACCESSIBILITY_ACTIVE == false;
-$isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
-// $_SESSION['active_stylesheet'] = null; // use this if you want to troubleshoot the behavior of just the persisted preference
-$localSession = isset($_SESSION['active_stylesheet']) ? $_SESSION['active_stylesheet'] : null;
-if($isAccessiblePreferred){
-	if(!isset($localSession) || !strpos($localSession, 'condensed.css')){
-		$ACCESSIBILITY_ACTIVE == true;
-	}
-} else{
-	if(isset($localSession) && strpos($localSession, 'accessibility-compliant.css')){
-		$ACCESSIBILITY_ACTIVE == true;
-	}
-}
-
 //Check session data to see if signed in
 $PARAMS_ARR = Array();				//params => 'un=egbot&dn=Edward&uid=301'
 $USER_RIGHTS = Array();
@@ -62,6 +47,21 @@ $USER_DISPLAY_NAME = (array_key_exists('dn',$PARAMS_ARR)?$PARAMS_ARR['dn']:'');
 $USERNAME = (array_key_exists('un',$PARAMS_ARR)?$PARAMS_ARR['un']:0);
 $SYMB_UID = (array_key_exists('uid',$PARAMS_ARR)?$PARAMS_ARR['uid']:0);
 $IS_ADMIN = (array_key_exists('SuperAdmin',$USER_RIGHTS)?1:0);
+
+//Set accessibilty variables
+$ACCESSIBILITY_ACTIVE = false;
+$isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
+// $_SESSION['active_stylesheet'] = null; // use this if you want to troubleshoot the behavior of just the persisted preference
+$localSession = isset($_SESSION['active_stylesheet']) ? $_SESSION['active_stylesheet'] : null;
+if($isAccessiblePreferred){
+	if(!isset($localSession) || !strpos($localSession, 'condensed.css')){
+		$ACCESSIBILITY_ACTIVE == true;
+	}
+} else{
+	if(isset($localSession) && strpos($localSession, 'accessibility-compliant.css')){
+		$ACCESSIBILITY_ACTIVE == true;
+	}
+}
 
 //$AVAILABLE_LANGS = array('en','es','fr','pt','ab','aa','af','sq','am','ar','hy','as','ay','az','ba','eu','bn','dz','bh','bi','br','bg','my','be','km','ca','zh','co','hr','cs','da','nl','eo','et','fo','fj','fi','fy','gd','gl','ka','de','el','kl','gn','gu','ha','iw','hi','hu','is','in','ia','ie','ik','ga','it','ja','jw','kn','ks','kk','rw','ky','rn','ko','ku','lo','la','lv','ln','lt','mk','mg','ms','ml','mt','mi','mr','mo','mn','na','ne','no','oc','or','om','ps','fa','pl','pa','qu','rm','ro','ru','sm','sg','sa','sr','sh','st','tn','sn','sd','si','ss','sk','sl','so','su','sw','sv','tl','tg','ta','tt','te','th','bo','ti','to','ts','tr','tk','tw','uk','ur','uz','vi','vo','cy','wo','xh','ji','yo','zu');
 $AVAILABLE_LANGS = array('en','es','fr','pt');
