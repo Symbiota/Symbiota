@@ -1175,16 +1175,6 @@ class OccurrenceEditorManager {
 			echo 'Duplicate: '.$this->conn->error;
 			error_log('Error Duplicate determination from latest identification:' . $e->getMessage());
 		}
-		//$tidToAdd = $detArr['tidtoadd'];
-		//if($tidToAdd && !is_numeric($tidToAdd)) $tidToAdd = 0;
-		//$this->updateBaseOccurrence($detId);
-
-		//Add identification confidence
-		/*
-		if(isset($detArr['confidenceranking'])){
-			$idStatus = $this->editIdentificationRanking($detArr['confidenceranking'],'');
-			if($idStatus) $status .= '; '.$idStatus;
-		}*/
 	}
 
 	// Copy of updateBaseOccurrence in OccurrenceEditorDeterminations for temporary utility till 3.2 
