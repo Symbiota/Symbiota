@@ -439,8 +439,69 @@ button.icon-button:hover {
   padding: 0.5rem 0.9rem;
 }
 
-/***********************************************************************/
+/* image thumbnails */
+#img-container {
+  width: 80%;
+}
 
+.tndiv {
+  float: left;
+  text-align: center;
+  width: 165px;
+  height: 230px;
+  page-break-before: auto;
+  page-break-inside: avoid;
+}
+
+.tnimg {
+  position: relative;
+  overflow: hidden;
+  width: 160px;
+  height: 160px;
+  border: 1px solid gray;
+}
+
+.tnimg img {
+  position: absolute;
+  max-height: 160px;
+  max-width: 160px;
+  width: expression(this.width >=this.height ? 160: true);
+  height: expression(this.height >=this.width ? 160: true);
+  top: -9999px;
+  bottom: -9999px;
+  left: -9999px;
+  right: -9999px;
+  margin: auto;
+}
+
+/* styled table */
+table.styledtable {
+  table-layout: auto;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table.styledtable th {
+  text-align: left;
+  padding: 4px;
+  border: 1px solid gray;
+  background-color: #dbe5f1;
+  color: black;
+}
+
+table.styledtable td {
+  padding: 3px;
+  border: 1px solid gray;
+  background-color: #efefef;
+}
+
+table.styledtable tr.alt td {
+  color: #000000;
+  /*background-color:	#FCFCFC; */
+  background-color: #dfdfdf;
+}
+
+/***********************************************************************/
 /* Utility classes
 ========================================================================== */
 .text-huge {

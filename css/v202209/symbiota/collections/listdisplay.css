@@ -4,6 +4,7 @@
 
 .collectiontitle a {
     font-size: 80%;
+    margin-left: 3px;
 }
 
 .collectiontitle a:hover {

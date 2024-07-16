@@ -12,6 +12,7 @@ include_once($SERVER_ROOT.'/classes/Encryption.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
 
 $pHandler = new ProfileManager();
+//Set accessibilty variables
 $ACCESSIBILITY_ACTIVE == false;
 $isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
 // $_SESSION['active_stylesheet'] = null; // use this if you want to troubleshoot the behavior of just the persisted preference
