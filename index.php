@@ -49,7 +49,7 @@ $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.
 							<div class="layout__container">
 								<div class="layout__region layout__region--content">
 									<section class="block block-title-block block-nal-page-title-block clearfix path-frontpage">
-										<h1 class="page-header page-heading">Agricultural Research Service Biocollections</h1>
+										<h1 class="page-header page-heading">Biocollections of the USDA Agricultural Research Service</h1>
 									</section>
 								</div>
 								<div  class="layout__region layout__region--first">
