@@ -62,7 +62,7 @@ if($action == 'batchAssignTag'){
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
 	<link href="<?= $CSS_BASE_PATH; ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
 	<link href="<?= $CSS_BASE_PATH; ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />
-	<style type="text/css">
+	<style>
 		fieldset{ padding: 15px }
 		fieldset legend{ font-weight:bold }
 		label{ font-weight:bold }

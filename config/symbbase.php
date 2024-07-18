@@ -55,11 +55,11 @@ $isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
 $localSession = isset($_SESSION['active_stylesheet']) ? $_SESSION['active_stylesheet'] : null;
 if($isAccessiblePreferred){
 	if(!isset($localSession) || !strpos($localSession, 'condensed.css')){
-		$ACCESSIBILITY_ACTIVE == true;
+		$ACCESSIBILITY_ACTIVE = true;
 	}
 } else{
 	if(isset($localSession) && strpos($localSession, 'accessibility-compliant.css')){
-		$ACCESSIBILITY_ACTIVE == true;
+		$ACCESSIBILITY_ACTIVE = true;
 	}
 }
 
