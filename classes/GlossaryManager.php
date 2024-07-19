@@ -62,11 +62,15 @@ class GlossaryManager extends Manager {
 			$sqlWhere .= ') ';
 		}
 		if($language) $sqlWhere .= 'AND (g.language = "'.$this->cleanInStr($language).'") ';
-		if($tid) $sqlWhere .= 'AND (t.tid = '.$tid.' OR t2.tid = '.$tid.') ';
+		if($tid) $sqlWhere .= 'AND (taxalink.tid = '.$tid.' OR taxalink2.tid = '.$tid.') ';
 		$sql = 'SELECT DISTINCT g.glossid, g.term, g.definition, tl.relationshipType, g2.glossid as glossid2, g2.term AS term2, g2.definition AS def2
 			FROM glossary g LEFT JOIN glossarytermlink tl ON g.glossid = tl.glossgrpid
 			LEFT JOIN glossary g2 ON tl.glossid = g2.glossid ';
-		if($tid) $sql .= 'INNER JOIN glossarytermlink tl ON g.glossid = tl.glossid INNER JOIN glossarytaxalink t ON tl.glossgrpid = t.glossid INNER JOIN glossarytaxalink t2 ON g.glossid = t2.glossid ';
+		if($tid){
+			$sql .= 'LEFT JOIN glossarytermlink termlink ON g.glossid = termlink.glossid
+				LEFT JOIN glossarytaxalink taxalink ON termlink.glossgrpid = taxalink.glossid
+				LEFT JOIN glossarytaxalink taxalink2 ON g.glossid = taxalink2.glossid ';
+		}
 		if($sqlWhere) $sql .= 'WHERE '.substr($sqlWhere, 3);
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
