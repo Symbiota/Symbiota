@@ -31,8 +31,8 @@ h4 {
   font-family: var(--heading-font-family);
 }
 
-h2.subheader,
-h3.subheader {
+.fieldset-like h2.subheader,
+.fieldset-like h3.subheader {
 	position: relative;
 	align-items: center;
 }
