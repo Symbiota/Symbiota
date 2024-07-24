@@ -657,17 +657,22 @@ class ChecklistManager extends Manager{
 	//Checklist index page fucntions
 	public function getChecklists($limitToKey=false){
 		$retArr = Array();
-		$sql = 'SELECT p.pid, p.projname, p.ispublic, c.clid, c.name, c.access, c.defaultSettings, COUNT(l.tid) AS sppcnt
+		$sql = 'SELECT p.pid, p.projname, p.ispublic, c.clid, c.name, c.access, c.defaultSettings, c.latCentroid
 			FROM fmchecklists c LEFT JOIN fmchklstprojlink cpl ON c.clid = cpl.clid
-			INNER JOIN fmchklsttaxalink l ON c.clid = l.clid
 			LEFT JOIN fmprojects p ON cpl.pid = p.pid
-			WHERE ((c.access LIKE "public%") ';
-		if(isset($GLOBALS['USER_RIGHTS']['ClAdmin']) && $GLOBALS['USER_RIGHTS']['ClAdmin']) $sql .= 'OR (c.clid IN('.implode(',',$GLOBALS['USER_RIGHTS']['ClAdmin']).'))';
+			WHERE c.type != "excludespp" AND ((c.access LIKE "public%") ';
+		if(isset($GLOBALS['USER_RIGHTS']['ClAdmin']) && $GLOBALS['USER_RIGHTS']['ClAdmin']){
+			$sql .= 'OR (c.clid IN('.implode(',',$GLOBALS['USER_RIGHTS']['ClAdmin']).'))';
+		}
 		$sql .= ') AND ((p.pid IS NULL) OR (p.ispublic = 1) ';
-		if(isset($GLOBALS['USER_RIGHTS']['ProjAdmin']) && $GLOBALS['USER_RIGHTS']['ProjAdmin']) $sql .= 'OR (p.pid IN('.implode(',',$GLOBALS['USER_RIGHTS']['ProjAdmin']).'))';
+		if(isset($GLOBALS['USER_RIGHTS']['ProjAdmin']) && $GLOBALS['USER_RIGHTS']['ProjAdmin']){
+			$sql .= 'OR (p.pid IN('.implode(',',$GLOBALS['USER_RIGHTS']['ProjAdmin']).'))';
+		}
 		$sql .= ') ';
 		if($this->pid) $sql .= 'AND (p.pid = '.$this->pid.') ';
-		$sql .= 'GROUP BY p.projname, c.Name HAVING sppcnt > 10';
+		//Following line limits result to only checklists that have a linked taxon or is a parent checklist with possible inherited taxa
+		$sql .= 'AND c.clid IN(SELECT clid FROM fmchklsttaxalink UNION DISTINCT SELECT clid FROM fmchklstchildren) ';
+		$sql .= 'ORDER BY p.projname, c.name';
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
 			if($limitToKey){
@@ -681,6 +686,7 @@ class ChecklistManager extends Manager{
 				$pid = 0;
 				$projName = 'Miscellaneous Inventories';
 			}
+			if($row->latCentroid) $retArr[$pid]['displayMap'] = 1;
 			$retArr[$pid]['name'] = $this->cleanOutStr($projName);
 			$retArr[$pid]['clid'][$row->clid] = $this->cleanOutStr($row->name).($row->access=='private'?' (Private)':'');
 		}

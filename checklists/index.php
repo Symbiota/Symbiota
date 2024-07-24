@@ -44,10 +44,14 @@ $clManager->setProj($pid);
 						$projName = $projArr['name'];
 						if($projName == 'Miscellaneous Inventories') $projName = (isset($LANG['MISC_INVENTORIES'])?$LANG['MISC_INVENTORIES']:'Miscellaneous Inventories');
 						echo $projName;
+						if(!empty($projArr['displayMap'])){
+							?>
+							<a href="<?php echo "clgmap.php?pid=" . $pid; ?>" title='<?php echo (isset($LANG['SHOW_MAP'])?$LANG['SHOW_MAP']:'Show inventories on map'); ?>'>
+								<img src='../images/world.png' style='width:10px;border:0' />
+							</a>
+							<?php
+						}
 						?>
-						<a href="<?php echo "clgmap.php?pid=" . $pid; ?>" title='<?php echo (isset($LANG['SHOW_MAP'])?$LANG['SHOW_MAP']:'Show inventories on map'); ?>'>
-							<img src='../images/world.png' style='width:10px;border:0' />
-						</a>
 					</h3>
 					<ul>
 						<?php
