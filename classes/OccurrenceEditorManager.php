@@ -1177,6 +1177,22 @@ class OccurrenceEditorManager {
 		}
 	}
 
+	// Function is only exists to move otherCatalogNumber when merging records
+	// This should be removed when otherCatalogNumber is no longer in omoccurrences
+	private function addLegacyIdentifers($occid) : void {
+		$sql_cnt = 'SELECT COUNT(*) AS cnt FROM omoccuridentifiers oi join omoccurrences o on o.occid = oi.occid WHERE o.occid = ?';
+		$sql_insert = 'INSERT INTO omoccuridentifiers(occid, identifierName, identifierValue, notes, modifiedUid) select occid,"legacyOtherCatalogNumber" as identifierName, otherCatalogNumbers as identifierValue, "Auto generated during record merge" as notes, ? as modifiedUid from omoccurrences where occid = ?';
+		try {
+			$result_cnt = $this->conn->execute_query($sql_cnt, [$occid]);
+			$cnt = ($result_cnt->fetch_assoc())["cnt"];
+			if($cnt === 0) {
+				$this->conn->execute_query($sql_insert,[$GLOBALS['SYMB_UID'], $occid]);
+			}
+		} catch (mysqli_sql_exception $e) {
+			error_log('Error: Failed to add otherCatalogNumbers to omoccuridentifiers for occid '. $occid . ' :' . $e->getMessage());
+		}
+	}
+
 	// Copy of updateBaseOccurrence in OccurrenceEditorDeterminations for temporary utility till 3.2 
 	// TODO (Logan) remove once latest Identification section in editor is removed
 	private function updateBaseOccurrence($detId){
@@ -1609,8 +1625,14 @@ class OccurrenceEditorManager {
 		/* Start transaction */
 		// This will autocommit if not rollback explicitly
 		$this->conn->begin_transaction();
+
+		//Add Latest Determination if missing
 		$this->addLatestIdentToDetermination($targetOccid);
 		$this->addLatestIdentToDetermination($sourceOccid);
+
+		//Add otherCatalogNumbers to Identifiers if missing
+		$this->addLegacyIdentifers($targetOccid);
+		$this->addLegacyIdentifers($sourceOccid);
 		$stage = '';
 		try {
 			$oArr = array();
