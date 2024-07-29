@@ -385,7 +385,6 @@ button.icon-button:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: var(--light-color);
 }
 
 .button > a {
@@ -423,7 +422,7 @@ button.icon-button:hover {
 }
 
 .button-primary > a {
-  color: var(--light-color);
+  color: #fff;
   font-family: var(--heading-font-family);
 }
 
