@@ -1,6 +1,6 @@
 <?php
 $DEFAULT_LANG = 'en';			//Default language
-$DEFAULT_PROJ_ID = 1;
+$DEFAULT_PROJ_ID = 0;
 $DEFAULTCATID = 0;
 $DEFAULT_TITLE = '';
 $EXTENDED_LANG = 'en';		//Add all languages you want to support separated by commas (e.g. en,es); currently supported languages: en,es
