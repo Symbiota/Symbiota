@@ -106,7 +106,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							<span id="author"><?php echo $taxonManager->getTaxonAuthor(); ?></span>
 							<?php
 							$parentLink = 'index.php?tid='.$taxonManager->getParentTid().'&clid=' . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&taxauthid='.$taxAuthId;
-							echo '&nbsp;<a href="' . htmlspecialchars($parentLink, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><img class="navIcon" src="../images/toparent.png" style="width:1.3em" title="' . $LANG['GO_TO_PARENT'] . '" /></a>';
+							echo '&nbsp;<a href="' . htmlspecialchars($parentLink, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><img class="navIcon" src="../images/toparent.png" style="height:1em" title="' . $LANG['GO_TO_PARENT'] . '" /></a>';
 							if($taxonManager->isForwarded()){
 						 		echo '<span id="redirectedfrom"> (' . $LANG['REDIRECT'] . ': <i>' . $taxonManager->getSubmittedValue('sciname') . '</i> ' . $taxonManager->getSubmittedValue('author') . ')</span>';
 						 	}
