@@ -327,7 +327,8 @@ ul.menu > ul li{
   }
 
   ul.menu * {
-    vertical-align: middle;
+	vertical-align: middle;
+	font-size: var(--menu-font-size);
   }
 
   ul.menu > li {
