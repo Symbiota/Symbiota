@@ -1,41 +1,42 @@
 <footer>
-	<dialog id="accessibility-modal" class="accessibility-dialog" aria-label="<?= $LANG['ACCESSIBILITY_OPTIONS']; ?>">
-		<h1><?= $LANG['ACCESSIBILITY_OPTIONS']; ?></h1>
-		<p class="bottom-breathing-room-rel"><?= $LANG['ACCESSIBILITY_OPTIONS_DESCRIPTION']; ?></p>
-		<button type="button" class="btn btn-primary bottom-breathing-room-rel" onclick="toggleAccessibilityStyles('<?= $CLIENT_ROOT . '/includes' . '/' ?>', '<?= $CSS_BASE_PATH ?>', '<?= $LANG['TOGGLE_508_OFF'] ?>', '<?= $LANG['TOGGLE_508_ON'] ?>')" id="accessibility-button" data-accessibility="accessibility-button">
-			<?= $LANG['TOGGLE_508_ON'] ?>
+	<dialog id="accessibility-modal" class="accessibility-dialog" aria-label="<?= $LANG['F_ACCESSIBILITY_OPTIONS']; ?>">
+		<h1><?= $LANG['F_ACCESSIBILITY_OPTIONS']; ?></h1>
+		<p class="bottom-breathing-room-rel"><?= $LANG['F_ACCESSIBILITY_OPTIONS_DESCRIPTION']; ?></p>
+		<button type="button" class="btn btn-primary bottom-breathing-room-rel" onclick="toggleAccessibilityStyles('<?php echo $CLIENT_ROOT . '/includes' . '/' ?>', '<?php echo $CSS_BASE_PATH ?>', '<?php echo $LANG['F_TOGGLE_508_OFF'] ?>', '<?php echo $LANG['F_TOGGLE_508_ON'] ?>')" id="accessibility-button" data-accessibility="accessibility-button">
+			<?= $LANG['F_TOGGLE_508_ON'] ?>
 		</button>
 		<form method="dialog">
-			<button type="submit" class="btn btn-primary"><?= $LANG['CLOSE']; ?></button>
+			<button type="submit" class="btn btn-primary"><?= $LANG['F_CLOSE']; ?></button>
 		</form>
 	</dialog>
 	<div class="logo-gallery">
 		<button id="accessibility-options-button" type="button" class="btn btn-primary  accessibility-option-button">
 			<span class="button__item-container">
-				<?= $LANG['ACCESSIBILITY_OPTIONS']; ?>
+				<?= $LANG['F_ACCESSIBILITY_OPTIONS']; ?>
 				<span>
-					<img alt="accessibility icon of a person" src="<?= $CLIENT_ROOT ?>/images/accessibility_FILL0_wght400_GRAD0_opsz24.svg" />
+					<img alt="<?= $LANG['F_ACCESSIBILITY_ICON'] ?>" src="<?= $CLIENT_ROOT ?>/images/accessibility_FILL0_wght400_GRAD0_opsz24.svg" />
 				</span>
 	        </span>
 		</button>
-		<a href="https://www.nsf.gov" target="_blank" aria-label="Visit National Science Foundation website">
-			<img src="<?= $CLIENT_ROOT; ?>/images/layout/logo_nsf.gif" alt="Logo for the National Science Foundation" />
+		<a href="https://www.nsf.gov" target="_blank" aria-label="<?= $LANG['F_VISIT_NSF'] ?>">
+			<img src="<?= $CLIENT_ROOT; ?>/images/layout/logo_nsf.gif" alt="<?= $LANG['F_NSF_LOGO'] ?>" />
 		</a>
-		<a href="http://idigbio.org" target="_blank" title="iDigBio" aria-label="Visit iDigBio website">
-			<img src="<?= $CLIENT_ROOT; ?>/images/layout/logo_idig.png" alt="Logo for iDigBio, or, Integrated Digitized Biocollections" />
+		<a href="http://idigbio.org" target="_blank" title="iDigBio" aria-label="<?= $LANG['F_VISIT_IDIGBIO'] ?>">
+			<img src="<?= $CLIENT_ROOT; ?>/images/layout/logo_idig.png" alt="<?= $LANG['F_IDIGBIO_LOGO'] ?>" />
 		</a>
-		<a href="https://biokic.asu.edu" target="_blank" title="Biodiversity Knowledge Integration Center" aria-label="Visit BioKIC website">
-			<img src="<?= $CLIENT_ROOT; ?>/images/layout/logo-asu-biokic.png"  alt="Logo for the Biodiversity Knowledge Integration Center" />
+		<a href="https://biokic.asu.edu" target="_blank" title="<?= $LANG['F_BIOKIC'] ?>" aria-label="Visit BioKIC website">
+			<img src="<?= $CLIENT_ROOT; ?>/images/layout/logo-asu-biokic.png"  alt="<?= $LANG['F_BIOKIC_LOGO'] ?>" />
 		</a>
 	</div>
 	<p>
-		This project made possible by National Science Foundation Awards <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=" target="_blank">#------</a>.
+		<?= $LANG['F_NSF_AWARDS'] ?> <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=" target="_blank">#------</a>.
 	</p>
 	<p>
-		For more information about Symbiota, <a href="https://symbiota.org/docs" target="_blank" rel="noopener noreferrer">read the docs</a> or contact the <a href="https://symbiota.org/contact-the-support-hub/" target="_blank" rel="noopener noreferrer">Symbiota Support Hub</a>.
+		<?= $LANG['F_MORE_INFO'] ?>, <a href="https://symbiota.org/docs" target="_blank" rel="noopener noreferrer"><?= $LANG['F_READ_DOCS'] ?></a> <?= $LANG['F_CONTACT'] ?>
+		<a href="https://symbiota.org/contact-the-support-hub/" target="_blank" rel="noopener noreferrer"><?= $LANG['F_SSH'] ?></a>.
 	</p>
 	<p>
-		Powered by <a href="https://symbiota.org/" target="_blank">Symbiota</a>.
+		<?= $LANG['F_POWERED_BY'] ?> <a href="https://symbiota.org/" target="_blank">Symbiota</a>.
 	</p>
 	<script>
 		let toggleOff508 = "<?= $LANG['TOGGLE_508_OFF'] ?>";

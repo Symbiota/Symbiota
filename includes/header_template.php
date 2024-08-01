@@ -1,13 +1,13 @@
 <?php
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/header.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/header.en.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/templates/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/templates/header.en.php');
+else include_once($SERVER_ROOT . '/content/lang/templates/header.' . $LANG_TAG . '.php');
 $SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
 $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '/collections/search/index.php';
 ?>
 <div class="header-wrapper">
 	<header>
 		<div class="top-wrapper">
-			<a class="screen-reader-only" href="#end-nav"><?= $LANG['SKIP_NAV'] ?></a>
+			<a class="screen-reader-only" href="#end-nav"><?= $LANG['H_SKIP_NAV'] ?></a>
 			<nav class="top-login" aria-label="horizontal-nav">
 				<?php
 				if ($USER_DISPLAY_NAME) {
@@ -26,7 +26,7 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
 					?>
 					<span class="button button-tertiary">
 						<a onclick="window.location.href='#'">
-							<?= $LANG['CONTACT_US'] ?>
+							<?= $LANG['H_CONTACT_US'] ?>
 						</a>
 					</span>
 					<span class="button button-secondary">
@@ -117,7 +117,7 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
 						</ul>
 					</li>
 					<li id="lang-select-li">
-						<label for="language-selection"><?= $LANG['SELECT_LANGUAGE'] ?>: </label>
+						<label for="language-selection"><?= $LANG['H_SELECT_LANGUAGE'] ?>: </label>
 						<select oninput="setLanguage(this)" id="language-selection" name="language-selection">
 							<option value="en">English</option>
 							<option value="es" <?= ($LANG_TAG == 'es' ? 'SELECTED' : '') ?>>Espa&ntilde;ol</option>
