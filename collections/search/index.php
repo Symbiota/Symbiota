@@ -2,20 +2,19 @@
 // error_reporting(E_ALL);
 // ini_set('display_errors', '1');
 include_once('../../config/symbini.php');
-include_once('../../content/lang/index.' . $LANG_TAG . '.php');
 include_once($SERVER_ROOT . '/classes/CollectionMetadata.php');
 include_once($SERVER_ROOT . '/classes/DatasetsMetadata.php');
-include_once($SERVER_ROOT.'/content/lang/collections/sharedterms.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceAttributeSearch.php');
-header("Content-Type: text/html; charset=" . $CHARSET);
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/search/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/search/index.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/search/index.en.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT . '/content/lang/collections/search/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/search/index.en.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/search/index.' . $LANG_TAG . '.php');
+header('Content-Type: text/html; charset=' . $CHARSET);
+
 $dbsWithBracketsRemoved = array_key_exists("db",$_GET) ?  str_replace(array('[',']'), '', $_GET["db"]) : '';
 $explodable = $dbsWithBracketsRemoved;
 if(is_array($dbsWithBracketsRemoved)){
 	$explodable = $dbsWithBracketsRemoved[0];
-} 
+}
 $collIdsFromUrl = array_key_exists("db",$_GET) ? explode(",", $explodable) : '';
 
 $collManager = new OccurrenceManager();
@@ -542,7 +541,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 					<label for="list-button"><?php echo $LANG['LIST'] ?></label>
 				</div>
 				<div style="display: flex; align-items: center;">
-					<input style="margin-bottom:0; margin-right: 0.5rem;" name="display-format-pref" id="table-button" type="radio" value="table" /> 	
+					<input style="margin-bottom:0; margin-right: 0.5rem;" name="display-format-pref" id="table-button" type="radio" value="table" />
 					<label for="table-button"><?php echo $LANG['TABLE'] ?></label>
 				</div>
 			</fieldset>

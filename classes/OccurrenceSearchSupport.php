@@ -340,17 +340,23 @@ class OccurrenceSearchSupport {
 	public static function getDbRequestVariable(){
 		$dbStr = '';
 		if(isset($_REQUEST['db'])){
-			$dbStr = $_REQUEST['db'];
-			if(is_array($dbStr)){
-				$dbArr = array_unique($dbStr);
-				$dbStr = '';
-				foreach($dbArr as $v){
-					if($v != 'all') $dbStr .= ','.$v;
+			$dbInput = $_REQUEST['db'];
+			if(is_array($dbInput)){
+				if(in_array('allspec', $dbInput)) $dbStr = 'allspec';
+				elseif(in_array('allobs', $dbInput)) $dbStr = 'allobs';
+				elseif(in_array('all', $dbInput)) $dbStr = 'all';
+				else{
+					$dbArr = array_unique($dbInput);
+					$dbStr = implode(',', $dbArr);
 				}
-				$dbStr = trim($dbStr, ',; ');
 			}
-			if(strpos($dbStr,'allspec') !== false) $dbStr = 'allspec';
-			elseif(strpos($dbStr,'allobs') !== false) $dbStr = 'allobs';
+			else{
+				//Input is a string
+				if(strpos($dbStr,'allspec') !== false) $dbStr = 'allspec';
+				elseif(strpos($dbStr,'allobs') !== false) $dbStr = 'allobs';
+				elseif(strpos($dbStr,'all') !== false) $dbStr = 'all';
+				else $dbStr = $dbInput;
+			}
 		}
 		if(($p = strpos($dbStr, ';')) !== false){
 			$dbStr = substr($dbStr, 0, $p);

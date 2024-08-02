@@ -1,6 +1,6 @@
 <?php
 include_once('../config/symbini.php');
-include_once('../content/lang/index.' . $LANG_TAG . '.php');
+include_once('../content/lang/templates/index.' . $LANG_TAG . '.php');
 header("Content-Type: text/html; charset=" . $CHARSET);
 ?>
 <!DOCTYPE html>

@@ -1,6 +1,6 @@
 <?php
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/header.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/header.en.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/templates/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/templates/header.en.php');
+else include_once($SERVER_ROOT . '/content/lang/templates/header.' . $LANG_TAG . '.php');
 $SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
 $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '/collections/search/index.php';
 ?>
@@ -54,7 +54,7 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
 						</a>
 					</li>
 					<li>
-						<label for="language-selection"><?= $LANG['SELECT_LANGUAGE'] ?>: </label>
+						<label for="language-selection"><?= $LANG['H_SELECT_LANGUAGE'] ?>: </label>
 						<select oninput="setLanguage(this)" id="language-selection" name="language-selection">
 							<option value="en">English</option>
 							<option value="es" <?= ($LANG_TAG=='es'?'SELECTED':'') ?>>Espa&ntilde;ol</option>
@@ -62,36 +62,36 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
 						</select>
 					</li>
 
-						<?php
-						if ($USER_DISPLAY_NAME) {
-							?>
-							<li>
-								<span>
-									<?= $LANG['H_WELCOME'] . ' ' . $USER_DISPLAY_NAME ?>!
-								</span>
-							</li>
-							<li>
-									<a style="font-size: 1.1em;" href="<?= $CLIENT_ROOT ?>/profile/viewprofile.php"><?= $LANG['H_MY_PROFILE'] ?></a>
-							</li>
-							<li>
-									<a style="font-size: 1.1em;" href="<?= $CLIENT_ROOT ?>/profile/index.php?submit=logout"><?= $LANG['H_LOGOUT'] ?></a>
-							</li>
-							<?php
-						} else {
-							?>
-							<li>
-								<a onclick="window.location.href='#'">
-									<?= $LANG['CONTACT_US']; ?>
-								</a>
-							</li>
-							<li>
-									<a href="<?= $CLIENT_ROOT . "/profile/index.php?refurl=" . htmlspecialchars($_SERVER['SCRIPT_NAME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "?" . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES); ?>">
-										<?= $LANG['H_LOGIN'] ?>
-									</a>
-							</li>
-							<?php
-						}
+					<?php
+					if ($USER_DISPLAY_NAME) {
 						?>
+						<li>
+							<span>
+								<?= $LANG['H_WELCOME'] . ' ' . $USER_DISPLAY_NAME ?>!
+							</span>
+						</li>
+						<li>
+							<a style="font-size: 1.1em;" href="<?= $CLIENT_ROOT ?>/profile/viewprofile.php"><?= $LANG['H_MY_PROFILE'] ?></a>
+						</li>
+						<li>
+							<a style="font-size: 1.1em;" href="<?= $CLIENT_ROOT ?>/profile/index.php?submit=logout"><?= $LANG['H_LOGOUT'] ?></a>
+						</li>
+						<?php
+					} else {
+						?>
+						<li>
+							<a onclick="window.location.href='#'">
+								<?= $LANG['H_CONTACT_US']; ?>
+							</a>
+						</li>
+						<li>
+							<a href="<?= $CLIENT_ROOT . "/profile/index.php?refurl=" . htmlspecialchars($_SERVER['SCRIPT_NAME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "?" . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES); ?>">
+								<?= $LANG['H_LOGIN'] ?>
+							</a>
+						</li>
+						<?php
+					}
+					?>
 				</ul>
 			</nav>
 		</div>

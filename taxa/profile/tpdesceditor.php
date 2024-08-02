@@ -2,7 +2,7 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TPDescEditorManager.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/profile/tpdesceditor.'.$LANG_TAG.'.php'))
-include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpdesceditor.'.$LANG_TAG.'.php');
+	include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpdesceditor.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpdesceditor.en.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 
@@ -82,28 +82,28 @@ if($isEditor){
 		foreach($descList as $langid => $descArr){
 			?>
 			<fieldset>
-				<legend><?php echo $langArr[$langid]; ?> <?= $LANG['DESCRIPTIONS'] ?></legend>
+				<legend><?= $langArr[$langid] . ' ' . $LANG['DESCRIPTIONS'] ?></legend>
 				<?php
 				foreach($descArr as $tdbid => $dArr){
 					?>
 					<fieldset>
 						<legend><?php echo ($dArr["caption"] ? $dArr["caption"] : $LANG['DESCRIPTION_'] . $dArr["displaylevel"]) . ' (#' . $tdbid . ')'; ?></legend>
-						<div style="float:right;" onclick="toggle('dblock-<?php echo $tdbid;?>');" title="<?= $LANG['EDIT_DESC_BLOCK'] ?>">
+						<div style="float:right;" onclick="toggle('dblock-<?= $tdbid ?>');" title="<?= $LANG['EDIT_DESC_BLOCK'] ?>">
 							<img style='border:0px;width:1.3em;' src='../../images/edit.png'/>
 						</div>
 						<?php
 						if($descEditor->getTid() != $dArr['tid']){
 							?>
 							<div style="margin:4px 0px;">
-								<b><?= $LANG['LINKED_TO_SYN'] ?>:</b> <?php echo $dArr['sciname']; ?>
-								(<a href="tpeditor.php?action=remap&tdbid=<?php echo htmlspecialchars($tdbid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&tid=' . htmlspecialchars($descEditor->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?= $LANG['RELINK_TO_ACCEPTED'] ?></a>)
+								<b><?= $LANG['LINKED_TO_SYN'] ?>:</b> <?= $dArr['sciname'] ?>
+								(<a href="tpeditor.php?action=remap&tdbid=<?= $tdbid . '&tid=' . $descEditor->getTid() ?>"><?= $LANG['RELINK_TO_ACCEPTED'] ?></a>)
 							</div>
 							<?php
 						}
 						?>
 						<div><b><?= $LANG['CAPTION'] ?>:</b> <?php echo $dArr["caption"]; ?></div>
 						<div><b><?= $LANG['SOURCE'] ?>:</b> <?php echo $dArr["source"]; ?></div>
-						<div><b><?= $LANG['SOURCE_URL'] ?>:</b> <a href='<?php echo htmlspecialchars($dArr["sourceurl"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>'><?php echo htmlspecialchars($dArr["sourceurl"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></div>
+						<div><b><?= $LANG['SOURCE_URL'] ?>:</b> <a href='<?= $dArr['sourceurl'] ?>'><?= $dArr['sourceurl'] ?></a></div>
 						<div><b><?= $LANG['NOTES'] ?>:</b> <?php echo $dArr["notes"]; ?></div>
 						<div id="dblock-<?php echo $tdbid;?>" style="display:none;margin-top:10px;">
 							<fieldset>

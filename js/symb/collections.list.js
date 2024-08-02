@@ -64,8 +64,13 @@ function encodedQueryStr(querystr){
 	let encodedQueryStr = "";
 	querystr.split("&").forEach(function(part) {
 		let eq = part.indexOf("=");
-		let key = eq > -1 ? part.substr(0, eq) : part;
-		let val = eq > -1 ? encodeURIComponent(part.substr(eq + 1)) : "";
+		let key = part;
+		let val = "";
+		if(eq > -1){
+			key = part.substr(0, eq);
+			val = encodeURIComponent(part.substr(eq + 1));
+			if(key == 'db') val = val.replace(/%2C/g, ",");		
+		}
 		if(encodedQueryStr != "") encodedQueryStr = encodedQueryStr + "&";
 		encodedQueryStr = encodedQueryStr + key + "=" + val;
 	});

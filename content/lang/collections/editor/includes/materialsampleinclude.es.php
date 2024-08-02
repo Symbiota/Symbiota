@@ -5,7 +5,7 @@ Language: Español
 ------------------
 */
 
-$LANG['SEL_USER'] = 'Debe seleccionar un usuario de la lista. Si el usuario no est&aacute; en el sistema, ingrese la informaci&oacute;n en los detalles de preparaci&oacute;n.';
+$LANG['SEL_USER'] = 'Debe seleccionar un usuario de la lista. Si el usuario no está en el sistema, ingrese la información en los detalles de preparación.';
 $LANG['MAT_SAMP'] = 'Muestra Material';
 $LANG['ADD_SAMPLE'] = 'Agregar Nueva Muestra';
 $LANG['SAVE_CHANGES'] = 'Guardar Cambios';

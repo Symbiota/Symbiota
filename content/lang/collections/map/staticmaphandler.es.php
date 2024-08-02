@@ -26,7 +26,7 @@ $LANG['GLOBAL_BOUNDS'] = 'Establecer límites globales';
 
 $LANG['PREVIEW_MAP'] = 'Vista previa del mapa';
 $LANG['TYPE_TAXON'] = 'Nombre del taxón';
-$LANG['SEPARATE_MULTIPLE'] = 'Separar m&uacute;ltiples con comas';
+$LANG['SEPARATE_MULTIPLE'] = 'Separar múltiples con comas';
 
 $LANG['TID'] = 'Tid';
 $LANG['TAXON'] = 'Taxón';
