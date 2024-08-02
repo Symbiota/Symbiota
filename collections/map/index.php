@@ -178,7 +178,7 @@ if(isset($_REQUEST['llpoint'])) {
 		<script src="../../js/symb/wktpolygontools.js" type="text/javascript"></script>
 		<script src="../../js/symb/MapShapeHelper.js" type="text/javascript"></script>
 		<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
-		<script src="../../js/symb/collections.list.js?ver=1" type="text/javascript"></script>
+		<script src="../../js/symb/collections.list.js?ver=2" type="text/javascript"></script>
 
 		<style type="text/css">
 		.ui-front {
