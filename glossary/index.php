@@ -168,14 +168,14 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 						<a href='glossaryloader.php'>Batch Upload Terms</a>
 						 -->
 					</div>
-					<?php
-				}
-				?>
-				<div>
+					<div>
 					<a title="Show download options" onclick="toggle('downloadoptionsdiv');return false;">
 						<?php echo (isset($LANG['DOWN_OP'])?$LANG['DOWN_OP']:'Download Options'); ?>
 					</a>
-				</div>
+					</div>
+				<?php
+				}
+				?>
 			</div>
 			<div id="downloadoptionsdiv" style="display:none;clear:both;float:right;margin-top:15px;background-color:white;">
 				<form name="downloadform" action="glossdocexport.php" method="post" onsubmit="return verifyDownloadForm(this);">
