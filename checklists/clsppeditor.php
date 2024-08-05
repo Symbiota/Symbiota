@@ -10,7 +10,7 @@ $tid = array_key_exists('tid', $_REQUEST) ? filter_var($_REQUEST['tid'], FILTER_
 $tabIndex = array_key_exists('tabindex', $_POST) ? filter_var($_POST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $action = array_key_exists('action', $_POST) ? htmlspecialchars($_POST['action'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $cltype = array_key_exists('cltype', $_POST) ? htmlspecialchars($_POST['cltype'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
-$renametid = array_key_exists('renametid', $_POST) ? htmlspecialchars($_POST['renametid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
+$renametid = array_key_exists('renametid', $_POST) ? filter_var($_POST['renametid'], FILTER_SANITIZE_NUMBER_INT) : '';
 $locality = array_key_exists('locality', $_POST) ? htmlspecialchars($_POST['locality'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $habitat = array_key_exists('habitat', $_POST) ? htmlspecialchars($_POST['habitat'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $abundance = array_key_exists('abundance', $_POST) ? htmlspecialchars($_POST['abundance'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
@@ -111,10 +111,13 @@ $clArray = $vManager->getChecklistData();
 			});
 
 			function validateRenameForm(f){
-				if(f.renamesciname.value == ""){
+				if (f.renamesciname.value !== "" && f.renametid.value !== ""){
+					f.submit();
+				}
+				else if(f.renamesciname.value == ""){
 					alert("<?php echo $LANG['NAME_BLANK']; ?>");
 				}
-				else{
+				else if (f.renametid.value == ""){
 					checkScinameExistence(f);
 				}
 				return false;
