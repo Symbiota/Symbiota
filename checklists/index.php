@@ -59,11 +59,20 @@ $clManager->setProj($pid);
 					<h2 class="checklist-header">
 						<?php
 						$projName = $projArr['name'];
+						if($pid) echo '<a href="../projects/index.php?pid=' . $pid . '">';
 						if($projName == 'Miscellaneous Inventories') $projName = $LANG['MISC_INVENTORIES'];
 						echo $projName;
+						if($pid) echo '</a>';
+						if(!empty($projArr['displayMap'])){
+							?>
+							<a href="<?php echo "clgmap.php?pid=" . $pid; ?>" title='<?= $LANG['SHOW_MAP'] ?>'>
+								<img src='../images/world.png' style='width:10px;border:0' />
+							</a>
+							<?php
+						}
 						?>
-						<a class="button button-tertiary btn-medium-font" style="gap:0.5rem" href="<?php echo "clgmap.php?pid=" . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" title='<?php echo htmlspecialchars($LANG['SHOW_MAP'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>'>
-							<?php echo $LANG['MAP']; ?> <img src='../images/world.png' style='width:1em;border:0' alt='<?php echo $LANG['IMG_OF_GLOBE']; ?>' />
+						<a class="button button-tertiary btn-medium-font" style="gap:0.5rem" href="<?= "clgmap.php?pid=" . $pid ?>" title='<?= $LANG['SHOW_MAP'] ?>'>
+							<?= $LANG['MAP'] ?> <img src='../images/world.png' style='width:1em;border:0' alt='<?= $LANG['IMG_OF_GLOBE'] ?>' />
 						</a>
 					</h2>
 					<ul class="checklist-ul">
