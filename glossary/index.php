@@ -168,14 +168,14 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 						<a href='glossaryloader.php'>Batch Upload Terms</a>
 						 -->
 					</div>
-					<?php
-				}
-				?>
-				<div>
+					<div>
 					<a title="Show download options" onclick="toggle('downloadoptionsdiv');return false;">
 						<?php echo (isset($LANG['DOWN_OP'])?$LANG['DOWN_OP']:'Download Options'); ?>
 					</a>
-				</div>
+					</div>
+				<?php
+				}
+				?>
 			</div>
 			<div id="downloadoptionsdiv" style="display:none;clear:both;float:right;margin-top:15px;background-color:white;">
 				<form name="downloadform" action="glossdocexport.php" method="post" onsubmit="return verifyDownloadForm(this);">
@@ -239,6 +239,9 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 		<div style="float:left;">
 			<form id="searchform" name="searchform" action="index.php" method="post" onsubmit="return verifySearchForm(this);">
 				<div style="height:25px;">
+					<div style="float:left;">
+						<b><?= (isset($LANG['PLEASE'])?$LANG['PLEASE']:'Please') . ' ' . "<a href=" . $CLIENT_ROOT . "/includes/usagepolicy.php" . ">" . (isset($LANG['CITE_GLOSSARY'])?$LANG['CITE_GLOSSARY']:'cite this glossary') . "</a>"; ?></b>
+					</div>
 					<?php
 					if($taxaArr){
 						?>

@@ -32,7 +32,7 @@ $_SESSION['citationvar'] = $searchVar;
 	include_once($SERVER_ROOT . '/includes/head.php');
 	include_once($SERVER_ROOT . '/includes/googleanalytics.php');
 	?>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
+	<link href="<?= $CSS_BASE_PATH; ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
@@ -93,7 +93,7 @@ $_SESSION['citationvar'] = $searchVar;
 			});
 		}
 	</script>
-	<script src="../js/symb/collections.list.js?ver=3" type="text/javascript"></script>
+	<script src="../js/symb/collections.list.js?ver=4" type="text/javascript"></script>
 	<style type="text/css">
 		fieldset {
 			padding: 15px;
@@ -115,6 +115,9 @@ $_SESSION['citationvar'] = $searchVar;
 
 		.ui-tabs .ui-tabs-nav li a {
 			margin-left: 10px;
+		}
+		#tabs {
+			width:95%;
 		}
 	</style>
 </head>
@@ -147,8 +150,8 @@ $_SESSION['citationvar'] = $searchVar;
 	?>
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
-		<h1 class="page-heading">Search Results (List)</h1>
-		<div id="tabs" style="width:95%;">
+		<h1 class="page-heading"><?php echo $LANG['SEARCH_RES_LIST']; ?></h1>
+		<div id="tabs" style="margin-bottom: 1rem">
 			<ul>
 				<li>
 					<a id="taxatablink" href='<?php echo 'checklist.php?' . htmlspecialchars($searchVar, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE | ENT_QUOTES) . '&taxonfilter=' . htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE | ENT_QUOTES); ?>'>

@@ -5,8 +5,6 @@ Language: Français (French)
 ------------------
 */
 
-$LANG = array();
-
 $LANG['NAV_HOME'] = 'Accueil';
 $LANG['NAV_COLLECTIONS'] = 'Collections';
 $LANG['NAV_SEARCH'] = 'Critères de Recherche';
@@ -14,6 +12,10 @@ $LANG['NAV_SEARCH'] = 'Critères de Recherche';
 $LANG['TAB_CHECKLIST'] = 'Liste des Espèces';
 $LANG['TAB_OCCURRENCES'] = 'Occurrences';
 $LANG['TAB_MAP'] = 'Cartes';
+
+$LANG['SPECIMEN_COLLECTIONS'] = 'Collections de Spécimens';
+$LANG['EXPAND'] = 'Développer';
+$LANG['CONDENSE'] = 'Condenser';
 
 $LANG['SELECT_DESELECT'] = 'Sélectionner/Désélectionner';
 $LANG['ALL_COLLECTIONS'] = 'toutes les collections';

@@ -518,11 +518,24 @@ else{
 	<script src="../../js/symb/collections.editor.query.js?ver=6" type="text/javascript"></script>
 	<style type="text/css">
 		fieldset > legend{ font-weight:bold; }
-		.fieldGroupDiv{ clear:both; margin-bottom: 1rem; overflow: auto}
-		.fieldDiv{ float:left; margin-right: 1rem;}
 		select{ height: 20px; margin-bottom: 2px; }
 		#identifierDiv img{ width:10px; margin-left: 5px; }
 		#innertext{ background-color: white; margin: 0px 10px; }
+		.fieldGroupDiv {
+			display: flex;
+			align-items: center;
+			gap: 0.75rem;
+			margin-bottom: 1rem;
+			input {
+				margin: 0
+			}
+			a {
+				display: flex;
+			}
+		}
+		.fieldDiv{
+			display: inline;
+		}
 
 		.editimg{ width: 15px; }
 
@@ -1271,7 +1284,7 @@ else{
 											<input type="text" name="substrate" maxlength="500" value="<?php echo array_key_exists('substrate',$occArr)?$occArr['substrate']:''; ?>" onchange="fieldChanged('substrate');" />
 										</div>
 										<?php
-										if(isset($QuickHostEntryIsActive) && $QuickHostEntryIsActive) { // Quick host field
+										if(!empty($QUICK_HOST_ENTRY_IS_ACTIVE)) { // Quick host field
 											$quickHostArr = $occManager->getQuickHost();
 											?>
 											<div id="hostDiv" class="field-div">
@@ -1343,12 +1356,12 @@ else{
 												<?php echo $LANG['REPRODUCTIVE_CONDITION']; ?>
 												<a href="#" onclick="return dwcDoc('reproductiveCondition')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 												<?php
-												if(isset($reproductiveConditionTerms) && $reproductiveConditionTerms){
+												if(!empty($REPRODUCTIVE_CONDITION_TERMS)){
 													?>
 													<select name="reproductivecondition" onchange="fieldChanged('reproductivecondition');">
 														<option value="">-----------------</option>
 														<?php
-														foreach($reproductiveConditionTerms as $term){
+														foreach($REPRODUCTIVE_CONDITION_TERMS as $term){
 															echo '<option value="'.$term.'" '.(isset($occArr['reproductivecondition']) && $term==$occArr['reproductivecondition']?'SELECTED':'').'>'.$term.'</option>';
 														}
 														?>

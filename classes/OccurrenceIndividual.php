@@ -258,9 +258,9 @@ class OccurrenceIndividual extends Manager{
 	}
 
 	private function setImages(){
-		global $imageDomain;
-		$sql = 'SELECT i.imgid, i.url, i.thumbnailurl, i.originalurl, i.sourceurl, i.notes, i.caption, 
-      CONCAT_WS(" ",u.firstname,u.lastname) as innerPhotographer, i.photographer, i.rights, i.accessRights, i.copyright
+	    global $IMAGE_DOMAIN;
+		$sql = 'SELECT i.imgid, i.url, i.thumbnailurl, i.originalurl, i.sourceurl, i.notes, i.caption,
+            CONCAT_WS(" ",u.firstname,u.lastname) as innerPhotographer, i.photographer, i.rights, i.accessRights, i.copyright
 			FROM images i LEFT JOIN users u ON i.photographeruid = u.uid
 			WHERE (i.occid = ?) ORDER BY i.sortoccurrence,i.sortsequence';
 		if($stmt = $this->conn->prepare($sql)){
@@ -272,10 +272,10 @@ class OccurrenceIndividual extends Manager{
 					$url = $row->url;
 					$tnUrl = $row->thumbnailurl;
 					$lgUrl = $row->originalurl;
-					if($imageDomain){
-						if(substr($url,0,1)=='/') $url = $imageDomain . $url;
-						if($lgUrl && substr($lgUrl, 0, 1) == '/') $lgUrl = $imageDomain . $lgUrl;
-						if($tnUrl && substr($tnUrl, 0, 1) == '/') $tnUrl = $imageDomain . $tnUrl;
+					if($IMAGE_DOMAIN){
+					    if(substr($url,0,1)=='/') $url = $IMAGE_DOMAIN . $url;
+					    if($lgUrl && substr($lgUrl, 0, 1) == '/') $lgUrl = $IMAGE_DOMAIN . $lgUrl;
+					    if($tnUrl && substr($tnUrl, 0, 1) == '/') $tnUrl = $IMAGE_DOMAIN . $tnUrl;
 					}
 					if((!$url || $url == 'empty') && $lgUrl) $url = $lgUrl;
 					if(!$tnUrl && $url) $tnUrl = $url;
