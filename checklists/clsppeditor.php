@@ -101,6 +101,14 @@ $clArray = $vManager->getChecklistData();
 							$( "#renamesciname" ).val(ui.item.value);
 							$( "#renametid" ).val(ui.item.id);
 						}
+					},
+					change: function( event, ui ) {
+						if(ui.item === null) {
+							$( "#renametid" ).val("");
+							if($( "#renamesciname" ).val() != ""){
+								alert("Please select a taxon from the list");
+							}
+						}
 					}
 				});
 
@@ -117,27 +125,7 @@ $clArray = $vManager->getChecklistData();
 				else if(f.renamesciname.value == ""){
 					alert("<?php echo $LANG['NAME_BLANK']; ?>");
 				}
-				else if (f.renametid.value == ""){
-					checkScinameExistence(f);
-				}
 				return false;
-			}
-
-			function checkScinameExistence(f){
-				$.ajax({
-					type: "POST",
-					url: "rpc/gettid.php",
-					data: { sciname: f.renamesciname.value }
-				}).done(function( renameTid ) {
-					if(renameTid){
-						if(f.renametid.value == "") f.renametid.value = renameTid;
-						f.submit();
-					}
-					else{
-						alert("<?php echo $LANG['SCINAME_ERROR']; ?>");
-						f.renametid.value = "";
-					}
-				});
 			}
 
 			function openPopup(urlStr,windowName){

@@ -8,7 +8,6 @@ Language: English
 $LANG['SPEC_DETAILS'] = 'Species Details';
 $LANG['OF'] = 'of';
 $LANG['NAME_BLANK'] = 'Scientific name field is blank';
-$LANG['SCINAME_ERROR'] = 'ERROR: Scientific name does not exist in database. Did you spell it correctly? If so, it may have to be added to taxa table.';
 $LANG['GEN_EDIT'] = 'General Editing';
 $LANG['VOUCHER_EDIT'] = 'Voucher Admin';
 $LANG['EDIT_CHECKLIST'] = 'Edit Checklist Information';
