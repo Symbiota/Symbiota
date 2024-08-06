@@ -45,4 +45,5 @@ $LANG['UNKNOWN_TAXON'] = 'Taxón Desconocido';
 $LANG['UNKNOWN_COLLECTION'] = 'Colección Desconocida';
 $LANG['REMOVE'] = 'Eliminar';
 $LANG['TO_COLLECTIONS_LINK'] = 'Enlace a colecciones y taxones objetivo';
+$LANG['SELECT_TAXON'] = 'Por favor seleccione un taxón de la lista';
 ?>

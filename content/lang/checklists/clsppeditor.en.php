@@ -44,5 +44,6 @@ $LANG['UNKNOWN_COLLECTION'] = 'Unknown Collection';
 $LANG['SKIP_NAV'] = 'Skip Navigation';
 $LANG['REMOVE'] = 'Remove';
 $LANG['TO_COLLECTIONS_LINK'] = 'Link to target collections and taxa';
+$LANG['SELECT_TAXON'] = 'Please select a taxon from the list';
 
 ?>

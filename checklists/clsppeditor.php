@@ -106,7 +106,8 @@ $clArray = $vManager->getChecklistData();
 						if(ui.item === null) {
 							$( "#renametid" ).val("");
 							if($( "#renamesciname" ).val() != ""){
-								alert("Please select a taxon from the list");
+								alert('<?= $LANG['SELECT_TAXON'] ?>');
+								f.renamesciname.focus();
 							}
 						}
 					}
@@ -125,6 +126,10 @@ $clArray = $vManager->getChecklistData();
 				else if(f.renamesciname.value == ""){
 					alert("<?php echo $LANG['NAME_BLANK']; ?>");
 				}
+				else {
+					alert('<?= $LANG['SELECT_TAXON'] ?>');
+				}
+				f.renamesciname.focus();
 				return false;
 			}
 
