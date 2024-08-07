@@ -2,30 +2,29 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/collections/list.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMapManager.php');
+include_once($SERVER_ROOT.'/classes/UtilityFunctions.php');
 include_once($SERVER_ROOT . '/rpc/crossPortalHeaders.php');
 
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' . $CHARSET);
 
-$cntPerPage = array_key_exists("cntperpage",$_REQUEST)?$_REQUEST["cntperpage"]:100;
-$pageNumber = array_key_exists("page",$_REQUEST)?$_REQUEST["page"]:1;
-$recLimit = (array_key_exists('recordlimit',$_REQUEST)&&is_numeric($_REQUEST['recordlimit'])?$_REQUEST['recordlimit']:15000);
+$cntPerPage = array_key_exists('cntperpage', $_REQUEST) ? $_REQUEST['cntperpage'] : 100;
+$pageNumber = array_key_exists('page', $_REQUEST) ? $_REQUEST['page'] : 1;
+$recLimit = (array_key_exists('recordlimit',$_REQUEST) && is_numeric($_REQUEST['recordlimit']) ? $_REQUEST['recordlimit']:15000);
 
 //Sanitation
-if(!is_numeric($cntPerPage)) $cntPerPage = 100;
-if(!is_numeric($pageNumber)) $pageNumber = 1;
+$cntPerPage = filter_var($cntPerPage, FILTER_SANITIZE_NUMBER_INT) ?? 100;
+$pageNumber = filter_var($pageNumber, FILTER_SANITIZE_NUMBER_INT) ?? 1;
+$recLimit = filter_var($recLimit, FILTER_SANITIZE_NUMBER_INT) ?? 15000;
 
 $mapManager = new OccurrenceMapManager();
 $searchVar = $mapManager->getQueryTermStr();
 $recCnt = $mapManager->getRecordCnt();
 $occArr = array();
-$host = false;
 
-if(isset($SERVER_HOST)) {
-   $host = ($SERVER_HOST === '127.0.0.1' || $SERVER_HOST === 'localhost'? "http://": "https://") . $SERVER_HOST . $CLIENT_ROOT;
-}
+$host = UtilityFunctions::getDomain() . $CLIENT_ROOT;
 
 if(!$recLimit || $recCnt < $recLimit){
-	$occArr = $mapManager->getOccurrenceArr($pageNumber,$cntPerPage);
+	$occArr = $mapManager->getOccurrenceArr($pageNumber, $cntPerPage);
 }
 ?>
 <div id="queryrecordsdiv" style="font-size: 1rem">
@@ -39,7 +38,7 @@ if(!$recLimit || $recCnt < $recLimit){
 			<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 			<input name="dltype" type="hidden" value="specimen" />
 		</form>
-		<form name="fullquerykmlform" action="<?= $host ? $host . '/collections/map/kmlhandler.php': 'kmlhandler.php' ?>" method="post" target="_blank" style="float:left;">
+		<form name="fullquerykmlform" action="<?= $host . '/collections/map/kmlhandler.php' ?>" method="post" target="_blank" style="float:left;">
 			<input name="reclimit" type="hidden" value="<?php echo $recLimit; ?>" />
 			<input name="sourcepage" type="hidden" value="map" />
 			<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
@@ -55,26 +54,26 @@ if(!$recLimit || $recCnt < $recLimit){
 	<div>
 		<?php
 		$paginationStr = '<div><div style="clear:both;"><hr/></div><div style="margin:5px;">';
-      $href = $host? $host . '/collections/map/occurrencelist.php?':'occurrencelist.php?' ;
+		$href = $host . '/collections/map/occurrencelist.php?' ;
 		$lastPage = (int)($recCnt / $cntPerPage) + 1;
 		$startPage = ($pageNumber > 5?$pageNumber - 5:1);
 		$endPage = ($lastPage > $startPage + 10?$startPage + 10:$lastPage);
 		$pageBar = '';
 		if($startPage > 1){
-			$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="' . $href . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '" >' . htmlspecialchars($LANG['PAGINATION_FIRST'], HTML_SPECIAL_CHARS_FLAGS) . '</a></span>';
-			$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="' . $href . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '&page=' . htmlspecialchars((($pageNumber - 10) < 1?1:$pageNumber - 10), HTML_SPECIAL_CHARS_FLAGS) . '">&lt;&lt;</a></span>';
+			$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="' . $href . $searchVar . '" >' . $LANG['PAGINATION_FIRST'] . '</a></span>';
+			$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="' . $href . $searchVar . '&page=' . (($pageNumber - 10) < 1?1:$pageNumber - 10) . '">&lt;&lt;</a></span>';
 		}
 		for($x = $startPage; $x <= $endPage; $x++){
 			if($pageNumber != $x){
-				$pageBar .= '<span class="pagination" style="margin-right:3px;margin-right:3px;"><a href="' . $href . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '&page=' . htmlspecialchars($x, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars($x, HTML_SPECIAL_CHARS_FLAGS) . '</a></span>';
+				$pageBar .= '<span class="pagination" style="margin-right:3px;margin-right:3px;"><a href="' . $href . $searchVar . '&page=' . $x . '">' . $x . '</a></span>';
 			}
 			else{
 				$pageBar .= '<span class="pagination" style="margin-right:3px;margin-right:3px;font-weight:bold;">'.$x.'</span>';
 			}
 		}
 		if(($lastPage - $startPage) >= 10){
-			$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="' . $href . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '&page=' . htmlspecialchars((($pageNumber + 10) > $lastPage?$lastPage:($pageNumber + 10)), HTML_SPECIAL_CHARS_FLAGS) . '">&gt;&gt;</a></span>';
-			$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="' . $href . htmlspecialchars($searchVar, HTML_SPECIAL_CHARS_FLAGS) . '&page=' . htmlspecialchars($lastPage, HTML_SPECIAL_CHARS_FLAGS) . '">Last</a></span>';
+			$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="' . $href . $searchVar . '&page=' . (($pageNumber + 10) > $lastPage?$lastPage:($pageNumber + 10)) . '">&gt;&gt;</a></span>';
+			$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="' . $href . $searchVar . '&page=' . $lastPage . '">Last</a></span>';
 		}
 		$pageBar .= '</div><div style="margin:5px;">';
 		$beginNum = ($pageNumber - 1)*$cntPerPage + 1;
@@ -108,7 +107,7 @@ if(!$recLimit || $recCnt < $recLimit){
 						echo '<tr '.($trCnt%2?'class="alt"':'').' id="tr'.$occId.'">';
 						echo '<td id="cat' . $occId . '" >' . $recArr["cat"] . '</td>';
 						echo '<td id="label' . $occId .'" >';
-						echo '<a href="#" onclick="openRecord({occid:' . $occId . ($host?', host:\'' . $host . '\'' : '' ) . '}); return false;">' . ($recArr["c"]?$recArr["c"]:"Not available") .'</a>';
+						echo '<a href="#" onclick="openRecord({occid:' . $occId . ', host:\'' . $host . '\'}); return false;">' . ($recArr["c"]?$recArr["c"]:"Not available") .'</a>';
 						echo '</td>';
 						echo '<td id="e' . $occId .'" >' . $recArr["e"] . '</td>';
 						echo '<td id="s' . $occId .'" >'. $recArr["s"] . '</td>';

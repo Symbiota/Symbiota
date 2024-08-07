@@ -5,6 +5,7 @@ Language: Français (French)
 ------------------
 */
 
+
 $LANG['NAV_HOME'] = 'Accueil';
 $LANG['CHECKLIST_ADMIN'] = 'Administration d\'Liste';
 $LANG['MANAGE_VOUCHERS'] = 'Gérer échantillons Liés';
@@ -71,6 +72,7 @@ $LANG['NOTY'] = 'pas encore';
 $LANG['AVAIL'] = 'disponible';
 $LANG['EDIT_DETAILS'] = 'Modifier Détails';
 $LANG['VIEW_RELATED'] = 'Voir Spécimens Associeés';
+$LANG['LINKTOINAT'] = "Lien vers l'observation iNaturalist";
 $LANG['MORE'] = 'plus';
 $LANG['LESS'] = 'moins';
 $LANG['NOTAXA'] = 'Aucun Taxa Trouvés';
