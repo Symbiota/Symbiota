@@ -7,14 +7,12 @@ header("Content-Type: text/html; charset=".$CHARSET);
 $tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']:'';
 $searchTerm = array_key_exists('keyword',$_REQUEST)?$_REQUEST['keyword']:'';
 $language = array_key_exists('language',$_REQUEST)?$_REQUEST['language']:'';
-$taxa = array_key_exists('taxa',$_REQUEST)?$_REQUEST['taxa']:'';
 $editMode = array_key_exists('emode',$_REQUEST)?1:0;
 
 //Sanitation
 if(!is_numeric($tid)) $tid = 0;
 $searchTerm = filter_var($searchTerm,FILTER_SANITIZE_STRING);
 $language = filter_var($language,FILTER_SANITIZE_STRING);
-$taxa = filter_var($taxa,FILTER_SANITIZE_STRING);
 if(!is_numeric($editMode)) $editMode = 0;
 
 $isEditor = false;
@@ -89,7 +87,7 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 								<input name="tid" type="hidden" value="<?php echo $tid; ?>" />
 								<input name="searchterm" type="hidden" value="<?php echo $searchTerm; ?>" />
 								<input name="searchlanguage" type="hidden" value="<?php echo $language; ?>" />
-								<input name="searchtaxa" type="hidden" value="<?php echo $taxa; ?>" />
+								<input name="searchtaxa" type="hidden" value="<?php echo $tid; ?>" />
 							</div>
 							<?php
 							if($sourceArr){
@@ -103,7 +101,7 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 								<?php
 							}
 							else{
-								echo '<div style="margin:20px;"><button name="formsubmit" type="submit" value="Add Source">'.(isset($LANG['ADD_SRC'])?$LANG['ADD_SRC']:'Add Source').'</button></div>';
+								echo '<div style="margin:20px;"><button name="formsubmit" type="submit" value="addSource">'.(isset($LANG['ADD_SRC'])?$LANG['ADD_SRC']:'Add Source').'</button></div>';
 							}
 							?>
 						</form>
