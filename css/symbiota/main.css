@@ -329,7 +329,7 @@ button {
   padding-block: 1px;
   padding-inline: 6px;
   color: #fff;
-  font-family: var(--heading-font-family);
+  font-family: var(--body-font-family);
   font-weight: 600;
   letter-spacing: 1px;
   word-spacing: normal;
@@ -380,7 +380,7 @@ button.inverse-color {
   border: none;
   border-radius: 5px;
   padding: 0.5rem 1rem;
-  font-family: var(--heading-font-family);
+  font-family: var(--body-font-family);
   letter-spacing: 1px;
   text-align: center;
   cursor: pointer;
@@ -422,11 +422,12 @@ button.inverse-color {
 
 .button-primary:hover > a,
 .button-secondary:hover > a {
-  color: var(--light-color);
+  color: #fff;
 }
 
 .button-primary > a {
-  color: var(--light-color);
+  color: #fff;
+  font-family: var(--body-font-family);
 }
 
 .button-secondary {

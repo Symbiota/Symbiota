@@ -628,13 +628,15 @@ include($SERVER_ROOT.'/includes/header.php');
 								</ul>
 								<?php
 							}
-							$versionCheckedStr = '';
-							if($isLiveData) $versionCheckedStr = 'checked';
+							if($isLiveData){
+								?>
+								<div style="margin:10px 0px;">
+									<input name="versiondata" type="checkbox" value="1">
+									<?php echo (isset($LANG['VERSION_DATA_CHANGES'])?$LANG['VERSION_DATA_CHANGES']:'Version data changes'); ?>
+								</div>
+								<?php
+							}
 							?>
-							<div style="margin:10px 0px;">
-								<input name="versiondata" type="checkbox" value="1" <?php echo $versionCheckedStr; ?> />
-								<?php echo (isset($LANG['VERSION_DATA_CHANGES']) ? $LANG['VERSION_DATA_CHANGES'] : 'Version data changes'); ?>
-							</div>
 							<div style="margin:10px 0px;">
 								<input name="verifyimages" type="checkbox" value="1" />
 								<?php echo (isset($LANG['VER_LINKS_MEDIA']) ? $LANG['VER_LINKS_MEDIA'] : 'Verify image links from associatedMedia field'); ?>

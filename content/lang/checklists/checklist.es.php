@@ -5,6 +5,7 @@ Language: Español (Spanish)
 ------------------
 */
 
+
 $LANG['NAV_HOME'] = 'Inicio';
 $LANG['CHECKLIST_ADMIN'] = 'Administración de Lista';
 $LANG['MANAGE_VOUCHERS'] = 'Administrar Especímenes de Vouchers';
@@ -71,6 +72,7 @@ $LANG['NOTY'] = 'aún no';
 $LANG['AVAIL'] = 'disponible';
 $LANG['EDIT_DETAILS'] = 'administrar detalles';
 $LANG['VIEW_RELATED'] = 'Ver muestras relacionadas';
+$LANG['LINKTOINAT'] = 'Enlace a la observación de iNaturalist';
 $LANG['MORE'] = 'más';
 $LANG['LESS'] = 'menos';
 $LANG['NOTAXA'] = 'No se han encontrado Taxa';
@@ -100,9 +102,6 @@ $LANG['IMG_DWNL_LIST'] = 'Descargar lista';
 $LANG['IMG_PRINT_LIST'] = 'Imprimir lista';
 $LANG['IMG_DOCX_EXPORT'] = 'Exportar a DOCX';
 $LANG['SKIP_LINK'] = 'Saltar a la lista de taxones';
-$LANG['IMAGE_SRC'] = 'Fuente de la imagen';
-$LANG['ALL_IMG'] = 'todas las imágenes';
-$LANG['LINKED_IMG'] = 'sólo imágenes de vales vinculadas';
 $LANG['IMAGE_SRC'] = 'Fuente de la imagen';
 $LANG['ALL_IMG'] = 'todas las imágenes';
 $LANG['LINKED_IMG'] = 'sólo imágenes de vales vinculadas';

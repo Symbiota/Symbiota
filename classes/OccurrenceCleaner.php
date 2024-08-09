@@ -43,7 +43,7 @@ class OccurrenceCleaner extends Manager{
 		}
 		$rs->free();
 
-		$retArr = array();
+		$stagingArr = array();
 		if($dupArr){
 			$sqlFrag = '';
 			if($type=='cat'){
@@ -52,13 +52,15 @@ class OccurrenceCleaner extends Manager{
 			else{
 				$sqlFrag = 'occid, otherCatalogNumbers, otherCatalogNumbers AS dupid FROM omoccurrences WHERE collid = '.$this->collid.' AND otherCatalogNumbers IN("'.implode('","', $dupArr).'") ORDER BY otherCatalogNumbers';
 			}
-			$retArr = $this->getDuplicates($sqlFrag);
+			$stagingArr = $this->getDuplicates($sqlFrag);
 		}
 
 		if($type=='other' && count($dupArr) < $limit){
-			$retArr = array_merge($retArr, $this->setAdditionalIdentifiers($cnt, ($limit - count($dupArr))));
+			$stagingArr = array_merge($stagingArr, $this->setAdditionalIdentifiers($cnt, ($limit - count($dupArr))));
 		}
 
+		//Replace catalog number keys with renumbered numeric keys, thus avoid unusual characters interferring with naming form target element
+		$retArr = array_values($stagingArr);
 		return $retArr;
 	}
 
@@ -147,7 +149,7 @@ class OccurrenceCleaner extends Manager{
 			$sqlFragment;
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_assoc()){
-			$retArr[$row['dupid']][$row['occid']] = array_change_key_case($row);
+			$retArr[strtolower($row['dupid'])][$row['occid']] = array_change_key_case($row);
 		}
 		$rs->free();
 		return $retArr;
@@ -157,6 +159,7 @@ class OccurrenceCleaner extends Manager{
 		$status = true;
 		$this->verboseMode = 2;
 		$editorManager = new OccurrenceEditorManager($this->conn);
+		$editorManager->setCollId($this->collid);
 		foreach($occidArr as $target => $occArr){
 			$mergeArr = array($target);
 			foreach($occArr as $source){

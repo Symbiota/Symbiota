@@ -587,7 +587,7 @@ class GlossaryManager extends Manager {
 
 	public function addSource($pArr){
 		$status = true;
-		if(is_numeric($pArr['tid'])){
+		if($pArr['tid'] && is_numeric($pArr['tid'])){
 			$terms = $this->cleanInStr($pArr['contributorTerm']);
 			$images = $this->cleanInStr($pArr['contributorImage']);
 			$translator = $this->cleanInStr($pArr['translator']);

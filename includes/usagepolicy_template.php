@@ -69,6 +69,19 @@ $serverHost = UtilityFunctions::getDomain();
 			}
 			?>
 		</blockquote>
+		<h3>Glossary</h3>
+		<p>Please cite this portal's glossary as:</p>
+		<blockquote>
+			<?php
+				if ($DEFAULT_TITLE) {
+					echo $DEFAULT_TITLE;
+				}
+				else {
+					echo 'Name of people or institutional reponsible for maintaining the portal';
+				};
+				echo '. Glossary. ' . $serverHost . $CLIENT_ROOT . 'glossary/index.php. Accessed: ' . date('Y-m-d') . '.';
+			?>
+		</blockquote>
 
 		<h2>Occurrence Record Use Policy</h2>
 		<div>

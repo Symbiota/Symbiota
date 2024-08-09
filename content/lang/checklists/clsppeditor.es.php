@@ -10,7 +10,6 @@ Date Translated: 2021-08-05
 $LANG['SPEC_DETAILS'] = 'Detalles de la Especie';
 $LANG['OF'] = 'de';
 $LANG['NAME_BLANK'] = 'El campo de nombre científico está vacío';
-$LANG['SCINAME_ERROR'] = 'ERROR: El nombre científico no existe en la base de datos. ¿Lo escribió correctamente? De ser así, puede ser ingresado en el tesauro taxonómico.';
 $LANG['GEN_EDIT'] = 'Edición General';
 $LANG['VOUCHER_EDIT'] = 'Administración de Vouchers';
 $LANG['EDIT_CHECKLIST'] = 'Editar Información del Listado de Especies';
@@ -46,4 +45,5 @@ $LANG['UNKNOWN_TAXON'] = 'Taxón Desconocido';
 $LANG['UNKNOWN_COLLECTION'] = 'Colección Desconocida';
 $LANG['REMOVE'] = 'Eliminar';
 $LANG['TO_COLLECTIONS_LINK'] = 'Enlace a colecciones y taxones objetivo';
+$LANG['SELECT_TAXON'] = 'Por favor seleccione un taxón de la lista';
 ?>

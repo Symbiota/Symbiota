@@ -5,10 +5,9 @@ include_once($SERVER_ROOT.'/content/lang/glossary/sources.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $tid = array_key_exists('tid', $_REQUEST) ? filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT) : '';
-$searchTerm = array_key_exists('keyword',$_REQUEST)?$_REQUEST['keyword']:'';
-$language = array_key_exists('language',$_REQUEST)?$_REQUEST['language']:'';
-$taxa = array_key_exists('taxa',$_REQUEST)?$_REQUEST['taxa']:'';
-$editMode = array_key_exists('emode',$_REQUEST)?1:0;
+$searchTerm = array_key_exists('keyword', $_REQUEST) ? $_REQUEST['keyword'] : '';
+$language = array_key_exists('language', $_REQUEST) ? $_REQUEST['language'] : '';
+$editMode = array_key_exists('emode', $_REQUEST) ? 1 : 0;
 
 $isEditor = false;
 if($IS_ADMIN || array_key_exists('GlossaryEditor',$USER_RIGHTS)) $isEditor = true;
@@ -84,7 +83,7 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 								<input name="tid" type="hidden" value="<?php echo $tid; ?>" />
 								<input name="searchterm" type="hidden" value="<?= htmlspecialchars($searchTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" />
 								<input name="searchlanguage" type="hidden" value="<?= htmlspecialchars($language, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" />
-								<input name="searchtaxa" type="hidden" value="<?= htmlspecialchars($taxa, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" />
+								<input name="searchtaxa" type="hidden" value="<?= $tid ?>" />
 							</div>
 							<?php
 							if($sourceArr){
@@ -98,7 +97,7 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 								<?php
 							}
 							else{
-								echo '<div style="margin:20px;"><button name="formsubmit" type="submit" value="Add Source">'.(isset($LANG['ADD_SRC'])?$LANG['ADD_SRC']:'Add Source').'</button></div>';
+								echo '<div style="margin:20px;"><button name="formsubmit" type="submit" value="addSource">'.(isset($LANG['ADD_SRC'])?$LANG['ADD_SRC']:'Add Source').'</button></div>';
 							}
 							?>
 						</form>
