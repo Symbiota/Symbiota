@@ -39,8 +39,8 @@
 		<?= $LANG['F_POWERED_BY'] ?> <a href="https://symbiota.org/" target="_blank">Symbiota</a>.
 	</p>
 	<script>
-		let toggleOff508 = "<?= $LANG['TOGGLE_508_OFF'] ?>";
-		let toggleOn508 = "<?= $LANG['TOGGLE_508_ON'] ?>";
+		let toggleOff508 = "<?= $LANG['F_TOGGLE_508_OFF'] ?>";
+		let toggleOn508 = "<?= $LANG['F_TOGGLE_508_ON'] ?>";
 	</script>
 	<script src="<?= $CLIENT_ROOT; ?>/js/symb/accessibility.footer.js?ver=1" type="text/javascript"></script>
 </footer>
