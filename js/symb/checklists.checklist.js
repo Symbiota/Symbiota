@@ -1,4 +1,3 @@
-<script type="text/javascript">
   $(document).ready(function() {
     //Filter autocomplete
     $("#taxonfilter").autocomplete({ 
@@ -26,7 +25,7 @@
         if(ui.item === null) {
           $( "#tid" ).val("");
           if($( "#speciestoadd" ).val() != ""){
-            alert('<?= $LANG['SELECT_TAXON'] ?>');
+            alert(lang_SELECT_TAXON);
             $("#speciestoadd").focus();
           }
         }
@@ -105,10 +104,10 @@
       f.submit();
     }
     else if (f.speciestoadd.value == "") {
-      alert("<?= $LANG['NAME_BLANK'] ?>");
+      alert(lang_NAME_BLANK);
     } 
     else {
-      alert('<?= $LANG['SELECT_TAXON'] ?>');
+      alert(lang_SELECT_TAXON);
     }
     f.speciestoadd.focus();
     return false;
@@ -169,4 +168,3 @@
 
   // close layer when click-out
   document.onclick = mclose;
-</script>
