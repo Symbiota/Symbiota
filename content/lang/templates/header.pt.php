@@ -51,12 +51,6 @@ $LANG['H_CONTACT_US'] = 'Entre em Contato Conosco';
 $LANG['H_SKIP_NAV'] = 'Pular Navegação';
 
 //Footer variables
-$LANG['F_TOGGLE_508_OFF'] = 'Modo Condensado';
-$LANG['F_TOGGLE_508_ON'] = 'Modo de Acessibilidade';
-$LANG['F_ACCESSIBILITY_OPTIONS'] = 'Opções de acessibilidade';
-$LANG['F_ACCESSIBILITY_OPTIONS_DESCRIPTION'] = 'Mais recursos de acessibilidade serão adicionados ao longo do tempo. Alterne aqueles que atendem às suas necessidades.';
-$LANG['F_CLOSE'] = 'Fechar';
-$LANG['F_ACCESSIBILITY_ICON'] = 'ícone de acessibilidade de uma pessoa';
 $LANG['F_VISIT_NSF'] = 'Visite o site da National Science Foundation';
 $LANG['F_NSF_LOGO'] = 'Logo da National Science Foundation';
 $LANG['F_VISIT_IDIGBIO'] = 'Visite o site do iDigBio';

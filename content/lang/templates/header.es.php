@@ -51,12 +51,6 @@ $LANG['H_CONTACT_US'] = 'Contáctenos';
 $LANG['H_SKIP_NAV'] = 'Saltar Navegación';
 
 //Footer variables
-$LANG['F_TOGGLE_508_OFF'] = 'Alternar el Diseño de Formulario Condensado';
-$LANG['F_TOGGLE_508_ON'] = 'Alternar Diseño de Formulario Vertical';
-$LANG['F_ACCESSIBILITY_OPTIONS'] = 'Opciones de accesibilidad';
-$LANG['F_ACCESSIBILITY_OPTIONS_DESCRIPTION'] = 'Con el tiempo se agregarán más funciones de accesibilidad. Alterna aquellos que se adapten a tus necesidades.';
-$LANG['F_CLOSE'] = 'Cerrar';
-$LANG['F_ACCESSIBILITY_ICON'] = 'icono de accesibilidad de una persona';
 $LANG['F_VISIT_NSF'] = 'Visita el sitio web de la National Science Foundation';
 $LANG['F_NSF_LOGO'] = 'Logo de la National Science Foundation';
 $LANG['F_VISIT_IDIGBIO'] = 'Visita el sitio web de iDigBio';
