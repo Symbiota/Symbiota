@@ -1,7 +1,7 @@
 <?php
 include_once('config/symbini.php');
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/index.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/index.en.php');
-else include_once($SERVER_ROOT.'/content/lang/index.'.$LANG_TAG.'.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/templates/index.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/templates/index.en.php');
+else include_once($SERVER_ROOT.'/content/lang/templates/index.'.$LANG_TAG.'.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 ?>
 <!DOCTYPE html>
@@ -12,10 +12,6 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 	include_once($SERVER_ROOT . '/includes/head.php');
 	include_once($SERVER_ROOT . '/includes/googleanalytics.php');
 	?>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
-	<link href="<?php echo $CSS_BASE_PATH; ?>/quicksearch.css" type="text/css" rel="Stylesheet" />
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 			var clientRoot = "<?php echo $CLIENT_ROOT; ?>";
 	</script>
@@ -27,7 +23,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class="navpath"></div>
-	<div id="innertext">
+	<main id="innertext">
 		<div>
 			<div style="float:right;width:500px;margin-left:20px">
 				<div id="quicksearchdiv" style="width:375px">
@@ -121,9 +117,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 			}
 			?>
 		</div>
-	</div>
-		
-	</div>
+	</main>
 	<?php
 	include($SERVER_ROOT . '/includes/footer.php');
 	?>
