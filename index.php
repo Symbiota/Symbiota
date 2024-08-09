@@ -12,6 +12,10 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 	include_once($SERVER_ROOT . '/includes/head.php');
 	include_once($SERVER_ROOT . '/includes/googleanalytics.php');
 	?>
+	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH; ?>/quicksearch.css" type="text/css" rel="Stylesheet" />
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 			var clientRoot = "<?php echo $CLIENT_ROOT; ?>";
 	</script>
