@@ -15,9 +15,9 @@
 		<!--
 		<button id="accessibility-options-button" type="button" class="btn btn-primary  accessibility-option-button">
 			<span class="button__item-container">
-				<?= $LANG['F_ACCESSIBILITY_OPTIONS']; ?>
+			<?= $LANG['F_ACCESSIBILITY_OPTIONS']; ?>
 				<span>
-					<img alt="accessibility icon of a person" src="<?= $CLIENT_ROOT ?>/images/accessibility_FILL0_wght400_GRAD0_opsz24.svg" />
+					<img alt="<?= $LANG['F_ACCESSIBILITY_ICON'] ?>" src="<?= $CLIENT_ROOT ?>/images/accessibility_FILL0_wght400_GRAD0_opsz24.svg" />
 				</span>
 	        </span>
 		</button>
@@ -28,22 +28,21 @@
 		<a href="https://www.usac.edu.gt/" target="_blank" title="iDigBio">
 			<img src="<?= $CLIENT_ROOT; ?>/images/layout/USACLOGO.png" />
 		</a>
-		<a href="https://biokic.asu.edu" target="_blank" title="Biodiversity Knowledge Integration Center" aria-label="Visit BioKIC website">
-			<img src="<?= $CLIENT_ROOT; ?>/images/layout/logo-asu-biokic.png"  alt="Logo for the Biodiversity Knowledge Integration Center" />
+		<a href="https://biokic.asu.edu" target="_blank" title="<?= $LANG['F_BIOKIC'] ?>" aria-label="Visit BioKIC website">
+			<img src="<?= $CLIENT_ROOT; ?>/images/layout/logo-asu-biokic.png"  alt="<?= $LANG['F_BIOKIC_LOGO'] ?>" />
 		</a>
 	</div>
-	<p>Para más información acerca de Symbiota <a href="https://biokic.github.io/symbiota-docs/es/" target="_blank" rel="noopener noreferrer">puede dirigirse a la documentación</a> o contactar al <a href="https://symbiota.org/ayuda/" target="_blank" rel="noopener noreferrer">Symbiota Support Hub</a>.
+	<p>
+		<?= $LANG['F_MORE_INFO'] ?>, <a href="https://symbiota.org/docs" target="_blank" rel="noopener noreferrer"><?= $LANG['F_READ_DOCS'] ?></a> <?= $LANG['F_CONTACT'] ?>
+		<a href="https://symbiota.org/contact-the-support-hub/" target="_blank" rel="noopener noreferrer"><?= $LANG['F_SSH'] ?></a>.
 	</p>
 	<p>
-		For more information about Symbiota, <a href="https://symbiota.org/docs" target="_blank" rel="noopener noreferrer">read the docs</a> or contact the <a href="https://symbiota.org/contact-the-support-hub/" target="_blank" rel="noopener noreferrer">Symbiota Support Hub</a>.
-	</p>
-	<p>
-		Powered by <a href="https://symbiota.org/" target="_blank">Symbiota</a>.
+		<?= $LANG['F_POWERED_BY'] ?> <a href="https://symbiota.org/" target="_blank">Symbiota</a>.
 	</p>
 	<!--
 	<script>
-		let toggleOff508 = "<?= $LANG['TOGGLE_508_OFF'] ?>";
-		let toggleOn508 = "<?= $LANG['TOGGLE_508_ON'] ?>";
+		let toggleOff508 = "<?= $LANG['F_TOGGLE_508_OFF'] ?>";
+		let toggleOn508 = "<?= $LANG['F_TOGGLE_508_ON'] ?>";
 	</script>
 	<script src="<?= $CLIENT_ROOT; ?>/js/symb/accessibility.footer.js?ver=1" type="text/javascript"></script>
 	-->
