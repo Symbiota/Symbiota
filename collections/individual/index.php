@@ -7,8 +7,6 @@ if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/indi
 else include_once($SERVER_ROOT.'/content/lang/collections/individual/index.en.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.en.php');
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/header.en.php');
-else include_once($SERVER_ROOT . '/content/lang/header.' . $LANG_TAG . '.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $submit = array_key_exists('formsubmit', $_REQUEST) ? $_REQUEST['formsubmit'] : '';
@@ -320,7 +318,7 @@ $traitArr = $indManager->getTraitArr();
 </head>
 <body>
 	<?php
-		if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimal_header_template.php');
+	if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimalheader.php');
 	?>
 	<header style="background-image: none;">
 		<a class="screen-reader-only" href="#end-nav"><?php echo $LANG['SKIP_NAV'] ?></a>
@@ -999,12 +997,16 @@ $traitArr = $indManager->getTraitArr();
 								<?php
 								foreach($iArr as $imgArr){
 									$thumbUrl = $imgArr['tnurl'];
-									if(!$thumbUrl || substr($thumbUrl,0,7)=='process'){
-										if($image = exif_thumbnail($imgArr['lgurl'])){
-											$thumbUrl = 'data:image/jpeg;base64,'.base64_encode($image);
+									if(!$thumbUrl || substr($thumbUrl, 0, 7) == 'process'){
+										if($imgArr['lgurl']){
+											if($image = exif_thumbnail($imgArr['lgurl'])){
+												$thumbUrl = 'data:image/jpeg;base64,' . base64_encode($image);
+											}
 										}
-										elseif($imgArr['url'] && substr($imgArr['url'],0,7)!='process') $thumbUrl = $imgArr['url'];
-										else $thumbUrl = $imgArr['lgurl'];
+										if(!$thumbUrl){
+											if($imgArr['url'] && substr($imgArr['url'], 0, 7) != 'process') $thumbUrl = $imgArr['url'];
+											else $thumbUrl = $imgArr['lgurl'];
+										}
 									}
 									?>
 									<div id="thumbnail-div" class="thumbnail-div">

@@ -10,7 +10,7 @@ $tid = array_key_exists('tid', $_REQUEST) ? filter_var($_REQUEST['tid'], FILTER_
 $tabIndex = array_key_exists('tabindex', $_POST) ? filter_var($_POST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $action = array_key_exists('action', $_POST) ? htmlspecialchars($_POST['action'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $cltype = array_key_exists('cltype', $_POST) ? htmlspecialchars($_POST['cltype'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
-$renametid = array_key_exists('renametid', $_POST) ? htmlspecialchars($_POST['renametid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
+$renametid = array_key_exists('renametid', $_POST) ? filter_var($_POST['renametid'], FILTER_SANITIZE_NUMBER_INT) : '';
 $locality = array_key_exists('locality', $_POST) ? htmlspecialchars($_POST['locality'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $habitat = array_key_exists('habitat', $_POST) ? htmlspecialchars($_POST['habitat'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $abundance = array_key_exists('abundance', $_POST) ? htmlspecialchars($_POST['abundance'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
@@ -101,6 +101,15 @@ $clArray = $vManager->getChecklistData();
 							$( "#renamesciname" ).val(ui.item.value);
 							$( "#renametid" ).val(ui.item.id);
 						}
+					},
+					change: function( event, ui ) {
+						if(ui.item === null) {
+							$( "#renametid" ).val("");
+							if($( "#renamesciname" ).val() != ""){
+								alert('<?= $LANG['SELECT_TAXON'] ?>');
+								f.renamesciname.focus();
+							}
+						}
 					}
 				});
 
@@ -111,30 +120,17 @@ $clArray = $vManager->getChecklistData();
 			});
 
 			function validateRenameForm(f){
-				if(f.renamesciname.value == ""){
+				if (f.renamesciname.value !== "" && f.renametid.value !== ""){
+					f.submit();
+				}
+				else if(f.renamesciname.value == ""){
 					alert("<?php echo $LANG['NAME_BLANK']; ?>");
 				}
-				else{
-					checkScinameExistence(f);
+				else {
+					alert('<?= $LANG['SELECT_TAXON'] ?>');
 				}
+				f.renamesciname.focus();
 				return false;
-			}
-
-			function checkScinameExistence(f){
-				$.ajax({
-					type: "POST",
-					url: "rpc/gettid.php",
-					data: { sciname: f.renamesciname.value }
-				}).done(function( renameTid ) {
-					if(renameTid){
-						if(f.renametid.value == "") f.renametid.value = renameTid;
-						f.submit();
-					}
-					else{
-						alert("<?php echo $LANG['SCINAME_ERROR']; ?>");
-						f.renametid.value = "";
-					}
-				});
 			}
 
 			function openPopup(urlStr,windowName){
@@ -340,7 +336,7 @@ $clArray = $vManager->getChecklistData();
 												</fieldset>
 											</form>
 										</div>
-								</div>
+								
 									<?php
 								}
 								?>

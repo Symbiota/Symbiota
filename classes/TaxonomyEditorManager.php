@@ -1,6 +1,8 @@
 <?php
 include_once($SERVER_ROOT.'/classes/Manager.php');
-include_once($SERVER_ROOT.'/content/lang/classes/TaxonomyEditorManager.'.$LANG_TAG.'.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT . '/content/lang/classes/TaxonomyEditorManager.' . $LANG_TAG . '.php'))
+	include_once($SERVER_ROOT . '/content/lang/classes/TaxonomyEditorManager.en.php');
+else include_once($SERVER_ROOT . '/content/lang/classes/TaxonomyEditorManager.' . $LANG_TAG . '.php');
 
 class TaxonomyEditorManager extends Manager{
 
@@ -701,6 +703,14 @@ class TaxonomyEditorManager extends Manager{
 		}
 		$rs->free();
 
+		//Taxon maps
+		$sql ='SELECT COUNT(mid) AS cnt FROM taxamaps WHERE tid = '.$this->tid;
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$retArr['map'] = $r->cnt;
+		}
+		$rs->free();
+
 		//Vernaculars
 		$sql ='SELECT vernacularname FROM taxavernaculars WHERE tid = '.$this->tid;
 		$rs = $this->conn->query($sql);
@@ -771,6 +781,10 @@ class TaxonomyEditorManager extends Manager{
 			$sql ='UPDATE IGNORE images SET tid = '.$targetTid.' WHERE occid IS NULL AND tid = '.$this->tid;
 			if(!$this->conn->query($sql)) $this->warningArr[] = (isset($this->langArr['ERROR_TRANSFER_IMGS'])?$this->langArr['ERROR_TRANSFER_IMGS']:'ERROR transferring image links').' ('.$this->conn->error.')';
 
+			//Taxon maps
+			$sql ='UPDATE IGNORE taxamaps SET mid = '.$targetTid.' WHERE tid = '.$this->tid;
+			if(!$this->conn->query($sql)) $this->warningArr[] = $this->langArr['ERROR_TRANSFER_MAPS'] . ' (' . $this->conn->error . ')';
+
 			//Vernaculars
 			$sql ='UPDATE IGNORE taxavernaculars SET tid = '.$targetTid.' WHERE tid = '.$this->tid;
 			if(!$this->conn->query($sql)) $this->warningArr[] = (isset($this->langArr['ERROR_TRANSFER_VERNACULARS'])?$this->langArr['ERROR_TRANSFER_VERNACULARS']:'ERROR transferring vernaculars').' ('.$this->conn->error.')';
@@ -820,6 +834,10 @@ class TaxonomyEditorManager extends Manager{
 		$sql ='DELETE FROM images WHERE tid = '.$this->tid;
 		if(!$this->conn->query($sql)) $this->warningArr[] = 'ERROR deleting remaining links in deleteTaxon method ('.$this->conn->error.')';
 		*/
+
+		//Taxon maps
+		$sql ='DELETE FROM taxamaps WHERE tid = '.$this->tid;
+		if(!$this->conn->query($sql)) $this->warningArr[] = $this->langArr['ERROR_DEL_MAPS'] . ' (' . $this->conn->error . ')';
 
 		//Vernaculars
 		$sql ='DELETE FROM taxavernaculars WHERE tid = '.$this->tid;

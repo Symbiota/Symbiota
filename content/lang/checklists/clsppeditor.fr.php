@@ -8,7 +8,6 @@ Language: Français (French)
 $LANG['SPEC_DETAILS'] = 'Détails de l\'Espèce';
 $LANG['OF'] = 'de';
 $LANG['NAME_BLANK'] = 'Le champ du nom scientifique est vide';
-$LANG['SCINAME_ERROR'] = "ERREUR: le nom scientifique n'existe pas dans la base de données. L'avez vous épeler correctement? Si c'est le cas, il faudra peut-être l'ajouter au tableau des taxons.";
 $LANG['GEN_EDIT'] = 'Modification Générale';
 $LANG['VOUCHER_EDIT'] = "Administration d'Échantillons";
 $LANG['EDIT_CHECKLIST'] = 'Modifier Informations de Liste';
@@ -44,4 +43,5 @@ $LANG['UNKNOWN_TAXON'] = 'Taxon Inconnu';
 $LANG['UNKNOWN_COLLECTION'] = 'Collection Inconnue';
 $LANG['REMOVE'] = 'Retirer';
 $LANG['TO_COLLECTIONS_LINK'] = 'Lien vers les collections et taxons cibles';
+$LANG['SELECT_TAXON'] = 'Veuillez sélectionner un taxon dans la liste';
 ?>

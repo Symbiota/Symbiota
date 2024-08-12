@@ -1,9 +1,8 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/content/lang/collections/map/index.'.$LANG_TAG.'.php');
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/header.en.php');
-    else include_once($SERVER_ROOT . '/content/lang/header.' . $LANG_TAG . '.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMapManager.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/collections/map/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/map/index.en.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/map/index.' . $LANG_TAG . '.php');
 
 header('Content-Type: text/html; charset='.$CHARSET);
 header("Accept-Encoding: gzip, deflate, br");
@@ -153,16 +152,15 @@ if(isset($_REQUEST['llpoint'])) {
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
-		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
-		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+		<link href="<?= $CSS_BASE_PATH; ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
+		<link href="<?= $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<style type="text/css">
-		.panel-content a{ outline-color: transparent; font-size: .9rem; font-weight: normal; }
-		.ui-front { z-index: 9999999 !important; }
+			.panel-content a{ outline-color: transparent; font-size: .9rem; font-weight: normal; }
+			.ui-front { z-index: 9999999 !important; }
 		</style>
-		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-
-		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />
+		<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+		<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery.symbiota.css" type="text/css" rel="stylesheet" />
 		<script src="../../js/jquery.popupoverlay.js" type="text/javascript"></script>
 		<script src="../../js/jscolor/jscolor.js?ver=1" type="text/javascript"></script>
@@ -171,16 +169,16 @@ if(isset($_REQUEST['llpoint'])) {
 
 		<?php
 		if(empty($GOOGLE_MAP_KEY)) {
-		include_once($SERVER_ROOT.'/includes/leafletMap.php');
+			include_once($SERVER_ROOT.'/includes/leafletMap.php');
 		} else {
-		include_once($SERVER_ROOT.'/includes/googleMap.php');
+			include_once($SERVER_ROOT.'/includes/googleMap.php');
 		}
 		?>
 
 		<script src="../../js/symb/wktpolygontools.js" type="text/javascript"></script>
 		<script src="../../js/symb/MapShapeHelper.js" type="text/javascript"></script>
 		<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
-		<script src="../../js/symb/collections.list.js?ver=1" type="text/javascript"></script>
+		<script src="../../js/symb/collections.list.js?ver=2" type="text/javascript"></script>
 
 		<style type="text/css">
 		.ui-front {
@@ -323,7 +321,7 @@ if(isset($_REQUEST['llpoint'])) {
 		//Object that maps portals to matching mapGroup Index
 		let portalLegendMap = {}
 
-		//Indciates if clustering should be drawn. Only comes into effect after redraw or refreshes 
+		//Indciates if clustering should be drawn. Only comes into effect after redraw or refreshes
 		let clusteroff = true;
 
 		const colorChange = new Event("colorchange",  {
@@ -431,7 +429,7 @@ if(isset($_REQUEST['llpoint'])) {
          for(let i = 0; i < mapGroups.length; i++) {
             for(portal of Object.values(mapGroups[i].portalMapGroup.group_map)) {
 					if(!portalLegendMap[portal.name]) {
-						portalLegendMap[portal.name] = portal; 
+						portalLegendMap[portal.name] = portal;
 						portalLegendMap[portal.name].id_map = [{portalid: portal.portalid, index: i}];
 					} else {
 						portalLegendMap[portal.name].id_map.push({portalid: portal.portalid, index: i});
@@ -597,7 +595,7 @@ if(isset($_REQUEST['llpoint'])) {
 					detail: {
 						lat,
 						lng,
-						title 
+						title
 					}
 				}));
 			}
@@ -1035,7 +1033,7 @@ if(isset($_REQUEST['llpoint'])) {
 			document.addEventListener('addReferencePoint', e => {
 				try {
 					marker = L.marker([
-						parseFloat(e.detail.lat), 
+						parseFloat(e.detail.lat),
 						parseFloat(e.detail.lng)
 					]);
 					if(e.detail.title) {
@@ -1451,7 +1449,7 @@ if(isset($_REQUEST['llpoint'])) {
 				genClusters(taxaLegendMap, "taxa");
 				genClusters(collLegendMap, "coll");
 				genClusters(portalLegendMap, "portal");
-            
+
 				autoColorTaxa();
 
 				drawPoints();
@@ -1472,7 +1470,7 @@ if(isset($_REQUEST['llpoint'])) {
 					var iconImg = new google.maps.MarkerImage( '../../images/google/arrow.png' );
 					let marker = new google.maps.Marker({
 						position: new google.maps.LatLng(
-							parseFloat(e.detail.lat), 
+							parseFloat(e.detail.lat),
 							parseFloat(e.detail.lng)
 						),
 						icon: iconImg,
@@ -1904,7 +1902,7 @@ if(isset($_REQUEST['llpoint'])) {
 	</head>
 	<body style='width:100%;max-width:100%;min-width:500px;' <?php echo (!$activateGeolocation?'onload="initialize();"':''); ?>>
 		<?php
-			if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimal_header_template.php');
+		if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimalheader.php');
 		?>
 	  	<h1 class="page-heading screen-reader-only">Map Interface</h1>
 		<div
@@ -1922,7 +1920,7 @@ if(isset($_REQUEST['llpoint'])) {
 		<div>
 			<button onclick="document.getElementById('defaultpanel').style.width='29rem';  " style="position:absolute;top:0;left:0;margin:0px;z-index:10; gap: 0.2rem">
 				<span style="padding-bottom:0.2rem">
-					&#9776; 
+					&#9776;
 				</span>
 				<b>Open Search Panel</b>
 			</button>
@@ -1959,7 +1957,7 @@ if(isset($_REQUEST['llpoint'])) {
 										<div id="specobsdiv">
 											<div style="margin:0px 0px 10px 5px;">
 												<input id="dballcb" data-role="none" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" <?php echo (!$mapManager->getSearchTerm('db') || $mapManager->getSearchTerm('db')=='all'?'checked':'') ?> />
-												<?php echo $LANG['SELECT_DESELECT'].' <a href="misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>'; ?>
+												<?php echo $LANG['SELECT_DESELECT'].' <a href="../misc/collprofiles.php" target="_blank">' . $LANG['ALL_COLLECTIONS'] . '</a>'; ?>
 											</div>
 											<?php
 											if($specArr){
@@ -2208,7 +2206,7 @@ Record Limit:
 												<div style="float:left;">eg: -112.38</div>
 											</div>
 											<div style='font-size:80%;margin-top:5px;clear:both'>
-											 <a href='#' onclick='toggleLatLongDivs();'> 
+											 <a href='#' onclick='toggleLatLongDivs();'>
 												<?= $LANG['ENTER_IN_DMS']?>
 											 </a>
 											</div>
@@ -2264,11 +2262,11 @@ Record Limit:
 						<h3 id="recordstaxaheader" style="display:none;padding-left:30px;"><?php echo (isset($LANG['RECORDS_TAXA'])?$LANG['RECORDS_TAXA']:'Records and Taxa'); ?></h3>
 						<div id="tabs2" style="display:none;padding:0px;">
 							<ul>
-								<li><a href='#occurrencelist'><span><?php echo htmlspecialchars($LANG['RECORDS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
-								<li id="cross_portal_results"><a href='#external_occurrencelist'><span><?php echo htmlspecialchars($LANG['EXTERNAL_RECORDS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
-								<li id="cross_portal_list"><a href='#portalsymbology'><span><?php echo htmlspecialchars($LANG['PORTAL_LIST'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
-						   	<li><a href='#symbology'><span><?php echo htmlspecialchars($LANG['COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
-								<li><a href='#maptaxalist'><span><?php echo htmlspecialchars($LANG['TAXA_LIST'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
+								<li><a href='#occurrencelist'><span><?= $LANG['RECORDS'] ?></span></a></li>
+								<li id="cross_portal_results"><a href='#external_occurrencelist'><span><?= $LANG['EXTERNAL_RECORDS'] ?></span></a></li>
+								<li id="cross_portal_list"><a href='#portalsymbology'><span><?= $LANG['PORTAL_LIST'] ?></span></a></li>
+						   	<li><a href='#symbology'><span><?= $LANG['COLLECTIONS'] ?></span></a></li>
+								<li><a href='#maptaxalist'><span><?= $LANG['TAXA_LIST'] ?></span></a></li>
 							</ul>
 							<div id="occurrencelist" style="">
 								loading...

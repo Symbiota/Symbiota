@@ -347,7 +347,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 		$cnt = 0;
 		$coordArr = $this->getMappingData($recLimit, $extraFieldArr);
 		if($coordArr){
-			$this->googleIconArr = array('pushpin/ylw-pushpin','pushpin/blue-pushpin','pushpin/grn-pushpin','pushpin/ltblu-pushpin',
+			$googleIconArr = array('pushpin/ylw-pushpin','pushpin/blue-pushpin','pushpin/grn-pushpin','pushpin/ltblu-pushpin',
 				'pushpin/pink-pushpin','pushpin/purple-pushpin', 'pushpin/red-pushpin','pushpin/wht-pushpin','paddle/blu-blank',
 				'paddle/grn-blank','paddle/ltblu-blank','paddle/pink-blank','paddle/wht-blank','paddle/blu-diamond','paddle/grn-diamond',
 				'paddle/ltblu-diamond','paddle/pink-diamond','paddle/ylw-diamond','paddle/wht-diamond','paddle/red-diamond','paddle/purple-diamond',
@@ -359,7 +359,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 			foreach($coordArr as $sciname => $snArr){
 				unset($snArr['tid']);
 				$cnt++;
-				$iconStr = $this->googleIconArr[$cnt%44];
+				$iconStr = $googleIconArr[$cnt%44];
 				echo "<Style id='sn_".$iconStr."'>\n";
 				echo "<IconStyle><scale>1.1</scale><Icon>";
 				echo "<href>http://maps.google.com/mapfiles/kml/" . htmlspecialchars($iconStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ".png</href>";
