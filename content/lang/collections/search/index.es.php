@@ -6,6 +6,8 @@ Translated by: Google Translate
 Date Translated: 2024/02/12
 ------------------
 */
+include_once($SERVER_ROOT . '/content/lang/collections/sharedterms.es.php');
+
 $LANG['SAMPLE_SEARCH'] = 'Búsqueda de Registros';
 $LANG['TAXONOMY'] = 'Taxonomía';
 $LANG['TAXON'] = 'Taxón';

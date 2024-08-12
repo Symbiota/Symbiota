@@ -1,9 +1,8 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/content/lang/collections/map/index.'.$LANG_TAG.'.php');
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/header.en.php');
-    else include_once($SERVER_ROOT . '/content/lang/header.' . $LANG_TAG . '.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMapManager.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/collections/map/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/map/index.en.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/map/index.' . $LANG_TAG . '.php');
 
 header('Content-Type: text/html; charset='.$CHARSET);
 header("Accept-Encoding: gzip, deflate, br");
@@ -179,7 +178,7 @@ if(isset($_REQUEST['llpoint'])) {
 		<script src="../../js/symb/wktpolygontools.js" type="text/javascript"></script>
 		<script src="../../js/symb/MapShapeHelper.js" type="text/javascript"></script>
 		<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
-		<script src="../../js/symb/collections.list.js?ver=1" type="text/javascript"></script>
+		<script src="../../js/symb/collections.list.js?ver=2" type="text/javascript"></script>
 
 		<style type="text/css">
 		.ui-front {
@@ -1903,7 +1902,7 @@ if(isset($_REQUEST['llpoint'])) {
 	</head>
 	<body style='width:100%;max-width:100%;min-width:500px;' <?php echo (!$activateGeolocation?'onload="initialize();"':''); ?>>
 		<?php
-			if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimal_header_template.php');
+		if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimalheader.php');
 		?>
 	  	<h1 class="page-heading screen-reader-only">Map Interface</h1>
 		<div
@@ -1958,7 +1957,7 @@ if(isset($_REQUEST['llpoint'])) {
 										<div id="specobsdiv">
 											<div style="margin:0px 0px 10px 5px;">
 												<input id="dballcb" data-role="none" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" <?php echo (!$mapManager->getSearchTerm('db') || $mapManager->getSearchTerm('db')=='all'?'checked':'') ?> />
-												<?php echo $LANG['SELECT_DESELECT'].' <a href="misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>'; ?>
+												<?php echo $LANG['SELECT_DESELECT'].' <a href="../misc/collprofiles.php" target="_blank">' . $LANG['ALL_COLLECTIONS'] . '</a>'; ?>
 											</div>
 											<?php
 											if($specArr){

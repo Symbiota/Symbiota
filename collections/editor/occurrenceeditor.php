@@ -450,7 +450,7 @@ else{
     <?php
     if($crowdSourceMode == 1){
 		?>
-		<link href="includes/config/occureditorcrowdsource.css?ver=4" type="text/css" rel="stylesheet" id="editorCssLink" />
+		<link href="includes/config/occureditorcrowdsource.css?ver=5" type="text/css" rel="stylesheet" id="editorCssLink" />
 		<?php
     }
     else{
@@ -554,9 +554,6 @@ else{
 				border: 2px solid var(--medium-color);
 				color: var(--light-color);
 			}
-		}
-		table, tr, th, td {
-			vertical-align: top;
 		}
 		#labelProcFieldset{
 			padding:15px;

@@ -500,12 +500,12 @@ class OccurrenceEditorManager {
 					$customWhere .= $cao.' ('.substr($this->setCustomSqlFragment($customField, $customTerm, $customValue, $cao, $cop, $ccp),3).' ';
 					if($customTerm != 'NOT_EQUALS' && $customTerm != 'NOT_LIKE'){
 						$caoOverride = 'OR';
-						if($customTerm == 'NULL') $caoOverride = 'AND';
+						if($customTerm == 'IS_NULL') $caoOverride = 'AND';
 						$customWhere .= $this->setCustomSqlFragment('id.identifierValue', $customTerm, $customValue, $caoOverride, $cop, $ccp);
 					}
 					else{
 						$customWhere .= 'AND o.occid NOT IN(SELECT occid FROM omoccuridentifiers WHERE identifierValue ';
-						if($customTerm == 'NOT_LIKE') $customWhere .= 'NOT_LIKE';
+						if($customTerm == 'NOT_LIKE') $customWhere .= 'NOT LIKE';
 						else $customWhere .= '!=';
 						$customWhere .= ' "'.$this->cleanInStr($customValue).'")';
 					}
@@ -1167,7 +1167,7 @@ class OccurrenceEditorManager {
 		$sqlInsert = 'INSERT IGNORE INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
 			'identificationQualifier, identificationReferences, identificationRemarks, recordID, sortsequence, isCurrent) '.
 			'SELECT occid, IFNULL(identifiedby,"unknown") AS idby, IFNULL(dateidentified,"s.d.") AS di, '.
-			'sciname, scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, "'.$guid.'", 10 AS sortseq, (SELECT IF(COUNT(*) > 0, 0, 1) AS isCur from omoccurdeterminations where isCurrent = 1 and occid = '. $occid . ') '. 
+			'sciname, scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, "'.$guid.'", 10 AS sortseq, (SELECT IF(COUNT(*) > 0, 0, 1) AS isCur from omoccurdeterminations where isCurrent = 1 and occid = '. $occid . ') '.
 			'FROM omoccurrences WHERE (occid = ' . $occid . ') AND (identifiedBy IS NOT NULL OR dateIdentified IS NOT NULL OR sciname IS NOT NULL)';
 		try {
 			$this->conn->query($sqlInsert);
@@ -1193,7 +1193,7 @@ class OccurrenceEditorManager {
 		}
 	}
 
-	// Copy of updateBaseOccurrence in OccurrenceEditorDeterminations for temporary utility till 3.2 
+	// Copy of updateBaseOccurrence in OccurrenceEditorDeterminations for temporary utility till 3.2
 	// TODO (Logan) remove once latest Identification section in editor is removed
 	private function updateBaseOccurrence($detId){
 		if(is_numeric($detId)){
@@ -1220,7 +1220,7 @@ class OccurrenceEditorManager {
 		}
 	}
 
-	// Copy of getTaxonVariables in OccurrenceEditorDeterminations for temporary utility till 3.2 
+	// Copy of getTaxonVariables in OccurrenceEditorDeterminations for temporary utility till 3.2
 	// TODO (Logan) remove once latest Identification section in editor is removed
 	private function getTaxonVariables($detId){
 		$retArr = array();
