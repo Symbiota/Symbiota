@@ -2,7 +2,7 @@
 include_once ('../config/symbini.php');
 include_once ($SERVER_ROOT . '/classes/GeographicThesaurus.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/geothesaurus/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/geothesaurus/index.' . $LANG_TAG . '.php');
-	else include_once($SERVER_ROOT . '/content/lang/geothesaurus/index.en.php');
+   else include_once($SERVER_ROOT . '/content/lang/geothesaurus/index.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $geoThesID = array_key_exists('geoThesID', $_REQUEST) ? filter_var($_REQUEST['geoThesID'], FILTER_SANITIZE_NUMBER_INT) : '';
@@ -50,7 +50,7 @@ function listGeoUnits($arr) {
    global $LANG;
    echo '<ul>';
    foreach($arr as $geoID => $unitArr){
-      $geoTerm = $unitArr['geoTerm'];
+      $geoTerm = htmlspecialchars($unitArr['geoTerm'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 
       $codeStr = '';
       if($unitArr['abbreviation']) {
@@ -66,17 +66,19 @@ function listGeoUnits($arr) {
       $referenceText = '';
 
       if($unitArr['acceptedTerm']) {
+         $geoTerm .= ' => ';
          $referenceText = '<a href="index.php?geoThesID=' . htmlspecialchars($unitArr['acceptedID']) . '">' . htmlspecialchars($unitArr['acceptedTerm'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
-      } elseif(isset($unitArr['childCnt'])) {
-         $referenceText = '- '. htmlspecialchars($unitArr['childCnt'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' ' . $LANG['CHILDREN'];
+      } else {
+         $geoTerm = '<a href="index.php?geoThesID=' . $geoID . '">' . $geoTerm . '</a>';
+         if(isset($unitArr['childCnt'])) {
+            $referenceText = '- '. htmlspecialchars($unitArr['childCnt'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' ' . $LANG['CHILDREN'];
+         }
       }
-
-      $geoTerm = htmlspecialchars($geoTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
       $codeStr = htmlspecialchars($codeStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 
       echo <<<HTML
       <li>
-         <a href='index.php?geoThesID=$geoID'>$geoTerm</a>
+         $geoTerm
          $codeStr
          $referenceText
       </li>
@@ -118,8 +120,8 @@ function listGeoUnits($arr) {
          toggle("#editButton-div", "block");
          toggle("#edit-legend");
          toggle("#unitDel-div", "block");
-		 let map = document.getElementById("map_canvas");
-		 if(map) map.style.display = map.style.display === 'none'?'block': 'none';
+       let map = document.getElementById("map_canvas");
+       if(map) map.style.display = map.style.display === 'none'?'block': 'none';
       }
 
       function toggle (target, defaultDisplay = "inline"){
@@ -183,8 +185,8 @@ function listGeoUnits($arr) {
    <body onload="init()">
       <div
          id="service-container"
-		 data-geo-unit='<?php echo htmlspecialchars(json_encode($geoUnit))?>'
-		>
+         data-geo-unit='<?php echo htmlspecialchars(json_encode($geoUnit))?>'
+      >
       </div>
       <?php
       include($SERVER_ROOT.'/includes/header.php');
@@ -407,40 +409,57 @@ function listGeoUnits($arr) {
                   <?php
                   }
                   }
-                  $acceptedStr = '';
                   if($geoUnit['acceptedTerm']) {
-                  $acceptedStr = '<a href="index.php?geoThesID=' . $geoUnit['acceptedID'] . '">' . htmlspecialchars($geoUnit['acceptedTerm'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
+                     $acceptedStr = '<a href="index.php?geoThesID=' . $geoUnit['acceptedID'] . '">' . htmlspecialchars($geoUnit['acceptedTerm'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
+                     ?>
+                     <div class="field-div">
+                        <label> <?= $LANG['ACCEPTED_TERM'] ?></label>:
+                        <span class="editTerm"><?php echo $acceptedStr; ?></span>
+                        <span class="editFormElem">
+                           <select name="acceptedID">
+                              <option value=""> <?= $LANG['IS_ACCEPTED'] ?> </option>
+                              <option value="">----------------------</option>
+                              <?php
+                              $acceptedList = $geoManager->getAcceptedGeoTermArr($geoUnit['geoLevel'], $geoUnit['parentID']);
+                              foreach($acceptedList as $id => $term){
+                                 echo '<option value="'.$id.'" '.($id==$geoUnit['acceptedID']?'selected':'').'>'.$term.'</option>';
+                              }
+                              ?>
+                           </select>
+                        </span>
+                     </div>
+                     <?php
+                  }
+                  else{
+                     $synonymStr = '';
+                     if($geoUnit['synonyms']){
+                        $delimiter = '';
+                        foreach($geoUnit['synonyms'] as $synTermID => $synName ){
+                           $synonymStr .= $delimiter . '<a href="index.php?geoThesID=' . $synTermID . '">' . $synName . '</a>';
+                           $delimiter = ', ';
+                        }
+                     }
+                     ?>
+                     <div class="field-div">
+                        <label> <?= $LANG['SYNONYMS'] ?></label>:
+                        <span class="editTerm"><?= $synonymStr ?></span>
+                     </div>
+                     <div class="field-div">
+                        <label><?= $LANG['POLYGON']?></label>:
+                        <span class="editTerm">
+                           <?= $geoUnit['geoJSON'] !== null? $LANG['YES_POLYGON']: $LANG['NO_POLYGON'] ?>
+                        </span>
+                        <div id="map_canvas" style="margin: 1rem 0; width:100%; height:20rem"></div>
+                        <a class="editFormElem" onclick="openCoordAid()">
+                           <img src='../images/world.png' style='width:10px;border:0' alt='<?= $LANG['IMG_OF_GLOBE'] ?>' /> <?= $LANG['EDIT_POLYGON']?>
+                        </a>
+                        <span class="editFormElem" style="margin-top: 0.5rem">
+                           <textarea id="footprintwkt" name="polygon" style="margin-top: 0.5rem; width:98%;height:90px;"><?= isset($geoUnit['geoJSON'])? trim($geoUnit['geoJSON']): null ?></textarea>
+                        </span>
+                     </div>
+                     <?php
                   }
                   ?>
-                  <div class="field-div">
-                     <label> <?= $LANG['ACCEPTED_TERM'] ?></label>:
-                     <span class="editTerm"><?php echo $acceptedStr; ?></span>
-                     <span class="editFormElem">
-                        <select name="acceptedID">
-                           <option value=""> <?= $LANG['IS_ACCEPTED'] ?> </option>
-                           <option value="">----------------------</option>
-                           <?php
-                           $acceptedList = $geoManager->getAcceptedGeoTermArr($geoUnit['geoLevel'], $geoUnit['parentID']);
-                           foreach($acceptedList as $id => $term){
-                           echo '<option value="'.$id.'" '.($id==$geoUnit['acceptedID']?'selected':'').'>'.$term.'</option>';
-                           }
-                           ?>
-                        </select>
-                     </span>
-                  </div>
-                  <div class="field-div">
-                     <label><?= $LANG['POLYGON']?></label>:
-                     <span class="editTerm">
-                        <?= $geoUnit['geoJSON'] !== null? $LANG['YES_POLYGON']: $LANG['NO_POLYGON'] ?>
-                     </span>
-                     <div id="map_canvas" style="margin: 1rem 0; width:100%; height:20rem"></div>
-                     <a class="editFormElem" onclick="openCoordAid()">
-                        <img src='../images/world.png' style='width:10px;border:0' alt='<?= $LANG['IMG_OF_GLOBE'] ?>' /> <?= $LANG['EDIT_POLYGON']?>
-                     </a>
-                     <span class="editFormElem" style="margin-top: 0.5rem">
-                        <textarea id="footprintwkt" name="polygon" style="margin-top: 0.5rem; width:98%;height:90px;"><?= isset($geoUnit['geoJSON'])? trim($geoUnit['geoJSON']): null ?></textarea>
-                     </span>
-                  </div>
                   <div id="editButton-div" class="button-div">
                      <input name="geoThesID" type="hidden" value="<?= $geoThesID; ?>" />
                      <button type="submit" name="submitaction" value="submitGeoEdits"> <?= $LANG['SAVE_EDITS'] ?> </button>
@@ -467,7 +486,7 @@ function listGeoUnits($arr) {
 
          <?php }?>
 
-         <?php if(!empty($childrenTitleStr)):?>
+         <?php if(!empty($childrenTitleStr) && empty($geoUnit['acceptedTerm'])):?>
          <div style="font-size:1.3em;margin: 10px 0px">
             <?= $childrenTitleStr ?>
             <span class="editIcon" title="<?= $LANG['ADD_TERM_LIST'] ?>">
