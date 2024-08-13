@@ -62,11 +62,11 @@ function listGeoUnits($arr) {
          if($codeStr) $codeStr = ' ('.trim($codeStr,', ').') ';
       }
 
-      $referenceHref = '';
       $referenceText = '';
 
       if($unitArr['acceptedTerm']) {
          $geoTerm .= ' => ';
+         $codeStr = '';
          $referenceText = '<a href="index.php?geoThesID=' . htmlspecialchars($unitArr['acceptedID']) . '">' . htmlspecialchars($unitArr['acceptedTerm'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
       } else {
          $geoTerm = '<a href="index.php?geoThesID=' . $geoID . '">' . $geoTerm . '</a>';
