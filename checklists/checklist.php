@@ -128,8 +128,12 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 			else f.voucherimages.value = "0";
 			f.submit();
 		}
+
+		var lang_NAME_BLANK = '<?= $LANG['NAME_BLANK'] ?>';
+		var lang_SELECT_TAXON = '<?= $LANG['SELECT_TAXON'] ?>';
 	</script>
-	<script type="text/javascript" src="../js/symb/checklists.checklist.js?ver=4"></script>
+	<script type="text/javascript" src="../js/symb/checklists.checklist.js"></script>
+	
 	<style>
 		<?php
 		if($printMode){

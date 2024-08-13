@@ -336,7 +336,7 @@ $clArray = $vManager->getChecklistData();
 												</fieldset>
 											</form>
 										</div>
-								</div>
+								
 									<?php
 								}
 								?>

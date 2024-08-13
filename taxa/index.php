@@ -87,7 +87,7 @@ include($SERVER_ROOT.'/includes/header.php');
 				?>
 				<table id="innertable">
 				<tr>
-					<td colspan="2" valign="bottom">
+					<td colspan="2" style="vertical-align: bottom">
 						<?php
 						if($isEditor){
 							?>
@@ -128,7 +128,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					</td>
 				</tr>
 				<tr>
-					<td width="300" valign="top">
+					<td width="300" style="vertical-align=top">
 						<div id="family"><?php echo '<b>' . $LANG['FAMILY'] . ':</b> ' . $taxonManager->getTaxonFamily(); ?></div>
 						<?php
 						if($vernArr = $taxonManager->getVernaculars()){
@@ -273,7 +273,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					</td>
 				</tr>
 				<tr>
-					<td width="300" valign="top">
+					<td width="300" style="vertical-align: top">
 						<?php
 						if($taxonRank > 140) echo '<div id="family"><b>' . $LANG['FAMILY'] . ':</b> ' . $taxonManager->getTaxonFamily() . '</div>';
 						if(!$taxonManager->echoImages(0,1,0)){
