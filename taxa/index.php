@@ -78,7 +78,7 @@ $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div id="popup-innertext">
-	<h1 class="page-heading"><?= $taxonManager->getTaxonName() ?></h1>
+	<h1 class="page-heading left-breathing-room-rel"><?= $taxonManager->getTaxonName() ?></h1>
 	<?php
 	if($taxonManager->getTaxonName()){
 		if(count($taxonManager->getAcceptedArr()) == 1){
