@@ -146,6 +146,11 @@ span[class="link"]:hover {
   text-decoration: underline;
 }
 
+/* User rights elements associated with occurrences, images, collections, data, etc */
+.rights-span img{
+	width: 100px;
+}
+
 /*
 * OccurrenceSearchSupport
 */
