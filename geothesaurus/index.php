@@ -65,7 +65,7 @@ function listGeoUnits($arr) {
       $referenceText = '';
 
       if($unitArr['acceptedTerm']) {
-         $geoTerm .= ' => ';
+         $geoTerm .= ' &rarr; ';
          $codeStr = '';
          $referenceText = '<a href="index.php?geoThesID=' . htmlspecialchars($unitArr['acceptedID']) . '">' . htmlspecialchars($unitArr['acceptedTerm'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
       } else {
