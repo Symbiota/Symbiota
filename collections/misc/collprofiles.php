@@ -317,6 +317,14 @@ if ($SYMB_UID) {
 			}
 
 			if ($editCode) {
+				$deactivateStyle = '';
+				$deactivateTag = '';
+				$deactivateMsg = '';
+				if ($collData['managementtype'] != 'Live Data'){
+					$deactivateStyle = 'style="pointer-events: none"';
+					$deactivateTag = '&nbsp;(*' . $LANG['DEACTIVATED'] . ')';
+					$deactivateMsg = '<div>* ' . $LANG['DEACTIVATED_MESSAGE'] . '</div>';
+				}
 				?>
 				<button style="margin-bottom: 0.5rem" type="button" onclick="toggleById('controlpanel');" >
 					<?= $LANG['TOGGLE_MAN'] ?>
@@ -326,37 +334,35 @@ if ($SYMB_UID) {
 						<h2><span><?= $LANG['DAT_EDIT'] ?></span></h2>
 						<ul>
 							<?php
-							if ($collData['managementtype'] == 'Live Data') {
-								if (stripos($collData['colltype'], 'observation') !== false) {
-									?>
-									<li>
-										<a href="../editor/observationsubmit.php?collid=<?= $collid ?>">
-											<?= $LANG['SUBMIT_IMAGE_V'] ?>
-										</a>
-									</li>
-									<?php
-								}
+							if (stripos($collData['colltype'], 'observation') !== false) {
 								?>
 								<li>
-									<a href="../editor/occurrenceeditor.php?gotomode=1&collid=<?= $collid ?>">
-										<?= $LANG['ADD_NEW_OCCUR'] ?>
-									</a>
+									<a href="../editor/observationsubmit.php?collid=<?= $collid ?>" <?= $deactivateStyle ?>>
+										<?= $LANG['SUBMIT_IMAGE_V'] ?>
+									</a><?= $deactivateTag ?>
 								</li>
 								<?php
-								if ($collData['colltype'] == 'Preserved Specimens') {
-									?>
-									<li style="margin-left:10px">
-										<a href="../editor/imageoccursubmit.php?collid=<?= $collid ?>">
-											<?= $LANG['CREATE_NEW_REC'] ?>
-										</a>
-									</li>
-									<li style="margin-left:10px">
-										<a href="../editor/skeletalsubmit.php?collid=<?= $collid ?>">
-											<?= $LANG['SKELETAL'] ?>
-										</a>
-									</li>
-									<?php
-								}
+							}
+							?>
+							<li>
+								<a href="../editor/occurrenceeditor.php?gotomode=1&collid=<?= $collid ?>" <?= $deactivateStyle ?>>
+									<?= $LANG['ADD_NEW_OCCUR'] ?>
+								</a><?= $deactivateTag ?>
+							</li>
+							<?php
+							if ($collData['colltype'] == 'Preserved Specimens') {
+								?>
+								<li style="margin-left:10px">
+									<a href="../editor/imageoccursubmit.php?collid=<?= $collid ?>" <?= $deactivateStyle ?>>
+										<?= $LANG['CREATE_NEW_REC'] ?>
+									</a><?= $deactivateTag ?>
+								</li>
+								<li style="margin-left:10px">
+									<a href="../editor/skeletalsubmit.php?collid=<?= $collid ?>" <?= $deactivateStyle ?>>
+										<?= $LANG['SKELETAL'] ?>
+									</a><?= $deactivateTag ?>
+								</li>
+								<?php
 							}
 							?>
 							<li>
@@ -370,14 +376,14 @@ if ($SYMB_UID) {
 								</a>
 							</li>
 							<li>
-								<a href="../reports/labelmanager.php?collid=<?= $collid ?>">
+								<a href="../reports/labelmanager.php?collid=<?= $collid ?>" <?= $deactivateStyle ?>>
 									<?= $LANG['PRINT_LABELS'] ?>
-								</a>
+								</a><?= $deactivateTag ?>
 							</li>
 							<li>
-								<a href="../reports/annotationmanager.php?collid=<?= $collid ?>">
+								<a href="../reports/annotationmanager.php?collid=<?= $collid ?>" <?= $deactivateStyle ?>>
 									<?= $LANG['PRINT_ANNOTATIONS'] ?>
-								</a>
+								</a><?= $deactivateTag ?>
 							</li>
 							<?php
 							if ($collManager->traitCodingActivated()) {
@@ -409,14 +415,15 @@ if ($SYMB_UID) {
 							if ($collData['colltype'] == 'Preserved Specimens') {
 								?>
 								<li>
-									<a href="../loans/index.php?collid=<?= $collid ?>">
+									<a href="../loans/index.php?collid=<?= $collid ?>" <?= $deactivateStyle ?>>
 										<?= $LANG['LOAN_MANAGEMENT'] ?>
-									</a>
+									</a><?= $deactivateTag ?>
 								</li>
 								<?php
 							}
 							?>
 						</ul>
+						<?= $deactivateMsg ?>
 					</section>
 					<?php
 					if ($editCode > 1) {
