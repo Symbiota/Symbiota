@@ -1,23 +1,8 @@
 <footer>
-	<dialog id="accessibility-modal" class="accessibility-dialog" aria-label="<?= $LANG['F_ACCESSIBILITY_OPTIONS']; ?>">
-		<h1><?= $LANG['F_ACCESSIBILITY_OPTIONS']; ?></h1>
-		<p class="bottom-breathing-room-rel"><?= $LANG['F_ACCESSIBILITY_OPTIONS_DESCRIPTION']; ?></p>
-		<button type="button" class="btn btn-primary bottom-breathing-room-rel" onclick="toggleAccessibilityStyles('<?php echo $CLIENT_ROOT . '/includes' . '/' ?>', '<?php echo $CSS_BASE_PATH ?>', '<?php echo $LANG['F_TOGGLE_508_OFF'] ?>', '<?php echo $LANG['F_TOGGLE_508_ON'] ?>')" id="accessibility-button" data-accessibility="accessibility-button">
-			<?= $LANG['F_TOGGLE_508_ON'] ?>
-		</button>
-		<form method="dialog">
-			<button type="submit" class="btn btn-primary"><?= $LANG['F_CLOSE']; ?></button>
-		</form>
-	</dialog>
 	<div class="logo-gallery">
-		<button id="accessibility-options-button" type="button" class="btn btn-primary  accessibility-option-button">
-			<span class="button__item-container">
-				<?= $LANG['F_ACCESSIBILITY_OPTIONS']; ?>
-				<span>
-					<img alt="<?= $LANG['F_ACCESSIBILITY_ICON'] ?>" src="<?= $CLIENT_ROOT ?>/images/accessibility_FILL0_wght400_GRAD0_opsz24.svg" />
-				</span>
-	        </span>
-		</button>
+		<?php
+		//include($SERVER_ROOT . '/accessibility/module.php');
+		?>
 		<a href="https://www.nsf.gov" target="_blank" aria-label="<?= $LANG['F_VISIT_NSF'] ?>">
 			<img src="<?= $CLIENT_ROOT; ?>/images/layout/logo_nsf.gif" alt="<?= $LANG['F_NSF_LOGO'] ?>" />
 		</a>
@@ -38,9 +23,4 @@
 	<p>
 		<?= $LANG['F_POWERED_BY'] ?> <a href="https://symbiota.org/" target="_blank">Symbiota</a>.
 	</p>
-	<script>
-		let toggleOff508 = "<?= $LANG['F_TOGGLE_508_OFF'] ?>";
-		let toggleOn508 = "<?= $LANG['F_TOGGLE_508_ON'] ?>";
-	</script>
-	<script src="<?= $CLIENT_ROOT; ?>/js/symb/accessibility.footer.js?ver=1" type="text/javascript"></script>
 </footer>

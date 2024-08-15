@@ -1,8 +1,20 @@
-function sendRequest(url, method, path, currentEnabledStylesheet) {
+const openDialogButton = document.getElementById('accessibility-options-button');
+const accessibilityDialog = document.getElementById('accessibility-modal');
+
+document.addEventListener('DOMContentLoaded', ()=>{
+	document.getElementById('accessibility-button').disabled=false;
+	updateButtonTextBasedOnEnabledStylesheet();
+});
+
+openDialogButton.addEventListener('click', function() {
+	accessibilityDialog.showModal();
+});
+
+function sendRequest(url, method, currentEnabledStylesheet) {
   return new Promise((resolve, reject) => {
     const xmlRequest = new XMLHttpRequest();
     xmlRequest.open(method, url);
-    xmlRequest.setRequestHeader("Content-Type", "application/json");
+	xmlRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xmlRequest.onreadystatechange = () => {
       if (xmlRequest.readyState === 4) {
         if (xmlRequest.status === 200) {
@@ -12,40 +24,25 @@ function sendRequest(url, method, path, currentEnabledStylesheet) {
         }
       }
     };
-    xmlRequest.send(
-      JSON.stringify({
-        path: path,
-        currentEnabledStylesheet: currentEnabledStylesheet,
-      })
-    );
+    xmlRequest.send("currentEnabledStylesheet=" + currentEnabledStylesheet);
   });
 }
 
-async function toggleAccessibilityStyles(
-  pathToToggleStyles,
-  cssPath,
-  viewCondensed,
-  viewAccessible
-) {
+async function toggleAccessibilityStyles() {
   try {
     const currentEnabledStylesheet = getEnabledLink().getAttribute("href");
     const response = await sendRequest(
-      pathToToggleStyles + "/toggle-styles.php",
+      clientRootPath + "/accessibility/rpc/toggle-styles.php",
       "POST",
-      cssPath,
       currentEnabledStylesheet
     );
-    await handleResponse(response, viewCondensed, viewAccessible);
+    await handleResponse(response);
   } catch (error) {
     console.log(error);
   }
 }
 
-async function handleResponse(
-  stylesheetReferencedInSession,
-  viewCondensed,
-  viewAccessible
-) {
+async function handleResponse(stylesheetReferencedInSession) {
   let links = document.querySelectorAll("[data-accessibility-link]");
 
   for (let i = 0; i < links.length; i++) {
@@ -55,20 +52,17 @@ async function handleResponse(
       links[i].disabled = true;
     }
   }
-  updateButtonTextBasedOnEnabledStylesheet(viewCondensed, viewAccessible);
+  updateButtonTextBasedOnEnabledStylesheet();
 }
 
-function updateButtonTextBasedOnEnabledStylesheet(
-  viewCondensed,
-  viewAccessible
-) {
+function updateButtonTextBasedOnEnabledStylesheet() {
   let enabledLink = getEnabledLink();
   const isAccessibleLinkEnabled =
     enabledLink
       ?.getAttribute("href")
       ?.indexOf("/symbiota/accessibility-compliant.css") > 0;
   let buttons = document.querySelectorAll("[data-accessibility]");
-  const newText = isAccessibleLinkEnabled ? viewCondensed : viewAccessible;
+  const newText = isAccessibleLinkEnabled ? toggleOff508Text : toggleOn508Text;
   for (let j = 0; j < buttons.length; j++) {
     buttons[j].textContent = newText;
   }

@@ -1,6 +1,7 @@
 /* Style and Font imports
   ========================================================================== */
 @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+@import "normalize.slim.css";
 @import "variables.css";
 
 

@@ -1,4 +1,4 @@
-<section id="cat-<?php echo $idStr ?>" class="gridlike-form-row bottom-breathing-room-rel">
+<section id="cat-<?php echo $idStr ?>" class="bottom-breathing-room-rel">
     <div>
         <fieldset name="boop">
             <legend>

@@ -72,6 +72,6 @@ if($LANG_TAG != 'en' && !in_array($LANG_TAG, $AVAILABLE_LANGS)) $LANG_TAG = 'en'
 //Sanitization
 const HTML_SPECIAL_CHARS_FLAGS = ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE;
 
-$CSS_VERSION = '14';
+$CSS_VERSION = '15';
 
 ?>
