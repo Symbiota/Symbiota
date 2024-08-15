@@ -11,5 +11,6 @@
 
 $LANG['H_TITLE'] = 'Guatemala Biodiversity Portal';
 $LANG['H_SUBTITLE']= 'Specimen data from Guatemala’s collections';
+$LANG['H_CLASSIC_SEARCH'] = 'Recherche classique';
 
 ?>
