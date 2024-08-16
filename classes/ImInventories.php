@@ -273,6 +273,9 @@ class ImInventories extends Manager{
 		if($paramArr){
 			$paramArr[] = $this->clTaxaID;
 			$this->typeStr .= 'i';
+			echo $sql.'<br>';
+			echo $this->typeStr.'<br>';
+			print_r($paramArr);
 			if($stmt = $this->conn->prepare($sql)) {
 				$stmt->bind_param($this->typeStr, ...$paramArr);
 				if($stmt->execute()){
