@@ -19,7 +19,8 @@ options=$(getopt -o fhtv -l force,test,help,verbose -n "$SCRIPTNAME" -- "$@")
 if ((BASH_VERSINFO[0] < 3))
 then
   BASHTOOOLD=1
-else if ((BASH_VERSINFO[0] < 5))
+elif ((BASH_VERSINFO[0] < 5))
+then
   if ((BASH_VERSINFO[0] < 4))
   then
     BASHTOOOLD=1
