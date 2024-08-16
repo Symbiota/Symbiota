@@ -9,20 +9,6 @@ $clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILT
 $tid = array_key_exists('tid', $_REQUEST) ? filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $tabIndex = array_key_exists('tabindex', $_POST) ? filter_var($_POST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $action = array_key_exists('action', $_POST) ? htmlspecialchars($_POST['action'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
-$cltype = array_key_exists('cltype', $_POST) ? htmlspecialchars($_POST['cltype'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
-$renametid = array_key_exists('renametid', $_POST) ? filter_var($_POST['renametid'], FILTER_SANITIZE_NUMBER_INT) : '';
-$locality = array_key_exists('locality', $_POST) ? htmlspecialchars($_POST['locality'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
-$habitat = array_key_exists('habitat', $_POST) ? htmlspecialchars($_POST['habitat'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
-$abundance = array_key_exists('abundance', $_POST) ? htmlspecialchars($_POST['abundance'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
-$notes = array_key_exists('notes', $_POST) ? htmlspecialchars($_POST['notes'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
-$internalnotes = array_key_exists('internalnotes', $_POST) ? htmlspecialchars($_POST['internalnotes'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
-$source = array_key_exists('source', $_POST) ? htmlspecialchars($_POST['source'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
-$familyoverride = array_key_exists('familyoverride', $_POST) ? htmlspecialchars($_POST['familyoverride'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
-$voucherID = array_key_exists('voucherID', $_POST) ? htmlspecialchars($_POST['voucherID'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
-$editornotes = array_key_exists('editornotes', $_POST) ? htmlspecialchars($_POST['editornotes'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
-$voccid = array_key_exists('voccid', $_POST) ? htmlspecialchars($_POST['voccid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
-$vnotes = array_key_exists('vnotes', $_POST) ? htmlspecialchars($_POST['vnotes'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
-$veditnotes = array_key_exists('veditnotes', $_POST) ? htmlspecialchars($_POST['veditnotes'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 
 $isEditor = false;
 if($IS_ADMIN || (array_key_exists('ClAdmin', $USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin']))){
@@ -31,49 +17,61 @@ if($IS_ADMIN || (array_key_exists('ClAdmin', $USER_RIGHTS) && in_array($clid, $U
 
 $vManager = new ChecklistVoucherManager();
 
-$status = '';
+$statusStr = '';
 $vManager->setTid($tid);
 $vManager->setClid($clid);
 $followUpAction = '';
 
-if($action == 'renameTransfer'){
+if($action == 'remapTaxon'){
 	$rareLocality = '';
-	if($cltype == 'rarespp') $rareLocality = $locality;
-	if($vManager->renameTaxon($renametid, $rareLocality)){
+	if(!empty($_POST['cltype']) && $_POST['cltype'] == 'rarespp' && !empty($_POST['locality'])) $rareLocality = $_POST['locality'];
+	if($vManager->remapTaxon($_POST['renametid'], $rareLocality)){
 		$followUpAction = 'removeTaxon()';
 	}
 	else echo $vManager->getErrorMessage();
 }
 elseif($action == 'editChecklist'){
-	$eArr = Array();
-	$eArr['habitat'] = $habitat;
-	$eArr['abundance'] = $abundance;
-	$eArr['notes'] = $notes;
-	$eArr['internalnotes'] = $internalnotes;
-	$eArr['source'] = $source;
-	$eArr['familyoverride'] = $familyoverride;
-	$status = $vManager->editClData($eArr);
-	$followUpAction = 'self.close()';
+	if(!$vManager->editClData($_POST)){
+		$followUpAction = 'self.close()';
+	}
+	else{
+		$statusStr = $vManager->getErrorMessage();
+	}
 }
 elseif($action == 'deleteTaxon'){
 	$rareLocality = '';
-	if($cltype == 'rarespp') $rareLocality = $locality;
-	$status = $vManager->deleteTaxon($rareLocality);
-	$followUpAction = 'removeTaxon()';
+	if(!empty($_POST['cltype']) && $_POST['cltype'] == 'rarespp' && !empty($_POST['locality'])) $rareLocality = $_POST['locality'];
+	if($vManager->deleteTaxon($_POST, $rareLocality)){
+		$followUpAction = 'removeTaxon()';
+	}
+	else{
+		$statusStr = $vManager->getErrorMessage();
+	}
 }
 elseif($action == 'editVoucher'){
-	if(!$vManager->editVoucher($voucherID, $notes, $editornotes)){
-		$status = $vManager->getErrorMessage();
+	$voucherID = filter_var($_POST['voucherID'], FILTER_SANITIZE_NUMBER_INT);
+	if(!$vManager->editVoucher($voucherID, $_POST['notes'], $_POST['editornotes'])){
+		$statusStr = $vManager->getErrorMessage();
 	}
 }
 elseif($action == 'deleteVoucher'){
-	if(!$vManager->deleteVoucher($voucherID)){
-		$status = $vManager->getErrorMessage();
+	if(!empty($_POST['voucherID'])){
+		if(!$vManager->deleteVoucher($voucherID)){
+			$statusStr = $vManager->getErrorMessage();
+		}
 	}
 }
 elseif($action == 'Add Voucher'){
 	//For processing requests sent from /collections/individual/index.php
-	$status = $vManager->addVoucher($voccid, $vnotes, $veditnotes);
+	$inputArr = array();
+	if(!empty($_POST['vnotes'])) $inputArr['notes'] = $_POST['vnotes'];
+	if(!empty($_POST['voccid'])) $inputArr['occid'] = $_POST['voccid'];
+	if(!empty($_POST['veditnotes'])) $inputArr['editNotes'] = $_POST['veditnotes'];
+	if($inputArr){
+		if(!$vManager->addVoucher($inputArr)){
+			$statusStr = $vManager->getErrorMessage();
+		}
+	}
 }
 $clArray = $vManager->getChecklistData();
 ?>
@@ -148,17 +146,17 @@ $clArray = $vManager->getChecklistData();
 			body{ background-color: #FFFFFF; }
 		</style>
 	</head>
-	<body onload="<?php  if(!$status) echo $followUpAction; ?>" >
+	<body onload="<?= $followUpAction ?>" >
 		<a class="screen-reader-only" href="#popup-innertext"><?php echo $LANG['SKIP_NAV'] ?></a>
 		<!-- This is inner text! -->
 		<div id='popup-innertext'>
-			<h1 class="page-heading"><?php echo "<i>" . ($vManager->getTaxonName() ?? $LANG['UNKNOWN_TAXON']) . "</i> " . $LANG['IN'] . " " . ($vManager->getClName() ?? $LANG['UNKNOWN_COLLECTION']); ?></h1>
+			<h1 class="page-heading"><?php echo "<i>" . ($vManager->getTaxonName() ?? $LANG['UNKNOWN_TAXON']) . '</i> ' . $LANG['IN'] . " " . ($vManager->getClName() ?? $LANG['UNKNOWN_COLLECTION']); ?></h1>
 			<?php
-			if($status){
+			if($statusStr){
 				?>
 				<hr />
 				<div style='color:red;font-weight:bold;'>
-					<?php echo $status;?>
+					<?= $statusStr;?>
 				</div>
 				<hr />
 				<?php
@@ -168,8 +166,8 @@ $clArray = $vManager->getChecklistData();
 				<div id="tabs" style="margin:10px;">
 					<nav>
 				    <ul>
-						<li><a href="#gendiv"><?php echo htmlspecialchars($LANG['GEN_EDIT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></li>
-						<li><a href="#voucherdiv"><?php echo htmlspecialchars($LANG['VOUCHER_EDIT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></li>
+						<li><a href="#gendiv"><?= $LANG['GEN_EDIT'] ?></a></li>
+						<li><a href="#voucherdiv"><?= $LANG['VOUCHER_EDIT'] ?></a></li>
 						<!--
 						<li><a href="#coorddiv">Coordinate Admin</a></li>
 						-->
@@ -257,7 +255,7 @@ $clArray = $vManager->getChecklistData();
 									<input name="clid" type="hidden" value="<?php echo $vManager->getClid(); ?>" />
 									<input name="cltype" type="hidden" value="<?php echo $clArray['cltype']; ?>" />
 									<input name="locality" type="hidden" value="<?php echo $clArray['locality']; ?>" />
-									<input name="action" type="hidden" value="renameTransfer" />
+									<input name="action" type="hidden" value="remapTaxon" />
 									<button type="submit" name="submitaction"><?php echo $LANG['RENAME']; ?></button>
 								</div>
 							</fieldset>
@@ -279,7 +277,7 @@ $clArray = $vManager->getChecklistData();
 						if($OCCURRENCE_MOD_IS_ACTIVE){
 							?>
 							<div style="float:right;margin-top:10px;">
-								<a href="../collections/list.php?mode=voucher&db=all&usethes=1&reset=1&taxa=<?php echo urlencode(htmlspecialchars($vManager->getTaxonName(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)) . "&targetclid=" . htmlspecialchars($vManager->getClid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "&targettid=" . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?>">
+								<a href="../collections/list.php?mode=voucher&db=all&usethes=1&reset=1&taxa=<?php echo urlencode(htmlspecialchars($vManager->getTaxonName(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)) . "&targetclid=" . $vManager->getClid() . "&targettid=" . $tid; ?>">
 									<img src="../images/link.png" alt="<?= $LANG['TO_COLLECTIONS_LINK']; ?>" style="border:0px;" />
 								</a>
 							</div>
@@ -295,8 +293,8 @@ $clArray = $vManager->getChecklistData();
 								foreach($vArray as $voucherID => $iArray){
 									?>
 									<li>
-										<a href="#" onclick="openPopup('../collections/individual/index.php?occid=<?php echo htmlspecialchars($iArray['occid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>','indpane')">
-											<?php echo htmlspecialchars($iArray['occid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>
+										<a href="#" onclick="openPopup('../collections/individual/index.php?occid=<?= $iArray['occid'] ?>','indpane')">
+											<?= $iArray['occid'] ?>
 										</a>:
 										<?php
 										if($iArray['catalognumber']) echo $iArray['catalognumber'].', ';
@@ -336,7 +334,7 @@ $clArray = $vManager->getChecklistData();
 												</fieldset>
 											</form>
 										</div>
-								
+
 									<?php
 								}
 								?>
