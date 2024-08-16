@@ -21,7 +21,7 @@ then
   BASHTOOOLD=1
 elif ((BASH_VERSINFO[0] < 5))
 then
-  if ((BASH_VERSINFO[0] < 4))
+  if ((BASH_VERSINFO[1] < 4))
   then
     BASHTOOOLD=1
   fi
