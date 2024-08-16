@@ -1,30 +1,172 @@
-#Create configuration files from conf template files
-echo "Creating dbconfiguration file: /config/dbconnection.php"
-cp ../config/dbconnection_template.php ../config/dbconnection.php
-echo "Creating Symbiota configuration file: /config/symbini.php"
-cp ../config/symbini_template.php ../config/symbini.php
-echo "Creating homepage: /index.php"
-cp ../index_template.php ../index.php
-echo "Creating header include: /includes/header.php"
-cp ../includes/header_template.php ../includes/header.php
-cp ../includes/minimalheader_template.php ../includes/minimalheader.php
-echo "Creating Left Menu include: /includes/leftmenu.php"
-cp ../includes/leftmenu_template.php ../includes/leftmenu.php
-echo "Creating footer include: /includes/footer.php"
-cp ../includes/footer_template.php ../includes/footer.php
-echo "Creating head include: /includes/head.php"
-cp ../includes/head_template.php ../includes/head.php
-echo "Creating usage policy include: /includes/usagepolicy.php"
-cp ../includes/usagepolicy_template.php ../includes/usagepolicy.php
+#!/bin/bash
+# Written by Greg Post
+
+# Global variables
+# Do not change these values unless you know what you are doing
+TEMPLATE_SUFFIX='_template'
+TEMPLATE_PATHS=('../config/' '../' '../includes/')
+WRITABLE_PATHS=('../temp' '../content' '../api/storage/framework' '../api/storage/logs')
+
+FORCEWRITE=0
+TESTMODE=0
+VERBOSE=0
+
+options=$(getopt -o fhtv -l force,test,help,verbose -n "$SCRIPTNAME" -- "$@")
+
+#sanity checks
+currentDir=${PWD##*/}
+if [ "$currentDir" != "config" ]
+then
+  echo "This script should be executed in the 'Symbiota'/config folder"
+  exit 1
+fi
+
+#functions
+usage(){ # Function: Print a help message.
+  echo "  Usage: $SCRIPTNAME [-h|--help -t|--test -f|--force -v|--verbose]" 1>&2
+}
+
+printHelp(){
+    echo
+    echo 'Symbiota setup script'
+    echo
+    usage
+cat <<End-of-message
+
+This script creates initial files that can then be customized/configured as desired
+
+    Optional paramters:
+
+        -h |--help     Print this help screen
+        -t |--test     Test execution - makes no changes
+        -f |--force    Force overwrite - will not prompt if a file will be overwritten **DANGER**
+        -v |--verbose  More verbose output
+End-of-message
+    exit 0
+}
+
+copyFromTemplate(){
+
+    local destinationPath="${1}"
+    local regX='(.*)'"$TEMPLATE_SUFFIX"'(.*)'
+    local templateArray
+    
+    echo
+    echo "Searching ${destinationPath} for templates"
+    readarray -d '' templateArray < <(find "${destinationPath}" -maxdepth 1 -name '*'"${TEMPLATE_SUFFIX}"'*'  -print0)
+    for i in "${templateArray[@]}"
+    do
+      echo "found file: $i"
+      if [[ $i =~ $regX ]]
+      then 
+        local destinationFile=${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+      else
+        echo "Error: Could not calculate target filename"
+        exit 1
+      fi
+
+      if [ -f "${destinationFile}" ]
+      then
+        echo "File ${destinationFile} already exists"
+        if [ "$FORCEWRITE" -eq "0" ]
+        then
+          continue
+        fi
+      fi
+
+      if [ "$TESTMODE" -eq "1" ]
+      then
+        echo "cp ${i} ${destinationFile}"
+        continue
+      fi
+
+      if cp "${i}" "${destinationFile}"
+      then
+         echo "Copied ${i} to ${destinationFile}"
+      else
+        echo "Error copying ${i} to ${destinationFile}"
+      fi
+
+    done
+}
+
+# Main
+
+eval set -- "${options}"
+unset options
+
+for var in "$@"
+do
+  case "$var" in
+    -f | --force )
+      FORCEWRITE=1; shift ;;
+    -t | --test )
+      TESTMODE=1; shift ;;
+    -v | --verbose )
+      VERBOSE=1; shift ;;
+    -h | --help )
+      printHelp; shift ;;
+  esac
+done
+
+if [[ "$FORCEWRITE" == "1" && "$TESTMODE" == "1" ]]
+then
+  echo
+  echo 'Error: Cannot set both "test" and "force" modes at the same time.'
+  usage
+  exit 1
+fi
+
+if [[ "$TESTMODE" == "1" ]]
+then
+  echo
+  echo '*******'
+  echo 'Test Mode - no changes will be made'
+  echo
+  echo '*******'
+fi
+
+# Iterate over list of paths that contain template files
+echo
+echo "** Copying template files to destination"
+for relPath in "${TEMPLATE_PATHS[@]}"
+do
+  if ! copyFromTemplate "${relPath}"
+  then
+    echo "An error occured when processing ${relPath}"
+  fi
+done
 
 #Adjust file permission to give write access to certain folders and files
-echo "Adjusting file permissions"
-chmod -R 777 ../temp
-chmod -R 777 ../content/collicon
-chmod -R 777 ../content/dwca
-chmod -R 777 ../content/geolocate
-chmod -R 777 ../content/imglib
-chmod -R 777 ../content/lang
-chmod -R 777 ../content/logs 
-chmod -R 777 ../api/storage/framework 
-chmod -R 777 ../api/storage/logs 
+echo
+echo "** Adjusting file permissions"
+
+for wPath in "${WRITABLE_PATHS[@]}"
+do
+  echo
+  echo "Setting subdirectories of ${wPath} to be writable"
+
+  readarray -d '' writableDirs < <(find "${wPath}" -type d -print0)
+
+  for wDir in ${writableDirs[@]}
+  do
+    if [[ "$VERBOSE" == "1" ]]
+    then
+      echo "chmod 777 $wDir"
+    fi
+
+    if [[ "$TESTMODE" == "1" ]]
+    then
+      continue
+    fi
+
+    if ! chmod 777 "$wDir"
+    then
+      echo "Error setting permission on $wDir"
+    fi
+  done
+done
+
+
+exit 0
+
