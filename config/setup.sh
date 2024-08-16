@@ -10,10 +10,26 @@ WRITABLE_PATHS=('../temp' '../content' '../api/storage/framework' '../api/storag
 FORCEWRITE=0
 TESTMODE=0
 VERBOSE=0
+BASHTOOOLD=0
 
 options=$(getopt -o fhtv -l force,test,help,verbose -n "$SCRIPTNAME" -- "$@")
 
 #sanity checks
+
+if ((BASH_VERSINFO[0] < 3))
+then
+  BASHTOOOLD=1
+else if ((BASH_VERSINFO[0] < 5))
+  if ((BASH_VERSINFO[0] < 4))
+  BASHTOOOLD=1
+fi
+
+if [[ "$BASHTOOOLD" == "1" ]]
+then
+  echo "Sorry, you need at least bash-4.4 to run this script."
+  exit 1
+fi
+
 currentDir=${PWD##*/}
 if [ "$currentDir" != "config" ]
 then
