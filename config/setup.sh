@@ -21,7 +21,9 @@ then
   BASHTOOOLD=1
 else if ((BASH_VERSINFO[0] < 5))
   if ((BASH_VERSINFO[0] < 4))
-  BASHTOOOLD=1
+  then
+    BASHTOOOLD=1
+  fi
 fi
 
 if [[ "$BASHTOOOLD" == "1" ]]
