@@ -181,7 +181,7 @@ function listGeoUnits($arr) {
       function init() {
          try {
 			  window.onbeforeunload = function(e) {
-				  if(window.unsavedChanges) return '<?= $LANG['UNSAVED_CHANGES_WARNING']?>';
+				  if(window.unsavedChanges) return true;
 			  }
             leafletInit();
          } catch(e) {
