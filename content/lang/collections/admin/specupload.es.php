@@ -7,6 +7,7 @@ Language: Español (Spanish)
 
 include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.es.php');
 
+$LANG['HOME'] = 'Inicio';
 $LANG['SPEC_UPLOAD'] = 'Carga de Especímenes';
 $LANG['PATH_EMPTY'] = 'La dirección al archivo está vacía. Por favor seleccione el archivo que va a ser cargado.';
 $LANG['MUST_CSV'] = 'El archivo debe ser separado por comas (.csv), delimitado por tabulaciones (.txt o .tab), archivo ZIP (.zip), o una URL a un Recurso IPT';
