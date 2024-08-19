@@ -150,8 +150,8 @@ $_SESSION['citationvar'] = $searchVar;
 	?>
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
-		<h1 class="page-heading"><?php echo $LANG['SEARCH_RES_LIST']; ?></h1>
-		<div id="tabs" style="margin-bottom: 1rem">
+		<h1 class="page-heading screen-reader-only"><?php echo $LANG['SEARCH_RES_LIST']; ?></h1>
+		<div id="tabs" class="top-breathing-room-rel" style="margin-bottom: 1rem">
 			<ul>
 				<li>
 					<a id="taxatablink" href='<?php echo 'checklist.php?' . htmlspecialchars($searchVar, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE | ENT_QUOTES) . '&taxonfilter=' . htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE | ENT_QUOTES); ?>'>

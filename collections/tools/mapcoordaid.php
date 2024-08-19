@@ -64,7 +64,7 @@ else{
 		</style>
 	</head>
 	<body style="background-color:#ffffff; display:flex; flex-direction:column;">
-		<h1 class="page-heading" style="margin-left:5px;">Taxon Map</h1>
+		<h1 class="page-heading screen-reader-only" style="margin-left:5px;">Taxon Map</h1>
 		<div style="float:right;margin-top:5px;margin-bottom:5px;margin-right:15px;margin-left:5px;">
 			<button name="closebutton" type="button" onclick="self.close()">
 				<?php echo isset($LANG['SAVE_N_CLOSE'])? $LANG['SAVE_N_CLOSE'] :'Save and Close'?>
