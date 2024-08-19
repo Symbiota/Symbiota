@@ -6,6 +6,7 @@ Language: English
 */
 include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.en.php');
 
+$LANG['HOME'] = 'Home';
 $LANG['SPEC_UPLOAD'] = 'Specimen Uploader';
 $LANG['PATH_EMPTY'] = 'File path is empty. Please select the file that is to be loaded.';
 $LANG['MUST_CSV'] = 'File must be comma separated (.csv), tab delimited (.txt or .tab), ZIP file (.zip), or a URL to an IPT Resource';
