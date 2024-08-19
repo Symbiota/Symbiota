@@ -7,6 +7,7 @@ Language: Français (French)
 
 include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.fr.php');
 
+$LANG['HOME'] = 'Accueil';
 $LANG['SPEC_UPLOAD'] = 'Télécharger Spécimens';
 $LANG['PATH_EMPTY'] = 'Le chemin du fichier est vide. Veuillez sélectionner le fichier à charger.';
 $LANG['MUST_CSV'] = 'Le fichier doit être séparé par des virgules (.csv), délimité par des tabulations (.txt ou .tab), un fichier ZIP (.zip) ou une URL vers une ressource IPT';
