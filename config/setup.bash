@@ -29,7 +29,7 @@ fi
 
 if [[ "$BASHTOOOLD" == "1" ]]
 then
-  echo "Sorry, you need at least bash-4.4 to run this script."
+  echo "Sorry, you need at least bash-4.4 to run this script.  Please use setup_pre_4.4.bash"
   exit 1
 fi
 
