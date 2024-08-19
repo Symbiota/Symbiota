@@ -312,6 +312,8 @@ else{
 				drawColor: {opacity: 0.85, fillOpacity: 0.55, color: '#000' }
 				}, setShapeToSearchForm);
 
+			map.mapLayer.on("draw:edited", saveCoordAid);
+
 			if(formShape) {
 				map.drawShape(formShape);
 			}
