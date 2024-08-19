@@ -223,6 +223,7 @@ else{
 				case "polygon":
 					if(polyOutputType === "geoJson") {
 						const geoJsonStr = getField(wktInputId);
+						if(!geoJsonStr) break;
 						try {
 							const geoJson = JSON.parse(geoJsonStr);
 							return { 
