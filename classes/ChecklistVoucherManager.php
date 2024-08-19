@@ -42,7 +42,7 @@ class ChecklistVoucherManager extends ChecklistVoucherAdmin{
 	//Editing functions
 	public function editClData($postArr){
 		$status = false;
-		$inventoryManager = new ImInventories($this->conn);
+		$inventoryManager = new ImInventories();
 		$clTaxaID = $this->getClTaxaID($this->tid);
 		$inventoryManager->setClTaxaID($clTaxaID);
 		$status = $inventoryManager->updateChecklistTaxaLink($postArr);
@@ -53,7 +53,7 @@ class ChecklistVoucherManager extends ChecklistVoucherAdmin{
 	public function remapTaxon($targetTid, $rareLocality = ''){
 		$statusStr = false;
 		if(is_numeric($targetTid)){
-			$inventoryManager = new ImInventories($this->conn);
+			$inventoryManager = new ImInventories();
 			$clTaxaID = $this->getClTaxaID($this->tid);
 			$inventoryManager->setClTaxaID($clTaxaID);
 			//First transfer taxa that
@@ -73,11 +73,11 @@ class ChecklistVoucherManager extends ChecklistVoucherAdmin{
 						$targetArr = $row;
 						$clTaxaIDTarget = $row['clTaxaID'];
 						unset($row['clTaxaID']);
-						if(!$inventoryManager->updateChecklistVouchersByClTaxaID($targetArr)){
+						if(!$inventoryManager->updateChecklistVouchersByClTaxaID(array('clTaxaID' => $clTaxaIDTarget))){
 							$this->errorMessage = 'ERROR transferring vouchers during taxon transfer: ' . $this->conn->error;
 						}
 						//Delete all Vouchers that didn't transfer because they were already linked to target name
-						if(!$inventoryManager->deleteChecklistVouchersByCltaxaid()){
+						if(!$inventoryManager->deleteChecklistVouchersByClTaxaID()){
 							$this->errorMessage = 'ERROR removing vouchers during taxon transfer: ' . $this->conn->error;
 						}
 					}
@@ -119,11 +119,11 @@ class ChecklistVoucherManager extends ChecklistVoucherAdmin{
 
 	public function deleteTaxon($rareLocality = ''){
 		$status = false;
-		$inventoryManager = new ImInventories($this->conn);
+		$inventoryManager = new ImInventories();
 		$clTaxaID = $this->getClTaxaID($this->tid);
 		$inventoryManager->setClTaxaID($clTaxaID);
 		//First delete all linked voucehrs
-		$status = $inventoryManager->deleteChecklistVouchersByCltaxaid();
+		$status = $inventoryManager->deleteChecklistVouchersByClTaxaID();
 		if(!$status) $this->errorMessage = $inventoryManager->getErrorMessage();
 		//Then delete checklist taxa linkage
 		if($status){
@@ -155,6 +155,7 @@ class ChecklistVoucherManager extends ChecklistVoucherAdmin{
 					$voucherData[$r->voucherID]['editornotes'] = $r->editornotes;
 				}
 				$rs->free();
+				$voucherData = $this->cleanOutArray($voucherData);
 			}
 		}
 		return $voucherData;
@@ -163,7 +164,7 @@ class ChecklistVoucherManager extends ChecklistVoucherAdmin{
 	public function editVoucher($voucherID, $notes, $editorNotes){
 		$status = false;
 		if(is_numeric($voucherID)){
-			$inventoryManager = new ImInventories($this->conn);
+			$inventoryManager = new ImInventories();
 			$inventoryManager->setVoucherID($voucherID);
 			$inputArr = array('notes' => $notes, 'editorNotes' => $editorNotes);
 			$status = $inventoryManager->updateChecklistVoucher($inputArr);

@@ -501,7 +501,7 @@ class ChecklistVoucherAdmin extends Manager {
 		$status = false;
 		if(!$clid) $clid = $this->clid;
 		if(is_numeric($tid) && is_numeric($clid)){
-			$inventoryManager = new ImInventories($this->conn);
+			$inventoryManager = new ImInventories();
 			$inputArr = array('tid' => $tid, 'clid' => $clid);
 			if($morpho) $inputArr['morphoSpecies'] = $morpho;
 			$status = $inventoryManager->insertChecklistTaxaLink($inputArr);
@@ -513,7 +513,7 @@ class ChecklistVoucherAdmin extends Manager {
 	protected function insertVoucher($clTaxaID, $occid, $editorNotes = null, $notes = null){
 		$status = false;
 		if(is_numeric($clTaxaID) && is_numeric($occid)){
-			$inventoryManager = new ImInventories($this->conn);
+			$inventoryManager = new ImInventories();
 			$inventoryManager->setClTaxaID($clTaxaID);
 			$inputArr = array('occid' => $occid);
 			if($editorNotes) $inputArr['editorNotes'] = $editorNotes;
@@ -527,7 +527,7 @@ class ChecklistVoucherAdmin extends Manager {
 	public function deleteVoucher($voucherID){
 		$status = false;
 		if(is_numeric($voucherID)){
-			$inventoryManager = new ImInventories($this->conn);
+			$inventoryManager = new ImInventories();
 			$inventoryManager->setVoucherID($voucherID);
 			$status = $inventoryManager->deleteChecklistVoucher();
 			if(!$status) $this->errorMessage = $inventoryManager->getErrorMessage();

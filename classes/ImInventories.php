@@ -269,13 +269,10 @@ class ImInventories extends Manager{
 			$sqlFrag .= $fieldName . ' = ?, ';
 			$paramArr[] = $value;
 		}
-		$sql = 'UPDATE IGNORE fmchklsttaxalink SET '.trim($sqlFrag, ', ').' WHERE (clTaxaID = ?)';
+		$sql = 'UPDATE IGNORE fmchklsttaxalink SET ' . trim($sqlFrag, ', ') . ' WHERE (clTaxaID = ?)';
 		if($paramArr){
 			$paramArr[] = $this->clTaxaID;
 			$this->typeStr .= 'i';
-			echo $sql.'<br>';
-			echo $this->typeStr.'<br>';
-			print_r($paramArr);
 			if($stmt = $this->conn->prepare($sql)) {
 				$stmt->bind_param($this->typeStr, ...$paramArr);
 				if($stmt->execute()){
@@ -331,18 +328,19 @@ class ImInventories extends Manager{
 	public function insertChecklistVoucher($inputArr){
 		$status = false;
 		if($this->clTaxaID && is_numeric($inputArr['occid'])){
-			$sql = 'INSERT IGNORE INTO fmvouchers(clTaxaID';
-			$sqlValues = '?, ';
-			$paramArr = array($this->clTaxaID);
-			$this->typeStr = 'i';
 			$this->setChecklistVoucherFieldMap();
 			$this->setParameterArr($inputArr);
+			$sql = 'INSERT IGNORE INTO fmvouchers(';
+			$paramArr = array();
+			$sqlValues = '';
 			foreach($this->parameterArr as $fieldName => $value){
-				$sql .= ', '.$fieldName;
+				$sql .= $fieldName . ', ';
 				$sqlValues .= '?, ';
 				$paramArr[] = $value;
 			}
-			$sql .= ') VALUES('.trim($sqlValues, ', ').') ';
+			$paramArr[] = $this->clTaxaID;
+			$this->typeStr .= 'i';
+			$sql .= 'clTaxaID) VALUES(' . $sqlValues . '?) ';
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param($this->typeStr, ...$paramArr);
 				if($stmt->execute()){
@@ -427,7 +425,7 @@ class ImInventories extends Manager{
 		return $status;
 	}
 
-	public function deleteChecklistVouchersByCltaxaid(){
+	public function deleteChecklistVouchersByClTaxaID(){
 		$status = false;
 		if($this->clTaxaID){
 			$sql = 'DELETE FROM fmvouchers WHERE clTaxaID = ?';
@@ -562,18 +560,19 @@ class ImInventories extends Manager{
 	public function insertChecklistCoordinates($inputArr){
 		$status = false;
 		if($this->clid && isset($inputArr['tid']) && $inputArr['tid']){
-			$sql = 'INSERT IGNORE INTO fmchklstcoordinates(clid';
-			$sqlValues = '?, ';
-			$paramArr = array($this->clid);
-			$this->typeStr = 'i';
 			$this->setChecklistCoordinatesFieldMap();
 			$this->setParameterArr($inputArr);
+			$sql = 'INSERT IGNORE INTO fmchklstcoordinates(';
+			$sqlValues = '';
+			$paramArr = array();
 			foreach($this->parameterArr as $fieldName => $value){
-				$sql .= ', '.$fieldName;
+				$sql .= $fieldName . ', ';
 				$sqlValues .= '?, ';
 				$paramArr[] = $value;
 			}
-			$sql .= ') VALUES('.trim($sqlValues, ', ').') ';
+			$paramArr[] = $this->clid;
+			$this->typeStr .= 'i';
+			$sql .= 'clid) VALUES(' . $sqlValues . '?) ';
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param($this->typeStr, ...$paramArr);
 				if($stmt->execute()){
@@ -816,6 +815,11 @@ class ImInventories extends Manager{
 
 	//Mics support functions
 	private function setParameterArr($inputArr){
+		//Reset class variables, which is very important if more than one write function is called per class instance
+		unset($this->parameterArr);
+		$this->parameterArr = array();
+		$this->typeStr = '';
+		//Prepare type and value variables used within prepared statement
 		foreach($this->fieldMap as $field => $type){
 			$postField = '';
 			if(isset($inputArr[$field])) $postField = $field;
@@ -828,7 +832,7 @@ class ImInventories extends Manager{
 				$this->typeStr .= $type;
 			}
 		}
-		if(isset($inputArr['clid']) && $inputArr['clid'] && !$this->clid) $this->clid = filter_var($inputArr['clid'], FILTER_SANITIZE_NUMBER_INT);
+		if(!$this->clid && !empty($inputArr['clid'])) $this->clid = filter_var($inputArr['clid'], FILTER_SANITIZE_NUMBER_INT);
 	}
 
 	//Setter and getter functions
