@@ -32,6 +32,7 @@ $LANG['ACCEPTED_TERM'] = 'Término preferido';
 $LANG['SYNONYMS'] = 'Sinónimos';
 $LANG['IS_ACCEPTED'] = 'Término preferido';
 $LANG['SAVE_EDITS'] = 'Guardar ediciones';
+$LANG['UNSAVED_CHANGES_WARNING'] = '¡Advertencia que hay cambios no guardados!';
 $LANG['DEL_GEO_UNIT'] = 'Eliminar unidad geográfica';
 $LANG['CONFIRM_DELETE'] = '¿Está seguro de que desea eliminar este registro?';
 $LANG['CANT_DELETE'] = 'El registro no se puede eliminar hasta que se eliminen todos los registros secundarios';

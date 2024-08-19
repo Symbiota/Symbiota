@@ -32,6 +32,7 @@ $LANG['ACCEPTED_TERM'] = 'Terme préféré';
 $LANG['SYNONYMS'] = 'Synonymes';
 $LANG['IS_ACCEPTED'] = 'Le terme est préféré';
 $LANG['SAVE_EDITS'] = 'Enregistrer les modifications';
+$LANG['UNSAVED_CHANGES_WARNING'] = 'Attention, il y a des modifications non enregistrées !';
 $LANG['DEL_GEO_UNIT'] = 'Supprimer l\'unité géographique';
 $LANG['CONFIRM_DELETE'] = 'Êtes-vous sûr de vouloir supprimer cet enregistrement ?';
 $LANG['CANT_DELETE'] = 'L\'enregistrement ne peut pas être supprimé tant que tous les enregistrements enfants ne sont pas supprimés';

@@ -32,6 +32,7 @@ $LANG['ACCEPTED_TERM'] = 'Preferred term';
 $LANG['SYNONYMS'] = 'Synonyms';
 $LANG['IS_ACCEPTED'] = 'Term is Preferred';
 $LANG['SAVE_EDITS'] = 'Save Edits';
+$LANG['UNSAVED_CHANGES_WARNING'] = 'Warning there are unsaved changes!';
 $LANG['DEL_GEO_UNIT'] = 'Delete Geographic Unit';
 $LANG['CONFIRM_DELETE'] = 'Are you sure you want to delete this record?';
 $LANG['CANT_DELETE'] = 'Record can not be deleted until all child records are deleted';
