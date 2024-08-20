@@ -41,6 +41,7 @@ $LANG['CREATECHECKDET'] = 'Crear Nueva Lista';
 $LANG['EDITCHECKDET'] = 'Editar detalles del Listado de Comprobación';
 $LANG['CHECKNAME'] = 'Nombre del Listado de Comprobación';
 $LANG['CHECKTYPE'] = 'Tipo de Listado de Comprobación';
+$LANG['EXCLUDESPP'] = 'Lista de Especies Excluidas';
 $LANG['RARETHREAT'] = 'Listado de especies raras, amenazadas, protegidas';
 $LANG['GENCHECK'] = 'Listado de Comprobación General';
 $LANG['EXTSERVICE'] = 'Servicio Externo (por ejemplo, iNaturalist) para asociar con esta listado';

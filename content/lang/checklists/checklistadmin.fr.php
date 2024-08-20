@@ -41,6 +41,7 @@ $LANG['CREATECHECKDET'] = 'Créer Nouvelle Liste';
 $LANG['EDITCHECKDET'] = 'Modifier Détails de Liste';
 $LANG['CHECKNAME'] = 'Nom de Liste';
 $LANG['CHECKTYPE'] = 'Type de Liste';
+$LANG['EXCLUDESPP'] = 'Liste d\'Exclusion des Espèces';
 $LANG['RARETHREAT'] = 'Liste d\'esp&egrave;ces rares, menacées et prot&acute;gées';
 $LANG['GENCHECK'] = 'Liste Générale';
 $LANG['EXTSERVICE'] = 'Le Service Externe (par exemple, iNaturalist) &agrave; associer &agrave; cette liste';
