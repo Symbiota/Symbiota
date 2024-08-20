@@ -50,22 +50,23 @@
          - From MySQL commandline run each schema patch: SOURCE /BaseFolderPath/config/schema/3.0/patches/db_schema_patch-3.x.sql
          - Make sure to run the scripts in the correct order e.g. db_schema_patch-3.1.sql, db_schema_patch-3.2.sql, etc.
 
-   NOTE: At this point you should have an operational "out of the box" Symbiota portal.
+      `NOTE: At this point you should have an operational "out of the box" Symbiota portal.`
 
-   4. Homepage
+   6. Homepage
       - Modify index.php. This is your home page or landing page to which will need introductory text, graphics, etc.
-   5. Layout - Within the /includes directory the header.php and footer.php files are used by all  
+   7. Layout - Within the /includes directory the header.php and footer.php files are used by all  
       pages to establish uniform layout. 
-      - header.php: Within file, change /images/layout/defaultheader.jpg
-        to /images/layout/header.jpg. Add your header to /images/layout/
-        folder. Establishing the header using an image is easy, yet more
-        complex header configurations are possible.
-      - footer.php: modify as you did with header.php file.
-   6. Files for style control - Within the css/symbiota folder there are two files you can modify to change the appearance of the portal:
+      - header.php: determines the content of the global page header and menu navigation.  
+      - footer.php: determines the content of the global page footer.  
+   8. Files for style control - Within the css/symbiota folder there are two files you can modify to change the appearance of the portal:
       - variables.css - Modify this file to set global values used across the portal
       - customization.css - Add css selectors to this file to override Symbiota's default styling on specific html elemments 
       - NOTE: Do not modify any other css files as these files may be over written in future updates
-   7. Misc: modify usagepolicy.php as needed  
+   9. Customize language tags
+      - Overide existing language tags or create new tags by modifying the override files in content/lang/templates/
+         - Example: modify content/lang/templates/header.es.override.php to replace the defualt values used when browsing the portal in spanish.
+   10. Misc: 
+      - Modify usagepolicy.php as needed  
 4. Misc configurations and recommendations
    - Install robots.txt file within root directory - The robots.txt file is a standard method used by websites to indicate to visiting web crawlers and other web robots which portions of the website they are allowed to visit and under what conditions. A robots.txt template can be found within the /includes directory. This file should be moved into the domain's root directory, which may or may not be the Symbiota root directory. The file paths listed within the file should be adjusted to match the portal installation path (e.g., start with $CLIENT_ROOT). See links below for more information:
      - https://developers.google.com/search/docs/crawling-indexing/robots/create-robots-txt

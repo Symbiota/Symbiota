@@ -17,14 +17,6 @@ cp ../includes/head_template.php ../includes/head.php
 echo "Creating usage policy include: /includes/usagepolicy.php"
 cp ../includes/usagepolicy_template.php ../includes/usagepolicy.php
 
-#Multilanguage support template files
-echo "Creating multilanguage translation files for header, e.g.: /content/lang/header.en.php"
-cp ../content/lang/header.en_template.php ../content/lang/header.en.php
-cp ../content/lang/header.es_template.php ../content/lang/header.es.php
-echo "Creating multilanguage translation files for index, e.g.: /content/lang/index.en.php"
-cp ../content/lang/index.en_template.php ../content/lang/index.en.php
-cp ../content/lang/index.es_template.php ../content/lang/index.es.php
-
 #Adjust file permission to give write access to certain folders and files
 echo "Adjusting file permissions"
 chmod -R 777 ../temp
