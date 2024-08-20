@@ -7,6 +7,7 @@ else include_once($SERVER_ROOT.'/content/lang/sitemap.en.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $smManager = new SiteMapManager();
+$schemaVersion = $smManager->getSchemaVersion();
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
@@ -28,24 +29,26 @@ $smManager = new SiteMapManager();
 	<?php
 	$displayLeftMenu = (isset($sitemapMenu)?$sitemapMenu:"true");
 	include($SERVER_ROOT.'/includes/header.php');
-	echo '<div class="navpath">';
-	echo '<a href="index.php">' . $LANG['HOME'] . '</a> &gt; ';
-	echo ' <b>' . $LANG['SITEMAP'] . '</b>';
-	echo '</div>';
-	$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
-	$actionPage = $SHOULD_USE_HARVESTPARAMS ? "collections/index.php" : "collections/search/index.php";
 	?>
+	<div class="navpath">
+		<a href="index.php"><?= $LANG['HOME'] ?></a> &gt;&gt;
+		<b><?= $LANG['SITEMAP'] ?></b>
+	</div>
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['SITEMAP'] ?></h1>
 		<div id="sitemap">
 			<h2><?= $LANG['COLLECTIONS'] ?></h2>
 			<ul>
-				<li><a href="<?= $actionPage ?>"><?= $LANG['SEARCHENGINE'] ?></a> - <?= $LANG['SEARCH_COLL'] ?></li>
+				<?php
+				$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
+				$collectionSearchUrl = $SHOULD_USE_HARVESTPARAMS ? 'collections/index.php' : 'collections/search/index.php';
+				?>
+				<li><a href="<?= $collectionSearchUrl ?>"><?= $LANG['SEARCHENGINE'] ?></a> - <?= $LANG['SEARCH_COLL'] ?></li>
 				<li><a href="collections/misc/collprofiles.php"><?= $LANG['COLLECTIONS'] ?></a> - <?= $LANG['LISTOFCOLL'] ?></li>
 				<li><a href="collections/misc/collstats.php"><?= $LANG['COLLSTATS'] ?></a></li>
 				<?php
-				if(isset($ACTIVATE_EXSICCATI) && $ACTIVATE_EXSICCATI){
+				if(!empty($ACTIVATE_EXSICCATI)){
 					echo '<li><a href="collections/exsiccati/index.php">' . $LANG['EXSICC'] . '</a></li>';
 				}
 				?>
@@ -95,7 +98,7 @@ $smManager = new SiteMapManager();
 				$projList = $smManager->getProjectList();
 				if($projList){
 					foreach($projList as $pid => $pArr){
-						echo "<li><a href='projects/index.php?pid=" . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'>" . $pArr["name"] . "</a></li>\n";
+						echo "<li><a href='projects/index.php?pid=" . $pid . "'>" . $pArr["name"] . "</a></li>\n";
 						echo "<li class='nested-li'>Manager: " . $pArr["managers"] . "</li>\n";
 					}
 				}
@@ -222,7 +225,7 @@ $smManager = new SiteMapManager();
 									echo '<li>' . $LANG['CODINGCHARA'] . '</li>';
 									echo '<ul>';
 									foreach($clAdmin as $vClid => $name){
-										echo "<li><a href='" . $CLIENT_ROOT . "/ident/tools/matrixeditor.php?clid=" . htmlspecialchars($vClid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'>" . htmlspecialchars($name, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a></li>";
+										echo "<li><a href='" . $CLIENT_ROOT . "/ident/tools/matrixeditor.php?clid=" . $vClid . "'>" . htmlspecialchars($name, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a></li>";
 									}
 									echo '</ul>';
 								}
@@ -283,7 +286,7 @@ $smManager = new SiteMapManager();
 							if($projList){
 								echo '<li><b>' . $LANG['LISTOFCURR'] . '</b> ' . $LANG['CLICKEDIT'] . '</li>';
 								foreach($projList as $pid => $pArr){
-									echo '<li class="nested-li"><a href="' . $CLIENT_ROOT . '/projects/index.php?pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">' . htmlspecialchars($pArr['name'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
+									echo '<li class="nested-li"><a href="' . $CLIENT_ROOT . '/projects/index.php?pid=' . $pid . '&emode=1">' . htmlspecialchars($pArr['name'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
 								}
 							}
 							else{
@@ -367,11 +370,11 @@ $smManager = new SiteMapManager();
 						<?php
 						if($clAdmin){
 							foreach($clAdmin as $k => $v){
-								echo "<li><a href='" . $CLIENT_ROOT . "/checklists/checklist.php?clid=" . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "&emode=1'>$v</a></li>";
+								echo '<li><a href="' . $CLIENT_ROOT . '/checklists/checklist.php?clid=' . $k . '&emode=1">'. $v . '</a></li>';
 							}
 						}
 						else{
-							echo "<li>" . $LANG['NOTEDITCHECK'] . "</li>";
+							echo '<li>' . $LANG['NOTEDITCHECK'] . '</li>';
 						}
 						?>
 					</ul>
@@ -412,7 +415,7 @@ $smManager = new SiteMapManager();
 						if($collList = $smManager->getCollArr()){
 							foreach($collList as $k => $cArr){
 								echo '<li>';
-								echo '<a href="' . $CLIENT_ROOT . '/collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">';
+								echo '<a href="' . $CLIENT_ROOT . '/collections/misc/collprofiles.php?collid=' . $k . '&emode=1">';
 								echo $cArr['name'];
 								echo '</a>';
 								echo '</li>';
@@ -450,26 +453,26 @@ $smManager = new SiteMapManager();
 								foreach($genObsList as $k => $oArr){
 									?>
 									<li>
-										<a href="collections/editor/observationsubmit.php?collid=<?= htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+										<a href="collections/editor/observationsubmit.php?collid=<?= $k ?>">
 											<?= $oArr['name'] ?>
 										</a>
 									</li>
 									<?php
-									if($oArr['isadmin']) $obsManagementStr .= '<li><a href="collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">' . htmlspecialchars($oArr['name'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a></li>\n";
+									if($oArr['isadmin']) $obsManagementStr .= '<li><a href="collections/misc/collprofiles.php?collid=' . $k . '&emode=1">' . htmlspecialchars($oArr['name'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a></li>\n";
 								}
 								foreach($obsList as $k => $oArr){
 									?>
 									<li>
-										<a href="collections/editor/observationsubmit.php?collid=<?= htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+										<a href="collections/editor/observationsubmit.php?collid=<?= $k ?>">
 											<?= $oArr['name'] ?>
 										</a>
 									</li>
 									<?php
-									if($oArr['isadmin']) $obsManagementStr .= '<li><a href="collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">' . htmlspecialchars($oArr['name'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a></li>\n";
+									if($oArr['isadmin']) $obsManagementStr .= '<li><a href="collections/misc/collprofiles.php?collid=' . $k . '&emode=1">' . htmlspecialchars($oArr['name'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a></li>\n";
 								}
 							}
 							else{
-								echo "<li>" . $LANG['NOOBSPROJ'] ."</li>";
+								echo '<li>' . $LANG['NOOBSPROJ'] . '</li>';
 							}
 							?>
 						</ul>
@@ -485,7 +488,7 @@ $smManager = new SiteMapManager();
 								foreach($genObsList as $k => $oArr){
 									?>
 									<li>
-										<a href="collections/misc/collprofiles.php?collid=<?= htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1">
+										<a href="collections/misc/collprofiles.php?collid=<?= $k ?>&emode=1">
 											<?= $oArr['name'] ?>
 										</a>
 									</li>
@@ -518,7 +521,7 @@ $smManager = new SiteMapManager();
 			</section>
 			<div id="symbiotaschema">
 				<img style="height:1.85rem" src="https://img.shields.io/badge/Symbiota-v<?= $CODE_VERSION ?>-blue.svg" alt="a blue badge depicting Symbiota software version" />
-				<img style="height:1.85rem" src="https://img.shields.io/badge/Schema-v<?= $smManager->getSchemaVersion() ?>-blue.svg" alt="a blue badge depicting Symbiota database schema version" />
+				<img style="height:1.85rem" src="https://img.shields.io/badge/Schema-v<?= $schemaVersion ?>-blue.svg" alt="a blue badge depicting Symbiota database schema version" />
 			</div>
 		</div>
 	</div>
