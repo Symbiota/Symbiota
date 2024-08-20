@@ -146,6 +146,11 @@ span[class="link"]:hover {
   text-decoration: underline;
 }
 
+/* User rights elements associated with occurrences, images, collections, data, etc */
+.rights-span img{
+	width: 100px;
+}
+
 /*
 * OccurrenceSearchSupport
 */
@@ -366,6 +371,10 @@ button.icon-button {
   border-width: 1px;
   border-style: outset;
   border-color: buttonborder;
+}
+
+button.icon-button > svg {
+  fill: var(--light-color);
 }
 
 button.icon-button:hover {

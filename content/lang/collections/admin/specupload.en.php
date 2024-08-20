@@ -6,6 +6,7 @@ Language: English
 */
 include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.en.php');
 
+$LANG['HOME'] = 'Home';
 $LANG['SPEC_UPLOAD'] = 'Specimen Uploader';
 $LANG['PATH_EMPTY'] = 'File path is empty. Please select the file that is to be loaded.';
 $LANG['MUST_CSV'] = 'File must be comma separated (.csv), tab delimited (.txt or .tab), ZIP file (.zip), or a URL to an IPT Resource';
@@ -29,6 +30,7 @@ $LANG['LIST_UPLOAD'] = 'List of Upload Profiles';
 $LANG['UP_MODULE'] = 'Data Upload Module';
 $LANG['CAUTION'] = 'Caution';
 $LANG['REC_REPLACE'] = 'Matching records will be replaced with incoming records';
+$LANG['LAST_UPLOAD_DATE'] = 'Last Upload Date';
 $LANG['NOT_REC'] = 'not recorded';
 $LANG['UP_STATUS'] = 'Upload Status';
 $LANG['PENDING_REPORT'] = 'Pending Data Transfer Report';

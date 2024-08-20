@@ -16,7 +16,22 @@
 1. Download Symbiota code from GitHub repository
    - (https://github.com/BioKIC/Symbiota)
    - Command line checkout (recommended): git clone https://github.com/BioKIC/Symbiota.git
-2. Install Symbiota database schema
+2. Configure the Symbiota Portal
+   1. Run /config/setup.bash (e.g. sudo bash setup.bash)
+      This scripts will attempt to:
+         - find all _template.* files and copy them to a new file at the same location without the '_template' suffix 
+         - set ACL permisions on folders that need to be writable by the web server:
+            - /api/storage/framework
+            - /api/storage/logs
+            - /content/collections/
+            - /content/collicon/
+            - /content/dwca/
+            - /content/geolocate/
+            - /content/logs/
+            - /temp/
+   2. Symbiota initialization configuration
+      - Modify variables within config/symbini.php to match your project environment. See Symbiota configuration help page for more information on this subject.
+3. Install Symbiota database schema
    1. Create new database (e.g. CREATE SCHEMA symbdb CHARACTER SET utf8 COLLATE utf8_general_ci)
    2. Create read-only and read/write users for Symbiota database
       - CREATE USER 'symbreader'@'localhost' IDENTIFIED BY 'password1';
@@ -26,40 +41,33 @@
    3. Load base database schema from scripts: <SymbiotaBaseFolder>/config/schema/3.0/db_schema-3.0.sql
       - Run db_schema-3.0.sql to install the core table structure
       - From MySQL commandline: SOURCE <BaseFolderPath>/config/schema/3.0/db_schema-3.0.sql
-   4. If needed, run database patch scripts to bring database up to current structure
-      - Make sure to run the scripts in the correct order e.g. db_schema_patch-3.1.sql, db_schema_patch-3.2.sql, etc.
-      - From MySQL commandline: SOURCE /BaseFolderPath/config/schema/3.0/patches/db_schema_patch-3.x.sql
-3. Configure the Symbiota Portal - modify following configuration files; running /config/setup.sh will create the following required files and permissions
-   1. Symbiota configuration
-      - rename /config/symbini_template.php to /config/symbini.php.
-      - Modify variables within to match your project environment. See Symbiota configuration help page for more information on this subject.
-   2. Database connection
-      - Rename /config/dbconnection_template.php to /config/dbconnection.php.
-      - Modify with readonly and read/write logins, passwords, and schema names.
-   3. Homepage
-      - Rename /index_template.php to index.php. This is your home page to which will need introductory text, graphics, etc.
-   4. Layout - Within the /includes directory, rename header_template.php to header.php, and
-      footer_template.php to footer.php. The header.php and footer.php files are used by all  
-      pages to establish uniform layout. left_menu.php is needed if a left menu is preferred.
-      - header.php: Within file, change /images/layout/defaultheader.jpg
-        to /images/layout/header.jpg. Add your header to /images/layout/
-        folder. Establishing the header using an image is easy, yet more
-        complex header configurations are possible.
-      - footer.php: modify as you did with header.php file.
-   5. Files for style control - Within the /includes directory, rename head_template.php to head.php
-      The head.php file is included within the <head> tag of each page.
-      Thus, you can modify this file to globally change design of portal.
-   6. Misc: rename usagepolicy_template.php to usagepolicy.php, and modify as needed
-4. File permissions - the web server needs write access to the following files and their subdirectories (e.g. sudo chmod -R 777 temp/)
-   - /api/storage/framework
-   - /api/storage/logs
-   - /content/collections/
-   - /content/collicon/
-   - /content/dwca/
-   - /content/geolocate/
-   - /content/logs/
-   - /temp/
-5. Misc configurations and recommendations
+   4. Modify config/dbconnection.php with readonly and read/write logins, passwords, and schema (DB) names.
+   5. If needed, run database patch scripts to bring database up to current structure
+      - Method 1: Using a web browser
+         - Navigate to <SymbiotaServer>/admin/schemamanager.php
+         - Follow the prompts provided by the database schema assistant
+      - Method 2: MySQL commandline
+         - From MySQL commandline run each schema patch: SOURCE /BaseFolderPath/config/schema/3.0/patches/db_schema_patch-3.x.sql
+         - Make sure to run the scripts in the correct order e.g. db_schema_patch-3.1.sql, db_schema_patch-3.2.sql, etc.
+
+      `NOTE: At this point you should have an operational "out of the box" Symbiota portal.`
+
+   6. Homepage
+      - Modify index.php. This is your home page or landing page to which will need introductory text, graphics, etc.
+   7. Layout - Within the /includes directory the header.php and footer.php files are used by all  
+      pages to establish uniform layout. 
+      - header.php: determines the content of the global page header and menu navigation.  
+      - footer.php: determines the content of the global page footer.  
+   8. Files for style control - Within the css/symbiota folder there are two files you can modify to change the appearance of the portal:
+      - variables.css - Modify this file to set global values used across the portal
+      - customization.css - Add css selectors to this file to override Symbiota's default styling on specific html elemments 
+      - NOTE: Do not modify any other css files as these files may be over written in future updates
+   9. Customize language tags
+      - Overide existing language tags or create new tags by modifying the override files in content/lang/templates/
+         - Example: modify content/lang/templates/header.es.override.php to replace the defualt values used when browsing the portal in spanish.
+   10. Misc: 
+      - Modify usagepolicy.php as needed  
+4. Misc configurations and recommendations
    - Install robots.txt file within root directory - The robots.txt file is a standard method used by websites to indicate to visiting web crawlers and other web robots which portions of the website they are allowed to visit and under what conditions. A robots.txt template can be found within the /includes directory. This file should be moved into the domain's root directory, which may or may not be the Symbiota root directory. The file paths listed within the file should be adjusted to match the portal installation path (e.g., start with $CLIENT_ROOT). See links below for more information:
      - https://developers.google.com/search/docs/crawling-indexing/robots/create-robots-txt
      - https://en.wikipedia.org/wiki/Robots.txt

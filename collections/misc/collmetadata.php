@@ -28,7 +28,7 @@ $statusStr = '';
 if ($isEditor) {
 	if ($action == 'saveEdits') {
 		$statusStr = $collManager->collectionUpdate($_POST);
-		if ($statusStr === true) { 
+		if ($statusStr === true) {
 			header('Location: collprofiles.php?collid=' . $collid);
 		} else {
 			$statusStr = $collManager->getErrorMessage();
@@ -245,8 +245,13 @@ $collManager->cleanOutArr($collData);
 		.field-label {}
 
 		.max-width-fit-75 {
-			max-width: 100%;
+			max-width: 90%;
 			width: 75rem;
+		}
+
+		.url-input{
+			max-width: 100%;
+			width:600px;
 		}
 	</style>
 </head>
@@ -302,7 +307,7 @@ $collManager->cleanOutArr($collData);
 									</span>
 									<input id="institutionCode" type="text" name="institutionCode" value="<?php echo ($collid ? $collData['institutioncode'] : ''); ?>" required />
 									<a id="instcodeinfo" href="#" onclick="return false" tabindex="0"	>
-										<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_INST_CODE'] ?>"/>
+										<img src="../../images/info.png" style="width:1.2em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_INST_CODE'] ?>"/>
 									</a>
 									<span id="instcodeinfodialog" aria-live="polite">
 										<?php
@@ -322,7 +327,7 @@ $collManager->cleanOutArr($collData);
 									</span>
 									<input id="collectionCode" type="text" name="collectionCode" value="<?php echo ($collid ? $collData['collectioncode'] : ''); ?>" />
 									<a id="collcodeinfo" href="#" onclick="return false" tabindex="0">
-										<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_COLL_CODE'] ?>"/>
+										<img src="../../images/info.png" style="width:1.2em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_COLL_CODE'] ?>"/>
 									</a>
 									<span id="collcodeinfodialog" aria-live="polite">
 										<?php
@@ -348,7 +353,7 @@ $collManager->cleanOutArr($collData);
 								<span class="field-elem">
 									<label for="decimallatitude"> <?php echo htmlspecialchars($LANG['LAT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>: </label>
 									<input id="decimallatitude" name="latitudeDecimal" type="text" value="<?php echo ($collid ? $collData["latitudedecimal"] : ''); ?>" />
-									<a href="#" onclick="openPopup('../tools/mappointaid.php?errmode=0');return false;" tabindex="0"><img src="../../images/world.png" alt="<?php echo $LANG['MAP'] ?>" style="width:12px;" /></a>
+									<a href="#" onclick="openPopup('../tools/mappointaid.php?errmode=0');return false;" tabindex="0"><img src="../../images/world.png" alt="<?php echo $LANG['MAP'] ?>" style="width:1.2em;" /></a>
 								</span>
 							</div>
 							<div class="field-block">
@@ -383,13 +388,13 @@ $collManager->cleanOutArr($collData);
 								<span class="field-elem">
 									<span class="screen-reader-only">
 										<?php
-											echo $LANG['EXPLAIN_PUBLIC'] . ' ';
+										echo $LANG['EXPLAIN_PUBLIC'] . ' ';
 										?>
 									</span>
 									<input id="publicEdits" type="checkbox" name="publicEdits" value="1" <?php echo ($collData && $collData['publicedits'] ? 'CHECKED' : ''); ?> />
 									<label for="publicEdits"> <?php echo htmlspecialchars($LANG['ALLOW_PUBLIC_EDITS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?> </label>
 									<a id="peditsinfo" href="#" onclick="return false" tabindex="0">
-										<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_PUB_EDITS'] ?>"/>
+										<img src="../../images/info.png" style="width:1.2em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_PUB_EDITS'] ?>"/>
 									</a>
 									<span id="peditsinfodialog" aria-live="polite">
 										<?php echo $LANG['EXPLAIN_PUBLIC'] ?>
@@ -399,15 +404,15 @@ $collManager->cleanOutArr($collData);
 							<div class="field-block">
 								<span class="field-elem">
 								<a class="screen-reader-only">
-										<?php
-											echo $LANG['LEGAL_DOC'] . ' ';
-										?>
+									<?php
+									echo $LANG['LEGAL_DOC'] . ' ';
+									?>
 								</a>
 								<label for="rights"> <?php echo htmlspecialchars($LANG['LICENSE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>: </label>
 								<?php
 									if (isset($RIGHTS_TERMS)) {
 										?>
-										<select id="rights" name="rights" class="max-width-fit-75">
+										<select id="rights" name="rights">
 											<?php
 											$hasOrphanTerm = true;
 											if (!$collid) $hasOrphanTerm = false;
@@ -435,7 +440,7 @@ $collManager->cleanOutArr($collData);
 									}
 									?>
 									<a id="rightsinfo" href="#" onclick="return false" tabindex="0">
-										<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_INFO_RIGHTS'] ?>"/>
+										<img src="../../images/info.png" style="width:1.2em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_INFO_RIGHTS'] ?>"/>
 									</a>
 									<span id="rightsinfodialog" aria-live="polite">
 										<?php
@@ -456,7 +461,7 @@ $collManager->cleanOutArr($collData);
 									</span>
 									<input type="text" id="rightsHolder" name="rightsHolder" value="<?php echo ($collid ? $collData["rightsholder"] : ''); ?>" style="max-width: 100%; width:600px" />
 									<a id="rightsholderinfo" href="#" onclick="return false" tabindex="0">
-										<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_INFO_RIGHTS_H'] ?>"/>
+										<img src="../../images/info.png" style="width:1.2em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_INFO_RIGHTS_H'] ?>"/>
 									</a>
 									<span id="rightsholderinfodialog" aria-live="polite">
 										<?php
@@ -476,7 +481,7 @@ $collManager->cleanOutArr($collData);
 									</span>
 									<input type="text" id="accessRights" name="accessRights" value="<?php echo ($collid ? $collData["accessrights"] : ''); ?>" style="max-width: 100%; width:600px" />
 									<a id="accessrightsinfo" href="#" onclick="return false" tabindex="0">
-										<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo htmlspecialchars((isset($LANG['MORE_INFO_ACCESS_RIGHTS']) ? $LANG['MORE_INFO_ACCESS_RIGHTS'] : 'More information about Access Rights'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"/>
+										<img src="../../images/info.png" style="width:1.2em;" alt="<?php echo (isset($LANG['MORE_INFO']) ? $LANG['MORE_INFO'] : 'Show more information'); ?>" title="<?php echo htmlspecialchars((isset($LANG['MORE_INFO_ACCESS_RIGHTS']) ? $LANG['MORE_INFO_ACCESS_RIGHTS'] : 'More information about Access Rights'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"/>
 									</a>
 									<span id="accessrightsinfodialog" aria-live="polite">
 										<?php
@@ -497,9 +502,9 @@ $collManager->cleanOutArr($collData);
 											<option value="Observations" <?php echo ($collid && $collData["colltype"] == 'Observations' ? 'SELECTED' : ''); ?>><?php echo $LANG['OBSERVATIONS']; ?></option>
 											<option value="General Observations" <?php echo ($collid && $collData["colltype"] == 'General Observations' ? 'SELECTED' : ''); ?>><?php echo $LANG['PERS_OBS_MAN']; ?></option>
 										</select>
-										
+
 										<a id="colltypeinfo" href="#" onclick="return false" tabindex="0">
-											<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_COL_TYPE']; ?>"/>
+											<img src="../../images/info.png" style="width:1.2em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_COL_TYPE']; ?>"/>
 										</a>
 										<span id="colltypeinfodialog" aria-live="polite">
 											<?php echo $LANG['COL_TYPE_DEF'] ?>
@@ -508,16 +513,15 @@ $collManager->cleanOutArr($collData);
 								</div>
 								<div class="field-block">
 									<fieldset>
-										<legend> <?php echo htmlspecialchars($LANG['MANAGEMENT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>: </legend>
-										
+										<legend>
+											<?= $LANG['MANAGEMENT'] ?>
+											<a id="managementinfo" href="#" onclick="return false" tabindex="0">
+												<img src="../../images/info.png" style="width:1.1em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_INFO_TYPE'] ?>"/>
+											</a>
+										</legend>
 										<input class="top-breathing-room-rel-sm" id="snapshot" type="radio" name="managementType" value="Snapshot" CHECKED> <label for="snapshot">  <?php echo $LANG['SNAPSHOT']; ?> </label> <br/>
 										<input id="liveData" type="radio" name="managementType" value="Live Data" <?php echo ($collid && $collData['managementtype'] == 'Live Data' ? 'CHECKED' : ''); ?>> <label for="liveData"> <?php echo $LANG['LIVE_DATA']; ?> </label> <br/>
 										<input id="aggregate" type="radio" name="managementType" value="Aggregate" <?php echo ($collid && $collData['managementtype'] == 'Aggregate' ? 'CHECKED' : ''); ?>> <label for="aggregate"> <?php echo $LANG['AGGREGATE']; ?> </label>
-										
-										<a id="managementinfo" href="#" onclick="return false" tabindex="0">
-											<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_INFO_TYPE'] ?>"/>
-										</a>
-
 										<script src="../../js/symb/collections.misc.collmetadata.js"></script>
 									</fieldset>
 									<span id="managementinfodialog" aria-live="polite">
@@ -528,26 +532,26 @@ $collManager->cleanOutArr($collData);
 							}
 							?>
 							<div class="field-block">
-									<fieldset>
-										<legend> <?php echo htmlspecialchars($LANG['GUID_SOURCE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>: </legend>										
-										<input class="top-breathing-room-rel-sm" id="occurrenceId" type="radio" name="guidTarget" value="occurrenceId" CHECKED> <label for="occurrenceId">  <?php echo (isset($LANG['OCCURRENCE_ID']) ? $LANG['OCCURRENCE_ID'] : 'occurrenceID GUID'); ?> </label> <br/>
-										<input id="catalogNumber" type="radio" name="guidTarget" value="catalogNumber" <?php echo ($collid && $collData['guidtarget'] == 'catalogNumber' ? 'CHECKED' : ''); ?>> <label for="catalogNumber"> <?php echo (isset($LANG['CAT_NUM']) ? $LANG['CAT_NUM'] : 'Catalog Number'); ?> </label> <br/>
-										<input id="symbiotaUUID" type="radio" name="guidTarget" value="symbiotaUUID" <?php echo ($collid && $collData['guidtarget'] == 'symbiotaUUID' ? 'CHECKED' : ''); ?>> <label for="symbiotaUUID">  <?php echo (isset($LANG['SYMB_GUID']) ? $LANG['SYMB_GUID'] : 'Symbiota Generated GUID (UUID)'); ?> </label>
-										
+								<fieldset>
+									<legend>
+										<?= $LANG['GUID_SOURCE'] ?>
 										<a id="guidinfo" href="#" onclick="return false" tabindex="0">
-											<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_INFO_GUID'] ?>"/>
+											<img src="../../images/info.png" style="width:1.1em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_INFO_GUID'] ?>"/>
 										</a>
-
-										<script src="../../js/symb/collections.misc.collmetadata.js"></script>
-									</fieldset>
-									<span id="guidinfodialog" aria-live="polite">
-										<?php
-										echo $LANG['OCCID_DEF_1'];
-										echo ' <a href="http://rs.tdwg.org/dwc/terms/index.htm#occurrenceID" target="_blank">';
-										echo $LANG['OCCURRENCEID'] . '</a>';
-										echo (isset($LANG['OCCID_DEF_2']) ? ' ' . $LANG['OCCID_DEF_2'] : '');
-										?>
-									</span>
+									</legend>
+									<input class="top-breathing-room-rel-sm" id="occurrenceId" type="radio" name="guidTarget" value="occurrenceId" CHECKED> <label for="occurrenceId">  <?php echo (isset($LANG['OCCURRENCE_ID']) ? $LANG['OCCURRENCE_ID'] : 'occurrenceID GUID'); ?> </label> <br/>
+									<input id="catalogNumber" type="radio" name="guidTarget" value="catalogNumber" <?php echo ($collid && $collData['guidtarget'] == 'catalogNumber' ? 'CHECKED' : ''); ?>> <label for="catalogNumber"> <?php echo (isset($LANG['CAT_NUM']) ? $LANG['CAT_NUM'] : 'Catalog Number'); ?> </label> <br/>
+									<input id="symbiotaUUID" type="radio" name="guidTarget" value="symbiotaUUID" <?php echo ($collid && $collData['guidtarget'] == 'symbiotaUUID' ? 'CHECKED' : ''); ?>> <label for="symbiotaUUID">  <?php echo (isset($LANG['SYMB_GUID']) ? $LANG['SYMB_GUID'] : 'Symbiota Generated GUID (UUID)'); ?> </label>
+									<script src="../../js/symb/collections.misc.collmetadata.js"></script>
+								</fieldset>
+								<span id="guidinfodialog" aria-live="polite">
+									<?php
+									echo $LANG['OCCID_DEF_1'];
+									echo ' <a href="http://rs.tdwg.org/dwc/terms/index.htm#occurrenceID" target="_blank">';
+									echo $LANG['OCCURRENCEID'] . '</a>';
+									echo (isset($LANG['OCCID_DEF_2']) ? ' ' . $LANG['OCCID_DEF_2'] : '');
+									?>
+								</span>
 							</div>
 							<?php
 							if (isset($GBIF_USERNAME) && isset($GBIF_PASSWORD) && isset($GBIF_ORG_KEY) && $GBIF_ORG_KEY) {
@@ -557,7 +561,7 @@ $collManager->cleanOutArr($collData);
 									<span class="field-elem">
 										GBIF <input type="checkbox" name="publishToGbif" value="1" onchange="checkGUIDSource(this.form);" <?php echo ($collData['publishtogbif'] ? 'CHECKED' : ''); ?> />
 										<a id="pubagginfo" href="#" onclick="return false" tabindex="0">
-											<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_INFO_AGGREGATORS'] ?>"/>
+											<img src="../../images/info.png" style="width:1.2em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_INFO_AGGREGATORS'] ?>"/>
 										</a>
 										<!--
 										<span>
@@ -575,11 +579,11 @@ $collManager->cleanOutArr($collData);
 							<div class="field-block">
 								<div class="sourceurl-div" style="display:<?php echo ($collData["managementtype"] == 'Live Data' ? 'none' : 'inline'); ?>">
 									<span class="field-label"><?php echo $LANG['SOURCE_REC_URL'] ?>:</span>
-									
+
 									<span class="field-elem">
-										<input type="text" name="individualUrl" class="max-width-fit-75" value="<?php echo ($collid ? $collData["individualurl"] : ''); ?>" title="<?php echo $LANG['DYNAMIC_LINK_REC'] ?>" />
+										<input type="text" name="individualUrl" class="url-input" value="<?php echo ($collid ? $collData["individualurl"] : ''); ?>" title="<?php echo $LANG['DYNAMIC_LINK_REC'] ?>" />
 										<a id="sourceurlinfo" href="#" onclick="return false" tabindex="0">
-											<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_INFO_SOURCE'] ?>"/>
+											<img src="../../images/info.png" style="width:1.2em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_INFO_SOURCE'] ?>"/>
 										</a>
 										<span id="sourceurlinfodialog" aria-live="polite">
 											<?php
@@ -602,9 +606,9 @@ $collManager->cleanOutArr($collData);
 									</span>
 									<span class="icon-elem" style="display:<?php echo (($collid && $collData["icon"]) ? 'inline' : 'none'); ?>">
 										<label for="iconurl"><?= $LANG['ICON_URL']; ?>: </label>
-										<input style="max-width: 100%; width:600px;" type='text' name='iconUrl' id='iconurl' value="<?php echo ($collid ? $collData["icon"] : ''); ?>" onchange="verifyIconURL(this.form);" />
+										<input class="url-input" type='text' name='iconUrl' id='iconurl' value="<?php echo ($collid ? $collData["icon"] : ''); ?>" onchange="verifyIconURL(this.form);" />
 									</span>
-									<a id="iconinfo" href="#" onclick="return false" title="<?php echo $LANG['WHAT_ICON'] ?>" tabindex="0"><img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO'] ?>"/></a>
+									<a id="iconinfo" href="#" onclick="return false" title="<?php echo $LANG['WHAT_ICON'] ?>" tabindex="0"><img src="../../images/info.png" style="width:1.2em;" alt="<?php echo $LANG['MORE_INFO'] ?>"/></a>
 									<span id="iconinfodialog" aria-live="polite">
 										<?php echo $LANG['UPLOAD_ICON'] ?>
 									</span>
@@ -631,7 +635,7 @@ $collManager->cleanOutArr($collData);
 										</span>
 										<input id="sortSeq" type="text" name="sortSeq" value="<?php echo ($collid ? $collData["sortseq"] : ''); ?>" />
 										<a id="sortinfo" href="#" onclick="return false" tabindex="0">
-											<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_SORTING'] ?>"/>
+											<img src="../../images/info.png" style="width:1.2em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_SORTING'] ?>"/>
 										</a>
 										<span id="sortinfodialog" aria-live="polite">
 											<?php echo $LANG['LEAVE_IF_ALPHABET'] ?>
@@ -651,7 +655,7 @@ $collManager->cleanOutArr($collData);
 									</span>
 									<input id="collectionID" type="text" name="collectionID" value="<?php echo ($collid ? $collData["collectionid"] : ''); ?>" style="max-width: 100%; width:400px" />
 									<a id="collectionidinfo" href="#" onclick="return false" tabindex="0">
-										<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_INFO'] ?>"/>
+										<img src="../../images/info.png" style="width:1.2em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_INFO'] ?>"/>
 									</a>
 									<span id="collectionidinfodialog" aria-live="polite">
 										<?php echo $LANG['EXPLAIN_COLLID'] .

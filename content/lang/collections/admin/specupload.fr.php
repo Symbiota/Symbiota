@@ -7,6 +7,7 @@ Language: Français (French)
 
 include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.fr.php');
 
+$LANG['HOME'] = 'Accueil';
 $LANG['SPEC_UPLOAD'] = 'Télécharger Spécimens';
 $LANG['PATH_EMPTY'] = 'Le chemin du fichier est vide. Veuillez sélectionner le fichier à charger.';
 $LANG['MUST_CSV'] = 'Le fichier doit être séparé par des virgules (.csv), délimité par des tabulations (.txt ou .tab), un fichier ZIP (.zip) ou une URL vers une ressource IPT';
@@ -30,6 +31,7 @@ $LANG['LIST_UPLOAD'] = 'Liste des Profils de Téléchargement';
 $LANG['UP_MODULE'] = 'Module de Téléchargement';
 $LANG['CAUTION'] = 'Avertir';
 $LANG['REC_REPLACE'] = 'Enregistrements correspondants seront remplacés par les enregistrements entrants';
+$LANG['LAST_UPLOAD_DATE'] = 'Date du Dernier Téléchargement';
 $LANG['NOT_REC'] = 'pas enregistré';
 $LANG['UP_STATUS'] = 'État du Téléchargement';
 $LANG['PENDING_REPORT'] = 'Rapport de Transfert de Données en Attente';
