@@ -1359,15 +1359,15 @@ class OccurrenceIndividual extends Manager{
 	}
 
 	public function activateOrcidID($inStr){
-		$retStr = $inStr;
+		$retStr = $this->cleanOutStr($inStr);
 		$m = array();
-		if(preg_match('#((https://orcid.org/)?\d{4}-\d{4}-\d{4}-\d{3}[0-9X])#', $inStr, $m)){
+		if(preg_match('#((https://orcid.org/)?\d{4}-\d{4}-\d{4}-\d{3}[0-9X])#', $retStr, $m)){
 			$orcidAnchor = $m[1];
 			if(substr($orcidAnchor,5) != 'https') $orcidAnchor = 'https://orcid.org/' . $orcidAnchor;
 			$orcidAnchor = '<a href="' . $orcidAnchor . '" target="_blank">' . $m[1] . '</a>';
 			$retStr = str_replace($m[1], $orcidAnchor, $retStr);
 		}
-		return $this->cleanOutStr($retStr);
+		return $retStr;
 	}
 
 	// Setters and getters

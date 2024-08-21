@@ -78,7 +78,7 @@ $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div id="popup-innertext">
-	<h1 class="page-heading left-breathing-room-rel"><?= $taxonManager->getTaxonName() ?></h1>
+	<h1 class="page-heading screen-reader-only"><?= $taxonManager->getTaxonName() ?></h1>
 	<?php
 	if($taxonManager->getTaxonName()){
 		if(count($taxonManager->getAcceptedArr()) == 1){
@@ -200,7 +200,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							if(isset($MAP_THUMBNAILS) && $MAP_THUMBNAILS) $url = $taxonManager->getGoogleStaticMap();
 							else $url = $CLIENT_ROOT.'/images/mappoint.png';
 							if($OCCURRENCE_MOD_IS_ACTIVE && $taxonManager->getDisplayLocality()){
-								$gAnchor = "openMapPopup('" . $taxonManager->getTid() . "'," . $clid . ','. (!empty($GOOGLE_MAP_KEY) ? 'false' : 'true') . ")";
+								$gAnchor = "openMapPopup('" . $taxonManager->getTid() . "'," . ($clid ? $clid:0) . ','. (!empty($GOOGLE_MAP_KEY) ? 'false' : 'true') . ")";
 							}
 							if($mapSrc = $taxonManager->getMapArr()){
 								$url = array_shift($mapSrc);

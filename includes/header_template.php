@@ -40,7 +40,7 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
 				?>
 			</nav>
 			<div class="top-brand">
-				<a href="https://symbiota.org">
+				<a href="<?= $CLIENT_ROOT ?>">
 					<div class="image-container">
 						<img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="Symbiota logo">
 					</div>
