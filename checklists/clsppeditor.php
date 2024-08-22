@@ -57,18 +57,6 @@ elseif($action == 'deleteVoucher'){
 		}
 	}
 }
-elseif($action == 'Add Voucher'){
-	//For processing requests sent from /collections/individual/index.php
-	$inputArr = array();
-	if(!empty($_POST['vnotes'])) $inputArr['notes'] = $_POST['vnotes'];
-	if(!empty($_POST['voccid'])) $inputArr['occid'] = $_POST['voccid'];
-	if(!empty($_POST['veditnotes'])) $inputArr['editNotes'] = $_POST['veditnotes'];
-	if($inputArr){
-		if(!$vManager->addVoucher($inputArr)){
-			$statusStr = $vManager->getErrorMessage();
-		}
-	}
-}
 $clArray = $vManager->getChecklistData();
 ?>
 <!DOCTYPE html>

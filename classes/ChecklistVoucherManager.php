@@ -173,20 +173,6 @@ class ChecklistVoucherManager extends ChecklistVoucherAdmin{
 		return $status;
 	}
 
-	public function addVoucher($vOccId, $vNotes, $vEditNotes){
-		$status = false;
-		if(is_numeric($vOccId) && $this->clid){
-			$status = $this->addVoucherRecord($vOccId, $vNotes, $vEditNotes);
-			if(!$status){
-				$tid = $this->getTidInterpreted($vOccId);
-				if($clTaxaID = $this->insertChecklistTaxaLink($tid, $this->clid)){
-					$status = $this->insertVoucher($clTaxaID, $vOccId, $vNotes, $vEditNotes);
-				}
-			}
-		}
-		return $status;
-	}
-
 	private function addVoucherRecord($vOccId, $vNotes, $vEditNotes){
 		//Checklist-taxon combination already exists
 		$sql = 'SELECT DISTINCT o.occid, ctl.tid '.
