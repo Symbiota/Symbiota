@@ -166,17 +166,14 @@ class TaxonomyUtilities {
 					}
 				}
 				//Check the retArr[author] array for cultivar epithet, tradename, author
-
 				if (preg_match('/[“"]([^”"]+)[”"]/', $retArr['author'], $matches)) {
 					$retArr['cultivarepithet'] = $matches[1];
 					$retArr['author'] = str_replace($matches[0], '', $retArr['author']);
 				}
-
 				if (preg_match('/\b[A-Z][A-Z0-9]+\b/', $retArr['author'], $matches)) {
 					$retArr['tradename'] = $matches[0];
 					$retArr['author'] = str_replace($matches[0], '', $retArr['author']);
 				}
-
 				if (empty($retArr['author']))
 					$retArr['author'] = " ";
 				if (preg_match_all('/\b[A-Z]\.?\s[A-Z][a-z]+\b/', $retArr['author'], $matches)) {
