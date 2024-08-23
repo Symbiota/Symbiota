@@ -332,9 +332,9 @@ class OccurrenceCleaner extends Manager{
 	//Bad countries
 	public function getBadCountryCount(){
 		$retCnt = 0;
-		$sql = 'SELECT COUNT(DISTINCT o.country) AS cnt '.
-		'FROM omoccurrences o LEFT JOIN lkupcountry l ON o.country = l.countryname '.
-		'WHERE o.country IS NOT NULL AND o.collid = '.$this->collid.' AND l.countryid IS NULL ';
+		$sql = 'SELECT COUNT(DISTINCT country) AS cnt
+			FROM omoccurrences
+			WHERE country IS NOT NULL AND collid = '.$this->collid.' AND country NOT IN(SELECT geoterm FROM geographicthesaurus WHERE geolevel = 50)';
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
 			$retCnt = $r->cnt;
@@ -345,10 +345,10 @@ class OccurrenceCleaner extends Manager{
 
 	public function getBadCountryArr(){
 		$retArr = array();
-		$sql = 'SELECT country, count(o.occid) as cnt '.
-			'FROM omoccurrences o LEFT JOIN lkupcountry l ON o.country = l.countryname '.
-			'WHERE o.country IS NOT NULL AND o.collid = '.$this->collid.' AND l.countryid IS NULL '.
-			'GROUP BY o.country ';
+		$sql = 'SELECT country, count(occid) as cnt
+			FROM omoccurrences
+			WHERE country IS NOT NULL AND collid = '.$this->collid.' AND country NOT IN(SELECT geoterm FROM geographicthesaurus WHERE geolevel = 50)
+			GROUP BY country';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr[$r->country] = $r->cnt;
