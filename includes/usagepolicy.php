@@ -27,10 +27,10 @@ $serverHost = UtilityFunctions::getDomain();
 		<b><?= $LANG['DATA_USAGE_GUIDELINES'] ?></b>
 	</div>
 	<!-- This is inner text! -->
+	<?php
+		if($LANG_TAG=='en'){
+	?>
 	<div role="main" id="innertext">
-		<?php
-			if($LANG_TAG=='en'){
-		?>
 		<h1 class="page-heading">Guidelines for Acceptable Use of Data</h1>
 		<h2>Recommended Citation Formats</h2>
 		<p>Use one of the following formats to cite data retrieved from the <?php echo $DEFAULT_TITLE; ?> network:</p>
