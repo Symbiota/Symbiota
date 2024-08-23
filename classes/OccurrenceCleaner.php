@@ -332,9 +332,9 @@ class OccurrenceCleaner extends Manager{
 	//Bad countries
 	public function getBadCountryCount(){
 		$retCnt = 0;
-		$sql = 'SELECT COUNT(DISTINCT country) AS cnt
-			FROM omoccurrences
-			WHERE country IS NOT NULL AND collid = 1 AND country NOT IN(SELECT geoterm FROM geographicthesaurus WHERE geolevel = 50)';
+		$sql = 'SELECT COUNT(DISTINCT o.country) AS cnt '.
+		'FROM omoccurrences o LEFT JOIN lkupcountry l ON o.country = l.countryname '.
+		'WHERE o.country IS NOT NULL AND o.collid = '.$this->collid.' AND l.countryid IS NULL ';
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
 			$retCnt = $r->cnt;
