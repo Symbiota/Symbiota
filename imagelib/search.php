@@ -157,6 +157,7 @@ if($action == 'batchAssignTag'){
 								<input id="taxa" name="taxa" type="text" style="width:450px;" value="<?= $imgLibManager->getTaxaStr() ?>" title="<?= $LANG['SEPARATE_MULTIPLE'] ?>" autocomplete="off" >
 							</div>
 							<div style="float:left;margin-left:10px;" >
+								<input type="hidden" name="usethes" value="0">
 								<input id="usethes" name="usethes" type="checkbox" value="1" <?php if(!$action || $imgLibManager->getUseThes()) echo 'CHECKED'; ?> > <label for="usethes"><?= $LANG['INCLUDE_SYN'] ?></label>
 							</div>
 						</div>
