@@ -93,10 +93,10 @@ $IS_ADMIN = true;
 						</div>
 						<?php
 						if($curentVersion != '3.1'){
-							if(!is_writable($SERVER_ROOT . '/content/logsd/install/')){
+							if(!is_writable($SERVER_ROOT . '/content/logs/install/')){
 								?>
 								<div class="info-div">
-									<span style="color: orange">WARNING</span>: The log directory (e.g. /content/logs/schema/) is not writable by web user.
+									<span style="color: orange">WARNING</span>: The log directory (e.g. /content/logs/install/) is not writable by web user.
 									We strongly recommend that you adjust directory permissions as defined within the installation before running installation/update scripts.
 								</div>
 								<?php
