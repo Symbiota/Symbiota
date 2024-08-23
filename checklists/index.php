@@ -65,15 +65,12 @@ $clManager->setProj($pid);
 						if($pid) echo '</a>';
 						if(!empty($projArr['displayMap'])){
 							?>
-							<a href="<?php echo "clgmap.php?pid=" . $pid; ?>" title='<?= $LANG['SHOW_MAP'] ?>'>
-								<img src='../images/world.png' style='width:10px;border:0' />
+							<a class="button button-tertiary btn-medium-font" style="gap:0.5rem" href="<?= "clgmap.php?pid=" . $pid ?>" title='<?= $LANG['SHOW_MAP'] ?>'>
+								<?= $LANG['MAP'] ?> <img src='../images/world.png' style='width:1em;border:0' alt='<?= $LANG['IMG_OF_GLOBE'] ?>' />
 							</a>
 							<?php
 						}
 						?>
-						<a class="button button-tertiary btn-medium-font" style="gap:0.5rem" href="<?= "clgmap.php?pid=" . $pid ?>" title='<?= $LANG['SHOW_MAP'] ?>'>
-							<?= $LANG['MAP'] ?> <img src='../images/world.png' style='width:1em;border:0' alt='<?= $LANG['IMG_OF_GLOBE'] ?>' />
-						</a>
 					</h2>
 					<ul class="checklist-ul">
 						<?php
