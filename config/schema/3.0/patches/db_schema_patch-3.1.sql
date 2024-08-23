@@ -1,17 +1,17 @@
-INSERT INTO schemaversion (versionnumber) values ("3.1");
+INSERT INTO `schemaversion` (versionnumber) values ("3.1");
 
 ALTER TABLE `ctcontrolvocab` 
   ADD COLUMN `filterVariable` VARCHAR(150) NOT NULL DEFAULT '' AFTER `fieldName`,
   DROP INDEX `UQ_ctControlVocab` ,
   ADD UNIQUE INDEX `UQ_ctControlVocab` (`title` ASC, `tableName` ASC, `fieldName` ASC, `filterVariable` ASC);
 
-INSERT INTO ctcontrolvocab(title, tableName, fieldName, filterVariable)
+INSERT INTO `ctcontrolvocab`(title, tableName, fieldName, filterVariable)
   VALUES("Occurrence Associations Type", "omoccurassociations", "relationship", "associationType:resource");
 
-INSERT INTO ctcontrolvocabterm(cvID, term, termDisplay)
+INSERT INTO `ctcontrolvocabterm`(cvID, term, termDisplay)
   SELECT cvID, "fieldNotes", "Field Notes" FROM ctcontrolvocab WHERE tableName = "omoccurassociations" AND fieldName = "relationship" AND filterVariable = "associationType:resource";
 
-INSERT INTO ctcontrolvocabterm(cvID, term, termDisplay)
+INSERT INTO `ctcontrolvocabterm`(cvID, term, termDisplay)
   SELECT cvID, "genericResource", "Generic Resource" FROM ctcontrolvocab WHERE tableName = "omoccurassociations" AND fieldName = "relationship" AND filterVariable = "associationType:resource";
 
   
@@ -39,20 +39,20 @@ ALTER TABLE `fmchklstcoordinates`
 
 
 -- Ensure these older tables are innoDB
-ALTER TABLE geographicpolygon ENGINE = InnoDB;
-ALTER TABLE geographicthesaurus  ENGINE = InnoDB;
+ALTER TABLE `geographicpolygon` ENGINE = InnoDB;
+ALTER TABLE `geographicthesaurus`  ENGINE = InnoDB;
 
-ALTER TABLE geographicpolygon MODIFY COLUMN footprintPolygon geometry NOT NULL;
+ALTER TABLE `geographicpolygon` MODIFY COLUMN footprintPolygon geometry NOT NULL;
 
-DROP PROCEDURE IF EXISTS insertGeographicPolygon;
-DROP PROCEDURE IF EXISTS updateGeographicPolygon;
+DROP PROCEDURE IF EXISTS `insertGeographicPolygon`;
+DROP PROCEDURE IF EXISTS `updateGeographicPolygon`;
 
 DELIMITER |
-CREATE PROCEDURE insertGeographicPolygon(IN geo_id int, IN geo_json longtext)
+CREATE PROCEDURE `insertGeographicPolygon`(IN geo_id int, IN geo_json longtext)
   BEGIN
     INSERT INTO geographicpolygon (geoThesID, footprintPolygon, geoJSON) VALUES (geo_id, ST_GeomFromGeoJSON(geo_json), geo_json);
   END |
-CREATE PROCEDURE updateGeographicPolygon(IN geo_id int, IN geo_json longtext)
+CREATE PROCEDURE `updateGeographicPolygon`(IN geo_id int, IN geo_json longtext)
   BEGIN
     UPDATE geographicpolygon SET geoJSON = geo_json, footprintPolygon = ST_GeomFromGeoJSON(geo_json) WHERE geoThesID = geo_id;
   END | 
@@ -78,11 +78,11 @@ ALTER TABLE `omoccurassociations`
   CHANGE COLUMN `identifier` `identifier` VARCHAR(250) NULL DEFAULT NULL COMMENT 'Deprecated field' ,
   CHANGE COLUMN `sourceIdentifier` `sourceIdentifier` VARCHAR(45) NULL DEFAULT NULL COMMENT 'deprecated field' ;
   
-UPDATE omoccurassociations
+UPDATE `omoccurassociations`
   SET objectID = identifier
   WHERE objectID IS NULL AND identifier IS NOT NULL;
 
-UPDATE omoccurassociations
+UPDATE `omoccurassociations`
   SET instanceID = sourceIdentifier
   WHERE instanceID IS NULL AND sourceIdentifier IS NOT NULL;
 
@@ -110,15 +110,15 @@ ALTER TABLE `omoccurassociations`
 ALTER TABLE `omoccurassociations` 
   ADD UNIQUE INDEX `UQ_omoccurassoc_identifier` (`occid` ASC, `identifier` ASC);
 
-UPDATE omoccurassociations
+UPDATE `omoccurassociations`
   SET associationType = "internalOccurrence"
   WHERE associationType = "" AND occidAssociate IS NOT NULL;
 
-UPDATE omoccurassociations
+UPDATE `omoccurassociations`
   SET associationType = "externalOccurrence"
   WHERE associationType = "" AND occidAssociate IS NULL AND resourceUrl IS NOT NULL;
 
-UPDATE omoccurassociations
+UPDATE `omoccurassociations`
   SET associationType = "observational"
   WHERE associationType = "" AND occidAssociate IS NULL AND resourceUrl IS NULL AND verbatimSciname IS NOT NULL;
 
@@ -129,7 +129,7 @@ ALTER TABLE `omoccurdeterminations`
 
 
 # Needed to ensure basisOfRecord values are tagged correctly based on collection type (aka collType field)
-UPDATE omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid
+UPDATE `omoccurrences` o INNER JOIN omcollections c ON o.collid = c.collid
   SET o.basisofrecord = "PreservedSpecimen"
   WHERE (o.basisofrecord = "HumanObservation" OR o.basisofrecord IS NULL) AND c.colltype = 'Preserved Specimens'
   AND o.occid NOT IN(SELECT occid FROM omoccuredits WHERE fieldname = "basisofrecord");
@@ -273,4 +273,3 @@ CREATE TABLE `usersthirdpartyauth` (
 # Table does not exist within db_schema-3.0, thus statement is expected to fail if this is a new 3.0 install
 ALTER TABLE `omoccurresource` 
   RENAME TO  `deprecated_omoccurresource` ;
-

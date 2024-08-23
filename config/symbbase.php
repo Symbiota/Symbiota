@@ -48,9 +48,11 @@ $IS_ADMIN = (array_key_exists('SuperAdmin',$USER_RIGHTS)?1:0);
 
 //Set accessibilty variables
 $ACCESSIBILITY_ACTIVE = false;
-$isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
-if($isAccessiblePreferred){
-	$ACCESSIBILITY_ACTIVE = true;
+if($SYMB_UID){
+	$isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
+	if($isAccessiblePreferred){
+		$ACCESSIBILITY_ACTIVE = true;
+	}
 }
 
 //$AVAILABLE_LANGS = array('en','es','fr','pt','ab','aa','af','sq','am','ar','hy','as','ay','az','ba','eu','bn','dz','bh','bi','br','bg','my','be','km','ca','zh','co','hr','cs','da','nl','eo','et','fo','fj','fi','fy','gd','gl','ka','de','el','kl','gn','gu','ha','iw','hi','hu','is','in','ia','ie','ik','ga','it','ja','jw','kn','ks','kk','rw','ky','rn','ko','ku','lo','la','lv','ln','lt','mk','mg','ms','ml','mt','mi','mr','mo','mn','na','ne','no','oc','or','om','ps','fa','pl','pa','qu','rm','ro','ru','sm','sg','sa','sr','sh','st','tn','sn','sd','si','ss','sk','sl','so','su','sw','sv','tl','tg','ta','tt','te','th','bo','ti','to','ts','tr','tk','tw','uk','ur','uz','vi','vo','cy','wo','xh','ji','yo','zu');

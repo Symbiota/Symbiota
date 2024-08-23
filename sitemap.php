@@ -8,6 +8,12 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 
 $smManager = new SiteMapManager();
 $schemaVersion = $smManager->getSchemaVersion();
+if(!$schemaVersion){
+	$err = $smManager->getErrorMessage();
+	if(strpos($err, "doesn't exist")){
+		header('Location: admin/schemamanager.php');
+	}
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
