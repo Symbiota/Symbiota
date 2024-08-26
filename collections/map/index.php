@@ -404,7 +404,12 @@ if(isset($_REQUEST['llpoint'])) {
 				}
 			}
 
-			let taxaArr = Object.values(taxaLegendMap).sort((a, b) => a.family > b.family)
+			let taxaArr = Object.values(taxaLegendMap).sort((a, b) => {
+				if(a.family === b.family) return 0;
+				else if(a.family > b.family) return 1;
+				else return -1;			
+			})
+
 			let prev_family;
 
 			for (let taxa of taxaArr) {
