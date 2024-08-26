@@ -702,7 +702,7 @@ $traitArr = $indManager->getTraitArr();
 						if($occArr['decimallatitude']){
 							?>
 							<div id="latlng-div" class="bottom-breathing-room-rel-sm">
-								<?php echo $LANG['LAT_LNG'] ?>:
+								<?php echo '<label>'.$LANG['LAT_LNG'].':</label> '; ?>
 								<?php
 								echo $occArr['decimallatitude'].'&nbsp;&nbsp;'.$occArr['decimallongitude'];
 								if($occArr['coordinateuncertaintyinmeters']) echo ' +-'.$occArr['coordinateuncertaintyinmeters'].'m.';
