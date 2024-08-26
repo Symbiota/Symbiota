@@ -1100,7 +1100,7 @@ if(isset($_REQUEST['llpoint'])) {
 				let formData = new FormData(document.getElementById("mapsearchform"));
 
 				const group = genMapGroups(recordArr, taxaMap, collArr, "<?=$LANG['CURRENT_PORTAL']?>");
-				group.origin = "<?= $SERVER_HOST . $CLIENT_ROOT?>"
+				group.origin = "<?= $SERVER_HOST . $CLIENT_ROOT?>";
 				mapGroups = [group];
 
 				getOccurenceRecords(formData).then(res => {
@@ -1453,7 +1453,9 @@ if(isset($_REQUEST['llpoint'])) {
 
 				for(let search of searches) {
 					recordArr = recordArr.concat(search.recordArr);
-					mapGroups.push(genGroups(search.recordArr, search.taxaArr, search.collArr, search.label));
+					const group = genGroups(search.recordArr, search.taxaArr, search.collArr, search.label)
+					group.origin = search.origin;
+					mapGroups.push(group);
 				}
 
 				buildPanels(formData.get('cross_portal_switch'));
@@ -1656,8 +1658,11 @@ if(isset($_REQUEST['llpoint'])) {
 			if(recordArr.length > 0) {
 				if(shape) map.drawShape(shape);
 				let formData = new FormData(document.getElementById("mapsearchform"));
+
+				const group = genGroups(recordArr, taxaMap, collArr, "<?= $LANG['CURRENT_PORTAL']?>");
+				group.origin = "<?= $SERVER_HOST . $CLIENT_ROOT?>";
 				mapGroups = [
-					genGroups(recordArr, taxaMap, collArr)
+					group
 				]
 
 				getOccurenceRecords(formData).then(res => {
