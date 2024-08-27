@@ -55,11 +55,20 @@ class OccurrenceMapManager extends OccurrenceManager {
 		if($this->sqlWhere){
 			$statsManager = new OccurrenceAccessStats();
 			$sql = 'SELECT o.occid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS identifier, '.
-				'o.sciname, o.family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, o.catalognumber, '.
+				'o.sciname, if(ts.family IS NULL, o.family, ts.family) as family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, o.catalognumber, '.
 				'o.othercatalognumbers, c.institutioncode, c.collectioncode, c.CollectionName '.
 				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
-			$sql .= $this->getTableJoins($this->sqlWhere);
+
+			$sqlJoin = $this->getTableJoins($this->sqlWhere);
+
+			//Ensure that taxastaus is joined
+			if(strpos($sqlJoin, 'LEFT JOIN taxstatus ts') === false) {
+				$sqlJoin .= 'LEFT JOIN taxstatus ts ON o.tidinterpreted = ts.tid ';
+			}
+
+			$sql .= $sqlJoin;
 			$sql .= $this->sqlWhere;
+
 			if(is_numeric($start) && $limit){
 				$sql .= "LIMIT ".$start.",".$limit;
 			}
