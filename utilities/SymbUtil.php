@@ -24,7 +24,6 @@ class SymbUtil {
 					$bind_params_str .= 'i';
 				}
 			}
-			// Call the foobar() function with 2 arguments
 			$stmt = $conn->prepare($sql);
 			$stmt->bind_param($bind_params_str,...$params);
 			$stmt->execute();
