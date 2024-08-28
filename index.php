@@ -29,7 +29,10 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 				do programa Avanço na Digitalização de Coleções Biológicas (Advancing the Digitization of Biological Collections) 
 				da Fundação Nacional de Ciências (National Science Foundation) que visa (1) digitalizar espécimes e dados 
 				associados de coleções africanas depositadas em herbários dos Estados Unidos, (2) georreferenciar e melhorar 
-				esses dados, e (3) partilhá-los abertamente com as comunidades mundiais científicas e de conservação. A descrição 
+				esses dados, e (3) partilhá-los abertamente com as comunidades mundiais científicas e de conservação. O escopo 
+				da digitalização deste projeto se concentra em espécimes da <a href=<?php echo $CLIENT_ROOT . '/includes/about.php' ?>>África tropical</a>. Embora espécimes digitalizados de 
+				outros países africanos também estejam incluídos neste portal, por não serem o foco da digitalização para este 
+				projeto, eles podem não refletir com precisão os acervos completos dos herbários parceiros. A descrição 
 				<a href="https://www.dropbox.com/scl/fi/lh9di7oo0hek25s8lnf73/African-Plants-2022-Final-Project-Description-only.pdf?rlkey=za4d08n016glut5ls9wjkamhx&dl=0" target="_blank">completa do projeto é fornecida aqui</a>.
 			</p>
 				
@@ -51,7 +54,10 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 				du programme Advancing the Digitization of Biological Collections de la National Science Foundation (USA) qui vise à 
 				(1) numériser les spécimens et les données associées des collections africaines déposées dans les herbiers aux 
 				États-Unis, (2) géoréférencer et améliorer ces données, et (3) les partager librement avec les communautés 
-				mondiales de la science et de la conservation. Vous pouvez lire la 
+				mondiales de la science et de la conservation. La numérisation de ce projet porte sur les spécimens <a href=<?php echo $CLIENT_ROOT . '/includes/about.php' ?>>d'Afrique tropicale</a>. 
+				Bien que des spécimens numérisés d'autres pays africains soient également inclus dans ce portail, comme ils ne sont pas 
+				l'objet de la numérisation de ce projet, ils peuvent ne pas refléter avec précision l'intégralité des fonds des herbiers 
+				partenaires. Vous pouvez lire la 
 				<a href="https://www.dropbox.com/scl/fi/lh9di7oo0hek25s8lnf73/African-Plants-2022-Final-Project-Description-only.pdf?rlkey=za4d08n016glut5ls9wjkamhx&dl=0" target="_blank">description complète du projet ici</a>.
 			</p>
 				
@@ -74,7 +80,10 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 				program <i>Advancing the Digitization of Biological Collections</i> 
 				that aims to (1) digitize specimens and associated data of African collections deposited in herbaria in 
 				the United States, (2) georeference and improve those data, and (3) share them openly with the global 
-				science and conservation communities. You can read the <a href="https://www.dropbox.com/scl/fi/lh9di7oo0hek25s8lnf73/African-Plants-2022-Final-Project-Description-only.pdf?rlkey=za4d08n016glut5ls9wjkamhx&dl=0" target="_blank">full project description here</a>.
+				science and conservation communities. The scope of digitization of this project focuses on specimens from <a href=<?php echo $CLIENT_ROOT . '/includes/about.php' ?>>tropical Africa</a>. 
+				While digitized specimens from other African countries are also included in this portal, because they are not the focus 
+				of digitization for this project, they may not accurately reflect partner herbaria's complete holdings. 
+				You can read the <a href="https://www.dropbox.com/scl/fi/lh9di7oo0hek25s8lnf73/African-Plants-2022-Final-Project-Description-only.pdf?rlkey=za4d08n016glut5ls9wjkamhx&dl=0" target="_blank">full project description here</a>.
 			</p>
 
 			<p>The African Plants Portal is broader in scope and is open to participation by any institutions wishing 
@@ -85,6 +94,9 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 		<?php
 			}
 		?>
+		<div style="max-width:500px;text-align:center;margin:3;">
+			<img src="<?php echo $CLIENT_ROOT . '/images/layout/Map_withimagery.jpg' ?>" alt="Map of Africa" width="1000px"></img>
+		</div>
 	</div>
 	<?php
 	include($SERVER_ROOT . '/includes/footer.php');

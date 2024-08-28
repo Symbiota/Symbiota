@@ -45,6 +45,15 @@ header("Content-Type: text/html; charset=".$CHARSET);
 				<p>JRS 2014: <a href="https://www.dropbox.com/scl/fi/ly4sbxq906117tca8f5ah/JRS_WAfrica_2014.pdf?rlkey=8n7rbdthzeprvbit5dh62trc2&dl=0" target="_blank">Projet sur les plantes d'Afrique de l'Ouest</a> (dirigé par le professeur Alex Asase)</p>
 				<p>NSF 2022: <a href="https://www.dropbox.com/scl/fi/lh9di7oo0hek25s8lnf73/African-Plants-2022-Final-Project-Description-only.pdf?rlkey=za4d08n016glut5ls9wjkamhx&dl=0" target="_blank">Projet sur les plantes d’Afrique tropicales</a></p>
 			</div>
+			<div style="margin:20px">
+				<p>
+					Les spécimens des pays suivants sont ciblés dans ce projet de numérisation :
+					Angola, Bénin, Burkina Faso, Burundi, Cameroun, République centrafricaine, Tchad, Congo, Côte d'Ivoire,
+					République démocratique du Congo, Djibouti, Guinée équatoriale, Érythrée, Éthiopie, Gabon, Gambie, Ghana,
+					Guinée, Guinée-Bissau, Kenya, Libéria, Malawi, Mali, Mozambique, Niger, Nigéria, Ouganda, Rwanda, Sao Tomé-et-Principe, Sénégal, Sierra Leone, Somalie, Soudan, Tanzanie, Togo et Zambie. Toutefois, des spécimens
+					d'autres pays peuvent également être numérisés dans le cadre de flux de travail efficaces.
+				</p>
+			</div>
 			<h2>Opportunités</h2>
 			<div style="margin:20px">
 				<p>
@@ -87,6 +96,16 @@ header("Content-Type: text/html; charset=".$CHARSET);
 				<p>JRS 2014: <a href="https://www.dropbox.com/scl/fi/ly4sbxq906117tca8f5ah/JRS_WAfrica_2014.pdf?rlkey=8n7rbdthzeprvbit5dh62trc2&dl=0" target="_blank">Projeto Plantas da África Ocidental</a> (liderado pelo Prof. Alex Asase)</p>
 				<p>NSF 2022: <a href="https://www.dropbox.com/scl/fi/lh9di7oo0hek25s8lnf73/African-Plants-2022-Final-Project-Description-only.pdf?rlkey=za4d08n016glut5ls9wjkamhx&dl=0" target="_blank">Projeto Plantas Tropicais Africanas</a></p>
 			</div>
+			<div style="margin:20px">
+				<p>
+					Espécimes dos seguintes países estão sendo alvos deste projeto de digitalização:
+					Angola, Benim, Burkina Faso, Burundi, Camarões, República Centro-Africana, Chade, Congo, Costa do Marfim,
+					República Democrática do Congo, Djibuti, Guiné Equatorial, Eritreia, Etiópia, Gabão, Gâmbia, Gana,
+					Guiné, Guiné-Bissau, Quênia, Libéria, Malawi, Mali, Moçambique, Níger, Nigéria, Ruanda, São Tomé e
+					Príncipe, Senegal, Serra Leoa, Somália, Sudão, Tanzânia, Togo, Uganda e Zâmbia. No entanto, espécimes
+					de outros países também podem ser digitalizados como parte de fluxos de trabalho eficientes.
+				</p>
+			</div>
 			<h2>Oportunidades</h2>
 			<div style="margin:20px">
 				<p>
@@ -127,6 +146,16 @@ header("Content-Type: text/html; charset=".$CHARSET);
 			<div style="margin:20px">
 				<p>JRS 2014: <a href="https://www.dropbox.com/scl/fi/ly4sbxq906117tca8f5ah/JRS_WAfrica_2014.pdf?rlkey=8n7rbdthzeprvbit5dh62trc2&dl=0" target="_blank">West African Plants Project</a> (led by Prof. Alex Asase)</p>
 				<p>NSF 2022: <a href="https://www.dropbox.com/scl/fi/lh9di7oo0hek25s8lnf73/African-Plants-2022-Final-Project-Description-only.pdf?rlkey=za4d08n016glut5ls9wjkamhx&dl=0" target="_blank">Tropical African Plants Project</a></p>
+			</div>
+			<div style="margin:20px">
+				<p>
+				Specimens from the following countries are being targeted in this digitization project:
+				Angola, Benin, Burkina Faso, Burundi, Cameroon, Central African Republic, Chad, Congo, Cote D'Ivoire, 
+				Democratic Republic of the Congo, Djibouti, Equatorial Guinea, Eritrea, Ethiopia, Gabon, Gambia, Ghana, 
+				Guinea, Guinea-Bissau, Kenya, Liberia, Malawi, Mali, Mozambique, Niger, Nigeria, Rwanda, Sao Tome and 
+				Principe, Senegal, Sierra Leone, Somalia, Sudan, Tanzania, Togo, Uganda, and Zambia. However, specimens 
+				from other countries may also be digitized as part of efficient workflows.
+				</p>
 			</div>
 			<h2>Opportunities</h2>
 			<div style="margin:20px">
