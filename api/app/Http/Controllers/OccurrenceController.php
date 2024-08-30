@@ -23,6 +23,13 @@ class OccurrenceController extends Controller{
 	 *	 operationId="/api/v2/occurrence/search",
 	 *	 tags={""},
 	 *	 @OA\Parameter(
+	 *		 name="collid",
+	 *		 in="query",
+	 *		 description="collid(s) - collection identifier(s) in portal",
+	 *		 required=false,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
 	 *		 name="catalogNumber",
 	 *		 in="query",
 	 *		 description="catalogNumber",
@@ -33,6 +40,48 @@ class OccurrenceController extends Controller{
 	 *		 name="occurrenceID",
 	 *		 in="query",
 	 *		 description="occurrenceID",
+	 *		 required=false,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="family",
+	 *		 in="query",
+	 *		 description="family",
+	 *		 required=false,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="sciname",
+	 *		 in="query",
+	 *		 description="Scientific Name - binomen only without authorship",
+	 *		 required=false,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="recordedBy",
+	 *		 in="query",
+	 *		 description="Collector/observer of occurrence",
+	 *		 required=false,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="recordedByLastName",
+	 *		 in="query",
+	 *		 description="Last name of collector/observer of occurrence",
+	 *		 required=false,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="recordNumber",
+	 *		 in="query",
+	 *		 description="Personal number of the collector or observer of the occurrence",
+	 *		 required=false,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="eventDate",
+	 *		 in="query",
+	 *		 description="Date as YYYY, YYYY-MM or YYYY-MM-DD",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
@@ -58,37 +107,9 @@ class OccurrenceController extends Controller{
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Parameter(
-	 *		 name="collid",
-	 *		 in="query",
-	 *		 description="collid - collection identifier in portal",
-	 *		 required=false,
-	 *		 @OA\Schema(type="string")
-	 *	 ),
-	 *	 @OA\Parameter(
 	 *		 name="datasetID",
 	 *		 in="query",
 	 *		 description="dataset ID within portal",
-	 *		 required=false,
-	 *		 @OA\Schema(type="string")
-	 *	 ),
-	 *	 @OA\Parameter(
-	 *		 name="family",
-	 *		 in="query",
-	 *		 description="family",
-	 *		 required=false,
-	 *		 @OA\Schema(type="string")
-	 *	 ),
-	 *	 @OA\Parameter(
-	 *		 name="sciname",
-	 *		 in="query",
-	 *		 description="Scientific Name - binomen only without authorship",
-	 *		 required=false,
-	 *		 @OA\Schema(type="string")
-	 *	 ),
-	 *	 @OA\Parameter(
-	 *		 name="eventDate",
-	 *		 in="query",
-	 *		 description="Date as YYYY, YYYY-MM or YYYY-MM-DD",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
@@ -119,35 +140,70 @@ class OccurrenceController extends Controller{
 	 */
 	public function showAllOccurrences(Request $request){
 		$this->validate($request, [
+			'collid' => 'regex:/^[\d,]+?$/',
 			'limit' => ['integer', 'max:300'],
 			'offset' => 'integer'
 		]);
 		$limit = $request->input('limit',100);
 		$offset = $request->input('offset',0);
 
-		$conditions = [];
-		if($request->has('catalogNumber')) $conditions[] = ['catalogNumber',$request->catalogNumber];
-		if($request->has('occurrenceID')) $conditions[] = ['occurrenceID',$request->occurrenceID];
-		if($request->has('country')) $conditions[] = ['country',$request->country];
-		if($request->has('stateProvince')) $conditions[] = ['stateProvince',$request->stateProvince];
-		if($request->has('county')) $conditions[] = ['county','LIKE',$request->county.'%'];
-		if($request->has('collid')) $conditions[] = ['collid',$request->collid];
-		if($request->has('family')) $conditions[] = ['family',$request->family];
-		if($request->has('sciname')) $conditions[] = ['sciname','LIKE',$request->sciname.'%'];
-		if($request->has('datasetID')) $conditions[] = ['datasetID',$request->datasetID];
-		if($request->has('eventDate')) $conditions[] = ['eventDate','LIKE',$request->eventDate.'%'];
+		$occurrenceModel = Occurrence::query();
+		if($request->has('collid')){
+			$occurrenceModel->whereIn('collid', explode(',', $request->collid));
+		}
+		if($request->has('catalogNumber')){
+			$occurrenceModel->where('catalogNumber', $request->catalogNumber);
+		}
+		if($request->has('occurrenceID')){
+			//$occurrenceModel->where('occurrenceID', $request->occurrenceID);
+			$occurrenceID = $request->occurrenceID;
+			$occurrenceModel->where(function ($query) use ($occurrenceID) {$query->where('occurrenceID', $occurrenceID)->orWhere('recordID', $occurrenceID);});
 
+		}
+		//Taxonomy
+		if($request->has('family')){
+			$occurrenceModel->where('family', $request->family);
+		}
+		if($request->has('sciname')){
+			$occurrenceModel->where('sciname', $request->sciname);
+		}
+		//Collector units
+		if($request->has('recordedBy')){
+			$occurrenceModel->where('recordedBy', $request->recordedBy);
+		}
+		if($request->has('recordedByLastName')){
+			$occurrenceModel->where('recordedBy', 'LIKE', '%' . $request->recordedByLastName . '%');
+		}
+		if($request->has('recordNumber')){
+			$occurrenceModel->where('recordNumber', $request->recordNumber);
+		}
+		if($request->has('eventDate')){
+			$occurrenceModel->where('eventDate', $request->eventDate);
+		}
+		if($request->has('datasetID')){
+			$occurrenceModel->where('datasetID', $request->datasetID);
+		}
+		//Locality place names
+		if($request->has('country')){
+			$occurrenceModel->where('country', $request->country);
+		}
+		if($request->has('stateProvince')){
+			$occurrenceModel->where('stateProvince', $request->stateProvince);
+		}
+		if($request->has('county')){
+			$occurrenceModel->where('county', $request->county);
+		}
 
-		$fullCnt = Occurrence::where($conditions)->count();
-		$result = Occurrence::where($conditions)->skip($offset)->take($limit)->get();
+		$fullCnt = $occurrenceModel->count();
+		$result = $occurrenceModel->skip($offset)->take($limit)->get();
 
 		$eor = false;
 		$retObj = [
-			"offset" => (int)$offset,
-			"limit" => (int)$limit,
-			"endOfRecords" => $eor,
-			"count" => $fullCnt,
-			"results" => $result
+			'offset' => (int)$offset,
+			'limit' => (int)$limit,
+			'endOfRecords' => $eor,
+			'count' => $fullCnt,
+			'results' => $result
 		];
 		return response()->json($retObj);
 	}

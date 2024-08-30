@@ -19,8 +19,30 @@ class Occurrence extends Model{
 		'footprintWKT', 'locationRemarks', 'verbatimCoordinates', 'georeferencedBy', 'georeferencedDate', 'georeferenceProtocol', 'georeferenceSources',
 		'georeferenceVerificationStatus', 'georeferenceRemarks', 'minimumElevationInMeters', 'maximumElevationInMeters', 'verbatimElevation', 'minimumDepthInMeters', 'maximumDepthInMeters',
 		'verbatimDepth', 'availability', 'disposition', 'storageLocation', 'modified', 'language', 'processingstatus', 'recordEnteredBy', 'duplicateQuantity', 'labelProject'];
-	protected $hidden = [ 'scientificName', 'recordedbyid', 'observerUid', 'labelProject', 'processingStatus', 'recordEnteredBy', 'associatedOccurrences', 'previousIdentifications',
-		'verbatimCoordinateSystem', 'coordinatePrecision', 'dynamicFields', 'institutionID', 'collectionID', 'genericcolumn1', 'genericcolumn2' ];
+	protected $hidden = [ 'collection', 'scientificName', 'recordedbyid', 'observerUid', 'labelProject', 'processingStatus', 'recordEnteredBy', 'associatedOccurrences', 'previousIdentifications',
+		'verbatimCoordinateSystem', 'coordinatePrecision', 'footprintWKT', 'dynamicFields', 'institutionID', 'collectionID', 'genericColumn1', 'genericColumn2' ];
+	public static $snakeAttributes = false;
+
+	public function getInstitutionCodeAttribute($value){
+		if(!$value){
+			$value = $this->collection->institutionCode;
+		}
+		return $value;
+	}
+
+	public function getCollectionCodeAttribute($value){
+		if(!$value){
+			$value = $this->collection->collectionCode;
+		}
+		return $value;
+	}
+
+	public function getOccurrenceIDAttribute($value){
+		if(!$value && $this->collection->guidTarget == 'symbiotaUUID'){
+			$value = $this->attributes['recordID'];
+		}
+		return $value;
+	}
 
 	public function collection(){
 		return $this->belongsTo(Collection::class, 'collid', 'collid');
@@ -49,6 +71,4 @@ class Occurrence extends Model{
 	public function portalPublications(){
 		return $this->belongsToMany(PortalPublication::class, 'portaloccurrences', 'occid', 'pubid')->withPivot('remoteOccid');;
 	}
-
-
 }
