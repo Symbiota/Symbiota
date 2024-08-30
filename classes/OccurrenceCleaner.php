@@ -531,7 +531,7 @@ class OccurrenceCleaner extends Manager{
 		}
 		$rs->free();
 		$this->featureCount = $cnt;
-		//ksort($retArr);
+		ksort($retArr);
 		return $retArr;
 	}
 
