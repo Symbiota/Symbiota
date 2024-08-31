@@ -94,7 +94,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 		<?php
 			}
 		?>
-		<div style="max-width:500px;text-align:center;margin:3;">
+		<div style="max-width:100%;text-align:center;margin:3;">
 			<img src="<?php echo $CLIENT_ROOT . '/images/layout/Map_withimagery.jpg' ?>" alt="Map of Africa" width="1000px"></img>
 		</div>
 	</div>
