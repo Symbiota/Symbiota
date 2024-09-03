@@ -1295,7 +1295,11 @@
                                         "maxLength": 45
                                     },
                                     "eventDate": {
-                                        "description": "Date the occurrence was collected or observed",
+                                        "description": "Date the occurrence was collected or observed, or earliest date if a range was provided",
+                                        "type": "string"
+                                    },
+                                    "eventDate2": {
+                                        "description": "Last date the occurrence was collected or observed. Used when a date range is provided",
                                         "type": "string"
                                     },
                                     "country": {

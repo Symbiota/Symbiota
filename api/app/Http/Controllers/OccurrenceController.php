@@ -468,7 +468,12 @@ class OccurrenceController extends Controller{
 	 *				@OA\Property(
 	 *					property="eventDate",
 	 *					type="string",
-	 *					description="Date the occurrence was collected or observed"
+	 *					description="Date the occurrence was collected or observed, or earliest date if a range was provided"
+	 *				),
+	 *				@OA\Property(
+	 *					property="eventDate2",
+	 *					type="string",
+	 *					description="Last date the occurrence was collected or observed. Used when a date range is provided"
 	 *				),
 	 *				@OA\Property(
 	 *					property="country",
