@@ -6,6 +6,7 @@ use App\Models\Occurrence;
 use App\Models\PortalIndex;
 use App\Models\PortalOccurrence;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
 class OccurrenceController extends Controller{
@@ -331,7 +332,11 @@ class OccurrenceController extends Controller{
 			if(!$this->isAuthorized($user, $collid)){
 				return response()->json(['error' => 'Unauthorized to add new records to target collection (collid = ' . $collid . ')'], 401);
 			}
-			//$occurrence = Occurrence::create($request->all());
+			$inputArr = $request->all();
+			$inputArr['recordID'] = (string) Str::uuid();
+			$inputArr['dateEntered'] = date('Y-m-d H:i:s');
+
+			//$occurrence = Occurrence::create($inputArr);
 			//return response()->json($occurrence, 201);
 		}
 		return response()->json(['error' => 'Unauthorized'], 401);
@@ -508,7 +513,9 @@ class OccurrenceController extends Controller{
 	public function skeletalImport(Request $request){
 		$this->validate($request, [
 			'collid' => 'required|integer',
-			'identifierTarget' => 'in:CATALOGNUMBER,IDENTIFIERS,GUID,OCCID,NONE'
+			'eventDate' => 'date',
+			'eventDate2' => 'date',
+			'identifierTarget' => 'in:CATALOGNUMBER,IDENTIFIERS,GUID,OCCID,NONE',
 		]);
 		if($user = $this->authenticate($request)){
 			$collid = $request->input('collid');
@@ -522,7 +529,7 @@ class OccurrenceController extends Controller{
 
 			//Remove fields with empty values and non-approved target fields
 			$updateArr = $request->all();
-			$skeletalFieldsAllowed = array('catalogNumber', 'otherCatalogNumbers', 'sciname', 'scientificNameAuthorship', 'family', 'recordedBy', 'recordNumber', 'eventDate', 'country', 'stateProvince', 'county', 'processingStatus');
+			$skeletalFieldsAllowed = array('catalogNumber', 'otherCatalogNumbers', 'sciname', 'scientificNameAuthorship', 'family', 'recordedBy', 'recordNumber', 'eventDate', 'eventDate2', 'country', 'stateProvince', 'county', 'processingStatus');
 			foreach($updateArr as $fieldName => $fieldValue){
 				if(!$fieldValue) unset($updateArr[$fieldName]);
 				elseif(!in_array($fieldName, $skeletalFieldsAllowed)) unset($updateArr[$fieldName]);
@@ -534,37 +541,47 @@ class OccurrenceController extends Controller{
 			//Get target record, if exists
 			$targetOccurrence = null;
 			if($identifier){
-				$occurrenceModel = Occurrence::where('collid', $collid);
+				$occurrenceModel = null;
 				if($identifierTarget == 'OCCID'){
-					$occurrenceModel->where('occid', $identifier);
+					$occurrenceModel = Occurrence::where('occid', $identifier);
 				}
 				elseif($identifierTarget == 'GUID'){
-					$occurrenceModel->where('occurrenceID', $identifier)->orWhere('recordID', $identifier);
+					$occurrenceModel = Occurrence::where('occurrenceID', $identifier)->orWhere('recordID', $identifier);
 				}
 				elseif($identifierTarget == 'CATALOGNUMBER'){
-					$occurrenceModel->where('catalogNumber', $identifier);
+					$occurrenceModel = Occurrence::where('catalogNumber', $identifier);
 				}
 				elseif($identifierTarget == 'IDENTIFIERS'){
-					$occurrenceModel->where('otherCatalogNumbers', $identifier);
+					$occurrenceModel = Occurrence::where('otherCatalogNumbers', $identifier);
 				}
-				$targetOccurrence = $occurrenceModel->first();
+				if($occurrenceModel){
+					$targetOccurrence = $occurrenceModel->where('collid', $collid)->first();
+				}
 			}
 			if($targetOccurrence){
 				foreach($updateArr as $fieldName => $fieldValue){
 					//Remove input if target field already contains data
-					if($targetOccurrence[$fieldName]) unset($updateArr[$fieldName]);
+					if($targetOccurrence[$fieldName]){
+						unset($updateArr[$fieldName]);
+					}
 				}
-				$updatedOccurrence = $targetOccurrence->update($updateArr);
-				return response()->json($updatedOccurrence, 200);
+				$responseObj = ['number of fields affected' => count($updateArr), 'fields affected' => $updateArr];
+				if($updateArr){
+					$targetOccurrence->update($updateArr);
+				}
+				return response()->json($responseObj, 200);
 			}
 			else{
 				//Record doesn't exist, thus create a new skeletal records, given that a catalog number exists
 				$updateArr['collid'] = $collid;
-				if(!empty($updateArr['catalogNumber']) || !empty($updateArr['otherCatalogNumbers'])){
-					if(empty($updateArr['processingStatus'])) $updateArr['processingStatus'] = 'unprocessed';
-					$newOccurrence = Occurrence::create($updateArr);
-					return response()->json($newOccurrence, 201);
+				if(empty($updateArr['catalogNumber']) && empty($updateArr['otherCatalogNumbers'])){
+					return response()->json(['error' => 'Bad request: catalogNumber or otherCatalogNumbers required when creating a new record'], 400);
 				}
+				if(empty($updateArr['processingStatus'])) $updateArr['processingStatus'] = 'unprocessed';
+				$updateArr['recordID'] = (string) Str::uuid();
+				$updateArr['dateEntered'] = date('Y-m-d H:i:s');
+				$newOccurrence = Occurrence::create($updateArr);
+				return response()->json($newOccurrence, 201);
 			}
 		}
 		return response()->json(['error' => 'Unauthorized'], 401);
