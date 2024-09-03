@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Occurrence;
 use App\Models\PortalIndex;
 use App\Models\PortalOccurrence;
+use App\Helpers\OccurrenceHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -564,6 +565,12 @@ class OccurrenceController extends Controller{
 					if($targetOccurrence[$fieldName]){
 						unset($updateArr[$fieldName]);
 					}
+				}
+				if(!empty($updateArr['eventDate'])){
+					$updateArr['eventDate'] = OccurrenceHelper::formatDate($updateArr['eventDate']);
+				}
+				if(!empty($updateArr['eventDate2'])){
+					$updateArr['eventDate2'] = OccurrenceHelper::formatDate($updateArr['eventDate2']);
 				}
 				$responseObj = ['number of fields affected' => count($updateArr), 'fields affected' => $updateArr];
 				if($updateArr){
