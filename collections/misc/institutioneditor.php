@@ -473,7 +473,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							</div>
 							<div>
 								<input name="institutioncode" type="text" value="<?= htmlspecialchars($instCodeDefault, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" />
-								<button name="getgrscicoll" type="button" value="Get data from GrSciColl" onClick="grscicoll('instaddform')"><?php echo $LANG['GET_DATA_FROM_GRSCICOLL']; ?></button>
+								<button name="getgrscicoll" type="button" value="Get data from GrSciColl" style="display:inline;" onClick="grscicoll('instaddform')"><?php echo $LANG['GET_DATA_FROM_GRSCICOLL']; ?></button>
 							</div>
 						</div>
 						<div style="position:relative;clear:both;">
