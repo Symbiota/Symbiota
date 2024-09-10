@@ -227,7 +227,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							</div>
 							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
 								<input name="institutioncode" type="text" value="<?php echo $instArr['institutioncode']; ?>" />
-								<button name="getgrscicoll" type="button" value="Update from GrSciColl" onClick="grscicoll('insteditform')"><?php echo $LANG['UPDATE_GRSCICOLL']; ?></button>
+								<button name="getgrscicoll" type="button" value="Update from GrSciColl" style="display:inline;" onClick="grscicoll('insteditform')"><?php echo $LANG['UPDATE_GRSCICOLL']; ?></button>
 							</div>
 						</div>
 						<div style="position:relative;clear:both;">
