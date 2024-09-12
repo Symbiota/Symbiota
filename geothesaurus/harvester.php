@@ -166,6 +166,7 @@ if($isEditor && $submitAction) {
          }
          else echo '<div>' . $LANG['ACTIVE_THES_EMPTY'] . '</div>';
          echo '</fieldset>';
+         }
          if(isset($statusReport['lkup'])){
          ?>
          <fieldset>
@@ -185,7 +186,7 @@ if($isEditor && $submitAction) {
          }
          ?>
          <fieldset>
-            <legend><?= $LANG['ACTIVE_GEOGRAPHIC_THESAURUS']?></legend>
+            <legend><?= $LANG['AVAILABLE_BOUNDARIES']?></legend>
             <?php
             if(!$gbAction){
             ?>
@@ -317,9 +318,6 @@ if($isEditor && $submitAction) {
             }
             ?>
          </fieldset>
-         <?php
-         }
-         ?>
       </div>
       <?php
       include($SERVER_ROOT.'/includes/footer.php');

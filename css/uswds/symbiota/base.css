@@ -488,6 +488,21 @@ b {
   font-weight: bold;
 }
 
+.button-danger {
+  background-color: var(--danger-color, var(--darkest-color));
+}
+
+.button-danger:hover 
+{
+  background-color: var(--medium-color);
+}
+
+.button-danger:disabled
+{
+	opacity: 50%;
+	pointer-events: none;
+}
+
 .gridlike-form {
   margin: 15px;
   display: flex;
@@ -514,4 +529,8 @@ b {
 
 .page-heading {
   font-size: 3rem;
+}
+
+.overlap {
+  z-index: 99999;
 }

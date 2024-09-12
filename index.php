@@ -11,7 +11,7 @@ $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
-		<title>ARS Biocollections Landing Page</title>
+		<title>ARS Biocollections Portal</title>
 		<?php
 		include_once($SERVER_ROOT . '/includes/head.php');
 		include_once($SERVER_ROOT . '/includes/googleanalytics.php');
@@ -49,7 +49,7 @@ $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.
 							<div class="layout__container">
 								<div class="layout__region layout__region--content">
 									<section class="block block-title-block block-nal-page-title-block clearfix path-frontpage">
-										<h1 class="page-header page-heading">Agricultural Research Service Biocollections</h1>
+										<h1 class="page-header page-heading">Biocollections of the USDA Agricultural Research Service</h1>
 									</section>
 								</div>
 								<div  class="layout__region layout__region--first">
@@ -65,7 +65,7 @@ $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.
 											</div>
 											<div class="usa-card__body">
 												<div class="field field--name-card-body field--type-text-long field--label-hidden field--item">
-													<p>700,000 pressed, preserved plant specimens representing USDA research and botanical exploration.</p>
+													<p>Pressed, dried plant specimens documenting USDA research and botanical exploration.</p>
 												</div>
 											</div>
 											<div class="usa-card__footer">
@@ -93,7 +93,7 @@ $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.
 											</div>
 											<div class="usa-card__body">
 												<div class="field field--name-card-body field--type-text-long field--label-hidden field--item">
-													<p>Over 150,000 preserved seed and fruit samples, primarily of non-native plant species.</p>
+													<p>Extensive reference collection of preserved seed and fruit samples from around the globe.</p>
 												</div>
 											</div>
 											<div class="usa-card__footer">
@@ -121,7 +121,7 @@ $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.
 											</div>
 											<div class="usa-card__body">
 												<div class="field field--name-card-body field--type-text-long field--label-hidden field--item">
-													<p>The Western Hemisphere’s largest fungal herbarium, including the John A. Stevenson Mycological Library.</p>
+													<p>The Western Hemisphere's largest fungarium, including the John A. Stevenson Mycological Library.</p>
 												</div>
 											</div>
 											<div class="usa-card__footer">

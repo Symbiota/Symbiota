@@ -94,6 +94,7 @@ header a:hover {
   background-color: var(--menu-top-bg-color);
   min-width: 0;
   text-align: center;
+  width: 100%;
 }
 
 .top-menu {
@@ -104,7 +105,8 @@ header a:hover {
   /* position: fixed; */
   left: 0;
   background-color: var(--menu-top-bg-color);
-  overflow: hidden;
+  text-align: left;
+  display: block;
 }
 
 /* Hamburger icon */
@@ -152,9 +154,11 @@ header a:hover {
   display: none;
 }
 
-ul.menu {
+ul.menu,
+ul.menu ul {
   list-style: none;
-  padding-left: 0;
+  padding: 0.25em 1em;
+  margin: 0;
 }
 
 .menu a {
@@ -163,14 +167,29 @@ ul.menu {
   font-size: 1.4rem;
   font-weight: 600;
   letter-spacing: 1px;
-  text-align: center;
+  text-align: left;
 }
 
-.menu li {
-  padding: 10px 20px;
+ul.menu > li > a {
+  text-align: left;
 }
+
+ul.menu > li {
+  display: block;
+  padding: 0.25em;
+}
+
+ul.menu > ul li{
+  display: block;
+}
+
 
 /* Toggles menu icon */
+.side-menu:not(:checked) ~ nav.top-menu .menu{
+  display:none;
+}
+
+
 .side-menu:checked ~ nav.top-menu {
   max-height: 100%;
 }
@@ -189,10 +208,53 @@ ul.menu {
   top: 0;
 }
 
+#lang-select-li {
+  margin-top: 1em;
+  text-align: center;
+}
+
 /* Media queries
 ========================================================================== */
 /* Medium screens and up */
 @media (min-width: 768px) {
+
+  .side-menu:not(:checked) ~ nav.top-menu .menu,
+  .side-menu:checked ~ nav.top-menu .menu {
+    display:block;
+  }
+
+  nav.top-menu > ul > li ul {
+    display: none;
+  }
+  
+  /* First level drop-down menu */
+  nav.top-menu > ul > li > a:hover > ul,
+  nav.top-menu > ul > li > a:focus > ul,
+  nav.top-menu > ul > li:hover > ul,
+  nav.top-menu > ul > li:focus-within > ul {
+    display: block;
+    position: absolute;
+    background-color: var(--menu-top-bg-color);
+    box-shadow: 3px 3px 3px #000;
+    width: max-content;
+  }
+
+  /* second+ level drop-down menu */
+  nav.top-menu > ul ul > li > a:hover > ul,
+  nav.top-menu > ul ul > li > a:focus > ul,
+  nav.top-menu > ul ul > li:hover > ul,
+  nav.top-menu > ul ul > li:focus-within > ul {
+    display: block;
+    position:absolute;
+    background-color: var(--menu-top-bg-color);
+    box-shadow: 3px 3px 3px #000;
+    width: max-content;
+  }
+  
+  /* Change this in order to change the Dropdown symbol */
+  nav.top-menu li > a:after { content:  ' +'; }
+  nav.top-menu li > a:only-child:after { content: ''; }
+
   .header-wrapper > * {
     min-width: 0;
     z-index: 10;
@@ -239,7 +301,8 @@ ul.menu {
     grid-area: menu;
     min-width: 0;
     width: 100%;
-    margin: 0 auto;
+    margin: 0;
+    padding: 0;
   }
 
   .hamb {
@@ -249,16 +312,28 @@ ul.menu {
   nav.top-menu {
     max-height: none;
     position: relative;
+    text-align: center;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
   }
 
-  .menu li {
+  ul.menu * {
+    vertical-align: middle;
+  }
+
+  ul.menu > li {
     display: inline-block;
     padding: 0 10px;
   }
 
-  .menu a {
+  ul.menu a {
     padding: 0;
   }
+
+  #lang-select-li {
+    margin: 0;
+  }
+
 }
 
 /* Medium-large desktop screens and up */

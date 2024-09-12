@@ -103,6 +103,25 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
 						</a>
 					</li>
 					<li>
+						<a href="#">Example Dropdown</a>
+						<ul>
+							<li>
+								<a href="#">Link 1</a>
+							</li>
+							<li>
+								<a href="#">Link 2</a>
+							</li>
+							<li>
+								<a href="#">Sub Menu</a>
+								<ul>
+									<li>
+										<a href="#">Link 3</a>
+									</li>
+								</ul>
+							</li>	
+						</ul>
+					</li>
+					<li id="lang-select-li">
 						<label for="language-selection"><?= $LANG['SELECT_LANGUAGE'] ?>: </label>
 						<select oninput="setLanguage(this)" id="language-selection" name="language-selection">
 							<option value="en">English</option>
