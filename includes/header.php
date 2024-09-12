@@ -40,9 +40,11 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
 				?>
 			</nav>
 			<div class="top-brand">
-			<div class="image-container">
-				<img src="<?= $CLIENT_ROOT; ?>/images/layout/africa_plants_tcn.png" alt="Tropical Africa TCN Logo">
-			</div>
+				<a href="<?= $CLIENT_ROOT ?>">
+					<div class="image-container">
+						<img src="<?= $CLIENT_ROOT; ?>/images/layout/africa_plants_tcn.png" alt="Tropical Africa TCN Logo">
+					</div>
+				</a>
 				<div class="brand-name">
 					<h1><?= $LANG['AFRICAN_PLANTS_PORTAL'] ?></h1>
 					<!-- <h2>Herbaria of Africa</h2> -->
