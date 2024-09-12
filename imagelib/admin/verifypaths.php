@@ -10,7 +10,8 @@ $buildThumbnails = array_key_exists("buildthumbnails",$_REQUEST)?$_REQUEST["buil
 $verifyPathsObj = new VerifyPaths();
 
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Verify Image Paths</title>
 	<?php
@@ -30,8 +31,8 @@ $verifyPathsObj = new VerifyPaths();
 	}
 	?>
 	<!-- This is inner text! -->
-	<div id="innertext">
-		<h1>Image Path Verification</h1>
+	<div role="main" id="innertext">
+		<h1 class="page-heading">Image Path Verification</h1>
 		<div>Clicking the button below will go through all the images in the image directory and
 		verify mapping within the database. Two following two error files will be produced:</div>
 
@@ -76,11 +77,11 @@ class VerifyPaths{
 	private $thumbnailArr = Array();
 
 	function __construct() {
-		$this->rootPath = $GLOBALS["imageRootPath"];
+		$this->rootPath = $GLOBALS['IMAGE_ROOT_PATH'];
 		if(substr($this->rootPath,-1) != "/") $this->rootPath .= "/";
-		$this->urlPath = $GLOBALS["imageRootUrl"];
+		$this->urlPath = $GLOBALS['IMAGE_ROOT_URL'];
 		if(substr($this->urlPath,-1) != "/") $this->urlPath .= "/";
-		$this->tempRoot = $GLOBALS["tempDirRoot"];
+		$this->tempRoot = $GLOBALS['TEMP_DIR_ROOT'];
 		if(!$this->tempRoot){
 			$this->tempRoot = ini_get('upload_tmp_dir');
 		}

@@ -2,7 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased] - 2022-01-14
+## [3.1] - 2024-08-29
+### New Feature 
+* 508 Accessibility features
+* Extended occurrence data upload module. Supports import and linking occurrence to: associated occurrences, identifications/annotations, image links, material samples, and reference links
+* LeafLet JavaScript added as an open source mapping option  
+* MediaWiki parser for mapping and integration of Flora of North American descriptions into taxon profile pages  
+* Occurrence associations management tools
+* Occurrence distribution static map thumbnail generator 
+* Public occurrence search form - new streamline version (via NEON support)
+* Responsive design framework
+* Specimen image batch tagging tool
+   
+### Changed
+* Bionomia badges and GBIF citation counts/links added to collection profile pages
+* Glossary improvements including ability to link terms into identification keys 
+* Identification Key user interface improved to including display of taxa as thumbnails
+* Significant extension of Spanish and French translation files, including refactor of how header, footer, and index language are integrated
+* Support for new Occurrence fields: waterBody, continent, islandGroup, island, countryCode, locationID, eventID, vitality, eventDateEnd 
+* Restructure css files, including removal of deprecated and redundant stylings
+* Taxon harvesting tool reconfigured to import directly from ChecklistBank API rather than Catalog of Life 
+* Security patches 
+** Update TinyMCE JS library 
+** Update jQuery JS libraries 
+** Cross-site scripting (XSS) protections - Improve sanitation of input variables to protect against 
+** SQL Injection protections - Improved prepared statements support 
+
+
+## [3.0] - 2022-01-14
 ### Added
 * Integrate additional identifiers table into occurrence management and publishing tools (table: omoccuridentifiers) 
 * Integrate Material Sample module into occurrence editor, public display, import, and export tools 

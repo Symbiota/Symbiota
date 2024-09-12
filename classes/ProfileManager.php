@@ -1,4 +1,7 @@
 <?php
+
+use function PHPUnit\Framework\returnValue;
+
 include_once('Manager.php');
 include_once('Person.php');
 include_once('Encryption.php');
@@ -6,11 +9,11 @@ include_once('Encryption.php');
 
 class ProfileManager extends Manager{
 
-	private $rememberMe = false;
-	private $uid;
-	private $userName;
-	private $displayName;
-	private $token;
+	protected $rememberMe = false;
+	protected $uid;
+	protected $userName;
+	protected $displayName;
+	protected $token;
 
 	public function __construct($connType = 'readonly'){
 		parent::__construct(null, $connType);
@@ -20,7 +23,7 @@ class ProfileManager extends Manager{
  		parent::__destruct();
 	}
 
-	private function resetConnection(){
+	protected function resetConnection(){
 		$this->conn = MySQLiConnectionFactory::getCon('write');
 	}
 
@@ -121,7 +124,7 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	private function setTokenCookie(){
+	protected function setTokenCookie(){
 		$tokenArr = Array();
 		if(!$this->token){
 			$this->createToken();
@@ -175,20 +178,25 @@ class ProfileManager extends Manager{
 		$zip = array_key_exists('zip', $postArr) ? strip_tags($postArr['zip']) : '';
 		$country = array_key_exists('country', $postArr) ? strip_tags($postArr['country']) : '';
 		$guid = array_key_exists('guid', $postArr) ? strip_tags($postArr['guid']) : '';
+		$isAccessiblePreferred = array_key_exists('accessibility-pref', $postArr) ? strip_tags($postArr['accessibility-pref']) : '0';
 
 		$status = false;
+
+		$accessibilityStatus = $this->setAccessibilityPreference($isAccessiblePreferred === '1' ? true : false, $this->uid);
+
 		if($this->uid && $lastName && $email){
 			$this->resetConnection();
 			$sql = 'UPDATE users SET firstname = ?, lastname = ?, email = ?, title = ?, institution = ?, city = ?, state = ?, zip = ?, country = ?, guid = ? WHERE (uid = ?)';
 			if($stmt = $this->conn->prepare($sql)) {
 				$stmt->bind_param('ssssssssssi', $firstName, $lastName, $email, $title, $institution, $city, $state, $zip, $country, $guid, $this->uid);
 				$stmt->execute();
-				if(!$stmt->error) $status = true;
+				if($accessibilityStatus && !$stmt->error) $status = true;
 				else $this->errorMessage = 'ERROR updating user profile: '.$stmt->error;
 				$stmt->close();
 			}
 			else $this->errorMessage = 'ERROR preparing statement user profile update: '.$this->conn->error;
 		}
+
 		return $status;
 	}
 
@@ -259,8 +267,8 @@ class ProfileManager extends Manager{
 				$body = 'Your '.$GLOBALS['DEFAULT_TITLE'].' password has been reset to: '.$newPassword.'<br/><br/> '.
 					'After logging in, you can change your password by clicking on the My Profile link within the site menu and then selecting the Edit Profile tab. '.
 					'If you have problems, contact the System Administrator: '.$GLOBALS['ADMIN_EMAIL'].'<br/><br/>'.
-					'Data portal: <a href="'.$serverPath.'">'.$serverPath.'</a><br/>'.
-					'Direct link to your user profile: <a href="'.$serverPath.'/profile/viewprofile.php?tabindex=2">'.$serverPath.'/profile/viewprofile.php</a>';
+					'Data portal: <a href="' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a><br/>'.
+					'Direct link to your user profile: <a href="' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/profile/viewprofile.php?tabindex=2">' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/profile/viewprofile.php</a>';
 
 				if($this->sendEmail($email, $subject, $body, $from)){
 					$this->resetConnection();
@@ -300,7 +308,7 @@ class ProfileManager extends Manager{
 		return $newPassword;
 	}
 
-	public function register($postArr){
+	public function register($postArr, $adminRegister = false){
 		$status = false;
 
 		$firstName = strip_tags($postArr['firstname']);
@@ -315,21 +323,28 @@ class ProfileManager extends Manager{
 		$zip = array_key_exists('zip', $postArr) ? strip_tags($postArr['zip']) : '';
 		$country = array_key_exists('country', $postArr) ? strip_tags($postArr['country']) : '';
 		$guid = array_key_exists('guid', $postArr) ? strip_tags($postArr['guid']) : '';
+		$isAccessiblePreferred = array_key_exists('accessibility-pref', $postArr) ? strip_tags($postArr['accessibility-pref']) : '0';
+		$initialDynamicProperties = array();
+		$initialDynamicProperties['accessibilityPref'] = $isAccessiblePreferred === "1" ? true : false;
+		$jsonDynProps = json_encode($initialDynamicProperties);
 
-		$sql = 'INSERT INTO users(username, password, email, firstName, lastName, title, institution, country, city, state, zip, guid) VALUES(?,CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?))))),?,?,?,?,?,?,?,?,?,?)';
+		$sql = 'INSERT INTO users(username, password, email, firstName, lastName, title, institution, country, city, state, zip, guid, dynamicProperties) VALUES(?,CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?))))),?,?,?,?,?,?,?,?,?,?,?)';
 		$this->resetConnection();
 		if($stmt = $this->conn->prepare($sql)) {
-			$stmt->bind_param('ssssssssssss', $this->userName, $pwd, $email, $firstName, $lastName, $title, $institution, $country, $city, $state, $zip, $guid);
+			$stmt->bind_param('sssssssssssss', $this->userName, $pwd, $email, $firstName, $lastName, $title, $institution, $country, $city, $state, $zip, $guid, $jsonDynProps);
 			$stmt->execute();
 			if($stmt->affected_rows){
 				$this->uid = $stmt->insert_id;
 				$this->displayName = $firstName;
-				$this->reset();
-				$this->authenticate($pwd);
+				if(!$adminRegister){
+					$this->reset();
+					$this->authenticate($pwd);
+				}
 				$status = true;
 			}
 			elseif($stmt->error) $this->errorMessage = 'ERROR inserting new user: '.$stmt->error;
 			$stmt->close();
+
 		}
 		else $this->errorMessage = 'ERROR inserting new user: '.$this->conn->error;
 
@@ -354,7 +369,7 @@ class ProfileManager extends Manager{
 		if($loginStr){
 			$subject = $GLOBALS['DEFAULT_TITLE'].' Login Name';
 			$serverPath = $this->getDomain().$GLOBALS['CLIENT_ROOT'];
-			$bodyStr = 'Your '.$GLOBALS['DEFAULT_TITLE'].' (<a href="'.$serverPath.'">'.$serverPath.'</a>) login name is: '.
+			$bodyStr = 'Your '.$GLOBALS['DEFAULT_TITLE'].' (<a href="' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>) login name is: '.
 				$loginStr.'<br/><br/>If you continue to have login issues, contact the System Administrator: '.$GLOBALS['ADMIN_EMAIL'];
 			$status = $this->sendEmail($emailAddr, $subject, $bodyStr, $from);
 		}
@@ -463,7 +478,7 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	private function setUserRights(){
+	public function setUserRights(){
 		if($this->uid){
 			$userRights = array();
 			$sql = 'SELECT role, tablepk FROM userroles WHERE (uid = ?) ';
@@ -483,7 +498,7 @@ class ProfileManager extends Manager{
 		}
 	}
 
-	private function setUserParams(){
+	protected function setUserParams(){
 		global $PARAMS_ARR;
 		$_SESSION['userparams']['un'] = $this->userName;
 		$_SESSION['userparams']['dn'] = $this->displayName;
@@ -648,7 +663,7 @@ class ProfileManager extends Manager{
 					if($rs->num_rows){
 						while($r = $rs->fetch_object()){
 							echo '<li><i>'.$r->sciname.'</i>, ';
-							echo '<a href="../collections/editor/occurrenceeditor.php?occid='.$r->occid.'" target="_blank">';
+							echo '<a href="../collections/editor/occurrenceeditor.php?occid=' . htmlspecialchars($r->occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">';
 							echo $r->catalognumber.'</a> ['.$r->collcode.']'.($r->stateprovince?', '.$r->stateprovince:'');
 							echo '</li>'."\n";
 						}
@@ -682,7 +697,7 @@ class ProfileManager extends Manager{
 			if($rs->num_rows){
 				while($r = $rs->fetch_object()){
 					echo '<li>';
-					echo '<a href="../collections/editor/occurrenceeditor.php?occid='.$r->occid.'" target="_blank">';
+					echo '<a href="../collections/editor/occurrenceeditor.php?occid=' . htmlspecialchars($r->occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">';
 					echo $r->catalognumber.'</a> ['.$r->collcode.']'.($r->stateprovince?', '.$r->stateprovince:'');
 					echo '</li>'."\n";
 				}
@@ -1017,23 +1032,63 @@ class ProfileManager extends Manager{
 		return $tPath;
 	}
 
-	//setter and getters
-	public function setRememberMe($test){
-		$this->rememberMe = $test;
+	//Accessubility functions
+	private function setAccessibilityPreference($pref, $uid){
+		$status = false;
+		$currentDynamicProperties = $this->getDynamicProperties($uid);
+		if(!$currentDynamicProperties) $currentDynamicProperties = array();
+		$currentDynamicProperties['accessibilityPref'] = $pref;
+		$status = $this->setDynamicProperties($uid, $currentDynamicProperties);
+		return $status;
 	}
 
-	public function getRememberMe(){
-		return $this->rememberMe;
-	}
+	private function setDynamicProperties($uid, $dynPropArr){
+		$status = false;
+		if(!$uid) return $status;
 
-	public function setToken($token){
-		$this->token = $token;
-	}
+		$jsonDynProps = json_encode($dynPropArr);
 
-	public function setUid($uid){
-		if(is_numeric($uid)){
-			$this->uid = $uid;
+		$this->resetConnection(); // @TODO decided whether this is necessary
+		$sql = 'UPDATE users SET dynamicProperties = ? WHERE (uid = ?)';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('si', $jsonDynProps, $uid);
+			$stmt->execute();
+			if(!$stmt->error) $status = true; // note: removed $stmt->affected_rows &&
+			$stmt->close();
 		}
+		return $status;
+	}
+
+	public function getAccessibilityPreference($uid){
+		if(!$uid){
+			return false;
+		}
+		$returnVal = false;
+		$dynPropArr = $this->getDynamicProperties($uid);
+
+		if($dynPropArr && isset($dynPropArr['accessibilityPref'])){
+			$returnVal = ($dynPropArr['accessibilityPref'] === true) ? true : false;
+		}
+		return $returnVal;
+	}
+
+	private function getDynamicProperties($uid){
+		$returnVal = false;
+		$sql = 'SELECT dynamicProperties FROM users WHERE uid = ?';
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bind_param('i', $uid);
+		$stmt->execute();
+		$respns= $stmt->get_result();
+		if($fetchedObj = $respns->fetch_object()){
+			$dynPropStr = $fetchedObj->dynamicProperties;
+		}
+		$respns->free();
+		if(isset($dynPropStr)){
+			if($dynPropArr = json_decode($dynPropStr, true)){
+				$returnVal = $dynPropArr;
+			}
+		}
+		return $returnVal;
 	}
 
 	//Misc support functions
@@ -1057,6 +1112,25 @@ class ProfileManager extends Manager{
 	private function encodeArr(&$inArr,$cSet){
 		foreach($inArr as $k => $v){
 			$inArr[$k] = $this->encodeString($v,$cSet);
+		}
+	}
+
+	//setter and getters
+	public function setRememberMe($test){
+		$this->rememberMe = $test;
+	}
+
+	public function getRememberMe(){
+		return $this->rememberMe;
+	}
+
+	public function setToken($token){
+		$this->token = $token;
+	}
+
+	public function setUid($uid){
+		if(is_numeric($uid)){
+			$this->uid = $uid;
 		}
 	}
 }

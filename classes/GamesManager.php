@@ -133,7 +133,7 @@ class GamesManager extends Manager{
 					while(($row = $rs->fetch_object()) && ($cnt < 6)){
 						$file = '';
 						if (substr($row->url, 0, 1) == '/'){
-							if(isset($GLOBALS['imageDomain']) && $GLOBALS['imageDomain']) $file = $GLOBALS['imageDomain'].$row->url;
+							if(!empty($GLOBALS['IMAGE_DOMAIN'])) $file = $GLOBALS['IMAGE_DOMAIN'] . $row->url;
 							else $file = $domain.$row->url;
 						}
 						else{
@@ -343,7 +343,7 @@ class GamesManager extends Manager{
 	//Misc functions
 	private function setClidStr(){
 		$clidArr = array($this->clid);
-		$sqlBase = 'SELECT clidchild FROM fmchklstchildren WHERE clid IN(';
+		$sqlBase = 'SELECT clidchild FROM fmchklstchildren WHERE clid != clidchild AND clid IN(';
 		$sql = $sqlBase.$this->clid.')';
 		do{
 			$childStr = "";

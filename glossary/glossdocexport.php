@@ -16,13 +16,13 @@ $definitions = array_key_exists('definitions',$_POST)?$_POST['definitions']:'';
 $images = array_key_exists('images',$_POST)?$_POST['images']:'';
 
 //Sanitation
-$language = htmlspecialchars($language, HTML_SPECIAL_CHARS_FLAGS);
-$taxon = htmlspecialchars($taxon, HTML_SPECIAL_CHARS_FLAGS);
-$searchTerm = htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS);
+$language = htmlspecialchars($language, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$taxon = htmlspecialchars($taxon, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$searchTerm = htmlspecialchars($searchTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 if(!is_numeric($deepSearch)) $relatedLanguage = 0;
-$exportType = htmlspecialchars($exportType, HTML_SPECIAL_CHARS_FLAGS);
-$definitions = htmlspecialchars($definitions, HTML_SPECIAL_CHARS_FLAGS);
-$images = htmlspecialchars($images, HTML_SPECIAL_CHARS_FLAGS);
+$exportType = htmlspecialchars($exportType, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$definitions = htmlspecialchars($definitions, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$images = htmlspecialchars($images, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 
 $fileName = '';
 $citationFormat = $DEFAULT_TITLE.'. '.date('Y').'. ';
@@ -246,8 +246,8 @@ else{
 				foreach($imageArr as $img => $imgArr){
 					$imgSrc = $imgArr["url"];
 					if(substr($imgSrc,0,1)=="/"){
-						if(array_key_exists("imageDomain",$GLOBALS) && $GLOBALS["imageDomain"]){
-							$imgSrc = $GLOBALS["imageDomain"].$imgSrc;
+						if(!empty($GLOBALS['IMAGE_DOMAIN'])){
+							$imgSrc = $GLOBALS['IMAGE_DOMAIN'].$imgSrc;
 						}
 						else{
 							$imgSrc = 'http://'.$_SERVER['HTTP_HOST'].$imgSrc;
@@ -336,6 +336,9 @@ $fileName = preg_replace('/[^0-9A-Za-z\-_]/', '', $fileName);
 $targetFile = $SERVER_ROOT.'/temp/report/'.$fileName.'_'.date('Y-m-d').'.docx';
 $phpWord->save($targetFile, 'Word2007');
 
+ob_start();
+ob_clean();
+ob_end_flush();
 header('Content-Description: File Transfer');
 header('Content-type: application/force-download');
 header('Content-Disposition: attachment; filename='.basename($targetFile));

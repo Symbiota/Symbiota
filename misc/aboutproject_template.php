@@ -3,7 +3,8 @@ include_once('../config/symbini.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 include_once('content/lang/misc/aboutproject.'.$LANG_TAG.'.php');
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title>About Project</title>
 		<?php
@@ -17,12 +18,12 @@ include_once('content/lang/misc/aboutproject.'.$LANG_TAG.'.php');
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div class="navpath">
-			<a href="../index.php"><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
+			<a href="../index.php"><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 			<b><?php echo (isset($LANG['ABOUT_PROJECT'])?$LANG['ABOUT_PROJECT']:'About the Project'); ?></b>
 		</div>
 		<!-- This is inner text! -->
-		<div id="innertext" style="margin:10px 20px">
-			<h1><?php echo (isset($LANG['ABOUT_PROJECT'])?$LANG['ABOUT_PROJECT']:'About the Project'); ?>:</h1>
+		<div role="main" id="innertext" style="margin:10px 20px">
+			<h1 class="page-heading"><?php echo $LANG['ABOUT_PROJECT']; ?>:</h1>
 
 			<p></p>
 

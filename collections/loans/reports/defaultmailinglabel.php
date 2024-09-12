@@ -76,6 +76,9 @@ if($outputMode == 'doc'){
 	$targetFile = $SERVER_ROOT.'/temp/report/'.$PARAMS_ARR['un'].'_mailing_label.docx';
 	$phpWord->save($targetFile, 'Word2007');
 
+	ob_start();
+	ob_clean();
+	ob_end_flush();
 	header('Content-Description: File Transfer');
 	header('Content-type: application/force-download');
 	header('Content-Disposition: attachment; filename='.basename($targetFile));
@@ -86,21 +89,22 @@ if($outputMode == 'doc'){
 }
 else{
 	?>
-	<html>
+	<!DOCTYPE html>
+	<html lang="<?php echo $LANG_TAG ?>">
 		<head>
 			<title>Mailing Label</title>
 			<?php
-	
+
 			include_once($SERVER_ROOT.'/includes/head.php');
 			?>
 			<style type="text/css">
-				body {font-family:arial,sans-serif;}
 				p.printbreak {page-break-after:always;}
 				.fromaddress {font:10pt arial,sans-serif;}
 				.toaddress {margin-left:1in;font:14pt arial,sans-serif;}
 			</style>
 		</head>
 		<body style="background-color:#ffffff;">
+			<h1 class="page-heading screen-reader-only">Mailing Label</h1>
 			<div>
 				<table style="width:8in;">
 					<tr>

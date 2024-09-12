@@ -30,6 +30,8 @@ $LANG['CONTACT'] = 'Contact';
 $LANG['EMAIL'] = 'Email';
 $LANG['LAT'] = 'Latitude';
 $LANG['LONG'] = 'Longitude';
+$LANG['MAP'] = 'Open map';
+$LANG['MORE_INFO'] = 'Show more information';
 $LANG['CATEGORY'] = 'Category';
 $LANG['NO_CATEGORY'] = 'No Category';
 $LANG['ALLOW_PUBLIC_EDITS'] = 'Allow Public Edits';
@@ -89,6 +91,7 @@ $LANG['OCCID_DEF_2'] = 'field. The use of the Occurrence Id as the GUID is not r
 						generate UUID GUIDs for each record. This option is recommended for many for Live Datasets
 						but not allowed for Snapshot collections that are managed in local management system.';
 $LANG['PUBLISH_TO_AGGS'] = 'Publish to Aggregators';
+$LANG['MORE_INFO_AGGREGATORS'] = 'More information about Publishing to Aggregators';
 $LANG['ACTIVATE_GBIF'] = 'Activates GBIF publishing tools available within Darwin Core Archive Publishing menu option';
 $LANG['SOURCE_REC_URL'] = 'Source Record URL';
 $LANG['DYNAMIC_LINK_REC'] = 'Dynamic link to source database individual record page';
@@ -121,5 +124,7 @@ $LANG['SECURITY_KEY'] = 'Security Key';
 $LANG['RECORDID'] = 'recordID';
 $LANG['SAVE_EDITS'] = 'Save Edits';
 $LANG['CREATE_COLL_2'] = 'Create New Collection';
+$LANG['TINYMCE_INFO'] = 'Collection description. You can access the text editing toolbar for this description 
+						by pressing key combination ALT + F10 on Windows or OPTION + F10 on MacOS.';
 
 ?>

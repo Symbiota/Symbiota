@@ -15,10 +15,6 @@ body{
 	width: 595px;
 }
 
-#querySymbolDiv{
-	float:right;
-}
-
 #navDiv{
 	width: 600px;
 	clear: both;	
@@ -55,6 +51,10 @@ body{
 	width: 95px;
 }
 
+#identifierDiv{
+	display: none;
+}
+
 #recordedByDiv {
 	float:left;
 	margin-right: 2px;
@@ -78,6 +78,14 @@ body{
 }
 
 #eventDateDiv input{
+	width:	110px;
+}
+
+#eventDate2Div {
+	float:left;
+}
+
+#eventDate2Div input{
 	width:	110px;
 }
 
@@ -114,15 +122,6 @@ body{
 	padding:3px;
 }
 
-#dateToggleDiv{
-	float:left;
-	margin:15px 5px;
-}
-
-#dateextradiv{
-	display: block;
-}
-
 #idrefToggleDiv{
 	display:none;
 }
@@ -142,14 +141,6 @@ body{
 	display: block;
 }
 
-#ymdDiv {
-	display: none;
-}
-
-#dayOfYearDiv {
-	display:none;
-}
-
 #endDateDiv {
 	display:none;
 }
@@ -164,7 +155,7 @@ body{
 }
 
 #exstitleinput {
-	width: 500px;
+	width: 400px;
 }
 
 #exsnumberDiv {
@@ -297,13 +288,13 @@ body{
 	width:	70px;
 }
 
-#googleDiv{
+#mapIconDiv{
 	float:left;
 	margin: 17px 2px 0px 2px;
 	cursor:	pointer;
 }
 
-#googleDiv img{
+#mapIconDiv img{
 	border:	0px;
 	width:	13px;
 }
@@ -402,7 +393,7 @@ body{
 }
 
 #verbatimCoordinatesDiv input{
-	width:	225px;
+	width:	200px;
 }
 
 #georeferencedByDiv{
@@ -504,6 +495,14 @@ body{
 }
 
 #reproductiveConditionDiv{
+	display:none;
+}
+
+#behaviorDiv{
+	display:none;
+}
+
+#vitalityDiv{
 	display:none;
 }
 

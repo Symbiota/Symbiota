@@ -41,16 +41,17 @@ if($glossId){
 	}
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.(isset($LANG['GLOSS_TERM_INFO'])?$LANG['GLOSS_TERM_INFO']:'Glossary Term Information'); ?></title>
+	<title><?php echo $DEFAULT_TITLE . $LANG['GLOSS_TERM_INFO']; ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<script type="text/javascript" src="../js/jquery.js"></script>
-	<script type="text/javascript" src="../js/jquery-ui.js"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/symb/glossary.index.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -61,13 +62,21 @@ if($glossId){
 			});
 		});
 	</script>
+	<style>
+		body{ margin-left: auto; margin-right: auto; }
+	</style>
 </head>
 
 <body style="overflow-x:hidden;overflow-y:auto;width:800px;min-width:800px">
 	<?php
 	if($termArr){
+		$glosManager->remapDescriptionCrossLinks($termArr);
+		if(strpos($_SERVER['HTTP_REFERER'], 'individual.php')){
+			echo '<div class="navpath"><a href="#" onclick="history.back();">&lt;&lt; ' . $LANG['RETURN_TO_PREVIOUS'] . '</a></div>';
+		}
 		?>
 		<!-- This is inner text! -->
+		<h1 class="page-heading"><?= $LANG['GLOSS_TERM_INFO']; ?></h1>
 		<div style="width:100%;margin-left:auto;margin-right:auto">
 			<div id="tabs" style="padding:10px">
 				<div style="clear:both;">
@@ -76,7 +85,7 @@ if($glossId){
 						?>
 						<div style="float:right;margin-right:15px;" title="Edit Term Data">
 							<a href="termdetails.php?glossid=<?php echo $glossId;?>" onclick="self.resizeTo(1250, 900);">
-								<img style="border:0px;width:12px;" src="../images/edit.png" />
+								<img style="border:0px;width:1.3em;" src="../images/edit.png" />
 							</a>
 						</div>
 						<?php
@@ -205,8 +214,8 @@ if($glossId){
 							foreach($termImgArr as $imgId => $imgArr){
 								$imgUrl = $imgArr["url"];
 								if(substr($imgUrl,0,1)=="/"){
-									if(array_key_exists('imageDomain',$GLOBALS) && $GLOBALS['imageDomain']){
-										$imgUrl = $GLOBALS['imageDomain'].$imgUrl;
+									if(!empty($GLOBALS['IMAGE_DOMAIN'])){
+										$imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
 									}
 									else{
 										$imgUrl = $glosManager->getDomain() . $imgUrl;

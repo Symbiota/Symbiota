@@ -1,6 +1,8 @@
 <?php
 include_once($SERVER_ROOT.'/classes/Manager.php');
-include_once($SERVER_ROOT.'/content/lang/classes/TaxonomyEditorManager.'.$LANG_TAG.'.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT . '/content/lang/classes/TaxonomyEditorManager.' . $LANG_TAG . '.php'))
+	include_once($SERVER_ROOT . '/content/lang/classes/TaxonomyEditorManager.en.php');
+else include_once($SERVER_ROOT . '/content/lang/classes/TaxonomyEditorManager.' . $LANG_TAG . '.php');
 
 class TaxonomyEditorManager extends Manager{
 
@@ -198,14 +200,12 @@ class TaxonomyEditorManager extends Manager{
 	}
 
 	private function setParentName(){
-		$sql = "SELECT t.sciname, t.author ".
-			"FROM taxa t ".
-			"WHERE (t.tid = ".$this->parentTid.")";
-		//echo $sql."<br>";
+		$sql = 'SELECT sciname, author, rankid FROM taxa WHERE (tid = ' . $this->parentTid . ')';
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
-			$this->parentNameFull = '<i>'.$r->sciname.'</i> '.$r->author;
-			$this->parentName = $r->sciname;
+			if($r->rankid >= 180) $this->parentNameFull = '<i>' . htmlspecialchars($r->sciname, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</i> ' . $r->author;
+			else $this->parentNameFull = htmlspecialchars($r->sciname . ' ' . $r->author, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+			$this->parentName = htmlspecialchars($r->sciname, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 		}
 		$rs->free();
 	}
@@ -238,8 +238,15 @@ class TaxonomyEditorManager extends Manager{
 		//If SecurityStatus was changed, set security status within omoccurrence table
 		if($postArr['securitystatus'] != $_REQUEST['securitystatusstart']){
 			if(is_numeric($postArr['securitystatus'])){
-				$sql2 = 'UPDATE omoccurrences SET localitysecurity = '.$postArr['securitystatus'].' WHERE (tidinterpreted = '.$this->tid.') AND (localitySecurityReason IS NULL)';
-				$this->conn->query($sql2);
+				$sql2 = 'UPDATE omoccurrences SET localitysecurity = 0 WHERE (tidinterpreted = ?) AND (localitySecurityReason IS NULL)';
+				if($postArr['securitystatus']){
+					$sql2 = 'UPDATE omoccurrences SET localitysecurity = 1 WHERE (tidinterpreted = ?) AND (localitySecurityReason IS NULL) AND (cultivationStatus = 0 OR cultivationStatus IS NULL)';
+				}
+				if($stmt = $this->conn->prepare($sql2)){
+					$stmt->bind_param('i', $this->tid);
+					$stmt->execute();
+					$stmt->close();
+				}
 			}
 		}
 		return $statusStr;
@@ -289,7 +296,7 @@ class TaxonomyEditorManager extends Manager{
 			$rs->free();
 
 			if($deleteOther){
-				$sqlDel = "DELETE FROM taxstatus WHERE (tid = ".$this->tid.") AND (taxauthid = ".$this->taxAuthId.')';
+				$sqlDel = 'DELETE FROM taxstatus WHERE (tid = '.$this->tid.') AND (taxauthid = '.$this->taxAuthId.')';
 				$this->conn->query($sqlDel);
 			}
 			$sql = 'INSERT INTO taxstatus (tid,tidaccepted,taxauthid,family,parenttid,modifiedUid) '.
@@ -387,57 +394,56 @@ class TaxonomyEditorManager extends Manager{
 
 	private function resetCharStateInheritance($tid){
 		//set inheritance for target only
-		$sqlAdd1 = "INSERT INTO kmdescr ( TID, CID, CS, Modifier, X, TXT, Seq, Notes, Inherited ) ".
-			"SELECT DISTINCT t2.TID, d1.CID, d1.CS, d1.Modifier, d1.X, d1.TXT, ".
-			"d1.Seq, d1.Notes, IFNULL(d1.Inherited,t1.SciName) AS parent ".
-			"FROM ((((taxa AS t1 INNER JOIN kmdescr d1 ON t1.TID = d1.TID) ".
-			"INNER JOIN taxstatus ts1 ON d1.TID = ts1.tid) ".
-			"INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.ParentTID) ".
-			"INNER JOIN taxa t2 ON ts2.tid = t2.tid) ".
-			"LEFT JOIN kmdescr d2 ON (d1.CID = d2.CID) AND (t2.TID = d2.TID) ".
-			"WHERE (ts1.taxauthid = '.$this->taxAuthId.') AND (ts2.taxauthid = '.$this->taxAuthId.') AND (ts2.tid = ts2.tidaccepted) ".
-			"AND (t2.tid = ".$tid.") And (d2.CID Is Null)";
+		$sqlAdd1 = 'INSERT INTO kmdescr ( TID, CID, CS, Modifier, X, TXT, Seq, Notes, Inherited )
+			SELECT DISTINCT t2.TID, d1.CID, d1.CS, d1.Modifier, d1.X, d1.TXT,
+			d1.Seq, d1.Notes, IFNULL(d1.Inherited,t1.SciName) AS parent
+			FROM ((((taxa AS t1 INNER JOIN kmdescr d1 ON t1.TID = d1.TID)
+			INNER JOIN taxstatus ts1 ON d1.TID = ts1.tid)
+			INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.ParentTID)
+			INNER JOIN taxa t2 ON ts2.tid = t2.tid)
+			LEFT JOIN kmdescr d2 ON (d1.CID = d2.CID) AND (t2.TID = d2.TID)
+			WHERE (ts1.taxauthid = '.$this->taxAuthId.') AND (ts2.taxauthid = '.$this->taxAuthId.') AND (ts2.tid = ts2.tidaccepted)
+			AND (t2.tid = '.$tid.') And (d2.CID Is Null)';
 		$this->conn->query($sqlAdd1);
 
 		//Set inheritance for all children of target
 		if($this->rankid == 140){
-			$sqlAdd2a = "INSERT INTO kmdescr ( TID, CID, CS, Modifier, X, TXT, Seq, Notes, Inherited ) ".
-				"SELECT DISTINCT t2.TID, d1.CID, d1.CS, d1.Modifier, d1.X, d1.TXT, ".
-				"d1.Seq, d1.Notes, IFNULL(d1.Inherited,t1.SciName) AS parent ".
-				"FROM ((((taxa AS t1 INNER JOIN kmdescr d1 ON t1.TID = d1.TID) ".
-				"INNER JOIN taxstatus ts1 ON d1.TID = ts1.tid) ".
-				"INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.ParentTID) ".
-				"INNER JOIN taxa t2 ON ts2.tid = t2.tid) ".
-				"LEFT JOIN kmdescr d2 ON (d1.CID = d2.CID) AND (t2.TID = d2.TID) ".
-				"WHERE (ts1.taxauthid = '.$this->taxAuthId.') AND (ts2.taxauthid = '.$this->taxAuthId.') AND (ts2.tid = ts2.tidaccepted) ".
-				"AND (t2.RankId = 180) AND (t1.tid = ".$tid.") AND (d2.CID Is Null)";
+			$sqlAdd2a = 'INSERT INTO kmdescr ( TID, CID, CS, Modifier, X, TXT, Seq, Notes, Inherited )
+				SELECT DISTINCT t2.TID, d1.CID, d1.CS, d1.Modifier, d1.X, d1.TXT,
+				d1.Seq, d1.Notes, IFNULL(d1.Inherited,t1.SciName) AS parent
+				FROM ((((taxa AS t1 INNER JOIN kmdescr d1 ON t1.TID = d1.TID)
+				INNER JOIN taxstatus ts1 ON d1.TID = ts1.tid)
+				INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.ParentTID)
+				INNER JOIN taxa t2 ON ts2.tid = t2.tid)
+				LEFT JOIN kmdescr d2 ON (d1.CID = d2.CID) AND (t2.TID = d2.TID)
+				WHERE (ts1.taxauthid = '.$this->taxAuthId.') AND (ts2.taxauthid = '.$this->taxAuthId.') AND (ts2.tid = ts2.tidaccepted)
+				AND (t2.RankId = 180) AND (t1.tid = '.$tid.') AND (d2.CID Is Null)';
 			//echo $sqlAdd2a;
 			$this->conn->query($sqlAdd2a);
-			$sqlAdd2b = "INSERT INTO kmdescr ( TID, CID, CS, Modifier, X, TXT, Seq, Notes, Inherited ) ".
-				"SELECT DISTINCT t2.TID, d1.CID, d1.CS, d1.Modifier, d1.X, d1.TXT, ".
-				"d1.Seq, d1.Notes, IFNULL(d1.Inherited,t1.SciName) AS parent ".
-				"FROM ((((taxa AS t1 INNER JOIN kmdescr d1 ON t1.TID = d1.TID) ".
-				"INNER JOIN taxstatus ts1 ON d1.TID = ts1.tid) ".
-				"INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.ParentTID) ".
-				"INNER JOIN taxa t2 ON ts2.tid = t2.tid) ".
-				"LEFT JOIN kmdescr d2 ON (d1.CID = d2.CID) AND (t2.TID = d2.TID) ".
-				"WHERE (ts1.taxauthid = '.$this->taxAuthId.') AND (ts2.taxauthid = '.$this->taxAuthId.') AND (ts2.family = '".
-				$this->sciName."') AND (ts2.tid = ts2.tidaccepted) ".
-				"AND (t2.RankId = 220) AND (d2.CID Is Null)";
+			$sqlAdd2b = 'INSERT INTO kmdescr ( TID, CID, CS, Modifier, X, TXT, Seq, Notes, Inherited )
+				SELECT DISTINCT t2.TID, d1.CID, d1.CS, d1.Modifier, d1.X, d1.TXT,
+				d1.Seq, d1.Notes, IFNULL(d1.Inherited,t1.SciName) AS parent
+				FROM ((((taxa AS t1 INNER JOIN kmdescr d1 ON t1.TID = d1.TID)
+				INNER JOIN taxstatus ts1 ON d1.TID = ts1.tid)
+				INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.ParentTID)
+				INNER JOIN taxa t2 ON ts2.tid = t2.tid)
+				LEFT JOIN kmdescr d2 ON (d1.CID = d2.CID) AND (t2.TID = d2.TID)
+				WHERE (ts1.taxauthid = '.$this->taxAuthId.') AND (ts2.taxauthid = '.$this->taxAuthId.')
+				AND (ts2.family = "'.$this->sciName.'") AND (ts2.tid = ts2.tidaccepted) AND (t2.RankId = 220) AND (d2.CID Is Null)';
 			$this->conn->query($sqlAdd2b);
 		}
 
 		if($this->rankid > 140 && $this->rankid < 220){
-			$sqlAdd3 = "INSERT INTO kmdescr ( TID, CID, CS, Modifier, X, TXT, Seq, Notes, Inherited ) ".
-				"SELECT DISTINCT t2.TID, d1.CID, d1.CS, d1.Modifier, d1.X, d1.TXT, ".
-				"d1.Seq, d1.Notes, IFNULL(d1.Inherited,t1.SciName) AS parent ".
-				"FROM ((((taxa AS t1 INNER JOIN kmdescr d1 ON t1.TID = d1.TID) ".
-				"INNER JOIN taxstatus ts1 ON d1.TID = ts1.tid) ".
-				"INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.ParentTID) ".
-				"INNER JOIN taxa t2 ON ts2.tid = t2.tid) ".
-				"LEFT JOIN kmdescr d2 ON (d1.CID = d2.CID) AND (t2.TID = d2.TID) ".
-				"WHERE (ts1.taxauthid = '.$this->taxAuthId.') AND (ts2.taxauthid = '.$this->taxAuthId.') AND (ts2.tid = ts2.tidaccepted) ".
-				"AND (t2.RankId = 220) AND (t1.tid = ".$tid.") AND (d2.CID Is Null)";
+			$sqlAdd3 = 'INSERT INTO kmdescr ( TID, CID, CS, Modifier, X, TXT, Seq, Notes, Inherited )
+				SELECT DISTINCT t2.TID, d1.CID, d1.CS, d1.Modifier, d1.X, d1.TXT,
+				d1.Seq, d1.Notes, IFNULL(d1.Inherited,t1.SciName) AS parent
+				FROM ((((taxa AS t1 INNER JOIN kmdescr d1 ON t1.TID = d1.TID)
+				INNER JOIN taxstatus ts1 ON d1.TID = ts1.tid)
+				INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.ParentTID)
+				INNER JOIN taxa t2 ON ts2.tid = t2.tid)
+				LEFT JOIN kmdescr d2 ON (d1.CID = d2.CID) AND (t2.TID = d2.TID)
+				WHERE (ts1.taxauthid = '.$this->taxAuthId.') AND (ts2.taxauthid = '.$this->taxAuthId.') AND (ts2.tid = ts2.tidaccepted)
+				AND (t2.RankId = 220) AND (t1.tid = '.$tid.') AND (d2.CID Is Null)';
 			//echo $sqlAdd2b;
 			$this->conn->query($sqlAdd3);
 		}
@@ -600,12 +606,28 @@ class TaxonomyEditorManager extends Manager{
 				return (isset($this->langArr['ERROR_MISSING_PARENTID'])?$this->langArr['ERROR_MISSING_PARENTID']:'ERROR loading taxon due to missing parentTid');
 			}
 
-			//Link new name to existing specimens and set locality secirity if needed
-			$sql1 = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname SET o.TidInterpreted = t.tid ';
-			if($dataArr['securitystatus'] == 1) $sql1 .= ',o.localitysecurity = 1 ';
-			$sql1 .= 'WHERE (o.sciname = "'.$this->cleanInStr($dataArr["sciname"]).'") ';
-			if(!$this->conn->query($sql1)){
-				echo (isset($this->langArr['WARNING_OCCURRENCES_NOT UPDATED'])?$this->langArr['WARNING_OCCURRENCES_NOT']:'WARNING: Taxon loaded into taxa, but  occurrences must be updated with matching name').': '.$this->conn->error;
+			//Link new name to existing specimens
+			$sqlUpdate1 = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname SET o.TidInterpreted = t.tid WHERE (o.sciname = ?)';
+			if($stmt = $this->conn->prepare($sqlUpdate1)){
+				$stmt->bind_param('s', $dataArr["sciname"]);
+				$stmt->execute();
+				if($stmt->error){
+					if(isset($this->langArr['WARNING_OCCURRENCES_NOT'])) echo $this->langArr['WARNING_OCCURRENCES_NOT'];
+					else echo 'WARNING: Taxon loaded into taxa, but occurrences must be updated with matching name';
+					echo ': ' . $this->conn->error;
+				}
+				$stmt->close();
+			}
+			if($dataArr['securitystatus'] == 1){
+				//Set locality security
+				$sqlUpdate2 = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname
+					SET o.localitysecurity = 1
+					WHERE (o.localitySecurityReason IS NULL) AND (cultivationStatus = 0 OR cultivationStatus IS NULL) AND (o.sciname = ?) ';
+				if($stmt = $this->conn->prepare($sqlUpdate2)){
+					$stmt->bind_param('s', $dataArr["sciname"]);
+					$stmt->execute();
+					$stmt->close();
+				}
 			}
 
 			//Link occurrence images to the new name
@@ -626,11 +648,11 @@ class TaxonomyEditorManager extends Manager{
 			}
 
 			//Add their geopoints to omoccurgeoindex
-			$sql3 = 'INSERT IGNORE INTO omoccurgeoindex(tid,decimallatitude,decimallongitude) '.
-				'SELECT DISTINCT o.tidinterpreted, round(o.decimallatitude,2), round(o.decimallongitude,2) '.
-				'FROM omoccurrences o '.
-				'WHERE (o.tidinterpreted '.$tid.') AND (o.decimallatitude between -90 and 90) AND (o.decimallongitude between -180 and 180) '.
-				'AND (o.cultivationStatus IS NULL OR o.cultivationStatus = 0) AND (o.coordinateUncertaintyInMeters IS NULL OR o.coordinateUncertaintyInMeters < 10000) ';
+			$sql3 = 'INSERT IGNORE INTO omoccurgeoindex(tid,decimallatitude,decimallongitude)
+				SELECT DISTINCT o.tidinterpreted, round(o.decimallatitude,2), round(o.decimallongitude,2)
+				FROM omoccurrences o
+				WHERE (o.tidinterpreted = '.$tid.') AND (o.decimallatitude between -90 and 90) AND (o.decimallongitude between -180 and 180)
+				AND (o.cultivationStatus IS NULL OR o.cultivationStatus = 0) AND (o.coordinateUncertaintyInMeters IS NULL OR o.coordinateUncertaintyInMeters < 10000) ';
 
 			$this->conn->query($sql3);
 
@@ -678,6 +700,14 @@ class TaxonomyEditorManager extends Manager{
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr['img'] = $r->cnt;
+		}
+		$rs->free();
+
+		//Taxon maps
+		$sql ='SELECT COUNT(mid) AS cnt FROM taxamaps WHERE tid = '.$this->tid;
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$retArr['map'] = $r->cnt;
 		}
 		$rs->free();
 
@@ -751,6 +781,10 @@ class TaxonomyEditorManager extends Manager{
 			$sql ='UPDATE IGNORE images SET tid = '.$targetTid.' WHERE occid IS NULL AND tid = '.$this->tid;
 			if(!$this->conn->query($sql)) $this->warningArr[] = (isset($this->langArr['ERROR_TRANSFER_IMGS'])?$this->langArr['ERROR_TRANSFER_IMGS']:'ERROR transferring image links').' ('.$this->conn->error.')';
 
+			//Taxon maps
+			$sql ='UPDATE IGNORE taxamaps SET mid = '.$targetTid.' WHERE tid = '.$this->tid;
+			if(!$this->conn->query($sql)) $this->warningArr[] = $this->langArr['ERROR_TRANSFER_MAPS'] . ' (' . $this->conn->error . ')';
+
 			//Vernaculars
 			$sql ='UPDATE IGNORE taxavernaculars SET tid = '.$targetTid.' WHERE tid = '.$this->tid;
 			if(!$this->conn->query($sql)) $this->warningArr[] = (isset($this->langArr['ERROR_TRANSFER_VERNACULARS'])?$this->langArr['ERROR_TRANSFER_VERNACULARS']:'ERROR transferring vernaculars').' ('.$this->conn->error.')';
@@ -775,15 +809,15 @@ class TaxonomyEditorManager extends Manager{
 			if(!$this->conn->query($sql)) $this->warningArr[] = (isset($this->langArr['ERROR_TRANSFER_TAXLINKS'])?$this->langArr['ERROR_TRANSFER_TAXLINKS']:'ERROR transferring taxa links').' ('.$this->conn->error.')';
 
 			//Transfer children taxa
-			$sql ='UPDATE taxstatus SET parenttid = '.$targetTid.' WHERE parenttid = '.$this->tid;
+			$sql ='UPDATE IGNORE taxstatus SET parenttid = '.$targetTid.' WHERE parenttid = '.$this->tid;
 			if(!$this->conn->query($sql)) $this->warningArr[] = (isset($this->langArr['ERROR_TRANSFER_CHILD'])?$this->langArr['ERROR_TRANSFER_CHILD']:'ERROR transferring child taxa').' ('.$this->conn->error.')';
 
 			//Transfer Synonyms
-			$sql ='UPDATE taxstatus SET tidaccepted = '.$targetTid.' WHERE tidaccepted = '.$this->tid;
+			$sql ='UPDATE IGNORE taxstatus SET tidaccepted = '.$targetTid.' WHERE tidaccepted = '.$this->tid;
 			if(!$this->conn->query($sql)) $this->warningArr[] = (isset($this->langArr['ERROR_TRANSFER_SYN'])?$this->langArr['ERROR_TRANSFER_SYN']:'ERROR transferring synonyms taxa').' ('.$this->conn->error.')';
 
 			//Adjust taxaEnumTree index table
-			$sql ='UPDATE taxaenumtree SET parenttid = '.$targetTid.' WHERE parenttid = '.$this->tid;
+			$sql ='UPDATE IGNORE taxaenumtree SET parenttid = '.$targetTid.' WHERE parenttid = '.$this->tid;
 			if(!$this->conn->query($sql)) $this->warningArr[] = (isset($this->langArr['ERROR_TRANSFER_TAXENUMTREE'])?$this->langArr['ERROR_TRANSFER_TAXENUMTREE']:'ERROR resetting taxaEnumTree index').' ('.$this->conn->error.')';
 
 			$status = $this->deleteTaxon();
@@ -800,6 +834,10 @@ class TaxonomyEditorManager extends Manager{
 		$sql ='DELETE FROM images WHERE tid = '.$this->tid;
 		if(!$this->conn->query($sql)) $this->warningArr[] = 'ERROR deleting remaining links in deleteTaxon method ('.$this->conn->error.')';
 		*/
+
+		//Taxon maps
+		$sql ='DELETE FROM taxamaps WHERE tid = '.$this->tid;
+		if(!$this->conn->query($sql)) $this->warningArr[] = $this->langArr['ERROR_DEL_MAPS'] . ' (' . $this->conn->error . ')';
 
 		//Vernaculars
 		$sql ='DELETE FROM taxavernaculars WHERE tid = '.$this->tid;
@@ -937,7 +975,7 @@ class TaxonomyEditorManager extends Manager{
 	}
 
 	public function getAuthor(){
-		return $this->author;
+		return $this->cleanOutStr($this->author);
 	}
 
 	public function getParentTid(){
@@ -953,11 +991,11 @@ class TaxonomyEditorManager extends Manager{
 	}
 
 	public function getSource(){
-		return $this->source;
+		return $this->source ?? '';
 	}
 
 	public function getNotes(){
-		return $this->notes;
+		return $this->cleanOutStr($this->notes);
 	}
 
 	public function getSecurityStatus(){

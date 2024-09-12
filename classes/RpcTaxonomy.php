@@ -79,12 +79,10 @@ class RpcTaxonomy extends RpcBase{
 		return $retStr;
 	}
 
-	public function getDynamicChildren($objId, $targetId, $displayAuthor, $isEditor){
+	public function getDynamicChildren($objId, $targetId, $displayAuthor, $limitToOccurrences, $isEditor){
 		$retArr = Array();
 		$childArr = Array();
 		//Sanitation
-		$objId = filter_var($objId,FILTER_SANITIZE_STRING);
-		if(!is_numeric($objId) && $objId != 'root') $objId = 0;
 		if(!is_numeric($targetId)) $targetId = 0;
 		if(!is_numeric($displayAuthor)) $displayAuthor = 0;
 		if(!is_numeric($isEditor)) $isEditor = 0;
@@ -109,120 +107,161 @@ class RpcTaxonomy extends RpcBase{
 			else $retArr['url'] = '../index.php';
 			$retArr['children'] = Array();
 			$lowestRank = '';
-			$sql = 'SELECT MIN(t.RankId) AS RankId FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid WHERE (t.rankid != 0) AND (ts.taxauthid = '.$this->taxAuthID.') LIMIT 1 ';
+			$sql = 'SELECT MIN(t.RankId) AS RankId FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid WHERE (t.rankid != 0) AND (ts.taxauthid = ?) LIMIT 1 ';
 			//echo $sql.'<br>';
-			$rs = $this->conn->query($sql);
-			while($row = $rs->fetch_object()){
-				$lowestRank = $row->RankId;
+			if ($statement = $this->conn->prepare($sql)) {
+				$statement->bind_param("i", $this->taxAuthID);
+				$statement->execute();
+				$result = $statement->get_result();
+				while($row = $result->fetch_object()){
+					$lowestRank = $row->RankId;
+				}
+				$result->free();
+				$statement->close();
 			}
-			$rs->free();
-			$sql1 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid FROM taxa t LEFT JOIN taxstatus ts ON t.tid = ts.tid WHERE ts.taxauthid = '.$this->taxAuthID.' AND t.RankId = '.$lowestRank.' ';
+			$sql1 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid FROM taxa t LEFT JOIN taxstatus ts ON t.tid = ts.tid WHERE ts.taxauthid = ? AND t.RankId = ? ';
 			//echo "<div>".$sql1."</div>";
-			$rs1 = $this->conn->query($sql1);
-			$i = 0;
-			while($row1 = $rs1->fetch_object()){
-				$rankName = (isset($taxonUnitArr[$row1->rankid])?$taxonUnitArr[$row1->rankid]:'Unknown');
-				$label = '2-'.$row1->rankid.'-'.$rankName.'-'.$row1->sciname;
-				$sciName = $row1->sciname;
-				if($row1->tid == $targetId) $sciName = '<b>'.$sciName.'</b>';
-				$sciName = "<span style='font-size:75%;'>".$rankName.":</span> ".$sciName.($displayAuthor?" ".$row1->author:"");
-				$childArr[$i]['id'] = $row1->tid;
-				$childArr[$i]['label'] = $label;
-				$childArr[$i]['name'] = $sciName;
-				$childArr[$i]['url'] = $urlPrefix.$row1->tid;
-				$sql3 = 'SELECT tid FROM taxaenumtree WHERE taxauthid = '.$this->taxAuthID.' AND parenttid = '.$row1->tid.' LIMIT 1 ';
-				//echo "<div>".$sql3."</div>";
-				$rs3 = $this->conn->query($sql3);
-				if($row3 = $rs3->fetch_object()){
-					$childArr[$i]['children'] = true;
-				}
-				else{
-					$sql4 = 'SELECT DISTINCT tid, tidaccepted FROM taxstatus WHERE (taxauthid = '.$this->taxAuthID.') AND (tidaccepted = '.$row1->tid.') ';
-					//echo "<div>".$sql4."</div>";
-					$rs4 = $this->conn->query($sql4);
-					while($row4 = $rs4->fetch_object()){
-						if($row4->tid != $row4->tidaccepted){
-							$childArr[$i]['children'] = true;
-						}
-					}
-					$rs4->free();
-				}
-				$rs3->free();
-				$i++;
-			}
-			$rs1->free();
-		}
-		else{
-			//Get children, but only accepted children
-			$sql = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid '.
-				'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
-				'WHERE (ts.taxauthid = '.$this->taxAuthID.') AND (ts.tid = ts.tidaccepted) '.
-				'AND ((ts.parenttid = '.$objId.') OR (t.tid = '.$objId.')) ';
-			//echo $sql.'<br>';
-			$rs = $this->conn->query($sql);
-			$i = 0;
-			while($r = $rs->fetch_object()){
-				$rankName = (isset($taxonUnitArr[$r->rankid])?$taxonUnitArr[$r->rankid]:'Unknown');
-				$label = '2-'.$r->rankid.'-'.$rankName.'-'.$r->sciname;
-				$sciName = $r->sciname;
-				if($r->rankid >= 180) $sciName = '<i>'.$sciName.'</i>';
-				if($r->tid == $targetId) $sciName = '<b>'.$sciName.'</b>';
-				$sciName = "<span style='font-size:75%;'>".$rankName.":</span> ".$sciName.($displayAuthor?" ".$r->author:"");
-				if($r->tid == $objId){
-					$retArr['id'] = $r->tid;
-					$retArr['label'] = $label;
-					$retArr['name'] = $sciName;
-					$retArr['url'] = $urlPrefix.$r->tid;
-					$retArr['children'] = Array();
-				}
-				else{
-					$childArr[$i]['id'] = $r->tid;
+
+			if ($statement1 = $this->conn->prepare($sql1)) {
+				$i = 0;
+				$statement1->bind_param("ii", $this->taxAuthID, $lowestRank);
+				$statement1->execute();
+				$result1 = $statement1->get_result();
+				while($row1 = $result1->fetch_object()){
+					$rankName = (isset($taxonUnitArr[$row1->rankid]) ? $taxonUnitArr[$row1->rankid] : 'Unknown');
+					$label = '2-' . $row1->rankid . '-' . $rankName.'-' . $row1->sciname;
+					$sciName = $row1->sciname;
+					if($row1->tid == $targetId) $sciName = '<b>' . $sciName . '</b>';
+					$sciName = "<span style='font-size:75%;'>" . $rankName . ":</span> " . $sciName . ($displayAuthor ? " " . $row1->author : "");
+					$childArr[$i]['id'] = $row1->tid;
 					$childArr[$i]['label'] = $label;
 					$childArr[$i]['name'] = $sciName;
-					$childArr[$i]['url'] = $urlPrefix.$r->tid;
-					$sql3 = 'SELECT tid FROM taxaenumtree WHERE taxauthid = '.$this->taxAuthID.' AND parenttid = '.$r->tid.' LIMIT 1 ';
-					//echo 'sql3: '.$sql3.'<br/>';
-					$rs3 = $this->conn->query($sql3);
-					if($row3 = $rs3->fetch_object()){
-						$childArr[$i]['children'] = true;
-					}
-					else{
-						$sql4 = 'SELECT DISTINCT tid, tidaccepted FROM taxstatus WHERE taxauthid = '.$this->taxAuthID.' AND tidaccepted = '.$r->tid.' ';
-						//echo 'sql4: '.$sql4.'<br/>';
-						$rs4 = $this->conn->query($sql4);
-						while($row4 = $rs4->fetch_object()){
-							if($row4->tid != $row4->tidaccepted){
-								$childArr[$i]['children'] = true;
+					$childArr[$i]['url'] = $urlPrefix.$row1->tid;
+					$sql3 = 'SELECT tid FROM taxaenumtree WHERE taxauthid = ? AND parenttid = ? LIMIT 1 ';
+					//echo "<div>".$sql3."</div>";
+					if ($statement3 = $this->conn->prepare($sql3)) {
+						$statement3->bind_param("ii", $this->taxAuthID, $row1->tid);
+						$statement3->execute();
+						$result3 = $statement3->get_result();
+						if($row3 = $result3->fetch_object()){
+							$childArr[$i]['children'] = true;
+						}
+						else{
+							$sql4 = 'SELECT DISTINCT tid, tidaccepted FROM taxstatus WHERE (taxauthid = ?) AND (tidaccepted = ?) ';
+							//echo "<div>".$sql4."</div>";
+							if ($statement4 = $this->conn->prepare($sql4)) {
+								$statement4->bind_param("ii", $this->taxAuthID, $row1->tid);
+								$statement4->execute();
+								$result4 = $statement4->get_result();
+								while($row4 = $result4->fetch_object()){
+									if($row4->tid != $row4->tidaccepted){
+										$childArr[$i]['children'] = true;
+									}
+								}
+								$result4->free();
+								$statement4->close();
 							}
 						}
-						$rs4->free();
+						$result3->free();
+						$statement3->close();
 					}
-					$rs3->free();
 					$i++;
 				}
+				$result1->free();
+				$statement1->close();
 			}
-			$rs->free();
+		}
+		else{
+			$objId = filter_var($objId, FILTER_SANITIZE_NUMBER_INT);
+			//Get children, but only accepted children
+			$sql = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid ';
+			if($limitToOccurrences) $sql .= 'INNER JOIN taxaenumtree e ON t.tid = e.parenttid INNER JOIN omoccurrences o ON e.tid = o.tidInterpreted ';
+			$sql .=	'WHERE (ts.taxauthid = ?) AND (ts.tid = ts.tidaccepted) AND ((ts.parenttid = ?) OR (t.tid = ?)) ';
+			//echo $sql.'<br>';
+			if ($statement = $this->conn->prepare($sql)) {
+				$statement->bind_param("iii", $this->taxAuthID, $objId, $objId);
+				$statement->execute();
+				$result = $statement->get_result();
+				$i = 0;
+				while($r = $result->fetch_object()){
+					$rankName = (isset($taxonUnitArr[$r->rankid]) ? $taxonUnitArr[$r->rankid] : 'Unknown');
+					$label = '2-'.$r->rankid.'-'.$rankName.'-'.$r->sciname;
+					$sciName = $r->sciname;
+					if($r->rankid >= 180) $sciName = '<i>' . $sciName . '</i>';
+					if($r->tid == $targetId) $sciName = '<b>' . $sciName . '</b>';
+					$sciName = "<span style='font-size:75%;'>" . $rankName . ":</span> " . $sciName . ($displayAuthor ? " " . $r->author : "");
+					if($r->tid == $objId){
+						$retArr['id'] = $r->tid;
+						$retArr['label'] = $label;
+						$retArr['name'] = $sciName;
+						$retArr['url'] = $urlPrefix.$r->tid;
+						$retArr['children'] = Array();
+					}
+					else{
+						$childArr[$i]['id'] = $r->tid;
+						$childArr[$i]['label'] = $label;
+						$childArr[$i]['name'] = $sciName;
+						$childArr[$i]['url'] = $urlPrefix.$r->tid;
+						$sql3 = 'SELECT tid FROM taxaenumtree WHERE taxauthid = ? AND parenttid = ? LIMIT 1 ';
+						//echo 'sql3: '.$sql3.'<br/>';
+						if ($statement3 = $this->conn->prepare($sql3)) {
+							$statement3->bind_param("ii", $this->taxAuthID, $r->tid);
+							$statement3->execute();
+							$result3 = $statement3->get_result();
+							if($row3 = $result3->fetch_object()){
+								$childArr[$i]['children'] = true;
+							}
+							else{
+								$sql4 = 'SELECT DISTINCT tid, tidaccepted FROM taxstatus WHERE taxauthid = ? AND tidaccepted = ? ';
+								//echo 'sql4: '.$sql4.'<br/>';
+								if ($statement4 = $this->conn->prepare($sql4)) {
+									$statement4->bind_param("ii", $this->taxAuthID, $r->tid);
+									$statement4->execute();
+									$result4 = $statement4->get_result();
+									while($row4 = $result4->fetch_object()){
+										if($row4->tid != $row4->tidaccepted){
+											$childArr[$i]['children'] = true;
+										}
+									}
+									$result4->free();
+									$statement4->close();
+								}
+							}
+							$result3->free();
+							$statement3->close();
+						}
+						$i++;
+					}
+				}
+				$result->free();
+				$statement->close();
+			}
 
 			//Get synonyms for all accepted taxa
 			$sqlSyns = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid '.
 				'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
-				'WHERE (ts.tid <> ts.tidaccepted) AND (ts.taxauthid = '.$this->taxAuthID.') AND (ts.tidaccepted = '.$objId.')';
+				'WHERE (ts.tid <> ts.tidaccepted) AND (ts.taxauthid = ?) AND (ts.tidaccepted = ?)';
 			//echo 'syn: '.$sqlSyns.'<br/>';
-			$rsSyns = $this->conn->query($sqlSyns);
-			while($row = $rsSyns->fetch_object()){
-				$rankName = (isset($taxonUnitArr[$row->rankid])?$taxonUnitArr[$row->rankid]:'Unknown');
-				$label = '1-'.$row->rankid.'-'.$rankName.'-'.$row->sciname;
-				$sciName = $row->sciname;
-				if($row->rankid >= 180) $sciName = '<i>'.$sciName.'</i>';
-				if($row->tid == $targetId) $sciName = '<b>'.$sciName.'</b>';
-				$sciName = '['.$sciName.']'.($displayAuthor?' '.$row->author:'');
-				$childArr[$i]['id'] = $row->tid;
-				$childArr[$i]['label'] = $label;
-				$childArr[$i]['name'] = $sciName;
-				$childArr[$i]['url'] = $urlPrefix.$row->tid;
-				$i++;
+			if ($statementSyns = $this->conn->prepare($sqlSyns)) {
+				$statementSyns->bind_param("ii", $this->taxAuthID, $objId);
+				$statementSyns->execute();
+				$resultSyns = $statementSyns->get_result();
+				while($row = $resultSyns->fetch_object()){
+					$rankName = (isset($taxonUnitArr[$row->rankid]) ? $taxonUnitArr[$row->rankid] : 'Unknown');
+					$label = '1-' . $row->rankid . '-' . $rankName . '-' . $row->sciname;
+					$sciName = $row->sciname;
+					if($row->rankid >= 180) $sciName = '<i>' . $sciName . '</i>';
+					if($row->tid == $targetId) $sciName = '<b>' . $sciName . '</b>';
+					$sciName = '[' . $sciName . ']' . ($displayAuthor ? ' ' . $row->author : '');
+					$childArr[$i]['id'] = $row->tid;
+					$childArr[$i]['label'] = $label;
+					$childArr[$i]['name'] = $sciName;
+					$childArr[$i]['url'] = $urlPrefix.$row->tid;
+					$i++;
+				}
+				$resultSyns->free();
+				$statementSyns->close();
 			}
-			$rsSyns->free();
 		}
 
 		usort($childArr, function ($a,$b){ return strnatcmp($a['label'],$b['label']);} );

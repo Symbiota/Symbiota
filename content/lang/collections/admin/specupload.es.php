@@ -5,6 +5,9 @@ Language: Español (Spanish)
 ------------------
 */
 
+include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.es.php');
+
+$LANG['HOME'] = 'Inicio';
 $LANG['SPEC_UPLOAD'] = 'Carga de Especímenes';
 $LANG['PATH_EMPTY'] = 'La dirección al archivo está vacía. Por favor seleccione el archivo que va a ser cargado.';
 $LANG['MUST_CSV'] = 'El archivo debe ser separado por comas (.csv), delimitado por tabulaciones (.txt o .tab), archivo ZIP (.zip), o una URL a un Recurso IPT';
@@ -28,6 +31,7 @@ $LANG['LIST_UPLOAD'] = 'Lista de Perfiles de Carga';
 $LANG['UP_MODULE'] = 'Módulo de Carga de Datos';
 $LANG['CAUTION'] = 'Precaución';
 $LANG['REC_REPLACE'] = 'Los registros que coincidan serán reemplazados por los registros cargados';
+$LANG['LAST_UPLOAD_DATE'] = 'Fecha de Última Carga';
 $LANG['NOT_REC'] = 'no registrado';
 $LANG['UP_STATUS'] = 'Estado de Carga';
 $LANG['PENDING_REPORT'] = 'Reporte de Datos Pendientes de Transferir';
@@ -62,7 +66,7 @@ $LANG['APPENDED'] = 'Los datos esqueléticos entrantes se agregarán solo si el 
 $LANG['BOTH_CATS'] = 'Si ambas casillas son seleccionadas, las coincidencias serán realizadas primero con el número de catálogo y luego con otros números de catálogo';
 $LANG['ID_SOURCE'] = 'Identificar Fuente de Datos';
 $LANG['IPT_URL'] = 'URL de Recurso IPT';
-$LANG['RES_URL'] = 'Dirección o URL del Recurso';
+$LANG['RESOURCE_URL'] = 'Dirección o URL del Recurso';
 $LANG['WORKAROUND'] = 'Esta opción es para dirigirse a un archivo de datos que fue subido manualmente a un servidor. Esta opción ofrece un atajo para importar archivos que son más grandes que lo permitido por los límites de carga del servidor (e.g. límites de configuración PHP)';
 $LANG['DISPLAY_OPS'] = 'Desplegar Opciones Adicionales';
 $LANG['AUTOMAP'] = 'Automapear Campos';
@@ -83,13 +87,6 @@ $LANG['CUSTOM_FILT'] = 'Filtros de Importación de Ocurrencias Personalizados';
 $LANG['FIELD'] = 'Campo';
 $LANG['SEL_FIELD'] = 'Seleccionar Nombre del Campo';
 $LANG['COND'] = 'Condición';
-$LANG['EQUALS'] = 'IGUAL';
-$LANG['STARTS_WITH'] = 'INICIA CON';
-$LANG['CONTAINS'] = 'CONTIENE';
-$LANG['LESS_THAN'] = 'MENOR QUE';
-$LANG['GREATER_THAN'] = 'MAYOR QUE';
-$LANG['IS_NULL'] = 'ES NULO';
-$LANG['NOT_NULL'] = 'NO ES NULO';
 $LANG['VALUE'] = 'Valor';
 $LANG['MULT_TERMS'] = 'Añadir múltiples términos separados por un punto y coma será filtrado como una condición O';
 $LANG['IMPORT_ID'] = 'Importar Historia de Identificación';
@@ -128,4 +125,6 @@ $LANG['PAGE_ERROR'] = 'ERROR: O intentó llegar a esta página sin pasar por el 
 	Tal vez quiera dividir el archivo en archivos más pequeños, o comprimirlo en un archivo zip  (extensión .zip).
 	Puede contactar al administrador del portal para solicitar asistencia para cargar el archivo (pista para el admin: incrementar el límite de carga PHP puede ayudar, current upload_max_filesize';
 $LANG['USE_BACK'] = 'Use las flechas para regresar a la página de carga de archivos.';
+$LANG['UPLOAD'] = 'Subir archivo';
+
 ?>

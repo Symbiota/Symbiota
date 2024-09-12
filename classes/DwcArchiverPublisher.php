@@ -11,10 +11,12 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		parent::__destruct();
 	}
 
-	private function resetCollArr($collTarget){
+	public function resetCollArr($id){
 		unset($this->collArr);
 		$this->collArr = array();
-		$this->setCollArr($collTarget);
+		$this->setCollArr($id);
+		$this->conditionArr['collid'] = $id;
+		$this->conditionSql = '';
 	}
 
 	public function verifyCollRecords($collId){
@@ -80,7 +82,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 
 	public function writeRssFile(){
 
-		$this->logOrEcho("Mapping data to RSS feed... \n");
+		$this->logOrEcho('Mapping data to RSS feed... ');
 
 		//Create new document and write out to target
 		$newDoc = new DOMDocument('1.0',$this->charSetOut);
@@ -212,7 +214,8 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 			$redirectDoc->save($deprecatedPath);
 		}
 
-		$this->logOrEcho("Done!\n");
+		$this->logOrEcho('Done!', 1);
+		$this->logOrEcho('-----------------------------------------------------');
 	}
 
 	//Misc data retrival functions
@@ -313,22 +316,27 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 	}
 
 	public function humanFileSize($filePath) {
+		$x = false;
 		if(substr($filePath,0,4)=='http') {
-			$x = array_change_key_case(get_headers($filePath, 1),CASE_LOWER);
-			if( strcasecmp($x[0], 'HTTP/1.1 200 OK') != 0 ) {
-				$x = $x['content-length'][1];
-			}
-			else {
-				$x = $x['content-length'];
+			if($headerArr = @get_headers($filePath, 1)){
+				$x = array_change_key_case($headerArr, CASE_LOWER);
+				if( strcasecmp($x[0], 'HTTP/1.1 200 OK') != 0 ) {
+					$x = $x['content-length'][1];
+				}
+				else {
+					$x = $x['content-length'];
+				}
 			}
 		}
 		else {
 			$x = @filesize($filePath);
 		}
-		$x = round($x/1000000, 1);
-		if(!$x) $x = 0.1;
-
-		return $x.'M ';
+		if($x !== false){
+			$x = round($x/1000000, 1);
+			if(!$x) $x = 0.1;
+			return $x.'M';
+		}
+		return '?M';
 	}
 }
 ?>

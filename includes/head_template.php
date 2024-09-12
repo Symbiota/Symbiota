@@ -1,16 +1,16 @@
 <?php
 /*
-** Symbiota Redesign
-** The version is determined by the number of the release
-** set in config/symbini.php ($CSS_VERSION_RELEASE).
-** To customize the styles, add your own CSS files to the
-** css folder and include them here.
+** Style sheets are determined by $CSS_BASE_PATH set within config/symbini.php
+** Customization can be made by modifying css files, $CSS_BASE_PATH, adding new css files below
 */
 ?>
 <!-- Responsive viewport -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- Symbiota styles -->
-<link href="<?php echo $CSS_BASE_PATH; ?>/symbiota/normalize.slim.css" type="text/css" rel="stylesheet">
-<link href="<?php echo $CSS_BASE_PATH; ?>/symbiota/main.css" type="text/css" rel="stylesheet">
-<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/lang.js" type="text/javascript"></script>
+<link href="<?= $CSS_BASE_PATH ?>/symbiota/header.css?ver=<?= $CSS_VERSION ?>" type="text/css" rel="stylesheet">
+<link href="<?= $CSS_BASE_PATH ?>/symbiota/footer.css?ver=<?= $CSS_VERSION ?>" type="text/css" rel="stylesheet">
+<link href="<?= $CSS_BASE_PATH ?>/symbiota/main.css?ver=<?= $CSS_VERSION ?>" type="text/css" rel="stylesheet">
+<link href="<?= $CSS_BASE_PATH ?>/symbiota/customizations.css?ver=<?= $CSS_VERSION ?>" type="text/css" rel="stylesheet">
+
+<script src="<?= $CLIENT_ROOT ?>/js/symb/lang.js" type="text/javascript"></script>

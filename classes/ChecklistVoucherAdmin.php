@@ -1,5 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/Manager.php');
+include_once('Manager.php');
+include_once('ImInventories.php');
 
 class ChecklistVoucherAdmin extends Manager {
 
@@ -44,7 +45,7 @@ class ChecklistVoucherAdmin extends Manager {
 	private function setMetaData(){
 		if($this->clid){
 			$sql = 'SELECT clid, name, locality, publication, abstract, authors, parentclid, notes, latcentroid, longcentroid, pointradiusmeters, '.
-				'footprintwkt, access, defaultSettings, dynamicsql, datelastmodified, uid, type, initialtimestamp '.
+				'footprintwkt, access, defaultSettings, dynamicsql, datelastmodified, dynamicProperties, uid, type, initialtimestamp '.
 				'FROM fmchecklists WHERE (clid = '.$this->clid.')';
 		 	$rs = $this->conn->query($sql);
 			if($rs){
@@ -66,6 +67,7 @@ class ChecklistVoucherAdmin extends Manager {
 					$this->clMetadata["defaultSettings"] = $row->defaultSettings;
 					$this->clMetadata["dynamicsql"] = $row->dynamicsql;
 					$this->clMetadata["datelastmodified"] = $row->datelastmodified;
+					$this->clMetadata['dynamicProperties'] = $row->dynamicProperties;
 				}
 				$rs->free();
 			}
@@ -108,6 +110,17 @@ class ChecklistVoucherAdmin extends Manager {
 		return $retArr;
 	}
 
+	public function getAssociatedExternalService(){
+		$resp = false;
+ 		if($this->clMetadata['dynamicProperties']){
+			$dynpropArr = json_decode($this->clMetadata['dynamicProperties'], true);
+			if(array_key_exists('externalservice', $dynpropArr)) {
+				$resp = $dynpropArr['externalservice'];
+			}
+		}
+		return $resp;
+	}
+
 	//Dynamic query variable functions
 	public function setCollectionVariables(){
 		if($this->clid){
@@ -116,8 +129,8 @@ class ChecklistVoucherAdmin extends Manager {
 			if($row = $result->fetch_object()){
 				$this->clName = $this->cleanOutStr($row->name);
 				$this->footprintWkt = $row->footprintwkt;
-				$sqlFrag = $row->dynamicsql;
-				$varArr = json_decode($sqlFrag,true);
+				$sqlFrag = $row->dynamicsql ?? '';
+				$varArr = json_decode($sqlFrag, true);
 				if(json_last_error() != JSON_ERROR_NONE){
 					$varArr = $this->parseSqlFrag($sqlFrag);
 					$this->saveQueryVariables($varArr);
@@ -129,7 +142,7 @@ class ChecklistVoucherAdmin extends Manager {
 			}
 			$result->free();
 			//Get children checklists
-			$sqlChildBase = 'SELECT clidchild FROM fmchklstchildren WHERE clid IN(';
+			$sqlChildBase = 'SELECT clidchild FROM fmchklstchildren WHERE clid != clidchild AND clid IN(';
 			$sqlChild = $sqlChildBase.$this->clid.')';
 			do{
 				$childStr = "";
@@ -417,9 +430,9 @@ class ChecklistVoucherAdmin extends Manager {
 				$tidTarget = $this->getTidInterpreted($occid);
 				if($oldClTaxaID && $tidTarget){
 					//Make sure target name is already linked to checklist
-					$sql2 = 'INSERT IGNORE INTO fmchklsttaxalink(tid, clid, morphospecies, familyoverride, habitat, abundance, notes, explicitExclude, source, internalnotes, dynamicProperties) '.
-						'SELECT '.$tidTarget.' as tid, c.clid, c.morphospecies, c.familyoverride, c.habitat, c.abundance, c.notes, c.explicitExclude, c.source, c.internalnotes, c.dynamicProperties '.
-						'FROM fmchklsttaxalink WHERE (cltaxaid = ?)';
+					$sql2 = 'INSERT IGNORE INTO fmchklsttaxalink(tid, clid, morphospecies, familyoverride, habitat, abundance, notes, explicitExclude, source, internalnotes, dynamicProperties)
+						SELECT '.$tidTarget.' as tid, clid, morphospecies, familyoverride, habitat, abundance, notes, explicitExclude, source, internalnotes, dynamicProperties
+						FROM fmchklsttaxalink WHERE (cltaxaid = ?)';
 					if($stmt2 = $this->conn->prepare($sql2)) {
 						$stmt2->bind_param('i', $oldClTaxaID);
 						$stmt2->execute();
@@ -449,22 +462,50 @@ class ChecklistVoucherAdmin extends Manager {
 		}
 	}
 
+	//Checklist Coordinate functions
+	public function addExternalVouchers($tid, $dataAsJson){
+		// EG suggested storing external (e.g., iNaturalist) voucher records in the `fmchklstcoordinates` table as this table
+		//   was un- or under-used as of schema 3.0. The `notes` column serves as a flag for these vouchers. --CDT 2023-08-21
+		$status = false;
+		$inputData = json_decode($dataAsJson, true);
+		// for single vouchers, add ll, for multiple use zero :(.
+		// we could try averaging ll for multiples, but then the software would be introducing non-real data, which is bad.
+		// not that zero/zero is real data either... CDT 8/2023
+		$lat = (count($inputData) == 1 ? $inputData[0]['lat'] : 0);
+		$lng = (count($inputData) == 1 ? $inputData[0]['lng'] : 0);
+		$sourceIdentifier = $inputData[0]['id'];
+		$referenceUrl = null;
+		if($sourceIdentifier) $referenceUrl = 'https://www.inaturalist.org/observations/'.$sourceIdentifier;
+		if(is_numeric($tid) && $lat && $lng){
+			unset($inputData[0]['lat']);
+			unset($inputData[0]['lng']);
+			unset($inputData[0]['taxon']);
+			$inputArr = array('tid' => $tid, 'decimalLatitude' => $lat, 'decimalLongitude' => $lng, 'sourceName' => 'EXTERNAL_VOUCHER',
+				'sourceIdentifier' => $sourceIdentifier, 'referenceUrl' => $referenceUrl, 'dynamicProperties' => json_encode($inputData));
+			$inventoryManager = new ImInventories();
+			$inventoryManager->setClid($this->clid);
+			if($inventoryManager->insertChecklistCoordinates($inputArr)){
+				$status = true;
+			}
+			else{
+				$errStr = $inventoryManager->getErrorMessage();
+				if(strpos($errStr, 'Duplicate') !== false) $errStr = 'Voucher already linked!';
+				$this->errorMessage = $errStr;
+			}
+		}
+		return $status;
+	}
+
 	//Data mod functions
 	protected function insertChecklistTaxaLink($tid, $clid = null, $morpho = ''){
 		$status = false;
 		if(!$clid) $clid = $this->clid;
 		if(is_numeric($tid) && is_numeric($clid)){
-			$sql = 'INSERT INTO fmchklsttaxalink(tid,clid,morphospecies) VALUES(?,?,?)';
-			if($stmt = $this->conn->prepare($sql)) {
-				$stmt->bind_param('iis', $tid, $clid, $morpho);
-				$stmt->execute();
-				if($stmt->affected_rows && !$stmt->error){
-					$status = $stmt->insert_id;
-				}
-				elseif($stmt->error) $this->errorMessage = 'ERROR inserting checklist-taxa-link: '.$stmt->error;
-				$stmt->close();
-			}
-			else $this->errorMessage = 'ERROR preparing statement for checklist-taxa-link insert: '.$this->conn->error;
+			$inventoryManager = new ImInventories();
+			$inputArr = array('tid' => $tid, 'clid' => $clid);
+			if($morpho) $inputArr['morphoSpecies'] = $morpho;
+			$status = $inventoryManager->insertChecklistTaxaLink($inputArr);
+			if(!$status) $this->errorMessage = $inventoryManager->getErrorMessage();
 		}
 		return $status;
 	}
@@ -472,34 +513,13 @@ class ChecklistVoucherAdmin extends Manager {
 	protected function insertVoucher($clTaxaID, $occid, $editorNotes = null, $notes = null){
 		$status = false;
 		if(is_numeric($clTaxaID) && is_numeric($occid)){
-			if($editorNotes == '') $editorNotes = null;
-			if($notes == '') $notes = null;
-			$sql = 'INSERT INTO fmvouchers(clTaxaID, occid, editorNotes, notes) VALUES (?,?,?,?)';
-			if($stmt = $this->conn->prepare($sql)) {
-				$stmt->bind_param('iiss', $clTaxaID, $occid, $editorNotes, $notes);
-				$stmt->execute();
-				if($stmt->affected_rows){
-					$status = $stmt->insert_id;
-				}
-				elseif($stmt->error) $this->errorMessage = 'ERROR inserting voucher: '.$stmt->error;
-				$stmt->close();
-			}
-			else $this->errorMessage = 'ERROR preparing statement for voucher insert: '.$this->conn->error;
-		}
-		return $status;
-	}
-
-	private function transferVouchers($target, $source){
-		$status = false;
-		if(is_numeric($target) && is_numeric($source)){
-			$sql = 'UPDATE fmvouchers SET clTaxaID = ? WHERE clTaxaID = ?';
-			if($stmt = $this->conn->prepare($sql)) {
-				$stmt->bind_param('ii', $target, $source);
-				$stmt->execute();
-				if($stmt->error) $this->errorMessage = 'ERROR transferring vouchers: '.$stmt->error;
-				$stmt->close();
-			}
-			else $this->errorMessage = 'ERROR preparing statement for voucher transfer: '.$this->conn->error;
+			$inventoryManager = new ImInventories();
+			$inventoryManager->setClTaxaID($clTaxaID);
+			$inputArr = array('occid' => $occid);
+			if($editorNotes) $inputArr['editorNotes'] = $editorNotes;
+			if($notes) $inputArr['notes'] = $notes;
+			$status = $inventoryManager->insertChecklistVoucher($inputArr);
+			if(!$status) $this->errorMessage = $inventoryManager->getErrorMessage();
 		}
 		return $status;
 	}
@@ -507,15 +527,10 @@ class ChecklistVoucherAdmin extends Manager {
 	public function deleteVoucher($voucherID){
 		$status = false;
 		if(is_numeric($voucherID)){
-			$sql = 'DELETE FROM fmvouchers WHERE (voucherID = ?)';
-			if($stmt = $this->conn->prepare($sql)) {
-				$stmt->bind_param('i', $voucherID);
-				$stmt->execute();
-				if($stmt->affected_rows) $status = true;
-				elseif($stmt->error) $this->errorMessage = 'ERROR deleting vouchers: '.$stmt->error;
-				$stmt->close();
-			}
-			else $this->errorMessage = 'ERROR preparing statement for voucher deletion: '.$this->conn->error;
+			$inventoryManager = new ImInventories();
+			$inventoryManager->setVoucherID($voucherID);
+			$status = $inventoryManager->deleteChecklistVoucher();
+			if(!$status) $this->errorMessage = $inventoryManager->getErrorMessage();
 		}
 		return $status;
 	}
@@ -774,17 +789,14 @@ class ChecklistVoucherAdmin extends Manager {
 		$charSetOut = 'ISO-8859-1';
 		$retStr = $inStr;
 		if($inStr && $charSetSource){
-			if($charSetOut == 'UTF-8' && $charSetSource == 'ISO-8859-1'){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) == 'ISO-8859-1'){
-					$retStr = utf8_encode($inStr);
-					//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
-				}
+			if($charSetOut == 'UTF-8'){
+				$retStr = mb_convert_encoding($inStr, 'UTF-8', mb_detect_encoding($inStr));
 			}
-			elseif($charSetOut == "ISO-8859-1" && $charSetSource == 'UTF-8'){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') == 'UTF-8'){
-					$retStr = utf8_decode($inStr);
-					//$retStr = iconv("UTF-8","ISO-8859-1//TRANSLIT",$inStr);
-				}
+			elseif($charSetOut == 'ISO-8859-1'){
+				$retStr = mb_convert_encoding($inStr, 'ISO-8859-1', mb_detect_encoding($inStr));
+			}
+			else{
+				$retStr = mb_convert_encoding($inStr, $charSetOut, mb_detect_encoding($inStr));
 			}
 		}
 		return $retStr;

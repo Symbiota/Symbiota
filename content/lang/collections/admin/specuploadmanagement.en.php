@@ -12,6 +12,7 @@ $LANG['UP_PROF_MAN'] = 'Specimen Upload Profile Manager';
 $LANG['OPT_PLZ'] = 'Please select an Upload Option';
 $LANG['TITLE_REQ'] = 'Profile title is required';
 $LANG['SELECT_TYPE'] = 'Select an Upload Type';
+$LANG['SELECT_PATH'] = 'Path to data provider is required';
 $LANG['HOME'] = 'Home';
 $LANG['SPEC_LOADER'] = 'Specimen Loader';
 $LANG['COL_MAN_PAN'] = 'Collection Management Panel';
@@ -50,7 +51,9 @@ $LANG['SAVE_PROFILE'] = 'Save Profile';
 $LANG['CREATE_PROFILE'] = 'Create Profile';
 $LANG['QUERY'] = 'Query/Command String';
 $LANG['PATH_EXPLAIN'] = 'Path can be URL or local path leading to a DwC-Archive zip file or a directory path to a pre-extracted DwC-Archive data package';
+$LANG['VERIFY_DEL'] = 'Are you sure you want to permanently delete this profile?';
 $LANG['DEL_PROFILE'] = 'Delete this Profile';
 $LANG['DEL_PR'] = 'Delete Profile';
 $LANG['ERROR_AUTH'] = 'ERROR: you are not authorized to upload to this collection';
+$LANG['IMG_EDIT'] = 'Edit Image';
 ?>

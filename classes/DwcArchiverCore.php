@@ -120,12 +120,12 @@ class DwcArchiverCore extends Manager{
 			$this->targetPath = $tp;
 		} else {
 			//Set to temp download path
-			$tPath = $GLOBALS["tempDirRoot"];
+			$tPath = $GLOBALS['TEMP_DIR_ROOT'];
 			if (!$tPath) {
 				$tPath = ini_get('upload_tmp_dir');
 			}
 			if (!$tPath) {
-				$tPath = $GLOBALS["serverRoot"];
+				$tPath = $GLOBALS['SERVER_ROOT'];
 				if (substr($tPath, -1) != '/' && substr($tPath, -1) != '\\') {
 					$tPath .= '/';
 				}
@@ -162,30 +162,30 @@ class DwcArchiverCore extends Manager{
 			if ($rs = $this->conn->query($sql)) {
 				while ($r = $rs->fetch_object()) {
 					$this->collArr[$r->collid]['instcode'] = $r->institutioncode;
-					$this->collArr[$r->collid]['collcode'] = $r->collectioncode;
+					$this->collArr[$r->collid]['collcode'] = $r->collectioncode ?? '';
 					$this->collArr[$r->collid]['collname'] = $r->collectionname;
-					$this->collArr[$r->collid]['description'] = $r->fulldescription;
-					$this->collArr[$r->collid]['collectionguid'] = $r->collectionguid;
-					$this->collArr[$r->collid]['url'] = $r->url;
-					$this->collArr[$r->collid]['contact'][0]['individualName']['surName'] = $r->contact;
-					$this->collArr[$r->collid]['contact'][0]['electronicMailAddress'] = $r->email;
-					$this->collArr[$r->collid]['guidtarget'] = $r->guidtarget;
-					$this->collArr[$r->collid]['dwcaurl'] = $r->dwcaurl;
-					$this->collArr[$r->collid]['lat'] = $r->latitudedecimal;
-					$this->collArr[$r->collid]['lng'] = $r->longitudedecimal;
-					$this->collArr[$r->collid]['icon'] = $r->icon;
+					$this->collArr[$r->collid]['description'] = $r->fulldescription ?? '';
+					$this->collArr[$r->collid]['collectionguid'] = $r->collectionguid ?? '';
+					$this->collArr[$r->collid]['url'] = $r->url ?? '';
+					$this->collArr[$r->collid]['contact'][0]['individualName']['surName'] = $r->contact ?? '';
+					$this->collArr[$r->collid]['contact'][0]['electronicMailAddress'] = $r->email ?? '';
+					$this->collArr[$r->collid]['guidtarget'] = $r->guidtarget ?? '';
+					$this->collArr[$r->collid]['dwcaurl'] = $r->dwcaurl ?? '';
+					$this->collArr[$r->collid]['lat'] = $r->latitudedecimal ?? '';
+					$this->collArr[$r->collid]['lng'] = $r->longitudedecimal ?? '';
+					$this->collArr[$r->collid]['icon'] = $r->icon ?? '';
 					$this->collArr[$r->collid]['colltype'] = $r->colltype;
 					$this->collArr[$r->collid]['managementtype'] = $r->managementtype;
-					$this->collArr[$r->collid]['rights'] = $r->rights;
-					$this->collArr[$r->collid]['rightsholder'] = $r->rightsholder;
-					$this->collArr[$r->collid]['usageterm'] = $r->usageterm;
-					$this->collArr[$r->collid]['address1'] = $r->address1;
-					$this->collArr[$r->collid]['address2'] = $r->address2;
-					$this->collArr[$r->collid]['city'] = $r->city;
-					$this->collArr[$r->collid]['state'] = $r->stateprovince;
-					$this->collArr[$r->collid]['postalcode'] = $r->postalcode;
-					$this->collArr[$r->collid]['country'] = $r->country;
-					$this->collArr[$r->collid]['phone'] = $r->phone;
+					$this->collArr[$r->collid]['rights'] = $r->rights ?? '';
+					$this->collArr[$r->collid]['rightsholder'] = $r->rightsholder ?? '';
+					$this->collArr[$r->collid]['usageterm'] = $r->usageterm ?? '';
+					$this->collArr[$r->collid]['address1'] = $r->address1 ?? '';
+					$this->collArr[$r->collid]['address2'] = $r->address2 ?? '';
+					$this->collArr[$r->collid]['city'] = $r->city ?? '';
+					$this->collArr[$r->collid]['state'] = $r->stateprovince ?? '';
+					$this->collArr[$r->collid]['postalcode'] = $r->postalcode ?? '';
+					$this->collArr[$r->collid]['country'] = $r->country ?? '';
+					$this->collArr[$r->collid]['phone'] = $r->phone ?? '';
 					if ($r->dynamicproperties) {
 						if ($propArr = json_decode($r->dynamicproperties, true)) {
 							if (isset($propArr['editorProps']['modules-panel'])) {
@@ -254,11 +254,11 @@ class DwcArchiverCore extends Manager{
 	public function addCondition($field, $cond, $value = ''){
 		$cond = strtoupper(trim($cond));
 		if (!preg_match('/^[A-Za-z]+$/', $field)) return false;
-		if (!preg_match('/^[A-Z]+$/', $cond)) return false;
+		if (!preg_match('/^[A-Z_]+$/', $cond)) return false;
 		if ($field) {
 			if ($this->overrideConditionLimit || in_array(strtolower($field), $this->condAllowArr)) {
 				if (!$cond) $cond = 'EQUALS';
-				if ($value != '' || ($cond == 'NULL' || $cond == 'NOTNULL')) {
+				if ($value != '' || ($cond == 'IS_NULL' || $cond == 'NOT_NULL')) {
 					if (is_array($value)) $this->conditionArr[$field][$cond] = $this->cleanInArray($value);
 					else $this->conditionArr[$field][$cond][] = $this->cleanInStr($value);
 				}
@@ -269,7 +269,7 @@ class DwcArchiverCore extends Manager{
 	private function applyConditions(){
 		if($this->conditionSql) return true;
 		if ($this->customWhereSql) {
-			$this->conditionSql = $this->customWhereSql . ' ';
+			$this->conditionSql = trim($this->customWhereSql) . ' ';
 		}
 		if (array_key_exists('collid', $this->conditionArr) && $this->conditionArr['collid']) {
 			if (preg_match('/^[\d,]+$/', $this->conditionArr['collid'])) {
@@ -297,7 +297,7 @@ class DwcArchiverCore extends Manager{
 					$taxaArr = array();
 					$taxaArr['taxa'] = implode(';', $condArr['EQUALS']);
 					if ($field == 'family') $taxaArr['taxontype'] = 3;
-					$taxaManager->setTaxonRequestVariable($taxaArr);
+					$taxaManager->setTaxonRequestVariable($taxaArr, true);
 					$sqlFrag .= $taxaManager->getTaxonWhereFrag();
 				} elseif ($field == 'cultivationstatus') {
 					if (current(current($condArr)) === '0') $sqlFrag .= 'AND (o.cultivationStatus = 0 OR o.cultivationStatus IS NULL) ';
@@ -309,10 +309,10 @@ class DwcArchiverCore extends Manager{
 					foreach ($condArr as $cond => $valueArr) {
 						if ($field == 'o.otherCatalogNumbers') {
 							$conj = 'OR';
-							if ($cond == 'NOTEQUALS' || $cond == 'NOTLIKE' || $cond == 'NULL') $conj = 'AND';
+							if ($cond == 'NOT_EQUALS' || $cond == 'NOT_LIKE' || $cond == 'IS_NULL') $conj = 'AND';
 							$sqlFrag2 .= 'AND (' . substr($this->getSqlFragment($field, $cond, $valueArr), 3) . ' ';
 							$sqlFrag2 .= $conj . ' (' . substr($this->getSqlFragment('id.identifierValue', $cond, $valueArr), 3);
-							if ($cond == 'NOTEQUALS' || $cond == 'NOTLIKE') $sqlFrag2 .= ' OR id.identifierValue IS NULL';
+							if ($cond == 'NOT_EQUALS' || $cond == 'NOT_LIKE') $sqlFrag2 .= ' OR id.identifierValue IS NULL';
 							$sqlFrag2 .= ')) ';
 						} else {
 							$sqlFrag2 .= $this->getSqlFragment($field, $cond, $valueArr);
@@ -338,26 +338,26 @@ class DwcArchiverCore extends Manager{
 
 	private function getSqlFragment($field, $cond, $valueArr){
 		$sql = '';
-		if ($cond == 'NULL') {
+		if ($cond == 'IS_NULL') {
 			$sql .= 'AND (' . $field . ' IS NULL) ';
-		} elseif ($cond == 'NOTNULL') {
+		} elseif ($cond == 'NOT_NULL') {
 			$sql .= 'AND (' . $field . ' IS NOT NULL) ';
 		} elseif ($cond == 'EQUALS') {
 			$sql .= 'AND (' . $field . ' IN("' . implode('","', $valueArr) . '")) ';
-		} elseif ($cond == 'NOTEQUALS') {
+		} elseif ($cond == 'NOT_EQUALS') {
 			$sql .= 'AND (' . $field . ' NOT IN("' . implode('","', $valueArr) . '") OR ' . $field . ' IS NULL) ';
 		} else {
 			$sqlFrag = '';
 			foreach ($valueArr as $value) {
-				if ($cond == 'STARTS') {
+				if ($cond == 'STARTS_WITH') {
 					$sqlFrag .= 'OR (' . $field . ' LIKE "' . $value . '%") ';
 				} elseif ($cond == 'LIKE') {
 					$sqlFrag .= 'OR (' . $field . ' LIKE "%' . $value . '%") ';
-				} elseif ($cond == 'NOTLIKE') {
+				} elseif ($cond == 'NOT_LIKE') {
 					$sqlFrag .= 'OR (' . $field . ' NOT LIKE "%' . $value . '%" OR ' . $field . ' IS NULL) ';
-				} elseif ($cond == 'LESSTHAN') {
+				} elseif ($cond == 'LESS_THAN') {
 					$sqlFrag .= 'OR (' . $field . ' < "' . $value . '") ';
-				} elseif ($cond == 'GREATERTHAN') {
+				} elseif ($cond == 'GREATER_THAN') {
 					$sqlFrag .= 'OR (' . $field . ' > "' . $value . '") ';
 				}
 			}
@@ -897,10 +897,13 @@ class DwcArchiverCore extends Manager{
 		else {
 			$this->errorMessage = 'FAILED to create archive file due to failure to return occurrence records; check and adjust search variables';
 			$this->logOrEcho($this->errorMessage);
-			if($this->collArr){
-				$collid = key($this->collArr);
-				if ($collid) $this->deleteArchive($collid);
-				unset($this->collArr[$collid]);
+			if($this->targetPath && strpos($this->targetPath, 'content/dwca')){
+				//Archive is being published to Dwc-A publishing directory, thus remove from RSS feed since it's an empty archive
+				if($this->collArr){
+					$collid = key($this->collArr);
+					if ($collid) $this->deleteArchive($collid);
+					unset($this->collArr[$collid]);
+				}
 			}
 		}
 		$this->logOrEcho("\n-----------------------------------------------------\n");
@@ -1531,13 +1534,15 @@ class DwcArchiverCore extends Manager{
 			$itemElem->appendChild($itemTitleElem);
 			//Icon
 			$imgLink = '';
-			if (substr($cArr['icon'], 0, 17) == 'images/collicons/') {
-				//Link is a
-				$imgLink = $urlPathPrefix . $cArr['icon'];
-			} elseif (substr($cArr['icon'], 0, 1) == '/') {
-				$imgLink = $localDomain . $cArr['icon'];
-			} else {
-				$imgLink = $cArr['icon'];
+			if($cArr['icon']){
+				if (substr($cArr['icon'], 0, 17) == 'images/collicons/') {
+					//Link is a
+					$imgLink = $urlPathPrefix . $cArr['icon'];
+				} elseif (substr($cArr['icon'], 0, 1) == '/') {
+					$imgLink = $localDomain . $cArr['icon'];
+				} else {
+					$imgLink = $cArr['icon'];
+				}
 			}
 			$iconElem = $newDoc->createElement('image');
 			$iconElem->appendChild($newDoc->createTextNode($imgLink));
@@ -1696,8 +1701,10 @@ class DwcArchiverCore extends Manager{
 					unset($r['localitySecurity']);
 					unset($r['collID']);
 					//Format dates
-					if($r['eventDate'] == '0000-00-00') $r['eventDate'] = '';
-					$r['eventDate'] = str_replace('-00', '', $r['eventDate']);
+					if($r['eventDate']){
+						if($r['eventDate'] == '0000-00-00') $r['eventDate'] = '';
+						$r['eventDate'] = str_replace('-00', '', $r['eventDate']);
+					}
 					if($r['eventDate2']){
 						if($r['eventDate2'] == '0000-00-00') $r['eventDate2'] = '';
 						$r['eventDate2'] = str_replace('-00', '', $r['eventDate2']);
@@ -1751,7 +1758,7 @@ class DwcArchiverCore extends Manager{
 					}
 					if ($assocOccurStr = $dwcOccurManager->getAssociationStr($r['occid'])) $r['t_associatedOccurrences'] = $assocOccurStr;
 					if ($assocSeqStr = $dwcOccurManager->getAssociatedSequencesStr($r['occid'])) $r['t_associatedSequences'] = $assocSeqStr;
-					if ($assocTaxa = $dwcOccurManager->getAssocTaxa($r['occid'])) $r['associatedTaxa'] = $assocTaxa;
+					if ($assocTaxa = $dwcOccurManager->getAssociationStr($r['occid'], 'observational')) $r['associatedTaxa'] = $assocTaxa;
 				}
 				//$dwcOccurManager->appendUpperTaxonomy($r);
 				$dwcOccurManager->appendUpperTaxonomy2($r);
@@ -1783,11 +1790,11 @@ class DwcArchiverCore extends Manager{
 			}
 			if ($this->includeAttributes){
 				$this->writeAttributeData($batchOccidArr);
-				if($this->attributeHandler !== null) $this->attributeHandler->__destruct();
+				unset($this->attributeHandler);
 			}
 			if ($this->includeMaterialSample){
 				$this->writeMaterialSampleData($batchOccidArr);
-				if($this->materialSampleHandler !== null) $this->materialSampleHandler->__destruct();
+				unset($this->materialSampleHandler);
 			}
 		}
 		else {
@@ -1892,18 +1899,18 @@ class DwcArchiverCore extends Manager{
 				if ($previousImgID == $r['imgID']) continue;
 				$previousImgID = $r['imgID'];
 				unset($r['imgID']);
-				if (substr($r['identifier'], 0, 1) == '/') $r['identifier'] = $localDomain . $r['identifier'];
-				if (substr($r['accessURI'], 0, 1) == '/') $r['accessURI'] = $localDomain . $r['accessURI'];
-				if (substr($r['thumbnailAccessURI'], 0, 1) == '/') $r['thumbnailAccessURI'] = $localDomain . $r['thumbnailAccessURI'];
-				if (substr($r['goodQualityAccessURI'], 0, 1) == '/') $r['goodQualityAccessURI'] = $localDomain . $r['goodQualityAccessURI'];
+				if ($r['identifier'] && substr($r['identifier'], 0, 1) == '/') $r['identifier'] = $localDomain . $r['identifier'];
+				if ($r['accessURI'] && substr($r['accessURI'], 0, 1) == '/') $r['accessURI'] = $localDomain . $r['accessURI'];
+				if ($r['thumbnailAccessURI'] && substr($r['thumbnailAccessURI'], 0, 1) == '/') $r['thumbnailAccessURI'] = $localDomain . $r['thumbnailAccessURI'];
+				if ($r['goodQualityAccessURI'] && substr($r['goodQualityAccessURI'], 0, 1) == '/') $r['goodQualityAccessURI'] = $localDomain . $r['goodQualityAccessURI'];
 
-				if ($r['goodQualityAccessURI'] == 'empty' || substr($r['goodQualityAccessURI'], 0, 10) == 'processing') $r['goodQualityAccessURI'] = '';
-				if (substr($r['thumbnailAccessURI'], 0, 10) == 'processing') $r['thumbnailAccessURI'] = '';
+				if ($r['goodQualityAccessURI'] && ($r['goodQualityAccessURI'] == 'empty' || substr($r['goodQualityAccessURI'], 0, 10) == 'processing')) $r['goodQualityAccessURI'] = '';
+				if ($r['thumbnailAccessURI'] && substr($r['thumbnailAccessURI'], 0, 10) == 'processing') $r['thumbnailAccessURI'] = '';
 				if ($this->schemaType != 'backup') {
-					if (stripos($r['rights'], 'creativecommons.org') === 0) {
+					if ($r['rights'] && stripos($r['rights'], 'creativecommons.org') === 0) {
 						$r['webstatement'] = $r['rights'];
 						$r['rights'] = '';
-						if (!$r['usageterms']) {
+						if (!$r['usageterms'] && $r['webstatement']) {
 							if (strpos($r['webstatement'], '/zero/1.0/')) {
 								$r['usageterms'] = 'CC0 1.0 (Public-domain)';
 							}
@@ -1927,22 +1934,24 @@ class DwcArchiverCore extends Manager{
 				$r['associatedSpecimenReference'] = $urlPathPrefix . 'collections/individual/index.php?occid=' . $r['occid'];
 				$r['type'] = 'StillImage';
 				$r['subtype'] = 'Photograph';
-				$extStr = strtolower(substr($r['accessURI'], strrpos($r['accessURI'], '.') + 1));
-				if ($r['format'] == '') {
-					if ($extStr == 'jpg' || $extStr == 'jpeg') {
-						$r['format'] = 'image/jpeg';
-					}
-					elseif ($extStr == 'gif') {
-						$r['format'] = 'image/gif';
-					}
-					elseif ($extStr == 'png') {
-						$r['format'] = 'image/png';
-					}
-					elseif ($extStr == 'tiff' || $extStr == 'tif') {
-						$r['format'] = 'image/tiff';
-					}
-					else {
-						$r['format'] = '';
+				if($r['accessURI']){
+					$extStr = strtolower(substr($r['accessURI'], strrpos($r['accessURI'], '.') + 1));
+					if ($r['format'] == '') {
+						if ($extStr == 'jpg' || $extStr == 'jpeg') {
+							$r['format'] = 'image/jpeg';
+						}
+						elseif ($extStr == 'gif') {
+							$r['format'] = 'image/gif';
+						}
+						elseif ($extStr == 'png') {
+							$r['format'] = 'image/png';
+						}
+						elseif ($extStr == 'tiff' || $extStr == 'tif') {
+							$r['format'] = 'image/tiff';
+						}
+						else {
+							$r['format'] = '';
+						}
 					}
 				}
 				$r['metadataLanguage'] = 'en';
@@ -2063,7 +2072,7 @@ class DwcArchiverCore extends Manager{
 			fputcsv($fh, $outputArr);
 		} else {
 			foreach ($outputArr as $k => $v) {
-				$outputArr[$k] = str_replace($this->delimiter, '', $v);
+				$outputArr[$k] = str_replace($this->delimiter, '', ($v ?? ''));
 			}
 			fwrite($fh, implode($this->delimiter, $outputArr) . "\n");
 		}
@@ -2135,7 +2144,7 @@ class DwcArchiverCore extends Manager{
 		} elseif ($d == 'csv' || $d == 'comma' || $d == ',') {
 			$this->delimiter = ",";
 			$this->fileExt = '.csv';
-		} else {
+		} elseif ($d) {
 			$this->delimiter = $d;
 			$this->fileExt = '.txt';
 		}
@@ -2143,18 +2152,22 @@ class DwcArchiverCore extends Manager{
 
 	public function setIncludeDets($includeDets){
 		if($includeDets) $this->includeDets = true;
+		else $this->includeDets = false;
 	}
 
 	public function setIncludeImgs($includeImgs){
 		if($includeImgs) $this->includeImgs = true;
+		else $this->includeImgs = false;
 	}
 
 	public function setIncludeAttributes($include){
 		if($include) $this->includeAttributes = true;
+		else $this->includeAttributes = false;
 	}
 
 	public function setIncludeMaterialSample($include){
 		if($include) $this->includeMaterialSample = true;
+		else $this->includeMaterialSample = false;
 	}
 
 	public function hasAttributes($collid = false){
@@ -2261,15 +2274,16 @@ class DwcArchiverCore extends Manager{
 		$retStr = $inStr;
 		if ($inStr && $this->charSetSource) {
 			if ($this->charSetOut == 'UTF-8' && $this->charSetSource == 'ISO-8859-1') {
-				if (mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1', true) == "ISO-8859-1") {
-					$retStr = utf8_encode($inStr);
-					//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
+				if (mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1', true) == 'ISO-8859-1') {
+					$retStr = mb_convert_encoding($inStr, 'UTF-8', 'ISO-8859-1');
 				}
-			} elseif ($this->charSetOut == "ISO-8859-1" && $this->charSetSource == 'UTF-8') {
-				if (mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1') == "UTF-8") {
-					$retStr = utf8_decode($inStr);
-					//$retStr = iconv("UTF-8","ISO-8859-1//TRANSLIT",$inStr);
+			} elseif ($this->charSetOut == 'ISO-8859-1' && $this->charSetSource == 'UTF-8') {
+				if (mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1') == 'UTF-8') {
+					$retStr = mb_convert_encoding($inStr, 'ISO-8859-1', 'UTF-8');
 				}
+			}
+			else{
+				$retStr = mb_convert_encoding($inStr, $this->charSetOut, mb_detect_encoding($inStr));
 			}
 		}
 		return $retStr;

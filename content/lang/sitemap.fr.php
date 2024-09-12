@@ -12,7 +12,7 @@ $LANG['SEARCHENGINE'] = 'Moteur de Recherche';
 $LANG['SEARCH_COLL'] = 'Rechercher des Collections';
 $LANG['LISTOFCOLL'] = 'Liste des Collections Participant au Projet';
 $LANG['COLLSTATS'] = 'Statistiques des Collections';
-$LANG['EXSICC'] = 'Indice Exsiccati';
+$LANG['EXSICC'] = 'Indice Exsiccatae';
 $LANG['DATA_PUBLISHING'] = 'Publication de Données';
 $LANG['COLLECTIONS_RSS'] = "Flux RSS pour les collections d'histoire naturelle et les projets d'observation";
 $LANG['DARWINCORE'] = 'Archives Darwin Core (DwC-A)';
@@ -47,7 +47,7 @@ $LANG['SALIX'] = 'Gestionnaire WordStat SALIX';
 $LANG['IDKEYS'] = 'Clés d\'Identification';
 $LANG['KEYMODULE'] = "Remarque: le module Clé d'Identification est désactivé dans ce portail. Cependant, vous pouvez annuler en activant des clés individuelles dans la page d'administration de la liste.";
 $LANG['AUTHOKEY'] = 'Vous êtes autorisé à accéder au';
-$LANG['CHARASTATES'] = "Éditeur de Caractères et d'&Eacute;tats de Caractère";
+$LANG['CHARASTATES'] = "Éditeur de Caractères et d'États de Caractère";
 $LANG['AUTHIDKEY'] = "Vous êtes autorisé à modifier les Clés d'Identification";
 $LANG['CODINGCHARA'] = "Pour coder des caractères dans un format de tableau, ouvrez l'éditeur de matrice pour l'une des listes suivantes";
 $LANG['NOTAUTHIDKEY'] = "Vous n'êtes pas autorisé à modifier les Clés d'Identification";
@@ -56,7 +56,7 @@ $LANG['SEESYMBDOC'] = 'Voir la documentation Symbiota sur';
 $LANG['IMGSUB'] = 'Soumission d\'Images';
 $LANG['FORANOVERVIEW'] = "pour un aperçu de la façon dont les images sont gérées dans un portail de données Symbiota. Les images de terrain sans
 						informations détaillées sur la localité peuvent être téléchargées à l'aide de la Page de Profil d'Espèce.
-						Les images d'échantillons sont chargées via la Page d'Edition d'&Eacute;chantillons ou via un processus de téléchargement par lots
+						Les images d'échantillons sont chargées via la Page d'Edition d'Échantillons ou via un processus de téléchargement par lots
 						établi par un gestionnaire de portail. Les observations d'images (échantillons d'images) avec des informations détaillées sur la localité peuvent être
 						téléchargées en utilisant le lien ci-dessous. Notez que vous aurez besoin des attributions d'autorisations nécessaires pour utiliser cette fonctionnalité. ";
 $LANG['BASICFIELD'] = 'Soumettre des Images de Base du Terrain';
@@ -108,7 +108,7 @@ $LANG['SYMBDOCU'] = 'Documentation Symbiote';
 $LANG['FORMOREINFO'] = "pour plus d'informations sur les capacités de traitement des échantillons. A noter que les projets d'observation ne sont pas activés sur tous les portails de données Symbiota";
 $LANG['OIVS'] = "Soumission de Image d'Observation";
 $LANG['NOOBSPROJ'] = "Il n'y a pas de Projets d'Observation pour lesquels vous avez des autorisations";
-$LANG['PERSONAL'] = "Fonctions de Gestion des &Eacute;chantillons Personnels et d'Impression d'&Eacute;tiquettes";
+$LANG['PERSONAL'] = "Fonctions de Gestion des Échantillons Personnels et d'Impression d'Étiquettes";
 $LANG['OPM'] = 'Gestion de Projet d\'Observation';
 $LANG['PLEASE'] = "S'il te plaît";
 $LANG['LOGIN'] = 'vous connecter';
@@ -124,6 +124,7 @@ $LANG['EDITIMG'] = 'Modifier Images';
 $LANG['IMGSORTORD'] = "Modifier l'Ordre de Tri des Images";
 $LANG['ADDNEWIMG'] = 'Ajouter une nouvelle image';
 $LANG['ALLPUBDAT'] = 'Tous les Ensembles de Données Consultables Publiquement';
-$LANG['DATMANPAG'] = 'Page de Gestion des Ensembles de Données</a> - ensembles de données que vous êtes autorisé à modifier';
-
+$LANG['DATMANPAG'] = 'Page de Gestion des Ensembles de Données';
+$LANG['DATA_AUTHORIZED_TO_EDIT'] = 'ensembles de données que vous êtes autorisé à modifier';
+$LANG['MANAGE_TAXON_THUMBNAILS'] = 'Gérer les miniatures de la carte du profil de taxonomie';
 ?>

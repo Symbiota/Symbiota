@@ -1,7 +1,7 @@
 <?php
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
 
-class ChecklistVoucherManager extends  ChecklistVoucherAdmin{
+class ChecklistVoucherManager extends ChecklistVoucherAdmin{
 
 	private $tid;
 	private $taxonName;
@@ -40,141 +40,100 @@ class ChecklistVoucherManager extends  ChecklistVoucherAdmin{
 	}
 
 	//Editing functions
-	public function editClData($eArr){
-		$retStr = '';
-		$innerSql = '';
-		foreach($eArr as $k => $v){
-			$valStr = trim($v);
-			$innerSql .= ",".$k."=".($valStr?'"'.$this->cleanInStr($valStr).'" ':'NULL');
-		}
-		$sqlClUpdate = 'UPDATE fmchklsttaxalink SET '.substr($innerSql,1).' WHERE (tid = '.$this->tid.') AND (clid = '.$this->clid.')';
-		if(!$this->conn->query($sqlClUpdate)){
-			$retStr = "ERROR editing details: ".$this->conn->error."<br/>SQL: ".$sqlClUpdate.";<br/> ";
-		}
-		return $retStr;
+	public function editClData($postArr){
+		$status = false;
+		$inventoryManager = new ImInventories();
+		$clTaxaID = $this->getClTaxaID($this->tid);
+		$inventoryManager->setClTaxaID($clTaxaID);
+		$status = $inventoryManager->updateChecklistTaxaLink($postArr);
+		if(!$status) $this->errorMessage = $inventoryManager->getErrorMessage();
+		return $status;
 	}
 
-	public function renameTaxon($targetTid, $rareLocality = ''){
+	public function remapTaxon($targetTid, $rareLocality = ''){
 		$statusStr = false;
 		if(is_numeric($targetTid)){
+			$inventoryManager = new ImInventories();
 			$clTaxaID = $this->getClTaxaID($this->tid);
-			$sql = 'UPDATE fmchklsttaxalink SET TID = '.$targetTid.' WHERE (clTaxaID = '.$clTaxaID.')';
-			if($this->conn->query($sql)){
+			$inventoryManager->setClTaxaID($clTaxaID);
+			//First transfer taxa that
+			$inputArr = array('tid' => $targetTid);
+			if($inventoryManager->updateChecklistTaxaLink($inputArr)){
 				$this->tid = $targetTid;
 				$this->taxonName = '';
 				$statusStr = true;
 			}
 			else{
-				$sqlTarget = 'SELECT clTaxaID, Habitat, Abundance, Notes, internalnotes, source, Nativity FROM fmchklsttaxalink WHERE (tid = '.$targetTid.') AND (clid = '.$this->clid.')';
-				$rsTarget = $this->conn->query($sqlTarget);
-				if($row = $rsTarget->fetch_object()){
-					$clTaxaIDTarget = $row->clTaxaID;
-					$habitatTarget = $this->cleanInStr($row->Habitat);
-					$abundTarget = $this->cleanInStr($row->Abundance);
-					$notesTarget = $this->cleanInStr($row->Notes);
-					$internalNotesTarget = $this->cleanInStr($row->internalnotes);
-					$sourceTarget = $this->cleanInStr($row->source);
-					$nativeTarget = $this->cleanInStr($row->Nativity);
-
-					//Move all vouchers to new name
-					$sqlVouch = 'UPDATE IGNORE fmvouchers SET clTaxaID = '.$clTaxaIDTarget.' WHERE (clTaxaID = '.$clTaxaID.')';
-
-					if(!$this->conn->query($sqlVouch)){
-						$this->errorMessage = 'ERROR transferring vouchers during taxon transfer: '.$this->conn->error;
+				if(!$inventoryManager->getErrorMessage()){
+					//Transferred failed due to target name already exiting within checklist
+					$targetArr = array();
+					$sqlTarget = 'SELECT clTaxaID, habitat, abundance, notes, internalNotes, source, nativity FROM fmchklsttaxalink WHERE (tid = '.$targetTid.') AND (clid = '.$this->clid.')';
+					$rsTarget = $this->conn->query($sqlTarget);
+					if($row = $rsTarget->fetch_assoc()){
+						$targetArr = $row;
+						$clTaxaIDTarget = $row['clTaxaID'];
+						unset($row['clTaxaID']);
+						if(!$inventoryManager->updateChecklistVouchersByClTaxaID(array('clTaxaID' => $clTaxaIDTarget))){
+							$this->errorMessage = 'ERROR transferring vouchers during taxon transfer: ' . $this->conn->error;
+						}
+						//Delete all Vouchers that didn't transfer because they were already linked to target name
+						if(!$inventoryManager->deleteChecklistVouchersByClTaxaID()){
+							$this->errorMessage = 'ERROR removing vouchers during taxon transfer: ' . $this->conn->error;
+						}
 					}
-					//Delete all Vouchers that didn't transfer because they were already linked to target name
-					$sqlVouchDel = 'DELETE FROM fmvouchers WHERE (clTaxaID = '.$clTaxaID.')';
-					if(!$this->conn->query($sqlVouchDel)){
-						$this->errorMessage = "ERROR removing vouchers during taxon transfer: ".$this->conn->error;
-					}
+					$rsTarget->free();
 
 					//Merge chklsttaxalink data
 					//Harvest source (unwanted) chklsttaxalink data
-					$sqlSourceCl = 'SELECT Habitat, Abundance, Notes, internalnotes, source, Nativity FROM fmchklsttaxalink WHERE (clTaxaID = '.$clTaxaID.')';
+					$sourceArr = array();
+					$sqlSourceCl = 'SELECT habitat, abundance, notes, internalNotes, source, nativity FROM fmchklsttaxalink WHERE (clTaxaID = '.$clTaxaID.')';
 					$rsSourceCl =  $this->conn->query($sqlSourceCl);
 					if($row = $rsSourceCl->fetch_object()){
-						$habitatSource = $this->cleanInStr($row->Habitat);
-						$abundSource = $this->cleanInStr($row->Abundance);
-						$notesSource = $this->cleanInStr($row->Notes);
-						$internalNotesSource = $this->cleanInStr($row->internalnotes);
-						$sourceSource = $this->cleanInStr($row->source);
-						$nativeSource = $this->cleanInStr($row->Nativity);
+						$sourceArr = $row;
 					}
 					$rsSourceCl->free();
 					//Transfer source chklsttaxalink data to target record
-					$habitatStr = $habitatTarget.(($habitatTarget && $habitatSource)?'; ':'').$habitatSource;
-					$abundStr = $abundTarget.(($abundTarget && $abundSource)?'; ':'').$abundSource;
-					$notesStr = $notesTarget.(($notesTarget && $notesSource)?'; ':'').$notesSource;
-					$internalNotesStr = $internalNotesTarget.(($internalNotesTarget && $internalNotesSource)?'; ':'').$internalNotesSource;
-					$sourceStr = $sourceTarget.(($sourceTarget && $sourceSource)?'; ':'').$sourceSource;
-					$nativeStr = $nativeTarget.(($nativeTarget && $nativeSource)?'; ':'').$nativeSource;
-					$sqlCl = 'UPDATE fmchklsttaxalink SET
-						Habitat = '.($habitatStr ? '"'.$this->cleanInStr($habitatStr).'"':'NULL').',
-						Abundance = '.($abundStr ? '"'.$this->cleanInStr($abundStr).'"':'NULL').',
-						Notes = '.($notesStr ? '"'.$this->cleanInStr($notesStr).'"' : 'NULL').',
-						internalnotes = '.($internalNotesStr ? '"'.$this->cleanInStr($internalNotesStr).'"' : 'NULL').',
-						source = '. ($sourceStr ? '"'.$this->cleanInStr($sourceStr).'"' : 'NULL').',
-						Nativity = '. ($nativeStr? '"'.$this->cleanInStr($nativeStr).'"' : 'NULL').'
-						WHERE (clTaxaID = '.$clTaxaIDTarget.')';
-					if($this->conn->query($sqlCl)){
-						//Delete unwanted taxon
-						$sqlDel = 'DELETE FROM fmchklsttaxalink WHERE (clTaxaID = '.$clTaxaID.')';
-						if($this->conn->query($sqlDel)){
-							$this->tid = $targetTid;
-							$this->taxonName = '';
-							$statusStr = true;
-						}
-						else $this->errorMessage = 'ERROR removing taxon during taxon transfer: '.$this->conn->error;
+
+					foreach($sourceArr as $sourceField => $sourceValue){
+						$newValue = $targetArr[$sourceField];
+						if($newValue && $sourceValue) $newValue .= '; ';
+						$newValue .= $sourceValue;
+						$targetArr[$sourceField] = trim($newValue , '; ');
 					}
-					else $this->errorMessage = 'ERROR updating new taxon during taxon transfer: '.$this->conn->error;
+					if($inventoryManager->deleteChecklistTaxaLink()){
+						$inventoryManager->setClTaxaID($clTaxaIDTarget);
+						$inventoryManager->updateChecklistTaxaLink($targetArr);
+						$this->tid = $targetTid;
+						$this->taxonName = '';
+						$statusStr = true;
+					}
+					else $this->errorMessage = 'ERROR removing taxon during taxon transfer: '.$this->conn->error;
 				}
-				$rsTarget->free();
 			}
 			if($rareLocality){
-				$this->removeStateRareStatus($rareLocality);
+				$inventoryManager->removeStateLocalitySecurityByTid($rareLocality, $this->tid);
 			}
 		}
 		return $statusStr;
 	}
 
 	public function deleteTaxon($rareLocality = ''){
-		$statusStr = '';
+		$status = false;
+		$inventoryManager = new ImInventories();
 		$clTaxaID = $this->getClTaxaID($this->tid);
-
-		//Delete vouchers
-		$vSql = 'DELETE FROM fmvouchers WHERE (clTaxaID = '.$clTaxaID.')';
-		$this->conn->query($vSql);
-		//Delete checklist record
-		$sql = 'DELETE FROM fmchklsttaxalink WHERE (clTaxaID = '.$clTaxaID.')';
-		if($this->conn->query($sql)){
-			if($rareLocality){
-				$this->removeStateRareStatus($rareLocality);
-			}
+		$inventoryManager->setClTaxaID($clTaxaID);
+		//First delete all linked voucehrs
+		$status = $inventoryManager->deleteChecklistVouchersByClTaxaID();
+		if(!$status) $this->errorMessage = $inventoryManager->getErrorMessage();
+		//Then delete checklist taxa linkage
+		if($status){
+			$status = $inventoryManager->deleteChecklistTaxaLink();
+			if(!$status) $this->errorMessage = $inventoryManager->getErrorMessage();
 		}
-		else $statusStr = 'ERROR deleting taxon from checklist: '.$this->conn->error;
-		return $statusStr;
-	}
-
-	private function removeStateRareStatus($rareLocality){
-		//Remove state based security protection only if name is not on global list
-		$sql = 'SELECT IFNULL(securitystatus,0) as securitystatus FROM taxa WHERE tid = '.$this->tid;
-		//echo $sql;
-		$rs = $this->conn->query($sql);
-		if($r = $rs->fetch_object()){
-			if($r->securitystatus == 0){
-				//Set occurrence
-				$sqlRare = 'UPDATE omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid '.
-					'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-					'SET o.localitysecurity = NULL '.
-					'WHERE (o.localitysecurity = 1) AND (o.localitySecurityReason IS NULL) AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1) '.
-					'AND o.stateprovince = "'.$rareLocality.'" AND ts2.tid = '.$this->tid;
-				//echo $sqlRare; exit;
-				if(!$this->conn->query($sqlRare)){
-					$this->errorMessage = "ERROR resetting locality security during taxon delete: ".$this->conn->error;
-				}
-			}
+		if($rareLocality){
+			$inventoryManager->removeStateLocalitySecurityByTid($rareLocality, $this->tid);
 		}
-		$rs->free();
+		return $status;
 	}
 
 	//Voucher functions
@@ -196,6 +155,7 @@ class ChecklistVoucherManager extends  ChecklistVoucherAdmin{
 					$voucherData[$r->voucherID]['editornotes'] = $r->editornotes;
 				}
 				$rs->free();
+				$voucherData = $this->cleanOutArray($voucherData);
 			}
 		}
 		return $voucherData;
@@ -204,30 +164,11 @@ class ChecklistVoucherManager extends  ChecklistVoucherAdmin{
 	public function editVoucher($voucherID, $notes, $editorNotes){
 		$status = false;
 		if(is_numeric($voucherID)){
-			if(!$notes) $notes = null;
-			if(!$editorNotes) $editorNotes = null;
-			$sql = 'UPDATE fmvouchers SET notes = ?, editornotes = ? WHERE (voucherID = ?)';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('ssi', $notes, $editorNotes, $voucherID);
-				$stmt->execute();
-				if($stmt->affected_rows) $status = true;
-				elseif($stmt->error) $this->errorMessage = 'ERROR editing voucher: '.$stmt->error;
-				$stmt->close();
-			}
-		}
-		return $status;
-	}
-
-	public function addVoucher($vOccId, $vNotes, $vEditNotes){
-		$status = false;
-		if(is_numeric($vOccId) && $this->clid){
-			$status = $this->addVoucherRecord($vOccId, $vNotes, $vEditNotes);
-			if(!$status){
-				$tid = $this->getTidInterpreted($vOccId);
-				if($clTaxaID = $this->insertChecklistTaxaLink($tid, $this->clid)){
-					$status = $this->insertVoucher($clTaxaID, $vOccId, $vNotes, $vEditNotes);
-				}
-			}
+			$inventoryManager = new ImInventories();
+			$inventoryManager->setVoucherID($voucherID);
+			$inputArr = array('notes' => $notes, 'editorNotes' => $editorNotes);
+			$status = $inventoryManager->updateChecklistVoucher($inputArr);
+			if(!$status) $this->errorMessage = $inventoryManager->getErrorMessage();
 		}
 		return $status;
 	}

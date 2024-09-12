@@ -48,13 +48,14 @@ if($collMap){
 	}
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['OCC_CLEANER']; ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<style type="text/css">
+	<style>
 		table.styledtable td { white-space: nowrap; }
 	</style>
 	<script type="text/javascript">
@@ -96,13 +97,17 @@ if($collMap){
 	</script>
 </head>
 <body style="margin-left:10px; width: 100%">
+	<?php
+	include($SERVER_ROOT . '/includes/header.php');
+	?>
 	<div class='navpath' style="margin:10px">
 		<a href="../../index.php"><?php echo $LANG['HOME']; ?></a> &gt;&gt;
 		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1"><?php echo $LANG['COL_MAN']; ?></a> &gt;&gt;
 		<a href="index.php?collid=<?php echo $collid; ?>"><?php echo $LANG['CLEAN_MOD_INDEX']; ?></a> &gt;&gt;
 		<b><?php echo $LANG['DUP_OCCS']; ?></b>
 	</div>
-	<div id="innertext" style="background-color:white; margin:10px; width: 100%; max-width: 100%; padding: 0px;">
+	<div role="main" id="innertext" style="background-color:white; margin:10px; width: 100%; max-width: 100%; padding: 0px;">
+		<h1 class="page-heading">Duplicate Catalog Number Cleaning Tool</h1>
 		<?php
 		if($collMap && $isEditor){
 			if($IS_ADMIN && $limit < 900) echo '<div style="max-width: 1000px">'.$LANG['SUPERADMIN_NOTICE'].'</div>';
@@ -122,12 +127,12 @@ if($collMap){
 								$href = 'duplicatesearch.php?collid='.$collid.'&action='.$action.'&start='.($start+$limit);
 								echo '<div style="float:right;"><a href="'.$href.'"><b>'.$LANG['NEXT'].' '.$limit.' '.$LANG['RECORDS'].' &gt;&gt;</b></a></div>';
 							}
-							echo '<div style="float:left;margin-bottom:4px;margin-left:15px;"><input name="action" type="submit" value="Merge Duplicate Records" /></div>';
+							echo '<div style="float:left;margin-bottom:4px;margin-left:15px;"><button name="action" type="submit" value="mergeDuplicates">' . $LANG['MERGE_DUPES'] . '</button></div>';
 							echo '<div style="float:left;margin-left:15px;"><b>'.($start+1).' '.$LANG['TO'].' '.($start+$recCnt).' '.$LANG['DUP_CLUSTERS'].' </b></div>';
 							?>
 						</div>
 						<div style="clear: both">
-							<table class="styledtable" style="font-family:Arial;font-size:12px;">
+							<table class="styledtable" style="font-size:12px;">
 								<tr>
 									<th style="width:40px;"><?php echo $LANG['ID']; ?></th>
 									<th style="width:20px;"><input name="selectalldupes" type="checkbox" title="<?php echo $LANG['SEL_DESEL_ALL']; ?>" onclick="selectAllDuplicates(this.form)" /></th>
@@ -177,7 +182,7 @@ if($collMap){
 							</table>
 						</div>
 						<div style="margin:15px;">
-							<button name="action" type="submit" value="Merge Duplicate Records"><?php echo $LANG['MERGE_DUPES']; ?></button>
+							<button name="action" type="submit" value="mergeDuplicates"><?php echo $LANG['MERGE_DUPES']; ?></button>
 						</div>
 					</form>
 					<?php
@@ -190,7 +195,7 @@ if($collMap){
 					<?php
 				}
 			}
-			elseif($action == 'Merge Duplicate Records'){
+			elseif($action == 'mergeDuplicates'){
 				?>
 				<ul>
 					<li><?php echo $LANG['DUPE_MERGING_STARTED']; ?></li>
@@ -199,7 +204,7 @@ if($collMap){
 					foreach($_POST['dupid'] as $v){
 						$vArr = explode('|',$v);
 						if(count($vArr) > 1){
-							$target = $_POST['dup'.str_replace(' ', '_', $vArr[0]).'target'];
+							$target = $_POST['dup' . $vArr[0] . 'target'];
 							if($target != $vArr[1]) $dupArr[$target][] = $vArr[1];
 						}
 					}
@@ -212,13 +217,13 @@ if($collMap){
 					if((count($dupArr)+2)>$limit){
 						?>
 							<div>
-								<a href="index.php?collid=<?php echo $collid; ?>"><?php echo $LANG['RETURN_TO_FORM']; ?></a>
+								<a href="index.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars($LANG['RETURN_TO_FORM'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 							</div>
 							<?php
 						}
 					?>
 					<div>
-						<a href="index.php?collid=<?php echo $collid; ?>"><?php echo $LANG['RETURN_TO_MAIN']; ?></a>
+						<a href="index.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars($LANG['RETURN_TO_MAIN'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 					</div>
 				</div>
 				<?php
@@ -229,5 +234,8 @@ if($collMap){
 		}
 		?>
 	</div>
+	<?php
+	include($SERVER_ROOT . '/includes/footer.php');
+	?>
 </body>
 </html>

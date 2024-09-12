@@ -97,4 +97,5 @@ $LANG['METADATA'] = 'Metadata';
 $LANG['PUB_DATE'] = 'Pub Date';
 $LANG['NO_PUBLISHABLE'] = 'There are no publishable collections';
 $LANG['ADDIT_SOURCES'] = 'Additional Data Sources within the Portal Network';
+$LANG['EDIT'] = 'Edit';
 ?>

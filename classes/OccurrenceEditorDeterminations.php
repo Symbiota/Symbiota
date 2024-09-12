@@ -1,5 +1,7 @@
 <?php
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
+include_once($SERVER_ROOT.'/utilities/SymbUtil.php');
+
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/classes/OccurrenceEditorDeterminations.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/classes/OccurrenceEditorDeterminations.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/classes/OccurrenceEditorDeterminations.en.php');
 
@@ -82,7 +84,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			$notes .= ($notes?'; ':'').'ConfidenceRanking: '.$detArr['confidenceranking'];
 		}
 		$guid = UuidFactory::getUuidV4();
-		$sql = 'INSERT INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
+		$sql = 'INSERT IGNORE INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
 			'identificationQualifier, iscurrent, printqueue, appliedStatus, identificationReferences, identificationRemarks, recordID, sortsequence) '.
 			'VALUES ('.$this->occid.',"'.$this->cleanInStr($detArr['identifiedby']).'","'.$this->cleanInStr($detArr['dateidentified']).'","'.
 			$sciname.'",'.($detArr['scientificnameauthorship']?'"'.$this->cleanInStr($detArr['scientificnameauthorship']).'"':'NULL').','.
@@ -90,18 +92,29 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			$detArr['makecurrent'].','.$detArr['printqueue'].','.($isEditor==3?0:1).','.
 			($detArr['identificationreferences']?'"'.$this->cleanInStr($detArr['identificationreferences']).'"':'NULL').','.
 			($notes?'"'.$notes.'"':'NULL').',"'.$guid.'",'.$sortSeq.')';
-		if($this->conn->query($sql)){
+		$detId = 0;
+		try {
+			$this->conn->query($sql);
 			$detId = $this->conn->insert_id;
+		} catch (mysqli_sql_exception $e) {
+			$status = $LANG['ERROR_FAILED_ADD'].': '.$this->conn->error;
+		}
+		if($detId){
 			//If is current, move old determination from omoccurrences to omoccurdeterminations and then load new record into omoccurrences
 			if($isCurrent){
-				//If determination is already in omoccurdeterminations, INSERT will fail move omoccurrences determination to  table
+				//If determination is already in omoccurdeterminations, INSERT will fail
 				$guid = UuidFactory::getUuidV4();
-				$sqlInsert = 'INSERT INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
+				$sqlInsert = 'INSERT IGNORE INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
 					'identificationQualifier, identificationReferences, identificationRemarks, recordID, sortsequence) '.
 					'SELECT occid, IFNULL(identifiedby,"unknown") AS idby, IFNULL(dateidentified,"s.d.") AS di, '.
 					'sciname, scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, "'.$guid.'", 10 AS sortseq '.
 					'FROM omoccurrences WHERE (occid = '.$this->occid.') AND (identifiedBy IS NOT NULL OR dateIdentified IS NOT NULL OR sciname IS NOT NULL)';
 				$this->conn->query($sqlInsert);
+				try {
+					//$this->conn->query($sqlInsert);
+				} catch (mysqli_sql_exception $e) {
+					echo 'Duplicate: '.$this->conn->error;
+				}
 				$tidToAdd = $detArr['tidtoadd'];
 				if($tidToAdd && !is_numeric($tidToAdd)) $tidToAdd = 0;
 				$this->updateBaseOccurrence($detId);
@@ -112,9 +125,6 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 					if($idStatus) $status .= '; '.$idStatus;
 				}
 			}
-		}
-		else{
-			$status = $LANG['ERROR_FAILED_ADD'].': '.$this->conn->error;
 		}
 		return $status;
 	}
@@ -214,7 +224,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		$status = $LANG['DET_NOW_CURRENT'];
 		//Make sure determination data within omoccurrences is in omoccurdeterminations. If already there, INSERT will fail and nothing lost
 		$guid = UuidFactory::getUuidV4();
-		$sqlInsert = 'INSERT INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
+		$sqlInsert = 'INSERT IGNORE INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
 			'identificationQualifier, identificationReferences, identificationRemarks, recordID, sortsequence) '.
 			'SELECT occid, IFNULL(identifiedby,"unknown") AS idby, IFNULL(dateidentified,"s.d.") AS iddate, sciname, scientificnameauthorship, '.
 			'identificationqualifier, identificationreferences, identificationremarks, "'.$guid.'", 10 AS sortseq '.
@@ -250,7 +260,17 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			if(isset($taxonArr['tid']) && $taxonArr['tid']) $sql .= ', o.tidinterpreted = '.$taxonArr['tid'];
 			if(isset($taxonArr['security']) && $taxonArr['security']) $sql .= ', o.localitysecurity = '.$taxonArr['security'].', o.localitysecurityreason = "<Security Setting Locked>"';
 			$sql .= ' WHERE (d.iscurrent = 1) AND (d.detid = '.$detId.')';
-			$this->conn->query($sql);
+			$updated_base = $this->conn->query($sql);
+
+			//Whenever occurrence is updated also update associated images
+			if($updated_base && isset($taxonArr['tid']) && $taxonArr['tid']) {
+				$sql = <<<'SQL'
+				UPDATE images i
+				INNER JOIN omoccurdeterminations od on od.occid = i.occid
+				SET tid = ? WHERE detid = ?;
+				SQL;
+				SymbUtil::execute_query($this->conn,$sql, [$taxonArr['tid'], $detId]);
+			}
 		}
 	}
 
@@ -349,7 +369,9 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 	}
 
 	public function getCollName(){
-		return $this->collMap['collectionname'].' ('.$this->collMap['institutioncode'].($this->collMap['collectioncode']?':'.$this->collMap['collectioncode']:'').')';
+		$retStr = '';
+		if($this->collMap) $retStr = $this->collMap['collectionname'].' ('.$this->collMap['institutioncode'].($this->collMap['collectioncode']?':'.$this->collMap['collectioncode']:'').')';
+		return $retStr;
 	}
 }
 ?>
