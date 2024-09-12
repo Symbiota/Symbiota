@@ -96,7 +96,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 			}
 		?>
 		<div style="max-width:100%;text-align:center;margin:3rem;height:auto">
-			<img src="<?php echo $CLIENT_ROOT . '/images/layout/Map_withimagery.jpg' ?>" alt="Map of Africa" width="1000px"></img>
+			<img src="<?php echo $CLIENT_ROOT . '/images/layout/Map_withimagery.jpg' ?>" alt="Map of Africa" style="max-width:100%"></img>
 		</div>
 	</main>
 	<?php
