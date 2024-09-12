@@ -3,7 +3,7 @@
 # Pre-Approval
 
 - [ ] There is a description section in the pull request that details what the proposed changes do. It can be very brief if need be, but it ought to exist.
-- [ ] Hotfixes should be branched off of the `master` branch and **squash and merged** into the `hotfix` branch.
+- [ ] Hotfixes should be branched off of the `master` branch and PR'd using the **merge** option (not squashed) into the `hotfix` branch.
 - [ ] Features and backlog bugs should be merged into the `Development` branch, **NOT** `master`
 - [ ] All new text is preferably internationalized (i.e., no end-user-visible text is hard-coded on the PHP pages), and the [spreadsheet tracking internationalizations](https://docs.google.com/spreadsheets/d/133fps9w2pUCEjUA6IGCcQotk7dn9KvepMXJ2IWUZsE8/edit?usp=sharing) has been updated either with a new row or with checkmarks to existing rows.
 - [ ] There are no linter errors
