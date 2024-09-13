@@ -196,7 +196,7 @@ if (array_key_exists('last_message', $_SESSION)){
 			margin-bottom: 1rem;
 		}
 		.custom-icam-button[_ngcontent-sum-c78] {
-			background: url(“<?php echo $CSS_BASE_PATH ?>/img/usa-icons/arrow-right.svg”) no-repeat
+			background: url(“<?php echo $CSS_BASE_PATH ?>/img/arrow-right.svg”) no-repeat
 			transparent;
 			background-position: right 1rem center;
 			background-size: 0.75rem;
@@ -213,29 +213,29 @@ if (array_key_exists('last_message', $_SESSION)){
 		.custom-icam-button--icon[_ngcontent-sum-c78] {
 			background: no-repeat center center;
 			background-size: contain;
-			background-image: url(“<?php echo $CSS_BASE_PATH ?>/img/usa-icons/microsoft-logo.svg”);
+			background-image: url(“<?php echo $CSS_BASE_PATH ?>/img/microsoft-logo.svg”);
 			display: block;
 			margin-right: 0.4rem;
 			height: 3rem;
 			width: 3rem;
 		}
 		.custom-icam-button--icon[data-image=“piv”][_ngcontent-sum-c78] {
-			background-image: url(“<?php echo $CSS_BASE_PATH ?>/img/usa-icons/microsoft-logo.svg”);
+			background-image: url(“<?php echo $CSS_BASE_PATH ?>/img/microsoft-logo.svg”);
 		}
 		.custom-icam-button--icon[data-image=“mobileLinc”][_ngcontent-sum-c78] {
-			background-image: url(“<?php echo $CSS_BASE_PATH ?>/img/usa-icons/microsoft-logo.svg”);
+			background-image: url(“<?php echo $CSS_BASE_PATH ?>/img/microsoft-logo.svg”);
 		}
 		.custom-icam-button--icon[data-image=“azure”][_ngcontent-sum-c78] {
-			background-image: url(“<?php echo $CSS_BASE_PATH ?>/img/usa-icons/microsoft-logo.svg”);
+			background-image: url(“<?php echo $CSS_BASE_PATH ?>/img/microsoft-logo.svg”);
 		}
 		.custom-icam-button--icon[data-image=“okta”][_ngcontent-sum-c78] {
-			background-image: url(“<?php echo $CSS_BASE_PATH ?>/img/usa-icons/microsoft-logo.svg”);
+			background-image: url(“<?php echo $CSS_BASE_PATH ?>/img/microsoft-logo.svg”);
 		}
 		.custom-icam-button--icon[data-image=“loginGov”][_ngcontent-sum-c78] {
-			background-image: url(“<?php echo $CSS_BASE_PATH ?>/img/usa-icons/microsoft-logo.svg”);
+			background-image: url(“<?php echo $CSS_BASE_PATH ?>/img/microsoft-logo.svg”);
 		}
 		.custom-icam-button--icon[data-image=“userPassword”][_ngcontent-sum-c78] {
-			background-image: url(“<?php echo $CSS_BASE_PATH ?>/img/usa-icons/microsoft-logo.svg”);
+			background-image: url(“<?php echo $CSS_BASE_PATH ?>/img/microsoft-logo.svg”);
 		}
 		.custom-icam-button--meta[_ngcontent-sum-c78] {
 			display: flex;
