@@ -24,6 +24,7 @@ $localSession = isset($_SESSION['active_stylesheet']) ? $_SESSION['active_styles
 <script src="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/assets/uswds/js/uswds-init.min.js" type="text/javascript"></script>
 <link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/styleguide.css" type="text/css" rel="stylesheet">
 <link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/nal.js" type="text/css" rel="stylesheet">
+<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/customizations.css" type="text/css" rel="stylesheet">
 <style>
     .accessibility-button {
         font-size: 1.1em;
