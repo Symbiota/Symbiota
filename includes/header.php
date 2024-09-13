@@ -309,7 +309,7 @@ $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.
 <script src="<?php echo $CLIENT_ROOT ?>/css/uswds/symbiota/nal.js"></script>
 <script type="text/javascript">
   const navigateHome = () => {
-    window.location.href = '<?php echo $CLIENT_ROOT; ?>';
+    window.location.href = '<?php echo $CLIENT_ROOT; ?>' || '/';
   };
   const navigateToDataUse = () => {
     window.location.href = '<?php echo $CLIENT_ROOT; ?>/includes/usagepolicy.php';
