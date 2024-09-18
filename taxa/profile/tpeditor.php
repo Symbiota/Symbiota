@@ -195,7 +195,7 @@ if($isEditor && $action){
 			if($isEditor){
 				if($tEditor->isForwarded()) echo '<div id="redirectedfrom">' . $LANG['REDIRECTED_FROM'] . ': <i>' . $tEditor->getSubmittedValue('sciname') . '</i></div>';
 				echo '<div id="taxonDiv"><a href="../index.php?taxon=' . htmlspecialchars($tEditor->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . $LANG['VIEW_PUBLIC_TAXON'] . '</a> ';
-				if($tEditor->getRankId() > 140) echo "&nbsp;<a href='tpeditor.php?tid=" . htmlspecialchars($tEditor->getParentTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'><img src='../../images/toparent.png' style='width:1.3em' title='" . htmlspecialchars($LANG['GO_TO_PARENT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "' /></a>";
+				if($tEditor->getRankId() > 140) echo "&nbsp;<a href='tpeditor.php?tid=" . htmlspecialchars($tEditor->getParentTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'><img src='../../images/toparent.png' style='width:1.2em;height:1.2em' title='" . htmlspecialchars($LANG['GO_TO_PARENT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "' /></a>";
 				echo "</div>\n";
 				if($tEditor->getFamily()) echo '<div id="familyDiv"><b>' . $LANG['FAMILY'] . ':</b> ' . $tEditor->getFamily() . '</div>' . "\n";
 				if($statusStr) echo '<div style="margin:15px;font-weight:bold;font-size:120%;color:' . (stripos($statusStr,'error') !== false?'red':'green') .';">' . $statusStr . '</div>';
