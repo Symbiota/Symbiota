@@ -1960,6 +1960,7 @@ class SpecUploadBase extends SpecUpload{
 				unset($recMap['taxonrank']);
 				unset($recMap['infraspecificepithet']);
 				//Try to get author, if it's not there
+				/*
 				if(!array_key_exists('scientificnameauthorship',$recMap) || !$recMap['scientificnameauthorship']){
 					//Parse scientific name to see if it has author imbedded
 					$parsedArr = OccurrenceUtilities::parseScientificName($recMap['sciname'],$this->conn);
@@ -1969,6 +1970,7 @@ class SpecUploadBase extends SpecUpload{
 						$recMap['sciname'] = trim($parsedArr['unitname1'].' '.$parsedArr['unitname2'].' '.$parsedArr['unitind3'].' '.$parsedArr['unitname3']);
 					}
 				}
+				*/
 				if(!isset($recMap['sciname']) || !$recMap['sciname']) return false;
 
 				if(!isset($recMap['identifiedby'])) $recMap['identifiedby'] = '';
@@ -2540,10 +2542,7 @@ class SpecUploadBase extends SpecUpload{
 					}
 				}
 				else{
-					if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) == 'ISO-8859-1'){
-						$retStr = utf8_encode($inStr);
-						//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
-					}
+					$retStr = mb_convert_encoding($inStr, 'UTF-8', mb_detect_encoding($inStr));
 				}
 			}
 			elseif($this->targetCharset == "ISO-8859-1"){
