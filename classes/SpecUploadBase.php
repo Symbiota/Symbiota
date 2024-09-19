@@ -2542,10 +2542,7 @@ class SpecUploadBase extends SpecUpload{
 					}
 				}
 				else{
-					if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) == 'ISO-8859-1'){
-						$retStr = utf8_encode($inStr);
-						//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
-					}
+					$retStr = mb_convert_encoding($inStr, 'UTF-8', mb_detect_encoding($inStr));
 				}
 			}
 			elseif($this->targetCharset == "ISO-8859-1"){
