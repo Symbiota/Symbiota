@@ -118,7 +118,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		//Create new item for target archives and load into array
 		$itemArr = array();
 		foreach($this->collArr as $collID => $cArr){
-			$cArr = $this->utf8EncodeArr($cArr);
+			$cArr = $this->encodeArr($cArr);
 			$itemElem = $newDoc->createElement('item');
 			$itemAttr = $newDoc->createAttribute('collid');
 			$itemAttr->value = $collID;

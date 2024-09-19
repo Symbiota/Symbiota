@@ -2528,51 +2528,22 @@ class SpecUploadBase extends SpecUpload{
 	}
 
 	protected function encodeString($inStr){
-		$retStr = $inStr;
-
 		if($inStr){
-			if($this->targetCharset == 'UTF-8'){
-				if($this->sourceCharset){
-					if($this->sourceCharset == 'ISO-8859-1') $retStr = utf8_encode($inStr);
-					elseif($this->sourceCharset == 'MAC'){
-						$retStr = iconv('macintosh', 'UTF-8', $inStr);
-						//$retStr = mb_convert_encoding($inStr,"UTF-8","auto");
-					}
-				}
-				else{
-					if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) == 'ISO-8859-1'){
-						$retStr = utf8_encode($inStr);
-						//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
-					}
-				}
-			}
-			elseif($this->targetCharset == "ISO-8859-1"){
-				if($this->sourceCharset){
-					if($this->sourceCharset == 'UTF-8') $retStr = utf8_decode($inStr);
-					elseif($this->sourceCharset == 'MAC'){
-						$retStr = iconv('macintosh', 'ISO-8859-1', $inStr);
-						//$retStr = mb_convert_encoding($inStr,"ISO-8859-1","auto");
-					}
-				}
-				else{
-					if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') == "UTF-8"){
-						$retStr = utf8_decode($inStr);
-					}
-				}
-			}
+			$inStr = mb_convert_encoding($inStr, $this->targetCharset, mb_detect_encoding($inStr));
 
 			//Get rid of UTF-8 curly smart quotes and dashes
-			$badwordchars=array("\xe2\x80\x98", // left single quote
-					"\xe2\x80\x99", // right single quote
-					"\xe2\x80\x9c", // left double quote
-					"\xe2\x80\x9d", // right double quote
-					"\xe2\x80\x94", // em dash
-					"\xe2\x80\xa6" // elipses
+			$badwordchars=array(
+				"\xe2\x80\x98", // left single quote
+				"\xe2\x80\x99", // right single quote
+				"\xe2\x80\x9c", // left double quote
+				"\xe2\x80\x9d", // right double quote
+				"\xe2\x80\x94", // em dash
+				"\xe2\x80\xa6" // elipses
 			);
 			$fixedwordchars=array("'", "'", '"', '"', '-', '...');
 			$inStr = str_replace($badwordchars, $fixedwordchars, $inStr);
 		}
-		return $retStr;
+		return $inStr;
 	}
 
 	function removeEmoji($string){
