@@ -59,7 +59,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 				'o.othercatalognumbers, c.institutioncode, c.collectioncode, c.CollectionName '.
 				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
 
-			$this->sqlWhere .= 'AND ts.taxauthid = 1 ';
+			$this->sqlWhere .= 'AND (ts.taxauthid = 1 OR ts.taxauthid IS NULL) ';
 
 			$sql .= $this->getTableJoins($this->sqlWhere);
 
@@ -68,7 +68,6 @@ class OccurrenceMapManager extends OccurrenceManager {
 			if(is_numeric($start) && $limit){
 				$sql .= "LIMIT ".$start.",".$limit;
 			}
-			//echo '//SQL: ' . $sql;
 			$result = $this->conn->query($sql);
 			$color = 'e69e67';
 			$occidArr = array();
