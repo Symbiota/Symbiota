@@ -42,7 +42,7 @@ class TaxonomyUtilities {
 			}
 			//Remove extra spaces
 			$inStr = preg_replace('/\s\s+/',' ',$inStr);
-
+			if(!$inStr) return $retArr;
 			$sciNameArr = explode(' ',trim($inStr));
 			$okToCloseConn = true;
 			if($conn !== null) $okToCloseConn = false;
