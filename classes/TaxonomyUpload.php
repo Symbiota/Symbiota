@@ -1155,7 +1155,7 @@ class TaxonomyUpload{
 		$inStr = str_replace($badwordchars, $fixedwordchars, $inStr);
 
 		if($inStr){
-			$inStr = mb_convert_encoding($inStr, $CHARSET, mb_detect_encoding($inStr));
+			$inStr = mb_convert_encoding($inStr, $CHARSET, mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1'));
  		}
  		return $inStr;
 	}

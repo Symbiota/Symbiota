@@ -2270,7 +2270,7 @@ class DwcArchiverCore extends Manager{
 				}
 			}
 			else{
-				$retStr = mb_convert_encoding($inStr, $this->charSetOut, mb_detect_encoding($inStr));
+				$retStr = mb_convert_encoding($inStr, $this->charSetOut, mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1'));
 			}
 		}
 		return $retStr;
