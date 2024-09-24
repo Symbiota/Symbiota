@@ -53,7 +53,7 @@ $GBIF_ORG_KEY = '';                 //GBIF organization key for organization whi
 //Misc variables
 $DEFAULT_TAXON_SEARCH = 2;			//Default taxonomic search type: 1 = Any Name, 2 = Scientific Name, 3 = Family, 4 = Taxonomic Group, 5 = Common Name
 
-$GOOGLE_MAP_KEY = '';				//Needed for Google Map; get from Google; comment out this line to use Open Street Maps (via Leaflet) instead of Google Maps
+$GOOGLE_MAP_KEY = '';				//Request from Google if Google Maps are desired. Leave empty for default Leaflet map.
 $MAPBOX_API_KEY = '';
 $MAP_THUMBNAILS = false;				//Display Static Map thumbnails within taxon profile, checklist, etc
 
