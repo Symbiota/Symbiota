@@ -86,7 +86,7 @@ if($collid){
 					</div>
  				</div>
 				<form id="defaultform" name="defaultform" action="skeletalsubmit.php" method="post" autocomplete="off" onsubmit="return submitDefaultForm(this)">
-					<div id="optiondiv" style="display:none;position:absolute;background-color:white;">
+					<div id="optiondiv" style="display:none;position:absolute;background-color:white; z-index: 1;">
 						<fieldset style="margin-top: -10px;padding-top:5px">
 							<legend><?php echo $LANG['OPTIONS']; ?></legend>
 							<div style="float:right;"><a href="#" onclick="hideOptions()" style="color:red" ><?php echo $LANG['X_CLOSE']; ?></a></div>
