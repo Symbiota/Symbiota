@@ -364,12 +364,12 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 					<div class="assoc-div">
 						<div><label><?= $LANG['ASSOCIATION_TYPE'] ?>:</label>
 							<?= $assocUnit['associationType'] ?>
-							<form action="resourcehandler.php" method="post" style="display:inline">
+							<form action="resourcehandler.php" method="post" style="display:inline; margin: 0px; padding: 0px">
 								<input name="occid" type="hidden" value="<?php echo $occid; ?>">
 								<input name="collid" type="hidden" value="<?php echo $collid; ?>">
 								<input name="occindex" type="hidden" value="<?php echo $occIndex; ?>">
 								<input name="delassocid" type="hidden" value="<?php echo $assocID; ?>">
-								<input class="icon-img" type="image" src="../../images/del.png">
+								<input class="icon-img" type="image" src="../../images/del.png" style="margin: 0px">
 							</form>
 							<a href="#" onclick="toggle('edit-assoc-div-<?= $assocID ?>')"><img class="icon-img" src="../../images/edit.png"></a>
 						</div>

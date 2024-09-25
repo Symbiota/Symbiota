@@ -498,11 +498,9 @@ class DwcArchiverOccurrence extends Manager{
 	private function getAssociationJSON($occid) {
 
 		// Build SQL to find any associations for the occurrence record passed with occid
-		$sql = 'SELECT occid, occidAssociate, relationship, subType, identifier,' .
-			'basisOfRecord, resourceUrl, verbatimSciname, locationOnHost ' .
-			'FROM omoccurassociations ' .
-			'WHERE (occid = ' . $occid . ' OR occidAssociate = ' . $occid . ') ';
-
+		$sql = 'SELECT occid, associationType, occidAssociate, relationship, subType, identifier, basisOfRecord, resourceUrl, verbatimSciname, locationOnHost 
+			FROM omoccurassociations 
+			WHERE (occid = ' . $occid . ' OR occidAssociate = ' . $occid . ') ';
 		if ($rs = $this->conn->query($sql)) {
 
 			// No associations, so just return an empty string, and quit the function

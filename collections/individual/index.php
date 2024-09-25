@@ -441,7 +441,7 @@ $traitArr = $indManager->getTraitArr();
 										$relID = $assocArr['objectID'];
 										$relUrl = $assocArr['resourceurl'];
 										if(!$relUrl && $assocArr['occidassoc']) $relUrl = $GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$assocArr['occidassoc'];
-										if($relUrl) $relID = '<a href="' . $relUrl . '">' . $relID . '</a>';
+										if($relUrl) $relID = '<a href="' . $relUrl . '" target="_blank">' . ($relID ? $relID : $relUrl) . '</a>';
 										if($relID) echo $relID;
 										if($assocArr['sciname']) echo ' [' . $assocArr['sciname'] . ']';
 										echo '</div>';
