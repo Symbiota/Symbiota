@@ -413,14 +413,24 @@ class OccurrenceIndividual extends Manager{
 			}
 		}
 		if($relOccidArr){
-			$sql = 'SELECT o.occid, o.sciname,
-				CONCAT_WS("-",IFNULL(o.institutioncode, c.institutioncode), IFNULL(o.collectioncode, c.collectioncode)) as collcode, IFNULL(o.catalogNumber, o.otherCatalogNumbers) as catnum
+			$sql = 'SELECT o.occid, o.sciname, IFNULL(o.institutioncode, c.institutioncode) as instCode, IFNULL(o.collectioncode, c.collectioncode) as collCode, o.catalogNumber, o.occurrenceID, o.recordID
 				FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid
 				WHERE o.occid IN(' . implode(',', array_keys($relOccidArr)) . ')';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				foreach($relOccidArr[$r->occid] as $targetAssocID){
-					$this->occArr['relation'][$targetAssocID]['objectID'] = $r->collcode . ':' . $r->catnum;
+					$objectID = $r->catalogNumber;
+					if($objectID) {
+						if(strpos($objectID, $r->instCode) === false){
+							//Append institution and collection code to catalogNumber, but only if it is not already included 
+							$collCode = $r->instCode;
+							if($r->collCode) $collCode .= '-' . $r->collCode;
+							$objectID = $collCode . ':' . $r->catalogNumber;
+						}
+					}
+					elseif($r->occurrenceID) $objectID = $r->occurrenceID;
+					else $objectID = $r->recordID;
+					$this->occArr['relation'][$targetAssocID]['objectID'] = $objectID;
 					$this->occArr['relation'][$targetAssocID]['sciname'] = $r->sciname;
 				}
 			}
@@ -1241,6 +1251,15 @@ class OccurrenceIndividual extends Manager{
 				}
 				$rsAssoc->free();
 				foreach($recArr['assoc'] as $pk => $secArr){
+					if(empty($secArr['associationType'])){
+						if(!empty($secArr['occidAssociate'])) $secArr['associationType'] = 'internalOccurrence';
+						elseif(!empty($secArr['resourceUrl'])){
+							if(!empty($secArr['verbatimSciname'])) $secArr['associationType'] = 'externalOccurrence';
+							else $secArr['associationType'] = 'resource';
+						}
+						elseif(!empty($secArr['verbatimSciname'])) $secArr['associationType'] = 'observational';
+						else $secArr['associationType'] = 'resource';
+					}
 					$sql1 = 'INSERT INTO omoccurassociations(';
 					$sql2 = 'VALUES(';
 					foreach($secArr as $f => $v){

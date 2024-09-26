@@ -1016,7 +1016,7 @@ class OccurrenceEditorManager {
 							if($postArr['host']) $sqlHost = 'UPDATE omoccurassociations SET verbatimsciname = "'.$postArr['host'].'" WHERE associd = '.$postArr['hostassocid'].' ';
 							else $sqlHost = 'DELETE FROM omoccurassociations WHERE associd = '.$postArr['hostassocid'].' ';
 						}
-						else $sqlHost = 'INSERT INTO omoccurassociations(occid,relationship,verbatimsciname) VALUES('.$this->occid.',"host","'.$postArr['host'].'")';
+						else $sqlHost = 'INSERT INTO omoccurassociations(occid,associationType,relationship,verbatimsciname) VALUES('.$this->occid.',"observational","host","'.$postArr['host'].'")';
 						$this->conn->query($sqlHost);
 					}
 					//Update occurrence record
@@ -1341,7 +1341,8 @@ class OccurrenceEditorManager {
 				}
 				//Deal with host data
 				if(array_key_exists('host',$postArr)){
-					$sql = 'INSERT INTO omoccurassociations(occid,relationship,verbatimsciname) VALUES('.$this->occid.',"host","'.$this->cleanInStr($postArr['host']).'")';
+					$sql = 'INSERT INTO omoccurassociations(occid, associationType, relationship, verbatimsciname) 
+						VALUES('.$this->occid.', "observational", "host", "'.$this->cleanInStr($postArr['host']).'")';
 					if(!$this->conn->query($sql)){
 						$status .= '(WARNING adding host: '.$this->conn->error.') ';
 					}
@@ -1551,7 +1552,7 @@ class OccurrenceEditorManager {
 				$archiveArr['dateDeleted'] = date('r').' by '.$USER_DISPLAY_NAME;
 				$archiveObj = json_encode($archiveArr);
 				$stage = 'Create Archive';
-				$sqlArchive = 'INSERT INTO omoccurarchive(archiveobj, occid, catalogNumber, occurrenceID, recordID) '.
+				$sqlArchive = 'REPLACE INTO omoccurarchive(archiveobj, occid, catalogNumber, occurrenceID, recordID) '.
 					'VALUES ("'.$this->cleanInStr($this->encodeStrTargeted($archiveObj,'utf8',$CHARSET)).'", '.$delOccid.','.
 					(isset($archiveArr['catalogNumber']) && $archiveArr['catalogNumber']?'"'.$this->cleanInStr($archiveArr['catalogNumber']).'"':'NULL').', '.
 					(isset($archiveArr['occurrenceID']) && $archiveArr['occurrenceID']?'"'.$this->cleanInStr($archiveArr['occurrenceID']).'"':'NULL').', '.
@@ -1620,10 +1621,14 @@ class OccurrenceEditorManager {
 				if($sourceOccid != $this->occid && !in_array($this->occid,$retArr)){
 					$retArr[$this->occid] = $this->occid;
 					if(isset($postArr['assocrelation']) && $postArr['assocrelation']){
-						$sql = 'INSERT INTO omoccurassociations(occid, occidAssociate, relationship,createdUid) '.
-							'values('.$this->occid.','.$sourceOccid.',"'.$postArr['assocrelation'].'",'.$GLOBALS['SYMB_UID'].') ';
-						if(!$this->conn->query($sql)){
-							$this->errorArr[] = $LANG['ERROR_ADDING_REL'].': '.$this->conn->error;
+						$sql = 'INSERT INTO omoccurassociations(occid, associationType, occidAssociate, relationship,createdUid) VALUES(?, "internalOccurrence", ?, ?, ?) ';
+						if($stmt = $this->conn->prepare($sql)){
+							$stmt->bind_param('iisi', $this->occid, $sourceOccid, $postArr['assocrelation'], $GLOBALS['SYMB_UID']);
+							$stmt->execute();
+							if($stmt->error){
+								$this->errorArr[] = $LANG['ERROR_ADDING_REL'].': '.$this->conn->error;
+							}
+							$stmt->close();
 						}
 					}
 					if(isset($postArr['carryoverimages']) && $postArr['carryoverimages']){
