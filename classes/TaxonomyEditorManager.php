@@ -592,7 +592,7 @@ class TaxonomyEditorManager extends Manager{
 				$sqlEnumTree = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid) '.
 					'SELECT '.$tid.' as tid, parenttid, taxauthid FROM taxaenumtree WHERE tid = '.$parTid;
 				if($this->conn->query($sqlEnumTree)){
-					$sqlEnumTree2 = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid) '.
+					$sqlEnumTree2 = 'INSERT IGNORE INTO taxaenumtree(tid,parenttid,taxauthid) '.
 						'VALUES ('.$tid.','.$parTid.','.$this->taxAuthId.')';
 					if(!$this->conn->query($sqlEnumTree2)){
 						echo (isset($this->langArr['WARNING_TAXAENUMTREE2'])?$this->langArr['WARNING_TAXAENUMTREE2']:'WARNING: Taxon loaded into taxa, but failed to populate taxaenumtree(2)').': '.$this->conn->error;
