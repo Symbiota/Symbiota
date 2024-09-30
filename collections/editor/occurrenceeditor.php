@@ -518,7 +518,7 @@ else{
 	<script src="../../js/symb/collections.editor.query.js?ver=6" type="text/javascript"></script>
 	<style type="text/css">
 		fieldset > legend{ font-weight:bold; }
-		select{ height: 20px; margin-bottom: 2px; }
+		select{ margin-bottom: 2px; }
 		#identifierDiv img{ width:10px; margin-left: 5px; }
 		#innertext{ background-color: white; margin: 0px 10px; }
 		.fieldGroupDiv {
