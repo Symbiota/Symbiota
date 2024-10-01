@@ -669,6 +669,10 @@ table.styledtable tr.alt td {
 }
 
 /* JQUERY UI modifications */
+.ui-tabs-tab {
+  font-size: 1rem;
+}
+
 .ui-widget {
 	font-size: 1rem;
 }
