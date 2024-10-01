@@ -100,6 +100,11 @@ class LeafletMap {
          attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
       });
 
+      var macro_strat = L.tileLayer('https://macrostrat.org/api/v2/maps/burwell/emphasized/{z}/{x}/{y}/tile.png', {
+         displayRetina:true,
+         attribution: 'Map data: &copy; <a href="https://macrostrat.org/#about">Macrostrat</a> (<a href="http://creativecommons.org/licenses/by/4.0/">CC-BY-4.0</a>)'
+      });
+
       const openTopoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
          maxZoom: 17,
          displayRetina:true,
@@ -112,6 +117,7 @@ class LeafletMap {
             "Basic": basicLayer,
             "Topo": openTopoLayer,
             "Satellite": Esri_WorldImagery,
+            "Macrostrat": macro_strat,
             //"Satellite": satelliteLayer,
          }).addTo(this.mapLayer);
       }
