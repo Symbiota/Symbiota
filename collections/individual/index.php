@@ -519,7 +519,7 @@ $traitArr = $indManager->getTraitArr();
 							<?php if($occArr['dateidentified']): ?>
 								<div id="identby-div" class="identby-div bottom-breathing-room-rel-sm">
 								<?php 
-									echo '<label>'.$LANG['DATE']  . ': '. '</label>' . $occArr['dateidentified'];
+									echo '<label>'.$LANG['DATE_DET']  . ': '. '</label>' . $occArr['dateidentified'];
 								?>
 							</div>
 							<?php endif; ?>
