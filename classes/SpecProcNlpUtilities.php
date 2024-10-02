@@ -250,7 +250,7 @@ class SpecProcNlpUtilities {
 	//Misc functions
 	public static function encodeString($inStr){
 		global $CHARSET;
-		$inStr = mb_convert_encoding($inStr, $CHARSET, mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1'));
+		$inStr = mb_convert_encoding($inStr, $CHARSET, mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
  		return $inStr;
 	}
 

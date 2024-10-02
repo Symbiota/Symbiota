@@ -31,10 +31,10 @@ elseif(preg_match('/R\d{1,2}[EW]{1}\sS\d{1,2}/i',$locality)){
 }
 //Convert latin1 character sets to utf-8, though probably not needed because Symbiota no longer provides extended support for storing data as a latin1 datasets
 if(strtolower($CHARSET) == 'iso-8859-1'){
-	$country = mb_convert_encoding($country, 'UTF-8', mb_detect_encoding($country, 'UTF-8,ISO-8859-1'));
-	$state = mb_convert_encoding($state, 'UTF-8', mb_detect_encoding($state, 'UTF-8,ISO-8859-1'));
-	$county = mb_convert_encoding($county, 'UTF-8', mb_detect_encoding($county, 'UTF-8,ISO-8859-1'));
-	$locality = mb_convert_encoding($locality, 'UTF-8', mb_detect_encoding($locality, 'UTF-8,ISO-8859-1'));
+	$country = mb_convert_encoding($country, 'UTF-8', mb_detect_encoding($country, 'UTF-8,ISO-8859-1,ISO-8859-15'));
+	$state = mb_convert_encoding($state, 'UTF-8', mb_detect_encoding($state, 'UTF-8,ISO-8859-1,ISO-8859-15'));
+	$county = mb_convert_encoding($county, 'UTF-8', mb_detect_encoding($county, 'UTF-8,ISO-8859-1,ISO-8859-15'));
+	$locality = mb_convert_encoding($locality, 'UTF-8', mb_detect_encoding($locality, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 }
 
 $country = removeAccents($country);
