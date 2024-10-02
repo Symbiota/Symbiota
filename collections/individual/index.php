@@ -514,9 +514,15 @@ $traitArr = $indManager->getTraitArr();
 							<div id="identby-div" class="identby-div bottom-breathing-room-rel-sm">
 								<?php
 								echo '<label>'.(isset($LANG['DETERMINER'])?$LANG['DETERMINER']:'Determiner').': </label>'.$indManager->activateOrcidID($occArr['identifiedby']);
-								if($occArr['dateidentified']) echo ' ('.$occArr['dateidentified'].')';
 								?>
 							</div>
+							<?php if($occArr['dateidentified']): ?>
+								<div id="identby-div" class="identby-div bottom-breathing-room-rel-sm">
+								<?php 
+									echo '<label>'.$LANG['DATE_DET']  . ': '. '</label>' . $occArr['dateidentified'];
+								?>
+							</div>
+							<?php endif; ?>
 							<?php
 						}
 						if($occArr['taxonremarks']){
