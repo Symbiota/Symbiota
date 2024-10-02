@@ -2531,8 +2531,6 @@ class SpecUploadBase extends SpecUpload{
 	}
 
 	protected function encodeString($inStr){
-		$retStr = $inStr;
-
 		if($inStr){
 			if($this->targetCharset == 'UTF-8'){
 				if($this->sourceCharset){
@@ -2562,17 +2560,18 @@ class SpecUploadBase extends SpecUpload{
 			}
 
 			//Get rid of UTF-8 curly smart quotes and dashes
-			$badwordchars=array("\xe2\x80\x98", // left single quote
-					"\xe2\x80\x99", // right single quote
-					"\xe2\x80\x9c", // left double quote
-					"\xe2\x80\x9d", // right double quote
-					"\xe2\x80\x94", // em dash
-					"\xe2\x80\xa6" // elipses
+			$badwordchars=array(
+				"\xe2\x80\x98", // left single quote
+				"\xe2\x80\x99", // right single quote
+				"\xe2\x80\x9c", // left double quote
+				"\xe2\x80\x9d", // right double quote
+				"\xe2\x80\x94", // em dash
+				"\xe2\x80\xa6" // elipses
 			);
 			$fixedwordchars=array("'", "'", '"', '"', '-', '...');
 			$inStr = str_replace($badwordchars, $fixedwordchars, $inStr);
 		}
-		return $retStr;
+		return $inStr;
 	}
 
 	function removeEmoji($string){

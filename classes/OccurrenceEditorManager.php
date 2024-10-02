@@ -2726,14 +2726,14 @@ class OccurrenceEditorManager {
 	private function encodeStrTargeted($inStr, $inCharset, $outCharset){
 		if($inCharset == $outCharset) return $inStr;
 		$retStr = $inStr;
-		$retStr = mb_convert_encoding($retStr, $outCharset, mb_detect_encoding($retStr));
+		$retStr = mb_convert_encoding($retStr, $outCharset, mb_detect_encoding($retStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 		return $retStr;
 	}
 
 	protected function encodeStr($inStr){
 		$retStr = $inStr;
 		if($inStr){
-			$retStr = mb_convert_encoding($retStr, $GLOBALS['CHARSET'], mb_detect_encoding($retStr));
+			$retStr = mb_convert_encoding($retStr, $GLOBALS['CHARSET'], mb_detect_encoding($retStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
  		}
 		return $retStr;
 	}

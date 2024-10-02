@@ -792,13 +792,13 @@ class ChecklistVoucherAdmin extends Manager {
 		$retStr = $inStr;
 		if($inStr && $charSetSource){
 			if($charSetOut == 'UTF-8'){
-				$retStr = mb_convert_encoding($inStr, 'UTF-8', mb_detect_encoding($inStr));
+				$retStr = mb_convert_encoding($inStr, 'UTF-8', mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 			elseif($charSetOut == 'ISO-8859-1'){
-				$retStr = mb_convert_encoding($inStr, 'ISO-8859-1', mb_detect_encoding($inStr));
+				$retStr = mb_convert_encoding($inStr, 'ISO-8859-1', mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 			else{
-				$retStr = mb_convert_encoding($inStr, $charSetOut, mb_detect_encoding($inStr));
+				$retStr = mb_convert_encoding($inStr, $charSetOut, mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 		}
 		return $retStr;

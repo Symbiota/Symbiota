@@ -119,7 +119,7 @@ class SpecProcNlpSalix
 
 		//An attempt to convert to UTF-8, though it doesn't seem to work very well.  Hence the routines above.
 		setlocale(LC_ALL,"en_US");
-		if(mb_detect_encoding($this->Label,'UTF-8') == "UTF-8")
+		if(mb_detect_encoding($this->Label, 'UTF-8,ISO-8859-1,ISO-8859-15') == "UTF-8")
 			{
 			$this->Label = iconv("UTF-8","ISO-8859-1//TRANSLIT",$this->Label);
 			$this->Label = str_replace("í","i",$this->Label);

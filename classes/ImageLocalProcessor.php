@@ -2167,7 +2167,7 @@ class ImageLocalProcessor {
 	private function encodeString($inStr){
 		$retStr = trim($inStr);
 		if($inStr){
-			$retStr = mb_convert_encoding($inStr, $GLOBALS['CHARSET'], mb_detect_encoding($inStr));
+			$retStr = mb_convert_encoding($inStr, $GLOBALS['CHARSET'], mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 		}
 		return $retStr;
 	}

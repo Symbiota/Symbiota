@@ -27,9 +27,8 @@ class SpecProcNlpUtilities {
 			foreach($dwcArr as $k => $v){
 				if($v){
 					//If is a latin character set, convert to UTF-8
-					if(mb_detect_encoding($v,'UTF-8,ISO-8859-1',true) == "ISO-8859-1"){
-						$dwcArr[$k] = utf8_encode($v);
-						//$dwcArr[$k] = iconv("ISO-8859-1//TRANSLIT","UTF-8",$v);
+					if(mb_detect_encoding($v,'UTF-8,ISO-8859-1',true) == 'ISO-8859-1'){
+						$dwcArr[$k] = mb_convert_encoding($v, 'UTF-8');
 					}
 				}
 				else{
@@ -251,22 +250,8 @@ class SpecProcNlpUtilities {
 	//Misc functions
 	public static function encodeString($inStr){
 		global $CHARSET;
- 		$retStr = $inStr;
- 		if($inStr){
- 			if(strtolower($CHARSET) == "utf-8" || strtolower($CHARSET) == "utf8"){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) == "ISO-8859-1"){
-					$retStr = utf8_encode($inStr);
-					//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
-				}
-			}
-			elseif(strtolower($CHARSET) == "iso-8859-1"){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') == "UTF-8"){
-					$retStr = utf8_decode($inStr);
-					//$retStr = iconv("UTF-8","ISO-8859-1//TRANSLIT",$inStr);
-				}
-			}
- 		}
-		return $retStr;
+		$inStr = mb_convert_encoding($inStr, $CHARSET, mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
+ 		return $inStr;
 	}
 
 	private function cleanInStr($str){

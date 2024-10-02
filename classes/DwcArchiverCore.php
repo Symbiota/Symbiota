@@ -1197,7 +1197,7 @@ class DwcArchiverCore extends Manager{
 				}
 			}
 		}
-		$emlArr = $this->utf8EncodeArr($emlArr);
+		$emlArr = $this->encodeArr($emlArr);
 		return $emlArr;
 	}
 
@@ -1395,7 +1395,7 @@ class DwcArchiverCore extends Manager{
 		//Collection data
 		if (array_key_exists('collMetadata', $emlArr)) {
 			foreach ($emlArr['collMetadata'] as $k => $collArr) {
-				$collArr = $this->utf8EncodeArr($collArr);
+				$collArr = $this->encodeArr($collArr);
 				$collElem = $newDoc->createElement('collection');
 				if (isset($collArr['attr']) && $collArr['attr']) {
 					$attrArr = $collArr['attr'];
@@ -1520,7 +1520,7 @@ class DwcArchiverCore extends Manager{
 			'ORDER BY c.SortSeq, c.CollectionName';
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_assoc()) {
-			$cArr = $this->utf8EncodeArr($r);
+			$cArr = $this->encodeArr($r);
 			$itemElem = $newDoc->createElement('item');
 			$itemAttr = $newDoc->createAttribute('collid');
 			$itemAttr->value = $cArr['collid'];
@@ -2244,32 +2244,19 @@ class DwcArchiverCore extends Manager{
 		return $this->serverDomain;
 	}
 
-	protected function utf8EncodeArr($inArr){
-		$retArr = $inArr;
-		if ($this->charSetSource == 'ISO-8859-1') {
-			foreach ($retArr as $k => $v) {
+	protected function encodeArr(&$inArr){
+		if ($this->charSetSource && $this->charSetOut != $this->charSetSource) {
+			foreach ($inArr as $k => $v) {
 				if (is_array($v)) {
-					$retArr[$k] = $this->utf8EncodeArr($v);
-				} elseif (is_string($v)) {
-					if (mb_detect_encoding($v, 'UTF-8,ISO-8859-1', true) == "ISO-8859-1") {
-						$retArr[$k] = utf8_encode($v);
-					}
-				} else {
-					$retArr[$k] = $v;
+					$inArr[$k] = $this->encodeArr($inArr);
+				}
+				else{
+					$inArr[$k] = $this->encodeStr($v);
 				}
 			}
 		}
-		return $retArr;
 	}
-
-	private function encodeArr(&$inArr){
-		if ($this->charSetSource && $this->charSetOut != $this->charSetSource) {
-			foreach ($inArr as $k => $v) {
-				$inArr[$k] = $this->encodeStr($v);
-			}
-		}
-	}
-
+	
 	private function encodeStr($inStr){
 		$retStr = $inStr;
 		if ($inStr && $this->charSetSource) {
@@ -2278,12 +2265,12 @@ class DwcArchiverCore extends Manager{
 					$retStr = mb_convert_encoding($inStr, 'UTF-8', 'ISO-8859-1');
 				}
 			} elseif ($this->charSetOut == 'ISO-8859-1' && $this->charSetSource == 'UTF-8') {
-				if (mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1') == 'UTF-8') {
+				if (mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15') == 'UTF-8') {
 					$retStr = mb_convert_encoding($inStr, 'ISO-8859-1', 'UTF-8');
 				}
 			}
 			else{
-				$retStr = mb_convert_encoding($inStr, $this->charSetOut, mb_detect_encoding($inStr));
+				$retStr = mb_convert_encoding($inStr, $this->charSetOut, mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 		}
 		return $retStr;

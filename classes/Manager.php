@@ -163,7 +163,7 @@ class Manager  {
 			$fixedwordchars=array("'", "'", '"', '"', '-', '...');
 			$retStr = str_replace($badwordchars, $fixedwordchars, $retStr);
 			if($retStr){
-				$retStr = mb_convert_encoding($retStr, $charsetOut, mb_detect_encoding($retStr));
+				$retStr = mb_convert_encoding($retStr, $charsetOut, mb_detect_encoding($retStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 	 		}
 		}
 		return $retStr;

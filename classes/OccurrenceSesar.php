@@ -464,7 +464,7 @@ class OccurrenceSesar extends Manager {
 
 	private function cleanCountryStr($countryStr){
 		if(!$countryStr) return $countryStr;
-		$countryStr = $this->mbStrtr($countryStr,'áéÉ','aeE');
+		$countryStr = mb_strtr($countryStr,'áéÉ','aeE');
 		$testStr = strtolower($countryStr);
 		$synonymArr = array('united states of america'=>'United States','usa'=>'United States','u.s.a.'=>'united states','us'=>'United States');
 		if(array_key_exists($testStr, $synonymArr)) $countryStr = $synonymArr[$testStr];
@@ -501,20 +501,6 @@ class OccurrenceSesar extends Manager {
 			}
 		}
 		return $countryStr;
-	}
-
-	function mbStrtr($str, $from, $to = null) {
-		if(function_exists('mb_strtr')) {
-			return mb_strtr($str, $from, $to);
-		}
-		else{
-			if(is_array($from)) {
-				$from = array_map('utf8_decode', $from);
-				$from = array_map('utf8_decode', array_flip ($from));
-				return utf8_encode (strtr (utf8_decode ($str), array_flip ($from)));
-			}
-			return utf8_encode (strtr (utf8_decode ($str), utf8_decode($from), utf8_decode ($to)));
-		}
 	}
 
 	//GUID verification functions
