@@ -700,7 +700,7 @@ class ChecklistManager extends Manager{
 		if($this->pid) $sql .= 'AND (p.pid = '.$this->pid.') ';
 		//Following line limits result to only checklists that have a linked taxon or is a parent checklist with possible inherited taxa
 		$sql .= 'AND c.clid IN(SELECT clid FROM fmchklsttaxalink UNION DISTINCT SELECT clid FROM fmchklstchildren) ';
-		$sql .= 'ORDER BY p.projname, c.name';
+		$sql .= 'ORDER BY p.projname, c.sortSequence, c.name';
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
 			if($limitToKey){

@@ -670,11 +670,11 @@ table.styledtable tr.alt td {
 
 /* JQUERY UI modifications */
 .ui-tabs-panel {
-  font-size: 1rem;
+  font-size: 1.2rem;
 }
 
 .ui-tabs-tab {
-  font-size: 1rem;
+  font-size: 1.2rem;
 }
 
 .ui-autocomplete {
