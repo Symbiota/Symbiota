@@ -53,6 +53,9 @@ header("Content-Type: text/html; charset=".$CHARSET);
 					Guinée, Guinée-Bissau, Kenya, Libéria, Malawi, Mali, Mozambique, Niger, Nigéria, Ouganda, Rwanda, Sao Tomé-et-Principe, Sénégal, Sierra Leone, Somalie, Soudan, Tanzanie, Togo et Zambie. Toutefois, des spécimens
 					d'autres pays peuvent également être numérisés dans le cadre de flux de travail efficaces.
 				</p>
+				<p>
+					Vous trouverez plus d'informations sur le projet sur le site <a href="https://sites.google.com/view/tap-tcn/home">Site Web du TCN sur les plantes tropicales africaines (TAP)</a>.
+				</p>
 			</div>
 			<h2>Opportunités</h2>
 			<div style="margin:20px">
@@ -105,6 +108,9 @@ header("Content-Type: text/html; charset=".$CHARSET);
 					Príncipe, Senegal, Serra Leoa, Somália, Sudão, Tanzânia, Togo, Uganda e Zâmbia. No entanto, espécimes
 					de outros países também podem ser digitalizados como parte de fluxos de trabalho eficientes.
 				</p>
+				<p>
+					Mais informações sobre o projeto podem ser encontradas no <a href="https://sites.google.com/view/tap-tcn/home">Site TCN de Plantas Tropicais Africanas (TAP)</a>.
+				</p>
 			</div>
 			<h2>Oportunidades</h2>
 			<div style="margin:20px">
@@ -149,12 +155,15 @@ header("Content-Type: text/html; charset=".$CHARSET);
 			</div>
 			<div style="margin:20px">
 				<p>
-				Specimens from the following countries are being targeted in this digitization project:
-				Angola, Benin, Burkina Faso, Burundi, Cameroon, Central African Republic, Chad, Congo, Cote D'Ivoire, 
-				Democratic Republic of the Congo, Djibouti, Equatorial Guinea, Eritrea, Ethiopia, Gabon, Gambia, Ghana, 
-				Guinea, Guinea-Bissau, Kenya, Liberia, Malawi, Mali, Mozambique, Niger, Nigeria, Rwanda, Sao Tome and 
-				Principe, Senegal, Sierra Leone, Somalia, Sudan, Tanzania, Togo, Uganda, and Zambia. However, specimens 
-				from other countries may also be digitized as part of efficient workflows.
+					Specimens from the following countries are being targeted in this digitization project:
+					Angola, Benin, Burkina Faso, Burundi, Cameroon, Central African Republic, Chad, Congo, Cote D'Ivoire, 
+					Democratic Republic of the Congo, Djibouti, Equatorial Guinea, Eritrea, Ethiopia, Gabon, Gambia, Ghana, 
+					Guinea, Guinea-Bissau, Kenya, Liberia, Malawi, Mali, Mozambique, Niger, Nigeria, Rwanda, Sao Tome and 
+					Principe, Senegal, Sierra Leone, Somalia, Sudan, Tanzania, Togo, Uganda, and Zambia. However, specimens 
+					from other countries may also be digitized as part of efficient workflows.
+				</p>
+				<p>
+					More information about the project can be found on the <a href="https://sites.google.com/view/tap-tcn/home">Tropical African Plants (TAP) TCN website</a>.
 				</p>
 			</div>
 			<h2>Opportunities</h2>
