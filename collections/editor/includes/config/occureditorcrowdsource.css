@@ -19,7 +19,6 @@ body{
 
 #occdiv{
 	position: relative;
-	height: 600px;
 }
 
 #admindiv{
@@ -27,7 +26,7 @@ body{
 }
 
 #innertext {
-	max-width: 90%;
+	max-width: 70%;
 	width: fit-content;
 }
 
@@ -510,6 +509,7 @@ body{
 }
 
 #cultivationStatusDiv{
+	width:100%;
 	float: left;
 	margin-top:2px;
 }
