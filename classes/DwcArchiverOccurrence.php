@@ -1,6 +1,6 @@
 <?php
 // Only needed for symbiotaAssociations version number.
-include_once($SERVER_ROOT . '/classes/OccurrenceUtilities.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtilities.php');
 class DwcArchiverOccurrence extends Manager{
 
 	private $occurDefArr = array();

@@ -1,6 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
-include_once('OccurrenceUtilities.php');
+include_once($SERVER_ROOT . '/config/dbconnection.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtilities.php');
+include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 
 class OmMaterialSample{
 

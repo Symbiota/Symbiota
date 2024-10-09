@@ -1,6 +1,6 @@
 <?php
 include_once($SERVER_ROOT.'/config/dbconnection.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceUtilities.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtilities.php');
 include_once($SERVER_ROOT.'/classes/SpecProcNlpSalix.php');
 include_once($SERVER_ROOT.'/classes/SpecProcNlpLbcc.php');
 include_once($SERVER_ROOT.'/classes/SpecProcNlpLbccLichen.php');

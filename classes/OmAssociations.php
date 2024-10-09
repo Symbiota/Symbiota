@@ -1,7 +1,7 @@
 <?php
 include_once('Manager.php');
-include_once('OccurrenceUtilities.php');
-include_once('UuidFactory.php');
+include_once('utilities/OccurrenceUtilities.php');
+include_once('utilities/UuidFactory.php');
 
 class OmAssociations extends Manager{
 

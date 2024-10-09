@@ -1,6 +1,6 @@
 <?php
-require_once($SERVER_ROOT.'/classes/APIBase.php');
-require_once($SERVER_ROOT.'/classes/OccurrenceUtilities.php');
+require_once($SERVER_ROOT . '/classes/APIBase.php');
+require_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtilities.php');
 
 class APIOccurEditor extends APIBase{
 

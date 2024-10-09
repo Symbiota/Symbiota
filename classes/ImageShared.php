@@ -1,6 +1,6 @@
 <?php
-include_once('OccurrenceUtilities.php');
-include_once('UuidFactory.php');
+include_once('utilites/Occurrence.php');
+include_once('utilites/UuidFactory.php');
 
 class ImageShared{
 

@@ -1,6 +1,6 @@
 <?php
 include_once($SERVER_ROOT.'/classes/OccurrenceSearchSupport.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceUtilities.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtilities.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceTaxaManager.php');
 
