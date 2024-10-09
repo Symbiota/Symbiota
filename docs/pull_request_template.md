@@ -21,7 +21,7 @@
 - [ ] If this PR represents a merge from the `Development` branch into the master branch, remember to use the **merge** option
 - [ ] If this PR represents a merge from the `hotfix` branch into the `master` branch use the **squash & merge** option
   - [ ] a subsequent PR from `master` into `Development` should be made with the **merge** option (i.e., no squash).
-  - [ ] **Immediatly** after merging into `master` and `Development` increment the Symbiota version number in the symbase.php file and commit to the `hotfix` branch.
+  - [ ] **Immediately** after merging into `master` and `Development` increment the Symbiota version number in the symbase.php file and commit to the `hotfix` branch.
 - [ ] If the dev team has agreed that this PR represents the last PR going into the `Development` branch before a tagged release (i.e., before an imminent merge into the master branch), make sure to notify the team and [lock the `Development` branch](https://github.com/BioKIC/Symbiota/settings/branches) to prevent accidental merges while QA takes place. Follow the release protocol [here](https://github.com/BioKIC/Symbiota/blob/master/docs/release-protocol.md).
 - [ ] Don't forget to delete your feature branch upon merge. Ignore this step as required.
 
