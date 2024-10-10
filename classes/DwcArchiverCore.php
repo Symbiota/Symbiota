@@ -9,6 +9,7 @@ include_once($SERVER_ROOT . '/classes/OccurrenceTaxaManager.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceAccessStats.php');
 include_once($SERVER_ROOT . '/classes/PortalIndex.php');
 include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtilities.php');
 
 class DwcArchiverCore extends Manager{
 
@@ -2011,7 +2012,7 @@ class DwcArchiverCore extends Manager{
 		}
 
 		$DEFAULT_TITLE = $GLOBALS['DEFAULT_TITLE'];
-		$SERVER_HOST = $this->getDomain();
+		$SERVER_HOST = GeneralUtilities::getDomain();
 		$CLIENT_ROOT = $GLOBALS['CLIENT_ROOT'];
 
 		// Decides which citation format to use according to $citationVarArr
@@ -2058,7 +2059,7 @@ class DwcArchiverCore extends Manager{
 			include $GLOBALS['SERVER_ROOT'] . '/includes/citation' . $citationFormat . '_template.php';
 		}
 		$output .= ob_get_clean();
-		$output .= "\n\nFor more information on citation formats, please see the following page: " . $this->getDomain() . $GLOBALS['CLIENT_ROOT'] . "/includes/usagepolicy.php";
+		$output .= "\n\nFor more information on citation formats, please see the following page: " . GeneralUtilities::getDomain() . $GLOBALS['CLIENT_ROOT'] . "/includes/usagepolicy.php";
 
 		fwrite($fh, $output);
 
@@ -2235,7 +2236,7 @@ class DwcArchiverCore extends Manager{
 		if ($domain) {
 			$this->serverDomain = $domain;
 		} elseif (!$this->serverDomain) {
-			$this->serverDomain = $this->getDomain();
+			$this->serverDomain = GeneralUtilities::getDomain();
 		}
 	}
 

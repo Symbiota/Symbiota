@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
+include_once($SERVER_ROOT . '/classes/utilities/TaxonomyUtilities.php');
 
 class EOLUtilities {
 

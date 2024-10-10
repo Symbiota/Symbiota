@@ -3,6 +3,8 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceIndividual.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
 include_once($SERVER_ROOT.'/classes/RdfUtility.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtilities.php');
+
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/individual/index.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/individual/index.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/individual/index.en.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
@@ -1124,7 +1126,7 @@ $traitArr = $indManager->getTraitArr();
 										$otherCatNum = ' (' . trim($otherCatNum, ', ') . ')';
 									}
 									$emailSubject = $DEFAULT_TITLE . ' occurrence: ' . $occArr['catalognumber'] . $otherCatNum;
-									$refPath = $indManager->getDomain().$CLIENT_ROOT.'/collections/individual/index.php?occid='.$occArr['occid'];
+									$refPath = GeneralUtilities::getDomain().$CLIENT_ROOT.'/collections/individual/index.php?occid='.$occArr['occid'];
 									$emailBody = $LANG['SPECIMEN_REFERENCED'].': '.$refPath;
 									$emailRef = 'subject=' . urlencode($emailSubject) . '&cc=' . urlencode($ADMIN_EMAIL) . '&body=' . urlencode($emailBody);
 									echo ' (<a href="mailto:' . $collMetadata['email'] . '?' . $emailRef . '">' . $collMetadata['email'] . '</a>)';

@@ -1,7 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/classes/Manager.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
-include_once($SERVER_ROOT.'/classes/EOLUtilities.php');
+include_once($SERVER_ROOT . '/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/EOLUtilities.php');
+include_once($SERVER_ROOT . '/classes/utilities/TaxonomyUtilities.php');
 
 class TaxonomyHarvester extends Manager{
 

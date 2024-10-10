@@ -1,6 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/GPoint.php');
-include_once($SERVER_ROOT.'/classes/utilities/Taxonomy.php');
+include_once($SERVER_ROOT . '/classes/GPoint.php');
+include_once($SERVER_ROOT . '/classes/utilities/TaxonomyUtilities.php');
 
 class OccurrenceUtilities {
 

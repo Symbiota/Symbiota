@@ -1,8 +1,9 @@
 <?php
 
 include_once($SERVER_ROOT . '/classes/Manager.php');
-include_once($SERVER_ROOT . '/classes/UuidFactory.php');
+include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 include_once($SERVER_ROOT . '/utilities/SymbUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtilities.php');
 
 class OmCollections extends Manager{
 
@@ -179,7 +180,7 @@ class OmCollections extends Manager{
 
 	private function addIconImageFile($postArr){
 		$targetPath = $GLOBALS['SERVER_ROOT'].'/content/collicon/';
-		$urlBase = $this->getDomain().$GLOBALS['CLIENT_ROOT'].'/content/collicon/';
+		$urlBase = GeneralUtilities::getDomain() . $GLOBALS['CLIENT_ROOT'] . '/content/collicon/';
 
 		//Clean file name
 		$fileName = basename($_FILES['iconFile']['name']);
