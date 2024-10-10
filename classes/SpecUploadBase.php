@@ -3,7 +3,7 @@ include_once($SERVER_ROOT . '/classes/SpecUpload.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceMaintenance.php');
 include_once($SERVER_ROOT . '/classes/GuidManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtilities.php');
-include_once($SERVER_ROOT . '/classes/Encoding.php');
+include_once($SERVER_ROOT . '/classes/utilities/Encoding.php');
 
 class SpecUploadBase extends SpecUpload{
 

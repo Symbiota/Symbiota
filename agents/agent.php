@@ -2,7 +2,7 @@
 
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/AgentManager.php');
-include_once($SERVER_ROOT.'/classes/RdfUtility.php');
+include_once($SERVER_ROOT.'/classes/utilities/RdfUtility.php');
 include_once($SERVER_ROOT.'/classes/utilities/UuidFactory.php');
 
 // Find out what media types the client would like, in order.

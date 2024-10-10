@@ -4,7 +4,7 @@ use function PHPUnit\Framework\returnValue;
 
 include_once('Manager.php');
 include_once('Person.php');
-include_once('Encryption.php');
+include_once('utilities/Encryption.php');
 include_once('utilities/GeneralUtilities.php');
 @include_once 'Mail.php';
 

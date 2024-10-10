@@ -3,7 +3,7 @@
  * Used by automatic nightly process and by the occurrence editor (/collections/editor/occurrenceeditor.php)
  */
 include_once($SERVER_ROOT . '/classes/Manager.php');
-include_once($SERVER_ROOT . '/classes/Encoding.php');
+include_once($SERVER_ROOT . '/classes/utilities/Encoding.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtilities.php');
 
 class SpecProcessorOcr extends Manager{
