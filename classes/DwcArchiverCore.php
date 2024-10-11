@@ -1198,7 +1198,7 @@ class DwcArchiverCore extends Manager{
 				}
 			}
 		}
-		$emlArr = $this->encodeArr($emlArr);
+		$this->encodeArr($emlArr);
 		return $emlArr;
 	}
 
@@ -1396,7 +1396,7 @@ class DwcArchiverCore extends Manager{
 		//Collection data
 		if (array_key_exists('collMetadata', $emlArr)) {
 			foreach ($emlArr['collMetadata'] as $k => $collArr) {
-				$collArr = $this->encodeArr($collArr);
+				$this->encodeArr($collArr);
 				$collElem = $newDoc->createElement('collection');
 				if (isset($collArr['attr']) && $collArr['attr']) {
 					$attrArr = $collArr['attr'];
@@ -1521,7 +1521,8 @@ class DwcArchiverCore extends Manager{
 			'ORDER BY c.SortSeq, c.CollectionName';
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_assoc()) {
-			$cArr = $this->encodeArr($r);
+			$cArr = $r;
+			$this->encodeArr($cArr);
 			$itemElem = $newDoc->createElement('item');
 			$itemAttr = $newDoc->createAttribute('collid');
 			$itemAttr->value = $cArr['collid'];
@@ -2249,7 +2250,8 @@ class DwcArchiverCore extends Manager{
 		if ($this->charSetSource && $this->charSetOut != $this->charSetSource) {
 			foreach ($inArr as $k => $v) {
 				if (is_array($v)) {
-					$inArr[$k] = $this->encodeArr($inArr);
+					$this->encodeArr($v);
+					$inArr[$k] = $v;
 				}
 				else{
 					$inArr[$k] = $this->encodeStr($v);
