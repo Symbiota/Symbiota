@@ -1,7 +1,7 @@
 <?php
 include_once('Manager.php');
-include_once('OccurrenceUtilities.php');
-include_once('UuidFactory.php');
+include_once('utilities/OccurrenceUtil.php');
+include_once('utilities/UuidFactory.php');
 
 class OmAssociations extends Manager{
 
@@ -187,9 +187,9 @@ class OmAssociations extends Manager{
 			if($postField){
 				$value = trim($inputArr[$postField]);
 				if($value){
-					if(strtolower($postField) == 'establisheddate') $value = OccurrenceUtilities::formatDate($value);
-					if(strtolower($postField) == 'modifieduid') $value = OccurrenceUtilities::verifyUser($value, $this->conn);
-					if(strtolower($postField) == 'createduid') $value = OccurrenceUtilities::verifyUser($value, $this->conn);
+					if(strtolower($postField) == 'establisheddate') $value = OccurrenceUtil::formatDate($value);
+					if(strtolower($postField) == 'modifieduid') $value = OccurrenceUtil::verifyUser($value, $this->conn);
+					if(strtolower($postField) == 'createduid') $value = OccurrenceUtil::verifyUser($value, $this->conn);
 				}
 				else $value = null;
 				$this->parameterArr[$field] = $value;

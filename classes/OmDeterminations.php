@@ -1,7 +1,7 @@
 <?php
 include_once('Manager.php');
-include_once('OccurrenceUtilities.php');
-include_once('UuidFactory.php');
+include_once('utilities/OccurrenceUtil.php');
+include_once('utilities/UuidFactory.php');
 
 class OmDeterminations extends Manager{
 
@@ -141,9 +141,9 @@ class OmDeterminations extends Manager{
 				$value = trim($inputArr[$postField]);
 				if($value){
 					$postField = strtolower($postField);
-					if($postField == 'establisheddate') $value = OccurrenceUtilities::formatDate($value);
-					if($postField == 'modifieduid') $value = OccurrenceUtilities::verifyUser($value, $this->conn);
-					if($postField == 'createduid') $value = OccurrenceUtilities::verifyUser($value, $this->conn);
+					if($postField == 'establisheddate') $value = OccurrenceUtil::formatDate($value);
+					if($postField == 'modifieduid') $value = OccurrenceUtil::verifyUser($value, $this->conn);
+					if($postField == 'createduid') $value = OccurrenceUtil::verifyUser($value, $this->conn);
 					if($postField == 'identificationuncertain' || $postField == 'iscurrent' || $postField == 'printqueue' || $postField == 'appliedstatus' || $postField == 'securitystatus'){
 						if(!is_numeric($value)){
 							$value = strtolower($value);

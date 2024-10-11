@@ -2,6 +2,7 @@
 include_once('Manager.php');
 include_once('OccurrenceAccessStats.php');
 include_once('ChecklistVoucherAdmin.php');
+include_once('utilities/GeneralUtil.php');
 
 class OccurrenceIndividual extends Manager{
 
@@ -779,7 +780,7 @@ class OccurrenceIndividual extends Manager{
 
 			//Email to portal admin
 			$emailAddr = $GLOBALS['ADMIN_EMAIL'];
-			$comUrl = $this->getDomain().$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid=' . $this->occid . '#commenttab';
+			$comUrl = GeneralUtil::getDomain().$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid=' . $this->occid . '#commenttab';
 			$subject = $GLOBALS['DEFAULT_TITLE'] . ' '. $LANG['INAPPROPRIATE'] . '<br/>';
 			$bodyStr = $LANG['REPORTED_AS_INAPPROPRIATE'] . ':<br/> <a href="' . $comUrl  . '">' . $comUrl . '</a>';
 			$headerStr = "MIME-Version: 1.0 \r\nContent-type: text/html \r\nTo: " . $emailAddr . " \r\nFrom: Admin <" . $emailAddr . "> \r\n";

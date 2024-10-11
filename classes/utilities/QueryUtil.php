@@ -1,5 +1,5 @@
 <?php
-class SymbUtil {
+class QueryUtil {
 	/*
 	 * This function is a wrapper for mysqli_execute_query. Not all Symbiota portals can update version so this an effort to fix backward compat issues 
 	 *
@@ -7,7 +7,7 @@ class SymbUtil {
 	 * @param string $sql 
 	 * @param string $params
 	 */
-	static function execute_query(mysqli $conn, string $sql, array $params): mysqli_result | bool {
+	static function executeQuery(mysqli $conn, string $sql, array $params): mysqli_result | bool {
 		//This is supported from 4 to 8
 		$version = phpversion();
 		[$major, $minor, $patch] = explode('.', $version);

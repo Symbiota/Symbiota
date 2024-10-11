@@ -1,22 +1,16 @@
 <?php
-include_once($SERVER_ROOT.'/classes/GPoint.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
+include_once($SERVER_ROOT . '/classes/GPoint.php');
+include_once($SERVER_ROOT . '/classes/utilities/TaxonomyUtil.php');
 
-class OccurrenceUtilities {
+class OccurrenceUtil {
 
-	static $monthRoman = array('I'=>'01','II'=>'02','III'=>'03','IV'=>'04','V'=>'05','VI'=>'06','VII'=>'07','VIII'=>'08','IX'=>'09','X'=>'10','XI'=>'11','XII'=>'12');
-	static $monthNames = array('jan'=>'01','ene'=>'01','feb'=>'02','mar'=>'03','abr'=>'04','apr'=>'04','may'=>'05','jun'=>'06','jul'=>'07','ago'=>'08',
+	private static $monthRoman = array('I'=>'01','II'=>'02','III'=>'03','IV'=>'04','V'=>'05','VI'=>'06','VII'=>'07','VIII'=>'08','IX'=>'09','X'=>'10','XI'=>'11','XII'=>'12');
+	public static $monthNames = array('jan'=>'01','ene'=>'01','feb'=>'02','mar'=>'03','abr'=>'04','apr'=>'04','may'=>'05','jun'=>'06','jul'=>'07','ago'=>'08',
 		'aug'=>'08','sep'=>'09','oct'=>'10','nov'=>'11','dec'=>'12','dic'=>'12');
 
 	// Current version for associatedOccurrences JSON
 	// TODO: is this the best place for it? No other obvious landing spot.
 	public static $assocOccurVersion = '1.0';
-
- 	public function __construct(){
- 	}
-
- 	public function __destruct(){
- 	}
 
 	/*
 	 * INPUT: String representing a verbatim date
@@ -167,7 +161,7 @@ class OccurrenceUtilities {
 	 *         Keys: unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, author, identificationqualifier
 	 */
 	public static function parseScientificName($inStr, $conn = null, $rankId = 0){
-		$taxonArr = TaxonomyUtilities::parseScientificName($inStr, $conn, $rankId);
+		$taxonArr = TaxonomyUtil::parseScientificName($inStr, $conn, $rankId);
 		if(array_key_exists('unitind1',$taxonArr)){
 			$taxonArr['unitname1'] = $taxonArr['unitind1'].' '.$taxonArr['unitname1'];
 			unset($taxonArr['unitind1']);
@@ -719,7 +713,7 @@ class OccurrenceUtilities {
 			}
 			elseif(array_key_exists('scientificname',$recMap)){
 				//Clean and parse scientific name
-				$parsedArr = TaxonomyUtilities::parseScientificName($recMap['scientificname']);
+				$parsedArr = TaxonomyUtil::parseScientificName($recMap['scientificname']);
 				$scinameStr = '';
 				if(array_key_exists('unitind1', $parsedArr)){
 					$scinameStr .= $parsedArr['unitind1'];

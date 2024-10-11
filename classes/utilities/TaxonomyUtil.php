@@ -1,7 +1,7 @@
 <?php
 include_once($SERVER_ROOT.'/config/dbconnection.php');
 
-class TaxonomyUtilities {
+class TaxonomyUtil {
 
 	/*
 	 * INPUT: String representing a verbatim scientific name

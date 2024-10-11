@@ -1,9 +1,9 @@
 <?php
-include_once($SERVER_ROOT.'/classes/SpecUpload.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceUtilities.php');
-include_once($SERVER_ROOT.'/classes/UuidFactory.php');
-include_once($SERVER_ROOT.'/classes/Encoding.php');
+include_once($SERVER_ROOT . '/classes/SpecUpload.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceMaintenance.php');
+include_once($SERVER_ROOT . '/classes/GuidManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/Encoding.php');
 
 class SpecUploadBase extends SpecUpload{
 
@@ -1564,7 +1564,7 @@ class SpecUploadBase extends SpecUpload{
 					if (isset($assocOccur)) {
 
 						// Check symbiotaAssociations version
-						if ($assocOccur['version'] != OccurrenceUtilities::$assocOccurVersion) {
+						if ($assocOccur['version'] != OccurrenceUtil::$assocOccurVersion) {
 
 							// JSON symbiotaAssociations versions don't match
 							// TODO: What should we do here?
@@ -1794,9 +1794,9 @@ class SpecUploadBase extends SpecUpload{
 		}
 
 		$this->outputMsg('<li style="margin-left:10px;">Populating recordID UUIDs for all records... </li>');
-		$uuidManager = new UuidFactory();
-		$uuidManager->setSilent(1);
-		$uuidManager->populateGuids($this->collId);
+		$guidManager = new GuidManager();
+		$guidManager->setSilent(1);
+		$guidManager->populateGuids($this->collId);
 
 		if($this->imageTransferCount){
 			$this->outputMsg('<li style="margin-left:10px;color:orange">WARNING: Image thumbnails may need to be created using the <a href="../../imagelib/admin/thumbnailbuilder.php?collid=' . htmlspecialchars($this->collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">Images Thumbnail Builder</a></li>');
@@ -1805,7 +1805,7 @@ class SpecUploadBase extends SpecUpload{
 
 	protected function loadRecord($recMap){
 		//Only import record if at least one of the minimal fields have data
-		$recMap = OccurrenceUtilities::occurrenceArrayCleaning($recMap);
+		$recMap = OccurrenceUtil::occurrenceArrayCleaning($recMap);
 
 		//Prime the targetFieldArr
 		if(!$this->targetFieldArr) $this->targetFieldArr = $this->getOccurrenceFieldArr(array_keys($recMap));
@@ -1964,7 +1964,7 @@ class SpecUploadBase extends SpecUpload{
 				/*
 				if(!array_key_exists('scientificnameauthorship',$recMap) || !$recMap['scientificnameauthorship']){
 					//Parse scientific name to see if it has author imbedded
-					$parsedArr = OccurrenceUtilities::parseScientificName($recMap['sciname'],$this->conn);
+					$parsedArr = OccurrenceUtil::parseScientificName($recMap['sciname'],$this->conn);
 					if(array_key_exists('author',$parsedArr)){
 						$recMap['scientificnameauthorship'] = $parsedArr['author'];
 						//Load sciname from parsedArr since if appears that author was embedded
@@ -2157,7 +2157,7 @@ class SpecUploadBase extends SpecUpload{
 						}
 						break;
 					case "date":
-						$dateStr = OccurrenceUtilities::formatDate($valueStr);
+						$dateStr = OccurrenceUtil::formatDate($valueStr);
 						if($dateStr){
 							$sqlValues .= ',"'.$dateStr.'"';
 						}

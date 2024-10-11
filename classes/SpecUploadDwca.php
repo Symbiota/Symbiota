@@ -1,6 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/classes/SpecUploadBase.php');
-include_once($SERVER_ROOT.'/classes/PortalIndex.php');
+include_once($SERVER_ROOT . '/classes/SpecUploadBase.php');
+include_once($SERVER_ROOT . '/classes/PortalIndex.php');
+include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 
 class SpecUploadDwca extends SpecUploadBase{
 

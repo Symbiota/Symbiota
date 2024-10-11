@@ -1,18 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceUtilities.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
-class SpecProcNlpUtilities {
-
-	private $conn;
-
-	function __construct() {
-		$this->conn = MySQLiConnectionFactory::getCon("readonly");
-	}
-
-	function __destruct(){
-		if(!($this->conn === false)) $this->conn->close();
-	}
+class SpecProcNlpUtil {
 
 	public static function cleanDwcArr($dwcArrIn){
 		$dwcArr = array();
@@ -40,27 +29,27 @@ class SpecProcNlpUtilities {
 	}
 
 	public static function formatDate($inStr){
-		return OccurrenceUtilities::formatDate($inStr);
+		return OccurrenceUtil::formatDate($inStr);
 	}
 
 	public static function parseScientificName($inStr){
-		return OccurrenceUtilities::parseScientificName($inStr);
+		return OccurrenceUtil::parseScientificName($inStr);
 	}
 
 	public static function parseVerbatimElevation($inStr){
-		return OccurrenceUtilities::parseVerbatimElevation($inStr);
+		return OccurrenceUtil::parseVerbatimElevation($inStr);
 	}
 
 	public static function parseVerbatimCoordinates($inStr,$target=''){
-		return OccurrenceUtilities::parseVerbatimCoordinates($inStr,$target='');
+		return OccurrenceUtil::parseVerbatimCoordinates($inStr,$target='');
 	}
 
 	public static function convertUtmToLL($e, $n, $z, $d){
-		return OccurrenceUtilities::convertUtmToLL($e, $n, $z, $d);
+		return OccurrenceUtil::convertUtmToLL($e, $n, $z, $d);
 	}
 
 	//Following functions need to be reworked if they are to be used
-	private function parseRecordedBy(){
+	public static function parseRecordedBy(){
 		$lineArr = explode("\n",$this->rawText);
 		//Locate matching lines
 		foreach($lineArr as $line){
@@ -79,6 +68,7 @@ class SpecProcNlpUtilities {
 				}
 			}
 		}
+		$conn = MySQLiConnectionFactory::getCon("readonly");
 		//If no match, try digging deeper
         // PJM: 2014 Nov 28, have done a simple subtitution of agents for omcollectors here,
         //      as this function doesn't appear to be in use, the agents and agentnames
@@ -92,7 +82,7 @@ class SpecProcNlpUtilities {
 						$sql .= 'OR familyname = "'.str_replace('"','',$v).'" ';
 					}
 					$sql = 'SELECT recordedbyid FROM agents WHERE '.substr($sql,2);
-					if($rs = $this->conn->query($sql)){
+					if($rs = $conn->query($sql)){
 						if($r = $rs->fetch_object()){
 							$this->fragMatches['recordedBy'] = trim($line);
 						}
@@ -113,7 +103,7 @@ class SpecProcNlpUtilities {
 						$sql .= 'OR familyname SOUNDS LIKE "'.str_replace('"','',$v).'" ';
 					}
 					$sql = 'SELECT recordedbyid FROM agents WHERE '.substr($sql,2);
-					if($rs = $this->conn->query($sql)){
+					if($rs = $conn->query($sql)){
 						if($r = $rs->fetch_object()){
 							$this->fragMatches['recordedBy'] = trim($line);
 						}
@@ -127,7 +117,7 @@ class SpecProcNlpUtilities {
 		if(isset($this->fragMatches['recordedby'])){
 			if(array_key_exists('exsiccatiNumber',$this->fragMatches)){
 				$sql = '';
-				if($rs = $this->conn->query($sql)){
+				if($rs = $conn->query($sql)){
 					while($r = $rs->fetch_object()){
 						$this->occDupes[] = $r->occid;
 					}
@@ -135,13 +125,15 @@ class SpecProcNlpUtilities {
 				}
 			}
 		}
+		$conn->close();
 	}
 
 	//Misc functions
-	private function getPoliticalUnits($countrySeed = '', $stateSeed = '', $countySeed = '', $wildStr = ''){
+	public static function getPoliticalUnits($countrySeed = '', $stateSeed = '', $countySeed = '', $wildStr = ''){
 		$retArr = array();
 		$cnt = 0;
 		$bestMatch = 0;
+		$conn = MySQLiConnectionFactory::getCon("readonly");
 		$sqlBase = 'SELECT cr.geoTerm AS countryname, sp.geoTerm AS statename, c.geoTerm AS countyname '.
 			'FROM geographicthesaurus cr INNER JOIN geographicthesaurus s ON cr.geoThesID = s.parentID '.
 			'LEFT JOIN geographicthesaurus c ON s.geoThesID = c.parentID WHERE ';
@@ -157,7 +149,7 @@ class SpecProcNlpUtilities {
 			if($countySeed){
 				$sqlWhere .= 'AND ((c.geoTerm = "'.$stateSeed.'") OR (c.geoTerm LIKE "'.$stateSeed.'%")) ';
 			}
-			$rs = $this->conn->query($sqlBase.substr($sqlWhere,4));
+			$rs = $conn->query($sqlBase.substr($sqlWhere,4));
 			while($r = $rs->fetch_object()){
 				$retArr[$cnt]['country'] = $r->countryname;
 				$retArr[$cnt]['state'] = $r->statename;
@@ -177,7 +169,7 @@ class SpecProcNlpUtilities {
 				if($countySeed){
 					$sqlWhere .= 'AND (SOUNDEX(c.geoTerm) = SOUNDEX("'.$stateSeed.'")) ';
 				}
-				$rs = $this->conn->query($sqlBase.substr($sqlWhere,4));
+				$rs = $conn->query($sqlBase.substr($sqlWhere,4));
 				while($r = $rs->fetch_object()){
 					$retArr[$cnt]['country'] = $r->countryname;
 					$retArr[$cnt]['state'] = $r->statename;
@@ -215,7 +207,7 @@ class SpecProcNlpUtilities {
 					'OR (SOUNDEX(c.geoTerm) = SOUNDEX("'.$wildArr[$k].'")) ';
 			}
 			if($sqlWhere){
-				$rs = $this->conn->query($sqlBase.substr($sqlWhere,3));
+				$rs = $conn->query($sqlBase.substr($sqlWhere,3));
 				while($r = $rs->fetch_object()){
 					$retArr[$cnt]['country'] = $r->countryname;
 					$retArr[$cnt]['state'] = $r->statename;
@@ -244,21 +236,8 @@ class SpecProcNlpUtilities {
 				$bestMatch = key($rateArr);
 			}
 		}
+		$conn->close();
 		return (isset($retArr[$bestMatch])?$retArr[$bestMatch]:null);
-	}
-
-	//Misc functions
-	public static function encodeString($inStr){
-		global $CHARSET;
-		$inStr = mb_convert_encoding($inStr, $CHARSET, mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
- 		return $inStr;
-	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 }
 ?>

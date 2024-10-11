@@ -1,8 +1,8 @@
 <?php
 include_once($SERVER_ROOT.'/config/dbconnection.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDuplicate.php');
-include_once($SERVER_ROOT.'/classes/UuidFactory.php');
-include_once($SERVER_ROOT.'/utilities/SymbUtil.php');
+include_once($SERVER_ROOT.'/classes/utilities/UuidFactory.php');
+include_once($SERVER_ROOT. '/classes/utilities/QueryUtil.php');
 
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.en.php');
@@ -1186,10 +1186,10 @@ class OccurrenceEditorManager {
 		$sql_cnt = 'SELECT COUNT(*) AS cnt FROM omoccuridentifiers oi join omoccurrences o on o.occid = oi.occid WHERE o.occid = ?';
 		$sql_insert = 'INSERT INTO omoccuridentifiers(occid, identifierName, identifierValue, notes, modifiedUid) select occid,"legacyOtherCatalogNumber" as identifierName, otherCatalogNumbers as identifierValue, "Auto generated during record merge" as notes, ? as modifiedUid from omoccurrences where occid = ?';
 		try {
-			$result_cnt = SymbUtil::execute_query($this->conn,$sql_cnt, [$occid]);
+			$result_cnt = QueryUtil::executeQuery($this->conn,$sql_cnt, [$occid]);
 			$cnt = ($result_cnt->fetch_assoc())["cnt"];
 			if($cnt === 0) {
-				SymbUtil::execute_query($this->conn,$sql_insert,[$GLOBALS['SYMB_UID'], $occid]);
+				QueryUtil::executeQuery($this->conn,$sql_insert,[$GLOBALS['SYMB_UID'], $occid]);
 			}
 		} catch (mysqli_sql_exception $e) {
 			error_log('Error: Failed to add otherCatalogNumbers to omoccuridentifiers for occid '. $occid . ' :' . $e->getMessage());
@@ -1218,7 +1218,7 @@ class OccurrenceEditorManager {
 				INNER JOIN omoccurdeterminations od on od.occid = i.occid
 				SET tid = ? WHERE detid = ?;
 				SQL;
-				SymbUtil::execute_query($this->conn,$sql, [$taxonArr['tid'], $detId]);
+				QueryUtil::executeQuery($this->conn,$sql, [$taxonArr['tid'], $detId]);
 			}
 		}
 	}
@@ -1575,13 +1575,13 @@ class OccurrenceEditorManager {
 				DELETE FROM omoccurrences WHERE occid = ?
 			SQL;
 			$stage = $LANG['ERROR_TRYING_TO_DELETE'];
-			SymbUtil::execute_query($this->conn, $sqlDel, [$delOccid]);
+			QueryUtil::executeQuery($this->conn, $sqlDel, [$delOccid]);
 
 			$sql = <<<SQL
 				UPDATE omcollectionstats SET recordcnt = recordcnt - 1 WHERE collid = ?
 			SQL;
 			$stage = $LANG['ERROR_TRYING_TO_UPDATE_COL_CNT'];
-			SymbUtil::execute_query($this->conn, $sql, [$this->collId]);
+			QueryUtil::executeQuery($this->conn, $sql, [$this->collId]);
 
 			return true;
 		} catch (\Throwable $th) {
@@ -1702,7 +1702,7 @@ class OccurrenceEditorManager {
 			if($sqlFrag){
 				$sqlIns = 'UPDATE IGNORE omoccurrences SET ' . substr($sqlFrag,1) . ' WHERE occid = ?';
 				$stage = $LANG['ABORT_DUE_TO_ERROR'];
-				SymbUtil::execute_query($this->conn, $sqlIns, [$targetOccid]);
+				QueryUtil::executeQuery($this->conn, $sqlIns, [$targetOccid]);
 			}
 
 			// Anon function for util of merging determinations
@@ -1710,7 +1710,7 @@ class OccurrenceEditorManager {
 				$sql =<<<'SQL'
 				SELECT detid FROM omoccurdeterminations where occid = ? and isCurrent = 1;
 				SQL;
-				$result = SymbUtil::execute_query($this->conn, $sql, [$occid]);
+				$result = QueryUtil::executeQuery($this->conn, $sql, [$occid]);
 				return array_map(fn($v) => $v[0], $result->fetch_all());
 			};
 
@@ -1730,7 +1730,7 @@ class OccurrenceEditorManager {
 				AND source.identifiedBy = target.identifiedBy
 			);
 			SQL;
-			SymbUtil::execute_query($this->conn, $sql, [
+			QueryUtil::executeQuery($this->conn, $sql, [
 				//Update To This Occid
 				$targetOccid,
 				//From Options of This Occid
@@ -1750,7 +1750,7 @@ class OccurrenceEditorManager {
 				SET isCurrent = 0
 				WHERE occid = ? AND isCurrent = 1 AND detid NOT IN ($parameters);
 				SQL;
-				SymbUtil::execute_query($this->conn, $sql, array_merge([$targetOccid], $currentDeterminations));
+				QueryUtil::executeQuery($this->conn, $sql, array_merge([$targetOccid], $currentDeterminations));
 			}
 
 			// Get New Current determination and updateBaseOccurrence to match
@@ -1764,7 +1764,7 @@ class OccurrenceEditorManager {
 			UPDATE images SET occid = ? WHERE occid = ?;
 			SQL;
 			$stage = $LANG['ERROR_REMAPPING_IMAGES'];
-			SymbUtil::execute_query($this->conn, $sql, [$targetOccid, $sourceOccid]);
+			QueryUtil::executeQuery($this->conn, $sql, [$targetOccid, $sourceOccid]);
 
 			//Remap paleo
 			if(isset($this->collMap['paleoActivated'])){
@@ -1772,7 +1772,7 @@ class OccurrenceEditorManager {
 				UPDATE IGNORE omoccurpaleo SET occid = ? WHERE occid = ?;
 				SQL;
 				$stage = $LANG['ERROR_REMAPPING_PALEOS'];
-				SymbUtil::execute_query($this->conn, $sql, [$targetOccid, $sourceOccid]);
+				QueryUtil::executeQuery($this->conn, $sql, [$targetOccid, $sourceOccid]);
 			}
 
 			//Delete source occurrence edits
@@ -1780,69 +1780,69 @@ class OccurrenceEditorManager {
 			DELETE FROM omoccuredits WHERE occid = ?
 			SQL;
 			$stage = $LANG['ERROR_REMAPPING_OCC_EDITS'];
-			SymbUtil::execute_query($this->conn, $sql, [$sourceOccid]);
+			QueryUtil::executeQuery($this->conn, $sql, [$sourceOccid]);
 
 			//Remap associations
 			$sql = <<<'SQL'
 			UPDATE IGNORE omoccurassociations SET occid = ? WHERE occid = ?
 			SQL;
 			$stage = $LANG['ERROR_REMAPPING_ASSOCS_1'];
-			SymbUtil::execute_query($this->conn, $sql, [$targetOccid, $sourceOccid]);
+			QueryUtil::executeQuery($this->conn, $sql, [$targetOccid, $sourceOccid]);
 
 			$sql = <<<'SQL'
 			UPDATE IGNORE omoccurassociations SET occidAssociate = ? WHERE occidAssociate = ?
 			SQL;
 			$stage = $LANG['ERROR_REMAPPING_ASSOCS_2'];
-			SymbUtil::execute_query($this->conn, $sql, [$targetOccid, $sourceOccid]);
+			QueryUtil::executeQuery($this->conn, $sql, [$targetOccid, $sourceOccid]);
 
 			//Remap comments
 			$sql = <<<'SQL'
 			UPDATE IGNORE omoccurcomments SET occid = ? WHERE occid = ?
 			SQL;
 			$stage = $LANG['ERROR_REMAPPING_COMMENTS'];
-			SymbUtil::execute_query($this->conn, $sql, [$targetOccid, $sourceOccid]);
+			QueryUtil::executeQuery($this->conn, $sql, [$targetOccid, $sourceOccid]);
 
 			//Remap genetic resources
 			$sql = <<<'SQL'
 			UPDATE IGNORE omoccurgenetic SET occid = ? WHERE occid = ?
 			SQL;
 			$stage = $LANG['ERROR_REMAPPING_GENETIC'];
-			SymbUtil::execute_query($this->conn, $sql, [$targetOccid, $sourceOccid]);
+			QueryUtil::executeQuery($this->conn, $sql, [$targetOccid, $sourceOccid]);
 
 			//Remap identifiers
 			$sql = <<<'SQL'
 			UPDATE IGNORE omoccuridentifiers SET occid = ? WHERE occid = ?
 			SQL;
 			$stage = $LANG['ERROR_REMAPPING_OCCIDS'];
-			SymbUtil::execute_query($this->conn, $sql, [$targetOccid, $sourceOccid]);
+			QueryUtil::executeQuery($this->conn, $sql, [$targetOccid, $sourceOccid]);
 
 			//Remap exsiccati
 			$sql = <<<'SQL'
 			UPDATE IGNORE omexsiccatiocclink SET occid = ? WHERE occid = ?
 			SQL;
 			$stage = $LANG['ERROR_REMAPPING_EXS'];
-			SymbUtil::execute_query($this->conn, $sql, [$targetOccid, $sourceOccid]);
+			QueryUtil::executeQuery($this->conn, $sql, [$targetOccid, $sourceOccid]);
 
 			//Remap occurrence dataset links
 			$sql = <<<'SQL'
 			UPDATE IGNORE omoccurdatasetlink SET occid = ? WHERE occid = ?
 			SQL;
 			$stage = $LANG['ERROR_REMAPPING_DATASET'];
-			SymbUtil::execute_query($this->conn, $sql, [$targetOccid, $sourceOccid]);
+			QueryUtil::executeQuery($this->conn, $sql, [$targetOccid, $sourceOccid]);
 
 			//Remap loans
 			$sql = <<<'SQL'
 			UPDATE IGNORE omoccurloanslink SET occid = ? WHERE occid = ?
 			SQL;
 			$stage = $LANG['ERROR_REMAPPING_LOANS'];
-			SymbUtil::execute_query($this->conn, $sql, [$targetOccid, $sourceOccid]);
+			QueryUtil::executeQuery($this->conn, $sql, [$targetOccid, $sourceOccid]);
 
 			//Remap checklists voucher links
 			$sql = <<<'SQL'
 			UPDATE IGNORE fmvouchers SET occid = ? WHERE occid = ?
 			SQL;
 			$stage = $LANG['ERROR_REMAPPING_VOUCHER'];
-			SymbUtil::execute_query($this->conn, $sql, [$targetOccid, $sourceOccid]);
+			QueryUtil::executeQuery($this->conn, $sql, [$targetOccid, $sourceOccid]);
 
 			if(!$this->deleteOccurrence($sourceOccid)){
 				error_log(

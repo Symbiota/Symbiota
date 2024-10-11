@@ -1,8 +1,9 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCollectionProfile.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-include_once($SERVER_ROOT.'/classes/UtilityFunctions.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+
 if($LANG_TAG == 'en' ||!file_exists($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php'))
 	include_once($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.en.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php');
@@ -875,7 +876,7 @@ if ($SYMB_UID) {
 							}
 						}
 						if($collData['rights']){
-							$rightsHtml = UtilityFunctions::getRightsHtml($collData['rights']);
+							$rightsHtml = GeneralUtil::getRightsHtml($collData['rights']);
 							?>
 							<div class="bottom-breathing-room-rel">
 								<span class="label"><?= $LANG['USAGE_RIGHTS'] ?>:</span>
