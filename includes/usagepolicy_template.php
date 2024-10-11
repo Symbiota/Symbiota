@@ -1,9 +1,9 @@
 <?php
 include_once('../config/symbini.php');
-include_once ($SERVER_ROOT . '/classes/utilities/GeneralUtilities.php');
+include_once ($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 header("Content-Type: text/html; charset=" . $CHARSET);
-$serverHost = GeneralUtilities::getDomain();
+$serverHost = GeneralUtil::getDomain();
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -9,7 +9,7 @@ include_once($SERVER_ROOT . '/classes/OccurrenceTaxaManager.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceAccessStats.php');
 include_once($SERVER_ROOT . '/classes/PortalIndex.php');
 include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
-include_once($SERVER_ROOT . '/classes/utilities/GeneralUtilities.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 class DwcArchiverCore extends Manager{
 
@@ -513,7 +513,7 @@ class DwcArchiverCore extends Manager{
 								break;
 							default:
 								if (isset($occurTermArr[$key])) {
-									//$ns = RdfUtility::namespaceAbbrev($occurTermArr[$key]);
+									//$ns = RdfUtil::namespaceAbbrev($occurTermArr[$key]);
 									//$returnvalue .= $separator . "   " . $ns . " \"$value\"";
 								}
 						}
@@ -650,7 +650,7 @@ class DwcArchiverCore extends Manager{
 								break;
 							default:
 								if (isset($occurTermArr[$key])) {
-									//$ns = RdfUtility::namespaceAbbrev($occurTermArr[$key]);
+									//$ns = RdfUtil::namespaceAbbrev($occurTermArr[$key]);
 									//$elem = $newDoc->createElement($ns);
 									//$elem->appendChild($newDoc->createTextNode($value));
 								}
@@ -2012,7 +2012,7 @@ class DwcArchiverCore extends Manager{
 		}
 
 		$DEFAULT_TITLE = $GLOBALS['DEFAULT_TITLE'];
-		$SERVER_HOST = GeneralUtilities::getDomain();
+		$SERVER_HOST = GeneralUtil::getDomain();
 		$CLIENT_ROOT = $GLOBALS['CLIENT_ROOT'];
 
 		// Decides which citation format to use according to $citationVarArr
@@ -2059,7 +2059,7 @@ class DwcArchiverCore extends Manager{
 			include $GLOBALS['SERVER_ROOT'] . '/includes/citation' . $citationFormat . '_template.php';
 		}
 		$output .= ob_get_clean();
-		$output .= "\n\nFor more information on citation formats, please see the following page: " . GeneralUtilities::getDomain() . $GLOBALS['CLIENT_ROOT'] . "/includes/usagepolicy.php";
+		$output .= "\n\nFor more information on citation formats, please see the following page: " . GeneralUtil::getDomain() . $GLOBALS['CLIENT_ROOT'] . "/includes/usagepolicy.php";
 
 		fwrite($fh, $output);
 
@@ -2236,7 +2236,7 @@ class DwcArchiverCore extends Manager{
 		if ($domain) {
 			$this->serverDomain = $domain;
 		} elseif (!$this->serverDomain) {
-			$this->serverDomain = GeneralUtilities::getDomain();
+			$this->serverDomain = GeneralUtil::getDomain();
 		}
 	}
 

@@ -1,7 +1,7 @@
 <?php
-include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtilities.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
-class SpecProcNlpUtilities {
+class SpecProcNlpUtil {
 
 	public static function cleanDwcArr($dwcArrIn){
 		$dwcArr = array();
@@ -29,23 +29,23 @@ class SpecProcNlpUtilities {
 	}
 
 	public static function formatDate($inStr){
-		return OccurrenceUtilities::formatDate($inStr);
+		return OccurrenceUtil::formatDate($inStr);
 	}
 
 	public static function parseScientificName($inStr){
-		return OccurrenceUtilities::parseScientificName($inStr);
+		return OccurrenceUtil::parseScientificName($inStr);
 	}
 
 	public static function parseVerbatimElevation($inStr){
-		return OccurrenceUtilities::parseVerbatimElevation($inStr);
+		return OccurrenceUtil::parseVerbatimElevation($inStr);
 	}
 
 	public static function parseVerbatimCoordinates($inStr,$target=''){
-		return OccurrenceUtilities::parseVerbatimCoordinates($inStr,$target='');
+		return OccurrenceUtil::parseVerbatimCoordinates($inStr,$target='');
 	}
 
 	public static function convertUtmToLL($e, $n, $z, $d){
-		return OccurrenceUtilities::convertUtmToLL($e, $n, $z, $d);
+		return OccurrenceUtil::convertUtmToLL($e, $n, $z, $d);
 	}
 
 	//Following functions need to be reworked if they are to be used

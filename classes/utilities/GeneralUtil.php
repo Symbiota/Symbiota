@@ -3,7 +3,7 @@
  *  Base static fucntions that are regularly used across all code.
  */
 
-class GeneralUtilities {
+class GeneralUtil {
 
 	public static function getDomain(){
 		$domain = 'http://';

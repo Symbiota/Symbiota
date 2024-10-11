@@ -2,7 +2,7 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverPublisher.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCollectionProfile.php');
-include_once($SERVER_ROOT . '/classes/utilities/GeneralUtilities.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/datasets/datapublisher.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/datasets/datapublisher.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/datasets/datapublisher.en.php');
@@ -340,7 +340,7 @@ if ($isEditor) {
 						echo '</div>';
 					}
 					if ($collArr['dwcaurl']) {
-						$serverName = GeneralUtilities::getDomain();
+						$serverName = GeneralUtil::getDomain();
 						if(substr($serverName, 0, 4) == 'www.') $serverName = str_replace('www.', '', $serverName);
 						if(!strpos($serverName, 'localhost') && strpos($collArr['dwcaurl'], $serverName) === false) {
 							$baseUrl = substr($collArr['dwcaurl'], 0, strpos($collArr['dwcaurl'], '/content')) . '/collections/datasets/datapublisher.php';
@@ -387,7 +387,7 @@ if ($isEditor) {
 									?>
 									<div style="margin:10px 0px;clear:both;">
 										<?php
-										$collPath = GeneralUtilities::getDomain() . $CLIENT_ROOT . '/collections/misc/collprofiles.php?collid=' . $collid;
+										$collPath = GeneralUtil::getDomain() . $CLIENT_ROOT . '/collections/misc/collprofiles.php?collid=' . $collid;
 										$bodyStr = 'Please provide the following GBIF user permission to create and update datasets for the following GBIF publisher.<br/>' .
 											'Once these permissions are assigned, we will be pushing a DwC-Archive from the following Symbiota collection to GBIF.<br/><br/>' .
 											'GBIF user: ' . $GBIF_USERNAME . '<br/>' .

@@ -11,7 +11,7 @@ include_once('../../config/symbini.php');
 $filename = "agentnames.csv";
 $filename = preg_replace("[^A-Za-z_\.0-9\-]",'', array_key_exists("file",$_REQUEST) ? $_REQUEST["file"] : $filename );
 include_once($SERVER_ROOT . '/classes/AgentManager.php');
-include_once($SERVER_ROOT . '/classes/utilities/RdfUtility.php');
+include_once($SERVER_ROOT . '/classes/utilities/RdfUtil.php');
 
 $debug = FALSE;
 

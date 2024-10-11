@@ -4,7 +4,7 @@ $defaultMode = "list";
 $mode = preg_replace("[^A-Za-z]",'', array_key_exists("mode",$_REQUEST) ? $_REQUEST["mode"] : $defaultMode );
 $table = preg_replace("[^A-Za-z_]",'', array_key_exists("table",$_REQUEST) ? $_REQUEST["table"] : '' );
 include_once($SERVER_ROOT . '/classes/AgentManager.php');
-include_once($SERVER_ROOT . '/classes/utilities/RdfUtility.php');
+include_once($SERVER_ROOT . '/classes/utilities/RdfUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 
 

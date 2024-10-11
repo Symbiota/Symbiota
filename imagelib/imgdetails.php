@@ -1,7 +1,7 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/ImageDetailManager.php');
-include_once($SERVER_ROOT . '/classes/utilities/GeneralUtilities.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/imagelib/imgdetails.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/imagelib/imgdetails.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/imagelib/imgdetails.en.php');
 
@@ -40,7 +40,7 @@ if($isEditor){
 	$imgArr = $imgManager->getImageMetadata($imgId);
 }
 
-$serverPath = GeneralUtilities::getDomain();
+$serverPath = GeneralUtil::getDomain();
 if($imgArr){
 	$imgUrl = $imgArr['url'];
 	$origUrl = $imgArr['originalurl'];

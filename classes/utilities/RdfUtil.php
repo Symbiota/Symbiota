@@ -1,7 +1,7 @@
 <?php
 
 /**
- * RdfUtility.php
+ * RdfUtil.php
  *
  * Utility class and functions for working with RDF.
  *
@@ -16,7 +16,7 @@
 // Example use:
 
 $done=FALSE;
-$accept = RdfUtility::parseHTTPAcceptHeader($_SERVER['HTTP_ACCEPT']);
+$accept = RdfUtil::parseHTTPAcceptHeader($_SERVER['HTTP_ACCEPT']);
 while (!$done && list($key, $mediarange) = each($accept)) {
     if ($mediarange=='text/turtle') {
        deliverTurtle();
@@ -91,7 +91,7 @@ class AcceptElement {
    public $mediarange;
 }
 
-class RdfUtility {
+class RdfUtil {
 
    /**
     * Split an http Accept header into an ordered array of media ranges (mime types).

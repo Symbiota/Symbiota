@@ -4,7 +4,7 @@
  */
 include_once($SERVER_ROOT . '/classes/Manager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Encoding.php');
-include_once($SERVER_ROOT . '/classes/utilities/GeneralUtilities.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 class SpecProcessorOcr extends Manager{
 
@@ -227,7 +227,7 @@ class SpecProcessorOcr extends Manager{
 					$imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
 				}
 				else{
-					$imgUrl = GeneralUtilities::getDomain() . $imgUrl;
+					$imgUrl = GeneralUtil::getDomain() . $imgUrl;
 				}
 			}
 			//Set temp folder path and file names

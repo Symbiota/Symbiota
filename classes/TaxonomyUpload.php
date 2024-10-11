@@ -1,6 +1,6 @@
 <?php
 include_once($SERVER_ROOT.'/config/dbconnection.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
+include_once($SERVER_ROOT.'/classes/TaxonomyUtil.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyHarvester.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
 
@@ -170,7 +170,7 @@ class TaxonomyUpload{
 									$inputArr['rankid'] = $id;
 								}
 							}
-							if($infraArr = TaxonomyUtilities::cleanInfra($inputArr['unitind3'])){
+							if($infraArr = TaxonomyUtil::cleanInfra($inputArr['unitind3'])){
 								$inputArr['unitind3'] = $infraArr['infra'];
 								$inputArr['rankid'] = $infraArr['rankid'];
 							}
@@ -201,7 +201,7 @@ class TaxonomyUpload{
 							if(isset($inputArr['acceptedstr'])){
 								if($this->kingdomName == 'Animalia') $inputArr['acceptedstr'] = str_replace(array(' subsp. ',' ssp. ',' var. ',' f. ',' fo. '), ' ', $inputArr['acceptedstr']);
 							}
-							$sciArr = TaxonomyUtilities::parseScientificName($inputArr['scinameinput'],$this->conn,(isset($inputArr['rankid'])?$inputArr['rankid']:0),$this->kingdomName);
+							$sciArr = TaxonomyUtil::parseScientificName($inputArr['scinameinput'],$this->conn,(isset($inputArr['rankid'])?$inputArr['rankid']:0),$this->kingdomName);
 							foreach($sciArr as $sciKey => $sciValue){
 								if(!array_key_exists($sciKey, $inputArr) && $sciValue) $inputArr[$sciKey] = $sciValue;
 							}
@@ -814,7 +814,7 @@ class TaxonomyUpload{
 		}while($loopCnt < 30);
 
 		$this->outputMsg('House cleaning... ');
-		TaxonomyUtilities::buildHierarchyEnumTree($this->conn, $this->taxAuthId);
+		TaxonomyUtil::buildHierarchyEnumTree($this->conn, $this->taxAuthId);
 
 		//Update occurrences with new tids
 		$occurMaintenance = new OccurrenceMaintenance($this->conn);
