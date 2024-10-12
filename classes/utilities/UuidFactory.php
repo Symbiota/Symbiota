@@ -2,7 +2,7 @@
 class UuidFactory {
 
 	public static function getUuidV3($namespace, $name) {
-		if(!self::is_valid($namespace)) return false;
+		if(!self::isValid($namespace)) return false;
 
 		// Get hexadecimal components of namespace
 		$nhex = str_replace(array('-','{','}'), '', $namespace);
@@ -88,7 +88,7 @@ class UuidFactory {
 	}
 
 	public static function getUuidV5($namespace, $name) {
-		if(!self::is_valid($namespace)) return false;
+		if(!self::isValid($namespace)) return false;
 
 		// Get hexadecimal components of namespace
 		$nhex = str_replace(array('-','{','}'), '', $namespace);
@@ -126,7 +126,7 @@ class UuidFactory {
 		);
 	}
 
-	public static function is_valid($uuid) {
+	public static function isValid($uuid) {
 		return preg_match('/^\{?[0-9a-f]{8}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{12}\}?$/i', $uuid) === 1;
 	}
 }

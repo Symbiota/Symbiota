@@ -18,7 +18,7 @@ if (strlen($agentid) > 0 ) {
   $agent->load($agentid);
   $agentview->setModel($agent);
 } elseif (strlen($uuid)>0) {
-  if (UuidFactory::is_valid($uuid)) {
+  if (UuidFactory::isValid($uuid)) {
      $agent->loadByGUID($uuid);
      $agentview->setModel($agent);
   }

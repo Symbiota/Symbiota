@@ -437,7 +437,7 @@ class DwcArchiverCore extends Manager{
 			}
 			if (isset($dwcArray['occurrenceID']) || (isset($dwcArray['catalogNumber']) && isset($dwcArray['collectionCode']))) {
 				$occurrenceid = $dwcArray['occurrenceID'];
-				if (UuidFactory::is_valid($occurrenceid)) {
+				if (UuidFactory::isValid($occurrenceid)) {
 					$occurrenceid = "urn:uuid:$occurrenceid";
 				} else {
 					$catalogNumber = $dwcArray['catalogNumber'];
@@ -462,7 +462,7 @@ class DwcArchiverCore extends Manager{
 								break;
 							case "collectionID":
 								// RDF Guide Section 2.3.3 owl:sameAs for urn:lsid and resolvable IRI.
-								if (stripos("urn:uuid:", $value) === false && UuidFactory::is_valid($value)) {
+								if (stripos("urn:uuid:", $value) === false && UuidFactory::isValid($value)) {
 									$lsid = "urn:uuid:$value";
 								} elseif (stripos("urn:lsid:biocol.org", $value) === 0) {
 									$lsid = "http://biocol.org/$value";
@@ -561,7 +561,7 @@ class DwcArchiverCore extends Manager{
 			}
 			if (isset($dwcArray['occurrenceID']) || (isset($dwcArray['catalogNumber']) && isset($dwcArray['collectionCode']))) {
 				$occurrenceid = $dwcArray['occurrenceID'];
-				if (UuidFactory::is_valid($occurrenceid)) {
+				if (UuidFactory::isValid($occurrenceid)) {
 					$occurrenceid = "urn:uuid:$occurrenceid";
 				} else {
 					$catalogNumber = $dwcArray['catalogNumber'];
@@ -592,7 +592,7 @@ class DwcArchiverCore extends Manager{
 								break;
 							case "collectionID":
 								// RDF Guide Section 2.3.3 owl:sameAs for urn:lsid and resolvable IRI.
-								if (stripos("urn:uuid:", $value) === false && UuidFactory::is_valid($value)) {
+								if (stripos("urn:uuid:", $value) === false && UuidFactory::isValid($value)) {
 									$lsid = "urn:uuid:$value";
 								} elseif (stripos("urn:lsid:biocol.org", $value) === 0) {
 									$lsid = "http://biocol.org/$value";
@@ -2213,11 +2213,11 @@ class DwcArchiverCore extends Manager{
 	}
 
 	public function setPublicationGuid($guid){
-		if(UuidFactory::is_valid($guid)) $this->publicationGuid = $guid;
+		if(UuidFactory::isValid($guid)) $this->publicationGuid = $guid;
 	}
 
 	public function setRequestPortalGuid($guid){
-		if(UuidFactory::is_valid($guid)) $this->requestPortalGuid = $guid;
+		if(UuidFactory::isValid($guid)) $this->requestPortalGuid = $guid;
 	}
 
 	public function setCharSetOut($cs){

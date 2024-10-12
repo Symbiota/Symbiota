@@ -2701,7 +2701,7 @@ class Agent {
        }
    }
    public function setuuid($uuid) {
-       if (!UuidFactory::is_valid(str_replace("urn:uuid:","",$uuid))) {
+       if (!UuidFactory::isValid(str_replace("urn:uuid:","",$uuid))) {
            throw new Exception("Not a valid uuid [$uuid].");
        }
        if (strlen($uuid) > Agent::UUID_SIZE) {
