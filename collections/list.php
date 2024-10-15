@@ -321,6 +321,18 @@ $_SESSION['citationvar'] = $searchVar;
 										echo (isset($LANG['ID_PROTECTED']) ? $LANG['ID_PROTECTED'] : 'Identification Protected');;
 									}
 									echo '</div>';
+									if (!empty($fieldArr['earlyInterval']) || !empty($fieldArr['lateInterval']) || !empty($fieldArr['formation'])) {
+										echo '<div style="margin:4px;">';
+										if (!empty($fieldArr['earlyInterval']) || !empty($fieldArr['lateInterval'])) {
+											echo '<span style="margin-right:20px;">'
+												. (!empty($fieldArr['earlyInterval']) ? $fieldArr['earlyInterval'] : '')
+												. (!empty($fieldArr['earlyInterval']) && !empty($fieldArr['lateInterval']) ? ' to ' : '')
+												. (!empty($fieldArr['lateInterval']) ? $fieldArr['lateInterval'] : '')
+												. '</span>';
+										}
+										if (!empty($fieldArr['formation'])) echo '<span>' . $fieldArr['formation'] . '</span>' ;
+										echo '</div>';
+									}
 									echo '<div style="margin:4px">';
 									echo '<span style="width:150px;">' . $fieldArr["catnum"] . '</span>';
 									echo '<span style="width:200px;margin-left:30px;">' . $fieldArr["collector"] . '&nbsp;&nbsp;&nbsp;' . (isset($fieldArr["collnum"]) ? $fieldArr["collnum"] : '') . '</span>';
