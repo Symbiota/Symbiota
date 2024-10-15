@@ -5,8 +5,9 @@ Language: Français (French)
 ------------------
 */
 
-$LANG['INVPROJ'] = 'Projets d&apos;Inventaire';
-$LANG['INVPROJLIST'] = 'Liste des projets d\'inventaire';
+$LANG['NAV_HOME'] = 'Accueil';
+$LANG['INVPROJ'] = "Projet d'Inventaire";
+$LANG['INVPROJLIST'] = "Liste des d'inventaire";
 $LANG['VIEW_PROJECT'] = 'View Inventory Project';
 $LANG['PROJMANAG'] = 'Chefs de Projet:';
 $LANG['METADATA'] = 'Métadonnées';

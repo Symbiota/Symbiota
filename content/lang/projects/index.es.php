@@ -5,8 +5,9 @@ Language: Espa�ol (Spanish)
 ------------------
 */
 
-$LANG['INVPROJ'] = 'Proyectos de Inventario';
-$LANG['INVPROJLIST'] = 'Lista de proyectos de inventario';
+$LANG['NAV_HOME'] = 'Inicio';
+$LANG['INVPROJ'] = 'Proyecto de Inventario';
+$LANG['INVPROJLIST'] = 'Lista de inventarios';
 $LANG['VIEW_PROJECT'] = 'View Inventory Project';
 $LANG['PROJMANAG'] = 'Administradores de Proyectos:';
 $LANG['METADATA'] = 'Metadatos';

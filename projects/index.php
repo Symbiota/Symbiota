@@ -224,16 +224,11 @@ if(!$researchList && !$editMode){
 	if(isset($projArr['headerurl']) && $projArr['headerurl']) $HEADER_URL = $CLIENT_ROOT.$projArr['headerurl'];
 	$displayLeftMenu = (isset($projects_indexMenu)?$projects_indexMenu:"true");
 	include($SERVER_ROOT.'/includes/header.php');
-	echo "<div class='navpath'>";
-	if(isset($projects_indexCrumbs) && $projArr){
-		if($projects_indexCrumbs) echo $projects_indexCrumbs.' &gt;&gt; ';
-	}
-	else{
-		echo "<a href='" . $CLIENT_ROOT . "'>" . $LANG['HOME'] . "</a> &gt;&gt; ";
-	}
-	echo '<b><a href="index.php?pid=' . $pid . '">' . ($projArr ? htmlspecialchars($projArr['projname'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE): $LANG['INVPROJLIST']) . '</a></b>';
-	echo "</div>";
 	?>
+	<div class="navpath">
+		<a href="<?= $CLIENT_ROOT ?>/"><?= $LANG['NAV_HOME'] ?> </a> &gt;&gt; 
+		<b><a href="index.php?pid=<?= $pid ?>"><?= $LANG['INVPROJLIST'] ?></a></b>
+	</div>
 
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
@@ -379,13 +374,8 @@ if(!$researchList && !$editMode){
 						?>
 						<div style="font-weight:bold;font-size:130%;">
 							<?= $LANG['RESCHECK'] ?>
-							<a href="#" onclick="toggleResearchInfoBox(this);" title="<?= $LANG['QUESRESSPEC'] ?>">
-								<img src="../images/qmark.png" style="width:1em;" alt="<?= $LANG['QUESTION_ALT'] ?>" />
-							</a>
-							<a href="../checklists/clgmap.php?pid=<?= $pid ?>" title="<?= $LANG['MAPCHECK'] ?>">
-								<?= $LANG['MAPCHECK'] ?>
-								<img src='../images/world.png' style="width:1em; height:1em;" alt="<?= $LANG['GLOBE_ALT'] ?>"/>
-							</a>
+							<a href="#" onclick="toggleResearchInfoBox(this);" title="<?= $LANG['QUESRESSPEC'] ?>"><img src="../images/qmark.png" style="width:1em;" alt="<?= $LANG['QUESTION_ALT'] ?>" /></a>
+							<a href="../checklists/clgmap.php?pid=<?= $pid ?>" title="<?= $LANG['MAPCHECK'] ?>"><img src='../images/world.png' style="width:1em; height:1em;" alt="<?= $LANG['GLOBE_ALT'] ?>"/></a>
 						</div>
 						<div id="researchlistpopup" class="genericpopup" style="display:none;">
 							<img src="../images/qmark.png" style="width:1.3em;" alt="<?= $LANG['QUESTION_ALT'] ?>" />
