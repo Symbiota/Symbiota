@@ -17,7 +17,7 @@
 
 - [ ] It is the code author's responsibility to merge their own pull request after it has been approved
 - [ ] If this PR represents a merge into the `Development` branch, remember to use the **squash & merge** option
-- [ ] If this PR represents a merge into the `hotfix` branch, remember to use the **squash & merge** option
+- [ ] If this PR represents a merge into the `hotfix` branch, remember to use the **merge** option (i.e., no squash).
 - [ ] If this PR represents a merge from the `Development` branch into the master branch, remember to use the **merge** option
 - [ ] If this PR represents a merge from the `hotfix` branch into the `master` branch use the **squash & merge** option
   - [ ] a subsequent PR from `master` into `Development` should be made with the **merge** option (i.e., no squash).
