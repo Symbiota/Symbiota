@@ -2245,17 +2245,20 @@ class DwcArchiverCore extends Manager{
 		return $this->serverDomain;
 	}
 
-	protected function encodeArr(&$inArr){
+	protected function encodeArr($inArr){
+		$retArr = $inArr;
 		if ($this->charSetSource && $this->charSetOut != $this->charSetSource) {
 			foreach ($inArr as $k => $v) {
 				if (is_array($v)) {
-					$inArr[$k] = $this->encodeArr($inArr);
+					$retArr[$k] = $this->encodeArr($v);
 				}
 				else{
-					$inArr[$k] = $this->encodeStr($v);
+					$retArr[$k] = $this->encodeStr($v);
 				}
 			}
 		}
+
+		return $retArr;
 	}
 	
 	private function encodeStr($inStr){
