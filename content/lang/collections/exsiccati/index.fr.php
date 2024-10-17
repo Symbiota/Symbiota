@@ -1,7 +1,9 @@
 <?php
 /*
 ------------------
-Language: English
+Language: French (Français)
+Translated by: Google Translate
+Date Translated: 2024-10-17
 ------------------
 */
 

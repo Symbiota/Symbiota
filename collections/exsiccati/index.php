@@ -472,7 +472,7 @@ if($ometid) unset($selectLookupArr[$ometid]);
 								<input name="enddate" type="text" value="<?php echo $exsArr['enddate']; ?>" />
 							</div>
 							<div class="field-div">
-								<?= $LANG['SOURCE'] ?>Source:<br/><input name="source" type="text" value="<?php echo $exsArr['source']; ?>" style="width:480px;" />
+								<?= $LANG['SOURCE'] ?>:<br/><input name="source" type="text" value="<?php echo $exsArr['source']; ?>" style="width:480px;" />
 							</div>
 							<div class="field-div">
 								<?= $LANG['SOURCE_ID_INDEXS'] ?>:<br/><input name="sourceidentifier" type="text" value="<?php echo $exsArr['sourceidentifier']; ?>" style="width:90%" />
