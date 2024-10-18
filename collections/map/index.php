@@ -1945,7 +1945,7 @@ if(isset($_REQUEST['llpoint'])) {
 		</div>
 		<div id='map' style='width:100vw;height:100vh;z-index:1'></div>
 		<div id="defaultpanel" class="sidepanel"  <?= $menuClosed? 'style="width: 0"': ''?>>
-			<div class="menu" style="display:flex; align-items: center; background-color: var(--darkest-color); height: 2rem">
+			<div class="menu" style="display:flex; align-items: center; background-color: var(--menu-top-bg-color); height: 2rem">
 				<a style="text-decoration: none; margin-left: 0.5rem;" href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php">
 					<?php echo (isset($LANG['H_HOME'])?$LANG['H_HOME']:'Home'); ?>
 				</a>
