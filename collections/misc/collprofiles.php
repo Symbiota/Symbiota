@@ -151,6 +151,7 @@ if ($SYMB_UID) {
 			position:sticky;
 			width: 100vw;
 			margin-left: calc(50% - 50vw);
+			z-index: 1;
 		}
 
 		@media (max-width: 1424px) {
@@ -189,6 +190,7 @@ if ($SYMB_UID) {
 				width: 12vw;
 				right: 1rem;
 				float: right;
+				background-color: var(--body-bg-color);
 			}
 		}
 		@media (min-width: 1500px) {
@@ -196,6 +198,7 @@ if ($SYMB_UID) {
 				width: 14vw;
 				right: 1rem;
 				float: right;
+				background-color: var(--body-bg-color);
 			}
 		}
 		@media (min-width: 1550px) {
@@ -203,6 +206,7 @@ if ($SYMB_UID) {
 				width: 15vw;
 				right: 1rem;
 				float: right;
+				background-color: var(--body-bg-color);
 			}
 		}
 		@media (min-width: 1700px) {
@@ -210,6 +214,7 @@ if ($SYMB_UID) {
 				width: 18vw;
 				right: 1rem;
 				float: right;
+				background-color: var(--body-bg-color);
 			}
 		}
 		@media (min-width: 1880px) {
@@ -217,6 +222,7 @@ if ($SYMB_UID) {
 				width: 21vw;
 				right: 1rem;
 				float: right;
+				background-color: var(--body-bg-color);
 			}
 		}
 	</style>
