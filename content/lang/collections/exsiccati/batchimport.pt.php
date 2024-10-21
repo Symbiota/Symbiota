@@ -9,7 +9,7 @@ Translated by: Google Translate (2024-10-21)
 $LANG['EXS_BATCH_TRANSFER'] = 'Transferência de lote de exsicatas';
 $LANG['SEL_ONE_RECORD'] = 'Selecione pelo menos um registro';
 $LANG['EXS_TITLE_SEL'] = 'O título da exsicata deve ser selecionado';
-$LANG['HOME'] = 'Lar';
+$LANG['HOME'] = 'Início';
 $LANG['EXS_INDEX'] = 'Índice de exsicatas';
 $LANG['BATCH_IMP_MOD'] = 'Módulo de importação em lote';
 $LANG['EXS_BATCH_IMP'] = 'Importação de lote de exsicatas';
