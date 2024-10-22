@@ -14,6 +14,7 @@ $LANG['MAP_OPTIONS'] = 'Options de la Carte';
 $LANG['RESET'] = 'Réinitialiser';
 $LANG['SEARCH'] = 'Recherche';
 $LANG['TAXA'] = 'Taxa';
+$LANG['WITHIN'] = 'à moins de';
 $LANG['SHAPE_TOOLS'] = 'Utilisez les outils de forme sur la carte pour sélectionner des occurrences dans une forme donnée';
 $LANG['WITHIN_POLYGON'] = 'Dans le polygone sélectionné';
 $LANG['WITHIN_CIRCLE'] = 'Dans le cercle sélectionné';
