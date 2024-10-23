@@ -624,6 +624,10 @@ if(isset($_REQUEST['llpoint'])) {
 			let map = new LeafletMap('map', {
 				lang: "<?php echo $LANG_TAG; ?>",
 			})
+			var oms = new OverlappingMarkerSpiderfier(map.mapLayer, {
+				nearbyDistance: 5
+			});
+
 			map.enableDrawing({
 				polyline: false,
 				circlemarker: false,
@@ -782,7 +786,7 @@ if(isset($_REQUEST['llpoint'])) {
 						if(marker.options.icon && marker.options.icon.options.observation) {
 							marker.setIcon(getObservationSvg({color: `#${color}`, size:30 }))
 						} else {
-							marker.setStyle({fillColor: `#${color}`})
+							marker.setIcon(getSpecimenSvg({color: `#${color}`, size:9 }))
 						}
 					}
 				}
@@ -795,14 +799,12 @@ if(isset($_REQUEST['llpoint'])) {
 
 				for(let record of records) {
 					let marker = (record.type === "specimen"?
-						L.circleMarker([record.lat, record.lng], {
-							radius : 8,
-							color  : '#000000',
-							weight: 2,
-							fillColor: `#${tMap[record['tid']].color}`,
-							opacity: 1.0,
-							fillOpacity: 1.0,
-							className: `coll-${record['collid']} taxa-${record['tid']}`
+						L.marker([record.lat, record.lng], {
+							icon: getSpecimenSvg({
+								color: `#${tMap[record['tid']].color}`,
+								className: `coll-${record['collid']} taxa-${record['tid']}`,
+								size: 9
+							})
 						}):
 						L.marker([record.lat, record.lng], {
 							icon: getObservationSvg({
@@ -811,11 +813,12 @@ if(isset($_REQUEST['llpoint'])) {
 								size: 30
 							})
 						}))
-					.on('click', function() { openRecord(record) })
 					.bindTooltip(`<div style="font-size:1rem">${record.id}</div>`)
 
-					markers.push(marker);
+					marker.record = record;
 
+					markers.push(marker);
+					oms.addMarker(marker);
 					taxon.addMarker(record['tid'], marker);
 					collections.addMarker(record['collid'], marker);
 					portal.addMarker(origin, marker);
@@ -878,6 +881,11 @@ if(isset($_REQUEST['llpoint'])) {
 				}
 			}
 
+			// Open Record needs oms to spider correctly
+			oms.addListener('click', function(marker) {
+				openRecord(marker.record);
+			})
+
 			document.addEventListener('resetMap', async e => {
 				setPanels(false);
 				mapGroups.forEach(group => {
@@ -907,6 +915,7 @@ if(isset($_REQUEST['llpoint'])) {
 				})
 
 				markers = [];
+				oms.clearMarkers();
 
 				if(heatmapLayer) map.mapLayer.removeLayer(heatmapLayer);
 
