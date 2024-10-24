@@ -1,7 +1,7 @@
 <?php
 require_once($SERVER_ROOT.'/config/dbconnection.php');
 require_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
-include_once($SERVER_ROOT.'/classes/UuidFactory.php');
+include_once($SERVER_ROOT.'/classes/GuidManager.php');
 
 class ImageProcessor {
 
@@ -18,7 +18,6 @@ class ImageProcessor {
 	private $destructConn = true;
 
 	function __construct($con = null){
-		ini_set('auto_detect_line_endings', true);
 		if($con){
 			//Inherits connection from another class
 			$this->conn = $con;
@@ -173,7 +172,7 @@ class ImageProcessor {
 						if(strpos($result[0],'503')){
 							$this->logOrEcho('ERROR: CyVerse Bisque system appears to be offline',1);
 							$this->logOrEcho('Response code: '.$result[0],2);
-							$this->logOrEcho('FAILED URL: <a href="' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($url, HTML_SPECIAL_CHARS_FLAGS) . '</a>',2);
+							$this->logOrEcho('FAILED URL: <a href="' . htmlspecialchars($url, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($url, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>',2);
 							return false;
 						}
 						else{
@@ -297,7 +296,7 @@ class ImageProcessor {
 											'sourceurl = '.($sourceUrl?'"'.$sourceUrl.'"':'NULL').' '.
 											'WHERE imgid = '.$r1->imgid;
 										if($this->conn->query($sql2)){
-											$this->logOrEcho('Existing image replaced with new image mapping: <a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">'.($catalogNumber?$catalogNumber:$otherCatalogNumbers).'</a>',1);
+											$this->logOrEcho('Existing image replaced with new image mapping: <a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">'.($catalogNumber?$catalogNumber:$otherCatalogNumbers).'</a>',1);
 											//Delete physical images it previous version was mapped locally
 											$this->deleteImage($r1->url);
 											$this->deleteImage($r1->originalurl);
@@ -355,9 +354,9 @@ class ImageProcessor {
 				}
 
 				$this->logOrEcho('Generating recordID GUID for all new records...');
-				$uuidManager = new UuidFactory();
-				$uuidManager->setSilent(1);
-				$uuidManager->populateGuids($this->collid);
+				$guidManager = new GuidManager();
+				$guidManager->setSilent(1);
+				$guidManager->populateGuids($this->collid);
 			}
 			unlink($fullPath);
 			$this->logOrEcho('Done process image mapping ('.date('Y-m-d H:i:s').')');
@@ -470,7 +469,7 @@ class ImageProcessor {
 					'VALUES('.$this->collid.',"'.$targetIdentifier.'","unprocessed","'.date('Y-m-d H:i:s').'")';
 				if($this->conn->query($sql2)){
 					$occid = $this->conn->insert_id;
-					$this->logOrEcho('Linked image to new "unprocessed" specimen record (#<a href="../individual/index.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '</a>) ',2);
+					$this->logOrEcho('Linked image to new "unprocessed" specimen record (#<a href="../individual/index.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>) ',2);
 				}
 				else $this->logOrEcho("ERROR creating new occurrence record: ".$this->conn->error,2);
 			}
@@ -494,7 +493,7 @@ class ImageProcessor {
 			}
 			$sql = 'INSERT INTO images(occid'.$sqlInsert.') VALUES ('.$occid.$sqlValues.')';
 			if($this->conn->query($sql)){
-				$occLink = '<a href="../individual/index.php?occid=' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">#' . htmlspecialchars($occid, HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+				$occLink = '<a href="../individual/index.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">#' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 				$this->logOrEcho('Image linked to existing record'.(isset($targetFieldArr['sourceIdentifier'])?' ('.$targetFieldArr['sourceIdentifier'].')':'').': '.$occLink,2);
 			}
 			else{
@@ -571,10 +570,10 @@ class ImageProcessor {
 		$occurMain->__destruct();
 
 		$this->logOrEcho('Populating recordID UUIDs for all records...',2);
-		$uuidManager = new UuidFactory($this->conn);
-		$uuidManager->setSilent(1);
-		$uuidManager->populateGuids();
-		$uuidManager->__destruct();
+		$guidManager = new GuidManager($this->conn);
+		$guidManager->setSilent(1);
+		$guidManager->populateGuids();
+		$guidManager->__destruct();
 	}
 
 	private function updateLastRunDate($date){

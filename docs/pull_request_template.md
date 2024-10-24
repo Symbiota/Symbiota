@@ -5,7 +5,7 @@
 - [ ] There is a description section in the pull request that details what the proposed changes do. It can be very brief if need be, but it ought to exist.
 - [ ] Hotfixes should be branched off of the `master` branch and **squash and merged** back into the `master` branch.
 - [ ] Features and backlog bugs should be merged into the `Development` branch, **NOT** `master`
-- [ ] All new text is preferably internationalized (i.e., no end-user-visible text is hard-coded on the PHP pages)
+- [ ] All new text is preferably internationalized (i.e., no end-user-visible text is hard-coded on the PHP pages), and the [spreadsheet tracking internationalizations](https://docs.google.com/spreadsheets/d/133fps9w2pUCEjUA6IGCcQotk7dn9KvepMXJ2IWUZsE8/edit?usp=sharing) has been updated either with a new row or with checkmarks to existing rows.
 - [ ] There are no linter errors
 - [ ] New features have responsive design (i.e., look aesthetically pleasing both full screen and with small or mobile screens)
 - [ ] [Symbiota coding standards](https://docs.google.com/document/d/1-FwCZP5Zu4f-bPwsKeVVsZErytALOJyA2szjbfSUjmc/edit?usp=sharing) have been followed

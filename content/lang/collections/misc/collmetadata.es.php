@@ -91,6 +91,7 @@ $LANG['OCCID_DEF_2'] = 'campo. No se recomienda el uso del ID de ocurrencia como
                         generar GUID UUID para cada registro. Esta opción se recomienda para muchos conjuntos de datos en vivo.
                         pero no está permitido para colecciones de instantáneas administradas en el sistema de administración local.';
 $LANG['PUBLISH_TO_AGGS'] = 'Publicar en agregadores';
+$LANG['MORE_INFO_AGGREGATORS'] = 'Más información sobre la publicación en agregadores';
 $LANG['ACTIVATE_GBIF'] = 'Activa las herramientas de publicación GBIF disponibles dentro de la opción de menú Darwin Core Archive Publishing';
 $LANG['SOURCE_REC_URL'] = 'URL del registro de origen';
 $LANG['DYNAMIC_LINK_REC'] = 'Enlace dinámico a la página de registro individual de la base de datos de origen';
@@ -123,5 +124,7 @@ $LANG['SECURITY_KEY'] = 'Clave de seguridad';
 $LANG['RECORDID'] = 'ID de registro';
 $LANG['SAVE_EDITS'] = 'Guardar ediciones';
 $LANG['CREATE_COLL_2'] = 'Crear nueva colección';
+$LANG['TINYMCE_INFO'] = 'Descripción de la colección. Puede acceder a la barra de herramientas de edición de texto para esta descripción presionando 
+                        la combinación de teclas ALT + F10 en Windows u OPCIÓN + F10 en MacOS.';
 
 ?>

@@ -1,45 +1,38 @@
 <?php
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/header.en.php');
-else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
-
-include_once($SERVER_ROOT.'/classes/ProfileManager.php');
-$pHandler = new ProfileManager();
-$isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/templates/header.' . $LANG_TAG . '.php'))
+	include_once($SERVER_ROOT . '/content/lang/templates/header.en.php');
+else include_once($SERVER_ROOT . '/content/lang/templates/header.' . $LANG_TAG . '.php');
+$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
+$collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '/collections/search/index.php';
 ?>
 <div class="header-wrapper">
 	<header>
 		<div class="top-wrapper">
-			<a class="skip-link" href="#end-nav"><?php echo $LANG['SKIP_NAV'] ?></a>
+			<a class="screen-reader-only" href="#end-nav"><?= $LANG['H_SKIP_NAV'] ?></a>
 			<nav class="top-login" aria-label="horizontal-nav">
 				<?php
 				if ($USER_DISPLAY_NAME) {
 					?>
-					<div class="welcome-text">
-						<?php echo (isset($LANG['H_WELCOME'])?$LANG['H_WELCOME']:'Welcome').' '.$USER_DISPLAY_NAME; ?>!
+					<div class="welcome-text bottom-breathing-room-rel">
+						<?= $LANG['H_WELCOME'] . ' ' . $USER_DISPLAY_NAME ?>!
 					</div>
-					<span style="white-space: nowrap; padding: 0.8rem;" class="button button-tertiary">
-						<a class="accessibility-button" onclick="toggleAccessibilityStyles('<?php echo $CLIENT_ROOT . '/includes' . '/' ?>', '<?php echo $CSS_BASE_PATH ?>', '<?php echo $LANG['TOGGLE_508_OFF'] ?>', '<?php echo $LANG['TOGGLE_508_ON'] ?>')" id="accessibility-button" data-accessibility="accessibility-button" ><?php echo (isset($LANG['TOGGLE_508_ON'])?$LANG['TOGGLE_508_ON']:'Accessibility Mode'); ?></a>
+					<span style="white-space: nowrap;" class="button button-tertiary bottom-breathing-room-rel">
+						<a href="<?= $CLIENT_ROOT ?>/profile/viewprofile.php"><?= $LANG['H_MY_PROFILE'] ?></a>
 					</span>
-					<span style="white-space: nowrap; padding: 0.8rem;" class="button button-tertiary">
-						<a style="font-size: 1.1em;" href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/profile/viewprofile.php"><?php echo htmlspecialchars((isset($LANG['H_MY_PROFILE'])?$LANG['H_MY_PROFILE']:'My Profile'), HTML_SPECIAL_CHARS_FLAGS)?></a>
-					</span>
-					<span style="white-space: nowrap; padding: 0.8rem;" class="button button-secondary">
-						<a style="font-size: 1.1em;" href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/profile/index.php?submit=logout"><?php echo htmlspecialchars((isset($LANG['H_LOGOUT'])?$LANG['H_LOGOUT']:'Sign Out'), HTML_SPECIAL_CHARS_FLAGS)?></a>
+					<span style="white-space: nowrap;" class="button button-secondary bottom-breathing-room-rel">
+						<a href="<?= $CLIENT_ROOT ?>/profile/index.php?submit=logout"><?= $LANG['H_LOGOUT'] ?></a>
 					</span>
 					<?php
 				} else {
 					?>
 					<span class="button button-tertiary">
-						<a class="accessibility-button" onclick="toggleAccessibilityStyles('<?php echo $CLIENT_ROOT . '/includes' . '/' ?>', '<?php echo $CSS_BASE_PATH ?>', '<?php echo $LANG['TOGGLE_508_OFF'] ?>', '<?php echo $LANG['TOGGLE_508_ON'] ?>')" id="accessibility-button" data-accessibility="accessibility-button" ><?php echo (isset($LANG['TOGGLE_508_ON'])?$LANG['TOGGLE_508_ON']:'Accessibility Mode'); ?></a>
-					</span>
-					<span class="button button-tertiary">
 						<a onclick="window.location.href='#'">
-							<?php echo htmlspecialchars($LANG['CONTACT_US'], HTML_SPECIAL_CHARS_FLAGS); ?>
+							<?= $LANG['H_CONTACT_US'] ?>
 						</a>
 					</span>
 					<span class="button button-secondary">
-						<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS) . "/profile/index.php?refurl=" . htmlspecialchars($_SERVER['SCRIPT_NAME'], HTML_SPECIAL_CHARS_FLAGS) . "?" . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES); ?>">
-							<?php echo (isset($LANG['H_LOGIN'])?$LANG['H_LOGIN']:'Login')?>
+						<a href="<?= $CLIENT_ROOT . "/profile/index.php?refurl=" . htmlspecialchars($_SERVER['SCRIPT_NAME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "?" . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES); ?>">
+							<?= $LANG['H_LOGIN'] ?>
 						</a>
 					</span>
 					<?php
@@ -47,9 +40,9 @@ $isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
 				?>
 			</nav>
 			<div class="top-brand">
-				<a href="https://symbiota.org">
+				<a href="<?= $CLIENT_ROOT ?>">
 					<div class="image-container">
-						<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/logo_symbiota.png" alt="Symbiota logo">
+						<img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="Symbiota logo">
 					</div>
 				</a>
 				<div class="brand-name">
@@ -66,51 +59,70 @@ $isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
 			<nav class="top-menu" aria-label="hamburger-nav">
 				<ul class="menu">
 					<li>
-						<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php">
-							<?php echo (isset($LANG['H_HOME'])?$LANG['H_HOME']:'Home'); ?>
+						<a href="<?= $CLIENT_ROOT ?>/index.php">
+							<?= $LANG['H_HOME'] ?>
 						</a>
 					</li>
 					<li>
-						<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/index.php">
-							<?php echo (isset($LANG['H_COLLECTIONS'])?$LANG['H_COLLECTIONS']:'Collections'); ?>
+						<a href="<?= $CLIENT_ROOT . $collectionSearchPage ?>">
+							<?= $LANG['H_SEARCH'] ?>
 						</a>
 					</li>
 					<li>
-						<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/map/index.php" target="_blank" rel="noopener noreferrer">
-							<?php echo (isset($LANG['H_MAP_SEARCH'])?$LANG['H_MAP_SEARCH']:'Map Search'); ?>
+						<a href="<?= $CLIENT_ROOT ?>/collections/map/index.php" rel="noopener noreferrer">
+							<?= $LANG['H_MAP_SEARCH'] ?>
 						</a>
 					</li>
 					<li>
-						<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/checklists/index.php">
-							<?php echo (isset($LANG['H_INVENTORIES'])?$LANG['H_INVENTORIES']:'Checklists'); ?>
+						<a href="<?= $CLIENT_ROOT ?>/checklists/index.php">
+							<?= $LANG['H_INVENTORIES'] ?>
 						</a>
 					</li>
 					<li>
-						<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/imagelib/search.php">
-							<?php echo (isset($LANG['H_IMAGES'])?$LANG['H_IMAGES']:'Images'); ?>
+						<a href="<?= $CLIENT_ROOT ?>/imagelib/search.php">
+							<?= $LANG['H_IMAGES'] ?>
 						</a>
 					</li>
 					<li>
-						<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/includes/usagepolicy.php">
-							<?php echo (isset($LANG['H_DATA_USAGE'])?$LANG['H_DATA_USAGE']:'Data Use'); ?>
+						<a href="<?= $CLIENT_ROOT ?>/includes/usagepolicy.php">
+							<?= $LANG['H_DATA_USAGE'] ?>
 						</a>
 					</li>
 					<li>
 						<a href="https://symbiota.org/docs" target="_blank" rel="noopener noreferrer">
-							<?php echo (isset($LANG['H_HELP'])?$LANG['H_HELP']:'Help'); ?>
+							<?= $LANG['H_HELP'] ?>
 						</a>
 					</li>
 					<li>
-						<a href='<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/sitemap.php'>
-							<?php echo (isset($LANG['H_SITEMAP'])?$LANG['H_SITEMAP']:'Sitemap'); ?>
+						<a href='<?= $CLIENT_ROOT ?>/sitemap.php'>
+							<?= $LANG['H_SITEMAP'] ?>
 						</a>
 					</li>
 					<li>
-						<label for="language-selection"><?php echo $LANG['SELECT_LANGUAGE'] ?>: </label>
+						<a href="#">Example Dropdown</a>
+						<ul>
+							<li>
+								<a href="#">Link 1</a>
+							</li>
+							<li>
+								<a href="#">Link 2</a>
+							</li>
+							<li>
+								<a href="#">Sub Menu</a>
+								<ul>
+									<li>
+										<a href="#">Link 3</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li id="lang-select-li">
+						<label for="language-selection"><?= $LANG['H_SELECT_LANGUAGE'] ?>: </label>
 						<select oninput="setLanguage(this)" id="language-selection" name="language-selection">
 							<option value="en">English</option>
-							<option value="es" <?php echo ($LANG_TAG=='es'?'SELECTED':''); ?>>Espa&ntilde;ol</option>
-							<option value="fr" <?php echo ($LANG_TAG=='fr'?'SELECTED':''); ?>>Français</option>
+							<option value="es" <?= ($LANG_TAG=='es'?'SELECTED':'') ?>>Español</option>
+							<option value="fr" <?= ($LANG_TAG=='fr'?'SELECTED':'') ?>>Français</option>
 						</select>
 					</li>
 				</ul>

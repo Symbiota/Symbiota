@@ -1,16 +1,16 @@
-<!DOCTYPE html>
 <?php
 include_once('../config/symbini.php');
-include_once ($SERVER_ROOT.'/classes/UtilityFunctions.php');
+include_once ($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+
 header("Content-Type: text/html; charset=" . $CHARSET);
-$serverHost = UtilityFunctions::getDomain();
+$serverHost = GeneralUtil::getDomain();
 ?>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Data Usage Guidelines</title>
 	<?php
-
 	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
 </head>
@@ -21,12 +21,12 @@ $serverHost = UtilityFunctions::getDomain();
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/index.php">Home</a> &gt;&gt;
+		<a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php">Home</a> &gt;&gt;
 		<b>Data Usage Guidelines</b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
-		<h1>Guidelines for Acceptable Use of Data</h1>
+	<div role="main" id="innertext">
+		<h1 class="page-heading">Guidelines for Acceptable Use of Data</h1>
 		<h2>Recommended Citation Formats</h2>
 		<p>Use one of the following formats to cite data retrieved from the <?php echo $DEFAULT_TITLE; ?> network:</p>
 		<h3>General Citation</h3>
@@ -67,6 +67,19 @@ $serverHost = UtilityFunctions::getDomain();
 			} else {
 				echo 'Name of Institution or Collection. Occurrence dataset ' . 'http://gh.local/Symbiota/portal/content/dwca/' . 'accessed via the' . 'Fresh Symbiota Install' . 'Portal, ' . 'http://gh.local/Symbiota' . ', 2022-07-25.';
 			}
+			?>
+		</blockquote>
+		<h3>Glossary</h3>
+		<p>Please cite this portal's glossary as:</p>
+		<blockquote>
+			<?php
+				if ($DEFAULT_TITLE) {
+					echo $DEFAULT_TITLE;
+				}
+				else {
+					echo 'Name of people or institutional reponsible for maintaining the portal';
+				};
+				echo '. Glossary. ' . $serverHost . $CLIENT_ROOT . 'glossary/index.php. Accessed: ' . date('Y-m-d') . '.';
 			?>
 		</blockquote>
 
@@ -119,5 +132,4 @@ $serverHost = UtilityFunctions::getDomain();
 	include($SERVER_ROOT . '/includes/footer.php');
 	?>
 </body>
-
 </html>

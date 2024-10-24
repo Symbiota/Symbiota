@@ -85,8 +85,8 @@ class DwcArchiverImage{
 			if(strpos($conditionSql,'MATCH(f.recordedby)') || strpos($conditionSql,'MATCH(f.locality)')){
 				$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 			}
-			if(strpos($conditionSql,'d.datasetid')){
-				$sql .= 'LEFT JOIN omoccurdatasetlink d ON o.occid = d.occid ';
+			if(strpos($conditionSql,'ds.datasetid')){
+				$sql .= 'LEFT JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
 			}
 			if(stripos($conditionSql,'a.stateid')){
 				//Search is limited by occurrence attribute

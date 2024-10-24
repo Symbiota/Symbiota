@@ -414,12 +414,189 @@
                 }
             }
         },
+        "/api/v2/media": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "showAllMedia",
+                "responses": {
+                    "200": {
+                        "description": "Returns list of media records",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. "
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    ""
+                ],
+                "summary": "Creates a new Media record",
+                "operationId": "insertMedia",
+                "parameters": [
+                    {
+                        "name": "apiToken",
+                        "in": "query",
+                        "description": "API security token to authenticate post action",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Media object to create",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "originalUrl"
+                                ],
+                                "properties": {
+                                    "format": {
+                                        "description": "Media Type (MIME type)",
+                                        "type": "string",
+                                        "maxLength": 45,
+                                        "enum": [
+                                            "image/jpeg",
+                                            "image/png",
+                                            "image/tiff",
+                                            "audio/wav"
+                                        ]
+                                    },
+                                    "originalUrl": {
+                                        "description": "URL of original media file; images should be a web-ready JPG",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "mediumUrl": {
+                                        "description": "URL of medium sized image of original image",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "thumbnailUrl": {
+                                        "description": "URL of thumbnail representation original media file",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "archiveUrl": {
+                                        "description": "URL of archival media file (e.g. DNG, TIFF, etc), if publicly web accessible",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "referenceUrl": {
+                                        "description": "URL of a web representation of media file. Maybe consist of html wrapper, viewer, player, etc",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "occid": {
+                                        "description": "Primary Key of occurrence record that media object is associated with. Should be left null if record is not associated with an occurrence.",
+                                        "type": "integer"
+                                    },
+                                    "tid": {
+                                        "description": "Primary Key of taxon record (e.g. scientific name reference) associated with media object. Should be left NULL if record is associated with an occurrence, since media will inherit occurrence identification. Required if media is not associated with an occurrence record (e.g. field image)",
+                                        "type": "integer"
+                                    },
+                                    "photographer": {
+                                        "description": "Verbatim name of author/photographer media object. Leave NULL if photographerUid is supplied",
+                                        "type": "string",
+                                        "maxLength": 100
+                                    },
+                                    "photographerUid": {
+                                        "description": "User Primary Key of photographer, who must have a user account register in the portal",
+                                        "type": "integer"
+                                    },
+                                    "imageType": {
+                                        "description": "Term name of image type (e.g. stillImage)",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    },
+                                    "caption": {
+                                        "description": "Consist, free-form text describing content of media object",
+                                        "type": "string",
+                                        "maxLength": 100
+                                    },
+                                    "copyright": {
+                                        "description": "Copyright Owner",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "rights": {
+                                        "description": "A URI pointing to structured information about rights held in and over the resource (e.g. https://creativecommons.org/publicdomain/zero/1.0/, https://creativecommons.org/licenses/by/4.0/legalcode)",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "accessRights": {
+                                        "description": "Information about who can access the resource or an indication of its security status",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "locality": {
+                                        "description": "Short description of locality. Leave null if locality is available via the occurrence record",
+                                        "type": "string",
+                                        "maxLength": 250
+                                    },
+                                    "notes": {
+                                        "description": "General notes",
+                                        "type": "string",
+                                        "maxLength": 350
+                                    },
+                                    "sourceIdentifier": {
+                                        "description": "The source identifier, if media was harvested from an external resource",
+                                        "type": "string",
+                                        "maxLength": 150
+                                    },
+                                    "hashFunction": {
+                                        "description": "Cryptographic hash function used to compute the value given in the Hash Value",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    },
+                                    "hashValue": {
+                                        "description": "Value computed by a hash function applied to the media that will be delivered at the access point",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    },
+                                    "sortSequence": {
+                                        "description": "Media sort control within the taxon profile page",
+                                        "type": "integer"
+                                    },
+                                    "sortOccurrence": {
+                                        "description": "Media sort control within the occurrence profile page",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Returns JSON object of the of media record that was created"
+                    },
+                    "400": {
+                        "description": "Error: Bad request."
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
         "/api/v2/media/{identifier}": {
             "get": {
                 "tags": [
                     ""
                 ],
-                "operationId": "/api/v2/media/identifier",
+                "operationId": "showOneMedia",
                 "parameters": [
                     {
                         "name": "identifier",
@@ -436,7 +613,9 @@
                         "description": "Returns single media record",
                         "content": {
                             "application/json": {
-                                "schema": {}
+                                "schema": {
+                                    "type": "application/json"
+                                }
                             }
                         }
                     },
@@ -444,213 +623,202 @@
                         "description": "Error: Bad request. Media identifier is required."
                     }
                 }
-            }
-        },
-        "/api/v2/media": {
-            "post": {
+            },
+            "delete": {
                 "tags": [
                     ""
                 ],
-                "operationId": "/api/v2/media",
+                "operationId": "deleteMedia",
                 "parameters": [
                     {
-                        "name": "apiToken",
+                        "name": "identifier",
                         "in": "path",
-                        "description": "API security token to authenicate post action",
+                        "description": "primary key or record GUID (UUID) associated with target media object",
                         "required": true,
                         "schema": {
                             "type": "string"
                         }
                     },
                     {
-                        "name": "format",
+                        "name": "apiToken",
                         "in": "query",
-                        "description": "Media Type (MIME type)",
+                        "description": "API security token to authenticate post action",
                         "required": true,
                         "schema": {
-                            "type": "string",
-                            "maxLength": 45
-                        }
-                    },
-                    {
-                        "name": "originalUrl",
-                        "in": "query",
-                        "description": "URL returning original large image; image should be a web-ready JPG  ",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "maxLength": 255
-                        }
-                    },
-                    {
-                        "name": "mediumUrl",
-                        "in": "query",
-                        "description": "URL returning medium sized image of original large image; image should be a web-ready JPG  ",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "maxLength": 255
-                        }
-                    },
-                    {
-                        "name": "thumbnailUrl",
-                        "in": "query",
-                        "description": "URL returning thumbnail derivative of original large image; image should be a web-ready JPG  ",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "maxLength": 255
-                        }
-                    },
-                    {
-                        "name": "archiveUrl",
-                        "in": "query",
-                        "description": "URL returning large archival image (e.g. DNG, TIFF, etc), if web accessible ",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "maxLength": 255
-                        }
-                    },
-                    {
-                        "name": "referenceUrl",
-                        "in": "query",
-                        "description": "",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "maxLength": 255
-                        }
-                    },
-                    {
-                        "name": "occid",
-                        "in": "query",
-                        "description": "Primary Key of occurrence record that media object is associated with. Should be left null if record is not associated with an occurrence.",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "tid",
-                        "in": "query",
-                        "description": "Primary Key of taxon record (e.g. scientific name reference) associated with media object. Should be left NULL if record is associated with an occurrence, since media will inherit occurrence identification. Required if media is not associated with an occurrence record (e.g. field image)",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "photographer",
-                        "in": "query",
-                        "description": "Verbatim name of author/photographer media object. Leave NULL if photographerUid is supplied",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "maxLength": 100
-                        }
-                    },
-                    {
-                        "name": "photographerUid",
-                        "in": "query",
-                        "description": "User Primary Key of photographer, who must have a user account register in the portal",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "imageType",
-                        "in": "query",
-                        "description": "Term name of image type (e.g. stillImage)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "maxLength": 45
-                        }
-                    },
-                    {
-                        "name": "caption",
-                        "in": "query",
-                        "description": "Consist, free-form text describing content of media object",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "maxLength": 100
-                        }
-                    },
-                    {
-                        "name": "copyright",
-                        "in": "query",
-                        "description": "Copyright Owner",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "maxLength": 255
-                        }
-                    },
-                    {
-                        "name": "rights",
-                        "in": "query",
-                        "description": "A URI pointing to structured information about rights held in and over the resource (e.g. https://creativecommons.org/publicdomain/zero/1.0/, https://creativecommons.org/licenses/by/4.0/legalcode)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "maxLength": 255
-                        }
-                    },
-                    {
-                        "name": "accessRights",
-                        "in": "query",
-                        "description": "Information about who can access the resource or an indication of its security status",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "maxLength": 255
-                        }
-                    },
-                    {
-                        "name": "locality",
-                        "in": "query",
-                        "description": "Short description of locality. Leave null if locality is available via the occurrence record",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "maxLength": 250
-                        }
-                    },
-                    {
-                        "name": "notes",
-                        "in": "query",
-                        "description": "General notes",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "maxLength": 350
-                        }
-                    },
-                    {
-                        "name": "sourceIdentifier",
-                        "in": "query",
-                        "description": "The source identifier, if media was harvested from an external resource",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "maxLength": 150
+                            "type": "string"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Returns UUID recordID (GUID)",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
+                    "204": {
+                        "description": "Record deleted successfully"
+                    },
+                    "400": {
+                        "description": "Error: Bad request. Media identifier is required."
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "updateMedia",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "primary key or record GUID (UUID) associated with target media object",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "apiToken",
+                        "in": "query",
+                        "description": "API security token to authenticate post action",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Media object to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "format": {
+                                        "description": "Media Type (MIME type)",
+                                        "type": "string",
+                                        "maxLength": 45,
+                                        "enum": [
+                                            "image/jpeg",
+                                            "image/png",
+                                            "image/tiff",
+                                            "audio/wav"
+                                        ]
+                                    },
+                                    "originalUrl": {
+                                        "description": "URL of original media file; images should be a web-ready JPG",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "mediumUrl": {
+                                        "description": "URL of medium sized image of original image",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "thumbnailUrl": {
+                                        "description": "URL of thumbnail representation original media file",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "archiveUrl": {
+                                        "description": "URL of archival media file (e.g. DNG, TIFF, etc), if publicly web accessible",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "referenceUrl": {
+                                        "description": "URL of a web representation of media file. Maybe consist of html wrapper, viewer, player, etc",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "occid": {
+                                        "description": "Primary Key of occurrence record that media object is associated with. Should be left null if record is not associated with an occurrence.",
+                                        "type": "integer"
+                                    },
+                                    "tid": {
+                                        "description": "Primary Key of taxon record (e.g. scientific name reference) associated with media object. Should be left NULL if record is associated with an occurrence, since media will inherit occurrence identification. Required if media is not associated with an occurrence record (e.g. field image)",
+                                        "type": "integer"
+                                    },
+                                    "photographer": {
+                                        "description": "Verbatim name of author/photographer media object. Leave NULL if photographerUid is supplied",
+                                        "type": "string",
+                                        "maxLength": 100
+                                    },
+                                    "photographerUid": {
+                                        "description": "User Primary Key of photographer, who must have a user account register in the portal",
+                                        "type": "integer"
+                                    },
+                                    "imageType": {
+                                        "description": "Term name of image type (e.g. stillImage)",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    },
+                                    "caption": {
+                                        "description": "Consist, free-form text describing content of media object",
+                                        "type": "string",
+                                        "maxLength": 100
+                                    },
+                                    "copyright": {
+                                        "description": "Copyright Owner",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "rights": {
+                                        "description": "A URI pointing to structured information about rights held in and over the resource (e.g. https://creativecommons.org/publicdomain/zero/1.0/, https://creativecommons.org/licenses/by/4.0/legalcode)",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "accessRights": {
+                                        "description": "Information about who can access the resource or an indication of its security status",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "locality": {
+                                        "description": "Short description of locality. Leave null if locality is available via the occurrence record",
+                                        "type": "string",
+                                        "maxLength": 250
+                                    },
+                                    "notes": {
+                                        "description": "General notes",
+                                        "type": "string",
+                                        "maxLength": 350
+                                    },
+                                    "sourceIdentifier": {
+                                        "description": "The source identifier, if media was harvested from an external resource",
+                                        "type": "string",
+                                        "maxLength": 150
+                                    },
+                                    "hashFunction": {
+                                        "description": "Cryptographic hash function used to compute the value given in the Hash Value",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    },
+                                    "hashValue": {
+                                        "description": "Value computed by a hash function applied to the media that will be delivered at the access point",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    },
+                                    "sortSequence": {
+                                        "description": "Media sort control within the taxon profile page",
+                                        "type": "integer"
+                                    },
+                                    "sortOccurrence": {
+                                        "description": "Media sort control within the occurrence profile page",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
                             }
                         }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Returns full JSON object of the of media record that was edited"
                     },
                     "400": {
                         "description": "Error: Bad request."
+                    },
+                    "401": {
+                        "description": "Unauthorized"
                     }
                 }
             }
@@ -765,6 +933,15 @@
                 "operationId": "/api/v2/occurrence/search",
                 "parameters": [
                     {
+                        "name": "collid",
+                        "in": "query",
+                        "description": "collid(s) - collection identifier(s) in portal",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "catalogNumber",
                         "in": "query",
                         "description": "catalogNumber",
@@ -777,6 +954,60 @@
                         "name": "occurrenceID",
                         "in": "query",
                         "description": "occurrenceID",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "family",
+                        "in": "query",
+                        "description": "family",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sciname",
+                        "in": "query",
+                        "description": "Scientific Name - binomen only without authorship",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "recordedBy",
+                        "in": "query",
+                        "description": "Collector/observer of occurrence",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "recordedByLastName",
+                        "in": "query",
+                        "description": "Last name of collector/observer of occurrence",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "recordNumber",
+                        "in": "query",
+                        "description": "Personal number of the collector or observer of the occurrence",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "eventDate",
+                        "in": "query",
+                        "description": "Date as YYYY, YYYY-MM or YYYY-MM-DD",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -810,45 +1041,9 @@
                         }
                     },
                     {
-                        "name": "collid",
-                        "in": "query",
-                        "description": "collid - collection identifier in portal",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
                         "name": "datasetID",
                         "in": "query",
                         "description": "dataset ID within portal",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "family",
-                        "in": "query",
-                        "description": "family",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "sciname",
-                        "in": "query",
-                        "description": "Scientific Name - binomen only without authorship",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "eventDate",
-                        "in": "query",
-                        "description": "Date as YYYY, YYYY-MM or YYYY-MM-DD",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -1004,6 +1199,148 @@
                 }
             }
         },
+        "/api/v2/occurrence/skeletal": {
+            "post": {
+                "tags": [
+                    ""
+                ],
+                "description": "If an existing record can be located within target collection based on matching the input identifier, empty (null) target fields will be updated with Skeletal Data.\r\n\t\t\tIf the target field contains data, it will remain unaltered.\r\n\t\t\tIf multiple records are returned matching the input identifier, data will be added only to the first record.\r\n\t\t\tIf an identifier is not provided or a matching record can not be found, a new Skeletal record will be created and primed with input data.\r\n\t\t\tNote that catalogNumber or otherCatalogNumber must be provided to create a new skeletal record. If processingStatus is not defined, new skeletal records will be set as 'unprocessed'",
+                "operationId": "skeletalImport",
+                "parameters": [
+                    {
+                        "name": "apiToken",
+                        "in": "query",
+                        "description": "API security token to authenticate post action",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "collid",
+                        "in": "query",
+                        "description": "primary key of target collection dataset",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "identifier",
+                        "in": "query",
+                        "description": "catalog number, other identifiers, occurrenceID, or recordID GUID (UUID) used to locate target occurrence occurrence",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "identifierTarget",
+                        "in": "query",
+                        "description": "Target field for matching identifier: catalog number, other identifiers (aka otherCatalogNumbers), GUID (occurrenceID or recordID), occid (primary key for occurrence). If identifier field is null, a new skeletal record will be created, given that a catalog number is provided.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "CATALOGNUMBER",
+                            "enum": [
+                                "CATALOGNUMBER",
+                                "IDENTIFIERS",
+                                "GUID",
+                                "OCCID",
+                                "NONE"
+                            ]
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Occurrence data to be inserted",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "catalogNumber": {
+                                        "description": "Primary catalog number",
+                                        "type": "string",
+                                        "maxLength": 32
+                                    },
+                                    "otherCatalogNumbers": {
+                                        "description": "Additional catalog numbers",
+                                        "type": "string",
+                                        "maxLength": 75
+                                    },
+                                    "sciname": {
+                                        "description": "Scientific name, without the author",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "scientificNameAuthorship": {
+                                        "description": "The authorship information of scientific name",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "family": {
+                                        "description": "Taxonomic family of the scientific name",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "recordedBy": {
+                                        "description": "Primary collector or observer",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "recordNumber": {
+                                        "description": "Identifier given at the time occurrence was recorded; typically the personal identifier of the primary collector or observer",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    },
+                                    "eventDate": {
+                                        "description": "Date the occurrence was collected or observed, or earliest date if a range was provided",
+                                        "type": "string"
+                                    },
+                                    "eventDate2": {
+                                        "description": "Last date the occurrence was collected or observed. Used when a date range is provided",
+                                        "type": "string"
+                                    },
+                                    "country": {
+                                        "description": "The name of the country or major administrative unit",
+                                        "type": "string",
+                                        "maxLength": 64
+                                    },
+                                    "stateProvince": {
+                                        "description": "The name of the next smaller administrative region than country (state, province, canton, department, region, etc.)",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "county": {
+                                        "description": "The full, unabbreviated name of the next smaller administrative region than stateProvince (county, shire, department, etc.",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "processingStatus": {
+                                        "description": "Processing status of the specimen record",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Returns full JSON object of the of media record that was edited"
+                    },
+                    "400": {
+                        "description": "Error: Bad request."
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
         "/api/v2/taxonomy": {
             "get": {
                 "tags": [
@@ -1011,6 +1348,74 @@
                 ],
                 "operationId": "/api/v2/taxonomy",
                 "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Controls the number of results in the page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 100
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Determines the offset for the search results. A limit of 200 and offset of 100, will get the third page of 100 results.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns list of inventories registered within system",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. "
+                    }
+                }
+            }
+        },
+        "/api/v2/taxonomy/search": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/taxonomy/search",
+                "parameters": [
+                    {
+                        "name": "taxon",
+                        "in": "query",
+                        "description": "Taxon searh term",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Type of search",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "EXACT",
+                            "enum": [
+                                "EXACT",
+                                "START",
+                                "WHOLEWORD",
+                                "WILD"
+                            ]
+                        }
+                    },
                     {
                         "name": "limit",
                         "in": "query",
@@ -1127,47 +1532,6 @@
                     },
                     "400": {
                         "description": "Error: Bad request. "
-                    }
-                }
-            }
-        },
-        "/api/v2/taxonomy/{identifier}/description/{identifier}": {
-            "get": {
-                "tags": [
-                    ""
-                ],
-                "operationId": "/api/v2/taxonomy/identifier/description/identifier",
-                "parameters": [
-                    {
-                        "name": "identifier",
-                        "in": "path",
-                        "description": "PK, GUID, or recordID associated with target taxonomic unit",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "identifier",
-                        "in": "path",
-                        "description": "Identifier (PK, tdbid) associated with taxonomic description",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Returns metabase on inventory registered within system with matching ID",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Bad request. Inventory identifier is required."
                     }
                 }
             }

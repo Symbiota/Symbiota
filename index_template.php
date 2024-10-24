@@ -1,7 +1,7 @@
 <?php
 include_once('config/symbini.php');
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/index.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/index.en.php');
-else include_once($SERVER_ROOT.'/content/lang/index.'.$LANG_TAG.'.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/templates/index.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/templates/index.en.php');
+else include_once($SERVER_ROOT.'/content/lang/templates/index.'.$LANG_TAG.'.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 ?>
 <!DOCTYPE html>
@@ -18,7 +18,8 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class="navpath"></div>
-	<div id="innertext">
+	<main id="innertext">
+		<h1 class="page-heading"><?php echo $DEFAULT_TITLE; ?> Home</h1>
 		<?php
 		if($LANG_TAG == 'es'){
 			?>
@@ -50,7 +51,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 			<?php
 		}
 		?>
-	</div>
+	</main>
 	<?php
 	include($SERVER_ROOT . '/includes/footer.php');
 	?>

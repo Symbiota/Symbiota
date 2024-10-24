@@ -86,14 +86,31 @@ function checkRecordLimit(f) {
   }
 }
 
+//Generate Random Color with luminance greater than 40 for good contrast on black text
 function generateRandColor() {
-  var hexColor = "";
-  var x = Math.round(0xffffff * Math.random()).toString(16);
-  var y = 6 - x.length;
-  var z = "000000";
-  var z1 = z.substring(0, y);
-  hexColor = z1 + x;
-  return hexColor;
+	// How Bright we want the color
+	// If this number needs to change extra work would need to be done to ensure variable luminance would work.
+	const luminance = 40;
+
+	const redLuminanceCoef = 0.299;
+	const greenLuminanceCoef = 0.587;
+	const blueLuminanceCoef = 0.114;
+
+	// max red 76.245
+	// min red is 0
+	let r = Math.round(255 * Math.random());
+	let redLuminance = redLuminanceCoef * r;
+
+	//max is 29.07
+	//min blue is 0
+	let b = Math.round(255 * Math.random());
+	let blueLuminance = blueLuminanceCoef * b;
+
+	//max g is 149.685  min green 
+	let minGreen = ((luminance * 3) - redLuminance - blueLuminance) / greenLuminanceCoef;
+	let g = Math.round((255 - minGreen) * Math.random()) + minGreen;
+
+	return (r < 16? "0": "") + parseInt(r).toString(16) + (g < 16? "0": "") + parseInt(g).toString(16) + (b < 16? "0": "") + parseInt(b).toString(16);
 }
 
 function toggleLatLongDivs() {
@@ -206,6 +223,7 @@ function verifyCollForm(f) {
       break;
     }
   }
+
   if (!formVerified) {
     alert("Please choose at least one collection!");
     return false;
@@ -243,9 +261,11 @@ function verifyCollForm(f) {
     f.locality.value == "" &&
     f.upperlat.value == "" &&
     f.pointlat.value == "" &&
+    f.polycoords.value == "" &&
     f.collector.value == "" &&
     f.collnum.value == "" &&
-    f.eventdate1.value == ""
+    f.eventdate1.value == "" &&
+    f.catnum.value == ""
   ) {
     alert("Please fill in at least one search parameter!");
     return false;
@@ -337,17 +357,12 @@ function resetQueryForm(f) {
   $("input[name=hasimages]").attr("checked", false);
   $("input[name=hasgenetic]").attr("checked", false);
   $("input[name=includecult]").attr("checked", false);
-  deleteSelectedShape();
-}
-
-function shiftKeyBox(tid) {
-  var currentkeys = document.getElementById("symbologykeysbox").innerHTML;
-  var keyDivName = tid + "keyrow";
-  var colorBoxName = "taxaColor" + tid;
-  var newKeyToAdd = document.getElementById(keyDivName).innerHTML;
-  document.getElementById(colorBoxName).color.hidePicker();
-  document.getElementById("symbologykeysbox").innerHTML =
-    currentkeys + newKeyToAdd;
+  const crossPortalForm = $("autocomplete-input[name=external-taxa-input]");
+  if(crossPortalForm && crossPortalForm[0]) {
+    crossPortalForm[0].getInputElement().value="";
+  }
+  document.dispatchEvent(new Event('deleteShape'));
+  document.dispatchEvent(new Event('resetMap'));
 }
 
 function prepSelectionKml(f) {
@@ -366,49 +381,9 @@ function prepSelectionKml(f) {
   f.submit();
 }
 
-function closeAllInfoWins() {
-  for (var w = 0; w < infoWins.length; w++) {
-    var win = infoWins[w];
-    win.close();
-  }
-}
-
-function openOccidInfoBox(label, lat, lon) {
-  var myOptions = {
-    content: label,
-    boxStyle: {
-      border: "1px solid black",
-      background: "#ffffff",
-      textAlign: "center",
-      padding: "2px",
-      fontSize: "12px",
-    },
-    disableAutoPan: true,
-    pixelOffset: new google.maps.Size(-25, 0),
-    position: new google.maps.LatLng(lat, lon),
-    isHidden: false,
-    closeBoxURL: "",
-    pane: "floatPane",
-    enableEventPropagation: false,
-  };
-
-  ibLabel = new InfoBox(myOptions);
-  ibLabel.open(map);
-}
-
-function closeOccidInfoBox() {
-  if (ibLabel) {
-    ibLabel.close();
-  }
-}
-
-function openIndPopup(occid, clid) {
-  openPopup("../individual/index.php?occid=" + occid + "&clid=" + clid);
-}
-
 function openRecord(record) {
    let url = record.host? 
-      `https://${record.host}/collections/individual/index.php?occid=${record.occid}` :
+      `${record.host}/collections/individual/index.php?occid=${record.occid}` :
       "../individual/index.php?occid=" + record.occid 
    openPopup(url);
 }
@@ -422,29 +397,11 @@ function openPopup(urlStr) {
   } catch (err) {}
   newWindow = window.open(
     urlStr,
-    "popup",
+   "_blank",
     "scrollbars=1,toolbar=0,resizable=1,width=" +
       wWidth +
       ",height=600,left=20,top=20"
   );
   if (newWindow.opener == null) newWindow.opener = self;
   return false;
-}
-
-function setClustering() {
-  var gridSizeSett = document.getElementById("gridsize").value;
-  var minClusterSett = document.getElementById("minclustersize").value;
-  if (document.getElementById("clusteroff").checked == true) {
-    var clstrSwitch = "y";
-  } else {
-    var clstrSwitch = "n";
-  }
-  document.getElementById("gridSizeSetting").value = gridSizeSett;
-  document.getElementById("minClusterSetting").value = minClusterSett;
-  document.getElementById("clusterSwitch").value = clstrSwitch;
-}
-
-function refreshClustering() {
-  var searchForm = document.getElementById("mapsearchform");
-  searchForm.submit();
 }

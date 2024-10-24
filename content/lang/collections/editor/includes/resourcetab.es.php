@@ -24,7 +24,7 @@ $LANG['SEL_CHECKLIST'] = 'Seleccionar un Listado de Especies';
 $LANG['LINK_TO_CHECKLIST_2'] = 'Enlazar a Listado de Especies como Voucher';
 $LANG['DELETE_VOUCHER_LINK'] = 'Eliminar voucher enlazado';
 $LANG['SURE_REMOVE_VOUCHER'] = '¿Está seguro que quiere eliminar este voucher enlazado?';
-$LANG['IF_X'] = 'Si una X roja no es desplegada al lado derecho del nombre del listado de especiese, usted no tiene permisos de edición para ese listado de especie y, por lo tanto, no puede remover el enlace del voucher sin contactar al propietario del listado';
+$LANG['IF_X'] = 'Si el icono de eliminación no se muestra a la derecha del nombre de la lista, no tiene derechos de edición para esa lista y, por lo tanto, no puede eliminar el enlace del cupón sin comunicarse con el propietario de la lista.';
 $LANG['SPEC_DUPES'] = 'Duplicados de Especímenes';
 $LANG['SEARCH_RECS'] = 'Buscar Registros para enlazar';
 $LANG['CLUSTER_TITLE'] = 'Título del Grupo';
@@ -48,6 +48,8 @@ $LANG['GEN_RES_EDITOR'] = 'Editor de Recursos Genéticos';
 $LANG['SAVE_EDITS'] = 'Guardar Ediciones';
 $LANG['DEL_GEN_RES'] = 'Eliminar Recurso Genético';
 $LANG['DEL_RES'] = 'Eliminar Recurso';
+$LANG['NO_CHECKLISTS'] = 'No se han establecido vínculos con los vales de la lista de verificación';
+$LANG['NO_GENETIC_RESOURCES'] = 'No se han establecido vínculos genéticos.';
 
 include_once($SERVER_ROOT.'/content/lang/collections/associations.es.php');
 ?>

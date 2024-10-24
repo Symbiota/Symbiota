@@ -1,10 +1,11 @@
 function copyUrl(){
+	host = window.location.host;
 	var $temp = $("<input>");
 	$("body").append($temp);
-	var activeLink = window.location.href;
-	if(activeLink.substring(activeLink.length - 3) == "php"){
-		activeLink = activeLink + "?" + sessionStorage.querystr;
-	}
+	var activeLink = host + window.location.pathname;
+	if(sessionStorage.querystr){
+		activeLink = activeLink + "?" + encodedQueryStr(sessionStorage.querystr);
+   }
 	$temp.val(activeLink).select();
 	document.execCommand("copy");
 	$temp.remove();
@@ -54,14 +55,26 @@ function openIndPU(occId,clid){
 	return false;
 }
 
-function openGoogleMapPU(){
-	let url = 'map/googlemap.php?'+sessionStorage.querystr;
-	window.open(url,'gmap','toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=1,resizable=1,width=1150,height=900,left=20,top=20');
+function openMapPU() {
+	let url = 'map/index.php?'+encodedQueryStr(sessionStorage.querystr)+'&gridSizeSetting=60&minClusterSetting=10&clusterSwitch=y&menuClosed';
+	window.open(url,'Map Search','toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=1,resizable=1,width=1150,height=900,left=20,top=20');
 }
 
-function openLeafletMapPU(){
-	let url = 'map/leafletmap.php?'+sessionStorage.querystr;
-	window.open(url,'leafmap','toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=1,resizable=1,width=1150,height=900,left=20,top=20');
+function encodedQueryStr(querystr){
+	let encodedQueryStr = "";
+	querystr.split("&").forEach(function(part) {
+		let eq = part.indexOf("=");
+		let key = part;
+		let val = "";
+		if(eq > -1){
+			key = part.substr(0, eq);
+			val = encodeURIComponent(part.substr(eq + 1));
+			if(key == 'db') val = val.replace(/%2C/g, ",");		
+		}
+		if(encodedQueryStr != "") encodedQueryStr = encodedQueryStr + "&";
+		encodedQueryStr = encodedQueryStr + key + "=" + val;
+	});
+	return encodedQueryStr;
 }
 
 function targetPopup(f) {

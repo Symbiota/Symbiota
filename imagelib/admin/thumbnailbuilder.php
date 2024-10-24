@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ImageCleaner.php');
@@ -14,7 +12,7 @@ $tid = array_key_exists('tid', $_REQUEST) ? filter_var($_REQUEST['tid'], FILTER_
 $buildMediumDerivatives = array_key_exists('buildmed', $_POST) ? filter_var($_POST['buildmed'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $evaluateOrientation = array_key_exists('evalorientation', $_POST) ? filter_var($_POST['evalorientation'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $limit = array_key_exists('limit', $_POST) ? filter_var($_POST['limit'], FILTER_SANITIZE_NUMBER_INT) : '';
-$action = array_key_exists('action', $_REQUEST) ? htmlspecialchars($_REQUEST['action'], HTML_SPECIAL_CHARS_FLAGS) : '';
+$action = array_key_exists('action', $_REQUEST) ? htmlspecialchars($_REQUEST['action'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 
 $isEditor = false;
 if($IS_ADMIN) $isEditor = true;
@@ -33,6 +31,7 @@ $imgManager->setTestOrientation($evaluateOrientation);
 //Set default actions
 if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') $buildMediumDerivatives = true;
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['THUMB_BUILDER']; ?></title>
@@ -64,21 +63,21 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], HTML_SPECIAL_CHARS_FLAGS); ?></a> &gt;&gt;
+		<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 		<?php
-		if($collid) echo '<a href="../../collections/misc/collprofiles.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&emode=1">' . htmlspecialchars($LANG['COL_MAN_MENU'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt;';
-		else echo '<a href="../../sitemap.php">' . htmlspecialchars($LANG['SITEMAP'], HTML_SPECIAL_CHARS_FLAGS) . '</a> &gt;&gt;';
+		if($collid) echo '<a href="../../collections/misc/collprofiles.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">' . htmlspecialchars($LANG['COL_MAN_MENU'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt;';
+		else echo '<a href="../../sitemap.php">' . htmlspecialchars($LANG['SITEMAP'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt;';
 		?>
-		<b> <?php echo htmlspecialchars($LANG['THUMB_BUILDER'], HTML_SPECIAL_CHARS_FLAGS) ?> </b>
+		<b> <?php echo htmlspecialchars($LANG['THUMB_BUILDER'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?> </b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<?php
 		if($isEditor){
-			echo '<h2>'.$LANG['THUMB_MAINT_TOOL'];
+			echo '<h1 class="page-heading">'.$LANG['THUMB_MAINT_TOOL'];
 			if($collid) echo ' - '.$imgManager->getCollectionName();
 			elseif($collid === '0') echo ' - '.$LANG['FIELD_IMAGES'];
-			echo '</h2>';
+			echo '</h1>';
 			if($action && $action != 'none'){
 				if($action == 'resetprocessing'){
 					$imgManager->resetProcessing();
@@ -102,7 +101,7 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 			}
 			?>
 			<section class="fieldset-like">
-				<h1> <span> <?php echo $LANG['THUMB_BUILDER']; ?> </span> </h1>
+				<h2> <span> <?php echo $LANG['THUMB_BUILDER']; ?> </span> </h2>
 				<div>
 					<?php
 					$reportArr = $imgManager->getReportArr();
@@ -112,7 +111,7 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 						echo '<ul>';
 						foreach($reportArr as $id => $retArr){
 							echo '<li>';
-							echo '<a href="thumbnailbuilder.php?collid=' . htmlspecialchars($id, HTML_SPECIAL_CHARS_FLAGS) . '&tid=' . htmlspecialchars($tid, HTML_SPECIAL_CHARS_FLAGS) . '&action=none">';
+							echo '<a href="thumbnailbuilder.php?collid=' . htmlspecialchars($id, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&tid=' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&action=none">';
 							echo $retArr['name'];
 							echo '</a>';
 							echo ': '.$retArr['cnt'].' images';
@@ -176,7 +175,7 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 			<?php
 			if($collid){
 				if($remoteImgCnt = $imgManager->getRemoteImageCnt()){
-					?>		
+					?>
 					<fieldset style="margin:30px 10px;padding:15px">
 						<legend><b><?php echo $LANG['THUMB_REMAPPER']; ?></b></legend>
 						<form name="tnrebuildform" action="thumbnailbuilder.php" method="post">
@@ -187,12 +186,12 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 								<?php echo $LANG['IMAGES_AVAIL_REFRESH'].': '.$remoteImgCnt; ?>
 							</div>
 							<div style="margin-bottom:10px;">
-								<?php echo $LANG['CATNUM_RANGE']; ?>: <input name="catNumLow" type="text" value="<?php echo (isset($_POST['catNumLow']) ? filter_var($_POST['catNumLow'], FILTER_SANITIZE_STRING) : ''); ?>" /> -
-								<input name="catNumHigh" type="text" value="<?php echo (isset($_POST['catNumHigh']) ? filter_var($_POST['catNumHigh'], FILTER_SANITIZE_STRING) : ''); ?>" />
+								<?php echo $LANG['CATNUM_RANGE']; ?>: <input name="catNumLow" type="text" value="<?php echo (isset($_POST['catNumLow']) ? htmlspecialchars($_POST['catNumLow'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>" /> -
+								<input name="catNumHigh" type="text" value="<?php echo (isset($_POST['catNumHigh']) ? htmlspecialchars($_POST['catNumHigh'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>" />
 							</div>
 							<div style="margin-bottom:10px;vertical-align:top;height:90px">
 								<div style="float:left"><?php echo $LANG['CATNUM_LIST']; ?>: </div>
-								<div style="margin-left:5px;float:left"><textarea name="catNumList" rows="5" cols="50"><?php echo (isset($_POST['catNumList']) ? filter_var($_POST['catNumList'], FILTER_SANITIZE_STRING) : ''); ?></textarea></div>
+								<div style="margin-left:5px;float:left"><textarea name="catNumList" rows="5" cols="50"><?php echo (isset($_POST['catNumList']) ? htmlspecialchars($_POST['catNumList'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?></textarea></div>
 							</div>
 							<div style="margin-bottom:10px;">
 								<input name="evaluate_ts" type="radio" value="1" checked /> <?php echo $LANG['ONLY_PROCESS_RECENT']; ?><br/>
@@ -204,7 +203,7 @@ if(!$buildMediumDerivatives && $imgManager->getManagementType() == 'Live Data') 
 							</div>
 							<div style="margin-bottom:10px;">
 								<input id="evalorientation" name="evalorientation" type="checkbox" value="1" <?php echo ($evaluateOrientation?'checked':''); ?> /> <?php echo $LANG['ROTATE_IMGS']; ?>
-								
+
 							</div>
 							<div style="margin:20px;clear:both">
 								<input name="collid" type="hidden" value="<?php echo $collid; ?>" />

@@ -5,6 +5,8 @@ Language: English
 ------------------
 */
 
+$LANG['HOME'] = 'Home';
+$LANG['COL_MGMNT'] = 'Collection Management Panel';
 $LANG['UID_MAP'] = 'GUID (UUID) Mapper';
 $LANG['GUID_CP'] = 'GUID Maintenance Control Panel';
 $LANG['REC_WO_GUIDS'] = 'Records without GUIDs (UUIDs)';

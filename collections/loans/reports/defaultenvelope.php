@@ -57,6 +57,9 @@ if($outputMode == 'doc'){
 	$targetFile = $SERVER_ROOT.'/temp/report/'.$PARAMS_ARR['un'].'_addressed_envelope.docx';
 	$phpWord->save($targetFile, 'Word2007');
 
+	ob_start();
+	ob_clean();
+	ob_end_flush();
 	header('Content-Description: File Transfer');
 	header('Content-type: application/force-download');
 	header('Content-Disposition: attachment; filename='.basename($targetFile));
@@ -67,21 +70,22 @@ if($outputMode == 'doc'){
 }
 else{
 	?>
-	<html>
+	<!DOCTYPE html>
+	<html lang="<?php echo $LANG_TAG ?>">
 		<head>
 			<title>Addressed Envelope</title>
 			<?php
-	
+
 			include_once($SERVER_ROOT.'/includes/head.php');
 			?>
 			<style type="text/css">
-				body {font-family:arial,sans-serif;}
 				p.printbreak {page-break-after:always;}
 				.accnum {margin-left:2.5in;font:8pt arial,sans-serif;}
 				.toaddress {margin-left:3in;font:12pt arial,sans-serif;}
 			</style>
 		</head>
 		<body style="background-color:#ffffff;">
+			<h1 class="page-heading screen-reader-only">Addressed Envelope</h1>
 			<div>
 				<table>
 					<tr style="height:1in;">

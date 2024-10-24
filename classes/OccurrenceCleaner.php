@@ -43,7 +43,7 @@ class OccurrenceCleaner extends Manager{
 		}
 		$rs->free();
 
-		$retArr = array();
+		$stagingArr = array();
 		if($dupArr){
 			$sqlFrag = '';
 			if($type=='cat'){
@@ -52,13 +52,15 @@ class OccurrenceCleaner extends Manager{
 			else{
 				$sqlFrag = 'occid, otherCatalogNumbers, otherCatalogNumbers AS dupid FROM omoccurrences WHERE collid = '.$this->collid.' AND otherCatalogNumbers IN("'.implode('","', $dupArr).'") ORDER BY otherCatalogNumbers';
 			}
-			$retArr = $this->getDuplicates($sqlFrag);
+			$stagingArr = $this->getDuplicates($sqlFrag);
 		}
 
 		if($type=='other' && count($dupArr) < $limit){
-			$retArr = array_merge($retArr, $this->setAdditionalIdentifiers($cnt, ($limit - count($dupArr))));
+			$stagingArr = array_merge($stagingArr, $this->setAdditionalIdentifiers($cnt, ($limit - count($dupArr))));
 		}
 
+		//Replace catalog number keys with renumbered numeric keys, thus avoid unusual characters interferring with naming form target element
+		$retArr = array_values($stagingArr);
 		return $retArr;
 	}
 
@@ -147,7 +149,7 @@ class OccurrenceCleaner extends Manager{
 			$sqlFragment;
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_assoc()){
-			$retArr[$row['dupid']][$row['occid']] = array_change_key_case($row);
+			$retArr[strtolower($row['dupid'])][$row['occid']] = array_change_key_case($row);
 		}
 		$rs->free();
 		return $retArr;
@@ -157,6 +159,7 @@ class OccurrenceCleaner extends Manager{
 		$status = true;
 		$this->verboseMode = 2;
 		$editorManager = new OccurrenceEditorManager($this->conn);
+		$editorManager->setCollId($this->collid);
 		foreach($occidArr as $target => $occArr){
 			$mergeArr = array($target);
 			foreach($occArr as $source){
@@ -329,14 +332,9 @@ class OccurrenceCleaner extends Manager{
 	//Bad countries
 	public function getBadCountryCount(){
 		$retCnt = 0;
-		/*
-		$sql = 'SELECT COUNT(DISTINCT o.country) AS cnt '.
-			'FROM omoccurrences o LEFT JOIN lkupcountry l ON o.country = l.countryname '.
-			'WHERE o.country IS NOT NULL AND o.collid = '.$this->collid.' AND l.countryid IS NULL ';
-		*/
 		$sql = 'SELECT COUNT(DISTINCT country) AS cnt
 			FROM omoccurrences
-			WHERE country IS NOT NULL AND collid = 1 AND country NOT IN(SELECT geoterm FROM geographicthesaurus WHERE geolevel = 50)';
+			WHERE country IS NOT NULL AND collid = '.$this->collid.' AND country NOT IN(SELECT geoterm FROM geographicthesaurus WHERE geolevel = 50)';
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
 			$retCnt = $r->cnt;
@@ -347,15 +345,9 @@ class OccurrenceCleaner extends Manager{
 
 	public function getBadCountryArr(){
 		$retArr = array();
-		/*
-		$sql = 'SELECT country, count(o.occid) as cnt '.
-			'FROM omoccurrences o LEFT JOIN lkupcountry l ON o.country = l.countryname '.
-			'WHERE o.country IS NOT NULL AND o.collid = '.$this->collid.' AND l.countryid IS NULL '.
-			'GROUP BY o.country ';
-		*/
 		$sql = 'SELECT country, count(occid) as cnt
 			FROM omoccurrences
-			WHERE country IS NOT NULL AND collid = 1 AND country NOT IN(SELECT geoterm FROM geographicthesaurus WHERE geolevel = 50)
+			WHERE country IS NOT NULL AND collid = '.$this->collid.' AND country NOT IN(SELECT geoterm FROM geographicthesaurus WHERE geolevel = 50)
 			GROUP BY country';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -370,7 +362,6 @@ class OccurrenceCleaner extends Manager{
 	public function getGoodCountryArr($includeStates = false){
 		$retArr = array();
 		if($includeStates){
-			//$sql = 'SELECT c.countryname, s.statename FROM lkupcountry c LEFT JOIN lkupstateprovince s ON c.countryid = s.countryid ';
 			$sql = 'SELECT g1.geoterm as countryName, g2.geoterm AS stateName
 				FROM geographicthesaurus g1 INNER JOIN geographicthesaurus g2 ON g1.geoThesID = g2.parentID
 				WHERE g1.geoLevel = 50 AND g2.geoLevel = 60';
@@ -477,6 +468,10 @@ class OccurrenceCleaner extends Manager{
 				$retArr[$r->countryName][] = $r->stateName;
 			}
 			$rs->free();
+			foreach ($retArr as &$counties) {
+				sort($counties, SORT_STRING);
+			}
+			unset($counties);
 		}
 		ksort($retArr);
 		$retArr[] = 'unknown';
@@ -668,7 +663,7 @@ class OccurrenceCleaner extends Manager{
 		$rs = $this->conn->query($sql);
 		$previousCoordStr = '';
 		while($r = $rs->fetch_object()){
-			echo '<li>Checking occurrence <a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($r->occid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($r->occid, HTML_SPECIAL_CHARS_FLAGS) . '</a>...</li>';
+			echo '<li>Checking occurrence <a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($r->occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($r->occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>...</li>';
 			$recCnt++;
 			if($previousCoordStr != $r->decimallatitude.','.$r->decimallongitude){
 				$googleUnits = $this->callGoogleApi($r->decimallatitude, $r->decimallongitude);

@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 //error_reporting(E_ALL);
 include_once('../config/symbini.php');
@@ -8,9 +6,9 @@ header('Content-Type: text/html; charset='.$CHARSET);
 
 $clid = array_key_exists('clid', $_REQUEST) ? $_REQUEST['clid'] : 0;
 $dynClid = array_key_exists('dynclid', $_REQUEST) ? $_REQUEST['dynclid'] : 0;
-$taxonFilter = array_key_exists('taxonfilter', $_REQUEST) ? htmlspecialchars($_REQUEST['taxonfilter'], HTML_SPECIAL_CHARS_FLAGS) : '';
+$taxonFilter = array_key_exists('taxonfilter', $_REQUEST) ? htmlspecialchars($_REQUEST['taxonfilter'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $showCommon = array_key_exists('showcommon', $_REQUEST) ? $_REQUEST['showcommon'] : 0;
-$lang = array_key_exists('lang', $_REQUEST) ? htmlspecialchars($_REQUEST['lang'], HTML_SPECIAL_CHARS_FLAGS) : $defaultLang;
+$lang = array_key_exists('lang', $_REQUEST) ? htmlspecialchars($_REQUEST['lang'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : $DEFAULT_LANG;
 
 //Sanitation
 if(!is_numeric($clid)) $clid = 0;
@@ -26,6 +24,7 @@ $fcManager->setLang($lang);
 
 $sciArr = array();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Flash Cards</title>
@@ -148,7 +147,7 @@ $sciArr = array();
 		echo $checklists_flashcardsCrumbs;
 	}
 	else{
-		echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($clid, HTML_SPECIAL_CHARS_FLAGS) . '&dynclid=' . htmlspecialchars($dynClid, HTML_SPECIAL_CHARS_FLAGS) . '">';
+		echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&dynclid=' . htmlspecialchars($dynClid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 		echo $fcManager->getClName();
 		echo '</a> &gt;&gt; ';
 	}
@@ -157,6 +156,7 @@ $sciArr = array();
 	?>
 	<!-- This is inner text! -->
 	<div id='innertext'>
+		<h1 class="page-heading screen-reader-only">Flash Cards</h1>
 		<div style="width:420px;margin-left:auto;margin-right:auto;">
 			<div style="width:420px;height:420px;text-align:center;">
 				<div>
@@ -216,10 +216,10 @@ $sciArr = array();
 							</div>
 							<div style='margin-top:3px;'>
 								<?php
-									//Display Common Names: 0 = false, 1 = true
-									if($displayCommonNames){
-										echo '<input id="showcommon" name="showcommon" type="checkbox" value="1" '.($showCommon?"checked":"").' /> <label for="showcommon">Display Common Names</label>'."\n";
-									}
+								//Display Common Names: 0 = false, 1 = true
+								if($DISPLAY_COMMON_NAMES){
+									echo '<input id="showcommon" name="showcommon" type="checkbox" value="1" '.($showCommon?"checked":"").' /> <label for="showcommon">Display Common Names</label>'."\n";
+								}
 								?>
 							</div>
 							<button type="submit" onclick="document.getElementById('taxonfilterform').submit();">Show Image</button>

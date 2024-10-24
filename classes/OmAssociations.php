@@ -1,7 +1,7 @@
 <?php
 include_once('Manager.php');
-include_once('OccurrenceUtilities.php');
-include_once('UuidFactory.php');
+include_once('utilities/OccurrenceUtil.php');
+include_once('utilities/UuidFactory.php');
 
 class OmAssociations extends Manager{
 
@@ -15,9 +15,9 @@ class OmAssociations extends Manager{
 
 	public function __construct($conn){
 		parent::__construct(null, 'write', $conn);
-		$this->schemaMap = array('associationType' => 's', 'occidAssociate' => 'i', 'relationship' => 's', 'relationshipID' => 's', 'subType' => 's', 'identifier' => 's',
+		$this->schemaMap = array('associationType' => 's', 'occidAssociate' => 'i', 'relationship' => 's', 'relationshipID' => 's', 'subType' => 's', 'objectID' => 's',
 			'basisOfRecord' => 's', 'resourceUrl' => 's', 'verbatimSciname' => 's', 'tid' => 'i', 'locationOnHost' => 's', 'conditionOfAssociate' => 's', 'establishedDate' => 's',
-			'imageMapJSON' => 's', 'dynamicProperties' => 's', 'notes' => 's', 'accordingTo' => 's', 'sourceIdentifier' => 's', 'recordID' => 's');
+			'imageMapJSON' => 's', 'dynamicProperties' => 's', 'notes' => 's', 'accordingTo' => 's', 'instanceID' => 's', 'recordID' => 's');
 	}
 
 	public function __destruct(){
@@ -55,7 +55,7 @@ class OmAssociations extends Manager{
 		}
 		if($uidArr){
 			//Add user names for modified and created by
-			$sql = 'SELECT uid, CONCAT_WS(", ",lastname, firstname) as fullname FROM users WHERE uid IN('.implode(',', $uidArr).')';
+			$sql = 'SELECT uid, CONCAT_WS(", ",lastname, firstname) as fullname FROM users WHERE uid IN(' . implode(',', array_keys($uidArr)) . ')';
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
 					$uidArr[$r->uid]['n'] = $r->fullname;
@@ -70,20 +70,21 @@ class OmAssociations extends Manager{
 			}
 		}
 		if($relOccidArr){
-			//Get catalog numbers for object occurrences
-			$sql = 'SELECT o.occid, IFNULL(o.institutioncode, c.institutioncode) as instCode, IFNULL(o.collectioncode, c.collectioncode) as collCode, o.catalogNumber
+			//Get catalog numbers and scientific name for object occurrences
+			$sql = 'SELECT o.occid, IFNULL(o.institutioncode, c.institutioncode) as instCode, IFNULL(o.collectioncode, c.collectioncode) as collCode, o.catalogNumber, o.sciname
 				FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid
 				WHERE o.occid IN('.implode(',',array_keys($relOccidArr)).')';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$prefix = '';
-				if(strpos($r->catalogNumber, $r->instCode) === false){
+				if($r->catalogNumber && strpos($r->catalogNumber, $r->instCode) === false){
 					$prefix = $r->instCode;
 					if($r->collCode) $prefix .= '-' . $r->collCode;
 					$prefix .= ':';
 				}
 				foreach($relOccidArr[$r->occid] as $targetAssocID){
-					$retArr[$targetAssocID]['object-catalogNumber'] = $prefix . $r->catalogNumber;
+					$retArr[$targetAssocID]['object-catalogNumber'] = $prefix . ($r->catalogNumber ?? 'not defined');
+					$retArr[$targetAssocID]['verbatimSciname'] = $r->sciname;
 				}
 			}
 			$rs->free();
@@ -121,14 +122,19 @@ class OmAssociations extends Manager{
 			$sql .= ') VALUES('.trim($sqlValues, ', ').') ';
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param($this->typeStr, ...$paramArr);
-				if($stmt->execute()){
-					if($stmt->affected_rows || !$stmt->error){
-						$this->assocID = $stmt->insert_id;
-						$status = true;
+				try{
+					if($stmt->execute()){
+						if($stmt->affected_rows || !$stmt->error){
+							$this->assocID = $stmt->insert_id;
+							$status = true;
+						}
+						else $this->errorMessage = $stmt->error;
 					}
-					else $this->errorMessage = 'ERROR inserting omoccurassociations record (2): '.$stmt->error;
+				} catch (mysqli_sql_exception $e){
+					$this->errorMessage = $stmt->error;
+				} catch (Exception $e){
+					$this->errorMessage = 'unknown error';
 				}
-				else $this->errorMessage = 'ERROR inserting omoccurassociations record (1): '.$stmt->error;
 				$stmt->close();
 			}
 			else $this->errorMessage = 'ERROR preparing statement for omoccurassociations insert: '.$this->conn->error;
@@ -160,7 +166,7 @@ class OmAssociations extends Manager{
 			}
 			$paramArr[] = $this->assocID;
 			$this->typeStr .= 'i';
-			$sql = 'UPDATE omoccurassociations SET '.trim($sqlFrag, ', ').' WHERE (assocID = ?)';
+			$sql = 'UPDATE IGNORE omoccurassociations SET '.trim($sqlFrag, ', ').' WHERE (assocID = ?)';
 			if($stmt = $this->conn->prepare($sql)) {
 				$stmt->bind_param($this->typeStr, ...$paramArr);
 				$stmt->execute();
@@ -181,9 +187,9 @@ class OmAssociations extends Manager{
 			if($postField){
 				$value = trim($inputArr[$postField]);
 				if($value){
-					if(strtolower($postField) == 'establisheddate') $value = OccurrenceUtilities::formatDate($value);
-					if(strtolower($postField) == 'modifieduid') $value = OccurrenceUtilities::verifyUser($value, $this->conn);
-					if(strtolower($postField) == 'createduid') $value = OccurrenceUtilities::verifyUser($value, $this->conn);
+					if(strtolower($postField) == 'establisheddate') $value = OccurrenceUtil::formatDate($value);
+					if(strtolower($postField) == 'modifieduid') $value = OccurrenceUtil::verifyUser($value, $this->conn);
+					if(strtolower($postField) == 'createduid') $value = OccurrenceUtil::verifyUser($value, $this->conn);
 				}
 				else $value = null;
 				$this->parameterArr[$field] = $value;

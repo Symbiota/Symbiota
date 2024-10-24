@@ -1,7 +1,7 @@
 <?php
 include_once('Manager.php');
-include_once('OccurrenceUtilities.php');
-include_once('UuidFactory.php');
+include_once('utilities/OccurrenceUtil.php');
+include_once('utilities/UuidFactory.php');
 
 class OmDeterminations extends Manager{
 
@@ -13,8 +13,16 @@ class OmDeterminations extends Manager{
 
 	public function __construct($conn){
 		parent::__construct(null, 'write', $conn);
+		/*
+		 $this->fieldMap = array('identifiedBy' => 's', 'identifiedByAgentID' => 'i', 'identifiedByID' => 's', 'dateIdentified' => 's', 'dateIdentifiedInterpreted' => 's',
+		 'higherClassification' => 's', 'family' => 's', 'sciname' => 's', 'verbatimIdentification' => 's', 'scientificNameAuthorship' => 's', 'tidInterpreted' => 'i',
+		 'identificationUncertain' => 'i', 'identificationQualifier' => 's', 'genus' => 's', 'specificEpithet' => 's', 'verbatimTaxonRank' => 's', 'taxonRank' => 's',
+		 'infraSpecificEpithet' => 's', 'isCurrent' => 'i', 'printQueue' => 'i', 'appliedStatus' => 'i', 'securityStatus' => 'i', 'securityStatusReason' => 's',
+		 'detType' => 's', 'identificationReferences' => 's', 'identificationRemarks' => 's', 'taxonRemarks' => 's', 'identificationVerificationStatus' => 's',
+		 'taxonConceptID' => 's', 'sourceIdentifier' => 's', 'sortSequence' => 'i', 'recordID' => 's', 'createdUid' => 'i', 'modifiedUid' => 'i', 'dateLastModified' => 's');
+		 */
 		$this->schemaMap = array('identifiedBy' => 's', 'dateIdentified' => 's', 'higherClassification' => 's', 'family' => 's', 'sciname' => 's', 'verbatimIdentification' => 's',
-			'scientificNameAuthorship' => 's', 'identificationUncertain' => 'i', 'identificationQualifier' => 's', 'isCurrent' => 'i', 'printQueue' => 'i', 'appliedStatus' => 'i',
+			'scientificNameAuthorship' => 's', 'identificationQualifier' => 's', 'isCurrent' => 'i', 'printQueue' => 'i', 'appliedStatus' => 'i',
 			'securityStatus' => 'i', 'securityStatusReason' => 's', 'detType' => 's', 'identificationReferences' => 's', 'identificationRemarks' => 's', 'taxonRemarks' => 's',
 			'identificationVerificationStatus' => 's', 'taxonConceptID' => 's', 'sourceIdentifier' => 's', 'sortSequence' => 'i');
 	}
@@ -75,14 +83,23 @@ class OmDeterminations extends Manager{
 			$sql .= ') VALUES('.trim($sqlValues, ', ').') ';
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param($this->typeStr, ...$paramArr);
-				if($stmt->execute()){
-					if($stmt->affected_rows || !$stmt->error){
-						$this->detID = $stmt->insert_id;
-						$status = true;
+				try {
+					if($stmt->execute()){
+						if($stmt->affected_rows || !$stmt->error){
+							$this->detID = $stmt->insert_id;
+							$status = true;
+						}
+						else $this->errorMessage = 'ERROR inserting omoccurdeterminations record (2): '.$stmt->error;
 					}
-					else $this->errorMessage = 'ERROR inserting omoccurdeterminations record (2): '.$stmt->error;
+					else $this->errorMessage = 'ERROR inserting omoccurdeterminations record (1): '.$stmt->error;
+				} catch (mysqli_sql_exception $e) {
+					if ($e->getCode() == '1062' || $e->getCode() == '1406') {
+						$this->errorMessage = $e->getMessage();
+					}
+					else {
+						throw $e;
+					}
 				}
-				else $this->errorMessage = 'ERROR inserting omoccurdeterminations record (1): '.$stmt->error;
 				$stmt->close();
 			}
 			else $this->errorMessage = 'ERROR preparing statement for omoccurdeterminations insert: '.$this->conn->error;
@@ -124,9 +141,9 @@ class OmDeterminations extends Manager{
 				$value = trim($inputArr[$postField]);
 				if($value){
 					$postField = strtolower($postField);
-					if($postField == 'establisheddate') $value = OccurrenceUtilities::formatDate($value);
-					if($postField == 'modifieduid') $value = OccurrenceUtilities::verifyUser($value, $this->conn);
-					if($postField == 'createduid') $value = OccurrenceUtilities::verifyUser($value, $this->conn);
+					if($postField == 'establisheddate') $value = OccurrenceUtil::formatDate($value);
+					if($postField == 'modifieduid') $value = OccurrenceUtil::verifyUser($value, $this->conn);
+					if($postField == 'createduid') $value = OccurrenceUtil::verifyUser($value, $this->conn);
 					if($postField == 'identificationuncertain' || $postField == 'iscurrent' || $postField == 'printqueue' || $postField == 'appliedstatus' || $postField == 'securitystatus'){
 						if(!is_numeric($value)){
 							$value = strtolower($value);

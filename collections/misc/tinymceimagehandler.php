@@ -1,6 +1,6 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/UtilityFunctions.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 /**
  * Based on code copied from https://www.tiny.cloud/docs/advanced/php-upload-handler/
@@ -11,7 +11,7 @@ include_once($SERVER_ROOT.'/classes/UtilityFunctions.php');
 /***************************************************
  * Only these origins are allowed to upload images *
  ***************************************************/
-$accepted_origins = array('http://localhost', UtilityFunctions::getDomain());
+$accepted_origins = array('http://localhost', GeneralUtil::getDomain());
 
 /*********************************************
  * Change thse lines to set the upload folder *

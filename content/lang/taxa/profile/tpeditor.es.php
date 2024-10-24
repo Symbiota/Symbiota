@@ -12,9 +12,10 @@ $LANG['HOME'] = 'Inicio';
 $LANG['TAX_PROF_PUBLIC_DISP'] = 'Visualización pública del perfil de taxón';
 $LANG['TAX_PROF_EDITOR'] = 'Editor de perfiles de taxón';
 $LANG['REDIRECTED_FROM'] = 'Redirigido desde';
+$LANG['VIEW_PUBLIC_TAXON'] = 'Ver Perfil de Taxón Público';
 $LANG['GO_TO_PARENT'] = 'Ir a Padre';
 $LANG['FAMILY'] = 'Familia';
-$LANG['SYN_VERNAC'] = 'Sinónimos / Lenguas vernáculas';
+$LANG['SYN_VERNAC'] = 'Sinónimos / Nombres comunes';
 $LANG['IMAGES'] = 'Imágenes';
 $LANG['IMAGE_SORT'] = "Clasificar imágenes";
 $LANG['ADD_IMAGE'] = "Agregar imagen";
@@ -45,5 +46,6 @@ $LANG['SCINAME'] = 'Nombre científico';
 $LANG['EDIT_TAXON'] = 'Editar taxón';
 $LANG['MORE_THAN_ONE_TAXON'] = 'Su término de búsqueda coincidió en más de un taxón. Seleccione el taxón objetivo a continuación';
 $LANG['NOT_IN_SYSTEM'] = 'no encontrado en el sistema. Revise la ortografía o comuníquese con el administrador para solicitar que se agregue el nombre al sistema';
+$LANG['EDIT_TAXON_PROFILE'] = 'Editar Perfil de Taxón';
 
 ?>

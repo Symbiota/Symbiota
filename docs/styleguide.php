@@ -1,9 +1,12 @@
 <?php
 include_once('../config/symbini.php');
-include_once('../content/lang/index.' . $LANG_TAG . '.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/templates/accessibility.' . $LANG_TAG . '.php'))
+	include_once($SERVER_ROOT . '/content/lang/templates/accessibility.en.php');
+else include_once($SERVER_ROOT . '/content/lang/templates/accessibility.' . $LANG_TAG . '.php');
 header("Content-Type: text/html; charset=" . $CHARSET);
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Style Guide</title>
@@ -19,6 +22,7 @@ header("Content-Type: text/html; charset=" . $CHARSET);
 	<main id="innertext">
 		<h1>Style Guide</h1>
 		<hr>
+		<h1 class="page-heading">Page Heading</h1>
 		<h1>Heading 1</h1>
 		<h2>Heading 2</h2>
 		<h3>Heading 3</h3>
@@ -29,7 +33,7 @@ header("Content-Type: text/html; charset=" . $CHARSET);
 		<p class="grid-3"><span class="button button-primary"><a href="#">Primary Button (Link)</a></span><span class="button button-secondary"><a href="#">Secondary Button (Link)</a></span><span class="button button-tertiary"><a href="#">Tertiary Button (Link)</a></span></p>
 		<h1>Forms in accessibility mode vs condensed mode</h1>
 		<section style="margin-bottom: 10;">
-			<button style="font-size:14" onclick="toggleAccessibilityStyles('<?php echo $CLIENT_ROOT . '/includes' . '/' ?>', '<?php echo $CSS_BASE_PATH ?>', '<?php echo $LANG['TOGGLE_508_OFF'] ?>', '<?php echo $LANG['TOGGLE_508_ON'] ?>')" id="accessibility-button-2" name="accessibility-button-2" data-accessibility="accessibility-button" ?><?php echo (isset($LANG['TOGGLE_508_ON'])?$LANG['TOGGLE_508_ON']:'Accessibility Mode'); ?></button>
+			<button style="font-size:14" onclick="toggleAccessibilityStyles()" id="accessibility-button-2" name="accessibility-button-2" data-accessibility="accessibility-button" ?><?= $LANG['TOGGLE_508_ON'] ?></button>
 		</section>
 		<section class="flex-form">
 			<section>
@@ -48,7 +52,7 @@ header("Content-Type: text/html; charset=" . $CHARSET);
 	<script type="text/javascript">
 		document.addEventListener('DOMContentLoaded', ()=>{
 			document.getElementById('accessibility-button-2').disabled=false;
-			updateButtonTextBasedOnEnabledStylesheet('<?php echo $LANG['TOGGLE_508_OFF'] ?>', '<?php echo $LANG['TOGGLE_508_ON'] ?>', 'accessibility-button-2');
+			updateButtonTextBasedOnEnabledStylesheet();
 		});
 	</script>
 </body>

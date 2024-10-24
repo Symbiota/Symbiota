@@ -26,16 +26,17 @@ if($SYMB_UID && $collid){
 $loanManager = new OccurrenceLoans();
 $loanManager->setCollId($collid);
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['LOAN_NOTES_EDITOR']; ?></title>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
-	<script type="text/javascript" src="../../js/jquery.js"></script>
-	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		function submitNotesForm(f){
 			self.close();
@@ -49,13 +50,12 @@ $loanManager->setCollId($collid);
 </head>
 <body>
 	<!-- This is inner text! -->
-	<div id="popup-innertext">
+	<div id="popup-innertext" class="left-breathing-room-rel">
+		<h1 class="page-heading"><?= $LANG['LOAN_NOTES_EDITOR']; ?></h1>
 		<?php
 		if($isEditor && $collid){
 			$noteArr = $loanManager->getSpecimenDetails($loanID, $occid)
 			?>
-			<fieldset class="notesDiv" >
-				<legend><?php echo $LANG['LOAN_SPEC_EDIT']; ?></legend>
 				<form name="noteEditor" action="outgoing.php" method="post" target="parentWin" onsubmit="submitNotesForm()">
 					<div>
 						<b><?php echo $LANG['DATE_RETURNED']; ?>:</b>
@@ -73,7 +73,6 @@ $loanManager->setCollId($collid);
 						<button name="formsubmit" type="submit" value="saveSpecimenDetails"><?php echo $LANG['SAVE_EDITS']; ?></button>
 					</div>
 				</form>
-			</fieldset>
 			<?php
 		}
 		else{

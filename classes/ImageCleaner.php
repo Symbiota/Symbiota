@@ -1,6 +1,7 @@
 <?php
 include_once('Manager.php');
 include_once('ImageShared.php');
+include_once('utilities/GeneralUtil.php');
 
 class ImageCleaner extends Manager{
 
@@ -68,7 +69,7 @@ class ImageCleaner extends Manager{
 			$status = true;
 			$cnt++;
 			$imgId = $row->imgid;
-			$this->logOrEcho($cnt.': Building thumbnail: <a href="../imgdetails.php?imgid=' . htmlspecialchars($imgId, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($imgId, HTML_SPECIAL_CHARS_FLAGS) . '</a>...');
+			$this->logOrEcho($cnt.': Building thumbnail: <a href="../imgdetails.php?imgid=' . htmlspecialchars($imgId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($imgId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>...');
 			$this->conn->autocommit(false);
 			//Tag for updating; needed to ensure two parallel processes are not processing the same image
 			$testSql = 'SELECT thumbnailurl, url FROM images WHERE (imgid = '.$imgId.') FOR UPDATE ';
@@ -374,7 +375,7 @@ class ImageCleaner extends Manager{
 			$url = $r->url;
 			$urlTn = $r->thumbnailurl;
 			$urlOrig = $r->originalurl;
-			$this->logOrEcho($cnt.'. Rebuilding thumbnail: <a href="../imgdetails.php?imgid=' . htmlspecialchars($r->imgid, HTML_SPECIAL_CHARS_FLAGS) . '" target="_blank">' . htmlspecialchars($r->imgid, HTML_SPECIAL_CHARS_FLAGS) . '</a> [cat#: ' . htmlspecialchars($r->catalognumber, HTML_SPECIAL_CHARS_FLAGS) . ']...',0,'div');
+			$this->logOrEcho($cnt.'. Rebuilding thumbnail: <a href="../imgdetails.php?imgid=' . htmlspecialchars($r->imgid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($r->imgid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> [cat#: ' . htmlspecialchars($r->catalognumber, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ']...',0,'div');
 			//echo 'evaluate_ts: '.$postArr['evaluate_ts'].'<br/>';
 			$tsSource = 0;
 			if($postArr['evaluate_ts']){
@@ -429,7 +430,7 @@ class ImageCleaner extends Manager{
 	}
 
 	private function getRemoteImageSql($postArr){
-		$domain = $this->getDomain();
+		$domain = GeneralUtil::getDomain();
 		$sql = 'FROM images i INNER JOIN omoccurrences o ON i.occid = o.occid '.
 			'WHERE (o.collid = '.$this->collid.') AND (i.thumbnailurl LIKE "%'.$domain.'/%" OR i.thumbnailurl LIKE "/%") '.
 			'AND IFNULL(i.originalurl,url) LIKE "http%" AND IFNULL(i.originalurl,url) NOT LIKE "%'.$domain.'/%" ';

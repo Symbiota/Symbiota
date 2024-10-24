@@ -5,16 +5,20 @@ function getObservationSvg(opts = {color: "#7A8BE7", size: 24, className:""}) {
 
    return L.divIcon({
       html: `
-<svg
-width="${opts.size}"
-height="${opts.size}"
-viewBox="-10 -10 ${opts.size + 20} ${opts.size + 20}"
-version="1.1"
-preserveAspectRatio="none"
-xmlns="http://www.w3.org/2000/svg"
->
-<polygon class="${opts.className}" points="${half},0 0,${opts.size} ${opts.size},${opts.size}" style="fill:${opts.color};stroke:black;stroke-width:3" />
-</svg>`,
+		<svg
+		width="${opts.size}"
+		height="${opts.size}"
+		viewBox="-10 -10 ${opts.size + 20} ${opts.size + 20}"
+		version="1.1"
+		preserveAspectRatio="none"
+		xmlns="http://www.w3.org/2000/svg"
+		>
+			<polygon 
+				class="${opts.className}" 
+				points="${half},0 0,${opts.size} ${opts.size},${opts.size}" 
+				style="fill:${opts.color};stroke:black;stroke-width:3" 
+			/>
+		</svg>`,
       className: "",
       observation: true,
       iconSize: [opts.size, opts.size],
@@ -22,11 +26,38 @@ xmlns="http://www.w3.org/2000/svg"
    });
 }
 
+function getSpecimenSvg(opts = {color: "#7A8BE7", size: 24, className:""}) {
+	const default_ops = {color: "#7A8BE7", size: 24};
+	opts = {...default_ops, ...opts};
+	const stroke_width = 2;
+	const size_with_stroke = stroke_width * 2 + opts.size;
+	return L.divIcon({
+		html: `
+			<svg 
+			height="${size_with_stroke * 2}"
+			width="${size_with_stroke * 2}"
+			version="1.1"
+			preserveAspectRatio="none"
+			xmlns="http://www.w3.org/2000/svg"
+			>
+				<circle 
+					r="${opts.size}" 
+					cx="${size_with_stroke}" cy="${size_with_stroke}" 
+					fill="${opts.color}" stroke="black" stroke-width="${stroke_width}"
+				/>
+			</svg>`,
+		className: "",
+		iconSize: [size_with_stroke, size_with_stroke],
+		iconAnchor: [size_with_stroke, size_with_stroke],
+	});
+}
+
 class LeafletMap {
    //DEFAULTS
    DEFAULT_MAP_OPTIONS = {
-      center: [43.64701, -79.39425],
-      zoom: 15,
+      center: [0, 0],
+      zoom: 2,
+      minZoom: 2,
    };
 
    DEFAULT_SHAPE_OPTIONS = {
@@ -61,7 +92,12 @@ class LeafletMap {
    /* Reference Leaflet Feature Group for all drawn items*/
    drawLayer;
 
-   constructor(map_id, map_options=this.DEFAULT_MAP_OPTIONS) {
+   constructor(map_id, map_options={}) {
+
+	  map_options = {
+		 ...this.DEFAULT_MAP_OPTIONS,
+		 ...map_options,
+	  }
 
       this.mapLayer = L.map(map_id, map_options);
 
@@ -69,25 +105,55 @@ class LeafletMap {
          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
          subdomains:['mt0','mt1','mt2','mt3'],
          maxZoom: 20, 
-         tileSize: 256,
+         worldCopyJump: true,
+         detectRetina:true,
       }).addTo(this.mapLayer);
 
       const satelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
          subdomains:['mt1','mt2','mt3'],
          maxZoom: 20, 
+         noWrap:true,
+         displayRetina:true,
          tileSize: 256,
+      });
+      const basicLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+         displayRetina:true,
+         maxZoom: 20, 
+         noWrap:true,
+         tileSize: 256,
+         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      });
+
+      var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+         displayRetina:true,
+         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+      });
+
+      var macro_strat = L.tileLayer('https://macrostrat.org/api/v2/maps/burwell/emphasized/{z}/{x}/{y}/tile.png', {
+         displayRetina:true,
+         attribution: 'Map data: &copy; <a href="https://macrostrat.org/#about">Macrostrat</a> (<a href="http://creativecommons.org/licenses/by/4.0/">CC-BY-4.0</a>)'
+      });
+
+      const openTopoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+         maxZoom: 17,
+         displayRetina:true,
+         attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
       });
 
       if(map_options.layer_control !== false) {
          L.control.layers({
             "Terrain": terrainLayer,
-            "Satellite": satelliteLayer
+            "Basic": basicLayer,
+            "Topo": openTopoLayer,
+            "Satellite": Esri_WorldImagery,
+            "Macrostrat": macro_strat,
+            //"Satellite": satelliteLayer,
          }).addTo(this.mapLayer);
       }
 
       if(map_options.scale !== false) {
-         L.control.scale().addTo(this.mapLayer);
+         L.control.scale({maxWidth: 200}).addTo(this.mapLayer);
       }
 
       this.setLang(map_options.lang);
@@ -462,15 +528,6 @@ class LeafletMap {
          if(drawOptions.mode !== "polyline") drawOptions.polyline = false;
       }
 
-      if(false) {
-         // Set the button title text for the polygon button
-         L.drawLocal.draw.toolbar.buttons.polygon = 'Draw a sexy polygon!';
-    
-         // Set the tooltip start text for the rectangle
-         L.drawLocal.draw.handlers.rectangle.tooltip.start = 'Not telling...';
-         L.drawLocal.draw.handlers.circle.tooltip.start = 'Not telling...';
-      }
-
       if(drawOptions.control || drawOptions.control === undefined) {
          var drawControl = new L.Control.Draw({
             position: 'topright',
@@ -542,9 +599,20 @@ class LeafletMap {
 
    }
 
-   drawShape(shape) {
+   drawShape(shape, fitbounds=true) {
       const id = this.shapes.length;
       switch(shape.type) {
+         case "geoJSON":
+            const geoJSON = L.geoJSON(shape.geoJSON);
+
+            for(let layer_id of Object.keys(geoJSON._layers)) {
+               for(let polygon of geoJSON._layers[layer_id]._latlngs) {
+                  this.drawShape({type:"polygon", latlngs: polygon}, false)
+               }
+            }
+
+            this.mapLayer.fitBounds(geoJSON.getBounds());
+            return;
          case "polygon":
             const poly = L.polygon(shape.latlngs);
             this.activeShape = getShapeCoords(shape.type, poly);
@@ -570,7 +638,9 @@ class LeafletMap {
       this.activeShape.id = id;
       this.shapes.push(this.activeShape);
 
-      this.mapLayer.fitBounds(this.activeShape.layer.getBounds());
+      if(fitbounds) {
+         this.mapLayer.fitBounds(this.activeShape.layer.getBounds());
+      }
    }
 
 }
@@ -590,10 +660,8 @@ function getShapeCoords(layerType, layer) {
       case "polygon":
          let latlngs = layer._latlngs[0].map(coord=> [coord.lat, coord.lng]);
          latlngs.push(latlngs[0]);
-
          let polygon = latlngs.map(coord => 
             (`${coord[0].toFixed(SIG_FIGS)} ${coord[1].toFixed(SIG_FIGS)}`));
-
          shape.latlngs = latlngs;
          shape.wkt = "POLYGON ((" + polygon.join(',') + "))";
          shape.center = layer.getBounds().getCenter();

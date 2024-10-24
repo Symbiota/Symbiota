@@ -6,7 +6,7 @@ else include_once($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.en.
 header("Content-Type: text/html; charset=".$CHARSET);
 if(!$SYMB_UID) header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=../collections/loans/incoming.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$collid = $_REQUEST['collid'];
+$collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $loanId = array_key_exists('loanid',$_REQUEST)?$_REQUEST['loanid']:0;
 $loanIdborr = array_key_exists('loanidentifierborr',$_REQUEST)?$_REQUEST['loanidentifierborr']:0;
 $formSubmit = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
@@ -27,11 +27,11 @@ $statusStr = '';
 if($isEditor){
 	if($formSubmit){
 		if($formSubmit == 'createLoanIn'){
-			$loanId = $loanManager->createNewLoanIn($_POST);
+			$loanId = filter_var($loanManager->createNewLoanIn($_POST), FILTER_SANITIZE_NUMBER_INT);
 			if(!$loanId) $statusStr = $loanManager->getErrorMessage();
 		}
 		elseif($formSubmit == 'Save Incoming'){
-			$statusStr = $loanManager->editLoanIn($_POST);
+			$statusStr = htmlspecialchars($loanManager->editLoanIn($_POST), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 		}
 		elseif ($formSubmit == "delAttachment") {
 			// Delete correspondence attachment
@@ -46,16 +46,17 @@ if($isEditor){
 	}
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 	<title><?php echo $DEFAULT_TITLE . ': ' . $LANG['INCOMING_LOAN_MANAGE']; ?></title>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
-	<script type="text/javascript" src="../../js/jquery.js"></script>
-	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		var tabIndex = <?php echo $tabIndex; ?>;
 
@@ -95,12 +96,13 @@ if($isEditor){
 	?>
 	<div class="navpath">
 		<a href='../../index.php'>Home</a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo $LANG['COL_MNG_MENU']; ?></a> &gt;&gt;
-		<a href="index.php?tabindex=1&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo $LANG['LOAN_INDEX']; ?></a> &gt;&gt;
-		<a href="incoming.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($loanId, HTML_SPECIAL_CHARS_FLAGS); ?>"><b><?php echo $LANG['INCOMING_LOAN_MANAGE']; ?></b></a>
+		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo $LANG['COL_MNG_MENU']; ?></a> &gt;&gt;
+		<a href="index.php?tabindex=1&collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo $LANG['LOAN_INDEX']; ?></a> &gt;&gt;
+		<a href="incoming.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&loanid=' . htmlspecialchars($loanId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><b><?php echo $LANG['INCOMING_LOAN_MANAGE']; ?></b></a>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
+		<h1 class="page-heading"><?= $LANG['INCOMING_LOAN_MANAGE']; ?></h1>
 		<?php
 		if($isEditor && $collid){
 			if($statusStr){
@@ -312,9 +314,9 @@ if($isEditor){
 										foreach($attachments as $attachId => $attachArr){
 											echo '<li><div style="float: left;">' . $attachArr['timestamp'] . ' -</div>';
 											echo '<div style="float: left; margin-left: 5px;"><a href="../../' .
-												$attachArr['path'] . $attachArr['filename']  . '" target="_blank">' .
+												$attachArr['path'] . $attachArr['filename']  . '" target="_blank" rel="noopener">' .
 												($attachArr['title'] != "" ? $attachArr['title'] : $attachArr['filename']) . '</a></div>';
-											echo '<a href="incoming.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&loanid=' . htmlspecialchars($loanId, HTML_SPECIAL_CHARS_FLAGS) . '&attachid=' . htmlspecialchars($attachId, HTML_SPECIAL_CHARS_FLAGS) . '&formsubmit=delAttachment"><img src="../../images/del.png" style="width: 15px; margin-left: 5px;"></a></li>';
+											echo '<a href="incoming.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&loanid=' . htmlspecialchars($loanId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&attachid=' . htmlspecialchars($attachId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&formsubmit=delAttachment"><img src="../../images/del.png" style="width: 1.2em; margin-left: 5px;"></a></li>';
 										}
 										echo '</ul>';
 									}
@@ -337,13 +339,13 @@ if($isEditor){
 						<?php
 					}
 					?>
-					<div style="margin:20px"><b>&lt;&lt; <a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo $LANG['RETURN_LOAN_INDEX']; ?></a></b></div>
+					<div style="margin:20px"><b>&lt;&lt; <a href="index.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo $LANG['RETURN_LOAN_INDEX']; ?></a></b></div>
 				</div>
 				<?php
 				if($specList){
 					?>
 					<div id="specdiv">
-						<table class="styledtable" style="font-family:Arial;font-size:12px;">
+						<table class="styledtable" style="font-size:12px;">
 							<tr>
 								<th style="width:100px;text-align:center;"><?php echo $LANG['CATNO']; ?></th>
 								<th style="width:375px;text-align:center;"><?php echo $LANG['DETAILS']; ?></th>
@@ -355,8 +357,10 @@ if($isEditor){
 								<tr>
 									<td>
 										<div style="float:right">
-											<a href="#" onclick="openIndPopup(<?php echo $occid; ?>); return false;"><img src="../../images/list.png" style="width:13px" title="<?php echo $LANG['OPEN_SPECIMEN_DETAILS']; ?>" /></a><br/>
-											<a href="#" onclick="openEditorPopup(<?php echo $occid; ?>); return false;"><img src="../../images/edit.png" style="width:13px" title="<?php echo $LANG['OPEN_OCC_EDITOR']; ?>" /></a>
+											<a href="#" onclick="openIndPopup(<?php echo $occid; ?>); return false;"><img src="../../images/list.png" style="width:1.3em" title="<?php echo $LANG['OPEN_SPECIMEN_DETAILS']; ?>" /></a><br/>
+										</div>
+										<div style="float:right">
+											<a href="#" onclick="openEditorPopup(<?php echo $occid; ?>); return false;"><img src="../../images/edit.png" style="width:1.3em" title="<?php echo $LANG['OPEN_OCC_EDITOR']; ?>" /></a>
 										</div>
 										<?php
 										if($specArr['catalognumber']) echo '<div>' . $specArr['catalognumber'] . '</div>';
@@ -395,7 +399,7 @@ if($isEditor){
 								<?php
 							}
 							?>
-							<button name="formsubmit" type="submit" value="Delete Loan" <?php if($specList) echo 'DISABLED'; ?>><?php echo $LANG['DELETE_LOAN']; ?></button>
+							<button class="button-danger" name="formsubmit" type="submit" value="Delete Loan" <?php if($specList) echo 'DISABLED'; ?>><?php echo $LANG['DELETE_LOAN']; ?></button>
 							<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 							<input name="loanid" type="hidden" value="<?php echo $loanId; ?>" />
 						</fieldset>

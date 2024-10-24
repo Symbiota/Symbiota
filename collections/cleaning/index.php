@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCleaner.php');
@@ -27,6 +25,7 @@ if($collMap['colltype'] == 'General Observations'){
 	$cleanManager->setObsUid($SYMB_UID);
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
@@ -35,9 +34,10 @@ if($collMap['colltype'] == 'General Observations'){
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<style>
-		table.styledtable {  width: 300px }
-		table.styledtable td { white-space: nowrap; }
-		h3 { text-decoration:underline }
+		.max-width-fit-65 {
+			max-width: 100%;
+			width: 65rem;
+		}
 	</style>
 </head>
 <body>
@@ -47,15 +47,15 @@ if($collMap['colltype'] == 'General Observations'){
 	?>
 	<div class='navpath'>
 		<a href="../../index.php"> <?php echo (isset($LANG['HOME']) ? $LANG['HOME'] : 'Home') ?> </a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"> <?php echo (isset($LANG['COLL_MNGMT']) ? $LANG['COLL_MNGMT'] : 'Collection Management') ?> </a> &gt;&gt;
+		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"> <?php echo (isset($LANG['COLL_MNGMT']) ? $LANG['COLL_MNGMT'] : 'Collection Management') ?> </a> &gt;&gt;
 		<b> <?php echo (isset($LANG['DATA_CLEAN']) ? $LANG['DATA_CLEAN'] : 'Data Cleaning Module') ?> </b>
 	</div>
-
+	
 	<!-- inner text -->
-	<div id="innertext" style="background-color:white;">
+	<div role="main" id="innertext" style="background-color:white;">
 		<?php
 		if($isEditor){
-			echo '<h1>' . $collMap['collectionname'] .' (' . $collMap['code'] . ')</h1>';
+			echo '<h1 class="page-heading">Data Cleaning Tools: ' . $collMap['collectionname'] .' (' . $collMap['code'] . ')</h1>';
 			?>
 			<div style="color:orange;margin:20px 0px"> <?php echo (isset($LANG['DOWNLOAD_BACKUP']) ? $LANG['DOWNLOAD_BACKUP'] : 'Downloading a backup of your collection data before running any batch updates is strongly recommended') ?> </div>
 			<?php
@@ -76,18 +76,18 @@ if($collMap['colltype'] == 'General Observations'){
 						</h3>
 						<ul>
 							<li>
-								<a href="duplicatesearch.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&action=listdupscatalog">
+								<a href="duplicatesearch.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&action=listdupscatalog">
 									<?php echo (isset($LANG['CAT_NUMS']) ? $LANG['CAT_NUMS'] : 'Catalog Numbers') ?>
 								</a>
 							</li>
 							<li>
-								<a href="duplicatesearch.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&action=listdupsothercatalog">
+								<a href="duplicatesearch.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&action=listdupsothercatalog">
 									<?php echo (isset($LANG['OTHER_CAT_NUMS']) ? $LANG['OTHER_CAT_NUMS'] : 'Other Catalog Numbers') ?>
 								</a>
 							</li>
 							<!--
 							<li>
-								<a href="duplicatesearch.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&action=listdupsrecordedby">
+								<a href="duplicatesearch.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&action=listdupsrecordedby">
 									Collector/Observer and numbers
 								</a>
 							</li>
@@ -99,7 +99,7 @@ if($collMap['colltype'] == 'General Observations'){
 			}
 			?>
 
-			<h3> <?php echo (isset($LANG['POLITIC_GEO']) ? $LANG['POLITIC_GEO'] : 'Political Geography') ?> </h3>
+			<h2> <?php echo $LANG['POLITIC_GEO'] ?> </h2>
 			<div style="margin:0px 0px 40px 15px;">
 				<div>
 					<?php echo (isset($LANG['POLITIC_GEO_DESCR']) ? $LANG['POLITIC_GEO_DESCR'] : 'These tools help standardize country, state/province, and county designations.
@@ -114,16 +114,16 @@ if($collMap['colltype'] == 'General Observations'){
 						</h3>
 					<ul>
 						<li>
-							<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&stat=geography#geographystats" target="_blank"> <?php echo (isset($LANG['GEO_DISTR']) ? $LANG['GEO_DISTR'] : 'Geographic Distributions') ?> </a>
+							<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&stat=geography#geographystats" target="_blank"> <?php echo (isset($LANG['GEO_DISTR']) ? $LANG['GEO_DISTR'] : 'Geographic Distributions') ?> </a>
 						</li>
 						<li>
-							<a href="politicalunits.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"> <?php echo (isset($LANG['GEO_CLEAN_TOOLS']) ? $LANG['GEO_CLEAN_TOOLS'] : 'Geography Cleaning Tools') ?> </a>
+							<a href="politicalunits.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"> <?php echo (isset($LANG['GEO_CLEAN_TOOLS']) ? $LANG['GEO_CLEAN_TOOLS'] : 'Geography Cleaning Tools') ?> </a>
 						</li>
 					</ul>
 				</section>
 			</div>
 <!--
-			<h3>Specimen Coordinates</h3>
+			<h2>Specimen Coordinates</h2>
 			<div style="margin:0px 0px 40px 15px;">
 				<div>
 					These tools are to aid collection managers in verifying, ranking, and managing coordinate information associated with occurrence records.
@@ -138,7 +138,7 @@ if($collMap['colltype'] == 'General Observations'){
 							<?php
 							if($statsArr['coord']){
 								?>
-								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NOTNULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+								<a href="../editor/occurrencetabledisplay.php?collid=<?= $collid ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NOT_NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
 									<img src="../../images/edit.png" style="width:10px" />
 								</a>
 								<?php
@@ -149,10 +149,10 @@ if($collMap['colltype'] == 'General Observations'){
 							<?php
 							if($statsArr['noCoord']){
 								?>
-								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=IS_NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
 									<img src="../../images/edit.png" style="width:10px" />
 								</a>
-								<a href="../georef/batchgeoreftool.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>" style="margin-left:5px;" title="Open Batch Georeference Tool" target="_blank">
+								<a href="../georef/batchgeoreftool.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" style="margin-left:5px;" title="Open Batch Georeference Tool" target="_blank">
 									<img src="../../images/edit.png" style="width:10px" /><span style="font-size:70%;margin-left:-3;">b-geo</span>
 								</a>
 								<?php
@@ -163,7 +163,7 @@ if($collMap['colltype'] == 'General Observations'){
 							<?php
 							if($statsArr['noCoord_verbatim']){
 								?>
-								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL&q_customfield2=verbatimcoordinates&q_customtype2=NOTNULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=IS_NULL&q_customfield2=verbatimcoordinates&q_customtype2=NOT_NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
 									<img src="../../images/edit.png" style="width:10px" />
 								</a>
 								<?php
@@ -174,7 +174,7 @@ if($collMap['colltype'] == 'General Observations'){
 							<?php
 							if($statsArr['noCoord_noVerbatim']){
 								?>
-								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL&q_customfield2=verbatimcoordinates&q_customtype2=NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL&q_customfield2=verbatimcoordinates&q_customtype2=NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
 									<img src="../../images/edit.png" style="width:10px" />
 								</a>
 								<?php
@@ -182,25 +182,25 @@ if($collMap['colltype'] == 'General Observations'){
 							?>
 						</li>
 						<li>
-							<a href="coordinatevalidator.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>">Verify coordinates against political boundaries</a>
+							<a href="coordinatevalidator.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">Verify coordinates against political boundaries</a>
 						</li>
 					</ul>
 				</fieldset>
 			</div>
  -->
-			<h3> <?php echo (isset($LANG['TAXONOMY']) ? $LANG['TAXONOMY'] : 'Taxonomy') ?> </h3>
+			<h2> <?php echo (isset($LANG['TAXONOMY']) ? $LANG['TAXONOMY'] : 'Taxonomy') ?> </h2>
 			<div style="margin:0px 0px 40px 15px;">
 				<div>
 					<?php echo (isset($LANG['TAXONOMY_DESCR']) ? $LANG['TAXONOMY_DESCR'] : 'These tools are meant to aid in locating and fixing taxonomic errors and inconsistencies.') ?>
 				</div>
 				<section class="fieldset-like max-width-fit-65 ">
-					<h1> <span> <?php echo (isset($LANG['STAT_ACT_PANEL']) ? $LANG['STAT_ACT_PANEL'] : 'Statistics and Action Panel') ?> </span> </h1>
+					<h2> <span> <?php echo (isset($LANG['STAT_ACT_PANEL']) ? $LANG['STAT_ACT_PANEL'] : 'Statistics and Action Panel') ?> </span> </h2>
 					<ul>
-						<li><a href="taxonomycleaner.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"> <?php echo (isset($LANG['ANALYZE_NAMES']) ? $LANG['ANALYZE_NAMES'] : 'Analyze taxonomic names...') ?> </a></li>
-						<li><a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&stat=taxonomy#taxonomystats"> <?php echo (isset($LANG['TAXON_DISTR']) ? $LANG['TAXON_DISTR'] : 'Taxonomic Distributions...') ?> </a></li>
+						<li><a href="taxonomycleaner.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"> <?php echo (isset($LANG['ANALYZE_NAMES']) ? $LANG['ANALYZE_NAMES'] : 'Analyze taxonomic names...') ?> </a></li>
+						<li><a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&stat=taxonomy#taxonomystats"> <?php echo (isset($LANG['TAXON_DISTR']) ? $LANG['TAXON_DISTR'] : 'Taxonomic Distributions...') ?> </a></li>
 						<?php
 						if($cleanManager->hasDuplicateClusters()){
-							echo '<li><a href="../datasets/duplicatemanager.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&dupedepth=3&action=listdupeconflicts">';
+							echo '<li><a href="../datasets/duplicatemanager.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&dupedepth=3&action=listdupeconflicts">';
 							echo (isset($LANG['DUPLICATE_SPECIMENS']) ? $LANG['DUPLICATE_SPECIMENS'] : 'Duplicate specimens with potential identification conflicts...');
 							echo '</a></li>';
 						}

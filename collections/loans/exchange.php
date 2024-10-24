@@ -6,7 +6,7 @@ else include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.en.ph
 header("Content-Type: text/html; charset=".$CHARSET);
 if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../collections/loans/exchange.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$collid = $_REQUEST['collid'];
+$collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $exchangeId = array_key_exists('exchangeid',$_REQUEST)?$_REQUEST['exchangeid']:0;
 $identifier = array_key_exists('identifier',$_REQUEST)?$_REQUEST['identifier']:0;
 $formSubmit = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
@@ -27,11 +27,11 @@ $statusStr = '';
 if($isEditor){
 	if($formSubmit){
 		if($formSubmit == 'createExchange'){
-			$exchangeId = $loanManager->createNewExchange($_POST);
+			$exchangeId = htmlspecialchars($loanManager->createNewExchange($_POST), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 			if(!$exchangeId) $statusStr = $loanManager->getErrorMessage();
 		}
 		elseif($formSubmit == 'Save Exchange'){
-			$statusStr = $loanManager->editExchange($_POST);
+			$statusStr = htmlspecialchars($loanManager->editExchange($_POST), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 		}
 		elseif ($formSubmit == "delAttachment") {
 			// Delete correspondence attachment
@@ -46,16 +46,17 @@ if($isEditor){
 	}
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 	<title><?php echo $DEFAULT_TITLE . ': ' . $LANG['EXCHANGE_MNG']; ?></title>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script type="text/javascript" src="../../js/jquery.js"></script>
-	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		var tabIndex = <?php echo $tabIndex; ?>;
 	</script>
@@ -72,12 +73,13 @@ if($isEditor){
 	?>
 	<div class="navpath">
 		<a href='../../index.php'>Home</a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>&emode=1"><?php echo $LANG['COL_MNG_MENU']; ?></a> &gt;&gt;
-		<a href="index.php?tabindex=2&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo $LANG['LOAN_INDEX']; ?></a> &gt;&gt;
-		<a href="exchange.php?exchangeid=<?php echo htmlspecialchars($exchangeId, HTML_SPECIAL_CHARS_FLAGS); ?>&collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><b><?php echo $LANG['EXCHANGE_MNG']; ?></b></a>
+		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo $LANG['COL_MNG_MENU']; ?></a> &gt;&gt;
+		<a href="index.php?tabindex=2&collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo $LANG['LOAN_INDEX']; ?></a> &gt;&gt;
+		<a href="exchange.php?exchangeid=<?php echo htmlspecialchars($exchangeId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><b><?php echo $LANG['EXCHANGE_MNG']; ?></b></a>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
+		<h1 class="page-heading"><?= $LANG['EXCHANGE_MNG']; ?></h1>
 		<?php
 		if($isEditor && $collid){
 			if($statusStr){
@@ -242,7 +244,7 @@ if($isEditor){
 									</div>
 								</div>
 								<div style="padding-top:8px;padding-bottom:8px;">
-									<table class="styledtable" style="font-family:Arial;font-size:12px;">
+									<table class="styledtable" style="font-size:12px;">
 										<tr>
 											<th style="width:220px;text-align:center;"><?php echo $LANG['GIFT_SPECIMENS']; ?></th>
 											<th style="width:220px;text-align:center;"><?php echo $LANG['EXCH_SPECIMENS']; ?></th>
@@ -344,9 +346,9 @@ if($isEditor){
 										foreach($attachments as $attachId => $attachArr){
 											echo '<li><div style="float: left;">' . $attachArr['timestamp'] . ' -</div>';
 											echo '<div style="float: left; margin-left: 5px;"><a href="../../' .
-												$attachArr['path'] . $attachArr['filename']  .'" target="_blank">' .
+												$attachArr['path'] . $attachArr['filename']  .'" target="_blank" rel="noopener noreferrer">' .
 												($attachArr['title'] != "" ? $attachArr['title'] : $attachArr['filename']) . '</a></div>';
-											echo '<a href="exchange.php?collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS) . '&exchangeid=' . htmlspecialchars($exchangeId, HTML_SPECIAL_CHARS_FLAGS) . '&attachid=' . htmlspecialchars($attachId, HTML_SPECIAL_CHARS_FLAGS) . '&formsubmit=delAttachment"><img src="../../images/del.png" style="width: 15px; margin-left: 5px;"></a></li>';
+											echo '<a href="exchange.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&exchangeid=' . htmlspecialchars($exchangeId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&attachid=' . htmlspecialchars($attachId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&formsubmit=delAttachment"><img src="../../images/del.png" style="width: 1.2em; margin-left: 5px;"></a></li>';
 										}
 										echo '</ul>';
 									}
@@ -368,16 +370,16 @@ if($isEditor){
 						<?php
 					}
 					?>
-					<div style="margin:20px"><b>&lt;&lt; <a href="index.php?collid=<?php echo htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo $LANG['RETURN_LOAN_INDEX']; ?></a></b></div>
+					<div style="margin:20px"><b>&lt;&lt; <a href="index.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo $LANG['RETURN_LOAN_INDEX']; ?></a></b></div>
 				</div>
 				<div id="exchangedeldiv">
 					<form name="delexchangeform" action="index.php" method="post" onsubmit="return confirm('<?php echo $LANG['SURE_DELETE_EX']; ?>')">
 						<fieldset>
-							<legend><?php echo $LANG['DEL_EXCHANGE']; ?></legend>
+							<legend><?php echo $LANG['DELETE_EXCHANGE']; ?></legend>
 							<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 							<input name="tabindex" type="hidden" value="2" />
 							<input name="exchangeid" type="hidden" value="<?php echo $exchangeId; ?>" />
-							<input name="formsubmit" type="submit" value="Delete Exchange" />
+							<button class="button-danger" name="formsubmit" type="submit" value="Delete Exchange"><?php echo $LANG['DELETE_EXCHANGE']; ?></button>
 						</fieldset>
 					</form>
 				</div>

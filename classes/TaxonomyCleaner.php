@@ -1,9 +1,8 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
-include_once($SERVER_ROOT.'/classes/Manager.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyHarvester.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
+include_once($SERVER_ROOT . '/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/TaxonomyHarvester.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceMaintenance.php');
+include_once($SERVER_ROOT . '/classes/utilities/TaxonomyUtil.php');
 
 class TaxonomyCleaner extends Manager{
 
@@ -85,9 +84,9 @@ class TaxonomyCleaner extends Manager{
 			$taxaCnt = 1;
 			$itemCnt = 0;
 			while($r = $rs->fetch_object()){
-				$editLink = '[<a href="#" onclick="openPopup(\'' . htmlspecialchars($GLOBALS['CLIENT_ROOT'], HTML_SPECIAL_CHARS_FLAGS) .
+				$editLink = '[<a href="#" onclick="openPopup(\'' . htmlspecialchars($GLOBALS['CLIENT_ROOT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .
 					'/collections/editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=sciname&q_customtype1=EQUALS&q_customvalue1=' . urlencode($r->sciname) . '&collid=' . 
-					htmlspecialchars($this->collid, HTML_SPECIAL_CHARS_FLAGS) . '\'); return false;">' . htmlspecialchars($r->cnt, HTML_SPECIAL_CHARS_FLAGS) . ' specimens <img src="../../images/edit.png" style="width:12px;" /></a>]';
+					htmlspecialchars($this->collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '\'); return false;">' . htmlspecialchars($r->cnt, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' specimens <img src="../../images/edit.png" style="width:1.2em;" /></a>]';
 				$this->logOrEcho('<div style="margin-top:5px">Resolving #'.$taxaCnt.': <b><i>'.$r->sciname.'</i></b>'.($r->family?' ('.$r->family.')':'').'</b> '.$editLink.'</div>');
 				if($r->family) $taxonHarvester->setDefaultFamily($r->family);
 				if($r->scientificnameauthorship) $taxonHarvester->setDefaultAuthor($r->scientificnameauthorship);
@@ -103,7 +102,7 @@ class TaxonomyCleaner extends Manager{
 						$this->logOrEcho('Taxon not fully resolved...',1);
 					}
 				}
-				$taxonArr = TaxonomyUtilities::parseScientificName($r->sciname,$this->conn,0,$this->targetKingdomName);
+				$taxonArr = TaxonomyUtil::parseScientificName($r->sciname,$this->conn,0,$this->targetKingdomName);
 				if(!$tid && $this->autoClean){
 					if(isset($taxonArr['sciname']) && $taxonArr['sciname']){
 						$sciname = $taxonArr['sciname'];
@@ -121,7 +120,7 @@ class TaxonomyCleaner extends Manager{
 				if($manualCheck){
 					$thesLink = '';
 					if($isTaxonomyEditor){
-						$thesLink = ' <a href="#" onclick="openPopup(\'../../taxa/taxonomy/taxonomyloader.php\'); return false;" title="Open Thesaurus New Record Form"><img src="../../images/edit.png" style="width:12px" /><b style="font-size:70%;">T</b></a>';
+						$thesLink = ' <a href="#" onclick="openPopup(\'../../taxa/taxonomy/taxonomyloader.php\'); return false;" title="Open Thesaurus New Record Form"><img src="../../images/edit.png" style="width:1.2em" /><b style="font-size:70%;">T</b></a>';
 					}
 					$this->logOrEcho('Checking close matches in thesaurus'.$thesLink.'...',1);
 					if($matchArr = $taxonHarvester->getCloseMatch($sciname)){
@@ -308,7 +307,7 @@ class TaxonomyCleaner extends Manager{
 		ob_flush();
 
 		$occurMaintenance = new OccurrenceMaintenance($this->conn);
-		$occurMaintenance->setCollidStr($this->collid);
+		//$occurMaintenance->setCollidStr($this->collid);
 		$occurMaintenance->setVerbose(true);
 		$occurMaintenance->generalOccurrenceCleaning();
 	}
@@ -578,7 +577,7 @@ class TaxonomyCleaner extends Manager{
 		else{
 			//Test taxon does not exists, thus lets load it
 			//Prepare taxon for loading
-			$parsedArr = TaxonomyUtilities::parseScientificName($testObj['name'],$this->conn,0,$this->targetKingdomName);
+			$parsedArr = TaxonomyUtil::parseScientificName($testObj['name'],$this->conn,0,$this->targetKingdomName);
 			if(!array_key_exists('rank',$parsedArr)){
 				//Grab taxon object from EOL or Species2000
 

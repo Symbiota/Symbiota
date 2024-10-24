@@ -33,6 +33,7 @@ Symbiota has been generously funded by the National Science Foundation (DBI-0743
 
 - Tested thoroughly on Linux and Windows operating systems
 - Code should work with an PHP enabled web server, though central development and testing done using Apache HTTP Server
+- Development and testing preformed using MariaDB. If you are using Oracle MySQL instead, please [report any issues](https://github.com/BioKIC/Symbiota/issues/new).
 
 ## INSTALLATION
 
@@ -41,3 +42,7 @@ Please read the [INSTALL.md](docs/INSTALL.md) file for installation instructions
 ## UPDATES
 
 Please read the [UPDATE.md](docs/UPDATE.md) file for instructions on how to update Symbiota.
+
+## CONTRIBUTING
+
+Please visit the [CONTRIBUTING.md](docs/CONTRIBUTING.md) page for guidance on contributing to the main Symbiota codebase.

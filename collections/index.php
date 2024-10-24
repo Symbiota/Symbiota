@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/collections/sharedterms.'.$LANG_TAG.'.php');
@@ -11,8 +9,9 @@ $catId = array_key_exists("catid",$_REQUEST)?$_REQUEST["catid"]:'';
 if(!preg_match('/^[,\d]+$/',$catId)) $catId = '';
 if($catId == '' && isset($DEFAULTCATID)) $catId = $DEFAULTCATID;
 
+
 $collManager = new OccurrenceManager();
-$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? true;
+$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
 //$collManager->reset();
 
 $collList = $collManager->getFullCollectionList($catId);
@@ -21,6 +20,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 
 $otherCatArr = $collManager->getOccurVoucherProjects();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
@@ -29,11 +29,11 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 		include_once($SERVER_ROOT.'/includes/head.php');
 		include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 		?>
-		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
-		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />
-		<script src="../js/jquery-3.2.1.min.js" type="text/javascript"></script>
-		<script src="../js/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
-		<link href="../js/jquery-ui/jquery-ui.min.css" type="text/css" rel="Stylesheet" />
+		<link href="<?= $CSS_BASE_PATH; ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
+		<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />
+		<link href="<?= $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+		<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 		<script src="../js/symb/collections.index.js?ver=20171215" type="text/javascript"></script>
 		<script type="text/javascript">
 			$(document).ready(function() {
@@ -64,14 +64,15 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 	}
 	else{
 		echo '<div class="navpath">';
-			echo '<a href="../index.php">' . htmlspecialchars((isset($LANG['NAV_HOME'])?$LANG['NAV_HOME']:'Home'), HTML_SPECIAL_CHARS_FLAGS) . '</a>';
+			echo '<a href="../index.php">' . htmlspecialchars((isset($LANG['NAV_HOME'])?$LANG['NAV_HOME']:'Home'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 			echo '&gt;&gt; ';
 			echo '<b>' . (isset($LANG['NAV_COLLECTIONS']) ? $LANG['NAV_COLLECTIONS'] : 'Collections') . '</b>';
 		echo "</div>";
 	}
 	?>
 	<!-- This is inner text! -->
-	<div id="innertext" class="inntertext-tab pin-things-here">
+	<div role="main" id="innertext" class="inntertext-tab pin-things-here">
+		<h1 class="page-heading screen-reader-only">Collections List</h1>
         <div id="tabs">
 			<ul>
 				<?php
@@ -90,7 +91,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 				?>
 			</ul>
 			<?php
-			$actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.php";
+			$actionPage = "harvestparams.php";
 			if($specArr && $obsArr){
 				?>
 				<div id="specobsdiv">
@@ -101,7 +102,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 						<div class="select-deselect-input">
 							<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" checked />
 							<label for="dballcb">
-								<?php echo $LANG['SELECT_DESELECT'] . ' <a href="misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS_CAP'], HTML_SPECIAL_CHARS_FLAGS) . '</a>'; ?>
+								<?php echo $LANG['SELECT_DESELECT'] . ' <a href="misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS_CAP'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>'; ?>
 							</label>
 						</div>
 						<?php
@@ -172,10 +173,10 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 								foreach($projTitleArr as $pid => $projTitle){
 									?>
 									<div>
-										<a href="#" onclick="togglePid('<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>');return false;">
+										<a href="#" onclick="togglePid('<?php echo htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>');return false;">
 											<div class="condense-expand-button-set">
-												<img id="plus-<?php echo $pid; ?>" alt="plus sign to expand menu" src="../../images/plus_sm.png" style="display: none;" />
-												<img id="minus-<?php echo $pid; ?>" alt="minus sign to condense menu" src="../../images/minus_sm.png" />
+												<img id="plus-<?php echo $pid; ?>" alt="plus sign to expand menu" src="../../images/plus.png" style="display: none;" />
+												<img id="minus-<?php echo $pid; ?>" alt="minus sign to condense menu" src="../../images/minus.png" />
 												<p id="pid-ptext-<?php echo $pid; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid) ? '' : 'display:none;') ?>">
 													<?php echo $LANG['EXPAND'] ?>
 												</p>

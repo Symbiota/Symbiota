@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDataset.php');
@@ -35,16 +33,17 @@ elseif($action == 'addAllToDataset'){
 
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 		<title><?php echo $DEFAULT_TITLE; ?> <?php echo (isset($LANG['OCC_DAT_MNG']) ? $LANG['OCC_DAT_MNG'] : 'Occurrence Dataset Manager') ?> </title>
-		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
-		<script type="text/javascript" src="../../js/jquery.js"></script>
-		<script type="text/javascript" src="../../js/jquery-ui.js"></script>
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 		<script type="text/javascript" src="../../js/symb/shared.js"></script>
 		<script type="text/javascript" src="../../js/tinymce/tinymce.min.js"></script>
 		<script type="text/javascript">
@@ -105,7 +104,7 @@ elseif($action == 'addAllToDataset'){
 		<a href="index.php"><b> <?php echo (isset($LANG['DATLIST']) ? $LANG['DATLIST'] : 'Dataset Listing') ?> </b></a>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
 		<?php
 		if($statusStr){
 			$color = 'green';
@@ -120,9 +119,9 @@ elseif($action == 'addAllToDataset'){
 		?>
 		<div>
 		<div style="float:right;margin:10px;" title="<?php echo (isset($LANG['CRT_NEW_DAT']) ? $LANG['CRT_NEW_DAT'] : 'Create New Dataset') ?>" >
-	 		<a href="#" onclick="toggle('adddiv');return false;"><img src="../../images/add.png"  style="width:14px;" alt="<?php echo (isset($LANG['ADD_BUTTON']) ? $LANG['ADD_BUTTON'] : 'Add Button') ?>"/> </a>
+	 		<a href="#" onclick="toggle('adddiv');return false;"><img src="../../images/add.png"  style="width:1.5em;" alt="<?php echo (isset($LANG['ADD_BUTTON']) ? $LANG['ADD_BUTTON'] : 'Add Button') ?>"/> </a>
 		</div>
-		<h2> <?php echo (isset($LANG['OCC_DAT_MNG']) ? $LANG['OCC_DAT_MNG'] : 'Occurrence Dataset Manager') ?> </h2>
+		<h1 class="page-heading"> <?php echo (isset($LANG['OCC_DAT_MNG']) ? $LANG['OCC_DAT_MNG'] : 'Occurrence Dataset Manager') ?> </h1>
 		<div> <?php echo (isset($LANG['TOOL_DESCR']) ? $LANG['TOOL_DESCR'] : 'These tools will allow you to define and manage dataset profiles. Once a profile is created, you can link occurrence records via the occurrence search and display pages.') ?> </div>
 		<div id=adddiv style="display:none">
 			<fieldset>
@@ -194,7 +193,7 @@ elseif($action == 'addAllToDataset'){
 					foreach($otherArr as $dsid => $dsArr){
 						?>
 						<div>
-							<a href="datasetmanager.php?datasetid=<?php echo htmlspecialchars($dsid, HTML_SPECIAL_CHARS_FLAGS); ?>" title="Access Dataset">
+							<a href="datasetmanager.php?datasetid=<?php echo htmlspecialchars($dsid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" title="Access Dataset">
 								<?php
 								$role = 'Dataset reader';
 								if($dsArr['role'] == 'DatasetAdmin') $role = 'Dataset Administator';

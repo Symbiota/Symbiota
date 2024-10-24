@@ -126,7 +126,7 @@ class UtilitiesFileImport extends Manager {
 
 	//Field mapping functions
 	public function getFieldMappingTable(){
-		$tableHtml = '<table class="styledtable" style="width:600px;font-family:Arial;font-size:12px;">';
+		$tableHtml = '<table class="styledtable" style="width:600px;font-size:12px;">';
 		$tableHtml .= '<tr><th>Source Field</th><th>Target Field</th></tr>';
 		$sourceFieldArr = $this->getHeaderArr();
 		foreach($sourceFieldArr as $i => $sourceField){
@@ -189,7 +189,10 @@ class UtilitiesFileImport extends Manager {
 		}
 		else{
 			$record = fgets($this->fileHandler);
-			if($record) $recordArr = explode($this->delimiter, $record);
+			if($record){
+				$recordArr = explode($this->delimiter, $record);
+				foreach($recordArr as $k => $v) $recordArr[$k] = trim($v);
+			}
 		}
 		return $recordArr;
 	}

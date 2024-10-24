@@ -11,6 +11,8 @@
    crossorigin="">
 </script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OverlappingMarkerSpiderfier-Leaflet/0.2.6/oms.min.js"></script>
+
 <!-- Importing Leaflet Draw Plugin --> 
 <link 
    rel="stylesheet" 
@@ -29,7 +31,7 @@
 
 <!-- Importing Cluster Plugin --> 
 <script 
-   src= <?php echo $CLIENT_ROOT . "/js/Leaflet.markercluster-1.4.1/dist/leaflet.markercluster.js" ?>
+   src= "<?php echo $CLIENT_ROOT?>/js/Leaflet.markercluster-1.4.1/dist/leaflet.markercluster.js"
    type="text/javascript">
 </script>
 

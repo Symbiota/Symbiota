@@ -260,7 +260,7 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 				<li><a href="#" onclick="displayBatchPanel(true,'speccheckin');return false;"><?php echo $LANG['CHECKIN_VIA_CATNUM']; ?></a></li>
 				<li><a href="#" onclick="displayBarcodePanel(true,'speccheckin');return false;"><?php echo $LANG['CHECKIN_VIA_BARCODE']; ?></a></li>
 				<li><a href="#" onclick="displayNewDetPanel(true);return false;"><?php echo $LANG['ADD_DETS']; ?></a></li>
-				<li><a href="outgoing.php?formsubmit=exportSpecimenList&loanid=<?php echo htmlspecialchars($loanId, HTML_SPECIAL_CHARS_FLAGS) . '&collid=' . htmlspecialchars($collid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo $LANG['EXPORT_FULL_LIST']; ?></a></li>
+				<li><a href="outgoing.php?formsubmit=exportSpecimenList&loanid=<?php echo htmlspecialchars($loanId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo $LANG['EXPORT_FULL_LIST']; ?></a></li>
 				<li><a href="#" onclick="displayBatchActionPanel(true);return false;"><?php echo $LANG['DISPLAY_BATCH_FORM']; ?></a></li>
 			</ul>
 		</fieldset>
@@ -400,7 +400,7 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 					<input name="tabindex" type="hidden" value="1" />
 				</fieldset>
 			</div>
-			<table class="styledtable" style="font-family:Arial;font-size:12px;">
+			<table class="styledtable" style="font-size:12px;">
 				<tr>
 					<th class="form-checkbox"><input type="checkbox" onclick="selectAll(this);" title="<?php echo $LANG['SEC_DESEL_ALL']; ?>" /></th>
 					<th>&nbsp;</th>
@@ -432,8 +432,10 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 						</td>
 						<td>
 							<div>
-								<a href="#" onclick="openIndPopup(<?php echo $occid; ?>); return false;"><img src="../../images/list.png" style="width:13px" title="<?php echo $LANG['OPEN_SPECIMEN_DETAILS']; ?>" /></a><br/>
-								<a href="#" onclick="openEditorPopup(<?php echo $occid; ?>); return false;"><img src="../../images/edit.png" style="width:13px" title="<?php echo $LANG['OPEN_OCC_EDITOR']; ?>" /></a>
+								<a href="#" onclick="openIndPopup(<?php echo $occid; ?>); return false;"><img src="../../images/list.png" style="width:1.3em" title="<?php echo $LANG['OPEN_SPECIMEN_DETAILS']; ?>" /></a><br/>
+							</div>
+							<div>
+								<a href="#" onclick="openEditorPopup(<?php echo $occid; ?>); return false;"><img src="../../images/edit.png" style="width:1.3em" title="<?php echo $LANG['OPEN_OCC_EDITOR']; ?>" /></a>
 							</div>
 						</td>
 						<td>

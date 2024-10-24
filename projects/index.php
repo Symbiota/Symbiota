@@ -1,24 +1,18 @@
-<!DOCTYPE html>
-
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ImInventories.php');
 include_once($SERVER_ROOT.'/classes/MapSupport.php');
-include_once($SERVER_ROOT.'/content/lang/projects/index.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/projects/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/projects/index.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/projects/index.en.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 
-$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']:'';
-if(!$pid && array_key_exists('proj',$_GET)) $pid = $_GET['proj'];
-$editMode = array_key_exists('emode',$_REQUEST)?$_REQUEST['emode']:0;
-$newProj = array_key_exists('newproj',$_REQUEST)?1:0;
-$projSubmit = array_key_exists('projsubmit',$_REQUEST)?$_REQUEST['projsubmit']:'';
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
+$pid = array_key_exists('pid', $_REQUEST) ? filter_var($_REQUEST['pid'], FILTER_SANITIZE_NUMBER_INT) : '';
+if(!$pid && array_key_exists('proj',$_GET)) $pid = filter_var($_GET['proj'], FILTER_SANITIZE_NUMBER_INT);
+$editMode = array_key_exists('emode', $_REQUEST) ? filter_var($_REQUEST['emode'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$newProj = array_key_exists('newproj', $_REQUEST) ? 1 : 0;
+$projSubmit = array_key_exists('projsubmit', $_REQUEST) ? $_REQUEST['projsubmit'] : '';
+$tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $statusStr = '';
-
-//Sanitation
-if(!is_numeric($pid)) $pid = 0;
-if(!is_numeric($editMode)) $editMode = 0;
-if(!is_numeric($tabIndex)) $tabIndex = 0;
 
 $projManager = new ImInventories($projSubmit?'write':'readonly');
 $projManager->setPid($pid);
@@ -79,16 +73,17 @@ if(!$researchList && !$editMode){
 	if(!$managerArr) $tabIndex = 1;
 }
 ?>
-<html lang="<?php echo $LANG_TAG ?>">
+<!DOCTYPE html>
+<html lang="<?= $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['INVPROJ'];?></title>
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<title><?= $DEFAULT_TITLE ?> <?= $LANG['INVPROJ'] ?></title>
+	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<script type="text/javascript" src="../js/jquery.js"></script>
-	<script type="text/javascript" src="../js/jquery-ui.js"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/tinymce/tinymce.min.js"></script>
 	<script type="text/javascript">
 		tinymce.init({
@@ -103,7 +98,7 @@ if(!$researchList && !$editMode){
 		});
 	</script>
 	<script type="text/javascript">
-		var tabIndex = <?php echo $tabIndex; ?>;
+		var tabIndex = <?= $tabIndex ?>;
 
 		$(document).ready(function() {
 			$('#tabs').tabs(
@@ -154,15 +149,15 @@ if(!$researchList && !$editMode){
 
 		function validateProjectForm(f){
 			if(f.projname.value == ""){
-				alert("<?php echo $LANG['PROJNAMEEMP'];?>.");
+				alert("<?= $LANG['PROJNAMEEMP'] ?>.");
 				return false;
 			}
 			else if(!isNumeric(f.sortsequence.value)){
-				alert("<?php echo $LANG['ONLYNUMER'];?>.");
+				alert("<?= $LANG['ONLYNUMER'] ?>.");
 				return false;
 			}
 			else if(f.fulldescription.value.length > 2000){
-				alert("<?php echo $LANG['DESCMAXCHAR'];?>" + f.fulldescription.value.length + " <?php echo $LANG['CHARLONG'];?>.");
+				alert("<?= $LANG['DESCMAXCHAR'] ?>" + f.fulldescription.value.length + " <?= $LANG['CHARLONG'] ?>.");
 				return false;
 			}
 			return true;
@@ -170,7 +165,7 @@ if(!$researchList && !$editMode){
 
 		function validateChecklistForm(f){
 			if(f.clid.value == ""){
-				alert("<?php echo $LANG['SELECTCHECKPULL'];?>");
+				alert("<?= $LANG['SELECTCHECKPULL'] ?>");
 				return false;
 			}
 			return true;
@@ -178,7 +173,7 @@ if(!$researchList && !$editMode){
 
 		function validateManagerAddForm(f){
 			if(f.uid.value == ""){
-				alert("<?php echo $LANG['CHOOSEUSER'];?>");
+				alert("<?= $LANG['CHOOSEUSER'] ?>");
 				return false;
 			}
 			return true;
@@ -198,6 +193,29 @@ if(!$researchList && !$editMode){
 	<style>
 		fieldset.form-color{ background-color:#f2f2f2; margin:15px; padding:20px; }
 		fieldset.form-color legend{ font-weight: bold; }
+		.gridlike-form-row-label {
+			width: 100px;
+		}
+		.gridlike-form-row-input {
+			width: 40%;
+		}
+		.background-gray-light {
+			background-color: #f2f2f2;
+		}
+		.max-width-fit-65 {
+			max-width: 100%;
+			width: 65rem;
+		}
+		.genericpopup {
+			position: absolute;
+			display: none;
+			width: 300px;
+			background-color: #efefef;
+			padding: 10px;
+			-moz-border-radius: 5px;
+			-webkit-border-radius: 5px;
+			border: black solid 3px;
+		}
 	</style>
 </head>
 <body>
@@ -206,25 +224,21 @@ if(!$researchList && !$editMode){
 	if(isset($projArr['headerurl']) && $projArr['headerurl']) $HEADER_URL = $CLIENT_ROOT.$projArr['headerurl'];
 	$displayLeftMenu = (isset($projects_indexMenu)?$projects_indexMenu:"true");
 	include($SERVER_ROOT.'/includes/header.php');
-	echo "<div class='navpath'>";
-	if(isset($projects_indexCrumbs) && $projArr){
-		if($projects_indexCrumbs) echo $projects_indexCrumbs.' &gt;&gt; ';
-	}
-	else{
-		echo "<a href='" . $CLIENT_ROOT . "'>" . (isset($LANG['HOME']) ? $LANG['HOME'] : 'Home') . "</a> &gt;&gt; ";
-	}
-	echo '<b><a href="index.php?pid=' . htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS) . '">' . htmlspecialchars(($projArr?$projArr['projname']: (isset($LANG['INVPROJLIST']) ? $LANG['INVPROJLIST'] : 'Inventory Project List')), HTML_SPECIAL_CHARS_FLAGS) . '</a></b>';
-	echo "</div>";
 	?>
+	<div class="navpath">
+		<a href="<?= $CLIENT_ROOT ?>/"><?= $LANG['NAV_HOME'] ?> </a> &gt;&gt; 
+		<b><a href="index.php?pid=<?= $pid ?>"><?= $LANG['INVPROJLIST'] ?></a></b>
+	</div>
 
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
+		<h1 class="page-heading screen-reader-only"><?= $LANG['VIEW_PROJECT'] ?></h1>
 		<?php
 		if($statusStr){
 			?>
 			<hr/>
-			<div style="margin:20px;font-weight:bold;color:<?php echo (stripos($statusStr,'error')!==false?'red':'green');?>;">
-				<?php echo $statusStr; ?>
+			<div style="margin:20px;font-weight:bold;color:<?= (stripos($statusStr,'error')!==false?'red':'green') ?>;">
+				<?= $statusStr ?>
 			</div>
 			<hr/>
 			<?php
@@ -232,88 +246,88 @@ if(!$researchList && !$editMode){
 		if($projArr || $newProj){
 			if($isEditor && !$newProj){
 				?>
-				<div style="float:right;" title="<?php echo $LANG['TOGGLEEDIT'];?>">
+				<div style="float:right;" title="<?= $LANG['TOGGLEEDIT'] ?>">
 					<a href="#" onclick="toggleById('tabs');return false;">
-							<?php echo $LANG['EDIT'] ?>
-							<img src="../images/edit.png" srcset="../images/edit.svg" style="width:20px;height:20px;" alt="<?php echo $LANG['PENCIL_ALT'] ?>" />
+							<?= $LANG['EDIT'] ?>
+							<img src="../images/edit.png" style="width:1.2em;" alt="<?= $LANG['PENCIL_ALT'] ?>" />
 					</a>
 				</div>
 				<?php
 			}
 			if($projArr){
 				?>
-				<h1><?php echo $projArr["projname"]; ?></h1>
+				<h1><?= $projArr["projname"] ?></h1>
 				<div style='margin: 10px;'>
 					<div>
-						<b><?php echo $LANG['PROJMANAG'];?></b>
-						<?php echo $projArr["managers"];?>
+						<b><?= $LANG['PROJMANAG'] ?></b>
+						<?= $projArr["managers"] ?>
 					</div>
 					<div style='margin-top:10px;'>
-						<?php echo $projArr["fulldescription"];?>
+						<?= $projArr["fulldescription"] ?>
 					</div>
 					<div style='margin-top:10px;'>
-						<?php echo $projArr["notes"]; ?>
+						<?= $projArr["notes"] ?>
 					</div>
 				</div>
 				<?php
 			}
 			if($isEditor){
 				?>
-				<div id="tabs" style="height:auto;margin:10px;display:<?php echo ($newProj||$editMode?'block':'none'); ?>;">
+				<div id="tabs" style="height:auto;margin:10px;display:<?= ($newProj||$editMode?'block':'none') ?>;">
 					<ul>
-						<li><a href="#mdtab"><span><?php echo htmlspecialchars($LANG['METADATA'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
+						<li><a href="#mdtab"><span><?= $LANG['METADATA'] ?></span></a></li>
 						<?php
 						if($pid){
 							?>
-							<li><a href="managertab.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><span><?php echo htmlspecialchars($LANG['INVMANAG'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
-							<li><a href="checklisttab.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><span><?php echo htmlspecialchars($LANG['CHECKMANAG'], HTML_SPECIAL_CHARS_FLAGS);?></span></a></li>
+							<li><a href="managertab.php?pid=<?= $pid ?>"><span><?= $LANG['INVMANAG'] ?></span></a></li>
+							<li><a href="checklisttab.php?pid=<?= $pid ?>"><span><?= $LANG['CHECKMANAG']?></span></a></li>
 							<?php
 						}
 						?>
 					</ul>
 					<div id="mdtab">
 						<section class="fieldset-like background-gray-light">
-							<h1> <span> <?php echo ($newProj ? (isset($LANG['ADD_NEW']) ? $LANG['ADD_NEW'] : 'Add New Project') : (isset($LANG['EDIT']) ? $LANG['EDIT'] : 'Edit Project'));  ?> </span> </h1>
+							<h2> <span> <?= ($newProj ? $LANG['ADD_NEW'] : $LANG['EDIT']);  ?> </span> </h2>
 							<form name='projeditorform' action='index.php' method='post' onsubmit="return validateProjectForm(this)">
 								<section class="gridlike-form">
 									<div class="bottom-breathing-room gridlike-form-row">
-										<label for="projname" class="gridlike-form-row-label"  > <?php echo (isset($LANG['PROJNAME']) ? $LANG['PROJNAME'] : 'Project Name'); ?>: </label>
-										<input id="projname" class="gridlike-form-row-input max-width-fit-65" type="text" name="projname"  value="<?php if($projArr) echo htmlspecialchars($projArr["projname"]); ?>"/>
+										<label for="projname" class="gridlike-form-row-label"  > <?= $LANG['PROJNAME'] ?>: </label>
+										<input id="projname" class="gridlike-form-row-input max-width-fit-65" type="text" name="projname"  value="<?php if($projArr) echo htmlspecialchars($projArr["projname"]?? '') ?>"/>
 									</div>
 
 									<div class="bottom-breathing-room gridlike-form-row">
-										<label for="managers" class="gridlike-form-row-label" > <?php echo (isset($LANG['MANAG']) ? $LANG['MANAG'] : 'Managers'); ?>: </label>
-										<input id="managers" class="gridlike-form-row-input max-width-fit-65" type="text" name="managers" value="<?php if($projArr) echo htmlspecialchars($projArr["managers"]); ?>"/>
-									</div>
-									
-									<div class="bottom-breathing-room gridlike-form-row">
-										<label for="fulldescription" class="gridlike-form-row-label"> <?php echo (isset($LANG['DESCRIP']) ? $LANG['DESCRIP'] : 'Description'); ?>: </label>
-										<textarea class="gridlike-form-row-input max-width-fit-65" rows="8" cols="45" id="fulldescription"  name="fulldescription" maxlength="5000"><?php if($projArr) echo htmlspecialchars($projArr["fulldescription"]);?></textarea>
+										<label for="managers" class="gridlike-form-row-label" > <?= $LANG['MANAG'] ?>: </label>
+										<input id="managers" class="gridlike-form-row-input max-width-fit-65" type="text" name="managers" value="<?php if($projArr) echo htmlspecialchars($projArr["managers"]??''); ?>"/>
 									</div>
 
 									<div class="bottom-breathing-room gridlike-form-row">
-										<label for="notes" class="gridlike-form-row-label"> <?php echo (isset($LANG['NOTES']) ? $LANG['NOTES'] : 'Notes'); ?>: </label>
-										<input type="text" class="gridlike-form-row-input max-width-fit-65" id="notes" name="notes" value="<?php if($projArr) echo htmlspecialchars($projArr["notes"]);?>"/>
+										<label for="fulldescription" class="gridlike-form-row-label"> <?= $LANG['DESCRIP'] ?>: </label>
+										<textarea class="gridlike-form-row-input max-width-fit-65" rows="8" cols="45" id="fulldescription"  name="fulldescription" maxlength="5000"><?php if($projArr) echo htmlspecialchars($projArr["fulldescription"]?? ''); ?></textarea>
 									</div>
 
 									<div class="bottom-breathing-room gridlike-form-row">
-										<label for="ispublic" class="gridlike-form-row-label"> <?php echo (isset($LANG['ACCESS']) ? $LANG['ACCESS'] : 'Access'); ?>: </label>
+										<label for="notes" class="gridlike-form-row-label"> <?= $LANG['NOTES'] ?>: </label>
+										<input type="text" class="gridlike-form-row-input max-width-fit-65" id="notes" name="notes" value="<?php if($projArr) echo htmlspecialchars($projArr["notes"] ?? ''); ?>"/>
+									</div>
+
+									<div class="bottom-breathing-room gridlike-form-row">
+										<label for="ispublic" class="gridlike-form-row-label"> <?= $LANG['ACCESS'] ?>: </label>
 										<select id="ispublic" name="ispublic">
-											<option value="0"><?php echo $LANG['PRIVATE'];?></option>
-											<option value="1" <?php echo ($projArr&&$projArr['ispublic']?'SELECTED':''); ?>><?php echo $LANG['PUBLIC'];?></option>
+											<option value="0"><?= $LANG['PRIVATE'] ?></option>
+											<option value="1" <?= ($projArr&&$projArr['ispublic']?'SELECTED':'') ?>><?= $LANG['PUBLIC'] ?></option>
 										</select>
 									</div>
 									<div style="margin:15px;">
 										<?php
 										if($newProj){
 											?>
-											<button name="projsubmit" type="submit" value="addNewProject"><?php echo $LANG['ADDNEWPR'];?></button>
+											<button name="projsubmit" type="submit" value="addNewProject"><?= $LANG['ADDNEWPR'] ?></button>
 											<?php
 										}
 										else{
 											?>
-											<input type="hidden" name="pid" value="<?php echo $pid;?>">
-											<button name="projsubmit" type="submit" value="submitEdit"><?php echo $LANG['SUBMITEDIT'];?></button>
+											<input type="hidden" name="pid" value="<?= $pid ?>">
+											<button name="projsubmit" type="submit" value="submitEdit"><?= $LANG['SUBMITEDIT'] ?></button>
 											<?php
 										}
 										?>
@@ -325,20 +339,21 @@ if(!$researchList && !$editMode){
 						if($pid){
 							?>
 							<fieldset class="form-color">
-								<legend><?php echo (isset($LANG['DELPROJECT'])?$LANG['DELPROJECT']:'Delete Project') ?></legend>
-								<form action="index.php" method="post" onsubmit="return confirm('<?php echo (isset($LANG['CONFIRMDEL'])?$LANG['CONFIRMDEL']:'Are you sure you want to delete this inventory Project') ?>')">
-									<input type="hidden" name="pid" value="<?php echo $pid;?>">
+								<legend><?= $LANG['DELPROJECT'] ?></legend>
+								<form action="index.php" method="post" onsubmit="return confirm('<?= $LANG['CONFIRMDEL'] ?>')">
+									<input type="hidden" name="pid" value="<?= $pid ?>">
 									<input type="hidden" name="projsubmit" value="submitDelete" />
+
+									<button class="button-danger" type="submit" name="submit" <?= (count($managerArr)>1 || $researchList)?'disabled':'' ?> >
+										<?= $LANG['SUBMITDELETE'] ?>
+									</button>
 									<?php
-									echo '<input type="submit" name="submit" value="'.(isset($LANG['SUBMITDELETE'])?$LANG['SUBMITDELETE']:'Delete Project').'" '.((count($managerArr)>1 || $researchList)?'disabled':'').' />';
 									echo '<div style="margin:10px;color:orange">';
 									if(count($managerArr) > 1){
-										if(isset($LANG['DELCONDITION1'])) echo $LANG['DELCONDITION1'];
-										else echo 'Inventory project cannot be deleted until all other managers are removed as project managers';
+										echo $LANG['DELCONDITION1'];
 									}
 									elseif($researchList){
-										if(isset($LANG['DELCONDITION2'])) echo $LANG['DELCONDITION2'];
-										else echo 'Inventory project cannot be deleted until all checklists are removed from the project';
+										echo $LANG['DELCONDITION2'];
 									}
 									echo '</div>';
 									?>
@@ -358,26 +373,21 @@ if(!$researchList && !$editMode){
 					if($researchList){
 						?>
 						<div style="font-weight:bold;font-size:130%;">
-							<?php echo $LANG['RESCHECK'];?>
-							<span onclick="toggleResearchInfoBox(this);" title="<?php echo $LANG['QUESRESSPEC'];?>" style="cursor:pointer;">
-								<img src="../images/qmark_big.png" srcset="../images/help-circle.svg" style="width:15px; height:15px;" alt="<?php echo $LANG['QUESTION_ALT'] ?>" />
-							</span>
-							<a href="../checklists/clgmap.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS);?>" title="<?php echo htmlspecialchars($LANG['MAPCHECK'], HTML_SPECIAL_CHARS_FLAGS);?>">
-								<?php echo $LANG['MAPCHECK'] ?>
-								<img src='../images/world.png'  srcset="../images/globe.svg" style="width:15px; height:15px;" alt="<?php echo $LANG['GLOBE_ALT'] ?>"/>
-							</a>
+							<?= $LANG['RESCHECK'] ?>
+							<a href="#" onclick="toggleResearchInfoBox(this);" title="<?= $LANG['QUESRESSPEC'] ?>"><img src="../images/qmark.png" style="width:1em;" alt="<?= $LANG['QUESTION_ALT'] ?>" /></a>
+							<a href="../checklists/clgmap.php?pid=<?= $pid ?>" title="<?= $LANG['MAPCHECK'] ?>"><img src='../images/world.png' style="width:1em; height:1em;" alt="<?= $LANG['GLOBE_ALT'] ?>"/></a>
 						</div>
 						<div id="researchlistpopup" class="genericpopup" style="display:none;">
-							<img src="../images/triangleup.png" style="position: relative; top: -22px; left: 30px;" alt="<?php echo $LANG['TRIANGLE_ALT'] ?>" />
-							<?php echo $LANG['RESCHECKQUES'];?>
+							<img src="../images/qmark.png" style="width:1.3em;" alt="<?= $LANG['QUESTION_ALT'] ?>" />
+							<?= $LANG['RESCHECKQUES'] ?>
 						</div>
 						<?php
 						if($KEY_MOD_IS_ACTIVE){
 							?>
 							<div style="margin-left:15px;font-size:90%">
-								<?php echo $LANG['THE'];?> 
-								<img src="../images/key.png" style="width: 12px;" alt="<?php echo $LANG['GOLDEN_KEY_SYMBOL'] ?>" />
-								<?php echo $LANG['SYMBOLOPEN'];?>.
+								<?= $LANG['THE'] ?>
+								<img src="../images/key.png" style="width: 1.3em;" alt="<?= $LANG['KEY_SYMBOL'] ?>" />
+								<?= $LANG['SYMBOLOPEN'] ?>.
 							</div>
 							<?php
 						}
@@ -393,14 +403,13 @@ if(!$researchList && !$editMode){
 							$tnUrl = MapSupport::getStaticMap($coordArr);
 							$tnWidth = 200;
 							if(strpos($tnUrl,$CLIENT_ROOT) === 0) $tnWidth = 100;
-							$mapTitle = '';
-							if(isset($LANG['MAPREP'])) $mapTitle = $LANG['MAPREP'];
+							$mapTitle = $LANG['MAPREP'];
 							?>
 							<div style="float:right;text-align:center;">
-								<a href="../checklists/clgmap.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS);?>" title="<?php echo htmlspecialchars($mapTitle, HTML_SPECIAL_CHARS_FLAGS); ?>">
-									<img src="<?php echo htmlspecialchars($tnUrl, HTML_SPECIAL_CHARS_FLAGS); ?>" style="width:<?php echo $tnWidth; ?>px;" alt="<?php echo htmlspecialchars($mapTitle, HTML_SPECIAL_CHARS_FLAGS); ?>" />
+								<a href="../checklists/clgmap.php?pid=<?= $pid ?>" title="<?= $mapTitle ?>">
+									<img src="<?= $tnUrl ?>" style="width:<?= $tnWidth ?>px;" alt="<?= $mapTitle ?>" />
 									<br/>
-									<?php echo $LANG['OPENMAP'];?>
+									<?= $LANG['OPENMAP'] ?>
 								</a>
 							</div>
 							<?php
@@ -412,16 +421,16 @@ if(!$researchList && !$editMode){
 								foreach($researchList as $key => $listArr){
 									?>
 									<li>
-										<a href='../checklists/checklist.php?clid=<?php echo $key."&pid=".$pid; ?>'>
-											<?php echo $listArr['name'].(strpos($listArr['access'], 'private') !== false?' <span title="Viewable only to editors">(private)</span>':''); ?>
+										<a href='../checklists/checklist.php?clid=<?= $key . '&pid=' . $pid ?>'>
+											<?= $listArr['name'].(strpos($listArr['access'], 'private') !== false?' <span title="' . $LANG['VIEWABLE_TO_EDITORS'] . '">(' . $LANG['PRIVATE'] . ')</span>':''); ?>
 										</a>
 										<?php
 										if($KEY_MOD_IS_ACTIVE){
 											?>
 											<span> | </span>
-											<a href='../ident/key.php?clid=<?php echo htmlspecialchars($key, HTML_SPECIAL_CHARS_FLAGS); ?>&pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>&taxon=All+Species'>
-												<?php echo $LANG['KEY'] ?>
-												<img style='width:12px;border:0px; margin-left: 0.5rem;' src='../images/key.png' alt="<?php echo $LANG['GOLDEN_KEY_SYMBOL'] ?>" />
+											<a href='../ident/key.php?clid=<?= $key ?>&pid=<?= $pid ?>&taxon=All+Species'>
+												<?= $LANG['KEY'] ?>
+												<img style='width:1.2em; margin-left: 0.5rem;' src='../images/key.png' alt="<?= $LANG['KEY_SYMBOL'] ?>" />
 											</a>
 											<?php
 										}
@@ -440,14 +449,14 @@ if(!$researchList && !$editMode){
 			}
 		}
 		else{
-			echo '<h2>'.(isset($LANG['INVPROJ'])?$LANG['INVPROJ']:'Inventory Projects').'</h2>';
+			echo '<h2>' . $LANG['INVPROJ'] . '</h2>';
 			$projectArr = $projManager->getProjectList();
 			foreach($projectArr as $pid => $projList){
 				?>
-				<h2><a href="index.php?pid=<?php echo htmlspecialchars($pid, HTML_SPECIAL_CHARS_FLAGS); ?>"><?php echo htmlspecialchars($projList["projname"], HTML_SPECIAL_CHARS_FLAGS); ?></a></h2>
+				<h2><a href="index.php?pid=<?= $pid ?>"><?= htmlspecialchars($projList["projname"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></h2>
 				<div style="margin:0px 0px 30px 15px;">
-					<div><b><?php echo $LANG['MANAG'];?>:</b> <?php echo ($projList["managers"]?$projList["managers"]:'Not defined'); ?></div>
-					<div style='margin-top:10px;'><?php echo $projList["descr"]; ?></div>
+					<div><b><?= $LANG['MANAG'] ?>:</b> <?= ($projList["managers"] ? $projList["managers"] : $LANG['NOT_DEFINED']); ?></div>
+					<div style='margin-top:10px;'><?= $projList["descr"] ?></div>
 				</div>
 				<?php
 			}

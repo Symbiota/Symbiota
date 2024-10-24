@@ -5,13 +5,13 @@ Language: Espa�ol (Spanish)
 ------------------
 */
 
-$LANG['IDKEY'] = ' Claves de identificaci&oacute;n';
-$LANG['IDKEYLIST'] = 'Listado de claves de identificaci&oacute;n';
+$LANG['IDKEY'] = ' Claves de identificación';
+$LANG['IDKEYLIST'] = 'Listado de claves de identificación';
 
-$LANG['IDKEYS'] = 'Claves de Identificaci&oacute;n';
-$LANG['SHOWCHECK'] = 'Mostrar listados de verificaci&oacute;n en mapa';
+$LANG['IDKEYS'] = 'Claves de Identificación';
+$LANG['SHOWCHECK'] = 'Mostrar listados de verificación en mapa';
 
-$LANG['CHAR_ADMIN'] = 'Administrador de personajes';
+$LANG['CHAR_ADMIN'] = 'Administración de Caracteres Taxonómicos';
 $LANG['ALERT_NAME'] = 'El nombre del personaje debe tener un valor';
 $LANG['ALERT_TYPE'] = 'Se debe seleccionar un tipo de carácter';
 $LANG['ALERT_SORT'] = 'La secuencia de clasificación debe ser sólo un valor numérico';
