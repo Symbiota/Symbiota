@@ -334,7 +334,7 @@ class OccurrenceCleaner extends Manager{
 		$retCnt = 0;
 		$sql = 'SELECT COUNT(DISTINCT country) AS cnt
 			FROM omoccurrences
-			WHERE country IS NOT NULL AND collid = 1 AND country NOT IN(SELECT geoterm FROM geographicthesaurus WHERE geolevel = 50)';
+			WHERE country IS NOT NULL AND collid = '.$this->collid.' AND country NOT IN(SELECT geoterm FROM geographicthesaurus WHERE geolevel = 50)';
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
 			$retCnt = $r->cnt;
@@ -347,7 +347,7 @@ class OccurrenceCleaner extends Manager{
 		$retArr = array();
 		$sql = 'SELECT country, count(occid) as cnt
 			FROM omoccurrences
-			WHERE country IS NOT NULL AND collid = 1 AND country NOT IN(SELECT geoterm FROM geographicthesaurus WHERE geolevel = 50)
+			WHERE country IS NOT NULL AND collid = '.$this->collid.' AND country NOT IN(SELECT geoterm FROM geographicthesaurus WHERE geolevel = 50)
 			GROUP BY country';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){

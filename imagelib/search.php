@@ -157,6 +157,7 @@ if($action == 'batchAssignTag'){
 								<input id="taxa" name="taxa" type="text" style="width:450px;" value="<?= $imgLibManager->getTaxaStr() ?>" title="<?= $LANG['SEPARATE_MULTIPLE'] ?>" autocomplete="off" >
 							</div>
 							<div style="float:left;margin-left:10px;" >
+								<input type="hidden" name="usethes" value="0">
 								<input id="usethes" name="usethes" type="checkbox" value="1" <?php if(!$action || $imgLibManager->getUseThes()) echo 'CHECKED'; ?> > <label for="usethes"><?= $LANG['INCLUDE_SYN'] ?></label>
 							</div>
 						</div>
@@ -392,8 +393,12 @@ if($action == 'batchAssignTag'){
 											if($imgArr['occid']){
 												$collid = $occArr[$imgArr['occid']]['collid'];
 												if($collid){
-													if(isset($USER_RIGHTS['CollAdmin'][$collid])) $isEditorOfThisImage = true;
-													elseif(isset($USER_RIGHTS['CollEditor'][$collid])) $isEditorOfThisImage = true;
+													if(isset($USER_RIGHTS['CollAdmin']) && in_array($collid, $USER_RIGHTS['CollAdmin'])){
+														$isEditorOfThisImage = true;
+													}
+													elseif(isset($USER_RIGHTS['CollEditor']) && in_array($collid, $USER_RIGHTS['CollEditor'])){
+														$isEditorOfThisImage = true;
+													}
 												}
 											}
 											else{

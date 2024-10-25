@@ -309,11 +309,17 @@ $traitArr = $indManager->getTraitArr();
 		.smaller-header {
 			font-size: 2rem;
 		}
-		<?php if($shouldUseMinimalMapHeader){ ?>
+		#exsiccati-div{ clear: both; }
+		#rights-div{ clear: both; }
+		<?php
+		if($shouldUseMinimalMapHeader){
+			?>
 			.minimal-header-margin{
 			   margin-top: 6rem;
 			}
-		<?php } ?>
+			<?php
+		}
+		?>
 		</style>
 </head>
 <body>
@@ -435,7 +441,7 @@ $traitArr = $indManager->getTraitArr();
 										$relID = $assocArr['objectID'];
 										$relUrl = $assocArr['resourceurl'];
 										if(!$relUrl && $assocArr['occidassoc']) $relUrl = $GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$assocArr['occidassoc'];
-										if($relUrl) $relID = '<a href="' . $relUrl . '">' . $relID . '</a>';
+										if($relUrl) $relID = '<a href="' . $relUrl . '" target="_blank">' . ($relID ? $relID : $relUrl) . '</a>';
 										if($relID) echo $relID;
 										if($assocArr['sciname']) echo ' [' . $assocArr['sciname'] . ']';
 										echo '</div>';
@@ -702,7 +708,7 @@ $traitArr = $indManager->getTraitArr();
 						if($occArr['decimallatitude']){
 							?>
 							<div id="latlng-div" class="bottom-breathing-room-rel-sm">
-								<?php echo $LANG['LAT_LNG'] ?>:
+								<?php echo '<label>'.$LANG['LAT_LNG'].':</label> '; ?>
 								<?php
 								echo $occArr['decimallatitude'].'&nbsp;&nbsp;'.$occArr['decimallongitude'];
 								if($occArr['coordinateuncertaintyinmeters']) echo ' +-'.$occArr['coordinateuncertaintyinmeters'].'m.';

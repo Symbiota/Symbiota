@@ -55,15 +55,19 @@ class OccurrenceMapManager extends OccurrenceManager {
 		if($this->sqlWhere){
 			$statsManager = new OccurrenceAccessStats();
 			$sql = 'SELECT o.occid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS identifier, '.
-				'o.sciname, o.family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, o.catalognumber, '.
+				'o.sciname, IF(ts.family IS NULL, o.family, ts.family) as family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, o.catalognumber, '.
 				'o.othercatalognumbers, c.institutioncode, c.collectioncode, c.CollectionName '.
 				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
+
+			$this->sqlWhere .= 'AND (ts.taxauthid = 1 OR ts.taxauthid IS NULL) ';
+
 			$sql .= $this->getTableJoins($this->sqlWhere);
+
 			$sql .= $this->sqlWhere;
+
 			if(is_numeric($start) && $limit){
 				$sql .= "LIMIT ".$start.",".$limit;
 			}
-			//echo '//SQL: ' . $sql;
 			$result = $this->conn->query($sql);
 			$color = 'e69e67';
 			$occidArr = array();

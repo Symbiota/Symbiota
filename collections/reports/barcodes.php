@@ -3,7 +3,7 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLabel.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$collid = filter($_POST['collid'], FILTER_SANITIZE_NUMBER_INT);
+$collid = filter_var($_POST['collid'], FILTER_SANITIZE_NUMBER_INT);
 $action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
 
 $labelManager = new OccurrenceLabel();

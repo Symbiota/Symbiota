@@ -310,37 +310,37 @@ if($isEditor){
 			<div>
 				<section class="fieldset-like">
 					<h2> <span> <?php echo $LANG['DEFINE_RECORDSET']; ?> </span> </h2>
-					<div class="left-breathing-room-rel-lg">
+					<div>
 						<?php echo $LANG['RECORDSET_EXPLAIN']; ?>
 					</div>
-					<div style="margin:15px;width:700px;">
+					<div style="margin-top:15px;">
 						<form name="accqueryform" action="batchdeterminations.php" method="post" onsubmit="return submitAccForm(this);">
-							<section class="flex-form">
-								<div class="bottom-breathing-room">
+							<section class="flex-form" style="align-items: center; gap:0.5rem; margin-bottom: 1rem">
+								<div style="margin: 0; display:flex; align-items: center; gap:0.25rem">
 									<label for="catalognumber"><?php echo $LANG['CATNUM']; ?>:</label>
-									<input name="catalognumber" id="catalognumber" type="text" style="border-color:green;width:200px;" />
+									<input style="margin: 0" name="catalognumber" id="catalognumber" type="text" style="border-color:green;width:200px;" />
 								</div>
-								<div class="bottom-breathing-room">
+								<div style="margin: 0">
 									<input name="allcatnum" id="allcatnum" type="checkbox" checked /> <label for="allcatnum"><?php echo $LANG['TARGET_ALL']; ?></label>
 								</div>
 							</section>
-							<div class="left-breathing-room-rel">
+							<div style="margin-bottom: 1rem; display:flex; align-items: center; gap:0.25rem">
 								<label for="nomsciname"><?php echo $LANG['TAXON']; ?>:</label>
-								<input type="text" id="nomsciname" name="sciname" style="width:260px;" onfocus="initScinameAutocomplete(this.form)" />
+								<input style="margin:0; width:260px;" type="text" id="nomsciname" name="sciname" onfocus="initScinameAutocomplete(this.form)" />
 							</div>
 							<section class="flex-form">
-								<div class="top-breathing-room-sm-px">
+								<div style="margin: 0">
 									<button name="addrecord" type="submit"><?php echo $LANG['ADD_RECORDS']; ?></button>
 									<img id="workingcircle" src="../../images/workingcircle.gif" style="display:none;" alt="progress is being made" />
 								</div>
-								<div class="top-breathing-room-sm-px">
+								<div style="margin: 0">
 									<button name="clearaccform" type="button" onclick='clearAccForm(this.form)'><?php echo $LANG['CLEAR_LIST']; ?></button>
 									<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 								</div>
 							</section>
 						</form>
 					</div>
-					<div style="margin:15px">
+					<div style="margin-top: 1rem">
 						* <?php echo $LANG['LIST_LIMIT']; ?><br/>
 					</div>
 					<?php
@@ -358,7 +358,7 @@ if($isEditor){
 							<input name="accselectall" value="" type="checkbox" onclick="selectAll(this);" checked />
 							<?php echo $LANG['SELECT_DESELECT']; ?>
 						</div>
-						<table class="styledtable" style="font-size: 1.45rem;">
+						<table class="styledtable">
 							<thead>
 								<tr>
 									<th style="width:25px;text-align:center;">&nbsp;</th>

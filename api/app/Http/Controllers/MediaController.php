@@ -287,7 +287,7 @@ class MediaController extends Controller{
 	 *	 ),
 	 *	 @OA\RequestBody(
 	 *		required=true,
-	 *		description="Media object to create",
+	 *		description="Media object to be updated",
      *		@OA\MediaType(
      *			mediaType="application/json",
      *			@OA\Schema(

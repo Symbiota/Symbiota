@@ -41,6 +41,7 @@ $LANG['CREATECHECKDET'] = 'Create New Checklist';
 $LANG['EDITCHECKDET'] = 'Edit Checklist Details';
 $LANG['CHECKNAME'] = 'Checklist Name';
 $LANG['CHECKTYPE'] = 'Checklist Type';
+$LANG['EXCLUDESPP'] = 'Species Exclusion List';
 $LANG['RARETHREAT'] = 'Rare, threatened, protected species list';
 $LANG['GENCHECK'] = 'General Checklist';
 $LANG['EXTSERVICE'] = 'External Service (e.g., iNaturalist) to associate with this checklist';

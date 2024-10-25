@@ -40,6 +40,7 @@ $router->group(['prefix' => 'v2'], function () use ($router) {
 	$router->get('occurrence/{id}/annotation', ['uses' => 'OccurrenceAnnotationController@showOccurrenceAnnotations']);
 	$router->get('occurrence/{id}/reharvest', ['uses' => 'OccurrenceController@oneOccurrenceReharvest']);
 	$router->get('occurrence/annotation/search', ['uses' => 'OccurrenceAnnotationController@showAllAnnotations']);
+	$router->post('occurrence/skeletal', ['uses' => 'OccurrenceController@skeletalImport']);
 
 	$router->get('installation',  ['uses' => 'InstallationController@showAllPortals']);
 	$router->get('installation/ping', ['uses' => 'InstallationController@pingPortal']);

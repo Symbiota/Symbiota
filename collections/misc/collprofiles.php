@@ -638,7 +638,7 @@ if ($SYMB_UID) {
 					if(!empty($contactArr)){
 						?>
 						<section style="margin-left: 0;">
-							<h1 style="font: 1.5rem normal;"><span><?= $LANG['CONTACT'] ?>: </span></h1>
+							<h1><span><?= $LANG['CONTACT'] ?>: </span></h1>
 							<ul>
 								<?php
 								foreach($contactArr as $cArr){
@@ -852,7 +852,7 @@ if ($SYMB_UID) {
 						if($collData['managementtype'] == 'Live Data'){
 							if($GLOBALS['SYMB_UID']){
 								?>
-								<div class="bottom-breathing-room-rel">';
+								<div class="bottom-breathing-room-rel">
 									<span class="label"><?= $LANG['LIVE_DOWNLOAD'] ?>:</span>
 									<a href="../../webservices/dwc/dwcapubhandler.php?collid=<?= $collData['collid'] ?>"><?= $LANG['FULL_DATA'] ?></a>
 								</div>

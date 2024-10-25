@@ -269,7 +269,7 @@ class DwcArchiverCore extends Manager{
 	private function applyConditions(){
 		if($this->conditionSql) return true;
 		if ($this->customWhereSql) {
-			$this->conditionSql = $this->customWhereSql . ' ';
+			$this->conditionSql = trim($this->customWhereSql) . ' ';
 		}
 		if (array_key_exists('collid', $this->conditionArr) && $this->conditionArr['collid']) {
 			if (preg_match('/^[\d,]+$/', $this->conditionArr['collid'])) {

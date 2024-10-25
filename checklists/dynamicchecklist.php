@@ -16,7 +16,7 @@ $interface = $_POST['interface'];
 
 //sanitation
 if($radiusUnits != 'mi') $radiusUnits == 'km';
-echo 'lat: '.$lat.'; lng: '. $lng . '; radius: '. $radius;
+// echo 'lat: '.$lat.'; lng: '. $lng . '; radius: '. $radius;
 $dynClManager = new DynamicChecklistManager();
 
 if($taxa && !$tid) $tid = $dynClManager->getTid($taxa);

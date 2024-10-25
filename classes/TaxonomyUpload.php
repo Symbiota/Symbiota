@@ -955,17 +955,19 @@ class TaxonomyUpload{
 		$sourceArr = array();
 		if(($fh = fopen($this->uploadTargetPath.$this->uploadFileName,'r')) !== FALSE){
 			$headerArr = fgetcsv($fh);
-			if(substr($headerArr[0], 0, 3) == chr(hexdec('EF')).chr(hexdec('BB')).chr(hexdec('BF'))){
-				//Remove UTF-8 BOM
-				$headerArr[0] = trim(substr($headerArr[0], 3), ' "');
-			}
-			foreach($headerArr as $field){
-				$fieldStr = trim($field);
-				if($fieldStr){
-					$sourceArr[] = $fieldStr;
+			if($headerArr){
+				if(substr($headerArr[0], 0, 3) == chr(hexdec('EF')).chr(hexdec('BB')).chr(hexdec('BF'))){
+					//Remove UTF-8 BOM
+					$headerArr[0] = trim(substr($headerArr[0], 3), ' "');
 				}
-				else{
-					break;
+				foreach($headerArr as $field){
+					$fieldStr = trim($field);
+					if($fieldStr){
+						$sourceArr[] = $fieldStr;
+					}
+					else{
+						break;
+					}
 				}
 			}
 		}

@@ -5,6 +5,7 @@ class ImInventories extends Manager{
 
 	private $clid;
 	private $clTaxaID;
+	private $voucherID;
 	private $pid;
 	private $fieldMap = array();
 	private $parameterArr = array();
@@ -146,7 +147,7 @@ class ImInventories extends Manager{
 				elseif($oldMetadata['type'] == 'rarespp'){
 					//Checklist type changed from rarespp, thus remove state-based protections
 					if($inputArr['locality']){
-						$this->removeStateBasedLocalitySecurity($inputArr['locality']);
+						$this->removeStateLocalitySecurity($inputArr['locality']);
 					}
 				}
 				elseif($inputArr['type'] == 'excludespp' && is_numeric($inputArr['excludeparent'])){
@@ -177,7 +178,7 @@ class ImInventories extends Manager{
 		$roleArr = $this->getManagers('ClAdmin', 'fmchecklists', $this->clid);
 		unset($roleArr[$GLOBALS['SYMB_UID']]);
 		if(!$roleArr){
-			$this->deleteAllChecklistTaxaLinks();
+			$this->deleteChecklistTaxaLinksByClid();
 			$sql = 'DELETE FROM fmchecklists WHERE clid = ?';
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param('i', $this->clid);
@@ -268,20 +269,20 @@ class ImInventories extends Manager{
 			$sqlFrag .= $fieldName . ' = ?, ';
 			$paramArr[] = $value;
 		}
-		$sql = 'UPDATE fmchklsttaxalink SET '.trim($sqlFrag, ', ').' WHERE (clTaxaID = ?)';
+		$sql = 'UPDATE IGNORE fmchklsttaxalink SET ' . trim($sqlFrag, ', ') . ' WHERE (clTaxaID = ?)';
 		if($paramArr){
 			$paramArr[] = $this->clTaxaID;
 			$this->typeStr .= 'i';
 			if($stmt = $this->conn->prepare($sql)) {
 				$stmt->bind_param($this->typeStr, ...$paramArr);
 				if($stmt->execute()){
-					if($stmt->affected_rows || !$stmt->error) $status = true;
-					else $this->errorMessage = 'ERROR updating fmchklsttaxalink record: '.$stmt->error;
+					if($stmt->affected_rows) $status = true;
+					elseif($stmt->error) $this->errorMessage = $stmt->error;
 				}
-				else $this->errorMessage = 'ERROR updating fmchklsttaxalink record (1): '.$stmt->error;
+				else $this->errorMessage = $stmt->error;
 				$stmt->close();
 			}
-			else $this->errorMessage = 'ERROR preparing statement for updating fmchklsttaxalink: '.$this->conn->error;
+			else $this->errorMessage = $this->conn->error;
 		}
 		return $status;
 	}
@@ -303,7 +304,7 @@ class ImInventories extends Manager{
 		return $status;
 	}
 
-	private function deleteAllChecklistTaxaLinks(){
+	private function deleteChecklistTaxaLinksByClid(){
 		$status = false;
 		if($this->clid){
 			$sql = 'DELETE FROM fmchklsttaxalink WHERE clid = ?';
@@ -323,8 +324,128 @@ class ImInventories extends Manager{
 			'explicitExclude' => 'i', 'source' => 's', 'nativity' => 's', 'endemic' => 's', 'invasive' => 's', 'internalNotes' => 's');
 	}
 
+	//Checklist vouchers management
+	public function insertChecklistVoucher($inputArr){
+		$status = false;
+		if($this->clTaxaID && is_numeric($inputArr['occid'])){
+			$this->setChecklistVoucherFieldMap();
+			$this->setParameterArr($inputArr);
+			$sql = 'INSERT IGNORE INTO fmvouchers(';
+			$paramArr = array();
+			$sqlValues = '';
+			foreach($this->parameterArr as $fieldName => $value){
+				$sql .= $fieldName . ', ';
+				$sqlValues .= '?, ';
+				$paramArr[] = $value;
+			}
+			$paramArr[] = $this->clTaxaID;
+			$this->typeStr .= 'i';
+			$sql .= 'clTaxaID) VALUES(' . $sqlValues . '?) ';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param($this->typeStr, ...$paramArr);
+				if($stmt->execute()){
+					if($stmt->affected_rows || !$stmt->error){
+						$this->primaryKey = $stmt->insert_id;
+						$status = true;
+					}
+					else $this->errorMessage = $stmt->error;
+				}
+				else $this->errorMessage = $stmt->error;
+				$stmt->close();
+			}
+			else $this->errorMessage = $this->conn->error;
+		}
+		return $status;
+	}
+
+	public function updateChecklistVoucher($inputArr){
+		$status = false;
+		if($this->voucherID){
+			$this->setChecklistVoucherFieldMap();
+			$this->setParameterArr($inputArr);
+			$paramArr = array();
+			$sqlFrag = '';
+			foreach($this->parameterArr as $fieldName => $value){
+				$sqlFrag .= $fieldName . ' = ?, ';
+				$paramArr[] = $value;
+			}
+			$paramArr[] = $this->voucherID;
+			$this->typeStr .= 'i';
+			$sql = 'UPDATE IGNORE fmvouchers SET '.trim($sqlFrag, ', ').' WHERE (voucherID = ?)';
+			if($stmt = $this->conn->prepare($sql)) {
+				$stmt->bind_param($this->typeStr, ...$paramArr);
+				$stmt->execute();
+				if($stmt->affected_rows) $status = true;
+				elseif($stmt->error) $this->errorMessage = $stmt->error;
+				$stmt->close();
+			}
+			else $this->errorMessage = $this->conn->error;
+		}
+		return $status;
+	}
+
+	public function updateChecklistVouchersByClTaxaID($inputArr){
+		$status = false;
+		if($this->clTaxaID){
+			$this->setChecklistVoucherFieldMap();
+			$this->setParameterArr($inputArr);
+			$paramArr = array();
+			$sqlFrag = '';
+			foreach($this->parameterArr as $fieldName => $value){
+				$sqlFrag .= $fieldName . ' = ?, ';
+				$paramArr[] = $value;
+			}
+			$paramArr[] = $this->clTaxaID;
+			$this->typeStr .= 'i';
+			$sql = 'UPDATE IGNORE fmvouchers SET '.trim($sqlFrag, ', ').' WHERE (clTaxaID = ?)';
+			if($stmt = $this->conn->prepare($sql)) {
+				$stmt->bind_param($this->typeStr, ...$paramArr);
+				$stmt->execute();
+				if($stmt->affected_rows) $status = true;
+				elseif($stmt->error) $this->errorMessage = $stmt->error;
+				$stmt->close();
+			}
+			else $this->errorMessage = $this->conn->error;
+		}
+		return $status;
+	}
+
+	public function deleteChecklistVoucher(){
+		$status = false;
+		if($this->voucherID){
+			$sql = 'DELETE FROM fmvouchers WHERE voucherID = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->voucherID);
+				$stmt->execute();
+				if($stmt->error) $this->errorMessage = $stmt->error;
+				else $status = true;
+				$stmt->close();
+			}
+		}
+		return $status;
+	}
+
+	public function deleteChecklistVouchersByClTaxaID(){
+		$status = false;
+		if($this->clTaxaID){
+			$sql = 'DELETE FROM fmvouchers WHERE clTaxaID = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->clTaxaID);
+				$stmt->execute();
+				if($stmt->error) $this->errorMessage = $stmt->error;
+				else $status = true;
+				$stmt->close();
+			}
+		}
+		return $status;
+	}
+
+	private function setChecklistVoucherFieldMap(){
+		$this->fieldMap = array('clTaxaID' => 'i', 'occid' => 'i', 'editorNotes' => 's', 'preferredImage' => 'i', 'notes' => 's');
+	}
+
 	//Set state-based locality security
-	public function setStateBasedLocalitySecurity($state, $tid = null){
+	private function setStateBasedLocalitySecurity($state, $tid = null){
 		$status = false;
 		$id = $tid;
 		$sql = 'UPDATE omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted ';
@@ -352,15 +473,17 @@ class ImInventories extends Manager{
 		return $status;
 	}
 
-	public function removeStateBasedLocalitySecurity($state){
+	private function removeStateLocalitySecurity($state){
 		$status = false;
 		if($this->clid){
+			// Removes security for all taxa associated with the checklist, excluding globally protected taxa
 			$sql = 'UPDATE omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid
 				INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted
 				INNER JOIN fmchklsttaxalink cl ON ts2.tid = cl.tid
 				SET o.localitysecurity = 0
 				WHERE (o.localitysecurity = 1) AND (o.localitySecurityReason IS NULL) AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1)
-				AND (o.stateprovince = ?) AND (cl.clid = ?) ';
+				AND (o.stateprovince = ?) AND (cl.clid = ?)
+				AND o.tidinterpreted NOT IN(SELECT s2.tid FROM taxstatus s2 INNER JOIN taxstatus s1 ON s2.tidaccepted = s1.tidaccepted INNER JOIN taxa t ON s1.tid = t.tid WHERE t.securityStatus > 0)';
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param('si', $state, $this->clid);
 				$stmt->execute();
@@ -370,6 +493,36 @@ class ImInventories extends Manager{
 			}
 		}
 		return $status;
+	}
+
+	public function removeStateLocalitySecurityByTid($rareLocality, $tid){
+		if(is_numeric($tid)){
+			//Remove state based security protection only if name is not on global list
+			$globalStatus = 0;
+			$sql = 'SELECT securityStatus FROM taxa WHERE tid = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $tid);
+				$stmt->execute();
+				$stmt->bind_result($globalStatus);
+				$stmt->fetch();
+				$stmt->close();
+			}
+			if(!$globalStatus){
+				$sqlRare = 'UPDATE omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid
+					INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted
+					SET o.localitysecurity = 0
+					WHERE (o.localitysecurity = 1) AND (o.localitySecurityReason IS NULL) AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1)
+					AND o.stateprovince = ? AND ts2.tid = ?';
+				if($stmt = $this->conn->prepare($sqlRare)){
+					$stmt->bind_param('si', $rareLocality, $tid);
+					$stmt->execute();
+					if($stmt->error){
+						$this->errorMessage = 'ERROR resetting locality security during taxon delete: '.$stmt->error;
+					}
+					$stmt->close();
+				}
+			}
+		}
 	}
 
 	//Child-Parent checklist functions
@@ -407,18 +560,19 @@ class ImInventories extends Manager{
 	public function insertChecklistCoordinates($inputArr){
 		$status = false;
 		if($this->clid && isset($inputArr['tid']) && $inputArr['tid']){
-			$sql = 'INSERT IGNORE INTO fmchklstcoordinates(clid';
-			$sqlValues = '?, ';
-			$paramArr = array($this->clid);
-			$this->typeStr = 'i';
 			$this->setChecklistCoordinatesFieldMap();
 			$this->setParameterArr($inputArr);
+			$sql = 'INSERT IGNORE INTO fmchklstcoordinates(';
+			$sqlValues = '';
+			$paramArr = array();
 			foreach($this->parameterArr as $fieldName => $value){
-				$sql .= ', '.$fieldName;
+				$sql .= $fieldName . ', ';
 				$sqlValues .= '?, ';
 				$paramArr[] = $value;
 			}
-			$sql .= ') VALUES('.trim($sqlValues, ', ').') ';
+			$paramArr[] = $this->clid;
+			$this->typeStr .= 'i';
+			$sql .= 'clid) VALUES(' . $sqlValues . '?) ';
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param($this->typeStr, ...$paramArr);
 				if($stmt->execute()){
@@ -661,6 +815,11 @@ class ImInventories extends Manager{
 
 	//Mics support functions
 	private function setParameterArr($inputArr){
+		//Reset class variables, which is very important if more than one write function is called per class instance
+		unset($this->parameterArr);
+		$this->parameterArr = array();
+		$this->typeStr = '';
+		//Prepare type and value variables used within prepared statement
 		foreach($this->fieldMap as $field => $type){
 			$postField = '';
 			if(isset($inputArr[$field])) $postField = $field;
@@ -673,7 +832,7 @@ class ImInventories extends Manager{
 				$this->typeStr .= $type;
 			}
 		}
-		if(isset($inputArr['clid']) && $inputArr['clid'] && !$this->clid) $this->clid = filter_var($inputArr['clid'], FILTER_SANITIZE_NUMBER_INT);
+		if(!$this->clid && !empty($inputArr['clid'])) $this->clid = filter_var($inputArr['clid'], FILTER_SANITIZE_NUMBER_INT);
 	}
 
 	//Setter and getter functions
@@ -683,6 +842,10 @@ class ImInventories extends Manager{
 
 	public function setClTaxaID($clTaxaID){
 		if(is_numeric($clTaxaID)) $this->clTaxaID = $clTaxaID;
+	}
+
+	public function setVoucherID($voucherID){
+		if(is_numeric($voucherID)) $this->voucherID = $voucherID;
 	}
 
 	public function getPid(){

@@ -1,7 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+namespace App\Helpers;
 
-class TaxonomyUtilities {
+class TaxonomyHelper {
 
 	/*
 	 * INPUT: String representing a verbatim scientific name
@@ -42,10 +42,8 @@ class TaxonomyUtilities {
 			}
 			//Remove extra spaces
 			$inStr = preg_replace('/\s\s+/',' ',$inStr);
-			if(!$inStr) return $retArr;
+
 			$sciNameArr = explode(' ',trim($inStr));
-			$okToCloseConn = true;
-			if($conn !== null) $okToCloseConn = false;
 			if(count($sciNameArr)){
 				if(strtolower($sciNameArr[0]) == 'x' || $sciNameArr[0] == '×'){
 					$retArr['unitind1'] = array_shift($sciNameArr);
@@ -92,19 +90,20 @@ class TaxonomyUtilities {
 					if($retArr['unitname2'] && !preg_match('/^[\-\'a-z]+$/',$retArr['unitname2'])){
 						if(preg_match('/[A-Z]{1}[\-\'a-z]+/',$retArr['unitname2'])){
 							//Check to see if is term is genus author
-							if($conn === null) $conn = MySQLiConnectionFactory::getCon('readonly');
-							$sql = 'SELECT tid FROM taxa WHERE unitname1 = "'.$conn->real_escape_string($retArr['unitname1']).'" AND unitname2 = "'.$conn->real_escape_string($retArr['unitname2']).'"';
-							$rs = $conn->query($sql);
-							if($rs->num_rows){
-								if(isset($retArr['author'])) unset($retArr['author']);
+							if($conn){
+								$sql = 'SELECT tid FROM taxa WHERE unitname1 = "'.$conn->real_escape_string($retArr['unitname1']).'" AND unitname2 = "'.$conn->real_escape_string($retArr['unitname2']).'"';
+								$rs = $conn->query($sql);
+								if($rs->num_rows){
+									if(isset($retArr['author'])) unset($retArr['author']);
+								}
+								else{
+									//Second word is likely author, thus assume assume author has been reach and stop process
+									$retArr['author'] = trim($retArr['unitname2'].' '.implode(' ', $sciNameArr));
+									$retArr['unitname2'] = '';
+									unset($sciNameArr);
+								}
+								$rs->free();
 							}
-							else{
-								//Second word is likely author, thus assume assume author has been reach and stop process
-								$retArr['author'] = trim($retArr['unitname2'].' '.implode(' ', $sciNameArr));
-								$retArr['unitname2'] = '';
-								unset($sciNameArr);
-							}
-							$rs->free();
 						}
 						if($retArr['unitname2']){
 							$retArr['unitname2'] = strtolower($retArr['unitname2']);
@@ -157,16 +156,17 @@ class TaxonomyUtilities {
 						$arr = explode(' ',$retArr['author']);
 						$firstWord = array_shift($arr);
 						if(preg_match('/^[\-\'a-z]{2,}$/',$firstWord)){
-							if($conn === null) $conn = MySQLiConnectionFactory::getCon('readonly');
-							$sql = 'SELECT unitind3 FROM taxa WHERE unitname1 = "'.$conn->real_escape_string($retArr['unitname1']).'" AND unitname2 = "'.$conn->real_escape_string($retArr['unitname2']).'" AND unitname3 = "'.$conn->real_escape_string($firstWord).'" ';
-							//echo $sql.'<br/>';
-							$rs = $conn->query($sql);
-							if($r = $rs->fetch_object()){
-								$retArr['unitind3'] = $r->unitind3;
-								$retArr['unitname3'] = $firstWord;
-								$retArr['author'] = implode(' ',$arr);
+							if($conn){
+								$sql = 'SELECT unitind3 FROM taxa WHERE unitname1 = "'.$conn->real_escape_string($retArr['unitname1']).'" AND unitname2 = "'.$conn->real_escape_string($retArr['unitname2']).'" AND unitname3 = "'.$conn->real_escape_string($firstWord).'" ';
+								//echo $sql.'<br/>';
+								$rs = $conn->query($sql);
+								if($r = $rs->fetch_object()){
+									$retArr['unitind3'] = $r->unitind3;
+									$retArr['unitname3'] = $firstWord;
+									$retArr['author'] = implode(' ',$arr);
+								}
+								$rs->free();
 							}
-							$rs->free();
 						}
 					}
 				}
@@ -178,7 +178,6 @@ class TaxonomyUtilities {
 					}
 				}
 			}
-			if($conn !== null && $okToCloseConn) $conn->close();
 			//Set taxon rankid
 			if($rankId && is_numeric($rankId)){
 				$retArr['rankid'] = $rankId;
@@ -262,7 +261,6 @@ class TaxonomyUtilities {
 	//Taxonomic indexing functions
 	public static function rebuildHierarchyEnumTree($conn = null){
 		$status = true;
-		if(!$conn) $conn = MySQLiConnectionFactory::getCon('write');
 		if($conn){
 			if($conn->query('DELETE FROM taxaenumtree')){
 				self::buildHierarchyEnumTree($conn);
@@ -278,7 +276,6 @@ class TaxonomyUtilities {
 	public static function buildHierarchyEnumTree($conn = null, $taxAuthId = 1){
 		set_time_limit(600);
 		$status = true;
-		if(!$conn) $conn = MySQLiConnectionFactory::getCon('write');
 		if($conn){
 			//Seed taxaenumtree table
 			$sql = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid)

@@ -114,15 +114,26 @@ function listGeoUnits($arr) {
       </style>
       <script src="<?php echo $CLIENT_ROOT?>/js/autocomplete-input.js" type="module"></script>
       <script type="text/javascript">
-      function toggleEditor(){
-         toggle(".editTerm");
-         toggle(".editFormElem");
-         toggle("#editButton-div", "block");
-         toggle("#edit-legend");
-         toggle("#unitDel-div", "block");
-       let map = document.getElementById("map_canvas");
-       if(map) map.style.display = map.style.display === 'none'?'block': 'none';
-      }
+		function toggleEditor(){
+			toggle(".editTerm");
+			toggle(".editFormElem");
+			toggle("#editButton-div", "block");
+			toggle("#edit-legend");
+			toggle("#unitDel-div", "block");
+
+			const edit_form = document.querySelector("#unitEditForm");
+			const add_form = document.querySelector("#unitAddForm");
+			if(edit_form) {
+				edit_form.addEventListener('submit', () => window.unsavedChanges = false);
+				edit_form.addEventListener('change', () => window.unsavedChanges = true);
+			}
+			if(add_form) {
+				add_form.addEventListener('submit', () => window.unsavedChanges = false);
+				add_form.addEventListener('change', () => window.unsavedChanges = true);
+			}
+			let map = document.getElementById("map_canvas");
+			if(map) map.style.display = map.style.display === 'none'?'block': 'none';
+		}
 
       function toggle (target, defaultDisplay = "inline"){
          const targetList = document.querySelectorAll(target);
@@ -169,6 +180,9 @@ function listGeoUnits($arr) {
 
       function init() {
          try {
+			  window.onbeforeunload = function(e) {
+				  if(window.unsavedChanges) return true;
+			  }
             leafletInit();
          } catch(e) {
             console.log("Leaflet Map failed to load")
@@ -227,7 +241,7 @@ function listGeoUnits($arr) {
 
          <!-- Add Form  -->
          <div id="addGeoUnit-div" style="clear:both;margin-bottom:10px;display:none">
-            <form name="unitAddForm" action="<?= $geoThesID? '' : 'index.php' ?>" method="post">
+            <form id="unitAddForm" name="unitAddForm" action="<?= $geoThesID? '' : 'index.php' ?>" method="post">
                <fieldset id="new-fieldset">
                   <legend> <?= $LANG['ADD_GEO_UNIT'] ?> </legend>
                   <div class="field-div">
@@ -331,7 +345,7 @@ function listGeoUnits($arr) {
          if($geoThesID && $geoUnit) {
          ?>
          <div id="updateGeoUnit-div" style="margin-bottom:10px;">
-            <form name="unitEditForm" action="index.php<?= $geoThesID? '?geoThesID=' . $geoThesID: '' ?>" method="post">
+            <form id="unitEditForm" name="unitEditForm" action="index.php<?= $geoThesID? '?geoThesID=' . $geoThesID: '' ?>" method="post">
                <fieldset id="edit-fieldset">
                   <legend><span id="edit-legend"><?= $LANG['EDIT'] ?></span> <?= $LANG['GEO_UNIT'] ?> </legend>
                   <div style="float:right">

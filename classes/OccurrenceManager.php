@@ -99,11 +99,12 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			//$this->displaySearchArr[] = $this->voucherManager->getQueryVariableStr();
 		}
 		elseif(array_key_exists('clid',$this->searchTermArr) && preg_match('/^[0-9,]+$/', $this->searchTermArr['clid'])){
-			if(isset($this->searchTermArr["cltype"]) && $this->searchTermArr["cltype"] == 'all'){
-				$sqlWhere .= 'AND (cl.clid IN('.$this->searchTermArr['clid'].')) ';
+			$clidStr = $this->getClidStrWithChildren($this->searchTermArr['clid']);
+			if(isset($this->searchTermArr['cltype']) && $this->searchTermArr['cltype'] == 'all'){
+				$sqlWhere .= 'AND (cl.clid IN(' . $clidStr . ')) ';
 			}
 			else{
-				$sqlWhere .= 'AND (ctl.clid IN('.$this->searchTermArr['clid'].')) ';
+				$sqlWhere .= 'AND (ctl.clid IN(' . $clidStr . ')) ';
 			}
 			$this->displaySearchArr[] = $this->LANG['CHECKLIST_ID'] . ': ' . $this->searchTermArr['clid'];
 		}
@@ -505,6 +506,27 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		return $retArr;
 	}
 
+	public function getClidStrWithChildren($clid){
+		$retStr = $clid;
+		if(is_numeric($clid)){
+			$sqlBase = 'SELECT ch.clidchild
+				FROM fmchecklists cl INNER JOIN fmchklstchildren ch ON cl.clid = ch.clid
+				INNER JOIN fmchecklists cl2 ON ch.clidchild = cl2.clid
+				WHERE (cl2.type != "excludespp") AND (ch.clid != ch.clidchild) AND cl.clid IN(';
+			$sql = $sqlBase . $clid . ')';
+			do{
+				$childStr = '';
+				$rsChild = $this->conn->query($sql);
+				while($r = $rsChild->fetch_object()){
+					$childStr .= ',' . $r->clidchild;
+					$retStr .= ',' . $r->clidchild;
+				}
+				$sql = $sqlBase . substr($childStr, 1) . ')';
+			}while($childStr);
+		}
+		return $retStr;
+	}
+
 	protected function formatDate($inDate){
 		$retDate = OccurrenceUtilities::formatDate($inDate);
 		return $retDate;
@@ -527,7 +549,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			if(strpos($sqlWhere,'e.taxauthid')){
 				$sqlJoin .= 'INNER JOIN taxaenumtree e ON o.tidinterpreted = e.tid ';
 			}
-			if(strpos($sqlWhere,'ts.family')){
+			if(strpos($sqlWhere,'ts.')){
 				$sqlJoin .= 'LEFT JOIN taxstatus ts ON o.tidinterpreted = ts.tid ';
 			}
 			if(strpos($sqlWhere,'ds.datasetid')){

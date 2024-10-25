@@ -394,17 +394,25 @@ if(isset($_REQUEST['llpoint'])) {
 			let taxaHtml = "";
 
 			for(let i = 0; i < mapGroups.length; i++) {
+				const origin = mapGroups[i].origin
 				for(taxon of Object.values(mapGroups[i].taxonMapGroup.group_map)) {
 					if(!taxaLegendMap[taxon.sn]) {
 						taxaLegendMap[taxon.sn] = taxon
+						taxaLegendMap[taxon.sn].origin = origin;
 						taxaLegendMap[taxon.sn].id_map = [{tid: taxon.tid, index: i}];
+						
 					} else {
 						taxaLegendMap[taxon.sn].id_map.push({tid: taxon.tid, index: i});
 					}
 				}
 			}
 
-			let taxaArr = Object.values(taxaLegendMap).sort((a, b) => a.family > b.family)
+			let taxaArr = Object.values(taxaLegendMap).sort((a, b) => {
+				if(a.family === b.family) return 0;
+				else if(a.family > b.family) return 1;
+				else return -1;			
+			})
+
 			let prev_family;
 
 			for (let taxa of taxaArr) {
@@ -415,7 +423,8 @@ if(isset($_REQUEST['llpoint'])) {
 					taxaHtml += "<div style='display:table;'>";
 					prev_family = taxa.family;
 				}
-				taxaHtml += legendRow(`taxa-${taxa.id_map.map(id => `${id.index}*${id.tid}`).join(",")}`, taxa.color, taxa.sn);
+				const sn_link = `<a target="_blank" href="${taxa.origin}/taxa/index.php?tid=${taxa.tid}">${taxa.sn}</a>`;
+				taxaHtml += legendRow(`taxa-${taxa.id_map.map(id => `${id.index}*${id.tid}`).join(",")}`, taxa.color, sn_link);
 			}
 
 			taxaHtml += "</div>";
@@ -934,13 +943,15 @@ if(isset($_REQUEST['llpoint'])) {
 				let count = 0;
 
 				for(let search of searches) {
-					if(count > 0) search.origin = "external-portal"
 					if(search.recordArr) {
 						recordArr = recordArr.concat(search.recordArr)
-						mapGroups.push(genMapGroups(search.recordArr, search.taxaArr, search.collArr, search.label))
+						const group = genMapGroups(search.recordArr, search.taxaArr, search.collArr, search.label)
+						group.origin = search.origin;
+						mapGroups.push(group);
 					}
 					count++;
 				}
+
 				//Need to generate colors for each group
 				buildPanels(formData.get('cross_portal_switch'));
 
@@ -1088,7 +1099,9 @@ if(isset($_REQUEST['llpoint'])) {
 			if(recordArr.length > 0) {
 				let formData = new FormData(document.getElementById("mapsearchform"));
 
-				mapGroups = [genMapGroups(recordArr, taxaMap, collArr)];
+				const group = genMapGroups(recordArr, taxaMap, collArr, "<?=$LANG['CURRENT_PORTAL']?>");
+				group.origin = "<?= $SERVER_HOST . $CLIENT_ROOT?>";
+				mapGroups = [group];
 
 				getOccurenceRecords(formData).then(res => {
 					if(res) loadOccurenceRecords(res);
@@ -1440,7 +1453,9 @@ if(isset($_REQUEST['llpoint'])) {
 
 				for(let search of searches) {
 					recordArr = recordArr.concat(search.recordArr);
-					mapGroups.push(genGroups(search.recordArr, search.taxaArr, search.collArr, search.label));
+					const group = genGroups(search.recordArr, search.taxaArr, search.collArr, search.label)
+					group.origin = search.origin;
+					mapGroups.push(group);
 				}
 
 				buildPanels(formData.get('cross_portal_switch'));
@@ -1643,8 +1658,11 @@ if(isset($_REQUEST['llpoint'])) {
 			if(recordArr.length > 0) {
 				if(shape) map.drawShape(shape);
 				let formData = new FormData(document.getElementById("mapsearchform"));
+
+				const group = genGroups(recordArr, taxaMap, collArr, "<?= $LANG['CURRENT_PORTAL']?>");
+				group.origin = "<?= $SERVER_HOST . $CLIENT_ROOT?>";
 				mapGroups = [
-					genGroups(recordArr, taxaMap, collArr)
+					group
 				]
 
 				getOccurenceRecords(formData).then(res => {
