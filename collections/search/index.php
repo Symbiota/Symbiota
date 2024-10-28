@@ -532,7 +532,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 			</div>
 
 			<!-- Criteria panel -->
-			<div id="criteria-panel" style="position: sticky; top: 0; height: 100vh">
+			<div id="criteria-panel" class="criteria-panel" style="overflow-y:clip">
 			<fieldset class="bottom-breathing-room-rel">
 				<legend>
 					<?php echo $LANG['DISPLAY_FORMAT']; ?>
@@ -549,7 +549,9 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 				<button id="search-btn" onclick="simpleSearch()"><?php echo $LANG['SEARCH'] ?></button>
 				<button id="reset-btn"><?php echo $LANG['RESET'] ?></button>
 				<h2><?php echo $LANG['CRITERIA'] ?></h2>
-				<div id="chips"></div>
+				<div class="criteria-panel">
+					<div id="chips"></div>
+				</div>
 			</div>
 		</form>
 	</div>
