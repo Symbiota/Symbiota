@@ -595,6 +595,9 @@ if ($SYMB_UID) {
 											<?= $LANG['RESTORE_BACKUP'] ?>
 										</a>
 									</li>
+									<?php
+								}
+								?>
 								<!--
 								<li style="margin-left:10px;">
 									<a href="../../imagelib/admin/igsnmapper.php?collid=<?= $collid ?>">
@@ -602,9 +605,6 @@ if ($SYMB_UID) {
 									</a>
 								</li>
 								 -->
-									<?php
-								}
-								?>
 								<li style="margin-left:10px;">
 									<a href="../../imagelib/admin/thumbnailbuilder.php?collid=<?= $collid ?>">
 										<?= $LANG['THUMBNAIL_MAINTENANCE'] ?>
