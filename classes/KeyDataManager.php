@@ -54,11 +54,10 @@ class KeyDataManager extends Manager {
 			$countMin = $this->taxaCount * $this->relevanceValue;
 			$loopCnt = 0;
 			while(!$charList && $loopCnt < 10){
-				$sqlRev = "SELECT tc.CID, Count(tc.TID) AS c FROM ".
-					"(SELECT DISTINCT tList.TID, d.CID FROM ($this->sql) AS tList INNER JOIN kmdescr d ON tList.TID = d.TID WHERE (d.CS <> '-')) AS tc ".
-					"GROUP BY tc.CID HAVING ((Count(tc.TID)) > $countMin)";
+				$sqlRev = 'SELECT tc.CID, Count(tc.TID) AS c FROM
+					(SELECT DISTINCT tList.TID, d.CID FROM (' . $this->sql . ') AS tList INNER JOIN kmdescr d ON tList.TID = d.TID WHERE (d.CS <> '-')) AS tc
+					GROUP BY tc.CID HAVING ((Count(tc.TID)) > $countMin)';
 				$rs = $this->conn->query($sqlRev);
-				//echo $sqlRev.'<br/>';
 				while($row = $rs->fetch_object()){
 					$charList[] = $row->CID;
 				}
