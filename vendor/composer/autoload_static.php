@@ -27,15 +27,12 @@ class ComposerStaticInit61c5b8c463cdaa6cee3bdb4483ab7dbb
             'Psr\\Http\\Client\\' => 16,
             'PhpOffice\\PhpWord\\' => 18,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
+            'PhpOffice\\Math\\' => 15,
             'ParagonIE\\ConstantTime\\' => 23,
         ),
         'M' => 
         array (
             'Matrix\\' => 7,
-        ),
-        'L' => 
-        array (
-            'Laminas\\Escaper\\' => 16,
         ),
         'C' => 
         array (
@@ -73,6 +70,10 @@ class ComposerStaticInit61c5b8c463cdaa6cee3bdb4483ab7dbb
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
         ),
+        'PhpOffice\\Math\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpoffice/math/src/Math',
+        ),
         'ParagonIE\\ConstantTime\\' => 
         array (
             0 => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src',
@@ -80,10 +81,6 @@ class ComposerStaticInit61c5b8c463cdaa6cee3bdb4483ab7dbb
         'Matrix\\' => 
         array (
             0 => __DIR__ . '/..' . '/markbaker/matrix/classes/src',
-        ),
-        'Laminas\\Escaper\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/laminas/laminas-escaper/src',
         ),
         'Complex\\' => 
         array (

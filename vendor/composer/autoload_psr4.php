@@ -13,8 +13,8 @@ return array(
     'Psr\\Http\\Client\\' => array($vendorDir . '/psr/http-client/src'),
     'PhpOffice\\PhpWord\\' => array($vendorDir . '/phpoffice/phpword/src/PhpWord'),
     'PhpOffice\\PhpSpreadsheet\\' => array($vendorDir . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet'),
+    'PhpOffice\\Math\\' => array($vendorDir . '/phpoffice/math/src/Math'),
     'ParagonIE\\ConstantTime\\' => array($vendorDir . '/paragonie/constant_time_encoding/src'),
     'Matrix\\' => array($vendorDir . '/markbaker/matrix/classes/src'),
-    'Laminas\\Escaper\\' => array($vendorDir . '/laminas/laminas-escaper/src'),
     'Complex\\' => array($vendorDir . '/markbaker/complex/classes/src'),
 );
