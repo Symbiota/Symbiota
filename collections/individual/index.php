@@ -924,6 +924,12 @@ $traitArr = $indManager->getTraitArr();
 						}
 						if(isset($occArr['paleoid'])){
 							?>
+								<div>
+									<?php
+									if($occArr['slideproperties']) echo '<div class="bottom-breathing-room-rel-sm"><label>'.$LANG['SLIDE_PROPS'].':</label> '.$occArr['slideproperties'].'</div>';
+									if($occArr['element']) echo '<div class="bottom-breathing-room-rel-sm"><label>'.$LANG['ELEMENT'].':</label> '.$occArr['element'].'</div>';
+									?>
+								</div>
 								<div class=" bottom-breathing-room-rel-sm"><label><?php echo $LANG['GEO_CONTEXT']; ?>: </label></div>
 								<?php
 								$paleoStr1 = '';
@@ -954,11 +960,8 @@ $traitArr = $indManager->getTraitArr();
 								if($occArr['storageage']) echo '<div class="paleofield-div bottom-breathing-room-rel-sm"><label>'.$LANG['STORAGE_AGE'].':</label> '.$occArr['storageage'].'</div>';
 								if($occArr['stratremarks']) echo '<div class="paleofield-div bottom-breathing-room-rel-sm"><label>'.$LANG['STRAT_REMARKS'].':</label> '.$occArr['stratremarks'].'</div>';
 								if($occArr['lithology']) echo '<div class="paleofield-div bottom-breathing-room-rel-sm"><label>'.$LANG['LITHOLOGY'].':</label> '.$occArr['lithology'].'</div>';
-								if($occArr['element']) echo '<div class="paleofield-div bottom-breathing-room-rel-sm"><label>'.$LANG['ELEMENT'].':</label> '.$occArr['element'].'</div>';
 								if($occArr['biota']) echo '<div class="paleofield-div bottom-breathing-room-rel-sm"><label>'.$LANG['BIOTA'].':</label> '.$occArr['biota'].'</div>';
 								if($occArr['taxonenvironment']) echo '<div class="paleofield-div bottom-breathing-room-rel-sm"><label>'.$LANG['TAXON_ENVIR'].':</label> '.$occArr['taxonenvironment'].'</div>';
-
-								if($occArr['slideproperties']) echo '<div class="paleofield-div bottom-breathing-room-rel-sm"><label>'.$LANG['SLIDE_PROPS'].':</label> '.$occArr['slideproperties'].'</div>';
 								if($occArr['geologicalcontextid']) echo '<div class="paleofield-div bottom-breathing-room-rel-sm"><label>'.$LANG['CONTEXT_ID'].':</label> '.$occArr['geologicalcontextid'].'</div>';
 								?>
 							

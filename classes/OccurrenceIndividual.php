@@ -322,21 +322,19 @@ class OccurrenceIndividual extends Manager{
 	}
 
 	private function setPaleo(){
-		if(isset($this->activeModules['paleo']) && $this->activeModules['paleo']){
-			$sql = 'SELECT paleoid, eon, era, period, epoch, earlyinterval, lateinterval, absoluteage, storageage, stage, localstage, biota,
-				biostratigraphy, lithogroup, formation, taxonenvironment, member, bed, lithology, stratremarks, element, slideproperties, geologicalcontextid
-				FROM omoccurpaleo WHERE occid = ?';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('i', $this->occid);
-				$stmt->execute();
-				if($rs = $stmt->get_result()){
-					while($r = $rs->fetch_assoc()){
-						$this->occArr = array_merge($this->occArr, $r);
-					}
-					$rs->free();
+		$sql = 'SELECT paleoid, eon, era, period, epoch, earlyinterval, lateinterval, absoluteage, storageage, stage, localstage, biota,
+			biostratigraphy, lithogroup, formation, taxonenvironment, member, bed, lithology, stratremarks, element, slideproperties, geologicalcontextid
+			FROM omoccurpaleo WHERE occid = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $this->occid);
+			$stmt->execute();
+			if($rs = $stmt->get_result()){
+				while($r = $rs->fetch_assoc()){
+					$this->occArr = array_merge($this->occArr, $r);
 				}
-				$stmt->close();
+				$rs->free();
 			}
+			$stmt->close();
 		}
 	}
 
