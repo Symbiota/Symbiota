@@ -11,7 +11,7 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PhpWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
@@ -23,66 +23,65 @@ use PhpOffice\PhpWord\Settings;
 use PhpOffice\PhpWord\Writer\HTML;
 
 /**
- * Abstract PDF renderer
+ * Abstract PDF renderer.
  *
  * @since 0.10.0
  */
 abstract class AbstractRenderer extends HTML
 {
     /**
-     * Name of renderer include file
+     * Name of renderer include file.
      *
      * @var string
      */
     protected $includeFile;
 
     /**
-     * Temporary storage directory
+     * Temporary storage directory.
      *
      * @var string
      */
     protected $tempDir = '';
 
     /**
-     * Font
+     * Font.
      *
      * @var string
      */
     protected $font;
 
     /**
-     * Paper size
+     * Paper size.
      *
      * @var int
      */
     protected $paperSize;
 
     /**
-     * Orientation
+     * Orientation.
      *
      * @var string
      */
     protected $orientation;
 
     /**
-     * Paper Sizes xRef List
+     * Paper Sizes xRef List.
      *
      * @var array
      */
-    protected static $paperSizes = array(
+    protected static $paperSizes = [
         9 => 'A4', // (210 mm by 297 mm)
-    );
+    ];
 
     /**
-     * Create new instance
+     * Create new instance.
      *
      * @param PhpWord $phpWord PhpWord object
-     *
-     * @throws \PhpOffice\PhpWord\Exception\Exception
      */
     public function __construct(PhpWord $phpWord)
     {
         parent::__construct($phpWord);
+        $this->isPdf = true;
         if ($this->includeFile != null) {
             $includeFile = Settings::getPdfRendererPath() . '/' . $this->includeFile;
             if (file_exists($includeFile)) {
@@ -95,10 +94,16 @@ abstract class AbstractRenderer extends HTML
                 // @codeCoverageIgnoreEnd
             }
         }
+
+        // Configuration
+        $options = Settings::getPdfRendererOptions();
+        if (!empty($options['font'])) {
+            $this->setFont($options['font']);
+        }
     }
 
     /**
-     * Get Font
+     * Get Font.
      *
      * @return string
      */
@@ -112,9 +117,10 @@ abstract class AbstractRenderer extends HTML
      *      'arialunicid0-chinese-simplified'
      *      'arialunicid0-chinese-traditional'
      *      'arialunicid0-korean'
-     *      'arialunicid0-japanese'
+     *      'arialunicid0-japanese'.
      *
      * @param string $fontName
+     *
      * @return self
      */
     public function setFont($fontName)
@@ -125,7 +131,7 @@ abstract class AbstractRenderer extends HTML
     }
 
     /**
-     * Get Paper Size
+     * Get Paper Size.
      *
      * @return int
      */
@@ -135,9 +141,10 @@ abstract class AbstractRenderer extends HTML
     }
 
     /**
-     * Set Paper Size
+     * Set Paper Size.
      *
      * @param int $value Paper size = PAPERSIZE_A4
+     *
      * @return self
      */
     public function setPaperSize($value = 9)
@@ -148,7 +155,7 @@ abstract class AbstractRenderer extends HTML
     }
 
     /**
-     * Get Orientation
+     * Get Orientation.
      *
      * @return string
      */
@@ -158,9 +165,10 @@ abstract class AbstractRenderer extends HTML
     }
 
     /**
-     * Set Orientation
+     * Set Orientation.
      *
      * @param string $value Page orientation ORIENTATION_DEFAULT
+     *
      * @return self
      */
     public function setOrientation($value = 'default')
@@ -171,35 +179,31 @@ abstract class AbstractRenderer extends HTML
     }
 
     /**
-     * Save PhpWord to PDF file, pre-save
+     * Save PhpWord to PDF file, pre-save.
      *
      * @param string $filename Name of the file to save as
      *
-     * @throws \PhpOffice\PhpWord\Exception\Exception
      * @return resource
      */
     protected function prepareForSave($filename = null)
     {
-        $fileHandle = fopen($filename, 'w');
+        $fileHandle = fopen($filename, 'wb');
         // @codeCoverageIgnoreStart
         // Can't find any test case. Uncomment when found.
         if ($fileHandle === false) {
             throw new Exception("Could not open file $filename for writing.");
         }
         // @codeCoverageIgnoreEnd
-        $this->isPdf = true;
 
         return $fileHandle;
     }
 
     /**
-     * Save PhpWord to PDF file, post-save
+     * Save PhpWord to PDF file, post-save.
      *
      * @param resource $fileHandle
-     *
-     * @throws Exception
      */
-    protected function restoreStateAfterSave($fileHandle)
+    protected function restoreStateAfterSave($fileHandle): void
     {
         fclose($fileHandle);
     }
