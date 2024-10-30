@@ -3,6 +3,6 @@
     "phpoffice/phpword": "^1.3.0",
     "phpoffice/phpspreadsheet": "^3.3.0",
     "jumbojett/openid-connect-php": "^1.0",
-    "phpseclib/phpseclib": "^3.0.33"
+    "phpseclib/phpseclib": "^3.0.42"
   }
 }
