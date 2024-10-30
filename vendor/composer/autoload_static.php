@@ -7,7 +7,6 @@ namespace Composer\Autoload;
 class ComposerStaticInit61c5b8c463cdaa6cee3bdb4483ab7dbb
 {
     public static $files = array (
-        '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
         'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
     );
 
@@ -88,16 +87,6 @@ class ComposerStaticInit61c5b8c463cdaa6cee3bdb4483ab7dbb
         ),
     );
 
-    public static $prefixesPsr0 = array (
-        'H' => 
-        array (
-            'HTMLPurifier' => 
-            array (
-                0 => __DIR__ . '/..' . '/ezyang/htmlpurifier/library',
-            ),
-        ),
-    );
-
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Jumbojett\\OpenIDConnectClient' => __DIR__ . '/..' . '/jumbojett/openid-connect-php/src/OpenIDConnectClient.php',
@@ -109,7 +98,6 @@ class ComposerStaticInit61c5b8c463cdaa6cee3bdb4483ab7dbb
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit61c5b8c463cdaa6cee3bdb4483ab7dbb::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit61c5b8c463cdaa6cee3bdb4483ab7dbb::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit61c5b8c463cdaa6cee3bdb4483ab7dbb::$prefixesPsr0;
             $loader->classMap = ComposerStaticInit61c5b8c463cdaa6cee3bdb4483ab7dbb::$classMap;
 
         }, null, ClassLoader::class);
