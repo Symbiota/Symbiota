@@ -399,7 +399,9 @@ class ChecklistVoucherAdmin extends Manager {
 								$tid = $this->getTidAccepted($tid);
 							}
 							//Add name to checklist
-							$clTaxaID = $this->insertChecklistTaxaLink($tid);
+							if($this->insertChecklistTaxaLink($tid)) {
+								$clTaxaID = $this->getClTaxaID($tid);
+							}
 						}
 						$tidMap[$tid] = $clTaxaID;
 					}
