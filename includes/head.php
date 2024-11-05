@@ -1,14 +1,8 @@
 <?php
 /*
- * Customize styling by adding or modifying CSS file links below
- * Default styling for individual page is defined within /css/symb/
- * Individual styling can be customized by:
- *     1) Uncommenting the $CUSTOM_CSS_PATH variable below
- *     2) Copying individual CCS file to the /css/symb/custom directory
- *     3) Modifying the sytle definiation within the file
- */
-
-//$CUSTOM_CSS_PATH = '/css/symb/custom';
+** Style sheets are determined by $CSS_BASE_PATH set within config/symbini.php
+** Customization can be made by modifying css files, $CSS_BASE_PATH, adding new css files below
+*/
 ?>
 <!-- Responsive viewport -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
