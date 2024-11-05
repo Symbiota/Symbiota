@@ -96,12 +96,12 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 							$detData['nonItalicized'] = '';
 							if (!empty($row3['cultivarEpithet']))
 								$nonItalicized = $this->standardizeCultivarEpithet($row3['cultivarEpithet']);
-							if (!empty($row3['tradeName'])) {
+								if (!empty($row3['tradeName'])) {
 								if (!empty($nonItalicized))
 									$nonItalicized .= ' '  . $this->standardizeTradeName($row3['tradeName']);
 							}
 							if (!empty($nonItalicized)) {
-								if (!empty($detData['nonItalicized']))
+								if (empty($detData['nonItalicized']))
 									$detData['nonItalicized'] .= ' ' . $nonItalicized;
 							}
 						}
