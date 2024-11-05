@@ -423,7 +423,7 @@ if(isset($_REQUEST['llpoint'])) {
 					taxaHtml += "<div style='display:table;'>";
 					prev_family = taxa.family;
 				}
-				const sn_link = `<a target="_blank" href="${taxa.origin}/taxa/index.php?tid=${taxa.tid}">${taxa.sn}</a>`;
+				const sn_link = `<a target="_blank" href="${taxa.origin? taxa.origin: '<?= $CLIENT_ROOT ?>'}/taxa/index.php?tid=${taxa.tid}">${taxa.sn}</a>`;
 				taxaHtml += legendRow(`taxa-${taxa.id_map.map(id => `${id.index}*${id.tid}`).join(",")}`, taxa.color, sn_link);
 			}
 

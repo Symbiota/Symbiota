@@ -416,7 +416,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										<input type="text" name="catnum" id="catnum" data-chip="<?php echo $LANG['CATALOG_NUMBER'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['CATALOG_NUMBER'] ?></span>
 									</label>
-									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
+									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA_DASH'] ?></span>
 								</div>
 							</div>
 							<div>
