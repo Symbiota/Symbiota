@@ -16,5 +16,3 @@ ALTER TABLE `uploadtaxa` ADD COLUMN `tradeName` VARCHAR(50) NULL AFTER `cultivar
 # Rename cultivated to cultivar
 
 update taxonunits set rankname='Cultivar' where rankname='Cultivated';
-
--- delete from taxonunits where rankname='Cultivar';

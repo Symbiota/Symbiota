@@ -510,7 +510,7 @@ $traitArr = $indManager->getTraitArr();
 									echo '<i>' . $splitSciname['base'] . '</i> ' . $nonItalicizedScinameComponent;
 									//echo ' <a href="../../taxa/index.php?taxon=' . $occArr['tidinterpreted'] . '" title="Open Species Profile Page"><img src="" /></a>';
 								} else{
-									// $splitSciname = $taxonEditorObj->splitScinameFromOccArr($occArr); // @TODO decide if we want to even handle this or if the misformatting herein is a good reminder to end users to attach entries from the taxonomy thesuarus to their occurrences https://github.com/BioKIC/Symbiota/issues/528#issuecomment-2384276915
+									// $splitSciname = $taxonEditorObj->splitScinameFromOccArr($occArr); // the misformatting herein is a good reminder to end users to attach entries from the taxonomy thesuarus to their occurrences https://github.com/BioKIC/Symbiota/issues/528#issuecomment-2384276915.
 									echo '<i>' . $occArr['sciname'] .  '</i>';
 								}
 								?>

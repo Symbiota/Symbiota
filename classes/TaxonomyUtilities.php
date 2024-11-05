@@ -45,8 +45,6 @@ class TaxonomyUtilities {
 			//Remove extra spaces
 			$inStr = preg_replace('/\s\s+/',' ',$inStr);
 			if(!$inStr) return $retArr;
-			// $singleQuotePattern = "/(['‘’][^'‘’]+?['‘’])|(\S+)/";
-			// preg_match_all($singleQuotePattern, $inStr, $matches);
 			$sciNameArr = explode(' ',trim($inStr));
 			$okToCloseConn = true;
 			if($conn !== null) $okToCloseConn = false;
@@ -258,7 +256,6 @@ class TaxonomyUtilities {
 			}
 			$retArr['sciname'] = trim($sciname);
 		}
-		// @TODO possible add cultivarEpithet and tradeName here?
 		return $retArr;
 	}
 
@@ -268,6 +265,7 @@ class TaxonomyUtilities {
 		$testStr = strtolower(trim($testStr,'.'));
 		if($testStr == 'cultivated' || $testStr == 'cv' ){
 			$retArr['infra'] = 'cv.';
+			$retArr['rankid'] = 300;
 		}
 		elseif($testStr == 'subform' || $testStr == 'subforma' || $testStr == 'subf' || $testStr == 'subfo'){
 			$retArr['infra'] = 'subf.';

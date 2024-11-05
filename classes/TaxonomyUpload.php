@@ -466,7 +466,7 @@ class TaxonomyUpload{
 		//Link names already in theusaurus
 		$this->outputMsg('Linking names already in thesaurus... ');
 		$sql = 'UPDATE uploadtaxa u INNER JOIN taxa t ON u.sciname = t.sciname SET u.tid = t.tid
-			WHERE (u.tid IS NULL) AND (t.kingdomname = "'.$this->kingdomName.'" OR t.sciname = "'.$this->kingdomName.'" OR t.rankid < 10) '; // @TODO this might need to
+			WHERE (u.tid IS NULL) AND (t.kingdomname = "'.$this->kingdomName.'" OR t.sciname = "'.$this->kingdomName.'" OR t.rankid < 10) ';
 		if(!$this->conn->query($sql)){
 			$this->outputMsg('ERROR: '.$this->conn->error,1);
 		}
@@ -812,7 +812,7 @@ class TaxonomyUpload{
 			$this->conn->query($sql);
 			if(!$this->conn->affected_rows) break;
 
-			//Update parentTids // @TODO deleteMe this is where uploadtaxa entry gets deleted
+			//Update parentTids
 			$sql = 'UPDATE uploadtaxa ut1 INNER JOIN uploadtaxa ut2 ON ut1.sourceparentid = ut2.sourceid '.
 				'INNER JOIN taxa t ON ut2.sciname = t.sciname '.
 				'SET ut1.parenttid = t.tid '.

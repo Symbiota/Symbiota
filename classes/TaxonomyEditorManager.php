@@ -248,15 +248,6 @@ class TaxonomyEditorManager extends Manager{
 			'securitystatus = '.(is_numeric($postArr['securitystatus'])?$postArr['securitystatus']:'0').', '.
 			'modifiedUid = '.$GLOBALS['SYMB_UID'].', '.
 			'modifiedTimeStamp = "'.date('Y-m-d H:i:s').'", ' ;
-
-			// if(array_key_exists('cultivarEpithet', $postArr) && !empty($postArr['cultivarEpithet'])){
-			// 	$processedCultivarEpithet = $this->standardizeCultivarEpithet($postArr['cultivarEpithet']);
-			// 	$sciname .= " '". $processedCultivarEpithet . "'";
-			// }
-			// if(array_key_exists('tradeName', $postArr) && !empty($postArr['tradeName'])){
-			// 	$processedTradeName = $this->standardizeTradeName($postArr['tradeName']);
-			// 	$sciname .= ' ' . $processedTradeName;
-			// }
 			$sql .= 'sciname = "' . $this->cleanInStr($sciname) . '" '; 
 			$sql .= 'WHERE (tid = '.$this->tid.')';
 		if(!$this->conn->query($sql)){
