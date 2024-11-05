@@ -1,5 +1,7 @@
 <?php
 include_once($SERVER_ROOT.'/classes/SpecUploadBase.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/classes/SpecUploadFile.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/classes/OccurrenceEditorDeterminations.'.$LANG_TAG.'.php');
+else include_once($SERVER_ROOT . '/content/lang/classes/SpecUploadFile.en.php');
 class SpecUploadFile extends SpecUploadBase{
 
 	private $ulFileName;
@@ -144,7 +146,8 @@ class SpecUploadFile extends SpecUploadBase{
 					}
 				}
 				if($isCultivar && !$hasCultivarEpithet && !$hasTradeName){
-					echo '<span style="color: var(--danger-color);">Unable to complete upload because occurrence ' . $currentOccId . ' is marked as cultivated but is missing both trade name and cultivar epithet, which is not permitted</span>'; exit;
+					global $LANG;
+					echo '<span style="color: var(--danger-color);">'  . $LANG['UPLOAD_ERROR_MSG'] . ': ' . $currentOccId . '</span>'; exit;
 				}
 				if($this->uploadType == $this->SKELETAL && !isset($recMap['catalognumber']) && !isset($recMap['othercatalognumbers'])){
 					//Skip loading record
