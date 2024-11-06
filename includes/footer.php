@@ -179,4 +179,4 @@
   </div>
 </footer>
 
-<script src="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/assets/uswds/js/uswds.js" type="text/javascript"></script>
+<script src="<?= $CLIENT_ROOT ?>/assets/uswds/js/uswds.js" type="text/javascript"></script>

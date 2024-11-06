@@ -3,8 +3,14 @@ Place your CSS customizations here.
 This stylesheet is defined last and will override all previously loaded sheets. You may reference variables defined in variables.css 
  */
 
+ @import "../uswds/styles.css";
+
  html {
     font-size: 13px; /*0.7rem; /* 1rem = 10px */
+  }
+
+  p {
+    font-size: 1.4rem;
   }
  
   button {

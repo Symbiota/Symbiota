@@ -303,7 +303,7 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
     </div>
   </div>
 </div>
-<script src="<?php echo $CLIENT_ROOT ?>/css/uswds/symbiota/nal.js"></script>
+<script src="<?= $USWDS_ASSETS ?>/nal.js"></script>
 <script type="text/javascript">
   const navigateHome = () => {
     window.location.href = '<?php echo $CLIENT_ROOT; ?>';

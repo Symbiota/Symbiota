@@ -9913,7 +9913,7 @@
 
 @font-face {
   font-family: "Source Sans Pro";
-  src: url(../fonts/source-sans-pro/sourcesanspro-bold-webfont.woff2)
+  src: url(./fonts/source-sans-pro/sourcesanspro-bold-webfont.woff2)
     format("woff2");
   font-style: normal;
   font-weight: 700;
@@ -9937,7 +9937,7 @@
 
 @font-face {
   font-family: "Merriweather";
-  src: url(../fonts/merriweather/Latin-Merriweather-Italic.woff2)
+  src: url(./fonts/merriweather/Latin-Merriweather-Italic.woff2)
     format("woff2");
   font-style: italic;
   font-weight: 400;
@@ -9945,7 +9945,7 @@
 
 @font-face {
   font-family: "Merriweather";
-  src: url(../fonts/merriweather/Latin-Merriweather-Bold.woff2) format("woff2");
+  src: url(./fonts/merriweather/Latin-Merriweather-Bold.woff2) format("woff2");
   font-style: normal;
   font-weight: 700;
 }
@@ -12822,12 +12822,12 @@
 }
 
 .footer-wrapper .official-website-banner__trigger.content-collapsed {
-  background: url(../img/usa-icons/bluedownv.png) right 0px center no-repeat;
+  background: url(./img/usa-icons/bluedownv.png) right 0px center no-repeat;
   margin-left: 1rem;
 }
 
 .footer-wrapper .official-website-banner__trigger.content-expanded {
-  background: url(../img/usa-icons/blueupv.png) right 0px center no-repeat;
+  background: url(./img/usa-icons/blueupv.png) right 0px center no-repeat;
   margin-left: 1rem;
 }
 
@@ -13154,7 +13154,7 @@
 }
 
 .footer-wrapper .social-link--facebook {
-  background-image: url(../../../assets/uswds/img/social-icon-facebook.svg);
+  background-image: url(./../../assets/uswds/img/social-icon-facebook.svg);
 }
 
 .footer-wrapper .social-link--flickr {
@@ -13166,11 +13166,11 @@
 }
 
 .footer-wrapper .social-link--twitter {
-  background-image: url(../../../assets/uswds/img/social-icon-x.svg);
+  background-image: url(./../../assets/uswds/img/social-icon-x.svg);
 }
 
 .footer-wrapper .social-link--youtube {
-  background-image: url(../../../assets/uswds/img/social-icon-youtube.svg);
+  background-image: url(./../../assets/uswds/img/social-icon-youtube.svg);
 }
 
 .footer-wrapper .social-link--rss {
