@@ -1,6 +1,6 @@
 </div> <!-- Closes everything-in-the-middle div in header -->
-<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/nalStyleguide.css" type="text/css" rel="stylesheet">
-<link onload="handleOnCssLoad()" href="<?php echo htmlspecialchars($CSS_BASE_PATH, HTML_SPECIAL_CHARS_FLAGS); ?>/symbiota/nalStyleguideSupplement.css" type="text/css" rel="stylesheet">
+<link href="<?= $USWDS_ASSETS  ?>/nalStyleguide.css" type="text/css" rel="stylesheet">
+<link onload="handleOnCssLoad()" href="<?= $USWDS_ASSETS  ?>/nalStyleguideSupplement.css" type="text/css" rel="stylesheet">
 <footer class="footer-wrapper footer" id="footer" style="display: none;">
   <div class="footer__primary-section">
     <div class="container">

@@ -12,7 +12,9 @@
 <link href="<?= $CSS_BASE_PATH ?>/symbiota/footer.css?ver=<?= $CSS_VERSION ?>" type="text/css" rel="stylesheet">
 <link href="<?= $CSS_BASE_PATH ?>/symbiota/main.css?ver=<?= $CSS_VERSION ?>" type="text/css" rel="stylesheet">
 <script src="<?= $CLIENT_ROOT ?>/js/symb/lang.js" type="text/javascript"></script>
+<!--
 <script src="<?= $CLIENT_ROOT ?>/js/symb/accessibilityUtils.js" type="text/javascript"></script>
+-->
 <script src="<?= $CLIENT_ROOT ?>/assets/uswds/js/uswds-init.min.js" type="text/javascript"></script>
 <link href="<?= $USWDS_ASSETS ?>/styleguide.css" type="text/css" rel="stylesheet">
 <link href="<?= $USWDS_ASSETS ?>/nal.js" type="text/css" rel="stylesheet">
