@@ -3,262 +3,264 @@ Place your CSS customizations here.
 This stylesheet is defined last and will override all previously loaded sheets. You may reference variables defined in variables.css 
  */
 
- @import "../uswds/styles.css";
+@import "../uswds/styles.css";
 
- html {
-    font-size: 13px; /*0.7rem; /* 1rem = 10px */
-  }
+html {
+  font-size: 13px; /*0.7rem; /* 1rem = 10px */
+}
 
-  p {
-    font-size: 1.4rem;
-  }
- 
-  button {
-    background-color: var(--darkest-color);
-    border: none;
-    border-radius: 5px;
-    padding: 0.5rem 1rem;
-    color: #fff;
-    font-family: var(--heading-font-family);
-    font-weight: 600;
-    letter-spacing: 1px;
-    cursor: pointer;
-    white-space: nowrap;
-  }
-  
-  button:hover {
-    background-color: var(--medium-color);
-    color: var(--light-color);
-  }
+header {
+  place-items: center stretch;
+}
 
-  div.site-branding__site-name a, div.site-branding__usda a {
-    font-weight: 600;
+p {
+  font-size: 1.4rem;
+}
 
-  }
+button {
+  background-color: var(--darkest-color);
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  color: #fff;
+  font-family: var(--heading-font-family);
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  white-space: nowrap;
+}
 
-  ul.menu.menu--footer.nav {
-    padding: 0;
-  }
+button:hover {
+  background-color: var(--medium-color);
+  color: var(--light-color);
+}
 
+div.site-branding__site-name a,
+div.site-branding__usda a {
+  font-weight: 600;
+}
 
-  #innertext {
-    padding: 3rem 0;
-  }
+ul.menu.menu--footer.nav {
+  padding: 0;
+}
 
-  #popup-innertext {
-    font-size: 1.2rem;
-  }
+#innertext {
+  padding: 3rem 0;
+}
 
-  #tabs table {
-    width: 90%;
-  }
+#popup-innertext {
+  font-size: 1.2rem;
+}
 
-  .ui-tabs .ui-tabs-panel {
-    padding: 10px 4px;
-  }
-  
-  .button {
-    border: none;
-    border-radius: 5px;
-    padding: 0.6rem 1rem;
-    font-family: var(--heading-font-family);
-    letter-spacing: 1px;
-    text-align: center;
-    cursor: pointer;
-    width: fit-content;
-  }
-  
-  .button > a {
-    text-decoration: none;
-    font-weight: 600;
-  }
-  
-  .button-primary {
-    background-color: var(--darkest-color);
-  }
-  
-  .button-primary:hover,
-  .button-secondary:hover {
-    background-color: var(--medium-color);
-  }
-  
-  .button-primary:hover > a,
-  .button-secondary:hover > a {
-    color: var(--light-color);
-  }
-  
-  .button-primary > a {
-    color: var(--light-color);
-  }
-  
-  .button-secondary {
-    background-color: var(--bright-color);
-  }
-  
-  .button-secondary > a {
-    color: var(--light-color);
-  }
-  
-  .button-tertiary {
-    background-color: none;
-    border: 1px solid var(--bright-color);
-    padding: 0.5rem 0.9rem;
-  }
-  
-  .skip-link {
-    position: absolute;
-    left: -10000px;
-  }
+#tabs table {
+  width: 90%;
+}
 
-  /* USDA - specific ********************************************************************************/
+.ui-tabs .ui-tabs-panel {
+  padding: 10px 4px;
+}
+
+.button {
+  border: none;
+  border-radius: 5px;
+  padding: 0.6rem 1rem;
+  font-family: var(--heading-font-family);
+  letter-spacing: 1px;
+  text-align: center;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.button > a {
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.button-primary {
+  background-color: var(--darkest-color);
+}
+
+.button-primary:hover,
+.button-secondary:hover {
+  background-color: var(--medium-color);
+}
+
+.button-primary:hover > a,
+.button-secondary:hover > a {
+  color: var(--light-color);
+}
+
+.button-primary > a {
+  color: var(--light-color);
+}
+
+.button-secondary {
+  background-color: var(--bright-color);
+}
+
+.button-secondary > a {
+  color: var(--light-color);
+}
+
+.button-tertiary {
+  background-color: none;
+  border: 1px solid var(--bright-color);
+  padding: 0.5rem 0.9rem;
+}
+
+.skip-link {
+  position: absolute;
+  left: -10000px;
+}
+
+/* USDA - specific ********************************************************************************/
 
 .card-image {
-    min-height: 22rem;
-    max-height: 22rem;
+  min-height: 22rem;
+  max-height: 22rem;
+}
+
+.card-button {
+  width: 100%;
+}
+
+.harvest-param-breadcrumbs-margin {
+  /* margin-top: 18rem; */
+}
+
+.adjusted-input-width {
+  max-width: 37rem;
+}
+
+*,
+:after,
+:before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.spinner {
+  margin-top: -21px;
+  /* position: absolute; */
+  text-align: center;
+  top: 50%;
+  width: 100%;
+}
+
+.spinner svg {
+  -webkit-animation: loading-rotate 2s linear infinite;
+  -moz-animation: loading-rotate 2s linear infinite;
+  -o-animation: loading-rotate 2s linear infinite;
+  animation: loading-rotate 2s linear infinite;
+  height: 42px;
+  width: 42px;
+}
+
+.spinner .path {
+  stroke-dasharray: 90, 150;
+  stroke-dashoffset: 0;
+  stroke-width: 2;
+  stroke: #409eff;
+  stroke-linecap: round;
+  -webkit-animation: loading-dash 1.5s ease-in-out infinite;
+  -moz-animation: loading-dash 1.5s ease-in-out infinite;
+  -o-animation: loading-dash 1.5s ease-in-out infinite;
+  animation: loading-dash 1.5s ease-in-out infinite;
+}
+
+@-webkit-keyframes loading-rotate {
+  to {
+    -webkit-transform: rotate(1turn);
+    transform: rotate(1turn);
   }
-  
-  .card-button {
-    width: 100%;
+}
+
+@-moz-keyframes loading-rotate {
+  to {
+    -moz-transform: rotate(1turn);
+    transform: rotate(1turn);
   }
-  
-  .harvest-param-breadcrumbs-margin {
-    /* margin-top: 18rem; */
+}
+
+@-o-keyframes loading-rotate {
+  to {
+    -o-transform: rotate(1turn);
+    transform: rotate(1turn);
   }
-  
-  .adjusted-input-width {
-    max-width: 37rem;
+}
+
+@keyframes loading-rotate {
+  to {
+    -webkit-transform: rotate(1turn);
+    -moz-transform: rotate(1turn);
+    -o-transform: rotate(1turn);
+    transform: rotate(1turn);
   }
-  
-  *,
-  :after,
-  :before {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-  }
-  
-  body {
-    margin: 0;
-  }
-  
-  .spinner {
-    margin-top: -21px;
-    /* position: absolute; */
-    text-align: center;
-    top: 50%;
-    width: 100%;
-  }
-  
-  .spinner svg {
-    -webkit-animation: loading-rotate 2s linear infinite;
-    -moz-animation: loading-rotate 2s linear infinite;
-    -o-animation: loading-rotate 2s linear infinite;
-    animation: loading-rotate 2s linear infinite;
-    height: 42px;
-    width: 42px;
-  }
-  
-  .spinner .path {
-    stroke-dasharray: 90, 150;
+}
+
+@-webkit-keyframes loading-dash {
+  0% {
+    stroke-dasharray: 1, 200;
     stroke-dashoffset: 0;
-    stroke-width: 2;
-    stroke: #409eff;
-    stroke-linecap: round;
-    -webkit-animation: loading-dash 1.5s ease-in-out infinite;
-    -moz-animation: loading-dash 1.5s ease-in-out infinite;
-    -o-animation: loading-dash 1.5s ease-in-out infinite;
-    animation: loading-dash 1.5s ease-in-out infinite;
   }
-  
-  @-webkit-keyframes loading-rotate {
-    to {
-      -webkit-transform: rotate(1turn);
-      transform: rotate(1turn);
-    }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -40px;
   }
-  
-  @-moz-keyframes loading-rotate {
-    to {
-      -moz-transform: rotate(1turn);
-      transform: rotate(1turn);
-    }
+  to {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -120px;
   }
-  
-  @-o-keyframes loading-rotate {
-    to {
-      -o-transform: rotate(1turn);
-      transform: rotate(1turn);
-    }
+}
+
+@-moz-keyframes loading-dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
   }
-  
-  @keyframes loading-rotate {
-    to {
-      -webkit-transform: rotate(1turn);
-      -moz-transform: rotate(1turn);
-      -o-transform: rotate(1turn);
-      transform: rotate(1turn);
-    }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -40px;
   }
-  
-  @-webkit-keyframes loading-dash {
-    0% {
-      stroke-dasharray: 1, 200;
-      stroke-dashoffset: 0;
-    }
-    50% {
-      stroke-dasharray: 90, 150;
-      stroke-dashoffset: -40px;
-    }
-    to {
-      stroke-dasharray: 90, 150;
-      stroke-dashoffset: -120px;
-    }
+  to {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -120px;
   }
-  
-  @-moz-keyframes loading-dash {
-    0% {
-      stroke-dasharray: 1, 200;
-      stroke-dashoffset: 0;
-    }
-    50% {
-      stroke-dasharray: 90, 150;
-      stroke-dashoffset: -40px;
-    }
-    to {
-      stroke-dasharray: 90, 150;
-      stroke-dashoffset: -120px;
-    }
+}
+
+@-o-keyframes loading-dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
   }
-  
-  @-o-keyframes loading-dash {
-    0% {
-      stroke-dasharray: 1, 200;
-      stroke-dashoffset: 0;
-    }
-    50% {
-      stroke-dasharray: 90, 150;
-      stroke-dashoffset: -40px;
-    }
-    to {
-      stroke-dasharray: 90, 150;
-      stroke-dashoffset: -120px;
-    }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -40px;
   }
-  
-  @keyframes loading-dash {
-    0% {
-      stroke-dasharray: 1, 200;
-      stroke-dashoffset: 0;
-    }
-    50% {
-      stroke-dasharray: 90, 150;
-      stroke-dashoffset: -40px;
-    }
-    to {
-      stroke-dasharray: 90, 150;
-      stroke-dashoffset: -120px;
-    }
+  to {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -120px;
   }
-  
-  /* End USDA ********************************************************************************/
-  
+}
+
+@keyframes loading-dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -40px;
+  }
+  to {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -120px;
+  }
+}
+
+/* End USDA ********************************************************************************/

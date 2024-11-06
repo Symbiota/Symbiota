@@ -192,16 +192,14 @@ ul.menu > li {
   padding: 0.25em;
 }
 
-ul.menu > ul li{
+ul.menu > ul li {
   display: block;
 }
 
-
 /* Toggles menu icon */
-.side-menu:not(:checked) ~ nav.top-menu .menu{
-  display:none;
+.side-menu:not(:checked) ~ nav.top-menu .menu {
+  display: none;
 }
-
 
 .side-menu:checked ~ nav.top-menu {
   max-height: 100%;
@@ -230,16 +228,15 @@ ul.menu > ul li{
 ========================================================================== */
 /* Medium screens and up */
 @media (min-width: 768px) {
-
   .side-menu:not(:checked) ~ nav.top-menu .menu,
   .side-menu:checked ~ nav.top-menu .menu {
-    display:block;
+    display: block;
   }
 
   nav.top-menu > ul > li ul {
     display: none;
   }
-  
+
   /* First level drop-down menu */
   nav.top-menu > ul > li > a:hover > ul,
   nav.top-menu > ul > li > a:focus > ul,
@@ -258,15 +255,19 @@ ul.menu > ul li{
   nav.top-menu > ul ul > li:hover > ul,
   nav.top-menu > ul ul > li:focus-within > ul {
     display: block;
-    position:absolute;
+    position: absolute;
     background-color: var(--menu-top-bg-color);
     box-shadow: 3px 3px 3px #000;
     width: max-content;
   }
-  
+
   /* Change this in order to change the Dropdown symbol */
-  nav.top-menu li > a:after { content:  ' +'; }
-  nav.top-menu li > a:only-child:after { content: ''; }
+  nav.top-menu li > a:after {
+    content: " +";
+  }
+  nav.top-menu li > a:only-child:after {
+    content: "";
+  }
 
   .header-wrapper > * {
     min-width: 0;
@@ -346,7 +347,6 @@ ul.menu > ul li{
   #lang-select-li {
     margin: 0;
   }
-
 }
 
 /* Medium-large desktop screens and up */
