@@ -1,88 +1,99 @@
-$(document).ready(function () {
-  const currentRankId = Number(document.getElementById("rankid").value);
-  showOnlyRelevantFields(currentRankId);
+import {
+  standardizeCultivarEpithet,
+  standardizeTradeName,
+  debounce,
+  rankIdsToHideUnit2From,
+  rankIdsToHideUnit3From,
+  rankIdsToHideUnit4From,
+  rankIdsToHideUnit5From,
+  allRankIds,
+} from "./taxa.sharedTaxonomyCRUD.js";
 
-  const form = document.getElementById("taxoneditform");
-  form.querySelectorAll("input, select, textarea").forEach((element) => {
-    const debouncedChange = debounce(() => handleFieldChange(form, true), 2000);
-    element.addEventListener("input", debouncedChange);
-    element.addEventListener("change", debouncedChange);
-  });
+// $(document).ready(function () {
+const currentRankId = Number(document.getElementById("rankid").value);
+showOnlyRelevantFields(currentRankId);
 
-  $("#tabs").tabs({ active: tabIndex });
-
-  $("#parentstr").autocomplete({
-    source: function (request, response) {
-      $.getJSON(
-        "rpc/gettaxasuggest.php",
-        {
-          term: request.term,
-          taid: document.taxauthidform.taxauthid.value,
-          rhigh: document.taxoneditform.rankid.value,
-        },
-        response
-      );
-    },
-    minLength: 3,
-    autoFocus: true,
-  });
-
-  document.getElementById("rankid").addEventListener("change", function () {
-    const selectedValue = Number(this.value);
-    showOnlyRelevantFields(selectedValue);
-  });
-
-  $("#aefacceptedstr").autocomplete({
-    source: "rpc/getacceptedsuggest.php",
-    dataType: "json",
-    minLength: 3,
-    autoFocus: true,
-    change: function (event, ui) {
-      if (ui.item == null && this.value.trim() != "") {
-        alert(
-          "Name must be selected from list of accepted taxa currently in the system."
-        );
-        this.focus();
-        this.form.tidaccepted.value = "";
-      }
-    },
-    focus: function (event, ui) {
-      this.form.tidaccepted.value = ui.item.id;
-    },
-    select: function (event, ui) {
-      this.form.tidaccepted.value = ui.item.id;
-    },
-  });
-
-  $("#ctnafacceptedstr").autocomplete({
-    source: "rpc/getacceptedsuggest.php",
-    dataType: "json",
-    minLength: 3,
-    autoFocus: true,
-    change: function (event, ui) {
-      if (ui.item == null && this.value.trim() != "") {
-        alert(
-          "Name must be selected from list of accepted taxa currently in the system."
-        );
-        this.focus();
-        this.form.tidaccepted.value = "";
-      }
-    },
-    focus: function (event, ui) {
-      this.form.tidaccepted.value = ui.item.id;
-    },
-    select: function (event, ui) {
-      this.form.tidaccepted.value = ui.item.id;
-    },
-  });
+const form = document.getElementById("taxoneditform");
+form.querySelectorAll("input, select, textarea").forEach((element) => {
+  const debouncedChange = debounce(() => handleFieldChange(form, true), 2000);
+  element.addEventListener("input", debouncedChange);
+  element.addEventListener("change", debouncedChange);
 });
 
-function toggleEditFields() {
+$("#tabs").tabs({ active: tabIndex });
+
+$("#parentstr").autocomplete({
+  source: function (request, response) {
+    $.getJSON(
+      "rpc/gettaxasuggest.php",
+      {
+        term: request.term,
+        taid: document.taxauthidform.taxauthid.value,
+        rhigh: document.taxoneditform.rankid.value,
+      },
+      response
+    );
+  },
+  minLength: 3,
+  autoFocus: true,
+});
+
+document.getElementById("rankid").addEventListener("change", function () {
+  const selectedValue = Number(this.value);
+  showOnlyRelevantFields(selectedValue);
+});
+
+$("#aefacceptedstr").autocomplete({
+  source: "rpc/getacceptedsuggest.php",
+  dataType: "json",
+  minLength: 3,
+  autoFocus: true,
+  change: function (event, ui) {
+    if (ui.item == null && this.value.trim() != "") {
+      alert(
+        "Name must be selected from list of accepted taxa currently in the system."
+      );
+      this.focus();
+      this.form.tidaccepted.value = "";
+    }
+  },
+  focus: function (event, ui) {
+    this.form.tidaccepted.value = ui.item.id;
+  },
+  select: function (event, ui) {
+    this.form.tidaccepted.value = ui.item.id;
+  },
+});
+
+$("#ctnafacceptedstr").autocomplete({
+  source: "rpc/getacceptedsuggest.php",
+  dataType: "json",
+  minLength: 3,
+  autoFocus: true,
+  change: function (event, ui) {
+    if (ui.item == null && this.value.trim() != "") {
+      alert(
+        "Name must be selected from list of accepted taxa currently in the system."
+      );
+      this.focus();
+      this.form.tidaccepted.value = "";
+    }
+  },
+  focus: function (event, ui) {
+    this.form.tidaccepted.value = ui.item.id;
+  },
+  select: function (event, ui) {
+    this.form.tidaccepted.value = ui.item.id;
+  },
+});
+// });
+
+const toggleEditFields = () => {
   toggle("editfield");
   toggle("kingdomdiv");
   const selectedValue = Number(document.getElementById("rankid").value);
   showOnlyRelevantFields(selectedValue);
-}
+};
 
 function showOnlyRelevantFields(rankId) {
   const currentCultivarEpithet =
@@ -99,42 +110,42 @@ function showOnlyRelevantFields(rankId) {
   const authorDiv = document.getElementById("author-div");
   const parentNode = div5Hide.parentNode;
 
-  rankIdsToHideUnit2From = {
-    "non-ranked node": 0,
-    organism: 1,
-    kingdom: 10,
-    subkingdom: 20,
-    division: 30,
-    subdivision: 40,
-    superclass: 50,
-    class: 60,
-    subclass: 70,
-    order: 100,
-    suborder: 110,
-    family: 140,
-    subfamily: 150,
-    tribe: 160,
-    subtribe: 170,
-    genus: 180,
-    subgenus: 190,
-    section: 200,
-    subsection: 210,
-  };
-  const { ...rest } = rankIdsToHideUnit2From;
-  rankIdsToHideUnit3From = { ...rest, species: 220 };
-  const { ...rest2 } = rankIdsToHideUnit3From;
-  rankIdsToHideUnit4From = {
-    ...rest2,
-    subspecies: 230,
-    variety: 240,
-    subvariety: 250,
-    form: 260,
-    subform: 270,
-  };
-  const { ...rest3 } = rankIdsToHideUnit4From;
-  rankIdsToHideUnit5From = { ...rest3 };
+  // rankIdsToHideUnit2From = {
+  //   "non-ranked node": 0,
+  //   organism: 1,
+  //   kingdom: 10,
+  //   subkingdom: 20,
+  //   division: 30,
+  //   subdivision: 40,
+  //   superclass: 50,
+  //   class: 60,
+  //   subclass: 70,
+  //   order: 100,
+  //   suborder: 110,
+  //   family: 140,
+  //   subfamily: 150,
+  //   tribe: 160,
+  //   subtribe: 170,
+  //   genus: 180,
+  //   subgenus: 190,
+  //   section: 200,
+  //   subsection: 210,
+  // };
+  // const { ...rest } = rankIdsToHideUnit2From;
+  // rankIdsToHideUnit3From = { ...rest, species: 220 };
+  // const { ...rest2 } = rankIdsToHideUnit3From;
+  // rankIdsToHideUnit4From = {
+  //   ...rest2,
+  //   subspecies: 230,
+  //   variety: 240,
+  //   subvariety: 250,
+  //   form: 260,
+  //   subform: 270,
+  // };
+  // const { ...rest3 } = rankIdsToHideUnit4From;
+  // rankIdsToHideUnit5From = { ...rest3 };
 
-  allRankIds = { ...rest3, cultivar: 300 };
+  // allRankIds = { ...rest3, cultivar: 300 };
 
   if (Object.values(rankIdsToHideUnit2From).includes(rankId)) {
     div2Hide.style.display = "none";
@@ -310,15 +321,6 @@ async function verifyLoadForm(f, silent = false) {
   return true;
 }
 
-function debounce(func, delay) {
-  // thanks for the idea, chatGtp!
-  let timeout;
-  return function (...args) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(this, args), delay);
-  };
-}
-
 function checkNameExistence(f, silent = false) {
   return new Promise((resolve, reject) => {
     if (!f?.sciname?.value || !f?.rankid?.value) {
@@ -400,24 +402,4 @@ function submitTaxStatusForm(f) {
       f.submit();
     }
   });
-}
-
-function standardizeCultivarEpithet(unstandardizedCultivarEpithet) {
-  if (unstandardizedCultivarEpithet) {
-    const cleanString = unstandardizedCultivarEpithet.replace(
-      "/(^[\"'“]+)|([\"'”]+$)/",
-      ""
-    );
-    return "'" + cleanString + "'";
-  } else {
-    return "";
-  }
-}
-
-function standardizeTradeName(unstandardizedTradeName) {
-  if (unstandardizedTradeName) {
-    return unstandardizedTradeName.toUpperCase();
-  } else {
-    return "";
-  }
 }

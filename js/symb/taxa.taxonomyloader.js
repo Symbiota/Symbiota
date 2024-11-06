@@ -1,3 +1,14 @@
+// depends on {
+//   standardizeCultivarEpithet,
+//   standardizeTradeName,
+//   debounce,
+//   rankIdsToHideUnit2From,
+//   rankIdsToHideUnit3From,
+//   rankIdsToHideUnit4From,
+//   rankIdsToHideUnit5From,
+//   allRankIds,
+// } from "./taxa.sharedTaxonomyCRUD.js", which are called in a script above this
+
 $(document).ready(function () {
   const currentRankId = Number(document.getElementById("rankid").value);
   showOnlyRelevantFields(currentRankId);
@@ -54,7 +65,7 @@ $(document).ready(function () {
   });
 
   document.getElementById("rankid").addEventListener("change", function () {
-    const selectedValue = Number(this.value); // Get the chosen value
+    const selectedValue = Number(this.value);
     showOnlyRelevantFields(selectedValue);
   });
 });
@@ -73,25 +84,12 @@ async function handleFieldChange(form, silent = false) {
   }
 }
 
-function debounce(func, delay) {
-  // thanks for the idea, chatGtp!
-  let timeout;
-  return function (...args) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(this, args), delay);
-  };
-}
-
 async function verifyLoadForm(f, silent = false) {
   const isUniqueEntry = await checkNameExistence(f, silent);
 
   if (!isUniqueEntry) {
     return false;
   }
-  // if (f.sciname.value == "") {
-  //   alert("Scientific Name field required.");
-  //   return false;
-  // }
   if (f.unitname1.value == "") {
     alert("Unit Name 1 (genus or uninomial) field required.");
     return false;
@@ -125,12 +123,12 @@ async function verifyLoadForm(f, silent = false) {
 }
 
 function parseName(f) {
-  handleFieldChange(f);
+  handleFieldChange(f, false);
   if (!f.quickparser.value) {
     return;
   }
   let sciNameInput = f.quickparser.value;
-  sciNameInput = sciNameInput.replace(/^\s+|\s+$/g, "");
+  sciNameInput = sciNameInput.trim();
   f.reset();
   let sciNameArr = new Array();
   sciNameArr = sciNameInput.split(" ");
@@ -380,7 +378,7 @@ function checkNameExistence(f, silent = false) {
           rankid: f.rankid.value,
           author: f.author.value,
         },
-        success: function (msg) {
+        success: (msg) => {
           if (msg != "0") {
             if (!silent) {
               alert(
@@ -415,8 +413,6 @@ function acceptanceChanged(f) {
 }
 
 function showOnlyRelevantFields(rankId) {
-  console.log("deleteMe rankId selected is: ");
-  console.log(rankId);
   const currentCultivarEpithet =
     document.getElementById("cultivarEpithet").value;
   const currentTradeName = document.getElementById("tradeName").value;
@@ -431,43 +427,43 @@ function showOnlyRelevantFields(rankId) {
   const authorDiv = document.getElementById("author-div");
   const parentNode = div5Hide.parentNode;
 
-  rankIdsToHideUnit2From = {
-    "non-ranked node": 0,
-    organism: 1,
-    kingdom: 10,
-    subkingdom: 20,
-    division: 30,
-    subdivision: 40,
-    superclass: 50,
-    class: 60,
-    subclass: 70,
-    order: 100,
-    suborder: 110,
-    family: 140,
-    subfamily: 150,
-    tribe: 160,
-    subtribe: 170,
-    genus: 180,
-    subgenus: 190,
-    section: 200,
-    subsection: 210,
-  };
-  const { ...rest } = rankIdsToHideUnit2From;
-  rankIdsToHideUnit3From = { ...rest, species: 220 };
-  const { ...rest2 } = rankIdsToHideUnit3From;
+  // rankIdsToHideUnit2From = {
+  //   "non-ranked node": 0,
+  //   organism: 1,
+  //   kingdom: 10,
+  //   subkingdom: 20,
+  //   division: 30,
+  //   subdivision: 40,
+  //   superclass: 50,
+  //   class: 60,
+  //   subclass: 70,
+  //   order: 100,
+  //   suborder: 110,
+  //   family: 140,
+  //   subfamily: 150,
+  //   tribe: 160,
+  //   subtribe: 170,
+  //   genus: 180,
+  //   subgenus: 190,
+  //   section: 200,
+  //   subsection: 210,
+  // };
+  // const { ...rest } = rankIdsToHideUnit2From;
+  // rankIdsToHideUnit3From = { ...rest, species: 220 };
+  // const { ...rest2 } = rankIdsToHideUnit3From;
 
-  rankIdsToHideUnit4From = {
-    ...rest2,
-    subspecies: 230,
-    variety: 240,
-    subvariety: 250,
-    form: 260,
-    subform: 270,
-  };
-  const { ...rest3 } = rankIdsToHideUnit4From;
-  rankIdsToHideUnit5From = { ...rest3 };
+  // rankIdsToHideUnit4From = {
+  //   ...rest2,
+  //   subspecies: 230,
+  //   variety: 240,
+  //   subvariety: 250,
+  //   form: 260,
+  //   subform: 270,
+  // };
+  // const { ...rest3 } = rankIdsToHideUnit4From;
+  // rankIdsToHideUnit5From = { ...rest3 };
 
-  allRankIds = { ...rest3, cultivar: 300 };
+  // allRankIds = { ...rest3, cultivar: 300 };
 
   if (Object.values(rankIdsToHideUnit2From).includes(rankId)) {
     div2Hide.style.display = "none";

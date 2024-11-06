@@ -92,7 +92,7 @@ if($isEditor){
 		var tid = <?php echo $taxonEditorObj->getTid(); ?>;
 		var tabIndex = <?php echo $tabIndex; ?>;
 	</script>
-	<script src="../../js/symb/taxa.taxonomyeditor.js?ver=2"></script>
+	<script src="../../js/symb/taxa.taxonomyeditor.js?ver=2" type="module"></script>
 	<style type="text/css">
 		.editDiv{ clear:both; }
 		.editLabel{ float:left; font-weight:bold; }
