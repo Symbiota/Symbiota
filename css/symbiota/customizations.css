@@ -31,6 +31,16 @@ This stylesheet is defined last and will override all previously loaded sheets. 
     color: var(--light-color);
   }
 
+  div.site-branding__site-name a, div.site-branding__usda a {
+    font-weight: 600;
+
+  }
+
+  ul.menu.menu--footer.nav {
+    padding: 0;
+  }
+
+
   #innertext {
     padding: 3rem 0;
   }
