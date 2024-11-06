@@ -173,6 +173,18 @@ body {
   animation: loading-dash 1.5s ease-in-out infinite;
 }
 
+div#innertext div.quicksearch-container {
+  width: auto;
+}
+
+#quicksearch-btn-container {
+  flex-wrap: wrap;
+}
+
+#quicksearch-btn-container button {
+  flex: 1 auto;
+}
+
 @-webkit-keyframes loading-rotate {
   to {
     -webkit-transform: rotate(1turn);
