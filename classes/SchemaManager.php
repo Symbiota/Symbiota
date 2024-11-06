@@ -58,7 +58,7 @@ class SchemaManager extends Manager{
 								$this->logOrEcho($fragment, 1);
 							}
 							elseif(!$stmtType){
-								if(preg_match('/`([a-z]+)`/', $fragment, $m)){
+								if(preg_match('/`([a-zA-Z]+)`/', $fragment, $m)){
 									$targetTable = $m[1];
 								}
 								$stmtType = 'undefined';
@@ -67,10 +67,10 @@ class SchemaManager extends Manager{
 									$this->setActiveTable($targetTable);
 								}
 								elseif(strpos($fragment, '/*!') === 0) $stmtType = 'Conditional statement';
-								elseif(preg_match('/^([A-Z\s]+)/', $fragment, $m)){
+								elseif(preg_match('/^([A-Z0-9_=\s]+)/', $fragment, $m)){
 									$stmtType = $m[1];
 								}
-								$this->logOrEcho('Type: ' . $stmtType . ($targetTable ? ' '.$targetTable : ''), 1);
+								$this->logOrEcho('Statement prefix: ' . $stmtType . ($targetTable ? ' '.$targetTable : ''), 1);
 								$sql = $fragment;
 							}
 							else{
@@ -115,7 +115,7 @@ class SchemaManager extends Manager{
 								fwrite($this->amendmentFH, '# ERROR: '.$this->conn->error."\n\n");
 								fwrite($this->amendmentFH, $sql . "\n\n");
 								$this->logOrEcho('ERROR: ' . $this->conn->error, 2);
-								$this->logOrEcho('SQL: ' . $sql, 2);
+								//$this->logOrEcho('SQL: ' . $sql, 2);
 								//break;
 							}
 						}
@@ -209,8 +209,8 @@ class SchemaManager extends Manager{
 				$rs->free();
 			}
 			catch(Exception $e){
-				$this->logOrEcho('ERROR: '.$this->conn->error, 2);
-				$this->logOrEcho($sql, 2);
+				//$this->logOrEcho('ERROR: '.$this->conn->error, 2);
+				//$this->logOrEcho($sql, 2);
 			}
 		}
 	}

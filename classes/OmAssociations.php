@@ -77,13 +77,13 @@ class OmAssociations extends Manager{
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$prefix = '';
-				if(strpos($r->catalogNumber, $r->instCode) === false){
+				if($r->catalogNumber && strpos($r->catalogNumber, $r->instCode) === false){
 					$prefix = $r->instCode;
 					if($r->collCode) $prefix .= '-' . $r->collCode;
 					$prefix .= ':';
 				}
 				foreach($relOccidArr[$r->occid] as $targetAssocID){
-					$retArr[$targetAssocID]['object-catalogNumber'] = $prefix . $r->catalogNumber;
+					$retArr[$targetAssocID]['object-catalogNumber'] = $prefix . ($r->catalogNumber ?? 'not defined');
 					$retArr[$targetAssocID]['verbatimSciname'] = $r->sciname;
 				}
 			}

@@ -8,7 +8,6 @@ Language: English
 $LANG['SPEC_DETAILS'] = 'Species Details';
 $LANG['OF'] = 'of';
 $LANG['NAME_BLANK'] = 'Scientific name field is blank';
-$LANG['SCINAME_ERROR'] = 'ERROR: Scientific name does not exist in database. Did you spell it correctly? If so, it may have to be added to taxa table.';
 $LANG['GEN_EDIT'] = 'General Editing';
 $LANG['VOUCHER_EDIT'] = 'Voucher Admin';
 $LANG['EDIT_CHECKLIST'] = 'Edit Checklist Information';
@@ -45,5 +44,6 @@ $LANG['UNKNOWN_COLLECTION'] = 'Unknown Collection';
 $LANG['SKIP_NAV'] = 'Skip Navigation';
 $LANG['REMOVE'] = 'Remove';
 $LANG['TO_COLLECTIONS_LINK'] = 'Link to target collections and taxa';
+$LANG['SELECT_TAXON'] = 'Please select a taxon from the list';
 
 ?>

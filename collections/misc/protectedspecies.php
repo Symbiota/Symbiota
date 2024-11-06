@@ -155,7 +155,7 @@ include($SERVER_ROOT.'/includes/header.php');
 		?>
 	</div>
 	<div style="clear:both">
-		<section class="fieldset-like">
+		<section class="fieldset-like" style="padding: 1.6rem 0 0 0">
 			<h1><span><?= $LANG['GLOBAL_PROTECTIONS'] ?></span></h1>
 			<br/>
 			<?php
@@ -182,7 +182,7 @@ include($SERVER_ROOT.'/includes/header.php');
 			if($rsArr){
 				foreach($rsArr as $family => $speciesArr){
 					?>
-					<h2>
+					<h2 class="subheader">
 						<span>
 							<?= $family ?>
 						</span>
