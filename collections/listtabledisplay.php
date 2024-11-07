@@ -6,8 +6,11 @@ else include_once($SERVER_ROOT . '/content/lang/collections/listtabledisplay.en.
 include_once($SERVER_ROOT.'/classes/OccurrenceListManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$actionPage = !empty($SHOULD_USE_HARVESTPARAMS) ? "harvestparams.php" : "./search/index.php";
-$comingFrom = array_key_exists('comingFrom', $_REQUEST) ? $_REQUEST['comingFrom'] : '';
+$comingFrom =  (array_key_exists('comingFrom', $_REQUEST) ? $_REQUEST['comingFrom'] : '');
+if($comingFrom != 'harvestparams' && $comingFrom != 'newsearch'){
+	//If not set via a valid input variable, use setting set within symbini
+	$comingFrom = !empty($SHOULD_USE_HARVESTPARAMS) ? 'harvestparams' : 'newsearch';
+}
 
 $page = array_key_exists('page',$_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $tableCount= array_key_exists('tablecount',$_REQUEST) ? filter_var($_REQUEST['tablecount'], FILTER_SANITIZE_NUMBER_INT) : 1000;
@@ -17,6 +20,7 @@ $sortOrder = !empty($_REQUEST['sortorder']) ? 'desc' : '';
 
 $collManager = new OccurrenceListManager();
 $searchVar = $collManager->getQueryTermStr();
+$searchVar .= '&comingFrom=' . $comingFrom;
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -64,6 +68,7 @@ $searchVar = $collManager->getQueryTermStr();
 				</div>
 				-->
 				<form action="list.php" method="post" style="float:left">
+					<input name="comingFrom" type="hidden" value="<?= $comingFrom; ?>" />
 					<button type="submit" class="icon-button" style="margin:5px;padding:5px;" title="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>"  aria-label="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>">
 						<svg xmlns="http://www.w3.org/2000/svg" style="width:1.3em;height:1.3em" alt="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>" height="24" viewBox="0 -960 960 960" width="24"> <path d="M280-600v-80h560v80H280Zm0 160v-80h560v80H280Zm0 160v-80h560v80H280ZM160-600q-17 0-28.5-11.5T120-640q0-17 11.5-28.5T160-680q17 0 28.5 11.5T200-640q0 17-11.5 28.5T160-600Zm0 160q-17 0-28.5-11.5T120-480q0-17 11.5-28.5T160-520q17 0 28.5 11.5T200-480q0 17-11.5 28.5T160-440Zm0 160q-17 0-28.5-11.5T120-320q0-17 11.5-28.5T160-360q17 0 28.5 11.5T200-320q0 17-11.5 28.5T160-280Z"/></svg>
 					</button>
@@ -157,7 +162,7 @@ $searchVar = $collManager->getQueryTermStr();
 			<div class="navpath">
 				<a href="../index.php"><?php echo (isset($LANG['NAV_HOME']) ? $LANG['NAV_HOME'] : 'Home'); ?></a> &gt;&gt;
 				<?php
-				if(!empty($SHOULD_USE_HARVESTPARAMS)){
+				if($comingFrom == 'harvestparams'){
 					?>
 					<a href="index.php"><?= $LANG['NAV_COLLECTIONS'] ?></a> &gt;&gt;
 					<a href="<?php echo $CLIENT_ROOT . '/collections/harvestparams.php' ?>"><?= $LANG['NAV_SEARCH'] ?></a> &gt;&gt;

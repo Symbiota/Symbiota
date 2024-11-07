@@ -582,6 +582,8 @@ function getSearchUrl() {
     baseUrl.searchParams.append(key, paramsArr[key]);
   });
 
+  baseUrl.searchParams.append("comingFrom", "newsearch");
+  
   return baseUrl.href;
 }
 
