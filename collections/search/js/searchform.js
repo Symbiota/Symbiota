@@ -582,8 +582,6 @@ function getSearchUrl() {
     baseUrl.searchParams.append(key, paramsArr[key]);
   });
 
-  baseUrl.searchParams.append("comingFrom", "search/index.php");
-
   return baseUrl.href;
 }
 

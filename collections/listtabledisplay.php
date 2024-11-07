@@ -6,16 +6,14 @@ else include_once($SERVER_ROOT . '/content/lang/collections/listtabledisplay.en.
 include_once($SERVER_ROOT.'/classes/OccurrenceListManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ?? false;
-$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
-$actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.php";
+$actionPage = !empty($SHOULD_USE_HARVESTPARAMS) ? "harvestparams.php" : "./search/index.php";
 $comingFrom = array_key_exists('comingFrom', $_REQUEST) ? $_REQUEST['comingFrom'] : '';
 
 $page = array_key_exists('page',$_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $tableCount= array_key_exists('tablecount',$_REQUEST) ? filter_var($_REQUEST['tablecount'], FILTER_SANITIZE_NUMBER_INT) : 1000;
-$sortField1 = array_key_exists('sortfield1',$_REQUEST) ? $_REQUEST['sortfield1'] : 'collectionname';
+$sortField1 = array_key_exists('sortfield1',$_REQUEST) ? $_REQUEST['sortfield1'] : '';
 $sortField2 = array_key_exists('sortfield2',$_REQUEST) ? $_REQUEST['sortfield2'] : '';
-$sortOrder = array_key_exists('sortorder',$_REQUEST) ? $_REQUEST['sortorder'] : '';
+$sortOrder = !empty($_REQUEST['sortorder']) ? 'desc' : '';
 
 $collManager = new OccurrenceListManager();
 $searchVar = $collManager->getQueryTermStr();
@@ -25,16 +23,11 @@ $searchVar = $collManager->getQueryTermStr();
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE.' '.(isset($LANG['COL_RESULTS']) ? $LANG['COL_RESULTS'] : 'Collections Search Results Table'); ?></title>
-	<style>
-		table.styledtable td {
-			white-space: nowrap;
-		}
-	</style>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
@@ -49,6 +42,14 @@ $searchVar = $collManager->getQueryTermStr();
 		});
 	</script>
 	<script src="../js/symb/collections.list.js?ver=1" type="text/javascript"></script>
+	<style>
+		table.styledtable td {
+			white-space: nowrap;
+		}
+		.fieldset-like{
+			margin: 1rem;
+		}
+	</style>
 </head>
 <body style="margin-left: 0px; margin-right: 0px;background-color:white;">
 	<h1 class="page-heading left-breathing-room-rel"><?php echo $LANG['SEARCH_RES_TABLE'] ?></h1>
@@ -63,7 +64,6 @@ $searchVar = $collManager->getQueryTermStr();
 				</div>
 				-->
 				<form action="list.php" method="post" style="float:left">
-					<input name="comingFrom" type="hidden" value="<?= htmlspecialchars($comingFrom, HTML_SPECIAL_CHARS_FLAGS) ?>" />
 					<button type="submit" class="icon-button" style="margin:5px;padding:5px;" title="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>"  aria-label="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>">
 						<svg xmlns="http://www.w3.org/2000/svg" style="width:1.3em;height:1.3em" alt="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>" height="24" viewBox="0 -960 960 960" width="24"> <path d="M280-600v-80h560v80H280Zm0 160v-80h560v80H280Zm0 160v-80h560v80H280ZM160-600q-17 0-28.5-11.5T120-640q0-17 11.5-28.5T160-680q17 0 28.5 11.5T200-640q0 17-11.5 28.5T160-600Zm0 160q-17 0-28.5-11.5T120-480q0-17 11.5-28.5T160-520q17 0 28.5 11.5T200-480q0 17-11.5 28.5T160-440Zm0 160q-17 0-28.5-11.5T120-320q0-17 11.5-28.5T160-360q17 0 28.5 11.5T200-320q0 17-11.5 28.5T160-280Z"/></svg>
 					</button>
@@ -91,9 +91,10 @@ $searchVar = $collManager->getQueryTermStr();
 						<div>
 							<label for="sortfield1"><?php echo (isset($LANG['SORT_BY']) ? $LANG['SORT_BY'] : 'Sort By'); ?>:</label>
 							<select name="sortfield1" id="sortfield1">
+								<option value=""></option>
 								<?php
-								$sortFields = array('c.collectionname' => (isset($LANG['COLLECTION']) ? $LANG['COLLECTION'] : 'Collection'), 'o.catalogNumber' => (isset($LANG['CATALOG_NUMBER']) ? $LANG['CATALOG_NUMBER'] : 'Catalog Number'), 'o.family' => (isset($LANG['FAMILY']) ? $LANG['FAMILY'] : 'Family'), 'o.sciname' => (isset($LANG['SCINAME']) ? $LANG['SCINAME'] : 'Scientific Name'), 'o.recordedBy' => (isset($LANG['COLLECTOR']) ? $LANG['COLLECTOR'] : 'Collector'),
-									'o.recordNumber' => (isset($LANG['NUMBER']) ? $LANG['NUMBER'] : 'Number'), 'o.eventDate' => (isset($LANG['EVENTDATE']) ? $LANG['EVENTDATE'] : 'Date'), 'o.country' => (isset($LANG['COUNTRY']) ? $LANG['COUNTRY'] : 'Country'), 'o.StateProvince' => (isset($LANG['STATE_PROVINCE']) ? $LANG['STATE_PROVINCE'] : 'State/Province'), 'o.county' => (isset($LANG['COUNTY']) ? $LANG['COUNTY'] : 'County'), 'o.minimumElevationInMeters' => (isset($LANG['ELEVATION']) ? $LANG['ELEVATION'] : 'Elevation'));
+								$sortFields = array('c.collectionname' => $LANG['COLLECTION'], 'o.catalogNumber' => $LANG['CATALOG_NUMBER'], 'o.family' => $LANG['FAMILY'], 'o.sciname' => $LANG['SCINAME'], 'o.recordedBy' => $LANG['COLLECTOR'],
+									'o.recordNumber' => $LANG['NUMBER'], 'o.eventDate' => $LANG['EVENTDATE'], 'o.country' => $LANG['COUNTRY'], 'o.StateProvince' => $LANG['STATE_PROVINCE'], 'o.county' => $LANG['COUNTY'], 'o.minimumElevationInMeters' => $LANG['ELEVATION']);
 								foreach($sortFields as $k => $v){
 									echo '<option value="'.$k.'" '.($k==$sortField1?'SELECTED':'').'>'.$v.'</option>';
 								}
@@ -103,7 +104,7 @@ $searchVar = $collManager->getQueryTermStr();
 						<div>
 							<label for="sortfield2"><?php echo (isset($LANG['THEN_BY']) ? $LANG['THEN_BY'] : 'Then Sort By'); ?>:</label>
 							<select name="sortfield2" id="sortfield2">
-								<option value=""><?php echo (isset($LANG['SEL_FIELD']) ? $LANG['SEL_FIELD'] : 'Select Field Name'); ?></option>
+								<option value=""></option>
 								<?php
 								foreach($sortFields as $k => $v){
 									echo '<option value="'.$k.'" '.($k==$sortField2?'SELECTED':'').'>'.$v.'</option>';
@@ -127,7 +128,7 @@ $searchVar = $collManager->getQueryTermStr();
 			</div>
 		</div>
 		<?php
-		$searchVar .= '&sortfield1=' . htmlspecialchars($sortField1, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&sortfield2=' . htmlspecialchars($sortField2, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&sortorder=' . htmlspecialchars($sortOrder, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+		$searchVar .= '&sortfield1=' . htmlspecialchars($sortField1, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&sortfield2=' . htmlspecialchars($sortField2, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&sortorder=' . $sortOrder;
 		$collManager->addSort($sortField1, $sortOrder);
 		if($sortField2) $collManager->addSort($sortField2, $sortOrder);
 		$recArr = $collManager->getSpecimenMap((($page-1)*$tableCount), $tableCount);
@@ -155,12 +156,18 @@ $searchVar = $collManager->getQueryTermStr();
 			</div>
 			<div class="navpath">
 				<a href="../index.php"><?php echo (isset($LANG['NAV_HOME']) ? $LANG['NAV_HOME'] : 'Home'); ?></a> &gt;&gt;
-				<?php if($comingFrom !== 'search/index.php'){ ?>
-					<a href="index.php"><?php echo (isset($LANG['NAV_COLLECTIONS']) ? $LANG['NAV_COLLECTIONS'] : 'Collections'); ?></a> &gt;&gt;
-					<a href="<?php echo $CLIENT_ROOT . '/collections/harvestparams.php' ?>"><?php echo (isset($LANG['NAV_SEARCH']) ? $LANG['NAV_SEARCH'] : 'Search Criteria'); ?></a> &gt;&gt;
-				<?php }else{ ?>
-					<a href="<?php echo $CLIENT_ROOT . '/collections/search/index.php' ?>"><?php echo (isset($LANG['NAV_SEARCH']) ? $LANG['NAV_SEARCH'] : 'Search Criteria'); ?></a> &gt;&gt;
-				<?php } ?>
+				<?php
+				if(!empty($SHOULD_USE_HARVESTPARAMS)){
+					?>
+					<a href="index.php"><?= $LANG['NAV_COLLECTIONS'] ?></a> &gt;&gt;
+					<a href="<?php echo $CLIENT_ROOT . '/collections/harvestparams.php' ?>"><?= $LANG['NAV_SEARCH'] ?></a> &gt;&gt;
+					<?php
+				}else{
+					?>
+					<a href="<?php echo $CLIENT_ROOT . '/collections/search/index.php' ?>"><?= $LANG['NAV_SEARCH'] ?></a> &gt;&gt;
+					<?php
+				}
+				?>
 				<b><?php echo (isset($LANG['SPEC_REC_TAB']) ? $LANG['SPEC_REC_TAB'] : 'Specimen Records Table'); ?></b>
 			</div>
 		</div>

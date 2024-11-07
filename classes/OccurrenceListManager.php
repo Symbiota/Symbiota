@@ -15,7 +15,7 @@ class OccurrenceListManager extends OccurrenceManager{
  		parent::__destruct();
 	}
 
-	public function getSpecimenMap($pageRequest,$cntPerPage){
+	public function getSpecimenMap($pageRequest, $cntPerPage){
 		$retArr = Array();
 		$isSecuredReader = false;
 		if($GLOBALS['USER_RIGHTS']){
@@ -34,11 +34,13 @@ class OccurrenceListManager extends OccurrenceManager{
 		$sql .= $this->getTableJoins($sqlWhere).$sqlWhere;
 		//Don't allow someone to query all occurrences if there are no conditions
 		if(!$sqlWhere) $sql .= 'WHERE o.occid IS NULL ';
-		if($this->sortArr) $sql .= 'ORDER BY '.implode(',',$this->sortArr);
+		if($this->sortArr) $sql .= 'ORDER BY '.implode(',', $this->sortArr);
+		/*
 		else{
-			//$sql .= 'ORDER BY c.sortseq, c.collectionname ';
+			$sql .= 'ORDER BY c.sortseq, c.collectionname ';
 			$pageRequest = ($pageRequest - 1)*$cntPerPage;
 		}
+		*/
 		$sql .= ' LIMIT ' . $pageRequest . ',' . $cntPerPage;
 		//echo '<div>Spec sql: ' . $sql . '</div>';
 		$result = $this->conn->query($sql);
@@ -140,7 +142,9 @@ class OccurrenceListManager extends OccurrenceManager{
 	}
 
 	public function addSort($field, $direction){
-		$this->sortArr[] = $this->cleanInStr($field.' '.$direction);
+		if($field){
+			$this->sortArr[] = $this->cleanInStr($field) . ($direction ? ' desc' : '');
+		}
 	}
 
 	//Misc support functions
