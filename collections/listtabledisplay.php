@@ -9,20 +9,13 @@ header("Content-Type: text/html; charset=".$CHARSET);
 $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ?? false;
 $SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
 $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.php";
-$comingFrom = array_key_exists('comingFrom', $_REQUEST) ? htmlspecialchars($_REQUEST['comingFrom'], HTML_SPECIAL_CHARS_FLAGS) : '';
+$comingFrom = array_key_exists('comingFrom', $_REQUEST) ? $_REQUEST['comingFrom'] : '';
 
-$page = array_key_exists('page',$_REQUEST) ? $_REQUEST['page'] : 1;
-$tableCount= array_key_exists('tablecount',$_REQUEST) ? $_REQUEST['tablecount'] : 1000;
+$page = array_key_exists('page',$_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
+$tableCount= array_key_exists('tablecount',$_REQUEST) ? filter_var($_REQUEST['tablecount'], FILTER_SANITIZE_NUMBER_INT) : 1000;
 $sortField1 = array_key_exists('sortfield1',$_REQUEST) ? $_REQUEST['sortfield1'] : 'collectionname';
 $sortField2 = array_key_exists('sortfield2',$_REQUEST) ? $_REQUEST['sortfield2'] : '';
 $sortOrder = array_key_exists('sortorder',$_REQUEST) ? $_REQUEST['sortorder'] : '';
-
-//Sanitation
-if(!is_numeric($page) || $page < 1) $page = 1;
-if(!is_numeric($tableCount)) $tableCount = 1000;
-$sortField1 = htmlspecialchars($sortField1, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
-$sortField2 = htmlspecialchars($sortField2, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
-$sortOrder = htmlspecialchars($sortOrder, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 
 $collManager = new OccurrenceListManager();
 $searchVar = $collManager->getQueryTermStr();
@@ -70,7 +63,7 @@ $searchVar = $collManager->getQueryTermStr();
 				</div>
 				-->
 				<form action="list.php" method="post" style="float:left">
-					<input name="comingFrom" type="hidden" value="<?php echo $comingFrom; ?>" />
+					<input name="comingFrom" type="hidden" value="<?= htmlspecialchars($comingFrom, HTML_SPECIAL_CHARS_FLAGS) ?>" />
 					<button type="submit" class="icon-button" style="margin:5px;padding:5px;" title="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>"  aria-label="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>">
 						<svg xmlns="http://www.w3.org/2000/svg" style="width:1.3em;height:1.3em" alt="<?php echo (isset($LANG['LIST_DISPLAY']) ? $LANG['LIST_DISPLAY'] : 'List Display'); ?>" height="24" viewBox="0 -960 960 960" width="24"> <path d="M280-600v-80h560v80H280Zm0 160v-80h560v80H280Zm0 160v-80h560v80H280ZM160-600q-17 0-28.5-11.5T120-640q0-17 11.5-28.5T160-680q17 0 28.5 11.5T200-640q0 17-11.5 28.5T160-600Zm0 160q-17 0-28.5-11.5T120-480q0-17 11.5-28.5T160-520q17 0 28.5 11.5T200-480q0 17-11.5 28.5T160-440Zm0 160q-17 0-28.5-11.5T120-320q0-17 11.5-28.5T160-360q17 0 28.5 11.5T200-320q0 17-11.5 28.5T160-280Z"/></svg>
 					</button>
@@ -134,7 +127,7 @@ $searchVar = $collManager->getQueryTermStr();
 			</div>
 		</div>
 		<?php
-		$searchVar .= '&sortfield1='.$sortField1.'&sortfield2='.$sortField2.'&sortorder='.$sortOrder;
+		$searchVar .= '&sortfield1=' . htmlspecialchars($sortField1, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&sortfield2=' . htmlspecialchars($sortField2, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&sortorder=' . htmlspecialchars($sortOrder, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 		$collManager->addSort($sortField1, $sortOrder);
 		if($sortField2) $collManager->addSort($sortField2, $sortOrder);
 		$recArr = $collManager->getSpecimenMap((($page-1)*$tableCount), $tableCount);
@@ -144,13 +137,13 @@ $searchVar = $collManager->getQueryTermStr();
 		$qryCnt = $collManager->getRecordCnt();
 		$navStr = '<div style="float:right;">';
 		if($page > 1){
-			$navStr .= '<a href="listtabledisplay.php?' . htmlspecialchars($searchVar, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&page=' . htmlspecialchars(($page-1), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" title="' . htmlspecialchars($LANG['PAGINATION_PREVIOUS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' ' . htmlspecialchars($tableCount, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' ' . htmlspecialchars($LANG['PAGINATION_RECORDS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">&lt;&lt;</a>';
+			$navStr .= '<a href="listtabledisplay.php?' . $searchVar . '&page=' . ($page-1) . '" title="' . $LANG['PAGINATION_PREVIOUS'] . ' ' . $tableCount . ' ' . $LANG['PAGINATION_RECORDS'] . '">&lt;&lt;</a>';
 		}
 		$navStr .= ' | ';
 		$navStr .= ($page==1 ? 1 : (($page-1)*$tableCount)).'-'.($qryCnt<$tableCount*$page ? $qryCnt : $tableCount*$page).' '.$LANG['PAGINATION_OF'].' '.$qryCnt.' '.$LANG['PAGINATION_RECORDS'];
 		$navStr .= ' | ';
 		if($qryCnt > ($page*$tableCount)){
-			$navStr .= '<a href="listtabledisplay.php?' . htmlspecialchars($searchVar, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&page=' . htmlspecialchars(($page+1), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" title="' . htmlspecialchars($LANG['PAGINATION_NEXT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' ' . htmlspecialchars($tableCount, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' ' . htmlspecialchars($LANG['PAGINATION_RECORDS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">&gt;&gt;</a>';
+			$navStr .= '<a href="listtabledisplay.php?' . $searchVar . '&page=' . ($page+1) . '" title="' . $LANG['PAGINATION_NEXT'] . ' ' . $tableCount . ' ' . $LANG['PAGINATION_RECORDS'] . '">&gt;&gt;</a>';
 		}
 		$navStr .= '</div>';
 		?>
@@ -161,12 +154,12 @@ $searchVar = $collManager->getQueryTermStr();
 				?>
 			</div>
 			<div class="navpath">
-				<a href="../index.php"><?php echo htmlspecialchars((isset($LANG['NAV_HOME']) ? $LANG['NAV_HOME'] : 'Home'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+				<a href="../index.php"><?php echo (isset($LANG['NAV_HOME']) ? $LANG['NAV_HOME'] : 'Home'); ?></a> &gt;&gt;
 				<?php if($comingFrom !== 'search/index.php'){ ?>
-					<a href="index.php"><?php echo htmlspecialchars((isset($LANG['NAV_COLLECTIONS']) ? $LANG['NAV_COLLECTIONS'] : 'Collections'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-					<a href="<?php echo $CLIENT_ROOT . '/collections/harvestparams.php' ?>"><?php echo htmlspecialchars((isset($LANG['NAV_SEARCH']) ? $LANG['NAV_SEARCH'] : 'Search Criteria'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+					<a href="index.php"><?php echo (isset($LANG['NAV_COLLECTIONS']) ? $LANG['NAV_COLLECTIONS'] : 'Collections'); ?></a> &gt;&gt;
+					<a href="<?php echo $CLIENT_ROOT . '/collections/harvestparams.php' ?>"><?php echo (isset($LANG['NAV_SEARCH']) ? $LANG['NAV_SEARCH'] : 'Search Criteria'); ?></a> &gt;&gt;
 				<?php }else{ ?>
-					<a href="<?php echo $CLIENT_ROOT . '/collections/search/index.php' ?>"><?php echo htmlspecialchars((isset($LANG['NAV_SEARCH']) ? $LANG['NAV_SEARCH'] : 'Search Criteria'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+					<a href="<?php echo $CLIENT_ROOT . '/collections/search/index.php' ?>"><?php echo (isset($LANG['NAV_SEARCH']) ? $LANG['NAV_SEARCH'] : 'Search Criteria'); ?></a> &gt;&gt;
 				<?php } ?>
 				<b><?php echo (isset($LANG['SPEC_REC_TAB']) ? $LANG['SPEC_REC_TAB'] : 'Specimen Records Table'); ?></b>
 			</div>
@@ -217,7 +210,7 @@ $searchVar = $collManager->getQueryTermStr();
 									<?php
 									echo '<a href="#" onclick="return openIndPU('.$occid.",".($targetClid ? $targetClid : "0").');">'.$occid.'</a> ';
 									if($isEditor || ($SYMB_UID && $SYMB_UID == $occArr['obsuid'])){
-										echo '<a href="editor/occurrenceeditor.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">';
+										echo '<a href="editor/occurrenceeditor.php?occid=' . $occid . '" target="_blank">';
 										echo '<img src="../images/edit.png" style="height:1.3em;" title="'.(isset($LANG['EDIT_REC']) ? $LANG['EDIT_REC'] : 'Edit Record').'" />';
 										echo '</a>';
 									}

@@ -1,16 +1,17 @@
 <?php
 include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceListManager.php');
 if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/list.en.php');
-include_once($SERVER_ROOT . '/classes/OccurrenceListManager.php');
-header("Content-Type: text/html; charset=" . $CHARSET);
+header('Content-Type: text/html; charset=' . $CHARSET);
+
 $taxonFilter = array_key_exists('taxonfilter', $_REQUEST) ? filter_var($_REQUEST['taxonfilter'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $targetTid = array_key_exists('targettid', $_REQUEST) ? filter_var($_REQUEST['targettid'], FILTER_SANITIZE_NUMBER_INT) : '';
 $tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $cntPerPage = array_key_exists('cntperpage', $_REQUEST) ? filter_var($_REQUEST['cntperpage'], FILTER_SANITIZE_NUMBER_INT) : 100;
 $pageNumber = array_key_exists('page', $_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $datasetid = array_key_exists('datasetid', $_REQUEST) ? filter_var($_REQUEST['datasetid'], FILTER_SANITIZE_NUMBER_INT) : '';
-$comingFrom = array_key_exists('comingFrom', $_REQUEST) ? htmlspecialchars($_REQUEST['comingFrom'], HTML_SPECIAL_CHARS_FLAGS) : '';
+$comingFrom = array_key_exists('comingFrom', $_REQUEST) ? $_REQUEST['comingFrom'] : '';
 $_SESSION['datasetid'] = filter_var($datasetid, FILTER_SANITIZE_NUMBER_INT);
 
 $collManager = new OccurrenceListManager();
@@ -129,7 +130,7 @@ $_SESSION['citationvar'] = $searchVar;
 	if (isset($collections_listCrumbs)) {
 		if ($collections_listCrumbs) {
 			echo '<div class="navpath">';
-			echo '<a href="../index.php">' . htmlspecialchars($LANG['NAV_HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
+			echo '<a href="../index.php">' . $LANG['NAV_HOME'] . '</a> &gt;&gt; ';
 			echo $collections_listCrumbs . ' &gt;&gt; ';
 			echo '<b>' . $LANG['NAV_SPECIMEN_LIST'] . '</b>';
 			echo '</div>';
@@ -137,12 +138,12 @@ $_SESSION['citationvar'] = $searchVar;
 	}
 	else {
 		echo '<div class="navpath">';
-		echo '<a href="../index.php">' . htmlspecialchars($LANG['NAV_HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
+		echo '<a href="../index.php">' . $LANG['NAV_HOME'] . '</a> &gt;&gt; ';
 		if($comingFrom !== 'search/index.php'){
-			echo '<a href="index.php">' . htmlspecialchars($LANG['NAV_COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
-			echo '<a href="' . $CLIENT_ROOT . '/collections/harvestparams.php">' . htmlspecialchars($LANG['NAV_SEARCH'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
+			echo '<a href="index.php">' . $LANG['NAV_COLLECTIONS'] . '</a> &gt;&gt; ';
+			echo '<a href="' . $CLIENT_ROOT . '/collections/harvestparams.php">' . $LANG['NAV_SEARCH'] . '</a> &gt;&gt; ';
 		} else{
-			echo '<a href="' . $CLIENT_ROOT . '/collections/search/index.php">' . htmlspecialchars($LANG['NAV_SEARCH'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
+			echo '<a href="' . $CLIENT_ROOT . '/collections/search/index.php">' . $LANG['NAV_SEARCH'] . '</a> &gt;&gt; ';
 		}
 		echo '<b>' . $LANG['NAV_SPECIMEN_LIST'] . '</b>';
 		echo '</div>';
@@ -154,7 +155,7 @@ $_SESSION['citationvar'] = $searchVar;
 		<div id="tabs" class="top-breathing-room-rel" style="margin-bottom: 1rem">
 			<ul>
 				<li>
-					<a id="taxatablink" href='<?php echo 'checklist.php?' . htmlspecialchars($searchVar, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE | ENT_QUOTES) . '&taxonfilter=' . htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE | ENT_QUOTES); ?>'>
+					<a id="taxatablink" href='<?= 'checklist.php?' . $searchVar . '&taxonfilter=' . $taxonFilter ?>'>
 						<span><?php echo $LANG['TAB_CHECKLIST']; ?></span>
 					</a>
 				</li>
@@ -184,7 +185,7 @@ $_SESSION['citationvar'] = $searchVar;
 						}
 						?>
 						<form action="listtabledisplay.php" method="post" style="float:left">
-							<input name="comingFrom" type="hidden" value="<?php echo $comingFrom; ?>" />
+							<input name="comingFrom" type="hidden" value="<?= htmlspecialchars($comingFrom, HTML_SPECIAL_CHARS_FLAGS) ?>" />
 							<button class="icon-button" aria-label="<?php echo (isset($LANG['TABLE_DISPLAY']) ? $LANG['TABLE_DISPLAY'] : 'Table Display'); ?>" title="<?php echo (isset($LANG['TABLE_DISPLAY']) ? $LANG['TABLE_DISPLAY'] : 'Table Display'); ?>">
 								<svg style="width:1.3em;height:1.3em" alt="<?php echo $LANG['IMG_TABLE_DISPLAY']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200Zm80-400h560v-160H200v160Zm213 200h134v-120H413v120Zm0 200h134v-120H413v120ZM200-400h133v-120H200v120Zm427 0h133v-120H627v120ZM200-200h133v-120H200v120Zm427 0h133v-120H627v120Z"/></svg>
 							</button>
@@ -213,7 +214,7 @@ $_SESSION['citationvar'] = $searchVar;
 							while ($collElem = array_shift($collSearchArr)) {
 								$collSearchStr .= $collElem . '; ';
 								if ($cnt == 10 && $collSearchArr) {
-									$collSearchStr = trim($collSearchStr, '; ') . '<span class="inst-span">... (<a href="#" onclick="$(\'.inst-span\').toggle();return false;">' . htmlspecialchars($LANG['SHOW_ALL'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>)</span><span class="inst-span" style="display:none">; ';
+									$collSearchStr = trim($collSearchStr, '; ') . '<span class="inst-span">... (<a href="#" onclick="$(\'.inst-span\').toggle();return false;">' . $LANG['SHOW_ALL'] . '</a>)</span><span class="inst-span" style="display:none">; ';
 								}
 								$cnt++;
 							}
@@ -221,7 +222,7 @@ $_SESSION['citationvar'] = $searchVar;
 						}
 						echo '<div><b>' . $LANG['DATASET'] . ':</b> ' . $collSearchStr . '</div>';
 						if ($taxaSearchStr = $collManager->getTaxaSearchStr()) {
-							if (strlen($taxaSearchStr) > 300) $taxaSearchStr = substr($taxaSearchStr, 0, 300) . '<span class="taxa-span">... (<a href="#" onclick="$(\'.taxa-span\').toggle();return false;">' . htmlspecialchars($LANG['SHOW_ALL'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>)</span><span class="taxa-span" style="display:none;">' . substr($taxaSearchStr, 300) . '</span>';
+							if (strlen($taxaSearchStr) > 300) $taxaSearchStr = substr($taxaSearchStr, 0, 300) . '<span class="taxa-span">... (<a href="#" onclick="$(\'.taxa-span\').toggle();return false;">' . $LANG['SHOW_ALL'] . '</a>)</span><span class="taxa-span" style="display:none;">' . substr($taxaSearchStr, 300) . '</span>';
 							echo '<div><b>' . $LANG['TAXA'] . ':</b> ' . $taxaSearchStr . '</div>';
 						}
 						if ($localSearchStr = $collManager->getLocalSearchStr()) {
@@ -238,19 +239,19 @@ $_SESSION['citationvar'] = $searchVar;
 					$endPage = ($lastPage > $startPage + 10 ? $startPage + 10 : $lastPage);
 					$pageBar = '';
 					if ($startPage > 1) {
-						$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="list.php?' . htmlspecialchars($searchVar, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" >' . htmlspecialchars($LANG['PAGINATION_FIRST'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></span>';
-						$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="list.php?' . htmlspecialchars($searchVar, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&page=' . htmlspecialchars((($pageNumber - 10) < 1 ? 1 : $pageNumber - 10), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">&lt;&lt;</a></span>';
+						$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="list.php?' . $searchVar . '" >' . $LANG['PAGINATION_FIRST'] . '</a></span>';
+						$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="list.php?' . $searchVar . '&page=' . (($pageNumber - 10) < 1 ? 1 : $pageNumber - 10) . '">&lt;&lt;</a></span>';
 					}
 					for ($x = $startPage; $x <= $endPage; $x++) {
 						if ($pageNumber != $x) {
-							$pageBar .= '<span class="pagination" style="margin-right:3px;margin-right:3px;"><a href="list.php?' . htmlspecialchars($searchVar, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&page=' . htmlspecialchars($x, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($x, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></span>';
+							$pageBar .= '<span class="pagination" style="margin-right:3px;margin-right:3px;"><a href="list.php?' . $searchVar . '&page=' . $x . '">' . $x . '</a></span>';
 						} else {
 							$pageBar .= '<span class="pagination" style="margin-right:3px;margin-right:3px;font-weight:bold;">' . $x . '</span>';
 						}
 					}
 					if (($lastPage - $startPage) >= 10) {
-						$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="list.php?' . htmlspecialchars($searchVar, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&page=' . htmlspecialchars((($pageNumber + 10) > $lastPage ? $lastPage : ($pageNumber + 10)), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">&gt;&gt;</a></span>';
-						$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="list.php?' . htmlspecialchars($searchVar, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&page=' . htmlspecialchars($lastPage, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">Last</a></span>';
+						$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="list.php?' . $searchVar . '&page=' . (($pageNumber + 10) > $lastPage ? $lastPage : ($pageNumber + 10)) . '">&gt;&gt;</a></span>';
+						$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="list.php?' . $searchVar . '&page=' . $lastPage . '">Last</a></span>';
 					}
 					$pageBar .= '</div><div style="float:right;margin:5px;">';
 					$beginNum = ($pageNumber - 1) * $cntPerPage + 1;
@@ -268,21 +269,12 @@ $_SESSION['citationvar'] = $searchVar;
 							<?php include('datasetinclude.php'); ?>
 							<table id="omlisttable">
 								<?php
-								$prevCollid = 0;
+								$permissionArr = array();
+								if(array_key_exists('CollAdmin', $USER_RIGHTS)) $permissionArr = $USER_RIGHTS['CollAdmin'];
+								if(array_key_exists('CollEditor', $USER_RIGHTS)) $permissionArr = array_merge($permissionArr, $USER_RIGHTS['CollEditor']);
 								foreach ($occurArr as $occid => $fieldArr) {
-									$collId = $fieldArr['collid'];
-									if ($collId != $prevCollid) {
-										$prevCollid = $collId;
-										$isEditor = false;
-										if ($SYMB_UID && ($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'])) || (array_key_exists('CollEditor', $USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'])))) {
-											$isEditor = true;
-										}
-										echo '<tr><td colspan="2"><h2>';
-										echo '<a href="misc/collprofiles.php?collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($fieldArr["collname"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
-										echo '</h2><hr /></td></tr>';
-									}
 									echo '<tr><td width="60" valign="top" align="center">';
-									echo '<a href="misc/collprofiles.php?collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&acronym=' . htmlspecialchars($fieldArr["instcode"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
+									echo '<a href="misc/collprofiles.php?collid=' . $fieldArr['collid'] . '">';
 									if ($fieldArr["icon"]) {
 										$icon = (substr($fieldArr["icon"], 0, 6) == 'images' ? '../' : '') . $fieldArr["icon"];
 										echo '<img align="bottom" src="' . $icon . '" style="width:35px;border:0px;" />';
@@ -295,9 +287,9 @@ $_SESSION['citationvar'] = $searchVar;
 									echo '</div>';
 									echo '<div style="margin-top:10px"><span class="dataset-div checkbox-elem" style="display:none;"><input name="occid[]" type="checkbox" value="' . $occid . '" /></span></div>';
 									echo '</td><td>';
-									if ($isEditor || ($SYMB_UID && $SYMB_UID == $fieldArr['obsuid'])) {
+									if ($IS_ADMIN || in_array($fieldArr['collid'], $permissionArr) || ($SYMB_UID && $SYMB_UID == $fieldArr['obsuid'])) {
 										echo '<div style="float:right;" title="' . $LANG['OCCUR_EDIT_TITLE'] . '">';
-										echo '<a href="editor/occurrenceeditor.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">';
+										echo '<a href="editor/occurrenceeditor.php?occid=' . $occid . '" target="_blank">';
 										echo '<img src="../images/edit.png" style="width:1.3em" alt="' . (isset($LANG['IMG_EDIT_OCC']) ? $LANG['IMG_EDIT_OCC'] : 'Edit Occurence') . '" /></a></div>';
 									}
 									$targetClid = $collManager->getSearchTerm("targetclid");
@@ -314,7 +306,7 @@ $_SESSION['citationvar'] = $searchVar;
 									echo '<div style="margin:4px;">';
 									if (isset($fieldArr['sciname'])) {
 										$sciStr = '<span style="font-style:italic;">' . $fieldArr['sciname'] . '</span>';
-										if (isset($fieldArr['tid']) && $fieldArr['tid']) $sciStr = '<i> <a target="_blank" href="../taxa/index.php?tid=' . strip_tags($fieldArr['tid']) . '">' . strip_tags($sciStr) . '</a> </i>' ;
+										if (isset($fieldArr['tid']) && $fieldArr['tid']) $sciStr = '<i> <a target="_blank" href="../taxa/index.php?tid=' . $fieldArr['tid'] . '">' . strip_tags($sciStr) . '</a> </i>' ;
 										if (isset($fieldArr['author']) && $fieldArr['author']) $sciStr .= ' ' . $fieldArr['author'];
 										echo $sciStr;
 									} elseif ($fieldArr['localitysecurity'] > 1) {
@@ -362,12 +354,12 @@ $_SESSION['citationvar'] = $searchVar;
 						if ($p = strpos($tn, '(')) {
 							$tn = substr($tn, 0, $p);
 						}
-						if ($closeArr = $collManager->getCloseTaxaMatch(trim($tn))) {
+						if ($closeArr = $collManager->getCloseTaxaMatch($tn)) {
 							echo '<div style="margin: 40px 0px 200px 20px;font-weight:bold;">';
 							echo $LANG['PERHAPS_LOOKING_FOR'] . ' ';
 							$outStr = '';
 							foreach ($closeArr as $v) {
-								$outStr .= '<a href="harvestparams.php?taxa=' . htmlspecialchars($v, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($v, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>, ';
+								$outStr .= '<a href="harvestparams.php?taxa=' . $v . '">' . $v . '</a>, ';
 							}
 							echo trim($outStr, ' ,');
 							echo '</div>';
