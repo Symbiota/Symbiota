@@ -137,7 +137,7 @@ if($ometid) unset($selectLookupArr[$ometid]);
 
 		function verifyExsMergeForm(f){
 			if(!f.targetometid || !f.targetometid.value){
-				alert("<?= $LANG['SEL_TARGET_EXS'] ?>");
+				alert("You need to select a target exsiccata to merge into");
 				return false;
 			}
 			else{
