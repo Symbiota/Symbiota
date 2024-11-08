@@ -196,24 +196,6 @@ class SpecUploadBase extends SpecUpload{
 		$this->symbFields[] = 'authorinfraspecific';
 		sort($this->symbFields);
 		if($this->paleoSupport) $this->symbFields = array_merge($this->symbFields,$this->getPaleoTerms());
-		if($this->materialSampleSupport) $this->symbFields = array_merge($this->symbFields,$this->getMaterialSampleTerms());
-
-		//Associated Occurrence fields
-		// All-purpose fields
-		$this->symbFields[] = 'associatedOccurrences';
-		$this->symbFields[] = 'associatedOccurrence:type';
-		$this->symbFields[] = 'associatedOccurrence:basisOfRecord';
-		$this->symbFields[] = 'associatedOccurrence:relationship';
-		$this->symbFields[] = 'associatedOccurrence:subType';
-		$this->symbFields[] = 'associatedOccurrence:locationOnHost';
-		$this->symbFields[] = 'associatedOccurrence:notes';
-		// internalOccurrence
-		$this->symbFields[] = 'associatedOccurrence:occidAssociate';
-		// externalOccurrence
-		$this->symbFields[] = 'associatedOccurrence:identifier';
-		$this->symbFields[] = 'associatedOccurrence:resourceUrl';
-		// genericObservation
-		$this->symbFields[] = 'associatedOccurrence:verbatimSciname';
 
 		//Specify fields
 		$this->symbFields[] = 'specify:subspecies';
@@ -353,8 +335,7 @@ class SpecUploadBase extends SpecUpload{
 			'generalnotes'=>'occurrenceremarks','plantdescription'=>'verbatimattributes','description'=>'verbatimattributes','specimendescription'=>'verbatimattributes',
 			'phenology'=>'reproductivecondition','field:habitat'=>'habitat','habitatdescription'=>'habitat','sitedeschabitat'=>'habitat','captivecultivated'=>'cultivationstatus',
 			'ometid'=>'exsiccatiidentifier','exsiccataeidentifier'=>'exsiccatiidentifier','exsnumber'=>'exsiccatinumber','exsiccataenumber'=>'exsiccatinumber',
-			'group'=>'paleo-lithogroup','materialsample-materialsampleid'=>'materialsample-guid','preparationdetails'=>'materialsample-preparationprocess',
-			'materialsampletype'=>'materialsample-sampletype','lithostratigraphic'=>'paleo-lithology','imageurl'=>'associatedmedia','subject_references'=>'tempfield01',
+			'group'=>'paleo-lithogroup','lithostratigraphic'=>'paleo-lithology','imageurl'=>'associatedmedia','subject_references'=>'tempfield01',
 			'subject_recordid'=>'tempfield02'
 		);
 		$autoMapExclude = array('institutioncode','collectioncode');
@@ -363,14 +344,6 @@ class SpecUploadBase extends SpecUpload{
 			$paleoArr = $this->getPaleoTerms();
 			foreach($paleoArr as $v){
 				$translationMap[substr($v,6)] = $v;
-			}
-		}
-		if($this->materialSampleSupport){
-			$msArr = $this->getMaterialSampleTerms();
-			foreach($msArr as $term){
-				$term = strtolower($term);
-				$baseTerm = substr($term,15);
-				if($baseTerm != 'individualcount' && $baseTerm != 'disposition' && $baseTerm != 'catalognumber') $translationMap[$baseTerm] = $term;
 			}
 		}
 		if($mode == 'ident'){
@@ -427,10 +400,6 @@ class SpecUploadBase extends SpecUpload{
 					}
 					elseif(in_array('specify:'.$fieldName,$symbFields)){
 						$tranlatedFieldName = strtolower('specify:'.$fieldName);
-						$isAutoMapped = true;
-					}
-					elseif(in_array('associatedOccurrence:'.$fieldName,$symbFields)){
-						$tranlatedFieldName = strtolower('associatedOccurrence:'.$fieldName);
 						$isAutoMapped = true;
 					}
 				}
@@ -1013,7 +982,6 @@ class SpecUploadBase extends SpecUpload{
 			$this->transferExsiccati();
 			$this->transferGeneticLinks();
 			$this->transferPaleoData();
-			$this->transferMaterialSampleData();
 
 			//Setup and add datasets and link datasets to current user
 		}
@@ -1246,33 +1214,6 @@ class SpecUploadBase extends SpecUpload{
 				}
 				catch(Exception $e){
 					$this->outputMsg('<li>ERROR adding paleo record (occid: '.$r->occid.', catalogNumber: '.$r->catalogNumber.'): '.$e->getMessage().'</li>',1);
-				}
-			}
-			$rs->free();
-		}
-	}
-
-	private function transferMaterialSampleData(){
-		if($this->materialSampleSupport){
-			$this->outputMsg('<li>Linking Material Sample data...</li>');
-			$sql = 'SELECT occid, catalogNumber, materialSampleJSON FROM uploadspectemp WHERE (occid IS NOT NULL) AND (materialSampleJSON IS NOT NULL) AND (collid = '.$this->collId.')';
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				try{
-					$matSampleArr = json_decode($r->materialSampleJSON,true);
-					$insertSQL = '';
-					$valueSQL = '';
-					foreach($matSampleArr as $k => $v){
-						$insertSQL .= ','.$k;
-						$valueSQL .= ',"'.$this->cleanInStr($v).'"';
-					}
-					$sql = 'REPLACE INTO ommaterialsample(occid'.$insertSQL.') VALUES('.$r->occid.$valueSQL.')';
-					if(!$this->conn->query($sql)){
-						$this->outputMsg('<li>ERROR adding Material Sample resources: '.$this->conn->error.'</li>',1);
-					}
-				}
-				catch(Exception $e){
-					$this->outputMsg('<li>ERROR adding Material Sample record (occid: '.$r->occid.', catalogNumber: '.$r->catalogNumber.'): '.$e->getMessage().'</li>',1);
 				}
 			}
 			$rs->free();
@@ -1855,13 +1796,6 @@ class SpecUploadBase extends SpecUpload{
 				$this->outputMsg('<li>Error JSON encoding paleo data for record #'.$this->transferCount.'</li>');
 				$this->outputMsg('<li style="margin-left:10px;">Error: '.$e->getMessage().'</li>');
 			}
-			try {
-				$this->buildMaterialSampleJSON($recMap);
-			} catch (Exception $e){
-				$this->outputMsg('<li>Error JSON encoding material sample data for record #'.$this->transferCount.'</li>');
-				$this->outputMsg('<li style="margin-left:10px;">Error: '.$e->getMessage().'</li>');
-			}
-
 
 			$sqlFragments = $this->getSqlFragments($recMap,$this->occurFieldMap);
 			if($sqlFragments){
@@ -1898,25 +1832,6 @@ class SpecUploadBase extends SpecUpload{
 			}
 			if($paleoArr){
 				$recMap['paleoJSON'] = json_encode($paleoArr);
-				if(json_last_error() !== JSON_ERROR_NONE){
-					throw new Exception("JSON encoding error: ".json_last_error_msg());
-				}
-			}
-		}
-	}
-
-	private function buildMaterialSampleJSON(&$recMap){
-		if($this->materialSampleSupport){
-			$msTermArr = $this->getMaterialSampleTerms();
-			$msArr = array();
-			foreach($msTermArr as $fieldName){
-				if(isset($recMap[$fieldName])){
-					if($recMap[$fieldName] !== '') $msArr[substr($fieldName,15)] = $recMap[$fieldName];
-					unset($recMap[$fieldName]);
-				}
-			}
-			if($msArr){
-				$recMap['materialSampleJSON'] = json_encode($msArr);
 				if(json_last_error() !== JSON_ERROR_NONE){
 					throw new Exception("JSON encoding error: ".json_last_error_msg());
 				}
@@ -2343,20 +2258,6 @@ class SpecUploadBase extends SpecUpload{
 			'paleo-earlyinterval','paleo-lateinterval','paleo-absoluteage','paleo-storageage','paleo-stage','paleo-localstage','paleo-biota','paleo-biostratigraphy',
 			'paleo-taxonenvironment','paleo-lithology','paleo-stratremarks','paleo-element','paleo-slideproperties');
 		return $paleoTermArr;
-	}
-
-	private function getMaterialSampleTerms(){
-		$msTermArr = array('materialSample-guid','materialSample-sampleType','materialSample-catalogNumber','materialSample-sampleCondition','materialSample-disposition',
-			'materialSample-preservationType','materialSample-preparationProcess','materialSample-preparationDate','materialSample-individualCount',
-			'materialSample-sampleSize','materialSample-storageLocation','materialSample-remarks');
-		//Get dynamic fields
-		$sql = 'SELECT t.term FROM ctcontrolvocab v INNER JOIN ctcontrolvocabterm t ON v.cvID = t.cvID WHERE v.tableName = "ommaterialsampleextended" AND v.fieldName = "fieldName"';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$msTermArr[] = 'materialSample-'.$r->term;
-		}
-		$rs->free();
-		return $msTermArr;
 	}
 
 	public function getObserverUidArr(){
