@@ -3,6 +3,7 @@
 namespace PhpOffice\PhpSpreadsheet\Calculation\Statistical;
 
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
+use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 
 class Deviations
 {
@@ -15,16 +16,14 @@ class Deviations
      *        DEVSQ(value1[,value2[, ...]])
      *
      * @param mixed ...$args Data values
-     *
-     * @return float|string
      */
-    public static function sumSquares(...$args)
+    public static function sumSquares(mixed ...$args): string|float
     {
         $aArgs = Functions::flattenArrayIndexed($args);
 
         $aMean = Averages::average($aArgs);
         if (!is_numeric($aMean)) {
-            return Functions::NAN();
+            return ExcelError::NAN();
         }
 
         // Return value
@@ -33,9 +32,9 @@ class Deviations
         foreach ($aArgs as $k => $arg) {
             // Is it a numeric value?
             if (
-                (is_bool($arg)) &&
-                ((!Functions::isCellValue($k)) ||
-                    (Functions::getCompatibilityMode() == Functions::COMPATIBILITY_OPENOFFICE))
+                (is_bool($arg))
+                && ((!Functions::isCellValue($k))
+                    || (Functions::getCompatibilityMode() == Functions::COMPATIBILITY_OPENOFFICE))
             ) {
                 $arg = (int) $arg;
             }
@@ -45,7 +44,7 @@ class Deviations
             }
         }
 
-        return $aCount === 0 ? Functions::VALUE() : $returnValue;
+        return $aCount === 0 ? ExcelError::VALUE() : $returnValue;
     }
 
     /**
@@ -57,17 +56,15 @@ class Deviations
      * relatively flat distribution.
      *
      * @param array ...$args Data Series
-     *
-     * @return float|string
      */
-    public static function kurtosis(...$args)
+    public static function kurtosis(...$args): string|int|float
     {
         $aArgs = Functions::flattenArrayIndexed($args);
         $mean = Averages::average($aArgs);
         if (!is_numeric($mean)) {
-            return Functions::DIV0();
+            return ExcelError::DIV0();
         }
-        $stdDev = StandardDeviations::STDEV($aArgs);
+        $stdDev = (float) StandardDeviations::STDEV($aArgs);
 
         if ($stdDev > 0) {
             $count = $summer = 0;
@@ -84,13 +81,13 @@ class Deviations
             }
 
             if ($count > 3) {
-                return $summer * ($count * ($count + 1) /
-                        (($count - 1) * ($count - 2) * ($count - 3))) - (3 * ($count - 1) ** 2 /
-                        (($count - 2) * ($count - 3)));
+                return $summer * ($count * ($count + 1)
+                        / (($count - 1) * ($count - 2) * ($count - 3))) - (3 * ($count - 1) ** 2
+                        / (($count - 2) * ($count - 3)));
             }
         }
 
-        return Functions::DIV0();
+        return ExcelError::DIV0();
     }
 
     /**
@@ -103,18 +100,18 @@ class Deviations
      *
      * @param array ...$args Data Series
      *
-     * @return float|string The result, or a string containing an error
+     * @return float|int|string The result, or a string containing an error
      */
-    public static function skew(...$args)
+    public static function skew(...$args): string|int|float
     {
         $aArgs = Functions::flattenArrayIndexed($args);
         $mean = Averages::average($aArgs);
         if (!is_numeric($mean)) {
-            return Functions::DIV0();
+            return ExcelError::DIV0();
         }
         $stdDev = StandardDeviations::STDEV($aArgs);
         if ($stdDev === 0.0 || is_string($stdDev)) {
-            return Functions::DIV0();
+            return ExcelError::DIV0();
         }
 
         $count = $summer = 0;
@@ -122,7 +119,7 @@ class Deviations
         foreach ($aArgs as $k => $arg) {
             if ((is_bool($arg)) && (!Functions::isMatrixValue($k))) {
             } elseif (!is_numeric($arg)) {
-                return Functions::VALUE();
+                return ExcelError::VALUE();
             } else {
                 // Is it a numeric value?
                 if ((is_numeric($arg)) && (!is_string($arg))) {
@@ -136,6 +133,6 @@ class Deviations
             return $summer * ($count / (($count - 1) * ($count - 2)));
         }
 
-        return Functions::DIV0();
+        return ExcelError::DIV0();
     }
 }
