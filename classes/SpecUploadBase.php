@@ -197,6 +197,23 @@ class SpecUploadBase extends SpecUpload{
 		sort($this->symbFields);
 		if($this->paleoSupport) $this->symbFields = array_merge($this->symbFields,$this->getPaleoTerms());
 
+	/*	//Associated Occurrence fields
+		// All-purpose fields
+		$this->symbFields[] = 'associatedOccurrences';
+		$this->symbFields[] = 'associatedOccurrence:type';
+		$this->symbFields[] = 'associatedOccurrence:basisOfRecord';
+		$this->symbFields[] = 'associatedOccurrence:relationship';
+		$this->symbFields[] = 'associatedOccurrence:subType';
+		$this->symbFields[] = 'associatedOccurrence:locationOnHost';
+		$this->symbFields[] = 'associatedOccurrence:notes';
+		// internalOccurrence
+		$this->symbFields[] = 'associatedOccurrence:occidAssociate';
+		// externalOccurrence
+		$this->symbFields[] = 'associatedOccurrence:identifier';
+		$this->symbFields[] = 'associatedOccurrence:resourceUrl';
+		// genericObservation
+		$this->symbFields[] = 'associatedOccurrence:verbatimSciname';
+	*/
 		//Specify fields
 		$this->symbFields[] = 'specify:subspecies';
 		$this->symbFields[] = 'specify:subspecies_author';
