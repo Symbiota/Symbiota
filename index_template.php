@@ -7,11 +7,42 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['HOME']; ?></title>
+	<title><?= $DEFAULT_TITLE ?> <?= $LANG['HOME'] ?></title>
 	<?php
 	include_once($SERVER_ROOT . '/includes/head.php');
 	include_once($SERVER_ROOT . '/includes/googleanalytics.php');
 	?>
+	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH ?>/quicksearch.css" type="text/css" rel="Stylesheet" />
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		var clientRoot = "<?= $CLIENT_ROOT ?>";
+		$(document).ready(function() {
+			$("#qstaxa").autocomplete({
+				source: function( request, response ) {
+					$.getJSON( "<?= $CLIENT_ROOT ?>/checklists/rpc/speciessuggest.php", { term: request.term }, response );
+				},
+				minLength: 3,
+				autoFocus: true,
+				select: function( event, ui ) {
+					if(ui.item){
+						$( "#qstaxa" ).val(ui.item.value);
+						$( "#qstid" ).val(ui.item.id);
+					}
+				},
+				change: function( event, ui ) {
+					if(ui.item === null) {
+						$( "#qstid" ).val("");
+					}
+				}
+			});
+		});
+	</script>
+	
+
+
+
 </head>
 <body>
 	<?php
@@ -20,6 +51,9 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 	<div class="navpath"></div>
 	<main id="innertext">
 		<h1 class="page-heading"><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['HOME']; ?></h1>
+		<?php 
+			include($SERVER_ROOT . '/includes/quicksearch.php');
+		?>
 		<?php
 		if($LANG_TAG == 'es'){
 			?>
