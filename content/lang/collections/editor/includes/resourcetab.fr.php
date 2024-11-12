@@ -7,8 +7,9 @@ Language: Français (French)
 
 $LANG['NO_RESULTS'] = 'Aucun résultat renvoyé';
 $LANG['ERROR_UNABLE_RESULTS'] ="'ERREUR: Impossible d'obtenir résultats";
-$LANG['DEFINE_REL'] = 'Relation doit être définie';
-$LANG['REL_NOT_DEFINED'] = "Occurrence associée n'est pas définie!";
+$LANG['SELECT_INTERNAL_REL'] = "Vous devez rechercher et sélectionner une instance d'occurrence interne";
+$LANG['VERB_SCINAME_EMPTY'] = 'Le nom scientifique verbatim nécessite une valeur';
+$LANG['RESOURCE_EMPTY'] = "L'URL de la ressource a besoin d'une valeur";
 $LANG['SELECT_CHECKLIST'] = 'Sélectionnez une liste à laquelle vous souhaitez lier le échantillon';
 $LANG['VOUCHER_CANNOT_LINK'] = "Le échantillon ne peut pas être lié à une liste tant que le nom taxonomique n'a pas été résolu (par exemple, le nom n'est pas lié au thésaurus taxonomique";
 $LANG['SURE_UNLINK'] = 'Voulez-vous vraiment dissocier enregistrement en tant que doublon?';
