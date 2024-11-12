@@ -2,6 +2,7 @@
 include_once('Manager.php');
 include_once('OccurrenceAccessStats.php');
 include_once('ChecklistVoucherAdmin.php');
+include_once($SERVER_ROOT . '/utilities/SymbUtil.php');
 
 class OccurrenceIndividual extends Manager{
 
@@ -75,11 +76,10 @@ class OccurrenceIndividual extends Manager{
 		if(!$this->occid){
 			//Check occurrence recordID
 			$sql = 'SELECT occid FROM omoccurrences WHERE (occurrenceid = ?) OR (recordID = ?)';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('ss', $guid, $guid);
-				$stmt->execute();
-				$stmt->bind_result($this->occid);
-				$stmt->close();
+			$result = SymbUtil::execute_query($this->conn, $sql, [$guid, $guid]);
+
+			if($result && $row = $result->fetch_assoc()) {
+				$this->occid = $row['occid'] ?? null;
 			}
 		}
 		if(!$this->occid){
