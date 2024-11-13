@@ -140,7 +140,7 @@ if($ometid) unset($selectLookupArr[$ometid]);
 		}
 
 		function verifyExsMergeForm(f){
-			if(t.targetometid == ""){
+			if(!f.targetometid || !f.targetometid.value){
 				alert("<?= $LANG['SEL_TARGET_EXS'] ?>");
 				return false;
 			}
@@ -854,4 +854,3 @@ if($ometid) unset($selectLookupArr[$ometid]);
 	include($SERVER_ROOT.'/includes/footer.php');
 	?>
 </body>
-</html>

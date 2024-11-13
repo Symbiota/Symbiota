@@ -217,13 +217,16 @@ class TaxonomyUpload{
 								if($k == 'author') $sql2 .= ',"'.($inValue?$inValue:'').'"';
 								else $sql2 .= ','.($inValue?'"'.$inValue.'"':'NULL');
 							}
-							$sql = 'INSERT INTO uploadtaxa('.substr($sql1,1).') VALUES('.substr($sql2,1).')';
+							$sql = 'INSERT IGNORE INTO uploadtaxa('.substr($sql1,1).') VALUES('.substr($sql2,1).')';
 							//echo '<div>'.$sql.'</div>';
 							if($this->conn->query($sql)){
 								if($recordCnt%1000 == 0){
 									$this->outputMsg('Upload count: '.$recordCnt,1);
 									ob_flush();
 									flush();
+								}
+								if($warnings = $this->conn->get_warnings()){
+									$this->outputMsg('WARNING at line ' . $recordCnt . ': ' . $warnings->message, 2);
 								}
 							}
 							else{
@@ -249,7 +252,7 @@ class TaxonomyUpload{
 						$this->outputMsg('ERROR loading taxonunit: '.$this->conn->error);
 					}
 				}
-				$this->outputMsg($recordCnt.' taxon records pre-processed');
+				$this->outputMsg(($recordCnt - 1) . ' taxon records pre-processed');
 			}
 			else{
 				$this->outputMsg('ERROR: Scientific name is not mapped to &quot;scinameinput&quot;');

@@ -4,6 +4,7 @@
 Language: English
 ------------------
 */
+$LANG['VIEW_INVETORY_PROJECTS'] = 'View Inventory Project';
 
 $LANG['NAV_HOME'] = 'Home';
 $LANG['INVPROJ'] = 'Inventory Project';

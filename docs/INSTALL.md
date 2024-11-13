@@ -8,7 +8,7 @@
   - Recommended configuration adjustments: upload_max_filesize = 100M (or expected file size upload), max_input_vars = 2000, memory_limit = 256M, post_max_size = 100M
   - Optional: Pear package Image_Barcode2 (https://pear.php.net/package/Image_Barcode2) – enables barcodes on specimen labels
   - Optional: Install Pear Mail for SMTP mail support: https://pear.php.net/package/Mail/redirected
-- MariaDB (v10.3+) Development and testing performed using MariaDB. If you are using Oracle MySQL instead, please [report any issues](https://github.com/BioKIC/Symbiota/issues/new).
+- MariaDB (v10.3+) or MySQL (v8.0+) - Development and testing performed using MariaDB. If you are using Oracle MySQL instead, please [report any issues](https://github.com/BioKIC/Symbiota/issues/new).
 - GIT Client - not required, though recommend for installation and updating source code
 
 ## INSTRUCTIONS
@@ -93,7 +93,7 @@ While user interfaces have been developed for web management for most of these d
          then from the Collection Data Management menu, select Data Cleaning Tools => Analyze taxonomic names...
       3. Batch Loader - Multiple names can be loaded from a flat, tab-delimited text file. See instructions on the batch loader for loading multiple names from a flat file.
       4. Look in /config/schema/data/ folder to find taxonomic thesaurus data that may serve as a base for your taxonomic thesaurus.
-   4. See https:symbiota.org for tutorials and more information on how load and manage data 
+   4. See <https://symbiota.org> for tutorials and more information on how load and manage data 
 
 ## UPDATES
 
