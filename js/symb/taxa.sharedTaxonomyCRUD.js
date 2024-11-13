@@ -1,4 +1,4 @@
-export const standardizeCultivarEpithet = (unstandardizedCultivarEpithet) => {
+const standardizeCultivarEpithet = (unstandardizedCultivarEpithet) => {
   if (unstandardizedCultivarEpithet) {
     const cleanString = unstandardizedCultivarEpithet.replace(
       "/(^[\"'“]+)|([\"'”]+$)/",
@@ -10,7 +10,7 @@ export const standardizeCultivarEpithet = (unstandardizedCultivarEpithet) => {
   }
 };
 
-export const standardizeTradeName = (unstandardizedTradeName) => {
+const standardizeTradeName = (unstandardizedTradeName) => {
   if (unstandardizedTradeName) {
     return unstandardizedTradeName.toUpperCase();
   } else {
@@ -18,7 +18,7 @@ export const standardizeTradeName = (unstandardizedTradeName) => {
   }
 };
 
-export const debounce = (func, delay) => {
+const debounce = (func, delay) => {
   // thanks for the idea, chatGtp!
   let timeout;
   return function (...args) {
@@ -27,7 +27,7 @@ export const debounce = (func, delay) => {
   };
 };
 
-export const rankIdsToHideUnit2From = {
+const rankIdsToHideUnit2From = {
   "non-ranked node": 0,
   organism: 1,
   kingdom: 10,
@@ -48,11 +48,11 @@ export const rankIdsToHideUnit2From = {
   section: 200,
   subsection: 210,
 };
-export const { ...rest } = rankIdsToHideUnit2From;
-export const rankIdsToHideUnit3From = { ...rest, species: 220 };
-export const { ...rest2 } = rankIdsToHideUnit3From;
+const { ...rest } = rankIdsToHideUnit2From;
+const rankIdsToHideUnit3From = { ...rest, species: 220 };
+const { ...rest2 } = rankIdsToHideUnit3From;
 
-export const rankIdsToHideUnit4From = {
+const rankIdsToHideUnit4From = {
   ...rest2,
   subspecies: 230,
   variety: 240,
@@ -60,7 +60,89 @@ export const rankIdsToHideUnit4From = {
   form: 260,
   subform: 270,
 };
-export const { ...rest3 } = rankIdsToHideUnit4From;
-export const rankIdsToHideUnit5From = { ...rest3 };
+const { ...rest3 } = rankIdsToHideUnit4From;
+const rankIdsToHideUnit5From = { ...rest3 };
 
-export const allRankIds = { ...rest3, cultivar: 300 };
+const allRankIds = { ...rest3, cultivar: 300 };
+
+function removeFromSciName(targetForRemoval) {
+  const oldValue = document.getElementById("sciname").value;
+  const newValue = oldValue
+    .replace(targetForRemoval, "")
+    .replace("  ", " ")
+    .trim();
+  document.getElementById("sciname").value = newValue;
+  const scinameDisplay = document.getElementById("scinamedisplay");
+  if (scinameDisplay) scinameDisplay.textContent = newValue;
+}
+
+async function handleFieldChange(form, silent = false) {
+  const submitButton = document.getElementById("taxoneditsubmit");
+  submitButton.disabled = true;
+  submitButton.textContent = "Checking for existing entry...";
+  const isOk = await verifyLoadForm(form, silent);
+  if (!isOk) {
+    submitButton.textContent = "Duplicate Detected - Button Disabled";
+    submitButton.disabled = true;
+  } else {
+    submitButton.textContent = "Submit Edits";
+    submitButton.disabled = false;
+  }
+}
+
+async function verifyLoadFormCore(f, silent = false) {
+  const isUniqueEntry = await checkNameExistence(f, silent);
+  if (!isUniqueEntry) {
+    return false;
+  }
+  if (f.unitname1.value == "") {
+    alert("Unit Name 1 (genus or uninomial) field required.");
+    return false;
+  }
+  var rankId = f.rankid.value;
+  if (rankId == "") {
+    alert("Taxon rank field required.");
+    return false;
+  }
+  return true;
+}
+
+function checkNameExistence(f, silent = false) {
+  return new Promise((resolve, reject) => {
+    if (!f?.sciname?.value || !f?.rankid?.value) {
+      resolve(false);
+    } else {
+      $.ajax({
+        type: "POST",
+        url: "rpc/gettid.php",
+        data: {
+          sciname: f.sciname.value,
+          rankid: f.rankid.value,
+          author: f.author.value,
+        },
+        success: function (msg) {
+          if (msg != "0") {
+            if (!silent) {
+              alert(
+                "Taxon " +
+                  f.sciname.value +
+                  " " +
+                  f.author.value +
+                  " (" +
+                  msg +
+                  ") already exists in database"
+              );
+            }
+            resolve(false);
+          } else {
+            resolve(true);
+          }
+        },
+        error: function (error) {
+          console.error("Error during AJAX request", error);
+          reject(error);
+        },
+      });
+    }
+  });
+}

@@ -1,14 +1,3 @@
-// depends on {
-//   standardizeCultivarEpithet,
-//   standardizeTradeName,
-//   debounce,
-//   rankIdsToHideUnit2From,
-//   rankIdsToHideUnit3From,
-//   rankIdsToHideUnit4From,
-//   rankIdsToHideUnit5From,
-//   allRankIds,
-// } from "./taxa.sharedTaxonomyCRUD.js", which are called in a script above this
-
 $(document).ready(function () {
   const currentRankId = Number(document.getElementById("rankid").value);
   showOnlyRelevantFields(currentRankId);
@@ -70,35 +59,8 @@ $(document).ready(function () {
   });
 });
 
-async function handleFieldChange(form, silent = false) {
-  const submitButton = document.getElementById("submitaction");
-  submitButton.disabled = true;
-  submitButton.textContent = "Checking for existing entry...";
-  const isOk = await verifyLoadForm(form, silent);
-  if (!isOk) {
-    submitButton.textContent = "Duplicate Detected - Button Disabled";
-    submitButton.disabled = true;
-  } else {
-    submitButton.textContent = "Submit New Name";
-    submitButton.disabled = false;
-  }
-}
-
 async function verifyLoadForm(f, silent = false) {
-  const isUniqueEntry = await checkNameExistence(f, silent);
-
-  if (!isUniqueEntry) {
-    return false;
-  }
-  if (f.unitname1.value == "") {
-    alert("Unit Name 1 (genus or uninomial) field required.");
-    return false;
-  }
-  var rankId = f.rankid.value;
-  if (rankId == "") {
-    alert("Taxon rank field required.");
-    return false;
-  }
+  verifyLoadFormCore(f, silent);
   if (f.parentname.value == "" && rankId > "10") {
     alert("Parent taxon required");
     return false;
@@ -291,26 +253,6 @@ function parseName(f) {
   f.quickparser.value = "";
 }
 
-function standardizeCultivarEpithet(unstandardizedCultivarEpithet) {
-  if (unstandardizedCultivarEpithet) {
-    const cleanString = unstandardizedCultivarEpithet.replace(
-      "/(^[\"'“]+)|([\"'”]+$)/",
-      ""
-    );
-    return "'" + cleanString + "'";
-  } else {
-    return "";
-  }
-}
-
-function standardizeTradeName(unstandardizedTradeName) {
-  if (unstandardizedTradeName) {
-    return unstandardizedTradeName.toUpperCase();
-  } else {
-    return "";
-  }
-}
-
 function setParent(parentName, unitind1) {
   $.ajax({
     type: "POST",
@@ -363,46 +305,6 @@ function updateFullname(f) {
   const scinameDisplay = document.getElementById("scinamedisplay");
   scinameDisplay.textContent = sciname.trim();
   checkNameExistence(f);
-}
-
-function checkNameExistence(f, silent = false) {
-  return new Promise((resolve, reject) => {
-    if (!f?.sciname?.value || !f?.rankid?.value) {
-      resolve(false);
-    } else {
-      $.ajax({
-        type: "POST",
-        url: "rpc/gettid.php",
-        data: {
-          sciname: f.sciname.value,
-          rankid: f.rankid.value,
-          author: f.author.value,
-        },
-        success: (msg) => {
-          if (msg != "0") {
-            if (!silent) {
-              alert(
-                "Taxon " +
-                  f.sciname.value +
-                  " " +
-                  f.author.value +
-                  " (" +
-                  msg +
-                  ") already exists in database"
-              );
-            }
-            resolve(false);
-          } else {
-            resolve(true);
-          }
-        },
-        error: function (error) {
-          console.error("Error during AJAX request", error);
-          reject(error);
-        },
-      });
-    }
-  });
 }
 
 function acceptanceChanged(f) {
@@ -532,14 +434,4 @@ function showOnlyRelevantFields(rankId) {
     document.getElementById("cultivarEpithet").value = null;
     document.getElementById("tradeName").value = null;
   }
-}
-
-function removeFromSciName(targetForRemoval) {
-  const oldValue = document.getElementById("sciname").value;
-  const newValue = oldValue
-    .replace(targetForRemoval, "")
-    .replace("  ", " ")
-    .trim();
-  document.getElementById("sciname").value = newValue;
-  document.getElementById("scinamedisplay").textContent = newValue;
 }
