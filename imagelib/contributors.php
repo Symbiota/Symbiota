@@ -1,6 +1,8 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ImageLibraryBrowser.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/imagelib/contributors.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/imagelib/contributors.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/imagelib/contributors.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $imgManager = new ImageLibraryBrowser();
@@ -8,7 +10,7 @@ $imgManager = new ImageLibraryBrowser();
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Photographer List</title>
+	<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['PHOTOGRAPHER_LIST']; ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
@@ -21,19 +23,19 @@ $imgManager = new ImageLibraryBrowser();
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="../index.php"> <?php echo htmlspecialchars($LANG['NAV_HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?> </a> &gt;&gt;
-		<a href="index.php"> <?php echo htmlspecialchars($LANG['NAV_IMG_LIB'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?> </a> &gt;&gt;
-		<b> <?php echo htmlspecialchars($LANG['NAV_IMG_CONTR'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?> </b>
+		<a href="../index.php"> <?= $LANG['NAV_HOME'] ?> </a> &gt;&gt;
+		<a href="index.php"> <?= $LANG['NAV_IMG_LIB'] ?> </a> &gt;&gt;
+		<b> <?= $LANG['NAV_IMG_CONTR'] ?> </b>
 	</div>
 
 	<!-- This is inner text! -->
 	<div role="main" id="innertext" style="height:100%">
-		<h1 class="page-heading">Photographer List</h1>
+		<h1 class="page-heading"><?php echo $LANG['PHOTOGRAPHER_LIST']; ?></h1>
 		<?php
 		$pList = $imgManager->getPhotographerList();
 		if($pList){
 			echo '<div style="float:left; margin-right:40px;">';
-			echo '<h2>' . htmlspecialchars($LANG['IMG_CONTR'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</h2>';
+			echo '<h2>' . $LANG['IMG_CONTR'] . '</h2>';
 			echo '<div style="margin-left:15px">';
 			foreach($pList as $uid => $pArr){
 				echo '<div>';
@@ -52,7 +54,7 @@ $imgManager = new ImageLibraryBrowser();
 			$collList = $imgManager->getCollectionImageList();
 			$specList = $collList['coll'];
 			if($specList){
-				echo '<h2>' . htmlspecialchars($LANG['SPECIMENS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</h2>';
+				echo '<h2>' . $LANG['SPECIMENS'] . '</h2>';
 				echo '<div style="margin-left:15px;margin-bottom:20px">';
 				foreach($specList as $k => $cArr){
 					echo '<div>';
@@ -64,7 +66,7 @@ $imgManager = new ImageLibraryBrowser();
 
 			$obsList = $collList['obs'];
 			if($obsList){
-				echo '<h2>' . htmlspecialchars($LANG['OBS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</h2>';
+				echo '<h2>' . $LANG['OBS'] . '</h2>';
 				echo '<div style="margin-left:15px">';
 				foreach($obsList as $k => $cArr){
 					echo '<div>';
@@ -80,4 +82,3 @@ $imgManager = new ImageLibraryBrowser();
 	include($SERVER_ROOT.'/includes/footer.php');
 	?>
 </body>
-</html>

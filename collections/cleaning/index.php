@@ -1,7 +1,8 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCleaner.php');
-include_once($SERVER_ROOT.'/content/lang/collections/cleaning/index.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/cleaning/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/cleaning/index.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/cleaning/index.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $collid = array_key_exists('collid',$_REQUEST) ? $_REQUEST['collid'] : 0;
@@ -55,7 +56,7 @@ if($collMap['colltype'] == 'General Observations'){
 	<div role="main" id="innertext" style="background-color:white;">
 		<?php
 		if($isEditor){
-			echo '<h1 class="page-heading">Data Cleaning Tools: ' . $collMap['collectionname'] .' (' . $collMap['code'] . ')</h1>';
+			echo '<h1 class="page-heading">' . $LANG['DATA_CLEANING_TOOL'] . ': ' . $collMap['collectionname'] .' (' . $collMap['code'] . ')</h1>';
 			?>
 			<div style="color:orange;margin:20px 0px"> <?php echo (isset($LANG['DOWNLOAD_BACKUP']) ? $LANG['DOWNLOAD_BACKUP'] : 'Downloading a backup of your collection data before running any batch updates is strongly recommended') ?> </div>
 			<?php
@@ -194,7 +195,7 @@ if($collMap['colltype'] == 'General Observations'){
 					<?php echo (isset($LANG['TAXONOMY_DESCR']) ? $LANG['TAXONOMY_DESCR'] : 'These tools are meant to aid in locating and fixing taxonomic errors and inconsistencies.') ?>
 				</div>
 				<section class="fieldset-like max-width-fit-65 ">
-					<h1> <span> <?php echo (isset($LANG['STAT_ACT_PANEL']) ? $LANG['STAT_ACT_PANEL'] : 'Statistics and Action Panel') ?> </span> </h1>
+					<h2> <span> <?php echo (isset($LANG['STAT_ACT_PANEL']) ? $LANG['STAT_ACT_PANEL'] : 'Statistics and Action Panel') ?> </span> </h2>
 					<ul>
 						<li><a href="taxonomycleaner.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"> <?php echo (isset($LANG['ANALYZE_NAMES']) ? $LANG['ANALYZE_NAMES'] : 'Analyze taxonomic names...') ?> </a></li>
 						<li><a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&stat=taxonomy#taxonomystats"> <?php echo (isset($LANG['TAXON_DISTR']) ? $LANG['TAXON_DISTR'] : 'Taxonomic Distributions...') ?> </a></li>

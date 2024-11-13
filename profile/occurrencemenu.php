@@ -1,8 +1,9 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
-if($LANG_TAG != 'en' && !file_exists($SERVER_ROOT . '/content/lang/profile/occurrencemenu.' . $LANG_TAG . '.php')) $LANG_TAG = 'en';
-include_once($SERVER_ROOT . '/content/lang/profile/occurrencemenu.' . $LANG_TAG . '.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/profile/occurrencemenu.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/profile/occurrencemenu.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/profile/occurrencemenu.en.php');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 unset($_SESSION['editorquery']);
 
@@ -32,7 +33,7 @@ foreach($collArr as $id => $collectionArr){
       </style>
 </head>
 	<div style="margin:10px;">
-		<h1 class="page-heading screen-reader-only">Occurrence Menu</h1>
+		<h1 class="page-heading screen-reader-only"><?php echo $LANG['OCCURRENCE_MENU']; ?></h1>
 	<?php
 	if($SYMB_UID){
 		if(!$collArr) echo '<div style="margin:40px 15px;font-weight:bold">' . $LANG['NO_PROJECTS'] . '</div>';
@@ -40,11 +41,11 @@ foreach($collArr as $id => $collectionArr){
 			$cName = $secArr['collectionname'] . ' (' . $secArr['institutioncode'] . ($secArr['collectioncode']?'-' . $secArr['collectioncode']:'') . ')';
 			?>
 			<section class="fieldset-like">
-				<h1>
+				<h2>
 					<span>
 						<?php echo $cName; ?>
 					</span>
-				</h1>
+				</h2>
 				<div style="margin-left:10px">
 					<?php
 					echo $LANG['TOTAL_RECORDS'] . ': ' . $specHandler->getPersonalOccurrenceCount($collId);
@@ -122,11 +123,11 @@ foreach($collArr as $id => $collectionArr){
 		if($cArr){
 			?>
 			<section class="fieldset-like">
-				<h1>
+				<h2>
 					<span>
 						<?php echo $LANG['COL_MANAGE']; ?>
 					</span>
-				</h1>
+				</h2>
 				<ul>
 					<?php
 					foreach($cArr as $collId => $secArr){
@@ -141,7 +142,7 @@ foreach($collArr as $id => $collectionArr){
 		if($oArr){
 			?>
 			<section class="fieldset-like">
-				<h1><span><?php echo $LANG['OBS_MANAGEMENT'] ?></span></h1>
+				<h2><span><?php echo $LANG['OBS_MANAGEMENT'] ?></span></h2>
 				<ul>
 					<?php
 					foreach($oArr as $collId => $secArr){
@@ -159,7 +160,7 @@ foreach($collArr as $id => $collectionArr){
 			if($genAdminArr){
 				?>
 				<section class="fieldset-like">
-					<h1><span><?php echo $LANG['GEN_OBS_ADMIN'] ?></span></h1>
+					<h2><span><?php echo $LANG['GEN_OBS_ADMIN'] ?></span></h2>
 					<ul>
 						<?php
 						foreach($genAdminArr as $id => $secArr){
@@ -174,7 +175,7 @@ foreach($collArr as $id => $collectionArr){
 		}
 		?>
 		<section class="fieldset-like">
-			<h1><span><?php echo $LANG['MISC_TOOLS'] ?></span></h1>
+			<h2><span><?php echo $LANG['MISC_TOOLS'] ?></span></h2>
 			<ul>
 				<li><a href="../collections/datasets/index.php"><?php echo htmlspecialchars($LANG['DATASET_MANAGEMENT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></li>
 				<?php

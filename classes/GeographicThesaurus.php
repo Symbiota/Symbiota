@@ -1,5 +1,6 @@
 <?php
-include_once ($SERVER_ROOT . '/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 
 class GeographicThesaurus extends Manager {
 
@@ -50,33 +51,52 @@ class GeographicThesaurus extends Manager {
 				FROM geographicthesaurus t LEFT JOIN geographicthesaurus a ON t.acceptedID = a.geoThesID
 				LEFT JOIN geographicthesaurus p ON t.parentID = p.geoThesID
 				LEFT JOIN geographicpolygon gp ON t.geoThesID = gp.geoThesID
-				WHERE t.geoThesID = '.$geoThesID;
-
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$retArr['geoThesID'] = $r->geoThesID;
-				$retArr['geoTerm'] = $r->geoTerm;
-				$retArr['abbreviation'] = $r->abbreviation;
-				$retArr['iso2'] = $r->iso2;
-				$retArr['iso3'] = $r->iso3;
-				$retArr['numCode'] = $r->numCode;
-				$retArr['category'] = $r->category;
-				$retArr['geoLevel'] = $r->geoLevel;
-				$retArr['acceptedID'] = $r->acceptedID;
-				$retArr['acceptedTerm'] = $r->acceptedTerm;
-				$retArr['parentID'] = $r->parentID;
-				$retArr['parentTerm'] = $r->parentTerm;
-				$retArr['notes'] = $r->notes;
-				$retArr['termStatus'] = $r->termStatus;
-				$retArr['wkt'] = $r->wkt;
-				$retArr['geoJSON'] = $r->geoJSON;
+				WHERE t.geoThesID = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $geoThesID);
+				$stmt->execute();
+				$rs = $stmt->get_result();
+				while($r = $rs->fetch_object()){
+					$retArr['geoThesID'] = $r->geoThesID;
+					$retArr['geoTerm'] = $r->geoTerm;
+					$retArr['abbreviation'] = $r->abbreviation;
+					$retArr['iso2'] = $r->iso2;
+					$retArr['iso3'] = $r->iso3;
+					$retArr['numCode'] = $r->numCode;
+					$retArr['category'] = $r->category;
+					$retArr['geoLevel'] = $r->geoLevel;
+					$retArr['acceptedID'] = $r->acceptedID;
+					$retArr['acceptedTerm'] = $r->acceptedTerm;
+					$retArr['parentID'] = $r->parentID;
+					$retArr['parentTerm'] = $r->parentTerm;
+					$retArr['notes'] = $r->notes;
+					$retArr['termStatus'] = $r->termStatus;
+					$retArr['wkt'] = $r->wkt;
+					$retArr['geoJSON'] = $r->geoJSON;
+				}
+				$rs->free();
+				$stmt->close();
 			}
-			$rs->free();
 			if($retArr){
 				$childArr = $this->setChildCnt($retArr['geoThesID']);
 				$cnt = 0;
 				if($childArr) $cnt = current($childArr);
 				$retArr['childCnt'] = $cnt;
+				if(!$retArr['acceptedID']) $retArr['synonyms'] = $this->getSynonyms($geoThesID);
+			}
+		}
+		return $retArr;
+	}
+
+	private function getSynonyms($geoThesID){
+		$retArr = array();
+		$sql = 'SELECT geoThesID, geoTerm FROM geographicthesaurus WHERE acceptedID = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $geoThesID);
+			$stmt->execute();
+			$rs = $stmt->get_result();
+			while($r = $rs->fetch_object()){
+				$retArr[$r->geoThesID] = $r->geoTerm;
 			}
 		}
 		return $retArr;
@@ -96,13 +116,13 @@ class GeographicThesaurus extends Manager {
 		}
 
 		$sql = <<<'SQL'
-		UPDATE geographicthesaurus SET geoterm = ?, abbreviation = ?, iso2 = ?, iso3 = ?, 
+		UPDATE geographicthesaurus SET geoterm = ?, abbreviation = ?, iso2 = ?, iso3 = ?,
 		numcode = ?, geoLevel = ?, acceptedID = ?, parentID = ?, notes = ?
 		WHERE geoThesID = ?
 		SQL;
 
 		try {
-			$this->conn->execute_query($sql, [
+			QueryUtil::executeQuery($this->conn,$sql, [
 				$postArr['geoTerm'],
 				empty($postArr['abbreviation'])? null: $postArr['abbreviation'],
 				empty($postArr['iso2'])? null: $postArr['iso2'],
@@ -124,7 +144,7 @@ class GeographicThesaurus extends Manager {
 			SELECT * from geographicpolygon WHERE geoThesID = ?
 			SQL;
 
-			$polygon_exists = $this->conn->execute_query($sql, [htmlspecialchars($postArr['geoThesID'])]);
+			$polygon_exists = QueryUtil::executeQuery($this->conn,$sql, [htmlspecialchars($postArr['geoThesID'])]);
 
 			if(!$polygon_exists) {
 				$this->errorMessage = 'ERROR saving polygon edits: '.$this->conn->error;
@@ -149,7 +169,7 @@ class GeographicThesaurus extends Manager {
 		CALL insertGeographicPolygon(?, ?);
 		SQL;
 		try {
-			$this->conn->execute_query($sql, [$geoThesID, $polygon]);
+			QueryUtil::executeQuery($this->conn,$sql, [$geoThesID, $polygon]);
 			return true;
 		} catch (\Throwable $e) {
 			$this->errorMessage = 'ERROR saving new polygon: ' . $e->getMessage();
@@ -162,7 +182,7 @@ class GeographicThesaurus extends Manager {
 		CALL updateGeographicPolygon(?, ?);
 		SQL;
 		try {
-			$this->conn->execute_query($sql, [$geoThesID, $polygon]);
+			QueryUtil::executeQuery($this->conn,$sql, [$geoThesID, $polygon]);
 			return true;
 		} catch (\Throwable $e) {
 			$this->errorMessage = 'ERROR updatePolygon on '. $geoThesID .':' . $e->getMessage();
@@ -176,7 +196,7 @@ class GeographicThesaurus extends Manager {
 		SQL;
 
 		try {
-			$this->conn->execute_query($sql, [$geoThesID]);
+			QueryUtil::executeQuery($this->conn,$sql, [$geoThesID]);
 			return true;
 		} catch (\Throwable $e) {
 			$this->errorMessage = 'ERROR deletePolygon on '. $geoThesID . ':' . $e->getMessage();
@@ -232,12 +252,12 @@ class GeographicThesaurus extends Manager {
 
 		$parameters = str_repeat('?,', count($parentIDs) - 1) . '?';
 		$sql = <<<SQL
-		SELECT g.geoThesID, g.geoterm, g.geoLevel, CASE WHEN gp.geoThesID IS NULL THEN false ELSE true END AS hasPolygon 
+		SELECT g.geoThesID, g.geoterm, g.geoLevel, CASE WHEN gp.geoThesID IS NULL THEN false ELSE true END AS hasPolygon
 		FROM geographicthesaurus AS g LEFT JOIN geographicpolygon AS gp ON gp.geoThesID = g.geoThesID WHERE parentID IN ($parameters)
 		SQL;
 
 		try {
-			$result = $this->conn->execute_query($sql, $parentIDs);
+			$result = QueryUtil::executeQuery($this->conn,$sql, $parentIDs);
 			$children = $result->fetch_all(MYSQLI_ASSOC);
 			$result->free();
 			$children_ids = array_map(fn($v) => $v["geoThesID"], $children);
@@ -486,7 +506,7 @@ class GeographicThesaurus extends Manager {
 			SQL;
 
 			try {
-				$result = $this->conn->execute_query($sql, [$countryCode]);
+				$result = QueryUtil::executeQuery($this->conn,$sql, [$countryCode]);
 				if(($row = $result->fetch_object()) && isset($retArr['ADM0'])) {
 					$retArr['ADM0']['geoThesID'] = $row->geoThesID;
 					if($row->polygonID) $retArr['ADM0']['polygon'] = 1;
@@ -532,13 +552,13 @@ class GeographicThesaurus extends Manager {
 	//Assumes Most Points probably the biggest or main polygon which is fine for
 	//this function
 	private function getBiggestPolygon($arr) {
-		if(!is_array($arr) || count($arr) === 0) { 
+		if(!is_array($arr) || count($arr) === 0) {
 			return null;
 		} elseif(is_array($arr[0]) && count($arr[0]) === 2 && !is_array($arr[0][0])) {
 			return $arr;
 		} else {
 			$maxPoly = [];
-			for ($i=0; $i < count($arr); $i++) { 
+			for ($i=0; $i < count($arr); $i++) {
 				$poly = $this->getBiggestPolygon($arr[$i]);
 				if(count($maxPoly) < count($poly)) {
 					$maxPoly = $poly;
@@ -584,7 +604,7 @@ class GeographicThesaurus extends Manager {
 		$maxDistance = 0;
 		$maxIndex = 1;
 
-		for ($i=1; $i < count($polygon); $i++) { 
+		for ($i=1; $i < count($polygon); $i++) {
 			$v1 = $polygon[$i];
 			$v2 = $polygon[$i - 1];
 
@@ -624,10 +644,10 @@ class GeographicThesaurus extends Manager {
 
 			if(!$intersection) continue;
 
-			$longBounds = ($edge1[0] <= $intersection[0] && $edge2[0] >= $intersection[0]) || 
+			$longBounds = ($edge1[0] <= $intersection[0] && $edge2[0] >= $intersection[0]) ||
 				($edge1[0] >= $intersection[0] && $edge2[0] <= $intersection[0]);
 
-			$latBounds = ($edge1[1] <= $intersection[1] && $edge2[1] >= $intersection[1]) || 
+			$latBounds = ($edge1[1] <= $intersection[1] && $edge2[1] >= $intersection[1]) ||
 				($edge1[1] >= $intersection[1] && $edge2[1] <= $intersection[1]);
 
 			if($latBounds && $longBounds) {
@@ -682,24 +702,24 @@ class GeographicThesaurus extends Manager {
 
 			if(is_array($geoThesIDs) && count($geoThesIDs) != 1) {
 				$testPoint = $this->getPointWithinPoly($feature->geometry->coordinates);
-				$parents = !empty($geoThesIDs)? 
+				$parents = !empty($geoThesIDs)?
 				array_filter(array_map(fn($val) => $val['parentID'], $geoThesIDs), fn($val) => $val !== null):
 				$potentialParents;
 
 				if($testPoint) {
 					$parentID = $this->findParentGeometry(
-						$testPoint["lat"], 
-						$testPoint["long"], 
-						$geoLevel - 10, 
+						$testPoint["lat"],
+						$testPoint["long"],
+						$geoLevel - 10,
 						//map and grab parentIds
 						$parents
 					);
 					$geoThesIDs = array_filter(
 						$this->getGeoThesIDByName($properties->shapeName, $geoLevel, [$parentID]),
-						fn($val) => $val['hasPolygon'] === 0, 
+						fn($val) => $val['hasPolygon'] === 0,
 					);
 				}
-			} 
+			}
 
 			if(is_array($geoThesIDs) && count($geoThesIDs) === 1) {
 				$key = array_keys($geoThesIDs)[0];
@@ -710,7 +730,7 @@ class GeographicThesaurus extends Manager {
 						$sql = <<<'SQL'
 						UPDATE geographicthesaurus set iso3 = ? where geoThesID = ?
 						SQL;
-						$this->conn->execute_query($sql, [$iso, $geoThesIDs[$key]['geoThesID']]);
+						QueryUtil::executeQuery($this->conn,$sql, [$iso, $geoThesIDs[$key]['geoThesID']]);
 					} catch (\Throwable $e) {
 						$this->errorMessage = 'ERROR updating iso3 to match boundaryISO:' . $e->getMessage();
 					}
@@ -718,7 +738,7 @@ class GeographicThesaurus extends Manager {
 				array_push($results, $geoThesIDs[$key]['geoThesID']);
 			} else if ($addMissing) {
 				array_push($results, $this->addGeoUnit([
-					"geoTerm" => $properties->shapeName, 
+					"geoTerm" => $properties->shapeName,
 					"iso2" =>"",
 					"iso3" => $iso,
 					"geoLevel" => $geoLevel,
@@ -772,7 +792,7 @@ class GeographicThesaurus extends Manager {
 		if($parent !== null) {
 			$sql .= ' and g2.geoterm like ?';
 			array_push($params, '%' . $parent . '%');
-		} 
+		}
 
 		if($distict_geoterms) {
 			$sql .= ' GROUP BY geoterm ';
@@ -780,7 +800,7 @@ class GeographicThesaurus extends Manager {
 
 		$sql .= ' ORDER BY CHAR_LENGTH(g.geoterm), g.geoterm ';
 
-		$result = $this->conn->execute_query($sql, $params);
+		$result = QueryUtil::executeQuery($this->conn,$sql, $params);
 
 		$geoterms = $result->fetch_all(MYSQLI_ASSOC);
 		for($i=0; $i < count($geoterms); $i++) {
@@ -815,7 +835,7 @@ class GeographicThesaurus extends Manager {
 
 	public function findParentGeometry($lat, $long, $parentGeoLevel = 50, $potentialParents = []) {
 		$sql = <<<'SQL'
-		SELECT g.geoThesID from geographicthesaurus g 
+		SELECT g.geoThesID from geographicthesaurus g
 		join geographicpolygon gp on g.geoThesID = gp.geoThesID
 		WHERE ST_CONTAINS(gp.footprintPolygon, ST_GEOMFROMTEXT(?)) = 1 and
 		g.geoLevel <= ?
@@ -847,9 +867,9 @@ class GeographicThesaurus extends Manager {
 	public function getGeoThesIDByName(string $geoTerm, int $geoLevel = null, array $parentIDs = []): array {
 		$params = [$geoTerm];
 		$sql = <<<SQL
-		SELECT g.geoThesID, g.parentID, g.iso3, CASE WHEN gp.geoThesID is null THEN false ELSE true END as hasPolygon 
-		FROM geographicthesaurus as g left join geographicpolygon as gp on gp.geoThesID = g.geoThesID 
-		WHERE geoTerm = ? and acceptedID is null 
+		SELECT g.geoThesID, g.parentID, g.iso3, CASE WHEN gp.geoThesID is null THEN false ELSE true END as hasPolygon
+		FROM geographicthesaurus as g left join geographicpolygon as gp on gp.geoThesID = g.geoThesID
+		WHERE geoTerm = ? and acceptedID is null
 		SQL;
 
 		if($geoLevel !== null) {
@@ -863,7 +883,7 @@ class GeographicThesaurus extends Manager {
 			$params = array_merge($params, $parentIDs);
 		}
 		try {
-			$result = $this->conn->execute_query($sql, $params);
+			$result = QueryUtil::executeQuery($this->conn,$sql, $params);
 			$geoThesID = $result->fetch_all(MYSQLI_ASSOC);
 			$result->free();
 			return $geoThesID;
@@ -878,7 +898,7 @@ class GeographicThesaurus extends Manager {
 		$params = [$iso3];
 		$sql = <<<SQL
 		SELECT g.geoThesID, g.parentID, g.iso3, CASE WHEN gp.geoThesID is null THEN false ELSE true END as hasPolygon
-		FROM geographicthesaurus as g left join geographicpolygon as gp on gp.geoThesID = g.geoThesID 
+		FROM geographicthesaurus as g left join geographicpolygon as gp on gp.geoThesID = g.geoThesID
 		WHERE iso3 = ? and acceptedID is null
 		SQL;
 
@@ -887,7 +907,7 @@ class GeographicThesaurus extends Manager {
 			array_push($params, $geoLevel);
 		}
 		try {
-			$result = $this->conn->execute_query($sql, $params);
+			$result = QueryUtil::executeQuery($this->conn,$sql, $params);
 			$geoThesID = $result->fetch_all(MYSQLI_ASSOC);
 			$result->free();
 			return $geoThesID;

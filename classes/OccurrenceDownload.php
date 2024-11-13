@@ -531,9 +531,9 @@ class OccurrenceDownload{
 	}
 
 	private function getOutputFilePath(){
-		$retStr = $GLOBALS['tempDirRoot'];
+		$retStr = $GLOBALS['TEMP_DIR_ROOT'];
 		if(!$retStr){
-			$retStr = $GLOBALS['serverRoot'];
+			$retStr = $GLOBALS['SERVER_ROOT'];
 			if(substr($retStr,-1) != '/' && substr($retStr,-1) != "\\") $retStr .= '/';
 			$retStr .= 'temp/';
 		}
@@ -736,7 +736,7 @@ class OccurrenceDownload{
 		$retStr = $inStr;
 		if($retStr){
 			if($this->charSetOut && $this->charSetOut != $this->charSetSource){
-				$retStr = mb_convert_encoding($retStr, $this->charSetOut, mb_detect_encoding($retStr));
+				$retStr = mb_convert_encoding($retStr, $this->charSetOut, mb_detect_encoding($retStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 		}
 		return $retStr;

@@ -196,7 +196,7 @@ function handleRemoval(element, inputChip) {
   setMaterialSampleToDefault(element);
   setTaxonTypeToDefault(element);
   setAssociationTaxonTypeToDefault(element);
-
+  // uncheckAllChip(element); // @TODO test this out
   element.dataset.formId ? uncheckAll(element) : "";
   removeChip(inputChip);
 }
@@ -453,8 +453,8 @@ function autoToggleSelector(e) {
  * Uses 'data-form-id' property in .php
  * @param {Object} element HTML Node Object
  */
-function uncheckAll(element) {
-  let isAllSel = element.classList.contains("all-selector");
+function uncheckAllChip(element) {
+  let isAllSel = element.classList.contains("specobs");
   if (isAllSel) {
     let selChildren = document.querySelectorAll(
       `#${element.dataset.formId} input[type=checkbox]:checked`
@@ -463,12 +463,10 @@ function uncheckAll(element) {
       item.checked = false;
     });
   } else {
-    let items = document.querySelectorAll(
-      `#${element.id} input[type=checkbox]:checked`
+    let item = document.querySelector(
+      `input[id^="${element.className}"][name="cat[]"]`
     );
-    items.forEach((item) => {
-      item.checked = false;
-    });
+    item.checked = false;
   }
 }
 
@@ -481,8 +479,7 @@ function getCollsSelected() {
   let selectedInForm = Array.from(
     document.querySelectorAll(
       '#search-form-colls input[name="db"]:checked, ' +
-        '#search-form-colls input[name="db[]"]:checked, ' +
-        '#search-form-colls input[name="cat[]"]:checked'
+        '#search-form-colls input[name="db[]"]:checked'
     )
   );
   let collsArr = selectedInForm;
@@ -613,7 +610,7 @@ function getSearchUrl() {
     baseUrl.searchParams.append(key, paramsArr[key]);
   });
 
-  baseUrl.searchParams.append("comingFrom", "search/index.php");
+  baseUrl.searchParams.append("comingFrom", "newsearch");
 
   return baseUrl.href;
 }

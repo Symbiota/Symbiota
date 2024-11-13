@@ -193,7 +193,7 @@ class SpecProcessorManager {
 				$this->createTnImg = $row->createtnimg;
 				$this->createLgImg = $row->createlgimg;
 				$this->lastRunDate = $row->lastrundate;
-				if(!$this->lastRunDate && preg_match('/\d{4}-\d{2}-\d{2}/', $row->source)) $this->lastRunDate = $row->source;
+				if(!$this->lastRunDate && $row->source && preg_match('/\d{4}-\d{2}-\d{2}/', $row->source)) $this->lastRunDate = $row->source;
 				if(!$this->projectType){
 					if($this->title == 'iDigBio CSV upload'){
 						$this->projectType = 'idigbio';
@@ -219,8 +219,8 @@ class SpecProcessorManager {
 					$rs->free();
 				}
 			} catch (Exception $e) {}
-			//if(!$this->targetPath) $this->targetPath = $GLOBALS['imageRootPath'];
-			//if(!$this->imgUrlBase) $this->imgUrlBase = $GLOBALS['imageRootUrl'];
+			//if(!$this->targetPath) $this->targetPath = $GLOBALS['IMAGE_ROOT_PATH'];
+			//if(!$this->imgUrlBase) $this->imgUrlBase = $GLOBALS['IMAGE_ROOT_URL'];
 			if($this->sourcePath && substr($this->sourcePath,-1) != '/' && substr($this->sourcePath,-1) != '\\') $this->sourcePath .= '/';
 			if($this->targetPath && substr($this->targetPath,-1) != '/' && substr($this->targetPath,-1) != '\\') $this->targetPath .= '/';
 			if($this->imgUrlBase && substr($this->imgUrlBase,-1) != '/') $this->imgUrlBase .= '/';
@@ -579,7 +579,7 @@ class SpecProcessorManager {
 	public function getLogListing(){
 		$retArr = array();
 		if($this->collid){
-			$dirArr = array('imgProccessing','cyverse','iplant','processing/imgmap');
+			$dirArr = array('imageprocessing','imgProccessing','cyverse','iplant','processing/imgmap');
 			foreach($dirArr as $dirPath){
 				if(file_exists($this->logPath.$dirPath)){
 					if($fh = opendir($this->logPath.$dirPath)){

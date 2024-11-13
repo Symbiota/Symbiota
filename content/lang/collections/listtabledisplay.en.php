@@ -8,7 +8,9 @@ Language: English
 include_once($SERVER_ROOT.'/content/lang/collections/list.en.php');
 
 $LANG['COL_RESULTS'] = 'Collections Search Results Table';
+$LANG['SEARCH_RES_TABLE'] = 'Search Results (Table)';
 $LANG['SORT'] = 'Sort Results';
+$LANG['SORT_BY'] = 'Sort By';
 $LANG['COLLECTION'] = 'Collection';
 $LANG['SCINAME'] = 'Scientific Name';
 $LANG['COUNTRY'] = 'Country';
@@ -28,4 +30,5 @@ $LANG['HAS_IMAGE'] = 'Has Image';
 $LANG['CLICK_SYMB'] = 'Click on the Symbiota identifier in the first column to see Full Record Details';
 $LANG['NONE_FOUND'] = 'No records found matching the query';
 $LANG['SORT'] = 'Sort';
+$LANG['SEARCH_RESULTS_TABLE'] = 'Search Results (Table)';
 ?>

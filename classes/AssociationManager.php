@@ -3,7 +3,7 @@
 use function PHPUnit\Framework\isEmpty;
 
 include_once($SERVER_ROOT.'/classes/OccurrenceTaxaManager.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
+include_once($SERVER_ROOT.'/classes/utilities/TaxonomyUtil.php');
 
 class AssociationManager extends OccurrenceTaxaManager{
 

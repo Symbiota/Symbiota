@@ -1,10 +1,10 @@
 <?php
 include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/classes/TaxonProfile.php');
+Header('Content-Type: text/html; charset=' . $CHARSET);
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/taxa/index.' . $LANG_TAG . '.php'))
-include_once($SERVER_ROOT.'/content/lang/taxa/index.' . $LANG_TAG . '.php');
+	include_once($SERVER_ROOT . '/content/lang/taxa/index.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/taxa/index.en.php');
-include_once($SERVER_ROOT.'/classes/TaxonProfile.php');
-Header('Content-Type: text/html; charset='.$CHARSET);
 
 $taxonValue = array_key_exists('taxon', $_REQUEST) ? $_REQUEST['taxon'] : '';
 $tid = array_key_exists('tid', $_REQUEST) ? $_REQUEST['tid'] : '';
@@ -78,7 +78,7 @@ $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div id="popup-innertext">
-	<h1 class="page-heading"><?= $taxonManager->getTaxonName() ?></h1>
+	<h1 class="page-heading screen-reader-only"><?= $taxonManager->getTaxonName() ?></h1>
 	<?php
 	if($taxonManager->getTaxonName()){
 		if(count($taxonManager->getAcceptedArr()) == 1){
@@ -87,14 +87,14 @@ include($SERVER_ROOT.'/includes/header.php');
 				?>
 				<table id="innertable">
 				<tr>
-					<td colspan="2" valign="bottom">
+					<td colspan="2" style="vertical-align: bottom">
 						<?php
 						if($isEditor){
 							?>
 							<div id="editorDiv">
 								<?php
 								echo '<a href="profile/tpeditor.php?tid=' . htmlspecialchars($taxonManager->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" title="' . htmlspecialchars($LANG['EDIT_TAXON_DATA'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
-								echo '<img class="navIcon" src="../images/edit.png" style="width:1.3em" />';
+								echo '<img class="navIcon" src="../images/edit.png">';
 								echo '</a>';
 								?>
 							</div>
@@ -106,7 +106,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							<span id="author"><?php echo $taxonManager->getTaxonAuthor(); ?></span>
 							<?php
 							$parentLink = 'index.php?tid='.$taxonManager->getParentTid().'&clid=' . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&taxauthid='.$taxAuthId;
-							echo '&nbsp;<a href="' . htmlspecialchars($parentLink, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><img class="navIcon" src="../images/toparent.png" style="width:1.3em" title="' . $LANG['GO_TO_PARENT'] . '" /></a>';
+							echo '&nbsp;<a href="' . htmlspecialchars($parentLink, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><img class="navIcon" src="../images/toparent.png" title="' . $LANG['GO_TO_PARENT'] . '"></a>';
 							if($taxonManager->isForwarded()){
 						 		echo '<span id="redirectedfrom"> (' . $LANG['REDIRECT'] . ': <i>' . $taxonManager->getSubmittedValue('sciname') . '</i> ' . $taxonManager->getSubmittedValue('author') . ')</span>';
 						 	}
@@ -128,7 +128,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					</td>
 				</tr>
 				<tr>
-					<td width="300" valign="top">
+					<td width="300" style="vertical-align=top">
 						<div id="family"><?php echo '<b>' . $LANG['FAMILY'] . ':</b> ' . $taxonManager->getTaxonFamily(); ?></div>
 						<?php
 						if($vernArr = $taxonManager->getVernaculars()){
@@ -199,8 +199,8 @@ include($SERVER_ROOT.'/includes/header.php');
 							$url = '';
 							if(isset($MAP_THUMBNAILS) && $MAP_THUMBNAILS) $url = $taxonManager->getGoogleStaticMap();
 							else $url = $CLIENT_ROOT.'/images/mappoint.png';
-							if($occurrenceModIsActive && $taxonManager->getDisplayLocality()){
-								$gAnchor = "openMapPopup('" . $taxonManager->getTid() . "'," . $clid . ','. (!empty($GOOGLE_MAP_KEY) ? 'false' : 'true') . ")";
+							if($OCCURRENCE_MOD_IS_ACTIVE && $taxonManager->getDisplayLocality()){
+								$gAnchor = "openMapPopup('" . $taxonManager->getTid() . "'," . ($clid ? $clid:0) . ','. (!empty($GOOGLE_MAP_KEY) ? 'false' : 'true') . ")";
 							}
 							if($mapSrc = $taxonManager->getMapArr()){
 								$url = array_shift($mapSrc);
@@ -252,7 +252,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							?>
 							<div id="editorDiv">
 								<a href="profile/tpeditor.php?tid=<?php echo htmlspecialchars($taxonManager->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" title="<?php echo htmlspecialchars($LANG['EDIT_TAXON_DATA'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
-									<img class="navIcon" src='../images/edit.png' style='width:1.3em' />
+									<img class="navIcon" src='../images/edit.png'>
 								</a>
 							</div>
 							<?php
@@ -264,7 +264,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							if($taxonRank > 140){
 								$parentLink = "index.php?tid=" . $taxonManager->getParentTid() . "&clid=" . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "&pid=".$pid."&taxauthid=".$taxAuthId;
 								$displayName .= ' <a href="' . htmlspecialchars($parentLink, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
-								$displayName .= '<img class="navIcon" src="../images/toparent.png" style="width:1.3em" title="' . $LANG['GO_TO_PARENT'] . '" />';
+								$displayName .= '<img class="navIcon" src="../images/toparent.png" title="' . $LANG['GO_TO_PARENT'] . '">';
 								$displayName .= '</a>';
 							}
 							echo '<div id="taxon">' . $displayName . '</div>';
@@ -273,7 +273,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					</td>
 				</tr>
 				<tr>
-					<td width="300" valign="top">
+					<td width="300" style="vertical-align: top">
 						<?php
 						if($taxonRank > 140) echo '<div id="family"><b>' . $LANG['FAMILY'] . ':</b> ' . $taxonManager->getTaxonFamily() . '</div>';
 						if(!$taxonManager->echoImages(0,1,0)){
@@ -307,7 +307,7 @@ include($SERVER_ROOT.'/includes/header.php');
 										$legendStr .= $LANG['SPECIES_CHECKLIST'] . ': <b>' . $checklistName . '</b>';
 									}
 									if($parentChecklistArr = $taxonManager->getParentChecklist($clid)){
-										$titleStr = $LANG['GO_TO_PARENT_CHECKLIST'] . ': ' . current($parentChecklistArr);
+										$titleStr = $LANG['GO_TO'] . ': ' . current($parentChecklistArr);
 										$legendStr .= ' <a href="index.php?tid=' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&clid='. htmlspecialchars(key($parentChecklistArr), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&taxauthid=' . htmlspecialchars($taxAuthId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" title="' . htmlspecialchars($titleStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 										$legendStr .= '<img style="border:0px;width:1.3em;" src="../images/toparent.png"/>';
 										$legendStr .= '</a>';
@@ -365,15 +365,15 @@ include($SERVER_ROOT.'/includes/header.php');
 
 										if(array_key_exists("url",$subArr)){
 											$imgUrl = $subArr["url"];
-											if(array_key_exists("imageDomain",$GLOBALS) && substr($imgUrl,0,1)=="/"){
-												$imgUrl = $GLOBALS["imageDomain"] . $imgUrl;
+											if(array_key_exists('IMAGE_DOMAIN', $GLOBALS) && substr($imgUrl, 0, 1) == '/'){
+												$imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
 											}
 											echo "<a href='index.php?tid=" . htmlspecialchars($subArr["tid"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "&taxauthid=" . htmlspecialchars($taxAuthId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "&clid=" . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'>";
 
 											if($subArr["thumbnailurl"]){
 												$imgUrl = $subArr["thumbnailurl"];
-												if(array_key_exists("imageDomain",$GLOBALS) && substr($subArr["thumbnailurl"],0,1)=="/"){
-													$imgUrl = $GLOBALS["imageDomain"] . $subArr["thumbnailurl"];
+												if(array_key_exists('IMAGE_DOMAIN',$GLOBALS) && substr($subArr["thumbnailurl"],0,1)=="/"){
+													$imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $subArr["thumbnailurl"];
 												}
 											}
 											elseif($image = exif_thumbnail($imgUrl)){
@@ -429,7 +429,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					<div id="editorDiv">
 						<?php
 						echo '<a href="profile/tpeditor.php?tid=' . htmlspecialchars($taxonManager->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" title="' . htmlspecialchars($LANG['EDIT_TAXON_DATA'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
-						echo '<img class="navIcon" src="../images/edit.png" style="width:1.3em" />';
+						echo '<img class="navIcon" src="../images/edit.png">';
 						echo '</a>';
 						?>
 					</div>
@@ -466,7 +466,7 @@ include($SERVER_ROOT.'/includes/header.php');
 				?>
 				<div style="margin-left: 15px;font-weight:bold;font-size:120%;">
 					<?php echo $LANG['DID_YOU_MEAN'];?>
-					<div style=margin-left:25px;>
+					<div style="margin-left:25px;">
 						<?php
 						foreach($matchArr as $t => $n){
 							echo '<a href="index.php?tid=' . htmlspecialchars($t, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($n, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a><br/>';

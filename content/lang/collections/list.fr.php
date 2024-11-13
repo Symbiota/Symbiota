@@ -8,6 +8,7 @@ Language: Français (French)
 include_once('sharedterms.fr.php');
 
 $LANG['PAGE_TITLE'] = 'Résultats de Recherche de Collections';
+$LANG['SEARCH_RES_LIST'] = 'Résultats de Recherche (Liste)';
 $LANG['NAV_SPECIMEN_LIST'] = 'Dossiers de Spécimens';
 $LANG['TABLE_DISPLAY'] = 'Affichage du Tableau';
 $LANG['LIST_DISPLAY'] = 'Affichage de Liste';
@@ -56,11 +57,14 @@ $LANG['IMG_EDIT_OCC'] = 'Modifier l\'occurrence';
 $LANG['IMG_OCC'] = 'Image associée à l\'occurrence';
 $LANG['CATALOG_NUMBER'] = 'Numéro de Catalogue';
 $LANG['COLLECTOR'] = 'Collectionneur';
-$LANG['DATE'] = 'Date';
+$LANG['NUMBER'] = 'Numéro du Collecteur';
+$LANG['EVENTDATE'] = 'Date';
 $LANG['SCIENTIFIC_NAME'] = 'Nom Scientifique';
+$LANG['ÉLÉVATION'] = 'Élévation';
 $LANG['MAP_LINK'] = 'Lien vers la Carte';
 $LANG['SEE_MAP_POINT'] = 'Voir le point sur la carte';
 $LANG['RECORD_COUNT_EXCEEDS_LIMIT'] = 'Le nombre d\'enregistrements dépasse la limite';
 $LANG['NO_RECORDS'] = 'Aucun enregistrement trouvé correspondant à la requête';
 $LANG['ASSOCIATIONS'] = 'Ressources Associées';
+$LANG['SEARCH_RESULTS_LIST'] = 'Résultats de la Recherche (Liste)';
 ?>

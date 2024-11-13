@@ -1,6 +1,8 @@
 <?php
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLoans.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/loans/reports/defaultinvoice.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/loans/reports/defaultinvoice.'.$LANG_TAG.'.php');
+else include_once($SERVER_ROOT.'/content/lang/collections/loans/reports/defaultinvoice.en.php');
 require_once $SERVER_ROOT.'/vendor/phpoffice/phpword/bootstrap.php';
 
 $collId = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -414,7 +416,7 @@ else{
 			</script>
 		</head>
 		<body style="background-color:#ffffff;">
-			<h1 class="page-heading screen-reader-only">Invoice</h1>
+			<h1 class="page-heading screen-reader-only"><?php echo $LANG['INVOICE']; ?></h1>
 			<div class="controls">
 				<button id="edit" style="font-weight: bold;" onclick="toggleEdits();">Edit Invoice</button>
 			</div>
@@ -504,13 +506,13 @@ else{
 									echo 'receipt by signing and returning the duplicate invoice to us.</div><br />';
 								}
 								if($spanish){
-									echo '<div>Est&aacute;mos remitiendo a Uds. '.($numBoxes == 1?'1 caja ':$numBoxes.' cajas ');
+									echo '<div>Estámos remitiendo a Uds. '.($numBoxes == 1?'1 caja ':$numBoxes.' cajas ');
 									echo 'de '.($numSpecimens == 1?'1 ejemplar. ':$numSpecimens.' ejemplares. ');
 									if(($loanType == 'in' && $invoiceArr['shippingmethodreturn']) || $invoiceArr['shippingmethod']){
 										echo ($numBoxes == 1?'Esta remesa hubiera enviado ':'Estas remesas hubieran enviado ').'por '.($loanType == 'in'?$invoiceArr['shippingmethodreturn']:$invoiceArr['shippingmethod']).'. ';
 									}
-									echo 'Al llegar la remesa, por favor verifique los contenidos y s&iacute;rvase acusar ';
-									echo 'recibo de esta remesa firmiendo una de las copias y devolvi&eacute;ndo la por correo.</div><br />';
+									echo 'Al llegar la remesa, por favor verifique los contenidos y sírvase acusar ';
+									echo 'recibo de esta remesa firmiendo una de las copias y devolviéndo la por correo.</div><br />';
 								}
 								?>
 							</div>
@@ -526,7 +528,7 @@ else{
 									<div class="duedate">Loans are made for a period of 2 years. This loan will be due <?php echo $invoiceArr['datedue']; ?>.</div><br />
 								<?php }
 								if($spanish){ ?>
-									<div class="duedate">Los pr&eacute;stamos se extienden por un periodo de 2 a&ntilde;os. Este pr&eacute;stamo tiene una fecha l&iacute;mite de <?php echo $invoiceArr['datedue']; ?>.</div><br />
+									<div class="duedate">Los préstamos se extienden por un periodo de 2 años. Este préstamo tiene una fecha límite de <?php echo $invoiceArr['datedue']; ?>.</div><br />
 								<?php }
 								if($english){ ?>
 									<div class="loanoutinfo">When circumstances warrant, the loan period may be extended. Specimens should be returned by
@@ -535,9 +537,9 @@ else{
 									</div><br />
 								<?php }
 								if($spanish){ ?>
-									<div class="loanoutinfo">Siempre y cuando las circunstancias se permiten, se puede pedir un pr&oacute;rroga de la fecha l&iacute;mite de este
-										pr&eacute;stamo. Todo material del pr&eacute;stamo debe devolverse en el mismo env&iacute;o. Notas y cambios de identificaci&oacute;n se
-										deben indicar con notas de anotaci&oacute;n. Adem&aacute;s, le pedimos mandar separatas de cualquier publicaci&oacute;n
+									<div class="loanoutinfo">Siempre y cuando las circunstancias se permiten, se puede pedir un prórroga de la fecha límite de este
+										préstamo. Todo material del préstamo debe devolverse en el mismo envío. Notas y cambios de identificación se
+										deben indicar con notas de anotación. Además, le pedimos mandar separatas de cualquier publicación
 										proveniente del uso de este material.
 									</div><br />
 								<?php }
@@ -562,7 +564,7 @@ else{
 										</div><br />
 									<?php }
 									if($spanish){ ?>
-										<div class="exchangeamts">Este env&iacute;o es un INTERCAMBIO, consistiendo en <?php echo ($invoiceArr['totalexunmounted']?$invoiceArr['totalexunmounted'].' ejemplares no montados ':''); ?>
+										<div class="exchangeamts">Este envío es un INTERCAMBIO, consistiendo en <?php echo ($invoiceArr['totalexunmounted']?$invoiceArr['totalexunmounted'].' ejemplares no montados ':''); ?>
 											<?php echo (($invoiceArr['totalexunmounted'] && $invoiceArr['totalexmounted'])?'y ':''); ?><?php echo ($invoiceArr['totalexmounted']?$invoiceArr['totalexmounted'].' ejemplares montados ':''); ?>,
 											con un valor de intercambio de <?php echo $exchangeValue; ?>. Favor de notarse que las ejemplares montados son de valor 2.
 										</div><br />
@@ -593,7 +595,7 @@ else{
 										if($spanish){ ?>
 											<div class="exchangeamts">
 												<?php
-													echo 'Esta remesa tambi&eacute;n contiene ';
+													echo 'Esta remesa también contiene ';
 													if($invoiceArr['totalgift']){
 														echo ($invoiceArr['totalgift'] == 1?'1 ejemplar de regalo':$invoiceArr['totalgift'].' ejemplares de regalo');
 													}
@@ -601,7 +603,7 @@ else{
 														echo ' y ';
 													}
 													if($invoiceArr['totalgiftdet']){
-														echo ($invoiceArr['totalgiftdet'] == 1?'1 ejemplar de regalo para identificaci&oacute;n':$invoiceArr['totalgiftdet'].' ejemplares de regalo para identificaci&oacute;n');
+														echo ($invoiceArr['totalgiftdet'] == 1?'1 ejemplar de regalo para identificación':$invoiceArr['totalgiftdet'].' ejemplares de regalo para identificación');
 													}
 													echo '.';
 												?>
@@ -616,7 +618,7 @@ else{
 									if($spanish){ ?>
 										<div class="exchangebal">Nuestros registros muestran un balance de <?php echo abs($invoiceArr['invoicebalance']); ?> ejemplares
 											a <?php echo ($invoiceArr['invoicebalance']>0?'nuestro':'su'); ?> favor. Favor de contactarnos si sus
-											registros se d&iacute;fieren de una manera apreciable.
+											registros se dífieren de una manera apreciable.
 										</div><br />
 									<?php }
 								}
@@ -640,15 +642,15 @@ else{
 									if($spanish){ ?>
 										<div class="exchangeamts">
 											<?php
-												echo 'Este env&iacute;o es un ';
+												echo 'Este envío es un ';
 												if($invoiceArr['totalgift'] && !$invoiceArr['totalgiftdet']){
 													echo 'REGALO.';
 												}
 												if($invoiceArr['totalgift'] && $invoiceArr['totalgiftdet']){
-													echo 'REGALO y un REGALO PARA IDENTIFICACI&Oacute;N.';
+													echo 'REGALO y un REGALO PARA IDENTIFICACIÓN.';
 												}
 												if(!$invoiceArr['totalgift'] && $invoiceArr['totalgiftdet']){
-													echo 'REGALO PARA IDENTIFICACI&Oacute;N.';
+													echo 'REGALO PARA IDENTIFICACIÓN.';
 												}
 											?>
 										</div><br />
@@ -658,7 +660,7 @@ else{
 							?>
 							<div class="description">
 								<?php
-									echo '<b>'.($english?'DESCRIPTION OF THE SPECIMENS':'').($engspan?' / ':'').($spanish?'DESCRIPCI&Oacute;N DE LOS EJEMPLARES':'').':</b><br /><br />' ;
+									echo '<b>'.($english?'DESCRIPTION OF THE SPECIMENS':'').($engspan?' / ':'').($spanish?'DESCRIPCIÓN DE LOS EJEMPLARES':'').':</b><br /><br />' ;
 									echo ($invoiceArr['description']?$invoiceArr['description']:'');
 								?>
 

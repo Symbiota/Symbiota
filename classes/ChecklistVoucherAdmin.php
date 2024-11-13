@@ -498,55 +498,30 @@ class ChecklistVoucherAdmin extends Manager {
 
 	//Data mod functions
 	protected function insertChecklistTaxaLink($tid, $clid = null, $morpho = ''){
-		$status = false;
+		$clTaxaID = false;
 		if(!$clid) $clid = $this->clid;
 		if(is_numeric($tid) && is_numeric($clid)){
-			$sql = 'INSERT INTO fmchklsttaxalink(tid,clid,morphospecies) VALUES(?,?,?)';
-			if($stmt = $this->conn->prepare($sql)) {
-				$stmt->bind_param('iis', $tid, $clid, $morpho);
-				$stmt->execute();
-				if($stmt->affected_rows && !$stmt->error){
-					$status = $stmt->insert_id;
-				}
-				elseif($stmt->error) $this->errorMessage = 'ERROR inserting checklist-taxa-link: '.$stmt->error;
-				$stmt->close();
+			$inventoryManager = new ImInventories();
+			$inputArr = array('tid' => $tid, 'clid' => $clid);
+			if($morpho) $inputArr['morphoSpecies'] = $morpho;
+			if($inventoryManager->insertChecklistTaxaLink($inputArr)){
+				$clTaxaID = $inventoryManager->getPrimaryKey();
 			}
-			else $this->errorMessage = 'ERROR preparing statement for checklist-taxa-link insert: '.$this->conn->error;
+			else $this->errorMessage = $inventoryManager->getErrorMessage();
 		}
-		return $status;
+		return $clTaxaID;
 	}
 
 	protected function insertVoucher($clTaxaID, $occid, $editorNotes = null, $notes = null){
 		$status = false;
 		if(is_numeric($clTaxaID) && is_numeric($occid)){
-			if($editorNotes == '') $editorNotes = null;
-			if($notes == '') $notes = null;
-			$sql = 'INSERT INTO fmvouchers(clTaxaID, occid, editorNotes, notes) VALUES (?,?,?,?)';
-			if($stmt = $this->conn->prepare($sql)) {
-				$stmt->bind_param('iiss', $clTaxaID, $occid, $editorNotes, $notes);
-				$stmt->execute();
-				if($stmt->affected_rows){
-					$status = $stmt->insert_id;
-				}
-				elseif($stmt->error) $this->errorMessage = 'ERROR inserting voucher: '.$stmt->error;
-				$stmt->close();
-			}
-			else $this->errorMessage = 'ERROR preparing statement for voucher insert: '.$this->conn->error;
-		}
-		return $status;
-	}
-
-	private function transferVouchers($target, $source){
-		$status = false;
-		if(is_numeric($target) && is_numeric($source)){
-			$sql = 'UPDATE fmvouchers SET clTaxaID = ? WHERE clTaxaID = ?';
-			if($stmt = $this->conn->prepare($sql)) {
-				$stmt->bind_param('ii', $target, $source);
-				$stmt->execute();
-				if($stmt->error) $this->errorMessage = 'ERROR transferring vouchers: '.$stmt->error;
-				$stmt->close();
-			}
-			else $this->errorMessage = 'ERROR preparing statement for voucher transfer: '.$this->conn->error;
+			$inventoryManager = new ImInventories();
+			$inventoryManager->setClTaxaID($clTaxaID);
+			$inputArr = array('occid' => $occid);
+			if($editorNotes) $inputArr['editorNotes'] = $editorNotes;
+			if($notes) $inputArr['notes'] = $notes;
+			$status = $inventoryManager->insertChecklistVoucher($inputArr);
+			if(!$status) $this->errorMessage = $inventoryManager->getErrorMessage();
 		}
 		return $status;
 	}
@@ -554,15 +529,10 @@ class ChecklistVoucherAdmin extends Manager {
 	public function deleteVoucher($voucherID){
 		$status = false;
 		if(is_numeric($voucherID)){
-			$sql = 'DELETE FROM fmvouchers WHERE (voucherID = ?)';
-			if($stmt = $this->conn->prepare($sql)) {
-				$stmt->bind_param('i', $voucherID);
-				$stmt->execute();
-				if($stmt->affected_rows) $status = true;
-				elseif($stmt->error) $this->errorMessage = 'ERROR deleting vouchers: '.$stmt->error;
-				$stmt->close();
-			}
-			else $this->errorMessage = 'ERROR preparing statement for voucher deletion: '.$this->conn->error;
+			$inventoryManager = new ImInventories();
+			$inventoryManager->setVoucherID($voucherID);
+			$status = $inventoryManager->deleteChecklistVoucher();
+			if(!$status) $this->errorMessage = $inventoryManager->getErrorMessage();
 		}
 		return $status;
 	}
@@ -822,13 +792,13 @@ class ChecklistVoucherAdmin extends Manager {
 		$retStr = $inStr;
 		if($inStr && $charSetSource){
 			if($charSetOut == 'UTF-8'){
-				$retStr = mb_convert_encoding($inStr, 'UTF-8', mb_detect_encoding($inStr));
+				$retStr = mb_convert_encoding($inStr, 'UTF-8', mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 			elseif($charSetOut == 'ISO-8859-1'){
-				$retStr = mb_convert_encoding($inStr, 'ISO-8859-1', mb_detect_encoding($inStr));
+				$retStr = mb_convert_encoding($inStr, 'ISO-8859-1', mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 			else{
-				$retStr = mb_convert_encoding($inStr, $charSetOut, mb_detect_encoding($inStr));
+				$retStr = mb_convert_encoding($inStr, $charSetOut, mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 		}
 		return $retStr;

@@ -2,9 +2,9 @@
 /*
  * Used by automatic nightly process and by the occurrence editor (/collections/editor/occurrenceeditor.php)
  */
-include_once($SERVER_ROOT.'/config/dbconnection.php');
-include_once($SERVER_ROOT.'/classes/Manager.php');
-include_once($SERVER_ROOT.'/classes/Encoding.php');
+include_once($SERVER_ROOT . '/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/utilities/Encoding.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 class SpecProcessorOcr extends Manager{
 
@@ -220,14 +220,14 @@ class SpecProcessorOcr extends Manager{
 	private function loadImage($imgUrl){
 		$status = false;
 		if($imgUrl){
-			if(substr($imgUrl,0,1)=="/"){
-				if(array_key_exists("imageDomain",$GLOBALS) && $GLOBALS["imageDomain"]){
+			if(substr($imgUrl,0,1) == '/'){
+				if(!empty($GLOBALS['IMAGE_DOMAIN'])){
 					//If there is an image domain name is set in symbini.php and url is relative,
 					//then it's assumed that image is located on another server, thus add domain to url
-					$imgUrl = $GLOBALS["imageDomain"].$imgUrl;
+					$imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
 				}
 				else{
-					$imgUrl = $this->getDomain().$imgUrl;
+					$imgUrl = GeneralUtil::getDomain() . $imgUrl;
 				}
 			}
 			//Set temp folder path and file names
@@ -839,8 +839,8 @@ class SpecProcessorOcr extends Manager{
 
 	private function setTempPath(){
 		$tempPath = 0;
-		if(array_key_exists('tempDirRoot',$GLOBALS)){
-			$tempPath = $GLOBALS['tempDirRoot'];
+		if(!empty($GLOBALS['TEMP_DIR_ROOT'])){
+			$tempPath = $GLOBALS['TEMP_DIR_ROOT'];
 		}
 		else{
 			$tempPath = ini_get('upload_tmp_dir');

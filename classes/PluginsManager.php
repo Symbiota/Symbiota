@@ -1,6 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/classes/Manager.php');
-include_once($SERVER_ROOT.'/classes/ImageShared.php');
+include_once($SERVER_ROOT . '/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/ImageShared.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 class PluginsManager extends Manager {
 
@@ -106,7 +107,7 @@ class PluginsManager extends Manager {
 			$sql .= 'ORDER BY i.sortsequence LIMIT 200 ';
 			//echo '<div>'.$sql.'</div>';
 			//Set local domain
-			$localDomain = $this->getDomain();
+			$localDomain = GeneralUtil::getDomain();
 			//Get records
 			$cnt = 1;
  			$conn = MySQLiConnectionFactory::getCon("readonly");
@@ -115,7 +116,7 @@ class PluginsManager extends Manager {
 				$file = $row->url;
 				if (substr($row->url, 0, 1) == '/'){
 					//If imageDomain variable is set within symbini file, image
-					if(isset($GLOBALS['imageDomain']) && $GLOBALS['imageDomain']) $file = $GLOBALS['imageDomain'].$row->url;
+					if(!empty($GLOBALS['IMAGE_DOMAIN'])) $file = $GLOBALS['IMAGE_DOMAIN'] . $row->url;
 					else $file = $localDomain.$row->url;
 				}
 

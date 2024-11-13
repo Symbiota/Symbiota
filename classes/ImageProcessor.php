@@ -1,7 +1,7 @@
 <?php
 require_once($SERVER_ROOT.'/config/dbconnection.php');
 require_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
-include_once($SERVER_ROOT.'/classes/UuidFactory.php');
+include_once($SERVER_ROOT.'/classes/GuidManager.php');
 
 class ImageProcessor {
 
@@ -354,9 +354,9 @@ class ImageProcessor {
 				}
 
 				$this->logOrEcho('Generating recordID GUID for all new records...');
-				$uuidManager = new UuidFactory();
-				$uuidManager->setSilent(1);
-				$uuidManager->populateGuids($this->collid);
+				$guidManager = new GuidManager();
+				$guidManager->setSilent(1);
+				$guidManager->populateGuids($this->collid);
 			}
 			unlink($fullPath);
 			$this->logOrEcho('Done process image mapping ('.date('Y-m-d H:i:s').')');
@@ -570,10 +570,10 @@ class ImageProcessor {
 		$occurMain->__destruct();
 
 		$this->logOrEcho('Populating recordID UUIDs for all records...',2);
-		$uuidManager = new UuidFactory($this->conn);
-		$uuidManager->setSilent(1);
-		$uuidManager->populateGuids();
-		$uuidManager->__destruct();
+		$guidManager = new GuidManager($this->conn);
+		$guidManager->setSilent(1);
+		$guidManager->populateGuids();
+		$guidManager->__destruct();
 	}
 
 	private function updateLastRunDate($date){

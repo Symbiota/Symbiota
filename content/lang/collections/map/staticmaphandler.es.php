@@ -5,7 +5,7 @@ Language: Spanish
 ------------------
 */
 include_once('mapshared.es.php');
-
+$LANG['STATIC_DIST_MAP_GENERATOR'] = 'Generador de mapas de distribución estática';
 $LANG['BUILD_MAPS'] = 'Construir mapas';
 $LANG['BOUNDS'] = 'Límites del mapa';
 $LANG['LOWER_BOUND'] = 'Límite inferior del mapa';
@@ -26,7 +26,7 @@ $LANG['GLOBAL_BOUNDS'] = 'Establecer límites globales';
 
 $LANG['PREVIEW_MAP'] = 'Vista previa del mapa';
 $LANG['TYPE_TAXON'] = 'Nombre del taxón';
-$LANG['SEPARATE_MULTIPLE'] = 'Separar m&uacute;ltiples con comas';
+$LANG['SEPARATE_MULTIPLE'] = 'Separar múltiples con comas';
 
 $LANG['TID'] = 'Tid';
 $LANG['TAXON'] = 'Taxón';

@@ -6,7 +6,8 @@ Language: Français (French)
 */
 
 include_once($SERVER_ROOT.'/content/lang/collections/misc/sharedterms.fr.php');
-
+$LANG['EDIT_METADATA'] = 'Modifier les Métadonnées et les Contacts de la Collection';
+$LANG['COLLECTION_METADATA_EDITOR'] = 'Onglet Éditeur de Métadonnées de Collection';
 $LANG['ADD_SUCCESS'] = 'Nouvelle collection ajoutée avec succès';
 $LANG['ADD_STUFF'] = 'Ajoutez des contacts, des liens vers des ressources ou l\'adresse de l\'institution ci-dessous';
 $LANG['COL_PROFS'] = 'Profils de Collecte';
@@ -89,6 +90,7 @@ $LANG['OCCID_DEF_2'] = "champ. L'utilisation de l'ID d'Occurrence comme GUID n'e
 						des UUID GUID pour chaque enregistrement. Cette option est recommandée pour beaucoup pour les Jeux de Données en Direct
 						mais non autorisé pour les collections d'instantanés gérées dans le système de gestion local.";
 $LANG['PUBLISH_TO_AGGS'] = 'Publier sur Agrégateurs';
+$LANG['MORE_INFO_AGGREGATORS'] = 'Plus d\'informations sur la publication sur des agrégateurs';
 $LANG['ACTIVATE_GBIF'] = "Active les outils de publication GBIF disponibles dans l'option de menu Publier Archive Darwin Core";
 $LANG['SOURCE_REC_URL'] = "URL de l'Enregistrement Source";
 $LANG['DYNAMIC_LINK_REC'] = "Lien dynamique vers la page d'enregistrement individuel de la base de données source";

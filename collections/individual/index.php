@@ -1,14 +1,14 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceIndividual.php');
-include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
-include_once($SERVER_ROOT.'/classes/RdfUtility.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceIndividual.php');
+include_once($SERVER_ROOT . '/classes/DwcArchiverCore.php');
+include_once($SERVER_ROOT . '/classes/utilities/RdfUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/individual/index.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/individual/index.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/individual/index.en.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.en.php');
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/header.en.php');
-else include_once($SERVER_ROOT . '/content/lang/header.' . $LANG_TAG . '.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $submit = array_key_exists('formsubmit', $_REQUEST) ? $_REQUEST['formsubmit'] : '';
@@ -74,7 +74,7 @@ $genticArr = $indManager->getGeneticArr();
 $statusStr = '';
 //  If other than HTML was requested, return just that content.
 if(isset($_SERVER['HTTP_ACCEPT'])){
-	$accept = RdfUtility::parseHTTPAcceptHeader($_SERVER['HTTP_ACCEPT']);
+	$accept = RdfUtil::parseHTTPAcceptHeader($_SERVER['HTTP_ACCEPT']);
 	foreach($accept as $key => $mediarange){
 		if($mediarange=='text/turtle' || $format == 'turtle') {
 			Header("Content-Type: text/turtle; charset=".$CHARSET);
@@ -311,20 +311,26 @@ $traitArr = $indManager->getTraitArr();
 		.smaller-header {
 			font-size: 2rem;
 		}
-		<?php if($shouldUseMinimalMapHeader){ ?>
+		#exsiccati-div{ clear: both; }
+		#rights-div{ clear: both; }
+		<?php
+		if($shouldUseMinimalMapHeader){
+			?>
 			.minimal-header-margin{
 			   margin-top: 6rem;
 			}
-		<?php } ?>
+			<?php
+		}
+		?>
 		</style>
 </head>
 <body>
 	<?php
-		if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimal_header_template.php');
+	if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimalheader.php');
 	?>
 	<header style="background-image: none;">
 		<a class="screen-reader-only" href="#end-nav"><?php echo $LANG['SKIP_NAV'] ?></a>
-		<h1 class="page-heading minimal-header-margin">
+		<h1 class="page-heading screen-reader-only">
 			<?php echo $LANG['FULL_RECORD_DETAILS']; ?>
 		</h1>
 		<div id="end-nav"></div>
@@ -437,7 +443,7 @@ $traitArr = $indManager->getTraitArr();
 										$relID = $assocArr['objectID'];
 										$relUrl = $assocArr['resourceurl'];
 										if(!$relUrl && $assocArr['occidassoc']) $relUrl = $GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$assocArr['occidassoc'];
-										if($relUrl) $relID = '<a href="' . $relUrl . '">' . $relID . '</a>';
+										if($relUrl) $relID = '<a href="' . $relUrl . '" target="_blank">' . ($relID ? $relID : $relUrl) . '</a>';
 										if($relID) echo $relID;
 										if($assocArr['sciname']) echo ' [' . $assocArr['sciname'] . ']';
 										echo '</div>';
@@ -510,9 +516,15 @@ $traitArr = $indManager->getTraitArr();
 							<div id="identby-div" class="identby-div bottom-breathing-room-rel-sm">
 								<?php
 								echo '<label>'.(isset($LANG['DETERMINER'])?$LANG['DETERMINER']:'Determiner').': </label>'.$indManager->activateOrcidID($occArr['identifiedby']);
-								if($occArr['dateidentified']) echo ' ('.$occArr['dateidentified'].')';
 								?>
 							</div>
+							<?php if($occArr['dateidentified']): ?>
+								<div id="identby-div" class="identby-div bottom-breathing-room-rel-sm">
+								<?php 
+									echo '<label>'.$LANG['DATE_DET']  . ': '. '</label>' . $occArr['dateidentified'];
+								?>
+							</div>
+							<?php endif; ?>
 							<?php
 						}
 						if($occArr['taxonremarks']){
@@ -704,7 +716,7 @@ $traitArr = $indManager->getTraitArr();
 						if($occArr['decimallatitude']){
 							?>
 							<div id="latlng-div" class="bottom-breathing-room-rel-sm">
-								<?php echo $LANG['LAT_LNG'] ?>:
+								<?php echo '<label>'.$LANG['LAT_LNG'].':</label> '; ?>
 								<?php
 								echo $occArr['decimallatitude'].'&nbsp;&nbsp;'.$occArr['decimallongitude'];
 								if($occArr['coordinateuncertaintyinmeters']) echo ' +-'.$occArr['coordinateuncertaintyinmeters'].'m.';
@@ -999,12 +1011,16 @@ $traitArr = $indManager->getTraitArr();
 								<?php
 								foreach($iArr as $imgArr){
 									$thumbUrl = $imgArr['tnurl'];
-									if(!$thumbUrl || substr($thumbUrl,0,7)=='process'){
-										if($image = exif_thumbnail($imgArr['lgurl'])){
-											$thumbUrl = 'data:image/jpeg;base64,'.base64_encode($image);
+									if(!$thumbUrl || substr($thumbUrl, 0, 7) == 'process'){
+										if($imgArr['lgurl']){
+											if($image = exif_thumbnail($imgArr['lgurl'])){
+												$thumbUrl = 'data:image/jpeg;base64,' . base64_encode($image);
+											}
 										}
-										elseif($imgArr['url'] && substr($imgArr['url'],0,7)!='process') $thumbUrl = $imgArr['url'];
-										else $thumbUrl = $imgArr['lgurl'];
+										if(!$thumbUrl){
+											if($imgArr['url'] && substr($imgArr['url'], 0, 7) != 'process') $thumbUrl = $imgArr['url'];
+											else $thumbUrl = $imgArr['lgurl'];
+										}
 									}
 									?>
 									<div id="thumbnail-div" class="thumbnail-div">
@@ -1110,7 +1126,7 @@ $traitArr = $indManager->getTraitArr();
 										$otherCatNum = ' (' . trim($otherCatNum, ', ') . ')';
 									}
 									$emailSubject = $DEFAULT_TITLE . ' occurrence: ' . $occArr['catalognumber'] . $otherCatNum;
-									$refPath = $indManager->getDomain().$CLIENT_ROOT.'/collections/individual/index.php?occid='.$occArr['occid'];
+									$refPath = GeneralUtil::getDomain().$CLIENT_ROOT.'/collections/individual/index.php?occid='.$occArr['occid'];
 									$emailBody = $LANG['SPECIMEN_REFERENCED'].': '.$refPath;
 									$emailRef = 'subject=' . urlencode($emailSubject) . '&cc=' . urlencode($ADMIN_EMAIL) . '&body=' . urlencode($emailBody);
 									echo ' (<a href="mailto:' . $collMetadata['email'] . '?' . $emailRef . '">' . $collMetadata['email'] . '</a>)';
@@ -1364,7 +1380,7 @@ $traitArr = $indManager->getTraitArr();
 								if($editArr){
 									?>
 									<section class="fieldset-like">
-										<h1><span><?php echo $LANG['INTERNAL_EDITS']; ?></span></h1>
+										<h2><span><?php echo $LANG['INTERNAL_EDITS']; ?></span></h2>
 										<?php
 										foreach($editArr as $ts => $tsArr){
 											?>

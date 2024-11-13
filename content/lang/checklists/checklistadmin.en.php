@@ -7,6 +7,7 @@ Language: English
 
 include_once('checklist.en.php');
 
+$LANG['MANAGE_CHECKLIST'] = 'Manage Checklist';
 $LANG['NO_PERMISSIONS'] = 'You do not have permission to create a Checklist. Please contact an administrator.';
 $LANG['ERR_DELETING_CHECKLIST'] = 'ERROR deleting checklist';
 $LANG['ERR_ADDING_CHILD'] = 'ERROR adding child checklist link';
@@ -41,6 +42,7 @@ $LANG['CREATECHECKDET'] = 'Create New Checklist';
 $LANG['EDITCHECKDET'] = 'Edit Checklist Details';
 $LANG['CHECKNAME'] = 'Checklist Name';
 $LANG['CHECKTYPE'] = 'Checklist Type';
+$LANG['EXCLUDESPP'] = 'Species Exclusion List';
 $LANG['RARETHREAT'] = 'Rare, threatened, protected species list';
 $LANG['GENCHECK'] = 'General Checklist';
 $LANG['EXTSERVICE'] = 'External Service (e.g., iNaturalist) to associate with this checklist';

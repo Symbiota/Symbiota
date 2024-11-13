@@ -6,14 +6,17 @@ Language: English
 */
 
 include_once($SERVER_ROOT.'/content/lang/collections/misc/sharedterms.en.php');
-
+$LANG['COLLEC_PROFILE'] = 'Collection Profile for';
 $LANG['RSS_FEED'] = 'RSS Feed';
 $LANG['CONTACT'] = 'Contacts';
 $LANG['HOMEPAGE'] = 'Homepage';
 $LANG['MORE_INFO'] = 'More Information';
 $LANG['COLLECTION_SEARCH'] = 'Collection Search Page';
 $LANG['UPDATE_STATISTICS'] = 'Updating statistics related to this collection...';
+$LANG['DEACTIVATED'] = 'Deactivated';
+$LANG['DEACTIVATED_MESSAGE'] = 'Certain management options are only available for Live Managed Datasets. Contact portal administrator if collection needs to be reclassified.';
 $LANG['TOGGLE_MAN'] = "Toggle Manager's Control Panel";
+$LANG['COLL_PROF_FOR'] = 'Collection Profile for';
 $LANG['DAT_EDIT'] = 'Data Editor Control Panel';
 $LANG['SUBMIT_IMAGE_V'] = 'Submit an Image Voucher (observation supported by a photo)';
 $LANG['ADD_NEW_OCCUR'] = 'Add New Occurrence Record';
@@ -113,4 +116,5 @@ $LANG['SEARCH_BY_TAXON'] = 'Search by Taxon';
 $LANG['OCCURENCE_IDENTIFIER'] = 'Catalog Number';
 $LANG['TAXON'] = 'Taxon';
 $LANG['OCCURRENCE_EDITOR'] = 'Edit';
+$LANG['INFO_ALT'] = "Info. icon indicating link to information about import/update";
 ?>

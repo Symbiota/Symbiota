@@ -10,7 +10,9 @@ Date Translated: 2024-02-16
 include_once($SERVER_ROOT.'/content/lang/collections/list.pt.php');
 
 $LANG['COL_RESULTS'] = 'Tabela de Resultados de Pesquisa';
+$LANG['SEARCH_RES_TABLE'] = 'Resultados da Pesquisa (tabela)';
 $LANG['SORT'] = 'Classificar Resultados';
+$LANG['SORT_BY'] = 'Classificar por';
 $LANG['COLLECTION'] = 'Coleção';
 $LANG['SCINAME'] = 'Nome Científico';
 $LANG['COUNTRY'] = 'País';
@@ -30,4 +32,5 @@ $LANG['HAS_IMAGE'] = 'Tem Imagem';
 $LANG['CLICK_SYMB'] = 'Clique no identificador Symbiota na primeira coluna para ver Detalhes Completos do Registro';
 $LANG['NONE_FOUND'] = 'Nenhum registro encontrado correspondente à consulta';
 $LANG['SORT'] = 'Classificar';
+$LANG['SEARCH_RESULTS_TABLE'] = 'Resultados de la búsqueda (tabla)';
 ?>

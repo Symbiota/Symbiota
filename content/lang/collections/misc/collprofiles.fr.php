@@ -6,14 +6,17 @@ Language: Français (French)
 */
 
 include_once($SERVER_ROOT.'/content/lang/collections/misc/sharedterms.fr.php');
-
+$LANG['COLLEC_PROFILE'] = 'Profil de Collection pour';
 $LANG['RSS_FEED'] = 'Flux RSS';
 $LANG['CONTACT'] = 'Contacts';
 $LANG['HOMEPAGE'] = 'Page d\'accueil';
 $LANG['MORE_INFO'] = 'Plus d\'Information';
 $LANG['COLLECTION_SEARCH'] = 'Page de Recherche de Collections';
 $LANG['UPDATE_STATISTICS'] = 'Nous mettons à jour les statistiques relatives à cette collecte...';
+$LANG['DEACTIVATED'] = 'Deactivated';
+$LANG['DEACTIVATED_MESSAGE'] = "Certaines options de gestion ne sont disponibles que pour les ensembles de données gérés en direct. Contactez l'administrateur du portail si la collection doit être reclassée.";
 $LANG['TOGGLE_MAN'] = 'Basculer Panneau de Configuration du Gestionnaire';
+$LANG['COLL_PROF_FOR'] = 'Profil de Collecte pour';
 $LANG['DAT_EDIT'] = "Panneau de Configuration de l'Éditeur de Données";
 $LANG['SUBMIT_IMAGE_V'] = "Soumettre un Échantillon d'Image (observation appuyée par une photo)";
 $LANG['ADD_NEW_OCCUR'] = "Ajouter Nouvel Échantillon d'Occurrence";
@@ -113,4 +116,5 @@ $LANG['SEARCH_BY_TAXON'] = 'Recherche par taxon';
 $LANG['OCCURENCE_IDENTIFIER'] = 'Numéro de Catalogue';
 $LANG['TAXON'] = 'Taxon';
 $LANG['OCCURRENCE_EDITOR'] = 'Modifier';
+$LANG['INFO_ALT'] = "Icône d'information indiquant un lien vers des informations sur l'importation/mise à jour";
 ?>

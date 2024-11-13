@@ -687,7 +687,7 @@
                     }
                 ],
                 "requestBody": {
-                    "description": "Media object to create",
+                    "description": "Media object to be updated",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -933,6 +933,15 @@
                 "operationId": "/api/v2/occurrence/search",
                 "parameters": [
                     {
+                        "name": "collid",
+                        "in": "query",
+                        "description": "collid(s) - collection identifier(s) in portal",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "catalogNumber",
                         "in": "query",
                         "description": "catalogNumber",
@@ -945,6 +954,60 @@
                         "name": "occurrenceID",
                         "in": "query",
                         "description": "occurrenceID",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "family",
+                        "in": "query",
+                        "description": "family",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sciname",
+                        "in": "query",
+                        "description": "Scientific Name - binomen only without authorship",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "recordedBy",
+                        "in": "query",
+                        "description": "Collector/observer of occurrence",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "recordedByLastName",
+                        "in": "query",
+                        "description": "Last name of collector/observer of occurrence",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "recordNumber",
+                        "in": "query",
+                        "description": "Personal number of the collector or observer of the occurrence",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "eventDate",
+                        "in": "query",
+                        "description": "Date as YYYY, YYYY-MM or YYYY-MM-DD",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -978,45 +1041,9 @@
                         }
                     },
                     {
-                        "name": "collid",
-                        "in": "query",
-                        "description": "collid - collection identifier in portal",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
                         "name": "datasetID",
                         "in": "query",
                         "description": "dataset ID within portal",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "family",
-                        "in": "query",
-                        "description": "family",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "sciname",
-                        "in": "query",
-                        "description": "Scientific Name - binomen only without authorship",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "eventDate",
-                        "in": "query",
-                        "description": "Date as YYYY, YYYY-MM or YYYY-MM-DD",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -1172,6 +1199,148 @@
                 }
             }
         },
+        "/api/v2/occurrence/skeletal": {
+            "post": {
+                "tags": [
+                    ""
+                ],
+                "description": "If an existing record can be located within target collection based on matching the input identifier, empty (null) target fields will be updated with Skeletal Data.\r\n\t\t\tIf the target field contains data, it will remain unaltered.\r\n\t\t\tIf multiple records are returned matching the input identifier, data will be added only to the first record.\r\n\t\t\tIf an identifier is not provided or a matching record can not be found, a new Skeletal record will be created and primed with input data.\r\n\t\t\tNote that catalogNumber or otherCatalogNumber must be provided to create a new skeletal record. If processingStatus is not defined, new skeletal records will be set as 'unprocessed'",
+                "operationId": "skeletalImport",
+                "parameters": [
+                    {
+                        "name": "apiToken",
+                        "in": "query",
+                        "description": "API security token to authenticate post action",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "collid",
+                        "in": "query",
+                        "description": "primary key of target collection dataset",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "identifier",
+                        "in": "query",
+                        "description": "catalog number, other identifiers, occurrenceID, or recordID GUID (UUID) used to locate target occurrence occurrence",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "identifierTarget",
+                        "in": "query",
+                        "description": "Target field for matching identifier: catalog number, other identifiers (aka otherCatalogNumbers), GUID (occurrenceID or recordID), occid (primary key for occurrence). If identifier field is null, a new skeletal record will be created, given that a catalog number is provided.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "CATALOGNUMBER",
+                            "enum": [
+                                "CATALOGNUMBER",
+                                "IDENTIFIERS",
+                                "GUID",
+                                "OCCID",
+                                "NONE"
+                            ]
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Occurrence data to be inserted",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "catalogNumber": {
+                                        "description": "Primary catalog number",
+                                        "type": "string",
+                                        "maxLength": 32
+                                    },
+                                    "otherCatalogNumbers": {
+                                        "description": "Additional catalog numbers",
+                                        "type": "string",
+                                        "maxLength": 75
+                                    },
+                                    "sciname": {
+                                        "description": "Scientific name, without the author",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "scientificNameAuthorship": {
+                                        "description": "The authorship information of scientific name",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "family": {
+                                        "description": "Taxonomic family of the scientific name",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "recordedBy": {
+                                        "description": "Primary collector or observer",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "recordNumber": {
+                                        "description": "Identifier given at the time occurrence was recorded; typically the personal identifier of the primary collector or observer",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    },
+                                    "eventDate": {
+                                        "description": "Date the occurrence was collected or observed, or earliest date if a range was provided",
+                                        "type": "string"
+                                    },
+                                    "eventDate2": {
+                                        "description": "Last date the occurrence was collected or observed. Used when a date range is provided",
+                                        "type": "string"
+                                    },
+                                    "country": {
+                                        "description": "The name of the country or major administrative unit",
+                                        "type": "string",
+                                        "maxLength": 64
+                                    },
+                                    "stateProvince": {
+                                        "description": "The name of the next smaller administrative region than country (state, province, canton, department, region, etc.)",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "county": {
+                                        "description": "The full, unabbreviated name of the next smaller administrative region than stateProvince (county, shire, department, etc.",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "processingStatus": {
+                                        "description": "Processing status of the specimen record",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Returns full JSON object of the of media record that was edited"
+                    },
+                    "400": {
+                        "description": "Error: Bad request."
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
         "/api/v2/taxonomy": {
             "get": {
                 "tags": [
@@ -1222,15 +1391,6 @@
                 ],
                 "operationId": "/api/v2/taxonomy/search",
                 "parameters": [
-                    {
-                        "name": "taxon",
-                        "in": "query",
-                        "description": "Taxon searh term",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
                     {
                         "name": "taxon",
                         "in": "query",

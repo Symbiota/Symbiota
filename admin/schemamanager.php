@@ -28,7 +28,7 @@ $IS_ADMIN = true;
 			label{ font-weight:bold; }
 			fieldset{ padding: 15px }
 			fieldset legend{ font-weight:bold; }
-			.info-div{ margin:10px 5px; }
+			.info-div{ margin:5px 5px 20px 5px; }
 			.form-section{ margin: 5px 10px; }
 			button{ margin: 15px; }
 		</style>
@@ -87,8 +87,22 @@ $IS_ADMIN = true;
 					?>
 					<fieldset style="width:800px">
 						<legend>Database Schema Assistant</legend>
-						<div class="info-div">Enter login criteria for database user that has full DDL privileges (e.g. create/alter tables, routines, indexes, etc.).<br>
-						We recommend creating a backup of the database before applying any database patches.</div>
+						<div class="info-div">
+							Enter login for database user who has full DDL privileges (e.g. create/alter tables, routines, indexes, etc.).<br>
+							We recommend creating a backup of the database before applying any database patches.
+						</div>
+						<?php
+						if($curentVersion != '3.1'){
+							if(!is_writable($SERVER_ROOT . '/content/logs/install/')){
+								?>
+								<div class="info-div">
+									<span style="color: orange">WARNING</span>: The log directory (e.g. /content/logs/install/) is not writable by web user.
+									We strongly recommend that you adjust directory permissions as defined within the installation before running installation/update scripts.
+								</div>
+								<?php
+							}
+						}
+						?>
 						<form name="databaseMaintenanceForm" action="schemamanager.php" method="post">
 							<div class="form-section">
 								<label>Schema: </label>
@@ -99,7 +113,7 @@ $IS_ADMIN = true;
 										foreach($schemaPatchArr as $schemaOption){
 											if($schemaOption > $curentVersion) echo '<option value="' . $schemaOption . '">Schema Patch ' . $schemaOption . '</option>';
 										}
-										echo '<option value="">Schema is Current - nothing to do</option>';
+										if($curentVersion == '3.1') echo '<option value="">Schema is Current - nothing to do</option>';
 									}
 									else{
 										echo '<option value="baseInstall">New Install (ver. 3.0)</option>';

@@ -116,21 +116,9 @@ $clArray = $clManager->cleanOutArray($clArray);
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="../js/tinymce/tinymce.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		var clid = <?php echo $clid; ?>;
 		var tabIndex = <?php echo $tabIndex; ?>;
-
-		tinymce.init({
-			selector: "textarea",
-			width: "100%",
-			height: 300,
-			menubar: false,
-			plugins: "link,charmap,code,paste",
-			toolbar : ["bold italic underline | cut copy paste | outdent indent | subscript superscript | undo redo removeformat | link | charmap | code"],
-			default_link_target: "_blank",
-			paste_as_text: true
-		});
 
 		function verifyAddUser(f){
 			if(f.editoruid.value == ""){
@@ -170,8 +158,8 @@ include($SERVER_ROOT.'/includes/header.php');
 	<b><?php echo $LANG['CHECKLIST_ADMIN']; ?></b>
 </div>
 <div id='innertext'>
-	<h1 class="page-heading">Manage Checklist</h1>
-	<div style="color:#990000;font-size:125%;font-weight:bold;margin:0px 10px 10px 0px;">
+	<h1 class="page-heading"><?php echo $LANG['MANAGE_CHECKLIST']; ?></h1>
+	<div style="color:#990000;font-size:20px;font-weight:bold;margin:0px 10px 10px 0px;">
 		<a href="checklist.php?clid=<?php echo $clid . '&pid=' . $pid; ?>">
 			<?php echo $clManager->getClName(); ?>
 		</a>
@@ -237,12 +225,12 @@ include($SERVER_ROOT.'/includes/header.php');
 						echo "<div>" . $LANG['NOEDITOR'] . "</div>\n";
 					}
 					?>
-                    <section class="fieldset-like">
-							<h2><span><?php echo $LANG['ADDNEWUSER']; ?></span></h2>
-						<form name="adduser" action="checklistadmin.php" method="post" onsubmit="return verifyAddUser(this)">
-							<div>
-							    <label for="editoruid"><?php echo $LANG['SELECTUSER']; ?></label>
-								<select id="editoruid" name="editoruid">
+                    <section class="fieldset-like" style="width:fit-content">
+							<h3><span><?php echo $LANG['ADDNEWUSER']; ?></span></h3>
+						<form name="adduser" action="checklistadmin.php" method="post" onsubmit="return verifyAddUser(this)" style="display:flex; gap:0.5rem; align-items: center; flex-wrap: wrap">
+								<div style="display:flex; gap:0.5rem; align-items: center; flex-wrap: nowrap">
+							    <label style="white-space:nowrap"for="editoruid"><?php echo $LANG['SELECTUSER']; ?></label>
+								<select style="width:100%" id="editoruid" name="editoruid">
 									<option value=""><?php echo $LANG['SELECTUSER']; ?></option>
 									<option value="">------------------------------</option>
 									<?php
@@ -252,10 +240,10 @@ include($SERVER_ROOT.'/includes/header.php');
 									}
 									?>
 								</select>
+								</div>
 								<button name="submitaction" type="submit" value="addEditor" aria-label="<?php echo $LANG['ADDEDITOR'];?>"><?php echo $LANG['ADDEDITOR'];?></button>
 								<input type="hidden" name="pid" value="<?php echo $pid; ?>" />
 								<input type="hidden" name="clid" value="<?php echo $clid; ?>" />
-							</div>
 						</form>
 					</section>
 				</div>

@@ -442,11 +442,8 @@ class GlossaryUpload{
 
 	//Setters and getters
 	private function setUploadTargetPath(){
-		$tPath = $GLOBALS["tempDirRoot"];
-		if(!$tPath){
-			$tPath = ini_get('upload_tmp_dir');
-		}
-		if(!$tPath && isset($GLOBALS["TEMP_DIR_ROOT"])){
+		$tPath = ini_get('upload_tmp_dir');
+		if(!$tPath && !empty($GLOBALS['TEMP_DIR_ROOT'])){
 			$tPath = $GLOBALS['TEMP_DIR_ROOT'];
 		}
 		if(!$tPath){
@@ -533,7 +530,7 @@ class GlossaryUpload{
 			);
 			$fixedwordchars=array("'", "'", '"', '"', '-', '...');
 			$retStr = str_replace($badwordchars, $fixedwordchars, $inStr);
-			$retStr = mb_convert_encoding($retStr, $GLOBALS['CHARSET'], mb_detect_encoding($retStr));
+			$retStr = mb_convert_encoding($retStr, $GLOBALS['CHARSET'], mb_detect_encoding($retStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 		}
 		return $retStr;
 	}
