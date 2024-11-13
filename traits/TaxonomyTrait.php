@@ -99,7 +99,7 @@ trait TaxonomyTrait {
 
 	public static function standardizeCultivarEpithet($unstandardizedCultivarEpithet){
 		if(!empty($unstandardizedCultivarEpithet)){
-			$clean_string = preg_replace('/(^["\'“]+)|(["\'”]+$)/', '', $unstandardizedCultivarEpithet);
+			$clean_string = preg_replace('/(^[\'"“”]+)|([\'"“”]+$)/u', '', $unstandardizedCultivarEpithet);
 			return "'" . $clean_string . "'";
 		} else{
 			return '';

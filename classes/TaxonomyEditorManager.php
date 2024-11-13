@@ -226,7 +226,7 @@ class TaxonomyEditorManager extends Manager{
 		$processedTradeName = '';
 		if(array_key_exists('cultivarEpithet', $postArr) && !empty($postArr['cultivarEpithet'])){
 			$processedCultivarEpithet = $this->standardizeCultivarEpithet($postArr['cultivarEpithet']);
-			$sciname .= " '". $processedCultivarEpithet . "'";
+			$sciname .= " ". $processedCultivarEpithet;
 		}
 		if(array_key_exists('tradeName', $postArr) && !empty($postArr['tradeName'])){
 			$processedTradeName = $this->standardizeTradeName($postArr['tradeName']);
