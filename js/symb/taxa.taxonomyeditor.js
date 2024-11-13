@@ -6,7 +6,7 @@ $(document).ready(function () {
   form.querySelectorAll("input, select, textarea").forEach((element) => {
     const debouncedChange = debounce(() => {
       updateFullname(form);
-      handleFieldChange(form, true);
+      handleFieldChange(form, true, "taxoneditsubmit");
     }, 2000);
     element.addEventListener("input", debouncedChange);
     element.addEventListener("change", debouncedChange);
@@ -166,23 +166,24 @@ function showOnlyRelevantFields(rankId) {
 }
 
 function updateFullname(f) {
-  let sciname =
-    f.unitind1.value +
-    f.unitname1.value +
-    " " +
-    f.unitind2.value +
-    f.unitname2.value +
-    " ";
-  if (f.unitname3.value) {
-    sciname = sciname + (f.unitind3.value + " " + f.unitname3.value).trim();
-  }
-  if (f.cultivarEpithet.value) {
-    sciname += " " + standardizeCultivarEpithet(f.cultivarEpithet.value);
-  }
-  if (f.tradeName.value) {
-    sciname += " " + standardizeTradeName(f.tradeName.value);
-  }
-  f.sciname.value = sciname.trim();
+  updateFullnameCore(f);
+  // let sciname =
+  //   f.unitind1.value +
+  //   f.unitname1.value +
+  //   " " +
+  //   f.unitind2.value +
+  //   f.unitname2.value +
+  //   " ";
+  // if (f.unitname3.value) {
+  //   sciname = sciname + (f.unitind3.value + " " + f.unitname3.value).trim();
+  // }
+  // if (f.cultivarEpithet.value) {
+  //   sciname += " " + standardizeCultivarEpithet(f.cultivarEpithet.value);
+  // }
+  // if (f.tradeName.value) {
+  //   sciname += " " + standardizeTradeName(f.tradeName.value);
+  // }
+  // f.sciname.value = sciname.trim();
   checkNameExistence(f);
 }
 
@@ -235,47 +236,8 @@ function validateTaxonEditForm(f) {
 }
 
 async function verifyLoadForm(f, silent = false) {
-  verifyLoadFormCore(f, silent); // wrapped because verifyLoadForm referenced in other shared functions with taxonomy creation
-}
-
-function checkNameExistence(f, silent = false) {
-  return new Promise((resolve, reject) => {
-    if (!f?.sciname?.value || !f?.rankid?.value) {
-      resolve(false);
-    } else {
-      $.ajax({
-        type: "POST",
-        url: "rpc/gettid.php",
-        data: {
-          sciname: f.sciname.value,
-          rankid: f.rankid.value,
-          author: f.author.value,
-        },
-        success: function (msg) {
-          if (msg != "0") {
-            if (!silent) {
-              alert(
-                "Taxon " +
-                  f.sciname.value +
-                  " " +
-                  f.author.value +
-                  " (" +
-                  msg +
-                  ") already exists in database"
-              );
-            }
-            resolve(false);
-          } else {
-            resolve(true);
-          }
-        },
-        error: function (error) {
-          console.error("Error during AJAX request", error);
-          reject(error);
-        },
-      });
-    }
-  });
+  console.log("deleteMe verifyLoadForm b entered");
+  return verifyLoadFormCore(f, silent); // wrapped because verifyLoadForm referenced in other shared functions with taxonomy creation
 }
 
 function verifyChangeToNotAcceptedForm(f) {

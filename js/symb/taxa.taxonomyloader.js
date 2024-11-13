@@ -4,7 +4,10 @@ $(document).ready(function () {
 
   const form = document.getElementById("loaderform");
   form.querySelectorAll("input, select, textarea").forEach((element) => {
-    const debouncedChange = debounce(() => handleFieldChange(form, true), 2000);
+    const debouncedChange = debounce(
+      () => handleFieldChange(form, true, "submitaction"),
+      2000
+    );
     element.addEventListener("input", debouncedChange);
     element.addEventListener("change", debouncedChange);
   });
@@ -60,32 +63,39 @@ $(document).ready(function () {
 });
 
 async function verifyLoadForm(f, silent = false) {
-  verifyLoadFormCore(f, silent);
-  if (f.parentname.value == "" && rankId > "10") {
-    alert("Parent taxon required");
-    return false;
-  }
-  if (f.parenttid.value == "" && rankId > "10") {
-    alert(
-      "Parent identifier is not set! Make sure to select parent taxon from the list"
-    );
-    return false;
-  }
-
-  //If name is not accepted, verify accetped name
-  var accStatusObj = f.acceptstatus;
-  if (accStatusObj[0].checked == false) {
-    if (f.acceptedstr.value == "") {
-      alert("Accepted name needs to have a value");
+  console.log("deleteMe verifyLoadForm a entered");
+  const rankId = f.rankid.value;
+  const coreVerify = await verifyLoadFormCore(f, silent);
+  console.log("deleteMe coreVerify is: ");
+  console.log(coreVerify);
+  if (coreVerify) {
+    if (f.parentname.value == "" && rankId > "10") {
+      alert("Parent taxon required");
       return false;
     }
-  }
+    if (f.parenttid.value == "" && rankId > "10") {
+      alert(
+        "Parent identifier is not set! Make sure to select parent taxon from the list"
+      );
+      return false;
+    }
 
-  return true;
+    //If name is not accepted, verify accetped name
+    var accStatusObj = f.acceptstatus;
+    if (accStatusObj[0].checked == false) {
+      if (f.acceptedstr.value == "") {
+        alert("Accepted name needs to have a value");
+        return false;
+      }
+    }
+    return true;
+  } else {
+    return false;
+  }
 }
 
 function parseName(f) {
-  handleFieldChange(f, false);
+  handleFieldChange(f, false, "submitaction");
   if (!f.quickparser.value) {
     return;
   }
@@ -285,23 +295,24 @@ function setParent(parentName, unitind1) {
 }
 
 function updateFullname(f) {
-  let sciname =
-    f.unitind1.value +
-    f.unitname1.value +
-    " " +
-    f.unitind2.value +
-    f.unitname2.value +
-    " ";
-  if (f.unitname3.value) {
-    sciname = sciname + (f.unitind3.value + " " + f.unitname3.value).trim();
-  }
-  if (f.cultivarEpithet.value) {
-    sciname += " " + standardizeCultivarEpithet(f.cultivarEpithet.value);
-  }
-  if (f.tradeName.value) {
-    sciname += " " + standardizeTradeName(f.tradeName.value);
-  }
-  f.sciname.value = sciname.trim();
+  updateFullnameCore(f);
+  // let sciname =
+  //   f.unitind1.value +
+  //   f.unitname1.value +
+  //   " " +
+  //   f.unitind2.value +
+  //   f.unitname2.value +
+  //   " ";
+  // if (f.unitname3.value) {
+  //   sciname = sciname + (f.unitind3.value + " " + f.unitname3.value).trim();
+  // }
+  // if (f.cultivarEpithet.value) {
+  //   sciname += " " + standardizeCultivarEpithet(f.cultivarEpithet.value);
+  // }
+  // if (f.tradeName.value) {
+  //   sciname += " " + standardizeTradeName(f.tradeName.value);
+  // }
+  // f.sciname.value = sciname.trim();
   const scinameDisplay = document.getElementById("scinamedisplay");
   scinameDisplay.textContent = sciname.trim();
   checkNameExistence(f);
@@ -328,44 +339,6 @@ function showOnlyRelevantFields(rankId) {
   const div5Display = document.getElementById("unit5Display");
   const authorDiv = document.getElementById("author-div");
   const parentNode = div5Hide.parentNode;
-
-  // rankIdsToHideUnit2From = {
-  //   "non-ranked node": 0,
-  //   organism: 1,
-  //   kingdom: 10,
-  //   subkingdom: 20,
-  //   division: 30,
-  //   subdivision: 40,
-  //   superclass: 50,
-  //   class: 60,
-  //   subclass: 70,
-  //   order: 100,
-  //   suborder: 110,
-  //   family: 140,
-  //   subfamily: 150,
-  //   tribe: 160,
-  //   subtribe: 170,
-  //   genus: 180,
-  //   subgenus: 190,
-  //   section: 200,
-  //   subsection: 210,
-  // };
-  // const { ...rest } = rankIdsToHideUnit2From;
-  // rankIdsToHideUnit3From = { ...rest, species: 220 };
-  // const { ...rest2 } = rankIdsToHideUnit3From;
-
-  // rankIdsToHideUnit4From = {
-  //   ...rest2,
-  //   subspecies: 230,
-  //   variety: 240,
-  //   subvariety: 250,
-  //   form: 260,
-  //   subform: 270,
-  // };
-  // const { ...rest3 } = rankIdsToHideUnit4From;
-  // rankIdsToHideUnit5From = { ...rest3 };
-
-  // allRankIds = { ...rest3, cultivar: 300 };
 
   if (Object.values(rankIdsToHideUnit2From).includes(rankId)) {
     div2Hide.style.display = "none";
