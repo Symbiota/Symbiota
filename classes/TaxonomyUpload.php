@@ -1,6 +1,6 @@
 <?php
 include_once($SERVER_ROOT.'/config/dbconnection.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
+include_once($SERVER_ROOT.'/classes/TaxonomyUtil.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyHarvester.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
 
@@ -170,7 +170,7 @@ class TaxonomyUpload{
 									$inputArr['rankid'] = $id;
 								}
 							}
-							if($infraArr = TaxonomyUtilities::cleanInfra($inputArr['unitind3'])){
+							if($infraArr = TaxonomyUtil::cleanInfra($inputArr['unitind3'])){
 								$inputArr['unitind3'] = $infraArr['infra'];
 								$inputArr['rankid'] = $infraArr['rankid'];
 							}
@@ -201,7 +201,7 @@ class TaxonomyUpload{
 							if(isset($inputArr['acceptedstr'])){
 								if($this->kingdomName == 'Animalia') $inputArr['acceptedstr'] = str_replace(array(' subsp. ',' ssp. ',' var. ',' f. ',' fo. '), ' ', $inputArr['acceptedstr']);
 							}
-							$sciArr = TaxonomyUtilities::parseScientificName($inputArr['scinameinput'],$this->conn,(isset($inputArr['rankid'])?$inputArr['rankid']:0),$this->kingdomName);
+							$sciArr = TaxonomyUtil::parseScientificName($inputArr['scinameinput'],$this->conn,(isset($inputArr['rankid'])?$inputArr['rankid']:0),$this->kingdomName);
 							foreach($sciArr as $sciKey => $sciValue){
 								if(!array_key_exists($sciKey, $inputArr) && $sciValue) $inputArr[$sciKey] = $sciValue;
 							}
@@ -217,13 +217,16 @@ class TaxonomyUpload{
 								if($k == 'author') $sql2 .= ',"'.($inValue?$inValue:'').'"';
 								else $sql2 .= ','.($inValue?'"'.$inValue.'"':'NULL');
 							}
-							$sql = 'INSERT INTO uploadtaxa('.substr($sql1,1).') VALUES('.substr($sql2,1).')';
+							$sql = 'INSERT IGNORE INTO uploadtaxa('.substr($sql1,1).') VALUES('.substr($sql2,1).')';
 							//echo '<div>'.$sql.'</div>';
 							if($this->conn->query($sql)){
 								if($recordCnt%1000 == 0){
 									$this->outputMsg('Upload count: '.$recordCnt,1);
 									ob_flush();
 									flush();
+								}
+								if($warnings = $this->conn->get_warnings()){
+									$this->outputMsg('WARNING at line ' . $recordCnt . ': ' . $warnings->message, 2);
 								}
 							}
 							else{
@@ -249,7 +252,7 @@ class TaxonomyUpload{
 						$this->outputMsg('ERROR loading taxonunit: '.$this->conn->error);
 					}
 				}
-				$this->outputMsg($recordCnt.' taxon records pre-processed');
+				$this->outputMsg(($recordCnt - 1) . ' taxon records pre-processed');
 			}
 			else{
 				$this->outputMsg('ERROR: Scientific name is not mapped to &quot;scinameinput&quot;');
@@ -814,7 +817,7 @@ class TaxonomyUpload{
 		}while($loopCnt < 30);
 
 		$this->outputMsg('House cleaning... ');
-		TaxonomyUtilities::buildHierarchyEnumTree($this->conn, $this->taxAuthId);
+		TaxonomyUtil::buildHierarchyEnumTree($this->conn, $this->taxAuthId);
 
 		//Update occurrences with new tids
 		$occurMaintenance = new OccurrenceMaintenance($this->conn);
@@ -1144,34 +1147,22 @@ class TaxonomyUpload{
 
 	private function encodeString($inStr){
 		global $CHARSET;
-		$retStr = $inStr;
 		//Get rid of UTF-8 curly smart quotes and dashes
-		$badwordchars=array("\xe2\x80\x98", // left single quote
-							"\xe2\x80\x99", // right single quote
-							"\xe2\x80\x9c", // left double quote
-							"\xe2\x80\x9d", // right double quote
-							"\xe2\x80\x94", // em dash
-							"\xe2\x80\xa6" // elipses
+		$badwordchars=array(
+			"\xe2\x80\x98", // left single quote
+			"\xe2\x80\x99", // right single quote
+			"\xe2\x80\x9c", // left double quote
+			"\xe2\x80\x9d", // right double quote
+			"\xe2\x80\x94", // em dash
+			"\xe2\x80\xa6" // elipses
 		);
 		$fixedwordchars=array("'", "'", '"', '"', '-', '...');
-		$inStr = str_REPLACE($badwordchars, $fixedwordchars, $inStr);
+		$inStr = str_replace($badwordchars, $fixedwordchars, $inStr);
 
 		if($inStr){
-			if(strtolower($CHARSET) == "utf-8" || strtolower($CHARSET) == "utf8"){
-				//$this->outputMsg($inStr.': '.mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true);
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) == "ISO-8859-1"){
-					$retStr = utf8_encode($inStr);
-					//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
-				}
-			}
-			elseif(strtolower($CHARSET) == "iso-8859-1"){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') == "UTF-8"){
-					$retStr = utf8_decode($inStr);
-					//$retStr = iconv("UTF-8","ISO-8859-1//TRANSLIT",$inStr);
-				}
-			}
+			$inStr = mb_convert_encoding($inStr, $CHARSET, mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
  		}
-		return $retStr;
+ 		return $inStr;
 	}
 }
 ?>

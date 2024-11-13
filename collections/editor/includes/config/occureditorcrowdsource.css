@@ -1,17 +1,14 @@
 body{
 	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
 }
 
 #innertext{
 	padding:	10px;
-	font-size:	12px;
 	background-color: #ffffff;;
 }
 
 #titleDiv{
 	font-weight: bold;
-	font-size: 16px;
 	width: 595px;
 }
 
@@ -22,18 +19,19 @@ body{
 
 #occdiv{
 	position: relative;
-	width: 595px;
-	height: 600px;
 }
 
 #admindiv{
 	width: 595px;
 }
 
+#innertext {
+	max-width: 70%;
+	width: fit-content;
+}
+
 #occedittabs{
 	font-family: Arial,Helvetica,sans-serif;
-	font-size: 12px;
-	height: 730px;
 }
 
 
@@ -511,6 +509,7 @@ body{
 }
 
 #cultivationStatusDiv{
+	width:100%;
 	float: left;
 	margin-top:2px;
 }
@@ -638,5 +637,5 @@ img.editimg {
 
 table { 
 	font-family: 	Arial, Helvetica, sans-serif; 
-	font-size: 		12px;
+	/*font-size: 		12px;*/
 }

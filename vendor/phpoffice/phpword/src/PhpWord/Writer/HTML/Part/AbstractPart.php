@@ -11,15 +11,14 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\HTML\Part;
 
-use Laminas\Escaper\Escaper;
 use PhpOffice\PhpWord\Exception\Exception;
-use PhpOffice\PhpWord\Writer\AbstractWriter;
+use PhpOffice\PhpWord\Writer\HTML;
 
 /**
  * @since 0.11.0
@@ -27,43 +26,29 @@ use PhpOffice\PhpWord\Writer\AbstractWriter;
 abstract class AbstractPart
 {
     /**
-     * @var \PhpOffice\PhpWord\Writer\AbstractWriter
+     * @var ?HTML
      */
     private $parentWriter;
-
-    /**
-     * @var \Laminas\Escaper\Escaper
-     */
-    protected $escaper;
-
-    public function __construct()
-    {
-        $this->escaper = new Escaper();
-    }
 
     /**
      * @return string
      */
     abstract public function write();
 
-    /**
-     * @param \PhpOffice\PhpWord\Writer\AbstractWriter $writer
-     */
-    public function setParentWriter(AbstractWriter $writer = null)
+    public function setParentWriter(?HTML $writer = null): void
     {
         $this->parentWriter = $writer;
     }
 
     /**
-     * @throws \PhpOffice\PhpWord\Exception\Exception
-     *
-     * @return \PhpOffice\PhpWord\Writer\AbstractWriter
+     * @return HTML
      */
     public function getParentWriter()
     {
         if ($this->parentWriter !== null) {
             return $this->parentWriter;
         }
+
         throw new Exception('No parent WriterInterface assigned.');
     }
 }

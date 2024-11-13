@@ -1,6 +1,7 @@
 <?php
 include_once('Manager.php');
 include_once('ImageShared.php');
+include_once('utilities/GeneralUtil.php');
 
 class ImageCleaner extends Manager{
 
@@ -429,7 +430,7 @@ class ImageCleaner extends Manager{
 	}
 
 	private function getRemoteImageSql($postArr){
-		$domain = $this->getDomain();
+		$domain = GeneralUtil::getDomain();
 		$sql = 'FROM images i INNER JOIN omoccurrences o ON i.occid = o.occid '.
 			'WHERE (o.collid = '.$this->collid.') AND (i.thumbnailurl LIKE "%'.$domain.'/%" OR i.thumbnailurl LIKE "/%") '.
 			'AND IFNULL(i.originalurl,url) LIKE "http%" AND IFNULL(i.originalurl,url) NOT LIKE "%'.$domain.'/%" ';

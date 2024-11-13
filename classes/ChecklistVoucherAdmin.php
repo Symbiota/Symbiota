@@ -492,16 +492,18 @@ class ChecklistVoucherAdmin extends Manager {
 
 	//Data mod functions
 	protected function insertChecklistTaxaLink($tid, $clid = null, $morpho = ''){
-		$status = false;
+		$clTaxaID = false;
 		if(!$clid) $clid = $this->clid;
 		if(is_numeric($tid) && is_numeric($clid)){
 			$inventoryManager = new ImInventories();
 			$inputArr = array('tid' => $tid, 'clid' => $clid);
 			if($morpho) $inputArr['morphoSpecies'] = $morpho;
-			$status = $inventoryManager->insertChecklistTaxaLink($inputArr);
-			if(!$status) $this->errorMessage = $inventoryManager->getErrorMessage();
+			if($inventoryManager->insertChecklistTaxaLink($inputArr)){
+				$clTaxaID = $inventoryManager->getPrimaryKey();
+			}
+			else $this->errorMessage = $inventoryManager->getErrorMessage();
 		}
-		return $status;
+		return $clTaxaID;
 	}
 
 	protected function insertVoucher($clTaxaID, $occid, $editorNotes = null, $notes = null){
@@ -784,13 +786,13 @@ class ChecklistVoucherAdmin extends Manager {
 		$retStr = $inStr;
 		if($inStr && $charSetSource){
 			if($charSetOut == 'UTF-8'){
-				$retStr = mb_convert_encoding($inStr, 'UTF-8', mb_detect_encoding($inStr));
+				$retStr = mb_convert_encoding($inStr, 'UTF-8', mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 			elseif($charSetOut == 'ISO-8859-1'){
-				$retStr = mb_convert_encoding($inStr, 'ISO-8859-1', mb_detect_encoding($inStr));
+				$retStr = mb_convert_encoding($inStr, 'ISO-8859-1', mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 			else{
-				$retStr = mb_convert_encoding($inStr, $charSetOut, mb_detect_encoding($inStr));
+				$retStr = mb_convert_encoding($inStr, $charSetOut, mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 		}
 		return $retStr;

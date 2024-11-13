@@ -1,7 +1,9 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/KeyCharAdmin.php');
+
 header("Content-Type: text/html; charset=".$CHARSET);
+
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../ident/admin/index.php');
 
@@ -322,7 +324,7 @@ if(!$cid) header('Location: index.php');
 							</div>
 							<div style="padding-top:8px;clear:both;">
 								<b>Help URL</b><br />
-								<input type="text" name="helpurl" maxlength="500" style="width:80%;" value="<?php echo $charArr['helpurl']; ?>" />
+								<input type="text" name="helpurl" maxlength="500" style="width:90%;" value="<?php echo $charArr['helpurl']; ?>" />
 								<?php
 								if($charArr['helpurl'] && substr($charArr['helpurl'],0,4) == 'http') echo '<a href="' . $charArr['helpurl'] . '" target="_blank"><img src="../../images/link2.png" style="width:1em" ></a>';
 								?>
@@ -333,7 +335,7 @@ if(!$cid) header('Location: index.php');
 								?>
 								<div style="padding-top:8px;clear:both;">
 									<b>Glossary link</b><br />
-									<select name="glossid">
+									<select name="glossid" style="max-width: 90%">
 										<option value="">------------------------</option>
 										<?php
 										foreach($glossaryArr as $glossArr){
@@ -352,11 +354,11 @@ if(!$cid) header('Location: index.php');
 							?>
 							<div style="padding-top:8px;">
 								<b>Description</b><br />
-								<input type="text" name="description" maxlength="255" style="width:80%;" value="<?php echo $charArr['description']; ?>" />
+								<input type="text" name="description" maxlength="255" style="width:90%;" value="<?php echo $charArr['description']; ?>" />
 							</div>
 							<div style="padding-top:8px;">
 								<b>Notes</b><br />
-								<input type="text" name="notes" maxlength="255" style="width:80%;" value="<?php echo $charArr['notes']; ?>" />
+								<input type="text" name="notes" maxlength="255" style="width:90%;" value="<?php echo $charArr['notes']; ?>" />
 							</div>
 							<div style="padding-top:8px;">
 								<b>Sort Sequence</b><br />
@@ -391,7 +393,7 @@ if(!$cid) header('Location: index.php');
 								</div>
 								<div style="padding-top:4px;">
 									<b>Description</b><br />
-									<input type="text" name="description" maxlength="255" style="width:80%;" />
+									<input type="text" name="description" maxlength="255" style="width:90%;" />
 								</div>
 								<?php
 								if($glossaryArr){
@@ -414,7 +416,7 @@ if(!$cid) header('Location: index.php');
 								?>
 								<div style="padding-top:4px;">
 									<b>Notes</b><br />
-									<input type="text" name="notes" style="width:80%;" />
+									<input type="text" name="notes" style="width:90%;" />
 								</div>
 								<div style="padding-top:4px;">
 									<b>Sort Sequence</b><br />
@@ -455,14 +457,14 @@ if(!$cid) header('Location: index.php');
 											</div>
 											<div style="padding-top:2px;">
 												<b>Description</b><br />
-												<input type="text" name="description" maxlength="255" style="width:80%;" value="<?php echo $stateArr['description']; ?>"/>
+												<input type="text" name="description" maxlength="255" style="width:90%;" value="<?php echo $stateArr['description']; ?>"/>
 											</div>
 											<?php
 											if($glossaryArr){
 												?>
 												<div style="padding-top:8px;clear:both;">
 													<b>Glossary link</b><br />
-													<select name="glossid">
+													<select name="glossid" style="max-width: 90%">
 														<option value="">------------------------</option>
 														<?php
 														foreach($glossaryArr as $glossArr){
@@ -481,7 +483,7 @@ if(!$cid) header('Location: index.php');
 											?>
 											<div style="padding-top:2px;">
 												<b>Notes</b><br />
-												<input type="text" name="notes" style="width:80%;" value="<?php echo $stateArr['notes']; ?>" />
+												<input type="text" name="notes" style="width:90%;" value="<?php echo $stateArr['notes']; ?>" />
 											</div>
 											<div style="padding-top:2px;">
 												<div style="float:right;">

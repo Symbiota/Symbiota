@@ -2,8 +2,8 @@
 if(isset($SERVER_ROOT) && $SERVER_ROOT){
 	include_once($SERVER_ROOT.'/config/dbconnection.php');
 	include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
-	include_once($SERVER_ROOT.'/classes/UuidFactory.php');
 	include_once($SERVER_ROOT.'/classes/ImageShared.php');
+	include_once($SERVER_ROOT . '/classes/GuidManager.php');
 }
 
 class ImageLocalProcessor {
@@ -1684,10 +1684,10 @@ class ImageLocalProcessor {
 			$occurMain->__destruct();
 
 			$this->logOrEcho('Populating recordID UUIDs for all records...');
-			$uuidManager = new UuidFactory($this->conn);
-			$uuidManager->setSilent(1);
-			$uuidManager->populateGuids();
-			$uuidManager->__destruct();
+			$guidManager = new GuidManager($this->conn);
+			$guidManager->setSilent(1);
+			$guidManager->populateGuids();
+			$guidManager->__destruct();
 			$this->logOrEcho('Stats update completed');
 		}
 	}
@@ -2167,7 +2167,7 @@ class ImageLocalProcessor {
 	private function encodeString($inStr){
 		$retStr = trim($inStr);
 		if($inStr){
-			$retStr = mb_convert_encoding($inStr, $GLOBALS['CHARSET'], mb_detect_encoding($inStr));
+			$retStr = mb_convert_encoding($inStr, $GLOBALS['CHARSET'], mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 		}
 		return $retStr;
 	}

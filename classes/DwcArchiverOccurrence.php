@@ -1,6 +1,8 @@
 <?php
 // Only needed for symbiotaAssociations version number.
-include_once($SERVER_ROOT . '/classes/OccurrenceUtilities.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+
 class DwcArchiverOccurrence extends Manager{
 
 	private $occurDefArr = array();
@@ -527,7 +529,7 @@ class DwcArchiverOccurrence extends Manager{
 				// Build symbiotaAssociations array
 				$symbiotaAssociations = array();
 				$symbiotaAssociations['type'] = 'symbiotaAssociations';
-				$symbiotaAssociations['version'] = OccurrenceUtilities::$assocOccurVersion;
+				$symbiotaAssociations['version'] = OccurrenceUtil::$assocOccurVersion;
 				$symbiotaAssociations['associations'] = array();
 
 				// Add the symbiotaAssociations array
@@ -820,7 +822,7 @@ class DwcArchiverOccurrence extends Manager{
 	}
 
 	public function setServerDomain(){
-		if(!$this->serverDomain) $this->serverDomain = $this->getDomain();
+		if(!$this->serverDomain) $this->serverDomain = GeneralUtil::getDomain();
 	}
 
 	//Setter and getter
