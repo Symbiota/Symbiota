@@ -337,7 +337,7 @@ class EOLManager {
  		$retStr = $inStr;
  		if($retStr){
  			$retStr = trim($inStr);
- 			$retStr = mb_convert_encoding($retStr, $CHARSET, mb_detect_encoding($retStr));
+ 			$retStr = mb_convert_encoding($retStr, $CHARSET, mb_detect_encoding($retStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
  		}
 		return $retStr;
 	}

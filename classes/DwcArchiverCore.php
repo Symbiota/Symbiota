@@ -5,10 +5,11 @@ include_once($SERVER_ROOT . '/classes/DwcArchiverDetermination.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverImage.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverAttribute.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverMaterialSample.php');
-include_once($SERVER_ROOT . '/classes/UuidFactory.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceTaxaManager.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceAccessStats.php');
 include_once($SERVER_ROOT . '/classes/PortalIndex.php');
+include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 class DwcArchiverCore extends Manager{
 
@@ -436,7 +437,7 @@ class DwcArchiverCore extends Manager{
 			}
 			if (isset($dwcArray['occurrenceID']) || (isset($dwcArray['catalogNumber']) && isset($dwcArray['collectionCode']))) {
 				$occurrenceid = $dwcArray['occurrenceID'];
-				if (UuidFactory::is_valid($occurrenceid)) {
+				if (UuidFactory::isValid($occurrenceid)) {
 					$occurrenceid = "urn:uuid:$occurrenceid";
 				} else {
 					$catalogNumber = $dwcArray['catalogNumber'];
@@ -461,7 +462,7 @@ class DwcArchiverCore extends Manager{
 								break;
 							case "collectionID":
 								// RDF Guide Section 2.3.3 owl:sameAs for urn:lsid and resolvable IRI.
-								if (stripos("urn:uuid:", $value) === false && UuidFactory::is_valid($value)) {
+								if (stripos("urn:uuid:", $value) === false && UuidFactory::isValid($value)) {
 									$lsid = "urn:uuid:$value";
 								} elseif (stripos("urn:lsid:biocol.org", $value) === 0) {
 									$lsid = "http://biocol.org/$value";
@@ -512,7 +513,7 @@ class DwcArchiverCore extends Manager{
 								break;
 							default:
 								if (isset($occurTermArr[$key])) {
-									//$ns = RdfUtility::namespaceAbbrev($occurTermArr[$key]);
+									//$ns = RdfUtil::namespaceAbbrev($occurTermArr[$key]);
 									//$returnvalue .= $separator . "   " . $ns . " \"$value\"";
 								}
 						}
@@ -560,7 +561,7 @@ class DwcArchiverCore extends Manager{
 			}
 			if (isset($dwcArray['occurrenceID']) || (isset($dwcArray['catalogNumber']) && isset($dwcArray['collectionCode']))) {
 				$occurrenceid = $dwcArray['occurrenceID'];
-				if (UuidFactory::is_valid($occurrenceid)) {
+				if (UuidFactory::isValid($occurrenceid)) {
 					$occurrenceid = "urn:uuid:$occurrenceid";
 				} else {
 					$catalogNumber = $dwcArray['catalogNumber'];
@@ -591,7 +592,7 @@ class DwcArchiverCore extends Manager{
 								break;
 							case "collectionID":
 								// RDF Guide Section 2.3.3 owl:sameAs for urn:lsid and resolvable IRI.
-								if (stripos("urn:uuid:", $value) === false && UuidFactory::is_valid($value)) {
+								if (stripos("urn:uuid:", $value) === false && UuidFactory::isValid($value)) {
 									$lsid = "urn:uuid:$value";
 								} elseif (stripos("urn:lsid:biocol.org", $value) === 0) {
 									$lsid = "http://biocol.org/$value";
@@ -649,7 +650,7 @@ class DwcArchiverCore extends Manager{
 								break;
 							default:
 								if (isset($occurTermArr[$key])) {
-									//$ns = RdfUtility::namespaceAbbrev($occurTermArr[$key]);
+									//$ns = RdfUtil::namespaceAbbrev($occurTermArr[$key]);
 									//$elem = $newDoc->createElement($ns);
 									//$elem->appendChild($newDoc->createTextNode($value));
 								}
@@ -1197,7 +1198,7 @@ class DwcArchiverCore extends Manager{
 				}
 			}
 		}
-		$emlArr = $this->utf8EncodeArr($emlArr);
+		$this->encodeArr($emlArr);
 		return $emlArr;
 	}
 
@@ -1395,7 +1396,7 @@ class DwcArchiverCore extends Manager{
 		//Collection data
 		if (array_key_exists('collMetadata', $emlArr)) {
 			foreach ($emlArr['collMetadata'] as $k => $collArr) {
-				$collArr = $this->utf8EncodeArr($collArr);
+				$this->encodeArr($collArr);
 				$collElem = $newDoc->createElement('collection');
 				if (isset($collArr['attr']) && $collArr['attr']) {
 					$attrArr = $collArr['attr'];
@@ -1520,7 +1521,8 @@ class DwcArchiverCore extends Manager{
 			'ORDER BY c.SortSeq, c.CollectionName';
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_assoc()) {
-			$cArr = $this->utf8EncodeArr($r);
+			$cArr = $r;
+			$this->encodeArr($cArr);
 			$itemElem = $newDoc->createElement('item');
 			$itemAttr = $newDoc->createAttribute('collid');
 			$itemAttr->value = $cArr['collid'];
@@ -2011,7 +2013,7 @@ class DwcArchiverCore extends Manager{
 		}
 
 		$DEFAULT_TITLE = $GLOBALS['DEFAULT_TITLE'];
-		$SERVER_HOST = $this->getDomain();
+		$SERVER_HOST = GeneralUtil::getDomain();
 		$CLIENT_ROOT = $GLOBALS['CLIENT_ROOT'];
 
 		// Decides which citation format to use according to $citationVarArr
@@ -2058,7 +2060,7 @@ class DwcArchiverCore extends Manager{
 			include $GLOBALS['SERVER_ROOT'] . '/includes/citation' . $citationFormat . '_template.php';
 		}
 		$output .= ob_get_clean();
-		$output .= "\n\nFor more information on citation formats, please see the following page: " . $this->getDomain() . $GLOBALS['CLIENT_ROOT'] . "/includes/usagepolicy.php";
+		$output .= "\n\nFor more information on citation formats, please see the following page: " . GeneralUtil::getDomain() . $GLOBALS['CLIENT_ROOT'] . "/includes/usagepolicy.php";
 
 		fwrite($fh, $output);
 
@@ -2212,11 +2214,11 @@ class DwcArchiverCore extends Manager{
 	}
 
 	public function setPublicationGuid($guid){
-		if(UuidFactory::is_valid($guid)) $this->publicationGuid = $guid;
+		if(UuidFactory::isValid($guid)) $this->publicationGuid = $guid;
 	}
 
 	public function setRequestPortalGuid($guid){
-		if(UuidFactory::is_valid($guid)) $this->requestPortalGuid = $guid;
+		if(UuidFactory::isValid($guid)) $this->requestPortalGuid = $guid;
 	}
 
 	public function setCharSetOut($cs){
@@ -2235,7 +2237,7 @@ class DwcArchiverCore extends Manager{
 		if ($domain) {
 			$this->serverDomain = $domain;
 		} elseif (!$this->serverDomain) {
-			$this->serverDomain = $this->getDomain();
+			$this->serverDomain = GeneralUtil::getDomain();
 		}
 	}
 
@@ -2244,32 +2246,20 @@ class DwcArchiverCore extends Manager{
 		return $this->serverDomain;
 	}
 
-	protected function utf8EncodeArr($inArr){
-		$retArr = $inArr;
-		if ($this->charSetSource == 'ISO-8859-1') {
-			foreach ($retArr as $k => $v) {
+	protected function encodeArr(&$inArr){
+		if ($this->charSetSource && $this->charSetOut != $this->charSetSource) {
+			foreach ($inArr as $k => $v) {
 				if (is_array($v)) {
-					$retArr[$k] = $this->utf8EncodeArr($v);
-				} elseif (is_string($v)) {
-					if (mb_detect_encoding($v, 'UTF-8,ISO-8859-1', true) == "ISO-8859-1") {
-						$retArr[$k] = utf8_encode($v);
-					}
-				} else {
-					$retArr[$k] = $v;
+					$this->encodeArr($v);
+					$inArr[$k] = $v;
+				}
+				else{
+					$inArr[$k] = $this->encodeStr($v);
 				}
 			}
 		}
-		return $retArr;
 	}
-
-	private function encodeArr(&$inArr){
-		if ($this->charSetSource && $this->charSetOut != $this->charSetSource) {
-			foreach ($inArr as $k => $v) {
-				$inArr[$k] = $this->encodeStr($v);
-			}
-		}
-	}
-
+	
 	private function encodeStr($inStr){
 		$retStr = $inStr;
 		if ($inStr && $this->charSetSource) {
@@ -2278,12 +2268,12 @@ class DwcArchiverCore extends Manager{
 					$retStr = mb_convert_encoding($inStr, 'UTF-8', 'ISO-8859-1');
 				}
 			} elseif ($this->charSetOut == 'ISO-8859-1' && $this->charSetSource == 'UTF-8') {
-				if (mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1') == 'UTF-8') {
+				if (mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15') == 'UTF-8') {
 					$retStr = mb_convert_encoding($inStr, 'ISO-8859-1', 'UTF-8');
 				}
 			}
 			else{
-				$retStr = mb_convert_encoding($inStr, $this->charSetOut, mb_detect_encoding($inStr));
+				$retStr = mb_convert_encoding($inStr, $this->charSetOut, mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 		}
 		return $retStr;

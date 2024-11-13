@@ -36,6 +36,7 @@ $LANG['HIDE_DET_HISTORY'] = 'Masquer Historique des Déterminations';
 $LANG['DET_HISTORY'] = 'Historique des Déterminations';
 $LANG['SPECIES_PROTECTED'] = 'Identification de l\'espèce protégée';
 $LANG['DATE'] = 'Date';
+$LANG['DATE_DET'] = 'Date déterminée';
 $LANG['TYPE_STATUS'] = 'État du type';
 $LANG['OBSERVER'] = 'Observateur';
 $LANG['COLLECTOR'] = 'Collectionneur';

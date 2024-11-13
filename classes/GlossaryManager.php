@@ -1,5 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT . '/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 class GlossaryManager extends Manager {
 
@@ -32,9 +33,9 @@ class GlossaryManager extends Manager {
 
  	public function __construct(){
  		parent::__construct(null, 'write');
-		$this->imageRootPath = $GLOBALS['$IMAGE_ROOT_PATH'];
+		$this->imageRootPath = $GLOBALS['IMAGE_ROOT_PATH'];
 		if(substr($this->imageRootPath,-1) != "/") $this->imageRootPath .= "/";
-		$this->imageRootUrl = $GLOBALS['$IMAGE_ROOT_URL'];
+		$this->imageRootUrl = $GLOBALS['IMAGE_ROOT_URL'];
 		if(substr($this->imageRootUrl,-1) != "/") $this->imageRootUrl .= "/";
 		if(!empty($GLOBALS['IMG_TN_WIDTH'])){
 			$this->tnPixWidth = $GLOBALS['IMG_TN_WIDTH'];
@@ -675,7 +676,7 @@ class GlossaryManager extends Manager {
 			//echo $sql;
 			if($this->conn->query($sql)){
 				$imgUrl2 = '';
-				$domain = $this->getDomain();
+				$domain = GeneralUtil::getDomain();
 				if(stripos($imgUrl,$domain) === 0){
 					$imgUrl2 = $imgUrl;
 					$imgUrl = substr($imgUrl,strlen($domain));
@@ -913,7 +914,7 @@ class GlossaryManager extends Manager {
 		$urlBase = $this->urlBase;
 		if(!empty($GLOBALS['IMAGE_DOMAIN'])){
 			//Central images are on remote server and new ones stored locally, thus need to use full local domain (this portal is sister portal to central portal)
-			$urlBase = $this->getDomain().$urlBase;
+			$urlBase = GeneralUtil::getDomain() . $urlBase;
 		}
 		if(strtolower(substr($imgWebUrl,0,7)) != 'http://' && strtolower(substr($imgWebUrl,0,8)) != 'https://'){
 			$imgWebUrl = $urlBase.$imgWebUrl;

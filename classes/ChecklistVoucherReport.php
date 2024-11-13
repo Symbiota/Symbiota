@@ -1,5 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
+include_once($SERVER_ROOT . '/classes/ChecklistVoucherAdmin.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 
@@ -530,7 +531,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
  			'o.decimalLatitude', 'o.decimalLongitude', 'o.coordinateUncertaintyInMeters', 'o.minimumElevationInMeters', 'o.maximumelevationinmeters',
 			'o.verbatimelevation', 'o.habitat', 'o.occurrenceRemarks', 'o.associatedTaxa', 'o.reproductivecondition', 'o.informationWithheld', 'o.occid');
 		$retArr[] = 'o.recordID AS recordID';
-		$retArr[] = 'CONCAT("' . $this->getDomain() . $GLOBALS['CLIENT_ROOT'] . '/collections/individual/index.php?occid=",o.occid) as `references`';
+		$retArr[] = 'CONCAT("' . GeneralUtil::getDomain() . $GLOBALS['CLIENT_ROOT'] . '/collections/individual/index.php?occid=",o.occid) as `references`';
 		return $retArr;
 
 		/*

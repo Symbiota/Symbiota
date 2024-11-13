@@ -1,7 +1,8 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ChecklistManager.php');
-require_once($SERVER_ROOT.'/vendor/phpoffice/phpword/bootstrap.php');
+include_once($SERVER_ROOT . '/classes/ChecklistManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+require_once($SERVER_ROOT . '/vendor/phpoffice/phpword/bootstrap.php');
 
 header('Content-Type: text/html; charset='.$CHARSET);
 ini_set('max_execution_time', 240); //240 seconds = 4 minutes
@@ -92,7 +93,7 @@ $phpWord->addTableStyle('imageTable',$tableStyle,$colRowStyle);
 $imageCellStyle = array('valign'=>'center','width'=>2475,'borderSize'=>15,'borderColor'=>'808080');
 $blankCellStyle = array('valign'=>'center','width'=>2475,'borderSize'=>15,'borderColor'=>'000000');
 
-$domainRoot = $clManager->getDomain().$CLIENT_ROOT;
+$domainRoot = GeneralUtil::getDomain() . $CLIENT_ROOT;
 $section = $phpWord->addSection(array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>1080,'marginRight'=>1080,'marginTop'=>1080,'marginBottom'=>1080,'headerHeight'=>0,'footerHeight'=>0));
 $title = $clManager->getClName();
 $clManager->cleanOutText($title);

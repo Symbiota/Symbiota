@@ -5,21 +5,51 @@ function getObservationSvg(opts = {color: "#7A8BE7", size: 24, className:""}) {
 
    return L.divIcon({
       html: `
-<svg
-width="${opts.size}"
-height="${opts.size}"
-viewBox="-10 -10 ${opts.size + 20} ${opts.size + 20}"
-version="1.1"
-preserveAspectRatio="none"
-xmlns="http://www.w3.org/2000/svg"
->
-<polygon class="${opts.className}" points="${half},0 0,${opts.size} ${opts.size},${opts.size}" style="fill:${opts.color};stroke:black;stroke-width:3" />
-</svg>`,
+		<svg
+		width="${opts.size}"
+		height="${opts.size}"
+		viewBox="-10 -10 ${opts.size + 20} ${opts.size + 20}"
+		version="1.1"
+		preserveAspectRatio="none"
+		xmlns="http://www.w3.org/2000/svg"
+		>
+			<polygon 
+				class="${opts.className}" 
+				points="${half},0 0,${opts.size} ${opts.size},${opts.size}" 
+				style="fill:${opts.color};stroke:black;stroke-width:3" 
+			/>
+		</svg>`,
       className: "",
       observation: true,
       iconSize: [opts.size, opts.size],
       iconAnchor: [half, half],
    });
+}
+
+function getSpecimenSvg(opts = {color: "#7A8BE7", size: 24, className:""}) {
+	const default_ops = {color: "#7A8BE7", size: 24};
+	opts = {...default_ops, ...opts};
+	const stroke_width = 2;
+	const size_with_stroke = stroke_width * 2 + opts.size;
+	return L.divIcon({
+		html: `
+			<svg 
+			height="${size_with_stroke * 2}"
+			width="${size_with_stroke * 2}"
+			version="1.1"
+			preserveAspectRatio="none"
+			xmlns="http://www.w3.org/2000/svg"
+			>
+				<circle 
+					r="${opts.size}" 
+					cx="${size_with_stroke}" cy="${size_with_stroke}" 
+					fill="${opts.color}" stroke="black" stroke-width="${stroke_width}"
+				/>
+			</svg>`,
+		className: "",
+		iconSize: [size_with_stroke, size_with_stroke],
+		iconAnchor: [size_with_stroke, size_with_stroke],
+	});
 }
 
 class LeafletMap {
@@ -100,6 +130,11 @@ class LeafletMap {
          attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
       });
 
+      var macro_strat = L.tileLayer('https://macrostrat.org/api/v2/maps/burwell/emphasized/{z}/{x}/{y}/tile.png', {
+         displayRetina:true,
+         attribution: 'Map data: &copy; <a href="https://macrostrat.org/#about">Macrostrat</a> (<a href="http://creativecommons.org/licenses/by/4.0/">CC-BY-4.0</a>)'
+      });
+
       const openTopoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
          maxZoom: 17,
          displayRetina:true,
@@ -112,6 +147,7 @@ class LeafletMap {
             "Basic": basicLayer,
             "Topo": openTopoLayer,
             "Satellite": Esri_WorldImagery,
+            "Macrostrat": macro_strat,
             //"Satellite": satelliteLayer,
          }).addTo(this.mapLayer);
       }

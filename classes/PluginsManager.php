@@ -1,6 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/classes/Manager.php');
-include_once($SERVER_ROOT.'/classes/ImageShared.php');
+include_once($SERVER_ROOT . '/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/ImageShared.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 class PluginsManager extends Manager {
 
@@ -106,7 +107,7 @@ class PluginsManager extends Manager {
 			$sql .= 'ORDER BY i.sortsequence LIMIT 200 ';
 			//echo '<div>'.$sql.'</div>';
 			//Set local domain
-			$localDomain = $this->getDomain();
+			$localDomain = GeneralUtil::getDomain();
 			//Get records
 			$cnt = 1;
  			$conn = MySQLiConnectionFactory::getCon("readonly");

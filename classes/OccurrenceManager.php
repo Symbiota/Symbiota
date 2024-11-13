@@ -1,6 +1,6 @@
 <?php
 include_once($SERVER_ROOT.'/classes/OccurrenceSearchSupport.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceUtilities.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceTaxaManager.php');
 
@@ -528,7 +528,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	}
 
 	protected function formatDate($inDate){
-		$retDate = OccurrenceUtilities::formatDate($inDate);
+		$retDate = OccurrenceUtil::formatDate($inDate);
 		return $retDate;
 	}
 
