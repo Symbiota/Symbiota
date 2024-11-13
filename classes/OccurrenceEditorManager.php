@@ -666,13 +666,11 @@ class OccurrenceEditorManager {
 		$localIndex = false;
 		$sqlFrag = '';
 		if($this->occid && !$this->direction){
-			$sqlFrag .= 'LEFT JOIN omoccurpaleo p ON p.occid = o.occid';
-			$sqlFrag .= 'WHERE (o.occid = '.$this->occid.')';
+			$sqlFrag .= 'LEFT JOIN omoccurpaleo p ON p.occid = o.occid WHERE (o.occid = '.$this->occid.')';
 		}
 		elseif($this->sqlWhere){
 			$this->addTableJoins($sqlFrag);
-			$sqlFrag .= 'LEFT JOIN omoccurpaleo p ON p.occid = o.occid ';
-			$sqlFrag .= $this->sqlWhere;
+			$sqlFrag .= 'LEFT JOIN omoccurpaleo p ON p.occid = o.occid ' . $this->sqlWhere;
 			if($limit){
 				$this->setSqlOrderBy($sqlFrag);
 				$sqlFrag .= 'LIMIT '.$start.','.$limit;

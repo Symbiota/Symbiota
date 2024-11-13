@@ -195,6 +195,9 @@ $searchVar = $collManager->getQueryTermStr();
 							<th><?php echo (isset($LANG['HABITAT']) ? $LANG['HABITAT'] : 'Habitat'); ?></th>
 							<th><?php echo (isset($LANG['SUBSTRATE']) ? $LANG['SUBSTRATE'] : 'Substrate'); ?></th>
 							<th><?php echo (isset($LANG['ELEVATION']) ? $LANG['ELEVATION'] : 'Elevation'); ?></th>
+							<th><?php echo isset($LANG['FORMATION']) ? $LANG['FORMATION'] : 'Formation'; ?></th>
+							<th><?php echo isset($LANG['EARLY_INT']) ? $LANG['EARLY_INT'] : 'Early Interval'; ?></th>
+							<th><?php echo isset($LANG['LATE_INT']) ? $LANG[':LATE_INT'] : 'Late Interval'; ?></th>
 						</tr>
 						<?php
 						$recCnt = 0;
@@ -245,6 +248,9 @@ $searchVar = $collManager->getQueryTermStr();
 								<td><?php if(isset($occArr['habitat'])) echo ((strlen($occArr['habitat'])>80) ? substr($occArr['habitat'],0,80).'...':$occArr['habitat']); ?></td>
 								<td><?php if(isset($occArr['substrate'])) echo ((strlen($occArr['substrate'])>80) ? substr($occArr['substrate'],0,80).'...':$occArr['substrate']); ?></td>
 								<td><?php echo (array_key_exists('elev',$occArr) ? $occArr['elev'] : ''); ?></td>
+								<td><?php if(isset($occArr['formation'])) echo $occArr['declat']; ?></td>
+								<td><?php if(isset($occArr['earlyInterval'])) echo $occArr['earlyInterval']; ?></td>
+								<td><?php if(isset($occArr['lateInterval'])) echo $occArr['lateInterval']; ?></td>
 							</tr>
 							<?php
 							$recCnt++;
