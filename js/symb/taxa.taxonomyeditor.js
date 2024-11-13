@@ -167,23 +167,6 @@ function showOnlyRelevantFields(rankId) {
 
 function updateFullname(f) {
   updateFullnameCore(f);
-  // let sciname =
-  //   f.unitind1.value +
-  //   f.unitname1.value +
-  //   " " +
-  //   f.unitind2.value +
-  //   f.unitname2.value +
-  //   " ";
-  // if (f.unitname3.value) {
-  //   sciname = sciname + (f.unitind3.value + " " + f.unitname3.value).trim();
-  // }
-  // if (f.cultivarEpithet.value) {
-  //   sciname += " " + standardizeCultivarEpithet(f.cultivarEpithet.value);
-  // }
-  // if (f.tradeName.value) {
-  //   sciname += " " + standardizeTradeName(f.tradeName.value);
-  // }
-  // f.sciname.value = sciname.trim();
   checkNameExistence(f);
 }
 
@@ -236,7 +219,7 @@ function validateTaxonEditForm(f) {
 }
 
 async function verifyLoadForm(f, silent = false) {
-  return verifyLoadFormCore(f, silent); // wrapped because verifyLoadForm referenced in other shared functions with taxonomy creation
+  return verifyLoadFormCore(f, silent); // wrapped because verifyLoadForm is what gets referenced in other shared functions with taxonomy creation
 }
 
 function verifyChangeToNotAcceptedForm(f) {

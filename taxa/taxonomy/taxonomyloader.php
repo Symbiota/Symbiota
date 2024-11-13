@@ -21,7 +21,6 @@ if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
 }
 
 if($isEditor){
-	// var_dump($_POST);
 	if(array_key_exists('sciname',$_POST)){
 		$status = $loaderObj->loadNewName($_POST);
 		if(is_int($status)){

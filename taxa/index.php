@@ -116,8 +116,6 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 								$tradeName = !empty($splitSciname['tradeName']) ? ($taxonManager->standardizeTradeName($splitSciname['tradeName']) . ' ') : '';
 								$nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 								$sciName .= $nonItalicizedScinameComponent;
-								// if(!empty($splitSciname['cultivarEpithet'])) $sciName .= " '" . $splitSciname['cultivarEpithet'] . "'";
-								// if(!empty($splitSciname['tradeName'])) $sciName .= " " . $splitSciname['tradeName'];
 								$taxonToDisplay = $taxonRankId > 179 ? $sciName : $taxonManager->getTaxonName();
 								echo '<span id="'.($taxonRankId > 179 ? 'sciname':'taxon').'">' . $taxonToDisplay . '</span>'; 
 							?>
