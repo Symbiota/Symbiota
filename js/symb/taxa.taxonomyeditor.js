@@ -236,7 +236,6 @@ function validateTaxonEditForm(f) {
 }
 
 async function verifyLoadForm(f, silent = false) {
-  console.log("deleteMe verifyLoadForm b entered");
   return verifyLoadFormCore(f, silent); // wrapped because verifyLoadForm referenced in other shared functions with taxonomy creation
 }
 

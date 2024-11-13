@@ -4,10 +4,10 @@ $(document).ready(function () {
 
   const form = document.getElementById("loaderform");
   form.querySelectorAll("input, select, textarea").forEach((element) => {
-    const debouncedChange = debounce(
-      () => handleFieldChange(form, true, "submitaction"),
-      2000
-    );
+    const debouncedChange = debounce(() => {
+      handleFieldChange(form, true, "submitaction");
+      updateFullname(form);
+    }, 2000);
     element.addEventListener("input", debouncedChange);
     element.addEventListener("change", debouncedChange);
   });
@@ -63,11 +63,8 @@ $(document).ready(function () {
 });
 
 async function verifyLoadForm(f, silent = false) {
-  console.log("deleteMe verifyLoadForm a entered");
   const rankId = f.rankid.value;
   const coreVerify = await verifyLoadFormCore(f, silent);
-  console.log("deleteMe coreVerify is: ");
-  console.log(coreVerify);
   if (coreVerify) {
     if (f.parentname.value == "" && rankId > "10") {
       alert("Parent taxon required");
@@ -295,26 +292,9 @@ function setParent(parentName, unitind1) {
 }
 
 function updateFullname(f) {
-  updateFullnameCore(f);
-  // let sciname =
-  //   f.unitind1.value +
-  //   f.unitname1.value +
-  //   " " +
-  //   f.unitind2.value +
-  //   f.unitname2.value +
-  //   " ";
-  // if (f.unitname3.value) {
-  //   sciname = sciname + (f.unitind3.value + " " + f.unitname3.value).trim();
-  // }
-  // if (f.cultivarEpithet.value) {
-  //   sciname += " " + standardizeCultivarEpithet(f.cultivarEpithet.value);
-  // }
-  // if (f.tradeName.value) {
-  //   sciname += " " + standardizeTradeName(f.tradeName.value);
-  // }
-  // f.sciname.value = sciname.trim();
+  const coreSciname = updateFullnameCore(f);
   const scinameDisplay = document.getElementById("scinamedisplay");
-  scinameDisplay.textContent = sciname.trim();
+  scinameDisplay.textContent = coreSciname.trim();
   checkNameExistence(f);
 }
 

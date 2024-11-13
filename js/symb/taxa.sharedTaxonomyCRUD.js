@@ -77,14 +77,10 @@ function removeFromSciName(targetForRemoval) {
 }
 
 async function handleFieldChange(form, silent = false, submitButtonId) {
-  console.log("deleteMe handleFieldChange entered");
-  // const submitButton = document.getElementById("taxoneditsubmit");
   const submitButton = document.getElementById(submitButtonId);
   submitButton.disabled = true;
   submitButton.textContent = "Checking for existing entry...";
   const isOk = await verifyLoadForm(form, silent);
-  console.log("deleteMe isOk is: ");
-  console.log(isOk);
   if (!isOk) {
     submitButton.textContent = "Duplicate Detected - Button Disabled";
     submitButton.disabled = true;
@@ -96,23 +92,15 @@ async function handleFieldChange(form, silent = false, submitButtonId) {
 
 async function verifyLoadFormCore(f, silent = false) {
   const isUniqueEntry = await checkNameExistence(f, silent);
-  console.log("deleteMe isUniqueEntry is: ");
-  console.log(isUniqueEntry);
-  console.log("deleteMe f is: ");
-  console.log(f);
   if (!isUniqueEntry) {
     return false;
   }
   if (f.unitname1.value == "") {
-    console.log("deleteMe got here c1");
     alert("Unit Name 1 (genus or uninomial) field required.");
     return false;
   }
   var rankId = f.rankid.value;
-  console.log("deleteMe rankId is: ");
-  console.log(rankId);
   if (rankId == "") {
-    console.log("deleteMe got here c2");
     alert("Taxon rank field required.");
     return false;
   }
@@ -178,5 +166,5 @@ function updateFullnameCore(f) {
   }
   f.sciname.value = sciname.trim();
   checkNameExistence(f);
-  // return f;
+  return sciname;
 }
