@@ -105,7 +105,7 @@ $dwcManager = new DwcArchiverCore();
 	<div style="width:100%; background-color:white;">
 		<h1 class="page-heading"><?php echo (isset($LANG['DATA_GUIDE']) ? $LANG['DATA_GUIDE'] : 'Data Usage Guidelines'); ?></h1>
 		<div style="margin:15px 0px;">
-		<?php echo (isset($LANG['GUIDE_ONE']) ? $LANG['GUIDE_ONE'] : 'By downloading data, the user confirms that he/she has read and agrees with the general'); ?> <a href="../../includes/usagepolicy.php#images"> <?php echo (isset($LANG['GUIDE_LINK']) ? $LANG['GUIDE_LINK'] : 'data usage terms'); ?> </a>.
+		<?php echo (isset($LANG['GUIDE_ONE']) ? $LANG['GUIDE_ONE'] : 'By downloading data, the user confirms that he/she has read and agrees with the general'); ?> <a href="../../includes/usagepolicy.php#images"> <?= $LANG['GUIDE_LINK'] ?> </a>.
 			<?php echo (isset($LANG['GUIDE_TWO']) ? $LANG['GUIDE_TWO'] : 'Note that additional terms of use specific to the individual collections may be distributed with the data download. When present, the terms
 			supplied by the owning institution should take precedence over the general terms posted on the website.'); ?>
 		</div>
@@ -157,8 +157,9 @@ $dwcManager = new DwcArchiverCore();
 								<label for="images"> <?php echo (isset($LANG['INCLUDE_IMG']) ? $LANG['INCLUDE_IMG'] : 'include Image Records'); ?> </label>
 								<br/>
 								<?php
-								if($dwcManager->hasAttributes()) echo '<input type="checkbox" name="attributes" id="attributes" value="1" onchange="extensionSelected(this)" checked /> <label for="attributes">' . (isset($LANG['INCLUDE_ATTR']) ? $LANG['INCLUDE_ATTR'] : 'include Occurrence Trait Attributes') . '</label><br/>';
-								if($dwcManager->hasMaterialSamples()) echo '<input type="checkbox" name="materialsample" id="materialsample" value="1" onchange="extensionSelected(this)" checked /><label for="materialsample">' . (isset($LANG['IMCLUDE_MAT']) ? $LANG['IMCLUDE_MAT'] : 'include Material Samples') . '</label><br/>';
+								if($dwcManager->hasAttributes()) echo '<input type="checkbox" name="attributes" id="attributes" value="1" onchange="extensionSelected(this)" checked /> <label for="attributes">' . $LANG['INCLUDE_ATTR'] . '</label><br/>';
+								if($dwcManager->hasMaterialSamples()) echo '<input type="checkbox" name="materialsample" id="materialsample" value="1" onchange="extensionSelected(this)" checked /><label for="materialsample">' . $LANG['IMCLUDE_MAT'] . '</label><br/>';
+								if($dwcManager->hasIdentifiers()) echo '<input type="checkbox" name="identifiers" id="identifiers" value="1" onchange="extensionSelected(this)" checked /> <label for="identifiers">' . $LANG['INCLUDE_IDENT'] . '</label><br/>';
 								?>
 								*<?php echo (isset($LANG['DATA_EXT_NOTE']) ? $LANG['DATA_EXT_NOTE'] : 'Output must be a compressed archive'); ?>
 							</div>

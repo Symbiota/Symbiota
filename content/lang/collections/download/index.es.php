@@ -34,6 +34,7 @@ $LANG['INCLUDE_HISTORY'] = 'incluir Historial de Determinación';
 $LANG['INCLUDE_IMG'] = 'incluir registros de imágenes';
 $LANG['INCLUDE_ATTR'] = 'incluir atributos de rasgo de ocurrencia';
 $LANG['IMCLUDE_MAT'] = 'incluir muestras de materiales';
+$LANG['INCLUDE_IDENT'] = 'incluir Identificadores Alternativos';
 $LANG['DATA_EXT_NOTE'] = 'La salida debe ser un archivo comprimido';
 $LANG['FILE_FORMAT'] = 'Formato de archivo';
 $LANG['COMMA_DELIM'] = 'Delimitado por comas (CSV)';
