@@ -292,4 +292,10 @@ div#innertext div.quicksearch-container {
   margin-right: 10px;
   margin-bottom: 5px;
 }
+
+div#tabs-div > div {
+  font-size: var(--body-font-size);
+}
+
+
 /* End remove */
