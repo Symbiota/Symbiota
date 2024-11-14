@@ -45,7 +45,7 @@ class DwcArchiverCore extends Manager{
 	private $includeImgs = 1;
 	protected $includeAttributes = 0;
 	protected $includeMaterialSample = 0;
-	protected $includeIdentifiers = 1;
+	protected $includeIdentifiers = 0;
 	private $hasPaleo = false;
 	private $redactLocalities = 1;
 	private $rareReaderArr = array();
