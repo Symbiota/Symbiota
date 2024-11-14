@@ -248,7 +248,7 @@ $searchVar = $collManager->getQueryTermStr();
 								<td><?php if(isset($occArr['habitat'])) echo ((strlen($occArr['habitat'])>80) ? substr($occArr['habitat'],0,80).'...':$occArr['habitat']); ?></td>
 								<td><?php if(isset($occArr['substrate'])) echo ((strlen($occArr['substrate'])>80) ? substr($occArr['substrate'],0,80).'...':$occArr['substrate']); ?></td>
 								<td><?php echo (array_key_exists('elev',$occArr) ? $occArr['elev'] : ''); ?></td>
-								<td><?php if(isset($occArr['formation'])) echo $occArr['declat']; ?></td>
+								<td><?php if(isset($occArr['formation'])) echo $occArr['formation']; ?></td>
 								<td><?php if(isset($occArr['earlyInterval'])) echo $occArr['earlyInterval']; ?></td>
 								<td><?php if(isset($occArr['lateInterval'])) echo $occArr['lateInterval']; ?></td>
 							</tr>
