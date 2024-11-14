@@ -150,3 +150,4 @@ ALTER TABLE `kmdescr`
   ADD CONSTRAINT `FK_descr_tid`  FOREIGN KEY (`tid`)  REFERENCES `taxa` (`TID`)  ON DELETE CASCADE  ON UPDATE CASCADE;
 
 ALTER TABLE `omoccuraccess` ENGINE=InnoDB;
+ALTER TABLE `omoccuraccesslink` ENGINE=InnoDB;
