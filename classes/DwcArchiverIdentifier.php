@@ -21,25 +21,24 @@ class DwcArchiverIdentifier extends DwcArchiverBaseManager{
 	//Based on https://rs.gbif.org/extension/gbif/1.0/identifier.xml
 	private function setFieldArr(){
 		$columnArr = array();
-		$columnArr['coreid'] = 'id.occid';
+		$columnArr['coreid'] = 'occid';
 		$termArr['identifier'] = 'http://purl.org/dc/terms/identifier';
-		$columnArr['identifier'] = 'id.identifierValue';
+		$columnArr['identifier'] = 'identifierValue';
 		$termArr['title'] = 'http://purl.org/dc/terms/title';
-		$columnArr['title'] = 'id.identifierName';
+		$columnArr['title'] = 'identifierName';
 		$termArr['format'] = 'http://purl.org/dc/terms/format';
-		$columnArr['format'] = 'id.format';
+		$columnArr['format'] = 'format';
 		$termArr['notes'] = 'https://symbiota.org/terms/identifier/notes';
-		$columnArr['notes'] = 'id.notes';
-		$termArr['sortBy'] = 'https://symbiota.org/terms/identifier/notes';
-		$columnArr['sortBy'] = 'id.sortBy';
+		$columnArr['notes'] = 'notes';
+		$termArr['sortBy'] = 'https://symbiota.org/terms/identifier/sortBy';
+		$columnArr['sortBy'] = 'sortBy';
  		$termArr['recordID'] = 'https://symbiota.org/terms/identifier/recordID';
- 		$columnArr['recordID'] = 'id.recordID';
+ 		$columnArr['recordID'] = 'recordID';
 		$termArr['initialTimestamp'] = 'https://symbiota.org/terms/identifier/initialTimestamp';
-		$columnArr['initialTimestamp'] = 'id.initialTimestamp';
+		$columnArr['initialTimestamp'] = 'initialTimestamp';
 
-		$retArr['terms'] = $this->trimBySchemaType($termArr);
-		$retArr['fields'] = $this->trimBySchemaType($columnArr);
-		return $retArr;
+		$this->fieldArr['terms'] = $this->trimBySchemaType($termArr);
+		$this->fieldArr['fields'] = $this->trimBySchemaType($columnArr);
 	}
 
 	private function trimBySchemaType($dataArr){
@@ -50,7 +49,7 @@ class DwcArchiverIdentifier extends DwcArchiverBaseManager{
 		elseif($this->schemaType == 'dwc'){
 			$trimArr = array('notes', 'sortBy');
 		}
-		return array_diff_key($dataArr,array_flip($trimArr));
+		return array_diff_key($dataArr, array_flip($trimArr));
 	}
 
 	private function setSqlBase(){
@@ -59,7 +58,7 @@ class DwcArchiverIdentifier extends DwcArchiverBaseManager{
 			foreach($this->fieldArr['fields'] as $colName){
 				if($colName) $sqlFrag .= ', ' . $colName;
 			}
-			$this->sqlBase = 'SELECT ' . trim($sqlFrag, ', ') . 'FROM omoccuridentifiers ';
+			$this->sqlBase = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccuridentifiers ';
 		}
 	}
 }

@@ -876,7 +876,7 @@ class DwcArchiverCore extends Manager{
 			}
 			if ($this->includeIdentifiers && file_exists($this->targetPath . $this->ts . '-ident' . $this->fileExt)) {
 				$zipArchive->addFile($this->targetPath . $this->ts . '-ident' . $this->fileExt);
-				$zipArchive->renameName($this->targetPath . $this->ts . '-ident' . $this->fileExt, 'identifier' . $this->fileExt);
+				$zipArchive->renameName($this->targetPath . $this->ts . '-ident' . $this->fileExt, 'identifiers' . $this->fileExt);
 			}
 			//Meta file
 			$this->writeMetaFile();
@@ -1105,7 +1105,7 @@ class DwcArchiverCore extends Manager{
 			$extElem3->setAttribute('rowType', 'http://rs.gbif.org/terms/1.0/Identifier');
 
 			$filesElem3 = $newDoc->createElement('files');
-			$filesElem3->appendChild($newDoc->createElement('location', 'identifier' . $this->fileExt));
+			$filesElem3->appendChild($newDoc->createElement('location', 'identifiers' . $this->fileExt));
 			$extElem3->appendChild($filesElem3);
 
 			$coreIdElem3 = $newDoc->createElement('coreid');
@@ -2020,8 +2020,8 @@ class DwcArchiverCore extends Manager{
 	private function writeAttributeData($batchOccidArr){
 		if(!$this->attributeHandler){
 			$this->attributeHandler = new DwcArchiverAttribute($this->conn);
-			$this->attributeHandler->initiateProcess($this->targetPath . $this->ts . '-attr' . $this->fileExt);
 			$this->attributeHandler->setSchemaType($this->schemaType);
+			$this->attributeHandler->initiateProcess($this->targetPath . $this->ts . '-attr' . $this->fileExt);
 			$this->fieldArrMap['attribute'] = $this->attributeHandler->getFieldArrTerms();
 		}
 		if($this->attributeHandler) $this->attributeHandler->writeOutRecordBlock($batchOccidArr);
@@ -2030,8 +2030,8 @@ class DwcArchiverCore extends Manager{
 	private function writeMaterialSampleData($batchOccidArr){
 		if(!$this->materialSampleHandler){
 			$this->materialSampleHandler = new DwcArchiverMaterialSample($this->conn);
-			$this->materialSampleHandler->initiateProcess($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
 			$this->materialSampleHandler->setSchemaType($this->schemaType);
+			$this->materialSampleHandler->initiateProcess($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
 			$this->fieldArrMap['materialSample'] = $this->materialSampleHandler->getFieldArrTerms();
 		}
 		if($this->materialSampleHandler) $this->materialSampleHandler->writeOutRecordBlock($batchOccidArr);
@@ -2040,8 +2040,8 @@ class DwcArchiverCore extends Manager{
 	private function writeIdentifierData($batchOccidArr){
 		if(!$this->identierHandler){
 			$this->identierHandler = new DwcArchiverIdentifier($this->conn);
-			$this->identierHandler->initiateProcess($this->targetPath . $this->ts . '-ident' . $this->fileExt);
 			$this->identierHandler->setSchemaType($this->schemaType);
+			$this->identierHandler->initiateProcess($this->targetPath . $this->ts . '-ident' . $this->fileExt);
 			$this->fieldArrMap['identifier'] = $this->identierHandler->getFieldArrTerms();
 		}
 		if($this->identierHandler) $this->identierHandler->writeOutRecordBlock($batchOccidArr);

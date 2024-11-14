@@ -83,7 +83,8 @@ $dwcManager = new DwcArchiverCore();
 	<style>
 		fieldset{ margin:10px; padding:10px }
 		legend{ font-weight:bold }
-		.sectionDiv{ clear:both; margin:20px; overflow:auto; }
+		button { display: inline; }
+		.sectionDiv{ clear:both; margin:20px; }
 		.labelDiv{ float:left; font-weight:bold; width:200px }
 		.formElemDiv{ float:left }
 	</style>
@@ -204,7 +205,7 @@ $dwcManager = new DwcArchiverCore();
 						<input name="taxonFilterCode" type="hidden" value="<?= $taxonFilterCode; ?>" />
 						<input name="sourcepage" type="hidden" value="<?= htmlspecialchars($sourcePage); ?>" />
 						<input name="searchvar" type="hidden" value="<?= $searchVar ?>" />
-						<button type="submit" name="submitaction"> <?= $LANG['DOWNLOAD_DATA'] ?></button>
+						<button type="submit" name="submitaction"><?= $LANG['DOWNLOAD_DATA'] ?></button>
 						<img id="workingcircle" src="../../images/ajax-loader_sm.gif" style="margin-bottom:-4px;width:20px;display:none;" />
 					</div>
 					<div class="sectionDiv">
