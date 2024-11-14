@@ -8,6 +8,9 @@ This stylesheet is defined last and will override all previously loaded sheets. 
 html {
   font-size: 13px; /*0.7rem; /* 1rem = 10px */
 }
+body {
+  background-color: var(--body-bg-color);
+}
 
 header {
   place-items: center stretch;
@@ -276,3 +279,17 @@ div#innertext div.quicksearch-container {
 }
 
 /* End USDA ********************************************************************************/
+
+/* Remove this once accessibility mode and condensed mode get enabled */
+.flex-form {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.flex-form > * {
+  flex-basis: auto;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 5px;
+}
+/* End remove */
