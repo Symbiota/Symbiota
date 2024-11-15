@@ -91,7 +91,7 @@ async function handleFieldChange(form, silent = false, submitButtonId) {
 }
 
 async function verifyLoadFormCore(f, silent = false) {
-  const isUniqueEntry = await checkNameExistence(f, silent);
+  const isUniqueEntry = await checkNameExistence(f, true);
   if (!isUniqueEntry) {
     return false;
   }

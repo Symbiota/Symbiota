@@ -77,7 +77,7 @@ if($isEditor){
 		}
 		if($isEditor){
 			?>
-			<form id="loaderform" name="loaderform" action="taxonomyloader.php" method="post" onsubmit="return verifyLoadForm(this)">
+			<form id="loaderform" name="loaderform" action="taxonomyloader.php" method="post">
 				<div>
 					<h2>Sciname will be saved as: <span id="scinamedisplay" name="scinamedisplay"></span></h2>
 				</div>
@@ -119,7 +119,6 @@ if($isEditor){
 							}
 							?>
 						</select>
-						<script src="../../js/symb/taxa.taxonomyloader.js"> </script>
 					</div>
 					<!-- <div id="author-div" style="clear: both;">
 						<div class="left-column">
@@ -136,12 +135,12 @@ if($isEditor){
 								<?php echo $LANG['GENUS_NAME'] . ': '; ?>:
 							</label>
 						</div>
-						<select id="unitind1" name="unitind1" onchange="updateFullname(this.form)">
+						<select id="unitind1" name="unitind1" onchange="updateFullname(this.form, true)">
 							<option value=""></option>
 							<option value="&#215;">&#215;</option>
 							<option value="&#8224;">&#8224;</option>
 						</select>
-						<input type='text' id='unitname1' name='unitname1' onchange="updateFullname(this.form)" class='search-bar' aria-label="<?php echo $LANG['GENUS_OR_BASE']; ?>" title="<?php echo $LANG['GENUS_OR_BASE']; ?>"/>
+						<input type='text' id='unitname1' name='unitname1' class='search-bar' aria-label="<?php echo $LANG['GENUS_OR_BASE']; ?>" title="<?php echo $LANG['GENUS_OR_BASE']; ?>"/>
 					</div>
 					<?php
 					if ($rankId > 150){
@@ -152,11 +151,11 @@ if($isEditor){
 										<?php echo $LANG['UNITNAME2']; ?>:
 									</label>
 								</div>
-								<select id="unitind2" name="unitind2" onchange="updateFullname(this.form)">
+								<select id="unitind2" name="unitind2" onchange="updateFullname(this.form, true)">
 									<option value=""></option>
 									<option value="&#215;">&#215;</option>
 								</select>
-								<input type='text' id='unitname2' name='unitname2' onchange="updateFullname(this.form)" class='search-bar' aria-label="<?php echo (isset($LANG['SPECIF_EPITHET_FIELD']) ? $LANG['SPECIF_EPITHET_FIELD'] : 'Specific Epithet Field'); ?>" title="<?php echo (isset($LANG['SPECIF_EPITHET_FIELD']) ? $LANG['SPECIF_EPITHET_FIELD'] : 'Specific Epithet Field'); ?>"/>
+								<input type='text' id='unitname2' name='unitname2' onchange="updateFullname(this.form, true)" class='search-bar' aria-label="<?php echo (isset($LANG['SPECIF_EPITHET_FIELD']) ? $LANG['SPECIF_EPITHET_FIELD'] : 'Specific Epithet Field'); ?>" title="<?php echo (isset($LANG['SPECIF_EPITHET_FIELD']) ? $LANG['SPECIF_EPITHET_FIELD'] : 'Specific Epithet Field'); ?>"/>
 							</div>
 							<div id="div3hide" style="clear:both;">
 								<div class="left-column">
@@ -164,8 +163,8 @@ if($isEditor){
 										<?php echo $LANG['UNITNAME3']; ?>:
 									</label>
 								</div>
-								<input type='text' id='unitind3' name='unitind3' onchange="updateFullname(this.form)" class='search-bar-extraShort' aria-label='<?php echo $LANG['UNITNAME3']; ?>:' title='<?php echo $LANG['RANK_FIELD']; ?>'/>
-								<input type='text' id='unitname3' name='unitname3' onchange="updateFullname(this.form)" class='search-bar' aria-label="<?php echo $LANG['INFRA_EPITHET_FIELD']; ?>" title="<?php echo $LANG['INFRA_EPITHET_FIELD']; ?>" />
+								<input type='text' id='unitind3' name='unitind3' onchange="updateFullname(this.form, true)" class='search-bar-extraShort' aria-label='<?php echo $LANG['UNITNAME3']; ?>:' title='<?php echo $LANG['RANK_FIELD']; ?>'/>
+								<input type='text' id='unitname3' name='unitname3' onchange="updateFullname(this.form, true)" class='search-bar' aria-label="<?php echo $LANG['INFRA_EPITHET_FIELD']; ?>" title="<?php echo $LANG['INFRA_EPITHET_FIELD']; ?>" />
 							</div>
 							<div id="div4hide" style="clear:both;display:none;">
 								<div id="unit4Display" style="display: <?php echo empty($loaderObj->getCultivarEpithet()) ? 'none' : 'block'; ?>">
@@ -174,7 +173,7 @@ if($isEditor){
 											<?php echo $LANG['UNITNAME4']; ?>:
 										</label>
 									</div>
-									<input type='text' id="cultivarEpithet" name='cultivarEpithet' onchange="updateFullname(this.form)" class='search-bar' aria-label="<?php echo $LANG['UNITNAME4']; ?>" title="<?php echo $LANG['UNITNAME4']; ?>" />
+									<input type='text' id="cultivarEpithet" name='cultivarEpithet' onchange="updateFullname(this.form, true)" class='search-bar' aria-label="<?php echo $LANG['UNITNAME4']; ?>" title="<?php echo $LANG['UNITNAME4']; ?>" />
 								</div>
 							</div>
 							<div id="div5hide" style="clear:both;display:none;">
@@ -184,7 +183,7 @@ if($isEditor){
 											<?php echo $LANG['UNITNAME5']; ?>:
 										</label>
 									</div>
-									<input type='text' id='tradeName' name='tradeName' onchange="updateFullname(this.form)" class='search-bar' aria-label="<?php echo $LANG['UNITNAME5']; ?>" title="<?php echo $LANG['UNITNAME5']; ?>" />
+									<input type='text' id='tradeName' name='tradeName' onchange="updateFullname(this.form, true)" class='search-bar' aria-label="<?php echo $LANG['UNITNAME5']; ?>" title="<?php echo $LANG['UNITNAME5']; ?>" />
 								</div>
 							</div>
 					<?php

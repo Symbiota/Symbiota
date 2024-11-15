@@ -4,12 +4,15 @@ $(document).ready(function () {
 
   const form = document.getElementById("loaderform");
   form.querySelectorAll("input, select, textarea").forEach((element) => {
-    const debouncedChange = debounce(() => {
-      handleFieldChange(form, true, "submitaction");
-      updateFullname(form, true);
+    const debouncedChange = debounce((event) => {
+      event.stopPropagation();
+      handleFieldChange(form, false, "submitaction");
+      updateFullname(form, false);
     }, 2000);
-    element.addEventListener("input", debouncedChange);
-    element.addEventListener("change", debouncedChange);
+    element.removeEventListener("change", debouncedChange);
+    if (element.type !== "hidden") {
+      element.addEventListener("change", debouncedChange);
+    }
   });
 
   $("#acceptedstr").autocomplete({
@@ -64,16 +67,17 @@ $(document).ready(function () {
 
 async function verifyLoadForm(f, silent = false) {
   const rankId = f.rankid.value;
-  const coreVerify = await verifyLoadFormCore(f, silent);
+  const coreVerify = await verifyLoadFormCore(f, true);
   if (coreVerify) {
     if (f.parentname.value == "" && rankId > "10") {
-      alert("Parent taxon required");
+      if (!silent) alert("Parent taxon required");
       return false;
     }
     if (f.parenttid.value == "" && rankId > "10") {
-      alert(
-        "Parent identifier is not set! Make sure to select parent taxon from the list"
-      );
+      if (!silent)
+        alert(
+          "Parent identifier is not set! Make sure to select parent taxon from the list"
+        );
       return false;
     }
 
@@ -81,7 +85,7 @@ async function verifyLoadForm(f, silent = false) {
     var accStatusObj = f.acceptstatus;
     if (accStatusObj[0].checked == false) {
       if (f.acceptedstr.value == "") {
-        alert("Accepted name needs to have a value");
+        if (!silent) alert("Accepted name needs to have a value");
         return false;
       }
     }
