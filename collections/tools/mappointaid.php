@@ -1,8 +1,8 @@
 <?php
 include_once('../../config/symbini.php');
-header('Content-Type: text/html; charset=' . $CHARSET);
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/collections/tools/mapaids.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/tools/mapaids.en.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/tools/mapaids.' . $LANG_TAG . '.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/tools/mapaids.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/tools/mapaids.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/tools/mapaids.en.php');
+header("Content-Type: text/html; charset=".$CHARSET);
 
 if($MAPPING_BOUNDARIES){
 	$boundaryArr = explode(";",$MAPPING_BOUNDARIES);
@@ -451,7 +451,7 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 		<?php
 		if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimalheader.php');
 		?>
-		<h1 class="page-heading screen-reader-only">Point-Radius Aid</h1>
+		<h1 class="page-heading screen-reader-only"><?php echo $LANG['POINT_RADIUS_AID']; ?></h1>
 		<div
 			id="service-container"
 			class="service-container"

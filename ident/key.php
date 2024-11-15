@@ -185,7 +185,7 @@ echo '<b>' . $LANG['NEW_ID_KEY'] . ': ' . htmlspecialchars($dataManager->getClNa
 echo '</div>';
 ?>
 <div role="main" id="innertext">
-	<h1 class="page-heading screen-reader-only">Key</h1>
+	<h1 class="page-heading screen-reader-only"><?php echo $LANG['KEY']; ?></h1>
 	<?php
 	if($clid || $dynClid){
 		?>

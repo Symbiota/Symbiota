@@ -1,5 +1,8 @@
 <?php
 include_once('../../config/symbini.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/georef/geolocate.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/georef/geolocate.'.$LANG_TAG.'.php');
+else include_once($SERVER_ROOT.'/content/lang/collections/georef/geolocate.en.php');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $locality = $_REQUEST['locality'];
@@ -53,7 +56,7 @@ if(isset($PORTAL_GUID) && $PORTAL_GUID){
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
-	<title>GEOLocate Tool</title>
+	<title><?= $LANG['GEO_LOCATE_TOOL'] ?></title>
 	<?php
 
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -69,13 +72,13 @@ if(isset($PORTAL_GUID) && $PORTAL_GUID){
 	<script type="text/javascript">
 	    function transferCoord(evt) {
 	        if(evt.origin.indexOf('geo-locate.org') < 0) {
-				alert("iframe url does not have permision to interact with me");
+				alert("<?= $LANG['IFRAME_PERMISSION'] ?>");
 	        }
 	        else {//alert(evt.data);
 	            var breakdown = evt.data.split("|");
                 if(breakdown.length == 4){
                     if(breakdown[0] == ""){
-                    	alert("There are no data points to tranfer");
+                    	alert("<?= $LANG['NO_POINTS_TO_TRANSFER'] ?>");
                     }
                     else{
 	                	opener.geoLocateUpdateCoord(breakdown[0],breakdown[1],breakdown[2],breakdown[3]);
@@ -96,7 +99,7 @@ if(isset($PORTAL_GUID) && $PORTAL_GUID){
 
 <body>
 	<div id="container">
-		<h1 class="page-heading screen-reader-only">GEOLocate Tool</h1>
+		<h1 class="page-heading screen-reader-only"><?php echo $LANG['GEO_LOCATE_TOOL']; ?></h1>
 		<div>
 			<iframe id="Iframe1" src="//www.geo-locate.org/web/WebGeoreflight.aspx?v=1&georef=run|true|true|true|false|false|false|false|0&tab=locality&<?php echo $urlVariables; ?>"></iframe>
 		</div>

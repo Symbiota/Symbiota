@@ -8,20 +8,23 @@ else include_once($SERVER_ROOT . '/content/lang/collections/listtabledisplay.en.
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ?? false;
-$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
-$actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.php";
-$comingFrom = array_key_exists('comingFrom', $_REQUEST) ? htmlspecialchars($_REQUEST['comingFrom'], HTML_SPECIAL_CHARS_FLAGS) : '';
 
 $page = array_key_exists('page',$_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $tableCount= array_key_exists('tablecount',$_REQUEST) ? filter_var($_REQUEST['tablecount'], FILTER_SANITIZE_NUMBER_INT) : 1000;
 $sortField1 = array_key_exists('sortfield1',$_REQUEST) ? htmlspecialchars($_REQUEST['sortfield1'], HTML_SPECIAL_CHARS_FLAGS) : 'collectionname';
 $sortField2 = array_key_exists('sortfield2',$_REQUEST) ? htmlspecialchars($_REQUEST['sortfield2'], HTML_SPECIAL_CHARS_FLAGS) : '';
 $sortOrder = array_key_exists('sortorder',$_REQUEST) ? htmlspecialchars($_REQUEST['sortorder'], HTML_SPECIAL_CHARS_FLAGS) : '';
+$comingFrom =  (array_key_exists('comingFrom', $_REQUEST) ? $_REQUEST['comingFrom'] : '');
+if($comingFrom != 'harvestparams' && $comingFrom != 'newsearch'){
+	//If not set via a valid input variable, use setting set within symbini
+	$comingFrom = !empty($SHOULD_USE_HARVESTPARAMS) ? 'harvestparams' : 'newsearch';
+}
 
 if($page < 1) $page = 1;
 
 $collManager = new OccurrenceListManager();
 $searchVar = $collManager->getQueryTermStr();
+$searchVar .= '&comingFrom=' . $comingFrom;
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
@@ -159,7 +162,7 @@ $searchVar = $collManager->getQueryTermStr();
 			<div class="navpath">
 				<a href="../index.php"><?= $LANG['NAV_HOME'] ?></a> &gt;&gt;
 				<?php
-				if($comingFrom !== 'search/index.php'){
+				if($comingFrom == 'harvestparams'){
 					?>
 					<a href="index.php"><?= $LANG['NAV_COLLECTIONS'] ?></a> &gt;&gt;
 					<a href="<?= $CLIENT_ROOT . '/collections/harvestparams.php' ?>"><?= $LANG['NAV_SEARCH'] ?></a> &gt;&gt;
