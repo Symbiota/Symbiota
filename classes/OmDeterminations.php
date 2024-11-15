@@ -13,18 +13,10 @@ class OmDeterminations extends Manager{
 
 	public function __construct($conn){
 		parent::__construct(null, 'write', $conn);
-		/*
-		 $this->fieldMap = array('identifiedBy' => 's', 'identifiedByAgentID' => 'i', 'identifiedByID' => 's', 'dateIdentified' => 's', 'dateIdentifiedInterpreted' => 's',
-		 'higherClassification' => 's', 'family' => 's', 'sciname' => 's', 'verbatimIdentification' => 's', 'scientificNameAuthorship' => 's', 'tidInterpreted' => 'i',
-		 'identificationUncertain' => 'i', 'identificationQualifier' => 's', 'genus' => 's', 'specificEpithet' => 's', 'verbatimTaxonRank' => 's', 'taxonRank' => 's',
-		 'infraSpecificEpithet' => 's', 'isCurrent' => 'i', 'printQueue' => 'i', 'appliedStatus' => 'i', 'securityStatus' => 'i', 'securityStatusReason' => 's',
-		 'detType' => 's', 'identificationReferences' => 's', 'identificationRemarks' => 's', 'taxonRemarks' => 's', 'identificationVerificationStatus' => 's',
-		 'taxonConceptID' => 's', 'sourceIdentifier' => 's', 'sortSequence' => 'i', 'recordID' => 's', 'createdUid' => 'i', 'modifiedUid' => 'i', 'dateLastModified' => 's');
-		 */
-		$this->schemaMap = array('identifiedBy' => 's', 'dateIdentified' => 's', 'higherClassification' => 's', 'family' => 's', 'sciname' => 's', 'verbatimIdentification' => 's',
-			'scientificNameAuthorship' => 's', 'identificationQualifier' => 's', 'isCurrent' => 'i', 'printQueue' => 'i', 'appliedStatus' => 'i',
+		$this->schemaMap = array('identifiedBy' => 's', 'dateIdentified' => 's', 'dateIdentifiedInterpreted' => 's', 'higherClassification' => 's', 'family' => 's', 'sciname' => 's', 'verbatimIdentification' => 's',
+			'scientificNameAuthorship' => 's', 'tidInterpreted' => 'i', 'identificationuncertain' => 'i', 'identificationQualifier' => 's', 'isCurrent' => 'i', 'printQueue' => 'i', 'appliedStatus' => 'i',
 			'securityStatus' => 'i', 'securityStatusReason' => 's', 'detType' => 's', 'identificationReferences' => 's', 'identificationRemarks' => 's', 'taxonRemarks' => 's',
-			'identificationVerificationStatus' => 's', 'taxonConceptID' => 's', 'sourceIdentifier' => 's', 'sortSequence' => 'i');
+			'identificationVerificationStatus' => 's', 'taxonConceptID' => 's', 'sourceIdentifier' => 's', 'sortSequence' => 'i', 'createdUid' => 'i', 'modifiedUid' => 'i');
 	}
 
 	public function __destruct(){
@@ -32,35 +24,108 @@ class OmDeterminations extends Manager{
 	}
 
 	public function getDeterminationArr($filterArr = null){
+		//Returns determinations based on a single matching detID or occid (determinations for a single occurrence)
 		$retArr = array();
-		$uidArr = array();
 		$sql = 'SELECT detID, occid, '.implode(', ', array_keys($this->schemaMap)).', initialTimestamp FROM omoccurdeterminations WHERE ';
 		if($this->detID) $sql .= '(detID = '.$this->detID.') ';
 		elseif($this->occid) $sql .= '(occid = '.$this->occid.') ';
-		foreach($filterArr as $field => $cond){
-			$sql .= 'AND '.$field.' = "'.$this->cleanInStr($cond).'" ';
-		}
-		if($rs = $this->conn->query($sql)){
-			while($r = $rs->fetch_assoc()){
-				$retArr[$r['detID']] = $r;
-				$uidArr[$r['createdUid']] = $r['createdUid'];
-				$uidArr[$r['modifiedUid']] = $r['modifiedUid'];
+		//Apply input filter conditions
+		$paramArr = array();
+		if($filterArr){
+			$this->setParameterArr($filterArr);
+			foreach($this->parameterArr as $field => $value){
+				$sql .= 'AND '.$field.' = ? ';
+				$paramArr[] = $value;
 			}
-			$rs->free();
 		}
-		if($uidArr){
-			//Add user names for modified and created by
-			$sql = 'SELECT uid, firstname, lastname, username FROM users WHERE uid IN('.implode(',', $uidArr).')';
-			if($rs = $this->conn->query($sql)){
-				while($r = $rs->fetch_object()){
-					$uidArr[$r->uid] = $r->lastname . ($r->firstname ? ', ' . $r->firstname : '');
+		//Run query
+		$uidArr = array();
+		if($stmt = $this->conn->prepare($sql)){
+			if($paramArr) $stmt->bind_param($this->typeStr, $paramArr);
+			$stmt->execute();
+			if($rs = $stmt->get_result()){
+				while($r = $rs->fetch_assoc()){
+					$retArr[$r['detID']] = $r;
+					if($r['createdUid']) $uidArr[$r['createdUid']] = $r['createdUid'];
+					if($r['modifiedUid']) $uidArr[$r['modifiedUid']] = $r['modifiedUid'];
 				}
 				$rs->free();
 			}
+			$stmt->close();
+		}
+		if($uidArr){
+			//Add user names based on modifiedBy and createdBy IDs
+			$uidArr = $this->getUserNames($uidArr);
 			foreach($retArr as $detID => $detArr){
-				if($detArr['createdUid'] && array_key_exists($detArr['createdUid'], $uidArr)) $retArr[$detID]['createdBy'] = $uidArr[$detArr['createdUid']];
-				if($detArr['modifiedUid'] && array_key_exists($detArr['modifiedUid'], $uidArr)) $retArr[$detID]['modifiedBy'] = $uidArr[$detArr['modifiedUid']];
+				if($detArr['createdUid'] && array_key_exists($detArr['createdUid'], $uidArr)){
+					$retArr[$detID]['createdBy'] = $uidArr[$detArr['createdUid']];
+				}
+				if($detArr['modifiedUid'] && array_key_exists($detArr['modifiedUid'], $uidArr)){
+					$retArr[$detID]['modifiedBy'] = $uidArr[$detArr['modifiedUid']];
+				}
 			}
+		}
+		return $retArr;
+	}
+
+	public function getDeterminationSetArr($occidArr, $filterArr = null){
+		//Returns determinations based on a set of occurrence (determinations for many occurrences)
+		$retArr = array();
+		$occidStr = implode(',', $occidArr);
+		if(preg_match('/^[\d,]+$/', $occidStr)){
+			$sql = 'SELECT detID, occid, ' . implode(', ', array_keys($this->schemaMap)) . ', initialTimestamp FROM omoccurdeterminations WHERE occid IN(' . $occidStr . ') ';
+			//Apply input filter conditions
+			$paramArr = array();
+			if($filterArr){
+				$this->setParameterArr($filterArr);
+				foreach($this->parameterArr as $field => $value){
+					$sql .= 'AND '.$field.' = ? ';
+					$paramArr[] = $value;
+				}
+			}
+			//Run query
+			$uidArr = array();
+			if($stmt = $this->conn->prepare($sql)){
+				if($paramArr) $stmt->bind_param($this->typeStr, ...$paramArr);
+				$stmt->execute();
+				if($rs = $stmt->get_result()){
+					while($r = $rs->fetch_assoc()){
+						$retArr[$r['occid']][$r['detID']] = $r;
+						if($r['createdUid']) $uidArr[$r['createdUid']] = $r['createdUid'];
+						if($r['modifiedUid']) $uidArr[$r['modifiedUid']] = $r['modifiedUid'];
+					}
+					$rs->free();
+				}
+				$stmt->close();
+			}
+			if($uidArr){
+				//Add user names based on modifiedBy and createdBy IDs
+				$uidArr = $this->getUserNames($uidArr);
+				foreach($retArr as $occid => $dArr){
+					foreach($dArr as $detID => $detArr){
+						if($detArr['createdUid'] && array_key_exists($detArr['createdUid'], $uidArr)){
+							$retArr[$occid][$detID]['createdBy'] = $uidArr[$detArr['createdUid']];
+						}
+						if($detArr['modifiedUid'] && array_key_exists($detArr['modifiedUid'], $uidArr)){
+							$retArr[$occid][$detID]['modifiedBy'] = $uidArr[$detArr['modifiedUid']];
+						}
+					}
+				}
+			}
+		}
+		return $retArr;
+	}
+
+	private function getUserNames($uidArr){
+		print_r($uidArr);
+		$retArr = array();
+		$sql = 'SELECT uid, firstname, lastname, username FROM users WHERE uid IN('.implode(',', $uidArr).')';
+		echo $sql;
+		if($rs = $this->conn->query($sql)){
+			while($r = $rs->fetch_object()){
+				$retArr[$r->uid] = $r->lastname . ($r->firstname ? ', ' . $r->firstname : '');
+			}
+			$rs->free();
 		}
 		return $retArr;
 	}
@@ -80,7 +145,7 @@ class OmDeterminations extends Manager{
 				$sqlValues .= '?, ';
 				$paramArr[] = $value;
 			}
-			$sql .= ') VALUES('.trim($sqlValues, ', ').') ';
+			$sql .= ') VALUES(' . trim($sqlValues, ', ') . ') ';
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param($this->typeStr, ...$paramArr);
 				try {
@@ -141,18 +206,15 @@ class OmDeterminations extends Manager{
 				$value = trim($inputArr[$postField]);
 				if($value){
 					$postField = strtolower($postField);
-					if($postField == 'establisheddate') $value = OccurrenceUtil::formatDate($value);
 					if($postField == 'modifieduid') $value = OccurrenceUtil::verifyUser($value, $this->conn);
-					if($postField == 'createduid') $value = OccurrenceUtil::verifyUser($value, $this->conn);
-					if($postField == 'identificationuncertain' || $postField == 'iscurrent' || $postField == 'printqueue' || $postField == 'appliedstatus' || $postField == 'securitystatus'){
+					elseif($postField == 'createduid') $value = OccurrenceUtil::verifyUser($value, $this->conn);
+					elseif($type == 'i'){
 						if(!is_numeric($value)){
 							$value = strtolower($value);
 							if($value == 'yes' || $value == 'true') $value = 1;
 							else $value = 0;
 						}
-					}
-					if($postField == 'sortsequence'){
-						if(!is_numeric($value)) $value = 10;
+						if($postField == 'sortsequence') $value = 10;
 					}
 				}
 				else $value = null;

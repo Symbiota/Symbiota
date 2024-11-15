@@ -5,10 +5,15 @@ include_once($SERVER_ROOT . '/classes/DwcArchiverCore.php');
 include_once($SERVER_ROOT . '/classes/utilities/RdfUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/individual/index.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/individual/index.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/individual/index.en.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.en.php');
+$langPath = $SERVER_ROOT.'/content/lang/collections/';
+if($LANG_TAG != 'en' && file_exists($langPath.'individual/index.'.$LANG_TAG.'.php')){
+	include_once($langPath.'individual/index.'.$LANG_TAG.'.php');
+	include_once($langPath.'fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
+}
+else{
+	include_once($langPath.'individual/index.en.php');
+	include_once($langPath.'fieldterms/materialSampleVars.en.php');
+}
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $submit = array_key_exists('formsubmit', $_REQUEST) ? $_REQUEST['formsubmit'] : '';
@@ -32,7 +37,7 @@ elseif($collid && $pk){
 }
 
 $indManager->setDisplayFormat($format);
-$indManager->setOccurData();
+$observerUid = $indManager->getOccData('observeruid');
 if(!$occid) $occid = $indManager->getOccid();
 if(!$collid) $collid = $indManager->getCollid();
 
@@ -46,7 +51,7 @@ if($SYMB_UID){
 	elseif((array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollEditor']))){
 		$isEditor = true;
 	}
-	elseif(isset($occArr['observeruid']) && $occArr['observeruid'] == $SYMB_UID){
+	elseif($observerUid && $observerUid == $SYMB_UID){
 		$isEditor = true;
 	}
 	elseif($indManager->isTaxonomicEditor()){
@@ -66,7 +71,7 @@ if($SYMB_UID){
 		$isSecuredReader = true;
 	}
 }
-$indManager->applyProtections($isSecuredReader);
+if(!$isSecuredReader) $indManager->applyProtections();
 $occArr = $indManager->getOccData();
 $collMetadata = $indManager->getMetadata();
 $genticArr = $indManager->getGeneticArr();
@@ -211,15 +216,12 @@ $traitArr = $indManager->getTraitArr();
 		}
 
 		function toggle(target){
-			var objDiv = document.getElementById(target);
-			if(objDiv){
-				var divObjs = document.getElementsByTagName("div");
-				for (i = 0; i < divObjs.length; i++) {
-					var obj = divObjs[i];
-					if(obj.getAttribute("class") == target || obj.getAttribute("className") == target){
-						if(obj.style.display=="none") obj.style.display="inline";
-						else obj.style.display="none";
-					}
+			let divObjs = document.getElementsByTagName("div");
+			for (i = 0; i < divObjs.length; i++) {
+				let obj = divObjs[i];
+				if(obj.getAttribute("class") == target || obj.getAttribute("className") == target){
+					if(obj.style.display=="none") obj.style.display="inline";
+					else obj.style.display="none";
 				}
 			}
 		}
@@ -266,31 +268,31 @@ $traitArr = $indManager->getTraitArr();
 				var marker = new google.maps.Marker({
 					position: mLatLng,
 					map: map
-			});
+				});
 
-			if(coordError > 0) {
-			   new google.maps.Circle({
-				  center: mLatLng,
-				  radius: coordError,
-				  map: map
-			   })
-			}
+				if(coordError > 0) {
+					new google.maps.Circle({
+						center: mLatLng,
+						radius: coordError,
+						map: map
+					})
+				}
 			}
 
 			function leafletInit() {
 				let mLatLng = [<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>];
 
-            map = new LeafletMap("map_canvas", {
-               center: mLatLng,
-               zoom: 8,
-            });
+				map = new LeafletMap("map_canvas", {
+					center: mLatLng,
+					zoom: 8,
+				});
 
-			if(coordError > 0) {
-			   map.enableDrawing({...map.DEFAULT_DRAW_OPTIONS, control: false})
-			   map.drawShape({type: "circle", radius: coordError, latlng: mLatLng})
-			}
+				if(coordError > 0) {
+					map.enableDrawing({...map.DEFAULT_DRAW_OPTIONS, control: false})
+					map.drawShape({type: "circle", radius: coordError, latlng: mLatLng})
+				}
 				const marker = L.marker(mLatLng).addTo(map.mapLayer);
-			map.mapLayer.setZoom(8)
+				map.mapLayer.setZoom(8);
 			}
 
 			function initializeMap(){
@@ -317,7 +319,7 @@ $traitArr = $indManager->getTraitArr();
 		if($shouldUseMinimalMapHeader){
 			?>
 			.minimal-header-margin{
-			   margin-top: 6rem;
+				margin-top: 6rem;
 			}
 			<?php
 		}
@@ -414,7 +416,7 @@ $traitArr = $indManager->getTraitArr();
 					<div id="title1-div" class="title1-div">
 						<?php echo $collMetadata['collectionname'].' ('.$instCode.')'; ?>
 					</div>
-					<div  id="occur-div">
+					<div id="occur-div">
 						<?php
 						if(array_key_exists('loan',$occArr)){
 							?>
@@ -426,32 +428,34 @@ $traitArr = $indManager->getTraitArr();
 						}
 						if(array_key_exists('relation',$occArr)){
 							?>
-								<fieldset id="association-div" class="top-light-margin">
-									<legend><?php echo (isset($LANG['RELATED_OCCUR'])?$LANG['RELATED_OCCUR']:'Related Occurrences'); ?></legend>
-									<?php
-									$displayLimit = 5;
-									$cnt = 0;
-									foreach($occArr['relation'] as $id => $assocArr){
-										if($cnt == $displayLimit){
-											echo '<div class="relation-hidden"><a href="#" onclick="$(\'.relation-hidden\').toggle();return false;">show all records</a></div>';
-											echo '<div class="relation-hidden" style="display:none">';
-										}
-										echo '<div>';
-										echo $assocArr['relationship'];
-										if($assocArr['subtype']) echo ' ('.$assocArr['subtype'].')';
-										echo ': ';
-										$relID = $assocArr['objectID'];
-										$relUrl = $assocArr['resourceurl'];
-										if(!$relUrl && $assocArr['occidassoc']) $relUrl = $GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$assocArr['occidassoc'];
-										if($relUrl) $relID = '<a href="' . $relUrl . '" target="_blank">' . ($relID ? $relID : $relUrl) . '</a>';
-										if($relID) echo $relID;
-										if($assocArr['sciname']) echo ' [' . $assocArr['sciname'] . ']';
-										echo '</div>';
-										$cnt++;
+							<fieldset id="association-div" class="top-light-margin">
+								<legend><?php echo (isset($LANG['RELATED_OCCUR'])?$LANG['RELATED_OCCUR']:'Related Occurrences'); ?></legend>
+								<?php
+								$displayLimit = 5;
+								$cnt = 0;
+								foreach($occArr['relation'] as $id => $assocArr){
+									if($cnt == $displayLimit){
+										?>
+										<div class="relation-hidden"><a href="#" onclick="toggle('relation-hidden'); return false;">show all records</a></div>
+										<div class="relation-hidden" style="display:none">
+										<?php
 									}
-									if(count($occArr['relation']) > $displayLimit) echo '</div>';
-									?>
-								</fieldset>
+									echo '<div>';
+									echo $assocArr['relationship'];
+									if($assocArr['subtype']) echo ' ('.$assocArr['subtype'].')';
+									echo ': ';
+									$relID = $assocArr['objectID'];
+									$relUrl = $assocArr['resourceurl'];
+									if(!$relUrl && $assocArr['occidassoc']) $relUrl = $GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$assocArr['occidassoc'];
+									if($relUrl) $relID = '<a href="' . $relUrl . '" target="_blank">' . ($relID ? $relID : $relUrl) . '</a>';
+									if($relID) echo $relID;
+									if($assocArr['sciname']) echo ' [' . $assocArr['sciname'] . ']';
+									echo '</div>';
+									$cnt++;
+								}
+								if(count($occArr['relation']) > $displayLimit) echo '</div>';
+								?>
+							</fieldset>
 							<?php
 						}
 						if($occArr['catalognumber']){
@@ -497,8 +501,8 @@ $traitArr = $indManager->getTraitArr();
 								<?php
 								echo '<label>'.$LANG['TAXON'].':</label> ';
 								echo '<i>'.$occArr['sciname'].'</i> '.$occArr['scientificnameauthorship'];
-								if(isset($occArr['taxonsecure'])){
-									echo '<span class="notice-span"> '.$LANG['ID_PROTECTED'].'</span>';
+								if(isset($occArr['protectedTaxon'])){
+									echo '<span class="notice-span" style="margin-left: 20px"> '.$LANG['ID_PROTECTED'].'</span>';
 								}
 								if($occArr['tidinterpreted']){
 									//echo ' <a href="../../taxa/index.php?taxon=' . $occArr['tidinterpreted'] . '" title="Open Species Profile Page"><img src="" /></a>';
@@ -515,17 +519,19 @@ $traitArr = $indManager->getTraitArr();
 							?>
 							<div id="identby-div" class="identby-div bottom-breathing-room-rel-sm">
 								<?php
-								echo '<label>'.(isset($LANG['DETERMINER'])?$LANG['DETERMINER']:'Determiner').': </label>'.$indManager->activateOrcidID($occArr['identifiedby']);
+								echo '<label>' . $LANG['DETERMINER'] . ': </label>'.$indManager->activateOrcidID($occArr['identifiedby']);
 								?>
 							</div>
-							<?php if($occArr['dateidentified']): ?>
-								<div id="identby-div" class="identby-div bottom-breathing-room-rel-sm">
-								<?php 
-									echo '<label>'.$LANG['DATE_DET']  . ': '. '</label>' . $occArr['dateidentified'];
-								?>
-							</div>
-							<?php endif; ?>
 							<?php
+							if($occArr['dateidentified']){
+								?>
+								<div id="dateident-div" class="dateident-div bottom-breathing-room-rel-sm">
+									<?php
+									echo '<label>'.$LANG['DATE_DET']  . ': '. '</label>' . $occArr['dateidentified'];
+									?>
+								</div>
+								<?php
+							}
 						}
 						if($occArr['taxonremarks']){
 							?>
@@ -556,60 +562,54 @@ $traitArr = $indManager->getTraitArr();
 							</div>
 							<?php
 						}
-						if(array_key_exists('dets',$occArr) && (count($occArr['dets']) > 1 || $occArr['dets'][key($occArr['dets'])]['iscurrent'] == 0)){
+						if(!empty($occArr['dets'])){
 							?>
 							<div id="determination-div" class="bottom-breathing-room-rel-sm">
-								<div id="det-toogle-div" class="det-toogle-div">
-									<a href="#" onclick="toggle('det-toogle-div');return false"><img src="../../images/plus.png" style="width:1em" alt="image of a plus sign; click to show determination history"></a>
-									<?php echo $LANG['SHOW_DET_HISTORY']; ?>
+								<div class="det-toggle-div">
+									<a href="#" onclick="toggle('det-toggle-div');return false"><img src="../../images/plus_sm.png"> <?php echo $LANG['SHOW_DET_HISTORY']; ?></a>
 								</div>
-								<div id="det-toogle-div" class="det-toogle-div" style="display:none;">
-									<div>
-										<a href="#" onclick="toggle('det-toogle-div');return false"><img src="../../images/minus.png" style="width:1em" alt="image of a minus sign; click to hide determination history"></a>
-										<?php echo $LANG['HIDE_DET_HISTORY']; ?>
-									</div>
+								<div class="det-toggle-div" style="display:none;">
 									<fieldset>
-										<legend><?php echo $LANG['DET_HISTORY']; ?></legend>
+										<legend><a href="#" onclick="toggle('det-toggle-div');return false"><?php echo $LANG['DET_HISTORY']; ?></a></legend>
 										<?php
 										$firstIsOut = false;
-										$dArr = $occArr['dets'];
-										foreach($dArr as $detArr){
+										foreach($occArr['dets'] as $detArr){
 											if($firstIsOut) echo '<hr />';
 												$firstIsOut = true;
 											?>
 											<div style="margin:10px;">
 												<?php
-												if($detArr['qualifier']) echo $detArr['qualifier'];
-												echo ' <label><i>'.$detArr['sciname'].'</i></label> '.$detArr['author'];
+												if($detArr['identificationQualifier']) echo $detArr['identificationQualifier'];
+												echo ' <label><i>'.$detArr['sciname'].'</i></label> '.$detArr['scientificNameAuthorship'];
 												?>
-												<div id="identby-div" class="identby-div">
+												<div class="identby-div">
 													<?php
-													echo '<label>'.(isset($LANG['DETERMINER'])?$LANG['DETERMINER']:'Determiner').': </label>';
-													echo $detArr['identifiedby'];
+													echo '<label>'.$LANG['DETERMINER'].': </label>';
+													echo $detArr['identifiedBy'];
 													?>
 												</div>
-												<div id="identdate-div" class="identdate-div">
+												<div class="dateident-div">
 													<?php
 													echo '<label>'.$LANG['DATE'].': </label>';
-													echo $detArr['date'];
+													echo $detArr['dateIdentified'];
 													?>
 												</div>
 												<?php
-												if($detArr['ref']){ ?>
-													<div id="identref-div" class="identref-div">
+												if($detArr['identificationReferences']){ ?>
+													<div class="identref-div">
 														<?php
 														echo '<label>'.$LANG['ID_REFERENCES'].': </label>';
-														echo $detArr['ref'];
+														echo $detArr['identificationReferences'];
 														?>
 													</div>
 													<?php
 												}
-												if($detArr['notes']){
+												if($detArr['identificationRemarks']){
 													?>
-													<div id="identremarks-div" class="identremarks-div">
+													<div class="identremarks-div">
 														<?php
 														echo '<label>'.$LANG['ID_REMARKS'].': </label>';
-														echo $detArr['notes'];
+														echo $detArr['identificationRemarks'];
 														?>
 													</div>
 													<?php
@@ -1217,7 +1217,7 @@ $traitArr = $indManager->getTraitArr();
 						if($occArr['catalognumber']) echo '<div><label>'.$LANG['CATALOG_NUMBER'].':</label> '.$occArr['catalognumber'].'</div>';
 						if($occArr['occurrenceid']) echo '<div><label>'.$LANG['GUID'].':</label> '.$occArr['occurrenceid'].'</div>';
 						echo '<div><label>'.$LANG['LATEST_ID'].':</label> ';
-						if(!isset($occArr['taxonsecure'])) echo '<i>'.$occArr['sciname'].'</i> '.$occArr['scientificnameauthorship'];
+						if(!isset($occArr['protectedTaxon'])) echo '<i>'.$occArr['sciname'].'</i> '.$occArr['scientificnameauthorship'];
 						else echo $LANG['SPECIES_PROTECTED'];
 						echo '</div>';
 						if($occArr['identifiedby']) echo '<div><label>'.$LANG['IDENTIFIED_BY'].':</label> '.$occArr['identifiedby'].'<span stlye="margin-left:30px;">'.$occArr['dateidentified'].'</span></div>';
@@ -1235,13 +1235,13 @@ $traitArr = $indManager->getTraitArr();
 									if($dupArr['catalognumber']) echo '<div><label>'.$LANG['CATALOG_NUMBER'].':</label> '.$dupArr['catalognumber'].'</div>';
 									if($dupArr['occurrenceid']) echo '<div><label>'.$LANG['GUID'].':</label> '.$dupArr['occurrenceid'].'</div>';
 									echo '<div><label>'.$LANG['LATEST_ID'].':</label> ';
-									if(!isset($occArr['taxonsecure'])) echo '<i>'.$dupArr['sciname'].'</i> '.$dupArr['author'];
+									if(!isset($occArr['protectedTaxon'])) echo '<i>'.$dupArr['sciname'].'</i> '.$dupArr['author'];
 									else echo $LANG['SPECIES_PROTECTED'];
 									echo '</div>';
 									if($dupArr['identifiedby']) echo '<div><label>'.$LANG['IDENTIFIED_BY'].':</label> '.$dupArr['identifiedby'].'<span stlye="margin-left:30px;">'.$dupArr['dateidentified'].'</span></div>';
 									echo '<div><a href="#" onclick="openIndividual('.$dupOccid.');return false;">'.$LANG['SHOW_FULL_DETAILS'].'</a></div>';
 									echo '</div>';
-									if(!isset($occArr['taxonsecure']) && !isset($occArr['localsecure'])){
+									if(!isset($occArr['protectedTaxon']) && !isset($occArr['localsecure'])){
 										if($dupArr['url']){
 											$url = $dupArr['url'];
 											if($IMAGE_DOMAIN) if(substr($url,0,1) == '/') $url = $IMAGE_DOMAIN.$url;

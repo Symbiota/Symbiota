@@ -1,5 +1,6 @@
 <?php
 include_once('Manager.php');
+include_once('OmDeterminations.php');
 include_once('OccurrenceAccessStats.php');
 include_once('ChecklistVoucherAdmin.php');
 include_once('utilities/GeneralUtil.php');
@@ -21,55 +22,6 @@ class OccurrenceIndividual extends Manager{
 
 	public function __destruct(){
 		parent::__destruct();
-	}
-
-	private function loadMetadata(){
-		if($this->collid){
-			//$sql = 'SELECT institutioncode, collectioncode, collectionname, colltype, homepage, individualurl, contact, email, icon, publicedits, rights, rightsholder, accessrights, guidtarget FROM omcollections WHERE collid = ?';
-			$sql = 'SELECT c.*, s.uploadDate FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid WHERE c.collid = ?';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('i', $this->collid);
-				$stmt->execute();
-				if($rs = $stmt->get_result()){
-					$this->metadataArr = array_change_key_case($rs->fetch_assoc());
-					if(isset($this->metadataArr['contactjson'])){
-						//Test to see if contact is a JSON object or a simple string
-						if($contactArr = json_decode($this->metadataArr['contactjson'],true)){
-							$contactStr = '';
-							foreach($contactArr as $cArr){
-								if(!$contactStr || isset($cArr['centralContact'])){
-									if(isset($cArr['firstName']) && $cArr['firstName']) $contactStr = $cArr['firstName'].' ';
-									$contactStr .= $cArr['lastName'];
-									if(isset($cArr['role']) && $cArr['role']) $contactStr .= ', ' . $cArr['role'];
-									$this->metadataArr['contact'] = $contactStr;
-									if(isset($cArr['email']) && $cArr['email']) $this->metadataArr['email'] = $cArr['email'];
-									if(isset($cArr['centralContact'])) break;
-								}
-							}
-						}
-					}
-					if($this->metadataArr['dynamicproperties']){
-						if($propArr = json_decode($this->metadataArr['dynamicproperties'], true)) {
-							if(isset($propArr['editorProps']['modules-panel'])) {
-								foreach($propArr['editorProps']['modules-panel'] as $k => $modArr) {
-									if(isset($modArr['paleo']['status'])) $this->activeModules['paleo'] = true;
-									elseif (isset($modArr['matSample']['status'])) $this->activeModules['matSample'] = true;
-								}
-							}
-						}
-					}
-					$rs->free();
-				}
-				else{
-					$this->errorMessage = $stmt->error;
-				}
-				$stmt->close();
-			}
-		}
-	}
-
-	public function getMetadata(){
-		return $this->cleanOutArray($this->metadataArr);
 	}
 
 	public function setGuid($guid){
@@ -110,14 +62,14 @@ class OccurrenceIndividual extends Manager{
 		if($this->occid){
 			if(!$this->occArr) $this->setOccurData();
 			if($fieldKey){
-				if(array_key_exists($fieldKey,$this->occArr)) return $this->occArr($fieldKey);
+				if(array_key_exists($fieldKey, $this->occArr)) return $this->occArr[$fieldKey];
 				return false;
 			}
 		}
 		return $this->cleanOutArray($this->occArr);
 	}
 
-	public function setOccurData(){
+	private function setOccurData(){
 		$status = false;
 		/*
 		$sql = 'SELECT o.occid, o.collid, o.institutioncode, o.collectioncode,
@@ -171,12 +123,15 @@ class OccurrenceIndividual extends Manager{
 						}
 					}
 					$this->setAdditionalIdentifiers();
+					$this->setDeterminations();
+					$this->setImages();
 					$this->setPaleo();
 					$this->setLoan();
 					$this->setOccurrenceRelationships();
 					$this->setReferences();
 					$this->setMaterialSamples();
 					$this->setSource();
+					$this->setExsiccati();
 				}
 				//Set access statistics
 				$accessType = 'view';
@@ -193,68 +148,141 @@ class OccurrenceIndividual extends Manager{
 		return $status;
 	}
 
-	public function applyProtections($isSecuredReader){
+	private function loadMetadata(){
+		if($this->collid){
+			//$sql = 'SELECT institutioncode, collectioncode, collectionname, colltype, homepage, individualurl, contact, email, icon, publicedits, rights, rightsholder, accessrights, guidtarget FROM omcollections WHERE collid = ?';
+			$sql = 'SELECT c.*, s.uploadDate FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid WHERE c.collid = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->collid);
+				$stmt->execute();
+				if($rs = $stmt->get_result()){
+					$this->metadataArr = array_change_key_case($rs->fetch_assoc());
+					if(isset($this->metadataArr['contactjson'])){
+						//Test to see if contact is a JSON object or a simple string
+						if($contactArr = json_decode($this->metadataArr['contactjson'],true)){
+							$contactStr = '';
+							foreach($contactArr as $cArr){
+								if(!$contactStr || isset($cArr['centralContact'])){
+									if(isset($cArr['firstName']) && $cArr['firstName']) $contactStr = $cArr['firstName'].' ';
+									$contactStr .= $cArr['lastName'];
+									if(isset($cArr['role']) && $cArr['role']) $contactStr .= ', ' . $cArr['role'];
+									$this->metadataArr['contact'] = $contactStr;
+									if(isset($cArr['email']) && $cArr['email']) $this->metadataArr['email'] = $cArr['email'];
+									if(isset($cArr['centralContact'])) break;
+								}
+							}
+						}
+					}
+					if($this->metadataArr['dynamicproperties']){
+						if($propArr = json_decode($this->metadataArr['dynamicproperties'], true)) {
+							if(isset($propArr['editorProps']['modules-panel'])) {
+								foreach($propArr['editorProps']['modules-panel'] as $k => $modArr) {
+									if(isset($modArr['paleo']['status'])) $this->activeModules['paleo'] = true;
+									elseif (isset($modArr['matSample']['status'])) $this->activeModules['matSample'] = true;
+								}
+							}
+						}
+					}
+					$rs->free();
+				}
+				else{
+					$this->errorMessage = $stmt->error;
+				}
+				$stmt->close();
+			}
+		}
+	}
+
+	public function applyProtections(){
 		if($this->occArr){
-			$protectTaxon = false;
-			/*
-			 if(isset($this->occArr['scinameprotected']) && $this->occArr['scinameprotected'] && !$isSecuredReader){
-			 $protectTaxon = true;
-			 $this->occArr['taxonsecure'] = 1;
-			 $this->occArr['sciname'] = $this->occArr['scinameprotected'];
-			 $this->occArr['family'] = $this->occArr['familyprotected'];
-			 $this->occArr['tidinterpreted'] = $this->occArr['tidprotected'];
-			 //$this->occArr['informationWithheld'] .= 'identification and images redacted';
-			 }
-			 */
-			$protectLocality = false;
-			if($this->occArr['localitysecurity'] == 1 && !$isSecuredReader){
-				$protectLocality = true;
+			$isProtected = false;
+			$infoWithheldArr = array();
+
+			//Locality protections
+			if($this->occArr['localitysecurity'] == 1){
+				$isProtected = true;
 				$this->occArr['localsecure'] = 1;
-				$redactArr = array('recordnumber','eventdate','verbatimeventdate','locality','locationid','decimallatitude','decimallongitude','verbatimcoordinates',
-					'locationremarks', 'georeferenceremarks', 'geodeticdatum', 'coordinateuncertaintyinmeters', 'minimumelevationinmeters', 'maximumelevationinmeters',
-					'verbatimelevation', 'habitat', 'associatedtaxa');
-				$infoWithheld = '';
-				foreach($redactArr as $term){
+				$redactLocalFieldArr = array('recordnumber','eventdate','verbatimeventdate','locality','locationid','decimallatitude','decimallongitude','verbatimcoordinates',
+						'locationremarks', 'georeferenceremarks', 'geodeticdatum', 'coordinateuncertaintyinmeters', 'minimumelevationinmeters', 'maximumelevationinmeters',
+						'verbatimelevation', 'habitat', 'associatedtaxa');
+				foreach($redactLocalFieldArr as $term){
 					if($this->occArr[$term]){
 						$this->occArr[$term] = '';
-						$infoWithheld .= ', ' . $term;
+						$infoWithheldArr['redacted'][] = $term;
 					}
 				}
-				if($this->occArr['informationwithheld']) $infoWithheld = $this->occArr['informationwithheld'] . '; ' . $infoWithheld;
-				$this->occArr['informationwithheld'] = trim($infoWithheld, ', ');
 			}
-			if(!$protectTaxon) $this->setDeterminations();
-			if(!$protectLocality && !$protectTaxon) $this->setImages();
-			if(!$protectLocality) $this->setExsiccati();
+
+			//Taxon protections
+			$redactTaxaFieldArr = array('identifiedBy', 'dateIdentified', 'family', 'sciname', 'scientificNameAuthorship', 'tidInterpreted',
+				'identificationQualifier', 'identificationReferences', 'identificationRemarks', 'taxonRemarks');
+			$approvedArr = array();
+			if(isset($this->occArr['dets']) && $this->occArr['dets']){
+				//$reason = '';
+				foreach($this->occArr['dets'] as $detID => $detArr){
+					if($detArr['securityStatus']){
+						$isProtected = true;
+						unset($this->occArr['dets'][$detID]);
+						//if(!empty($detArr['securityStatusReason']) && $detArr['securityStatusReason'] != 'Locked - NEON redaction list') $reason = $detArr['securityStatusReason'];
+					}
+					elseif($detArr['isCurrent']){
+						$approvedArr = $detArr;
+					}
+				}
+				if($isProtected){
+					$this->occArr['protectedTaxon'] = 1;
+					foreach($redactTaxaFieldArr as $field){
+						$field = strtolower($field);
+						if(isset($this->occArr[$field]) && $this->occArr[$field]){
+							unset($this->occArr[$field]);
+							$infoWithheldArr['fuzzed'][] = $field;
+						}
+					}
+					//if(isset($infoWithheldArr['fuzzed'])) $infoWithheldArr['fuzzed'][] = 'reason: '.$reason;
+					foreach($approvedArr as $field => $value){
+						$this->occArr[strtolower($field)] = $value;
+					}
+				}
+				if($isProtected){
+					if(!empty($this->occArr['imgs'])){
+						$infoWithheldArr['redacted'][] = 'images';
+						unset($this->occArr['imgs']);
+					}
+					if(!empty($this->occArr['exs'])){
+						$infoWithheldArr['redacted'][] = 'exsiccati';
+						unset($this->occArr['exs']);
+					}
+				}
+				if($infoWithheldArr){
+					$infoWithheld = '';
+					if($this->occArr['informationwithheld']) $infoWithheld = $this->occArr['informationwithheld'];
+					if(isset($infoWithheldArr['redacted'])) $infoWithheld .= ', redacted: '.implode(', ', $infoWithheldArr['redacted']);
+					if(isset($infoWithheldArr['fuzzed'])) $infoWithheld .= ', fuzzed: '.implode(', ', $infoWithheldArr['fuzzed']);
+					$this->occArr['informationwithheld'] = trim($infoWithheld,', ');
+				}
+			}
 		}
 	}
 
 	private function setDeterminations(){
-		$sql = 'SELECT detid, dateidentified, identifiedby, sciname, scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, iscurrent
-			FROM omoccurdeterminations
-			WHERE (occid = ?) AND appliedstatus = 1
-			ORDER BY sortsequence';
-		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('i', $this->occid);
-			$stmt->execute();
-			if($rs = $stmt->get_result()){
-				while($row = $rs->fetch_object()){
-					$detId = $row->detid;
-					$this->occArr['dets'][$detId]['date'] = $row->dateidentified;
-					$this->occArr['dets'][$detId]['identifiedby'] = $row->identifiedby;
-					$this->occArr['dets'][$detId]['sciname'] = $row->sciname;
-					$this->occArr['dets'][$detId]['author'] = $row->scientificnameauthorship;
-					$this->occArr['dets'][$detId]['qualifier'] = $row->identificationqualifier;
-					$this->occArr['dets'][$detId]['ref'] = $row->identificationreferences;
-					$this->occArr['dets'][$detId]['notes'] = $row->identificationremarks;
-					$this->occArr['dets'][$detId]['iscurrent'] = $row->iscurrent;
+		$conditionArr = array('appliedStatus' => '1');
+		$detManager = new OmDeterminations($this->conn);
+		$detManager->setOccid($this->occid);
+		if($detArr = $detManager->getDeterminationArr($conditionArr)){
+			$this->occArr['dets'] = $detArr;
+			$currentDisplay = array('identifiedBy', 'dateIdentified', 'family', 'sciname', 'scientificNameAuthorship', 'tidInterpreted',
+				'identificationQualifier', 'identificationReferences', 'identificationRemarks', 'taxonRemarks');
+			foreach($detArr as $detArr){
+				if($detArr['isCurrent']){
+					foreach($currentDisplay as $field){
+						$fieldLowerCase = strtolower($field);
+						if(array_key_exists($fieldLowerCase, $this->occArr)) $this->occArr[$fieldLowerCase] = $detArr[$field];
+					}
 				}
-				$rs->free();
 			}
-			else{
-				$this->warningArr[] = $stmt->error;
-			}
-			$stmt->close();
+		}
+		else{
+			$this->errorMessage = $detManager->getErrorMessage();
 		}
 	}
 
@@ -289,7 +317,7 @@ class OccurrenceIndividual extends Manager{
 					$this->occArr['imgs'][$imgId]['rights'] = $row->rights;
 					$this->occArr['imgs'][$imgId]['accessrights'] = $row->accessRights;
 					$this->occArr['imgs'][$imgId]['copyright'] = $row->copyright;
-          if($row->innerPhotographer) $this->occArr['imgs'][$imgId]['photographer'] = $row->innerPhotographer;
+					if($row->innerPhotographer) $this->occArr['imgs'][$imgId]['photographer'] = $row->innerPhotographer;
 				}
 				$rs->free();
 			}
@@ -301,7 +329,7 @@ class OccurrenceIndividual extends Manager{
 	}
 
 	private function setAdditionalIdentifiers(){
-		$retArr = array();
+		$idArr = array();
 		$sql = 'SELECT idomoccuridentifiers, occid, identifiervalue, identifiername FROM omoccuridentifiers WHERE (occid = ?) ORDER BY sortBy';
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('i', $this->occid);
@@ -310,13 +338,13 @@ class OccurrenceIndividual extends Manager{
 				while($r = $rs->fetch_object()){
 					$identifierTag = $r->identifiername;
 					if(!$identifierTag) $identifierTag = 0;
-					$retArr[$r->idomoccuridentifiers]['name'] = $identifierTag;
-					$retArr[$r->idomoccuridentifiers]['value'] = $r->identifiervalue;
+					$idArr[$r->idomoccuridentifiers]['name'] = $identifierTag;
+					$idArr[$r->idomoccuridentifiers]['value'] = $r->identifiervalue;
 				}
 				$rs->free();
 			}
 		}
-		if($retArr) $this->occArr['othercatalognumbers'] = $retArr;
+		if($idArr) $this->occArr['othercatalognumbers'] = $idArr;
 		elseif($this->occArr['othercatalognumbers']){
 			$this->occArr['othercatalognumbers'] = array(array('value' => $this->occArr['othercatalognumbers']));
 		}
@@ -342,7 +370,7 @@ class OccurrenceIndividual extends Manager{
 	}
 
 	private function setLoan(){
-		$sql = 'SELECT l.loanIdentifierOwn, i.institutioncode
+		$sql = 'SELECT l.loanIdentifierOwn, i.institutionCode
 			FROM omoccurloanslink llink INNER JOIN omoccurloans l ON llink.loanid = l.loanid
 			INNER JOIN institutions i ON l.iidBorrower = i.iid
 			WHERE (llink.occid = ?) AND (l.dateclosed IS NULL) AND (llink.returndate IS NULL)';
@@ -352,7 +380,7 @@ class OccurrenceIndividual extends Manager{
 			if($rs = $stmt->get_result()){
 				while($row = $rs->fetch_object()){
 					$this->occArr['loan']['identifier'] = $row->loanIdentifierOwn;
-					$this->occArr['loan']['code'] = $row->institutioncode;
+					$this->occArr['loan']['code'] = $row->institutionCode;
 				}
 				$rs->free();
 			}
@@ -839,6 +867,7 @@ class OccurrenceIndividual extends Manager{
 		return $this->cleanOutArray($retArr);
 	}
 
+	//Data verioning functions
 	public function getEditArr(){
 		$retArr = array();
 		$sql = 'SELECT e.ocedid, e.fieldname, e.fieldvalueold, e.fieldvaluenew, e.reviewstatus, e.appliedstatus,
@@ -1403,6 +1432,10 @@ class OccurrenceIndividual extends Manager{
 
 	public function setDbpk($pk){
 		$this->dbpk = $pk;
+	}
+
+	public function getMetadata(){
+		return $this->cleanOutArray($this->metadataArr);
 	}
 
 	public function setDisplayFormat($f){

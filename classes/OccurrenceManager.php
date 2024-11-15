@@ -652,7 +652,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	}
 
 	public function getQueryTermStr(){
-		//Returns a search variable string
+		//Returns a sanitized search variable string
 		$retStr = '';
 		foreach($this->searchTermArr as $k => $v){
 			if(is_array($v)) $v = implode(',', $v);
