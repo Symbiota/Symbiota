@@ -147,7 +147,7 @@ function checkNameExistence(f, silent = false) {
   });
 }
 
-function updateFullnameCore(f) {
+function updateFullnameCore(f, silent = false) {
   let sciname =
     f.unitind1.value +
     f.unitname1.value +
@@ -165,6 +165,6 @@ function updateFullnameCore(f) {
     sciname += " " + standardizeTradeName(f.tradeName.value);
   }
   f.sciname.value = sciname.trim();
-  checkNameExistence(f);
+  checkNameExistence(f, silent);
   return sciname;
 }

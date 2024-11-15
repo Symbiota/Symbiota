@@ -165,9 +165,9 @@ function showOnlyRelevantFields(rankId) {
   }
 }
 
-function updateFullname(f) {
-  updateFullnameCore(f);
-  checkNameExistence(f);
+function updateFullname(f, silent = false) {
+  updateFullnameCore(f, true);
+  checkNameExistence(f, silent);
 }
 
 function toggle(target) {

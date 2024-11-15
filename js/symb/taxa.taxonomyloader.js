@@ -6,7 +6,7 @@ $(document).ready(function () {
   form.querySelectorAll("input, select, textarea").forEach((element) => {
     const debouncedChange = debounce(() => {
       handleFieldChange(form, true, "submitaction");
-      updateFullname(form);
+      updateFullname(form, true);
     }, 2000);
     element.addEventListener("input", debouncedChange);
     element.addEventListener("change", debouncedChange);
@@ -92,7 +92,7 @@ async function verifyLoadForm(f, silent = false) {
 }
 
 function parseName(f) {
-  handleFieldChange(f, false, "submitaction");
+  handleFieldChange(f, true, "submitaction");
   if (!f.quickparser.value) {
     return;
   }
@@ -256,7 +256,7 @@ function parseName(f) {
   }
   if (parentName != "") setParent(parentName, f.unitind1.value);
   showOnlyRelevantFields(rankId);
-  updateFullname(f);
+  updateFullname(f, false); // @TODO maybe false
   f.quickparser.value = "";
 }
 
@@ -291,11 +291,11 @@ function setParent(parentName, unitind1) {
   });
 }
 
-function updateFullname(f) {
-  const coreSciname = updateFullnameCore(f);
+function updateFullname(f, silent = false) {
+  const coreSciname = updateFullnameCore(f, true);
   const scinameDisplay = document.getElementById("scinamedisplay");
   scinameDisplay.textContent = coreSciname.trim();
-  checkNameExistence(f);
+  checkNameExistence(f, silent);
 }
 
 function acceptanceChanged(f) {
