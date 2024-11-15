@@ -1292,7 +1292,11 @@ class SpecUploadBase extends SpecUpload{
 	// }
 	private function setOtherCatalogNumbers(){
 		if($this->uploadType == $this->FILEUPLOAD || $this->uploadType == $this->SKELETAL){
-			$sql = 'INSERT IGNORE INTO omoccuridentifiers (occid, identifiername, identifiervalue, modifiedUid) SELECT kv.occid, kv.key as identifiername, kv.value as identifiervalue, kv.upload_uid as modifiedUid FROM uploadKeyValueTemp kv 
+			$sql = 'INSERT IGNORE INTO omoccuridentifiers (occid, identifiername, identifiervalue, modifiedUid) 
+			SELECT o.occid, kv.key as identifiername, kv.value as identifiervalue, kv.upload_uid as modifiedUid 
+			FROM uploadKeyValueTemp kv 
+			INNER JOIN uploadspectemp u on u.dbpk = kv.dbpk 
+			INNER JOIN omoccurrences o on o.occid = u.occid
 			WHERE type = "omoccuridentifiers" AND kv.collid = ?';
 
 			if($stmt = $this->conn->prepare($sql)){
