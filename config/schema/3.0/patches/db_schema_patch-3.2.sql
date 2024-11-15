@@ -149,4 +149,19 @@ ALTER TABLE `kmdescr`
   ADD CONSTRAINT `FK_descr_cs`  FOREIGN KEY (`cid` , `cs`)  REFERENCES `kmcs` (`cid` , `cs`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_descr_tid`  FOREIGN KEY (`tid`)  REFERENCES `taxa` (`TID`)  ON DELETE CASCADE  ON UPDATE CASCADE;
 
-
+CREATE TABLE `uploadKeyValueTemp`(
+  `key_value_id` int(11) NOT NULL AUTO_INCREMENT,
+  `key` varchar(255) DEFAULT NULL,
+  `value` varchar(255) DEFAULT NULL,
+  `occid` int(10) unsigned DEFAULT NULL,
+  `collid` int(10) unsigned DEFAULT NULL,
+  `dbpk` varchar(255) NOT NULL,
+  `upload_uid` int(10) unsigned NOT NULL,
+  `type` varchar(255) NOT NULL,
+  PRIMARY KEY (`key_value_id`),
+  KEY `occid` (`occid`),
+  KEY `collid` (`collid`),
+  KEY `upload_key_temp_uid` (`upload_uid`),
+  CONSTRAINT `uploadKeyValueTemp_ibfk_1` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `uploadKeyValueTemp_ibfk_2` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`collID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `upload_key_temp_uid` FOREIGN KEY (`upload_uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE)
