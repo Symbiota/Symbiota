@@ -791,9 +791,9 @@ class OccurrenceEditorManager {
 
 							if($matches = explode(':', $identUnit)) {
 								if(count($matches) === 2) {
-									$otherCatNumArr[$matches[1]] = $matches[0];
+									$otherCatNumArr[trim($matches[1])] = trim($matches[0]);
 								} else if(count($matches) > 0) {
-									$otherCatNumArr[$matches[0]] = '';
+									$otherCatNumArr[trim($matches[0])] = '';
 								}
 							}
 						}
