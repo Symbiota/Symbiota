@@ -11,74 +11,77 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\HTML\Element;
 
 use PhpOffice\PhpWord\Element\TrackChange;
-use PhpOffice\PhpWord\Settings;
+use PhpOffice\PhpWord\Style;
 use PhpOffice\PhpWord\Style\Font;
 use PhpOffice\PhpWord\Style\Paragraph;
+use PhpOffice\PhpWord\Writer\HTML;
 use PhpOffice\PhpWord\Writer\HTML\Style\Font as FontStyleWriter;
 use PhpOffice\PhpWord\Writer\HTML\Style\Paragraph as ParagraphStyleWriter;
 
 /**
- * Text element HTML writer
+ * Text element HTML writer.
  *
  * @since 0.10.0
  */
 class Text extends AbstractElement
 {
     /**
-     * Text written after opening
+     * Text written after opening.
      *
      * @var string
      */
     private $openingText = '';
 
     /**
-     * Text written before closing
+     * Text written before closing.
      *
      * @var string
      */
     private $closingText = '';
 
     /**
-     * Opening tags
+     * Opening tags.
      *
      * @var string
      */
     private $openingTags = '';
 
     /**
-     * Closing tag
+     * Closing tag.
      *
      * @var string
      */
     private $closingTags = '';
 
     /**
-     * Write text
+     * Write text.
      *
      * @return string
      */
     public function write()
     {
+        $this->processFontStyle();
+
         /** @var \PhpOffice\PhpWord\Element\Text $element Type hint */
         $element = $this->element;
-        $this->getFontStyle();
+
+        $text = $this->parentWriter->escapeHTML($element->getText());
+        if (!$this->withoutP && !trim($text)) {
+            $text = '&nbsp;';
+        }
 
         $content = '';
         $content .= $this->writeOpening();
         $content .= $this->openingText;
         $content .= $this->openingTags;
-        if (Settings::isOutputEscapingEnabled()) {
-            $content .= $this->escaper->escapeHtml($element->getText());
-        } else {
-            $content .= $element->getText();
-        }
+        $content .= $text;
         $content .= $this->closingTags;
         $content .= $this->closingText;
         $content .= $this->writeClosing();
@@ -91,7 +94,7 @@ class Text extends AbstractElement
      *
      * @param string $value
      */
-    public function setOpeningText($value)
+    public function setOpeningText($value): void
     {
         $this->openingText = $value;
     }
@@ -101,13 +104,13 @@ class Text extends AbstractElement
      *
      * @param string $value
      */
-    public function setClosingText($value)
+    public function setClosingText($value): void
     {
         $this->closingText = $value;
     }
 
     /**
-     * Write opening
+     * Write opening.
      *
      * @return string
      */
@@ -115,10 +118,7 @@ class Text extends AbstractElement
     {
         $content = '';
         if (!$this->withoutP) {
-            $style = '';
-            if (method_exists($this->element, 'getParagraphStyle')) {
-                $style = $this->getParagraphStyle();
-            }
+            $style = $this->getParagraphStyle();
             $content .= "<p{$style}>";
         }
 
@@ -129,7 +129,7 @@ class Text extends AbstractElement
     }
 
     /**
-     * Write ending
+     * Write ending.
      *
      * @return string
      */
@@ -141,12 +141,7 @@ class Text extends AbstractElement
         $content .= $this->writeTrackChangeClosing();
 
         if (!$this->withoutP) {
-            if (Settings::isOutputEscapingEnabled()) {
-                $content .= $this->escaper->escapeHtml($this->closingText);
-            } else {
-                $content .= $this->closingText;
-            }
-
+            $content .= $this->parentWriter->escapeHTML($this->closingText);
             $content .= '</p>' . PHP_EOL;
         }
 
@@ -154,7 +149,7 @@ class Text extends AbstractElement
     }
 
     /**
-     * writes the track change opening tag
+     * writes the track change opening tag.
      *
      * @return string the HTML, an empty string if no track change information
      */
@@ -172,7 +167,7 @@ class Text extends AbstractElement
             $content .= '<del data-phpword-prop=\'';
         }
 
-        $changedProp = array('changed' => array('author'=> $changed->getAuthor(), 'id'    => $this->element->getElementId()));
+        $changedProp = ['changed' => ['author' => $changed->getAuthor(), 'id' => $this->element->getElementId()]];
         if ($changed->getDate() != null) {
             $changedProp['changed']['date'] = $changed->getDate()->format('Y-m-d\TH:i:s\Z');
         }
@@ -189,7 +184,7 @@ class Text extends AbstractElement
     }
 
     /**
-     * writes the track change closing tag
+     * writes the track change closing tag.
      *
      * @return string the HTML, an empty string if no track change information
      */
@@ -211,7 +206,7 @@ class Text extends AbstractElement
     }
 
     /**
-     * Write paragraph style
+     * Write paragraph style.
      *
      * @return string
      */
@@ -228,6 +223,7 @@ class Text extends AbstractElement
         $pStyleIsObject = ($paragraphStyle instanceof Paragraph);
         if ($pStyleIsObject) {
             $styleWriter = new ParagraphStyleWriter($paragraphStyle);
+            $styleWriter->setParentWriter($this->parentWriter);
             $style = $styleWriter->write();
         } elseif (is_string($paragraphStyle)) {
             $style = $paragraphStyle;
@@ -243,22 +239,50 @@ class Text extends AbstractElement
     /**
      * Get font style.
      */
-    private function getFontStyle()
+    private function processFontStyle(): void
     {
         /** @var \PhpOffice\PhpWord\Element\Text $element Type hint */
         $element = $this->element;
-        $style = '';
+
+        $attributeStyle = $attributeLang = '';
+        $lang = null;
+
         $fontStyle = $element->getFontStyle();
-        $fStyleIsObject = ($fontStyle instanceof Font);
-        if ($fStyleIsObject) {
+        if ($fontStyle instanceof Font) {
+            // Attribute style
             $styleWriter = new FontStyleWriter($fontStyle);
-            $style = $styleWriter->write();
-        } elseif (is_string($fontStyle)) {
-            $style = $fontStyle;
+            $fontCSS = $styleWriter->write();
+            if ($fontCSS) {
+                $attributeStyle = ' style="' . $fontCSS . '"';
+            }
+            // Attribute Lang
+            $lang = $fontStyle->getLang();
+        } elseif (!empty($fontStyle)) {
+            // Attribute class
+            $attributeStyle = ' class="' . $fontStyle . '"';
+            // Attribute Lang
+            /** @var Font $cssClassStyle */
+            $cssClassStyle = Style::getStyle($fontStyle);
+            if ($cssClassStyle !== null && method_exists($cssClassStyle, 'getLang')) {
+                $lang = $cssClassStyle->getLang();
+            }
         }
-        if ($style) {
-            $attribute = $fStyleIsObject ? 'style' : 'class';
-            $this->openingTags = "<span {$attribute}=\"{$style}\">";
+
+        if ($lang) {
+            $attributeLang = $lang->getLatin();
+            if (!$attributeLang) {
+                $attributeLang = $lang->getEastAsia();
+            }
+            if (!$attributeLang) {
+                $attributeLang = $lang->getBidirectional();
+            }
+            if ($attributeLang) {
+                $attributeLang = " lang='$attributeLang'";
+            }
+        }
+
+        if ($attributeStyle || $attributeLang) {
+            $this->openingTags = "<span$attributeLang$attributeStyle>";
             $this->closingTags = '</span>';
         }
     }

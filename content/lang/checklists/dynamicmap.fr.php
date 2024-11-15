@@ -4,7 +4,6 @@
 Language: Français (French)
 ------------------
 */
-
 $LANG['CHECKLIST_GENERATOR'] = 'Générateur de Liste Dynamique';
 $LANG['CLICK_MAP'] = "Vous devez d'abord cliquer sur la carte pour capturer les points de coordonnées";
 $LANG['HOME'] = 'Accueil';
