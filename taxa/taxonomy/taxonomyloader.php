@@ -261,8 +261,11 @@ if($isEditor){
 							</div>
 						</fieldset>
 					</div>
-					<div class="top-breathing-room-rel">
-						<button type="submit" id="submitaction" name="submitaction" value="submitNewName" ><?php echo $LANG['SUBMIT_NEW_NAME']; ?></button>
+					<div class="top-breathing-room-re gridlike-form">
+						<div class="gridlike-form-row">
+							<button type="submit" id="submitaction" name="submitaction" value="submitNewName" ><?php echo $LANG['SUBMIT_NEW_NAME']; ?></button>
+							<span id="error-display" style="color: var(--danger-color)"></span>
+						</div>
 					</div>
 				</fieldset>
 			</form>

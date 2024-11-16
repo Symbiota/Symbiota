@@ -5,8 +5,8 @@ $(document).ready(function () {
   const form = document.getElementById("taxoneditform");
   form.querySelectorAll("input, select, textarea").forEach((element) => {
     const debouncedChange = debounce(() => {
-      updateFullname(form);
-      handleFieldChange(form, true, "taxoneditsubmit");
+      updateFullname(form, true);
+      handleFieldChange(form, true, "taxoneditsubmit", "Submit Edits");
     }, 2000);
     element.addEventListener("input", debouncedChange);
     element.addEventListener("change", debouncedChange);

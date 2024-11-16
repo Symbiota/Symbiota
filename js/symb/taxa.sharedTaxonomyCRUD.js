@@ -76,16 +76,22 @@ function removeFromSciName(targetForRemoval) {
   if (scinameDisplay) scinameDisplay.textContent = newValue;
 }
 
-async function handleFieldChange(form, silent = false, submitButtonId) {
+async function handleFieldChange(
+  form,
+  silent = false,
+  submitButtonId,
+  submitText
+) {
+  document.getElementById("error-display").textContent = "";
   const submitButton = document.getElementById(submitButtonId);
   submitButton.disabled = true;
-  submitButton.textContent = "Checking for existing entry...";
+  submitButton.textContent = "Checking for errors...";
   const isOk = await verifyLoadForm(form, silent);
   if (!isOk) {
-    submitButton.textContent = "Duplicate Detected - Button Disabled";
+    submitButton.textContent = "Button Disabled";
     submitButton.disabled = true;
   } else {
-    submitButton.textContent = "Submit Edits";
+    submitButton.textContent = submitText;
     submitButton.disabled = false;
   }
 }
@@ -96,12 +102,16 @@ async function verifyLoadFormCore(f, silent = false) {
     return false;
   }
   if (f.unitname1.value == "") {
-    alert("Unit Name 1 (genus or uninomial) field required.");
+    if (!silent) alert("Unit Name 1 (genus or uninomial) field required.");
+    document.getElementById("error-display").textContent =
+      "Unit Name 1 (genus or uninomial) field required.";
     return false;
   }
   var rankId = f.rankid.value;
   if (rankId == "") {
-    alert("Taxon rank field required.");
+    if (!silent) alert("Taxon rank field required.");
+    document.getElementById("error-display").textContent =
+      "Taxon rank field required.";
     return false;
   }
   return true;
@@ -133,6 +143,14 @@ function checkNameExistence(f, silent = false) {
                   ") already exists in database"
               );
             }
+            document.getElementById("error-display").textContent =
+              "Taxon " +
+              f.sciname.value +
+              " " +
+              f.author.value +
+              " (" +
+              msg +
+              ") already exists in database";
             resolve(false);
           } else {
             resolve(true);

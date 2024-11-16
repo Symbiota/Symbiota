@@ -6,8 +6,8 @@ $(document).ready(function () {
   form.querySelectorAll("input, select, textarea").forEach((element) => {
     const debouncedChange = debounce((event) => {
       event.stopPropagation();
-      handleFieldChange(form, false, "submitaction");
-      updateFullname(form, false);
+      handleFieldChange(form, true, "submitaction", "Submit New Name");
+      updateFullname(form, true);
     }, 2000);
     element.removeEventListener("change", debouncedChange);
     if (element.type !== "hidden") {
@@ -25,9 +25,11 @@ $(document).ready(function () {
     },
     change: function (event, ui) {
       if (!$("#tidaccepted").val()) {
-        alert(
-          "You must select a name from the list. If accepted name is not in the list, it needs to be added or it is in the system as a non-accepted synonym"
-        );
+        // alert(
+        //   "You must select a name from the list. If accepted name is not in the list, it needs to be added or it is in the system as a non-accepted synonym"
+        // );
+        document.getElementById("error-display").textContent =
+          "You must select a name from the list. If accepted name is not in the list, it needs to be added or it is in the system as a non-accepted synonym";
       }
     },
     minLength: 2,
@@ -50,9 +52,11 @@ $(document).ready(function () {
     },
     change: function (event, ui) {
       if (!$("#parenttid").val()) {
-        alert(
-          "You must select a name from the list. If parent name is not in the list, it may need to be added"
-        );
+        // alert(
+        //   "You must select a name from the list. If parent name is not in the list, it may need to be added"
+        // );
+        document.getElementById("error-display").textContent =
+          "You must select a name from the list. If parent name is not in the list, it may need to be added";
       }
     },
     minLength: 2,
@@ -71,6 +75,8 @@ async function verifyLoadForm(f, silent = false) {
   if (coreVerify) {
     if (f.parentname.value == "" && rankId > "10") {
       if (!silent) alert("Parent taxon required");
+      document.getElementById("error-display").textContent =
+        "Parent taxon required";
       return false;
     }
     if (f.parenttid.value == "" && rankId > "10") {
@@ -78,6 +84,8 @@ async function verifyLoadForm(f, silent = false) {
         alert(
           "Parent identifier is not set! Make sure to select parent taxon from the list"
         );
+      document.getElementById("error-display").textContent =
+        "Parent identifier is not set! Make sure to select parent taxon from the list";
       return false;
     }
 
@@ -86,6 +94,8 @@ async function verifyLoadForm(f, silent = false) {
     if (accStatusObj[0].checked == false) {
       if (f.acceptedstr.value == "") {
         if (!silent) alert("Accepted name needs to have a value");
+        document.getElementById("error-display").textContent =
+          "Accepted name needs to have a value";
         return false;
       }
     }
@@ -96,7 +106,7 @@ async function verifyLoadForm(f, silent = false) {
 }
 
 function parseName(f) {
-  handleFieldChange(f, true, "submitaction");
+  handleFieldChange(f, true, "submitaction", "Submit New Name");
   if (!f.quickparser.value) {
     return;
   }
@@ -260,7 +270,7 @@ function parseName(f) {
   }
   if (parentName != "") setParent(parentName, f.unitind1.value);
   showOnlyRelevantFields(rankId);
-  updateFullname(f, false); // @TODO maybe false
+  updateFullname(f, true);
   f.quickparser.value = "";
 }
 
@@ -273,11 +283,15 @@ function setParent(parentName, unitind1) {
   }).done(function (msg) {
     if (msg == 0) {
       if (!unitind1)
-        alert(
+        // alert(
+        //   "Parent taxon '" +
+        //     parentName +
+        //     "' does not exist. Please first add parent to system."
+        // );
+        document.getElementById("error-display").textContent =
           "Parent taxon '" +
-            parentName +
-            "' does not exist. Please first add parent to system."
-        );
+          parentName +
+          "' does not exist. Please first add parent to system.";
       else {
         setParent(unitind1 + " " + parentName, "");
       }
@@ -285,12 +299,17 @@ function setParent(parentName, unitind1) {
       if (msg.indexOf(",") == -1) {
         document.getElementById("parentname").value = parentName;
         document.getElementById("parenttid").value = msg;
-      } else
-        alert(
+      }
+      // alert(
+      //   "Parent taxon '" +
+      //     parentName +
+      //     "' is matching two different names in the thesaurus. Please select taxon with the correct author."
+      // );
+      else
+        document.getElementById("error-display").textContent =
           "Parent taxon '" +
-            parentName +
-            "' is matching two different names in the thesaurus. Please select taxon with the correct author."
-        );
+          parentName +
+          "' is matching two different names in the thesaurus. Please select taxon with the correct author.";
     }
   });
 }

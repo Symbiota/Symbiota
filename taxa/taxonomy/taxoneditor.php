@@ -341,10 +341,13 @@ if($isEditor){
 								<input type='hidden' name='securitystatusstart' value='<?php echo $taxonEditorObj->getSecurityStatus(); ?>' />
 							</div>
 						</div>
-						<div class="editfield" style="display:none;clear:both;margin:15px 0px">
+						<div class="editfield" style="display:none;clear:both;margin:15px 0px" class="gridlike-form">
 							<input type="hidden" name="tid" value="<?php echo $taxonEditorObj->getTid(); ?>" />
 							<input type="hidden" name="taxauthid" value="<?php echo $taxAuthId;?>">
-							<button type="submit" id="taxoneditsubmit" name="taxonedits" value="submitEdits" ><?php echo $LANG['SUBMIT_EDITS']; ?></button>
+							<div class="gridlike-form-row">
+								<button type="submit" id="taxoneditsubmit" name="taxonedits" value="submitEdits" ><?php echo $LANG['SUBMIT_EDITS']; ?></button>
+								<span id="error-display" style="color: var(--danger-color)"></span>
+							</div>
 						</div>
 					</form>
 				</div>
