@@ -76,7 +76,7 @@ $statusStr = "";
 						$imageProcessor = new ImageLocalProcessor();
 
 						$imageProcessor->setLogMode(3);
-						$logPath = $SERVER_ROOT.(substr($SERVER_ROOT,-1) == '/'?'':'/').'content/logs/imgProccessing';
+						$logPath = $SERVER_ROOT . (substr($SERVER_ROOT, -1) == '/' ? '' : '/') . 'content/logs/imageprocessing';
 						if(!file_exists($logPath)) mkdir($logPath);
 						$imageProcessor->setLogPath($logPath);
 						$logFile = $collid.'_'.$specManager->getInstitutionCode();

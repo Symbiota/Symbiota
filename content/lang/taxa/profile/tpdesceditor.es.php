@@ -8,10 +8,10 @@ Date Translated: 2024-04-22
 */
 
 $LANG['NEW_DESC_BLOCK'] = 'Nuevo Bloque de Descripción';
-$LANG['IDIOMA'] = 'Idioma';
+$LANG['LANGUAGE'] = 'Idioma';
 $LANG['SEL_LANGUAGE'] = 'Seleccionar Idioma';
 $LANG['CAPTION'] = 'Título';
-$LANG['FUENTE'] = 'Fuente';
+$LANG['SOURCE'] = 'Fuente';
 $LANG['SOURCE_URL'] = 'URL de Origen';
 $LANG['NOTES'] = 'Notas';
 $LANG['DISPLAY_LEVEL'] = 'Nivel de Visualización';

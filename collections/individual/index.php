@@ -8,8 +8,6 @@ if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/indi
 else include_once($SERVER_ROOT.'/content/lang/collections/individual/index.en.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.en.php');
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/header.en.php');
-else include_once($SERVER_ROOT . '/content/lang/header.' . $LANG_TAG . '.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $submit = array_key_exists('formsubmit', $_REQUEST) ? $_REQUEST['formsubmit'] : '';
@@ -312,21 +310,27 @@ $traitArr = $indManager->getTraitArr();
 		.smaller-header {
 			font-size: 2rem;
 		}
-		<?php if($shouldUseMinimalMapHeader){ ?>
+		#exsiccati-div{ clear: both; }
+		#rights-div{ clear: both; }
+		<?php
+		if($shouldUseMinimalMapHeader){
+			?>
 			.minimal-header-margin{
 			   margin-top: 6rem;
 			}
-		<?php } ?>
+			<?php
+		}
+		?>
 		</style>
 </head>
 <body>
 	<script src="<?php echo htmlspecialchars($CLIENT_ROOT, HTML_SPECIAL_CHARS_FLAGS); ?>/collections/individual/domManipulationUtils.js" type="text/javascript"></script>
 	<?php
-		if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimal_header_template.php');
+	if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimalheader.php');
 	?>
 	<header style="background-image: none;">
 		<a class="screen-reader-only" href="#end-nav"><?php echo $LANG['SKIP_NAV'] ?></a>
-		<h1 class="page-heading minimal-header-margin">
+		<h1 class="page-heading screen-reader-only">
 			<?php echo $LANG['FULL_RECORD_DETAILS']; ?>
 		</h1>
 		<div id="end-nav"></div>
@@ -439,7 +443,7 @@ $traitArr = $indManager->getTraitArr();
 										$relID = $assocArr['objectID'];
 										$relUrl = $assocArr['resourceurl'];
 										if(!$relUrl && $assocArr['occidassoc']) $relUrl = $GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$assocArr['occidassoc'];
-										if($relUrl) $relID = '<a href="' . $relUrl . '">' . $relID . '</a>';
+										if($relUrl) $relID = '<a href="' . $relUrl . '" target="_blank">' . ($relID ? $relID : $relUrl) . '</a>';
 										if($relID) echo $relID;
 										if($assocArr['sciname']) echo ' [' . $assocArr['sciname'] . ']';
 										echo '</div>';
@@ -713,9 +717,7 @@ $traitArr = $indManager->getTraitArr();
 						if($occArr['decimallatitude']){
 							?>
 							<div id="latlng-div" class="bottom-breathing-room-rel-sm">
-								<label>
-									<?php echo $LANG['LAT_LNG'] ?>:
-								</label>
+								<?php echo '<label>' . $LANG['LAT_LNG'] . ':</label> '; ?>
 								<?php
 								echo $occArr['decimallatitude'].'&nbsp;&nbsp;'.$occArr['decimallongitude'];
 								if($occArr['coordinateuncertaintyinmeters']) echo ' +-'.$occArr['coordinateuncertaintyinmeters'].'m.';
@@ -1017,12 +1019,16 @@ $traitArr = $indManager->getTraitArr();
 								<?php
 								foreach($iArr as $imgArr){
 									$thumbUrl = $imgArr['tnurl'];
-									if(!$thumbUrl || substr($thumbUrl,0,7)=='process'){
-										if($image = exif_thumbnail($imgArr['lgurl'])){
-											$thumbUrl = 'data:image/jpeg;base64,'.base64_encode($image);
+									if(!$thumbUrl || substr($thumbUrl, 0, 7) == 'process'){
+										if($imgArr['lgurl']){
+											if($image = exif_thumbnail($imgArr['lgurl'])){
+												$thumbUrl = 'data:image/jpeg;base64,' . base64_encode($image);
+											}
 										}
-										elseif($imgArr['url'] && substr($imgArr['url'],0,7)!='process') $thumbUrl = $imgArr['url'];
-										else $thumbUrl = $imgArr['lgurl'];
+										if(!$thumbUrl){
+											if($imgArr['url'] && substr($imgArr['url'], 0, 7) != 'process') $thumbUrl = $imgArr['url'];
+											else $thumbUrl = $imgArr['lgurl'];
+										}
 									}
 									?>
 									<div id="thumbnail-div" class="thumbnail-div">
@@ -1382,7 +1388,7 @@ $traitArr = $indManager->getTraitArr();
 								if($editArr){
 									?>
 									<section class="fieldset-like">
-										<h1><span><?php echo $LANG['INTERNAL_EDITS']; ?></span></h1>
+										<h2><span><?php echo $LANG['INTERNAL_EDITS']; ?></span></h2>
 										<?php
 										foreach($editArr as $ts => $tsArr){
 											?>

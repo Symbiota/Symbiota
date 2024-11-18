@@ -1,0 +1,177 @@
+/*
+ * 
+*/
+
+div.button {
+  background-color: #ffffd7;
+  padding: 3px;
+  border: 1px outset #a0a0a0;
+}
+
+div.button img {
+  border: 0px;
+}
+
+div.button:hover {
+  border: 1px inset #a0a0a0;
+}
+
+#game-dropdown {
+  margin: 0;
+  padding: 0;
+  z-index: 30;
+}
+#game-dropdown:hover {
+  background-color: #eaebd8;
+}
+#game-dropdown img {
+  padding: 3px;
+}
+#game-dropdown:hover img {
+  background-color: #eaebd8;
+}
+#game-dropdown li {
+  margin: 0px;
+  padding: 0;
+  list-style: none;
+  float: left;
+  font: bold 11px arial;
+}
+#game-dropdown li a {
+  display: block;
+  margin: 0 1px 0 0;
+  padding: 4px 10px;
+  width: 60px;
+  background: #5970b2;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+}
+#game-dropdown li a:hover {
+  background: #49a3ff;
+}
+#game-dropdown div {
+  position: absolute;
+  visibility: hidden;
+  margin: 0;
+  padding: 0;
+  background: #eaebd8;
+  border: 1px solid #5970b2;
+}
+#game-dropdown div a {
+  position: relative;
+  display: block;
+  margin: 0;
+  padding: 5px 10px;
+  width: auto;
+  white-space: nowrap;
+  text-align: left;
+  text-decoration: none;
+  background: #eaebd8;
+  color: #2875de;
+  font-weight: bold;
+}
+#game-dropdown div a:hover {
+  background: #49a3ff;
+  color: #fff;
+}
+
+/* checklist info */
+#title-div {
+  float: left;
+  color: #000000;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#title-div a:link {
+  color: #000000;
+  text-decoration: none;
+}
+
+#title-div a:visited {
+  text-decoration: none;
+}
+
+#title-div a:hover {
+  text-decoration: underline;
+  color: #000000;
+}
+
+.md-label {
+}
+
+#author-div {
+  clear: both;
+}
+
+#author-div .span {
+  font-weight: bold;
+}
+
+/* Species list component */
+#taxalist-div {
+  line-height: 1em;
+}
+
+#taxalist-div a {
+  color: #215078;
+  text-decoration: none;
+}
+
+#taxalist-div a:hover {
+  text-decoration: underline;
+  color: #337ab7;
+}
+
+.family-div {
+  margin: 20px 0px 10px 0px;
+  font-weight: bold;
+}
+
+.taxon-container {
+  margin: 0px 0px 8px 10px;
+}
+
+.taxon-div {
+  clear: left;
+  margin-bottom: 5px;
+}
+
+.taxon-span {
+  font-style: italic;
+  color: black;
+}
+
+.taxon-span a {
+}
+
+.vern-span {
+}
+
+.view-specimen-span {
+  margin: 0px 10px;
+}
+
+.syn-div {
+  margin-left: 15px;
+}
+
+.note-div {
+  margin-left: 25px;
+  font-size: 95%;
+}
+
+#cloptiondiv {
+  width: fit-content;
+}
+
+#taxonfilterdiv {
+  padding: 5px;
+  background-color: #ffffcc;
+  border: 1px solid;
+}
+
+#taxonfilterdiv {
+  margin: 3px;
+}

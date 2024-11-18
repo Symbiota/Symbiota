@@ -5,6 +5,7 @@ Language: English
 ------------------
 */
 
+
 $LANG['NAV_HOME'] = 'Home';
 $LANG['CHECKLIST_ADMIN'] = 'Checklist Administration';
 $LANG['MANAGE_VOUCHERS'] = 'Manage Linked Vouchers';
@@ -71,6 +72,7 @@ $LANG['NOTY'] = 'not yet';
 $LANG['AVAIL'] = 'available';
 $LANG['EDIT_DETAILS'] = 'edit details';
 $LANG['VIEW_RELATED'] = 'View Related Specimens';
+$LANG['LINKTOINAT'] = 'Link to iNaturalist observation';
 $LANG['MORE'] = 'more';
 $LANG['LESS'] = 'less';
 $LANG['NOTAXA'] = 'No Taxa Found';
@@ -95,7 +97,7 @@ $LANG['IMG_VOUCHERS_SIMPLE_MAP'] = 'Show Vouchers in Simple Map';
 $LANG['IMG_VOUCHERS_DYNAMIC_MAP'] = 'Show Vouchers in Dynamic Map';
 $LANG['IMG_OCCUR_DYNAMIC_MAP'] = 'Show All Occurrences in Dynamic Map';
 $LANG['EDIT_DETAILS'] = 'Edit Details Button';
-$LANG['SEARCH_COMMON'] = 'Search Common Names';  
+$LANG['SEARCH_COMMON'] = 'Search Common Names';
 $LANG['IMG_DWNL_LIST'] = 'Download List';
 $LANG['IMG_PRINT_LIST'] = 'Print List';
 $LANG['IMG_DOCX_EXPORT'] = 'Export to DOCX';
@@ -103,6 +105,8 @@ $LANG['SKIP_LINK'] = 'Skip to Taxa List';
 $LANG['IMAGE_SRC'] = 'Image source';
 $LANG['ALL_IMG'] = 'all images';
 $LANG['LINKED_IMG'] = 'linked voucher images only';
+$LANG['SELECT_TAXON'] = 'Please select a taxon from the list';
+$LANG['NAME_BLANK'] = 'Scientific name field is blank';
 
 //from dynamicchecklist.php
 $LANG['ERROR_GEN_CHECK'] = 'ERROR generating checklist';

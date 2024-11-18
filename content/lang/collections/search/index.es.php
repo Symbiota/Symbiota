@@ -6,6 +6,8 @@ Translated by: Google Translate
 Date Translated: 2024/02/12
 ------------------
 */
+include_once($SERVER_ROOT . '/content/lang/collections/sharedterms.es.php');
+
 $LANG['SAMPLE_SEARCH'] = 'Búsqueda de Registros';
 $LANG['TAXONOMY'] = 'Taxonomía';
 $LANG['TAXON'] = 'Taxón';
@@ -22,6 +24,7 @@ $LANG['SAMPLE_PROPERTIES'] = 'Propiedades de muestra';
 $LANG['INCLUDE_CATA_NUM_GUIDs'] = 'Incluir otros números de catálogo y GUID';
 $LANG['CATALOG_NUMBER'] = 'Número de catálogo';
 $LANG['SEPARATE_MULTIPLE_W_COMMA'] = 'Separar varios con comas.';
+$LANG['SEPARATE_MULTIPLE_W_COMMA_DASH'] = 'Separe números múltiples con comas o proporcione rangos con un guión.';
 $LANG['LIMIT_TO_SPECIMENS_W_IMAGES'] = 'Limitar a especímenes con imágenes';
 $LANG['LIMIT_TO_SPECIMENS_W_GENETIC_DATA'] = 'Limitar a especímenes con datos genéticos';
 $LANG['LOCALITY'] = 'Localidad';
@@ -69,16 +72,16 @@ $LANG['SELECT_RADIUS_UNITS'] = 'Seleccionar unidades de radio';
 $LANG['SELECT_UNIT'] = 'Seleccionar unidad';
 $LANG['KILOMETERS'] = 'Kilómetros';
 $LANG['MILES'] = 'Millas';
-$LANG['PREVIOUS_SAMPLE_SEARCH'] = 'página de búsqueda de ejemplo anterior';
+$LANG['PREVIOUS_SAMPLE_SEARCH'] = 'Página Anterior de Búsqueda de Muestras';
 $LANG['SEARCH'] = 'Buscar';
 $LANG['RESET'] = 'Reiniciar';
 $LANG['CRITERIA'] = 'Criterios';
-$LANG['COLLECTING_EVENT'] = 'Evento de Recopilación';
+$LANG['COLLECTING_EVENT'] = 'Evento de Colecta';
 $LANG['COLLECTION_START_DATE'] = 'Fecha de inicio de la colección';
 $LANG['SINGLE_DATE_START_DATE'] = 'Fecha única o fecha de inicio del rango (por ejemplo, AAAA-MM-DD o formato similar).';
 $LANG['COLLECTION_END_DATE'] = 'Fecha de finalización de la colección';
 $LANG['SINGLE_DATE_END_DATE'] = 'Fecha única o fecha de finalización del rango (por ejemplo, AAAA-MM-DD o formato similar).';
-$LANG['COLLECTOR_LAST_NAME'] = 'Apellido del Coleccionista';
+$LANG['COLLECTOR_LAST_NAME'] = 'Apellido del Colector';
 $LANG['COLLECTOR_NUMBER_'] = 'Número de Coleccionista';
 $LANG['COLLECTIONS'] = 'Colecciones';
 

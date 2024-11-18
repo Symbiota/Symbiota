@@ -1,12 +1,10 @@
 <?php
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/header.en.php');
-else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
-include_once($SERVER_ROOT.'/classes/ProfileManager.php');
-$pHandler = new ProfileManager();
-$isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
-
-$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? true;
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/templates/header.' . $LANG_TAG . '.php'))
+	include_once($SERVER_ROOT . '/content/lang/templates/header.en.php');
+else include_once($SERVER_ROOT . '/content/lang/templates/header.' . $LANG_TAG . '.php');
+$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
 $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.php";
+$collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '/collections/search/index.php';
 ?>
 <div class="spinner" id="spinner">
   <svg viewBox="25 25 50 50" style="width: 35vw; height: auto;margin-top: 3rem;">
@@ -306,7 +304,7 @@ $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.
     </div>
   </div>
 </div>
-<script src="<?php echo $CLIENT_ROOT ?>/css/uswds/symbiota/nal.js"></script>
+<script src="<?= $USWDS_ASSETS ?>/nal.js"></script>
 <script type="text/javascript">
   const navigateHome = () => {
     window.location.href = '<?php echo $CLIENT_ROOT; ?>' || '/';

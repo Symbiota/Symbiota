@@ -60,15 +60,19 @@ class OccurrenceMapManager extends OccurrenceManager {
 		if($this->sqlWhere){
 			$statsManager = new OccurrenceAccessStats();
 			$sql = 'SELECT o.occid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS identifier, '.
-				'o.sciname, o.family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, o.catalognumber, '.
+				'o.sciname, IF(ts.family IS NULL, o.family, ts.family) as family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, o.catalognumber, '.
 				'o.othercatalognumbers, c.institutioncode, c.collectioncode, c.CollectionName '.
 				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
+
+			$this->sqlWhere .= 'AND (ts.taxauthid = 1 OR ts.taxauthid IS NULL) ';
+
 			$sql .= $this->getTableJoins($this->sqlWhere);
+
 			$sql .= $this->sqlWhere;
+
 			if(is_numeric($start) && $limit){
 				$sql .= "LIMIT ".$start.",".$limit;
 			}
-			//echo '//SQL: ' . $sql;
 			$result = $this->conn->query($sql);
 			$color = 'e69e67';
 			$occidArr = array();
@@ -352,7 +356,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 		$cnt = 0;
 		$coordArr = $this->getMappingData($recLimit, $extraFieldArr);
 		if($coordArr){
-			$this->googleIconArr = array('pushpin/ylw-pushpin','pushpin/blue-pushpin','pushpin/grn-pushpin','pushpin/ltblu-pushpin',
+			$googleIconArr = array('pushpin/ylw-pushpin','pushpin/blue-pushpin','pushpin/grn-pushpin','pushpin/ltblu-pushpin',
 				'pushpin/pink-pushpin','pushpin/purple-pushpin', 'pushpin/red-pushpin','pushpin/wht-pushpin','paddle/blu-blank',
 				'paddle/grn-blank','paddle/ltblu-blank','paddle/pink-blank','paddle/wht-blank','paddle/blu-diamond','paddle/grn-diamond',
 				'paddle/ltblu-diamond','paddle/pink-diamond','paddle/ylw-diamond','paddle/wht-diamond','paddle/red-diamond','paddle/purple-diamond',
@@ -364,7 +368,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 			foreach($coordArr as $sciname => $snArr){
 				unset($snArr['tid']);
 				$cnt++;
-				$iconStr = $this->googleIconArr[$cnt%44];
+				$iconStr = $googleIconArr[$cnt%44];
 				echo "<Style id='sn_".$iconStr."'>\n";
 				echo "<IconStyle><scale>1.1</scale><Icon>";
 				echo "<href>http://maps.google.com/mapfiles/kml/" . htmlspecialchars($iconStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ".png</href>";

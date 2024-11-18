@@ -2,20 +2,19 @@
 // error_reporting(E_ALL);
 // ini_set('display_errors', '1');
 include_once('../../config/symbini.php');
-include_once('../../content/lang/index.' . $LANG_TAG . '.php');
 include_once($SERVER_ROOT . '/classes/CollectionMetadata.php');
 include_once($SERVER_ROOT . '/classes/DatasetsMetadata.php');
-include_once($SERVER_ROOT.'/content/lang/collections/sharedterms.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceAttributeSearch.php');
-header("Content-Type: text/html; charset=" . $CHARSET);
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/search/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/search/index.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/search/index.en.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT . '/content/lang/collections/search/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/search/index.en.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/search/index.' . $LANG_TAG . '.php');
+header('Content-Type: text/html; charset=' . $CHARSET);
+
 $dbsWithBracketsRemoved = array_key_exists("db",$_GET) ?  str_replace(array('[',']'), '', $_GET["db"]) : '';
 $explodable = $dbsWithBracketsRemoved;
 if(is_array($dbsWithBracketsRemoved)){
 	$explodable = $dbsWithBracketsRemoved[0];
-} 
+}
 $collIdsFromUrl = array_key_exists("db",$_GET) ? explode(",", $explodable) : '';
 
 $collManager = new OccurrenceManager();
@@ -128,7 +127,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								<option id="taxontype-common" value="5" data-chip="<?php echo $LANG['TAXON'] . ': ' . $LANG['COMMON_NAME'] ?>"><?php echo $LANG['COMMON_NAME'] ?></option>
 							</select>
 							<span class="inset-input-label"><?php echo $LANG['TAXON_TYPE'] ?></span>
-							<span class="assistive-text"><?php echo $LANG['TAXON_TYPE'] ?></span>
 						</div>
 							</div>
 						<div>
@@ -218,7 +216,8 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 						<div id="search-form-latlong">
 							<div id="bounding-box-form">
 								<h1 class="bounding-box-form__header"><?php echo $LANG['BOUNDING_BOX'] ?></h1>
-								<button onclick="openCoordAid('rectangle');return false;"><?php echo $LANG['SELECT_IN_MAP'] ?></button>
+
+								<button type="button" onclick="openCoordAid('rectangle');"><?php echo $LANG['SELECT_IN_MAP'] ?></button>
 								<div class="input-text-container">
 										<label for="upperlat" class="input-text--outlined">
 											<span class="screen-reader-only"><?php echo $LANG['UPPER_LATITUDE'] ?></span>
@@ -287,7 +286,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 							</div>
 							<div id="polygon-form">
 								<h1 class="bounding-box-form__header"><?php echo $LANG['POLYGON_WKT_FOOTPRINT'] ?></h1>
-								<button onclick="openCoordAid('polygon');return false;"><?php echo $LANG['SELECT_MAP_POLYGON'] ?></button>
+								<button type="button" onclick="openCoordAid('polygon')"><?php echo $LANG['SELECT_MAP_POLYGON'] ?></button>
 								<div class="text-area-container">
 									<label for="footprintwkt" class="text-area--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['POLYGON'] ?></span>
@@ -299,7 +298,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 							</div>
 							<div id="point-radius-form">
 								<h1 class="bounding-box-form__header"><?php echo $LANG['POINT_RADIUS'] ?></h1>
-								<button onclick="openCoordAid('circle');return false;"><?php echo $LANG['SELECT_MAP_PR'] ?></button>
+								<button type="button" onclick="openCoordAid('circle');"><?php echo $LANG['SELECT_MAP_PR'] ?></button>
 								<div class="input-text-container">
 									<label for="pointlat" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['POINT_LATITUDE'] ?></span>
@@ -416,7 +415,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										<input type="text" name="catnum" id="catnum" data-chip="<?php echo $LANG['CATALOG_NUMBER'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['CATALOG_NUMBER'] ?></span>
 									</label>
-									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
+									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA_DASH'] ?></span>
 								</div>
 							</div>
 							<div>
@@ -542,7 +541,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 					<label for="list-button"><?php echo $LANG['LIST'] ?></label>
 				</div>
 				<div style="display: flex; align-items: center;">
-					<input style="margin-bottom:0; margin-right: 0.5rem;" name="display-format-pref" id="table-button" type="radio" value="table" /> 	
+					<input style="margin-bottom:0; margin-right: 0.5rem;" name="display-format-pref" id="table-button" type="radio" value="table" />
 					<label for="table-button"><?php echo $LANG['TABLE'] ?></label>
 				</div>
 			</fieldset>

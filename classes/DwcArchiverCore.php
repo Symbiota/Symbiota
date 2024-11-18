@@ -120,7 +120,7 @@ class DwcArchiverCore extends Manager{
 			$this->targetPath = $tp;
 		} else {
 			//Set to temp download path
-			$tPath = $GLOBALS["tempDirRoot"];
+			$tPath = $GLOBALS['TEMP_DIR_ROOT'];
 			if (!$tPath) {
 				$tPath = ini_get('upload_tmp_dir');
 			}
@@ -269,7 +269,7 @@ class DwcArchiverCore extends Manager{
 	private function applyConditions(){
 		if($this->conditionSql) return true;
 		if ($this->customWhereSql) {
-			$this->conditionSql = $this->customWhereSql . ' ';
+			$this->conditionSql = trim($this->customWhereSql) . ' ';
 		}
 		if (array_key_exists('collid', $this->conditionArr) && $this->conditionArr['collid']) {
 			if (preg_match('/^[\d,]+$/', $this->conditionArr['collid'])) {
