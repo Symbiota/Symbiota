@@ -365,12 +365,12 @@ function showOnlyRelevantFields(rankId) {
     const optionIdx = rankIdSelector.options.selectedIndex;
     const selectedOptionText = rankIdSelector.options[optionIdx].text.trim();
     if (!purelyAestheticRankNames.includes(selectedOptionText)) {
-      label.textContent = selectedOptionText + " Name: ";
+      label.textContent = selectedOptionText + " Name *: ";
     } else {
-      label.textContent = genusName;
+      label.textContent = genusName + " *:";
     }
   } else {
-    label.textContent = genusName;
+    label.textContent = genusName + " *:";
   }
 
   if (Object.values(rankIdsToHideUnit2From).includes(rankId)) {

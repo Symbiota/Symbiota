@@ -23,5 +23,6 @@ $LANG['EPITHET'] = 'Epíteto';
 $LANG['INFRA_EPITHET_FIELD'] = 'Campo de epíteto infraespecífico';
 $LANG['RANK_FIELD'] = 'Campo de clasificación';
 $LANG['RUN_QUICK_PARSE'] = 'Analizar sintáctico';
+$LANG['REQUIRED'] = "* = Campo Obligatorio";
 
 ?>

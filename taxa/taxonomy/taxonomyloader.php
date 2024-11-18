@@ -103,7 +103,7 @@ if($isEditor){
 					<div style="clear:both;">
 						<div class="left-column"> 
 							<label for="rankid">
-								 <?php echo $LANG['TAXON_RANK']; ?>: 
+								 <?php echo $LANG['TAXON_RANK'] . ' *'; ?>: 
 								</label>
 						</div>
 						<select id="rankid" name="rankid" title="Rank ID" class='search-bar-short bottom-breathing-room-rel-sm'>
@@ -132,7 +132,7 @@ if($isEditor){
 					<div style="clear:both;" id="genus-div">
 						<div class="left-column">
 							<label id="unitind1label" for="unitind1">
-								<?php echo $LANG['GENUS_NAME'] . ': '; ?>:
+								<?php echo $LANG['GENUS_NAME'] . ' *' . ': '; ?>:
 							</label>
 						</div>
 						<select id="unitind1" name="unitind1" onchange="updateFullname(this.form, true)">
@@ -199,10 +199,10 @@ if($isEditor){
 					<div style="clear:both;">
 						<div class="left-column" id="parentname-div">
 							<label for="parentname">
-								<?php echo $LANG['PARENT_TAXON']; ?>:
+								<?php echo $LANG['PARENT_TAXON'] . ' *'; ?>:
 							</label>
 						</div>
-						<input type="text" id="parentname" name="parentname" class='search-bar' />
+						<input required type="text" id="parentname" name="parentname" class='search-bar' />
 						<span id="addparentspan" style="display:none;">
 							<a id="addparentanchor" href="taxonomyloader.php?target=" target="_blank">
 								<?php echo htmlspecialchars($LANG['ADD_PARENT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE	); ?>
@@ -261,7 +261,10 @@ if($isEditor){
 							</div>
 						</fieldset>
 					</div>
-					<div class="top-breathing-room-re gridlike-form">
+					<div class="top-breathing-room-re gridlike-form" style="margin:0;">
+						<div class="gridlike-form-row bottom-breathing-room-rel-sm top-breathing-room-rel-sm">
+							<span id="required-display" ><?= $LANG['REQUIRED']; ?></span>
+						</div>
 						<div class="gridlike-form-row">
 							<button type="submit" id="submitaction" name="submitaction" value="submitNewName" ><?php echo $LANG['SUBMIT_NEW_NAME']; ?></button>
 							<span id="error-display" style="color: var(--danger-color)"></span>
