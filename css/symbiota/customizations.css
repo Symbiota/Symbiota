@@ -176,7 +176,7 @@ body {
   animation: loading-dash 1.5s ease-in-out infinite;
 }
 
-div#innertext div.quicksearch-container {
+/* div#innertext div.quicksearch-container {
   width: auto;
 }
 
@@ -186,7 +186,7 @@ div#innertext div.quicksearch-container {
 
 #quicksearch-btn-container button {
   flex: 1 auto;
-}
+} */
 
 @-webkit-keyframes loading-rotate {
   to {
