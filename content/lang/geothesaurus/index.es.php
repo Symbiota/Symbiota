@@ -6,7 +6,6 @@ Translated by: Google Translate
 Date Translated: 2024-03-05
 ------------------
 */
-
 $LANG['GEOTHES_TITLE'] = 'Administrador de tesauros geográficos';
 $LANG['NAV_HOME'] = 'Inicio';
 $LANG['NAV_GEOTHES'] = 'Términos raíz del tesauro geográfico';
@@ -30,6 +29,7 @@ $LANG['NOTES'] = 'Notas';
 $LANG['PARENT_TERM'] = 'Término principal';
 $LANG['IS_ROOT_TERM'] = 'Es un término raíz (es decir, sin padre)';
 $LANG['ACCEPTED_TERM'] = 'Término preferido';
+$LANG['SYNONYMS'] = 'Sinónimos';
 $LANG['IS_ACCEPTED'] = 'Término preferido';
 $LANG['SAVE_EDITS'] = 'Guardar ediciones';
 $LANG['DEL_GEO_UNIT'] = 'Eliminar unidad geográfica';

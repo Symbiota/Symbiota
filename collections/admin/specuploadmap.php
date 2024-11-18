@@ -587,9 +587,9 @@ include($SERVER_ROOT.'/includes/header.php');
 								<?php
 							}
 							?>
-							<button type="submit" name="action" value="Automap Fields" ><?php echo (isset($LANG['AUTOMAP']) ? $LANG['AUTOMAP'] : 'Automap Fields'); ?></button>
-							<button type="submit" name="action" value="Verify Mapping" ><?php echo (isset($LANG['VER_MAPPING']) ? $LANG['VER_MAPPING'] : 'Verify Mapping'); ?></button>
-							<button type="submit" name="action" value="saveMapping" onclick="return verifySaveMapping(this.form)" ><?php echo (isset($LANG['SAVE_MAP']) ? $LANG['SAVE_MAP'] : 'Save Mapping'); ?></button>
+							<button class="bottom-breathing-room-rel-sm" type="submit" name="action" value="Automap Fields" ><?php echo (isset($LANG['AUTOMAP']) ? $LANG['AUTOMAP'] : 'Automap Fields'); ?></button>
+							<button class="bottom-breathing-room-rel-sm" type="submit" name="action" value="Verify Mapping" ><?php echo (isset($LANG['VER_MAPPING']) ? $LANG['VER_MAPPING'] : 'Verify Mapping'); ?></button>
+							<button class="bottom-breathing-room-rel-sm" type="submit" name="action" value="saveMapping" onclick="return verifySaveMapping(this.form)" ><?php echo (isset($LANG['SAVE_MAP']) ? $LANG['SAVE_MAP'] : 'Save Mapping'); ?></button>
 							<span id="newProfileNameDiv" style="margin-left:15px;color:red;display:none">
 								<?php echo (isset($LANG['NEW_PROF_TITLE']) ? $LANG['NEW_PROF_TITLE'] : 'New profile title'); ?>:
 								<input type="text" name="profiletitle" style="width:300px" value="<?php echo $duManager->getTitle().'-'.date('Y-m-d'); ?>" />
@@ -628,13 +628,15 @@ include($SERVER_ROOT.'/includes/header.php');
 								</ul>
 								<?php
 							}
-							$versionCheckedStr = '';
-							if($isLiveData) $versionCheckedStr = 'checked';
+							if($isLiveData){
+								?>
+								<div style="margin:10px 0px;">
+									<input name="versiondata" type="checkbox" value="1">
+									<?php echo (isset($LANG['VERSION_DATA_CHANGES'])?$LANG['VERSION_DATA_CHANGES']:'Version data changes'); ?>
+								</div>
+								<?php
+							}
 							?>
-							<div style="margin:10px 0px;">
-								<input name="versiondata" type="checkbox" value="1" <?php echo $versionCheckedStr; ?> />
-								<?php echo (isset($LANG['VERSION_DATA_CHANGES']) ? $LANG['VERSION_DATA_CHANGES'] : 'Version data changes'); ?>
-							</div>
 							<div style="margin:10px 0px;">
 								<input name="verifyimages" type="checkbox" value="1" />
 								<?php echo (isset($LANG['VER_LINKS_MEDIA']) ? $LANG['VER_LINKS_MEDIA'] : 'Verify image links from associatedMedia field'); ?>

@@ -23,7 +23,7 @@ $glosManager = new GlossaryManager();
 
 $statusStr = '';
 if($formSubmit){
-	if($formSubmit == 'Add Source'){
+	if($formSubmit == 'addSource'){
 		if(!$glosManager->addSource($_POST)) $statusStr = $glosManager->getErrorMessage();
 	}
 	elseif($formSubmit == 'Edit Source'){
@@ -168,14 +168,14 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 						<a href='glossaryloader.php'>Batch Upload Terms</a>
 						 -->
 					</div>
-					<?php
-				}
-				?>
-				<div>
+					<div>
 					<a title="Show download options" onclick="toggle('downloadoptionsdiv');return false;">
 						<?php echo (isset($LANG['DOWN_OP'])?$LANG['DOWN_OP']:'Download Options'); ?>
 					</a>
-				</div>
+					</div>
+				<?php
+				}
+				?>
 			</div>
 			<div id="downloadoptionsdiv" style="display:none;clear:both;float:right;margin-top:15px;background-color:white;">
 				<form name="downloadform" action="glossdocexport.php" method="post" onsubmit="return verifyDownloadForm(this);">
@@ -239,6 +239,9 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 		<div style="float:left;">
 			<form id="searchform" name="searchform" action="index.php" method="post" onsubmit="return verifySearchForm(this);">
 				<div style="height:25px;">
+					<div style="float:left;">
+						<b><?= (isset($LANG['PLEASE'])?$LANG['PLEASE']:'Please') . ' ' . "<a href=" . $CLIENT_ROOT . "/includes/usagepolicy.php" . ">" . (isset($LANG['CITE_GLOSSARY'])?$LANG['CITE_GLOSSARY']:'cite this glossary') . "</a>"; ?></b>
+					</div>
 					<?php
 					if($taxaArr){
 						?>
@@ -297,8 +300,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 						if($language) $title .= ' '.$LANG['IN'].' '.$language;
 						if($searchTerm) $title .= ' '.$LANG['KEYWORD'].' &quot;'.htmlspecialchars($searchTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE).'&quot;';
 						echo '<div style="float:left;font-weight:bold;font-size:120%;">'.$title.'</div>';
-						$sourceArrFull = $glosManager->getTaxonSources($tid);
-						$sourceArr = current($sourceArrFull);
+						$sourceArr = $glosManager->getTaxonSources($tid);
 						if($sourceArr){
 							?>
 							<div style="float:left;margin-left:5px;">
@@ -309,10 +311,10 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 							<?php
 						}
 						else{
-							if($isEditor){
+							if($isEditor && $tid){
 								?>
 								<div style="float:left;margin-left:5px;">
-									(<a href="sources.php?emode=1&tid=<?php echo $tid.'&searchterm='.htmlspecialchars($searchTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE).'&language='.$language.'&taxa='.$tid; ?>"><?php echo (isset($LANG['ADD_SRC'])?$LANG['ADD_SRC']:'Add Sources'); ?></a>)
+									(<a href="sources.php?emode=1&tid=<?php echo $tid.'&searchterm='.htmlspecialchars($searchTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE).'&language='.$language; ?>"><?php echo (isset($LANG['ADD_SRC'])?$LANG['ADD_SRC']:'Add Sources'); ?></a>)
 								</div>
 								<?php
 							}
@@ -324,42 +326,52 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 						?>
 						<div id="sourcesdiv" style="display:none;padding:5px">
 							<fieldset style="margin:15px;padding:20px;">
-								<legend><b><?php echo (isset($LANG['TAX_CONTR'])?$LANG['TAX_CONTR']:'Contributors for Taxonomic Group'); ?></b></legend>
+								<legend><b><?= $LANG['TAX_CONTR'] ?></b></legend>
 								<?php
-								if($isEditor){
-									?>
-									<div style="float:right;">
-										<a href="sources.php?emode=1&tid=<?php echo $tid.'&searchterm='.htmlspecialchars($searchTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE).'&language='.$language.'&taxa='.$tid; ?>"><img src="../images/edit.png" style="width:1.3em" /></a>
-									</div>
-									<?php
-								}
-								if($sourceArr['contributorTerm']){
+								$sourceDelimiter = '';
+								foreach($sourceArr as $sourceTid => $sourceObj){
+									echo $sourceDelimiter;
+									if($isEditor){
+										?>
+										<div style="float:right;">
+											<a href="sources.php?emode=1&tid=<?= $sourceTid.'&searchterm='.htmlspecialchars($searchTerm, HTML_SPECIAL_CHARS_FLAGS).'&language='.$language; ?>"><img src="../images/edit.png" style="width:13px"></a>
+										</div>
+										<?php
+									}
 									?>
 									<div style="">
-										<?php echo '<b>'.(isset($LANG['TERM_CONTR'])?$LANG['TERM_CONTR']:'Terms and Definitions contributed by').':</b> '.$sourceArr['contributorTerm']; ?>
+										<?= '<b>' . $LANG['SOURCE_SCINAME'] . ':</b> ' . $sourceObj['sciname'] ?>
 									</div>
 									<?php
-								}
-								if($sourceArr['contributorImage']){
-									?>
-									<div style="margin-top:8px;">
-										<?php echo '<b>'.(isset($LANG['IMG_CONTR'])?$LANG['IMG_CONTR']:'Images contributed by').':</b> '.$sourceArr['contributorImage']; ?>
-									</div>
-									<?php
-								}
-								if($sourceArr['translator']){
-									?>
-									<div style="margin-top:8px;">
-										<?php echo '<b>'.(isset($LANG['TRANS_BY'])?$LANG['TRANS_BY']:'Translations by').':</b> '.$sourceArr['translator']; ?>
-									</div>
-									<?php
-								}
-								if($sourceArr['additionalSources']){
-									?>
-									<div style="margin-top:8px;">
-										<?php echo '<b>'.(isset($LANG['TRAN_IMG_BY'])?$LANG['TRAN_IMG_BY']:'Translations and images were also sourced from the following references').':</b> '.$sourceArr['additionalSources']; ?>
-									</div>
-									<?php
+									if($sourceObj['contributorTerm']){
+										?>
+										<div style="margin-top:8px;">
+											<?= '<b>' .$LANG['TERM_CONTR'] . ':</b> ' . $sourceObj['contributorTerm'] ?>
+										</div>
+										<?php
+									}
+									if($sourceObj['contributorImage']){
+										?>
+										<div style="margin-top:8px;">
+											<?= '<b>' . $LANG['IMG_CONTR'] . ':</b> ' . $sourceObj['contributorImage'] ?>
+										</div>
+										<?php
+									}
+									if($sourceObj['translator']){
+										?>
+										<div style="margin-top:8px;">
+											<?= '<b>' . $LANG['TRANS_BY'] . ':</b> ' . $sourceObj['translator'] ?>
+										</div>
+										<?php
+									}
+									if($sourceObj['additionalSources']){
+										?>
+										<div style="margin-top:8px;">
+											<?= '<b>' . $LANG['TRAN_IMG_BY'] . ':</b> ' . $sourceObj['additionalSources'] ?>
+										</div>
+										<?php
+									}
+									$sourceDelimiter = '<div style="padding: 5px 0px"><hr></div>';
 								}
 								?>
 							</fieldset>

@@ -917,9 +917,7 @@ class SpecUploadBase extends SpecUpload{
 			$this->outputMsg('<li>Transferring edits to versioning tables...</li>');
 			$this->versionExternalEdits();
 		}
-		elseif($this->collMetadataArr['managementtype'] == 'Live Data' && $this->uploadType != $this->RESTOREBACKUP){
-			$this->versionInternalEdits();
-		}
+		$this->versionInternalEdits();
 		$transactionInterval = 1000;
 		$this->outputMsg('<li>Updating existing records in batches of '.$transactionInterval.'... </li>');
 		//Grab specimen intervals for updating records in batches
@@ -1024,23 +1022,25 @@ class SpecUploadBase extends SpecUpload{
 
 	private function versionInternalEdits(){
 		if($this->versionDataEdits){
-			$sqlFrag = '';
-			$excludedFieldArr = array('dateentered','observeruid');
-			foreach($this->targetFieldArr as $field){
-				if(!in_array($field, $excludedFieldArr)) $sqlFrag .= ',u.'.$field.',o.'.$field.' as old_'.$field;
-			}
-			$sql = 'SELECT o.occid'.$sqlFrag.' FROM omoccurrences o INNER JOIN uploadspectemp u ON o.occid = u.occid WHERE o.collid IN('.$this->collId.') AND u.collid IN('.$this->collId.')';
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_assoc()){
+			if($this->collMetadataArr['managementtype'] == 'Live Data' && $this->uploadType != $this->RESTOREBACKUP){
+				$sqlFrag = '';
+				$excludedFieldArr = array('dateentered','observeruid');
 				foreach($this->targetFieldArr as $field){
-					if(in_array($field, $excludedFieldArr)) continue;
-					if($r[$field] != $r['old_'.$field]){
-						if($this->uploadType == $this->SKELETAL && $r['old_'.$field]) continue;
-						$this->insertOccurEdit($r['occid'], $field, $r[$field], $r['old_'.$field]);
+					if(!in_array($field, $excludedFieldArr)) $sqlFrag .= ',u.'.$field.',o.'.$field.' as old_'.$field;
+				}
+				$sql = 'SELECT o.occid'.$sqlFrag.' FROM omoccurrences o INNER JOIN uploadspectemp u ON o.occid = u.occid WHERE o.collid IN('.$this->collId.') AND u.collid IN('.$this->collId.')';
+				$rs = $this->conn->query($sql);
+				while($r = $rs->fetch_assoc()){
+					foreach($this->targetFieldArr as $field){
+						if(in_array($field, $excludedFieldArr)) continue;
+						if($r[$field] != $r['old_'.$field]){
+							if($this->uploadType == $this->SKELETAL && $r['old_'.$field]) continue;
+							$this->insertOccurEdit($r['occid'], $field, $r[$field], $r['old_'.$field]);
+						}
 					}
 				}
+				$rs->free();
 			}
-			$rs->free();
 		}
 	}
 
@@ -1806,6 +1806,7 @@ class SpecUploadBase extends SpecUpload{
 	protected function loadRecord($recMap){
 		//Only import record if at least one of the minimal fields have data
 		$recMap = OccurrenceUtilities::occurrenceArrayCleaning($recMap);
+
 		//Prime the targetFieldArr
 		if(!$this->targetFieldArr) $this->targetFieldArr = $this->getOccurrenceFieldArr(array_keys($recMap));
 		$loadRecord = false;
@@ -1960,6 +1961,7 @@ class SpecUploadBase extends SpecUpload{
 				unset($recMap['taxonrank']);
 				unset($recMap['infraspecificepithet']);
 				//Try to get author, if it's not there
+				/*
 				if(!array_key_exists('scientificnameauthorship',$recMap) || !$recMap['scientificnameauthorship']){
 					//Parse scientific name to see if it has author imbedded
 					$parsedArr = OccurrenceUtilities::parseScientificName($recMap['sciname'],$this->conn);
@@ -1969,6 +1971,7 @@ class SpecUploadBase extends SpecUpload{
 						$recMap['sciname'] = trim($parsedArr['unitname1'].' '.$parsedArr['unitname2'].' '.$parsedArr['unitind3'].' '.$parsedArr['unitname3']);
 					}
 				}
+				*/
 				if(!isset($recMap['sciname']) || !$recMap['sciname']) return false;
 
 				if(!isset($recMap['identifiedby'])) $recMap['identifiedby'] = '';
@@ -2540,10 +2543,7 @@ class SpecUploadBase extends SpecUpload{
 					}
 				}
 				else{
-					if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) == 'ISO-8859-1'){
-						$retStr = utf8_encode($inStr);
-						//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
-					}
+					$retStr = mb_convert_encoding($inStr, 'UTF-8', mb_detect_encoding($inStr, "UTF-8, ISO-8859-1, ISO-8859-15", true));
 				}
 			}
 			elseif($this->targetCharset == "ISO-8859-1"){

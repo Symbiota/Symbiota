@@ -2,6 +2,7 @@
 
 include_once($SERVER_ROOT.'/classes/Manager.php');
 include_once($SERVER_ROOT.'/classes/UuidFactory.php');
+include_once($SERVER_ROOT.'/utilities/SymbUtil.php');
 
 class OmCollections extends Manager{
 
@@ -16,14 +17,14 @@ class OmCollections extends Manager{
 	}
 
 	// Needed to 
-	private function isCollUnique(String $collectionCode, String $institutionCode): bool {
+	public function isCollUnique(String $collectionCode, String $institutionCode): bool {
 		global $CLIENT_ROOT;
 		try {
 			$sql = <<<'SQL'
 			SELECT collectionName, collid FROM omcollections 
 			WHERE collid != ? AND collectionCode = ? AND institutionCode = ?
 			SQL;
-			$result = $this->conn->execute_query($sql, [$this->collid, $collectionCode, $institutionCode]);
+			$result = SymbUtil::execute_query($this->conn, $sql, [$this->collid, $collectionCode, $institutionCode]);
 			if($col = $result->fetch_object()) {
 				$this->errorMessage = 'Error: Duplicate collection + institution code found in ' 
 					. '<a target="_blank" href="'

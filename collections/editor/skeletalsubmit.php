@@ -69,11 +69,11 @@ if($collid){
 		if($isEditor){
 			?>
 			<section class="fieldset-like">
-				<h1>
+				<h2>
 					<span><?php echo $LANG['SKELETAL_DATA']; ?></span>
 					<span onclick="toggle('descriptiondiv')" onkeypress="toggle('descriptiondiv')" tabindex="0"><img src="../../images/info.png" style="width:1em;" title="<?php echo $LANG['TOOL_DESCRIPTION']; ?>" aria-label="<?php echo (isset($LANG['IMG_TOOL_DESCRIPTION'])?$LANG['IMG_TOOL_DESCRIPTION']:'Description of Tool Button'); ?>"/></span>
 					<span id="optionimgspan" onclick="showOptions()" onkeypress="showOptions()" tabindex="0"><img src="../../images/list.png" style="width:1em;" title="<?php echo $LANG['DISPLAY_OPTIONS']; ?>" aria-label="<?php echo (isset($LANG['IMG_DISPLAY_OPTIONS'])?$LANG['IMG_DISPLAY_OPTIONS']:'Display Options Button'); ?>"/></span>
-				</h1>
+				</h2>
 				<div id="descriptiondiv" style="display:none;margin:10px;width:80%">
 					<div style="margin-bottom:5px">
 						<?php echo $LANG['SKELETAL_DESCIPRTION_1']; //This page is typically used to enter skeletal records into the system during the imaging process...?>
@@ -86,7 +86,7 @@ if($collid){
 					</div>
  				</div>
 				<form id="defaultform" name="defaultform" action="skeletalsubmit.php" method="post" autocomplete="off" onsubmit="return submitDefaultForm(this)">
-					<div id="optiondiv" style="display:none;position:absolute;background-color:white;">
+					<div id="optiondiv" style="display:none;position:absolute;background-color:white; z-index: 1;">
 						<fieldset style="margin-top: -10px;padding-top:5px">
 							<legend><?php echo $LANG['OPTIONS']; ?></legend>
 							<div style="float:right;"><a href="#" onclick="hideOptions()" style="color:red" ><?php echo $LANG['X_CLOSE']; ?></a></div>
@@ -250,9 +250,9 @@ if($collid){
 				</form>
 			</section>
 			<section class="fieldset-like">
-				<h1>
+				<h2>
 					<span><?php echo $LANG['RECORDS']; ?></span>
-				</h1>
+				</h2>
 				<div id="occurlistdiv">
 				</div>
 			</section>

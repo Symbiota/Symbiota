@@ -23,6 +23,7 @@ class Manager  {
 			$this->isConnInherited = true;
 		}
 		else $this->conn = MySQLiConnectionFactory::getCon($conType);
+		if($this->conn === null) exit;
  		if($id != null || is_numeric($id)){
 	 		$this->id = $id;
  		}

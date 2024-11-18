@@ -1,0 +1,25 @@
+/* Variables
+   ========================================================================== */
+:root {
+  --header-bg-image: #fff;
+  --header-bg-color: #fafafa; /** Transparent color if adding header bg-image **/
+  --header-font-color: #000000;
+  --brand-font-size: 2rem;
+  --title-font-family: "Averia Serif Libre", serif;
+  --logo-width: 120px;
+  --menu-top-bg-color: #0071bc;
+  --body-bg-color: #fafafa;
+  --body-text-color: #000000;
+  --body-font-size: 1.2rem;
+  --body-font-family: "Roboto", sans-serif;
+  --footer-bg-color: #f2f0e9;
+  --heading-font-family: "Roboto", sans-serif;
+  --link-color: #0071bc;
+  --darkest-color: #112e51;
+  --medium-color: #5a5a53;
+  --light-color: #f2f0e9;
+  --bright-color: #0071bc;
+  --danger-color: #b31b1b;
+  --max-innertext-width: 1024px;
+  --usda-footer-text-color: #fafafa;
+}

@@ -44,13 +44,13 @@ if($imgArr){
 	$imgUrl = $imgArr['url'];
 	$origUrl = $imgArr['originalurl'];
 	$metaUrl = $imgArr['url'];
-	if(array_key_exists('imageDomain',$GLOBALS)){
-		if(substr($imgUrl,0,1)=='/'){
-			$imgUrl = $GLOBALS['imageDomain'].$imgUrl;
-			$metaUrl = $GLOBALS['imageDomain'].$metaUrl;
+	if(array_key_exists('IMAGE_DOMAIN', $GLOBALS)){
+		if(substr($imgUrl, 0, 1) == '/'){
+			$imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
+			$metaUrl = $GLOBALS['IMAGE_DOMAIN'] . $metaUrl;
 		}
 		if($origUrl && substr($origUrl,0,1)=='/'){
-			$origUrl = $GLOBALS['imageDomain'].$origUrl;
+			$origUrl = $GLOBALS['IMAGE_DOMAIN'].$origUrl;
 		}
 	}
 	if(substr($metaUrl,0,1)=='/'){
@@ -399,16 +399,21 @@ if($imgArr){
 					if($imgArr['occid']) echo '<div><a href="../collections/individual/index.php?occid=' .htmlspecialchars($imgArr['occid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . $LANG['DISPLAY_SPECIMEN_DETAILS'] . '</a></div>';
 					if($imgUrl) echo '<div><a href="' . htmlspecialchars($imgUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . $LANG['OPEN_MEDIUM_SIZED_IMAGE'] . '</a></div>';
 					if($origUrl) echo '<div><a href="' . htmlspecialchars($origUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . $LANG['OPEN_LARGE_IMAGE'] . '</a></div>';
-					?>
-					<div style="margin-top:20px;">
-						<?php echo $LANG['ERROR_COMMENT_ABOUT_IMAGE'] ?> <br/><?php echo $LANG['SEND_EMAIL'] ?>:
-						<?php
-						$emailSubject = $DEFAULT_TITLE . ' ' . $LANG['IMG_NO'] . ' ' . $imgId;
-						$emailBody = 'Image being referenced: '.$serverPath.$CLIENT_ROOT.'/imagelib/imgdetails.php?imgid='.$imgId;
-						$emailRef = 'subject=' . $emailSubject . '&cc=' . $ADMIN_EMAIL . '&body=' . $emailBody;
-						echo '<a href="mailto:' . htmlspecialchars($ADMIN_EMAIL, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '?' . htmlspecialchars($emailRef, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($ADMIN_EMAIL, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
+					$emailAddress = $ADMIN_EMAIL;
+					if($emailAddress){
 						?>
-					</div>
+						<div style="margin-top:20px;">
+							<?php echo $LANG['ERROR_COMMENT_ABOUT_IMAGE'] ?> <br/><?php echo $LANG['SEND_EMAIL'] ?>:
+							<?php
+							$emailSubject = $DEFAULT_TITLE . ' ' . $LANG['IMG_NO'] . ' ' . $imgId;
+							$emailBody = 'Image being referenced: '.urlencode($serverPath.$CLIENT_ROOT.'/imagelib/imgdetails.php?imgid='.$imgId);
+							$emailRef = 'subject=' . $emailSubject . '&cc=' . $ADMIN_EMAIL . '&body=' . $emailBody;
+							echo '<a href="mailto:' . $ADMIN_EMAIL . '?' . $emailRef . '">' . $emailAddress . '</a>';
+							?>
+						</div>
+						<?php
+					}
+					?>
 				</div>
 				<div style="clear:both;"></div>
 			</div>

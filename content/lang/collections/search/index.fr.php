@@ -6,6 +6,7 @@ Translated by: Google Translate
 Date Translated: 2024/02/12
 ------------------
 */
+include_once($SERVER_ROOT . '/content/lang/collections/sharedterms.fr.php');
 
 $LANG['SAMPLE_SEARCH'] = 'Recherche d\'Enregistrements';
 $LANG['TAXONOMY'] = 'Taxonomie';
@@ -23,6 +24,7 @@ $LANG['SAMPLE_PROPERTIES'] = 'Exemples de propriétés';
 $LANG['INCLUDE_CATA_NUM_GUIDs'] = 'Inclure d\'autres numéros de catalogue et GUIDs';
 $LANG['CATALOG_NUMBER'] = 'Numéro de catalogue';
 $LANG['SEPARATE_MULTIPLE_W_COMMA'] = 'Séparez les multiples par des virgules.';
+$LANG['SEPARATE_MULTIPLE_W_COMMA_DASH'] = 'Séparez multiples par des virgules ou indiquez plages avec un tiret.';
 $LANG['LIMIT_TO_SPECIMENS_W_IMAGES'] = 'Limiter aux spécimens avec images';
 $LANG['LIMIT_TO_SPECIMENS_W_GENETIC_DATA'] = 'Limiter aux spécimens possédant des données génétiques';
 $LANG['LOCALITY'] = 'Localité';

@@ -190,6 +190,60 @@ if (array_key_exists('last_message', $_SESSION)){
 			margin-left: auto;
 			margin-right: auto;
 		}
+
+		[_nghost-sum-c78] {
+			display: block;
+			margin-bottom: 1rem;
+		}
+		.custom-icam-button[_ngcontent-sum-c78] {
+			background: url(“<?php echo $CSS_BASE_PATH ?>/img/arrow-right.svg”) no-repeat
+			transparent;
+			background-position: right 1rem center;
+			background-size: 0.75rem;
+			border: 1px solid #CEDCED;
+			border-radius: 0.5rem;
+			display: flex;
+			padding: 0.65rem 2.5rem 0.65rem 0.65rem;
+			transition: 0.25s;
+		}
+		.custom-icam-button[_ngcontent-sum-c78]:hover {
+			border-color: #A5B8CF;
+			cursor: pointer;
+		}
+		.custom-icam-button--icon[_ngcontent-sum-c78] {
+			background: no-repeat center center;
+			background-size: contain;
+			background-image: url(“<?php echo $CSS_BASE_PATH ?>/img/microsoft-logo.svg”);
+			display: block;
+			margin-right: 0.4rem;
+			height: 3rem;
+			width: 3rem;
+		}
+		.custom-icam-button--icon[data-image=“piv”][_ngcontent-sum-c78] {
+			background-image: url(“<?php echo $CSS_BASE_PATH ?>/img/microsoft-logo.svg”);
+		}
+		.custom-icam-button--icon[data-image=“mobileLinc”][_ngcontent-sum-c78] {
+			background-image: url(“<?php echo $CSS_BASE_PATH ?>/img/microsoft-logo.svg”);
+		}
+		.custom-icam-button--icon[data-image=“azure”][_ngcontent-sum-c78] {
+			background-image: url(“<?php echo $CSS_BASE_PATH ?>/img/microsoft-logo.svg”);
+		}
+		.custom-icam-button--icon[data-image=“okta”][_ngcontent-sum-c78] {
+			background-image: url(“<?php echo $CSS_BASE_PATH ?>/img/microsoft-logo.svg”);
+		}
+		.custom-icam-button--icon[data-image=“loginGov”][_ngcontent-sum-c78] {
+			background-image: url(“<?php echo $CSS_BASE_PATH ?>/img/microsoft-logo.svg”);
+		}
+		.custom-icam-button--icon[data-image=“userPassword”][_ngcontent-sum-c78] {
+			background-image: url(“<?php echo $CSS_BASE_PATH ?>/img/microsoft-logo.svg”);
+		}
+		.custom-icam-button--meta[_ngcontent-sum-c78] {
+			display: flex;
+			flex-direction: column;
+			flex: 1;
+			justify-content: center;
+		}
+
 	</style>
 </head>
 <body>
@@ -197,6 +251,7 @@ if (array_key_exists('last_message', $_SESSION)){
 $displayLeftMenu = (isset($profile_indexMenu)?$profile_indexMenu:'true');
 include($SERVER_ROOT.'/includes/header.php');
 ?>
+<div class="navpath"></div>
 <!-- inner text -->
 <div role="main" id="innertext" style="padding-left:0px;margin-left:0px;">
 	<h1 class="page-heading screen-reader-only">Login</h1>
@@ -252,7 +307,15 @@ include($SERVER_ROOT.'/includes/header.php');
 					<fieldset  class="profile-fieldset">
 						<legend class="profile-legend"><?php echo (isset($LANG['THIRD_PARTY_LOGIN'])?$LANG['THIRD_PARTY_LOGIN']:'Login using third-party authentication'); ?></legend>
 						<div class="justify-center">
-							<button type="submit" value="login"><?php echo (isset($LANG['OID_LOGIN'])?$LANG['OID_LOGIN']:'Login with OID'); ?></button>
+							<div _ngcontent-sum-c78="" role="button" tabindex="0" class="custom-icam-button" data-id="login-option-azure">
+								<div _ngcontent-sum-c78="" class="custom-icam-button--icon" data-image="azure"></div>
+								<button type="submit" value="login" style="background: none; color: inherit; border: none; padding: 0; font: inherit; cursor: pointer; outline: inherit;">
+									<div _ngcontent-sum-c78="" class="custom-icam-button--meta">
+										<strong _ngcontent-sum-c78="" style="font-weight: bolder;">USDA Work Account</strong>
+										<div _ngcontent-sum-c78="">Employees and contractors use Microsoft login</div>
+									</div>
+								</button>
+							</div>
 						</div>
 					</fieldset>
 				</form>

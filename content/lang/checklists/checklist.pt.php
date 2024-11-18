@@ -2,8 +2,7 @@
 /*
 ------------------
 Language: Português (Portuguese)
-Translated by: Google Translate
-Date Translated: 2024-02-16
+Translated by: Google Translate (2024-02-16)
 ------------------
 */
 
@@ -36,6 +35,7 @@ $LANG['NOTESVOUC'] = 'Notas e Vouchers';
 $LANG['TAXONAUTHOR'] = 'Autores do Táxon';
 $LANG['TAXONABC'] = 'Mostrar Táxons em Ordem Alfabética';
 $LANG['SHOWSUBGENERA'] = 'Mostrar classificação subgenérica dentro do nome científico';
+$LANG['ACTIVATEKEY'] = 'Ativar chave de identificação';
 $LANG['BUILD_LIST'] = 'Construir Lista';
 $LANG['DOWNLOAD_CHECKLIST'] = 'Baixar Inventário Taxonômico';
 $LANG['PRINT_BROWSER'] = 'Imprimir no Navegador';
@@ -55,9 +55,12 @@ $LANG['INTNOTES'] = 'Notas Internas';
 $LANG['ADMIN_ONLY'] = 'Exibido apenas para administradores';
 $LANG['SOURCE'] = 'Fonte';
 $LANG['ADD_SPECIES'] = 'Adicionar Espécie à Lista';
+$LANG['VOUCHER_MAPPING'] = 'Mapeamento de vouchers';
 $LANG['BATCH_LOAD_SPREADSHEET'] = 'Planilha de Upload em Lote';
 $LANG['VOUCHERS_SIMPLE_MAP'] = 'Exibir Vouchers no Mapa Simples';
+$LANG['SIMPLE_MAP'] = 'Mapa Simples';
 $LANG['VOUCHERS_DYNAMIC_MAP'] = 'Exibir Vouchers no Mapa Dinâmico';
+$LANG['DYNAMIC_MAP'] = 'Mapa Dinâmico';
 $LANG['OCCUR_DYNAMIC_MAP'] = 'Exibir Ocorrências no Mapa Dinâmico';
 $LANG['FAMILIES'] = 'Famílias';
 $LANG['GENERA'] = 'Gênero';
@@ -69,7 +72,8 @@ $LANG['NOTY'] = 'ainda não';
 $LANG['AVAIL'] = 'disponível';
 $LANG['EDIT_DETAILS'] = 'editar detalhes';
 $LANG['VIEW_RELATED'] = 'Ver amostras relacionadas';
-$LANG['MAIS'] = 'mais';
+$LANG['LINKTOINAT'] = 'Link para observação iNaturalist';
+$LANG['MORE'] = 'mais';
 $LANG['LESS'] = 'menos';
 $LANG['NOTAXA'] = 'Nenhum táxon encontrado';
 $LANG['CHECKNULL'] = 'ERRO: identificador de lista de verificação inválido';

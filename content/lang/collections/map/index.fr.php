@@ -1,7 +1,7 @@
 <?php
 /*
 ------------------
-Language: French 
+Language: French
 ------------------
 */
 include_once($SERVER_ROOT.'/content/lang/collections/harvestparams.fr.php');
@@ -14,6 +14,7 @@ $LANG['MAP_OPTIONS'] = 'Options de la Carte';
 $LANG['RESET'] = 'Réinitialiser';
 $LANG['SEARCH'] = 'Recherche';
 $LANG['TAXA'] = 'Taxa';
+$LANG['WITHIN'] = 'à moins de';
 $LANG['SHAPE_TOOLS'] = 'Utilisez les outils de forme sur la carte pour sélectionner des occurrences dans une forme donnée';
 $LANG['WITHIN_POLYGON'] = 'Dans le polygone sélectionné';
 $LANG['WITHIN_CIRCLE'] = 'Dans le cercle sélectionné';
@@ -35,6 +36,8 @@ $LANG['MAX_DENSITY'] = 'Densité Maximale';
 
 $LANG['RECORDS_TAXA'] = 'Registres et Taxons';
 $LANG['RECORDS'] = 'Registres';
+$LANG['EXTERNAL_RECORDS'] = 'Registres Externes';
+$LANG['PORTAL_LIST'] = 'Liste des portails';
 $LANG['COLLECTIONS'] = 'Collections';
 $LANG['TAXA_LIST'] = 'Liste des taxons';
 $LANG['COLLECTION'] = 'Collection';
