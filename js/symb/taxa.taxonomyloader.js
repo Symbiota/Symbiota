@@ -8,7 +8,7 @@ $(document).ready(function () {
       event.stopPropagation();
       handleFieldChange(form, true, "submitaction", "Submit New Name");
       updateFullname(form, true);
-    }, 2000);
+    }, 500);
     element.removeEventListener("change", debouncedChange);
     if (element.type !== "hidden") {
       element.addEventListener("change", debouncedChange);

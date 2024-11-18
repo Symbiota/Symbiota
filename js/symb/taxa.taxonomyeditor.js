@@ -7,7 +7,7 @@ $(document).ready(function () {
     const debouncedChange = debounce(() => {
       updateFullname(form, true);
       handleFieldChange(form, true, "taxoneditsubmit", "Submit Edits");
-    }, 2000);
+    }, 500);
     element.addEventListener("input", debouncedChange);
     element.addEventListener("change", debouncedChange);
   });
