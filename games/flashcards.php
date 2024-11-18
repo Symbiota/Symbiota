@@ -158,7 +158,7 @@ $sciArr = array();
 	<div id='innertext'>
 		<h1 class="page-heading screen-reader-only">Flash Cards</h1>
 		<div style="width:420px;margin-left:auto;margin-right:auto;">
-			<div style="width:420px;height:420px;text-align:center;">
+			<div style="text-align:center;">
 				<div>
 					<a id="imageanchor" href="" target="_blank">
 						<img src="#" id="activeimage" style="height:97%;max-width:450px" alt="Image to guess"/>
@@ -189,7 +189,7 @@ $sciArr = array();
 
 						?>
 					</select>
-					<button type="submit" onclick="checkId(document.getElementById('scinameselect'))">Check Image</button>
+					<button type="submit" onclick="checkId(document.getElementById('scinameselect'))">Check Name</button>
 				</div>
 				<div style="clear:both;margin-top:10px;">
 					<div>
@@ -222,7 +222,7 @@ $sciArr = array();
 								}
 								?>
 							</div>
-							<button type="submit" onclick="document.getElementById('taxonfilterform').submit();">Show Image</button>
+							<button type="submit" onclick="document.getElementById('taxonfilterform').submit();">Apply Taxonomic Filter</button>
 						</fieldset>
 					</form>
 				</div>
