@@ -4,6 +4,7 @@
 Language: Français (French)
 ------------------
 */
+$LANG['HOME'] = 'Maison';
 
 //Taxon Quick Search plugin variables
 $LANG['QSEARCH_SEARCH'] = 'Rechercher de Taxons';
