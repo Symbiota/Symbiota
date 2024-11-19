@@ -166,9 +166,9 @@ class OccurrenceSearchSupport {
 								<legend>
 									<?php
 									echo $name;
-									$specimenLegendTxt = isset($LANG['SPECIMEN']) ? $LANG['SPECIMEN'] : "Specimen";
-									$observationLegendTxt = isset($LANG['OBSERVATION']) ? $LANG['OBSERVATION'] : "Observation";
-									$isObservation = $collTypeLabel === "Observation";
+									$specimenLegendTxt = isset($LANG['SPECIMEN']) ? $LANG['SPECIMEN'] : "Specimens";
+									$observationLegendTxt = isset($LANG['OBSERVATION']) ? $LANG['OBSERVATION'] : "Observations";
+									$isObservation = $collTypeLabel === "Observations";
 									$outputTxt = $specimenLegendTxt;
 									if($isObservation) $outputTxt = $observationLegendTxt;
 									?>
