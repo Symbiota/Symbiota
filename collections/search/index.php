@@ -534,7 +534,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 							<div class="select-container" style="margin-left: 1rem; position: relative; width: 40vw;">
 								<label for="association-type" class="screen-reader-only"><?php echo $LANG['ASSOCIATION_TYPE'] ?></label>
 								<select name="association-type" id="association-type" style="margin-top:0;padding-top:0; margin-bottom: 0.5rem">
-									<option id="association-type-none" value="none" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '-none'?>">None</option>
+									<option id="association-type-none" value="none" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '- Not Specified'?>">Not Specified</option>
 									<option id="association-type-any" value="any" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '-any'?>">Any</option>
 									<?php
 										$relationshipTypes = $associationManager->getRelationshipTypes();
