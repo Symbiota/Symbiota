@@ -6,6 +6,18 @@ DROP TRIGGER specprocessorrawlabelsfulltext_delete
 DROP TABLE specprocessorawlabelsfulltext;
 
 
+ALTER TABLE `omoccuridentifiers`
+  CHANGE COLUMN `identifiervalue` `identifierValue` VARCHAR(75) NOT NULL AFTER `occid`,
+  CHANGE COLUMN `identifiername` `identifierName` VARCHAR(45) NOT NULL DEFAULT '' AFTER `identifierValue`,
+  ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL AFTER `identifierName`,
+  CHANGE COLUMN `modifiedtimestamp` `modifiedTimestamp` DATETIME NULL DEFAULT NULL AFTER `modifiedUid`,
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT current_timestamp() AFTER `modifiedTimestamp`,
+  DROP INDEX `UQ_omoccuridentifiers`,
+  ADD UNIQUE INDEX `UQ_omoccuridentifiers` (`occid`, `identifierValue`, `identifierName`),
+  DROP INDEX `IX_omoccuridentifiers_value`,
+  ADD INDEX `IX_omoccuridentifiers_value` (`identifierValue`);
+
+
 ALTER TABLE `kmcharacters` 
   DROP FOREIGN KEY `FK_kmchar_glossary`;
 

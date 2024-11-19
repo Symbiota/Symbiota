@@ -47,14 +47,11 @@ class DwcArchiverDetermination{
 	private static function trimBySchemaType($detArr,$schemaType,$extended){
 		$trimArr = array();
 		if($schemaType == 'dwc'){
-			$trimArr = array('identifiedByID');
-			$trimArr = array('tidInterpreted');
-			$trimArr = array('identificationIsCurrent');
+			$trimArr = array('identifiedByID', 'tidInterpreted', 'identificationIsCurrent');
 		}
 		elseif($schemaType == 'symbiota'){
 			if(!$extended){
-				$trimArr = array('identifiedByID');
-				$trimArr = array('tidInterpreted');
+				$trimArr = array('identifiedByID', 'tidInterpreted');
 			}
 		}
 		elseif($schemaType == 'backup'){

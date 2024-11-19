@@ -72,7 +72,6 @@ $LANG['FULLSPECLISTVOUCHER'] = 'Listado de especies completo con vouchers vincul
 $LANG['VOUCHERONLY'] = 'Vouchers vinculados solomente (DwC-A, CSV, Tab-delimited)';
 $LANG['FULLSPECLISTALLOCCUR'] = 'Listado de especies completo con todos ocurrencias (CSV)';
 $LANG['PENSOFT_XLSX_EXPORT'] = 'Listado de especies en el formato del Pensoft';
-$LANG['SPECMISSINGTITLE'] = 'Posibles adiciones de especies basadas en vales de muestra';
 $LANG['SPECMISSTAXA'] = 'Especímenes de taxa faltantes del listado de Comprobación (CSV)';
 $LANG['SPECMISSPELLED'] = 'Especímenes con nombres científicos mal escritos, ilegales, y problemáticos (CSV)';
 $LANG['CHECKIDNOTSET'] = 'Identificador de listado de Comprobación no establecido';
