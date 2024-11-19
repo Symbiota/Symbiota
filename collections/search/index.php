@@ -10,7 +10,8 @@ if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT . '/content/lang/collections/s
 else include_once($SERVER_ROOT . '/content/lang/collections/search/index.' . $LANG_TAG . '.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
-$translations = file_get_contents($SERVER_ROOT . '/content/lang/en.json');
+$filename = file_exists($SERVER_ROOT . '/content/lang/'. $LANG_TAG . '.json') ? $SERVER_ROOT . '/content/lang/'. $LANG_TAG . '.json' : $SERVER_ROOT . '/content/lang/en.json';
+$translations = file_get_contents($filename);
 
 $dbsWithBracketsRemoved = array_key_exists("db",$_GET) ?  str_replace(array('[',']'), '', $_GET["db"]) : '';
 $explodable = $dbsWithBracketsRemoved;
