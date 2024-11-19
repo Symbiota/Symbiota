@@ -4,7 +4,7 @@
 Language: Español (Spanish)
 ------------------
 */
-$LANG['HOME'] = 'Hogar';
+$LANG['HOME'] = 'Inicio';
 
 //Various plugin variables
 $LANG['QSEARCH_SEARCH'] = 'Búsqueda de especies';
