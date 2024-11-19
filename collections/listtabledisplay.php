@@ -198,7 +198,7 @@ $searchVar = $collManager->getQueryTermStr();
 							<?php if (!empty($ACTIVATE_PALEO)): ?>
 								<th><?php echo isset($LANG['FORMATION']) ? $LANG['FORMATION'] : 'Formation'; ?></th>
 								<th><?php echo isset($LANG['EARLY_INT']) ? $LANG['EARLY_INT'] : 'Early Interval'; ?></th>
-								<th><?php echo isset($LANG['LATE_INT']) ? $LANG[':LATE_INT'] : 'Late Interval'; ?></th>
+								<th><?php echo isset($LANG['LATE_INT']) ? $LANG['LATE_INT'] : 'Late Interval'; ?></th>
 							<?php endif; ?>
 						</tr>
 						<?php
