@@ -526,7 +526,7 @@ table.styledtable tr.alt td {
 ========================================================================== */
 .text-huge {
   font-size: 4rem;
-  font-family: var(--title-font-family);
+  font-family: var(--heading-font-family);
   margin: 0;
 }
 
@@ -609,7 +609,7 @@ table.styledtable tr.alt td {
 @media screen and (min-width: 2560px) {
   .text-huge {
     font-size: 5rem;
-    font-family: var(--title-font-family);
+    font-family: var(--heading-font-family);
     margin: 0;
   }
 
