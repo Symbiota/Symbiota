@@ -196,7 +196,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										<label for="elevhigh" class="input-text--outlined">
 											<span class="screen-reader-only"><?php echo $LANG['MAXIMUM_ELEVATION'] ?></span>
 											<input type="number" step="any" name="elevhigh" id="elevhigh" data-chip="<?php echo $LANG['MAX_ELEVATION'] ?>" />
-											<span class="inset-input-label"><?php echo $LANG['MINIMUM_ELEVATION'] ?></span>
+											<span class="inset-input-label"><?php echo $LANG['MAXIMUM_ELEVATION'] ?></span>
 										</label>
 										<span class="assistive-text"><?php echo $LANG['NUMBER_IN_METERS'] ?></span>
 									</div>

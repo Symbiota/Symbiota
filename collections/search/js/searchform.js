@@ -535,6 +535,10 @@ function getParam(paramName) {
       let pRadiusVal = pRadius.value + ";" + pRadiusUn.value;
       elementValues = `${pLatVal};${pLngVal};${pRadiusVal}`;
     }
+  } else if (paramName === "elevlow" || paramName === "elevhigh") {
+      (firstEl.type === "number" && firstEl != "")
+      ? (elementValues = firstEl.value)
+      : "";
   } else if (elements[0] != undefined) {
     switch (firstEl.tagName) {
       case "INPUT":
