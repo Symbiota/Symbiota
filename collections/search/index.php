@@ -223,7 +223,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										<label for="upperlat" class="input-text--outlined">
 											<span class="screen-reader-only"><?php echo $LANG['UPPER_LATITUDE'] ?></span>
 											<input type="number" step="any" min="-90" max="90" id="upperlat" name="upperlat" data-chip="<?php echo $LANG['UPPER_LAT'] ?>" />
-											<span class="inset-input-label"><?php echo $LANG['MINIMUM_ELEVATION'] ?></span>
+											<span class="inset-input-label"><?php echo $LANG['UPPER_LATITUDE'] ?></span>
 											<span class="assistive-text"><?php echo $LANG['VALUE_BETWEEN_NUM'] ?></span>
 										</label>
 
