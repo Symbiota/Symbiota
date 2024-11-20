@@ -234,10 +234,10 @@ class AssociationManager extends OccurrenceTaxaManager{
 							$tidArr = array_keys($searchArr['tid']);
 							$tidInArr = array_merge($tidInArr, $tidArr);
 							//Return matches that are not linked to thesaurus
-							// if($rankid > 179){
+							if($rankid > 179){
 								if($this->exactMatchOnly) $sqlWhereTaxa .= 'OR (o.sciname = "' . $term . '") ';
 								else $sqlWhereTaxa .= "OR (o.sciname LIKE '" . $term . "%' AND od.isCurrent=1) OR (oa.verbatimsciname LIKE '" . $term . "%') ";
-							// }
+							}
 						}
 						else{
 							//Protect against someone trying to download big pieces of the occurrence table through the user interface
