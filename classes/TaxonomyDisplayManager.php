@@ -1,6 +1,6 @@
 <?php
 include_once($SERVER_ROOT.'/classes/Manager.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUtil.php');
+include_once($SERVER_ROOT.'/classes/utilities/TaxonomyUtil.php');
 
 class TaxonomyDisplayManager extends Manager{
 
