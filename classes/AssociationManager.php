@@ -219,6 +219,12 @@ class AssociationManager extends OccurrenceTaxaManager{
 					if(isset($searchArr['TID_BATCH'])){
 						$tidInArr = array_merge($tidInArr, array_keys($searchArr['TID_BATCH']));
 						if(isset($searchArr['tid'])) $tidInArr = array_merge($tidInArr, array_keys($searchArr['tid']));
+
+						// Adding this section in to address the use case where only genus is being searched and the entry in the omoccurassociations table is the TARGET taxon rather than the source. I'm a little concerned that this will result in off-target results, but it seems to be ok so far.
+						$term = $this->cleanInStr(trim($searchTaxon,'%'));
+						$term = preg_replace(array('/\s{1}x\s{1}/','/\s{1}X\s{1}/','/\s{1}\x{00D7}\s{1}/u'), ' _ ', $term);
+						$sqlWhereTaxa .= "OR (o.sciname LIKE '" . $term . "%' AND od.isCurrent=1) OR (oa.verbatimsciname LIKE '" . $term . "%') ";
+						// End
 					}
 					else{
 						$term = $this->cleanInStr(trim($searchTaxon,'%'));
@@ -228,10 +234,10 @@ class AssociationManager extends OccurrenceTaxaManager{
 							$tidArr = array_keys($searchArr['tid']);
 							$tidInArr = array_merge($tidInArr, $tidArr);
 							//Return matches that are not linked to thesaurus
-							if($rankid > 179){
+							// if($rankid > 179){
 								if($this->exactMatchOnly) $sqlWhereTaxa .= 'OR (o.sciname = "' . $term . '") ';
 								else $sqlWhereTaxa .= "OR (o.sciname LIKE '" . $term . "%' AND od.isCurrent=1) OR (oa.verbatimsciname LIKE '" . $term . "%') ";
-							}
+							// }
 						}
 						else{
 							//Protect against someone trying to download big pieces of the occurrence table through the user interface
