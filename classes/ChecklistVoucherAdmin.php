@@ -498,16 +498,18 @@ class ChecklistVoucherAdmin extends Manager {
 
 	//Data mod functions
 	protected function insertChecklistTaxaLink($tid, $clid = null, $morpho = ''){
-		$status = false;
+		$clTaxaID = false;
 		if(!$clid) $clid = $this->clid;
 		if(is_numeric($tid) && is_numeric($clid)){
 			$inventoryManager = new ImInventories();
 			$inputArr = array('tid' => $tid, 'clid' => $clid);
 			if($morpho) $inputArr['morphoSpecies'] = $morpho;
-			$status = $inventoryManager->insertChecklistTaxaLink($inputArr);
-			if(!$status) $this->errorMessage = $inventoryManager->getErrorMessage();
+			if($inventoryManager->insertChecklistTaxaLink($inputArr)){
+				$clTaxaID = $inventoryManager->getPrimaryKey();
+			}
+			else $this->errorMessage = $inventoryManager->getErrorMessage();
 		}
-		return $status;
+		return $clTaxaID;
 	}
 
 	protected function insertVoucher($clTaxaID, $occid, $editorNotes = null, $notes = null){

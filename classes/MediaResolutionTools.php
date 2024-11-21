@@ -11,6 +11,7 @@ class MediaResolutionTools extends Manager {
 	private $deleteOriginal = false;
 
 	//Image migration variables
+	private $collid;
 	private $collMetaArr;
 	private $transferThumbnail = false;
 	private $transferWeb = false;
@@ -23,14 +24,12 @@ class MediaResolutionTools extends Manager {
 	private $imgRootPath;
 	private $imgSubPath;
 	private $sourcePathPrefix;
+	private $copyOverExistingImages = false;
 
 	private $debugMode = false;
 
 	function __construct() {
 		parent::__construct(null,'write');
-		set_time_limit(600);
-		$this->verboseMode = 3;
-		$this->setLogFH('../../../temp/logs/imgMigration_'.date('Ym').'.log');
 	}
 
 	function __destruct(){
@@ -39,7 +38,12 @@ class MediaResolutionTools extends Manager {
 
 	//Archiver functions
 	public function archiveImageFiles($imgidStart, $limit){
-		//Set stage
+		set_time_limit(1200);
+		$this->verboseMode = 3;
+		$logPath = $GLOBALS['SERVER_ROOT'] . '/content/logs/imageprocessing/';
+		if(!file_exists($logPath)) mkdir($logPath);
+		$logPath .= 'imgArchive_' . date('Ym') . '.log';
+		$this->setLogFH($logPath);
 		if(!$imgidStart) $imgidStart = 0;
 		if(!$this->imgidArr){
 			$this->logOrEcho('ABORTED: Image ids (imgid) not supplied');
@@ -165,8 +169,13 @@ class MediaResolutionTools extends Manager {
 
 	//Image migration functions
 	public function migrateFieldDerivatives($imgIdStart, $limit){
+		set_time_limit(1200);
+		$this->verboseMode = 3;
+		$logPath = $GLOBALS['SERVER_ROOT'] . '/content/logs/imageprocessing/';
+		if(!file_exists($logPath)) mkdir($logPath);
+		$logPath .= 'fieldDerivativeMigration_' . date('Ym') . '.log';
+		$this->setLogFH($logPath);
 		//Needs to be reworked
-		ini_set('max_execution_time', 3600);
 		$this->debugMode = true;
 		$imgId = 0;
 		if(is_numeric($limit) && is_numeric($this->collid) && $this->imgRootUrl && $this->imgRootPath){
@@ -249,7 +258,12 @@ class MediaResolutionTools extends Manager {
 
 	public function migrateCollectionDerivatives($imgIdStart, $limit){
 		//Migrates images based on catalog number; NULL or weak catalogNumbers are skipped
-		ini_set('max_execution_time', 3600);
+		set_time_limit(1200);
+		$this->verboseMode = 3;
+		$logPath = $GLOBALS['SERVER_ROOT'] . '/content/logs/imageprocessing/';
+		if(!file_exists($logPath)) mkdir($logPath);
+		$logPath .= 'imgMigration_' . date('Ym') . '.log';
+		$this->setLogFH($logPath);
 		if($this->collid && is_numeric($limit) && $this->imgRootUrl && $this->imgRootPath){
 			if($this->transferThumbnail || $this->transferWeb || $this->transferLarge){
 				if($this->matchTermThumbnail || $this->matchTermWeb || $this->matchTermLarge){
@@ -294,17 +308,27 @@ class MediaResolutionTools extends Manager {
 								$targetPath = $this->imgRootPath.$pathFrag.$fileName;
 								$targetUrl = $this->imgRootUrl.$pathFrag.$fileName;
 								$thumbPath = $this->getLocalPath($r->thumbnailurl);
-								if(copy($thumbPath, $targetPath)){
-									$imgArr[$r->imgid]['tn'] = $targetUrl;
-									$this->logOrEcho('Copied: '.$thumbPath.' => '.$targetPath,1);
-									if($this->deleteSource){
-										if(unlink($thumbPath)){
-											$this->logOrEcho('Source deleted: '.$thumbPath,1);
-										}
-										else{
-											$this->logOrEcho('ERROR deleting source (file permissions?): '.$thumbPath,1);
+								if(file_exists($thumbPath)){
+									if($this->copyOverExistingImages || !file_exists($targetPath)){
+										if(copy($thumbPath, $targetPath)){
+											$imgArr[$r->imgid]['tn'] = $targetUrl;
+											$this->logOrEcho('Copied: '.$thumbPath.' => '.$targetPath,1);
+											if($this->deleteSource){
+												if(unlink($thumbPath)){
+													$this->logOrEcho('Source deleted: '.$thumbPath,1);
+												}
+												else{
+													$this->logOrEcho('ERROR deleting source (file permissions?): '.$thumbPath,1);
+												}
+											}
 										}
 									}
+									else{
+										$this->logOrEcho('Skipped: target file already exists (' . $targetPath . ')', 1);
+									}
+								}
+								else{
+									$this->logOrEcho('Skipped: source thumbnail does not exist (' . $thumbPath . ')', 1);
 								}
 							}
 							if($this->transferWeb && $r->url){
@@ -312,17 +336,27 @@ class MediaResolutionTools extends Manager {
 								$targetPath = $this->imgRootPath.$pathFrag.$fileName;
 								$targetUrl = $this->imgRootUrl.$pathFrag.$fileName;
 								$urlPath = $this->getLocalPath($r->url);
-								if(copy($urlPath, $targetPath)){
-									$imgArr[$r->imgid]['web'] = $targetUrl;
-									$this->logOrEcho('Copied: '.$urlPath.' => '.$targetPath,1);
-									if($this->deleteSource){
-										if(unlink($urlPath)){
-											$this->logOrEcho('Source delete: '.$urlPath,1);
-										}
-										else{
-											$this->logOrEcho('ERROR deleting source (file permissions?): '.$urlPath,1);
+								if(file_exists($urlPath)){
+									if($this->copyOverExistingImages || !file_exists($targetPath)){
+										if(copy($urlPath, $targetPath)){
+											$imgArr[$r->imgid]['web'] = $targetUrl;
+											$this->logOrEcho('Copied: '.$urlPath.' => '.$targetPath,1);
+											if($this->deleteSource){
+												if(unlink($urlPath)){
+													$this->logOrEcho('Source delete: '.$urlPath,1);
+												}
+												else{
+													$this->logOrEcho('ERROR deleting source (file permissions?): '.$urlPath,1);
+												}
+											}
 										}
 									}
+									else{
+										$this->logOrEcho('Skipped: target file already exists (' . $targetPath . ')', 1);
+									}
+								}
+								else{
+									$this->logOrEcho('Skipped: source file does not exist (' . $urlPath . ')', 1);
 								}
 							}
 							if($this->transferLarge && $r->originalurl){
@@ -330,17 +364,27 @@ class MediaResolutionTools extends Manager {
 								$targetPath = $this->imgRootPath.$pathFrag.$fileName;
 								$targetUrl = $this->imgRootUrl.$pathFrag.$fileName;
 								$origPath = $this->getLocalPath($r->originalurl);
-								if(copy($origPath, $targetPath)){
-									$imgArr[$r->imgid]['lg'] = $targetUrl;
-									$this->logOrEcho('Copied: '.$origPath.' => '.$targetPath,1);
-									if($this->deleteSource){
-										if(unlink($origPath)){
-											$this->logOrEcho('Source deleted: '.$origPath,1);
-										}
-										else{
-											$this->logOrEcho('ERROR deleting source (file permissions?): '.$origPath,1);
+								if(file_exists($origPath)){
+									if($this->copyOverExistingImages || !file_exists($targetPath)){
+										if(copy($origPath, $targetPath)){
+											$imgArr[$r->imgid]['lg'] = $targetUrl;
+											$this->logOrEcho('Copied: '.$origPath.' => '.$targetPath,1);
+											if($this->deleteSource){
+												if(unlink($origPath)){
+													$this->logOrEcho('Source deleted: '.$origPath,1);
+												}
+												else{
+													$this->logOrEcho('ERROR deleting source (file permissions?): '.$origPath,1);
+												}
+											}
 										}
 									}
+									else{
+										$this->logOrEcho('Skipped: target file already exists (' . $targetPath . ')', 1);
+									}
+								}
+								else{
+									$this->logOrEcho('Skipped: source file does not exist (' . $origPath . ')', 1);
 								}
 							}
 							$processingCnt++;
@@ -566,6 +610,11 @@ class MediaResolutionTools extends Manager {
 
 	public function setImgSubPath($path){
 		$this->imgSubPath = $path;
+	}
+
+	public function setCopyOverExistingImages($bool){
+		if($bool) $this->copyOverExistingImages = true;
+		else $this->copyOverExistingImages = false;
 	}
 }
 ?>

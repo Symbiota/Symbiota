@@ -11,17 +11,18 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PhpWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\PDF;
 
 use Dompdf\Dompdf as DompdfLib;
+use Dompdf\Options;
 use PhpOffice\PhpWord\Writer\WriterInterface;
 
 /**
- * DomPDF writer
+ * DomPDF writer.
  *
  * @see  https://github.com/dompdf/dompdf
  * @since 0.10.0
@@ -29,11 +30,11 @@ use PhpOffice\PhpWord\Writer\WriterInterface;
 class DomPDF extends AbstractRenderer implements WriterInterface
 {
     /**
-     * Name of renderer include file
+     * Name of renderer include file.
      *
      * @var string
      */
-    protected $includeFile = null;
+    protected $includeFile;
 
     /**
      * Gets the implementation of external PDF library that should be used.
@@ -42,15 +43,18 @@ class DomPDF extends AbstractRenderer implements WriterInterface
      */
     protected function createExternalWriterInstance()
     {
-        return new DompdfLib();
+        $options = new Options();
+        if ($this->getFont()) {
+            $options->set('defaultFont', $this->getFont());
+        }
+
+        return new DompdfLib($options);
     }
 
     /**
      * Save PhpWord to file.
-     *
-     * @param string $filename Name of the file to save as
      */
-    public function save($filename = null)
+    public function save(string $filename): void
     {
         $fileHandle = parent::prepareForSave($filename);
 

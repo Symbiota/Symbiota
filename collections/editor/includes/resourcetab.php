@@ -121,12 +121,27 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 	}
 
 	function validateAssocForm(f){
-		if(f.relationship.value == ""){
-			alert("<?php echo $LANG['DEFINE_REL']; ?>");
-			return false;
+		if(f.associationType.value == "internalOccurrence"){
+			let occidAssocChecked = false;
+			if(f.occidAssociate){
+				let assocRadios = document.querySelector('input[name = "occidAssociate"]:checked');
+				if(assocRadios != null){
+					occidAssocChecked = true;
+				}
+			}
+			if(!occidAssocChecked){
+				alert("<?= $LANG['SELECT_INTERNAL_REL'] ?>");
+				return false;
+			}
 		}
-		else if(f.resourceurl.value == "" && f.objectid.value == "" && f.verbatimsciname.value == "" && (!f.occidAssociate || f.occidAssociate.value == "")){
-			alert("<?php echo $LANG['REL_NOT_DEFINED']; ?>");
+		else if(f.associationType.value == "observational"){
+			if(f.verbatimsciname.value == ""){
+				alert("<?= $LANG['VERB_SCINAME_EMPTY'] ?>");
+				return false;
+			}
+		}
+		else if(f.resourceurl.value == ""){
+			alert("<?= $LANG['RESOURCE_EMPTY'] ?>");
 			return false;
 		}
 		return true;

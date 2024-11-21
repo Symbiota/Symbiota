@@ -416,7 +416,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										<input type="text" name="catnum" id="catnum" data-chip="<?php echo $LANG['CATALOG_NUMBER'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['CATALOG_NUMBER'] ?></span>
 									</label>
-									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
+									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA_DASH'] ?></span>
 								</div>
 							</div>
 							<div>
@@ -557,7 +557,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 	include($SERVER_ROOT . '/includes/footer.php');
 	?>
 </body>
-<script src="js/searchform.js" type="text/javascript"></script>
+<script src="js/searchform.js?ver=1" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/collections/search/js/alerts.js?v=202107'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/symb/api.taxonomy.taxasuggest.js'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/symb/collections.index.js?ver=20171215' ?>" type="text/javascript"></script>

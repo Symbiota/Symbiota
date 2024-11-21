@@ -24,6 +24,7 @@ $LANG['SAMPLE_PROPERTIES'] = 'Propiedades de muestra';
 $LANG['INCLUDE_CATA_NUM_GUIDs'] = 'Incluir otros números de catálogo y GUID';
 $LANG['CATALOG_NUMBER'] = 'Número de catálogo';
 $LANG['SEPARATE_MULTIPLE_W_COMMA'] = 'Separar varios con comas.';
+$LANG['SEPARATE_MULTIPLE_W_COMMA_DASH'] = 'Separe números múltiples con comas o proporcione rangos con un guión.';
 $LANG['LIMIT_TO_SPECIMENS_W_IMAGES'] = 'Limitar a especímenes con imágenes';
 $LANG['LIMIT_TO_SPECIMENS_W_GENETIC_DATA'] = 'Limitar a especímenes con datos genéticos';
 $LANG['LOCALITY'] = 'Localidad';

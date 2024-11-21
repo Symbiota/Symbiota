@@ -27,6 +27,7 @@ $deleteSource = (array_key_exists('deleteSource', $_POST)?$_POST['deleteSource']
 $imgRootUrl = (array_key_exists('imgRootUrl', $_POST)?$_POST['imgRootUrl']:'');
 $imgRootPath = (array_key_exists('imgRootPath', $_POST)?$_POST['imgRootPath']:'');
 $imgSubPath = (array_key_exists('imgSubPath', $_POST)?$_POST['imgSubPath']:'');
+$copyover = (!empty($_POST['copyover']) ? 1 : 0);
 $submit = (array_key_exists('submitbutton', $_POST)?$_POST['submitbutton']:'');
 
 //Sanitation
@@ -107,6 +108,7 @@ if($IS_ADMIN) $isEditor = true;
 							$toolManager->setImgRootUrl($imgRootUrl);
 							$toolManager->setImgRootPath($imgRootPath);
 							$toolManager->setImgSubPath($imgSubPath);
+							$toolManager->setCopyOverExistingImages($copyover);
 							if($collid) $imgIdStart = $toolManager->migrateCollectionDerivatives($imgIdStart, $limit);
 							else $imgIdStart = $toolManager->migrateFieldDerivatives($imgIdStart, $limit);
 							?>
@@ -286,6 +288,12 @@ if($IS_ADMIN) $isEditor = true;
 								</div>
 							</div>
 						</fieldset>
+					</div>
+					<div class="fieldRowDiv">
+						<div class="fieldDiv">
+							<input type="checkbox" name="copyover" value="1" <?= ($copyover ? 'checked' : '') ?>>
+							<span class="fieldLabel">copyover existing target images</span>
+						</div>
 					</div>
 					<div class="fieldRowDiv">
 						<div class="fieldDiv">

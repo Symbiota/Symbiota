@@ -3,6 +3,8 @@
 namespace PhpOffice\PhpSpreadsheet\Calculation\MathTrig;
 
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
+use PhpOffice\PhpSpreadsheet\Calculation\Information\ErrorValue;
+use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 
 class Sum
 {
@@ -15,10 +17,8 @@ class Sum
      *        SUM(value1[,value2[, ...]])
      *
      * @param mixed ...$args Data values
-     *
-     * @return float|string
      */
-    public static function sumIgnoringStrings(...$args)
+    public static function sumIgnoringStrings(mixed ...$args): float|int|string
     {
         $returnValue = 0;
 
@@ -27,7 +27,7 @@ class Sum
             // Is it a numeric value?
             if (is_numeric($arg)) {
                 $returnValue += $arg;
-            } elseif (Functions::isError($arg)) {
+            } elseif (ErrorValue::isError($arg)) {
                 return $arg;
             }
         }
@@ -44,28 +44,23 @@ class Sum
      *        SUM(value1[,value2[, ...]])
      *
      * @param mixed ...$args Data values
-     *
-     * @return float|string
      */
-    public static function sumErroringStrings(...$args)
+    public static function sumErroringStrings(mixed ...$args): float|int|string|array
     {
         $returnValue = 0;
         // Loop through the arguments
         $aArgs = Functions::flattenArrayIndexed($args);
         foreach ($aArgs as $k => $arg) {
             // Is it a numeric value?
-            if (is_numeric($arg) || empty($arg)) {
-                if (is_string($arg)) {
-                    $arg = (int) $arg;
-                }
+            if (is_numeric($arg)) {
                 $returnValue += $arg;
             } elseif (is_bool($arg)) {
                 $returnValue += (int) $arg;
-            } elseif (Functions::isError($arg)) {
+            } elseif (ErrorValue::isError($arg)) {
                 return $arg;
-            // ignore non-numerics from cell, but fail as literals (except null)
             } elseif ($arg !== null && !Functions::isCellValue($k)) {
-                return Functions::VALUE();
+                // ignore non-numerics from cell, but fail as literals (except null)
+                return ExcelError::VALUE();
             }
         }
 
@@ -80,9 +75,9 @@ class Sum
      *
      * @param mixed ...$args Data values
      *
-     * @return float|string The result, or a string containing an error
+     * @return float|int|string The result, or a string containing an error
      */
-    public static function product(...$args)
+    public static function product(mixed ...$args): string|int|float
     {
         $arrayList = $args;
 
@@ -99,7 +94,7 @@ class Sum
             $array2 = Functions::flattenArray($matrixData);
             $count = count($array2);
             if ($wrkCellCount != $count) {
-                return Functions::VALUE();
+                return ExcelError::VALUE();
             }
 
             foreach ($array2 as $i => $val) {

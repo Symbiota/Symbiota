@@ -2,12 +2,15 @@
 
 namespace PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions;
 
+use PhpOffice\PhpSpreadsheet\Calculation\ArrayEnabled;
 use PhpOffice\PhpSpreadsheet\Calculation\Engineering;
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
-use PhpOffice\PhpSpreadsheet\Calculation\Functions;
+use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 
 class Normal
 {
+    use ArrayEnabled;
+
     public const SQRT2PI = 2.5066282746310005024157652848110452530069867406099;
 
     /**
@@ -18,17 +21,23 @@ class Normal
      * testing.
      *
      * @param mixed $value Float value for which we want the probability
+     *                      Or can be an array of values
      * @param mixed $mean Mean value as a float
+     *                      Or can be an array of values
      * @param mixed $stdDev Standard Deviation as a float
+     *                      Or can be an array of values
      * @param mixed $cumulative Boolean value indicating if we want the cdf (true) or the pdf (false)
+     *                      Or can be an array of values
      *
-     * @return float|string The result, or a string containing an error
+     * @return array|float|string The result, or a string containing an error
+     *         If an array of numbers is passed as an argument, then the returned result will also be an array
+     *            with the same dimensions
      */
-    public static function distribution($value, $mean, $stdDev, $cumulative)
+    public static function distribution(mixed $value, mixed $mean, mixed $stdDev, mixed $cumulative): array|string|float
     {
-        $value = Functions::flattenSingleValue($value);
-        $mean = Functions::flattenSingleValue($mean);
-        $stdDev = Functions::flattenSingleValue($stdDev);
+        if (is_array($value) || is_array($mean) || is_array($stdDev) || is_array($cumulative)) {
+            return self::evaluateArrayArguments([self::class, __FUNCTION__], $value, $mean, $stdDev, $cumulative);
+        }
 
         try {
             $value = DistributionValidations::validateFloat($value);
@@ -40,7 +49,7 @@ class Normal
         }
 
         if ($stdDev < 0) {
-            return Functions::NAN();
+            return ExcelError::NAN();
         }
 
         if ($cumulative) {
@@ -56,16 +65,21 @@ class Normal
      * Returns the inverse of the normal cumulative distribution for the specified mean and standard deviation.
      *
      * @param mixed $probability Float probability for which we want the value
+     *                      Or can be an array of values
      * @param mixed $mean Mean Value as a float
+     *                      Or can be an array of values
      * @param mixed $stdDev Standard Deviation as a float
+     *                      Or can be an array of values
      *
-     * @return float|string The result, or a string containing an error
+     * @return array|float|string The result, or a string containing an error
+     *         If an array of numbers is passed as an argument, then the returned result will also be an array
+     *            with the same dimensions
      */
-    public static function inverse($probability, $mean, $stdDev)
+    public static function inverse(mixed $probability, mixed $mean, mixed $stdDev): array|string|float
     {
-        $probability = Functions::flattenSingleValue($probability);
-        $mean = Functions::flattenSingleValue($mean);
-        $stdDev = Functions::flattenSingleValue($stdDev);
+        if (is_array($probability) || is_array($mean) || is_array($stdDev)) {
+            return self::evaluateArrayArguments([self::class, __FUNCTION__], $probability, $mean, $stdDev);
+        }
 
         try {
             $probability = DistributionValidations::validateProbability($probability);
@@ -76,7 +90,7 @@ class Normal
         }
 
         if ($stdDev < 0) {
-            return Functions::NAN();
+            return ExcelError::NAN();
         }
 
         return (self::inverseNcdf($probability) * $stdDev) + $mean;
@@ -90,7 +104,7 @@ class Normal
      *    email                : nickersonm@yahoo.com
      *
      */
-    private static function inverseNcdf($p)
+    private static function inverseNcdf(float $p): float
     {
         //    Inverse ncdf approximation by Peter J. Acklam, implementation adapted to
         //    PHP by Michael Nickerson, using Dr. Thomas Ziegler's C implementation as
@@ -146,21 +160,21 @@ class Normal
             //    Rational approximation for lower region.
             $q = sqrt(-2 * log($p));
 
-            return ((((($c[1] * $q + $c[2]) * $q + $c[3]) * $q + $c[4]) * $q + $c[5]) * $q + $c[6]) /
-                (((($d[1] * $q + $d[2]) * $q + $d[3]) * $q + $d[4]) * $q + 1);
+            return ((((($c[1] * $q + $c[2]) * $q + $c[3]) * $q + $c[4]) * $q + $c[5]) * $q + $c[6])
+                / (((($d[1] * $q + $d[2]) * $q + $d[3]) * $q + $d[4]) * $q + 1);
         } elseif ($p_high < $p && $p < 1) {
             //    Rational approximation for upper region.
             $q = sqrt(-2 * log(1 - $p));
 
-            return -((((($c[1] * $q + $c[2]) * $q + $c[3]) * $q + $c[4]) * $q + $c[5]) * $q + $c[6]) /
-                (((($d[1] * $q + $d[2]) * $q + $d[3]) * $q + $d[4]) * $q + 1);
+            return -((((($c[1] * $q + $c[2]) * $q + $c[3]) * $q + $c[4]) * $q + $c[5]) * $q + $c[6])
+                / (((($d[1] * $q + $d[2]) * $q + $d[3]) * $q + $d[4]) * $q + 1);
         }
 
         //    Rational approximation for central region.
         $q = $p - 0.5;
         $r = $q * $q;
 
-        return ((((($a[1] * $r + $a[2]) * $r + $a[3]) * $r + $a[4]) * $r + $a[5]) * $r + $a[6]) * $q /
-                ((((($b[1] * $r + $b[2]) * $r + $b[3]) * $r + $b[4]) * $r + $b[5]) * $r + 1);
+        return ((((($a[1] * $r + $a[2]) * $r + $a[3]) * $r + $a[4]) * $r + $a[5]) * $r + $a[6]) * $q
+                / ((((($b[1] * $r + $b[2]) * $r + $b[3]) * $r + $b[4]) * $r + $b[5]) * $r + 1);
     }
 }

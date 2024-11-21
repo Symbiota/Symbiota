@@ -11,43 +11,43 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Collection;
 
 /**
- * Collection abstract class
+ * Collection abstract class.
  *
  * @since 0.10.0
+ * @template T
  */
 abstract class AbstractCollection
 {
     /**
-     * Items
+     * Items.
      *
-     * @var \PhpOffice\PhpWord\Element\AbstractContainer[]
+     * @var T[]
      */
-    private $items = array();
+    private $items = [];
 
     /**
-     * Get items
+     * Get items.
      *
-     * @return \PhpOffice\PhpWord\Element\AbstractContainer[]
+     * @return T[]
      */
-    public function getItems()
+    public function getItems(): array
     {
         return $this->items;
     }
 
     /**
-     * Get item by index
+     * Get item by index.
      *
-     * @param int $index
-     * @return \PhpOffice\PhpWord\Element\AbstractContainer
+     * @return ?T
      */
-    public function getItem($index)
+    public function getItem(int $index)
     {
         if (array_key_exists($index, $this->items)) {
             return $this->items[$index];
@@ -59,10 +59,9 @@ abstract class AbstractCollection
     /**
      * Set item.
      *
-     * @param int $index
-     * @param \PhpOffice\PhpWord\Element\AbstractContainer $item
+     * @param ?T $item
      */
-    public function setItem($index, $item)
+    public function setItem(int $index, $item): void
     {
         if (array_key_exists($index, $this->items)) {
             $this->items[$index] = $item;
@@ -70,25 +69,22 @@ abstract class AbstractCollection
     }
 
     /**
-     * Add new item
+     * Add new item.
      *
-     * @param \PhpOffice\PhpWord\Element\AbstractContainer $item
-     * @return int
+     * @param T $item
      */
-    public function addItem($item)
+    public function addItem($item): int
     {
-        $index = $this->countItems() + 1;
+        $index = $this->countItems();
         $this->items[$index] = $item;
 
         return $index;
     }
 
     /**
-     * Get item count
-     *
-     * @return int
+     * Get item count.
      */
-    public function countItems()
+    public function countItems(): int
     {
         return count($this->items);
     }

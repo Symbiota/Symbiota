@@ -4,6 +4,7 @@ namespace PhpOffice\PhpSpreadsheet\Calculation\MathTrig;
 
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
+use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 
 class Lcm
 {
@@ -48,7 +49,7 @@ class Lcm
      *
      * @return int|string Lowest Common Multiplier, or a string containing an error
      */
-    public static function evaluate(...$args)
+    public static function evaluate(mixed ...$args): int|string
     {
         try {
             $arrayArgs = [];
@@ -104,7 +105,7 @@ class Lcm
     private static function testNonNulls(int $anyNonNulls): void
     {
         if (!$anyNonNulls) {
-            throw new Exception(Functions::VALUE());
+            throw new Exception(ExcelError::VALUE());
         }
     }
 }

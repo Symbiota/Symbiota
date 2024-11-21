@@ -1056,9 +1056,9 @@ class GlossaryManager extends Manager {
 			if($r->source && !in_array($r->source, $referencesArr)) $referencesArr[] = $r->source;
 			if($r->translator && !in_array($r->translator, $contributorsArr)) $contributorsArr[] = $r->translator;
 			if($r->author && !in_array($r->author, $contributorsArr)) $contributorsArr[] = $r->author;
-			$retArr[$r->glossid]['term'] = strip_tags($r->term);
-			$retArr[$r->glossid]['searchTerm'] = strip_tags($r->searchterm);
-			if(!$definitions || $definitions != 'nodef') $retArr[$r->glossid]['definition'] = strip_tags($r->definition);
+			$retArr[$r->glossid]['term'] = strip_tags($r->term ?? '');
+			$retArr[$r->glossid]['searchTerm'] = strip_tags($r->searchterm ?? '');
+			if(!$definitions || $definitions != 'nodef') $retArr[$r->glossid]['definition'] = strip_tags($r->definition ?? '');
 			if($r->glossgrpid && $r->glossgrpid != $r->glossid) $groupMap[$r->glossgrpid][] = $r->glossid;
 		}
 		$rs->free();

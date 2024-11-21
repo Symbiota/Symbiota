@@ -2,6 +2,7 @@
 include_once('Manager.php');
 include_once('OccurrenceAccessStats.php');
 include_once('ChecklistVoucherAdmin.php');
+include_once($SERVER_ROOT . '/utilities/SymbUtil.php');
 
 class OccurrenceIndividual extends Manager{
 
@@ -75,31 +76,31 @@ class OccurrenceIndividual extends Manager{
 		if(!$this->occid){
 			//Check occurrence recordID
 			$sql = 'SELECT occid FROM omoccurrences WHERE (occurrenceid = ?) OR (recordID = ?)';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('ss', $guid, $guid);
-				$stmt->execute();
-				$stmt->bind_result($this->occid);
-				$stmt->close();
+			if($result = SymbUtil::execute_query($this->conn, $sql, [$guid, $guid])){
+				if($row = $result->fetch_assoc()) {
+					$this->occid = $row['occid'];
+				}
+				$result->free();
 			}
 		}
 		if(!$this->occid){
 			//Check image recordID
 			$sql = 'SELECT occid FROM images WHERE recordID = ?';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('s', $guid);
-				$stmt->execute();
-				$stmt->bind_result($this->occid);
-				$stmt->close();
+			if($result = SymbUtil::execute_query($this->conn, $sql, [$guid])){
+				if($row = $result->fetch_assoc()) {
+					$this->occid = $row['occid'];
+				}
+				$result->free();
 			}
 		}
 		if(!$this->occid){
 			//Check identification recordID
 			$sql = 'SELECT occid FROM omoccurdeterminations WHERE recordID = ?';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('s', $guid);
-				$stmt->execute();
-				$stmt->bind_result($this->occid);
-				$stmt->close();
+			if($result = SymbUtil::execute_query($this->conn, $sql, [$guid])){
+				if($row = $result->fetch_assoc()) {
+					$this->occid = $row['occid'];
+				}
+				$result->free();
 			}
 		}
 		return $this->occid;
@@ -422,7 +423,7 @@ class OccurrenceIndividual extends Manager{
 					$objectID = $r->catalogNumber;
 					if($objectID) {
 						if(strpos($objectID, $r->instCode) === false){
-							//Append institution and collection code to catalogNumber, but only if it is not already included 
+							//Append institution and collection code to catalogNumber, but only if it is not already included
 							$collCode = $r->instCode;
 							if($r->collCode) $collCode .= '-' . $r->collCode;
 							$objectID = $collCode . ':' . $r->catalogNumber;

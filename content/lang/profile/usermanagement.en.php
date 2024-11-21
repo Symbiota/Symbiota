@@ -6,6 +6,7 @@ Language: English
 */
 
 $LANG['USER_MNGMT'] = 'User Management';
+$LANG['SEARCH_BOX'] = 'Search'; //because a search box and the "search" button might have different names in different languages
 $LANG['SEARCH'] = 'Search';
 $LANG['LAST_OR_LOGIN'] = 'Last Name or Login Name';
 $LANG['ENTER_LAST'] = 'Enter Last Name';

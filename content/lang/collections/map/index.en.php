@@ -14,6 +14,7 @@ $LANG['MAP_OPTIONS'] = 'Map Options';
 $LANG['RESET'] = 'Reset';
 $LANG['SEARCH'] = 'Search';
 $LANG['TAXA'] = 'Taxa';
+$LANG['WITHIN'] = 'within';
 $LANG['SHAPE_TOOLS'] = 'Use the shape tools on the map to select occurrences within a given shape';
 $LANG['WITHIN_POLYGON'] = 'Within the selected polygon';
 $LANG['WITHIN_CIRCLE'] = 'Within the selected circle';

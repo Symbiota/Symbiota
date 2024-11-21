@@ -775,6 +775,7 @@ class OccurrenceExsiccatae {
 	}
 
 	private function cleanOutStr($str){
+		if(!isset($str)) return null;
 		$newStr = str_replace('"',"&quot;",$str);
 		$newStr = str_replace("'","&apos;",$newStr);
 		//$newStr = $this->conn->real_escape_string($newStr);
