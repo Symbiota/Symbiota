@@ -84,6 +84,7 @@ $LANG['INCLUDE_DETS'] = 'Include Determination History';
 $LANG['INCLUDE_IMGS'] = 'Include Image URLs';
 $LANG['INCLUDE_ATTRIBUTES'] = 'Include Occurrence Trait Attributes';
 $LANG['INCLUDE_MATSAMPLE'] = 'Include Material Sample';
+$LANG['INCLUDE_IDENTIFIERS'] = 'Include Alternative Identifiers';
 $LANG['REDACT_LOC'] = 'Redact Sensitive Localities';
 $LANG['CREATE_REFRESH'] = 'Create/Refresh Darwin Core Archive';
 $LANG['NOTE_LACKING_EXCLUDED'] = 'NOTE: all records lacking occurrenceID GUIDs will be excluded';

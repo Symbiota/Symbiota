@@ -72,7 +72,6 @@ $LANG['FULLSPECLISTVOUCHER'] = 'Liste complète des espèces avec des échantill
 $LANG['VOUCHERONLY'] = 'Échantillons liés uniquement (DwC-A, CSV, délimité par des tabulations)';
 $LANG['FULLSPECLISTALLOCCUR'] = 'Liste complète des espèces avec toutes les occurrences correspondant aux termes de recherche (CSV)';
 $LANG['PENSOFT_XLSX_EXPORT'] = 'Exportation Pensoft Excel';
-$LANG['SPECMISSINGTITLE'] = "Ajouts d'espèces possibles sur la base d'échantillons";
 $LANG['SPECMISSTAXA'] = 'Spécimens de taxons absents de la liste (CSV)';
 $LANG['SPECMISSPELLED'] = 'Spécimens avec des noms scientifiques mal orthographiés, illégaux et problématiques (CSV)';
 $LANG['CHECKIDNOTSET'] = 'Identifiant de liste non défini';
