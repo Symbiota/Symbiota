@@ -402,7 +402,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 											foreach($clidArr as $id){
 												?>
 												<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo $tid . '&clid=' . $id; ?>','editorwindow');">
-													<img src='../images/edit.png' style='width:1.3em;' alt="<?php echo $LANG['IMG_EDIT_DETAILS']; ?>" title='<?php echo $LANG['EDIT_DETAILS']; ?>' />
+													<img src='../images/edit.png' style='width:1.3em;' alt="<?php echo $LANG['EDIT_DETAILS']; ?>" title='<?php echo $LANG['EDIT_DETAILS']; ?>' />
 												</a>
 												<?php
 											}

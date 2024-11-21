@@ -42,7 +42,7 @@ class TaxonomyUtilities {
 			}
 			//Remove extra spaces
 			$inStr = preg_replace('/\s\s+/',' ',$inStr);
-
+			if(!$inStr) return $retArr;
 			$sciNameArr = explode(' ',trim($inStr));
 			$okToCloseConn = true;
 			if($conn !== null) $okToCloseConn = false;
@@ -127,7 +127,19 @@ class TaxonomyUtilities {
 					//cycles through the final terms to evaluate and extract infraspecific data
 					while($sciStr = array_shift($sciNameArr)){
 						if($testArr = self::cleanInfra($sciStr)){
-							self::setInfraNode($sciStr, $sciNameArr, $retArr, $authorArr, $testArr['infra']);
+							if($sciNameArr){
+								$infraStr = array_shift($sciNameArr);
+								if(preg_match('/^[a-z]{3,}$/', $infraStr)){
+									$retArr['unitind3'] = $testArr['infra'];
+									$retArr['unitname3'] = $infraStr;
+									unset($authorArr);
+									$authorArr = array();
+								}
+								else{
+									$authorArr[] = $sciStr;
+									$authorArr[] = $infraStr;
+								}
+							}
 						}
 						elseif($kingdomName == 'Animalia' && !$retArr['unitname3'] && ($rankId == 230 || preg_match('/^[a-z]{3,}$/',$sciStr) || preg_match('/^[A-Z]{3,}$/',$sciStr))){
 							$retArr['unitind3'] = '';
@@ -245,22 +257,6 @@ class TaxonomyUtilities {
 			$retArr['rankid'] = 230;
 		}
 		return $retArr;
-	}
-
-	private static function setInfraNode($sciStr, &$sciNameArr, &$retArr, &$authorArr, $rankTag){
-		if($sciNameArr){
-			$infraStr = array_shift($sciNameArr);
-			if(preg_match('/^[a-z]{3,}$/', $infraStr)){
-				$retArr['unitind3'] = $rankTag;
-				$retArr['unitname3'] = $infraStr;
-				unset($authorArr);
-				$authorArr = array();
-			}
-			else{
-				$authorArr[] = $sciStr;
-				$authorArr[] = $infraStr;
-			}
-		}
 	}
 
 	//Taxonomic indexing functions

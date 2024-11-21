@@ -6,6 +6,7 @@ Language: Français (French)
 */
 
 $LANG['USER_MNGMT'] = 'Gestion des Utilisateurs';
+$LANG['SEARCH_BOX'] = 'Recherche'; //because a search box and the "search" button might have different names in different languages
 $LANG['SEARCH'] = 'Rechercher';
 $LANG['LAST_OR_LOGIN'] = 'Nom de Famille ou nom d\'Utilisateur';
 $LANG['ENTER_LAST'] = 'Entrer Nom de Famille';
