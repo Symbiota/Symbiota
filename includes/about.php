@@ -50,7 +50,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 					Les spécimens des pays suivants sont ciblés dans ce projet de numérisation :
 					Angola, Bénin, Burkina Faso, Burundi, Cameroun, République centrafricaine, Tchad, Congo, Côte d'Ivoire,
 					République démocratique du Congo, Djibouti, Guinée équatoriale, Érythrée, Éthiopie, Gabon, Gambie, Ghana,
-					Guinée, Guinée-Bissau, Kenya, Libéria, Malawi, Mali, Mozambique, Niger, Nigéria, Ouganda, Rwanda, Sao Tomé-et-Principe, Sénégal, Sierra Leone, Somalie, Soudan, Tanzanie, Togo et Zambie. Toutefois, des spécimens
+					Guinée, Guinée-Bissau, Kenya, Libéria, Malawi, Mali, Mozambique, Niger, Nigéria, Ouganda, Rwanda, Sao Tomé-et-Principe, Sénégal, Sierra Leone, Somalie, Soudan, Soudan du Sud, Tanzanie, Togo et Zambie. Toutefois, des spécimens
 					d'autres pays peuvent également être numérisés dans le cadre de flux de travail efficaces.
 				</p>
 				<p>
@@ -105,7 +105,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 					Angola, Benim, Burkina Faso, Burundi, Camarões, República Centro-Africana, Chade, Congo, Costa do Marfim,
 					República Democrática do Congo, Djibuti, Guiné Equatorial, Eritreia, Etiópia, Gabão, Gâmbia, Gana,
 					Guiné, Guiné-Bissau, Quênia, Libéria, Malawi, Mali, Moçambique, Níger, Nigéria, Ruanda, São Tomé e
-					Príncipe, Senegal, Serra Leoa, Somália, Sudão, Tanzânia, Togo, Uganda e Zâmbia. No entanto, espécimes
+					Príncipe, Senegal, Serra Leoa, Somália, Sudão, Sudão do Sul, Tanzânia, Togo, Uganda e Zâmbia. No entanto, espécimes
 					de outros países também podem ser digitalizados como parte de fluxos de trabalho eficientes.
 				</p>
 				<p>
@@ -159,7 +159,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 					Angola, Benin, Burkina Faso, Burundi, Cameroon, Central African Republic, Chad, Congo, Cote D'Ivoire, 
 					Democratic Republic of the Congo, Djibouti, Equatorial Guinea, Eritrea, Ethiopia, Gabon, Gambia, Ghana, 
 					Guinea, Guinea-Bissau, Kenya, Liberia, Malawi, Mali, Mozambique, Niger, Nigeria, Rwanda, Sao Tome and 
-					Principe, Senegal, Sierra Leone, Somalia, Sudan, Tanzania, Togo, Uganda, and Zambia. However, specimens 
+					Principe, Senegal, Sierra Leone, Somalia, South Sudan, Sudan, Tanzania, Togo, Uganda, and Zambia. However, specimens 
 					from other countries may also be digitized as part of efficient workflows.
 				</p>
 				<p>
