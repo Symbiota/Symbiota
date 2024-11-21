@@ -34,6 +34,7 @@ $LANG['INCLUDE_HISTORY'] = 'include Determination History';
 $LANG['INCLUDE_IMG'] = 'include Image Records';
 $LANG['INCLUDE_ATTR'] = 'include Occurrence Trait Attributes';
 $LANG['IMCLUDE_MAT'] = 'include Material Samples';
+$LANG['INCLUDE_IDENT'] = 'include Alternative Identifiers';
 $LANG['DATA_EXT_NOTE'] = 'Output must be a compressed archive';
 $LANG['FILE_FORMAT'] = 'File Format';
 $LANG['COMMA_DELIM'] = 'Comma Delimited (CSV)';

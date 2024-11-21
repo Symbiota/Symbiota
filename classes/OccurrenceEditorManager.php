@@ -376,13 +376,7 @@ class OccurrenceEditorManager {
 			}
 			elseif(substr($this->qryArr['rb'],0,1) == '%'){
 				$collStr = $this->cleanInStr(substr($this->qryArr['rb'],1));
-				if(strlen($collStr) < 4 || in_array(strtolower($collStr),array('best','little'))){
-					//Need to avoid FULLTEXT stopwords interfering with return
-					$sqlWhere .= 'AND (o.recordedby LIKE "%'.$collStr.'%") ';
-				}
-				else{
-					$sqlWhere .= 'AND (MATCH(f.recordedby) AGAINST("'.$collStr.'")) ';
-				}
+				$sqlWhere .= 'AND (MATCH(o.recordedby) AGAINST("'.$collStr.'") IN BOOLEAN MODE) ';
 			}
 			else{
 				$sqlWhere .= 'AND (o.recordedby LIKE "'.$this->cleanInStr($this->qryArr['rb']).'%") ';
@@ -760,9 +754,6 @@ class OccurrenceEditorManager {
 		}
 		if(strpos($this->sqlWhere,'exn.ometid')){
 			$sql .= 'INNER JOIN omexsiccatiocclink exocc ON o.occid = exocc.occid INNER JOIN omexsiccatinumbers exn ON exocc.omenid = exn.omenid ';
-		}
-		if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')){
-			$sql.= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 		}
 		if($this->crowdSourceMode){
 			$sql .= 'INNER JOIN omcrowdsourcequeue q ON q.occid = o.occid ';

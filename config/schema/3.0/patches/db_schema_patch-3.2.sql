@@ -1,9 +1,68 @@
 INSERT INTO `schemaversion` (versionnumber) values ("3.2");
 
+ALTER TABLE `omoccurrences` 
+  ADD FULLTEXT INDEX `FT_omoccurrence_locality` (`locality`),
+  ADD FULLTEXT INDEX `FT_omoccurrence_recordedBy` (`recordedBy`),
+  DROP INDEX `Index_locality` ;
+  
+DROP TABLE `omoccurrencesfulltext`;
+
+DROP TRIGGER IF EXISTS `omoccurrences_insert`;
+
+DROP TRIGGER IF EXISTS `omoccurrences_update`;
+
+DROP TRIGGER IF EXISTS `omoccurrences_delete`;
+
+
+DELIMITER $$
+
+CREATE TRIGGER `omoccurrences_insert` AFTER INSERT ON `omoccurrences`
+FOR EACH ROW BEGIN
+	IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
+		INSERT INTO omoccurpoints (`occid`,`point`) 
+		VALUES (NEW.`occid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
+	END IF;
+END$$
+
+CREATE TRIGGER `omoccurrences_update` AFTER UPDATE ON `omoccurrences`
+FOR EACH ROW BEGIN
+	IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
+		IF EXISTS (SELECT `occid` FROM omoccurpoints WHERE `occid`=NEW.`occid`) THEN
+			UPDATE omoccurpoints 
+			SET `point` = Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`)
+			WHERE `occid` = NEW.`occid`;
+		ELSE 
+			INSERT INTO omoccurpoints (`occid`,`point`) 
+			VALUES (NEW.`occid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
+		END IF;
+	ELSE
+		DELETE FROM omoccurpoints WHERE `occid` = NEW.`occid`;
+	END IF;
+END$$
+
+CREATE TRIGGER `omoccurrences_delete` BEFORE DELETE ON `omoccurrences`
+FOR EACH ROW BEGIN
+	DELETE FROM omoccurpoints WHERE `occid` = OLD.`occid`;
+END$$
+
+DELIMITER ;
 DROP TRIGGER specprocessorrawlabelsfulltext_insert
 DROP TRIGGER specprocessorrawlabelsfulltext_update
 DROP TRIGGER specprocessorrawlabelsfulltext_delete
 DROP TABLE specprocessorawlabelsfulltext;
+
+
+ALTER TABLE `omoccuridentifiers`
+  CHANGE COLUMN `identifiervalue` `identifierValue` VARCHAR(75) NOT NULL AFTER `occid`,
+  CHANGE COLUMN `identifiername` `identifierName` VARCHAR(45) NOT NULL DEFAULT '' AFTER `identifierValue`,
+  ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL AFTER `identifierName`,
+  ADD COLUMN `recordID` VARCHAR(45) NULL DEFAULT NULL AFTER `sortBy`,
+  CHANGE COLUMN `modifiedtimestamp` `modifiedTimestamp` DATETIME NULL DEFAULT NULL AFTER `modifiedUid`,
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT current_timestamp() AFTER `modifiedTimestamp`,
+  DROP INDEX `UQ_omoccuridentifiers`,
+  ADD UNIQUE INDEX `UQ_omoccuridentifiers` (`occid`, `identifierValue`, `identifierName`),
+  DROP INDEX `IX_omoccuridentifiers_value`,
+  ADD INDEX `IX_omoccuridentifiers_value` (`identifierValue`);
 
 
 ALTER TABLE `kmcharacters` 
@@ -165,3 +224,6 @@ CREATE TABLE `uploadKeyValueTemp`(
   CONSTRAINT `uploadKeyValueTemp_ibfk_1` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `uploadKeyValueTemp_ibfk_2` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`collID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `upload_key_temp_uid` FOREIGN KEY (`upload_uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE)
+
+ALTER TABLE `omoccuraccess` ENGINE=InnoDB;
+ALTER TABLE `omoccuraccesslink` ENGINE=InnoDB;

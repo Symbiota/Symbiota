@@ -223,6 +223,11 @@ $LANG['LOAD_OCR_FILES'] = 'Cargar archivos OCR';
 
 //processor.php
 $LANG['SPEC_PROCESSOR_CONTROL_PANEL'] = 'Panel de Control del Procesador de Muestras';
+$LANG['HOME'] = 'Inicio';
+$LANG['COL_CONTROL_PANEL'] = 'Panel de control de recopilación';
+$LANG['SPEC_PROCESSOR'] = 'Procesador de muestras';
+$LANG['PROC_HANDLER'] = 'Controlador de procesamiento';
+$LANG['RETURN_SPEC_PROCESSOR'] = 'Regresar al procesador de muestras';
 
 //wordcloudhandler.php
 $LANG['WORD_CLOUD_HANDLER'] = 'Manejador de Nube de Palabras';
