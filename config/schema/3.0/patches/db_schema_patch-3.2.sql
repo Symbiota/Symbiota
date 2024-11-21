@@ -156,9 +156,9 @@ ALTER TABLE `omoccurassociations`
   DROP FOREIGN KEY `FK_occurassoc_uidmodified`;
 
 ALTER TABLE `omoccurassociations`
-  ADD CONSTRAINT `FK_occurassoc_occidassoc` FOREIGN KEY (`occidAssociate`) REFERENCES `omoccurrences` (`occid`) ON UPDATE CASCADE ON DELETE RESTRICT,
-  ADD CONSTRAINT `FK_occurassoc_uidcreated` FOREIGN KEY (`createdUid`) REFERENCES `users` (`uid`) ON UPDATE CASCADE ON DELETE RESTRICT,
-  ADD CONSTRAINT `FK_occurassoc_uidmodified` FOREIGN KEY (`modifiedUid`) REFERENCES `users` (`uid`) ON UPDATE CASCADE ON DELETE RESTRICT;
+  ADD CONSTRAINT `FK_occurassoc_occidassoc` FOREIGN KEY (`occidAssociate`) REFERENCES `omoccurrences` (`occid`) ON UPDATE RESTRICT ON DELETE RESTRICT,
+  ADD CONSTRAINT `FK_occurassoc_uidcreated` FOREIGN KEY (`createdUid`) REFERENCES `users` (`uid`) ON UPDATE RESTRICT ON DELETE RESTRICT,
+  ADD CONSTRAINT `FK_occurassoc_uidmodified` FOREIGN KEY (`modifiedUid`) REFERENCES `users` (`uid`) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 
