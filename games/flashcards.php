@@ -34,7 +34,8 @@ $sciArr = array();
 	?>
 	<style>
 		.flashcard-img {
-		height:97%;max-width:450px
+		height: 97%;
+		max-width: 450px;
 		}
 
         .flashcard-nav {
@@ -43,7 +44,7 @@ $sciArr = array();
 			width: 450px;
 		}
 		.flashcard-nav > img {
-			cursor:pointer;
+			cursor: pointer;
 		}
     </style>
 	<script type="text/javascript">
