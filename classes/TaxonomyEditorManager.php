@@ -228,6 +228,7 @@ class TaxonomyEditorManager extends Manager{
 			$processedCultivarEpithet = $this->standardizeCultivarEpithet($postArr['cultivarEpithet']);
 			$sciname .= " ". $processedCultivarEpithet;
 		}
+		$cultivarEpithetForSaving = $this->standardizeCultivarEpithet($postArr['cultivarEpithet'], true);
 		if(array_key_exists('tradeName', $postArr) && !empty($postArr['tradeName'])){
 			$processedTradeName = $this->standardizeTradeName($postArr['tradeName']);
 			$sciname .= ' ' . $processedTradeName;
@@ -239,7 +240,9 @@ class TaxonomyEditorManager extends Manager{
 			'unitname2 = '.($postArr['unitname2']?'"'.$this->cleanInStr($postArr['unitname2']).'"':'NULL').', '.
 			'unitind3 = '.($postArr['unitind3']?'"'.$this->cleanInStr($postArr['unitind3']).'"':'NULL').', '.
 			'unitname3 = '.($postArr['unitname3']?'"'.$this->cleanInStr($postArr['unitname3']).'"':'NULL').', '.
-			'cultivarEpithet = "'.((array_key_exists('cultivarEpithet', $postArr) && $postArr['cultivarEpithet']) ? ($this->cleanInStr($processedCultivarEpithet)) : '') . '", ' . // @TODO won't this set this value as blank quotes if empty?
+			// 'cultivarEpithet = "'.((array_key_exists('cultivarEpithet', $postArr) && $postArr['cultivarEpithet']) ? ($this->cleanInStr($processedCultivarEpithet)) : '') . '", ' . // @TODO won't this set this value as blank quotes if empty?
+			'cultivarEpithet = ' . ((array_key_exists('cultivarEpithet', $postArr) && $postArr['cultivarEpithet']) ? '"'.($this->cleanInStr($cultivarEpithetForSaving)).'"' : '') . ', ' . // @TODO won't this set this value as blank quotes if empty?
+			// 'cultivarEpithet = ". 'boop' . ", ' . // @TODO won't this set this value as blank quotes if empty?
 			'tradeName = "' . ((array_key_exists('tradeName', $postArr) && $postArr['tradeName']) ? $this->cleanInStr($processedTradeName) : '') . '", ' .
 			'author = "'.($postArr['author']?$this->cleanInStr($postArr['author']):'').'", '.
 			'rankid = '.(is_numeric($postArr['rankid'])?$postArr['rankid']:'NULL').', '.

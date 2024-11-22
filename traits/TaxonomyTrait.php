@@ -8,7 +8,11 @@ trait TaxonomyTrait {
 		}
 
 		if(!empty($this->cultivarEpithet)){
-			$scinameBase = str_replace("'". $this->cultivarEpithet . "'", '', trim($scinameBase)); // @TODO could possibly replace off-target if cultivarEpithet matches some parent taxon exactly. We think extremely unlikely edge case, so ignoring for now.
+			if(strpos($this->cultivarEpithet, "'") !== false){
+				$scinameBase = str_replace($this->cultivarEpithet, '', trim($scinameBase)); // a safe guard, but should not be necessary if cultivarEpithet is being saved correctly with no quote.
+			}else{
+				$scinameBase = str_replace("'". $this->cultivarEpithet . "'", '', trim($scinameBase)); // @TODO could possibly replace off-target if cultivarEpithet matches some parent taxon exactly. We think extremely unlikely edge case, so ignoring for now.
+			}
 		}
 		$returnObj['base'] = trim($scinameBase ?? '');
 		$returnObj['cultivarEpithet'] = $this->cultivarEpithet; // assumes quotes not stored in db
@@ -97,10 +101,14 @@ trait TaxonomyTrait {
 
 	}
 
-	public static function standardizeCultivarEpithet($unstandardizedCultivarEpithet){
+	public static function standardizeCultivarEpithet($unstandardizedCultivarEpithet, $excludeQuotes=false){
 		if(!empty($unstandardizedCultivarEpithet)){
 			$clean_string = preg_replace('/(^[\'"“”]+)|([\'"“”]+$)/u', '', $unstandardizedCultivarEpithet);
-			return "'" . $clean_string . "'";
+			if($excludeQuotes){
+				return $clean_string;
+			}else{
+				return "'" . $clean_string . "'";
+			}
 		} else{
 			return '';
 		}
