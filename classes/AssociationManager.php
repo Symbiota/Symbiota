@@ -23,6 +23,7 @@ class AssociationManager extends OccurrenceTaxaManager{
 		parent::__destruct();
 	}
 
+
 	public function getRelationshipTypes(){
 		$sql = "SELECT DISTINCT relationship from omoccurassociations WHERE relationship IN (SELECT term from ctcontrolvocabterm WHERE cvID='1')";
 		if($statement = $this->conn->prepare($sql)){
@@ -46,6 +47,7 @@ class AssociationManager extends OccurrenceTaxaManager{
 			return [];
 		}
 	}
+
 
 	public function establishInverseRelationshipRecords(){
 		$sql = "SELECT * FROM omoccurassociations where occid IS NOT NULL AND occidAssociate IS NOT NULL;";
@@ -221,9 +223,9 @@ class AssociationManager extends OccurrenceTaxaManager{
 						if(isset($searchArr['tid'])) $tidInArr = array_merge($tidInArr, array_keys($searchArr['tid']));
 
 						// Adding this section in to address the use case where only genus is being searched and the entry in the omoccurassociations table is the TARGET taxon rather than the source. I'm a little concerned that this will result in off-target results, but it seems to be ok so far.
-						$term = $this->cleanInStr(trim($searchTaxon,'%'));
-						$term = preg_replace(array('/\s{1}x\s{1}/','/\s{1}X\s{1}/','/\s{1}\x{00D7}\s{1}/u'), ' _ ', $term);
-						$sqlWhereTaxa .= "OR (o.sciname LIKE '" . $term . "%' AND od.isCurrent=1) OR (oa.verbatimsciname LIKE '" . $term . "%') ";
+						// $term = $this->cleanInStr(trim($searchTaxon,'%'));
+						// $term = preg_replace(array('/\s{1}x\s{1}/','/\s{1}X\s{1}/','/\s{1}\x{00D7}\s{1}/u'), ' _ ', $term);
+						// $sqlWhereTaxa .= "OR (o.sciname LIKE '" . $term . "%' AND od.isCurrent=1) OR (oa.verbatimsciname LIKE '" . $term . "%') ";
 						// End
 					}
 					else{

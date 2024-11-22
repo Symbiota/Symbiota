@@ -168,7 +168,7 @@ class OccurrenceTaxaManager {
 		}
 	}
 
-	protected function addAcceptedChildrenToArray($tid, $rankid, $accArr, $searchStr){
+	protected function addAcceptedChildrenToArray($tid, $rankid, &$accArr, $searchStr){
 		$typeStr1 = '';
 		$bindingArr1 = array();
 		$sql1 = 'SELECT DISTINCT t.tid, t.sciname, t.rankid
@@ -195,14 +195,12 @@ class OccurrenceTaxaManager {
 	}
 
 	protected function addSynonymsOfAcceptedTaxaToArray($accArr, $rankid, $searchStr){
-		$typeStr2 = '';
 		$bindingArr2 = array();
-		$sql2 = 'SELECT DISTINCT t.tid, t.sciname, t2.sciname as accepted '.
-			'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-			'INNER JOIN taxa t2 ON ts.tidaccepted = t2.tid '.
-			'WHERE (ts.TidAccepted != ts.tid) AND (ts.taxauthid = ?) AND (ts.tidaccepted IN(?)) ';
-		$typeStr2 .= 'is';
-		array_push($bindingArr2, $this->taxAuthId, implode(',',$accArr));
+		$bindingArr2 = array_merge([$this->taxAuthId], $accArr);
+		$typeStr2 = str_repeat('s', count($bindingArr2));
+		$placeholders = implode(',', array_fill(0, count($accArr), '?')); // h/t chat gtp for this one
+
+		$sql2 = "SELECT DISTINCT t.tid, t.sciname, t2.sciname as accepted FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid INNER JOIN taxa t2 ON ts.tidaccepted = t2.tid WHERE (ts.TidAccepted != ts.tid) AND (ts.taxauthid = ?) AND (ts.tidaccepted IN($placeholders)) ";
 		if ($statement2 = $this->conn->prepare($sql2)) {
 			$statement2->bind_param($typeStr2,...$bindingArr2);
 			$statement2->execute();
