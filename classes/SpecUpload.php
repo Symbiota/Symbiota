@@ -238,11 +238,15 @@ class SpecUpload{
 			$fieldName = strtolower($schemaRow->Field);
 			if(!in_array($fieldName,$this->skipOccurFieldArr)){
 				$occFieldArr[] = $fieldName;
+				if($fieldName === 'othercatalognumbers') {
+					$occFieldArr[] = 'CONCAT(o.otherCatalogNumbers, ";", i.identifiers) as otherCatalogNumbers';
+				}
 			}
 		}
 		$schemaRS->free();
 
-		$sql = 'SELECT occid, dbpk, '.implode(',',$occFieldArr).' FROM uploadspectemp WHERE collid IN('.$this->collId.') ';
+		$sql = 'SELECT occid, dbpk, '.implode(',',$occFieldArr).' FROM uploadspectemp o LEFT JOIN (SELECT occid as id_occid, GROUP_CONCAT(CONCAT(identifiername,":" , identifiervalue) SEPARATOR ";") as identifiers from omoccuridentifiers as oi group by oi.occid) as i on i.id_occid = o.occid WHERE collid IN('.$this->collId.') ';
+
 		if($searchVariables){
 			if($searchVariables == 'matchappend'){
 				$sql = 'SELECT DISTINCT u.occid, u.dbpk, u.'.implode(',u.',$occFieldArr).' '.
