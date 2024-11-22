@@ -237,9 +237,10 @@ class SpecUpload{
 		while($schemaRow = $schemaRS->fetch_object()){
 			$fieldName = strtolower($schemaRow->Field);
 			if(!in_array($fieldName,$this->skipOccurFieldArr)){
-				$occFieldArr[] = $fieldName;
 				if($fieldName === 'othercatalognumbers') {
-					$occFieldArr[] = 'CONCAT(o.otherCatalogNumbers, ";", i.identifiers) as otherCatalogNumbers';
+					$occFieldArr[] = 'CASE WHEN o.otherCatalogNumbers IS NULL THEN i.identifiers WHEN i.identifiers IS NULL THEN o.otherCatalogNumbers ELSE CONCAT(o.otherCatalogNumbers, ";", i.identifiers) END as otherCatalogNumbers';
+				} else {
+					$occFieldArr[] = $fieldName;
 				}
 			}
 		}
