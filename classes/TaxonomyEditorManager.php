@@ -240,8 +240,8 @@ class TaxonomyEditorManager extends Manager{
 			'unitname2 = '.($postArr['unitname2']?'"'.$this->cleanInStr($postArr['unitname2']).'"':'NULL').', '.
 			'unitind3 = '.($postArr['unitind3']?'"'.$this->cleanInStr($postArr['unitind3']).'"':'NULL').', '.
 			'unitname3 = '.($postArr['unitname3']?'"'.$this->cleanInStr($postArr['unitname3']).'"':'NULL').', '.
-			'cultivarEpithet = ' . ((array_key_exists('cultivarEpithet', $postArr) && $postArr['cultivarEpithet']) ? '"'.($this->cleanInStr($cultivarEpithetForSaving)).'"' : '') . ', ' . // @TODO won't this set this value as blank quotes if empty?
-			'tradeName = "' . ((array_key_exists('tradeName', $postArr) && $postArr['tradeName']) ? $this->cleanInStr($processedTradeName) : '') . '", ' .
+			'cultivarEpithet = ' . ((array_key_exists('cultivarEpithet', $postArr) && $postArr['cultivarEpithet']) ? '"'.($this->cleanInStr($cultivarEpithetForSaving)).'"' : 'NULL') . ', ' . // @TODO won't this set this value as blank quotes if empty?
+			'tradeName = ' . ((array_key_exists('tradeName', $postArr) && $postArr['tradeName']) ? '"'.$this->cleanInStr($processedTradeName).'"' : 'NULL') . ', ' .
 			'author = "'.($postArr['author']?$this->cleanInStr($postArr['author']):'').'", '.
 			'rankid = '.(is_numeric($postArr['rankid'])?$postArr['rankid']:'NULL').', '.
 			'source = '.($postArr['source']?'"'.$this->cleanInStr($postArr['source']).'"':'NULL').', '.
@@ -249,7 +249,7 @@ class TaxonomyEditorManager extends Manager{
 			'securitystatus = '.(is_numeric($postArr['securitystatus'])?$postArr['securitystatus']:'0').', '.
 			'modifiedUid = '.$GLOBALS['SYMB_UID'].', '.
 			'modifiedTimeStamp = "'.date('Y-m-d H:i:s').'", ' ;
-			$sql .= 'sciname = "' . $this->cleanInStr($sciname) . '" '; 
+			$sql .= 'sciname = "' . $this->cleanInStr($sciname) . '" ';
 			$sql .= 'WHERE (tid = '.$this->tid.')';
 		if(!$this->conn->query($sql)){
 			$statusStr = (isset($this->langArr['ERROR_EDITING_TAXON'])?$this->langArr['ERROR_EDITING_TAXON']:'ERROR editing taxon').': '.$this->conn->error;
