@@ -92,23 +92,17 @@ async function handleFieldChange(
     submitButton.textContent = "Button Disabled";
     submitButton.disabled = true;
   } else {
-    await updateFullname(form, true, true);
+    await updateFullname(form, true);
     submitButton.textContent = submitText;
     submitButton.disabled = false;
   }
 }
 
 async function verifyLoadFormCore(f, silent = false, originalForm) {
-  console.log("deleteMe verifyLoadFormCore entered");
-  console.log("deleteMe form is now: ");
-  console.log(f);
-  console.log("deleteMe originalForm is now: ");
-  console.log(originalForm);
   const entryHasNotChanged = await isTheSameEntryAsItStarted(f, originalForm);
   if (entryHasNotChanged) {
     return true;
   }
-  console.log("deleteMe got past the entry has not changed check");
   const isUniqueEntry = await checkNameExistence(f, true, originalForm);
   if (!isUniqueEntry) {
     return false;
@@ -131,7 +125,6 @@ async function verifyLoadFormCore(f, silent = false, originalForm) {
 
 function checkNameExistence(f, silent = false) {
   return new Promise((resolve, reject) => {
-    console.log("deleteMe checkNameExistence called");
     if (!f?.sciname?.value || !f?.rankid?.value) {
       resolve(false);
     } else {
@@ -178,8 +171,7 @@ function checkNameExistence(f, silent = false) {
   });
 }
 
-async function updateFullnameCore(f, silent = false, skipCheck = false) {
-  console.log("deleteMe updateFullnameCore entered");
+async function updateFullnameCore(f, silent = false) {
   let sciname =
     f.unitind1.value +
     f.unitname1.value +
@@ -197,25 +189,17 @@ async function updateFullnameCore(f, silent = false, skipCheck = false) {
     sciname += " " + standardizeTradeName(f.tradeName.value);
   }
   f.sciname.value = sciname.trim();
-
-  console.log("deleteMe got here 1");
-  if (!skipCheck) {
-    await checkNameExistence(f, silent);
-    console.log("deleteMe got here 2");
-  }
   return sciname;
 }
 
 function isTheSameEntryAsItStarted(f, originalForm) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     if (f != null && originalForm != null && !hasChanged(f, originalForm)) {
-      console.log("deleteMe got here b1");
       document.getElementById("error-display").textContent = "";
       resolve(true);
       return;
     } else {
       resolve(false);
-      // reject("Forms not populated yet"); // @TODO decide if this is needed
     }
   });
 }

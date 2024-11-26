@@ -3,17 +3,11 @@ $(document).ready(async function () {
   showOnlyRelevantFields(currentRankId);
 
   const form = document.getElementById("taxoneditform");
-  // console.log("deleteMe form before: ");
-  // console.log(form);
-  await updateFullname(form, true, true);
-  // console.log("deleteMe form after: ");
-  // console.log(form);
+  await updateFullname(form, true);
   const originalForm = form.cloneNode(true);
-  // console.log("deleteMe originalForm is: ");
-  // console.log(originalForm);
   form.querySelectorAll("input, select, textarea").forEach((element) => {
     const debouncedChange = debounce(async () => {
-      await updateFullname(form, true, true);
+      await updateFullname(form, true);
       handleFieldChange(
         form,
         true,
@@ -179,9 +173,8 @@ function showOnlyRelevantFields(rankId) {
   }
 }
 
-async function updateFullname(f, silent = false, skipCheck = false) {
-  await updateFullnameCore(f, true, skipCheck);
-  // checkNameExistence(f, silent);
+async function updateFullname(f, silent = false) {
+  await updateFullnameCore(f, true);
 }
 
 function toggle(target) {
@@ -233,7 +226,6 @@ function validateTaxonEditForm(f) {
 }
 
 async function verifyLoadForm(f, silent = false, originalForm) {
-  console.log("deleteMe verifyLoadForm entered");
   return verifyLoadFormCore(f, silent, originalForm); // wrapped because verifyLoadForm is what gets referenced in other shared functions with taxonomy creation
 }
 
