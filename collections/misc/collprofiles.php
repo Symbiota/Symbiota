@@ -982,8 +982,8 @@ if ($SYMB_UID) {
 							<div style='margin:10px;'>
 								<div class="coll-description bottom-breathing-room-rel"><?= (!empty($collData) && array_key_exists('fulldescription', $collData)) ? $collData['fulldescription'] : '' ?></div>
 								<?php
-								if(isset($collData['resourcejson'])){
-									if($resourceArr = json_decode($collData['resourcejson'], true)){
+								if(isset($collArr['resourcejson'])){
+									if($resourceArr = json_decode($collArr['resourcejson'], true)){
 										$title = $LANG['HOMEPAGE'];
 										foreach($resourceArr as $rArr){
 											if(!empty($rArr['title'][$LANG_TAG])) $title = $rArr['title'][$LANG_TAG];
@@ -995,8 +995,8 @@ if ($SYMB_UID) {
 										}
 									}
 								}
-								if(!empty($collData['contactjson'])){
-									if($contactArr = json_decode($collData['contactjson'], true)){
+								if(!empty($collArr['contactjson'])){
+									if($contactArr = json_decode($collArr['contactjson'], true)){
 										if(!empty($contactArr)){
 											?>
 											<section style="margin-left: 0;">

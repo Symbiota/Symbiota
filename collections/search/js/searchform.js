@@ -433,7 +433,8 @@ function uncheckAllChip(element) {
     });
   } else {
     let item = document.querySelector(`input[id^="${element.className}"][name="cat[]"]`);
-    item.checked = false;
+    if (item)
+      item.checked = false;
   }
 }
 

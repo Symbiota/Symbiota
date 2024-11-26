@@ -551,6 +551,8 @@ class SpecUploadBase extends SpecUpload{
 		$this->conn->query($sqlDel2);
 		$sqlDel3 = 'DELETE FROM uploadimagetemp WHERE (collid IN('.$this->collId.'))';
 		$this->conn->query($sqlDel3);
+		$sqlDel4 = 'DELETE FROM uploadKeyValueTemp WHERE (collid IN('.$this->collId.'))';
+		$this->conn->query($sqlDel4);
 	}
 
 	public function uploadData($finalTransfer){
@@ -613,6 +615,9 @@ class SpecUploadBase extends SpecUpload{
 			}
 		}
 
+		//Links UploadKeyValueTemp occid to uploadspectemp's based on dbfk
+		$this->linkTempKeyValueOccurrences();
+
 		//Prefrom general cleaning and parsing tasks
 		$this->recordCleaningStage1();
 
@@ -621,6 +626,12 @@ class SpecUploadBase extends SpecUpload{
 		$this->setTransferCount();
 		$this->setIdentTransferCount();
 		$this->setImageTransferCount();
+	}
+
+	private function linkTempKeyValueOccurrences() {
+		$this->outputMsg('<li>Linking key value data to occurrences...</li>');
+		$sql = 'UPDATE uploadKeyValueTemp kv JOIN uploadspectemp s ON s.dbpk = kv.dbpk SET kv.occid = s.occid, kv.collid = s.collid';
+		$this->conn->query($sql);
 	}
 
 	private function recordCleaningStage1(){
@@ -1018,6 +1029,7 @@ class SpecUploadBase extends SpecUpload{
 			//Setup and add datasets and link datasets to current user
 		}
 		$this->setDeterminations();
+		$this->setOtherCatalogNumbers();
 	}
 
 	private function versionInternalEdits(){
@@ -1278,6 +1290,23 @@ class SpecUploadBase extends SpecUpload{
 	// 		$rs->free();
 	// 	}
 	// }
+	private function setOtherCatalogNumbers(){
+		if($this->uploadType == $this->FILEUPLOAD || $this->uploadType == $this->SKELETAL){
+			$sql = 'INSERT IGNORE INTO omoccuridentifiers (occid, identifiername, identifiervalue, modifiedUid) 
+			SELECT o.occid, kv.key as identifiername, kv.value as identifiervalue, kv.upload_uid as modifiedUid 
+			FROM uploadKeyValueTemp kv 
+			INNER JOIN uploadspectemp u on u.dbpk = kv.dbpk 
+			INNER JOIN omoccurrences o on o.occid = u.occid
+			WHERE type = "omoccuridentifiers" AND kv.collid = ?';
+
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->collId);
+				$stmt->execute();
+				if($stmt->error) $this->outputMsg('<li>ERROR adding other catalog numbers to identifiers: '.$stmt->error.'</li>');
+				$stmt->close();
+			}
+		}
+	}
 
 	private function setDeterminations(){
 		if($this->collId){
@@ -1881,8 +1910,39 @@ class SpecUploadBase extends SpecUpload{
 						$this->outputMsg('<li style="margin:0px 0px 10px 10px;">SQL: '.$sql.'</li>');
 					}
 				}
+
+				if(isset($recMap['othercatalognumbers']) && $recMap['othercatalognumbers']) {
+					$parsedCatalogNumbers = self::parseOtherCatalogNumbers($recMap['othercatalognumbers']);
+					$sql = 'INSERT INTO uploadKeyValueTemp (`key`, `value`, dbpk, upload_uid, type) VALUES (?, ?, ?, ?, "omoccuridentifiers")';
+					foreach ($parsedCatalogNumbers as $entry) {
+						mysqli_execute_query($this->conn, $sql, [$entry['key'], $entry['value'], $recMap['dbpk'], $GLOBALS['SYMB_UID']]);
+					}
+				} 
+			}
+
+		}
+	}
+	private static function parseOtherCatalogNumbers($otherCatalogNumbers): Array {
+		$catalogNumbers = explode(';', str_replace(['|',','], ';', $otherCatalogNumbers));
+		$parsedCatalogNumbers = [];
+
+		for ($i = 0; $i < count($catalogNumbers); $i++) { 
+			$key_value = explode(':', $catalogNumbers[$i]);
+
+			if(count($key_value) == 2) {
+				array_push($parsedCatalogNumbers, [
+					'key' => trim($key_value[0]),
+					'value' => trim($key_value[1]),
+				]);
+			} else if(count($key_value) > 0) {
+				array_push($parsedCatalogNumbers ,[
+					'key' => '',
+					'value' => trim($key_value[0]),
+				]);
 			}
 		}
+
+		return $parsedCatalogNumbers;
 	}
 
 	private function buildPaleoJSON(&$recMap){

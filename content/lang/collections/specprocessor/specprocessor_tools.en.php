@@ -222,6 +222,11 @@ $LANG['LOAD_OCR_FILES'] = 'Load OCR Files';
 
 //processor.php
 $LANG['SPEC_PROCESSOR_CONTROL_PANEL'] = 'Specimen Processor Control Panel';
+$LANG['HOME'] = 'Home';
+$LANG['COL_CONTROL_PANEL'] = 'Collection Control Panel';
+$LANG['SPEC_PROCESSOR'] = 'Specimen Processor';
+$LANG['PROC_HANDLER'] = 'Processing Handler';
+$LANG['RETURN_SPEC_PROCESSOR'] = 'Return to Specimen Processor';
 
 //wordcloudhandler.php
 $LANG['WORD_CLOUD_HANDLER'] = 'Word Cloud Handler';
