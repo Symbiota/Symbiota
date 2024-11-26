@@ -1,12 +1,26 @@
-$(document).ready(function () {
+$(document).ready(async function () {
   const currentRankId = Number(document.getElementById("rankid").value);
   showOnlyRelevantFields(currentRankId);
 
   const form = document.getElementById("taxoneditform");
+  // console.log("deleteMe form before: ");
+  // console.log(form);
+  await updateFullname(form, true, true);
+  // console.log("deleteMe form after: ");
+  // console.log(form);
+  const originalForm = form.cloneNode(true);
+  // console.log("deleteMe originalForm is: ");
+  // console.log(originalForm);
   form.querySelectorAll("input, select, textarea").forEach((element) => {
-    const debouncedChange = debounce(() => {
-      updateFullname(form, true);
-      handleFieldChange(form, true, "taxoneditsubmit", "Submit Edits");
+    const debouncedChange = debounce(async () => {
+      await updateFullname(form, true, true);
+      handleFieldChange(
+        form,
+        true,
+        "taxoneditsubmit",
+        "Submit Edits",
+        originalForm
+      );
     }, 500);
     element.addEventListener("input", debouncedChange);
     element.addEventListener("change", debouncedChange);
@@ -165,9 +179,9 @@ function showOnlyRelevantFields(rankId) {
   }
 }
 
-function updateFullname(f, silent = false) {
-  updateFullnameCore(f, true);
-  checkNameExistence(f, silent);
+async function updateFullname(f, silent = false, skipCheck = false) {
+  await updateFullnameCore(f, true, skipCheck);
+  // checkNameExistence(f, silent);
 }
 
 function toggle(target) {
@@ -218,8 +232,9 @@ function validateTaxonEditForm(f) {
   return true;
 }
 
-async function verifyLoadForm(f, silent = false) {
-  return verifyLoadFormCore(f, silent); // wrapped because verifyLoadForm is what gets referenced in other shared functions with taxonomy creation
+async function verifyLoadForm(f, silent = false, originalForm) {
+  console.log("deleteMe verifyLoadForm entered");
+  return verifyLoadFormCore(f, silent, originalForm); // wrapped because verifyLoadForm is what gets referenced in other shared functions with taxonomy creation
 }
 
 function verifyChangeToNotAcceptedForm(f) {

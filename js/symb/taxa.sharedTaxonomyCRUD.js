@@ -80,24 +80,36 @@ async function handleFieldChange(
   form,
   silent = false,
   submitButtonId,
-  submitText
+  submitText,
+  originalForm
 ) {
   document.getElementById("error-display").textContent = "";
   const submitButton = document.getElementById(submitButtonId);
   submitButton.disabled = true;
   submitButton.textContent = "Checking for errors...";
-  const isOk = await verifyLoadForm(form, silent);
+  const isOk = await verifyLoadForm(form, silent, originalForm);
   if (!isOk) {
     submitButton.textContent = "Button Disabled";
     submitButton.disabled = true;
   } else {
+    await updateFullname(form, true, true);
     submitButton.textContent = submitText;
     submitButton.disabled = false;
   }
 }
 
-async function verifyLoadFormCore(f, silent = false) {
-  const isUniqueEntry = await checkNameExistence(f, true);
+async function verifyLoadFormCore(f, silent = false, originalForm) {
+  console.log("deleteMe verifyLoadFormCore entered");
+  console.log("deleteMe form is now: ");
+  console.log(f);
+  console.log("deleteMe originalForm is now: ");
+  console.log(originalForm);
+  const entryHasNotChanged = await isTheSameEntryAsItStarted(f, originalForm);
+  if (entryHasNotChanged) {
+    return true;
+  }
+  console.log("deleteMe got past the entry has not changed check");
+  const isUniqueEntry = await checkNameExistence(f, true, originalForm);
   if (!isUniqueEntry) {
     return false;
   }
@@ -119,6 +131,7 @@ async function verifyLoadFormCore(f, silent = false) {
 
 function checkNameExistence(f, silent = false) {
   return new Promise((resolve, reject) => {
+    console.log("deleteMe checkNameExistence called");
     if (!f?.sciname?.value || !f?.rankid?.value) {
       resolve(false);
     } else {
@@ -165,7 +178,8 @@ function checkNameExistence(f, silent = false) {
   });
 }
 
-function updateFullnameCore(f, silent = false) {
+async function updateFullnameCore(f, silent = false, skipCheck = false) {
+  console.log("deleteMe updateFullnameCore entered");
   let sciname =
     f.unitind1.value +
     f.unitname1.value +
@@ -183,6 +197,69 @@ function updateFullnameCore(f, silent = false) {
     sciname += " " + standardizeTradeName(f.tradeName.value);
   }
   f.sciname.value = sciname.trim();
-  checkNameExistence(f, silent);
+
+  console.log("deleteMe got here 1");
+  if (!skipCheck) {
+    await checkNameExistence(f, silent);
+    console.log("deleteMe got here 2");
+  }
   return sciname;
+}
+
+function isTheSameEntryAsItStarted(f, originalForm) {
+  return new Promise((resolve, reject) => {
+    if (f != null && originalForm != null && !hasChanged(f, originalForm)) {
+      console.log("deleteMe got here b1");
+      document.getElementById("error-display").textContent = "";
+      resolve(true);
+      return;
+    } else {
+      resolve(false);
+      // reject("Forms not populated yet"); // @TODO decide if this is needed
+    }
+  });
+}
+
+function hasChanged(f, originalForm) {
+  const newFormData = getFormData(f);
+  const originalFormData = getFormData(originalForm);
+  const returnVal = !shallowEqual(newFormData, originalFormData);
+  return returnVal;
+}
+
+function getFormData(f) {
+  const formData = {};
+  const formElements = Array.from(f.elements || []);
+  formElements.forEach((element) => {
+    if (
+      !element.name ||
+      element.type === "button" ||
+      element.type === "submit"
+    ) {
+      return;
+    }
+    if (element.type === "checkbox" || element.type === "radio") {
+      formData[element.name] = element.checked; // Use `checked` for boolean values
+    } else {
+      formData[element.name] = element.value; // For other input types, use `value`
+    }
+  });
+  return formData;
+}
+
+function shallowEqual(obj1, obj2) {
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+
+  if (keys1.length !== keys2.length) {
+    return false;
+  }
+
+  for (let key of keys1) {
+    if (obj1[key] !== obj2[key]) {
+      return false;
+    }
+  }
+
+  return true;
 }
