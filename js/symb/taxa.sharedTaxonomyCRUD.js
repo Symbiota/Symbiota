@@ -207,7 +207,13 @@ function isTheSameEntryAsItStarted(f, originalForm) {
 function hasChanged(f, originalForm) {
   const newFormData = getFormData(f);
   const originalFormData = getFormData(originalForm);
-  const returnVal = !shallowEqual(newFormData, originalFormData);
+  const returnVal = !shallowEqual(newFormData, originalFormData, [
+    "notes",
+    "source",
+    "securitystatus",
+    "securitystatusstart",
+    "author",
+  ]);
   return returnVal;
 }
 
@@ -231,15 +237,16 @@ function getFormData(f) {
   return formData;
 }
 
-function shallowEqual(obj1, obj2) {
+function shallowEqual(obj1, obj2, exceptionFields = []) {
   const keys1 = Object.keys(obj1);
   const keys2 = Object.keys(obj2);
+  const filteredKeys1 = keys1.filter((k) => !exceptionFields.includes(k));
 
   if (keys1.length !== keys2.length) {
     return false;
   }
 
-  for (let key of keys1) {
+  for (let key of filteredKeys1) {
     if (obj1[key] !== obj2[key]) {
       return false;
     }
