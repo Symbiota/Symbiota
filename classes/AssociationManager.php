@@ -137,7 +137,7 @@ class AssociationManager extends OccurrenceTaxaManager{
 	// protected function resetConnectionToRead(){
 	// 	$this->conn = MySQLiConnectionFactory::getCon('readonly');
 	// }
-		
+
 	public function getAssociatedRecords($associationArr) {
     $sql = '';
 
@@ -152,7 +152,7 @@ class AssociationManager extends OccurrenceTaxaManager{
         $relationshipStr = (array_key_exists('relationship', $associationArr) && $associationArr['relationship'] !== 'any') ? ("='" . $relationshipType . "'") : ' IS NOT NULL';
 
         // $forwardSql = "SELECT o.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid " . $familyJoinStr . " WHERE oa.relationship " . $relationshipStr . " ";
-		$forwardSql = "SELECT o.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid  LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE oa.relationship " . $relationshipStr . " ";
+		$forwardSql = "SELECT oa.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate  LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE oa.relationship " . $relationshipStr . " ";
 		$forwardSql .= $this->getAssociatedTaxonWhereFrag($associationArr);
 
         // "Reverse" association
@@ -163,14 +163,14 @@ class AssociationManager extends OccurrenceTaxaManager{
 
 		// Best so
 		$reverseSql = "SELECT oa.occidAssociate FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE oa.relationship " . $reverseRelationshipStr . " ";
-		
-		
+
+
 		// $occurencesJoinedWithOccidOrWithOccidAssociate = "SELECT o.*, oa.occid, oa.occidAssociate FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid UNION SELECT o.* FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate";
 		// $reverseSql = "SELECT oa.occidAssociate FROM (" . $occurencesJoinedWithOccidOrWithOccidAssociate. ") LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE oa.relationship " . $reverseRelationshipStr . " ";
-		
+
 		// $occurencesJoinedWithOccidOrWithOccidAssociate = "SELECT o.*, oa.occid AS assoc_occid, oa.occidAssociate AS assoc_occidAssociate FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid UNION SELECT o.*, oa.occid AS assoc_occid, oa.occidAssociate AS assoc_occidAssociate FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate";
 		// $reverseSql = "SELECT assoc_occidAssociate FROM (" . $occurencesJoinedWithOccidOrWithOccidAssociate . ") AS occids LEFT JOIN omoccurdeterminations od ON occids.assoc_occid = od.occid " . $familyJoinStr . " WHERE occids.relationship " . $reverseRelationshipStr . "";
-		
+
 		// IFNULL(d.sciname, o.sciname) as sciname // TODO look into this and note the left join in the above line
 		// @TODO make sure they're (isCurrent = 1 OR (detID IS NULL AND )) determinations ... let's punt until determination stuff is stabilized?
 		// (d.isCurrent = 1 || (d.detid IS NULL AND o.sciname = "Pinus longifolia")) ... let's punt until determination stuff is stabilized?
