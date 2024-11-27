@@ -3,11 +3,11 @@ $(document).ready(async function () {
   showOnlyRelevantFields(currentRankId);
 
   const form = document.getElementById("taxoneditform");
-  await updateFullname(form, true);
+  await updateFullname(form);
   const originalForm = form.cloneNode(true);
   form.querySelectorAll("input, select, textarea").forEach((element) => {
     const debouncedChange = debounce(async () => {
-      await updateFullname(form, true);
+      await updateFullname(form);
       handleFieldChange(
         form,
         true,
@@ -173,7 +173,7 @@ function showOnlyRelevantFields(rankId) {
   }
 }
 
-async function updateFullname(f, silent = false) {
+async function updateFullname(f) {
   await updateFullnameCore(f, true);
 }
 

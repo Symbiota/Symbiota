@@ -4,10 +4,10 @@ $(document).ready(function () {
 
   const form = document.getElementById("loaderform");
   form.querySelectorAll("input, select, textarea").forEach((element) => {
-    const debouncedChange = debounce((event) => {
+    const debouncedChange = debounce(async (event) => {
       event.stopPropagation();
+      await updateFullname(form);
       handleFieldChange(form, true, "submitaction", "Submit New Name");
-      updateFullname(form, true);
     }, 500);
     element.removeEventListener("change", debouncedChange);
     if (element.type !== "hidden") {
@@ -270,7 +270,7 @@ function parseName(f) {
   }
   if (parentName != "") setParent(parentName, f.unitind1.value);
   showOnlyRelevantFields(rankId);
-  updateFullname(f, true);
+  updateFullname(f);
   f.quickparser.value = "";
 }
 
@@ -314,11 +314,10 @@ function setParent(parentName, unitind1) {
   });
 }
 
-function updateFullname(f, silent = false) {
-  const coreSciname = updateFullnameCore(f, true);
+async function updateFullname(f) {
+  const coreSciname = await updateFullnameCore(f, true);
   const scinameDisplay = document.getElementById("scinamedisplay");
   scinameDisplay.textContent = coreSciname.trim();
-  checkNameExistence(f, silent);
 }
 
 function acceptanceChanged(f) {
