@@ -133,14 +133,14 @@ class TaxonomyDisplayManager extends Manager{
 			$rs2 = $this->conn->query($sql2);
 			while($row2 = $rs2->fetch_object()){
 				$tid = $row2->tid;
-				$this->taxaArr[$tid]["sciname"] = $row2->sciname;
+				$this->taxaArr[$tid]['sciname'] = $row2->sciname;
 				$this->taxaArr[$tid]['cultivarEpithet'] = $row2->cultivarepithet;
 				$this->taxaArr[$tid]['tradeName'] = $row2->tradename;
-				$this->taxaArr[$tid]["author"] = $row2->author;
-				$this->taxaArr[$tid]["rankid"] = $row2->rankid;
+				$this->taxaArr[$tid]['author'] = $row2->author;
+				$this->taxaArr[$tid]['rankid'] = $row2->rankid;
 				if(!$row2->rankid) $zeroRank[] = $tid;
 				$parentTid = $row2->parenttid;
-				$this->taxaArr[$tid]["parenttid"] = $parentTid;
+				$this->taxaArr[$tid]['parenttid'] = $parentTid;
 				if($parentTid) $taxaParentIndex[$tid] = $parentTid;
 			}
 			$rs2->free();
@@ -154,13 +154,13 @@ class TaxonomyDisplayManager extends Manager{
 			while($row3 = $rs3->fetch_object()){
 				$tid = $row3->tid;
 				$parentTid = $row3->parenttid;
-				$this->taxaArr[$tid]["sciname"] = $row3->sciname;
+				$this->taxaArr[$tid]['sciname'] = $row3->sciname;
 				$this->taxaArr[$tid]['cultivarEpithet'] = $row3->cultivarepithet;
 				$this->taxaArr[$tid]['tradeName'] = $row3->tradename;
-				$this->taxaArr[$tid]["author"] = $row3->author;
-				$this->taxaArr[$tid]["rankid"] = $row3->rankid;
+				$this->taxaArr[$tid]['author'] = $row3->author;
+				$this->taxaArr[$tid]['rankid'] = $row3->rankid;
 				if(!$row3->rankid) $zeroRank[] = $tid;
-				$this->taxaArr[$tid]["parenttid"] = $parentTid;
+				$this->taxaArr[$tid]['parenttid'] = $parentTid;
 				if($parentTid) $taxaParentIndex[$tid] = $parentTid;
 			}
 			$rs3->free();
@@ -275,6 +275,7 @@ class TaxonomyDisplayManager extends Manager{
 						if($taxonRankId >= 180) $sciName = '<i>'.$sciName.'</i>';
 						if(!empty($sciNameParts['cultivarEpithet'])) $sciName .= " '" . $sciNameParts['cultivarEpithet'] . "'";
 						if(!empty($sciNameParts['tradeName'])) $sciName .= " " . $sciNameParts['tradeName'];
+						if($this->displayAuthor) $sciName .= " " . $author;
 					}
 				}
 				elseif(!$key){
