@@ -229,9 +229,9 @@ function getFormData(f) {
       return;
     }
     if (element.type === "checkbox" || element.type === "radio") {
-      formData[element.name] = element.checked; // Use `checked` for boolean values
+      formData[element.name] = element.checked;
     } else {
-      formData[element.name] = element.value; // For other input types, use `value`
+      formData[element.name] = element.value;
     }
   });
   return formData;
