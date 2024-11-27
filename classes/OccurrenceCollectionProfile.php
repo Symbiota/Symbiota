@@ -93,9 +93,11 @@ class OccurrenceCollectionProfile extends OmCollections{
 		while($row = $rs->fetch_object()){
 			if($row->publishToGbif && $row->aggKeysStr){
 				$gbifKeyArr = json_decode($row->aggKeysStr,true);
-				$this->datasetKey = $gbifKeyArr['datasetKey'];
-				$this->organizationKey = $gbifKeyArr['organizationKey'];
-				if(isset($gbifKeyArr['datasetKey']) && $row->dwcaUrl) $this->triggerGBIFCrawl($row->dwcaUrl, $row->collid, $row->collectionname);
+				if(isset($gbifKeyArr['datasetKey']) && $row->dwcaUrl){
+					$this->datasetKey = $gbifKeyArr['datasetKey'];
+					$this->organizationKey = $gbifKeyArr['organizationKey'];
+					$this->triggerGBIFCrawl($row->dwcaUrl, $row->collid, $row->collectionname);
+				}
 			}
 		}
 		$rs->free();

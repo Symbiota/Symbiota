@@ -390,9 +390,6 @@ class DwcArchiverCore extends Manager{
 				//Search criteria came from map search page
 				$sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
 			}
-			if (strpos($this->conditionSql, 'MATCH(f.recordedby)') || strpos($this->conditionSql, 'MATCH(f.locality)')) {
-				$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
-			}
 			if (stripos($this->conditionSql, 'a.stateid')) {
 				//Search is limited by occurrence attribute
 				$sql .= 'INNER JOIN tmattributes a ON o.occid = a.occid ';
@@ -1831,15 +1828,15 @@ class DwcArchiverCore extends Manager{
 			}
 			if ($this->includeAttributes){
 				$this->writeAttributeData($batchOccidArr);
-				unset($this->attributeHandler);
+				$this->attributeHandler = null;
 			}
 			if ($this->includeMaterialSample){
 				$this->writeMaterialSampleData($batchOccidArr);
-				unset($this->materialSampleHandler);
+				$this->materialSampleHandler = null;
 			}
 			if ($this->includeIdentifiers){
 				$this->writeIdentifierData($batchOccidArr);
-				unset($this->identierHandler);
+				$this->identierHandler = null;
 			}
 		}
 		else {
@@ -2235,7 +2232,7 @@ class DwcArchiverCore extends Manager{
 		$bool = false;
 		$sql = 'SELECT occid FROM tmattributes LIMIT 1';
 		if(is_numeric($collid)){
-			$sql = 'SELECT a.occid FROM omoccurrences o INNER JOIN tmattributes a ON o.occid = a.occid WHERE o.collid = '.$collid.' LIMIT 1';
+			$sql = 'SELECT o.occid FROM omoccurrences o INNER JOIN tmattributes a ON o.occid = a.occid WHERE o.collid = '.$collid.' LIMIT 1';
 		}
 		$rs = $this->conn->query($sql);
 		if ($rs->num_rows) $bool = true;
@@ -2247,7 +2244,7 @@ class DwcArchiverCore extends Manager{
 		$bool = false;
 		$sql = 'SELECT occid FROM ommaterialsample LIMIT 1';
 		if(is_numeric($collid)){
-			$sql = 'SELECT m.occid FROM omoccurrences o INNER JOIN ommaterialsample m ON o.occid = m.occid WHERE o.collid = '.$collid.' LIMIT 1';
+			$sql = 'SELECT o.occid FROM omoccurrences o INNER JOIN ommaterialsample m ON o.occid = m.occid WHERE o.collid = '.$collid.' LIMIT 1';
 		}
 		if ($rs = $this->conn->query($sql)) {
 			if ($rs->num_rows) $bool = true;
@@ -2260,7 +2257,7 @@ class DwcArchiverCore extends Manager{
 		$bool = false;
 		$sql = 'SELECT occid FROM omoccuridentifiers LIMIT 1';
 		if(is_numeric($collid)){
-			$sql = 'SELECT a.occid FROM omoccurrences o INNER JOIN omoccuridentifiers i ON o.occid = i.occid WHERE o.collid = ' . $collid . ' LIMIT 1';
+			$sql = 'SELECT o.occid FROM omoccurrences o INNER JOIN omoccuridentifiers i ON o.occid = i.occid WHERE o.collid = ' . $collid . ' LIMIT 1';
 		}
 		$rs = $this->conn->query($sql);
 		if ($rs->num_rows) $bool = true;
