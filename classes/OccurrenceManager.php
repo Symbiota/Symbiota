@@ -3,6 +3,7 @@ include_once($SERVER_ROOT.'/classes/OccurrenceSearchSupport.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceTaxaManager.php');
+include_once($SERVER_ROOT.'/classes/AssociationManager.php');
 
 class OccurrenceManager extends OccurrenceTaxaManager {
 
@@ -15,10 +16,12 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	protected $searchSupportManager = null;
 	protected $errorMessage;
 	private $LANG;
+	protected $associationManager=null;
 
 	public function __construct($type='readonly'){
 		parent::__construct($type);
  		if(array_key_exists('reset',$_REQUEST) && $_REQUEST['reset'])  $this->reset();
+		$this->associationManager = new AssociationManager();
 		$this->readRequestVariables();
 		$langTag = '';
 		if(!empty($GLOBALS['LANG_TAG'])) $langTag = $GLOBALS['LANG_TAG'];
@@ -63,6 +66,9 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			}
 			$voucherVariableArr = $this->voucherManager->getQueryVariableArr();
 			if($voucherVariableArr){
+				if(isset($voucherVariableArr['association-type'])) $this->searchTermArr['association-type'] = $voucherVariableArr['association-type'];
+				if(isset($voucherVariableArr['taxontype-association'])) $this->searchTermArr['taxontype-association'] = $voucherVariableArr['taxontype-association'];
+				if(isset($voucherVariableArr['associated-taxa'])) $this->searchTermArr['associated-taxa'] = $voucherVariableArr['associated-taxa'];
 				if(isset($voucherVariableArr['collid'])) $this->searchTermArr['db'] = $voucherVariableArr['collid'];
 				if(isset($voucherVariableArr['country'])) $this->searchTermArr['country'] = $voucherVariableArr['country'];
 				if(isset($voucherVariableArr['state'])) $this->searchTermArr['state'] = $voucherVariableArr['state'];
@@ -120,7 +126,12 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$this->displaySearchArr[] = $this->LANG['DATASETS'] . ': ' . $this->getDatasetTitle($this->searchTermArr['datasetid']);
 		}
 		$sqlWhere .= $this->getTaxonWhereFrag();
-
+		$hasValidRelationship = isset(($this->associationArr['relationship'])) && $this->associationArr['relationship']!=='none';
+		if($hasValidRelationship){
+			$sqlWhere = substr_replace($sqlWhere,'',-1);
+			$sqlWhere .= $this->associationManager->getAssociatedRecords($this->associationArr) . ')';
+		}
+		
 		if(array_key_exists('country',$this->searchTermArr)){
 			$countryArr = explode(";",$this->searchTermArr["country"]);
 			$tempArr = Array();
@@ -441,6 +452,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 				$this->displaySearchArr[] = $this->LANG['INCLUDE_CULTIVATED'];
 			}
 		}
+		// var_dump('$sqlWhere after includecult: ' . $sqlWhere);
 		if(array_key_exists('attr',$this->searchTermArr)){
 			$traitNameSql = 'SELECT t.traitName, s.stateName FROM tmtraits t JOIN tmstates s ON s.traitid = t.traitid WHERE s.stateid IN(' . $this->searchTermArr['attr'] . ')';
 			$rs = $this->conn->query($traitNameSql);
@@ -464,7 +476,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			//Make the sql valid, but return nothing
 			//$this->sqlWhere = 'WHERE o.occid IS NULL ';
 		}
-		//echo $this->sqlWhere;
+		// echo $this->sqlWhere; exit;
 	}
 
 	private function getAdditionIdentifiers($identFrag){
@@ -643,6 +655,26 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 				$retStr .= '&taxontype=1';
 			}
 		}
+		$patternOfOnlyLettersDigitsAndSpaces = '/^[a-zA-Z0-9\s\-]*$/'; // TOOD accommodate symbols associated with extinct taxa, hybrid crosses, and abbreviations with periods, e.g. "var."?
+		if(isset($this->associationArr['search'])){
+			if (preg_match($patternOfOnlyLettersDigitsAndSpaces, $this->associationArr['search'])==1) {
+				$retStr .= '&associated-taxa=' . $this->associationArr['search'];
+			}
+		}
+
+		if(isset($this->associationArr['relationship'])){
+			if (preg_match($patternOfOnlyLettersDigitsAndSpaces, $this->associationArr['relationship'])==1) {
+				$retStr .= '&association-type=' . $this->associationArr['relationship'];
+			}
+		}
+
+		if(isset($this->associationArr['associated-taxa'])){
+			$retStr .= '&associated-taxon-type=' . intval($this->associationArr['associated-taxa']);
+		}
+		if(isset($this->associationArr['usethes-associations'])){
+			$retStr .= '&usethes-associations=' . intval($this->associationArr['usethes-associations']);
+		}
+
 		return substr($retStr, 1);
 	}
 
@@ -722,6 +754,10 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		}
 		if(array_key_exists('taxa',$_REQUEST) && $_REQUEST['taxa']){
 			$this->setTaxonRequestVariable();
+		}
+		$hasEverythingRequiredForAssociationSearch = (array_key_exists('association-type',$_REQUEST) && $_REQUEST['association-type'] || array_key_exists('associated-taxa',$_REQUEST) && $_REQUEST['associated-taxa']) && array_key_exists('taxontype-association',$_REQUEST) && $_REQUEST['taxontype-association'];
+		if($hasEverythingRequiredForAssociationSearch){
+			$this->setAssociationRequestVariable();
 		}
 		if(array_key_exists('country',$_REQUEST)){
 			$country = $this->cleanInputStr($_REQUEST['country']);
@@ -955,6 +991,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		if(array_key_exists('footprintwkt',$_REQUEST) && $_REQUEST['footprintwkt']){
 			$this->searchTermArr['footprintwkt'] = $this->cleanInputStr($_REQUEST['footprintwkt']);
 		}
+
 	}
 
 	private function setChecklistVariables($clid){

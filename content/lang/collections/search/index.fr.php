@@ -117,5 +117,9 @@ $LANG['TRAIT_CRITERIA'] = 'Critères de Caractéristiques';
 $LANG['TRAIT'] = 'Trait';
 $LANG['EXPAND_ALL_SECTIONS'] = 'Développer toutes les sections';
 $LANG['COLLAPSE_ALL_SECTIONS'] = 'Réduire toutes les sections';
+$LANG['ASSOCIATIONS'] = 'Les associations';
+$LANG['ASSOCIATION_DESCRIPTION'] = 'Trouver toutes les occurrences de taxons qui ont l\'association suivante';
+$LANG['ASSOCIATION_DESCRIPTION_2'] = 'avec le taxon suivant';
+$LANG['ASSOCIATION_TYPE'] = 'Type d\'association';
 
 ?>

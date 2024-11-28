@@ -273,3 +273,4 @@ CREATE TABLE `usersthirdpartyauth` (
 # Table does not exist within db_schema-3.0, thus statement is expected to fail if this is a new 3.0 install
 ALTER TABLE `omoccurresource` 
   RENAME TO  `deprecated_omoccurresource` ;
+
