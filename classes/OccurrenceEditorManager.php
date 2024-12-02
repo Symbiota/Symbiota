@@ -784,12 +784,11 @@ class OccurrenceEditorManager {
 					$ocnStr = str_replace(array(',',';'),'|',$ocnStr);
 					$ocnArr = explode('|',$ocnStr);
 					foreach($ocnArr as $identUnit){
-						$identUnit = trim($identUnit, ': ');
 						if($identUnit){
 							$tag = '';
 							$value = $identUnit;
 							if(preg_match('/^([A-Za-z\s]+[\s#:]+)(\d+)$/', $identUnit, $m)){
-								$tag = $m[1];
+								$tag = trim($m[1], ': ');
 								$value = $m[2];
 							}
 							$otherCatNumArr[$value] = $tag;
@@ -1341,7 +1340,7 @@ class OccurrenceEditorManager {
 				}
 				//Deal with host data
 				if(array_key_exists('host',$postArr)){
-					$sql = 'INSERT INTO omoccurassociations(occid, associationType, relationship, verbatimsciname) 
+					$sql = 'INSERT INTO omoccurassociations(occid, associationType, relationship, verbatimsciname)
 						VALUES('.$this->occid.', "observational", "host", "'.$this->cleanInStr($postArr['host']).'")';
 					if(!$this->conn->query($sql)){
 						$status .= '(WARNING adding host: '.$this->conn->error.') ';
