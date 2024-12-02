@@ -314,7 +314,7 @@ if($isEditor){
 				<div id="taxonstatusdiv" style="min-height:400px;">
 					<fieldset style="width:95%;">
 						<legend><b><?php echo $LANG['TAX_PLACEMENT']; ?></b></legend>
-						<div style="padding:3px 7px;margin:-12px -10px 5px 0px;float:right;">
+						<div id="tax-thes-authid-form-div" style="padding:3px 7px;margin:-12px -10px 5px 0px;float:right;">
 							<form name="taxauthidform" action="taxoneditor.php" method="post">
 								<select name="taxauthid" onchange="this.form.submit()">
 									<option value="1"><?php echo $LANG['DEFAULT_TAX']; ?></option>
@@ -330,7 +330,7 @@ if($isEditor){
 								<input type="hidden" name="tabindex" value="1" />
 							</form>
 						</div>
-						<div style="font-size:120%;font-weight:bold;"><?php echo $LANG['STATUS']; ?>:
+						<div id="tax-status-display-div" style="font-size:120%;font-weight:bold;"><?php echo $LANG['STATUS']; ?>:
 							<span style='color:red;'>
 								<?php
 								switch($taxonEditorObj->getIsAccepted()){
