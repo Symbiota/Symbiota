@@ -195,7 +195,18 @@ class OccurrenceUtil {
 			$max_elev = $m[3];
 			$unit = $m[4];
 
-			$meter_conversion = in_array($unit,['ft', 'ft.', 'feet', "'"])? 0.3048: 1;
+			$feet = ['ft', 'ft.', 'feet', 'foot' ,"'"];
+			$meter = ['meter', 'meters', 'm', 'm.'];
+
+			$meter_conversion = 0;
+
+			if(in_array($unit, $feet)) {
+				$meter_conversion = 0.3048;
+			} else if (in_array($unit, $meter)) {
+				$meter_conversion = 1;
+			} else {
+				return $retArr;
+			}
 
 			$min_elev = str_replace(',', '', $min_elev);
 			$max_elev = str_replace(',', '', $max_elev);
