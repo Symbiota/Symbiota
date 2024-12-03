@@ -2413,13 +2413,20 @@ class OccurrenceEditorManager {
 	//Edit locking functions (session variables)
 	public function getLock(){
 		$isLocked = false;
-		//Check lock
-		$delSql = 'DELETE FROM omoccureditlocks WHERE (ts < '.(time()-900).') OR (uid = '.$GLOBALS['SYMB_UID'].')';
-		if(!$this->conn->query($delSql)) return false;
-		//Try to insert lock for , existing lock is assumed if fails
-		$sql = 'INSERT INTO omoccureditlocks(occid,uid,ts) VALUES ('.$this->occid.','.$GLOBALS['SYMB_UID'].','.time().')';
-		if(!$this->conn->query($sql)){
-			$isLocked = true;
+		//Delete all expired locks and other locks associated with current user
+		$delSql = 'DELETE FROM omoccureditlocks WHERE (ts < ' . (time()-900) . ') OR (uid = ?)';
+		if($stmt = $this->conn->prepare($delSql)){
+			$stmt->bind_param('i', $GLOBALS['SYMB_UID']);
+			$stmt->execute();
+			$stmt->close();
+		}
+		//Try to insert lock for this record; if a lock exists for another user, INSERT will silently fail with no rows affected
+		$sql = 'INSERT IGNORE INTO omoccureditlocks(occid,uid,ts) VALUES(?,?,' . time() . ')';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('ii', $this->occid, $GLOBALS['SYMB_UID']);
+			$stmt->execute();
+			if(!$stmt->affected_rows) $isLocked = true;
+			$stmt->close();
 		}
 		return $isLocked;
 	}
