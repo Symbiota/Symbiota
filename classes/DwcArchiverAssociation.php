@@ -17,7 +17,7 @@ class DwcArchiverAssociation extends DwcArchiverBaseManager{
 		$this->setFileHandler($filePath);
 	}
 
-    //Based on https://rs.gbif.org/extension/gbif/1.0/identifier.xml
+    //Based on https://rs.gbif.org/extension/resource_relationship_2024-02-19.xml
 	private function setFieldArr(){
 		$columnArr = array();
 		$columnArr['coreid'] = 'occid';
@@ -38,8 +38,33 @@ class DwcArchiverAssociation extends DwcArchiverBaseManager{
 		$termArr['relationshipRemarks'] = 'https://dwc.tdwg.org/terms/#dwc:relationshipRemarks';
 		$columnArr['relationshipRemarks'] = 'notes';
 
+        
+
 		$this->fieldArr['terms'] = $this->trimBySchemaType($termArr);
 		$this->fieldArr['fields'] = $this->trimBySchemaType($columnArr);
+	}
+
+    private function trimBySchemaType($dataArr){
+		$trimArr = array();
+		if($this->schemaType == 'backup'){
+			//$trimArr = array();
+		}
+		elseif($this->schemaType == 'dwc'){
+			// $trimArr = array('notes', 'sortBy'); // @TODO revisit if you don't think these should be identical
+		}
+		return array_diff_key($dataArr, array_flip($trimArr));
+	}
+
+	// @TODO decide if setDynamicFields is needed
+
+	private function setSqlBase(){
+		if($this->fieldArr){
+			$sqlFrag = '';
+			foreach($this->fieldArr['fields'] as $colName){
+				if($colName) $sqlFrag .= ', ' . $colName;
+			}
+			$this->sqlBase = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccurassociations ';
+		}
 	}
 
 }
