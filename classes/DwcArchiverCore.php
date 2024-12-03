@@ -1854,6 +1854,7 @@ class DwcArchiverCore extends Manager{
 					if ($this->includeAttributes) $this->writeAttributeData($batchOccidArr);
 					if ($this->includeMaterialSample) $this->writeMaterialSampleData($batchOccidArr);
 					if ($this->includeIdentifiers) $this->writeIdentifierData($batchOccidArr);
+					if ($this->includeAssociations) $this->writeAssociationData($batchOccidArr);
 					if ($pubID && $portalManager) $portalManager->insertPortalOccurrences($pubID, $batchOccidArr);
 					unset($batchOccidArr);
 					$batchOccidArr = array();
@@ -2096,7 +2097,7 @@ class DwcArchiverCore extends Manager{
 		if(!$this->associationHandler){
 			$this->associationHandler = new DwcArchiverAssociation($this->conn);
 			$this->associationHandler->setSchemaType($this->schemaType);
-			$this->associationHandler->initiateProcess($this->targetPath . $this->ts . '-ident' . $this->fileExt);
+			$this->associationHandler->initiateProcess($this->targetPath . $this->ts . '-assoc' . $this->fileExt);
 			$this->fieldArrMap['associations'] = $this->identierHandler->getFieldArrTerms();
 		}
 		if($this->associationHandler) $this->associationHandler->writeOutRecordBlock($batchOccidArr);
