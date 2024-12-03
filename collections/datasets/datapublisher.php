@@ -8,7 +8,7 @@ if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/d
 else include_once($SERVER_ROOT . '/content/lang/collections/datasets/datapublisher.en.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
-$collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0; // @TODO collid is really coming from db in the searchvar attribute of the request, right? So it'll always be incorrect here?
 $emode = array_key_exists('emode', $_REQUEST) ? filter_var($_REQUEST['emode'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $action = array_key_exists('formsubmit', $_REQUEST) ? $_REQUEST['formsubmit'] : '';
 
@@ -438,6 +438,7 @@ if ($isEditor) {
 						if($dwcaManager->hasAttributes($collid)) echo '<input type="checkbox" name="attributes" value="1" '.($includeAttributes ? 'CHECKED' : '').'> '.$LANG['INCLUDE_ATTRIBUTES'].'<br/>';
 						if($dwcaManager->hasMaterialSamples($collid)) echo '<input type="checkbox" name="matsample" value="1" '.($includeMatSample ? 'CHECKED' : '').'> '.$LANG['INCLUDE_MATSAMPLE'].'<br/>';
 						if($dwcaManager->hasIdentifiers($collid)) echo '<input type="checkbox" name="identifiers" value="1" '.($includeIdentifiers ? 'CHECKED' : '').'> '.$LANG['INCLUDE_IDENTIFIERS'].'<br/>';
+						if($dwcaManager->hasAssociations($collid)) echo '<input type="checkbox" name="associations" value="1" '.($includeAssociations ? 'CHECKED' : '').'> '.$LANG['INCLUDE_ASSOCIATIONS'].'<br/>';
 						?>
 					</div>
 					<div style="margin-top:5px;" class="font-control top-breathing-room-rel">
@@ -484,6 +485,10 @@ if ($isEditor) {
 							}
 							if($includeIdentifiers){
 								if($dwcaManager->hasIdentifiers($id)) $dwcaManager->setIncludeIdentifiers(1);
+								else $dwcaManager->setIncludeIdentifiers(0);
+							}
+							if($includeAssociations){
+								if($dwcaManager->hasAssociations($id)) $dwcaManager->setIncludeAssociations(1);
 								else $dwcaManager->setIncludeIdentifiers(0);
 							}
 							if($dwcaManager->createDwcArchive()){
@@ -535,6 +540,7 @@ if ($isEditor) {
 									if($dwcaManager->hasAttributes()) echo '<input type="checkbox" name="attributes" value="1" '.($includeAttributes ? 'CHECKED' : '').'> '.$LANG['INCLUDE_ATTRIBUTES'].'<br/>';
 									if($dwcaManager->hasMaterialSamples()) echo '<input type="checkbox" name="matsample" value="1" '.($includeMatSample ? 'CHECKED' : '').'> '.$LANG['INCLUDE_MATSAMPLE'].'<br/>';
 									if($dwcaManager->hasIdentifiers()) echo '<input type="checkbox" name="identifiers" value="1" '.($includeIdentifiers ? 'CHECKED' : '').'> '.$LANG['INCLUDE_IDENTIFIERS'].'<br/>';
+									if($dwcaManager->hasAssociations()) echo '<input type="checkbox" name="associations" value="1" '.($includeAssociations ? 'CHECKED' : '').'> '.$LANG['INCLUDE_ASSOCIATIONS'].'<br/>';
 									?>
 								</div>
 								<div style="margin-top:5px;">
