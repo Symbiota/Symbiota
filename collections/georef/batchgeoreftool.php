@@ -194,7 +194,7 @@ if($isEditor && $submitAction){
 					?>
 					<div id="queryform-section" style="float:right;">
 						<form name="queryform" method="post" action="batchgeoreftool.php" onsubmit="return verifyQueryForm(this)">
-							<fieldset style="padding:5px;width:600px;background-color:lightyellow;">
+							<fieldset class="fieldset-like-box" style="width:600px">
 								<legend><b><?php echo $LANG['QUERY_FORM']; ?></b></legend>
 								<div style="height:20px;">
 									<div style="clear:both;">
