@@ -2106,7 +2106,7 @@ class DwcArchiverCore extends Manager{
 			$this->associationHandler->initiateProcess($this->targetPath . $this->ts . '-assoc' . $this->fileExt);
 			$this->fieldArrMap['associations'] = $this->associationHandler->getFieldArrTerms();
 		}
-		if($this->associationHandler) $this->associationHandler->writeOutRecordBlock($batchOccidArr);
+		if($this->associationHandler) $this->associationHandler->writeOutRecordBlock($batchOccidArr, 'occidAssociate', 'occid');
 	}
 
 	private function writeCitationFile(){

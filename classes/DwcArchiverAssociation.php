@@ -20,7 +20,7 @@ class DwcArchiverAssociation extends DwcArchiverBaseManager{
     //Based on https://rs.gbif.org/extension/resource_relationship_2024-02-19.xml
 	private function setFieldArr(){
 		$columnArr = array();
-		$columnArr['coreid'] = 'occid';
+		$columnArr['coreid'] = 'occid'; // @TODO ?
 		$termArr['resourceRelationshipID'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
 		$columnArr['resourceRelationshipID'] = 'instanceID';
 		$termArr['resourceID'] = 'https://dwc.tdwg.org/terms/#dwc:resourceID';
