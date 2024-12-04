@@ -24,7 +24,7 @@ class DwcArchiverAssociation extends DwcArchiverBaseManager{
 		$termArr['resourceRelationshipID'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
 		$columnArr['resourceRelationshipID'] = 'instanceID';
 		$termArr['resourceID'] = 'https://dwc.tdwg.org/terms/#dwc:resourceID';
-		$columnArr['resourceID'] = 'occurrenceID';
+		$columnArr['resourceID'] = 'occid';
         $termArr['relationshipOfResourceID'] = 'https://dwc.tdwg.org/terms/#dwc:relationshipOfResourceID';
 		$columnArr['relationshipOfResourceID'] = 'relationshipID';
 		$termArr['relatedResourceID'] = 'https://dwc.tdwg.org/terms/#dwc:relatedResourceID';

@@ -878,6 +878,10 @@ class DwcArchiverCore extends Manager{
 				$zipArchive->addFile($this->targetPath . $this->ts . '-ident' . $this->fileExt);
 				$zipArchive->renameName($this->targetPath . $this->ts . '-ident' . $this->fileExt, 'identifiers' . $this->fileExt);
 			}
+			if ($this->includeAssociations && file_exists($this->targetPath . $this->ts . '-assoc' . $this->fileExt)) {
+				$zipArchive->addFile($this->targetPath . $this->ts . '-assoc' . $this->fileExt);
+				$zipArchive->renameName($this->targetPath . $this->ts . '-assoc' . $this->fileExt, 'associations' . $this->fileExt);
+			}
 			//Meta file
 			$this->writeMetaFile();
 			$zipArchive->addFile($this->targetPath . $this->ts . '-meta.xml');
@@ -898,6 +902,7 @@ class DwcArchiverCore extends Manager{
 			if ($this->includeAttributes && file_exists($this->targetPath . $this->ts . '-attr' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-attr' . $this->fileExt);
 			if ($this->includeMaterialSample && file_exists($this->targetPath . $this->ts . '-matSample' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
 			if ($this->includeIdentifiers && file_exists($this->targetPath . $this->ts . '-ident' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-ident' . $this->fileExt);
+			if ($this->includeAssociations && file_exists($this->targetPath . $this->ts . '-assoc' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-assoc' . $this->fileExt);
 			unlink($this->targetPath . $this->ts . '-meta.xml');
 			if ($this->schemaType == 'dwc') rename($this->targetPath . $this->ts . '-eml.xml', $this->targetPath . str_replace('.zip', '.eml', $fileName));
 			else unlink($this->targetPath . $this->ts . '-eml.xml');
@@ -1905,6 +1910,7 @@ class DwcArchiverCore extends Manager{
 		if ($this->includeAttributes) $this->logOrEcho('Occurrence Attributes exported as a MeasurementsOrFact extension file... ');
 		if ($this->includeMaterialSample) $this->logOrEcho('Material Samples exported within a MaterialSample extension file... ');
 		if ($this->includeIdentifiers) $this->logOrEcho('Occurrence Alternative Identifiers exported as a Identifier extension file... ');
+		if ($this->includeAssociations) $this->logOrEcho('Occurrence Associations exported as a Resource Relationship extension file... ');
 		return $filePath;
 	}
 
@@ -2098,7 +2104,7 @@ class DwcArchiverCore extends Manager{
 			$this->associationHandler = new DwcArchiverAssociation($this->conn);
 			$this->associationHandler->setSchemaType($this->schemaType);
 			$this->associationHandler->initiateProcess($this->targetPath . $this->ts . '-assoc' . $this->fileExt);
-			$this->fieldArrMap['associations'] = $this->identierHandler->getFieldArrTerms();
+			$this->fieldArrMap['associations'] = $this->associationHandler->getFieldArrTerms();
 		}
 		if($this->associationHandler) $this->associationHandler->writeOutRecordBlock($batchOccidArr);
 	}
@@ -2336,7 +2342,7 @@ class DwcArchiverCore extends Manager{
 			$sql = "(SELECT o.occid FROM omoccurrences o INNER JOIN omoccurassociations a ON o.occid = a.occid WHERE o.collid = ?) UNION (SELECT o.occid FROM omoccurrences o INNER JOIN omoccurassociations a ON o.occid = a.occidAssociate WHERE o.collid = ?) LIMIT 1;";
 		}
 		$stmt = $this->conn->stmt_init();
-      	// $stmt->prepare($sql);
+      	// $stmt->prepare($sql); // @TODO clean up
 		if (!$stmt->prepare($sql)) {
         	throw new Exception("SQL Error: " . $stmt->error);
     	}

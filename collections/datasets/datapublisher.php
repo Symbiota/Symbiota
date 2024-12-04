@@ -36,6 +36,7 @@ $includeImgs = 1;
 $includeAttributes = 1;
 $includeMatSample = 1;
 $includeIdentifiers = 1;
+$includeAssociations = 1;
 $redactLocalities = 1;
 
 if ($action == 'savekey' || (isset($_REQUEST['datasetKey']) && $_REQUEST['datasetKey'])) {
@@ -53,6 +54,8 @@ elseif ($action) {
 	$dwcaManager->setIncludeMaterialSample($includeMatSample);
 	if (!array_key_exists('identifiers', $_POST)) $includeIdentifiers = 0;
 	$dwcaManager->setIncludeIdentifiers($includeIdentifiers);
+	if (!array_key_exists('associations', $_POST)) $includeAssociations = 0;
+	$dwcaManager->setIncludeAssociations($includeAssociations);
 	if (!array_key_exists('redact', $_POST)) $redactLocalities = 0;
 	$dwcaManager->setRedactLocalities($redactLocalities);
 	$dwcaManager->setTargetPath($SERVER_ROOT . (substr($SERVER_ROOT, -1) == '/' ? '' : '/') . 'content/dwca/');
@@ -489,7 +492,7 @@ if ($isEditor) {
 							}
 							if($includeAssociations){
 								if($dwcaManager->hasAssociations($id)) $dwcaManager->setIncludeAssociations(1);
-								else $dwcaManager->setIncludeIdentifiers(0);
+								else $dwcaManager->setIncludeAssociations(0);
 							}
 							if($dwcaManager->createDwcArchive()){
 								$dwcaManager->writeRssFile();
@@ -499,6 +502,7 @@ if ($isEditor) {
 						$dwcaManager->setIncludeAttributes($includeAttributes);
 						$dwcaManager->setIncludeMaterialSample($includeMatSample);
 						$dwcaManager->setIncludeIdentifiers($includeIdentifiers);
+						$dwcaManager->setIncludeAssociations($includeAssociations);
 						echo '</ul>';
 						echo 'Batch process finished! (' . date('Y-m-d h:i:s A') . ')';
 					}
