@@ -20,7 +20,7 @@ class DwcArchiverAssociation extends DwcArchiverBaseManager{
     //Based on https://rs.gbif.org/extension/resource_relationship_2024-02-19.xml
 	private function setFieldArr(){
 		$columnArr = array();
-		$columnArr['coreid'] = 'occid'; // @TODO ?
+		// $columnArr['coreid'] = 'occid'; // @TODO ?
 		$termArr['resourceRelationshipID'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
 		$columnArr['resourceRelationshipID'] = 'instanceID';
 		$termArr['resourceID'] = 'https://dwc.tdwg.org/terms/#dwc:resourceID';
@@ -38,6 +38,42 @@ class DwcArchiverAssociation extends DwcArchiverBaseManager{
 		$termArr['relationshipRemarks'] = 'https://dwc.tdwg.org/terms/#dwc:relationshipRemarks';
 		$columnArr['relationshipRemarks'] = 'notes';
 
+		$termArr['associd'] = 'https://symbiota.org/terms/associd';
+		$columnArr['associd'] = 'associd';
+		$termArr['associationType'] = 'https://symbiota.org/terms/associationType';
+		$columnArr['associationType'] = 'associationType';
+		$termArr['subType'] = 'https://symbiota.org/terms/subType';
+		$columnArr['subType'] = 'subType';
+		$termArr['objectID'] = 'https://symbiota.org/terms/objectID';
+		$columnArr['objectID'] = 'objectID';
+		$termArr['identifier'] = 'https://symbiota.org/terms/identifier';
+		$columnArr['identifier'] = 'identifier';
+		$termArr['basisOfRecord'] = 'https://symbiota.org/terms/basisOfRecord';
+		$columnArr['basisOfRecord'] = 'basisOfRecord';
+		$termArr['verbatimSciname'] = 'https://symbiota.org/terms/verbatimSciname';
+		$columnArr['verbatimSciname'] = 'verbatimSciname';
+		$termArr['tid'] = 'https://symbiota.org/terms/tid';
+		$columnArr['tid'] = 'tid';
+		$termArr['locationOnHost'] = 'https://symbiota.org/terms/locationOnHost';
+		$columnArr['locationOnHost'] = 'locationOnHost';
+		$termArr['conditionOfAssociate'] = 'https://symbiota.org/terms/conditionOfAssociate';
+		$columnArr['conditionOfAssociate'] = 'conditionOfAssociate';
+		$termArr['imageMapJSON'] = 'https://symbiota.org/terms/imageMapJSON';
+		$columnArr['imageMapJSON'] = 'imageMapJSON';
+		$termArr['dynamicProperties'] = 'https://symbiota.org/terms/dynamicProperties';
+		$columnArr['dynamicProperties'] = 'dynamicProperties';
+		$termArr['sourceIdentifier'] = 'https://symbiota.org/terms/sourceIdentifier';
+		$columnArr['sourceIdentifier'] = 'sourceIdentifier';
+		$termArr['recordID'] = 'https://symbiota.org/terms/recordID';
+		$columnArr['recordID'] = 'recordID';
+		$termArr['createdUid'] = 'https://symbiota.org/terms/createdUid';
+		$columnArr['createdUid'] = 'createdUid';
+		$termArr['modifiedTimestamp'] = 'https://symbiota.org/terms/modifiedTimestamp';
+		$columnArr['modifiedTimestamp'] = 'modifiedTimestamp';
+		$termArr['modifiedUid'] = 'https://symbiota.org/terms/modifiedUid';
+		$columnArr['modifiedUid'] = 'modifiedUid';
+		$termArr['initialtimestamp'] = 'https://symbiota.org/terms/initialtimestamp';
+		$columnArr['initialtimestamp'] = 'initialtimestamp';
         
 
 		$this->fieldArr['terms'] = $this->trimBySchemaType($termArr);
@@ -50,7 +86,10 @@ class DwcArchiverAssociation extends DwcArchiverBaseManager{
 			//$trimArr = array();
 		}
 		elseif($this->schemaType == 'dwc'){
-			// $trimArr = array('notes', 'sortBy'); // @TODO revisit if you don't think these should be identical
+			$trimArr = array('associd', 'associationType', 'subType', 'objectID', 'identifier',
+			 'basisOfRecord', 'verbatimSciname', 'tid', 'locationOnHost', 'conditionOfAssociate',
+			  'imageMapJSON', 'dynamicProperties', 'sourceIdentifier', 'recordID', 'createdUid',
+			   'modifiedTimestamp', 'modifiedUid', 'initialtimestamp');
 		}
 		return array_diff_key($dataArr, array_flip($trimArr));
 	}
