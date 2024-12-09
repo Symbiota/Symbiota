@@ -147,7 +147,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 		if($fieldArr){
 			$fieldArr[] = 'specimen';
 			$fieldArr[] = $imgId;
-			$sql .= 'imagetype=? WHERE (media_id= ?)';
+			$sql .= 'imagetype=? WHERE (mediaID = ?)';
 			$types .= 'si';
 			$imgUpdateStatus = false;
 			$stmt = $this->conn->stmt_init();
@@ -156,7 +156,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 			if($stmt->execute()){
 				$imgUpdateStatus = true;
 				if(array_key_exists('occid', $imgArr) || array_key_exists('tidinterpreted', $imgArr)){
-					$imgSql = 'UPDATE media m INNER JOIN omoccurrences o ON m.occid = o.occid SET m.tid = o.tidinterpreted WHERE (m.media_id = '.$imgId.')';
+					$imgSql = 'UPDATE media m INNER JOIN omoccurrences o ON m.occid = o.occid SET m.tid = o.tidinterpreted WHERE (m.mediaID = '.$imgId.')';
 					$this->conn->query($imgSql);
 				}
 				$status = true;
@@ -302,7 +302,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 
 	public function createOccurrenceFrom(): int {
 		$sql = 'INSERT INTO omoccurrences(collid, observeruid,processingstatus) SELECT collid, observeruid, "unprocessed" FROM omoccurrences WHERE occid = ?';
-			
+
 		try {
 			mysqli_execute_query($this->conn, $sql, [$this->occid]);
 			return $this->conn->insert_id;
@@ -363,7 +363,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 			}
 		}
 		else{
-			$sql = 'UPDATE media SET occid = NULL WHERE (media_id = '.$imgId.')';
+			$sql = 'UPDATE media SET occid = NULL WHERE (mediaID = '.$imgId.')';
 			if(!$this->conn->query($sql)){
 				$this->errorArr[] = $LANG['UNABLE_DISSOCIATE'].': '.$this->conn->error;
 				return false;

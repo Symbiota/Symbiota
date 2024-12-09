@@ -1896,9 +1896,9 @@ class DwcArchiverCore extends Manager{
 			}
 			$previousImgID = 0;
 			while ($r = $rs->fetch_assoc()) {
-				if ($previousImgID == $r['media_id']) continue;
-				$previousImgID = $r['media_id'];
-				unset($r['media_id']);
+				if ($previousImgID == $r['mediaID']) continue;
+				$previousImgID = $r['mediaID'];
+				unset($r['mediaID']);
 				if ($r['identifier'] && substr($r['identifier'], 0, 1) == '/') $r['identifier'] = $localDomain . $r['identifier'];
 				if ($r['accessURI'] && substr($r['accessURI'], 0, 1) == '/') $r['accessURI'] = $localDomain . $r['accessURI'];
 				if ($r['thumbnailAccessURI'] && substr($r['thumbnailAccessURI'], 0, 1) == '/') $r['thumbnailAccessURI'] = $localDomain . $r['thumbnailAccessURI'];
@@ -2263,7 +2263,7 @@ class DwcArchiverCore extends Manager{
 			}
 		}
 	}
-	
+
 	private function encodeStr($inStr){
 		$retStr = $inStr;
 		if ($inStr && $this->charSetSource) {

@@ -464,7 +464,7 @@ class OccurrenceEditorManager {
 		}
 		//Without images
 		if(array_key_exists('woi',$this->qryArr)){
-			$sqlWhere .= 'AND (m.media_id IS NULL) ';
+			$sqlWhere .= 'AND (m.mediaID IS NULL) ';
 		}
 		//OCR
 		if(array_key_exists('ocr',$this->qryArr)){
@@ -737,13 +737,13 @@ class OccurrenceEditorManager {
 
 		if(strpos($this->sqlWhere,'ocr.rawstr')){
 			if(strpos($this->sqlWhere,'ocr.rawstr IS NULL') && array_key_exists('io',$this->qryArr)){
-				$sql .= 'INNER JOIN media m ON o.occid = m.occid LEFT JOIN specprocessorrawlabels ocr ON m.media_id = ocr.imgid ';
+				$sql .= 'INNER JOIN media m ON o.occid = m.occid LEFT JOIN specprocessorrawlabels ocr ON m.mediaID = ocr.imgid ';
 			}
 			elseif(strpos($this->sqlWhere,'ocr.rawstr IS NULL')){
-				$sql .= 'LEFT JOIN media m ON o.occid = m.occid LEFT JOIN specprocessorrawlabels ocr ON m.media_id = ocr.imgid ';
+				$sql .= 'LEFT JOIN media m ON o.occid = m.occid LEFT JOIN specprocessorrawlabels ocr ON m.mediaID = ocr.imgid ';
 			}
 			else{
-				$sql .= 'INNER JOIN media m ON o.occid = m.occid INNER JOIN specprocessorrawlabels ocr ON m.media_id = ocr.imgid ';
+				$sql .= 'INNER JOIN media m ON o.occid = m.occid INNER JOIN specprocessorrawlabels ocr ON m.mediaID = ocr.imgid ';
 			}
 		}
 		elseif(array_key_exists('io',$this->qryArr)){
@@ -1466,7 +1466,7 @@ class OccurrenceEditorManager {
 				if($rs = $this->conn->query($sql)){
 					$imgidStr = '';
 					while($r = $rs->fetch_assoc()){
-						$imgId = $r['media_id'];
+						$imgId = $r['mediaID'];
 						$imgidStr .= ','.$imgId;
 						foreach($r as $k => $v){
 							if($v) $archiveArr['imgs'][$imgId][$k] = $this->encodeStrTargeted($v,$CHARSET,'utf8');
@@ -1486,7 +1486,7 @@ class OccurrenceEditorManager {
 							$this->errorArr[] = $LANG['ERROR_REMOVING_IMAGETAGS'].': '.$this->conn->error;
 						}
 						//Remove images
-						if(!$this->conn->query('DELETE FROM media WHERE mediaType = "image" AND (media_id IN('.$imgidStr.'))')){
+						if(!$this->conn->query('DELETE FROM media WHERE mediaType = "image" AND (mediaID IN('.$imgidStr.'))')){
 							$this->errorArr[] = $LANG['ERROR_REMOVING_LINKS'].': '.$this->conn->error;
 						}
 					}
@@ -2247,7 +2247,7 @@ class OccurrenceEditorManager {
 		$retArr = array();
 		if($this->occid){
 			$sql = 'SELECT r.prlid, r.imgid, r.rawstr, r.notes, r.source '.
-				'FROM specprocessorrawlabels r INNER JOIN media m ON r.imgid = m.media_id '.
+				'FROM specprocessorrawlabels r INNER JOIN media m ON r.imgid = m.mediaID '.
 				'WHERE m.occid = '.$this->occid;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
@@ -2314,24 +2314,24 @@ class OccurrenceEditorManager {
 	public function getImageMap($imgId = 0){
 		$imageMap = Array();
 		if($this->occid){
-			$sql = 'SELECT media_id, url, thumbnailurl, originalurl, caption, creator, creatorUid, sourceurl, copyright, notes, occid, username, sortoccurrence, initialtimestamp FROM media '; if($imgId) $sql .= 'WHERE AND (media_id = '.$imgId.') ';
+			$sql = 'SELECT mediaID, url, thumbnailurl, originalurl, caption, creator, creatorUid, sourceurl, copyright, notes, occid, username, sortoccurrence, initialtimestamp FROM media '; if($imgId) $sql .= 'WHERE AND (mediaID = '.$imgId.') ';
 			else $sql .= 'WHERE mediaType = "image" AND (occid = '.$this->occid.') ';
 			$sql .= 'ORDER BY sortoccurrence';
 			//echo $sql;
 			$result = $this->conn->query($sql);
 			while($row = $result->fetch_object()){
-				$imageMap[$row->media_id]['url'] = $row->url;
-				$imageMap[$row->media_id]['tnurl'] = $row->thumbnailurl;
-				$imageMap[$row->media_id]['origurl'] = $row->originalurl;
-				$imageMap[$row->media_id]['caption'] = $row->caption;
-				$imageMap[$row->media_id]['creator'] = $row->creator;
-				$imageMap[$row->media_id]['creatorUid'] = $row->creatorUid;
-				$imageMap[$row->media_id]['sourceurl'] = $row->sourceurl;
-				$imageMap[$row->media_id]['copyright'] = $row->copyright;
-				$imageMap[$row->media_id]['notes'] = $row->notes;
-				$imageMap[$row->media_id]['occid'] = $row->occid;
-				$imageMap[$row->media_id]['username'] = $row->username;
-				$imageMap[$row->media_id]['sort'] = $row->sortoccurrence;
+				$imageMap[$row->mediaID]['url'] = $row->url;
+				$imageMap[$row->mediaID]['tnurl'] = $row->thumbnailurl;
+				$imageMap[$row->mediaID]['origurl'] = $row->originalurl;
+				$imageMap[$row->mediaID]['caption'] = $row->caption;
+				$imageMap[$row->mediaID]['creator'] = $row->creator;
+				$imageMap[$row->mediaID]['creatorUid'] = $row->creatorUid;
+				$imageMap[$row->mediaID]['sourceurl'] = $row->sourceurl;
+				$imageMap[$row->mediaID]['copyright'] = $row->copyright;
+				$imageMap[$row->mediaID]['notes'] = $row->notes;
+				$imageMap[$row->mediaID]['occid'] = $row->occid;
+				$imageMap[$row->mediaID]['username'] = $row->username;
+				$imageMap[$row->mediaID]['sort'] = $row->sortoccurrence;
 			}
 			$result->free();
 		}

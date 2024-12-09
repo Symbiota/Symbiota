@@ -260,9 +260,9 @@ class SpecProcessorOcr extends Manager{
 			//Batch OCR
 			foreach($collArr as $collid => $instCode){
 				$this->logOrEcho('Starting batch processing for '.$instCode);
-				$sql = 'SELECT m.media_id, IFNULL(m.originalurl, m.url) AS url, o.sciName, m.occid '.
+				$sql = 'SELECT m.mediaID, IFNULL(m.originalurl, m.url) AS url, o.sciName, m.occid '.
 					'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid '.
-					'LEFT JOIN specprocessorrawlabels r ON m.media_id = r.imgid '.
+					'LEFT JOIN specprocessorrawlabels r ON m.mediaID = r.imgid '.
 					'WHERE (o.collid = '.$collid.') AND r.prlid IS NULL ';
 				if($procStatus) $sql .= 'AND o.processingstatus = "unprocessed" ';
 				if($limit) $sql .= 'LIMIT '.$limit;
@@ -271,10 +271,10 @@ class SpecProcessorOcr extends Manager{
 					while($r = $rs->fetch_object()){
 						$rawStr = $this->ocrImageByUrl($r->url,$getBest,$r->sciName);
 						if($rawStr != 'ERROR'){
-							$this->logOrEcho('#'.$recCnt.': image <a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($r->occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($r->media_id, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> processed (' . date("Y-m-d H:i:s") . ')');
+							$this->logOrEcho('#'.$recCnt.': image <a href="../editor/occurrenceeditor.php?occid=' . $r->occid . '" target="_blank">' . $r->mediaID . '</a> processed (' . date("Y-m-d H:i:s") . ')');
 							$notes = '';
 							$source = 'Tesseract: '.date('Y-m-d');
-							$this->databaseRawStr($r->media_id,$rawStr,$notes,$source);
+							$this->databaseRawStr($r->mediaID,$rawStr,$notes,$source);
 						}
 						ob_flush();
 						flush();
@@ -467,23 +467,23 @@ class SpecProcessorOcr extends Manager{
 			if($catNumber){
 				//Grab image primary key (imgid)
 				$imgArr = array();
-				$sql = 'SELECT m.media_id, IFNULL(m.originalurl,m.url) AS url '.
+				$sql = 'SELECT m.mediaID, IFNULL(m.originalurl,m.url) AS url '.
 					'FROM media m INNER JOIN omoccurrences o ON m.occid = o.occid '.
 					'WHERE (o.collid = '.$this->collid.') AND (o.catalognumber = "'.$this->cleanInStr($catNumber).'")';
 				$rs = $this->conn->query($sql);
 				while($r = $rs->fetch_object()){
-					$imgArr[$r->media_id] = $r->url;
+					$imgArr[$r->mediaID] = $r->url;
 				}
 				$rs->free();
 				if(!$imgArr){
 					$fileBaseName = basename($sourcePath.$fileName, ".txt");
 					if(strlen($fileBaseName)>4){
-						$sql = 'SELECT m.media_id, IFNULL(m.originalurl,m.url) AS url '.
+						$sql = 'SELECT m.mediaID, IFNULL(m.originalurl,m.url) AS url '.
 							'FROM media m INNER JOIN omoccurrences o ON m.occid = o.occid '.
 							'WHERE (o.collid = '.$this->collid.') AND ((m.originalurl LIKE "%/'.$this->cleanInStr($fileBaseName).'.jpg") OR (m.url LIKE "%/'.$this->cleanInStr($fileBaseName).'.jpg"))';
 						$rs = $this->conn->query($sql);
 						while($r = $rs->fetch_object()){
-							$imgArr[$r->media_id] = $r->url;
+							$imgArr[$r->mediaID] = $r->url;
 						}
 						$rs->free();
 					}

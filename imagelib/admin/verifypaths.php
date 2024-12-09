@@ -211,7 +211,7 @@ class VerifyPaths{
 		    if(file_exists($newThumbnailPath)){
 			    //Insert thumbnail path into database
 				$con = MySQLiConnectionFactory::getCon("write");
-		    	$sql = "UPDATE media ti SET ti.thumbnailurl = '".$newThumbnailUrl."' WHERE ti.media_id = ".$imgId;
+		    	$sql = "UPDATE media ti SET ti.thumbnailurl = '".$newThumbnailUrl."' WHERE ti.mediaID = ".$imgId;
 			    $con->query($sql);
 			    echo "<div>Thumbnail Created: $imgId - $newThumbnailUrl</div>";
 		    }
@@ -219,7 +219,7 @@ class VerifyPaths{
 	}
 
 	private function loadImageArr(){
-		$sql = "SELECT ti.media_id as imgid, ti.url, ti.thumbnailurl FROM media ti ";
+		$sql = "SELECT ti.mediaID as imgid, ti.url, ti.thumbnailurl FROM media ti ";
 		$result = $this->conn->query($sql);
 		while($row = $result->fetch_object()){
 			$this->imageArr[$row->imgid] = $row->url;
