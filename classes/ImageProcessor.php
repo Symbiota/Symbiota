@@ -280,7 +280,7 @@ class ImageProcessor {
 							$origUrl = substr($originalUrl, 5);
 							$baseUrl = substr($url, 5);
 							foreach($occArr as $occid => $tid){
-								$sql1 = 'SELECT media_id as imgid, url, originalurl, thumbnailurl FROM media WHERE (occid = '.$occid.')';
+								$sql1 = 'SELECT mediaID as imgid, url, originalurl, thumbnailurl FROM media WHERE (occid = '.$occid.')';
 								$rs1 = $this->conn->query($sql1);
 								while($r1 = $rs1->fetch_object()){
 									$testOrigUrl = substr($r1->originalurl,5);
@@ -294,7 +294,7 @@ class ImageProcessor {
 										$sql2 = 'UPDATE media '.
 											'SET url = "'.$url.'", originalurl = "'.$originalUrl.'", thumbnailurl = '.($thumbnailUrl?'"'.$thumbnailUrl.'"':'NULL').', '.
 											'sourceurl = '.($sourceUrl?'"'.$sourceUrl.'"':'NULL').' '.
-											'WHERE media_id = '.$r1->imgid;
+											'WHERE mediaID = '.$r1->imgid;
 										if($this->conn->query($sql2)){
 											$this->logOrEcho('Existing image replaced with new image mapping: <a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">'.($catalogNumber?$catalogNumber:$otherCatalogNumbers).'</a>',1);
 											//Delete physical images it previous version was mapped locally
@@ -411,7 +411,7 @@ class ImageProcessor {
 					}
 					//Grab existing images for that occurrence
 					$imgArr = array();
-					$sqlTest = 'SELECT media_id as imgid, sourceidentifier FROM media WHERE (occid = '.$occid.') ';
+					$sqlTest = 'SELECT mediaID as imgid, sourceidentifier FROM media WHERE (occid = '.$occid.') ';
 					$rsTest = $this->conn->query($sqlTest);
 					while($rTest = $rsTest->fetch_object()){
 						$imgArr[$rTest->imgid] = $rTest->sourceidentifier;
@@ -447,7 +447,7 @@ class ImageProcessor {
 								elseif($fileExt == 'jpg' && in_array($fnExt,$highResList)){
 									//$this->logOrEcho('NOTICE: Replacing exist map of high-res with this JPG version ('.$fileName.'; #'.$occLink.')',2);
 									//Replace high res source with JPG by deleteing high res from database
-									$this->conn->query('DELETE FROM media WHERE media_id = '.$imgId);
+									$this->conn->query('DELETE FROM media WHERE mediaID = '.$imgId);
 								}
 							}
 						}
@@ -519,7 +519,7 @@ class ImageProcessor {
 			foreach($targetFieldArr as $fieldName => $value){
 				$sqlFrag .= $fieldName.' = '.($value?'"'.$this->cleanInStr($value).'"':'NULL').',';
 			}
-			$sql = 'UPDATE media SET '.trim($sqlFrag,' ,').' WHERE (media_id = '.$imgid.')';
+			$sql = 'UPDATE media SET '.trim($sqlFrag,' ,').' WHERE (mediaID = '.$imgid.')';
 			if($this->conn->query($sql)){
 				$this->logOrEcho('Existing image data updated '.(isset($targetFieldArr['sourceIdentifier'])?'('.$targetFieldArr['sourceIdentifier'].')':''),2);
 			}

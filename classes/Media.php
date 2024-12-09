@@ -794,10 +794,10 @@ class Media {
 			if($should_upload_file) {
 				//Check if file exists
 				if($storage->file_exists($file)) {
-					//Add media_id onto end of file name which should be unique within portal
-					$file['name'] = self::addToFilename($file['name'], '_' . $media_id);
+					//Add mediaID onto end of file name which should be unique within portal
+					$file['name'] = self::addToFilename($file['name'], '_' . $mediaID);
 
-					//Fail case the appended media_id is taken stops after 10
+					//Fail case the appended mediaID is taken stops after 10
 					$cnt = 1;
 					while($storage->file_exists($file) && $cnt < 10) {
 						$file['name'] = self::addToFilename($file['name'], '_' . $cnt);
@@ -1057,7 +1057,7 @@ class Media {
 			array_push(self::$errors, $e->getMessage());
 
 			mysqli_rollback($conn);
-			error_log('ERROR: Media update failed on media_id '
+			error_log('ERROR: Media update failed on mediaID '
 				. $media_id . ' ' . $e->getMessage()
 			);
 			return false;
@@ -1238,7 +1238,7 @@ class Media {
 		}
 		array_push($values, $media_id);
 
-		$sql = 'UPDATE media set '. $parameter_str . ' where media_id = ?';
+		$sql = 'UPDATE media set '. $parameter_str . ' where mediaID = ?';
 		SymbUtil::execute_query(
 			$conn ?? Database::connect('write'),
 			$sql,
@@ -1254,7 +1254,7 @@ class Media {
 		$conn = Database::connect('write');
 		$result = SymbUtil::execute_query(
 			$conn,
-			'SELECT url, thumbnailUrl, originalUrl from media where media_id = ?',
+			'SELECT url, thumbnailUrl, originalUrl from media where mediaID = ?',
 			[$media_id]
 		);
 		$media_urls = $result->fetch_assoc();
@@ -1262,7 +1262,7 @@ class Media {
 		$queries = [
 			'DELETE FROM specprocessorrawlabels WHERE imgid = ?',
 			'DELETE FROM imagetag WHERE imgid = ?',
-			'DELETE FROM media WHERE media_id = ?'
+			'DELETE FROM media WHERE mediaID = ?'
 		];
 		mysqli_begin_transaction($conn);
 		try {
@@ -1282,7 +1282,7 @@ class Media {
 			}
 			mysqli_commit($conn);
 		} catch(Exception $e) {
-			error_log("Error: couldnt' remove media of media_id " . $media_id .": " . $e->getMessage());
+			error_log("Error: couldnt' remove media of mediaID " . $media_id .": " . $e->getMessage());
 			array_push(self::$errors, $e->getMessage());
 			mysqli_rollback($conn);
 		}
@@ -1306,7 +1306,7 @@ class Media {
 		$sql ='SELECT ' . implode(', ', $select) .' FROM media m ' .
 		'LEFT JOIN taxa t ON t.tid = m.tid ' .
 		'LEFT JOIN users u on u.uid = m.creatorUid ' .
-		'WHERE media_id = ?';
+		'WHERE mediaID = ?';
 
 		if($media_type) {
 			$sql .= ' AND mediaType = ?';
@@ -1395,7 +1395,7 @@ class Media {
 		$media_items = Array();
 
 		while($row = $results->fetch_assoc()){
-			$media_items[$row['media_id']] = $row;
+			$media_items[$row['mediaID']] = $row;
 		}
 		$results->free();
 

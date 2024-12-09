@@ -581,7 +581,7 @@ class ImageShared{
 	public function deleteImage($imgIdDel, $removeImg){
 		if(is_numeric($imgIdDel)){
 			$imgUrl = ''; $imgThumbnailUrl = ''; $imgOriginalUrl = ''; $occid = 0;
-			$sqlQuery = 'SELECT url, thumbnailUrl, originalUrl, tid, occid FROM media WHERE (media_id = '.$imgIdDel.')';
+			$sqlQuery = 'SELECT url, thumbnailUrl, originalUrl, tid, occid FROM media WHERE (mediaID = '.$imgIdDel.')';
 			$rs = $this->conn->query($sqlQuery);
 			if($r = $rs->fetch_object()){
 				$imgUrl = $r->url;
@@ -599,7 +599,7 @@ class ImageShared{
 			//Remove image tags
 			$this->conn->query('DELETE FROM imagetag WHERE (imgid = '.$imgIdDel.')');
 
-			$sql = "DELETE FROM media WHERE (media_id = ".$imgIdDel.')';
+			$sql = "DELETE FROM media WHERE (mediaID = ".$imgIdDel.')';
 			//echo $sql;
 			if($this->conn->query($sql)){
 				if($removeImg){

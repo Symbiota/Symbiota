@@ -48,7 +48,7 @@ class DwcArchiverImage{
 		$termArr['metadataLanguage'] = 'http://rs.tdwg.org/ac/terms/metadataLanguage';	//en
 		$fieldArr['metadataLanguage'] = '';
 		$termArr['imgID'] = 'https://symbiota.org/terms/imgID';	//en
-		$fieldArr['imgID'] = 'm.media_id';
+		$fieldArr['imgID'] = 'm.mediaID';
 
 		if($schemaType == 'backup') $fieldArr['rights'] = 'm.copyright';
 
