@@ -38,7 +38,7 @@ if($isEditor){
 	}
 	$imgArr = Media::getMedia($imgId);
 }
-// TODO (Logan) once basic utils for domain image manager can be removed 
+// TODO (Logan) once basic utils for domain image manager can be removed
 $serverPath = $imgManager->getDomain();
 
 if($imgArr){
@@ -364,17 +364,17 @@ if($imgArr){
 				<div style="width:350px;padding:10px;float:left;">
 					<?php
 					$imgDisplay = $imgUrl;
-					$media_type = MediaType::tryFrom($imgArr['media_type']);
+					$mediaType = MediaType::tryFrom($imgArr['mediaType']);
 					if((!$imgDisplay || $imgDisplay == 'empty') && $origUrl) $imgDisplay = $origUrl;
 					?>
-					<?php if($media_type === MediaType::Image):?>
+					<?php if($mediaType === MediaType::Image):?>
 					<a href="<?php echo htmlspecialchars($imgDisplay, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?>">
 						<img src="<?php echo htmlspecialchars($imgDisplay, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?>" style="width:300px;" />
 					</a>
 					<?php
 					if($origUrl) echo '<div><a href="' . htmlspecialchars($origUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . $LANG['CLICK_IMAGE'] . '</a></div>';
 					?>
-					<?php elseif($media_type === MediaType::Audio):?>
+					<?php elseif($mediaType === MediaType::Audio):?>
 						<audio controls style="margin-top: 5rem">
 							<source src="<?= $origUrl ?>" type="<?=$imgArr['format']?>">
 							Your browser does not support the audio element.

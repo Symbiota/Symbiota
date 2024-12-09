@@ -14,7 +14,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 	private $keywords;
 	private $imageCount = 0;
 	private $imageType = 0;
-	private $media_type = null;
+	private $mediaType = null;
 
 	private $recordCount = 0;
 	private $tidFocus;
@@ -37,7 +37,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		$retArr = Array();
 		$this->setSqlWhere();
 		$this->setRecordCnt();
-		$sql = 'SELECT m.media_id, m.tid, IFNULL(t.sciname,o.sciname) as sciname, m.url, m.thumbnailurl, m.originalurl, m.creatorUid, m.caption, m.occid, m.media_type ';
+		$sql = 'SELECT m.media_id, m.tid, IFNULL(t.sciname,o.sciname) as sciname, m.url, m.thumbnailurl, m.originalurl, m.creatorUid, m.caption, m.occid, m.mediaType ';
 		$sqlWhere = $this->sqlWhere;
 		if($this->imageCount == 1) $sqlWhere .= 'GROUP BY sciname ';
 		elseif($this->imageCount == 2) $sqlWhere .= 'GROUP BY m.occid ';
@@ -61,7 +61,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 			$retArr[$imgId]['uid'] = $r->creatorUid;
 			$retArr[$imgId]['caption'] = $r->caption;
 			$retArr[$imgId]['occid'] = $r->occid;
-			$retArr[$imgId]['media_type'] = $r->media_type;
+			$retArr[$imgId]['mediaType'] = $r->mediaType;
 			//$retArr[$imgId]['stateprovince'] = $r->stateprovince;
 			//$retArr[$imgId]['catalognumber'] = $r->catalognumber;
 			//$retArr[$imgId]['instcode'] = $r->instcode;
@@ -199,9 +199,9 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 				$sqlWhere .= 'AND (m.occid IS NULL) ';
 			}
 		}
-		if($this->media_type){
-			//Note media_type is cleaned to only be 'image' and 'audio' strings
-			$sqlWhere .= 'AND (m.media_type = "' . $this->media_type . '") ';
+		if($this->mediaType){
+			//Note mediaType is cleaned to only be 'image' and 'audio' strings
+			$sqlWhere .= 'AND (m.mediaType = "' . $this->mediaType . '") ';
 		}
 		if(strpos($sqlWhere,'ts.taxauthid')) $sqlWhere = str_replace('m.tid', 'ts.tid', $sqlWhere);
 		if($sqlWhere) $this->sqlWhere = 'WHERE '.substr($sqlWhere,4);
@@ -452,12 +452,12 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 
 	public function setMediaType($type) {
 		if($type === 'image' || $type === 'audio') {
-			$this->media_type = $type;
+			$this->mediaType = $type;
 		}
 	}
 
 	public function getMediaType() {
-		return $this->media_type;
+		return $this->mediaType;
 	}
 }
 ?>

@@ -117,7 +117,7 @@ class ImageCleaner extends Manager{
 	}
 
 	private function getSqlWhere(){
-		$sql = 'WHERE ((m.thumbnailurl IS NULL) OR (m.thumbnailurl LIKE "processing%")) AND m.media_type = "image"';
+		$sql = 'WHERE ((m.thumbnailurl IS NULL) OR (m.thumbnailurl LIKE "processing%")) AND m.mediaType = "image"';
 		if($this->collid) $sql .= 'AND (o.collid = '.$this->collid.') ';
 		elseif($this->collid === '0') $sql .= 'AND (m.occid IS NULL) ';
 		if($this->tidArr) $sql .= 'AND (e.taxauthid = 1) AND (m.tid IN('.implode(',',$this->tidArr).') OR e.parenttid IN('.implode(',',$this->tidArr).')) ';
@@ -429,7 +429,7 @@ class ImageCleaner extends Manager{
 	private function getRemoteImageSql($postArr){
 		$domain = $this->getDomain();
 		$sql = 'FROM media m INNER JOIN omoccurrences o ON m.occid = o.occid '.
-			'WHERE (o.collid = '.$this->collid.') AND m.media_type = "image" AND (m.thumbnailurl LIKE "%'.$domain.'/%" OR m.thumbnailurl LIKE "/%") '.
+			'WHERE (o.collid = '.$this->collid.') AND m.mediaType = "image" AND (m.thumbnailurl LIKE "%'.$domain.'/%" OR m.thumbnailurl LIKE "/%") '.
 			'AND IFNULL(m.originalurl,url) LIKE "http%" AND IFNULL(m.originalurl,url) NOT LIKE "%'.$domain.'/%" ';
 		$catNumLow = '';
 		if(isset($postArr['catNumLow'])) $catNumLow = filter_var($postArr['catNumLow']);
@@ -486,7 +486,7 @@ class ImageCleaner extends Manager{
 	public function testByCollid(){
 		$sql = 'SELECT m.media_id, m.url, m.thumbnailurl, m.originalurl '.
 			'FROM media m INNER JOIN omoccurrences o ON m.occid = o.occid '.
-			'WHERE o.collid IN('.$this->collid.') and m.media_type = "image"';
+			'WHERE o.collid IN('.$this->collid.') and m.mediaType = "image"';
 		return $this->testUrls($sql);
 	}
 
@@ -545,12 +545,12 @@ class ImageCleaner extends Manager{
 		}
 	}
 
-	private function recycleImage($media_id){
-		if(!is_numeric($media_id)) return false;
+	private function recycleImage($mediaID){
+		if(!is_numeric($mediaID)) return false;
 		if($this->imgRecycleBin){
 			$sql = 'SELECT m.url, m.originalurl, m.thumbnailurl '.
 				'FROM media m INNER JOIN omoccurrences o ON m.occid = o.occid '.
-				'WHERE (o.collid = '.$this->collid.') AND m.media_type = "image" AND(m.media_id = ' . $media_id . ')';
+				'WHERE (o.collid = '.$this->collid.') AND m.mediaType = "image" AND(m.mediaID = ' . $mediaID . ')';
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
 				$imgUrlArr = array();
@@ -582,7 +582,7 @@ class ImageCleaner extends Manager{
 					}
 				}
 				if($delRec){
-					$this->conn->query('DELETE FROM media WHERE (media_id = ' . $media_id . ') and media_type = "image"');
+					$this->conn->query('DELETE FROM media WHERE (media_id = ' . $mediaID . ') and mediaType = "image"');
 				}
 			}
 			$rs->free();

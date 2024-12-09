@@ -377,7 +377,7 @@ class SpecProcessorManager {
 		$cnt = 0;
 		if($this->collid){
 			$sql = 'SELECT count(o.occid) AS cnt '.
-				'FROM omoccurrences o LEFT JOIN media m ON o.occid = m.occid AND m.media_type = "image"'.
+				'FROM omoccurrences o LEFT JOIN media m ON o.occid = m.occid AND m.mediaType = "image"'.
 				'WHERE o.collid = '.$this->collid.' AND m.media_id IS NULL ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
@@ -393,7 +393,7 @@ class SpecProcessorManager {
 		$cnt = 0;
 		if($this->collid){
 			$sql = 'SELECT count(o.occid) AS cnt '.
-				'FROM omoccurrences o LEFT JOIN media m ON o.occid = m.occid AND m.media_type = "image"'.
+				'FROM omoccurrences o LEFT JOIN media m ON o.occid = m.occid AND m.mediaType = "image"'.
 				'WHERE (o.collid = '.$this->collid.') AND (m.media_id IS NULL) AND (o.processingstatus = "unprocessed") ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){

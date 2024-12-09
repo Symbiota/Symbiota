@@ -1341,7 +1341,7 @@ class OccurrenceEditorManager {
 				}
 				//Deal with host data
 				if(array_key_exists('host',$postArr)){
-					$sql = 'INSERT INTO omoccurassociations(occid, associationType, relationship, verbatimsciname) 
+					$sql = 'INSERT INTO omoccurassociations(occid, associationType, relationship, verbatimsciname)
 						VALUES('.$this->occid.', "observational", "host", "'.$this->cleanInStr($postArr['host']).'")';
 					if(!$this->conn->query($sql)){
 						$status .= '(WARNING adding host: '.$this->conn->error.') ';
@@ -1461,7 +1461,7 @@ class OccurrenceEditorManager {
 				$rs->free();
 
 				//Archive image history
-				$sql = 'SELECT * FROM media WHERE media_type = "image" AND occid = '.$delOccid;
+				$sql = 'SELECT * FROM media WHERE mediaType = "image" AND occid = '.$delOccid;
 				$stage = $LANG['ERROR_ARCHIVING_IMG_HISTORY'];
 				if($rs = $this->conn->query($sql)){
 					$imgidStr = '';
@@ -1486,7 +1486,7 @@ class OccurrenceEditorManager {
 							$this->errorArr[] = $LANG['ERROR_REMOVING_IMAGETAGS'].': '.$this->conn->error;
 						}
 						//Remove images
-						if(!$this->conn->query('DELETE FROM media WHERE media_type = "image" AND (media_id IN('.$imgidStr.'))')){
+						if(!$this->conn->query('DELETE FROM media WHERE mediaType = "image" AND (media_id IN('.$imgidStr.'))')){
 							$this->errorArr[] = $LANG['ERROR_REMOVING_LINKS'].': '.$this->conn->error;
 						}
 					}
@@ -2315,7 +2315,7 @@ class OccurrenceEditorManager {
 		$imageMap = Array();
 		if($this->occid){
 			$sql = 'SELECT media_id, url, thumbnailurl, originalurl, caption, creator, creatorUid, sourceurl, copyright, notes, occid, username, sortoccurrence, initialtimestamp FROM media '; if($imgId) $sql .= 'WHERE AND (media_id = '.$imgId.') ';
-			else $sql .= 'WHERE media_type = "image" AND (occid = '.$this->occid.') ';
+			else $sql .= 'WHERE mediaType = "image" AND (occid = '.$this->occid.') ';
 			$sql .= 'ORDER BY sortoccurrence';
 			//echo $sql;
 			$result = $this->conn->query($sql);

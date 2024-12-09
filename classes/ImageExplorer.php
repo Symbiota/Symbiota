@@ -56,7 +56,7 @@ class ImageExplorer{
 				}
 
 				//Set image count
-				$cntSql = 'SELECT count(DISTINCT m.media_type) AS cnt '.substr($sql,strpos($sql,' FROM '));
+				$cntSql = 'SELECT count(DISTINCT m.mediaType) AS cnt '.substr($sql,strpos($sql,' FROM '));
 				$cntSql = substr($cntSql,0,strpos($cntSql,' LIMIT '));
 				//echo '<br/>'.$cntSql.'<br/>';
 				$cntRs = $this->conn->query($cntSql);
@@ -86,7 +86,7 @@ class ImageExplorer{
 	 * Output: String, SQL to be used to query database
 	 */
 	private function getSql($searchCriteria){
-		$sqlWhere = 'AND m.media_type = "image"';
+		$sqlWhere = 'AND m.mediaType = "image"';
 
 		//Set taxa
 		if(isset($searchCriteria['taxa']) && $searchCriteria['taxa']){

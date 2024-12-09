@@ -575,7 +575,7 @@ class OCCURRENCE {
    	$status = "";
    	$sql = 'INSERT INTO media (tid, url, thumbnailurl, originalurl, creator, creatorUid, caption, '.
      	'owner, sourceurl, copyright, locality, occid, notes, username, sortsequence, imagetype, anatomy, '.
-     	'sourceIdentifier, rights, accessrights, media_type) '.
+     	'sourceIdentifier, rights, accessrights, mediaType) '.
      	'VALUES (?,?,?,?,?,?,? ,?,?,?,?,?,?,?,?,?,? ,?,?,?, "image")';
    	if ($statement = $this->conn->prepare($sql)) {
    		//If central images are on remote server and new ones stored locally, then we need to use full domain

@@ -23,7 +23,7 @@ class ImageDetailManager extends Manager {
 			$sql = "SELECT m.media_id, m.tid, m.url, m.thumbnailurl, m.originalurl, m.creatorUid, m.creator, ".
 				"IFNULL(m.creator,CONCAT_WS(' ',u.firstname,u.lastname)) AS creatorDisplay, ".
 				"m.caption, m.owner, m.sourceurl, m.copyright, m.rights, m.locality, m.notes, m.occid, m.sortsequence, m.username, ".
-				"t.sciname, t.author, t.rankid, m.format, m.media_type ".
+				"t.sciname, t.author, t.rankid, m.format, m.mediaType ".
 				"FROM media m LEFT JOIN taxa t ON m.tid = t.tid ".
 				"LEFT JOIN users u ON m.creatorUid = u.uid ".
 				'WHERE (m.media_id = '.$this->imgId.')';
@@ -50,7 +50,7 @@ class ImageDetailManager extends Manager {
 				$retArr["sortsequence"] = $row->sortsequence;
 				$retArr["occid"] = $row->occid;
 				$retArr["username"] = $row->username;
-				$retArr["media_type"] = $row->media_type;
+				$retArr["mediaType"] = $row->mediaType;
 				$retArr["format"] = $row->format;
 			}
 			$rs->free();
@@ -146,7 +146,7 @@ class ImageDetailManager extends Manager {
 			', sourceurl = '.($sourceUrl?'"'.$sourceUrl.'"':'NULL').',copyright = '.($copyRight?'"'.$copyRight.'"':'NULL').
 			',rights = '.($rights?'"'.$rights.'"':'NULL').', locality = '.($locality?'"'.$locality.'"':'NULL').', occid = '.($occId?$occId:'NULL').', '.
 			'notes = '.($notes?'"'.$notes.'"':'NULL').($sortSequence?', sortsequence = '.$sortSequence:'').
-			' WHERE (media_id = '.$this->imgId.') and media_type = "image"';
+			' WHERE (media_id = '.$this->imgId.') and mediaType = "image"';
 		//echo $sql;
 		if(!$this->conn->query($sql)){
 			$status = "Error:editImage: ".$this->conn->error."\nSQL: ".$sql;
@@ -157,7 +157,7 @@ class ImageDetailManager extends Manager {
 	public function changeTaxon($targetTid,$sourceTid){
 		$status = '';
 		if(is_numeric($targetTid) && is_numeric($sourceTid)){
-			$sql = 'UPDATE media SET tid = '.$targetTid.', sortsequence = 50 WHERE media_id = '.$this->imgId.' and media_type = "image" AND tid = '.$sourceTid;
+			$sql = 'UPDATE media SET tid = '.$targetTid.', sortsequence = 50 WHERE media_id = '.$this->imgId.' and mediaType = "image" AND tid = '.$sourceTid;
 			if(!$this->conn->query($sql)){
 				$sql = 'SELECT m.media_id '.
 					'FROM media m INNER JOIN media m2 ON m.url = m2.url '.

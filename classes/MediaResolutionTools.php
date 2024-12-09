@@ -65,7 +65,7 @@ class MediaResolutionTools extends Manager {
 		$cnt = 0;
 		$sql = 'SELECT m.* FROM media m ';
 		if($this->collid) $sql .= 'INNER JOIN omoccurrences o ON m.occid = o.occid ';
-		$sql .= 'WHERE (m.media_id IN('.trim(implode(',',$this->imgidArr),', ').')) AND m.media_type = "image" AND (m.media_id > '.$imgidStart.') ';
+		$sql .= 'WHERE (m.media_id IN('.trim(implode(',',$this->imgidArr),', ').')) AND m.mediaType = "image" AND (m.media_id > '.$imgidStart.') ';
 		if($this->collid) $sql .= 'AND (o.collid = '.$this->collid.') ';
 		$sql .= 'ORDER BY m.media_id LIMIT '.$limit;
 		//echo $sql;
@@ -238,7 +238,7 @@ class MediaResolutionTools extends Manager {
 					echo '<ul>';
 					$this->setTargetPaths();
 					$processingCnt = 0;
-					$sqlBase = 'FROM media m INNER JOIN omoccurrences o ON m.occid = o.occid WHERE o.collid = ' . $this->collid . ' AND m.media_type = "image" ';
+					$sqlBase = 'FROM media m INNER JOIN omoccurrences o ON m.occid = o.occid WHERE o.collid = ' . $this->collid . ' AND m.mediaType = "image" ';
 					if($this->matchTermThumbnail) $sqlBase .= 'AND thumbnailurl LIKE "'.$this->matchTermThumbnail.'%" ';
 					if($this->matchTermWeb) $sqlBase .= 'AND url LIKE "'.$this->matchTermWeb.'%" ';
 					if($this->matchTermLarge) $sqlBase .= 'AND originalurl LIKE "'.$this->matchTermLarge.'%" ';
@@ -369,7 +369,7 @@ class MediaResolutionTools extends Manager {
 			if(isset($iArr['web'])) $sqlFrag .= ',url = "'.$iArr['web'].'"';
 			if(isset($iArr['lg'])) $sqlFrag .= ',originalurl = "'.$iArr['lg'].'"';
 			if($sqlFrag){
-				$sql = 'UPDATE media SET '.trim($sqlFrag,' ,').' WHERE media_type = "image" AND media_id = '.$imgID;
+				$sql = 'UPDATE media SET '.trim($sqlFrag,' ,').' WHERE mediaType = "image" AND media_id = '.$imgID;
 				if($this->debugMode) $this->logOrEcho($sql);
 				if(!$this->conn->query($sql)) $this->logOrEcho('ERROR saving new paths: '.$this->conn->error,1);
 			}

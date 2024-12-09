@@ -156,7 +156,7 @@ class UuidFactory {
 		$retCnt = 0;
 		$sql = 'SELECT COUNT(m.media_id) as reccnt FROM media m ';
 		if($collId) $sql .= 'INNER JOIN omoccurrences o ON m.occid = o.occid ';
-		$sql .= 'WHERE m.recordID IS NULL and m.media_type = "image"';
+		$sql .= 'WHERE m.recordID IS NULL and m.mediaType = "image"';
 		if($collId) $sql .= 'AND o.collid = '.$collId;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){

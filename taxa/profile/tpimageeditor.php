@@ -51,7 +51,7 @@ if($tid){
 									$imgCnt = 0;
 									foreach($images as $imgArr){
 										$tnUrl = $imgArr["thumbnailUrl"];
-										if($imgArr['media_type'] === 'audio') {
+										if($imgArr['mediaType'] === 'audio') {
 											$tnUrl = $CLIENT_ROOT . '/images/speaker_thumbnail.png';
 										}
 										if($tnUrl && substr($tnUrl,0,10) != 'processing'){
