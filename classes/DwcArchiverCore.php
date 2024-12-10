@@ -274,7 +274,7 @@ class DwcArchiverCore extends Manager{
 	}
 
 	private function applyConditions(){
-		if($this->conditionSql) return true;
+		if($this->conditionSql) return true; // @TODO maybe here is different?
 		if ($this->customWhereSql) {
 			$this->conditionSql = trim($this->customWhereSql) . ' ';
 		}
@@ -1838,9 +1838,9 @@ class DwcArchiverCore extends Manager{
 						//$dynProp = $r['dynamicProperties'] . '; ' . $dynProp;
 						//$r['dynamicProperties'] = $dynProp;
 					}
-					if ($assocOccurStr = $dwcOccurManager->getAssociationStr($r['occid'])) $r['t_associatedOccurrences'] = $assocOccurStr;
+					// if ($assocOccurStr = $dwcOccurManager->getAssociationStr($r['occid'])) $r['t_associatedOccurrences'] = $assocOccurStr;
 					if ($assocSeqStr = $dwcOccurManager->getAssociatedSequencesStr($r['occid'])) $r['t_associatedSequences'] = $assocSeqStr;
-					if ($assocTaxa = $dwcOccurManager->getAssociationStr($r['occid'], 'observational')) $r['associatedTaxa'] = $assocTaxa;
+					// if ($assocTaxa = $dwcOccurManager->getAssociationStr($r['occid'], 'observational')) $r['associatedTaxa'] = $assocTaxa;
 				}
 				//$dwcOccurManager->appendUpperTaxonomy($r);
 				$dwcOccurManager->appendUpperTaxonomy2($r);
