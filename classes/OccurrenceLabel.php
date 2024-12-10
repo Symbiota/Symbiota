@@ -425,23 +425,21 @@ class OccurrenceLabel{
 			$sql = 'SELECT dynamicProperties FROM users WHERE uid = '.$GLOBALS['SYMB_UID'];
 			$rs = $this->conn->query($sql);
 			if($rs){
-				$dynPropStr = '';
 				if($r = $rs->fetch_object()){
-					$dynPropStr = $r->dynamicProperties;
-				}
-				$rs->free();
-				$dynPropArr = json_decode($dynPropStr  ?? '',true);
-				if($annotated){
-					if(isset($dynPropArr['labelFormats'])){
-						foreach($dynPropArr['labelFormats'] as $k => $labelObj){
-							unset($labelObj['labelBlocks']);
-							$retArr['u'][$k] = $labelObj;
+					if($r->dynamicProperties){
+						$dynPropArr = json_decode($r->dynamicProperties, true);
+						if(isset($dynPropArr['labelFormats'])){
+							if($annotated){
+								foreach($dynPropArr['labelFormats'] as $k => $labelObj){
+									unset($labelObj['labelBlocks']);
+									$retArr['u'][$k] = $labelObj;
+								}
+							}
+							else $retArr['u'] = $dynPropArr['labelFormats'];
 						}
-
 					}
 				}
-				elseif(isset($dynPropArr['labelFormats'])) $retArr['u'] = $dynPropArr['labelFormats'];
-				else $retArr['u'] = array();
+				$rs->free();
 			}
 		}
 		return $retArr;
