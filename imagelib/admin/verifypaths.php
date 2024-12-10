@@ -219,12 +219,12 @@ class VerifyPaths{
 	}
 
 	private function loadImageArr(){
-		$sql = "SELECT ti.mediaID as imgid, ti.url, ti.thumbnailurl FROM media ti ";
+		$sql = 'SELECT ti.mediaID, ti.url, ti.thumbnailurl FROM media ti ';
 		$result = $this->conn->query($sql);
 		while($row = $result->fetch_object()){
-			$this->imageArr[$row->imgid] = $row->url;
+			$this->imageArr[$row->mediaID] = $row->url;
 			if($row->thumbnailurl){
-				$thumbnailArr[$row->imgid] = $row->thumbnailurl;
+				$this->thumbnailArr[$row->mediaID] = $row->thumbnailurl;
 			}
 		}
 		$result->close();

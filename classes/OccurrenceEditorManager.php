@@ -737,13 +737,13 @@ class OccurrenceEditorManager {
 
 		if(strpos($this->sqlWhere,'ocr.rawstr')){
 			if(strpos($this->sqlWhere,'ocr.rawstr IS NULL') && array_key_exists('io',$this->qryArr)){
-				$sql .= 'INNER JOIN media m ON o.occid = m.occid LEFT JOIN specprocessorrawlabels ocr ON m.mediaID = ocr.imgid ';
+				$sql .= 'INNER JOIN media m ON o.occid = m.occid LEFT JOIN specprocessorrawlabels ocr ON m.mediaID = ocr.mediaID ';
 			}
 			elseif(strpos($this->sqlWhere,'ocr.rawstr IS NULL')){
-				$sql .= 'LEFT JOIN media m ON o.occid = m.occid LEFT JOIN specprocessorrawlabels ocr ON m.mediaID = ocr.imgid ';
+				$sql .= 'LEFT JOIN media m ON o.occid = m.occid LEFT JOIN specprocessorrawlabels ocr ON m.mediaID = ocr.mediaID ';
 			}
 			else{
-				$sql .= 'INNER JOIN media m ON o.occid = m.occid INNER JOIN specprocessorrawlabels ocr ON m.mediaID = ocr.imgid ';
+				$sql .= 'INNER JOIN media m ON o.occid = m.occid INNER JOIN specprocessorrawlabels ocr ON m.mediaID = ocr.mediaID ';
 			}
 		}
 		elseif(array_key_exists('io',$this->qryArr)){
@@ -1478,11 +1478,11 @@ class OccurrenceEditorManager {
 					if($imgidStr){
 						$imgidStr = trim($imgidStr, ', ');
 						//Remove any OCR text blocks linked to the image
-						if(!$this->conn->query('DELETE FROM specprocessorrawlabels WHERE (imgid IN('.$imgidStr.'))')){
+						if(!$this->conn->query('DELETE FROM specprocessorrawlabels WHERE (mediaID IN('.$imgidStr.'))')){
 							$this->errorArr[] = $LANG['ERROR_REMOVING_OCR'].': '.$this->conn->error;
 						}
 						//Remove image tags
-						if(!$this->conn->query('DELETE FROM imagetag WHERE (imgid IN('.$imgidStr.'))')){
+						if(!$this->conn->query('DELETE FROM imagetag WHERE (mediaID IN('.$imgidStr.'))')){
 							$this->errorArr[] = $LANG['ERROR_REMOVING_IMAGETAGS'].': '.$this->conn->error;
 						}
 						//Remove images
@@ -2246,14 +2246,14 @@ class OccurrenceEditorManager {
 	public function getRawTextFragments(){
 		$retArr = array();
 		if($this->occid){
-			$sql = 'SELECT r.prlid, r.imgid, r.rawstr, r.notes, r.source '.
-				'FROM specprocessorrawlabels r INNER JOIN media m ON r.imgid = m.mediaID '.
+			$sql = 'SELECT r.prlid, r.mediaID, r.rawstr, r.notes, r.source '.
+				'FROM specprocessorrawlabels r INNER JOIN media m ON r.mediaID = m.mediaID '.
 				'WHERE m.occid = '.$this->occid;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$retArr[$r->imgid][$r->prlid]['raw'] = $this->cleanOutStr($r->rawstr);
-				$retArr[$r->imgid][$r->prlid]['notes'] = $this->cleanOutStr($r->notes);
-				$retArr[$r->imgid][$r->prlid]['source'] = $this->cleanOutStr($r->source);
+				$retArr[$r->mediaID][$r->prlid]['raw'] = $this->cleanOutStr($r->rawstr);
+				$retArr[$r->mediaID][$r->prlid]['notes'] = $this->cleanOutStr($r->notes);
+				$retArr[$r->mediaID][$r->prlid]['source'] = $this->cleanOutStr($r->source);
 			}
 			$rs->free();
 		}
@@ -2265,7 +2265,7 @@ class OccurrenceEditorManager {
 		if($imgId && $rawFrag){
 			$statusStr = '';
 			//$rawFrag = preg_replace('/[^(\x20-\x7F)]*/','', $rawFrag);
-			$sql = 'INSERT INTO specprocessorrawlabels(imgid,rawstr,notes,source) '.
+			$sql = 'INSERT INTO specprocessorrawlabels(mediaID,rawstr,notes,source) '.
 				'VALUES ('.$imgId.',"'.$this->cleanRawFragment($rawFrag).'",'.
 				($notes?'"'.$this->cleanInStr($notes).'"':'NULL').','.
 				($source?'"'.$this->cleanInStr($source).'"':'NULL').')';
@@ -2341,10 +2341,10 @@ class OccurrenceEditorManager {
 
 	protected function getImageTags($imgIdStr){
 		$retArr = array();
-		$sql = 'SELECT t.imgid, k.tagkey, k.shortlabel, k.description_en FROM imagetag t INNER JOIN imagetagkey k ON t.keyvalue = k.tagkey WHERE t.imgid IN('.$imgIdStr.')';
+		$sql = 'SELECT t.mediaID, k.tagkey, k.shortlabel, k.description_en FROM imagetag t INNER JOIN imagetagkey k ON t.keyvalue = k.tagkey WHERE t.mediaID IN('.$imgIdStr.')';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->imgid][$r->tagkey] = $r->shortlabel;
+			$retArr[$r->mediaID][$r->tagkey] = $r->shortlabel;
 		}
 		$rs->free();
 		return $retArr;

@@ -203,7 +203,7 @@ class ImageExplorer{
 			$sqlStr .= 'LEFT JOIN omoccurverification v ON o.occid = v.occid ';
 		}
 		if(isset($searchCriteria['tags']) && $searchCriteria['tags']){
-			$sqlStr .= 'LEFT JOIN imagetag it ON m.mediaID = it.imgid';
+			$sqlStr .= 'LEFT JOIN imagetag it ON m.mediaID = it.mediaID';
 		}
 		if(isset($searchCriteria['countPerCategory'])){
 			$countPerCategory = (int)$searchCriteria['countPerCategory'];

@@ -117,7 +117,7 @@ class MediaResolutionTools extends Manager {
 				if($sqlImg) $sqlImg = 'UPDATE media SET '.substr($sqlImg,1).' WHERE mediaID = '.$imgId;
 			}
 			else{
-				$sqlImg = 'DELETE FROM media WHERE imgid = '.$imgId;
+				$sqlImg = 'DELETE FROM media WHERE mediaID = '.$imgId;
 			}
 			if($sqlImg){
 				if(!$this->conn->query($sqlImg)){
@@ -157,7 +157,7 @@ class MediaResolutionTools extends Manager {
 				}
 			}
 			else{
-				$this->logOrEcho('ERROR: image unwritable (imgid: <a href="' . htmlspecialchars($GLOBALS['CLIENT_ROOT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/imagelib/imgdetails.php?imgid=' . htmlspecialchars($imgid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($imgid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>, path: ' . htmlspecialchars($path, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ')');
+				$this->logOrEcho('ERROR: image unwritable (imgid: <a href="' . $GLOBALS['CLIENT_ROOT'] . '/imagelib/imgdetails.php?mediaid=' . $imgid . '" target="_blank">' . $imgid . '</a>, path: ' . htmlspecialchars($path, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ')');
 			}
 		}
 		return $status;

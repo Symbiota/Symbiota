@@ -154,7 +154,7 @@ class TaxonProfile extends Manager {
 				$imgObj["thumbnailurl"] = $GLOBALS['CLIENT_ROOT'] . '/images/speaker_thumbnail.png';
 			}
 			$imgUrl = $imgObj['url'];
-			$imgAnchor = '../imagelib/imgdetails.php?imgid='.$imgId;
+			$imgAnchor = '../imagelib/imgdetails.php?mediaid='.$imgId;
 			$imgThumbnail = $imgObj['thumbnailurl'];
 			if(array_key_exists('MEDIA_DOMAIN',$GLOBALS)){
 				//Images with relative paths are on another server

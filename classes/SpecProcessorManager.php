@@ -263,8 +263,8 @@ class SpecProcessorManager {
 		if($this->collid){
 			$sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt '.
 				'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid '.
-				'LEFT JOIN specprocessorrawlabels r ON m.mediaID = r.imgid '.
-				'WHERE o.collid = '.$this->collid.' AND r.imgid IS NULL ';
+				'LEFT JOIN specprocessorrawlabels r ON m.mediaID = r.mediaID '.
+				'WHERE o.collid = '.$this->collid.' AND r.mediaID IS NULL ';
 			if($procStatus){
 				if($procStatus == 'null'){
 					$sql .= 'AND processingstatus IS NULL';

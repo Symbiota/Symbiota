@@ -320,7 +320,7 @@ if($SYMB_UID){
 					$mediaID = filter_var($_POST['imgid'], FILTER_SANITIZE_NUMBER_INT);
 					Media::disassociate($mediaID);
 
-					$statusStr = $LANG['DISASS_SUCCESS'] . ' <a href="../../imagelib/imgdetails.php?imgid=' . $mediaID . '" target="_blank">#' . $mediaID . '</a>';
+					$statusStr = $LANG['DISASS_SUCCESS'] . ' <a href="../../imagelib/imgdetails.php?mediaid=' . $mediaID . '" target="_blank">#' . $mediaID . '</a>';
 				} catch(Exception $e) {
 					$statusStr = $LANG['DISASS_ERORR'] .': '.$e->getMessage();
 				}
@@ -452,7 +452,7 @@ if($SYMB_UID){
 			$iUrl = $i2['url'];
 			if($iUrl == 'empty' && $i2['origurl']) $iUrl = $i2['origurl'];
 			if($imgUrlPrefix && substr($iUrl,0,4) != 'http') $iUrl = $imgUrlPrefix.$iUrl;
-			$imgArr[$imgCnt]['imgid'] = $imgId;
+			$imgArr[$imgCnt]['mediaid'] = $imgId;
 			$imgArr[$imgCnt]['web'] = $iUrl;
 			if($i2['origurl']){
 				$lgUrl = $i2['origurl'];

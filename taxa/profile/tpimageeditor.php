@@ -89,7 +89,7 @@ if($tid){
 												</div>
 												<div>
 													<?php echo $LANG['NEW_VALUE']; ?>:
-													<input name="imgid-<?php echo $imgArr['mediaID'];?>" type="text" size="5" maxlength="5" />
+													<input name="imgid-<?= $imgArr['mediaID'] ?>" type="text" size="5" maxlength="5" />
 												</div>
 											</td>
 											<?php
@@ -275,7 +275,7 @@ if($tid){
 										else{
 											?>
 											<div style='float:right;margin-right:10px;'>
-												<a href="../../imagelib/imgdetails.php?imgid=<?= $imgArr['mediaID'] ?>&emode=1">
+												<a href="../../imagelib/imgdetails.php?mediaid=<?= $imgArr['mediaID'] ?>&emode=1">
 													<img src="../../images/edit.png" style="width:1.3em;border:0px;" />
 												</a>
 											</div>

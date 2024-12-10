@@ -178,12 +178,12 @@ class SpecProcessorOcr extends Manager{
 	}
 
 	//Misc OCR support functions
-	private function getImageUrl($imgid){
+	private function getImageUrl($mediaID){
 		$retUrl = false;
-		if(is_numeric($imgid)){
-			$sql = 'SELECT url, originalurl FROM media WHERE imgid = ?';
+		if(is_numeric($mediaID)){
+			$sql = 'SELECT url, originalurl FROM media WHERE mediaID = ?';
 			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('i', $imgid);
+				$stmt->bind_param('i', $mediaID);
 				$stmt->execute();
 				$url = '';
 				$stmt->bind_result($url, $retUrl);
@@ -195,13 +195,13 @@ class SpecProcessorOcr extends Manager{
 		return $retUrl;
 	}
 
-	private function databaseRawStr($imgId,$rawStr,$notes,$source){
-		if(is_numeric($imgId) && $rawStr){
+	private function databaseRawStr($mediaID,$rawStr,$notes,$source){
+		if(is_numeric($mediaID) && $rawStr){
 			$rawStr = $this->cleanInStr($this->encodeString($rawStr));
 			$score = '';
 			if($rawStr == 'Failed OCR return') $score = 0;
-			$sql = 'INSERT INTO specprocessorrawlabels(imgid,rawstr,notes,source,score) '.
-				'VALUE ('.$imgId.',"'.$rawStr.'",'.
+			$sql = 'INSERT INTO specprocessorrawlabels(mediaID,rawstr,notes,source,score) '.
+				'VALUE ('.$mediaID.',"'.$rawStr.'",'.
 				($notes?'"'.$this->cleanInStr($notes).'"':'NULL').','.
 				($source?'"'.$this->cleanInStr($source).'"':'NULL').','.
 				($score?'"'.$this->cleanInStr($score).'"':'NULL').')';
@@ -262,7 +262,7 @@ class SpecProcessorOcr extends Manager{
 				$this->logOrEcho('Starting batch processing for '.$instCode);
 				$sql = 'SELECT m.mediaID, IFNULL(m.originalurl, m.url) AS url, o.sciName, m.occid '.
 					'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid '.
-					'LEFT JOIN specprocessorrawlabels r ON m.mediaID = r.imgid '.
+					'LEFT JOIN specprocessorrawlabels r ON m.mediaID = r.mediaID '.
 					'WHERE (o.collid = '.$collid.') AND r.prlid IS NULL ';
 				if($procStatus) $sql .= 'AND o.processingstatus = "unprocessed" ';
 				if($limit) $sql .= 'LIMIT '.$limit;
@@ -465,7 +465,7 @@ class SpecProcessorOcr extends Manager{
 				}
 			}
 			if($catNumber){
-				//Grab image primary key (imgid)
+				//Grab image primary key (mediaID)
 				$imgArr = array();
 				$sql = 'SELECT m.mediaID, IFNULL(m.originalurl,m.url) AS url '.
 					'FROM media m INNER JOIN omoccurrences o ON m.occid = o.occid '.

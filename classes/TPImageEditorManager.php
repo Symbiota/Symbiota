@@ -44,7 +44,7 @@ class TPImageEditorManager extends TPEditorManager{
 		$rs = $this->conn->query($sql);
 		$imgCnt = 0;
 		while($r = $rs->fetch_object()){
-			$imageArr[$imgCnt]['imgid'] = $r->mediaID;
+			$imageArr[$imgCnt]['mediaid'] = $r->mediaID;
 			$imageArr[$imgCnt]['url'] = $r->url;
 			$imageArr[$imgCnt]['thumbnailurl'] = $r->thumbnailurl;
 			$imageArr[$imgCnt]['originalurl'] = $r->originalurl;

@@ -68,7 +68,7 @@ class ImageCleaner extends Manager{
 			$status = true;
 			$cnt++;
 			$mediaID = $row->mediaID;
-			$this->logOrEcho($cnt.': Building thumbnail: <a href="../imgdetails.php?imgid=' . $mediaID . '" target="_blank">' . $mediaID . '</a>...');
+			$this->logOrEcho($cnt.': Building thumbnail: <a href="../imgdetails.php?mediaid=' . $mediaID . '" target="_blank">' . $mediaID . '</a>...');
 			$this->conn->autocommit(false);
 			//Tag for updating; needed to ensure two parallel processes are not processing the same image
 			$testSql = 'SELECT thumbnailurl, url FROM media WHERE (mediaID = '. $mediaID . ') FOR UPDATE ';
@@ -372,7 +372,7 @@ class ImageCleaner extends Manager{
 			$url = $r->url;
 			$urlTn = $r->thumbnailurl;
 			$urlOrig = $r->originalurl;
-			$this->logOrEcho($cnt.'. Rebuilding thumbnail: <a href="../imgdetails.php?imgid=' . $r->mediaID . '" target="_blank">' . $r->mediaID . '</a> [cat#: ' . htmlspecialchars($r->catalognumber, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ']...',0,'div');
+			$this->logOrEcho($cnt.'. Rebuilding thumbnail: <a href="../imgdetails.php?mediaid=' . $r->mediaID . '" target="_blank">' . $r->mediaID . '</a> [cat#: ' . htmlspecialchars($r->catalognumber, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ']...',0,'div');
 			//echo 'evaluate_ts: '.$postArr['evaluate_ts'].'<br/>';
 			$tsSource = 0;
 			if($postArr['evaluate_ts']){

@@ -1016,7 +1016,7 @@ class DwcArchiverCore extends Manager{
 			//List image fields
 			$imgCnt = 1;
 			$termArr = $this->imageFieldArr['terms'];
-			unset($termArr['imgID']);
+			unset($termArr['mediaID']);
 			foreach ($termArr as $v) {
 				$fieldElem = $newDoc->createElement('field');
 				$fieldElem->setAttribute('index', $imgCnt);
@@ -1894,10 +1894,10 @@ class DwcArchiverCore extends Manager{
 			else {
 				$localDomain = $this->serverDomain;
 			}
-			$previousImgID = 0;
+			$previousMediaID = 0;
 			while ($r = $rs->fetch_assoc()) {
-				if ($previousImgID == $r['mediaID']) continue;
-				$previousImgID = $r['mediaID'];
+				if ($previousMediaID == $r['mediaID']) continue;
+				$previousMediaID = $r['mediaID'];
 				unset($r['mediaID']);
 				if ($r['identifier'] && substr($r['identifier'], 0, 1) == '/') $r['identifier'] = $localDomain . $r['identifier'];
 				if ($r['accessURI'] && substr($r['accessURI'], 0, 1) == '/') $r['accessURI'] = $localDomain . $r['accessURI'];

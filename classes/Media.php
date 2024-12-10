@@ -971,11 +971,11 @@ class Media {
 		}
 
 		foreach($add_tags as $add) {
-			SymbUtil::execute_query($conn, 'INSERT INTO imagetag (imgid, keyvalue) VALUES (?, ?)', [$media_id, $add]);
+			SymbUtil::execute_query($conn, 'INSERT INTO imagetag (mediaID, keyvalue) VALUES (?, ?)', [$media_id, $add]);
 		}
 
 		foreach($remove_tags as $remove) {
-			SymbUtil::execute_query($conn, 'DELETE FROM imagetag where imgid = ? and keyvalue = ?', [$media_id, $remove]);
+			SymbUtil::execute_query($conn, 'DELETE FROM imagetag where mediaID = ? and keyvalue = ?', [$media_id, $remove]);
 		}
 	}
 
@@ -1260,8 +1260,8 @@ class Media {
 		$media_urls = $result->fetch_assoc();
 
 		$queries = [
-			'DELETE FROM specprocessorrawlabels WHERE imgid = ?',
-			'DELETE FROM imagetag WHERE imgid = ?',
+			'DELETE FROM specprocessorrawlabels WHERE mediaID = ?',
+			'DELETE FROM imagetag WHERE mediaID = ?',
 			'DELETE FROM media WHERE mediaID = ?'
 		];
 		mysqli_begin_transaction($conn);
@@ -1408,9 +1408,9 @@ class Media {
 	 * @return array<string>
 	 */
 	public static function getMediaTags(int|array $media_id, mysqli $conn = null): array {
-		$sql = 'SELECT t.imgid, k.tagkey, k.shortlabel, k.description_en FROM imagetag t
+		$sql = 'SELECT t.mediaID, k.tagkey, k.shortlabel, k.description_en FROM imagetag t
 		INNER JOIN imagetagkey k ON t.keyvalue = k.tagkey
-		WHERE t.imgid ';
+		WHERE t.mediaID ';
 
 		if(is_array($media_id)) {
 			$count = count($media_id);
@@ -1429,7 +1429,7 @@ class Media {
 		);
 		$tags = [];
 		while($row = $res->fetch_object()) {
-			$tags[$row->imgid][$row->tagkey] = $row->shortlabel;
+			$tags[$row->mediaID][$row->tagkey] = $row->shortlabel;
 		}
 		$res->free();
 

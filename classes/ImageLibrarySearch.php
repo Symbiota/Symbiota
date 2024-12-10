@@ -179,7 +179,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 			if(!$this->tagExistance){
 				$sqlWhere .= 'NOT ';
 			}
-			$sqlWhere .= 'IN(SELECT imgid FROM imagetag '.$tagFrag.')';
+			$sqlWhere .= 'IN(SELECT mediaid FROM imagetag '.$tagFrag.')';
 		}
 		if($this->keywords){
 			$keywordArr = explode(";",$this->keywords);
@@ -236,7 +236,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 			$sql .= 'INNER JOIN taxaenumtree e ON m.tid = e.tid ';
 		}
 		if($this->keywords){
-			$sql .= 'INNER JOIN imagekeywords ik ON m.mediaID = ik.imgid ';
+			$sql .= 'INNER JOIN imagekeywords ik ON m.mediaID = ik.mediaid ';
 		}
 		if($this->dbStr && $this->dbStr != 'all'){
 			$sql .= 'INNER JOIN omoccurrences o ON m.occid = o.occid ';
@@ -277,16 +277,16 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 	//Action editing functions
 	public function batchAssignImageTag($postArr){
 		$status = false;
-		$imageArr = $postArr['imgid'];
+		$imageArr = $postArr['mediaid'];
 		$tagName = $postArr['imgTagAction'];
 		if($imageArr && $tagName){
 			$cnt = 0;
 			$fail = 0;
-			foreach($imageArr as $imgid){
-				if(is_numeric($imgid)){
-					$sql = 'INSERT IGNORE INTO imagetag(imgid, keyValue) VALUE(?, ?)';
+			foreach($imageArr as $mediaID){
+				if(is_numeric($mediaID)){
+					$sql = 'INSERT IGNORE INTO imagetag(mediaid, keyValue) VALUE(?, ?)';
 					if($stmt = $this->conn->prepare($sql)){
-						$stmt->bind_param('is', $imgid, $tagName);
+						$stmt->bind_param('is', $mediaID, $tagName);
 						$stmt->execute();
 						if($stmt->affected_rows) $cnt++;
 						elseif($stmt->error){

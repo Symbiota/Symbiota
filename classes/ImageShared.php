@@ -594,12 +594,12 @@ class ImageShared{
 
 			if($occid){
 				//Remove any OCR text blocks linked to the image
-				$this->conn->query('DELETE FROM specprocessorrawlabels WHERE (imgid = '.$imgIdDel.')');
+				$this->conn->query('DELETE FROM specprocessorrawlabels WHERE (mediaID = ' . $imgIdDel . ')');
 			}
 			//Remove image tags
-			$this->conn->query('DELETE FROM imagetag WHERE (imgid = '.$imgIdDel.')');
+			$this->conn->query('DELETE FROM imagetag WHERE (mediaID = ' . $imgIdDel . ')');
 
-			$sql = "DELETE FROM media WHERE (mediaID = ".$imgIdDel.')';
+			$sql = 'DELETE FROM media WHERE (mediaID = ' . $imgIdDel . ')';
 			//echo $sql;
 			if($this->conn->query($sql)){
 				if($removeImg){
@@ -651,7 +651,7 @@ class ImageShared{
 			$kArr = $this->getImageTagValues();
 			foreach($kArr as $key => $description) {
 				if(array_key_exists("ch_$key",$reqArr)) {
-					$sql = "INSERT INTO imagetag (imgid,keyvalue) VALUES (?,?) ";
+					$sql = 'INSERT INTO imagetag (mediaID, keyvalue) VALUES (?,?) ';
 					$stmt = $this->conn->stmt_init();
 					$stmt->prepare($sql);
 					if($stmt){
