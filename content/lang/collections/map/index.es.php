@@ -41,7 +41,7 @@ $LANG['MAX_DENSITY'] = 'Densidad Máxima';
 
 $LANG['RECORDS_TAXA'] = 'Registros y Taxa';
 $LANG['RECORDS'] = 'Registros';
-$LANG['INTERAL_RECORDS'] = 'Registros Internos';
+$LANG['INTERNAL_RECORDS'] = 'Registros Internos';
 $LANG['EXTERNAL_RECORDS'] = 'Registros Externos';
 $LANG['PORTAL_LIST'] = 'Lista de portales';
 $LANG['COLLECTIONS'] = 'Colecciones';
