@@ -93,7 +93,6 @@ $LANG['IMG_CHECKLIST_ADMIN'] = 'Botão de Administração da Inventário Taxonô
 $LANG['IMG_MANAGE_VOUCHERS'] = 'Botão Gerenciar Vouchers Vinculados';
 $LANG['IMG_EDIT_LIST'] = 'Botão Editar Lista de Espécies';
 $LANG['IMG_OPEN_KEY'] = 'Botão de Abertura da Chave Symbiota';
-$LANG['GAMES'] = 'Mostrar jogos';
 $LANG['IMG_VOUCHERS_SIMPLE_MAP'] = 'Mostrar Vouchers no Mapa Simples';
 $LANG['IMG_VOUCHERS_DYNAMIC_MAP'] = 'Mostrar Vouchers no Mapa Dinâmico';
 $LANG['IMG_OCCUR_DYNAMIC_MAP'] = 'Mostrar todas as ocorrências no mapa dinâmico';

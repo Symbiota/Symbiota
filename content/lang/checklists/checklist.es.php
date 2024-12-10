@@ -93,7 +93,6 @@ $LANG['IMG_CHECKLIST_ADMIN'] = 'Botón de administración de la lista de verific
 $LANG['IMG_MANAGE_VOUCHERS'] = 'Botón Administrar vales vinculados';
 $LANG['IMG_EDIT_LIST'] = 'Botón Editar lista de Especies';
 $LANG['IMG_OPEN_KEY'] = 'Abrir botón clave Symbiota';
-$LANG['GAMES'] = 'Mostrar juegos';
 $LANG['IMG_VOUCHERS_SIMPLE_MAP'] = 'Mostrar vales en mapa simple';
 $LANG['IMG_VOUCHERS_DYNAMIC_MAP'] = 'Mostrar vales en el mapa dinámico';
 $LANG['IMG_OCCUR_DYNAMIC_MAP'] = 'Mostrar todas las ocurrencias en el mapa dinámico';

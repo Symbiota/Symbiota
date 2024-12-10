@@ -93,7 +93,6 @@ $LANG['IMG_CHECKLIST_ADMIN'] = 'Bouton d\'administration de la liste de contrôl
 $LANG['IMG_MANAGE_VOUCHERS'] = 'Bouton Gérer les bons liés';
 $LANG['IMG_EDIT_LIST'] = 'Bouton Modifier la liste des espèces';
 $LANG['IMG_OPEN_KEY'] = 'Bouton d\'ouverture de la clé Symbiota';
-$LANG['GAMES'] = 'Afficher les jeux';
 $LANG['IMG_VOUCHERS_SIMPLE_MAP'] = 'Afficher les bons dans une carte simple';
 $LANG['IMG_VOUCHERS_DYNAMIC_MAP'] = 'Afficher les bons dans la carte dynamique';
 $LANG['IMG_OCCUR_DYNAMIC_MAP'] = 'Afficher toutes les occurrences dans la carte dynamique';

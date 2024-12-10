@@ -93,7 +93,6 @@ $LANG['IMG_CHECKLIST_ADMIN'] = 'Checklist Administration Button';
 $LANG['IMG_MANAGE_VOUCHERS'] = 'Manage Linked Vouchers Button';
 $LANG['IMG_EDIT_LIST'] = 'Edit Species List Button';
 $LANG['IMG_OPEN_KEY'] = 'Open Symbiota Key Button';
-$LANG['GAMES'] = 'Show Games';
 $LANG['IMG_VOUCHERS_SIMPLE_MAP'] = 'Show Vouchers in Simple Map';
 $LANG['IMG_VOUCHERS_DYNAMIC_MAP'] = 'Show Vouchers in Dynamic Map';
 $LANG['IMG_OCCUR_DYNAMIC_MAP'] = 'Show All Occurrences in Dynamic Map';
