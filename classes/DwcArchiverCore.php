@@ -274,7 +274,7 @@ class DwcArchiverCore extends Manager{
 	}
 
 	private function applyConditions(){
-		if($this->conditionSql) return true; // @TODO maybe here is different?
+		if($this->conditionSql) return true;
 		if ($this->customWhereSql) {
 			$this->conditionSql = trim($this->customWhereSql) . ' ';
 		}
@@ -2342,7 +2342,6 @@ class DwcArchiverCore extends Manager{
 			$sql = "(SELECT o.occid FROM omoccurrences o INNER JOIN omoccurassociations a ON o.occid = a.occid WHERE o.collid = ?) UNION (SELECT o.occid FROM omoccurrences o INNER JOIN omoccurassociations a ON o.occid = a.occidAssociate WHERE o.collid = ?) LIMIT 1;";
 		}
 		$stmt = $this->conn->stmt_init();
-      	// $stmt->prepare($sql); // @TODO clean up
 		if (!$stmt->prepare($sql)) {
         	throw new Exception("SQL Error: " . $stmt->error);
     	}
@@ -2351,15 +2350,12 @@ class DwcArchiverCore extends Manager{
 		}
 		$stmt->execute();
 		$result = $stmt->get_result();
-		// $rs = $this->conn->query($sql);
-		// if ($rs->num_rows) $bool = true;
 		if ($result && $result->num_rows > 0) {
 			$bool = true;
 		}
 		$result->free();
     	$stmt->close();
 
-		// $rs->free();
 		return $bool;
 	}
 
