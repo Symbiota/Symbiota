@@ -11,6 +11,7 @@ $LANG['CHECKLIST_ADMIN'] = 'Checklist Administration';
 $LANG['MANAGE_VOUCHERS'] = 'Manage Linked Vouchers';
 $LANG['EDIT_LIST'] = 'Edit Species List';
 $LANG['OPEN_KEY'] = 'Open Symbiota Key';
+$LANG['GAMES'] = 'Games';
 $LANG['NAMEGAME'] = 'Name Game';
 $LANG['FLASH'] = 'Flash Card Quiz';
 $LANG['SENSITIVE_SPECIES'] = 'Sensitive species checklist for';

@@ -11,6 +11,7 @@ $LANG['CHECKLIST_ADMIN'] = 'Administración de Lista';
 $LANG['MANAGE_VOUCHERS'] = 'Administrar Especímenes de Vouchers';
 $LANG['EDIT_LIST'] = 'Administrar Lista de Especies';
 $LANG['OPEN_KEY'] = 'Abier Clave de Symbiota';
+$LANG['GAMES'] = 'Juegos';
 $LANG['NAMEGAME'] = 'Nombre del Juego';
 $LANG['FLASH'] = 'Examen con fichas';
 $LANG['SENSITIVE_SPECIES'] = 'Lista de verificación de especies sensibles para';

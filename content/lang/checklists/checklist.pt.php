@@ -11,6 +11,7 @@ $LANG['CHECKLIST_ADMIN'] = 'Administração da Inventários Taxonômicos';
 $LANG['MANAGE_VOUCHERS'] = 'Gerenciar Vouchers Vinculados';
 $LANG['EDIT_LIST'] = 'Editar Lista de Espécies';
 $LANG['OPEN_KEY'] = 'Abrir Chave Symbiota';
+$LANG['GAMES'] = 'Jogos';
 $LANG['NAMEGAME'] = 'Nomear Jogo';
 $LANG['FLASH'] = 'Teste de Cartão Flash';
 $LANG['SENSITIVE_SPECIES'] = 'Inventário Taxonômico de Espécies Sensíveis para';
