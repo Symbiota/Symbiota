@@ -2298,7 +2298,7 @@ Record Limit:
 										<?= $LANG['RECORDS'] ?>
 									</span>
 									<span id="cross_portal_record_label">
-										Internal <?= $LANG['RECORDS'] ?>
+										<?= $LANG['INTERNAL_RECORDS'] ?>
 									</span></a>
 								</li>
 								<li id="cross_portal_results"><a href='#external_occurrencelist'><span><?= $LANG['EXTERNAL_RECORDS'] ?></span></a></li>
