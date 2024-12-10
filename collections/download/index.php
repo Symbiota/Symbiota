@@ -146,7 +146,6 @@ $dwcManager = new DwcArchiverCore();
 									For more information on what data fields are included in DwC, visit the'); ?>
 									<a href="http://rs.tdwg.org/dwc/index.htm"target='_blank'> <?php echo (isset($LANG['DARWIN_GUIDE_LINK']) ? $LANG['DARWIN_GUIDE_LINK'] : 'DwC Quick Reference Guide'); ?></a>.
 								</div>
-								*<a href='http://rs.tdwg.org/dwc/index.htm' class='bodylink' target='_blank'> <?php echo (isset($LANG['WHAT_IS_DARWIN_LINK']) ? $LANG['WHAT_IS_DARWIN_LINK'] : 'Ho What is Darwin Core?me'); ?></a>
 							</div>
 						</fieldset>
 						<fieldset class="sectionDiv">
