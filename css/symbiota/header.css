@@ -30,8 +30,20 @@ header {
   margin-right: 0.4rem;
 }
 
+#login {
+  float: right;
+  margin: 0;
+  padding: 0;
+}
+
+#contactUs {
+  float: left;
+}
+
 .top-brand {
   /* align a and brand-name */
+  clear: both;
+  padding-top: 0.5rem;
   grid-column: 1;
   display: flex;
   align-items: stretch;
