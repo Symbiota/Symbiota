@@ -178,6 +178,8 @@ function handleRemoval(element, inputChip) {
     const targetCategoryCheckboxes =
       document.querySelectorAll('input[id^="cat-"]');
     targetCategoryCheckboxes.forEach((collection) => {
+      console.log("deleteMe collection is: ");
+      console.log(collection);
       collection.checked = false;
     });
     const targetCheckboxes = document.querySelectorAll('input[id^="coll-"]');

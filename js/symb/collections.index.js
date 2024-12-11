@@ -23,6 +23,8 @@ function toggle(target) {
 }
 
 function toggleCat(catid) {
+  console.log("deleteMe toggleCat entered with catid: ");
+  console.log(catid);
   toggle("minus-" + catid);
   toggle("plus-" + catid);
   toggle("cat-" + catid);
@@ -85,7 +87,9 @@ function selectAllCat(cb, target) {
 }
 
 function unselectCat(catTarget) {
-  var catObj = document.querySelector(`input[id^="${catTarget}"][name="cat[]"]`);
+  var catObj = document.querySelector(
+    `input[id^="${catTarget}"][name="cat[]"]`
+  );
   if (catObj) catObj.checked = false;
   uncheckAll();
 }
