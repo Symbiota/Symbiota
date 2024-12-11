@@ -25,15 +25,16 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
 					<?php
 				} else {
 					?>
-					<span class="button button-tertiary">
+					<span class="button button-tertiary" id="contactUs">
 						<a onclick="window.location.href='#'">
 							<?= $LANG['H_CONTACT_US'] ?>
 						</a>
 					</span>
-					<span class="button button-secondary">
-						<a href="<?= $CLIENT_ROOT . "/profile/index.php?refurl=" . htmlspecialchars($_SERVER['SCRIPT_NAME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "?" . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES); ?>">
-							<?= $LANG['H_LOGIN'] ?>
-						</a>
+					<span id="login">
+						<form name="loginForm" method="post" action="<?= $CLIENT_ROOT . "/profile/index.php" ?>">
+							<input name="refurl" type="hidden" value="<?= htmlspecialchars($_SERVER['SCRIPT_NAME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "?" . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES) ?>">
+							<button class="button button-secondary" name="loginButton" type="submit"><?= $LANG['H_LOGIN'] ?></button>
+						</form>
 					</span>
 					<?php
 				}
