@@ -1060,7 +1060,7 @@ if ($SYMB_UID) {
 			dialogContainer.appendChild(dialogEl);
 
 		});
-		document.getElementById('quicksearch').addEventListener('keypress', function (e) {
+		document.getElementById('quicksearch').addEventListener('keypress', e => {
 			if (e.key === 'Enter') {
 			e.preventDefault();
 			const editEnabled = <?php echo ($editCode == 1 || $editCode == 2 || $editCode == 3); ?>;
