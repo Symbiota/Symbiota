@@ -629,6 +629,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 		}
 		?>
 		setSearchForm(document.getElementById("params-form"));
+		toggleTheNonDefaultsClosed(<?php echo $DEFAULTCATID ?>);
 	});
 </script>
 <script>

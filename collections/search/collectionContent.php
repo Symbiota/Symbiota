@@ -20,23 +20,6 @@
 		$targetCatID = (string)$catId;
 		if($targetCatID != '') $targetCatArr = explode(',', $catId);
 		elseif($GLOBALS['DEFAULTCATID'] != '') $targetCatArr = explode(',', $GLOBALS['DEFAULTCATID']);
-		// echo implode(',', $targetCatArr);
-		foreach($targetCatArr as $targetCatId => $targetCat){
-			echo $targetCat;
-			// $shouldExpand = str_replace('-','',$targetCat) == $DEFAULTCATID;
-			// echo $shouldExpand;
-			// if(!$shouldExpand){
-				?>
-				<script type="text/javascript">
-					console.log('deleteMe got here and the category is: ');
-					console.log(<?php echo $targetCat; ?>);
-					document.addEventListener("DOMContentLoaded", function(event) { 
-						toggleCat(<?php echo $targetCat . '-'; ?>);
-					});
-				</script>
-				<?php
-			// }
-		}
 		$collCnt = 0;
 		$borderStyle = ('margin:10px;padding:10px 20px;border:inset');
 		?>

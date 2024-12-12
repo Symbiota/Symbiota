@@ -178,8 +178,6 @@ function handleRemoval(element, inputChip) {
     const targetCategoryCheckboxes =
       document.querySelectorAll('input[id^="cat-"]');
     targetCategoryCheckboxes.forEach((collection) => {
-      console.log("deleteMe collection is: ");
-      console.log(collection);
       collection.checked = false;
     });
     const targetCheckboxes = document.querySelectorAll('input[id^="coll-"]');
@@ -950,6 +948,16 @@ function parseUrlVariables(varStr) {
     result[key] = val;
   });
   return result;
+}
+
+function toggleTheNonDefaultsClosed(defaultId) {
+  const categoryButtons = document.querySelectorAll('a[id^="condense-"]');
+  categoryButtons.forEach((categoryButton) => {
+    if (categoryButton.id !== "condense-" + defaultId + "-") {
+      const idToToggle = categoryButton.id.replace("condense-", "");
+      toggleCat(idToToggle);
+    }
+  });
 }
 
 //////////////////////////////////////////////////////////////////////////
