@@ -30,14 +30,20 @@ header {
   margin-right: 0.4rem;
 }
 
-#login {
-  float: right;
+
+nav.top-login > span > form{
+  display: inline;
   margin: 0;
   padding: 0;
+
 }
 
-#contactUs {
+#profile, #contactUs{
   float: left;
+}
+
+#login, #logout {
+  float: right;
 }
 
 .top-brand {
