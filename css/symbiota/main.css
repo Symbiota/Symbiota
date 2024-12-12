@@ -668,6 +668,24 @@ table.styledtable tr.alt td {
   float: right;
 }
 
+/* Games styling  */
+
+.games-content {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.games-body {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.games-body div{
+  margin: 0.5rem;
+}
+
 /* JQUERY UI modifications */
 .ui-tabs-tab {
   font-size: 1rem;
