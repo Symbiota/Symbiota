@@ -4,6 +4,7 @@ function verifyCoordinates(f, client_root) {
 	//Function tiggered whenever decimalLatitude or decimalLongitud fields are modified
 	//Uses GBIF spacial boundary tool to check if coordinates fall within country/state/county boundaries
 	//Following code needs to be modified to use intenal shape spatial indexes associated with the geographic thesaurus 
+
 	var lngValue = f.decimallongitude.value;
 	var latValue = f.decimallatitude.value;
 
@@ -16,12 +17,29 @@ function verifyCoordinates(f, client_root) {
 		}).done(function( data ) {
 			if(data){
 				let coord_valid = true;
-					const geocode_form_map = {
-						50: 'country',
-						60: 'stateprovince',
-						70: 'county',
-						80: 'municipality',
+				const geocode_form_map = {
+					50: 'country',
+					60: 'stateprovince',
+					70: 'county',
+					80: 'municipality',
+				}
+
+				function getAccepted(match) {
+					let returnArr = [];
+
+					if(match && typeof match.synonyms === 'string') {
+						returnArr = match.synonyms.split(',').map(v => v.trim());
 					}
+
+					returnArr.push(match.geoterm);
+
+					if(match.geoLevel === 70) {
+						returnArr = [...returnArr, `${match.geoterm} County` ]
+					} 
+
+					return returnArr.map(v => v.toLowerCase().trim());
+				}
+
 				for(let match of data) {
 						if(geocode_form_map[match.geoLevel]) {
 							const form_name = geocode_form_map[match.geoLevel];
@@ -29,7 +47,7 @@ function verifyCoordinates(f, client_root) {
 							if(f[form_name].value === "") {
 								f[form_name].value = match.geoterm;
 								f[form_name].style.backgroundColor = "lightblue";
-							} else if(f[form_name].value.toLowerCase() !== match.geoterm.toLowerCase()) {
+							} else if(!getAccepted(match).includes(f[form_name].value.toLowerCase())) {
 								coord_valid = false;
 							}
 
@@ -37,9 +55,7 @@ function verifyCoordinates(f, client_root) {
 				}
 				if(!coord_valid) {
 					alert("Are the coordinates accurate? They currently map to: " + data.map(d => d.geoterm).join(', ') + " which differs from what is in the form. Click globe symbol to display coordinates in map.");
-				} else if(data && !data.length) {
-					alert("Are the coordinates accurate? There are no matching localities tracked by this portal. Could mean that Geographic Thesaurus needs to be update or coordinates are in the ocean. Click globe symbol to display coordinates in map.");
-				}
+				} 
 			}
 		});
 	}

@@ -956,10 +956,10 @@ class GeographicThesaurus extends Manager {
 		if(!$lng || !$lat) return [];
 
 		$result = SymbUtil::execute_query($this->conn ,"
-			SELECT g.geoThesID, geoterm, geoLevel 
+			SELECT g.geoThesID, g.geoterm, g.geoLevel, s.synonyms
 			from geographicthesaurus g 
 			join geographicpolygon gp on gp.geoThesID = g.geoThesID 
-			where ST_Within(Point(?, ?), gp.footprintPolygon) order by geolevel
+			left join (SELECT acceptedID, GROUP_CONCAT(geoterm) as `synonyms` from geographicthesaurus where acceptedID is not null group by acceptedID) s on s.acceptedID = g.geoThesID where ST_Within(Point(?, ?), gp.footprintPolygon) order by geolevel
 			", [floatval($lng), floatval($lat)]);
 
 		$matches = [];

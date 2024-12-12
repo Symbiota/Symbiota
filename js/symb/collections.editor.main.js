@@ -380,15 +380,20 @@ function stateProvinceChanged(stateVal) {
 	}
 }
 
+function coordinatesChanged(f, client_root) {
+	verifyDecimalLatitude(f);
+	verifyDecimalLongitude(f);
+	verifyCoordinates(f, client_root);
+	fieldChanged('decimallatitude');
+}
+
 function decimalLatitudeChanged(f, client_root) {
 	verifyDecimalLatitude(f);
-	verifyCoordinates(f, client_root);
 	fieldChanged('decimallatitude');
 }
 
 function decimalLongitudeChanged(f, client_root) {
 	verifyDecimalLongitude(f);
-	verifyCoordinates(f, client_root);
 	fieldChanged('decimallongitude');
 }
 
@@ -680,7 +685,7 @@ function parseVerbatimCoordinates(f, verbose) {
 			f.decimallatitude.value = Math.round(latDec * 1000000) / 1000000;
 			f.decimallongitude.value = Math.round(lngDec * 1000000) / 1000000;
 			decimalLatitudeChanged(f);
-			decimalLongitudeChanged(f);
+			decimalLongitudeChanged(f);	
 		}
 		else {
 			if (verbose) alert("Unable to parse coordinates");
