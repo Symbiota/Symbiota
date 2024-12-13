@@ -7,7 +7,7 @@ class QueryUtil {
 	 * @param string $sql 
 	 * @param string $params
 	 */
-	static function execute_query(mysqli $conn, string $sql, array $params) {
+	static function executeQuery(mysqli $conn, string $sql, array $params) {
 		//This is supported from 4 to 8
 		$version = phpversion();
 		[$major, $minor, $patch] = explode('.', $version);

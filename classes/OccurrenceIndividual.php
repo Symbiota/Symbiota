@@ -3,6 +3,7 @@ include_once('Manager.php');
 include_once('OccurrenceAccessStats.php');
 include_once('ChecklistVoucherAdmin.php');
 include_once('utilities/GeneralUtil.php');
+include_once('utilities/QueryUtil.php');
 
 class OccurrenceIndividual extends Manager{
 
@@ -76,7 +77,7 @@ class OccurrenceIndividual extends Manager{
 		if(!$this->occid){
 			//Check occurrence recordID
 			$sql = 'SELECT occid FROM omoccurrences WHERE (occurrenceid = ?) OR (recordID = ?)';
-			if($result = SymbUtil::execute_query($this->conn, $sql, [$guid, $guid])){
+			if($result = QueryUtil::executeQuery($this->conn, $sql, [$guid, $guid])){
 				if($row = $result->fetch_assoc()) {
 					$this->occid = $row['occid'];
 				}
@@ -86,7 +87,7 @@ class OccurrenceIndividual extends Manager{
 		if(!$this->occid){
 			//Check image recordID
 			$sql = 'SELECT occid FROM images WHERE recordID = ?';
-			if($result = SymbUtil::execute_query($this->conn, $sql, [$guid])){
+			if($result = QueryUtil::executeQuery($this->conn, $sql, [$guid])){
 				if($row = $result->fetch_assoc()) {
 					$this->occid = $row['occid'];
 				}
@@ -96,7 +97,7 @@ class OccurrenceIndividual extends Manager{
 		if(!$this->occid){
 			//Check identification recordID
 			$sql = 'SELECT occid FROM omoccurdeterminations WHERE recordID = ?';
-			if($result = SymbUtil::execute_query($this->conn, $sql, [$guid])){
+			if($result = QueryUtil::executeQuery($this->conn, $sql, [$guid])){
 				if($row = $result->fetch_assoc()) {
 					$this->occid = $row['occid'];
 				}

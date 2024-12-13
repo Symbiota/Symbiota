@@ -4,6 +4,7 @@ include_once($SERVER_ROOT . '/classes/OccurrenceMaintenance.php');
 include_once($SERVER_ROOT . '/classes/GuidManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/Encoding.php');
+include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 
 class SpecUploadBase extends SpecUpload{
 
@@ -1915,7 +1916,7 @@ class SpecUploadBase extends SpecUpload{
 					$parsedCatalogNumbers = self::parseOtherCatalogNumbers($recMap['othercatalognumbers']);
 					$sql = 'INSERT INTO uploadKeyValueTemp (`key`, `value`, dbpk, upload_uid, type) VALUES (?, ?, ?, ?, "omoccuridentifiers")';
 					foreach ($parsedCatalogNumbers as $entry) {
-						mysqli_execute_query($this->conn, $sql, [$entry['key'], $entry['value'], $recMap['dbpk'], $GLOBALS['SYMB_UID']]);
+						QueryUtil::executeQuery($this->conn, $sql, [$entry['key'], $entry['value'], $recMap['dbpk'], $GLOBALS['SYMB_UID']]);
 					}
 				} 
 			}
