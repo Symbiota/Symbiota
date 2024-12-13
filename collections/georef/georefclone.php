@@ -198,7 +198,7 @@ if($coorArr && count($coorArr) == 4){
 		></div>
 		<!-- This is inner text! -->
 		<div role="main" id="innertext" style="margin-top: <?php echo $topVal; ?>">
-			<h1 class="page-heading">Georeference Clone Tool</h1>
+			<h1 class="page-heading"><?php echo $LANG['GEOREFERENCE_CLONE']; ?></h1>
 			<fieldset style="padding:10px;">
             <legend><b>
                <?= $LANG['SEARCH_FORM'] ?>

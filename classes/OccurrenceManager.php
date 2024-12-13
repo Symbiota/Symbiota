@@ -1,8 +1,9 @@
 <?php
 include_once($SERVER_ROOT.'/classes/OccurrenceSearchSupport.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceUtilities.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceTaxaManager.php');
+include_once($SERVER_ROOT.'/classes/AssociationManager.php');
 
 class OccurrenceManager extends OccurrenceTaxaManager {
 
@@ -15,10 +16,12 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	protected $searchSupportManager = null;
 	protected $errorMessage;
 	private $LANG;
+	protected $associationManager=null;
 
 	public function __construct($type='readonly'){
 		parent::__construct($type);
  		if(array_key_exists('reset',$_REQUEST) && $_REQUEST['reset'])  $this->reset();
+		$this->associationManager = new AssociationManager();
 		$this->readRequestVariables();
 		$langTag = '';
 		if(!empty($GLOBALS['LANG_TAG'])) $langTag = $GLOBALS['LANG_TAG'];
@@ -63,6 +66,9 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			}
 			$voucherVariableArr = $this->voucherManager->getQueryVariableArr();
 			if($voucherVariableArr){
+				if(isset($voucherVariableArr['association-type'])) $this->searchTermArr['association-type'] = $voucherVariableArr['association-type'];
+				if(isset($voucherVariableArr['taxontype-association'])) $this->searchTermArr['taxontype-association'] = $voucherVariableArr['taxontype-association'];
+				if(isset($voucherVariableArr['associated-taxa'])) $this->searchTermArr['associated-taxa'] = $voucherVariableArr['associated-taxa'];
 				if(isset($voucherVariableArr['collid'])) $this->searchTermArr['db'] = $voucherVariableArr['collid'];
 				if(isset($voucherVariableArr['country'])) $this->searchTermArr['country'] = $voucherVariableArr['country'];
 				if(isset($voucherVariableArr['state'])) $this->searchTermArr['state'] = $voucherVariableArr['state'];
@@ -120,7 +126,12 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$this->displaySearchArr[] = $this->LANG['DATASETS'] . ': ' . $this->getDatasetTitle($this->searchTermArr['datasetid']);
 		}
 		$sqlWhere .= $this->getTaxonWhereFrag();
-
+		$hasValidRelationship = isset(($this->associationArr['relationship'])) && $this->associationArr['relationship']!=='none';
+		if($hasValidRelationship){
+			$sqlWhere = substr_replace($sqlWhere,'',-1);
+			$sqlWhere .= $this->associationManager->getAssociatedRecords($this->associationArr) . ')';
+		}
+		
 		if(array_key_exists('country',$this->searchTermArr)){
 			$countryArr = explode(";",$this->searchTermArr["country"]);
 			$tempArr = Array();
@@ -173,48 +184,27 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$localArr = explode(';',$this->searchTermArr['local']);
 			$tempSqlArr = Array();
 			$tempTermArr = Array();
-			$fullTextArr = array();
-			foreach($localArr as $k => $value){
-				$value = trim($value);
+			$singleWords = array();
+			foreach($localArr as $value){
+				$value = $this->cleanInStr(str_replace(array('"', '+', '%'), '', $value));
 				if($value == 'NULL'){
 					$tempSqlArr[] = '(o.locality IS NULL)';
 					$tempTermArr[] = 'Locality IS NULL';
 				}
 				else{
-					$fullTextSearch = true;
-					if(strlen($value) < 4) $fullTextSearch = false;
-					elseif(strpos($value,' ')){
-						$wordArr = explode(' ',$value);
-						$fullTextSearch = false;
-						foreach($wordArr as $w){
-							if(strlen($w) > 3){
-								$fullTextSearch = true;
-								break;
-							}
-						}
+					$tempSqlArr[] = '(o.municipality LIKE "'.$value.'%")';
+					if(strpos($value, ' ')){
+						$tempSqlArr[] = '(MATCH(o.locality) AGAINST("'.str_replace(' ', ' +', $value).'" IN BOOLEAN MODE) AND o.locality LIKE "%'.$value.'%")';
 					}
-					if($fullTextSearch) $fullTextArr[] = $this->cleanInStr(str_replace('"', '', $value));
 					else{
-						$tempSqlArr[] = '(o.municipality LIKE "'.$this->cleanInStr($value).'%" OR o.Locality LIKE "%'.$this->cleanInStr($value).'%")';
-						$tempTermArr[] = $value;
+						$singleWords[] = $value;
 					}
-					//if($fullTextSearch) $tempArr[] = '(MATCH(f.locality) AGAINST(\'"'.$this->cleanInStr(str_replace('"', '', $value)).'"\' IN BOOLEAN MODE)) ';
-					//else $tempArr[] = '(o.municipality LIKE "'.$this->cleanInStr($value).'%" OR o.Locality LIKE "%'.$this->cleanInStr($value).'%")';
+					$tempTermArr[] = $value;
 				}
 			}
-			if($fullTextArr){
-				if(count($fullTextArr) == 1){
-					$searchTerm = array_pop($fullTextArr);
-					$tempSqlArr[] = '(MATCH(f.locality) AGAINST(\'"'.$searchTerm.'"\' IN BOOLEAN MODE)) ';
-					$this->displaySearchArr[] = $searchTerm;
-				}
-				else{
-					$tempSqlArr[] = '(MATCH(f.locality) AGAINST("'.implode(' ',$fullTextArr).'")) ';
-					$this->displaySearchArr[] = implode(' ' .  $this->LANG['OR'] . ' ', $fullTextArr);
-				}
-			}
-			$sqlWhere .= 'AND ('.implode(' OR ',$tempSqlArr).') ';
-			if($tempTermArr) $this->displaySearchArr[] = implode(' ' .  $this->LANG['OR'] . ' ', $tempTermArr);
+			if($singleWords) $tempSqlArr[] = '(MATCH(o.locality) AGAINST("'.implode(' ', $singleWords).'"))';
+			$sqlWhere .= 'AND ('.implode(' OR ', $tempSqlArr).') ';
+			if($tempTermArr) $this->displaySearchArr[] = implode(' OR ', $tempTermArr);
 		}
 		if(array_key_exists("elevlow",$this->searchTermArr) || array_key_exists("elevhigh",$this->searchTermArr)){
 			$elevlow = -200;
@@ -272,30 +262,27 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 				$tempCollTextArr[] = $this->LANG['COLLECTOR_IS_NULL'];
 			}
 			else{
-				$fullCollArr = array();
-				foreach($collectorArr AS $collStr){
-					if(strlen($collStr) == 2 || strlen($collStr) == 3 || in_array(strtolower($collStr),array('best','little'))){
-						//Need to avoid FULLTEXT stopwords interfering with return
-						$tempCollSqlArr[] = '(o.recordedBy LIKE "%'.$this->cleanInStr($collStr).'%")';
-						$tempCollTextArr[] = $collStr;
+				$singleWordArr = array();
+				foreach($collectorArr as $value){
+					$value = $this->cleanInStr(str_replace(array('"', '+', '%'), '', $value));
+					if($value == 'NULL'){
+						$tempCollSqlArr[] = '(o.recordedby IS NULL)';
+						$tempCollTextArr[] = 'Collector IS NULL';
 					}
 					else{
-						$fullCollArr[] = $this->cleanInStr(str_replace('"','',$collStr));
-						//$tempArr[] = '(MATCH(f.recordedby) AGAINST("'.$this->cleanInStr($collStr).'")) ';
+						if(strpos($value, ' ')){
+							$tempCollSqlArr[] = '(MATCH(o.recordedby) AGAINST("'.str_replace(' ', ' +', $value).'" IN BOOLEAN MODE) AND o.recordedby LIKE "%'.$value.'%")';
+						}
+						else{
+							$singleWordArr[] = $value;
+						}
+						$tempCollTextArr[] = $value;
 					}
 				}
-				if(count($fullCollArr) == 1){
-					$collTerm = array_pop($fullCollArr);
-					$tempCollSqlArr[] = '(MATCH(f.recordedby) AGAINST(\'"'.$collTerm.'"\' IN BOOLEAN MODE)) ';
-					$tempCollTextArr[] = $collTerm;
-				}
-				else{
-					$tempCollSqlArr[] = '(MATCH(f.recordedby) AGAINST("'.implode(' ',$fullCollArr).'")) ';
-					$tempCollTextArr = array_merge($tempCollTextArr, explode(' ',implode(' ',$fullCollArr)));
-				}
+				if($singleWordArr) $tempCollSqlArr[] = '(MATCH(o.recordedby) AGAINST("'.implode(' ', $singleWordArr).'"))';
 			}
 			if($tempCollSqlArr) $sqlWhere .= 'AND ('.implode(' OR ',$tempCollSqlArr).') ';
-			$this->displaySearchArr[] = implode(' ' .  $this->LANG['OR'] . ' ', $tempCollTextArr);
+			if($tempCollTextArr) $this->displaySearchArr[] = implode(' OR ',$tempCollTextArr);
 		}
 		if(array_key_exists("collnum",$this->searchTermArr)){
 			$collNumArr = explode(";",$this->cleanInStr($this->searchTermArr["collnum"]));
@@ -465,6 +452,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 				$this->displaySearchArr[] = $this->LANG['INCLUDE_CULTIVATED'];
 			}
 		}
+		// var_dump('$sqlWhere after includecult: ' . $sqlWhere);
 		if(array_key_exists('attr',$this->searchTermArr)){
 			$traitNameSql = 'SELECT t.traitName, s.stateName FROM tmtraits t JOIN tmstates s ON s.traitid = t.traitid WHERE s.stateid IN(' . $this->searchTermArr['attr'] . ')';
 			$rs = $this->conn->query($traitNameSql);
@@ -488,7 +476,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			//Make the sql valid, but return nothing
 			//$this->sqlWhere = 'WHERE o.occid IS NULL ';
 		}
-		//echo $this->sqlWhere;
+		// echo $this->sqlWhere; exit;
 	}
 
 	private function getAdditionIdentifiers($identFrag){
@@ -528,7 +516,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	}
 
 	protected function formatDate($inDate){
-		$retDate = OccurrenceUtilities::formatDate($inDate);
+		$retDate = OccurrenceUtil::formatDate($inDate);
 		return $retDate;
 	}
 
@@ -542,9 +530,6 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 				else{
 					$sqlJoin .= 'INNER JOIN fmchklsttaxalink cl ON o.tidinterpreted = cl.tid ';
 				}
-			}
-			if(strpos($sqlWhere,'MATCH(f.recordedby)') || strpos($sqlWhere,'MATCH(f.locality)')){
-				$sqlJoin .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 			}
 			if(strpos($sqlWhere,'e.taxauthid')){
 				$sqlJoin .= 'INNER JOIN taxaenumtree e ON o.tidinterpreted = e.tid ';
@@ -670,6 +655,26 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 				$retStr .= '&taxontype=1';
 			}
 		}
+		$patternOfOnlyLettersDigitsAndSpaces = '/^[a-zA-Z0-9\s\-]*$/'; // TOOD accommodate symbols associated with extinct taxa, hybrid crosses, and abbreviations with periods, e.g. "var."?
+		if(isset($this->associationArr['search'])){
+			if (preg_match($patternOfOnlyLettersDigitsAndSpaces, $this->associationArr['search'])==1) {
+				$retStr .= '&associated-taxa=' . $this->associationArr['search'];
+			}
+		}
+
+		if(isset($this->associationArr['relationship'])){
+			if (preg_match($patternOfOnlyLettersDigitsAndSpaces, $this->associationArr['relationship'])==1) {
+				$retStr .= '&association-type=' . $this->associationArr['relationship'];
+			}
+		}
+
+		if(isset($this->associationArr['associated-taxa'])){
+			$retStr .= '&associated-taxon-type=' . intval($this->associationArr['associated-taxa']);
+		}
+		if(isset($this->associationArr['usethes-associations'])){
+			$retStr .= '&usethes-associations=' . intval($this->associationArr['usethes-associations']);
+		}
+
 		return substr($retStr, 1);
 	}
 
@@ -749,6 +754,10 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		}
 		if(array_key_exists('taxa',$_REQUEST) && $_REQUEST['taxa']){
 			$this->setTaxonRequestVariable();
+		}
+		$hasEverythingRequiredForAssociationSearch = (array_key_exists('association-type',$_REQUEST) && $_REQUEST['association-type'] || array_key_exists('associated-taxa',$_REQUEST) && $_REQUEST['associated-taxa']) && array_key_exists('taxontype-association',$_REQUEST) && $_REQUEST['taxontype-association'];
+		if($hasEverythingRequiredForAssociationSearch){
+			$this->setAssociationRequestVariable();
 		}
 		if(array_key_exists('country',$_REQUEST)){
 			$country = $this->cleanInputStr($_REQUEST['country']);
@@ -982,6 +991,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		if(array_key_exists('footprintwkt',$_REQUEST) && $_REQUEST['footprintwkt']){
 			$this->searchTermArr['footprintwkt'] = $this->cleanInputStr($_REQUEST['footprintwkt']);
 		}
+
 	}
 
 	private function setChecklistVariables($clid){

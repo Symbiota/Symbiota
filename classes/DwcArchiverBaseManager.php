@@ -1,6 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/Manager.php');
-include_once($SERVER_ROOT.'/classes/UuidFactory.php');
+include_once($SERVER_ROOT . '/classes/Manager.php');
 
 class DwcArchiverBaseManager extends Manager{
 

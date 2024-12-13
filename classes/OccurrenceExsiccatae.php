@@ -432,20 +432,12 @@ class OccurrenceExsiccatae {
 			}
 			elseif($collId && is_numeric($collId) && ($identifier || ($pArr['recordedby'] && $pArr['recordnumber']))){
 				//Grab matching occid(s)
-				$sql1 = 'SELECT o.occid '.
-					'FROM omoccurrences o LEFT JOIN omoccurrencesfulltext f ON o.occid = f.occid '.
-					'WHERE o.collid = '.$collId.' ';
+				$sql1 = 'SELECT o.occid FROM omoccurrences o WHERE o.collid = '.$collId.' ';
 				if($identifier){
 					$sql1 .= 'AND (o.catalogNumber = '.(is_numeric($identifier)?$identifier:'"'.$identifier.'"').') ';
 				}
 				else{
-					if(strlen($pArr['recordedby']) < 4 || in_array(strtolower($pArr['recordedby']),array('best','little'))){
-						//Need to avoid FULLTEXT stopwords interfering with return
-						$sql1 .= 'AND (o.recordedby LIKE "%'.$pArr['recordedby'].'%")';
-					}
-					else{
-						$sql1 .= 'AND (MATCH(f.recordedby) AGAINST("'.$pArr['recordedby'].'")) ';
-					}
+					$sql1 .= 'AND (MATCH(o.recordedby) AGAINST("'.$pArr['recordedby'].'" IN BOOLEAN MODE)) ';
 					$sql1 .= 'AND (o.recordnumber = '.(is_numeric($pArr['recordnumber'])?$pArr['recordnumber']:'"'.$pArr['recordnumber'].'"').') ';
 				}
 				$sql1 .= 'LIMIT 5';
@@ -775,6 +767,7 @@ class OccurrenceExsiccatae {
 	}
 
 	private function cleanOutStr($str){
+		if(!isset($str)) return null;
 		$newStr = str_replace('"',"&quot;",$str);
 		$newStr = str_replace("'","&apos;",$newStr);
 		//$newStr = $this->conn->real_escape_string($newStr);

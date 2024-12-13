@@ -24,6 +24,7 @@ $LANG['SAMPLE_PROPERTIES'] = 'Propiedades de muestra';
 $LANG['INCLUDE_CATA_NUM_GUIDs'] = 'Incluir otros números de catálogo y GUID';
 $LANG['CATALOG_NUMBER'] = 'Número de catálogo';
 $LANG['SEPARATE_MULTIPLE_W_COMMA'] = 'Separar varios con comas.';
+$LANG['SEPARATE_MULTIPLE_W_COMMA_DASH'] = 'Separe números múltiples con comas o proporcione rangos con un guión.';
 $LANG['LIMIT_TO_SPECIMENS_W_IMAGES'] = 'Limitar a especímenes con imágenes';
 $LANG['LIMIT_TO_SPECIMENS_W_GENETIC_DATA'] = 'Limitar a especímenes con datos genéticos';
 $LANG['LOCALITY'] = 'Localidad';
@@ -116,4 +117,8 @@ $LANG['TRAIT_CRITERIA'] = 'Criterios de Rasgo';
 $LANG['TRAIT'] = 'Rasgo';
 $LANG['EXPAND_ALL_SECTIONS'] = 'Expandir todas las secciones';
 $LANG['COLLAPSE_ALL_SECTIONS'] = 'Contraer todas las secciones';
+$LANG['ASSOCIATIONS'] = 'Asociaciones';
+$LANG['ASSOCIATION_DESCRIPTION'] = 'Encuentre todas las apariciones de taxones que tengan la siguiente asociación';
+$LANG['ASSOCIATION_DESCRIPTION_2'] = 'con el siguiente taxon';
+$LANG['ASSOCIATION_TYPE'] = 'Tipo de asociación';
 ?>

@@ -40,7 +40,7 @@ class OccurrenceListManager extends OccurrenceManager{
 			$pageRequest = ($pageRequest - 1)*$cntPerPage;
 		}
 		$sql .= ' LIMIT ' . $pageRequest . ',' . $cntPerPage;
-		//echo '<div>Spec sql: ' . $sql . '</div>'; exit;
+		// echo '<div>Spec sql: ' . $sql . '</div>'; exit; // @TODO HERE
 		$result = $this->conn->query($sql);
 		if($result){
 			$securityCollArr = array();
@@ -128,7 +128,7 @@ class OccurrenceListManager extends OccurrenceManager{
 	private function setRecordCnt($sqlWhere){
 		if($sqlWhere){
 			$sql = "SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences o ".$this->getTableJoins($sqlWhere).$sqlWhere;
-			//echo "<div>Count sql: ".$sql."</div>";
+			// echo "<div>Count sql: ".$sql."</div>"; exit; // @TODO here
 			$result = $this->conn->query($sql);
 			if($result){
 				if($row = $result->fetch_object()){

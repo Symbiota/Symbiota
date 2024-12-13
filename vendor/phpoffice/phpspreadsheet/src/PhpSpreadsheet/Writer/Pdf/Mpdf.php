@@ -7,6 +7,16 @@ use PhpOffice\PhpSpreadsheet\Writer\Pdf;
 
 class Mpdf extends Pdf
 {
+    public const SIMULATED_BODY_START = '<!-- simulated body start -->';
+    private const BODY_TAG = '<body>';
+
+    /**
+     * Is the current writer creating mPDF?
+     *
+     * @deprecated 2.0.1 use instanceof Mpdf instead
+     */
+    protected bool $isMPdf = true;
+
     /**
      * Gets the implementation of external PDF library that should be used.
      *
@@ -14,7 +24,7 @@ class Mpdf extends Pdf
      *
      * @return \Mpdf\Mpdf implementation
      */
-    protected function createExternalWriterInstance($config)
+    protected function createExternalWriterInstance(array $config): \Mpdf\Mpdf
     {
         return new \Mpdf\Mpdf($config);
     }
@@ -22,43 +32,18 @@ class Mpdf extends Pdf
     /**
      * Save Spreadsheet to file.
      *
-     * @param string $pFilename Name of the file to save as
+     * @param string $filename Name of the file to save as
      */
-    public function save($pFilename): void
+    public function save($filename, int $flags = 0): void
     {
-        $fileHandle = parent::prepareForSave($pFilename);
-
-        //  Default PDF paper size
-        $paperSize = 'LETTER'; //    Letter    (8.5 in. by 11 in.)
+        $fileHandle = parent::prepareForSave($filename);
 
         //  Check for paper size and page orientation
-        if (null === $this->getSheetIndex()) {
-            $orientation = ($this->spreadsheet->getSheet(0)->getPageSetup()->getOrientation()
-                == PageSetup::ORIENTATION_LANDSCAPE) ? 'L' : 'P';
-            $printPaperSize = $this->spreadsheet->getSheet(0)->getPageSetup()->getPaperSize();
-        } else {
-            $orientation = ($this->spreadsheet->getSheet($this->getSheetIndex())->getPageSetup()->getOrientation()
-                == PageSetup::ORIENTATION_LANDSCAPE) ? 'L' : 'P';
-            $printPaperSize = $this->spreadsheet->getSheet($this->getSheetIndex())->getPageSetup()->getPaperSize();
-        }
-        $this->setOrientation($orientation);
-
-        //  Override Page Orientation
-        if (null !== $this->getOrientation()) {
-            $orientation = ($this->getOrientation() == PageSetup::ORIENTATION_DEFAULT)
-                ? PageSetup::ORIENTATION_PORTRAIT
-                : $this->getOrientation();
-        }
-        $orientation = strtoupper($orientation);
-
-        //  Override Paper Size
-        if (null !== $this->getPaperSize()) {
-            $printPaperSize = $this->getPaperSize();
-        }
-
-        if (isset(self::$paperSizes[$printPaperSize])) {
-            $paperSize = self::$paperSizes[$printPaperSize];
-        }
+        $setup = $this->spreadsheet->getSheet($this->getSheetIndex() ?? 0)->getPageSetup();
+        $orientation = $this->getOrientation() ?? $setup->getOrientation();
+        $orientation = ($orientation === PageSetup::ORIENTATION_LANDSCAPE) ? 'L' : 'P';
+        $printPaperSize = $this->getPaperSize() ?? $setup->getPaperSize();
+        $paperSize = self::$paperSizes[$printPaperSize] ?? PageSetup::getPaperSizeDefault();
 
         //  Create PDF
         $config = ['tempDir' => $this->tempDir . '/mpdf'];
@@ -82,8 +67,22 @@ class Mpdf extends Pdf
         $pdf->SetCreator($this->spreadsheet->getProperties()->getCreator());
 
         $html = $this->generateHTMLAll();
-        foreach (\array_chunk(\explode(PHP_EOL, $html), 1000) as $lines) {
-            $pdf->WriteHTML(\implode(PHP_EOL, $lines));
+        $bodyLocation = strpos($html, self::SIMULATED_BODY_START);
+        if ($bodyLocation === false) {
+            $bodyLocation = strpos($html, self::BODY_TAG);
+            if ($bodyLocation !== false) {
+                $bodyLocation += strlen(self::BODY_TAG);
+            }
+        }
+        // Make sure first data presented to Mpdf includes body tag
+        //   (and any htmlpageheader/htmlpagefooter tags)
+        //   so that Mpdf doesn't parse it as content. Issue 2432.
+        if ($bodyLocation !== false) {
+            $pdf->WriteHTML(substr($html, 0, $bodyLocation));
+            $html = substr($html, $bodyLocation);
+        }
+        foreach (explode("\n", $html) as $line) {
+            $pdf->WriteHTML("$line\n");
         }
 
         //  Write to file
@@ -94,12 +93,8 @@ class Mpdf extends Pdf
 
     /**
      * Convert inches to mm.
-     *
-     * @param float $inches
-     *
-     * @return float
      */
-    private function inchesToMm($inches)
+    private function inchesToMm(float $inches): float
     {
         return $inches * 25.4;
     }

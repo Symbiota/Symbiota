@@ -1,6 +1,6 @@
 <?php
 include_once($SERVER_ROOT.'/classes/Manager.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
+include_once($SERVER_ROOT.'/classes/utilities/TaxonomyUtil.php');
 
 class TaxonomyDisplayManager extends Manager{
 
@@ -523,7 +523,7 @@ class TaxonomyDisplayManager extends Manager{
 			echo '</div>';
 			ob_flush();
 			flush();
-			$status = TaxonomyUtilities::buildHierarchyEnumTree(null, $this->taxAuthId);
+			$status = TaxonomyUtil::buildHierarchyEnumTree(null, $this->taxAuthId);
 			if($status === true) echo '<div style="color:green;margin:30px;">Done! Taxonomic hierarchy index has been created</div>';
 			else echo $status;
 			ob_flush();

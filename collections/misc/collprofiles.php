@@ -1,11 +1,11 @@
 <?php
 include_once('../../config/symbini.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.en.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCollectionProfile.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-include_once($SERVER_ROOT.'/classes/UtilityFunctions.php');
-if($LANG_TAG == 'en' ||!file_exists($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.en.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 unset($_SESSION['editorquery']);
 
@@ -151,6 +151,7 @@ if ($SYMB_UID) {
 			position:sticky;
 			width: 100vw;
 			margin-left: calc(50% - 50vw);
+			z-index: 1;
 		}
 
 		@media (max-width: 1424px) {
@@ -189,6 +190,7 @@ if ($SYMB_UID) {
 				width: 12vw;
 				right: 1rem;
 				float: right;
+				background-color: var(--body-bg-color);
 			}
 		}
 		@media (min-width: 1500px) {
@@ -196,6 +198,7 @@ if ($SYMB_UID) {
 				width: 14vw;
 				right: 1rem;
 				float: right;
+				background-color: var(--body-bg-color);
 			}
 		}
 		@media (min-width: 1550px) {
@@ -203,6 +206,7 @@ if ($SYMB_UID) {
 				width: 15vw;
 				right: 1rem;
 				float: right;
+				background-color: var(--body-bg-color);
 			}
 		}
 		@media (min-width: 1700px) {
@@ -210,6 +214,7 @@ if ($SYMB_UID) {
 				width: 18vw;
 				right: 1rem;
 				float: right;
+				background-color: var(--body-bg-color);
 			}
 		}
 		@media (min-width: 1880px) {
@@ -217,6 +222,7 @@ if ($SYMB_UID) {
 				width: 21vw;
 				right: 1rem;
 				float: right;
+				background-color: var(--body-bg-color);
 			}
 		}
 	</style>
@@ -473,6 +479,9 @@ if ($SYMB_UID) {
 									<a href="#" onclick="$('li.importItem').show(); return false;">
 										<?= $LANG['IMPORT_SPECIMEN'] ?>
 									</a>
+									<a id="importinfo" href="https://biokic.github.io/symbiota-docs/coll_manager/upload/" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>">
+											<img src="../../images/info.png" style="width:13px;" alt="<?= $LANG['INFO_ALT'] ?>" />
+									</a><br/>
 								</li>
 								<li class="importItem">
 									<a href="../admin/specupload.php?uploadtype=7&collid=<?php echo $collid; ?>">
@@ -588,6 +597,9 @@ if ($SYMB_UID) {
 											<?= $LANG['RESTORE_BACKUP'] ?>
 										</a>
 									</li>
+									<?php
+								}
+								?>
 								<!--
 								<li style="margin-left:10px;">
 									<a href="../../imagelib/admin/igsnmapper.php?collid=<?= $collid ?>">
@@ -595,9 +607,6 @@ if ($SYMB_UID) {
 									</a>
 								</li>
 								 -->
-									<?php
-								}
-								?>
 								<li style="margin-left:10px;">
 									<a href="../../imagelib/admin/thumbnailbuilder.php?collid=<?= $collid ?>">
 										<?= $LANG['THUMBNAIL_MAINTENANCE'] ?>
@@ -875,7 +884,7 @@ if ($SYMB_UID) {
 							}
 						}
 						if($collData['rights']){
-							$rightsHtml = UtilityFunctions::getRightsHtml($collData['rights']);
+							$rightsHtml = GeneralUtil::getRightsHtml($collData['rights']);
 							?>
 							<div class="bottom-breathing-room-rel">
 								<span class="label"><?= $LANG['USAGE_RIGHTS'] ?>:</span>
@@ -971,10 +980,10 @@ if ($SYMB_UID) {
 								</a>
 							</h3>
 							<div style='margin:10px;'>
-								<div class="coll-description bottom-breathing-room-rel"><?= $collData['fulldescription'] ?></div>
+								<div class="coll-description bottom-breathing-room-rel"><?= $collArr['fulldescription'] ?></div>
 								<?php
-								if(isset($collData['resourcejson'])){
-									if($resourceArr = json_decode($collData['resourcejson'], true)){
+								if(isset($collArr['resourcejson'])){
+									if($resourceArr = json_decode($collArr['resourcejson'], true)){
 										$title = $LANG['HOMEPAGE'];
 										foreach($resourceArr as $rArr){
 											if(!empty($rArr['title'][$LANG_TAG])) $title = $rArr['title'][$LANG_TAG];
@@ -986,8 +995,8 @@ if ($SYMB_UID) {
 										}
 									}
 								}
-								if(!empty($collData['contactjson'])){
-									if($contactArr = json_decode($collData['contactjson'], true)){
+								if(!empty($collArr['contactjson'])){
+									if($contactArr = json_decode($collArr['contactjson'], true)){
 										if(!empty($contactArr)){
 											?>
 											<section style="margin-left: 0;">

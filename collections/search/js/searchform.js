@@ -36,6 +36,10 @@ let paramNames = [
   "collector",
   "attr[]",
   "materialsampletype",
+  "association-type",
+  "associated-taxa",
+  "taxontype-association",
+  "usethes-associations",
 ];
 const uLat = document.getElementById("upperlat") || null;
 const uLatNs = document.getElementById("upperlat_NS") || null;
@@ -151,46 +155,7 @@ function addChip(element) {
     isTextOrNum
       ? (inputChip.textContent = `${element.dataset.chip}: ${element.value}`)
       : (inputChip.textContent = element.dataset.chip);
-    chipBtn.onclick = function () {
-      element.type === "checkbox"
-        ? (element.checked = false)
-        : (element.value = element.defaultValue);
-      if (element.getAttribute("id") === "dballcb") {
-        const targetCategoryCheckboxes =
-          document.querySelectorAll('input[id^="cat-"]');
-        targetCategoryCheckboxes.forEach((collection) => {
-          collection.checked = false;
-        });
-        const targetCheckboxes =
-          document.querySelectorAll('input[id^="coll-"]');
-        targetCheckboxes.forEach((collection) => {
-          collection.checked = false;
-        });
-        //do the same for collections with slightly different format
-        const targetCheckboxAlts = document.querySelectorAll(
-          'input[id^="collection-"]'
-        );
-        targetCheckboxAlts.forEach((collection) => {
-          collection.checked = false;
-        });
-      }
-      if (element?.getAttribute("id")?.startsWith("materialsampletype")) {
-        // if they close a materialsampletype chip, revert to the none option selected
-        const targetIndex = document.getElementById(
-          "materialsampletype-none"
-        ).selectedIndex;
-        document.getElementById("materialsampletype").selectedIndex =
-          targetIndex;
-      }
-      if (element?.getAttribute("id")?.startsWith("taxontype")) {
-        // if they close a taxontype chip, revert to the any option selected
-        const targetIndex =
-          document.getElementById("taxontype-any").selectedIndex;
-        document.getElementById("taxontype").selectedIndex = targetIndex;
-      }
-      element.dataset.formId ? uncheckAll(element) : "";
-      removeChip(inputChip);
-    };
+    chipBtn.onclick = () => handleRemoval(element, inputChip);
   }
   let screenReaderSpan = document.createElement("span");
   const dataChipText = element.getAttribute("data-chip");
@@ -203,6 +168,72 @@ function addChip(element) {
   chipBtn.appendChild(screenReaderSpan);
   inputChip.appendChild(chipBtn);
   document.getElementById("chips").appendChild(inputChip);
+}
+
+function handleRemoval(element, inputChip) {
+  element.type === "checkbox"
+    ? (element.checked = false)
+    : (element.value = element.defaultValue);
+  if (element.getAttribute("id") === "dballcb") {
+    const targetCategoryCheckboxes =
+      document.querySelectorAll('input[id^="cat-"]');
+    targetCategoryCheckboxes.forEach((collection) => {
+      collection.checked = false;
+    });
+    const targetCheckboxes = document.querySelectorAll('input[id^="coll-"]');
+    targetCheckboxes.forEach((collection) => {
+      collection.checked = false;
+    });
+    //do the same for collections with slightly different format
+    const targetCheckboxAlts = document.querySelectorAll(
+      'input[id^="collection-"]'
+    );
+    targetCheckboxAlts.forEach((collection) => {
+      collection.checked = false;
+    });
+  }
+  setAssociationRelationshipTypeToDefault(element);
+  setMaterialSampleToDefault(element);
+  setTaxonTypeToDefault(element);
+  setAssociationTaxonTypeToDefault(element);
+  // uncheckAllChip(element); // @TODO test this out
+  element.dataset.formId ? uncheckAll(element) : "";
+  removeChip(inputChip);
+}
+
+function setMaterialSampleToDefault(element) {
+  if (element?.getAttribute("id")?.startsWith("materialsampletype")) {
+    const targetIndex = document.getElementById(
+      "materialsampletype-none"
+    ).selectedIndex;
+    document.getElementById("materialsampletype").selectedIndex = targetIndex;
+  }
+}
+
+function setTaxonTypeToDefault(element) {
+  if (element?.getAttribute("id")?.startsWith("taxontype")) {
+    const targetIndex = document.getElementById("taxontype-any")?.selectedIndex;
+    document.getElementById("taxontype").selectedIndex = targetIndex;
+  }
+}
+
+function setAssociationTaxonTypeToDefault(element) {
+  if (element?.getAttribute("id")?.startsWith("taxontype-association-")) {
+    const targetIndex = document.getElementById(
+      "taxontype-association-scientific"
+    )?.selectedIndex;
+    document.getElementById("taxontype-association").selectedIndex =
+      targetIndex;
+  }
+}
+
+function setAssociationRelationshipTypeToDefault(element) {
+  if (element?.getAttribute("id")?.startsWith("association-type-")) {
+    const targetIndex = document.getElementById(
+      "association-type-none"
+    )?.selectedIndex;
+    document.getElementById("association-type").selectedIndex = targetIndex;
+  }
 }
 
 /**
@@ -422,8 +453,8 @@ function autoToggleSelector(e) {
  * Uses 'data-form-id' property in .php
  * @param {Object} element HTML Node Object
  */
-function uncheckAll(element) {
-  let isAllSel = element.classList.contains("all-selector");
+function uncheckAllChip(element) {
+  let isAllSel = element.classList.contains("specobs");
   if (isAllSel) {
     let selChildren = document.querySelectorAll(
       `#${element.dataset.formId} input[type=checkbox]:checked`
@@ -432,12 +463,10 @@ function uncheckAll(element) {
       item.checked = false;
     });
   } else {
-    let items = document.querySelectorAll(
-      `#${element.id} input[type=checkbox]:checked`
+    let item = document.querySelector(
+      `input[id^="${element.className}"][name="cat[]"]`
     );
-    items.forEach((item) => {
-      item.checked = false;
-    });
+    if (item) item.checked = false;
   }
 }
 
@@ -450,8 +479,7 @@ function getCollsSelected() {
   let selectedInForm = Array.from(
     document.querySelectorAll(
       '#search-form-colls input[name="db"]:checked, ' +
-        '#search-form-colls input[name="db[]"]:checked, ' +
-        '#search-form-colls input[name="cat[]"]:checked'
+        '#search-form-colls input[name="db[]"]:checked'
     )
   );
   let collsArr = selectedInForm;
@@ -582,7 +610,7 @@ function getSearchUrl() {
     baseUrl.searchParams.append(key, paramsArr[key]);
   });
 
-  baseUrl.searchParams.append("comingFrom", "search/index.php");
+  baseUrl.searchParams.append("comingFrom", "newsearch");
 
   return baseUrl.href;
 }
@@ -773,6 +801,13 @@ function setSearchForm(frm) {
     ) {
       frm.usethes.checked = false;
     }
+    if (
+      typeof urlVar["usethes-associations"] !== "undefined" &&
+      (urlVar["usethes-associations"] == "" ||
+        urlVar["usethes-associations"] == "0")
+    ) {
+      frm["usethes-associations"].checked = false;
+    }
     if (urlVar.taxontype) {
       if (frm?.taxontype) {
         frm.taxontype.value = urlVar.taxontype;
@@ -783,6 +818,24 @@ function setSearchForm(frm) {
         frm.taxa.value = urlVar.taxa;
       }
     }
+
+    if (urlVar["associated-taxa"]) {
+      if (frm["associated-taxa"]) {
+        frm["associated-taxa"].value = urlVar["associated-taxa"];
+      }
+    }
+    if (urlVar["association-type"]) {
+      if (frm["association-type"]) {
+        frm["association-type"].value = urlVar["association-type"];
+      }
+    }
+
+    if (urlVar["associated-taxon-type"]) {
+      if (frm["taxontype-association"]) {
+        frm["taxontype-association"].value = urlVar["associated-taxon-type"];
+      }
+    }
+
     if (urlVar.country) {
       countryStr = urlVar.country;
       countryArr = countryStr.split(";");

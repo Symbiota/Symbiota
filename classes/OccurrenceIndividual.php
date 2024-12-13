@@ -2,6 +2,7 @@
 include_once('Manager.php');
 include_once('OccurrenceAccessStats.php');
 include_once('ChecklistVoucherAdmin.php');
+include_once('utilities/GeneralUtil.php');
 
 class OccurrenceIndividual extends Manager{
 
@@ -75,31 +76,31 @@ class OccurrenceIndividual extends Manager{
 		if(!$this->occid){
 			//Check occurrence recordID
 			$sql = 'SELECT occid FROM omoccurrences WHERE (occurrenceid = ?) OR (recordID = ?)';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('ss', $guid, $guid);
-				$stmt->execute();
-				$stmt->bind_result($this->occid);
-				$stmt->close();
+			if($result = SymbUtil::execute_query($this->conn, $sql, [$guid, $guid])){
+				if($row = $result->fetch_assoc()) {
+					$this->occid = $row['occid'];
+				}
+				$result->free();
 			}
 		}
 		if(!$this->occid){
 			//Check image recordID
 			$sql = 'SELECT occid FROM images WHERE recordID = ?';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('s', $guid);
-				$stmt->execute();
-				$stmt->bind_result($this->occid);
-				$stmt->close();
+			if($result = SymbUtil::execute_query($this->conn, $sql, [$guid])){
+				if($row = $result->fetch_assoc()) {
+					$this->occid = $row['occid'];
+				}
+				$result->free();
 			}
 		}
 		if(!$this->occid){
 			//Check identification recordID
 			$sql = 'SELECT occid FROM omoccurdeterminations WHERE recordID = ?';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('s', $guid);
-				$stmt->execute();
-				$stmt->bind_result($this->occid);
-				$stmt->close();
+			if($result = SymbUtil::execute_query($this->conn, $sql, [$guid])){
+				if($row = $result->fetch_assoc()) {
+					$this->occid = $row['occid'];
+				}
+				$result->free();
 			}
 		}
 		return $this->occid;
@@ -336,6 +337,34 @@ class OccurrenceIndividual extends Manager{
 			}
 			$stmt->close();
 		}
+		if ($this->occArr['earlyInterval'])
+			$this->occArr['earlyIntervalHieararchy'] = $this->getPaleoGtsParents($this->occArr['earlyInterval']);
+		if ($this->occArr['lateInterval'])
+			$this->occArr['lateIntervalHieararchy'] = $this->getPaleoGtsParents($this->occArr['lateInterval']);
+	}
+
+	public function getPaleoGtsParents($term){
+		$retArr = [];
+		$sql = 'SELECT gtsid, gtsterm, rankid, rankname, parentgtsid FROM omoccurpaleogts WHERE rankid > 10 AND gtsterm = "'.$this->cleanInStr($term).'"';
+		$parentId = '';
+		do{
+			$rs = $this->conn->query($sql);
+			if($r = $rs->fetch_object()){
+				if($parentId == $r->parentgtsid){
+					$parentId = 0;
+				}
+				else{
+					$retArr[] = $r->gtsterm	;
+					$parentId = $r->parentgtsid;
+				}
+			}
+			else $parentId = 0;
+			$rs->free();
+			$sql = 'SELECT gtsid, gtsterm, rankid, rankname, parentgtsid FROM omoccurpaleogts WHERE rankid > 10 AND gtsid = '.$parentId;
+		}while($parentId);
+		$retArr = array_reverse($retArr);
+		$retStr = implode(' | ', $retArr);
+		return trim($retStr);
 	}
 
 	private function setLoan(){
@@ -420,7 +449,7 @@ class OccurrenceIndividual extends Manager{
 					$objectID = $r->catalogNumber;
 					if($objectID) {
 						if(strpos($objectID, $r->instCode) === false){
-							//Append institution and collection code to catalogNumber, but only if it is not already included 
+							//Append institution and collection code to catalogNumber, but only if it is not already included
 							$collCode = $r->instCode;
 							if($r->collCode) $collCode .= '-' . $r->collCode;
 							$objectID = $collCode . ':' . $r->catalogNumber;
@@ -777,7 +806,7 @@ class OccurrenceIndividual extends Manager{
 
 			//Email to portal admin
 			$emailAddr = $GLOBALS['ADMIN_EMAIL'];
-			$comUrl = $this->getDomain().$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid=' . $this->occid . '#commenttab';
+			$comUrl = GeneralUtil::getDomain().$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid=' . $this->occid . '#commenttab';
 			$subject = $GLOBALS['DEFAULT_TITLE'] . ' '. $LANG['INAPPROPRIATE'] . '<br/>';
 			$bodyStr = $LANG['REPORTED_AS_INAPPROPRIATE'] . ':<br/> <a href="' . $comUrl  . '">' . $comUrl . '</a>';
 			$headerStr = "MIME-Version: 1.0 \r\nContent-type: text/html \r\nTo: " . $emailAddr . " \r\nFrom: Admin <" . $emailAddr . "> \r\n";

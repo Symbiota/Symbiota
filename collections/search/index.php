@@ -6,9 +6,12 @@ include_once($SERVER_ROOT . '/classes/CollectionMetadata.php');
 include_once($SERVER_ROOT . '/classes/DatasetsMetadata.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceAttributeSearch.php');
+include_once($SERVER_ROOT.'/classes/AssociationManager.php');
 if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT . '/content/lang/collections/search/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/search/index.en.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/search/index.' . $LANG_TAG . '.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
+
+$filename = file_exists($SERVER_ROOT . '/js/symb/'. $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/'. $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 
 $dbsWithBracketsRemoved = array_key_exists("db",$_GET) ?  str_replace(array('[',']'), '', $_GET["db"]) : '';
 $explodable = $dbsWithBracketsRemoved;
@@ -28,6 +31,8 @@ $catId = array_key_exists("catid",$_REQUEST)?$_REQUEST["catid"]:'';
 $collList = $collManager->getFullCollectionList($catId);
 $specArr = (isset($collList['spec'])?$collList['spec']:null);
 $obsArr = (isset($collList['obs'])?$collList['obs']:null);
+$associationManager = new AssociationManager();
+$relationshipTypes = $associationManager->getRelationshipTypes();
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -116,20 +121,20 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								<input type="text" name="taxa" id="taxa" data-chip="<?php echo $LANG['TAXON'] ?>" />
 								<span class="inset-input-label"><?php echo $LANG['TAXON'] ?></span>
 							</label>
-							<span class="assistive-text"><?php echo $LANG['TYPE_CHAR_FOR_SUGGESTIONS'] ?></span>
 						</div>
-							<div style="padding-top:14px">
-						<div class="select-container" style="position: relative">
-							<label for="taxontype" class="screen-reader-only"><?php echo $LANG['TAXON_TYPE'] ?></label>
-							<select name="taxontype" id="taxontype" style="margin-top:0;padding-top:0; margin-bottom: 0.5rem">
-								<option id="taxontype-scientific" value="2" data-chip="<?php echo $LANG['TAXON'] . ': ' . $LANG['SCIENTIFIC_NAME'] ?>"><?php echo $LANG['SCIENTIFIC_NAME'] ?></option>
-								<option id="taxontype-family" value="3" data-chip="<?php echo $LANG['TAXON'] . ': ' . $LANG['FAMILY'] ?>"><?php echo $LANG['FAMILY'] ?></option>
-								<option id="taxontype-group" value="4" data-chip="<?php echo $LANG['TAXON'] . ': ' . $LANG['TAXONOMIC_GROUP'] ?>"><?php echo $LANG['TAXONOMIC_GROUP'] ?></option>
-								<option id="taxontype-common" value="5" data-chip="<?php echo $LANG['TAXON'] . ': ' . $LANG['COMMON_NAME'] ?>"><?php echo $LANG['COMMON_NAME'] ?></option>
-							</select>
-							<span class="inset-input-label"><?php echo $LANG['TAXON_TYPE'] ?></span>
-						</div>
+						<span class="assistive-text"><?php echo $LANG['TYPE_CHAR_FOR_SUGGESTIONS'] ?></span>
+						<div style="padding-top:14px">
+							<div class="select-container" style="position: relative">
+								<label for="taxontype" class="screen-reader-only"><?php echo $LANG['TAXON_TYPE'] ?></label>
+								<select name="taxontype" id="taxontype" style="margin-top:0;padding-top:0; margin-bottom: 0.5rem">
+									<option id="taxontype-scientific" value="2" data-chip="<?php echo $LANG['TAXON'] . ': ' . $LANG['SCIENTIFIC_NAME'] ?>"><?php echo $LANG['SCIENTIFIC_NAME'] ?></option>
+									<option id="taxontype-family" value="3" data-chip="<?php echo $LANG['TAXON'] . ': ' . $LANG['FAMILY'] ?>"><?php echo $LANG['FAMILY'] ?></option>
+									<option id="taxontype-group" value="4" data-chip="<?php echo $LANG['TAXON'] . ': ' . $LANG['TAXONOMIC_GROUP'] ?>"><?php echo $LANG['TAXONOMIC_GROUP'] ?></option>
+									<option id="taxontype-common" value="5" data-chip="<?php echo $LANG['TAXON'] . ': ' . $LANG['COMMON_NAME'] ?>"><?php echo $LANG['COMMON_NAME'] ?></option>
+								</select>
+								<span class="inset-input-label"><?php echo $LANG['TAXON_TYPE'] ?></span>
 							</div>
+						</div>
 						<div>
 							<input type="checkbox" name="usethes" id="usethes" data-chip="<?php echo $LANG['INCLUDE_SYNONYMS'] ?>" value="1" checked />
 							<label for="usethes">
@@ -155,7 +160,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										<input type="text" name="country" id="country" data-chip="<?php echo $LANG['COUNTRY'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['COUNTRY'] ?></span>
 									</label>
-									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
 								</div>
 								<div class="input-text-container">
 									<label for="state" class="input-text--outlined">
@@ -163,7 +167,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										<input type="text" name="state" id="state" data-chip="<?php echo $LANG['STATE'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['STATE'] ?></span>
 									</label>
-									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
 								</div>
 								<div class="input-text-container">
 									<label for="county" class="input-text--outlined">
@@ -171,7 +174,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										<input type="text" name="county" id="county" data-chip="<?php echo $LANG['COUNTY'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['COUNTY'] ?></span>
 									</label>
-									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
 								</div>
 							</div>
 <div>
@@ -181,7 +183,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										 <input type="text" name="local" id="local" data-chip="<?php echo $LANG['LOCALITY'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['LOCALITY_LOCALITIES'] ?></span>
 									</label>
-									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
 								</div>
 								<div class="grid grid--half">
 									<div class="input-text-container">
@@ -190,7 +191,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 											<input type="number" step="any" name="elevlow" id="elevlow" data-chip="<?php echo $LANG['MIN_ELEVATION'] ?>" />
 											<span class="inset-input-label"><?php echo $LANG['MINIMUM_ELEVATION'] ?></span>
 										</label>
-										<span class="assistive-text"><?php echo $LANG['NUMBER_IN_METERS'] ?></span>
 									</div>
 									<div class="input-text-container">
 										<label for="elevhigh" class="input-text--outlined">
@@ -198,7 +198,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 											<input type="number" step="any" name="elevhigh" id="elevhigh" data-chip="<?php echo $LANG['MAX_ELEVATION'] ?>" />
 											<span class="inset-input-label"><?php echo $LANG['MINIMUM_ELEVATION'] ?></span>
 										</label>
-										<span class="assistive-text"><?php echo $LANG['NUMBER_IN_METERS'] ?></span>
 									</div>
 								</div>
 							</div>
@@ -224,7 +223,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 											<span class="screen-reader-only"><?php echo $LANG['UPPER_LATITUDE'] ?></span>
 											<input type="number" step="any" min="-90" max="90" id="upperlat" name="upperlat" data-chip="<?php echo $LANG['UPPER_LAT'] ?>" />
 											<span class="inset-input-label"><?php echo $LANG['MINIMUM_ELEVATION'] ?></span>
-											<span class="assistive-text"><?php echo $LANG['VALUE_BETWEEN_NUM'] ?></span>
 										</label>
 
 										<label for="upperlat_NS" class="input-text--outlined">
@@ -241,7 +239,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										<span class="screen-reader-only"><?php echo $LANG['BOTTOM_LATITUDE'] ?></span>
 										<input type="number" step="any" min="-90" max="90" id="bottomlat" name="bottomlat" data-chip="<?php echo $LANG['BOTTOM_LAT'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['SOUTHERN_LATITUDE'] ?></span>
-										<span class="assistive-text"><?php echo $LANG['VALUE_BETWEEN_NUM'] ?></span>
 									</label>
 									<label for="bottomlat_NS">
 										<span class="screen-reader-only"><?php echo $LANG['SELECT_BOTTOM_LAT_DIREC_NORTH_SOUTH'] ?></span>
@@ -257,7 +254,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										<span class="screen-reader-only"><?php echo $LANG['LEFT_LONGITUDE'] ?></span>
 										<input type="number" step="any" min="-180" max="180" id="leftlong" name="leftlong" data-chip="<?php echo $LANG['LEFT_LONG'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['WESTERN_LONGITUDE'] ?></span>
-										<span class="assistive-text"><?php echo $LANG['VALUES_BETWEEN_NEG180_TO_180'] ?></span>
 									</label>
 									<label for="leftlong_EW" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['SELECT_LEFT_LONG_DIREC_WEST_EAST'] ?></span>
@@ -273,7 +269,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										<span class="screen-reader-only"><?php echo $LANG['RIGHT_LONGITUDE'] ?></span>
 										<input type="number" step="any" min="-180" max="180" id="rightlong" name="rightlong" data-chip="<?php echo $LANG['RIGHT_LONG'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['EASTERN_LONGITUDE'] ?></span>
-										<span class="assistive-text"><?php echo $LANG['VALUES_BETWEEN_NEG180_TO_180'] ?></span>
 									</label>
 										<label for="rightlong_EW" class="input-text--outlined">
 											<span class="screen-reader-only"><?php echo $LANG['SELECT_RIGHT_LONG_DIREC_WEST_EAST'] ?></span>
@@ -294,7 +289,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										<textarea id="footprintwkt" name="footprintwkt" class="full-width-pcnt" rows="5"></textarea>
 										<span class="inset-input-label"><?php echo $LANG['POLYGON'] ?></span>
 									</label>
-									<span class="assistive-text"><?php echo $LANG['SELECT_MAP_BUTTON_PASTE'] ?></span>
 								</div>
 							</div>
 							<div id="point-radius-form">
@@ -305,7 +299,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										<span class="screen-reader-only"><?php echo $LANG['POINT_LATITUDE'] ?></span>
 										<input type="number" step="any" min="-90" max="90" id="pointlat" name="pointlat" data-chip="<?php echo $LANG['POINT_LAT'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['LATITUDE'] ?></span>
-										<span class="assistive-text"><?php echo $LANG['VALUE_BETWEEN_NUM'] ?></span>
 									</label>
 									<label for="pointlat_NS" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['POINT_LAT_DIREC_NORTH_SOUTH'] ?></span>
@@ -321,7 +314,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										<span class="screen-reader-only"><?php echo $LANG['POINT_LONGITUDE'] ?></span>
 										<input type="number" step="any" min="-180" max="180" id="pointlong" name="pointlong" data-chip="<?php echo $LANG['POINT_LONG'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['LONGITUDE'] ?></span>
-										<span class="assistive-text"><?php echo $LANG['VALUES_BETWEEN_NEG180_TO_180'] ?></span>
 									</label>
 									<label for="pointlong_EW" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['POINT_LONGITUDE_DIREC_EAST_WEST'] ?></span>
@@ -337,7 +329,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										<span class="screen-reader-only"><?php echo $LANG['RADIUS'] ?></span>
 										<input type="number" min="0" step="any" id="radius" name="radius" data-chip="<?php echo $LANG['RADIUS'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['RADIUS'] ?></span>
-										<span class="assistive-text"><?php echo $LANG['ANY_POSITIVE_VALUES'] ?></span>
 									</label>
 									<label for="radiusunits" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['SELECT_RADIUS_UNITS'] ?></span>
@@ -368,7 +359,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 									<input type="text" name="eventdate1" id="eventdate1" data-chip="<?php echo $LANG['EVENT_DATE_START'] ?>" />
 									<span class="inset-input-label"><?php echo $LANG['COLLECTION_START_DATE'] ?></span>
 								</label>
-								<span class="assistive-text"><?php echo $LANG['SINGLE_DATE_START_DATE'] ?></span>
 							</div>
 							<div class="input-text-container">
 								<label for="eventdate2" class="input-text--outlined">
@@ -376,7 +366,6 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 									<input type="text" name="eventdate2" id="eventdate2" data-chip="<?php echo $LANG['EVENT_DATE_END'] ?>" />
 									<span class="inset-input-label"><?php echo $LANG['COLLECTION_END_DATE'] ?></span>
 								</label>
-								<span class="assistive-text"><?php echo $LANG['SINGLE_DATE_END_DATE'] ?></span>
 							</div>
 							<div class="input-text-container">
 								<label for="collector" class="input-text--outlined">
@@ -416,7 +405,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										<input type="text" name="catnum" id="catnum" data-chip="<?php echo $LANG['CATALOG_NUMBER'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['CATALOG_NUMBER'] ?></span>
 									</label>
-									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
+									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA_DASH'] ?></span>
 								</div>
 							</div>
 							<div>
@@ -529,10 +518,76 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 					</div>
 				</section>
 
+
+				<!-- Associations -->
+				<section>
+					<!-- Accordion selector -->
+					<input type="checkbox" id="associations" class="accordion-selector" />
+
+					<!-- Accordion header -->
+					<label for="associations" class="accordion-header"><?php echo $LANG['ASSOCIATIONS'] ?></label>
+
+					<!-- Taxonomy -->
+					<div id="search-form-associations" class="content">
+						<div>
+							<p><?= $LANG['ASSOCIATION_DESCRIPTION']; ?>: </p>
+						</div>
+						<div style="padding-top:14px;">
+							<div class="select-container" style="margin-left: 1rem; position: relative; width: 40vw;">
+								<label for="association-type" class="screen-reader-only"><?php echo $LANG['ASSOCIATION_TYPE'] ?></label>
+								<select name="association-type" id="association-type" style="margin-top:0;padding-top:0; margin-bottom: 0.5rem">
+									<option id="association-type-none" value="none" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '- Not Specified'?>">Not Specified</option>
+									<option id="association-type-any" value="any" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '-any'?>">Any</option>
+									<?php
+										$relationshipTypes = $associationManager->getRelationshipTypes();
+										foreach($relationshipTypes as $relationshipKey => $relationshipType){
+											?>
+											<option id="association-type-<?php echo $relationshipKey . '-' . $relationshipType ?>" value="<?php echo $relationshipType ?>" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '-' . $relationshipType ?>"><?php echo $relationshipType; ?></option>
+											<?php
+										}
+									?>
+								</select>
+								<span class="inset-input-label"><?php echo $LANG['ASSOCIATION_TYPE'] ?></span>
+							</div>
+						</div>
+						<div>
+							<p><?= $LANG['ASSOCIATION_DESCRIPTION_2']; ?>: </p>
+						</div>
+						<div style="display: flex;">
+							<div id="associated-taxa-text" class="input-text-container" style="margin-left: 1rem; margin-right: 1rem; width: 40vw;">
+								<label for="associated-taxa" class="input-text--outlined">
+									<span class="screen-reader-only"><?php echo $LANG['TAXON'] ?></span>
+									<input type="text" name="associated-taxa" id="associated-taxa" data-chip="<?php echo $LANG['ASSOCIATIONS'] . $LANG['TAXON'] . ': ' ?>" />
+									<span class="inset-input-label"><?php echo $LANG['TAXON'] ?></span>
+								</label>
+							</div>
+							<div style="padding-top:14px">
+								<div class="select-container" style="position: relative; width: 13vw;">
+									<label for="taxontype-association" class="screen-reader-only"><?php echo $LANG['TAXON_TYPE'] ?></label>
+									<select name="taxontype-association" id="taxontype-association" style="margin-top:0;padding-top:0; margin-bottom: 0.5rem">
+										<option id="taxontype-association-scientific" value="2" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '-' . $LANG['TAXON_TYPE'] . ': ' . $LANG['SCIENTIFIC_NAME'] ?>"><?php echo $LANG['SCIENTIFIC_NAME'] ?></option>
+										<option id="taxontype-association-family" value="3" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '-' . $LANG['TAXON_TYPE'] . ': ' . $LANG['FAMILY'] ?>"><?php echo $LANG['FAMILY'] ?></option>
+										<option id="taxontype-association-group" value="4" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '-' . $LANG['TAXON_TYPE'] . ': ' . $LANG['TAXONOMIC_GROUP'] ?>"><?php echo $LANG['TAXONOMIC_GROUP'] ?></option>
+										<option id="taxontype-association-common" value="5" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '-' . $LANG['TAXON_TYPE'] . ': ' . $LANG['COMMON_NAME'] ?>"><?php echo $LANG['COMMON_NAME'] ?></option>
+									</select>
+									<span class="inset-input-label"><?php echo $LANG['TAXON_TYPE'] ?></span>
+								</div>
+							</div>
+						</div>
+							
+						<div>
+							<input type="checkbox" name="usethes-associations" id="usethes-associations" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '-' . $LANG['INCLUDE_SYNONYMS'] ?>" value="1" checked />
+							<label for="usethes-associations">
+								<span class="ml-1"><?php echo $LANG['ASSOCIATIONS'] . '-' . $LANG['INCLUDE_SYNONYMS'] ?></span>
+							</label>
+						</div>
+					</div>
+				</section>
+
 			</div>
 
 			<!-- Criteria panel -->
-			<div id="criteria-panel" style="position: sticky; top: 0; height: 100vh">
+			<div id="criteria-panel" class="criteria-panel" style="overflow-y:clip">
 			<fieldset class="bottom-breathing-room-rel">
 				<legend>
 					<?php echo $LANG['DISPLAY_FORMAT']; ?>
@@ -549,7 +604,9 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 				<button id="search-btn" onclick="simpleSearch()"><?php echo $LANG['SEARCH'] ?></button>
 				<button id="reset-btn"><?php echo $LANG['RESET'] ?></button>
 				<h2><?php echo $LANG['CRITERIA'] ?></h2>
-				<div id="chips"></div>
+				<div class="criteria-panel">
+					<div id="chips"></div>
+				</div>
 			</div>
 		</form>
 	</div>
@@ -557,7 +614,8 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 	include($SERVER_ROOT . '/includes/footer.php');
 	?>
 </body>
-<script src="js/searchform.js" type="text/javascript"></script>
+<script src="<?php echo $filename ?>" type="text/javascript"></script>
+<script src="js/searchform.js?ver=1" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/collections/search/js/alerts.js?v=202107'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/symb/api.taxonomy.taxasuggest.js'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/symb/collections.index.js?ver=20171215' ?>" type="text/javascript"></script>

@@ -240,15 +240,13 @@ class OccurrenceGeorefTools {
 		}
 		if($searchType == 2){
 			//Wildcard search
-			$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
-			$sqlWhere .= 'AND (MATCH(f.locality) AGAINST(\'"'.$locality.'"\' IN BOOLEAN MODE)) ';
+			$sqlWhere .= 'AND (MATCH(o.locality) AGAINST(\'"'.$locality.'"\' IN BOOLEAN MODE)) ';
 		}
 		elseif($searchType == 3){
 			//Deep search
-			$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 			$localArr = explode(' ', $locality);
 			foreach($localArr as $str){
-				$sqlWhere .= 'AND (MATCH(f.locality) AGAINST("'.$str.'")) ';
+				$sqlWhere .= 'AND (MATCH(o.locality) AGAINST("'.$str.'" IN BOOLEAN MODE)) ';
 			}
 		}
 		else{

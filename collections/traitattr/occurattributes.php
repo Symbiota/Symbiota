@@ -1,6 +1,7 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceAttributes.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/traitattr/occurattributes.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/traitattr/occurattributes.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/traitattr/occurattributes.en.php');
@@ -99,7 +100,7 @@ if ($traitID) {
 			var imgLgArr = [];
 			<?php
 			$imgDomain = $IMAGE_DOMAIN;
-			if(!$imgDomain) $attrManager->getDomain();
+			if(!$imgDomain) GeneralUtil::getDomain();
 			foreach($imgArr as $cnt => $iArr){
 				//Regular url
 				$url = $iArr['web'];
