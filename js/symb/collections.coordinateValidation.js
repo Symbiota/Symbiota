@@ -13,9 +13,9 @@ function verifyCoordinates(f, client_root) {
 			type: "GET",
 			url: `${window.location.origin + client_root}/collections/editor/rpc/geocode.php`,
 			dataType: "json",
-			data: { lat: latValue, lng: lngValue }
+			data: { lat: latValue, lng: lngValue, country: f.country.value, stateprovince: f.stateprovince.value, county: f.county.value, municipality: f.municipality.value}
 		}).done(function( data ) {
-			if(data){
+			if(data.matches){
 				let coord_valid = true;
 				const geocode_form_map = {
 					50: 'country',
@@ -40,7 +40,7 @@ function verifyCoordinates(f, client_root) {
 					return returnArr.map(v => v.toLowerCase().trim());
 				}
 
-				for(let match of data) {
+				for(let match of data.matches) {
 						if(geocode_form_map[match.geoLevel]) {
 							const form_name = geocode_form_map[match.geoLevel];
 
@@ -55,7 +55,10 @@ function verifyCoordinates(f, client_root) {
 				}
 				if(!coord_valid) {
 					alert("Are the coordinates accurate? They currently map to: " + data.map(d => d.geoterm).join(', ') + " which differs from what is in the form. Click globe symbol to display coordinates in map.");
-				} 
+				} else if(data.matches && data.matches.length === 0 && data.is_registered) {
+					alert("Are the coordinates accurate? They are not within the entered locality. Click globe symbol to display coordinates in map.");
+
+				}
 			}
 		});
 	}

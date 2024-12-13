@@ -12,4 +12,16 @@ if(!$lat || !$lng) {
 }
 
 $geoThesaurus = new GeographicThesaurus();
-echo json_encode($geoThesaurus->geocode($lng, $lat));
+$matches = $geoThesaurus->geocode($lng, $lat);
+
+$geo_data = [];
+
+foreach (['country', 'stateprovince', 'county', 'municipality'] as $value) {
+	if(isset($_REQUEST[$value]) && $_REQUEST[$value]) {
+		$geo_data[$value] = $_REQUEST[$value];
+	}
+}
+
+$exists = $geoThesaurus->placeExists($geo_data);
+
+echo json_encode(['is_registered' => $exists, 'matches' => $matches ]);

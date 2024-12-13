@@ -385,6 +385,7 @@ function coordinatesChanged(f, client_root) {
 	verifyDecimalLongitude(f);
 	verifyCoordinates(f, client_root);
 	fieldChanged('decimallatitude');
+	fieldChanged('decimallongitude');
 }
 
 function decimalLatitudeChanged(f, client_root) {
