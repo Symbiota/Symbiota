@@ -1,7 +1,7 @@
 <?php
 include_once($SERVER_ROOT . "/classes//Database.php");
 include_once($SERVER_ROOT . "/classes/Sanitize.php");
-include_once($SERVER_ROOT . "/utilities/SymbUtil.php");
+include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 
 if(file_exists($SERVER_ROOT.'/content/lang/classes/Media.'.$LANG_TAG.'.php')) {
 	include_once($SERVER_ROOT.'/content/lang/classes/Media.'.$LANG_TAG.'.php');
@@ -715,7 +715,7 @@ class Media {
 		WHERE tidinterpreted IS NOT NULL AND occid = ? 
 		SQL;
 
-		$taxon_result = SymbUtil::execute_query(
+		$taxon_result = QueryUtil::executeQuery(
 			$conn,
 			$sql,
 			[$clean_post_arr['occid']]
@@ -786,7 +786,7 @@ class Media {
 		mysqli_begin_transaction($conn);
 		try {
 			//insert media
-			$result = SymbUtil::execute_query($conn, $sql, array_values($keyValuePairs));
+			$result = QueryUtil::executeQuery($conn, $sql, array_values($keyValuePairs));
 			//Insert to other tables as needed like imagetags...
 
 			$media_id = $conn->insert_id;
@@ -971,11 +971,11 @@ class Media {
 		}
 
 		foreach($add_tags as $add) {
-			SymbUtil::execute_query($conn, 'INSERT INTO imagetag (mediaID, keyvalue) VALUES (?, ?)', [$media_id, $add]);
+			QueryUtil::executeQuery($conn, 'INSERT INTO imagetag (mediaID, keyvalue) VALUES (?, ?)', [$media_id, $add]);
 		}
 
 		foreach($remove_tags as $remove) {
-			SymbUtil::execute_query($conn, 'DELETE FROM imagetag where mediaID = ? and keyvalue = ?', [$media_id, $remove]);
+			QueryUtil::executeQuery($conn, 'DELETE FROM imagetag where mediaID = ? and keyvalue = ?', [$media_id, $remove]);
 		}
 	}
 
@@ -1239,7 +1239,7 @@ class Media {
 		array_push($values, $media_id);
 
 		$sql = 'UPDATE media set '. $parameter_str . ' where mediaID = ?';
-		SymbUtil::execute_query(
+		QueryUtil::executeQuery(
 			$conn ?? Database::connect('write'),
 			$sql,
 			$values
@@ -1252,7 +1252,7 @@ class Media {
 	**/
 	public static function delete($media_id, $remove_files = true): void {
 		$conn = Database::connect('write');
-		$result = SymbUtil::execute_query(
+		$result = QueryUtil::executeQuery(
 			$conn,
 			'SELECT url, thumbnailUrl, originalUrl from media where mediaID = ?',
 			[$media_id]
@@ -1267,7 +1267,7 @@ class Media {
 		mysqli_begin_transaction($conn);
 		try {
 			foreach ($queries as $query) {
-				SymbUtil::execute_query($conn, $query, [$media_id]);
+				QueryUtil::executeQuery($conn, $query, [$media_id]);
 			}
 
 			//Unlink all files
@@ -1314,7 +1314,7 @@ class Media {
 		}
 
 		$sql .= ' ORDER BY sortoccurrence ASC';
-		$results = SymbUtil::execute_query(Database::connect('readonly'), $sql, $parameters);
+		$results = QueryUtil::executeQuery(Database::connect('readonly'), $sql, $parameters);
 		$media = self::get_media_items($results);
 		if(count($media) <= 0) {
 			return [];
@@ -1350,7 +1350,7 @@ class Media {
 		}
 
 		$sql .= ' ORDER BY sortsequence IS NULL ASC, sortsequence ASC';
-		$results = SymbUtil::execute_query(Database::connect('readonly'), $sql, $parameters);
+		$results = QueryUtil::executeQuery(Database::connect('readonly'), $sql, $parameters);
 
 		return Sanitize::out(self::get_media_items($results));
 	}
@@ -1382,7 +1382,7 @@ class Media {
 
 		$sql .= ' ORDER BY sortoccurrence IS NULL ASC, sortoccurrence ASC';
 
-		$results = SymbUtil::execute_query(Database::connect('readonly'), $sql, $parameters);
+		$results = QueryUtil::executeQuery(Database::connect('readonly'), $sql, $parameters);
 
 		return Sanitize::out(self::get_media_items($results));
 	}
@@ -1422,7 +1422,7 @@ class Media {
 			$sql .= '= ?';
 		}
 
-		$res = SymbUtil::execute_query(
+		$res = QueryUtil::executeQuery(
 			$conn?? Database::connect('readonly'),
 			$sql,
 			is_array($media_id)? $media_id: [$media_id]
@@ -1446,7 +1446,7 @@ class Media {
 		ORDER BY u.lastname, u.firstname 
 		SQL;
 
-		$result = SymbUtil::execute_query(Database::connect('readonly'), $sql);
+		$result = QueryUtil::executeQuery(Database::connect('readonly'), $sql);
 		$creators = array();
 
 		while($row = $result->fetch_object()){
@@ -1466,7 +1466,7 @@ class Media {
 		SELECT tagkey, description_en FROM imagetagkey ORDER BY sortorder;
 		SQL;
 
-		$result = SymbUtil::execute_query(Database::connect('readonly'), $sql);
+		$result = QueryUtil::executeQuery(Database::connect('readonly'), $sql);
 		while($r = $result->fetch_object()){
 			$retArr[$r->tagkey] = Sanitize::out($r->description_en);
 		}
@@ -1512,7 +1512,7 @@ class Media {
 		//Load identifiers
 		$idArr = array();
 		$sql = 'SELECT o.catalogNumber, o.otherCatalogNumbers, i.identifierValue FROM omoccurrences o LEFT JOIN omoccuridentifiers i ON o.occid = i.occid WHERE o.occid = ?';
-		$rs = SymbUtil::execute_query(Database::connect('readonly'), $sql, [$occid]);
+		$rs = QueryUtil::executeQuery(Database::connect('readonly'), $sql, [$occid]);
 		$cnt = 0;
 		while($r = $rs->fetch_object()){
 			if(!$cnt){
