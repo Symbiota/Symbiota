@@ -50,11 +50,10 @@ function verifyCoordinates(f, client_root) {
 							} else if(!getAccepted(match).includes(f[form_name].value.toLowerCase())) {
 								coord_valid = false;
 							}
-
 						}
 				}
 				if(!coord_valid) {
-					alert("Are the coordinates accurate? They currently map to: " + data.map(d => d.geoterm).join(', ') + " which differs from what is in the form. Click globe symbol to display coordinates in map.");
+					alert("Are the coordinates accurate? They currently map to: " + data.matches.map(d => d.geoterm).join(', ') + " which differs from what is in the form. Click globe symbol to display coordinates in map.");
 				} else if(data.matches && data.matches.length === 0 && data.is_registered) {
 					alert("Are the coordinates accurate? They are not within the entered locality. Click globe symbol to display coordinates in map.");
 
