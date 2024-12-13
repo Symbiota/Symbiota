@@ -14,6 +14,7 @@ $LANG['OF'] = 'de';
 $LANG['NEXT'] = 'Siguiente';
 $LANG['LAST'] = 'Última';
 $LANG['TABLE_VIEW'] = 'Ver Tabla de Ocurrencias';
+$LANG['TABLE_DISPLAY'] = 'Visualización de Tabla de Ocurrencia';
 $LANG['TABLE_VIEW_DESC'] = 'La tabla muestra información de ocurrencias con columnas que muestran ID de Symbiota, familia, fecha del evento, autor, ubicación y otros detalles';
 $LANG['SEARCH_FILTER'] = 'Alternar Formulario de Búsqueda';
 $LANG['BATCH_UPDATE'] = 'Actualizar en Lote';

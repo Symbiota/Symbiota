@@ -12,9 +12,10 @@ $LANG['RETURN'] = 'Retour à la page de recherche';
 $LANG['OCC_DOWNLOAD'] = 'Téléchargement de l\'enregistrement d\'événement';
 $LANG['DATA_GUIDE'] = 'Consignes d\'utilisation des données';
 $LANG['GUIDE_ONE'] = 'En téléchargeant des données, l\'utilisateur confirme qu\'il a lu et accepte les conditions générales d\'utilisation des données';
-$LANG['GUIDE_LINK'] = 'términos generales de uso de datos';
-$LANG['GUIDE_TWO'] = 'Notez que des conditions d\'utilisation supplémentaires spécifiques aux collections individuelles peuvent être distribuées avec le téléchargement des données. Lorsqu\'ils sont présents, les termes                         fournies par l\'établissement propriétaire doivent prévaloir sur les conditions générales publiées sur le site Internet.';
-$LANG['DOWNLOAD_CHECKL'] = 'Télécharger la liste de contrôle';
+$LANG['GUIDE_LINK'] = "conditions d\'utilisation des données";
+$LANG['GUIDE_TWO'] = 'Notez que des conditions d\'utilisation supplémentaires spécifiques aux collections individuelles peuvent être distribuées avec le téléchargement des données. Lorsqu\'ils sont présents, les termes
+                         fournies par l\'établissement propriétaire doivent prévaloir sur les conditions générales publiées sur le site Internet.';
+$LANG['DOWNLOAD_CHECKl'] = 'Télécharger la liste de contrôle';
 $LANG['DOWNLOAD_GEO_DATA'] = 'Télécharger les données de géoréférence';
 $LANG['DOWNLOAD_SPEC_REC'] = 'Télécharger les enregistrements d\'échantillons';
 $LANG['STRUCTURE'] = 'Structure';
@@ -32,6 +33,7 @@ $LANG['INCLUDE_HISTORY'] = 'inclure l\'historique des déterminations';
 $LANG['INCLUDE_IMG'] = 'inclure les enregistrements multimédias';
 $LANG['INCLUDE_ATTR'] = 'inclure les attributs de trait d\'occurrence';
 $LANG['IMCLUDE_MAT'] = 'inclure des échantillons de matériaux';
+$LANG['INCLUDE_IDENT'] = 'inclure Identifiants Alternatifs';
 $LANG['DATA_EXT_NOTE'] = 'La sortie doit être une archive compressée';
 $LANG['FILE_FORMAT'] = 'Format de fichier';
 $LANG['COMMA_DELIM'] = 'Délimité par des virgules (CSV)';
@@ -44,4 +46,3 @@ $LANG['COMPRESSED_ZIP'] = 'Fichier ZIP compressé';
 $LANG['DOWNLOAD_DATA'] = 'Télécharger les données';
 $LANG['LIMIT_NOTE'] = '* Il existe une limite de 1 000 000 d\'enregistrements pour les téléchargements d\'occurrences';
 
-?>

@@ -1,9 +1,9 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ImageLibraryBrowser.php');
-header('Content-Type: text/html; charset=' . $CHARSET);
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/imagelib/contributors.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/imagelib/contributors.en.php');
-else include_once($SERVER_ROOT.'/content/lang/imagelib/contributors.' . $LANG_TAG . '.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/imagelib/contributors.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/imagelib/contributors.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/imagelib/contributors.en.php');
+header("Content-Type: text/html; charset=".$CHARSET);
 
 $imgManager = new ImageLibraryBrowser();
 ?>

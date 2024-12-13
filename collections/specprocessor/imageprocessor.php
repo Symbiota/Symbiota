@@ -738,7 +738,8 @@ if($spprid) $specManager->setProjVariables($spprid);
 							$logPath = '../../content/logs/';
 							foreach($logArr as $logCat => $logList){
 								echo '<div style="font-weight:bold;margin: 10px 0px 5px 0px">';
-								if($logCat=='imgProccessing') echo $LANG['GEN_PROCESSING'];
+								if($logCat=='imageprocessing') echo $LANG['GEN_PROCESSING'];
+								elseif($logCat=='imgProccessing') echo $LANG['GEN_PROCESSING'];
 								elseif($logCat=='iplant') echo $LANG['IPLANT'];
 								elseif($logCat=='cyverse') echo $LANG['CYVERSE'];
 								elseif($logCat=='processing/imgmap') echo $LANG['IMG_MAP_FILE'];

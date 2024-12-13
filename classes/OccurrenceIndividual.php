@@ -2,6 +2,7 @@
 include_once('Manager.php');
 include_once('OccurrenceAccessStats.php');
 include_once('ChecklistVoucherAdmin.php');
+include_once('utilities/GeneralUtil.php');
 
 class OccurrenceIndividual extends Manager{
 
@@ -75,31 +76,31 @@ class OccurrenceIndividual extends Manager{
 		if(!$this->occid){
 			//Check occurrence recordID
 			$sql = 'SELECT occid FROM omoccurrences WHERE (occurrenceid = ?) OR (recordID = ?)';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('ss', $guid, $guid);
-				$stmt->execute();
-				$stmt->bind_result($this->occid);
-				$stmt->close();
+			if($result = SymbUtil::execute_query($this->conn, $sql, [$guid, $guid])){
+				if($row = $result->fetch_assoc()) {
+					$this->occid = $row['occid'];
+				}
+				$result->free();
 			}
 		}
 		if(!$this->occid){
 			//Check image recordID
 			$sql = 'SELECT occid FROM media WHERE recordID = ?';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('s', $guid);
-				$stmt->execute();
-				$stmt->bind_result($this->occid);
-				$stmt->close();
+			if($result = SymbUtil::execute_query($this->conn, $sql, [$guid])){
+				if($row = $result->fetch_assoc()) {
+					$this->occid = $row['occid'];
+				}
+				$result->free();
 			}
 		}
 		if(!$this->occid){
 			//Check identification recordID
 			$sql = 'SELECT occid FROM omoccurdeterminations WHERE recordID = ?';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('s', $guid);
-				$stmt->execute();
-				$stmt->bind_result($this->occid);
-				$stmt->close();
+			if($result = SymbUtil::execute_query($this->conn, $sql, [$guid])){
+				if($row = $result->fetch_assoc()) {
+					$this->occid = $row['occid'];
+				}
+				$result->free();
 			}
 		}
 		return $this->occid;
@@ -781,7 +782,7 @@ class OccurrenceIndividual extends Manager{
 
 			//Email to portal admin
 			$emailAddr = $GLOBALS['ADMIN_EMAIL'];
-			$comUrl = $this->getDomain().$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid=' . $this->occid . '#commenttab';
+			$comUrl = GeneralUtil::getDomain().$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid=' . $this->occid . '#commenttab';
 			$subject = $GLOBALS['DEFAULT_TITLE'] . ' '. $LANG['INAPPROPRIATE'] . '<br/>';
 			$bodyStr = $LANG['REPORTED_AS_INAPPROPRIATE'] . ':<br/> <a href="' . $comUrl  . '">' . $comUrl . '</a>';
 			$headerStr = "MIME-Version: 1.0 \r\nContent-type: text/html \r\nTo: " . $emailAddr . " \r\nFrom: Admin <" . $emailAddr . "> \r\n";

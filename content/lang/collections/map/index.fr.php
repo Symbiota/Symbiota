@@ -7,7 +7,7 @@ Translated by: Google Translate (2024-09-13)
 */
 include_once($SERVER_ROOT.'/content/lang/collections/harvestparams.fr.php');
 include_once('mapshared.fr.php');
-
+$LANG['MAP_INTERFACE'] = 'Interface Cartographique';
 $LANG['SEARCH_CRITERIA'] = 'Critères et Options de Recherche';
 $LANG['CRITERIA'] = 'Critères';
 $LANG['COLLECTIONS'] = 'Collections';
@@ -15,6 +15,7 @@ $LANG['MAP_OPTIONS'] = 'Options de la Carte';
 $LANG['RESET'] = 'Réinitialiser';
 $LANG['SEARCH'] = 'Recherche';
 $LANG['TAXA'] = 'Taxa';
+$LANG['WITHIN'] = 'à moins de';
 $LANG['SHAPE_TOOLS'] = 'Utilisez les outils de forme sur la carte pour sélectionner des occurrences dans une forme donnée';
 $LANG['WITHIN_POLYGON'] = 'Dans le polygone sélectionné';
 $LANG['WITHIN_CIRCLE'] = 'Dans le cercle sélectionné';
@@ -36,6 +37,7 @@ $LANG['MIN_DENSITY'] = 'Densité Minimale';
 $LANG['MAX_DENSITY'] = 'Densité Maximale';
 $LANG['RECORDS_TAXA'] = 'Registres et Taxons';
 $LANG['RECORDS'] = 'Registres';
+$LANG['INTERNAL_RECORDS'] = 'Registres Internes';
 $LANG['EXTERNAL_RECORDS'] = 'Registres Externes';
 $LANG['PORTAL_LIST'] = 'Liste des portails';
 $LANG['TAXA_LIST'] = 'Liste des taxons';

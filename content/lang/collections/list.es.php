@@ -66,5 +66,5 @@ $LANG['MAP_LINK'] = 'Enlace al Mapa';
 $LANG['SEE_MAP_POINT'] = 'Ver punto del mapa';
 $LANG['RECORD_COUNT_EXCEEDS_LIMIT'] = 'El recuento de registros supera el límite';
 $LANG['NO_RECORDS'] = 'No se encontraron registros que coincidan con la consulta';
-
+$LANG['ASSOCIATIONS'] = 'Recursos Relacionados';
 ?>

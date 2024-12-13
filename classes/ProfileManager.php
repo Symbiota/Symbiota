@@ -4,7 +4,8 @@ use function PHPUnit\Framework\returnValue;
 
 include_once('Manager.php');
 include_once('Person.php');
-include_once('Encryption.php');
+include_once('utilities/Encryption.php');
+include_once('utilities/GeneralUtil.php');
 @include_once 'Mail.php';
 
 class ProfileManager extends Manager{
@@ -259,7 +260,7 @@ class ProfileManager extends Manager{
 
 			if($uid){
 				$subject = 'RE: Password reset';
-				$serverPath = $this->getDomain().$GLOBALS['CLIENT_ROOT'];
+				$serverPath = GeneralUtil::getDomain().$GLOBALS['CLIENT_ROOT'];
 				$from = '';
 				if (array_key_exists("SYSTEM_EMAIL", $GLOBALS) && !empty($GLOBALS["SYSTEM_EMAIL"])){
 					$from = 'Reset Request <'.$GLOBALS["SYSTEM_EMAIL"].'>';
@@ -368,7 +369,7 @@ class ProfileManager extends Manager{
 		$rs->free();
 		if($loginStr){
 			$subject = $GLOBALS['DEFAULT_TITLE'].' Login Name';
-			$serverPath = $this->getDomain().$GLOBALS['CLIENT_ROOT'];
+			$serverPath = GeneralUtil::getDomain().$GLOBALS['CLIENT_ROOT'];
 			$bodyStr = 'Your '.$GLOBALS['DEFAULT_TITLE'].' (<a href="' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>) login name is: '.
 				$loginStr.'<br/><br/>If you continue to have login issues, contact the System Administrator: '.$GLOBALS['ADMIN_EMAIL'];
 			$status = $this->sendEmail($emailAddr, $subject, $bodyStr, $from);

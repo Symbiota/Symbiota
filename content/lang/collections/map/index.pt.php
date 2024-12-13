@@ -6,6 +6,7 @@ Translated by: Google Translate (2024-09-13)
 ------------------
 */
 include_once($SERVER_ROOT.'/content/lang/collections/harvestparams.pt.php');
+include_once('mapshared.pt.php');
 
 $LANG['SEARCH_CRITERIA'] = 'Critérios de Pesquisa';
 $LANG['CRITERIA'] = 'Critérios';
@@ -14,6 +15,7 @@ $LANG['MAP_OPTIONS'] = 'Opções do Mapa';
 $LANG['RESET'] = 'Redefinir';
 $LANG['SEARCH'] = 'Pesquisar';
 $LANG['TAXA'] = 'Taxa';
+$LANG['WITHIN'] = ''; //empty because correct phrasing is "a _ de mim"
 $LANG['SHAPE_TOOLS'] = 'Use as ferramentas de forma no mapa para selecionar ocorrências dentro de uma determinada forma';
 $LANG['WITHIN_POLYGON'] = 'Dentro do polígono selecionado';
 $LANG['WITHIN_CIRCLE'] = 'Dentro do círculo selecionado';
@@ -35,6 +37,7 @@ $LANG['MIN_DENSITY'] = 'Densidade Mínima';
 $LANG['MAX_DENSITY'] = 'Densidade Máxima';
 $LANG['RECORDS_TAXA'] = 'Registros e Taxas';
 $LANG['RECORDS'] = 'Registros';
+$LANG['INTERNAL_RECORDS'] = 'Registos Internos';
 $LANG['EXTERNAL_RECORDS'] = 'Registros Externos';
 $LANG['PORTAL_LIST'] = 'Lista de portais';
 $LANG['TAXA_LIST'] = 'Lista de Impostos';

@@ -4,6 +4,7 @@ include_once($SERVER_ROOT.'/classes/OccurrenceMapManager.php');
 
 header('Content-Type: application/json;charset='.$CHARSET);
 include_once($SERVER_ROOT . '/rpc/crossPortalHeaders.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 /*
 $distFromMe = array_key_exists('distFromMe', $_REQUEST)?$_REQUEST['distFromMe']:'';
@@ -48,10 +49,7 @@ $recordArr = [];
 $collArr = [];
 $defaultColor = "#B2BEB5";
 
-$host = false;
-if(isset($SERVER_HOST)) {
-   $host = ($SERVER_HOST === '127.0.0.1' || $SERVER_HOST === 'localhost'? "http://": "https://") . $SERVER_HOST . $CLIENT_ROOT;
-}
+$host = GeneralUtil::getDomain();
 
 foreach ($coordArr as $collName => $coll) {
 	//Collect all the collections

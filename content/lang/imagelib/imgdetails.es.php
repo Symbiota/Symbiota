@@ -6,6 +6,7 @@ Translated by: Google Translate (2024-09-05)
 ------------------
 */
 
+$LANG['IMG_DETAILS'] = 'Detalles de la Imagen';
 $LANG['ERROR_FILE_PATH'] = 'ERROR: Se debe ingresar la ruta del archivo';
 $LANG['ENTER_TAXON_NAME'] = 'Ingrese el nombre del taxón al que se transferirá el medios';
 $LANG['TAXON_PROFILE_EDITING'] = 'Ir a la página de edición del perfil de taxón';
@@ -60,4 +61,3 @@ $LANG['OPEN_MEDIUM_SIZED_IMAGE'] = 'Abrir imagen de tamaño mediano';
 $LANG['OPEN_LARGE_IMAGE'] = 'Abrir imagen grande';
 $LANG['UNABLE_TO_LOCATE'] = 'No se puede localizar el recurso medios';
 
-?>

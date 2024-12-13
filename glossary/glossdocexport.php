@@ -1,6 +1,7 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 require_once $SERVER_ROOT.'/vendor/phpoffice/phpword/bootstrap.php';
 
 header('Content-Type: text/html; charset=' . $CHARSET);
@@ -77,7 +78,7 @@ if($exportType == 'translation'){
 		$header->addPreserveText($sciname.' - p.{PAGE} '.date("Y-m-d"),null,array('align'=>'right'));
 		$textrun = $section->addTextRun('titlePara');
 		if(isset($GLOSSARY_BANNER) && $GLOSSARY_BANNER){
-			$textrun->addImage($glosManager->getDomain() . $CLIENT_ROOT . '/images/layout/' . $GLOSSARY_BANNER, array('width'=>500, 'align'=>'center'));
+			$textrun->addImage(GeneralUtil::getDomain() . $CLIENT_ROOT . '/images/layout/' . $GLOSSARY_BANNER, array('width'=>500, 'align'=>'center'));
 			$textrun->addTextBreak(1);
 		}
 		$titleStr = 'Translation Table';
@@ -218,7 +219,7 @@ else{
 		$header->addPreserveText($sciname.' - p.{PAGE} '.date("Y-m-d"),null,array('align'=>'right'));
 		$textrun = $section->addTextRun('titlePara');
 		if(isset($GLOSSARY_BANNER) && $GLOSSARY_BANNER){
-			$textrun->addImage($glosManager->getDomain() . $CLIENT_ROOT . '/images/layout/' . $GLOSSARY_BANNER, array('width'=>500, 'align'=>'center'));
+			$textrun->addImage(GeneralUtil::getDomain() . $CLIENT_ROOT . '/images/layout/' . $GLOSSARY_BANNER, array('width'=>500, 'align'=>'center'));
 			$textrun->addTextBreak(1);
 		}
 		$titleStr = 'Glossary';

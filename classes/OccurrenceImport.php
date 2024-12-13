@@ -5,8 +5,8 @@ include_once('OmMaterialSample.php');
 include_once('OmAssociations.php');
 include_once('OmDeterminations.php');
 include_once('OccurrenceMaintenance.php');
-include_once('UuidFactory.php');
 include_once('Media.php');
+include_once('utilities/UuidFactory.php');
 
 class OccurrenceImport extends UtilitiesFileImport{
 

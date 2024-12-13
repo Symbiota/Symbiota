@@ -5,7 +5,7 @@ Language: English
 Translated by: Google Translate (2024-09-05)
 ------------------
 */
-
+$LANG['IMG_DETAILS'] = 'Image Details';
 $LANG['ERROR_FILE_PATH'] = 'ERROR: File path must be entered';
 $LANG['ENTER_TAXON_NAME'] = 'Enter a taxon name to which the media resource will be transferred';
 $LANG['TAXON_PROFILE_EDITING'] = 'Go to Taxon Profile editing page';

@@ -242,11 +242,11 @@ class OccurrenceDuplicate {
 		$lastName = $this->parseLastName($collName);
 		if($lastName && $collNum){
 			$sql = 'SELECT o.occid FROM omoccurrences o ';
-			if(strlen($lastName) < 4 || in_array(strtolower($lastName),array('best','little'))){
+			if(strlen($lastName) < 4){
 				//Need to avoid FULLTEXT stopwords interfering with return
 				$sql .= 'WHERE (o.recordedby LIKE "%'.$lastName.'%") ';
 			}
-			else $sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid WHERE (MATCH(f.recordedby) AGAINST("'.$lastName.'")) ';
+			else $sql .= 'WHERE (MATCH(o.recordedby) AGAINST("'.$lastName.'") IN BOOLEAN MODE) ';
 			$sql .= 'AND (o.recordnumber = "'.$collNum.'") ';
 			if($skipOccid) $sql .= 'AND (o.occid != '.$skipOccid.') ';
 			//echo $sql;
@@ -264,11 +264,11 @@ class OccurrenceDuplicate {
 		$lastName = $this->parseLastName($collName);
 		if($lastName){
 			$sql = 'SELECT o.occid FROM omoccurrences o ';
-			if(strlen($lastName) < 4 || in_array(strtolower($lastName),array('best','little'))){
+			if(strlen($lastName) < 4){
 				//Need to avoid FULLTEXT stopwords interfering with return
 				$sql .= 'WHERE (o.recordedby LIKE "%'.$lastName.'%") ';
 			}
-			else $sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid WHERE (MATCH(f.recordedby) AGAINST("'.$lastName.'")) ';
+			else $sql .= 'WHERE (MATCH(o.recordedby) AGAINST("'.$lastName.'" IN BOOLEAN MODE)) ';
 			$sql .= 'AND (o.processingstatus IS NULL OR o.processingstatus != "unprocessed" OR o.locality IS NOT NULL) ';
 			if($skipOccid) $sql .= 'AND (o.occid != '.$skipOccid.') ';
 
@@ -378,16 +378,7 @@ class OccurrenceDuplicate {
 
 		$queryTerms = array();
 		$recordedBy = $this->cleanInStr($recordedBy);
-		if($recordedBy){
-			if(strlen($recordedBy) < 4 || in_array(strtolower($recordedBy),array('best','little'))){
-				//Need to avoid FULLTEXT stopwords interfering with return
-				$queryTerms[] = '(o.recordedby LIKE "%'.$recordedBy.'%")';
-			}
-			else{
-				$queryTerms[] = 'MATCH(f.recordedby) AGAINST("'.$recordedBy.'")';
-			}
-		}
-		//if($recordedBy) $queryTerms[] = 'recordedby LIKE "%'.$this->cleanInStr($recordedBy).'%"';
+		if($recordedBy) $queryTerms[] = 'MATCH(o.recordedby) AGAINST("'.$recordedBy.'" IN BOOLEAN MODE)';
 		if($recordNumber) $queryTerms[] = 'o.recordnumber = "'.$this->cleanInStr($recordNumber).'"';
 		if($eventDate) $queryTerms[] = 'o.eventdate = "'.$this->cleanInStr($eventDate).'"';
 		if($catNum) $queryTerms[] = 'o.catalognumber = "'.$this->cleanInStr($catNum).'"';
@@ -395,7 +386,6 @@ class OccurrenceDuplicate {
 		$sql = 'SELECT c.institutioncode, c.collectioncode, c.collectionname, o.occid, o.catalognumber, '.
 			'o.recordedby, o.recordnumber, o.eventdate, o.verbatimeventdate, o.country, o.stateprovince, o.county, o.locality '.
 			'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
-		if($recordedBy) $sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 		$sql .= 'WHERE o.occid != '.$currentOccid;
 		if($queryTerms){
 			$sql .= ' AND ('.implode(') AND (', $queryTerms).') ';
@@ -423,13 +413,7 @@ class OccurrenceDuplicate {
 		$sqlFrag = '';
 		if($recordedBy && $collDate && $localFrag){
 			$collStr = $this->cleanInStr($recordedBy);
-			if(strlen($collStr) < 4 || in_array(strtolower($collStr),array('best','little'))){
-				//Need to avoid FULLTEXT stopwords interfering with return
-				$sqlFrag = 'WHERE (o.recordedby LIKE "%'.$collStr.'%") ';
-			}
-			else{
-				$sqlFrag = 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid WHERE (MATCH(f.recordedby) AGAINST("'.$collStr.'")) ';
-			}
+			$sqlFrag = 'WHERE (MATCH(o.recordedby) AGAINST("'.$collStr.'" IN BOOLEAN MODE)) ';
 			$sqlFrag .= 'AND (o.eventdate = "'.$this->cleanInStr($collDate).'") AND (o.locality LIKE "'.$this->cleanInStr($localFrag).'%") ';
 		}
 		return $this->getDupeLocality($sqlFrag);

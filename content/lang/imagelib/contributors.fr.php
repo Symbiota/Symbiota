@@ -13,5 +13,4 @@ $LANG['NAV_IMG_CONTR'] = 'Contributeurs multimédia';
 $LANG['SPECIMENS'] = 'Spécimens';
 $LANG['IMG_CONTR'] = 'Contributeurs multimédia';
 $LANG['OBS'] = 'Observations';
-
 ?>

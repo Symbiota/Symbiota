@@ -1,8 +1,8 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ImageDetailManager.php');
-include_once($SERVER_ROOT.'/classes/Media.php');
-
+include_once($SERVER_ROOT . '/classes/Media.php');
+include_once($SERVER_ROOT . '/classes/ImageDetailManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/imagelib/imgdetails.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/imagelib/imgdetails.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/imagelib/imgdetails.en.php');
 
@@ -12,8 +12,6 @@ $mediaID = array_key_exists('mediaid', $_REQUEST) ? filter_var($_REQUEST['mediai
 if(!$mediaID && array_key_exists('imgid', $_REQUEST)) $mediaID = filter_var($_REQUEST['imgid'], FILTER_SANITIZE_NUMBER_INT);
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 $eMode = array_key_exists('emode',$_REQUEST)?filter_var($_REQUEST['emode'], FILTER_SANITIZE_NUMBER_INT):0;
-
-$imgManager = new ImageDetailManager($mediaID,($action?'write':'readonly'));
 
 $imgArr = Media::getMedia($mediaID);
 $creatorArray = Media::getCreatorArray();
@@ -39,9 +37,7 @@ if($isEditor){
 	}
 	$imgArr = Media::getMedia($mediaID);
 }
-// TODO (Logan) once basic utils for domain image manager can be removed
-$serverPath = $imgManager->getDomain();
-
+$serverPath = GeneralUtil::getDomain();
 if($imgArr){
 	$imgUrl = $imgArr['url'];
 	$origUrl = $imgArr['originalUrl'];
@@ -146,7 +142,7 @@ if($imgArr){
 	 -->
 	<div role="main" id="innertext">
 		<!-- This is inner text! -->
-		<h1 class="page-heading">Image Details</h1>
+		<h1 class="page-heading"><?php echo $LANG['IMG_DETAILS']; ?></h1>
 		<?php
 		if($imgArr){
 			?>

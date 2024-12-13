@@ -1,6 +1,6 @@
 <?php
 include_once($SERVER_ROOT.'/config/dbconnection.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceUtilities.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT.'/classes/SpecProcNlpSalix.php');
 include_once($SERVER_ROOT.'/classes/SpecProcNlpLbcc.php');
 include_once($SERVER_ROOT.'/classes/SpecProcNlpLbccLichen.php');
@@ -276,8 +276,8 @@ class SpecProcNlpHandler {
 		if(isset($dwcArr['month']) && !is_numeric($dwcArr['month'])){
 			//Month should be numeric, yet is a sting. Check to see if it is the month name or abbreviation
 			$mStr = strtolower(substr($dwcArr['month'],0,3));
-			if(array_key_exists($mStr,OccurrenceUtilities::$monthNames)){
-				$dwcArr['month'] = OccurrenceUtilities::$monthNames[$mStr];
+			if(array_key_exists($mStr,OccurrenceUtil::$monthNames)){
+				$dwcArr['month'] = OccurrenceUtil::$monthNames[$mStr];
 			}
 			else{
 				if(!isset($dwcArr['verbatimeventdate']) || !$dwcArr['verbatimeventdate']){
@@ -296,7 +296,7 @@ class SpecProcNlpHandler {
 			$dwcArr['eventdate'] = $dwcArr['year'].'-'.$dwcArr['month'].'-'.$dwcArr['day'];
 		}
 		if(!isset($dwcArr['eventdate']) && isset($dwcArr['verbatimeventdate'])){
-			$dwcArr['eventdate'] = OccurrenceUtilities::formatDate($dwcArr['verbatimeventdate']);
+			$dwcArr['eventdate'] = OccurrenceUtil::formatDate($dwcArr['verbatimeventdate']);
 		}
 
 		//Load data
@@ -323,7 +323,7 @@ class SpecProcNlpHandler {
 					}
 					elseif(strpos($targetFields[$fieldTerm],'date') === 0){
 						//Target field is a date data type
-						$dateValue = OccurrenceUtilities::formatDate($valueStr);
+						$dateValue = OccurrenceUtil::formatDate($valueStr);
 						if($dateValue){
 							$valueIn = '"'.$dateValue.'"';
 						}

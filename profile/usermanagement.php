@@ -90,8 +90,8 @@ if($IS_ADMIN){
 		<h1 class="page-heading"><?= $LANG['USER_MNGMT']; ?></h1>
 		<div style="float:right;">
 			<div style="margin:10px 0px 15px 0px;">
-				<section class="fieldset-like" style="background-color:#FFFFCC;">
-					<h2> <span> <?php echo (isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search'); ?> </span> </h2>
+				<section class="fieldset-like-box">
+					<h2> <span> <?php echo (isset($LANG['SEARCH_BOX'])?$LANG['SEARCH_BOX']:'Search'); ?> </span> </h2>
 					<form name='searchform1' action='usermanagement.php' method='post'>
 					<label for="searchterm" > <?php echo (isset($LANG['LAST_OR_LOGIN'])?$LANG['LAST_OR_LOGIN']:'Last Name or Login Name'); ?>: </label> <br>
 						<input type="text" id="searchterm" name="searchterm" title="<?php echo (isset($LANG['ENTER_LAST'])?$LANG['ENTER_LAST']:'Enter Last Name'); ?>" /><br/>

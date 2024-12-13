@@ -1,6 +1,6 @@
 <?php
-include_once('OccurrenceUtilities.php');
-include_once('UuidFactory.php');
+include_once('utilities/OccurrenceUtil.php');
+include_once('utilities/UuidFactory.php');
 
 class ImageShared{
 
@@ -765,7 +765,7 @@ class ImageShared{
 	}
 
 	public function setPhotographerUid($v){
-		$v = OccurrenceUtilities::verifyUser($v, $this->conn);
+		$v = OccurrenceUtil::verifyUser($v, $this->conn);
 		$this->photographerUid = $v;
 	}
 

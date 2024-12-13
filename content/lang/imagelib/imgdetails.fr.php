@@ -5,7 +5,7 @@ Language: Français (French)
 Translated by: Google Translate (2024-09-05)
 ------------------
 */
-
+$LANG['IMG_DETAILS'] = 'Détails de l\'Image';
 $LANG['ERROR_FILE_PATH'] = 'ERREUR : Le chemin du fichier doit être saisi';
 $LANG['ENTER_TAXON_NAME'] = 'Entrez un nom de taxon vers lequel le multimédia sera transféré';
 $LANG['TAXON_PROFILE_EDITING'] = 'Aller à la page d\'édition du profil de taxon';

@@ -8,6 +8,7 @@ Translated by: Google Translate (2024-09-13)
 include_once($SERVER_ROOT.'/content/lang/collections/harvestparams.en.php');
 include_once('mapshared.en.php');
 
+$LANG['MAP_INTERFACE'] = 'Map Interface';
 $LANG['SEARCH_CRITERIA'] = 'Search Criteria and Options';
 $LANG['CRITERIA'] = 'Criteria';
 $LANG['COLLECTIONS'] = 'Collections';
@@ -15,6 +16,7 @@ $LANG['MAP_OPTIONS'] = 'Map Options';
 $LANG['RESET'] = 'Reset';
 $LANG['SEARCH'] = 'Search';
 $LANG['TAXA'] = 'Taxa';
+$LANG['WITHIN'] = 'within';
 $LANG['SHAPE_TOOLS'] = 'Use the shape tools on the map to select occurrences within a given shape';
 $LANG['WITHIN_POLYGON'] = 'Within the selected polygon';
 $LANG['WITHIN_CIRCLE'] = 'Within the selected circle';
@@ -36,6 +38,7 @@ $LANG['MIN_DENSITY'] = 'Minimum Density';
 $LANG['MAX_DENSITY'] = 'Maximum Density';
 $LANG['RECORDS_TAXA'] = 'Records and Taxa';
 $LANG['RECORDS'] = 'Records';
+$LANG['INTERNAL_RECORDS'] = 'Internal Records';
 $LANG['EXTERNAL_RECORDS'] = 'External Records';
 $LANG['PORTAL_LIST'] = 'Portal List';
 $LANG['TAXA_LIST'] = 'Taxa List';

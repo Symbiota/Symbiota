@@ -14,7 +14,7 @@ $LANG['GO_TO'] = 'Aller à';
 $LANG['WITHIN_INVENTORY'] = 'Espèces dans le projet d\'inventaire';
 $LANG['FAMILY'] = 'Famille';
 $LANG['CLICK_TO_SHOW_COMMONS'] = 'Cliquez ici pour afficher des noms plus courants';
-$LANG['MORE'] = 'más';
+$LANG['MORE'] = 'plus';
 $LANG['CLICK_VIEW_MORE_SYNS'] = 'Cliquez ici pour afficher plus de synonymes';
 $LANG['SYNONYMS'] = 'Synonymes';
 $LANG['AMB_ACCEPTED'] = 'Ce nom est accepté, mais est également synonyme des taxons suivants: ';
@@ -41,4 +41,3 @@ $LANG['NOT_FOUND'] = 'pas trouvé';
 $LANG['DID_YOU_MEAN'] = 'Vouliez-vous dire?';
 $LANG['CALENDAR_TRAIT_PLOT'] = 'Graphiques de Traits';
 
-?>

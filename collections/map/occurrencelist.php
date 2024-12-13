@@ -1,9 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/content/lang/collections/list.'.$LANG_TAG.'.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceMapManager.php');
-include_once($SERVER_ROOT.'/classes/UtilityFunctions.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceMapManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 include_once($SERVER_ROOT . '/rpc/crossPortalHeaders.php');
+
+include_once($SERVER_ROOT . '/content/lang/collections/list.'.$LANG_TAG.'.php');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
@@ -21,7 +22,7 @@ $searchVar = $mapManager->getQueryTermStr();
 $recCnt = $mapManager->getRecordCnt();
 $occArr = array();
 
-$host = UtilityFunctions::getDomain() . $CLIENT_ROOT;
+$host = GeneralUtil::getDomain() . $CLIENT_ROOT;
 
 if(!$recLimit || $recCnt < $recLimit){
 	$occArr = $mapManager->getOccurrenceArr($pageNumber, $cntPerPage);
@@ -51,6 +52,11 @@ if(!$recLimit || $recCnt < $recLimit){
 			<svg alt="Copy as a link." style="width:1.2em;" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg>
 		</button>
 	</div>
+	<?php if($ENABLE_CROSS_PORTAL && isset($_REQUEST['cross_portal_switch']) && $_REQUEST['cross_portal_switch'] === 'on'): ?>
+		<h3>
+			<?= htmlspecialchars($DEFAULT_TITLE) ?>
+		</h3>
+	<?php endif ?>
 	<div>
 		<?php
 		$paginationStr = '<div><div style="clear:both;"><hr/></div><div style="margin:5px;">';

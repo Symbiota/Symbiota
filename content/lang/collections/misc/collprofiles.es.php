@@ -7,7 +7,7 @@ Translated by: Google Translate (2024-09-16)
 */
 
 include_once($SERVER_ROOT.'/content/lang/collections/misc/sharedterms.es.php');
-
+$LANG['COLLEC_PROFILE'] = 'Perfil de Colección para';
 $LANG['RSS_FEED'] = 'RSS Feed';
 $LANG['CONTACT'] = 'Contactos';
 $LANG['HOMEPAGE'] = 'Sitio Web';
@@ -116,5 +116,5 @@ $LANG['SEARCH_BY_TAXON'] = 'Buscar por taxón';
 $LANG['OCCURENCE_IDENTIFIER'] = 'Número de Catálogo';
 $LANG['TAXON'] = 'Taxón';
 $LANG['OCCURRENCE_EDITOR'] = 'Editar';
-
+$LANG['INFO_ALT'] = "Icono de información que indica un enlace a información sobre importación/actualización";
 ?>

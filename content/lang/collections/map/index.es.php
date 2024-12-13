@@ -3,11 +3,14 @@
 ------------------
 Language: Español (Spanish)
 Translated by: Samanta Orellana
-Translated by: Google Translate (2024-09-13)
+Edited by: Katie Pearson
+Date Translated: 2021-06-23
+Date Edited: 2024-10-22
 ------------------
 */
 include_once($SERVER_ROOT.'/content/lang/collections/harvestparams.es.php');
 include_once('mapshared.es.php');
+$LANG['MAP_INTERFACE'] = 'Interfaz del Mapa';
 
 $LANG['SEARCH_CRITERIA'] = 'Criterios de búsqueda';
 $LANG['CRITERIA'] = 'Criterios';
@@ -16,6 +19,7 @@ $LANG['MAP_OPTIONS'] = 'Opciones del Mapa';
 $LANG['RESET'] = 'Reiniciar';
 $LANG['SEARCH'] = 'Buscar';
 $LANG['TAXA'] = 'Taxa';
+$LANG['WITHIN'] = ''; //empty because correct phrasing is "a _ de mí"
 $LANG['SHAPE_TOOLS'] = 'Use las herramientas de formas sobre el mapa para seleccionar los registros dentro de dicha forma';
 $LANG['WITHIN_POLYGON'] = 'Dentro del polígono seleccionado';
 $LANG['WITHIN_CIRCLE'] = 'Dentro del círculo seleccionado';
@@ -37,7 +41,8 @@ $LANG['MIN_DENSITY'] = 'Densidad Mínima';
 $LANG['MAX_DENSITY'] = 'Densidad Máxima';
 $LANG['RECORDS_TAXA'] = 'Registros y Taxa';
 $LANG['RECORDS'] = 'Registros';
-$LANG['EXTERNAL_RECORDS'] = 'Registros externos';
+$LANG['INTERNAL_RECORDS'] = 'Registros Internos';
+$LANG['EXTERNAL_RECORDS'] = 'Registros Externos';
 $LANG['PORTAL_LIST'] = 'Lista de portales';
 $LANG['TAXA_LIST'] = 'Listado Taxonómico';
 $LANG['COLLECTION'] = 'Colección';
@@ -66,4 +71,3 @@ $LANG['EAST'] = 'E';
 $LANG['WEST'] = 'W';
 $LANG['FAILED_TO_LOAD_OCCR_DATA'] = 'Error al cargar los datos de ocurrencia';
 
-?>
