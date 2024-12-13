@@ -1004,7 +1004,7 @@ class GeographicThesaurus extends Manager {
 			$binds
 		);
 
-		return true;
+		return $result->fetch_assoc() ? true: false;
 	}
 }
 ?>
