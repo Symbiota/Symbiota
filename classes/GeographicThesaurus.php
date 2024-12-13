@@ -957,9 +957,9 @@ class GeographicThesaurus extends Manager {
 
 		$result = SymbUtil::execute_query($this->conn ,"
 			SELECT g.geoThesID, g.geoterm, g.geoLevel, s.synonyms
-			from geographicthesaurus g 
-			join geographicpolygon gp on gp.geoThesID = g.geoThesID 
-			left join (SELECT acceptedID, GROUP_CONCAT(geoterm) as `synonyms` from geographicthesaurus where acceptedID is not null group by acceptedID) s on s.acceptedID = g.geoThesID where ST_Within(Point(?, ?), gp.footprintPolygon) order by geolevel
+			FROM geographicthesaurus g 
+			JOIN geographicpolygon gp on gp.geoThesID = g.geoThesID 
+			LEFT JOIN (SELECT acceptedID, GROUP_CONCAT(geoterm) as `synonyms` FROM geographicthesaurus WHERE acceptedID IS NOT NULL GROUP BY acceptedID) s ON s.acceptedID = g.geoThesID where ST_Within(Point(?, ?), gp.footprintPolygon) ORDER BY geolevel
 			", [floatval($lng), floatval($lat)]);
 
 		$matches = [];
@@ -994,7 +994,10 @@ class GeographicThesaurus extends Manager {
 			return false;
 		}
 
-		$sql = "SELECT * FROM geographicthesaurus WHERE " . implode(" or ", $parameters );
+		$sql = "SELECT g.geoThesID FROM geographicthesaurus g 
+			JOIN geographicpolygon gp ON gp.geoThesID = g.geoThesID 
+			WHERE " . implode(" or ", $parameters );
+
 		$result = SymbUtil::execute_query(
 			$this->conn,
 			$sql, 
