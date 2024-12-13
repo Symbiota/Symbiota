@@ -86,10 +86,11 @@ INSERT INTO
 		"image" as mediaType
 	from images;
 
-
+-- Key names may very depending on database and history
 ALTER TABLE imagetag 
-  DROP CONSTRAINT FK_imagetag_imgid,
-  DROP FOREIGN KEY `FK_imagetag_tagkey`;
+  DROP CONSTRAINT IF EXISTS FK_imagetag_imgid,
+  DROP CONSTRAINT IF EXISTS FK_imagetag_imgid_idx,
+  DROP FOREIGN KEY IF EXISTS `FK_imagetag_tagkey`;
 
 ALTER TABLE `imagetag` 
   CHANGE COLUMN `imagetagid` `imageTagID` BIGINT(20) NOT NULL AUTO_INCREMENT ,
