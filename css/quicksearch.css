@@ -1,29 +1,25 @@
-#quicksearchdiv{
-	width: 335px;
-	margin-top: 8px;
-	margin-bottom: 8px;
-	margin-left: auto;
-	margin-right: auto;
-	padding: 5px 5px 0px 5px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	border: 1px solid black;	
+.quicksearchcontainer{
+    display: flex;
+    align-items: baseline;
 }
 
 #quicksearchtext{
+	transform: translateY(-50%) translateX(20%);
+    background-color: var(--body-bg-color);
+    position: absolute;
+    padding: 0 0.5rem 0 0.5rem;
 }
 
 #quicksearch input{
-	width: 250px;
-	float: left;
-	margin-bottom:0px;
-	padding-bottom:0px;
-	font-family: Arial, Helvetica, sans-serif;
+    width: 250px;
+    margin-bottom: 0.5rem;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 10px 5px;
+    font-size: 1em;
+    border: 1.5px solid var(--medium-color);
+    background-color: var(--body-bg-color);
 }
 
 #quicksearchbutton{
-	margin-left:10px;
-	margin-top:0px;
-	margin-bottom:0px;
-	padding-bottom:0px;
+	margin-left: 0.5rem;
 }

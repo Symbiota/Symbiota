@@ -1,5 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 class OccurrenceSesar extends Manager {
 
@@ -387,7 +388,7 @@ class OccurrenceSesar extends Manager {
 		$this->addSampleElem($this->igsnDom, $sampleElem, 'current_archive', $this->collArr['collectionName']);
 		$this->addSampleElem($this->igsnDom, $sampleElem, 'current_archive_contact', $this->collArr['contact'].($this->collArr['email']?' ('.$this->collArr['email'].')':''));
 
-		$baseUrl = $this->getDomain().$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1)=='/'?'':'/');
+		$baseUrl = GeneralUtil::getDomain().$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1)=='/'?'':'/');
 		//$baseUrl = 'http://swbiodiversity.org/seinet/';
 		$url = $baseUrl.'collections/individual/index.php?occid='.$this->fieldMap['occid']['value'];
 		$externalUrlsElem = $this->igsnDom->createElement('external_urls');

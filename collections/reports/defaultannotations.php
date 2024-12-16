@@ -1,6 +1,7 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLabel.php');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $collid = $_POST["collid"];

@@ -1,8 +1,11 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMapManager.php');
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/collections/map/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/map/index.en.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/map/index.' . $LANG_TAG . '.php');
+
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/map/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/map/index.' . $LANG_TAG . '.php');
+	else include_once($SERVER_ROOT . '/content/lang/collections/map/index.en.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/header.en.php');
+    else include_once($SERVER_ROOT . '/content/lang/header.' . $LANG_TAG . '.php');
 
 header('Content-Type: text/html; charset='.$CHARSET);
 header("Accept-Encoding: gzip, deflate, br");
@@ -149,7 +152,7 @@ if(isset($_REQUEST['llpoint'])) {
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title><?php echo $DEFAULT_TITLE; ?> - Map Interface</title>
+		<title><?php echo $DEFAULT_TITLE . ' - ' . $LANG['MAP_INTERFACE'] ?></title>
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -158,6 +161,9 @@ if(isset($_REQUEST['llpoint'])) {
 		<style type="text/css">
 			.panel-content a{ outline-color: transparent; font-size: .9rem; font-weight: normal; }
 			.ui-front { z-index: 9999999 !important; }
+			#cross_portal_record_label {
+				display: none;
+			}
 		</style>
 		<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 		<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
@@ -342,13 +348,23 @@ if(isset($_REQUEST['llpoint'])) {
 		function buildPanels(cross_portal_enabled) {
          const cross_portal_results = document.getElementById("cross_portal_results");
          const cross_portal_list = document.getElementById("cross_portal_list");
+         const record_label = document.getElementById("standard_record_label");
+         const cross_portal_record_label = document.getElementById("cross_portal_record_label");
          if(cross_portal_results) {
             if(cross_portal_enabled) {
                cross_portal_results.style.display = "block";
                cross_portal_list.style.display = "block";
+
+			   //Swap record table label for cross portal searches
+			   cross_portal_record_label.style.display = "block";
+			   standard_record_label.style.display = "none";
             } else {
                cross_portal_results.style.display = "none";
                cross_portal_list.style.display = "none";
+
+			   //Swap record table label for standard searches 
+			   cross_portal_record_label.style.display = "none";
+			   standard_record_label.style.display = "block";
             }
          }
 			setPanels(true);
@@ -424,7 +440,7 @@ if(isset($_REQUEST['llpoint'])) {
 					taxaHtml += "<div style='display:table;'>";
 					prev_family = taxa.family;
 				}
-				const sn_link = `<a target="_blank" href="${taxa.origin}/taxa/index.php?tid=${taxa.tid}">${taxa.sn}</a>`;
+				const sn_link = `<a target="_blank" href="${taxa.origin? taxa.origin: '<?= $CLIENT_ROOT ?>'}/taxa/index.php?tid=${taxa.tid}">${taxa.sn}</a>`;
 				taxaHtml += legendRow(`taxa-${taxa.id_map.map(id => `${id.index}*${id.tid}`).join(",")}`, taxa.color, sn_link);
 			}
 
@@ -633,6 +649,10 @@ if(isset($_REQUEST['llpoint'])) {
 			let map = new LeafletMap('map', {
 				lang: "<?php echo $LANG_TAG; ?>",
 			})
+			var oms = new OverlappingMarkerSpiderfier(map.mapLayer, {
+				nearbyDistance: 5
+			});
+
 			map.enableDrawing({
 				polyline: false,
 				circlemarker: false,
@@ -791,7 +811,7 @@ if(isset($_REQUEST['llpoint'])) {
 						if(marker.options.icon && marker.options.icon.options.observation) {
 							marker.setIcon(getObservationSvg({color: `#${color}`, size:30 }))
 						} else {
-							marker.setStyle({fillColor: `#${color}`})
+							marker.setIcon(getSpecimenSvg({color: `#${color}`, size:9 }))
 						}
 					}
 				}
@@ -804,14 +824,12 @@ if(isset($_REQUEST['llpoint'])) {
 
 				for(let record of records) {
 					let marker = (record.type === "specimen"?
-						L.circleMarker([record.lat, record.lng], {
-							radius : 8,
-							color  : '#000000',
-							weight: 2,
-							fillColor: `#${tMap[record['tid']].color}`,
-							opacity: 1.0,
-							fillOpacity: 1.0,
-							className: `coll-${record['collid']} taxa-${record['tid']}`
+						L.marker([record.lat, record.lng], {
+							icon: getSpecimenSvg({
+								color: `#${tMap[record['tid']].color}`,
+								className: `coll-${record['collid']} taxa-${record['tid']}`,
+								size: 9
+							})
 						}):
 						L.marker([record.lat, record.lng], {
 							icon: getObservationSvg({
@@ -820,11 +838,12 @@ if(isset($_REQUEST['llpoint'])) {
 								size: 30
 							})
 						}))
-					.on('click', function() { openRecord(record) })
 					.bindTooltip(`<div style="font-size:1rem">${record.id}</div>`)
 
-					markers.push(marker);
+					marker.record = record;
 
+					markers.push(marker);
+					oms.addMarker(marker);
 					taxon.addMarker(record['tid'], marker);
 					collections.addMarker(record['collid'], marker);
 					portal.addMarker(origin, marker);
@@ -887,6 +906,11 @@ if(isset($_REQUEST['llpoint'])) {
 				}
 			}
 
+			// Open Record needs oms to spider correctly
+			oms.addListener('click', function(marker) {
+				openRecord(marker.record);
+			})
+
 			document.addEventListener('resetMap', async e => {
 				setPanels(false);
 				mapGroups.forEach(group => {
@@ -916,6 +940,7 @@ if(isset($_REQUEST['llpoint'])) {
 				})
 
 				markers = [];
+				oms.clearMarkers();
 
 				if(heatmapLayer) map.mapLayer.removeLayer(heatmapLayer);
 
@@ -1954,7 +1979,7 @@ if(isset($_REQUEST['llpoint'])) {
 		</div>
 		<div id='map' style='width:100vw;height:100vh;z-index:1'></div>
 		<div id="defaultpanel" class="sidepanel"  <?= $menuClosed? 'style="width: 0"': ''?>>
-			<div class="menu" style="display:flex; align-items: center; background-color: var(--darkest-color); height: 2rem">
+			<div class="menu" style="display:flex; align-items: center; background-color: var(--menu-top-bg-color); height: 2rem">
 				<a style="text-decoration: none; margin-left: 0.5rem;" href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php">
 					<?php echo (isset($LANG['H_HOME'])?$LANG['H_HOME']:'Home'); ?>
 				</a>
@@ -2289,7 +2314,14 @@ Record Limit:
 						<h3 id="recordstaxaheader" style="display:none;padding-left:30px;"><?php echo (isset($LANG['RECORDS_TAXA'])?$LANG['RECORDS_TAXA']:'Records and Taxa'); ?></h3>
 						<div id="tabs2" style="display:none;padding:0px;">
 							<ul>
-								<li><a href='#occurrencelist'><span><?= $LANG['RECORDS'] ?></span></a></li>
+								<li><a href='#occurrencelist'>
+									<span id="standard_record_label">
+										<?= $LANG['RECORDS'] ?>
+									</span>
+									<span id="cross_portal_record_label">
+										<?= $LANG['INTERNAL_RECORDS'] ?>
+									</span></a>
+								</li>
 								<li id="cross_portal_results"><a href='#external_occurrencelist'><span><?= $LANG['EXTERNAL_RECORDS'] ?></span></a></li>
 								<li id="cross_portal_list"><a href='#portalsymbology'><span><?= $LANG['PORTAL_LIST'] ?></span></a></li>
 						   	<li><a href='#symbology'><span><?= $LANG['COLLECTIONS'] ?></span></a></li>

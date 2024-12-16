@@ -82,9 +82,6 @@ class DwcArchiverImage{
 				//Search criteria came from map search page
 				$sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
 			}
-			if(strpos($conditionSql,'MATCH(f.recordedby)') || strpos($conditionSql,'MATCH(f.locality)')){
-				$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
-			}
 			if(strpos($conditionSql,'ds.datasetid')){
 				$sql .= 'LEFT JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
 			}

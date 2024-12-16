@@ -2,8 +2,8 @@
 if(isset($SERVER_ROOT) && $SERVER_ROOT){
 	include_once($SERVER_ROOT.'/config/dbconnection.php');
 	include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
-	include_once($SERVER_ROOT.'/classes/UuidFactory.php');
 	include_once($SERVER_ROOT.'/classes/ImageShared.php');
+	include_once($SERVER_ROOT . '/classes/GuidManager.php');
 }
 
 class ImageLocalProcessor {
@@ -726,7 +726,7 @@ class ImageLocalProcessor {
 					}
 					else {
 						$medUrl = $lgUrl;
-						$this->logOrEcho('Web image linked to original as source image is relativly small', 1);
+						$this->logOrEcho('Web image linked to original as source image is relatively small', 1);
 					}
 				}
 				elseif($this->medProcessingCode == 2){
@@ -1684,10 +1684,10 @@ class ImageLocalProcessor {
 			$occurMain->__destruct();
 
 			$this->logOrEcho('Populating recordID UUIDs for all records...');
-			$uuidManager = new UuidFactory($this->conn);
-			$uuidManager->setSilent(1);
-			$uuidManager->populateGuids();
-			$uuidManager->__destruct();
+			$guidManager = new GuidManager($this->conn);
+			$guidManager->setSilent(1);
+			$guidManager->populateGuids();
+			$guidManager->__destruct();
 			$this->logOrEcho('Stats update completed');
 		}
 	}

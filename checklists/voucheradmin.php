@@ -110,15 +110,15 @@ $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath">
-	<a href="../index.php"><?php echo htmlspecialchars($LANG['NAV_HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)?></a> &gt;&gt;
-	<a href="checklist.php?clid=<?php echo htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars($LANG['RETURNCHECK'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?></a> &gt;&gt;
+	<a href="../index.php"><?= $LANG['NAV_HOME'] ?></a> &gt;&gt;
+	<a href="checklist.php?clid=<?= $clid . '&pid=' . $pid ?>"><?= $LANG['RETURNCHECK'] ?></a> &gt;&gt;
 	<b><?php echo $LANG['CHECKLIST_ADMIN'];?></b>
 </div>
 <!-- This is inner text! -->
 <div id='innertext'>
-	<h1 class="page-heading">Voucher Administration</h1>
+	<h1 class="page-heading"><?php echo $LANG['VOUCHER_ADMIN']; ?></h1>
 <div class="voucher-admin-header">
-	<a href="checklist.php?clid=<?php echo htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+	<a href="checklist.php?clid=<?= $clid . '&pid=' . $pid; ?>">
 		<?php echo $clManager->getClName(); ?>
 	</a>
 </div>
@@ -293,27 +293,24 @@ if($clid && $isEditor){
 				<div style="margin:25px;height:400px;">
 					<div style="margin:10px 5px;"><?php echo $LANG['ADDITIONAL'];?>.</div>
 					<ul>
-						<li><a href="voucherreporthandler.php?rtype=fullcsv&clid=<?php echo htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars($LANG['FULLSPECLIST'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?></a></li>
+						<li><a href="voucherreporthandler.php?rtype=fullcsv&clid=<?= $clid ?>"><?= $LANG['FULLSPECLIST'] ?></a></li>
 						<?php
 						$vouchersExist = $clManager->vouchersExist();
 						if($vouchersExist){
 							?>
-							<li><a href="voucherreporthandler.php?rtype=fullvoucherscsv&clid=<?php echo htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars($LANG['FULLSPECLISTVOUCHER'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?></a></li>
+							<li><a href="voucherreporthandler.php?rtype=fullvoucherscsv&clid=<?= $clid ?>"><?= $LANG['FULLSPECLISTVOUCHER'] ?></a></li>
 							<li>
-								<a href="#" onclick="openPopup('../collections/download/index.php?searchvar=<?php echo urlencode('clid=' . htmlspecialchars($clManager->getClidFullStr(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)); ?>&noheader=1','repvouchers');return false;">
+								<a href="#" onclick="openPopup('../collections/download/index.php?searchvar=<?php echo urlencode('clid=' . $clManager->getClidFullStr()); ?>&noheader=1','repvouchers');return false;">
 									<?php echo $LANG['VOUCHERONLY']; ?>
 								</a>
 							</li>
 							<?php
 						}
 						?>
-						<li><a href="voucherreporthandler.php?rtype=fullalloccurcsv&clid=<?php echo htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars($LANG['FULLSPECLISTALLOCCUR'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?></a></li>
-						<li><a href="voucherreporthandler.php?rtype=pensoftxlsx&clid=<?php echo htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank"><?php echo htmlspecialchars($LANG['PENSOFT_XLSX_EXPORT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?></a></li>
-						<li><?php echo $LANG['SPECMISSINGTITLE'];?></li>
-					</ul>
-					<ul style="list-style-type:circle">
-						<li><a href="voucherreporthandler.php?rtype=missingoccurcsv&clid=<?php echo htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars($LANG['SPECMISSTAXA'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?></a></li>
-						<li><a href="voucherreporthandler.php?rtype=problemtaxacsv&clid=<?php echo htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars($LANG['SPECMISSPELLED'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?></a></li>
+						<li><a href="voucherreporthandler.php?rtype=fullalloccurcsv&clid=<?= $clid ?>"><?= $LANG['FULLSPECLISTALLOCCUR'] ?></a></li>
+						<li><a href="voucherreporthandler.php?rtype=pensoftxlsx&clid=<?= $clid ?>" target="_blank"><?= $LANG['PENSOFT_XLSX_EXPORT'] ?></a></li>
+						<li><a href="voucherreporthandler.php?rtype=missingoccurcsv&clid=<?= $clid ?>"><?= $LANG['SPECMISSTAXA'] ?></a></li>
+						<li><a href="voucherreporthandler.php?rtype=problemtaxacsv&clid=<?= $clid ?>"><?= $LANG['SPECMISSPELLED'] ?></a></li>
 					</ul>
 				</div>
 			</div>

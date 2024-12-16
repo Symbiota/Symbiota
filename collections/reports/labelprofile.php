@@ -1,6 +1,7 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLabel.php');
+
 header('Content-Type: text/html; charset='.$CHARSET);
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/reports/labelprofile.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));

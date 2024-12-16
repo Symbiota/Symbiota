@@ -1,6 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-include_once($SERVER_ROOT.'/utilities/SymbUtil.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/classes/OccurrenceEditorDeterminations.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/classes/OccurrenceEditorDeterminations.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/classes/OccurrenceEditorDeterminations.en.php');
@@ -269,7 +269,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 				INNER JOIN omoccurdeterminations od on od.occid = i.occid
 				SET tid = ? WHERE detid = ?;
 				SQL;
-				SymbUtil::execute_query($this->conn,$sql, [$taxonArr['tid'], $detId]);
+				QueryUtil::executeQuery($this->conn,$sql, [$taxonArr['tid'], $detId]);
 			}
 		}
 	}
