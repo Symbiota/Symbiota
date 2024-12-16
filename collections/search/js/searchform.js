@@ -953,12 +953,18 @@ function parseUrlVariables(varStr) {
 function toggleTheNonDefaultsClosed(defaultId) {
   const categoryButtons = document.querySelectorAll('a[id^="condense-"]');
   categoryButtons.forEach((categoryButton) => {
-    if (categoryButton.id !== "condense-" + defaultId + "-") {
-      const idToToggle = categoryButton.id.replace("condense-", "");
+    const regexPattern = new RegExp(`^condense-\\d+-${defaultId}$`);
+    if (!regexPattern.test(categoryButton.id)) {
+      const idToToggle = categoryButton.id
+        .replace("condense-", "")
+        .replace("-" + defaultId, "");
       toggleCat(idToToggle);
     }
   });
+  moveDefaultDivUpTop(defaultId);
 }
+
+function moveDefaultDivUpTop(defaultId) {}
 
 //////////////////////////////////////////////////////////////////////////
 

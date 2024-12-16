@@ -25,14 +25,16 @@
 		?>
 			<div>
 			<?php
+				// var_dump($specArr);
 				if(isset($specArr['cat'])){
 					$categoryArr = $specArr['cat'];
 					$collTypeLabel = 'Specimens';
 					$uniqGrouping = '';
 					?>
-					<section class="gridlike-form">
+					<section id="category-container" class="gridlike-form">
 						<?php
 						foreach($categoryArr as $catid => $catEl){
+							$_SESSION[$catEl['name']] = strval($catid);
 							include('./singleCollectionGroupDetails.php');
 							$collCnt++;
 						}
