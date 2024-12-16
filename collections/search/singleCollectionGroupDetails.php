@@ -10,9 +10,8 @@ unset($catEl['name']);
 unset($catEl['acronym']);
 unset($catEl['icon']);
 $idStr = $collCnt . '-' . $catId;
-echo '$idStr on the singleCollectionGroup details side is: ' . $idStr;
 ?>
-<script id="ignore-me-<?php echo $catId?>" type="text/javascript">
+<script type="text/javascript">
 	document.addEventListener('DOMContentLoaded', ()=>{
         if(<?php echo $catId; ?>){
             addElemFirst("category-container", "category-chunk-<?php echo $DEFAULTCATID; ?>");

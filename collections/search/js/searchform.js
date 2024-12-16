@@ -961,10 +961,7 @@ function toggleTheNonDefaultsClosed(defaultId) {
       toggleCat(idToToggle);
     }
   });
-  moveDefaultDivUpTop(defaultId);
 }
-
-function moveDefaultDivUpTop(defaultId) {}
 
 //////////////////////////////////////////////////////////////////////////
 

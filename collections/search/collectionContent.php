@@ -25,7 +25,6 @@
 		?>
 			<div>
 			<?php
-				// var_dump($specArr);
 				if(isset($specArr['cat'])){
 					$categoryArr = $specArr['cat'];
 					$collTypeLabel = 'Specimens';
