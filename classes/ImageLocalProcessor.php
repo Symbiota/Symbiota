@@ -726,7 +726,7 @@ class ImageLocalProcessor {
 					}
 					else {
 						$medUrl = $lgUrl;
-						$this->logOrEcho('Web image linked to original as source image is relativly small', 1);
+						$this->logOrEcho('Web image linked to original as source image is relatively small', 1);
 					}
 				}
 				elseif($this->medProcessingCode == 2){
