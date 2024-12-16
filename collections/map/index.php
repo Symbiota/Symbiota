@@ -4,6 +4,8 @@ include_once($SERVER_ROOT.'/classes/OccurrenceMapManager.php');
 
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/map/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/map/index.' . $LANG_TAG . '.php');
 	else include_once($SERVER_ROOT . '/content/lang/collections/map/index.en.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/templates/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/templates/header.en.php');
+    else include_once($SERVER_ROOT . '/content/lang/templates/header.' . $LANG_TAG . '.php');
 
 header('Content-Type: text/html; charset='.$CHARSET);
 header("Accept-Encoding: gzip, deflate, br");
