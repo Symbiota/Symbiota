@@ -118,7 +118,7 @@ $dwcManager = new DwcArchiverCore();
 						<?php
 						if($downloadType == 'checklist') echo $LANG['DOWNLOAD_CHECKL'];
 						elseif($downloadType == 'georef') echo $LANG['DOWNLOAD_GEO_DATA'];
-						else echo $LANG['DOWNLOAD_SPEC_REC'] ;
+						else echo $LANG['DOWNLOAD_SPEC_REC'];
 						?>
 					</legend>
 					<?php
