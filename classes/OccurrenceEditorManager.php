@@ -660,11 +660,11 @@ class OccurrenceEditorManager {
 		$localIndex = false;
 		$sqlFrag = '';
 		if($this->occid && !$this->direction){
-			$sqlFrag .= 'LEFT JOIN omoccurpaleo p ON p.occid = o.occid WHERE (o.occid = '.$this->occid.')';
+			$sqlFrag .= 'LEFT JOIN omoccurpaleo paleo ON paleo.occid = o.occid WHERE (o.occid = '.$this->occid.')';
 		}
 		elseif($this->sqlWhere){
 			$this->addTableJoins($sqlFrag);
-			$sqlFrag .= 'LEFT JOIN omoccurpaleo p ON p.occid = o.occid ' . $this->sqlWhere;
+			$sqlFrag .= 'LEFT JOIN omoccurpaleo paleo ON paleo.occid = o.occid ' . $this->sqlWhere;
 			if($limit){
 				$this->setSqlOrderBy($sqlFrag);
 				$sqlFrag .= 'LIMIT '.$start.','.$limit;
@@ -682,7 +682,7 @@ class OccurrenceEditorManager {
 			}
 		}
 		if($sqlFrag){
-			$sql = 'SELECT DISTINCT o.occid, o.collid, o.'.implode(',o.',array_keys($this->fieldArr['omoccurrences'])) . ',p.' . implode(',p.',($this->fieldArr['omoccurpaleo'])).', datelastmodified FROM omoccurrences o '.$sqlFrag;
+			$sql = 'SELECT DISTINCT o.occid, o.collid, o.'.implode(',o.',array_keys($this->fieldArr['omoccurrences'])) . ',paleo.' . implode(',paleo.',($this->fieldArr['omoccurpaleo'])).', datelastmodified FROM omoccurrences o '.$sqlFrag;
 			$previousOccid = 0;
 			$rs = $this->conn->query($sql);
 			$rsCnt = 0;

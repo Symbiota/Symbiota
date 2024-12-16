@@ -23,6 +23,8 @@ $collIdsFromUrl = array_key_exists("db",$_GET) ? explode(",", $explodable) : '';
 $collManager = new OccurrenceManager();
 $collectionSource = $collManager->getQueryTermStr();
 
+$gtsTermArr = $collManager->getPaleoGtsTerms();
+
 $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ?? false;
 $collData = new CollectionMetadata();
 $siteData = new DatasetsMetadata();
@@ -176,7 +178,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 									</label>
 								</div>
 							</div>
-<div>
+							<div>
 								<div class="input-text-container">
 									<label for="local" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['LOCALITY_LOCALITIES'] ?></span>
@@ -580,6 +582,87 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 							<label for="usethes-associations">
 								<span class="ml-1"><?php echo $LANG['ASSOCIATIONS'] . '-' . $LANG['INCLUDE_SYNONYMS'] ?></span>
 							</label>
+						</div>
+					</div>
+				</section>
+
+				<!-- Geological Context -->
+				<section>
+					<!-- Accordion selector -->
+					<input type="checkbox" id="geocontext" class="accordion-selector" />
+
+					<!-- Accordion header -->
+					<label for="geocontext" class="accordion-header"><?php echo $LANG['GEO_CONTEXT'] ?></label>
+
+					<!-- Content -->
+					<div id="search-form-geocontext" class="content">
+						<div class="top-breathing-room-rel" style="display: grid;grid-template-columns: 1fr 1fr;gap: 10px;">
+							<div class="select-container" style="position: relative;">
+								<label for="earlyInterval" class="screen-reader-only"><?php echo $LANG['EARLY_INT'] ?></label>
+								<select name="earlyInterval" id="earlyInterval" style="margin-top:0;padding-top:0; margin-bottom: 0.5rem">
+									<option value=""></option>
+									<?php
+									$earlyIntervalTerm = '';
+									if(isset($occArr['earlyInterval'])) $earlyIntervalTerm = $occArr['earlyInterval'];
+									if($earlyIntervalTerm && !array_key_exists($earlyIntervalTerm, $gtsTermArr)){
+										echo '<option value="'.$earlyIntervalTerm.'" SELECTED>'.$earlyIntervalTerm.' - mismatched term</option>';
+										echo '<option value="">---------------------------</option>';
+									}
+									foreach($gtsTermArr as $term => $rankid){
+										echo '<option value="'.$term.'" '.($earlyIntervalTerm==$term?'SELECTED':'').'>'.$term.'</option>';
+									}
+									?>
+								</select>
+								<span class="inset-input-label"><?php echo $LANG['EARLY_INT'] ?></span>
+							</div>
+							<div class="select-container" style="position: relative;">
+								<label for="lateInterval" class="screen-reader-only"><?php echo $LANG['LATE_INT'] ?></label>
+								<select name="lateInterval" id="lateInterval" style="margin-top:0;padding-top:0; margin-bottom: 0.5rem">
+									<option value=""></option>
+									<?php
+									$lateIntervalTerm = '';
+									if(isset($occArr['lateInterval'])) $lateIntervalTerm = $occArr['lateInterval'];
+									if($lateIntervalTerm && !array_key_exists($lateIntervalTerm, $gtsTermArr)){
+										echo '<option value="'.$lateIntervalTerm.'" SELECTED>'.$lateIntervalTerm.' - mismatched term</option>';
+										echo '<option value="">---------------------------</option>';
+									}
+									foreach($gtsTermArr as $term => $rankid){
+										echo '<option value="'.$term.'" '.($lateIntervalTerm==$term?'SELECTED':'').'>'.$term.'</option>';
+									}
+									?>
+								</select>
+								<span class="inset-input-label"><?php echo $LANG['LATE_INT'] ?></span>
+							</div>
+						</div>
+						<div style="display: grid; grid-template-columns: 1fr 1fr; grid-gap: 10px;">
+							<div class="input-text-container">
+								<label for="lithogroup" class="input-text--outlined">
+									<span class="screen-reader-only"><?php echo $LANG['LITHOGROUP'] ?></span>
+										<input type="text" name="lithogroup" id="lithogroup" data-chip="<?php echo $LANG['LITHOGROUP'] ?>" />
+									<span class="inset-input-label"><?php echo $LANG['LITHOGROUP'] ?></span>
+								</label>
+							</div>
+							<div class="input-text-container">
+								<label for="formation" class="input-text--outlined">
+									<span class="screen-reader-only"><?php echo $LANG['FORMATION'] ?></span>
+										<input type="text" name="formation" id="formation" data-chip="<?php echo $LANG['FORMATION'] ?>" />
+									<span class="inset-input-label"><?php echo $LANG['FORMATION'] ?></span>
+								</label>
+							</div>
+							<div class="input-text-container">
+								<label for="member" class="input-text--outlined">
+									<span class="screen-reader-only"><?php echo $LANG['MEMBER'] ?></span>
+										<input type="text" name="member" id="member" data-chip="<?php echo $LANG['MEMBER'] ?>" />
+									<span class="inset-input-label"><?php echo $LANG['MEMBER'] ?></span>
+								</label>
+							</div>
+							<div class="input-text-container">
+								<label for="bed" class="input-text--outlined">
+									<span class="screen-reader-only"><?php echo $LANG['BED'] ?></span>
+										<input type="text" name="bed" id="bed" data-chip="<?php echo $LANG['BED'] ?>" />
+									<span class="inset-input-label"><?php echo $LANG['BED'] ?></span>
+								</label>
+							</div>
 						</div>
 					</div>
 				</section>

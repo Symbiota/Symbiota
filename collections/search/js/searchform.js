@@ -40,6 +40,12 @@ let paramNames = [
   "associated-taxa",
   "taxontype-association",
   "usethes-associations",
+  "earlyInterval",
+  "lateInterval",
+  "lithogroup",
+  "formation",
+  "member",
+  "bed",
 ];
 const uLat = document.getElementById("upperlat") || null;
 const uLatNs = document.getElementById("upperlat_NS") || null;
@@ -833,6 +839,37 @@ function setSearchForm(frm) {
     if (urlVar["associated-taxon-type"]) {
       if (frm["taxontype-association"]) {
         frm["taxontype-association"].value = urlVar["associated-taxon-type"];
+      }
+    }
+
+    if (urlVar["earlyInterval"]) {
+      if (frm["earlyInterval"]) {
+        frm["earlyInterval"].value = urlVar["earlyInterval"];
+      }
+    }
+    if (urlVar["lateInterval"]) {
+      if (frm["lateInterval"]) {
+        frm["lateInterval"].value = urlVar["lateInterval"];
+      }
+    }
+    if (urlVar["lithogroup"]) {
+      if (frm["lithogroup"]) {
+        frm["lithogroup"].value = urlVar["lithogroup"];
+      }
+    }
+    if (urlVar["formation"]) {
+      if (frm["formation"]) {
+        frm["formation"].value = urlVar["formation"];
+      }
+    }
+    if (urlVar["member"]) {
+      if (frm["member"]) {
+        frm["member"].value = urlVar["member"];
+      }
+    }
+    if (urlVar["bed"]) {
+      if (frm["bed"]) {
+        frm["bed"].value = urlVar["bed"];
       }
     }
 

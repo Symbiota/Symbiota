@@ -117,5 +117,12 @@ $LANG['ASSOCIATIONS'] = 'Associations';
 $LANG['ASSOCIATION_DESCRIPTION'] = 'Find all occurrences of taxa that have the following association';
 $LANG['ASSOCIATION_DESCRIPTION_2'] = 'with the following taxon';
 $LANG['ASSOCIATION_TYPE'] = 'Association Type';
+$LANG['GEO_CONTEXT'] = 'Geological Context';
+$LANG['EARLY_INT'] = 'Early Interval';
+$LANG['LATE_INT'] = 'Late Interval';
+$LANG['LITHOGROUP'] = 'Group';
+$LANG['FORMATION'] = 'Formation';
+$LANG['MEMBER'] = 'Member';
+$LANG['BED'] = 'Bed';
 
 ?>
