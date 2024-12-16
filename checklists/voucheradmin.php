@@ -206,9 +206,10 @@ if($clid && $isEditor){
 									<b><?php echo $LANG['LATN'];?>:</b>
 									<input id="upperlat" type="text" name="latnorth" style="width:80px;" value="<?php echo isset($termArr['latnorth'])?$termArr['latnorth']:''; ?>" title="<?php echo $LANG['LAT_NORTH'] ?>" />
 									<?php
-									$coordAidUrl = '../collections/tools/mapcoordaid.php?map_mode_strict=true&mapmode=rectangle&latdef='.$clMetaArr['latcentroid'].'&lngdef='.$clMetaArr['longcentroid'];
+									$latDef = $clMetaArr['latcentroid'];
+									$lngDef = $clMetaArr['longcentroid'];
 									?>
-											<a href="#" onclick="openCoordAid({map_mode: MAP_MODES.RECTANGLE, client_root:'<?=$CLIENT_ROOT?>', map_mode_strict: true })"><img src="../images/world.png" style="width:1.2em" title="<?php echo $LANG['FIND_COORD'] ?>" /></a>
+											<a href="#" onclick="openCoordAid({map_mode: MAP_MODES.RECTANGLE, client_root:'<?=$CLIENT_ROOT?>', map_mode_strict: true, latdef: '<?= $latDef ?>', lngdef: '<?= $lngDef ?>' })"><img src="../images/world.png" style="width:1.2em" title="<?php echo $LANG['FIND_COORD'] ?>" /></a>
 								</div>
 								<div>
 									<b><?php echo $LANG['LATS'];?>:</b>
@@ -229,7 +230,7 @@ if($clid && $isEditor){
 								<div>
 									<input name="includewkt" value="1" type="checkbox" <?php if(isset($termArr['includewkt'])) echo 'CHECKED'; ?> onclick="coordInputSelected(this)" />
 									<?php echo $LANG['POLYGON_SEARCH']; ?>
-									<a href="#"  onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root:'<?=$CLIENT_ROOT?>', map_mode_strict: true });return false;" title="<?php echo $LANG['EDIT_META_POLYGON'] ?>"><img src="../images/edit.png" style="width:1.2em" /></a>
+									<a href="#"  onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root:'<?=$CLIENT_ROOT?>', map_mode_strict: true, latdef: '<?= $latDef ?>', lngdef: '<?= $lngDef ?>' });return false;" title="<?php echo $LANG['EDIT_META_POLYGON'] ?>"><img src="../images/edit.png" style="width:1.2em" /></a>
 								</div>
 								<div>
 									<input name="excludecult" value="1" type="checkbox" <?php if(isset($termArr['excludecult'])) echo 'CHECKED'; ?> />
