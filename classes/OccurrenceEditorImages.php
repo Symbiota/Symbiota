@@ -2,6 +2,8 @@
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT.'/classes/SpecProcessorOcr.php');
 include_once($SERVER_ROOT.'/classes/ImageShared.php');
+include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
+
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/classes/OccurrenceEditorImages'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/classes/OccurrenceEditorImages.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/classes/OccurrenceEditorImages.en.php');
 
@@ -304,7 +306,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 		$sql = 'INSERT INTO omoccurrences(collid, observeruid,processingstatus) SELECT collid, observeruid, "unprocessed" FROM omoccurrences WHERE occid = ?';
 
 		try {
-			mysqli_execute_query($this->conn, $sql, [$this->occid]);
+			QueryUtil::executeQuery($this->conn, $sql, [$this->occid]);
 			return $this->conn->insert_id;
 		} catch(Exception $e) {
 			$this->errorArr[] = $LANG['UNABLE_RELINK_BLANK'].': '.$this->conn->error;
