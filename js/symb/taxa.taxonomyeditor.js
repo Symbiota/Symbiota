@@ -214,10 +214,18 @@ function toggle(target) {
   }
 }
 
-function validateTaxonEditForm(f) {
-  if (!checkNameExistence(f)) {
+async function validateTaxonEditForm(f, originalForm) {
+  const entryHasNotChanged = await isTheSameEntryAsItStarted(f, originalForm);
+  if (entryHasNotChanged) {
+    return true;
+  }
+  const isUniqueEntry = await checkNameExistence(f, true, originalForm);
+  if (!isUniqueEntry) {
     return false;
   }
+  // if (!checkNameExistence(f)) {
+  //   return false;
+  // }
   if (f.unitname1.value.trim() == "") {
     alert("Unitname 1 field must have a value");
     return false;
