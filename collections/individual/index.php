@@ -1079,9 +1079,6 @@ $traitArr = $indManager->getTraitArr();
 							else echo '<a href="../../includes/usagepolicy.php">' . $LANG['USAGE_POLICY'] . '</a>';
 							?>
 						</div>
-						<div id="record-id-div" style="margin:3px 0px;">
-							<?php echo '<label>'.$LANG['RECORD_ID'].': </label>'.$occArr['recordid']; ?>
-						</div>
 						<?php
 						if(isset($occArr['source'])){
 							$recordType = (isset($occArr['source']['type'])?$occArr['source']['type']:'');
