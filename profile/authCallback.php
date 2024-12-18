@@ -27,7 +27,7 @@ if (array_key_exists('code', $_REQUEST) && $_REQUEST['code']) {
   try{
     $status = $oidc->authenticate();
     //error_log(print_r($oidc, true));
-    var_dump($this->oidc->getSidFromBackChannel());
+    var_dump($oidc->getSidFromBackChannel());
     die();
   }
   catch (Exception $ex){
