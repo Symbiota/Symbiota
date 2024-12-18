@@ -26,9 +26,9 @@ if (array_key_exists('code', $_REQUEST) && $_REQUEST['code']) {
   
   try{
     $status = $oidc->authenticate();
-    //error_log(print_r($oidc, true));
-    var_dump($oidc->getSidFromBackChannel());
-    die();
+    $claims = $oidc->getVerifiedClaims();
+    $sid = $claims->sid;
+    error_log("SID: $sid");
   }
   catch (Exception $ex){
     $_SESSION['last_message'] = $LANG['CAUGHT_EXCEPTION'] . ' ' . $ex->getMessage() . ' <ERR/>';
