@@ -1,0 +1,67 @@
+<?php
+include_once('../../../config/symbini.php');
+
+if ( $_SERVER['REQUEST_METHOD'] == 'POST' && empty($_POST) ) {
+	$_POST = json_decode(file_get_contents('php://input'), true);
+	error_log("building $_POST from php://input", 0);
+}
+
+if(!is_array($_POST)){
+	echo '';
+	exit;
+}
+
+$type = array_key_exists('type',$_POST)?$_POST['type']:'';
+$data = array_key_exists('data',$_POST)?$_POST['data']:'';
+
+$data = json_decode($data);
+
+//Greg Testing
+error_log("POST: " . print_r($_POST, true));
+error_log("DATA: " . print_r($data, true));
+
+
+$endpoint = '';
+if(property_exists($data, 'endpoint')){
+    $endpoint = $data->endpoint;
+    unset($data->endpoint);
+}
+
+$GBIF_url = 'https://api.gbif.org/v1/' . $endpoint;
+if(property_exists($data,'datasetkey') && !empty($data->datasetkey)){
+    $GBIF_url .= '/' . $data->datasetkey . +'/endpoint';
+}
+
+error_log("GBIF_URL: " . $GBIF_url);
+
+$result = '';
+$loginStr = $GBIF_USERNAME.':'.$GBIF_PASSWORD;
+
+$data = (array) $data;
+
+error_log("DATA as cast array: " . print_r($data, true));
+
+if($type && filter_var($GBIF_url, FILTER_VALIDATE_URL)) {
+    $ch = curl_init($GBIF_url);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $type);
+    if($data){
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    }
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_USERPWD, $loginStr);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Content-Type: application/json',
+        'Accept: application/json')
+    );
+    curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+
+    $result = curl_exec($ch);
+    $info = curl_getinfo($ch);
+    error_log("CURL Request Header: ". print_r($info['request_header'], true));
+}
+else {
+    error_log("Skipped Curl request");
+}
+
+echo str_replace('"','',$result);
+?>
