@@ -4,7 +4,8 @@ include_once($SERVER_ROOT . '/classes/OccurrenceIndividual.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverCore.php');
 include_once($SERVER_ROOT . '/classes/utilities/RdfUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyEditorManager.php');
+include_once($SERVER_ROOT . '/classes/Media.php');
+include_once($SERVER_ROOT . '/classes/TaxonomyEditorManager.php');
 
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/individual/index.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/individual/index.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/individual/index.en.php');
