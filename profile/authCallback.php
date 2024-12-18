@@ -26,7 +26,9 @@ if (array_key_exists('code', $_REQUEST) && $_REQUEST['code']) {
   
   try{
     $status = $oidc->authenticate();
-    error_log(var_dump($oidc));
+    error_log(print_r($oidc, true));
+    error_log(print_r($this->oidc->getSidFromBackChannel(), true));
+
   }
   catch (Exception $ex){
     $_SESSION['last_message'] = $LANG['CAUGHT_EXCEPTION'] . ' ' . $ex->getMessage() . ' <ERR/>';
