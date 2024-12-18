@@ -216,9 +216,10 @@ FOR EACH ROW BEGIN
 END$$
 
 DELIMITER ;
-DROP TRIGGER specprocessorrawlabelsfulltext_insert
-DROP TRIGGER specprocessorrawlabelsfulltext_update
-DROP TRIGGER specprocessorrawlabelsfulltext_delete
+
+DROP TRIGGER specprocessorrawlabelsfulltext_insert;
+DROP TRIGGER specprocessorrawlabelsfulltext_update;
+DROP TRIGGER specprocessorrawlabelsfulltext_delete;
 DROP TABLE specprocessorawlabelsfulltext;
 
 
