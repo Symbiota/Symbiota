@@ -13,6 +13,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 
 $submit = array_key_exists('formsubmit', $_REQUEST) ? $_REQUEST['formsubmit'] : '';
 $indManager = new OccurrenceIndividual($submit ? 'write' : 'readonly');
+// var_dump($indManager);
 
 $occid = array_key_exists('occid', $_REQUEST) ? $indManager->sanitizeInt($_REQUEST['occid']) : 0;
 $collid = array_key_exists('collid', $_REQUEST) ? $indManager->sanitizeInt($_REQUEST['collid']) : 0;
@@ -69,6 +70,7 @@ if($SYMB_UID){
 $indManager->applyProtections($isSecuredReader);
 $occArr = $indManager->getOccData();
 $collMetadata = $indManager->getMetadata();
+// var_dump($collMetadata);
 $genticArr = $indManager->getGeneticArr();
 
 $statusStr = '';
@@ -464,7 +466,7 @@ $traitArr = $indManager->getTraitArr();
 							</div>
 							<?php
 						}
-						if($occArr['occurrenceid']){
+						// if($occArr['occurrenceid']){
 							?>
 							<div id="occurrenceid-div" class="bottom-breathing-room-rel-sm">
 								<?php
@@ -472,12 +474,15 @@ $traitArr = $indManager->getTraitArr();
 								$resolvableGuid = false;
 								if(substr($occArr['occurrenceid'],0,4) == 'http') $resolvableGuid = true;
 								if($resolvableGuid) echo '<a href="' . $occArr['occurrenceid'] . '" target="_blank">';
-								echo $occArr['occurrenceid'];
+								// var_dump($occArr);
+								if(isset($occArr['occurrenceid'])){
+									echo $occArr['occurrenceid'];
+								}
 								if($resolvableGuid) echo '</a>';
 								?>
 							</div>
 							<?php
-						}
+						// }
 						if($occArr['othercatalognumbers']){
 							?>
 							<div id="assoccatnum-div" class="assoccatnum-div bottom-breathing-room-rel-sm">
