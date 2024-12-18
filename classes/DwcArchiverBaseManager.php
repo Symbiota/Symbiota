@@ -32,12 +32,9 @@ class DwcArchiverBaseManager extends Manager{
 		$this->writeOutRecord(array_keys($this->fieldArr['fields']));
 	}
 
-	public function writeOutRecordBlock($occidArr, $idOverride='occid', $secondId=null){
+	public function writeOutRecordBlock($occidArr, $targetField='occid'){
 		if($occidArr){
-			$sql = $this->sqlBase.' WHERE ' . $idOverride . ' IN('.implode(',',$occidArr).') ';
-			if(!empty($secondId)){
-				$sql .= ' UNION ' . $this->sqlBase.' WHERE ' . $secondId . ' IN('.implode(',',$occidArr).') ';
-			}
+			$sql = $this->sqlBase.' WHERE ' . $targetField . ' IN('.implode(',',$occidArr).') ';
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_assoc()){
 					$this->encodeArr($r);

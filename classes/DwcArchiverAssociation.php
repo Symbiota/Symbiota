@@ -76,7 +76,7 @@ class DwcArchiverAssociation extends DwcArchiverBaseManager{
 		$columnArr['modifiedUid'] = 'oa.modifiedUid';
 		$termArr['initialtimestamp'] = 'https://symbiota.org/terms/initialtimestamp';
 		$columnArr['initialtimestamp'] = 'oa.initialtimestamp';
-        
+
 
 		$this->fieldArr['terms'] = $this->trimBySchemaType($termArr);
 		$this->fieldArr['fields'] = $this->trimBySchemaType($columnArr);
@@ -98,17 +98,29 @@ class DwcArchiverAssociation extends DwcArchiverBaseManager{
 
 	// @TODO decide if setDynamicFields is needed
 
-	private function setSqlBase(){
+	public function setSqlBase($getInverse = false){
 		if($this->fieldArr){
 			$sqlFrag = '';
-			foreach($this->fieldArr['fields'] as $colName){
-				if($colName) $sqlFrag .= ', ' . $colName;
+			if(!$getInverse){
+				foreach($this->fieldArr['fields'] as $colName){
+					if($colName) $sqlFrag .= ', ' . $colName;
+				}
+				// $this->sqlBase = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccurassociations ';
+				$this->sqlBase = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate ';
 			}
-			// $this->sqlBase = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccurassociations ';
-			$this->sqlBase = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate ';
+			else{
+				$this->fieldArr['fields']['relationship'] = 'terms.inverseRelationship AS relationship';
+				foreach($this->fieldArr['fields'] as $colName){
+					if($colName) $sqlFrag .= ', ' . $colName;
+				}
+				// $this->sqlBase = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccurassociations ';
+				$this->sqlBase = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate
+					LEFT JOIN (SELECT t.term, t.inverseRelationship
+					FROM ctcontrolvocabterm t INNER JOIN ctcontrolvocab v ON t.cvID = v.cvID
+					WHERE v.tablename = "omoccurassociations" AND fieldName = "relationship" AND t.inverseRelationship IS NOT NULL) terms ON oa.relationship = terms.term ';
+			}
 		}
 	}
-
 }
 
 ?>
