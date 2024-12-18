@@ -26,6 +26,7 @@ if (array_key_exists('code', $_REQUEST) && $_REQUEST['code']) {
   
   try{
     $status = $oidc->authenticate();
+    error_log(var_dump($oidc));
   }
   catch (Exception $ex){
     $_SESSION['last_message'] = $LANG['CAUGHT_EXCEPTION'] . ' ' . $ex->getMessage() . ' <ERR/>';
