@@ -1,6 +1,6 @@
 <?php
 include_once('../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/SpecProcNlpUtilities.php');
+include_once($SERVER_ROOT.'/classes/utilities/SpecProcNlpUtil.php');
 
 $targetParser = 'common';
 if(strpos($_SERVER['SERVER_NAME'],'bryophyte') !== false){
@@ -38,7 +38,7 @@ if($rawStr) {
 		$handler->setCollId($collid);
 		$handler->setCatalogNumber($catNum);
 		$dwcArr = $handler->parse($rawStr);
-		$dwcArr = SpecProcNlpUtilities::cleanDwcArr($dwcArr);
+		$dwcArr = SpecProcNlpUtil::cleanDwcArr($dwcArr);
 	}
 }
 

@@ -11,7 +11,7 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
@@ -20,31 +20,29 @@ namespace PhpOffice\PhpWord\Writer;
 use PhpOffice\PhpWord\PhpWord;
 
 /**
- * RTF writer
+ * RTF writer.
  *
  * @since 0.7.0
  */
 class RTF extends AbstractWriter implements WriterInterface
 {
     /**
-     * Last paragraph style
+     * Last paragraph style.
      *
      * @var mixed
      */
     private $lastParagraphStyle;
 
     /**
-     * Create new instance
-     *
-     * @param \PhpOffice\PhpWord\PhpWord $phpWord
+     * Create new instance.
      */
-    public function __construct(PhpWord $phpWord = null)
+    public function __construct(?PhpWord $phpWord = null)
     {
         $this->setPhpWord($phpWord);
 
-        $this->parts = array('Header', 'Document');
+        $this->parts = ['Header', 'Document'];
         foreach ($this->parts as $partName) {
-            $partClass = get_class($this) . '\\Part\\' . $partName;
+            $partClass = static::class . '\\Part\\' . $partName;
             if (class_exists($partClass)) {
                 /** @var \PhpOffice\PhpWord\Writer\RTF\Part\AbstractPart $part Type hint */
                 $part = new $partClass();
@@ -56,19 +54,17 @@ class RTF extends AbstractWriter implements WriterInterface
 
     /**
      * Save content to file.
-     *
-     * @param string $filename
-     * @throws \PhpOffice\PhpWord\Exception\Exception
      */
-    public function save($filename = null)
+    public function save(string $filename): void
     {
         $this->writeFile($this->openFile($filename), $this->getContent());
     }
 
     /**
-     * Get content
+     * Get content.
      *
      * @return string
+     *
      * @since 0.11.0
      */
     private function getContent()
@@ -119,7 +115,7 @@ class RTF extends AbstractWriter implements WriterInterface
      *
      * @param mixed $value
      */
-    public function setLastParagraphStyle($value = '')
+    public function setLastParagraphStyle($value = ''): void
     {
         $this->lastParagraphStyle = $value;
     }

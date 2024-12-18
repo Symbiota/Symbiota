@@ -1,11 +1,11 @@
 <?php
 include_once('../../config/symbini.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.en.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCollectionProfile.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-include_once($SERVER_ROOT.'/classes/UtilityFunctions.php');
-if($LANG_TAG == 'en' ||!file_exists($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.en.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 unset($_SESSION['editorquery']);
 
@@ -151,6 +151,7 @@ if ($SYMB_UID) {
 			position:sticky;
 			width: 100vw;
 			margin-left: calc(50% - 50vw);
+			z-index: 1;
 		}
 
 		@media (max-width: 1424px) {
@@ -189,6 +190,7 @@ if ($SYMB_UID) {
 				width: 12vw;
 				right: 1rem;
 				float: right;
+				background-color: var(--body-bg-color);
 			}
 		}
 		@media (min-width: 1500px) {
@@ -196,6 +198,7 @@ if ($SYMB_UID) {
 				width: 14vw;
 				right: 1rem;
 				float: right;
+				background-color: var(--body-bg-color);
 			}
 		}
 		@media (min-width: 1550px) {
@@ -203,6 +206,7 @@ if ($SYMB_UID) {
 				width: 15vw;
 				right: 1rem;
 				float: right;
+				background-color: var(--body-bg-color);
 			}
 		}
 		@media (min-width: 1700px) {
@@ -210,6 +214,7 @@ if ($SYMB_UID) {
 				width: 18vw;
 				right: 1rem;
 				float: right;
+				background-color: var(--body-bg-color);
 			}
 		}
 		@media (min-width: 1880px) {
@@ -217,6 +222,7 @@ if ($SYMB_UID) {
 				width: 21vw;
 				right: 1rem;
 				float: right;
+				background-color: var(--body-bg-color);
 			}
 		}
 	</style>
@@ -240,7 +246,7 @@ if ($SYMB_UID) {
 			<section id="quicksearch-box" class="fieldset-like" >
 				<h3><span><?= $LANG['QUICK_SEARCH'] ?></span></h3>
 				<div id="dialogContainer" style="position: relative;">
-					<form name="quicksearch" style="display: flex; align-items:center; gap:0.5rem; flex-wrap: wrap" action="javascript:void(0);" onsubmit="directSubmitAction(event)">
+					<form id="quicksearch" name="quicksearch" style="display: flex; align-items:center; gap:0.5rem; flex-wrap: wrap" action="javascript:void(0);" onsubmit="directSubmitAction(event)">
 						<div class="quicksearch-input-container">
 								<label style="display:flex; align-items: center; position: relative; margin-right: 1.5rem" for="catalog-number"><?= $LANG['OCCURENCE_IDENTIFIER'] ?>
 						<a href="#" id="q_catalognumberinfo" style="text-decoration:none; position: absolute; right: -1.5rem">
@@ -253,7 +259,7 @@ if ($SYMB_UID) {
 						<input style="margin-bottom: 0" name="catalog-number" id="catalog-number" type="text" />
 						<dialog id="dialogEl" aria-live="polite" aria-label="Catalog number search dialog">
 							<?= $LANG['IDENTIFIER_PLACEHOLDER_LIST'] . ' ' ?>
-							<button id="closeDialog">Close</button>
+							<button id="closeDialog" value="search">Close</button>
 						</dialog>
 						</div>
 						<input name="collid" type="hidden" value="<?= $collid; ?>" />
@@ -473,6 +479,9 @@ if ($SYMB_UID) {
 									<a href="#" onclick="$('li.importItem').show(); return false;">
 										<?= $LANG['IMPORT_SPECIMEN'] ?>
 									</a>
+									<a id="importinfo" href="https://biokic.github.io/symbiota-docs/coll_manager/upload/" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>">
+											<img src="../../images/info.png" style="width:13px;" alt="<?= $LANG['INFO_ALT'] ?>" />
+									</a><br/>
 								</li>
 								<li class="importItem">
 									<a href="../admin/specupload.php?uploadtype=7&collid=<?php echo $collid; ?>">
@@ -588,6 +597,9 @@ if ($SYMB_UID) {
 											<?= $LANG['RESTORE_BACKUP'] ?>
 										</a>
 									</li>
+									<?php
+								}
+								?>
 								<!--
 								<li style="margin-left:10px;">
 									<a href="../../imagelib/admin/igsnmapper.php?collid=<?= $collid ?>">
@@ -595,9 +607,6 @@ if ($SYMB_UID) {
 									</a>
 								</li>
 								 -->
-									<?php
-								}
-								?>
 								<li style="margin-left:10px;">
 									<a href="../../imagelib/admin/thumbnailbuilder.php?collid=<?= $collid ?>">
 										<?= $LANG['THUMBNAIL_MAINTENANCE'] ?>
@@ -875,7 +884,7 @@ if ($SYMB_UID) {
 							}
 						}
 						if($collData['rights']){
-							$rightsHtml = UtilityFunctions::getRightsHtml($collData['rights']);
+							$rightsHtml = GeneralUtil::getRightsHtml($collData['rights']);
 							?>
 							<div class="bottom-breathing-room-rel">
 								<span class="label"><?= $LANG['USAGE_RIGHTS'] ?>:</span>
@@ -913,17 +922,21 @@ if ($SYMB_UID) {
 			include('collprofilestats.php');
 			?>
 			<div style="margin-bottom: 2rem;">
-			<form action="<?= $actionPage ?>">
-				<input hidden id="'<?= 'coll-' . $collid . '-' ?>'" name="db[]" class="specobs" value='<?= $collid ?>' type="checkbox" onclick="selectAll(this);" checked />
-				<button type="submit" class="button button-primary">
-					<?= $LANG['ADVANCED_SEARCH_THIS_COLLECTION'] ?>
-				</button>
-			</form>
+				<form name="coll-search-form" action="<?= $actionPage ?>" method="get">
+					<input name="db" value="<?= $collid ?>" type="hidden">
+					<button type="submit" class="button button-primary">
+						<?= $LANG['ADVANCED_SEARCH_THIS_COLLECTION'] ?>
+					</button>
+				</form>
 			</div>
 			<div>
-				<span class="button button-primary">
-					<a id="image-search" href="<?= $CLIENT_ROOT ?>/imagelib/search.php?submitaction=search&db[]=<?= $collid ?>" ><?= $LANG['IMAGE_SEARCH_THIS_COLLECTION'] ?></a>
-				</span>
+				<form name="image-search-form" action="<?= $CLIENT_ROOT ?>/imagelib/search.php" method="get">
+					<input name="db" value="<?= $collid ?>" type="hidden">
+					<input name="imagetype" value="1" type="hidden">
+					<button name="submitaction" type="submit" value="search" class="button button-primary">
+						<?= $LANG['IMAGE_SEARCH_THIS_COLLECTION'] ?>
+					</button>
+				</form>
 			</div>
 			<?php
 		} elseif($collectionData) {
@@ -971,10 +984,10 @@ if ($SYMB_UID) {
 								</a>
 							</h3>
 							<div style='margin:10px;'>
-								<div class="coll-description bottom-breathing-room-rel"><?= $collData['fulldescription'] ?></div>
+								<div class="coll-description bottom-breathing-room-rel"><?= (!empty($collData) && array_key_exists('fulldescription', $collData)) ? $collData['fulldescription'] : '' ?></div>
 								<?php
-								if(isset($collData['resourcejson'])){
-									if($resourceArr = json_decode($collData['resourcejson'], true)){
+								if(isset($collArr['resourcejson'])){
+									if($resourceArr = json_decode($collArr['resourcejson'], true)){
 										$title = $LANG['HOMEPAGE'];
 										foreach($resourceArr as $rArr){
 											if(!empty($rArr['title'][$LANG_TAG])) $title = $rArr['title'][$LANG_TAG];
@@ -986,8 +999,8 @@ if ($SYMB_UID) {
 										}
 									}
 								}
-								if(!empty($collData['contactjson'])){
-									if($contactArr = json_decode($collData['contactjson'], true)){
+								if(!empty($collArr['contactjson'])){
+									if($contactArr = json_decode($collArr['contactjson'], true)){
 										if(!empty($contactArr)){
 											?>
 											<section style="margin-left: 0;">
@@ -1050,6 +1063,14 @@ if ($SYMB_UID) {
 			dialogContainer.style.position = 'relative';
 			dialogContainer.appendChild(dialogEl);
 
+		});
+		document.getElementById('quicksearch').addEventListener('keypress', e => {
+			if (e.key === 'Enter') {
+			e.preventDefault();
+			const editEnabled = <?php echo ($editCode == 1 || $editCode == 2 || $editCode == 3); ?>;
+			const newSubmitObj= {submitter:{value: editEnabled ? 'edit': 'search'}};
+			directSubmitAction(newSubmitObj);
+			}
 		});
 
 		closeDialogButton.addEventListener('click', (e) => {

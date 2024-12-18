@@ -1,6 +1,6 @@
 <?php
-include_once ($SERVER_ROOT . '/classes/Manager.php');
-include_once($SERVER_ROOT. '/utilities/SymbUtil.php');
+include_once($SERVER_ROOT . '/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 
 class GeographicThesaurus extends Manager {
 
@@ -122,7 +122,7 @@ class GeographicThesaurus extends Manager {
 		SQL;
 
 		try {
-			SymbUtil::execute_query($this->conn,$sql, [
+			QueryUtil::executeQuery($this->conn,$sql, [
 				$postArr['geoTerm'],
 				empty($postArr['abbreviation'])? null: $postArr['abbreviation'],
 				empty($postArr['iso2'])? null: $postArr['iso2'],
@@ -144,7 +144,7 @@ class GeographicThesaurus extends Manager {
 			SELECT * from geographicpolygon WHERE geoThesID = ?
 			SQL;
 
-			$polygon_exists = SymbUtil::execute_query($this->conn,$sql, [htmlspecialchars($postArr['geoThesID'])]);
+			$polygon_exists = QueryUtil::executeQuery($this->conn,$sql, [htmlspecialchars($postArr['geoThesID'])]);
 
 			if(!$polygon_exists) {
 				$this->errorMessage = 'ERROR saving polygon edits: '.$this->conn->error;
@@ -169,7 +169,7 @@ class GeographicThesaurus extends Manager {
 		CALL insertGeographicPolygon(?, ?);
 		SQL;
 		try {
-			SymbUtil::execute_query($this->conn,$sql, [$geoThesID, $polygon]);
+			QueryUtil::executeQuery($this->conn,$sql, [$geoThesID, $polygon]);
 			return true;
 		} catch (\Throwable $e) {
 			$this->errorMessage = 'ERROR saving new polygon: ' . $e->getMessage();
@@ -182,7 +182,7 @@ class GeographicThesaurus extends Manager {
 		CALL updateGeographicPolygon(?, ?);
 		SQL;
 		try {
-			SymbUtil::execute_query($this->conn,$sql, [$geoThesID, $polygon]);
+			QueryUtil::executeQuery($this->conn,$sql, [$geoThesID, $polygon]);
 			return true;
 		} catch (\Throwable $e) {
 			$this->errorMessage = 'ERROR updatePolygon on '. $geoThesID .':' . $e->getMessage();
@@ -196,7 +196,7 @@ class GeographicThesaurus extends Manager {
 		SQL;
 
 		try {
-			SymbUtil::execute_query($this->conn,$sql, [$geoThesID]);
+			QueryUtil::executeQuery($this->conn,$sql, [$geoThesID]);
 			return true;
 		} catch (\Throwable $e) {
 			$this->errorMessage = 'ERROR deletePolygon on '. $geoThesID . ':' . $e->getMessage();
@@ -257,7 +257,7 @@ class GeographicThesaurus extends Manager {
 		SQL;
 
 		try {
-			$result = SymbUtil::execute_query($this->conn,$sql, $parentIDs);
+			$result = QueryUtil::executeQuery($this->conn,$sql, $parentIDs);
 			$children = $result->fetch_all(MYSQLI_ASSOC);
 			$result->free();
 			$children_ids = array_map(fn($v) => $v["geoThesID"], $children);
@@ -506,7 +506,7 @@ class GeographicThesaurus extends Manager {
 			SQL;
 
 			try {
-				$result = SymbUtil::execute_query($this->conn,$sql, [$countryCode]);
+				$result = QueryUtil::executeQuery($this->conn,$sql, [$countryCode]);
 				if(($row = $result->fetch_object()) && isset($retArr['ADM0'])) {
 					$retArr['ADM0']['geoThesID'] = $row->geoThesID;
 					if($row->polygonID) $retArr['ADM0']['polygon'] = 1;
@@ -730,7 +730,7 @@ class GeographicThesaurus extends Manager {
 						$sql = <<<'SQL'
 						UPDATE geographicthesaurus set iso3 = ? where geoThesID = ?
 						SQL;
-						SymbUtil::execute_query($this->conn,$sql, [$iso, $geoThesIDs[$key]['geoThesID']]);
+						QueryUtil::executeQuery($this->conn,$sql, [$iso, $geoThesIDs[$key]['geoThesID']]);
 					} catch (\Throwable $e) {
 						$this->errorMessage = 'ERROR updating iso3 to match boundaryISO:' . $e->getMessage();
 					}
@@ -800,7 +800,7 @@ class GeographicThesaurus extends Manager {
 
 		$sql .= ' ORDER BY CHAR_LENGTH(g.geoterm), g.geoterm ';
 
-		$result = SymbUtil::execute_query($this->conn,$sql, $params);
+		$result = QueryUtil::executeQuery($this->conn,$sql, $params);
 
 		$geoterms = $result->fetch_all(MYSQLI_ASSOC);
 		for($i=0; $i < count($geoterms); $i++) {
@@ -883,7 +883,7 @@ class GeographicThesaurus extends Manager {
 			$params = array_merge($params, $parentIDs);
 		}
 		try {
-			$result = SymbUtil::execute_query($this->conn,$sql, $params);
+			$result = QueryUtil::executeQuery($this->conn,$sql, $params);
 			$geoThesID = $result->fetch_all(MYSQLI_ASSOC);
 			$result->free();
 			return $geoThesID;
@@ -907,7 +907,7 @@ class GeographicThesaurus extends Manager {
 			array_push($params, $geoLevel);
 		}
 		try {
-			$result = SymbUtil::execute_query($this->conn,$sql, $params);
+			$result = QueryUtil::executeQuery($this->conn,$sql, $params);
 			$geoThesID = $result->fetch_all(MYSQLI_ASSOC);
 			$result->free();
 			return $geoThesID;

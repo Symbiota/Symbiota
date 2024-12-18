@@ -8,7 +8,7 @@ header('Content-Type: text/html; charset='.$CHARSET);
 $clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $tid = array_key_exists('tid', $_REQUEST) ? filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $tabIndex = array_key_exists('tabindex', $_POST) ? filter_var($_POST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$action = array_key_exists('action', $_POST) ? htmlspecialchars($_POST['action'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
+$action = array_key_exists('action', $_POST) ? $_POST['action'] : '';
 
 $isEditor = false;
 if($IS_ADMIN || (array_key_exists('ClAdmin', $USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin']))){

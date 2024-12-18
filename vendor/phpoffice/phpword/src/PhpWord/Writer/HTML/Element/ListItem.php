@@ -11,23 +11,23 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\HTML\Element;
 
-use PhpOffice\PhpWord\Settings;
+use PhpOffice\PhpWord\Writer\HTML;
 
 /**
- * ListItem element HTML writer
+ * ListItem element HTML writer.
  *
  * @since 0.10.0
  */
 class ListItem extends AbstractElement
 {
     /**
-     * Write list item
+     * Write list item.
      *
      * @return string
      */
@@ -37,11 +37,7 @@ class ListItem extends AbstractElement
             return '';
         }
 
-        if (Settings::isOutputEscapingEnabled()) {
-            $content = '<p>' . $this->escaper->escapeHtml($this->element->getTextObject()->getText()) . '</p>' . PHP_EOL;
-        } else {
-            $content = '<p>' . $this->element->getTextObject()->getText() . '</p>' . PHP_EOL;
-        }
+        $content = '<p>' . $this->parentWriter->escapeHTML($this->element->getTextObject()->getText()) . '</p>' . PHP_EOL;
 
         return $content;
     }
