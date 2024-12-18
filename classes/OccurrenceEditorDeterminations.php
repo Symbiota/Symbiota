@@ -326,8 +326,8 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			//Whenever occurrence is updated also update associated images
 			if($updated_base && isset($taxonArr['tid']) && $taxonArr['tid']) {
 				$sql = <<<'SQL'
-				UPDATE images i
-				INNER JOIN omoccurdeterminations od on od.occid = i.occid
+				UPDATE media m
+				INNER JOIN omoccurdeterminations od on od.occid = m.occid
 				SET tid = ? WHERE detid = ?;
 				SQL;
 				QueryUtil::executeQuery($this->conn,$sql, [$taxonArr['tid'], $detId]);

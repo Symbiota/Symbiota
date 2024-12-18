@@ -181,41 +181,48 @@ class OccurrenceUtil {
 	 *         Keys: minelev, maxelev
 	 */
 	public static function parseVerbatimElevation($inStr){
-		$retArr = array();
-		//Start parsing
-		if(preg_match('/([\.\d]+)\s*-\s*([\.\d]+)\s*meter/i',$inStr,$m)){
-			$retArr['minelev'] = $m[1];
-			$retArr['maxelev'] = $m[2];
-		}
-		elseif(preg_match('/([\.\d]+)\s*-\s*([\.\d]+)\s*m./i',$inStr,$m)){
-			$retArr['minelev'] = $m[1];
-			$retArr['maxelev'] = $m[2];
-		}
-		elseif(preg_match('/([\.\d]+)\s*-\s*([\.\d]+)\s*m$/i',$inStr,$m)){
-			$retArr['minelev'] = $m[1];
-			$retArr['maxelev'] = $m[2];
-		}
-		elseif(preg_match('/([\.\d]+)\s*meter/i',$inStr,$m)){
-			$retArr['minelev'] = $m[1];
-		}
-		elseif(preg_match('/([\.\d]+)\s*m./i',$inStr,$m)){
-			$retArr['minelev'] = $m[1];
-		}
-		elseif(preg_match('/([\.\d]+)\s*m$/i',$inStr,$m)){
-			$retArr['minelev'] = $m[1];
-		}
-		elseif(preg_match('/([\.\d]+)[fet\']{,4}\s*-\s*([\.\d]+)\s{,1}[f\']{1}/i',$inStr,$m)){
-			if(is_numeric($m[1])) $retArr['minelev'] = (round($m[1]*.3048));
-			if(is_numeric($m[2])) $retArr['maxelev'] = (round($m[2]*.3048));
-		}
-		elseif(preg_match('/([\.\d]+)\s*[f\']{1}/i',$inStr,$m)){
-			if(is_numeric($m[1])) $retArr['minelev'] = (round($m[1]*.3048));
-		}
-		//Clean
-		if($retArr){
-			if(array_key_exists('minelev',$retArr) && ($retArr['minelev'] > 8000 || $retArr['minelev'] < 0)) unset($retArr['minelev']);
-			if(array_key_exists('maxelev',$retArr) && ($retArr['maxelev'] > 8000 || $retArr['maxelev'] < 0)) unset($retArr['maxelev']);
-		}
+		$retArr = [];
+
+		/*
+		 *	Supported Formats
+		 *	Space must exist between units and numbers. 
+		 *	No units assumes meters.
+		 *
+		 *	Numbers: 100, 100-200, 1,000-2,000
+		 *	Feet: ft, ft., feet, '
+		 */
+		if(preg_match('/([\.,\d]+)(\s*-\s*([\.,\d]+))?\s?(\D+)/i', $inStr, $m)) {
+			$min_elev = $m[1];
+			$max_elev = $m[3];
+			$unit = $m[4];
+
+			$feet = ['ft', 'ft.', 'feet', 'foot' ,"'"];
+			$meter = ['meter', 'meters', 'm', 'm.'];
+
+			$meter_conversion = 0;
+
+			if(in_array($unit, $feet)) {
+				$meter_conversion = 0.3048;
+			} else if (in_array($unit, $meter)) {
+				$meter_conversion = 1;
+			} else {
+				return $retArr;
+			}
+
+			$min_elev = str_replace(',', '', $min_elev);
+			$max_elev = str_replace(',', '', $max_elev);
+
+			if(is_numeric($min_elev)) {
+				$retArr['minelev'] = round($min_elev * $meter_conversion); 
+			}
+			if(is_numeric($max_elev)) {
+				$retArr['maxelev'] = round($max_elev * $meter_conversion); 
+			}
+		} 
+
+		if(array_key_exists('minelev',$retArr) && ($retArr['minelev'] > 8000 || $retArr['minelev'] < 0)) unset($retArr['minelev']);
+		if(array_key_exists('maxelev',$retArr) && ($retArr['maxelev'] > 8000 || $retArr['maxelev'] < 0)) unset($retArr['maxelev']);
+	
 		return $retArr;
 	}
 

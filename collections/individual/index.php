@@ -1023,6 +1023,19 @@ $traitArr = $indManager->getTraitArr();
 								<?php
 								foreach($iArr as $imgArr){
 									$thumbUrl = $imgArr['tnurl'];
+									echo '<div id="thumbnail-div" class="thumbnail-div">';
+									echo Media::render_media_item($imgArr);
+										if($imgArr['caption']) echo '<div><i>'.$imgArr['caption'].'</i></div>';
+										if($imgArr['creator']) echo '<div>'.(isset($LANG['AUTHOR'])?$LANG['AUTHOR']:'Author').': '.$imgArr['creator'].'</div>';
+										if($imgArr['url'] && substr($thumbUrl,0,7)!='process' && $imgArr['url'] != $imgArr['lgurl']) echo '<div><a href="' . $imgArr['url'] . '" target="_blank">' . $LANG['OPEN_MEDIUM'] . '</a></div>';
+										if($imgArr['lgurl']) echo '<div><a href="' . $imgArr['lgurl'] . '" target="_blank">' . $LANG['OPEN_LARGE'] . '</a></div>';
+										if($imgArr['sourceurl']) echo '<div><a href="' . $imgArr['sourceurl'] . '" target="_blank">' . $LANG['OPEN_SOURCE'] . '</a></div>';
+										//Use image rights settings as the default for current record
+										if($imgArr['rights']) $collMetadata['rights'] = $imgArr['rights'];
+										if($imgArr['copyright']) $collMetadata['rightsholder'] = $imgArr['copyright'];
+										if($imgArr['accessrights']) $collMetadata['accessrights'] = $imgArr['accessrights'];
+									echo '</div>';
+									/*
 									if(!$thumbUrl || substr($thumbUrl, 0, 7) == 'process'){
 										if($imgArr['lgurl']){
 											if($image = exif_thumbnail($imgArr['lgurl'])){
@@ -1033,7 +1046,7 @@ $traitArr = $indManager->getTraitArr();
 											if($imgArr['url'] && substr($imgArr['url'], 0, 7) != 'process') $thumbUrl = $imgArr['url'];
 											else $thumbUrl = $imgArr['lgurl'];
 										}
-									}
+							}
 									?>
 									<div id="thumbnail-div" class="thumbnail-div">
 										<a href='<?= $imgArr['url'] ?>' target="_blank">
@@ -1041,7 +1054,7 @@ $traitArr = $indManager->getTraitArr();
 										</a>
 										<?php
 										if($imgArr['caption']) echo '<div><i>'.$imgArr['caption'].'</i></div>';
-										if($imgArr['photographer']) echo '<div>'.(isset($LANG['AUTHOR'])?$LANG['AUTHOR']:'Author').': '.$imgArr['photographer'].'</div>';
+										if($imgArr['creator']) echo '<div>'.(isset($LANG['AUTHOR'])?$LANG['AUTHOR']:'Author').': '.$imgArr['creator'].'</div>';
 										if($imgArr['url'] && substr($thumbUrl,0,7)!='process' && $imgArr['url'] != $imgArr['lgurl']) echo '<div><a href="' . $imgArr['url'] . '" target="_blank">' . $LANG['OPEN_MEDIUM'] . '</a></div>';
 										if($imgArr['lgurl']) echo '<div><a href="' . $imgArr['lgurl'] . '" target="_blank">' . $LANG['OPEN_LARGE'] . '</a></div>';
 										if($imgArr['sourceurl']) echo '<div><a href="' . $imgArr['sourceurl'] . '" target="_blank">' . $LANG['OPEN_SOURCE'] . '</a></div>';
@@ -1051,7 +1064,7 @@ $traitArr = $indManager->getTraitArr();
 										if($imgArr['accessrights']) $collMetadata['accessrights'] = $imgArr['accessrights'];
 										?>
 									</div>
-									<?php
+							<?php */
 								}
 								?>
 							</fieldset>
@@ -1256,7 +1269,7 @@ $traitArr = $indManager->getTraitArr();
 									if(!isset($occArr['taxonsecure']) && !isset($occArr['localsecure'])){
 										if($dupArr['url']){
 											$url = $dupArr['url'];
-											if($IMAGE_DOMAIN) if(substr($url,0,1) == '/') $url = $IMAGE_DOMAIN.$url;
+											if($MEDIA_DOMAIN) if(substr($url,0,1) == '/') $url = $MEDIA_DOMAIN.$url;
 											echo '<div style="float:right;margin:10px;"><img src="'.$url.'" style="width:70px;border:1px solid grey" /></div>';
 										}
 									}

@@ -14,6 +14,7 @@ let paramNames = [
   "catnum",
   "includeothercatnum",
   "hasimages",
+  "hasaudio",
   "typestatus",
   "hasgenetic",
   "hascoords",
@@ -563,6 +564,10 @@ function getParam(paramName) {
       let pRadiusVal = pRadius.value + ";" + pRadiusUn.value;
       elementValues = `${pLatVal};${pLngVal};${pRadiusVal}`;
     }
+  } else if (paramName === "elevlow" || paramName === "elevhigh") {
+      (firstEl.type === "number" && firstEl != "")
+      ? (elementValues = firstEl.value)
+      : "";
   } else if (elements[0] != undefined) {
     switch (firstEl.tagName) {
       case "INPUT":
@@ -864,9 +869,16 @@ function setSearchForm(frm) {
     if (urlVar.llbound) {
       var coordArr = urlVar.llbound.split(";");
       frm.upperlat.value = Math.abs(parseFloat(coordArr[0]));
+	  frm.upperlat_NS.value = parseFloat(coordArr[0]) > 0? 'N': 'S'; 
+
       frm.bottomlat.value = Math.abs(parseFloat(coordArr[1]));
+	  frm.bottomlat_NS.value = parseFloat(coordArr[1]) > 0? 'N': 'S'; 
+
       frm.leftlong.value = Math.abs(parseFloat(coordArr[2]));
+	  frm.leftlong_EW.value = parseFloat(coordArr[2]) > 0? 'E': 'W'; 
+
       frm.rightlong.value = Math.abs(parseFloat(coordArr[3]));
+	  frm.rightlong_EW.value = parseFloat(coordArr[3]) > 0? 'E': 'W'; 
     }
     if (urlVar.footprintwkt) {
       frm.footprintwkt.value = urlVar.footprintwkt;
@@ -874,9 +886,14 @@ function setSearchForm(frm) {
     if (urlVar.llpoint) {
       var coordArr = urlVar.llpoint.split(";");
       frm.pointlat.value = Math.abs(parseFloat(coordArr[0]));
+	  frm.pointlat_NS.value = parseFloat(coordArr[0]) > 0 ? 'N': 'S';
+
       frm.pointlong.value = Math.abs(parseFloat(coordArr[1]));
+	  frm.pointlong_EW.value = parseFloat(coordArr[1]) > 0 ? 'E': 'W';
+
       frm.radius.value = Math.abs(parseFloat(coordArr[2]));
-      if (coordArr[4] == "mi") frm.radiusunits.value = "mi";
+      if (coordArr[3] === "mi") frm.radiusunits.value = "mi";
+	  else if(coordArr[3] === "km") frm.radiusunits.value = "km";
     }
     if (urlVar.collector) {
       frm.collector.value = urlVar.collector;
@@ -948,6 +965,19 @@ function parseUrlVariables(varStr) {
     result[key] = val;
   });
   return result;
+}
+
+function toggleTheNonDefaultsClosed(defaultId) {
+  const categoryButtons = document.querySelectorAll('a[id^="condense-"]');
+  categoryButtons.forEach((categoryButton) => {
+    const regexPattern = new RegExp(`^condense-\\d+-${defaultId}$`);
+    if (!regexPattern.test(categoryButton.id)) {
+      const idToToggle = categoryButton.id
+        .replace("condense-", "")
+        .replace("-" + defaultId, "");
+      toggleCat(idToToggle);
+    }
+  });
 }
 
 //////////////////////////////////////////////////////////////////////////

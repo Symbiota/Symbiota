@@ -1,5 +1,6 @@
 <?php
 include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/classes/Media.php');
 include_once($SERVER_ROOT . '/classes/ImageDetailManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/imagelib/imgdetails.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/imagelib/imgdetails.' . $LANG_TAG . '.php');
@@ -7,51 +8,47 @@ else include_once($SERVER_ROOT . '/content/lang/imagelib/imgdetails.en.php');
 
 header('Content-Type: text/html; charset='.$CHARSET);
 
-$imgId = filter_var($_REQUEST['imgid'], FILTER_SANITIZE_NUMBER_INT);
+$mediaID = array_key_exists('mediaid', $_REQUEST) ? filter_var($_REQUEST['mediaid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+if(!$mediaID && array_key_exists('imgid', $_REQUEST)) $mediaID = filter_var($_REQUEST['imgid'], FILTER_SANITIZE_NUMBER_INT);
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 $eMode = array_key_exists('emode',$_REQUEST)?filter_var($_REQUEST['emode'], FILTER_SANITIZE_NUMBER_INT):0;
 
-$imgManager = new ImageDetailManager($imgId,($action?'write':'readonly'));
+$imgArr = Media::getMedia($mediaID);
+$creatorArray = Media::getCreatorArray();
 
-$imgArr = $imgManager->getImageMetadata();
 $isEditor = false;
-if($IS_ADMIN || ($imgArr && ($imgArr['username'] === $USERNAME || ($imgArr['photographeruid'] && $imgArr['photographeruid'] == $SYMB_UID)))){
+if($IS_ADMIN || ($imgArr && ($imgArr['username'] === $USERNAME || ($imgArr['creatoruid'] && $imgArr['creatoruid'] == $SYMB_UID)))){
     $isEditor = true;
 }
 
 $status = '';
+
 if($isEditor){
 	if($action == 'Submit Image Edits'){
-		$status = $imgManager->editImage($_POST);
-		if(is_numeric($status)) header( 'Location: ../taxa/profile/tpeditor.php?tid='.$status.'&tabindex=1' );
+		Media::update($mediaID, $_POST, new LocalStorage());
 	}
 	elseif($action == 'Transfer Image'){
-		$imgManager->changeTaxon($_REQUEST['targettid'],$_REQUEST['sourcetid']);
+		Media::update($mediaID, ['tid' => $_REQUEST['targettid']]);
 		header( 'Location: ../taxa/profile/tpeditor.php?tid='.$_REQUEST['targettid'].'&tabindex=1' );
 	}
 	elseif($action == 'Delete Image'){
-		$imgDel = $_REQUEST['imgid'];
-		$removeImg = (array_key_exists('removeimg',$_REQUEST)?$_REQUEST['removeimg']:0);
-		$status = $imgManager->deleteImage($imgDel, $removeImg);
-		if(is_numeric($status)){
-			header( 'Location: ../taxa/profile/tpeditor.php?tid='.$status.'&tabindex=1' );
-		}
+		$remove_files = $_REQUEST['removeimg'] ?? false;
+		Media::delete(intval($mediaID), boolval($remove_files));
 	}
-	$imgArr = $imgManager->getImageMetadata($imgId);
+	$imgArr = Media::getMedia($mediaID);
 }
-
 $serverPath = GeneralUtil::getDomain();
 if($imgArr){
 	$imgUrl = $imgArr['url'];
-	$origUrl = $imgArr['originalurl'];
+	$origUrl = $imgArr['originalUrl'];
 	$metaUrl = $imgArr['url'];
-	if(array_key_exists('IMAGE_DOMAIN', $GLOBALS)){
+	if(array_key_exists('MEDIA_DOMAIN', $GLOBALS)){
 		if(substr($imgUrl, 0, 1) == '/'){
-			$imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
-			$metaUrl = $GLOBALS['IMAGE_DOMAIN'] . $metaUrl;
+			$imgUrl = $GLOBALS['MEDIA_DOMAIN'] . $imgUrl;
+			$metaUrl = $GLOBALS['MEDIA_DOMAIN'] . $metaUrl;
 		}
 		if($origUrl && substr($origUrl,0,1)=='/'){
-			$origUrl = $GLOBALS['IMAGE_DOMAIN'].$origUrl;
+			$origUrl = $GLOBALS['MEDIA_DOMAIN'].$origUrl;
 		}
 	}
 	if(substr($metaUrl,0,1)=='/'){
@@ -72,11 +69,11 @@ if($imgArr){
 		<meta name="twitter:card" content="photo" data-dynamic="true" />
 		<meta name="twitter:title" content="<?php echo $imgArr["sciname"]; ?>" />
 		<meta name="twitter:image" content="<?php echo $metaUrl; ?>" />
-		<meta name="twitter:url" content="<?php echo $serverPath.$CLIENT_ROOT.'/imagelib/imgdetails.php?imgid='.$imgId; ?>" />
+		<meta name="twitter:url" content="<?php echo $serverPath.$CLIENT_ROOT.'/imagelib/imgdetails.php?mediaid='.$mediaID; ?>" />
 		<?php
 	}
 	?>
-	<title><?php echo $DEFAULT_TITLE." Image Details: #".$imgId; ?></title>
+	<title><?php echo $DEFAULT_TITLE." Image Details: #".$mediaID; ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -138,8 +135,8 @@ if($imgArr){
 		<a href="index.php">Image Browser</a> &gt;&gt;
 		<a href="search.php">Image Search</a> &gt;&gt;
 		<?php
-		//if(isset($imgArr['tid']) && $imgArr['tid']) echo '<a href="../taxa/index.php?tid=' . htmlspecialchars($imgArr['tid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">Image Search</a> &gt;&gt;';
-		//echo '<b>Image Profile: image <a href="imgdetails.php?imgid=' . htmlspecialchars($imgId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">#' . htmlspecialchars($imgId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></b>';
+		//if(isset($imgArr['tid']) && $imgArr['tid']) echo '<a href="../taxa/index.php?tid=' . $imgArr['tid'] . '">Image Search</a> &gt;&gt;';
+		//echo '<b>Image Profile: image <a href="imgdetails.php?mediaid=' . $mediaID . '">#' . $mediaID . '</a></b>';
 		?>
 	</div>
 	 -->
@@ -182,7 +179,7 @@ if($imgArr){
 				}
 				?>
 				<div style="float:right;margin-right:10px;">
-					<a class="twitter-share-button" data-text="<?php echo $imgArr["sciname"]; ?>" href="https://twitter.com/share" data-url="<?php echo htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE). htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/imagelib/imgdetails.php?imgid=' . htmlspecialchars($imgId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo $LANG['TWEET'] ?></a>
+					<a class="twitter-share-button" data-text="<?php echo $imgArr["sciname"]; ?>" href="https://twitter.com/share" data-url="<?php echo htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE). $CLIENT_ROOT . '/imagelib/imgdetails.php?mediaid=' . $mediaID; ?>"><?php echo $LANG['TWEET'] ?></a>
 					<script>
 						window.twttr=(function(d,s,id){
 							var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};
@@ -225,16 +222,22 @@ if($imgArr){
 								<select name="photographeruid" name="photographeruid">
 									<option value=""><?php echo $LANG['SELECT_PHOTOGRAPHER'] ?></option>
 									<option value="">---------------------------------------</option>
-									<?php $imgManager->echoPhotographerSelect($imgArr["photographeruid"]); ?>
+									<?php
+									foreach($creatorArray as $id => $uname){
+											echo '<option value="'.$id.'" >';
+											echo $uname;
+											echo '</option>';
+										}
+									?>
 								</select>
 								* <?php echo $LANG['USER_REGISTERED_SYSTEM'] ?>
 								<a href="#" onclick="toggle('iepor');return false;" title="<?php echo $LANG['DISPLAY_PHOTOGRAPHER_FIELD'] ?>">
 									<img src="../images/editplus.png" style="border:0px;width:1.5em;" />
 								</a>
 							</div>
-							<div id="iepor" style="margin-top:2px;display:<?php echo ($imgArr["photographer"]?'block':'none'); ?>;">
+							<div id="iepor" style="margin-top:2px;display:<?php echo ($imgArr["creator"]?'block':'none'); ?>;">
 								<b><?php echo $LANG['PHOTOGRAPHER_OVERRIDE'] ?>:</b>
-								<input name="photographer" type="text" value="<?php echo $imgArr["photographer"];?>" style="width:250px;" />
+								<input name="photographer" type="text" value="<?php echo $imgArr["creator"];?>" style="width:250px;" />
 								* <?php echo $LANG['OVERRIDE_SELECTION'] ?>
 							</div>
 							<div style="margin-top:2px;">
@@ -259,9 +262,9 @@ if($imgArr){
 							</div>
 							<div style="margin-top:2px;">
 								<b><?php echo $LANG['OCCURRENCE_RECORD'] ?> #:</b>
-								<input id="imgdisplay-<?php echo $imgId; ?>" name="displayoccid" type="text" value="" disabled style="width:70px" />
-								<input id="imgoccid-<?php echo $imgId; ?>" name="occid" type="hidden" value="" />
-								<span onclick="openOccurrenceSearch('<?php echo $imgId; ?>');return false"><a href="#"><?php echo $LANG['LINK_OCCUR_RECORD'] ?></a></span>
+								<input id="imgdisplay-<?php echo $mediaID; ?>" name="displayoccid" type="text" value="" disabled style="width:70px" />
+								<input id="imgoccid-<?php echo $mediaID; ?>" name="occid" type="hidden" value="" />
+								<span onclick="openOccurrenceSearch('<?php echo $mediaID; ?>');return false"><a href="#"><?php echo $LANG['LINK_OCCUR_RECORD'] ?></a></span>
 							</div>
 							<div style="margin-top:2px;">
 								<b><?php echo $LANG['NOTES'] ?>:</b>
@@ -275,7 +278,7 @@ if($imgArr){
 								<b><?php echo $LANG['WEB_IMAGE'] ?>:</b><br/>
 								<input name="url" type="text" value="<?php echo $imgArr["url"];?>" style="width:90%;" />
 								<?php
-								if(stripos($imgArr["url"],$IMAGE_ROOT_URL) === 0){
+								if(stripos($imgArr["url"],$MEDIA_ROOT_URL) === 0){
 									?>
 									<div style="margin-left:70px;">
 										<input type="checkbox" name="renameweburl" value="1" />
@@ -288,35 +291,35 @@ if($imgArr){
 							</div>
 							<div style="margin-top:2px;">
 								<b><?php echo $LANG['THUMBNAIL'] ?>:</b><br/>
-								<input name="thumbnailurl" type="text" value="<?php echo $imgArr["thumbnailurl"];?>" style="width:90%;" />
+								<input name="thumbnailurl" type="text" value="<?php echo $imgArr["thumbnailUrl"];?>" style="width:90%;" />
 								<?php
-								if(stripos($imgArr["thumbnailurl"],$IMAGE_ROOT_URL) === 0){
+								if($imgArr["thumbnailUrl"] && stripos($imgArr["thumbnailUrl"],$MEDIA_ROOT_URL) === 0){
 									?>
 									<div style="margin-left:70px;">
 										<input type="checkbox" name="renametnurl" value="1" />
 										<?php echo $LANG['RENAME_THUMBNAIL_IMAGE_FILE'] ?>
 									</div>
-									<input name="oldthumbnailurl" type="hidden" value="<?php echo $imgArr["thumbnailurl"];?>" />
+									<input name="oldthumbnailurl" type="hidden" value="<?php echo $imgArr["thumbnailUrl"];?>" />
 									<?php
 								}
 								?>
 							</div>
 							<div style="margin-top:2px;">
 								<b><?php echo $LANG['LARGE_IMAGE'] ?>:</b><br/>
-								<input name="originalurl" type="text" value="<?php echo $imgArr["originalurl"];?>" style="width:90%;" />
+								<input name="originalUrl" type="text" value="<?php echo $imgArr["originalUrl"];?>" style="width:90%;" />
 								<?php
-								if(stripos($imgArr["originalurl"],$IMAGE_ROOT_URL) === 0){
+								if(stripos($imgArr["originalUrl"],$MEDIA_ROOT_URL) === 0){
 									?>
 									<div style="margin-left:80px;">
 										<input type="checkbox" name="renameorigurl" value="1" />
 										<?php echo $LANG['RENAME_LARGE_IMAGE_FILE'] ?>
 									</div>
-									<input name="oldoriginalurl" type="hidden" value="<?php echo $imgArr["originalurl"];?>" />
+									<input name="oldoriginalurl" type="hidden" value="<?php echo $imgArr["originalUrl"];?>" />
 									<?php
 								}
 								?>
 							</div>
-							<input name="imgid" type="hidden" value="<?php echo $imgId; ?>" />
+							<input name="mediaid" type="hidden" value="<?php echo $mediaID; ?>" />
 							<div style="margin-top:2px;">
 								<button type="submit" name="submitaction" id="editsubmit" value="Submit Image Edits" ><?php echo $LANG['SUBMIT_IMAGE_EDITS'] ?></button>
 							</div>
@@ -330,16 +333,17 @@ if($imgArr){
 								<input type="text" id="taxa" name="targettaxon" size="40" />
 								<input type="hidden" id="tid" name="targettid" value="" />
 								<input type="hidden" name="sourcetid" value="<?php echo $imgArr["tid"];?>" />
-								<input type="hidden" name="imgid" value="<?php echo $imgId; ?>" />
-								<button type="hidden" name="submitaction" value="Transfer Image" ><?php echo $LANG['TRANSFER_IMAGE'] ?></button>
-								<button type="submit" name="submitbutton" value="Transfer Image" ><?php echo $LANG['TRANSFER_IMAGE'] ?></button>
+								<input type="hidden" name="mediaid" value="<?php echo $mediaID; ?>" />
+
+								<input type="hidden" name="submitaction" value="Transfer Image" />
+								<button type="submit" name="submitaction" value="Transfer Image" ><?php echo $LANG['TRANSFER_IMAGE'] ?></button>
 							</div>
 					    </fieldset>
 					</form>
 					<form name="deleteform" action="imgdetails.php" method="post" target="_self" onsubmit="return window.confirm('<?php echo $LANG['DELETE_IMAGE_FROM_SERVER'] ?>');">
 						<fieldset style="margin:5px 0px 5px 5px;">
 					    	<legend><b><?php echo $LANG['AUTHORIZED_REMOVE_IMAGE'] ?></b></legend>
-							<input name="imgid" type="hidden" value="<?php echo $imgId; ?>" />
+							<input name="mediaid" type="hidden" value="<?php echo $mediaID; ?>" />
 							<div style="margin-top:2px;">
 								<button class="button-danger" type="submit" name="submitaction" id="submit" value="Delete Image"><?php echo $LANG['DELETE_IMAGE'] ?></button>
 							</div>
@@ -357,14 +361,22 @@ if($imgArr){
 				<div style="width:350px;padding:10px;float:left;">
 					<?php
 					$imgDisplay = $imgUrl;
+					$mediaType = MediaType::tryFrom($imgArr['mediaType']);
 					if((!$imgDisplay || $imgDisplay == 'empty') && $origUrl) $imgDisplay = $origUrl;
 					?>
+					<?php if($mediaType === MediaType::Image):?>
 					<a href="<?php echo htmlspecialchars($imgDisplay, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?>">
 						<img src="<?php echo htmlspecialchars($imgDisplay, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?>" style="width:300px;" />
 					</a>
 					<?php
 					if($origUrl) echo '<div><a href="' . htmlspecialchars($origUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . $LANG['CLICK_IMAGE'] . '</a></div>';
 					?>
+					<?php elseif($mediaType === MediaType::Audio):?>
+						<audio controls style="margin-top: 5rem">
+							<source src="<?= $origUrl ?>" type="<?=$imgArr['format']?>">
+							Your browser does not support the audio element.
+						</audio>
+					<?php endif ?>
 				</div>
 				<div style="padding:10px;float:left;">
 					<div style="clear:both;margin-top:40px;">
@@ -372,14 +384,14 @@ if($imgArr){
 					</div>
 					<?php
 					if($imgArr['caption']) echo '<div><b>' . $LANG['CAPTION'] . ':</b> '.$imgArr['caption'].'</div>';
-					if($imgArr['photographerdisplay']){
+					if($imgArr['creatorDisplay']){
 						echo '<div><b>' . $LANG['PHOTOGRAPHER'] . ':</b> ';
-						if(!$imgArr['photographer']){
-							$phLink = 'search.php?imagetype=all&phuid='.$imgArr['photographeruid'].'&submitaction=search';
+						if(!$imgArr['creator']){
+							$phLink = 'search.php?imagetype=all&phuid='.$imgArr['creatoruid'].'&submitaction=search';
 							echo '<a href="' . htmlspecialchars($phLink, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 						}
-						echo $imgArr['photographerdisplay'];
-						if(!$imgArr['photographer']) echo '</a>';
+						echo $imgArr['creatorDisplay'];
+						if(!$imgArr['creator']) echo '</a>';
 						echo '</div>';
 					}
 					if($imgArr['owner']) echo '<div><b>' . $LANG['MANAGER'] . ':</b> ' . $imgArr['owner'] . '</div>';
@@ -406,8 +418,8 @@ if($imgArr){
 						<div style="margin-top:20px;">
 							<?php echo $LANG['ERROR_COMMENT_ABOUT_IMAGE'] ?> <br/><?php echo $LANG['SEND_EMAIL'] ?>:
 							<?php
-							$emailSubject = $DEFAULT_TITLE . ' ' . $LANG['IMG_NO'] . ' ' . $imgId;
-							$emailBody = 'Image being referenced: '.urlencode($serverPath.$CLIENT_ROOT.'/imagelib/imgdetails.php?imgid='.$imgId);
+							$emailSubject = $DEFAULT_TITLE . ' ' . $LANG['IMG_NO'] . ' ' . $mediaID;
+							$emailBody = 'Image being referenced: '.urlencode($serverPath.$CLIENT_ROOT.'/imagelib/imgdetails.php?mediaid='.$imgId);
 							$emailRef = 'subject=' . $emailSubject . '&cc=' . $ADMIN_EMAIL . '&body=' . $emailBody;
 							echo '<a href="mailto:' . $ADMIN_EMAIL . '?' . $emailRef . '">' . $emailAddress . '</a>';
 							?>

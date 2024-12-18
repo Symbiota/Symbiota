@@ -246,7 +246,7 @@ if ($SYMB_UID) {
 			<section id="quicksearch-box" class="fieldset-like" >
 				<h3><span><?= $LANG['QUICK_SEARCH'] ?></span></h3>
 				<div id="dialogContainer" style="position: relative;">
-					<form name="quicksearch" style="display: flex; align-items:center; gap:0.5rem; flex-wrap: wrap" action="javascript:void(0);" onsubmit="directSubmitAction(event)">
+					<form id="quicksearch" name="quicksearch" style="display: flex; align-items:center; gap:0.5rem; flex-wrap: wrap" action="javascript:void(0);" onsubmit="directSubmitAction(event)">
 						<div class="quicksearch-input-container">
 								<label style="display:flex; align-items: center; position: relative; margin-right: 1.5rem" for="catalog-number"><?= $LANG['OCCURENCE_IDENTIFIER'] ?>
 						<a href="#" id="q_catalognumberinfo" style="text-decoration:none; position: absolute; right: -1.5rem">
@@ -259,7 +259,7 @@ if ($SYMB_UID) {
 						<input style="margin-bottom: 0" name="catalog-number" id="catalog-number" type="text" />
 						<dialog id="dialogEl" aria-live="polite" aria-label="Catalog number search dialog">
 							<?= $LANG['IDENTIFIER_PLACEHOLDER_LIST'] . ' ' ?>
-							<button id="closeDialog">Close</button>
+							<button id="closeDialog" value="search">Close</button>
 						</dialog>
 						</div>
 						<input name="collid" type="hidden" value="<?= $collid; ?>" />
@@ -922,17 +922,21 @@ if ($SYMB_UID) {
 			include('collprofilestats.php');
 			?>
 			<div style="margin-bottom: 2rem;">
-			<form action="<?= $actionPage ?>">
-				<input hidden id="'<?= 'coll-' . $collid . '-' ?>'" name="db[]" class="specobs" value='<?= $collid ?>' type="checkbox" onclick="selectAll(this);" checked />
-				<button type="submit" class="button button-primary">
-					<?= $LANG['ADVANCED_SEARCH_THIS_COLLECTION'] ?>
-				</button>
-			</form>
+				<form name="coll-search-form" action="<?= $actionPage ?>" method="get">
+					<input name="db" value="<?= $collid ?>" type="hidden">
+					<button type="submit" class="button button-primary">
+						<?= $LANG['ADVANCED_SEARCH_THIS_COLLECTION'] ?>
+					</button>
+				</form>
 			</div>
 			<div>
-				<span class="button button-primary">
-					<a id="image-search" href="<?= $CLIENT_ROOT ?>/imagelib/search.php?submitaction=search&db[]=<?= $collid ?>" ><?= $LANG['IMAGE_SEARCH_THIS_COLLECTION'] ?></a>
-				</span>
+				<form name="image-search-form" action="<?= $CLIENT_ROOT ?>/imagelib/search.php" method="get">
+					<input name="db" value="<?= $collid ?>" type="hidden">
+					<input name="imagetype" value="1" type="hidden">
+					<button name="submitaction" type="submit" value="search" class="button button-primary">
+						<?= $LANG['IMAGE_SEARCH_THIS_COLLECTION'] ?>
+					</button>
+				</form>
 			</div>
 			<?php
 		} elseif($collectionData) {
@@ -1059,6 +1063,14 @@ if ($SYMB_UID) {
 			dialogContainer.style.position = 'relative';
 			dialogContainer.appendChild(dialogEl);
 
+		});
+		document.getElementById('quicksearch').addEventListener('keypress', e => {
+			if (e.key === 'Enter') {
+			e.preventDefault();
+			const editEnabled = <?php echo ($editCode == 1 || $editCode == 2 || $editCode == 3); ?>;
+			const newSubmitObj= {submitter:{value: editEnabled ? 'edit': 'search'}};
+			directSubmitAction(newSubmitObj);
+			}
 		});
 
 		closeDialogButton.addEventListener('click', (e) => {

@@ -99,7 +99,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 						$clOccidArr[] = $r->occid;
 					}
 					$rs->free();
-				}
+			}
 				if($clOccidArr) $sqlWhere .= 'AND (o.occid NOT IN('.implode(',',$clOccidArr).')) ';
 			}
 			//$this->displaySearchArr[] = $this->voucherManager->getQueryVariableStr();
@@ -432,7 +432,11 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$this->displaySearchArr[] = $this->LANG['IS_TYPE'];
 		}
 		if(array_key_exists('hasimages', $this->searchTermArr)){
-			$sqlWhere .= 'AND (o.occid IN(SELECT occid FROM images)) ';
+			$sqlWhere .= 'AND (o.occid IN(SELECT occid FROM media where mediaType = "image")) ';
+			$this->displaySearchArr[] = $this->LANG['HAS_IMAGES'];
+		}
+		if(array_key_exists('hasaudio', $this->searchTermArr)){
+			$sqlWhere .= 'AND (o.occid IN(SELECT occid FROM media where mediaType = "audio")) ';
 			$this->displaySearchArr[] = $this->LANG['HAS_IMAGES'];
 		}
 		if(array_key_exists('hasgenetic', $this->searchTermArr)){
@@ -898,6 +902,10 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		if(array_key_exists('hasimages',$_REQUEST)){
 			if($_REQUEST['hasimages']) $this->searchTermArr['hasimages'] = true;
 			else unset($this->searchTermArr['hasimages']);
+		}
+		if(array_key_exists('hasaudio',$_REQUEST)){
+			if($_REQUEST['hasaudio']) $this->searchTermArr['hasaudio'] = true;
+			else unset($this->searchTermArr['hasaudio']);
 		}
 		if(array_key_exists('hasgenetic',$_REQUEST)){
 			if($_REQUEST['hasgenetic']) $this->searchTermArr['hasgenetic'] = true;
